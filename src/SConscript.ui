@@ -1,0 +1,39 @@
+# -*- mode: python -*-
+# Enemy Territory build script
+# TTimo <ttimo@idsoftware.com>
+# http://scons.sourceforge.net
+
+import sys, os
+import scons_utils
+
+Import( 'GLOBALS' )
+Import( GLOBALS )
+
+ui_string = """
+ui_atoms.c
+ui_gameinfo.c
+ui_loadpanel.c
+ui_main.c
+ui_players.c
+ui_shared.c
+ui_syscalls.c
+ui_util.c
+../game/bg_campaign.c
+../game/bg_classes.c
+../game/bg_misc.c
+../game/q_math.c
+../game/q_shared.c
+"""
+
+ui_list = scons_utils.BuildList( 'ui', ui_string )
+
+local_env = g_env.Clone()
+
+local_env.Append( CPPDEFINES = [ 'UIDLL' ] )
+
+source_list = ui_list
+
+local_env['LINK'] = local_env['CC']
+
+ret = local_env.SharedLibrary( target = 'ui', source = source_list )
+Return( 'ret' )

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleVersion</key>
+	<string>2.60b4</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.60b4</string>
+	<key>CFBundleLongVersionString</key>
+	<string>2.60b4, Copyright 2001-2005 Activision Inc, All Rights Reserved.</string>
+	<key>CFBundleGetInfoString</key>
+	<string>2.60b4, Copyright 2001-2005 Activision Inc, All Rights Reserved.</string>
+	<key>CFBundleName</key>
+	<string>Wolfenstein ET</string>
+	<key>CFExecutableName</key>
+	<string>Wolfenstein ET</string>
+	<key>CFBundleSignature</key>
+	<string>WlfE</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleIconFile</key>
+	<string>Icon.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.activision.rtcw_et</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Wolfenstein Data File</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>pk3.icns</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>WlfB</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSServices</key>
+	<array>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Wolfenstein ET/Connect To Server</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>connectToServer</string>
+			<key>NSPortName</key>
+			<string>Wolfenstein ET</string>
+			<key>NSSendTypes</key>
+			<array>
+				<string>NSStringPboardType</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Wolfenstein ET/Perform Command</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>performCommand</string>
+			<key>NSPortName</key>
+			<string>Wolfenstein ET</string>
+			<key>NSSendTypes</key>
+			<array>
+				<string>NSStringPboardType</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>LSRequiresCarbon</key>
+	<true/>
+	<key>NSAppleScriptEnabled</key>
+	<true/>
+</dict>
+</plist>

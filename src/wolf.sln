@@ -1,0 +1,133 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Splines", "splines\Splines.vcproj", "{0C24E6E9-2B9F-43AE-ADB7-B7693966F41E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "botlib", "botlib\botlib.vcproj", "{EFA65954-05A8-43C4-B4FE-FAFE8E678AB7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cgame", "cgame\cgame.vcproj", "{68A804FC-00C3-44E2-A479-3DB3D20F943D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "extractfuncs", "extractfuncs\extractfuncs.vcproj", "{D8A3C382-BCD1-46AE-B5AD-C8538DDD0D3D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game", "game\game.vcproj", "{4F8332D7-5687-4875-813A-A1B7AA479C2D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "renderer", "renderer\renderer.vcproj", "{7906CC4F-E230-4049-A3EF-EA7F64E73DDE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ui", "ui\ui.vcproj", "{4C02EEB1-33AA-41C5-9A96-609161DF1635}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wolf", "wolf.vcproj", "{B604B554-38D6-4BC8-9F7F-D6BC8719A653}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7906CC4F-E230-4049-A3EF-EA7F64E73DDE} = {7906CC4F-E230-4049-A3EF-EA7F64E73DDE}
+		{EFA65954-05A8-43C4-B4FE-FAFE8E678AB7} = {EFA65954-05A8-43C4-B4FE-FAFE8E678AB7}
+		{0C24E6E9-2B9F-43AE-ADB7-B7693966F41E} = {0C24E6E9-2B9F-43AE-ADB7-B7693966F41E}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug Dedicated|Win32 = Debug Dedicated|Win32
+		Debug|Win32 = Debug|Win32
+		Release Dedicated|Win32 = Release Dedicated|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C24E6E9-2B9F-43AE-ADB7-B7693966F41E}.Debug Dedicated|Win32.ActiveCfg = Debug|Win32
+		{0C24E6E9-2B9F-43AE-ADB7-B7693966F41E}.Debug Dedicated|Win32.Build.0 = Debug|Win32
+		{0C24E6E9-2B9F-43AE-ADB7-B7693966F41E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0C24E6E9-2B9F-43AE-ADB7-B7693966F41E}.Debug|Win32.Build.0 = Debug|Win32
+		{0C24E6E9-2B9F-43AE-ADB7-B7693966F41E}.Release Dedicated|Win32.ActiveCfg = Release|Win32
+		{0C24E6E9-2B9F-43AE-ADB7-B7693966F41E}.Release Dedicated|Win32.Build.0 = Release|Win32
+		{0C24E6E9-2B9F-43AE-ADB7-B7693966F41E}.Release|Win32.ActiveCfg = Release|Win32
+		{0C24E6E9-2B9F-43AE-ADB7-B7693966F41E}.Release|Win32.Build.0 = Release|Win32
+		{EFA65954-05A8-43C4-B4FE-FAFE8E678AB7}.Debug Dedicated|Win32.ActiveCfg = Debug|Win32
+		{EFA65954-05A8-43C4-B4FE-FAFE8E678AB7}.Debug Dedicated|Win32.Build.0 = Debug|Win32
+		{EFA65954-05A8-43C4-B4FE-FAFE8E678AB7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EFA65954-05A8-43C4-B4FE-FAFE8E678AB7}.Debug|Win32.Build.0 = Debug|Win32
+		{EFA65954-05A8-43C4-B4FE-FAFE8E678AB7}.Release Dedicated|Win32.ActiveCfg = Release|Win32
+		{EFA65954-05A8-43C4-B4FE-FAFE8E678AB7}.Release Dedicated|Win32.Build.0 = Release|Win32
+		{EFA65954-05A8-43C4-B4FE-FAFE8E678AB7}.Release|Win32.ActiveCfg = Release|Win32
+		{EFA65954-05A8-43C4-B4FE-FAFE8E678AB7}.Release|Win32.Build.0 = Release|Win32
+		{68A804FC-00C3-44E2-A479-3DB3D20F943D}.Debug Dedicated|Win32.ActiveCfg = Debug|Win32
+		{68A804FC-00C3-44E2-A479-3DB3D20F943D}.Debug Dedicated|Win32.Build.0 = Debug|Win32
+		{68A804FC-00C3-44E2-A479-3DB3D20F943D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{68A804FC-00C3-44E2-A479-3DB3D20F943D}.Release Dedicated|Win32.ActiveCfg = Release|Win32
+		{68A804FC-00C3-44E2-A479-3DB3D20F943D}.Release|Win32.ActiveCfg = Release|Win32
+		{68A804FC-00C3-44E2-A479-3DB3D20F943D}.Release|Win32.Build.0 = Release|Win32
+		{D8A3C382-BCD1-46AE-B5AD-C8538DDD0D3D}.Debug Dedicated|Win32.ActiveCfg = Debug|Win32
+		{D8A3C382-BCD1-46AE-B5AD-C8538DDD0D3D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D8A3C382-BCD1-46AE-B5AD-C8538DDD0D3D}.Release Dedicated|Win32.ActiveCfg = Release|Win32
+		{D8A3C382-BCD1-46AE-B5AD-C8538DDD0D3D}.Release|Win32.ActiveCfg = Release|Win32
+		{4F8332D7-5687-4875-813A-A1B7AA479C2D}.Debug Dedicated|Win32.ActiveCfg = Debug|Win32
+		{4F8332D7-5687-4875-813A-A1B7AA479C2D}.Debug Dedicated|Win32.Build.0 = Debug|Win32
+		{4F8332D7-5687-4875-813A-A1B7AA479C2D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4F8332D7-5687-4875-813A-A1B7AA479C2D}.Release Dedicated|Win32.ActiveCfg = Release|Win32
+		{4F8332D7-5687-4875-813A-A1B7AA479C2D}.Release|Win32.ActiveCfg = Release|Win32
+		{4F8332D7-5687-4875-813A-A1B7AA479C2D}.Release|Win32.Build.0 = Release|Win32
+		{7906CC4F-E230-4049-A3EF-EA7F64E73DDE}.Debug Dedicated|Win32.ActiveCfg = Debug|Win32
+		{7906CC4F-E230-4049-A3EF-EA7F64E73DDE}.Debug Dedicated|Win32.Build.0 = Debug|Win32
+		{7906CC4F-E230-4049-A3EF-EA7F64E73DDE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7906CC4F-E230-4049-A3EF-EA7F64E73DDE}.Debug|Win32.Build.0 = Debug|Win32
+		{7906CC4F-E230-4049-A3EF-EA7F64E73DDE}.Release Dedicated|Win32.ActiveCfg = Release|Win32
+		{7906CC4F-E230-4049-A3EF-EA7F64E73DDE}.Release Dedicated|Win32.Build.0 = Release|Win32
+		{7906CC4F-E230-4049-A3EF-EA7F64E73DDE}.Release|Win32.ActiveCfg = Release|Win32
+		{7906CC4F-E230-4049-A3EF-EA7F64E73DDE}.Release|Win32.Build.0 = Release|Win32
+		{4C02EEB1-33AA-41C5-9A96-609161DF1635}.Debug Dedicated|Win32.ActiveCfg = Debug|Win32
+		{4C02EEB1-33AA-41C5-9A96-609161DF1635}.Debug Dedicated|Win32.Build.0 = Debug|Win32
+		{4C02EEB1-33AA-41C5-9A96-609161DF1635}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4C02EEB1-33AA-41C5-9A96-609161DF1635}.Release Dedicated|Win32.ActiveCfg = Release|Win32
+		{4C02EEB1-33AA-41C5-9A96-609161DF1635}.Release|Win32.ActiveCfg = Release|Win32
+		{4C02EEB1-33AA-41C5-9A96-609161DF1635}.Release|Win32.Build.0 = Release|Win32
+		{B604B554-38D6-4BC8-9F7F-D6BC8719A653}.Debug Dedicated|Win32.ActiveCfg = Debug Dedicated|Win32
+		{B604B554-38D6-4BC8-9F7F-D6BC8719A653}.Debug Dedicated|Win32.Build.0 = Debug Dedicated|Win32
+		{B604B554-38D6-4BC8-9F7F-D6BC8719A653}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B604B554-38D6-4BC8-9F7F-D6BC8719A653}.Debug|Win32.Build.0 = Debug|Win32
+		{B604B554-38D6-4BC8-9F7F-D6BC8719A653}.Release Dedicated|Win32.ActiveCfg = Release Dedicated|Win32
+		{B604B554-38D6-4BC8-9F7F-D6BC8719A653}.Release Dedicated|Win32.Build.0 = Release Dedicated|Win32
+		{B604B554-38D6-4BC8-9F7F-D6BC8719A653}.Release|Win32.ActiveCfg = Release|Win32
+		{B604B554-38D6-4BC8-9F7F-D6BC8719A653}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 8
+		SccProjectUniqueName0 = splines\\Splines.vcproj
+		SccProjectName0 = \u0022$/Wolfenstein\u0020MP/src/splines\u0022,\u0020ENNAAAAA
+		SccLocalPath0 = splines
+		SccProvider0 = MSSCCI:NXN\u0020alienbrain
+		CanCheckoutShared = false
+		SccProjectUniqueName1 = botlib\\botlib.vcproj
+		SccProjectName1 = \u0022$/Wolfenstein\u0020MP/src/botlib\u0022,\u0020FTMAAAAA
+		SccLocalPath1 = botlib
+		SccProvider1 = MSSCCI:NXN\u0020alienbrain
+		CanCheckoutShared = false
+		SccProjectUniqueName2 = cgame\\cgame.vcproj
+		SccProjectName2 = \u0022$/Wolfenstein\u0020MP/src/cgame\u0022,\u0020HTMAAAAA
+		SccLocalPath2 = cgame
+		SccProvider2 = MSSCCI:NXN\u0020alienbrain
+		CanCheckoutShared = false
+		SccProjectUniqueName3 = extractfuncs\\extractfuncs.vcproj
+		SccProjectName3 = \u0022$/Wolf5/src/extractfuncs\u0022,\u0020JTMAAAAA
+		SccLocalPath3 = extractfuncs
+		SccProvider3 = MSSCCI:NXN\u0020alienbrain
+		CanCheckoutShared = false
+		SccProjectUniqueName4 = game\\game.vcproj
+		SccProjectName4 = \u0022$/Wolfenstein\u0020MP/src/game\u0022,\u0020LTMAAAAA
+		SccLocalPath4 = game
+		SccProvider4 = MSSCCI:NXN\u0020alienbrain
+		CanCheckoutShared = false
+		SccProjectUniqueName5 = renderer\\renderer.vcproj
+		SccProjectName5 = \u0022$/Wolfenstein\u0020MP/src/renderer\u0022,\u0020OTMAAAAA
+		SccLocalPath5 = renderer
+		SccProvider5 = MSSCCI:NXN\u0020alienbrain
+		CanCheckoutShared = false
+		SccProjectUniqueName6 = ui\\ui.vcproj
+		SccProjectName6 = \u0022$/Wolfenstein\u0020MP/src/ui\u0022,\u0020QTMAAAAA
+		SccLocalPath6 = ui
+		SccProvider6 = MSSCCI:NXN\u0020alienbrain
+		CanCheckoutShared = false
+		SccProjectUniqueName7 = wolf.vcproj
+		SccProjectName7 = \u0022$/Wolfenstein\u0020MP/src\u0022,\u0020DTMAAAAA
+		SccLocalPath7 = .
+		SccProvider7 = MSSCCI:NXN\u0020alienbrain
+		CanCheckoutShared = false
+	EndGlobalSection
+EndGlobal

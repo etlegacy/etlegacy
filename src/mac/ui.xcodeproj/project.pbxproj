@@ -1,0 +1,251 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5088180A09F0CE0A0071BF1A /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5088180909F0CE0A0071BF1A /* CoreFoundation.framework */; };
+		B76249A40B470E570088DCD4 /* ui_atoms.c in Sources */ = {isa = PBXBuildFile; fileRef = B762499C0B470E570088DCD4 /* ui_atoms.c */; };
+		B76249A50B470E570088DCD4 /* ui_gameinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = B762499D0B470E570088DCD4 /* ui_gameinfo.c */; };
+		B76249A60B470E570088DCD4 /* ui_loadpanel.c in Sources */ = {isa = PBXBuildFile; fileRef = B762499E0B470E570088DCD4 /* ui_loadpanel.c */; };
+		B76249A70B470E570088DCD4 /* ui_main.c in Sources */ = {isa = PBXBuildFile; fileRef = B762499F0B470E570088DCD4 /* ui_main.c */; };
+		B76249A80B470E570088DCD4 /* ui_players.c in Sources */ = {isa = PBXBuildFile; fileRef = B76249A00B470E570088DCD4 /* ui_players.c */; };
+		B76249A90B470E570088DCD4 /* ui_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = B76249A10B470E570088DCD4 /* ui_shared.c */; };
+		B76249AA0B470E570088DCD4 /* ui_syscalls.c in Sources */ = {isa = PBXBuildFile; fileRef = B76249A20B470E570088DCD4 /* ui_syscalls.c */; };
+		B76249AB0B470E570088DCD4 /* ui_util.c in Sources */ = {isa = PBXBuildFile; fileRef = B76249A30B470E570088DCD4 /* ui_util.c */; };
+		B76249B10B470E770088DCD4 /* bg_campaign.c in Sources */ = {isa = PBXBuildFile; fileRef = B76249AC0B470E770088DCD4 /* bg_campaign.c */; };
+		B76249B20B470E770088DCD4 /* bg_classes.c in Sources */ = {isa = PBXBuildFile; fileRef = B76249AD0B470E770088DCD4 /* bg_classes.c */; };
+		B76249B30B470E770088DCD4 /* bg_misc.c in Sources */ = {isa = PBXBuildFile; fileRef = B76249AE0B470E770088DCD4 /* bg_misc.c */; };
+		B76249B40B470E770088DCD4 /* q_math.c in Sources */ = {isa = PBXBuildFile; fileRef = B76249AF0B470E770088DCD4 /* q_math.c */; };
+		B76249B50B470E770088DCD4 /* q_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = B76249B00B470E770088DCD4 /* q_shared.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		508817D409F0C9AD0071BF1A /* ui_mac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ui_mac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		5088180909F0CE0A0071BF1A /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		B762499C0B470E570088DCD4 /* ui_atoms.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ui_atoms.c; path = ../ui/ui_atoms.c; sourceTree = SOURCE_ROOT; };
+		B762499D0B470E570088DCD4 /* ui_gameinfo.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ui_gameinfo.c; path = ../ui/ui_gameinfo.c; sourceTree = SOURCE_ROOT; };
+		B762499E0B470E570088DCD4 /* ui_loadpanel.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ui_loadpanel.c; path = ../ui/ui_loadpanel.c; sourceTree = SOURCE_ROOT; };
+		B762499F0B470E570088DCD4 /* ui_main.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ui_main.c; path = ../ui/ui_main.c; sourceTree = SOURCE_ROOT; };
+		B76249A00B470E570088DCD4 /* ui_players.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ui_players.c; path = ../ui/ui_players.c; sourceTree = SOURCE_ROOT; };
+		B76249A10B470E570088DCD4 /* ui_shared.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ui_shared.c; path = ../ui/ui_shared.c; sourceTree = SOURCE_ROOT; };
+		B76249A20B470E570088DCD4 /* ui_syscalls.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ui_syscalls.c; path = ../ui/ui_syscalls.c; sourceTree = SOURCE_ROOT; };
+		B76249A30B470E570088DCD4 /* ui_util.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ui_util.c; path = ../ui/ui_util.c; sourceTree = SOURCE_ROOT; };
+		B76249AC0B470E770088DCD4 /* bg_campaign.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = bg_campaign.c; path = ../game/bg_campaign.c; sourceTree = SOURCE_ROOT; };
+		B76249AD0B470E770088DCD4 /* bg_classes.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = bg_classes.c; path = ../game/bg_classes.c; sourceTree = SOURCE_ROOT; };
+		B76249AE0B470E770088DCD4 /* bg_misc.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = bg_misc.c; path = ../game/bg_misc.c; sourceTree = SOURCE_ROOT; };
+		B76249AF0B470E770088DCD4 /* q_math.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = q_math.c; path = ../game/q_math.c; sourceTree = SOURCE_ROOT; };
+		B76249B00B470E770088DCD4 /* q_shared.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = q_shared.c; path = ../game/q_shared.c; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		508817D209F0C9AD0071BF1A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5088180A09F0CE0A0071BF1A /* CoreFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		508817C209F0C9740071BF1A = {
+			isa = PBXGroup;
+			children = (
+				508817E509F0C9EF0071BF1A /* Configuration Files */,
+				508817F509F0CAB50071BF1A /* Sources */,
+				5088180609F0CDD00071BF1A /* External Frameworks and Libraries */,
+				508817D509F0C9AD0071BF1A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		508817D509F0C9AD0071BF1A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				508817D409F0C9AD0071BF1A /* ui_mac.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		508817E509F0C9EF0071BF1A /* Configuration Files */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Configuration Files";
+			sourceTree = "<group>";
+		};
+		508817F509F0CAB50071BF1A /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B76249AC0B470E770088DCD4 /* bg_campaign.c */,
+				B76249AD0B470E770088DCD4 /* bg_classes.c */,
+				B76249AE0B470E770088DCD4 /* bg_misc.c */,
+				B76249AF0B470E770088DCD4 /* q_math.c */,
+				B76249B00B470E770088DCD4 /* q_shared.c */,
+				B762499C0B470E570088DCD4 /* ui_atoms.c */,
+				B762499D0B470E570088DCD4 /* ui_gameinfo.c */,
+				B762499E0B470E570088DCD4 /* ui_loadpanel.c */,
+				B762499F0B470E570088DCD4 /* ui_main.c */,
+				B76249A00B470E570088DCD4 /* ui_players.c */,
+				B76249A10B470E570088DCD4 /* ui_shared.c */,
+				B76249A20B470E570088DCD4 /* ui_syscalls.c */,
+				B76249A30B470E570088DCD4 /* ui_util.c */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		5088180609F0CDD00071BF1A /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				5088180909F0CE0A0071BF1A /* CoreFoundation.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		508817D309F0C9AD0071BF1A /* ui */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 508817D709F0C9AE0071BF1A /* Build configuration list for PBXNativeTarget "ui" */;
+			buildPhases = (
+				508817D009F0C9AD0071BF1A /* Resources */,
+				508817D109F0C9AD0071BF1A /* Sources */,
+				508817D209F0C9AD0071BF1A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ui;
+			productName = ui;
+			productReference = 508817D409F0C9AD0071BF1A /* ui_mac.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		508817C409F0C9740071BF1A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 508817C509F0C9740071BF1A /* Build configuration list for PBXProject "ui" */;
+			hasScannedForEncodings = 0;
+			mainGroup = 508817C209F0C9740071BF1A;
+			productRefGroup = 508817D509F0C9AD0071BF1A /* Products */;
+			projectDirPath = "";
+			targets = (
+				508817D309F0C9AD0071BF1A /* ui */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		508817D009F0C9AD0071BF1A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		508817D109F0C9AD0071BF1A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B76249A40B470E570088DCD4 /* ui_atoms.c in Sources */,
+				B76249A50B470E570088DCD4 /* ui_gameinfo.c in Sources */,
+				B76249A60B470E570088DCD4 /* ui_loadpanel.c in Sources */,
+				B76249A70B470E570088DCD4 /* ui_main.c in Sources */,
+				B76249A80B470E570088DCD4 /* ui_players.c in Sources */,
+				B76249A90B470E570088DCD4 /* ui_shared.c in Sources */,
+				B76249AA0B470E570088DCD4 /* ui_syscalls.c in Sources */,
+				B76249AB0B470E570088DCD4 /* ui_util.c in Sources */,
+				B76249B10B470E770088DCD4 /* bg_campaign.c in Sources */,
+				B76249B20B470E770088DCD4 /* bg_classes.c in Sources */,
+				B76249B30B470E770088DCD4 /* bg_misc.c in Sources */,
+				B76249B40B470E770088DCD4 /* q_math.c in Sources */,
+				B76249B50B470E770088DCD4 /* q_shared.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		508817C609F0C9740071BF1A /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					UIDLL,
+					_DEBUG,
+				);
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+			};
+			name = Development;
+		};
+		508817C709F0C9740071BF1A /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				DEAD_CODE_STRIPPING = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					UIDLL,
+					NDEBUG,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+			};
+			name = Deployment;
+		};
+		508817D809F0C9AE0071BF1A /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = ui_mac;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+			};
+			name = Development;
+		};
+		508817D909F0C9AE0071BF1A /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = ui_mac;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+			};
+			name = Deployment;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		508817C509F0C9740071BF1A /* Build configuration list for PBXProject "ui" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				508817C609F0C9740071BF1A /* Development */,
+				508817C709F0C9740071BF1A /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Deployment;
+		};
+		508817D709F0C9AE0071BF1A /* Build configuration list for PBXNativeTarget "ui" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				508817D809F0C9AE0071BF1A /* Development */,
+				508817D909F0C9AE0071BF1A /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Deployment;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 508817C409F0C9740071BF1A /* Project object */;
+}

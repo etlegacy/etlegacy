@@ -1,0 +1,73 @@
+#define kShortVersionString "2.60b4"
+#define kLongVersionString "2.60b4, Copyright 2001-2005 Activision Inc, All Rights Reserved."
+
+plist
+{
+	dictionary
+	{
+		key "CFBundleVersion" value string kShortVersionString
+		key "CFBundleShortVersionString" value string kShortVersionString
+		key "CFBundleLongVersionString" value string kLongVersionString
+		key "CFBundleGetInfoString" value string kLongVersionString
+		
+		key "CFBundleName" value string __OUTPUT_FILENAME__
+		key "CFExecutableName" value string __OUTPUT_FILENAME__
+		key "CFBundleSignature" value string __OUTPUT_CREATOR__
+		key "CFBundlePackageType" value string __OUTPUT_TYPE__
+		
+		key "CFBundleIconFile" value string "Icon.icns"
+		key "CFBundleIdentifier" value string "com.activision.rtcw_et"
+		
+		key "CFBundleDocumentTypes" value array
+		[
+			dictionary
+			{
+				key "CFBundleTypeName" value string "Wolfenstein Data File"
+				key "CFBundleTypeIconFile" value string "pk3.icns"
+				key "CFBundleTypeRole" value string "Viewer"
+				key "CFBundleTypeOSTypes" value array
+				[
+					string 'WlfB'
+				]
+			}
+		]
+		
+		key "NSServices" value array
+		[
+			dictionary
+			{
+				key "NSMenuItem" value
+				dictionary
+				{
+					key "default" value string "Wolfenstein ET/Connect To Server"
+				}
+				key "NSMessage" value string "connectToServer"
+				key "NSPortName" value string __OUTPUT_FILENAME__
+				key "NSSendTypes" value array
+				[
+					string 'NSStringPboardType'
+				]
+			}
+
+			dictionary
+			{
+				key "NSMenuItem" value
+				dictionary
+				{
+					key "default" value string "Wolfenstein ET/Perform Command"
+				}
+				key "NSMessage" value string "performCommand"
+				key "NSPortName" value string __OUTPUT_FILENAME__
+				key "NSSendTypes" value array
+				[
+					string 'NSStringPboardType'
+				]
+			}
+		]
+		
+		key "CFBundleDevelopmentRegion" value string "English"
+		key "CFBundleInfoDictionaryVersion" value string "6.0"
+		key "LSRequiresCarbon" value boolean true
+		key "NSAppleScriptEnabled" value boolean true
+	}
+}

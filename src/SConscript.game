@@ -1,0 +1,97 @@
+# -*- mode: python -*-
+# Enemy Territory build script
+# TTimo <ttimo@idsoftware.com>
+# http://scons.sourceforge.net
+
+import sys, os
+import scons_utils
+
+Import( 'GLOBALS' )
+Import( GLOBALS )
+
+botai_string = """
+ai_cmd.c
+ai_dmgoal_mp.c
+ai_dmnet_mp.c
+ai_dmq3.c
+ai_main.c
+ai_script.c
+ai_script_actions.c
+ai_team.c
+"""
+
+botai_list = scons_utils.BuildList( 'botai', botai_string )
+
+qagame_string = """
+bg_animation.c
+bg_animgroup.c
+bg_campaign.c
+bg_character.c
+bg_classes.c
+bg_misc.c
+bg_pmove.c
+bg_slidemove.c
+bg_sscript.c
+bg_stats.c
+bg_tracemap.c
+g_active.c
+g_alarm.c
+g_antilag.c
+g_bot.c
+g_buddy_list.c
+g_character.c
+g_client.c
+g_cmds.c
+g_cmds_ext.c
+g_combat.c
+g_config.c
+g_fireteams.c
+g_items.c
+g_main.c
+g_match.c
+g_mem.c
+g_misc.c
+g_missile.c
+g_mover.c
+g_multiview.c
+g_props.c
+g_referee.c
+g_save.c
+g_script.c
+g_script_actions.c
+g_session.c
+g_spawn.c
+g_stats.c
+g_sv_entities.c
+g_svcmds.c
+g_syscalls.c
+g_systemmsg.c
+g_target.c
+g_team.c
+g_teammapdata.c
+g_trigger.c
+g_utils.c
+g_vote.c
+g_weapon.c
+q_math.c
+q_shared.c
+"""
+
+qagame_list = scons_utils.BuildList( 'game', qagame_string )
+
+#botai_objs = []
+#for i in botai_list:
+#	botlib_ai.append( botai_env.StaticObject( os.path.join( 'botlib', i ) ) )
+
+local_env = g_env.Clone()
+
+local_env.Append( CPPDEFINES = [ 'GAMEDLL' ] )
+
+local_env['LINK'] = local_env['CC']
+
+source_list = botai_list
+source_list += qagame_list
+
+#ret = local_env.Program( target = 'et', source = source_list )
+ret = local_env.SharedLibrary( target = 'qagame', source = source_list )
+Return( 'ret' )

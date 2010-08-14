@@ -1,0 +1,49 @@
+# -*- mode: python -*-
+# ET build script
+# TTimo <ttimo@idsoftware.com>
+# http://scons.sourceforge.net
+
+import scons_utils
+
+Import( 'GLOBALS' )
+Import( GLOBALS )
+
+class idBuildCurl( scons_utils.idSetupBase ):
+
+	def Compile( self, target = None, source = None, env = None ):	
+		if ( g_os == 'win32' ):
+			self.TrySimpleCommand( 'cd ' + self.curl_dir + '/lib/ ; make -f Makefile.m32 clean' )
+			cmd = 'cd ' + self.curl_dir + '/lib/ ; CC=\'' + env['CC'] + '\' make -f Makefile.m32 libcurl.a'
+			self.SimpleCommand( cmd )
+			if ( self.debug ):
+				self.SimpleCommand( 'cd ' + self.curl_dir + ' ; mv ./lib/libcurl.a ./lib/.libs/libcurl-debug.a' )
+			else:
+				self.SimpleCommand( 'cd ' + self.curl_dir + ' ; mv ./lib/libcurl.a ./lib/.libs/libcurl-release.a' )
+		else:
+			self.TrySimpleCommand( 'cd ' + self.curl_dir + ' ; make distclean' )
+			cmd = 'cd ' + self.curl_dir + ' ; CC=\'' + env['CC'] + '\' ./configure --enable-shared=no --enable-static=yes --enable-http --enable-ftp --disable-gopher --enable-file --disable-ldap --disable-dict --disable-telnet --disable-manual --enable-libgcc --disable-ipv6 --disable-ares --without-ssl --without-zlib --without-libidn '
+			if ( self.debug ):
+				cmd += '--enable-debug'
+			else:
+				cmd += '--disable-debug'
+			self.SimpleCommand( cmd )
+			self.SimpleCommand( 'cd ' + self.curl_dir + ' ; make' )
+			if ( self.debug ):
+				self.SimpleCommand( 'cd ' + self.curl_dir + ' ; mv ./lib/.libs/libcurl.a ./lib/.libs/libcurl-debug.a' )
+			else:
+				self.SimpleCommand( 'cd ' + self.curl_dir + ' ; mv ./lib/.libs/libcurl.a ./lib/.libs/libcurl-release.a' )
+		return 0
+
+build = idBuildCurl()
+build.curl_dir = 'curl-7.12.2'
+if ( local_curl == 1 ):
+	build.debug = 1
+	target_name = '#' + build.curl_dir + '/lib/.libs/libcurl-debug.a'
+else:
+	build.debug = 0
+	target_name = '#' + build.curl_dir + '/lib/.libs/libcurl-release.a'
+
+g_env.Command( target_name, None, Action( build.Compile ) )
+
+curl_libs = [ target_name ]
+Return( 'curl_libs' )
