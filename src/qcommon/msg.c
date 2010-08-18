@@ -834,7 +834,7 @@ typedef struct {
 } netField_t;
 
 // using the stringizing operator to save typing...
-#define NETF( x ) # x,(int)&( (entityState_t*)0 )->x
+#define NETF( x ) # x,(size_t)&( (entityState_t*)0 )->x
 
 netField_t entityStateFields[] = {
 	{ NETF( eType ), 8 },
@@ -1240,7 +1240,7 @@ player_state_t communication
 */
 
 // using the stringizing operator to save typing...
-#define PSF( x ) # x,(int)&( (playerState_t*)0 )->x
+#define PSF( x ) # x,(size_t)&( (playerState_t*)0 )->x
 
 netField_t playerStateFields[] = {
 	{ PSF( commandTime ), 32 },

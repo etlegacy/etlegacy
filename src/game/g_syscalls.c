@@ -31,12 +31,12 @@ If you have questions concerning this license or the applicable additional terms
 // this file is only included when building a dll
 // g_syscalls.asm is included instead when building a qvm
 
-static int ( QDECL * syscall )( int arg, ... ) = ( int ( QDECL * )( int, ... ) ) - 1;
+static intptr_t ( QDECL * syscall )( intptr_t arg, ... ) = ( intptr_t ( QDECL * )( intptr_t, ... ) ) - 1;
 
 #if __GNUC__ >= 4
 #pragma GCC visibility push(default)
 #endif
-void dllEntry( int ( QDECL *syscallptr )( int arg,... ) ) {
+void dllEntry( intptr_t ( QDECL *syscallptr )( intptr_t arg,... ) ) {
 	syscall = syscallptr;
 }
 #if __GNUC__ >= 4

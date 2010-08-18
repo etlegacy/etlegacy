@@ -462,7 +462,7 @@ gotnewcl:
 	denied = (char *)VM_Call( gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse ); // firstTime = qtrue
 	if ( denied ) {
 		// we can't just use VM_ArgPtr, because that is only valid inside a VM_Call
-		denied = VM_ExplicitArgPtr( gvm, (int)denied );
+		denied = VM_ExplicitArgPtr( gvm, (intptr_t)denied );
 
 		NET_OutOfBandPrint( NS_SERVER, from, "print\n[err_dialog]%s\n", denied );
 		Com_DPrintf( "Game rejected a connection: %s.\n", denied );

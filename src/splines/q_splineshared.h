@@ -162,6 +162,8 @@ void Sys_PumpEvents( void );
 
 #ifdef __i386__
 #define CPUSTRING   "linux-i386"
+#elif defined __x86_64__
+#define CPUSTRING   "linux-x86_64"
 #elif defined __axp__
 #define CPUSTRING   "linux-alpha"
 #else

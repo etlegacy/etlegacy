@@ -41,12 +41,8 @@ If you have questions concerning this license or the applicable additional terms
 #include "../mssdk/include/dinput.h"
 #include "../mssdk/include/dsound.h"
 #else
-#ifndef __GNUC__
 #include <dinput.h>
 #include <dsound.h>
-#else
-#include <directx.h>
-#endif
 #endif  ///// (SA) DOOMSOUND
 
 #include <winsock.h>

@@ -111,6 +111,8 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "bg_lib.h"
 
+typedef int intptr_t;
+
 #else
 
 #include <assert.h>
@@ -124,6 +126,21 @@ If you have questions concerning this license or the applicable additional terms
 #include <limits.h>
 #include <sys/stat.h> // rain
 #include <float.h>
+
+#ifdef _MSC_VER
+  #include <io.h>
+
+  typedef __int64 int64_t;
+  typedef __int32 int32_t;
+  typedef __int16 int16_t;
+  typedef __int8 int8_t;
+  typedef unsigned __int64 uint64_t;
+  typedef unsigned __int32 uint32_t;
+  typedef unsigned __int16 uint16_t;
+  typedef unsigned __int8 uint8_t;
+#else
+  #include <stdint.h>
+#endif
 
 #endif
 
@@ -147,6 +164,16 @@ If you have questions concerning this license or the applicable additional terms
 #define _attribute( x )
 #endif
 
+#if (defined _MSC_VER)
+#define Q_EXPORT __declspec(dllexport)
+#elif (defined __SUNPRO_C)
+#define Q_EXPORT __global
+#elif ((__GNUC__ >= 3) && (!__EMX__) && (!sun))
+#define Q_EXPORT __attribute__((visibility("default")))
+#else
+#define Q_EXPORT
+#endif
+
 //======================= WIN32 DEFINES =================================
 
 #ifdef WIN32
@@ -162,12 +189,16 @@ If you have questions concerning this license or the applicable additional terms
 #define CPUSTRING   "win-x86"
 #elif defined _M_ALPHA
 #define CPUSTRING   "win-AXP"
+#else
+#define CPUSTRING   "win"
 #endif
 #else
 #ifdef _M_IX86
 #define CPUSTRING   "win-x86-debug"
 #elif defined _M_ALPHA
 #define CPUSTRING   "win-AXP-debug"
+#else
+#define CPUSTRING   "win-debug"
 #endif
 #endif
 
@@ -252,6 +283,8 @@ void Sys_PumpEvents( void );
 
 #ifdef __i386__
 #define CPUSTRING   "linux-i386"
+#elif defined __x86_64__
+#define CPUSTRING   "linux-x86_64"
 #elif defined __axp__
 #define CPUSTRING   "linux-alpha"
 #else

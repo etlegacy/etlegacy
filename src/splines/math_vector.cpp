@@ -28,14 +28,14 @@ If you have questions concerning this license or the applicable additional terms
 
 //#include "../game/q_shared.h"
 #include "math_vector.h"
-#include <assert.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <ctype.h>
+#include <cassert>
+#include <cmath>
+#include <cstdio>
+#include <cstdarg>
+#include <cstring>
+#include <cstdlib>
+#include <ctime>
+#include <cctype>
 
 #define M_PI        3.14159265358979323846  // matches value in gcc v2 math.h
 

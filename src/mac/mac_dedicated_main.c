@@ -671,9 +671,9 @@ char* Sys_GetDLLName( const char *name ) {
 
 #if MAC_WOLF2_MP
 #pragma mark Sys_LoadDll
-void *Sys_LoadDll( const char *name, char *fqpath, int( **entryPoint ) ( int, ... ), int ( *systemCalls )( int, ... ) )
+void *Sys_LoadDll( const char *name, char *fqpath, intptr_t( **entryPoint ) ( int, ... ), intptr_t ( *systemCalls )( intptr_t, ... ) )
 #else
-void *Sys_LoadDll( const char *name, int( **entryPoint ) ( int, ... ), int ( *systemCalls )( int, ... ) )
+void *Sys_LoadDll( const char *name, intptr_t( **entryPoint ) ( int, ... ), intptr_t ( *systemCalls )( intptr_t, ... ) )
 #endif
 {
 	OSErr err = noErr;

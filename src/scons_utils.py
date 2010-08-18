@@ -6,6 +6,8 @@ import SCons
 class idBuffering:
 
 	def buffered_spawn( self, sh, escape, cmd, args, env ):
+		print ' '.join(args)
+		return self.env['PSPAWN']( sh, escape, cmd, args, env, sys.stdout, sys.stderr )
 		stderr = StringIO.StringIO()
 		stdout = StringIO.StringIO()
 		command_string = ''
@@ -14,6 +16,7 @@ class idBuffering:
 				command_string += ' '
 			command_string += i
 		try:
+			print self.env['PSPAWN']
 			retval = self.env['PSPAWN']( sh, escape, cmd, args, env, stdout, stderr )
 		except OSError, x:
 			if x.errno != 10:

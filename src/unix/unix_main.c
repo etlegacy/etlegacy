@@ -296,6 +296,8 @@ void Sys_Init( void ) {
 #if defined __linux__
 #if defined __i386__
 	Cvar_Set( "arch", "linux i386" );
+#elif defined __x86_64__
+	Cvar_Set( "arch", "linux x86_64" );
 #elif defined __alpha__
 	Cvar_Set( "arch", "linux alpha" );
 #elif defined __sparc__
@@ -704,6 +706,8 @@ qboolean CopyDLLForMod( char **p_fn, const char* gamedir, const char *pwdpath, c
 char* Sys_GetDLLName( const char *name ) {
 #if defined __i386__
 	return va( "%s.mp.i386.so", name );
+#elif defined __x86_64__
+	return va( "%s.mp.x86_64.so", name );
 #elif defined __ppc__
 	return va( "%s.mp.ppc.so", name );
 #elif defined __axp__
@@ -716,10 +720,10 @@ char* Sys_GetDLLName( const char *name ) {
 }
 
 void *Sys_LoadDll( const char *name, char *fqpath,
-				   int( **entryPoint ) ( int, ... ),
-				   int ( *systemcalls )( int, ... ) ) {
+				   intptr_t( **entryPoint ) ( int, ... ),
+				   intptr_t ( *systemcalls )( intptr_t, ... ) ) {
 	void *libHandle;
-	void ( *dllEntry )( int ( *syscallptr )( int, ... ) );
+	void ( *dllEntry )( intptr_t ( *syscallptr )( intptr_t, ... ) );
 	char fname[MAX_OSPATH];
 	char  *pwdpath;
 	char  *homepath;
@@ -1465,3 +1469,12 @@ qboolean Sys_IsNumLockDown( void ) {
 	// Gordon: FIXME for timothee
 	return qfalse;
 }
+
+#ifndef __i386__
+void Sys_SnapVector( float *v )
+{
+	v[0] = rint(v[0]);
+	v[1] = rint(v[1]);
+	v[2] = rint(v[2]);
+}
+#endif

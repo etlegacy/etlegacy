@@ -327,7 +327,7 @@ char* Sys_GetDLLName( const char *name ) {
 
 
 #pragma mark Sys_LoadDll
-void *Sys_LoadDll( const char *name, char *fqpath, int( **entryPoint ) ( int, ... ), int ( *systemCalls )( int, ... ) ) {
+void *Sys_LoadDll( const char *name, char *fqpath, intptr_t( **entryPoint ) ( int, ... ), intptr_t ( *systemCalls )( intptr_t, ... ) ) {
 	OSErr err = noErr;
 	FSSpec SLSpec;
 	char name2[255];
