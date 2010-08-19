@@ -114,6 +114,7 @@ SDIR=$(MOUNT_DIR)/server
 RDIR=$(MOUNT_DIR)/renderer
 CMDIR=$(MOUNT_DIR)/qcommon
 SDLDIR=$(MOUNT_DIR)/sdl
+ASMDIR=$(MOUNT_DIR)/asm
 SYSDIR=$(MOUNT_DIR)/sys
 GDIR=$(MOUNT_DIR)/game
 CGDIR=$(MOUNT_DIR)/cgame
@@ -124,7 +125,6 @@ UIDIR=$(MOUNT_DIR)/ui
 JPDIR=$(MOUNT_DIR)/jpeg-6
 SDLHDIR=$(MOUNT_DIR)/SDL12
 LIBSDIR=$(MOUNT_DIR)/libs
-UNIXDIR=$(MOUNT_DIR)/unix
 SPLDIR=$(MOUNT_DIR)/splines
 TEMPDIR=/tmp
 
@@ -1061,13 +1061,13 @@ $(B)/etmain/ui$(SHLIBNAME): $(Q3UIOBJ)
 ## CLIENT/SERVER RULES
 #############################################################################
 
-$(B)/client/%.o: $(UNIXDIR)/%.spp
+$(B)/client/%.o: $(ASMDIR)/%.spp
 	$(DO_AS)
 	
-$(B)/client/%.o: $(UNIXDIR)/%.asm
+$(B)/client/%.o: $(ASMDIR)/%.asm
 	$(DO_NASM)
 	
-$(B)/client/%.o: $(UNIXDIR)/%.nasm
+$(B)/client/%.o: $(ASMDIR)/%.nasm
 	$(DO_NASM)
 
 $(B)/client/%.o: $(CDIR)/%.c
@@ -1112,13 +1112,13 @@ $(B)/client/%.o: $(SYSDIR)/%.rc
 $(B)/splines/%.o: $(SPLDIR)/%.cpp
 	$(DO_SPLINE_CXX)
 
-$(B)/ded/%.o: $(UNIXDIR)/%.spp
+$(B)/ded/%.o: $(ASMDIR)/%.spp
 	$(DO_AS)
 	
-$(B)/ded/%.o: $(UNIXDIR)/%.asm
+$(B)/ded/%.o: $(ASMDIR)/%.asm
 	$(DO_NASM)
 	
-$(B)/ded/%.o: $(UNIXDIR)/%.nasm
+$(B)/ded/%.o: $(ASMDIR)/%.nasm
 	$(DO_NASM)
 
 $(B)/ded/%.o: $(SDIR)/%.c
