@@ -108,7 +108,7 @@ static void IN_PrintKey( const SDL_keysym *keysym, keyNum_t key, qboolean down )
 	if( keysym->mod & KMOD_MODE )     Com_Printf( " KMOD_MODE" );
 	if( keysym->mod & KMOD_RESERVED ) Com_Printf( " KMOD_RESERVED" );
 
-	Com_Printf( " Q:0x%02x(%s)", key, Key_KeynumToString( key, qfalse ) );
+	Com_Printf( " Q:0x%02x(%s)", key, Key_KeynumToString( key ) );
 
 	if( keysym->unicode )
 	{
@@ -345,7 +345,7 @@ static const char *IN_TranslateSDLToQ3Key( SDL_keysym *keysym,
 
 	// Keys that have ASCII names but produce no character are probably
 	// dead keys -- ignore them
-	if( down && strlen( Key_KeynumToString( *key, qfalse ) ) == 1 &&
+	if( down && strlen( Key_KeynumToString( *key ) ) == 1 &&
 		keysym->unicode == 0 )
 	{
 		if( in_keyboardDebug->integer )

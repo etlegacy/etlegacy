@@ -78,6 +78,8 @@ keyname_t keynames[] =
 	{"CTRL", K_CTRL},
 	{"SHIFT", K_SHIFT},
 
+	{"COMMAND", K_COMMAND},
+
 	{"CAPSLOCK", K_CAPSLOCK},
 
 
@@ -93,6 +95,9 @@ keyname_t keynames[] =
 	{"F10", K_F10},
 	{"F11", K_F11},
 	{"F12", K_F12},
+	{"F13", K_F13},
+	{"F14", K_F14},
+	{"F15", K_F15},
 
 	{"INS", K_INS},
 	{"DEL", K_DEL},
@@ -183,505 +188,119 @@ keyname_t keynames[] =
 
 	{"SEMICOLON", ';'},   // because a raw semicolon seperates commands
 
-	{"COMMAND", K_COMMAND},  //mac
+	{"WORLD_0", K_WORLD_0},
+	{"WORLD_1", K_WORLD_1},
+	{"WORLD_2", K_WORLD_2},
+	{"WORLD_3", K_WORLD_3},
+	{"WORLD_4", K_WORLD_4},
+	{"WORLD_5", K_WORLD_5},
+	{"WORLD_6", K_WORLD_6},
+	{"WORLD_7", K_WORLD_7},
+	{"WORLD_8", K_WORLD_8},
+	{"WORLD_9", K_WORLD_9},
+	{"WORLD_10", K_WORLD_10},
+	{"WORLD_11", K_WORLD_11},
+	{"WORLD_12", K_WORLD_12},
+	{"WORLD_13", K_WORLD_13},
+	{"WORLD_14", K_WORLD_14},
+	{"WORLD_15", K_WORLD_15},
+	{"WORLD_16", K_WORLD_16},
+	{"WORLD_17", K_WORLD_17},
+	{"WORLD_18", K_WORLD_18},
+	{"WORLD_19", K_WORLD_19},
+	{"WORLD_20", K_WORLD_20},
+	{"WORLD_21", K_WORLD_21},
+	{"WORLD_22", K_WORLD_22},
+	{"WORLD_23", K_WORLD_23},
+	{"WORLD_24", K_WORLD_24},
+	{"WORLD_25", K_WORLD_25},
+	{"WORLD_26", K_WORLD_26},
+	{"WORLD_27", K_WORLD_27},
+	{"WORLD_28", K_WORLD_28},
+	{"WORLD_29", K_WORLD_29},
+	{"WORLD_30", K_WORLD_30},
+	{"WORLD_31", K_WORLD_31},
+	{"WORLD_32", K_WORLD_32},
+	{"WORLD_33", K_WORLD_33},
+	{"WORLD_34", K_WORLD_34},
+	{"WORLD_35", K_WORLD_35},
+	{"WORLD_36", K_WORLD_36},
+	{"WORLD_37", K_WORLD_37},
+	{"WORLD_38", K_WORLD_38},
+	{"WORLD_39", K_WORLD_39},
+	{"WORLD_40", K_WORLD_40},
+	{"WORLD_41", K_WORLD_41},
+	{"WORLD_42", K_WORLD_42},
+	{"WORLD_43", K_WORLD_43},
+	{"WORLD_44", K_WORLD_44},
+	{"WORLD_45", K_WORLD_45},
+	{"WORLD_46", K_WORLD_46},
+	{"WORLD_47", K_WORLD_47},
+	{"WORLD_48", K_WORLD_48},
+	{"WORLD_49", K_WORLD_49},
+	{"WORLD_50", K_WORLD_50},
+	{"WORLD_51", K_WORLD_51},
+	{"WORLD_52", K_WORLD_52},
+	{"WORLD_53", K_WORLD_53},
+	{"WORLD_54", K_WORLD_54},
+	{"WORLD_55", K_WORLD_55},
+	{"WORLD_56", K_WORLD_56},
+	{"WORLD_57", K_WORLD_57},
+	{"WORLD_58", K_WORLD_58},
+	{"WORLD_59", K_WORLD_59},
+	{"WORLD_60", K_WORLD_60},
+	{"WORLD_61", K_WORLD_61},
+	{"WORLD_62", K_WORLD_62},
+	{"WORLD_63", K_WORLD_63},
+	{"WORLD_64", K_WORLD_64},
+	{"WORLD_65", K_WORLD_65},
+	{"WORLD_66", K_WORLD_66},
+	{"WORLD_67", K_WORLD_67},
+	{"WORLD_68", K_WORLD_68},
+	{"WORLD_69", K_WORLD_69},
+	{"WORLD_70", K_WORLD_70},
+	{"WORLD_71", K_WORLD_71},
+	{"WORLD_72", K_WORLD_72},
+	{"WORLD_73", K_WORLD_73},
+	{"WORLD_74", K_WORLD_74},
+	{"WORLD_75", K_WORLD_75},
+	{"WORLD_76", K_WORLD_76},
+	{"WORLD_77", K_WORLD_77},
+	{"WORLD_78", K_WORLD_78},
+	{"WORLD_79", K_WORLD_79},
+	{"WORLD_80", K_WORLD_80},
+	{"WORLD_81", K_WORLD_81},
+	{"WORLD_82", K_WORLD_82},
+	{"WORLD_83", K_WORLD_83},
+	{"WORLD_84", K_WORLD_84},
+	{"WORLD_85", K_WORLD_85},
+	{"WORLD_86", K_WORLD_86},
+	{"WORLD_87", K_WORLD_87},
+	{"WORLD_88", K_WORLD_88},
+	{"WORLD_89", K_WORLD_89},
+	{"WORLD_90", K_WORLD_90},
+	{"WORLD_91", K_WORLD_91},
+	{"WORLD_92", K_WORLD_92},
+	{"WORLD_93", K_WORLD_93},
+	{"WORLD_94", K_WORLD_94},
+	{"WORLD_95", K_WORLD_95},
+
+	{"WINDOWS", K_SUPER},
+	{"COMPOSE", K_COMPOSE},
+	{"MODE", K_MODE},
+	{"HELP", K_HELP},
+	{"PRINT", K_PRINT},
+	{"SYSREQ", K_SYSREQ},
+	{"SCROLLOCK", K_SCROLLOCK },
+	{"BREAK", K_BREAK},
+	{"MENU", K_MENU},
+	{"POWER", K_POWER},
+	{"EURO", K_EURO},
+	{"UNDO", K_UNDO},
 
 	{NULL,0}
 };
 
-keyname_t keynames_d[] =    //deutsch
-{
-	{"TAB", K_TAB},
-	{"EINGABETASTE", K_ENTER},
-	{"ESC", K_ESCAPE},
-	{"LEERTASTE", K_SPACE},
-	{"RÜCKTASTE", K_BACKSPACE},
-	{"PFEILT.AUF", K_UPARROW},
-	{"PFEILT.UNTEN", K_DOWNARROW},
-	{"PFEILT.LINKS", K_LEFTARROW},
-	{"PFEILT.RECHTS", K_RIGHTARROW},
-
-	{"ALT", K_ALT},
-	{"STRG", K_CTRL},
-	{"UMSCHALLT", K_SHIFT},
-
-	{"FESTSTELLT", K_CAPSLOCK},
-
-	{"F1", K_F1},
-	{"F2", K_F2},
-	{"F3", K_F3},
-	{"F4", K_F4},
-	{"F5", K_F5},
-	{"F6", K_F6},
-	{"F7", K_F7},
-	{"F8", K_F8},
-	{"F9", K_F9},
-	{"F10", K_F10},
-	{"F11", K_F11},
-	{"F12", K_F12},
-
-	{"EINFG", K_INS},
-	{"ENTF", K_DEL},
-	{"BILD-AB", K_PGDN},
-	{"BILD-AUF", K_PGUP},
-	{"POS1", K_HOME},
-	{"ENDE", K_END},
-
-	{"MAUS1", K_MOUSE1},
-	{"MAUS2", K_MOUSE2},
-	{"MAUS3", K_MOUSE3},
-	{"MAUS4", K_MOUSE4},
-	{"MAUS5", K_MOUSE5},
-
-	{"MRADOBEN", K_MWHEELUP },
-	{"MRADUNTEN",    K_MWHEELDOWN },
-
-	{"JOY1", K_JOY1},
-	{"JOY2", K_JOY2},
-	{"JOY3", K_JOY3},
-	{"JOY4", K_JOY4},
-	{"JOY5", K_JOY5},
-	{"JOY6", K_JOY6},
-	{"JOY7", K_JOY7},
-	{"JOY8", K_JOY8},
-	{"JOY9", K_JOY9},
-	{"JOY10", K_JOY10},
-	{"JOY11", K_JOY11},
-	{"JOY12", K_JOY12},
-	{"JOY13", K_JOY13},
-	{"JOY14", K_JOY14},
-	{"JOY15", K_JOY15},
-	{"JOY16", K_JOY16},
-	{"JOY17", K_JOY17},
-	{"JOY18", K_JOY18},
-	{"JOY19", K_JOY19},
-	{"JOY20", K_JOY20},
-	{"JOY21", K_JOY21},
-	{"JOY22", K_JOY22},
-	{"JOY23", K_JOY23},
-	{"JOY24", K_JOY24},
-	{"JOY25", K_JOY25},
-	{"JOY26", K_JOY26},
-	{"JOY27", K_JOY27},
-	{"JOY28", K_JOY28},
-	{"JOY29", K_JOY29},
-	{"JOY30", K_JOY30},
-	{"JOY31", K_JOY31},
-	{"JOY32", K_JOY32},
-
-	{"AUX1", K_AUX1},
-	{"AUX2", K_AUX2},
-	{"AUX3", K_AUX3},
-	{"AUX4", K_AUX4},
-	{"AUX5", K_AUX5},
-	{"AUX6", K_AUX6},
-	{"AUX7", K_AUX7},
-	{"AUX8", K_AUX8},
-	{"AUX9", K_AUX9},
-	{"AUX10", K_AUX10},
-	{"AUX11", K_AUX11},
-	{"AUX12", K_AUX12},
-	{"AUX13", K_AUX13},
-	{"AUX14", K_AUX14},
-	{"AUX15", K_AUX15},
-	{"AUX16", K_AUX16},
-
-	{"ZB_POS1",          K_KP_HOME },
-	{"ZB_PFEILT.AUF",    K_KP_UPARROW },
-	{"ZB_BILD-AUF",      K_KP_PGUP },
-	{"ZB_PFEILT.LINKS",  K_KP_LEFTARROW },
-	{"ZB_5",         K_KP_5 },
-	{"ZB_PFEILT.RECHTS",K_KP_RIGHTARROW },
-	{"ZB_ENDE",          K_KP_END },
-	{"ZB_PFEILT.UNTEN",  K_KP_DOWNARROW },
-	{"ZB_BILD-AB",       K_KP_PGDN },
-	{"ZB_ENTER",     K_KP_ENTER },
-	{"ZB_EINFG",     K_KP_INS },
-	{"ZB_ENTF",          K_KP_DEL },
-	{"ZB_SLASH",     K_KP_SLASH },
-	{"ZB_MINUS",     K_KP_MINUS },
-	{"ZB_PLUS",          K_KP_PLUS },
-	{"ZB_NUM",           K_KP_NUMLOCK },
-	{"ZB_*",         K_KP_STAR },
-	{"ZB_EQUALS",        K_KP_EQUALS },
-
-	{"PAUSE", K_PAUSE},
-
-	{"COMMAND", K_COMMAND},  //mac
-	{NULL,0}
-};  //end german
-
-keyname_t keynames_f[] =    //french
-{
-	{"TAB", K_TAB},
-	{"ENTREE",   K_ENTER},
-	{"ECHAP",    K_ESCAPE},
-	{"ESPACE",   K_SPACE},
-	{"RETOUR",   K_BACKSPACE},
-	{"HAUT", K_UPARROW},
-	{"BAS",      K_DOWNARROW},
-	{"GAUCHE",   K_LEFTARROW},
-	{"DROITE",   K_RIGHTARROW},
-
-	{"ALT",      K_ALT},
-	{"CTRL", K_CTRL},
-	{"MAJ",      K_SHIFT},
-
-	{"VERRMAJ", K_CAPSLOCK},
-
-	{"F1", K_F1},
-	{"F2", K_F2},
-	{"F3", K_F3},
-	{"F4", K_F4},
-	{"F5", K_F5},
-	{"F6", K_F6},
-	{"F7", K_F7},
-	{"F8", K_F8},
-	{"F9", K_F9},
-	{"F10", K_F10},
-	{"F11", K_F11},
-	{"F12", K_F12},
-
-	{"INSER", K_INS},
-	{"SUPPR", K_DEL},
-	{"PGBAS", K_PGDN},
-	{"PGHAUT", K_PGUP},
-	{"ORIGINE", K_HOME},
-	{"FIN", K_END},
-
-	{"SOURIS1", K_MOUSE1},
-	{"SOURIS2", K_MOUSE2},
-	{"SOURIS3", K_MOUSE3},
-	{"SOURIS4", K_MOUSE4},
-	{"SOURIS5", K_MOUSE5},
-
-	{"MOLETTEHT.",   K_MWHEELUP },
-	{"MOLETTEBAS",   K_MWHEELDOWN },
-
-	{"JOY1", K_JOY1},
-	{"JOY2", K_JOY2},
-	{"JOY3", K_JOY3},
-	{"JOY4", K_JOY4},
-	{"JOY5", K_JOY5},
-	{"JOY6", K_JOY6},
-	{"JOY7", K_JOY7},
-	{"JOY8", K_JOY8},
-	{"JOY9", K_JOY9},
-	{"JOY10", K_JOY10},
-	{"JOY11", K_JOY11},
-	{"JOY12", K_JOY12},
-	{"JOY13", K_JOY13},
-	{"JOY14", K_JOY14},
-	{"JOY15", K_JOY15},
-	{"JOY16", K_JOY16},
-	{"JOY17", K_JOY17},
-	{"JOY18", K_JOY18},
-	{"JOY19", K_JOY19},
-	{"JOY20", K_JOY20},
-	{"JOY21", K_JOY21},
-	{"JOY22", K_JOY22},
-	{"JOY23", K_JOY23},
-	{"JOY24", K_JOY24},
-	{"JOY25", K_JOY25},
-	{"JOY26", K_JOY26},
-	{"JOY27", K_JOY27},
-	{"JOY28", K_JOY28},
-	{"JOY29", K_JOY29},
-	{"JOY30", K_JOY30},
-	{"JOY31", K_JOY31},
-	{"JOY32", K_JOY32},
-
-	{"AUX1", K_AUX1},
-	{"AUX2", K_AUX2},
-	{"AUX3", K_AUX3},
-	{"AUX4", K_AUX4},
-	{"AUX5", K_AUX5},
-	{"AUX6", K_AUX6},
-	{"AUX7", K_AUX7},
-	{"AUX8", K_AUX8},
-	{"AUX9", K_AUX9},
-	{"AUX10", K_AUX10},
-	{"AUX11", K_AUX11},
-	{"AUX12", K_AUX12},
-	{"AUX13", K_AUX13},
-	{"AUX14", K_AUX14},
-	{"AUX15", K_AUX15},
-	{"AUX16", K_AUX16},
-
-	{"PN_ORIGINE",       K_KP_HOME },
-	{"PN_HAUT",          K_KP_UPARROW },
-	{"PN_PGBAS",     K_KP_PGUP },
-	{"PN_GAUCHE",        K_KP_LEFTARROW },
-	{"PN_5",         K_KP_5 },
-	{"PN_DROITE",        K_KP_RIGHTARROW },
-	{"PN_FIN",           K_KP_END },
-	{"PN_BAS",           K_KP_DOWNARROW },
-	{"PN_PGBAS",     K_KP_PGDN },
-	{"PN_ENTR",          K_KP_ENTER },
-	{"PN_INSER",     K_KP_INS },
-	{"PN_SUPPR",     K_KP_DEL },
-	{"PN_SLASH",     K_KP_SLASH },
-	{"PN_MOINS",     K_KP_MINUS },
-	{"PN_PLUS",          K_KP_PLUS },
-	{"PN_VERRNUM",       K_KP_NUMLOCK },
-	{"PN_*",         K_KP_STAR },
-	{"PN_EQUALS",        K_KP_EQUALS },
-
-	{"PAUSE", K_PAUSE},
-
-	{"COMMAND", K_COMMAND},  //mac
-
-	{NULL,0}
-};  //end french
-
-keyname_t keynames_s[] =  //Spanish
-{
-	{"TABULADOR", K_TAB},
-	{"INTRO", K_ENTER},
-	{"ESC", K_ESCAPE},
-	{"BARRA_ESPACIAD", K_SPACE},
-	{"RETROCESO", K_BACKSPACE},
-	{"CURSOR_ARRIBA", K_UPARROW},
-	{"CURSOR_ABAJO", K_DOWNARROW},
-	{"CURSOR_IZQDA", K_LEFTARROW},
-	{"CURSOR_DERECHA", K_RIGHTARROW},
-
-	{"ALT", K_ALT},
-	{"CTRL", K_CTRL},
-	{"MAYÚS", K_SHIFT},
-
-	{"BLOQ_MAYÚS", K_CAPSLOCK},
-
-	{"F1", K_F1},
-	{"F2", K_F2},
-	{"F3", K_F3},
-	{"F4", K_F4},
-	{"F5", K_F5},
-	{"F6", K_F6},
-	{"F7", K_F7},
-	{"F8", K_F8},
-	{"F9", K_F9},
-	{"F10", K_F10},
-	{"F11", K_F11},
-	{"F12", K_F12},
-
-	{"INSERT", K_INS},
-	{"SUPR", K_DEL},
-	{"AV_PÁG", K_PGDN},
-	{"RE_PÁG", K_PGUP},
-	{"INICIO", K_HOME},
-	{"FIN", K_END},
-
-	{"RATÓN1", K_MOUSE1},
-	{"RATÓN2", K_MOUSE2},
-	{"RATÓN3", K_MOUSE3},
-	{"RATÓN4", K_MOUSE4},
-	{"RATÓN5", K_MOUSE5},
-
-	{"RUEDA_HACIA_ARRIBA",   K_MWHEELUP },
-	{"RUEDA_HACIA_ABAJO",    K_MWHEELDOWN },
-
-	{"JOY1", K_JOY1},
-	{"JOY2", K_JOY2},
-	{"JOY3", K_JOY3},
-	{"JOY4", K_JOY4},
-	{"JOY5", K_JOY5},
-	{"JOY6", K_JOY6},
-	{"JOY7", K_JOY7},
-	{"JOY8", K_JOY8},
-	{"JOY9", K_JOY9},
-	{"JOY10", K_JOY10},
-	{"JOY11", K_JOY11},
-	{"JOY12", K_JOY12},
-	{"JOY13", K_JOY13},
-	{"JOY14", K_JOY14},
-	{"JOY15", K_JOY15},
-	{"JOY16", K_JOY16},
-	{"JOY17", K_JOY17},
-	{"JOY18", K_JOY18},
-	{"JOY19", K_JOY19},
-	{"JOY20", K_JOY20},
-	{"JOY21", K_JOY21},
-	{"JOY22", K_JOY22},
-	{"JOY23", K_JOY23},
-	{"JOY24", K_JOY24},
-	{"JOY25", K_JOY25},
-	{"JOY26", K_JOY26},
-	{"JOY27", K_JOY27},
-	{"JOY28", K_JOY28},
-	{"JOY29", K_JOY29},
-	{"JOY30", K_JOY30},
-	{"JOY31", K_JOY31},
-	{"JOY32", K_JOY32},
-
-	{"AUX1", K_AUX1},
-	{"AUX2", K_AUX2},
-	{"AUX3", K_AUX3},
-	{"AUX4", K_AUX4},
-	{"AUX5", K_AUX5},
-	{"AUX6", K_AUX6},
-	{"AUX7", K_AUX7},
-	{"AUX8", K_AUX8},
-	{"AUX9", K_AUX9},
-	{"AUX10", K_AUX10},
-	{"AUX11", K_AUX11},
-	{"AUX12", K_AUX12},
-	{"AUX13", K_AUX13},
-	{"AUX14", K_AUX14},
-	{"AUX15", K_AUX15},
-	{"AUX16", K_AUX16},
-
-	{"INICIO(NUM)",          K_KP_HOME },
-	{"ARRIBA(NUM)",      K_KP_UPARROW },
-	{"RE_PÁG(NUM)",          K_KP_PGUP },
-	{"IZQUIERDA(NUM)",   K_KP_LEFTARROW },
-	{"5(NUM)",           K_KP_5 },
-	{"DERECHA(NUM)", K_KP_RIGHTARROW },
-	{"FIN(NUM)",         K_KP_END },
-	{"ABAJO(NUM)",   K_KP_DOWNARROW },
-	{"AV_PÁG(NUM)",          K_KP_PGDN },
-	{"INTRO(NUM)",       K_KP_ENTER },
-	{"INS(NUM)",         K_KP_INS },
-	{"SUPR(NUM)",            K_KP_DEL },
-	{"/(NUM)",       K_KP_SLASH },
-	{"-(NUM)",       K_KP_MINUS },
-	{"+(NUM)",           K_KP_PLUS },
-	{"BLOQ_NUM",     K_KP_NUMLOCK },
-	{"*(NUM)",           K_KP_STAR },
-	{"INTRO(NUM)",       K_KP_EQUALS },
-
-	{"PAUSA", K_PAUSE},
-
-	{"PUNTO_Y_COMA", ';'},    // because a raw semicolon seperates commands
-
-	{"COMANDO", K_COMMAND},  //mac
-
-	{NULL,0}
-};
-
-keyname_t keynames_i[] =  //Italian
-{
-	{"TAB", K_TAB},
-	{"INVIO", K_ENTER},
-	{"ESC", K_ESCAPE},
-	{"SPAZIO", K_SPACE},
-	{"BACKSPACE", K_BACKSPACE},
-	{"FRECCIASU", K_UPARROW},
-	{"FRECCIAGIÙ", K_DOWNARROW},
-	{"FRECCIASX", K_LEFTARROW},
-	{"FRECCIADX", K_RIGHTARROW},
-
-	{"ALT", K_ALT},
-	{"CTRL", K_CTRL},
-	{"MAIUSC", K_SHIFT},
-
-	{"BLOCMAIUSC", K_CAPSLOCK},
-
-	{"F1", K_F1},
-	{"F2", K_F2},
-	{"F3", K_F3},
-	{"F4", K_F4},
-	{"F5", K_F5},
-	{"F6", K_F6},
-	{"F7", K_F7},
-	{"F8", K_F8},
-	{"F9", K_F9},
-	{"F10", K_F10},
-	{"F11", K_F11},
-	{"F12", K_F12},
-
-	{"INS", K_INS},
-	{"CANC", K_DEL},
-	{"PAGGIÙ", K_PGDN},
-	{"PAGGSU", K_PGUP},
-	{"HOME", K_HOME},
-	{"FINE", K_END},
-
-	{"MOUSE1", K_MOUSE1},
-	{"MOUSE2", K_MOUSE2},
-	{"MOUSE3", K_MOUSE3},
-	{"MOUSE4", K_MOUSE4},
-	{"MOUSE5", K_MOUSE5},
-
-	{"ROTELLASU",    K_MWHEELUP },
-	{"ROTELLAGIÙ",   K_MWHEELDOWN },
-
-	{"JOY1", K_JOY1},
-	{"JOY2", K_JOY2},
-	{"JOY3", K_JOY3},
-	{"JOY4", K_JOY4},
-	{"JOY5", K_JOY5},
-	{"JOY6", K_JOY6},
-	{"JOY7", K_JOY7},
-	{"JOY8", K_JOY8},
-	{"JOY9", K_JOY9},
-	{"JOY10", K_JOY10},
-	{"JOY11", K_JOY11},
-	{"JOY12", K_JOY12},
-	{"JOY13", K_JOY13},
-	{"JOY14", K_JOY14},
-	{"JOY15", K_JOY15},
-	{"JOY16", K_JOY16},
-	{"JOY17", K_JOY17},
-	{"JOY18", K_JOY18},
-	{"JOY19", K_JOY19},
-	{"JOY20", K_JOY20},
-	{"JOY21", K_JOY21},
-	{"JOY22", K_JOY22},
-	{"JOY23", K_JOY23},
-	{"JOY24", K_JOY24},
-	{"JOY25", K_JOY25},
-	{"JOY26", K_JOY26},
-	{"JOY27", K_JOY27},
-	{"JOY28", K_JOY28},
-	{"JOY29", K_JOY29},
-	{"JOY30", K_JOY30},
-	{"JOY31", K_JOY31},
-	{"JOY32", K_JOY32},
-
-	{"AUX1", K_AUX1},
-	{"AUX2", K_AUX2},
-	{"AUX3", K_AUX3},
-	{"AUX4", K_AUX4},
-	{"AUX5", K_AUX5},
-	{"AUX6", K_AUX6},
-	{"AUX7", K_AUX7},
-	{"AUX8", K_AUX8},
-	{"AUX9", K_AUX9},
-	{"AUX10", K_AUX10},
-	{"AUX11", K_AUX11},
-	{"AUX12", K_AUX12},
-	{"AUX13", K_AUX13},
-	{"AUX14", K_AUX14},
-	{"AUX15", K_AUX15},
-	{"AUX16", K_AUX16},
-
-	{"TN_HOME",          K_KP_HOME },
-	{"TN_FRECCIASU",     K_KP_UPARROW },
-	{"TN_PAGGSU",            K_KP_PGUP },
-	{"TN_FRECCIASX", K_KP_LEFTARROW },
-	{"TN_5",         K_KP_5 },
-	{"TN_FRECCIA_DX",    K_KP_RIGHTARROW },
-	{"TN_FINE",          K_KP_END },
-	{"TN_FRECCIAGIÙ",    K_KP_DOWNARROW },
-	{"TN_PAGGIÙ",            K_KP_PGDN },
-	{"TN_INVIO",     K_KP_ENTER },
-	{"TN_INS",           K_KP_INS },
-	{"TN_CANC",          K_KP_DEL },
-	{"TN_/",     K_KP_SLASH },
-	{"TN_-",     K_KP_MINUS },
-	{"TN_+",         K_KP_PLUS },
-	{"TN_BLOCNUM",       K_KP_NUMLOCK },
-	{"TN_*",         K_KP_STAR },
-	{"TN_=",     K_KP_EQUALS },
-
-	{"PAUSA", K_PAUSE},
-
-	{"ò", ';'},   // because a raw semicolon seperates commands
-
-	{"COMMAND", K_COMMAND},  //mac
-
-	{NULL,0}
-};
 
 /*
 =============================================================================
@@ -835,48 +454,55 @@ void Field_KeyDownEvent( field_t *edit, int key ) {
 
 	len = strlen( edit->buffer );
 
-	if ( key == K_DEL || key == K_KP_DEL ) {
-		if ( edit->cursor < len ) {
-			memmove( edit->buffer + edit->cursor,
-					 edit->buffer + edit->cursor + 1, len - edit->cursor );
-		}
-		return;
+	switch ( key ) {
+		case K_DEL:
+		case K_KP_DEL:
+			if ( edit->cursor < len ) {
+				memmove( edit->buffer + edit->cursor,
+					 	edit->buffer + edit->cursor + 1, len - edit->cursor );
+			}
+			break;
+
+		case K_RIGHTARROW:
+		case K_KP_RIGHTARROW:
+			if ( edit->cursor < len ) {
+				edit->cursor++;
+			}
+			break;
+
+		case K_LEFTARROW:
+		case K_KP_LEFTARROW:
+			if ( edit->cursor > 0 ) {
+				edit->cursor--;
+			}
+			break;
+		case K_HOME:
+		case K_KP_HOME:
+			edit->cursor = 0;
+		case 'a':
+			if ( keys[K_CTRL].down ) {
+				edit->cursor = 0;
+			}
+			break;
+		case K_END:
+		case K_KP_END:
+			edit->cursor = len;
+		case 'e':
+			if ( keys[K_CTRL].down ) {
+				edit->cursor = len;
+			}
+			break;
+		case K_INS:
+		case K_KP_INS:
+			key_overstrikeMode = !key_overstrikeMode;
+			break;
 	}
 
-	if ( key == K_RIGHTARROW || key == K_KP_RIGHTARROW ) {
-		if ( edit->cursor < len ) {
-			edit->cursor++;
-		}
-
-		if ( edit->cursor >= edit->scroll + edit->widthInChars && edit->cursor <= len ) {
-			edit->scroll++;
-		}
-		return;
-	}
-
-	if ( key == K_LEFTARROW || key == K_KP_LEFTARROW ) {
-		if ( edit->cursor > 0 ) {
-			edit->cursor--;
-		}
-		if ( edit->cursor < edit->scroll ) {
-			edit->scroll--;
-		}
-		return;
-	}
-
-	if ( key == K_HOME || key == K_KP_HOME || ( tolower( key ) == 'a' && keys[K_CTRL].down ) ) {
-		edit->cursor = 0;
-		return;
-	}
-
-	if ( key == K_END || key == K_KP_END || ( tolower( key ) == 'e' && keys[K_CTRL].down ) ) {
-		edit->cursor = len;
-		return;
-	}
-
-	if ( key == K_INS || key == K_KP_INS ) {
-		key_overstrikeMode = !key_overstrikeMode;
-		return;
+	// Change scroll if cursor is no longer visible
+	if ( edit->cursor < edit->scroll ) {
+		edit->scroll = edit->cursor;
+	} else if ( edit->cursor >= edit->scroll + edit->widthInChars && edit->cursor <= len ) {
+		edit->scroll = edit->cursor - edit->widthInChars + 1;
 	}
 }
 
@@ -1177,7 +803,7 @@ void Console_Key( int key ) {
 	if ( key == K_ENTER || key == K_KP_ENTER ) {
 		con.acLength = 0;
 
-		// if not in the game explicitly prepent a slash if needed
+		// if not in the game explicitly prepend a slash if needed
 		if ( cls.state != CA_ACTIVE && g_consoleField.buffer[0] != '\\'
 			 && g_consoleField.buffer[0] != '/' ) {
 			char temp[MAX_STRING_CHARS];
@@ -1365,7 +991,7 @@ Key_IsDown
 ===================
 */
 qboolean Key_IsDown( int keynum ) {
-	if ( keynum == -1 ) {
+	if ( keynum < 0 || keynum >= MAX_KEYS ) {
 		return qfalse;
 	}
 
@@ -1393,41 +1019,22 @@ int Key_StringToKeynum( char *str ) {
 		return -1;
 	}
 	if ( !str[1] ) {
-		// Always lowercase
-		Q_strlwr( str );
 		return str[0];
 	}
 
 	// check for hex code
-	if ( str[0] == '0' && str[1] == 'x' && strlen( str ) == 4 ) {
-		int n1, n2;
+	if ( strlen( str ) == 4 ) {
+		int n = Com_HexStrToInt( str );
 
-		n1 = str[2];
-		if ( n1 >= '0' && n1 <= '9' ) {
-			n1 -= '0';
-		} else if ( n1 >= 'a' && n1 <= 'f' ) {
-			n1 = n1 - 'a' + 10;
-		} else {
-			n1 = 0;
+		if ( n >= 0 ) {
+			return n;
 		}
-
-		n2 = str[3];
-		if ( n2 >= '0' && n2 <= '9' ) {
-			n2 -= '0';
-		} else if ( n2 >= 'a' && n2 <= 'f' ) {
-			n2 = n2 - 'a' + 10;
-		} else {
-			n2 = 0;
-		}
-
-		return n1 * 16 + n2;
 	}
 
 	// scan for a text match
 	for ( kn = keynames ; kn->name ; kn++ ) {
-		if ( !Q_stricmp( str,kn->name ) ) {
+		if ( !Q_stricmp( str,kn->name ) )
 			return kn->keynum;
-		}
 	}
 
 	return -1;
@@ -1441,7 +1048,7 @@ Returns a string (either a single ascii char, a K_* name, or a 0x11 hex string) 
 given keynum.
 ===================
 */
-char *Key_KeynumToString( int keynum, qboolean bTranslate ) {
+char *Key_KeynumToString( int keynum ) {
 	keyname_t   *kn;
 	static char tinystr[5];
 	int i, j;
@@ -1450,39 +1057,19 @@ char *Key_KeynumToString( int keynum, qboolean bTranslate ) {
 		return "<KEY NOT FOUND>";
 	}
 
-	if ( keynum < 0 || keynum > 255 ) {
+	if ( keynum < 0 || keynum >= MAX_KEYS ) {
 		return "<OUT OF RANGE>";
 	}
 
 	// check for printable ascii (don't use quote)
-	if ( keynum > 32 && keynum < 127 && keynum != '"' ) {
+	if ( keynum > 32 && keynum < 127 && keynum != '"' && keynum != ';' ) {
 		tinystr[0] = keynum;
 		tinystr[1] = 0;
-		if ( keynum == ';' && !bTranslate ) {
-			//fall through and use keyname table
-		} else {
-			return tinystr;
-		}
+		return tinystr;
 	}
-
-
-	kn = keynames;    //init to english
-#ifndef __MACOS__   //DAJ USA
-	if ( bTranslate ) {
-		if ( cl_language->integer - 1 == LANGUAGE_FRENCH ) {
-			kn = keynames_f;  //use french
-		} else if ( cl_language->integer - 1 == LANGUAGE_GERMAN ) {
-			kn = keynames_d;  //use german
-		} else if ( cl_language->integer - 1 == LANGUAGE_ITALIAN ) {
-			kn = keynames_i;  //use italian
-		} else if ( cl_language->integer - 1 == LANGUAGE_SPANISH ) {
-			kn = keynames_s;  //use spanish
-		}
-	}
-#endif
 
 	// check for a key string
-	for ( ; kn->name ; kn++ ) {
+	for ( kn=keynames ; kn->name ; kn++ ) {
 		if ( keynum == kn->keynum ) {
 			return kn->name;
 		}
@@ -1698,9 +1285,9 @@ void Key_WriteBindings( fileHandle_t f ) {
 
 	FS_Printf( f, "unbindall\n" );
 
-	for ( i = 0 ; i < 256 ; i++ ) {
+	for (i=0 ; i<MAX_KEYS ; i++) {
 		if ( keys[i].binding && keys[i].binding[0] ) {
-			FS_Printf( f, "bind %s \"%s\"\n", Key_KeynumToString( i, qfalse ), keys[i].binding );
+			FS_Printf (f, "bind %s \"%s\"\n", Key_KeynumToString(i), keys[i].binding );
 
 		}
 
@@ -1717,9 +1304,9 @@ Key_Bindlist_f
 void Key_Bindlist_f( void ) {
 	int i;
 
-	for ( i = 0 ; i < 256 ; i++ ) {
+	for ( i = 0 ; i < MAX_KEYS ; i++ ) {
 		if ( keys[i].binding && keys[i].binding[0] ) {
-			Com_Printf( "%s \"%s\"\n", Key_KeynumToString( i, qfalse ), keys[i].binding );
+			Com_Printf( "%s \"%s\"\n", Key_KeynumToString(i), keys[i].binding );
 		}
 	}
 }
@@ -1817,7 +1404,7 @@ void CL_KeyEvent( int key, qboolean down, unsigned time ) {
 #endif
 
 	// console key is hardcoded, so the user can never unbind it
-	if ( key == '`' || key == '~' ) {
+	if( key == K_CONSOLE || ( keys[K_SHIFT].down && key == K_ESCAPE ) ) {
 		if ( !down ) {
 			return;
 		}
@@ -1970,7 +1557,7 @@ void CL_KeyEvent( int key, qboolean down, unsigned time ) {
 		if ( !kb ) {
 			if ( key >= 200 ) {
 				Com_Printf( "%s is unbound, use controls menu to set.\n"
-							, Key_KeynumToString( key, qfalse ) );
+							, Key_KeynumToString( key ) );
 			}
 		} else if ( kb[0] == '+' ) {
 			// button commands add keynum and time as parms so that multiple

@@ -674,7 +674,7 @@ Key_KeynumToStringBuf
 ====================
 */
 void Key_KeynumToStringBuf( int keynum, char *buf, int buflen ) {
-	Q_strncpyz( buf, Key_KeynumToString( keynum, qtrue ), buflen );
+	Q_strncpyz( buf, Key_KeynumToString( keynum ), buflen );
 }
 
 /*

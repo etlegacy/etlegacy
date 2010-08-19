@@ -559,7 +559,7 @@ void CL_VerifyCode( void );
 
 float CL_KeyState( kbutton_t *key );
 int Key_StringToKeynum( char *str );
-char *Key_KeynumToString (int keynum, qboolean bTranslate );
+char *Key_KeynumToString( int keynum );
 
 //
 // cl_parse.c
