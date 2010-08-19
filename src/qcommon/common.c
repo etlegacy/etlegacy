@@ -87,9 +87,12 @@ cvar_t  *com_version;
 cvar_t  *com_buildScript;   // for automated data building scripts
 cvar_t  *con_drawnotify;
 cvar_t  *com_introPlayed;
+cvar_t  *com_ansiColor;
 cvar_t  *com_logosPlaying;
 cvar_t  *cl_paused;
 cvar_t  *sv_paused;
+cvar_t  *cl_packetdelay;
+cvar_t  *sv_packetdelay;
 cvar_t  *com_cameraMode;
 #if defined( _WIN32 ) && defined( _DEBUG )
 cvar_t  *com_noErrorInterrupt;
@@ -2005,10 +2008,124 @@ void Com_InitJournaling( void ) {
 }
 
 /*
-=================
-Com_GetRealEvent
-=================
+========================================================================
+
+EVENT LOOP
+
+========================================================================
 */
+
+#define MAX_QUEUED_EVENTS  256
+#define MASK_QUEUED_EVENTS ( MAX_QUEUED_EVENTS - 1 )
+
+static sysEvent_t  eventQueue[ MAX_QUEUED_EVENTS ];
+static int         eventHead = 0;
+static int         eventTail = 0;
+static byte        sys_packetReceived[ MAX_MSGLEN ];
+
+/*
+================
+Com_QueueEvent
+
+A time of 0 will get the current time
+Ptr should either be null, or point to a block of data that can
+be freed by the game later.
+================
+*/
+void Com_QueueEvent( int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr )
+{
+	sysEvent_t  *ev;
+
+	ev = &eventQueue[ eventHead & MASK_QUEUED_EVENTS ];
+
+	if ( eventHead - eventTail >= MAX_QUEUED_EVENTS )
+	{
+		Com_Printf("Com_QueueEvent: overflow\n");
+		// we are discarding an event, but don't leak memory
+		if ( ev->evPtr )
+		{
+			Z_Free( ev->evPtr );
+		}
+		eventTail++;
+	}
+
+	eventHead++;
+
+	if ( time == 0 )
+	{
+		time = Sys_Milliseconds();
+	}
+
+	ev->evTime = time;
+	ev->evType = type;
+	ev->evValue = value;
+	ev->evValue2 = value2;
+	ev->evPtrLength = ptrLength;
+	ev->evPtr = ptr;
+}
+
+/*
+================
+Com_GetSystemEvent
+
+================
+*/
+sysEvent_t Com_GetSystemEvent( void )
+{
+	sysEvent_t  ev;
+	char        *s;
+	msg_t       netmsg;
+	netadr_t    adr;
+
+	// return if we have data
+	if ( eventHead > eventTail )
+	{
+		eventTail++;
+		return eventQueue[ ( eventTail - 1 ) & MASK_QUEUED_EVENTS ];
+	}
+
+	// check for console commands
+	s = Sys_ConsoleInput();
+	if ( s )
+	{
+		char  *b;
+		int   len;
+
+		len = strlen( s ) + 1;
+		b = Z_Malloc( len );
+		strcpy( b, s );
+		Com_QueueEvent( 0, SE_CONSOLE, 0, 0, len, b );
+	}
+
+	// check for network packets
+	MSG_Init( &netmsg, sys_packetReceived, sizeof( sys_packetReceived ) );
+	if ( Sys_GetPacket ( &adr, &netmsg ) )
+	{
+		netadr_t  *buf;
+		int       len;
+
+		// copy out to a seperate buffer for qeueing
+		len = sizeof( netadr_t ) + netmsg.cursize;
+		buf = Z_Malloc( len );
+		*buf = adr;
+		memcpy( buf+1, netmsg.data, netmsg.cursize );
+		Com_QueueEvent( 0, SE_PACKET, 0, 0, len, buf );
+	}
+
+	// return if we have data
+	if ( eventHead > eventTail )
+	{
+		eventTail++;
+		return eventQueue[ ( eventTail - 1 ) & MASK_QUEUED_EVENTS ];
+	}
+
+	// create an empty event to return
+	memset( &ev, 0, sizeof( ev ) );
+	ev.evTime = Sys_Milliseconds();
+
+	return ev;
+}
+
 sysEvent_t  Com_GetRealEvent( void ) {
 	int r;
 	sysEvent_t ev;
@@ -2027,7 +2144,7 @@ sysEvent_t  Com_GetRealEvent( void ) {
 			}
 		}
 	} else {
-		ev = Sys_GetEvent();
+		ev = Com_GetSystemEvent();
 
 		// write the journal value out if needed
 		if ( com_journal->integer == 1 ) {
@@ -2046,7 +2163,6 @@ sysEvent_t  Com_GetRealEvent( void ) {
 
 	return ev;
 }
-
 
 /*
 =================
@@ -2336,7 +2452,6 @@ Com_CPUSpeed_f
 =============
 */
 void Com_CPUSpeed_f( void ) {
-	Com_Printf( "CPU Speed: %.2f Mhz\n", Sys_GetCPUSpeed() );
 }
 
 qboolean CL_CDKeyValidate( const char *key, const char *checksum );
@@ -2452,72 +2567,20 @@ static void Com_WriteCDKey( const char *filename, const char *ikey ) {
 void Com_SetRecommended() {
 	cvar_t *r_highQualityVideo,* com_recommended;
 	qboolean goodVideo;
-	float cpuSpeed;
-	//qboolean goodCPU;
 	// will use this for recommended settings as well.. do i outside the lower check so it gets done even with command line stuff
 	r_highQualityVideo = Cvar_Get( "r_highQualityVideo", "1", CVAR_ARCHIVE );
 	com_recommended = Cvar_Get( "com_recommended", "-1", CVAR_ARCHIVE );
 	goodVideo = ( r_highQualityVideo && r_highQualityVideo->integer );
 
-	cpuSpeed = Sys_GetCPUSpeed();
-
-	if ( cpuSpeed > 1500 ) {
-		if ( goodVideo ) {
-			Com_Printf( "Found high quality video and fast CPU\n" );
-			Cbuf_AddText( "exec preset_high.cfg\n" );
-			Cvar_Set( "com_recommended", "0" );
-		} else {
-			Com_Printf( "Found low quality video and fast CPU\n" );
-			Cbuf_AddText( "exec preset_normal.cfg\n" );
-			Cvar_Set( "com_recommended", "1" );
-		}
-	} else if ( cpuSpeed > 850 ) {
-		if ( goodVideo ) {
-			Com_Printf( "Found high quality video and normal CPU\n" );
-		} else {
-			Com_Printf( "Found low quality video and normal CPU\n" );
-		}
-		Cbuf_AddText( "exec preset_normal.cfg\n" );
-		Cvar_Set( "com_recommended", "1" );
-	} else if ( cpuSpeed < 200 ) {   // do the < 200 check just in case we barf, better than falling back to ugly fast
-		if ( goodVideo ) {
-			Com_Printf( "Found high quality video but didn't manage to detect a CPU properly\n" );
-		} else {
-			Com_Printf( "Found low quality video but didn't manage to detect a CPU properly\n" );
-		}
-		Cbuf_AddText( "exec preset_normal.cfg\n" );
-		Cvar_Set( "com_recommended", "1" );
+	if ( goodVideo ) {
+		Com_Printf( "Found high quality video and fast CPU\n" );
+		Cbuf_AddText( "exec preset_high.cfg\n" );
+		Cvar_Set( "com_recommended", "0" );
 	} else {
-		if ( goodVideo ) {
-			Com_Printf( "Found high quality video and slow CPU\n" );
-			Cbuf_AddText( "exec preset_fast.cfg\n" );
-			Cvar_Set( "com_recommended", "2" );
-		} else {
-			Com_Printf( "Found low quality video and slow CPU\n" );
-			Cbuf_AddText( "exec preset_fastest.cfg\n" );
-			Cvar_Set( "com_recommended", "3" );
-		}
+		Com_Printf( "Found low quality video and fast CPU\n" );
+		Cbuf_AddText( "exec preset_normal.cfg\n" );
+		Cvar_Set( "com_recommended", "1" );
 	}
-
-
-	/*goodCPU = Sys_GetHighQualityCPU();
-
-	if (goodVideo && goodCPU) {
-		Com_Printf ("Found high quality video and CPU\n");
-		Cbuf_AddText ("exec highVidhighCPU.cfg\n");
-	} else if (goodVideo && !goodCPU) {
-		Cbuf_AddText ("exec highVidlowCPU.cfg\n");
-		Com_Printf ("Found high quality video and low quality CPU\n");
-	} else if (!goodVideo && goodCPU) {
-		Cbuf_AddText ("exec lowVidhighCPU.cfg\n");
-		Com_Printf ("Found low quality video and high quality CPU\n");
-	} else {
-		Cbuf_AddText ("exec lowVidlowCPU.cfg\n");
-		Com_Printf ("Found low quality video and low quality CPU\n");
-	}*/
-
-// (SA) set the cvar so the menu will reflect this on first run
-//	Cvar_Set("ui_glCustom", "999");	// 'recommended'
 }
 
 // Arnout: gameinfo, to let the engine know which gametypes are SP and if we should use profiles.
@@ -2708,7 +2771,6 @@ void Com_Init( char *commandLine ) {
 	// cvar and command buffer management
 	Com_ParseCommandLine( commandLine );
 
-	Swap_Init();
 	Cbuf_Init();
 
 	Com_InitZoneMemory();
@@ -2855,6 +2917,7 @@ void Com_Init( char *commandLine ) {
 	con_drawnotify = Cvar_Get( "con_drawnotify", "0", CVAR_CHEAT );
 
 	com_introPlayed = Cvar_Get( "com_introplayed", "0", CVAR_ARCHIVE );
+	com_ansiColor = Cvar_Get( "com_ansiColor", "0", CVAR_ARCHIVE );
 	com_logosPlaying = Cvar_Get( "com_logosPlaying", "0", CVAR_ROM );
 	com_recommendedSet = Cvar_Get( "com_recommendedSet", "0", CVAR_ARCHIVE );
 
@@ -2894,7 +2957,6 @@ void Com_Init( char *commandLine ) {
 	com_dedicated->modified = qfalse;
 	if ( !com_dedicated->integer ) {
 		CL_Init();
-		Sys_ShowConsole( com_viewlog->integer, qfalse );
 	}
 
 	// set com_frameTime so that if a map is started on the
@@ -2911,11 +2973,6 @@ void Com_Init( char *commandLine ) {
 	Cvar_Set( "r_uiFullScreen", "1" );
 
 	CL_StartHunkUsers();
-
-	// delay this so potential wicked3d dll can find a wolf window
-	if ( !com_dedicated->integer ) {
-		Sys_ShowConsole( com_viewlog->integer, qfalse );
-	}
 
 	// NERVE - SMF - force recommendedSet and don't do vid_restart if in safe mode
 	if ( !com_recommendedSet->integer && !safeMode ) {
@@ -3110,9 +3167,6 @@ void Com_Frame( void ) {
 
 	// if "viewlog" has been modified, show or hide the log console
 	if ( com_viewlog->modified ) {
-		if ( !com_dedicated->value ) {
-			Sys_ShowConsole( com_viewlog->integer, qfalse );
-		}
 		com_viewlog->modified = qfalse;
 	}
 
@@ -3163,10 +3217,8 @@ void Com_Frame( void ) {
 		com_dedicated->modified = qfalse;
 		if ( !com_dedicated->integer ) {
 			CL_Init();
-			Sys_ShowConsole( com_viewlog->integer, qfalse );
 		} else {
 			CL_Shutdown();
-			Sys_ShowConsole( 1, qtrue );
 		}
 	}
 

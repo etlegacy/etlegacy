@@ -215,7 +215,7 @@ void COM_BitClear( int array[], int bitNum ) {
 
 ============================================================================
 */
-
+/*
 // can't just use function pointers, or dll linkage can
 // mess up when qcommon is included in multiple places
 static short ( *_BigShort )( short l ) = NULL;
@@ -236,6 +236,7 @@ short   BigShort( short l ) {return _BigShort( l );}
 int     BigLong( int l ) {return _BigLong( l );}
 qint64  BigLong64( qint64 l ) {return _BigLong64( l );}
 float   BigFloat( float l ) {return _BigFloat( l );}
+*/
 
 short   ShortSwap( short l ) {
 	byte b1,b2;
@@ -284,20 +285,13 @@ qint64 Long64NoSwap( qint64 ll ) {
 	return ll;
 }
 
-float FloatSwap( float f ) {
-	union
-	{
-		float f;
-		byte b[4];
-	} dat1, dat2;
+float FloatSwap( const float *f ) {
+	floatint_t out;
 
+	out.f = *f;
+	out.ui = LongSwap(out.ui);
 
-	dat1.f = f;
-	dat2.b[0] = dat1.b[3];
-	dat2.b[1] = dat1.b[2];
-	dat2.b[2] = dat1.b[1];
-	dat2.b[3] = dat1.b[0];
-	return dat2.f;
+	return out.f;
 }
 
 float FloatNoSwap( float f ) {
@@ -309,6 +303,7 @@ float FloatNoSwap( float f ) {
 Swap_Init
 ================
 */
+/*
 void Swap_Init( void ) {
 	byte swaptest[2] = {1,0};
 
@@ -335,6 +330,7 @@ void Swap_Init( void ) {
 	}
 
 }
+*/
 
 
 /*
@@ -791,6 +787,45 @@ int Com_ParseInfos( char *buf, int max, char infos[][MAX_INFO_STRING] ) {
 }
 
 /*
+===================
+Com_HexStrToInt
+===================
+*/
+int Com_HexStrToInt( const char *str )
+{
+	if ( !str || !str[ 0 ] )
+		return -1;
+
+	// check for hex code
+	if( str[ 0 ] == '0' && str[ 1 ] == 'x' )
+	{
+		int i, n = 0;
+
+		for( i = 2; i < strlen( str ); i++ )
+		{
+			char digit;
+
+			n *= 16;
+
+			digit = tolower( str[ i ] );
+
+			if( digit >= '0' && digit <= '9' )
+				digit -= '0';
+			else if( digit >= 'a' && digit <= 'f' )
+				digit = digit - 'a' + 10;
+			else
+				return -1;
+
+			n += digit;
+		}
+
+		return n;
+	}
+
+	return -1;
+}
+
+/*
 ============================================================================
 
 					LIBRARY REPLACEMENT FUNCTIONS
@@ -974,6 +1009,38 @@ void Q_strcat( char *dest, int size, const char *src ) {
 	Q_strncpyz( dest + l1, src, size - l1 );
 }
 
+/*
+* Find the first occurrence of find in s.
+*/
+const char *Q_stristr( const char *s, const char *find)
+{
+  char c, sc;
+  size_t len;
+
+  if ((c = *find++) != 0)
+  {
+    if (c >= 'a' && c <= 'z')
+    {
+      c -= ('a' - 'A');
+    }
+    len = strlen(find);
+    do
+    {
+      do
+      {
+        if ((sc = *s++) == 0)
+          return NULL;
+        if (sc >= 'a' && sc <= 'z')
+        {
+          sc -= ('a' - 'A');
+        }
+      } while (sc != c);
+    } while (Q_stricmpn(s, find, len) != 0);
+    s--;
+  }
+  return s;
+}
+
 
 int Q_PrintStrlen( const char *string ) {
 	int len;
@@ -1055,6 +1122,18 @@ char *Q_CleanDirName( char *dirname ) {
 	return dirname;
 }
 
+int Q_CountChar(const char *string, char tocount)
+{
+	int count;
+	
+	for(count = 0; *string; string++)
+	{
+		if(*string == tocount)
+			count++;
+	}
+	
+	return count;
+}
 
 void QDECL Com_sprintf( char *dest, int size, const char *fmt, ... ) {
 	int ret;

@@ -1889,7 +1889,8 @@ R_DebugText
 ================
 */
 void R_DebugText( const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude ) {
-
+	Com_Printf("TODO: R_DebugText Unimplemented!\n");
+	/*
 	if ( neverOcclude ) {
 		qglDepthRange( 0, 0 );  // never occluded
 
@@ -1905,6 +1906,7 @@ void R_DebugText( const vec3_t org, float r, float g, float b, const char *text,
 	if ( neverOcclude ) {
 		qglDepthRange( 0, 1 );
 	}
+	*/
 }
 
 /*

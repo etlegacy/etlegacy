@@ -1759,6 +1759,7 @@ void CL_KeyEvent( int key, qboolean down, unsigned time ) {
 		return;
 	}
 
+/*
 	switch ( key ) {
 	case K_KP_PGUP:
 	case K_KP_EQUALS:
@@ -1777,6 +1778,7 @@ void CL_KeyEvent( int key, qboolean down, unsigned time ) {
 		}
 		break;
 	}
+*/
 
 	// update auto-repeat status and BUTTON_ANY status
 	keys[key].down = down;

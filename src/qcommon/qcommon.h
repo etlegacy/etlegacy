@@ -127,12 +127,6 @@ void MSG_ReportChangeVectors_f( void );
 
 //============================================================================
 
-extern short   BigShort( short l );
-extern short   LittleShort( short l );
-extern int     BigLong( int l );
-extern int     LittleLong( int l );
-extern float   BigFloat( float l );
-extern float   LittleFloat( float l );
 
 
 /*
@@ -142,6 +136,13 @@ NET
 
 ==============================================================
 */
+
+#define NET_ENABLEV4            0x01
+#define NET_ENABLEV6            0x02
+// if this flag is set, always attempt ipv6 connections instead of ipv4 if a v6 address is found.
+#define NET_PRIOV6              0x04
+// disables ipv6 multicast support if set.
+#define NET_DISABLEMCAST        0x08
 
 #define PACKET_BACKUP   32  // number of old messages that must be kept on client and
 							// server for delta comrpession and ping estimation
@@ -164,8 +165,9 @@ typedef enum {
 	NA_LOOPBACK,
 	NA_BROADCAST,
 	NA_IP,
-	NA_IPX,
-	NA_BROADCAST_IPX
+	NA_IP6,
+	NA_MULTICAST6,
+	NA_UNSPEC
 } netadrtype_t;
 
 typedef enum {
@@ -173,18 +175,20 @@ typedef enum {
 	NS_SERVER
 } netsrc_t;
 
+#define NET_ADDRSTRMAXLEN 48	// maximum length of an IPv6 address string including trailing '\0'
 typedef struct {
 	netadrtype_t type;
 
 	byte ip[4];
-	byte ipx[10];
+	byte ip6[16];
 
 	unsigned short port;
+	unsigned long scope_id;	// Needed for IPv6 link-local addresses
 } netadr_t;
 
 void        NET_Init( void );
 void        NET_Shutdown( void );
-void        NET_Restart( void );
+void        NET_Restart_f( void );
 void        NET_Config( qboolean enableNetworking );
 
 void        NET_SendPacket( netsrc_t sock, int length, const void *data, netadr_t to );
@@ -196,7 +200,8 @@ qboolean    NET_CompareBaseAdr( netadr_t a, netadr_t b );
 qboolean    NET_IsLocalAddress( netadr_t adr );
 qboolean    NET_IsIPXAddress( const char *buf );
 const char  *NET_AdrToString( netadr_t a );
-qboolean    NET_StringToAdr( const char *s, netadr_t *a );
+const char  *NET_AdrToStringwPort (netadr_t a);
+int NET_StringToAdr( const char *s, netadr_t *a, netadrtype_t family );
 qboolean    NET_GetLoopPacket( netsrc_t sock, netadr_t *net_from, msg_t *net_message );
 void        NET_Sleep( int msec );
 
@@ -838,6 +843,19 @@ extern gameInfo_t com_gameInfo;
 
 #define CPUID_AMD_3DNOW         0x30            // AMD K6 3DNOW!
 
+// returned by Sys_GetProcessorFeatures
+typedef enum
+{
+  CF_RDTSC      = 1 << 0,
+  CF_MMX        = 1 << 1,
+  CF_MMX_EXT    = 1 << 2,
+  CF_3DNOW      = 1 << 3,
+  CF_3DNOW_EXT  = 1 << 4,
+  CF_SSE        = 1 << 5,
+  CF_SSE2       = 1 << 6,
+  CF_ALTIVEC    = 1 << 7
+} cpuFeatures_t;
+
 // TTimo
 // centralized and cleaned, that's the max string you can send to a Com_Printf / Com_DPrintf (above gets truncated)
 #define MAXPRINTMSG 4096
@@ -891,6 +909,7 @@ extern cvar_t  *com_version;
 extern cvar_t  *com_buildScript;        // for building release pak files
 extern cvar_t  *com_journal;
 extern cvar_t  *com_cameraMode;
+extern cvar_t  *com_ansiColor;
 extern cvar_t  *com_logosPlaying;
 
 // watchdog
@@ -900,6 +919,9 @@ extern cvar_t  *com_watchdog_cmd;
 // both client and server must agree to pause
 extern cvar_t  *cl_paused;
 extern cvar_t  *sv_paused;
+
+extern cvar_t  *cl_packetdelay;
+extern cvar_t  *sv_packetdelay;
 
 // com_speeds times
 extern int time_game;
@@ -1108,7 +1130,9 @@ typedef struct {
 	void            *evPtr;         // this must be manually freed if not NULL
 } sysEvent_t;
 
-sysEvent_t  Sys_GetEvent( void );
+void		Com_QueueEvent( int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr );
+int			Com_EventLoop( void );
+sysEvent_t	Com_GetSystemEvent( void );
 
 void    Sys_Init( void );
 qboolean Sys_IsNumLockDown( void );
@@ -1117,7 +1141,8 @@ void *Sys_InitializeCriticalSection();
 void Sys_EnterCriticalSection( void *ptr );
 void Sys_LeaveCriticalSection( void *ptr );
 
-char* Sys_GetDLLName( const char *name );
+#define Sys_GetDLLName(x) x ".mp." ARCH_STRING DLL_EXT
+
 // fqpath param added 2/15/02 by T.Ray - Sys_LoadDll is only called in vm.c at this time
 void    * QDECL Sys_LoadDll( const char *name, char *fqpath, intptr_t( QDECL * *entryPoint ) ( int, ... ),
 							 intptr_t ( QDECL * systemcalls )( intptr_t, ... ) );
@@ -1154,19 +1179,13 @@ void    Sys_SnapVector( float *v );
 // the system console is shown when a dedicated server is running
 void    Sys_DisplaySystemConsole( qboolean show );
 
-int     Sys_GetProcessorId( void );
+cpuFeatures_t Sys_GetProcessorFeatures( void );
 
-void    Sys_BeginStreamedFile( fileHandle_t f, int readahead );
-void    Sys_EndStreamedFile( fileHandle_t f );
-int     Sys_StreamedRead( void *buffer, int size, int count, fileHandle_t f );
-void    Sys_StreamSeek( fileHandle_t f, int offset, int origin );
-
-void    Sys_ShowConsole( int level, qboolean quitOnClose );
 void    Sys_SetErrorText( const char *text );
 
 void    Sys_SendPacket( int length, const void *data, netadr_t to );
 
-qboolean    Sys_StringToAdr( const char *s, netadr_t *a );
+qboolean    Sys_StringToAdr( const char *s, netadr_t *a, netadrtype_t family );
 //Does NOT parse port numbers, only base addresses.
 
 qboolean    Sys_IsLANAddress( netadr_t adr );
@@ -1174,27 +1193,48 @@ void        Sys_ShowIP( void );
 
 qboolean    Sys_CheckCD( void );
 
-void    Sys_Mkdir( const char *path );
+qboolean    Sys_Mkdir( const char *path );
 char    *Sys_Cwd( void );
-char    *Sys_DefaultCDPath( void );
 char    *Sys_DefaultBasePath( void );
 char    *Sys_DefaultInstallPath( void );
 char    *Sys_DefaultHomePath( void );
+const char *Sys_TempPath(void);
+const char *Sys_Dirname( char *path );
+const char *Sys_Basename( char *path );
+char *Sys_ConsoleInput(void);
 
 char **Sys_ListFiles( const char *directory, const char *extension, char *filter, int *numfiles, qboolean wantsubs );
 void    Sys_FreeFileList( char **list );
 
-void    Sys_BeginProfiling( void );
-void    Sys_EndProfiling( void );
-
 qboolean Sys_LowPhysicalMemory();
 unsigned int Sys_ProcessorCount();
+
+void    Sys_SetEnv(const char *name, const char *value);
+
+typedef enum
+{
+	DR_YES = 0,
+	DR_NO = 1,
+	DR_OK = 0,
+	DR_CANCEL = 1
+} dialogResult_t;
+
+typedef enum
+{
+	DT_INFO,
+	DT_WARNING,
+	DT_ERROR,
+	DT_YES_NO,
+	DT_OK_CANCEL
+} dialogType_t;
+
+dialogResult_t Sys_Dialog( dialogType_t type, const char *message, const char *title );
+
+qboolean Sys_WritePIDFile( void );
 
 // NOTE TTimo - on win32 the cwd is prepended .. non portable behaviour
 void Sys_StartProcess( char *exeName, qboolean doexit );            // NERVE - SMF
 void Sys_OpenURL( const char *url, qboolean doexit );                       // NERVE - SMF
-int Sys_GetHighQualityCPU();
-float Sys_GetCPUSpeed( void );
 
 #ifdef __linux__
 // TTimo only on linux .. maybe on Mac too?

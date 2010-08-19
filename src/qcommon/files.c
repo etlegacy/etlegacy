@@ -255,7 +255,6 @@ static cvar_t      *fs_basepath;
 static cvar_t      *fs_buildpath;
 static cvar_t      *fs_buildgame;
 static cvar_t      *fs_basegame;
-static cvar_t      *fs_cdpath;
 static cvar_t      *fs_copyfiles;
 static cvar_t      *fs_gamedirvar;
 static cvar_t      *fs_restrict;
@@ -729,23 +728,6 @@ int FS_SV_FOpenFileRead( const char *filename, fileHandle_t *fp ) {
 		}
 	}
 
-	if ( !fsh[f].handleFiles.file.o ) {
-		// search cd path
-		ospath = FS_BuildOSPath( fs_cdpath->string, filename, "" );
-		ospath[strlen( ospath ) - 1] = '\0';
-
-		if ( fs_debug->integer ) {
-			Com_Printf( "FS_SV_FOpenFileRead (fs_cdpath) : %s\n", ospath );
-		}
-
-		fsh[f].handleFiles.file.o = fopen( ospath, "rb" );
-		fsh[f].handleSync = qfalse;
-
-		if ( !fsh[f].handleFiles.file.o ) {
-			f = 0;
-		}
-	}
-
 	*fp = f;
 	if ( f ) {
 		return FS_filelength( f );
@@ -833,9 +815,6 @@ void FS_FCloseFile( fileHandle_t f ) {
 		Com_Error( ERR_FATAL, "Filesystem call made without initialization\n" );
 	}
 
-	if ( fsh[f].streamed ) {
-		Sys_EndStreamedFile( f );
-	}
 	if ( fsh[f].zipFile == qtrue ) {
 		unzCloseCurrentFile( fsh[f].handleFiles.file.z );
 		if ( fsh[f].handleFiles.unique ) {
@@ -1305,20 +1284,6 @@ int FS_FOpenFileRead( const char *filename, fileHandle_t *file, qboolean uniqueF
 							dir->path, dir->gamedir );
 			}
 
-			// if we are getting it from the cdpath, optionally copy it
-			//  to the basepath
-			if ( fs_copyfiles->integer && !Q_stricmp( dir->path, fs_cdpath->string ) ) {
-				char    *copypath;
-
-				copypath = FS_BuildOSPath( fs_basepath->string, dir->gamedir, filename );
-				FS_CopyFile( netpath, copypath );
-			} else if ( fs_copyfiles->integer && fs_buildpath->string[0] && Q_stricmp( dir->path, fs_buildpath->string ) ) {
-				char    *copypath;
-
-				copypath = FS_BuildOSPath( fs_buildpath->string, fs_buildgame->string, filename );
-				FS_CopyFile( netpath, copypath );
-			}
-
 			return FS_filelength( *file );
 		}
 	}
@@ -1624,7 +1589,7 @@ int FS_Read2( void *buffer, int len, fileHandle_t f ) {
 	if ( fsh[f].streamed ) {
 		int r;
 		fsh[f].streamed = qfalse;
-		r = Sys_StreamedRead( buffer, len, 1, f );
+		r = FS_Read( buffer, len, f );
 		fsh[f].streamed = qtrue;
 		return r;
 	} else {
@@ -1760,7 +1725,7 @@ int FS_Seek( fileHandle_t f, long offset, int origin ) {
 
 	if ( fsh[f].streamed ) {
 		fsh[f].streamed = qfalse;
-		Sys_StreamSeek( f, offset, origin );
+		FS_Seek( f, offset, origin );
 		fsh[f].streamed = qtrue;
 	}
 
@@ -2524,11 +2489,6 @@ int FS_GetModList( char *listbuf, int bufsize ) {
 	pFiles0 = Sys_ListFiles( fs_homepath->string, NULL, NULL, &dummy, qtrue );
 	pFiles1 = Sys_ListFiles( fs_basepath->string, NULL, NULL, &dummy, qtrue );
 
-	// DHM - Nerve :: Don't add blank paths (root)
-	if ( fs_cdpath->string[0] ) {
-		pFiles2 = Sys_ListFiles( fs_cdpath->string, NULL, NULL, &dummy, qtrue );
-	}
-
 	// we searched for mods in the three paths
 	// it is likely that we have duplicate names now, which we will cleanup below
 	pFiles = Sys_ConcatenateFileLists( pFiles0, pFiles1, pFiles2 );
@@ -2565,14 +2525,6 @@ int FS_GetModList( char *listbuf, int bufsize ) {
 			nPaks = 0;
 			pPaks = Sys_ListFiles( path, ".pk3", NULL, &nPaks, qfalse );
 			Sys_FreeFileList( pPaks ); // we only use Sys_ListFiles to check wether .pk3 files are present
-
-			/* Try on cd path */
-			if ( nPaks <= 0 ) {
-				path = FS_BuildOSPath( fs_cdpath->string, name, "" );
-				nPaks = 0;
-				pPaks = Sys_ListFiles( path, ".pk3", NULL, &nPaks, qfalse );
-				Sys_FreeFileList( pPaks );
-			}
 
 			/* try on home path */
 			if ( nPaks <= 0 ) {
@@ -3245,7 +3197,6 @@ static void FS_Startup( const char *gameName ) {
 
 	fs_debug = Cvar_Get( "fs_debug", "0", 0 );
 	fs_copyfiles = Cvar_Get( "fs_copyfiles", "0", CVAR_INIT );
-	fs_cdpath = Cvar_Get( "fs_cdpath", Sys_DefaultCDPath(), CVAR_INIT );
 	fs_basepath = Cvar_Get( "fs_basepath", Sys_DefaultInstallPath(), CVAR_INIT );
 	fs_buildpath = Cvar_Get( "fs_buildpath", "", CVAR_INIT );
 	fs_buildgame = Cvar_Get( "fs_buildgame", BASEGAME, CVAR_INIT );
@@ -3259,9 +3210,6 @@ static void FS_Startup( const char *gameName ) {
 	fs_restrict = Cvar_Get( "fs_restrict", "", CVAR_INIT );
 
 	// add search path elements in reverse priority order
-	if ( fs_cdpath->string[0] ) {
-		FS_AddGameDirectory( fs_cdpath->string, gameName );
-	}
 	if ( fs_basepath->string[0] ) {
 		FS_AddGameDirectory( fs_basepath->string, gameName );
 	}
@@ -3274,9 +3222,6 @@ static void FS_Startup( const char *gameName ) {
 #ifndef PRE_RELEASE_DEMO
 	// check for additional base game so mods can be based upon other mods
 	if ( fs_basegame->string[0] && !Q_stricmp( gameName, BASEGAME ) && Q_stricmp( fs_basegame->string, gameName ) ) {
-		if ( fs_cdpath->string[0] ) {
-			FS_AddGameDirectory( fs_cdpath->string, fs_basegame->string );
-		}
 		if ( fs_basepath->string[0] ) {
 			FS_AddGameDirectory( fs_basepath->string, fs_basegame->string );
 		}
@@ -3287,9 +3232,6 @@ static void FS_Startup( const char *gameName ) {
 
 	// check for additional game folder for mods
 	if ( fs_gamedirvar->string[0] && !Q_stricmp( gameName, BASEGAME ) && Q_stricmp( fs_gamedirvar->string, gameName ) ) {
-		if ( fs_cdpath->string[0] ) {
-			FS_AddGameDirectory( fs_cdpath->string, fs_gamedirvar->string );
-		}
 		if ( fs_basepath->string[0] ) {
 			FS_AddGameDirectory( fs_basepath->string, fs_gamedirvar->string );
 		}
@@ -4080,7 +4022,6 @@ void FS_InitFilesystem( void ) {
 	// we have to specially handle this, because normal command
 	// line variable sets don't happen until after the filesystem
 	// has already been initialized
-	Com_StartupVariable( "fs_cdpath" );
 	Com_StartupVariable( "fs_basepath" );
 	Com_StartupVariable( "fs_buildpath" );
 	Com_StartupVariable( "fs_buildgame" );

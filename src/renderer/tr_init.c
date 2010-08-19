@@ -32,6 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 
 glconfig_t glConfig;
 glstate_t glState;
+float displayAspect = 0.0f;
 
 static void GfxInfo_f( void );
 
@@ -53,10 +54,14 @@ cvar_t  *r_detailTextures;
 
 cvar_t  *r_znear;
 cvar_t  *r_zfar;
+cvar_t	*r_stereoSeparation;
 
 cvar_t  *r_smp;
 cvar_t  *r_showSmp;
 cvar_t  *r_skipBackEnd;
+
+cvar_t	*r_stereoEnabled;
+cvar_t	*r_anaglyphMode;
 
 cvar_t  *r_ignorehwgamma;
 cvar_t  *r_measureOverdraw;
@@ -115,6 +120,7 @@ cvar_t  *r_colorbits;
 cvar_t  *r_stereo;
 cvar_t  *r_primitives;
 cvar_t  *r_texturebits;
+cvar_t  *r_ext_multisample;
 
 cvar_t  *r_drawBuffer;
 cvar_t  *r_glDriver;
@@ -154,6 +160,7 @@ cvar_t  *r_subdivisions;
 cvar_t  *r_lodCurveError;
 
 cvar_t  *r_fullscreen;
+cvar_t  *r_noborder;
 
 cvar_t  *r_customwidth;
 cvar_t  *r_customheight;
@@ -799,10 +806,6 @@ void GL_SetDefaultState( void ) {
 //----(SA)	end
 }
 
-#ifdef __linux__
-extern const char *glx_extensions_string;
-#endif
-
 /*
 ================
 GfxInfo_f
@@ -825,9 +828,6 @@ void GfxInfo_f( void ) {
 	ri.Printf( PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string );
 	ri.Printf( PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string );
 	ri.Printf( PRINT_ALL, "GL_EXTENSIONS: %s\n", glConfig.extensions_string );
-#ifdef __linux__
-	ri.Printf( PRINT_ALL, "GLX_EXTENSIONS: %s\n", glx_extensions_string );
-#endif
 	ri.Printf( PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize );
 	ri.Printf( PRINT_ALL, "GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures );
 	ri.Printf( PRINT_ALL, "\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits );
@@ -956,18 +956,22 @@ void R_Register( void ) {
 	r_stencilbits = ri.Cvar_Get( "r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE );
 #endif
 	r_depthbits = ri.Cvar_Get( "r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE );
+	r_ext_multisample = ri.Cvar_Get( "r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH );
+	AssertCvarRange( r_ext_multisample, 0, 4, qtrue );
 	r_overBrightBits = ri.Cvar_Get( "r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH ); // Arnout: disable overbrightbits by default
 	AssertCvarRange( r_overBrightBits, 0, 1, qtrue );                                   // ydnar: limit to overbrightbits 1 (sorry 1337 players)
 	r_ignorehwgamma = ri.Cvar_Get( "r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH );        // ydnar: use hw gamma by default
 	r_mode = ri.Cvar_Get( "r_mode", "4", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE );
 	r_oldMode = ri.Cvar_Get( "r_oldMode", "", CVAR_ARCHIVE );                             // ydnar: previous "good" video mode
 	r_fullscreen = ri.Cvar_Get( "r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH );
+	r_noborder = ri.Cvar_Get( "r_noborder", "0", CVAR_ARCHIVE );
 	r_customwidth = ri.Cvar_Get( "r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH );
 	r_customheight = ri.Cvar_Get( "r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH );
 	r_customaspect = ri.Cvar_Get( "r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH );
 	r_simpleMipMaps = ri.Cvar_Get( "r_simpleMipMaps", "1", CVAR_ARCHIVE | CVAR_LATCH );
 	r_uiFullScreen = ri.Cvar_Get( "r_uifullscreen", "0", 0 );
 	r_subdivisions = ri.Cvar_Get( "r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH );
+	r_stereoEnabled = ri.Cvar_Get( "r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
 #ifdef MACOS_X
 	// Default to using SMP on Mac OS X if we have multiple processors
 	r_smp = ri.Cvar_Get( "r_smp", Sys_ProcessorCount() > 1 ? "1" : "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE );
@@ -982,6 +986,7 @@ void R_Register( void ) {
 #if MAC_STVEF_HM || MAC_WOLF2_MP
 	r_ati_fsaa_samples              = ri.Cvar_Get( "r_ati_fsaa_samples", "1", CVAR_ARCHIVE );       //DAJ valids are 1, 2, 4
 #endif
+
 	//
 	// temporary latched variables that can only change over a restart
 	//
@@ -1029,6 +1034,8 @@ void R_Register( void ) {
 
 	r_ambientScale = ri.Cvar_Get( "r_ambientScale", "0.5", CVAR_CHEAT );
 	r_directedScale = ri.Cvar_Get( "r_directedScale", "1", CVAR_CHEAT );
+
+	r_anaglyphMode = ri.Cvar_Get("r_anaglyphMode", "0", CVAR_ARCHIVE);
 
 	//
 	// temporary variables that can change at any time
@@ -1143,8 +1150,6 @@ void R_Init( void ) {
 
 	tess.maxShaderVerts =       SHADER_MAX_VERTEXES;
 	tess.maxShaderIndicies =    SHADER_MAX_INDEXES;
-
-	Swap_Init();
 
 	if ( (int)tess.xyz & 15 ) {
 		Com_Printf( "WARNING: tess.xyz not 16 byte aligned\n" );

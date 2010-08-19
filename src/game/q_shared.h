@@ -32,6 +32,10 @@ If you have questions concerning this license or the applicable additional terms
 // q_shared.h -- included first by ALL program modules.
 // A user mod should never modify this file
 
+#define PRODUCT_NAME "ioWolfET"
+#define CLIENT_WINDOW_TITLE "Enemy Territory"
+#define CLIENT_WINDOW_MIN_TITLE "Enemy Territory"
+#define GAMENAME_FOR_MASTER "ioWolfET"
 //#define PRE_RELEASE_DEMO
 
 #ifndef PRE_RELEASE_DEMO
@@ -127,6 +131,16 @@ typedef int intptr_t;
 #include <sys/stat.h> // rain
 #include <float.h>
 
+// vsnprintf is ISO/IEC 9899:1999
+// abstracting this to make it portable
+#ifdef _WIN32
+  #define Q_vsnprintf _vsnprintf
+  #define Q_snprintf _snprintf
+#else
+  #define Q_vsnprintf vsnprintf
+  #define Q_snprintf snprintf
+#endif
+
 #ifdef _MSC_VER
   #include <io.h>
 
@@ -145,11 +159,12 @@ typedef int intptr_t;
 #endif
 
 
-// use MSVC inline asm version of C functions
-#if defined _M_IX86
-#define id386   1
+#include "../qcommon/q_platform.h"
+
+#ifdef __GNUC__
+#define _attribute( x ) __attribute__( x )
 #else
-#define id386   0
+#define _attribute( x )
 #endif
 
 // for windows fastcall option
@@ -158,12 +173,6 @@ typedef int intptr_t;
 
 //bani
 //======================= GNUC DEFINES ==================================
-#ifdef __GNUC__
-#define _attribute( x ) __attribute__( x )
-#else
-#define _attribute( x )
-#endif
-
 #if (defined _MSC_VER)
 #define Q_EXPORT __declspec(dllexport)
 #elif (defined __SUNPRO_C)
@@ -302,6 +311,12 @@ typedef unsigned char byte;
 
 typedef enum {qfalse, qtrue}    qboolean;
 
+typedef union {
+	float f;
+	int i;
+	unsigned int ui;
+} floatint_t;
+
 typedef int qhandle_t;
 typedef int sfxHandle_t;
 typedef int fileHandle_t;
@@ -319,6 +334,10 @@ typedef int clipHandle_t;
 #ifndef NULL
 #define NULL ( (void *)0 )
 #endif
+
+#define STRING(s)			#s
+// expand constants before stringifying them
+#define XSTRING(s)			STRING(s)
 
 #define MAX_QINT            0x7fffffff
 #define MIN_QINT            ( -MAX_QINT - 1 )
@@ -353,6 +372,7 @@ typedef int clipHandle_t;
 
 #define MAX_QPATH           64      // max length of a quake game pathname
 #define MAX_OSPATH          256     // max length of a filesystem pathname
+#define MAX_CMD             1024    // max length of a command line
 
 // rain - increased to 36 to match MAX_NETNAME, fixes #13 - UI stuff breaks
 // with very long names
@@ -454,16 +474,8 @@ void *Hunk_AllocDebug( int size, ha_pref preference, char *label, char *file, in
 void *Hunk_Alloc( int size, ha_pref preference );
 #endif
 
-#ifdef __linux__
-// show_bug.cgi?id=371
-// custom Snd_Memset implementation for glibc memset bug workaround
-void Snd_Memset( void* dest, const int val, const size_t count );
-#else
-#define Snd_Memset Com_Memset
-#endif
-
-void Com_Memset( void* dest, const int val, const size_t count );
-void Com_Memcpy( void* dest, const void* src, const size_t count );
+#define Com_Memset memset
+#define Com_Memcpy memcpy
 
 #define CIN_system  1
 #define CIN_loop    2
@@ -858,6 +870,8 @@ typedef enum {
 	FS_SEEK_SET
 } fsOrigin_t;
 
+int Com_HexStrToInt( const char *str );
+
 //=============================================
 
 int Q_isprint( int c );
@@ -875,6 +889,7 @@ int     Q_stricmpn( const char *s1, const char *s2, int n );
 char    *Q_strlwr( char *s1 );
 char    *Q_strupr( char *s1 );
 char    *Q_strrchr( const char* string, int c );
+const char *Q_stristr( const char *s, const char *find);
 
 #ifdef _WIN32
 #define Q_putenv _putenv
@@ -890,6 +905,8 @@ void    Q_strcat( char *dest, int size, const char *src );
 int Q_PrintStrlen( const char *string );
 // removes color sequences from string
 char *Q_CleanStr( char *string );
+// Count the number of char tocount encountered in string
+int Q_CountChar(const char *string, char tocount);
 // removes whitespaces and other bad directory characters
 char *Q_CleanDirName( char *dirname );
 
@@ -913,21 +930,9 @@ typedef struct
 	byte b7;
 } qint64;
 
-//=============================================
-
-short   LittleShort( short l );
-int     LittleLong( int l );
-qint64  LittleLong64( qint64 l );
-float   LittleFloat( float l );
-
-short   BigShort( short l );
-int BigLong( int l );
-qint64  BigLong64( qint64 l );
-float   BigFloat( float l );
-
-void    Swap_Init( void );
-char    * QDECL va( char *format, ... ) _attribute( ( format( printf,1,2 ) ) );
 float   *tv( float x, float y, float z );
+
+char	* QDECL va(char *format, ...) __attribute__ ((format (printf, 1, 2)));
 
 //=============================================
 

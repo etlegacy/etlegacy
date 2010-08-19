@@ -98,7 +98,7 @@ endif
 USE_CURL_DLOPEN=0
 
 ifndef USE_LOCAL_HEADERS
-USE_LOCAL_HEADERS=1
+USE_LOCAL_HEADERS=0
 endif
 
 ifndef DEBUG_CFLAGS
@@ -113,6 +113,8 @@ CDIR=$(MOUNT_DIR)/client
 SDIR=$(MOUNT_DIR)/server
 RDIR=$(MOUNT_DIR)/renderer
 CMDIR=$(MOUNT_DIR)/qcommon
+SDLDIR=$(MOUNT_DIR)/sdl
+SYSDIR=$(MOUNT_DIR)/sys
 GDIR=$(MOUNT_DIR)/game
 CGDIR=$(MOUNT_DIR)/cgame
 BLIBDIR=$(MOUNT_DIR)/botlib
@@ -120,7 +122,8 @@ BOTAIDIR=$(MOUNT_DIR)/botai
 NDIR=$(MOUNT_DIR)/null
 UIDIR=$(MOUNT_DIR)/ui
 JPDIR=$(MOUNT_DIR)/jpeg-6
-WINDIR=$(MOUNT_DIR)/win32
+SDLHDIR=$(MOUNT_DIR)/SDL12
+LIBSDIR=$(MOUNT_DIR)/libs
 UNIXDIR=$(MOUNT_DIR)/unix
 SPLDIR=$(MOUNT_DIR)/splines
 TEMPDIR=/tmp
@@ -134,6 +137,15 @@ ifneq ($(BUILD_CLIENT),0)
   ifneq ($(call bin_path, pkg-config),)
     CURL_CFLAGS=$(shell pkg-config --silence-errors --cflags libcurl)
     CURL_LIBS=$(shell pkg-config --silence-errors --libs libcurl)
+    SDL_CFLAGS=$(shell pkg-config --silence-errors --cflags sdl|sed 's/-Dmain=SDL_main//')
+    SDL_LIBS=$(shell pkg-config --silence-errors --libs sdl) 
+  endif
+  # Use sdl-config if all else fails
+  ifeq ($(SDL_CFLAGS),)
+    ifneq ($(call bin_path, sdl-config),)
+      SDL_CFLAGS=$(shell sdl-config --cflags)
+      SDL_LIBS=$(shell sdl-config --libs)
+    endif
   endif
 endif
 
@@ -175,7 +187,7 @@ ifeq ($(PLATFORM),linux)
 
   BASE_CFLAGS = -Wall -fno-strict-aliasing -Wimplicit -Wstrict-prototypes \
     -pipe -DUSE_ICON -DNO_VM_COMPILED
-  CLIENT_CFLAGS =
+  CLIENT_CFLAGS = $(SDL_CFLAGS)
   SERVER_CFLAGS =
 
   ifeq ($(USE_CURL),1)
@@ -220,12 +232,16 @@ ifeq ($(PLATFORM),linux)
   THREAD_LIBS=-lpthread
   LIBS=-ldl -lm -lX11 -lXext -lXxf86dga -lXxf86vm -lsupc++
 
-  CLIENT_LIBS=-lGL
+  CLIENT_LIBS=$(SDL_LIBS) -lGL
 
   ifeq ($(USE_CURL),1)
     ifneq ($(USE_CURL_DLOPEN),1)
       CLIENT_LIBS += -lcurl
     endif
+  endif
+
+  ifeq ($(USE_LOCAL_HEADERS),1)
+    CLIENT_CFLAGS += -I$(SDLHDIR)/include
   endif
 
   ifeq ($(ARCH),i386)
@@ -289,6 +305,23 @@ ifeq ($(PLATFORM),mingw32)
   CLIENT_LDFLAGS = -mwindows
   CLIENT_LIBS = -lole32 -lopengl32 -ldinput -ldsound -lsupc++
 
+  ifeq ($(USE_CURL),1)
+    CLIENT_CFLAGS += -DUSE_CURL
+    CLIENT_CFLAGS += $(CURL_CFLAGS)
+    ifneq ($(USE_CURL_DLOPEN),1)
+      ifeq ($(USE_LOCAL_HEADERS),1)
+        CLIENT_CFLAGS += -DCURL_STATICLIB
+        ifeq ($(ARCH),x64)
+	  CLIENT_LIBS += $(LIBSDIR)/win64/libcurl.a
+	else
+          CLIENT_LIBS += $(LIBSDIR)/win32/libcurl.a
+        endif
+      else
+        CLIENT_LIBS += $(CURL_LIBS)
+      endif
+    endif
+  endif
+
   ifeq ($(ARCH),x86)
     # build 32bit
     BASE_CFLAGS += -m32
@@ -296,14 +329,23 @@ ifeq ($(PLATFORM),mingw32)
     BASE_CFLAGS += -m64
   endif
 
-  ifeq ($(USE_CURL),1)
-    ifneq ($(USE_CURL_DLOPEN),1)
-      CLIENT_LIBS += -lcurl
-    endif
-  endif
 
   # libmingw32 must be linked before libSDLmain
   CLIENT_LIBS += -lmingw32
+  ifeq ($(USE_LOCAL_HEADERS),1)
+    CLIENT_CFLAGS += -I$(SDLHDIR)/include
+    ifeq ($(ARCH), x86)
+    CLIENT_LIBS += $(LIBSDIR)/win32/libSDLmain.a \
+                      $(LIBSDIR)/win32/libSDL.dll.a
+    else
+    CLIENT_LIBS += $(LIBSDIR)/win64/libSDLmain.a \
+                      $(LIBSDIR)/win64/libSDL.dll.a \
+                      $(LIBSDIR)/win64/libSDL.a
+    endif
+  else
+    CLIENT_CFLAGS += $(SDL_CFLAGS)
+    CLIENT_LIBS += $(SDL_LIBS)
+  endif
 
   BUILD_CLIENT_SMP = 0
 
@@ -442,7 +484,7 @@ endef
 
 define DO_SPLINE_CXX
 $(echo_cmd) "SPLINE_CXX $<"
-$(Q)$(CXX) $(NOTSHLIBCFLAGS) $(CFLAGS) $(OPTIMIZE) -o $@ -c $<
+$(Q)$(CXX) $(NOTSHLIBCFLAGS) $(CFLAGS) $(CLIENT_CFLAGS) $(OPTIMIZE) -o $@ -c $<
 endef
 
 #############################################################################
@@ -568,6 +610,7 @@ Q3OBJ = \
   $(B)/client/md4.o \
   $(B)/client/msg.o \
   $(B)/client/net_chan.o \
+  $(B)/client/net_ip.o \
   $(B)/client/huffman.o \
   \
   $(B)/client/snd_adpcm.o \
@@ -691,7 +734,15 @@ Q3OBJ = \
   $(B)/splines/math_vector.o \
   $(B)/splines/q_parse.o \
   $(B)/splines/splines.o \
-  $(B)/splines/util_str.o
+  $(B)/splines/util_str.o \
+  \
+  $(B)/client/sdl_glimp.o \
+  $(B)/client/sdl_gamma.o \
+  $(B)/client/sdl_input.o \
+  $(B)/client/sdl_snd.o \
+  \
+  $(B)/client/con_log.o \
+  $(B)/client/sys_main.o
 
 ifneq ($(PLATFORM),mingw32)
   ifeq ($(ARCH),i386)
@@ -710,26 +761,18 @@ endif
 
 ifeq ($(PLATFORM),mingw32)
   Q3OBJ += \
-    $(B)/client/win_gamma.o \
-    $(B)/client/win_glimp.o \
-    $(B)/client/win_input.o \
-    $(B)/client/win_main.o \
-    $(B)/client/win_net.o \
-    $(B)/client/win_qgl.o \
-    $(B)/client/win_shared.o \
-    $(B)/client/win_snd.o \
-    $(B)/client/win_syscon.o \
-    $(B)/client/win_wndproc.o
+    $(B)/ded/win_resource.o \
+    $(B)/ded/sys_win32.o \
+    $(B)/ded/con_win32.o
 else
   Q3OBJ += \
-    $(B)/client/linux_glimp.o \
-    $(B)/client/linux_joystick.o \
-    $(B)/client/linux_qgl.o \
-    $(B)/client/linux_signals.o \
-    $(B)/client/linux_snd.o \
-    $(B)/client/unix_main.o \
-    $(B)/client/unix_net.o \
-    $(B)/client/unix_shared.o
+    $(B)/ded/sys_unix.o \
+    $(B)/ded/con_tty.o
+endif
+
+ifeq ($(PLATFORM),darwin)
+  Q3OBJ += \
+    $(B)/ded/sys_osx.o
 endif
 
 $(B)/$(CLIENT_NAME)$(FULLBINEXT): $(Q3OBJ) $(Q3POBJ)
@@ -773,6 +816,7 @@ Q3DOBJ = \
   $(B)/ded/md4.o \
   $(B)/ded/msg.o \
   $(B)/ded/net_chan.o \
+  $(B)/ded/net_ip.o \
   $(B)/ded/huffman.o \
   \
   $(B)/ded/q_math.o \
@@ -814,7 +858,11 @@ Q3DOBJ = \
   \
   $(B)/ded/null_client.o \
   $(B)/ded/null_input.o \
-  $(B)/ded/null_snddma.o
+  $(B)/ded/null_snddma.o \
+  \
+  $(B)/ded/con_log.o \
+  $(B)/ded/sys_main.o
+
 
 ifneq ($(PLATFORM),mingw32)
   ifeq ($(ARCH),i386)
@@ -831,17 +879,18 @@ endif
 
 ifeq ($(PLATFORM),mingw32)
   Q3DOBJ += \
-    $(B)/ded/win_main.o \
-    $(B)/ded/win_net.o \
-    $(B)/ded/win_shared.o \
-    $(B)/ded/win_syscon.o \
-    $(B)/ded/win_wndproc.o
+    $(B)/ded/win_resource.o \
+    $(B)/ded/sys_win32.o \
+    $(B)/ded/con_win32.o
 else
   Q3DOBJ += \
-    $(B)/ded/linux_signals.o \
-    $(B)/ded/unix_main.o \
-    $(B)/ded/unix_net.o \
-    $(B)/ded/unix_shared.o
+    $(B)/ded/sys_unix.o \
+    $(B)/ded/con_tty.o
+endif
+
+ifeq ($(PLATFORM),darwin)
+  Q3DOBJ += \
+    $(B)/ded/sys_osx.o
 endif
 
 $(B)/$(SERVER_NAME)$(FULLBINEXT): $(Q3DOBJ)
@@ -1036,31 +1085,28 @@ $(B)/client/%.o: $(BLIBDIR)/%.c
 $(B)/client/%.o: $(JPDIR)/%.c
 	$(DO_CC)
 
-$(B)/client/%.o: $(SPEEXDIR)/%.c
-	$(DO_CC)
-
 $(B)/client/%.o: $(ZDIR)/%.c
 	$(DO_CC)
 
 $(B)/client/%.o: $(RDIR)/%.c
 	$(DO_CC)
 
-$(B)/client/%.o: $(UNIXDIR)/%.c
-	$(DO_CC)
-
-$(B)/client/%.o: $(GDIR)/%.c
+$(B)/client/%.o: $(SDLDIR)/%.c
 	$(DO_CC)
 	
-$(B)/clientsmp/%.o: $(UNIXDIR)/%.c
-	$(DO_SMP_CC)
-
-$(B)/client/%.o: $(WINDIR)/%.c
+$(B)/client/%.o: $(GDIR)/%.c
 	$(DO_CC)
 
-$(B)/clientsmp/%.o: $(WINDIR)/%.c
+$(B)/clientsmp/%.o: $(SDLDIR)/%.c
 	$(DO_SMP_CC)
 
-$(B)/client/%.o: $(WINDIR)/%.rc
+$(B)/client/%.o: $(SYSDIR)/%.c
+	$(DO_CC)
+
+$(B)/client/%.o: $(SYSDIR)/%.m
+	$(DO_CC)
+
+$(B)/client/%.o: $(SYSDIR)/%.rc
 	$(DO_WINDRES)
 
 $(B)/splines/%.o: $(SPLDIR)/%.cpp
@@ -1087,13 +1133,13 @@ $(B)/ded/%.o: $(ZDIR)/%.c
 $(B)/ded/%.o: $(BLIBDIR)/%.c
 	$(DO_BOT_CC)
 
-$(B)/ded/%.o: $(UNIXDIR)/%.c
+$(B)/ded/%.o: $(SYSDIR)/%.c
 	$(DO_DED_CC)
 
-$(B)/ded/%.o: $(WINDIR)/%.c
+$(B)/ded/%.o: $(SYSDIR)/%.m
 	$(DO_DED_CC)
 
-$(B)/ded/%.o: $(WINDIR)/%.rc
+$(B)/ded/%.o: $(SYSDIR)/%.rc
 	$(DO_WINDRES)
 
 $(B)/ded/%.o: $(NDIR)/%.c

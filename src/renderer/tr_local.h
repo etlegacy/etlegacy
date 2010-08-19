@@ -1255,6 +1255,7 @@ extern trGlobals_t tr;
 extern glconfig_t glConfig;         // outside of TR since it shouldn't be cleared during ref re-init
 extern glstate_t glState;           // outside of TR since it shouldn't be cleared during ref re-init
 
+extern float displayAspect;
 
 //
 // cvars
@@ -1282,7 +1283,7 @@ extern cvar_t   *r_texturebits;         // number of desired texture bits
 										// 16 = use 16-bit textures
 										// 32 = use 32-bit textures
 										// all else = error
-
+extern cvar_t   *r_ext_multisample;
 extern cvar_t   *r_measureOverdraw;     // enables stencil buffer overdraw measurement
 
 extern cvar_t   *r_lodbias;             // push/pull LOD transitions
@@ -1317,6 +1318,7 @@ extern cvar_t  *r_showcluster;
 extern cvar_t   *r_mode;                // video mode
 extern cvar_t   *r_oldMode;             // ydnar: previous "good" video mode
 extern cvar_t   *r_fullscreen;
+extern cvar_t   *r_noborder;
 extern cvar_t   *r_gamma;
 extern cvar_t   *r_displayRefresh;      // optional display refresh option
 extern cvar_t   *r_ignorehwgamma;       // overrides hardware gamma capabilities
@@ -1380,6 +1382,9 @@ extern cvar_t  *r_lodCurveError;
 extern cvar_t  *r_smp;
 extern cvar_t  *r_showSmp;
 extern cvar_t  *r_skipBackEnd;
+
+extern cvar_t	*r_stereoEnabled;
+extern cvar_t	*r_anaglyphMode;
 
 extern cvar_t  *r_ignoreGLErrors;
 

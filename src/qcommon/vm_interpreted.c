@@ -118,7 +118,7 @@ static char *opnames[256] = {
 };
 #endif
 
-#if defined( idppc )
+#if idppc
 	#if defined( __GNUC__ )
 static inline unsigned int loadWord( void *addr ) {
 	unsigned int word;
