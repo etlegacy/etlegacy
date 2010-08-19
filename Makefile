@@ -98,7 +98,7 @@ endif
 USE_CURL_DLOPEN=0
 
 ifndef USE_LOCAL_HEADERS
-USE_LOCAL_HEADERS=0
+USE_LOCAL_HEADERS=1
 endif
 
 ifndef DEBUG_CFLAGS
@@ -463,13 +463,8 @@ endef
 
 define DO_AS
 $(echo_cmd) "AS $<"
-$(echo_cmd) "$(CC) $(CFLAGS) -DELF $(OPTIMIZE) -x assembler-with-cpp -o $@ -c $<"
-$(Q)$(CC) $(CFLAGS) -DELF $(OPTIMIZE) -x assembler-with-cpp -o $@ -c $<
-endef
-
-define DO_NASM
-$(echo_cmd) "NASM $<"
-$(Q)$(NASM) -f elf -o $@ $<
+$(echo_cmd) "$(CC) $(CFLAGS) $(OPTIMIZE) -x assembler-with-cpp -o $@ -c $<"
+$(Q)$(CC) $(CFLAGS) $(OPTIMIZE) -x assembler-with-cpp -o $@ -c $<
 endef
 
 define DO_DED_CC
@@ -744,19 +739,19 @@ Q3OBJ = \
   $(B)/client/con_log.o \
   $(B)/client/sys_main.o
 
-ifneq ($(PLATFORM),mingw32)
-  ifeq ($(ARCH),i386)
-    Q3OBJ += \
-      $(B)/client/snd_mixa.o \
-      $(B)/client/matha.o \
-      $(B)/client/snapvector.o
-  endif
-  ifeq ($(ARCH),x86)
-    Q3OBJ += \
-      $(B)/client/snd_mixa.o \
-      $(B)/client/matha.o \
-      $(B)/client/snapvector.o
-  endif
+ifeq ($(ARCH),i386)
+  Q3OBJ += \
+    $(B)/client/ftola.o \
+    $(B)/client/snd_mixa.o \
+    $(B)/client/matha.o \
+    $(B)/client/snapvectora.o
+endif
+ifeq ($(ARCH),x86)
+  Q3OBJ += \
+    $(B)/client/ftola.o \
+    $(B)/client/snd_mixa.o \
+    $(B)/client/matha.o \
+    $(B)/client/snapvectora.o
 endif
 
 ifeq ($(PLATFORM),mingw32)
@@ -864,17 +859,17 @@ Q3DOBJ = \
   $(B)/ded/sys_main.o
 
 
-ifneq ($(PLATFORM),mingw32)
-  ifeq ($(ARCH),i386)
-    Q3DOBJ += \
-        $(B)/ded/snapvector.o \
-        $(B)/ded/matha.o
-  endif
-  ifeq ($(ARCH),x86)
-    Q3DOBJ += \
-        $(B)/ded/snapvector.o \
-        $(B)/ded/matha.o
-  endif
+ifeq ($(ARCH),i386)
+  Q3DOBJ += \
+      $(B)/ded/ftola.o \
+      $(B)/ded/snapvectora.o \
+      $(B)/ded/matha.o
+endif
+ifeq ($(ARCH),x86)
+  Q3DOBJ += \
+      $(B)/ded/ftola.o \
+      $(B)/ded/snapvectora.o \
+      $(B)/ded/matha.o
 endif
 
 ifeq ($(PLATFORM),mingw32)
@@ -1061,14 +1056,8 @@ $(B)/etmain/ui$(SHLIBNAME): $(Q3UIOBJ)
 ## CLIENT/SERVER RULES
 #############################################################################
 
-$(B)/client/%.o: $(ASMDIR)/%.spp
+$(B)/client/%.o: $(ASMDIR)/%.s
 	$(DO_AS)
-	
-$(B)/client/%.o: $(ASMDIR)/%.asm
-	$(DO_NASM)
-	
-$(B)/client/%.o: $(ASMDIR)/%.nasm
-	$(DO_NASM)
 
 $(B)/client/%.o: $(CDIR)/%.c
 	$(DO_CC)
@@ -1112,14 +1101,8 @@ $(B)/client/%.o: $(SYSDIR)/%.rc
 $(B)/splines/%.o: $(SPLDIR)/%.cpp
 	$(DO_SPLINE_CXX)
 
-$(B)/ded/%.o: $(ASMDIR)/%.spp
+$(B)/ded/%.o: $(ASMDIR)/%.s
 	$(DO_AS)
-	
-$(B)/ded/%.o: $(ASMDIR)/%.asm
-	$(DO_NASM)
-	
-$(B)/ded/%.o: $(ASMDIR)/%.nasm
-	$(DO_NASM)
 
 $(B)/ded/%.o: $(SDIR)/%.c
 	$(DO_DED_CC)
