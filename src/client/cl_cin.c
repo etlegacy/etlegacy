@@ -1601,6 +1601,11 @@ void CL_PlayCinematic_f(void) {
 	qboolean	holdatend;
 	int bits = CIN_system;
 
+	// don't allow this while on server
+	if ( cls.state > CA_DISCONNECTED && cls.state <= CA_ACTIVE ) {
+		return;
+	}
+	
 	Com_DPrintf("CL_PlayCinematic_f\n");
 	if (cls.state == CA_CINEMATIC) {
 		SCR_StopCinematic();
