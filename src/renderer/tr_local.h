@@ -2,9 +2,9 @@
 ===========================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
 Wolf ET Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1386,6 +1386,8 @@ extern cvar_t  *r_skipBackEnd;
 extern cvar_t	*r_stereoEnabled;
 extern cvar_t	*r_anaglyphMode;
 
+extern	cvar_t	*r_greyscale;
+
 extern cvar_t  *r_ignoreGLErrors;
 
 extern cvar_t  *r_overBrightBits;
@@ -1840,6 +1842,20 @@ int R_MDM_GetBoneTag( orientation_t *outTag, mdmHeader_t *mdm, int startTagIndex
 
 /*
 =============================================================
+
+IMAGE LOADERS
+
+=============================================================
+*/
+
+void R_LoadBMP( const char *name, byte **pic, int *width, int *height );
+void R_LoadJPG( const char *name, byte **pic, int *width, int *height );
+void R_LoadPCX( const char *name, byte **pic, int *width, int *height );
+void R_LoadPNG( const char *name, byte **pic, int *width, int *height );
+void R_LoadTGA( const char *name, byte **pic, int *width, int *height );
+
+/*
+=============================================================
 =============================================================
 */
 void    R_TransformModelToClip( const vec3_t src, const float *modelMatrix, const float *projectionMatrix,
@@ -2053,6 +2069,16 @@ void SaveJPG( char * filename, int quality, int image_width, int image_height, u
 void R_InitFreeType();
 void R_DoneFreeType();
 void RE_RegisterFont( const char *fontName, int pointSize, fontInfo_t *font );
+
+// image buffer
+typedef enum {
+	BUFFER_IMAGE,
+	BUFFER_SCALED,
+	BUFFER_RESAMPLED,
+	BUFFER_MAX_TYPES
+} bufferMemType_t;
+void *R_GetImageBuffer( int size, bufferMemType_t bufferType );
+void R_FreeImageBuffer( void );
 
 // Ridah, caching system
 // NOTE: to disable this for development, set "r_cache 0" in autoexec.cfg

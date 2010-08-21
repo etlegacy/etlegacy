@@ -2,9 +2,9 @@
 ===========================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
 Wolf ET Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -237,7 +237,7 @@ static void R_BindAnimatedImage( textureBundle_t *bundle ) {
 
 	// it is necessary to do this messy calc to make sure animations line up
 	// exactly with waveforms of the same frequency
-	index = myftol( tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE );
+	index = (int)( tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE );
 	index >>= FUNCTABLE_SIZE2;
 
 	if ( index < 0 ) {
@@ -600,11 +600,11 @@ static void DynamicLightSinglePass( void ) {
 			}
 
 			// add to color
-			color = colors[ 0 ] + myftol( floatColor[ 0 ] * modulate );
+			color = colors[ 0 ] + (int)( floatColor[ 0 ] * modulate );
 			colors[ 0 ] = color > 255 ? 255 : color;
-			color = colors[ 1 ] + myftol( floatColor[ 1 ] * modulate );
+			color = colors[ 1 ] + (int)( floatColor[ 1 ] * modulate );
 			colors[ 1 ] = color > 255 ? 255 : color;
-			color = colors[ 2 ] + myftol( floatColor[ 2 ] * modulate );
+			color = colors[ 2 ] + (int)( floatColor[ 2 ] * modulate );
 			colors[ 2 ] = color > 255 ? 255 : color;
 		}
 	}
@@ -740,11 +740,11 @@ static void DynamicLightPass( void ) {
 			}
 
 			// set color
-			color = myftol( floatColor[ 0 ] * modulate );
+			color = (int)( floatColor[ 0 ] * modulate );
 			colors[ 0 ] = color > 255 ? 255 : color;
-			color = myftol( floatColor[ 1 ] * modulate );
+			color = (int)( floatColor[ 1 ] * modulate );
 			colors[ 1 ] = color > 255 ? 255 : color;
-			color = myftol( floatColor[ 2 ] * modulate );
+			color = (int)( floatColor[ 2 ] * modulate );
 			colors[ 2 ] = color > 255 ? 255 : color;
 		}
 

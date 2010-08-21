@@ -704,7 +704,7 @@ void PC_AddBuiltinDefines( source_t *source ) {
 int PC_ExpandBuiltinDefine( source_t *source, token_t *deftoken, define_t *define,
 							token_t **firsttoken, token_t **lasttoken ) {
 	token_t *token;
-	unsigned long t;    //	time_t t; //to prevent LCC warning
+	time_t t;
 	char *curtime;
 
 	token = PC_CopyToken( deftoken );

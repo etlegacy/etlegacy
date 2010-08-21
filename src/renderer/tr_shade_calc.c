@@ -2,9 +2,9 @@
 ===========================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
 Wolf ET Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "tr_local.h"
 
 
-#define WAVEVALUE( table, base, amplitude, phase, freq )  ( ( base ) + table[ myftol( ( ( ( phase ) + tess.shaderTime * ( freq ) ) * FUNCTABLE_SIZE ) ) & FUNCTABLE_MASK ] * ( amplitude ) )
+#define WAVEVALUE( table, base, amplitude, phase, freq )  ( ( base ) + table[ (int)( ( ( ( phase ) + tess.shaderTime * ( freq ) ) * FUNCTABLE_SIZE ) ) & FUNCTABLE_MASK ] * ( amplitude ) )
 
 static float *TableForFunc( genFunc_t func ) {
 	switch ( func )
@@ -745,7 +745,7 @@ void RB_CalcWaveColor( const waveForm_t *wf, unsigned char *dstColors ) {
 		glow = 1;
 	}
 
-	v = myftol( 255 * glow );
+	v = (int)( 255 * glow );
 	color[0] = color[1] = color[2] = v;
 	color[3] = 255;
 	v = *(int *)color;
@@ -1367,7 +1367,7 @@ void RB_CalcDiffuseColor( unsigned char *colors ) {
 	numVertexes = tess.numVertexes;
 	for ( i = 0; i < numVertexes; i++, normal += 4, colorsInt++ )
 	{
-		dp = myftol( ENTITY_LIGHT_STEPS * DotProduct( normal, lightDir ) );
+		dp = (int)( ENTITY_LIGHT_STEPS * DotProduct( normal, lightDir ) );
 
 		// ydnar: enable this for twosided lighting
 		//%	if( tess.shader->cullType == CT_TWO_SIDED )
@@ -1417,19 +1417,19 @@ void RB_CalcDiffuseColor( unsigned char *colors ) {
 			*(int *)&colors[i * 4] = ambientLightInt;
 			continue;
 		}
-		j = myftol( ambientLight[0] + incoming * directedLight[0] );
+		j = (int)( ambientLight[0] + incoming * directedLight[0] );
 		if ( j > 255 ) {
 			j = 255;
 		}
 		colors[i * 4 + 0] = j;
 
-		j = myftol( ambientLight[1] + incoming * directedLight[1] );
+		j = (int)( ambientLight[1] + incoming * directedLight[1] );
 		if ( j > 255 ) {
 			j = 255;
 		}
 		colors[i * 4 + 1] = j;
 
-		j = myftol( ambientLight[2] + incoming * directedLight[2] );
+		j = (int)( ambientLight[2] + incoming * directedLight[2] );
 		if ( j > 255 ) {
 			j = 255;
 		}

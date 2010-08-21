@@ -122,7 +122,7 @@ BLIBDIR=$(MOUNT_DIR)/botlib
 BOTAIDIR=$(MOUNT_DIR)/botai
 NDIR=$(MOUNT_DIR)/null
 UIDIR=$(MOUNT_DIR)/ui
-JPDIR=$(MOUNT_DIR)/jpeg-6
+JPDIR=$(MOUNT_DIR)/jpeg-6b
 SDLHDIR=$(MOUNT_DIR)/SDL12
 LIBSDIR=$(MOUNT_DIR)/libs
 SPLDIR=$(MOUNT_DIR)/splines
@@ -606,6 +606,7 @@ Q3OBJ = \
   $(B)/client/msg.o \
   $(B)/client/net_chan.o \
   $(B)/client/net_ip.o \
+  $(B)/client/puff.o \
   $(B)/client/huffman.o \
   \
   $(B)/client/snd_adpcm.o \
@@ -662,10 +663,11 @@ Q3OBJ = \
   $(B)/client/l_struct.o \
   \
   $(B)/client/jcapimin.o \
-  $(B)/client/jccoefct.o \
+  $(B)/client/jcapistd.o \
+  $(B)/client/jccoefct.o  \
   $(B)/client/jccolor.o \
   $(B)/client/jcdctmgr.o \
-  $(B)/client/jchuff.o \
+  $(B)/client/jchuff.o   \
   $(B)/client/jcinit.o \
   $(B)/client/jcmainct.o \
   $(B)/client/jcmarker.o \
@@ -707,6 +709,11 @@ Q3OBJ = \
   $(B)/client/tr_flares.o \
   $(B)/client/tr_font.o \
   $(B)/client/tr_image.o \
+  $(B)/client/tr_image_bmp.o \
+  $(B)/client/tr_image_jpg.o \
+  $(B)/client/tr_image_pcx.o \
+  $(B)/client/tr_image_png.o \
+  $(B)/client/tr_image_tga.o \
   $(B)/client/tr_init.o \
   $(B)/client/tr_light.o \
   $(B)/client/tr_main.o \
@@ -812,6 +819,7 @@ Q3DOBJ = \
   $(B)/ded/msg.o \
   $(B)/ded/net_chan.o \
   $(B)/ded/net_ip.o \
+  $(B)/ded/puff.o \
   $(B)/ded/huffman.o \
   \
   $(B)/ded/q_math.o \

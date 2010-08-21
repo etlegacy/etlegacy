@@ -2,9 +2,9 @@
 ===========================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
 Wolf ET Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -470,9 +470,9 @@ void R_SetupEntityLighting( const trRefdef_t *refdef, trRefEntity_t *ent ) {
 	//%	VectorClear( ent->ambientLight );
 
 	// save out the byte packet version
-	( (byte *)&ent->ambientLightInt )[0] = myftol( ent->ambientLight[0] );
-	( (byte *)&ent->ambientLightInt )[1] = myftol( ent->ambientLight[1] );
-	( (byte *)&ent->ambientLightInt )[2] = myftol( ent->ambientLight[2] );
+	( (byte *)&ent->ambientLightInt )[0] = (int)( ent->ambientLight[0] );
+	( (byte *)&ent->ambientLightInt )[1] = (int)( ent->ambientLight[1] );
+	( (byte *)&ent->ambientLightInt )[2] = (int)( ent->ambientLight[2] );
 	( (byte *)&ent->ambientLightInt )[3] = 0xff;
 
 	// ydnar: save out the light table
@@ -482,9 +482,9 @@ void R_SetupEntityLighting( const trRefdef_t *refdef, trRefEntity_t *ent ) {
 	for ( i = 0; i < ENTITY_LIGHT_STEPS; i++ )
 	{
 		VectorMA( ent->ambientLight, d, ent->directedLight, lightValue );
-		entityLight[ 0 ] = lightValue[ 0 ] > 255.0f ? 255 : myftol( lightValue[ 0 ] );
-		entityLight[ 1 ] = lightValue[ 1 ] > 255.0f ? 255 : myftol( lightValue[ 1 ] );
-		entityLight[ 2 ] = lightValue[ 2 ] > 255.0f ? 255 : myftol( lightValue[ 2 ] );
+		entityLight[ 0 ] = lightValue[ 0 ] > 255.0f ? 255 : (int)( lightValue[ 0 ] );
+		entityLight[ 1 ] = lightValue[ 1 ] > 255.0f ? 255 : (int)( lightValue[ 1 ] );
+		entityLight[ 2 ] = lightValue[ 2 ] > 255.0f ? 255 : (int)( lightValue[ 2 ] );
 		entityLight[ 3 ] = 0xFF;
 
 		d += modulate;

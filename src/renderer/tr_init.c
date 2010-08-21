@@ -2,9 +2,9 @@
 ===========================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
 Wolf ET Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -62,6 +62,8 @@ cvar_t  *r_skipBackEnd;
 
 cvar_t	*r_stereoEnabled;
 cvar_t	*r_anaglyphMode;
+
+cvar_t	*r_greyscale;
 
 cvar_t  *r_ignorehwgamma;
 cvar_t  *r_measureOverdraw;
@@ -986,6 +988,7 @@ void R_Register( void ) {
 #if MAC_STVEF_HM || MAC_WOLF2_MP
 	r_ati_fsaa_samples              = ri.Cvar_Get( "r_ati_fsaa_samples", "1", CVAR_ARCHIVE );       //DAJ valids are 1, 2, 4
 #endif
+	r_greyscale = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	//
 	// temporary latched variables that can only change over a restart

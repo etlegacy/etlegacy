@@ -641,16 +641,6 @@ float Q_rsqrt( float f );       // reciprocal square root
 
 #define SQRTFAST( x ) ( 1.0f / Q_rsqrt( x ) )
 
-// fast float to int conversion
-#if id386 && !( ( defined __linux__ || defined __FreeBSD__ || defined __GNUC__ ) && ( defined __i386__ ) ) // rb010123
-long myftol( float f );
-#elif defined( __MACOS__ )
-#define myftol( x ) (long)( x )
-#else
-extern long int lrintf( float x );
-#define myftol( x ) lrintf( x )
-#endif
-
 signed char ClampChar( int i );
 signed short ClampShort( int i );
 
@@ -799,6 +789,7 @@ float Com_Clamp( float min, float max, float value );
 
 char    *COM_SkipPath( char *pathname );
 void    COM_FixPath( char *pathname );
+const char	*COM_GetExtension( const char *name );
 void    COM_StripExtension( const char *in, char *out );
 void    COM_StripExtension2( const char *in, char *out, int destsize );
 void    COM_StripFilename( char *in, char *out );

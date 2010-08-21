@@ -2,9 +2,9 @@
 ===========================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
 Wolf ET Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -666,10 +666,10 @@ static void FillCloudBox( const shader_t *shader, int stage ) {
 			continue;
 		}
 
-		sky_mins_subd[0] = myftol( sky_mins[0][i] * HALF_SKY_SUBDIVISIONS );
-		sky_mins_subd[1] = myftol( sky_mins[1][i] * HALF_SKY_SUBDIVISIONS );
-		sky_maxs_subd[0] = myftol( sky_maxs[0][i] * HALF_SKY_SUBDIVISIONS );
-		sky_maxs_subd[1] = myftol( sky_maxs[1][i] * HALF_SKY_SUBDIVISIONS );
+		sky_mins_subd[0] = (int)( sky_mins[0][i] * HALF_SKY_SUBDIVISIONS );
+		sky_mins_subd[1] = (int)( sky_mins[1][i] * HALF_SKY_SUBDIVISIONS );
+		sky_maxs_subd[0] = (int)( sky_maxs[0][i] * HALF_SKY_SUBDIVISIONS );
+		sky_maxs_subd[1] = (int)( sky_maxs[1][i] * HALF_SKY_SUBDIVISIONS );
 
 		if ( sky_mins_subd[0] < -HALF_SKY_SUBDIVISIONS ) {
 			sky_mins_subd[0] = -HALF_SKY_SUBDIVISIONS;
