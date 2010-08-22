@@ -691,7 +691,7 @@ intptr_t QDECL VM_Call( vm_t *vm, int callnum, ... ) {
 	if ( vm->entryPoint ) {
 		va_start( ap, callnum );
 		for ( i = 0; i < sizeof( args ) / sizeof( args[i] ); i++ )
-			args[i] = va_arg( ap, int );
+			args[i] = va_arg( ap, intptr_t );
 		va_end( ap );
 
 		r = vm->entryPoint( callnum,  args[0],  args[1],  args[2], args[3],
