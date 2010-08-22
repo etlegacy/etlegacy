@@ -230,9 +230,9 @@ ifeq ($(PLATFORM),linux)
   SHLIBLDFLAGS=-shared $(LDFLAGS)
 
   THREAD_LIBS=-lpthread
-  LIBS=-ldl -lm -lX11 -lXext -lXxf86dga -lXxf86vm -lsupc++
+  LIBS=-ldl -lm 
 
-  CLIENT_LIBS=$(SDL_LIBS) -lGL
+  CLIENT_LIBS=$(SDL_LIBS) -lGL -lsupc++
 
   ifeq ($(USE_CURL),1)
     ifneq ($(USE_CURL_DLOPEN),1)
@@ -301,9 +301,9 @@ ifeq ($(PLATFORM),mingw32)
 
   BINEXT=.exe
 
-  LIBS = -lws2_32 -lwinmm -lpsapi -lgdi32 -liphlpapi
+  LIBS = -lws2_32 -lwinmm -lpsapi
   CLIENT_LDFLAGS = -mwindows
-  CLIENT_LIBS = -lole32 -lopengl32 -ldinput -ldsound -lsupc++
+  CLIENT_LIBS = -lgdi32 -lole32 -lopengl32 -lsupc++
 
   ifeq ($(USE_CURL),1)
     CLIENT_CFLAGS += -DUSE_CURL
@@ -336,10 +336,9 @@ ifeq ($(PLATFORM),mingw32)
     CLIENT_CFLAGS += -I$(SDLHDIR)/include
     ifeq ($(ARCH), x86)
     CLIENT_LIBS += $(LIBSDIR)/win32/libSDLmain.a \
-                      $(LIBSDIR)/win32/libSDL.dll.a
+                      $(LIBSDIR)/win32/libSDL.a
     else
     CLIENT_LIBS += $(LIBSDIR)/win64/libSDLmain.a \
-                      $(LIBSDIR)/win64/libSDL.dll.a \
                       $(LIBSDIR)/win64/libSDL.a
     endif
   else
@@ -763,18 +762,18 @@ endif
 
 ifeq ($(PLATFORM),mingw32)
   Q3OBJ += \
-    $(B)/ded/win_resource.o \
-    $(B)/ded/sys_win32.o \
-    $(B)/ded/con_win32.o
+    $(B)/client/win_resource.o \
+    $(B)/client/sys_win32.o \
+    $(B)/client/con_win32.o
 else
   Q3OBJ += \
-    $(B)/ded/sys_unix.o \
-    $(B)/ded/con_tty.o
+    $(B)/client/sys_unix.o \
+    $(B)/client/con_tty.o
 endif
 
 ifeq ($(PLATFORM),darwin)
   Q3OBJ += \
-    $(B)/ded/sys_osx.o
+    $(B)/client/sys_osx.o
 endif
 
 $(B)/$(CLIENT_NAME)$(FULLBINEXT): $(Q3OBJ) $(Q3POBJ)
