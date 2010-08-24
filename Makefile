@@ -344,6 +344,7 @@ ifeq ($(PLATFORM),mingw32)
     CLIENT_CFLAGS += $(SDL_CFLAGS)
     CLIENT_LIBS += $(SDL_LIBS)
   endif
+  CLIENT_LIBS += -ldxguid -ldinput8
 
   BUILD_CLIENT_SMP = 0
 

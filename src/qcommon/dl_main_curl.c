@@ -32,10 +32,10 @@ If you have questions concerning this license or the applicable additional terms
 	* Add server as referring URL
 */
 
-#ifdef __MACOS__
-#include <curl/curl.h>
+#ifdef USE_LOCAL_HEADERS
+  #include "../libcurl/curl/curl.h"
 #else
-#include "../curl-7.12.2/include/curl/curl.h"
+  #include <curl/curl.h>
 #endif
 
 #include "../game/q_shared.h"
