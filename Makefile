@@ -125,7 +125,6 @@ UIDIR=$(MOUNT_DIR)/ui
 JPDIR=$(MOUNT_DIR)/jpeg-6b
 SDLHDIR=$(MOUNT_DIR)/SDL12
 LIBSDIR=$(MOUNT_DIR)/libs
-SPLDIR=$(MOUNT_DIR)/splines
 TEMPDIR=/tmp
 
 bin_path=$(shell which $(1) 2> /dev/null)
@@ -476,11 +475,6 @@ $(echo_cmd) "WINDRES $<"
 $(Q)$(WINDRES) -i $< -o $@
 endef
 
-define DO_SPLINE_CXX
-$(echo_cmd) "SPLINE_CXX $<"
-$(Q)$(CXX) $(NOTSHLIBCFLAGS) $(CFLAGS) $(CLIENT_CFLAGS) $(OPTIMIZE) -o $@ -c $<
-endef
-
 #############################################################################
 # MAIN TARGETS
 #############################################################################
@@ -564,7 +558,6 @@ makedirs:
 	@if [ ! -d $(BUILD_DIR) ];then $(MKDIR) $(BUILD_DIR);fi
 	@if [ ! -d $(B) ];then $(MKDIR) $(B);fi
 	@if [ ! -d $(B)/client ];then $(MKDIR) $(B)/client;fi
-	@if [ ! -d $(B)/splines ];then $(MKDIR) $(B)/splines;fi
 	@if [ ! -d $(B)/clientsmp ];then $(MKDIR) $(B)/clientsmp;fi
 	@if [ ! -d $(B)/ded ];then $(MKDIR) $(B)/ded;fi
 	@if [ ! -d $(B)/etmain ];then $(MKDIR) $(B)/etmain;fi
@@ -728,14 +721,6 @@ Q3OBJ = \
   $(B)/client/tr_sky.o \
   $(B)/client/tr_surface.o \
   $(B)/client/tr_world.o \
-  \
-  $(B)/splines/math_angles.o \
-  $(B)/splines/math_matrix.o \
-  $(B)/splines/math_quaternion.o \
-  $(B)/splines/math_vector.o \
-  $(B)/splines/q_parse.o \
-  $(B)/splines/splines.o \
-  $(B)/splines/util_str.o \
   \
   $(B)/client/sdl_glimp.o \
   $(B)/client/sdl_gamma.o \
@@ -1104,9 +1089,6 @@ $(B)/client/%.o: $(SYSDIR)/%.m
 
 $(B)/client/%.o: $(SYSDIR)/%.rc
 	$(DO_WINDRES)
-
-$(B)/splines/%.o: $(SPLDIR)/%.cpp
-	$(DO_SPLINE_CXX)
 
 $(B)/ded/%.o: $(ASMDIR)/%.s
 	$(DO_AS)
