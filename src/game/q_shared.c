@@ -129,12 +129,19 @@ a safer version
 ============
 */
 void COM_StripExtension2( const char *in, char *out, int destsize ) {
-	int len = 0;
-	while ( len < destsize - 1 && *in && *in != '.' ) {
-		*out++ = *in++;
-		len++;
+	int i;
+	qboolean period = qfalse;
+	for ( i = strlen( in ) - 1; i >= 0; --i ) {
+		if ( in[i] == '.' ) {
+			if ( ++i > destsize )
+				i = destsize;
+			period = qtrue;
+			break;
+		}
 	}
-	*out = 0;
+	if ( !period )
+		i = destsize;
+	Q_strncpyz( out, in, i );
 }
 
 void COM_StripFilename( char *in, char *out ) {
