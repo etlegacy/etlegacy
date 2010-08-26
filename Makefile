@@ -231,7 +231,7 @@ ifeq ($(PLATFORM),linux)
   THREAD_LIBS=-lpthread
   LIBS=-ldl -lm 
 
-  CLIENT_LIBS=$(SDL_LIBS) -lGL -lsupc++
+  CLIENT_LIBS=$(SDL_LIBS) -lGL
 
   ifeq ($(USE_CURL),1)
     ifneq ($(USE_CURL_DLOPEN),1)
@@ -302,7 +302,7 @@ ifeq ($(PLATFORM),mingw32)
 
   LIBS = -lws2_32 -lwinmm -lpsapi
   CLIENT_LDFLAGS = -mwindows
-  CLIENT_LIBS = -lgdi32 -lole32 -lopengl32 -lsupc++
+  CLIENT_LIBS = -lgdi32 -lole32 -lopengl32
 
   ifeq ($(USE_CURL),1)
     CLIENT_CFLAGS += -DUSE_CURL
