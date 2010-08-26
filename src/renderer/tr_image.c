@@ -1784,15 +1784,19 @@ qhandle_t RE_RegisterSkin( const char *name ) {
 	R_SyncRenderThread();
 
 	// If not a .skin file, load as a single shader
+	// HACK: ET evilly has filenames slightly longer than MAX_QPATH
+	// this check breaks the loading of such skins
+	/*
 	if ( strcmp( name + strlen( name ) - 5, ".skin" ) ) {
 		skin->numSurfaces = 1;
 		skin->surfaces[0] = ri.Hunk_Alloc( sizeof(skin->surfaces[0]), h_low );
 		skin->surfaces[0]->shader = R_FindShader( name, LIGHTMAP_NONE, qtrue );
 		return hSkin;
 	}
+	*/
 
 	// load and parse the skin file
-    ri.FS_ReadFile( name, &text.v );
+	ri.FS_ReadFile( name, &text.v );
 	if ( !text.c ) {
 		return 0;
 	}
