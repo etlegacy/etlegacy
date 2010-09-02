@@ -1708,6 +1708,8 @@ void QDECL FS_Printf( fileHandle_t h, const char *fmt, ... ) {
 	FS_Write( msg, strlen( msg ), h );
 }
 
+#define PK3_SEEK_BUFFER_SIZE 65536
+
 /*
 =================
 FS_Seek
@@ -1730,18 +1732,36 @@ int FS_Seek( fileHandle_t f, long offset, int origin ) {
 	}
 
 	if ( fsh[f].zipFile == qtrue ) {
-		if ( offset == 0 && origin == FS_SEEK_SET ) {
-			// set the file position in the zip file (also sets the current file info)
-			unzSetCurrentFileInfoPosition( fsh[f].handleFiles.file.z, fsh[f].zipFilePos );
-			return unzOpenCurrentFile( fsh[f].handleFiles.file.z );
-		} else if ( offset < 65536 ) {
-			// set the file position in the zip file (also sets the current file info)
-			unzSetCurrentFileInfoPosition( fsh[f].handleFiles.file.z, fsh[f].zipFilePos );
-			unzOpenCurrentFile( fsh[f].handleFiles.file.z );
-			return FS_Read( foo, offset, f );
-		} else {
-			Com_Error( ERR_FATAL, "ZIP FILE FSEEK NOT YET IMPLEMENTED\n" );
+		//FIXME: this is incomplete and really, really
+		//crappy (but better than what was here before)
+		byte buffer[PK3_SEEK_BUFFER_SIZE];
+		int remainder = offset;
+
+		if( offset < 0 || origin == FS_SEEK_END ) {
+			Com_Error( ERR_FATAL, "Negative offsets and FS_SEEK_END not implemented "
+					"for FS_Seek on pk3 file contents\n" );
 			return -1;
+		}
+
+		switch( origin ) {
+			case FS_SEEK_SET:
+				unzSetCurrentFileInfoPosition( fsh[f].handleFiles.file.z, fsh[f].zipFilePos );
+				unzOpenCurrentFile( fsh[f].handleFiles.file.z );
+				//fallthrough
+
+			case FS_SEEK_CUR:
+				while( remainder > PK3_SEEK_BUFFER_SIZE ) {
+					FS_Read( buffer, PK3_SEEK_BUFFER_SIZE, f );
+					remainder -= PK3_SEEK_BUFFER_SIZE;
+				}
+				FS_Read( buffer, remainder, f );
+				return offset;
+				break;
+
+			default:
+				Com_Error( ERR_FATAL, "Bad origin in FS_Seek\n" );
+				return -1;
+				break;
 		}
 	} else {
 		FILE *file;

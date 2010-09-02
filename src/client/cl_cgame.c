@@ -682,7 +682,7 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 		S_StartLocalSound( args[1], args[2], args[3] );
 		return 0;
 	case CG_S_CLEARLOOPINGSOUNDS:
-		S_ClearLoopingSounds();
+		S_ClearLoopingSounds( qtrue );
 		return 0;
 	case CG_S_CLEARSOUNDS:
 		if ( args[1] == 0 ) {

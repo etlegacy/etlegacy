@@ -2,9 +2,9 @@
 ===========================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
 Wolf ET Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,24 +26,24 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-
 /*****************************************************************************
  * name:		snd_mem.c
  *
  * desc:		sound caching
  *
- * $Archive: /Wolfenstein MP/src/client/snd_mem.c $
+ * $Archive: /MissionPack/code/client/snd_mem.c $
  *
  *****************************************************************************/
 
 #include "snd_local.h"
+#include "snd_codec.h"
 
-#define DEF_COMSOUNDMEGS "24"    // (SA) upped for GD
+#define DEF_COMSOUNDMEGS "8"
 
 /*
 ===============================================================================
 
-SOUND MEMORY MANAGENT
+memory management
 
 ===============================================================================
 */
@@ -52,41 +52,27 @@ static sndBuffer   *buffer = NULL;
 static sndBuffer   *freelist = NULL;
 static int inUse = 0;
 static int totalInUse = 0;
-static int totalAllocated = 0;
 
 short *sfxScratchBuffer = NULL;
-const sfx_t *sfxScratchPointer = NULL;
+sfx_t *sfxScratchPointer = NULL;
 int sfxScratchIndex = 0;
 
-extern cvar_t   *s_nocompressed;
-
-/*
-================
-SND_free
-================
-*/
-void SND_free( sndBuffer *v ) {
+void    SND_free( sndBuffer *v ) {
 	*(sndBuffer **)v = freelist;
 	freelist = (sndBuffer*)v;
 	inUse += sizeof( sndBuffer );
-	totalInUse -= sizeof( sndBuffer );
 }
 
-/*
-================
-SND_malloc
-================
-*/
-sndBuffer*  SND_malloc() {
+sndBuffer*  SND_malloc( void ) {
 	sndBuffer *v;
-
-	while ( freelist == NULL ) {
+redo:
+	if ( freelist == NULL ) {
 		S_FreeOldestSound();
+		goto redo;
 	}
 
 	inUse -= sizeof( sndBuffer );
 	totalInUse += sizeof( sndBuffer );
-	totalAllocated += sizeof( sndBuffer );
 
 	v = freelist;
 	freelist = *(sndBuffer **)freelist;
@@ -94,19 +80,14 @@ sndBuffer*  SND_malloc() {
 	return v;
 }
 
-/*
-================
-SND_setup
-================
-*/
-void SND_setup() {
+void SND_setup( void ) {
 	sndBuffer *p, *q;
 	cvar_t  *cv;
 	int scs;
 
 	cv = Cvar_Get( "com_soundMegs", DEF_COMSOUNDMEGS, CVAR_LATCH | CVAR_ARCHIVE );
 
-	scs = cv->integer * 512;
+	scs = ( cv->integer * 1536 );
 
 	buffer = malloc( scs * sizeof( sndBuffer ) );
 	// allocate the stack based hunk allocator
@@ -114,219 +95,15 @@ void SND_setup() {
 	sfxScratchPointer = NULL;
 
 	inUse = scs * sizeof( sndBuffer );
-	totalInUse = 0;
-	totalAllocated = 0;
 	p = buffer;;
 	q = p + scs;
-	while ( --q > p ) {
+	while ( --q > p )
 		*(sndBuffer **)q = q - 1;
-	}
+
 	*(sndBuffer **)q = NULL;
 	freelist = p + scs - 1;
 
 	Com_Printf( "Sound memory manager started\n" );
-}
-
-/*
-===============================================================================
-
-WAV loading
-
-===============================================================================
-*/
-
-static byte    *data_p;
-static byte    *iff_end;
-static byte    *last_chunk;
-static byte    *iff_data;
-static int iff_chunk_len;
-
-/*
-================
-GetLittleShort
-================
-*/
-static short GetLittleShort( void ) {
-	short val = 0;
-	val = *data_p;
-	val = val + ( *( data_p + 1 ) << 8 );
-	data_p += 2;
-	return val;
-}
-
-/*
-================
-GetLittleLong
-================
-*/
-static int GetLittleLong( void ) {
-	int val = 0;
-	val = *data_p;
-	val = val + ( *( data_p + 1 ) << 8 );
-	val = val + ( *( data_p + 2 ) << 16 );
-	val = val + ( *( data_p + 3 ) << 24 );
-	data_p += 4;
-	return val;
-}
-
-/*
-================
-FindNextChunk
-================
-*/
-static void FindNextChunk( char *name ) {
-	while ( 1 )
-	{
-		data_p = last_chunk;
-
-		if ( data_p >= iff_end ) { // didn't find the chunk
-			data_p = NULL;
-			return;
-		}
-
-		data_p += 4;
-		iff_chunk_len = GetLittleLong();
-		if ( iff_chunk_len < 0 ) {
-			data_p = NULL;
-			return;
-		}
-		data_p -= 8;
-		last_chunk = data_p + 8 + ( ( iff_chunk_len + 1 ) & ~1 );
-		if ( !strncmp( (char *)data_p, name, 4 ) ) {
-			return;
-		}
-	}
-}
-
-/*
-================
-FindChunk
-================
-*/
-static void FindChunk( char *name ) {
-	last_chunk = iff_data;
-	FindNextChunk( name );
-}
-
-typedef struct waveFormat_s {
-	const char  *name;
-	int format;
-} waveFormat_t;
-
-static waveFormat_t waveFormats[] = {
-	{ "Windows PCM", 1 },
-	{ "Antex ADPCM", 14 },
-	{ "Antex ADPCME", 33 },
-	{ "Antex ADPCM", 40 },
-	{ "Audio Processing Technology", 25 },
-	{ "Audiofile, Inc.", 24 },
-	{ "Audiofile, Inc.", 26 },
-	{ "Control Resources Limited", 34 },
-	{ "Control Resources Limited", 37 },
-	{ "Creative ADPCM", 200 },
-	{ "Dolby Laboratories", 30 },
-	{ "DSP Group, Inc", 22 },
-	{ "DSP Solutions, Inc.", 15 },
-	{ "DSP Solutions, Inc.", 16 },
-	{ "DSP Solutions, Inc.", 35 },
-	{ "DSP Solutions ADPCM", 36 },
-	{ "Echo Speech Corporation", 23 },
-	{ "Fujitsu Corp.", 300 },
-	{ "IBM Corporation", 5 },
-	{ "Ing C. Olivetti & C., S.p.A.", 1000 },
-	{ "Ing C. Olivetti & C., S.p.A.", 1001 },
-	{ "Ing C. Olivetti & C., S.p.A.", 1002 },
-	{ "Ing C. Olivetti & C., S.p.A.", 1003 },
-	{ "Ing C. Olivetti & C., S.p.A.", 1004 },
-	{ "Intel ADPCM", 11 },
-	{ "Intel ADPCM", 11 },
-	{ "Unknown", 0 },
-	{ "Microsoft ADPCM", 2 },
-	{ "Microsoft Corporation", 6 },
-	{ "Microsoft Corporation", 7 },
-	{ "Microsoft Corporation", 31 },
-	{ "Microsoft Corporation", 50 },
-	{ "Natural MicroSystems ADPCM", 38 },
-	{ "OKI ADPCM", 10 },
-	{ "Sierra ADPCM", 13 },
-	{ "Speech Compression", 21 },
-	{ "Videologic ADPCM", 12 },
-	{ "Yamaha ADPCM", 20 },
-	{ NULL, 0 }
-};
-
-static const char *GetWaveFormatName( const int format ) {
-	int i = 0;
-
-	while ( waveFormats[i].name ) {
-		if ( format == waveFormats[i].format ) {
-			return( waveFormats[i].name );
-		}
-		i++;
-	}
-
-	return( "Unknown" );
-
-}
-
-/*
-============
-GetWavinfo
-============
-*/
-static wavinfo_t GetWavinfo( char *name, byte *wav, int wavlength ) {
-	wavinfo_t info;
-
-	Com_Memset( &info, 0, sizeof( info ) );
-
-	if ( !wav ) {
-		return info;
-	}
-
-	iff_data = wav;
-	iff_end = wav + wavlength;
-
-// find "RIFF" chunk
-	FindChunk( "RIFF" );
-	if ( !( data_p && !strncmp( (char *)data_p + 8, "WAVE", 4 ) ) ) {
-		Com_Printf( "Missing RIFF/WAVE chunks\n" );
-		return info;
-	}
-
-// get "fmt " chunk
-	iff_data = data_p + 12;
-// DumpChunks ();
-
-	FindChunk( "fmt " );
-	if ( !data_p ) {
-		Com_Printf( "Missing fmt chunk\n" );
-		return info;
-	}
-	data_p += 8;
-	info.format = GetLittleShort();
-	info.channels = GetLittleShort();
-	info.rate = GetLittleLong();
-	data_p += 4 + 2;
-	info.width = GetLittleShort() / 8;
-
-	if ( info.format != 1 ) {
-		Com_Printf( "Unsupported format: %s\n", GetWaveFormatName( info.format ) );
-		Com_Printf( "Microsoft PCM format only\n" );
-		return info;
-	}
-
-// find data chunk
-	FindChunk( "data" );
-	if ( !data_p ) {
-		Com_Printf( "Missing data chunk\n" );
-		return info;
-	}
-
-	data_p += 4;
-	info.samples = GetLittleLong() / info.width;
-	info.dataofs = data_p - wav;
-
-	return info;
 }
 
 /*
@@ -354,55 +131,28 @@ static void ResampleSfx( sfx_t *sfx, int inrate, int inwidth, byte *data, qboole
 	fracstep = stepscale * 256;
 	chunk = sfx->soundData;
 
-	// Gordon: use the littleshort version only if we need to
-	if ( LittleShort( 256 ) == 256 ) {
-		for ( i = 0 ; i < outcount ; i++ )
-		{
-			srcsample = samplefrac >> 8;
-			samplefrac += fracstep;
-			if ( inwidth == 2 ) {
-				sample = ( (short *)data )[srcsample];
-			} else {
-				sample = (int)( ( unsigned char )( data[srcsample] ) - 128 ) << 8;
-			}
-			part  = ( i & ( SND_CHUNK_SIZE - 1 ) );
-			if ( part == 0 ) {
-				sndBuffer   *newchunk;
-				newchunk = SND_malloc();
-				if ( chunk == NULL ) {
-					sfx->soundData = newchunk;
-				} else {
-					chunk->next = newchunk;
-				}
-				chunk = newchunk;
-			}
-
-			chunk->sndChunk[part] = sample;
+	for ( i = 0 ; i < outcount ; i++ )
+	{
+		srcsample = samplefrac >> 8;
+		samplefrac += fracstep;
+		if ( inwidth == 2 ) {
+			sample = ( ( (short *)data )[srcsample] );
+		} else {
+			sample = (int)( (unsigned char)( data[srcsample] ) - 128 ) << 8;
 		}
-	} else {
-		for ( i = 0 ; i < outcount ; i++ )
-		{
-			srcsample = samplefrac >> 8;
-			samplefrac += fracstep;
-			if ( inwidth == 2 ) {
-				sample = LittleShort( ( (short *)data )[srcsample] );
+		part  = ( i & ( SND_CHUNK_SIZE - 1 ) );
+		if ( part == 0 ) {
+			sndBuffer   *newchunk;
+			newchunk = SND_malloc();
+			if ( chunk == NULL ) {
+				sfx->soundData = newchunk;
 			} else {
-				sample = (int)( ( unsigned char )( data[srcsample] ) - 128 ) << 8;
+				chunk->next = newchunk;
 			}
-			part  = ( i & ( SND_CHUNK_SIZE - 1 ) );
-			if ( part == 0 ) {
-				sndBuffer   *newchunk;
-				newchunk = SND_malloc();
-				if ( chunk == NULL ) {
-					sfx->soundData = newchunk;
-				} else {
-					chunk->next = newchunk;
-				}
-				chunk = newchunk;
-			}
-
-			chunk->sndChunk[part] = sample;
+			chunk = newchunk;
 		}
+
+		chunk->sndChunk[part] = sample;
 	}
 }
 
@@ -427,35 +177,19 @@ static int ResampleSfxRaw( short *sfx, int inrate, int inwidth, int samples, byt
 	samplefrac = 0;
 	fracstep = stepscale * 256;
 
-	// Gordon: use the littleshort version only if we need to
-	if ( LittleShort( 256 ) == 256 ) {
-		for ( i = 0 ; i < outcount ; i++ )
-		{
-			srcsample = samplefrac >> 8;
-			samplefrac += fracstep;
-			if ( inwidth == 2 ) {
-				sample = ( (short *)data )[srcsample];
-			} else {
-				sample = (int)( ( unsigned char )( data[srcsample] ) - 128 ) << 8;
-			}
-			sfx[i] = sample;
+	for ( i = 0 ; i < outcount ; i++ )
+	{
+		srcsample = samplefrac >> 8;
+		samplefrac += fracstep;
+		if ( inwidth == 2 ) {
+			sample = LittleShort( ( (short *)data )[srcsample] );
+		} else {
+			sample = (int)( (unsigned char)( data[srcsample] ) - 128 ) << 8;
 		}
-	} else {
-		for ( i = 0 ; i < outcount ; i++ )
-		{
-			srcsample = samplefrac >> 8;
-			samplefrac += fracstep;
-			if ( inwidth == 2 ) {
-				sample = LittleShort( ( (short *)data )[srcsample] );
-			} else {
-				sample = (int)( ( unsigned char )( data[srcsample] ) - 128 ) << 8;
-			}
-			sfx[i] = sample;
-		}
+		sfx[i] = sample;
 	}
 	return outcount;
 }
-
 
 //=============================================================================
 
@@ -470,8 +204,8 @@ of a forced fallback of a player specific sound
 qboolean S_LoadSound( sfx_t *sfx ) {
 	byte    *data;
 	short   *samples;
-	wavinfo_t info;
-	int size;
+	snd_info_t info;
+//	int		size;
 
 	// player specific sounds are never directly loaded
 	if ( sfx->soundName[0] == '*' ) {
@@ -479,15 +213,8 @@ qboolean S_LoadSound( sfx_t *sfx ) {
 	}
 
 	// load it in
-	size = FS_ReadFile( sfx->soundName, (void **)&data );
+	data = S_CodecLoad( sfx->soundName, &info );
 	if ( !data ) {
-		return qfalse;
-	}
-
-	info = GetWavinfo( sfx->soundName, data, size );
-	if ( info.channels != 1 ) {
-		Com_Printf( "%s is a stereo wav file\n", sfx->soundName );
-		FS_FreeFile( data );
 		return qfalse;
 	}
 
@@ -501,8 +228,7 @@ qboolean S_LoadSound( sfx_t *sfx ) {
 
 	samples = Hunk_AllocateTempMemory( info.samples * sizeof( short ) * 2 );
 
-	// DHM - Nerve
-	sfx->lastTimeUsed = Sys_Milliseconds() + 1;
+	sfx->lastTimeUsed = Com_Milliseconds() + 1;
 
 	// each of these compression schemes works just fine
 	// but the 16bit quality is much nicer and with a local
@@ -510,18 +236,12 @@ qboolean S_LoadSound( sfx_t *sfx ) {
 	// manager to do the right thing for us and page
 	// sound in as needed
 
-
-	if ( s_nocompressed->value ) {
-		sfx->soundCompressionMethod = 0;
-		sfx->soundLength = info.samples;
-		sfx->soundData = NULL;
-		ResampleSfx( sfx, info.rate, info.width, data + info.dataofs, qfalse );
-	} else if ( sfx->soundCompressed == qtrue )     {
+	if ( sfx->soundCompressed == qtrue ) {
 		sfx->soundCompressionMethod = 1;
 		sfx->soundData = NULL;
-		sfx->soundLength = ResampleSfxRaw( samples, info.rate, info.width, info.samples, ( data + info.dataofs ) );
+		sfx->soundLength = ResampleSfxRaw( samples, info.rate, info.width, info.samples, data + info.dataofs );
 		S_AdpcmEncodeSound( sfx, samples );
-#ifdef COMPRESSION
+#if 0
 	} else if ( info.samples > ( SND_CHUNK_SIZE * 16 ) && info.width > 1 ) {
 		sfx->soundCompressionMethod = 3;
 		sfx->soundData = NULL;
@@ -539,17 +259,13 @@ qboolean S_LoadSound( sfx_t *sfx ) {
 		sfx->soundData = NULL;
 		ResampleSfx( sfx, info.rate, info.width, data + info.dataofs, qfalse );
 	}
+
 	Hunk_FreeTempMemory( samples );
-	FS_FreeFile( data );
+	Z_Free( data );
 
 	return qtrue;
 }
 
-/*
-================
-S_DisplayFreeMemory
-================
-*/
-void S_DisplayFreeMemory() {
-	Com_Printf( "%d bytes (%.2fMB) free sound buffer memory, %d bytes (%.2fMB) total used\n%d bytes (%.2fMB) sound buffer memory have been allocated since the last SND_setup", inUse, inUse / Square( 1024.f ), totalInUse, totalInUse / Square( 1024.f ), totalAllocated, totalAllocated / Square( 1024.f ) );
+void S_DisplayFreeMemory( void ) {
+	Com_Printf( "%d bytes free sound buffer memory, %d total used\n", inUse, totalInUse );
 }
