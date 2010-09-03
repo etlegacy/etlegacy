@@ -756,7 +756,7 @@ char *FS_BuildOSPath( const char *base, const char *game, const char *qpath );
 
 #if !defined( DEDICATED )
 extern int cl_connectedToPureServer;
-qboolean FS_CL_ExtractFromPakFile( const char *path, const char *gamedir, const char *filename, const char *cvar_lastVersion );
+qboolean FS_CL_ExtractFromPakFile( const char *base, const char *gamedir, const char *filename );
 #endif
 
 #if defined( DO_LIGHT_DEDICATED )

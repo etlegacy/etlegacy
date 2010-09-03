@@ -1337,14 +1337,16 @@ NOTE TTimo:
 
 ==================
 */
-qboolean FS_CL_ExtractFromPakFile( const char *fullpath, const char *gamedir, const char *filename, const char *cvar_lastVersion ) {
+qboolean FS_CL_ExtractFromPakFile( const char *base, const char *gamedir, const char *filename ) {
 	int srcLength;
 	int destLength;
-	unsigned char   *srcData;
-	unsigned char   *destData;
+	unsigned char *srcData;
+	unsigned char *destData;
 	qboolean needToCopy;
-	FILE            *destHandle;
+	FILE *destHandle;
+	char *fn;
 
+	fn =  FS_BuildOSPath( base, gamedir, filename );
 	needToCopy = qtrue;
 
 	// read in compressed file
@@ -1356,7 +1358,7 @@ qboolean FS_CL_ExtractFromPakFile( const char *fullpath, const char *gamedir, co
 	}
 
 	// read in local file
-	destHandle = fopen( fullpath, "rb" );
+	destHandle = fopen( fn, "rb" );
 
 	// if we have a local file, we need to compare the two
 	if ( destHandle ) {
@@ -1367,7 +1369,6 @@ qboolean FS_CL_ExtractFromPakFile( const char *fullpath, const char *gamedir, co
 		if ( destLength > 0 ) {
 			destData = (unsigned char*)Z_Malloc( destLength );
 
-//			fread( destData, 1, destLength, destHandle );
 			fread( destData, destLength, 1, destHandle );
 
 			// compare files
@@ -1395,7 +1396,6 @@ qboolean FS_CL_ExtractFromPakFile( const char *fullpath, const char *gamedir, co
 	if ( needToCopy ) {
 		fileHandle_t f;
 
-		// Com_DPrintf("FS_ExtractFromPakFile: FS_FOpenFileWrite '%s'\n", filename);
 		f = FS_FOpenFileWrite( filename );
 		if ( !f ) {
 			Com_Printf( "Failed to open %s\n", filename );
@@ -1405,14 +1405,6 @@ qboolean FS_CL_ExtractFromPakFile( const char *fullpath, const char *gamedir, co
 		FS_Write( srcData, srcLength, f );
 
 		FS_FCloseFile( f );
-
-#ifdef __linux__
-		// show_bug.cgi?id=463
-		// need to keep track of what versions we extract
-		if ( cvar_lastVersion ) {
-			Cvar_Set( cvar_lastVersion, Cvar_VariableString( "version" ) );
-		}
-#endif
 	}
 
 	FS_FreeFile( srcData );
@@ -3489,7 +3481,6 @@ const char *FS_ReferencedPakPureChecksums( void ) {
 			// is the element a pak file and has it been referenced based on flag?
 			if ( search->pack && ( search->pack->referenced & nFlags ) ) {
 				Q_strcat( info, sizeof( info ), va( "%i ", search->pack->pure_checksum ) );
-				Com_Printf("cgpure: %d %s %i\n", nFlags, search->pack->pakFilename, search->pack->pure_checksum);
 				if ( nFlags & ( FS_CGAME_REF | FS_UI_REF ) ) {
 					break;
 				}

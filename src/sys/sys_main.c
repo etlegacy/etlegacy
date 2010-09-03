@@ -463,6 +463,14 @@ void *Sys_LoadDll( const char *name, char *fqpath ,
 	homepath = Cvar_VariableString( "fs_homepath" );
 	gamedir = Cvar_VariableString( "fs_game" );
 
+#ifndef DEDICATED
+	// if the server is pure, extract the dlls from the mp_bin.pk3 so
+	// that they can be referenced
+	if ( Cvar_VariableValue( "sv_pure" ) && Q_stricmp( name, "qagame" ) ) {
+		FS_CL_ExtractFromPakFile( homepath, gamedir, fname );
+	}
+#endif
+
 	libHandle = Sys_TryLibraryLoad(homepath, gamedir, fname, fqpath);
 
 	if(!libHandle && basepath)
