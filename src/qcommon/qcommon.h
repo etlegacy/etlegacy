@@ -1141,7 +1141,11 @@ void *Sys_InitializeCriticalSection();
 void Sys_EnterCriticalSection( void *ptr );
 void Sys_LeaveCriticalSection( void *ptr );
 
+#ifdef WIN32
+#define Sys_GetDLLName(x) x "_mp_" ARCH_STRING DLL_EXT
+#else
 #define Sys_GetDLLName(x) x ".mp." ARCH_STRING DLL_EXT
+#endif
 
 // fqpath param added 2/15/02 by T.Ray - Sys_LoadDll is only called in vm.c at this time
 void    * QDECL Sys_LoadDll( const char *name, char *fqpath, intptr_t( QDECL * *entryPoint ) ( int, ... ),
@@ -1297,71 +1301,5 @@ extern huffman_t clientHuffTables;
 #define CL_DECODE_START     4
 
 void Com_GetHunkInfo( int* hunkused, int* hunkexpected );
-
-// TTimo
-// dll checksuming stuff, centralizing OS-dependent parts
-// *_SHIFT is the shifting we applied to the reference string
-
-#if defined( _WIN32 )
-
-// qagame_mp_x86.dll
-#define SYS_DLLNAME_QAGAME_SHIFT 6
-#define SYS_DLLNAME_QAGAME "wgmgskesve~><4jrr"
-
-// cgame_mp_x86.dll
-#define SYS_DLLNAME_CGAME_SHIFT 2
-#define SYS_DLLNAME_CGAME "eicogaoraz:80fnn"
-
-// ui_mp_x86.dll
-#define SYS_DLLNAME_UI_SHIFT 5
-#define SYS_DLLNAME_UI "zndrud}=;3iqq"
-
-#elif defined( __linux__ )
-
-// qagame.mp.i386.so
-#define SYS_DLLNAME_QAGAME_SHIFT 6
-#define SYS_DLLNAME_QAGAME "wgmgsk4sv4o9><4yu"
-
-// cgame.mp.i386.so
-#define SYS_DLLNAME_CGAME_SHIFT 2
-#define SYS_DLLNAME_CGAME "eicog0or0k5:80uq"
-
-// ui.mp.i386.so
-#define SYS_DLLNAME_UI_SHIFT 5
-#define SYS_DLLNAME_UI "zn3ru3n8=;3xt"
-
-#elif __MACOS__
-
-#ifdef _DEBUG
-// qagame_d_mac
-	#define SYS_DLLNAME_QAGAME_SHIFT 6
-	#define SYS_DLLNAME_QAGAME "wgmgskejesgi"
-
-// cgame_d_mac
-	#define SYS_DLLNAME_CGAME_SHIFT 2
-	#define SYS_DLLNAME_CGAME "eicogafaoce"
-
-// ui_d_mac
-	#define SYS_DLLNAME_UI_SHIFT 5
-	#define SYS_DLLNAME_UI "zndidrfh"
-#else
-// qagame_mac
-	#define SYS_DLLNAME_QAGAME_SHIFT 6
-	#define SYS_DLLNAME_QAGAME "wgmgskesgi"
-
-// cgame_mac
-	#define SYS_DLLNAME_CGAME_SHIFT 2
-	#define SYS_DLLNAME_CGAME "eicogaoce"
-
-// ui_mac
-	#define SYS_DLLNAME_UI_SHIFT 5
-	#define SYS_DLLNAME_UI "zndrfh"
-#endif
-
-#else
-
-#error unknown OS
-
-#endif
 
 #endif // _QCOMMON_H_

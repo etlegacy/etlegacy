@@ -1200,9 +1200,9 @@ static void SV_VerifyPaks_f( client_t *cl ) {
 		bGood = qtrue;
 		nChkSum1 = nChkSum2 = 0;
 
-		bGood = ( FS_FileIsInPAK( FS_ShiftStr( SYS_DLLNAME_CGAME, -SYS_DLLNAME_CGAME_SHIFT ), &nChkSum1 ) == 1 );
+		bGood = ( FS_FileIsInPAK( Sys_GetDLLName("cgame"), &nChkSum1 ) == 1 );
 		if ( bGood ) {
-			bGood = ( FS_FileIsInPAK( FS_ShiftStr( SYS_DLLNAME_UI, -SYS_DLLNAME_UI_SHIFT ), &nChkSum2 ) == 1 );
+			bGood = ( FS_FileIsInPAK( Sys_GetDLLName("ui"), &nChkSum2 ) == 1 );
 		}
 
 		nClientPaks = Cmd_Argc();
@@ -1237,12 +1237,14 @@ static void SV_VerifyPaks_f( client_t *cl ) {
 			// verify first to be the cgame checksum
 			pArg = Cmd_Argv( nCurArg++ );
 			if ( !pArg || *pArg == '@' || atoi( pArg ) != nChkSum1 ) {
+				Com_Printf("nChkSum1 %d == %d\n", atoi( pArg ), nChkSum1 );
 				bGood = qfalse;
 				break;
 			}
 			// verify the second to be the ui checksum
 			pArg = Cmd_Argv( nCurArg++ );
 			if ( !pArg || *pArg == '@' || atoi( pArg ) != nChkSum2 ) {
+				Com_Printf("nChkSum2 %d == %d\n", atoi( pArg ), nChkSum2 );
 				bGood = qfalse;
 				break;
 			}
@@ -1475,6 +1477,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK, qb
 	ucmd_t  *u;
 	qboolean bProcessed = qfalse;
 
+	Com_Printf("EXCL: %s\n", s);
 	Cmd_TokenizeString( s );
 
 	// see if it is a server level command

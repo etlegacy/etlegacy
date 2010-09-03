@@ -456,7 +456,7 @@ void *Sys_LoadDll( const char *name, char *fqpath ,
 
 	assert( name );
 
-	Q_snprintf (fname, sizeof(fname), "%s.mp." ARCH_STRING DLL_EXT, name);
+	Q_snprintf (fname, sizeof(fname), Sys_GetDLLName( "%s" ), name);
 
 	// TODO: use fs_searchpaths from files.c
 	basepath = Cvar_VariableString( "fs_basepath" );
