@@ -1145,17 +1145,14 @@ int FS_FOpenFileRead( const char *filename, fileHandle_t *file, qboolean uniqueF
 		  #endif
 					// qagame dll
 					if ( !( pak->referenced & FS_QAGAME_REF ) && !Q_stricmp( filename, Sys_GetDLLName( "qagame" ) ) ) {
-						Com_Printf("Ref'd QAGAME\n");
 						pak->referenced |= FS_QAGAME_REF;
 					}
 					// cgame dll
 					if ( !( pak->referenced & FS_CGAME_REF ) && !Q_stricmp( filename, Sys_GetDLLName( "cgame" ) ) ) {
-						Com_Printf("Ref'd CGAME\n");
 						pak->referenced |= FS_CGAME_REF;
 					}
 					// ui dll
 					if ( !( pak->referenced & FS_UI_REF ) && !Q_stricmp( filename, Sys_GetDLLName( "ui") ) ) {
-						Com_Printf("Ref'd UI\n");
 						pak->referenced |= FS_UI_REF;
 					}
 
