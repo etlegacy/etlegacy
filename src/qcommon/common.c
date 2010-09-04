@@ -49,7 +49,8 @@ If you have questions concerning this license or the applicable additional terms
 #define MIN_DEDICATED_COMHUNKMEGS 1
 #define MIN_COMHUNKMEGS 64 // JPW NERVE changed this to 42 for MP, was 56 for team arena and 75 for wolfSP
 #define DEF_COMHUNKMEGS "64" // RF, increased this, some maps are exceeding 56mb // JPW NERVE changed this for multiplayer back to 42, 56 for depot/mp_cpdepot, 42 for everything else
-#define DEF_COMZONEMEGS "24" // RF, increased this from 16, to account for botlib/AAS
+#define MIN_DEDICATED_COMZONEMEGS 4
+#define DEF_COMZONEMEGS "16"
 
 int com_argc;
 char    *com_argv[MAX_NUM_ARGVS + 1];
@@ -1467,13 +1468,11 @@ void Com_InitZoneMemory( void ) {
 	// allocate the random block zone
 	cv = Cvar_Get( "com_zoneMegs", DEF_COMZONEMEGS, CVAR_LATCH | CVAR_ARCHIVE );
 
-#ifndef __MACOS__   //DAJ HOG
-	if ( cv->integer < 16 ) {
-		s_zoneTotal = 1024 * 1024 * 16;
-	} else
-#endif
-	{
-		s_zoneTotal = cv->integer * 1024 * 1024;
+	Com_Printf("Zone megs: %d\n", cv->integer);
+	if ( com_dedicated && com_dedicated->integer ) {
+		s_zoneTotal = 1024 * 1024 * MIN_DEDICATED_COMZONEMEGS;
+	} else {
+		s_zoneTotal = 1024 * 1024 * cv->integer;
 	}
 
 	// bk001205 - was malloc
