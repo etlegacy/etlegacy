@@ -148,10 +148,9 @@ typedef struct
 	void ( *ClearSounds )( qboolean clearStreaming, qboolean clearMusic );
 	void ( *StopAllSounds )( void );
 	void ( *FadeAllSounds )( float targetvol, int time, qboolean stopsounds );
-	void ( *ClearLoopingSounds )( qboolean killall );
+	void ( *ClearLoopingSounds )( void );
 	void ( *AddLoopingSound )( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfx, int volume, int soundTime );
 	void ( *AddRealLoopingSound )( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfx, int volume, int soundTime );
-	void ( *StopLoopingSound )( int entityNum );
 	void ( *Respatialize )( int entityNum, const vec3_t origin, vec3_t axis[3], int inwater );
 	void ( *UpdateEntityPosition )( int entityNum, const vec3_t origin );
 	void ( *Update )( void );

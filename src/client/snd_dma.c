@@ -520,7 +520,7 @@ void S_Base_StartSoundEx( vec3_t origin, int entnum, int entchannel, sfxHandle_t
 	sfx_t       *sfx;
 	int i, oldest, chosen, time;
 	int inplay, allowed;
-
+	
 	if ( !s_soundStarted || s_soundMuted ) {
 		return;
 	}
@@ -533,7 +533,7 @@ void S_Base_StartSoundEx( vec3_t origin, int entnum, int entchannel, sfxHandle_t
 		Com_Printf( S_COLOR_YELLOW "S_StartSound: handle %i out of range\n", sfxHandle );
 		return;
 	}
-
+	
 	sfx = &s_knownSfx[ sfxHandle ];
 
 	if ( sfx->inMemory == qfalse ) {
@@ -748,33 +748,18 @@ void S_Base_StopAllSounds( void ) {
 }
 
 /*
-==============================================================
-
-continuous looping sounds are added each frame
-
-==============================================================
-*/
-
-void S_Base_StopLoopingSound( int entnum ) {
-	loopSounds[entnum].active = qfalse;
-//	loopSounds[entnum].sfx = 0;
-	loopSounds[entnum].kill = qfalse;
-}
-
-/*
 ==================
 S_ClearLoopingSounds
 
 ==================
 */
-void S_Base_ClearLoopingSounds( qboolean killall ) {
+void S_Base_ClearLoopingSounds( void ) {
 	int i;
-	for ( i = 0 ; i < MAX_GENTITIES ; i++ ) {
-		if ( killall || loopSounds[i].kill == qtrue || ( loopSounds[i].sfx && loopSounds[i].sfx->soundLength == 0 ) ) {
-			loopSounds[i].kill = qfalse;
-			S_Base_StopLoopingSound( i );
-		}
+	for ( i = 0 ; i < numLoopSounds ; i++ ) {
+		loopSounds[i].active = qfalse;
+		loopSounds[i].kill = qfalse;
 	}
+	numLoopSounds = 0;
 	numLoopChannels = 0;
 }
 
@@ -792,7 +777,7 @@ Include velocity in case I get around to doing doppler...
 void S_Base_AddLoopingSound( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfxHandle, int volume, int soundTime ) {
 	sfx_t *sfx;
 
-	if ( !s_soundStarted || s_soundMuted ) {
+	if ( !s_soundStarted || s_soundMuted || !volume ) {
 		return;
 	}
 
@@ -815,8 +800,7 @@ void S_Base_AddLoopingSound( const vec3_t origin, const vec3_t velocity, const i
 		Com_Error( ERR_DROP, "%s has length 0", sfx->soundName );
 	}
 
-
-	VectorCopy( origin, entityPositions[numLoopSounds] );
+	VectorCopy( origin, loopSounds[numLoopSounds].origin );
 	VectorCopy( velocity, loopSounds[numLoopSounds].velocity );
 	loopSounds[numLoopSounds].startSample = soundTime % sfx->soundLength;
 	loopSounds[numLoopSounds].active = qtrue;
@@ -870,7 +854,7 @@ Include velocity in case I get around to doing doppler...
 void S_Base_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfxHandle, int volume, int soundTime ) {
 	sfx_t *sfx;
 
-	if ( !s_soundStarted || s_soundMuted ) {
+	if ( !s_soundStarted || s_soundMuted || !volume ) {
 		return;
 	}
 
@@ -882,7 +866,7 @@ void S_Base_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, con
 		Com_Printf( S_COLOR_YELLOW "S_AddRealLoopingSound: handle %i out of range\n", sfxHandle );
 		return;
 	}
-
+	
 	sfx = &s_knownSfx[ sfxHandle ];
 
 	if ( sfx->inMemory == qfalse ) {
@@ -893,7 +877,7 @@ void S_Base_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, con
 		Com_Error( ERR_DROP, "%s has length 0", sfx->soundName );
 	}
 		
-	VectorCopy( origin, entityPositions[numLoopSounds] );
+	VectorCopy( origin, loopSounds[numLoopSounds].origin );
 	VectorCopy( velocity, loopSounds[numLoopSounds].velocity );
 	loopSounds[numLoopSounds].sfx = sfx;
 	loopSounds[numLoopSounds].active = qtrue;
@@ -1963,7 +1947,6 @@ qboolean S_Base_Init( soundInterface_t *si ) {
 	si->ClearLoopingSounds = S_Base_ClearLoopingSounds;
 	si->AddLoopingSound = S_Base_AddLoopingSound;
 	si->AddRealLoopingSound = S_Base_AddRealLoopingSound;
-	si->StopLoopingSound = S_Base_StopLoopingSound;
 	si->Respatialize = S_Base_Respatialize;
 	si->UpdateEntityPosition = S_Base_UpdateEntityPosition;
 	si->Update = S_Base_Update;

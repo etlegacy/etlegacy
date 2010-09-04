@@ -101,9 +101,6 @@ static qboolean S_ValidSoundInterface( soundInterface_t *si ) {
 	if ( !si->AddRealLoopingSound ) {
 		return qfalse;
 	}
-	if ( !si->StopLoopingSound ) {
-		return qfalse;
-	}
 	if ( !si->Respatialize ) {
 		return qfalse;
 	}
@@ -312,9 +309,9 @@ void S_FadeAllSounds( float targetVol, int time, qboolean stopSounds ) {
 S_ClearLoopingSounds
 =================
 */
-void S_ClearLoopingSounds( qboolean killall ) {
+void S_ClearLoopingSounds( void ) {
 	if ( si.ClearLoopingSounds ) {
-		si.ClearLoopingSounds( killall );
+		si.ClearLoopingSounds();
 	}
 }
 
@@ -340,16 +337,6 @@ void S_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, const in
 	}
 }
 
-/*
-=================
-S_StopLoopingSound
-=================
-*/
-void S_StopLoopingSound( int entityNum ) {
-	if ( si.StopLoopingSound ) {
-		si.StopLoopingSound( entityNum );
-	}
-}
 
 /*
 =================
