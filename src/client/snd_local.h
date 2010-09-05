@@ -246,6 +246,8 @@ extern cvar_t *s_doppler;
 
 extern cvar_t *s_testsound;
 
+extern float s_volCurrent;
+
 qboolean S_LoadSound( sfx_t *sfx );
 
 void        SND_free( sndBuffer *v );

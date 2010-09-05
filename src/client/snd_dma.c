@@ -42,6 +42,7 @@ If you have questions concerning this license or the applicable additional terms
 void S_Update_( void );
 void S_Base_StopAllSounds( void );
 void S_Base_StopStreamingSound( int stream );
+void S_FreeStreamingSound( int stream );
 void S_UpdateStreamingSounds( void );
 
 streamingSound_t streamingSounds[MAX_STREAMING_SOUNDS];
@@ -65,8 +66,9 @@ static qboolean s_soundMuted;
 // sound fading
 static float s_volStart, s_volTarget;
 static int s_volTime1, s_volTime2;
-static float s_volFadeFrac, s_volCurrent;
+static float s_volFadeFrac;
 static qboolean s_stopSounds;
+float s_volCurrent;
 
 dma_t dma;
 
@@ -352,7 +354,7 @@ void S_Base_Reload( void ) {
 
 	Com_Printf( "reloading sounds...\n" );
 
-	S_StopAllSounds();
+	S_Base_StopAllSounds();
 
 	for ( sfx = s_knownSfx, i = 0; i < s_numSfx; i++, sfx++ ) {
 		sfx->inMemory = qfalse;
@@ -666,10 +668,15 @@ void S_Base_ClearSounds( qboolean clearStreaming, qboolean clearMusic ) {
 	channel_t *ch;
 	int clear;
 	
+	if ( !s_soundStarted ) {
+		return;
+	}
+	
 	// stop looping sounds
 	Com_Memset( loopSounds, 0, MAX_LOOP_SOUNDS * sizeof( loopSound_t ) );
 	Com_Memset( loop_channels, 0, MAX_CHANNELS * sizeof( channel_t ) );
 	numLoopChannels = 0;
+	numLoopSounds = 0;
 
 	// RF, moved this up so streaming sounds dont get updated with the music, below, 
 	// and leave us with a snippet off streaming sounds after we reload
@@ -688,9 +695,12 @@ void S_Base_ClearSounds( qboolean clearStreaming, qboolean clearMusic ) {
 				S_ChannelFree( ch );
 			}
 		}
-
 	}
-
+	
+	if ( !clearMusic ) {
+		S_UpdateStreamingSounds();
+	}
+	
 	if ( clearStreaming && clearMusic ) {
 		if ( dma.samplebits == 8 ) {
 			clear = 0x80;
@@ -707,7 +717,6 @@ void S_Base_ClearSounds( qboolean clearStreaming, qboolean clearMusic ) {
 		// NERVE - SMF - clear out channels so they don't finish playing when audio restarts
 		S_ChannelSetup();
 	}
-	
 }
 
 
@@ -724,7 +733,7 @@ void S_Base_ClearSoundBuffer( qboolean killStreaming ) {
 		return;
 	}
 
-	S_ClearSounds( killStreaming, qtrue );
+	S_Base_ClearSounds( killStreaming, qtrue );
 }
 
 /*
@@ -737,11 +746,6 @@ void S_Base_StopAllSounds( void ) {
 	
 	if ( !s_soundStarted ) {
 		return;
-	}
-
-	// stop all streams
-	for ( i = 0; i < MAX_STREAMING_SOUNDS; i++ ) {
-		S_Base_StopStreamingSound( i );
 	}
 
 	S_Base_ClearSoundBuffer( qtrue );
@@ -1433,19 +1437,17 @@ float S_StartStreamingSoundEx( const char *intro, const char *loop, int entnum, 
 			}
 		}
 	} else {
-		//if ( entnum >= 0 ) {
-			for ( i = 1; i < MAX_STREAMING_SOUNDS; i++ ) {
-				if ( !streamingSounds[i].stream && !freeTrack ) {
-					freeTrack = i;
-				} else if ( ( channel != CHAN_AUTO ) &&
-				     ( streamingSounds[i].entnum == entnum ) ) {
-					// found a match, override this channel
-					S_Base_StopStreamingSound( i );
-					ss = &streamingSounds[i];
-					break;
-				}
+		for ( i = 1; i < MAX_STREAMING_SOUNDS; i++ ) {
+			if ( !streamingSounds[i].stream && !freeTrack ) {
+				freeTrack = i;
+			} else if ( ( entnum >= 0 ) && ( channel != CHAN_AUTO ) &&
+			     ( streamingSounds[i].entnum == entnum ) ) {
+				// found a match, override this channel
+				S_Base_StopStreamingSound( i );
+				ss = &streamingSounds[i];
+				break;
 			}
-		//}
+		}
 	}
 	
 	// Normal streaming sounds, select a free track
@@ -1473,7 +1475,7 @@ float S_StartStreamingSoundEx( const char *intro, const char *loop, int entnum, 
 		if ( !music || Q_stricmp( loop, "onetimeonly" ) )
 			Q_strncpyz( ss->loopStream, loop, MAX_QPATH );
 	} else {
-		ss->loopStream[0] = 0;
+		ss->loopStream[0] = '\0';
 	}
 	
 	// clear current music cvar
@@ -1510,7 +1512,7 @@ float S_StartStreamingSoundEx( const char *intro, const char *loop, int entnum, 
 	}
 	
 	if ( ss->stream->info.channels != 2 || ss->stream->info.rate != 22050 ) {
-		Com_Printf( S_COLOR_YELLOW "WARNING: stream file %s is not 22k stereo\n", intro );
+		Com_DPrintf( S_COLOR_YELLOW "WARNING: stream file %s is not 22k stereo\n", intro );
 	}
 	
 	// return the length of sound
@@ -1529,11 +1531,12 @@ float S_Base_StartStreamingSound( const char *intro, const char *loop, int entnu
 
 /*
 ==============
-S_StopStreamingSound
+S_FreeStreamingSound
 
+Frees a streaming sound so that it can be used again, but does not terminate the sound.
 ==============
 */
-void S_Base_StopStreamingSound( int stream ) {
+void S_FreeStreamingSound( int stream ) {
 	streamingSound_t *ss;
 	
 	if ( stream < 0 && stream >= MAX_STREAMING_SOUNDS ) {
@@ -1551,7 +1554,19 @@ void S_Base_StopStreamingSound( int stream ) {
 	ss->loopStream[0] = '\0';
 	ss->queueStream[0] = '\0';
 	ss->queueStreamType = 0;
-	//s_rawend[RAW_STREAM( stream )] = 0;
+}
+
+
+/*
+==============
+S_StopStreamingSound
+
+Stops a streaming sound completely in its tracks.
+==============
+*/
+void S_Base_StopStreamingSound( int stream ) {
+	S_FreeStreamingSound( stream );
+	s_rawend[RAW_STREAM( stream )] = 0;
 }
 
 /*
@@ -1570,7 +1585,6 @@ void S_Base_StopEntStreamingSound( int entnum ) {
 		if ( streamingSounds[i].entnum != entnum && entnum != -1 )
 			continue;
 		S_Base_StopStreamingSound( i );
-		s_rawend[RAW_STREAM( i )] = 0;
 	}
 }
 
@@ -1796,11 +1810,10 @@ void S_UpdateStreamingSounds( void ) {
 				if ( *ss->loopStream ) {
 					// TODO: Implement a rewind?
 					S_Base_StopStreamingSound( i );
-					S_Base_StartBackgroundTrack( ss->loopStream, ss->loopStream, 0 );
 					S_StartStreamingSoundEx( ss->loopStream, ss->loopStream,
 						ss->entnum, ss->channel, i == 0, i == 0 ? 0 : ss->attenuation );
 				} else {
-					S_Base_StopStreamingSound( i );
+					S_FreeStreamingSound( i );
 				}
 				break;
 			}

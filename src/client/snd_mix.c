@@ -645,10 +645,10 @@ void S_PaintChannels( int endtime ) {
 	if ( s_muted->integer ) {
 		snd_vol = 0;
 	} else {
-		snd_vol = s_volume->value * 255;
+		snd_vol = s_volume->value * s_volCurrent * 255;
 	}
-
-//Com_Printf ("%i to %i\n", s_paintedtime, endtime);
+	
+	//Com_Printf ("%i to %i\n", s_paintedtime, endtime);
 	while ( s_paintedtime < endtime ) {
 		// if paintbuffer is smaller than DMA buffer
 		// we may need to fill it multiple times
