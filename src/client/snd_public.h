@@ -44,7 +44,6 @@ void S_StartBackgroundTrack( const char *intro, const char *loop, int fadeupTime
 void S_StopBackgroundTrack( void );
 
 float S_StartStreamingSound( const char *intro, const char *loop, int entnum, int channel, int attenuation );
-void S_StopStreamingSound( int index );
 void S_StopEntStreamingSound( int entNum );
 void S_FadeStreamingSound( float targetvol, int time, int stream );
 

@@ -71,9 +71,6 @@ static qboolean S_ValidSoundInterface( soundInterface_t *si ) {
 	if ( !si->StartStreamingSound ) {
 		return qfalse;
 	}
-	if ( !si->StopStreamingSound ) {
-		return qfalse;
-	}
 	if ( !si->StopEntStreamingSound ) {
 		return qfalse;
 	}
@@ -223,17 +220,6 @@ float S_StartStreamingSound( const char *intro, const char *loop, int entnum, in
 		return si.StartStreamingSound( intro, loop, entnum, channel, attenuation );
 	} else {
 		return 0.0f;
-	}
-}
-
-/*
-=================
-S_StopStreamingSound
-=================
-*/
-void S_StopStreamingSound( int stream ) {
-	if ( si.StopStreamingSound ) {
-		si.StopStreamingSound( stream );
 	}
 }
 

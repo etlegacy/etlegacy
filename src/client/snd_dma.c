@@ -41,7 +41,7 @@ If you have questions concerning this license or the applicable additional terms
 
 void S_Update_( void );
 void S_Base_StopAllSounds( void );
-void S_Base_StopStreamingSound( int stream );
+void S_StopStreamingSound( int stream );
 void S_FreeStreamingSound( int stream );
 void S_UpdateStreamingSounds( void );
 
@@ -683,7 +683,7 @@ void S_Base_ClearSounds( qboolean clearStreaming, qboolean clearMusic ) {
 	if ( clearStreaming ) {
 		for ( i = 0, ss = streamingSounds; i < MAX_STREAMING_SOUNDS; i++, ss++ ) {
 			if ( i > 0 || clearMusic ) {
-				S_Base_StopStreamingSound( i );
+				S_StopStreamingSound( i );
 			}
 		}
 
@@ -1443,7 +1443,7 @@ float S_StartStreamingSoundEx( const char *intro, const char *loop, int entnum, 
 			} else if ( ( entnum >= 0 ) && ( channel != CHAN_AUTO ) &&
 			     ( streamingSounds[i].entnum == entnum ) ) {
 				// found a match, override this channel
-				S_Base_StopStreamingSound( i );
+				S_StopStreamingSound( i );
 				ss = &streamingSounds[i];
 				break;
 			}
@@ -1564,7 +1564,7 @@ S_StopStreamingSound
 Stops a streaming sound completely in its tracks.
 ==============
 */
-void S_Base_StopStreamingSound( int stream ) {
+void S_StopStreamingSound( int stream ) {
 	S_FreeStreamingSound( stream );
 	s_rawend[RAW_STREAM( stream )] = 0;
 }
@@ -1584,7 +1584,7 @@ void S_Base_StopEntStreamingSound( int entnum ) {
 		// is it the right entity or is it all
 		if ( streamingSounds[i].entnum != entnum && entnum != -1 )
 			continue;
-		S_Base_StopStreamingSound( i );
+		S_StopStreamingSound( i );
 	}
 }
 
@@ -1683,7 +1683,7 @@ S_StopBackgroundTrack
 ======================
 */
 void S_Base_StopBackgroundTrack( void ) {
-	S_Base_StopStreamingSound( 0 );
+	S_StopStreamingSound( 0 );
 }
 
 /*
@@ -1754,7 +1754,7 @@ void S_UpdateStreamingSounds( void ) {
 			streamingVol = S_GetStreamingFade( ss );
 			// stop the stream if we had faded out of existence
 			if ( streamingVol == 0.0f ) {
-				S_Base_StopStreamingSound( i );
+				S_StopStreamingSound( i );
 				break;
 			}
 			streamingVol *= s_volCurrent;
@@ -1809,7 +1809,7 @@ void S_UpdateStreamingSounds( void ) {
 				// loop
 				if ( *ss->loopStream ) {
 					// TODO: Implement a rewind?
-					S_Base_StopStreamingSound( i );
+					S_StopStreamingSound( i );
 					S_StartStreamingSoundEx( ss->loopStream, ss->loopStream,
 						ss->entnum, ss->channel, i == 0, i == 0 ? 0 : ss->attenuation );
 				} else {
@@ -1950,7 +1950,6 @@ qboolean S_Base_Init( soundInterface_t *si ) {
 	si->StartBackgroundTrack = S_Base_StartBackgroundTrack;
 	si->StopBackgroundTrack = S_Base_StopBackgroundTrack;
 	si->StartStreamingSound = S_Base_StartStreamingSound;
-	si->StopStreamingSound = S_Base_StopStreamingSound;
 	si->StopEntStreamingSound = S_Base_StopEntStreamingSound;
 	si->FadeStreamingSound = S_Base_FadeStreamingSound;
 	si->RawSamples = S_Base_RawSamples;
