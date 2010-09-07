@@ -608,7 +608,11 @@ Q3OBJ = \
   $(B)/client/huffman.o \
   \
   $(B)/client/snd_adpcm.o \
+  $(B)/client/snd_codec.o \
+  $(B)/client/snd_codec_ogg.o \
+  $(B)/client/snd_codec_wav.o \
   $(B)/client/snd_dma.o \
+  $(B)/client/snd_main.o \
   $(B)/client/snd_mem.o \
   $(B)/client/snd_mix.o \
   $(B)/client/snd_wavelet.o \
