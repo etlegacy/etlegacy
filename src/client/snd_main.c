@@ -306,7 +306,7 @@ void S_ClearLoopingSounds( void ) {
 S_AddLoopingSound
 =================
 */
-void S_AddLoopingSound( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfx, int volume, int soundTime ) {
+void S_AddLoopingSound( const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfx, int volume, int soundTime ) {
 	if ( si.AddLoopingSound ) {
 		si.AddLoopingSound( origin, velocity, range, sfx, volume, soundTime );
 	}
@@ -317,7 +317,7 @@ void S_AddLoopingSound( const vec3_t origin, const vec3_t velocity, const int ra
 S_AddRealLoopingSound
 =================
 */
-void S_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfx, int volume, int soundTime ) {
+void S_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfx, int volume, int soundTime ) {
 	if ( si.AddRealLoopingSound ) {
 		si.AddRealLoopingSound( origin, velocity, range, sfx, volume, soundTime );
 	}

@@ -59,8 +59,8 @@ void S_FadeAllSounds( float targetVol, int time, qboolean stopSounds );
 
 // all continuous looping sounds must be added before calling S_Update
 void S_ClearLoopingSounds( void );
-void S_AddLoopingSound( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfx, int volume, int soundTime );
-void S_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfx, int volume, int soundTime );
+void S_AddLoopingSound( const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfx, int volume, int soundTime );
+void S_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfx, int volume, int soundTime );
 
 // recompute the reletive volumes for all running sounds
 // reletive to the given entityNum / orientation

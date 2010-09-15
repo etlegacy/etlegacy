@@ -778,7 +778,7 @@ Include velocity in case I get around to doing doppler...
 
 #define UNDERWATER_BIT 16
 
-void S_Base_AddLoopingSound( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfxHandle, int volume, int soundTime ) {
+void S_Base_AddLoopingSound( const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfxHandle, int volume, int soundTime ) {
 	sfx_t *sfx;
 
 	if ( !s_soundStarted || s_soundMuted || !volume ) {
@@ -855,7 +855,7 @@ Called during entity generation for a frame
 Include velocity in case I get around to doing doppler...
 ==================
 */
-void S_Base_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfxHandle, int volume, int soundTime ) {
+void S_Base_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfxHandle, int volume, int soundTime ) {
 	sfx_t *sfx;
 
 	if ( !s_soundStarted || s_soundMuted || !volume ) {
