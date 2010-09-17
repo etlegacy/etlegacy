@@ -82,10 +82,9 @@ int s_paintedtime;              // sample PAIRS
 // MAX_SFX may be larger than MAX_SOUNDS because
 // of custom player sounds
 #define     MAX_SFX         4096
-sfx_t s_knownSfx[MAX_SFX];
-int s_numSfx = 0;
+static sfx_t knownSfx[MAX_SFX];
+static int numSfx = 0;
 
-#define     MAX_LOOP_SOUNDS 1024
 #define     LOOP_HASH       128
 static sfx_t       *sfxHash[LOOP_HASH];
 
@@ -182,7 +181,7 @@ void S_Base_SoundList( void ) {
 	strcpy( mem[0], "paged out" );
 	strcpy( mem[1], "resident " );
 	total = 0;
-	for ( sfx = s_knownSfx, i = 0 ; i < s_numSfx ; i++, sfx++ ) {
+	for ( sfx = knownSfx, i = 0 ; i < numSfx ; i++, sfx++ ) {
 		size = sfx->soundLength;
 		total += size;
 		Com_Printf( "%6i[%s] : %s[%s]\n", size, type[sfx->soundCompressionMethod],
@@ -297,20 +296,20 @@ static sfx_t *S_FindName( const char *name ) {
 	}
 
 	// find a free sfx
-	for ( i = 0 ; i < s_numSfx ; i++ ) {
-		if ( !s_knownSfx[i].soundName[0] ) {
+	for ( i = 0 ; i < numSfx ; i++ ) {
+		if ( !knownSfx[i].soundName[0] ) {
 			break;
 		}
 	}
 
-	if ( i == s_numSfx ) {
-		if ( s_numSfx == MAX_SFX ) {
+	if ( i == numSfx ) {
+		if ( numSfx == MAX_SFX ) {
 			Com_Error( ERR_FATAL, "S_FindName: out of sfx_t" );
 		}
-		s_numSfx++;
+		numSfx++;
 	}
 
-	sfx = &s_knownSfx[i];
+	sfx = &knownSfx[i];
 	Com_Memset( sfx, 0, sizeof( *sfx ) );
 	strcpy( sfx->soundName, name );
 
@@ -356,7 +355,7 @@ void S_Base_Reload( void ) {
 
 	S_Base_StopAllSounds();
 
-	for ( sfx = s_knownSfx, i = 0; i < s_numSfx; i++, sfx++ ) {
+	for ( sfx = knownSfx, i = 0; i < numSfx; i++, sfx++ ) {
 		sfx->inMemory = qfalse;
 		S_memoryLoad( sfx );
 	}
@@ -402,7 +401,7 @@ sfxHandle_t S_Base_RegisterSound( const char *name, qboolean compressed ) {
 			Com_DPrintf( S_COLOR_YELLOW "WARNING: could not find %s - using default\n", sfx->soundName );
 			return 0;
 		}
-		return sfx - s_knownSfx;
+		return sfx - knownSfx;
 	}
 
 	sfx->inMemory = qfalse;
@@ -415,7 +414,7 @@ sfxHandle_t S_Base_RegisterSound( const char *name, qboolean compressed ) {
 		return 0;
 	}
 
-	return sfx - s_knownSfx;
+	return sfx - knownSfx;
 }
 
 /*
@@ -427,11 +426,11 @@ S_BeginRegistration
 void S_Base_BeginRegistration( void ) {
 	s_soundMuted = qfalse;      // we can play again
 
-	if ( s_numSfx == 0 ) {
+	if ( numSfx == 0 ) {
 		SND_setup();
 
-		s_numSfx = 0;
-		Com_Memset( s_knownSfx, 0, sizeof( s_knownSfx ) );
+		numSfx = 0;
+		Com_Memset( knownSfx, 0, sizeof( knownSfx ) );
 		Com_Memset( sfxHash, 0, sizeof( sfx_t * ) * LOOP_HASH );
 
 		S_Base_RegisterSound( "sound/feedback/hit.wav", qfalse );     // changed to a sound in baseq3
@@ -531,12 +530,12 @@ void S_Base_StartSoundEx( vec3_t origin, int entnum, int entchannel, sfxHandle_t
 		Com_Error( ERR_DROP, "S_StartSound: bad entitynum %i", entnum );
 	}
 
-	if ( sfxHandle < 0 || sfxHandle >= s_numSfx ) {
+	if ( sfxHandle < 0 || sfxHandle >= numSfx ) {
 		Com_Printf( S_COLOR_YELLOW "S_StartSound: handle %i out of range\n", sfxHandle );
 		return;
 	}
 	
-	sfx = &s_knownSfx[ sfxHandle ];
+	sfx = &knownSfx[ sfxHandle ];
 
 	if ( sfx->inMemory == qfalse ) {
 		S_memoryLoad( sfx );
@@ -648,7 +647,7 @@ void S_Base_StartLocalSound( sfxHandle_t sfxHandle, int channelNum, int volume )
 		return;
 	}
 
-	if ( sfxHandle < 0 || sfxHandle >= s_numSfx ) {
+	if ( sfxHandle < 0 || sfxHandle >= numSfx ) {
 		Com_Printf( S_COLOR_YELLOW "S_StartLocalSound: handle %i out of range\n", sfxHandle );
 		return;
 	}
@@ -789,12 +788,12 @@ void S_Base_AddLoopingSound( const vec3_t origin, const vec3_t velocity, int ran
 		return;
 	}
 
-	if ( sfxHandle < 0 || sfxHandle >= s_numSfx ) {
+	if ( sfxHandle < 0 || sfxHandle >= numSfx ) {
 		Com_Printf( S_COLOR_YELLOW "S_AddLoopingSound: handle %i out of range\n", sfxHandle );
 		return;
 	}
 
-	sfx = &s_knownSfx[ sfxHandle ];
+	sfx = &knownSfx[ sfxHandle ];
 
 	if ( sfx->inMemory == qfalse ) {
 		S_memoryLoad( sfx );
@@ -866,12 +865,12 @@ void S_Base_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, int
 		return;
 	}
 
-	if ( sfxHandle < 0 || sfxHandle >= s_numSfx ) {
+	if ( sfxHandle < 0 || sfxHandle >= numSfx ) {
 		Com_Printf( S_COLOR_YELLOW "S_AddRealLoopingSound: handle %i out of range\n", sfxHandle );
 		return;
 	}
 	
-	sfx = &s_knownSfx[ sfxHandle ];
+	sfx = &knownSfx[ sfxHandle ];
 
 	if ( sfx->inMemory == qfalse ) {
 		S_memoryLoad( sfx );
@@ -1837,11 +1836,11 @@ Returns how long the sound lasts in milliseconds
 ======================
 */
 int S_Base_GetSoundLength( sfxHandle_t sfxHandle ) {
-	if ( sfxHandle < 0 || sfxHandle >= s_numSfx ) {
+	if ( sfxHandle < 0 || sfxHandle >= numSfx ) {
 		Com_DPrintf( S_COLOR_YELLOW "S_StartSound: handle %i out of range\n", sfxHandle );
 		return -1;
 	}
-	return (int)( (float)s_knownSfx[sfxHandle].soundLength / dma.speed * 1000.0 );
+	return (int)( (float)knownSfx[sfxHandle].soundLength / dma.speed * 1000.0 );
 }
 
 /*
@@ -1867,15 +1866,15 @@ void S_FreeOldestSound( void ) {
 	oldest = Com_Milliseconds();
 	used = 0;
 
-	for ( i = 1 ; i < s_numSfx ; i++ ) {
-		sfx = &s_knownSfx[i];
+	for ( i = 1 ; i < numSfx ; i++ ) {
+		sfx = &knownSfx[i];
 		if ( sfx->inMemory && sfx->lastTimeUsed < oldest ) {
 			used = i;
 			oldest = sfx->lastTimeUsed;
 		}
 	}
 
-	sfx = &s_knownSfx[used];
+	sfx = &knownSfx[used];
 
 	Com_DPrintf( "S_FreeOldestSound: freeing sound %s\n", sfx->soundName );
 
@@ -1929,7 +1928,7 @@ qboolean S_Base_Init( soundInterface_t *si ) {
 	if ( r ) {
 		s_soundStarted = 1;
 		s_soundMuted = 1;
-//		s_numSfx = 0;
+//		numSfx = 0;
 
 		Com_Memset( streamingSounds, 0, sizeof( streamingSound_t ) * MAX_STREAMING_SOUNDS );
 		Com_Memset( sfxHash, 0, sizeof( sfx_t * ) * LOOP_HASH );

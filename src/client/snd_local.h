@@ -238,6 +238,8 @@ typedef struct {
 extern portable_samplepair_t s_rawsamples[MAX_RAW_STREAMS][MAX_RAW_SAMPLES];
 extern int s_rawend[MAX_RAW_STREAMS];
 
+#define     MAX_LOOP_SOUNDS 1024
+
 extern cvar_t *s_volume;
 extern cvar_t *s_musicVolume;
 extern cvar_t *s_muted;
