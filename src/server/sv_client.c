@@ -1477,7 +1477,6 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK, qb
 	ucmd_t  *u;
 	qboolean bProcessed = qfalse;
 
-	Com_Printf("EXCL: %s\n", s);
 	Cmd_TokenizeString( s );
 
 	// see if it is a server level command
