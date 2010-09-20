@@ -591,6 +591,7 @@ typedef struct sentity_s
 
 	qboolean						srcAllocated; // If a src_t has been allocated to this entity
 	int							srcIndex;
+	int                     volume;
 
 	qboolean				loopAddedThisFrame;
 	alSrcPriority_t	loopPriority;
@@ -786,7 +787,7 @@ S_AL_SrcSetup
 =================
 */
 static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t priority,
-		int entity, int channel, qboolean local)
+		int entity, int channel, qboolean local, int volume)
 {
 	ALuint buffer;
 	src_t *curSource;
@@ -807,7 +808,7 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 	curSource->isLocked = qfalse;
 	curSource->isLooping = qfalse;
 	curSource->isTracking = qfalse;
-	curSource->curGain = s_alGain->value * s_volume->value;
+	curSource->curGain = s_alGain->value * s_volume->value * ((float)volume/255.0f);
 	curSource->scaleGain = curSource->curGain;
 	curSource->local = local;
 
@@ -1213,7 +1214,7 @@ void S_AL_StartLocalSound(sfxHandle_t sfx, int channel, int volume)
 		return;
 
 	// Set up the effect
-	S_AL_SrcSetup(src, sfx, SRCPRI_LOCAL, -1, channel, qtrue);
+	S_AL_SrcSetup(src, sfx, SRCPRI_LOCAL, -1, channel, qtrue, volume);
 
 	// Start it playing
 	srcList[src].isPlaying = qtrue;
@@ -1269,7 +1270,7 @@ static void S_AL_StartSoundEx( vec3_t origin, int entnum, int entchannel, sfxHan
 	if(src == -1)
 		return;
 
-	S_AL_SrcSetup(src, sfx, SRCPRI_ONESHOT, entnum, entchannel, qfalse);
+	S_AL_SrcSetup(src, sfx, SRCPRI_ONESHOT, entnum, entchannel, qfalse, volume);
 	
 	curSource = &srcList[src];
 
@@ -1323,6 +1324,7 @@ static void S_AL_SrcLoop( alSrcPriority_t priority, sfxHandle_t sfx,
 	src_t		*curSource;
 	vec3_t		sorigin, svelocity;
 
+	//TODO: implement soundTime
 	//if(S_AL_CheckInput(entityNum, sfx))
 	//	return;
 		
@@ -1358,12 +1360,13 @@ static void S_AL_SrcLoop( alSrcPriority_t priority, sfxHandle_t sfx,
 		curSource = &srcList[src];
 	}
 
-	VectorCopy(origin, sent->origin)
+	VectorCopy(origin, sent->origin);
 	sent->srcAllocated = qtrue;
 	sent->srcIndex = src;
 
 	sent->loopPriority = priority;
 	sent->loopSfx = sfx;
+	sent->volume = volume;
 
 	// If this is not set then the looping sound is stopped.
 	sent->loopAddedThisFrame = qtrue;
@@ -1474,7 +1477,7 @@ void S_AL_SrcUpdate( void )
 				if(sent->startLoopingSound)
 				{
 					S_AL_SrcSetup(i, sent->loopSfx, sent->loopPriority,
-							entityNum, -1, curSource->local);
+							entityNum, -1, curSource->local, sent->volume);
 					curSource->isLooping = qtrue;
 					
 					knownSfx[curSource->sfx].loopCnt++;
