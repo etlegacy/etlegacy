@@ -3462,7 +3462,6 @@ const char *FS_ReferencedPakPureChecksums( void ) {
 	info[0] = 0;
 
 	checksum = fs_checksumFeed;
-	Com_Printf("cgckfeed: %d\n", checksum);
 
 	numPaks = 0;
 	for ( nFlags = FS_CGAME_REF; nFlags; nFlags = nFlags >> 1 ) {
