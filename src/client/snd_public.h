@@ -2,9 +2,9 @@
 ===========================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
 Wolf ET Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,19 +26,13 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-
-#ifdef DOOMSOUND    ///// (SA) DOOMSOUND
-#ifdef __cplusplus
-extern "C" {
-#endif
-#endif  ///// (SA) DOOMSOUND
-
-#ifndef __snd_public_h__
-#define __snd_public_h__
+// background track queuing
+#define QUEUED_PLAY_ONCE    -1
+#define QUEUED_PLAY_LOOPED  -2
+#define QUEUED_PLAY_ONCE_SILENT -3  // when done it goes quiet
 
 void S_Init( void );
 void S_Shutdown( void );
-void S_UpdateThread( void );
 void S_Reload( void );
 
 // if origin is NULL, the sound will be dynamically sourced from the entity
@@ -48,41 +42,33 @@ void S_StartLocalSound( sfxHandle_t sfx, int channelNum, int volume );
 
 void S_StartBackgroundTrack( const char *intro, const char *loop, int fadeupTime );
 void S_StopBackgroundTrack( void );
-void S_QueueBackgroundTrack( const char *loop );            //----(SA)	added
-void S_FadeStreamingSound( float targetvol, int time, int ssNum );  //----(SA)	added
-void S_FadeAllSounds( float targetvol, int time, qboolean stopsounds );   //----(SA)	added
 
 float S_StartStreamingSound( const char *intro, const char *loop, int entnum, int channel, int attenuation );
-void S_StopStreamingSound( int index );
-void S_StopEntStreamingSound( int entNum ); //----(SA)	added
-
-void S_AddLoopSounds( void );
+void S_StopEntStreamingSound( int entNum );
+void S_FadeStreamingSound( float targetvol, int time, int stream );
 
 // cinematics and voice-over-network will send raw samples
 // 1.0 volume will be direct output of source samples
-void S_RawSamples( int samples, int rate, int width, int s_channels,
-				   const byte *data, float lvol, float rvol, int streamingIndex );
+void S_RawSamples( int stream, int samples, int rate, int width, int channels,
+				   const byte *data, float lvol, float rvol );
 
 // stop all sounds and the background track
+void S_ClearSounds( qboolean clearStreaming, qboolean clearMusic );
 void S_StopAllSounds( void );
+void S_FadeAllSounds( float targetVol, int time, qboolean stopSounds );
 
 // all continuous looping sounds must be added before calling S_Update
 void S_ClearLoopingSounds( void );
-void S_ClearSounds( qboolean clearStreaming, qboolean clearMusic ); //----(SA)	modified
-void S_AddLoopingSound( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfxHandle, int volume, int soundTime );
-void S_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, const int range, sfxHandle_t sfxHandle, int volume, int soundTime );
+void S_AddLoopingSound( const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfx, int volume, int soundTime );
+void S_AddRealLoopingSound( const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfx, int volume, int soundTime );
 
-#ifdef DOOMSOUND    ///// (SA) DOOMSOUND
-void S_ClearSoundBuffer( void );
-#endif ///// (SA) DOOMSOUND
 // recompute the reletive volumes for all running sounds
 // reletive to the given entityNum / orientation
-void S_Respatialize( int entityNum, const vec3_t origin, vec3_t axis[3], int inwater );
+void S_Respatialize( int entnum, const vec3_t origin, vec3_t axis[3], int inwater );
 
 // let the sound system know where an entity currently is
-void S_UpdateEntityPosition( int entityNum, const vec3_t origin );
+void S_UpdateEntityPosition( int entnum, const vec3_t origin );
 
-void S_Update_Debug( void );
 void S_Update( void );
 
 void S_DisableSounds( void );
@@ -92,24 +78,24 @@ void S_BeginRegistration( void );
 // RegisterSound will allways return a valid sample, even if it
 // has to create a placeholder.  This prevents continuous filesystem
 // checks for missing files
-#ifdef DOOMSOUND    ///// (SA) DOOMSOUND
-sfxHandle_t S_RegisterSound( const char *sample );
-#else
 sfxHandle_t S_RegisterSound( const char *sample, qboolean compressed );
-#endif ///// (SA) DOOMSOUND
 
 void S_DisplayFreeMemory( void );
 
-//
-int S_GetVoiceAmplitude( int entityNum );
+void S_ClearSoundBuffer( qboolean killStreaming );
+
+void SNDDMA_Activate( void );
+
+int S_GetVoiceAmplitude( int entnum );
 
 int S_GetSoundLength( sfxHandle_t sfxHandle );
 int S_GetCurrentSoundTime( void );
 
-#endif  // __snd_public_h__
-
-#ifdef DOOMSOUND    ///// (SA) DOOMSOUND
-#ifdef __cplusplus
-}
+#ifdef USE_VOIP
+void S_StartCapture( void );
+int S_AvailableCaptureSamples( void );
+void S_Capture( int samples, byte *data );
+void S_StopCapture( void );
+void S_MasterGain( float gain );
 #endif
-#endif  ///// (SA) DOOMSOUND
+

@@ -702,67 +702,6 @@ void CL_WriteWaveClose() {
 	clc.wavefile = 0;
 }
 
-extern int s_soundtime;
-extern int s_paintedtime;
-extern portable_samplepair_t paintbuffer[PAINTBUFFER_SIZE];
-portable_samplepair_t wavbuffer[PAINTBUFFER_SIZE];
-
-void CL_WriteWaveFilePacket( int endtime ) {
-	int total, i;
-
-	if ( !clc.waverecording || !clc.wavefile ) {
-		return;
-	}
-
-	if ( clc.wavetime == -1 ) {
-		clc.wavetime = s_soundtime;
-
-		memcpy( wavbuffer, paintbuffer, sizeof( wavbuffer ) );
-		return;
-	}
-
-	if ( s_soundtime <= clc.wavetime ) {
-		return;
-	}
-
-	total = s_soundtime - clc.wavetime;
-
-	if ( total < 1 ) {
-		return;
-	}
-
-	clc.wavetime = s_soundtime;
-
-	for ( i = 0; i < total; i++ ) {
-		int parm;
-		short out;
-
-		parm = ( wavbuffer[i].left ) >> 8;
-		if ( parm > 32767 ) {
-			parm = 32767;
-		}
-		if ( parm < -32768 ) {
-			parm = -32768;
-		}
-		out = parm;
-		FS_Write( &out, 2, clc.wavefile );
-
-		parm = ( wavbuffer[i].right ) >> 8;
-		if ( parm > 32767 ) {
-			parm = 32767;
-		}
-		if ( parm < -32768 ) {
-			parm = -32768;
-		}
-		out = parm;
-		FS_Write( &out, 2, clc.wavefile );
-		hdr.NumSamples++;
-	}
-	memcpy( wavbuffer, paintbuffer, sizeof( wavbuffer ) );
-
-	Cvar_Set( "cl_waveoffset", va( "%d", FS_FTell( clc.wavefile ) ) );
-}
-
 /*
 ====================
 CL_PlayDemo_f
