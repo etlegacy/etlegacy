@@ -1306,11 +1306,7 @@ void S_AL_ClearLoopingSounds( void )
 {
 	int i;
 	for(i = 0; i < numLoopingSounds; i++)
-	{
 		loopSounds[i].loopAddedThisFrame = qfalse;
-		if( loopSounds[i].srcAllocated )
-			S_AL_SrcKill(loopSounds[i].srcIndex);
-	}
 	numLoopingSounds = 0;
 }
 
@@ -1362,6 +1358,7 @@ static void S_AL_SrcLoop( alSrcPriority_t priority, sfxHandle_t sfx,
 		curSource = &srcList[src];
 	}
 
+	VectorCopy(origin, sent->origin)
 	sent->srcAllocated = qtrue;
 	sent->srcIndex = src;
 
@@ -1377,43 +1374,25 @@ static void S_AL_SrcLoop( alSrcPriority_t priority, sfxHandle_t sfx,
 	// with subsequent calls to S_AL_SrcLoop
 	curSource->entity = numLoopingSounds - 1;
 	curSource->isLooping = qtrue;
+	
+	curSource->local = qfalse;
+	
+	VectorCopy(origin, sorigin);
 
-/*
-    TODO: Loops have no entities anymore!
-	if( S_AL_HearingThroughEntity( entityNum ) )
+	S_AL_SanitiseVector(sorigin);
+	
+	VectorCopy(sorigin, curSource->loopSpeakerPos);
+	
+	if(velocity)
 	{
-		curSource->local = qtrue;
-
-		VectorClear(sorigin);
-
-		qalSourcefv(curSource->alSource, AL_POSITION, sorigin);
-		qalSourcefv(curSource->alSource, AL_VELOCITY, sorigin);
+		VectorCopy(velocity, svelocity);
+		S_AL_SanitiseVector(svelocity);
 	}
 	else
-*/
-	{
-		curSource->local = qfalse;
+		VectorClear(svelocity);
 
-		if(origin)
-			VectorCopy(origin, sorigin);
-		else
-			VectorCopy(sent->origin, sorigin);
-
-		S_AL_SanitiseVector(sorigin);
-		
-		VectorCopy(sorigin, curSource->loopSpeakerPos);
-		
-		if(velocity)
-		{
-			VectorCopy(velocity, svelocity);
-			S_AL_SanitiseVector(svelocity);
-		}
-		else
-			VectorClear(svelocity);
-
-		qalSourcefv( curSource->alSource, AL_POSITION, (ALfloat *)sorigin );
-		qalSourcefv( curSource->alSource, AL_VELOCITY, (ALfloat *)velocity );
-	}
+	qalSourcefv( curSource->alSource, AL_POSITION, (ALfloat *)sorigin );
+	qalSourcefv( curSource->alSource, AL_VELOCITY, (ALfloat *)velocity );
 }
 
 /*
