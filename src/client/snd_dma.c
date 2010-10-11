@@ -1784,9 +1784,10 @@ void S_UpdateStreamingSounds( void ) {
 			} else {
 				if ( s_debugStreams->integer ) {
 					Com_Printf( "STREAM %d: ending...\n", i );
+					Com_Printf( "Queue stream: %s\nLoopStream: %s\n", ss->queueStream, ss->loopStream );
 				}
 				// special case for music track queue
-				if ( i == 0 ) {
+				if ( i == 0 && ss->queueStreamType && *ss->queueStream ) {
 					switch ( ss->queueStreamType ) {
 						case QUEUED_PLAY_ONCE_SILENT:
 							break;
@@ -1794,10 +1795,8 @@ void S_UpdateStreamingSounds( void ) {
 							S_StartBackgroundTrack( ss->queueStream,  ss->name, 0 );
 							break;
 						case QUEUED_PLAY_LOOPED:
-						default:
 							S_StartBackgroundTrack( ss->queueStream,  ss->queueStream, 0 );
 							break;
-
 					}
 					// queue is done, clear it
 					ss->queueStream[0] = '\0';
@@ -1808,8 +1807,10 @@ void S_UpdateStreamingSounds( void ) {
 				// loop
 				if ( *ss->loopStream ) {
 					// TODO: Implement a rewind?
+					char loopStream[MAX_QPATH];
+					Q_strncpyz(loopStream, ss->loopStream, MAX_QPATH);
 					S_StopStreamingSound( i );
-					S_StartStreamingSoundEx( ss->loopStream, ss->loopStream,
+					S_StartStreamingSoundEx( loopStream, loopStream,
 						ss->entnum, ss->channel, i == 0, i == 0 ? 0 : ss->attenuation );
 				} else {
 					S_FreeStreamingSound( i );

@@ -2038,7 +2038,7 @@ static void S_AL_SSProcess(int ss, ALuint b)
 		curstream = NULL;
 
 		// queuing music tracks for the music stream
-		if(ss == ssMusic)
+		if(ss == ssMusic && ssData[ss].queueStreamType && *(ssData[ss].queueStream))
 		{
 			switch(ssData[ss].queueStreamType)
 			{
