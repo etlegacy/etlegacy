@@ -91,6 +91,14 @@ ifndef GENERATE_DEPENDENCIES
 GENERATE_DEPENDENCIES=1
 endif
 
+ifndef USE_OPENAL
+USE_OPENAL=1
+endif
+
+ifndef USE_OPENAL_DLOPEN
+USE_OPENAL_DLOPEN=1
+endif
+
 ifndef USE_CURL
 USE_CURL=1
 endif
@@ -136,6 +144,8 @@ ifneq ($(BUILD_CLIENT),0)
   ifneq ($(call bin_path, pkg-config),)
     CURL_CFLAGS=$(shell pkg-config --silence-errors --cflags libcurl)
     CURL_LIBS=$(shell pkg-config --silence-errors --libs libcurl)
+    OPENAL_CFLAGS=$(shell pkg-config --silence-errors --cflags openal)
+    OPENAL_LIBS=$(shell pkg-config --silence-errors --libs openal)
     SDL_CFLAGS=$(shell pkg-config --silence-errors --cflags sdl|sed 's/-Dmain=SDL_main//')
     SDL_LIBS=$(shell pkg-config --silence-errors --libs sdl) 
   endif
@@ -189,11 +199,22 @@ ifeq ($(PLATFORM),linux)
   CLIENT_CFLAGS = $(SDL_CFLAGS)
   SERVER_CFLAGS =
 
+  ifeq ($(USE_OPENAL),1)
+    CLIENT_CFLAGS += -DUSE_OPENAL
+    ifeq ($(USE_OPENAL_DLOPEN),1)
+      CLIENT_CFLAGS += -DUSE_OPENAL_DLOPEN
+    endif
+  endif
+
   ifeq ($(USE_CURL),1)
     CLIENT_CFLAGS += -DUSE_CURL
     ifeq ($(USE_CURL_DLOPEN),1)
       CLIENT_CFLAGS += -DUSE_CURL_DLOPEN
     endif
+  endif
+
+  ifeq ($(USE_CODEC_VORBIS),1)
+    CLIENT_CFLAGS += -DUSE_CODEC_VORBIS
   endif
 
   OPTIMIZEVM = -O3 -funroll-loops -fomit-frame-pointer
@@ -233,10 +254,24 @@ ifeq ($(PLATFORM),linux)
 
   CLIENT_LIBS=$(SDL_LIBS) -lGL
 
+  ifeq ($(USE_OPENAL),1)
+    ifneq ($(USE_OPENAL_DLOPEN),1)
+      CLIENT_LIBS += -lopenal
+    endif
+  endif
+
   ifeq ($(USE_CURL),1)
     ifneq ($(USE_CURL_DLOPEN),1)
       CLIENT_LIBS += -lcurl
     endif
+  endif
+
+  ifeq ($(USE_CODEC_VORBIS),1)
+    CLIENT_LIBS += -lvorbisfile -lvorbis -logg
+  endif
+
+  ifeq ($(USE_MUMBLE),1)
+    CLIENT_LIBS += -lrt
   endif
 
   ifeq ($(USE_LOCAL_HEADERS),1)
@@ -284,6 +319,20 @@ ifeq ($(PLATFORM),mingw32)
     BASE_CFLAGS += -DWINVER=0x501
   endif
 
+  ifeq ($(USE_OPENAL),1)
+    CLIENT_CFLAGS += -DUSE_OPENAL
+    CLIENT_CFLAGS += $(OPENAL_CFLAGS)
+    ifeq ($(USE_OPENAL_DLOPEN),1)
+      CLIENT_CFLAGS += -DUSE_OPENAL_DLOPEN
+    else
+      CLIENT_LDFLAGS += $(OPENAL_LDFLAGS)
+    endif
+  endif
+
+  ifeq ($(USE_CODEC_VORBIS),1)
+    CLIENT_CFLAGS += -DUSE_CODEC_VORBIS
+  endif
+
   ifeq ($(ARCH),x64)
     OPTIMIZEVM = -O3 -fno-omit-frame-pointer \
       -falign-loops=2 -funroll-loops -falign-jumps=2 -falign-functions=2 \
@@ -324,6 +373,10 @@ ifeq ($(PLATFORM),mingw32)
         CLIENT_LIBS += $(CURL_LIBS)
       endif
     endif
+  endif
+
+  ifeq ($(USE_CODEC_VORBIS),1)
+    CLIENT_LIBS += -lvorbisfile -lvorbis -logg
   endif
 
   ifeq ($(ARCH),x86)
@@ -608,9 +661,15 @@ Q3OBJ = \
   $(B)/client/huffman.o \
   \
   $(B)/client/snd_adpcm.o \
+  $(B)/client/snd_codec.o \
+  $(B)/client/snd_codec_ogg.o \
+  $(B)/client/snd_codec_wav.o \
   $(B)/client/snd_dma.o \
+  $(B)/client/snd_main.o \
   $(B)/client/snd_mem.o \
   $(B)/client/snd_mix.o \
+  $(B)/client/qal.o \
+  $(B)/client/snd_openal.o \
   $(B)/client/snd_wavelet.o \
   \
   $(B)/client/sv_bot.o \

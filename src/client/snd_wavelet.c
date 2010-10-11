@@ -2,9 +2,9 @@
 ===========================================================================
 
 Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
+This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
 
 Wolf ET Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,16 +26,9 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-
-/*****************************************************************************
- * name:		snd_wavelet.c
- *
- * desc:
- *
- *
- *****************************************************************************/
-
 #include "snd_local.h"
+
+long myftol( float f );
 
 #define C0 0.4829629131445341
 #define C1 0.8365163037378079
@@ -54,7 +47,7 @@ void daub4( float b[], unsigned long n, int isign ) {
 
 	nh1 = ( nh = n >> 1 ) + 1;
 	if ( isign >= 0 ) {
-		for ( i = 1, j = 1; j <= n - 3; j += 2, i++ ) {
+		for ( i = 1,j = 1; j <= n - 3; j += 2,i++ ) {
 			wksp[i]    = C0 * a[j] + C1 * a[j + 1] + C2 * a[j + 2] + C3 * a[j + 3];
 			wksp[i + nh] = C3 * a[j] - C2 * a[j + 1] + C1 * a[j + 2] - C0 * a[j + 3];
 		}
@@ -63,7 +56,7 @@ void daub4( float b[], unsigned long n, int isign ) {
 	} else {
 		wksp[1] = C2 * a[nh] + C1 * a[n] + C0 * a[1] + C3 * a[nh1];
 		wksp[2] = C3 * a[nh] - C0 * a[n] + C1 * a[1] - C2 * a[nh1];
-		for ( i = 1, j = 3; i < nh; i++ ) {
+		for ( i = 1,j = 3; i < nh; i++ ) {
 			wksp[j++] = C2 * a[i] + C1 * a[i + nh] + C0 * a[i + 1] + C3 * a[i + nh1];
 			wksp[j++] = C3 * a[i] - C0 * a[i + nh] + C1 * a[i + 1] - C2 * a[i + nh1];
 		}
@@ -182,7 +175,7 @@ void encodeWavelet( sfx_t *sfx, short *packets ) {
 			temp = wksp[i];
 			if ( temp > 32767 ) {
 				temp = 32767;
-			} else if ( temp < -32768 )     {
+			} else if ( temp < -32768 ) {
 				temp = -32768;
 			}
 			out[i] = MuLawEncode( (short)temp );
@@ -274,3 +267,5 @@ void decodeMuLaw( sndBuffer *chunk, short *to ) {
 		to[i] = mulawToShort[out[i]];
 	}
 }
+
+
