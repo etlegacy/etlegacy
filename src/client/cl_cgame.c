@@ -338,7 +338,7 @@ rescan:
 	if ( !strcmp( cmd, "disconnect" ) ) {
 		// NERVE - SMF - allow server to indicate why they were disconnected
 		if ( argc >= 2 ) {
-			Com_Error( ERR_SERVERDISCONNECT, va( "Server Disconnected - %s", Cmd_Argv( 1 ) ) );
+			Com_Error( ERR_SERVERDISCONNECT, "%s", va( "Server Disconnected - %s", Cmd_Argv( 1 ) ) );
 		} else {
 			Com_Error( ERR_SERVERDISCONNECT,"Server disconnected\n" );
 		}

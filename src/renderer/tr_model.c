@@ -347,7 +347,7 @@ R_MDC_GetAnorm
 =============
 */
 unsigned char R_MDC_GetAnorm( const vec3_t dir ) {
-	int i, best_start_i[3], next_start, next_end;
+	int i, best_start_i[3] = { 0 }, next_start, next_end;
 	int best = 0; // TTimo: init
 	float best_diff, group_val, this_val, diff;
 	float   *this_norm;

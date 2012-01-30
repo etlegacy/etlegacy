@@ -110,7 +110,7 @@ int G_voteCmdCheck( gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd 
 			int hResult = aVoteInfo[i].pVoteCommand( ent, i, arg, arg2, fRefereeCmd );
 
 			if ( hResult == G_OK ) {
-				Com_sprintf( arg, VOTE_MAXSTRING, aVoteInfo[i].pszVoteMessage );
+				Com_sprintf( arg, VOTE_MAXSTRING, "%s", aVoteInfo[i].pszVoteMessage );
 				level.voteInfo.vote_fn = aVoteInfo[i].pVoteCommand;
 			} else {
 				level.voteInfo.vote_fn = NULL;

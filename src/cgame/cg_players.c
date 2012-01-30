@@ -1783,8 +1783,7 @@ void CG_Player( centity_t *cent ) {
 	refEntity_t body;
 	refEntity_t head;
 	refEntity_t acc;
-	vec3_t playerOrigin;
-	vec3_t lightorigin;
+	vec3_t playerOrigin = { 0 }, lightorigin = { 0 };
 	int clientNum,i;
 	int renderfx;
 	qboolean shadow;

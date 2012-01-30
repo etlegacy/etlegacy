@@ -2037,7 +2037,7 @@ void CL_DisconnectPacket( netadr_t from ) {
 	if ( !cls.bWWWDlDisconnected ) {
 		// drop the connection
 		message = "Server disconnected for unknown reason";
-		Com_Printf( message );
+		Com_Printf( "%s", message );
 		Cvar_Set( "com_errorMessage", message );
 		CL_Disconnect( qtrue );
 	} else {
@@ -2096,18 +2096,18 @@ void CL_PrintPacket( netadr_t from, msg_t *msg ) {
 	if ( !Q_stricmpn( s, "[err_dialog]", 12 ) ) {
 		Q_strncpyz( clc.serverMessage, s + 12, sizeof( clc.serverMessage ) );
 		// Cvar_Set("com_errorMessage", clc.serverMessage );
-		Com_Error( ERR_DROP, clc.serverMessage );
+		Com_Error( ERR_DROP, "%s", clc.serverMessage );
 	} else if ( !Q_stricmpn( s, "[err_prot]", 10 ) )       {
 		Q_strncpyz( clc.serverMessage, s + 10, sizeof( clc.serverMessage ) );
 		// Cvar_Set("com_errorMessage", CL_TranslateStringBuf( PROTOCOL_MISMATCH_ERROR_LONG ) );
-		Com_Error( ERR_DROP, CL_TranslateStringBuf( PROTOCOL_MISMATCH_ERROR_LONG ) );
+		Com_Error( ERR_DROP, "%s", CL_TranslateStringBuf( PROTOCOL_MISMATCH_ERROR_LONG ) );
 	} else if ( !Q_stricmpn( s, "[err_update]", 12 ) )       {
 		Q_strncpyz( clc.serverMessage, s + 12, sizeof( clc.serverMessage ) );
-		Com_Error( ERR_AUTOUPDATE, clc.serverMessage );
+		Com_Error( ERR_AUTOUPDATE, "%s", clc.serverMessage );
 	} else if ( !Q_stricmpn( s, "ET://", 5 ) )       { // fretn
 		Q_strncpyz( clc.serverMessage, s, sizeof( clc.serverMessage ) );
 		Cvar_Set( "com_errorMessage", clc.serverMessage );
-		Com_Error( ERR_DROP, clc.serverMessage );
+		Com_Error( ERR_DROP, "%s", clc.serverMessage );
 	} else {
 		Q_strncpyz( clc.serverMessage, s, sizeof( clc.serverMessage ) );
 	}
@@ -2142,7 +2142,7 @@ CL_ServersResponsePacket
 ===================
 */
 void CL_ServersResponsePacket( const netadr_t* from, msg_t *msg, qboolean extended ) {
-	int i, count, max, total;
+	int i, count, total;
 	netadr_t addresses[MAX_SERVERSPERPACKET];
 	int numservers;
 	byte*           buffptr;
@@ -2565,7 +2565,7 @@ void CL_WWWDownload( void ) {
 			const char *error = va( "Download failure while getting '%s'\n", cls.downloadName ); // get the msg before clearing structs
 			cls.bWWWDlDisconnected = qfalse; // need clearing structs before ERR_DROP, or it goes into endless reload
 			CL_ClearStaticDownload();
-			Com_Error( ERR_DROP, error );
+			Com_Error( ERR_DROP, "%s", error );
 		} else {
 			// see CL_ParseDownload, same abort strategy
 			Com_Printf( "Download failure while getting '%s'\n", cls.downloadName );
@@ -5210,7 +5210,7 @@ CL_OpenURLForCvar
 */
 void CL_OpenURL( const char *url ) {
 	if ( !url || !strlen( url ) ) {
-		Com_Printf( CL_TranslateStringBuf( "invalid/empty URL\n" ) );
+		Com_Printf( "%s", CL_TranslateStringBuf( "invalid/empty URL\n" ) );
 		return;
 	}
 	Sys_OpenURL( url, qtrue );

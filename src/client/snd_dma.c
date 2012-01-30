@@ -741,7 +741,6 @@ S_StopAllSounds
 ==================
 */
 void S_Base_StopAllSounds( void ) {
-	int i;
 	
 	if ( !s_soundStarted ) {
 		return;

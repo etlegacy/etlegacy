@@ -425,7 +425,7 @@ void CG_DrawMapEntity( mapEntityData_t *mEnt, float x, float y, float w, float h
 	centity_t *cent;
 	const char* name;
 	vec4_t c_clr = {1.f, 1.f, 1.f, 1.f};
-	vec2_t icon_extends, icon_pos, string_pos;
+	vec2_t icon_extends, icon_pos, string_pos = { 0 };
 	int customimage = 0;
 	oidInfo_t* oidInfo = NULL;
 

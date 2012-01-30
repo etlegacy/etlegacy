@@ -569,7 +569,7 @@ BotFindSparseDefendArea
 ==================
 */
 int BotFindSparseDefendArea( bot_state_t *bs, bot_goal_t *goal, qboolean force ) {
-	vec3_t dSpot, targetPos;
+	vec3_t dSpot = { 0 }, targetPos = { 0 };
 	int numTeam, i, j, t, t2, teammates[64];
 	int numareas, numTPos, area, bestArea = 0, bestTime = 0;
 	vec3_t tPos[64], waypoints[64];
@@ -1673,7 +1673,7 @@ BotCTFOrders
 */
 void BotCTFOrders_BothFlagsNotAtBase( bot_state_t *bs ) {
 	int numteammates, defenders, attackers, i, other;
-	int teammates[MAX_CLIENTS];
+	int teammates[MAX_CLIENTS] = { 0 };
 	char name[MAX_NETNAME], carriername[MAX_NETNAME];
 
 	numteammates = BotSortTeamMatesByBaseTravelTime( bs, teammates, sizeof( teammates ) );
@@ -1756,7 +1756,7 @@ BotCTFOrders
 */
 void BotCTFOrders_FlagNotAtBase( bot_state_t *bs ) {
 	int numteammates, defenders, attackers, i;
-	int teammates[MAX_CLIENTS];
+	int teammates[MAX_CLIENTS] = { 0 };
 	char name[MAX_NETNAME];
 
 	numteammates = BotSortTeamMatesByBaseTravelTime( bs, teammates, sizeof( teammates ) );

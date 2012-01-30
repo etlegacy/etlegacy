@@ -1325,7 +1325,7 @@ void Think_SetupObjectiveInfo( gentity_t *ent ) {
 		}
 	} else if ( ent->target_ent->s.eType == ET_CONSTRUCTIBLE ) {
 		gentity_t *constructibles[2];
-		int team[2];
+		int team[2] = { 0 };
 
 		ent->target_ent->parent = ent;
 

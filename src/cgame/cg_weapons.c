@@ -4271,7 +4271,7 @@ The current weapon has just run out of ammo
 */
 void CG_OutOfAmmoChange( qboolean allowforceswitch ) {
 	int i;
-	int bank, cycle;
+	int bank = 0, cycle = 0;
 	int equiv = WP_NONE;
 
 	//

@@ -1171,7 +1171,7 @@ qboolean G_ScriptAction_GotoMarker( gentity_t *ent, char *params ) {
 				} else if ( !Q_stricmp( token, "relative" ) ) {
 					gentity_t*      target2;
 					pathCorner_t*   pPathCorner2;
-					vec3_t vec2;
+					vec3_t vec2 = { 0 };
 
 					token = COM_ParseExt( &pString, qfalse );
 

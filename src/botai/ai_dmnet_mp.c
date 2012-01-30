@@ -6559,7 +6559,7 @@ int AINode_MP_NavigateFromVoid( bot_state_t *bs ) {
 	aas_clientmove_t move;
 	qboolean success;
 	float bestDist;
-	vec3_t bestDir;
+	vec3_t bestDir = { 0 };
 
 	// are we out of the void?
 	if ( bs->areanum ) {

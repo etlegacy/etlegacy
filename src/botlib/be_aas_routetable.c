@@ -103,7 +103,7 @@ void AAS_RT_FreeMemory( void *ptr ) {
 	memorycount -= before - totalmemorysize;
 }
 
-void AAS_RT_PrintMemoryUsage() {
+void AAS_RT_PrintMemoryUsage( void ) {
 #ifdef  AAS_RT_MEMORY_USAGE
 
 	botimport.Print( PRT_MESSAGE, "\n" );
@@ -245,7 +245,7 @@ void AAS_RT_WriteByte( int si, fileHandle_t fp ) {
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void AAS_RT_WriteRouteTable() {
+void AAS_RT_WriteRouteTable( void ) {
 	int ident, version;
 	unsigned short crc_aas;
 	fileHandle_t fp;

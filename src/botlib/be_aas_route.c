@@ -3017,9 +3017,7 @@ int AAS_AvoidDangerArea( vec3_t srcpos, int srcarea, vec3_t dangerpos, int dange
 // Description: Init the priority queue
 // Written: 12/12/2002
 //
-void AAS_DangerPQInit
-(
-) {
+void AAS_DangerPQInit ( void ) {
 	// Local Variables ////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
@@ -3080,9 +3078,7 @@ void AAS_DangerPQInsert
 // Description: Is the Danger Priority Queue empty?
 // Written: 12/11/2002
 //
-qboolean AAS_DangerPQEmpty
-(
-) {
+qboolean AAS_DangerPQEmpty ( void ) {
 	// Local Variables ////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
@@ -3108,9 +3104,7 @@ qboolean AAS_DangerPQEmpty
 // Queue.
 // Written: 12/11/2002
 //
-int AAS_DangerPQRemove
-(
-) {
+int AAS_DangerPQRemove ( void ) {
 	// Local Variables ////////////////////////////////////////////////////////
 	int j;
 	int nearest = 1;

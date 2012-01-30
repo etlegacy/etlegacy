@@ -4444,7 +4444,7 @@ float BG_SplineLength( splinePath_t* pSpline ) {
 	float dist = 0;
 //	float tension;
 	vec3_t vec[2];
-	vec3_t lastPoint;
+	vec3_t lastPoint = { 0 };
 	vec3_t result;
 
 	for ( i = 0; i <= 1.f; i += granularity ) {
