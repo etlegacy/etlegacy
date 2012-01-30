@@ -1,10 +1,14 @@
-Wolfenstein: Enemy Territory GPL source release
-===============================================
+ET: Legacy
+==========
 
-This file contains the following sections:
+*A second breath of life for Wolfenstein: Enemy Territory*
 
-GENERAL NOTES
-LICENSE
+INTRODUCTION
+============
+
+ET: Legacy is based on the [raedwulf-et project](https://bitbucket.org/tcmreastwood/raedwulf-et/) which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory. 
+
+Its main goal is to fix bugs and clean up the codebase while remaining (somewhat) compatible with the ET 2.60b version. 
 
 GENERAL NOTES
 =============
@@ -18,38 +22,12 @@ http://www.splashdamage.com/content/wolfenstein-enemy-territory-barracks
 This source release does not contain any game data, the game data is still
 covered by the original EULA and must be obeyed as usual.
 
-Install the latest version of the game for your platform to get the game data.
+Compiling
+---------
 
-Compiling on win32:
--------------------
+Install mercurial and get the code from the repository: _hg clone http://hg.code.sf.net/p/etlegacy/code etlegacy-code_
 
-A Visual C++ 2008 project is provided in src\wolf.sln.
-The solution file is compatible with the Express release of Visual C++.
-
-In order to test your binaries, backup and remove Main\mp_bin.pk3, then replace
-WolfMP.exe, Main\qagame_mp_x86.dll, Main\cgame_mp_x86.dll, Main\ui_mp_x86.dll
-by your compiled versions. When starting the server make sure to specify
-'Pure Server: No' in the advanced settings page.
-
-Compiling on GNU/Linux x86:
----------------------------
-
-Get scons from http://scons.org/ if your favorite distribution doesn't
-package it.
-
-run scons from the src/ directory. see scons --help for build options
-
-If any problems occur, consult the internet.
-
-Other platforms, updated source code, security issues:
-------------------------------------------------------
-
-If you have obtained this source code several weeks after the time of release
-(August 2010), it is likely that you can find modified and improved
-versions of the engine in various open source projects across the internet.
-Depending what is your interest with the source code, those may be a better
-starting point.
-
+Then just run run: _make ARCH=i386_
 
 LICENSE
 =======

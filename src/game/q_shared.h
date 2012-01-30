@@ -32,34 +32,13 @@ If you have questions concerning this license or the applicable additional terms
 // q_shared.h -- included first by ALL program modules.
 // A user mod should never modify this file
 
-#define PRODUCT_NAME "ioWolfET"
-#define CLIENT_WINDOW_TITLE "Enemy Territory"
+#define PRODUCT_NAME 		"etlegacy"
+#define CLIENT_WINDOW_TITLE 	"Enemy Territory"
 #define CLIENT_WINDOW_MIN_TITLE "Enemy Territory"
-#define GAMENAME_FOR_MASTER "ioWolfET"
-//#define PRE_RELEASE_DEMO
-
-#ifndef PRE_RELEASE_DEMO
-#define Q3_VERSION      "ET 2.60d"
-#else
-#define Q3_VERSION      "ET 2.32"
-#endif // PRE_RELEASE_DEMO
-// 2.60d: Mac OSX universal binaries
-// 2.60c: Mac OSX universal binaries
-// 2.60b: CVE-2006-2082 fix
-// 2.6x: Enemy Territory - ETPro team maintenance release
-// 2.5x: Enemy Territory FINAL
-// 2.4x: Enemy Territory RC's
-// 2.3x: Enemy Territory TEST
-// 2.2+: post SP removal
-// 2.1+: post Enemy Territory moved standalone
-// 2.x: post Enemy Territory
-// 1.x: pre Enemy Territory
-////
-// 1.3-MP : final for release
-// 1.1b - TTimo SP linux release (+ MP updates)
-// 1.1b5 - Mac update merge in
-
-#define CONFIG_NAME     "etconfig.cfg"
+#define GAMENAME_FOR_MASTER 	"ioWolfET"
+#define Q3_VERSION      	"ET 2.60e"
+#define FAKE_VERSION		"ET 2.60b linux-i386 May  8 2006"
+#define CONFIG_NAME     	"etconfig.cfg"
 
 //#define LOCALIZATION_SUPPORT
 

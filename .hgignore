@@ -1,1 +1,5 @@
 build/
+
+syntax: glob
+*.kdev4
+*~
