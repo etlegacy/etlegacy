@@ -3285,7 +3285,7 @@ static void Menu_CloseCinematics( menuDef_t *menu ) {
 	}
 }
 
-static void Display_CloseCinematics() {
+static void Display_CloseCinematics( void ) {
 	int i;
 	for ( i = 0; i < menuCount; i++ ) {
 		Menu_CloseCinematics( &Menus[i] );
@@ -3343,7 +3343,7 @@ qboolean Menus_CaptureFuncActive( void ) {
 	}
 }
 
-int Display_VisibleMenuCount() {
+int Display_VisibleMenuCount( void ) {
 	int i, count;
 	count = 0;
 	for ( i = 0; i < menuCount; i++ ) {

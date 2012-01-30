@@ -35,7 +35,7 @@ If you have questions concerning this license or the applicable additional terms
 char* BindingFromName( const char *cvar );
 void Controls_GetConfig( void );
 void SetHeadOrigin( clientInfo_t *ci, playerInfo_t *pi );
-void CG_DrawOverlays();
+void CG_DrawOverlays( void );
 int activeFont;
 
 #define TEAM_OVERLAY_TIME 1000
@@ -3298,7 +3298,7 @@ static void CG_DrawObjectiveInfo( void ) {
 
 //==================================================================================
 
-void CG_DrawTimedMenus() {
+void CG_DrawTimedMenus( void ) {
 	if ( cg.voiceTime ) {
 		int t = cg.time - cg.voiceTime;
 		if ( t > 2500 ) {
@@ -4433,7 +4433,7 @@ void CG_StartShakeCamera( float p ) {
 	cg.cameraShakePhase = crandom() * M_PI; // start chain in random dir
 }
 
-void CG_ShakeCamera() {
+void CG_ShakeCamera( void ) {
 	float x, val;
 
 	if ( cg.time > cg.cameraShakeTime ) {

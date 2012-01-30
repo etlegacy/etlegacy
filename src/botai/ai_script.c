@@ -345,7 +345,7 @@ bot_script_stack_action_t *Bot_ActionForString( char *string ) {
 	return NULL;
 }
 
-void Bot_ScriptParseAllCharacters();
+void Bot_ScriptParseAllCharacters( void );
 
 /*
 =============
@@ -398,7 +398,7 @@ void Bot_ScriptLoad( void ) {
 Bot_ScriptParseAllCharacters
 ==============
 */
-void Bot_ScriptParseAllCharacters() {
+void Bot_ScriptParseAllCharacters( void ) {
 	char        *pScript;
 	char        *token;
 	bot_script_global_data_t *bsd;

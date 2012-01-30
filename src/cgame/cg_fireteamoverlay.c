@@ -388,7 +388,7 @@ void CG_DrawFireTeamOverlay( rectDef_t* rect ) {
 	}
 }
 
-qboolean CG_FireteamGetBoxNeedsButtons() {
+qboolean CG_FireteamGetBoxNeedsButtons( void ) {
 	if ( cgs.applicationEndTime > cg.time ) {
 		if ( cgs.applicationClient < 0 ) {
 			return qfalse;
@@ -413,7 +413,7 @@ qboolean CG_FireteamGetBoxNeedsButtons() {
 	return qfalse;
 }
 
-const char* CG_FireteamGetBoxText() {
+const char* CG_FireteamGetBoxText( void ) {
 	if ( cgs.applicationEndTime > cg.time ) {
 		if ( cgs.applicationClient == -1 ) {
 			return "Sent";

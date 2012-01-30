@@ -372,11 +372,11 @@ qboolean trap_LAN_ServerIsInFavoriteList( int source, int n  ) {
 	return syscall( UI_LAN_SERVERISINFAVORITELIST, source, n );
 }
 
-void trap_LAN_SaveCachedServers() {
+void trap_LAN_SaveCachedServers( void ) {
 	syscall( UI_LAN_SAVECACHEDSERVERS );
 }
 
-void trap_LAN_LoadCachedServers() {
+void trap_LAN_LoadCachedServers( void ) {
 	syscall( UI_LAN_LOADCACHEDSERVERS );
 }
 

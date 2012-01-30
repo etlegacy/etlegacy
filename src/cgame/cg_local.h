@@ -2358,10 +2358,10 @@ void CG_DrawTopBottom( float x, float y, float w, float h, float size );
 void CG_DrawTopBottom_NoScale( float x, float y, float w, float h, float size );
 
 // NERVE - SMF - localization functions
-void CG_InitTranslation();
+void CG_InitTranslation( void );
 char* CG_TranslateString( const char *string );
-void CG_SaveTransTable();
-void CG_ReloadTranslation();
+void CG_SaveTransTable( void );
+void CG_ReloadTranslation( void );
 // -NERVE - SMF
 
 //
@@ -2396,8 +2396,8 @@ void CG_GetTeamColor( vec4_t *color );
 void CG_Draw3DModel( float x, float y, float w, float h, qhandle_t model, qhandle_t skin, vec3_t origin, vec3_t angles );
 void CG_Text_PaintChar_Ext( float x, float y, float w, float h, float scalex, float scaley, float s, float t, float s2, float t2, qhandle_t hShader );
 void CG_Text_PaintChar( float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader );
-qboolean CG_YourTeamHasFlag();
-qboolean CG_OtherTeamHasFlag();
+qboolean CG_YourTeamHasFlag( void );
+qboolean CG_OtherTeamHasFlag( void );
 void CG_DrawCursorhint( rectDef_t *rect );
 void CG_DrawWeapStability( rectDef_t *rect );
 void CG_DrawWeapHeat( rectDef_t *rect, int align );
@@ -2712,7 +2712,7 @@ qboolean CG_ObjectiveMenuClick( int key );
 
 void CG_GameViewMenuClick( int key );
 void CG_GetLimboWeaponAnim( const char **torso_anim, const char **legs_anim );
-int CG_GetLimboSelectedWeapon();
+int CG_GetLimboSelectedWeapon( void );
 
 qboolean CG_DrawMissionBriefing( void );
 void CG_MissionBriefingClick( int key );
@@ -2783,8 +2783,8 @@ void CG_ParseReinforcementTimes( const char *pszReinfSeedString );
 void CG_SetConfigValues( void );
 void CG_ShaderStateChanged( void );
 void CG_ChargeTimesChanged( void );
-void CG_LoadVoiceChats();               // NERVE - SMF
-void CG_PlayBufferedVoiceChats();       // NERVE - SMF
+void CG_LoadVoiceChats( void );               // NERVE - SMF
+void CG_PlayBufferedVoiceChats( void );       // NERVE - SMF
 void CG_AddToNotify( const char *str );
 const char* CG_LocalizeServerCommand( const char *buf );
 void CG_wstatsParse_cmd( void );
@@ -2805,7 +2805,7 @@ void CG_TransitionPlayerState( playerState_t *ps, playerState_t *ops );
 //
 void CG_GenerateTracemap( void );
 void CG_EffectParse( const char *effectstr );
-void CG_AddAtmosphericEffects();
+void CG_AddAtmosphericEffects( void );
 
 //===============================================
 
@@ -2970,16 +2970,16 @@ int         trap_R_LerpTag( orientation_t *tag, const refEntity_t *refent, const
 void        trap_R_RemapShader( const char *oldShader, const char *newShader, const char *timeOffset );
 
 // Save out the old render info so we don't kill the LOD system here
-void trap_R_SaveViewParms();
+void trap_R_SaveViewParms( void );
 
 // Reset the view parameters
-void trap_R_RestoreViewParms();
+void trap_R_RestoreViewParms( void );
 
 // Save out the old render info so we don't kill the LOD system here
-void trap_R_SaveViewParms();
+void trap_R_SaveViewParms( void );
 
 // Reset the view parameters
-void trap_R_RestoreViewParms();
+void trap_R_RestoreViewParms( void );
 
 // Set fog
 void    trap_R_SetFog( int fogvar, int var1, int var2, float r, float g, float b, float density );
@@ -3083,7 +3083,7 @@ void        trap_stopCamera( int camNum );
 qboolean    trap_getCameraInfo( int camNum, int time, vec3_t *origin, vec3_t *angles, float *fov );
 void        CG_SetInitialCamera( const char *name, qboolean startBlack );
 void        CG_StartCamera( const char *name, qboolean startBlack );
-void        CG_StartInitialCamera();
+void        CG_StartInitialCamera( void );
 void        CG_StopCamera( void );
 
 //----(SA)	added
@@ -3103,7 +3103,7 @@ void CG_LocateCampaign( void );
 void CG_LocateArena( void );
 const char* CG_DescriptionForCampaign( void );
 const char* CG_NameForCampaign( void );
-void CG_CloseMenus();
+void CG_CloseMenus( void );
 // void CG_CampaignBriefing_f( void );
 void CG_LimboMenu_f( void );
 
@@ -3164,9 +3164,9 @@ fireteamData_t* CG_IsOnSameFireteam( int clientNum, int clientNum2 );
 #define UI_SQUAD_SELECT 2
 
 
-void CG_DrawUITabs();
-void CG_DrawUICurrentSquad();
-qboolean CG_UICommonClick();
+void CG_DrawUITabs( void );
+void CG_DrawUICurrentSquad( void );
+qboolean CG_UICommonClick( void );
 void CG_DrawUISelectedSoldier( void );
 void CG_UICurrentSquadSetup( void );
 void CG_CampaignBriefingSetup( void );
@@ -3174,7 +3174,7 @@ void CG_CampaignBriefingSetup( void );
 
 #define ORDER_ICON_FADE_TIME 3500
 
-int CG_GetFirstSelectedBot();
+int CG_GetFirstSelectedBot( void );
 void CG_AddToJournal( char *text );
 // returns true if game is single player (or coop)
 qboolean CG_IsSinglePlayer( void );
@@ -3192,7 +3192,7 @@ clientInfo_t*   CG_ClientInfoForPosition(       int pos, int max );
 fireteamData_t* CG_FireTeamForPosition(         int pos, int max );
 clientInfo_t*   CG_FireTeamPlayerForPosition(   int pos, int max );
 
-void CG_SortClientFireteam();
+void CG_SortClientFireteam( void );
 
 void CG_DrawFireTeamOverlay( rectDef_t* rect );
 clientInfo_t* CG_SortedFireTeamPlayerForPosition( int pos, int max );

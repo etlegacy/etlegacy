@@ -193,7 +193,7 @@ static void UpdateIPBans( ipFilterList_t *ipFilterList ) {
 	trap_Cvar_Set( ipFilterList->cvarIPList, iplist_final );
 }
 
-void PrintMaxLivesGUID() {
+void PrintMaxLivesGUID( void ) {
 	int i;
 
 	for ( i = 0 ; i < numMaxLivesFilters ; i++ )

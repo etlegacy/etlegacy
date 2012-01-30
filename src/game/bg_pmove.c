@@ -3254,7 +3254,7 @@ static void PM_Weapon( void ) {
 
 	// check for dead player
 	if ( pm->ps->stats[STAT_HEALTH] <= 0 ) {
-		if ( !pm->ps->pm_flags & PMF_LIMBO ) {
+		if ( !pm->ps->pm_flags && PMF_LIMBO ) {
 			PM_CoolWeapons();
 		}
 

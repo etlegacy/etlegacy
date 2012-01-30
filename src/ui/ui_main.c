@@ -322,7 +322,7 @@ Q_EXPORT intptr_t vmMain( intptr_t command, intptr_t arg0, intptr_t arg1, intptr
 
 
 
-void AssetCache() {
+void AssetCache( void ) {
 	int n;
 	//if (Assets.textFont == NULL) {
 	//}
@@ -2567,7 +2567,7 @@ static void UI_DrawOpponent(rectDef_t *rect) {
 
 }*/
 
-static void UI_NextOpponent() {
+static void UI_NextOpponent( void ) {
 	int i = UI_TeamIndexFromName( UI_Cvar_VariableString( "ui_opponentName" ) );
 	int j = UI_TeamIndexFromName( UI_Cvar_VariableString( "ui_teamName" ) );
 	i++;
@@ -2583,7 +2583,7 @@ static void UI_NextOpponent() {
 	trap_Cvar_Set( "ui_opponentName", uiInfo.teamList[i].teamName );
 }
 
-static void UI_PriorOpponent() {
+static void UI_PriorOpponent( void ) {
 	int i = UI_TeamIndexFromName( UI_Cvar_VariableString( "ui_opponentName" ) );
 	int j = UI_TeamIndexFromName( UI_Cvar_VariableString( "ui_teamName" ) );
 	i--;
@@ -2837,7 +2837,7 @@ static void UI_DrawCrosshair( rectDef_t *rect, float scale, vec4_t color ) {
 UI_BuildPlayerList
 ===============
 */
-static void UI_BuildPlayerList() {
+static void UI_BuildPlayerList( void ) {
 	uiClientState_t cs;
 	int n, count, team, team2, playerTeamNumber, muted;
 	char info[MAX_INFO_STRING];
@@ -3909,7 +3909,7 @@ void UI_ServersSort( int column, qboolean force ) {
 UI_LoadMods
 ===============
 */
-static void UI_LoadMods() {
+static void UI_LoadMods( void ) {
 	int numdirs;
 	char dirlist[2048];
 	char    *dirptr;
@@ -3938,7 +3938,7 @@ static void UI_LoadMods() {
 UI_LoadProfiles
 ===============
 */
-static void UI_LoadProfiles() {
+static void UI_LoadProfiles( void ) {
 	int numdirs;
 	char dirlist[2048];
 	char    *dirptr;
@@ -4053,7 +4053,7 @@ static void UI_LoadTeams() {
 UI_DelSavegame
 ==============
 */
-static void UI_DelSavegame() {
+static void UI_DelSavegame( void ) {
 
 	int ret;
 
@@ -4072,7 +4072,7 @@ static void UI_DelSavegame() {
 UI_LoadSavegames
 ==============
 */
-static void UI_LoadSavegames() {
+static void UI_LoadSavegames( void ) {
 	char sglist[4096];
 	char    *sgname;
 	int i, len;
@@ -4112,7 +4112,7 @@ static void UI_LoadSavegames() {
 UI_LoadMovies
 ===============
 */
-static void UI_LoadMovies() {
+static void UI_LoadMovies( void ) {
 	char movielist[4096];
 	char    *moviename;
 	int i, len;
@@ -4144,7 +4144,7 @@ static void UI_LoadMovies() {
 UI_LoadDemos
 ===============
 */
-static void UI_LoadDemos() {
+static void UI_LoadDemos( void ) {
 	char demolist[30000];
 	char demoExt[32];
 	char    *demoname;
@@ -4253,7 +4253,7 @@ qboolean UI_CheckExecKey( int key ) {
 	return qfalse;
 }
 
-void WM_ActivateLimboChat() {
+void WM_ActivateLimboChat( void ) {
 	menuDef_t *menu;
 	itemDef_t *itemdef;
 
@@ -6339,7 +6339,7 @@ static int UI_GetIndexFromSelection( int actual ) {
 	return 0;
 }
 
-static void UI_UpdatePendingPings() {
+static void UI_UpdatePendingPings( void ) {
 	trap_LAN_ResetPings( ui_netSource.integer );
 	uiInfo.serverStatus.refreshActive = qtrue;
 	uiInfo.serverStatus.refreshtime = uiInfo.uiDC.realTime + 1000;
@@ -7626,7 +7626,7 @@ void _UI_MouseEvent( int dx, int dy ) {
 
 }
 
-void UI_LoadNonIngame() {
+void UI_LoadNonIngame( void ) {
 	const char *menuSet = UI_Cvar_VariableString( "ui_menuFiles" );
 
 	if ( menuSet == NULL || menuSet[0] == '\0' ) {

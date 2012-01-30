@@ -131,4 +131,4 @@ int BotGetAdjacentExposedCoverSpot( bot_state_t *bs );
 //	Get the next cover spot towards the retreatTo entity - used when retreating
 int BotGetRetreatingCoverSpot( bot_state_t *bs, int retreatTo );
 
-void AI_Team_Init_All_Teams();
+void AI_Team_Init_All_Teams( void );

@@ -305,7 +305,7 @@ static glyphInfo_t *RE_ConstructGlyphInfo( unsigned char *imageOut, int *xOut, i
 static int fdOffset;
 static byte *fdFile;
 
-int readInt() {
+int readInt( void ) {
 	int i = fdFile[fdOffset] + ( fdFile[fdOffset + 1] << 8 ) + ( fdFile[fdOffset + 2] << 16 ) + ( fdFile[fdOffset + 3] << 24 );
 	fdOffset += 4;
 	return i;
@@ -316,7 +316,7 @@ typedef union {
 	float ffred;
 } poor;
 
-float readFloat() {
+float readFloat( void ) {
 	poor me;
 #if idppc
 	me.fred[0] = fdFile[fdOffset + 3];
@@ -528,7 +528,7 @@ void RE_RegisterFont( const char *fontName, int pointSize, fontInfo_t *font ) {
 
 
 
-void R_InitFreeType() {
+void R_InitFreeType( void ) {
 #ifdef BUILD_FREETYPE
 	if ( FT_Init_FreeType( &ftLibrary ) ) {
 		ri.Printf( PRINT_ALL, "R_InitFreeType: Unable to initialize FreeType.\n" );
@@ -538,7 +538,7 @@ void R_InitFreeType() {
 }
 
 
-void R_DoneFreeType() {
+void R_DoneFreeType( void ) {
 #ifdef BUILD_FREETYPE
 	if ( ftLibrary ) {
 		FT_Done_FreeType( ftLibrary );

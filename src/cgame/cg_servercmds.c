@@ -34,7 +34,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #define SCOREPARSE_COUNT    9
 
-void CG_LimboMenu_f();
+void CG_LimboMenu_f( void );
 
 
 /*

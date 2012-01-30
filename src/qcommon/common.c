@@ -126,7 +126,7 @@ qboolean com_fullyInitialized;
 char com_errorMessage[MAXPRINTMSG];
 
 void Com_WriteConfig_f( void );
-void CIN_CloseAllVideos();
+void CIN_CloseAllVideos( void );
 
 //============================================================================
 
@@ -2587,7 +2587,7 @@ void Com_SetRecommended() {
 // are loaded
 gameInfo_t com_gameInfo;
 
-void Com_GetGameInfo() {
+void Com_GetGameInfo( void ) {
 	char    *f, *buf;
 	char    *token;
 

@@ -59,7 +59,7 @@ static void GetClientState( uiClientState_t *state ) {
 LAN_LoadCachedServers
 ====================
 */
-void LAN_LoadCachedServers() {
+void LAN_LoadCachedServers( void ) {
 	int size;
 	fileHandle_t fileIn;
 	char filename[MAX_QPATH];
@@ -95,7 +95,7 @@ void LAN_LoadCachedServers() {
 LAN_SaveServersToCache
 ====================
 */
-void LAN_SaveServersToCache() {
+void LAN_SaveServersToCache( void ) {
 	int size;
 	fileHandle_t fileOut;
 	char filename[MAX_QPATH];

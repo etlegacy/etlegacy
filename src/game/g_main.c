@@ -1236,7 +1236,7 @@ void G_FindTeams( void ) {
 G_RemapTeamShaders
 ==============
 */
-void G_RemapTeamShaders() {
+void G_RemapTeamShaders( void ) {
 }
 
 
@@ -3063,7 +3063,7 @@ void CheckWolfMP() {
 }
 // -NERVE - SMF
 */
-void CheckWolfMP() {
+void CheckWolfMP( void ) {
 	// check because we run 6 game frames before calling Connect and/or ClientBegin
 	// for clients on a map_restart
 	if ( g_gametype.integer >= GT_WOLF ) {

@@ -1275,7 +1275,7 @@ This function may execute for a couple of minutes with a slow disk.
 
 qboolean CG_RegisterClientSkin( bg_playerclass_t* classInfo );
 qboolean CG_RegisterClientModelname( bg_playerclass_t* classInfo );
-void WM_RegisterWeaponTypeShaders();
+void WM_RegisterWeaponTypeShaders( void );
 
 static void CG_RegisterGraphics( void ) {
 	char name[1024];
@@ -2526,7 +2526,7 @@ CG_LoadHudMenu();
 
 =================
 */
-void CG_LoadHudMenu() {
+void CG_LoadHudMenu( void ) {
 	cgDC.registerShaderNoMip = &trap_R_RegisterShaderNoMip;
 	cgDC.setColor = &trap_R_SetColor;
 	cgDC.drawHandlePic = &CG_DrawPic;
@@ -2601,7 +2601,7 @@ void CG_LoadHudMenu() {
 	CG_Text_SetActiveFont( 0 );
 }
 
-void CG_AssetCache() {
+void CG_AssetCache( void ) {
 	cgDC.Assets.gradientBar = trap_R_RegisterShaderNoMip( ASSET_GRADIENTBAR );
 	cgDC.Assets.fxBasePic = trap_R_RegisterShaderNoMip( ART_FX_BASE );
 	cgDC.Assets.fxPic[0] = trap_R_RegisterShaderNoMip( ART_FX_RED );

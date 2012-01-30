@@ -1698,7 +1698,7 @@ BotPreProcessAI
 Perform Pre-processing steps on the bots and entities
 ==================
 */
-void BotPreProcessAI() {
+void BotPreProcessAI( void ) {
 }
 
 int botTime_EmergencyGoals;

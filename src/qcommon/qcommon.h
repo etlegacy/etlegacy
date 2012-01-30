@@ -622,7 +622,7 @@ issues.
 	#define Q_rmdir rmdir
 #endif
 
-qboolean FS_Initialized();
+qboolean FS_Initialized( void );
 
 void    FS_InitFilesystem( void );
 void    FS_Shutdown( qboolean closemfp );
@@ -641,7 +641,7 @@ void    FS_FreeFileList( char **list );
 qboolean FS_FileExists( const char *file );
 qboolean FS_OS_FileExists( const char *file ); // TTimo - test file existence given OS path
 
-int     FS_LoadStack();
+int     FS_LoadStack( void );
 
 int     FS_GetFileList(  const char *path, const char *extension, char *listbuf, int bufsize );
 int     FS_GetModList(  char *listbuf, int bufsize );
@@ -881,7 +881,7 @@ int         Com_RealTime( qtime_t *qtime );
 qboolean    Com_SafeMode( void );
 
 void        Com_StartupVariable( const char *match );
-void        Com_SetRecommended();
+void        Com_SetRecommended( void );
 // checks for and removes command line "+set var arg" constructs
 // if match is NULL, all set commands will be executed, otherwise
 // only a set with the exact name.  Only used during startup.
@@ -1091,7 +1091,7 @@ qboolean SV_GameCommand( void );
 // UI interface
 //
 qboolean UI_GameCommand( void );
-qboolean UI_usesUniqueCDKey();
+qboolean UI_usesUniqueCDKey( void );
 
 /*
 ==============================================================
@@ -1137,7 +1137,7 @@ sysEvent_t	Com_GetSystemEvent( void );
 void    Sys_Init( void );
 qboolean Sys_IsNumLockDown( void );
 
-void *Sys_InitializeCriticalSection();
+void *Sys_InitializeCriticalSection( void );
 void Sys_EnterCriticalSection( void *ptr );
 void Sys_LeaveCriticalSection( void *ptr );
 
@@ -1210,8 +1210,8 @@ char *Sys_ConsoleInput(void);
 char **Sys_ListFiles( const char *directory, const char *extension, char *filter, int *numfiles, qboolean wantsubs );
 void    Sys_FreeFileList( char **list );
 
-qboolean Sys_LowPhysicalMemory();
-unsigned int Sys_ProcessorCount();
+qboolean Sys_LowPhysicalMemory( void );
+unsigned int Sys_ProcessorCount( void );
 
 void    Sys_SetEnv(const char *name, const char *value);
 

@@ -76,7 +76,7 @@ If you have questions concerning this license or the applicable additional terms
 #define G_ClientPrintAndReturn( entityNum, text ) trap_SendServerCommand( entityNum, "cpm \"" text "\"\n" ); return;
 
 // Utility functions
-fireteamData_t* G_FindFreeFireteam() {
+fireteamData_t* G_FindFreeFireteam( void ) {
 	int i;
 
 	for ( i = 0; i < MAX_FIRETEAMS; i++ ) {

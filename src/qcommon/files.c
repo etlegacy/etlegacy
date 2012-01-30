@@ -322,7 +322,7 @@ FS_Initialized
 ==============
 */
 
-qboolean FS_Initialized() {
+qboolean FS_Initialized( void ) {
 	return ( fs_searchpaths != NULL );
 }
 
@@ -355,7 +355,7 @@ FS_LoadStack
 return load stack
 =================
 */
-int FS_LoadStack() {
+int FS_LoadStack( void ) {
 	return fs_loadStack;
 }
 
@@ -3163,7 +3163,7 @@ NOTE TTimo: the reordering that happens here is not reflected in the cvars (\cva
   this can lead to misleading situations, see show_bug.cgi?id=540
 ================
 */
-static void FS_ReorderPurePaks() {
+static void FS_ReorderPurePaks( void ) {
 	searchpath_t *s;
 	int i;
 	searchpath_t **p_insert_index, // for linked list reordering

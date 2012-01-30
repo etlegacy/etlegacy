@@ -64,7 +64,7 @@ g_serverEntity_t *GetServerEntity( int num ) {
 
 }
 
-g_serverEntity_t *GetFreeServerEntity() {
+g_serverEntity_t *GetFreeServerEntity( void ) {
 	// NOTE:  this is simplistic because we can't currently free these entities
 	//		if we change this, then we need to be more careful when allocating the entities
 	if ( numServerEntities >= MAX_SERVER_ENTITIES ) {
@@ -114,13 +114,13 @@ g_serverEntity_t *CreateServerEntity( gentity_t *ent ) {
 }
 
 // TAT - create the server entities for the current map
-void CreateMapServerEntities();
+void CreateMapServerEntities( void );
 
 
 // These server entities don't get to update every frame, but some of them have to set themselves up
 //		after they've all been created
 //		So we want to give each entity the chance to set itself up after it has been created
-void InitialServerEntitySetup() {
+void InitialServerEntitySetup( void ) {
 	int i;
 	g_serverEntity_t *ent;
 
@@ -228,7 +228,7 @@ void CreateServerEntityFromData( char* classname, char* targetname, char* target
 }
 
 // TAT - create the server entities for the current map
-void CreateMapServerEntities() {
+void CreateMapServerEntities( void ) {
 	char info[1024];
 	char mapname[128];
 

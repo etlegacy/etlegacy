@@ -1816,8 +1816,8 @@ void RE_AddLightToScene( const vec3_t org, float radius, float intensity, float 
 void RE_AddCoronaToScene( const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible );
 //----(SA)
 void RE_RenderScene( const refdef_t *fd );
-void RE_SaveViewParms();
-void RE_RestoreViewParms();
+void RE_SaveViewParms( void );
+void RE_RestoreViewParms( void );
 
 /*
 =============================================================
@@ -2066,8 +2066,8 @@ void RE_EndFrame( int *frontEndMsec, int *backEndMsec );
 void SaveJPG( char * filename, int quality, int image_width, int image_height, unsigned char *image_buffer );
 
 // font stuff
-void R_InitFreeType();
-void R_DoneFreeType();
+void R_InitFreeType( void );
+void R_DoneFreeType( void );
 void RE_RegisterFont( const char *fontName, int pointSize, fontInfo_t *font );
 
 // image buffer

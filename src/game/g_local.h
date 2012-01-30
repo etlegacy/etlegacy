@@ -1239,7 +1239,7 @@ void G_AddPredictableEvent( gentity_t *ent, int event, int eventParm );
 void G_AddEvent( gentity_t *ent, int event, int eventParm );
 void G_SetOrigin( gentity_t *ent, vec3_t origin );
 void AddRemap( const char *oldShader, const char *newShader, float timeOffset );
-const char *BuildShaderStateConfig();
+const char *BuildShaderStateConfig( void );
 void G_SetAngle( gentity_t *ent, vec3_t angle );
 
 qboolean infront( gentity_t *self, gentity_t *other );
@@ -1407,7 +1407,7 @@ void G_ClearXPBackup( void );
 void G_ReadXPBackup( void );
 void AddMaxLivesGUID( char *str );
 void AddMaxLivesBan( const char *str );
-void ClearMaxLivesBans();
+void ClearMaxLivesBans( void );
 void AddIPBan( const char *str );
 
 void Svcmd_ShuffleTeams_f( void );
@@ -1466,7 +1466,7 @@ void QDECL G_Printf( const char *fmt, ... ) _attribute( ( format( printf,1,2 ) )
 void QDECL G_DPrintf( const char *fmt, ... ) _attribute( ( format( printf,1,2 ) ) );
 void QDECL G_Error( const char *fmt, ... ) _attribute( ( format( printf,1,2 ) ) );
 // Is this a single player type game - sp or coop?
-qboolean G_IsSinglePlayerGame();
+qboolean G_IsSinglePlayerGame( void );
 
 //
 // g_client.c
@@ -1532,7 +1532,7 @@ void G_CheckBotSpawn( void );
 void G_QueueBotBegin( int clientNum );
 qboolean G_BotConnect( int clientNum, qboolean restart );
 void Svcmd_AddBot_f( void );
-void Svcmd_SpawnBot();
+void Svcmd_SpawnBot( void );
 void G_SpawnBot( const char *text );
 int Bot_GetWeaponForClassAndTeam( int classNum, int teamNum, const char *weaponName );
 void G_BotParseCharacterParms( char *characterFile, int *characterInt );
@@ -1541,8 +1541,8 @@ void G_BotParseCharacterParms( char *characterFile, int *characterInt );
 #define MAX_FILEPATH            144
 int BotAIThinkFrame( int time );
 void G_SetAASBlockingEntity( gentity_t *ent, int blocking );
-qboolean BotSinglePlayer();
-qboolean BotCoop();
+qboolean BotSinglePlayer( void );
+qboolean BotCoop( void );
 //gentity_t *BotCheckBotGameEntity( gentity_t *ent );
 gentity_t *BotFindEntity( gentity_t *from, int fieldofs, char *match );
 void GetBotAmmoPct( int clientNum, int *ammoPct, int *ammoclipPct );
@@ -2144,8 +2144,8 @@ mapEntityData_t *G_AllocMapEntityData( mapEntityData_Team_t *teamList );
 mapEntityData_t *G_FindMapEntityData( mapEntityData_Team_t *teamList, int entNum );
 mapEntityData_t *G_FindMapEntityDataSingleClient( mapEntityData_Team_t *teamList, mapEntityData_t *start, int entNum, int clientNum );
 
-void G_ResetTeamMapData();
-void G_UpdateTeamMapData();
+void G_ResetTeamMapData( void );
+void G_UpdateTeamMapData( void );
 
 void G_SetupFrustum( gentity_t* ent );
 void G_SetupFrustum_ForBinoculars( gentity_t* ent );
@@ -2245,7 +2245,7 @@ g_serverEntity_t *CreateServerEntity( gentity_t *ent );
 // These server entities don't get to update every frame, but some of them have to set themselves up
 //		after they've all been created
 //		So we want to give each entity the chance to set itself up after it has been created
-void InitialServerEntitySetup();
+void InitialServerEntitySetup( void );
 // Like G_Find, but for server entities
 g_serverEntity_t *FindServerEntity( g_serverEntity_t *from, int fieldofs, char *match );
 

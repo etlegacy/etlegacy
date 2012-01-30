@@ -421,7 +421,7 @@ qboolean CG_ViewingDraw() {
 #define GS_Y    10
 #define GS_W    308
 
-void CG_GameStatsDraw() {
+void CG_GameStatsDraw( void ) {
 	if ( cgs.gamestats.show == SHOW_OFF ) {
 		return;
 
@@ -620,7 +620,7 @@ void CG_GameStatsDraw() {
 #define TS_Y    -60     // spacing from bottom
 #define TS_W    308
 
-void CG_TopShotsDraw() {
+void CG_TopShotsDraw( void ) {
 	if ( cgs.topshots.show == SHOW_OFF ) {
 		return;
 
@@ -745,7 +745,7 @@ void CG_TopShotsDraw() {
 #define DH_Y    -60     // spacing from bottom
 #define DH_W    148
 
-void CG_DemoHelpDraw() {
+void CG_DemoHelpDraw( void ) {
 	if ( cg.demohelpWindow == SHOW_OFF ) {
 		return;
 
@@ -905,7 +905,7 @@ typedef struct
 #define SH_X    2       // spacing from left
 #define SH_Y    155     // spacing from top
 
-void CG_SpecHelpDraw() {
+void CG_SpecHelpDraw( void ) {
 	if ( cg.spechelpWindow == SHOW_OFF ) {
 		return;
 

@@ -87,8 +87,8 @@ typedef struct {
 //----(SA)
 	void ( *RenderScene )( const refdef_t *fd );
 
-	void ( *SaveViewParms )();
-	void ( *RestoreViewParms )();
+	void ( *SaveViewParms )( void );
+	void ( *RestoreViewParms )( void );
 
 	void ( *SetColor )( const float *rgba );    // NULL = 1,1,1,1
 	void ( *DrawStretchPic )( float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader );      // 0 = white

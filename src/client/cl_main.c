@@ -628,7 +628,7 @@ static void CL_WriteWaveHeader( void ) {
 }
 
 static char wavName[MAX_QPATH];     // compiler bug workaround
-void CL_WriteWaveOpen() {
+void CL_WriteWaveOpen( void ) {
 	// we will just save it as a 16bit stereo 22050kz pcm file
 
 	char name[MAX_OSPATH];
@@ -4682,7 +4682,7 @@ static trans_t* LookupTrans( char *original, char *translated[MAX_LANGUAGES], qb
 
 	// see if we want to save out the translation table everytime a string is added
 	if ( cl_debugTranslation->integer == 2 && !isLoading ) {
-		CL_SaveTransTable();
+		CL_SaveTransTable("", qfalse);
 	}
 
 	return newt;

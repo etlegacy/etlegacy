@@ -137,7 +137,7 @@ static void CG_AddPolyToPool( qhandle_t shader, const polyVert_t *verts ) {
 */
 
 static qboolean kludgeChecked, kludgeResult;
-qboolean CG_AtmosphericKludge() {
+qboolean CG_AtmosphericKludge( void ) {
 	// Activate rain for specified kludge maps that don't
 	// have it specified for them.
 
@@ -645,7 +645,7 @@ static void CG_SnowParticleRender( cg_atmosphericParticle_t *particle ) {
 **	Set up gust parameters.
 */
 
-static void CG_EffectGust() {
+static void CG_EffectGust( void ) {
 	// Generate random values for the next gust
 
 	int diff;

@@ -2160,7 +2160,7 @@ pathCorner_t *BG_Find_PathCorner( const char *match );
 splinePath_t* BG_GetSplineData( int number, qboolean* backwards );
 void BG_AddPathCorner( const char* name, vec3_t origin );
 splinePath_t* BG_AddSplinePath( const char* name, const char* target, vec3_t origin );
-void BG_BuildSplinePaths();
+void BG_BuildSplinePaths( void );
 splinePath_t *BG_Find_Spline( const char *match );
 float BG_SplineLength( splinePath_t* pSpline );
 void BG_AddSplineControl( splinePath_t* spline, const char* name );

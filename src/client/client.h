@@ -483,9 +483,9 @@ void CL_AddToLimboChat( const char *str );                  // NERVE - SMF
 qboolean CL_GetLimboString( int index, char *buf );         // NERVE - SMF
 
 // NERVE - SMF - localization
-void CL_InitTranslation();
-void CL_SaveTransTable();
-void CL_ReloadTranslation();
+void CL_InitTranslation( void );
+void CL_SaveTransTable( const char *fileName, qboolean newOnly );
+void CL_ReloadTranslation( void );
 void CL_TranslateString( const char *string, char *dest_buffer );
 const char* CL_TranslateStringBuf( const char *string ); // TTimo
 // -NERVE - SMF
@@ -692,8 +692,8 @@ void CL_InitUI( void );
 void CL_ShutdownUI( void );
 int Key_GetCatcher( void );
 void Key_SetCatcher( int catcher );
-void LAN_LoadCachedServers();
-void LAN_SaveServersToCache();
+void LAN_LoadCachedServers( void );
+void LAN_SaveServersToCache( void );
 
 
 //

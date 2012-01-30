@@ -2829,7 +2829,7 @@ weaponType_t* WM_FindWeaponTypeForWeapon( weapon_t weapon ) {
 	return NULL;
 }
 
-void WM_RegisterWeaponTypeShaders() {
+void WM_RegisterWeaponTypeShaders( void ) {
 	weaponType_t* w = weaponTypes;
 
 	while ( w->weapindex ) {

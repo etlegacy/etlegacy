@@ -71,7 +71,7 @@ static int DL_cb_Progress( void *clientp, double dltotal, double dlnow, double u
 	return 0;
 }
 
-void DL_InitDownload() {
+void DL_InitDownload( void ) {
 	if ( dl_initialized ) {
 		return;
 	}
@@ -91,7 +91,7 @@ DL_Shutdown
 
 ================
 */
-void DL_Shutdown() {
+void DL_Shutdown( void ) {
 	if ( !dl_initialized ) {
 		return;
 	}
@@ -154,7 +154,7 @@ int DL_BeginDownload( const char *localName, const char *remoteName, int debug )
 }
 
 // (maybe this should be CL_DL_DownloadLoop)
-dlStatus_t DL_DownloadLoop() {
+dlStatus_t DL_DownloadLoop( void ) {
 	CURLMcode status;
 	CURLMsg *msg;
 	int dls = 0;

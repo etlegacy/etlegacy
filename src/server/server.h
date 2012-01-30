@@ -368,7 +368,7 @@ void SV_RemoveOperatorCommands( void );
 void SV_MasterHeartbeat( const char *hbname );
 void SV_MasterShutdown( void );
 
-void SV_MasterGameCompleteStatus();     // NERVE - SMF
+void SV_MasterGameCompleteStatus( void );     // NERVE - SMF
 //bani - bugtraq 12534
 qboolean SV_VerifyChallenge( char *challenge );
 
