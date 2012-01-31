@@ -203,19 +203,6 @@ void SV_AuthorizeIpPacket( netadr_t from ) {
 	s = Cmd_Argv( 2 );
 	r = Cmd_Argv( 3 );          // reason
 
-	if ( !Q_stricmp( s, "ettest" ) ) {
-		if ( Cvar_VariableValue( "fs_restrict" ) ) {
-			// a demo client connecting to a demo server
-			NET_OutOfBandPrint( NS_SERVER, svs.challenges[i].adr,
-								"challengeResponse %i", svs.challenges[i].challenge );
-			return;
-		}
-		// they are a demo client trying to connect to a real server
-		NET_OutOfBandPrint( NS_SERVER, svs.challenges[i].adr, "print\nServer is not a demo server\n" );
-		// clear the challenge record so it won't timeout and let them through
-		memset( &svs.challenges[i], 0, sizeof( svs.challenges[i] ) );
-		return;
-	}
 	if ( !Q_stricmp( s, "accept" ) ) {
 		if ( sv_onlyVisibleClients->integer ) {
 			NET_OutOfBandPrint( NS_SERVER, svs.challenges[i].adr,

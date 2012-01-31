@@ -108,17 +108,6 @@ trying to restrict demo / oem versions of the game with code changes.  Demo / oe
 should be exactly the same executables as release versions, but with different data that
 automatically restricts where game media can come from to prevent add-ons from working.
 
-After the paths are initialized, quake will look for the product.txt file.  If not
-found and verified, the game will run in restricted mode.  In restricted mode, only
-files contained in demoq3/pak0.pk3 will be available for loading, and only if the zip header is
-verified to not have been modified.  A single exception is made for q3config.cfg.  Files
-can still be written out in restricted mode, so screenshots and demos are allowed.
-Restricted mode can be tested by setting "+set fs_restrict 1" on the command line, even
-if there is a valid product.txt under the basepath or cdpath.
-
-If not running in restricted mode, and a file is not found in any local filesystem,
-an attempt will be made to download it and save it under the base path.
-
 If the "fs_copyfiles" cvar is set to 1, then every time a file is sourced from the cd
 path, it will be copied over to the base path.  This is a development aid to help build
 test releases and to copy working sets over slow network links.
@@ -257,7 +246,6 @@ static cvar_t      *fs_buildgame;
 static cvar_t      *fs_basegame;
 static cvar_t      *fs_copyfiles;
 static cvar_t      *fs_gamedirvar;
-static cvar_t      *fs_restrict;
 static searchpath_t    *fs_searchpaths;
 static int fs_readCount;                    // total bytes read
 static int fs_loadCount;                    // total files read
@@ -1238,10 +1226,10 @@ int FS_FOpenFileRead( const char *filename, fileHandle_t *file, qboolean uniqueF
 
 			// check a file in the directory tree
 
-			// if we are running restricted, or if the filesystem is configured for pure (fs_numServerPaks)
+			// if the filesystem is configured for pure (fs_numServerPaks)
 			// the only files we will allow to come from the directory are .cfg files
 			l = strlen( filename );
-			if ( fs_restrict->integer || fs_numServerPaks ) {
+			if ( fs_numServerPaks ) {
 
 				if ( Q_stricmp( filename + l - 4, ".cfg" )       // for config files
 					 && Q_stricmp( filename + l - 5, ".menu" )  // menu files
@@ -2302,10 +2290,6 @@ char **FS_ListFilteredFiles( const char *path, const char *extension, char *filt
 			// don't scan directories for files if we are pure or restricted
 			if ( fs_numServerPaks ) {
 				continue;
-			} else if ( fs_restrict->integer &&
-						( !com_gameInfo.usesProfiles || ( com_gameInfo.usesProfiles && Q_stricmpn( path, "profiles", 8 ) ) ) &&
-						Q_stricmpn( path, "demos", 5 ) ) {
-				continue;
 			} else {
 				netpath = FS_BuildOSPath( search->dir->path, search->dir->gamedir, path );
 				sysFiles = Sys_ListFiles( netpath, extension, filter, &numSysFiles, qfalse );
@@ -3217,7 +3201,6 @@ static void FS_Startup( const char *gameName ) {
 	}
 	fs_homepath = Cvar_Get( "fs_homepath", homePath, CVAR_INIT );
 	fs_gamedirvar = Cvar_Get( "fs_game", "", CVAR_INIT | CVAR_SYSTEMINFO );
-	fs_restrict = Cvar_Get( "fs_restrict", "", CVAR_INIT );
 
 	// add search path elements in reverse priority order
 	if ( fs_basepath->string[0] ) {
@@ -3961,7 +3944,6 @@ void FS_InitFilesystem( void ) {
 	Com_StartupVariable( "fs_homepath" );
 	Com_StartupVariable( "fs_game" );
 	Com_StartupVariable( "fs_copyfiles" );
-	Com_StartupVariable( "fs_restrict" );
 
 	// try to start up normally
 	FS_Startup( BASEGAME );
@@ -4016,7 +3998,6 @@ void FS_Restart( int checksumFeed ) {
 			Cvar_Set( "fs_gamedirvar", lastValidGame );
 			lastValidBase[0] = '\0';
 			lastValidGame[0] = '\0';
-			Cvar_Set( "fs_restrict", "0" );
 			FS_Restart( checksumFeed );
 			Com_Error( ERR_DROP, "Invalid game folder\n" );
 			return;
