@@ -1722,9 +1722,6 @@ typedef enum _flag_status {
 #define MAX_PINGREQUESTS            16
 #define MAX_SERVERSTATUSREQUESTS    16
 
-#define CDKEY_LEN 16
-#define CDCHKSUM_LEN 2
-
 // NERVE - SMF - localization
 typedef enum {
 #ifndef __MACOS__   //DAJ USA

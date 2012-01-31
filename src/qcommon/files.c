@@ -3202,7 +3202,6 @@ FS_Startup
 */
 static void FS_Startup( const char *gameName ) {
 	const char *homePath;
-	cvar_t  *fs;
 
 	Com_Printf( "----- FS_Startup -----\n" );
 
@@ -3249,12 +3248,6 @@ static void FS_Startup( const char *gameName ) {
 		if ( fs_homepath->string[0] && Q_stricmp( fs_homepath->string,fs_basepath->string ) ) {
 			FS_AddGameDirectory( fs_homepath->string, fs_gamedirvar->string );
 		}
-	}
-
-	Com_ReadCDKey( BASEGAME );
-	fs = Cvar_Get( "fs_game", "", CVAR_INIT | CVAR_SYSTEMINFO );
-	if ( fs && fs->string[0] != 0 ) {
-		Com_AppendCDKey( fs->string );
 	}
 
 	// add our commands

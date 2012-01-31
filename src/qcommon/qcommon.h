@@ -795,12 +795,6 @@ MISC
 ==============================================================
 */
 
-// centralizing the declarations for cl_cdkey
-// (old code causing buffer overflows)
-extern char cl_cdkey[34];
-void Com_AppendCDKey( const char *filename );
-void Com_ReadCDKey( const char *filename );
-
 typedef struct gameInfo_s {
 	qboolean spEnabled;
 	int spGameTypes;
@@ -1073,7 +1067,6 @@ qboolean SV_GameCommand( void );
 // UI interface
 //
 qboolean UI_GameCommand( void );
-qboolean UI_usesUniqueCDKey( void );
 
 /*
 ==============================================================
