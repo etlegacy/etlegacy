@@ -1873,7 +1873,6 @@ and determine if we need to download them
 =================
 */
 void CL_InitDownloads( void ) {
-#ifndef PRE_RELEASE_DEMO
 	char missingfiles[1024];
 	char *dir = FS_ShiftStr( AUTOUPDATE_DIR, AUTOUPDATE_DIR_SHIFT );
 
@@ -1916,7 +1915,6 @@ void CL_InitDownloads( void ) {
 			}
 		}
 	}
-#endif
 
 	CL_DownloadsComplete();
 }
@@ -2930,8 +2928,6 @@ void CL_StartHunkUsers( void ) {
 
 // DHM - Nerve
 void CL_CheckAutoUpdate( void ) {
-#ifndef PRE_RELEASE_DEMO
-
 	if ( !cl_autoupdate->integer ) {
 		return;
 	}
@@ -2966,8 +2962,6 @@ void CL_CheckAutoUpdate( void ) {
 
 	NET_OutOfBandPrint( NS_CLIENT, cls.autoupdateServer, "getUpdateInfo \"%s\" \"%s\"\n", Q3_VERSION, CPUSTRING );
 
-#endif // !PRE_RELEASE_DEMO
-
 	CL_RequestMotd();
 
 	autoupdateChecked = qtrue;
@@ -2975,10 +2969,6 @@ void CL_CheckAutoUpdate( void ) {
 
 qboolean CL_NextUpdateServer( void ) {
 	char        *servername;
-
-#ifdef PRE_RELEASE_DEMO
-	return qfalse;
-#endif // PRE_RELEASE_DEMO
 
 	if ( !cl_autoupdate->integer ) {
 		return qfalse;

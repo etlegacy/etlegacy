@@ -1099,7 +1099,7 @@ Q3UIOBJ_ = \
   $(B)/etmain/ui/ui_loadpanel.o \
   $(B)/etmain/ui/ui_players.o \
   $(B)/etmain/ui/ui_shared.o \
-  $(B)/etmain/ui/ui_util.o \
+#   $(B)/etmain/ui/ui_util.o \
   $(B)/etmain/ui/q_math.o \
   $(B)/etmain/ui/q_shared.o
 

@@ -39,11 +39,6 @@ If you have questions concerning this license or the applicable additional terms
 #define _attribute( x )
 #endif
 
-//#define PRE_RELEASE_DEMO
-#ifdef PRE_RELEASE_DEMO
-#define PRE_RELEASE_DEMO_NODEVMAP
-#endif // PRE_RELEASE_DEMO
-
 //============================================================================
 
 //
@@ -272,17 +267,8 @@ The server you attempted to join is running an incompatible version of the game.
 You or the server may be running older versions of the game. Press the auto-update\
  button if it appears on the Main Menu screen."
 
-#define GAMENAME_STRING "et"
-#ifndef PRE_RELEASE_DEMO
-// 2.56 - protocol 83
-// 2.4 - protocol 80
-// 1.33 - protocol 59
-// 1.4 - protocol 60
-#define PROTOCOL_VERSION    84
-#else
-// the demo uses a different protocol version for independant browsing
-#define PROTOCOL_VERSION    72
-#endif
+#define GAMENAME_STRING 	"et"
+#define PROTOCOL_VERSION    	84
 
 // NERVE - SMF - wolf multiplayer master servers
 #ifndef MASTER_SERVER_NAME
@@ -598,12 +584,8 @@ issues.
 ==============================================================
 */
 
-#ifndef PRE_RELEASE_DEMO
 //#define BASEGAME "main"
 #define BASEGAME "etmain"
-#else
-#define BASEGAME "ettest"
-#endif
 
 // referenced flags
 // these are in loop specific order so don't change the order

@@ -3224,13 +3224,13 @@ static void FS_Startup( const char *gameName ) {
 	if ( fs_basepath->string[0] ) {
 		FS_AddGameDirectory( fs_basepath->string, gameName );
 	}
+	
 	// fs_homepath is somewhat particular to *nix systems, only add if relevant
 	// NOTE: same filtering below for mods and basegame
 	if ( fs_basepath->string[0] && Q_stricmp( fs_homepath->string,fs_basepath->string ) ) {
 		FS_AddGameDirectory( fs_homepath->string, gameName );
 	}
 
-#ifndef PRE_RELEASE_DEMO
 	// check for additional base game so mods can be based upon other mods
 	if ( fs_basegame->string[0] && !Q_stricmp( gameName, BASEGAME ) && Q_stricmp( fs_basegame->string, gameName ) ) {
 		if ( fs_basepath->string[0] ) {
@@ -3250,7 +3250,6 @@ static void FS_Startup( const char *gameName ) {
 			FS_AddGameDirectory( fs_homepath->string, fs_gamedirvar->string );
 		}
 	}
-#endif // PRE_RELEASE_DEMO
 
 	Com_ReadCDKey( BASEGAME );
 	fs = Cvar_Get( "fs_game", "", CVAR_INIT | CVAR_SYSTEMINFO );
