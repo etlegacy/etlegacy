@@ -793,7 +793,8 @@ Q3OBJ = \
   $(B)/client/sdl_snd.o \
   \
   $(B)/client/con_log.o \
-  $(B)/client/sys_main.o
+  $(B)/client/sys_main.o \
+  $(B)/client/md5.o
 
 ifeq ($(ARCH),i386)
   Q3OBJ += \

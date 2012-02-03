@@ -2402,6 +2402,62 @@ void CL_CheckUserinfo( void ) {
 }
 
 /*
+ * @brief Update cl_guid using ETKEY_FILE and optional prefix
+ * @author ioquake3
+ */
+static void CL_UpdateGUID( const char *prefix, int prefix_len )
+{
+	fileHandle_t f;
+	int len;
+
+	len = FS_SV_FOpenFileRead( ETKEY_FILE, &f );
+	FS_FCloseFile( f );
+
+	if( len != ETKEY_SIZE ) 
+		Cvar_Set( "cl_guid", "" );
+	else
+		Cvar_Set( "cl_guid", Com_MD5File( ETKEY_FILE, ETKEY_SIZE,
+			prefix, prefix_len ) );
+}
+
+/*
+ * @brief Test for the existence of a valid ETKEY_FILE, otherwise generate it
+ * @author ioquake3
+ */
+static void CL_GenerateETKey(void)
+{
+	int len = 0;
+	unsigned char buff[ ETKEY_SIZE ];
+	fileHandle_t f;
+
+	len = FS_SV_FOpenFileRead( ETKEY_FILE, &f );
+	FS_FCloseFile( f );
+	if( len == ETKEY_SIZE ) {
+		Com_Printf( "ETKEY found.\n" );
+		return;
+	}
+	else {
+		if( len > 0 ) {
+			Com_Printf( "ETKEY file size != %d, regenerating\n",
+				ETKEY_SIZE );
+		}
+
+		Com_Printf( "ETKEY building random string\n" );
+		Com_RandomBytes( buff, sizeof(buff) );
+
+		f = FS_SV_FOpenFileWrite( ETKEY_FILE );
+		if( !f ) {
+			Com_Printf( "ETKEY could not open %s for write\n",
+				ETKEY_FILE );
+			return;
+		}
+		FS_Write( buff, sizeof(buff), f );
+		FS_FCloseFile( f );
+		Com_Printf( "ETKEY generated\n" );
+	}
+} 
+
+/*
 ==================
 CL_WWWDownload
 ==================
@@ -3379,6 +3435,10 @@ void CL_Init( void ) {
 	Cbuf_Execute();
 
 	Cvar_Set( "cl_running", "1" );
+	
+	CL_GenerateETKey();
+	Cvar_Get( "cl_guid", "", CVAR_USERINFO | CVAR_ROM );
+	CL_UpdateGUID( NULL, 0 );
 
 	// DHM - Nerve
 	autoupdateChecked = qfalse;

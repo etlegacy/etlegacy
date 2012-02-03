@@ -856,6 +856,9 @@ int         Com_FilterPath( char *filter, char *name, int casesensitive );
 int         Com_RealTime( qtime_t *qtime );
 qboolean    Com_SafeMode( void );
 
+// char            *Com_MD5File(const char *filename, int length);
+char		*Com_MD5File(const char *filename, int length, const char *prefix, int prefix_len);
+
 void        Com_StartupVariable( const char *match );
 void        Com_SetRecommended( void );
 // checks for and removes command line "+set var arg" constructs

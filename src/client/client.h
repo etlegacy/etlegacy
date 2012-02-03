@@ -42,6 +42,9 @@ If you have questions concerning this license or the applicable additional terms
 #define LIMBOCHAT_WIDTH     140     // NERVE - SMF - NOTE TTimo buffer size indicator, not related to screen bbox
 #define LIMBOCHAT_HEIGHT    7       // NERVE - SMF
 
+#define ETKEY_FILE "etkey"
+#define ETKEY_SIZE 2048
+
 // snapshots are a view of the server at a given time
 typedef struct {
 	qboolean valid;                 // cleared if delta parsing was invalid
