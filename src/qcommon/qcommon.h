@@ -1,45 +1,47 @@
 /*
-===========================================================================
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ * 
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
+ * 
+ * This file is part of ET: Legacy.
+ * 
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also 
+ * subject to certain additional terms. You should have received a copy 
+ * of these additional terms immediately following the terms and conditions 
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ * 
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ * 
+ * @file qcommon.h
+ * @brief definitions common between client and server, but not game or ref modules
+ */
 
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
-// qcommon.h -- definitions common between client and server, but not game.or ref modules
 #ifndef _QCOMMON_H_
 #define _QCOMMON_H_
 
 #include "../qcommon/cm_public.h"
 
-//bani
 #ifdef __GNUC__
 #define _attribute( x ) __attribute__( x )
 #else
 #define _attribute( x )
 #endif
-
-//============================================================================
 
 //
 // msg.c
@@ -64,10 +66,11 @@ void MSG_WriteData( msg_t *buf, const void *data, int length );
 void MSG_Bitstream( msg_t *buf );
 void MSG_Uncompressed( msg_t *buf );
 
-// TTimo
-// copy a msg_t in case we need to store it as is for a bit
-// (as I needed this to keep an msg_t from a static var for later use)
-// sets data buffer as MSG_Init does prior to do the copy
+/*
+ * copy a msg_t in case we need to store it as is for a bit
+ * (as I needed this to keep an msg_t from a static var for later use)
+ * sets data buffer as MSG_Init does prior to do the copy
+ */
 void MSG_Copy( msg_t *buf, byte *data, int length, msg_t *src );
 
 struct usercmd_s;
@@ -120,39 +123,49 @@ void MSG_ReadDeltaPlayerstate( msg_t *msg, struct playerState_s *from, struct pl
 
 void MSG_ReportChangeVectors_f( void );
 
-//============================================================================
-
-
-
-/*
-==============================================================
-
+/*==============================================================
 NET
-
-==============================================================
-*/
+==============================================================*/
 
 #define NET_ENABLEV4            0x01
 #define NET_ENABLEV6            0x02
-// if this flag is set, always attempt ipv6 connections instead of ipv4 if a v6 address is found.
+/*
+ * @def NET_PRIOV6
+ * @brief if this flag is set, always attempt ipv6 connections 
+ * instead of ipv4 if a v6 address is found.
+ */
 #define NET_PRIOV6              0x04
-// disables ipv6 multicast support if set.
+/*
+ * @def NET_PRIOV6
+ * @brief disables ipv6 multicast support if set.
+ */
 #define NET_DISABLEMCAST        0x08
 
-#define PACKET_BACKUP   32  // number of old messages that must be kept on client and
-							// server for delta comrpession and ping estimation
-#define PACKET_MASK     ( PACKET_BACKUP - 1 )
+/*
+ * @def PACKET_BACKUP
+ * @brief number of old messages that must be kept on client and
+ * server for delta comrpession and ping estimation
+ */
+#define PACKET_BACKUP	32
+#define PACKET_MASK	( PACKET_BACKUP - 1 )
 
-#define MAX_PACKET_USERCMDS     32      // max number of usercmd_t in a packet
+/*
+ * @def MAX_PACKET_USERCMDS
+ * @brief max number of usercmd_t in a packet
+ */
+#define MAX_PACKET_USERCMDS     32
 
 #define PORT_ANY            -1
 
-// RF, increased this, seems to keep causing problems when set to 64, especially when loading
-// a savegame, which is hard to fix on that side, since we can't really spread out a loadgame
-// among several frames
-//#define	MAX_RELIABLE_COMMANDS	64			// max string commands buffered for restransmit
-//#define	MAX_RELIABLE_COMMANDS	128			// max string commands buffered for restransmit
-#define MAX_RELIABLE_COMMANDS   256 // bigger!
+/*
+ * @def MAX_RELIABLE_COMMANDS
+ * @brief max string commands buffered for restransmit
+ * 
+ * RF, increased this, seems to keep causing problems when set to 64, especially when loading
+ * a savegame, which is hard to fix on that side, since we can't really spread out a loadgame
+ * among several frames
+ */
+#define MAX_RELIABLE_COMMANDS   256
 
 typedef enum {
 	NA_BOT,
@@ -170,13 +183,15 @@ typedef enum {
 	NS_SERVER
 } netsrc_t;
 
-#define NET_ADDRSTRMAXLEN 48	// maximum length of an IPv6 address string including trailing '\0'
+/*
+ * @def NET_ADDRSTRMAXLEN
+ * @brief maximum length of an IPv6 address string including trailing '\0'
+ */
+#define NET_ADDRSTRMAXLEN 48
 typedef struct {
 	netadrtype_t type;
-
 	byte ip[4];
 	byte ip6[16];
-
 	unsigned short port;
 	unsigned long scope_id;	// Needed for IPv6 link-local addresses
 } netadr_t;
@@ -248,13 +263,9 @@ void Netchan_TransmitNextFragment( netchan_t *chan );
 qboolean Netchan_Process( netchan_t *chan, msg_t *msg );
 
 
-/*
-==============================================================
-
+/*==============================================================
 PROTOCOL
-
-==============================================================
-*/
+==============================================================*/
 
 // sent by the server, printed on connection screen, works for all clients
 // (restrictions: does not handle \n, no more than 256 chars)
@@ -270,11 +281,17 @@ You or the server may be running older versions of the game. Press the auto-upda
 #define GAMENAME_STRING 	"et"
 #define PROTOCOL_VERSION    	84
 
-// NERVE - SMF - wolf multiplayer master servers
+/*
+ * @def MASTER_SERVER_NAME
+ * @brief location of the master server
+ * 
+ * As the main etmaster.idsoftware.com server seems to
+ * be permanently down, we switched to an alternative.
+ */
 #ifndef MASTER_SERVER_NAME
-	#define MASTER_SERVER_NAME      "etmaster.idsoftware.com"
-#endif
-#define MOTD_SERVER_NAME        "etmaster.idsoftware.com"    //"etmotd.idsoftware.com"			// ?.?.?.?
+	#define MASTER_SERVER_NAME      "master0.etmaster.net"
+#endif // MASTER_SERVER_NAME
+#define MOTD_SERVER_NAME        "etmaster.idsoftware.com"
 
 #ifdef AUTHORIZE_SUPPORT
 	#define AUTHORIZE_SERVER_NAME   "wolfauthorize.idsoftware.com"
@@ -282,7 +299,6 @@ You or the server may be running older versions of the game. Press the auto-upda
 
 // TTimo: override autoupdate server for testing
 #ifndef AUTOUPDATE_SERVER_NAME
-//	#define AUTOUPDATE_SERVER_NAME "127.0.0.1"
 	#define AUTOUPDATE_SERVER_NAME "au2rtcw2.activision.com"
 #endif
 
@@ -307,13 +323,16 @@ You or the server may be running older versions of the game. Press the auto-upda
 #define PORT_MASTER         27950
 #define PORT_MOTD           27951
 #ifdef AUTHORIZE_SUPPORT
-#define PORT_AUTHORIZE      27952
+	#define PORT_AUTHORIZE      27952
 #endif // AUTHORIZE_SUPPORT
 #define PORT_SERVER         27960
-#define NUM_SERVER_PORTS    4       // broadcast scan this many ports after
-									// PORT_SERVER so a single machine can
-									// run multiple servers
-
+/*
+ * @def NUM_SERVER_PORTS
+ * 
+ * Broadcast scan this many ports after PORT_SERVER
+ * so a single machine can run multiple servers
+ */
+#define NUM_SERVER_PORTS    4
 
 // the svc_strings[] array in cl_parse.c should mirror this
 //
@@ -404,22 +423,14 @@ static inline float _vmf(intptr_t x)
 }
 #define	VMF(x)	_vmf(args[x])
 
-/*
-==============================================================
-
-CMD
-
-Command text buffering and command execution
-
-==============================================================
-*/
+/*==============================================================
+CMD - Command text buffering and command execution
+==============================================================*/
 
 /*
-
 Any number of commands can be added in a frame, from several different sources.
 Most commands come from either keybindings or console line input, but entire text
 files can be execed.
-
 */
 
 void Cbuf_Init( void );
@@ -440,10 +451,8 @@ void Cbuf_Execute( void );
 //===========================================================================
 
 /*
-
 Command execution takes a null terminated string, breaks it into tokens,
 then searches for a command or variable that matches the first token.
-
 */
 
 typedef void ( *xcommand_t )( void );
@@ -482,16 +491,11 @@ void    Cmd_ExecuteString( const char *text );
 // as if it was typed at the console
 
 
-/*
-==============================================================
-
+/*==============================================================
 CVAR
-
-==============================================================
-*/
+==============================================================*/
 
 /*
-
 cvar_t variables are used to hold scalar or string variables that can be changed
 or displayed at the console or prog code as well as accessed directly
 in C code.
@@ -506,7 +510,6 @@ interface from being ambiguous.
 
 The are also occasionally used to communicated information between different
 modules of the program.
-
 */
 
 cvar_t *Cvar_Get( const char *var_name, const char *value, int flags );
@@ -573,18 +576,13 @@ extern int cvar_modifiedFlags;
 // etc, variables have been modified since the last check.  The bit
 // can then be cleared to allow another change detection.
 
-/*
-==============================================================
-
+/*==============================================================
 FILESYSTEM
-
 No stdio calls should be used by any part of the game, because
 we need to deal with all sorts of directory and seperator char
 issues.
-==============================================================
-*/
+==============================================================*/
 
-//#define BASEGAME "main"
 #define BASEGAME "etmain"
 
 // referenced flags
@@ -593,7 +591,11 @@ issues.
 #define FS_UI_REF       0x02
 #define FS_CGAME_REF    0x04
 #define FS_QAGAME_REF   0x08
-// number of id paks that will never be autodownloaded from baseq3
+
+/*
+ * @def NUM_ID_PAKS
+ * @brief number of id paks that will never be autodownloaded from baseq3 
+ */
 #define NUM_ID_PAKS     9
 
 #define MAX_FILE_HANDLES    64
@@ -758,23 +760,15 @@ qboolean FS_IsPure( void );
 
 unsigned int FS_ChecksumOSPath( char *OSPath );
 
-/*
-==============================================================
-
+/*==============================================================
 DOWNLOAD
-
-==============================================================
-*/
+==============================================================*/
 
 #include "dl_public.h"
 
-/*
-==============================================================
-
+/*==============================================================
 Edit fields and command line history/completion
-
-==============================================================
-*/
+==============================================================*/
 
 #define MAX_EDIT_LINE   256
 typedef struct {
@@ -787,13 +781,9 @@ typedef struct {
 void Field_Clear( field_t *edit );
 void Field_CompleteCommand( field_t *edit );
 
-/*
-==============================================================
-
+/*==============================================================
 MISC
-
-==============================================================
-*/
+==============================================================*/
 
 typedef struct gameInfo_s {
 	qboolean spEnabled;
@@ -856,7 +846,6 @@ int         Com_FilterPath( char *filter, char *name, int casesensitive );
 int         Com_RealTime( qtime_t *qtime );
 qboolean    Com_SafeMode( void );
 
-// char            *Com_MD5File(const char *filename, int length);
 char		*Com_MD5File(const char *filename, int length, const char *prefix, int prefix_len);
 
 void        Com_StartupVariable( const char *match );
@@ -927,7 +916,6 @@ typedef enum {
 } memtag_t;
 
 /*
-
 --- low memory ----
 server vm
 server clipmap
@@ -942,7 +930,6 @@ renderer models
 
 temp file loading
 --- high memory ---
-
 */
 
 #if defined( _DEBUG ) && !defined( BSPC )
@@ -986,13 +973,9 @@ void Com_Frame( void );
 void Com_Shutdown( qboolean badProfile );
 
 
-/*
-==============================================================
-
+/*==============================================================
 CLIENT / SERVER SYSTEMS
-
-==============================================================
-*/
+==============================================================*/
 
 //
 // client interface
@@ -1071,13 +1054,9 @@ qboolean SV_GameCommand( void );
 //
 qboolean UI_GameCommand( void );
 
-/*
-==============================================================
-
+/*==============================================================
 NON-PORTABLE SYSTEM SERVICES
-
-==============================================================
-*/
+==============================================================*/
 
 typedef enum {
 	AXIS_SIDE,
