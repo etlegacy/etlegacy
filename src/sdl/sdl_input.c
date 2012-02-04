@@ -80,11 +80,9 @@ static int vidRestartTime = 0;
 
 #define CTRL(a) ((a)-'a'+1)
 
-/*
-===============
+/*===============
 IN_PrintKey
-===============
-*/
+===============*/
 static void IN_PrintKey( const SDL_keysym *keysym, keyNum_t key, qboolean down )
 {
 	if( down )
@@ -215,10 +213,8 @@ static qboolean IN_IsConsoleKey( keyNum_t key, const unsigned char character )
 }
 
 /*
-===============
-IN_TranslateSDLToQ3Key
-===============
-*/
+ * @brief translates SLD keyboard code to its Q3 counterpart
+ */
 static const char *IN_TranslateSDLToQ3Key( SDL_keysym *keysym,
 	keyNum_t *key, qboolean down )
 {

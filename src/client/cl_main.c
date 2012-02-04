@@ -3139,28 +3139,6 @@ void CL_ClientDamageCommand( void ) {
 	// do nothing
 }
 
-// NERVE - SMF
-/*void CL_startSingleplayer_f( void ) {
-#if defined(__linux__)
-	Sys_StartProcess( "./wolfsp.x86", qtrue );
-#else
-	Sys_StartProcess( "WolfSP.exe", qtrue );
-#endif
-}*/
-
-// NERVE - SMF
-// fretn unused
-#if 0
-void CL_buyNow_f( void ) {
-	Sys_OpenURL( "http://www.activision.com/games/wolfenstein/purchase.html", qtrue );
-}
-
-// NERVE - SMF
-void CL_singlePlayLink_f( void ) {
-	Sys_OpenURL( "http://www.activision.com/games/wolfenstein/home.html", qtrue );
-}
-#endif
-
 #if !defined( __MACOS__ )
 void CL_SaveTranslations_f( void ) {
 	CL_SaveTransTable( "scripts/translation.cfg", qfalse );
@@ -3187,11 +3165,9 @@ void CL_LoadTranslations_f( void ) {
 
 //===========================================================================================
 
-/*
-====================
+/*====================
 CL_Init
-====================
-*/
+====================*/
 void CL_Init( void ) {
 	Com_Printf( "----- Client Initialization -----\n" );
 
@@ -5062,12 +5038,10 @@ void CL_TranslateString( const char *string, char *dest_buffer ) {
 #endif //DAJ USA
 }
 
-/*
-=======================
+/*=======================
 CL_TranslateStringBuf
 TTimo - handy, stores in a static buf, converts \n to chr(13)
-=======================
-*/
+=======================*/
 const char* CL_TranslateStringBuf( const char *string ) {
 	char *p;
 	int i,l;
@@ -5088,11 +5062,9 @@ const char* CL_TranslateStringBuf( const char *string ) {
 	return buf;
 }
 
-/*
-=======================
+/*=======================
 CL_OpenURLForCvar
-=======================
-*/
+=======================*/
 void CL_OpenURL( const char *url ) {
 	if ( !url || !strlen( url ) ) {
 		Com_Printf( "%s", CL_TranslateStringBuf( "invalid/empty URL\n" ) );
@@ -5101,12 +5073,9 @@ void CL_OpenURL( const char *url ) {
 	Sys_OpenURL( url, qtrue );
 }
 
-// Gordon: TEST TEST TEST
-/*
-==================
+/*==================
 BotImport_DrawPolygon
-==================
-*/
+==================*/
 void BotImport_DrawPolygon( int color, int numpoints, float* points ) {
 	re.DrawDebugPolygon( color, numpoints, points );
 }

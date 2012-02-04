@@ -1057,9 +1057,9 @@ char *Key_KeynumToString( int keynum ) {
 		return "<KEY NOT FOUND>";
 	}
 
-	if ( keynum < 0 || keynum >= MAX_KEYS ) {
-		return "<OUT OF RANGE>";
-	}
+// 	if ( keynum < 0 || keynum >= MAX_KEYS ) {
+// 		return "<OUT OF RANGE>";
+// 	}
 
 	// check for printable ascii (don't use quote)
 	if ( keynum > 32 && keynum < 127 && keynum != '"' && keynum != ';' ) {
@@ -1588,7 +1588,7 @@ void CL_CharEvent( int key ) {
 	// fretn - this should be fixed in Com_EventLoop
 	// but I can't be arsed to leave this as is
 
-	if ( key == (unsigned char) '`' || key == (unsigned char) '~' || key == (unsigned char) '¬' ) {
+	if ( key == (unsigned char) '`' || key == (unsigned char) '~' || key == (unsigned char) '\xAC' ) {
 		return;
 	}
 

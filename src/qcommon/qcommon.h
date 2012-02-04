@@ -285,7 +285,7 @@ You or the server may be running older versions of the game. Press the auto-upda
  * @def MASTER_SERVER_NAME
  * @brief location of the master server
  * 
- * As the main etmaster.idsoftware.com server seems to
+ * As the main server list etmaster.idsoftware.com seems to
  * be permanently down, we switched to an alternative.
  */
 #ifndef MASTER_SERVER_NAME
@@ -326,6 +326,7 @@ You or the server may be running older versions of the game. Press the auto-upda
 	#define PORT_AUTHORIZE      27952
 #endif // AUTHORIZE_SUPPORT
 #define PORT_SERVER         27960
+
 /*
  * @def NUM_SERVER_PORTS
  * 
@@ -363,13 +364,9 @@ enum clc_ops_e {
 	clc_EOF
 };
 
-/*
-==============================================================
-
+/*==============================================================
 VIRTUAL MACHINE
-
-==============================================================
-*/
+==============================================================*/
 
 typedef struct vm_s vm_t;
 

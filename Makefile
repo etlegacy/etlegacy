@@ -1,5 +1,5 @@
 #
-# ioWolfET Makefile
+# ET: Legacy Makefile
 #
 # GNU Make required
 #
@@ -40,8 +40,8 @@ endif
 #############################################################################
 -include Makefile.local
 
-CLIENT_NAME=ioet
-SERVER_NAME=ioetded
+CLIENT_NAME=etlet
+SERVER_NAME=etlded
 
 ifndef PLATFORM
 PLATFORM=$(COMPILE_PLATFORM)
@@ -92,7 +92,7 @@ GENERATE_DEPENDENCIES=1
 endif
 
 ifndef USE_OPENAL
-USE_OPENAL=1
+USE_OPENAL=0
 endif
 
 ifndef USE_OPENAL_DLOPEN

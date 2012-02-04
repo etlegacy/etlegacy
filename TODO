@@ -1,0 +1,13 @@
+TODO
+====
+
+TO BE ADDED
+-----------
+
+* use freetype instead of ft2
+* use zlib istead of unzip
+
+TO BE REMOVED
+-------------
+
+* openUrl
