@@ -514,7 +514,8 @@ void Sys_ParseArgs( int argc, char **argv )
 #ifdef DEDICATED
 			fprintf( stdout, Q3_VERSION " dedicated server (%s)\n", date );
 #else
-			fprintf( stdout, Q3_VERSION " client (%s)\n", date );
+			fprintf( stdout, "Client: " ET_VERSION "\n");
+			fprintf( stdout, "Masked as: " FAKE_VERSION "\n");
 #endif
 			Sys_Exit( 0 );
 		}

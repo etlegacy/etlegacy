@@ -29,7 +29,7 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  * 
  * @file q_shared.h
- * @brief included first by ALL program modules. 
+ * @brief included first by ALL program modules.
  * A user mod should never modify this file
  */
 
@@ -42,7 +42,7 @@
 #define GAMENAME_FOR_MASTER 	"etlegacy"
 #define Q3_VERSION      	"ET 2.60e"
 #define ET_VERSION		Q3_VERSION " " CPUSTRING " " __DATE__
-#define FAKE_VERSION		"ET 2.60b linux-i386 May  8 2006"
+#define FAKE_VERSION		"ET 2.60b " CPUSTRING " May  8 2006"
 #define CONFIG_NAME     	"etconfig.cfg"
 
 //#define LOCALIZATION_SUPPORT
@@ -183,7 +183,7 @@ typedef int intptr_t;
 #elif defined _M_ALPHA
 #define CPUSTRING   "win-AXP"
 #else
-#define CPUSTRING   "win"
+#define CPUSTRING   "win-x86"
 #endif
 #else
 #ifdef _M_IX86
@@ -191,7 +191,7 @@ typedef int intptr_t;
 #elif defined _M_ALPHA
 #define CPUSTRING   "win-AXP-debug"
 #else
-#define CPUSTRING   "win-debug"
+#define CPUSTRING   "win-x86-debug"
 #endif
 #endif
 

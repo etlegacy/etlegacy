@@ -35,7 +35,7 @@ static intptr_t ( QDECL * syscall )( intptr_t arg, ... ) = ( intptr_t ( QDECL * 
 #if __GNUC__ >= 4
 #pragma GCC visibility push(default)
 #endif
-void dllEntry( intptr_t ( QDECL  *syscallptr )( intptr_t arg,... ) ) {
+void dllEntry( intptr_t ( QDECL *syscallptr )( intptr_t arg,... ) ) {
 	syscall = syscallptr;
 }
 #if __GNUC__ >= 4

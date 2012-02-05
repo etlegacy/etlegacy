@@ -40,7 +40,7 @@ endif
 #############################################################################
 -include Makefile.local
 
-CLIENT_NAME=etlet
+CLIENT_NAME=etl
 SERVER_NAME=etlded
 
 ifndef PLATFORM
@@ -92,7 +92,7 @@ GENERATE_DEPENDENCIES=1
 endif
 
 ifndef USE_OPENAL
-USE_OPENAL=0
+USE_OPENAL=1
 endif
 
 ifndef USE_OPENAL_DLOPEN
@@ -531,7 +531,7 @@ endef
 
 define DO_WINDRES
 $(echo_cmd) "WINDRES $<"
-$(Q)$(WINDRES) -i $< -o $@
+$(Q)$(WINDRES) -i $< -o $@ -I /usr/i686-pc-mingw32/usr/include
 endef
 
 #############################################################################
@@ -1100,7 +1100,6 @@ Q3UIOBJ_ = \
   $(B)/etmain/ui/ui_loadpanel.o \
   $(B)/etmain/ui/ui_players.o \
   $(B)/etmain/ui/ui_shared.o \
-#   $(B)/etmain/ui/ui_util.o \
   $(B)/etmain/ui/q_math.o \
   $(B)/etmain/ui/q_shared.o
 
