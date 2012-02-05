@@ -1057,9 +1057,9 @@ char *Key_KeynumToString( int keynum ) {
 		return "<KEY NOT FOUND>";
 	}
 
-// 	if ( keynum < 0 || keynum >= MAX_KEYS ) {
-// 		return "<OUT OF RANGE>";
-// 	}
+	if ( keynum < 0 || keynum >= MAX_KEYS ) {
+		return "<OUT OF RANGE>";
+	}
 
 	// check for printable ascii (don't use quote)
 	if ( keynum > 32 && keynum < 127 && keynum != '"' && keynum != ';' ) {

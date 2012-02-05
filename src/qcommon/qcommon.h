@@ -291,7 +291,7 @@ You or the server may be running older versions of the game. Press the auto-upda
 #ifndef MASTER_SERVER_NAME
 	#define MASTER_SERVER_NAME      "master0.etmaster.net"
 #endif // MASTER_SERVER_NAME
-#define MOTD_SERVER_NAME        "etmaster.idsoftware.com"
+#define MOTD_SERVER_NAME        	"master0.etmaster.net"
 
 #ifdef AUTHORIZE_SUPPORT
 	#define AUTHORIZE_SERVER_NAME   "wolfauthorize.idsoftware.com"

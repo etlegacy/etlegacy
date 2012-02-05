@@ -28,8 +28,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../ui/keycodes.h"
 
-#define MAX_KEYS        256
-
 typedef struct {
 	qboolean down;
 	int repeats;                // if > 1, it is autorepeating
