@@ -30,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #define __UI_SHARED_H
 
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "../cgame/tr_types.h"
 #include "keycodes.h"
 

@@ -35,7 +35,7 @@ If you have questions concerning this license or the applicable additional terms
  *
  *****************************************************************************/
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 //#include "../server/server.h"
 #include "l_memory.h"
 #include "l_libvar.h"

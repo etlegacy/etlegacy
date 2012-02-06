@@ -28,7 +28,7 @@ If you have questions concerning this license or the applicable additional terms
 // snd_local.h -- private sound definations
 
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 #include "snd_public.h"
 #include "snd_codec.h"

@@ -35,7 +35,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifdef CGAMEDLL
 #include "../cgame/cg_local.h"
 #else
-#include "q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "bg_public.h"
 #endif // CGAMEDLL
 

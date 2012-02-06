@@ -35,7 +35,7 @@ If you have questions concerning this license or the applicable additional terms
 // Tab Size:		3
 //===========================================================================
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "../bspc/l_log.h"
 #include "../bspc/l_qfiles.h"
 #include "../botlib/l_memory.h"

@@ -143,7 +143,7 @@ typedef int intptr_t;
 #endif
 
 
-#include "../qcommon/q_platform.h"
+#include "q_platform.h"
 
 #ifdef __GNUC__
 #define _attribute( x ) __attribute__( x )
@@ -327,6 +327,9 @@ typedef int clipHandle_t;
 
 #define MAX_QINT            0x7fffffff
 #define MIN_QINT            ( -MAX_QINT - 1 )
+
+#define ARRAY_LEN(x)		(sizeof(x) / sizeof(*(x)))
+#define STRARRAY_LEN(x)		(ARRAY_LEN(x) - 1)
 
 // TTimo gcc: was missing, added from Q3 source
 #ifndef max
@@ -1016,7 +1019,7 @@ COLLISION DETECTION
 ==============================================================
 */
 
-#include "surfaceflags.h"            // shared with the q3map utility
+#include "../game/surfaceflags.h"
 
 // plane types are used to speed some tests
 // 0-2 are axial planes

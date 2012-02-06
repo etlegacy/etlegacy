@@ -31,7 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __QAL_H__
 #define __QAL_H__
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 
 #ifdef USE_OPENAL_DLOPEN

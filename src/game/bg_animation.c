@@ -37,7 +37,7 @@ If you have questions concerning this license or the applicable additional terms
 //
 //===========================================================================
 
-#include "q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "bg_public.h"
 
 // JPW NERVE -- added because I need to check single/multiplayer instances and branch accordingly

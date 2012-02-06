@@ -30,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 **  Character definition code
 */
 
-#include "q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "bg_public.h"
 
 bg_character_t alliedClassCharacters[NUM_PLAYER_CLASSES];

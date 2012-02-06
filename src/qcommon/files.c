@@ -37,7 +37,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #define MP_LEGACY_PAK 0x7776DC09
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "qcommon.h"
 #include "unzip.h"
 

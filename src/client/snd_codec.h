@@ -29,7 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef _SND_CODEC_H_
 #define _SND_CODEC_H_
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 
 typedef struct snd_info_s

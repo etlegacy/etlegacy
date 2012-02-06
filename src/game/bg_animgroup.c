@@ -30,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 **  Animation group code
 */
 
-#include "q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "bg_public.h"
 
 #define MAX_ANIMPOOL_SIZE 5 * MAX_MODEL_ANIMATIONS

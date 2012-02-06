@@ -31,7 +31,7 @@ If you have questions concerning this license or the applicable additional terms
  * Compression book.  The ranks are not actually stored, but implicitly defined
  * by the location of a node within a doubly-linked list */
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "qcommon.h"
 
 static int bloc = 0;

@@ -34,7 +34,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifdef SAVEGAME_SUPPORT
 
 #include "../game/g_local.h"
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "../game/botlib.h"      //bot lib interface
 #include "../game/be_aas.h"
 #include "../game/be_ea.h"

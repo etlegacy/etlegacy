@@ -38,7 +38,7 @@ If you have questions concerning this license or the applicable additional terms
   #include <curl/curl.h>
 #endif
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "qcommon.h"
 #include "dl_public.h"
 
@@ -177,7 +177,7 @@ dlStatus_t DL_DownloadLoop( void ) {
 	}
 
 	if ( msg->data.result != CURLE_OK ) {
-#ifdef __MACOS__ // ¥¥¥
+#ifdef __MACOS__ // ï¿½ï¿½ï¿½
 		err = "unknown curl error.";
 #else
 		err = curl_easy_strerror( msg->data.result );

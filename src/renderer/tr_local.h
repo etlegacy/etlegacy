@@ -31,7 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef TR_LOCAL_H
 #define TR_LOCAL_H
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "../qcommon/qfiles.h"
 #include "../qcommon/qcommon.h"
 #include "tr_public.h"

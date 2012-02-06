@@ -50,7 +50,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "sys_local.h"
 #include "sys_loadlib.h"
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 
 static char binaryPath[ MAX_OSPATH ] = { 0 };

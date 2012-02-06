@@ -28,7 +28,7 @@ If you have questions concerning this license or the applicable additional terms
 
 // server.h
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 #include "../game/g_public.h"
 #include "../game/bg_public.h"

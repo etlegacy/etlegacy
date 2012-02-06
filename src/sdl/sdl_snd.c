@@ -35,7 +35,7 @@ If you have questions concerning this license or the applicable additional terms
 #	include <SDL.h>
 #endif
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "../client/snd_local.h"
 
 qboolean snd_inited = qfalse;

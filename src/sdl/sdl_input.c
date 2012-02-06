@@ -1,30 +1,35 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ * 
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
+ * 
+ * This file is part of ET: Legacy.
+ * 
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also 
+ * subject to certain additional terms. You should have received a copy 
+ * of these additional terms immediately following the terms and conditions 
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ * 
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ * 
+ * @file sdl_input.c
+ */
 
 #ifdef USE_LOCAL_HEADERS
 #	include "SDL.h"
@@ -40,8 +45,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "../client/client.h"
 #include "../sys/sys_local.h"
 
-#define ARRAYLEN(x) (sizeof(x)/sizeof(x[0]))
-
 #ifdef MACOS_X
 // Mouse acceleration needs to be disabled
 #define MACOS_X_ACCELERATION_HACK
@@ -56,33 +59,33 @@ If you have questions concerning this license or the applicable additional terms
 #include <IOKit/hidsystem/event_status_driver.h>
 #endif
 
-static cvar_t *in_keyboardDebug     = NULL;
+static cvar_t *in_nograb;
+static cvar_t *in_keyboardDebug     	= NULL;
 
-static SDL_Joystick *stick = NULL;
+static cvar_t *in_mouse             	= NULL;
+static qboolean mouseAvailable 		= qfalse;
+static qboolean mouseActive 		= qfalse;
+static qboolean keyRepeatEnabled	= qfalse;
 
-static qboolean mouseAvailable = qfalse;
-static qboolean mouseActive = qfalse;
-static qboolean keyRepeatEnabled = qfalse;
-
-static cvar_t *in_mouse             = NULL;
 #ifdef MACOS_X_ACCELERATION_HACK
 static cvar_t *in_disablemacosxmouseaccel = NULL;
 static double originalMouseSpeed = -1.0;
 #endif
-static cvar_t *in_nograb;
 
-static cvar_t *in_joystick          = NULL;
-static cvar_t *in_joystickDebug     = NULL;
-static cvar_t *in_joystickThreshold = NULL;
-static cvar_t *in_joystickNo        = NULL;
+static SDL_Joystick *stick		= NULL;
+static cvar_t *in_joystick          	= NULL;
+static cvar_t *in_joystickDebug     	= NULL;
+static cvar_t *in_joystickThreshold 	= NULL;
+static cvar_t *in_joystickNo        	= NULL;
+static cvar_t *in_joystickUseAnalog 	= NULL;
 
 static int vidRestartTime = 0;
 
 #define CTRL(a) ((a)-'a'+1)
 
-/*===============
-IN_PrintKey
-===============*/
+/*
+ * @brief Prints keyboard identifiers in the console
+ */
 static void IN_PrintKey( const SDL_keysym *keysym, keyNum_t key, qboolean down )
 {
 	if( down )
@@ -121,11 +124,6 @@ static void IN_PrintKey( const SDL_keysym *keysym, keyNum_t key, qboolean down )
 
 #define MAX_CONSOLE_KEYS 16
 
-/*
-===============
-IN_IsConsoleKey
-===============
-*/
 static qboolean IN_IsConsoleKey( keyNum_t key, const unsigned char character )
 {
 	typedef struct consoleKey_s
@@ -213,7 +211,7 @@ static qboolean IN_IsConsoleKey( keyNum_t key, const unsigned char character )
 }
 
 /*
- * @brief translates SLD keyboard code to its Q3 counterpart
+ * @brief translates SLD keyboard identifier to its Q3 counterpart
  */
 static const char *IN_TranslateSDLToQ3Key( SDL_keysym *keysym,
 	keyNum_t *key, qboolean down )
@@ -365,11 +363,7 @@ static const char *IN_TranslateSDLToQ3Key( SDL_keysym *keysym,
 }
 
 #ifdef MACOS_X_ACCELERATION_HACK
-/*
-===============
-IN_GetIOHandle
-===============
-*/
+
 static io_connect_t IN_GetIOHandle(void) // mac os x mouse accel hack
 {
 	io_connect_t iohandle = MACH_PORT_NULL;
@@ -392,11 +386,6 @@ static io_connect_t IN_GetIOHandle(void) // mac os x mouse accel hack
 }
 #endif
 
-/*
-===============
-IN_GobbleMotionEvents
-===============
-*/
 static void IN_GobbleMotionEvents( void )
 {
 	SDL_Event dummy[ 1 ];
@@ -407,11 +396,6 @@ static void IN_GobbleMotionEvents( void )
 		SDL_EVENTMASK( SDL_MOUSEMOTION ) ) ) { }
 }
 
-/*
-===============
-IN_ActivateMouse
-===============
-*/
 static void IN_ActivateMouse( void )
 {
 	if (!mouseAvailable || !SDL_WasInit( SDL_INIT_VIDEO ) )
@@ -467,7 +451,7 @@ static void IN_ActivateMouse( void )
 	}
 
 	// in_nograb makes no sense in fullscreen mode
-	if( !r_fullscreen->integer )
+	if( !Cvar_VariableIntegerValue("r_fullscreen") )
 	{
 		if( in_nograb->modified || !mouseActive )
 		{
@@ -483,11 +467,6 @@ static void IN_ActivateMouse( void )
 	mouseActive = qtrue;
 }
 
-/*
-===============
-IN_DeactivateMouse
-===============
-*/
 static void IN_DeactivateMouse( void )
 {
 	if( !SDL_WasInit( SDL_INIT_VIDEO ) )
@@ -495,7 +474,7 @@ static void IN_DeactivateMouse( void )
 
 	// Always show the cursor when the mouse is disabled,
 	// but not when fullscreen
-	if( !r_fullscreen->integer )
+	if( !Cvar_VariableIntegerValue("r_fullscreen") )
 		SDL_ShowCursor( 1 );
 
 	if( !mouseAvailable )
@@ -528,7 +507,7 @@ static void IN_DeactivateMouse( void )
 
 		// Don't warp the mouse unless the cursor is within the window
 		if( SDL_GetAppState( ) & SDL_APPMOUSEFOCUS )
-			SDL_WarpMouse( glConfig.vidWidth / 2, glConfig.vidHeight / 2 );
+			SDL_WarpMouse( cls.glconfig.vidWidth / 2, cls.glconfig.vidHeight / 2 );
 
 		mouseActive = qfalse;
 	}
@@ -538,13 +517,12 @@ static void IN_DeactivateMouse( void )
 static int joy_keys[16] = {
 	K_LEFTARROW, K_RIGHTARROW,
 	K_UPARROW, K_DOWNARROW,
-	K_JOY16, K_JOY17,
-	K_JOY18, K_JOY19,
-	K_JOY20, K_JOY21,
-	K_JOY22, K_JOY23,
-
-	K_JOY24, K_JOY25,
-	K_JOY26, K_JOY27
+	K_JOY17, K_JOY18,
+	K_JOY19, K_JOY20,
+	K_JOY21, K_JOY22,
+	K_JOY23, K_JOY24,
+	K_JOY25, K_JOY26,
+	K_JOY27, K_JOY28
 };
 
 // translate hat events into keypresses
@@ -565,30 +543,21 @@ struct
 {
 	qboolean buttons[16];  // !!! FIXME: these might be too many.
 	unsigned int oldaxes;
+	int oldaaxes[16];
 	unsigned int oldhats;
 } stick_state;
 
-
-/*
-===============
-IN_InitJoystick
-===============
-*/
 static void IN_InitJoystick( void )
 {
 	int i = 0;
 	int total = 0;
+	char buf[16384] = "";
 
 	if (stick != NULL)
 		SDL_JoystickClose(stick);
 
 	stick = NULL;
 	memset(&stick_state, '\0', sizeof (stick_state));
-
-	if( !in_joystick->integer ) {
-		Com_DPrintf( "Joystick is not active.\n" );
-		return;
-	}
 
 	if (!SDL_WasInit(SDL_INIT_JOYSTICK))
 	{
@@ -603,12 +572,27 @@ static void IN_InitJoystick( void )
 
 	total = SDL_NumJoysticks();
 	Com_DPrintf("%d possible joysticks\n", total);
+
+	// Print list and build cvar to allow ui to select joystick.
 	for (i = 0; i < total; i++)
-		Com_DPrintf("[%d] %s\n", i, SDL_JoystickName(i));
+	{
+		Q_strcat(buf, sizeof(buf), SDL_JoystickName(i));
+		Q_strcat(buf, sizeof(buf), "\n");
+	}
+
+	Cvar_Get( "in_availableJoysticks", buf, CVAR_ROM );
+
+	if( !in_joystick->integer ) {
+		Com_DPrintf( "Joystick is not active.\n" );
+		SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+		return;
+	}
 
 	in_joystickNo = Cvar_Get( "in_joystickNo", "0", CVAR_ARCHIVE );
 	if( in_joystickNo->integer < 0 || in_joystickNo->integer >= total )
 		Cvar_Set( "in_joystickNo", "0" );
+
+	in_joystickUseAnalog = Cvar_Get( "in_joystickUseAnalog", "0", CVAR_ARCHIVE );
 
 	stick = SDL_JoystickOpen( in_joystickNo->integer );
 
@@ -618,20 +602,16 @@ static void IN_InitJoystick( void )
 	}
 
 	Com_DPrintf( "Joystick %d opened\n", in_joystickNo->integer );
-	Com_DPrintf( "Name:    %s\n", SDL_JoystickName(in_joystickNo->integer) );
-	Com_DPrintf( "Axes:    %d\n", SDL_JoystickNumAxes(stick) );
-	Com_DPrintf( "Hats:    %d\n", SDL_JoystickNumHats(stick) );
-	Com_DPrintf( "Buttons: %d\n", SDL_JoystickNumButtons(stick) );
-	Com_DPrintf( "Balls: %d\n", SDL_JoystickNumBalls(stick) );
+	Com_DPrintf( "Name:       %s\n", SDL_JoystickName(in_joystickNo->integer) );
+	Com_DPrintf( "Axes:       %d\n", SDL_JoystickNumAxes(stick) );
+	Com_DPrintf( "Hats:       %d\n", SDL_JoystickNumHats(stick) );
+	Com_DPrintf( "Buttons:    %d\n", SDL_JoystickNumButtons(stick) );
+	Com_DPrintf( "Balls:      %d\n", SDL_JoystickNumBalls(stick) );
+	Com_DPrintf( "Use Analog: %s\n", in_joystickUseAnalog->integer ? "Yes" : "No" );
 
 	SDL_JoystickEventState(SDL_QUERY);
 }
 
-/*
-===============
-IN_ShutdownJoystick
-===============
-*/
 static void IN_ShutdownJoystick( void )
 {
 	if (stick)
@@ -643,14 +623,9 @@ static void IN_ShutdownJoystick( void )
 	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
-/*
-===============
-IN_JoyMove
-===============
-*/
 static void IN_JoyMove( void )
 {
-	qboolean joy_pressed[ARRAYLEN(joy_keys)];
+	qboolean joy_pressed[ARRAY_LEN(joy_keys)];
 	unsigned int axes = 0;
 	unsigned int hats = 0;
 	int total = 0;
@@ -693,8 +668,8 @@ static void IN_JoyMove( void )
 	total = SDL_JoystickNumButtons(stick);
 	if (total > 0)
 	{
-		if (total > ARRAYLEN(stick_state.buttons))
-			total = ARRAYLEN(stick_state.buttons);
+		if (total > ARRAY_LEN(stick_state.buttons))
+			total = ARRAY_LEN(stick_state.buttons);
 		for (i = 0; i < total; i++)
 		{
 			qboolean pressed = (SDL_JoystickGetButton(stick, i) != 0);
@@ -803,11 +778,27 @@ static void IN_JoyMove( void )
 		for (i = 0; i < total; i++)
 		{
 			Sint16 axis = SDL_JoystickGetAxis(stick, i);
-			float f = ( (float) axis ) / 32767.0f;
-			if( f < -in_joystickThreshold->value ) {
-				axes |= ( 1 << ( i * 2 ) );
-			} else if( f > in_joystickThreshold->value ) {
-				axes |= ( 1 << ( ( i * 2 ) + 1 ) );
+
+			if (in_joystickUseAnalog->integer)
+			{
+				float f = ( (float) abs(axis) ) / 32767.0f;
+				
+				if( f < in_joystickThreshold->value ) axis = 0;
+
+				if ( axis != stick_state.oldaaxes[i] )
+				{
+					Com_QueueEvent( 0, SE_JOYSTICK_AXIS, i, axis, 0, NULL );
+					stick_state.oldaaxes[i] = axis;
+				}
+			}
+			else
+			{
+				float f = ( (float) axis ) / 32767.0f;
+				if( f < -in_joystickThreshold->value ) {
+					axes |= ( 1 << ( i * 2 ) );
+				} else if( f > in_joystickThreshold->value ) {
+					axes |= ( 1 << ( ( i * 2 ) + 1 ) );
+				}
 			}
 		}
 	}
@@ -830,11 +821,6 @@ static void IN_JoyMove( void )
 	stick_state.oldaxes = axes;
 }
 
-/*
-===============
-IN_ProcessEvents
-===============
-*/
 static void IN_ProcessEvents( void )
 {
 	SDL_Event e;
@@ -910,9 +896,9 @@ static void IN_ProcessEvents( void )
 				char width[32], height[32];
 				Com_sprintf( width, sizeof(width), "%d", e.resize.w );
 				Com_sprintf( height, sizeof(height), "%d", e.resize.h );
-				ri.Cvar_Set( "r_customwidth", width );
-				ri.Cvar_Set( "r_customheight", height );
-				ri.Cvar_Set( "r_mode", "-1" );
+				Cvar_Set( "r_customwidth", width );
+				Cvar_Set( "r_customheight", height );
+				Cvar_Set( "r_mode", "-1" );
 				/* wait until user stops dragging for 1 second, so
 				   we aren't constantly recreating the GL context while
 				   he tries to drag...*/
@@ -934,11 +920,6 @@ static void IN_ProcessEvents( void )
 	}
 }
 
-/*
-===============
-IN_Frame
-===============
-*/
 void IN_Frame( void )
 {
 	qboolean loading;
@@ -947,14 +928,14 @@ void IN_Frame( void )
 	IN_ProcessEvents( );
 
 	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
-	loading = !!( cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE );
+	loading = !!( clc.state != CA_DISCONNECTED && clc.state != CA_ACTIVE );
 
-	if( !r_fullscreen->integer && ( Key_GetCatcher( ) & KEYCATCH_CONSOLE ) )
+	if( !Cvar_VariableIntegerValue("r_fullscreen") && ( Key_GetCatcher( ) & KEYCATCH_CONSOLE ) )
 	{
 		// Console is down in windowed mode
 		IN_DeactivateMouse( );
 	}
-	else if( !r_fullscreen->integer && loading )
+	else if( !Cvar_VariableIntegerValue("r_fullscreen") && loading )
 	{
 		// Loading in windowed mode
 		IN_DeactivateMouse( );
@@ -975,18 +956,22 @@ void IN_Frame( void )
 	}
 }
 
-/*
-===============
-IN_Init
-===============
-*/
+void IN_InitKeyLockStates( void )
+{
+	unsigned char *keystate = SDL_GetKeyState(NULL);
+
+	keys[K_SCROLLOCK].down = keystate[SDLK_SCROLLOCK];
+	keys[K_KP_NUMLOCK].down = keystate[SDLK_NUMLOCK];
+	keys[K_CAPSLOCK].down = keystate[SDLK_CAPSLOCK];
+}
+
 void IN_Init( void )
 {
 	int appState;
 
 	if( !SDL_WasInit( SDL_INIT_VIDEO ) )
 	{
-		Com_Error( ERR_FATAL, "IN_Init called before SDL_Init( SDL_INIT_VIDEO )\n" );
+		Com_Error( ERR_FATAL, "IN_Init called before SDL_Init( SDL_INIT_VIDEO )" );
 		return;
 	}
 
@@ -1000,7 +985,7 @@ void IN_Init( void )
 
 	in_joystick = Cvar_Get( "in_joystick", "0", CVAR_ARCHIVE|CVAR_LATCH );
 	in_joystickDebug = Cvar_Get( "in_joystickDebug", "0", CVAR_TEMP );
-	in_joystickThreshold = Cvar_Get( "in_joystickThreshold", "0.15", CVAR_ARCHIVE );
+	in_joystickThreshold = Cvar_Get( "joy_threshold", "0.15", CVAR_ARCHIVE );
 
 #ifdef MACOS_X_ACCELERATION_HACK
 	in_disablemacosxmouseaccel = Cvar_Get( "in_disablemacosxmouseaccel", "1", CVAR_ARCHIVE );
@@ -1010,30 +995,19 @@ void IN_Init( void )
 	SDL_EnableKeyRepeat( SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL );
 	keyRepeatEnabled = qtrue;
 
-	if( in_mouse->value )
-	{
-		mouseAvailable = qtrue;
-		IN_ActivateMouse( );
-	}
-	else
-	{
-		IN_DeactivateMouse( );
-		mouseAvailable = qfalse;
-	}
+	mouseAvailable = ( in_mouse->value != 0 );
+	IN_DeactivateMouse( );
 
 	appState = SDL_GetAppState( );
 	Cvar_SetValue( "com_unfocused",	!( appState & SDL_APPINPUTFOCUS ) );
 	Cvar_SetValue( "com_minimized", !( appState & SDL_APPACTIVE ) );
 
+	IN_InitKeyLockStates( );
+
 	IN_InitJoystick( );
 	Com_DPrintf( "------------------------------------\n" );
 }
 
-/*
-===============
-IN_Shutdown
-===============
-*/
 void IN_Shutdown( void )
 {
 	IN_DeactivateMouse( );
@@ -1042,11 +1016,6 @@ void IN_Shutdown( void )
 	IN_ShutdownJoystick( );
 }
 
-/*
-===============
-IN_Restart
-===============
-*/
 void IN_Restart( void )
 {
 	IN_ShutdownJoystick( );

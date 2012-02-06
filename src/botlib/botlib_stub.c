@@ -41,7 +41,7 @@ If you have questions concerning this license or the applicable additional terms
  *   probably a bad thing, and it should be fixed down the road.
  */
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "../game/botlib.h"
 #include "l_script.h"
 #include "l_precomp.h"

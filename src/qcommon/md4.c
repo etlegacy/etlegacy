@@ -28,7 +28,7 @@ If you have questions concerning this license or the applicable additional terms
 
 /* GLOBAL.H - RSAREF types and constants */
 
-#include "../game/q_shared.h"
+#include "../qcommon/q_shared.h"
 
 #ifdef WIN32
 #ifndef __GNUC__

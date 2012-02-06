@@ -34,7 +34,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 
-#include "q_shared.h"
+#include "../qcommon/q_shared.h"
 #include "bg_public.h"
 #include "../../etmain/ui/menudef.h"
 

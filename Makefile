@@ -92,7 +92,7 @@ GENERATE_DEPENDENCIES=1
 endif
 
 ifndef USE_OPENAL
-USE_OPENAL=0
+USE_OPENAL=1
 endif
 
 ifndef USE_OPENAL_DLOPEN
@@ -1189,7 +1189,7 @@ $(B)/ded/%.o: $(GDIR)/%.c
 ## GAME MODULE RULES
 #############################################################################
 
-$(B)/etmain/cgame/q_%.o: $(GDIR)/q_%.c
+$(B)/etmain/cgame/q_%.o: $(CMDIR)/q_%.c
 	$(DO_CGAME_CC)
 	
 $(B)/etmain/cgame/bg_%.o: $(GDIR)/bg_%.c
@@ -1203,11 +1203,14 @@ $(B)/etmain/cgame/%.o: $(CGDIR)/%.c
 
 $(B)/etmain/game/%.o: $(GDIR)/%.c
 	$(DO_GAME_CC)
+	
+$(B)/etmain/game/q_%.o: $(CMDIR)/q_%.c
+	$(DO_GAME_CC)
 
 $(B)/etmain/game/%.o: $(BOTAIDIR)/%.c
 	$(DO_GAME_CC)
 	
-$(B)/etmain/ui/q_%.o: $(GDIR)/q_%.c
+$(B)/etmain/ui/q_%.o: $(CMDIR)/q_%.c
 	$(DO_UI_CC)
 	
 $(B)/etmain/ui/bg_%.o: $(GDIR)/bg_%.c
