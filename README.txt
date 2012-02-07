@@ -6,15 +6,17 @@ ET: Legacy
 INTRODUCTION
 ============
 
-ET: Legacy is based on the [raedwulf-et project](https://bitbucket.org/tcmreastwood/raedwulf-et/) which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory. 
+ET: Legacy is based on the [raedwulf-et project](https://bitbucket.org/tcmreastwood/raedwulf-et/) 
+which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory. 
 
-Its main goal is to fix bugs and clean up the codebase while remaining (somewhat) compatible with the ET 2.60b version. 
+Its main goal is to fix bugs and clean up the codebase while remaining 
+(somewhat) compatible with the ET 2.60b version. 
 
 GENERAL NOTES
 =============
 
 Game data and patching:
------------------------
+-----------------------------------------------------------------------------
 
 Wolfenstein: Enemy Territory is a free release, and can be downloaded from
 http://www.splashdamage.com/content/wolfenstein-enemy-territory-barracks
@@ -23,23 +25,33 @@ This source release does not contain any game data, the game data is still
 covered by the original EULA and must be obeyed as usual.
 
 Compiling
----------
+-----------------------------------------------------------------------------
 
-Install mercurial and get the code from the repository: _hg clone http://hg.code.sf.net/p/etlegacy/code etlegacy-code_
+Install mercurial and get the latest code from the repository hosted at 
+sourceforge.net: _hg clone http://hg.code.sf.net/p/etlegacy/code etlegacy-code_
 
-Then just run run: _make ARCH=i386_
+Then just run: _make_
 
 LICENSE
 =======
 
 See COPYING.txt for the GNU GENERAL PUBLIC LICENSE
 
-ADDITIONAL TERMS:  The Wolfenstein: Enemy Territory GPL Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU GPL which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ADDITIONAL TERMS:  The Wolfenstein: Enemy Territory GPL Source Code is also 
+subject to certain additional terms. You should have received a copy of these 
+additional terms immediately following the terms and conditions of the GNU GPL 
+which accompanied the Wolf ET Source Code.  If not, please request a copy in 
+writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120, 
+Rockville, Maryland 20850 USA.
 
-EXCLUDED CODE:  The code described below and contained in the Wolfenstein: Enemy Territory GPL Source Code release is not part of the Program covered by the GPL and is expressly excluded from its terms.  You are solely responsible for obtaining from the copyright holder a license for such code and complying with the applicable license terms.
+EXCLUDED CODE:  The code described below and contained in the Wolfenstein: 
+Enemy Territory GPL Source Code release is not part of the Program covered by 
+the GPL and is expressly excluded from its terms.  You are solely responsible 
+for obtaining from the copyright holder a license for such code and complying 
+with the applicable license terms.
 
 IO on .zip files using portions of zlib
----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
 lines	file(s)
 4301	src/qcommon/unzip.c
 Copyright (C) 1998 Gilles Vollant
