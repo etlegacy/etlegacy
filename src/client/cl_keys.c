@@ -27,6 +27,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 #include "client.h"
+#include <SDL/SDL_video.h>
 
 /*
 
@@ -1397,6 +1398,16 @@ void CL_KeyEvent( int key, qboolean down, unsigned time ) {
 					Cvar_Set( "r_fullscreen", "0" );
 				}
 				Cbuf_ExecuteText( EXEC_APPEND, "vid_restart\n" );
+				return;
+			}
+		}
+	}
+	
+	if ( key == K_TAB ) {
+		if ( down ) {
+			if ( keys[K_ALT].down ) {
+				Key_ClearStates();
+				SDL_WM_IconifyWindow();
 				return;
 			}
 		}

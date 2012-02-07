@@ -910,7 +910,9 @@ static void IN_ProcessEvents( void )
 					Cvar_SetValue( "com_unfocused",	!e.active.gain);
 				}
 				if (e.active.state & SDL_APPACTIVE) {
-					Cvar_SetValue( "com_minimized", !e.active.gain);
+					// Cvar_SetValue( "com_minimized", !e.active.gain);
+					if ( e.active.gain && !Cvar_VariableIntegerValue("r_fullscreen") )
+						Cbuf_ExecuteText( EXEC_APPEND, "vid_restart\n" );
 				}
 				break;
 

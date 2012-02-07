@@ -32,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifdef USE_LOCAL_HEADERS
 #	include "SDL.h"
 #else
-#	include <SDL.h>
+#	include <SDL/SDL.h>
 #endif
 
 #include "../qcommon/q_shared.h"
@@ -105,8 +105,7 @@ static struct
 	{ AUDIO_S16MSB, "AUDIO_S16MSB" }
 };
 
-static int formatToStringTableSize =
-  sizeof( formatToStringTable ) / sizeof( formatToStringTable[ 0 ] );
+static int formatToStringTableSize = ARRAY_LEN( formatToStringTable );
 
 /*
 ===============
