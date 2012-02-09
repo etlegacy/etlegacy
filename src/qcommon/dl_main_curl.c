@@ -32,11 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 	* Add server as referring URL
 */
 
-#ifdef USE_LOCAL_HEADERS
-  #include "../libcurl/curl/curl.h"
-#else
-  #include <curl/curl.h>
-#endif
+#include <curl/curl.h>
 
 #include "../qcommon/q_shared.h"
 #include "qcommon.h"

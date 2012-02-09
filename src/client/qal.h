@@ -39,10 +39,6 @@ If you have questions concerning this license or the applicable additional terms
 #define ALC_NO_PROTOTYPES
 #endif
 
-#ifdef USE_LOCAL_HEADERS
-#include "../AL/al.h"
-#include "../AL/alc.h"
-#else
 #ifdef _MSC_VER
   // MSVC users must install the OpenAL SDK which doesn't use the AL/*.h scheme.
   #include <al.h>
