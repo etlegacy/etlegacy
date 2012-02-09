@@ -29,11 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifdef USE_LOCAL_HEADERS
-#	include "SDL.h"
-#else
-#	include <SDL/SDL.h>
-#endif
+#include <SDL/SDL.h>
 
 #include "../qcommon/q_shared.h"
 #include "../client/snd_local.h"

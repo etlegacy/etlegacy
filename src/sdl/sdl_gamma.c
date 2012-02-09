@@ -26,11 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#ifdef USE_LOCAL_HEADERS
-#	include "SDL.h"
-#else
-#	include <SDL.h>
-#endif
+#include <SDL/SDL.h>
 
 #include "../renderer/tr_local.h"
 #include "../qcommon/qcommon.h"
