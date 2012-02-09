@@ -200,7 +200,7 @@ ifeq ($(PLATFORM),linux)
   SERVER_CFLAGS =
 
   ifeq ($(USE_FREETYPE),1)
-    CLIENT_CFLAGS += -DUSE_FREETYPE
+    CLIENT_CFLAGS += -DUSE_FREETYPE $(FREETYPE_CFLAGS)
   endif
 
   ifeq ($(USE_OPENAL),1)
@@ -653,12 +653,15 @@ Q3OBJ = \
   $(B)/client/cvar.o \
   $(B)/client/dl_main_curl.o \
   $(B)/client/files.o \
+  $(B)/client/huffman.o \
   $(B)/client/md4.o \
+  $(B)/client/md5.o \
   $(B)/client/msg.o \
   $(B)/client/net_chan.o \
   $(B)/client/net_ip.o \
   $(B)/client/puff.o \
-  $(B)/client/huffman.o \
+  $(B)/client/q_math.o \
+  $(B)/client/q_shared.o \
   \
   $(B)/client/snd_adpcm.o \
   $(B)/client/snd_codec.o \
@@ -681,9 +684,6 @@ Q3OBJ = \
   $(B)/client/sv_net_chan.o \
   $(B)/client/sv_snapshot.o \
   $(B)/client/sv_world.o \
-  \
-  $(B)/client/q_math.o \
-  $(B)/client/q_shared.o \
   \
   $(B)/client/unzip.o \
   $(B)/client/vm.o \
@@ -743,36 +743,35 @@ Q3OBJ = \
   $(B)/client/tr_model.o \
   $(B)/client/tr_noise.o \
   $(B)/client/tr_scene.o \
-  $(B)/client/tr_shade_calc.o \
   $(B)/client/tr_shade.o \
+  $(B)/client/tr_shade_calc.o \
   $(B)/client/tr_shader.o \
   $(B)/client/tr_shadows.o \
   $(B)/client/tr_sky.o \
   $(B)/client/tr_surface.o \
   $(B)/client/tr_world.o \
   \
-  $(B)/client/sdl_glimp.o \
   $(B)/client/sdl_gamma.o \
+  $(B)/client/sdl_glimp.o \
   $(B)/client/sdl_input.o \
   $(B)/client/sdl_snd.o \
   \
   $(B)/client/con_log.o \
-  $(B)/client/sys_main.o \
-  $(B)/client/md5.o
+  $(B)/client/sys_main.o
 
 ifeq ($(ARCH),i386)
   Q3OBJ += \
     $(B)/client/ftola.o \
-    $(B)/client/snd_mixa.o \
     $(B)/client/matha.o \
-    $(B)/client/snapvectora.o
+    $(B)/client/snapvectora.o \
+    $(B)/client/snd_mixa.o
 endif
 ifeq ($(ARCH),x86)
   Q3OBJ += \
     $(B)/client/ftola.o \
-    $(B)/client/snd_mixa.o \
     $(B)/client/matha.o \
-    $(B)/client/snapvectora.o
+    $(B)/client/snapvectora.o \
+    $(B)/client/snd_mixa.o
 endif
 
 ifeq ($(PLATFORM),mingw32)
@@ -920,7 +919,6 @@ $(B)/$(SERVER_NAME)$(FULLBINEXT): $(Q3DOBJ)
 #############################################################################
 
 Q3CGOBJ_ = \
-  $(B)/etmain/cgame/cg_main.o \
   $(B)/etmain/cgame/bg_animation.o \
   $(B)/etmain/cgame/bg_animgroup.o \
   $(B)/etmain/cgame/bg_campaign.o \
@@ -933,6 +931,7 @@ Q3CGOBJ_ = \
   $(B)/etmain/cgame/bg_stats.o \
   $(B)/etmain/cgame/bg_tracemap.o \
   $(B)/etmain/cgame/ui_shared.o \
+  \
   $(B)/etmain/cgame/cg_atmospheric.o \
   $(B)/etmain/cgame/cg_character.o \
   $(B)/etmain/cgame/cg_commandmap.o \
@@ -950,6 +949,7 @@ Q3CGOBJ_ = \
   $(B)/etmain/cgame/cg_limbopanel.o \
   $(B)/etmain/cgame/cg_loadpanel.o \
   $(B)/etmain/cgame/cg_localents.o \
+  $(B)/etmain/cgame/cg_main.o \
   $(B)/etmain/cgame/cg_marks.o \
   $(B)/etmain/cgame/cg_missionbriefing.o \
   $(B)/etmain/cgame/cg_multiview.o \
@@ -984,7 +984,6 @@ $(B)/etmain/cgame$(SHLIBNAME): $(Q3CGOBJ)
 #############################################################################
 
 Q3GOBJ_ = \
-  $(B)/etmain/game/g_main.o \
   $(B)/etmain/game/ai_cmd.o \
   $(B)/etmain/game/ai_dmgoal_mp.o \
   $(B)/etmain/game/ai_dmnet_mp.o \
@@ -993,6 +992,7 @@ Q3GOBJ_ = \
   $(B)/etmain/game/ai_script.o \
   $(B)/etmain/game/ai_script_actions.o \
   $(B)/etmain/game/ai_team.o \
+  \
   $(B)/etmain/game/bg_animation.o \
   $(B)/etmain/game/bg_animgroup.o \
   $(B)/etmain/game/bg_campaign.o \
@@ -1017,6 +1017,7 @@ Q3GOBJ_ = \
   $(B)/etmain/game/g_config.o \
   $(B)/etmain/game/g_fireteams.o \
   $(B)/etmain/game/g_items.o \
+  $(B)/etmain/game/g_main.o \
   $(B)/etmain/game/g_match.o \
   $(B)/etmain/game/g_mem.o \
   $(B)/etmain/game/g_misc.o \
@@ -1026,13 +1027,13 @@ Q3GOBJ_ = \
   $(B)/etmain/game/g_props.o \
   $(B)/etmain/game/g_referee.o \
   $(B)/etmain/game/g_save.o \
-  $(B)/etmain/game/g_script_actions.o \
   $(B)/etmain/game/g_script.o \
+  $(B)/etmain/game/g_script_actions.o \
   $(B)/etmain/game/g_session.o \
   $(B)/etmain/game/g_spawn.o \
   $(B)/etmain/game/g_stats.o \
-  $(B)/etmain/game/g_svcmds.o \
   $(B)/etmain/game/g_sv_entities.o \
+  $(B)/etmain/game/g_svcmds.o \
   $(B)/etmain/game/g_systemmsg.o \
   $(B)/etmain/game/g_target.o \
   $(B)/etmain/game/g_team.o \
@@ -1041,6 +1042,7 @@ Q3GOBJ_ = \
   $(B)/etmain/game/g_utils.o \
   $(B)/etmain/game/g_vote.o \
   $(B)/etmain/game/g_weapon.o \
+  \
   $(B)/etmain/game/q_math.o \
   $(B)/etmain/game/q_shared.o
 
@@ -1058,12 +1060,14 @@ Q3UIOBJ_ = \
   $(B)/etmain/ui/bg_campaign.o \
   $(B)/etmain/ui/bg_classes.o \
   $(B)/etmain/ui/bg_misc.o \
-  $(B)/etmain/ui/ui_main.o \
+  \
   $(B)/etmain/ui/ui_atoms.o \
   $(B)/etmain/ui/ui_gameinfo.o \
   $(B)/etmain/ui/ui_loadpanel.o \
+  $(B)/etmain/ui/ui_main.o \
   $(B)/etmain/ui/ui_players.o \
   $(B)/etmain/ui/ui_shared.o \
+  \
   $(B)/etmain/ui/q_math.o \
   $(B)/etmain/ui/q_shared.o
 
@@ -1091,9 +1095,6 @@ $(B)/client/%.o: $(CMDIR)/%.c
 
 $(B)/client/%.o: $(BLIBDIR)/%.c
 	$(DO_BOT_CC)
-
-$(B)/client/%.o: $(ZDIR)/%.c
-	$(DO_CC)
 
 $(B)/client/%.o: $(RDIR)/%.c
 	$(DO_CC)
@@ -1123,9 +1124,6 @@ $(B)/ded/%.o: $(SDIR)/%.c
 	$(DO_DED_CC)
 
 $(B)/ded/%.o: $(CMDIR)/%.c
-	$(DO_DED_CC)
-
-$(B)/ded/%.o: $(ZDIR)/%.c
 	$(DO_DED_CC)
 
 $(B)/ded/%.o: $(BLIBDIR)/%.c

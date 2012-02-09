@@ -773,7 +773,7 @@ int BoxOnPlaneSide2 (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 ==================
 */
 
-//TODO: raedwulf-et removed this, but if I do it then it fails to build on my system
+//FIXME: raedwulf-et removed this, but if I do it then it fails to build on my system
 #if !( ( defined __linux__ || defined __MINGW32__ ) && defined __i386__ && !defined C_ONLY )
 
 #if defined __LCC__ || defined C_ONLY || !id386 || __GNUC__
