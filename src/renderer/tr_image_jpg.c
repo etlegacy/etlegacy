@@ -36,8 +36,8 @@ If you have questions concerning this license or the applicable additional terms
  * You may also wish to include "jerror.h".
  */
 
-#define JPEG_INTERNALS
-#include "../jpeg-6b/jpeglib.h"
+// #define JPEG_INTERNALS
+#include <jpeglib.h>
 
 void R_LoadJPG( const char *filename, unsigned char **pic, int *width, int *height ) {
   /* This struct contains the JPEG decompression parameters and pointers to

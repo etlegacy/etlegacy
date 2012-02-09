@@ -130,7 +130,6 @@ BLIBDIR=$(MOUNT_DIR)/botlib
 BOTAIDIR=$(MOUNT_DIR)/botai
 NDIR=$(MOUNT_DIR)/null
 UIDIR=$(MOUNT_DIR)/ui
-JPDIR=$(MOUNT_DIR)/jpeg-6b
 LIBSDIR=$(MOUNT_DIR)/libs
 TEMPDIR=/tmp
 
@@ -249,9 +248,9 @@ ifeq ($(PLATFORM),linux)
   SHLIBLDFLAGS=-shared $(LDFLAGS)
 
   THREAD_LIBS=-lpthread
-  LIBS=-ldl -lm 
-
-  CLIENT_LIBS=$(SDL_LIBS) -lGL
+  LIBS=-ldl -lm
+  
+  CLIENT_LIBS=$(SDL_LIBS) -lGL -ljpeg
 
   ifeq ($(USE_OPENAL),1)
     ifneq ($(USE_OPENAL_DLOPEN),1)
@@ -718,42 +717,6 @@ Q3OBJ = \
   $(B)/client/l_script.o \
   $(B)/client/l_struct.o \
   \
-  $(B)/client/jcapimin.o \
-  $(B)/client/jcapistd.o \
-  $(B)/client/jccoefct.o  \
-  $(B)/client/jccolor.o \
-  $(B)/client/jcdctmgr.o \
-  $(B)/client/jchuff.o   \
-  $(B)/client/jcinit.o \
-  $(B)/client/jcmainct.o \
-  $(B)/client/jcmarker.o \
-  $(B)/client/jcmaster.o \
-  $(B)/client/jcomapi.o \
-  $(B)/client/jcparam.o \
-  $(B)/client/jcphuff.o \
-  $(B)/client/jcprepct.o \
-  $(B)/client/jcsample.o \
-  $(B)/client/jdapimin.o \
-  $(B)/client/jdapistd.o \
-  $(B)/client/jdatasrc.o \
-  $(B)/client/jdcoefct.o \
-  $(B)/client/jdcolor.o \
-  $(B)/client/jddctmgr.o \
-  $(B)/client/jdhuff.o \
-  $(B)/client/jdinput.o \
-  $(B)/client/jdmainct.o \
-  $(B)/client/jdmarker.o \
-  $(B)/client/jdmaster.o \
-  $(B)/client/jdpostct.o \
-  $(B)/client/jdsample.o \
-  $(B)/client/jdtrans.o \
-  $(B)/client/jerror.o \
-  $(B)/client/jfdctflt.o \
-  $(B)/client/jidctflt.o \
-  $(B)/client/jmemmgr.o \
-  $(B)/client/jmemnobs.o \
-  $(B)/client/jutils.o \
-  \
   $(B)/client/tr_animation_mdm.o \
   $(B)/client/tr_animation_mds.o \
   $(B)/client/tr_backend.o \
@@ -1126,9 +1089,6 @@ $(B)/client/%.o: $(CMDIR)/%.c
 
 $(B)/client/%.o: $(BLIBDIR)/%.c
 	$(DO_BOT_CC)
-
-$(B)/client/%.o: $(JPDIR)/%.c
-	$(DO_CC)
 
 $(B)/client/%.o: $(ZDIR)/%.c
 	$(DO_CC)
