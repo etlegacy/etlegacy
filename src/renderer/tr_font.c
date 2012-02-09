@@ -73,7 +73,7 @@ If you have questions concerning this license or the applicable additional terms
 //    touch the font bitmaps.
 //
 // Currently a define in the project turns on or off the FreeType code which is currently
-// defined out. To pre-render new fonts you need enable the define ( BUILD_FREETYPE ) and
+// defined out. To pre-render new fonts you need enable the define ( USE_FREETYPE ) and
 // uncheck the exclude from build check box in the FreeType2 area of the Renderer project.
 
 
@@ -81,13 +81,13 @@ If you have questions concerning this license or the applicable additional terms
 #include "tr_local.h"
 #include "../qcommon/qcommon.h"
 
-//#define BUILD_FREETYPE
-#ifdef BUILD_FREETYPE
-#include <freetype2/freetype/fterrors.h>
-#include <freetype2/freetype/ftsystem.h>
-#include <freetype2/freetype/ftimage.h>
-#include <freetype2/freetype/freetype.h>
-#include <freetype2/freetype/ftoutln.h>
+#ifdef USE_FREETYPE
+#include <ft2build.h>
+#include <freetype/fterrors.h>
+#include <freetype/ftsystem.h>
+#include <freetype/ftimage.h>
+#include <freetype/freetype.h>
+#include <freetype/ftoutln.h>
 
 #define _FLOOR( x )  ( ( x ) & - 64 )
 #define _CEIL( x )   ( ( ( x ) + 63 ) & - 64 )
@@ -100,7 +100,7 @@ FT_Library ftLibrary = NULL;
 static int registeredFontCount = 0;
 static fontInfo_t registeredFont[MAX_FONTS];
 
-#ifdef BUILD_FREETYPE
+#ifdef USE_FREETYPE
 void R_GetGlyphInfo( FT_GlyphSlot glyph, int *left, int *right, int *width, int *top, int *bottom, int *height, int *pitch ) {
 
 	*left  = _FLOOR( glyph->metrics.horiBearingX );
@@ -334,7 +334,7 @@ float readFloat( void ) {
 }
 
 void RE_RegisterFont( const char *fontName, int pointSize, fontInfo_t *font ) {
-#ifdef BUILD_FREETYPE
+#ifdef USE_FREETYPE
 	FT_Face face;
 	int j, k, xOut, yOut, lastStart, imageNumber;
 	int scaledSize, newSize, maxHeight, left, satLevels;
@@ -405,7 +405,7 @@ void RE_RegisterFont( const char *fontName, int pointSize, fontInfo_t *font ) {
 		return;
 	}
 
-#ifndef BUILD_FREETYPE
+#ifndef USE_FREETYPE
 	ri.Printf( PRINT_DEVELOPER, "RE_RegisterFont: FreeType code not available\n" ); // JPW NERVE was PRINT_ALL
 #else
 	if ( ftLibrary == NULL ) {
@@ -529,7 +529,7 @@ void RE_RegisterFont( const char *fontName, int pointSize, fontInfo_t *font ) {
 
 
 void R_InitFreeType( void ) {
-#ifdef BUILD_FREETYPE
+#ifdef USE_FREETYPE
 	if ( FT_Init_FreeType( &ftLibrary ) ) {
 		ri.Printf( PRINT_ALL, "R_InitFreeType: Unable to initialize FreeType.\n" );
 	}
@@ -539,7 +539,7 @@ void R_InitFreeType( void ) {
 
 
 void R_DoneFreeType( void ) {
-#ifdef BUILD_FREETYPE
+#ifdef USE_FREETYPE
 	if ( ftLibrary ) {
 		FT_Done_FreeType( ftLibrary );
 		ftLibrary = NULL;

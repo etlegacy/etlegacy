@@ -103,11 +103,11 @@ ifndef USE_CURL
 USE_CURL=1
 endif
 
-USE_CURL_DLOPEN=0
-
-ifndef USE_LOCAL_HEADERS
-USE_LOCAL_HEADERS=1
+ifndef USE_FREETYPE
+USE_FREETYPE=0
 endif
+
+USE_CURL_DLOPEN=0
 
 ifndef DEBUG_CFLAGS
 DEBUG_CFLAGS=-g -O0
@@ -146,6 +146,8 @@ ifneq ($(BUILD_CLIENT),0)
     OPENAL_LIBS=$(shell pkg-config --silence-errors --libs openal)
     SDL_CFLAGS=$(shell pkg-config --silence-errors --cflags sdl|sed 's/-Dmain=SDL_main//')
     SDL_LIBS=$(shell pkg-config --silence-errors --libs sdl) 
+    FREETYPE_CFLAGS=$(shell pkg-config --silence-errors --cflags freetype2)
+    FREETYPE_LIBS=$(shell pkg-config --silence-errors --libs freetype2)
   endif
   # Use sdl-config if all else fails
   ifeq ($(SDL_CFLAGS),)
@@ -157,7 +159,7 @@ ifneq ($(BUILD_CLIENT),0)
 endif
 
 # version info
-VERSION=2.6
+VERSION=2.70
 
 #############################################################################
 # SETUP AND BUILD -- LINUX
@@ -196,6 +198,10 @@ ifeq ($(PLATFORM),linux)
     -pipe -DUSE_ICON -DNO_VM_COMPILED
   CLIENT_CFLAGS = $(SDL_CFLAGS)
   SERVER_CFLAGS =
+
+  ifeq ($(USE_FREETYPE),1)
+    CLIENT_CFLAGS += -DUSE_FREETYPE
+  endif
 
   ifeq ($(USE_OPENAL),1)
     CLIENT_CFLAGS += -DUSE_OPENAL
@@ -252,6 +258,10 @@ ifeq ($(PLATFORM),linux)
   
   CLIENT_LIBS=$(SDL_LIBS) -lGL -ljpeg
 
+  ifeq ($(USE_FREETYPE),1)
+    CLIENT_LIBS += $(FREETYPE_LIBS)
+  endif
+
   ifeq ($(USE_OPENAL),1)
     ifneq ($(USE_OPENAL_DLOPEN),1)
       CLIENT_LIBS += -lopenal
@@ -270,10 +280,6 @@ ifeq ($(PLATFORM),linux)
 
   ifeq ($(USE_MUMBLE),1)
     CLIENT_LIBS += -lrt
-  endif
-
-  ifeq ($(USE_LOCAL_HEADERS),1)
-    CLIENT_CFLAGS += -I$(SDLHDIR)/include
   endif
 
   ifeq ($(ARCH),i386)
@@ -449,10 +455,6 @@ endif
 
 ifdef DEFAULT_BASEDIR
   BASE_CFLAGS += -DDEFAULT_BASEDIR=\\\"$(DEFAULT_BASEDIR)\\\"
-endif
-
-ifeq ($(USE_LOCAL_HEADERS),1)
-  BASE_CFLAGS += -DUSE_LOCAL_HEADERS
 endif
 
 ifeq ($(BUILD_STANDALONE),1)
