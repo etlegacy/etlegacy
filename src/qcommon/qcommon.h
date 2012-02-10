@@ -661,6 +661,7 @@ int     FS_Write( const void *buffer, int len, fileHandle_t f );
 
 int     FS_Read( void *buffer, int len, fileHandle_t f );
 // properly handles partial reads and reads from other dlls
+int 	FS_Read2( void *buffer, int len, fileHandle_t f );
 
 void    FS_FCloseFile( fileHandle_t f );
 // note: you can't just fclose from another DLL, due to MS libc issues
@@ -842,6 +843,7 @@ int         Com_Filter( char *filter, char *name, int casesensitive );
 int         Com_FilterPath( char *filter, char *name, int casesensitive );
 int         Com_RealTime( qtime_t *qtime );
 qboolean    Com_SafeMode( void );
+void Com_RandomBytes( byte *string, int len );
 
 char		*Com_MD5File(const char *filename, int length, const char *prefix, int prefix_len);
 
@@ -1142,6 +1144,7 @@ cpuFeatures_t Sys_GetProcessorFeatures( void );
 void    Sys_SetErrorText( const char *text );
 
 void    Sys_SendPacket( int length, const void *data, netadr_t to );
+qboolean Sys_GetPacket( netadr_t *net_from, msg_t *net_message );
 
 qboolean    Sys_StringToAdr( const char *s, netadr_t *a, netadrtype_t family );
 //Does NOT parse port numbers, only base addresses.
@@ -1160,6 +1163,8 @@ const char *Sys_TempPath(void);
 const char *Sys_Dirname( char *path );
 const char *Sys_Basename( char *path );
 char *Sys_ConsoleInput(void);
+
+qboolean Sys_RandomBytes( byte *string, int len );
 
 char **Sys_ListFiles( const char *directory, const char *extension, char *filter, int *numfiles, qboolean wantsubs );
 void    Sys_FreeFileList( char **list );

@@ -514,81 +514,79 @@ qboolean BotFindNearbyGoal( bot_state_t *bs ) {
 	for ( i = MAX_CLIENTS; i < level.num_entities; i++ ) {
 		gentity_t* ent = &g_entities[i];
 		switch ( ent->s.eType ) {
-		case ET_ITEM:
-		{
-			gitem_t* item = &bg_itemlist[ent->s.modelindex];
-			switch ( item->giType ) {
-			case IT_TEAM:
+			case ET_ITEM:
+			{
+				gitem_t* item = &bg_itemlist[ent->s.modelindex];
 				switch ( item->giType ) {
-				case PW_REDFLAG:
-					if ( bs->sess.sessionTeam == TEAM_AXIS ) {
+					case IT_TEAM:
+						switch ( item->giType ) {
+						case PW_REDFLAG:
+							if ( bs->sess.sessionTeam == TEAM_AXIS ) {
+								continue;
+							}
+							break;
+						case PW_BLUEFLAG:
+							if ( bs->sess.sessionTeam == TEAM_ALLIES ) {
+								continue;
+							}
+							break;
+						default:
+							break;
+						}
+						break;
+					case IT_WEAPON:
+						if ( !needAmmo ) {
+							continue;
+						}
+						switch ( item->giType ) {
+							case WP_AMMO:
+								break;
+							default:
+								continue;
+						}
+						break;
+					case IT_HEALTH:
+						if ( !needHealth ) {
+							continue;
+						}
+						break;
+					default:
 						continue;
-					}
-					break;
-				case PW_BLUEFLAG:
-					if ( bs->sess.sessionTeam == TEAM_ALLIES ) {
-						continue;
-					}
-					break;
-				default:
-					break;
 				}
-				break;
-			case IT_WEAPON:
-				if ( !needAmmo ) {
+
+				if ( ent->r.ownerNum == bs->client && ent->botIgnoreTime > level.time ) {
 					continue;
 				}
-				switch ( item->giType ) {
-				case WP_AMMO:
-					break;
-				default:
+				VectorCopy( ent->r.currentOrigin, org );
+				org[2] += 30;
+
+				if ( sDoNearbyGoalCheck( bs, org, ent ) ) {
+					return qtrue;
+				}
+			}
+			case ET_SUPPLIER:
+			case ET_HEALER:
+			{
+				vec3_t loc;
+				if ( ent->s.eType == ET_HEALER && !needHealth ) {
 					continue;
 				}
-				break;
-			case IT_HEALTH:
-				if ( !needHealth ) {
+				if ( ent->s.eType == ET_SUPPLIER && !needAmmo ) {
 					continue;
 				}
-				break;
+
+				VectorAdd( ent->r.mins, ent->r.maxs, loc );
+				VectorScale( loc, 0.5f, loc );
+				loc[2] += 30.f;
+
+				if ( sDoNearbyGoalCheck( bs, loc, ent ) ) {
+					return qtrue;
+				}
+			}
 			default:
 				continue;
 			}
-
-			if ( ent->r.ownerNum == bs->client && ent->botIgnoreTime > level.time ) {
-				continue;
-			}
-			VectorCopy( ent->r.currentOrigin, org );
-			org[2] += 30;
-
-			if ( sDoNearbyGoalCheck( bs, org, ent ) ) {
-				return qtrue;
-			}
-		}
-		case ET_SUPPLIER:
-		case ET_HEALER:
-		{
-			vec3_t loc;
-			if ( ent->s.eType == ET_HEALER && !needHealth ) {
-				continue;
-			}
-			if ( ent->s.eType == ET_SUPPLIER && !needAmmo ) {
-				continue;
-			}
-
-			VectorAdd( ent->r.mins, ent->r.maxs, loc );
-			VectorScale( loc, 0.5f, loc );
-			loc[2] += 30.f;
-
-			if ( sDoNearbyGoalCheck( bs, loc, ent ) ) {
-				return qtrue;
-			}
-		}
-		default:
-			continue;
-		}
-
 	}
-
 	return qfalse;
 }
 

@@ -1,4 +1,5 @@
 build/
+Makefile.local
 
 syntax: glob
 *.kdev4

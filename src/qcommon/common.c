@@ -46,11 +46,11 @@ If you have questions concerning this license or the applicable additional terms
 
 #define MAX_NUM_ARGVS   50
 
-#define MIN_DEDICATED_COMHUNKMEGS 1
-#define MIN_COMHUNKMEGS 64 // JPW NERVE changed this to 42 for MP, was 56 for team arena and 75 for wolfSP
-#define DEF_COMHUNKMEGS "64" // RF, increased this, some maps are exceeding 56mb // JPW NERVE changed this for multiplayer back to 42, 56 for depot/mp_cpdepot, 42 for everything else
-#define MIN_DEDICATED_COMZONEMEGS 4
-#define DEF_COMZONEMEGS "16"
+#define MIN_DEDICATED_COMHUNKMEGS 	1
+#define MIN_COMHUNKMEGS 		64
+#define DEF_COMHUNKMEGS 		"256"
+#define MIN_DEDICATED_COMZONEMEGS 	4
+#define DEF_COMZONEMEGS 		"24"
 
 int com_argc;
 char    *com_argv[MAX_NUM_ARGVS + 1];
@@ -2909,10 +2909,8 @@ Com_WriteConfiguration
 Writes key bindings and archived cvars to config file if modified
 ===============
 */
-void Com_WriteConfiguration( void ) {
-#ifndef DEDICATED
-	cvar_t  *fs;
-#endif
+void Com_WriteConfiguration( void ) 
+{
 	char *cl_profileStr = Cvar_VariableString( "cl_profile" );
 
 	// if we are quiting without fully initializing, make sure

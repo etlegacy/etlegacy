@@ -1030,7 +1030,7 @@ void S_Base_RawSamples( int stream, int samples, int rate, int width, int s_chan
 	int i;
 	int src, dst;
 	float scale;
-	int lintVolume, rintVolume = 0;
+	int lintVolume = 0, rintVolume = 0;
 	portable_samplepair_t *rawsamples;
 
 	if ( !s_soundStarted || s_soundMuted )

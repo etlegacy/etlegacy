@@ -503,9 +503,8 @@ void Sys_ParseArgs( int argc, char **argv )
 		if( !strcmp( argv[1], "--version" ) ||
 				!strcmp( argv[1], "-v" ) )
 		{
-			const char* date = __DATE__;
 #ifdef DEDICATED
-			fprintf( stdout, Q3_VERSION " dedicated server (%s)\n", date );
+			fprintf( stdout, Q3_VERSION " dedicated server (%s)\n", __DATE__ );
 #else
 			fprintf( stdout, "Client: " ET_VERSION "\n");
 			fprintf( stdout, "Masked as: " FAKE_VERSION "\n");
