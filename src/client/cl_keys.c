@@ -1397,7 +1397,7 @@ void CL_KeyEvent( int key, qboolean down, unsigned time ) {
 					Com_Printf( "Switching to windowed rendering\n" );
 					Cvar_Set( "r_fullscreen", "0" );
 				}
-				Cbuf_ExecuteText( EXEC_APPEND, "vid_restart\n" );
+				//Cbuf_ExecuteText( EXEC_APPEND, "vid_restart\n" );
 				return;
 			}
 		}

@@ -906,9 +906,9 @@ static void IN_ProcessEvents( void )
 					Cvar_SetValue( "com_unfocused",	!e.active.gain);
 				}
 				if (e.active.state & SDL_APPACTIVE) {
-					// Cvar_SetValue( "com_minimized", !e.active.gain);
-					if ( e.active.gain && !Cvar_VariableIntegerValue("r_fullscreen") )
-						Cbuf_ExecuteText( EXEC_APPEND, "vid_restart\n" );
+					// 	Cvar_SetValue( "com_minimized", !e.active.gain);
+					// 	if ( e.active.gain && Cvar_VariableIntegerValue("r_fullscreen") )
+					// 		Cbuf_ExecuteText( EXEC_APPEND, "vid_restart\n" );
 				}
 				break;
 
@@ -922,17 +922,17 @@ void IN_Frame( void )
 {
 	qboolean loading;
 
-	IN_JoyMove( );
+ 	IN_JoyMove( );
 	IN_ProcessEvents( );
 
 	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
-	loading = !( clc.state != CA_DISCONNECTED && clc.state != CA_ACTIVE );
+ 	loading = !( clc.state != CA_DISCONNECTED && clc.state != CA_ACTIVE );
 
-	if( !Cvar_VariableIntegerValue("r_fullscreen") && ( Key_GetCatcher( ) & KEYCATCH_CONSOLE ) )
-	{
+ 	if( !Cvar_VariableIntegerValue("r_fullscreen") && ( Key_GetCatcher( ) & KEYCATCH_CONSOLE ) )
+ 	{
 		// Console is down in windowed mode
-		IN_DeactivateMouse( );
-	}
+ 		IN_DeactivateMouse( );
+ 	}
 	else if( !Cvar_VariableIntegerValue("r_fullscreen") && loading )
 	{
 		// Loading in windowed mode
@@ -1000,7 +1000,7 @@ void IN_Init( void )
 	Cvar_SetValue( "com_unfocused",	!( appState & SDL_APPINPUTFOCUS ) );
 	Cvar_SetValue( "com_minimized", !( appState & SDL_APPACTIVE ) );
 
-	IN_InitKeyLockStates( );
+ 	IN_InitKeyLockStates( );
 
 	IN_InitJoystick( );
 	Com_DPrintf( "------------------------------------\n" );

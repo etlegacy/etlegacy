@@ -174,6 +174,7 @@ static void GLimp_DetectAvailableModes(void)
 	if( *buf )
 	{
 		buf[ strlen( buf ) - 1 ] = 0;
+		
 		ri.Printf( PRINT_ALL, "Available modes: '%s'\n", buf );
 		ri.Cvar_Set( "r_availableModes", buf );
 	}
@@ -228,6 +229,8 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			ri.Printf( PRINT_ALL,
 					"Cannot estimate display aspect, assuming 1.333\n" );
 		}
+		
+		ri.Printf( PRINT_ALL, "Current desktop video resolution is: %ix%i\n", videoInfo->current_w, videoInfo->current_h );
 	}
 
 	ri.Printf (PRINT_ALL, "...setting mode %d:", mode );
@@ -654,26 +657,21 @@ static void GLimp_InitExtensions( void )
 #define R_MODE_FALLBACK 3 // 640 * 480
 
 /*
-===============
-GLimp_Init
-
-This routine is responsible for initializing the OS specific portions
-of OpenGL
-===============
-*/
+ * @brief This routine is responsible for initializing the OS specific portions of OpenGL
+ */
 void GLimp_Init( void )
 {
-	r_allowSoftwareGL = ri.Cvar_Get( "r_allowSoftwareGL", "0", CVAR_LATCH );
-	r_sdlDriver = ri.Cvar_Get( "r_sdlDriver", "", CVAR_ROM );
-	r_allowResize = ri.Cvar_Get( "r_allowResize", "0", CVAR_ARCHIVE );
-	r_centerWindow = ri.Cvar_Get( "r_centerWindow", "0", CVAR_ARCHIVE );
+	r_allowSoftwareGL 	= ri.Cvar_Get( "r_allowSoftwareGL", 	"0", 	CVAR_LATCH 	);
+	r_sdlDriver		= ri.Cvar_Get( "r_sdlDriver", 		"", 	CVAR_ROM 	);
+	r_allowResize 		= ri.Cvar_Get( "r_allowResize", 	"0", 	CVAR_ARCHIVE 	);
+	r_centerWindow 		= ri.Cvar_Get( "r_centerWindow", 	"0", 	CVAR_ARCHIVE 	);
 
 	if( Cvar_VariableIntegerValue( "com_abnormalExit" ) )
 	{
-		ri.Cvar_Set( "r_mode", va( "%d", R_MODE_FALLBACK ) );
-		ri.Cvar_Set( "r_fullscreen", "0" );
-		ri.Cvar_Set( "r_centerWindow", "0" );
-		ri.Cvar_Set( "com_abnormalExit", "0" );
+		ri.Cvar_Set( "r_mode", 		va( "%d", R_MODE_FALLBACK ) );
+		ri.Cvar_Set( "r_fullscreen", 	"0" );
+		ri.Cvar_Set( "r_centerWindow", 	"0" );
+		ri.Cvar_Set( "com_abnormalExit","0" );
 	}
 
 	Sys_SetEnv( "SDL_VIDEO_CENTERED", r_centerWindow->integer ? "1" : "" );
@@ -754,7 +752,7 @@ void GLimp_EndFrame( void )
 		qboolean    needToToggle = qtrue;
 		qboolean    sdlToggled = qfalse;
 		SDL_Surface *s = SDL_GetVideoSurface( );
-
+		
 		if( s )
 		{
 			// Find out the current state

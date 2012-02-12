@@ -2699,7 +2699,6 @@ void Com_Init( char *commandLine ) {
 	Com_GetGameInfo();
 
 	Cbuf_AddText( "exec default.cfg\n" );
-	Cbuf_AddText( "exec language.cfg\n" );     // NERVE - SMF
 
 	// skip the q3config.cfg if "safe" is on the command line
 	if ( !Com_SafeMode() ) {

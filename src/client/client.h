@@ -580,7 +580,7 @@ void    CL_UpdateInfoPacket( netadr_t from );       // DHM - Nerve
 void    CL_ServerInfoPacket( netadr_t from, msg_t *msg );
 void    CL_LocalServers_f( void );
 void    CL_GlobalServers_f( void );
-void    CL_FavoriteServers_f( void );
+//FIXME: void    CL_FavoriteServers_f( void );
 void    CL_Ping_f( void );
 qboolean CL_UpdateVisiblePings_f( int source );
 

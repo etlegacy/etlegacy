@@ -20,9 +20,6 @@ endif
 ifndef BUILD_CLIENT
   BUILD_CLIENT     =
 endif
-ifndef BUILD_CLIENT_SMP
-  BUILD_CLIENT_SMP =
-endif
 ifndef BUILD_SERVER
   BUILD_SERVER     =
 endif
@@ -139,24 +136,38 @@ bin_path=$(shell which $(1) 2> /dev/null)
 ifneq ($(BUILD_CLIENT),0)
   # set PKG_CONFIG_PATH to influence this, e.g.
   # PKG_CONFIG_PATH=/opt/cross/i386-mingw32msvc/lib/pkgconfig
-  ifneq ($(call bin_path, pkg-config),)
-    CURL_CFLAGS=$(shell pkg-config --silence-errors --cflags libcurl)
-    CURL_LIBS=$(shell pkg-config --silence-errors --libs libcurl)
-    OPENAL_CFLAGS=$(shell pkg-config --silence-errors --cflags openal)
-    OPENAL_LIBS=$(shell pkg-config --silence-errors --libs openal)
-    SDL_CFLAGS=$(shell pkg-config --silence-errors --cflags sdl|sed 's/-Dmain=SDL_main//')
-    SDL_LIBS=$(shell pkg-config --silence-errors --libs sdl) 
-    FREETYPE_CFLAGS=$(shell pkg-config --silence-errors --cflags freetype2)
-    FREETYPE_LIBS=$(shell pkg-config --silence-errors --libs freetype2)
+  ifndef PKG_CONFIG_PATH
+    PKG_CONFIG_PATH=pkg-config
   endif
-  # Use sdl-config if all else fails
-  ifeq ($(SDL_CFLAGS),)
-    ifneq ($(call bin_path, sdl-config),)
-      SDL_CFLAGS=$(shell sdl-config --cflags)
-      SDL_LIBS=$(shell sdl-config --libs)
-    endif
-  endif
+
+  CURL_CFLAGS=$(shell ${PKG_CONFIG_PATH} --silence-errors --cflags libcurl)
+  CURL_LIBS=$(shell ${PKG_CONFIG_PATH} --silence-errors --libs libcurl)
+  OPENAL_CFLAGS=$(shell ${PKG_CONFIG_PATH} --silence-errors --cflags openal)
+  OPENAL_LIBS=$(shell ${PKG_CONFIG_PATH} --silence-errors --libs openal)
+  SDL_CFLAGS=$(shell ${PKG_CONFIG_PATH} --silence-errors --cflags sdl|sed 's/-Dmain=SDL_main//')
+  SDL_LIBS=$(shell ${PKG_CONFIG_PATH} --silence-errors --libs sdl) 
+  FREETYPE_CFLAGS=$(shell ${PKG_CONFIG_PATH} --silence-errors --cflags freetype2)
+  FREETYPE_LIBS=$(shell ${PKG_CONFIG_PATH} --silence-errors --libs freetype2)
 endif
+  
+#   ifneq ($(call bin_path, pkg-config),)
+#     CURL_CFLAGS=$(shell pkg-config --silence-errors --cflags libcurl)
+#     CURL_LIBS=$(shell pkg-config --silence-errors --libs libcurl)
+#     OPENAL_CFLAGS=$(shell pkg-config --silence-errors --cflags openal)
+#     OPENAL_LIBS=$(shell pkg-config --silence-errors --libs openal)
+#     SDL_CFLAGS=$(shell pkg-config --silence-errors --cflags sdl|sed 's/-Dmain=SDL_main//')
+#     SDL_LIBS=$(shell pkg-config --silence-errors --libs sdl) 
+#     FREETYPE_CFLAGS=$(shell pkg-config --silence-errors --cflags freetype2)
+#     FREETYPE_LIBS=$(shell pkg-config --silence-errors --libs freetype2)
+#   endif
+  # Use sdl-config if all else fails
+#   ifeq ($(SDL_CFLAGS),)
+#     ifneq ($(call bin_path, sdl-config),)
+#       SDL_CFLAGS=$(shell sdl-config --cflags)
+#       SDL_LIBS=$(shell sdl-config --libs)
+#     endif
+#   endif
+# endif
 
 # version info
 VERSION=2.70
@@ -312,6 +323,10 @@ ifeq ($(PLATFORM),mingw32)
   ifndef WINDRES
     WINDRES=windres
   endif
+  
+  ifndef WINDRES_INC
+    WINDRES_INC=/usr/include
+  endif
 
   BASE_CFLAGS = -Wall -fno-strict-aliasing -Wimplicit -Wstrict-prototypes \
     -DUSE_ICON -DNO_VM_COMPILED
@@ -393,22 +408,10 @@ ifeq ($(PLATFORM),mingw32)
 
   # libmingw32 must be linked before libSDLmain
   CLIENT_LIBS += -lmingw32
-  ifeq ($(USE_LOCAL_HEADERS),1)
-    CLIENT_CFLAGS += -I$(SDLHDIR)/include
-    ifeq ($(ARCH), x86)
-    CLIENT_LIBS += $(LIBSDIR)/win32/libSDLmain.a \
-                      $(LIBSDIR)/win32/libSDL.a
-    else
-    CLIENT_LIBS += $(LIBSDIR)/win64/libSDLmain.a \
-                      $(LIBSDIR)/win64/libSDL.a
-    endif
-  else
-    CLIENT_CFLAGS += $(SDL_CFLAGS)
-    CLIENT_LIBS += $(SDL_LIBS)
-  endif
+  CLIENT_CFLAGS += $(SDL_CFLAGS)
+  CLIENT_LIBS += $(SDL_LIBS)
   CLIENT_LIBS += -ldxguid -ldinput8
 
-  BUILD_CLIENT_SMP = 0
 
   ifndef SHLIBNAME
     SHLIBNAME=_mp_$(ARCH).$(SHLIBEXT)
@@ -441,9 +444,6 @@ endif
 
 ifneq ($(BUILD_CLIENT),0)
   TARGETS += $(B)/$(CLIENT_NAME)$(FULLBINEXT)
-  ifneq ($(BUILD_CLIENT_SMP),0)
-    TARGETS += $(B)/$(CLIENT_NAME)-smp$(FULLBINEXT)
-  endif
 endif
 
 ifneq ($(BUILD_GAME_SO),0)
@@ -488,11 +488,6 @@ $(echo_cmd) "CC $<"
 $(Q)$(CC) $(NOTSHLIBCFLAGS) $(CFLAGS) $(CLIENT_CFLAGS) $(OPTIMIZE) -o $@ -c $<
 endef
 
-define DO_SMP_CC
-$(echo_cmd) "SMP_CC $<"
-$(Q)$(CC) $(NOTSHLIBCFLAGS) $(CFLAGS) $(CLIENT_CFLAGS) $(OPTIMIZE) -DSMP -o $@ -c $<
-endef
-
 define DO_BOT_CC
 $(echo_cmd) "BOT_CC $<"
 $(Q)$(CC) $(NOTSHLIBCFLAGS) $(CFLAGS) $(BOTCFLAGS) $(OPTIMIZE) -DBOTLIB -o $@ -c $<
@@ -531,7 +526,7 @@ endef
 
 define DO_WINDRES
 $(echo_cmd) "WINDRES $<"
-$(Q)$(WINDRES) -i $< -o $@ -I /usr/i686-pc-mingw32/usr/include
+$(Q)$(WINDRES) -i $< -o $@ -I $(WINDRES_INC)
 endef
 
 #############################################################################
@@ -617,7 +612,6 @@ makedirs:
 	@if [ ! -d $(BUILD_DIR) ];then $(MKDIR) $(BUILD_DIR);fi
 	@if [ ! -d $(B) ];then $(MKDIR) $(B);fi
 	@if [ ! -d $(B)/client ];then $(MKDIR) $(B)/client;fi
-	@if [ ! -d $(B)/clientsmp ];then $(MKDIR) $(B)/clientsmp;fi
 	@if [ ! -d $(B)/ded ];then $(MKDIR) $(B)/ded;fi
 	@if [ ! -d $(B)/etmain ];then $(MKDIR) $(B)/etmain;fi
 	@if [ ! -d $(B)/etmain/cgame ];then $(MKDIR) $(B)/etmain/cgame;fi
@@ -795,12 +789,6 @@ $(B)/$(CLIENT_NAME)$(FULLBINEXT): $(Q3OBJ) $(Q3POBJ)
 	$(echo_cmd) "$(CC) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) -o $@ $(Q3OBJ) $(Q3POBJ) $(THREAD_LIBS) $(CLIENT_LIBS) $(LIBS)"
 	$(Q)$(CC) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) \
 		-o $@ $(Q3OBJ) $(Q3POBJ) \
-		$(THREAD_LIBS) $(CLIENT_LIBS) $(LIBS)
-
-$(B)/$(CLIENT_NAME)-smp$(FULLBINEXT): $(Q3OBJ) $(Q3POBJ_SMP)
-	$(echo_cmd) "LD $@"
-	$(Q)$(CC) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) $(THREAD_LDFLAGS) \
-		-o $@ $(Q3OBJ) $(Q3POBJ_SMP) \
 		$(THREAD_LIBS) $(CLIENT_LIBS) $(LIBS)
 
 
@@ -1105,9 +1093,6 @@ $(B)/client/%.o: $(SDLDIR)/%.c
 $(B)/client/%.o: $(GDIR)/%.c
 	$(DO_CC)
 
-$(B)/clientsmp/%.o: $(SDLDIR)/%.c
-	$(DO_SMP_CC)
-
 $(B)/client/%.o: $(SYSDIR)/%.c
 	$(DO_CC)
 
@@ -1185,7 +1170,7 @@ $(B)/etmain/qcommon/%.o: $(CMDIR)/%.c
 # MISC
 #############################################################################
 
-OBJ = $(Q3OBJ) $(Q3POBJ) $(Q3POBJ_SMP) $(Q3DOBJ) \
+OBJ = $(Q3OBJ) $(Q3POBJ) $(Q3DOBJ) \
   $(Q3GOBJ) $(Q3CGOBJ) $(Q3UIOBJ)
 
 copyfiles: release
@@ -1195,11 +1180,6 @@ copyfiles: release
 ifneq ($(BUILD_CLIENT),0)
 	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(CLIENT_NAME)$(FULLBINEXT) $(COPYBINDIR)/$(CLIENT_NAME)$(FULLBINEXT)
 endif
-
-# Don't copy the SMP until it's working together with SDL.
-#ifneq ($(BUILD_CLIENT_SMP),0)
-#	$(INSTALL) $(STRIP_FLAG) -m 0755 $(BR)/$(CLIENT_NAME)-smp$(FULLBINEXT) $(COPYBINDIR)/$(CLIENT_NAME)-smp$(FULLBINEXT)
-#endif
 
 ifneq ($(BUILD_SERVER),0)
 	@if [ -f $(BR)/$(SERVER_NAME)$(FULLBINEXT) ]; then \
