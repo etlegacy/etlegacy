@@ -101,7 +101,7 @@ USE_CURL=1
 endif
 
 ifndef USE_FREETYPE
-USE_FREETYPE=0
+USE_FREETYPE=1
 endif
 
 USE_CURL_DLOPEN=0
@@ -337,7 +337,12 @@ ifeq ($(PLATFORM),mingw32)
   ifeq ($(shell test -e $(CMDIR)/wspiapi.h; echo $$?),1)
     BASE_CFLAGS += -DWINVER=0x501
   endif
-
+  
+  ifeq ($(USE_FREETYPE),1)
+    CLIENT_CFLAGS += -DUSE_FREETYPE $(FREETYPE_CFLAGS)
+    CLIENT_LIBS += $(FREETYPE_LIBS)
+  endif
+  
   ifeq ($(USE_OPENAL),1)
     CLIENT_CFLAGS += -DUSE_OPENAL
     CLIENT_CFLAGS += $(OPENAL_CFLAGS)
@@ -373,6 +378,7 @@ ifeq ($(PLATFORM),mingw32)
 
   BINEXT=.exe
 
+#   LIBS = -lws2_32 -lwinmm -lpsapi
   LIBS = -lws2_32 -lwinmm -lpsapi
   CLIENT_LDFLAGS = -mwindows
   CLIENT_LIBS = -lgdi32 -lole32 -lopengl32
