@@ -83,11 +83,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #ifdef USE_FREETYPE
 #include <ft2build.h>
-#include <freetype/fterrors.h>
-#include <freetype/ftsystem.h>
-#include <freetype/ftimage.h>
-#include <freetype/freetype.h>
-#include <freetype/ftoutln.h>
+#include FT_FREETYPE_H
 
 #define _FLOOR( x )  ( ( x ) & - 64 )
 #define _CEIL( x )   ( ( ( x ) + 63 ) & - 64 )

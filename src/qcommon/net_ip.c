@@ -30,20 +30,13 @@ If you have questions concerning this license or the applicable additional terms
 #include "../qcommon/qcommon.h"
 
 #ifdef _WIN32
-#	include <winsock2.h>
-#	include <ws2tcpip.h>
-#	if WINVER < 0x501
-#		ifdef __MINGW32__
-			// wspiapi.h isn't available on MinGW, so if it's
-			// present it's because the end user has added it
-			// and we should look for it in our tree
-#			include "wspiapi.h"
-#		else
-#			include <wspiapi.h>
-#		endif
-#	else
+#	ifdef __MINGW32__
+#		define _WIN32_WINNT 0x0501
 #		include <ws2spi.h>
 #	endif
+#	include <winsock2.h>
+#	include <ws2tcpip.h>
+
 
 typedef int socklen_t;
 #	ifdef ADDRESS_FAMILY

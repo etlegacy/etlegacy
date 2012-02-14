@@ -772,11 +772,7 @@ int BoxOnPlaneSide2 (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 
 ==================
 */
-
-//FIXME: raedwulf-et removed this, but if I do it then it fails to build on my system
-#if !( ( defined __linux__ || defined __MINGW32__ ) && defined __i386__ && !defined C_ONLY )
-
-#if defined __LCC__ || defined C_ONLY || !id386 || __GNUC__
+#if defined __LCC__ || defined C_ONLY || __GNUC__
 
 int BoxOnPlaneSide( vec3_t emins, vec3_t emaxs, struct cplane_s *p ) {
 	float dist1, dist2;
@@ -1094,7 +1090,6 @@ int BoxOnPlaneSide( vec3_t emins, vec3_t emaxs, struct cplane_s *p ) {
 
 #pragma warning( default: 4035 )
 
-#endif
 #endif
 
 /*

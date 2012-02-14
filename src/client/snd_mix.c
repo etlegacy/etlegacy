@@ -40,7 +40,7 @@ int*     snd_p;
 int snd_linear_count;
 short*   snd_out;
 
-#if !id386                                        // if configured not to use asm
+// #if !id386                                        // if configured not to use asm
 
 void S_WriteLinearBlastStereo16( void ) {
 	int i;
@@ -67,55 +67,55 @@ void S_WriteLinearBlastStereo16( void ) {
 		}
 	}
 }
-#elif defined( __GNUC__ )
-// uses snd_mixa.s
-void S_WriteLinearBlastStereo16( void );
-#else
-
-__declspec( naked ) void S_WriteLinearBlastStereo16( void ) {
-	__asm {
-
-		push edi
-		push ebx
-		mov ecx,ds : dword ptr[snd_linear_count]
-		mov ebx,ds : dword ptr[snd_p]
-		mov edi,ds : dword ptr[snd_out]
-		LWLBLoopTop :
-		mov eax,ds : dword ptr[-8 + ebx + ecx * 4]
-		sar eax,8
-		cmp eax,07FFFh
-		jg LClampHigh
-		cmp eax,0FFFF8000h
-		jnl LClampDone
-		mov eax,0FFFF8000h
-		jmp LClampDone
-			LClampHigh :
-		mov eax,07FFFh
-		LClampDone :
-		mov edx,ds : dword ptr[-4 + ebx + ecx * 4]
-		sar edx,8
-		cmp edx,07FFFh
-		jg LClampHigh2
-		cmp edx,0FFFF8000h
-		jnl LClampDone2
-		mov edx,0FFFF8000h
-		jmp LClampDone2
-			LClampHigh2 :
-		mov edx,07FFFh
-		LClampDone2 :
-		shl edx,16
-		and eax,0FFFFh
-		or edx,eax
-		mov ds : dword ptr[-4 + edi + ecx * 2],edx
-		sub ecx,2
-		jnz LWLBLoopTop
-		pop ebx
-		pop edi
-			ret
-	}
-}
-
-#endif
+// #elif defined( __GNUC__ )
+// // uses snd_mixa.s
+// void S_WriteLinearBlastStereo16( void );
+// #else
+// 
+// __declspec( naked ) void S_WriteLinearBlastStereo16( void ) {
+// 	__asm {
+// 
+// 		push edi
+// 		push ebx
+// 		mov ecx,ds : dword ptr[snd_linear_count]
+// 		mov ebx,ds : dword ptr[snd_p]
+// 		mov edi,ds : dword ptr[snd_out]
+// 		LWLBLoopTop :
+// 		mov eax,ds : dword ptr[-8 + ebx + ecx * 4]
+// 		sar eax,8
+// 		cmp eax,07FFFh
+// 		jg LClampHigh
+// 		cmp eax,0FFFF8000h
+// 		jnl LClampDone
+// 		mov eax,0FFFF8000h
+// 		jmp LClampDone
+// 			LClampHigh :
+// 		mov eax,07FFFh
+// 		LClampDone :
+// 		mov edx,ds : dword ptr[-4 + ebx + ecx * 4]
+// 		sar edx,8
+// 		cmp edx,07FFFh
+// 		jg LClampHigh2
+// 		cmp edx,0FFFF8000h
+// 		jnl LClampDone2
+// 		mov edx,0FFFF8000h
+// 		jmp LClampDone2
+// 			LClampHigh2 :
+// 		mov edx,07FFFh
+// 		LClampDone2 :
+// 		shl edx,16
+// 		and eax,0FFFFh
+// 		or edx,eax
+// 		mov ds : dword ptr[-4 + edi + ecx * 2],edx
+// 		sub ecx,2
+// 		jnz LWLBLoopTop
+// 		pop ebx
+// 		pop edi
+// 			ret
+// 	}
+// }
+// 
+// #endif
 
 void S_TransferStereo16( unsigned long *pbuf, int endtime ) {
 	int lpos;
