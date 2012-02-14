@@ -219,12 +219,17 @@ project "etlegacy-dedicated"
 		}
 		links
 		{ 
-			"mingw32",
-			"curl",
+			-- some of this is not needed, but 
+			"mingw32", -- for the love of god, don't forget to link this first
 			"ws2_32",
 			"winmm",
 			"wsock32",
  			"iphlpapi",
+			
+			"curl",
+			"SDLmain",
+			"SDL",
+			
 			"psapi",
 		}
 		libdirs
