@@ -1327,14 +1327,8 @@ void CL_InitKeyCommands( void ) {
 }
 
 /*
-===================
-CL_KeyEvent
-
-Called by the system for both key up and key down events
-===================
-*/
-//static consoleCount = 0;
-// fretn
+ * @brief Called by the system for both key up and key down events
+ */
 qboolean consoleButtonWasPressed = qfalse;
 
 void CL_KeyEvent( int key, qboolean down, unsigned time ) {
@@ -1384,7 +1378,6 @@ void CL_KeyEvent( int key, qboolean down, unsigned time ) {
 		}
 	}
 
-#ifdef __linux__
 	/* 
 	 * Switch from / to fullscreen on Alt+Enter.
 	 * No need to restart video if the game's
@@ -1407,6 +1400,7 @@ void CL_KeyEvent( int key, qboolean down, unsigned time ) {
 		}
 	}
 	
+#ifdef __linux__	
 	// Minimize the game on Alt+Tab press.
 	if ( key == K_TAB ) {
 		if ( down ) {
