@@ -91,10 +91,13 @@ project "etlegacy"
 		flags       { "WinMain" }
 		libdirs
 		{
-			"../mingw-deps/mingw-libs"
+			-- specify library directories with -L
 		}
 		links
 		{ 
+			-- NOTE TO SELF:
+			-- Think twice before changing the order of the
+			-- following libraries !!!
 			"mingw32", -- for the love of god, don't forget to link this first
 			"ws2_32",
 			"dinput8",
@@ -218,8 +221,10 @@ project "etlegacy-dedicated"
 			"`/usr/i686-pc-mingw32/usr/bin/pkg-config --cflags libcurl`",
 		}
 		links
-		{ 
-			-- some of this is not needed, but 
+		{
+			-- NOTE TO SELF:
+			-- Think twice before changing the order of the
+			-- following libraries !!!
 			"mingw32", -- for the love of god, don't forget to link this first
 			"ws2_32",
 			"winmm",
@@ -238,7 +243,7 @@ project "etlegacy-dedicated"
 		}
 		includedirs
 		{
-			"/usr/i686-pc-mingw32/usr/include",
+			-- specify include directories with -I
 	-- 
 		}
 		defines
@@ -317,25 +322,26 @@ project "etmain_cgame"
 	{ 
 		"CGAMEDLL",
 	}
-	
-	--
-	-- Platform Configurations
-	--
-	configuration "x32"
-		targetname  "cgame_mp_x86"
-	
-	configuration "x64"
-		targetname  "cgame_mp_x86_64"
-				
+		
 	-- 
 	-- Project Configurations
 	-- 
-	configuration "mingw"
+	configuration {"mingw", "x32"}
+		targetdir "build/win-x32/etmain"
+		targetname  "cgame_mp_x86"
+		targetsuffix ".dll"
+		targetprefix ""
 		defines
 		{
 			"WIN32",
 			"_CRT_SECURE_NO_WARNINGS",
 		}
+
+	configuration {"mingw", "x64"}
+		targetdir "build/win-x64/etmain"
+		targetname  "cgame_mp_x86_64"
+		targetsuffix ".dll"
+		targetprefix ""
 	
 	configuration { "linux", "not mingw", "x32" }
 		targetdir "build/linux-i386/etmain"
@@ -376,24 +382,25 @@ project "etmain_game"
 		"NO_BOT_SUPPORT"
 	}
 	
-	--
-	-- Platform Configurations
-	--
-	configuration "x32"
-		targetname  "qagame_mp_x86"
-	
-	configuration "x64"
-		targetname  "qagame_mp_x86_64"
-				
 	-- 
 	-- Project Configurations
 	-- 
-	configuration "mingw"
+	configuration {"mingw", "x32"}
+		targetdir "build/win-x32/etmain"
+		targetname  "qagame_mp_x86"
+		targetsuffix ".dll"
+		targetprefix ""
 		defines
 		{
 			"WIN32",
 			"_CRT_SECURE_NO_WARNINGS",
 		}
+
+	configuration {"mingw", "x64"}
+		targetdir "build/win-x64/etmain"
+		targetname  "qagame_mp_x86_64"
+		targetsuffix ".dll"
+		targetprefix ""
 	
 	configuration { "linux", "not mingw", "x32" }
 		targetdir "build/linux-i386/etmain"
@@ -446,8 +453,10 @@ project "etmain_ui"
 	-- Project Configurations
 	-- 
 	configuration {"mingw", "x32"}
-		targetname  "ui_mp_x86"
 		targetdir "build/win-x32/etmain"
+		targetname  "ui_mp_x86"
+		targetsuffix ".dll"
+		targetprefix ""
 		defines
 		{
 			"WIN32",
@@ -455,8 +464,10 @@ project "etmain_ui"
 		}
 
 	configuration {"mingw", "x64"}
-		targetname  "ui_mp_x86_64"
 		targetdir "build/win-x64/etmain"
+		targetname  "ui_mp_x86_64"
+		targetsuffix ".dll"
+		targetprefix ""
 	
 	configuration { "linux", "not mingw", "x32" }
 		targetdir "build/linux-i386/etmain"
