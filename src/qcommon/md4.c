@@ -30,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../qcommon/q_shared.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifndef __GNUC__
 #pragma warning(disable : 4711) // selected for automatic inline expansion
 #endif

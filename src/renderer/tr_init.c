@@ -986,7 +986,7 @@ void R_Register( void ) {
 #ifdef MACOS_X
 	// Default to using SMP on Mac OS X if we have multiple processors
 	r_smp = ri.Cvar_Get( "r_smp", Sys_ProcessorCount() > 1 ? "1" : "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE );
-#elif defined WIN32
+#elif defined _WIN32
 	// ydnar: r_smp is nonfunctional on windows
 	r_smp = ri.Cvar_Get( "r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE | CVAR_ROM );
 	Cvar_Set( "r_smp", "0" );

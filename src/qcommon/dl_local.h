@@ -47,7 +47,7 @@ void    Cvar_SetValue( const char *var_name, float value );
 void    Cvar_Set( const char *var_name, const char *value );
 char    * va( char *format, ... ) _attribute( ( format( printf,1,2 ) ) );
 
-#ifdef WIN32
+#ifdef _WIN32
   #define Q_stricmp stricmp
 #else
   #define Q_stricmp strcasecmp

@@ -597,7 +597,7 @@ issues.
 
 #define MAX_FILE_HANDLES    64
 
-#ifdef WIN32
+#ifdef _WIN32
 	#define Q_rmdir _rmdir
 #else
 	#define Q_rmdir rmdir
@@ -1097,7 +1097,7 @@ void *Sys_InitializeCriticalSection( void );
 void Sys_EnterCriticalSection( void *ptr );
 void Sys_LeaveCriticalSection( void *ptr );
 
-#ifdef WIN32
+#ifdef _WIN32
 #define Sys_GetDLLName(x) x "_mp_" ARCH_STRING DLL_EXT
 #else
 #define Sys_GetDLLName(x) x ".mp." ARCH_STRING DLL_EXT

@@ -384,7 +384,7 @@ void Q_getwd( char *out ) {
 
 
 void Q_mkdir( char *path ) {
-#ifdef WIN32
+#ifdef _WIN32
 	if ( _mkdir( path ) != -1 ) {
 		return;
 	}

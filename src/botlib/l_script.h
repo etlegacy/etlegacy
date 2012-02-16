@@ -41,7 +41,7 @@ If you have questions concerning this license or the applicable additional terms
 // for windows fastcall option
 #define QDECL
 //======================= WIN32 DEFINES =================================
-#ifdef WIN32
+#ifdef _WIN32
 #undef QDECL
 #define QDECL   __cdecl
 #endif
