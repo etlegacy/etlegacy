@@ -27,10 +27,15 @@ covered by the original EULA and must be obeyed as usual.
 Compiling
 -----------------------------------------------------------------------------
 
-Install mercurial and get the latest code from the repository hosted at 
+Install [mercurial](mercurial.selenic.com) and [premake4](ndustriousone.com/premake).
+
+Download the latest source code from the repository hosted at 
 sourceforge.net: _hg clone http://hg.code.sf.net/p/etlegacy/code etlegacy-code_
 
-Then just run: _make_
+To build linux binary run _premake4 gmake_ followed by _make_
+
+To build windows binary run _premake4 gmake_ followed by _make config=mingw32_
+(you must have cross-compiling toolchain set up for this)
 
 LICENSE
 =======
