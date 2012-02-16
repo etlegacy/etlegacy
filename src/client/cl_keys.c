@@ -1385,17 +1385,21 @@ void CL_KeyEvent( int key, qboolean down, unsigned time ) {
 	}
 
 #ifdef __linux__
+	/* 
+	 * Switch from / to fullscreen on Alt+Enter.
+	 * No need to restart video if the game's
+	 * resolution matches the desktop resolution.
+	 */
 	if ( key == K_ENTER ) {
 		if ( down ) {
 			if ( keys[K_ALT].down ) {
 				Key_ClearStates();
-				if ( Cvar_VariableValue( "r_fullscreen" ) == 0 ) {
-					Com_Printf( "Switching to fullscreen rendering\n" );
-					Cvar_Set( "r_fullscreen", "1" );
-				} else
-				{
+				if ( Cvar_VariableIntegerValue( "r_fullscreen" ) ) {
 					Com_Printf( "Switching to windowed rendering\n" );
 					Cvar_Set( "r_fullscreen", "0" );
+				} else {
+					Com_Printf( "Switching to fullscreen rendering\n" );
+					Cvar_Set( "r_fullscreen", "1" );
 				}
 				//Cbuf_ExecuteText( EXEC_APPEND, "vid_restart\n" );
 				return;
@@ -1403,6 +1407,7 @@ void CL_KeyEvent( int key, qboolean down, unsigned time ) {
 		}
 	}
 	
+	// Minimize the game on Alt+Tab press.
 	if ( key == K_TAB ) {
 		if ( down ) {
 			if ( keys[K_ALT].down ) {

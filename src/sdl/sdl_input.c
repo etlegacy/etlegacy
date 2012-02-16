@@ -943,7 +943,18 @@ void IN_Frame( void )
 		IN_DeactivateMouse( );
 	}
 	else
+	{
 		IN_ActivateMouse( );
+		
+		//HACK, and a terrible one too
+		//virtual cursor gets stuck sometimes when in windowed mode
+		//so the real cursor is now forced to stay in the center
+		if ( !Cvar_VariableIntegerValue("r_fullscreen") ) {
+			SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+			SDL_WarpMouse( cls.glconfig.vidWidth / 2, cls.glconfig.vidHeight / 2 );
+			SDL_EventState(SDL_MOUSEMOTION, SDL_ENABLE);
+		}
+	}
 
 	/* in case we had to delay actual restart of video system... */
 	if ( (vidRestartTime != 0) && (vidRestartTime < Sys_Milliseconds()) )
