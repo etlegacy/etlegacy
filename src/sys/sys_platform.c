@@ -92,7 +92,7 @@ char *Sys_DefaultHomePath( void )
 			return NULL;
 		}
 		Q_strncpyz( homePath, szPath, sizeof( homePath ) );
-		Q_strcat( homePath, sizeof( homePath ), "\\WolfET" );
+		Q_strcat( homePath, sizeof( homePath ), "\\ETlegacy" );
 		FreeLibrary(shfolder);
 	}
 
@@ -889,9 +889,9 @@ char *Sys_DefaultHomePath(void)
 			Q_strncpyz( homePath, p, sizeof( homePath ) );
 #ifdef MACOS_X
 			Q_strcat( homePath, sizeof( homePath ),
-					"/Library/Application Support/WolfensteinMP" );
+					"/Library/Application Support/ETlegacy" );
 #else
-			Q_strcat( homePath, sizeof( homePath ), "/.etwolf" );
+			Q_strcat( homePath, sizeof( homePath ), "/.etlegacy" );
 #endif
 		}
 	}
