@@ -1,5 +1,5 @@
 build/
-Makefile.local
+mingw-compile.sh
 
 syntax: glob
 *.kdev4
