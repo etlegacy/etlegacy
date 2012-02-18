@@ -69,6 +69,17 @@ project "etlegacy"
 	--
 	-- Options Configurations
 	--
+	
+	newoption {
+		trigger	=	"with-freetype",
+		description = 	"Use freetype font library",
+	}
+			
+	newoption {
+		trigger	=	"with-openal",
+		description = 	"Use OpenAL sound library",
+	}
+	
 	configuration "with-freetype"
 		buildoptions 	{ "`pkg-config --cflags freetype2`" }
 		linkoptions	{ "`pkg-config --libs freetype2`" }
