@@ -1,33 +1,33 @@
 /*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
- * 
+ *
  * ET: Legacy
  * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
- * 
+ *
  * This file is part of ET: Legacy.
- * 
+ *
  * ET: Legacy is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ET: Legacy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
- * 
- * In addition, Wolfenstein: Enemy Territory GPL Source Code is also 
- * subject to certain additional terms. You should have received a copy 
- * of these additional terms immediately following the terms and conditions 
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
  * of the GNU General Public License which accompanied the source code.
  * If not, please request a copy in writing from id Software at the address below.
- * 
+ *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- * 
+ *
  * @file qcommon.h
  * @brief definitions common between client and server, but not game or ref modules
  */
@@ -37,25 +37,26 @@
 
 #include "../qcommon/cm_public.h"
 
-#ifdef __GNUC__
-#define _attribute( x ) __attribute__( x )
-#else
-#define _attribute( x )
+//Ignore __attribute__ on non-gcc platforms
+#ifndef __GNUC__
+#   ifndef __attribute__
+#       define __attribute__(x)
+#   endif
 #endif
 
 //
 // msg.c
 //
 typedef struct {
-	qboolean allowoverflow;     // if false, do a Com_Error
-	qboolean overflowed;        // set to true if the buffer size failed (with allowoverflow set)
-	qboolean oob;               // set to true if the buffer size failed (with allowoverflow set)
-	byte    *data;
-	int maxsize;
-	int cursize;
-	int uncompsize;             // NERVE - SMF - net debugging
-	int readcount;
-	int bit;                    // for bitwise reads and writes
+    qboolean allowoverflow;     // if false, do a Com_Error
+    qboolean overflowed;        // set to true if the buffer size failed (with allowoverflow set)
+    qboolean oob;               // set to true if the buffer size failed (with allowoverflow set)
+    byte    *data;
+    int maxsize;
+    int cursize;
+    int uncompsize;             // NERVE - SMF - net debugging
+    int readcount;
+    int bit;                    // for bitwise reads and writes
 } msg_t;
 
 void MSG_Init( msg_t *buf, byte *data, int length );
@@ -113,9 +114,9 @@ void MSG_WriteDeltaUsercmdKey( msg_t *msg, int key, usercmd_t *from, usercmd_t *
 void MSG_ReadDeltaUsercmdKey( msg_t *msg, int key, usercmd_t *from, usercmd_t *to );
 
 void MSG_WriteDeltaEntity( msg_t *msg, struct entityState_s *from, struct entityState_s *to
-						   , qboolean force );
+                           , qboolean force );
 void MSG_ReadDeltaEntity( msg_t *msg, entityState_t *from, entityState_t *to,
-						  int number );
+                          int number );
 
 void MSG_WriteDeltaPlayerstate( msg_t *msg, struct playerState_s *from, struct playerState_s *to );
 void MSG_ReadDeltaPlayerstate( msg_t *msg, struct playerState_s *from, struct playerState_s *to );
@@ -131,7 +132,7 @@ NET
 #define NET_ENABLEV6            0x02
 /*
  * @def NET_PRIOV6
- * @brief if this flag is set, always attempt ipv6 connections 
+ * @brief if this flag is set, always attempt ipv6 connections
  * instead of ipv4 if a v6 address is found.
  */
 #define NET_PRIOV6              0x04
@@ -146,8 +147,8 @@ NET
  * @brief number of old messages that must be kept on client and
  * server for delta comrpession and ping estimation
  */
-#define PACKET_BACKUP	32
-#define PACKET_MASK	( PACKET_BACKUP - 1 )
+#define PACKET_BACKUP   32
+#define PACKET_MASK ( PACKET_BACKUP - 1 )
 
 /*
  * @def MAX_PACKET_USERCMDS
@@ -160,7 +161,7 @@ NET
 /*
  * @def MAX_RELIABLE_COMMANDS
  * @brief max string commands buffered for restransmit
- * 
+ *
  * RF, increased this, seems to keep causing problems when set to 64, especially when loading
  * a savegame, which is hard to fix on that side, since we can't really spread out a loadgame
  * among several frames
@@ -168,19 +169,19 @@ NET
 #define MAX_RELIABLE_COMMANDS   256
 
 typedef enum {
-	NA_BOT,
-	NA_BAD,                 // an address lookup failed
-	NA_LOOPBACK,
-	NA_BROADCAST,
-	NA_IP,
-	NA_IP6,
-	NA_MULTICAST6,
-	NA_UNSPEC
+    NA_BOT,
+    NA_BAD,                 // an address lookup failed
+    NA_LOOPBACK,
+    NA_BROADCAST,
+    NA_IP,
+    NA_IP6,
+    NA_MULTICAST6,
+    NA_UNSPEC
 } netadrtype_t;
 
 typedef enum {
-	NS_CLIENT,
-	NS_SERVER
+    NS_CLIENT,
+    NS_SERVER
 } netsrc_t;
 
 /*
@@ -189,11 +190,11 @@ typedef enum {
  */
 #define NET_ADDRSTRMAXLEN 48
 typedef struct {
-	netadrtype_t type;
-	byte ip[4];
-	byte ip6[16];
-	unsigned short port;
-	unsigned long scope_id;	// Needed for IPv6 link-local addresses
+    netadrtype_t type;
+    byte ip[4];
+    byte ip6[16];
+    unsigned short port;
+    unsigned long scope_id; // Needed for IPv6 link-local addresses
 } netadr_t;
 
 void        NET_Init( void );
@@ -216,9 +217,9 @@ qboolean    NET_GetLoopPacket( netsrc_t sock, netadr_t *net_from, msg_t *net_mes
 void        NET_Sleep( int msec );
 
 
-//----(SA)	increased for larger submodel entity counts
+//----(SA)  increased for larger submodel entity counts
 #define MAX_MSGLEN              32768       // max length of a message, which may
-//#define	MAX_MSGLEN				16384		// max length of a message, which may
+//#define   MAX_MSGLEN              16384       // max length of a message, which may
 // be fragmented into multiple packets
 #define MAX_DOWNLOAD_WINDOW         8       // max of eight download frames
 #define MAX_DOWNLOAD_BLKSIZE        2048    // 2048 byte block chunks
@@ -229,28 +230,28 @@ Netchan handles packet fragmentation and out of order / duplicate suppression
 */
 
 typedef struct {
-	netsrc_t sock;
+    netsrc_t sock;
 
-	int dropped;                    // between last packet and previous
+    int dropped;                    // between last packet and previous
 
-	netadr_t remoteAddress;
-	int qport;                      // qport value to write when transmitting
+    netadr_t remoteAddress;
+    int qport;                      // qport value to write when transmitting
 
-	// sequencing variables
-	int incomingSequence;
-	int outgoingSequence;
+    // sequencing variables
+    int incomingSequence;
+    int outgoingSequence;
 
-	// incoming fragment assembly buffer
-	int fragmentSequence;
-	int fragmentLength;
-	byte fragmentBuffer[MAX_MSGLEN];
+    // incoming fragment assembly buffer
+    int fragmentSequence;
+    int fragmentLength;
+    byte fragmentBuffer[MAX_MSGLEN];
 
-	// outgoing fragment buffer
-	// we need to space out the sending of large fragmented messages
-	qboolean unsentFragments;
-	int unsentFragmentStart;
-	int unsentLength;
-	byte unsentBuffer[MAX_MSGLEN];
+    // outgoing fragment buffer
+    // we need to space out the sending of large fragmented messages
+    qboolean unsentFragments;
+    int unsentFragmentStart;
+    int unsentLength;
+    byte unsentBuffer[MAX_MSGLEN];
 
 } netchan_t;
 
@@ -278,28 +279,28 @@ The server you attempted to join is running an incompatible version of the game.
 You or the server may be running older versions of the game. Press the auto-update\
  button if it appears on the Main Menu screen."
 
-#define GAMENAME_STRING 	"et"
-#define PROTOCOL_VERSION    	84
+#define GAMENAME_STRING     "et"
+#define PROTOCOL_VERSION        84
 
 /*
  * @def MASTER_SERVER_NAME
  * @brief location of the master server
- * 
+ *
  * As the main server list etmaster.idsoftware.com seems to
  * be permanently down, we switched to an alternative.
  */
 #ifndef MASTER_SERVER_NAME
-	#define MASTER_SERVER_NAME      "master0.etmaster.net"
+#define MASTER_SERVER_NAME      "master0.etmaster.net"
 #endif // MASTER_SERVER_NAME
-#define MOTD_SERVER_NAME        	"master0.etmaster.net"
+#define MOTD_SERVER_NAME            "master0.etmaster.net"
 
 #ifdef AUTHORIZE_SUPPORT
-	#define AUTHORIZE_SERVER_NAME   "wolfauthorize.idsoftware.com"
+#define AUTHORIZE_SERVER_NAME   "wolfauthorize.idsoftware.com"
 #endif // AUTHORIZE_SUPPORT
 
 // TTimo: override autoupdate server for testing
 #ifndef AUTOUPDATE_SERVER_NAME
-	#define AUTOUPDATE_SERVER_NAME "au2rtcw2.activision.com"
+#define AUTOUPDATE_SERVER_NAME "au2rtcw2.activision.com"
 #endif
 
 // TTimo: allow override for easy dev/testing..
@@ -307,29 +308,29 @@ You or the server may be running older versions of the game. Press the auto-upda
 // see cons -- update_server=myhost
 #define MAX_AUTOUPDATE_SERVERS  5
 #if !defined( AUTOUPDATE_SERVER_NAME )
-  #define AUTOUPDATE_SERVER1_NAME   "au2rtcw1.activision.com"            // DHM - Nerve
-  #define AUTOUPDATE_SERVER2_NAME   "au2rtcw2.activision.com"            // DHM - Nerve
-  #define AUTOUPDATE_SERVER3_NAME   "au2rtcw3.activision.com"            // DHM - Nerve
-  #define AUTOUPDATE_SERVER4_NAME   "au2rtcw4.activision.com"            // DHM - Nerve
-  #define AUTOUPDATE_SERVER5_NAME   "au2rtcw5.activision.com"            // DHM - Nerve
+#define AUTOUPDATE_SERVER1_NAME   "au2rtcw1.activision.com"            // DHM - Nerve
+#define AUTOUPDATE_SERVER2_NAME   "au2rtcw2.activision.com"            // DHM - Nerve
+#define AUTOUPDATE_SERVER3_NAME   "au2rtcw3.activision.com"            // DHM - Nerve
+#define AUTOUPDATE_SERVER4_NAME   "au2rtcw4.activision.com"            // DHM - Nerve
+#define AUTOUPDATE_SERVER5_NAME   "au2rtcw5.activision.com"            // DHM - Nerve
 #else
-  #define AUTOUPDATE_SERVER1_NAME   AUTOUPDATE_SERVER_NAME
-  #define AUTOUPDATE_SERVER2_NAME   AUTOUPDATE_SERVER_NAME
-  #define AUTOUPDATE_SERVER3_NAME   AUTOUPDATE_SERVER_NAME
-  #define AUTOUPDATE_SERVER4_NAME   AUTOUPDATE_SERVER_NAME
-  #define AUTOUPDATE_SERVER5_NAME   AUTOUPDATE_SERVER_NAME
+#define AUTOUPDATE_SERVER1_NAME   AUTOUPDATE_SERVER_NAME
+#define AUTOUPDATE_SERVER2_NAME   AUTOUPDATE_SERVER_NAME
+#define AUTOUPDATE_SERVER3_NAME   AUTOUPDATE_SERVER_NAME
+#define AUTOUPDATE_SERVER4_NAME   AUTOUPDATE_SERVER_NAME
+#define AUTOUPDATE_SERVER5_NAME   AUTOUPDATE_SERVER_NAME
 #endif
 
 #define PORT_MASTER         27950
 #define PORT_MOTD           27951
 #ifdef AUTHORIZE_SUPPORT
-	#define PORT_AUTHORIZE      27952
+#define PORT_AUTHORIZE      27952
 #endif // AUTHORIZE_SUPPORT
 #define PORT_SERVER         27960
 
 /*
  * @def NUM_SERVER_PORTS
- * 
+ *
  * Broadcast scan this many ports after PORT_SERVER
  * so a single machine can run multiple servers
  */
@@ -340,15 +341,15 @@ You or the server may be running older versions of the game. Press the auto-upda
 // server to client
 //
 enum svc_ops_e {
-	svc_bad,
-	svc_nop,
-	svc_gamestate,
-	svc_configstring,           // [short] [string] only in gamestate messages
-	svc_baseline,               // only in gamestate messages
-	svc_serverCommand,          // [string] to be executed by client game module
-	svc_download,               // [short] size [size bytes]
-	svc_snapshot,
-	svc_EOF
+    svc_bad,
+    svc_nop,
+    svc_gamestate,
+    svc_configstring,           // [short] [string] only in gamestate messages
+    svc_baseline,               // only in gamestate messages
+    svc_serverCommand,          // [string] to be executed by client game module
+    svc_download,               // [short] size [size bytes]
+    svc_snapshot,
+    svc_EOF
 };
 
 
@@ -356,12 +357,12 @@ enum svc_ops_e {
 // client to server
 //
 enum clc_ops_e {
-	clc_bad,
-	clc_nop,
-	clc_move,               // [[usercmd_t]
-	clc_moveNoDelta,        // [[usercmd_t]
-	clc_clientCommand,      // [string] message
-	clc_EOF
+    clc_bad,
+    clc_nop,
+    clc_move,               // [[usercmd_t]
+    clc_moveNoDelta,        // [[usercmd_t]
+    clc_clientCommand,      // [string] message
+    clc_EOF
 };
 
 /*==============================================================
@@ -371,32 +372,32 @@ VIRTUAL MACHINE
 typedef struct vm_s vm_t;
 
 typedef enum {
-	VMI_NATIVE,
-	VMI_BYTECODE,
-	VMI_COMPILED
+    VMI_NATIVE,
+    VMI_BYTECODE,
+    VMI_COMPILED
 } vmInterpret_t;
 
 typedef enum {
-	TRAP_MEMSET = 100,
-	TRAP_MEMCPY,
-	TRAP_STRNCPY,
-	TRAP_SIN,
-	TRAP_COS,
-	TRAP_ATAN2,
-	TRAP_SQRT,
-	TRAP_MATRIXMULTIPLY,
-	TRAP_ANGLEVECTORS,
-	TRAP_PERPENDICULARVECTOR,
-	TRAP_FLOOR,
-	TRAP_CEIL,
+    TRAP_MEMSET = 100,
+    TRAP_MEMCPY,
+    TRAP_STRNCPY,
+    TRAP_SIN,
+    TRAP_COS,
+    TRAP_ATAN2,
+    TRAP_SQRT,
+    TRAP_MATRIXMULTIPLY,
+    TRAP_ANGLEVECTORS,
+    TRAP_PERPENDICULARVECTOR,
+    TRAP_FLOOR,
+    TRAP_CEIL,
 
-	TRAP_TESTPRINTINT,
-	TRAP_TESTPRINTFLOAT
+    TRAP_TESTPRINTINT,
+    TRAP_TESTPRINTFLOAT
 } sharedTraps_t;
 
 void    VM_Init( void );
 vm_t    *VM_Create( const char *module, intptr_t ( *systemCalls )( intptr_t * ),
-					vmInterpret_t interpret );
+                    vmInterpret_t interpret );
 // module should be bare: "cgame", not "cgame.dll" or "vm/cgame.qvm"
 
 void    VM_Free( vm_t *vm );
@@ -411,14 +412,13 @@ void    *VM_ArgPtr( intptr_t intValue );
 void    *VM_ExplicitArgPtr( vm_t *vm, intptr_t intValue );
 
 #define VMA( x ) VM_ArgPtr( args[x] )
-static inline float _vmf(intptr_t x)
+static ID_INLINE float _vmf(intptr_t x)
 {
-	int i = x;
-	float f;
-	memcpy(&f, &x, sizeof(i));
-	return f;
+    floatint_t fi;
+    fi.i = (int) x;
+    return fi.f;
 }
-#define	VMF(x)	_vmf(args[x])
+#define VMF(x)  _vmf(args[x])
 
 /*==============================================================
 CMD - Command text buffering and command execution
@@ -498,9 +498,9 @@ or displayed at the console or prog code as well as accessed directly
 in C code.
 
 The user can access cvars from the console in three ways:
-r_draworder			prints the current value
-r_draworder 0		sets the current value to 0
-set r_draworder 0	as above, but creates the cvar if not present
+r_draworder         prints the current value
+r_draworder 0       sets the current value to 0
+set r_draworder 0   as above, but creates the cvar if not present
 
 Cvars are restricted from having the same names as commands to keep this
 interface from being ambiguous.
@@ -591,16 +591,16 @@ issues.
 
 /*
  * @def NUM_ID_PAKS
- * @brief number of id paks that will never be autodownloaded from baseq3 
+ * @brief number of id paks that will never be autodownloaded from baseq3
  */
 #define NUM_ID_PAKS     9
 
 #define MAX_FILE_HANDLES    64
 
 #ifdef _WIN32
-	#define Q_rmdir _rmdir
+#define Q_rmdir _rmdir
 #else
-	#define Q_rmdir rmdir
+#define Q_rmdir rmdir
 #endif
 
 qboolean FS_Initialized( void );
@@ -620,7 +620,6 @@ char    **FS_ListFiles( const char *directory, const char *extension, int *numfi
 void    FS_FreeFileList( char **list );
 
 qboolean FS_FileExists( const char *file );
-qboolean FS_OS_FileExists( const char *file ); // TTimo - test file existence given OS path
 
 int     FS_LoadStack( void );
 
@@ -661,7 +660,7 @@ int     FS_Write( const void *buffer, int len, fileHandle_t f );
 
 int     FS_Read( void *buffer, int len, fileHandle_t f );
 // properly handles partial reads and reads from other dlls
-int 	FS_Read2( void *buffer, int len, fileHandle_t f );
+int     FS_Read2( void *buffer, int len, fileHandle_t f );
 
 void    FS_FCloseFile( fileHandle_t f );
 // note: you can't just fclose from another DLL, due to MS libc issues
@@ -750,7 +749,7 @@ char *FS_ShiftStr( const char *string, int shift );
 
 void FS_CopyFile( char *fromOSPath, char *toOSPath );
 
-int FS_CreatePath( const char *OSPath );
+qboolean FS_CreatePath( char *OSPath );
 
 qboolean FS_VerifyPak( const char *pak );
 
@@ -770,10 +769,10 @@ Edit fields and command line history/completion
 
 #define MAX_EDIT_LINE   256
 typedef struct {
-	int cursor;
-	int scroll;
-	int widthInChars;
-	char buffer[MAX_EDIT_LINE];
+    int cursor;
+    int scroll;
+    int widthInChars;
+    char buffer[MAX_EDIT_LINE];
 } field_t;
 
 void Field_Clear( field_t *edit );
@@ -784,13 +783,13 @@ MISC
 ==============================================================*/
 
 typedef struct gameInfo_s {
-	qboolean spEnabled;
-	int spGameTypes;
-	int defaultSPGameType;
-	int coopGameTypes;
-	int defaultCoopGameType;
-	int defaultGameType;
-	qboolean usesProfiles;
+    qboolean spEnabled;
+    int spGameTypes;
+    int defaultSPGameType;
+    int coopGameTypes;
+    int defaultCoopGameType;
+    int defaultGameType;
+    qboolean usesProfiles;
 } gameInfo_t;
 
 extern gameInfo_t com_gameInfo;
@@ -810,14 +809,14 @@ extern gameInfo_t com_gameInfo;
 // returned by Sys_GetProcessorFeatures
 typedef enum
 {
-  CF_RDTSC      = 1 << 0,
-  CF_MMX        = 1 << 1,
-  CF_MMX_EXT    = 1 << 2,
-  CF_3DNOW      = 1 << 3,
-  CF_3DNOW_EXT  = 1 << 4,
-  CF_SSE        = 1 << 5,
-  CF_SSE2       = 1 << 6,
-  CF_ALTIVEC    = 1 << 7
+    CF_RDTSC      = 1 << 0,
+    CF_MMX        = 1 << 1,
+    CF_MMX_EXT    = 1 << 2,
+    CF_3DNOW      = 1 << 3,
+    CF_3DNOW_EXT  = 1 << 4,
+    CF_SSE        = 1 << 5,
+    CF_SSE2       = 1 << 6,
+    CF_ALTIVEC    = 1 << 7
 } cpuFeatures_t;
 
 // TTimo
@@ -845,7 +844,7 @@ int         Com_RealTime( qtime_t *qtime );
 qboolean    Com_SafeMode( void );
 void Com_RandomBytes( byte *string, int len );
 
-char		*Com_MD5File(const char *filename, int length, const char *prefix, int prefix_len);
+char        *Com_MD5File(const char *filename, int length, const char *prefix, int prefix_len);
 
 void        Com_StartupVariable( const char *match );
 void        Com_SetRecommended( void );
@@ -872,7 +871,7 @@ extern cvar_t  *com_sv_running;
 extern cvar_t  *com_cl_running;
 extern cvar_t  *com_viewlog;            // 0 = hidden, 1 = visible, 2 = minimized
 extern cvar_t  *com_version;
-//extern	cvar_t	*com_blood;
+//extern    cvar_t  *com_blood;
 extern cvar_t  *com_buildScript;        // for building release pak files
 extern cvar_t  *com_journal;
 extern cvar_t  *com_cameraMode;
@@ -906,12 +905,12 @@ extern fileHandle_t com_journalFile;
 extern fileHandle_t com_journalDataFile;
 
 typedef enum {
-	TAG_FREE,
-	TAG_GENERAL,
-	TAG_BOTLIB,
-	TAG_RENDERER,
-	TAG_SMALL,
-	TAG_STATIC
+    TAG_FREE,
+    TAG_GENERAL,
+    TAG_BOTLIB,
+    TAG_RENDERER,
+    TAG_SMALL,
+    TAG_STATIC
 } memtag_t;
 
 /*
@@ -1032,7 +1031,7 @@ void CL_GetAutoUpdate( void );
 void Key_WriteBindings( fileHandle_t f );
 // for writing the config files
 
-void S_ClearSoundBuffer( qboolean killStreaming );  //----(SA)	modified
+void S_ClearSoundBuffer( qboolean killStreaming );  //----(SA)  modified
 // call before filesystem access
 
 void SCR_DebugGraph( float value, int color );   // FIXME: move logging to common?
@@ -1058,37 +1057,37 @@ NON-PORTABLE SYSTEM SERVICES
 ==============================================================*/
 
 typedef enum {
-	AXIS_SIDE,
-	AXIS_FORWARD,
-	AXIS_UP,
-	AXIS_ROLL,
-	AXIS_YAW,
-	AXIS_PITCH,
-	MAX_JOYSTICK_AXIS
+    AXIS_SIDE,
+    AXIS_FORWARD,
+    AXIS_UP,
+    AXIS_ROLL,
+    AXIS_YAW,
+    AXIS_PITCH,
+    MAX_JOYSTICK_AXIS
 } joystickAxis_t;
 
 typedef enum {
-	// bk001129 - make sure SE_NONE is zero
-	SE_NONE = 0,    // evTime is still valid
-	SE_KEY,     // evValue is a key code, evValue2 is the down flag
-	SE_CHAR,    // evValue is an ascii char
-	SE_MOUSE,   // evValue and evValue2 are reletive signed x / y moves
-	SE_JOYSTICK_AXIS,   // evValue is an axis number and evValue2 is the current state (-127 to 127)
-	SE_CONSOLE, // evPtr is a char*
-	SE_PACKET   // evPtr is a netadr_t followed by data bytes to evPtrLength
+    // bk001129 - make sure SE_NONE is zero
+    SE_NONE = 0,    // evTime is still valid
+    SE_KEY,     // evValue is a key code, evValue2 is the down flag
+    SE_CHAR,    // evValue is an ascii char
+    SE_MOUSE,   // evValue and evValue2 are reletive signed x / y moves
+    SE_JOYSTICK_AXIS,   // evValue is an axis number and evValue2 is the current state (-127 to 127)
+    SE_CONSOLE, // evPtr is a char*
+    SE_PACKET   // evPtr is a netadr_t followed by data bytes to evPtrLength
 } sysEventType_t;
 
 typedef struct {
-	int evTime;
-	sysEventType_t evType;
-	int evValue, evValue2;
-	int evPtrLength;                // bytes of data pointed to by evPtr, for journaling
-	void            *evPtr;         // this must be manually freed if not NULL
+    int evTime;
+    sysEventType_t evType;
+    int evValue, evValue2;
+    int evPtrLength;                // bytes of data pointed to by evPtr, for journaling
+    void            *evPtr;         // this must be manually freed if not NULL
 } sysEvent_t;
 
-void		Com_QueueEvent( int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr );
-int			Com_EventLoop( void );
-sysEvent_t	Com_GetSystemEvent( void );
+void        Com_QueueEvent( int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr );
+int         Com_EventLoop( void );
+sysEvent_t  Com_GetSystemEvent( void );
 
 void    Sys_Init( void );
 qboolean Sys_IsNumLockDown( void );
@@ -1105,7 +1104,7 @@ void Sys_LeaveCriticalSection( void *ptr );
 
 // fqpath param added 2/15/02 by T.Ray - Sys_LoadDll is only called in vm.c at this time
 void    * QDECL Sys_LoadDll( const char *name, char *fqpath, intptr_t( QDECL * *entryPoint ) ( int, ... ),
-							 intptr_t ( QDECL * systemcalls )( intptr_t, ... ) );
+                             intptr_t ( QDECL * systemcalls )( intptr_t, ... ) );
 void    Sys_UnloadDll( void *dllHandle );
 
 void    Sys_UnloadGame( void );
@@ -1176,19 +1175,19 @@ void    Sys_SetEnv(const char *name, const char *value);
 
 typedef enum
 {
-	DR_YES = 0,
-	DR_NO = 1,
-	DR_OK = 0,
-	DR_CANCEL = 1
+    DR_YES = 0,
+    DR_NO = 1,
+    DR_OK = 0,
+    DR_CANCEL = 1
 } dialogResult_t;
 
 typedef enum
 {
-	DT_INFO,
-	DT_WARNING,
-	DT_ERROR,
-	DT_YES_NO,
-	DT_OK_CANCEL
+    DT_INFO,
+    DT_WARNING,
+    DT_ERROR,
+    DT_YES_NO,
+    DT_OK_CANCEL
 } dialogType_t;
 
 dialogResult_t Sys_Dialog( dialogType_t type, const char *message, const char *title );
@@ -1213,32 +1212,32 @@ void Sys_Chmod( char *file, int mode );
 #define INTERNAL_NODE ( HMAX + 1 )
 
 typedef struct nodetype {
-	struct  nodetype *left, *right, *parent; /* tree structure */
-	struct  nodetype *next, *prev; /* doubly-linked list */
-	struct  nodetype **head; /* highest ranked node in block */
-	int weight;
-	int symbol;
+    struct  nodetype *left, *right, *parent; /* tree structure */
+    struct  nodetype *next, *prev; /* doubly-linked list */
+    struct  nodetype **head; /* highest ranked node in block */
+    int weight;
+    int symbol;
 } node_t;
 
 #define HMAX 256 /* Maximum symbol */
 
 typedef struct {
-	int blocNode;
-	int blocPtrs;
+    int blocNode;
+    int blocPtrs;
 
-	node_t*     tree;
-	node_t*     lhead;
-	node_t*     ltail;
-	node_t*     loc[HMAX + 1];
-	node_t**    freelist;
+    node_t*     tree;
+    node_t*     lhead;
+    node_t*     ltail;
+    node_t*     loc[HMAX + 1];
+    node_t**    freelist;
 
-	node_t nodeList[768];
-	node_t*     nodePtrs[768];
+    node_t nodeList[768];
+    node_t*     nodePtrs[768];
 } huff_t;
 
 typedef struct {
-	huff_t compressor;
-	huff_t decompressor;
+    huff_t compressor;
+    huff_t decompressor;
 } huffman_t;
 
 void    Huff_Compress( msg_t *buf, int offset );

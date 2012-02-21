@@ -97,7 +97,7 @@ project "etlegacy"
 	-- 
 	-- Windows build options
 	-- 
-	configuration {  "mingw"  }
+	configuration {  "vs* or mingw"  }
 		targetname  "etl"
 		flags       { "WinMain" }
 		libdirs
@@ -137,10 +137,10 @@ project "etlegacy"
 		}
 		
 		
-	configuration { "mingw", "x32" }
+	configuration { "vs* or mingw", "x32" }
 		targetdir "build/win-x32"
 		
-	configuration { "mingw", "x64" }
+	configuration { "vs* or mingw", "x64" }
 		targetdir "build/win-x64"
 		
 	-- 		
@@ -225,7 +225,7 @@ project "etlegacy-dedicated"
 	-- 
 	-- Windows build options
 	-- 
-	configuration { "mingw" }
+	configuration { "vs* or mingw" }
 		flags       { "WinMain" }
 		buildoptions
 		{
@@ -263,10 +263,10 @@ project "etlegacy-dedicated"
 			"_CRT_SECURE_NO_WARNINGS",
 		}
 		
-	configuration { "mingw", "x32" }
+	configuration { "vs* or mingw", "x32" }
 		targetdir 	"build/win-x32"
 		
-	configuration { "mingw", "x64" }
+	configuration { "vs* or mingw", "x64" }
 		targetdir 	"build/win-x64"
 
 	--
@@ -337,7 +337,7 @@ project "etmain_cgame"
 	-- 
 	-- Project Configurations
 	-- 
-	configuration {"mingw", "x32"}
+	configuration {"vs* or mingw", "x32"}
 		targetdir "build/win-x32/etmain"
 		targetname  "cgame_mp_x86"
 		targetsuffix ".dll"
@@ -348,7 +348,7 @@ project "etmain_cgame"
 			"_CRT_SECURE_NO_WARNINGS",
 		}
 
-	configuration {"mingw", "x64"}
+	configuration {"vs* or mingw", "x64"}
 		targetdir "build/win-x64/etmain"
 		targetname  "cgame_mp_x86_64"
 		targetsuffix ".dll"
@@ -396,7 +396,7 @@ project "etmain_game"
 	-- 
 	-- Project Configurations
 	-- 
-	configuration {"mingw", "x32"}
+    configuration {"vs* or mingw", "x32"}
 		targetdir "build/win-x32/etmain"
 		targetname  "qagame_mp_x86"
 		targetsuffix ".dll"
@@ -407,7 +407,7 @@ project "etmain_game"
 			"_CRT_SECURE_NO_WARNINGS",
 		}
 
-	configuration {"mingw", "x64"}
+	configuration {"vs* or mingw", "x64"}
 		targetdir "build/win-x64/etmain"
 		targetname  "qagame_mp_x86_64"
 		targetsuffix ".dll"
@@ -463,7 +463,7 @@ project "etmain_ui"
 	-- 
 	-- Project Configurations
 	-- 
-	configuration {"mingw", "x32"}
+    configuration {"vs* or mingw", "x32"}
 		targetdir "build/win-x32/etmain"
 		targetname  "ui_mp_x86"
 		targetsuffix ".dll"
@@ -474,7 +474,7 @@ project "etmain_ui"
 			"_CRT_SECURE_NO_WARNINGS",
 		}
 
-	configuration {"mingw", "x64"}
+	configuration {"vs* or mingw", "x64"}
 		targetdir "build/win-x64/etmain"
 		targetname  "ui_mp_x86_64"
 		targetsuffix ".dll"

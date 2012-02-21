@@ -30,6 +30,8 @@ If you have questions concerning this license or the applicable additional terms
 #define __Q_PLATFORM_H
 
 // this is for determining if we have an asm version of a C function
+#define idx64 0
+
 #ifdef Q3_VM
 
 #define id386 0
@@ -77,13 +79,20 @@ If you have questions concerning this license or the applicable additional terms
 
 // for windows fastcall option
 #define QDECL
+#define QCALL
 
 //================================================================= WIN64/32 ===
 
-#ifdef __WIN64__
+#if defined(_WIN64) || defined(__WIN64__)
+
+#undef idx64
+#define idx64 1
 
 #undef QDECL
 #define QDECL __cdecl
+
+#undef QCALL
+#define QCALL __stdcall
 
 #if defined( _MSC_VER )
 #define OS_STRING "win_msvc64"
@@ -91,11 +100,11 @@ If you have questions concerning this license or the applicable additional terms
 #define OS_STRING "win_mingw64"
 #endif
 
-#define ID_INLINE inline
+#define ID_INLINE __inline
 #define PATH_SEP '\\'
 
 #if defined( __WIN64__ ) 
-#define ARCH_STRING "x86_64"
+#define ARCH_STRING "x64"
 #elif defined _M_ALPHA
 #define ARCH_STRING "AXP"
 #endif
@@ -104,10 +113,13 @@ If you have questions concerning this license or the applicable additional terms
 
 #define DLL_EXT ".dll"
 
-#elif __WIN32__
+#elif defined(_WIN32) || defined(__WIN32__)
 
 #undef QDECL
 #define QDECL __cdecl
+
+#undef QCALL
+#define QCALL __stdcall
 
 #if defined( _MSC_VER )
 #define OS_STRING "win_msvc"
@@ -130,6 +142,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #endif
 
+
 //============================================================== MAC OS X ===
 
 #if defined(MACOS_X) || defined(__APPLE_CC__)
@@ -150,6 +163,8 @@ If you have questions concerning this license or the applicable additional terms
 #define ARCH_STRING "i386"
 #define Q3_LITTLE_ENDIAN
 #elif defined __x86_64__
+#undef idx64
+#define idx64 1
 #define ARCH_STRING "x86_64"
 #define Q3_LITTLE_ENDIAN
 #endif
@@ -160,17 +175,29 @@ If you have questions concerning this license or the applicable additional terms
 
 //================================================================= LINUX ===
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD_kernel__)
 
 #include <endian.h>
 
+#if defined(__linux__)
 #define OS_STRING "linux"
+#else
+#define OS_STRING "kFreeBSD"
+#endif
+
+#ifdef __clang__
+#define ID_INLINE static inline
+#else
 #define ID_INLINE inline
+#endif
+
 #define PATH_SEP '/'
 
 #if defined __i386__
 #define ARCH_STRING "i386"
 #elif defined __x86_64__
+#undef idx64
+#define idx64 1
 #define ARCH_STRING "x86_64"
 #elif defined __powerpc64__
 #define ARCH_STRING "ppc64"
@@ -233,6 +260,8 @@ If you have questions concerning this license or the applicable additional terms
 #ifdef __i386__
 #define ARCH_STRING "i386"
 #elif defined __amd64__
+#undef idx64
+#define idx64 1
 #define ARCH_STRING "amd64"
 #elif defined __axp__
 #define ARCH_STRING "alpha"

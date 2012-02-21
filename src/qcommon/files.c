@@ -188,7 +188,8 @@ or configs will never get loaded from disk!
 
 typedef struct fileInPack_s {
     char                    *name;      // name of the file
-    unsigned long pos;                  // file info position in zip
+    unsigned long           pos;        // file info position in zip
+    unsigned long           len;        // uncompress file size
     struct  fileInPack_s*   next;       // next file in the hash
 } fileInPack_t;
 
@@ -207,8 +208,9 @@ typedef struct {
 } pack_t;
 
 typedef struct {
-    char path[MAX_OSPATH];              // c:\quake3
-    char gamedir[MAX_OSPATH];           // baseq3
+    char path[MAX_OSPATH];      // c:\quake3
+    char fullpath[MAX_OSPATH];  // c:\quake3\baseq3
+    char gamedir[MAX_OSPATH];   // baseq3
 } directory_t;
 
 typedef struct searchpath_s {
@@ -285,6 +287,11 @@ char lastValidGame[MAX_OSPATH];
 
 #ifdef FS_MISSING
 FILE*       missingFiles = NULL;
+#endif
+
+/* C99 defines __func__ */
+#ifndef __func__
+#   define __func__ "(unknown)"
 #endif
 
 qboolean legacy_mp_bin = qfalse;
@@ -443,10 +450,9 @@ char *FS_BuildOSPath( const char *base, const char *game, const char *qpath ) {
 /*
  * @brief Creates any directories needed to store the given filename
  */
-int FS_CreatePath( const char *OSPath_ ) {
-    // use va() to have a clean const char* prototype
-    char *OSPath = va( "%s", OSPath_ );
-    char *ofs;
+qboolean FS_CreatePath( char *OSPath ) {
+    char    *ofs;
+    char    path[MAX_OSPATH];
 
     // make absolutely sure that it can't back up the path
     // FIXME: is c: allowed???
@@ -455,14 +461,25 @@ int FS_CreatePath( const char *OSPath_ ) {
         return qtrue;
     }
 
-    for ( ofs = OSPath + 1 ; *ofs ; ofs++ ) {
-        if ( *ofs == PATH_SEP ) {
+    Q_strncpyz( path, OSPath, sizeof( path ) );
+    FS_ReplaceSeparators( path );
+
+    // Skip creation of the root directory as it will always be there
+    ofs = strchr( path, PATH_SEP );
+    ofs++;
+
+    for (; ofs != NULL && *ofs ; ofs++) {
+        if (*ofs == PATH_SEP) {
             // create the directory
             *ofs = 0;
-            Sys_Mkdir( OSPath );
+            if (!Sys_Mkdir (path)) {
+                Com_Error( ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"",
+                           path );
+            }
             *ofs = PATH_SEP;
         }
     }
+
     return qfalse;
 }
 
@@ -511,9 +528,33 @@ void FS_CopyFile( char *fromOSPath, char *toOSPath ) {
     free( buf );
 }
 
-static void FS_Remove( const char *osPath ) {
+/*
+ * ERR_FATAL if trying to manipulate a file with the platform library extension
+ */
+static void FS_CheckFilenameIsNotExecutable( const char *filename,
+        const char *function )
+{
+    // Check if the filename ends with the library extension
+    if (COM_CompareExtension(filename, DLL_EXT))
+    {
+        Com_Error( ERR_FATAL, "%s: Not allowed to manipulate '%s' due "
+                   "to %s extension", function, filename, DLL_EXT );
+    }
+}
+
+void FS_Remove( const char *osPath ) {
+    FS_CheckFilenameIsNotExecutable( osPath, __func__ );
+
     remove( osPath );
 }
+
+void FS_HomeRemove( const char *homePath ) {
+    FS_CheckFilenameIsNotExecutable( homePath, __func__ );
+
+    remove( FS_BuildOSPath( fs_homepath->string,
+                            fs_gamedir, homePath ) );
+}
+
 
 /*
  * @brief Tests if path and file exists
@@ -548,7 +589,6 @@ qboolean FS_FileExists( const char *file ) {
  * @brief Tests if the file exists
  */
 qboolean FS_SV_FileExists( const char *file ) {
-    FILE *f;
     char *testpath;
 
     testpath = FS_BuildOSPath( fs_homepath->string, file, "" );
@@ -889,6 +929,8 @@ char *FS_ShiftStr( const char *string, int shift ) {
     return buf;
 }
 
+extern qboolean     com_fullyInitialized;
+
 /*
 ===========
 FS_FOpenFileRead
@@ -899,8 +941,6 @@ Used for streaming data out of either a
 separate file or a ZIP file.
 ===========
 */
-extern qboolean com_fullyInitialized;
-
 // see FS_FOpenFileRead_Filtered
 static int fs_filter_flag = 0;
 
@@ -1062,16 +1102,6 @@ int FS_FOpenFileRead( const char *filename, fileHandle_t *file, qboolean uniqueF
                     if ( !( pak->referenced & FS_UI_REF ) && !Q_stricmp( filename, Sys_GetDLLName( "ui") ) ) {
                         pak->referenced |= FS_UI_REF;
                     }
-
-//#if !defined(PRE_RELEASE_DEMO) && !defined(DO_LIGHT_DEDICATED)
-//                  // DHM -- Nerve :: Don't allow maps to be loaded from pak0 (singleplayer)
-//                  if ( Q_stricmp(filename + l - 4, ".bsp") == 0 &&
-//                      Q_stricmp( pak->pakBasename, "pak0" ) == 0 ) {
-//
-//                      *file = 0;
-//                      return -1;
-//                  }
-//#endif
 
                     if ( uniqueFILE ) {
                         // open a new file on the pakfile
@@ -2679,13 +2709,9 @@ void FS_Path_f( void ) {
 }
 
 /*
-============
-FS_TouchFile_f
-
-The only purpose of this function is to allow game script files to copy
-arbitrary files furing an "fs_copyfiles 1" run.
-============
-*/
+ * The only purpose of this function is to allow game script files to copy
+ * arbitrary files furing an "fs_copyfiles 1" run.
+ */
 void FS_TouchFile_f( void ) {
     fileHandle_t f;
 
@@ -2698,6 +2724,56 @@ void FS_TouchFile_f( void ) {
     if ( f ) {
         FS_FCloseFile( f );
     }
+}
+
+/**/
+qboolean FS_Which(const char *filename, void *searchPath)
+{
+//     searchpath_t *search = searchPath;
+//     
+//     if(FS_FOpenFileReadDir(filename, search, NULL, qfalse, qfalse) > 0)
+//     {
+//         if(search->pack)
+//         {
+//             Com_Printf("File \"%s\" found in \"%s\"\n", filename, search->pack->pakFilename);
+//             return qtrue;
+//         }
+//         else if(search->dir)
+//         {
+//             Com_Printf( "File \"%s\" found at \"%s\"\n", filename, search->dir->fullpath);
+//             return qtrue;
+//         }
+//     }
+    
+    return qfalse;
+}
+
+/**/
+void FS_Which_f( void ) {
+//     searchpath_t    *search;
+//     char        *filename;
+//     
+//     filename = Cmd_Argv(1);
+//     
+//     if ( !filename[0] ) {
+//         Com_Printf( "Usage: which <file>\n" );
+//         return;
+//     }
+//     
+//     // qpaths are not supposed to have a leading slash
+//     if ( filename[0] == '/' || filename[0] == '\\' ) {
+//         filename++;
+//     }
+//     
+//     // just wants to see if file is there
+//     for(search = fs_searchpaths; search; search = search->next)
+//     {
+//         if(FS_Which(filename, search))
+//             return;
+//     }
+//     
+//     Com_Printf("File not found: \"%s\"\n", filename);
+    return;
 }
 
 //===========================================================================
@@ -3050,7 +3126,8 @@ void FS_Shutdown( qboolean closemfp ) {
     Cmd_RemoveCommand( "dir" );
     Cmd_RemoveCommand( "fdir" );
     Cmd_RemoveCommand( "touchFile" );
-
+    Cmd_RemoveCommand( "which" );
+    
 #ifdef FS_MISSING
     if ( closemfp ) {
         fclose( missingFiles );
@@ -3153,10 +3230,11 @@ static void FS_Startup( const char *gameName ) {
     }
 
     // add our commands
-    Cmd_AddCommand( "path", FS_Path_f );
-    Cmd_AddCommand( "dir", FS_Dir_f );
-    Cmd_AddCommand( "fdir", FS_NewDir_f );
-    Cmd_AddCommand( "touchFile", FS_TouchFile_f );
+    Cmd_AddCommand( "path",         FS_Path_f       );
+    Cmd_AddCommand( "dir",          FS_Dir_f        );
+    Cmd_AddCommand( "fdir",         FS_NewDir_f     );
+    Cmd_AddCommand( "touchFile",    FS_TouchFile_f  );
+    Cmd_AddCommand( "which",        FS_Which_f      );
 
     // show_bug.cgi?id=506
     // reorder the pure pk3 files according to server order
@@ -3743,17 +3821,12 @@ void FS_ClearPakReferences( int flags ) {
 
 
 /*
-=====================
-FS_PureServerSetLoadedPaks
-
-If the string is empty, all data sources will be allowed.
-If not empty, only pk3 files that match one of the space
-separated checksums will be checked for files, with the
-exception of .cfg and .dat files.
-=====================
-*/
+ * If the string is empty, all data sources will be allowed.
+ * If not empty, only pk3 files that match one of the space separated checksums
+ * will be checked for files, with the exception of .cfg and .dat files.
+ */
 void FS_PureServerSetLoadedPaks( const char *pakSums, const char *pakNames ) {
-    int i, c, d;
+    int     i, c, d;
 
     Cmd_TokenizeString( pakSums );
 
@@ -3768,25 +3841,27 @@ void FS_PureServerSetLoadedPaks( const char *pakSums, const char *pakNames ) {
         fs_serverPaks[i] = atoi( Cmd_Argv( i ) );
     }
 
-    if ( fs_numServerPaks ) {
+    if (fs_numServerPaks) {
         Com_DPrintf( "Connected to a pure server.\n" );
-    } else
+    }
+    else
     {
-        if ( fs_reordered ) {
-            // show_bug.cgi?id=540
+        if (fs_reordered)
+        {
             // force a restart to make sure the search order will be correct
             Com_DPrintf( "FS search reorder is required\n" );
-            FS_Restart( fs_checksumFeed );
+            FS_Restart(fs_checksumFeed);
             return;
         }
     }
 
     for ( i = 0 ; i < c ; i++ ) {
-        if ( fs_serverPakNames[i] ) {
-            Z_Free( fs_serverPakNames[i] );
+        if (fs_serverPakNames[i]) {
+            Z_Free(fs_serverPakNames[i]);
         }
         fs_serverPakNames[i] = NULL;
     }
+
     if ( pakNames && *pakNames ) {
         Cmd_TokenizeString( pakNames );
 
@@ -3802,16 +3877,12 @@ void FS_PureServerSetLoadedPaks( const char *pakSums, const char *pakNames ) {
 }
 
 /*
-=====================
-FS_PureServerSetReferencedPaks
-
-The checksums and names of the pk3 files referenced at the server
-are sent to the client and stored here. The client will use these
-checksums to see if any pk3 files need to be auto-downloaded.
-=====================
-*/
+ * The checksums and names of the pk3 files referenced at the server are sent to
+ * the client and stored here. The client will use these checksums to see if any
+ * pk3 files need to be auto-downloaded.
+ */
 void FS_PureServerSetReferencedPaks( const char *pakSums, const char *pakNames ) {
-    int i, c, d;
+    int i, c, d = 0;
 
     Cmd_TokenizeString( pakSums );
 
@@ -3820,18 +3891,18 @@ void FS_PureServerSetReferencedPaks( const char *pakSums, const char *pakNames )
         c = MAX_SEARCH_PATHS;
     }
 
-    fs_numServerReferencedPaks = c;
-
     for ( i = 0 ; i < c ; i++ ) {
         fs_serverReferencedPaks[i] = atoi( Cmd_Argv( i ) );
     }
 
-    for ( i = 0 ; i < c ; i++ ) {
-        if ( fs_serverReferencedPakNames[i] ) {
-            Z_Free( fs_serverReferencedPakNames[i] );
-        }
+    for (i = 0 ; i < ARRAY_LEN(fs_serverReferencedPakNames); i++)
+    {
+        if (fs_serverReferencedPakNames[i])
+            Z_Free(fs_serverReferencedPakNames[i]);
+
         fs_serverReferencedPakNames[i] = NULL;
     }
+
     if ( pakNames && *pakNames ) {
         Cmd_TokenizeString( pakNames );
 

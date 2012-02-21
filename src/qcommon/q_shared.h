@@ -777,6 +777,7 @@ const char  *COM_GetExtension ( const char *name );
 void    COM_StripExtension ( const char *in, char *out );
 void    COM_StripExtension2 ( const char *in, char *out, int destsize );
 void    COM_StripFilename ( char *in, char *out );
+qboolean COM_CompareExtension(const char *in, const char *ext);
 void    COM_DefaultExtension ( char *path, int maxSize, const char *extension );
 
 void    COM_BeginParseSession ( const char *name );
