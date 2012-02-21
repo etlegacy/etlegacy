@@ -32,10 +32,13 @@ Install [mercurial](mercurial.selenic.com) and [premake4](ndustriousone.com/prem
 Download the latest source code from the repository hosted at 
 sourceforge.net: _hg clone http://hg.code.sf.net/p/etlegacy/code etlegacy-code_
 
-To build linux binary run _premake4 gmake_ followed by _make_
+To **build linux binary** run _premake4 gmake_ followed by _make_
 
-To build windows binary run _premake4 gmake_ followed by _make config=mingw32_
+To **cross-compile windows binary** on linux run _premake4 gmake_ followed by _make config=mingw32_
 (you must have cross-compiling toolchain set up for this)
+
+To **build windows binary** run _premake4 vs2010_ (or any other VS version) and
+open the produced solution in Visual Studio.
 
 LICENSE
 =======
