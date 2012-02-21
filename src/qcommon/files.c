@@ -2730,7 +2730,7 @@ void FS_TouchFile_f( void ) {
 qboolean FS_Which(const char *filename, void *searchPath)
 {
 //     searchpath_t *search = searchPath;
-//     
+//
 //     if(FS_FOpenFileReadDir(filename, search, NULL, qfalse, qfalse) > 0)
 //     {
 //         if(search->pack)
@@ -2744,7 +2744,7 @@ qboolean FS_Which(const char *filename, void *searchPath)
 //             return qtrue;
 //         }
 //     }
-    
+
     return qfalse;
 }
 
@@ -2752,26 +2752,26 @@ qboolean FS_Which(const char *filename, void *searchPath)
 void FS_Which_f( void ) {
 //     searchpath_t    *search;
 //     char        *filename;
-//     
+//
 //     filename = Cmd_Argv(1);
-//     
+//
 //     if ( !filename[0] ) {
 //         Com_Printf( "Usage: which <file>\n" );
 //         return;
 //     }
-//     
+//
 //     // qpaths are not supposed to have a leading slash
 //     if ( filename[0] == '/' || filename[0] == '\\' ) {
 //         filename++;
 //     }
-//     
+//
 //     // just wants to see if file is there
 //     for(search = fs_searchpaths; search; search = search->next)
 //     {
 //         if(FS_Which(filename, search))
 //             return;
 //     }
-//     
+//
 //     Com_Printf("File not found: \"%s\"\n", filename);
     return;
 }
@@ -3127,7 +3127,7 @@ void FS_Shutdown( qboolean closemfp ) {
     Cmd_RemoveCommand( "fdir" );
     Cmd_RemoveCommand( "touchFile" );
     Cmd_RemoveCommand( "which" );
-    
+
 #ifdef FS_MISSING
     if ( closemfp ) {
         fclose( missingFiles );
@@ -3890,6 +3890,8 @@ void FS_PureServerSetReferencedPaks( const char *pakSums, const char *pakNames )
     if ( c > MAX_SEARCH_PATHS ) {
         c = MAX_SEARCH_PATHS;
     }
+
+    fs_numServerReferencedPaks = c;
 
     for ( i = 0 ; i < c ; i++ ) {
         fs_serverReferencedPaks[i] = atoi( Cmd_Argv( i ) );
