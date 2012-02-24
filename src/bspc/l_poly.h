@@ -1,46 +1,43 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
-//===========================================================================
-//
-// Name:				l_poly.h
-// Function:
-// Programmer:		id Sofware
-//						Mr Elusive (MrElusive@demigod.demon.nl)
-// Last update:	1997-12-04
-// Tab Size:		3
-//===========================================================================
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ *
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
+ *
+ * This file is part of ET: Legacy.
+ *
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file l_poly.h
+ * @author Mr Elusive (MrElusive@demigod.demon.nl)
+ * @brief polygon (winding) library
+ */
 
 //a winding gives the bounding points of a convex polygon
 typedef struct
 {
-	int numpoints;
-	vec3_t p[4];            //variable sized
+    int numpoints;
+    vec3_t p[4];            //variable sized
 } winding_t;
 
 #define MAX_POINTS_ON_WINDING   96
@@ -67,7 +64,7 @@ void WindingCenter( winding_t *w, vec3_t center );
 //clips the given winding to the given plane and gives the front
 //and back part of the clipped winding
 void ClipWindingEpsilon( winding_t *in, vec3_t normal, vec_t dist,
-						 vec_t epsilon, winding_t **front, winding_t **back );
+                         vec_t epsilon, winding_t **front, winding_t **back );
 //returns the fragment of the given winding that is on the front
 //side of the cliping plane. The original is freed.
 winding_t *ChopWinding( winding_t *in, vec3_t normal, vec_t dist );
@@ -130,7 +127,7 @@ int PointOnWinding( winding_t *w, vec3_t normal, float dist, vec3_t point, int *
 int FindPlaneSeperatingWindings( winding_t *w1, winding_t *w2, vec3_t dir, vec3_t normal, float *dist, vec3_t* points );
 //
 int WindingsNonConvex( winding_t *w1, winding_t *w2,
-					   vec3_t normal1, vec3_t normal2,
-					   float dist1, float dist2 );
+                       vec3_t normal1, vec3_t normal2,
+                       float dist1, float dist2 );
 //#endif //ME
 

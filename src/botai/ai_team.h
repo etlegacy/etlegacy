@@ -1,53 +1,50 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
-
-/*****************************************************************************
- * name:		ai_team.h
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
- * desc:		Wolf bot AI
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
  *
+ * This file is part of ET: Legacy.
  *
- *****************************************************************************/
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file ai_team.h
+ * @brief Wolf bot AI
+ */
 
 #ifndef BOT_SHOWTEXT
 #define BOT_SHOWTEXT    2
 
 typedef enum {
-	VCHAT_MEDIC,
-	VCHAT_NEEDAMMO,
-	VCHAT_NEEDBACKUP,
-	VCHAT_DYNAMITEPLANTED,
-	VCHAT_GREATSHOT,
-	VCHAT_HI,
-	VCHAT_THANKS,
-	VCHAT_FOLLOWME,
-	VCHAT_DROPFLAG,
+    VCHAT_MEDIC,
+    VCHAT_NEEDAMMO,
+    VCHAT_NEEDBACKUP,
+    VCHAT_DYNAMITEPLANTED,
+    VCHAT_GREATSHOT,
+    VCHAT_HI,
+    VCHAT_THANKS,
+    VCHAT_FOLLOWME,
+    VCHAT_DROPFLAG,
 } vchat_id_t;
 
 
@@ -60,8 +57,8 @@ typedef enum {
 //
 typedef struct AI_Team_s
 {
-	// Last time we had a vo from this team
-	int last_voice_chat;
+    // Last time we had a vo from this team
+    int last_voice_chat;
 
 } AI_Team_t;
 //
@@ -112,23 +109,23 @@ int BotClosestSeekCoverSpot( bot_state_t *bs );
 // Returns the entity number of the spot, -1 if N/A.
 int BotSquadGetNextAvailableSeekCoverSpot
 (
-	// The info for the bot
-	bot_state_t *bs,
-	// Moving forwards or backwards?
-	qboolean advance,
-	// entity id of the player we should check being in a seek_cover_sequence
-	int entityId
+    // The info for the bot
+    bot_state_t *bs,
+    // Moving forwards or backwards?
+    qboolean advance,
+    // entity id of the player we should check being in a seek_cover_sequence
+    int entityId
 );
-//	TAT 12/19/2002 - When a bot sees an enemy, he tells his squadmates
+//  TAT 12/19/2002 - When a bot sees an enemy, he tells his squadmates
 void BotSquadEnemySight( bot_state_t *bs, int enemy );
 
 
 // TAT 12/10/2002
-//		If possible, find a seek cover spot marked as exposed that is a parent or child of the current seek cover spot
+//      If possible, find a seek cover spot marked as exposed that is a parent or child of the current seek cover spot
 int BotGetAdjacentExposedCoverSpot( bot_state_t *bs );
 
 // TAT 1/8/2003
-//	Get the next cover spot towards the retreatTo entity - used when retreating
+//  Get the next cover spot towards the retreatTo entity - used when retreating
 int BotGetRetreatingCoverSpot( bot_state_t *bs, int retreatTo );
 
 void AI_Team_Init_All_Teams( void );

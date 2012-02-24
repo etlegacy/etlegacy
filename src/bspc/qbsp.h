@@ -1,32 +1,35 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
-
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ *
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
+ *
+ * This file is part of ET: Legacy.
+ *
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file qbsp.h
+ */
 
 #if defined( WIN32 ) || defined( _WIN32 )
 #include <io.h>
@@ -53,7 +56,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #define MAX_BRUSH_SIDES     128     //maximum number of sides per brush
 #define CLIP_EPSILON        0.1
-//#define MAX_MAP_BOUNDS		65535
+//#define MAX_MAP_BOUNDS        65535
 #define MAX_MAP_BOUNDS      ( 128 * 1024 )    // (SA) (9/17/01) new map dimensions (from Q3TA)
 #define BOGUS_RANGE         ( MAX_MAP_BOUNDS + 128 )    //somewhere outside the map
 
@@ -71,140 +74,140 @@ If you have questions concerning this license or the applicable additional terms
 //map plane
 typedef struct plane_s
 {
-	vec3_t normal;
-	vec_t dist;
-	byte /*int*/ type;
-	byte /*int*/ signbits;
-	struct plane_s  *hash_chain;
+    vec3_t normal;
+    vec_t dist;
+    byte /*int*/ type;
+    byte /*int*/ signbits;
+    struct plane_s  *hash_chain;
 } plane_t;
 //brush texture
 typedef struct
 {
-	vec_t shift[2];
-	vec_t rotate;
-	vec_t scale[2];
-	char name[32];
-	int flags;
-	int value;
+    vec_t shift[2];
+    vec_t rotate;
+    vec_t scale[2];
+    char name[32];
+    int flags;
+    int value;
 } brush_texture_t;
 //brush side
 typedef struct side_s
 {
-	int planenum;               // map plane this side is in
-	int texinfo;                    // texture reference
-	winding_t       *winding;   // winding of this side
-	struct side_s   *original;  // bspbrush_t sides will reference the mapbrush_t sides
-	int lightinfo;              // for SIN only
-	int contents;               // from miptex
-	int surf;                       // from miptex
-	unsigned short flags;       // side flags
+    int planenum;               // map plane this side is in
+    int texinfo;                    // texture reference
+    winding_t       *winding;   // winding of this side
+    struct side_s   *original;  // bspbrush_t sides will reference the mapbrush_t sides
+    int lightinfo;              // for SIN only
+    int contents;               // from miptex
+    int surf;                       // from miptex
+    unsigned short flags;       // side flags
 } side_t;       //sizeof(side_t) = 36
 //map brush
 typedef struct mapbrush_s
 {
-	int entitynum;
-	int brushnum;
+    int entitynum;
+    int brushnum;
 
-	int contents;
+    int contents;
 #ifdef ME
-	int expansionbbox;              //bbox used for expansion of the brush
-	int leafnum;
-	int modelnum;
+    int expansionbbox;              //bbox used for expansion of the brush
+    int leafnum;
+    int modelnum;
 #endif
 
-	vec3_t mins, maxs;
+    vec3_t mins, maxs;
 
-	int numsides;
-	side_t  *original_sides;
+    int numsides;
+    side_t  *original_sides;
 } mapbrush_t;
 //bsp face
 typedef struct face_s
 {
-	struct face_s       *next;      // on node
+    struct face_s       *next;      // on node
 
-	// the chain of faces off of a node can be merged or split,
-	// but each face_t along the way will remain in the chain
-	// until the entire tree is freed
-	struct face_s       *merged;    // if set, this face isn't valid anymore
-	struct face_s       *split[2];  // if set, this face isn't valid anymore
+    // the chain of faces off of a node can be merged or split,
+    // but each face_t along the way will remain in the chain
+    // until the entire tree is freed
+    struct face_s       *merged;    // if set, this face isn't valid anymore
+    struct face_s       *split[2];  // if set, this face isn't valid anymore
 
-	struct portal_s *portal;
-	int texinfo;
+    struct portal_s *portal;
+    int texinfo;
 #ifdef SIN
-	int lightinfo;
+    int lightinfo;
 #endif
-	int planenum;
-	int contents;                   // faces in different contents can't merge
-	int outputnumber;
-	winding_t           *w;
-	int numpoints;
-	qboolean badstartvert;                  // tjunctions cannot be fixed without a midpoint vertex
-	int vertexnums[MAXEDGES];
+    int planenum;
+    int contents;                   // faces in different contents can't merge
+    int outputnumber;
+    winding_t           *w;
+    int numpoints;
+    qboolean badstartvert;                  // tjunctions cannot be fixed without a midpoint vertex
+    int vertexnums[MAXEDGES];
 } face_t;
 //bsp brush
 typedef struct bspbrush_s
 {
-	struct      bspbrush_s  *next;
-	vec3_t mins, maxs;
-	int side, testside;             // side of node during construction
-	mapbrush_t  *original;
-	int numsides;
-	side_t sides[6];                // variably sized
+    struct      bspbrush_s  *next;
+    vec3_t mins, maxs;
+    int side, testside;             // side of node during construction
+    mapbrush_t  *original;
+    int numsides;
+    side_t sides[6];                // variably sized
 } bspbrush_t;   //sizeof(bspbrush_t) = 44 + numsides * sizeof(side_t)
 //bsp node
 typedef struct node_s
 {
-	//both leafs and nodes
-	int planenum;               // -1 = leaf node
-	struct node_s   *parent;
-	vec3_t mins, maxs;          // valid after portalization
-	bspbrush_t      *volume;        // one for each leaf/node
+    //both leafs and nodes
+    int planenum;               // -1 = leaf node
+    struct node_s   *parent;
+    vec3_t mins, maxs;          // valid after portalization
+    bspbrush_t      *volume;        // one for each leaf/node
 
-	// nodes only
-	qboolean detail_seperator;              // a detail brush caused the split
-	side_t          *side;      // the side that created the node
-	struct node_s   *children[2];
-	face_t          *faces;
+    // nodes only
+    qboolean detail_seperator;              // a detail brush caused the split
+    side_t          *side;      // the side that created the node
+    struct node_s   *children[2];
+    face_t          *faces;
 
-	// leafs only
-	bspbrush_t      *brushlist; // fragments of all brushes in this leaf
-	int contents;               // OR of all brush contents
-	int occupied;               // 1 or greater can reach entity
-	entity_t            *occupant;  // for leak file testing
-	int cluster;                    // for portalfile writing
-	int area;                       // for areaportals
-	struct portal_s *portals;   // also on nodes during construction
+    // leafs only
+    bspbrush_t      *brushlist; // fragments of all brushes in this leaf
+    int contents;               // OR of all brush contents
+    int occupied;               // 1 or greater can reach entity
+    entity_t            *occupant;  // for leak file testing
+    int cluster;                    // for portalfile writing
+    int area;                       // for areaportals
+    struct portal_s *portals;   // also on nodes during construction
 #ifdef NODELIST
-	struct node_s *next;            //next node in the nodelist
+    struct node_s *next;            //next node in the nodelist
 #endif
 #ifdef ME
-	int expansionbboxes;            //OR of all bboxes used for expansion of the brushes
-	int modelnum;
+    int expansionbboxes;            //OR of all bboxes used for expansion of the brushes
+    int modelnum;
 #endif
 } node_t;       //sizeof(node_t) = 80 bytes
 //bsp portal
 typedef struct portal_s
 {
-	plane_t plane;
-	node_t *onnode;             // NULL = outside box
-	node_t *nodes[2];               // [0] = front side of plane
-	struct portal_s *next[2];
-	winding_t *winding;
+    plane_t plane;
+    node_t *onnode;             // NULL = outside box
+    node_t *nodes[2];               // [0] = front side of plane
+    struct portal_s *next[2];
+    winding_t *winding;
 
-	qboolean sidefound;             // false if ->side hasn't been checked
-	side_t *side;                   // NULL = non-visible
-	face_t *face[2];                // output face in bsp file
+    qboolean sidefound;             // false if ->side hasn't been checked
+    side_t *side;                   // NULL = non-visible
+    face_t *face[2];                // output face in bsp file
 #ifdef ME
-	struct tmp_face_s *tmpface; //pointer to the tmpface created for this portal
-	int planenum;                   //number of the map plane used by the portal
+    struct tmp_face_s *tmpface; //pointer to the tmpface created for this portal
+    int planenum;                   //number of the map plane used by the portal
 #endif
 } portal_t;
 //bsp tree
 typedef struct
 {
-	node_t      *headnode;
-	node_t outside_node;
-	vec3_t mins, maxs;
+    node_t      *headnode;
+    node_t outside_node;
+    vec3_t mins, maxs;
 } tree_t;
 
 //=============================================================================
@@ -271,11 +274,11 @@ extern brush_texture_t side_brushtextures[MAX_MAPFILE_BRUSHSIDES];
 
 typedef struct
 {
-	float vecs[2][4];           // [s/t][xyz offset]
-	int flags;              // miptex flags + overrides
-	int value;
-	char texture[64];           // texture name (textures/*.wal)
-	int nexttexinfo;        // for animations, -1 = end of chain
+    float vecs[2][4];           // [s/t][xyz offset]
+    int flags;              // miptex flags + overrides
+    int value;
+    char texture[64];           // texture name (textures/*.wal)
+    int nexttexinfo;        // for animations, -1 = end of chain
 } map_texinfo_t;
 
 extern map_texinfo_t map_texinfo[MAX_MAPFILE_TEXINFO];
@@ -340,11 +343,11 @@ void Q3_LoadMapFromBSP( struct quakefile_s *qf );
 
 typedef struct
 {
-	char name[64];
-	int flags;
-	int value;
-	int contents;
-	char animname[64];
+    char name[64];
+    int flags;
+    int value;
+    int contents;
+    char animname[64];
 } textureref_t;
 
 #define MAX_MAP_TEXTURES    1024

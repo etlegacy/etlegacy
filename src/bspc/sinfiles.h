@@ -1,31 +1,33 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ *
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
+ *
+ * This file is part of ET: Legacy.
+ *
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ */
 
 /*
 ==============================================================================
@@ -82,7 +84,7 @@ If you have questions concerning this license or the applicable additional terms
 
 typedef struct
 {
-	int fileofs, filelen;
+    int fileofs, filelen;
 } sin_lump_t;
 
 #define SIN_LUMP_ENTITIES       0
@@ -112,23 +114,23 @@ typedef struct
 
 typedef struct
 {
-	int ident;
-	int version;
-	sin_lump_t lumps[SINHEADER_LUMPS];
+    int ident;
+    int version;
+    sin_lump_t lumps[SINHEADER_LUMPS];
 } sin_dheader_t;
 
 typedef struct
 {
-	float mins[3], maxs[3];
-	float origin[3];            // for sounds or lights
-	int headnode;
-	int firstface, numfaces;            // submodels just draw faces
-										// without walking the bsp tree
+    float mins[3], maxs[3];
+    float origin[3];            // for sounds or lights
+    int headnode;
+    int firstface, numfaces;            // submodels just draw faces
+    // without walking the bsp tree
 } sin_dmodel_t;
 
 typedef struct
 {
-	float point[3];
+    float point[3];
 } sin_dvertex_t;
 
 
@@ -146,9 +148,9 @@ typedef struct
 
 typedef struct
 {
-	float normal[3];
-	float dist;
-	int type;           // PLANE_X - PLANE_ANYZ ?remove? trivial to regenerate
+    float normal[3];
+    float dist;
+    int type;           // PLANE_X - PLANE_ANYZ ?remove? trivial to regenerate
 } sin_dplane_t;
 
 
@@ -240,42 +242,42 @@ typedef struct
 
 typedef struct
 {
-	int planenum;
-	int children[2];            // negative numbers are -(leafs+1), not nodes
-	short mins[3];              // for frustom culling
-	short maxs[3];
-	unsigned short firstface;
-	unsigned short numfaces;    // counting both sides
+    int planenum;
+    int children[2];            // negative numbers are -(leafs+1), not nodes
+    short mins[3];              // for frustom culling
+    short maxs[3];
+    unsigned short firstface;
+    unsigned short numfaces;    // counting both sides
 } sin_dnode_t;
 
 #ifdef SIN
 
 typedef struct sin_lightvalue_s
 {
-	int value;              // light emission, etc
-	vec3_t color;
-	float direct;
-	float directangle;
-	float directstyle;
-	char directstylename[32];
+    int value;              // light emission, etc
+    vec3_t color;
+    float direct;
+    float directangle;
+    float directstyle;
+    char directstylename[32];
 } sin_lightvalue_t;
 
 typedef struct sin_texinfo_s
 {
-	float vecs[2][4];           // [s/t][xyz offset]
-	int flags;                  // miptex flags + overrides
-	char texture[64];           // texture name (textures/*.wal)
-	int nexttexinfo;            // for animations, -1 = end of chain
-	float trans_mag;
-	int trans_angle;
-	int base_angle;
-	float animtime;
-	float nonlit;
-	float translucence;
-	float friction;
-	float restitution;
-	vec3_t color;
-	char groupname[32];
+    float vecs[2][4];           // [s/t][xyz offset]
+    int flags;                  // miptex flags + overrides
+    char texture[64];           // texture name (textures/*.wal)
+    int nexttexinfo;            // for animations, -1 = end of chain
+    float trans_mag;
+    int trans_angle;
+    int base_angle;
+    float animtime;
+    float nonlit;
+    float translucence;
+    float friction;
+    float restitution;
+    vec3_t color;
+    char groupname[32];
 } sin_texinfo_t;
 
 #endif //SIN
@@ -284,7 +286,7 @@ typedef struct sin_texinfo_s
 // counterclockwise use of the edge in a face
 typedef struct
 {
-	unsigned short v[2];        // vertex numbers
+    unsigned short v[2];        // vertex numbers
 } sin_dedge_t;
 
 #ifdef MAXLIGHTMAPS
@@ -293,52 +295,52 @@ typedef struct
 #define MAXLIGHTMAPS    16
 typedef struct
 {
-	unsigned short planenum;
-	short side;
+    unsigned short planenum;
+    short side;
 
-	int firstedge;          // we must support > 64k edges
-	short numedges;
-	short texinfo;
+    int firstedge;          // we must support > 64k edges
+    short numedges;
+    short texinfo;
 
 // lighting info
-	byte styles[MAXLIGHTMAPS];
-	int lightofs;           // start of [numstyles*surfsize] samples
+    byte styles[MAXLIGHTMAPS];
+    int lightofs;           // start of [numstyles*surfsize] samples
 #ifdef SIN
-	int lightinfo;
+    int lightinfo;
 #endif
 } sin_dface_t;
 
 typedef struct
 {
-	int contents;                       // OR of all brushes (not needed?)
+    int contents;                       // OR of all brushes (not needed?)
 
-	short cluster;
-	short area;
+    short cluster;
+    short area;
 
-	short mins[3];                      // for frustum culling
-	short maxs[3];
+    short mins[3];                      // for frustum culling
+    short maxs[3];
 
-	unsigned short firstleafface;
-	unsigned short numleaffaces;
+    unsigned short firstleafface;
+    unsigned short numleaffaces;
 
-	unsigned short firstleafbrush;
-	unsigned short numleafbrushes;
+    unsigned short firstleafbrush;
+    unsigned short numleafbrushes;
 } sin_dleaf_t;
 
 typedef struct
 {
-	unsigned short planenum;        // facing out of the leaf
-	short texinfo;
+    unsigned short planenum;        // facing out of the leaf
+    short texinfo;
 #ifdef SIN
-	int lightinfo;
+    int lightinfo;
 #endif
 } sin_dbrushside_t;
 
 typedef struct
 {
-	int firstside;
-	int numsides;
-	int contents;
+    int firstside;
+    int numsides;
+    int contents;
 } sin_dbrush_t;
 
 #define ANGLE_UP    -1
@@ -352,8 +354,8 @@ typedef struct
 #define DVIS_PHS    1
 typedef struct
 {
-	int numclusters;
-	int bitofs[8][2];           // bitofs[numclusters][2]
+    int numclusters;
+    int bitofs[8][2];           // bitofs[numclusters][2]
 } sin_dvis_t;
 
 // each area has a list of portals that lead into other areas
@@ -361,12 +363,12 @@ typedef struct
 // hearable even if the vis info says that it should be
 typedef struct
 {
-	int portalnum;
-	int otherarea;
+    int portalnum;
+    int otherarea;
 } sin_dareaportal_t;
 
 typedef struct
 {
-	int numareaportals;
-	int firstareaportal;
+    int numareaportals;
+    int firstareaportal;
 } sin_darea_t;

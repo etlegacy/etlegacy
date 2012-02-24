@@ -1,57 +1,54 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
-
-/*****************************************************************************
- * name:		l_precomp.h
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
- * desc:		pre compiler
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
  *
+ * This file is part of ET: Legacy.
  *
- *****************************************************************************/
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file l_precom.h
+ * @brief pre compiler
+ */
 
 #ifndef _MAX_PATH
-	#define MAX_PATH            MAX_QPATH
+#define MAX_PATH            MAX_QPATH
 #endif
 
 #ifndef PATH_SEPERATORSTR
-	#if defined( WIN32 ) | defined( _WIN32 ) | defined( __NT__ ) | defined( __WINDOWS__ ) | defined( __WINDOWS_386__ )
-		#define PATHSEPERATOR_STR       "\\"
-	#else
-		#define PATHSEPERATOR_STR       "/"
-	#endif
+#if defined( WIN32 ) | defined( _WIN32 ) | defined( __NT__ ) | defined( __WINDOWS__ ) | defined( __WINDOWS_386__ )
+#define PATHSEPERATOR_STR       "\\"
+#else
+#define PATHSEPERATOR_STR       "/"
+#endif
 #endif
 #ifndef PATH_SEPERATORCHAR
-	#if defined( WIN32 ) | defined( _WIN32 ) | defined( __NT__ ) | defined( __WINDOWS__ ) | defined( __WINDOWS_386__ )
-		#define PATHSEPERATOR_CHAR      '\\'
-	#else
-		#define PATHSEPERATOR_CHAR      '/'
-	#endif
+#if defined( WIN32 ) | defined( _WIN32 ) | defined( __NT__ ) | defined( __WINDOWS__ ) | defined( __WINDOWS_386__ )
+#define PATHSEPERATOR_CHAR      '\\'
+#else
+#define PATHSEPERATOR_CHAR      '/'
+#endif
 #endif
 
 
@@ -72,14 +69,14 @@ If you have questions concerning this license or the applicable additional terms
 //macro definitions
 typedef struct define_s
 {
-	char *name;                         //define name
-	int flags;                          //define flags
-	int builtin;                        // > 0 if builtin define
-	int numparms;                       //number of define parameters
-	token_t *parms;                     //define parameters
-	token_t *tokens;                    //macro tokens (possibly containing parm tokens)
-	struct define_s *next;              //next defined macro in a list
-	struct define_s *hashnext;          //next define in the hash chain
+    char *name;                         //define name
+    int flags;                          //define flags
+    int builtin;                        // > 0 if builtin define
+    int numparms;                       //number of define parameters
+    token_t *parms;                     //define parameters
+    token_t *tokens;                    //macro tokens (possibly containing parm tokens)
+    struct define_s *next;              //next defined macro in a list
+    struct define_s *hashnext;          //next define in the hash chain
 } define_t;
 
 //indents
@@ -87,25 +84,25 @@ typedef struct define_s
 //#if, #else, #elif, #ifdef, #ifndef
 typedef struct indent_s
 {
-	int type;                               //indent type
-	int skip;                               //true if skipping current indent
-	script_t *script;                       //script the indent was in
-	struct indent_s *next;                  //next indent on the indent stack
+    int type;                               //indent type
+    int skip;                               //true if skipping current indent
+    script_t *script;                       //script the indent was in
+    struct indent_s *next;                  //next indent on the indent stack
 } indent_t;
 
 //source file
 typedef struct source_s
 {
-	char filename[_MAX_PATH];               //file name of the script
-	char includepath[_MAX_PATH];            //path to include files
-	punctuation_t *punctuations;            //punctuations to use
-	script_t *scriptstack;                  //stack with scripts of the source
-	token_t *tokens;                        //tokens to read first
-	define_t *defines;                      //list with macro definitions
-	define_t **definehash;                  //hash chain with defines
-	indent_t *indentstack;                  //stack with indents
-	int skip;                               // > 0 if skipping conditional code
-	token_t token;                          //last read token
+    char filename[_MAX_PATH];               //file name of the script
+    char includepath[_MAX_PATH];            //path to include files
+    punctuation_t *punctuations;            //punctuations to use
+    script_t *scriptstack;                  //stack with scripts of the source
+    token_t *tokens;                        //tokens to read first
+    define_t *defines;                      //list with macro definitions
+    define_t **definehash;                  //hash chain with defines
+    indent_t *indentstack;                  //stack with indents
+    int skip;                               // > 0 if skipping conditional code
+    token_t token;                          //last read token
 } source_t;
 
 

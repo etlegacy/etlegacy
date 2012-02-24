@@ -1,40 +1,36 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
-
-/*****************************************************************************
- * name:		l_struct.h
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
- * desc:		structure reading/writing
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
  *
+ * This file is part of ET: Legacy.
  *
- *****************************************************************************/
-
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file l_struct.h
+ * @brief structure reading / writing
+ */
 
 #define MAX_STRINGFIELD             80
 //field types
@@ -53,20 +49,20 @@ If you have questions concerning this license or the applicable additional terms
 //structure field definition
 typedef struct fielddef_s
 {
-	char *name;                                     //name of the field
-	int offset;                                     //offset in the structure
-	int type;                                       //type of the field
-	//type specific fields
-	int maxarray;                                   //maximum array size
-	float floatmin, floatmax;                   //float min and max
-	struct structdef_s *substruct;          //sub structure
+    char *name;                                     //name of the field
+    int offset;                                     //offset in the structure
+    int type;                                       //type of the field
+    //type specific fields
+    int maxarray;                                   //maximum array size
+    float floatmin, floatmax;                   //float min and max
+    struct structdef_s *substruct;          //sub structure
 } fielddef_t;
 
 //structure definition
 typedef struct structdef_s
 {
-	int size;
-	fielddef_t *fields;
+    int size;
+    fielddef_t *fields;
 } structdef_t;
 
 //read a structure from a script

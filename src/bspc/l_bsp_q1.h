@@ -1,32 +1,36 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
-
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ *
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
+ *
+ * This file is part of ET: Legacy.
+ *
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file l_bsp_q1.h
+ * @brief Quake1 BSP loading and writing
+ */
 
 // upper design bounds
 
@@ -63,7 +67,7 @@ If you have questions concerning this license or the applicable additional terms
 
 typedef struct
 {
-	int fileofs, filelen;
+    int fileofs, filelen;
 } q1_lump_t;
 
 #define Q1_LUMP_ENTITIES    0
@@ -86,37 +90,37 @@ typedef struct
 
 typedef struct
 {
-	float mins[3], maxs[3];
-	float origin[3];
-	int headnode[Q1_MAX_MAP_HULLS];
-	int visleafs;           // not including the solid leaf 0
-	int firstface, numfaces;
+    float mins[3], maxs[3];
+    float origin[3];
+    int headnode[Q1_MAX_MAP_HULLS];
+    int visleafs;           // not including the solid leaf 0
+    int firstface, numfaces;
 } q1_dmodel_t;
 
 typedef struct
 {
-	int version;
-	q1_lump_t lumps[Q1_HEADER_LUMPS];
+    int version;
+    q1_lump_t lumps[Q1_HEADER_LUMPS];
 } q1_dheader_t;
 
 typedef struct
 {
-	int nummiptex;
-	int dataofs[4];         // [nummiptex]
+    int nummiptex;
+    int dataofs[4];         // [nummiptex]
 } q1_dmiptexlump_t;
 
 #define MIPLEVELS   4
 typedef struct q1_miptex_s
 {
-	char name[16];
-	unsigned width, height;
-	unsigned offsets[MIPLEVELS];        // four mip maps stored
+    char name[16];
+    unsigned width, height;
+    unsigned offsets[MIPLEVELS];        // four mip maps stored
 } q1_miptex_t;
 
 
 typedef struct
 {
-	float point[3];
+    float point[3];
 } q1_dvertex_t;
 
 
@@ -132,9 +136,9 @@ typedef struct
 
 typedef struct
 {
-	float normal[3];
-	float dist;
-	int type;           // PLANE_X - PLANE_ANYZ ?remove? trivial to regenerate
+    float normal[3];
+    float dist;
+    int type;           // PLANE_X - PLANE_ANYZ ?remove? trivial to regenerate
 } q1_dplane_t;
 
 
@@ -149,26 +153,26 @@ typedef struct
 // !!! if this is changed, it must be changed in asm_i386.h too !!!
 typedef struct
 {
-	int planenum;
-	short children[2];          // negative numbers are -(leafs+1), not nodes
-	short mins[3];              // for sphere culling
-	short maxs[3];
-	unsigned short firstface;
-	unsigned short numfaces;    // counting both sides
+    int planenum;
+    short children[2];          // negative numbers are -(leafs+1), not nodes
+    short mins[3];              // for sphere culling
+    short maxs[3];
+    unsigned short firstface;
+    unsigned short numfaces;    // counting both sides
 } q1_dnode_t;
 
 typedef struct
 {
-	int planenum;
-	short children[2];          // negative numbers are contents
+    int planenum;
+    short children[2];          // negative numbers are contents
 } q1_dclipnode_t;
 
 
 typedef struct q1_texinfo_s
 {
-	float vecs[2][4];           // [s/t][xyz offset]
-	int miptex;
-	int flags;
+    float vecs[2][4];           // [s/t][xyz offset]
+    int miptex;
+    int flags;
 } q1_texinfo_t;
 #define TEX_SPECIAL     1       // sky or slime, no lightmap or 256 subdivision
 
@@ -176,22 +180,22 @@ typedef struct q1_texinfo_s
 // counterclockwise use of the edge in a face
 typedef struct
 {
-	unsigned short v[2];        // vertex numbers
+    unsigned short v[2];        // vertex numbers
 } q1_dedge_t;
 
 #define MAXLIGHTMAPS    4
 typedef struct
 {
-	short planenum;
-	short side;
+    short planenum;
+    short side;
 
-	int firstedge;          // we must support > 64k edges
-	short numedges;
-	short texinfo;
+    int firstedge;          // we must support > 64k edges
+    short numedges;
+    short texinfo;
 
 // lighting info
-	byte styles[MAXLIGHTMAPS];
-	int lightofs;           // start of [numstyles*surfsize] samples
+    byte styles[MAXLIGHTMAPS];
+    int lightofs;           // start of [numstyles*surfsize] samples
 } q1_dface_t;
 
 
@@ -207,16 +211,16 @@ typedef struct
 // all other leafs need visibility info
 typedef struct
 {
-	int contents;
-	int visofs;                         // -1 = no visibility info
+    int contents;
+    int visofs;                         // -1 = no visibility info
 
-	short mins[3];                          // for frustum culling
-	short maxs[3];
+    short mins[3];                          // for frustum culling
+    short maxs[3];
 
-	unsigned short firstmarksurface;
-	unsigned short nummarksurfaces;
+    unsigned short firstmarksurface;
+    unsigned short nummarksurfaces;
 
-	byte ambient_level[NUM_AMBIENTS];
+    byte ambient_level[NUM_AMBIENTS];
 } q1_dleaf_t;
 
 //============================================================================

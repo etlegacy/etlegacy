@@ -1,39 +1,36 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
-
-/*****************************************************************************
- * name:		l_script.h
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
- * desc:		lexicographical parser
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
  *
+ * This file is part of ET: Legacy.
  *
- *****************************************************************************/
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file l_script.h
+ * @brief lexicographical parser
+ */
 
 // Ridah, can't get it to compile without this
 #ifndef QDECL
@@ -60,7 +57,7 @@ If you have questions concerning this license or the applicable additional terms
 //maximum path length
 #ifndef _MAX_PATH
 // TTimo: used to be MAX_QPATH, which is the game filesystem max len, and not the OS max len
-	#define _MAX_PATH               1024
+#define _MAX_PATH               1024
 #endif
 
 
@@ -82,10 +79,10 @@ If you have questions concerning this license or the applicable additional terms
 
 //string sub type
 //---------------
-//		the length of the string
+//      the length of the string
 //literal sub type
 //----------------
-//		the ASCII code of the literal
+//      the ASCII code of the literal
 //number sub type
 //---------------
 #define TT_DECIMAL                  0x0008  // decimal number
@@ -163,52 +160,52 @@ If you have questions concerning this license or the applicable additional terms
 #define P_DOLLAR                        52
 //name sub type
 //-------------
-//		the length of the name
+//      the length of the name
 
 //punctuation
 typedef struct punctuation_s
 {
-	char *p;                        //punctuation character(s)
-	int n;                          //punctuation indication
-	struct punctuation_s *next;     //next punctuation
+    char *p;                        //punctuation character(s)
+    int n;                          //punctuation indication
+    struct punctuation_s *next;     //next punctuation
 } punctuation_t;
 
 //token
 typedef struct token_s
 {
-	char string[MAX_TOKEN];         //available token
-	int type;                       //last read token type
-	int subtype;                    //last read token sub type
+    char string[MAX_TOKEN];         //available token
+    int type;                       //last read token type
+    int subtype;                    //last read token sub type
 #ifdef NUMBERVALUE
-	unsigned long int intvalue; //integer value
-	long double floatvalue;         //floating point value
+    unsigned long int intvalue; //integer value
+    long double floatvalue;         //floating point value
 #endif //NUMBERVALUE
-	char *whitespace_p;             //start of white space before token
-	char *endwhitespace_p;          //start of white space before token
-	int line;                       //line the token was on
-	int linescrossed;               //lines crossed in white space
-	struct token_s *next;           //next token in chain
+    char *whitespace_p;             //start of white space before token
+    char *endwhitespace_p;          //start of white space before token
+    int line;                       //line the token was on
+    int linescrossed;               //lines crossed in white space
+    struct token_s *next;           //next token in chain
 } token_t;
 
 //script file
 typedef struct script_s
 {
-	char filename[_MAX_PATH];       //file name of the script
-	char *buffer;                       //buffer containing the script
-	char *script_p;                 //current pointer in the script
-	char *end_p;                    //pointer to the end of the script
-	char *lastscript_p;             //script pointer before reading token
-	char *whitespace_p;             //begin of the white space
-	char *endwhitespace_p;          //end of the white space
-	int length;                     //length of the script in bytes
-	int line;                       //current line in script
-	int lastline;                   //line before reading token
-	int tokenavailable;             //set by UnreadLastToken
-	int flags;                      //several script flags
-	punctuation_t *punctuations;    //the punctuations used in the script
-	punctuation_t **punctuationtable;
-	token_t token;                  //available token
-	struct script_s *next;          //next script in a chain
+    char filename[_MAX_PATH];       //file name of the script
+    char *buffer;                       //buffer containing the script
+    char *script_p;                 //current pointer in the script
+    char *end_p;                    //pointer to the end of the script
+    char *lastscript_p;             //script pointer before reading token
+    char *whitespace_p;             //begin of the white space
+    char *endwhitespace_p;          //end of the white space
+    int length;                     //length of the script in bytes
+    int line;                       //current line in script
+    int lastline;                   //line before reading token
+    int tokenavailable;             //set by UnreadLastToken
+    int flags;                      //several script flags
+    punctuation_t *punctuations;    //the punctuations used in the script
+    punctuation_t **punctuationtable;
+    token_t token;                  //available token
+    struct script_s *next;          //next script in a chain
 } script_t;
 
 //read a token from the script

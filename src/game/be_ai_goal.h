@@ -1,39 +1,36 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
-
-/*****************************************************************************
- * name:		be_ai_goal.h
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
- * desc:		goal AI
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
  *
+ * This file is part of ET: Legacy.
  *
- *****************************************************************************/
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file be_ai_goal.h
+ * @brief goal AI
+ */
 
 #define MAX_AVOIDGOALS          64
 #define MAX_GOALSTACK           8
@@ -48,12 +45,12 @@ If you have questions concerning this license or the applicable additional terms
 
 // Rafael gameskill
 /*typedef enum {
-	GSKILL_EASY = 1,
-	GSKILL_MEDIUM,
-	GSKILL_MEDIUMHARD, // normal default level
-	GSKILL_HARD,
-	GSKILL_VERYHARD,
-	GSKILL_MAX		// must always be last
+    GSKILL_EASY = 1,
+    GSKILL_MEDIUM,
+    GSKILL_MEDIUMHARD, // normal default level
+    GSKILL_HARD,
+    GSKILL_VERYHARD,
+    GSKILL_MAX      // must always be last
 } gameskill_t;*/
 
 // bot goal urgency
@@ -65,15 +62,15 @@ If you have questions concerning this license or the applicable additional terms
 //a bot goal
 typedef struct bot_goal_s
 {
-	vec3_t origin;              //origin of the goal
-	int areanum;                //area number of the goal
-	vec3_t mins, maxs;          //mins and maxs of the goal
-	int entitynum;              //number of the goal entity
-	int number;                 //goal number
-	int flags;                  //goal flags
-	int iteminfo;               //item information
-	int urgency;                //how urgent is the goal? should we be allowed to exit autonomy range to reach the goal?
-	int goalEndTime;            // When is the shortest time this can end?
+    vec3_t origin;              //origin of the goal
+    int areanum;                //area number of the goal
+    vec3_t mins, maxs;          //mins and maxs of the goal
+    int entitynum;              //number of the goal entity
+    int number;                 //goal number
+    int flags;                  //goal flags
+    int iteminfo;               //item information
+    int urgency;                //how urgent is the goal? should we be allowed to exit autonomy range to reach the goal?
+    int goalEndTime;            // When is the shortest time this can end?
 } bot_goal_t;
 
 //reset the whole goal state, but keep the item weights
@@ -101,7 +98,7 @@ int BotGetSecondGoal( int goalstate, bot_goal_t *goal );
 int BotChooseLTGItem( int goalstate, vec3_t origin, int *inventory, int travelflags );
 //choose the best nearby goal item for the bot
 int BotChooseNBGItem( int goalstate, vec3_t origin, int *inventory, int travelflags,
-					  bot_goal_t *ltg, float maxtime );
+                      bot_goal_t *ltg, float maxtime );
 //returns true if the bot touches the goal
 int BotTouchingGoal( vec3_t origin, bot_goal_t *goal );
 //returns true if the goal should be visible but isn't
@@ -133,9 +130,9 @@ int BotAllocGoalState( int client );
 //free the given goal state
 void BotFreeGoalState( int handle );
 //setup the goal AI
-// START	Arnout changes, 28-08-2002.
+// START    Arnout changes, 28-08-2002.
 // single player
 int BotSetupGoalAI( qboolean singleplayer );
-// END	Arnout changes, 28-08-2002.
+// END  Arnout changes, 28-08-2002.
 //shut down the goal AI
 void BotShutdownGoalAI( void );

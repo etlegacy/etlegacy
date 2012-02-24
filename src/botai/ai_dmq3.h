@@ -1,41 +1,36 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
-
-/*****************************************************************************
- * name:		ai_dmq3.h
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
- * desc:		Wolf bot AI
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
  *
+ * This file is part of ET: Legacy.
  *
- *****************************************************************************/
-
-
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file ai_dmq3.h
+ * @brief Wolf bot AI
+ */
 
 // How many targets we'll let the bots choose between?
 #define BOT_MAX_POTENTIAL_TARGETS 10
@@ -55,26 +50,26 @@ If you have questions concerning this license or the applicable additional terms
 //
 typedef struct BotTarget_s
 {
-	// Who is this target?
-	int m_target;
+    // Who is this target?
+    int m_target;
 
-	// Distance from bot
-	float m_distance;
+    // Distance from bot
+    float m_distance;
 
-	// Did he shoot us?
-	qboolean m_thisGuyShotUsDammit;
+    // Did he shoot us?
+    qboolean m_thisGuyShotUsDammit;
 
-	// Did we see him?
-	qboolean m_canSeeTarget;
+    // Did we see him?
+    qboolean m_canSeeTarget;
 
-	// Did we hear him?
-	qboolean m_canHearTarget;
+    // Did we hear him?
+    qboolean m_canHearTarget;
 
-	// Did we hear footsteps?
-	qboolean m_heardFootSteps;
+    // Did we hear footsteps?
+    qboolean m_heardFootSteps;
 
-	// Did we hear shooting?
-	qboolean m_heardShooting;
+    // Did we hear shooting?
+    qboolean m_heardShooting;
 
 } BotTarget_t;
 //
@@ -124,14 +119,14 @@ float BotGetRawMovementAutonomyRange( bot_state_t *bs );
 float BotGetMovementAutonomyRange( bot_state_t *bs, bot_goal_t *goal );
 
 // Start - TAT 9/18/2002
-//	What distance should a bot be from its leader during a follow order?  Based on autonomy
+//  What distance should a bot be from its leader during a follow order?  Based on autonomy
 float BotGetFollowAutonomyDist( bot_state_t *bs );
 
 // Is a bot within the desired distance of its leader?
 qboolean BotWithinLeaderFollowDist( bot_state_t *bs );
 // End - TAT 9/18/2002
 
-// Start	TAT 9/23/2002
+// Start    TAT 9/23/2002
 // Update recon state information for a bot
 void BotUpdateReconInfo( bot_state_t *bs );
 
@@ -234,9 +229,9 @@ int TeamPlayIsOn( void );
 // Set up our danger spots
 void BotFindEnemies
 (
-	bot_state_t *bs,
-	int *dangerSpots,
-	int *dangerSpotCount
+    bot_state_t *bs,
+    int *dangerSpots,
+    int *dangerSpotCount
 );
 
 // Returns true if we can do the battle fight.

@@ -1,32 +1,36 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).  
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
-
-// bg_local.h -- local definitions for the bg (both games) files
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ *
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
+ *
+ * This file is part of ET: Legacy.
+ *
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file bg_local.h
+ * @brief local definitions for the bg (both games) files
+ */
 
 #define MIN_WALK_NORMAL 0.7     // can't walk on very steep slopes
 
@@ -46,23 +50,23 @@ If you have questions concerning this license or the applicable additional terms
 // pmove, just to make damn sure we don't have
 // any differences when running on client or server
 typedef struct {
-	vec3_t forward, right, up;
-	float frametime;
+    vec3_t forward, right, up;
+    float frametime;
 
-	int msec;
+    int msec;
 
-	qboolean walking;
-	qboolean groundPlane;
-	trace_t groundTrace;
+    qboolean walking;
+    qboolean groundPlane;
+    trace_t groundTrace;
 
-	float impactSpeed;
+    float impactSpeed;
 
-	vec3_t previous_origin;
-	vec3_t previous_velocity;
-	int previous_waterlevel;
+    vec3_t previous_origin;
+    vec3_t previous_velocity;
+    int previous_waterlevel;
 
-	// Ridah, ladders
-	qboolean ladder;
+    // Ridah, ladders
+    qboolean ladder;
 } pml_t;
 
 extern pmove_t     *pm;
@@ -70,9 +74,9 @@ extern pml_t pml;
 
 // movement parameters
 extern float pm_stopspeed;
-//extern	float	pm_duckScale;
+//extern    float   pm_duckScale;
 
-//----(SA)	modified
+//----(SA)  modified
 extern float pm_waterSwimScale;
 extern float pm_waterWadeScale;
 extern float pm_slagSwimScale;
@@ -89,7 +93,7 @@ extern float pm_waterfriction;
 extern float pm_slagfriction;
 extern float pm_flightfriction;
 
-//----(SA)	end
+//----(SA)  end
 
 extern int c_pmove;
 

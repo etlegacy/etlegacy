@@ -29,7 +29,8 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
  * @file qcommon.h
- * @brief definitions common between client and server, but not game or ref modules
+ * @brief definitions common between client and server, but not game or ref
+ * modules
  */
 
 #ifndef _QCOMMON_H_
