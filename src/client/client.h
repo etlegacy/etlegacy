@@ -47,7 +47,7 @@
 #define LIMBOCHAT_HEIGHT    7       // NERVE - SMF
 
 #define ETKEY_FILE "etkey"
-#define ETKEY_SIZE 2048
+#define ETKEY_SIZE 28
 
 // snapshots are a view of the server at a given time
 typedef struct {

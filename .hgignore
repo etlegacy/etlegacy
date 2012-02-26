@@ -1,6 +1,6 @@
 build/
-mingw-compile.sh
 
 syntax: glob
+*.sh
 *.kdev4
 *~
