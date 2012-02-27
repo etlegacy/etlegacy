@@ -1,6 +1,4 @@
 build/
-
-syntax: glob
 *.sh
 *.kdev4
 *~
