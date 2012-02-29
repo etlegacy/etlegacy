@@ -35,6 +35,9 @@
 #include "client.h"
 #include <limits.h>
 
+#include <curl/curl.h>
+#include <curl/easy.h>
+
 #include "snd_local.h" // fretn
 
 cvar_t  *cl_wavefilerecord;
@@ -914,6 +917,38 @@ void CL_MapLoading ( void ) {
 }
 
 /*
+ * @brief passed to libcurl in CURLOPT_WRITEFUNCTION.
+ * This is required on Windows
+ */
+size_t curl_write_etkey(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+    FS_WriteFile(ETKEY_FILE, (char*)ptr, size*nmemb);
+    return size*nmemb;
+}
+
+/*
+ * @brief Downloads a new etkey from www.etkey.org
+ */
+static qboolean CL_DownloadETkey(void)
+{
+    CURL *curl;
+
+    curl = curl_easy_init();
+    if (curl)
+    {
+        curl_easy_setopt(curl, CURLOPT_URL, "www.etkey.org/etkey.php");
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write_etkey);
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+        Com_Printf ("ETKEY: downloaded a new %s from ETkey.org\n", ETKEY_FILE);
+        return qtrue;
+    }
+    
+    Com_Printf (S_COLOR_RED "ERROR: unable to download a new %s\n", ETKEY_FILE);
+    return qfalse;
+}
+
+/*
  * @brief Update cl_guid using ETKEY_FILE and optional prefix
  * @author ioquake3
  */
@@ -943,8 +978,8 @@ static void CL_UpdateGUID ( const char *prefix, int prefix_len ) {
  *
  * 1. if the key exists and has the right size use it
  * 2. if the key exists, but does not have the right size use it anyway
- * 3. if the key does not exist generate a new one
- * TODO: download a new key from ETkey.org
+ * 3. if the key does not exist download a new key from ETkey.org
+ * 4. if all else fails generate a new etkey
  */
 static void CL_GenerateETKey ( void ) {
     int len = 0;
@@ -962,19 +997,22 @@ static void CL_GenerateETKey ( void ) {
             Com_Printf ( S_COLOR_YELLOW "WARNING: %s file size != %d\n",
                          ETKEY_FILE, ETKEY_SIZE );
         } else {
-            Com_Printf ( "ETKEY: building random string\n" );
-            Com_RandomBytes ( buff, sizeof ( buff ) );
+            if (!CL_DownloadETkey())
+            {
+                Com_Printf ( "ETKEY: building random string\n" );
+                Com_RandomBytes ( buff, sizeof ( buff ) );
 
-            f = FS_SV_FOpenFileWrite ( BASEGAME "/" ETKEY_FILE );
-            if ( !f ) {
-                Com_Printf ( S_COLOR_RED
-                             "ERROR: could not open %s file for write\n",
-                             ETKEY_FILE );
-                return;
+                f = FS_SV_FOpenFileWrite ( BASEGAME "/" ETKEY_FILE );
+                if ( !f ) {
+                    Com_Printf ( S_COLOR_RED
+                                "ERROR: could not open %s file for write\n",
+                                ETKEY_FILE );
+                    return;
+                }
+                FS_Write ( buff, sizeof ( buff ), f );
+                FS_FCloseFile ( f );
+                Com_Printf ( "ETKEY: new %s file generated\n", ETKEY_FILE );
             }
-            FS_Write ( buff, sizeof ( buff ), f );
-            FS_FCloseFile ( f );
-            Com_Printf ( "ETKEY: new %s file generated\n", ETKEY_FILE );
         }
     }
 }
