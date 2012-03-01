@@ -3,9 +3,9 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012 Jan Simek <jsimek.cz@gmail.com>
+ * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
  *
- * This file is part of ET: Legacy.
+ * This file is part of ET: Legacy - http://www.etlegacy.com
  *
  * ET: Legacy is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
