@@ -51,6 +51,4 @@ typedef enum {
     DL_FLAG_URL
 } dlFlags_t;
 
-qboolean FS_CreatePath( char *OSPath );
-
 #endif

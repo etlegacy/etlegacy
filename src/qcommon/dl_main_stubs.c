@@ -29,35 +29,29 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
  * @file dl_main_stubs.c
+ * @brief Dummy methods for downloading files
+ *
+ * This file is included only when there is no other way of downloading files.
  */
 
-/*
-TTimo - 12/13/2002
-libwww Bindings
-indent -kr -ut -ts2 -i2 <file>
-*/
 #include "dl_public.h"
 
 
-void DL_InitDownload() {
+void DL_InitDownload(void)
+{
 }
 
-void DL_Shutdown() {
+void DL_Shutdown(void)
+{
 }
 
-/*
-===============
-inspired from http://www.w3.org/Library/Examples/LoadToFile.c
-setup the download, return once we have a connection
-===============
-*/
-int DL_BeginDownload( const char *localName, const char *remoteName, int debug ) {
-
+int DL_BeginDownload(const char *localName, const char *remoteName, int debug)
+{
     return 1;
 }
 
 // (maybe this should be CL_DL_DownloadLoop)
-dlStatus_t DL_DownloadLoop() {
-
+dlStatus_t DL_DownloadLoop(void)
+{
     return DL_DONE;
 }

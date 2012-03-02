@@ -33,12 +33,13 @@
  */
 
 #include "client.h"
+#include "snd_local.h"
+
 #include <limits.h>
-
-#include <curl/curl.h>
-#include <curl/easy.h>
-
-#include "snd_local.h" // fretn
+#ifdef USE_CURL
+#   include <curl/curl.h>
+#   include <curl/easy.h>
+#endif /* USE_CURL */
 
 cvar_t  *cl_wavefilerecord;
 cvar_t  *cl_nodelta;
@@ -931,6 +932,7 @@ size_t curl_write_etkey(void *ptr, size_t size, size_t nmemb, FILE *stream)
  */
 static qboolean CL_DownloadETkey(void)
 {
+#ifdef USE_CURL
     CURL *curl;
 
     curl = curl_easy_init();
@@ -945,6 +947,8 @@ static qboolean CL_DownloadETkey(void)
     }
     
     Com_Printf (S_COLOR_RED "ERROR: unable to download a new %s\n", ETKEY_FILE);
+#endif /* USE_CURL */
+    
     return qfalse;
 }
 

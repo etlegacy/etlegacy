@@ -62,22 +62,31 @@ project "etlegacy"
 	}
 	excludes
 	{
-		"src/qcommon/dl_main_stubs.c",
 		"src/botlib/botlib_stub.c",
 	}
-	
+
+	if _OPTIONS["with-curl"] then
+		excludes "src/qcommon/dl_main_stubs.c"
+	else
+		excludes "src/qcommon/dl_main_curl.c"
+	end
+        
 	--
 	-- Options Configurations
 	--
-	
 	newoption {
 		trigger	=	"with-freetype",
 		description = 	"Use freetype font library",
 	}
-			
+
 	newoption {
-		trigger	=	"with-openal",
-		description = 	"Use OpenAL sound library",
+		trigger =   "with-openal",
+		description =   "Use OpenAL sound library",
+	}
+        
+	newoption {
+		trigger =   "with-curl",
+		description =   "Use cURL library",
 	}
 	
 	configuration "with-freetype"
@@ -93,12 +102,17 @@ project "etlegacy"
 			"USE_OPENAL",
 			"USE_OPENAL_DLOPEN",
 		}
+
+	configuration "with-curl"
+		buildoptions    { "`pkg-config --cflags libcurl`" }
+		linkoptions     { "`pkg-config --libs libcurl`" }
+		defines         { "USE_CURL" }
 	
 	-- 
 	-- Windows build options
 	-- 
 	configuration {  "vs* or mingw"  }
-		targetname  "etl"
+        targetsuffix ".exe"
 		flags       { "WinMain" }
 		libdirs
 		{
@@ -154,7 +168,6 @@ project "etlegacy"
 			"`pkg-config --cflags xxf86dga`",
 			"`pkg-config --cflags xxf86vm`",
 			"`pkg-config --cflags sdl`",
-			"`pkg-config --cflags libcurl`",
 			"`pkg-config --cflags gl`",
 		}
 		linkoptions
@@ -164,7 +177,6 @@ project "etlegacy"
 			"`pkg-config --libs xxf86dga`",
 			"`pkg-config --libs xxf86vm`",
 			"`pkg-config --libs sdl`",
-			"`pkg-config --libs libcurl`",
 			"`pkg-config --libs gl`",
 		}
 	
@@ -218,15 +230,22 @@ project "etlegacy-dedicated"
 	}
 	excludes
 	{
-		"src/qcommon/dl_main_stubs.c",
 		"src/botlib/botlib_stub.c",
 	}
-	
+
+	if _OPTIONS["with-curl"] then
+		excludes "src/qcommon/dl_main_stubs.c"
+	else
+		excludes "src/qcommon/dl_main_curl.c"
+	end
+        
 	-- 
 	-- Windows build options
 	-- 
 	configuration { "vs* or mingw" }
+		targetsuffix ".exe"
 		flags       { "WinMain" }
+        
 		buildoptions
 		{
 			"`/usr/i686-pc-mingw32/usr/bin/pkg-config --cflags libcurl`",
