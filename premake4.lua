@@ -53,7 +53,7 @@ project "etlegacy"
 		"src/sys/con_log.c",
 		"src/sys/con_tty.c",
 
-		"src/renderer/**.c", "src/renderer/**.cpp", "src/renderer/**.h",		
+		"src/renderer/**.c", "src/renderer/**.h",
 	}
 	defines
 	{
@@ -112,7 +112,7 @@ project "etlegacy"
 	-- Windows build options
 	-- 
 	configuration {  "vs* or mingw"  }
-        targetsuffix ".exe"
+		targetsuffix ".exe"
 		flags       { "WinMain" }
 		libdirs
 		{
@@ -337,9 +337,9 @@ project "etmain_cgame"
 		"src/ui/keycodes.h",
 		"src/game/surfaceflags.h",
 		
-		"src/cgame/**.c", "src/cgame/**.cpp", "src/cgame/**.h",
+		"src/cgame/**.c", "src/cgame/**.h",
 		
-		"src/game/bg_**.c", "src/game/bg_**.cpp", "src/game/bg_**.h",
+		"src/game/bg_**.c", "src/game/bg_**.h",
 		
 		"src/ui/ui_shared.c", "src/ui/ui_shared.h"
 	}
@@ -398,7 +398,7 @@ project "etmain_game"
 		"src/game/g_public.h",
 		"src/game/surfaceflags.h",
 		
-		"src/game/**.c", "src/game/**.cpp", "src/game/**.h",
+		"src/game/**.c", "src/game/**.h",
 		
 		"src/botai/**.c", "src/botai/**.h",
 	}
@@ -459,7 +459,7 @@ project "etmain_ui"
 		"src/ui/keycodes.h",
 		"src/game/surfaceflags.h",
 		
-		"src/ui/**.c", "src/ui/**.cpp", "src/ui/**.h",
+		"src/ui/**.c", "src/ui/**.h",
 		
 		"etmain/ui/menudef.h",
 		"etmain/ui/menumacros.h",
