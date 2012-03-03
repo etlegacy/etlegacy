@@ -34,6 +34,5 @@
 
 #ifdef AASINTERN
 //initialize the AAS clustering
-void AAS_InitClustering( void );
+void AAS_InitClustering(void);
 #endif //AASINTERN
-

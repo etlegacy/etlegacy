@@ -37,7 +37,7 @@
  *                      in micro brushes??
  */
 
-#if defined( WIN32 ) || defined( _WIN32 )
+#if defined(WIN32) || defined(_WIN32)
 #include <direct.h>
 #include <windows.h>
 #include <sys/types.h>
@@ -74,13 +74,13 @@ extern int calcgrapplereach;    //be_aas_reach.c
 //float         subdivide_size = 1024;
 //float         bsp_grid_size = 2048;
 // Gordon: FIXME: test
-float subdivide_size = 240;
-float bsp_grid_size = 512;
-char source[1024];
-char name[1024];
-vec_t microvolume = 1.0;
-char outbase[32];
-int entity_num;
+float          subdivide_size = 240;
+float          bsp_grid_size  = 512;
+char           source[1024];
+char           name[1024];
+vec_t          microvolume = 1.0;
+char           outbase[32];
+int            entity_num;
 aas_settings_t aassettings;
 
 qboolean noprune;               //don't prune nodes (bspc.c)
@@ -111,17 +111,18 @@ qboolean writebrushmap;
 qboolean noPatches = false;
 //qboolean  capsule_collision = true;   //use capsule collision
 qboolean capsule_collision = false; // capsule collision// Ridah, allow to specify an extension for multiple AAS files per map
-int mingroundarea = 0;          // areas with ground surface area less than this will be removed
+int      mingroundarea     = 0; // areas with ground surface area less than this will be removed
 qboolean reachableonly;         // remove areas with no reachability
 
 char aas_extension[64];
 // done.
 
-float VectorDistance( vec3_t v1, vec3_t v2 ) {
-    vec3_t dir;
+float VectorDistance(vec3_t v1, vec3_t v2)
+{
+	vec3_t dir;
 
-    VectorSubtract( v2, v1, dir );
-    return VectorLength( dir );
+	VectorSubtract(v2, v1, dir);
+	return VectorLength(dir);
 }
 
 /*
@@ -365,64 +366,68 @@ void Map2Bsp(char *mapfilename, char *outputfilename)
 // Returns:             -
 // Changes Globals:     -
 //===========================================================================
-void AASOuputFile( quakefile_t *qf, char *outputpath, char *filename ) {
-    char ext[MAX_PATH];
+void AASOuputFile(quakefile_t *qf, char *outputpath, char *filename)
+{
+	char ext[MAX_PATH];
 
-    //
-    if ( strlen( outputpath ) ) {
-        strcpy( filename, outputpath );
-        //append the bsp file base
-        AppendPathSeperator( filename, MAX_PATH );
-        ExtractFileBase( qf->origname, &filename[strlen( filename )] );
+	//
+	if (strlen(outputpath))
+	{
+		strcpy(filename, outputpath);
+		//append the bsp file base
+		AppendPathSeperator(filename, MAX_PATH);
+		ExtractFileBase(qf->origname, &filename[strlen(filename)]);
 
-        // Ridah, add extension
-        strcat( filename, aas_extension );
-        // done.
+		// Ridah, add extension
+		strcat(filename, aas_extension);
+		// done.
 
-        //append .aas
-        strcat( filename, ".aas" );
-        return;
-    } //end if
-    //
-    ExtractFileExtension( qf->filename, ext );
-    if ( !stricmp( ext, "pk3" ) || !stricmp( ext, "pak" ) || !stricmp( ext, "sin" ) ) {
-        strcpy( filename, qf->filename );
-        while ( strlen( filename ) &&
-                filename[strlen( filename ) - 1] != '\\' &&
-                filename[strlen( filename ) - 1] != '/' )
-        {
-            filename[strlen( filename ) - 1] = '\0';
-        } //end while
-        strcat( filename, "maps" );
-        if ( access( filename, 0x04 ) ) {
-            CreatePath( filename );
-        }
-        //append the bsp file base
-        AppendPathSeperator( filename, MAX_PATH );
-        ExtractFileBase( qf->origname, &filename[strlen( filename )] );
+		//append .aas
+		strcat(filename, ".aas");
+		return;
+	} //end if
+	  //
+	ExtractFileExtension(qf->filename, ext);
+	if (!stricmp(ext, "pk3") || !stricmp(ext, "pak") || !stricmp(ext, "sin"))
+	{
+		strcpy(filename, qf->filename);
+		while (strlen(filename) &&
+		       filename[strlen(filename) - 1] != '\\' &&
+		       filename[strlen(filename) - 1] != '/')
+		{
+			filename[strlen(filename) - 1] = '\0';
+		} //end while
+		strcat(filename, "maps");
+		if (access(filename, 0x04))
+		{
+			CreatePath(filename);
+		}
+		//append the bsp file base
+		AppendPathSeperator(filename, MAX_PATH);
+		ExtractFileBase(qf->origname, &filename[strlen(filename)]);
 
-        // Ridah, add extension
-        strcat( filename, aas_extension );
-        // done.
+		// Ridah, add extension
+		strcat(filename, aas_extension);
+		// done.
 
-        //append .aas
-        strcat( filename, ".aas" );
-    } //end if
-    else
-    {
-        strcpy( filename, qf->filename );
-        while ( strlen( filename ) &&
-                filename[strlen( filename ) - 1] != '.' )
-        {
-            filename[strlen( filename ) - 1] = '\0';
-        } //end while
+		//append .aas
+		strcat(filename, ".aas");
+	} //end if
+	else
+	{
+		strcpy(filename, qf->filename);
+		while (strlen(filename) &&
+		       filename[strlen(filename) - 1] != '.')
+		{
+			filename[strlen(filename) - 1] = '\0';
+		} //end while
 
-        // Ridah, add extension
-        strcat( filename, aas_extension );
-        // done.
+		// Ridah, add extension
+		strcat(filename, aas_extension);
+		// done.
 
-        strcat( filename, "aas" );
-    } //end else
+		strcat(filename, "aas");
+	} //end else
 } //end of the function AASOutputFile
 //===========================================================================
 //
@@ -430,99 +435,112 @@ void AASOuputFile( quakefile_t *qf, char *outputpath, char *filename ) {
 // Returns:             -
 // Changes Globals:     -
 //===========================================================================
-void CreateAASFilesForAllBSPFiles( char *quakepath ) {
-#if defined( WIN32 ) | defined( _WIN32 )
-    WIN32_FIND_DATA filedata;
-    HWND handle;
-    struct _stat statbuf;
+void CreateAASFilesForAllBSPFiles(char *quakepath)
+{
+#if defined(WIN32) | defined(_WIN32)
+	WIN32_FIND_DATA filedata;
+	HWND            handle;
+	struct _stat    statbuf;
 #else
-    glob_t globbuf;
-    struct stat statbuf;
-    int j;
+	glob_t      globbuf;
+	struct stat statbuf;
+	int         j;
 #endif
-    int done;
-    char filter[_MAX_PATH], bspfilter[_MAX_PATH], aasfilter[_MAX_PATH];
-    char aasfile[_MAX_PATH], buf[_MAX_PATH], foldername[_MAX_PATH];
-    quakefile_t *qf, *qf2, *files, *bspfiles, *aasfiles;
+	int         done;
+	char        filter[_MAX_PATH], bspfilter[_MAX_PATH], aasfilter[_MAX_PATH];
+	char        aasfile[_MAX_PATH], buf[_MAX_PATH], foldername[_MAX_PATH];
+	quakefile_t *qf, *qf2, *files, *bspfiles, *aasfiles;
 
-    strcpy( filter, quakepath );
-    AppendPathSeperator( filter, sizeof( filter ) );
-    strcat( filter, "*" );
+	strcpy(filter, quakepath);
+	AppendPathSeperator(filter, sizeof(filter));
+	strcat(filter, "*");
 
-#if defined( WIN32 ) | defined( _WIN32 )
-    handle = FindFirstFile( filter, &filedata );
-    done = ( handle == INVALID_HANDLE_VALUE );
-    while ( !done )
-    {
-        _splitpath( filter, foldername, NULL, NULL, NULL );
-        _splitpath( filter, NULL, &foldername[strlen( foldername )], NULL, NULL );
-        AppendPathSeperator( foldername, _MAX_PATH );
-        strcat( foldername, filedata.cFileName );
-        _stat( foldername, &statbuf );
+#if defined(WIN32) | defined(_WIN32)
+	handle = FindFirstFile(filter, &filedata);
+	done   = (handle == INVALID_HANDLE_VALUE);
+	while (!done)
+	{
+		_splitpath(filter, foldername, NULL, NULL, NULL);
+		_splitpath(filter, NULL, &foldername[strlen(foldername)], NULL, NULL);
+		AppendPathSeperator(foldername, _MAX_PATH);
+		strcat(foldername, filedata.cFileName);
+		_stat(foldername, &statbuf);
 #else
-    glob( filter, 0, NULL, &globbuf );
-    for ( j = 0; j < globbuf.gl_pathc; j++ )
-    {
-        strcpy( foldername, globbuf.gl_pathv[j] );
-        stat( foldername, &statbuf );
+	glob(filter, 0, NULL, &globbuf);
+	for (j = 0; j < globbuf.gl_pathc; j++)
+	{
+		strcpy(foldername, globbuf.gl_pathv[j]);
+		stat(foldername, &statbuf);
 #endif
-        //if it is a folder
-        if ( statbuf.st_mode & S_IFDIR ) {
-            //
-            AppendPathSeperator( foldername, sizeof( foldername ) );
-            //get all the bsp files
-            strcpy( bspfilter, foldername );
-            strcat( bspfilter, "maps/*.bsp" );
-            files = FindQuakeFiles( bspfilter );
-            strcpy( bspfilter, foldername );
-            strcat( bspfilter, "*.pk3/maps/*.bsp" );
-            bspfiles = FindQuakeFiles( bspfilter );
-            for ( qf = bspfiles; qf; qf = qf->next ) if ( !qf->next ) {
-                    break;
-                }
-            if ( qf ) {
-                qf->next = files;
-            } else {
-                bspfiles = files;
-            }
-            //get all the aas files
-            strcpy( aasfilter, foldername );
-            strcat( aasfilter, "maps/*.aas" );
-            files = FindQuakeFiles( aasfilter );
-            strcpy( aasfilter, foldername );
-            strcat( aasfilter, "*.pk3/maps/*.aas" );
-            aasfiles = FindQuakeFiles( aasfilter );
-            for ( qf = aasfiles; qf; qf = qf->next ) if ( !qf->next ) {
-                    break;
-                }
-            if ( qf ) {
-                qf->next = files;
-            } else {
-                aasfiles = files;
-            }
-            //
-            for ( qf = bspfiles; qf; qf = qf->next )
-            {
-                sprintf( aasfile, "%s/%s", qf->pakfile, qf->origname );
-                Log_Print( "found %s\n", aasfile );
-                strcpy( &aasfile[strlen( aasfile ) - strlen( ".bsp" )], ".aas" );
-                for ( qf2 = aasfiles; qf2; qf2 = qf2->next )
-                {
-                    sprintf( buf, "%s/%s", qf2->pakfile, qf2->origname );
-                    if ( !stricmp( aasfile, buf ) ) {
-                        Log_Print( "found %s\n", buf );
-                        break;
-                    } //end if
-                } //end for
-            } //end for
-        } //end if
-#if defined( WIN32 ) | defined( _WIN32 )
-        //find the next file
-        done = !FindNextFile( handle, &filedata );
-    } //end while
+		//if it is a folder
+		if (statbuf.st_mode & S_IFDIR)
+		{
+			//
+			AppendPathSeperator(foldername, sizeof(foldername));
+			//get all the bsp files
+			strcpy(bspfilter, foldername);
+			strcat(bspfilter, "maps/*.bsp");
+			files = FindQuakeFiles(bspfilter);
+			strcpy(bspfilter, foldername);
+			strcat(bspfilter, "*.pk3/maps/*.bsp");
+			bspfiles = FindQuakeFiles(bspfilter);
+			for (qf = bspfiles; qf; qf = qf->next)
+				if (!qf->next)
+				{
+					break;
+				}
+			if (qf)
+			{
+				qf->next = files;
+			}
+			else
+			{
+				bspfiles = files;
+			}
+			//get all the aas files
+			strcpy(aasfilter, foldername);
+			strcat(aasfilter, "maps/*.aas");
+			files = FindQuakeFiles(aasfilter);
+			strcpy(aasfilter, foldername);
+			strcat(aasfilter, "*.pk3/maps/*.aas");
+			aasfiles = FindQuakeFiles(aasfilter);
+			for (qf = aasfiles; qf; qf = qf->next)
+				if (!qf->next)
+				{
+					break;
+				}
+			if (qf)
+			{
+				qf->next = files;
+			}
+			else
+			{
+				aasfiles = files;
+			}
+			//
+			for (qf = bspfiles; qf; qf = qf->next)
+			{
+				sprintf(aasfile, "%s/%s", qf->pakfile, qf->origname);
+				Log_Print("found %s\n", aasfile);
+				strcpy(&aasfile[strlen(aasfile) - strlen(".bsp")], ".aas");
+				for (qf2 = aasfiles; qf2; qf2 = qf2->next)
+				{
+					sprintf(buf, "%s/%s", qf2->pakfile, qf2->origname);
+					if (!stricmp(aasfile, buf))
+					{
+						Log_Print("found %s\n", buf);
+						break;
+					} //end if
+				} //end for
+			} //end for
+		} //end if
+#if defined(WIN32) | defined(_WIN32)
+		//find the next file
+		done = !FindNextFile(handle, &filedata);
+	} //end while
 #else
-    } //end for
-    globfree( &globbuf );
+	} //end for
+	globfree(&globbuf);
 #endif
 } //end of the function CreateAASFilesForAllBSPFiles
 //===========================================================================
@@ -531,36 +549,44 @@ void CreateAASFilesForAllBSPFiles( char *quakepath ) {
 // Returns:                 -
 // Changes Globals:     -
 //===========================================================================
-quakefile_t *GetArgumentFiles( int argc, char *argv[], int *i, char *ext ) {
-    quakefile_t *qfiles, *lastqf, *qf;
-    int j;
-    char buf[1024];
+quakefile_t *GetArgumentFiles(int argc, char *argv[], int *i, char *ext)
+{
+	quakefile_t *qfiles, *lastqf, *qf;
+	int         j;
+	char        buf[1024];
 
-    qfiles = NULL;
-    lastqf = NULL;
-    for (; ( *i ) + 1 < argc && argv[( *i ) + 1][0] != '-'; ( *i )++ )
-    {
-        strcpy( buf, argv[( *i ) + 1] );
-        for ( j = strlen( buf ) - 1; j >= strlen( buf ) - 4; j-- )
-            if ( buf[j] == '.' ) {
-                break;
-            }
-        if ( j >= strlen( buf ) - 4 ) {
-            strcpy( &buf[j + 1], ext );
-        }
-        qf = FindQuakeFiles( buf );
-        if ( !qf ) {
-            continue;
-        }
-        if ( lastqf ) {
-            lastqf->next = qf;
-        } else {
-            qfiles = qf;
-        }
-        lastqf = qf;
-        while ( lastqf->next ) lastqf = lastqf->next;
-    } //end for
-    return qfiles;
+	qfiles = NULL;
+	lastqf = NULL;
+	for (; (*i) + 1 < argc && argv[(*i) + 1][0] != '-'; (*i)++)
+	{
+		strcpy(buf, argv[(*i) + 1]);
+		for (j = strlen(buf) - 1; j >= strlen(buf) - 4; j--)
+			if (buf[j] == '.')
+			{
+				break;
+			}
+		if (j >= strlen(buf) - 4)
+		{
+			strcpy(&buf[j + 1], ext);
+		}
+		qf = FindQuakeFiles(buf);
+		if (!qf)
+		{
+			continue;
+		}
+		if (lastqf)
+		{
+			lastqf->next = qf;
+		}
+		else
+		{
+			qfiles = qf;
+		}
+		lastqf = qf;
+		while (lastqf->next)
+			lastqf = lastqf->next;
+	} //end for
+	return qfiles;
 } //end of the function GetArgumentFiles
 //===========================================================================
 //
@@ -578,650 +604,740 @@ quakefile_t *GetArgumentFiles( int argc, char *argv[], int *i, char *ext ) {
 #define COMP_TETRA          7
 #define COMP_AASREMOVENONREACHABLE  8
 
-void AAS_InitBotImport( void );
-void AAS_InitClustering( void );
-void AAS_ShowTotals( void );
-void AAS_InitBSP( void );
+void AAS_InitBotImport(void);
+void AAS_InitClustering(void);
+void AAS_ShowTotals(void);
+void AAS_InitBSP(void);
 
-int main( int argc, char **argv ) {
-    int i, comp = 0;
-    char outputpath[MAX_PATH] = "";
-    char filename[MAX_PATH] = "unknown";
-    quakefile_t *qfiles, *qf;
+int main(int argc, char **argv)
+{
+	int         i, comp = 0;
+	char        outputpath[MAX_PATH] = "";
+	char        filename[MAX_PATH]   = "unknown";
+	quakefile_t *qfiles, *qf;
 
-    // Ridah, allow to specify an extension for multiple AAS files per map
-    int has_ext = 0;
-    // done.
+	// Ridah, allow to specify an extension for multiple AAS files per map
+	int has_ext = 0;
+	// done.
 
-    // Gordon: make sure to memset bspworld, fixes crash after CM_LoadMap
-    AAS_InitBSP();
+	// Gordon: make sure to memset bspworld, fixes crash after CM_LoadMap
+	AAS_InitBSP();
 
-    // Ridah, set the world pointer up for reachabilities
-    aasworld = aasworlds;
-    AAS_SetWorldPointer( &( *aasworld ) );
-    // done.
+	// Ridah, set the world pointer up for reachabilities
+	aasworld = aasworlds;
+	AAS_SetWorldPointer(&(*aasworld));
+	// done.
 
-    myargc = argc;
-    myargv = argv;
+	myargc = argc;
+	myargv = argv;
 
-    Log_Open( "bspc.log" );        //open a log file
-    Log_Print( "BSPC version " BSPC_VERSION ", %s %s by Mr Elusive\n", __DATE__, __TIME__ );
+	Log_Open("bspc.log");          //open a log file
+	Log_Print("BSPC version " BSPC_VERSION ", %s %s by Mr Elusive\n", __DATE__, __TIME__);
 
-    // Ryan, I added this so our designers would know which .exe they had...
-    Log_Print( "Last worked on by Ryan Feltrin\n" );
+	// Ryan, I added this so our designers would know which .exe they had...
+	Log_Print("Last worked on by Ryan Feltrin\n");
 
-    DefaultCfg();
-    for ( i = 1; i < argc; i++ )
-    {
-        if ( !stricmp( argv[i],"-threads" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            numthreads = atoi( argv[++i] );
-            Log_Print( "threads = %d\n", numthreads );
-        } //end if
-        else if ( !stricmp( argv[i], "-noverbose" ) ) {
-            Log_Print( "verbose = false\n" );
-            verbose = false;
-        } //end else if
-        else if ( !stricmp( argv[i], "-nocsg" ) ) {
-            Log_Print( "nocsg = true\n" );
-            nocsg = true;
-        } //end else if
-        else if ( !stricmp( argv[i], "-optimize" ) ) {
-            Log_Print( "optimize = true\n" );
-            optimize = true;
-        } //end else if
-        /*
-        else if (!stricmp(argv[i],"-glview"))
-        {
-            glview = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-draw"))
-        {
-            Log_Print("drawflag = true\n");
-            drawflag = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-noweld"))
-        {
-            Log_Print("noweld = true\n");
-            noweld = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-noshare"))
-        {
-            Log_Print("noshare = true\n");
-            noshare = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-notjunc"))
-        {
-            Log_Print("notjunc = true\n");
-            notjunc = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-nowater"))
-        {
-            Log_Print("nowater = true\n");
-            nowater = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-noprune"))
-        {
-            Log_Print("noprune = true\n");
-            noprune = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-nomerge"))
-        {
-            Log_Print("nomerge = true\n");
-            nomerge = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-nosubdiv"))
-        {
-            Log_Print("nosubdiv = true\n");
-            nosubdiv = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-nodetail"))
-        {
-            Log_Print("nodetail = true\n");
-            nodetail = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-fulldetail"))
-        {
-            Log_Print("fulldetail = true\n");
-            fulldetail = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-onlyents"))
-        {
-            Log_Print("onlyents = true\n");
-            onlyents = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-micro"))
-        {
-            if (i + 1 >= argc) {i = 0; break;}
-            microvolume = atof(argv[++i]);
-            Log_Print("microvolume = %f\n", microvolume);
-        } //end else if
-        else if (!stricmp(argv[i], "-leaktest"))
-        {
-            Log_Print("leaktest = true\n");
-            leaktest = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-verboseentities"))
-        {
-            Log_Print("verboseentities = true\n");
-            verboseentities = true;
-        } //end else if
-        else if (!stricmp(argv[i], "-chop"))
-        {
-            if (i + 1 >= argc) {i = 0; break;}
-            subdivide_size = atof(argv[++i]);
-            Log_Print("subdivide_size = %f\n", subdivide_size);
-        } //end else if
-        else if (!stricmp (argv[i], "-tmpout"))
-        {
-            strcpy (outbase, "/tmp");
-            Log_Print("temp output\n");
-        } //end else if
-        */
+	DefaultCfg();
+	for (i = 1; i < argc; i++)
+	{
+		if (!stricmp(argv[i], "-threads"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			numthreads = atoi(argv[++i]);
+			Log_Print("threads = %d\n", numthreads);
+		} //end if
+		else if (!stricmp(argv[i], "-noverbose"))
+		{
+			Log_Print("verbose = false\n");
+			verbose = false;
+		} //end else if
+		else if (!stricmp(argv[i], "-nocsg"))
+		{
+			Log_Print("nocsg = true\n");
+			nocsg = true;
+		} //end else if
+		else if (!stricmp(argv[i], "-optimize"))
+		{
+			Log_Print("optimize = true\n");
+			optimize = true;
+		} //end else if
+		  /*
+		  else if (!stricmp(argv[i],"-glview"))
+		  {
+		      glview = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-draw"))
+		  {
+		      Log_Print("drawflag = true\n");
+		      drawflag = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-noweld"))
+		  {
+		      Log_Print("noweld = true\n");
+		      noweld = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-noshare"))
+		  {
+		      Log_Print("noshare = true\n");
+		      noshare = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-notjunc"))
+		  {
+		      Log_Print("notjunc = true\n");
+		      notjunc = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-nowater"))
+		  {
+		      Log_Print("nowater = true\n");
+		      nowater = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-noprune"))
+		  {
+		      Log_Print("noprune = true\n");
+		      noprune = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-nomerge"))
+		  {
+		      Log_Print("nomerge = true\n");
+		      nomerge = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-nosubdiv"))
+		  {
+		      Log_Print("nosubdiv = true\n");
+		      nosubdiv = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-nodetail"))
+		  {
+		      Log_Print("nodetail = true\n");
+		      nodetail = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-fulldetail"))
+		  {
+		      Log_Print("fulldetail = true\n");
+		      fulldetail = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-onlyents"))
+		  {
+		      Log_Print("onlyents = true\n");
+		      onlyents = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-micro"))
+		  {
+		      if (i + 1 >= argc) {i = 0; break;}
+		      microvolume = atof(argv[++i]);
+		      Log_Print("microvolume = %f\n", microvolume);
+		  } //end else if
+		  else if (!stricmp(argv[i], "-leaktest"))
+		  {
+		      Log_Print("leaktest = true\n");
+		      leaktest = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-verboseentities"))
+		  {
+		      Log_Print("verboseentities = true\n");
+		      verboseentities = true;
+		  } //end else if
+		  else if (!stricmp(argv[i], "-chop"))
+		  {
+		      if (i + 1 >= argc) {i = 0; break;}
+		      subdivide_size = atof(argv[++i]);
+		      Log_Print("subdivide_size = %f\n", subdivide_size);
+		  } //end else if
+		  else if (!stricmp (argv[i], "-tmpout"))
+		  {
+		      strcpy (outbase, "/tmp");
+		      Log_Print("temp output\n");
+		  } //end else if
+		  */
 #ifdef ME
-        else if ( !stricmp( argv[i], "-freetree" ) ) {
-            freetree = true;
-            Log_Print( "freetree = true\n" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-grapplereach" ) ) {
-            calcgrapplereach = true;
-            Log_Print( "grapplereach = true\n" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-nobrushmerge" ) ) {
-            nobrushmerge = true;
-            Log_Print( "nobrushmerge = true\n" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-noliquids" ) ) {
-            noliquids = true;
-            Log_Print( "noliquids = true\n" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-forcesidesvisible" ) ) {
-            forcesidesvisible = true;
-            Log_Print( "forcesidesvisible = true\n" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-output" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            if ( access( argv[i + 1], 0x04 ) ) {
-                Warning( "the folder %s does not exist", argv[i + 1] );
-            }
-            strcpy( outputpath, argv[++i] );
-        } //end else if
-        else if ( !stricmp( argv[i], "-breadthfirst" ) ) {
-            use_nodequeue = true;
-            Log_Print( "breadthfirst = true\n" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-cfg" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            if ( !LoadCfgFile( argv[++i] ) ) {
-                exit( 0 );
-            }
-        } //end else if
-        else if ( !stricmp( argv[i], "-bsp2map" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            comp = COMP_BSP2MAP;
-            qfiles = GetArgumentFiles( argc, argv, &i, "bsp" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-bsp2aas" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            comp = COMP_BSP2AAS;
-            qfiles = GetArgumentFiles( argc, argv, &i, "bsp" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-aasall" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            CreateAASFilesForAllBSPFiles( argv[++i] );
-        } //end else if
-        else if ( !stricmp( argv[i], "-reach" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            comp = COMP_REACH;
-            qfiles = GetArgumentFiles( argc, argv, &i, "bsp" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-cluster" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            comp = COMP_CLUSTER;
-            qfiles = GetArgumentFiles( argc, argv, &i, "bsp" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-aasinfo" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            comp = COMP_AASINFO;
-            qfiles = GetArgumentFiles( argc, argv, &i, "aas" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-aasopt" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            comp = COMP_AASOPTIMIZE;
-            qfiles = GetArgumentFiles( argc, argv, &i, "aas" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-aasreachonly" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            comp = COMP_AASREMOVENONREACHABLE;
-            qfiles = GetArgumentFiles( argc, argv, &i, "aas" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-tetra" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            comp = COMP_TETRA;
-            qfiles = GetArgumentFiles( argc, argv, &i, "aas" );
-        } //end else if
-        else if ( !stricmp( argv[i], "-writeaasmap" ) ) {
-            writeaasmap = true;
-            Log_Print( "writeaasmap = true\n" );
-        } else if ( !stricmp( argv[i], "-groundonly" ) )        {
-            groundonly = true;
-            Log_Print( "groundonly = true\n" );
-        } else if ( !stricmp( argv[i], "-reachableonly" ) )        {
-            reachableonly = true;
-            Log_Print( "reachableonly = true\n" );
-        } else if ( !stricmp( argv[i], "-mingroundarea" ) )        {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            mingroundarea = atoi( argv[++i] );
-            Log_Print( "mingroundvolume = %i\n", mingroundarea );
-        } else if ( !stricmp( argv[i], "-writebrushmap" ) )        {
-            writebrushmap = true;
-            Log_Print( "writebrushmap = %i\n", writebrushmap );
-        } else if ( !stricmp( argv[i], "-noPatches" ) )        {
-            noPatches = true;
-            Log_Print( "noPatches = %i\n", noPatches );
-        }
-        // Ridah, allow to specify an extension for multiple AAS files per map
-        else if ( !stricmp( argv[i], "-ext" ) ) {
-            if ( i + 1 >= argc ) {
-                i = 0;
-                break;
-            }
-            strcpy( aas_extension, argv[++i] );
-            has_ext = 1;
+		else if (!stricmp(argv[i], "-freetree"))
+		{
+			freetree = true;
+			Log_Print("freetree = true\n");
+		} //end else if
+		else if (!stricmp(argv[i], "-grapplereach"))
+		{
+			calcgrapplereach = true;
+			Log_Print("grapplereach = true\n");
+		} //end else if
+		else if (!stricmp(argv[i], "-nobrushmerge"))
+		{
+			nobrushmerge = true;
+			Log_Print("nobrushmerge = true\n");
+		} //end else if
+		else if (!stricmp(argv[i], "-noliquids"))
+		{
+			noliquids = true;
+			Log_Print("noliquids = true\n");
+		} //end else if
+		else if (!stricmp(argv[i], "-forcesidesvisible"))
+		{
+			forcesidesvisible = true;
+			Log_Print("forcesidesvisible = true\n");
+		} //end else if
+		else if (!stricmp(argv[i], "-output"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			if (access(argv[i + 1], 0x04))
+			{
+				Warning("the folder %s does not exist", argv[i + 1]);
+			}
+			strcpy(outputpath, argv[++i]);
+		} //end else if
+		else if (!stricmp(argv[i], "-breadthfirst"))
+		{
+			use_nodequeue = true;
+			Log_Print("breadthfirst = true\n");
+		} //end else if
+		else if (!stricmp(argv[i], "-cfg"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			if (!LoadCfgFile(argv[++i]))
+			{
+				exit(0);
+			}
+		} //end else if
+		else if (!stricmp(argv[i], "-bsp2map"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			comp   = COMP_BSP2MAP;
+			qfiles = GetArgumentFiles(argc, argv, &i, "bsp");
+		} //end else if
+		else if (!stricmp(argv[i], "-bsp2aas"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			comp   = COMP_BSP2AAS;
+			qfiles = GetArgumentFiles(argc, argv, &i, "bsp");
+		} //end else if
+		else if (!stricmp(argv[i], "-aasall"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			CreateAASFilesForAllBSPFiles(argv[++i]);
+		} //end else if
+		else if (!stricmp(argv[i], "-reach"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			comp   = COMP_REACH;
+			qfiles = GetArgumentFiles(argc, argv, &i, "bsp");
+		} //end else if
+		else if (!stricmp(argv[i], "-cluster"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			comp   = COMP_CLUSTER;
+			qfiles = GetArgumentFiles(argc, argv, &i, "bsp");
+		} //end else if
+		else if (!stricmp(argv[i], "-aasinfo"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			comp   = COMP_AASINFO;
+			qfiles = GetArgumentFiles(argc, argv, &i, "aas");
+		} //end else if
+		else if (!stricmp(argv[i], "-aasopt"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			comp   = COMP_AASOPTIMIZE;
+			qfiles = GetArgumentFiles(argc, argv, &i, "aas");
+		} //end else if
+		else if (!stricmp(argv[i], "-aasreachonly"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			comp   = COMP_AASREMOVENONREACHABLE;
+			qfiles = GetArgumentFiles(argc, argv, &i, "aas");
+		} //end else if
+		else if (!stricmp(argv[i], "-tetra"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			comp   = COMP_TETRA;
+			qfiles = GetArgumentFiles(argc, argv, &i, "aas");
+		} //end else if
+		else if (!stricmp(argv[i], "-writeaasmap"))
+		{
+			writeaasmap = true;
+			Log_Print("writeaasmap = true\n");
+		}
+		else if (!stricmp(argv[i], "-groundonly"))
+		{
+			groundonly = true;
+			Log_Print("groundonly = true\n");
+		}
+		else if (!stricmp(argv[i], "-reachableonly"))
+		{
+			reachableonly = true;
+			Log_Print("reachableonly = true\n");
+		}
+		else if (!stricmp(argv[i], "-mingroundarea"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			mingroundarea = atoi(argv[++i]);
+			Log_Print("mingroundvolume = %i\n", mingroundarea);
+		}
+		else if (!stricmp(argv[i], "-writebrushmap"))
+		{
+			writebrushmap = true;
+			Log_Print("writebrushmap = %i\n", writebrushmap);
+		}
+		else if (!stricmp(argv[i], "-noPatches"))
+		{
+			noPatches = true;
+			Log_Print("noPatches = %i\n", noPatches);
+		}
+		// Ridah, allow to specify an extension for multiple AAS files per map
+		else if (!stricmp(argv[i], "-ext"))
+		{
+			if (i + 1 >= argc)
+			{
+				i = 0;
+				break;
+			}
+			strcpy(aas_extension, argv[++i]);
+			has_ext = 1;
 
-        } //end else if
-        // done.
+		} //end else if
+		  // done.
 
 #endif //ME
-        else
-        {
-            Log_Print( "unknown parameter %s\n", argv[i] );
-            break;
-        } //end else
-    } //end for
+		else
+		{
+			Log_Print("unknown parameter %s\n", argv[i]);
+			break;
+		} //end else
+	} //end for
 
-    //if there are parameters and there's no mismatch in one of the parameters
-    if ( argc > 1 && i == argc ) {
-        switch ( comp )
-        {
-        case COMP_BSP2MAP:
-        {
-            if ( !qfiles ) {
-                Log_Print( "no files found\n" );
-            }
-            for ( qf = qfiles; qf; qf = qf->next )
-            {
-                //copy the output path
-                strcpy( filename, outputpath );
-                //append the bsp file base
-                AppendPathSeperator( filename, MAX_PATH );
-                ExtractFileBase( qf->origname, &filename[strlen( filename )] );
-                //append .map
-                strcat( filename, ".map" );
-                //
-                Log_Print( "bsp2map: %s to %s\n", qf->origname, filename );
-                if ( qf->type != QFILETYPE_BSP ) {
-                    Warning( "%s is probably not a BSP file\n", qf->origname );
-                }
-                //
-                LoadMapFromBSP( qf );
-                //write the map file
-                WriteMapFile( filename );
-            }     //end for
-            break;
-        }     //end case
-        case COMP_BSP2AAS:
-        {
-            if ( !qfiles ) {
-                Log_Print( "no files found\n" );
-            }
-            for ( qf = qfiles; qf; qf = qf->next )
-            {
-                AASOuputFile( qf, outputpath, filename );
-                //
-                Log_Print( "bsp2aas: %s to %s\n", qf->origname, filename );
-                if ( qf->type != QFILETYPE_BSP ) {
-                    Warning( "%s is probably not a BSP file\n", qf->origname );
-                }
-                //set before map loading
-                create_aas = 1;
-                LoadMapFromBSP( qf );
-                //create the AAS file
-                AAS_Create( filename );
-                //if it's a Quake3 map calculate the reachabilities and clusters
-                if ( loadedmaptype == MAPTYPE_QUAKE3 ) {
-                    AAS_CalcReachAndClusters( qf );
-                }
-                //
-                if ( groundonly ) {
-                    AAS_RemoveNonGrounded();
-                }
-                if ( reachableonly ) {
-                    AAS_RemoveNonReachability();
-                }
-                if ( optimize ) {
-                    AAS_Optimize();
-                }
-                //
-                //write out the stored AAS file
-                if ( !AAS_WriteAASFile( filename ) ) {
-                    Error( "error writing %s\n", filename );
-                }     //end if
-                //deallocate memory
-                AAS_FreeMaxAAS();
-            }     //end for
-            break;
-        }     //end case
-        case COMP_REACH:
-        {
-            if ( !qfiles ) {
-                Log_Print( "no files found\n" );
-            }
-            for ( qf = qfiles; qf; qf = qf->next )
-            {
-                AASOuputFile( qf, outputpath, filename );
-                //
-                Log_Print( "reach: %s to %s\n", qf->origname, filename );
-                if ( qf->type != QFILETYPE_BSP ) {
-                    Warning( "%s is probably not a BSP file\n", qf->origname );
-                }
-                //if the AAS file exists in the output directory
-                if ( !access( filename, 0x04 ) ) {
-                    if ( !AAS_LoadAASFile( filename, 0, 0 ) ) {
-                        Error( "error loading aas file %s\n", filename );
-                    }     //end if
-                    //assume it's a Quake3 BSP file
-                    loadedmaptype = MAPTYPE_QUAKE3;
-                }     //end if
-                else
-                {
-                    Warning( "AAS file %s not found in output folder\n", filename );
-                    Log_Print( "creating %s...\n", filename );
-                    //set before map loading
-                    create_aas = 1;
-                    LoadMapFromBSP( qf );
-                    //create the AAS file
-                    AAS_Create( filename );
-                }     //end else
-                //if it's a Quake3 map calculate the reachabilities and clusters
-                if ( loadedmaptype == MAPTYPE_QUAKE3 ) {
-                    AAS_CalcReachAndClusters( qf );
-                }     //end if
-                //
-                if ( groundonly ) {
-                    AAS_RemoveNonGrounded();
-                }
-                if ( reachableonly ) {
-                    AAS_RemoveNonReachability();
-                }
-                if ( optimize ) {
-                    AAS_Optimize();
-                }
-                //write out the stored AAS file
-                if ( !AAS_WriteAASFile( filename ) ) {
-                    Error( "error writing %s\n", filename );
-                }     //end if
-                //deallocate memory
-                AAS_FreeMaxAAS();
-            }     //end for
-            break;
-        }     //end case
-        case COMP_CLUSTER:
-        {
-            if ( !qfiles ) {
-                Log_Print( "no files found\n" );
-            }
-            for ( qf = qfiles; qf; qf = qf->next )
-            {
-                AASOuputFile( qf, outputpath, filename );
-                //
-                Log_Print( "cluster: %s to %s\n", qf->origname, filename );
-                if ( qf->type != QFILETYPE_BSP ) {
-                    Warning( "%s is probably not a BSP file\n", qf->origname );
-                }
-                //if the AAS file exists in the output directory
-                if ( !access( filename, 0x04 ) ) {
-                    if ( !AAS_LoadAASFile( filename, 0, 0 ) ) {
-                        Error( "error loading aas file %s\n", filename );
-                    }     //end if
-                    //assume it's a Quake3 BSP file
-                    loadedmaptype = MAPTYPE_QUAKE3;
-                    //if it's a Quake3 map calculate the clusters
-                    if ( loadedmaptype == MAPTYPE_QUAKE3 ) {
-                        ( *aasworld ).numclusters = 0;
-                        AAS_InitBotImport();
-                        AAS_InitClustering();
-                    }     //end if
-                }     //end if
-                else
-                {
-                    Warning( "AAS file %s not found in output folder\n", filename );
-                    Log_Print( "creating %s...\n", filename );
-                    //set before map loading
-                    create_aas = 1;
-                    LoadMapFromBSP( qf );
-                    //create the AAS file
-                    AAS_Create( filename );
-                    //if it's a Quake3 map calculate the reachabilities and clusters
-                    if ( loadedmaptype == MAPTYPE_QUAKE3 ) {
-                        AAS_CalcReachAndClusters( qf );
-                    }
-                }     //end else
-                //
-                if ( optimize ) {
-                    AAS_Optimize();
-                }
-                //write out the stored AAS file
-                if ( !AAS_WriteAASFile( filename ) ) {
-                    Error( "error writing %s\n", filename );
-                }     //end if
-                //deallocate memory
-                AAS_FreeMaxAAS();
-            }     //end for
-            break;
-        }     //end case
-        case COMP_AASOPTIMIZE:
-        {
-            if ( !qfiles ) {
-                Log_Print( "no files found\n" );
-            }
-            for ( qf = qfiles; qf; qf = qf->next )
-            {
-                AASOuputFile( qf, outputpath, filename );
-                //
-                Log_Print( "optimizing: %s to %s\n", qf->origname, filename );
-                if ( qf->type != QFILETYPE_AAS ) {
-                    Warning( "%s is probably not a AAS file\n", qf->origname );
-                }
-                //
-                AAS_InitBotImport();
-                //
-                if ( !AAS_LoadAASFile( qf->filename, qf->offset, qf->length ) ) {
-                    Error( "error loading aas file %s\n", qf->filename );
-                }     //end if
-                if ( groundonly ) {
-                    AAS_RemoveNonGrounded();
-                }
-                if ( reachableonly ) {
-                    AAS_RemoveNonReachability();
-                }
-                AAS_Optimize();
-                //write out the stored AAS file
-                if ( !AAS_WriteAASFile( filename ) ) {
-                    Error( "error writing %s\n", filename );
-                }     //end if
-                //deallocate memory
-                AAS_FreeMaxAAS();
-            }     //end for
-            break;
-        }     //end case
-        case COMP_AASREMOVENONREACHABLE:
-        {
-            if ( !qfiles ) {
-                Log_Print( "no files found\n" );
-            }
-            for ( qf = qfiles; qf; qf = qf->next )
-            {
-                AASOuputFile( qf, outputpath, filename );
-                //
-                Log_Print( "removing non-reachability areas: %s to %s\n", qf->origname, filename );
-                if ( qf->type != QFILETYPE_AAS ) {
-                    Warning( "%s is probably not a AAS file\n", qf->origname );
-                }
-                //
-                AAS_InitBotImport();
-                //
-                if ( !AAS_LoadAASFile( qf->filename, qf->offset, qf->length ) ) {
-                    Error( "error loading aas file %s\n", qf->filename );
-                }     //end if
-                AAS_RemoveNonReachability();
-                if ( optimize ) {
-                    AAS_Optimize();
-                }
-                //write out the stored AAS file
-                if ( !AAS_WriteAASFile( filename ) ) {
-                    Error( "error writing %s\n", filename );
-                }     //end if
-                //deallocate memory
-                AAS_FreeMaxAAS();
-            }     //end for
-            break;
-        }     //end case
-        case COMP_AASINFO:
-        {
-            if ( !qfiles ) {
-                Log_Print( "no files found\n" );
-            }
-            for ( qf = qfiles; qf; qf = qf->next )
-            {
-                AASOuputFile( qf, outputpath, filename );
-                //
-                Log_Print( "aas info for: %s\n", filename );
-                if ( qf->type != QFILETYPE_AAS ) {
-                    Warning( "%s is probably not a AAS file\n", qf->origname );
-                }
-                //
-                AAS_InitBotImport();
-                //
-                if ( !AAS_LoadAASFile( qf->filename, qf->offset, qf->length ) ) {
-                    Error( "error loading aas file %s\n", qf->filename );
-                }     //end if
-                AAS_ShowTotals();
-            }     //end for
-        }     //end case
-        case COMP_TETRA:
-        {
-            if ( !qfiles ) {
-                Log_Print( "no files found\n" );
-            }
-            for ( qf = qfiles; qf; qf = qf->next )
-            {
-                //TH_AASToTetrahedrons(qf->filename);
-            }     //end for
-            break;
-        }     //end case
-        default:
-        {
-            Log_Print( "don't know what to do\n" );
-            break;
-        }     //end default
-        } //end switch
-    } //end if
-    else
-    {
-        Log_Print( "Usage:   bspc [-<switch> [-<switch> ...]]\n"
-#if defined( WIN32 ) || defined( _WIN32 )
-                   "Example 1: bspc -bsp2aas d:\\quake3\\baseq3\\maps\\mymap?.bsp\n"
-                   "Example 2: bspc -bsp2aas d:\\quake3\\baseq3\\pak0.pk3\\maps/q3dm*.bsp\n"
+	//if there are parameters and there's no mismatch in one of the parameters
+	if (argc > 1 && i == argc)
+	{
+		switch (comp)
+		{
+		case COMP_BSP2MAP:
+		{
+			if (!qfiles)
+			{
+				Log_Print("no files found\n");
+			}
+			for (qf = qfiles; qf; qf = qf->next)
+			{
+				//copy the output path
+				strcpy(filename, outputpath);
+				//append the bsp file base
+				AppendPathSeperator(filename, MAX_PATH);
+				ExtractFileBase(qf->origname, &filename[strlen(filename)]);
+				//append .map
+				strcat(filename, ".map");
+				//
+				Log_Print("bsp2map: %s to %s\n", qf->origname, filename);
+				if (qf->type != QFILETYPE_BSP)
+				{
+					Warning("%s is probably not a BSP file\n", qf->origname);
+				}
+				//
+				LoadMapFromBSP(qf);
+				//write the map file
+				WriteMapFile(filename);
+			}     //end for
+			break;
+		}     //end case
+		case COMP_BSP2AAS:
+		{
+			if (!qfiles)
+			{
+				Log_Print("no files found\n");
+			}
+			for (qf = qfiles; qf; qf = qf->next)
+			{
+				AASOuputFile(qf, outputpath, filename);
+				//
+				Log_Print("bsp2aas: %s to %s\n", qf->origname, filename);
+				if (qf->type != QFILETYPE_BSP)
+				{
+					Warning("%s is probably not a BSP file\n", qf->origname);
+				}
+				//set before map loading
+				create_aas = 1;
+				LoadMapFromBSP(qf);
+				//create the AAS file
+				AAS_Create(filename);
+				//if it's a Quake3 map calculate the reachabilities and clusters
+				if (loadedmaptype == MAPTYPE_QUAKE3)
+				{
+					AAS_CalcReachAndClusters(qf);
+				}
+				//
+				if (groundonly)
+				{
+					AAS_RemoveNonGrounded();
+				}
+				if (reachableonly)
+				{
+					AAS_RemoveNonReachability();
+				}
+				if (optimize)
+				{
+					AAS_Optimize();
+				}
+				//
+				//write out the stored AAS file
+				if (!AAS_WriteAASFile(filename))
+				{
+					Error("error writing %s\n", filename);
+				}     //end if
+				//deallocate memory
+				AAS_FreeMaxAAS();
+			}     //end for
+			break;
+		}     //end case
+		case COMP_REACH:
+		{
+			if (!qfiles)
+			{
+				Log_Print("no files found\n");
+			}
+			for (qf = qfiles; qf; qf = qf->next)
+			{
+				AASOuputFile(qf, outputpath, filename);
+				//
+				Log_Print("reach: %s to %s\n", qf->origname, filename);
+				if (qf->type != QFILETYPE_BSP)
+				{
+					Warning("%s is probably not a BSP file\n", qf->origname);
+				}
+				//if the AAS file exists in the output directory
+				if (!access(filename, 0x04))
+				{
+					if (!AAS_LoadAASFile(filename, 0, 0))
+					{
+						Error("error loading aas file %s\n", filename);
+					}     //end if
+					//assume it's a Quake3 BSP file
+					loadedmaptype = MAPTYPE_QUAKE3;
+				}     //end if
+				else
+				{
+					Warning("AAS file %s not found in output folder\n", filename);
+					Log_Print("creating %s...\n", filename);
+					//set before map loading
+					create_aas = 1;
+					LoadMapFromBSP(qf);
+					//create the AAS file
+					AAS_Create(filename);
+				}     //end else
+				//if it's a Quake3 map calculate the reachabilities and clusters
+				if (loadedmaptype == MAPTYPE_QUAKE3)
+				{
+					AAS_CalcReachAndClusters(qf);
+				}     //end if
+				//
+				if (groundonly)
+				{
+					AAS_RemoveNonGrounded();
+				}
+				if (reachableonly)
+				{
+					AAS_RemoveNonReachability();
+				}
+				if (optimize)
+				{
+					AAS_Optimize();
+				}
+				//write out the stored AAS file
+				if (!AAS_WriteAASFile(filename))
+				{
+					Error("error writing %s\n", filename);
+				}     //end if
+				//deallocate memory
+				AAS_FreeMaxAAS();
+			}     //end for
+			break;
+		}     //end case
+		case COMP_CLUSTER:
+		{
+			if (!qfiles)
+			{
+				Log_Print("no files found\n");
+			}
+			for (qf = qfiles; qf; qf = qf->next)
+			{
+				AASOuputFile(qf, outputpath, filename);
+				//
+				Log_Print("cluster: %s to %s\n", qf->origname, filename);
+				if (qf->type != QFILETYPE_BSP)
+				{
+					Warning("%s is probably not a BSP file\n", qf->origname);
+				}
+				//if the AAS file exists in the output directory
+				if (!access(filename, 0x04))
+				{
+					if (!AAS_LoadAASFile(filename, 0, 0))
+					{
+						Error("error loading aas file %s\n", filename);
+					}     //end if
+					//assume it's a Quake3 BSP file
+					loadedmaptype = MAPTYPE_QUAKE3;
+					//if it's a Quake3 map calculate the clusters
+					if (loadedmaptype == MAPTYPE_QUAKE3)
+					{
+						(*aasworld).numclusters = 0;
+						AAS_InitBotImport();
+						AAS_InitClustering();
+					}     //end if
+				}     //end if
+				else
+				{
+					Warning("AAS file %s not found in output folder\n", filename);
+					Log_Print("creating %s...\n", filename);
+					//set before map loading
+					create_aas = 1;
+					LoadMapFromBSP(qf);
+					//create the AAS file
+					AAS_Create(filename);
+					//if it's a Quake3 map calculate the reachabilities and clusters
+					if (loadedmaptype == MAPTYPE_QUAKE3)
+					{
+						AAS_CalcReachAndClusters(qf);
+					}
+				}     //end else
+				//
+				if (optimize)
+				{
+					AAS_Optimize();
+				}
+				//write out the stored AAS file
+				if (!AAS_WriteAASFile(filename))
+				{
+					Error("error writing %s\n", filename);
+				}     //end if
+				//deallocate memory
+				AAS_FreeMaxAAS();
+			}     //end for
+			break;
+		}     //end case
+		case COMP_AASOPTIMIZE:
+		{
+			if (!qfiles)
+			{
+				Log_Print("no files found\n");
+			}
+			for (qf = qfiles; qf; qf = qf->next)
+			{
+				AASOuputFile(qf, outputpath, filename);
+				//
+				Log_Print("optimizing: %s to %s\n", qf->origname, filename);
+				if (qf->type != QFILETYPE_AAS)
+				{
+					Warning("%s is probably not a AAS file\n", qf->origname);
+				}
+				//
+				AAS_InitBotImport();
+				//
+				if (!AAS_LoadAASFile(qf->filename, qf->offset, qf->length))
+				{
+					Error("error loading aas file %s\n", qf->filename);
+				}     //end if
+				if (groundonly)
+				{
+					AAS_RemoveNonGrounded();
+				}
+				if (reachableonly)
+				{
+					AAS_RemoveNonReachability();
+				}
+				AAS_Optimize();
+				//write out the stored AAS file
+				if (!AAS_WriteAASFile(filename))
+				{
+					Error("error writing %s\n", filename);
+				}     //end if
+				//deallocate memory
+				AAS_FreeMaxAAS();
+			}     //end for
+			break;
+		}     //end case
+		case COMP_AASREMOVENONREACHABLE:
+		{
+			if (!qfiles)
+			{
+				Log_Print("no files found\n");
+			}
+			for (qf = qfiles; qf; qf = qf->next)
+			{
+				AASOuputFile(qf, outputpath, filename);
+				//
+				Log_Print("removing non-reachability areas: %s to %s\n", qf->origname, filename);
+				if (qf->type != QFILETYPE_AAS)
+				{
+					Warning("%s is probably not a AAS file\n", qf->origname);
+				}
+				//
+				AAS_InitBotImport();
+				//
+				if (!AAS_LoadAASFile(qf->filename, qf->offset, qf->length))
+				{
+					Error("error loading aas file %s\n", qf->filename);
+				}     //end if
+				AAS_RemoveNonReachability();
+				if (optimize)
+				{
+					AAS_Optimize();
+				}
+				//write out the stored AAS file
+				if (!AAS_WriteAASFile(filename))
+				{
+					Error("error writing %s\n", filename);
+				}     //end if
+				//deallocate memory
+				AAS_FreeMaxAAS();
+			}     //end for
+			break;
+		}     //end case
+		case COMP_AASINFO:
+		{
+			if (!qfiles)
+			{
+				Log_Print("no files found\n");
+			}
+			for (qf = qfiles; qf; qf = qf->next)
+			{
+				AASOuputFile(qf, outputpath, filename);
+				//
+				Log_Print("aas info for: %s\n", filename);
+				if (qf->type != QFILETYPE_AAS)
+				{
+					Warning("%s is probably not a AAS file\n", qf->origname);
+				}
+				//
+				AAS_InitBotImport();
+				//
+				if (!AAS_LoadAASFile(qf->filename, qf->offset, qf->length))
+				{
+					Error("error loading aas file %s\n", qf->filename);
+				}     //end if
+				AAS_ShowTotals();
+			}     //end for
+		}     //end case
+		case COMP_TETRA:
+		{
+			if (!qfiles)
+			{
+				Log_Print("no files found\n");
+			}
+			for (qf = qfiles; qf; qf = qf->next)
+			{
+				//TH_AASToTetrahedrons(qf->filename);
+			}     //end for
+			break;
+		}     //end case
+		default:
+		{
+			Log_Print("don't know what to do\n");
+			break;
+		}     //end default
+		} //end switch
+	} //end if
+	else
+	{
+		Log_Print("Usage:   bspc [-<switch> [-<switch> ...]]\n"
+#if defined(WIN32) || defined(_WIN32)
+		          "Example 1: bspc -bsp2aas d:\\quake3\\baseq3\\maps\\mymap?.bsp\n"
+		          "Example 2: bspc -bsp2aas d:\\quake3\\baseq3\\pak0.pk3\\maps/q3dm*.bsp\n"
 #else
-                   "Example 1: bspc -bsp2aas /quake3/baseq3/maps/mymap?.bsp\n"
-                   "Example 2: bspc -bsp2aas /quake3/baseq3/pak0.pk3/maps/q3dm*.bsp\n"
+		          "Example 1: bspc -bsp2aas /quake3/baseq3/maps/mymap?.bsp\n"
+		          "Example 2: bspc -bsp2aas /quake3/baseq3/pak0.pk3/maps/q3dm*.bsp\n"
 #endif
-                   "\n"
-                   "Switches:\n"
-                   //"   bsp2map  <[pakfilter/]filter.bsp>    = convert BSP to MAP\n"
-                   "   bsp2aas  <[pakfilter/]filter.bsp>    = convert BSP to AAS\n"
-                   //"   aasall   <quake3folder>              = create AAS files for all BSPs\n"
-                   "   reach    <filter.bsp>                = compute reachability & clusters\n"
-                   "   cluster  <filter.aas>                = compute clusters\n"
-                   "   aasopt   <filter.aas>                = optimize aas file\n"
-                   //"   tetra    <filter.aas>                = tetrahedral decomposition\n"
-                   "   output   <output path>               = set output path\n"
-                   "   threads  <X>                         = set number of threads to X\n"
-                   "   cfg      <filename>                  = use this cfg file\n"
-                   "   optimize                             = enable optimization\n"
-                   "   noverbose                            = disable verbose output\n"
-                   "   breadthfirst                         = breadth first bsp building\n"
-                   "   nobrushmerge                         = don't merge brushes\n"
-                   "   noliquids                            = don't write liquids to map\n"
-                   "   freetree                             = free the bsp tree\n"
-                   "   nocsg                                = disables brush chopping\n"
-                   "   forcesidesvisible                    = force all sides to be visible\n"
-                   "   grapplereach                         = calculate grapple reachabilities\n"
-                   "   writeaasmap                          = write the map the AI sees\n"
+		          "\n"
+		          "Switches:\n"
+		          //"   bsp2map  <[pakfilter/]filter.bsp>    = convert BSP to MAP\n"
+		          "   bsp2aas  <[pakfilter/]filter.bsp>    = convert BSP to AAS\n"
+		          //"   aasall   <quake3folder>              = create AAS files for all BSPs\n"
+		          "   reach    <filter.bsp>                = compute reachability & clusters\n"
+		          "   cluster  <filter.aas>                = compute clusters\n"
+		          "   aasopt   <filter.aas>                = optimize aas file\n"
+		          //"   tetra    <filter.aas>                = tetrahedral decomposition\n"
+		          "   output   <output path>               = set output path\n"
+		          "   threads  <X>                         = set number of threads to X\n"
+		          "   cfg      <filename>                  = use this cfg file\n"
+		          "   optimize                             = enable optimization\n"
+		          "   noverbose                            = disable verbose output\n"
+		          "   breadthfirst                         = breadth first bsp building\n"
+		          "   nobrushmerge                         = don't merge brushes\n"
+		          "   noliquids                            = don't write liquids to map\n"
+		          "   freetree                             = free the bsp tree\n"
+		          "   nocsg                                = disables brush chopping\n"
+		          "   forcesidesvisible                    = force all sides to be visible\n"
+		          "   grapplereach                         = calculate grapple reachabilities\n"
+		          "   writeaasmap                          = write the map the AI sees\n"
 
-                   /*           "   glview     = output a GL view\n"
-                            "   draw       = enables drawing\n"
-                            "   noweld     = disables weld\n"
-                            "   noshare    = disables sharing\n"
-                            "   notjunc    = disables juncs\n"
-                            "   nowater    = disables water brushes\n"
-                            "   noprune    = disables node prunes\n"
-                            "   nomerge    = disables face merging\n"
-                            "   nosubdiv   = disables subdeviding\n"
-                            "   nodetail   = disables detail brushes\n"
-                            "   fulldetail = enables full detail\n"
-                            "   onlyents   = only compile entities with bsp\n"
-                            "   micro <volume>\n"
-                            "              = sets the micro volume to the given float\n"
-                            "   leaktest   = perform a leak test\n"
-                            "   verboseentities\n"
-                            "              = enable entity verbose mode\n"
-                            "   chop <subdivide_size>\n"
-                            "              = sets the subdivide size to the given float\n"*/
-                   "\n" );
-    } //end else
-    Log_Close();                        //close the log file
-    return 0;
+		          /*           "   glview     = output a GL view\n"
+		                   "   draw       = enables drawing\n"
+		                   "   noweld     = disables weld\n"
+		                   "   noshare    = disables sharing\n"
+		                   "   notjunc    = disables juncs\n"
+		                   "   nowater    = disables water brushes\n"
+		                   "   noprune    = disables node prunes\n"
+		                   "   nomerge    = disables face merging\n"
+		                   "   nosubdiv   = disables subdeviding\n"
+		                   "   nodetail   = disables detail brushes\n"
+		                   "   fulldetail = enables full detail\n"
+		                   "   onlyents   = only compile entities with bsp\n"
+		                   "   micro <volume>\n"
+		                   "              = sets the micro volume to the given float\n"
+		                   "   leaktest   = perform a leak test\n"
+		                   "   verboseentities\n"
+		                   "              = enable entity verbose mode\n"
+		                   "   chop <subdivide_size>\n"
+		                   "              = sets the subdivide size to the given float\n"*/
+		          "\n");
+	} //end else
+	Log_Close();                        //close the log file
+	return 0;
 } //end of the function main
-
-

@@ -34,7 +34,7 @@
 //NOTE:	int = default signed
 //					default long
 
-#define AASID                       ( ( 'S' << 24 ) + ( 'A' << 16 ) + ( 'A' << 8 ) + 'E' )
+#define AASID                       (('S' << 24) + ('A' << 16) + ('A' << 8) + 'E')
 #define AASVERSION                  8
 
 //presence types
@@ -66,8 +66,8 @@
 
 //additional travel flags
 #define TRAVELTYPE_MASK             0xFFFFFF
-#define TRAVELFLAG_NOTTEAM1         ( 1 << 24 )
-#define TRAVELFLAG_NOTTEAM2         ( 2 << 24 )
+#define TRAVELFLAG_NOTTEAM1         (1 << 24)
+#define TRAVELFLAG_NOTTEAM2         (2 << 24)
 
 //face flags
 #define FACE_SOLID                  1       //just solid at the other side
@@ -95,7 +95,7 @@
 //number of model of the mover inside this area
 #define AREACONTENTS_MODELNUMSHIFT      24
 #define AREACONTENTS_MAXMODELNUM        0xFF
-#define AREACONTENTS_MODELNUM           ( AREACONTENTS_MAXMODELNUM << AREACONTENTS_MODELNUMSHIFT )
+#define AREACONTENTS_MODELNUM           (AREACONTENTS_MAXMODELNUM << AREACONTENTS_MODELNUMSHIFT)
 
 //area flags
 #define AREA_GROUNDED               1       //bot can stand on the ground
@@ -112,7 +112,7 @@
 #define AREA_AVOID_AXIS             2048    // death area
 #define AREA_AVOID_ALLIES           4096    // death area
 
-#define AREA_TEAM_FLAGS             ( AREA_TEAM_AXIS | AREA_TEAM_ALLIES | AREA_TEAM_AXIS_DISGUISED | AREA_TEAM_ALLIES_DISGUISED | AREA_AVOID_AXIS | AREA_AVOID_ALLIES )
+#define AREA_TEAM_FLAGS             (AREA_TEAM_AXIS | AREA_TEAM_ALLIES | AREA_TEAM_AXIS_DISGUISED | AREA_TEAM_ALLIES_DISGUISED | AREA_AVOID_AXIS | AREA_AVOID_ALLIES)
 
 //aas file header lumps
 #define AAS_LUMPS                   14
@@ -243,7 +243,7 @@ typedef struct aas_node_s
 {
 	int planenum;
 	int children[2];                    //child nodes of this node, or convex areas as leaves when negative
-										//when a child is zero it's a solid leaf
+	                                    //when a child is zero it's a solid leaf
 } aas_node_t;
 
 //=========== aas file ===============
@@ -271,16 +271,16 @@ typedef struct aas_header_s
 
 -	when a node child is a solid leaf the node child number is zero
 -	two adjacent areas (sharing a plane at opposite sides) share a face
-	this face is a portal between the areas
+    this face is a portal between the areas
 -	when an area uses a face from the faceindex with a positive index
-	then the face plane normal points into the area
+    then the face plane normal points into the area
 -	the face edges are stored counter clockwise using the edgeindex
 -	two adjacent convex areas (sharing a face) only share One face
-	this is a simple result of the areas being convex
+    this is a simple result of the areas being convex
 -	the convex areas can't have a mixture of ground and gap faces
-	other mixtures of faces in one area are allowed
+    other mixtures of faces in one area are allowed
 -	areas with the AREACONTENTS_CLUSTERPORTAL in the settings have
-	cluster number zero
+    cluster number zero
 -	edge zero is a dummy
 -	face zero is a dummy
 -	area zero is a dummy

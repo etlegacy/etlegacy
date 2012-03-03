@@ -133,7 +133,7 @@
 //
 ///////////////////////////////////////
 
-#define kBOT_FOLLOW_SPEED_BONUS ( 1.25f )
+#define kBOT_FOLLOW_SPEED_BONUS (1.25f)
 
 ///////////////////////////////////////
 //
@@ -245,11 +245,11 @@
 
 // How much to penalize damage ratio based on distance from leader
 // NOTE: 1 == take full damage at max dist, 0 == use scripted ratio
-#define NO_LEADER_DAMAGE_PENALTY ( 0.6f )
+#define NO_LEADER_DAMAGE_PENALTY (0.6f)
 
 // How much to penalize the aiming accuracy based on distance from
 // leader.  1 == can't hit at all, 0 == No penalty
-#define NO_LEADER_MAX_AIM_PENALTY ( 0.5f )
+#define NO_LEADER_MAX_AIM_PENALTY (0.5f)
 
 // how much inaccuracy to remove. e.g. 0.5 = 50% less inaccuracy
 #define AIM_ACCURACY_BONUS_PRONE    0.5

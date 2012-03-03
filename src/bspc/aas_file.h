@@ -33,6 +33,5 @@
  * @brief AAS file loading and writing
  */
 
-qboolean AAS_WriteAASFile( char *filename );
-qboolean AAS_LoadAASFile( char *filename, int fpoffset, int fplength );
-
+qboolean AAS_WriteAASFile(char *filename);
+qboolean AAS_LoadAASFile(char *filename, int fpoffset, int fplength);

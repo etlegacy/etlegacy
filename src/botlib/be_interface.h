@@ -48,7 +48,7 @@
 
 //#define DEBUG         //debug code
 #define RANDOMIZE       //randomize bot behaviour
-#if defined( WIN32 ) || defined( _WIN32 )
+#if defined(WIN32) || defined(_WIN32)
 #define AASZIP          //allow reading directly from aasX.zip files
 #endif
 #define QUAKE2          //bot for Quake2
@@ -63,16 +63,16 @@
 //FIXME: get rid of this global structure
 typedef struct botlib_globals_s
 {
-    int botlibsetup;                        //true when the bot library has been setup
-    int maxentities;                        //maximum number of entities
-    int maxclients;                         //maximum number of clients
-    float time;                             //the global time
+	int botlibsetup;                        //true when the bot library has been setup
+	int maxentities;                        //maximum number of entities
+	int maxclients;                         //maximum number of clients
+	float time;                             //the global time
 //#ifdef DEBUG
-    qboolean debug;                         //true if debug is on
-    int goalareanum;
-    vec3_t goalorigin;
-    int runai;
-    qboolean lastsuccess;
+	qboolean debug;                         //true if debug is on
+	int goalareanum;
+	vec3_t goalorigin;
+	int runai;
+	qboolean lastsuccess;
 //#endif
 } botlib_globals_t;
 
@@ -83,9 +83,8 @@ typedef struct botlib_globals_s
 //==========================================================
 
 extern botlib_globals_t botlibglobals;
-extern botlib_import_t botimport;
-extern int bot_developer;                   //true if developer is on
+extern botlib_import_t  botimport;
+extern int              bot_developer;      //true if developer is on
 
 //
-int Sys_MilliSeconds( void );
-
+int Sys_MilliSeconds(void);

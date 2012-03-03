@@ -33,5 +33,4 @@
  * @brief Melting of Edges
  */
 
-void AAS_MeltAreaFaceWindings( void );
-
+void AAS_MeltAreaFaceWindings(void);

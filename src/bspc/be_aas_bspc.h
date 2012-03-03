@@ -33,9 +33,8 @@
  * @brief Area Awareness System
  */
 
-void AAS_CalcReachAndClusters( struct quakefile_s *qf );
+void AAS_CalcReachAndClusters(struct quakefile_s *qf);
 
 // Ridah
-void AAS_SetWorldPointer( aas_t *newaasworld );
+void AAS_SetWorldPointer(aas_t *newaasworld);
 // done.
-

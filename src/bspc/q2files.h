@@ -42,7 +42,7 @@ The .pak files are just a linear collapse of a directory tree
 ========================================================================
 */
 
-#define IDPAKHEADER     ( ( 'K' << 24 ) + ( 'C' << 16 ) + ( 'A' << 8 ) + 'P' )
+#define IDPAKHEADER     (('K' << 24) + ('C' << 16) + ('A' << 8) + 'P')
 
 typedef struct
 {
@@ -74,8 +74,8 @@ typedef struct
 	char version;
 	char encoding;
 	char bits_per_pixel;
-	unsigned short xmin,ymin,xmax,ymax;
-	unsigned short hres,vres;
+	unsigned short xmin, ymin, xmax, ymax;
+	unsigned short hres, vres;
 	unsigned char palette[48];
 	char reserved;
 	char color_planes;
@@ -94,7 +94,7 @@ typedef struct
 ========================================================================
 */
 
-#define IDALIASHEADER       ( ( '2' << 24 ) + ( 'P' << 16 ) + ( 'D' << 8 ) + 'I' )
+#define IDALIASHEADER       (('2' << 24) + ('P' << 16) + ('D' << 8) + 'I')
 #define ALIAS_VERSION   8
 
 #define MAX_TRIANGLES   4096
@@ -178,7 +178,7 @@ typedef struct
 ========================================================================
 */
 
-#define IDSPRITEHEADER  ( ( '2' << 24 ) + ( 'S' << 16 ) + ( 'D' << 8 ) + 'I' )
+#define IDSPRITEHEADER  (('2' << 24) + ('S' << 16) + ('D' << 8) + 'I')
 // little-endian "IDS2"
 #define SPRITE_VERSION  2
 
@@ -189,7 +189,8 @@ typedef struct
 	char name[MAX_SKINNAME];        // name of pcx file
 } dsprframe_t;
 
-typedef struct {
+typedef struct
+{
 	int ident;
 	int version;
 	int numframes;
@@ -227,7 +228,7 @@ typedef struct miptex_s
 ==============================================================================
 */
 
-#define IDBSPHEADER ( ( 'P' << 24 ) + ( 'S' << 16 ) + ( 'B' << 8 ) + 'I' )
+#define IDBSPHEADER (('P' << 24) + ('S' << 16) + ('B' << 8) + 'I')
 // little-endian "IBSP"
 
 #define BSPVERSION  38
@@ -239,7 +240,7 @@ typedef struct miptex_s
 #define MAX_MAP_MODELS      1024
 #define MAX_MAP_BRUSHES     16384
 #define MAX_MAP_ENTITIES    4096
-#define MAX_MAP_ENTSTRING   ( 128 * MAX_MAP_ENTITIES )
+#define MAX_MAP_ENTSTRING   (128 * MAX_MAP_ENTITIES)
 #define MAX_MAP_TEXINFO     8192
 
 #define MAX_MAP_AREAS       256
@@ -304,7 +305,7 @@ typedef struct
 	float origin[3];            // for sounds or lights
 	int headnode;
 	int firstface, numfaces;            // submodels just draw faces
-										// without walking the bsp tree
+	                                    // without walking the bsp tree
 } dmodel_t;
 
 

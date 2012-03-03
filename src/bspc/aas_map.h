@@ -32,4 +32,4 @@
  * @author Mr Elusive (MrElusive@demigod.demon.nl)
  */
 
-void AAS_CreateMapBrushes( mapbrush_t *brush, entity_t *mapent, int addbevels );
+void AAS_CreateMapBrushes(mapbrush_t *brush, entity_t *mapent, int addbevels);

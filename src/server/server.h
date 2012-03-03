@@ -38,21 +38,22 @@
 
 //bani
 #ifdef __GNUC__
-#define _attribute( x ) __attribute__( x )
+#define _attribute(x) __attribute__(x)
 #else
-#define _attribute( x )
+#define _attribute(x)
 #endif
 
 //=============================================================================
 
 #define PERS_SCORE              0       // !!! MUST NOT CHANGE, SERVER AND
-										// GAME BOTH REFERENCE !!!
+                                        // GAME BOTH REFERENCE !!!
 
 #define MAX_ENT_CLUSTERS    16
 
 #define MAX_BPS_WINDOW      20          // NERVE - SMF - net debugging
 
-typedef struct svEntity_s {
+typedef struct svEntity_s
+{
 	struct worldSector_s *worldSector;
 	struct svEntity_s *nextEntityInWorldSector;
 
@@ -65,13 +66,15 @@ typedef struct svEntity_s {
 	int originCluster;              // Gordon: calced upon linking, for origin only bmodel vis checks
 } svEntity_t;
 
-typedef enum {
+typedef enum
+{
 	SS_DEAD,            // no map loaded
 	SS_LOADING,         // spawning level entities
 	SS_GAME             // actively running
 } serverState_t;
 
-typedef struct {
+typedef struct
+{
 	serverState_t state;
 	qboolean restarting;                // if true, send configstring changes during SS_LOADING
 	int serverId;                       // changes each server start
@@ -84,18 +87,18 @@ typedef struct {
 	int timeResidual;                   // <= 1000 / sv_frame->value
 	int nextFrameTime;                  // when time > nextFrameTime, process world
 	struct cmodel_s *models[MAX_MODELS];
-	char*           configstrings[MAX_CONFIGSTRINGS];
+	char *configstrings[MAX_CONFIGSTRINGS];
 	qboolean configstringsmodified[MAX_CONFIGSTRINGS];
 	svEntity_t svEntities[MAX_GENTITIES];
 
-	char            *entityParsePoint;  // used during game VM init
+	char *entityParsePoint;             // used during game VM init
 
 	// the game virtual machine will update these on init and changes
-	sharedEntity_t  *gentities;
+	sharedEntity_t *gentities;
 	int gentitySize;
 	int num_entities;                   // current number, <= MAX_GENTITIES
 
-	playerState_t   *gameClients;
+	playerState_t *gameClients;
 	int gameClientSize;                 // will be > sizeof(playerState_t) due to game private data
 
 	int restartTime;
@@ -125,20 +128,22 @@ typedef struct {
 
 
 
-typedef struct {
+typedef struct
+{
 	int areabytes;
 	byte areabits[MAX_MAP_AREA_BYTES];                  // portalarea visibility bits
 	playerState_t ps;
 	int num_entities;
 	int first_entity;                   // into the circular sv_packet_entities[]
-										// the entities MUST be in increasing state number
-										// order, otherwise the delta compression will fail
+	                                    // the entities MUST be in increasing state number
+	                                    // order, otherwise the delta compression will fail
 	int messageSent;                    // time the message was transmitted
 	int messageAcked;                   // time the message was acked
 	int messageSize;                    // used to rate drop packets
 } clientSnapshot_t;
 
-typedef enum {
+typedef enum
+{
 	CS_FREE,        // can be reused for a new connection
 	CS_ZOMBIE,      // client has been disconnected, but don't reuse connection for a couple seconds
 	CS_CONNECTED,   // has been assigned to a client_t, but no gamestate yet
@@ -146,14 +151,16 @@ typedef enum {
 	CS_ACTIVE       // client is fully in game
 } clientState_t;
 
-typedef struct netchan_buffer_s {
+typedef struct netchan_buffer_s
+{
 	msg_t msg;
 	byte msgBuffer[MAX_MSGLEN];
 	char lastClientCommandString[MAX_STRING_CHARS];
 	struct netchan_buffer_s *next;
 } netchan_buffer_t;
 
-typedef struct client_s {
+typedef struct client_s
+{
 	clientState_t state;
 	char userinfo[MAX_INFO_STRING];                 // name, etc
 
@@ -174,7 +181,7 @@ typedef struct client_s {
 	int lastMessageNum;                 // for delta compression
 	int lastClientCommand;              // reliable client message sequence
 	char lastClientCommandString[MAX_STRING_CHARS];
-	sharedEntity_t  *gentity;           // SV_GentityNum(clientnum)
+	sharedEntity_t *gentity;            // SV_GentityNum(clientnum)
 	char name[MAX_NAME_LENGTH];                     // extracted from userinfo, high bits masked
 
 	// downloading
@@ -185,7 +192,7 @@ typedef struct client_s {
 	int downloadClientBlock;                // last block we sent to the client, awaiting ack
 	int downloadCurrentBlock;               // current block number
 	int downloadXmitBlock;              // last block we xmited
-	unsigned char   *downloadBlocks[MAX_DOWNLOAD_WINDOW];   // the buffers for the download blocks
+	unsigned char *downloadBlocks[MAX_DOWNLOAD_WINDOW];     // the buffers for the download blocks
 	int downloadBlockSize[MAX_DOWNLOAD_WINDOW];
 	qboolean downloadEOF;               // We have sent the EOF block
 	int downloadSendTime;               // time we last got an ack from the client
@@ -234,7 +241,8 @@ typedef struct client_s {
 
 #define AUTHORIZE_TIMEOUT   5000
 
-typedef struct {
+typedef struct
+{
 	netadr_t adr;
 	int challenge;
 	int time;                       // time the last packet was sent to the autherize server
@@ -244,7 +252,8 @@ typedef struct {
 	qboolean connected;
 } challenge_t;
 
-typedef struct tempBan_s {
+typedef struct tempBan_s
+{
 	netadr_t adr;
 	int endtime;
 } tempBan_t;
@@ -257,17 +266,18 @@ typedef struct tempBan_s {
 #define SERVER_PERFORMANCECOUNTER_SAMPLES   6
 
 // this structure will be cleared only when the game dll changes
-typedef struct {
+typedef struct
+{
 	qboolean initialized;                   // sv_init has completed
 
 	int time;                               // will be strictly increasing across level changes
 
 	int snapFlagServerBit;                  // ^= SNAPFLAG_SERVERCOUNT every SV_SpawnServer()
 
-	client_t    *clients;                   // [sv_maxclients->integer];
+	client_t *clients;                      // [sv_maxclients->integer];
 	int numSnapshotEntities;                // sv_maxclients->integer*PACKET_BACKUP*MAX_PACKET_ENTITIES
 	int nextSnapshotEntities;               // next snapshotEntities to use
-	entityState_t   *snapshotEntities;      // [numSnapshotEntities]
+	entityState_t *snapshotEntities;        // [numSnapshotEntities]
 	int nextHeartbeatTime;
 	challenge_t challenges[MAX_CHALLENGES]; // to prevent invalid IPs from connecting
 	netadr_t redirectAddress;               // for rcon return messages
@@ -288,53 +298,53 @@ typedef struct {
 //=============================================================================
 
 extern serverStatic_t svs;                  // persistant server info across maps
-extern server_t sv;                         // cleared each map
-extern vm_t            *gvm;                // game virtual machine
+extern server_t       sv;                   // cleared each map
+extern vm_t           *gvm;                 // game virtual machine
 
 
 #define MAX_MASTER_SERVERS  5
 
-extern cvar_t  *sv_fps;
-extern cvar_t  *sv_timeout;
-extern cvar_t  *sv_zombietime;
-extern cvar_t  *sv_rconPassword;
-extern cvar_t  *sv_privatePassword;
-extern cvar_t  *sv_allowDownload;
-extern cvar_t  *sv_friendlyFire;        // NERVE - SMF
-extern cvar_t  *sv_maxlives;            // NERVE - SMF
-extern cvar_t  *sv_maxclients;
-extern cvar_t  *sv_needpass;
+extern cvar_t *sv_fps;
+extern cvar_t *sv_timeout;
+extern cvar_t *sv_zombietime;
+extern cvar_t *sv_rconPassword;
+extern cvar_t *sv_privatePassword;
+extern cvar_t *sv_allowDownload;
+extern cvar_t *sv_friendlyFire;         // NERVE - SMF
+extern cvar_t *sv_maxlives;             // NERVE - SMF
+extern cvar_t *sv_maxclients;
+extern cvar_t *sv_needpass;
 
-extern cvar_t  *sv_privateClients;
-extern cvar_t  *sv_hostname;
-extern cvar_t  *sv_master[MAX_MASTER_SERVERS];
-extern cvar_t  *sv_reconnectlimit;
-extern cvar_t  *sv_tempbanmessage;
-extern cvar_t  *sv_showloss;
-extern cvar_t  *sv_padPackets;
-extern cvar_t  *sv_killserver;
-extern cvar_t  *sv_mapname;
-extern cvar_t  *sv_mapChecksum;
-extern cvar_t  *sv_serverid;
-extern cvar_t  *sv_maxRate;
-extern cvar_t  *sv_minPing;
-extern cvar_t  *sv_maxPing;
+extern cvar_t *sv_privateClients;
+extern cvar_t *sv_hostname;
+extern cvar_t *sv_master[MAX_MASTER_SERVERS];
+extern cvar_t *sv_reconnectlimit;
+extern cvar_t *sv_tempbanmessage;
+extern cvar_t *sv_showloss;
+extern cvar_t *sv_padPackets;
+extern cvar_t *sv_killserver;
+extern cvar_t *sv_mapname;
+extern cvar_t *sv_mapChecksum;
+extern cvar_t *sv_serverid;
+extern cvar_t *sv_maxRate;
+extern cvar_t *sv_minPing;
+extern cvar_t *sv_maxPing;
 //extern	cvar_t	*sv_gametype;
-extern cvar_t  *sv_pure;
-extern cvar_t  *sv_floodProtect;
-extern cvar_t  *sv_allowAnonymous;
-extern cvar_t  *sv_lanForceRate;
-extern cvar_t  *sv_onlyVisibleClients;
+extern cvar_t *sv_pure;
+extern cvar_t *sv_floodProtect;
+extern cvar_t *sv_allowAnonymous;
+extern cvar_t *sv_lanForceRate;
+extern cvar_t *sv_onlyVisibleClients;
 
-extern cvar_t  *sv_showAverageBPS;          // NERVE - SMF - net debugging
+extern cvar_t *sv_showAverageBPS;           // NERVE - SMF - net debugging
 
-extern cvar_t* g_gameType;
+extern cvar_t *g_gameType;
 
 // Rafael gameskill
 //extern	cvar_t	*sv_gameskill;
 // done
 
-extern cvar_t  *sv_reloading;
+extern cvar_t *sv_reloading;
 
 // TTimo - autodl
 extern cvar_t *sv_dl_maxRate;
@@ -360,133 +370,133 @@ extern cvar_t *sv_fullmsg;
 //
 // sv_main.c
 //
-void SV_FinalCommand( char *cmd, qboolean disconnect ); // ydnar: added disconnect flag so map changes can use this function as well
-void QDECL SV_SendServerCommand( client_t *cl, const char *fmt, ... );
+void SV_FinalCommand(char *cmd, qboolean disconnect);   // ydnar: added disconnect flag so map changes can use this function as well
+void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...);
 
 
-void SV_AddOperatorCommands( void );
-void SV_RemoveOperatorCommands( void );
+void SV_AddOperatorCommands(void);
+void SV_RemoveOperatorCommands(void);
 
 
-void SV_MasterHeartbeat( const char *hbname );
-void SV_MasterShutdown( void );
+void SV_MasterHeartbeat(const char *hbname);
+void SV_MasterShutdown(void);
 
-void SV_MasterGameCompleteStatus( void );     // NERVE - SMF
+void SV_MasterGameCompleteStatus(void);       // NERVE - SMF
 //bani - bugtraq 12534
-qboolean SV_VerifyChallenge( char *challenge );
+qboolean SV_VerifyChallenge(char *challenge);
 
 
 //
 // sv_init.c
 //
-void SV_SetConfigstringNoUpdate( int index, const char *val );
-void SV_SetConfigstring( int index, const char *val );
-void SV_UpdateConfigStrings( void );
-void SV_GetConfigstring( int index, char *buffer, int bufferSize );
+void SV_SetConfigstringNoUpdate(int index, const char *val);
+void SV_SetConfigstring(int index, const char *val);
+void SV_UpdateConfigStrings(void);
+void SV_GetConfigstring(int index, char *buffer, int bufferSize);
 
-void SV_SetUserinfo( int index, const char *val );
-void SV_GetUserinfo( int index, char *buffer, int bufferSize );
+void SV_SetUserinfo(int index, const char *val);
+void SV_GetUserinfo(int index, char *buffer, int bufferSize);
 
-void SV_CreateBaseline( void );
+void SV_CreateBaseline(void);
 
-void SV_ChangeMaxClients( void );
-void SV_SpawnServer( char *server, qboolean killBots );
+void SV_ChangeMaxClients(void);
+void SV_SpawnServer(char *server, qboolean killBots);
 
 
 
 //
 // sv_client.c
 //
-void SV_GetChallenge( netadr_t from );
+void SV_GetChallenge(netadr_t from);
 
-void SV_DirectConnect( netadr_t from );
+void SV_DirectConnect(netadr_t from);
 
-void SV_AuthorizeIpPacket( netadr_t from );
+void SV_AuthorizeIpPacket(netadr_t from);
 
-void SV_ExecuteClientMessage( client_t *cl, msg_t *msg );
-void SV_UserinfoChanged( client_t *cl );
+void SV_ExecuteClientMessage(client_t *cl, msg_t *msg);
+void SV_UserinfoChanged(client_t *cl);
 
-void SV_ClientEnterWorld( client_t *client, usercmd_t *cmd );
-void SV_FreeClientNetChan( client_t* client );
-void SV_DropClient( client_t *drop, const char *reason );
+void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd);
+void SV_FreeClientNetChan(client_t *client);
+void SV_DropClient(client_t *drop, const char *reason);
 
-void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK, qboolean premaprestart );
-void SV_ClientThink( client_t *cl, usercmd_t *cmd );
+void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qboolean premaprestart);
+void SV_ClientThink(client_t *cl, usercmd_t *cmd);
 
-void SV_WriteDownloadToClient( client_t *cl, msg_t *msg );
+void SV_WriteDownloadToClient(client_t *cl, msg_t *msg);
 
 //
 // sv_ccmds.c
 //
-void SV_Heartbeat_f( void );
+void SV_Heartbeat_f(void);
 
-qboolean SV_TempBanIsBanned( netadr_t address );
-void SV_TempBanNetAddress( netadr_t address, int length );
+qboolean SV_TempBanIsBanned(netadr_t address);
+void SV_TempBanNetAddress(netadr_t address, int length);
 
 //
 // sv_snapshot.c
 //
-void SV_AddServerCommand( client_t *client, const char *cmd );
-void SV_UpdateServerCommandsToClient( client_t *client, msg_t *msg );
-void SV_WriteFrameToClient( client_t *client, msg_t *msg );
-void SV_SendMessageToClient( msg_t *msg, client_t *client );
-void SV_SendClientMessages( void );
-void SV_SendClientSnapshot( client_t *client );
+void SV_AddServerCommand(client_t *client, const char *cmd);
+void SV_UpdateServerCommandsToClient(client_t *client, msg_t *msg);
+void SV_WriteFrameToClient(client_t *client, msg_t *msg);
+void SV_SendMessageToClient(msg_t *msg, client_t *client);
+void SV_SendClientMessages(void);
+void SV_SendClientSnapshot(client_t *client);
 //bani
-void SV_SendClientIdle( client_t *client );
+void SV_SendClientIdle(client_t *client);
 
 //
 // sv_game.c
 //
-int SV_NumForGentity( sharedEntity_t *ent );
+int SV_NumForGentity(sharedEntity_t *ent);
 
 //#define SV_GentityNum( num ) ((sharedEntity_t *)((byte *)sv.gentities + sv.gentitySize*(num)))
 //#define SV_GameClientNum( num ) ((playerState_t *)((byte *)sv.gameClients + sv.gameClientSize*(num)))
 
-sharedEntity_t *SV_GentityNum( int num );
-playerState_t *SV_GameClientNum( int num );
+sharedEntity_t *SV_GentityNum(int num);
+playerState_t *SV_GameClientNum(int num);
 
-svEntity_t  *SV_SvEntityForGentity( sharedEntity_t *gEnt );
-sharedEntity_t *SV_GEntityForSvEntity( svEntity_t *svEnt );
-void        SV_InitGameProgs( void );
-void        SV_ShutdownGameProgs( void );
-void        SV_RestartGameProgs( void );
-qboolean    SV_inPVS( const vec3_t p1, const vec3_t p2 );
-qboolean SV_GetTag( int clientNum, int tagFileNumber, char *tagname, orientation_t * or );
-int SV_LoadTag( const char* mod_name );
-qboolean    SV_GameIsSinglePlayer( void );
-qboolean    SV_GameIsCoop( void );
-void        SV_GameBinaryMessageReceived( int cno, const char *buf, int buflen, int commandTime );
+svEntity_t *SV_SvEntityForGentity(sharedEntity_t *gEnt);
+sharedEntity_t *SV_GEntityForSvEntity(svEntity_t *svEnt);
+void        SV_InitGameProgs(void);
+void        SV_ShutdownGameProgs(void);
+void        SV_RestartGameProgs(void);
+qboolean    SV_inPVS(const vec3_t p1, const vec3_t p2);
+qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *or);
+int SV_LoadTag(const char *mod_name);
+qboolean    SV_GameIsSinglePlayer(void);
+qboolean    SV_GameIsCoop(void);
+void        SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int commandTime);
 
 //
 // sv_bot.c
 //
-void        SV_BotFrame( int time );
-int         SV_BotAllocateClient( int clientNum );
-void        SV_BotFreeClient( int clientNum );
+void        SV_BotFrame(int time);
+int         SV_BotAllocateClient(int clientNum);
+void        SV_BotFreeClient(int clientNum);
 
-void        SV_BotInitCvars( void );
-int         SV_BotLibSetup( void );
-int         SV_BotLibShutdown( void );
-int         SV_BotGetSnapshotEntity( int client, int ent );
-int         SV_BotGetConsoleMessage( int client, char *buf, int size );
+void        SV_BotInitCvars(void);
+int         SV_BotLibSetup(void);
+int         SV_BotLibShutdown(void);
+int         SV_BotGetSnapshotEntity(int client, int ent);
+int         SV_BotGetConsoleMessage(int client, char *buf, int size);
 
-int BotImport_DebugPolygonCreate( int color, int numPoints, vec3_t *points );
-void BotImport_DebugPolygonDelete( int id );
+int BotImport_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
+void BotImport_DebugPolygonDelete(int id);
 
 //============================================================
 //
 // high level object sorting to reduce interaction tests
 //
 
-void SV_ClearWorld( void );
+void SV_ClearWorld(void);
 // called after the world model has been loaded, before linking any entities
 
-void SV_UnlinkEntity( sharedEntity_t *ent );
+void SV_UnlinkEntity(sharedEntity_t *ent);
 // call before removing an entity, and before trying to move one,
 // so it doesn't clip against itself
 
-void SV_LinkEntity( sharedEntity_t *ent );
+void SV_LinkEntity(sharedEntity_t *ent);
 // Needs to be called any time an entity changes origin, mins, maxs,
 // or solid.  Automatically unlinks if needed.
 // sets ent->v.absmin and ent->v.absmax
@@ -494,13 +504,13 @@ void SV_LinkEntity( sharedEntity_t *ent );
 // is not solid
 
 
-clipHandle_t SV_ClipHandleForEntity( const sharedEntity_t *ent );
+clipHandle_t SV_ClipHandleForEntity(const sharedEntity_t *ent);
 
 
-void SV_SectorList_f( void );
+void SV_SectorList_f(void);
 
 
-int SV_AreaEntities( const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount );
+int SV_AreaEntities(const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount);
 // fills in a table of entity numbers with entities that have bounding boxes
 // that intersect the given area.  It is possible for a non-axial bmodel
 // to be returned that doesn't actually intersect the area on an exact
@@ -509,11 +519,11 @@ int SV_AreaEntities( const vec3_t mins, const vec3_t maxs, int *entityList, int 
 // The world entity is never returned in this list.
 
 
-int SV_PointContents( const vec3_t p, int passEntityNum );
+int SV_PointContents(const vec3_t p, int passEntityNum);
 // returns the CONTENTS_* value from the world and all entities at the given point.
 
 
-void SV_Trace( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, int capsule );
+void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, int capsule);
 // mins and maxs are relative
 
 // if the entire move stays in a solid volume, trace.allsolid will be set,
@@ -525,17 +535,17 @@ void SV_Trace( trace_t *results, const vec3_t start, const vec3_t mins, const ve
 // passEntityNum is explicitly excluded from clipping checks (normally ENTITYNUM_NONE)
 
 
-void SV_ClipToEntity( trace_t *trace, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int entityNum, int contentmask, int capsule );
+void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int entityNum, int contentmask, int capsule);
 // clip to a specific entity
 
 //
 // sv_net_chan.c
 //
-void SV_Netchan_Transmit( client_t *client, msg_t *msg );
-void SV_Netchan_TransmitNextFragment( client_t *client );
-qboolean SV_Netchan_Process( client_t *client, msg_t *msg );
+void SV_Netchan_Transmit(client_t *client, msg_t *msg);
+void SV_Netchan_TransmitNextFragment(client_t *client);
+qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
 
 //bani - cl->downloadnotify
 #define DLNOTIFY_REDIRECT   0x00000001  // "Redirecting client ..."
 #define DLNOTIFY_BEGIN      0x00000002  // "clientDownload: 4 : beginning ..."
-#define DLNOTIFY_ALL        ( DLNOTIFY_REDIRECT | DLNOTIFY_BEGIN )
+#define DLNOTIFY_ALL        (DLNOTIFY_REDIRECT | DLNOTIFY_BEGIN)

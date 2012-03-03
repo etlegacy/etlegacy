@@ -70,17 +70,17 @@
 #define TFL_TEAM_AXIS_DISGUISED 0x10000000  //travel through axis+DISGUISED areas
 #define TFL_TEAM_ALLIES_DISGUISED   0x2000000   //travel through allies+DISGUISED areas
 
-#define TFL_TEAM_FLAGS      ( TFL_TEAM_AXIS | TFL_TEAM_ALLIES | TFL_TEAM_AXIS_DISGUISED | TFL_TEAM_ALLIES_DISGUISED )
+#define TFL_TEAM_FLAGS      (TFL_TEAM_AXIS | TFL_TEAM_ALLIES | TFL_TEAM_AXIS_DISGUISED | TFL_TEAM_ALLIES_DISGUISED)
 
 //default travel flags
 
 //----(SA)	modified since slime is no longer deadly
-#define TFL_DEFAULT ( TFL_WALK | TFL_CROUCH | TFL_BARRIERJUMP |	\
-					  TFL_JUMP | TFL_LADDER | \
-					  TFL_WALKOFFLEDGE | TFL_SWIM | TFL_WATERJUMP |	\
-					  TFL_TELEPORT | TFL_ELEVATOR | TFL_AIR | \
-					  TFL_WATER | TFL_SLIME | \
-					  TFL_JUMPPAD | TFL_FUNCBOB )
+#define TFL_DEFAULT (TFL_WALK | TFL_CROUCH | TFL_BARRIERJUMP | \
+                     TFL_JUMP | TFL_LADDER | \
+                     TFL_WALKOFFLEDGE | TFL_SWIM | TFL_WATERJUMP | \
+                     TFL_TELEPORT | TFL_ELEVATOR | TFL_AIR | \
+                     TFL_WATER | TFL_SLIME | \
+                     TFL_JUMPPAD | TFL_FUNCBOB)
 
 typedef enum
 {
@@ -107,24 +107,24 @@ typedef struct aas_trace_s
 //bsp_trace_t hit surface
 typedef struct bsp_surface_s
 {
-	char name[16];
-	int flags;
-	int value;
+    char name[16];
+    int flags;
+    int value;
 } bsp_surface_t;
 
 //a trace is returned when a box is swept through the BSP world
 typedef struct bsp_trace_s
 {
-	qboolean		allsolid;	// if true, plane is not valid
-	qboolean		startsolid;	// if true, the initial point was in a solid area
-	float			fraction;	// time completed, 1.0 = didn't hit anything
-	vec3_t		endpos;		// final position
-	cplane_t		plane;		// surface normal at impact
-	float			exp_dist;	// expanded plane distance
-	int			sidenum;		// number of the brush side hit
-	bsp_surface_t surface;	// hit surface
-	int			contents;	// contents on other side of surface hit
-	int			ent;			// number of entity hit
+    qboolean		allsolid;	// if true, plane is not valid
+    qboolean		startsolid;	// if true, the initial point was in a solid area
+    float			fraction;	// time completed, 1.0 = didn't hit anything
+    vec3_t		endpos;		// final position
+    cplane_t		plane;		// surface normal at impact
+    float			exp_dist;	// expanded plane distance
+    int			sidenum;		// number of the brush side hit
+    bsp_surface_t surface;	// hit surface
+    int			contents;	// contents on other side of surface hit
+    int			ent;			// number of entity hit
 } bsp_trace_t;
 //
 */
@@ -189,7 +189,8 @@ typedef struct bsp_surface_s
 #ifndef CPLANE
 // plane_t structure
 // !!! if this is changed, it must be changed in asm code too !!!
-typedef struct {
+typedef struct
+{
 	vec3_t normal;
 	float dist;
 	byte type;              // for fast side tests: 0,1,2 = axial, 3 = nonaxial

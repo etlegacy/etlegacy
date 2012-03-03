@@ -36,7 +36,8 @@
 
 #define UI_API_VERSION  4
 
-typedef struct {
+typedef struct
+{
 	connstate_t connState;
 	int connectPacketCount;
 	int clientNum;
@@ -45,7 +46,8 @@ typedef struct {
 	char messageString[MAX_STRING_CHARS];
 } uiClientState_t;
 
-typedef enum {
+typedef enum
+{
 	UI_ERROR,
 	UI_PRINT,
 	UI_MILLISECONDS,
@@ -184,7 +186,8 @@ typedef enum {
 #define SORT_FILTERS        5
 #define SORT_FAVOURITES     6
 
-typedef enum {
+typedef enum
+{
 	UI_GETAPIVERSION = 0,   // system reserved
 
 	UI_INIT,

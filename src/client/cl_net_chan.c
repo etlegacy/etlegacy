@@ -46,49 +46,56 @@ CL_Netchan_Encode
 
 ==============
 */
-static void CL_Netchan_Encode( msg_t *msg ) {
-    int serverId, messageAcknowledge, reliableAcknowledge;
-    int i, index, srdc, sbit, soob;
-    byte key, *string;
+static void CL_Netchan_Encode(msg_t *msg)
+{
+	int  serverId, messageAcknowledge, reliableAcknowledge;
+	int  i, index, srdc, sbit, soob;
+	byte key, *string;
 
-    if ( msg->cursize <= CL_ENCODE_START ) {
-        return;
-    }
+	if (msg->cursize <= CL_ENCODE_START)
+	{
+		return;
+	}
 
-    srdc = msg->readcount;
-    sbit = msg->bit;
-    soob = msg->oob;
+	srdc = msg->readcount;
+	sbit = msg->bit;
+	soob = msg->oob;
 
-    msg->bit = 0;
-    msg->readcount = 0;
-    msg->oob = 0;
+	msg->bit       = 0;
+	msg->readcount = 0;
+	msg->oob       = 0;
 
-    serverId = MSG_ReadLong( msg );
-    messageAcknowledge = MSG_ReadLong( msg );
-    reliableAcknowledge = MSG_ReadLong( msg );
+	serverId            = MSG_ReadLong(msg);
+	messageAcknowledge  = MSG_ReadLong(msg);
+	reliableAcknowledge = MSG_ReadLong(msg);
 
-    msg->oob = soob;
-    msg->bit = sbit;
-    msg->readcount = srdc;
+	msg->oob       = soob;
+	msg->bit       = sbit;
+	msg->readcount = srdc;
 
-    string = (byte *)clc.serverCommands[ reliableAcknowledge & ( MAX_RELIABLE_COMMANDS - 1 ) ];
-    index = 0;
-    //
-    key = clc.challenge ^ serverId ^ messageAcknowledge;
-    for ( i = CL_ENCODE_START; i < msg->cursize; i++ ) {
-        // modify the key with the last received now acknowledged server command
-        if ( !string[index] ) {
-            index = 0;
-        }
-        if ( string[index] > 127 || string[index] == '%' ) {
-            key ^= '.' << ( i & 1 );
-        } else {
-            key ^= string[index] << ( i & 1 );
-        }
-        index++;
-        // encode the data with this key
-        *( msg->data + i ) = ( *( msg->data + i ) ) ^ key;
-    }
+	string = (byte *)clc.serverCommands[reliableAcknowledge & (MAX_RELIABLE_COMMANDS - 1)];
+	index  = 0;
+	//
+	key = clc.challenge ^ serverId ^ messageAcknowledge;
+	for (i = CL_ENCODE_START; i < msg->cursize; i++)
+	{
+		// modify the key with the last received now acknowledged server command
+		if (!string[index])
+		{
+			index = 0;
+		}
+		if (string[index] > 127 || string[index] == '%')
+		{
+			key ^= '.' << (i & 1);
+		}
+		else
+		{
+			key ^= string[index] << (i & 1);
+		}
+		index++;
+		// encode the data with this key
+		*(msg->data + i) = (*(msg->data + i)) ^ key;
+	}
 }
 
 /*
@@ -100,41 +107,47 @@ CL_Netchan_Decode
 
 ==============
 */
-static void CL_Netchan_Decode( msg_t *msg ) {
-    long reliableAcknowledge, i, index;
-    byte key, *string;
-    int srdc, sbit, soob;
+static void CL_Netchan_Decode(msg_t *msg)
+{
+	long reliableAcknowledge, i, index;
+	byte key, *string;
+	int  srdc, sbit, soob;
 
-    srdc = msg->readcount;
-    sbit = msg->bit;
-    soob = msg->oob;
+	srdc = msg->readcount;
+	sbit = msg->bit;
+	soob = msg->oob;
 
-    msg->oob = 0;
+	msg->oob = 0;
 
-    reliableAcknowledge = MSG_ReadLong( msg );
+	reliableAcknowledge = MSG_ReadLong(msg);
 
-    msg->oob = soob;
-    msg->bit = sbit;
-    msg->readcount = srdc;
+	msg->oob       = soob;
+	msg->bit       = sbit;
+	msg->readcount = srdc;
 
-    string = clc.reliableCommands[ reliableAcknowledge & ( MAX_RELIABLE_COMMANDS - 1 ) ];
-    index = 0;
-    // xor the client challenge with the netchan sequence number (need something that changes every message)
-    key = clc.challenge ^ LittleLong( *(unsigned *)msg->data );
-    for ( i = msg->readcount + CL_DECODE_START; i < msg->cursize; i++ ) {
-        // modify the key with the last sent and with this message acknowledged client command
-        if ( !string[index] ) {
-            index = 0;
-        }
-        if ( string[index] > 127 || string[index] == '%' ) {
-            key ^= '.' << ( i & 1 );
-        } else {
-            key ^= string[index] << ( i & 1 );
-        }
-        index++;
-        // decode the data with this key
-        *( msg->data + i ) = *( msg->data + i ) ^ key;
-    }
+	string = clc.reliableCommands[reliableAcknowledge & (MAX_RELIABLE_COMMANDS - 1)];
+	index  = 0;
+	// xor the client challenge with the netchan sequence number (need something that changes every message)
+	key = clc.challenge ^ LittleLong(*(unsigned *)msg->data);
+	for (i = msg->readcount + CL_DECODE_START; i < msg->cursize; i++)
+	{
+		// modify the key with the last sent and with this message acknowledged client command
+		if (!string[index])
+		{
+			index = 0;
+		}
+		if (string[index] > 127 || string[index] == '%')
+		{
+			key ^= '.' << (i & 1);
+		}
+		else
+		{
+			key ^= string[index] << (i & 1);
+		}
+		index++;
+		// decode the data with this key
+		*(msg->data + i) = *(msg->data + i) ^ key;
+	}
 }
 
 /*
@@ -142,32 +155,36 @@ static void CL_Netchan_Decode( msg_t *msg ) {
 CL_Netchan_TransmitNextFragment
 =================
 */
-void CL_Netchan_TransmitNextFragment( netchan_t *chan ) {
-    Netchan_TransmitNextFragment( chan );
+void CL_Netchan_TransmitNextFragment(netchan_t *chan)
+{
+	Netchan_TransmitNextFragment(chan);
 }
 
-extern qboolean SV_GameIsSinglePlayer( void );
+extern qboolean SV_GameIsSinglePlayer(void);
 
 /*
 ================
 CL_WriteBinaryMessage
 ================
 */
-static void CL_WriteBinaryMessage( msg_t *msg ) {
-    if ( !clc.binaryMessageLength ) {
-        return;
-    }
+static void CL_WriteBinaryMessage(msg_t *msg)
+{
+	if (!clc.binaryMessageLength)
+	{
+		return;
+	}
 
-    MSG_Uncompressed( msg );
+	MSG_Uncompressed(msg);
 
-    if ( ( msg->cursize + clc.binaryMessageLength ) >= msg->maxsize ) {
-        clc.binaryMessageOverflowed = qtrue;
-        return;
-    }
+	if ((msg->cursize + clc.binaryMessageLength) >= msg->maxsize)
+	{
+		clc.binaryMessageOverflowed = qtrue;
+		return;
+	}
 
-    MSG_WriteData( msg, clc.binaryMessage, clc.binaryMessageLength );
-    clc.binaryMessageLength = 0;
-    clc.binaryMessageOverflowed = qfalse;
+	MSG_WriteData(msg, clc.binaryMessage, clc.binaryMessageLength);
+	clc.binaryMessageLength     = 0;
+	clc.binaryMessageOverflowed = qfalse;
 }
 
 /*
@@ -175,34 +192,39 @@ static void CL_WriteBinaryMessage( msg_t *msg ) {
 CL_Netchan_Transmit
 ================
 */
-void CL_Netchan_Transmit( netchan_t *chan, msg_t* msg ) {
-    MSG_WriteByte( msg, clc_EOF );
-    CL_WriteBinaryMessage( msg );
+void CL_Netchan_Transmit(netchan_t *chan, msg_t *msg)
+{
+	MSG_WriteByte(msg, clc_EOF);
+	CL_WriteBinaryMessage(msg);
 
-    if ( !SV_GameIsSinglePlayer() ) {
-        CL_Netchan_Encode( msg );
-    }
-    Netchan_Transmit( chan, msg->cursize, msg->data );
+	if (!SV_GameIsSinglePlayer())
+	{
+		CL_Netchan_Encode(msg);
+	}
+	Netchan_Transmit(chan, msg->cursize, msg->data);
 }
 
 extern int oldsize;
-int newsize = 0;
+int        newsize = 0;
 
 /*
 =================
 CL_Netchan_Process
 =================
 */
-qboolean CL_Netchan_Process( netchan_t *chan, msg_t *msg ) {
-    int ret;
+qboolean CL_Netchan_Process(netchan_t *chan, msg_t *msg)
+{
+	int ret;
 
-    ret = Netchan_Process( chan, msg );
-    if ( !ret ) {
-        return qfalse;
-    }
-    if ( !SV_GameIsSinglePlayer() ) {
-        CL_Netchan_Decode( msg );
-    }
-    newsize += msg->cursize;
-    return qtrue;
+	ret = Netchan_Process(chan, msg);
+	if (!ret)
+	{
+		return qfalse;
+	}
+	if (!SV_GameIsSinglePlayer())
+	{
+		CL_Netchan_Decode(msg);
+	}
+	newsize += msg->cursize;
+	return qtrue;
 }

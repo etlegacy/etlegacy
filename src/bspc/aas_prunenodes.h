@@ -33,5 +33,4 @@
  * @author Mr Elusive (MrElusive@demigod.demon.nl)
  */
 
-void AAS_PruneNodes( void );
-
+void AAS_PruneNodes(void);

@@ -32,9 +32,9 @@
  * @brief utils
  */
 
-#define Vector2Angles( v,a )      vectoangles( v,a )
+#define Vector2Angles(v, a)      vectoangles(v, a)
 #ifndef MAX_PATH // LBO 1/25/05
 #define MAX_PATH                MAX_QPATH
 #endif
-#define Maximum( x,y )            ( x > y ? x : y )
-#define Minimum( x,y )            ( x < y ? x : y )
+#define Maximum(x, y)            (x > y ? x : y)
+#define Minimum(x, y)            (x < y ? x : y)

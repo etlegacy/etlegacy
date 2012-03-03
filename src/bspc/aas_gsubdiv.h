@@ -34,5 +34,5 @@
  */
 
 //works with the global tmpaasworld
-void AAS_GravitationalSubdivision( void );
-void AAS_LadderSubdivision( void );
+void AAS_GravitationalSubdivision(void);
+void AAS_LadderSubdivision(void);

@@ -47,7 +47,7 @@
 #define SIN_MAX_MAP_MODELS      1024
 #define SIN_MAX_MAP_BRUSHES     8192
 #define SIN_MAX_MAP_ENTITIES    4096
-#define SIN_MAX_MAP_ENTSTRING   ( 128 * SIN_MAX_MAP_ENTITIES )
+#define SIN_MAX_MAP_ENTSTRING   (128 * SIN_MAX_MAP_ENTITIES)
 #define SIN_MAX_MAP_TEXINFO     8192
 
 #define SIN_MAX_MAP_AREAS       256
@@ -84,7 +84,7 @@
 
 typedef struct
 {
-    int fileofs, filelen;
+	int fileofs, filelen;
 } sin_lump_t;
 
 #define SIN_LUMP_ENTITIES       0
@@ -114,23 +114,23 @@ typedef struct
 
 typedef struct
 {
-    int ident;
-    int version;
-    sin_lump_t lumps[SINHEADER_LUMPS];
+	int ident;
+	int version;
+	sin_lump_t lumps[SINHEADER_LUMPS];
 } sin_dheader_t;
 
 typedef struct
 {
-    float mins[3], maxs[3];
-    float origin[3];            // for sounds or lights
-    int headnode;
-    int firstface, numfaces;            // submodels just draw faces
-    // without walking the bsp tree
+	float mins[3], maxs[3];
+	float origin[3];            // for sounds or lights
+	int headnode;
+	int firstface, numfaces;            // submodels just draw faces
+	// without walking the bsp tree
 } sin_dmodel_t;
 
 typedef struct
 {
-    float point[3];
+	float point[3];
 } sin_dvertex_t;
 
 
@@ -148,9 +148,9 @@ typedef struct
 
 typedef struct
 {
-    float normal[3];
-    float dist;
-    int type;           // PLANE_X - PLANE_ANYZ ?remove? trivial to regenerate
+	float normal[3];
+	float dist;
+	int type;           // PLANE_X - PLANE_ANYZ ?remove? trivial to regenerate
 } sin_dplane_t;
 
 
@@ -216,68 +216,68 @@ typedef struct
 #define  SURF_TYPE_BIT3       0x40000000  // 3 bit of surface type
 
 #define SURF_START_BIT        27
-#define SURFACETYPE_FROM_FLAGS( x ) ( ( x >> ( SURF_START_BIT ) ) & 0xf )
+#define SURFACETYPE_FROM_FLAGS(x) ((x >> (SURF_START_BIT)) & 0xf)
 
 
-#define  SURF_TYPE_SHIFT( x )   ( ( x ) << ( SURF_START_BIT ) ) // macro for getting proper bit mask
+#define  SURF_TYPE_SHIFT(x)   ((x) << (SURF_START_BIT))         // macro for getting proper bit mask
 
-#define  SURF_TYPE_NONE       SURF_TYPE_SHIFT( 0 )
-#define  SURF_TYPE_WOOD       SURF_TYPE_SHIFT( 1 )
-#define  SURF_TYPE_METAL      SURF_TYPE_SHIFT( 2 )
-#define  SURF_TYPE_STONE      SURF_TYPE_SHIFT( 3 )
-#define  SURF_TYPE_CONCRETE   SURF_TYPE_SHIFT( 4 )
-#define  SURF_TYPE_DIRT       SURF_TYPE_SHIFT( 5 )
-#define  SURF_TYPE_FLESH      SURF_TYPE_SHIFT( 6 )
-#define  SURF_TYPE_GRILL      SURF_TYPE_SHIFT( 7 )
-#define  SURF_TYPE_GLASS      SURF_TYPE_SHIFT( 8 )
-#define  SURF_TYPE_FABRIC     SURF_TYPE_SHIFT( 9 )
-#define  SURF_TYPE_MONITOR    SURF_TYPE_SHIFT( 10 )
-#define  SURF_TYPE_GRAVEL     SURF_TYPE_SHIFT( 11 )
-#define  SURF_TYPE_VEGETATION SURF_TYPE_SHIFT( 12 )
-#define  SURF_TYPE_PAPER      SURF_TYPE_SHIFT( 13 )
-#define  SURF_TYPE_DUCT       SURF_TYPE_SHIFT( 14 )
-#define  SURF_TYPE_WATER      SURF_TYPE_SHIFT( 15 )
+#define  SURF_TYPE_NONE       SURF_TYPE_SHIFT(0)
+#define  SURF_TYPE_WOOD       SURF_TYPE_SHIFT(1)
+#define  SURF_TYPE_METAL      SURF_TYPE_SHIFT(2)
+#define  SURF_TYPE_STONE      SURF_TYPE_SHIFT(3)
+#define  SURF_TYPE_CONCRETE   SURF_TYPE_SHIFT(4)
+#define  SURF_TYPE_DIRT       SURF_TYPE_SHIFT(5)
+#define  SURF_TYPE_FLESH      SURF_TYPE_SHIFT(6)
+#define  SURF_TYPE_GRILL      SURF_TYPE_SHIFT(7)
+#define  SURF_TYPE_GLASS      SURF_TYPE_SHIFT(8)
+#define  SURF_TYPE_FABRIC     SURF_TYPE_SHIFT(9)
+#define  SURF_TYPE_MONITOR    SURF_TYPE_SHIFT(10)
+#define  SURF_TYPE_GRAVEL     SURF_TYPE_SHIFT(11)
+#define  SURF_TYPE_VEGETATION SURF_TYPE_SHIFT(12)
+#define  SURF_TYPE_PAPER      SURF_TYPE_SHIFT(13)
+#define  SURF_TYPE_DUCT       SURF_TYPE_SHIFT(14)
+#define  SURF_TYPE_WATER      SURF_TYPE_SHIFT(15)
 #endif
 
 
 typedef struct
 {
-    int planenum;
-    int children[2];            // negative numbers are -(leafs+1), not nodes
-    short mins[3];              // for frustom culling
-    short maxs[3];
-    unsigned short firstface;
-    unsigned short numfaces;    // counting both sides
+	int planenum;
+	int children[2];            // negative numbers are -(leafs+1), not nodes
+	short mins[3];              // for frustom culling
+	short maxs[3];
+	unsigned short firstface;
+	unsigned short numfaces;    // counting both sides
 } sin_dnode_t;
 
 #ifdef SIN
 
 typedef struct sin_lightvalue_s
 {
-    int value;              // light emission, etc
-    vec3_t color;
-    float direct;
-    float directangle;
-    float directstyle;
-    char directstylename[32];
+	int value;              // light emission, etc
+	vec3_t color;
+	float direct;
+	float directangle;
+	float directstyle;
+	char directstylename[32];
 } sin_lightvalue_t;
 
 typedef struct sin_texinfo_s
 {
-    float vecs[2][4];           // [s/t][xyz offset]
-    int flags;                  // miptex flags + overrides
-    char texture[64];           // texture name (textures/*.wal)
-    int nexttexinfo;            // for animations, -1 = end of chain
-    float trans_mag;
-    int trans_angle;
-    int base_angle;
-    float animtime;
-    float nonlit;
-    float translucence;
-    float friction;
-    float restitution;
-    vec3_t color;
-    char groupname[32];
+	float vecs[2][4];           // [s/t][xyz offset]
+	int flags;                  // miptex flags + overrides
+	char texture[64];           // texture name (textures/*.wal)
+	int nexttexinfo;            // for animations, -1 = end of chain
+	float trans_mag;
+	int trans_angle;
+	int base_angle;
+	float animtime;
+	float nonlit;
+	float translucence;
+	float friction;
+	float restitution;
+	vec3_t color;
+	char groupname[32];
 } sin_texinfo_t;
 
 #endif //SIN
@@ -286,7 +286,7 @@ typedef struct sin_texinfo_s
 // counterclockwise use of the edge in a face
 typedef struct
 {
-    unsigned short v[2];        // vertex numbers
+	unsigned short v[2];        // vertex numbers
 } sin_dedge_t;
 
 #ifdef MAXLIGHTMAPS
@@ -295,52 +295,52 @@ typedef struct
 #define MAXLIGHTMAPS    16
 typedef struct
 {
-    unsigned short planenum;
-    short side;
+	unsigned short planenum;
+	short side;
 
-    int firstedge;          // we must support > 64k edges
-    short numedges;
-    short texinfo;
+	int firstedge;          // we must support > 64k edges
+	short numedges;
+	short texinfo;
 
 // lighting info
-    byte styles[MAXLIGHTMAPS];
-    int lightofs;           // start of [numstyles*surfsize] samples
+	byte styles[MAXLIGHTMAPS];
+	int lightofs;           // start of [numstyles*surfsize] samples
 #ifdef SIN
-    int lightinfo;
+	int lightinfo;
 #endif
 } sin_dface_t;
 
 typedef struct
 {
-    int contents;                       // OR of all brushes (not needed?)
+	int contents;                       // OR of all brushes (not needed?)
 
-    short cluster;
-    short area;
+	short cluster;
+	short area;
 
-    short mins[3];                      // for frustum culling
-    short maxs[3];
+	short mins[3];                      // for frustum culling
+	short maxs[3];
 
-    unsigned short firstleafface;
-    unsigned short numleaffaces;
+	unsigned short firstleafface;
+	unsigned short numleaffaces;
 
-    unsigned short firstleafbrush;
-    unsigned short numleafbrushes;
+	unsigned short firstleafbrush;
+	unsigned short numleafbrushes;
 } sin_dleaf_t;
 
 typedef struct
 {
-    unsigned short planenum;        // facing out of the leaf
-    short texinfo;
+	unsigned short planenum;        // facing out of the leaf
+	short texinfo;
 #ifdef SIN
-    int lightinfo;
+	int lightinfo;
 #endif
 } sin_dbrushside_t;
 
 typedef struct
 {
-    int firstside;
-    int numsides;
-    int contents;
+	int firstside;
+	int numsides;
+	int contents;
 } sin_dbrush_t;
 
 #define ANGLE_UP    -1
@@ -354,8 +354,8 @@ typedef struct
 #define DVIS_PHS    1
 typedef struct
 {
-    int numclusters;
-    int bitofs[8][2];           // bitofs[numclusters][2]
+	int numclusters;
+	int bitofs[8][2];           // bitofs[numclusters][2]
 } sin_dvis_t;
 
 // each area has a list of portals that lead into other areas
@@ -363,12 +363,12 @@ typedef struct
 // hearable even if the vis info says that it should be
 typedef struct
 {
-    int portalnum;
-    int otherarea;
+	int portalnum;
+	int otherarea;
 } sin_dareaportal_t;
 
 typedef struct
 {
-    int numareaportals;
-    int firstareaportal;
+	int numareaportals;
+	int firstareaportal;
 } sin_darea_t;

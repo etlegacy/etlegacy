@@ -47,11 +47,11 @@ void DL_Shutdown(void)
 
 int DL_BeginDownload(const char *localName, const char *remoteName, int debug)
 {
-    return 1;
+	return 1;
 }
 
 // (maybe this should be CL_DL_DownloadLoop)
 dlStatus_t DL_DownloadLoop(void)
 {
-    return DL_DONE;
+	return DL_DONE;
 }

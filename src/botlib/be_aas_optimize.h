@@ -33,6 +33,6 @@
  * calculated, just dumps all the faces, edges and vertexes
  */
 
-void AAS_Optimize( void );
-void AAS_RemoveNonReachability( void );
-void AAS_RemoveNonGrounded( void );
+void AAS_Optimize(void);
+void AAS_RemoveNonReachability(void);
+void AAS_RemoveNonGrounded(void);

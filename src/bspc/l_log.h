@@ -34,22 +34,22 @@
  */
 
 //open a log file
-void Log_Open( char *filename );
+void Log_Open(char *filename);
 //close the current log file
-void Log_Close( void );
+void Log_Close(void);
 //close log file if present
-void Log_Shutdown( void );
+void Log_Shutdown(void);
 //print on stdout and write to the current opened log file
-void Log_Print( char *fmt, ... );
+void Log_Print(char *fmt, ...);
 //write to the current opened log file
-void Log_Write( char *fmt, ... );
+void Log_Write(char *fmt, ...);
 //write to the current opened log file with a time stamp
-void Log_WriteTimeStamped( char *fmt, ... );
+void Log_WriteTimeStamped(char *fmt, ...);
 //returns the log file structure
-FILE *Log_FileStruct( void );
+FILE *Log_FileStruct(void);
 //flush log file
-void Log_Flush( void );
+void Log_Flush(void);
 
 #ifdef WINBSPC
-void WinBSPCPrint( char *str );
+void WinBSPCPrint(char *str);
 #endif //WINBSPC

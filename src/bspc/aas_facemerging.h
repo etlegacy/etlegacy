@@ -33,5 +33,5 @@
  * @brief Merging of Faces
  */
 
-void AAS_MergeAreaFaces( void );
-void AAS_MergeAreaPlaneFaces( void );
+void AAS_MergeAreaFaces(void);
+void AAS_MergeAreaPlaneFaces(void);

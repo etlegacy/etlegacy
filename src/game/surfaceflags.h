@@ -98,7 +98,3 @@
 #define SURF_MONSLICK_S         0x40000000
 
 #define SURF_LANDMINE           0x80000000  // ydnar: ok to place landmines on this surface
-
-
-
-

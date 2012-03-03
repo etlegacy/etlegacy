@@ -34,5 +34,4 @@
  */
 
 
-void AAS_MergeAreas( void );
-
+void AAS_MergeAreas(void);

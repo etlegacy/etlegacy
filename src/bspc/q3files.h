@@ -39,7 +39,7 @@
 
 // surface geometry should not exceed these limits
 #define SHADER_MAX_VERTEXES 1000
-#define SHADER_MAX_INDEXES  ( 6 * SHADER_MAX_VERTEXES )
+#define SHADER_MAX_INDEXES  (6 * SHADER_MAX_VERTEXES)
 
 
 // the maximum size of game reletive pathnames
@@ -98,7 +98,7 @@ typedef struct _TargaHeader {
 ========================================================================
 */
 
-#define MD3_IDENT           ( ( '3' << 24 ) + ( 'P' << 16 ) + ( 'D' << 8 ) + 'I' )
+#define MD3_IDENT           (('3' << 24) + ('P' << 16) + ('D' << 8) + 'I')
 #define MD3_VERSION         15
 
 // limits
@@ -111,19 +111,21 @@ typedef struct _TargaHeader {
 #define MD3_MAX_TAGS        16      // per frame
 
 // vertex scales
-#define MD3_XYZ_SCALE       ( 1.0 / 64 )
+#define MD3_XYZ_SCALE       (1.0 / 64)
 
-typedef struct md3Frame_s {
-    vec3_t bounds[2];
-    vec3_t localOrigin;
-    float radius;
-    char name[16];
+typedef struct md3Frame_s
+{
+	vec3_t bounds[2];
+	vec3_t localOrigin;
+	float radius;
+	char name[16];
 } md3Frame_t;
 
-typedef struct md3Tag_s {
-    char name[MAX_QPATH];           // tag name
-    vec3_t origin;
-    vec3_t axis[3];
+typedef struct md3Tag_s
+{
+	char name[MAX_QPATH];           // tag name
+	vec3_t origin;
+	vec3_t axis[3];
 } md3Tag_t;
 
 /*
@@ -137,64 +139,70 @@ typedef struct md3Tag_s {
 ** XyzNormals       sizeof( md3XyzNormal_t ) * numVerts * numFrames
 */
 
-typedef struct {
-    int ident;                  //
+typedef struct
+{
+	int ident;                  //
 
-    char name[MAX_QPATH];       // polyset name
+	char name[MAX_QPATH];       // polyset name
 
-    int flags;
-    int numFrames;              // all surfaces in a model should have the same
+	int flags;
+	int numFrames;              // all surfaces in a model should have the same
 
-    int numShaders;             // all surfaces in a model should have the same
-    int numVerts;
+	int numShaders;             // all surfaces in a model should have the same
+	int numVerts;
 
-    int numTriangles;
-    int ofsTriangles;
+	int numTriangles;
+	int ofsTriangles;
 
-    int ofsShaders;             // offset from start of md3Surface_t
-    int ofsSt;                  // texture coords are common for all frames
-    int ofsXyzNormals;          // numVerts * numFrames
+	int ofsShaders;             // offset from start of md3Surface_t
+	int ofsSt;                  // texture coords are common for all frames
+	int ofsXyzNormals;          // numVerts * numFrames
 
-    int ofsEnd;                 // next surface follows
+	int ofsEnd;                 // next surface follows
 } md3Surface_t;
 
-typedef struct {
-    char name[MAX_QPATH];
-    int shaderIndex;                // for in-game use
+typedef struct
+{
+	char name[MAX_QPATH];
+	int shaderIndex;                // for in-game use
 } md3Shader_t;
 
-typedef struct {
-    int indexes[3];
+typedef struct
+{
+	int indexes[3];
 } md3Triangle_t;
 
-typedef struct {
-    float st[2];
+typedef struct
+{
+	float st[2];
 } md3St_t;
 
-typedef struct {
-    short xyz[3];
-    short normal;
+typedef struct
+{
+	short xyz[3];
+	short normal;
 } md3XyzNormal_t;
 
-typedef struct {
-    int ident;
-    int version;
+typedef struct
+{
+	int ident;
+	int version;
 
-    char name[MAX_QPATH];           // model name
+	char name[MAX_QPATH];           // model name
 
-    int flags;
+	int flags;
 
-    int numFrames;
-    int numTags;
-    int numSurfaces;
+	int numFrames;
+	int numTags;
+	int numSurfaces;
 
-    int numSkins;
+	int numSkins;
 
-    int ofsFrames;                  // offset for first frame
-    int ofsTags;                    // numFrames * numTags
-    int ofsSurfaces;                // first surface, others follow
+	int ofsFrames;                  // offset for first frame
+	int ofsTags;                    // numFrames * numTags
+	int ofsSurfaces;                // first surface, others follow
 
-    int ofsEnd;                     // end of file
+	int ofsEnd;                     // end of file
 } md3Header_t;
 
 
@@ -208,7 +216,7 @@ typedef struct {
 */
 
 
-#define Q3_BSP_IDENT    ( ( 'P' << 24 ) + ( 'S' << 16 ) + ( 'B' << 8 ) + 'I' )
+#define Q3_BSP_IDENT    (('P' << 24) + ('S' << 16) + ('B' << 8) + 'I')
 // little-endian "IBSP"
 
 #define Q3_BSP_VERSION          47
@@ -255,8 +263,9 @@ typedef struct {
 //=============================================================================
 
 
-typedef struct {
-    int fileofs, filelen;
+typedef struct
+{
+	int fileofs, filelen;
 } q3_lump_t;
 
 #define Q3_LUMP_ENTITIES        0
@@ -278,107 +287,119 @@ typedef struct {
 #define Q3_LUMP_VISIBILITY      16
 #define Q3_HEADER_LUMPS     17
 
-typedef struct {
-    int ident;
-    int version;
+typedef struct
+{
+	int ident;
+	int version;
 
-    q3_lump_t lumps[Q3_HEADER_LUMPS];
+	q3_lump_t lumps[Q3_HEADER_LUMPS];
 } q3_dheader_t;
 
-typedef struct {
-    float mins[3], maxs[3];
-    int firstSurface, numSurfaces;
-    int firstBrush, numBrushes;
+typedef struct
+{
+	float mins[3], maxs[3];
+	int firstSurface, numSurfaces;
+	int firstBrush, numBrushes;
 } q3_dmodel_t;
 
-typedef struct {
-    char shader[MAX_QPATH];
-    int surfaceFlags;
-    int contentFlags;
+typedef struct
+{
+	char shader[MAX_QPATH];
+	int surfaceFlags;
+	int contentFlags;
 } q3_dshader_t;
 
 // planes (x&~1) and (x&~1)+1 are allways opposites
 
-typedef struct {
-    float normal[3];
-    float dist;
+typedef struct
+{
+	float normal[3];
+	float dist;
 } q3_dplane_t;
 
-typedef struct {
-    int planeNum;
-    int children[2];            // negative numbers are -(leafs+1), not nodes
-    int mins[3];                // for frustom culling
-    int maxs[3];
+typedef struct
+{
+	int planeNum;
+	int children[2];            // negative numbers are -(leafs+1), not nodes
+	int mins[3];                // for frustom culling
+	int maxs[3];
 } q3_dnode_t;
 
-typedef struct {
-    int cluster;                    // -1 = opaque cluster (do I still store these?)
-    int area;
+typedef struct
+{
+	int cluster;                    // -1 = opaque cluster (do I still store these?)
+	int area;
 
-    int mins[3];                    // for frustum culling
-    int maxs[3];
+	int mins[3];                    // for frustum culling
+	int maxs[3];
 
-    int firstLeafSurface;
-    int numLeafSurfaces;
+	int firstLeafSurface;
+	int numLeafSurfaces;
 
-    int firstLeafBrush;
-    int numLeafBrushes;
+	int firstLeafBrush;
+	int numLeafBrushes;
 } q3_dleaf_t;
 
-typedef struct {
-    int planeNum;                   // positive plane side faces out of the leaf
-    int shaderNum;
+typedef struct
+{
+	int planeNum;                   // positive plane side faces out of the leaf
+	int shaderNum;
 } q3_dbrushside_t;
 
-typedef struct {
-    int firstSide;
-    int numSides;
-    int shaderNum;              // the shader that determines the contents flags
+typedef struct
+{
+	int firstSide;
+	int numSides;
+	int shaderNum;              // the shader that determines the contents flags
 } q3_dbrush_t;
 
-typedef struct {
-    char shader[MAX_QPATH];
-    int brushNum;
-    int visibleSide;            // the brush side that ray tests need to clip against (-1 == none)
+typedef struct
+{
+	char shader[MAX_QPATH];
+	int brushNum;
+	int visibleSide;            // the brush side that ray tests need to clip against (-1 == none)
 } q3_dfog_t;
 
-typedef struct {
-    vec3_t xyz;
-    float st[2];
-    float lightmap[2];
-    vec3_t normal;
-    byte color[4];
+typedef struct
+{
+	vec3_t xyz;
+	float st[2];
+	float lightmap[2];
+	vec3_t normal;
+	byte color[4];
 } q3_drawVert_t;
 
-typedef enum {
-    MST_BAD,
-    MST_PLANAR,
-    MST_PATCH,
-    MST_TRIANGLE_SOUP,
-    MST_FLARE,
-    MST_FOLIAGE
+typedef enum
+{
+	MST_BAD,
+	MST_PLANAR,
+	MST_PATCH,
+	MST_TRIANGLE_SOUP,
+	MST_FLARE,
+	MST_FOLIAGE
 } q3_mapSurfaceType_t;
 
-typedef struct {
-    int shaderNum;
-    int fogNum;
-    int surfaceType;
+typedef struct
+{
+	int shaderNum;
+	int fogNum;
+	int surfaceType;
 
-    int firstVert;
-    int numVerts;
+	int firstVert;
+	int numVerts;
 
-    int firstIndex;
-    int numIndexes;
+	int firstIndex;
+	int numIndexes;
 
-    int lightmapNum;
-    int lightmapX, lightmapY;
-    int lightmapWidth, lightmapHeight;
+	int lightmapNum;
+	int lightmapX, lightmapY;
+	int lightmapWidth, lightmapHeight;
 
-    vec3_t lightmapOrigin;
-    vec3_t lightmapVecs[3];         // for patches, [0] and [1] are lodbounds
+	vec3_t lightmapOrigin;
+	vec3_t lightmapVecs[3];         // for patches, [0] and [1] are lodbounds
 
-    int patchWidth;
-    int patchHeight;
+	int patchWidth;
+	int patchHeight;
 } q3_dsurface_t;
 
 

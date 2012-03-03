@@ -131,5 +131,3 @@
 #define MODELINDEX_FLIGHT           33
 #define MODELINDEX_REDFLAG          34
 #define MODELINDEX_BLUEFLAG         35
-
-

@@ -49,29 +49,27 @@
 //structure field definition
 typedef struct fielddef_s
 {
-    char *name;                                     //name of the field
-    int offset;                                     //offset in the structure
-    int type;                                       //type of the field
-    //type specific fields
-    int maxarray;                                   //maximum array size
-    float floatmin, floatmax;                   //float min and max
-    struct structdef_s *substruct;          //sub structure
+	char *name;                                     //name of the field
+	int offset;                                     //offset in the structure
+	int type;                                       //type of the field
+	//type specific fields
+	int maxarray;                                   //maximum array size
+	float floatmin, floatmax;                   //float min and max
+	struct structdef_s *substruct;          //sub structure
 } fielddef_t;
 
 //structure definition
 typedef struct structdef_s
 {
-    int size;
-    fielddef_t *fields;
+	int size;
+	fielddef_t *fields;
 } structdef_t;
 
 //read a structure from a script
-int ReadStructure( source_t *source, structdef_t *def, char *structure );
+int ReadStructure(source_t *source, structdef_t *def, char *structure);
 //write a structure to a file
-int WriteStructure( FILE *fp, structdef_t *def, char *structure );
+int WriteStructure(FILE *fp, structdef_t *def, char *structure);
 //writes indents
-int WriteIndent( FILE *fp, int indent );
+int WriteIndent(FILE *fp, int indent);
 //writes a float without traling zeros
-int WriteFloat( FILE *fp, float value );
-
-
+int WriteFloat(FILE *fp, float value);
