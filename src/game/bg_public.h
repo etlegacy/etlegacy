@@ -45,7 +45,7 @@
 #if defined( _DEBUG )
 	#define GAME_VERSION_DATED          GAME_VERSION
 #else
-	#define GAME_VERSION_DATED          ( GAME_VERSION ", " Q3_VERSION )
+	#define GAME_VERSION_DATED          ( GAME_VERSION ", ET 2.60b" )
 #endif
 
 //bani
