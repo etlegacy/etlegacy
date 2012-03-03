@@ -33,6 +33,10 @@
  * get separated once premake supports different files per configuration
  */
 
+#ifndef DEDICATED
+#include <SDL/SDL_video.h>
+#endif
+
 #ifdef _WIN32
 
 #include "../qcommon/q_shared.h"
@@ -839,6 +843,7 @@ NERVE - SMF
 ==================
 */
 void Sys_OpenURL( const char *url, qboolean doexit ) {
+#ifndef DEDICATED
     HWND wnd;
 
     static qboolean doexit_spamguard = qfalse;
@@ -867,6 +872,9 @@ void Sys_OpenURL( const char *url, qboolean doexit ) {
         doexit_spamguard = qtrue;
         Cbuf_ExecuteText( EXEC_APPEND, "quit\n" );
     }
+
+    SDL_WM_IconifyWindow();
+#endif
 }
 
 #else
@@ -1645,7 +1653,7 @@ void Sys_StartProcess( char *cmdline, qboolean doexit ) {
 
     if ( doexit ) {
         Com_DPrintf( "Sys_StartProcess %s (delaying to final exit)\n", cmdline );
-        Q_strncpyz( exit_cmdline, cmdline, MAX_CMD );
+        Sys_DoStartProcess( cmdline );
         Cbuf_ExecuteText( EXEC_APPEND, "quit\n" );
         return;
     }
@@ -1660,6 +1668,7 @@ Sys_OpenURL
 =================
 */
 void Sys_OpenURL( const char *url, qboolean doexit ) {
+#ifndef DEDICATED
     char *basepath, *homepath, *pwdpath;
     char fname[20];
     char fn[MAX_OSPATH];
@@ -1673,47 +1682,14 @@ void Sys_OpenURL( const char *url, qboolean doexit ) {
     }
 
     Com_Printf( "Open URL: %s\n", url );
-    // opening an URL on *nix can mean a lot of things ..
-    // just spawn a script instead of deciding for the user :-)
-
-    // do the setup before we fork
-    // search for an openurl.sh script
-    // search procedure taken from Sys_LoadDll
-    Q_strncpyz( fname, "openurl.sh", 20 );
-
-    pwdpath = Sys_Cwd();
-    Com_sprintf( fn, MAX_OSPATH, "%s/%s", pwdpath, fname );
-    if ( access( fn, X_OK ) == -1 ) {
-        Com_DPrintf( "%s not found\n", fn );
-        // try in home path
-        homepath = Cvar_VariableString( "fs_homepath" );
-        Com_sprintf( fn, MAX_OSPATH, "%s/%s", homepath, fname );
-        if ( access( fn, X_OK ) == -1 ) {
-            Com_DPrintf( "%s not found\n", fn );
-            // basepath, last resort
-            basepath = Cvar_VariableString( "fs_basepath" );
-            Com_sprintf( fn, MAX_OSPATH, "%s/%s", basepath, fname );
-            if ( access( fn, X_OK ) == -1 ) {
-                Com_DPrintf( "%s not found\n", fn );
-                Com_Printf( "Can't find script '%s' to open requested URL (use +set developer 1 for more verbosity)\n", fname );
-                // we won't quit
-                return;
-            }
-        }
-    }
-
-    // show_bug.cgi?id=612
-    if ( doexit ) {
-        doexit_spamguard = qtrue;
-    }
 
     Com_DPrintf( "URL script: %s\n", fn );
 
-    // build the command line
-    Com_sprintf( cmdline, MAX_CMD, "%s '%s' &", fn, url );
-
+    Com_sprintf( cmdline, MAX_CMD, "xdg-open '%s' &", url );
     Sys_StartProcess( cmdline, doexit );
 
+    SDL_WM_IconifyWindow();
+#endif
 }
 
 /*
