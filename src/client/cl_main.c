@@ -965,13 +965,12 @@ static void CL_UpdateGUID ( const char *prefix, int prefix_len ) {
 
     if ( len < ETKEY_SIZE ) {
         Cvar_Set ( "cl_guid", "" );
+		Com_Printf ( S_COLOR_RED "ERROR: unable to set cl_guid from %s!\n",
+					 ETKEY_FILE );
     } else {
         char *guid = Com_MD5FileETCompat ( ETKEY_FILE );
         if ( guid ) {
             Cvar_Set ( "cl_guid", guid );
-        } else {
-            Com_Printf ( S_COLOR_RED "ERROR: unable to set cl_guid from %s!\n",
-                         ETKEY_FILE );
         }
     }
 }

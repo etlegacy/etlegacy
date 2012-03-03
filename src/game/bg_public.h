@@ -40,15 +40,9 @@
 #ifndef __BG_PUBLIC_H__
 #define __BG_PUBLIC_H__
 
-#define GAME_VERSION    "Enemy Territory"
+#define GAME_VERSION		"Enemy Territory"
+#define GAME_VERSION_DATED	( GAME_VERSION ", ET 2.60b" )
 
-#if defined( _DEBUG )
-	#define GAME_VERSION_DATED          GAME_VERSION
-#else
-	#define GAME_VERSION_DATED          ( GAME_VERSION ", ET 2.60b" )
-#endif
-
-//bani
 #ifdef __GNUC__
 #define _attribute( x ) __attribute__( x )
 #else
