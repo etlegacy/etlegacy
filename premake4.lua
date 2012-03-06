@@ -231,25 +231,15 @@ project "etlegacy-dedicated"
 	excludes
 	{
 		"src/botlib/botlib_stub.c",
+		"src/qcommon/dl_main_curl.c",
 	}
 
-	if _OPTIONS["with-curl"] then
-		excludes "src/qcommon/dl_main_stubs.c"
-	else
-		excludes "src/qcommon/dl_main_curl.c"
-	end
-        
 	-- 
 	-- Windows build options
 	-- 
 	configuration { "vs* or mingw" }
 		targetsuffix ".exe"
 		flags       { "WinMain" }
-        
-		buildoptions
-		{
-			"`/usr/i686-pc-mingw32/usr/bin/pkg-config --cflags libcurl`",
-		}
 		links
 		{
 			-- NOTE TO SELF:
@@ -261,7 +251,6 @@ project "etlegacy-dedicated"
 			"wsock32",
  			"iphlpapi",
 			
-			"curl",
 			"SDLmain",
 			"SDL",
 			
@@ -290,17 +279,7 @@ project "etlegacy-dedicated"
 
 	--
 	-- Linux build options	
-	-- 	
-	configuration { "linux", "not mingw", "gmake" }
-		buildoptions
-		{
-			"`pkg-config --cflags libcurl`",
-		}
-		linkoptions
-		{
-			"`pkg-config --libs libcurl`",
-		}
-		
+	--
 	configuration { "linux", "not mingw", "x32" }
 		targetdir 	"build/linux-i386"
 		
