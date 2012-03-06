@@ -549,7 +549,9 @@ void SV_TouchCGameDLL(void)
 	}
 	else if (sv_pure->integer)       // ydnar: so we can work the damn game
 	{
-		Com_Error(ERR_DROP, "Failed to locate cgame DLL for pure server mode");
+		Com_Error(ERR_DROP, "Failed to locate cgame %s for pure server mode"
+		                    "Probably you'll need cgame for other platforms too",
+		                    filename);
 	}
 }
 
