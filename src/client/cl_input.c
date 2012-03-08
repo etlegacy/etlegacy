@@ -377,13 +377,7 @@ void IN_Button4Up(void)
 {
 	IN_KeyUp(&kb[KB_BUTTONS4]);
 }
-// void IN_Button5Down(void) {IN_KeyDown(&kb[KB_BUTTONS5]);}
-// void IN_Button5Up(void) {IN_KeyUp(&kb[KB_BUTTONS5]);}
 
-// void IN_Button6Down(void) {IN_KeyDown(&kb[KB_BUTTONS6]);}
-// void IN_Button6Up(void) {IN_KeyUp(&kb[KB_BUTTONS6]);}
-
-// Rafael activate
 void IN_ActivateDown(void)
 {
 	IN_KeyDown(&kb[KB_BUTTONS6]);
@@ -392,7 +386,6 @@ void IN_ActivateUp(void)
 {
 	IN_KeyUp(&kb[KB_BUTTONS6]);
 }
-// done.
 
 void IN_SprintDown(void)
 {
@@ -1321,8 +1314,6 @@ void CL_InitInput(void)
 
 	Cmd_AddCommand("+attack", IN_Button0Down);     // ---- id   (primary firing)
 	Cmd_AddCommand("-attack", IN_Button0Up);
-//  Cmd_AddCommand ("+button0", IN_Button0Down);
-//  Cmd_AddCommand ("-button0", IN_Button0Up);
 
 	Cmd_AddCommand("+button1", IN_Button1Down);
 	Cmd_AddCommand("-button1", IN_Button1Up);
@@ -1330,33 +1321,17 @@ void CL_InitInput(void)
 	Cmd_AddCommand("+useitem", IN_UseItemDown);
 	Cmd_AddCommand("-useitem", IN_UseItemUp);
 
-	Cmd_AddCommand("+salute", IN_Button3Down);     //----(SA) salute
+	Cmd_AddCommand("+salute", IN_Button3Down);
 	Cmd_AddCommand("-salute", IN_Button3Up);
-//  Cmd_AddCommand ("+button3", IN_Button3Down);
-//  Cmd_AddCommand ("-button3", IN_Button3Up);
 
-	Cmd_AddCommand("+button4", IN_Button4Down);
-	Cmd_AddCommand("-button4", IN_Button4Up);
-	//Cmd_AddCommand ("+button5", IN_Button5Down);
-	//Cmd_AddCommand ("-button5", IN_Button5Up);
-
-	//Cmd_AddCommand ("+button6", IN_Button6Down);
-	//Cmd_AddCommand ("-button6", IN_Button6Up);
-
-	// Rafael Activate
 	Cmd_AddCommand("+activate", IN_ActivateDown);
 	Cmd_AddCommand("-activate", IN_ActivateUp);
-	// done.
 
-	// Rafael Kick
-	// Arnout: now prone
 	Cmd_AddCommand("+prone", IN_ProneDown);
 	Cmd_AddCommand("-prone", IN_ProneUp);
-	// done
 
 	Cmd_AddCommand("+sprint", IN_SprintDown);
 	Cmd_AddCommand("-sprint", IN_SprintUp);
-
 
 	// wolf buttons
 	Cmd_AddCommand("+attack2", IN_Wbutton0Down);          //----(SA) secondary firing
