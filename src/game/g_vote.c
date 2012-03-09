@@ -353,7 +353,7 @@ int G_Comp_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 	{
 		// Load in comp settings for current gametype
 		G_configSet(g_gametype.integer, qtrue);
-		AP("cp \"Competition Settings Loaded!\n\"");
+		AP("cpm \"Competition Settings Loaded!\n\"");
 	}
 
 	return(G_OK);
@@ -868,7 +868,7 @@ int G_Pub_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qbo
 	{
 		// Load in pub settings for current gametype
 		G_configSet(g_gametype.integer, qfalse);
-		AP("cp \"Public Settings Loaded!\n\"");
+		AP("cpm \"Public Settings Loaded!\n\"");
 	}
 
 	return(G_OK);
@@ -953,7 +953,7 @@ int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *
 	{
 		if (trap_Argc() > 2)
 		{
-			G_refPrintf(ent, "Usage: ^3%s %s%s\n\n", ((fRefereeCmd) ? "\\ref" : "\\callvote"), arg, aVoteInfo[dwVoteIndex].pszVoteHelp);
+			G_refPrintf(ent, "Usage: ^3%s %s%s\n", ((fRefereeCmd) ? "\\ref" : "\\callvote"), arg, aVoteInfo[dwVoteIndex].pszVoteHelp);
 			return(G_INVALID);
 		}
 		else if (!vote_allow_shuffleteamsxp.integer && ent && !ent->client->sess.referee)
@@ -1209,7 +1209,7 @@ int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 	else
 	{
 		// Warmup damage setting
-		AP(va("print \"^3Warmup Damage set to: ^5%s\n\"", warmupType[atoi(level.voteInfo.vote_value)]));
+		AP(va("cpm \"^3Warmup Damage set to: ^5%s\n\"", warmupType[atoi(level.voteInfo.vote_value)]));
 		trap_SendConsoleCommand(EXEC_APPEND, va("match_warmupDamage %s\n", level.voteInfo.vote_value));
 	}
 

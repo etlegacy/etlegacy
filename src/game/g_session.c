@@ -378,8 +378,10 @@ void G_InitSessionData(gclient_t *client, char *userinfo)
 	sess->muted = qfalse;
 	memset(sess->skill, 0, sizeof(sess->skill));
 	memset(sess->skillpoints, 0, sizeof(sess->skillpoints));
+	memset(sess->startskillpoints, 0, sizeof(sess->startskillpoints));
 	memset(sess->medals, 0, sizeof(sess->medals));
-	sess->rank = 0;
+	sess->rank         = 0;
+	sess->startxptotal = 0;
 
 	// OSP
 	sess->coach_team  = 0;

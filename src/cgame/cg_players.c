@@ -180,7 +180,6 @@ void CG_NewClientInfo(int clientNum)
 	clientInfo_t newInfo;
 	const char   *configstring;
 	const char   *v;
-	int          oldclass;
 
 	ci = &cgs.clientinfo[clientNum];
 
@@ -288,8 +287,10 @@ void CG_NewClientInfo(int clientNum)
 	v                 = Info_ValueForKey(configstring, "ref");
 	newInfo.refStatus = atoi(v);
 
-	// Gordon: detect rank/skill changes client side
-	if (clientNum == cg.clientNum)
+	// Detect rank/skill changes client side.
+	// Make sure we have some valid clientinfo, otherwise people are thrown
+	// into spectator on map starts.
+	if (clientNum == cg.clientNum && cgs.clientinfo[cg.clientNum].team > 0)
 	{
 		int i;
 
@@ -313,6 +314,10 @@ void CG_NewClientInfo(int clientNum)
 			CG_AddPMItemBig(PM_RANK, va("Promoted to rank %s!", cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? rankNames_Axis[newInfo.rank] : rankNames_Allies[newInfo.rank]), rankicons[newInfo.rank][0].shader);
 		}
 
+		// Make sure primary class and primary weapons are correct for
+		// subsequent calls to CG_LimboPanel_SendSetupMsg
+		CG_LimboPanel_Setup();
+
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
 			if (newInfo.skill[i] > cgs.clientinfo[cg.clientNum].skill[i])
@@ -322,44 +327,37 @@ void CG_NewClientInfo(int clientNum)
 
 				if (newInfo.skill[i] == 4 && i == SK_HEAVY_WEAPONS)
 				{
-					if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] == 4)
+					if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4)
 					{
-						oldclass            = cgs.ccSelectedClass;
-						cgs.ccSelectedClass = newInfo.cls;
-						CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 2);
-						CG_LimboPanel_SendSetupMsg(qfalse);
-						cgs.ccSelectedClass = oldclass;
+						// Only select SMG (2) if using the single gun (0)
+						if (cgs.ccSelectedWeapon2 == 0)
+						{
+							CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 2); // Selects SMG
+							CG_LimboPanel_SendSetupMsg(qfalse);
+						}
 					}
 					else
 					{
-						oldclass            = cgs.ccSelectedClass;
-						cgs.ccSelectedClass = newInfo.cls;
-						CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 1);
+						CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 1); // Selects SMG
 						CG_LimboPanel_SendSetupMsg(qfalse);
-						cgs.ccSelectedClass = oldclass;
 					}
 				}
 
 				if (newInfo.skill[i] == 4 && i == SK_LIGHT_WEAPONS)
 				{
-					if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] == 4)
+					if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4)
 					{
-						if (cgs.ccSelectedWeapon2 == 2)
+						// Only select Akimbo guns (1) if using the single gun (0)
+						if (cgs.ccSelectedWeapon2 == 0)
 						{
-							oldclass            = cgs.ccSelectedClass;
-							cgs.ccSelectedClass = newInfo.cls;
-							CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 3);
+							CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 1); // Selects Akimbo guns
 							CG_LimboPanel_SendSetupMsg(qfalse);
-							cgs.ccSelectedClass = oldclass;
 						}
 					}
 					else
 					{
-						oldclass            = cgs.ccSelectedClass;
-						cgs.ccSelectedClass = newInfo.cls;
-						CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 1);
+						CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 1); // Selects Akimbo guns
 						CG_LimboPanel_SendSetupMsg(qfalse);
-						cgs.ccSelectedClass = oldclass;
 					}
 				}
 

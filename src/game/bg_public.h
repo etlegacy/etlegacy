@@ -110,7 +110,7 @@
 extern vec3_t playerlegsProneMins;
 extern vec3_t playerlegsProneMaxs;
 
-#define MAX_COMMANDMAP_LAYERS   4
+#define MAX_COMMANDMAP_LAYERS   16
 
 #define DEFAULT_MODEL       "multi"
 #define DEFAULT_HEAD        "default"    // technically the default head skin.  this means "head_default.skin" for the head

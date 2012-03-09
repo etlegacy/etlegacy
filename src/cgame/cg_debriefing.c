@@ -2952,15 +2952,21 @@ void CG_Debreifing2_Mission_Draw(panel_button_t *button)
 
 				w = CG_Text_Width_Ext(cgs.campaignData.arenas[i].longname, 0.2f, 0, &cgs.media.limboFont2);
 
-				if (x + 10 + w > button->rect.x + button->rect.w)
+				// Pin half width is 12
+				// Pin left margin is 3
+				// Pin right margin is 0
+				// Text margin is 2
+				if (x + 14 + w > button->rect.x + button->rect.w)
 				{
-					CG_FillRect(x - w - 12 + 1, y - 6 + 1, 12 + w, 12, colourFadedBlack);
-					CG_FillRect(x - w - 12, y - 6, 12 + w, 12, colorBlack);
+					// x - pinhwidth (12) - pin left margin (3) - w - text margin (2) => x - w - 17
+					CG_FillRect(x - w - 17 + 1, y - 6 + 1, 17 + w, 12, colourFadedBlack);
+					CG_FillRect(x - w - 17, y - 6, 17 + w, 12, colorBlack);
 				}
 				else
 				{
-					CG_FillRect(x + 1, y - 6 + 1, 12 + w, 12, colourFadedBlack);
-					CG_FillRect(x, y - 6, 12 + w, 12, colorBlack);
+					// Width = pinhwidth (12) + pin right margin (0) + w + text margin (2) = 14 + w
+					CG_FillRect(x + 1, y - 6 + 1, 14 + w, 12, colourFadedBlack);
+					CG_FillRect(x, y - 6, 14 + w, 12, colorBlack);
 				}
 
 				switch (CG_Debriefing_FindWinningTeamForPos(i + 1))
@@ -2976,13 +2982,13 @@ void CG_Debreifing2_Mission_Draw(panel_button_t *button)
 					break;
 				}
 
-				if (x + 10 + w > button->rect.x + button->rect.w)
+				if (x + 14 + w > button->rect.x + button->rect.w)
 				{
-					CG_Text_Paint_Ext(x - w - 10, y + 3, 0.2f, 0.2f, colorWhite, cgs.campaignData.arenas[i].longname, 0, 0, 0, &cgs.media.limboFont2);
+					CG_Text_Paint_Ext(x - w - 15, y + 3, 0.2f, 0.2f, colorWhite, cgs.campaignData.arenas[i].longname, 0, 0, 0, &cgs.media.limboFont2);
 				}
 				else
 				{
-					CG_Text_Paint_Ext(x + 10, y + 3, 0.2f, 0.2f, colorWhite, cgs.campaignData.arenas[i].longname, 0, 0, 0, &cgs.media.limboFont2);
+					CG_Text_Paint_Ext(x + 12, y + 3, 0.2f, 0.2f, colorWhite, cgs.campaignData.arenas[i].longname, 0, 0, 0, &cgs.media.limboFont2);
 				}
 			}
 
@@ -3056,15 +3062,21 @@ void CG_Debreifing2_Mission_Draw(panel_button_t *button)
 
 		w = CG_Text_Width_Ext(cgs.arenaData.longname, 0.2f, 0, &cgs.media.limboFont2);
 
-		if (x + 10 + w > button->rect.x + button->rect.w)
+		// Pin half width is 12
+		// Pin left margin is 3
+		// Pin right margin is 0
+		// Text margin is 2
+		if (x + 14 + w > button->rect.x + button->rect.w)
 		{
-			CG_FillRect(x - w - 12 + 1, y - 6 + 1, 12 + w, 12, colourFadedBlack);
-			CG_FillRect(x - w - 12, y - 6, 12 + w, 12, colorBlack);
+			// x - pinhwidth (12) - pin left margin (3) - w - text margin (2) => x - w - 17
+			CG_FillRect(x - w - 17 + 1, y - 6 + 1, 17 + w, 12, colourFadedBlack);
+			CG_FillRect(x - w - 17, y - 6, 17 + w, 12, colorBlack);
 		}
 		else
 		{
-			CG_FillRect(x + 1, y - 6 + 1, 12 + w, 12, colourFadedBlack);
-			CG_FillRect(x, y - 6, 12 + w, 12, colorBlack);
+			// Width = pinhwidth (12) + pin right margin (0) + w + text margin (2) = 14 + w
+			CG_FillRect(x + 1, y - 6 + 1, 14 + w, 12, colourFadedBlack);
+			CG_FillRect(x, y - 6, 14 + w, 12, colorBlack);
 		}
 
 		switch (CG_Debriefing_FindWinningTeam())
@@ -3080,13 +3092,13 @@ void CG_Debreifing2_Mission_Draw(panel_button_t *button)
 			break;
 		}
 
-		if (x + 10 + w > button->rect.x + button->rect.w)
+		if (x + 14 + w > button->rect.x + button->rect.w)
 		{
-			CG_Text_Paint_Ext(x - w - 10, y + 3, 0.2f, 0.2f, colorWhite, cgs.arenaData.longname, 0, 0, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x - w - 15, y + 3, 0.2f, 0.2f, colorWhite, cgs.arenaData.longname, 0, 0, 0, &cgs.media.limboFont2);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(x + 10, y + 3, 0.2f, 0.2f, colorWhite, cgs.arenaData.longname, 0, 0, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x + 12, y + 3, 0.2f, 0.2f, colorWhite, cgs.arenaData.longname, 0, 0, 0, &cgs.media.limboFont2);
 		}
 	}
 	else

@@ -362,7 +362,13 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			Q_strcat(buf, sizeof(buf), va("^%c%c", COLOR_RED + i, skillNames[i][0]));
 	}
 	maxchars--;
-	CG_DrawStringExt(tempx + (BG_drawStrlen(ci->name) * SMALLCHAR_WIDTH + SMALLCHAR_WIDTH), y, buf, hcolor, qfalse, qfalse, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, maxchars);
+
+	// CG_DrawStringExt will draw everything if maxchars <= 0
+	if (maxchars > 0)
+	{
+		CG_DrawStringExt(tempx + (BG_drawStrlen(ci->name) * SMALLCHAR_WIDTH + SMALLCHAR_WIDTH),
+		                 y, buf, hcolor, qfalse, qfalse, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, maxchars);
+	}
 
 	tempx += INFO_PLAYER_WIDTH - offset;
 
@@ -373,9 +379,16 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 		totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
 
-		s = CG_TranslateString("^3SPECTATOR");
+		// Show connecting people as CONNECTING
+		if (score->ping == -1)
+		{
+			s = CG_TranslateString("^3CONNECTING");
+		}
+		else
+		{
+			s = CG_TranslateString("^3SPECTATOR");
+		}
 		w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-
 		CG_DrawSmallString(tempx + totalwidth - w, y, s, fade);
 		return;
 	}
@@ -433,7 +446,11 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	vec4_t       hcolor;
 	clientInfo_t *ci;
 
-	if (y + SMALLCHAR_HEIGHT >= 470)
+	// To draw medals
+	int  i, j;
+	char buf[64];
+
+	if (y + MINICHAR_HEIGHT >= 470)
 	{
 		return;
 	}
@@ -487,11 +504,10 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	tempx = x;
 
-	// DHM - Nerve
 	VectorSet(hcolor, 1, 1, 1);
 	hcolor[3] = fade;
 
-	maxchars = 17;
+	maxchars = 16;
 	offset   = 0;
 
 	if (ci->team != TEAM_SPECTATOR)
@@ -523,8 +539,28 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	// draw name
 	CG_DrawStringExt(tempx, y, ci->name, hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, maxchars);
+
+	// draw medals
+	maxchars -= CG_DrawStrlen(ci->name);
+
+	buf[0] = '\0';
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		for (j = 0; j < ci->medals[i]; j++)
+		{
+			Q_strcat(buf, sizeof(buf), va("^%c%c",
+			                              COLOR_RED + i, skillNames[i][0]));
+		}
+		maxchars--;
+	}
+
+	if (maxchars > 0)
+	{
+		CG_DrawStringExt(tempx + (BG_drawStrlen(ci->name) * MINICHAR_WIDTH + MINICHAR_WIDTH),
+		                 y, buf, hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, maxchars);
+	}
+
 	tempx += INFO_PLAYER_WIDTH - offset;
-	// dhm - nerve
 
 	if (ci->team == TEAM_SPECTATOR)
 	{
@@ -533,10 +569,19 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 		totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
 
-		s = CG_TranslateString("^3SPECTATOR");
+		// Show connecting people as CONNECTING
+		if (score->ping = -1)
+		{
+			s = CG_TranslateString("^3CONNECTING");
+		}
+		else
+		{
+			s = CG_TranslateString("^3SPECTATOR");
+		}
 		w = CG_DrawStrlen(s) * MINICHAR_WIDTH;
 
-		CG_DrawSmallString(tempx + totalwidth - w, y, s, fade);
+		CG_DrawStringExt(tempx + totalwidth - w, y, s, hcolor, qfalse, qfalse,
+		                 MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
 		return;
 	}
 	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team)
@@ -637,14 +682,16 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	return y + INFO_LINE_HEIGHT + 6;
 }
 
-static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows)
+static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
+                             int absmaxrows)
 {
-	vec4_t hcolor;
-	float  tempx, tempy;
-	int    height, width;
-	int    i;
-	int    count = 0;
-	vec4_t tclr  = { 0.6f, 0.6f, 0.6f, 1.0f };
+	vec4_t   hcolor;
+	float    tempx, tempy;
+	int      height, width;
+	int      i;
+	int      count          = 0;
+	qboolean use_mini_chars = qfalse;
+	vec4_t   tclr           = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	height = SMALLCHAR_HEIGHT * maxrows;
 	width  = INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
@@ -688,33 +735,6 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows)
 
 	y += SMALLCHAR_HEIGHT + 3;
 
-	// save off y val
-	tempy = y;
-
-	// draw color bands
-	for (i = 0; i <= maxrows; i++)
-	{
-		if (i % 2 == 0)
-		{
-			VectorSet(hcolor, (80.f / 255.f), (80.f / 255.f), (80.f / 255.f));                  // LIGHT BLUE
-		}
-		else
-		{
-			VectorSet(hcolor, (0.f / 255.f), (0.f / 255.f), (0.f / 255.f));                 // DARK BLUE
-		}
-		hcolor[3] = fade * 0.3;
-
-		CG_FillRect(x - 5, y, width + 5, SMALLCHAR_HEIGHT + 1, hcolor);
-		trap_R_SetColor(colorBlack);
-		CG_DrawTopBottom(x - 5, y, width + 5, SMALLCHAR_HEIGHT + 1, 1);
-		trap_R_SetColor(NULL);
-
-		y += SMALLCHAR_HEIGHT;
-	}
-	hcolor[3] = 1;
-
-	y = tempy;
-
 	tempx = x;
 
 	CG_FillRect(x - 5, y - 1, width + 5, 18, clrUiBack);
@@ -750,12 +770,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows)
 		tempx += INFO_LIVES_WIDTH;
 	}
 
-
 	y += SMALLCHAR_HEIGHT;
-
-	// draw player info
-	VectorSet(hcolor, 1, 1, 1);
-	hcolor[3] = fade;
 
 	cg.teamPlayers[team] = 0; // JPW NERVE
 	for (i = 0; i < cg.numScores; i++)
@@ -768,6 +783,54 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows)
 		cg.teamPlayers[team]++;
 	}
 
+	if (cg.teamPlayers[team] > maxrows)
+	{
+		maxrows        = absmaxrows;
+		use_mini_chars = qtrue;
+
+	}
+	// save off y val
+	tempy = y;
+
+	// draw color bands
+	for (i = 0; i < maxrows; i++)
+	{
+		if (i % 2 == 0)
+		{
+			VectorSet(hcolor, (80.f / 255.f), (80.f / 255.f), (80.f / 255.f));  // LIGHT BLUE
+		}
+		else
+		{
+			VectorSet(hcolor, (0.f / 255.f), (0.f / 255.f), (0.f / 255.f));     // DARK BLUE
+		}
+		hcolor[3] = fade * 0.3;
+
+		if (use_mini_chars)
+		{
+			CG_FillRect(x - 5, y, width + 5, MINICHAR_HEIGHT + 1, hcolor);
+			trap_R_SetColor(colorBlack);
+			CG_DrawTopBottom(x - 5, y, width + 5, MINICHAR_HEIGHT + 1, 1);
+			trap_R_SetColor(NULL); y += MINICHAR_HEIGHT;
+
+		}
+		else
+		{
+			CG_FillRect(x - 5, y, width + 5, SMALLCHAR_HEIGHT + 1, hcolor);
+			trap_R_SetColor(colorBlack);
+			CG_DrawTopBottom(x - 5, y, width + 5, SMALLCHAR_HEIGHT + 1, 1);
+			trap_R_SetColor(NULL);
+			y += SMALLCHAR_HEIGHT;
+		}
+	}
+
+	hcolor[3] = 1;
+
+	y = tempy;
+
+	// draw player info
+	VectorSet(hcolor, 1, 1, 1);
+	hcolor[3] = fade;
+
 	count = 0;
 	for (i = 0; i < cg.numScores && count < maxrows; i++)
 	{
@@ -776,7 +839,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows)
 			continue;
 		}
 
-		if (cg.teamPlayers[team] > maxrows)
+		if (use_mini_chars)
 		{
 			WM_DrawClientScore_Small(x, y, &cg.scores[i], hcolor, fade);
 			y += MINICHAR_HEIGHT;
@@ -791,7 +854,14 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows)
 	}
 
 	// draw spectators
-	y += SMALLCHAR_HEIGHT;
+	if (use_mini_chars)
+	{
+		y += MINICHAR_HEIGHT;
+	}
+	else
+	{
+		y += SMALLCHAR_HEIGHT;
+	}
 
 	for (i = 0; i < cg.numScores; i++)
 	{
@@ -808,21 +878,24 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows)
 			continue;
 		}
 
-		WM_DrawClientScore(x, y, &cg.scores[i], hcolor, fade);
-		y += SMALLCHAR_HEIGHT;
+		if (use_mini_chars)
+		{
+			WM_DrawClientScore_Small(x, y, &cg.scores[i], hcolor, fade);
+			y += MINICHAR_HEIGHT;
+		}
+		else
+		{
+			WM_DrawClientScore(x, y, &cg.scores[i], hcolor, fade);
+			y += SMALLCHAR_HEIGHT;
+		}
 	}
 
 	return y;
 }
-// -NERVE - SMF
 
 /*
-=================
-CG_DrawScoreboard
-
-Draw the normal in-game scoreboard
-=================
-*/
+ * Draw the normal in-game scoreboard
+ */
 qboolean CG_DrawScoreboard(void)
 {
 	int   x = 0, y = 0, x_right;
@@ -877,23 +950,23 @@ qboolean CG_DrawScoreboard(void)
 	{
 		y = WM_DrawInfoLine(x, 155, fade);
 
-		WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 8);
+		WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 8, 10);
 		x = x_right;
-		WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 8);
+		WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 8, 10);
 	}
 	else
 	{
 		if (cg.snap->ps.pm_type == PM_INTERMISSION)
 		{
-			WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 9);
+			WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 9, 12);
 			x = x_right;
-			WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 9);
+			WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 9, 12);
 		}
 		else
 		{
-			WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 25);
+			WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 25, 33);
 			x = x_right;
-			WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 25);
+			WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 25, 33);
 		}
 	}
 

@@ -872,7 +872,7 @@ qboolean IsHeadShotWeapon(int mod)
 
 gentity_t *G_BuildHead(gentity_t *ent)
 {
-	gentity_t     *head;
+	gentity_t *head;
 	orientation_t or;           // DHM - Nerve
 
 	head = G_Spawn();
@@ -1225,9 +1225,14 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 
 //  trap_SendServerCommand( -1, va("print \"%i\n\"\n", targ->health) );
 
-	// the intermission has allready been qualified for, so don't
-	// allow any extra scoring
-	if (level.intermissionQueued || (g_gamestate.integer != GS_PLAYING && match_warmupDamage.integer == 0))
+	/*
+	 * The intermission has allready been qualified for, so don't allow any
+	 * extra scoring.
+	 * Don't do damage if at warmup and warmupdamage is set to 'None'
+	 * and the target is a client.
+	 */
+	if (level.intermissionQueued || (g_gamestate.integer != GS_PLAYING
+	                                 && match_warmupDamage.integer == 0 && targ->client))
 	{
 		return;
 	}
@@ -1352,180 +1357,180 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		// 512 Satchel only
 		if ((targ->spawnflags & 32) || (targ->spawnflags & 64) || (targ->spawnflags & 256) || (targ->spawnflags & 512))
 		{
-			switch (mod)
-			{
-			case MOD_GRENADE:
-			case MOD_GRENADE_LAUNCHER:
-			case MOD_ROCKET:
-			case MOD_GRENADE_PINEAPPLE:
-			case MOD_MAPMORTAR:
-			case MOD_EXPLOSIVE:
-			case MOD_LANDMINE:
-			case MOD_GPG40:
-			case MOD_M7:
-				if (!(targ->spawnflags & 32))
-				{
-					return;
-				}
-				break;
-			case MOD_SATCHEL:
-				if (!(targ->spawnflags & 512))
-				{
-					return;
-				}
-				break;
-			case MOD_ARTY:
-			case MOD_AIRSTRIKE:
-				if (!(targ->spawnflags & 256))
-				{
-					return;
-				}
-				break;
-			case MOD_DYNAMITE:
-				if (!(targ->spawnflags & 64))
-				{
-					return;
-				}
-				break;
-			default:
-				return;
-			}
+		    switch (mod)
+		    {
+		    case MOD_GRENADE:
+		    case MOD_GRENADE_LAUNCHER:
+		    case MOD_ROCKET:
+		    case MOD_GRENADE_PINEAPPLE:
+		    case MOD_MAPMORTAR:
+		    case MOD_EXPLOSIVE:
+		    case MOD_LANDMINE:
+		    case MOD_GPG40:
+		    case MOD_M7:
+		        if (!(targ->spawnflags & 32))
+		        {
+		            return;
+		        }
+		        break;
+		    case MOD_SATCHEL:
+		        if (!(targ->spawnflags & 512))
+		        {
+		            return;
+		        }
+		        break;
+		    case MOD_ARTY:
+		    case MOD_AIRSTRIKE:
+		        if (!(targ->spawnflags & 256))
+		        {
+		            return;
+		        }
+		        break;
+		    case MOD_DYNAMITE:
+		        if (!(targ->spawnflags & 64))
+		        {
+		            return;
+		        }
+		        break;
+		    default:
+		        return;
+		    }
 
-			// check for team
-			if (targ->s.teamNum == inflictor->s.teamNum)
-			{
-				return;
-			}
+		    // check for team
+		    if (targ->s.teamNum == inflictor->s.teamNum)
+		    {
+		        return;
+		    }
 		}
 		* /
 
 		if (targ->parent && G_GetWeaponClassForMOD(mod) == 2)
 		{
-			return;
+		    return;
 		}
 
 		// check for team
-//      if( G_GetWeaponClassForMOD( mod ) != -1 && targ->s.teamNum == inflictor->s.teamNum ) {
-//          return;
-//      }
+		//      if( G_GetWeaponClassForMOD( mod ) != -1 && targ->s.teamNum == inflictor->s.teamNum ) {
+		//          return;
+		//      }
 		if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
 		{
-			return;
+		    return;
 		}
 
 		if (G_GetWeaponClassForMOD(mod) < targ->constructibleStats.weaponclass)
 		{
-			return;
+		    return;
 		}
-	}
-	else if (targ->s.eType == ET_MISSILE && targ->methodOfDeath == MOD_LANDMINE)
-	{
+		}
+		else if (targ->s.eType == ET_MISSILE && targ->methodOfDeath == MOD_LANDMINE)
+		{
 		if (targ->s.modelindex2)
 		{
-			if (G_WeaponIsExplosive(mod))
-			{
-				mapEntityData_t *mEnt;
+		    if (G_WeaponIsExplosive(mod))
+		    {
+		        mapEntityData_t *mEnt;
 
-				if ((mEnt = G_FindMapEntityData(&mapEntityData[0], targ - g_entities)) != NULL)
-				{
-					G_FreeMapEntityData(&mapEntityData[0], mEnt);
-				}
+		        if ((mEnt = G_FindMapEntityData(&mapEntityData[0], targ - g_entities)) != NULL)
+		        {
+		            G_FreeMapEntityData(&mapEntityData[0], mEnt);
+		        }
 
-				if ((mEnt = G_FindMapEntityData(&mapEntityData[1], targ - g_entities)) != NULL)
-				{
-					G_FreeMapEntityData(&mapEntityData[1], mEnt);
-				}
+		        if ((mEnt = G_FindMapEntityData(&mapEntityData[1], targ - g_entities)) != NULL)
+		        {
+		            G_FreeMapEntityData(&mapEntityData[1], mEnt);
+		        }
 
-				if (attacker && attacker->client)
-				{
-					AddScore(attacker, 1);
-					//G_AddExperience( attacker, 1.f );
-				}
+		        if (attacker && attacker->client)
+		        {
+		            AddScore(attacker, 1);
+		            //G_AddExperience( attacker, 1.f );
+		        }
 
-				G_ExplodeMissile(targ);
-			}
+		        G_ExplodeMissile(targ);
+		    }
 		}
 		return;
-	}
-	else if (targ->s.eType == ET_CONSTRUCTIBLE)
-	{
+		}
+		else if (targ->s.eType == ET_CONSTRUCTIBLE)
+		{
 
 		if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
 		{
-			return;
+		    return;
 		}
 
 		if (G_GetWeaponClassForMOD(mod) < targ->constructibleStats.weaponclass)
 		{
-			return;
+		    return;
 		}
 		//bani - fix #238
 		if (mod == MOD_DYNAMITE)
 		{
-			if (!(inflictor->etpro_misc_1 & 1))
-			{
-				return;
-			}
+		    if (!(inflictor->etpro_misc_1 & 1))
+		    {
+		        return;
+		    }
 		}
-	}
+		}
 
-	client = targ->client;
+		client = targ->client;
 
-	if (client)
-	{
+		if (client)
+		{
 		if (client->noclip || client->ps.powerups[PW_INVULNERABLE])
 		{
-			return;
+		    return;
 		}
-	}
+		}
 
-	// check for godmode
-	if (targ->flags & FL_GODMODE)
-	{
+		// check for godmode
+		if (targ->flags & FL_GODMODE)
+		{
 		return;
-	}
+		}
 
-	if (!dir)
-	{
+		if (!dir)
+		{
 		dflags |= DAMAGE_NO_KNOCKBACK;
-	}
-	else
-	{
+		}
+		else
+		{
 		VectorNormalize(dir);
-	}
+		}
 
-	knockback = damage;
-	if (knockback > 200)
-	{
+		knockback = damage;
+		if (knockback > 200)
+		{
 		knockback = 200;
-	}
-	if (targ->flags & FL_NO_KNOCKBACK)
-	{
+		}
+		if (targ->flags & FL_NO_KNOCKBACK)
+		{
 		knockback = 0;
-	}
-	if (dflags & DAMAGE_NO_KNOCKBACK)
-	{
+		}
+		if (dflags & DAMAGE_NO_KNOCKBACK)
+		{
 		knockback = 0;
-	}
-	else if (dflags & DAMAGE_HALF_KNOCKBACK)
-	{
+		}
+		else if (dflags & DAMAGE_HALF_KNOCKBACK)
+		{
 		knockback *= 0.5f;
-	}
+		}
 
-	// ydnar: set weapons means less knockback
-	if (client && (client->ps.weapon == WP_MORTAR_SET || client->ps.weapon == WP_MOBILE_MG42_SET))
-	{
+		// ydnar: set weapons means less knockback
+		if (client && (client->ps.weapon == WP_MORTAR_SET || client->ps.weapon == WP_MOBILE_MG42_SET))
+		{
 		knockback *= 0.5;
-	}
+		}
 
-	if (targ->client && g_friendlyFire.integer && OnSameTeam(targ, attacker))
-	{
+		if (targ->client && g_friendlyFire.integer && OnSameTeam(targ, attacker))
+		{
 		knockback = 0;
-	}
+		}
 
-	// figure momentum add, even if the damage won't be taken
-	if (knockback && targ->client)
-	{
+		// figure momentum add, even if the damage won't be taken
+		if (knockback && targ->client)
+		{
 		vec3_t kvel;
 		float  mass;
 
@@ -1676,24 +1681,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			VectorSubtract(point, muzzleTrace, shotvec);
 			dist = VectorLength(shotvec);
 
-#if DO_BROKEN_DISTANCEFALLOFF
-			// ~~~___---___
-			if (dist > 1500.f)
-			{
-				if (dist > 2500.f)
-				{
-					take *= 0.2f;
-				}
-				else
-				{
-					float scale = 1.f - 0.2f * (1000.f / (dist - 1000.f));
-
-					take *= scale;
-				}
-			}
-#else
-			// ~~~---______
-			// zinx - start at 100% at 1500 units (and before),
+			// start at 100% at 1500 units (and before),
 			// and go to 20% at 2500 units (and after)
 
 			// 1500 to 2500 -> 0.0 to 1.0
@@ -1714,7 +1702,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			}
 
 			take *= scale;
-#endif
 		}
 
 		if (!(targ->client->ps.eFlags & EF_HEADSHOT))          // only toss hat on first headshot

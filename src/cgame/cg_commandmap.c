@@ -183,12 +183,11 @@ void CG_ParseMapEntity(int *mapEntityCount, int *offset, team_t team)
 
 	switch (mEnt->type)
 	{
-	case ME_CONSTRUCT:     // Gordon: these ones don't need much info
+	// These are needed for command map icons to show up on the correct layer.
+	case ME_CONSTRUCT:
 	case ME_DESTRUCT:
 	case ME_DESTRUCT_2:
 	case ME_COMMANDMAP_MARKER:
-		break;
-
 	case ME_TANK:
 	case ME_TANK_DEAD:
 		trap_Argv((*offset)++, buffer, 16);

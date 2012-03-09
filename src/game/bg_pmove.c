@@ -4572,9 +4572,12 @@ static void PM_Weapon(void)
 		if (pm->ps->weapon != WP_KNIFE &&
 		    pm->ps->weapon != WP_GRENADE_LAUNCHER &&
 		    pm->ps->weapon != WP_GRENADE_PINEAPPLE &&
+		    pm->ps->weapon != WP_MEDIC_SYRINGE &&
 		    pm->ps->weapon != WP_DYNAMITE &&
+		    pm->ps->weapon != WP_PLIERS &&
 		    pm->ps->weapon != WP_LANDMINE &&
 		    pm->ps->weapon != WP_TRIPMINE &&
+		    pm->ps->weapon != WP_MEDIC_ADRENALINE &&
 		    pm->ps->weapon != WP_SMOKE_BOMB)
 		{
 			PM_AddEvent(EV_NOFIRE_UNDERWATER);      // event for underwater 'click' for nofire

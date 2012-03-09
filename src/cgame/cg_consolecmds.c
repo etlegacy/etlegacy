@@ -1287,13 +1287,9 @@ qboolean CG_ConsoleCommand(void)
 
 
 /*
-=================
-CG_InitConsoleCommands
-
-Let the client system know about all of our commands
-so it can perform tab completion
-=================
-*/
+ * Let the client system know about all of our commands so it can perform tab
+ * completion
+ */
 void CG_InitConsoleCommands(void)
 {
 	int i;
@@ -1303,14 +1299,10 @@ void CG_InitConsoleCommands(void)
 		trap_AddCommand(commands[i].cmd);
 	}
 
-	//
 	// the game server will interpret these commands, which will be automatically
 	// forwarded to the server after they are not recognized locally
-	//
 	trap_AddCommand("kill");
 	trap_AddCommand("say");
-	trap_AddCommand("say_limbo");             // NERVE - SMF
-	trap_AddCommand("tell");
 	trap_AddCommand("listbotgoals");
 	trap_AddCommand("give");
 	trap_AddCommand("god");
@@ -1318,27 +1310,22 @@ void CG_InitConsoleCommands(void)
 	trap_AddCommand("noclip");
 	trap_AddCommand("team");
 	trap_AddCommand("follow");
-	trap_AddCommand("addbot");
 	trap_AddCommand("setviewpos");
 	trap_AddCommand("callvote");
 	trap_AddCommand("vote");
 
-	// Rafael
 	trap_AddCommand("nofatigue");
 
-	// NERVE - SMF
 	trap_AddCommand("follownext");
 	trap_AddCommand("followprev");
 
 	trap_AddCommand("start_match");
 	trap_AddCommand("reset_match");
 	trap_AddCommand("swap_teams");
-	// -NERVE - SMF
-	// OSP
+
 	trap_AddCommand("?");
 	trap_AddCommand("bottomshots");
 	trap_AddCommand("commands");
-	trap_AddCommand("follow");
 	trap_AddCommand("lock");
 #ifdef MV_SUPPORT
 	trap_AddCommand("mvadd");
@@ -1368,25 +1355,25 @@ void CG_InitConsoleCommands(void)
 	trap_AddCommand("unpause");
 	trap_AddCommand("unready");
 	trap_AddCommand("weaponstats");
-	// OSP
 
 	trap_AddCommand("fireteam");
-	trap_AddCommand("buddylist");
 	trap_AddCommand("showstats");
 
 	trap_AddCommand("ignore");
 	trap_AddCommand("unignore");
 
-	trap_AddCommand("addtt");
-	trap_AddCommand("selectbuddy");
-	trap_AddCommand("selectNextBuddy");   // xkan 9/26/2002
-
-	trap_AddCommand("loadgame");
-	trap_AddCommand("savegame");
+//	trap_AddCommand ("addbot");
+//	trap_AddCommand("loadgame");
+//	trap_AddCommand("savegame");
 
 	trap_AddCommand("campaign");
 	trap_AddCommand("listcampaigns");
 
-	trap_AddCommand("setweapons");
-	trap_AddCommand("setclass");
+	trap_AddCommand("imready");
+	trap_AddCommand("say_buddy");
+	trap_AddCommand("setspawnpt");
+	trap_AddCommand("vsay");
+	trap_AddCommand("vsay_buddy");
+	trap_AddCommand("vsay_team");
+	trap_AddCommand("where");
 }

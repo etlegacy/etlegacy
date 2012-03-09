@@ -583,7 +583,8 @@ static float CG_DrawTimer(float y)
 	vec4_t timerBackground = { 0.16f, 0.2f, 0.17f, 0.8f };
 	vec4_t timerBorder     = { 0.5f, 0.5f, 0.5f, 0.5f };
 
-	rt = (cgs.gametype != GT_WOLF_LMS && cg_drawReinforcementTime.integer > 0) ?
+	// Respawn timer shouldn't be shown in spectator mode
+	rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || cg.snap->ps.pm_flags & PMF_FOLLOW) && cg_drawReinforcementTime.integer > 0) ?
 	     va("^F%d%s", CG_CalculateReinfTime(qfalse), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
 
 	msec = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
@@ -670,21 +671,16 @@ static void CG_DrawUpperRight(void)
 {
 	float y;
 
-	if (!cg_drawFireteamOverlay.integer)
-	{
-		return;
-	}
-
 	y = 20 + 100 + 32;
 
-	if (CG_IsOnFireteam(cg.clientNum))
+	if (cg_drawFireteamOverlay.integer && CG_IsOnFireteam(cg.clientNum))
 	{
 		rectDef_t rect = { 10, 10, 100, 100 };
 		CG_DrawFireTeamOverlay(&rect);
 	}
 	else
 	{
-//      CG_DrawTeamOverlay( 0 );
+		//      CG_DrawTeamOverlay( 0 );
 	}
 
 	if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR) &&

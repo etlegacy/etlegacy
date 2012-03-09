@@ -181,7 +181,8 @@ void Weapon_Knife(gentity_t *ent)
 		damage *= 2;    // Watch it - you could hurt someone with that thing!
 
 	}
-	if (traceEnt->client)
+	// Only do backstabs if the body is standing up (i.e. alive)
+	if (traceEnt->client && traceEnt->health > 0)
 	{
 		AngleVectors(ent->client->ps.viewangles, pforward, NULL, NULL);
 		AngleVectors(traceEnt->client->ps.viewangles, eforward, NULL, NULL);
@@ -191,8 +192,7 @@ void Weapon_Knife(gentity_t *ent)
 			damage = 100;   // enough to drop a 'normal' (100 health) human with one jab
 			mod    = MOD_KNIFE;
 
-			// rain - only do this if they have a positive health
-			if (traceEnt->health > 0 && ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 4)
+			if (ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 4)
 			{
 				damage = traceEnt->health;
 			}
@@ -611,7 +611,7 @@ void Weapon_Syringe(gentity_t *ent)
 	VectorMA(muzzleTrace, 48, forward, end);             // CH_ACTIVATE_DIST
 	//VectorMA (muzzleTrace, -16, forward, muzzleTrace);    // DHM - Back up the start point in case medic is
 	// right on top of intended revivee.
-	trap_Trace(&tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
+	G_HistoricalTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
 	if (tr.startsolid)
 	{
@@ -1825,7 +1825,7 @@ void Weapon_Engineer(gentity_t *ent)
 
 		if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
 		{
-			ent->client->ps.classWeaponTime += .66f * 150;
+			ent->client->ps.classWeaponTime += .33f * 150;
 		}
 		else
 		{
@@ -3751,7 +3751,6 @@ void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_fal
 {
 	vec3_t end;
 
-	// Gordon: skill thing should be here Arnout!
 	switch (ent->s.weapon)
 	{
 	// light weapons
@@ -3762,7 +3761,12 @@ void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_fal
 	case WP_STEN:
 	case WP_SILENCER:
 	case WP_SILENCED_COLT:
-		if (ent->client->sess.skill[SK_LIGHT_WEAPONS] >= 4)
+	case WP_AKIMBO_LUGER:
+	case WP_AKIMBO_COLT:
+	case WP_AKIMBO_SILENCEDLUGER:
+	case WP_AKIMBO_SILENCEDCOLT:
+		// increase in accuracy (spread reduction) at level 3
+		if (ent->client->sess.skill[SK_LIGHT_WEAPONS] >= 3)
 		{
 			spread *= .65f;
 		}

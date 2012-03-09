@@ -5353,9 +5353,19 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			}
 		}
 
-		// JPW NERVE -- early out if we just fired Panzerfaust, go to pistola, then grenades
+		// Early out if we just fired Panzerfaust, go to SMG, pistol, then grenades
 		if (cg.weaponSelect == WP_PANZERFAUST)
 		{
+			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
+			{
+				// Make sure we don't reselect the panzer
+				if (weapBanksMultiPlayer[3][i] != WP_PANZERFAUST && CG_WeaponSelectable(weapBanksMultiPlayer[3][i])) // find an SMG
+				{
+					cg.weaponSelect = weapBanksMultiPlayer[3][i];
+					CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
+					return;
+				}
+			}
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
 				if (CG_WeaponSelectable(weapBanksMultiPlayer[2][i]))       // find a pistol

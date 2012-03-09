@@ -1996,16 +1996,16 @@ void CG_parseWeaponStatsGS_cmd(void)
 			}
 			else
 			{
-				str = va("%d", ci->skillpoints[i]);
+				str = va("%-8d", ci->skillpoints[i]);
 			}
 
 			if (cgs.gametype == GT_WOLF_CAMPAIGN)
 			{
-				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %s %12d", skillNames[i], ci->skill[i], str, ci->medals[i]), sizeof(gs->strSkillz[0]));
+				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %-15s %6d", skillNames[i], ci->skill[i], str, ci->medals[i]), sizeof(gs->strSkillz[0]));
 			}
 			else
 			{
-				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %s", skillNames[i], ci->skill[i], str), sizeof(gs->strSkillz[0]));
+				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %-15s", skillNames[i], ci->skill[i], str), sizeof(gs->strSkillz[0]));
 			}
 		}
 	}
@@ -2024,7 +2024,8 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 	unsigned int nClient      = atoi(CG_Argv(iArg++));
 	unsigned int nRounds      = atoi(CG_Argv(iArg++));
 	unsigned int dwWeaponMask = atoi(CG_Argv(iArg++));
-	unsigned int dwSkillPointMask, xp = 0;
+	unsigned int dwSkillPointMask;
+	int          xp = 0; // XP can be negative
 
 	ci = &cgs.clientinfo[nClient];
 

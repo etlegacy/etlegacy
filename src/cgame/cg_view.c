@@ -305,13 +305,14 @@ void CG_OffsetThirdPersonView(void)
 
 	VectorCopy(cg.refdefViewAngles, focusAngles);
 
-	// rain - if dead, look at medic or allow freelook if none in range
-	if (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0)
+	// If dead, look at medic or allow freelook if none in range
+	if (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0
+	    && !(cg.predictedPlayerState.pm_flags & PMF_LIMBO))
 	{
-		// rain - #254 - force yaw to 0 if we're tracking a medic
+		// Force yaw to 0 if we're tracking a medic
 		if (cg.snap->ps.viewlocked != 7)
 		{
-			// rain - do short2angle AFTER the network part
+			// Do short2angle AFTER the network part
 			focusAngles[YAW]         = SHORT2ANGLE(cg.predictedPlayerState.stats[STAT_DEAD_YAW]);
 			cg.refdefViewAngles[YAW] = SHORT2ANGLE(cg.predictedPlayerState.stats[STAT_DEAD_YAW]);
 		}

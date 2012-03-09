@@ -1,30 +1,35 @@
 /*
-===========================================================================
-
-Wolfenstein: Enemy Territory GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
-
-This file is part of the Wolfenstein: Enemy Territory GPL Source Code (Wolf ET Source Code).
-
-Wolf ET Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Wolf ET Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Wolf ET Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Wolf: ET Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Wolf ET Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ *
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
+ *
+ * This file is part of ET: Legacy - http://www.etlegacy.com
+ *
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file g_stats.c
+ */
 
 #include "g_local.h"
 
@@ -279,7 +284,7 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 		ent->client->sess.skillpoints[skill] = skillLevels[oldskill];
 	}
 
-	G_Printf("%s just lost %f skill points for skill %s\n", ent->client->pers.netname, oldskillpoints - ent->client->sess.skillpoints[skill], skillNames[skill]);
+	G_Printf("%s just lost %.0f skill points for skill %s\n", ent->client->pers.netname, oldskillpoints - ent->client->sess.skillpoints[skill], skillNames[skill]);
 
 	trap_PbStat(ent - g_entities, "loseskill",
 	            va("%d %d %d %f", ent->client->sess.sessionTeam, ent->client->sess.playerType,
@@ -320,7 +325,7 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]] += points;
 
-//	G_Printf( "%s just got %f skill points for skill %s\n", ent->client->pers.netname, points, skillNames[skill] );
+	//	G_Printf( "%s just got %.0f skill points for skill %s\n", ent->client->pers.netname, points, skillNames[skill] );
 
 	trap_PbStat(ent - g_entities, "addskill",
 	            va("%d %d %d %f", ent->client->sess.sessionTeam, ent->client->sess.playerType,
@@ -644,14 +649,14 @@ void G_DebugAddSkillLevel(gentity_t *ent, skillType_t skill)
 		return;
 	}
 
-	trap_SendServerCommand(ent - g_entities, va("sdbg \"^%c(SK: %2i XP: %6.2f) %s: You raised your skill level to %i.\"\n",
+	trap_SendServerCommand(ent - g_entities, va("sdbg \"^%c(SK: %2i XP: %.0f) %s: You raised your skill level to %i.\"\n",
 	                                            COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], skillNames[skill], ent->client->sess.skill[skill]));
 
 	trap_RealTime(&ct);
 
 	if (g_debugSkills.integer >= 2 && skillDebugLog != -1)
 	{
-		char *s = va("%02d:%02d:%02d : ^%c(SK: %2i XP: %6.2f) %s: %s raised in skill level to %i.\n",
+		char *s = va("%02d:%02d:%02d : ^%c(SK: %2i XP: %.0f) %s: %s raised in skill level to %i.\n",
 		             ct.tm_hour, ct.tm_min, ct.tm_sec,
 		             COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], skillNames[skill], ent->client->pers.netname, ent->client->sess.skill[skill]);
 		trap_FS_Write(s, strlen(s), skillDebugLog);
@@ -667,14 +672,14 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 		return;
 	}
 
-	trap_SendServerCommand(ent - g_entities, va("sdbg \"^%c(SK: %2i XP: %6.2f) %s: You gained %.2fXP, reason: %s.\"\n",
+	trap_SendServerCommand(ent - g_entities, va("sdbg \"^%c(SK: %2i XP: %.0f) %s: You gained %.0fXP, reason: %s.\"\n",
 	                                            COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], skillNames[skill], points, reason));
 
 	trap_RealTime(&ct);
 
 	if (g_debugSkills.integer >= 2 && skillDebugLog != -1)
 	{
-		char *s = va("%02d:%02d:%02d : ^%c(SK: %2i XP: %6.2f) %s: %s gained %.2fXP, reason: %s.\n",
+		char *s = va("%02d:%02d:%02d : ^%c(SK: %2i XP: %.0f) %s: %s gained %.0fXP, reason: %s.\n",
 		             ct.tm_hour, ct.tm_min, ct.tm_sec,
 		             COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], skillNames[skill], ent->client->pers.netname, points, reason);
 		trap_FS_Write(s, strlen(s), skillDebugLog);
@@ -688,6 +693,10 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
 			continue;                                                           \
 		}                                                                       \
+		if (cl->XX <= 0)                                                    \
+		{                                                                   \
+			continue;                                                       \
+		}                                                                   \
 		if (!best || cl->XX > best->XX) {                                  \
 			best = cl;                                                          \
 		}                                                                       \
@@ -716,12 +725,20 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
 			continue;                                                           \
 		}                                                                       \
+		if ((cl->sess.skillpoints[XX] - cl->sess.startskillpoints[XX]) <= 0)    \
+		{                                                                       \
+			continue;                                                           \
+		}                                                                       \
+		if (cl->sess.skill[XX] < 1)                                             \
+		{                                                                       \
+			continue;                                                           \
+		}                                                                       \
 		if (!best || (cl->sess.skillpoints[XX] - cl->sess.startskillpoints[XX]) > (best->sess.skillpoints[XX] - best->sess.startskillpoints[XX])) {                                    \
 			best = cl;                                                          \
 		}                                                                       \
 	}                                                                           \
     if (best) { best->hasaward = qtrue; }                                      \
-    Q_strcat(buffer, 1024, va(";%s; %i ", best && best->sess.skillpoints[XX] >= 20 ? best->pers.netname : "", best && best->sess.skillpoints[XX] >= 20 ? best->sess.sessionTeam : -1))
+    Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
 
 #define CHECKSTAT3(XX, YY, ZZ)                                                \
     best = NULL;                                                                \

@@ -157,12 +157,12 @@ void trap_DropClient(int clientNum, const char *reason, int length)
 
 void trap_SendServerCommand(int clientNum, const char *text)
 {
-	// rain - #433 - commands over 1022 chars will crash the
-	// client engine upon receipt, so ignore them
+	// commands over 1022 chars will crash the client engine upon receipt,
+	// so ignore them
 	if (strlen(text) > 1022)
 	{
 		G_LogPrintf("%s: trap_SendServerCommand( %d, ... ) length exceeds 1022.\n", GAMEVERSION, clientNum);
-		G_LogPrintf("%s: text [%s]\n", GAMEVERSION, text);
+		G_LogPrintf("%s: text [%s.950s]... truncated\n", GAMEVERSION, text);
 		return;
 	}
 	syscall(G_SEND_SERVER_COMMAND, clientNum, text);

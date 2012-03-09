@@ -468,10 +468,11 @@ char *G_createStats(gentity_t *refEnt)
 	}
 
 	// Add weapon stats as necessary
+	// The client also expects stats when kills are above 0
 	for (i = WS_KNIFE; i < WS_MAX; i++)
 	{
 		if (refEnt->client->sess.aWeaponStats[i].atts || refEnt->client->sess.aWeaponStats[i].hits ||
-		    refEnt->client->sess.aWeaponStats[i].deaths)
+		    refEnt->client->sess.aWeaponStats[i].deaths || refEnt->client->sess.aWeaponStats[i].kills)
 		{
 			dwWeaponMask |= (1 << i);
 			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d %d %d",
@@ -482,15 +483,19 @@ char *G_createStats(gentity_t *refEnt)
 	}
 
 	// Additional info
-	Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d",
-	                                              refEnt->client->sess.damage_given,
-	                                              refEnt->client->sess.damage_received,
-	                                              refEnt->client->sess.team_damage));
+	// Only send these when there are some weaponstats. This is what the client expects.
+	if (dwWeaponMask != 0)
+	{
+		Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d",
+		                                              refEnt->client->sess.damage_given,
+		                                              refEnt->client->sess.damage_received,
+		                                              refEnt->client->sess.team_damage));
+	}
 
 	// Add skillpoints as necessary
 	for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
 	{
-		if (refEnt->client->sess.skillpoints[i] > 0)
+		if (refEnt->client->sess.skillpoints[i] != 0) // Skillpoints can be negative
 		{
 			dwSkillPointMask |= (1 << i);
 			Q_strcat(strSkillInfo, sizeof(strSkillInfo), va(" %d", (int)refEnt->client->sess.skillpoints[i]));
@@ -558,9 +563,14 @@ void G_parseStats(char *pszStatsInfo)
 		}
 	}
 
-	GETVAL(cl->sess.damage_given);
-	GETVAL(cl->sess.damage_received);
-	GETVAL(cl->sess.team_damage);
+	// These only gets generated when there are some weaponstats.
+	// This is what the client expects.
+	if (dwWeaponMask != 0)
+	{
+		GETVAL(cl->sess.damage_given);
+		GETVAL(cl->sess.damage_received);
+		GETVAL(cl->sess.team_damage);
+	}
 }
 
 

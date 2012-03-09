@@ -1573,6 +1573,8 @@ qboolean    ConsoleCommand(void)
 		// OSP - console also gets ref commands
 		if (!level.fLocalHost && Q_stricmp(cmd, "ref") == 0)
 		{
+			// G_refCommandCheck expects the next argument (warn, pause, lock,..)
+			trap_Argv(1, cmd, sizeof(cmd));
 			if (!G_refCommandCheck(NULL, cmd))
 			{
 				G_refHelp_cmd(NULL);

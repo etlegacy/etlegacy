@@ -2940,11 +2940,6 @@ void LogExit(const char *string)
 	// that will get cut off when the queued intermission starts
 	trap_SetConfigstring(CS_INTERMISSION, "1");
 
-	G_LogPrintf("red:%i  blue:%i\n", level.teamScores[TEAM_AXIS], level.teamScores[TEAM_ALLIES]);
-
-	// NERVE - SMF - send gameCompleteStatus message to master servers
-	trap_SendConsoleCommand(EXEC_APPEND, "gameCompleteStatus\n");
-
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		int ping;
@@ -2963,12 +2958,19 @@ void LogExit(const char *string)
 			continue;
 		}
 
+		// Make sure all the stats are recalculated and accurate
+		G_CalcRank(cl);
+
 		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
 
 		G_LogPrintf("score: %i  ping: %i  client: %i %s\n", cl->ps.persistant[PERS_SCORE], ping, level.sortedClients[i], cl->pers.netname);
 	}
 
-	// NERVE - SMF
+	G_LogPrintf("red:%i  blue:%i\n", level.teamScores[TEAM_AXIS], level.teamScores[TEAM_ALLIES]);
+
+	// Send gameCompleteStatus message to master servers
+	trap_SendConsoleCommand(EXEC_APPEND, "gameCompleteStatus\n");
+
 	if (g_gametype.integer == GT_WOLF_STOPWATCH)
 	{
 		char cs[MAX_STRING_CHARS];
@@ -3011,6 +3013,7 @@ void LogExit(const char *string)
 		char cs[MAX_STRING_CHARS];
 		int  winner;
 		int  highestskillpoints, highestskillpointsclient, j, teamNum;
+		int  highestskillpointsincrease;
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 		winner = atoi(Info_ValueForKey(cs, "winner"));
@@ -3039,8 +3042,9 @@ void LogExit(const char *string)
 		{
 			for (i = 0; i < SK_NUM_SKILLS; i++)
 			{
-				highestskillpoints       = 0;
-				highestskillpointsclient = -1;
+				highestskillpoints         = 0;
+				highestskillpointsincrease = 0;
+				highestskillpointsclient   = -1;
 				for (j = 0; j < level.numConnectedClients; j++)
 				{
 					cl = &level.clients[level.sortedClients[j]];
@@ -3050,10 +3054,29 @@ void LogExit(const char *string)
 						continue;
 					}
 
-					if (cl->sess.skillpoints[i] > highestskillpoints)
+					// Make sure the player got some skills
+					if (cl->sess.skill[i] < 1)
 					{
-						highestskillpoints       = cl->sess.skillpoints[i];
-						highestskillpointsclient = j;
+						continue;
+					}
+
+					// Only battlesense and light weapons medals are awarded to
+					// the highest score. Class medals get awarded to best ones.
+					if (i == SK_BATTLE_SENSE || i == SK_LIGHT_WEAPONS)
+					{
+						if (cl->sess.skillpoints[i] > highestskillpoints)
+						{
+							highestskillpoints       = cl->sess.skillpoints[i];
+							highestskillpointsclient = j;
+						}
+					}
+					else
+					{
+						if ((cl->sess.skillpoints[i] - cl->sess.startskillpoints[i]) > highestskillpointsincrease)
+						{
+							highestskillpointsincrease = (cl->sess.skillpoints[i] - cl->sess.startskillpoints[i]);
+							highestskillpointsclient   = j;
+						}
 					}
 				}
 
@@ -3071,11 +3094,29 @@ void LogExit(const char *string)
 							continue;
 						}
 
-						if (cl->sess.skillpoints[i] == highestskillpoints)
+						// Make sure the player got some skills
+						if (cl->sess.skill[i] < 1)
 						{
-							cl->sess.medals[i]++;
+							continue;
+						}
 
-							ClientUserinfoChanged(level.sortedClients[j]);
+						// Only battlesense and light weapons medals are awarded to
+						// the highest score. Class medals get awarded to best ones.
+						if (i == SK_BATTLE_SENSE || i == SK_LIGHT_WEAPONS)
+						{
+							if (cl->sess.skillpoints[i] == highestskillpoints)
+							{
+								cl->sess.medals[i]++;
+								ClientUserinfoChanged(level.sortedClients[j]);
+							}
+						}
+						else
+						{
+							if ((cl->sess.skillpoints[i] - cl->sess.startskillpoints[i]) == highestskillpointsincrease)
+							{
+								cl->sess.medals[i]++;
+								ClientUserinfoChanged(level.sortedClients[j]);
+							}
 						}
 					}
 				}

@@ -53,12 +53,11 @@ void G_PushMapEntityToBuffer(char *buffer, int size, mapEntityData_t *mEnt)
 
 	switch (mEnt->type)
 	{
-	case ME_CONSTRUCT:     // Gordon: these ones don't need much info
+	// These need to be send so that icons can display correct command map layer
+	case ME_CONSTRUCT:
 	case ME_DESTRUCT:
 	case ME_DESTRUCT_2:
 	case ME_COMMANDMAP_MARKER:
-		Q_strcat(buffer, size, va(" %i %i", mEnt->type, mEnt->data));
-		break;
 	case ME_TANK:
 	case ME_TANK_DEAD:
 		Q_strcat(buffer, size, va(" %i %s %i", mEnt->type, buf, mEnt->data));
@@ -1263,7 +1262,7 @@ void G_UpdateTeamMapData(void)
 
 													// for marker
 													ent->client->landmineSpotted->s.frame    = rand() % 20;
-													ent->client->landmineSpotted->r.contents = CONTENTS_CORPSE;
+													ent->client->landmineSpotted->r.contents = CONTENTS_TRANSLUCENT;
 													trap_LinkEntity(ent->client->landmineSpotted);
 
 													{
@@ -1308,7 +1307,7 @@ void G_UpdateTeamMapData(void)
 
 													// for marker
 													ent->client->landmineSpotted->s.frame    = rand() % 20;
-													ent->client->landmineSpotted->r.contents = CONTENTS_CORPSE;
+													ent->client->landmineSpotted->r.contents = CONTENTS_TRANSLUCENT;
 													trap_LinkEntity(ent->client->landmineSpotted);
 
 													{

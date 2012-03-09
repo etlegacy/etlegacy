@@ -1845,26 +1845,34 @@ void UI_DrawMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 
 				w = Text_Width(uiInfo.campaignList[map].mapInfos[i]->mapName, scale, 0);
 
+				// Pin half width is 8
+				// Pin left margin is 2
+				// Pin right margin is 0
+				// Text margin is 2
 				if (x + 10 + w > rect->x + rect->w)
 				{
+					// x - pinhwidth (8) - pin left margin (2) - w - text margin (2) => x - w - 12
 					UI_FillRect(x - w - 12 + 1, y - 6 + 1, 12 + w, 12, colourFadedBlack);
 					UI_FillRect(x - w - 12, y - 6, 12 + w, 12, colorBlack);
 				}
 				else
 				{
-					UI_FillRect(x + 1, y - 6 + 1, 12 + w, 12, colourFadedBlack);
-					UI_FillRect(x, y - 6, 12 + w, 12, colorBlack);
+					// Width = pinhwidth (8) + pin right margin (0) + w + text margin (2) = 10 + w
+					UI_FillRect(x + 1, y - 6 + 1, 10 + w, 12, colourFadedBlack);
+					UI_FillRect(x, y - 6, 10 + w, 12, colorBlack);
 				}
 
 				UI_DrawHandlePic(x - 8, y - 8, 16, 16, trap_R_RegisterShaderNoMip("gfx/loading/pin_neutral"));
 
 				if (x + 10 + w > rect->x + rect->w)
 				{
+					// x - pinhwidth (8) - pin left margin (2) - w => x - w - 10
 					Text_Paint(x - w - 10, y + 3, scale, colorWhite, uiInfo.campaignList[map].mapInfos[i]->mapName, 0, 0, 0);
 				}
 				else
 				{
-					Text_Paint(x + 10, y + 3, scale, colorWhite, uiInfo.campaignList[map].mapInfos[i]->mapName, 0, 0, 0);
+					// x - pinhwidth (8) - pin left margin (2) - w => x - w - 10
+					Text_Paint(x + 8, y + 3, scale, colorWhite, uiInfo.campaignList[map].mapInfos[i]->mapName, 0, 0, 0);
 				}
 			}
 		}
@@ -1937,26 +1945,34 @@ void UI_DrawMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 
 		w = Text_Width(uiInfo.mapList[map].mapName, scale, 0);
 
+		// Pin half width is 8
+		// Pin left margin is 2
+		// Pin right margin is 0
+		// Text margin is 2
 		if (x + 10 + w > rect->x + rect->w)
 		{
+			// x - pinhwidth (8) - pin left margin (2) - w - text margin (2) => x - w - 12
 			UI_FillRect(x - w - 12 + 1, y - 6 + 1, 12 + w, 12, colourFadedBlack);
 			UI_FillRect(x - w - 12, y - 6, 12 + w, 12, colorBlack);
 		}
 		else
 		{
-			UI_FillRect(x + 1, y - 6 + 1, 12 + w, 12, colourFadedBlack);
-			UI_FillRect(x, y - 6, 12 + w, 12, colorBlack);
+			// Width = pinhwidth (8) + pin right margin (0) + w + text margin (2) = 10 + w
+			UI_FillRect(x + 1, y - 6 + 1, 10 + w, 12, colourFadedBlack);
+			UI_FillRect(x, y - 6, 10 + w, 12, colorBlack);
 		}
 
 		UI_DrawHandlePic(x - 8, y - 8, 16, 16, trap_R_RegisterShaderNoMip("gfx/loading/pin_neutral"));
 
 		if (x + 10 + w > rect->x + rect->w)
 		{
+			// x - pinhwidth (8) - pin left margin (2) - w => x - w - 10
 			Text_Paint(x - w - 10, y + 3, scale, colorWhite, uiInfo.mapList[map].mapName, 0, 0, 0);
 		}
 		else
 		{
-			Text_Paint(x + 10, y + 3, scale, colorWhite, uiInfo.mapList[map].mapName, 0, 0, 0);
+			// x + pinhwidth (8) + pin right margin (0) => x + 8
+			Text_Paint(x + 8, y + 3, scale, colorWhite, uiInfo.mapList[map].mapName, 0, 0, 0);
 		}
 	}
 	else

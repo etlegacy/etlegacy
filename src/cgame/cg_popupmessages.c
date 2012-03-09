@@ -570,6 +570,11 @@ const char *CG_GetPMItemText(centity_t *cent)
 		}
 		break;
 	case PM_MINES:
+		// Prevent spectators from being informed when a mine is spotted
+		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+		{
+			return NULL;
+		}
 		if (cgs.clientinfo[cg.clientNum].team == cent->currentState.effect2Time)
 		{
 			return NULL;
@@ -643,6 +648,11 @@ void CG_PlayPMItemSound(centity_t *cent)
 		}
 		break;
 	case PM_MINES:
+		// Prevent spectators from being informed when a mine is spotted
+		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+		{
+			break;
+		}
 		if (cgs.clientinfo[cg.clientNum].team != cent->currentState.effect2Time)
 		{
 			// inverted teams
