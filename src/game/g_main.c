@@ -729,6 +729,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 	float         chMaxDist = CH_MAX_DIST;
 	gentity_t     *checkEnt, *traceEnt = 0;
 	playerState_t *ps;
+	static int    hintValMax = 255; // Breakable damage indicator can wrap when the entity has a lot of health
 	int           hintType, hintDist, hintVal;
 	qboolean      zooming, indirectHit; // indirectHit means the checkent was not the ent hit by the trace (checkEnt!=traceEnt)
 	int           trace_contents;       // DHM - Nerve
@@ -998,6 +999,13 @@ void G_CheckForCursorHints(gentity_t *ent)
 						hintDist = CH_BREAKABLE_DIST;
 						hintType = HINT_BREAKABLE;
 						hintVal  = checkEnt->health;            // also send health to client for visualization
+
+						// Breakable damage indicator can wrap when the entity has a lot of health
+						if (hintVal > hintValMax)
+						{
+							hintValMax = hintVal;
+						}
+						hintVal = (hintVal * 255) / hintValMax;
 						break;
 					case 1:
 						hintDist = CH_BREAKABLE_DIST * 2;
@@ -1026,6 +1034,13 @@ void G_CheckForCursorHints(gentity_t *ent)
 							hintDist = CH_BREAKABLE_DIST;
 							hintType = HINT_BREAKABLE;
 							hintVal  = checkEnt->health;            // also send health to client for visualization
+
+							// Breakable damage indicator can wrap when the entity has a lot of health
+							if (hintVal > hintValMax)
+							{
+								hintValMax = hintVal;
+							}
+							hintVal = (hintVal * 255) / hintValMax;
 						}
 						else
 						{
@@ -1051,6 +1066,13 @@ void G_CheckForCursorHints(gentity_t *ent)
 							hintDist = CH_BREAKABLE_DIST;
 							hintType = HINT_BREAKABLE;
 							hintVal  = checkEnt->health;            // also send health to client for visualization
+
+							// Breakable damage indicator can wrap when the entity has a lot of health
+							if (hintVal > hintValMax)
+							{
+								hintValMax = hintVal;
+							}
+							hintVal = (hintVal * 255) / hintValMax;
 							break;
 						case 1:
 							hintDist = CH_BREAKABLE_DIST * 2;
@@ -2627,6 +2649,13 @@ void MoveClientToIntermission(gentity_t *ent)
 
 	// clean up powerup info
 	// memset( ent->client->ps.powerups, 0, sizeof(ent->client->ps.powerups) );
+
+	// Player view is distorted in intermission if you have ridden a vehicle,
+	// mounted a tank
+	if (ent->tankLink)
+	{
+		G_LeaveTank(ent, qfalse);
+	}
 
 	ent->client->ps.eFlags = 0;
 	ent->s.eFlags          = 0;

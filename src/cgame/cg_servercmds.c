@@ -2586,6 +2586,11 @@ static void CG_ServerCommand(void)
 	// DHM - Nerve :: Allow client to lodge a complaing
 	if (!Q_stricmp(cmd, "complaint") && cgs.gamestate == GS_PLAYING)
 	{
+		if (cg_complaintPopUp.integer == 0)
+		{
+			trap_SendClientCommand("vote no");
+		}
+
 		cgs.complaintEndTime = cg.time + 20000;
 		cgs.complaintClient  = atoi(CG_Argv(1));
 

@@ -574,12 +574,6 @@ int G_UnMute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, 
 			return(G_INVALID);
 		}
 
-		if (level.clients[pid].sess.referee)
-		{
-			G_refPrintf(ent, "Can't vote to un-mute referees!");
-			return(G_INVALID);
-		}
-
 		if (!level.clients[pid].sess.muted)
 		{
 			G_refPrintf(ent, "Player is not muted!");

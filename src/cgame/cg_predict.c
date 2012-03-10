@@ -956,7 +956,7 @@ void CG_PredictPlayerState(void)
 	}
 
 	// non-predicting local movement will grab the latest angles
-	if (cg_nopredict.integer
+	if (cg_nopredict.integer || cg.predictedPlayerState.pm_type == PM_INTERMISSION
 #ifdef ALLOW_GSYNC
 	    || cg_synchronousClients.integer
 #endif // ALLOW_GSYNC

@@ -1089,12 +1089,7 @@ static int CG_CalcFov(void)
 		cg.zoomval     = 0;
 	}
 
-	if (cg.predictedPlayerState.pm_type == PM_INTERMISSION)
-	{
-		// if in intermission, use a fixed value
-		fov_x = 90;
-	}
-	else
+	if (cg.predictedPlayerState.pm_type != PM_INTERMISSION)
 	{
 		fov_x = cg_fov.value;
 		if (!developer.integer)
@@ -1178,6 +1173,12 @@ static int CG_CalcFov(void)
 	else if (cg.snap->ps.eFlags & EF_MOUNTEDTANK)
 	{
 		fov_x = 75;
+	}
+
+	if (cg.predictedPlayerState.pm_type == PM_INTERMISSION)
+	{
+		// if in intermission, use a fixed value
+		fov_x = 90;
 	}
 
 	if (cg.showGameView)

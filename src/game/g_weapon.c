@@ -1910,7 +1910,7 @@ void Weapon_Engineer(gentity_t *ent)
 
 				Add_Ammo(ent, WP_LANDMINE, 1, qfalse);
 
-				// rain - #202 - give back the correct charge amount
+				// Give back the correct charge amount
 				if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
 				{
 					ent->client->ps.classWeaponTime -= .33f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
@@ -3115,6 +3115,9 @@ void G_GlobalClientEvent(int event, int param, int client)
 	tent->s.density      = param;
 	tent->r.singleClient = client;
 	tent->r.svFlags      = SVF_SINGLECLIENT | SVF_BROADCAST;
+
+	// Calling for a lot of artillery or airstrikes can result voice over spam
+	tent->s.effect1Time = 1; // don't buffer
 }
 
 /*
@@ -3272,14 +3275,7 @@ void Weapon_Artillery(gentity_t *ent)
 		}
 		else
 		{
-			if (ent->client->sess.skill[SK_SIGNALS] >= 3)
-			{
-				bomb->nextthink = level.time + 8950 + 2000 * i + crandom() * 800;
-			}
-			else
-			{
-				bomb->nextthink = level.time + 8950 + 2000 * i + crandom() * 800;
-			}
+			bomb->nextthink = level.time + 8950 + 2000 * i + crandom() * 800;
 
 			// Gordon: for explosion type
 			bomb->accuracy     = 2;
@@ -4862,7 +4858,7 @@ void FireWeapon(gentity_t *ent)
 
 		if (ent->client->sess.skill[SK_HEAVY_WEAPONS] >= 1)
 		{
-			ent->client->ps.classWeaponTime += .5f * (1 - 0.3f) * level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
+			ent->client->ps.classWeaponTime += .33f * level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 		else
 		{

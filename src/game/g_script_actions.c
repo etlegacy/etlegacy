@@ -169,7 +169,7 @@ qboolean G_ScriptAction_SetAutoSpawn(gentity_t *ent, char *params)
 	tent = G_Find(NULL, FOFS(message), spawnname);
 	if (!tent)
 	{
-		G_Error("G_Scripting: setautospawn, couldn't find target\n");
+		G_Error("G_Scripting: setautospawn, couldn't find target (%s)\n", token);
 	}
 
 	if (!tent->count)
@@ -699,9 +699,9 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 			}
 
 			bufferIndex = atoi(token);
-			if (bufferIndex < 0 || bufferIndex >= G_MAX_SCRIPT_ACCUM_BUFFERS)
+			if (bufferIndex < 0 || bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS)
 			{
-				G_Error("G_Scripting: accum buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
+				G_Error("G_Scripting: accum buffer is outside range (0 - %i)\n", MAX_SCRIPT_ACCUM_BUFFERS - 1);
 			}
 
 			backward = ent->scriptAccumBuffer[bufferIndex] != 0 ? qtrue : qfalse;
@@ -713,13 +713,13 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 			token = COM_ParseExt(&pString, qfalse);
 			if (!token[0])
 			{
-				G_Error("G_Scripting: accum without a buffer index\n");
+				G_Error("G_Scripting: globalaccum without a buffer index\n");
 			}
 
 			bufferIndex = atoi(token);
 			if (bufferIndex < 0 || bufferIndex >= G_MAX_SCRIPT_ACCUM_BUFFERS)
 			{
-				G_Error("G_Scripting: accum buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
+				G_Error("G_Scripting: globalaccum buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
 			}
 
 			backward = level.globalAccumBuffer[bufferIndex] != 0 ? qtrue : qfalse;
@@ -1161,7 +1161,7 @@ qboolean G_ScriptAction_DisableMessage(gentity_t *ent, char *params)
 	token   = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: setposition must have an targetname\n");
+		G_Error("G_Scripting: disablemessage must have an targetname\n");
 	}
 
 	// find the entity with the given "targetname"
@@ -2333,7 +2333,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	bufferIndex = atoi(token);
 	if (bufferIndex >= G_MAX_SCRIPT_ACCUM_BUFFERS)
 	{
-		G_Error("G_Scripting: accum buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS);
+		G_Error("G_Scripting: accum buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
@@ -2517,7 +2517,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (ent->scriptAccumBuffer[bufferIndex] == atoi(token))
 		{
@@ -2529,7 +2529,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 		gentity_t *target;
 		if (!*token)
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 
 		target = G_FindByTargetname(NULL, token);
@@ -2586,19 +2586,19 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: accum without a buffer index\n");
+		G_Error("G_Scripting: globalaccum without a buffer index\n");
 	}
 
 	bufferIndex = atoi(token);
-	if (bufferIndex >= G_MAX_SCRIPT_ACCUM_BUFFERS)
+	if (bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS)
 	{
-		G_Error("G_Scripting: accum buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS);
+		G_Error("G_Scripting: globalaccum buffer is outside range (0 - %i)\n", MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: accum without a command\n");
+		G_Error("G_Scripting: globalaccum without a command\n");
 	}
 
 	Q_strncpyz(lastToken, token, sizeof(lastToken));
@@ -2608,7 +2608,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		level.globalAccumBuffer[bufferIndex] += atoi(token);
 	}
@@ -2616,7 +2616,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] < atoi(token))
 		{
@@ -2628,7 +2628,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] > atoi(token))
 		{
@@ -2640,7 +2640,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] != atoi(token))
 		{
@@ -2652,7 +2652,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] == atoi(token))
 		{
@@ -2664,7 +2664,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		level.globalAccumBuffer[bufferIndex] |= (1 << atoi(token));
 	}
@@ -2672,7 +2672,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		level.globalAccumBuffer[bufferIndex] &= ~(1 << atoi(token));
 	}
@@ -2680,7 +2680,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] & (1 << atoi(token)))
 		{
@@ -2692,7 +2692,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (!(level.globalAccumBuffer[bufferIndex] & (1 << atoi(token))))
 		{
@@ -2704,7 +2704,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		level.globalAccumBuffer[bufferIndex] = atoi(token);
 	}
@@ -2712,7 +2712,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		level.globalAccumBuffer[bufferIndex] = rand() % atoi(token);
 	}
@@ -2720,7 +2720,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] == atoi(token))
 		{
@@ -2767,7 +2767,6 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 				return qtrue;
 			}
 
-//          G_Error( "G_Scripting: trigger has unknown name: %s\n", name );
 			G_Printf("G_Scripting: trigger has unknown name: %s\n", name);
 			return qtrue;
 		}
@@ -3837,7 +3836,8 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 	Q_strncpyz(state, token, sizeof(state));
 	if (!state[0])
 	{
-		G_Error("G_Scripting: setstate must have a name and an state\n");
+		G_Error("G_Scripting: setstate (%s) must have a name and an state\n",
+		        name);
 	}
 
 	if (!Q_stricmp(state, "default"))
@@ -3854,7 +3854,8 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 	}
 	else
 	{
-		G_Error("G_Scripting: setstate with invalid state '%s'\n", state);
+		G_Error("G_Scripting: setstate (%s) with invalid state '%s'\n",
+		        name, state);
 	}
 
 	// look for an entities
@@ -3868,7 +3869,8 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 		{
 			if (!found)
 			{
-				G_Printf("^1Warning: setstate called and no entities found\n");
+				G_Printf("^1Warning: setstate (%s) called and no entities found\n",
+				         name);
 			}
 			break;
 		}
@@ -4119,9 +4121,9 @@ qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params)
 
 
 	bufferIndex = atoi(token);
-	if ((bufferIndex < 0) || (bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS))
+	if ((bufferIndex < 0) || (bufferIndex >= G_MAX_SCRIPT_ACCUM_BUFFERS))
 	{
-		G_Error("G_ScriptAction_PrintAccum: buffer is outside range (0 - %i)", MAX_SCRIPT_ACCUM_BUFFERS);
+		G_Error("G_ScriptAction_PrintAccum: buffer is outside range (0 - %i)", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 	G_Printf("(G_Script) %s: Accum[%i] = %d\n", ent->scriptName, bufferIndex, ent->scriptAccumBuffer[bufferIndex]);
@@ -4162,7 +4164,7 @@ qboolean G_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params)
 	bufferIndex = atoi(token);
 	if ((bufferIndex < 0) || (bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS))
 	{
-		G_Error("PrintGlobalAccum: buffer is outside range (0 - %i)", MAX_SCRIPT_ACCUM_BUFFERS);
+		G_Error("PrintGlobalAccum: buffer is outside range (0 - %i)", MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 	G_Printf("(G_Script) GlobalAccum[%i] = %d\n", bufferIndex, level.globalAccumBuffer[bufferIndex]);

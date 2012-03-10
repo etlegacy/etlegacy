@@ -577,8 +577,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 		if (scissor)
 		{
-			icon_pos[0] = mEnt->automapTransformed[0] - scissor->tl[0] + x - icon_size;
-			icon_pos[1] = mEnt->automapTransformed[1] - scissor->tl[1] + y - icon_size;
+			icon_pos[0] = mEnt->automapTransformed[0] - scissor->tl[0] + x - (icon_size * (scissor->zoomFactor / 5.159));
+			icon_pos[1] = mEnt->automapTransformed[1] - scissor->tl[1] + y - (icon_size * (scissor->zoomFactor / 5.159));
 		}
 		else
 		{

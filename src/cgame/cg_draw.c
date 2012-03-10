@@ -992,6 +992,11 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 		return;
 	}
 
+	if (cg.demoPlayback)
+	{
+		snap->ping = (snap->serverTime - snap->ps.commandTime) - 50;
+	}
+
 	// add this snapshot's info
 	lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->ping;
 	lagometer.snapshotFlags[lagometer.snapshotCount & (LAG_SAMPLES - 1)]   = snap->snapFlags;

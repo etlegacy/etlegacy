@@ -339,7 +339,7 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
 		}
 		else
 		{
-			AP("print \"\n^3Match is ^5UNPAUSED^3 ... resuming in 10 seconds!\n\n\"");
+			AP("print \"^3Match is ^5UNPAUSED^3 ... resuming in 10 seconds!\n\"");
 			level.match_pause = PAUSE_UNPAUSING;
 			G_globalSound("sound/osp/prepare.wav");
 			G_spawnPrintf(DP_UNPAUSING, level.time + 10, NULL);
@@ -778,7 +778,7 @@ void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 
 
 // These map to WS_* weapon indexes
-const int cQualifyingShots[WS_MAX] =
+const unsigned int cQualifyingShots[WS_MAX] =
 {
 	10,     // 0
 	15,     // 1
@@ -857,7 +857,8 @@ int QDECL SortStats(const void *a, const void *b)
 // Shows the most accurate players for each weapon to the requesting client
 void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow)
 {
-	int             i, iWeap, shots, wBestAcc, cClients, cPlaces;
+	int             i, iWeap, wBestAcc, cClients, cPlaces;
+	unsigned        shots;
 	int             aClients[MAX_CLIENTS];
 	float           acc;
 	char            z[MAX_STRING_CHARS];
@@ -922,7 +923,8 @@ void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow)
 void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 {
 	gclient_t *cl;
-	int       c = 0, i, shots, wBestAcc;
+	int       c = 0, i, wBestAcc;
+	unsigned  shots;
 	char      z[MAX_STRING_CHARS];
 
 	if (trap_Argc() < 2)

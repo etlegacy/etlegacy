@@ -755,11 +755,8 @@ typedef struct
 
 #define MAX_CLIENT_MARKERS 10
 
-#define NUM_SOLDIERKILL_TIMES 10
-#define SOLDIERKILL_MAXTIME 60000
-
-#define LT_SPECIAL_PICKUP_MOD   3       // JPW NERVE # of times (minus one for modulo) LT must drop ammo before scoring a point
-#define MEDIC_SPECIAL_PICKUP_MOD    4   // JPW NERVE same thing for medic
+#define LT_SPECIAL_PICKUP_MOD   3       // # of times (minus one for modulo) LT must drop ammo before scoring a point
+#define MEDIC_SPECIAL_PICKUP_MOD    4   // same thing for medic
 
 // Gordon: debris test
 typedef struct debrisChunk_s
@@ -856,9 +853,6 @@ struct gclient_s
 
 	int lastConstructibleBlockingWarnTime;
 	int lastConstructibleBlockingWarnEnt;
-
-	int soldierKillMarker;
-	int soliderKillTimes[NUM_SOLDIERKILL_TIMES];
 
 	int landmineSpottedTime;
 	gentity_t *landmineSpotted;
@@ -1222,6 +1216,7 @@ void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, int quantity, int type);
 //
 // Ridah
 int G_FindConfigstringIndex(const char *name, int start, int max, qboolean create);
+void G_RemoveConfigstringIndex(const char *name, int start, int max);
 // done.
 int     G_ModelIndex(char *name);
 int     G_SoundIndex(const char *name);
@@ -1888,7 +1883,7 @@ int     trap_BotAllocateClient(int clientNum);
 void    trap_BotFreeClient(int clientNum);
 void    trap_GetUsercmd(int clientNum, usercmd_t *cmd);
 qboolean    trap_GetEntityToken(char *buffer, int bufferSize);
-qboolean trap_GetTag(int clientNum, int tagFileNumber, char *tagName, orientation_t *or);
+qboolean trap_GetTag(int clientNum, int tagFileNumber, char *tagName, orientation_t * or);
 qboolean trap_LoadTag(const char *filename);
 
 int     trap_RealTime(qtime_t *qtime);

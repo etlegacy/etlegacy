@@ -252,7 +252,7 @@ ipXPStorage_t *G_FindIpData(ipXPStorageList_t *ipXPStorageList, char *from)
 
 	in = *(unsigned *)m;
 
-	for (i = 0; i < MAX_IPFILTERS; i++)
+	for (i = 0; i < MAX_XPSTORAGEITEMS; i++)
 	{
 		if (!ipXPStorageList->ipFilters[i].timeadded || level.time - ipXPStorageList->ipFilters[i].timeadded > (5 * 60000))
 		{
@@ -840,8 +840,7 @@ gclient_t *G_GetPlayerByName(char *name)
 
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
-
-		cl = &level.clients[i];
+		cl = &level.clients[level.sortedClients[i]];
 
 		if (!Q_stricmp(cl->pers.netname, name))
 		{

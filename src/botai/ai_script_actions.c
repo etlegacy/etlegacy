@@ -426,7 +426,7 @@ qboolean Bot_ScriptAction_Accum(bot_state_t *bs, char *params)
 	bufferIndex = atoi(token);
 	if (bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS)
 	{
-		Bot_ScriptError(bs, "accum: buffer is outside range (0 - %i)", MAX_SCRIPT_ACCUM_BUFFERS);
+		Bot_ScriptError(bs, "accum: buffer is outside range (0 - %i)", MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
@@ -1236,7 +1236,7 @@ qboolean Bot_ScriptAction_GlobalAccum(bot_state_t *bs, char *params)
 	bufferIndex = atoi(token);
 	if (bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS)
 	{
-		Bot_ScriptError(bs, "globalAccum: buffer is outside range (0 - %i)", MAX_SCRIPT_ACCUM_BUFFERS);
+		Bot_ScriptError(bs, "globalAccum: buffer is outside range (0 - %i)", MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
@@ -2002,7 +2002,7 @@ qboolean Bot_ScriptAction_PrintAccum(bot_state_t *bs, char *params)
 	bufferIndex = atoi(token);
 	if ((bufferIndex < 0) || (bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS))
 	{
-		G_Error("Bot_ScriptAction_PrintAccum: buffer is outside range (0 - %i)", MAX_SCRIPT_ACCUM_BUFFERS);
+		G_Error("Bot_ScriptAction_PrintAccum: buffer is outside range (0 - %i)", MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 	ent = BotGetEntity(bs->client);
@@ -2043,9 +2043,9 @@ qboolean Bot_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params)
 
 
 	bufferIndex = atoi(token);
-	if ((bufferIndex < 0) || (bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS))
+	if ((bufferIndex < 0) || (bufferIndex >= G_MAX_SCRIPT_ACCUM_BUFFERS))
 	{
-		G_Error("PrintGlobalAccum: buffer is outside range (0 - %i)", MAX_SCRIPT_ACCUM_BUFFERS);
+		G_Error("PrintGlobalAccum: buffer is outside range (0 - %i)", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 

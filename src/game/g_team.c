@@ -528,8 +528,6 @@ void Team_DroppedFlagThink(gentity_t *ent)
 		{
 			G_Script_ScriptEvent(level.gameManager, "trigger", "axis_object_returned");
 		}
-
-		trap_SendServerCommand(-1, "cp \"Axis have returned the objective!\" 2");
 	}
 	else if (ent->item->giTag == PW_BLUEFLAG)
 	{
@@ -542,8 +540,6 @@ void Team_DroppedFlagThink(gentity_t *ent)
 		{
 			G_Script_ScriptEvent(level.gameManager, "trigger", "allied_object_returned");
 		}
-
-//      trap_SendServerCommand(-1, "cp \"Allies have returned the objective!\" 2");
 	}
 	// Reset Flag will delete this entity
 }
@@ -551,8 +547,7 @@ void Team_DroppedFlagThink(gentity_t *ent)
 int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 {
 	gclient_t *cl = other->client;
-//  gentity_t* te;
-	int our_flag, enemy_flag;
+	int       our_flag, enemy_flag;
 
 	if (cl->sess.sessionTeam == TEAM_AXIS)
 	{

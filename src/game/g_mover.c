@@ -6230,7 +6230,7 @@ void G_LinkDebris(void)
 		target = G_FindByTargetname(NULL, debris->target);
 		if (!target)
 		{
-			G_Error("ERROR: func_debris with no target");
+			G_Error("ERROR: func_debris with no target (%s)", debris->target);
 		}
 
 		speed = debris->velocity[0];

@@ -4590,7 +4590,16 @@ void UI_ServersSort(int column, qboolean force)
 	qsort(&uiInfo.serverStatus.displayServers[0], uiInfo.serverStatus.numDisplayServers, sizeof(int), UI_ServersQsortCompare);
 }
 
+/*
+ * Sorting the mods list
+ */
+int QDECL UI_SortMods(const void *a, const void *b)
+{
+	modInfo_t ca = *(modInfo_t *)a;
+	modInfo_t cb = *(modInfo_t *)b;
 
+	return strcmp(ca.modName, cb.modName);
+}
 
 /*
 ===============
@@ -4622,6 +4631,9 @@ static void UI_LoadMods(void)
 			break;
 		}
 	}
+
+	// Sorting the mods list
+	qsort(uiInfo.modList, uiInfo.modCount, sizeof(uiInfo.modList[0]), UI_SortMods);
 }
 
 /*

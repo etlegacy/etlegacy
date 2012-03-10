@@ -2318,8 +2318,8 @@ void CG_KeyEvent(int key, qboolean down);
 void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type, qboolean fForced);
 
-qboolean CG_GetTag(int clientNum, char *tagname, orientation_t *or);
-qboolean CG_GetWeaponTag(int clientNum, char *tagname, orientation_t *or);
+qboolean CG_GetTag(int clientNum, char *tagname, orientation_t * or);
+qboolean CG_GetWeaponTag(int clientNum, char *tagname, orientation_t * or);
 
 //
 // cg_view.c
@@ -2363,8 +2363,9 @@ void CG_DrawString(float x, float y, const char *string,
                    float charWidth, float charHeight, const float *modulate);
 
 
-void CG_DrawStringExt(int x, int y, const char *string, const float *setColor,
-                      qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars);
+void CG_DrawStringExt(int x, int y, const char *string, float *setColor,
+                      qboolean forceColor, qboolean shadow, int charWidth,
+                      int charHeight, int maxChars);
 // JOSEPH 4-17-00
 void CG_DrawStringExt2(int x, int y, const char *string, const float *setColor,
                        qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars);
@@ -2395,6 +2396,7 @@ void CG_DrawRect_FixedBorder(float x, float y, float width, float height, int bo
 void CG_DrawSides(float x, float y, float w, float h, float size);
 void CG_DrawTopBottom(float x, float y, float w, float h, float size);
 void CG_DrawTopBottom_NoScale(float x, float y, float w, float h, float size);
+void CG_DrawBottom_NoScale(float x, float y, float w, float h, float size);
 
 // NERVE - SMF - localization functions
 void CG_InitTranslation(void);

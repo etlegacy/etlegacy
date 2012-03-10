@@ -371,7 +371,7 @@ panel_button_t debriefMissionTitleWindow =
 {
 	NULL,
 	NULL,
-	{ 10,                        30,  193, 240 },
+	{ 10,                        30,  193, 326 },
 	{ 0,                         0,   0,   0, 0, 0, 0, 0},
 	NULL,                        /* font     */
 	NULL,                        /* keyDown  */
@@ -436,7 +436,7 @@ panel_button_t debriefMissionStatsWindow =
 {
 	NULL,
 	"MISSION STATS",
-	{ 10,                        280 - 6,620, 70 + 12 },
+	{ 213,                       280 - 6,417, 70 + 12 },
 	{ 0,                         0,  0,   0, 0, 0, 0, 0},
 	NULL,                        /* font     */
 	NULL,                        /* keyDown  */
@@ -449,8 +449,8 @@ panel_button_t debriefMissionStatsHeaders =
 {
 	NULL,
 	NULL,
-	{ 16,                               298,  608, 16 },
-	{ 0,                                0,    0,   0, 0, 0, 0, 0},
+	{ 219,                              298,   405, 16 },
+	{ 0,                                0,     0,   0, 0, 0, 0, 0},
 	NULL,                               /* font     */
 	NULL,                               /* keyDown  */
 	NULL,                               /* keyUp    */
@@ -462,8 +462,8 @@ panel_button_t debriefMissionStatsWinner =
 {
 	NULL,
 	NULL,
-	{ 16,                          314,  608, 16 },
-	{ 0,                           0,    0,   0, 0, 0, 0, 0},
+	{ 219,                         314,   405, 16 },
+	{ 0,                           0,     0,   0, 0, 0, 0, 0},
 	NULL,                          /* font     */
 	NULL,                          /* keyDown  */
 	NULL,                          /* keyUp    */
@@ -475,8 +475,8 @@ panel_button_t debriefMissionStatsLoser =
 {
 	NULL,
 	NULL,
-	{ 16,                          330,  608, 16 },
-	{ 1,                           0,    0,   0, 0, 0, 0, 0},
+	{ 219,                         330,   405, 16 },
+	{ 1,                           0,     0,   0, 0, 0, 0, 0},
 	NULL,                          /* font     */
 	NULL,                          /* keyDown  */
 	NULL,                          /* keyUp    */
@@ -2908,7 +2908,7 @@ void CG_Debreifing2_Maps_Draw(panel_button_t *button)
 				CG_FillRect(button->rect.x + 2, y + 2, button->rect.w - 4, 12, clrBck);
 			}
 
-			CG_Text_Paint_Ext(button->rect.x + 8, y + 11, 0.19f, 0.19f, clrTxtBck, va("%i. %s", i + 1, cgs.campaignData.arenas[i].longname), 0, 0, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(button->rect.x + 8, y + 11, 0.19f, 0.19f, clrTxtBck, va("%s", cgs.campaignData.arenas[i].longname), 0, 0, 0, &cgs.media.limboFont2);
 
 			if (i <= cgs.currentCampaignMap)
 			{
@@ -2918,7 +2918,7 @@ void CG_Debreifing2_Maps_Draw(panel_button_t *button)
 				CG_Text_Paint_Ext(button->rect.x + button->rect.w - w - 8, y + 11, 0.19f, 0.19f, clrTxtBck, str, 0, 0, 0, &cgs.media.limboFont2);
 			}
 
-			y += 14;
+			y += 13;
 		}
 	}
 	else if (cg_gameType.integer == GT_WOLF_STOPWATCH)
@@ -3279,13 +3279,13 @@ qboolean CG_Debriefing2_Maps_KeyDown(panel_button_t *button, int key)
 int skillPositions[SK_NUM_SKILLS + 1] =
 {
 	0,
-	70,
-	140,
-	210,
-	280,
-	350,
-	420,
-	490,
+	55,
+	110,
+	150,
+	200,
+	250,
+	290,
+	330,
 };
 
 void CG_Debriefing2TeamSkillHeaders_Draw(panel_button_t *button)
@@ -3330,9 +3330,9 @@ void CG_Debriefing2TeamSkillHeaders_Draw(panel_button_t *button)
 
 			if (*str)
 			{
-				w = CG_Text_Width_Ext(str, 0.2f, 0, &cgs.media.limboFont2);
+				w = CG_Text_Width_Ext(str, 0.175f, 0, &cgs.media.limboFont2);
 
-				CG_Text_Paint_Ext(button->rect.x + 100 + skillPositions[i] - (w * 0.5f), button->rect.y + (j * 11), 0.2f, 0.2f, clrTxtBck, str, 0, 0, 0, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(button->rect.x + 60 + skillPositions[i] - (w * 0.5f), button->rect.y + (j * 11), 0.2f, 0.2f, clrTxtBck, str, 0, 0, 0, &cgs.media.limboFont2);
 			}
 		}
 	}
@@ -3362,11 +3362,11 @@ void CG_Debriefing2TeamSkillXP_Draw(panel_button_t *button)
 
 	if (team == winner)
 	{
-		scale = 0.3f;
+		scale = 0.225f;
 	}
 	else
 	{
-		scale = 0.2f;
+		scale = 0.175f;
 	}
 
 	switch (team)
@@ -3397,6 +3397,6 @@ void CG_Debriefing2TeamSkillXP_Draw(panel_button_t *button)
 
 		w = CG_Text_Width_Ext(str, scale, 0, &cgs.media.limboFont2);
 
-		CG_Text_Paint_Ext(button->rect.x + 100 + skillPositions[i] - (w * 0.5f), button->rect.y + 11, scale, scale, clrTxtBck, str, 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(button->rect.x + 60 + skillPositions[i] - (w * 0.5f), button->rect.y + 11, scale, scale, clrTxtBck, str, 0, 0, 0, &cgs.media.limboFont2);
 	}
 }

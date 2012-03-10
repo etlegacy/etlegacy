@@ -120,12 +120,6 @@ void G_refHelp_cmd(gentity_t *ent)
 	// List commands only for enabled refs.
 	if (ent)
 	{
-		if (!ent->client->sess.referee)
-		{
-			CP("cpm \"Sorry, you are not a referee!\n");
-			return;
-		}
-
 		CP("print \"\n^3Referee commands:^7\n\"");
 		CP("print \"------------------------------------------\n\"");
 
@@ -503,7 +497,9 @@ void G_refMute_cmd(gentity_t *ent, qboolean mute)
 
 	player = g_entities + pid;
 
-	if (player->client->sess.referee != RL_NONE)
+	// mute check so that players that are muted
+	// before granted referee status, can be unmuted
+	if (player->client->sess.referee != RL_NONE && mute)
 	{
 		G_refPrintf(ent, "Cannot mute a referee.");
 		return;

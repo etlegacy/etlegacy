@@ -321,6 +321,24 @@ static void UI_LoadArenasFromFile(char *filename)
 }
 
 /*
+ * Sorting the map list
+ */
+int QDECL UI_SortArenas(const void *a, const void *b)
+{
+	mapInfo ca = *(mapInfo *)a;
+	mapInfo cb = *(mapInfo *)b;
+	char    cleanNameA[MAX_STRING_CHARS];
+	char    cleanNameB[MAX_STRING_CHARS];
+
+	Q_strncpyz(cleanNameA, ca.mapName, sizeof(cleanNameA));
+	Q_strncpyz(cleanNameB, cb.mapName, sizeof(cleanNameB));
+	Q_CleanStr(cleanNameA);
+	Q_CleanStr(cleanNameB);
+
+	return strcmp(cleanNameA, cleanNameB);
+}
+
+/*
 ===============
 UI_LoadArenas
 ===============
@@ -453,6 +471,9 @@ void UI_LoadArenas(void)
             break;
         }
     }*/
+
+	// sorting the maplist
+	qsort(uiInfo.mapList, uiInfo.mapCount, sizeof(uiInfo.mapList[0]), UI_SortArenas);
 }
 
 mapInfo *UI_FindMapInfoByMapname(const char *name)
@@ -903,6 +924,24 @@ int UI_FindCampaignInCampaignList(const char *shortName)
 }
 
 /*
+ * Sorting the campaign list
+ */
+int QDECL UI_SortCampaigns(const void *a, const void *b)
+{
+	char cleanNameA[MAX_STRING_CHARS];
+	char cleanNameB[MAX_STRING_CHARS];
+
+	campaignInfo_t ca = *(campaignInfo_t *)a;
+	campaignInfo_t cb = *(campaignInfo_t *)b;
+	Q_strncpyz(cleanNameA, ca.campaignName, sizeof(cleanNameA));
+	Q_strncpyz(cleanNameB, cb.campaignName, sizeof(cleanNameB));
+	Q_CleanStr(cleanNameA);
+	Q_CleanStr(cleanNameB);
+
+	return strcmp(cleanNameA, cleanNameB);
+}
+
+/*
 ===============
 UI_LoadCampaigns
 ===============
@@ -1001,6 +1040,9 @@ void UI_LoadCampaigns(void)
 		    uiInfo.campaignList[i].cpsCampaign = NULL;
 		}*/
 	}
+
+	// Sorting the campaign list
+	qsort(uiInfo.campaignList, uiInfo.campaignCount, sizeof(uiInfo.campaignList[0]), UI_SortCampaigns);
 }
 
 /*

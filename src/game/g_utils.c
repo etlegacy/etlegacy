@@ -141,6 +141,42 @@ int G_FindConfigstringIndex(const char *name, int start, int max, qboolean creat
 	return i;
 }
 
+/*
+ * Bugfix project: http://games.chruker.dk/enemy_territory/modding_project_bugfix.php?bug_id=087
+ */
+void G_RemoveConfigstringIndex(const char *name, int start, int max)
+{
+	int  i, j;
+	char s[MAX_STRING_CHARS];
+
+	if (!name || !name[0])
+	{
+		return;
+	}
+
+	for (i = 1; i < max; i++)
+	{
+		trap_GetConfigstring(start + i, s, sizeof(s));
+
+		if (!s[0])
+		{
+			break;
+		}
+
+		if (strcmp(s, name) == 0)
+		{
+			trap_SetConfigstring(start + i, "");
+			for (j = i + 1; j < max - 1; j++)
+			{
+				trap_GetConfigstring(start + j, s, sizeof(s));
+				trap_SetConfigstring(start + j, "");
+				trap_SetConfigstring(start + i, s);
+
+			}
+			break;
+		}
+	}
+}
 
 int G_ModelIndex(char *name)
 {
@@ -941,6 +977,7 @@ void G_SetOrigin(gentity_t *ent, vec3_t origin)
 	ent->s.pos.trDuration = 0;
 	VectorClear(ent->s.pos.trDelta);
 
+	VectorCopy(origin, ent->s.origin);
 	VectorCopy(origin, ent->r.currentOrigin);
 
 	if (ent->client)

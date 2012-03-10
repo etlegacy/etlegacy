@@ -287,6 +287,12 @@ void CG_DrawTopBottom_NoScale(float x, float y, float w, float h, float size)
 	trap_R_DrawStretchPic(x, y + h - size, w, size, 0, 0, 0, 0, cgs.media.whiteShader);
 }
 
+void CG_DrawBottom_NoScale(float x, float y, float w, float h, float size)
+{
+	CG_AdjustFrom640(&x, &y, &w, &h);
+	trap_R_DrawStretchPic(x, y + h - size, w, size, 0, 0, 0, 0, cgs.media.whiteShader);
+}
+
 /*
 ================
 UI_DrawRect
@@ -480,8 +486,9 @@ to a fixed color.
 Coordinates are at 640 by 480 virtual resolution
 ==================
 */
-void CG_DrawStringExt(int x, int y, const char *string, const float *setColor,
-                      qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars)
+void CG_DrawStringExt(int x, int y, const char *string, float *setColor,
+                      qboolean forceColor, qboolean shadow, int charWidth,
+                      int charHeight, int maxChars)
 {
 	vec4_t     color;
 	const char *s;
@@ -537,6 +544,9 @@ void CG_DrawStringExt(int x, int y, const char *string, const float *setColor,
 					color[3] = setColor[3];
 				}
 				trap_R_SetColor(color);
+
+				// Save the new color so that it can be used on subsequent lines
+				memcpy(setColor, color, sizeof(color));
 			}
 			s += 2;
 			continue;

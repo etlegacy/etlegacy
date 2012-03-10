@@ -57,34 +57,6 @@ void G_LogKill(gentity_t *ent, weapon_t weap)
 		return;
 	}
 
-	if (ent->client->sess.playerType == PC_SOLDIER)
-	{
-		int      i, j;
-		qboolean pass = qtrue;
-
-		ent->client->soliderKillTimes[ent->client->soldierKillMarker++] = level.timeCurrent;
-
-		if (ent->client->soldierKillMarker >= NUM_SOLDIERKILL_TIMES)
-		{
-			ent->client->soldierKillMarker = 0;
-		}
-
-		for (i = 0, j = ent->client->soldierKillMarker; i < NUM_SOLDIERKILL_TIMES; i++)
-		{
-
-			if (!ent->client->soliderKillTimes[j] || (ent->client->soliderKillTimes[j] < level.timeCurrent - SOLDIERKILL_MAXTIME))
-			{
-				pass = qfalse;
-				break;
-			}
-
-			if (++j == NUM_SOLDIERKILL_TIMES)
-			{
-				j = 0;
-			}
-		}
-	}
-
 	ent->client->pers.playerStats.weaponStats[weap].kills++;
 
 	trap_PbStat(ent - g_entities, "kill",

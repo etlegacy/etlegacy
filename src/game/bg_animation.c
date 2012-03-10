@@ -538,7 +538,8 @@ int BG_IndexForString(char *token, animStringItem_t *strings, qboolean allowFail
 BG_CopyStringIntoBuffer
 ===============
 */
-char *BG_CopyStringIntoBuffer(char *string, char *buffer, int bufSize, int *offset)
+char *BG_CopyStringIntoBuffer(char *string, char *buffer,
+                              unsigned int bufSize, unsigned int *offset)
 {
 	char *pch;
 

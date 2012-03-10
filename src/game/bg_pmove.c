@@ -2715,9 +2715,9 @@ static void PM_BeginWeaponReload(int weapon)
 		return;
 	}
 
-	if (((weapon == WP_CARBINE) && pm->ps->ammoclip[WP_CARBINE] != 0) || ((weapon == WP_MOBILE_MG42 || weapon == WP_MOBILE_MG42_SET) && pm->ps->ammoclip[WP_MOBILE_MG42] != 0) || ((weapon == WP_GARAND || weapon == WP_GARAND_SCOPE) && pm->ps->ammoclip[WP_GARAND] != 0))
+	if ((weapon == WP_MOBILE_MG42 || weapon == WP_MOBILE_MG42_SET) && pm->ps->ammoclip[WP_MOBILE_MG42] != 0)
 	{
-		return; // Gordon: no reloading of the carbine until clip is empty
+		return;
 	}
 
 	if ((weapon <= WP_NONE || weapon > WP_DYNAMITE) && !(weapon >= WP_KAR98 && weapon < WP_NUM_WEAPONS))
@@ -4347,7 +4347,7 @@ static void PM_Weapon(void)
 	{
 		if (pm->skill[SK_HEAVY_WEAPONS] >= 1)
 		{
-			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->soldierChargeTime * 0.5f * (1 - 0.3f)))
+			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->soldierChargeTime * 0.33f))
 			{
 				return;
 			}

@@ -773,7 +773,7 @@ static void G_AddBot(const char *name, int skill, const char *team, const char *
 	char userinfo[MAX_INFO_STRING];
 
 	// get the botinfo from bots.txt
-	botinfo = G_GetBotInfoByName("wolfbot");
+	botinfo = G_GetBotInfoByName("WolfBot");
 	if (!botinfo)
 	{
 		G_Printf(S_COLOR_RED "Error: Bot '%s' not defined\n", name);
@@ -989,7 +989,7 @@ void Svcmd_AddBot_f(void)
 		trap_Printf("Usage: Addbot [skill 1-4] [team (RED/BLUE)] [msec delay]\n");
 		return;
 	}
-	Q_strncpyz(name, "wolfbot", sizeof(name));       // RF, hard code the bots for wolf
+	Q_strncpyz(name, "WolfBot", sizeof(name));       // RF, hard code the bots for wolf
 	if (!name[0])
 	{
 		trap_Printf("Usage: Addbot [skill 1-4] [team (RED/BLUE)] [msec delay]\n");
@@ -1107,7 +1107,7 @@ G_SpawnBot
 void G_SpawnBot(const char *text)
 {
 	// bot parameters
-	char name[MAX_TOKEN_CHARS] = "wolfBot";
+	char name[MAX_TOKEN_CHARS] = "WolfBot";
 	//GS  prevent bot health from counting down to 70 (i.e. don't set STAT_MAX_HEALTH = 70)
 	char skill[MAX_TOKEN_CHARS]         = "4";
 	char team[MAX_TOKEN_CHARS]          = "";
@@ -1115,7 +1115,7 @@ void G_SpawnBot(const char *text)
 	char pWeapon[MAX_TOKEN_CHARS]       = "0";
 	char spawnPoint[MAX_TOKEN_CHARS]    = "";
 	char respawn[MAX_TOKEN_CHARS]       = "";
-	char scriptName[MAX_TOKEN_CHARS]    = "wolfBot";
+	char scriptName[MAX_TOKEN_CHARS]    = "WolfBot";
 	char characterFile[MAX_TOKEN_CHARS] = "";
 
 	// START - Mad Doc - TDF

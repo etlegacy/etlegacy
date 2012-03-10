@@ -2316,7 +2316,7 @@ int BG_simpleWeaponState(int ws);
 int BG_colorstrncpyz(char *in, char *out, int str_max, int out_max);
 int BG_drawStrlen(const char *str);
 int BG_strRelPos(char *in, int index);
-int BG_cleanName(const char *pszIn, char *pszOut, unsigned int dwMaxLength, qboolean fCRLF);
+int BG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRLF);
 
 // Crosshair support
 void BG_setCrosshair(char *colString, float *col, float alpha, char *cvarName);

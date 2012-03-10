@@ -56,9 +56,9 @@ void G_SendScore(gentity_t *ent)
 
 	// send the latest information on all clients
 	numSorted = level.numConnectedClients;
-	if (numSorted > 64)
+	if (numSorted > MAX_CLIENTS)
 	{
-		numSorted = 64;
+		numSorted = MAX_CLIENTS;
 	}
 
 	i = 0;
@@ -129,7 +129,7 @@ void G_SendScore(gentity_t *ent)
 			if (g_gametype.integer == GT_WOLF_LMS)
 			{
 				Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i %i %i", level.sortedClients[i], cl->ps.persistant[PERS_SCORE], ping,
-				            (level.time - cl->pers.enterTime) / 60000, g_entities[level.sortedClients[i]].s.powerups, playerClass, respawnsLeft);
+				            (level.time - cl->pers.enterTime - (level.time - level.intermissiontime)) / 60000, g_entities[level.sortedClients[i]].s.powerups, playerClass, respawnsLeft);
 			}
 			else
 			{
@@ -141,20 +141,24 @@ void G_SendScore(gentity_t *ent)
 				}
 
 				Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i %i %i", level.sortedClients[i], totalXP, ping,
-				            (level.time - cl->pers.enterTime) / 60000, g_entities[level.sortedClients[i]].s.powerups, playerClass, respawnsLeft);
+				            (level.time - cl->pers.enterTime - (level.time - level.intermissiontime)) / 60000, g_entities[level.sortedClients[i]].s.powerups, playerClass, respawnsLeft);
 			}
 
+			// Make sure the entry can fit in the buffer.
+			// If not break away and send the buffer content
 			if (size + strlen(entry) > 1000)
 			{
-				i--; // we need to redo this client in the next buffer (if we can)
 				break;
 			}
-			size += strlen(entry);
 
+			// Copy the entry into the send buffer
+			size += strlen(entry);
 			Q_strcat(buffer, 1024, entry);
+
+			// Send a maximum of 31 players in one packet
 			if (++count >= 32)
 			{
-				i--; // we need to redo this client in the next buffer (if we can)
+				i++;
 				break;
 			}
 		}
@@ -286,7 +290,7 @@ int ClientNumberFromString(gentity_t *to, char *s)
 	qboolean  fIsNumber = qtrue;
 
 	// See if its a number or string
-	for (idnum = 0; idnum < strlen(s) && s[idnum] != 0; idnum++)
+	for (idnum = 0; idnum < (int)strlen(s) && s[idnum] != 0; idnum++)
 	{
 		if (s[idnum] < '0' || s[idnum] > '9')
 		{
@@ -396,6 +400,7 @@ void Cmd_Give_f(gentity_t *ent)
 //  gentity_t       *it_ent;
 //  trace_t     trace;
 	int      amount;
+	int      skill;
 	qboolean hasAmount = qfalse;
 
 	if (!CheatsOk(ent))
@@ -427,10 +432,18 @@ void Cmd_Give_f(gentity_t *ent)
 	{
 		if (hasAmount)
 		{
-			if (amount >= 0 && amount < SK_NUM_SKILLS)
+			skill = amount; // Change amount to skill, so that we can use amount properly
+			if (skill >= 0 && skill < SK_NUM_SKILLS)
 			{
-				G_AddSkillPoints(ent, amount, 20);
-				G_DebugAddSkillPoints(ent, amount, 20, "give skill");
+				// Detecting the correct amount to move to the next skill level
+				amount = 20;
+				if (ent->client->sess.skill[skill] < NUM_SKILL_LEVELS - 1)
+				{
+					amount = skillLevels[ent->client->sess.skill[skill] + 1] - ent->client->sess.skillpoints[skill];
+				}
+
+				G_AddSkillPoints(ent, skill, amount);
+				G_DebugAddSkillPoints(ent, skill, amount, "give skill");
 			}
 		}
 		else
@@ -438,8 +451,15 @@ void Cmd_Give_f(gentity_t *ent)
 			// bumps all skills with 1 level
 			for (i = 0; i < SK_NUM_SKILLS; i++)
 			{
-				G_AddSkillPoints(ent, i, 20);
-				G_DebugAddSkillPoints(ent, i, 20, "give skill");
+				// Detecting the correct amount to move to the next skill level
+				amount = 20;
+				if (ent->client->sess.skill[i] < NUM_SKILL_LEVELS - 1)
+				{
+					amount = skillLevels[ent->client->sess.skill[i] + 1] - ent->client->sess.skillpoints[i];
+				}
+
+				G_AddSkillPoints(ent, i, amount);
+				G_DebugAddSkillPoints(ent, i, amount, "give skill");
 			}
 		}
 		return;
@@ -1068,6 +1088,9 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 	client->sess.spectatorClient = specClient;
 	client->pers.ready           = qfalse;
 
+	// During team switching you can sometime spawn immediately
+	client->pers.lastReinforceTime = 0;
+
 	// (l)users will spam spec messages... honest!
 	if (team != oldTeam)
 	{
@@ -1526,8 +1549,8 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 
 	if (ent->client->ps.pm_flags & PMF_LIMBO)
 	{
-		CP("cpm \"Can't issue a follow command while in limbo.\n\"");
-		CP("cpm \"Hit FIRE to switch between teammates.\n\"");
+		CP("print \"Can't issue a follow command while in limbo.\n\"");
+		CP("print \"Hit FIRE to switch between teammates.\n\"");
 		return;
 	}
 
@@ -1968,7 +1991,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 	// Only do the spam check for MP
 	if (ent->voiceChatSquelch >= 30000)
 	{
-		trap_SendServerCommand(ent - g_entities, "cpm \"^1Spam Protection^7: VoiceChat ignored\n\"");
+		trap_SendServerCommand(ent - g_entities, "cp \"^1Spam Protection^7: VoiceChat ignored\"");
 		return;
 	}
 
@@ -2270,29 +2293,29 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	{
 		if (level.voteInfo.voteTime)
 		{
-			CP("cpm \"A vote is already in progress.\n\"");
+			G_printFull("A vote is already in progress.", ent);
 			return qfalse;
 		}
 		else if (level.intermissiontime)
 		{
-			CP("cpm \"Cannot callvote during intermission.\n\"");
+			G_printFull("Cannot callvote during intermission.", ent);
 			return qfalse;
 		}
 		else if (!ent->client->sess.referee)
 		{
 			if (voteFlags.integer == VOTING_DISABLED)
 			{
-				CP("cpm \"Voting not enabled on this server.\n\"");
+				G_printFull("Voting not enabled on this server.", ent);
 				return qfalse;
 			}
 			else if (vote_limit.integer > 0 && ent->client->pers.voteCount >= vote_limit.integer)
 			{
-				CP(va("cpm \"You have already called the maximum number of votes (%d).\n\"", vote_limit.integer));
+				G_printFull(va("You have already called the maximum number of votes (%d).", vote_limit.integer), ent);
 				return qfalse;
 			}
 			else if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
 			{
-				CP("cpm \"Not allowed to call a vote as a spectator.\n\"");
+				G_printFull("Not allowed to call a vote as a spectator.", ent);
 				return qfalse;
 			}
 		}
@@ -3003,7 +3026,7 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 						G_AddEvent(ent, EV_DISGUISE_SOUND, 0);
 
 						G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5.f);
-						G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5, "stealing uniform");
+						G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5.f, "stealing uniform");
 
 						Q_strncpyz(ent->client->disguiseNetname, g_entities[traceEnt->s.clientNum].client->pers.netname, sizeof(ent->client->disguiseNetname));
 						ent->client->disguiseRank = g_entities[traceEnt->s.clientNum].client ? g_entities[traceEnt->s.clientNum].client->sess.rank : 0;
@@ -3238,6 +3261,9 @@ void G_LeaveTank(gentity_t *ent, qboolean position)
 	tank->mg42weapHeat         = ent->client->ps.weapHeat[WP_DUMMY_MG42];
 	tank->backupWeaponTime     = ent->client->ps.weaponTime;
 	ent->client->ps.weaponTime = ent->backupWeaponTime;
+
+	// Prevent player always mounting the last gun used, on tank maps
+	G_RemoveConfigstringIndex(va("%i %i %s", ent->s.number, ent->tagParent->s.number, ent->tagName), CS_TAGCONNECTS, MAX_TAGCONNECTS);
 
 	G_Script_ScriptEvent(tank, "mg42", "unmount");
 	ent->tagParent          = NULL;
