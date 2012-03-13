@@ -29,9 +29,7 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
  * @file vm.c
- * @brief virtual machine
- * intermix code and data
- * symbol table
+ * @brief virtual machine intermix code and data symbol table
  *
  * a dll has one imported function: VM_SystemCall and one exported function:
  * Perform
@@ -39,18 +37,15 @@
 
 #include "vm_local.h"
 
-
-vm_t *currentVM = NULL;             // bk001212
-vm_t *lastVM    = NULL;         // bk001212
+vm_t *currentVM = NULL;
+vm_t *lastVM    = NULL;
 int  vm_debugLevel;
 
 #define MAX_VM      3
 vm_t vmTable[MAX_VM];
 
-
 void            VM_VmInfo_f(void);
 void            VM_VmProfile_f(void);
-
 
 // converts a VM pointer to a C pointer and
 // checks to make sure that the range is acceptable
@@ -64,11 +59,6 @@ void VM_Debug(int level)
 	vm_debugLevel = level;
 }
 
-/*
-==============
-VM_Init
-==============
-*/
 void VM_Init(void)
 {
 	Cvar_Get("vm_cgame", "0", CVAR_ARCHIVE);
@@ -83,12 +73,8 @@ void VM_Init(void)
 
 
 /*
-===============
-VM_ValueToSymbol
-
-Assumes a program counter value
-===============
-*/
+ * Assumes a program counter value
+ */
 const char *VM_ValueToSymbol(vm_t *vm, int value)
 {
 	vmSymbol_t  *sym;
@@ -117,12 +103,8 @@ const char *VM_ValueToSymbol(vm_t *vm, int value)
 }
 
 /*
-===============
-VM_ValueToFunctionSymbol
-
-For profiling, find the symbol behind this value
-===============
-*/
+ * For profiling, find the symbol behind this value
+ */
 vmSymbol_t *VM_ValueToFunctionSymbol(vm_t *vm, int value)
 {
 	vmSymbol_t        *sym;
@@ -142,12 +124,6 @@ vmSymbol_t *VM_ValueToFunctionSymbol(vm_t *vm, int value)
 	return sym;
 }
 
-
-/*
-===============
-VM_SymbolToValue
-===============
-*/
 int VM_SymbolToValue(vm_t *vm, const char *symbol)
 {
 	vmSymbol_t *sym;
@@ -162,12 +138,6 @@ int VM_SymbolToValue(vm_t *vm, const char *symbol)
 	return 0;
 }
 
-
-/*
-=====================
-VM_SymbolForCompiledPointer
-=====================
-*/
 const char *VM_SymbolForCompiledPointer(vm_t *vm, void *code)
 {
 	int i;
@@ -195,13 +165,6 @@ const char *VM_SymbolForCompiledPointer(vm_t *vm, void *code)
 	return VM_ValueToSymbol(vm, i);
 }
 
-
-
-/*
-===============
-ParseHex
-===============
-*/
 int ParseHex(const char *text)
 {
 	int value;
@@ -230,11 +193,6 @@ int ParseHex(const char *text)
 	return value;
 }
 
-/*
-===============
-VM_LoadSymbols
-===============
-*/
 void VM_LoadSymbols(vm_t *vm)
 {
 	int        len;
@@ -371,7 +329,7 @@ intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 	args[0] = arg;
 
 	va_start(ap, arg);
-	for (i = 1; i < sizeof(args) / sizeof(args[i]); i++)
+	for (i = 1; i < ARRAY_LEN(args); i++)
 		args[i] = va_arg(ap, intptr_t);
 	va_end(ap);
 
@@ -382,13 +340,9 @@ intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 }
 
 /*
-=================
-VM_Restart
-
-Reload the data, but leave everything else in place
-This allows a server to do a map_restart without changing memory allocation
-=================
-*/
+ * Reload the data, but leave everything else in place
+ * This allows a server to do a map_restart without changing memory allocation
+ */
 vm_t *VM_Restart(vm_t *vm)
 {
 	vmHeader_t *header;
@@ -463,24 +417,15 @@ vm_t *VM_Restart(vm_t *vm)
 }
 
 /*
-================
-VM_Create
-
-If image ends in .qvm it will be interpreted, otherwise
-it will attempt to load as a system dll
-================
-*/
-
+ * If image ends in .qvm it will be interpreted, otherwise it will attempt to
+ * load as a system dll
+ */
 #define STACK_SIZE  0x20000
 
 vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInterpret_t interpret)
 {
-	vm_t       *vm;
-	vmHeader_t *header;
-	int        length;
-	int        dataLength;
-	int        i, remaining;
-	char       filename[MAX_QPATH];
+	vm_t *vm;
+	int  i, remaining;
 
 	if (!module || !module[0] || !systemCalls)
 	{
@@ -613,11 +558,6 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 #endif
 }
 
-/*
-==============
-VM_Free
-==============
-*/
 void VM_Free(vm_t *vm)
 {
 
@@ -708,30 +648,23 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
 	}
 }
 
-
 /*
-==============
-VM_Call
-
-
-Upon a system call, the stack will look like:
-
-sp+32   parm1
-sp+28   parm0
-sp+24   return value
-sp+20   return address
-sp+16   local1
-sp+14   local0
-sp+12   arg1
-sp+8    arg0
-sp+4    return stack
-sp      return address
-
-An interpreted function will immediately execute
-an OP_ENTER instruction, which will subtract space for
-locals from sp
-==============
-*/
+ * Upon a system call, the stack will look like:
+ *
+ * sp+32   parm1
+ * sp+28   parm0
+ * sp+24   return value
+ * sp+20   return address
+ * sp+16   local1
+ * sp+14   local0
+ * sp+12   arg1
+ * sp+8    arg0
+ * sp+4    return stack
+ * sp      return address
+ *
+ * An interpreted function will immediately execute an OP_ENTER instruction,
+ * which will subtract space for locals from sp
+ */
 #define MAX_STACK   256
 #define STACK_MASK  (MAX_STACK - 1)
 
@@ -796,14 +729,12 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
 	}
 #endif
 
-	if (oldVM != NULL)          // bk001220 - assert(currentVM!=NULL) for oldVM==NULL
+	if (oldVM != NULL)
 	{
 		currentVM = oldVM;
 	}
 	return r;
 }
-
-//=================================================================
 
 static int QDECL VM_ProfileSort(const void *a, const void *b)
 {
@@ -823,12 +754,6 @@ static int QDECL VM_ProfileSort(const void *a, const void *b)
 	return 0;
 }
 
-/*
-==============
-VM_VmProfile_f
-
-==============
-*/
 void VM_VmProfile_f(void)
 {
 	vm_t       *vm;
@@ -875,12 +800,6 @@ void VM_VmProfile_f(void)
 	Z_Free(sorted);
 }
 
-/*
-==============
-VM_VmInfo_f
-
-==============
-*/
 void VM_VmInfo_f(void)
 {
 	vm_t *vm;
@@ -915,12 +834,8 @@ void VM_VmInfo_f(void)
 }
 
 /*
-===============
-VM_LogSyscalls
-
-Insert calls to this while debugging the vm compiler
-===============
-*/
+ * Insert calls to this while debugging the vm compiler
+ */
 void VM_LogSyscalls(int *args)
 {
 	static int  callnum;
@@ -931,7 +846,7 @@ void VM_LogSyscalls(int *args)
 		f = fopen("syscalls.log", "w");
 	}
 	callnum++;
-	fprintf(f, "%i: %i (%i) = %i %i %i %i\n", callnum, args - (int *)currentVM->dataBase,
+	fprintf(f, "%i: %p (%i) = %i %i %i %i\n", callnum, (void *)(args - (int *)currentVM->dataBase),
 	        args[0], args[1], args[2], args[3], args[4]);
 }
 

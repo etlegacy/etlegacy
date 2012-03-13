@@ -1572,10 +1572,8 @@ qboolean    R_GetEntityToken(char *buffer, int size);
 
 float       R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte **pic_out);    // Arnout
 
-//----(SA)
 qboolean    RE_GetSkinModel(qhandle_t skinid, const char *type, char *name);
 qhandle_t   RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);      //----(SA)
-//----(SA) end
 
 model_t *R_AllocModel(void);
 
@@ -1591,6 +1589,8 @@ void        R_GammaCorrect(byte *buffer, int bufSize);
 
 void    R_ImageList_f(void);
 void    R_SkinList_f(void);
+
+const void *RB_TakeScreenshotCmd(const void *data);
 void    R_ScreenShot_f(void);
 void    R_ScreenShotJPEG_f(void);
 

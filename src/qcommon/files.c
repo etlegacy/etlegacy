@@ -1755,8 +1755,7 @@ int FS_Read(void *buffer, int len, fileHandle_t f)
 		while (remaining)
 		{
 			block = remaining;
-//          read = fread (buf, block, 1, fsh[f].handleFiles.file.o);
-			read = fread(buf, 1, block, fsh[f].handleFiles.file.o);
+			read  = fread(buf, 1, block, fsh[f].handleFiles.file.o);
 			if (read == 0)
 			{
 				// we might have been trying to read from a CD, which

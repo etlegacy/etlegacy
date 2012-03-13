@@ -149,11 +149,6 @@ typedef unsigned __int8 uint8_t;
 #define _attribute(x)
 #endif
 
-// for windows fastcall option
-
-#define QDECL
-
-//bani
 //======================= GNUC DEFINES ==================================
 #if (defined _MSC_VER)
 #define Q_EXPORT __declspec(dllexport)

@@ -978,8 +978,6 @@ qboolean stdinIsATTY;
 // Used to determine where to store user-specific files
 static char homePath[MAX_OSPATH] = { 0 };
 
-static char exit_cmdline[MAX_CMD] = "";
-
 /*
 ==================
 Sys_DefaultHomePath
@@ -1817,8 +1815,6 @@ Sys_OpenURL
 void Sys_OpenURL(const char *url, qboolean doexit)
 {
 #ifndef DEDICATED
-	char *basepath, *homepath, *pwdpath;
-	char fname[20];
 	char fn[MAX_OSPATH];
 	char cmdline[MAX_CMD];
 

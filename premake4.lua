@@ -15,7 +15,7 @@ solution "etlegacy"
 		defines     "NDEBUG"
 		flags      
 		{
-			"OptimizeSpeed",
+			"Optimize", -- OptimizeSpeed sigsegvs 64bit build
 			"EnableSSE",
 			"StaticRuntime"
 		}
@@ -26,7 +26,6 @@ solution "etlegacy"
 		{
 			"Symbols",
 			"StaticRuntime",
-			--"NoRuntimeChecks"
 		}
 
 -- 
@@ -63,14 +62,12 @@ project "etlegacy"
 	excludes
 	{
 		"src/botlib/botlib_stub.c",
+
+		-- Premake will support configuration-dependent files in the next version.
+		-- Force cURL until then.
+		"src/qcommon/dl_main_stubs.c",
 	}
 
-	if _OPTIONS["with-curl"] then
-		excludes "src/qcommon/dl_main_stubs.c"
-	else
-		excludes "src/qcommon/dl_main_curl.c"
-	end
-        
 	--
 	-- Options Configurations
 	--
@@ -83,11 +80,19 @@ project "etlegacy"
 		trigger =   "with-openal",
 		description =   "Use OpenAL sound library",
 	}
-        
+
 	newoption {
-		trigger =   "with-curl",
-		description =   "Use cURL library",
+		trigger =	"netlib",
+		value = 	"LIBRARY",
+		description = "Choose a library that will be used for downloading files",
+		allowed = {
+			{ "curl",	"cURL (default)" },
+		}
 	}
+
+	if not _OPTIONS["netlib"] then
+		_OPTIONS["netlib"] = "curl"
+	end
 	
 	configuration "with-freetype"
 		buildoptions 	{ "`pkg-config --cflags freetype2`" }
@@ -103,7 +108,10 @@ project "etlegacy"
 			"USE_OPENAL_DLOPEN",
 		}
 
-	configuration "with-curl"
+	--
+	-- netlib options
+	--
+	configuration "curl"
 		buildoptions    { "`pkg-config --cflags libcurl`" }
 		linkoptions     { "`pkg-config --libs libcurl`" }
 		defines         { "USE_CURL" }
@@ -112,12 +120,8 @@ project "etlegacy"
 	-- Windows build options
 	-- 
 	configuration {  "vs* or mingw"  }
-		targetsuffix ".exe"
+		targetextension ".exe"
 		flags       { "WinMain" }
-		libdirs
-		{
-			-- specify library directories with -L
-		}
 		links
 		{ 
 			-- NOTE TO SELF:
@@ -125,7 +129,6 @@ project "etlegacy"
 			-- following libraries !!!
 			"mingw32", -- for the love of god, don't forget to link this first
 			"ws2_32",
-			"dinput8",
 			"winmm",
 			"wsock32",
  			"iphlpapi",
@@ -137,12 +140,6 @@ project "etlegacy"
 			"SDL",
 			
 			"psapi",
-		}
-		buildoptions
-		{
-			"`/usr/i686-pc-mingw32/usr/bin/pkg-config --cflags sdl`",
-			"`/usr/i686-pc-mingw32/usr/bin/pkg-config --cflags libcurl`",
-			"`/usr/i686-pc-mingw32/usr/bin/pkg-config --cflags freetype2`",
 		}
 		defines
 		{
@@ -163,19 +160,11 @@ project "etlegacy"
 	configuration { "linux", "not mingw", "gmake" }
 		buildoptions
 		{
-			"`pkg-config --cflags x11`",
-			"`pkg-config --cflags xext`",
-			"`pkg-config --cflags xxf86dga`",
-			"`pkg-config --cflags xxf86vm`",
 			"`pkg-config --cflags sdl`",
 			"`pkg-config --cflags gl`",
 		}
 		linkoptions
 		{
-			"`pkg-config --libs x11`",
-			"`pkg-config --libs xext`",
-			"`pkg-config --libs xxf86dga`",
-			"`pkg-config --libs xxf86vm`",
 			"`pkg-config --libs sdl`",
 			"`pkg-config --libs gl`",
 		}
@@ -238,7 +227,7 @@ project "etlegacy-dedicated"
 	-- Windows build options
 	-- 
 	configuration { "vs* or mingw" }
-		targetsuffix ".exe"
+		targetextension ".exe"
 		flags       { "WinMain" }
 		links
 		{
@@ -255,15 +244,6 @@ project "etlegacy-dedicated"
 			"SDL",
 			
 			"psapi",
-		}
-		libdirs
-		{
-			"../mingw-deps/mingw-libs"
-		}
-		includedirs
-		{
-			-- specify include directories with -I
-	-- 
 		}
 		defines
 		{
@@ -338,7 +318,7 @@ project "etmain_cgame"
 	configuration {"vs* or mingw", "x32"}
 		targetdir "build/win-x32/etmain"
 		targetname  "cgame_mp_x86"
-		targetsuffix ".dll"
+		targetextension ".dll"
 		targetprefix ""
 		defines
 		{
@@ -349,7 +329,7 @@ project "etmain_cgame"
 	configuration {"vs* or mingw", "x64"}
 		targetdir "build/win-x64/etmain"
 		targetname  "cgame_mp_x86_64"
-		targetsuffix ".dll"
+		targetextension ".dll"
 		targetprefix ""
 	
 	configuration { "linux", "not mingw", "x32" }
@@ -397,7 +377,7 @@ project "etmain_game"
     configuration {"vs* or mingw", "x32"}
 		targetdir "build/win-x32/etmain"
 		targetname  "qagame_mp_x86"
-		targetsuffix ".dll"
+		targetextension ".dll"
 		targetprefix ""
 		defines
 		{
@@ -408,7 +388,7 @@ project "etmain_game"
 	configuration {"vs* or mingw", "x64"}
 		targetdir "build/win-x64/etmain"
 		targetname  "qagame_mp_x86_64"
-		targetsuffix ".dll"
+		targetextension ".dll"
 		targetprefix ""
 	
 	configuration { "linux", "not mingw", "x32" }
@@ -455,7 +435,7 @@ project "etmain_ui"
 	}
 	defines
 	{ 
-		--"CGAMEDLL",
+		--"UIDLL",
 	}
 	
 	-- 
@@ -464,7 +444,7 @@ project "etmain_ui"
     configuration {"vs* or mingw", "x32"}
 		targetdir "build/win-x32/etmain"
 		targetname  "ui_mp_x86"
-		targetsuffix ".dll"
+		targetextension ".dll"
 		targetprefix ""
 		defines
 		{
@@ -475,7 +455,7 @@ project "etmain_ui"
 	configuration {"vs* or mingw", "x64"}
 		targetdir "build/win-x64/etmain"
 		targetname  "ui_mp_x86_64"
-		targetsuffix ".dll"
+		targetextension ".dll"
 		targetprefix ""
 	
 	configuration { "linux", "not mingw", "x32" }

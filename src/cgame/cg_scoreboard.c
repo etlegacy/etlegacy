@@ -502,7 +502,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
 
 		// Show connecting people as CONNECTING
-		if (score->ping = -1)
+		if ((score->ping = -1))
 		{
 			s = CG_TranslateString("^3CONNECTING");
 		}

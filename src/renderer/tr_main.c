@@ -1522,9 +1522,6 @@ DRAWSURF SORTING
 ==========================================================================================
 */
 
-#warning FIXME
-#define Q3_LITTLE_ENDIAN
-#define ID_INLINE inline
 
 /*
 ===============

@@ -1402,11 +1402,11 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		        return;
 		    }
 		}
-		* /
+		*/
 
 		if (targ->parent && G_GetWeaponClassForMOD(mod) == 2)
 		{
-		    return;
+			return;
 		}
 
 		// check for team
@@ -1415,122 +1415,122 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		//      }
 		if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
 		{
-		    return;
+			return;
 		}
 
 		if (G_GetWeaponClassForMOD(mod) < targ->constructibleStats.weaponclass)
 		{
-		    return;
+			return;
 		}
-		}
-		else if (targ->s.eType == ET_MISSILE && targ->methodOfDeath == MOD_LANDMINE)
-		{
+	}
+	else if (targ->s.eType == ET_MISSILE && targ->methodOfDeath == MOD_LANDMINE)
+	{
 		if (targ->s.modelindex2)
 		{
-		    if (G_WeaponIsExplosive(mod))
-		    {
-		        mapEntityData_t *mEnt;
+			if (G_WeaponIsExplosive(mod))
+			{
+				mapEntityData_t *mEnt;
 
-		        if ((mEnt = G_FindMapEntityData(&mapEntityData[0], targ - g_entities)) != NULL)
-		        {
-		            G_FreeMapEntityData(&mapEntityData[0], mEnt);
-		        }
+				if ((mEnt = G_FindMapEntityData(&mapEntityData[0], targ - g_entities)) != NULL)
+				{
+					G_FreeMapEntityData(&mapEntityData[0], mEnt);
+				}
 
-		        if ((mEnt = G_FindMapEntityData(&mapEntityData[1], targ - g_entities)) != NULL)
-		        {
-		            G_FreeMapEntityData(&mapEntityData[1], mEnt);
-		        }
+				if ((mEnt = G_FindMapEntityData(&mapEntityData[1], targ - g_entities)) != NULL)
+				{
+					G_FreeMapEntityData(&mapEntityData[1], mEnt);
+				}
 
-		        if (attacker && attacker->client)
-		        {
-		            AddScore(attacker, 1);
-		            //G_AddExperience( attacker, 1.f );
-		        }
+				if (attacker && attacker->client)
+				{
+					AddScore(attacker, 1);
+					//G_AddExperience( attacker, 1.f );
+				}
 
-		        G_ExplodeMissile(targ);
-		    }
+				G_ExplodeMissile(targ);
+			}
 		}
 		return;
-		}
-		else if (targ->s.eType == ET_CONSTRUCTIBLE)
-		{
+	}
+	else if (targ->s.eType == ET_CONSTRUCTIBLE)
+	{
 
 		if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
 		{
-		    return;
+			return;
 		}
 
 		if (G_GetWeaponClassForMOD(mod) < targ->constructibleStats.weaponclass)
 		{
-		    return;
+			return;
 		}
 		//bani - fix #238
 		if (mod == MOD_DYNAMITE)
 		{
-		    if (!(inflictor->etpro_misc_1 & 1))
-		    {
-		        return;
-		    }
+			if (!(inflictor->etpro_misc_1 & 1))
+			{
+				return;
+			}
 		}
-		}
+	}
 
-		client = targ->client;
+	client = targ->client;
 
-		if (client)
-		{
+	if (client)
+	{
 		if (client->noclip || client->ps.powerups[PW_INVULNERABLE])
 		{
-		    return;
+			return;
 		}
-		}
+	}
 
-		// check for godmode
-		if (targ->flags & FL_GODMODE)
-		{
+	// check for godmode
+	if (targ->flags & FL_GODMODE)
+	{
 		return;
-		}
+	}
 
-		if (!dir)
-		{
+	if (!dir)
+	{
 		dflags |= DAMAGE_NO_KNOCKBACK;
-		}
-		else
-		{
+	}
+	else
+	{
 		VectorNormalize(dir);
-		}
+	}
 
-		knockback = damage;
-		if (knockback > 200)
-		{
+	knockback = damage;
+	if (knockback > 200)
+	{
 		knockback = 200;
-		}
-		if (targ->flags & FL_NO_KNOCKBACK)
-		{
+	}
+	if (targ->flags & FL_NO_KNOCKBACK)
+	{
 		knockback = 0;
-		}
-		if (dflags & DAMAGE_NO_KNOCKBACK)
-		{
+	}
+	if (dflags & DAMAGE_NO_KNOCKBACK)
+	{
 		knockback = 0;
-		}
-		else if (dflags & DAMAGE_HALF_KNOCKBACK)
-		{
+	}
+	else if (dflags & DAMAGE_HALF_KNOCKBACK)
+	{
 		knockback *= 0.5f;
-		}
+	}
 
-		// ydnar: set weapons means less knockback
-		if (client && (client->ps.weapon == WP_MORTAR_SET || client->ps.weapon == WP_MOBILE_MG42_SET))
-		{
+	// ydnar: set weapons means less knockback
+	if (client && (client->ps.weapon == WP_MORTAR_SET || client->ps.weapon == WP_MOBILE_MG42_SET))
+	{
 		knockback *= 0.5;
-		}
+	}
 
-		if (targ->client && g_friendlyFire.integer && OnSameTeam(targ, attacker))
-		{
+	if (targ->client && g_friendlyFire.integer && OnSameTeam(targ, attacker))
+	{
 		knockback = 0;
-		}
+	}
 
-		// figure momentum add, even if the damage won't be taken
-		if (knockback && targ->client)
-		{
+	// figure momentum add, even if the damage won't be taken
+	if (knockback && targ->client)
+	{
 		vec3_t kvel;
 		float  mass;
 
