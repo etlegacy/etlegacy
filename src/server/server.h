@@ -162,7 +162,8 @@ typedef struct netchan_buffer_s
 typedef struct client_s
 {
 	clientState_t state;
-	char userinfo[MAX_INFO_STRING];                 // name, etc
+	char userinfo[MAX_INFO_STRING];         // name, etc
+	char userinfobuffer[MAX_INFO_STRING];   // used for buffering of user info
 
 	char reliableCommands[MAX_RELIABLE_COMMANDS][MAX_STRING_CHARS];
 	int reliableSequence;                   // last added reliable message, not necesarily sent or acknowledged yet
@@ -207,6 +208,7 @@ typedef struct client_s
 
 	int deltaMessage;                   // frame last client usercmd message
 	int nextReliableTime;               // svs.time when another reliable command will be allowed
+	int nextReliableUserTime;           // svs.time when another userinfo change will be allowed
 	int lastPacketTime;                 // svs.time when packet was last received
 	int lastConnectTime;                // svs.time when connection started
 	int nextSnapshotTime;               // send another snapshot when svs.time >= nextSnapshotTime
@@ -252,6 +254,19 @@ typedef struct
 	qboolean connected;
 } challenge_t;
 
+typedef struct
+{
+	netadr_t adr;
+	int time;
+} receipt_t;
+
+/*
+ * @def MAX_INFO_RECEIPTS
+ * @brief the maximum number of getstatus+getinfo responses that we send in
+ * a two second time period.
+ */
+#define MAX_INFO_RECEIPTS  48
+
 typedef struct tempBan_s
 {
 	netadr_t adr;
@@ -280,6 +295,7 @@ typedef struct
 	entityState_t *snapshotEntities;        // [numSnapshotEntities]
 	int nextHeartbeatTime;
 	challenge_t challenges[MAX_CHALLENGES]; // to prevent invalid IPs from connecting
+	receipt_t infoReceipts[MAX_INFO_RECEIPTS];
 	netadr_t redirectAddress;               // for rcon return messages
 	tempBan_t tempBanAddresses[MAX_TEMPBAN_ADDRESSES];
 
@@ -415,6 +431,7 @@ void SV_AuthorizeIpPacket(netadr_t from);
 
 void SV_ExecuteClientMessage(client_t *cl, msg_t *msg);
 void SV_UserinfoChanged(client_t *cl);
+void SV_UpdateUserinfo_f(client_t *cl);
 
 void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd);
 void SV_FreeClientNetChan(client_t *client);
@@ -442,7 +459,7 @@ void SV_WriteFrameToClient(client_t *client, msg_t *msg);
 void SV_SendMessageToClient(msg_t *msg, client_t *client);
 void SV_SendClientMessages(void);
 void SV_SendClientSnapshot(client_t *client);
-//bani
+void SV_CheckClientUserinfoTimer(void);
 void SV_SendClientIdle(client_t *client);
 
 //
@@ -462,8 +479,8 @@ void        SV_InitGameProgs(void);
 void        SV_ShutdownGameProgs(void);
 void        SV_RestartGameProgs(void);
 qboolean    SV_inPVS(const vec3_t p1, const vec3_t p2);
-qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *or);
-int SV_LoadTag(const char *mod_name);
+qboolean    SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *or);
+int         SV_LoadTag(const char *mod_name);
 qboolean    SV_GameIsSinglePlayer(void);
 qboolean    SV_GameIsCoop(void);
 void        SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int commandTime);

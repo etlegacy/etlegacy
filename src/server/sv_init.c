@@ -551,7 +551,7 @@ void SV_TouchCGameDLL(void)
 	{
 		Com_Error(ERR_DROP, "Failed to locate cgame %s for pure server mode"
 		                    "Probably you'll need cgame for other platforms too",
-		                    filename);
+		          filename);
 	}
 }
 

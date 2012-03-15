@@ -1652,13 +1652,17 @@ void SV_UserinfoChanged(client_t *cl)
 }
 
 
-/*
-==================
-SV_UpdateUserinfo_f
-==================
-*/
-static void SV_UpdateUserinfo_f(client_t *cl)
+void SV_UpdateUserinfo_f(client_t *cl)
 {
+	if ((sv_floodProtect->integer) && (cl->state >= CS_ACTIVE) && (svs.time < cl->nextReliableUserTime))
+	{
+		Q_strncpyz(cl->userinfobuffer, Cmd_Argv(1), sizeof(cl->userinfobuffer));
+		SV_SendServerCommand(cl, "print \"^7Command ^1delayed^7 due to sv_floodprotect.\"");
+		return;
+	}
+	cl->userinfobuffer[0]    = 0;
+	cl->nextReliableUserTime = svs.time + 5000;
+
 	Q_strncpyz(cl->userinfo, Cmd_Argv(1), sizeof(cl->userinfo));
 
 	SV_UserinfoChanged(cl);
