@@ -33,7 +33,7 @@
 
 #include "qfiles.h"
 
-#include "../cgame/tr_types.h"
+#include "../renderer/tr_types.h"
 
 void        CM_LoadMap(const char *name, qboolean clientload, int *checksum);
 void        CM_ClearMap(void);

@@ -773,7 +773,7 @@ static void Upload32(unsigned *data,
 			}
 			else
 			{
-				if (!noCompress && glConfig.textureCompression == TC_EXT_COMP_S3TC)
+				if (!noCompress && glConfig.textureCompression == TC_S3TC_ARB)
 				{
 					internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 				}
@@ -814,7 +814,7 @@ static void Upload32(unsigned *data,
 			}
 			else
 			{
-				if (!noCompress && glConfig.textureCompression == TC_EXT_COMP_S3TC)
+				if (!noCompress && glConfig.textureCompression == TC_S3TC_ARB)
 				{
 					internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 				}
@@ -1456,10 +1456,10 @@ static void R_CreateFogImage(void)
 	// standard openGL clamping doesn't really do what we want -- it includes
 	// the border color at the edges.  OpenGL 1.2 has clamp-to-edge, which does
 	// what we want.
-	tr.fogImage = R_CreateImage("*fog", (byte *)data, FOG_S, FOG_T, qfalse, qfalse, GL_CLAMP);
+	tr.fogImage = R_CreateImage("*fog", (byte *)data, FOG_S, FOG_T, qfalse, qfalse, GL_CLAMP_TO_EDGE);
 	ri.Hunk_FreeTempMemory(data);
 
-	// ydnar: the following lines are unecessary for new GL_CLAMP_TO_EDGE fog
+	// FIXME: the following lines are unecessary for new GL_CLAMP_TO_EDGE fog (?)
 	borderColor[0] = 1.0;
 	borderColor[1] = 1.0;
 	borderColor[2] = 1.0;

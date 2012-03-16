@@ -260,8 +260,8 @@ typedef enum
 typedef enum
 {
 	TC_NONE,
-	TC_S3TC,
-	TC_EXT_COMP_S3TC
+	TC_S3TC,    // this is for the GL_S3_s3tc extension.
+	TC_S3TC_ARB // this is for the GL_EXT_texture_compression_s3tc extension.
 } textureCompression_t;
 
 typedef enum
@@ -321,6 +321,7 @@ typedef struct
 	// than scrWidth / scrHeight if the pixels are non-square
 	// normal screens should be 4/3, but wide aspect monitors may be 16/9
 	float windowAspect;
+	float displayAspect;
 
 	int displayFrequency;
 

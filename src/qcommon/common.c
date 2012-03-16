@@ -51,10 +51,10 @@
 #define MAX_NUM_ARGVS   50
 
 #define MIN_DEDICATED_COMHUNKMEGS   1
-#define MIN_COMHUNKMEGS         64
-#define DEF_COMHUNKMEGS         "256"
+#define MIN_COMHUNKMEGS             64
+#define DEF_COMHUNKMEGS             "256"
 #define MIN_DEDICATED_COMZONEMEGS   4
-#define DEF_COMZONEMEGS         "24"
+#define DEF_COMZONEMEGS             "24"
 
 int  com_argc;
 char *com_argv[MAX_NUM_ARGVS + 1];
