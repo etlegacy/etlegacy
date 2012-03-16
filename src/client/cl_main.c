@@ -156,6 +156,7 @@ char autoupdateFilename[MAX_QPATH];
 #define AUTOUPDATE_DIR "ni]Zm^l"
 #define AUTOUPDATE_DIR_SHIFT 7
 
+extern void GLimp_Minimize(void);
 extern void SV_BotFrame(int time);
 void CL_CheckForResend(void);
 void CL_ShowIP_f(void);
@@ -3823,6 +3824,7 @@ void CL_Init(void)
 	Cmd_AddCommand("showip", CL_ShowIP_f);
 	Cmd_AddCommand("fs_openedList", CL_OpenedPK3List_f);
 	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f);
+	Cmd_AddCommand("minimize", GLimp_Minimize);
 
 	// Ridah, startup-caching system
 	Cmd_AddCommand("cache_startgather", CL_Cache_StartGather_f);
