@@ -3633,133 +3633,133 @@ void FreeSource(source_t *source)
 
 source_t *sourceFiles[MAX_SOURCEFILES];
 
-int PC_LoadSourceHandle(const char *filename)
-{
-	source_t *source;
-	int      i;
-
-	for (i = 1; i < MAX_SOURCEFILES; i++)
-	{
-		if (!sourceFiles[i])
-		{
-			break;
-		}
-	} //end for
-	if (i >= MAX_SOURCEFILES)
-	{
-		return 0;
-	}
-	PS_SetBaseFolder("");
-	source = LoadSourceFile(filename);
-	if (!source)
-	{
-		return 0;
-	}
-	sourceFiles[i] = source;
-	return i;
-} //end of the function PC_LoadSourceHandle
-//============================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//============================================================================
-int PC_FreeSourceHandle(int handle)
-{
-	if (handle < 1 || handle >= MAX_SOURCEFILES)
-	{
-		return qfalse;
-	}
-	if (!sourceFiles[handle])
-	{
-		return qfalse;
-	}
-
-	FreeSource(sourceFiles[handle]);
-	sourceFiles[handle] = NULL;
-	return qtrue;
-} //end of the function PC_FreeSourceHandle
-//============================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//============================================================================
-int PC_ReadTokenHandle(int handle, pc_token_t *pc_token)
-{
-	token_t token;
-	int     ret;
-
-	if (handle < 1 || handle >= MAX_SOURCEFILES)
-	{
-		return 0;
-	}
-	if (!sourceFiles[handle])
-	{
-		return 0;
-	}
-
-	ret = PC_ReadToken(sourceFiles[handle], &token);
-	strcpy(pc_token->string, token.string);
-	pc_token->type         = token.type;
-	pc_token->subtype      = token.subtype;
-	pc_token->intvalue     = token.intvalue;
-	pc_token->floatvalue   = token.floatvalue;
-	pc_token->line         = token.line;
-	pc_token->linescrossed = token.linescrossed;
-	if (pc_token->type == TT_STRING)
-	{
-		StripDoubleQuotes(pc_token->string);
-	}
-	return ret;
-} //end of the function PC_ReadTokenHandle
-//============================================================================
-//
-// Parameter:               -
-// Returns:                 -
-// Changes Globals:     -
-//============================================================================
-void PC_UnreadLastTokenHandle(int handle)
-{
-	if (handle < 1 || handle >= MAX_SOURCEFILES)
-	{
-		return;
-	}
-	if (!sourceFiles[handle])
-	{
-		return;
-	}
-
-	PC_UnreadSourceToken(sourceFiles[handle], &sourceFiles[handle]->token);
-} //end of the function PC_UnreadLastTokenHandle
-//============================================================================
-//
-// Parameter:           -
-// Returns:             -
-// Changes Globals:     -
-//============================================================================
-int PC_SourceFileAndLine(int handle, char *filename, int *line)
-{
-	if (handle < 1 || handle >= MAX_SOURCEFILES)
-	{
-		return qfalse;
-	}
-	if (!sourceFiles[handle])
-	{
-		return qfalse;
-	}
-
-	strcpy(filename, sourceFiles[handle]->filename);
-	if (sourceFiles[handle]->scriptstack)
-	{
-		*line = sourceFiles[handle]->scriptstack->line;
-	}
-	else
-	{
-		*line = 0;
-	}
-	return qtrue;
-} //end of the function PC_SourceFileAndLine
+// int PC_LoadSourceHandle(const char *filename)
+// {
+// 	source_t *source;
+// 	int      i;
+// 
+// 	for (i = 1; i < MAX_SOURCEFILES; i++)
+// 	{
+// 		if (!sourceFiles[i])
+// 		{
+// 			break;
+// 		}
+// 	} //end for
+// 	if (i >= MAX_SOURCEFILES)
+// 	{
+// 		return 0;
+// 	}
+// 	PS_SetBaseFolder("");
+// 	source = LoadSourceFile(filename);
+// 	if (!source)
+// 	{
+// 		return 0;
+// 	}
+// 	sourceFiles[i] = source;
+// 	return i;
+// } //end of the function PC_LoadSourceHandle
+// //============================================================================
+// //
+// // Parameter:           -
+// // Returns:             -
+// // Changes Globals:     -
+// //============================================================================
+// int PC_FreeSourceHandle(int handle)
+// {
+// 	if (handle < 1 || handle >= MAX_SOURCEFILES)
+// 	{
+// 		return qfalse;
+// 	}
+// 	if (!sourceFiles[handle])
+// 	{
+// 		return qfalse;
+// 	}
+// 
+// 	FreeSource(sourceFiles[handle]);
+// 	sourceFiles[handle] = NULL;
+// 	return qtrue;
+// } //end of the function PC_FreeSourceHandle
+// //============================================================================
+// //
+// // Parameter:           -
+// // Returns:             -
+// // Changes Globals:     -
+// //============================================================================
+// int PC_ReadTokenHandle(int handle, pc_token_t *pc_token)
+// {
+// 	token_t token;
+// 	int     ret;
+// 
+// 	if (handle < 1 || handle >= MAX_SOURCEFILES)
+// 	{
+// 		return 0;
+// 	}
+// 	if (!sourceFiles[handle])
+// 	{
+// 		return 0;
+// 	}
+// 
+// 	ret = PC_ReadToken(sourceFiles[handle], &token);
+// 	strcpy(pc_token->string, token.string);
+// 	pc_token->type         = token.type;
+// 	pc_token->subtype      = token.subtype;
+// 	pc_token->intvalue     = token.intvalue;
+// 	pc_token->floatvalue   = token.floatvalue;
+// 	pc_token->line         = token.line;
+// 	pc_token->linescrossed = token.linescrossed;
+// 	if (pc_token->type == TT_STRING)
+// 	{
+// 		StripDoubleQuotes(pc_token->string);
+// 	}
+// 	return ret;
+// } //end of the function PC_ReadTokenHandle
+// //============================================================================
+// //
+// // Parameter:               -
+// // Returns:                 -
+// // Changes Globals:     -
+// //============================================================================
+// void PC_UnreadLastTokenHandle(int handle)
+// {
+// 	if (handle < 1 || handle >= MAX_SOURCEFILES)
+// 	{
+// 		return;
+// 	}
+// 	if (!sourceFiles[handle])
+// 	{
+// 		return;
+// 	}
+// 
+// 	PC_UnreadSourceToken(sourceFiles[handle], &sourceFiles[handle]->token);
+// } //end of the function PC_UnreadLastTokenHandle
+// //============================================================================
+// //
+// // Parameter:           -
+// // Returns:             -
+// // Changes Globals:     -
+// //============================================================================
+// int PC_SourceFileAndLine(int handle, char *filename, int *line)
+// {
+// 	if (handle < 1 || handle >= MAX_SOURCEFILES)
+// 	{
+// 		return qfalse;
+// 	}
+// 	if (!sourceFiles[handle])
+// 	{
+// 		return qfalse;
+// 	}
+// 
+// 	strcpy(filename, sourceFiles[handle]->filename);
+// 	if (sourceFiles[handle]->scriptstack)
+// 	{
+// 		*line = sourceFiles[handle]->scriptstack->line;
+// 	}
+// 	else
+// 	{
+// 		*line = 0;
+// 	}
+// 	return qtrue;
+// } //end of the function PC_SourceFileAndLine
 //============================================================================
 //
 // Parameter:           -
