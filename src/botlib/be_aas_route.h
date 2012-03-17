@@ -1,0 +1,64 @@
+/*
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ *
+ * ET: Legacy
+ * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
+ *
+ * This file is part of ET: Legacy - http://www.etlegacy.com
+ *
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ *
+ * @file be_aas_route.h
+ */
+
+#ifdef AASINTERN
+//initialize the AAS routing
+void AAS_InitRouting(void);
+//free the AAS routing caches
+void AAS_FreeRoutingCaches(void);
+//returns the travel time from start to end in the given area
+unsigned short int AAS_AreaTravelTime(int areanum, vec3_t start, vec3_t end);
+//
+void AAS_CreateAllRoutingCache(void);
+//
+void AAS_RoutingInfo(void);
+#endif //AASINTERN
+
+//returns the travel flag for the given travel type
+int AAS_TravelFlagForType(int traveltype);
+//
+int AAS_AreaContentsTravelFlag(int areanum);
+//returns the index of the next reachability for the given area
+int AAS_NextAreaReachability(int areanum, int reachnum);
+//returns the reachability with the given index
+void AAS_ReachabilityFromNum(int num, struct aas_reachability_s *reach);
+//returns a random goal area and goal origin
+int AAS_RandomGoalArea(int areanum, int travelflags, int *goalareanum, vec3_t goalorigin);
+//returns the travel time within the given area from start to end
+unsigned short int AAS_AreaTravelTime(int areanum, vec3_t start, vec3_t end);
+//returns the travel time from the area to the goal area using the given travel flags
+int AAS_AreaTravelTimeToGoalArea(int areanum, vec3_t origin, int goalareanum, int travelflags);
+
+void AAS_InitTeamDeath(void);
+void AAS_RecordTeamDeathArea(vec3_t srcpos, int srcarea, int team, int teamCount, int travelflags);
+void AAS_UpdateTeamDeath(void);

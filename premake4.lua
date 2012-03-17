@@ -61,6 +61,8 @@ project "etlegacy"
 	}
 	excludes
 	{
+		"src/botlib/botlib_stub.c",
+
 		-- Premake will support configuration-dependent files in the next version.
 		-- Force cURL until then.
 		"src/qcommon/dl_main_stubs.c",
@@ -199,7 +201,6 @@ project "etlegacy-dedicated"
 		"src/qcommon/**.c", "src/qcommon/**.h",
 		
 		"src/botlib/**.c", "src/botlib/**.h",
-		
 		"src/server/**.c", "src/server/**.h",
 		
 		"src/null/null_client.c",
@@ -218,6 +219,7 @@ project "etlegacy-dedicated"
 	}
 	excludes
 	{
+		"src/botlib/botlib_stub.c",
 		"src/qcommon/dl_main_curl.c",
 	}
 
