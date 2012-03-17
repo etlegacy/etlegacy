@@ -2284,6 +2284,7 @@ Cmd_CallVote_f
 */
 qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCommand)
 {
+	char *c;
 	int  i;
 	char arg1[MAX_STRING_TOKENS];
 	char arg2[MAX_STRING_TOKENS];
@@ -2325,14 +2326,19 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	trap_Argv(1, arg1, sizeof(arg1));
 	trap_Argv(2, arg2, sizeof(arg2));
 
-	if (strchr(arg1, ';') || strchr(arg2, ';'))
+	// check for command separators in arg2
+	for (c = arg2; *c; ++c)
 	{
-		char *strCmdBase = (!fRefCommand) ? "vote" : "ref command";
-
-		G_refPrintf(ent, "Invalid %s string.", strCmdBase);
-		return(qfalse);
+		switch (*c)
+		{
+		case '\n':
+		case '\r':
+		case ';':
+			trap_SendServerCommand(ent - g_entities, "print \"Invalid vote string.\n\"");
+			return(qfalse);
+			break;
+		}
 	}
-
 
 	if (trap_Argc() > 1 && (i = G_voteCmdCheck(ent, arg1, arg2, fRefCommand)) != G_NOTFOUND)           //  --OSP
 	{
