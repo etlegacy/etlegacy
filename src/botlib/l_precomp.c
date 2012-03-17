@@ -77,32 +77,7 @@ typedef enum { qfalse, qtrue }    qboolean;
 #define qfalse  false
 #endif //MEQCC
 
-#ifdef BSPC
-//include files for usage in the BSP Converter
-#include "../bspc/qbsp.h"
-#include "../bspc/l_log.h"
-#include "../bspc/l_mem.h"
-#include "l_precomp.h"
-
-#define qtrue   true
-#define qfalse  false
-#define Q_stricmp   stricmp
-
-#define MAX_TOKENLENGTH     1024
-
-typedef struct pc_token_s
-{
-	int type;
-	int subtype;
-	int intvalue;
-	int line;
-	int linescrossed;
-	float floatvalue;
-	char string[MAX_TOKENLENGTH];
-} pc_token_t;
-#endif //BSPC
-
-#if defined(QUAKE) && !defined(BSPC)
+#if defined(QUAKE)
 #include "l_utils.h"
 #endif //QUAKE
 
@@ -153,9 +128,6 @@ void QDECL SourceError(source_t *source, char *str, ...)
 #ifdef MEQCC
 	printf("error: file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
 #endif //MEQCC
-#ifdef BSPC
-	Log_Print("error: file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
-#endif //BSPC
 } //end of the function SourceError
 //===========================================================================
 //
@@ -177,9 +149,6 @@ void QDECL SourceWarning(source_t *source, char *str, ...)
 #ifdef MEQCC
 	printf("warning: file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
 #endif //MEQCC
-#ifdef BSPC
-	Log_Print("warning: file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
-#endif //BSPC
 } //end of the function ScriptWarning
 //============================================================================
 //
@@ -286,11 +255,7 @@ token_t *PC_CopyToken(token_t *token)
 	t = (token_t *) GetMemory(sizeof(token_t));
 	if (!t)
 	{
-#ifdef BSPC
-		Error("out of token space\n");
-#else
 		Com_Error(ERR_FATAL, "out of token space\n");
-#endif
 		return NULL;
 	} //end if
 //  freetokens = freetokens->next;

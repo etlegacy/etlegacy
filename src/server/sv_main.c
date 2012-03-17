@@ -201,6 +201,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 
 	// do not forward server command messages that would be too big to clients
 	// ( q3infoboom / q3msgboom stuff )
+	// see http://aluigi.altervista.org/adv/q3msgboom-adv.txt
 	if (strlen((char *)message) > 1022)
 	{
 		return;
@@ -256,14 +257,12 @@ but not on every player enter or exit.
 ================
 */
 #define HEARTBEAT_MSEC  300 * 1000
-//#define	HEARTBEAT_GAME	"Wolfenstein-1"
-//#define	HEARTBEAT_DEAD	"WolfFlatline-1"			// NERVE - SMF
 #define HEARTBEAT_GAME  "EnemyTerritory-1"
-#define HEARTBEAT_DEAD  "ETFlatline-1"           // NERVE - SMF
+#define HEARTBEAT_DEAD  "ETFlatline-1"
 
 void SV_MasterHeartbeat(const char *hbname)
 {
-	static netadr_t adr[MAX_MASTER_SERVERS][2];
+	static netadr_t adr[MAX_MASTER_SERVERS][2]; // [2] for v4 and v6 address for the same address string.
 	int             i;
 	int             res;
 	int             netenabled;

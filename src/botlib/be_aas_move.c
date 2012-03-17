@@ -42,8 +42,6 @@
 #include "be_aas_funcs.h"
 #include "be_aas_def.h"
 
-//#define BSPC
-
 extern botlib_import_t botimport;
 
 aas_settings_t aassettings;
@@ -496,13 +494,8 @@ int AAS_PredictClientMovement(struct aas_clientmove_s *move,
 
 	if (visualize)
 	{
-
-// These debugging tools are not currently available in bspc. Mad Doctor I, 1/27/2003.
-#ifndef BSPC
 		AAS_ClearShownPolygons();
 		AAS_ClearShownDebugLines();
-#endif
-
 	}
 
 	// don't let us succeed on interaction with area 0

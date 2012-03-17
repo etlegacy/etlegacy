@@ -279,8 +279,6 @@ typedef struct aas_s
 
 #define AASINTERN
 
-#ifndef BSPCINCLUDE
-
 #include "be_aas_main.h"
 #include "be_aas_entity.h"
 #include "be_aas_sample.h"
@@ -296,5 +294,3 @@ typedef struct aas_s
 
 // Ridah, route-tables
 #include "be_aas_routetable.h"
-
-#endif //BSPCINCLUDE

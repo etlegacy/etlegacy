@@ -31,8 +31,6 @@
  * @file be_aas_funcs.h
  */
 
-#ifndef BSPCINCLUDE
-
 #include "be_aas_main.h"
 #include "be_aas_entity.h"
 #include "be_aas_sample.h"
@@ -48,5 +46,3 @@
 
 // Ridah, route-tables
 #include "be_aas_routetable.h"
-
-#endif //BSPCINCLUDE

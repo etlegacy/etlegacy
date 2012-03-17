@@ -34,27 +34,6 @@
 
 #include "cm_local.h"
 
-#ifdef BSPC
-
-#include "../bspc/l_qfiles.h"
-
-void SetPlaneSignbits(cplane_t *out)
-{
-	int bits, j;
-
-	// for fast box on planeside test
-	bits = 0;
-	for (j = 0 ; j < 3 ; j++)
-	{
-		if (out->normal[j] < 0)
-		{
-			bits |= 1 << j;
-		}
-	}
-	out->signbits = bits;
-}
-#endif //BSPC
-
 // to allow boxes to be treated as brush models, we allocate
 // some extra indexes along with those needed by the map
 #define BOX_LEAF_BRUSHES    1   // ydnar
@@ -73,12 +52,10 @@ int       c_traces, c_brush_traces, c_patch_traces;
 
 byte *cmod_base;
 
-#ifndef BSPC
 cvar_t *cm_noAreas;
 cvar_t *cm_noCurves;
 cvar_t *cm_playerCurveClip;
 cvar_t *cm_optimize;
-#endif
 
 cmodel_t box_model;
 cplane_t *box_planes;
@@ -616,23 +593,6 @@ void CMod_LoadPatches(lump_t *surfs, lump_t *verts)
 
 //==================================================================
 
-
-#if 0 //BSPC
-/*
-==================
-CM_FreeMap
-
-Free any loaded map and all submodels
-==================
-*/
-void CM_FreeMap(void)
-{
-	memset(&cm, 0, sizeof(cm));
-	Hunk_ClearHigh();
-	CM_ClearLevelPatches();
-}
-#endif //BSPC
-
 unsigned CM_LumpChecksum(lump_t *lump)
 {
 	return LittleLong(Com_BlockChecksum(cmod_base + lump->fileofs, lump->filelen));
@@ -676,12 +636,11 @@ void CM_LoadMap(const char *name, qboolean clientload, int *checksum)
 		Com_Error(ERR_DROP, "CM_LoadMap: NULL name");
 	}
 
-#ifndef BSPC
 	cm_noAreas         = Cvar_Get("cm_noAreas", "0", CVAR_CHEAT);
 	cm_noCurves        = Cvar_Get("cm_noCurves", "0", CVAR_CHEAT);
 	cm_playerCurveClip = Cvar_Get("cm_playerCurveClip", "1", CVAR_ARCHIVE | CVAR_CHEAT);
 	cm_optimize        = Cvar_Get("cm_optimize", "1", CVAR_CHEAT);
-#endif
+
 	Com_DPrintf("CM_LoadMap( %s, %i )\n", name, clientload);
 
 	if (!strcmp(cm.name, name) && clientload)
@@ -707,11 +666,7 @@ void CM_LoadMap(const char *name, qboolean clientload, int *checksum)
 	//
 	// load the file
 	//
-#ifndef BSPC
 	length = FS_ReadFile(name, (void **)&buf);
-#else
-	length = LoadQuakeFile((quakefile_t *) name, (void **)&buf);
-#endif
 
 	if (!buf)
 	{

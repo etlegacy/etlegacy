@@ -1630,8 +1630,6 @@ void AAS_InitClustering(void)
 	//if there are clusters
 	if ((*aasworld).numclusters >= 1)
 	{
-#ifndef BSPC
-
 		if ((*aasworld).clusterTeamTravelFlags)
 		{
 			FreeMemory((*aasworld).clusterTeamTravelFlags);
@@ -1644,9 +1642,6 @@ void AAS_InitClustering(void)
 		{
 			return;
 		}
-#else
-		return;
-#endif
 	} //end if
 	  //
 	AAS_CountForcedClusterPortals();

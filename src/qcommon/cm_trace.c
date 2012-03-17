@@ -339,13 +339,8 @@ void CM_TestInLeaf(traceWork_t *tw, cLeaf_t *leaf)
 	}
 
 	// test against all patches
-#ifdef BSPC
-	if (1)
-	{
-#else
 	if (!cm_noCurves->integer)
 	{
-#endif //BSPC
 		for (k = 0 ; k < leaf->numLeafSurfaces ; k++)
 		{
 			patch = cm.surfaces[cm.leafsurfaces[leaf->firstLeafSurface + k]];
@@ -942,9 +937,7 @@ static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 		}
 
 #ifdef MRE_OPTIMIZE
-#ifndef BSPC
 		if (cm_optimize->integer)
-#endif
 		{
 			if (!CM_TraceThroughBounds(tw, brush->bounds[0], brush->bounds[1]))
 			{
@@ -971,13 +964,8 @@ static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 	}
 
 	// trace line against all patches in the leaf
-#ifdef BSPC
-	if (1)
-	{
-#else
 	if (!cm_noCurves->integer)
 	{
-#endif
 		for (k = 0 ; k < leaf->numLeafSurfaces ; k++)
 		{
 			patch = cm.surfaces[cm.leafsurfaces[leaf->firstLeafSurface + k]];
@@ -997,9 +985,7 @@ static void CM_TraceThroughLeaf(traceWork_t *tw, cLeaf_t *leaf)
 			}
 
 #ifdef MRE_OPTIMIZE
-#ifndef BSPC
 			if (cm_optimize->integer)
-#endif
 			{
 				if (!CM_TraceThroughBounds(tw, patch->pc->bounds[0], patch->pc->bounds[1]))
 				{
