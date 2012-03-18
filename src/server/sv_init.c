@@ -698,10 +698,6 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	// load and spawn all other entities
 	SV_InitGameProgs();
 
-	// don't allow a map_restart if game is modified
-	// Arnout: there isn't any check done against this, obsolete
-//	sv_gametype->modified = qfalse;
-
 	// run a few frames to allow everything to settle
 	for (i = 0 ; i < GAME_INIT_FRAMES ; i++)
 	{
@@ -851,10 +847,6 @@ void SV_Init(void)
 	Cvar_Get("dmflags", "0", /*CVAR_SERVERINFO*/ 0);
 	Cvar_Get("fraglimit", "0", /*CVAR_SERVERINFO*/ 0);
 	Cvar_Get("timelimit", "0", CVAR_SERVERINFO);
-
-	// Rafael gameskill
-//	sv_gameskill = Cvar_Get ("g_gameskill", "3", CVAR_SERVERINFO | CVAR_LATCH );
-	// done
 
 	Cvar_Get("sv_keywords", "", CVAR_SERVERINFO);
 	Cvar_Get("protocol", va("%i", PROTOCOL_VERSION), CVAR_SERVERINFO | CVAR_ROM);

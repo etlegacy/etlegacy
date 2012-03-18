@@ -52,7 +52,7 @@ typedef enum { qfalse, qtrue }    qboolean;
 #ifdef BOTLIB
 //include files for usage in the bot library
 #include "../qcommon/q_shared.h"
-#include "../game/botlib.h"
+#include "../botlib/botlib.h"
 #include "be_interface.h"
 #include "l_script.h"
 #include "l_memory.h"

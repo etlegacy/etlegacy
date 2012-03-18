@@ -294,10 +294,6 @@ qboolean ChangeBotAlertState(bot_state_t *bs, aistateEnum_t newAlertState, qbool
 
 extern int gametype;        //game type
 
-// Rafael gameskill
-extern int gameskill;
-// done
-
 extern vmCvar_t bot_grapple;
 extern vmCvar_t bot_rocketjump;
 extern vmCvar_t bot_fastchat;

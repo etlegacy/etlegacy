@@ -1919,16 +1919,6 @@ static void PM_CrashLand(void)
 			Com_Printf("delta: %5.2f\n", delta);
 		}
 
-		/* JPW NERVE removed from MP, breaks too many levels and skill as no-fall-damage indicator isn't obvious
-		        // Rafael gameskill
-		        if (bg_pmove_gameskill_integer == 1)
-		        {
-		            if (delta > 7)
-		                delta = 8;
-		        }
-		        // done
-		*/
-
 		if (delta > 77)
 		{
 			PM_AddEventExt(EV_FALL_NDIE, PM_FootstepForSurface());

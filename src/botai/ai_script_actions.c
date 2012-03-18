@@ -35,7 +35,7 @@
 
 #include "../game/g_local.h"
 #include "../qcommon/q_shared.h"
-#include "../game/botlib.h"      //bot lib interface
+#include "../botlib/botlib.h"      //bot lib interface
 #include "../game/be_aas.h"
 #include "../game/be_ea.h"
 #include "../game/be_ai_gen.h"

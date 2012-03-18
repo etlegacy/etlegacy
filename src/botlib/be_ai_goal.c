@@ -41,7 +41,7 @@
 #include "l_precomp.h"
 #include "l_struct.h"
 #include "aasfile.h"
-#include "../game/botlib.h"
+#include "../botlib/botlib.h"
 #include "../game/be_aas.h"
 #include "be_aas_funcs.h"
 #include "be_interface.h"
@@ -171,11 +171,6 @@ campspot_t *campspots = NULL;
 // removed gametype, added single player
 //int g_gametype;
 qboolean g_singleplayer;
-// END      Arnout changes, 28-08-2002.
-
-// Rafael gameskill
-int g_gameskill;
-// done
 
 //========================================================================
 //

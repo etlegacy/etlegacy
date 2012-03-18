@@ -239,7 +239,11 @@ typedef struct client_s
 // MAX_CHALLENGES is made large to prevent a denial
 // of service attack that could cycle all of them
 // out before legitimate users connected
-#define MAX_CHALLENGES  1024
+#define MAX_CHALLENGES  2048
+// Allow a certain amount of challenges to have the same IP address
+// to make it a bit harder to DOS one single IP address from connecting
+// while not allowing a single ip to grab all challenge resources
+#define MAX_CHALLENGES_MULTI (MAX_CHALLENGES / 2)
 
 #define AUTHORIZE_TIMEOUT   5000
 
@@ -247,10 +251,12 @@ typedef struct
 {
 	netadr_t adr;
 	int challenge;
+    int         clientChallenge;    // challenge number coming from the client
 	int time;                       // time the last packet was sent to the autherize server
 	int pingTime;                   // time the challenge response was sent to client
 	int firstTime;                  // time the adr was first used, for authorize timeout checks
 	int firstPing;                  // Used for min and max ping checks
+	qboolean wasrefused;
 	qboolean connected;
 } challenge_t;
 
@@ -345,7 +351,6 @@ extern cvar_t *sv_serverid;
 extern cvar_t *sv_maxRate;
 extern cvar_t *sv_minPing;
 extern cvar_t *sv_maxPing;
-//extern	cvar_t	*sv_gametype;
 extern cvar_t *sv_pure;
 extern cvar_t *sv_floodProtect;
 extern cvar_t *sv_allowAnonymous;
@@ -355,10 +360,6 @@ extern cvar_t *sv_onlyVisibleClients;
 extern cvar_t *sv_showAverageBPS;           // NERVE - SMF - net debugging
 
 extern cvar_t *g_gameType;
-
-// Rafael gameskill
-//extern	cvar_t	*sv_gameskill;
-// done
 
 extern cvar_t *sv_reloading;
 
@@ -398,8 +399,6 @@ void SV_MasterHeartbeat(const char *hbname);
 void SV_MasterShutdown(void);
 
 void SV_MasterGameCompleteStatus(void);       // NERVE - SMF
-//bani - bugtraq 12534
-qboolean SV_VerifyChallenge(char *challenge);
 
 
 //
@@ -467,9 +466,6 @@ void SV_SendClientIdle(client_t *client);
 //
 int SV_NumForGentity(sharedEntity_t *ent);
 
-//#define SV_GentityNum( num ) ((sharedEntity_t *)((byte *)sv.gentities + sv.gentitySize*(num)))
-//#define SV_GameClientNum( num ) ((playerState_t *)((byte *)sv.gameClients + sv.gameClientSize*(num)))
-
 sharedEntity_t *SV_GentityNum(int num);
 playerState_t *SV_GameClientNum(int num);
 
@@ -479,7 +475,7 @@ void        SV_InitGameProgs(void);
 void        SV_ShutdownGameProgs(void);
 void        SV_RestartGameProgs(void);
 qboolean    SV_inPVS(const vec3_t p1, const vec3_t p2);
-qboolean    SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *or);
+qboolean    SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t * or);
 int         SV_LoadTag(const char *mod_name);
 qboolean    SV_GameIsSinglePlayer(void);
 qboolean    SV_GameIsCoop(void);

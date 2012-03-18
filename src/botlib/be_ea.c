@@ -37,7 +37,7 @@
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"
-#include "../game/botlib.h"
+#include "../botlib/botlib.h"
 #include "be_interface.h"
 
 #define MAX_USERMOVE                400

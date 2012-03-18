@@ -42,7 +42,7 @@
  */
 
 #include "../qcommon/q_shared.h"
-#include "../game/botlib.h"
+#include "../botlib/botlib.h"
 #include "l_script.h"
 #include "l_precomp.h"
 
