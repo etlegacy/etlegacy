@@ -37,7 +37,7 @@
 //
 
 #include "../game/g_local.h"
-#include "../game/botlib.h"
+#include "../botlib/botlib.h"
 #include "../game/be_aas.h"
 #include "../game/be_ea.h"
 #include "../game/be_ai_char.h"

@@ -33,7 +33,7 @@
  */
 
 #include "../game/g_local.h"
-#include "../game/botlib.h"
+#include "../botlib/botlib.h"
 #include "../game/be_aas.h"
 #include "../game/be_ea.h"
 #include "../game/be_ai_char.h"
@@ -99,9 +99,6 @@ bot_waypoint_t *botai_freewaypoints;
 
 //NOTE: not using a cvar which can be updated because the game should be reloaded anyway
 int gametype;       //game type
-
-// Rafael gameskill
-//int   gameskill;
 
 vmCvar_t bot_grapple;
 vmCvar_t bot_rocketjump;

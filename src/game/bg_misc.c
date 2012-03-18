@@ -768,7 +768,6 @@ gitem_t bg_itemlist[] =
 		0,
 		"",
 		"",
-//      {50,50,50,40,30}    // amount given in first stage based on gameskill level
 	},
 
 	// xkan, 1/6/2002 - updated
@@ -795,7 +794,6 @@ gitem_t bg_itemlist[] =
 		0,
 		"",
 		"",
-		//{30,30,20,15} // amount given in first stage based on gameskill level
 	},
 
 	// xkan, 1/6/2002 - updated

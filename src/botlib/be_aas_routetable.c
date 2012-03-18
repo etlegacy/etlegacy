@@ -41,7 +41,7 @@
 #include "l_libvar.h"
 #include "l_utils.h"
 #include "aasfile.h"
-#include "../game/botlib.h"
+#include "../botlib/botlib.h"
 #include "../game/be_aas.h"
 #include "be_interface.h"
 #include "be_aas_def.h"

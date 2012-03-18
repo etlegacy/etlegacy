@@ -2196,10 +2196,6 @@ extern vmCvar_t cg_bloodTime;
 extern vmCvar_t cg_norender;
 extern vmCvar_t cg_skybox;
 
-// Rafael gameskill
-//extern vmCvar_t           cg_gameSkill;
-// done
-
 // JPW NERVE
 extern vmCvar_t cg_redlimbotime;
 extern vmCvar_t cg_bluelimbotime;

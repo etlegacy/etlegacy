@@ -34,7 +34,7 @@
 
 #ifdef BOTLIB
 #include "../qcommon/q_shared.h"
-#include "../game/botlib.h"              //for the include of be_interface.h
+#include "../botlib/botlib.h"              //for the include of be_interface.h
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"

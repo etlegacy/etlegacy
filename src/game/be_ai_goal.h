@@ -43,16 +43,6 @@
 #define GFL_LEADER              16
 #define GFL_DEBUGPATH           32
 
-// Rafael gameskill
-/*typedef enum {
-    GSKILL_EASY = 1,
-    GSKILL_MEDIUM,
-    GSKILL_MEDIUMHARD, // normal default level
-    GSKILL_HARD,
-    GSKILL_VERYHARD,
-    GSKILL_MAX      // must always be last
-} gameskill_t;*/
-
 // bot goal urgency
 #define BGU_LOW                 0
 #define BGU_MEDIUM              1

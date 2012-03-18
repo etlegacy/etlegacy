@@ -427,19 +427,6 @@ typedef enum
 	GT_WOLF_LMS,
 	GT_MAX_GAME_TYPE
 } gametype_t;
-//#define GAMETYPES
-
-// Rafael gameskill
-/*typedef enum {
-    GSKILL_EASY = 1,
-    GSKILL_MEDIUM,
-    GSKILL_MEDIUMHARD, // normal default level
-    GSKILL_HARD,
-    GSKILL_VERYHARD,
-    GSKILL_MAX		// must always be last
-} gameskill_t;*/
-
-//#endif // ifndef GAMETYPES
 
 typedef enum { GENDER_MALE, GENDER_FEMALE, GENDER_NEUTER } gender_t;
 
@@ -1543,7 +1530,6 @@ typedef enum
 #define MAX_ITEM_MODELS 3
 #define MAX_ITEM_ICONS 4
 
-// JOSEPH 4-17-00
 typedef struct gitem_s
 {
 	char *classname;        // spawning name
@@ -1564,10 +1550,7 @@ typedef struct gitem_s
 
 	char *precaches;            // string of all models and images this item will use
 	char *sounds;               // string of all sounds this item will use
-
-//	int			gameskillnumber[5];
 } gitem_t;
-// END JOSEPH
 
 // included in both the game dll and the client
 extern gitem_t bg_itemlist[];
