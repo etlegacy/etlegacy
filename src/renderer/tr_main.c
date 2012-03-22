@@ -1576,40 +1576,6 @@ static void R_RadixSort(drawSurf_t *source, int size)
 
 /*
 =================
-qsort replacement
-
-=================
-*/
-#define SWAP_DRAW_SURF(a, b) temp = ((int *)a)[0]; ((int *)a)[0] = ((int *)b)[0]; ((int *)b)[0] = temp; temp = ((int *)a)[1]; ((int *)a)[1] = ((int *)b)[1]; ((int *)b)[1] = temp;
-
-/* this parameter defines the cutoff between using quick sort and
-   insertion sort for arrays; arrays with lengths shorter or equal to the
-   below value use insertion sort */
-
-#define CUTOFF 8            /* testing shows that this is good value */
-
-static void shortsort(drawSurf_t *lo, drawSurf_t *hi)
-{
-	drawSurf_t *p, *max;
-	int        temp;
-
-	while (hi > lo)
-	{
-		max = lo;
-		for (p = lo + 1; p <= hi; p++)
-		{
-			if (p->sort > max->sort)
-			{
-				max = p;
-			}
-		}
-		SWAP_DRAW_SURF(max, hi);
-		hi--;
-	}
-}
-
-/*
-=================
 R_AddDrawSurf
 =================
 */

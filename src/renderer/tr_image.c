@@ -1696,19 +1696,16 @@ void R_DeleteTextures(void)
 	tr.numImages = 0;
 
 	Com_Memset(glState.currenttextures, 0, sizeof(glState.currenttextures));
-	if (qglBindTexture)
+	if (qglActiveTextureARB)
 	{
-		if (qglActiveTextureARB)
-		{
-			GL_SelectTexture(1);
-			qglBindTexture(GL_TEXTURE_2D, 0);
-			GL_SelectTexture(0);
-			qglBindTexture(GL_TEXTURE_2D, 0);
-		}
-		else
-		{
-			qglBindTexture(GL_TEXTURE_2D, 0);
-		}
+		GL_SelectTexture(1);
+		qglBindTexture(GL_TEXTURE_2D, 0);
+		GL_SelectTexture(0);
+		qglBindTexture(GL_TEXTURE_2D, 0);
+	}
+	else
+	{
+		qglBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
 
@@ -2304,19 +2301,16 @@ void R_PurgeImage(image_t *image)
 	R_CacheImageFree(image);
 
 	Com_Memset(glState.currenttextures, 0, sizeof(glState.currenttextures));
-	if (qglBindTexture)
+	if (qglActiveTextureARB)
 	{
-		if (qglActiveTextureARB)
-		{
-			GL_SelectTexture(1);
-			qglBindTexture(GL_TEXTURE_2D, 0);
-			GL_SelectTexture(0);
-			qglBindTexture(GL_TEXTURE_2D, 0);
-		}
-		else
-		{
-			qglBindTexture(GL_TEXTURE_2D, 0);
-		}
+		GL_SelectTexture(1);
+		qglBindTexture(GL_TEXTURE_2D, 0);
+		GL_SelectTexture(0);
+		qglBindTexture(GL_TEXTURE_2D, 0);
+	}
+	else
+	{
+		qglBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
 
@@ -2395,19 +2389,16 @@ void R_BackupImages(void)
 	tr.numImages    = 0;
 
 	Com_Memset(glState.currenttextures, 0, sizeof(glState.currenttextures));
-	if (qglBindTexture)
+	if (qglActiveTextureARB)
 	{
-		if (qglActiveTextureARB)
-		{
-			GL_SelectTexture(1);
-			qglBindTexture(GL_TEXTURE_2D, 0);
-			GL_SelectTexture(0);
-			qglBindTexture(GL_TEXTURE_2D, 0);
-		}
-		else
-		{
-			qglBindTexture(GL_TEXTURE_2D, 0);
-		}
+		GL_SelectTexture(1);
+		qglBindTexture(GL_TEXTURE_2D, 0);
+		GL_SelectTexture(0);
+		qglBindTexture(GL_TEXTURE_2D, 0);
+	}
+	else
+	{
+		qglBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
 
