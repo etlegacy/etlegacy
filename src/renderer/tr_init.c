@@ -1489,7 +1489,7 @@ void R_Init(void)
 	tess.maxShaderVerts    = SHADER_MAX_VERTEXES;
 	tess.maxShaderIndicies = SHADER_MAX_INDEXES;
 
-	if (( int ) tess.xyz & 15)
+	if ((intptr_t) tess.xyz & 15)
 	{
 		ri.Printf(PRINT_WARNING, "tess.xyz not 16 byte aligned\n");
 	}
