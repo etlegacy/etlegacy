@@ -35,7 +35,7 @@
 #include "snd_local.h"
 #include "snd_codec.h"
 
-#define DEF_COMSOUNDMEGS "8"
+#define DEF_COMSOUNDMEGS "160"
 
 /*
 ===============================================================================

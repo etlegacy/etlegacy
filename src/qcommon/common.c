@@ -32,7 +32,7 @@
  * @brief misc functions used in client and server
  */
 
-#include "../qcommon/q_shared.h"
+#include "q_shared.h"
 #include "qcommon.h"
 #include <setjmp.h>
 
@@ -52,9 +52,10 @@
 
 #define MIN_DEDICATED_COMHUNKMEGS   1
 #define MIN_COMHUNKMEGS             64
-#define DEF_COMHUNKMEGS             "256"
-#define MIN_DEDICATED_COMZONEMEGS   4
-#define DEF_COMZONEMEGS             "24"
+#define DEF_COMHUNKMEGS             128
+#define DEF_COMZONEMEGS             24
+#define DEF_COMHUNKMEGS_S           XSTRING(DEF_COMHUNKMEGS)
+#define DEF_COMZONEMEGS_S           XSTRING(DEF_COMZONEMEGS)
 
 int  com_argc;
 char *com_argv[MAX_NUM_ARGVS + 1];
@@ -1141,9 +1142,9 @@ void *Z_TagMalloc(int size, int tag)
 	// scan through the block list looking for the first free block
 	// of sufficient size
 	//
-	size += sizeof(memblock_t);   // account for size of block header
-	size += 4;                  // space for memory trash tester
-	size  = (size + 3) & ~3;      // align to 32 bit boundary
+	size += sizeof(memblock_t);         // account for size of block header
+	size += 4;                          // space for memory trash tester
+	size  = PAD(size, sizeof(intptr_t)); // align to 32/64 bit boundary
 
 	base  = rover = zone->rover;
 	start = base->prev;
@@ -1356,7 +1357,6 @@ typedef struct memstatic_s
 	byte mem[2];
 } memstatic_t;
 
-// bk001204 - initializer brackets
 memstatic_t emptystring =
 { { (sizeof(memblock_t) + 2 + 3) & ~3, TAG_STATIC, NULL, NULL, ZONEID }, { '\0', '\0' } };
 memstatic_t numberstring[] =
@@ -1649,7 +1649,7 @@ Com_InitZoneMemory
 void Com_InitSmallZoneMemory(void)
 {
 	s_smallZoneTotal = 512 * 1024;
-	// bk001205 - was malloc
+
 	smallzone = calloc(s_smallZoneTotal, 1);
 	if (!smallzone)
 	{
@@ -1660,49 +1660,22 @@ void Com_InitSmallZoneMemory(void)
 	return;
 }
 
-/*
-void Com_InitZoneMemory( void ) {
-    cvar_t	*cv;
-    s_smallZoneTotal = 512 * 1024;
-    smallzone = malloc( s_smallZoneTotal );
-    if ( !smallzone ) {
-        Com_Error( ERR_FATAL, "Small zone data failed to allocate %1.1f megs", (float)s_smallZoneTotal / (1024*1024) );
-    }
-    Z_ClearZone( smallzone, s_smallZoneTotal );
-
-    // allocate the random block zone
-    cv = Cvar_Get( "com_zoneMegs", DEF_COMZONEMEGS, CVAR_LATCH | CVAR_ARCHIVE );
-
-    if ( cv->integer < 16 ) {
-        s_zoneTotal = 1024 * 1024 * 16;
-    } else {
-        s_zoneTotal = cv->integer * 1024 * 1024;
-    }
-
-    mainzone = malloc( s_zoneTotal );
-    if ( !mainzone ) {
-        Com_Error( ERR_FATAL, "Zone data failed to allocate %i megs", s_zoneTotal / (1024*1024) );
-    }
-    Z_ClearZone( mainzone, s_zoneTotal );
-}
-*/
 void Com_InitZoneMemory(void)
 {
 	cvar_t *cv;
 	// allocate the random block zone
-	cv = Cvar_Get("com_zoneMegs", DEF_COMZONEMEGS, CVAR_LATCH | CVAR_ARCHIVE);
+	cv = Cvar_Get("com_zoneMegs", DEF_COMZONEMEGS_S, CVAR_LATCH | CVAR_ARCHIVE);
 
 	Com_Printf("Zone megs: %d\n", cv->integer);
-	if (com_dedicated && com_dedicated->integer)
+	if (cv->integer < DEF_COMZONEMEGS)
 	{
-		s_zoneTotal = 1024 * 1024 * MIN_DEDICATED_COMZONEMEGS;
+		s_zoneTotal = 1024 * 1024 * DEF_COMZONEMEGS;
 	}
 	else
 	{
 		s_zoneTotal = 1024 * 1024 * cv->integer;
 	}
 
-	// bk001205 - was malloc
 	mainzone = calloc(s_zoneTotal, 1);
 	if (!mainzone)
 	{
@@ -1824,7 +1797,7 @@ void Com_InitHunkMemory(void)
 	}
 
 	// allocate the stack based hunk allocator
-	cv = Cvar_Get("com_hunkMegs", DEF_COMHUNKMEGS, CVAR_LATCH | CVAR_ARCHIVE);
+	cv = Cvar_Get("com_hunkMegs", DEF_COMHUNKMEGS_S, CVAR_LATCH | CVAR_ARCHIVE);
 
 	// if we are not dedicated min allocation is 56, otherwise min is 1
 	if (com_dedicated && com_dedicated->integer)
@@ -1848,8 +1821,7 @@ void Com_InitHunkMemory(void)
 		s_hunkTotal = cv->integer * 1024 * 1024;
 	}
 
-
-	s_hunkData = malloc(s_hunkTotal + 31);
+	s_hunkData = calloc(s_hunkTotal + 31, 1);
 	if (!s_hunkData)
 	{
 		Com_Error(ERR_FATAL, "Hunk data failed to allocate %i megs", s_hunkTotal / (1024 * 1024));
@@ -1961,7 +1933,7 @@ void Hunk_Clear(void)
 	com_hunkusedvalue = hunk_low.permanent + hunk_high.permanent;
 
 	Com_Printf("Hunk_Clear: reset the hunk ok\n");
-	VM_Clear(); // (SA) FIXME:TODO: was commented out in wolf
+	VM_Clear();
 #ifdef HUNK_DEBUG
 	hunkblocks = NULL;
 #endif

@@ -892,6 +892,7 @@ extern cvar_t *com_journal;
 extern cvar_t *com_cameraMode;
 extern cvar_t *com_ansiColor;
 extern cvar_t *com_logosPlaying;
+extern cvar_t *com_minimized;
 
 // watchdog
 extern cvar_t *com_watchdog;
