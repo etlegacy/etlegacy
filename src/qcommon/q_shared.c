@@ -202,32 +202,20 @@ qboolean COM_CompareExtension(const char *in, const char *ext)
 }
 
 /*
-==================
-COM_DefaultExtension
-==================
-*/
+ * @brief if path doesn't have an extension, then append the specified one
+ * (which should include the .)
+ */
 void COM_DefaultExtension(char *path, int maxSize, const char *extension)
 {
-	char oldPath[MAX_QPATH];
-	char *src;
-
-//
-// if path doesn't have a .EXT, append extension
-// (extension should include the .)
-//
-	src = path + strlen(path) - 1;
-
-	while (*src != '/' && src != path)
+	const char *dot = strrchr(path, '.'), *slash;
+	if (dot && (!(slash = strrchr(path, '/')) || slash < dot))
 	{
-		if (*src == '.')
-		{
-			return;                 // it has an extension
-		}
-		src--;
+		return;
 	}
-
-	Q_strncpyz(oldPath, path, sizeof(oldPath));
-	Com_sprintf(path, maxSize, "%s%s", oldPath, extension);
+	else
+	{
+		Q_strcat(path, maxSize, extension);
+	}
 }
 
 //============================================================================
@@ -535,67 +523,97 @@ static char *SkipWhitespace(char *data, qboolean *hasNewLines)
 
 int COM_Compress(char *data_p)
 {
-	char     *datai, *datao;
-	int      c, pc, size;
-	qboolean ws = qfalse;
+	char     *in, *out;
+	int      c;
+	qboolean newline = qfalse, whitespace = qfalse;
 
-	size  = 0;
-	pc    = 0;
-	datai = datao = data_p;
-	if (datai)
+	in = out = data_p;
+	if (in)
 	{
-		while ((c = *datai) != 0)
+		while ((c = *in) != 0)
 		{
-			if (c == 13 || c == 10)
+			// skip double slash comments
+			if (c == '/' && in[1] == '/')
 			{
-				*datao = c;
-				datao++;
-				ws = qfalse;
-				pc = c;
-				datai++;
-				size++;
-				// skip double slash comments
-			}
-			else if (c == '/' && datai[1] == '/')
-			{
-				while (*datai && *datai != '\n')
+				while (*in && *in != '\n')
 				{
-					datai++;
+					in++;
 				}
-				ws = qfalse;
 				// skip /* */ comments
 			}
-			else if (c == '/' && datai[1] == '*')
+			else if (c == '/' && in[1] == '*')
 			{
-				datai += 2; // Arnout: skip over '/*'
-				while (*datai && (*datai != '*' || datai[1] != '/'))
+				while (*in && (*in != '*' || in[1] != '/'))
+					in++;
+				if (*in)
 				{
-					datai++;
+					in += 2;
 				}
-				if (*datai)
-				{
-					datai += 2;
-				}
-				ws = qfalse;
+				// record when we hit a newline
+			}
+			else if (c == '\n' || c == '\r')
+			{
+				newline = qtrue;
+				in++;
+				// record when we hit whitespace
+			}
+			else if (c == ' ' || c == '\t')
+			{
+				whitespace = qtrue;
+				in++;
+				// an actual token
 			}
 			else
 			{
-				if (ws)
+				// if we have a pending newline, emit it (and it counts as whitespace)
+				if (newline)
 				{
-					*datao = ' ';
-					datao++;
+					*out++     = '\n';
+					newline    = qfalse;
+					whitespace = qfalse;
 				}
-				*datao = c;
-				datao++;
-				datai++;
-				ws = qfalse;
-				pc = c;
-				size++;
+				if (whitespace)
+				{
+					*out++     = ' ';
+					whitespace = qfalse;
+				}
+
+				// copy quoted strings unmolested
+				if (c == '"')
+				{
+					*out++ = c;
+					in++;
+					while (1)
+					{
+						c = *in;
+						if (c && c != '"')
+						{
+							*out++ = c;
+							in++;
+						}
+						else
+						{
+							break;
+						}
+					}
+					if (c == '"')
+					{
+						*out++ = c;
+						in++;
+					}
+				}
+				else
+				{
+					*out = c;
+					out++;
+					in++;
+				}
 			}
 		}
+
+		*out = 0;
 	}
-	*datao = 0;
-	return size;
+	return out - data_p;
 }
 
 char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
@@ -1107,6 +1125,38 @@ char *Q_strrchr(const char *string, int c)
 	return sp;
 }
 
+#ifdef _MSC_VER
+/*
+ * =============
+ * Q_vsnprintf
+ *
+ * Special wrapper function for Microsoft's broken _vsnprintf() function.
+ * MinGW comes with its own snprintf() which is not broken.
+ * =============
+ */
+int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap)
+{
+	int retval;
+
+	retval = _vsnprintf(str, size, format, ap);
+
+	if (retval < 0 || retval == size)
+	{
+		// Microsoft doesn't adhere to the C99 standard of vsnprintf,
+		// which states that the return value must be the number of
+		// bytes written if the output string had sufficient length.
+		//
+		// Obviously we cannot determine that value from Microsoft's
+		// implementation, so we have no choice but to return size.
+
+		str[size - 1] = '\0';
+		return size;
+	}
+
+	return retval;
+}
+#endif
+
 /*
 =============
 Q_strncpyz
@@ -1116,6 +1166,10 @@ Safe strncpy that ensures a trailing zero
 */
 void Q_strncpyz(char *dest, const char *src, int destsize)
 {
+	if (!dest)
+	{
+		Com_Error(ERR_FATAL, "Q_strncpyz: NULL dest");
+	}
 	if (!src)
 	{
 		Com_Error(ERR_FATAL, "Q_strncpyz: NULL src");
@@ -1132,6 +1186,22 @@ void Q_strncpyz(char *dest, const char *src, int destsize)
 int Q_stricmpn(const char *s1, const char *s2, int n)
 {
 	int c1, c2;
+
+	if (s1 == NULL)
+	{
+		if (s2 == NULL)
+		{
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	else if (s2 == NULL)
+	{
+		return 1;
+	}
 
 	do
 	{
