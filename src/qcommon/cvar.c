@@ -1140,6 +1140,22 @@ void Cvar_InfoStringBuffer(int bit, char *buff, int buffsize)
 }
 
 /*
+ * =====================
+ * Cvar_CheckRange
+ * =====================
+ */
+void Cvar_CheckRange( cvar_t *var, float min, float max, qboolean integral )
+{
+//     var->validate = qtrue;
+//     var->min = min;
+//     var->max = max;
+//     var->integral = integral;
+    
+    // Force an initial range check
+    Cvar_Set( var->name, var->string );
+}
+
+/*
 =====================
 Cvar_Register
 

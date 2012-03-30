@@ -576,6 +576,7 @@ char *Cvar_InfoString_Big(int bit);
 // returns an info string containing all the cvars that have the given bit set
 // in their flags ( CVAR_USERINFO, CVAR_SERVERINFO, CVAR_SYSTEMINFO, etc )
 void    Cvar_InfoStringBuffer(int bit, char *buff, int buffsize);
+void Cvar_CheckRange( cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral );
 
 void    Cvar_Restart_f(void);
 
@@ -1120,11 +1121,6 @@ void Sys_LeaveCriticalSection(void *ptr);
 #else
 #define Sys_GetDLLName(x) x ".mp." ARCH_STRING DLL_EXT
 #endif
-
-// fqpath param added 2/15/02 by T.Ray - Sys_LoadDll is only called in vm.c at this time
-void *QDECL Sys_LoadDll(const char *name, char *fqpath, intptr_t(QDECL * *entryPoint) (int, ...),
-                        intptr_t (QDECL *systemcalls)(intptr_t, ...));
-void    Sys_UnloadDll(void *dllHandle);
 
 void    Sys_UnloadGame(void);
 void *Sys_GetGameAPI(void *parms);

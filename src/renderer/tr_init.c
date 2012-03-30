@@ -37,10 +37,15 @@
 glconfig_t glConfig;
 qboolean   textureFilterAnisotropic = qfalse;
 int        maxAnisotropy            = 0;
+float      displayAspect            = 0.0f;
 
 glstate_t glState;
 
 static void GfxInfo_f(void);
+
+#ifdef USE_RENDERER_DLOPEN
+cvar_t *com_altivec;
+#endif
 
 cvar_t *r_flareSize;
 cvar_t *r_flareFade;
@@ -104,10 +109,8 @@ cvar_t *r_ext_multitexture;
 cvar_t *r_ext_compiled_vertex_array;
 cvar_t *r_ext_texture_env_add;
 
-cvar_t *r_clampToEdge;  // ydnar: opengl 1.2 GL_CLAMP_TO_EDGE SUPPORT
-
-//----(SA)      added
 cvar_t *r_ext_texture_filter_anisotropic;
+cvar_t *r_ext_max_anisotropy;
 
 cvar_t *r_ext_NV_fog_dist;
 cvar_t *r_nv_fogdist_mode;
@@ -173,7 +176,7 @@ cvar_t *r_noborder;
 
 cvar_t *r_customwidth;
 cvar_t *r_customheight;
-cvar_t *r_customaspect;
+cvar_t *r_customPixelAspect;
 
 cvar_t *r_overBrightBits;
 cvar_t *r_mapOverBrightBits;
@@ -449,9 +452,9 @@ qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode)
 
 	if (mode == -1)
 	{
-		*width        = r_customwidth->integer;
-		*height       = r_customheight->integer;
-		*windowAspect = r_customaspect->value;
+		*width      = r_customwidth->integer;
+		*height     = r_customheight->integer;
+		pixelAspect = r_customPixelAspect->value;
 	}
 	else
 	{
@@ -1238,6 +1241,10 @@ R_Register
 */
 void R_Register(void)
 {
+	#ifdef USE_RENDERER_DLOPEN
+	com_altivec = ri.Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
+	#endif
+
 	//
 	// latched and archived variables
 	//
@@ -1269,8 +1276,6 @@ void R_Register(void)
 	r_ext_texture_env_add = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 #endif
 
-	r_clampToEdge = ri.Cvar_Get("r_clampToEdge", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);    // ydnar: opengl 1.2 GL_CLAMP_TO_EDGE support
-
 	r_picmip          = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH); //----(SA)   mod for DM and DK for id build.  was "1" // JPW NERVE pushed back to 1
 	r_roundImagesDown = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_rmse            = ri.Cvar_Get("r_rmse", "0.0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1290,18 +1295,18 @@ void R_Register(void)
 	AssertCvarRange(r_ext_multisample, 0, 4, qtrue);
 	r_overBrightBits = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);    // Arnout: disable overbrightbits by default
 	AssertCvarRange(r_overBrightBits, 0, 1, qtrue);                                     // ydnar: limit to overbrightbits 1 (sorry 1337 players)
-	r_ignorehwgamma = ri.Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH);          // ydnar: use hw gamma by default
-	r_mode          = ri.Cvar_Get("r_mode", "4", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_oldMode       = ri.Cvar_Get("r_oldMode", "", CVAR_ARCHIVE);                         // ydnar: previous "good" video mode
-	r_fullscreen    = ri.Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_noborder      = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE);
-	r_customwidth   = ri.Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
-	r_customheight  = ri.Cvar_Get("r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	r_customaspect  = ri.Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_simpleMipMaps = ri.Cvar_Get("r_simpleMipMaps", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_uiFullScreen  = ri.Cvar_Get("r_uifullscreen", "0", 0);
-	r_subdivisions  = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
-	r_stereoEnabled = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_ignorehwgamma     = ri.Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH);      // ydnar: use hw gamma by default
+	r_mode              = ri.Cvar_Get("r_mode", "4", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_oldMode           = ri.Cvar_Get("r_oldMode", "", CVAR_ARCHIVE);                     // ydnar: previous "good" video mode
+	r_fullscreen        = ri.Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_noborder          = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE);
+	r_customwidth       = ri.Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
+	r_customheight      = ri.Cvar_Get("r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH);
+	r_customPixelAspect = ri.Cvar_Get("r_customPixelAspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_simpleMipMaps     = ri.Cvar_Get("r_simpleMipMaps", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_uiFullScreen      = ri.Cvar_Get("r_uifullscreen", "0", 0);
+	r_subdivisions      = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
+	r_stereoEnabled     = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
 #ifdef MACOS_X
 	// Default to using SMP on Mac OS X if we have multiple processors
 	r_smp = ri.Cvar_Get("r_smp", Sys_ProcessorCount() > 1 ? "1" : "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
@@ -1459,7 +1464,7 @@ void R_Register(void)
 	ri.Cmd_AddCommand("screenshotJPEG", R_ScreenShotJPEG_f);
 	ri.Cmd_AddCommand("gfxinfo", GfxInfo_f);
 	ri.Cmd_AddCommand("taginfo", R_TagInfo_f);
-//         ri.Cmd_AddCommand( "minimize", GLimp_Minimize );
+	ri.Cmd_AddCommand("minimize", GLimp_Minimize);
 }
 
 /*

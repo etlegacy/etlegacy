@@ -1785,18 +1785,18 @@ int Q_isnan(float x)
  */
 float Q_acos(float c)
 {
-    float           angle;
-    
-    angle = acos(c);
-    
-    if(angle > M_PI)
-    {
-        return (float)M_PI;
-    }
-    if(angle < -M_PI)
-    {
-        return (float)M_PI;
-    }
-    return angle;
+	float angle;
+
+	angle = acos(c);
+
+	if (angle > M_PI)
+	{
+		return (float)M_PI;
+	}
+	if (angle < -M_PI)
+	{
+		return (float)M_PI;
+	}
+	return angle;
 }
 #endif

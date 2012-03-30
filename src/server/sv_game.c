@@ -565,16 +565,10 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case G_REGISTERTAG:
 		return SV_LoadTag(VMA(1));
 
-	// START    xkan, 10/28/2002
 	case G_REGISTERSOUND:
-#ifdef DOOMSOUND    ///// (SA) DOOMSOUND
-		return S_RegisterSound(VMA(1));
-#else
 		return S_RegisterSound(VMA(1), args[2]);
-#endif  ///// (SA) DOOMSOUND
 	case G_GET_SOUND_LENGTH:
 		return S_GetSoundLength(args[1]);
-	// END      xkan, 10/28/2002
 
 	//====================================
 

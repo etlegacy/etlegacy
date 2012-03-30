@@ -53,9 +53,6 @@
 
 #define MAX_VIDEO_HANDLES   16
 
-extern glconfig_t glConfig;
-
-
 static void RoQ_init(void);
 
 /******************************************************************************

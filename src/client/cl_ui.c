@@ -1048,11 +1048,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return re.LerpTag(VMA(1), VMA(2), VMA(3), args[4]);
 
 	case UI_S_REGISTERSOUND:
-#ifdef DOOMSOUND    ///// (SA) DOOMSOUND
-		return S_RegisterSound(VMA(1));
-#else
 		return S_RegisterSound(VMA(1), args[2]);
-#endif  ///// (SA) DOOMSOUND
 
 	case UI_S_STARTLOCALSOUND:
 		S_StartLocalSound(args[1], args[2], args[3]);

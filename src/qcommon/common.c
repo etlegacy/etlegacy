@@ -102,6 +102,15 @@ cvar_t *com_cameraMode;
 #if defined(_WIN32) && defined(_DEBUG)
 cvar_t *com_noErrorInterrupt;
 #endif
+
+#if idx64
+int (*Q_VMftol)(void);
+#elif id386
+long (QDECL *Q_ftol)(float f);
+int  (QDECL *Q_VMftol)(void);
+void (QDECL *Q_SnapVector)(vec3_t vec);
+#endif
+
 cvar_t *com_recommendedSet;
 
 cvar_t *com_watchdog;
