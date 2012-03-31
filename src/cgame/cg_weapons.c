@@ -1013,6 +1013,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 	if (len >= sizeof(text) - 1)
 	{
 		CG_Printf("File %s too long\n", filename);
+		trap_FS_FCloseFile(f);
 		return qfalse;
 	}
 

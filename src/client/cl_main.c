@@ -1562,27 +1562,21 @@ void CL_Connect_f(void)
 	Cvar_Set("ui_limboOptions", "0");
 	Cvar_Set("ui_limboPrevOptions", "0");
 	Cvar_Set("ui_limboObjective", "0");
-	// -NERVE - SMF
-
 }
 
+#define MAX_RCON_MESSAGE 1024
 
 /*
-=====================
-CL_Rcon_f
-
-  Send the rest of the command line over as
-  an unconnected command.
-=====================
-*/
+ * @brief Send the rest of the command line over as an unconnected command.
+ */
 void CL_Rcon_f(void)
 {
-	char     message[1024];
+	char     message[MAX_RCON_MESSAGE];
 	netadr_t to;
 
 	if (!rcon_client_password->string)
 	{
-		Com_Printf("You must set 'rconPassword' before\n"
+		Com_Printf("You must set 'rconpassword' before\n"
 		           "issuing an rcon command.\n");
 		return;
 	}
@@ -1593,15 +1587,14 @@ void CL_Rcon_f(void)
 	message[3] = -1;
 	message[4] = 0;
 
-	strcat(message, "rcon ");
+	Q_strcat(message, MAX_RCON_MESSAGE, "rcon ");
 
-	strcat(message, rcon_client_password->string);
-	strcat(message, " ");
+	Q_strcat(message, MAX_RCON_MESSAGE, rcon_client_password->string);
+	Q_strcat(message, MAX_RCON_MESSAGE, " ");
 
-	// ATVI Wolfenstein Misc #284
-	strcat(message, Cmd_Cmd() + 5);
+	Q_strcat(message, MAX_RCON_MESSAGE, Cmd_Cmd() + 5);
 
-	if (cls.state >= CA_CONNECTED)
+	if (clc.state >= CA_CONNECTED)
 	{
 		to = clc.netchan.remoteAddress;
 	}

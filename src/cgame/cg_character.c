@@ -112,6 +112,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 	if (len >= sizeof(bigTextBuffer) - 1)
 	{
 		CG_Printf("File %s too long\n", filename);
+		trap_FS_FCloseFile(f);
 		return qfalse;
 	}
 

@@ -34,20 +34,6 @@
 
 #include "q_shared.h"
 
-// os x game bundles have no standard library links, and the defines are not always defined!
-
-#ifdef MACOS_X
-int qmax(int x, int y)
-{
-	return (((x) > (y)) ? (x) : (y));
-}
-
-int qmin(int x, int y)
-{
-	return (((x) < (y)) ? (x) : (y));
-}
-#endif
-
 float Com_Clamp(float min, float max, float value)
 {
 	if (value < min)
@@ -61,12 +47,9 @@ float Com_Clamp(float min, float max, float value)
 	return value;
 }
 
-
 /*
-COM_FixPath()
-unixifies a pathname
-*/
-
+ * @brief unixifies a pathname
+ */
 void COM_FixPath(char *pathname)
 {
 	while (*pathname)
@@ -78,8 +61,6 @@ void COM_FixPath(char *pathname)
 		pathname++;
 	}
 }
-
-
 
 /*
 ============
@@ -661,7 +642,6 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 			{
 				data++;
 			}
-//          com_lines++;
 		}
 		// skip /* */ comments
 		else if (c == '/' && data[1] == '*')
@@ -670,10 +650,6 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 			while (*data && (*data != '*' || data[1] != '/'))
 			{
 				data++;
-				if (*data == '\n')
-				{
-//                  com_lines++;
-				}
 			}
 			if (*data)
 			{
@@ -724,7 +700,7 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 						c = *data++;
 						break;
 					}
-					if (len < MAX_TOKEN_CHARS)
+					if (len < MAX_TOKEN_CHARS - 1)
 					{
 						com_token[len] = c;
 						len++;
@@ -737,7 +713,7 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 				*data_p        = ( char * ) data;
 				return com_token;
 			}
-			if (len < MAX_TOKEN_CHARS)
+			if (len < MAX_TOKEN_CHARS - 1)
 			{
 				com_token[len] = c;
 				len++;
@@ -748,7 +724,7 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 	// parse a regular word
 	do
 	{
-		if (len < MAX_TOKEN_CHARS)
+		if (len < MAX_TOKEN_CHARS - 1)
 		{
 			com_token[len] = c;
 			len++;
@@ -762,19 +738,11 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 	}
 	while (c > 32);
 
-	if (len == MAX_TOKEN_CHARS)
-	{
-//      Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
-		len = 0;
-	}
 	com_token[len] = 0;
 
 	*data_p = ( char * ) data;
 	return com_token;
 }
-
-
-
 
 /*
 ==================

@@ -51,12 +51,10 @@ field_t  chatField;
 qboolean chat_team;
 qboolean chat_buddy;
 
-
-
 qboolean key_overstrikeMode;
 
-qboolean anykeydown;
-qkey_t   keys[MAX_KEYS];
+int    anykeydown;
+qkey_t keys[MAX_KEYS];
 
 
 typedef struct
@@ -1885,7 +1883,7 @@ void Key_ClearStates(void)
 {
 	int i;
 
-	anykeydown = qfalse;
+	anykeydown = 0;
 
 	for (i = 0 ; i < MAX_KEYS ; i++)
 	{
