@@ -67,11 +67,9 @@
 // 4. Exit the game and there will be three dat files and at least three tga files. The
 //    tga's are in 256x256 pages so if it takes three images to render a 24 point font you
 //    will end up with fontImage_0_24.tga through fontImage_2_24.tga
-// 5. You will need to flip the tga's in Photoshop as the tga output code writes them upside
-//    down.
-// 6. In future runs of the game, the system looks for these images and data files when a s
+// 5. In future runs of the game, the system looks for these images and data files when a s
 //    specific point sized font is rendered and loads them for use.
-// 7. Because of the original beta nature of the FreeType code you will probably want to hand
+// 6. Because of the original beta nature of the FreeType code you will probably want to hand
 //    touch the font bitmaps.
 //
 // Currently a define in the project turns on or off the FreeType code which is currently
@@ -85,7 +83,11 @@
 
 #ifdef USE_FREETYPE
 #include <ft2build.h>
+#include FT_ERRORS_H
+#include FT_SYSTEM_H
+#include FT_IMAGE_H
 #include FT_FREETYPE_H
+#include FT_OUTLINE_H
 
 #define _FLOOR(x)  ((x) & - 64)
 #define _CEIL(x)   (((x) + 63) & - 64)
@@ -125,14 +127,14 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 	{
 		size = pitch * height;
 
-		bit2 = Z_Malloc(sizeof(FT_Bitmap));
+		bit2 = ri.Z_Malloc(sizeof(FT_Bitmap));
 
 		bit2->width      = width;
 		bit2->rows       = height;
 		bit2->pitch      = pitch;
 		bit2->pixel_mode = ft_pixel_mode_grays;
 		//bit2->pixel_mode = ft_pixel_mode_mono;
-		bit2->buffer    = Z_Malloc(pitch * height);
+		bit2->buffer    = ri.Z_Malloc(pitch * height);
 		bit2->num_grays = 256;
 
 		Com_Memset(bit2->buffer, 0, size);
@@ -157,10 +159,13 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 
 void WriteTGA(char *filename, byte *data, int width, int height)
 {
-	byte *buffer;
-	int  i, c;
+	byte          *buffer;
+	int           i, c;
+	int           row;
+	unsigned char *flip;
+	unsigned char *src, *dst;
 
-	buffer = Z_Malloc(width * height * 4 + 18);
+	buffer = ri.Z_Malloc(width * height * 4 + 18);
 	Com_Memset(buffer, 0, 18);
 	buffer[2]  = 2;     // uncompressed type
 	buffer[12] = width & 255;
@@ -173,11 +178,24 @@ void WriteTGA(char *filename, byte *data, int width, int height)
 	c = 18 + width * height * 4;
 	for (i = 18 ; i < c ; i += 4)
 	{
-		buffer[i]     = data[i - 18 + 2];   // blue
+		buffer[i]     = data[i - 18 + 2]; // blue
 		buffer[i + 1] = data[i - 18 + 1];     // green
 		buffer[i + 2] = data[i - 18 + 0];     // red
 		buffer[i + 3] = data[i - 18 + 3];     // alpha
 	}
+
+	// flip upside down
+	flip = (unsigned char *)ri.Z_Malloc(width * 4);
+	for (row = 0; row < height / 2; row++)
+	{
+		src = buffer + 18 + row * 4 * width;
+		dst = buffer + 18 + (height - row - 1) * 4 * width;
+
+		Com_Memcpy(flip, src, width * 4);
+		Com_Memcpy(src, dst, width * 4);
+		Com_Memcpy(dst, flip, width * 4);
+	}
+	ri.Free(flip);
 
 	ri.FS_WriteFile(filename, buffer, c);
 
@@ -185,7 +203,7 @@ void WriteTGA(char *filename, byte *data, int width, int height)
 	//fwrite (buffer, 1, c, f);
 	//fclose (f);
 
-	Z_Free(buffer);
+	ri.Free(buffer);
 }
 
 static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, int *yOut, int *maxHeight, FT_Face face, const unsigned char c, qboolean calcHeight)
@@ -218,8 +236,8 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 
 		if (calcHeight)
 		{
-			Z_Free(bitmap->buffer);
-			Z_Free(bitmap);
+			ri.Free(bitmap->buffer);
+			ri.Free(bitmap);
 			return &glyph;
 		}
 
@@ -242,8 +260,8 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 			{
 				*yOut = -1;
 				*xOut = -1;
-				Z_Free(bitmap->buffer);
-				Z_Free(bitmap);
+				ri.Free(bitmap->buffer);
+				ri.Free(bitmap);
 				return &glyph;
 			}
 			else
@@ -256,8 +274,8 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 		{
 			*yOut = -1;
 			*xOut = -1;
-			Z_Free(bitmap->buffer);
-			Z_Free(bitmap);
+			ri.Free(bitmap->buffer);
+			ri.Free(bitmap);
 			return &glyph;
 		}
 
@@ -321,8 +339,8 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 		*xOut += scaled_width + 1;
 	}
 
-	Z_Free(bitmap->buffer);
-	Z_Free(bitmap);
+	ri.Free(bitmap->buffer);
+	ri.Free(bitmap);
 
 	return &glyph;
 }
@@ -398,7 +416,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 
 	if (registeredFontCount >= MAX_FONTS)
 	{
-		ri.Printf(PRINT_ALL, "RE_RegisterFont: Too many fonts registered already.\n");
+		ri.Printf(PRINT_WARNING, "RE_RegisterFont: Too many fonts registered already.\n");
 		return;
 	}
 
@@ -449,44 +467,43 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 	}
 
 #ifndef USE_FREETYPE
-	ri.Printf(PRINT_DEVELOPER, "RE_RegisterFont: FreeType code not available\n");
+	ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType code not available\n");
 #else
 	if (ftLibrary == NULL)
 	{
-		ri.Printf(PRINT_DEVELOPER, "RE_RegisterFont: FreeType not initialized.\n");
+		ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType not initialized.\n");
 		return;
 	}
 
 	len = ri.FS_ReadFile(fontName, &faceData);
 	if (len <= 0)
 	{
-		ri.Printf(PRINT_ALL, "RE_RegisterFont: Unable to read font file\n");
+		ri.Printf(PRINT_WARNING, "RE_RegisterFont: Unable to read font file '%s'\n", fontName);
 		return;
 	}
 
-	// allocate on the stack first in case we fail
+// allocate on the stack first in case we fail
 	if (FT_New_Memory_Face(ftLibrary, faceData, len, 0, &face))
 	{
-		ri.Printf(PRINT_ALL, "RE_RegisterFont: FreeType2, unable to allocate new face.\n");
+		ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType, unable to allocate new face.\n");
 		return;
 	}
-
 
 	if (FT_Set_Char_Size(face, pointSize << 6, pointSize << 6, dpi, dpi))
 	{
-		ri.Printf(PRINT_ALL, "RE_RegisterFont: FreeType2, Unable to set face char size.\n");
+		ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType, unable to set face char size.\n");
 		return;
 	}
 
-	//*font = &registeredFonts[registeredFontCount++];
+//*font = &registeredFonts[registeredFontCount++];
 
-	// make a 256x256 image buffer, once it is full, register it, clean it and keep going
-	// until all glyphs are rendered
+// make a 256x256 image buffer, once it is full, register it, clean it and keep going
+// until all glyphs are rendered
 
-	out = Z_Malloc(1024 * 1024);
+	out = ri.Z_Malloc(1024 * 1024);
 	if (out == NULL)
 	{
-		ri.Printf(PRINT_ALL, "RE_RegisterFont: Z_Malloc failure during output image creation.\n");
+		ri.Printf(PRINT_WARNING, "RE_RegisterFont: ri.Z_Malloc failure during output image creation.\n");
 		return;
 	}
 	Com_Memset(out, 0, 1024 * 1024);
@@ -517,7 +534,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 
 			scaledSize = 256 * 256;
 			newSize    = scaledSize * 4;
-			imageBuff  = Z_Malloc(newSize);
+			imageBuff  = ri.Z_Malloc(newSize);
 			left       = 0;
 			max        = 0;
 			satLevels  = 255;
@@ -561,7 +578,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 			Com_Memset(out, 0, 1024 * 1024);
 			xOut = 0;
 			yOut = 0;
-			Z_Free(imageBuff);
+			ri.Free(imageBuff);
 			i++;
 		}
 		else
@@ -580,7 +597,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 		ri.FS_WriteFile(va("fonts/fontImage_%i.dat", pointSize), font, sizeof(fontInfo_t));
 	}
 
-	Z_Free(out);
+	ri.Free(out);
 
 	ri.FS_FreeFile(faceData);
 #endif
@@ -593,7 +610,7 @@ void R_InitFreeType(void)
 #ifdef USE_FREETYPE
 	if (FT_Init_FreeType(&ftLibrary))
 	{
-		ri.Printf(PRINT_ALL, "R_InitFreeType: Unable to initialize FreeType.\n");
+		ri.Printf(PRINT_WARNING, "R_InitFreeType: Unable to initialize FreeType.\n");
 	}
 #endif
 	registeredFontCount = 0;
