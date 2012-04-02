@@ -40,7 +40,7 @@
 #include "l_struct.h"
 #include "l_log.h"
 #include "aasfile.h"
-#include "../botlib/botlib.h"
+#include "botlib.h"
 #include "../game/be_aas.h"
 #include "be_aas_funcs.h"
 #include "be_interface.h"
@@ -64,7 +64,7 @@ void QDECL AAS_Error(char *fmt, ...)
 	va_start(arglist, fmt);
 	Q_vsnprintf(str, sizeof(str), fmt, arglist);
 	va_end(arglist);
-	botimport.Print(PRT_FATAL, str);
+	botimport.Print(PRT_FATAL, "%s", str);
 } //end of the function AAS_Error
 
 // Ridah, multiple AAS worlds

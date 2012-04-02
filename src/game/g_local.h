@@ -1480,7 +1480,7 @@ void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
-void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
+void QDECL G_Error(const char *fmt, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
 // Is this a single player type game - sp or coop?
 qboolean G_IsSinglePlayerGame(void);
 

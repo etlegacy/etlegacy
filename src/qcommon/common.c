@@ -184,6 +184,7 @@ A raw string should NEVER be passed as fmt, because of "%f" type crashers.
 */
 int QDECL Com_VPrintf(const char *fmt, va_list argptr)
 {
+	// FIXME: correct all this
 	char            msg[MAXPRINTMSG];
 	static qboolean opening_qconsole = qfalse;
 
@@ -301,18 +302,6 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 	static int lastErrorTime;
 	static int errorCount;
 	int        currentTime;
-
-#if 0   //#if defined(_WIN32) && defined(_DEBUG)
-	if (code != ERR_DISCONNECT && code != ERR_NEED_CD)
-	{
-		if (!com_noErrorInterrupt->integer)
-		{
-			__asm {
-				int 0x03
-			}
-		}
-	}
-#endif
 
 	// when we are running automated scripts, make sure we
 	// know if anything failed

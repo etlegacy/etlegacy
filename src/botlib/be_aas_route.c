@@ -41,7 +41,7 @@
 #include "l_precomp.h"
 #include "l_struct.h"
 #include "aasfile.h"
-#include "../botlib/botlib.h"
+#include "botlib.h"
 #include "../game/be_aas.h"
 #include "be_aas_funcs.h"
 #include "be_interface.h"
@@ -1264,7 +1264,7 @@ int AAS_ReadRouteCache(void)
 	if (routecacheheader.ident != RCID)
 	{
 		botimport.FS_FCloseFile(fp);
-		AAS_Error("%s is not a route cache dump\n");
+        AAS_Error("%s is not a route cache dump\n", filename);
 		return qfalse;
 	} //end if
 	if (routecacheheader.version != RCVERSION)

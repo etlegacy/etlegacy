@@ -172,8 +172,8 @@ NET
 
 typedef enum
 {
+	NA_BAD = 0,                 // an address lookup failed
 	NA_BOT,
-	NA_BAD,                 // an address lookup failed
 	NA_LOOPBACK,
 	NA_BROADCAST,
 	NA_IP,
@@ -221,11 +221,13 @@ int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family);
 qboolean    NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_message);
 void        NET_Sleep(int msec);
 
-
-//----(SA)  increased for larger submodel entity counts
-#define MAX_MSGLEN              32768       // max length of a message, which may
-//#define   MAX_MSGLEN              16384       // max length of a message, which may
-// be fragmented into multiple packets
+/*
+ * @def MAX_MSGLEN
+ * @brief max length of a message, which may be fragmented into multiple packets
+ *
+ * ioquake - increased for larger submodel entity counts
+ */
+#define MAX_MSGLEN              32768
 #define MAX_DOWNLOAD_WINDOW         8       // max of eight download frames
 #define MAX_DOWNLOAD_BLKSIZE        2048    // 2048 byte block chunks
 
@@ -635,6 +637,10 @@ void    FS_FreeFileList(char **list);
 
 qboolean FS_FileExists(const char *file);
 
+qboolean FS_CreatePath(char *OSPath);
+
+char *FS_BuildOSPath(const char *base, const char *game, const char *qpath);
+
 int     FS_LoadStack(void);
 
 int     FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
@@ -672,9 +678,9 @@ int     FS_Delete(char *filename);      // only works inside the 'save' director
 
 int     FS_Write(const void *buffer, int len, fileHandle_t f);
 
+int     FS_Read2(void *buffer, int len, fileHandle_t f);
 int     FS_Read(void *buffer, int len, fileHandle_t f);
 // properly handles partial reads and reads from other dlls
-int     FS_Read2(void *buffer, int len, fileHandle_t f);
 
 void    FS_FCloseFile(fileHandle_t f);
 // note: you can't just fclose from another DLL, due to MS libc issues
@@ -741,13 +747,11 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames);
 // separated checksums will be checked for files, with the
 // sole exception of .cfg files.
 
-qboolean FS_idPak(char *pak, char *base);
 qboolean FS_VerifyOfficialPaks(void);
+qboolean FS_idPak(char *pak, char *base);
 qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring);
 
 void FS_Rename(const char *from, const char *to);
-
-char *FS_BuildOSPath(const char *base, const char *game, const char *qpath);
 
 #if !defined(DEDICATED)
 extern int cl_connectedToPureServer;
@@ -762,8 +766,6 @@ char *FS_ShiftedStrStr(const char *string, const char *substring, int shift);
 char *FS_ShiftStr(const char *string, int shift);
 
 void FS_CopyFile(char *fromOSPath, char *toOSPath);
-
-qboolean FS_CreatePath(char *OSPath);
 
 qboolean FS_VerifyPak(const char *pak);
 
@@ -848,7 +850,7 @@ int QDECL Com_VPrintf(const char *fmt, va_list argptr) _attribute((format(printf
 void QDECL Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));       // this one calls to Com_VPrintf now
 void QDECL Com_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL Com_Error(int code, const char *fmt, ...) _attribute((format(printf, 2, 3)));
-void        Com_Quit_f(void);
+void        Com_Quit_f(void) __attribute__ ((noreturn));
 int         Com_EventLoop(void);
 int         Com_Milliseconds(void);     // will be journaled properly
 unsigned int    Com_BlockChecksum(const void *buffer, int length);
@@ -893,6 +895,8 @@ extern cvar_t *com_buildScript;         // for building release pak files
 extern cvar_t *com_journal;
 extern cvar_t *com_cameraMode;
 extern cvar_t *com_ansiColor;
+extern cvar_t *com_unfocused;
+extern cvar_t *com_minimized;
 extern cvar_t *com_logosPlaying;
 
 // watchdog

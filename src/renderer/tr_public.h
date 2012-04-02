@@ -34,7 +34,7 @@
 #ifndef __TR_PUBLIC_H
 #define __TR_PUBLIC_H
 
-#include "../renderer/tr_types.h"
+#include "tr_types.h"
 
 #define REF_API_VERSION     8
 
@@ -83,14 +83,10 @@ typedef struct
 	void (*AddRefEntityToScene)(const refEntity_t *re);
 	int (*LightForPoint)(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir);
 	void (*AddPolyToScene)(qhandle_t hShader, int numVerts, const polyVert_t *verts);
-	// Ridah
 	void (*AddPolysToScene)(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys);
-	// done.
 	void (*AddLightToScene)(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags);
-//----(SA)
 	void (*AddCoronaToScene)(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);
 	void (*SetFog)(int fogvar, int var1, int var2, float r, float g, float b, float density);
-//----(SA)
 	void (*RenderScene)(const refdef_t *fd);
 
 	void (*SaveViewParms)(void);
@@ -152,10 +148,10 @@ typedef struct
 typedef struct
 {
 	// print message on the local console
-	void (QDECL *Printf)(int printLevel, const char *fmt, ...);
+	void (QDECL *Printf)(int printLevel, const char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
 
 	// abort the game
-	void (QDECL *Error)(int errorLevel, const char *fmt, ...);
+	void (QDECL *Error)(int errorLevel, const char *fmt, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
 
 	// milliseconds should only be used for profiling, never
 	// for anything game related.  Get time from the refdef
