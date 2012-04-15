@@ -293,14 +293,11 @@ You or the server may be running older versions of the game. Press the auto-upda
 /*
  * @def MASTER_SERVER_NAME
  * @brief location of the master server
- *
- * As the main server list etmaster.idsoftware.com seems to
- * be permanently down, we switched to an alternative.
  */
 #ifndef MASTER_SERVER_NAME
-#define MASTER_SERVER_NAME      "master0.etmaster.net"
+#define MASTER_SERVER_NAME      "etmaster.idsoftware.com"
 #endif // MASTER_SERVER_NAME
-#define MOTD_SERVER_NAME            "master0.etmaster.net"
+#define MOTD_SERVER_NAME            "etmaster.idsoftware.com"
 
 #ifdef AUTHORIZE_SUPPORT
 #define AUTHORIZE_SERVER_NAME   "wolfauthorize.idsoftware.com"
@@ -846,10 +843,9 @@ void        Info_Print(const char *s);
 
 void Com_BeginRedirect(char *buffer, int buffersize, void (*flush)(char *));
 void        Com_EndRedirect(void);
-int QDECL Com_VPrintf(const char *fmt, va_list argptr) _attribute((format(printf, 1, 0)));       // conforms to vprintf prototype for print callback passing
-void QDECL Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));       // this one calls to Com_VPrintf now
-void QDECL Com_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
-void QDECL Com_Error(int code, const char *fmt, ...) _attribute((format(printf, 2, 3)));
+void QDECL Com_Printf(const char *fmt, ...) __attribute__ ((format(printf, 1, 2)));
+void QDECL Com_DPrintf(const char *fmt, ...) __attribute__ ((format(printf, 1, 2)));
+void QDECL Com_Error(int code, const char *fmt, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
 void        Com_Quit_f(void) __attribute__ ((noreturn));
 int         Com_EventLoop(void);
 int         Com_Milliseconds(void);     // will be journaled properly

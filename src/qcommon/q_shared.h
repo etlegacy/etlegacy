@@ -73,8 +73,27 @@
 #pragma warning(disable : 4220) // varargs matches remaining parameters
 #endif
 
-#if defined(ppc) || defined(__ppc) || defined(__ppc__) || defined(__POWERPC__)
-#define idppc 1
+//Ignore __attribute__ on non-gcc platforms
+#ifndef __GNUC__
+#ifndef __attribute__
+#define __attribute__(x)
+#endif
+#endif
+
+#ifdef __GNUC__
+#define UNUSED_VAR __attribute__((unused))
+#else
+#define UNUSED_VAR
+#endif
+
+#if (defined _MSC_VER)
+#define Q_EXPORT __declspec(dllexport)
+#elif (defined __SUNPRO_C)
+#define Q_EXPORT __global
+#elif ((__GNUC__ >= 3) && (!__EMX__) && (!sun))
+#define Q_EXPORT __attribute__((visibility("default")))
+#else
+#define Q_EXPORT
 #endif
 
 /**********************************************************************
@@ -134,8 +153,14 @@ typedef unsigned __int64 uint64_t;
 typedef unsigned __int32 uint32_t;
 typedef unsigned __int16 uint16_t;
 typedef unsigned __int8 uint8_t;
+
+// vsnprintf is ISO/IEC 9899:1999
+// abstracting this to make it portable
+int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap);
 #else
-#include <stdint.h>
+  #include <stdint.h>
+
+  #define Q_vsnprintf vsnprintf
 #endif
 
 #endif
@@ -979,10 +1004,6 @@ char *Q_CleanStr(char *string);
 int Q_CountChar(const char *string, char tocount);
 // removes whitespaces and other bad directory characters
 char *Q_CleanDirName(char *dirname);
-
-#define _vsnprintf use_Q_vsnprintf
-#define vsnprintf use_Q_vsnprintf
-int Q_vsnprintf(char *dest, int size, const char *fmt, va_list argptr);
 
 //=============================================
 
