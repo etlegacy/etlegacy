@@ -478,7 +478,8 @@ typedef void (*completionFunc_t)(char *args, int argNum);
 
 void Cmd_CommandCompletion(void (*callback)(const char *s));
 // callback with each valid string
-
+void Cmd_SetCommandCompletionFunc(const char *command,
+                                  completionFunc_t complete);
 void Cmd_CompleteArgument(const char *command, char *args, int argNum);
 
 int     Cmd_Argc(void);
@@ -583,6 +584,8 @@ void    Cvar_InfoStringBuffer(int bit, char *buff, int buffsize);
 void Cvar_CheckRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
 
 void    Cvar_Restart_f(void);
+
+void Cvar_CompleteCvarName(char *args, int argNum);
 
 extern int cvar_modifiedFlags;
 // whenever a cvar is modifed, its flags will be OR'd into this, so

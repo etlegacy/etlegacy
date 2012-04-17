@@ -400,7 +400,7 @@ void CL_Record_f(void)
 	{
 		s = Cmd_Argv(1);
 		Q_strncpyz(demoName, s, sizeof(demoName));
-		Com_sprintf(name, sizeof(name), "demos/%s.dm_%d", demoName, PROTOCOL_VERSION);
+		Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, PROTOCOL_VERSION);
 	}
 	else
 	{
@@ -410,7 +410,7 @@ void CL_Record_f(void)
 		for (number = 0 ; number <= 9999 ; number++)
 		{
 			CL_DemoFilename(number, demoName);
-			Com_sprintf(name, sizeof(name), "demos/%s.dm_%d", demoName, PROTOCOL_VERSION);
+			Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, PROTOCOL_VERSION);
 
 			len = FS_ReadFile(name, NULL);
 			if (len <= 0)
@@ -781,12 +781,23 @@ void CL_WriteWaveClose()
 
 /*
 ====================
-CL_PlayDemo_f
-
-demo <demoname>
-
+CL_CompleteDemoName
 ====================
 */
+static void CL_CompleteDemoName(char *args, int argNum)
+{
+	if (argNum == 2)
+	{
+		char demoExt[16];
+
+		Com_sprintf(demoExt, sizeof(demoExt), ".%s%d", DEMOEXT, PROTOCOL_VERSION);
+		Field_CompleteFilename("demos", demoExt, qtrue, qtrue);
+	}
+}
+
+/*
+ * @brief Usage: demo <demoname>
+ */
 void CL_PlayDemo_f(void)
 {
 	char name[MAX_OSPATH], extension[32];
@@ -1565,6 +1576,25 @@ void CL_Connect_f(void)
 }
 
 #define MAX_RCON_MESSAGE 1024
+
+/*
+==================
+CL_CompleteRcon
+==================
+*/
+static void CL_CompleteRcon(char *args, int argNum)
+{
+	if (argNum == 2)
+	{
+		// Skip "rcon "
+		char *p = Com_SkipTokens(args, 1, " ");
+
+		if (p > args)
+		{
+			Field_CompleteCommand(p, qtrue, qtrue);
+		}
+	}
+}
 
 /*
  * @brief Send the rest of the command line over as an unconnected command.
@@ -3861,6 +3891,7 @@ void CL_Init(void)
 	Cmd_AddCommand("disconnect", CL_Disconnect_f);
 	Cmd_AddCommand("record", CL_Record_f);
 	Cmd_AddCommand("demo", CL_PlayDemo_f);
+	Cmd_SetCommandCompletionFunc("demo", CL_CompleteDemoName);
 	Cmd_AddCommand("cinematic", CL_PlayCinematic_f);
 	Cmd_AddCommand("stoprecord", CL_StopRecord_f);
 	Cmd_AddCommand("connect", CL_Connect_f);
@@ -3868,6 +3899,7 @@ void CL_Init(void)
 	Cmd_AddCommand("localservers", CL_LocalServers_f);
 	Cmd_AddCommand("globalservers", CL_GlobalServers_f);
 	Cmd_AddCommand("rcon", CL_Rcon_f);
+	Cmd_SetCommandCompletionFunc("rcon", CL_CompleteRcon);
 	Cmd_AddCommand("setenv", CL_Setenv_f);
 	Cmd_AddCommand("ping", CL_Ping_f);
 	Cmd_AddCommand("serverstatus", CL_ServerStatus_f);

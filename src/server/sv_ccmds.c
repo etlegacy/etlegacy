@@ -1244,6 +1244,19 @@ static void SV_KillServer_f(void)
 }
 
 /*
+==================
+SV_CompleteMapName
+==================
+*/
+static void SV_CompleteMapName(char *args, int argNum)
+{
+	if (argNum == 2)
+	{
+		Field_CompleteFilename("maps", "bsp", qtrue, qfalse);
+	}
+}
+
+/*
 =================
 SV_GameCompleteStatus_f
 
@@ -1273,9 +1286,9 @@ void SV_AddOperatorCommands(void)
 	initialized = qtrue;
 
 	Cmd_AddCommand("heartbeat", SV_Heartbeat_f);
-// fretn - moved to qagame
-	/*Cmd_AddCommand ("kick", SV_Kick_f);
-	Cmd_AddCommand ("clientkick", SV_KickNum_f);*/
+	// moved to qagame
+	// Cmd_AddCommand ("kick", SV_Kick_f);
+	// Cmd_AddCommand ("clientkick", SV_KickNum_f);
 #ifdef AUTHORIZE_SUPPORT
 	// Arnout: banning requires auth server
 	Cmd_AddCommand("banUser", SV_Ban_f);
@@ -1289,11 +1302,15 @@ void SV_AddOperatorCommands(void)
 	Cmd_AddCommand("fieldinfo", SV_FieldInfo_f);
 	Cmd_AddCommand("sectorlist", SV_SectorList_f);
 	Cmd_AddCommand("map", SV_Map_f);
+	Cmd_SetCommandCompletionFunc("map", SV_CompleteMapName);
 	Cmd_AddCommand("gameCompleteStatus", SV_GameCompleteStatus_f);        // NERVE - SMF
 
 	Cmd_AddCommand("devmap", SV_Map_f);
+	Cmd_SetCommandCompletionFunc("devmap", SV_CompleteMapName);
 	Cmd_AddCommand("spmap", SV_Map_f);
+	Cmd_SetCommandCompletionFunc("spmap", SV_CompleteMapName);
 	Cmd_AddCommand("spdevmap", SV_Map_f);
+	Cmd_SetCommandCompletionFunc("spdevmap", SV_CompleteMapName);
 
 	Cmd_AddCommand("loadgame", SV_LoadGame_f);
 	Cmd_AddCommand("killserver", SV_KillServer_f);

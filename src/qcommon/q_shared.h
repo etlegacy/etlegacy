@@ -47,6 +47,9 @@
 
 #define NEW_ANIMS
 #define MAX_TEAMNAME    32
+#define MAX_MASTER_SERVERS      5   // number of supported master servers
+
+#define DEMOEXT "dm_"           // standard demo extension
 
 #ifdef _MSC_VER
 
@@ -928,6 +931,7 @@ void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m);
 
 int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) __attribute__ ((format(printf, 3, 4)));
 
+char *Com_SkipTokens(char *s, int numTokens, char *sep);
 char *Com_SkipCharset(char *s, char *sep);
 
 // mode parm for FS_FOpenFile
