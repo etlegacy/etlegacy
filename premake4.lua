@@ -119,6 +119,12 @@ project "etlegacy"
 	-- 
 	-- Windows build options
 	-- 
+	configuration {  "mingw"  }
+		links
+		{
+			"mingw32", -- for the love of god, don't forget to link this first
+		}
+
 	configuration {  "vs* or mingw"  }
 		targetextension ".exe"
 		flags       { "WinMain" }
@@ -127,7 +133,6 @@ project "etlegacy"
 			-- NOTE TO SELF:
 			-- Think twice before changing the order of the
 			-- following libraries !!!
-			"mingw32", -- for the love of god, don't forget to link this first
 			"ws2_32",
 			"winmm",
 			"wsock32",
@@ -226,6 +231,12 @@ project "etlegacy-dedicated"
 	-- 
 	-- Windows build options
 	-- 
+	configuration {  "mingw"  }
+		links
+		{
+			"mingw32", -- for the love of god, don't forget to link this first
+		}
+
 	configuration { "vs* or mingw" }
 		targetextension ".exe"
 		flags       { "WinMain" }
@@ -234,7 +245,6 @@ project "etlegacy-dedicated"
 			-- NOTE TO SELF:
 			-- Think twice before changing the order of the
 			-- following libraries !!!
-			"mingw32", -- for the love of god, don't forget to link this first
 			"ws2_32",
 			"winmm",
 			"wsock32",

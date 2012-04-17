@@ -1423,18 +1423,21 @@ int Q_CountChar(const char *string, char tocount)
 	return count;
 }
 
-void QDECL Com_sprintf(char *dest, int size, const char *fmt, ...)
+int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...)
 {
-	int     ret;
+	int     len;
 	va_list argptr;
 
 	va_start(argptr, fmt);
-	ret = Q_vsnprintf(dest, size, fmt, argptr);
+	len = Q_vsnprintf(dest, size, fmt, argptr);
 	va_end(argptr);
-	if (ret == -1)
+
+	if (len >= size)
 	{
-		Com_Printf("Com_sprintf: overflow of %i bytes buffer\n", size);
+		Com_Printf("Com_sprintf: Output length %d too short, require %d bytes.\n", size, len + 1);
 	}
+
+	return len;
 }
 
 /*

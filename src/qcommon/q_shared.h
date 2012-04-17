@@ -48,7 +48,7 @@
 #define NEW_ANIMS
 #define MAX_TEAMNAME    32
 
-#if defined _WIN32 && !defined __GNUC__
+#ifdef _MSC_VER
 
 #pragma warning(disable : 4018) // signed/unsigned mismatch
 #pragma warning(disable : 4032)
@@ -132,16 +132,6 @@ typedef int intptr_t;
 #include <sys/stat.h> // rain
 #include <float.h>
 
-// vsnprintf is ISO/IEC 9899:1999
-// abstracting this to make it portable
-#ifdef _WIN32
-#define Q_vsnprintf _vsnprintf
-#define Q_snprintf _snprintf
-#else
-#define Q_vsnprintf vsnprintf
-#define Q_snprintf snprintf
-#endif
-
 #ifdef _MSC_VER
 #include <io.h>
 
@@ -167,23 +157,6 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap);
 
 
 #include "q_platform.h"
-
-#ifdef __GNUC__
-#define _attribute(x) __attribute__(x)
-#else
-#define _attribute(x)
-#endif
-
-//======================= GNUC DEFINES ==================================
-#if (defined _MSC_VER)
-#define Q_EXPORT __declspec(dllexport)
-#elif (defined __SUNPRO_C)
-#define Q_EXPORT __global
-#elif ((__GNUC__ >= 3) && (!__EMX__) && (!sun))
-#define Q_EXPORT __attribute__((visibility("default")))
-#else
-#define Q_EXPORT
-#endif
 
 //======================= WIN32 DEFINES =================================
 
@@ -332,6 +305,12 @@ typedef int clipHandle_t;
 
 #define PADP(base, alignment)   ((void *) PAD((intptr_t) (base), (alignment)))
 
+#ifdef __GNUC__
+#define QALIGN(x) __attribute__((aligned(x)))
+#else
+#define QALIGN(x)
+#endif
+
 //#define   SND_NORMAL          0x000   // (default) Allow sound to be cut off only by the same sound on this channel
 #define     SND_OKTOCUT         0x001   // Allow sound to be cut off by any following sounds on this channel
 #define     SND_REQUESTCUT      0x002   // Allow sound to be cut off by following sounds on this channel only for sounds who request cutoff
@@ -354,12 +333,6 @@ typedef int clipHandle_t;
 
 #define ARRAY_LEN(x)        (sizeof(x) / sizeof(*(x)))
 #define STRARRAY_LEN(x)     (ARRAY_LEN(x) - 1)
-
-// TTimo gcc: was missing, added from Q3 source
-#ifndef max
-#define max(x, y) (((x) > (y)) ? (x) : (y))
-#define min(x, y) (((x) < (y)) ? (x) : (y))
-#endif
 
 // angle indexes
 #define PITCH               0       // up / down
@@ -465,16 +438,14 @@ typedef enum
 #define UI_BLINK        0x00001000
 #define UI_INVERSE      0x00002000
 #define UI_PULSE        0x00004000
-// JOSEPH 10-24-99
 #define UI_MENULEFT     0x00008000
 #define UI_MENURIGHT    0x00010000
 #define UI_EXSMALLFONT  0x00020000
 #define UI_MENUFULL     0x00080000
-// END JOSEPH
 
 #define UI_SMALLFONT75  0x00100000
 
-#if defined(_DEBUG)
+#if !defined(NDEBUG)
 #define HUNK_DEBUG
 #endif
 
@@ -651,6 +622,8 @@ extern vec3_t vec3_origin;
 extern vec3_t axisDefault[3];
 
 #define nanmask (255 << 23)
+
+#define IS_NAN(x) (((*(int *)&x) & nanmask) == nanmask)
 
 int Q_isnan(float x);
 
@@ -874,6 +847,14 @@ void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void PerpendicularVector(vec3_t dst, const vec3_t src);
 
+#ifndef MAX
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#endif
+
+#ifndef MIN
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#endif
+
 // Ridah
 void GetPerpendicularViewVector(const vec3_t point, const vec3_t p1, const vec3_t p2, vec3_t up);
 void ProjectPointOntoVector(vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vProj);
@@ -904,9 +885,9 @@ int     COM_GetCurrentParseLine(void);
 char *COM_Parse(char **data_p);
 char *COM_ParseExt(char **data_p, qboolean allowLineBreak);
 int     COM_Compress(char *data_p);
-void    COM_ParseError(char *format, ...) _attribute((format(printf, 1, 2)));
-void    COM_ParseWarning(char *format, ...) _attribute((format(printf, 1, 2)));
-int Com_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING]);
+void    COM_ParseError(char *format, ...) __attribute__ ((format(printf, 1, 2)));
+void    COM_ParseWarning(char *format, ...) __attribute__ ((format(printf, 1, 2)));
+int COM_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING]);
 
 qboolean COM_BitCheck(const int array[], int bitNum);
 void COM_BitSet(int array[], int bitNum);
@@ -946,8 +927,7 @@ void Parse1DMatrix(char **buf_p, int x, float *m);
 void Parse2DMatrix(char **buf_p, int y, int x, float *m);
 void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m);
 
-void QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) _attribute((format(printf, 3, 4)));
-
+int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) __attribute__ ((format(printf, 3, 4)));
 
 // mode parm for FS_FOpenFile
 typedef enum
@@ -1039,8 +1019,8 @@ qboolean Info_Validate(const char *s);
 void Info_NextPair(const char **s, char *key, char *value);
 
 // this is only here so the functions in q_shared.c and bg_*.c can link
-void QDECL Com_Error(int level, const char *error, ...) _attribute((format(printf, 2, 3)));
-void QDECL Com_Printf(const char *msg, ...) _attribute((format(printf, 1, 2)));
+void QDECL Com_Error(int level, const char *error, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
+void QDECL Com_Printf(const char *msg, ...) __attribute__ ((format(printf, 1, 2)));
 
 /*
 ==========================================================
@@ -1319,12 +1299,8 @@ typedef enum
 #define MAX_POWERUPS            16
 #define MAX_WEAPONS             64  // (SA) and yet more!
 
-// Ridah, increased this
 //#define   MAX_PS_EVENTS           2
-// ACK: I'd really like to make this 4, but that seems to cause network problems
 #define MAX_EVENTS              4   // max events per frame before we drop events
-//#define   MAX_EVENTS              2   // max events per frame before we drop events
-
 
 #define PS_PMOVEFRAMECOUNTBITS  6
 

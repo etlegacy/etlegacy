@@ -1211,8 +1211,8 @@ void SP_dlight(gentity_t *ent)
 	}
 	else if (style)
 	{
-		style               = max(1, style);                      // clamp to predefined range
-		style               = min(19, style);
+		style               = MAX(1, style);                      // clamp to predefined range
+		style               = MIN(19, style);
 		ent->dl_stylestring = predef_lightstyles[style - 1];    // these are input as 1-20
 	}
 	else

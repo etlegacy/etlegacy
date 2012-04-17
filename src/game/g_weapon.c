@@ -2727,7 +2727,7 @@ qboolean G_AvailableAirstrikes(gentity_t *ent)
 
 void G_AddAirstrikeToCounters(gentity_t *ent)
 {
-	int max = min(6, 2 * (ceil(g_heavyWeaponRestriction.integer * G_TeamCount(ent, -1) * 0.1f * 10 * 0.01f)));
+	int max = MIN(6, 2 * (ceil(g_heavyWeaponRestriction.integer * G_TeamCount(ent, -1) * 0.1f * 10 * 0.01f)));
 
 
 
@@ -4101,7 +4101,7 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 	else
 	{
 		pitch       = -pitch;
-		pitch       = min(pitch, 30);
+		pitch       = MIN(pitch, 30);
 		pitch      /= 30.f;
 		pitch       = 1 - pitch;
 		forward[2] += (pitch * 0.5f);
@@ -4114,8 +4114,8 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 	VectorNormalizeFast(forward);           //  make sure forward is normalized
 
 	upangle  = -(ent->s.apos.trBase[0]);  //    this will give between  -90 / 90
-	upangle  = min(upangle, 50);
-	upangle  = max(upangle, -50);         //    now clamped to  -50 / 50    (don't allow firing straight up/down)
+	upangle  = MIN(upangle, 50);
+	upangle  = MAX(upangle, -50);         //    now clamped to  -50 / 50    (don't allow firing straight up/down)
 	upangle  = upangle / 100.0f;          //                   -0.5 / 0.5
 	upangle += 0.5f;                    //                  0.0 / 1.0
 

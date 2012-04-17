@@ -32,18 +32,13 @@
  * @brief misc functions used in client and server
  */
 
-#include "../qcommon/q_shared.h"
+#include "q_shared.h"
 #include "qcommon.h"
 #include <setjmp.h>
 
-// htons
-#ifdef __linux__
+#ifndef _WIN32
 #include <netinet/in.h>
-// getpid
-#include <unistd.h>
-#elif __MACOS__
-// getpid
-#include <unistd.h>
+#include <sys/stat.h> // umask
 #else
 #include <winsock.h>
 #endif
@@ -61,6 +56,7 @@ char *com_argv[MAX_NUM_ARGVS + 1];
 
 jmp_buf abortframe;     // an ERR_DROP occured, exit the entire frame
 
+void CL_ShutdownCGame(void);
 
 FILE                *debuglogfile;
 static fileHandle_t logfile;
@@ -173,15 +169,10 @@ void Com_EndRedirect(void)
 }
 
 /*
-=============
-Com_Printf
-
-Both client and server can use this, and it will output
-to the apropriate place.
-
-A raw string should NEVER be passed as fmt, because of "%f" type crashers.
-=============
-*/
+ * @brief Both client and server can use this, and it will output to the apropriate place.
+ *
+ * A raw string should NEVER be passed as fmt, because of "%f" type crashers.
+ */
 void QDECL Com_Printf(const char *fmt, ...)
 {
 	va_list         argptr;
@@ -201,11 +192,10 @@ void QDECL Com_Printf(const char *fmt, ...)
 			*rd_buffer = 0;
 		}
 		Q_strcat(rd_buffer, rd_buffersize, msg);
-		// show_bug.cgi?id=51
 		// only flush the rcon buffer when it's necessary, avoid fragmenting
 		//rd_flush(rd_buffer);
 		//*rd_buffer = 0;
-		return strlen(msg);
+		return;
 	}
 
 	// echo to console if we're not a dedicated server
@@ -248,22 +238,17 @@ void QDECL Com_Printf(const char *fmt, ...)
 			FS_Write(msg, strlen(msg), logfile);
 		}
 	}
-	return strlen(msg);
 }
 
 /*
-================
-Com_DPrintf
-
-A Com_Printf that only shows up if the "developer" cvar is set
-================
-*/
+ * @brief A Com_Printf that only shows up if the "developer" cvar is set
+ */
 void QDECL Com_DPrintf(const char *fmt, ...)
 {
 	va_list argptr;
 	char    msg[MAXPRINTMSG];
 
-	if (!com_developer || com_developer->integer != 1)
+	if (!com_developer || !com_developer->integer)
 	{
 		return;         // don't confuse non-developers with techie stuff...
 	}
@@ -274,16 +259,10 @@ void QDECL Com_DPrintf(const char *fmt, ...)
 
 	Com_Printf("%s", msg);
 }
-void QDECL Com_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 /*
-=============
-Com_Error
-
-Both client and server can use this, and it will
-do the apropriate things.
-=============
-*/
+ * @brief Both client and server can use this, and it will do the appropriate thing.
+ */
 void QDECL Com_Error(int code, const char *fmt, ...)
 {
 	va_list    argptr;
@@ -395,19 +374,10 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 
 	Sys_Error("%s", com_errorMessage);
 }
-void QDECL Com_Error(int code, const char *fmt, ...) _attribute((format(printf, 2, 3)));
-
-//bani - moved
-void CL_ShutdownCGame(void);
 
 /*
-=============
-Com_Quit_f
-
-Both client and server can use this, and it will
-do the apropriate things.
-=============
-*/
+ * @brief Both client and server can use this, and it will do the appropriate thing.
+ */
 void Com_Quit_f(void)
 {
 	// don't try to shutdown if we are in a recursive error
@@ -605,7 +575,7 @@ void Info_Print(const char *s)
 		l = o - key;
 		if (l < 20)
 		{
-			memset(o, ' ', 20 - l);
+			Com_Memset(o, ' ', 20 - l);
 			key[20] = 0;
 		}
 		else
@@ -1019,7 +989,7 @@ void Z_Free(void *ptr)
 	zone->used -= block->size;
 	// set the block to something that should cause problems
 	// if it is referenced...
-	memset(ptr, 0xaa, block->size - sizeof(*block));
+	Com_Memset(ptr, 0xaa, block->size - sizeof(*block));
 
 	block->tag = 0;     // mark as free
 
@@ -1626,17 +1596,10 @@ void Com_TouchMemory(void)
 }
 
 
-
-/*
-=================
-Com_InitZoneMemory
-=================
-*/
 void Com_InitSmallZoneMemory(void)
 {
 	s_smallZoneTotal = 512 * 1024;
-	// bk001205 - was malloc
-	smallzone = calloc(s_smallZoneTotal, 1);
+	smallzone        = calloc(s_smallZoneTotal, 1);
 	if (!smallzone)
 	{
 		Com_Error(ERR_FATAL, "Small zone data failed to allocate %1.1f megs", (float)s_smallZoneTotal / (1024 * 1024));
@@ -1646,35 +1609,16 @@ void Com_InitSmallZoneMemory(void)
 	return;
 }
 
-/*
-void Com_InitZoneMemory( void ) {
-    cvar_t	*cv;
-    s_smallZoneTotal = 512 * 1024;
-    smallzone = malloc( s_smallZoneTotal );
-    if ( !smallzone ) {
-        Com_Error( ERR_FATAL, "Small zone data failed to allocate %1.1f megs", (float)s_smallZoneTotal / (1024*1024) );
-    }
-    Z_ClearZone( smallzone, s_smallZoneTotal );
-
-    // allocate the random block zone
-    cv = Cvar_Get( "com_zoneMegs", DEF_COMZONEMEGS, CVAR_LATCH | CVAR_ARCHIVE );
-
-    if ( cv->integer < 16 ) {
-        s_zoneTotal = 1024 * 1024 * 16;
-    } else {
-        s_zoneTotal = cv->integer * 1024 * 1024;
-    }
-
-    mainzone = malloc( s_zoneTotal );
-    if ( !mainzone ) {
-        Com_Error( ERR_FATAL, "Zone data failed to allocate %i megs", s_zoneTotal / (1024*1024) );
-    }
-    Z_ClearZone( mainzone, s_zoneTotal );
-}
-*/
 void Com_InitZoneMemory(void)
 {
 	cvar_t *cv;
+
+	// Please note: com_zoneMegs can only be set on the command line, and
+	// not in etconfig.cfg or Com_StartupVariable, as they haven't been
+	// executed by this point. It's a chicken and egg problem. We need the
+	// memory manager configured to handle those places where you would
+	// configure the memory manager.
+
 	// allocate the random block zone
 	cv = Cvar_Get("com_zoneMegs", DEF_COMZONEMEGS, CVAR_LATCH | CVAR_ARCHIVE);
 
@@ -1688,7 +1632,6 @@ void Com_InitZoneMemory(void)
 		s_zoneTotal = 1024 * 1024 * cv->integer;
 	}
 
-	// bk001205 - was malloc
 	mainzone = calloc(s_zoneTotal, 1);
 	if (!mainzone)
 	{
@@ -1913,12 +1856,8 @@ void CL_ShutdownUI(void);
 void SV_ShutdownGameProgs(void);
 
 /*
-=================
-Hunk_Clear
-
-The server calls this before shutting down or loading a new map
-=================
-*/
+ * @brief The server calls this before shutting down or loading a new map
+ */
 void Hunk_Clear(void)
 {
 
@@ -2026,7 +1965,7 @@ void *Hunk_Alloc(int size, ha_pref preference)
 
 	hunk_permanent->temp = hunk_permanent->permanent;
 
-	memset(buf, 0, size);
+	Com_Memset(buf, 0, size);
 
 #ifdef HUNK_DEBUG
 	{
@@ -2077,14 +2016,10 @@ void *Hunk_AllocateTempMemory(int size)
 
 	Hunk_SwapBanks();
 
-	size = ((size + 3) & ~3) + sizeof(hunkHeader_t);
+	size = PAD(size, sizeof(intptr_t)) + sizeof(hunkHeader_t);
 
 	if (hunk_temp->temp + hunk_permanent->permanent + size > s_hunkTotal)
 	{
-#ifdef HUNK_DEBUG
-		Hunk_Log();
-		Hunk_SmallLog();
-#endif
 		Com_Error(ERR_DROP, "Hunk_AllocateTempMemory: failed on %i", size);
 	}
 
@@ -2247,12 +2182,9 @@ journaled file
 ===================================================================
 */
 
-// bk001129 - here we go again: upped from 64
-#define MAX_PUSHED_EVENTS               256
-// bk001129 - init, also static
-static int com_pushedEventsHead = 0;
-static int com_pushedEventsTail = 0;
-// bk001129 - static
+#define MAX_PUSHED_EVENTS               1024
+static int        com_pushedEventsHead = 0;
+static int        com_pushedEventsTail = 0;
 static sysEvent_t com_pushedEvents[MAX_PUSHED_EVENTS];
 
 /*
@@ -2404,7 +2336,7 @@ sysEvent_t Com_GetSystemEvent(void)
 	}
 
 	// create an empty event to return
-	memset(&ev, 0, sizeof(ev));
+	Com_Memset(&ev, 0, sizeof(ev));
 	ev.evTime = Sys_Milliseconds();
 
 	return ev;
@@ -2459,17 +2391,11 @@ sysEvent_t  Com_GetRealEvent(void)
 	return ev;
 }
 
-/*
-=================
-Com_InitPushEvent
-=================
-*/
-// bk001129 - added
 void Com_InitPushEvent(void)
 {
 	// clear the static buffer array
 	// this requires SE_NONE to be accepted as a valid but NOP event
-	memset(com_pushedEvents, 0, sizeof(com_pushedEvents));
+	Com_Memset(com_pushedEvents, 0, sizeof(com_pushedEvents));
 	// reset counters while we are at it
 	// beware: GetEvent might still return an SE_NONE from the buffer
 	com_pushedEventsHead = 0;
@@ -2485,7 +2411,7 @@ Com_PushEvent
 void Com_PushEvent(sysEvent_t *event)
 {
 	sysEvent_t *ev;
-	static int printedWarning = 0; // bk001129 - init, bk001204 - explicit int
+	static int printedWarning = 0;
 
 	ev = &com_pushedEvents[com_pushedEventsHead & (MAX_PUSHED_EVENTS - 1)];
 
@@ -2771,24 +2697,11 @@ static void Com_Freeze_f(void)
 }
 
 /*
-=================
-Com_Crash_f
-
-A way to force a bus error for development reasons
-=================
-*/
+ * @brief A way to force a bus error for development reasons
+ */
 static void Com_Crash_f(void)
 {
 	*( volatile int * ) 0 = 0x12345678;
-}
-
-/*
-=============
-Com_CPUSpeed_f
-=============
-*/
-void Com_CPUSpeed_f(void)
-{
 }
 
 void Com_SetRecommended()
@@ -2824,7 +2737,7 @@ void Com_GetGameInfo(void)
 	char *f, *buf;
 	char *token;
 
-	memset(&com_gameInfo, 0, sizeof(com_gameInfo));
+	Com_Memset(&com_gameInfo, 0, sizeof(com_gameInfo));
 
 	if (FS_ReadFile("gameinfo.dat", (void **)&f) > 0)
 	{
@@ -3228,7 +3141,6 @@ void Com_Init(char *commandLine)
 		Cmd_AddCommand("error", Com_Error_f);
 		Cmd_AddCommand("crash", Com_Crash_f);
 		Cmd_AddCommand("freeze", Com_Freeze_f);
-		Cmd_AddCommand("cpuspeed", Com_CPUSpeed_f);
 	}
 	Cmd_AddCommand("quit", Com_Quit_f);
 	Cmd_AddCommand("changeVectors", MSG_ReportChangeVectors_f);
@@ -3695,7 +3607,7 @@ Field_Clear
 */
 void Field_Clear(field_t *edit)
 {
-	memset(edit->buffer, 0, MAX_EDIT_LINE);
+	Com_Memset(edit->buffer, 0, MAX_EDIT_LINE);
 	edit->cursor = 0;
 	edit->scroll = 0;
 }

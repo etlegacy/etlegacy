@@ -2638,7 +2638,7 @@ void MoveClientToIntermission(gentity_t *ent)
 	/*if ( ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES ) {
 	    timeLived = (level.time - ent->client->pers.lastSpawnTime) * 0.001f;
 
-	    G_AddExperience( ent, min((timeLived * timeLived) * 0.00005f, 5) );
+	    G_AddExperience( ent, MIN((timeLived * timeLived) * 0.00005f, 5) );
 	}*/
 
 	// move to the spot

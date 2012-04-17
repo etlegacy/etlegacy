@@ -834,10 +834,7 @@ qboolean SV_CheckDRDoS(netadr_t from)
 	}
 	else
 	{
-		// So we got a connectionless packet but it's not IPv4, so
-		// what is it?  I don't care, it doesn't matter, we'll just block it.
-		// This probably won't even happen.
-		return qtrue;
+		from.ip6[15] = 0;
 	}
 
 	// Count receipts in last 2 seconds.

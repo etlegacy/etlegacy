@@ -1656,7 +1656,7 @@ void CG_DebriefingTitle_Draw(panel_button_t *button)
 
 	CG_Text_Paint_Ext(x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, s, 0, 0, 0, button->font->font);
 
-	s = va("%i seconds to next map", max(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0));
+	s = va("%i seconds to next map", MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0));
 	w = CG_Text_Width_Ext(s, button->font->scalex, 0, button->font->font);
 	x = button->rect.x + button->rect.w - w - 4;
 
@@ -1974,7 +1974,7 @@ void CG_Debriefing_ScrollCheckOffset(panel_button_t *button)
 	int cnt    = CG_Debriefing_ScrollGetCount(button);
 	int offset = CG_Debriefing_ScrollGetOffset(button);
 
-	int maxofs = max(0, cnt - max);
+	int maxofs = MAX(0, cnt - max);
 
 	if (offset > maxofs)
 	{
@@ -2784,7 +2784,7 @@ void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button)
 		CG_PanelButtonsRender_Window_Ext(&button->rect, CG_Debreifing2_WinStringForTeam(CG_Debriefing_FindOveralWinningTeam()), 0, 18, 0.25f, 16);
 	}
 
-	s = va("%i SECS TO NEXT MAP", max(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0));
+	s = va("%i SECS TO NEXT MAP", MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0));
 
 	w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 	x = button->rect.x + button->rect.w - w - 4;
