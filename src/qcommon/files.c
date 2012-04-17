@@ -2433,151 +2433,126 @@ Returns a uniqued list of files that match the given criteria
 from all search paths
 ===============
 */
-char **FS_ListFilteredFiles(const char *path, const char *extension, char *filter, int *numfiles)
-{
-	int          nfiles;
-	char         **listCopy;
-	char         *list[MAX_FOUND_FILES];
-	searchpath_t *search;
-	int          i;
-	int          pathLength;
-	int          extensionLength;
-	int          length, pathDepth, temp;
-	pack_t       *pak;
-	fileInPack_t *buildBuffer;
-	char         zpath[MAX_ZPATH];
+char **FS_ListFilteredFiles( const char *path, const char *extension, char *filter, int *numfiles, qboolean allowNonPureFilesOnDisk ) {
+	int				nfiles;
+	char			**listCopy;
+	char			*list[MAX_FOUND_FILES];
+	searchpath_t	*search;
+	int				i;
+	int				pathLength;
+	int				extensionLength;
+	int				length, pathDepth, temp;
+	pack_t			*pak;
+	fileInPack_t	*buildBuffer;
+	char			zpath[MAX_ZPATH];
 
-	if (!fs_searchpaths)
-	{
-		Com_Error(ERR_FATAL, "Filesystem call made without initialization\n");
+	if ( !fs_searchpaths ) {
+		Com_Error( ERR_FATAL, "Filesystem call made without initialization" );
 	}
 
-	if (!path)
-	{
+	if ( !path ) {
 		*numfiles = 0;
 		return NULL;
 	}
-	if (!extension)
-	{
+	if ( !extension ) {
 		extension = "";
 	}
 
-	pathLength = strlen(path);
-	if (path[pathLength - 1] == '\\' || path[pathLength - 1] == '/')
-	{
+	pathLength = strlen( path );
+	if ( path[pathLength-1] == '\\' || path[pathLength-1] == '/' ) {
 		pathLength--;
 	}
-	extensionLength = strlen(extension);
-	nfiles          = 0;
+	extensionLength = strlen( extension );
+	nfiles = 0;
 	FS_ReturnPath(path, zpath, &pathDepth);
 
 	//
 	// search through the path, one element at a time, adding to list
 	//
-	for (search = fs_searchpaths ; search ; search = search->next)
-	{
+	for (search = fs_searchpaths ; search ; search = search->next) {
 		// is the element a pak file?
-		if (search->pack)
-		{
+		if (search->pack) {
 
 			//ZOID:  If we are pure, don't search for files on paks that
 			// aren't on the pure list
-			if (!FS_PakIsPure(search->pack))
-			{
+			if ( !FS_PakIsPure(search->pack) ) {
 				continue;
 			}
 
 			// look through all the pak file elements
-			pak         = search->pack;
+			pak = search->pack;
 			buildBuffer = pak->buildBuffer;
-			for (i = 0; i < pak->numfiles; i++)
-			{
-				char *name;
-				int  zpathLen, depth;
+			for (i = 0; i < pak->numfiles; i++) {
+				char	*name;
+				int		zpathLen, depth;
 
 				// check for directory match
 				name = buildBuffer[i].name;
 				//
-				if (filter)
-				{
+				if (filter) {
 					// case insensitive
-					if (!Com_FilterPath(filter, name, qfalse))
-					{
+					if (!Com_FilterPath( filter, name, qfalse ))
 						continue;
-					}
 					// unique the match
-					nfiles = FS_AddFileToList(name, list, nfiles);
+					nfiles = FS_AddFileToList( name, list, nfiles );
 				}
-				else
-				{
+				else {
 
 					zpathLen = FS_ReturnPath(name, zpath, &depth);
 
-					if ((depth - pathDepth) > 2 || pathLength > zpathLen || Q_stricmpn(name, path, pathLength))
-					{
+					if ( (depth-pathDepth)>2 || pathLength > zpathLen || Q_stricmpn( name, path, pathLength ) ) {
 						continue;
 					}
 
 					// check for extension match
-					length = strlen(name);
-					if (length < extensionLength)
-					{
+					length = strlen( name );
+					if ( length < extensionLength ) {
 						continue;
 					}
 
-					if (Q_stricmp(name + length - extensionLength, extension))
-					{
+					if ( Q_stricmp( name + length - extensionLength, extension ) ) {
 						continue;
 					}
 					// unique the match
 
 					temp = pathLength;
-					if (pathLength)
-					{
-						temp++;     // include the '/'
+					if (pathLength) {
+						temp++;		// include the '/'
 					}
-					nfiles = FS_AddFileToList(name + temp, list, nfiles);
+					nfiles = FS_AddFileToList( name + temp, list, nfiles );
 				}
 			}
-		}
-		else if (search->dir)       // scan for files in the filesystem
-		{
-			char *netpath;
-			int  numSysFiles;
-			char **sysFiles;
-			char *name;
+		} else if (search->dir) { // scan for files in the filesystem
+			char	*netpath;
+			int		numSysFiles;
+			char	**sysFiles;
+			char	*name;
 
 			// don't scan directories for files if we are pure or restricted
-			if (fs_numServerPaks)
-			{
-				continue;
-			}
-			else
-			{
-				netpath  = FS_BuildOSPath(search->dir->path, search->dir->gamedir, path);
-				sysFiles = Sys_ListFiles(netpath, extension, filter, &numSysFiles, qfalse);
-				for (i = 0 ; i < numSysFiles ; i++)
-				{
+			if ( fs_numServerPaks && !allowNonPureFilesOnDisk ) {
+		        continue;
+		    } else {
+				netpath = FS_BuildOSPath( search->dir->path, search->dir->gamedir, path );
+				sysFiles = Sys_ListFiles( netpath, extension, filter, &numSysFiles, qfalse );
+				for ( i = 0 ; i < numSysFiles ; i++ ) {
 					// unique the match
-					name   = sysFiles[i];
-					nfiles = FS_AddFileToList(name, list, nfiles);
+					name = sysFiles[i];
+					nfiles = FS_AddFileToList( name, list, nfiles );
 				}
-				Sys_FreeFileList(sysFiles);
+				Sys_FreeFileList( sysFiles );
 			}
-		}
+		}		
 	}
 
 	// return a copy of the list
 	*numfiles = nfiles;
 
-	if (!nfiles)
-	{
+	if ( !nfiles ) {
 		return NULL;
 	}
 
-	listCopy = Z_Malloc((nfiles + 1) * sizeof(*listCopy));
-	for (i = 0 ; i < nfiles ; i++)
-	{
+	listCopy = Z_Malloc( ( nfiles + 1 ) * sizeof( *listCopy ) );
+	for ( i = 0 ; i < nfiles ; i++ ) {
 		listCopy[i] = list[i];
 	}
 	listCopy[i] = NULL;
@@ -2590,10 +2565,10 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 FS_ListFiles
 =================
 */
-char **FS_ListFiles(const char *path, const char *extension, int *numfiles)
-{
-	return FS_ListFilteredFiles(path, extension, NULL, numfiles);
+char **FS_ListFiles( const char *path, const char *extension, int *numfiles ) {
+	return FS_ListFilteredFiles( path, extension, NULL, numfiles, qfalse );
 }
+
 
 /*
 =================
@@ -3038,7 +3013,7 @@ void FS_NewDir_f(void)
 
 	Com_Printf("---------------\n");
 
-	dirnames = FS_ListFilteredFiles("", "", filter, &ndirs);
+	dirnames = FS_ListFilteredFiles("", "", filter, &ndirs, qfalse );
 
 	FS_SortFileList(dirnames, ndirs);
 
@@ -4680,6 +4655,30 @@ int     FS_FTell(fileHandle_t f)
 void    FS_Flush(fileHandle_t f)
 {
 	fflush(fsh[f].handleFiles.file.o);
+}
+
+void	FS_FilenameCompletion( const char *dir, const char *ext,
+		qboolean stripExt, void(*callback)(const char *s), qboolean allowNonPureFilesOnDisk ) {
+	char	**filenames;
+	int		nfiles;
+	int		i;
+	char	filename[ MAX_STRING_CHARS ];
+
+	filenames = FS_ListFilteredFiles( dir, ext, NULL, &nfiles, allowNonPureFilesOnDisk );
+
+	FS_SortFileList( filenames, nfiles );
+
+	for( i = 0; i < nfiles; i++ ) {
+		FS_ConvertPath( filenames[ i ] );
+		Q_strncpyz( filename, filenames[ i ], MAX_STRING_CHARS );
+
+		if( stripExt ) {
+			COM_StripExtension(filename, filename, sizeof(filename));
+		}
+
+		callback( filename );
+	}
+	FS_FreeFileList( filenames );
 }
 
 // CVE-2006-2082

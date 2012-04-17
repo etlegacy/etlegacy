@@ -107,48 +107,22 @@ const char *COM_GetExtension(const char *name)
 	return &name[i + 1];
 }
 
-
 /*
 ============
 COM_StripExtension
 ============
 */
-void COM_StripExtension(const char *in, char *out)
+void COM_StripExtension(const char *in, char *out, int destsize)
 {
-	while (*in && *in != '.')
+	const char *dot = strrchr(in, '.'), *slash;
+	if (dot && (!(slash = strrchr(in, '/')) || slash < dot))
 	{
-		*out++ = *in++;
+		Q_strncpyz(out, in, (destsize < dot - in + 1 ? destsize : dot - in + 1));
 	}
-	*out = 0;
-}
-
-/*
-============
-COM_StripExtension2
-a safer version
-============
-*/
-void COM_StripExtension2(const char *in, char *out, int destsize)
-{
-	int      i;
-	qboolean period = qfalse;
-	for (i = strlen(in) - 1; i >= 0; --i)
+	else
 	{
-		if (in[i] == '.')
-		{
-			if (++i > destsize)
-			{
-				i = destsize;
-			}
-			period = qtrue;
-			break;
-		}
+		Q_strncpyz(out, in, destsize);
 	}
-	if (!period)
-	{
-		i = destsize;
-	}
-	Q_strncpyz(out, in, i);
 }
 
 void COM_StripFilename(char *in, char *out)
@@ -1486,6 +1460,25 @@ char *QDECL va(char *format, ...)
 }
 
 /*
+ * @brief Assumes buffer is atleast TRUNCATE_LENGTH big
+ */
+void Com_TruncateLongString(char *buffer, const char *s)
+{
+	int length = strlen(s);
+
+	if (length <= TRUNCATE_LENGTH)
+	{
+		Q_strncpyz(buffer, s, TRUNCATE_LENGTH);
+	}
+	else
+	{
+		Q_strncpyz(buffer, s, (TRUNCATE_LENGTH / 2) - 3);
+		Q_strcat(buffer, TRUNCATE_LENGTH, " ... ");
+		Q_strcat(buffer, TRUNCATE_LENGTH, s + length - (TRUNCATE_LENGTH / 2) + 3);
+	}
+}
+
+/*
 =============
 TempVector
 
@@ -1901,3 +1894,81 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 
 
 //====================================================================
+
+/*
+==================
+Com_CharIsOneOfCharset
+==================
+*/
+static qboolean Com_CharIsOneOfCharset(char c, char *set)
+{
+	int i;
+
+	for (i = 0; i < strlen(set); i++)
+	{
+		if (set[i] == c)
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/*
+==================
+Com_SkipCharset
+==================
+*/
+char *Com_SkipCharset(char *s, char *sep)
+{
+	char *p = s;
+
+	while (p)
+	{
+		if (Com_CharIsOneOfCharset(*p, sep))
+		{
+			p++;
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	return p;
+}
+
+/*
+==================
+Com_SkipTokens
+==================
+*/
+char *Com_SkipTokens(char *s, int numTokens, char *sep)
+{
+	int  sepCount = 0;
+	char *p       = s;
+
+	while (sepCount < numTokens)
+	{
+		if (Com_CharIsOneOfCharset(*p++, sep))
+		{
+			sepCount++;
+			while (Com_CharIsOneOfCharset(*p, sep))
+				p++;
+		}
+		else if (*p == '\0')
+		{
+			break;
+		}
+	}
+
+	if (sepCount == numTokens)
+	{
+		return p;
+	}
+	else
+	{
+		return s;
+	}
+}

@@ -405,6 +405,10 @@ void CON_Print(const char *msg)
 #include "../qcommon/qcommon.h"
 #include "sys_local.h"
 
+#ifndef DEDICATED
+#include "../client/client.h"
+#endif
+
 #include <unistd.h>
 #include <signal.h>
 #include <termios.h>
@@ -424,8 +428,9 @@ called before and after a stdout or stderr output
 extern qboolean stdinIsATTY;
 static qboolean stdin_active;
 // general flag to tell about tty console mode
-static qboolean ttycon_on   = qfalse;
-static int      ttycon_hide = 0;
+static qboolean ttycon_on           = qfalse;
+static int      ttycon_hide         = 0;
+static int      ttycon_show_overdue = 0;
 
 // some key codes that the terminal may be using, initialised on start up
 static int TTY_erase;
@@ -440,6 +445,14 @@ static field_t TTY_con;
 #define CON_HISTORY 32
 static field_t ttyEditLines[CON_HISTORY];
 static int     hist_current = -1, hist_count = 0;
+
+#ifndef DEDICATED
+// Don't use "]" as it would be the same as in-game console,
+//   this makes it clear where input came from.
+#define TTY_CONSOLE_PROMPT "tty]"
+#else
+#define TTY_CONSOLE_PROMPT "]"
+#endif
 
 /*
 ==================
@@ -469,8 +482,8 @@ send "\b \b"
 */
 static void CON_Back(void)
 {
-	char   key;
-	size_t size;
+	char              key;
+	size_t UNUSED_VAR size;
 
 	key  = '\b';
 	size = write(STDOUT_FILENO, &key, 1);
@@ -505,7 +518,11 @@ static void CON_Hide(void)
 				CON_Back();
 			}
 		}
-		CON_Back(); // Delete "]"
+		// Delete prompt
+		for (i = strlen(TTY_CONSOLE_PROMPT); i > 0; i--)
+		{
+			CON_Back();
+		}
 		ttycon_hide++;
 	}
 }
@@ -528,8 +545,8 @@ static void CON_Show(void)
 		ttycon_hide--;
 		if (ttycon_hide == 0)
 		{
-			size_t size;
-			size = write(STDOUT_FILENO, "]", 1);
+			size_t UNUSED_VAR size;
+			size = write(STDOUT_FILENO, TTY_CONSOLE_PROMPT, strlen(TTY_CONSOLE_PROMPT));
 			if (TTY_con.cursor)
 			{
 				for (i = 0; i < TTY_con.cursor; i++)
@@ -552,7 +569,7 @@ void CON_Shutdown(void)
 {
 	if (ttycon_on)
 	{
-		CON_Back(); // Delete "]"
+		CON_Hide();
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &TTY_tc);
 	}
 
@@ -567,6 +584,12 @@ Hist_Add
 */
 void Hist_Add(field_t *field)
 {
+	// Don't save blank lines in history.
+	if (!field->cursor)
+	{
+		return;
+	}
+
 	int i;
 	assert(hist_count <= CON_HISTORY);
 	assert(hist_count >= 0);
@@ -696,7 +719,9 @@ void CON_Init(void)
 	tc.c_cc[VMIN]  = 1;
 	tc.c_cc[VTIME] = 0;
 	tcsetattr(STDIN_FILENO, TCSADRAIN, &tc);
-	ttycon_on = qtrue;
+	ttycon_on   = qtrue;
+	ttycon_hide = 1; // Mark as hidden, so prompt is shown in CON_Show
+	CON_Show();
 }
 
 /*
@@ -707,11 +732,11 @@ CON_Input
 char *CON_Input(void)
 {
 	// we use this when sending back commands
-	static char text[MAX_EDIT_LINE];
-	int         avail;
-	char        key;
-	field_t     *history;
-	size_t      size;
+	static char       text[MAX_EDIT_LINE];
+	int               avail;
+	char              key;
+	field_t           *history;
+	size_t UNUSED_VAR size;
 
 	if (ttycon_on)
 	{
@@ -736,19 +761,51 @@ char *CON_Input(void)
 			{
 				if (key == '\n')
 				{
+#ifndef DEDICATED
+					// if not in the game explicitly prepend a slash if needed
+					if (clc.state != CA_ACTIVE && TTY_con.cursor &&
+					    TTY_con.buffer[0] != '/' && TTY_con.buffer[0] != '\\')
+					{
+						memmove(TTY_con.buffer + 1, TTY_con.buffer, sizeof(TTY_con.buffer) - 1);
+						TTY_con.buffer[0] = '\\';
+						TTY_con.cursor++;
+					}
+
+					if (TTY_con.buffer[0] == '/' || TTY_con.buffer[0] == '\\')
+					{
+						Q_strncpyz(text, TTY_con.buffer + 1, sizeof(text));
+					}
+					else if (TTY_con.cursor)
+					{
+						Com_sprintf(text, sizeof(text), "cmd say %s", TTY_con.buffer);
+					}
+					else
+					{
+						text[0] = '\0';
+					}
+
+					// push it in history
+					Hist_Add(&TTY_con);
+					CON_Hide();
+					Com_Printf("%s%s\n", TTY_CONSOLE_PROMPT, TTY_con.buffer);
+					Field_Clear(&TTY_con);
+					CON_Show();
+#else
 					// push it in history
 					Hist_Add(&TTY_con);
 					Q_strncpyz(text, TTY_con.buffer, sizeof(text));
 					Field_Clear(&TTY_con);
 					key  = '\n';
-					size = write(1, &key, 1);
-					size = write(1, "]", 1);
+					size = write(STDOUT_FILENO, &key, 1);
+					size = write(STDOUT_FILENO, TTY_CONSOLE_PROMPT, strlen(TTY_CONSOLE_PROMPT));
+#endif
+
 					return text;
 				}
 				if (key == '\t')
 				{
 					CON_Hide();
-					Field_CompleteCommand(&TTY_con);
+					Field_AutoComplete(&TTY_con);
 					CON_Show();
 					return NULL;
 				}
@@ -807,7 +864,7 @@ char *CON_Input(void)
 			}
 			// push regular character
 			TTY_con.buffer[TTY_con.cursor] = key;
-			TTY_con.cursor++;
+			TTY_con.cursor++; // next char will always be '\0'
 			// print the current line (this is differential)
 			size = write(STDOUT_FILENO, &key, 1);
 		}
@@ -854,6 +911,11 @@ CON_Print
 */
 void CON_Print(const char *msg)
 {
+	if (!msg[0])
+	{
+		return;
+	}
+
 	CON_Hide();
 
 	if (com_ansiColor && com_ansiColor->integer)
@@ -865,7 +927,30 @@ void CON_Print(const char *msg)
 		fputs(msg, stderr);
 	}
 
-	CON_Show();
+	if (!ttycon_on)
+	{
+		// CON_Hide didn't do anything.
+		return;
+	}
+
+	// Only print prompt when msg ends with a newline, otherwise the console
+	//   might get garbled when output does not fit on one line.
+	if (msg[strlen(msg) - 1] == '\n')
+	{
+		CON_Show();
+
+		// Run CON_Show the number of times it was deferred.
+		while (ttycon_show_overdue > 0)
+		{
+			CON_Show();
+			ttycon_show_overdue--;
+		}
+	}
+	else
+	{
+		// Defer calling CON_Show
+		ttycon_show_overdue++;
+	}
 }
 
 #endif

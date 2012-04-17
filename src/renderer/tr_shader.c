@@ -131,7 +131,7 @@ void R_RemapShader(const char *shaderName, const char *newShaderName, const char
 
 	// remap all the shaders with the given name
 	// even tho they might have different lightmaps
-	COM_StripExtension2(shaderName, strippedName, sizeof(strippedName));
+	COM_StripExtension(shaderName, strippedName, sizeof(strippedName));
 	hash = generateHashValue(strippedName);
 	for (sh = hashTable[hash]; sh; sh = sh->next)
 	{
@@ -3425,7 +3425,7 @@ shader_t *R_FindShaderByName(const char *name)
 		return tr.defaultShader;
 	}
 
-	COM_StripExtension2(name, strippedName, sizeof(strippedName));
+	COM_StripExtension(name, strippedName, sizeof(strippedName));
 	COM_FixPath(strippedName);
 
 	hash = generateHashValue(strippedName);
@@ -3551,7 +3551,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	// ydnar: validate lightmap index
 	R_FindLightmap(&lightmapIndex);
 
-	COM_StripExtension2(name, strippedName, sizeof(strippedName));
+	COM_StripExtension(name, strippedName, sizeof(strippedName));
 	COM_FixPath(strippedName);
 
 	hash = generateHashValue(strippedName);

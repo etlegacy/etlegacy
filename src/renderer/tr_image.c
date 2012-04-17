@@ -1134,7 +1134,7 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 				// Loader failed, most likely because the file isn't there;
 				// try again without the extension
 				orgNameFailed = qtrue;
-				COM_StripExtension2(name, localName, MAX_QPATH);
+				COM_StripExtension(name, localName, MAX_QPATH);
 			}
 			else
 			{

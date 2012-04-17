@@ -387,6 +387,7 @@ typedef struct cmd_function_s
 	struct cmd_function_s *next;
 	char *name;
 	xcommand_t function;
+	completionFunc_t	complete;
 } cmd_function_t;
 
 
@@ -768,6 +769,20 @@ void    Cmd_CommandCompletion(void (*callback)(const char *s))
 	}
 }
 
+/*
+============
+Cmd_CompleteArgument
+============
+*/
+void Cmd_CompleteArgument( const char *command, char *args, int argNum ) {
+	cmd_function_t	*cmd;
+
+	for( cmd = cmd_functions; cmd; cmd = cmd->next ) {
+		if( !Q_stricmp( command, cmd->name ) && cmd->complete ) {
+			cmd->complete( args, argNum );
+		}
+	}
+}
 
 /*
 ============

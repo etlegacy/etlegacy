@@ -872,8 +872,7 @@ float Com_Clamp(float min, float max, float value);
 char *COM_SkipPath(char *pathname);
 void    COM_FixPath(char *pathname);
 const char *COM_GetExtension(const char *name);
-void    COM_StripExtension(const char *in, char *out);
-void    COM_StripExtension2(const char *in, char *out, int destsize);
+void    COM_StripExtension(const char *in, char *out, int destsize);
 void    COM_StripFilename(char *in, char *out);
 qboolean COM_CompareExtension(const char *in, const char *ext);
 void    COM_DefaultExtension(char *path, int maxSize, const char *extension);
@@ -928,6 +927,8 @@ void Parse2DMatrix(char **buf_p, int y, int x, float *m);
 void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m);
 
 int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) __attribute__ ((format(printf, 3, 4)));
+
+char *Com_SkipCharset(char *s, char *sep);
 
 // mode parm for FS_FOpenFile
 typedef enum
@@ -1004,6 +1005,9 @@ typedef struct
 float *tv(float x, float y, float z);
 
 char *QDECL va(char *format, ...) __attribute__ ((format(printf, 1, 2)));
+
+#define TRUNCATE_LENGTH 64
+void Com_TruncateLongString(char *buffer, const char *s);
 
 //=============================================
 

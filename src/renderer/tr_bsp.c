@@ -3021,17 +3021,17 @@ void RE_LoadWorldMap(const char *name)
 
 	// ydnar: set map meta dir
 	tr.worldDir = CopyString(name);
-	COM_StripExtension(tr.worldDir, tr.worldDir);
+	COM_StripExtension(tr.worldDir, tr.worldDir, sizeof(tr.worldDir));
 
 	// clear tr.world so if the level fails to load, the next
 	// try will not look at the partially loaded version
 	tr.world = NULL;
 
-	memset(&s_worldData, 0, sizeof(s_worldData));
+	Com_Memset(&s_worldData, 0, sizeof(s_worldData));
 	Q_strncpyz(s_worldData.name, name, sizeof(s_worldData.name));
 
 	Q_strncpyz(s_worldData.baseName, COM_SkipPath(s_worldData.name), sizeof(s_worldData.name));
-	COM_StripExtension(s_worldData.baseName, s_worldData.baseName);
+	COM_StripExtension(s_worldData.baseName, s_worldData.baseName, sizeof(s_worldData.baseName));
 
 	startMarker = ri.Hunk_Alloc(0, h_low);
 	c_gridVerts = 0;

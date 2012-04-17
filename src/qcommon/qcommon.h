@@ -474,8 +474,12 @@ void    Cmd_AddCommand(const char *cmd_name, xcommand_t function);
 
 void    Cmd_RemoveCommand(const char *cmd_name);
 
+typedef void (*completionFunc_t)(char *args, int argNum);
+
 void Cmd_CommandCompletion(void (*callback)(const char *s));
 // callback with each valid string
+
+void Cmd_CompleteArgument(const char *command, char *args, int argNum);
 
 int     Cmd_Argc(void);
 char *Cmd_Argv(int arg);
@@ -750,6 +754,9 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring);
 
 void FS_Rename(const char *from, const char *to);
 
+void    FS_FilenameCompletion(const char *dir, const char *ext,
+                              qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
+
 #if !defined(DEDICATED)
 extern int cl_connectedToPureServer;
 qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const char *filename);
@@ -790,7 +797,12 @@ typedef struct
 } field_t;
 
 void Field_Clear(field_t *edit);
-void Field_CompleteCommand(field_t *edit);
+void Field_AutoComplete(field_t *edit);
+void Field_CompleteKeyname(void);
+void Field_CompleteFilename(const char *dir,
+                            const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk);
+void Field_CompleteCommand(char *cmd,
+                           qboolean doCommands, qboolean doCvars);
 
 /*==============================================================
 MISC
@@ -1045,6 +1057,9 @@ void CL_StartHunkUsers(void);
 void CL_CheckAutoUpdate(void);
 qboolean CL_NextUpdateServer(void);
 void CL_GetAutoUpdate(void);
+
+void Key_KeynameCompletion(void (*callback)(const char *s));
+// for keyname autocompletion
 
 void Key_WriteBindings(fileHandle_t f);
 // for writing the config files

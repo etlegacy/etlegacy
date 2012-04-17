@@ -3615,7 +3615,7 @@ void Field_Clear(field_t *edit)
 static const char *completionString;
 static char       shortestMatch[MAX_TOKEN_CHARS];
 static int        matchCount;
-// field we are working on, passed to Field_CompleteCommand (&g_consoleCommand for instance)
+// field we are working on, passed to Field_AutoComplete(&g_consoleCommand for instance)
 static field_t *completionField;
 
 /*
@@ -3664,6 +3664,21 @@ static void PrintMatches(const char *s)
 	}
 }
 
+/*
+===============
+PrintCvarMatches
+
+===============
+*/
+static void PrintCvarMatches( const char *s ) {
+	char value[ TRUNCATE_LENGTH ];
+
+	if ( !Q_stricmpn( s, shortestMatch, strlen( shortestMatch ) ) ) {
+		Com_TruncateLongString( value, Cvar_VariableString( s ) );
+		Com_Printf( "    %s = \"%s\"\n", s, value );
+	}
+}
+
 static void keyConcatArgs(void)
 {
 	int  i;
@@ -3707,75 +3722,195 @@ static void ConcatRemaining(const char *src, const char *start)
 
 /*
 ===============
-Field_CompleteCommand
-
-perform Tab expansion
-NOTE TTimo this was originally client code only
-  moved to common code when writing tty console for *nix dedicated server
+Field_FindFirstSeparator
 ===============
 */
-void Field_CompleteCommand(field_t *field)
+static char *Field_FindFirstSeparator( char *s )
 {
-	field_t temp;
-	completionField = field;
+	int i;
 
-	// only look at the first token for completion purposes
-	Cmd_TokenizeString(completionField->buffer);
-
-	completionString = Cmd_Argv(0);
-	if (completionString[0] == '\\' || completionString[0] == '/')
+	for( i = 0; i < strlen( s ); i++ )
 	{
-		completionString++;
-	}
-	matchCount       = 0;
-	shortestMatch[0] = 0;
-
-	if (strlen(completionString) == 0)
-	{
-		return;
+		if( s[ i ] == ';' )
+			return &s[ i ];
 	}
 
-	Cmd_CommandCompletion(FindMatches);
-	Cvar_CommandCompletion(FindMatches);
-
-	if (matchCount == 0)
-	{
-		return; // no matches
-	}
-
-	Com_Memcpy(&temp, completionField, sizeof(field_t));
-
-	if (matchCount == 1)
-	{
-		Com_sprintf(completionField->buffer, sizeof(completionField->buffer), "\\%s", shortestMatch);
-		if (Cmd_Argc() == 1)
-		{
-			Q_strcat(completionField->buffer, sizeof(completionField->buffer), " ");
-		}
-		else
-		{
-			ConcatRemaining(temp.buffer, completionString);
-		}
-		completionField->cursor = strlen(completionField->buffer);
-		return;
-	}
-
-	// multiple matches, complete to shortest
-	Com_sprintf(completionField->buffer, sizeof(completionField->buffer), "\\%s", shortestMatch);
-	completionField->cursor = strlen(completionField->buffer);
-	ConcatRemaining(temp.buffer, completionString);
-
-	Com_Printf("]%s\n", completionField->buffer);
-
-	// run through again, printing matches
-	Cmd_CommandCompletion(PrintMatches);
-	Cvar_CommandCompletion(PrintMatches);
+	return NULL;
 }
+
+/*
+===============
+Field_Complete
+===============
+*/
+static qboolean Field_Complete( void )
+{
+	int completionOffset;
+
+	if( matchCount == 0 )
+		return qtrue;
+
+	completionOffset = strlen( completionField->buffer ) - strlen( completionString );
+
+	Q_strncpyz( &completionField->buffer[ completionOffset ], shortestMatch,
+		sizeof( completionField->buffer ) - completionOffset );
+
+	completionField->cursor = strlen( completionField->buffer );
+
+	if( matchCount == 1 )
+	{
+		Q_strcat( completionField->buffer, sizeof( completionField->buffer ), " " );
+		completionField->cursor++;
+		return qtrue;
+	}
+
+	Com_Printf( "]%s\n", completionField->buffer );
+
+	return qfalse;
+}
+
+#ifndef DEDICATED
+/*
+===============
+Field_CompleteKeyname
+===============
+*/
+void Field_CompleteKeyname( void )
+{
+	matchCount = 0;
+	shortestMatch[ 0 ] = 0;
+
+	Key_KeynameCompletion( FindMatches );
+
+	if( !Field_Complete( ) )
+		Key_KeynameCompletion( PrintMatches );
+}
+#endif
+
+/*
+===============
+Field_CompleteFilename
+===============
+*/
+void Field_CompleteFilename( const char *dir,
+		const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk )
+{
+	matchCount = 0;
+	shortestMatch[ 0 ] = 0;
+
+	FS_FilenameCompletion( dir, ext, stripExt, FindMatches, allowNonPureFilesOnDisk );
+
+	if( !Field_Complete( ) )
+		FS_FilenameCompletion( dir, ext, stripExt, PrintMatches, allowNonPureFilesOnDisk );
+}
+
+/*
+===============
+Field_CompleteCommand
+===============
+*/
+void Field_CompleteCommand( char *cmd,
+		qboolean doCommands, qboolean doCvars )
+{
+	int		completionArgument = 0;
+
+	// Skip leading whitespace and quotes
+	cmd = Com_SkipCharset( cmd, " \"" );
+
+	Cmd_TokenizeStringIgnoreQuotes( cmd );
+	completionArgument = Cmd_Argc( );
+
+	// If there is trailing whitespace on the cmd
+	if( *( cmd + strlen( cmd ) - 1 ) == ' ' )
+	{
+		completionString = "";
+		completionArgument++;
+	}
+	else
+		completionString = Cmd_Argv( completionArgument - 1 );
+
+#ifndef DEDICATED
+	// Unconditionally add a '\' to the start of the buffer
+	if( completionField->buffer[ 0 ] &&
+			completionField->buffer[ 0 ] != '\\' )
+	{
+		if( completionField->buffer[ 0 ] != '/' )
+		{
+			// Buffer is full, refuse to complete
+			if( strlen( completionField->buffer ) + 1 >=
+				sizeof( completionField->buffer ) )
+				return;
+
+			memmove( &completionField->buffer[ 1 ],
+				&completionField->buffer[ 0 ],
+				strlen( completionField->buffer ) + 1 );
+			completionField->cursor++;
+		}
+
+		completionField->buffer[ 0 ] = '\\';
+	}
+#endif
+
+	if( completionArgument > 1 )
+	{
+		const char *baseCmd = Cmd_Argv( 0 );
+		char *p;
+
+#ifndef DEDICATED
+		// This should always be true
+		if( baseCmd[ 0 ] == '\\' || baseCmd[ 0 ] == '/' )
+			baseCmd++;
+#endif
+
+		if( ( p = Field_FindFirstSeparator( cmd ) ) )
+			Field_CompleteCommand( p + 1, qtrue, qtrue ); // Compound command
+		else
+			Cmd_CompleteArgument( baseCmd, cmd, completionArgument ); 
+	}
+	else
+	{
+		if( completionString[0] == '\\' || completionString[0] == '/' )
+			completionString++;
+
+		matchCount = 0;
+		shortestMatch[ 0 ] = 0;
+
+		if( strlen( completionString ) == 0 )
+			return;
+
+		if( doCommands )
+			Cmd_CommandCompletion( FindMatches );
+
+		if( doCvars )
+			Cvar_CommandCompletion( FindMatches );
+
+		if( !Field_Complete( ) )
+		{
+			// run through again, printing matches
+			if( doCommands )
+				Cmd_CommandCompletion( PrintMatches );
+
+			if( doCvars )
+				Cvar_CommandCompletion( PrintCvarMatches );
+		}
+	}
+}
+
 
 void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
 {
 	*hunkused     = com_hunkusedvalue;
 	*hunkexpected = com_expectedhunkusage;
+}
+
+/*
+ * @brief Perform Tab expansion
+ */
+void Field_AutoComplete( field_t *field )
+{
+	completionField = field;
+
+	Field_CompleteCommand( completionField->buffer, qtrue, qtrue );
 }
 
 /*

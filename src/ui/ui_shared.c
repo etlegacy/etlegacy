@@ -4770,7 +4770,7 @@ void Item_Text_Paint(itemDef_t *item)
 			DC->getCVarString(item->cvar, text, sizeof(text));
 			if (item->window.flags & WINDOW_TEXTASINT)
 			{
-				COM_StripExtension(text, text);
+				COM_StripExtension(text, text, sizeof(text));
 				item->textRect.w = 0;   // force recalculation
 			}
 			else if (item->window.flags & WINDOW_TEXTASFLOAT)

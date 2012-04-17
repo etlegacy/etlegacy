@@ -216,7 +216,7 @@ void VM_LoadSymbols(vm_t *vm)
 		return;
 	}
 
-	COM_StripExtension2(vm->name, name, sizeof(name));
+	COM_StripExtension(vm->name, name, sizeof(name));
 	Com_sprintf(symbols, sizeof(symbols), "vm/%s.map", name);
 	FS_ReadFile(symbols, &mapfile.v);
 	if (!mapfile.c)

@@ -626,7 +626,7 @@ void SP_misc_gamemodel(gentity_t *ent)
 
 	if (ent->model)
 	{
-		COM_StripExtension(ent->model, tagname);
+		COM_StripExtension(ent->model, tagname, sizeof(tagname));
 		Q_strcat(tagname, MAX_QPATH, ".tag");
 
 		ent->tagNumber = trap_LoadTag(tagname);

@@ -105,7 +105,7 @@ void R_LoadModelShadow(model_t *mod)
 	mod->shadowShader = 0;
 
 	// build name
-	COM_StripExtension2(mod->name, filename, sizeof(filename));
+	COM_StripExtension(mod->name, filename, sizeof(filename));
 	COM_DefaultExtension(filename, 1024, ".shadow");
 
 	// load file
