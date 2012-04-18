@@ -29,54 +29,39 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
  * @file tr_font.c
+ * @brief Handles ingame fonts and can also generate new font files
+ *
+ * The fonts are pre-rendered using [FreeType], then the glyph data are saved
+ * and then hand touched so the font bitmaps scale a bit better in GL.
+ *
+ * In the UI Scripting code, a scale of 1.0 is equal to a 48 point font. In Team
+ * Arena, we use three or four scales, most of them exactly equaling the specific
+ * rendered size. We rendered three sizes in Team Arena, 12, 16, and 20.
+ *
+ * How to generate new font data files
+ * ===================================
+ * 1. Compile ET: Legacy with Freetype support:
+ *  premake4 --with-freetype gmake
+ *  make
+ * 2. Delete the fontname_x_xx.tga files and fontname_xx.dat files from the fonts
+ *    path.
+ * 3. In a ui script, specify a font, smallFont, and bigFont keyword with font
+ *    name and point size.
+ *    The new TrueType fonts must exist in the etmain directory at this point.
+ * 4. Run the game with +set r_saveFontData 1.
+ *    NOTE: you must specify r_saveFontData before the game is started.
+ *    Setting it ingame is pointless as it will get reset to 0 when you restart
+ *    the game.
+ * 5. Exit the game and there will be three dat files and at least three tga files.
+ *    The tga's are in 256x256 pages so if it takes three images to render
+ *    a 24 point font. You will end up with fontname_0_24.tga through fontname_2_24.tga
+ * 6. In future runs of the game, the system looks for these images and data
+ *    files when a specific point sized font is rendered and loads them for use.
+ *    Because of the original beta nature of the FreeType code you will probably
+ *    want to hand touch the font bitmaps.
+ *
+ * [FreeType]:	http://www.freetype.org/	"FreeType"
  */
-
-// The font system uses FreeType 2.x to render TrueType fonts for use within the game.
-// As of this writing ( Nov, 2000 ) Team Arena uses these fonts for all of the ui and
-// about 90% of the cgame presentation. A few areas of the CGAME were left uses the old
-// fonts since the code is shared with standard Q3A.
-//
-// If you include this font rendering code in a commercial product you MUST include the
-// following somewhere with your product, see www.freetype.org for specifics or changes.
-// The Freetype code also uses some hinting techniques that MIGHT infringe on patents
-// held by apple so be aware of that also.
-//
-// As of Q3A 1.25+ and Team Arena, we are shipping the game with the font rendering code
-// disabled. This removes any potential patent issues and it keeps us from having to
-// distribute an actual TrueTrype font which is 1. expensive to do and 2. seems to require
-// an act of god to accomplish.
-//
-// What we did was pre-render the fonts using FreeType ( which is why we leave the FreeType
-// credit in the credits ) and then saved off the glyph data and then hand touched up the
-// font bitmaps so they scale a bit better in GL.
-//
-// There are limitations in the way fonts are saved and reloaded in that it is based on
-// point size and not name. So if you pre-render Helvetica in 18 point and Impact in 18 point
-// you will end up with a single 18 point data file and image set. Typically you will want to
-// choose 3 sizes to best approximate the scaling you will be doing in the ui scripting system
-//
-// In the UI Scripting code, a scale of 1.0 is equal to a 48 point font. In Team Arena, we
-// use three or four scales, most of them exactly equaling the specific rendered size. We
-// rendered three sizes in Team Arena, 12, 16, and 20.
-//
-// To generate new font data you need to go through the following steps.
-// 1. delete the fontImage_x_xx.tga files and fontImage_xx.dat files from the fonts path.
-// 2. in a ui script, specificy a font, smallFont, and bigFont keyword with font name and
-//    point size. the original TrueType fonts must exist in fonts at this point.
-// 3. run the game, you should see things normally.
-// 4. Exit the game and there will be three dat files and at least three tga files. The
-//    tga's are in 256x256 pages so if it takes three images to render a 24 point font you
-//    will end up with fontImage_0_24.tga through fontImage_2_24.tga
-// 5. In future runs of the game, the system looks for these images and data files when a s
-//    specific point sized font is rendered and loads them for use.
-// 6. Because of the original beta nature of the FreeType code you will probably want to hand
-//    touch the font bitmaps.
-//
-// Currently a define in the project turns on or off the FreeType code which is currently
-// defined out. To pre-render new fonts you need enable the define ( USE_FREETYPE ) and
-// uncheck the exclude from build check box in the FreeType2 area of the Renderer project.
-
-
 
 #include "tr_local.h"
 #include "../qcommon/qcommon.h"
@@ -256,21 +241,11 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 		// we need to make sure we fit
 		if (*xOut + scaled_width + 1 >= 255)
 		{
-			if (*yOut + *maxHeight + 1 >= 255)
-			{
-				*yOut = -1;
-				*xOut = -1;
-				ri.Free(bitmap->buffer);
-				ri.Free(bitmap);
-				return &glyph;
-			}
-			else
-			{
-				*xOut  = 0;
-				*yOut += *maxHeight + 1;
-			}
+			*xOut  = 0;
+			*yOut += *maxHeight + 1;
 		}
-		else if (*yOut + *maxHeight + 1 >= 255)
+
+		if (*yOut + *maxHeight + 1 >= 255)
 		{
 			*yOut = -1;
 			*xOut = -1;
@@ -391,12 +366,12 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 	image_t       *image;
 	qhandle_t     h;
 	float         max;
+	float         dpi = 72;
+	float         glyphScale;
 #endif
-	void  *faceData;
-	int   i, len;
-	char  name[1024];
-	float dpi        = 72;
-	float glyphScale = 72.0f / dpi;         // change the scale to be relative to 1 based on 72 dpi ( so dpi of 144 means a scale of .5 )
+	void *faceData;
+	int  i, len;
+	char name[1024];
 
 	if (!fontName)
 	{
@@ -408,8 +383,6 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 	{
 		pointSize = 12;
 	}
-	// we also need to adjust the scale based on point size relative to 48 points as the ui scaling is based on a 48 point font
-	glyphScale *= 48.0f / pointSize;
 
 	// make sure the render thread is stopped
 	R_SyncRenderThread();
@@ -450,8 +423,8 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 			font->glyphs[i].s2          = readFloat();
 			font->glyphs[i].t2          = readFloat();
 			font->glyphs[i].glyph       = readInt();
-			Com_Memcpy(font->glyphs[i].shaderName, &fdFile[fdOffset], 32);
-			fdOffset += 32;
+			Q_strncpyz(font->glyphs[i].shaderName, (const char *)&fdFile[fdOffset], sizeof(font->glyphs[i].shaderName));
+			fdOffset += sizeof(font->glyphs[i].shaderName);
 		}
 		font->glyphScale = readFloat();
 		Com_Memcpy(font->name, &fdFile[fdOffset], MAX_QPATH);
@@ -512,7 +485,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 
 	for (i = GLYPH_START; i < GLYPH_END; i++)
 	{
-		glyph = RE_ConstructGlyphInfo(out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qtrue);
+		RE_ConstructGlyphInfo(out, &xOut, &yOut, &maxHeight, face, (unsigned char)i, qtrue);
 	}
 
 	xOut        = 0;
@@ -537,7 +510,6 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 			imageBuff  = ri.Z_Malloc(newSize);
 			left       = 0;
 			max        = 0;
-			satLevels  = 255;
 			for (k = 0; k < (scaledSize) ; k++)
 			{
 				if (max < out[k])
@@ -587,6 +559,12 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 			i++;
 		}
 	}
+
+	// change the scale to be relative to 1 based on 72 dpi ( so dpi of 144 means a scale of .5 )
+	glyphScale = 72.0f / dpi;
+
+	// we also need to adjust the scale based on point size relative to 48 points as the ui scaling is based on a 48 point font
+	glyphScale *= 48.0f / pointSize;
 
 	registeredFont[registeredFontCount].glyphScale = glyphScale;
 	font->glyphScale                               = glyphScale;
