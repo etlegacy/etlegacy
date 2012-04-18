@@ -963,7 +963,7 @@ temp file loading
 --- high memory ---
 */
 
-#if defined(_DEBUG)
+#if !defined(NDEBUG)
 #define ZONE_DEBUG
 #endif
 
@@ -1070,7 +1070,7 @@ void Key_WriteBindings(fileHandle_t f);
 void S_ClearSoundBuffer(qboolean killStreaming);    //----(SA)  modified
 // call before filesystem access
 
-void SCR_DebugGraph(float value, int color);     // FIXME: move logging to common?
+void SCR_DebugGraph(float value);     // FIXME: move logging to common?
 
 
 //
@@ -1156,8 +1156,8 @@ void *Sys_GetBotLibAPI(void *parms);
 
 char *Sys_GetCurrentUser(void);
 
-void QDECL Sys_Error(const char *error, ...);
-void    Sys_Quit(void);
+void QDECL Sys_Error(const char *error, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
+void    Sys_Quit(void) __attribute__ ((noreturn));
 char *Sys_GetClipboardData(void);       // note that this isn't journaled...
 
 void    Sys_Print(const char *msg);

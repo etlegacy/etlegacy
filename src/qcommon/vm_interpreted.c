@@ -187,7 +187,6 @@ void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 	// to find each instructions starting point for jumps
 	pc          = 0;
 	instruction = 0;
-	code        = (byte *)header + header->codeOffset;
 	codeBase    = (int *)vm->codeBase;
 
 	while (instruction < header->instructionCount)

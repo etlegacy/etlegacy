@@ -350,6 +350,11 @@ int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t project
 	vec3_t           v1, v2;
 	int              *indexes;
 
+	if (numPoints <= 0)
+	{
+		return 0;
+	}
+
 	//increment view count for double check prevention
 	tr.viewCount++;
 

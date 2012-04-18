@@ -411,18 +411,6 @@ void AAS_Accelerate(vec3_t velocity, float frametime, vec3_t wishdir, float wish
 	}
 } //end of the function AAS_Accelerate
 //===========================================================================
-//
-// Parameter:			-
-// Returns:				-
-// Changes Globals:		-
-//===========================================================================
-void AAS_AirControl(vec3_t start, vec3_t end, vec3_t velocity, vec3_t cmdmove)
-{
-	vec3_t dir;
-
-	VectorSubtract(end, start, dir);
-} //end of the function AAS_AirControl
-//===========================================================================
 // applies ground friction to the given velocity
 //
 // Parameter:				-
@@ -583,7 +571,7 @@ int AAS_PredictClientMovement(struct aas_clientmove_s *move,
 		}
 		else if (n < cmdframes)
 		{
-			ax         = 0;
+			//ax         = 0;
 			maxvel     = sv_maxwalkvelocity;
 			accelerate = sv_airaccelerate;
 			VectorCopy(cmdmove, wishdir);
@@ -607,13 +595,13 @@ int AAS_PredictClientMovement(struct aas_clientmove_s *move,
 				{
 					accelerate = sv_walkaccelerate;
 				} //end else
-				ax = 2;
+				  //ax = 2;
 			} //end if
 			if (swimming)
 			{
 				maxvel     = sv_maxswimvelocity;
 				accelerate = sv_swimaccelerate;
-				ax         = 3;
+				//ax         = 3;
 			} //end if
 			else
 			{

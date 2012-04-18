@@ -1087,7 +1087,8 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		re.Finish();
 		return 0;
 	default:
-		Com_Error(ERR_DROP, "Bad cgame system trap: %i", args[0]);
+		assert(0);
+		Com_Error(ERR_DROP, "Bad cgame system trap: %ld", (long int) args[0]);
 	}
 	return 0;
 }
@@ -1321,7 +1322,6 @@ or bursted delayed packets.
 
 void CL_AdjustTimeDelta(void)
 {
-	int resetTime;
 	int newDelta;
 	int deltaDelta;
 
@@ -1331,16 +1331,6 @@ void CL_AdjustTimeDelta(void)
 	if (clc.demoplaying)
 	{
 		return;
-	}
-
-	// if the current time is WAY off, just correct to the current value
-	if (com_sv_running->integer)
-	{
-		resetTime = 100;
-	}
-	else
-	{
-		resetTime = RESET_TIME;
 	}
 
 	newDelta   = cl.snap.serverTime - cls.realtime;

@@ -843,7 +843,7 @@ void R_BuildCloudData(shaderCommands_t *input)
 	tess.numIndexes  = 0;
 	tess.numVertexes = 0;
 
-	if (input->shader->sky.cloudHeight)
+	if (shader->sky.cloudHeight)
 	{
 		// ok, this is really wierd. it's iterating through shader stages here,
 		// which is unecessary for a multi-stage sky shader, as far as i can tell
@@ -858,7 +858,7 @@ void R_BuildCloudData(shaderCommands_t *input)
 			FillCloudBox(input->shader, i);
 		}
 #else
-		FillCloudBox(input->shader, 0);
+		FillCloudBox(shader, 0);
 #endif
 	}
 }

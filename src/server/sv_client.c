@@ -821,30 +821,22 @@ static void SV_CloseDownload(client_t *cl)
 }
 
 /*
-==================
-SV_StopDownload_f
-
-Abort a download if in progress
-==================
-*/
-void SV_StopDownload_f(client_t *cl)
+ * @brief Abort a download if in progress
+ */
+static void SV_StopDownload_f(client_t *cl)
 {
 	if (*cl->downloadName)
 	{
-		Com_DPrintf("clientDownload: %d : file \"%s\" aborted\n", cl - svs.clients, cl->downloadName);
+		Com_DPrintf("clientDownload: %d : file \"%s\" aborted\n", (int) (cl - svs.clients), cl->downloadName);
 	}
 
 	SV_CloseDownload(cl);
 }
 
 /*
-==================
-SV_DoneDownload_f
-
-Downloads are finished
-==================
-*/
-void SV_DoneDownload_f(client_t *cl)
+ * @brief Downloads are finished
+ */
+static void SV_DoneDownload_f(client_t *cl)
 {
 	Com_DPrintf("clientDownload: %s Done\n", cl->name);
 	// resend the game state to update any clients that entered during the download
@@ -865,12 +857,12 @@ void SV_NextDownload_f(client_t *cl)
 
 	if (block == cl->downloadClientBlock)
 	{
-		Com_DPrintf("clientDownload: %d : client acknowledge of block %d\n", cl - svs.clients, block);
+		Com_DPrintf("clientDownload: %d : client acknowledge of block %d\n", (int) (cl - svs.clients), block);
 
 		// Find out if we are done.  A zero-length block indicates EOF
 		if (cl->downloadBlockSize[cl->downloadClientBlock % MAX_DOWNLOAD_WINDOW] == 0)
 		{
-			Com_Printf("clientDownload: %d : file \"%s\" completed\n", cl - svs.clients, cl->downloadName);
+			Com_Printf("clientDownload: %d : file \"%s\" completed\n", (int) (cl - svs.clients), cl->downloadName);
 			SV_CloseDownload(cl);
 			return;
 		}
@@ -1313,7 +1305,7 @@ void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 			MSG_WriteData(msg, cl->downloadBlocks[curindex], cl->downloadBlockSize[curindex]);
 		}
 
-		Com_DPrintf("clientDownload: %d : writing block %d\n", cl - svs.clients, cl->downloadXmitBlock);
+		Com_DPrintf("clientDownload: %d : writing block %d\n", (int) (cl - svs.clients), cl->downloadXmitBlock);
 
 		// Move on to the next block
 		// It will get sent with next snap shot.  The rate will keep us in line.
@@ -1362,8 +1354,6 @@ static void SV_VerifyPaks_f(client_t *cl)
 	// ui and cgame that we think should be loaded based on the pure setting
 	if (sv_pure->integer != 0)
 	{
-
-		bGood    = qtrue;
 		nChkSum1 = nChkSum2 = 0;
 
 		bGood = (FS_FileIsInPAK(Sys_GetDLLName("cgame"), &nChkSum1) == 1);

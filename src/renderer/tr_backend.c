@@ -920,7 +920,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	// we definately want to sync every frame for the cinematics
 	qglFinish();
 
-	start = end = 0;
+	start = 0;
 	if (r_speeds->integer)
 	{
 		start = ri.Milliseconds();

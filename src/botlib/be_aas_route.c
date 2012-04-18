@@ -1264,7 +1264,7 @@ int AAS_ReadRouteCache(void)
 	if (routecacheheader.ident != RCID)
 	{
 		botimport.FS_FCloseFile(fp);
-        AAS_Error("%s is not a route cache dump\n", filename);
+		AAS_Error("%s is not a route cache dump\n", filename);
 		return qfalse;
 	} //end if
 	if (routecacheheader.version != RCVERSION)

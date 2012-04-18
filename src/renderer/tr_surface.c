@@ -1392,10 +1392,6 @@ void RB_SurfaceFace(srfSurfaceFace_t *surf)
 
 	tess.numIndexes += surf->numIndices;
 
-	v = surf->points[0];
-
-	ndx = tess.numVertexes;
-
 	numPoints = surf->numPoints;
 
 	if (tess.shader->needsNormal)
@@ -1520,7 +1516,6 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 	// in the tess structure, so we may have to issue it in multiple passes
 
 	used = 0;
-	rows = 0;
 	while (used < lodHeight - 1)
 	{
 		// see how many rows of both verts and indexes we can add without overflowing

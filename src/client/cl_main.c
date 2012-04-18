@@ -261,10 +261,8 @@ CL_ChangeReliableCommand
 */
 void CL_ChangeReliableCommand(void)
 {
-	int r, index, l;
+	int index, l;
 
-	// NOTE TTimo: what is the randomize for?
-	r     = clc.reliableSequence - (random() * 5);
 	index = clc.reliableSequence & (MAX_RELIABLE_COMMANDS - 1);
 	l     = strlen(clc.reliableCommands[index]);
 	if (l >= MAX_STRING_CHARS - 1)
@@ -3023,7 +3021,7 @@ void CL_Frame(int msec)
 
 	if (cl_timegraph->integer)
 	{
-		SCR_DebugGraph(cls.realFrametime * 0.25, 0);
+		SCR_DebugGraph(cls.realFrametime * 0.25);
 	}
 
 	// see if we need to update any userinfo
@@ -4281,10 +4279,8 @@ CL_GetServerStatus
 */
 serverStatus_t *CL_GetServerStatus(netadr_t from)
 {
-	serverStatus_t *serverStatus;
-	int            i, oldest, oldestTime;
+	int i, oldest, oldestTime;
 
-	serverStatus = NULL;
 	for (i = 0; i < MAX_SERVERSTATUSREQUESTS; i++)
 	{
 		if (NET_CompareAdr(from, cl_serverStatusList[i].address))
@@ -4880,7 +4876,6 @@ qboolean CL_UpdateVisiblePings_f(int source)
 	{
 		serverInfo_t *server = NULL;
 
-		max = (source == AS_GLOBAL) ? MAX_GLOBAL_SERVERS : MAX_OTHER_SERVERS;
 		switch (source)
 		{
 		case AS_LOCAL:
