@@ -339,7 +339,7 @@ char *CON_Input(void)
 
 			Q_strncpyz(f.buffer, qconsole_line,
 			           sizeof(f.buffer));
-			Field_CompleteCommand(&f);
+			Field_AutoComplete(&f);
 			Q_strncpyz(qconsole_line, f.buffer,
 			           sizeof(qconsole_line));
 			qconsole_linelen = strlen(qconsole_line);
