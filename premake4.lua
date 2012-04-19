@@ -27,6 +27,13 @@ solution "etlegacy"
 			"Symbols",
 			"StaticRuntime",
 		}
+	--
+	-- Options Configurations
+	--
+	newoption {
+		trigger	=	"static",
+		description = 	"Do not link dependencies dynamically",
+	}
 
 -- 
 -- CLIENT BUILD
@@ -95,13 +102,17 @@ project "etlegacy"
 	end
 	
 	configuration "with-freetype"
-		buildoptions 	{ "`pkg-config --cflags freetype2`" }
-		linkoptions	{ "`pkg-config --libs freetype2`" }
+		if not _OPTIONS["static"] then
+			buildoptions 	{ "`pkg-config --cflags freetype2`" }
+			linkoptions	{ "`pkg-config --libs freetype2`" }
+		end
 		defines      	{ "USE_FREETYPE" }
 
 	configuration "with-openal"
-		buildoptions	{ "`pkg-config --cflags openal`" }
-		linkoptions	{ "`pkg-config --libs openal`" }
+		if not _OPTIONS["static"] then
+			buildoptions	{ "`pkg-config --cflags openal`" }
+			linkoptions	{ "`pkg-config --libs openal`" }
+		end
 		defines      
 		{
 			"USE_OPENAL",
@@ -112,13 +123,19 @@ project "etlegacy"
 	-- netlib options
 	--
 	configuration "curl"
-		buildoptions    { "`pkg-config --cflags libcurl`" }
-		linkoptions     { "`pkg-config --libs libcurl`" }
+		if not _OPTIONS["static"] then
+			buildoptions    { "`pkg-config --cflags libcurl`" }
+			linkoptions     { "`pkg-config --libs libcurl`" }
+		end
 		defines         { "USE_CURL" }
 	
 	-- 
 	-- Windows build options
 	-- 
+	configuration {  "mingw"  }
+		-- for the love of god, don't forget to link this first
+		links { "mingw32" }
+
 	configuration {  "vs* or mingw"  }
 		targetextension ".exe"
 		flags       { "WinMain" }
@@ -127,7 +144,6 @@ project "etlegacy"
 			-- NOTE TO SELF:
 			-- Think twice before changing the order of the
 			-- following libraries !!!
-			"mingw32", -- for the love of god, don't forget to link this first
 			"ws2_32",
 			"winmm",
 			"wsock32",
@@ -158,16 +174,12 @@ project "etlegacy"
 	-- Linux build options		
 	-- 		
 	configuration { "linux", "not mingw", "gmake" }
-		buildoptions
-		{
-			"`pkg-config --cflags sdl`",
-			"`pkg-config --cflags gl`",
-		}
-		linkoptions
-		{
-			"`pkg-config --libs sdl`",
-			"`pkg-config --libs gl`",
-		}
+		buildoptions { "`pkg-config --cflags gl`" }
+		linkoptions { "`pkg-config --libs gl`" }
+		if not _OPTIONS["static"] then
+			buildoptions { "`pkg-config --cflags sdl`" }
+			linkoptions { "`pkg-config --libs sdl`" }
+		end
 	
 	configuration { "linux", "not mingw", "x32" }
 		targetdir "build/linux-i386"
@@ -177,16 +189,16 @@ project "etlegacy"
 	
 	configuration { "linux", "not mingw" }
 		targetname  "etl"
-		buildoptions
-		{
-			"-pthread"
-		}
+		buildoptions { "-pthread" }
 		links
 		{
 			"dl",
 			"m",
-			"jpeg",
 		}
+		
+		if not _OPTIONS["static"] then
+			links { "jpeg" }
+		end
 
 -- 
 -- DEDICATED SERVER BUILD
@@ -226,6 +238,10 @@ project "etlegacy-dedicated"
 	-- 
 	-- Windows build options
 	-- 
+	configuration {  "mingw"  }
+		-- for the love of god, don't forget to link this first
+		links { "mingw32" }
+
 	configuration { "vs* or mingw" }
 		targetextension ".exe"
 		flags       { "WinMain" }
@@ -234,7 +250,6 @@ project "etlegacy-dedicated"
 			-- NOTE TO SELF:
 			-- Think twice before changing the order of the
 			-- following libraries !!!
-			"mingw32", -- for the love of god, don't forget to link this first
 			"ws2_32",
 			"winmm",
 			"wsock32",
@@ -268,10 +283,7 @@ project "etlegacy-dedicated"
 	
 	configuration { "linux", "not mingw" }
 		targetname  "etlded"
-		buildoptions
-		{
-			"-pthread"
-		}
+		buildoptions { "-pthread" }
 		links
 		{
 			"dl",
@@ -307,10 +319,7 @@ project "etmain_cgame"
 		"src/qcommon",
 		"src/game",
 	}
-	defines
-	{ 
-		"CGAMEDLL",
-	}
+	defines { "CGAMEDLL" }
 		
 	-- 
 	-- Project Configurations
@@ -432,10 +441,6 @@ project "etmain_ui"
 	includedirs
 	{
 		"src/qcommon",
-	}
-	defines
-	{ 
-		--"UIDLL",
 	}
 	
 	-- 
