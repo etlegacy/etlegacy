@@ -1388,8 +1388,10 @@ extern cvar_t *r_ext_texenv_op;
 extern cvar_t *r_ext_multitexture;
 extern cvar_t *r_ext_compiled_vertex_array;
 extern cvar_t *r_ext_texture_env_add;
-extern cvar_t *r_ext_texture_filter_anisotropic;    //DAJ from EF
 extern cvar_t *r_ati_fsaa_samples;                  //DAJ
+
+extern cvar_t *r_ext_texture_filter_anisotropic;
+extern cvar_t *r_ext_max_anisotropy;
 
 // TTimo
 extern cvar_t *r_ext_NV_fog_dist;
@@ -1407,7 +1409,6 @@ extern cvar_t *r_glDriver;
 extern cvar_t *r_glIgnoreWicked3D;
 extern cvar_t *r_swapInterval;
 extern cvar_t *r_textureMode;
-extern cvar_t *r_textureAnisotropy;
 extern cvar_t *r_offsetFactor;
 extern cvar_t *r_offsetUnits;
 
@@ -1519,7 +1520,6 @@ void    GL_Bind(image_t *image);
 void    GL_SetDefaultState(void);
 void    GL_SelectTexture(int unit);
 void    GL_TextureMode(const char *string);
-void    GL_TextureAnisotropy(float anisotropy);
 void    GL_CheckErrors(void);
 void    GL_State(unsigned long stateVector);
 void    GL_TexEnv(int env);

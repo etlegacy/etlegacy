@@ -159,7 +159,6 @@ cvar_t *r_finish;
 cvar_t *r_clear;
 cvar_t *r_swapInterval;
 cvar_t *r_textureMode;
-cvar_t *r_textureAnisotropy;
 cvar_t *r_offsetFactor;
 cvar_t *r_offsetUnits;
 cvar_t *r_gamma;
@@ -1050,7 +1049,6 @@ void GL_SetDefaultState(void)
 	{
 		GL_SelectTexture(1);
 		GL_TextureMode(r_textureMode->string);
-		GL_TextureAnisotropy(r_textureAnisotropy->value);
 		GL_TexEnv(GL_MODULATE);
 		qglDisable(GL_TEXTURE_2D);
 		GL_SelectTexture(0);
@@ -1058,7 +1056,6 @@ void GL_SetDefaultState(void)
 
 	qglEnable(GL_TEXTURE_2D);
 	GL_TextureMode(r_textureMode->string);
-	GL_TextureAnisotropy(r_textureAnisotropy->value);
 	GL_TexEnv(GL_MODULATE);
 
 	qglShadeModel(GL_SMOOTH);
@@ -1101,19 +1098,6 @@ void GL_SetDefaultState(void)
 		// set Wolf defaults
 		qglPNTrianglesiATI(GL_PN_TRIANGLES_TESSELATION_LEVEL_ATI, r_ati_truform_tess->value);
 	}
-
-	if (glConfig.anisotropicAvailable)
-	{
-		float maxAnisotropy;
-
-		qglGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
-		glConfig.maxAnisotropy = maxAnisotropy;
-
-		// set when rendering
-//         qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, glConfig.maxAnisotropy);
-	}
-
-//----(SA)      end
 }
 
 /*
@@ -1204,7 +1188,6 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "compiled vertex arrays: %s\n", enablestrings[qglLockArraysEXT != 0]);
 	ri.Printf(PRINT_ALL, "texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
 	ri.Printf(PRINT_ALL, "compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
-	ri.Printf(PRINT_ALL, "anisotropy: %s\n", r_textureAnisotropy->string);
 
 	ri.Printf(PRINT_ALL, "NV distance fog: %s\n", enablestrings[glConfig.NVFogAvailable != 0]);
 	if (glConfig.NVFogAvailable)
@@ -1256,6 +1239,9 @@ void R_Register(void)
 	r_ext_compiled_vertex_array = ri.Cvar_Get("r_ext_compiled_vertex_array", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_glIgnoreWicked3D          = ri.Cvar_Get("r_glIgnoreWicked3D", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
+	r_ext_texture_filter_anisotropic = ri.Cvar_Get("r_ext_texture_filter_anisotropic", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_ext_max_anisotropy             = ri.Cvar_Get("r_ext_max_anisotropy", "2", CVAR_ARCHIVE | CVAR_LATCH);
+
 //----(SA)      added
 	r_ext_ATI_pntriangles    = ri.Cvar_Get("r_ext_ATI_pntriangles", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);           //----(SA) default to '0'
 	r_ati_truform_tess       = ri.Cvar_Get("r_ati_truform_tess", "1", CVAR_ARCHIVE | CVAR_UNSAFE);
@@ -1263,8 +1249,6 @@ void R_Register(void)
 	r_ati_truform_pointmode  = ri.Cvar_Get("r_ati_truform_pointmode", "GL_PN_TRIANGLES_POINT_MODE_LINEAR", CVAR_ARCHIVE | CVAR_UNSAFE);
 
 	r_ati_fsaa_samples = ri.Cvar_Get("r_ati_fsaa_samples", "1", CVAR_ARCHIVE | CVAR_UNSAFE);                       //DAJ valids are 1, 2, 4
-
-	r_ext_texture_filter_anisotropic = ri.Cvar_Get("r_ext_texture_filter_anisotropic", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
 	r_ext_NV_fog_dist = ri.Cvar_Get("r_ext_NV_fog_dist", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_nv_fogdist_mode = ri.Cvar_Get("r_nv_fogdist_mode", "GL_EYE_RADIAL_NV", CVAR_ARCHIVE | CVAR_UNSAFE);                      // default to 'looking good'
@@ -1345,16 +1329,15 @@ void R_Register(void)
 //----(SA)      added
 	r_zfar = ri.Cvar_Get("r_zfar", "0", CVAR_CHEAT);
 //----(SA)      end
-	r_ignoreGLErrors    = ri.Cvar_Get("r_ignoreGLErrors", "1", CVAR_ARCHIVE);
-	r_fastsky           = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE);
-	r_inGameVideo       = ri.Cvar_Get("r_inGameVideo", "1", CVAR_ARCHIVE);
-	r_drawSun           = ri.Cvar_Get("r_drawSun", "1", CVAR_ARCHIVE);
-	r_dynamiclight      = ri.Cvar_Get("r_dynamiclight", "1", CVAR_ARCHIVE);
-	r_dlightBacks       = ri.Cvar_Get("r_dlightBacks", "1", CVAR_ARCHIVE);
-	r_finish            = ri.Cvar_Get("r_finish", "0", CVAR_ARCHIVE);
-	r_textureMode       = ri.Cvar_Get("r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
-	r_textureAnisotropy = ri.Cvar_Get("r_textureAnisotropy", "1.0", CVAR_ARCHIVE);
-	r_swapInterval      = ri.Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
+	r_ignoreGLErrors = ri.Cvar_Get("r_ignoreGLErrors", "1", CVAR_ARCHIVE);
+	r_fastsky        = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE);
+	r_inGameVideo    = ri.Cvar_Get("r_inGameVideo", "1", CVAR_ARCHIVE);
+	r_drawSun        = ri.Cvar_Get("r_drawSun", "1", CVAR_ARCHIVE);
+	r_dynamiclight   = ri.Cvar_Get("r_dynamiclight", "1", CVAR_ARCHIVE);
+	r_dlightBacks    = ri.Cvar_Get("r_dlightBacks", "1", CVAR_ARCHIVE);
+	r_finish         = ri.Cvar_Get("r_finish", "0", CVAR_ARCHIVE);
+	r_textureMode    = ri.Cvar_Get("r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
+	r_swapInterval   = ri.Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
 #ifdef __MACOS__
 	r_gamma = ri.Cvar_Get("r_gamma", "1.2", CVAR_ARCHIVE);
 #else
