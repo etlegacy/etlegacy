@@ -443,11 +443,11 @@ static void AutospriteDeform(void)
 
 	if (tess.numVertexes & 3)
 	{
-		ri.Printf(PRINT_WARNING, "Autosprite shader %s had odd vertex count", tess.shader->name);
+		ri.Printf(PRINT_DEVELOPER, "Autosprite shader %s had odd vertex count\n", tess.shader->name);
 	}
 	if (tess.numIndexes != (tess.numVertexes >> 2) * 6)
 	{
-		ri.Printf(PRINT_WARNING, "Autosprite shader %s had odd index count", tess.shader->name);
+		ri.Printf(PRINT_DEVELOPER, "Autosprite shader %s had odd index count\n", tess.shader->name);
 	}
 
 	oldVerts         = tess.numVertexes;
@@ -533,11 +533,11 @@ static void Autosprite2Deform(void)
 
 	if (tess.numVertexes & 3)
 	{
-		ri.Printf(PRINT_WARNING, "Autosprite2 shader %s had odd vertex count", tess.shader->name);
+		ri.Printf(PRINT_DEVELOPER, "Autosprite2 shader %s had odd vertex count\n", tess.shader->name);
 	}
 	if (tess.numIndexes != (tess.numVertexes >> 2) * 6)
 	{
-		ri.Printf(PRINT_WARNING, "Autosprite2 shader %s had odd index count", tess.shader->name);
+		ri.Printf(PRINT_DEVELOPER, "Autosprite2 shader %s had odd index count\n", tess.shader->name);
 	}
 
 	if (backEnd.currentEntity != &tr.worldEntity)
