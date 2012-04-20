@@ -1388,14 +1388,9 @@ extern cvar_t *r_ext_texenv_op;
 extern cvar_t *r_ext_multitexture;
 extern cvar_t *r_ext_compiled_vertex_array;
 extern cvar_t *r_ext_texture_env_add;
-extern cvar_t *r_ati_fsaa_samples;                  //DAJ
 
 extern cvar_t *r_ext_texture_filter_anisotropic;
 extern cvar_t *r_ext_max_anisotropy;
-
-// TTimo
-extern cvar_t *r_ext_NV_fog_dist;
-extern cvar_t *r_nv_fogdist_mode;
 
 extern cvar_t *r_nobind;                        // turns off binding to appropriate textures
 extern cvar_t *r_singleShader;                  // make most world faces use default shader
@@ -1405,8 +1400,6 @@ extern cvar_t *r_colorMipLevels;                // development aid to see textur
 extern cvar_t *r_picmip;                        // controls picmip values
 extern cvar_t *r_finish;
 extern cvar_t *r_drawBuffer;
-extern cvar_t *r_glDriver;
-extern cvar_t *r_glIgnoreWicked3D;
 extern cvar_t *r_swapInterval;
 extern cvar_t *r_textureMode;
 extern cvar_t *r_offsetFactor;

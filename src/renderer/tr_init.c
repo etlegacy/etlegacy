@@ -112,17 +112,6 @@ cvar_t *r_ext_texture_env_add;
 cvar_t *r_ext_texture_filter_anisotropic;
 cvar_t *r_ext_max_anisotropy;
 
-cvar_t *r_ext_NV_fog_dist;
-cvar_t *r_nv_fogdist_mode;
-
-cvar_t *r_ext_ATI_pntriangles;
-cvar_t *r_ati_truform_tess;         //
-cvar_t *r_ati_truform_normalmode;   // linear/quadratic
-cvar_t *r_ati_truform_pointmode;    // linear/cubic
-//----(SA)      end
-
-cvar_t *r_ati_fsaa_samples;         //DAJ valids are 1, 2, 4
-
 cvar_t *r_ignoreGLErrors;
 cvar_t *r_logFile;
 
@@ -135,8 +124,6 @@ cvar_t *r_texturebits;
 cvar_t *r_ext_multisample;
 
 cvar_t *r_drawBuffer;
-cvar_t *r_glDriver;
-cvar_t *r_glIgnoreWicked3D;
 cvar_t *r_lightmap;
 cvar_t *r_uiFullScreen;
 cvar_t *r_shadows;
@@ -314,7 +301,6 @@ static void InitOpenGL(void)
 	//
 	// GLimp_Init directly or indirectly references the following cvars:
 	//          - r_fullscreen
-	//          - r_glDriver
 	//          - r_mode
 	//          - r_(color|depth|stencil)bits
 	//          - r_ignorehwgamma
@@ -1076,28 +1062,6 @@ void GL_SetDefaultState(void)
 	qglEnable(GL_SCISSOR_TEST);
 	qglDisable(GL_CULL_FACE);
 	qglDisable(GL_BLEND);
-
-//----(SA)      added.
-	// ATI pn_triangles
-	if (qglPNTrianglesiATI)
-	{
-		int maxtess;
-		// get max supported tesselation
-		qglGetIntegerv(GL_MAX_PN_TRIANGLES_TESSELATION_LEVEL_ATI, ( GLint * ) &maxtess);
-#ifdef __MACOS__
-		glConfig.ATIMaxTruformTess = 7;
-#else
-		glConfig.ATIMaxTruformTess = maxtess;
-#endif
-		// cap if necessary
-		if (r_ati_truform_tess->value > maxtess)
-		{
-			ri.Cvar_Set("r_ati_truform_tess", va("%d", maxtess));
-		}
-
-		// set Wolf defaults
-		qglPNTrianglesiATI(GL_PN_TRIANGLES_TESSELATION_LEVEL_ATI, r_ati_truform_tess->value);
-	}
 }
 
 /*
@@ -1107,7 +1071,6 @@ GfxInfo_f
 */
 void GfxInfo_f(void)
 {
-	cvar_t     *sys_cpustring   = ri.Cvar_Get("sys_cpustring", "", 0);
 	const char *enablestrings[] =
 	{
 		"disabled",
@@ -1143,7 +1106,6 @@ void GfxInfo_f(void)
 	{
 		ri.Printf(PRINT_ALL, "GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
 	}
-	ri.Printf(PRINT_ALL, "CPU: %s\n", sys_cpustring->string);
 
 	// rendering primitives
 	{
@@ -1189,12 +1151,6 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
 	ri.Printf(PRINT_ALL, "compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
 
-	ri.Printf(PRINT_ALL, "NV distance fog: %s\n", enablestrings[glConfig.NVFogAvailable != 0]);
-	if (glConfig.NVFogAvailable)
-	{
-		ri.Printf(PRINT_ALL, "Fog Mode: %s\n", r_nv_fogdist_mode->string);
-	}
-
 	if (glConfig.hardwareType == GLHW_PERMEDIA2)
 	{
 		ri.Printf(PRINT_ALL, "HACK: using vertex lightmap approximation\n");
@@ -1231,34 +1187,15 @@ void R_Register(void)
 	//
 	// latched and archived variables
 	//
-	r_glDriver                  = ri.Cvar_Get("r_glDriver", OPENGL_DRIVER_NAME, CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_allowExtensions           = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_compressed_textures   = ri.Cvar_Get("r_ext_compressed_textures", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);  // (SA) ew, a spelling change I missed from the missionpack
 	r_ext_gamma_control         = ri.Cvar_Get("r_ext_gamma_control", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_multitexture          = ri.Cvar_Get("r_ext_multitexture", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_compiled_vertex_array = ri.Cvar_Get("r_ext_compiled_vertex_array", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_glIgnoreWicked3D          = ri.Cvar_Get("r_glIgnoreWicked3D", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_ext_texture_env_add       = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_ext_texture_filter_anisotropic = ri.Cvar_Get("r_ext_texture_filter_anisotropic", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_ext_max_anisotropy             = ri.Cvar_Get("r_ext_max_anisotropy", "2", CVAR_ARCHIVE | CVAR_LATCH);
-
-//----(SA)      added
-	r_ext_ATI_pntriangles    = ri.Cvar_Get("r_ext_ATI_pntriangles", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);           //----(SA) default to '0'
-	r_ati_truform_tess       = ri.Cvar_Get("r_ati_truform_tess", "1", CVAR_ARCHIVE | CVAR_UNSAFE);
-	r_ati_truform_normalmode = ri.Cvar_Get("r_ati_truform_normalmode", "GL_PN_TRIANGLES_NORMAL_MODE_LINEAR", CVAR_ARCHIVE | CVAR_UNSAFE);
-	r_ati_truform_pointmode  = ri.Cvar_Get("r_ati_truform_pointmode", "GL_PN_TRIANGLES_POINT_MODE_LINEAR", CVAR_ARCHIVE | CVAR_UNSAFE);
-
-	r_ati_fsaa_samples = ri.Cvar_Get("r_ati_fsaa_samples", "1", CVAR_ARCHIVE | CVAR_UNSAFE);                       //DAJ valids are 1, 2, 4
-
-	r_ext_NV_fog_dist = ri.Cvar_Get("r_ext_NV_fog_dist", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_nv_fogdist_mode = ri.Cvar_Get("r_nv_fogdist_mode", "GL_EYE_RADIAL_NV", CVAR_ARCHIVE | CVAR_UNSAFE);                      // default to 'looking good'
-//----(SA)      end
-
-#ifdef __linux__ // broken on linux
-	r_ext_texture_env_add = ri.Cvar_Get("r_ext_texture_env_add", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-#else
-	r_ext_texture_env_add = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-#endif
 
 	r_picmip          = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH); //----(SA)   mod for DM and DK for id build.  was "1" // JPW NERVE pushed back to 1
 	r_roundImagesDown = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1302,10 +1239,7 @@ void R_Register(void)
 	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 #endif
 	r_ignoreFastPath = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH);    // ydnar: use fast path by default
-#if MAC_STVEF_HM || MAC_WOLF2_MP
-	r_ati_fsaa_samples = ri.Cvar_Get("r_ati_fsaa_samples", "1", CVAR_ARCHIVE);                      //DAJ valids are 1, 2, 4
-#endif
-	r_greyscale = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_greyscale      = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	//
 	// temporary latched variables that can only change over a restart
