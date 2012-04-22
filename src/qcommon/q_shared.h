@@ -922,6 +922,8 @@ typedef struct
 
 float *tv(float x, float y, float z);
 
+#define rc(x) va("%s^7", x) // shortcut for color reset after printing variable
+
 char *QDECL va(char *format, ...) __attribute__ ((format(printf, 1, 2)));
 
 //=============================================

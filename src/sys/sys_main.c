@@ -297,21 +297,52 @@ void Sys_AnsiColorPrint(const char *msg)
 {
 	static char buffer[MAXPRINTMSG];
 	int         length      = 0;
-	static int  q3ToAnsi[8] =
+
+	// colors hash from http://wolfwiki.anime.net/index.php/Color_Codes
+	static int etAnsiHash[][6] =
 	{
-		30, // COLOR_BLACK
-		31, // COLOR_RED
-		32, // COLOR_GREEN
-		33, // COLOR_YELLOW
-		34, // COLOR_BLUE
-		36, // COLOR_CYAN
-		35, // COLOR_MAGENTA
-		0   // COLOR_WHITE
+		// here should be black, but it's invisible in terminal
+		// so you see dark grey here. like in 9 color
+		{ 1,  30, 0,   '0', 'p',  'P'  },
+		{ 1,  31, 0,   '1', 'q',  'Q'  },
+		{ 1,  32, 0,   '2', 'r',  'R'  },
+		{ 1,  33, 0,   '3', 's',  'S'  },
+		{ 1,  34, 0,   '4', 't',  'T'  },
+		{ 1,  36, 0,   '5', 'u',  'U'  },
+		{ 1,  35, 0,   '6', 'v',  'V'  },
+		{ 1,  37, 0,   '7', 'w',  'W'  },
+
+		{ 38, 5,  208, '8', 'x',  'X'  },
+		{ 1,  30, 0,   '9', 'y',  'Y'  },
+		{ 0,  37, 0,   'z', 'Z',  ':'  }, // the same
+		{ 0,  37, 0,   '[', '{',  ';'  }, // --------
+		{ 0,  32, 0,   '<', '\\', '|'  },
+		{ 0,  33, 0,   '=', ']',  '}'  },
+		{ 0,  34, 0,   '>', '~',  0    },
+		{ 0,  31, 0,   '?', '_',  0    },
+		{ 38, 5,  94,  '@', '`',  0    },
+
+		{ 38, 5,  214, 'a', 'A',  '!'  },
+		{ 38, 5,  30,  'b', 'B',  '"'  },
+		{ 38, 5,  90,  'c', 'C',  '#'  },
+		{ 38, 5,  33,  'd', 'D',  '$'  },
+		{ 38, 5,  93,  'e', 'E',  '%'  },
+		{ 38, 5,  38,  'f', 'F',  '&'  },
+		{ 38, 5,  194, 'g', 'G',  '\'' },
+		{ 38, 5,  29,  'h', 'H',  '('  },
+
+		{ 38, 5,  197, 'i', 'I',  ')'  },
+		{ 38, 5,  124, 'j', 'J',  '*'  },
+		{ 38, 5,  130, 'k', 'K',  '+'  },
+		{ 38, 5,  179, 'l', 'L',  ','  },
+		{ 38, 5,  143, 'm', 'M',  '-'  },
+		{ 38, 5,  229, 'n', 'N',  '.'  },
+		{ 38, 5,  228, 'o', 'O',  '/'  }
 	};
 
 	while (*msg)
 	{
-		if (Q_IsColorString(msg) || *msg == '\n')
+		if (Q_IsColorString(msg) || *msg == '\n' || *msg == '\\')
 		{
 			// First empty the buffer
 			if (length > 0)
@@ -327,11 +358,53 @@ void Sys_AnsiColorPrint(const char *msg)
 				fputs("\033[0m\n", stderr);
 				msg++;
 			}
+			else if (*msg == '\\')
+			{
+				fputs("\033[0m\\", stderr);
+				msg++;
+			}
+			else if (*(msg + 1) == '7' && (*(msg + 2) == '"' || *(msg + 2) == '\'' || *(msg + 2) == '\0'))
+			{
+				fputs("\033[0m", stderr);
+				msg += 2;
+			}
 			else
 			{
 				// Print the color code
-				Com_sprintf(buffer, sizeof(buffer), "\033[%dm",
-				            q3ToAnsi[ColorIndex(*(msg + 1))]);
+				int i, j, _found = 0;
+				for (i = 0; i < 33; i++)
+				{
+					if (_found)
+					{
+						break;
+					}
+
+					for (j = 3; j < 6; j++)
+					{
+						if (etAnsiHash[i][j] == 0)
+						{
+							break;
+						}
+
+						if (*(msg + 1) == etAnsiHash[i][j])
+						{
+							if (etAnsiHash[i][2] == 0)
+							{
+								Com_sprintf(buffer, sizeof(buffer), "\033[%d;%dm",
+											etAnsiHash[i][0], etAnsiHash[i][1]);
+								_found = 1;
+								break;
+							}
+							else
+							{
+								Com_sprintf(buffer, sizeof(buffer), "\033[%d;%d;%dm",
+											etAnsiHash[i][0], etAnsiHash[i][1], etAnsiHash[i][2]);
+								_found = 1;
+								break;
+							}
+						}
+					}
+				}
 				fputs(buffer, stderr);
 				msg += 2;
 			}

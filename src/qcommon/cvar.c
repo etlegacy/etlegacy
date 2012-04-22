@@ -645,7 +645,7 @@ qboolean Cvar_Command(void)
 	// perform a variable print or set
 	if (Cmd_Argc() == 1)
 	{
-		Com_Printf("\"%s\" is:\"%s" S_COLOR_WHITE "\" default:\"%s" S_COLOR_WHITE "\"\n", v->name, v->string, v->resetString);
+		Com_Printf("\"%s\" is:\"%s\" default:\"%s\"\n", v->name, rc(v->string), rc(v->resetString));
 		if (v->latchedString)
 		{
 			Com_Printf("latched: \"%s\"\n", v->latchedString);

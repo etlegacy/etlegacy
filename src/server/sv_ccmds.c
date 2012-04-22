@@ -884,7 +884,7 @@ static void SV_Ban_f(void)
 		NET_OutOfBandPrint(NS_SERVER, svs.authorizeAddress,
 		                   "banUser %i.%i.%i.%i", cl->netchan.remoteAddress.ip[0], cl->netchan.remoteAddress.ip[1],
 		                   cl->netchan.remoteAddress.ip[2], cl->netchan.remoteAddress.ip[3]);
-		Com_Printf("%s was banned from coming back\n", cl->name);
+		Com_Printf("%s was banned from coming back\n", rc(cl->name));
 	}
 }
 
@@ -946,7 +946,7 @@ static void SV_BanNum_f(void)
 		NET_OutOfBandPrint(NS_SERVER, svs.authorizeAddress,
 		                   "banUser %i.%i.%i.%i", cl->netchan.remoteAddress.ip[0], cl->netchan.remoteAddress.ip[1],
 		                   cl->netchan.remoteAddress.ip[2], cl->netchan.remoteAddress.ip[3]);
-		Com_Printf("%s was banned from coming back\n", cl->name);
+		Com_Printf("%s was banned from coming back\n", rc(cl->name));
 	}
 }
 #endif // AUTHORIZE_SUPPORT
@@ -1097,7 +1097,7 @@ static void SV_Status_f(void)
 			Com_Printf("%4i ", ping);
 		}
 
-		Com_Printf("%s", cl->name);
+		Com_Printf("%s", rc(cl->name));
 		l = 16 - strlen(cl->name);
 		for (j = 0 ; j < l ; j++)
 			Com_Printf(" ");
