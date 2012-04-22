@@ -36,14 +36,9 @@
 #include "qcommon.h"
 #include <setjmp.h>
 
-// htons
-#ifdef __linux__
+#ifndef _WIN32
 #include <netinet/in.h>
-// getpid
-#include <unistd.h>
-#elif __MACOS__
-// getpid
-#include <unistd.h>
+#include <sys/stat.h> // umask
 #else
 #include <winsock.h>
 #endif
@@ -62,6 +57,7 @@ char *com_argv[MAX_NUM_ARGVS + 1];
 
 jmp_buf abortframe;     // an ERR_DROP occured, exit the entire frame
 
+void CL_ShutdownCGame(void);
 
 FILE                *debuglogfile;
 static fileHandle_t logfile;
@@ -103,6 +99,15 @@ cvar_t *com_cameraMode;
 #if defined(_WIN32) && defined(_DEBUG)
 cvar_t *com_noErrorInterrupt;
 #endif
+
+#if idx64
+int (*Q_VMftol)(void);
+#elif id386
+long (QDECL *Q_ftol)(float f);
+int  (QDECL *Q_VMftol)(void);
+void (QDECL *Q_SnapVector)(vec3_t vec);
+#endif
+
 cvar_t *com_recommendedSet;
 
 cvar_t *com_watchdog;
@@ -165,25 +170,20 @@ void Com_EndRedirect(void)
 }
 
 /*
-=============
-Com_Printf
-
-Both client and server can use this, and it will output
-to the apropriate place.
-
-A raw string should NEVER be passed as fmt, because of "%f" type crashers.
-=============
-*/
-int QDECL Com_VPrintf(const char *fmt, va_list argptr)
+ * @brief Both client and server can use this, and it will output to the apropriate place.
+ *
+ * A raw string should NEVER be passed as fmt, because of "%f" type crashers.
+ */
+void QDECL Com_Printf(const char *fmt, ...)
 {
+	va_list         argptr;
 	char            msg[MAXPRINTMSG];
 	static qboolean opening_qconsole = qfalse;
 
-	// FIXME TTimo
-	// switched vsprintf -> vsnprintf
-	// rcon could cause buffer overflow
-	//
+
+	va_start(argptr, fmt);
 	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
+	va_end(argptr);
 
 	if (rd_buffer)
 	{
@@ -193,11 +193,10 @@ int QDECL Com_VPrintf(const char *fmt, va_list argptr)
 			*rd_buffer = 0;
 		}
 		Q_strcat(rd_buffer, rd_buffersize, msg);
-		// show_bug.cgi?id=51
 		// only flush the rcon buffer when it's necessary, avoid fragmenting
 		//rd_flush(rd_buffer);
 		//*rd_buffer = 0;
-		return strlen(msg);
+		return;
 	}
 
 	// echo to console if we're not a dedicated server
@@ -240,33 +239,17 @@ int QDECL Com_VPrintf(const char *fmt, va_list argptr)
 			FS_Write(msg, strlen(msg), logfile);
 		}
 	}
-	return strlen(msg);
 }
-int QDECL Com_VPrintf(const char *fmt, va_list argptr) _attribute((format(printf, 1, 0)));
-
-void QDECL Com_Printf(const char *fmt, ...)
-{
-	va_list argptr;
-
-	va_start(argptr, fmt);
-	Com_VPrintf(fmt, argptr);
-	va_end(argptr);
-}
-void QDECL Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 /*
-================
-Com_DPrintf
-
-A Com_Printf that only shows up if the "developer" cvar is set
-================
-*/
+ * @brief A Com_Printf that only shows up if the "developer" cvar is set
+ */
 void QDECL Com_DPrintf(const char *fmt, ...)
 {
 	va_list argptr;
 	char    msg[MAXPRINTMSG];
 
-	if (!com_developer || com_developer->integer != 1)
+	if (!com_developer || !com_developer->integer)
 	{
 		return;         // don't confuse non-developers with techie stuff...
 	}
@@ -277,34 +260,16 @@ void QDECL Com_DPrintf(const char *fmt, ...)
 
 	Com_Printf("%s", msg);
 }
-void QDECL Com_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 /*
-=============
-Com_Error
-
-Both client and server can use this, and it will
-do the apropriate things.
-=============
-*/
+ * @brief Both client and server can use this, and it will do the appropriate thing.
+ */
 void QDECL Com_Error(int code, const char *fmt, ...)
 {
 	va_list    argptr;
 	static int lastErrorTime;
 	static int errorCount;
 	int        currentTime;
-
-#if 0   //#if defined(_WIN32) && defined(_DEBUG)
-	if (code != ERR_DISCONNECT && code != ERR_NEED_CD)
-	{
-		if (!com_noErrorInterrupt->integer)
-		{
-			__asm {
-				int 0x03
-			}
-		}
-	}
-#endif
 
 	// when we are running automated scripts, make sure we
 	// know if anything failed
@@ -410,19 +375,10 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 
 	Sys_Error("%s", com_errorMessage);
 }
-void QDECL Com_Error(int code, const char *fmt, ...) _attribute((format(printf, 2, 3)));
-
-//bani - moved
-void CL_ShutdownCGame(void);
 
 /*
-=============
-Com_Quit_f
-
-Both client and server can use this, and it will
-do the apropriate things.
-=============
-*/
+ * @brief Both client and server can use this, and it will do the appropriate thing.
+ */
 void Com_Quit_f(void)
 {
 	// don't try to shutdown if we are in a recursive error
@@ -620,7 +576,7 @@ void Info_Print(const char *s)
 		l = o - key;
 		if (l < 20)
 		{
-			memset(o, ' ', 20 - l);
+			Com_Memset(o, ' ', 20 - l);
 			key[20] = 0;
 		}
 		else
@@ -1034,7 +990,7 @@ void Z_Free(void *ptr)
 	zone->used -= block->size;
 	// set the block to something that should cause problems
 	// if it is referenced...
-	memset(ptr, 0xaa, block->size - sizeof(*block));
+	Com_Memset(ptr, 0xaa, block->size - sizeof(*block));
 
 	block->tag = 0;     // mark as free
 
@@ -1115,11 +1071,12 @@ memblock_t *debugblock; // RF, jusy so we can track a block to find out when it'
 #ifdef ZONE_DEBUG
 void *Z_TagMallocDebug(int size, int tag, char *label, char *file, int line)
 {
+	int allocSize;
 #else
 void *Z_TagMalloc(int size, int tag)
 {
 #endif
-	int        extra, allocSize;
+	int        extra;
 	memblock_t *start, *rover, *new, *base;
 	memzone_t  *zone;
 
@@ -1137,7 +1094,9 @@ void *Z_TagMalloc(int size, int tag)
 		zone = mainzone;
 	}
 
+#ifdef ZONE_DEBUG
 	allocSize = size;
+#endif
 	//
 	// scan through the block list looking for the first free block
 	// of sufficient size
@@ -1155,10 +1114,13 @@ void *Z_TagMalloc(int size, int tag)
 		{
 #ifdef ZONE_DEBUG
 			Z_LogHeap();
-#endif
-			// scaned all the way around the list
+
+			Com_Error(ERR_FATAL, "Z_Malloc: failed on allocation of %i bytes from the %s zone: %s, line: %d (%s)",
+			          size, zone == smallzone ? "small" : "main", file, line, label);
+#else
 			Com_Error(ERR_FATAL, "Z_Malloc: failed on allocation of %i bytes from the %s zone",
 			          size, zone == smallzone ? "small" : "main");
+#endif
 			return NULL;
 		}
 		if (rover->tag)
@@ -1640,17 +1602,10 @@ void Com_TouchMemory(void)
 }
 
 
-
-/*
-=================
-Com_InitZoneMemory
-=================
-*/
 void Com_InitSmallZoneMemory(void)
 {
 	s_smallZoneTotal = 512 * 1024;
-
-	smallzone = calloc(s_smallZoneTotal, 1);
+	smallzone        = calloc(s_smallZoneTotal, 1);
 	if (!smallzone)
 	{
 		Com_Error(ERR_FATAL, "Small zone data failed to allocate %1.1f megs", (float)s_smallZoneTotal / (1024 * 1024));
@@ -1663,6 +1618,13 @@ void Com_InitSmallZoneMemory(void)
 void Com_InitZoneMemory(void)
 {
 	cvar_t *cv;
+
+	// Please note: com_zoneMegs can only be set on the command line, and
+	// not in etconfig.cfg or Com_StartupVariable, as they haven't been
+	// executed by this point. It's a chicken and egg problem. We need the
+	// memory manager configured to handle those places where you would
+	// configure the memory manager.
+
 	// allocate the random block zone
 	cv = Cvar_Get("com_zoneMegs", DEF_COMZONEMEGS_S, CVAR_LATCH | CVAR_ARCHIVE);
 
@@ -1899,12 +1861,8 @@ void CL_ShutdownUI(void);
 void SV_ShutdownGameProgs(void);
 
 /*
-=================
-Hunk_Clear
-
-The server calls this before shutting down or loading a new map
-=================
-*/
+ * @brief The server calls this before shutting down or loading a new map
+ */
 void Hunk_Clear(void)
 {
 
@@ -2012,7 +1970,7 @@ void *Hunk_Alloc(int size, ha_pref preference)
 
 	hunk_permanent->temp = hunk_permanent->permanent;
 
-	memset(buf, 0, size);
+	Com_Memset(buf, 0, size);
 
 #ifdef HUNK_DEBUG
 	{
@@ -2063,14 +2021,10 @@ void *Hunk_AllocateTempMemory(int size)
 
 	Hunk_SwapBanks();
 
-	size = ((size + 3) & ~3) + sizeof(hunkHeader_t);
+	size = PAD(size, sizeof(intptr_t)) + sizeof(hunkHeader_t);
 
 	if (hunk_temp->temp + hunk_permanent->permanent + size > s_hunkTotal)
 	{
-#ifdef HUNK_DEBUG
-		Hunk_Log();
-		Hunk_SmallLog();
-#endif
 		Com_Error(ERR_DROP, "Hunk_AllocateTempMemory: failed on %i", size);
 	}
 
@@ -2233,12 +2187,9 @@ journaled file
 ===================================================================
 */
 
-// bk001129 - here we go again: upped from 64
-#define MAX_PUSHED_EVENTS               256
-// bk001129 - init, also static
-static int com_pushedEventsHead = 0;
-static int com_pushedEventsTail = 0;
-// bk001129 - static
+#define MAX_PUSHED_EVENTS               1024
+static int        com_pushedEventsHead = 0;
+static int        com_pushedEventsTail = 0;
 static sysEvent_t com_pushedEvents[MAX_PUSHED_EVENTS];
 
 /*
@@ -2390,7 +2341,7 @@ sysEvent_t Com_GetSystemEvent(void)
 	}
 
 	// create an empty event to return
-	memset(&ev, 0, sizeof(ev));
+	Com_Memset(&ev, 0, sizeof(ev));
 	ev.evTime = Sys_Milliseconds();
 
 	return ev;
@@ -2445,17 +2396,11 @@ sysEvent_t  Com_GetRealEvent(void)
 	return ev;
 }
 
-/*
-=================
-Com_InitPushEvent
-=================
-*/
-// bk001129 - added
 void Com_InitPushEvent(void)
 {
 	// clear the static buffer array
 	// this requires SE_NONE to be accepted as a valid but NOP event
-	memset(com_pushedEvents, 0, sizeof(com_pushedEvents));
+	Com_Memset(com_pushedEvents, 0, sizeof(com_pushedEvents));
 	// reset counters while we are at it
 	// beware: GetEvent might still return an SE_NONE from the buffer
 	com_pushedEventsHead = 0;
@@ -2471,7 +2416,7 @@ Com_PushEvent
 void Com_PushEvent(sysEvent_t *event)
 {
 	sysEvent_t *ev;
-	static int printedWarning = 0; // bk001129 - init, bk001204 - explicit int
+	static int printedWarning = 0;
 
 	ev = &com_pushedEvents[com_pushedEventsHead & (MAX_PUSHED_EVENTS - 1)];
 
@@ -2757,24 +2702,11 @@ static void Com_Freeze_f(void)
 }
 
 /*
-=================
-Com_Crash_f
-
-A way to force a bus error for development reasons
-=================
-*/
+ * @brief A way to force a bus error for development reasons
+ */
 static void Com_Crash_f(void)
 {
-	*( int * ) 0 = 0x12345678;
-}
-
-/*
-=============
-Com_CPUSpeed_f
-=============
-*/
-void Com_CPUSpeed_f(void)
-{
+	*( volatile int * ) 0 = 0x12345678;
 }
 
 void Com_SetRecommended()
@@ -2810,7 +2742,7 @@ void Com_GetGameInfo(void)
 	char *f, *buf;
 	char *token;
 
-	memset(&com_gameInfo, 0, sizeof(com_gameInfo));
+	Com_Memset(&com_gameInfo, 0, sizeof(com_gameInfo));
 
 	if (FS_ReadFile("gameinfo.dat", (void **)&f) > 0)
 	{
@@ -3218,7 +3150,6 @@ void Com_Init(char *commandLine)
 		Cmd_AddCommand("error", Com_Error_f);
 		Cmd_AddCommand("crash", Com_Crash_f);
 		Cmd_AddCommand("freeze", Com_Freeze_f);
-		Cmd_AddCommand("cpuspeed", Com_CPUSpeed_f);
 	}
 	Cmd_AddCommand("quit", Com_Quit_f);
 	Cmd_AddCommand("changeVectors", MSG_ReportChangeVectors_f);
@@ -3673,37 +3604,6 @@ void Com_Shutdown(qboolean badProfile)
 }
 
 /*
-=====================
-Q_acos
-
-the msvc acos doesn't always return a value between -PI and PI:
-
-int i;
-i = 1065353246;
-acos(*(float*) &i) == -1.#IND0
-
-    This should go in q_math but it is too late to add new traps
-    to game and ui
-=====================
-*/
-float Q_acos(float c)
-{
-	float angle;
-
-	angle = acos(c);
-
-	if (angle > M_PI)
-	{
-		return (float)M_PI;
-	}
-	if (angle < -M_PI)
-	{
-		return (float)M_PI;
-	}
-	return angle;
-}
-
-/*
 ===========================================
 command line completion
 ===========================================
@@ -3716,7 +3616,7 @@ Field_Clear
 */
 void Field_Clear(field_t *edit)
 {
-	memset(edit->buffer, 0, MAX_EDIT_LINE);
+	Com_Memset(edit->buffer, 0, MAX_EDIT_LINE);
 	edit->cursor = 0;
 	edit->scroll = 0;
 }
@@ -3724,7 +3624,7 @@ void Field_Clear(field_t *edit)
 static const char *completionString;
 static char       shortestMatch[MAX_TOKEN_CHARS];
 static int        matchCount;
-// field we are working on, passed to Field_CompleteCommand (&g_consoleCommand for instance)
+// field we are working on, passed to Field_AutoComplete(&g_consoleCommand for instance)
 static field_t *completionField;
 
 /*
@@ -3773,6 +3673,23 @@ static void PrintMatches(const char *s)
 	}
 }
 
+/*
+===============
+PrintCvarMatches
+
+===============
+*/
+static void PrintCvarMatches(const char *s)
+{
+	char value[TRUNCATE_LENGTH];
+
+	if (!Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
+	{
+		Com_TruncateLongString(value, Cvar_VariableString(s));
+		Com_Printf("    %s = \"%s\"\n", s, value);
+	}
+}
+
 static void keyConcatArgs(void)
 {
 	int  i;
@@ -3816,75 +3733,225 @@ static void ConcatRemaining(const char *src, const char *start)
 
 /*
 ===============
-Field_CompleteCommand
-
-perform Tab expansion
-NOTE TTimo this was originally client code only
-  moved to common code when writing tty console for *nix dedicated server
+Field_FindFirstSeparator
 ===============
 */
-void Field_CompleteCommand(field_t *field)
+static char *Field_FindFirstSeparator(char *s)
 {
-	field_t temp;
-	completionField = field;
+	int i;
 
-	// only look at the first token for completion purposes
-	Cmd_TokenizeString(completionField->buffer);
-
-	completionString = Cmd_Argv(0);
-	if (completionString[0] == '\\' || completionString[0] == '/')
+	for (i = 0; i < strlen(s); i++)
 	{
-		completionString++;
-	}
-	matchCount       = 0;
-	shortestMatch[0] = 0;
-
-	if (strlen(completionString) == 0)
-	{
-		return;
+		if (s[i] == ';')
+		{
+			return &s[i];
+		}
 	}
 
-	Cmd_CommandCompletion(FindMatches);
-	Cvar_CommandCompletion(FindMatches);
+	return NULL;
+}
+
+/*
+===============
+Field_Complete
+===============
+*/
+static qboolean Field_Complete(void)
+{
+	int completionOffset;
 
 	if (matchCount == 0)
 	{
-		return; // no matches
+		return qtrue;
 	}
 
-	Com_Memcpy(&temp, completionField, sizeof(field_t));
+	completionOffset = strlen(completionField->buffer) - strlen(completionString);
+
+	Q_strncpyz(&completionField->buffer[completionOffset], shortestMatch,
+	           sizeof(completionField->buffer) - completionOffset);
+
+	completionField->cursor = strlen(completionField->buffer);
 
 	if (matchCount == 1)
 	{
-		Com_sprintf(completionField->buffer, sizeof(completionField->buffer), "\\%s", shortestMatch);
-		if (Cmd_Argc() == 1)
-		{
-			Q_strcat(completionField->buffer, sizeof(completionField->buffer), " ");
-		}
-		else
-		{
-			ConcatRemaining(temp.buffer, completionString);
-		}
-		completionField->cursor = strlen(completionField->buffer);
-		return;
+		Q_strcat(completionField->buffer, sizeof(completionField->buffer), " ");
+		completionField->cursor++;
+		return qtrue;
 	}
-
-	// multiple matches, complete to shortest
-	Com_sprintf(completionField->buffer, sizeof(completionField->buffer), "\\%s", shortestMatch);
-	completionField->cursor = strlen(completionField->buffer);
-	ConcatRemaining(temp.buffer, completionString);
 
 	Com_Printf("]%s\n", completionField->buffer);
 
-	// run through again, printing matches
-	Cmd_CommandCompletion(PrintMatches);
-	Cvar_CommandCompletion(PrintMatches);
+	return qfalse;
 }
+
+#ifndef DEDICATED
+/*
+===============
+Field_CompleteKeyname
+===============
+*/
+void Field_CompleteKeyname(void)
+{
+	matchCount       = 0;
+	shortestMatch[0] = 0;
+
+	Key_KeynameCompletion(FindMatches);
+
+	if (!Field_Complete())
+	{
+		Key_KeynameCompletion(PrintMatches);
+	}
+}
+#endif
+
+/*
+===============
+Field_CompleteFilename
+===============
+*/
+void Field_CompleteFilename(const char *dir,
+                            const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk)
+{
+	matchCount       = 0;
+	shortestMatch[0] = 0;
+
+	FS_FilenameCompletion(dir, ext, stripExt, FindMatches, allowNonPureFilesOnDisk);
+
+	if (!Field_Complete())
+	{
+		FS_FilenameCompletion(dir, ext, stripExt, PrintMatches, allowNonPureFilesOnDisk);
+	}
+}
+
+/*
+===============
+Field_CompleteCommand
+===============
+*/
+void Field_CompleteCommand(char *cmd,
+                           qboolean doCommands, qboolean doCvars)
+{
+	int completionArgument = 0;
+
+	// Skip leading whitespace and quotes
+	cmd = Com_SkipCharset(cmd, " \"");
+
+	Cmd_TokenizeStringIgnoreQuotes(cmd);
+	completionArgument = Cmd_Argc();
+
+	// If there is trailing whitespace on the cmd
+	if (*(cmd + strlen(cmd) - 1) == ' ')
+	{
+		completionString = "";
+		completionArgument++;
+	}
+	else
+	{
+		completionString = Cmd_Argv(completionArgument - 1);
+	}
+
+#ifndef DEDICATED
+	// Unconditionally add a '\' to the start of the buffer
+	if (completionField->buffer[0] &&
+	    completionField->buffer[0] != '\\')
+	{
+		if (completionField->buffer[0] != '/')
+		{
+			// Buffer is full, refuse to complete
+			if (strlen(completionField->buffer) + 1 >=
+			    sizeof(completionField->buffer))
+			{
+				return;
+			}
+
+			memmove(&completionField->buffer[1],
+			        &completionField->buffer[0],
+			        strlen(completionField->buffer) + 1);
+			completionField->cursor++;
+		}
+
+		completionField->buffer[0] = '\\';
+	}
+#endif
+
+	if (completionArgument > 1)
+	{
+		const char *baseCmd = Cmd_Argv(0);
+		char       *p;
+
+#ifndef DEDICATED
+		// This should always be true
+		if (baseCmd[0] == '\\' || baseCmd[0] == '/')
+		{
+			baseCmd++;
+		}
+#endif
+
+		if ((p = Field_FindFirstSeparator(cmd)))
+		{
+			Field_CompleteCommand(p + 1, qtrue, qtrue);   // Compound command
+		}
+		else
+		{
+			Cmd_CompleteArgument(baseCmd, cmd, completionArgument);
+		}
+	}
+	else
+	{
+		if (completionString[0] == '\\' || completionString[0] == '/')
+		{
+			completionString++;
+		}
+
+		matchCount       = 0;
+		shortestMatch[0] = 0;
+
+		if (strlen(completionString) == 0)
+		{
+			return;
+		}
+
+		if (doCommands)
+		{
+			Cmd_CommandCompletion(FindMatches);
+		}
+
+		if (doCvars)
+		{
+			Cvar_CommandCompletion(FindMatches);
+		}
+
+		if (!Field_Complete())
+		{
+			// run through again, printing matches
+			if (doCommands)
+			{
+				Cmd_CommandCompletion(PrintMatches);
+			}
+
+			if (doCvars)
+			{
+				Cvar_CommandCompletion(PrintCvarMatches);
+			}
+		}
+	}
+}
+
 
 void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
 {
 	*hunkused     = com_hunkusedvalue;
 	*hunkexpected = com_expectedhunkusage;
+}
+
+/*
+ * @brief Perform Tab expansion
+ */
+void Field_AutoComplete(field_t *field)
+{
+	completionField = field;
+
+	Field_CompleteCommand(completionField->buffer, qtrue, qtrue);
 }
 
 /*
@@ -3903,43 +3970,4 @@ void Com_RandomBytes(byte *string, int len)
 	Com_Printf("Com_RandomBytes: using weak randomization\n");
 	for (i = 0; i < len; i++)
 		string[i] = (unsigned char)(rand() % 255);
-}
-
-/*
-============
-Q_vsnprintf
-
-vsnprintf portability:
-
-C99 standard: vsnprintf returns the number of characters (excluding the trailing
-'\0') which would have been written to the final string if enough space had been available
-snprintf and vsnprintf do not write more than size bytes (including the trailing '\0')
-
-win32: _vsnprintf returns the number of characters written, not including the terminating null character,
-or a negative value if an output error occurs. If the number of characters to write exceeds count,
-then count characters are written and -1 is returned and no trailing '\0' is added.
-
-Q_vsnPrintf: always append a trailing '\0', returns number of characters written or
-returns -1 on failure or if the buffer would be overflowed.
-============
-*/
-int Q_vsnprintf(char *dest, int size, const char *fmt, va_list argptr)
-{
-	int ret;
-
-#ifdef _WIN32
-#undef _vsnprintf
-	ret = _vsnprintf(dest, size - 1, fmt, argptr);
-#define _vsnprintf  use_idStr_vsnPrintf
-#else
-#undef vsnprintf
-	ret = vsnprintf(dest, size, fmt, argptr);
-#define vsnprintf   use_idStr_vsnPrintf
-#endif
-	dest[size - 1] = '\0';
-	if (ret < 0 || ret >= size)
-	{
-		return -1;
-	}
-	return ret;
 }

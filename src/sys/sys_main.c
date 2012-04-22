@@ -194,13 +194,9 @@ qboolean Sys_WritePIDFile(void)
 }
 
 /*
-=================
-Sys_Exit
-
-Single exit point (regular exit or in case of error)
-=================
-*/
-static void Sys_Exit(int exitCode)
+ * @brief Single exit point (regular exit or in case of error)
+ */
+static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 {
 	CON_Shutdown();
 
@@ -455,27 +451,9 @@ void Sys_Error(const char *error, ...)
 	Q_vsnprintf(string, sizeof(string), error, argptr);
 	va_end(argptr);
 
-	CL_Shutdown();
 	Sys_ErrorDialog(string);
 
 	Sys_Exit(3);
-}
-
-/*
-=================
-Sys_Warn
-=================
-*/
-void Sys_Warn(char *warning, ...)
-{
-	va_list argptr;
-	char    string[1024];
-
-	va_start(argptr, warning);
-	Q_vsnprintf(string, sizeof(string), warning, argptr);
-	va_end(argptr);
-
-	CON_Print(va("Warning: %s", string));
 }
 
 /*
@@ -564,7 +542,7 @@ void *Sys_LoadDll(const char *name, char *fqpath,
 
 	assert(name);
 
-	Q_snprintf(fname, sizeof(fname), Sys_GetDLLName("%s"), name);
+	snprintf(fname, sizeof(fname), Sys_GetDLLName("%s"), name);
 
 	// TODO: use fs_searchpaths from files.c
 	basepath = Cvar_VariableString("fs_basepath");

@@ -36,13 +36,6 @@
 #include "../game/g_public.h"
 #include "../game/bg_public.h"
 
-//bani
-#ifdef __GNUC__
-#define _attribute(x) __attribute__(x)
-#else
-#define _attribute(x)
-#endif
-
 //=============================================================================
 
 #define PERS_SCORE              0       // !!! MUST NOT CHANGE, SERVER AND
@@ -251,7 +244,7 @@ typedef struct
 {
 	netadr_t adr;
 	int challenge;
-    int         clientChallenge;    // challenge number coming from the client
+	int clientChallenge;            // challenge number coming from the client
 	int time;                       // time the last packet was sent to the autherize server
 	int pingTime;                   // time the challenge response was sent to client
 	int firstTime;                  // time the adr was first used, for authorize timeout checks
@@ -388,8 +381,7 @@ extern cvar_t *sv_fullmsg;
 // sv_main.c
 //
 void SV_FinalCommand(char *cmd, qboolean disconnect);   // ydnar: added disconnect flag so map changes can use this function as well
-void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...);
-
+void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
 
 void SV_AddOperatorCommands(void);
 void SV_RemoveOperatorCommands(void);

@@ -112,6 +112,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 	if (len >= sizeof(bigTextBuffer) - 1)
 	{
 		CG_Printf("File %s too long\n", filename);
+		trap_FS_FCloseFile(f);
 		return qfalse;
 	}
 
@@ -376,7 +377,7 @@ static qboolean CG_RegisterAcc(const char *modelName, int *model, const char *sk
 		return qfalse;
 	}
 
-	COM_StripExtension(modelName, filename);
+	COM_StripExtension(modelName, filename, sizeof(filename));
 	Q_strcat(filename, sizeof(filename), va("_%s.skin", skinname));
 	*skin = trap_R_RegisterSkin(filename);
 
@@ -438,7 +439,7 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 	}
 
 	// Register Skin
-	COM_StripExtension(characterDef.mesh, buf);
+	COM_StripExtension(characterDef.mesh, buf, sizeof(buf));
 	filename = va("%s_%s.skin", buf, characterDef.skin);
 	if (!(character->skin = trap_R_RegisterSkin(filename)))
 	{
@@ -479,7 +480,7 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 		}
 
 		// Register Undressed Corpse Skin
-		COM_StripExtension(characterDef.undressedCorpseModel, buf);
+		COM_StripExtension(characterDef.undressedCorpseModel, buf, sizeof(buf));
 		filename = va("%s_%s.skin", buf, characterDef.undressedCorpseSkin);
 		if (!(character->undressedCorpseSkin = trap_R_RegisterSkin(filename)))
 		{

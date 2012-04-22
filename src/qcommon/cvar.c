@@ -599,6 +599,15 @@ void Cvar_Reset(const char *var_name)
 	Cvar_Set2(var_name, NULL, qfalse);
 }
 
+/*
+ * ============
+ * Cvar_ForceReset
+ * ============
+ */
+void Cvar_ForceReset(const char *var_name)
+{
+	Cvar_Set2(var_name, NULL, qtrue);
+}
 
 /*
 ============
@@ -1140,6 +1149,22 @@ void Cvar_InfoStringBuffer(int bit, char *buff, int buffsize)
 }
 
 /*
+ * =====================
+ * Cvar_CheckRange
+ * =====================
+ */
+void Cvar_CheckRange(cvar_t *var, float min, float max, qboolean integral)
+{
+//     var->validate = qtrue;
+//     var->min = min;
+//     var->max = max;
+//     var->integral = integral;
+
+	// Force an initial range check
+	Cvar_Set(var->name, var->string);
+}
+
+/*
 =====================
 Cvar_Register
 
@@ -1170,12 +1195,12 @@ updates an interpreted modules' version of a cvar
 */
 void    Cvar_Update(vmCvar_t *vmCvar)
 {
-	cvar_t *cv = NULL;  // bk001129
-	assert(vmCvar);   // bk
+	cvar_t *cv = NULL;
+	assert(vmCvar);
 
 	if ((unsigned)vmCvar->handle >= cvar_numIndexes)
 	{
-		Com_Error(ERR_DROP, "Cvar_Update: handle %d out of range", (unsigned)vmCvar->handle);
+		Com_Error(ERR_DROP, "Cvar_Update: handle out of range");
 	}
 
 	cv = cvar_indexes + vmCvar->handle;
@@ -1189,25 +1214,36 @@ void    Cvar_Update(vmCvar_t *vmCvar)
 		return;     // variable might have been cleared by a cvar_restart
 	}
 	vmCvar->modificationCount = cv->modificationCount;
-	// bk001129 - mismatches.
 	if (strlen(cv->string) + 1 > MAX_CVAR_VALUE_STRING)
 	{
-		Com_Error(ERR_DROP, "Cvar_Update: src %s length %d exceeds MAX_CVAR_VALUE_STRING(%d)",
+		Com_Error(ERR_DROP, "Cvar_Update: src %s length %u exceeds MAX_CVAR_VALUE_STRING",
 		          cv->string,
-		          strlen(cv->string),
-		          sizeof(vmCvar->string));
+		          (unsigned int) strlen(cv->string));
 	}
-	// bk001212 - Q_strncpyz guarantees zero padding and dest[MAX_CVAR_VALUE_STRING-1]==0
-	// bk001129 - paranoia. Never trust the destination string.
-	// bk001129 - beware, sizeof(char*) is always 4 (for cv->string).
-	//            sizeof(vmCvar->string) always MAX_CVAR_VALUE_STRING
-	//Q_strncpyz( vmCvar->string, cv->string, sizeof( vmCvar->string ) ); // id
 	Q_strncpyz(vmCvar->string, cv->string, MAX_CVAR_VALUE_STRING);
 
 	vmCvar->value   = cv->value;
 	vmCvar->integer = cv->integer;
 }
 
+/*
+==================
+Cvar_CompleteCvarName
+==================
+*/
+void Cvar_CompleteCvarName(char *args, int argNum)
+{
+	if (argNum == 2)
+	{
+		// Skip "<cmd> "
+		char *p = Com_SkipTokens(args, 1, " ");
+
+		if (p > args)
+		{
+			Field_CompleteCommand(p, qfalse, qtrue);
+		}
+	}
+}
 
 /*
 ============
@@ -1221,12 +1257,18 @@ void Cvar_Init(void)
 	cvar_cheats = Cvar_Get("sv_cheats", "1", CVAR_ROM | CVAR_SYSTEMINFO);
 
 	Cmd_AddCommand("toggle", Cvar_Toggle_f);
-	Cmd_AddCommand("cycle", Cvar_Cycle_f);    // ydnar
+	Cmd_SetCommandCompletionFunc("toggle", Cvar_CompleteCvarName);
+	Cmd_AddCommand("cycle", Cvar_Cycle_f);
 	Cmd_AddCommand("set", Cvar_Set_f);
+	Cmd_SetCommandCompletionFunc("set", Cvar_CompleteCvarName);
 	Cmd_AddCommand("sets", Cvar_SetS_f);
+	Cmd_SetCommandCompletionFunc("sets", Cvar_CompleteCvarName);
 	Cmd_AddCommand("setu", Cvar_SetU_f);
+	Cmd_SetCommandCompletionFunc("setu", Cvar_CompleteCvarName);
 	Cmd_AddCommand("seta", Cvar_SetA_f);
+	Cmd_SetCommandCompletionFunc("seta", Cvar_CompleteCvarName);
 	Cmd_AddCommand("reset", Cvar_Reset_f);
+	Cmd_SetCommandCompletionFunc("reset", Cvar_CompleteCvarName);
 	Cmd_AddCommand("cvarlist", Cvar_List_f);
 	Cmd_AddCommand("cvar_restart", Cvar_Restart_f);
 

@@ -135,14 +135,6 @@ void R_Fog(glfog_t *curfog)
 //      }
 	}
 
-// TTimo - from SP NV fog code
-	// NV fog mode
-	if (glConfig.NVFogAvailable)
-	{
-		qglFogi(GL_FOG_DISTANCE_MODE_NV, glConfig.NVFogMode);
-	}
-// end
-
 	setfog.registered = qtrue;
 
 	qglClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
@@ -1375,7 +1367,6 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	for (i = 0; i < tess.numIndexes; i += 3)
 	{
 		vec3_t normal;
-		float  dot;
 		float  len;
 
 		VectorSubtract(tess.xyz[tess.indexes[i]].v, tr.viewParms.orientation.origin, normal);
@@ -1386,7 +1377,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 			shortest = len;
 		}
 
-		if ((dot = DotProduct(normal, tess.normal[tess.indexes[i]].v)) >= 0)
+		if (DotProduct(normal, tess.normal[tess.indexes[i]].v) >= 0)
 		{
 			numTriangles--;
 		}
@@ -1606,9 +1597,8 @@ R_DecomposeSort
 */
 void R_DecomposeSort(unsigned sort, int *entityNum, shader_t **shader, int *fogNum, int *frontFace, int *dlightMap)
 {
-	*fogNum = (sort >> QSORT_FOGNUM_SHIFT) & 31;
-	*shader = tr.sortedShaders[(sort >> QSORT_SHADERNUM_SHIFT) & (MAX_SHADERS - 1)];
-//  *entityNum = ( sort >> QSORT_ENTITYNUM_SHIFT ) & 1023;
+	*fogNum    = (sort >> QSORT_FOGNUM_SHIFT) & 31;
+	*shader    = tr.sortedShaders[(sort >> QSORT_SHADERNUM_SHIFT) & (MAX_SHADERS - 1)];
 	*entityNum = (sort >> QSORT_ENTITYNUM_SHIFT) & (MAX_GENTITIES - 1);       // (SA) uppded entity count for Wolf to 11 bits
 	*frontFace = (sort >> QSORT_FRONTFACE_SHIFT) & 1;
 	*dlightMap = sort & 1;

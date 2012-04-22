@@ -199,7 +199,7 @@ qboolean G_ScriptAction_ChangeModel(gentity_t *ent, char *params)
 		G_Error("G_Scripting: changemodel must have a target model name\n");
 	}
 
-	COM_StripExtension(token, tagname);
+	COM_StripExtension(token, tagname, sizeof(tagname));
 	Q_strcat(tagname, MAX_QPATH, ".tag");
 	ent->tagNumber = trap_LoadTag(tagname);
 

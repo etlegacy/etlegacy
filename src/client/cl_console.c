@@ -325,6 +325,18 @@ void Con_CheckResize(void)
 	con.display = con.current;
 }
 
+/*
+==================
+Cmd_CompleteTxtName
+==================
+*/
+void Cmd_CompleteTxtName(char *args, int argNum)
+{
+	if (argNum == 2)
+	{
+		Field_CompleteFilename("", "txt", qfalse, qtrue);
+	}
+}
 
 /*
 ================
@@ -349,14 +361,14 @@ void Con_Init(void)
 		historyEditLines[i].widthInChars = g_console_field_width;
 	}
 
-	Cmd_AddCommand("toggleConsole", Con_ToggleConsole_f);
-	Cmd_AddCommand("clear", Con_Clear_f);
-	Cmd_AddCommand("condump", Con_Dump_f);
-
-	// ydnar: these are deprecated in favor of cgame/ui based version
+	Cmd_AddCommand("toggleconsole", Con_ToggleConsole_f);
+	// clMessageMode: deprecated in favor of cgame/ui based version
 	Cmd_AddCommand("clMessageMode", Con_MessageMode_f);
 	Cmd_AddCommand("clMessageMode2", Con_MessageMode2_f);
 	Cmd_AddCommand("clMessageMode3", Con_MessageMode3_f);
+	Cmd_AddCommand("clear", Con_Clear_f);
+	Cmd_AddCommand("condump", Con_Dump_f);
+	Cmd_SetCommandCompletionFunc("condump", Cmd_CompleteTxtName);
 }
 
 

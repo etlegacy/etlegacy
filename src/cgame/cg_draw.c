@@ -724,8 +724,8 @@ CG_DrawTeamInfo
 */
 static void CG_DrawTeamInfo(void)
 {
-	int    w, h;
-	int    i, len;
+	int    h;
+	int    i;
 	vec4_t hcolor;
 	int    chatHeight;
 	float  alphapercent;
@@ -755,19 +755,6 @@ static void CG_DrawTeamInfo(void)
 		}
 
 		h = (cgs.teamChatPos - cgs.teamLastChatPos) * lineHeight;
-
-		w = 0;
-
-		for (i = cgs.teamLastChatPos; i < cgs.teamChatPos; i++)
-		{
-			len = CG_Text_Width_Ext(cgs.teamChatMsgs[i % chatHeight], 0.2f, 0, &cgs.media.limboFont2);
-			if (len > w)
-			{
-				w = len;
-			}
-		}
-		w *= TINYCHAR_WIDTH;
-		w += TINYCHAR_WIDTH * 2;
 
 		for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i--)
 		{
@@ -4017,7 +4004,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 	x = x + (cos(angle) * w);
 	y = y + (sin(angle) * w);
 
-	len = 1 - min(1.f, len / 2000.f);
+	len = 1 - MIN(1.f, len / 2000.f);
 
 
 	CG_DrawPic(x - (14 * len + 4) / 2, y - (14 * len + 4) / 2, 14 * len + 8, 14 * len + 8, shader);
@@ -4069,7 +4056,7 @@ else
 
 	}
 
-	len        = 1 - min(1.f, len / 2000.f);
+	len        = 1 - MIN(1.f, len / 2000.f);
 	iconWidth  = 14 * len + 4;    // where did this calc. come from?
 	iconHeight = 14 * len + 4;
 

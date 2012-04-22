@@ -195,8 +195,12 @@ int ParseHex(const char *text)
 
 void VM_LoadSymbols(vm_t *vm)
 {
-	int        len;
-	char       *mapfile, *text_p, *token;
+	union
+	{
+		char *c;
+		void *v;
+	} mapfile;
+	char       *text_p, *token;
 	char       name[MAX_QPATH];
 	char       symbols[MAX_QPATH];
 	vmSymbol_t **prev, *sym;
@@ -212,10 +216,10 @@ void VM_LoadSymbols(vm_t *vm)
 		return;
 	}
 
-	COM_StripExtension2(vm->name, name, sizeof(name));
+	COM_StripExtension(vm->name, name, sizeof(name));
 	Com_sprintf(symbols, sizeof(symbols), "vm/%s.map", name);
-	len = FS_ReadFile(symbols, (void **)&mapfile);
-	if (!mapfile)
+	FS_ReadFile(symbols, &mapfile.v);
+	if (!mapfile.c)
 	{
 		Com_Printf("Couldn't load symbol file: %s\n", symbols);
 		return;
@@ -224,7 +228,7 @@ void VM_LoadSymbols(vm_t *vm)
 	numInstructions = vm->instructionPointersLength >> 2;
 
 	// parse the symbols
-	text_p = mapfile;
+	text_p = mapfile.c;
 	prev   = &vm->symbols;
 	count  = 0;
 
@@ -240,7 +244,7 @@ void VM_LoadSymbols(vm_t *vm)
 		{
 			COM_Parse(&text_p);
 			COM_Parse(&text_p);
-			continue;           // only load code segment values
+			continue;       // only load code segment values
 		}
 
 		token = COM_Parse(&text_p);
@@ -277,7 +281,7 @@ void VM_LoadSymbols(vm_t *vm)
 
 	vm->numSymbols = count;
 	Com_Printf("%i symbols parsed from %s\n", count, symbols);
-	FS_FreeFile(mapfile);
+	FS_FreeFile(mapfile.v);
 }
 
 /*

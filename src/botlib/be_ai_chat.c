@@ -33,7 +33,6 @@
  */
 
 #include "../qcommon/q_shared.h"
-//#include "../server/server.h"
 #include "l_memory.h"
 #include "l_libvar.h"
 #include "l_script.h"
@@ -780,7 +779,7 @@ bot_synonymlist_t *BotLoadSynonyms(char *filename)
 						StripDoubleQuotes(token.string);
 						if (strlen(token.string) <= 0)
 						{
-							SourceError(source, "empty string", token.string);
+							SourceError(source, "empty string");
 							FreeSource(source);
 							return NULL;
 						} //end if
@@ -1334,7 +1333,7 @@ bot_matchpiece_t *BotLoadMatchPieces(source_t *source, char *endtoken)
 	{
 		if (token.type == TT_NUMBER && (token.subtype & TT_INTEGER))
 		{
-			if (token.intvalue < 0 || token.intvalue >= MAX_MATCHVARIABLES)
+			if (token.intvalue >= MAX_MATCHVARIABLES)
 			{
 				SourceError(source, "can't have more than %d match variables\n", MAX_MATCHVARIABLES);
 				FreeSource(source);

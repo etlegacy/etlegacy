@@ -1308,6 +1308,13 @@ extern trGlobals_t    tr;
 extern glconfig_t     glConfig;     // outside of TR since it shouldn't be cleared during ref re-init
 extern glstate_t      glState;      // outside of TR since it shouldn't be cleared during ref re-init
 
+// These two variables should live inside glConfig but can't because of compatibility issues to the original ID vms.
+// If you release a stand-alone game and your mod uses tr_types.h from this build you can safely move them to
+// the glconfig_t struct.
+extern qboolean textureFilterAnisotropic;
+extern int      maxAnisotropy;
+extern float    displayAspect;
+
 //
 // cvars
 //
@@ -1381,14 +1388,9 @@ extern cvar_t *r_ext_texenv_op;
 extern cvar_t *r_ext_multitexture;
 extern cvar_t *r_ext_compiled_vertex_array;
 extern cvar_t *r_ext_texture_env_add;
-extern cvar_t *r_ext_texture_filter_anisotropic;    //DAJ from EF
-extern cvar_t *r_ati_fsaa_samples;                  //DAJ
 
-extern cvar_t *r_clampToEdge;           // ydnar: opengl 1.2 GL_CLAMP_TO_EDGE support
-
-// TTimo
-extern cvar_t *r_ext_NV_fog_dist;
-extern cvar_t *r_nv_fogdist_mode;
+extern cvar_t *r_ext_texture_filter_anisotropic;
+extern cvar_t *r_ext_max_anisotropy;
 
 extern cvar_t *r_nobind;                        // turns off binding to appropriate textures
 extern cvar_t *r_singleShader;                  // make most world faces use default shader
@@ -1398,11 +1400,8 @@ extern cvar_t *r_colorMipLevels;                // development aid to see textur
 extern cvar_t *r_picmip;                        // controls picmip values
 extern cvar_t *r_finish;
 extern cvar_t *r_drawBuffer;
-extern cvar_t *r_glDriver;
-extern cvar_t *r_glIgnoreWicked3D;
 extern cvar_t *r_swapInterval;
 extern cvar_t *r_textureMode;
-extern cvar_t *r_textureAnisotropy;
 extern cvar_t *r_offsetFactor;
 extern cvar_t *r_offsetUnits;
 
@@ -1514,7 +1513,6 @@ void    GL_Bind(image_t *image);
 void    GL_SetDefaultState(void);
 void    GL_SelectTexture(int unit);
 void    GL_TextureMode(const char *string);
-void    GL_TextureAnisotropy(float anisotropy);
 void    GL_CheckErrors(void);
 void    GL_State(unsigned long stateVector);
 void    GL_TexEnv(int env);
@@ -1646,7 +1644,10 @@ void        GLimp_FrontEndSleep(void);
 void        GLimp_WakeRenderer(void *data);
 
 void        GLimp_LogComment(char *comment);
+void        GLimp_Minimize(void);
 
+// NOTE linux works with float gamma value, not the gamma table
+// the params won't be used, getting the r_gamma cvar directly
 void GLimp_SetGamma(unsigned char red[256],
                     unsigned char green[256],
                     unsigned char blue[256]);

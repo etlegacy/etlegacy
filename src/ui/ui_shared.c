@@ -4770,7 +4770,7 @@ void Item_Text_Paint(itemDef_t *item)
 			DC->getCVarString(item->cvar, text, sizeof(text));
 			if (item->window.flags & WINDOW_TEXTASINT)
 			{
-				COM_StripExtension(text, text);
+				COM_StripExtension(text, text, sizeof(text));
 				item->textRect.w = 0;   // force recalculation
 			}
 			else if (item->window.flags & WINDOW_TEXTASFLOAT)
@@ -8152,10 +8152,17 @@ qboolean MenuParse_name(itemDef_t *item, int handle)
 qboolean MenuParse_fullscreen(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
-	if (!PC_Int_Parse(handle, (int *)&menu->fullScreen))
+	union
+	{
+		qboolean b;
+		int i;
+	} fullScreen;
+
+	if (!PC_Int_Parse(handle, &fullScreen.i))
 	{
 		return qfalse;
 	}
+	menu->fullScreen = fullScreen.b;
 	return qtrue;
 }
 

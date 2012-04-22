@@ -101,7 +101,7 @@
 { "COM_BitCheck", (byte *)COM_BitCheck },
 { "COM_DefaultExtension", (byte *)COM_DefaultExtension },
 { "COM_StripFilename", (byte *)COM_StripFilename },
-{ "COM_StripExtension2", (byte *)COM_StripExtension2 },
+{ "COM_StripExtension", (byte *)COM_StripExtension },
 { "COM_StripExtension", (byte *)COM_StripExtension },
 { "COM_SkipPath", (byte *)COM_SkipPath },
 { "COM_FixPath", (byte *)COM_FixPath },

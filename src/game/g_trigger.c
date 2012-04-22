@@ -637,10 +637,10 @@ void heal_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	for (i = 0; i < clientcount; i++)
 	{
-		healvalue = min(touchClients[i]->client->ps.stats[STAT_MAX_HEALTH] - touchClients[i]->health, self->damage);
+		healvalue = MIN(touchClients[i]->client->ps.stats[STAT_MAX_HEALTH] - touchClients[i]->health, self->damage);
 		if (self->health != -9999)
 		{
-			healvalue = min(healvalue, self->health);
+			healvalue = MIN(healvalue, self->health);
 		}
 		if (healvalue <= 0)
 		{
@@ -852,7 +852,7 @@ void ammo_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	}
 	else
 	{
-		count = min(clientcount, self->health / (float)self->damage);
+		count = MIN(clientcount, self->health / (float)self->damage);
 	}
 
 	for (i = 0; i < count; i++)

@@ -3533,7 +3533,7 @@ aas_lreachability_t *AAS_FindFaceReachabilities(vec3_t *facepoints, int numpoint
 		lreach->traveltime = 0;
 		lreach->next       = lreachabilities;
 		lreachabilities    = lreach;
-		
+
 		if (towardsface)
 		{
 			AAS_PermanentLine(lreach->start, lreach->end, 1);

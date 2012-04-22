@@ -172,8 +172,8 @@ NET
 
 typedef enum
 {
+	NA_BAD = 0,                 // an address lookup failed
 	NA_BOT,
-	NA_BAD,                 // an address lookup failed
 	NA_LOOPBACK,
 	NA_BROADCAST,
 	NA_IP,
@@ -221,11 +221,13 @@ int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family);
 qboolean    NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_message);
 void        NET_Sleep(int msec);
 
-
-//----(SA)  increased for larger submodel entity counts
-#define MAX_MSGLEN              32768       // max length of a message, which may
-//#define   MAX_MSGLEN              16384       // max length of a message, which may
-// be fragmented into multiple packets
+/*
+ * @def MAX_MSGLEN
+ * @brief max length of a message, which may be fragmented into multiple packets
+ *
+ * ioquake - increased for larger submodel entity counts
+ */
+#define MAX_MSGLEN              32768
 #define MAX_DOWNLOAD_WINDOW         8       // max of eight download frames
 #define MAX_DOWNLOAD_BLKSIZE        2048    // 2048 byte block chunks
 
@@ -291,14 +293,11 @@ You or the server may be running older versions of the game. Press the auto-upda
 /*
  * @def MASTER_SERVER_NAME
  * @brief location of the master server
- *
- * As the main server list etmaster.idsoftware.com seems to
- * be permanently down, we switched to an alternative.
  */
 #ifndef MASTER_SERVER_NAME
-#define MASTER_SERVER_NAME      "master0.etmaster.net"
+#define MASTER_SERVER_NAME      "etmaster.idsoftware.com"
 #endif // MASTER_SERVER_NAME
-#define MOTD_SERVER_NAME            "master0.etmaster.net"
+#define MOTD_SERVER_NAME            "etmaster.idsoftware.com"
 
 #ifdef AUTHORIZE_SUPPORT
 #define AUTHORIZE_SERVER_NAME   "wolfauthorize.idsoftware.com"
@@ -475,8 +474,13 @@ void    Cmd_AddCommand(const char *cmd_name, xcommand_t function);
 
 void    Cmd_RemoveCommand(const char *cmd_name);
 
+typedef void (*completionFunc_t)(char *args, int argNum);
+
 void Cmd_CommandCompletion(void (*callback)(const char *s));
 // callback with each valid string
+void Cmd_SetCommandCompletionFunc(const char *command,
+                                  completionFunc_t complete);
+void Cmd_CompleteArgument(const char *command, char *args, int argNum);
 
 int     Cmd_Argc(void);
 char *Cmd_Argv(int arg);
@@ -556,6 +560,7 @@ void Cvar_CommandCompletion(void (*callback)(const char *s));
 // callback with each valid string
 
 void    Cvar_Reset(const char *var_name);
+void    Cvar_ForceReset(const char *var_name);
 
 void    Cvar_SetCheatState(void);
 // reset all testing vars to a safe value
@@ -576,8 +581,11 @@ char *Cvar_InfoString_Big(int bit);
 // returns an info string containing all the cvars that have the given bit set
 // in their flags ( CVAR_USERINFO, CVAR_SERVERINFO, CVAR_SYSTEMINFO, etc )
 void    Cvar_InfoStringBuffer(int bit, char *buff, int buffsize);
+void Cvar_CheckRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
 
 void    Cvar_Restart_f(void);
+
+void Cvar_CompleteCvarName(char *args, int argNum);
 
 extern int cvar_modifiedFlags;
 // whenever a cvar is modifed, its flags will be OR'd into this, so
@@ -633,6 +641,10 @@ void    FS_FreeFileList(char **list);
 
 qboolean FS_FileExists(const char *file);
 
+qboolean FS_CreatePath(char *OSPath);
+
+char *FS_BuildOSPath(const char *base, const char *game, const char *qpath);
+
 int     FS_LoadStack(void);
 
 int     FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
@@ -670,9 +682,9 @@ int     FS_Delete(char *filename);      // only works inside the 'save' director
 
 int     FS_Write(const void *buffer, int len, fileHandle_t f);
 
+int     FS_Read2(void *buffer, int len, fileHandle_t f);
 int     FS_Read(void *buffer, int len, fileHandle_t f);
 // properly handles partial reads and reads from other dlls
-int     FS_Read2(void *buffer, int len, fileHandle_t f);
 
 void    FS_FCloseFile(fileHandle_t f);
 // note: you can't just fclose from another DLL, due to MS libc issues
@@ -739,13 +751,14 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames);
 // separated checksums will be checked for files, with the
 // sole exception of .cfg files.
 
-qboolean FS_idPak(char *pak, char *base);
 qboolean FS_VerifyOfficialPaks(void);
+qboolean FS_idPak(char *pak, char *base);
 qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring);
 
 void FS_Rename(const char *from, const char *to);
 
-char *FS_BuildOSPath(const char *base, const char *game, const char *qpath);
+void    FS_FilenameCompletion(const char *dir, const char *ext,
+                              qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
 
 #if !defined(DEDICATED)
 extern int cl_connectedToPureServer;
@@ -760,8 +773,6 @@ char *FS_ShiftedStrStr(const char *string, const char *substring, int shift);
 char *FS_ShiftStr(const char *string, int shift);
 
 void FS_CopyFile(char *fromOSPath, char *toOSPath);
-
-qboolean FS_CreatePath(char *OSPath);
 
 qboolean FS_VerifyPak(const char *pak);
 
@@ -789,7 +800,12 @@ typedef struct
 } field_t;
 
 void Field_Clear(field_t *edit);
-void Field_CompleteCommand(field_t *edit);
+void Field_AutoComplete(field_t *edit);
+void Field_CompleteKeyname(void);
+void Field_CompleteFilename(const char *dir,
+                            const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk);
+void Field_CompleteCommand(char *cmd,
+                           qboolean doCommands, qboolean doCvars);
 
 /*==============================================================
 MISC
@@ -842,11 +858,10 @@ void        Info_Print(const char *s);
 
 void Com_BeginRedirect(char *buffer, int buffersize, void (*flush)(char *));
 void        Com_EndRedirect(void);
-int QDECL Com_VPrintf(const char *fmt, va_list argptr) _attribute((format(printf, 1, 0)));       // conforms to vprintf prototype for print callback passing
-void QDECL Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));       // this one calls to Com_VPrintf now
-void QDECL Com_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
-void QDECL Com_Error(int code, const char *fmt, ...) _attribute((format(printf, 2, 3)));
-void        Com_Quit_f(void);
+void QDECL Com_Printf(const char *fmt, ...) __attribute__ ((format(printf, 1, 2)));
+void QDECL Com_DPrintf(const char *fmt, ...) __attribute__ ((format(printf, 1, 2)));
+void QDECL Com_Error(int code, const char *fmt, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
+void        Com_Quit_f(void) __attribute__ ((noreturn));
 int         Com_EventLoop(void);
 int         Com_Milliseconds(void);     // will be journaled properly
 unsigned int    Com_BlockChecksum(const void *buffer, int length);
@@ -891,6 +906,8 @@ extern cvar_t *com_buildScript;         // for building release pak files
 extern cvar_t *com_journal;
 extern cvar_t *com_cameraMode;
 extern cvar_t *com_ansiColor;
+extern cvar_t *com_unfocused;
+extern cvar_t *com_minimized;
 extern cvar_t *com_logosPlaying;
 extern cvar_t *com_minimized;
 
@@ -947,7 +964,7 @@ temp file loading
 --- high memory ---
 */
 
-#if defined(_DEBUG)
+#if !defined(NDEBUG)
 #define ZONE_DEBUG
 #endif
 
@@ -1045,13 +1062,16 @@ void CL_CheckAutoUpdate(void);
 qboolean CL_NextUpdateServer(void);
 void CL_GetAutoUpdate(void);
 
+void Key_KeynameCompletion(void (*callback)(const char *s));
+// for keyname autocompletion
+
 void Key_WriteBindings(fileHandle_t f);
 // for writing the config files
 
 void S_ClearSoundBuffer(qboolean killStreaming);    //----(SA)  modified
 // call before filesystem access
 
-void SCR_DebugGraph(float value, int color);     // FIXME: move logging to common?
+void SCR_DebugGraph(float value);     // FIXME: move logging to common?
 
 
 //
@@ -1122,11 +1142,6 @@ void Sys_LeaveCriticalSection(void *ptr);
 #define Sys_GetDLLName(x) x ".mp." ARCH_STRING DLL_EXT
 #endif
 
-// fqpath param added 2/15/02 by T.Ray - Sys_LoadDll is only called in vm.c at this time
-void *QDECL Sys_LoadDll(const char *name, char *fqpath, intptr_t(QDECL * *entryPoint) (int, ...),
-                        intptr_t (QDECL *systemcalls)(intptr_t, ...));
-void    Sys_UnloadDll(void *dllHandle);
-
 void    Sys_UnloadGame(void);
 void *Sys_GetGameAPI(void *parms);
 
@@ -1142,8 +1157,8 @@ void *Sys_GetBotLibAPI(void *parms);
 
 char *Sys_GetCurrentUser(void);
 
-void QDECL Sys_Error(const char *error, ...);
-void    Sys_Quit(void);
+void QDECL Sys_Error(const char *error, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
+void    Sys_Quit(void) __attribute__ ((noreturn));
 char *Sys_GetClipboardData(void);       // note that this isn't journaled...
 
 void    Sys_Print(const char *msg);

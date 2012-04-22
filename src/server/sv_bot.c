@@ -220,7 +220,7 @@ void BotDrawDebugPolygons(BotPolyFunc drawPoly, int value)
 BotImport_Print
 ==================
 */
-void QDECL BotImport_Print(int type, char *fmt, ...)
+static __attribute__ ((format(printf, 2, 3))) void QDECL BotImport_Print(int type, char *fmt, ...)
 {
 	char    str[2048];
 	va_list ap;
@@ -774,10 +774,6 @@ void SV_BotInitBotLib(void)
 	botlib_import.BotCheckAttackAtPos = BotImport_BotCheckAttackAtPos;
 
 	botlib_import.BotDrawPolygon = BotImport_DrawPolygon;
-
-	// singleplayer check
-	// Arnout: no need for this
-	//botlib_import.BotGameIsSinglePlayer = SV_GameIsSinglePlayer;
 
 	botlib_export = (botlib_export_t *)GetBotLibAPI(BOTLIB_API_VERSION, &botlib_import);
 }

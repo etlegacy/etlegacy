@@ -993,12 +993,12 @@ qboolean FS_FilenameCompare(const char *s1, const char *s2)
 
 		if (c1 != c2)
 		{
-			return -1;      // strings not equal
+			return qtrue;      // strings not equal
 		}
 	}
 	while (c1);
 
-	return 0;       // strings are equal
+	return qfalse;       // strings are equal
 }
 
 /*
@@ -2433,7 +2433,7 @@ Returns a uniqued list of files that match the given criteria
 from all search paths
 ===============
 */
-char **FS_ListFilteredFiles(const char *path, const char *extension, char *filter, int *numfiles)
+char **FS_ListFilteredFiles(const char *path, const char *extension, char *filter, int *numfiles, qboolean allowNonPureFilesOnDisk)
 {
 	int          nfiles;
 	char         **listCopy;
@@ -2449,7 +2449,7 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 
 	if (!fs_searchpaths)
 	{
-		Com_Error(ERR_FATAL, "Filesystem call made without initialization\n");
+		Com_Error(ERR_FATAL, "Filesystem call made without initialization");
 	}
 
 	if (!path)
@@ -2540,7 +2540,7 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 				}
 			}
 		}
-		else if (search->dir)       // scan for files in the filesystem
+		else if (search->dir)     // scan for files in the filesystem
 		{
 			char *netpath;
 			int  numSysFiles;
@@ -2548,7 +2548,7 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 			char *name;
 
 			// don't scan directories for files if we are pure or restricted
-			if (fs_numServerPaks)
+			if (fs_numServerPaks && !allowNonPureFilesOnDisk)
 			{
 				continue;
 			}
@@ -2592,8 +2592,9 @@ FS_ListFiles
 */
 char **FS_ListFiles(const char *path, const char *extension, int *numfiles)
 {
-	return FS_ListFilteredFiles(path, extension, NULL, numfiles);
+	return FS_ListFilteredFiles(path, extension, NULL, numfiles, qfalse);
 }
+
 
 /*
 =================
@@ -2766,7 +2767,7 @@ int FS_GetModList(char *listbuf, int bufsize)
 	qboolean bDrop     = qfalse;
 
 	*listbuf = 0;
-	nMods    = nPotential = nTotal = 0;
+	nMods    = nTotal = 0;
 
 	pFiles0 = Sys_ListFiles(fs_homepath->string, NULL, NULL, &dummy, qtrue);
 	pFiles1 = Sys_ListFiles(fs_basepath->string, NULL, NULL, &dummy, qtrue);
@@ -3038,7 +3039,7 @@ void FS_NewDir_f(void)
 
 	Com_Printf("---------------\n");
 
-	dirnames = FS_ListFilteredFiles("", "", filter, &ndirs);
+	dirnames = FS_ListFilteredFiles("", "", filter, &ndirs, qfalse);
 
 	FS_SortFileList(dirnames, ndirs);
 
@@ -3429,7 +3430,7 @@ qboolean CL_WWWBadChecksum(const char *pakname);
 qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring)
 {
 	searchpath_t *sp;
-	qboolean     havepak, badchecksum;
+	qboolean     havepak;
 	int          i;
 
 	if (!fs_numServerReferencedPaks)
@@ -3442,8 +3443,7 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring)
 	for (i = 0 ; i < fs_numServerReferencedPaks ; i++)
 	{
 		// Ok, see if we have this pak file
-		badchecksum = qfalse;
-		havepak     = qfalse;
+		havepak = qfalse;
 
 		// never autodownload any of the id paks
 		if (FS_idPak(fs_serverReferencedPakNames[i], BASEGAME))
@@ -4680,6 +4680,33 @@ int     FS_FTell(fileHandle_t f)
 void    FS_Flush(fileHandle_t f)
 {
 	fflush(fsh[f].handleFiles.file.o);
+}
+
+void    FS_FilenameCompletion(const char *dir, const char *ext,
+                              qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk)
+{
+	char **filenames;
+	int  nfiles;
+	int  i;
+	char filename[MAX_STRING_CHARS];
+
+	filenames = FS_ListFilteredFiles(dir, ext, NULL, &nfiles, allowNonPureFilesOnDisk);
+
+	FS_SortFileList(filenames, nfiles);
+
+	for (i = 0; i < nfiles; i++)
+	{
+		FS_ConvertPath(filenames[i]);
+		Q_strncpyz(filename, filenames[i], MAX_STRING_CHARS);
+
+		if (stripExt)
+		{
+			COM_StripExtension(filename, filename, sizeof(filename));
+		}
+
+		callback(filename);
+	}
+	FS_FreeFileList(filenames);
 }
 
 // CVE-2006-2082

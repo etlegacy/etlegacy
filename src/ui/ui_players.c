@@ -113,7 +113,7 @@ tryagain:
 	}
 
 	strcpy(path, item->world_model[0]);
-	COM_StripExtension(path, path);
+	COM_StripExtension(path, path, sizeof(path));
 	strcat(path, "_flash.md3");
 	pi->flashModel = trap_R_RegisterModel(path);
 
@@ -1442,6 +1442,7 @@ static qboolean UI_ParseAnimationFile(const char *filename, playerInfo_t *pi)
 	if (len >= (sizeof(text) - 1))
 	{
 		Com_Printf("File %s too long\n", filename);
+		trap_FS_FCloseFile(f);
 		return qfalse;
 	}
 	trap_FS_Read(text, len, f);

@@ -169,15 +169,13 @@ typedef struct bot_entitystate_s
 	int weapon;             // determines weapon and flash model, etc
 	int legsAnim;           // mask off ANIM_TOGGLEBIT
 	int torsoAnim;          // mask off ANIM_TOGGLEBIT
-//  int     weapAnim;       // mask off ANIM_TOGGLEBIT  //----(SA)  added
-//----(SA)  didn't want to comment in as I wasn't sure of any implications of changing this structure.
 } bot_entitystate_t;
 
 //bot AI library exported functions
 typedef struct botlib_import_s
 {
 	//print messages from the bot library
-	void (QDECL *Print)(int type, char *fmt, ...);
+	void (QDECL *Print)(int type, char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
 	//trace a bbox through the world
 	void (*Trace)(bsp_trace_t *trace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int passent, int contentmask);
 	//trace a bbox against a specific entity

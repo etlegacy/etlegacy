@@ -920,9 +920,9 @@ int AAS_CheckAreaForPossiblePortals(int areanum)
 		return 0;
 	}
 	//
-	memset(numareafrontfaces, 0, sizeof(numareafrontfaces));
-	memset(numareabackfaces, 0, sizeof(numareabackfaces));
-	numareas      = numfrontfaces = numbackfaces = 0;
+	Com_Memset(numareafrontfaces, 0, sizeof(numareafrontfaces));
+	Com_Memset(numareabackfaces, 0, sizeof(numareabackfaces));
+	numfrontfaces = numbackfaces = 0;
 	numfrontareas = numbackareas = 0;
 	frontplanenum = backplanenum = -1;
 	//add any adjacent areas with less presence types

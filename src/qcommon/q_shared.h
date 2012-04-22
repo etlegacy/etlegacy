@@ -47,8 +47,11 @@
 
 #define NEW_ANIMS
 #define MAX_TEAMNAME    32
+#define MAX_MASTER_SERVERS      5   // number of supported master servers
 
-#if defined _WIN32 && !defined __GNUC__
+#define DEMOEXT "dm_"           // standard demo extension
+
+#ifdef _MSC_VER
 
 #pragma warning(disable : 4018) // signed/unsigned mismatch
 #pragma warning(disable : 4032)
@@ -73,8 +76,27 @@
 #pragma warning(disable : 4220) // varargs matches remaining parameters
 #endif
 
-#if defined(ppc) || defined(__ppc) || defined(__ppc__) || defined(__POWERPC__)
-#define idppc 1
+//Ignore __attribute__ on non-gcc platforms
+#ifndef __GNUC__
+#ifndef __attribute__
+#define __attribute__(x)
+#endif
+#endif
+
+#ifdef __GNUC__
+#define UNUSED_VAR __attribute__((unused))
+#else
+#define UNUSED_VAR
+#endif
+
+#if (defined _MSC_VER)
+#define Q_EXPORT __declspec(dllexport)
+#elif (defined __SUNPRO_C)
+#define Q_EXPORT __global
+#elif ((__GNUC__ >= 3) && (!__EMX__) && (!sun))
+#define Q_EXPORT __attribute__((visibility("default")))
+#else
+#define Q_EXPORT
 #endif
 
 /**********************************************************************
@@ -113,16 +135,6 @@ typedef int intptr_t;
 #include <sys/stat.h> // rain
 #include <float.h>
 
-// vsnprintf is ISO/IEC 9899:1999
-// abstracting this to make it portable
-#ifdef _WIN32
-#define Q_vsnprintf _vsnprintf
-#define Q_snprintf _snprintf
-#else
-#define Q_vsnprintf vsnprintf
-#define Q_snprintf snprintf
-#endif
-
 #ifdef _MSC_VER
 #include <io.h>
 
@@ -134,31 +146,20 @@ typedef unsigned __int64 uint64_t;
 typedef unsigned __int32 uint32_t;
 typedef unsigned __int16 uint16_t;
 typedef unsigned __int8 uint8_t;
+
+// vsnprintf is ISO/IEC 9899:1999
+// abstracting this to make it portable
+int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap);
 #else
-#include <stdint.h>
+  #include <stdint.h>
+
+  #define Q_vsnprintf vsnprintf
 #endif
 
 #endif
 
 
 #include "q_platform.h"
-
-#ifdef __GNUC__
-#define _attribute(x) __attribute__(x)
-#else
-#define _attribute(x)
-#endif
-
-//======================= GNUC DEFINES ==================================
-#if (defined _MSC_VER)
-#define Q_EXPORT __declspec(dllexport)
-#elif (defined __SUNPRO_C)
-#define Q_EXPORT __global
-#elif ((__GNUC__ >= 3) && (!__EMX__) && (!sun))
-#define Q_EXPORT __attribute__((visibility("default")))
-#else
-#define Q_EXPORT
-#endif
 
 //======================= WIN32 DEFINES =================================
 
@@ -307,6 +308,12 @@ typedef int clipHandle_t;
 
 #define PADP(base, alignment)   ((void *) PAD((intptr_t) (base), (alignment)))
 
+#ifdef __GNUC__
+#define QALIGN(x) __attribute__((aligned(x)))
+#else
+#define QALIGN(x)
+#endif
+
 //#define   SND_NORMAL          0x000   // (default) Allow sound to be cut off only by the same sound on this channel
 #define     SND_OKTOCUT         0x001   // Allow sound to be cut off by any following sounds on this channel
 #define     SND_REQUESTCUT      0x002   // Allow sound to be cut off by following sounds on this channel only for sounds who request cutoff
@@ -329,12 +336,6 @@ typedef int clipHandle_t;
 
 #define ARRAY_LEN(x)        (sizeof(x) / sizeof(*(x)))
 #define STRARRAY_LEN(x)     (ARRAY_LEN(x) - 1)
-
-// TTimo gcc: was missing, added from Q3 source
-#ifndef max
-#define max(x, y) (((x) > (y)) ? (x) : (y))
-#define min(x, y) (((x) < (y)) ? (x) : (y))
-#endif
 
 // angle indexes
 #define PITCH               0       // up / down
@@ -440,16 +441,14 @@ typedef enum
 #define UI_BLINK        0x00001000
 #define UI_INVERSE      0x00002000
 #define UI_PULSE        0x00004000
-// JOSEPH 10-24-99
 #define UI_MENULEFT     0x00008000
 #define UI_MENURIGHT    0x00010000
 #define UI_EXSMALLFONT  0x00020000
 #define UI_MENUFULL     0x00080000
-// END JOSEPH
 
 #define UI_SMALLFONT75  0x00100000
 
-#if defined(_DEBUG)
+#if !defined(NDEBUG)
 #define HUNK_DEBUG
 #endif
 
@@ -629,8 +628,90 @@ extern vec3_t axisDefault[3];
 
 #define IS_NAN(x) (((*(int *)&x) & nanmask) == nanmask)
 
+int Q_isnan(float x);
+
+#if idx64
+extern long qftolsse(float f);
+extern int qvmftolsse(void);
+extern void qsnapvectorsse(vec3_t vec);
+
+#define Q_ftol qftolsse
+#define Q_SnapVector qsnapvectorsse
+
+extern int (*Q_VMftol)(void);
+#elif id386
+extern long QDECL qftolx87(float f);
+extern long QDECL qftolsse(float f);
+extern int QDECL qvmftolx87(void);
+extern int QDECL qvmftolsse(void);
+extern void QDECL qsnapvectorx87(vec3_t vec);
+extern void QDECL qsnapvectorsse(vec3_t vec);
+
+extern long (QDECL *Q_ftol)(float f);
+extern int  (QDECL *Q_VMftol)(void);
+extern void (QDECL *Q_SnapVector)(vec3_t vec);
+#else
+// Q_ftol must expand to a function name so the pluggable renderer can take
+// its address
+#define Q_ftol lrintf
+#define Q_SnapVector(vec) \
+    do \
+	{ \
+		vec3_t *temp = (vec); \
+\
+		(*temp)[0] = round((*temp)[0]); \
+		(*temp)[1] = round((*temp)[1]); \
+		(*temp)[2] = round((*temp)[2]); \
+	} while (0)
+#endif
+/*
+ / / if *your system does not have lrintf() and round() you can try this block. Please also open a bug report at bugzilla.icculus.org
+ // or write a mail to the ioq3 mailing list.
+ #else
+ #define Q_ftol(v) ((long) (v))
+ #define Q_round(v) do { if((v) < 0) (v) -= 0.5f; else (v) += 0.5f; (v) = Q_ftol((v)); } while(0)
+ #define Q_SnapVector(vec) \
+ do\
+ {\
+ vec3_t *temp = (vec);\
+ \
+ Q_round((*temp)[0]);\
+ Q_round((*temp)[1]);\
+ Q_round((*temp)[2]);\
+ } while(0)
+ #endif
+ */
+
+#if idppc
+
+static ID_INLINE float Q_rsqrt(float number)
+{
+	float x = 0.5f * number;
+	float y;
+	#ifdef __GNUC__
+	asm ("frsqrte %0,%1" : "=f" (y) : "f" (number));
+	#else
+	y = __frsqrte(number);
+	#endif
+	return y * (1.5f - (x * y * y));
+}
+
+#ifdef __GNUC__
+static ID_INLINE float Q_fabs(float x)
+{
+	float abs_x;
+
+	asm ("fabs %0,%1" : "=f" (abs_x) : "f" (x));
+	return abs_x;
+}
+#else
+#define Q_fabs __fabsf
+#endif
+
+#else
 float Q_fabs(float f);
 float Q_rsqrt(float f);         // reciprocal square root
+#endif
 
 #define SQRTFAST(x) (1.0f / Q_rsqrt(x))
 
@@ -769,6 +850,14 @@ void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void PerpendicularVector(vec3_t dst, const vec3_t src);
 
+#ifndef MAX
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#endif
+
+#ifndef MIN
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#endif
+
 // Ridah
 void GetPerpendicularViewVector(const vec3_t point, const vec3_t p1, const vec3_t p2, vec3_t up);
 void ProjectPointOntoVector(vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vProj);
@@ -786,8 +875,7 @@ float Com_Clamp(float min, float max, float value);
 char *COM_SkipPath(char *pathname);
 void    COM_FixPath(char *pathname);
 const char *COM_GetExtension(const char *name);
-void    COM_StripExtension(const char *in, char *out);
-void    COM_StripExtension2(const char *in, char *out, int destsize);
+void    COM_StripExtension(const char *in, char *out, int destsize);
 void    COM_StripFilename(char *in, char *out);
 qboolean COM_CompareExtension(const char *in, const char *ext);
 void    COM_DefaultExtension(char *path, int maxSize, const char *extension);
@@ -799,9 +887,9 @@ int     COM_GetCurrentParseLine(void);
 char *COM_Parse(char **data_p);
 char *COM_ParseExt(char **data_p, qboolean allowLineBreak);
 int     COM_Compress(char *data_p);
-void    COM_ParseError(char *format, ...) _attribute((format(printf, 1, 2)));
-void    COM_ParseWarning(char *format, ...) _attribute((format(printf, 1, 2)));
-int Com_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING]);
+void    COM_ParseError(char *format, ...) __attribute__ ((format(printf, 1, 2)));
+void    COM_ParseWarning(char *format, ...) __attribute__ ((format(printf, 1, 2)));
+int COM_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING]);
 
 qboolean COM_BitCheck(const int array[], int bitNum);
 void COM_BitSet(int array[], int bitNum);
@@ -841,8 +929,10 @@ void Parse1DMatrix(char **buf_p, int x, float *m);
 void Parse2DMatrix(char **buf_p, int y, int x, float *m);
 void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m);
 
-void QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) _attribute((format(printf, 3, 4)));
+int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) __attribute__ ((format(printf, 3, 4)));
 
+char *Com_SkipTokens(char *s, int numTokens, char *sep);
+char *Com_SkipCharset(char *s, char *sep);
 
 // mode parm for FS_FOpenFile
 typedef enum
@@ -900,10 +990,6 @@ int Q_CountChar(const char *string, char tocount);
 // removes whitespaces and other bad directory characters
 char *Q_CleanDirName(char *dirname);
 
-#define _vsnprintf use_Q_vsnprintf
-#define vsnprintf use_Q_vsnprintf
-int Q_vsnprintf(char *dest, int size, const char *fmt, va_list argptr);
-
 //=============================================
 
 // 64-bit integers for global rankings interface
@@ -926,6 +1012,9 @@ float *tv(float x, float y, float z);
 
 char *QDECL va(char *format, ...) __attribute__ ((format(printf, 1, 2)));
 
+#define TRUNCATE_LENGTH 64
+void Com_TruncateLongString(char *buffer, const char *s);
+
 //=============================================
 
 //
@@ -940,8 +1029,8 @@ qboolean Info_Validate(const char *s);
 void Info_NextPair(const char **s, char *key, char *value);
 
 // this is only here so the functions in q_shared.c and bg_*.c can link
-void QDECL Com_Error(int level, const char *error, ...) _attribute((format(printf, 2, 3)));
-void QDECL Com_Printf(const char *msg, ...) _attribute((format(printf, 1, 2)));
+void QDECL Com_Error(int level, const char *error, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
+void QDECL Com_Printf(const char *msg, ...) __attribute__ ((format(printf, 1, 2)));
 
 /*
 ==========================================================
@@ -1220,12 +1309,8 @@ typedef enum
 #define MAX_POWERUPS            16
 #define MAX_WEAPONS             64  // (SA) and yet more!
 
-// Ridah, increased this
 //#define   MAX_PS_EVENTS           2
-// ACK: I'd really like to make this 4, but that seems to cause network problems
 #define MAX_EVENTS              4   // max events per frame before we drop events
-//#define   MAX_EVENTS              2   // max events per frame before we drop events
-
 
 #define PS_PMOVEFRAMECOUNTBITS  6
 

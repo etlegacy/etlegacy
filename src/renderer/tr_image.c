@@ -39,8 +39,6 @@ static unsigned char s_gammatable[256];
 int gl_filter_min = GL_LINEAR_MIPMAP_NEAREST;
 int gl_filter_max = GL_LINEAR;
 
-float gl_anisotropy = 1.0;
-
 #define FILE_HASH_SIZE      4096
 static image_t *hashTable[FILE_HASH_SIZE];
 
@@ -197,41 +195,6 @@ void GL_TextureMode(const char *string)
 			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 		}
-	}
-}
-
-/*
-===============
-GL_TextureAnisotropy
-===============
-*/
-void GL_TextureAnisotropy(float anisotropy)
-{
-	int     i;
-	image_t *glt;
-
-	if (r_ext_texture_filter_anisotropic->integer == 1)
-	{
-		if (anisotropy < 1.0 || anisotropy > glConfig.maxAnisotropy)
-		{
-			ri.Printf(PRINT_ALL, "anisotropy out of range\n");
-			return;
-		}
-	}
-
-	gl_anisotropy = anisotropy;
-
-	if (!glConfig.anisotropicAvailable)
-	{
-		return;
-	}
-
-	// change all the existing texture objects
-	for (i = 0 ; i < tr.numImages ; i++)
-	{
-		glt = tr.images[i];
-		GL_Bind(glt);
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_anisotropy);
 	}
 }
 
@@ -909,19 +872,24 @@ done:
 
 	if (mipmap)
 	{
+		if (textureFilterAnisotropic)
+		{
+			qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
+			                 (GLint)Com_Clamp(1, maxAnisotropy, r_ext_max_anisotropy->integer));
+		}
+
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	}
 	else
 	{
-		// ydnar: for allowing lightmap debugging
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
-	}
+		if (textureFilterAnisotropic)
+		{
+			qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
+		}
 
-	if (glConfig.anisotropicAvailable)
-	{
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_anisotropy);
+		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 
 	GL_CheckErrors();
@@ -1134,7 +1102,7 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 				// Loader failed, most likely because the file isn't there;
 				// try again without the extension
 				orgNameFailed = qtrue;
-				COM_StripExtension2(name, localName, MAX_QPATH);
+				COM_StripExtension(name, localName, MAX_QPATH);
 			}
 			else
 			{

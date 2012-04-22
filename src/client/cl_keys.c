@@ -51,12 +51,10 @@ field_t  chatField;
 qboolean chat_team;
 qboolean chat_buddy;
 
-
-
 qboolean key_overstrikeMode;
 
-qboolean anykeydown;
-qkey_t   keys[MAX_KEYS];
+int    anykeydown;
+qkey_t keys[MAX_KEYS];
 
 
 typedef struct
@@ -950,7 +948,7 @@ void Console_Key(int key)
 
 	if (key == K_TAB)
 	{
-		CompleteCommand();
+		Field_AutoComplete(&g_consoleField);
 		return;
 	}
 
@@ -1490,6 +1488,68 @@ void Key_Bindlist_f(void)
 	}
 }
 
+/*
+============
+Key_KeynameCompletion
+============
+*/
+void Key_KeynameCompletion(void (*callback)(const char *s))
+{
+	int i;
+
+	for (i = 0; keynames[i].name != NULL; i++)
+		callback(keynames[i].name);
+}
+
+/*
+====================
+Key_CompleteUnbind
+====================
+*/
+static void Key_CompleteUnbind(char *args, int argNum)
+{
+	if (argNum == 2)
+	{
+		// Skip "unbind "
+		char *p = Com_SkipTokens(args, 1, " ");
+
+		if (p > args)
+		{
+			Field_CompleteKeyname();
+		}
+	}
+}
+
+/*
+====================
+Key_CompleteBind
+====================
+*/
+static void Key_CompleteBind(char *args, int argNum)
+{
+	char *p;
+
+	if (argNum == 2)
+	{
+		// Skip "bind "
+		p = Com_SkipTokens(args, 1, " ");
+
+		if (p > args)
+		{
+			Field_CompleteKeyname();
+		}
+	}
+	else if (argNum >= 3)
+	{
+		// Skip "bind <key> "
+		p = Com_SkipTokens(args, 2, " ");
+
+		if (p > args)
+		{
+			Field_CompleteCommand(p, qtrue, qtrue);
+		}
+	}
+}
 
 /*
 ===================
@@ -1500,7 +1560,9 @@ void CL_InitKeyCommands(void)
 {
 	// register our functions
 	Cmd_AddCommand("bind", Key_Bind_f);
+	Cmd_SetCommandCompletionFunc("bind", Key_CompleteBind);
 	Cmd_AddCommand("unbind", Key_Unbind_f);
+	Cmd_SetCommandCompletionFunc("unbind", Key_CompleteUnbind);
 	Cmd_AddCommand("unbindall", Key_Unbindall_f);
 	Cmd_AddCommand("bindlist", Key_Bindlist_f);
 }
@@ -1885,7 +1947,7 @@ void Key_ClearStates(void)
 {
 	int i;
 
-	anykeydown = qfalse;
+	anykeydown = 0;
 
 	for (i = 0 ; i < MAX_KEYS ; i++)
 	{

@@ -36,6 +36,14 @@
 #include "snd_local.h"
 
 #include <limits.h>
+
+#include "../sys/sys_local.h"
+#include "../sys/sys_loadlib.h"
+
+#ifdef USE_RENDERER_DLOPEN
+cvar_t *cl_renderer;
+#endif
+
 #ifdef USE_CURL
 #   include <curl/curl.h>
 #   include <curl/easy.h>
@@ -131,6 +139,9 @@ vm_t               *cgvm;
 
 // Structure containing functions exported from refresh DLL
 refexport_t re;
+#ifdef USE_RENDERER_DLOPEN
+static void *rendererLib = NULL;
+#endif
 
 ping_t cl_pinglist[MAX_PINGREQUESTS];
 
@@ -156,7 +167,6 @@ char autoupdateFilename[MAX_QPATH];
 #define AUTOUPDATE_DIR "ni]Zm^l"
 #define AUTOUPDATE_DIR_SHIFT 7
 
-extern void GLimp_Minimize(void);
 extern void SV_BotFrame(int time);
 void CL_CheckForResend(void);
 void CL_ShowIP_f(void);
@@ -251,10 +261,8 @@ CL_ChangeReliableCommand
 */
 void CL_ChangeReliableCommand(void)
 {
-	int r, index, l;
+	int index, l;
 
-	// NOTE TTimo: what is the randomize for?
-	r     = clc.reliableSequence - (random() * 5);
 	index = clc.reliableSequence & (MAX_RELIABLE_COMMANDS - 1);
 	l     = strlen(clc.reliableCommands[index]);
 	if (l >= MAX_STRING_CHARS - 1)
@@ -390,7 +398,7 @@ void CL_Record_f(void)
 	{
 		s = Cmd_Argv(1);
 		Q_strncpyz(demoName, s, sizeof(demoName));
-		Com_sprintf(name, sizeof(name), "demos/%s.dm_%d", demoName, PROTOCOL_VERSION);
+		Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, PROTOCOL_VERSION);
 	}
 	else
 	{
@@ -400,7 +408,7 @@ void CL_Record_f(void)
 		for (number = 0 ; number <= 9999 ; number++)
 		{
 			CL_DemoFilename(number, demoName);
-			Com_sprintf(name, sizeof(name), "demos/%s.dm_%d", demoName, PROTOCOL_VERSION);
+			Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, PROTOCOL_VERSION);
 
 			len = FS_ReadFile(name, NULL);
 			if (len <= 0)
@@ -771,12 +779,23 @@ void CL_WriteWaveClose()
 
 /*
 ====================
-CL_PlayDemo_f
-
-demo <demoname>
-
+CL_CompleteDemoName
 ====================
 */
+static void CL_CompleteDemoName(char *args, int argNum)
+{
+	if (argNum == 2)
+	{
+		char demoExt[16];
+
+		Com_sprintf(demoExt, sizeof(demoExt), ".%s%d", DEMOEXT, PROTOCOL_VERSION);
+		Field_CompleteFilename("demos", demoExt, qtrue, qtrue);
+	}
+}
+
+/*
+ * @brief Usage: demo <demoname>
+ */
 void CL_PlayDemo_f(void)
 {
 	char name[MAX_OSPATH], extension[32];
@@ -1552,27 +1571,40 @@ void CL_Connect_f(void)
 	Cvar_Set("ui_limboOptions", "0");
 	Cvar_Set("ui_limboPrevOptions", "0");
 	Cvar_Set("ui_limboObjective", "0");
-	// -NERVE - SMF
-
 }
 
+#define MAX_RCON_MESSAGE 1024
 
 /*
-=====================
-CL_Rcon_f
-
-  Send the rest of the command line over as
-  an unconnected command.
-=====================
+==================
+CL_CompleteRcon
+==================
 */
+static void CL_CompleteRcon(char *args, int argNum)
+{
+	if (argNum == 2)
+	{
+		// Skip "rcon "
+		char *p = Com_SkipTokens(args, 1, " ");
+
+		if (p > args)
+		{
+			Field_CompleteCommand(p, qtrue, qtrue);
+		}
+	}
+}
+
+/*
+ * @brief Send the rest of the command line over as an unconnected command.
+ */
 void CL_Rcon_f(void)
 {
-	char     message[1024];
+	char     message[MAX_RCON_MESSAGE];
 	netadr_t to;
 
 	if (!rcon_client_password->string)
 	{
-		Com_Printf("You must set 'rconPassword' before\n"
+		Com_Printf("You must set 'rconpassword' before\n"
 		           "issuing an rcon command.\n");
 		return;
 	}
@@ -1583,15 +1615,14 @@ void CL_Rcon_f(void)
 	message[3] = -1;
 	message[4] = 0;
 
-	strcat(message, "rcon ");
+	Q_strcat(message, MAX_RCON_MESSAGE, "rcon ");
 
-	strcat(message, rcon_client_password->string);
-	strcat(message, " ");
+	Q_strcat(message, MAX_RCON_MESSAGE, rcon_client_password->string);
+	Q_strcat(message, MAX_RCON_MESSAGE, " ");
 
-	// ATVI Wolfenstein Misc #284
-	strcat(message, Cmd_Cmd() + 5);
+	Q_strcat(message, MAX_RCON_MESSAGE, Cmd_Cmd() + 5);
 
-	if (cls.state >= CA_CONNECTED)
+	if (clc.state >= CA_CONNECTED)
 	{
 		to = clc.netchan.remoteAddress;
 	}
@@ -2990,7 +3021,7 @@ void CL_Frame(int msec)
 
 	if (cl_timegraph->integer)
 	{
-		SCR_DebugGraph(cls.realFrametime * 0.25, 0);
+		SCR_DebugGraph(cls.realFrametime * 0.25);
 	}
 
 	// see if we need to update any userinfo
@@ -3203,7 +3234,7 @@ CL_RefPrintf
 DLL glue
 ================
 */
-void QDECL CL_RefPrintf(int print_level, const char *fmt, ...)
+static __attribute__ ((format(printf, 2, 3))) void QDECL CL_RefPrintf(int print_level, const char *fmt, ...)
 {
 	va_list argptr;
 	char    msg[MAXPRINTMSG];
@@ -3521,8 +3552,38 @@ void CL_InitRef(void)
 {
 	refimport_t ri;
 	refexport_t *ret;
+	#ifdef USE_RENDERER_DLOPEN
+	GetRefAPI_t GetRefAPI;
+	char        dllName[MAX_OSPATH];
+	#endif
 
 	Com_Printf("----- Initializing Renderer ----\n");
+
+	#ifdef USE_RENDERER_DLOPEN
+	cl_renderer = Cvar_Get("cl_renderer", "opengl1", CVAR_ARCHIVE | CVAR_LATCH);
+
+	Com_sprintf(dllName, sizeof(dllName), "renderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
+
+	if (!(rendererLib = Sys_LoadDll(dllName, qfalse)) && strcmp(cl_renderer->string, cl_renderer->resetString))
+	{
+		Cvar_ForceReset("cl_renderer");
+
+		Com_sprintf(dllName, sizeof(dllName), "renderer_opengl1_" ARCH_STRING DLL_EXT);
+		rendererLib = Sys_LoadLibrary(dllName);
+	}
+
+	if (!rendererLib)
+	{
+		Com_Printf("failed:\n\"%s\"\n", Sys_LibraryError());
+		Com_Error(ERR_FATAL, "Failed to load renderer");
+	}
+
+	GetRefAPI = Sys_LoadFunction(rendererLib, "GetRefAPI");
+	if (!GetRefAPI)
+	{
+		Com_Error(ERR_FATAL, "Can't load symbol GetRefAPI: '%s'", Sys_LibraryError());
+	}
+	#endif
 
 	ri.Cmd_AddCommand    = Cmd_AddCommand;
 	ri.Cmd_RemoveCommand = Cmd_RemoveCommand;
@@ -3547,22 +3608,39 @@ void CL_InitRef(void)
 #endif
 	ri.Hunk_AllocateTempMemory = Hunk_AllocateTempMemory;
 	ri.Hunk_FreeTempMemory     = Hunk_FreeTempMemory;
-	ri.CM_DrawDebugSurface     = CM_DrawDebugSurface;
-	ri.FS_ReadFile             = FS_ReadFile;
-	ri.FS_FreeFile             = FS_FreeFile;
-	ri.FS_WriteFile            = FS_WriteFile;
-	ri.FS_FreeFileList         = FS_FreeFileList;
-	ri.FS_ListFiles            = FS_ListFiles;
-	ri.FS_FileIsInPAK          = FS_FileIsInPAK;
-	ri.FS_FileExists           = FS_FileExists;
-	ri.Cvar_Get                = Cvar_Get;
-	ri.Cvar_Set                = Cvar_Set;
+
+//     ri.CM_ClusterPVS = CM_ClusterPVS;
+	ri.CM_DrawDebugSurface = CM_DrawDebugSurface;
+
+	ri.FS_ReadFile     = FS_ReadFile;
+	ri.FS_FreeFile     = FS_FreeFile;
+	ri.FS_WriteFile    = FS_WriteFile;
+	ri.FS_FreeFileList = FS_FreeFileList;
+	ri.FS_ListFiles    = FS_ListFiles;
+	ri.FS_FileIsInPAK  = FS_FileIsInPAK;
+	ri.FS_FileExists   = FS_FileExists;
+	ri.Cvar_Get        = Cvar_Get;
+	ri.Cvar_Set        = Cvar_Set;
+//     ri.Cvar_SetValue = Cvar_SetValue;
+//     ri.Cvar_CheckRange = Cvar_CheckRange;
+//     ri.Cvar_VariableIntegerValue = Cvar_VariableIntegerValue;
 
 	// cinematic stuff
 
 	ri.CIN_UploadCinematic = CIN_UploadCinematic;
 	ri.CIN_PlayCinematic   = CIN_PlayCinematic;
 	ri.CIN_RunCinematic    = CIN_RunCinematic;
+
+//     ri.IN_Init = IN_Init;
+//     ri.IN_Shutdown = IN_Shutdown;
+//     ri.IN_Restart = IN_Restart;
+//
+//     ri.ftol = Q_ftol;
+//
+//     ri.Sys_SetEnv = Sys_SetEnv;
+//     ri.Sys_GLimpSafeInit = Sys_GLimpSafeInit;
+//     ri.Sys_GLimpInit = Sys_GLimpInit;
+//     ri.Sys_LowPhysicalMemory = Sys_LowPhysicalMemory;
 
 	ret = GetRefAPI(REF_API_VERSION, &ri);
 
@@ -3811,6 +3889,7 @@ void CL_Init(void)
 	Cmd_AddCommand("disconnect", CL_Disconnect_f);
 	Cmd_AddCommand("record", CL_Record_f);
 	Cmd_AddCommand("demo", CL_PlayDemo_f);
+	Cmd_SetCommandCompletionFunc("demo", CL_CompleteDemoName);
 	Cmd_AddCommand("cinematic", CL_PlayCinematic_f);
 	Cmd_AddCommand("stoprecord", CL_StopRecord_f);
 	Cmd_AddCommand("connect", CL_Connect_f);
@@ -3818,13 +3897,13 @@ void CL_Init(void)
 	Cmd_AddCommand("localservers", CL_LocalServers_f);
 	Cmd_AddCommand("globalservers", CL_GlobalServers_f);
 	Cmd_AddCommand("rcon", CL_Rcon_f);
+	Cmd_SetCommandCompletionFunc("rcon", CL_CompleteRcon);
 	Cmd_AddCommand("setenv", CL_Setenv_f);
 	Cmd_AddCommand("ping", CL_Ping_f);
 	Cmd_AddCommand("serverstatus", CL_ServerStatus_f);
 	Cmd_AddCommand("showip", CL_ShowIP_f);
 	Cmd_AddCommand("fs_openedList", CL_OpenedPK3List_f);
 	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f);
-	Cmd_AddCommand("minimize", GLimp_Minimize);
 
 	// Ridah, startup-caching system
 	Cmd_AddCommand("cache_startgather", CL_Cache_StartGather_f);
@@ -4200,10 +4279,8 @@ CL_GetServerStatus
 */
 serverStatus_t *CL_GetServerStatus(netadr_t from)
 {
-	serverStatus_t *serverStatus;
-	int            i, oldest, oldestTime;
+	int i, oldest, oldestTime;
 
-	serverStatus = NULL;
 	for (i = 0; i < MAX_SERVERSTATUSREQUESTS; i++)
 	{
 		if (NET_CompareAdr(from, cl_serverStatusList[i].address))
@@ -4799,7 +4876,6 @@ qboolean CL_UpdateVisiblePings_f(int source)
 	{
 		serverInfo_t *server = NULL;
 
-		max = (source == AS_GLOBAL) ? MAX_GLOBAL_SERVERS : MAX_OTHER_SERVERS;
 		switch (source)
 		{
 		case AS_LOCAL:

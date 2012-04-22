@@ -47,8 +47,7 @@
 #define MAX_MENUDEFFILE 4096
 #define MAX_MENUFILE 32768
 #define MAX_MENUS 128
-//#define MAX_MENUITEMS 256
-#define MAX_MENUITEMS 128 // JPW NERVE q3ta was 96
+#define MAX_MENUITEMS 128 // ioquake3 has 96
 #define MAX_COLOR_RANGES 10
 #define MAX_MODAL_MENUS 16
 
@@ -469,8 +468,8 @@ typedef struct
 
 	void (*setBinding)(int keynum, const char *binding);
 	void (*executeText)(int exec_when, const char *text);
-	void (*Error)(int level, const char *error, ...);
-	void (*Print)(const char *msg, ...);
+	void (*Error)(int level, const char *error, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
+	void (*Print)(const char *msg, ...) __attribute__ ((format(printf, 1, 2)));
 	void (*Pause)(qboolean b);
 	int (*ownerDrawWidth)(int ownerDraw, float scale);
 	sfxHandle_t (*registerSound)(const char *name, qboolean compressed);

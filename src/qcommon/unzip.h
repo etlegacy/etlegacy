@@ -1,34 +1,43 @@
-/*
- * Wolfenstein: Enemy Territory GPL Source Code
- * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
- *
- * ET: Legacy
- * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
- *
- * This file is part of ET: Legacy - http://www.etlegacy.com
- *
- * ET: Legacy is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * ET: Legacy is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
- *
- * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
- * subject to certain additional terms. You should have received a copy
- * of these additional terms immediately following the terms and conditions
- * of the GNU General Public License which accompanied the source code.
- * If not, please request a copy in writing from id Software at the address below.
- *
- * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file unzip.h
+/* unzip.h -- IO for uncompress .zip files using zlib
+ *   Version 1.01e, February 12th, 2005
+ * 
+ *   Copyright (C) 1998-2005 Gilles Vollant
+ * 
+ *   This unzip package allow extract file from .ZIP file, compatible with PKZip 2.04g
+ *     WinZip, InfoZip tools and compatible.
+ * 
+ *   Multi volume ZipFile (span) are not supported.
+ *   Encryption compatible with pkzip 2.04g only supported
+ *   Old compressions used by old PKZip 1.x are not supported
+ * 
+ * 
+ *   I WAIT FEEDBACK at mail info@winimage.com
+ *   Visit also http://www.winimage.com/zLibDll/unzip.htm for evolution
+ * 
+ *   Condition of use and distribution are the same than zlib :
+ * 
+ *  This software is provided 'as-is', without any express or implied
+ *  warranty.  In no event will the authors be held liable for any damages
+ *  arising from the use of this software.
+ * 
+ *  Permission is granted to anyone to use this software for any purpose,
+ *  including commercial applications, and to alter it and redistribute it
+ *  freely, subject to the following restrictions:
+ * 
+ *  1. The origin of this software must not be misrepresented; you must not
+ *     claim that you wrote the original software. If you use this software
+ *     in a product, an acknowledgment in the product documentation would be
+ *     appreciated but is not required.
+ *  2. Altered source versions must be plainly marked as such, and must not be
+ *     misrepresented as being the original software.
+ *  3. This notice may not be removed or altered from any source distribution.
+ */
+
+/* for more info about .ZIP format, see
+ *      http://www.info-zip.org/pub/infozip/doc/appnote-981119-iz.zip
+ *      http://www.info-zip.org/pub/infozip/doc/
+ *   PkWare has also a specification at :
+ *      ftp://ftp.pkware.com/probdesc.zip
  */
 
 #if defined(STRICTUNZIP) || defined(STRICTZIPUNZIP)

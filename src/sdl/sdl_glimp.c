@@ -90,15 +90,12 @@ GLimp_Shutdown
 */
 void GLimp_Shutdown(void)
 {
-	float oldDisplayAspect = glConfig.displayAspect;
-
 	IN_Shutdown();
 
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	screen = NULL;
 
 	Com_Memset(&glConfig, 0, sizeof(glConfig));
-	glConfig.displayAspect = oldDisplayAspect;
 	Com_Memset(&glState, 0, sizeof(glState));
 }
 
@@ -133,8 +130,8 @@ static int GLimp_CompareModes(const void *a, const void *b)
 	float       aspectB         = (float)modeB->w / (float)modeB->h;
 	int         areaA           = modeA->w * modeA->h;
 	int         areaB           = modeB->w * modeB->h;
-	float       aspectDiffA     = fabs(aspectA - glConfig.displayAspect);
-	float       aspectDiffB     = fabs(aspectB - glConfig.displayAspect);
+	float       aspectDiffA     = fabs(aspectA - displayAspect);
+	float       aspectDiffB     = fabs(aspectB - displayAspect);
 	float       aspectDiffsDiff = aspectDiffA - aspectDiffB;
 
 	if (aspectDiffsDiff > ASPECT_EPSILON)
@@ -251,17 +248,15 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			// Guess the display aspect ratio through the desktop resolution
 			// by assuming (relatively safely) that it is set at or close to
 			// the display's native aspect ratio
-			glConfig.displayAspect = (float)videoInfo->current_w / (float)videoInfo->current_h;
+			displayAspect = (float)videoInfo->current_w / (float)videoInfo->current_h;
 
-			ri.Printf(PRINT_ALL, "Estimated display aspect: %.3f\n", glConfig.displayAspect);
+			ri.Printf(PRINT_ALL, "Estimated display aspect: %.3f\n", displayAspect);
 		}
 		else
 		{
 			ri.Printf(PRINT_ALL,
 			          "Cannot estimate display aspect, assuming 1.333\n");
 		}
-
-		ri.Printf(PRINT_ALL, "Current desktop video resolution is: %ix%i\n", videoInfo->current_w, videoInfo->current_h);
 	}
 
 	ri.Printf(PRINT_ALL, "...setting mode %d:", mode);
@@ -697,21 +692,21 @@ static void GLimp_InitExtensions(void)
 		ri.Printf(PRINT_ALL, "...GL_EXT_compiled_vertex_array not found\n");
 	}
 
-	glConfig.anisotropicAvailable = qfalse;
+	textureFilterAnisotropic = qfalse;
 	if (GLimp_HaveExtension("GL_EXT_texture_filter_anisotropic"))
 	{
 		if (r_ext_texture_filter_anisotropic->integer)
 		{
-			qglGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, (GLint *)&glConfig.maxAnisotropy);
-			if (glConfig.maxAnisotropy <= 0)
+			qglGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, (GLint *)&maxAnisotropy);
+			if (maxAnisotropy <= 0)
 			{
 				ri.Printf(PRINT_ALL, "...GL_EXT_texture_filter_anisotropic not properly supported!\n");
-				glConfig.maxAnisotropy = 0;
+				maxAnisotropy = 0;
 			}
 			else
 			{
-				ri.Printf(PRINT_ALL, "...using GL_EXT_texture_filter_anisotropic (max: %i)\n", glConfig.maxAnisotropy);
-				glConfig.anisotropicAvailable = qtrue;
+				ri.Printf(PRINT_ALL, "...using GL_EXT_texture_filter_anisotropic (max: %i)\n", maxAnisotropy);
+				textureFilterAnisotropic = qtrue;
 			}
 		}
 		else
@@ -858,10 +853,9 @@ void GLimp_EndFrame(void)
 			// SDL_WM_ToggleFullScreen didn't work, so do it the slow way
 			if (!sdlToggled)
 			{
-				Cbuf_AddText("vid_restart");
+				ri.Cmd_ExecuteText(EXEC_APPEND, "vid_restart");
+				IN_Restart();
 			}
-
-			IN_Restart();
 		}
 
 		r_fullscreen->modified = qfalse;
