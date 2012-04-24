@@ -40,7 +40,7 @@
 #define CLIENT_WINDOW_TITLE     "Enemy Territory: Legacy"
 #define CLIENT_WINDOW_MIN_TITLE "ET: Legacy"
 #define GAMENAME_FOR_MASTER     "etlegacy"
-#define Q3_VERSION              "ET 2.70"
+#define Q3_VERSION              "ET:Legacy 2.70"
 #define ET_VERSION              Q3_VERSION " " CPUSTRING " " __DATE__
 #define FAKE_VERSION            "ET 2.60b " CPUSTRING " May  8 2006"
 #define CONFIG_NAME             "etconfig.cfg"

@@ -665,6 +665,7 @@ static void SVC_Status(netadr_t from)
 	// echo back the parameter to status. so master servers can use it as a challenge
 	// to prevent timed spoofed reply packets that add ghost servers
 	Info_SetValueForKey(infostring, "challenge", Cmd_Argv(1));
+	Info_SetValueForKey(infostring, "version", ET_VERSION);
 
 	status[0]    = 0;
 	statusLength = 0;
