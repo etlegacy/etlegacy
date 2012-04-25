@@ -702,7 +702,6 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	for (i = 0 ; i < GAME_INIT_FRAMES ; i++)
 	{
 		VM_Call(gvm, GAME_RUN_FRAME, svs.time);
-		SV_BotFrame(svs.time);
 		svs.time += FRAMETIME;
 	}
 
@@ -768,7 +767,7 @@ void SV_SpawnServer(char *server, qboolean killBots)
 
 	// run another frame to allow things to look at all the players
 	VM_Call(gvm, GAME_RUN_FRAME, svs.time);
-	SV_BotFrame(svs.time);
+
 	svs.time += FRAMETIME;
 
 	if (sv_pure->integer)
@@ -953,9 +952,6 @@ void SV_Init(void)
 	// fretn - note: redirecting of clients to other servers relies on this,
 	// ET://someserver.com
 	sv_fullmsg = Cvar_Get("sv_fullmsg", "Server is full.", CVAR_ARCHIVE);
-
-	// initialize bot cvars so they are listed and can be set before loading the botlib
-	SV_BotInitCvars();
 
 	// init the botlib here because we need the pre-compiler in the UI
 	SV_BotInitBotLib();

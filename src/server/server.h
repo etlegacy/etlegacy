@@ -118,9 +118,6 @@ typedef struct
 } server_t;
 
 
-
-
-
 typedef struct
 {
 	int areabytes;
@@ -467,7 +464,7 @@ void        SV_InitGameProgs(void);
 void        SV_ShutdownGameProgs(void);
 void        SV_RestartGameProgs(void);
 qboolean    SV_inPVS(const vec3_t p1, const vec3_t p2);
-qboolean    SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t * or);
+qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t * or);
 int         SV_LoadTag(const char *mod_name);
 qboolean    SV_GameIsSinglePlayer(void);
 qboolean    SV_GameIsCoop(void);
@@ -476,18 +473,13 @@ void        SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, i
 //
 // sv_bot.c
 //
-void        SV_BotFrame(int time);
 int         SV_BotAllocateClient(int clientNum);
 void        SV_BotFreeClient(int clientNum);
 
-void        SV_BotInitCvars(void);
-int         SV_BotLibSetup(void);
-int         SV_BotLibShutdown(void);
-int         SV_BotGetSnapshotEntity(int client, int ent);
 int         SV_BotGetConsoleMessage(int client, char *buf, int size);
 
-int BotImport_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
-void BotImport_DebugPolygonDelete(int id);
+int         BotImport_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
+void        BotImport_DebugPolygonDelete(int id);
 
 //============================================================
 //
