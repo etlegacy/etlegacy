@@ -688,7 +688,7 @@ static void SVC_Status(netadr_t from)
 		}
 	}
 
-	NET_OutOfBandPrint(NS_SERVER, from, "gameCompleteStatus\n%s\n%s", infostring, status);
+	NET_OutOfBandPrint(NS_SERVER, from, "statusResponse\n%s\n%s", infostring, status);
 }
 
 /*
