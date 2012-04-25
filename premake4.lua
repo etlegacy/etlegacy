@@ -12,7 +12,11 @@ solution "etlegacy"
 	-- Release/Debug Configurations
 	--
 	configuration "Release"
-		defines     "NDEBUG"
+		defines
+		{
+			"GUIDMASTER_SUPPORT",
+			"NDEBUG",
+		}
 		flags      
 		{
 			"Optimize", -- OptimizeSpeed sigsegvs 64bit build
@@ -21,7 +25,11 @@ solution "etlegacy"
 		}
 	
 	configuration "Debug"
-		defines     "_DEBUG"
+		defines
+		{
+			"GUIDMASTER_SUPPORT",
+			"_DEBUG",
+		}
 		flags
 		{
 			"Symbols",
