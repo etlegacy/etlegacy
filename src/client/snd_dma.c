@@ -1211,8 +1211,8 @@ void S_Base_RawSamples(int stream, int samples, int rate, int width, int s_chann
 
 	if (!s_muted->integer)
 	{
-		lintVolume = 256 * lvol * s_volume->value;
-		rintVolume = 256 * rvol * s_volume->value;
+		lintVolume = 256 * s_volume->value;
+		rintVolume = 256 * s_volume->value;
 	}
 
 	if (s_rawend[stream] < s_soundtime)
