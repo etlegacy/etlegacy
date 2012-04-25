@@ -1049,7 +1049,7 @@ static void CL_UpdateGUID(void)
 	len = FS_SV_FOpenFileRead(BASEGAME "/" ETKEY_FILE, &f);
 	FS_FCloseFile(f);
 
-	if (len != ETKEY_SIZE)
+	if (len < ETKEY_SIZE)
 	{
 #ifdef GUIDMASTER_SUPPORT
 		CL_GetAndRegGUID();
