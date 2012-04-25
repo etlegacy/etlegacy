@@ -1062,14 +1062,12 @@ static void IN_ProcessEvents(void)
 void IN_Frame(void)
 {
 	qboolean loading;
-	qboolean cursorShowing;
 
 	IN_JoyMove();
 	IN_ProcessEvents();
 
 	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
-	loading       = !!(cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
-	cursorShowing = Key_GetCatcher() & KEYCATCH_UI;
+	loading = !!(cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
 
 	if (!Cvar_VariableIntegerValue("r_fullscreen") && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
@@ -1079,11 +1077,6 @@ void IN_Frame(void)
 	else if (!Cvar_VariableIntegerValue("r_fullscreen") && loading)
 	{
 		// Loading in windowed mode
-		IN_DeactivateMouse();
-	}
-	else if (!Cvar_VariableIntegerValue("r_fullscreen") && cursorShowing)
-	{
-		// Use WM cursor when not fullscreen
 		IN_DeactivateMouse();
 	}
 	else if (!(SDL_GetAppState() & SDL_APPINPUTFOCUS))
