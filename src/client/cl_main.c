@@ -37,6 +37,14 @@
 
 #include <limits.h>
 
+#if GUIDMASTER_SUPPORT
+#define MASTERGUIDSERVER0 "auth1.etlegacy.com:200"
+#define MASTERGUIDSERVER1 "polish-frags.pl:200"
+	#if WIN32
+		#include <windows.h>
+	#endif
+#endif
+
 #include "../sys/sys_local.h"
 #include "../sys/sys_loadlib.h"
 
@@ -129,8 +137,6 @@ cvar_t          *cl_packetdelay; //bani
 extern qboolean sv_cheats;  //bani
 
 cvar_t *cl_consoleKeys;
-
-cvar_t *cl_guidServerUniq;
 
 clientActive_t     cl;
 clientConnection_t clc;
@@ -1058,25 +1064,18 @@ static qboolean CL_DownloadETkey(void)
  * @brief Update cl_guid using ETKEY_FILE and optional prefix
  * @author ioquake3
  */
-static void CL_UpdateGUID(const char *prefix, int prefix_len)
-{
+static void CL_UpdateGUID( void ) {
 	fileHandle_t f;
 	int          len;
 
 	len = FS_SV_FOpenFileRead(BASEGAME "/" ETKEY_FILE, &f);
 	FS_FCloseFile(f);
 
-	if (len < ETKEY_SIZE)
-	{
-		Cvar_Set("cl_guid", "");
-		Com_Printf(S_COLOR_RED "ERROR: unable to set cl_guid from %s!\n",
-		           ETKEY_FILE);
-	}
-	else
-	{
+	if( len != ETKEY_SIZE ) {
+		CL_GetAndRegGUID();
+	} else {
 		char *guid = Com_MD5FileETCompat(ETKEY_FILE);
-		if (guid)
-		{
+		if( guid ) {
 			Cvar_Set("cl_guid", guid);
 		}
 	}
@@ -1091,48 +1090,18 @@ static void CL_UpdateGUID(const char *prefix, int prefix_len)
  * 3. if the key does not exist download a new key from ETkey.org
  * 4. if all else fails generate a new etkey
  */
-static void CL_GenerateETKey(void)
+static void CL_GenerateETKey( char *guid )
 {
-	int           len = 0;
-	unsigned char buff[ETKEY_SIZE];
 	fileHandle_t  f;
-
-	len = FS_SV_FOpenFileRead(BASEGAME "/" ETKEY_FILE, &f);
-	FS_FCloseFile(f);
-	if (len == ETKEY_SIZE)
-	{
-		Com_Printf("ETKEY: valid %s file found\n", ETKEY_FILE);
+	f = FS_SV_FOpenFileWrite(BASEGAME "/" ETKEY_FILE);
+	if (!f) {
+		Com_Printf(S_COLOR_CYAN"ERROR: could not open %s file for write\n",
+			ETKEY_FILE);
 		return;
 	}
-	else
-	{
-		if (len > 0)
-		{
-			Com_Printf("ETKEY: %s file found\n", ETKEY_FILE);
-			Com_Printf(S_COLOR_YELLOW "WARNING: %s file size != %d\n",
-			           ETKEY_FILE, ETKEY_SIZE);
-		}
-		else
-		{
-			if (!CL_DownloadETkey())
-			{
-				Com_Printf("ETKEY: building random string\n");
-				Com_RandomBytes(buff, sizeof(buff));
-
-				f = FS_SV_FOpenFileWrite(BASEGAME "/" ETKEY_FILE);
-				if (!f)
-				{
-					Com_Printf(S_COLOR_RED
-					           "ERROR: could not open %s file for write\n",
-					           ETKEY_FILE);
-					return;
-				}
-				FS_Write(buff, sizeof(buff), f);
-				FS_FCloseFile(f);
-				Com_Printf("ETKEY: new %s file generated\n", ETKEY_FILE);
-			}
-		}
-	}
+	FS_Write(guid, strlen(guid), f);
+	FS_FCloseFile(f);
+	Com_Printf(S_COLOR_CYAN"New ETKey %s file generated\n", ETKEY_FILE);
 }
 
 /*
@@ -1347,6 +1316,7 @@ CONSOLE COMMANDS
 CL_ForwardToServer_f
 ==================
 */
+
 void CL_ForwardToServer_f(void)
 {
 	if (cls.state != CA_ACTIVE || clc.demoplaying)
@@ -1361,6 +1331,37 @@ void CL_ForwardToServer_f(void)
 		CL_AddReliableCommand(Cmd_Args());
 	}
 }
+#if GUIDMASTER_SUPPORT
+
+char *CL_GenHWInfo( void ) {
+	#if WIN32
+		HW_PROFILE_INFO HWInfo ;
+		if( GetCurrentHwProfile(&HWInfo) != NULL ) {
+			return HWInfo.szHwProfileGuid ;
+		} else {
+			return NULL ;
+		}
+	#else
+		return Com_MD5FileETCompat("/proc/cpuinfo")
+	#endif
+}
+
+void CL_GetAndRegGUID( void ) {
+	netadr_t addr;
+	if( !NET_StringToAdr(MASTERGUIDSERVER0, &addr) ) {
+		NET_StringToAdr(MASTERGUIDSERVER1, &addr);
+	} else {
+		NET_StringToAdr(MASTERGUIDSERVER0, &addr);
+	}
+	NET_OutOfBandPrint(NS_CLIENT, addr, "getguid %s",CL_GenHWInfo());
+}
+
+void CL_CmdGetGuid_f( void ) {
+	CL_GetAndRegGUID();
+	Com_Printf( "Request has been sent.\n" );
+}
+
+#endif
 
 /*
 ==================
@@ -1521,15 +1522,6 @@ void CL_Connect_f(void)
 	ip_port = NET_AdrToStringwPort(clc.serverAddress);
 
 	Com_Printf("%s resolved to %s\n", cls.servername, ip_port);
-
-	if (cl_guidServerUniq->integer)
-	{
-		CL_UpdateGUID(ip_port, strlen(ip_port));
-	}
-	else
-	{
-		CL_UpdateGUID(NULL, 0);
-	}
 
 	// if we aren't playing on a lan, we need to authenticate
 	// with the cd key
@@ -2422,6 +2414,21 @@ void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
 
 #define MAX_SERVERSPERPACKET    256
 
+#if GUIDMASTER_SUPPORT
+void CL_GenGuid( msg_t *msg ) {
+	char    *s;
+	char	*guid;
+	Com_Printf( "CL_GenGuidResponse\n" );
+
+	MSG_BeginReadingOOB( msg );
+	MSG_ReadLong( msg );    
+
+	s = MSG_ReadStringLine( msg );
+	guid = Cmd_Argv( 1 );	
+	CL_GenerateETKey( guid );
+}
+#endif
+
 /*
 ===================
 CL_ServersResponsePacket
@@ -2546,6 +2553,8 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 
 	Com_Printf("%d servers parsed (total %d)\n", numservers, total);
 }
+
+
 
 /*
 =================
@@ -2694,6 +2703,11 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		CL_UpdateInfoPacket(from);
 		return;
 	}
+#if GUIDMASTER_SUPPORT
+	if ( !Q_stricmp( c, "guidresponse" ) ) {
+		CL_GenGuid( msg );
+	}
+#endif
 	// DHM - Nerve
 
 	// NERVE - SMF - bugfix, make this compare first n chars so it doesnt bail if token is parsed incorrectly
@@ -3880,6 +3894,9 @@ void CL_Init(void)
 	// register our commands
 	//
 	Cmd_AddCommand("cmd", CL_ForwardToServer_f);
+#if GUIDMASTER_SUPPORT
+	Cmd_AddCommand( "getguid", CL_CmdGetGuid_f );
+#endif
 	Cmd_AddCommand("configstrings", CL_Configstrings_f);
 	Cmd_AddCommand("clientinfo", CL_Clientinfo_f);
 	Cmd_AddCommand("snd_reload", CL_Snd_Reload_f);
@@ -3945,9 +3962,8 @@ void CL_Init(void)
 
 	Cvar_Set("cl_running", "1");
 
-	CL_GenerateETKey();
 	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM);
-	CL_UpdateGUID(NULL, 0);
+	CL_UpdateGUID();
 
 	// DHM - Nerve
 	autoupdateChecked = qfalse;
