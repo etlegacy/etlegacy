@@ -92,14 +92,19 @@ project "etlegacy"
 	}
 
 	newoption {
-		trigger =   "with-openal",
-		description =   "Use OpenAL sound library",
+		trigger = 	"with-openal",
+		description = 	"Use OpenAL sound library",
+	}
+
+	newoption {
+		trigger = 	"with-ogg",
+		description = 	"Use OGG Vorbis codec",
 	}
 
 	newoption {
 		trigger =	"netlib",
 		value = 	"LIBRARY",
-		description = "Choose a library that will be used for downloading files",
+		description = 	"Choose a library that will be used for downloading files",
 		allowed = {
 			{ "curl",	"cURL (default)" },
 		}
@@ -126,6 +131,13 @@ project "etlegacy"
 			"USE_OPENAL",
 			"USE_OPENAL_DLOPEN",
 		}
+	
+	configuration "with-ogg"
+		if not _OPTIONS["static"] then
+			buildoptions 	{ "`pkg-config --cflags vorbisfile`" }
+			linkoptions	{ "`pkg-config --libs vorbisfile`" }
+		end
+		defines      	{ "USE_CODEC_VORBIS" }
 
 	--
 	-- netlib options
