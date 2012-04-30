@@ -899,6 +899,8 @@ void SV_Init(void)
 	sv_padPackets     = Cvar_Get("sv_padPackets", "0", 0);
 	sv_killserver     = Cvar_Get("sv_killserver", "0", 0);
 	sv_mapChecksum    = Cvar_Get("sv_mapChecksum", "", CVAR_ROM);
+	sv_protocolcheck  = Cvar_Get("sv_protocolcheck", "0", CVAR_ARCHIVE);
+	sv_protocol       = Cvar_Get("sv_protocol", "84", CVAR_ARCHIVE);
 
 	sv_reloading = Cvar_Get("g_reloading", "0", CVAR_ROM);
 

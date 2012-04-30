@@ -350,6 +350,9 @@ extern cvar_t *sv_allowAnonymous;
 extern cvar_t *sv_lanForceRate;
 extern cvar_t *sv_onlyVisibleClients;
 
+extern cvar_t *sv_protocolcheck;
+extern cvar_t *sv_protocol;
+
 extern cvar_t *sv_showAverageBPS;           // NERVE - SMF - net debugging
 
 extern cvar_t *g_gameType;

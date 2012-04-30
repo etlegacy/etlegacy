@@ -67,6 +67,8 @@ cvar_t *sv_onlyVisibleClients;  // DHM - Nerve
 cvar_t *sv_friendlyFire;        // NERVE - SMF
 cvar_t *sv_maxlives;            // NERVE - SMF
 cvar_t *sv_needpass;
+cvar_t *sv_protocolcheck;
+cvar_t *sv_protocol;
 
 cvar_t *sv_dl_maxRate;
 
@@ -741,7 +743,7 @@ void SVC_Info(netadr_t from)
 	// to prevent timed spoofed reply packets that add ghost servers
 	Info_SetValueForKey(infostring, "challenge", Cmd_Argv(1));
 
-	Info_SetValueForKey(infostring, "protocol", va("%i", PROTOCOL_VERSION));
+	Info_SetValueForKey(infostring, "protocol", va("%i", sv_protocol->integer));
 	Info_SetValueForKey(infostring, "hostname", sv_hostname->string);
 	Info_SetValueForKey(infostring, "serverload", va("%i", svs.serverLoad));
 	Info_SetValueForKey(infostring, "mapname", sv_mapname->string);
