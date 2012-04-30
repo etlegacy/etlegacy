@@ -38,8 +38,8 @@
 #include <limits.h>
 
 #if GUIDMASTER_SUPPORT
-#define MASTERGUIDSERVER0 "auth1.etlegacy.com:200"
-#define MASTERGUIDSERVER1 "polish-frags.pl:200"
+#define MASTERGUIDSERVER0 "auth1.etlegacy.com:27955"
+#define MASTERGUIDSERVER1 "auth2.etlegacy.com:27955"
 	#if WIN32
 		#include <windows.h>
 	#endif
@@ -132,16 +132,16 @@ cvar_t *cl_waverecording;  //bani
 cvar_t *cl_wavefilename;  //bani
 cvar_t *cl_waveoffset;  //bani
 
-cvar_t          *cl_packetloss; //bani
-cvar_t          *cl_packetdelay; //bani
+cvar_t *cl_packetloss;          //bani
+cvar_t *cl_packetdelay;          //bani
 extern qboolean sv_cheats;  //bani
 
 cvar_t *cl_consoleKeys;
 
-clientActive_t     cl;
+clientActive_t cl;
 clientConnection_t clc;
-clientStatic_t     cls;
-vm_t               *cgvm;
+clientStatic_t cls;
+vm_t *cgvm;
 
 // Structure containing functions exported from refresh DLL
 refexport_t re;
@@ -153,16 +153,16 @@ ping_t cl_pinglist[MAX_PINGREQUESTS];
 
 typedef struct serverStatus_s
 {
-	char string[BIG_INFO_STRING];
+	char     string[BIG_INFO_STRING];
 	netadr_t address;
-	int time, startTime;
+	int      time, startTime;
 	qboolean pending;
 	qboolean print;
 	qboolean retrieved;
 } serverStatus_t;
 
 serverStatus_t cl_serverStatusList[MAX_SERVERSTATUSREQUESTS];
-int            serverStatusCount;
+int serverStatusCount;
 
 // DHM - Nerve :: Have we heard from the auto-update server this session?
 qboolean autoupdateChecked;
@@ -184,6 +184,8 @@ void CL_LoadTranslations_f(void);
 // fretn
 void CL_WriteWaveClose(void);
 void CL_WavStopRecord_f(void);
+
+void CL_GetAndRegGUID(void);
 
 /*
 ===============
@@ -429,13 +431,13 @@ void CL_Record_f(void)
 
 void CL_Record(const char *name)
 {
-	int           i;
-	msg_t         buf;
-	byte          bufData[MAX_MSGLEN];
+	int i;
+	msg_t buf;
+	byte  bufData[MAX_MSGLEN];
 	entityState_t *ent;
 	entityState_t nullstate;
-	char          *s;
-	int           len;
+	char *s;
+	int  len;
 
 	// open the demo file
 
@@ -563,10 +565,10 @@ CL_ReadDemoMessage
 
 void CL_ReadDemoMessage(void)
 {
-	int   r;
+	int r;
 	msg_t buf;
 	byte  bufData[MAX_MSGLEN];
-	int   s;
+	int s;
 
 	if (!clc.demofile)
 	{
@@ -650,12 +652,12 @@ typedef struct wav_hdr_s
 	unsigned int ChunkSize;     // little endian
 	unsigned int Format;        // big endian
 
-	unsigned int Subchunk1ID;   // big endian
-	unsigned int Subchunk1Size; // little endian
+	unsigned int   Subchunk1ID; // big endian
+	unsigned int   Subchunk1Size; // little endian
 	unsigned short AudioFormat; // little endian
 	unsigned short NumChannels; // little endian
-	unsigned int SampleRate;    // little endian
-	unsigned int ByteRate;      // little endian
+	unsigned int   SampleRate;  // little endian
+	unsigned int   ByteRate;    // little endian
 	unsigned short BlockAlign;  // little endian
 	unsigned short BitsPerSample;   // little endian
 
@@ -1036,46 +1038,30 @@ size_t curl_write_etkey(void *ptr, size_t size, size_t nmemb, FILE *stream)
 }
 
 /*
- * @brief Downloads a new etkey from www.etkey.org
- */
-static qboolean CL_DownloadETkey(void)
-{
-#ifdef USE_CURL
-	CURL *curl;
-
-	curl = curl_easy_init();
-	if (curl)
-	{
-		curl_easy_setopt(curl, CURLOPT_URL, "http://www.etkey.org/etkey.php");
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write_etkey);
-		curl_easy_perform(curl);
-		curl_easy_cleanup(curl);
-		Com_Printf("ETKEY: downloaded a new %s from ETkey.org\n", ETKEY_FILE);
-		return qtrue;
-	}
-
-	Com_Printf(S_COLOR_RED "ERROR: unable to download a new %s\n", ETKEY_FILE);
-#endif /* USE_CURL */
-
-	return qfalse;
-}
-
-/*
  * @brief Update cl_guid using ETKEY_FILE and optional prefix
  * @author ioquake3
  */
-static void CL_UpdateGUID( void ) {
+static void CL_UpdateGUID(void)
+{
 	fileHandle_t f;
-	int          len;
+	int len;
 
 	len = FS_SV_FOpenFileRead(BASEGAME "/" ETKEY_FILE, &f);
 	FS_FCloseFile(f);
 
-	if( len != ETKEY_SIZE ) {
+	if (len < ETKEY_SIZE)
+	{
+#ifdef GUIDMASTER_SUPPORT
 		CL_GetAndRegGUID();
-	} else {
+#else
+		Com_Printf("^3Support for GUID server disabled. Can't create guid!\n");
+#endif
+	}
+	else
+	{
 		char *guid = Com_MD5FileETCompat(ETKEY_FILE);
-		if( guid ) {
+		if (guid)
+		{
 			Cvar_Set("cl_guid", guid);
 		}
 	}
@@ -1090,18 +1076,19 @@ static void CL_UpdateGUID( void ) {
  * 3. if the key does not exist download a new key from ETkey.org
  * 4. if all else fails generate a new etkey
  */
-static void CL_GenerateETKey( char *guid )
+static void CL_GenerateETKey(char *guid)
 {
-	fileHandle_t  f;
+	fileHandle_t f;
 	f = FS_SV_FOpenFileWrite(BASEGAME "/" ETKEY_FILE);
-	if (!f) {
-		Com_Printf(S_COLOR_CYAN"ERROR: could not open %s file for write\n",
-			ETKEY_FILE);
+	if (!f)
+	{
+		Com_Printf(S_COLOR_CYAN "ERROR: could not open %s file for write\n",
+		           ETKEY_FILE);
 		return;
 	}
 	FS_Write(guid, strlen(guid), f);
 	FS_FCloseFile(f);
-	Com_Printf(S_COLOR_CYAN"New ETKey %s file generated\n", ETKEY_FILE);
+	Com_Printf(S_COLOR_CYAN "New ETKey %s file generated\n", ETKEY_FILE);
 }
 
 /*
@@ -1331,34 +1318,47 @@ void CL_ForwardToServer_f(void)
 		CL_AddReliableCommand(Cmd_Args());
 	}
 }
-#if GUIDMASTER_SUPPORT
 
-char *CL_GenHWInfo( void ) {
+#if GUIDMASTER_SUPPORT
+char *CL_GenHWInfo(void)
+{
 	#if WIN32
-		HW_PROFILE_INFO HWInfo ;
-		if( GetCurrentHwProfile(&HWInfo) != NULL ) {
-			return HWInfo.szHwProfileGuid ;
-		} else {
-			return NULL ;
-		}
+	HW_PROFILE_INFO HWInfo;
+	if (GetCurrentHwProfile(&HWInfo) != NULL)
+	{
+		return HWInfo.szHwProfileGuid;
+	}
+	else
+	{
+		return NULL;
+	}
 	#else
-		return Com_MD5FileETCompat("/proc/cpuinfo")
+	printf("HWID: %s\n", Com_MD5File("/proc/cpuinfo", 512, "hwid", 5));
+	return Com_MD5File("/proc/cpuinfo", 512, "hwid", 5);
 	#endif
 }
 
-void CL_GetAndRegGUID( void ) {
+void CL_GetAndRegGUID(void)
+{
 	netadr_t addr;
-	if( !NET_StringToAdr(MASTERGUIDSERVER0, &addr) ) {
-		NET_StringToAdr(MASTERGUIDSERVER1, &addr);
-	} else {
-		NET_StringToAdr(MASTERGUIDSERVER0, &addr);
+	if (!NET_StringToAdr(MASTERGUIDSERVER0, &addr, NA_IP))
+	{
+		if (!NET_StringToAdr(MASTERGUIDSERVER1, &addr, NA_IP))
+		{
+			Com_Printf("^3Can't connect to GUID server! ETKey generation is impossible.\n");
+		}
 	}
-	NET_OutOfBandPrint(NS_CLIENT, addr, "getguid %s",CL_GenHWInfo());
+	else
+	{
+		NET_StringToAdr(MASTERGUIDSERVER0, &addr, NA_IP);
+	}
+	NET_OutOfBandPrint(NS_CLIENT, addr, "getguid %s", CL_GenHWInfo());
 }
 
-void CL_CmdGetGuid_f( void ) {
+void CL_CmdGetGuid_f(void)
+{
 	CL_GetAndRegGUID();
-	Com_Printf( "Request has been sent.\n" );
+	Com_Printf("Request has been sent.\n");
 }
 
 #endif
@@ -1447,9 +1447,9 @@ CL_Connect_f
 */
 void CL_Connect_f(void)
 {
-	char         *server;
-	const char   *ip_port;
-	int          argc   = Cmd_Argc();
+	char *server;
+	const char *ip_port;
+	int argc            = Cmd_Argc();
 	netadrtype_t family = NA_UNSPEC;
 
 	if (argc != 2 && argc != 3)
@@ -1591,7 +1591,7 @@ static void CL_CompleteRcon(char *args, int argNum)
  */
 void CL_Rcon_f(void)
 {
-	char     message[MAX_RCON_MESSAGE];
+	char message[MAX_RCON_MESSAGE];
 	netadr_t to;
 
 	if (!rcon_client_password->string)
@@ -1646,8 +1646,8 @@ CL_SendPureChecksums
 void CL_SendPureChecksums(void)
 {
 	const char *pChecksums;
-	char       cMsg[MAX_INFO_VALUE];
-	int        i;
+	char cMsg[MAX_INFO_VALUE];
+	int  i;
 
 	// if we are pure we need to send back a command with our referenced pk3 checksums
 	pChecksums = FS_ReferencedPakPureChecksums();
@@ -2415,17 +2415,18 @@ void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
 #define MAX_SERVERSPERPACKET    256
 
 #if GUIDMASTER_SUPPORT
-void CL_GenGuid( msg_t *msg ) {
-	char    *s;
-	char	*guid;
-	Com_Printf( "CL_GenGuidResponse\n" );
+void CL_GenGuid(msg_t *msg)
+{
+	char *s;
+	char *guid;
+	Com_Printf("CL_GenGuidResponse\n");
 
-	MSG_BeginReadingOOB( msg );
-	MSG_ReadLong( msg );    
+	MSG_BeginReadingOOB(msg);
+	MSG_ReadLong(msg);
 
-	s = MSG_ReadStringLine( msg );
-	guid = Cmd_Argv( 1 );	
-	CL_GenerateETKey( guid );
+	s    = MSG_ReadStringLine(msg);
+	guid = Cmd_Argv(1);
+	CL_GenerateETKey(guid);
 }
 #endif
 
@@ -2436,11 +2437,11 @@ CL_ServersResponsePacket
 */
 void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extended)
 {
-	int      i, count, total;
+	int i, count, total;
 	netadr_t addresses[MAX_SERVERSPERPACKET];
-	int      numservers;
-	byte     *buffptr;
-	byte     *buffend;
+	int numservers;
+	byte *buffptr;
+	byte *buffend;
 
 	Com_Printf("CL_ServersResponsePacket\n");
 
@@ -2704,8 +2705,9 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		return;
 	}
 #if GUIDMASTER_SUPPORT
-	if ( !Q_stricmp( c, "guidresponse" ) ) {
-		CL_GenGuid( msg );
+	if (!Q_stricmp(c, "guidresponse"))
+	{
+		CL_GenGuid(msg);
 	}
 #endif
 	// DHM - Nerve
@@ -2861,8 +2863,8 @@ CL_WWWDownload
 */
 void CL_WWWDownload(void)
 {
-	char            *to_ospath;
-	dlStatus_t      ret;
+	char *to_ospath;
+	dlStatus_t ret;
 	static qboolean bAbort = qfalse;
 
 	if (clc.bWWWDlAborting)
@@ -3080,8 +3082,8 @@ void CL_Frame(int msec)
 typedef struct
 {
 	char name[MAX_QPATH];
-	int hits;
-	int lastSetIndex;
+	int  hits;
+	int  lastSetIndex;
 } cacheItem_t;
 typedef enum
 {
@@ -3100,7 +3102,7 @@ static cacheItem_t cacheGroups[CACHE_NUMGROUPS] =
 #define MAX_CACHE_ITEMS     4096
 #define CACHE_HIT_RATIO     0.75        // if hit on this percentage of maps, it'll get cached
 
-static int         cacheIndex;
+static int cacheIndex;
 static cacheItem_t cacheItems[CACHE_NUMGROUPS][MAX_CACHE_ITEMS];
 
 static void CL_Cache_StartGather_f(void)
@@ -3113,9 +3115,9 @@ static void CL_Cache_StartGather_f(void)
 
 static void CL_Cache_UsedFile_f(void)
 {
-	char        groupStr[MAX_QPATH];
-	char        itemStr[MAX_QPATH];
-	int         i, group;
+	char groupStr[MAX_QPATH];
+	char itemStr[MAX_QPATH];
+	int  i, group;
 	cacheItem_t *item;
 
 	if (Cmd_Argc() < 2)
@@ -3251,7 +3253,7 @@ DLL glue
 static __attribute__ ((format(printf, 2, 3))) void QDECL CL_RefPrintf(int print_level, const char *fmt, ...)
 {
 	va_list argptr;
-	char    msg[MAXPRINTMSG];
+	char msg[MAXPRINTMSG];
 
 	va_start(argptr, fmt);
 	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
@@ -3568,7 +3570,7 @@ void CL_InitRef(void)
 	refexport_t *ret;
 	#ifdef USE_RENDERER_DLOPEN
 	GetRefAPI_t GetRefAPI;
-	char        dllName[MAX_OSPATH];
+	char dllName[MAX_OSPATH];
 	#endif
 
 	Com_Printf("----- Initializing Renderer ----\n");
@@ -3816,8 +3818,6 @@ void CL_Init(void)
 
 	Cvar_Get("cl_maxPing", "800", CVAR_ARCHIVE);
 
-	cl_guidServerUniq = Cvar_Get("cl_guidServerUniq", "1", CVAR_ARCHIVE);
-
 	// ~ and `, as keys and characters
 	cl_consoleKeys = Cvar_Get("cl_consoleKeys", "~ ` 0x7e 0x60", CVAR_ARCHIVE);
 
@@ -3895,7 +3895,7 @@ void CL_Init(void)
 	//
 	Cmd_AddCommand("cmd", CL_ForwardToServer_f);
 #if GUIDMASTER_SUPPORT
-	Cmd_AddCommand( "getguid", CL_CmdGetGuid_f );
+	Cmd_AddCommand("getguid", CL_CmdGetGuid_f);
 #endif
 	Cmd_AddCommand("configstrings", CL_Configstrings_f);
 	Cmd_AddCommand("clientinfo", CL_Clientinfo_f);
@@ -4336,8 +4336,8 @@ CL_ServerStatus
 */
 int CL_ServerStatus(char *serverAddress, char *serverStatusString, int maxLen)
 {
-	int            i;
-	netadr_t       to;
+	int i;
+	netadr_t to;
 	serverStatus_t *serverStatus;
 
 	// if no server address then reset all server status requests
@@ -4408,10 +4408,10 @@ CL_ServerStatusResponse
 */
 void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 {
-	char           *s;
-	char           info[MAX_INFO_STRING];
-	int            i, l, score, ping;
-	int            len;
+	char *s;
+	char info[MAX_INFO_STRING];
+	int  i, l, score, ping;
+	int  len;
 	serverStatus_t *serverStatus;
 
 	serverStatus = NULL;
@@ -4526,8 +4526,8 @@ CL_LocalServers_f
 */
 void CL_LocalServers_f(void)
 {
-	char     *message;
-	int      i, j;
+	char *message;
+	int  i, j;
 	netadr_t to;
 
 	Com_Printf("Scanning for servers on the local network...\n");
@@ -4576,11 +4576,11 @@ CL_GlobalServers_f
 void CL_GlobalServers_f(void)
 {
 	netadr_t to;
-	int      i;
-	int      count;
-	char     *buffptr;
-	char     command[1024];
-	char     *cmdname;
+	int i;
+	int count;
+	char *buffptr;
+	char command[1024];
+	char *cmdname;
 
 	if (Cmd_Argc() < 3)
 	{
@@ -4638,8 +4638,8 @@ CL_GetPing
 void CL_GetPing(int n, char *buf, int buflen, int *pingtime)
 {
 	const char *str;
-	int        time;
-	int        maxPing;
+	int time;
+	int maxPing;
 
 	if (n < 0 || n >= MAX_PINGREQUESTS || !cl_pinglist[n].adr.port)
 	{
@@ -4731,8 +4731,8 @@ CL_GetPingQueueCount
 */
 int CL_GetPingQueueCount(void)
 {
-	int    i;
-	int    count;
+	int i;
+	int count;
 	ping_t *pingptr;
 
 	count   = 0;
@@ -4758,9 +4758,9 @@ ping_t *CL_GetFreePing(void)
 {
 	ping_t *pingptr;
 	ping_t *best;
-	int    oldest;
-	int    i;
-	int    time;
+	int oldest;
+	int i;
+	int time;
 
 	pingptr = cl_pinglist;
 	for (i = 0; i < MAX_PINGREQUESTS; i++, pingptr++)
@@ -4813,10 +4813,10 @@ CL_Ping_f
 */
 void CL_Ping_f(void)
 {
-	netadr_t     to;
-	ping_t       *pingptr;
-	char         *server;
-	int          argc;
+	netadr_t to;
+	ping_t   *pingptr;
+	char *server;
+	int  argc;
 	netadrtype_t family = NA_UNSPEC;
 
 	argc = Cmd_Argc();
@@ -4874,10 +4874,10 @@ CL_UpdateVisiblePings_f
 */
 qboolean CL_UpdateVisiblePings_f(int source)
 {
-	int      slots, i;
-	char     buff[MAX_STRING_CHARS];
-	int      pingTime;
-	int      max;
+	int  slots, i;
+	char buff[MAX_STRING_CHARS];
+	int  pingTime;
+	int  max;
 	qboolean status = qfalse;
 
 	if (source < 0 || source > AS_FAVORITES)
@@ -4997,11 +4997,11 @@ CL_ServerStatus_f
 */
 void CL_ServerStatus_f(void)
 {
-	netadr_t       to, *toptr = NULL;
-	char           *server;
+	netadr_t to, *toptr = NULL;
+	char *server;
 	serverStatus_t *serverStatus;
-	int            argc;
-	netadrtype_t   family = NA_UNSPEC;
+	int argc;
+	netadrtype_t family = NA_UNSPEC;
 
 	argc = Cmd_Argc();
 
@@ -5077,7 +5077,7 @@ CL_AddToLimboChat
 */
 void CL_AddToLimboChat(const char *str)
 {
-	int  len;
+	int len;
 	char *p, *ls;
 	int  lastcolor;
 	int  chatHeight;
@@ -5152,12 +5152,12 @@ qboolean CL_GetLimboString(int index, char *buf)
 #ifndef __MACOS__   //DAJ USA
 typedef struct trans_s
 {
-	char original[MAX_TRANS_STRING];
-	char translated[MAX_LANGUAGES][MAX_TRANS_STRING];
+	char            original[MAX_TRANS_STRING];
+	char            translated[MAX_LANGUAGES][MAX_TRANS_STRING];
 	struct  trans_s *next;
-	float x_offset;
-	float y_offset;
-	qboolean fromFile;
+	float           x_offset;
+	float           y_offset;
+	qboolean        fromFile;
 } trans_t;
 
 static trans_t *transTable[FILE_HASH_SIZE];
@@ -5170,7 +5170,7 @@ AllocTrans
 static trans_t *AllocTrans(char *original, char *translated[MAX_LANGUAGES])
 {
 	trans_t *t;
-	int     i;
+	int i;
 
 	t = malloc(sizeof(trans_t));
 	memset(t, 0, sizeof(trans_t));
@@ -5220,7 +5220,7 @@ LookupTrans
 static trans_t *LookupTrans(char *original, char *translated[MAX_LANGUAGES], qboolean isLoading)
 {
 	trans_t *t, *newt, *prev = NULL;
-	long    hash;
+	long hash;
 
 	hash = generateHashValue(original);
 
@@ -5268,12 +5268,12 @@ CL_SaveTransTable
 */
 void CL_SaveTransTable(const char *fileName, qboolean newOnly)
 {
-	int          bucketlen, bucketnum, maxbucketlen, avebucketlen;
-	int          untransnum, transnum;
-	const char   *buf;
+	int bucketlen, bucketnum, maxbucketlen, avebucketlen;
+	int untransnum, transnum;
+	const char *buf;
 	fileHandle_t f;
-	trans_t      *t;
-	int          i, j, len;
+	trans_t *t;
+	int i, j, len;
 
 	if (cl.corruptedTranslationFile)
 	{
@@ -5453,16 +5453,16 @@ CL_LoadTransTable
 */
 void CL_LoadTransTable(const char *fileName)
 {
-	char         translated[MAX_LANGUAGES][MAX_VA_STRING];
-	char         original[MAX_VA_STRING];
-	qboolean     aborted;
-	char         *text;
+	char translated[MAX_LANGUAGES][MAX_VA_STRING];
+	char original[MAX_VA_STRING];
+	qboolean aborted;
+	char *text;
 	fileHandle_t f;
-	char         *text_p;
-	char         *token;
-	int          len, i;
-	trans_t      *t;
-	int          count;
+	char *text_p;
+	char *token;
+	int  len, i;
+	trans_t *t;
+	int count;
 
 	count                       = 0;
 	aborted                     = qfalse;
@@ -5700,10 +5700,10 @@ void CL_InitTranslation()
 #else
 typedef struct trans_s
 {
-	char original[MAX_TRANS_STRING];
+	char            original[MAX_TRANS_STRING];
 	struct  trans_s *next;
-	float x_offset;
-	float y_offset;
+	float           x_offset;
+	float           y_offset;
 } trans_t;
 
 #endif  //DAJ USA
@@ -5715,10 +5715,10 @@ CL_TranslateString
 */
 void CL_TranslateString(const char *string, char *dest_buffer)
 {
-	int      i, count, currentLanguage;
+	int i, count, currentLanguage;
 	trans_t  *t;
 	qboolean newline = qfalse;
-	char     *buf;
+	char *buf;
 
 	buf             = dest_buffer;
 	currentLanguage = cl_language->integer - 1;
@@ -5800,7 +5800,7 @@ void CL_TranslateString(const char *string, char *dest_buffer)
 
 		if (cl_debugTranslation->integer >= 1)
 		{
-			int      len2       = strlen(buf);
+			int len2            = strlen(buf);
 			qboolean addnewline = qfalse;
 
 			if (buf[len2 - 1] == '\n')
@@ -5830,8 +5830,8 @@ TTimo - handy, stores in a static buf, converts \n to chr(13)
 =======================*/
 const char *CL_TranslateStringBuf(const char *string)
 {
-	char        *p;
-	int         i, l;
+	char *p;
+	int  i, l;
 	static char buf[MAX_VA_STRING];
 	CL_TranslateString(string, buf);
 	while ((p = strstr(buf, "\\n")) != NULL)

@@ -369,7 +369,6 @@ static char *CalculateMD5ForSeed(const char *key, int seed)
 	return hash;
 }
 
-
 static char *CalculateGUID(const char *key)
 {
 	int  i;
@@ -384,7 +383,6 @@ static char *CalculateGUID(const char *key)
 
 	return hash;
 }
-
 
 char *Com_MD5FileETCompat(const char *filename)
 {
