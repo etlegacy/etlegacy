@@ -1333,8 +1333,7 @@ char *CL_GenHWInfo(void)
 		return NULL;
 	}
 	#else
-	printf("HWID: %s\n", Com_MD5File("/proc/cpuinfo", 512, "hwid", 5));
-	return Com_MD5File("/proc/cpuinfo", 512, "hwid", 5);
+	return va("%x", gethostid());
 	#endif
 }
 
