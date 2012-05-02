@@ -438,6 +438,11 @@ sfxHandle_t S_Base_RegisterSound(const char *name, qboolean compressed)
 	}
 
 	sfx = S_FindName(name);
+	if (!sfx)
+	{
+		return 0;
+	}
+
 	if (sfx->soundData)
 	{
 		if (sfx->defaultSound)
