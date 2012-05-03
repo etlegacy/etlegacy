@@ -470,7 +470,7 @@ int AAS_PredictClientMovement(struct aas_clientmove_s *move,
 	float sv_maxstep, sv_maxsteepness, sv_jumpvel, friction;
 	float gravity, delta, maxvel, wishspeed, accelerate;
 	//float velchange, newvel;
-	int      n, i, j, pc, step, swimming, ax, crouch, event, jump_frame, areanum;
+	int      n, i, j, pc, step, swimming, crouch, event, jump_frame, areanum;
 	int      areas[20], numareas;
 	vec3_t   points[20], mins, maxs;
 	vec3_t   org, end, feet, start, stepend, lastorg, wishdir;
