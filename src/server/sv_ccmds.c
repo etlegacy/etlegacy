@@ -746,83 +746,6 @@ void    SV_LoadGame_f(void)
 
 //===============================================================
 
-/*
-==================
-SV_Kick_f
-
-Kick a user off of the server  FIXME: move to game
-// fretn: done
-==================
-*/
-/*
-static void SV_Kick_f( void ) {
-    client_t    *cl;
-    int         i;
-    int         timeout = -1;
-
-    // make sure server is running
-    if ( !com_sv_running->integer ) {
-        Com_Printf( "Server is not running.\n" );
-        return;
-    }
-
-    if ( Cmd_Argc() < 2 || Cmd_Argc() > 3 ) {
-        Com_Printf ("Usage: kick <player name> [timeout]\n");
-        return;
-    }
-
-    if( Cmd_Argc() == 3 ) {
-        timeout = atoi( Cmd_Argv( 2 ) );
-    } else {
-        timeout = 300;
-    }
-
-    cl = SV_GetPlayerByName();
-    if ( !cl ) {
-        if ( !Q_stricmp(Cmd_Argv(1), "all") ) {
-            for( i = 0, cl = svs.clients; i < sv_maxclients->integer; i++, cl++ ) {
-                if ( !cl->state ) {
-                    continue;
-                }
-                if( cl->netchan.remoteAddress.type == NA_LOOPBACK ) {
-                    continue;
-                }
-                SV_DropClient( cl, "player kicked" ); // JPW NERVE to match front menu message
-                if( timeout != -1 ) {
-                    SV_TempBanNetAddress( cl->netchan.remoteAddress, timeout );
-                }
-                cl->lastPacketTime = svs.time;  // in case there is a funny zombie
-            }
-        } else if ( !Q_stricmp(Cmd_Argv(1), "allbots") ) {
-            for ( i=0, cl=svs.clients ; i < sv_maxclients->integer ; i++,cl++ ) {
-                if ( !cl->state ) {
-                    continue;
-                }
-                if( cl->netchan.remoteAddress.type != NA_BOT ) {
-                    continue;
-                }
-                SV_DropClient( cl, "was kicked" );
-                if( timeout != -1 ) {
-                    SV_TempBanNetAddress( cl->netchan.remoteAddress, timeout );
-                }
-                cl->lastPacketTime = svs.time;  // in case there is a funny zombie
-            }
-        }
-        return;
-    }
-    if( cl->netchan.remoteAddress.type == NA_LOOPBACK ) {
-        SV_SendServerCommand(NULL, "print \"%s\"", "Cannot kick host player\n");
-        return;
-    }
-
-    SV_DropClient( cl, "player kicked" ); // JPW NERVE to match front menu message
-    if( timeout != -1 ) {
-        SV_TempBanNetAddress( cl->netchan.remoteAddress, timeout );
-    }
-    cl->lastPacketTime = svs.time;  // in case there is a funny zombie
-}
-*/
-
 #ifdef AUTHORIZE_SUPPORT
 /*
 ==================
@@ -1003,52 +926,6 @@ qboolean SV_TempBanIsBanned(netadr_t address)
 	return qfalse;
 }
 
-/*
-==================
-SV_KickNum_f
-
-Kick a user off of the server  FIXME: move to game
-*DONE*
-==================
-*/
-/*
-static void SV_KickNum_f( void ) {
-    client_t    *cl;
-    int timeout = -1;
-
-    // make sure server is running
-    if ( !com_sv_running->integer ) {
-        Com_Printf( "Server is not running.\n" );
-        return;
-    }
-
-    if ( Cmd_Argc() < 2 || Cmd_Argc() > 3 ) {
-        Com_Printf ("Usage: kicknum <client number> [timeout]\n");
-        return;
-    }
-
-    if( Cmd_Argc() == 3 ) {
-        timeout = atoi( Cmd_Argv( 2 ) );
-    } else {
-        timeout = 300;
-    }
-
-    cl = SV_GetPlayerByNum();
-    if ( !cl ) {
-        return;
-    }
-    if( cl->netchan.remoteAddress.type == NA_LOOPBACK ) {
-        SV_SendServerCommand(NULL, "print \"%s\"", "Cannot kick host player\n");
-        return;
-    }
-
-    SV_DropClient( cl, "player kicked" );
-    if( timeout != -1 ) {
-        SV_TempBanNetAddress( cl->netchan.remoteAddress, timeout );
-    }
-    cl->lastPacketTime = svs.time;  // in case there is a funny zombie
-}
-*/
 /*
 ================
 SV_Status_f
@@ -1286,9 +1163,6 @@ void SV_AddOperatorCommands(void)
 	initialized = qtrue;
 
 	Cmd_AddCommand("heartbeat", SV_Heartbeat_f);
-	// moved to qagame
-	// Cmd_AddCommand ("kick", SV_Kick_f);
-	// Cmd_AddCommand ("clientkick", SV_KickNum_f);
 #ifdef AUTHORIZE_SUPPORT
 	// Arnout: banning requires auth server
 	Cmd_AddCommand("banUser", SV_Ban_f);
