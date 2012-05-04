@@ -249,11 +249,6 @@ void SV_MasterHeartbeat(const char *message)
 
 	netenabled = Cvar_VariableIntegerValue("net_enabled");
 
-	if (SV_GameIsSinglePlayer())
-	{
-		return;     // no heartbeats for SP
-	}
-
 	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
 	if (!com_dedicated || com_dedicated->integer != 2 || !(netenabled & (NET_ENABLEV4 | NET_ENABLEV6)))
 	{
@@ -360,11 +355,6 @@ void SV_MasterGameCompleteStatus()
 {
 	static netadr_t adr[MAX_MASTER_SERVERS];
 	int             i;
-
-	if (SV_GameIsSinglePlayer())
-	{
-		return;     // no master game status for SP
-	}
 
 	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
 	if (!com_dedicated || com_dedicated->integer != 2)
@@ -640,12 +630,6 @@ static void SVC_Status(netadr_t from)
 	char                 infostring[MAX_INFO_STRING];
 	static leakyBucket_t bucket;
 
-	// ignore if we are in single player
-	if (SV_GameIsSinglePlayer())
-	{
-		return;
-	}
-
 	// Prevent using getstatus as an amplifier
 	if (SVC_RateLimitAddress(from, 10, 1000))
 	{
@@ -705,12 +689,6 @@ void SVC_Info(netadr_t from)
 	char *antilag;
 	char *weaprestrict;
 	char *balancedteams;
-
-	// ignore if we are in single player
-	if (SV_GameIsSinglePlayer())
-	{
-		return;
-	}
 
 	/*
 	 * Check whether Cmd_Argv(1) has a sane length. This was not done in the original Quake3 version which led

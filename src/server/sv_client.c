@@ -61,12 +61,6 @@ void SV_GetChallenge(netadr_t from)
 	int         oldestTime;
 	challenge_t *challenge;
 
-	// ignore if we are in single player
-	if (SV_GameIsSinglePlayer())
-	{
-		return;
-	}
-
 	if (SV_TempBanIsBanned(from))
 	{
 		NET_OutOfBandPrint(NS_SERVER, from, "print\n%s\n", sv_tempbanmessage->string);
@@ -619,7 +613,7 @@ void SV_DropClient(client_t *drop, const char *reason)
 		SV_CloseDownload(drop);
 	}
 
-	if ((!SV_GameIsSinglePlayer()) || (!isBot))
+	if (!isBot)
 	{
 		// tell everyone why they got dropped
 
@@ -1935,14 +1929,14 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 		//if ( cmds[i].serverTime > svs.time + 3000 ) {
 		//  continue;
 		//}
-		if (!SV_GameIsSinglePlayer())     // We need to allow this in single player, where loadgame's can cause the player to freeze after reloading if we do this check
-		{   // don't execute if this is an old cmd which is already executed
-			// these old cmds are included when cl_packetdup > 0
-			if (cmds[i].serverTime <= cl->lastUsercmd.serverTime)       // Q3_MISSIONPACK
-			{ //          if ( cmds[i].serverTime > cmds[cmdCount-1].serverTime ) {
-				continue;   // from just before a map_restart
-			}
+
+		// don't execute if this is an old cmd which is already executed
+		// these old cmds are included when cl_packetdup > 0
+		if (cmds[i].serverTime <= cl->lastUsercmd.serverTime)       // Q3_MISSIONPACK
+		{ //          if ( cmds[i].serverTime > cmds[cmdCount-1].serverTime ) {
+			continue;   // from just before a map_restart
 		}
+
 		SV_ClientThink(cl, &cmds[i]);
 	}
 }

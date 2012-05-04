@@ -159,12 +159,9 @@ static void SV_Map_f(void)
 {
 	char     *cmd;
 	char     *map;
-	char     smapname[MAX_QPATH];
 	char     mapname[MAX_QPATH];
 	qboolean killBots, cheat, buildScript;
 	char     expanded[MAX_QPATH];
-	int      savegameTime   = -1;
-	char     *cl_profileStr = Cvar_VariableString("cl_profile");
 
 	map = Cmd_Argv(1);
 	if (!map)
@@ -183,102 +180,9 @@ static void SV_Map_f(void)
 
 	buildScript = Cvar_VariableIntegerValue("com_buildScript");
 
-	if (SV_GameIsSinglePlayer())
-	{
-		if (!buildScript && sv_reloading->integer && sv_reloading->integer != RELOAD_NEXTMAP)     // game is in 'reload' mode, don't allow starting new maps yet.
-		{
-			return;
-		}
-
-		// Trap a savegame load
-		if (strstr(map, ".sav"))
-		{
-			// open the savegame, read the mapname, and copy it to the map string
-			char savemap[MAX_QPATH];
-			char savedir[MAX_QPATH];
-			byte *buffer;
-			int  size, csize;
-
-			if (com_gameInfo.usesProfiles && cl_profileStr[0])
-			{
-				Com_sprintf(savedir, sizeof(savedir), "profiles/%s/save/", cl_profileStr);
-			}
-			else
-			{
-				Q_strncpyz(savedir, "save/", sizeof(savedir));
-			}
-
-			if (!(strstr(map, savedir) == map))
-			{
-				Com_sprintf(savemap, sizeof(savemap), "%s%s", savedir, map);
-			}
-			else
-			{
-				strcpy(savemap, map);
-			}
-
-			size = FS_ReadFile(savemap, NULL);
-			if (size < 0)
-			{
-				Com_Printf("Can't find savegame %s\n", savemap);
-				return;
-			}
-
-			//buffer = Hunk_AllocateTempMemory(size);
-			FS_ReadFile(savemap, (void **)&buffer);
-
-			if (Q_stricmp(savemap, va("%scurrent.sav", savedir)) != 0)
-			{
-				// copy it to the current savegame file
-				FS_WriteFile(va("%scurrent.sav", savedir), buffer, size);
-				// make sure it is the correct size
-				csize = FS_ReadFile(va("%scurrent.sav", savedir), NULL);
-				if (csize != size)
-				{
-					Hunk_FreeTempMemory(buffer);
-					FS_Delete(va("%scurrent.sav", savedir));
-// TTimo
-#ifdef __linux__
-					Com_Error(ERR_DROP, "Unable to save game.\n\nPlease check that you have at least 5mb free of disk space in your home directory.");
-#else
-					Com_Error(ERR_DROP, "Insufficient free disk space.\n\nPlease free at least 5mb of free space on game drive.");
-#endif
-					return;
-				}
-			}
-
-			// set the cvar, so the game knows it needs to load the savegame once the clients have connected
-			Cvar_Set("savegame_loading", "1");
-			// set the filename
-			Cvar_Set("savegame_filename", savemap);
-
-			// the mapname is at the very start of the savegame file
-			Com_sprintf(savemap, sizeof(savemap), "%s", ( char * )(buffer + sizeof(int)));          // skip the version
-			Q_strncpyz(smapname, savemap, sizeof(smapname));
-			map = smapname;
-
-			savegameTime = *( int * )(buffer + sizeof(int) + MAX_QPATH);
-
-			if (savegameTime >= 0)
-			{
-				svs.time = savegameTime;
-			}
-
-			Hunk_FreeTempMemory(buffer);
-		}
-		else
-		{
-			Cvar_Set("savegame_loading", "0");    // make sure it's turned off
-			// set the filename
-			Cvar_Set("savegame_filename", "");
-		}
-	}
-	else
-	{
-		Cvar_Set("savegame_loading", "0");    // make sure it's turned off
-		// set the filename
-		Cvar_Set("savegame_filename", "");
-	}
+	Cvar_Set("savegame_loading", "0");    // make sure it's turned off
+	// set the filename
+	Cvar_Set("savegame_filename", "");
 
 	// make sure the level exists before trying to change, so that
 	// a typo at the server console won't end the game
@@ -392,13 +296,10 @@ NERVE - SMF
 */
 static qboolean SV_TransitionGameState(gamestate_t new_gs, gamestate_t old_gs, int delay)
 {
-	if (!SV_GameIsSinglePlayer() && !SV_GameIsCoop())
+	// we always do a warmup before starting match
+	if (old_gs == GS_INTERMISSION && new_gs == GS_PLAYING)
 	{
-		// we always do a warmup before starting match
-		if (old_gs == GS_INTERMISSION && new_gs == GS_PLAYING)
-		{
-			new_gs = GS_WARMUP;
-		}
+		new_gs = GS_WARMUP;
 	}
 
 	// check if its a valid state transition
@@ -476,20 +377,13 @@ static void SV_MapRestart_f(void)
 	// NERVE - SMF - read in gamestate or just default to GS_PLAYING
 	old_gs = atoi(Cvar_VariableString("gamestate"));
 
-	if (SV_GameIsSinglePlayer() || SV_GameIsCoop())
+	if (Cmd_Argc() > 2)
 	{
-		new_gs = GS_PLAYING;
+		new_gs = atoi(Cmd_Argv(2));
 	}
 	else
 	{
-		if (Cmd_Argc() > 2)
-		{
-			new_gs = atoi(Cmd_Argv(2));
-		}
-		else
-		{
-			new_gs = GS_PLAYING;
-		}
+		new_gs = GS_PLAYING;
 	}
 
 	if (!SV_TransitionGameState(new_gs, old_gs, delay))
@@ -597,10 +491,6 @@ static void SV_MapRestart_f(void)
 
 		if (client->netchan.remoteAddress.type == NA_BOT)
 		{
-			if (SV_GameIsSinglePlayer() || SV_GameIsCoop())
-			{
-				continue;   // dont carry across bots in single player
-			}
 			isBot = qtrue;
 		}
 		else
@@ -618,7 +508,7 @@ static void SV_MapRestart_f(void)
 			// this generally shouldn't happen, because the client
 			// was connected before the level change
 			SV_DropClient(client, denied);
-			if ((!SV_GameIsSinglePlayer()) || (!isBot))
+			if (!isBot)
 			{
 				Com_Printf("SV_MapRestart_f(%d): dropped client %i - denied!\n", delay, i);   // bk010125
 			}

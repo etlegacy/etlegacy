@@ -651,21 +651,13 @@ int SV_BotLibSetup(void)
 	bot_norcd = Cvar_Get("bot_norcd", "0", 0);
 	botlib_export->BotLibVarSet("bot_norcd", bot_norcd->string);
 
-	// RF, set AAS routing max per frame
-	if (SV_GameIsSinglePlayer())
-	{
-		bot_frameroutingupdates = Cvar_Get("bot_frameroutingupdates", "9999999", 0);
-	}
-	else        // more restrictive in multiplayer
-	{
-		bot_frameroutingupdates = Cvar_Get("bot_frameroutingupdates", "1000", 0);
-	}
+	// RF, set AAS routing max per frame - restrictive in multiplayer
+	// TODO #3: remove all bot_ cvars
+	bot_frameroutingupdates = Cvar_Get("bot_frameroutingupdates", "1000", 0);
+
 	botlib_export->BotLibVarSet("bot_frameroutingupdates", bot_frameroutingupdates->string);
 
-// START	Arnout changes, 28-08-2002.
-// added single player
-	return botlib_export->BotLibSetup((SV_GameIsSinglePlayer() || SV_GameIsCoop()));
-// END	Arnout changes, 28-08-2002.
+	return botlib_export->BotLibSetup(qfalse);
 }
 
 /*

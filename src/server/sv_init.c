@@ -124,10 +124,13 @@ void SV_UpdateConfigStrings(void)
 				// RF, re-enabled
 				// Arnout: removed hardcoded gametype
 				// Arnout: added coop
+				// Ir4T4: fully disabled never true for MP - FIXME: do we have to send to OB ?
+				/*
 				if ((SV_GameIsSinglePlayer() || SV_GameIsCoop()) && client->gentity && (client->gentity->r.svFlags & SVF_BOT))
 				{
 					continue;
 				}
+				*/
 
 				len = strlen(sv.configstrings[index]);
 				if (len >= maxChunkSize)
@@ -285,20 +288,6 @@ void SV_BoundMaxClients(int minimum)
 #else
 	Cvar_Get("sv_maxclients", "20", 0);           // NERVE - SMF - changed to 20 from 8
 #endif
-
-	// START	xkan, 10/03/2002
-	// allow many bots in single player. note that this pretty much means all previous
-	// settings will be ignored (including the one set through "seta sv_maxclients <num>"
-	// in user profile's wolfconfig_mp.cfg). also that if the user subsequently start
-	// the server in multiplayer mode, the number of clients will still be the number
-	// set here, which may be wrong - we can certainly just set it to a sensible number
-	// when it is not in single player mode in the else part of the if statement when
-	// necessary
-	if (SV_GameIsSinglePlayer() || SV_GameIsCoop())
-	{
-		Cvar_Set("sv_maxclients", "64");
-	}
-	// END		xkan, 10/03/2002
 
 	sv_maxclients->modified = qfalse;
 
@@ -639,17 +628,8 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	// set nextmap to the same map, but it may be overriden
 	// by the game startup or another console command
 	Cvar_Set("nextmap", "map_restart 0");
-//	Cvar_Set( "nextmap", va("map %s", server) );
 
-	// Ridah
-	// DHM - Nerve :: We want to use the completion bar in multiplayer as well
-	// Arnout: just always use it
-//	if( !SV_GameIsSinglePlayer() ) {
 	SV_SetExpectedHunkUsage(va("maps/%s.bsp", server));
-//	} else {
-	// just set it to a negative number,so the cgame knows not to draw the percent bar
-//		Cvar_Set( "com_expectedhunkusage", "-1" );
-//	}
 
 	// make sure we are not paused
 	Cvar_Set("cl_paused", "0");
@@ -718,7 +698,7 @@ void SV_SpawnServer(char *server, qboolean killBots)
 
 			if (svs.clients[i].netchan.remoteAddress.type == NA_BOT)
 			{
-				if (killBots || SV_GameIsSinglePlayer() || SV_GameIsCoop())
+				if (killBots)
 				{
 					SV_DropClient(&svs.clients[i], "");
 					continue;

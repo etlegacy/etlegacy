@@ -175,10 +175,8 @@ void SV_Netchan_TransmitNextFragment(client_t *client)
 			client->netchan_end_queue = NULL;
 		}
 
-		if (!SV_GameIsSinglePlayer())
-		{
-			SV_Netchan_Encode(client, &netbuf->msg, netbuf->lastClientCommandString);
-		}
+		SV_Netchan_Encode(client, &netbuf->msg, netbuf->lastClientCommandString);
+
 		Netchan_Transmit(&client->netchan, netbuf->msg.cursize, netbuf->msg.data);
 
 		Z_Free(netbuf);
@@ -259,10 +257,8 @@ void SV_Netchan_Transmit(client_t *client, msg_t *msg)       //int length, const
 	}
 	else
 	{
-		if (!SV_GameIsSinglePlayer())
-		{
-			SV_Netchan_Encode(client, msg, client->lastClientCommandString);
-		}
+		SV_Netchan_Encode(client, msg, client->lastClientCommandString);
+
 		Netchan_Transmit(&client->netchan, msg->cursize, msg->data);
 	}
 }
@@ -280,9 +276,8 @@ qboolean SV_Netchan_Process(client_t *client, msg_t *msg)
 	{
 		return qfalse;
 	}
-	if (!SV_GameIsSinglePlayer())
-	{
-		SV_Netchan_Decode(client, msg);
-	}
+
+	SV_Netchan_Decode(client, msg);
+
 	return qtrue;
 }
