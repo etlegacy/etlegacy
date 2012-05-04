@@ -395,13 +395,6 @@ void CL_Record_f(void)
 		return;
 	}
 
-
-	// ATVI Wolfenstein Misc #479 - changing this to a warning
-	// sync 0 doesn't prevent recording, so not forcing it off .. everyone does g_sync 1 ; record ; g_sync 0 ..
-	//if ( !Cvar_VariableValue( "g_synchronousClients" ) ) {
-	//  Com_Printf (S_COLOR_YELLOW "WARNING: You should set 'g_synchronousClients 1' for smoother demo recording\n");
-	//}
-
 	if (Cmd_Argc() == 2)
 	{
 		s = Cmd_Argv(1);
@@ -3827,35 +3820,20 @@ void CL_Init(void)
 	Cvar_Get("cg_popupLimboMenu", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_descriptiveText", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_drawTeamOverlay", "2", CVAR_ARCHIVE);
-//  Cvar_Get( "cg_uselessNostalgia", "0", CVAR_ARCHIVE ); // JPW NERVE
 	Cvar_Get("cg_drawGun", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_cursorHints", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_voiceSpriteTime", "6000", CVAR_ARCHIVE);
-//  Cvar_Get( "cg_teamChatsOnly", "0", CVAR_ARCHIVE );
-//  Cvar_Get( "cg_noVoiceChats", "0", CVAR_ARCHIVE );
-//  Cvar_Get( "cg_noVoiceText", "0", CVAR_ARCHIVE );
 	Cvar_Get("cg_crosshairSize", "48", CVAR_ARCHIVE);
 	Cvar_Get("cg_drawCrosshair", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_zoomDefaultSniper", "20", CVAR_ARCHIVE);
 	Cvar_Get("cg_zoomstepsniper", "2", CVAR_ARCHIVE);
-
-//  Cvar_Get( "mp_playerType", "0", 0 );
-//  Cvar_Get( "mp_currentPlayerType", "0", 0 );
-//  Cvar_Get( "mp_weapon", "0", 0 );
-//  Cvar_Get( "mp_team", "0", 0 );
-//  Cvar_Get( "mp_currentTeam", "0", 0 );
 	// -NERVE - SMF
 
 	// userinfo
 	Cvar_Get("name", "ETPlayer", CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("rate", "5000", CVAR_USERINFO | CVAR_ARCHIVE);       // NERVE - SMF - changed from 3000
 	Cvar_Get("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE);
-//  Cvar_Get ("model", "american", CVAR_USERINFO | CVAR_ARCHIVE );  // temp until we have an skeletal american model
-//  Arnout - no need // Cvar_Get ("model", "multi", CVAR_USERINFO | CVAR_ARCHIVE );
-//  Arnout - no need // Cvar_Get ("head", "default", CVAR_USERINFO | CVAR_ARCHIVE );
-//  Arnout - no need // Cvar_Get ("color", "4", CVAR_USERINFO | CVAR_ARCHIVE );
-//  Arnout - no need // Cvar_Get ("handicap", "0", CVAR_USERINFO | CVAR_ARCHIVE );
-//  Cvar_Get ("sex", "male", CVAR_USERINFO | CVAR_ARCHIVE );
+
 	Cvar_Get("cl_anonymous", "0", CVAR_USERINFO | CVAR_ARCHIVE);
 
 	Cvar_Get("password", "", CVAR_USERINFO);
@@ -3936,14 +3914,6 @@ void CL_Init(void)
 	Cmd_AddCommand("SaveNewTranslations", CL_SaveNewTranslations_f);     // NERVE - SMF - localization
 	Cmd_AddCommand("LoadTranslations", CL_LoadTranslations_f);       // NERVE - SMF - localization
 #endif
-	// NERVE - SMF - don't do this in multiplayer
-	// RF, add this command so clients can't bind a key to send client damage commands to the server
-//  Cmd_AddCommand ("cld", CL_ClientDamageCommand );
-
-//  Cmd_AddCommand ( "startSingleplayer", CL_startSingleplayer_f );     // NERVE - SMF
-//  fretn - unused
-//  Cmd_AddCommand ( "buyNow", CL_buyNow_f );                           // NERVE - SMF
-//  Cmd_AddCommand ( "singlePlayLink", CL_singlePlayLink_f );           // NERVE - SMF
 
 	Cmd_AddCommand("setRecommended", CL_SetRecommended_f);
 
