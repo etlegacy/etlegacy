@@ -39,6 +39,7 @@
 #ifndef _WIN32
 #include <netinet/in.h>
 #include <sys/stat.h> // umask
+#include <unistd.h> // getpid() - this is POSIX check MAC build
 #else
 #include <winsock.h>
 #endif
@@ -3690,6 +3691,7 @@ static void PrintCvarMatches(const char *s)
 	}
 }
 
+/* IR4T4: warning fix/unused - see cl_keys.c
 static void keyConcatArgs(void)
 {
 	int  i;
@@ -3715,7 +3717,9 @@ static void keyConcatArgs(void)
 		}
 	}
 }
+*/
 
+/* IR4T4: warning fix/unused - see cl_keys.c
 static void ConcatRemaining(const char *src, const char *start)
 {
 	char *str;
@@ -3730,6 +3734,7 @@ static void ConcatRemaining(const char *src, const char *start)
 	str += strlen(start);
 	Q_strcat(completionField->buffer, sizeof(completionField->buffer), str);
 }
+*/
 
 /*
 ===============
