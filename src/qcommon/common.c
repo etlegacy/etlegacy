@@ -3691,51 +3691,6 @@ static void PrintCvarMatches(const char *s)
 	}
 }
 
-/* IR4T4: warning fix/unused - see cl_keys.c
-static void keyConcatArgs(void)
-{
-	int  i;
-	char *arg;
-
-	for (i = 1 ; i < Cmd_Argc() ; i++)
-	{
-		Q_strcat(completionField->buffer, sizeof(completionField->buffer), " ");
-		arg = Cmd_Argv(i);
-		while (*arg)
-		{
-			if (*arg == ' ')
-			{
-				Q_strcat(completionField->buffer, sizeof(completionField->buffer), "\"");
-				break;
-			}
-			arg++;
-		}
-		Q_strcat(completionField->buffer, sizeof(completionField->buffer), Cmd_Argv(i));
-		if (*arg == ' ')
-		{
-			Q_strcat(completionField->buffer, sizeof(completionField->buffer), "\"");
-		}
-	}
-}
-*/
-
-/* IR4T4: warning fix/unused - see cl_keys.c
-static void ConcatRemaining(const char *src, const char *start)
-{
-	char *str;
-
-	str = strstr(src, start);
-	if (!str)
-	{
-		keyConcatArgs();
-		return;
-	}
-
-	str += strlen(start);
-	Q_strcat(completionField->buffer, sizeof(completionField->buffer), str);
-}
-*/
-
 /*
 ===============
 Field_FindFirstSeparator
