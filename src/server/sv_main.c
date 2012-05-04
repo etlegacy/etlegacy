@@ -109,9 +109,8 @@ EVENT MESSAGES
 static char *SV_ExpandNewlines(char *in)
 {
 	static char string[1024];
-	int         l;
+	int         l = 0;
 
-	l = 0;
 	while (*in && l < sizeof(string) - 3)
 	{
 		if (*in == '\n')
@@ -1214,7 +1213,7 @@ static void SV_CheckTimeouts(void)
 
 static qboolean SV_CheckPaused(void)
 {
-	int      count;
+	int      count = 0;
 	client_t *cl;
 	int      i;
 
@@ -1224,7 +1223,6 @@ static qboolean SV_CheckPaused(void)
 	}
 
 	// only pause if there is just a single client connected
-	count = 0;
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
 		if (cl->state >= CS_CONNECTED && cl->netchan.remoteAddress.type != NA_BOT)
@@ -1320,11 +1318,6 @@ void SV_Frame(int msec)
 
 	sv.timeResidual += msec;
 
-	if (!com_dedicated->integer)
-	{
-		SV_BotFrame(svs.time + sv.timeResidual);
-	}
-
 	if (com_dedicated->integer && sv.timeResidual < frameMsec)
 	{
 		// NET_Sleep will give the OS time slices until either get a packet
@@ -1399,11 +1392,6 @@ void SV_Frame(int msec)
 
 	// update ping based on the all received frames
 	SV_CalcPings();
-
-	if (com_dedicated->integer)
-	{
-		SV_BotFrame(svs.time);
-	}
 
 	// run the game simulation in chunks
 	while (sv.timeResidual >= frameMsec)

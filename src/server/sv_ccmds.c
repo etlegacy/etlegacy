@@ -205,8 +205,6 @@ static void SV_Map_f(void)
 		Cvar_Set("g_gametype", va("%i", com_gameInfo.defaultSPGameType));
 		// force latched values to get set
 		Cvar_Get("g_gametype", va("%i", com_gameInfo.defaultSPGameType), CVAR_SERVERINFO | CVAR_USERINFO | CVAR_LATCH);
-		// enable bot support for AI
-		Cvar_Set("bot_enable", "1");
 	}
 
 	cmd = Cmd_Argv(0);

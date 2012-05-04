@@ -518,24 +518,6 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return 0;
 	case GAME_CONSOLE_COMMAND:
 		return ConsoleCommand();
-	case BOTAI_START_FRAME:
-#ifdef NO_BOT_SUPPORT
-		return 0;
-#else
-		return BotAIStartFrame(arg0);
-#endif // NO_BOT_SUPPORT
-	case BOT_VISIBLEFROMPOS:
-#ifdef NO_BOT_SUPPORT
-		return qfalse;
-#else
-		return BotVisibleFromPos((float *)arg0, arg1, (float *)arg2, arg3, arg4);
-#endif // NO_BOT_SUPPORT
-	case BOT_CHECKATTACKATPOS:
-#ifdef NO_BOT_SUPPORT
-		return qfalse;
-#else
-		return BotCheckAttackAtPos(arg0, arg1, (float *)arg2, arg3, arg4);
-#endif // NO_BOT_SUPPORT
 	case GAME_SNAPSHOT_CALLBACK:
 		return G_SnapshotCallback(arg0, arg1);
 	case GAME_MESSAGERECEIVED:

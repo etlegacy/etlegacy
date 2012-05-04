@@ -397,7 +397,6 @@ project "etmain_game"
 	defines
 	{ 
 		"GAMEDLL",
-		"NO_BOT_SUPPORT"
 	}
 	
 	-- 

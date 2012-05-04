@@ -38,7 +38,6 @@
 static bot_debugpoly_t debugpolygons[MAX_DEBUGPOLYS];
 
 extern botlib_export_t *botlib_export;
-int                    bot_enable;
 
 /*
 ==================
@@ -126,93 +125,13 @@ void SV_BotFreeClient(int clientNum)
 /*
 ==================
 BotDrawDebugPolygons
+
+TODO: remove in cm_patch.c
 ==================
 */
 void BotDrawDebugPolygons(BotPolyFunc drawPoly, int value)
 {
-	static cvar_t   *bot_debug, *bot_groundonly, *bot_reachability, *bot_highlightarea;
-	static cvar_t   *bot_testhidepos;
-	bot_debugpoly_t *poly;
-	int             i, parm0;
-	static cvar_t   *debugSurface;
-
-	if (!bot_enable)
-	{
-		return;
-	}
-	//bot debugging
-	if (!bot_debug)
-	{
-		bot_debug = Cvar_Get("bot_debug", "0", 0);
-	}
-	//show reachabilities
-	if (!bot_reachability)
-	{
-		bot_reachability = Cvar_Get("bot_reachability", "0", 0);
-	}
-	//show ground faces only
-	if (!bot_groundonly)
-	{
-		bot_groundonly = Cvar_Get("bot_groundonly", "1", 0);
-	}
-	//get the hightlight area
-	if (!bot_highlightarea)
-	{
-		bot_highlightarea = Cvar_Get("bot_highlightarea", "0", 0);
-	}
-	//
-	if (!bot_testhidepos)
-	{
-		bot_testhidepos = Cvar_Get("bot_testhidepos", "0", 0);
-	}
-	//
-	if (!debugSurface)
-	{
-		debugSurface = Cvar_Get("r_debugSurface", "0", 0);
-	}
-	//
-	if (bot_debug->integer == 1 || bot_debug->integer == 9)
-	{
-		parm0 = 0;
-		if (svs.clients[0].lastUsercmd.buttons & BUTTON_ATTACK)
-		{
-			parm0 |= 1;
-		}
-		if (bot_reachability->integer)
-		{
-			parm0 |= 2;
-		}
-		if (bot_groundonly->integer)
-		{
-			parm0 |= 4;
-		}
-		if (debugSurface->integer == 3)
-		{
-			parm0 |= 8;
-		}
-		else if (debugSurface->integer == 4)
-		{
-			parm0 |= 4 | 8;
-		}
-		else if (debugSurface->integer == 5)
-		{
-			parm0 |= 8 | 16;
-		}
-		botlib_export->BotLibVarSet("bot_highlightarea", bot_highlightarea->string);
-		botlib_export->BotLibVarSet("bot_testhidepos", bot_testhidepos->string);
-		botlib_export->BotLibVarSet("bot_debug", bot_debug->string);
-		botlib_export->Test(parm0, NULL, svs.clients[0].gentity->r.currentOrigin, svs.clients[0].gentity->r.currentAngles);
-	} //end if
-	for (i = 0; i < MAX_DEBUGPOLYS; i++)
-	{
-		poly = &debugpolygons[i];
-		if (!poly->inuse)
-		{
-			continue;
-		}
-		drawPoly(poly->color, poly->numPoints, (float *) poly->points);
-		//Com_Printf("poly %i, numpoints = %d\n", i, poly->numPoints);
-	}
+	return;
 }
 
 /*
@@ -576,25 +495,6 @@ void BotImport_DebugLineShow(int line, vec3_t start, vec3_t end, int color)
 	BotImport_DebugPolygonShow(line, color, 4, points);
 }
 
-/*
-==================
-BotImport_BotVisibleFromPos
-==================
-*/
-qboolean BotImport_BotVisibleFromPos(vec3_t srcorigin, int srcnum, vec3_t destorigin, int destent, qboolean dummy)
-{
-	return VM_Call(gvm, BOT_VISIBLEFROMPOS, srcorigin, srcnum, destorigin, destent, dummy);
-}
-
-/*
-==================
-BotImport_BotCheckAttackAtPos
-==================
-*/
-qboolean BotImport_BotCheckAttackAtPos(int entnum, int enemy, vec3_t pos, qboolean ducking, qboolean allowHitWorld)
-{
-	return VM_Call(gvm, BOT_CHECKATTACKATPOS, entnum, enemy, pos, ducking, allowHitWorld);
-}
 
 /*
 ==================
@@ -604,105 +504,6 @@ SV_BotClientCommand
 void BotClientCommand(int client, char *command)
 {
 	SV_ExecuteClientCommand(&svs.clients[client], command, qtrue, qfalse);
-}
-
-/*
-==================
-SV_BotFrame
-==================
-*/
-void SV_BotFrame(int time)
-{
-
-	if (!bot_enable)
-	{
-		return;
-	}
-	//NOTE: maybe the game is already shutdown
-	if (!gvm)
-	{
-		return;
-	}
-	VM_Call(gvm, BOTAI_START_FRAME, time);
-}
-
-/*
-===============
-SV_BotLibSetup
-===============
-*/
-int SV_BotLibSetup(void)
-{
-	static cvar_t *bot_norcd;
-	static cvar_t *bot_frameroutingupdates;
-
-	if (!bot_enable)
-	{
-		return 0;
-	}
-
-	if (!botlib_export)
-	{
-		Com_Printf(S_COLOR_RED "Error: SV_BotLibSetup without SV_BotInitBotLib\n");
-		return -1;
-	}
-
-	// RF, set RCD calculation status
-	bot_norcd = Cvar_Get("bot_norcd", "0", 0);
-	botlib_export->BotLibVarSet("bot_norcd", bot_norcd->string);
-
-	// RF, set AAS routing max per frame - restrictive in multiplayer
-	// TODO #3: remove all bot_ cvars
-	bot_frameroutingupdates = Cvar_Get("bot_frameroutingupdates", "1000", 0);
-
-	botlib_export->BotLibVarSet("bot_frameroutingupdates", bot_frameroutingupdates->string);
-
-	return botlib_export->BotLibSetup(qfalse);
-}
-
-/*
-===============
-SV_ShutdownBotLib
-
-Called when either the entire server is being killed, or
-it is changing to a different game directory.
-===============
-*/
-int SV_BotLibShutdown(void)
-{
-
-	if (!botlib_export)
-	{
-		return -1;
-	}
-
-	return botlib_export->BotLibShutdown();
-}
-
-/*
-==================
-SV_BotInitCvars
-==================
-*/
-void SV_BotInitCvars(void)
-{
-
-	Cvar_Get("bot_enable", "0", 0);                 //enable the bot
-	Cvar_Get("bot_developer", "0", 0);              //bot developer mode
-	Cvar_Get("bot_debug", "0", 0);                  //enable bot debugging
-	Cvar_Get("bot_groundonly", "1", 0);             //only show ground faces of areas
-	Cvar_Get("bot_reachability", "0", 0);       //show all reachabilities to other areas
-	Cvar_Get("bot_thinktime", "50", 0);         //msec the bots thinks
-	Cvar_Get("bot_reloadcharacters", "0", 0);   //reload the bot characters each time
-	Cvar_Get("bot_testichat", "0", 0);              //test ichats
-	Cvar_Get("bot_testrchat", "0", 0);              //test rchats
-	Cvar_Get("bot_fastchat", "0", 0);           //fast chatting bots
-	Cvar_Get("bot_nochat", "1", 0);                 //disable chats
-	Cvar_Get("bot_grapple", "0", 0);            //enable grapple
-	Cvar_Get("bot_rocketjump", "0", 0);             //enable rocket jumping
-	Cvar_Get("bot_norcd", "0", 0);                  //enable creation of RCD file
-
-	bot_enable = Cvar_VariableIntegerValue("bot_enable");
 }
 
 #ifndef DEDICATED
@@ -760,10 +561,6 @@ void SV_BotInitBotLib(void)
 	botlib_import.DebugPolygonGetFree       = BotImport_GetFreeDebugPolygon;
 	botlib_import.DebugPolygonDelete        = BotImport_DebugPolygonDelete;
 	botlib_import.DebugPolygonDeletePointer = BotImport_DebugPolygonDeletePointer;
-
-	//bot routines
-	botlib_import.BotVisibleFromPos   = BotImport_BotVisibleFromPos;
-	botlib_import.BotCheckAttackAtPos = BotImport_BotCheckAttackAtPos;
 
 	botlib_import.BotDrawPolygon = BotImport_DrawPolygon;
 
@@ -830,21 +627,3 @@ int EntityInPVS(int client, int entityNum)
 }
 #endif
 
-/*
-==================
-SV_BotGetSnapshotEntity
-==================
-*/
-int SV_BotGetSnapshotEntity(int client, int sequence)
-{
-	client_t         *cl;
-	clientSnapshot_t *frame;
-
-	cl    = &svs.clients[client];
-	frame = &cl->frames[cl->netchan.outgoingSequence & PACKET_MASK];
-	if (sequence < 0 || sequence >= frame->num_entities)
-	{
-		return -1;
-	}
-	return svs.snapshotEntities[(frame->first_entity + sequence) % svs.numSnapshotEntities].number;
-}
