@@ -88,13 +88,14 @@ void SV_SetConfigstring(int index, const char *val)
 
 void SV_UpdateConfigStrings(void)
 {
-	int      len, i, index;
-	client_t *client;
-	int      maxChunkSize = MAX_STRING_CHARS - 24;
+	client_t 	*client;
+	int			len, i, index, sent, remaining;
+	int			maxChunkSize = MAX_STRING_CHARS - 24;
+	char 		*cmd;
+	char 		buf[MAX_STRING_CHARS];
 
 	for (index = 0; index < MAX_CONFIGSTRINGS; index++)
 	{
-
 		if (!sv.configstringsmodified[index])
 		{
 			continue;
@@ -131,10 +132,8 @@ void SV_UpdateConfigStrings(void)
 				len = strlen(sv.configstrings[index]);
 				if (len >= maxChunkSize)
 				{
-					int  sent      = 0;
-					int  remaining = len;
-					char *cmd;
-					char buf[MAX_STRING_CHARS];
+					sent      = 0;
+					remaining = len;
 
 					while (remaining > 0)
 					{
@@ -150,6 +149,7 @@ void SV_UpdateConfigStrings(void)
 						{
 							cmd = "bcs1";
 						}
+
 						Q_strncpyz(buf, &sv.configstrings[index][sent], maxChunkSize);
 
 						SV_SendServerCommand(client, "%s %i \"%s\"\n", cmd, index, buf);
