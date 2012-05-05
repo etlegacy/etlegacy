@@ -388,7 +388,7 @@ project "etmain_game"
 		
 		"src/game/**.c", "src/game/**.h",
 		
-		"src/botai/**.c", "src/botai/**.h",
+		"src/botai/**.h",
 	}
 	includedirs
 	{
