@@ -1192,7 +1192,7 @@ static void SV_CheckTimeouts(void)
 			// cause a timeout
 			if (++cl->timeoutCount > 5)
 			{
-				SV_DropClient(cl, "timed out");
+				SV_DropClient(cl, va("timed out %i\n", cl->state));
 				cl->state = CS_FREE;    // don't bother with zombie state
 			}
 		}
