@@ -1004,12 +1004,6 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	else if (!Q_stricmp(c, "connect"))
 	{
 		SV_DirectConnect(from);
-#ifdef AUTHORIZE_SUPPORT
-	}
-	else if (!Q_stricmp(c, "ipAuthorize"))
-	{
-		SV_AuthorizeIpPacket(from);
-#endif // AUTHORIZE_SUPPORT
 	}
 	else if (!Q_stricmp(c, "rcon"))
 	{

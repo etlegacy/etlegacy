@@ -235,8 +235,6 @@ typedef struct client_s
 // while not allowing a single ip to grab all challenge resources
 #define MAX_CHALLENGES_MULTI (MAX_CHALLENGES / 2)
 
-#define AUTHORIZE_TIMEOUT   5000
-
 typedef struct
 {
 	netadr_t adr;
@@ -244,7 +242,7 @@ typedef struct
 	int clientChallenge;            // challenge number coming from the client
 	int time;                       // time the last packet was sent to the autherize server
 	int pingTime;                   // time the challenge response was sent to client
-	int firstTime;                  // time the adr was first used, for authorize timeout checks
+	int firstTime;                  // time the adr was first used
 	int firstPing;                  // Used for min and max ping checks
 	qboolean wasrefused;
 	qboolean connected;
@@ -294,10 +292,6 @@ typedef struct
 	receipt_t infoReceipts[MAX_INFO_RECEIPTS];
 	netadr_t redirectAddress;               // for rcon return messages
 	tempBan_t tempBanAddresses[MAX_TEMPBAN_ADDRESSES];
-
-#ifdef AUTHORIZE_SUPPORT
-	netadr_t authorizeAddress;
-#endif // AUTHORIZE_SUPPORT
 
 	int sampleTimes[SERVER_PERFORMANCECOUNTER_SAMPLES];
 	int currentSampleIndex;
@@ -417,8 +411,6 @@ void SV_SpawnServer(char *server, qboolean killBots);
 void SV_GetChallenge(netadr_t from);
 
 void SV_DirectConnect(netadr_t from);
-
-void SV_AuthorizeIpPacket(netadr_t from);
 
 void SV_ExecuteClientMessage(client_t *cl, msg_t *msg);
 void SV_UserinfoChanged(client_t *cl);

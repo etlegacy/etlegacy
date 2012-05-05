@@ -47,11 +47,6 @@ We do this to prevent denial of service attacks that
 flood the server with invalid connection IPs.  With a
 challenge, they must give a valid IP address.
 
-If we are authorizing, a challenge request will cause a packet
-to be sent to the authorize server.
-
-When an authorizeip is returned, a challenge response will be
-sent to that ip.
 =================
 */
 void SV_GetChallenge(netadr_t from)
@@ -99,178 +94,20 @@ void SV_GetChallenge(netadr_t from)
 		i                    = oldest;
 	}
 
-#if !defined(AUTHORIZE_SUPPORT)
-	// FIXME: deal with restricted filesystem
-	if (1)
+	// FIXME: deal with restricted filesystem - done with sv_pure check ?
+
+	challenge->pingTime = svs.time;
+	if (sv_onlyVisibleClients->integer)
 	{
-#else
-	// if they are on a lan address, send the challengeResponse immediately
-	if (Sys_IsLANAddress(from))
-	{
-#endif
-		challenge->pingTime = svs.time;
-		if (sv_onlyVisibleClients->integer)
-		{
-			NET_OutOfBandPrint(NS_SERVER, from, "challengeResponse %i %i", challenge->challenge, sv_onlyVisibleClients->integer);
-		}
-		else
-		{
-			NET_OutOfBandPrint(NS_SERVER, from, "challengeResponse %i", challenge->challenge);
-		}
-		return;
-	}
-
-#ifdef AUTHORIZE_SUPPORT
-	// look up the authorize server's IP
-	if (!svs.authorizeAddress.ip[0] && svs.authorizeAddress.type != NA_BAD)
-	{
-		Com_Printf("Resolving %s\n", AUTHORIZE_SERVER_NAME);
-		if (!NET_StringToAdr(AUTHORIZE_SERVER_NAME, &svs.authorizeAddress))
-		{
-			Com_Printf("Couldn't resolve address\n");
-			return;
-		}
-		svs.authorizeAddress.port = BigShort(PORT_AUTHORIZE);
-		Com_Printf("%s resolved to %i.%i.%i.%i:%i\n", AUTHORIZE_SERVER_NAME,
-		           svs.authorizeAddress.ip[0], svs.authorizeAddress.ip[1],
-		           svs.authorizeAddress.ip[2], svs.authorizeAddress.ip[3],
-		           BigShort(svs.authorizeAddress.port));
-	}
-
-	// if they have been challenging for a long time and we
-	// haven't heard anything from the authoirze server, go ahead and
-	// let them in, assuming the id server is down
-	if (svs.time - challenge->firstTime > AUTHORIZE_TIMEOUT)
-	{
-		Com_DPrintf("authorize server timed out\n");
-
-		challenge->pingTime = svs.time;
-		if (sv_onlyVisibleClients->integer)
-		{
-			NET_OutOfBandPrint(NS_SERVER, challenge->adr,
-			                   "challengeResponse %i %i", challenge->challenge, sv_onlyVisibleClients->integer);
-		}
-		else
-		{
-			NET_OutOfBandPrint(NS_SERVER, challenge->adr,
-			                   "challengeResponse %i", challenge->challenge);
-		}
-
-		return;
-	}
-
-	// otherwise send their ip to the authorize server
-	if (svs.authorizeAddress.type != NA_BAD)
-	{
-		cvar_t *fs;
-		char   game[1024];
-
-		game[0] = 0;
-		fs      = Cvar_Get("fs_game", "", CVAR_INIT | CVAR_SYSTEMINFO);
-		if (fs && fs->string[0] != 0)
-		{
-			strcpy(game, fs->string);
-		}
-		Com_DPrintf("sending getIpAuthorize for %s\n", NET_AdrToString(from));
-		fs = Cvar_Get("sv_allowAnonymous", "0", CVAR_SERVERINFO);
-
-		// NERVE - SMF - fixed parsing on sv_allowAnonymous
-		NET_OutOfBandPrint(NS_SERVER, svs.authorizeAddress,
-		                   "getIpAuthorize %i %i.%i.%i.%i %s %i", svs.challenges[i].challenge,
-		                   from.ip[0], from.ip[1], from.ip[2], from.ip[3], game, fs->integer);
-	}
-#endif // AUTHORIZE_SUPPORT
-}
-
-#ifdef AUTHORIZE_SUPPORT
-/*
-====================
-SV_AuthorizeIpPacket
-
-A packet has been returned from the authorize server.
-If we have a challenge adr for that ip, send the
-challengeResponse to it
-====================
-*/
-void SV_AuthorizeIpPacket(netadr_t from)
-{
-	int  challenge;
-	int  i;
-	char *s;
-	char *r;
-	char ret[1024];
-
-	if (!NET_CompareBaseAdr(from, svs.authorizeAddress))
-	{
-		Com_Printf("SV_AuthorizeIpPacket: not from authorize server\n");
-		return;
-	}
-
-	challenge = atoi(Cmd_Argv(1));
-
-	for (i = 0 ; i < MAX_CHALLENGES ; i++)
-	{
-		if (svs.challenges[i].challenge == challenge)
-		{
-			break;
-		}
-	}
-	if (i == MAX_CHALLENGES)
-	{
-		Com_Printf("SV_AuthorizeIpPacket: challenge not found\n");
-		return;
-	}
-
-	// send a packet back to the original client
-	svs.challenges[i].pingTime = svs.time;
-	s                          = Cmd_Argv(2);
-	r                          = Cmd_Argv(3); // reason
-
-	if (!Q_stricmp(s, "accept"))
-	{
-		if (sv_onlyVisibleClients->integer)
-		{
-			NET_OutOfBandPrint(NS_SERVER, svs.challenges[i].adr,
-			                   "challengeResponse %i %i", svs.challenges[i].challenge, sv_onlyVisibleClients->integer);
-		}
-		else
-		{
-			NET_OutOfBandPrint(NS_SERVER, svs.challenges[i].adr,
-			                   "challengeResponse %i", svs.challenges[i].challenge);
-		}
-		return;
-	}
-	if (!Q_stricmp(s, "unknown"))
-	{
-		if (!r)
-		{
-			NET_OutOfBandPrint(NS_SERVER, svs.challenges[i].adr, "print\nAwaiting CD key authorization\n");
-		}
-		else
-		{
-			sprintf(ret, "print\n%s\n", r);
-			NET_OutOfBandPrint(NS_SERVER, svs.challenges[i].adr, ret);
-		}
-		// clear the challenge record so it won't timeout and let them through
-		memset(&svs.challenges[i], 0, sizeof(svs.challenges[i]));
-		return;
-	}
-
-	// authorization failed
-	if (!r)
-	{
-		NET_OutOfBandPrint(NS_SERVER, svs.challenges[i].adr, "print\nSomeone is using this CD Key\n");
+		NET_OutOfBandPrint(NS_SERVER, from, "challengeResponse %i %i", challenge->challenge, sv_onlyVisibleClients->integer);
 	}
 	else
 	{
-		sprintf(ret, "print\n%s\n", r);
-		NET_OutOfBandPrint(NS_SERVER, svs.challenges[i].adr, ret);
+		NET_OutOfBandPrint(NS_SERVER, from, "challengeResponse %i", challenge->challenge);
 	}
 
-	// clear the challenge record so it won't timeout and let them through
-	memset(&svs.challenges[i], 0, sizeof(svs.challenges[i]));
+	return;
 }
-#endif // AUTHORIZE_SUPPORT
 
 /*
 ==================
