@@ -299,10 +299,6 @@ You or the server may be running older versions of the game. Press the auto-upda
 #endif // MASTER_SERVER_NAME
 #define MOTD_SERVER_NAME            "etmaster.idsoftware.com"
 
-#ifdef AUTHORIZE_SUPPORT
-#define AUTHORIZE_SERVER_NAME   "wolfauthorize.idsoftware.com"
-#endif // AUTHORIZE_SUPPORT
-
 // TTimo: override autoupdate server for testing
 #ifndef AUTOUPDATE_SERVER_NAME
 #define AUTOUPDATE_SERVER_NAME "au2rtcw2.activision.com"
@@ -328,9 +324,6 @@ You or the server may be running older versions of the game. Press the auto-upda
 
 #define PORT_MASTER         27950
 #define PORT_MOTD           27951
-#ifdef AUTHORIZE_SUPPORT
-#define PORT_AUTHORIZE      27952
-#endif // AUTHORIZE_SUPPORT
 #define PORT_SERVER         27960
 
 /*
