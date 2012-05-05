@@ -469,7 +469,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 
 			if (scriptSound->numsounds >= MAX_SOUNDSCRIPT_SOUNDS)
 			{
-				CG_Error("Too many sounds for soundscript %s\n");
+				CG_Error(S_COLOR_RED "Too many sounds for soundscript\n");
 			}
 
 			token = COM_ParseExt(text, qtrue);
@@ -511,7 +511,7 @@ static void CG_SoundLoadSoundFiles(void)
 	}
 	if (len > sizeof(bigTextBuffer))
 	{
-		CG_Error("%s is too big, make it smaller (max = %i bytes)\n", filename, sizeof(bigTextBuffer));
+		CG_Error("%s is too big, make it smaller (max = %i bytes)\n", filename, 100000);
 	}
 	// load the file into memory
 	trap_FS_Read(bigTextBuffer, len, f);
@@ -555,7 +555,7 @@ static void CG_SoundLoadSoundFiles(void)
 		}
 		if (len > sizeof(bigTextBuffer))
 		{
-			CG_Error("%s is too big, make it smaller (max = %i bytes)\n", filename, sizeof(bigTextBuffer));
+			CG_Error("%s is too big, make it smaller (max = %i bytes)\n", filename, 100000);
 		}
 		memset(bigTextBuffer, 0, sizeof(bigTextBuffer));
 		trap_FS_Read(bigTextBuffer, len, f);
