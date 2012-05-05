@@ -1,3 +1,4 @@
+#if 0
 /*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
@@ -2056,3 +2057,4 @@ void SP_bot_landmine_area(gentity_t *ent)
 
 	trap_LinkEntity(ent);
 }
+#endif

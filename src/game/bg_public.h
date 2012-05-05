@@ -419,8 +419,8 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 //#define GAMETYPES
 typedef enum
 {
-	GT_SINGLE_PLAYER,
-	GT_COOP,
+	GT_SINGLE_PLAYER,	// obsolete
+	GT_COOP,			// obsolete
 	GT_WOLF,
 	GT_WOLF_STOPWATCH,
 	GT_WOLF_CAMPAIGN,   // Exactly the same as GT_WOLF, but uses campaign roulation (multiple maps form one virtual map)

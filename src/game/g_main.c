@@ -2143,15 +2143,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	trap_PbStat(-1, "INIT", "GAME") ;
 
-#ifndef NO_BOT_SUPPORT
-	if (bot_enable.integer)
-	{
-		BotAISetup(restart);
-//		BotAILoadMap( restart );
-		G_InitBots(restart);
-	}
-#endif // NO_BOT_SUPPORT
-
 	G_RemapTeamShaders();
 
 	BG_ClearAnimationPool();
@@ -2214,13 +2205,6 @@ void G_ShutdownGame(int restart)
 
 	// write all the client session data so we can get it back
 	G_WriteSessionData(restart);
-
-#ifndef NO_BOT_SUPPORT
-	if (bot_enable.integer)
-	{
-		BotAIShutdown(restart);
-	}
-#endif // NO_BOT_SUPPORT
 }
 
 

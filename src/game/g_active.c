@@ -1566,15 +1566,6 @@ void ClientThink(int clientNum)
 	{
 		ClientThink_real(ent);
 	}
-
-	// if this is the locally playing client, do bot thinks
-#ifndef NO_BOT_SUPPORT
-	if (bot_enable.integer && !g_dedicated.integer && clientNum == 0)
-	{
-		BotAIThinkFrame(ent->client->pers.cmd.serverTime);
-		level.lastClientBotThink = level.time;
-	}
-#endif // NO_BOT_SUPPORT
 }
 
 

@@ -1852,32 +1852,10 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	if (isBot)
 	{
-		// Set up the name for the bot client before initing the bot
-		value = Info_ValueForKey(userinfo, "scriptName");
-		if (value && value[0])
-		{
-			Q_strncpyz(client->pers.botScriptName, value, sizeof(client->pers.botScriptName));
-			ent->scriptName = client->pers.botScriptName;
-		}
-		ent->aiName   = ent->scriptName;
 		ent->s.number = clientNum;
-
 		ent->r.svFlags |= SVF_BOT;
 		ent->inuse      = qtrue;
-		// if this bot is reconnecting, and they aren't supposed to respawn, then dont let it in
-		if (!firstTime)
-		{
-			value = Info_ValueForKey(userinfo, "respawn");
-			if (value && value[0] && (!Q_stricmp(value, "NO") || !Q_stricmp(value, "DISCONNECT")))
-			{
-				return "BotConnectFailed (no respawn)";
-			}
-		}
 
-		if (!G_BotConnect(clientNum, !firstTime))
-		{
-			return "BotConnectfailed";
-		}
 	}
 	else if (g_gametype.integer == GT_COOP || g_gametype.integer == GT_SINGLE_PLAYER)
 	{
@@ -2776,11 +2754,6 @@ void ClientDisconnect(int clientNum)
 
 
 	CalculateRanks();
-
-	if (ent->r.svFlags & SVF_BOT)
-	{
-		BotAIShutdownClient(clientNum);
-	}
 
 	// OSP
 	G_verifyMatchState(i);

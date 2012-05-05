@@ -515,10 +515,6 @@ struct gentity_s
 	int etpro_misc_1;
 };
 
-// Ridah
-//#include "ai_cast_global.h"
-// done.
-
 typedef enum
 {
 	CON_DISCONNECTED,
@@ -1546,7 +1542,6 @@ char *G_GetBotInfoByNumber(int num);
 char *G_GetBotInfoByName(const char *name);
 void G_CheckBotSpawn(void);
 void G_QueueBotBegin(int clientNum);
-qboolean G_BotConnect(int clientNum, qboolean restart);
 void Svcmd_AddBot_f(void);
 void Svcmd_SpawnBot(void);
 void G_SpawnBot(const char *text);
@@ -1555,14 +1550,10 @@ void G_BotParseCharacterParms(char *characterFile, int *characterInt);
 
 // ai_main.c
 #define MAX_FILEPATH            144
-int BotAIThinkFrame(int time);
 void G_SetAASBlockingEntity(gentity_t *ent, int blocking);
-qboolean BotSinglePlayer(void);
-qboolean BotCoop(void);
 //gentity_t *BotCheckBotGameEntity( gentity_t *ent );
 gentity_t *BotFindEntity(gentity_t *from, int fieldofs, char *match);
 void GetBotAmmoPct(int clientNum, int *ammoPct, int *ammoclipPct);
-void BotCalculateMg42Spots(void);
 
 // ai_dmq3.c
 //returns the number of the client with the given name
@@ -1584,13 +1575,6 @@ typedef struct bot_settings_s
 	int squadNum;       // xkan, 10/10/2002
 } bot_settings_t;
 
-int BotAISetup(int restart);
-//void BotInitBotGameEntities(void);
-int BotAIShutdown(int restart);
-int BotAILoadMap(int restart);
-int BotAISetupClient(int client, struct bot_settings_s *settings);
-int BotAIShutdownClient(int client);
-int BotAIStartFrame(int time);
 void BotTestAAS(vec3_t origin);
 void BotSetIdealViewAngles(int clientNum, vec3_t angle);
 

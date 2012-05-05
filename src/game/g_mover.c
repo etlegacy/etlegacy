@@ -2654,14 +2654,6 @@ void SP_func_door(gentity_t *ent)
 
 
 	}
-	// special case for single player
-	if (BotSinglePlayer() && (ent->key == 99))
-	{
-		ent->key = KEY_LOCKED_PICKABLE;
-
-		// TAT 1/29/2003 - also load how long it takes to pick the lock - default to 30 seconds
-		G_SpawnInt("lockpickTime", "30", &ent->grenadeFired);
-	}
 
 	// if the key is invalid, set the key in the finishSpawning routine
 	if (ent->key > KEY_NUM_KEYS || ent->key < -2)
@@ -2797,15 +2789,6 @@ void SP_func_secret(gentity_t *ent)
 		ent->key = -1;                  // otherwise, set the key when this ent finishes spawning
 
 	}
-	// special case for single player
-	if (BotSinglePlayer() && (ent->key == 99))
-	{
-		ent->key = KEY_LOCKED_PICKABLE;
-
-		// TAT 1/29/2003 - also load how long it takes to pick the lock - default to 30 seconds
-		G_SpawnInt("lockpickTime", "30", &ent->grenadeFired);
-	}
-
 
 	// if the key is invalid, set the key in the finishSpawning routine
 	if (ent->key > KEY_NUM_KEYS || ent->key < -1)
