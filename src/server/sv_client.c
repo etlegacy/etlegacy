@@ -139,9 +139,9 @@ void SV_DirectConnect(netadr_t from)
 	// DHM - Nerve :: Update Server allows any protocol to connect
 	// NOTE TTimo: but we might need to store the protocol around for potential non http/ftp clients
 	version = atoi(Info_ValueForKey(userinfo, "protocol"));
-	if ((sv_protocolcheck->integer == 1) && version != sv_protocol->integer)
+	if (version != PROTOCOL_VERSION)
 	{
-		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_prot]" PROTOCOL_MISMATCH_ERROR);
+		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_update]" PROTOCOL_MISMATCH_ERROR_LONG);
 		Com_DPrintf("    rejected connect from version %i\n", version);
 		return;
 	}
