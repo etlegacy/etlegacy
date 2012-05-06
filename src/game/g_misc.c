@@ -2948,6 +2948,51 @@ qboolean G_ConstructionIsPartlyBuilt( gentity_t* ent ) {
 	return qfalse;
 }
 
+
+// returns the constructible for this team that is attached to this toi
+gentity_t* G_ConstructionForTeam( gentity_t* toi, team_t team ) {
+	gentity_t* targ = toi->target_ent;
+
+	if(!targ || targ->s.eType != ET_CONSTRUCTIBLE) {
+		return NULL;
+	}
+
+	if( targ->spawnflags & 4 ) {
+		if( team == TEAM_ALLIES ) {
+			return targ->chain;
+		}
+	}
+	else if( targ->spawnflags & 8 ) {
+		if( team == TEAM_AXIS ) {
+			return targ->chain;
+		}
+	}
+
+	return targ;
+}
+
+gentity_t* G_IsConstructible( team_t team, gentity_t* toi ) {
+	gentity_t* ent;
+
+	if( !toi || toi->s.eType != ET_OID_TRIGGER ) {
+		return NULL;
+	}
+
+	if( !(ent = G_ConstructionForTeam( toi, team )) ) {
+		return NULL;
+	}
+
+	if( G_ConstructionIsFullyBuilt( ent ) ) {
+		return NULL;
+	}
+
+	if( ent->chain && G_ConstructionBegun( ent->chain ) ) {
+		return NULL;
+	}
+
+	return ent;
+}
+
 /*
 ==============
 AngleDifference
