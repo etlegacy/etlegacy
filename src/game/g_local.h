@@ -2258,8 +2258,6 @@ void G_SetTargetName(gentity_t *ent, char *targetname);
 void G_KillEnts(const char *target, gentity_t *ignore, gentity_t *killer, meansOfDeath_t mod);
 void trap_EngineerTrace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 
-qboolean G_ConstructionIsPartlyBuilt(gentity_t *ent);
-
 int G_CountTeamMedics(team_t team, qboolean alivecheck);
 qboolean G_TankIsOccupied(gentity_t *ent);
 qboolean G_TankIsMountable(gentity_t *ent, gentity_t *other);
