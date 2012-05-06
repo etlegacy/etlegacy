@@ -150,7 +150,7 @@ char *TB_makeClientInfo(int clientNum)
 	playerState_t *ps;
 	ps = SV_GameClientNum(clientNum);
 
-	return va("%i\\%i\\%c\\%i\\%s", svs.clients[clientNum].ping, ps->stats[STAT_XP], Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[clientNum], ps->stats[STAT_PLAYER_CLASS], svs.clients[clientNum].name);
+	return va("%i\\%i\\%c\\%i\\%s", svs.clients[clientNum].ping, ps->persistant[PERS_SCORE], Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[clientNum], ps->stats[STAT_PLAYER_CLASS], svs.clients[clientNum].name);
 }
 
 void TB_requestWeaponStats()
