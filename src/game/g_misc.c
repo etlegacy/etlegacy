@@ -3010,6 +3010,26 @@ float AngleDifference(float ang1, float ang2) {
 	return diff;
 }
 
+
+/*
+==================
+ClientName
+==================
+*/
+char *ClientName(int client, char *name, int size) {
+	char buf[MAX_INFO_STRING];
+
+	if (client < 0 || client >= MAX_CLIENTS) {
+		G_Printf("^1ClientName: client out of range\n");
+		return "[client out of range]";
+	}
+	trap_GetConfigstring(CS_PLAYERS+client, buf, sizeof(buf));
+	strncpy(name, Info_ValueForKey(buf, "n"), size-1);
+	name[size-1] = '\0';
+	Q_CleanStr( name );
+	return name;
+}
+
 /*
 ==================
 FindClientByName
