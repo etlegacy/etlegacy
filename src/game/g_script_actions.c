@@ -1645,10 +1645,6 @@ qboolean G_ScriptAction_Trigger(gentity_t *ent, char *params)
 					terminate = qtrue;
 				}
 			}
-			else
-			{
-				Bot_ScriptEvent(trent->s.number, "trigger", trigger);
-			}
 		}
 		//
 		if (terminate)
@@ -1674,10 +1670,6 @@ qboolean G_ScriptAction_Trigger(gentity_t *ent, char *params)
 	}
 	else if (!Q_stricmp(name, "activator"))
 	{
-		if (ent->activator && ent->activator->client && (ent->activator->r.svFlags & SVF_BOT) && ent->inuse && ent->activator->client->ps.stats[STAT_HEALTH] > 0)
-		{
-			Bot_ScriptEvent(ent->activator - g_entities, "trigger", trigger);
-		}
 		return qtrue;   // always true, as players aren't always there
 	}
 	else
@@ -1698,10 +1690,6 @@ qboolean G_ScriptAction_Trigger(gentity_t *ent, char *params)
 				{
 					terminate = qtrue;
 				}
-			}
-			else
-			{
-				Bot_ScriptEvent(trent->s.number, "trigger", trigger);
 			}
 		}
 		//
@@ -2312,8 +2300,6 @@ G_ScriptAction_Accum
 =================
 */
 
-int BotGetTargetDynamite(int *list, int listSize, gentity_t *target);
-
 qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 {
 	char     *pString, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
@@ -2536,7 +2522,22 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 			G_Error("Scripting: accum %s could not find target\n", lastToken);
 		}
 
-		ent->scriptAccumBuffer[bufferIndex] = BotGetTargetDynamite(NULL, 0, target);
+		{
+			int num=0, i;
+			// sigh, searching..
+			for ( i=MAX_CLIENTS ; i< level.num_entities; ++i ){
+
+				if ( !(g_entities[i].etpro_misc_1 & 1))
+					continue;
+// FIXME
+//				if ( g_entities[i].etpro_misc_2 != target-g_entities)
+//					continue;
+
+				num++;
+			}
+
+			ent->scriptAccumBuffer[bufferIndex] = num;
+		}
 	}
 	else
 	{

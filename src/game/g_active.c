@@ -245,7 +245,6 @@ void G_SetClientSound(gentity_t *ent)
 PushBot
 ==============
 */
-void BotVoiceChatAfterIdleTime(int client, const char *id, int mode, int delay, qboolean voiceonly, int idleTime, qboolean forceIfDead);
 
 void PushBot(gentity_t *ent, gentity_t *other)
 {
@@ -272,12 +271,6 @@ void PushBot(gentity_t *ent, gentity_t *other)
 	{
 		VectorNormalize(other->client->ps.velocity);
 		VectorScale(other->client->ps.velocity, oldspeed, other->client->ps.velocity);
-	}
-	//
-	// also, if "ent" is a bot, tell "other" to move!
-	if (rand() % 50 == 0 && (ent->r.svFlags & SVF_BOT) && oldspeed < 10)
-	{
-		BotVoiceChatAfterIdleTime(ent->s.number, "Move", SAY_TEAM, 1000, qfalse, 20000, qfalse);
 	}
 }
 
@@ -359,25 +352,6 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 	return qtrue;
 }
 
-void BotSetBlockEnt(int client, int blocker);
-/*
-==============
-CheckBotImpacts
-==============
-*/
-void CheckBotImpacts(gentity_t *ent, gentity_t *other)
-{
-	char *blockEnts[] = { "func_explosive", NULL };
-	int  j;
-
-	for (j = 0; blockEnts[j]; j++)
-	{
-		if (other->classname && !Q_stricmp(other->classname, blockEnts[j]))
-		{
-			BotSetBlockEnt(ent->s.number, other->s.number);
-		}
-	}
-}
 
 //==============================================================
 
@@ -431,11 +405,6 @@ void ClientImpacts(gentity_t *ent, pmove_t *pm)
 		if ((ent->r.svFlags & SVF_BOT) && ent->s.groundEntityNum == other->s.number && other->client)
 		{
 			PushBot(other, ent);
-		}
-
-		if (ent->r.svFlags & SVF_BOT)
-		{
-			CheckBotImpacts(ent, other);
 		}
 
 		if (!other->touch)

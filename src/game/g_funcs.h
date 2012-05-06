@@ -497,7 +497,7 @@
 { "G_ScriptAction_AbortIfNotSinglePlayer", (byte *)G_ScriptAction_AbortIfNotSinglePlayer },
 { "G_ScriptAction_AbortIfWarmup", (byte *)G_ScriptAction_AbortIfWarmup },
 { "G_ScriptAction_Cvar", (byte *)G_ScriptAction_Cvar },
-{ "G_ScriptAction_SpawnBot", (byte *)G_ScriptAction_SpawnBot },
+
 { "G_ScriptAction_ConstructibleDuration", (byte *)G_ScriptAction_ConstructibleDuration },
 { "G_ScriptAction_ConstructibleWeaponclass", (byte *)G_ScriptAction_ConstructibleWeaponclass },
 { "G_ScriptAction_ConstructibleHealth", (byte *)G_ScriptAction_ConstructibleHealth },
@@ -506,12 +506,7 @@
 { "G_ScriptAction_ConstructibleChargeBarReq", (byte *)G_ScriptAction_ConstructibleChargeBarReq },
 { "G_ScriptAction_ConstructibleClass", (byte *)G_ScriptAction_ConstructibleClass },
 { "G_ScriptAction_Construct", (byte *)G_ScriptAction_Construct },
-{ "G_ScriptAction_SetBotGoalPriority", (byte *)G_ScriptAction_SetBotGoalPriority },
-{ "G_ScriptAction_SetAASState", (byte *)G_ScriptAction_SetAASState },
-{ "G_ScriptAction_SetBotGoalState", (byte *)G_ScriptAction_SetBotGoalState },
-{ "G_IsValidBotStateGoal", (byte *)G_IsValidBotStateGoal },
-{ "G_ScriptAction_BotDebugging", (byte *)G_ScriptAction_BotDebugging },
-{ "G_ScriptAction_RemoveBot", (byte *)G_ScriptAction_RemoveBot },
+
 { "G_ScriptAction_PrintGlobalAccum", (byte *)G_ScriptAction_PrintGlobalAccum },
 { "G_ScriptAction_PrintAccum", (byte *)G_ScriptAction_PrintAccum },
 { "G_ScriptAction_SetHQStatus", (byte *)G_ScriptAction_SetHQStatus },
@@ -1223,7 +1218,7 @@
 { "SpectatorThink", (byte *)SpectatorThink },
 { "G_TouchTriggers", (byte *)G_TouchTriggers },
 { "ClientImpacts", (byte *)ClientImpacts },
-{ "CheckBotImpacts", (byte *)CheckBotImpacts },
+
 { "ReadyToConstruct", (byte *)ReadyToConstruct },
 { "ReadyToCallArtillery", (byte *)ReadyToCallArtillery },
 { "ClientNeedsAmmo", (byte *)ClientNeedsAmmo },

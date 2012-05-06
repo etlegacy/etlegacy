@@ -370,7 +370,6 @@ char *modNames[] =
 player_die
 ==================
 */
-void BotRecordTeamDeath(int client);
 
 void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath)
 {
@@ -1883,24 +1882,13 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				// RF, entity scripting
 				if (targ->health <= 0)       // might have revived itself in death function
 				{
-					if (targ->r.svFlags & SVF_BOT)
-					{
-						// See if this is the first kill of this bot
-						if (wasAlive)
-						{
-							Bot_ScriptEvent(targ->s.number, "death", "");
-						}
-					}
-					else if ((targ->s.eType != ET_CONSTRUCTIBLE && targ->s.eType != ET_EXPLOSIVE) ||
-					         (targ->s.eType == ET_CONSTRUCTIBLE && !targ->desstages))          // call manually if using desstages
+					if ( (!(targ->r.svFlags & SVF_BOT) && targ->s.eType != ET_CONSTRUCTIBLE && targ->s.eType != ET_EXPLOSIVE) ||
+					         ( targ->s.eType == ET_CONSTRUCTIBLE && !targ->desstages) )          // call manually if using desstages
 					{
 						G_Script_ScriptEvent(targ, "death", "");
 					}
 				}
-
-
 			}
-
 		}
 		else if (targ->pain)
 		{

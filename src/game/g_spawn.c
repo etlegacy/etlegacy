@@ -879,9 +879,6 @@ void G_SpawnGEntityFromSpawnVars(void)
 	{
 		G_FreeEntity(ent);
 	}
-
-	// RF, try and move it into the bot entities if possible
-//	BotCheckBotGameEntity( ent );
 }
 
 
