@@ -97,6 +97,10 @@ int SV_BotAllocateClient(int clientNum)
 	cl->netchan.remoteAddress.type = NA_BOT;
 	cl->rate                       = 16384;
 
+#ifdef TRACKBASE_SUPPORT
+	TB_catchBotConnect(cl - svs.clients);
+#endif
+
 	return i;
 }
 

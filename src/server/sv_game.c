@@ -474,7 +474,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return 0;
 	case G_SEND_SERVER_COMMAND:
 #ifdef TRACKBASE_SUPPORT
-		if (!TB_CatchServerCommand(args[1], VMA(2)))
+		if (!TB_catchServerCommand(args[1], VMA(2)))
 #endif
 		{
 			SV_GameSendServerCommand(args[1], VMA(2));
