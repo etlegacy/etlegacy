@@ -42,8 +42,10 @@
 #include <ctype.h>
 #include <errno.h>
 
+#ifndef DEDICATED
 #include <SDL/SDL.h>
 #include <SDL/SDL_cpuinfo.h>
+#endif
 
 #include "sys_local.h"
 #include "sys_loadlib.h"
