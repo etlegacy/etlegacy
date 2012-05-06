@@ -506,12 +506,8 @@ extern qboolean G_ScriptAction_ConstructibleConstructXPBonus(gentity_t *ent, cha
 extern qboolean G_ScriptAction_ConstructibleChargeBarReq(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_ConstructibleClass(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_Construct(gentity_t *ent, char *params) ;
-extern qboolean G_ScriptAction_SetBotGoalPriority(gentity_t *ent, char *params) ;
-extern qboolean G_ScriptAction_SetAASState(gentity_t *ent, char *params) ;
-extern qboolean G_ScriptAction_SetBotGoalState(gentity_t *ent, char *params) ;
-extern qboolean G_IsValidBotStateGoal(gentity_t *ent) ;
-extern qboolean G_ScriptAction_BotDebugging(gentity_t *ent, char *params) ;
-extern qboolean G_ScriptAction_RemoveBot(gentity_t *ent, char *params) ;
+
+
 extern qboolean G_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params) ;

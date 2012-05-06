@@ -105,7 +105,6 @@ qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params);
 qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params);
 qboolean G_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params);
 
-qboolean G_ScriptAction_BotDebugging(gentity_t *ent, char *params);
 qboolean G_ScriptAction_ObjectiveStatus(gentity_t *ent, char *params);
 qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params);
 qboolean G_ScriptAction_SetPosition(gentity_t *ent, char *params);
@@ -130,9 +129,7 @@ qboolean G_ScriptAction_MusicQueue(gentity_t *ent, char *params);
 qboolean G_ScriptAction_MusicFade(gentity_t *ent, char *params);
 qboolean G_ScriptAction_SetDebugLevel(gentity_t *ent, char *params);
 qboolean G_ScriptAction_FadeAllSounds(gentity_t *ent, char *params);
-qboolean G_ScriptAction_SetBotGoalState(gentity_t *ent, char *params);
-qboolean G_ScriptAction_SetBotGoalPriority(gentity_t *ent, char *params);
-qboolean G_ScriptAction_SetAASState(gentity_t *ent, char *params);
+
 qboolean G_ScriptAction_Construct(gentity_t *ent, char *params) ;
 qboolean G_ScriptAction_ConstructibleClass(gentity_t *ent, char *params) ;
 qboolean G_ScriptAction_ConstructibleChargeBarReq(gentity_t *ent, char *params) ;
@@ -227,9 +224,7 @@ g_script_stack_action_t gScriptActions[] =
 	// fade all sounds up or down
 	{ "fadeallsounds",                  G_ScriptAction_FadeAllSounds                 },
 
-	{ "setbotgoalstate",                G_ScriptAction_SetBotGoalState               },
-	{ "setbotgoalpriority",             G_ScriptAction_SetBotGoalPriority            },
-	{ "setaasstate",                    G_ScriptAction_SetAASState                   },
+
 	{ "construct",                      G_ScriptAction_Construct                     },
 	{ "spawnrubble",                    G_ScriptAction_SpawnRubble                   },
 	{ "setglobalfog",                   G_ScriptAction_SetGlobalFog                  },
