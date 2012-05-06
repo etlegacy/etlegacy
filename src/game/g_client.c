@@ -105,7 +105,6 @@ void SP_info_player_intermission(gentity_t *ent)
 
 }
 
-extern void BotSpeedBonus(int clientNum);
 
 
 /*
@@ -931,8 +930,6 @@ qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int amm
 	return qtrue;
 }
 
-void BotSetPOW(int entityNum, qboolean isPOW);
-
 /*
 ===========
 SetWolfSpawnWeapons
@@ -941,8 +938,7 @@ SetWolfSpawnWeapons
 void SetWolfSpawnWeapons(gclient_t *client)
 {
 	int      pc    = client->sess.playerType;
-	qboolean isBot = (g_entities[client->ps.clientNum].r.svFlags & SVF_BOT) ? qtrue : qfalse;
-	qboolean isPOW = (g_entities[client->ps.clientNum].r.svFlags & SVF_POW) ? qtrue : qfalse;
+	// qboolean isBot = (g_entities[client->ps.clientNum].r.svFlags & SVF_BOT) ? qtrue : qfalse;
 
 	if (client->sess.sessionTeam == TEAM_SPECTATOR)
 	{
@@ -964,20 +960,6 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	// All players start with a knife (not OR-ing so that it clears previous weapons)
 	client->ps.weapons[0] = 0;
 	client->ps.weapons[1] = 0;
-
-	// Gordon: set up pow status
-	if (isBot)
-	{
-		if (isPOW)
-		{
-			BotSetPOW(client->ps.clientNum, qtrue);
-			return;
-		}
-		else
-		{
-			BotSetPOW(client->ps.clientNum, qfalse);
-		}
-	}
 
 	AddWeaponToPlayer(client, WP_KNIFE, 1, 0, qtrue);
 
@@ -2164,9 +2146,6 @@ gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spaw
 }
 
 
-// TAT 1/14/2003 - init the bot's movement autonomy pos to it's current position
-void BotInitMovementAutonomyPos(gentity_t *bot);
-
 #if 0 // rain - not used
 static char *G_CheckVersion(gentity_t *ent)
 {
@@ -2498,16 +2477,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 		SetClientViewAngle(ent, newangle);
 	}
 
-	if (ent->r.svFlags & SVF_BOT)
-	{
-		// xkan, 10/11/2002 - the ideal view angle is defaulted to 0,0,0, but the
-		// spawn_angles is the desired angle for the bots to face.
-		BotSetIdealViewAngles(index, spawn_angles);
-
-		// TAT 1/14/2003 - now that we have our position in the world, init our autonomy positions
-		BotInitMovementAutonomyPos(ent);
-	}
-
 	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
 		//G_KillBox( ent );
@@ -2561,32 +2530,12 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	// show_bug.cgi?id=569
 	G_ResetMarkers(ent);
 
-	// Set up bot speed bonusses
-	BotSpeedBonus(ent->s.number);
-
 	// RF, start the scripting system
 	if (!revived && client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		Bot_ScriptInitBot(ent->s.number);
-		//
-		if (spawnPoint && spawnPoint->targetname)
-		{
-			Bot_ScriptEvent(ent->s.number, "spawn", spawnPoint->targetname);
-		}
-		else
-		{
-			Bot_ScriptEvent(ent->s.number, "spawn", "");
-		}
 		// RF, call entity scripting event
 		G_Script_ScriptEvent(ent, "playerstart", "");
 	}
-	else if (revived && ent->r.svFlags & SVF_BOT)
-	{
-		Bot_ScriptEvent(ent->s.number, "revived", "");
-	}
-
-
-
 }
 
 

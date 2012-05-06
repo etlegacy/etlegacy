@@ -2086,22 +2086,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	}
 #endif // USEXPSTORAGE
 
-	// START	Mad Doctor I changes, 8/21/2002
-	// This needs to be called before G_SpawnEntitiesFromString, or the
-	// bot entities get trashed.
-	//initialize the bot game entities
-//	BotInitBotGameEntities();
-	// END		Mad Doctor I changes, 8/21/2002
-
-	// TAT 11/13/2002
-	//		similarly set up the Server entities
-	InitServerEntities();
-
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString();
-
-	// TAT 11/13/2002 - entities are spawned, so now we can do setup
-	InitialServerEntitySetup();
 
 	// Gordon: debris test
 	G_LinkDebris();
@@ -2632,8 +2618,6 @@ void MoveClientToIntermission(gentity_t *ent)
 	ent->s.events[0]       = ent->s.events[1] = ent->s.events[2] = ent->s.events[3] = 0; // DHM - Nerve
 	ent->r.contents        = 0;
 
-	// todo: call bot routine so they can process the transition to intermission (send voice chats, etc)
-	BotMoveToIntermission(ent->s.number);
 }
 
 /*

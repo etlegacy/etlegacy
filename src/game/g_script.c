@@ -104,7 +104,7 @@ qboolean G_ScriptAction_RepairMG42(gentity_t *ent, char *params);
 qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params);
 qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params);
 qboolean G_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params);
-qboolean G_ScriptAction_RemoveBot(gentity_t *ent, char *params);
+
 qboolean G_ScriptAction_BotDebugging(gentity_t *ent, char *params);
 qboolean G_ScriptAction_ObjectiveStatus(gentity_t *ent, char *params);
 qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params);
@@ -208,9 +208,6 @@ g_script_stack_action_t gScriptActions[] =
 
 	{ "printaccum",                     G_ScriptAction_PrintAccum                    },
 	{ "printglobalaccum",               G_ScriptAction_PrintGlobalAccum              },
-	{ "removebot",                      G_ScriptAction_RemoveBot                     },
-	{ "botgebugging",                   G_ScriptAction_BotDebugging                  },
-	{ "spawnbot",                       G_ScriptAction_SpawnBot                      },
 	{ "cvar",                           G_ScriptAction_Cvar                          },
 	{ "abortifwarmup",                  G_ScriptAction_AbortIfWarmup                 },
 	{ "abortifnotsingleplayer",         G_ScriptAction_AbortIfNotSinglePlayer        },
@@ -1071,63 +1068,31 @@ void script_mover_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker
 	self->die = NULL;
 }
 
-void script_mover_set_blocking(gentity_t *ent)
+/*
+================
+script_mover_think
+================
+*/
+void script_mover_think( gentity_t *ent )
 {
-	if (ent->r.linked && ent->r.contents == CONTENTS_SOLID)
-	{
-		G_SetAASBlockingEntity(ent, AAS_AREA_AVOID);
-	}
-}
+	if( ent->spawnflags & 128 ) {
+		if( !ent->tankLink ) {
+			if( ent->mg42weapHeat ) {
+				ent->mg42weapHeat -= (300.f * 100 * 0.001);
 
-void script_mover_aas_blocking(gentity_t *ent)
-{
-	if (ent->timestamp <= level.time)
-	{
-		// are we moving?
-		if (ent->s.pos.trType != TR_STATIONARY /*VectorLengthSquared( ent->s.pos.trDelta )*/)
-		{
-			// never block while moving
-			if (ent->AASblocking)
-			{
-				G_SetAASBlockingEntity(ent, AAS_AREA_ENABLED);
-			}
-		}
-		else if (!VectorCompare(ent->s.pos.trBase, ent->botAreaPos))
-		{
-			script_mover_set_blocking(ent);
-			VectorCopy(ent->s.pos.trBase, ent->botAreaPos);
-		}
-		ent->timestamp = level.time + 500;
-	}
-
-	if (ent->spawnflags & 128)
-	{
-		if (!ent->tankLink)
-		{
-			if (ent->mg42weapHeat)
-			{
-				ent->mg42weapHeat -= (300.f * FRAMETIME * 0.001);
-
-				if (ent->mg42weapHeat < 0)
-				{
+				if( ent->mg42weapHeat < 0 )
 					ent->mg42weapHeat = 0;
-				}
 			}
-
-			if (ent->backupWeaponTime)
-			{
-				ent->backupWeaponTime -= FRAMETIME;
-
-				if (ent->backupWeaponTime < 0)
-				{
-					ent->backupWeaponTime = 0;
-				}
+			if( ent->backupWeaponTime ) {
+				ent->backupWeaponTime -= 100;
+				if( ent->backupWeaponTime < 0 ) ent->backupWeaponTime = 0;
 			}
 		}
 	}
 
-	ent->nextthink = level.time + FRAMETIME;
+	ent->nextthink = level.time + 100;
 }
+
 
 void script_mover_spawn(gentity_t *ent)
 {
@@ -1166,10 +1131,7 @@ void script_mover_spawn(gentity_t *ent)
 	}
 
 	script_linkentity(ent);
-
-	// now start thinking process which controls AAS interaction
-	script_mover_set_blocking(ent);
-	ent->think     = script_mover_aas_blocking;
+	ent->think     = script_mover_think;
 	ent->nextthink = level.time + 200;
 }
 
@@ -1185,6 +1147,9 @@ void script_mover_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			G_Script_ScriptEvent(ent, "rebirth", "");
 
 			ent->die = script_mover_die;
+
+			ent->think = script_mover_think;
+			ent->nextthink = level.time + 200;
 		}
 	}
 	else

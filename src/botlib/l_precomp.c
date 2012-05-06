@@ -99,11 +99,6 @@ typedef struct directive_s
 #define TOKEN_HEAP_SIZE     4096
 
 int numtokens;
-/*
-int tokenheapinitialized;               //true when the token heap is initialized
-token_t token_heap[TOKEN_HEAP_SIZE];    //heap with tokens
-token_t *freetokens;                    //free tokens from the heap
-*/
 
 //list with global defines added to every source loaded
 define_t *globaldefines;

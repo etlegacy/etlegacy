@@ -922,14 +922,7 @@ void Use_Target_Lock(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	{
 //		G_Printf("target_lock locking entity with key: %d\n", ent->count);
 		t->key = ent->key;
-		if (t->key)
-		{
-			G_SetAASBlockingEntity(t, AAS_AREA_DISABLED);
-		}
-		else
-		{
-			G_SetAASBlockingEntity(t, AAS_AREA_ENABLED);
-		}
+
 	}
 
 }

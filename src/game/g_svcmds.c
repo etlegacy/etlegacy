@@ -1432,14 +1432,6 @@ qboolean    ConsoleCommand(void)
 		return qtrue;
 	}
 
-	/*if (Q_stricmp (cmd, "addbot") == 0) {
-	    Svcmd_AddBot_f();
-	    return qtrue;
-	}
-	if (Q_stricmp (cmd, "removebot") == 0) {
-	    Svcmd_AddBot_f();
-	    return qtrue;
-	}*/
 	if (Q_stricmp(cmd, "addip") == 0)
 	{
 		Svcmd_AddIP_f();
@@ -1528,12 +1520,6 @@ qboolean    ConsoleCommand(void)
 	if (Q_stricmp(cmd, "listcampaigns") == 0)
 	{
 		Svcmd_ListCampaigns_f();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "spawnbot") == 0)
-	{
-		Svcmd_SpawnBot();
 		return qtrue;
 	}
 
