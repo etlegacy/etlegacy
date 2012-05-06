@@ -8,6 +8,10 @@ solution "etlegacy"
 
 	configurations { "Release", "Debug", "mingw" }
 	platforms { "x32", "x64" }
+	defines
+	{
+		"TRACKBASE_SUPPORT",
+	}
 	--
 	-- Release/Debug Configurations
 	--

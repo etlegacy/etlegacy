@@ -398,6 +398,10 @@ void SV_MasterGameCompleteStatus()
 		// ever incompatably changes
 		SVC_Status(adr[i]);
 	}
+
+#ifdef TRACKBASE_SUPPORT
+	TB_MapEnd();
+#endif
 }
 
 /*
@@ -1461,6 +1465,10 @@ void SV_Frame(int msec)
 	{
 		svs.serverLoad = -1;
 	}
+
+#ifdef TRACKBASE_SUPPORT
+	TB_Frame();
+#endif
 }
 
 int SV_LoadTag(const char *mod_name)

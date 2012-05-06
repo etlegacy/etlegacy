@@ -339,6 +339,10 @@ void SV_Startup(void)
 	svs.initialized = qtrue;
 
 	Cvar_Set("sv_running", "1");
+
+#ifdef TRACKBASE_SUPPORT
+	TB_ServerStart();
+#endif
 }
 
 
@@ -937,6 +941,10 @@ void SV_Init(void)
 	SV_BotInitBotLib();
 
 	svs.serverLoad = -1;
+
+#ifdef TRACKBASE_SUPPORT
+	TB_Init();
+#endif
 }
 
 
@@ -1028,4 +1036,8 @@ void SV_Shutdown(char *finalmsg)
 
 	// disconnect any local clients
 	CL_Disconnect(qfalse);
+
+#ifdef TRACKBASE_SUPPORT
+	TB_ServerStop();
+#endif
 }

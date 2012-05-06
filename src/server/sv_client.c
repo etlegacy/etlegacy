@@ -398,6 +398,10 @@ gotnewcl:
 	{
 		SV_Heartbeat_f();
 	}
+
+#ifdef TRACKBASE_SUPPORT
+	TB_ClientConnect(newcl);
+#endif
 }
 
 /*
@@ -498,6 +502,10 @@ void SV_DropClient(client_t *drop, const char *reason)
 	{
 		SV_Heartbeat_f();
 	}
+
+#ifdef TRACKBASE_SUPPORT
+	TB_ClientDisconnect(drop);
+#endif
 }
 
 /*
@@ -1377,6 +1385,13 @@ void SV_UserinfoChanged(client_t *cl)
 {
 	char *val;
 	int  i;
+
+#ifdef TRACKBASE_SUPPORT
+	if (strcmp(cl->name, Info_ValueForKey(cl->userinfo, "name")))
+	{
+		TB_ClientName(cl);
+	}
+#endif
 
 	// name for C code
 	Q_strncpyz(cl->name, Info_ValueForKey(cl->userinfo, "name"), sizeof(cl->name));

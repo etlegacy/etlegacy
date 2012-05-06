@@ -473,7 +473,12 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		SV_GameDropClient(args[1], VMA(2), args[3]);
 		return 0;
 	case G_SEND_SERVER_COMMAND:
-		SV_GameSendServerCommand(args[1], VMA(2));
+#ifdef TRACKBASE_SUPPORT
+		if (!TB_CatchServerCommand(args[1], VMA(2)))
+#endif
+		{
+			SV_GameSendServerCommand(args[1], VMA(2));
+		}
 		return 0;
 	case G_LINKENTITY:
 		SV_LinkEntity(VMA(1));
@@ -716,6 +721,10 @@ void SV_RestartGameProgs(void)
 	}
 
 	SV_InitGameVM(qtrue);
+
+#ifdef TRACKBASE_SUPPORT
+	TB_MapRestart();
+#endif
 }
 
 
@@ -739,6 +748,10 @@ void SV_InitGameProgs(void)
 	}
 
 	SV_InitGameVM(qfalse);
+
+#ifdef TRACKBASE_SUPPORT
+	TB_Map(sv_mapname->string);
+#endif
 }
 
 
