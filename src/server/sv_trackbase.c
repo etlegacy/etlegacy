@@ -44,6 +44,12 @@ qboolean maprunning = qfalse;
 
 int querycl = -1;
 
+enum {
+	TB_BOT_NONE,
+	TB_BOT_CONNECT
+} catchBot;
+qboolean catchBotNum = 0;
+
 netadr_t addr;
 #ifdef TRACKBASE_DEBUG
 netadr_t local;
@@ -107,6 +113,14 @@ void TB_ClientName(client_t *cl)
 	TB_Send("name %i %s %s", (int)(cl - svs.clients), Info_ValueForKey(cl->userinfo, "cl_guid"), Info_ValueForKey(cl->userinfo, "name"));
 }
 
+void TB_ClientTeam(client_t *cl)
+{
+	playerState_t *ps;
+	ps = SV_GameClientNum(cl - svs.clients);
+
+	TB_Send("team %i %i %i %s", (int)(cl - svs.clients), Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[cl - svs.clients], ps->stats[STAT_PLAYER_CLASS], cl->name);
+}
+
 void TB_Map(char *mapname)
 {
 	TB_Send("map %s", mapname);
@@ -134,13 +148,9 @@ void TB_TeamSwitch(client_t *cl)
 char *TB_makeClientInfo(int clientNum)
 {
 	playerState_t *ps;
-
 	ps = SV_GameClientNum(clientNum);
 
-	strcpy(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
-	char *P = Info_ValueForKey(infostring, "P");
-
-	return va("%i\\%i\\%c\\%i\\%s", svs.clients[clientNum].ping, ps->stats[STAT_XP], P[clientNum], ps->stats[STAT_PLAYER_CLASS], svs.clients[clientNum].name);
+	return va("%i\\%i\\%c\\%i\\%s", svs.clients[clientNum].ping, ps->persistant[PERS_SCORE], Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[clientNum], ps->stats[STAT_PLAYER_CLASS], svs.clients[clientNum].name);
 }
 
 void TB_requestWeaponStats()
@@ -151,6 +161,8 @@ void TB_requestWeaponStats()
 	}
 
 	int i;
+	qboolean onlybots = qtrue;
+
 	strcpy(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
 	char *P = Info_ValueForKey(infostring, "P");
 
@@ -159,6 +171,10 @@ void TB_requestWeaponStats()
 	{
 		if (svs.clients[i].state == CS_ACTIVE)
 		{
+			if (svs.clients[i].netchan.remoteAddress.type != NA_BOT)
+			{
+				onlybots = qfalse;
+			}
 			querycl = i;
 			expectnum++;
 		}
@@ -173,7 +189,7 @@ void TB_requestWeaponStats()
 			if (svs.clients[i].state == CS_ACTIVE)
 			{
 				// send basic data is client is spectator
-				if (P[i] == '3')
+				if (P[i] == '3' || (svs.clients[i].netchan.remoteAddress.type == NA_BOT && onlybots))
 				{
 					TB_Send("ws %i 0 0 0\\%s", i, TB_makeClientInfo(i));
 				}
@@ -189,6 +205,12 @@ void TB_requestWeaponStats()
 
 void TB_Frame(int msec)
 {
+	if (catchBot == TB_BOT_CONNECT)
+	{
+		TB_ClientConnect(&svs.clients[catchBotNum]);
+		catchBot = TB_BOT_NONE;
+	}
+
 	if (!(time(0) - waittime > t))
 	{
 		return;
@@ -200,10 +222,8 @@ void TB_Frame(int msec)
 	t = time(0);
 }
 
-qboolean TB_CatchServerCommand(int clientNum, char *msg)
+qboolean TB_catchServerCommand(int clientNum, char *msg)
 {
-//	Com_Printf("^5%s\n", msg);
-
 	if (clientNum != querycl)
 	{
 		return qfalse;
@@ -239,4 +259,10 @@ qboolean TB_CatchServerCommand(int clientNum, char *msg)
 	}
 
 	return qfalse;
+}
+
+void TB_catchBotConnect(int clientNum)
+{
+	catchBot    = TB_BOT_CONNECT;
+	catchBotNum = clientNum;
 }
