@@ -1571,14 +1571,6 @@ float AngleDifference(float ang1, float ang2);
 // g_props.c
 void Props_Chair_Skyboxtouch(gentity_t *ent);
 
-// ai_script.c
-void Bot_ScriptLoad(void);
-qboolean Bot_ScriptInitBot(int entnum);
-void Bot_ScriptEvent(int entityNum, char *eventStr, char *params);
-
-void Bot_TeamScriptEvent(int team, char *eventStr, char *params);
-
-
 #include "g_team.h" // teamplay specific stuff
 
 extern level_locals_t   level;
