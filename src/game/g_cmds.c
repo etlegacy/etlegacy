@@ -33,7 +33,6 @@
 
 #include "g_local.h"
 
-void BotDebug(int clientNum);
 void GetBotAutonomies(int clientNum, int *weapAutonomy, int *moveAutonomy);
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
 
@@ -846,8 +845,6 @@ void Cmd_Kill_f(gentity_t *ent)
 	ent->client->ps.persistant[PERS_HWEAPON_USE] = 0; // TTimo - if using /kill while at MG42
 	player_die(ent, ent, ent, (g_gamestate.integer == GS_PLAYING) ? 100000 : 135, MOD_SUICIDE);
 }
-
-void BotRecordTeamChange(int client);
 
 void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState, int *specClient)
 {
@@ -1887,8 +1884,6 @@ void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0)
 	G_Say(ent, NULL, mode, ConcatArgs(((arg0) ? 0 : 1)));
 }
 
-extern void BotRecordVoiceChat(int client, int destclient, const char *id, int mode, qboolean noResponse);
-
 // NERVE - SMF
 void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly)
 {
@@ -1955,10 +1950,6 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 		color = COLOR_GREEN;
 		cmd   = "vchat";
 	}
-
-	// RF, record this chat so bots can parse them
-	// bots respond with voiceonly, so we check for this so they dont keep responding to responses
-	BotRecordVoiceChat(ent->s.number, other->s.number, id, mode, voiceonly == 2);
 
 	if (voiceonly == 2)
 	{

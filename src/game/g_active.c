@@ -245,7 +245,6 @@ void G_SetClientSound(gentity_t *ent)
 PushBot
 ==============
 */
-void BotVoiceChatAfterIdleTime(int client, const char *id, int mode, int delay, qboolean voiceonly, int idleTime, qboolean forceIfDead);
 
 void PushBot(gentity_t *ent, gentity_t *other)
 {
@@ -359,7 +358,6 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 	return qtrue;
 }
 
-void BotSetBlockEnt(int client, int blocker);
 /*
 ==============
 CheckBotImpacts

@@ -370,7 +370,6 @@ char *modNames[] =
 player_die
 ==================
 */
-void BotRecordTeamDeath(int client);
 
 void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath)
 {
