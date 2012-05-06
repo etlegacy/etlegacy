@@ -40,7 +40,7 @@
 #if GUIDMASTER_SUPPORT
 #define MASTERGUIDSERVER0 "auth1.etlegacy.com:27955"
 #define MASTERGUIDSERVER1 "auth2.etlegacy.com:27955"
-	#if WIN32
+	#ifdef _WIN32
 		#include <windows.h>
 	#endif
 #endif
@@ -1315,9 +1315,9 @@ void CL_ForwardToServer_f(void)
 #if GUIDMASTER_SUPPORT
 char *CL_GenHWInfo(void)
 {
-	#if WIN32
+	#ifdef _WIN32
 	HW_PROFILE_INFO HWInfo;
-	if (GetCurrentHwProfile(&HWInfo) != NULL)
+	if (GetCurrentHwProfileA(&HWInfo) != NULL)
 	{
 		return HWInfo.szHwProfileGuid;
 	}

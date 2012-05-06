@@ -14,7 +14,6 @@ solution "etlegacy"
 	configuration "Release"
 		defines
 		{
-			"GUIDMASTER_SUPPORT",
 			"NDEBUG",
 		}
 		flags      
@@ -27,7 +26,6 @@ solution "etlegacy"
 	configuration "Debug"
 		defines
 		{
-			"GUIDMASTER_SUPPORT",
 			"_DEBUG",
 		}
 		flags
@@ -71,6 +69,7 @@ project "etlegacy"
 	}
 	defines
 	{
+		"GUIDMASTER_SUPPORT",
 		"BOTLIB",
 		"USE_ICON",
 	}
