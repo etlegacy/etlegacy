@@ -2985,7 +2985,7 @@ int FindClientByName(char *name) {
 	for(j = 0; j < level.numConnectedClients; j++) {
 		i = level.sortedClients[j];
 		ClientName(i, buf, sizeof(buf));
-		if( stristr(buf, name) ) {
+		if( Q_stristr(buf, name) ) {
 			return i;
 		}
 	}
