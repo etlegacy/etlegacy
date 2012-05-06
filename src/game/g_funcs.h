@@ -1218,7 +1218,7 @@
 { "SpectatorThink", (byte *)SpectatorThink },
 { "G_TouchTriggers", (byte *)G_TouchTriggers },
 { "ClientImpacts", (byte *)ClientImpacts },
-{ "CheckBotImpacts", (byte *)CheckBotImpacts },
+
 { "ReadyToConstruct", (byte *)ReadyToConstruct },
 { "ReadyToCallArtillery", (byte *)ReadyToCallArtillery },
 { "ClientNeedsAmmo", (byte *)ClientNeedsAmmo },

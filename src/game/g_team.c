@@ -982,7 +982,6 @@ gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t
 
 /*---------------------------------------------------------------------------*/
 
-void GetBotAutonomies(int clientNum, int *weapAutonomy, int *moveAutonomy);
 /*
 ==================
 TeamplayLocationsMessage

@@ -1219,7 +1219,7 @@ extern qboolean ClientInactivityTimer(gclient_t *client) ;
 extern void SpectatorThink(gentity_t *ent, usercmd_t *ucmd) ;
 extern void G_TouchTriggers(gentity_t *ent) ;
 extern void ClientImpacts(gentity_t *ent, pmove_t *pm) ;
-extern void CheckBotImpacts(gentity_t *ent, gentity_t *other) ;
+
 extern qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean updateState) ;
 extern qboolean ReadyToCallArtillery(gentity_t *ent) ;
 extern qboolean ClientNeedsAmmo(int client) ;

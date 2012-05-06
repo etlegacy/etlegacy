@@ -33,7 +33,6 @@
 
 #include "g_local.h"
 
-void GetBotAutonomies(int clientNum, int *weapAutonomy, int *moveAutonomy);
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
 
 /*
@@ -1115,7 +1114,6 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 	}
 
 	G_verifyMatchState(oldTeam);
-	BotRecordTeamChange(clientNum);
 
 	// Reset stats when changing teams
 	if (team != oldTeam)
