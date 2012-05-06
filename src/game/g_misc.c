@@ -2947,3 +2947,48 @@ qboolean G_ConstructionIsPartlyBuilt( gentity_t* ent ) {
 
 	return qfalse;
 }
+
+/*
+==============
+AngleDifference
+==============
+*/
+float AngleDifference(float ang1, float ang2) {
+	float diff = ang1 - ang2;
+
+	if (ang1 > ang2) {
+		if (diff > 180.0f) diff -= 360.0f;
+	}
+	else {
+		if (diff < -180.0f) diff += 360.0f;
+	}
+	return diff;
+}
+
+/*
+==================
+FindClientByName
+==================
+*/
+int FindClientByName(char *name) {
+	int i, j;
+	char buf[MAX_INFO_STRING];
+
+	for(j = 0; j < level.numConnectedClients; j++) {
+		i = level.sortedClients[j];
+		ClientName(i, buf, sizeof(buf));
+		if (!Q_stricmp(buf, name)) {
+			return i;
+		}
+	}
+
+	for(j = 0; j < level.numConnectedClients; j++) {
+		i = level.sortedClients[j];
+		ClientName(i, buf, sizeof(buf));
+		if( stristr(buf, name) ) {
+			return i;
+		}
+	}
+
+	return -1;
+}
