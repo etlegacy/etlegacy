@@ -497,7 +497,7 @@ extern qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_AbortIfNotSinglePlayer(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_AbortIfWarmup(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params) ;
-extern qboolean G_ScriptAction_SpawnBot(gentity_t *ent, char *params) ;
+
 extern qboolean G_ScriptAction_ConstructibleDuration(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_ConstructibleWeaponclass(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_ConstructibleHealth(gentity_t *ent, char *params) ;
@@ -506,7 +506,6 @@ extern qboolean G_ScriptAction_ConstructibleConstructXPBonus(gentity_t *ent, cha
 extern qboolean G_ScriptAction_ConstructibleChargeBarReq(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_ConstructibleClass(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_Construct(gentity_t *ent, char *params) ;
-
 
 extern qboolean G_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params) ;
 extern qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params) ;

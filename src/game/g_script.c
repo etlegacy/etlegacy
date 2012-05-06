@@ -118,7 +118,7 @@ qboolean G_ScriptAction_AddTankAmmo(gentity_t *ent, char *params);
 qboolean G_ScriptAction_Kill(gentity_t *ent, char *params);
 qboolean G_ScriptAction_DisableMessage(gentity_t *ent, char *params);
 qboolean G_ScriptAction_SetGlobalFog(gentity_t *ent, char *params);
-qboolean G_ScriptAction_SpawnBot(gentity_t *ent, char *params);
+
 qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params);
 qboolean G_ScriptAction_AbortIfWarmup(gentity_t *ent, char *params);
 qboolean G_ScriptAction_AbortIfNotSinglePlayer(gentity_t *ent, char *params);

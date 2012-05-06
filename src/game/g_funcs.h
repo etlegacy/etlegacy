@@ -497,7 +497,7 @@
 { "G_ScriptAction_AbortIfNotSinglePlayer", (byte *)G_ScriptAction_AbortIfNotSinglePlayer },
 { "G_ScriptAction_AbortIfWarmup", (byte *)G_ScriptAction_AbortIfWarmup },
 { "G_ScriptAction_Cvar", (byte *)G_ScriptAction_Cvar },
-{ "G_ScriptAction_SpawnBot", (byte *)G_ScriptAction_SpawnBot },
+
 { "G_ScriptAction_ConstructibleDuration", (byte *)G_ScriptAction_ConstructibleDuration },
 { "G_ScriptAction_ConstructibleWeaponclass", (byte *)G_ScriptAction_ConstructibleWeaponclass },
 { "G_ScriptAction_ConstructibleHealth", (byte *)G_ScriptAction_ConstructibleHealth },
