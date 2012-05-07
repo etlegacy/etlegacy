@@ -41,11 +41,9 @@
 #include "be_interface.h"            //for botimport.Print
 #include "l_libvar.h"
 
-#define MAX_LOGFILENAMESIZE     1024
-
 typedef struct logfile_s
 {
-	char filename[MAX_LOGFILENAMESIZE];
+	char filename[MAX_QPATH];
 	FILE *fp;
 	int numwrites;
 } logfile_t;
@@ -76,9 +74,10 @@ void Log_AlwaysOpen(char *filename)
 		botimport.Print(PRT_ERROR, "can't open the log file %s\n", filename);
 		return;
 	} //end if
-	strncpy(logfile.filename, filename, MAX_LOGFILENAMESIZE);
+	strncpy(logfile.filename, filename, MAX_QPATH);
 	botimport.Print(PRT_MESSAGE, "Opened log %s\n", logfile.filename);
 } //end of the function Log_Create
+
 //===========================================================================
 //
 // Parameter:               -

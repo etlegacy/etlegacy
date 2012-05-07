@@ -50,8 +50,7 @@ botlib_globals_t botlibglobals;
 
 botlib_export_t be_botlib_export;
 botlib_import_t botimport;
-//
-int bot_developer;
+
 //qtrue if the library is setup
 int botlibsetup = qfalse;
 
@@ -105,8 +104,6 @@ int Sys_MilliSeconds(void)
 //===========================================================================
 qboolean BotLibSetup(char *str)
 {
-//  return qtrue;
-
 	if (!botlibglobals.botlibsetup)
 	{
 		botimport.Print(PRT_ERROR, "%s: bot library used before being setup\n", str);
@@ -114,6 +111,7 @@ qboolean BotLibSetup(char *str)
 	} //end if
 	return qtrue;
 } //end of the function BotLibSetup
+
 //===========================================================================
 //
 // Parameter:               -
@@ -125,7 +123,6 @@ int Export_BotLibSetup(qboolean singleplayer)
 {
 	int errnum;
 
-	bot_developer = LibVarGetValue("bot_developer");
 	//initialize byte swapping (litte endian etc.)
 	Log_Open("botlib.log");
 	//
@@ -147,6 +144,7 @@ int Export_BotLibSetup(qboolean singleplayer)
 
 	return BLERR_NOERROR;
 } //end of the function Export_BotLibSetup
+
 //===========================================================================
 //
 // Parameter:               -
@@ -190,6 +188,7 @@ int Export_BotLibShutdown(void)
 #endif
 	return BLERR_NOERROR;
 } //end of the function Export_BotLibShutdown
+
 //===========================================================================
 //
 // Parameter:               -
@@ -201,6 +200,7 @@ int Export_BotLibVarSet(char *var_name, char *value)
 	LibVarSet(var_name, value);
 	return BLERR_NOERROR;
 } //end of the function Export_BotLibVarSet
+
 //===========================================================================
 //
 // Parameter:               -

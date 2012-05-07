@@ -121,7 +121,6 @@ void botlib_stub(void)
 
 int PC_LoadSourceHandle(const char *filename)
 {
-	// rain - FIXME - LoadSourceFile should take a const filename
 	return (int)LoadSourceFile(filename);
 }
 
