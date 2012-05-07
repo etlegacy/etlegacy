@@ -2854,6 +2854,7 @@ void CG_AddAtmosphericEffects(void);
 // These functions are how the cgame communicates with the main game system
 //
 
+// no engine implementation
 void trap_PumpEventLoop(void);
 
 // print message on the local console

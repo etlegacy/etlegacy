@@ -54,6 +54,13 @@ void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
     return *(int *)&floatTemp;
 }*/
 
+/*
+int PASSFLOAT( float x ) {
+	floatint_t fi;
+	fi.f = x;
+	return fi.i;
+}
+*/
 
 #define PASSFLOAT(x) (*(int *)&x)
 
@@ -879,7 +886,6 @@ sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 		Com_Printf("^1Warning: Failed to load sound: %s\n", sample);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_S_RegisterSound", sample)
-	trap_PumpEventLoop();
 	return snd;
 }
 
@@ -890,7 +896,6 @@ qhandle_t trap_R_RegisterModel(const char *name)
 	CG_DrawInformation(qtrue);
 	handle = syscall(CG_R_REGISTERMODEL, name);
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterModel", name)
-	trap_PumpEventLoop();
 	return handle;
 }
 
@@ -901,7 +906,6 @@ qhandle_t trap_R_RegisterSkin(const char *name)
 	CG_DrawInformation(qtrue);
 	handle = syscall(CG_R_REGISTERSKIN, name);
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterSkin", name)
-	trap_PumpEventLoop();
 	return handle;
 }
 
@@ -912,7 +916,6 @@ qhandle_t trap_R_RegisterShader(const char *name)
 	CG_DrawInformation(qtrue);
 	handle = syscall(CG_R_REGISTERSHADER, name);
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterShader", name)
-	trap_PumpEventLoop();
 	return handle;
 }
 
@@ -922,7 +925,6 @@ qhandle_t trap_R_RegisterShaderNoMip(const char *name)
 	DEBUG_REGISTERPROFILE_INIT
 	CG_DrawInformation(qtrue);
 	handle = syscall(CG_R_REGISTERSHADERNOMIP, name);
-	trap_PumpEventLoop();
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterShaderNpMip", name);
 	return handle;
 }
@@ -933,7 +935,6 @@ void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 	CG_DrawInformation(qtrue);
 	syscall(CG_R_REGISTERFONT, fontName, pointSize, font);
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterFont", fontName)
-	trap_PumpEventLoop();
 }
 
 void    trap_CM_LoadMap(const char *mapname)
@@ -942,7 +943,6 @@ void    trap_CM_LoadMap(const char *mapname)
 	CG_DrawInformation(qtrue);
 	syscall(CG_CM_LOADMAP, mapname);
 	DEBUG_REGISTERPROFILE_EXEC("trap_CM_LoadMap", mapname)
-	trap_PumpEventLoop();
 }
 
 void    trap_R_LoadWorldMap(const char *mapname)
@@ -951,62 +951,53 @@ void    trap_R_LoadWorldMap(const char *mapname)
 	CG_DrawInformation(qtrue);
 	syscall(CG_R_LOADWORLDMAP, mapname);
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_LoadWorldMap", mapname)
-	trap_PumpEventLoop();
 }
 #else
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 {
 	CG_DrawInformation(qtrue);
-	trap_PumpEventLoop();
 	return syscall(CG_S_REGISTERSOUND, sample, qfalse /* compressed */);
 }
 
 qhandle_t trap_R_RegisterModel(const char *name)
 {
 	CG_DrawInformation(qtrue);
-	trap_PumpEventLoop();
 	return syscall(CG_R_REGISTERMODEL, name);
 }
 
 qhandle_t trap_R_RegisterSkin(const char *name)
 {
 	CG_DrawInformation(qtrue);
-	trap_PumpEventLoop();
 	return syscall(CG_R_REGISTERSKIN, name);
 }
 
 qhandle_t trap_R_RegisterShader(const char *name)
 {
 	CG_DrawInformation(qtrue);
-	trap_PumpEventLoop();
 	return syscall(CG_R_REGISTERSHADER, name);
 }
 
 qhandle_t trap_R_RegisterShaderNoMip(const char *name)
 {
 	CG_DrawInformation(qtrue);
-	trap_PumpEventLoop();
 	return syscall(CG_R_REGISTERSHADERNOMIP, name);
 }
 
 void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 {
 	CG_DrawInformation(qtrue);
-	trap_PumpEventLoop();
 	syscall(CG_R_REGISTERFONT, fontName, pointSize, font);
 }
 
 void    trap_CM_LoadMap(const char *mapname)
 {
 	CG_DrawInformation(qtrue);
-	trap_PumpEventLoop();
 	syscall(CG_CM_LOADMAP, mapname);
 }
 
 void    trap_R_LoadWorldMap(const char *mapname)
 {
 	CG_DrawInformation(qtrue);
-	trap_PumpEventLoop();
 	syscall(CG_R_LOADWORLDMAP, mapname);
 }
 #endif // _DEBUG
