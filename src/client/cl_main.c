@@ -1406,7 +1406,7 @@ CL_Disconnect_f
 void CL_Disconnect_f(void)
 {
 	SCR_StopCinematic();
-	Cvar_Set("savegame_loading", "0");
+
 	Cvar_Set("g_reloading", "0");
 	if (cls.state != CA_DISCONNECTED && cls.state != CA_CINEMATIC)
 	{
