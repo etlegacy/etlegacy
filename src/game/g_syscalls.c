@@ -270,14 +270,24 @@ qboolean trap_EntityContactCapsule(const vec3_t mins, const vec3_t maxs, const g
 	return syscall(G_ENTITY_CONTACTCAPSULE, mins, maxs, ent);
 }
 
+// these are used by omnibots
 int trap_BotAllocateClient(int clientNum)
 {
 	return syscall(G_BOT_ALLOCATE_CLIENT, clientNum);
 }
 
-void trap_BotFreeClient(int clientNum)
-{
+int trap_BotGetServerCommand(int clientNum, char *message, int size) {
+	return syscall( BOTLIB_GET_CONSOLE_MESSAGE, clientNum, message, size );
 }
+
+void trap_BotUserCommand(int clientNum, usercmd_t *ucmd) {
+	syscall( BOTLIB_USER_COMMAND, clientNum, ucmd );
+}
+
+void trap_EA_Command(int client, char *command) {
+	syscall( BOTLIB_EA_COMMAND, client, command );
+}
+// omnibot usage end
 
 int trap_GetSoundLength(sfxHandle_t sfxHandle)
 {
