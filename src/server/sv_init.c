@@ -171,8 +171,6 @@ void SV_UpdateConfigStrings(void)
 	}
 }
 
-
-
 /*
 ===============
 SV_GetConfigstring
@@ -198,7 +196,6 @@ void SV_GetConfigstring(int index, char *buffer, int bufferSize)
 	Q_strncpyz(buffer, sv.configstrings[index], bufferSize);
 }
 
-
 /*
 ===============
 SV_SetUserinfo
@@ -221,8 +218,6 @@ void SV_SetUserinfo(int index, const char *val)
 	Q_strncpyz(svs.clients[index].name, Info_ValueForKey(val, "name"), sizeof(svs.clients[index].name));
 }
 
-
-
 /*
 ===============
 SV_GetUserinfo
@@ -241,7 +236,6 @@ void SV_GetUserinfo(int index, char *buffer, int bufferSize)
 	}
 	Q_strncpyz(buffer, svs.clients[index].userinfo, bufferSize);
 }
-
 
 /*
 ================
@@ -273,7 +267,6 @@ void SV_CreateBaseline(void)
 	}
 }
 
-
 /*
 ===============
 SV_BoundMaxClients
@@ -300,7 +293,6 @@ void SV_BoundMaxClients(int minimum)
 		Cvar_Set("sv_maxclients", va("%i", MAX_CLIENTS));
 	}
 }
-
 
 /*
 ===============
@@ -345,7 +337,6 @@ void SV_Startup(void)
 #endif
 }
 
-
 /*
 ==================
 SV_ChangeMaxClients
@@ -356,10 +347,9 @@ void SV_ChangeMaxClients(void)
 	int      oldMaxClients;
 	int      i;
 	client_t *oldClients;
-	int      count;
+	int      count = 0;
 
 	// get the highest client number in use
-	count = 0;
 	for (i = 0 ; i < sv_maxclients->integer ; i++)
 	{
 		if (svs.clients[i].state >= CS_CONNECTED)
@@ -432,7 +422,6 @@ void SV_ChangeMaxClients(void)
 		svs.numSnapshotEntities = sv_maxclients->integer * 4 * 64;
 	}
 }
-
 
 /*
 ====================
@@ -563,7 +552,6 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	int        checksum;
 	qboolean   isBot;
 	const char *p;
-
 
 	// ydnar: broadcast a level change to all connected clients
 	if (svs.clients && !com_errorEntered)
@@ -904,10 +892,6 @@ void SV_Init(void)
 	Cvar_Get("g_nextTimeLimit", "0", CVAR_WOLFINFO);
 	// -NERVE - SMF
 
-	// TTimo - some UI additions
-	// NOTE: sucks to have this hardcoded really, I suppose this should be in UI
-	Cvar_Get("g_axismaxlives", "0", 0);
-	Cvar_Get("g_alliedmaxlives", "0", 0);
 	Cvar_Get("g_fastres", "0", CVAR_ARCHIVE);
 	Cvar_Get("g_fastResMsec", "1000", CVAR_ARCHIVE);
 
@@ -946,7 +930,6 @@ void SV_Init(void)
 	TB_Init();
 #endif
 }
-
 
 /*
 ==================
@@ -990,7 +973,6 @@ void SV_FinalCommand(char *cmd, qboolean disconnect)
 	}
 }
 
-
 /*
 ================
 SV_Shutdown
@@ -1023,7 +1005,6 @@ void SV_Shutdown(char *finalmsg)
 	// free server static data
 	if (svs.clients)
 	{
-
 		//Z_Free( svs.clients );
 		free(svs.clients);      // RF, avoid trying to allocate large chunk on a fragmented zone
 	}
