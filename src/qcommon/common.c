@@ -3129,7 +3129,6 @@ void Com_Init(char *commandLine)
 	com_logosPlaying   = Cvar_Get("com_logosPlaying", "0", CVAR_ROM);
 	com_recommendedSet = Cvar_Get("com_recommendedSet", "0", CVAR_ARCHIVE);
 
-	Cvar_Get("savegame_loading", "0", CVAR_ROM);
 
 #if defined(_WIN32) && defined(_DEBUG)
 	com_noErrorInterrupt = Cvar_Get("com_noErrorInterrupt", "0", 0);
