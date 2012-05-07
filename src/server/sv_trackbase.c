@@ -175,8 +175,8 @@ void TB_requestWeaponStats()
 			if (svs.clients[i].netchan.remoteAddress.type != NA_BOT)
 			{
 				onlybots = qfalse;
+				querycl = i;
 			}
-			querycl = i;
 			expectnum++;
 		}
 	}
