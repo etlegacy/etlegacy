@@ -41,8 +41,7 @@
 #include "l_struct.h"
 
 #include "../botlib/botlib.h"
-#include "../game/be_aas.h"
-#include "../game/be_ea.h"
+#include "be_ea.h"
 #include "be_interface.h"
 
 //library globals in a structure

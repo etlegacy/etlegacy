@@ -33,7 +33,6 @@
 
 #include "server.h"
 #include "../botlib/botlib.h"
-#include "../botai/botai.h"
 
 static bot_debugpoly_t debugpolygons[MAX_DEBUGPOLYS];
 

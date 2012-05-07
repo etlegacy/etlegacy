@@ -32,8 +32,6 @@
  * @brief bot AI library
  */
 
-#include "../game/be_aas.h"
-
 #define BOTLIB_API_VERSION      2
 
 struct aas_entityinfo_s;
@@ -157,6 +155,33 @@ typedef struct bot_entitystate_s
 	int legsAnim;           // mask off ANIM_TOGGLEBIT
 	int torsoAnim;          // mask off ANIM_TOGGLEBIT
 } bot_entitystate_t;
+
+
+// from be_aas.h
+//bsp_trace_t hit surface
+typedef struct bsp_surface_s
+{
+	char name[16];
+	int flags;
+	int value;
+} bsp_surface_t;
+
+//remove the bsp_trace_s structure definition l8r on
+//a trace is returned when a box is swept through the world
+typedef struct bsp_trace_s
+{
+	qboolean allsolid;          // if true, plane is not valid
+	qboolean startsolid;        // if true, the initial point was in a solid area
+	float fraction;             // time completed, 1.0 = didn't hit anything
+	vec3_t endpos;              // final position
+	cplane_t plane;             // surface normal at impact
+	float exp_dist;             // expanded plane distance
+	int sidenum;                // number of the brush side hit
+	bsp_surface_t surface;      // the hit point surface
+	int contents;               // contents on other side of surface hit
+	int ent;                    // number of entity hit
+} bsp_trace_t;
+// end be_aas.h
 
 //bot AI library exported functions
 typedef struct botlib_import_s
