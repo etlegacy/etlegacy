@@ -89,64 +89,7 @@ static client_t *SV_GetPlayerByName(void)
 	return NULL;
 }
 
-/*
-==================
-SV_GetPlayerByNum
-
-Returns the player with idnum from Cmd_Argv(1)
-==================
-*/
-// fretn unused
-#if 0
-static client_t *SV_GetPlayerByNum(void)
-{
-	client_t *cl;
-	int      i;
-	int      idnum;
-	char     *s;
-
-	// make sure server is running
-	if (!com_sv_running->integer)
-	{
-		return NULL;
-	}
-
-	if (Cmd_Argc() < 2)
-	{
-		Com_Printf("No player specified.\n");
-		return NULL;
-	}
-
-	s = Cmd_Argv(1);
-
-	for (i = 0; s[i]; i++)
-	{
-		if (s[i] < '0' || s[i] > '9')
-		{
-			Com_Printf("Bad slot number: %s\n", s);
-			return NULL;
-		}
-	}
-	idnum = atoi(s);
-	if (idnum < 0 || idnum >= sv_maxclients->integer)
-	{
-		Com_Printf("Bad client slot: %i\n", idnum);
-		return NULL;
-	}
-
-	cl = &svs.clients[idnum];
-	if (cl->state <= CS_ZOMBIE)
-	{
-		Com_Printf("Client %i is not active\n", idnum);
-		return NULL;
-	}
-	return cl;
-
-	return NULL;
-}
-#endif
 //=========================================================
-
 
 /*
 ==================
@@ -193,7 +136,7 @@ static void SV_Map_f(void)
 		return;
 	}
 
-	Cvar_Set("gamestate", va("%i", GS_INITIALIZE));           // NERVE - SMF - reset gamestate on map/devmap
+	Cvar_Set("gamestate", va("%i", GS_INITIALIZE)); // NERVE - SMF - reset gamestate on map/devmap
 
 	Cvar_Set("g_currentRound", "0");              // NERVE - SMF - reset the current round
 	Cvar_Set("g_nextTimeLimit", "0");             // NERVE - SMF - reset the next time limit
@@ -260,12 +203,6 @@ static qboolean SV_CheckTransitionGameState(gamestate_t new_gs, gamestate_t old_
 	{
 		return qfalse;
 	}
-
-//  if ( old_gs == GS_WARMUP && new_gs != GS_WARMUP_COUNTDOWN )
-//      return qfalse;
-
-//  if ( old_gs == GS_WARMUP_COUNTDOWN && new_gs != GS_PLAYING )
-//      return qfalse;
 
 	if (old_gs == GS_WAITING_FOR_PLAYERS && new_gs != GS_WARMUP)
 	{
@@ -355,10 +292,6 @@ static void SV_MapRestart_f(void)
 		return;
 	}
 
-	// ydnar: allow multiple delayed server restarts [atvi bug 3813]
-	//% if ( sv.restartTime ) {
-	//%     return;
-	//% }
 
 	if (Cmd_Argc() > 1)
 	{
@@ -469,10 +402,6 @@ static void SV_MapRestart_f(void)
 		svs.time += FRAMETIME;
 	}
 
-	// create a baseline for more efficient communications
-	// Gordon: meh, this wont work here as the client doesn't know it has happened
-//  SV_CreateBaseline ();
-
 	sv.state      = SS_GAME;
 	sv.restarting = qfalse;
 
@@ -544,8 +473,7 @@ void    SV_LoadGame_f(void)
 	}
 	if (sv_reloading->integer)
 	{
-		// (SA) disabling
-//  if(sv_reloading->integer && sv_reloading->integer != RELOAD_FAILED )    // game is in 'reload' mode, don't allow starting new maps yet.
+		// game is in 'reload' mode, don't allow starting new maps yet.
 		return;
 	}
 
@@ -564,10 +492,6 @@ void    SV_LoadGame_f(void)
 	{
 		Q_strncpyz(savedir, "save/", sizeof(savedir));
 	}
-
-	/*if ( Q_strncmp( filename, "save/", 5 ) && Q_strncmp( filename, "save\\", 5 ) ) {
-	    Q_strncpyz( filename, va("save/%s", filename), sizeof( filename ) );
-	}*/
 
 	// go through a va to avoid vsnprintf call with same source and target
 	Q_strncpyz(filename, va("%s%s", savedir, filename), sizeof(filename));

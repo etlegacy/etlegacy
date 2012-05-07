@@ -395,11 +395,8 @@ void SV_GetConfigstring(int index, char *buffer, int bufferSize);
 void SV_SetUserinfo(int index, const char *val);
 void SV_GetUserinfo(int index, char *buffer, int bufferSize);
 
-void SV_CreateBaseline(void);
-
 void SV_ChangeMaxClients(void);
 void SV_SpawnServer(char *server, qboolean killBots);
-
 
 
 //
