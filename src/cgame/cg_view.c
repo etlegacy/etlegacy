@@ -34,10 +34,6 @@
 
 #include "cg_local.h"
 
-//========================
-extern pmove_t cg_pmove;
-//========================
-
 /*
 =============================================================================
 
@@ -598,7 +594,7 @@ static void CG_ZoomSway(void)
 		return;
 	}
 
-	if (cg.snap->ps.eFlags & EF_MG42_ACTIVE || cg.snap->ps.eFlags & EF_AAGUN_ACTIVE)     // don't draw when on mg_42
+	if ((cg.snap->ps.eFlags & EF_MG42_ACTIVE) || (cg.snap->ps.eFlags & EF_AAGUN_ACTIVE))     // don't draw when on mg_42
 	{
 		return;
 	}
@@ -1221,7 +1217,7 @@ static int CG_CalcFov(void)
 	    } else
 	*/
 	// rain - allow freelook when dead until we tap out into limbo
-	if (cg.snap->ps.pm_type == PM_FREEZE || (cg.snap->ps.pm_type == PM_DEAD && (cg.snap->ps.pm_flags & PMF_LIMBO)) || cg.snap->ps.pm_flags & PMF_TIME_LOCKPLAYER)
+	if (cg.snap->ps.pm_type == PM_FREEZE || (cg.snap->ps.pm_type == PM_DEAD && (cg.snap->ps.pm_flags & PMF_LIMBO)) || (cg.snap->ps.pm_flags & PMF_TIME_LOCKPLAYER))
 	{
 		// No movement for pauses
 		cg.zoomSensitivity = 0;
@@ -1278,7 +1274,7 @@ static void CG_DamageBlendBlob(void)
 	float        redFlash;
 
 	// Gordon: no damage blend blobs if in limbo or spectator, and in the limbo menu
-	if ((cg.snap->ps.pm_flags & PMF_LIMBO || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
+	if (((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
 	{
 		return;
 	}
