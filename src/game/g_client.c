@@ -722,17 +722,6 @@ respawn
 */
 void respawn(gentity_t *ent)
 {
-
-#ifdef SAVEGAME_SUPPORT
-	if (g_gametype.integer == GT_SINGLE_PLAYER)
-	{
-		if (g_reloading.integer || saveGamePending)
-		{
-			return;
-		}
-	}
-#endif // SAVEGAME_SUPPORT
-
 	ent->client->ps.pm_flags &= ~PMF_LIMBO; // JPW NERVE turns off limbo
 
 	// DHM - Nerve :: Decrease the number of respawns left
@@ -1839,17 +1828,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		ent->inuse      = qtrue;
 
 	}
-	else if (g_gametype.integer == GT_COOP || g_gametype.integer == GT_SINGLE_PLAYER)
-	{
-		// RF, in single player, enforce team = ALLIES
-		// Arnout: disabled this for savegames as the double ClientBegin it causes wipes out all loaded data
-		if (saveGamePending != 2)
-		{
-			client->sess.sessionTeam = TEAM_ALLIES;
-		}
-		client->sess.spectatorState  = SPECTATOR_NOT;
-		client->sess.spectatorClient = 0;
-	}
 	else if (firstTime)
 	{
 		// force into spectator
@@ -1865,25 +1843,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	G_LogPrintf("ClientConnect: %i\n", clientNum);
 	G_UpdateCharacter(client);
 	ClientUserinfoChanged(clientNum);
-
-	if (g_gametype.integer == GT_SINGLE_PLAYER)
-	{
-
-		if (!isBot)
-		{
-			ent->scriptName = "player";
-
-// START	Mad Doctor I changes, 8/14/2002
-			// We must store this here, so that BotFindEntityForName can find the
-			// player.
-			ent->aiName = "player";
-// END		Mad Doctor I changes, 8/12/2002
-
-			G_Script_ScriptParse(ent);
-			G_Script_ScriptEvent(ent, "spawn", "");
-		}
-
-	}
 
 
 	// don't do the "xxx connected" messages if they were caried over from previous level

@@ -1140,7 +1140,7 @@ void ClientThink_real(gentity_t *ent)
 
 	// spectators don't do much
 	// DHM - Nerve :: In limbo use SpectatorThink
-	if (client->sess.sessionTeam == TEAM_SPECTATOR || client->ps.pm_flags & PMF_LIMBO)
+	if (client->sess.sessionTeam == TEAM_SPECTATOR || (client->ps.pm_flags & PMF_LIMBO))
 	{
 		/*if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD ) {
 		    return;
@@ -1149,13 +1149,8 @@ void ClientThink_real(gentity_t *ent)
 		return;
 	}
 
-	if ((client->ps.eFlags & EF_VIEWING_CAMERA) || level.match_pause != PAUSE_NONE
-#ifdef SAVEGAME_SUPPORT
-	    || (g_gametype.integer == GT_SINGLE_PLAYER && saveGamePending && g_reloading.integer && (g_reloading.integer != RELOAD_FAILED)))
+	if ((client->ps.eFlags & EF_VIEWING_CAMERA) || level.match_pause != PAUSE_NONE)
 	{
-#else
-	    ) {
-#endif // SAVEGAME_SUPPORT
 		ucmd->buttons     = 0;
 		ucmd->forwardmove = 0;
 		ucmd->rightmove   = 0;
@@ -1168,13 +1163,7 @@ void ClientThink_real(gentity_t *ent)
 		{
 			client->ps.pm_type = PM_FREEZE;
 		}
-		else if ((client->ps.eFlags & EF_VIEWING_CAMERA)
-#ifdef SAVEGAME_SUPPORT
-		         || (g_gametype.integer == GT_SINGLE_PLAYER && g_reloading.integer & (RELOAD_NEXTMAP_WAITING | RELOAD_ENDGAME)))
-		{
-#else
-		         ) {
-#endif // SAVEGAME_SUPPORT
+		else if ((client->ps.eFlags & EF_VIEWING_CAMERA)) {
 			VectorClear(client->ps.velocity);
 			client->ps.pm_type = PM_FREEZE;
 		}
@@ -1272,11 +1261,11 @@ void ClientThink_real(gentity_t *ent)
 
 		if (client->combatState != COMBATSTATE_COLD)
 		{
-			if (client->combatState & (1 << COMBATSTATE_KILLEDPLAYER) && client->combatState & (1 << COMBATSTATE_DAMAGERECEIVED))
+			if ((client->combatState & (1 << COMBATSTATE_KILLEDPLAYER)) && (client->combatState & (1 << COMBATSTATE_DAMAGERECEIVED)))
 			{
 				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 8.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 8.f, "combatstate super-hot");
 			}
-			else if (client->combatState & (1 << COMBATSTATE_DAMAGEDEALT) && client->combatState & (1 << COMBATSTATE_DAMAGERECEIVED))
+			else if ((client->combatState & (1 << COMBATSTATE_DAMAGEDEALT)) && (client->combatState & (1 << COMBATSTATE_DAMAGERECEIVED)))
 			{
 				G_AddSkillPoints(ent, SK_BATTLE_SENSE, 5.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 5.f, "combatstate hot");
 			}
@@ -1546,7 +1535,7 @@ void G_RunClient(gentity_t *ent)
 		Cmd_Activate2_f(ent);
 	}
 
-	if (ent->health <= 0 && ent->client->ps.pm_flags & PMF_LIMBO)
+	if (ent->health <= 0 && (ent->client->ps.pm_flags & PMF_LIMBO))
 	{
 		if (ent->r.linked)
 		{

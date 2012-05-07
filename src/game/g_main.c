@@ -51,7 +51,6 @@ gentity_t g_entities[MAX_GENTITIES];
 gclient_t g_clients[MAX_CLIENTS];
 
 g_campaignInfo_t g_campaigns[MAX_CAMPAIGNS];
-int              saveGamePending;   // 0 = no, 1 = check, 2 = loading
 
 mapEntityData_Team_t mapEntityData[2];
 
@@ -2049,26 +2048,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
 	                    &level.clients[0].ps, sizeof(level.clients[0]));
 
-	if (g_gametype.integer == GT_SINGLE_PLAYER)
-	{
-		char loading[4];
-
-		trap_Cvar_VariableStringBuffer("savegame_loading", loading, sizeof(loading));
-
-		if (atoi(loading))
-		{
-			saveGamePending = 2;
-		}
-		else
-		{
-			saveGamePending = 1;
-		}
-	}
-	else
-	{
-		saveGamePending = 0;
-	}
-
 	// load level script
 	G_Script_ScriptLoad();
 
@@ -3698,159 +3677,6 @@ void CheckVote(void)
 	level.voteInfo.voteTime = 0;
 	trap_SetConfigstring(CS_VOTE_TIME, "");
 }
-
-#ifdef SAVEGAME_SUPPORT
-/*
-=============
-CheckReloadStatus
-=============
-*/
-void G_CheckReloadStatus(void)
-{
-	// if we are waiting for a reload, check the delay time
-	if (g_reloading.integer)
-	{
-		if (level.reloadDelayTime)
-		{
-			if (level.reloadDelayTime < level.time)
-			{
-
-				/*if (g_reloading.integer == RELOAD_NEXTMAP_WAITING) {
-				    trap_Cvar_Set( "g_reloading", va("%d", RELOAD_NEXTMAP) );	// set so sv_map_f will know it's okay to start a map
-				    if (g_cheats.integer)
-				        trap_SendConsoleCommand( EXEC_APPEND, va("spdevmap %s\n", level.nextMap) );
-				    else
-				        trap_SendConsoleCommand( EXEC_APPEND, va("spmap %s\n", level.nextMap ) );
-
-				}*//* else if(g_reloading.integer == RELOAD_ENDGAME) {
-				    G_EndGame();	// kick out to the menu and start the "endgame" menu (credits, etc)
-
-				}*/                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   // else {
-				// set the loadgame flag, and restart the server
-				trap_Cvar_Set("savegame_loading", "2");     // 2 means it's a restart, so stop rendering until we are loaded
-				trap_SendConsoleCommand(EXEC_INSERT, "map_restart\n");
-				//}
-
-				level.reloadDelayTime = 0;
-			}
-		}
-		else if (level.reloadPauseTime)
-		{
-			if (level.reloadPauseTime < level.time)
-			{
-				trap_Cvar_Set("g_reloading", "0");
-				level.reloadPauseTime = 0;
-			}
-		}
-	}
-}
-
-static void G_EnableRenderingThink(gentity_t *ent)
-{
-	trap_Cvar_Set("cg_norender", "0");
-//		trap_S_FadeAllSound(1.0f, 1000);	// fade sound up
-	G_FreeEntity(ent);
-}
-
-extern gentity_t *BotFindEntityForName(char *name);
-extern void Bot_ScriptThink(void);
-
-static void G_CheckLoadGame(void)
-{
-	char      loading[4];
-	gentity_t *ent = NULL; // TTimo: VC6 'may be used without having been init'
-	qboolean  ready;
-
-	// have we already done the save or load?
-	if (!saveGamePending)
-	{
-		return;
-	}
-
-	// tell the cgame NOT to render the scene while we are waiting for things to settle
-	//trap_Cvar_Set( "cg_norender", "1" );
-
-	trap_Cvar_VariableStringBuffer("savegame_loading", loading, sizeof(loading));
-
-	//trap_Cvar_Set( "g_reloading", "1" );	// moved down
-
-	if (strlen(loading) > 0 && atoi(loading) != 0)
-	{
-		trap_Cvar_Set("g_reloading", "1");
-
-		// screen should be black if we are at this stage
-		trap_SetConfigstring(CS_SCREENFADE, va("1 %i 1", level.time - 10));
-
-//		if (!reloading && atoi(loading) == 2) {
-		if (!(g_reloading.integer) && atoi(loading) == 2)
-		{
-			// (SA) hmm, this seems redundant when it sets it above...
-//			reloading = qtrue;	// this gets reset at the Map_Restart() since the server unloads the game dll
-			trap_Cvar_Set("g_reloading", "1");
-		}
-
-		ready = qtrue;
-		if ((ent = BotFindEntityForName("player")) == NULL)
-		{
-			ready = qfalse;
-		}
-		else if (!ent->client || ent->client->pers.connected != CON_CONNECTED)
-		{
-			ready = qfalse;
-		}
-
-		if (ready)
-		{
-			trap_Cvar_Set("savegame_loading", "0");   // in-case it aborts
-			saveGamePending = 0;
-			G_LoadGame();
-
-			// RF, spawn a thinker that will enable rendering after the client has had time to process the entities and setup the display
-			ent            = G_Spawn();
-			ent->nextthink = level.time + 200;
-			ent->think     = G_EnableRenderingThink;
-
-			// wait for the clients to return from faded screen
-			//trap_SetConfigstring( CS_SCREENFADE, va("0 %i 1500", level.time + 500) );
-			trap_SetConfigstring(CS_SCREENFADE, va("0 %i 750", level.time + 500));
-			level.reloadPauseTime = level.time + 1100;
-
-			// make sure sound fades up
-			trap_SendServerCommand(-1, va("snd_fade 1 %d 0", 2000));        //----(SA)	added
-
-			Bot_ScriptThink();
-		}
-	}
-	else
-	{
-
-		ready = qtrue;
-		if ((ent = BotFindEntityForName("player")) == NULL)
-		{
-			ready = qfalse;
-		}
-		else if (!ent->client || ent->client->pers.connected != CON_CONNECTED)
-		{
-			ready = qfalse;
-		}
-
-		// not loading a game, we must be in a new level, so look for some persistant data to read in, then save the game
-		if (ready)
-		{
-			G_LoadPersistant();     // make sure we save the game after we have brought across the items
-
-			saveGamePending = 0;
-
-// briefing menu will handle transition, just set a cvar for it to check for drawing the 'continue' button
-			trap_SendServerCommand(-1, "rockandroll\n");
-
-			level.reloadPauseTime = level.time + 1100;
-
-			Bot_ScriptThink();
-		}
-	}
-}
-#endif // SAVEGAME_SUPPORT
 
 /*
 ==================

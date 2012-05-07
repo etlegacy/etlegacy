@@ -1362,58 +1362,6 @@ qboolean    ConsoleCommand(void)
 
 	trap_Argv(0, cmd, sizeof(cmd));
 
-#ifdef SAVEGAME_SUPPORT
-	if (Q_stricmp(cmd, "savegame") == 0)
-	{
-
-		if (g_gametype.integer != GT_SINGLE_PLAYER)
-		{
-			return qtrue;
-		}
-
-		// don't allow a manual savegame command while we are waiting for the game to start/exit
-		if (g_reloading.integer)
-		{
-			return qtrue;
-		}
-		if (saveGamePending)
-		{
-			return qtrue;
-		}
-
-		trap_Argv(1, cmd, sizeof(cmd));
-		if (strlen(cmd) > 0)
-		{
-			// strip the extension if provided
-			if (strrchr(cmd, '.'))
-			{
-				cmd[strrchr(cmd, '.') - cmd] = '\0';
-			}
-			if (!Q_stricmp(cmd, "current"))           // beginning of map
-			{
-				Com_Printf("sorry, '%s' is a reserved savegame name.  please use another name.\n", cmd);
-				return qtrue;
-			}
-
-			if (G_SaveGame(cmd))
-			{
-				trap_SendServerCommand(-1, "cp \"Game Saved\n\"");    // deletedgame
-			}
-			else
-			{
-				G_Printf("Unable to save game.\n");
-			}
-
-		}
-		else        // need a name
-		{
-			G_Printf("syntax: savegame <name>\n");
-		}
-
-		return qtrue;
-	}
-#endif // SAVEGAME_SUPPORT
-
 	if (Q_stricmp(cmd, "entitylist") == 0)
 	{
 		Svcmd_EntityList_f();
