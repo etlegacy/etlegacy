@@ -774,28 +774,6 @@ qboolean SV_GameCommand(void)
 
 /*
 ====================
-SV_GameIsSinglePlayer
-====================
-*/
-qboolean SV_GameIsSinglePlayer(void)
-{
-	return(com_gameInfo.spGameTypes & (1 << g_gameType->integer));
-}
-
-/*
-====================
-SV_GameIsCoop
-
-    This is a modified SinglePlayer, no savegame capability for example
-====================
-*/
-qboolean SV_GameIsCoop(void)
-{
-	return(com_gameInfo.coopGameTypes & (1 << g_gameType->integer));
-}
-
-/*
-====================
 SV_GetTag
 
   return qfalse if unable to retrieve tag information for this client

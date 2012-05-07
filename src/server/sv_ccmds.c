@@ -123,10 +123,6 @@ static void SV_Map_f(void)
 
 	buildScript = Cvar_VariableIntegerValue("com_buildScript");
 
-	Cvar_Set("savegame_loading", "0");    // make sure it's turned off
-	// set the filename
-	Cvar_Set("savegame_filename", "");
-
 	// make sure the level exists before trying to change, so that
 	// a typo at the server console won't end the game
 	Com_sprintf(expanded, sizeof(expanded), "maps/%s.bsp", map);
@@ -336,46 +332,6 @@ static void SV_MapRestart_f(void)
 		return;
 	}
 
-	// Check for loading a saved game
-	if (Cvar_VariableIntegerValue("savegame_loading"))
-	{
-		// open the current savegame, and find out what the time is, everything else we can ignore
-		char savemap[MAX_QPATH];
-		byte *buffer;
-		int  size, savegameTime;
-		char *cl_profileStr = Cvar_VariableString("cl_profile");
-
-		if (com_gameInfo.usesProfiles)
-		{
-			Com_sprintf(savemap, sizeof(savemap), "profiles/%s/save/current.sav", cl_profileStr);
-		}
-		else
-		{
-			Q_strncpyz(savemap, "save/current.sav", sizeof(savemap));
-		}
-
-		size = FS_ReadFile(savemap, NULL);
-		if (size < 0)
-		{
-			Com_Printf("Can't find savegame %s\n", savemap);
-			return;
-		}
-
-		//buffer = Hunk_AllocateTempMemory(size);
-		FS_ReadFile(savemap, (void **)&buffer);
-
-		// the mapname is at the very start of the savegame file
-		savegameTime = *( int * )(buffer + sizeof(int) + MAX_QPATH);
-
-		if (savegameTime >= 0)
-		{
-			svs.time = savegameTime;
-		}
-
-		Hunk_FreeTempMemory(buffer);
-	}
-	// done.
-
 	// toggle the server bit so clients can detect that a
 	// map_restart has happened
 	svs.snapFlagServerBit ^= SNAPFLAG_SERVERCOUNT;
@@ -452,108 +408,6 @@ static void SV_MapRestart_f(void)
 	svs.time += FRAMETIME;
 
 	Cvar_Set("sv_serverRestarting", "0");
-}
-
-/*
-=================
-SV_LoadGame_f
-=================
-*/
-void    SV_LoadGame_f(void)
-{
-	char filename[MAX_QPATH], mapname[MAX_QPATH], savedir[MAX_QPATH];
-	byte *buffer;
-	int  size;
-	char *cl_profileStr = Cvar_VariableString("cl_profile");
-
-	// dont allow command if another loadgame is pending
-	if (Cvar_VariableIntegerValue("savegame_loading"))
-	{
-		return;
-	}
-	if (sv_reloading->integer)
-	{
-		// game is in 'reload' mode, don't allow starting new maps yet.
-		return;
-	}
-
-	Q_strncpyz(filename, Cmd_Argv(1), sizeof(filename));
-	if (!filename[0])
-	{
-		Com_Printf("You must specify a savegame to load\n");
-		return;
-	}
-
-	if (com_gameInfo.usesProfiles && cl_profileStr[0])
-	{
-		Com_sprintf(savedir, sizeof(savedir), "profiles/%s/save/", cl_profileStr);
-	}
-	else
-	{
-		Q_strncpyz(savedir, "save/", sizeof(savedir));
-	}
-
-	// go through a va to avoid vsnprintf call with same source and target
-	Q_strncpyz(filename, va("%s%s", savedir, filename), sizeof(filename));
-
-	// enforce .sav extension
-	if (!strstr(filename, ".") || Q_strncmp(strstr(filename, ".") + 1, "sav", 3))
-	{
-		Q_strcat(filename, sizeof(filename), ".sav");
-	}
-	// use '/' instead of '\\' for directories
-	while (strstr(filename, "\\"))
-	{
-		*(char *)strstr(filename, "\\") = '/';
-	}
-
-	size = FS_ReadFile(filename, NULL);
-	if (size < 0)
-	{
-		Com_Printf("Can't find savegame %s\n", filename);
-		return;
-	}
-
-	//buffer = Hunk_AllocateTempMemory(size);
-	FS_ReadFile(filename, (void **)&buffer);
-
-	// read the mapname, if it is the same as the current map, then do a fast load
-	Com_sprintf(mapname, sizeof(mapname), "%s", (const char *)(buffer + sizeof(int)));
-
-	if (com_sv_running->integer && (com_frameTime != sv.serverId))
-	{
-		// check mapname
-		if (!Q_stricmp(mapname, sv_mapname->string))          // same
-		{
-			if (Q_stricmp(filename, va("%scurrent.sav", savedir)) != 0)
-			{
-				// copy it to the current savegame file
-				FS_WriteFile(va("%scurrent.sav", savedir), buffer, size);
-			}
-
-			Hunk_FreeTempMemory(buffer);
-
-			Cvar_Set("savegame_loading", "2");    // 2 means it's a restart, so stop rendering until we are loaded
-			// set the filename
-			Cvar_Set("savegame_filename", filename);
-			// quick-restart the server
-			SV_MapRestart_f();  // savegame will be loaded after restart
-
-			return;
-		}
-	}
-
-	Hunk_FreeTempMemory(buffer);
-
-	// otherwise, do a slow load
-	if (Cvar_VariableIntegerValue("sv_cheats"))
-	{
-		Cbuf_ExecuteText(EXEC_APPEND, va("spdevmap %s", filename));
-	}
-	else        // no cheats
-	{
-		Cbuf_ExecuteText(EXEC_APPEND, va("spmap %s", filename));
-	}
 }
 
 //===============================================================
@@ -865,7 +719,6 @@ void SV_AddOperatorCommands(void)
 	Cmd_AddCommand("spdevmap", SV_Map_f);
 	Cmd_SetCommandCompletionFunc("spdevmap", SV_CompleteMapName);
 
-	Cmd_AddCommand("loadgame", SV_LoadGame_f);
 	Cmd_AddCommand("killserver", SV_KillServer_f);
 	if (com_dedicated->integer)
 	{
