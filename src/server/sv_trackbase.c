@@ -32,6 +32,7 @@
  * @file sv_trackbase.h
  * @brief Sends game statistics to Trackbase
  */
+#ifdef TRACKBASE_SUPPORT
 
 #include "sv_trackbase.h"
 
@@ -266,3 +267,5 @@ void TB_catchBotConnect(int clientNum)
 	catchBot    = TB_BOT_CONNECT;
 	catchBotNum = clientNum;
 }
+
+#endif // TRACKBASE_SUPPORT

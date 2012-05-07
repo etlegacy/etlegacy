@@ -32,6 +32,7 @@
  * @file sv_trackbase.h
  * @brief Sends game statistics to Trackbase
  */
+#ifdef TRACKBASE_SUPPORT
 
 #ifndef _TRACKBASE_H
 #define _TRACKBASE_H
@@ -57,3 +58,5 @@ qboolean TB_CatchServerCommand(int clientNum, char *msg);
 void TB_requestWeaponStats();
 
 #endif // _TRACKBASE_H
+
+#endif // TRACKBASE_SUPPORT
