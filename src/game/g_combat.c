@@ -1191,13 +1191,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		return;
 	}
 
-#ifdef SAVEGAME_SUPPORT
-	if (g_gametype.integer == GT_SINGLE_PLAYER && (g_reloading.integer || saveGamePending))
-	{
-		return;
-	}
-#endif // SAVEGAME_SUPPORT
-
 //  trap_SendServerCommand( -1, va("print \"%i\n\"\n", targ->health) );
 
 	/*
