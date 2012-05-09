@@ -1407,7 +1407,6 @@ void CL_Disconnect_f(void)
 {
 	SCR_StopCinematic();
 
-	Cvar_Set("g_reloading", "0");
 	if (cls.state != CA_DISCONNECTED && cls.state != CA_CINEMATIC)
 	{
 		Com_Error(ERR_DISCONNECT, "Disconnected from server");
