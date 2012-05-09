@@ -72,8 +72,6 @@ cvar_t *sv_dl_maxRate;
 
 cvar_t *g_gameType;
 
-cvar_t *sv_reloading;
-
 cvar_t *sv_showAverageBPS;      // NERVE - SMF - net debugging
 
 cvar_t *sv_wwwDownload;  // server does a www dl redirect

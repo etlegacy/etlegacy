@@ -345,8 +345,6 @@ extern cvar_t *sv_showAverageBPS;           // NERVE - SMF - net debugging
 
 extern cvar_t *g_gameType;
 
-extern cvar_t *sv_reloading;
-
 // TTimo - autodl
 extern cvar_t *sv_dl_maxRate;
 

@@ -871,8 +871,6 @@ void SV_Init(void)
 	sv_killserver     = Cvar_Get("sv_killserver", "0", 0);
 	sv_mapChecksum    = Cvar_Get("sv_mapChecksum", "", CVAR_ROM);
 
-	sv_reloading = Cvar_Get("g_reloading", "0", CVAR_ROM);
-
 	sv_lanForceRate = Cvar_Get("sv_lanForceRate", "1", CVAR_ARCHIVE);
 
 	sv_onlyVisibleClients = Cvar_Get("sv_onlyVisibleClients", "0", 0);         // DHM - Nerve
