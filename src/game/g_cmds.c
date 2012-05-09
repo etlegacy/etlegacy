@@ -832,13 +832,6 @@ void Cmd_Kill_f(gentity_t *ent)
 		return;
 	}
 
-#ifdef SAVEGAME_SUPPORT
-	if (g_gametype.integer == GT_SINGLE_PLAYER && g_reloading.integer)
-	{
-		return;
-	}
-#endif // SAVEGAME_SUPPORT
-
 	ent->flags                                  &= ~FL_GODMODE;
 	ent->client->ps.stats[STAT_HEALTH]           = ent->health = 0;
 	ent->client->ps.persistant[PERS_HWEAPON_USE] = 0; // TTimo - if using /kill while at MG42
@@ -2859,20 +2852,6 @@ void Cmd_StopCamera_f(gentity_t *ent)
 
 		//G_SetOrigin( ent, ent->client->cameraOrigin );    // restore our origin
 		//VectorCopy( ent->client->cameraOrigin, ent->client->ps.origin );
-
-// (SA) trying this in client to avoid 1 frame of player drawing
-//      ent->s.eFlags &= ~EF_NODRAW;
-//      ent->client->ps.eFlags &= ~EF_NODRAW;
-
-		// RF, if we are near the spawn point, save the "current" game, for reloading after death
-//      sp = NULL;
-		// gcc: suggests () around assignment used as truth value
-//      while ((sp = G_Find( sp, FOFS(classname), "info_player_deathmatch" ))) {    // info_player_start becomes info_player_deathmatch in it's spawn functon
-//          if (Distance( ent->s.pos.trBase, sp->s.origin ) < 256 && trap_InPVS( ent->s.pos.trBase, sp->s.origin )) {
-//              G_SaveGame( NULL );
-//              break;
-//          }
-//      }
 	}
 }
 

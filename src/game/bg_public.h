@@ -49,8 +49,6 @@
 #define _attribute(x)
 #endif
 
-//#define SAVEGAME_SUPPORT	// uncomment to enable savegames
-// enabling this requires you to run extractfuncs.bat as well before compiling qagame
 
 #define SPRINTTIME 20000.0f
 
@@ -565,10 +563,6 @@ typedef struct
 	float xyspeed;
 
 	int *skill;                     // player skills
-
-#ifdef SAVEGAME_SUPPORT
-	qboolean reloading;
-#endif // SAVEGAME_SUPPORT
 
 #ifdef GAMEDLL  // the whole stamina thing is only in qagame
 	qboolean leadership;            // within 512 units of a player with level 5 Signals skill (that player has to be in PVS as well to make sue we can predict it)

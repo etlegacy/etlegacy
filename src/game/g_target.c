@@ -879,16 +879,6 @@ void SP_target_location(gentity_t *self)
 
 /*
 ==============
-Use_Target_Autosave
-    save game for emergency backup or convienience
-==============
-*/
-/*void Use_Target_Autosave( gentity_t *ent, gentity_t *other, gentity_t *activator ) {
-    G_SaveGame("autosave.sav");
-}*/
-
-/*
-==============
 Use_Target_Counter
 ==============
 */
@@ -995,8 +985,7 @@ saves game to 'autosave.sav' when triggered then dies.
 */
 void SP_target_autosave(gentity_t *ent)
 {
-//	ent->use = Use_Target_Autosave;
-	G_FreeEntity(ent);
+	G_Printf("SP_target_autosave not supported.\n");
 }
 
 //==========================================================

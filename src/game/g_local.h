@@ -1545,16 +1545,6 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt);
 void G_LeaveTank(gentity_t *ent, qboolean position);
 
 
-// Ridah
-
-// g_save.c
-#ifdef SAVEGAME_SUPPORT
-qboolean G_SaveGame(char *username);
-void G_LoadGame(void);
-qboolean G_SavePersistant(char *nextmap);
-void G_LoadPersistant(void);
-#endif // SAVEGAME_SUPPORT
-
 // g_script.c
 void G_Script_ScriptParse(gentity_t *ent);
 qboolean G_Script_ScriptRun(gentity_t *ent);
@@ -1680,10 +1670,6 @@ extern vmCvar_t g_lms_matchlimit;
 extern vmCvar_t g_lms_currentMatch;
 extern vmCvar_t g_lms_lockTeams;
 extern vmCvar_t g_lms_followTeamOnly;
-
-#ifdef SAVEGAME_SUPPORT
-extern vmCvar_t g_reloading;
-#endif // SAVEGAME_SUPPORT
 
 // NERVE - SMF
 extern vmCvar_t g_warmupLatch;

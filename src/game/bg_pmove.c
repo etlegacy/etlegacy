@@ -4535,13 +4535,6 @@ static void PM_Weapon(void)
 		return;
 	}
 
-#ifdef SAVEGAME_SUPPORT
-	if (pm->reloading)
-	{
-		return;
-	}
-#endif // SAVEGAME_SUPPORT
-
 	// player is zooming - no fire
 	// JPW NERVE in MP, LT needs to zoom to call artillery
 	if (pm->ps->eFlags & EF_ZOOMING)

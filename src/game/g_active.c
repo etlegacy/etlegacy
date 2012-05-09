@@ -585,13 +585,6 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		pm.trace         = trap_TraceCapsuleNoEnts;
 		pm.pointcontents = trap_PointContents;
 
-#ifdef SAVEGAME_SUPPORT
-		if (g_gametype.integer == GT_SINGLE_PLAYER && g_reloading.integer)
-		{
-			pm.reloading = qtrue;
-		}
-#endif // SAVEGAME_SUPPORT
-
 		Pmove(&pm);   // JPW NERVE
 
 		// Rafael - Activate
@@ -1304,13 +1297,6 @@ void ClientThink_real(gentity_t *ent)
 
 	    break;
 	}*/
-
-#ifdef SAVEGAME_SUPPORT
-	if (g_gametype.integer == GT_SINGLE_PLAYER && g_reloading.integer)
-	{
-		pm.reloading = qtrue;
-	}
-#endif // SAVEGAME_SUPPORT
 
 	// Gordon: bit hacky, stop the slight lag from client -> server even on locahost, switching back to the weapon you were holding
 	//			and then back to what weapon you should have, became VERY noticible for the kar98/carbine + gpg40, esp now i've added the

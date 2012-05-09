@@ -526,7 +526,7 @@ spawn_t spawns[] =
 	{ "target_lock",               SP_target_lock               },
 	{ "target_effect",             SP_target_effect             },
 	{ "target_fog",                SP_target_fog                },
-	{ "target_autosave",           SP_target_autosave           }, //----(SA)	added
+	{ "target_autosave",           SP_target_autosave           }, // obsolete
 	//---- done
 
 	{ "target_rumble",             SP_target_rumble             },
