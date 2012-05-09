@@ -866,7 +866,7 @@ void SV_Init(void)
 	sv_master[4]      = Cvar_Get("sv_master5", "", CVAR_ARCHIVE);
 	sv_reconnectlimit = Cvar_Get("sv_reconnectlimit", "3", 0);
 	sv_tempbanmessage = Cvar_Get("sv_tempbanmessage", "You have been kicked and are temporarily banned from joining this server.", 0);
-	sv_showloss       = Cvar_Get("sv_showloss", "0", 0);
+
 	sv_padPackets     = Cvar_Get("sv_padPackets", "0", 0);
 	sv_killserver     = Cvar_Get("sv_killserver", "0", 0);
 	sv_mapChecksum    = Cvar_Get("sv_mapChecksum", "", CVAR_ROM);
