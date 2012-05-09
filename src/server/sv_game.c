@@ -593,7 +593,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return 0;
 
 	case BOTLIB_EA_COMMAND:
-		botlib_export->ea.EA_Command(args[1], VMA(2));
+		SV_ExecuteClientCommand(&svs.clients[args[1]], VMA(2), qtrue, qfalse);
 		return 0;
 
 	case TRAP_MEMSET:
