@@ -1362,10 +1362,6 @@ void CG_InitConsoleCommands(void)
 	trap_AddCommand("ignore");
 	trap_AddCommand("unignore");
 
-//	trap_AddCommand ("addbot");
-//	trap_AddCommand("loadgame");
-//	trap_AddCommand("savegame");
-
 	trap_AddCommand("campaign");
 	trap_AddCommand("listcampaigns");
 

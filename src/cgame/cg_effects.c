@@ -372,14 +372,6 @@ void CG_Bleed(vec3_t origin, int entityNum)
 		return;
 	}
 
-#ifdef SAVEGAME_SUPPORT
-	if (cg_reloading.integer)
-	{
-		// to dangerous, since we call playerangles() in here, which calls the animation system, which might not be setup yet
-		return;
-	}
-#endif // SAVEGAME_SUPPORT
-
 	cent = &cg_entities[entityNum];
 
 	// Ridah, blood spurts
