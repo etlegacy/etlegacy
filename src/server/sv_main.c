@@ -497,6 +497,10 @@ static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int peri
 	{
 		switch (bucket->type)
 		{
+		case NA_BAD:
+			Com_DPrintf("^1SVC_BucketForAddress: Bad bucket!\n");
+			return 0;
+
 		case NA_IP:
 			if (memcmp(bucket->ipv._4, address.ip, 4) == 0)
 			{
