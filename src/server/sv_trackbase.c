@@ -58,6 +58,8 @@ netadr_t local;
 
 char infostring[MAX_INFO_STRING];
 
+char *TB_getGUID(client_t *cl);
+
 void TB_Send(char *format, ...)
 {
 	va_list argptr;
@@ -96,7 +98,7 @@ void TB_ServerStop()
 
 void TB_ClientConnect(client_t *cl)
 {
-	TB_Send("connect %i %s %s", (int)(cl - svs.clients), Info_ValueForKey(cl->userinfo, "cl_guid"), cl->name);
+	TB_Send("connect %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), cl->name);
 }
 
 void TB_ClientDisconnect(client_t *cl)
@@ -111,7 +113,7 @@ void TB_ClientName(client_t *cl)
 		return;
 	}
 
-	TB_Send("name %i %s %s", (int)(cl - svs.clients), Info_ValueForKey(cl->userinfo, "cl_guid"), Info_ValueForKey(cl->userinfo, "name"));
+	TB_Send("name %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), Info_ValueForKey(cl->userinfo, "name"));
 }
 
 void TB_ClientTeam(client_t *cl)
@@ -266,6 +268,22 @@ void TB_catchBotConnect(int clientNum)
 {
 	catchBot    = TB_BOT_CONNECT;
 	catchBotNum = clientNum;
+}
+
+char *TB_getGUID(client_t *cl)
+{
+	if (*Info_ValueForKey(cl->userinfo, "cl_guid"))
+	{
+		return Info_ValueForKey(cl->userinfo, "cl_guid");
+	}
+	else if (*Info_ValueForKey(cl->userinfo, "n_guid"))
+	{
+		return Info_ValueForKey(cl->userinfo, "n_guid");
+	}
+	else
+	{
+		return "unknown";
+	}
 }
 
 #endif // TRACKBASE_SUPPORT
