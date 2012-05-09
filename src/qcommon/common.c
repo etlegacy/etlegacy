@@ -2712,11 +2712,10 @@ static void Com_Crash_f(void)
 
 void Com_SetRecommended()
 {
-	cvar_t   *r_highQualityVideo, *com_recommended;
+	cvar_t   *r_highQualityVideo;
 	qboolean goodVideo;
 	// will use this for recommended settings as well.. do i outside the lower check so it gets done even with command line stuff
 	r_highQualityVideo = Cvar_Get("r_highQualityVideo", "1", CVAR_ARCHIVE);
-	com_recommended    = Cvar_Get("com_recommended", "-1", CVAR_ARCHIVE);
 	goodVideo          = (r_highQualityVideo && r_highQualityVideo->integer);
 
 	if (goodVideo)
@@ -3359,7 +3358,6 @@ void Com_Frame(void)
 
 	int        msec, minMsec;
 	static int lastTime;
-	int        key;
 
 	int timeBeforeFirstEvents;
 	int timeBeforeServer;
@@ -3382,10 +3380,6 @@ void Com_Frame(void)
 	timeBeforeEvents      = 0;
 	timeBeforeClient      = 0;
 	timeAfter             = 0;
-
-
-	// old net chan encryption key
-	key = 0x87243987;
 
 	// write config file if anything changed
 	Com_WriteConfiguration();
@@ -3564,9 +3558,6 @@ void Com_Frame(void)
 		c_patch_traces  = 0;
 		c_pointcontents = 0;
 	}
-
-	// old net chan encryption key
-	key = lastTime * 0x87243987;
 
 	com_frameNumber++;
 }

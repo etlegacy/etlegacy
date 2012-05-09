@@ -53,7 +53,9 @@ void TB_MapRestart();
 void TB_MapEnd();
 void TB_TeamSwitch(client_t *cl);
 void TB_Frame(int msec);
-qboolean TB_CatchServerCommand(int clientNum, char *msg);
+
+void TB_catchBotConnect(int clientNum);
+qboolean TB_catchServerCommand(int clientNum, char *msg);
 
 void TB_requestWeaponStats();
 

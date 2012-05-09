@@ -176,7 +176,7 @@ void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 {
 	int  op;
 	int  pc;
-	byte *code;
+	byte *code = { 0 };
 	int  instruction;
 	int  *codeBase;
 

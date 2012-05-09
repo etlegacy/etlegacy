@@ -815,7 +815,6 @@ int SV_PointContents(const vec3_t p, int passEntityNum)
 	int            i, num;
 	int            contents, c2;
 	clipHandle_t   clipHandle;
-	float          *angles;
 
 	// get base contents from world
 	contents = CM_PointContents(p, 0);
@@ -837,12 +836,6 @@ int SV_PointContents(const vec3_t p, int passEntityNum)
 		if (clipHandle == 0)
 		{
 			continue;
-		}
-
-		angles = hit->r.currentAngles;
-		if (!hit->r.bmodel)
-		{
-			angles = vec3_origin;   // boxes don't rotate
 		}
 
 		c2 = CM_TransformedPointContents(p, clipHandle, hit->r.currentOrigin, hit->r.currentAngles);

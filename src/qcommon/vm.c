@@ -36,6 +36,7 @@
  */
 
 #include "vm_local.h"
+#include "../sys/sys_local.h"
 
 vm_t *currentVM = NULL;
 vm_t *lastVM    = NULL;
@@ -350,7 +351,6 @@ intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 vm_t *VM_Restart(vm_t *vm)
 {
 	vmHeader_t *header;
-	int        length;
 	int        dataLength;
 	int        i;
 	char       filename[MAX_QPATH];
@@ -374,7 +374,7 @@ vm_t *VM_Restart(vm_t *vm)
 	Com_Printf("VM_Restart()\n");
 	Com_sprintf(filename, sizeof(filename), "vm/%s.qvm", vm->name);
 	Com_Printf("Loading vm file %s.\n", filename);
-	length = FS_ReadFile(filename, (void **)&header);
+	FS_ReadFile(filename, (void **)&header);
 	if (!header)
 	{
 		Com_Error(ERR_DROP, "VM_Restart failed.\n");
@@ -429,14 +429,12 @@ vm_t *VM_Restart(vm_t *vm)
 vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInterpret_t interpret)
 {
 	vm_t *vm;
-	int  i, remaining;
+	int  i;
 
 	if (!module || !module[0] || !systemCalls)
 	{
 		Com_Error(ERR_FATAL, "VM_Create: bad parms");
 	}
-
-	remaining = Hunk_MemoryRemaining();
 
 	// see if we already have the VM
 	for (i = 0; i < MAX_VM; i++)

@@ -34,6 +34,10 @@
 #include "server.h"
 #include "../botlib/botlib.h"
 
+#ifdef TRACKBASE_SUPPORT
+#include "sv_trackbase.h"
+#endif
+
 static bot_debugpoly_t debugpolygons[MAX_DEBUGPOLYS];
 
 extern botlib_export_t *botlib_export;

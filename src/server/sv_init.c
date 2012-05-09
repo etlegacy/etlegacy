@@ -33,6 +33,10 @@
 
 #include "server.h"
 
+#ifdef TRACKBASE_SUPPORT
+#include "sv_trackbase.h"
+#endif
+
 /*
 ===============
 SV_SetConfigstring

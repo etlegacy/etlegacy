@@ -34,6 +34,10 @@
 
 #include "server.h"
 
+#ifdef TRACKBASE_SUPPORT
+#include "sv_trackbase.h"
+#endif
+
 static void SV_CloseDownload(client_t *cl);
 
 /*
@@ -1811,7 +1815,7 @@ static void SV_ParseBinaryMessage(client_t *cl, msg_t *msg)
 		return;
 	}
 
-	SV_GameBinaryMessageReceived(cl - svs.clients, &msg->data[msg->readcount], size, cl->lastUsercmd.serverTime);
+	SV_GameBinaryMessageReceived(cl - svs.clients, (char *)&msg->data[msg->readcount], size, cl->lastUsercmd.serverTime);
 }
 
 /*

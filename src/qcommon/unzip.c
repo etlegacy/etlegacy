@@ -1136,8 +1136,7 @@ static int unzlocal_getShort (FILE* fin, uLong *pX)
 {
 	short	v;
 
-    size_t size;
-    size = fread( &v, sizeof(v), 1, fin );
+	fread( &v, sizeof(v), 1, fin );
 
 	*pX = LittleShort( v);
 	return UNZ_OK;
@@ -1166,8 +1165,7 @@ static int unzlocal_getLong (FILE *fin, uLong *pX)
 {
 	int		v;
 
-    size_t size;
-    size = fread( &v, sizeof(v), 1, fin );
+	fread( &v, sizeof(v), 1, fin );
 
 	*pX = LittleLong( v);
 	return UNZ_OK;
@@ -2072,12 +2070,12 @@ extern int unzReadCurrentFile  (unzFile file, void *buf, unsigned len)
 		else
 		{
 			uLong uTotalOutBefore,uTotalOutAfter;
-			const Byte *bufBefore;
+//			const Byte *bufBefore;
 			uLong uOutThis;
 			int flush=Z_SYNC_FLUSH;
 
 			uTotalOutBefore = pfile_in_zip_read_info->stream.total_out;
-			bufBefore = pfile_in_zip_read_info->stream.next_out;
+//			bufBefore = pfile_in_zip_read_info->stream.next_out;
 
 			/*
 			if ((pfile_in_zip_read_info->rest_read_uncompressed ==

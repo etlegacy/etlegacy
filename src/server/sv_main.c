@@ -33,6 +33,10 @@
 
 #include "server.h"
 
+#ifdef TRACKBASE_SUPPORT
+#include "sv_trackbase.h"
+#endif
+
 serverStatic_t svs;                 // persistant server info
 server_t       sv;                  // local server
 vm_t           *gvm = NULL;         // game virtual machine
@@ -1465,7 +1469,7 @@ void SV_Frame(int msec)
 	}
 
 #ifdef TRACKBASE_SUPPORT
-	TB_Frame();
+	TB_Frame(msec);
 #endif
 }
 

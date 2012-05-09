@@ -31,6 +31,9 @@
  * @file server.h
  */
 
+#ifndef _SERVER_H
+#define _SERVER_H
+
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 #include "../game/g_public.h"
@@ -532,3 +535,5 @@ qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
 #define DLNOTIFY_REDIRECT   0x00000001  // "Redirecting client ..."
 #define DLNOTIFY_BEGIN      0x00000002  // "clientDownload: 4 : beginning ..."
 #define DLNOTIFY_ALL        (DLNOTIFY_REDIRECT | DLNOTIFY_BEGIN)
+
+#endif // _SERVER_H

@@ -613,6 +613,7 @@ issues.
 #ifdef _WIN32
 #define Q_rmdir _rmdir
 #else
+#include <unistd.h>
 #define Q_rmdir rmdir
 #endif
 
