@@ -647,231 +647,6 @@ CONSOLE LINE EDITING
 ==============================================================================
 */
 
-static char completionString[MAX_TOKEN_CHARS];
-static char currentMatch[MAX_TOKEN_CHARS];
-static int  matchCount;
-static int  matchIndex;
-
-/*
-===============
-FindMatches
-
-===============
-*/
-static void FindMatches(const char *s)
-{
-	int i;
-
-	if (Q_stricmpn(s, completionString, strlen(completionString)))
-	{
-		return;
-	}
-	matchCount++;
-	if (matchCount == 1)
-	{
-		Q_strncpyz(currentMatch, s, sizeof(currentMatch));
-		return;
-	}
-
-	// cut currentMatch to the amount common with s
-	for (i = 0 ; s[i] ; i++)
-	{
-		if (tolower(currentMatch[i]) != tolower(s[i]))
-		{
-			currentMatch[i] = 0;
-		}
-	}
-	currentMatch[i] = 0;
-}
-
-/*
-===============
-FindIndexMatch
-
-===============
-*/
-static int findMatchIndex;
-static void FindIndexMatch(const char *s)
-{
-
-	if (Q_stricmpn(s, completionString, strlen(completionString)))
-	{
-		return;
-	}
-
-	if (findMatchIndex == matchIndex)
-	{
-		Q_strncpyz(currentMatch, s, sizeof(currentMatch));
-	}
-
-	findMatchIndex++;
-}
-
-/*
-===============
-PrintMatches
-
-===============
-*/
-static void PrintMatches(const char *s)
-{
-	if (!Q_stricmpn(s, currentMatch, strlen(currentMatch)))
-	{
-		Com_Printf("  ^9%s^0\n", s);
-	}
-}
-
-// ydnar: to display cvar values
-static void PrintCvarMatches(const char *s)
-{
-	if (!Q_stricmpn(s, currentMatch, strlen(currentMatch)))
-	{
-		Com_Printf("  ^9%s = ^5%s^0\n", s, Cvar_VariableString(s));
-	}
-}
-
-static void keyConcatArgs(void)
-{
-	int  i;
-	char *arg;
-
-	for (i = 1 ; i < Cmd_Argc() ; i++)
-	{
-		Q_strcat(g_consoleField.buffer, sizeof(g_consoleField.buffer), " ");
-		arg = Cmd_Argv(i);
-		while (*arg)
-		{
-			if (*arg == ' ')
-			{
-				Q_strcat(g_consoleField.buffer, sizeof(g_consoleField.buffer), "\"");
-				break;
-			}
-			arg++;
-		}
-		Q_strcat(g_consoleField.buffer, sizeof(g_consoleField.buffer), Cmd_Argv(i));
-		if (*arg == ' ')
-		{
-			Q_strcat(g_consoleField.buffer, sizeof(g_consoleField.buffer), "\"");
-		}
-	}
-}
-
-static void ConcatRemaining(const char *src, const char *start)
-{
-	char *str;
-
-	str = strstr(src, start);
-	if (!str)
-	{
-		keyConcatArgs();
-		return;
-	}
-
-	str += strlen(start);
-	Q_strcat(g_consoleField.buffer, sizeof(g_consoleField.buffer), str);
-}
-
-
-/*
-===============
-CompleteCommand
-
-Tab expansion
-===============
-*/
-static void CompleteCommand(void)
-{
-	field_t *edit;
-	field_t temp;
-
-	edit = &g_consoleField;
-
-	if (!con.acLength)
-	{
-		// only look at the first token for completion purposes
-		Cmd_TokenizeString(edit->buffer);
-
-		Q_strncpyz(completionString, Cmd_Argv(0), sizeof(completionString));
-		if (completionString[0] == '\\' || completionString[0] == '/')
-		{
-			// rain - in strcpy, src and dest cannot overlap
-			//Q_strncpyz( completionString, completionString+1, sizeof(completionString) );
-			memmove(completionString, completionString + 1, sizeof(completionString) - 1);
-		}
-
-		matchCount      = 0;
-		matchIndex      = 0;
-		currentMatch[0] = 0;
-
-		if (strlen(completionString) == 0)
-		{
-			return;
-		}
-
-		Cmd_CommandCompletion(FindMatches);
-		Cvar_CommandCompletion(FindMatches);
-
-		if (matchCount == 0)
-		{
-			return; // no matches
-		}
-
-		Com_Memcpy(&temp, edit, sizeof(field_t));
-
-		if (matchCount == 1)
-		{
-			Com_sprintf(edit->buffer, sizeof(edit->buffer), "\\%s", currentMatch);
-			if (Cmd_Argc() == 1)
-			{
-				Q_strcat(g_consoleField.buffer, sizeof(g_consoleField.buffer), " ");
-			}
-			else
-			{
-				ConcatRemaining(temp.buffer, completionString);
-			}
-			edit->cursor = strlen(edit->buffer);
-			return;
-		}
-
-		// multiple matches, complete to shortest
-		Com_sprintf(edit->buffer, sizeof(edit->buffer), "\\%s", currentMatch);
-		con.acLength = edit->cursor = strlen(edit->buffer);
-		ConcatRemaining(temp.buffer, completionString);
-
-		Com_Printf("]%s\n", edit->buffer);
-
-		// run through again, printing matches
-		Cmd_CommandCompletion(PrintMatches);
-		Cvar_CommandCompletion(PrintCvarMatches);
-	}
-	else
-	{
-		if (matchCount != 1)
-		{
-			// get the next match and show instead
-			char lastMatch[MAX_TOKEN_CHARS];
-
-			Q_strncpyz(lastMatch, currentMatch, sizeof(lastMatch));
-
-			matchIndex++;
-			if (matchIndex == matchCount)
-			{
-				matchIndex = 0;
-			}
-			findMatchIndex = 0;
-			Cmd_CommandCompletion(FindIndexMatch);
-			Cvar_CommandCompletion(FindIndexMatch);
-
-			Com_Memcpy(&temp, edit, sizeof(field_t));
-
-			// and print it
-			Com_sprintf(edit->buffer, sizeof(edit->buffer), "\\%s", currentMatch);
-			edit->cursor = strlen(edit->buffer);
-			ConcatRemaining(temp.buffer, lastMatch);
-		}
-	}
-}
-
 
 /*
 ====================
@@ -1789,14 +1564,14 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			Cbuf_AddText(cmd);
 		}
 
-		if (cls.keyCatchers & KEYCATCH_UI && uivm)
+		if ((cls.keyCatchers & KEYCATCH_UI) && uivm)
 		{
 			if (!onlybinds || VM_Call(uivm, UI_WANTSBINDKEYS))
 			{
 				VM_Call(uivm, UI_KEY_EVENT, key, down);
 			}
 		}
-		else if (cls.keyCatchers & KEYCATCH_CGAME && cgvm)
+		else if ((cls.keyCatchers & KEYCATCH_CGAME) && cgvm)
 		{
 			if (!onlybinds || VM_Call(cgvm, CG_WANTSBINDKEYS))
 			{
@@ -1817,7 +1592,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 				bypassMenu = qtrue;
 			}
 		}
-		else if ((cls.keyCatchers & KEYCATCH_UI && !UI_checkKeyExec(key)) || (cls.keyCatchers & KEYCATCH_CGAME && !CL_CGameCheckKeyExec(key)))
+		else if (((cls.keyCatchers & KEYCATCH_UI) && !UI_checkKeyExec(key)) || ((cls.keyCatchers & KEYCATCH_CGAME) && !CL_CGameCheckKeyExec(key)))
 		{
 			bypassMenu = qtrue;
 		}
@@ -1831,14 +1606,14 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			Console_Key(key);
 		}
 	}
-	else if (cls.keyCatchers & KEYCATCH_UI && !bypassMenu)
+	else if ((cls.keyCatchers & KEYCATCH_UI) && !bypassMenu)
 	{
 		if (!onlybinds || VM_Call(uivm, UI_WANTSBINDKEYS))
 		{
 			VM_Call(uivm, UI_KEY_EVENT, key, down);
 		}
 	}
-	else if (cls.keyCatchers & KEYCATCH_CGAME && !bypassMenu)
+	else if ((cls.keyCatchers & KEYCATCH_CGAME) && !bypassMenu)
 	{
 		if (cgvm)
 		{
