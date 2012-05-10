@@ -306,7 +306,7 @@
 #define UI_ALLMAPS_SELECTION        236
 #define UI_OPPONENT_NAME            237
 #define UI_VOTE_KICK                238
-#define UI_BOTNAME                  239
+//#define UI_BOTNAME                239
 //#define UI_BOTSKILL               240
 #define UI_REDBLUE                  241
 #define UI_CROSSHAIR                242

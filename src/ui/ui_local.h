@@ -53,7 +53,7 @@ extern vmCvar_t ui_ctf_timelimit;
 extern vmCvar_t ui_ctf_friendly;
 
 extern vmCvar_t ui_arenasFile;
-extern vmCvar_t ui_botsFile;
+
 extern vmCvar_t ui_spScores1;
 extern vmCvar_t ui_spScores2;
 extern vmCvar_t ui_spScores3;
@@ -515,8 +515,6 @@ extern void ArenaServers_Cache(void);
 extern void UI_StartServerMenu(qboolean multiplayer);
 extern void StartServer_Cache(void);
 extern void ServerOptions_Cache(void);
-extern void UI_BotSelectMenu(char *bot);
-extern void UI_BotSelectMenu_Cache(void);
 
 //
 // ui_serverinfo.c
@@ -1128,17 +1126,6 @@ void            trap_GetHunkData(int *hunkused, int *hunkexpected);
 
 
 char *trap_TranslateString(const char *string);                         // NERVE - SMF - localization
-//
-// ui_addbots.c
-//
-void UI_AddBots_Cache(void);
-void UI_AddBotsMenu(void);
-
-//
-// ui_removebots.c
-//
-void UI_RemoveBots_Cache(void);
-void UI_RemoveBotsMenu(void);
 
 //
 // ui_teamorders.c
@@ -1196,10 +1183,6 @@ const char *UI_GetSpecialArenaInfo(const char *tag);
 int UI_GetNumArenas(void);
 int UI_GetNumSPArenas(void);
 int UI_GetNumSPTiers(void);
-
-char *UI_GetBotInfoByNumber(int num);
-char *UI_GetBotInfoByName(const char *name);
-int UI_GetNumBots(void);
 
 void UI_GetBestScore(int level, int *score, int *skill);
 void UI_SetBestScore(int level, int score);

@@ -3737,12 +3737,14 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 	case UI_OPPONENT_NAME:
 		UI_DrawOpponentName(&rect, scale, color, textStyle);
 		break;
+/* Kept as reminder
 	case UI_BOTNAME:
 		UI_DrawBotName(&rect, scale, color, textStyle);
 		break;
-	/*      case UI_BOTSKILL:
+	      case UI_BOTSKILL:
 	            UI_DrawBotSkill(&rect, scale, color, textStyle);
-	            break;*/
+	            break;
+*/
 	case UI_REDBLUE:
 		UI_DrawRedBlue(&rect, scale, color, textStyle);
 		break;
@@ -4346,53 +4348,6 @@ static qboolean UI_OpponentName_HandleKey(int flags, float *special, int key)
 	return qfalse;
 }
 
-static qboolean UI_BotName_HandleKey(int flags, float *special, int key)
-{
-	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
-	{
-//      int game = trap_Cvar_VariableValue("g_gametype");
-		int value = uiInfo.botIndex;
-
-		if (key == K_MOUSE2)
-		{
-			value--;
-		}
-		else
-		{
-			value++;
-		}
-
-		if (value >= uiInfo.characterCount + 2)
-		{
-			value = 0;
-		}
-		else if (value < 0)
-		{
-			value = uiInfo.characterCount + 2 - 1;
-		}
-		uiInfo.botIndex = value;
-		return qtrue;
-	}
-	return qfalse;
-}
-
-/*static qboolean UI_BotSkill_HandleKey(int flags, float *special, int key) {
-  if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER) {
-        if (key == K_MOUSE2) {
-            uiInfo.skillIndex--;
-        } else {
-            uiInfo.skillIndex++;
-        }
-        if (uiInfo.skillIndex >= numSkillLevels) {
-            uiInfo.skillIndex = 0;
-        } else if (uiInfo.skillIndex < 0) {
-            uiInfo.skillIndex = numSkillLevels-1;
-        }
-    return qtrue;
-  }
-    return qfalse;
-}*/
-
 static qboolean UI_RedBlue_HandleKey(int flags, float *special, int key)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
@@ -4531,12 +4486,14 @@ static qboolean UI_OwnerDrawHandleKey(int ownerDraw, int flags, float *special, 
 	case UI_OPPONENT_NAME:
 		UI_OpponentName_HandleKey(flags, special, key);
 		break;
+/* Kept as reminder
 	case UI_BOTNAME:
 		return UI_BotName_HandleKey(flags, special, key);
 		break;
-	/*case UI_BOTSKILL:
+	case UI_BOTSKILL:
 	    return UI_BotSkill_HandleKey(flags, special, key);
-	    break;*/
+	    break;
+*/
 	case UI_REDBLUE:
 		UI_RedBlue_HandleKey(flags, special, key);
 		break;
@@ -9427,12 +9384,6 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 
 			trap_S_FadeAllSound(1.0f, 1000, qfalse);    // make sure sound fades up
 
-#ifdef SAVEGAME_SUPPORT
-			// ensure savegames are loadable
-			trap_Cvar_Set("g_reloading", "0");
-#endif // SAVEGAME_SUPPORT
-			return;
-
 		case UIMENU_TEAM:
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_ActivateByName("team", qtrue);
@@ -9879,7 +9830,7 @@ vmCvar_t ui_ctf_timelimit;
 vmCvar_t ui_ctf_friendly;
 
 vmCvar_t ui_arenasFile;
-vmCvar_t ui_botsFile;
+
 vmCvar_t ui_spScores1;
 vmCvar_t ui_spScores2;
 vmCvar_t ui_spScores3;
@@ -10024,7 +9975,6 @@ cvarTable_t cvarTable[] =
 	{ &ui_ctf_friendly,                 "ui_ctf_friendly",                 "0",                          CVAR_ARCHIVE                   },
 
 	{ &ui_arenasFile,                   "g_arenasFile",                    "",                           CVAR_INIT | CVAR_ROM           },
-	{ &ui_botsFile,                     "g_botsFile",                      "",                           CVAR_INIT | CVAR_ROM           },
 	{ &ui_spScores1,                    "g_spScores1",                     "",                           CVAR_ARCHIVE | CVAR_ROM        },
 	{ &ui_spScores2,                    "g_spScores2",                     "",                           CVAR_ARCHIVE | CVAR_ROM        },
 	{ &ui_spScores3,                    "g_spScores3",                     "",                           CVAR_ARCHIVE | CVAR_ROM        },
