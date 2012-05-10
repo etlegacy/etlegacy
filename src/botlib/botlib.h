@@ -69,37 +69,6 @@ typedef void (*BotPolyFunc)(int color, int numPoints, float *points);
 //botlib error codes
 #define BLERR_NOERROR                   0   //no error
 #define BLERR_LIBRARYNOTSETUP           1   //library not setup
-#define BLERR_LIBRARYALREADYSETUP       2   //BotSetupLibrary: library already setup
-#define BLERR_INVALIDCLIENTNUMBER       3   //invalid client number
-#define BLERR_INVALIDENTITYNUMBER       4   //invalid entity number
-#define BLERR_NOAASFILE                 5   //BotLoadMap: no AAS file available
-#define BLERR_CANNOTOPENAASFILE         6   //BotLoadMap: cannot open AAS file
-#define BLERR_CANNOTSEEKTOAASFILE       7   //BotLoadMap: cannot seek to AAS file
-#define BLERR_CANNOTREADAASHEADER       8   //BotLoadMap: cannot read AAS header
-#define BLERR_WRONGAASFILEID            9   //BotLoadMap: incorrect AAS file id
-#define BLERR_WRONGAASFILEVERSION       10  //BotLoadMap: incorrect AAS file version
-#define BLERR_CANNOTREADAASLUMP         11  //BotLoadMap: cannot read AAS file lump
-#define BLERR_NOBSPFILE                 12  //BotLoadMap: no BSP file available
-#define BLERR_CANNOTOPENBSPFILE         13  //BotLoadMap: cannot open BSP file
-#define BLERR_CANNOTSEEKTOBSPFILE       14  //BotLoadMap: cannot seek to BSP file
-#define BLERR_CANNOTREADBSPHEADER       15  //BotLoadMap: cannot read BSP header
-#define BLERR_WRONGBSPFILEID            16  //BotLoadMap: incorrect BSP file id
-#define BLERR_WRONGBSPFILEVERSION       17  //BotLoadMap: incorrect BSP file version
-#define BLERR_CANNOTREADBSPLUMP         18  //BotLoadMap: cannot read BSP file lump
-#define BLERR_AICLIENTNOTSETUP          19  //BotAI: client not setup
-#define BLERR_AICLIENTALREADYSETUP      20  //BotSetupClient: client already setup
-#define BLERR_AIMOVEINACTIVECLIENT      21  //BotMoveClient: cannot move inactive client
-#define BLERR_AIMOVETOACTIVECLIENT      22  //BotMoveClient: cannot move to active client
-#define BLERR_AICLIENTALREADYSHUTDOWN   23  //BotShutdownClient: client not setup
-#define BLERR_AIUPDATEINACTIVECLIENT    24  //BotUpdateClient: called for inactive client
-#define BLERR_AICMFORINACTIVECLIENT     25  //BotConsoleMessage: called for inactive client
-#define BLERR_SETTINGSINACTIVECLIENT    26  //BotClientSettings: called for inactive client
-#define BLERR_CANNOTLOADICHAT           27  //BotSetupClient: cannot load initial chats
-#define BLERR_CANNOTLOADITEMWEIGHTS     28  //BotSetupClient: cannot load item weights
-#define BLERR_CANNOTLOADITEMCONFIG      29  //BotSetupLibrary: cannot load item config
-#define BLERR_CANNOTLOADWEAPONWEIGHTS   30  //BotSetupClient: cannot load weapon weights
-#define BLERR_CANNOTLOADWEAPONCONFIG    31  //BotSetupLibrary: cannot load weapon config
-#define BLERR_INVALIDSOUNDINDEX         32  //BotAddSound: invalid sound index value
 
 //action flags
 #define ACTION_ATTACK           1
@@ -227,61 +196,14 @@ typedef struct botlib_import_s
 	qboolean (*BotVisibleFromPos)(vec3_t srcpos, int srcnum, vec3_t destpos, int destnum, qboolean updateVisPos);
 	qboolean (*BotCheckAttackAtPos)(int entnum, int enemy, vec3_t pos, qboolean ducking, qboolean allowHitWorld);
 	// done.
-	// Gordon: ability for botlib to check for singleplayer
-	// Arnout: removed again, botlibsetup already has a parameter 'singleplayer'
-	//qboolean  (*BotGameIsSinglePlayer) ( void );
-
-
 	// Gordon: direct hookup into rendering, stop using this silly debugpoly faff
 	void (*BotDrawPolygon)(int color, int numPoints, float *points);
 } botlib_import_t;
 
 
-typedef struct ea_export_s
-{
-	//ClientCommand elementary actions
-	void (*EA_Say)(int client, char *str);
-	void (*EA_SayTeam)(int client, char *str);
-	void (*EA_UseItem)(int client, char *it);
-	void (*EA_DropItem)(int client, char *it);
-	void (*EA_UseInv)(int client, char *inv);
-	void (*EA_DropInv)(int client, char *inv);
-	void (*EA_Gesture)(int client);
-	void (*EA_Command)(int client, char *command);
-	//regular elementary actions
-	void (*EA_SelectWeapon)(int client, int weapon);
-	void (*EA_Talk)(int client);
-	void (*EA_Attack)(int client);
-	void (*EA_Reload)(int client);
-	void (*EA_Use)(int client);
-	void (*EA_Respawn)(int client);
-	void (*EA_Jump)(int client);
-	void (*EA_DelayedJump)(int client);
-	void (*EA_Crouch)(int client);
-	void (*EA_Walk)(int client);
-	void (*EA_MoveUp)(int client);
-	void (*EA_MoveDown)(int client);
-	void (*EA_MoveForward)(int client);
-	void (*EA_MoveBack)(int client);
-	void (*EA_MoveLeft)(int client);
-	void (*EA_MoveRight)(int client);
-	void (*EA_Move)(int client, vec3_t dir, float speed);
-	void (*EA_View)(int client, vec3_t viewangles);
-	void (*EA_Prone)(int client);
-	//send regular input to the server
-	void (*EA_EndRegular)(int client, float thinktime);
-	void (*EA_GetInput)(int client, float thinktime, bot_input_t *input);
-	void (*EA_ResetInput)(int client, bot_input_t *init);
-} ea_export_t;
-
-
-
 //bot AI library imported functions
 typedef struct botlib_export_s
 {
-	//Elementary Action functions
-	ea_export_t ea;
-
 	//setup the bot library, returns BLERR_
 	int (*BotLibSetup)(qboolean singleplayer);
 	//shutdown the bot library, returns BLERR_
@@ -312,4 +234,3 @@ typedef struct botlib_export_s
 
 //linking of bot library
 botlib_export_t *GetBotLibAPI(int apiVersion, botlib_import_t *import);
-

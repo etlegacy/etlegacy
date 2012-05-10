@@ -32,27 +32,7 @@
  * @brief bot library interface
  */
 
-/*
-"Do not go where the path leads, rather go where there's no track and leave a trail."
-
-"AAS (Area Awareness System)"
-
-"Part of the Gladiator is BoGuS (Bot Guidance System)"
-
-"ANSI (Advanced Navigational System Interface)"
-
-"to make things work the only thing you really have to do is think things work."
-
-"a madman is just someone living in another reality which isn't shared among many people"
-*/
-
 //#define DEBUG         //debug code
-#define RANDOMIZE       //randomize bot behaviour
-#if defined(WIN32) || defined(_WIN32)
-#define AASZIP          //allow reading directly from aasX.zip files
-#endif
-#define QUAKE2          //bot for Quake2
-//#define HALFLIFE      //bot for Half-Life
 
 //==========================================================
 //

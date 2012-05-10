@@ -61,38 +61,6 @@ botlib_export_t *GetBotLibAPI(int version, botlib_import_t *imports)
 
 	botimport = *imports;
 
-	botlib_export.ea.EA_Say          = (void *)botlib_stub;
-	botlib_export.ea.EA_SayTeam      = (void *)botlib_stub;
-	botlib_export.ea.EA_UseItem      = (void *)botlib_stub;
-	botlib_export.ea.EA_DropItem     = (void *)botlib_stub;
-	botlib_export.ea.EA_UseInv       = (void *)botlib_stub;
-	botlib_export.ea.EA_DropInv      = (void *)botlib_stub;
-	botlib_export.ea.EA_Gesture      = (void *)botlib_stub;
-	botlib_export.ea.EA_Command      = (void *)botlib_stub;
-	botlib_export.ea.EA_SelectWeapon = (void *)botlib_stub;
-	botlib_export.ea.EA_Talk         = (void *)botlib_stub;
-	botlib_export.ea.EA_Attack       = (void *)botlib_stub;
-	botlib_export.ea.EA_Reload       = (void *)botlib_stub;
-	botlib_export.ea.EA_Use          = (void *)botlib_stub;
-	botlib_export.ea.EA_Respawn      = (void *)botlib_stub;
-	botlib_export.ea.EA_Jump         = (void *)botlib_stub;
-	botlib_export.ea.EA_DelayedJump  = (void *)botlib_stub;
-	botlib_export.ea.EA_Crouch       = (void *)botlib_stub;
-	botlib_export.ea.EA_Walk         = (void *)botlib_stub;
-	botlib_export.ea.EA_MoveUp       = (void *)botlib_stub;
-	botlib_export.ea.EA_MoveDown     = (void *)botlib_stub;
-	botlib_export.ea.EA_MoveForward  = (void *)botlib_stub;
-	botlib_export.ea.EA_MoveBack     = (void *)botlib_stub;
-	botlib_export.ea.EA_MoveLeft     = (void *)botlib_stub;
-	botlib_export.ea.EA_MoveRight    = (void *)botlib_stub;
-	botlib_export.ea.EA_Move         = (void *)botlib_stub;
-	botlib_export.ea.EA_View         = (void *)botlib_stub;
-	botlib_export.ea.EA_Prone        = (void *)botlib_stub;
-	botlib_export.ea.EA_EndRegular   = (void *)botlib_stub;
-	botlib_export.ea.EA_GetInput     = (void *)botlib_stub;
-	botlib_export.ea.EA_ResetInput   = (void *)botlib_stub;
-
-
 	botlib_export.BotLibSetup        = (void *)botlib_stub;
 	botlib_export.BotLibShutdown     = (void *)botlib_stub;
 	botlib_export.BotLibVarSet       = (void *)botlib_stub;

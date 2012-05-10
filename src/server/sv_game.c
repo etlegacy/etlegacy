@@ -648,6 +648,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 
 	default:
 		Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int) args[0]);
+		break;
 	}
 	return -1;
 }

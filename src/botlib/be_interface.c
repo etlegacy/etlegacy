@@ -41,7 +41,6 @@
 #include "l_struct.h"
 
 #include "../botlib/botlib.h"
-#include "be_ea.h"
 #include "be_interface.h"
 
 //library globals in a structure
@@ -120,8 +119,6 @@ qboolean BotLibSetup(char *str)
 extern define_t *globaldefines;
 int Export_BotLibSetup(qboolean singleplayer)
 {
-	int errnum;
-
 	//initialize byte swapping (litte endian etc.)
 	Log_Open("botlib.log");
 	//
@@ -129,12 +126,6 @@ int Export_BotLibSetup(qboolean singleplayer)
 	//
 	botlibglobals.maxclients  = (int) LibVarValue("maxclients", "128");
 	botlibglobals.maxentities = (int) LibVarValue("maxentities", "1024");
-
-
-	errnum = EA_Setup();            //be_ea.c
-	if ( errnum != BLERR_NOERROR ) {
-		return errnum;
-	}
 
 	globaldefines = NULL;
 
@@ -164,8 +155,6 @@ int Export_BotLibShutdown(void)
 		return BLERR_NOERROR;
 	}
 	recursive = 1;
-
-	EA_Shutdown();
 
 	// free all libvars
 	LibVarDeAllocAll();
@@ -219,46 +208,6 @@ int Export_BotLibVarGet(char *var_name, char *value, int size)
 
 /*
 ============
-Init_EA_Export
-============
-*/
-static void Init_EA_Export( ea_export_t *ea ) {
-	//ClientCommand elementary actions
-	ea->EA_Say = EA_Say;
-	ea->EA_SayTeam = EA_SayTeam;
-	ea->EA_UseItem = EA_UseItem;
-	ea->EA_DropItem = EA_DropItem;
-	ea->EA_UseInv = EA_UseInv;
-	ea->EA_DropInv = EA_DropInv;
-	ea->EA_Gesture = EA_Gesture;
-	ea->EA_Command = EA_Command;
-	ea->EA_SelectWeapon = EA_SelectWeapon;
-	ea->EA_Talk = EA_Talk;
-	ea->EA_Attack = EA_Attack;
-	ea->EA_Reload = EA_Reload;
-	ea->EA_Use = EA_Use;
-	ea->EA_Respawn = EA_Respawn;
-	ea->EA_Jump = EA_Jump;
-	ea->EA_DelayedJump = EA_DelayedJump;
-	ea->EA_Crouch = EA_Crouch;
-	ea->EA_Walk = EA_Walk;
-	ea->EA_MoveUp = EA_MoveUp;
-	ea->EA_MoveDown = EA_MoveDown;
-	ea->EA_MoveForward = EA_MoveForward;
-	ea->EA_MoveBack = EA_MoveBack;
-	ea->EA_MoveLeft = EA_MoveLeft;
-	ea->EA_MoveRight = EA_MoveRight;
-	ea->EA_Move = EA_Move;
-	ea->EA_View = EA_View;
-	ea->EA_GetInput = EA_GetInput;
-	ea->EA_EndRegular = EA_EndRegular;
-	ea->EA_ResetInput = EA_ResetInput;
-	ea->EA_Prone = EA_Prone;
-}
-
-
-/*
-============
 GetBotLibAPI
 ============
 */
@@ -274,12 +223,11 @@ botlib_export_t *GetBotLibAPI(int apiVersion, botlib_import_t *import)
 		return NULL;
 	}
 
-	Init_EA_Export( &be_botlib_export.ea );
-
 	be_botlib_export.BotLibSetup               = Export_BotLibSetup;
 	be_botlib_export.BotLibShutdown            = Export_BotLibShutdown;
 	be_botlib_export.BotLibVarSet              = Export_BotLibVarSet;
 	be_botlib_export.BotLibVarGet              = Export_BotLibVarGet;
+
 	be_botlib_export.PC_AddGlobalDefine        = PC_AddGlobalDefine;
 	be_botlib_export.PC_RemoveAllGlobalDefines = PC_RemoveAllGlobalDefines;
 	be_botlib_export.PC_LoadSourceHandle       = PC_LoadSourceHandle;
