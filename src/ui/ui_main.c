@@ -58,27 +58,6 @@ static const serverFilter_t serverFilters[] =
 	{ "All", "" }
 };
 
-// For server browser
-/*static const char *ETGameTypes[] = {
-    "Single Player",
-    "Cooperative",
-    "Objective",
-    "Stopwatch",
-    "Campaign",
-    "Last Man Standing"
-};
-
-static const char *shortETGameTypes[] = {
-    "SP",
-    "Coop",
-    "Obj",
-    "SW",
-    "Cmpgn",
-    "LMS"
-};
-
-static int const numETGameTypes = sizeof(ETGameTypes) / sizeof(const char*);*/
-
 static const int numServerFilters = sizeof(serverFilters) / sizeof(serverFilter_t);
 
 static char *netnames[] =
@@ -156,61 +135,8 @@ static playerType_t playerTypes[] =
 
 int numPlayerTypes = sizeof(playerTypes) / sizeof(playerTypes[0]);
 
-/*typedef struct {
-    int         weapindex;
-
-    const char  *desc;
-//  int         flags;
-    const char  *cvar;
-    int         value;
-    const char  *shadername;
-
-    const char  *torso_anim;
-    const char  *legs_anim;
-
-//  const char  *large_shader;
-} weaponType_t;*/
-
 #define ENG_WEAPMASK_1 (0 | 1 | 2)
 #define ENG_WEAPMASK_2 (4 | 8)
-
-// NERVE - SMF - this is the weapon info list [what can and can't be used by character classes]
-//   - This list is seperate from the actual text names in the listboxes for localization purposes.
-//   - The list boxes look up this list by the cvar value.
-// Gordon: stripped out some useless stuff, and moved some other stuff to generic class stuff
-/*static weaponType_t weaponTypes[] = {
-    { 0,                    "NULL",                     "none",         -1, "none",                                 "",                     ""                      },
-
-    { WP_COLT,              "1911 pistol",              "mp_weapon",    -1, "ui/assets/weapon_colt1911.tga",        "firing_pistolB_1",     "stand_pistolB"         },
-    { WP_LUGER,             "Luger pistol",             "mp_weapon",    -1, "ui/assets/weapon_luger.tga",           "firing_pistolB_1",     "stand_pistolB"         },
-
-    { WP_MP40,              "MP 40",                    "mp_weapon",    0,  "ui/assets/weapon_mp40.tga",            "relaxed_idle_2h_1",    "relaxed_idle_2h_1"     },
-    { WP_THOMPSON,          "Thompson",                 "mp_weapon",    1,  "ui/assets/weapon_thompson.tga",        "relaxed_idle_2h_1",    "relaxed_idle_2h_1"     },
-    { WP_STEN,              "Sten",                     "mp_weapon",    2,  "ui/assets/weapon_sten.tga",            "relaxed_idle_2h_1",    "relaxed_idle_2h_1"     },
-
-    { WP_PANZERFAUST,       "Panzerfaust",              "mp_weapon",    4,  "ui/assets/weapon_panzerfaust.tga",     "stand_panzer",         "stand_panzer"          },
-    { WP_FLAMETHROWER,      "Flamethrower",             "mp_weapon",    6,  "ui/assets/weapon_flamethrower.tga",    "stand_machinegun",     "stand_machinegun"      },
-
-    { WP_GRENADE_PINEAPPLE, "Pineapple grenade",        "mp_weapon_2",  8,  "ui/assets/weapon_grenade.tga",         "firing_pistolB_1",     "stand_pistolB"         },
-    { WP_GRENADE_LAUNCHER,  "Stick grenade",            "mp_weapon_2",  8,  "ui/assets/weapon_grenade_ger.tga",     "firing_pistolB_1",     "stand_pistolB"         },
-
-    { WP_DYNAMITE,          "Explosives",               "mp_item2",     -1, "ui/assets/weapon_dynamite.tga",        "firing_pistolB_1",     "stand_pistolB"         },
-
-    { WP_KAR98,             "Kar98",                    "mp_weapon",    2,  "ui/assets/weapon_kar98.tga",           "stand_rifle",          "stand_rifle"           },
-    { WP_CARBINE,           "M1 Garand",                "mp_weapon",    2,  "ui/assets/weapon_carbine.tga",         "stand_rifle",          "stand_rifle"           },
-
-    { WP_FG42,              "FG42",                     "mp_weapon",    7,  "ui/assets/weapon_fg42.tga",            "stand_rifle",          "stand_rifle"           },
-    { WP_GARAND,            "M1 Garand",                "mp_weapon",    8,  "ui/assets/weapon_carbine.tga",         "stand_rifle",          "stand_rifle"           },
-    { WP_MOBILE_MG42,       "Mobile MG42",              "mp_weapon",    9,  "ui/assets/weapon_mg42.tga",            "stand_rifle",          "stand_rifle"           },
-
-    { WP_LANDMINE,          "Land Mines",               "mp_weapon_2",  4,  "ui/assets/weapon_landmine.tga",        "firing_pistolB_1",     "stand_pistolB"         },
-
-    { WP_K43,               "K43",                      "mp_weapon",    8,  "ui/assets/weapon_kar98.tga",           "stand_rifle",          "stand_rifle"           },
-//  { WP_SATCHEL,           "Satchel Charges",          "mp_weapon",    10, "ui/assets/weapon_satchel.tga",         "firing_pistolB_1",     "stand_pistolB"         },
-    { WP_TRIPMINE,          "Trip Mines",               "mp_weapon",    9,  "ui/assets/weapon_tripmine.tga",        "firing_pistolB_1",     "stand_pistolB"         },
-
-    { 0,                    NULL,                       NULL,           -1,                                         NULL,                   NULL                    },
-};*/
 
 typedef struct
 {
@@ -1607,7 +1533,6 @@ void UI_Load()
 }
 
 static const char *handicapValues[] = { "None", "95", "90", "85", "80", "75", "70", "65", "60", "55", "50", "45", "40", "35", "30", "25", "20", "15", "10", "5", NULL };
-//static int numHandicaps = sizeof(handicapValues) / sizeof(const char*); // TTimo: unused
 
 static void UI_DrawHandicap(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
@@ -1624,10 +1549,6 @@ static void UI_DrawClanName(rectDef_t *rect, float scale, vec4_t color, int text
 	Text_Paint(rect->x, rect->y, scale, color, UI_Cvar_VariableString("ui_teamName"), 0, 0, textStyle);
 }
 
-
-static void UI_SetCapFragLimits(qboolean uiVars)
-{
-}
 
 // ui_gameType assumes gametype 0 is -1 ALL and will not show
 static void UI_DrawGameType(rectDef_t *rect, float scale, vec4_t color, int textStyle)
@@ -3278,16 +3199,6 @@ static int UI_OwnerDrawWidth(int ownerDraw, float scale)
 	return 0;
 }
 
-static void UI_DrawBotName(rectDef_t *rect, float scale, vec4_t color, int textStyle)
-{
-}
-
-/*static void UI_DrawBotSkill(rectDef_t *rect, float scale, vec4_t color, int textStyle) {
-    if (uiInfo.skillIndex >= 0 && uiInfo.skillIndex < numSkillLevels) {
-      Text_Paint(rect->x, rect->y, scale, color, skillLevels[uiInfo.skillIndex], 0, 0, textStyle);
-    }
-}*/
-
 static void UI_DrawRedBlue(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
 	Text_Paint(rect->x, rect->y, scale, color, (uiInfo.redBlue == 0) ? "Red" : "Blue", 0, 0, textStyle);
@@ -4129,7 +4040,7 @@ static qboolean UI_GameType_HandleKey(int flags, float *special, int key, qboole
 		trap_Cvar_Set("ui_Q3Model", "0");
 
 		trap_Cvar_Set("ui_gameType", va("%d", ui_gameType.integer));
-		UI_SetCapFragLimits(qtrue);
+
 		UI_LoadBestScores(uiInfo.mapList[ui_currentMap.integer].mapLoadName, uiInfo.gameTypes[ui_gameType.integer].gtEnum);
 		if (resetMap && oldCount != UI_MapCountByGameType(qtrue))
 		{
@@ -4384,8 +4295,6 @@ static qboolean UI_Crosshair_HandleKey(int flags, float *special, int key)
 	}
 	return qfalse;
 }
-
-
 
 static qboolean UI_SelectedPlayer_HandleKey(int flags, float *special, int key)
 {
@@ -5179,7 +5088,6 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "updateSPMenu") == 0)
 		{
-			UI_SetCapFragLimits(qtrue);
 			UI_MapCountByGameType(qtrue);
 			ui_mapIndex.integer = UI_GetIndexFromSelection(ui_currentMap.integer);
 			trap_Cvar_Set("ui_mapIndex", va("%d", ui_mapIndex.integer));
