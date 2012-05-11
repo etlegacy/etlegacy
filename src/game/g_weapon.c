@@ -634,7 +634,7 @@ void Weapon_Syringe(gentity_t *ent)
 				}
 				if (ent && ent->client)
 				{
-					G_LogPrintf("Medic_Revive: %d %d\n", ent - g_entities, traceEnt - g_entities);                  // OSP
+					G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));                  // OSP
 
 				}
 				if (!traceEnt->isProp)     // Gordon: flag for if they were teamkilled or not
@@ -1790,7 +1790,7 @@ void Weapon_Engineer(gentity_t *ent)
 				traceEnt->health = MG42_MULTIPLAYER_HEALTH;
 			}
 
-			G_LogPrintf("Repair: %d\n", ent - g_entities);      // OSP
+			G_LogPrintf("Repair: %d\n", (int)(ent - g_entities));      // OSP
 
 			if (traceEnt->sound3to2 != ent->client->sess.sessionTeam)
 			{
@@ -2300,7 +2300,7 @@ evilbanigoto:
 								AddScore(traceEnt->parent, WOLF_DYNAMITE_PLANT);       // give drop score to guy who dropped it
 								if (traceEnt->parent && traceEnt->parent->client)
 								{
-									G_LogPrintf("Dynamite_Plant: %d\n", traceEnt->parent - g_entities);         // OSP
+									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));         // OSP
 								}
 								traceEnt->parent = ent;     // give explode score to guy who armed it
 							}
@@ -2379,7 +2379,7 @@ evilbanigoto:
 								AddScore(traceEnt->parent, WOLF_DYNAMITE_PLANT);       // give drop score to guy who dropped it
 								if (traceEnt->parent && traceEnt->parent->client)
 								{
-									G_LogPrintf("Dynamite_Plant: %d\n", traceEnt->parent - g_entities);         // OSP
+									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));         // OSP
 								}
 								traceEnt->parent = ent;     // give explode score to guy who armed it
 							}
@@ -2575,7 +2575,7 @@ evilbanigoto:
 									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
 									if (ent && ent->client)
 									{
-										G_LogPrintf("Dynamite_Diffuse: %d\n", ent - g_entities);                        // OSP
+										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));                        // OSP
 									}
 									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
 									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
@@ -2599,7 +2599,7 @@ evilbanigoto:
 									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
 									if (ent && ent->client)
 									{
-										G_LogPrintf("Dynamite_Diffuse: %d\n", ent - g_entities);                        // OSP
+										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));                        // OSP
 									}
 									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
 									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");

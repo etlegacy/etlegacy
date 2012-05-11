@@ -99,7 +99,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       restart ? client->sess.spawnObjectiveIndex : 0
 	       );
 
-	trap_Cvar_Set(va("session%i", client - level.clients), s);
+	trap_Cvar_Set(va("session%i", (int)(client - level.clients)), s);
 
 	// Arnout: store the clients stats (7) and medals (7)
 	// addition: but only if it isn't a forced map_restart (done by someone on the console)
@@ -122,13 +122,13 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 		       client->sess.medals[6]
 		       );
 
-		trap_Cvar_Set(va("sessionstats%i", client - level.clients), s);
+		trap_Cvar_Set(va("sessionstats%i", (int)(client - level.clients)), s);
 	}
 
 	// OSP -- save weapon stats too
 	if (!level.fResetStats)
 	{
-		trap_Cvar_Set(va("wstats%i", client - level.clients), G_createStats(&g_entities[client - level.clients]));
+		trap_Cvar_Set(va("wstats%i", (int)(client - level.clients)), G_createStats(&g_entities[client - level.clients]));
 	}
 	// OSP
 }
@@ -231,7 +231,7 @@ void G_ReadSessionData(gclient_t *client)
 	char     s[MAX_STRING_CHARS];
 	qboolean test;
 
-	trap_Cvar_VariableStringBuffer(va("session%i", client - level.clients), s, sizeof(s));
+	trap_Cvar_VariableStringBuffer(va("session%i", (int)(client - level.clients)), s, sizeof(s));
 
 	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 	       (int *)&client->sess.sessionTeam,
@@ -275,7 +275,7 @@ void G_ReadSessionData(gclient_t *client)
 
 	// OSP -- pull and parse weapon stats
 	*s = 0;
-	trap_Cvar_VariableStringBuffer(va("wstats%i", client - level.clients), s, sizeof(s));
+	trap_Cvar_VariableStringBuffer(va("wstats%i", (int)(client - level.clients)), s, sizeof(s));
 	if (*s)
 	{
 		G_parseStats(s);
@@ -295,7 +295,7 @@ void G_ReadSessionData(gclient_t *client)
 	    !(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer == 0))
 	{
 
-		trap_Cvar_VariableStringBuffer(va("sessionstats%i", client - level.clients), s, sizeof(s));
+		trap_Cvar_VariableStringBuffer(va("sessionstats%i", (int)(client - level.clients)), s, sizeof(s));
 
 		// Arnout: read the clients stats (7) and medals (7)
 		sscanf(s, "%f %f %f %f %f %f %f %i %i %i %i %i %i %i",

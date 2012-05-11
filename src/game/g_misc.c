@@ -2724,7 +2724,7 @@ void SP_misc_constructiblemarker(gentity_t *ent)
 		char cs[MAX_INFO_STRING];
 
 		trap_GetConfigstring(CS_CONSTRUCTION_NAMES, cs, sizeof(cs));
-		Info_SetValueForKey(cs, va("%i", ent - g_entities), s);
+		Info_SetValueForKey(cs, va("%i", (int)(ent - g_entities)), s);
 		trap_SetConfigstring(CS_CONSTRUCTION_NAMES, cs);
 	}
 
