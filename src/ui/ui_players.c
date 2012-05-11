@@ -1552,7 +1552,6 @@ static qboolean UI_ParseAnimationFile(const char *filename, playerInfo_t *pi)
 UI_RegisterClientModelname
 ==========================
 */
-int WM_getWeaponIndex(void);
 
 qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName)
 {
