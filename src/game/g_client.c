@@ -1345,7 +1345,7 @@ int G_CountTeamMedics(team_t team, qboolean alivecheck)
 				continue;
 			}
 
-			if (level.clients[j].ps.pm_type == PM_DEAD || level.clients[j].ps.pm_flags & PMF_LIMBO)
+			if (level.clients[j].ps.pm_type == PM_DEAD || (level.clients[j].ps.pm_flags & PMF_LIMBO))
 			{
 				continue;
 			}

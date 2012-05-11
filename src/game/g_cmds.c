@@ -3308,7 +3308,7 @@ void Cmd_Activate_f(gentity_t *ent)
 		}
 		return;
 	}
-	else if (ent->client->ps.eFlags & EF_MOUNTEDTANK && ent->s.eFlags & EF_MOUNTEDTANK && !level.disableTankExit)
+	else if ((ent->client->ps.eFlags & EF_MOUNTEDTANK) && (ent->s.eFlags & EF_MOUNTEDTANK) && !level.disableTankExit)
 	{
 		G_LeaveTank(ent, qtrue);
 		return;
@@ -3330,7 +3330,7 @@ void Cmd_Activate_f(gentity_t *ent)
 
 	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_BODY | CONTENTS_CORPSE));
 
-	if (tr.surfaceFlags & SURF_NOIMPACT || tr.entityNum == ENTITYNUM_WORLD)
+	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
 	{
 		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE | CONTENTS_MISSILECLIP | CONTENTS_TRIGGER));
 		pass2 = qtrue;
@@ -3338,7 +3338,7 @@ void Cmd_Activate_f(gentity_t *ent)
 
 tryagain:
 
-	if (tr.surfaceFlags & SURF_NOIMPACT || tr.entityNum == ENTITYNUM_WORLD)
+	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
 	{
 		return;
 	}
@@ -3377,7 +3377,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 
 	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE));
 
-	if (tr.surfaceFlags & SURF_NOIMPACT || tr.entityNum == ENTITYNUM_WORLD)
+	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
 	{
 		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE | CONTENTS_TRIGGER));
 		pass2 = qtrue;
@@ -3385,7 +3385,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 
 tryagain:
 
-	if (tr.surfaceFlags & SURF_NOIMPACT || tr.entityNum == ENTITYNUM_WORLD)
+	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
 	{
 		return;
 	}

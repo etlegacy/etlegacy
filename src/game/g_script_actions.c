@@ -1402,7 +1402,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 			// setup the movement with the new parameters
 			InitMover(ent);
 
-			if (ent->s.eType == ET_MOVER && ent->spawnflags & 8)
+			if (ent->s.eType == ET_MOVER && (ent->spawnflags & 8))
 			{
 				ent->use = script_mover_use;
 			}

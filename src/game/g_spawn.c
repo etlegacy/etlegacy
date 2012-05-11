@@ -219,10 +219,6 @@ void SP_info_player_start(gentity_t *ent);
 void SP_info_player_checkpoint(gentity_t *ent);
 void SP_info_player_deathmatch(gentity_t *ent);
 void SP_info_player_intermission(gentity_t *ent);
-void SP_info_firstplace(gentity_t *ent);
-void SP_info_secondplace(gentity_t *ent);
-void SP_info_thirdplace(gentity_t *ent);
-void SP_info_podium(gentity_t *ent);
 
 void SP_func_plat(gentity_t *ent);
 void SP_func_static(gentity_t *ent);
@@ -272,7 +268,7 @@ void SP_target_delay(gentity_t *ent);
 void SP_target_speaker(gentity_t *ent);
 void SP_target_print(gentity_t *ent);
 void SP_target_laser(gentity_t *self);
-void SP_target_character(gentity_t *ent);
+
 void SP_target_score(gentity_t *ent);
 void SP_target_teleporter(gentity_t *ent);
 void SP_target_relay(gentity_t *ent);
@@ -421,7 +417,7 @@ void SP_script_multiplayer(gentity_t *ent);           // DHM - Nerve
 
 void SP_props_footlocker(gentity_t *self);
 void SP_misc_firetrails(gentity_t *ent);
-void SP_trigger_deathCheck(gentity_t *ent);
+
 void SP_misc_spawner(gentity_t *ent);
 void SP_props_decor_Scale(gentity_t *ent);
 

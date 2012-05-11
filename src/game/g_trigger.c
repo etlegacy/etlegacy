@@ -1156,7 +1156,7 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 
 
-	if (ent->spawnflags & RED_FLAG && other->client->ps.powerups[PW_REDFLAG])
+	if ((ent->spawnflags & RED_FLAG) && other->client->ps.powerups[PW_REDFLAG])
 	{
 
 		if (ent->spawnflags & 4)
@@ -1182,7 +1182,7 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 		ent->nextthink = level.time + FRAMETIME;
 		ent->think     = G_FreeEntity;
 	}
-	else if (ent->spawnflags & BLUE_FLAG && other->client->ps.powerups[PW_BLUEFLAG])
+	else if ((ent->spawnflags & BLUE_FLAG) && other->client->ps.powerups[PW_BLUEFLAG])
 	{
 
 		if (ent->spawnflags & 4)
@@ -1223,7 +1223,7 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-	if (ent->spawnflags & RED_FLAG && other->client->ps.powerups[PW_REDFLAG])
+	if ((ent->spawnflags & RED_FLAG) && other->client->ps.powerups[PW_REDFLAG])
 	{
 
 		other->client->ps.powerups[PW_REDFLAG] = 0;
@@ -1241,7 +1241,7 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 		ent->parent = tmp;
 	}
-	else if (ent->spawnflags & BLUE_FLAG && other->client->ps.powerups[PW_BLUEFLAG])
+	else if ((ent->spawnflags & BLUE_FLAG) && other->client->ps.powerups[PW_BLUEFLAG])
 	{
 
 		other->client->ps.powerups[PW_BLUEFLAG] = 0;

@@ -1594,7 +1594,7 @@ void G_ParseCampaigns(void)
 
 			trap_Argv(0, buf, sizeof(buf));
 
-			if (!buf)     // command not found, throw error
+			if (!(*buf))     // command not found, throw error
 			{
 				G_Error("Usage 'map <mapname>\n'");
 			}

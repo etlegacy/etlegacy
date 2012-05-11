@@ -2411,7 +2411,7 @@ void CalculateRanks(void)
 					{
 						if (g_gametype.integer == GT_WOLF_LMS)
 						{
-							if (g_entities[i].health <= 0 || level.clients[i].ps.pm_flags & PMF_LIMBO)
+							if (g_entities[i].health <= 0 || (level.clients[i].ps.pm_flags & PMF_LIMBO))
 							{
 								level.numFinalDead[teamIndex]++;
 							}
@@ -3225,8 +3225,6 @@ qboolean ScoreIsTied(void)
 	return a == -1;
 }
 
-qboolean G_ScriptAction_SetWinner(gentity_t *ent, char *params);
-
 /*
 =================
 CheckExitRules
@@ -3783,7 +3781,7 @@ qboolean G_PositionEntityOnTag(gentity_t *entity, gentity_t *parent, char *tagNa
 		VectorMA(entity->r.currentOrigin, tag.origin[i], axis[i], entity->r.currentOrigin);
 	}
 
-	if (entity->client && entity->s.eFlags & EF_MOUNTEDTANK)
+	if (entity->client && (entity->s.eFlags & EF_MOUNTEDTANK))
 	{
 		// zinx - moved tank hack to here
 		// bani - fix tank bb

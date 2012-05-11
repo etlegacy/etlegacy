@@ -112,9 +112,6 @@ KNIFE/GAUNTLET (NOTE: gauntlet is now the Zombie melee)
 
 #define KNIFE_DIST 48
 
-// Let's use the same angle between function we've used before
-extern float sAngleBetweenVectors(vec3_t a, vec3_t b);
-
 /*
 ==============
 Weapon_Knife
@@ -677,7 +674,6 @@ void Weapon_AdrenalineSyringe(gentity_t *ent)
 }
 
 void G_ExplodeMissile(gentity_t *ent);
-void DynaSink(gentity_t *self);
 
 // Arnout: crude version of G_RadiusDamage to see if the dynamite can damage a func_constructible
 int EntsThatRadiusCanDamage(vec3_t origin, float radius, int *damagedList)
@@ -2137,7 +2133,7 @@ evilbanigoto:
 						}
 
 						// invulnerable
-						if (hit->spawnflags & CONSTRUCTIBLE_INVULNERABLE || (hit->parent && hit->parent->spawnflags & 8))
+						if ((hit->spawnflags & CONSTRUCTIBLE_INVULNERABLE) || (hit->parent && (hit->parent->spawnflags & 8)))
 						{
 							continue;
 						}
@@ -2810,9 +2806,6 @@ qboolean weapon_checkAirStrike(gentity_t *ent)
 
 	return qtrue;
 }
-
-void G_RailTrail(vec_t *start, vec_t *end);
-
 
 void weapon_callAirStrike(gentity_t *ent)
 {
@@ -3567,7 +3560,7 @@ void RubbleFlagCheck(gentity_t *ent, trace_t tr)
 
 
 
-	if (tr.surfaceFlags & SURF_RUBBLE || tr.surfaceFlags & SURF_GRAVEL)
+	if ((tr.surfaceFlags & SURF_RUBBLE) || (tr.surfaceFlags & SURF_GRAVEL))
 	{
 		is_valid = qtrue;
 		type     = 4;
@@ -3926,7 +3919,6 @@ GRENADE LAUNCHER
 
 ======================================================================
 */
-extern void G_ExplodeMissilePoisonGas(gentity_t *ent);
 
 gentity_t *weapon_gpg40_fire(gentity_t *ent, int grenType)
 {
@@ -3994,7 +3986,7 @@ gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
 	VectorMA(launchPos, 32, forward, testPos);
 
 	// Gordon: hack so i can do inverse trajectory calcs easily :p
-	if (G_IsSinglePlayerGame() && ent->r.svFlags & SVF_BOT)
+	if (G_IsSinglePlayerGame() && (ent->r.svFlags & SVF_BOT))
 	{
 		/*      forward[0] *= 3000;
 		        forward[1] *= 3000;
@@ -4733,7 +4725,7 @@ void FireWeapon(gentity_t *ent)
 		break;
 
 	case WP_MOBILE_MG42:
-		if (ent->client->ps.pm_flags & PMF_DUCKED || ent->client->ps.eFlags & EF_PRONE)
+		if ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE))
 		{
 			Bullet_Fire(ent, MOBILE_MG42_SPREAD * 0.6f * aimSpreadScale, MOBILE_MG42_DAMAGE, qfalse);
 		}

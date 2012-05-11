@@ -993,8 +993,6 @@ void SP_shooter_grenade(gentity_t *ent)
 	InitShooter(ent, WP_GRENADE_LAUNCHER);
 }
 
-extern void InitTrigger(gentity_t *self);
-
 /*QUAKED corona (0 1 0) (-4 -4 -4) (4 4 4) START_OFF
 Use color picker to set color or key "color".  values are 0.0-1.0 for each color (rgb).
 "scale" will designate a multiplier to the default size.  (so 2.0 is 2xdefault size, 0.5 is half)

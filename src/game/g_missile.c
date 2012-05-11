@@ -35,11 +35,6 @@
 
 #define MISSILE_PRESTEP_TIME    50
 
-
-extern void gas_think(gentity_t *gas);
-extern void gas_touch(gentity_t *gas, gentity_t *other, trace_t *trace);
-extern void SP_target_smoke(gentity_t *ent);
-
 void M_think(gentity_t *ent);
 void G_ExplodeMissile(gentity_t *ent);
 
@@ -874,7 +869,7 @@ void G_RunMissile(gentity_t *ent)
 		     ent->s.weapon == WP_M7 ||
 		     ent->s.weapon == WP_GRENADE_LAUNCHER ||
 		     ent->s.weapon == WP_GRENADE_PINEAPPLE)
-		    && tr.surfaceFlags & SURF_SKY)
+		    && (tr.surfaceFlags & SURF_SKY))
 		{
 			// goes through sky
 			ent->count = 1;
@@ -1978,7 +1973,7 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 	}
 
 	//bani - fix for covops spotting
-	if (clEnt->client->sess.playerType == PC_COVERTOPS && clEnt->client->ps.eFlags & EF_ZOOMING && (clEnt->client->ps.stats[STAT_KEYS] & (1 << INV_BINOCS)))
+	if (clEnt->client->sess.playerType == PC_COVERTOPS && (clEnt->client->ps.eFlags & EF_ZOOMING) && (clEnt->client->ps.stats[STAT_KEYS] & (1 << INV_BINOCS)))
 	{
 		return qtrue;
 	}
