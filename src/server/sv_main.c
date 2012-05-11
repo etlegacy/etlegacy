@@ -91,7 +91,7 @@ cvar_t *sv_packetdelay;
 
 cvar_t *sv_fullmsg;
 
-static void SVC_Status(netadr_t from);
+static void SVC_Status(netadr_t from, qboolean force);
 
 #define LL(x) x = LittleLong(x)
 
@@ -398,7 +398,7 @@ void SV_MasterGameCompleteStatus()
 		Com_Printf("Sending gameCompleteStatus to %s\n", sv_master[i]->string);
 		// this command should be changed if the server info / status format
 		// ever incompatably changes
-		SVC_Status(adr[i]);
+		SVC_Status(adr[i], qtrue);
 	}
 
 #ifdef TRACKBASE_SUPPORT
@@ -497,10 +497,6 @@ static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int peri
 	{
 		switch (bucket->type)
 		{
-		case NA_BAD:
-			Com_DPrintf("^1SVC_BucketForAddress: Bad bucket!\n");
-			return 0;
-
 		case NA_IP:
 			if (memcmp(bucket->ipv._4, address.ip, 4) == 0)
 			{
@@ -622,10 +618,12 @@ static qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period)
 }
 
 /*
- * @brief Send serverinfo cvars, etc to master servers when game complete.
+ * @brief Send serverinfo cvars, etc to master servers when game complete or
+ * by request of getstatus calls.
  * Useful for tracking global player stats.
+ * Param force toogles rate limit checks
  */
-static void SVC_Status(netadr_t from)
+static void SVC_Status(netadr_t from, qboolean force)
 {
 	char                 player[1024];
 	char                 status[MAX_MSGLEN];
@@ -637,22 +635,24 @@ static void SVC_Status(netadr_t from)
 	char                 infostring[MAX_INFO_STRING];
 	static leakyBucket_t bucket;
 
-	// Prevent using getstatus as an amplifier
-	if (SVC_RateLimitAddress(from, 10, 1000))
+	if (!force)
 	{
-		Com_DPrintf("SVC_Status: rate limit from %s exceeded, dropping request\n",
-		            NET_AdrToString(from));
-		return;
-	}
+		// Prevent using getstatus as an amplifier
+		if (SVC_RateLimitAddress(from, 10, 1000))
+		{
+			Com_DPrintf("SVC_Status: rate limit from %s exceeded, dropping request\n",
+						NET_AdrToString(from));
+			return;
+		}
 
-	// Allow getstatus to be DoSed relatively easily, but prevent
-	// excess outbound bandwidth usage when being flooded inbound
-	if (SVC_RateLimit(&bucket, 10, 100))
-	{
-		Com_DPrintf("SVC_Status: rate limit exceeded, dropping request\n");
-		return;
+		// Allow getstatus to be DoSed relatively easily, but prevent
+		// excess outbound bandwidth usage when being flooded inbound
+		if (SVC_RateLimit(&bucket, 10, 100))
+		{
+			Com_DPrintf("SVC_Status: rate limit exceeded, dropping request\n");
+			return;
+		}
 	}
-
 	strcpy(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
 
 	// echo back the parameter to status. so master servers can use it as a challenge
@@ -999,7 +999,7 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 
 	if (!Q_stricmp(c, "getstatus"))
 	{
-		SVC_Status(from);
+		SVC_Status(from, qfalse);
 	}
 	else if (!Q_stricmp(c, "getinfo"))
 	{
