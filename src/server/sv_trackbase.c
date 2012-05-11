@@ -218,8 +218,10 @@ void TB_Frame(int msec)
 	{
 		return;
 	}
-	expectnum = 0; // reset before next statsall
 
+	TB_Send("p"); // send ping to tb to show that server is still alive
+
+	expectnum = 0; // reset before next statsall
 	TB_requestWeaponStats();
 
 	t = time(0);
