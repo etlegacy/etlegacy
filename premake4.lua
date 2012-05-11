@@ -390,8 +390,6 @@ project "etmain_game"
 		"src/game/surfaceflags.h",
 		
 		"src/game/**.c", "src/game/**.h",
-		
-		"src/botai/**.h",
 	}
 	includedirs
 	{
