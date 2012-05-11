@@ -135,6 +135,7 @@ void SV_DirectConnect(netadr_t from)
 	int                 startIndex;
 	char                *denied;
 	int                 count;
+	int                 port ;
 
 	Com_DPrintf("SVC_DirectConnect ()\n");
 
@@ -202,7 +203,8 @@ void SV_DirectConnect(netadr_t from)
 			return;
 		}
 		// force the IP key/value pair so the game can filter based on ip
-		Info_SetValueForKey(userinfo, "ip", NET_AdrToString(from));
+		port = Cvar_Get( "net_port", va( "%i", PORT_SERVER ), CVAR_LATCH )->integer;
+		Info_SetValueForKey( userinfo, "ip", va("%s:%d", NET_AdrToString( from ) , port ) );
 
 		if (svs.challenges[i].firstPing == 0)
 		{
