@@ -325,7 +325,7 @@ void R_AddModelShadow(refEntity_t *ent)
 
 
 	/* shadows? */
-	if (!r_drawentities->integer || r_shadows->integer != 1 || ent->renderfx & RF_NOSHADOW)
+	if (!r_drawentities->integer || r_shadows->integer != 1 || (ent->renderfx & RF_NOSHADOW))
 	{
 		return;
 	}

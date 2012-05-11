@@ -1189,7 +1189,7 @@ void R_AddWorldSurfaces(void)
 	ClearBounds(tr.viewParms.visBounds[0], tr.viewParms.visBounds[1]);
 
 	// render sky or world?
-	if (tr.refdef.rdflags & RDF_SKYBOXPORTAL && tr.world->numSkyNodes > 0)
+	if ((tr.refdef.rdflags & RDF_SKYBOXPORTAL) && tr.world->numSkyNodes > 0)
 	{
 		int     i;
 		mnode_t **node;
