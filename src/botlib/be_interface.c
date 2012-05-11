@@ -72,28 +72,6 @@ int botlibsetup = qfalse;
 #define MAX_PATH    MAX_QPATH
 #endif
 
-int Sys_MilliSeconds(void)
-{
-// Ridah, faster Win32 code
-#ifdef _WIN32
-	int             sys_curtime;
-	static qboolean initialized = qfalse;
-	static int      sys_timeBase;
-
-	if (!initialized)
-	{
-		sys_timeBase = timeGetTime();
-		initialized  = qtrue;
-	}
-	sys_curtime = timeGetTime() - sys_timeBase;
-
-	return sys_curtime;
-#else
-	return clock() * 1000 / CLOCKS_PER_SEC;
-#endif
-} //end of the function Sys_MilliSeconds
-
-
 //===========================================================================
 //
 // Parameter:               -

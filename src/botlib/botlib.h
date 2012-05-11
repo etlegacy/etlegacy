@@ -34,11 +34,6 @@
 
 #define BOTLIB_API_VERSION      2
 
-struct aas_entityinfo_s;
-struct bot_consolemessage_s;
-struct bot_match_s;
-struct bot_goal_s;
-struct bot_moveresult_s;
 struct bot_initmove_s;
 struct weaponinfo_s;
 
@@ -53,11 +48,6 @@ typedef struct bot_debugpoly_s
 } bot_debugpoly_t;
 
 typedef void (*BotPolyFunc)(int color, int numPoints, float *points);
-
-// RF, these need to be here so the botlib also knows how many bot game entities there are
-#define NUM_BOTGAMEENTITIES 384
-
-#define BLOCKINGFLAG_MOVER  (~0x7fffffff)
 
 //Print types
 #define PRT_MESSAGE             1
