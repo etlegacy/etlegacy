@@ -44,10 +44,8 @@ int activeFont;
 
 #define TEAM_OVERLAY_TIME 1000
 
-////////////////////////
-////////////////////////
-////// new hud stuff
 ///////////////////////
+////// new hud stuff
 ///////////////////////
 
 void CG_Text_SetActiveFont(int font)
@@ -4239,45 +4237,6 @@ static void CG_DrawNewCompass(void)
 	}
 //  }
 
-	/*  if( !(cgs.ccFilter & CC_FILTER_DESTRUCTIONS) ) {
-	        // draw constructibles if an engineer
-	        if ( cg.predictedPlayerState.stats[ STAT_PLAYER_CLASS ] == PC_ENGINEER ) {
-	            for ( i = 0; i < snap->numEntities; i++ ) {
-	                centity_t *cent = &cg_entities[ snap->entities[ i ].number ];
-
-	                if ( cent->currentState.eType != ET_CONSTRUCTIBLE_INDICATOR ) {
-	                    continue;
-	                }
-
-	                if ( cent->currentState.teamNum != cg.predictedPlayerState.persistant[PERS_TEAM] && cent->currentState.teamNum != 3 )
-	                    continue;
-
-	                CG_DrawCompassIcon( basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.compassConstructShader );
-	            }
-	        }
-	    }*/
-
-	/*  if( !(cgs.ccFilter & CC_FILTER_WAYPOINTS) ) {
-	        // draw waypoint icons
-	        for ( i = 0; i < snap->numEntities; i++ ) {
-	            centity_t *cent = &cg_entities[ snap->entities[ i ].number ];
-
-	            if( cent->currentState.eType != ET_WAYPOINT ) {
-	                continue;
-	            }
-
-	            // see if the waypoint owner is someone that you accept waypoints from
-	            if( !CG_IsOnSameFireteam( cg.clientNum, cent->currentState.clientNum )) {  // TODO: change to fireteam
-	                    continue;
-	            }
-
-	            switch( cent->currentState.frame ) {
-	            case WAYP_ATTACK: CG_DrawCompassIcon( basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->currentState.pos.trBase, cgs.media.waypointCompassAttackShader ); break;
-	            case WAYP_DEFEND: CG_DrawCompassIcon( basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->currentState.pos.trBase, cgs.media.waypointCompassDefendShader ); break;
-	            case WAYP_REGROUP: CG_DrawCompassIcon( basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->currentState.pos.trBase, cgs.media.waypointCompassRegroupShader ); break;
-	            }
-	        }
-	    }*/
 
 //  if( !(cgs.ccFilter & CC_FILTER_BUDDIES) ) {
 	for (i = 0; i < snap->numEntities; i++)
@@ -4662,19 +4621,16 @@ static void CG_DrawPlayerStatus(void)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i|%i/%i", value3, value, value2);
 		CG_Text_Paint_Ext(640 - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-//      CG_DrawPic( 640 - 2 * ( 12 + 2 ) - 16 - 4, 480 - 1 * ( 16 + 2 ) - 4, 16, 16, cgs.media.SPPlayerInfoAmmoIcon );
 	}
 	else if (value2 >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i/%i", value, value2);
 		CG_Text_Paint_Ext(640 - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-//      CG_DrawPic( 640 - 2 * ( 12 + 2 ) - 16 - 4, 480 - 1 * ( 16 + 2 ) - 4, 16, 16, cgs.media.SPPlayerInfoAmmoIcon );
 	}
 	else if (value >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i", value);
 		CG_Text_Paint_Ext(640 - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-//      CG_DrawPic( 640 - 2 * ( 12 + 2 ) - 16 - 4, 480 - 1 * ( 16 + 2 ) - 4, 16, 16, cgs.media.SPPlayerInfoAmmoIcon );
 	}
 
 

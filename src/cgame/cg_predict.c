@@ -607,9 +607,6 @@ static void CG_TouchItem(centity_t *cent)
 	}
 }
 
-void CG_AddDirtBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale, float width, float height, float alpha, qhandle_t shader);
-
-
 /*
 =========================
 CG_TouchTriggerPrediction
@@ -968,7 +965,7 @@ void CG_PredictPlayerState(void)
 		cg.pmext.airleft = (cg.waterundertime - cg.time);
 
 		// Arnout: are we using an mg42?
-		if (cg_pmove.ps->eFlags & EF_MG42_ACTIVE || cg_pmove.ps->eFlags & EF_AAGUN_ACTIVE)
+		if ((cg_pmove.ps->eFlags & EF_MG42_ACTIVE) || (cg_pmove.ps->eFlags & EF_AAGUN_ACTIVE))
 		{
 			cg.pmext.harc = cg_entities[cg_pmove.ps->viewlocked_entNum].currentState.origin2[0];
 			cg.pmext.varc = cg_entities[cg_pmove.ps->viewlocked_entNum].currentState.origin2[1];
@@ -984,7 +981,7 @@ void CG_PredictPlayerState(void)
 		return;
 	}
 
-	if (cg_pmove.ps && cg_pmove.ps->eFlags & EF_MOUNTEDTANK)
+	if (cg_pmove.ps && (cg_pmove.ps->eFlags & EF_MOUNTEDTANK))
 	{
 		centity_t *tank = &cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent];
 
@@ -999,7 +996,7 @@ void CG_PredictPlayerState(void)
 	cg.pmext.airleft   = (cg.waterundertime - cg.time);
 
 	// Arnout: are we using an mg42?
-	if (cg_pmove.ps->eFlags & EF_MG42_ACTIVE || cg_pmove.ps->eFlags & EF_AAGUN_ACTIVE)
+	if ((cg_pmove.ps->eFlags & EF_MG42_ACTIVE) || (cg_pmove.ps->eFlags & EF_AAGUN_ACTIVE))
 	{
 		cg.pmext.harc = cg_entities[cg_pmove.ps->viewlocked_entNum].currentState.origin2[0];
 		cg.pmext.varc = cg_entities[cg_pmove.ps->viewlocked_entNum].currentState.origin2[1];

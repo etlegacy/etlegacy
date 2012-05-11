@@ -431,7 +431,7 @@ bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent)
 		return BG_GetPlayerClassInfo(cent->currentState.modelindex, cent->currentState.modelindex2);
 	}
 
-	if (cent && cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
+	if (cent && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 	{
 		team = ci->team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
 
@@ -1296,7 +1296,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	}
 
 	// adjust legs for movement dir
-	if (cent->currentState.eFlags & EF_DEAD || cent->currentState.eFlags & EF_MOUNTEDTANK)
+	if ((cent->currentState.eFlags & EF_DEAD) || (cent->currentState.eFlags & EF_MOUNTEDTANK))
 	{
 		// don't let dead bodies twitch
 		legsAngles[YAW]  = headAngles[YAW];
@@ -1576,8 +1576,8 @@ static void CG_PlayerSprites(centity_t *cent)
 {
 	int team;
 
-	if (cent->currentState.powerups & (1 << PW_REDFLAG) ||
-	    cent->currentState.powerups & (1 << PW_BLUEFLAG))
+	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) ||
+	    (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.objectiveShader, 56);
 		return;
@@ -1618,7 +1618,7 @@ static void CG_PlayerSprites(centity_t *cent)
 	}
 
 	// DHM - Nerve :: only show talk icon to team-mates
-	if (cent->currentState.eFlags & EF_TALK && cg.snap->ps.persistant[PERS_TEAM] == team)
+	if ((cent->currentState.eFlags & EF_TALK) && cg.snap->ps.persistant[PERS_TEAM] == team)
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.balloonShader, 48);
 		return;
@@ -2139,7 +2139,7 @@ void CG_Player(centity_t *cent)
 	{
 		VectorCopy(cg_entities[cg_entities[cent->currentState.clientNum].tagParent].mountedMG42Player.origin, playerOrigin);
 	}
-	else if (cent->currentState.eFlags & EF_MG42_ACTIVE || cent->currentState.eFlags & EF_AAGUN_ACTIVE)          // Arnout: see if we're attached to a gun
+	else if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))          // Arnout: see if we're attached to a gun
 	{
 		centity_t *mg42;
 		int       num;
@@ -2573,8 +2573,6 @@ void CG_Player(centity_t *cent)
 }
 
 //=====================================================================
-
-extern void CG_ClearWeapLerpFrame(clientInfo_t *ci, lerpFrame_t *lf, int animationNumber);
 
 /*
 ===============

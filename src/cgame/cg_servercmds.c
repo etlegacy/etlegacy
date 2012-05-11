@@ -39,9 +39,6 @@
 
 #define SCOREPARSE_COUNT    9
 
-void CG_LimboMenu_f(void);
-
-
 /*
 =================
 CG_ParseScores
@@ -188,7 +185,7 @@ static void CG_ParseWarmup(void)
 	else if (warmup > 0 && cg.warmup <= 0 && cgs.gamestate != GS_WARMUP)
 	{
 //      if(cg_announcer.integer > 0) trap_S_StartLocalSound( cgs.media.countPrepare, CHAN_ANNOUNCER );
-		if (!cg.demoPlayback && cg_autoAction.integer & AA_DEMORECORD)
+		if (!cg.demoPlayback && (cg_autoAction.integer & AA_DEMORECORD))
 		{
 			CG_autoRecord_f();
 		}

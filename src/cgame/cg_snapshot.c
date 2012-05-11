@@ -499,7 +499,7 @@ static snapshot_t *CG_ReadNextSnapshot(void)
 		{
 			CG_AddLagometerSnapshotInfo(dest);
 			// server has been restarted
-			if (cg.snap && (dest->snapFlags ^ cg.snap->snapFlags) & SNAPFLAG_SERVERCOUNT)
+			if (cg.snap && ((dest->snapFlags ^ cg.snap->snapFlags) & SNAPFLAG_SERVERCOUNT))
 			{
 				cg.damageTime = 0;
 				cg.duckTime   = -1;

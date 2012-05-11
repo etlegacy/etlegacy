@@ -1103,7 +1103,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 			}
 			else
 			{
-				if (!forceLowGrav && rand() & 1)        // if low gravity is not forced and die roll goes our way use regular grav
+				if (!forceLowGrav && (rand() & 1))        // if low gravity is not forced and die roll goes our way use regular grav
 				{
 					le->pos.trType = TR_GRAVITY;
 				}
@@ -1487,7 +1487,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			}
 			else
 			{
-				if (!forceLowGrav && rand() & 1)        // if low gravity is not forced and die roll goes our way use regular grav
+				if (!forceLowGrav && (rand() & 1))        // if low gravity is not forced and die roll goes our way use regular grav
 				{
 					le->pos.trType = TR_GRAVITY;
 				}
@@ -2054,8 +2054,7 @@ also called by CG_CheckPlayerstateEvents
 */
 extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale);
 // JPW NERVE
-void CG_MachineGunEjectBrass(centity_t *cent);
-void CG_MachineGunEjectBrassNew(centity_t *cent);
+
 // jpw
 #define DEBUGNAME(x) if (cg_debugEvents.integer) { CG_Printf(x "\n"); }
 void CG_EntityEvent(centity_t *cent, vec3_t position)
@@ -2599,7 +2598,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_FIRE_WEAPON:
 	case EV_FIRE_WEAPONB:
 		DEBUGNAME("EV_FIRE_WEAPON");
-		if (cent->currentState.clientNum == cg.snap->ps.clientNum && cg.snap->ps.eFlags & EF_ZOOMING)     // to stop airstrike sfx
+		if (cent->currentState.clientNum == cg.snap->ps.clientNum && (cg.snap->ps.eFlags & EF_ZOOMING))     // to stop airstrike sfx
 		{
 			break;
 		}

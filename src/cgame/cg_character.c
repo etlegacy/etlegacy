@@ -553,7 +553,7 @@ bg_character_t *CG_CharacterForClientinfo(clientInfo_t *ci, centity_t *cent)
 		}
 	}
 
-	if (cent && cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
+	if (cent && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 	{
 		team = ci->team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
 
