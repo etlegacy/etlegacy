@@ -816,6 +816,8 @@ void SV_BotInitBotLib(void);
 
 void SV_Init(void)
 {
+	int index;
+
 	SV_AddOperatorCommands();
 
 	// serverinfo vars
@@ -864,10 +866,14 @@ void SV_Init(void)
 
 	sv_allowDownload  = Cvar_Get("sv_allowDownload", "1", CVAR_ARCHIVE);
 	sv_master[0]      = Cvar_Get("sv_master1", MASTER_SERVER_NAME, 0);
-	sv_master[1]      = Cvar_Get("sv_master2", "", CVAR_ARCHIVE);
-	sv_master[2]      = Cvar_Get("sv_master3", "", CVAR_ARCHIVE);
-	sv_master[3]      = Cvar_Get("sv_master4", "", CVAR_ARCHIVE);
-	sv_master[4]      = Cvar_Get("sv_master5", "", CVAR_ARCHIVE);
+
+	// master servers
+	sv_master[0] = Cvar_Get("sv_master1", MASTER_SERVER_NAME, 0);
+	for(index = 1; index < MAX_MASTER_SERVERS; index++)
+	{
+		sv_master[index] = Cvar_Get(va("sv_master%d", index + 1), "", CVAR_ARCHIVE);
+	}
+
 	sv_reconnectlimit = Cvar_Get("sv_reconnectlimit", "3", 0);
 	sv_tempbanmessage = Cvar_Get("sv_tempbanmessage", "You have been kicked and are temporarily banned from joining this server.", 0);
 
