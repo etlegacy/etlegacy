@@ -8,10 +8,6 @@ solution "etlegacy"
 
 	configurations { "Release", "Debug", "mingw" }
 	platforms { "x32", "x64" }
-	defines
-	{
-		"TRACKBASE_SUPPORT",
-	}
 	--
 	-- Release/Debug Configurations
 	--
@@ -44,6 +40,7 @@ solution "etlegacy"
 		trigger	=	"static",
 		description = 	"Do not link dependencies dynamically",
 	}
+
 
 -- 
 -- CLIENT BUILD
@@ -251,12 +248,21 @@ project "etlegacy-dedicated"
 	{ 
 		"DEDICATED",
 		"BOTLIB",
+		"TRACKBASE_SUPPORT",
 	}
 	excludes
 	{
 		"src/botlib/botlib_stub.c",
 		"src/qcommon/dl_main_curl.c",
 	}
+
+	newoption {
+		trigger = "debug-trackbase",
+		description = "Debug Trackbase support",
+	}
+
+	configuration "debug-trackbase"
+		defines { "TRACKBASE_DEBUG" }
 
 	-- 
 	-- Windows build options
