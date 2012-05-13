@@ -637,6 +637,7 @@ static void SV_DumpUser_f(void)
 	cl = SV_GetPlayerByName();
 	if (!cl)
 	{
+		Com_Printf("No player found.\n");
 		return;
 	}
 
