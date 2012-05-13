@@ -143,17 +143,18 @@ float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte 
 {
 	int    j;
 	float  maxIntensity = 0;
-	double sumIntensity = 0;
 
 	if (r_lightmap->integer > 1)     // color code by intensity as development tool (FIXME: check range)
 	{
+		double sumIntensity = 0;
+		float r, g, b, intensity;
+		float out[3] = { 0, 0, 0 };
+
 		for (j = 0; j < width * height; j++)
 		{
-			float r = (*pic)[j * in_padding + 0];
-			float g = (*pic)[j * in_padding + 1];
-			float b = (*pic)[j * in_padding + 2];
-			float intensity;
-			float out[3];
+			r = (*pic)[j * in_padding + 0];
+			g = (*pic)[j * in_padding + 1];
+			b = (*pic)[j * in_padding + 2];
 
 			intensity = 0.33f * r + 0.685f * g + 0.063f * b;
 
@@ -280,7 +281,7 @@ This is called by the clipmodel subsystem so we can share the 1.8 megs of
 space in big maps...
 =================
 */
-void        RE_SetWorldVisData(const byte *vis)
+void RE_SetWorldVisData(const byte *vis)
 {
 	tr.externalVisData = vis;
 }
@@ -407,7 +408,6 @@ void *R_GetSurfMemory(int size)
 }
 
 
-
 /*
 SphereFromBounds() - ydnar
 creates a bounding sphere from a bounding box
@@ -422,7 +422,6 @@ static void SphereFromBounds(vec3_t mins, vec3_t maxs, vec3_t origin, float *rad
 	VectorSubtract(maxs, origin, temp);
 	*radius = VectorLength(temp);
 }
-
 
 
 /*
@@ -443,7 +442,6 @@ static void FinishGenericSurface(dsurface_t *ds, srfGeneric_t *gen, vec3_t pt)
 	SetPlaneSignbits(&gen->plane);
 	gen->plane.type = PlaneTypeForNormal(gen->plane.normal);
 }
-
 
 
 /*
@@ -521,7 +519,6 @@ static void ParseMesh(dsurface_t *ds, drawVert_t *verts, msurface_t *surf)
 	// finish surface
 	FinishGenericSurface(ds, (srfGeneric_t *) grid, grid->verts[0].xyz);
 }
-
 
 
 /*
@@ -728,7 +725,6 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	int            numVerts, numIndexes;
 	int            lightmapNum;
 
-
 	// get lightmap num
 	lightmapNum = LittleLong(ds->lightmapNum);
 
@@ -793,7 +789,6 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	FinishGenericSurface(ds, (srfGeneric_t *) tri, tri->verts[0].xyz);
 }
 #endif // 0
-
 
 
 /*
@@ -926,7 +921,6 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 }
 
 
-
 /*
 ===============
 ParseFlare
@@ -960,7 +954,6 @@ static void ParseFlare(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, int 
 		flare->normal[i] = LittleFloat(ds->lightmapVecs[2][i]);
 	}
 }
-
 
 
 /*
@@ -2216,6 +2209,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 			break;
 		default:
 			ri.Error(ERR_DROP, "Bad surfaceType");
+			break;
 		}
 	}
 
@@ -2232,7 +2226,6 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	ri.Printf(PRINT_ALL, "...loaded %d faces, %i meshes, %i trisurfs, %i flares %i foliage\n",
 	          numFaces, numMeshes, numTriSurfs, numFlares, numFoliage);
 }
-
 
 
 /*
@@ -2290,7 +2283,6 @@ static void R_LoadSubmodels(lump_t *l)
 }
 
 
-
 //==================================================================
 
 /*
@@ -2298,7 +2290,6 @@ static void R_LoadSubmodels(lump_t *l)
 R_SetParent
 =================
 */
-
 static void R_SetParent(mnode_t *node, mnode_t *parent)
 {
 	//  set parent
@@ -2313,7 +2304,6 @@ static void R_SetParent(mnode_t *node, mnode_t *parent)
 			int          c;
 			msurface_t   **mark;
 			srfGeneric_t *gen;
-
 
 			// add node surfaces to bounds
 			mark = node->firstmarksurface;
@@ -2726,10 +2716,6 @@ void R_FindLightGridBounds(vec3_t mins, vec3_t maxs)
 	return;
 //----(SA)  temp
 
-
-
-
-
 	ClearBounds(mins, maxs);
 
 // wrong!
@@ -2750,7 +2736,6 @@ void R_FindLightGridBounds(vec3_t mins, vec3_t maxs)
 
 		foundGridBrushes = qtrue;
 	}
-
 
 // wrong!
 	for (i = 0; i < w->numsurfaces; i++)
