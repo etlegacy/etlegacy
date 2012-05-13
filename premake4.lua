@@ -6,7 +6,6 @@
 -- 
 
 -- Notes: 
--- OptimizeSpeed has been added to release builds
 -- Extra warnings are DEBUG only now
 
 
@@ -30,7 +29,7 @@ solution "etlegacy"
 		flags      
 		{
 			"Optimize",			-- OptimizeSpeed sigsegvs 64bit build (Perform a balanced set of optimizations.)
-			"OptimizeSpeed",	-- Optimize for the best performance.
+			-- "OptimizeSpeed",	-- Optimize for the best performance.
 			"EnableSSE",		-- Use the SSE instruction sets for floating point math. (EnableSSE2 ??)
 			"StaticRuntime",	-- Perform a static link against the standard runtime libraries.
 		}
