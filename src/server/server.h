@@ -224,6 +224,8 @@ typedef struct client_s
 
 	//bani
 	int downloadnotify;
+
+	int protocol;//We can access clients protocol any time
 } client_t;
 
 //=============================================================================

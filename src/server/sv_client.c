@@ -135,7 +135,6 @@ void SV_DirectConnect(netadr_t from)
 	int                 startIndex;
 	char                *denied;
 	int                 count;
-	int                 port ;
 
 	Com_DPrintf("SVC_DirectConnect ()\n");
 
@@ -203,8 +202,7 @@ void SV_DirectConnect(netadr_t from)
 			return;
 		}
 		// force the IP key/value pair so the game can filter based on ip
-		port = Cvar_Get( "net_port", va( "%i", PORT_SERVER ), CVAR_LATCH )->integer;
-		Info_SetValueForKey( userinfo, "ip", va("%s:%d", NET_AdrToString( from ) , port ) );
+		Info_SetValueForKey( userinfo, "ip", va("%s:%d", NET_AdrToString( from ),qport) );
 
 		if (svs.challenges[i].firstPing == 0)
 		{
@@ -404,6 +402,8 @@ gotnewcl:
 	{
 		SV_Heartbeat_f();
 	}
+
+	newcl->protocol = atoi(Info_ValueForKey(userinfo, "protocol"));
 
 #ifdef TRACKBASE_SUPPORT
 	TB_ClientConnect(newcl);
@@ -1470,7 +1470,7 @@ void SV_UserinfoChanged(client_t *cl)
 	//Com_DPrintf("Maintain IP in userinfo for '%s'\n", cl->name);
 	if (!NET_IsLocalAddress(cl->netchan.remoteAddress))
 	{
-		Info_SetValueForKey(cl->userinfo, "ip", NET_AdrToString(cl->netchan.remoteAddress));
+		Info_SetValueForKey( cl->userinfo, "ip", va("%s:%d", NET_AdrToString( cl->netchan.remoteAddress ),cl->netchan.qport) );
 	}
 	else
 	{
