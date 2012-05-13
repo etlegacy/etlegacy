@@ -4,6 +4,17 @@
 -- You need *premake* to compile this project. 
 -- Get it from here: http://industriousone.com/premake
 -- 
+
+-- Notes: 
+-- OptimizeSpeed has been added to release builds
+-- Extra warnings are DEBUG only now
+
+
+ETL_VERSION = "2.70"
+
+print ("Using premake4 V" .. _PREMAKE_VERSION .. " for ET:Legacy " .. ETL_VERSION)
+print ("Run 'premake4 --help' for extended usage, options and actions info.")
+
 solution "etlegacy"
 
 	configurations { "Release", "Debug", "mingw" }
@@ -18,9 +29,10 @@ solution "etlegacy"
 		}
 		flags      
 		{
-			"Optimize", -- OptimizeSpeed sigsegvs 64bit build
-			"EnableSSE",
-			"StaticRuntime"
+			"Optimize",			-- OptimizeSpeed sigsegvs 64bit build (Perform a balanced set of optimizations.)
+			"OptimizeSpeed",	-- Optimize for the best performance.
+			"EnableSSE",		-- Use the SSE instruction sets for floating point math. (EnableSSE2 ??)
+			"StaticRuntime",	-- Perform a static link against the standard runtime libraries.
 		}
 	
 	configuration "Debug"
@@ -30,8 +42,9 @@ solution "etlegacy"
 		}
 		flags
 		{
-			"Symbols",
-			"StaticRuntime",
+			"ExtraWarnings", 	-- Sets the compiler's maximum warning level.
+			"Symbols",			-- Generate debugging information.
+			"StaticRuntime", 	-- Perform a static link against the standard runtime libraries.
 		}
 	--
 	-- Options Configurations
@@ -49,7 +62,7 @@ project "etlegacy"
 	targetname  "etl"
 	language    "C"
 	kind        "WindowedApp"
-	flags       { "ExtraWarnings" }
+
 	files
 	{
 		"src/qcommon/**.c", "src/qcommon/**.h",
@@ -227,7 +240,7 @@ project "etlegacy-dedicated"
 	targetname  "etlded"
 	language    "C"
 	kind        "WindowedApp"
-	flags       { "ExtraWarnings" }
+
 	files
 	{
 		"src/qcommon/**.c", "src/qcommon/**.h",
@@ -326,7 +339,7 @@ project "etmain_cgame"
 	targetname  "cgame"
 	language    "C"
 	kind        "SharedLib"
-	flags       { "ExtraWarnings" }
+
 	files
 	{
 		"src/qcommon/q_math.c",
@@ -386,7 +399,7 @@ project "etmain_game"
 	targetname  "game"
 	language    "C"
 	kind        "SharedLib"
-	flags       { "ExtraWarnings" }
+
 	files
 	{
 		"src/qcommon/q_math.c",
@@ -442,7 +455,7 @@ project "etmain_ui"
 	targetname  "ui"
 	language    "C"
 	kind        "SharedLib"
-	flags       { "ExtraWarnings" }
+
 	files
 	{
 		"src/qcommon/q_math.c",
