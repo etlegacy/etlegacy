@@ -122,7 +122,6 @@ int DL_BeginDownload(const char *localName, const char *remoteName, int debug)
 	if (dl_request)
 	{
 		Com_Printf("ERROR: DL_BeginDownload called with a download request already active\n");
-        \
 		return 0;
 	}
 
