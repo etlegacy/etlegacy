@@ -2525,17 +2525,11 @@ static void FixRenderCommandList(int newShader)
 				curCmd = (const void *)(sp_cmd + 1);
 				break;
 			}
-			break;
 			case RC_DRAW_SURFS:
 			{
-				int                      i;
 				drawSurf_t               *drawSurf;
 				shader_t                 *shader;
-				int                      fogNum;
-				int                      frontFace;
-				int                      entityNum;
-				int                      dlightMap;
-				int                      sortedIndex;
+				int                      i, fogNum, frontFace, entityNum, dlightMap, sortedIndex;
 				const drawSurfsCommand_t *ds_cmd = (const drawSurfsCommand_t *)curCmd;
 
 				for (i = 0, drawSurf = ds_cmd->drawSurfs; i < ds_cmd->numDrawSurfs; i++, drawSurf++)
@@ -2547,10 +2541,11 @@ static void FixRenderCommandList(int newShader)
 						sortedIndex++;
 						drawSurf->sort = (sortedIndex << QSORT_SHADERNUM_SHIFT)
 						                 | (entityNum << QSORT_ENTITYNUM_SHIFT) | (fogNum << QSORT_FOGNUM_SHIFT) | (frontFace << QSORT_FRONTFACE_SHIFT) | dlightMap;
+						                 
 					}
-					curCmd = (const void *)(ds_cmd + 1);
-					break;
 				}
+				curCmd = (const void *)(ds_cmd + 1);
+				break;
 			}
 			case RC_DRAW_BUFFER:
 			{
