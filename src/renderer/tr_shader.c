@@ -40,7 +40,6 @@ static char *s_shaderText;
 static shaderStage_t stages[MAX_SHADER_STAGES];
 static shader_t      shader;
 static texModInfo_t  texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
-static qboolean      deferLoad;
 
 // ydnar: these are here because they are only referenced while parsing a shader
 static char       implicitMap[MAX_QPATH];
@@ -412,7 +411,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 
 	if (stage->bundle[0].numTexMods == TR_MAX_TEXMODS)
 	{
-		ri.Error(ERR_DROP, "ERROR: too many tcMod stages in shader '%s'\n", shader.name);
+		ri.Error(ERR_DROP, "ERROR: too many tcMod stages in shader '%s'", shader.name);
 		return;
 	}
 
@@ -769,7 +768,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			else if (!Q_stricmp(token, "$lightmap"))
 			{
 				stage->bundle[0].isLightmap = qtrue;
-				if (shader.lightmapIndex < 0)
+				if (shader.lightmapIndex < 0 || !tr.lightmaps )
 				{
 					stage->bundle[0].image[0] = tr.whiteImage;
 				}
@@ -801,7 +800,8 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				return qfalse;
 			}
 
-			stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_CLAMP, qfalse);
+			// TODO GL_CLAMP_TO_EDGE
+			stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_CLAMP/*_TO_EDGE*/, qfalse);
 			if (!stage->bundle[0].image[0])
 			{
 				ri.Printf(PRINT_WARNING, "WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
@@ -1521,6 +1521,7 @@ static void ParseSkyParms(char **text)
 		{
 			Com_sprintf(pathname, sizeof(pathname), "%s_%s.tga"
 			            , token, suf[i]);
+			// FIXME GL_CLAMP_TO_EDGE
 			shader.sky.outerbox[i] = R_FindImageFile(( char * ) pathname, qtrue, qtrue, GL_CLAMP, qfalse);
 			if (!shader.sky.outerbox[i])
 			{
@@ -1724,7 +1725,7 @@ surfaceparm <name>
 static void ParseSurfaceParm(char **text)
 {
 	char *token;
-	int  numInfoParms = sizeof(infoParms) / sizeof(infoParms[0]);
+	int  numInfoParms = ARRAY_LEN( infoParms );// sizeof(infoParms) / sizeof(infoParms[0]);
 	int  i;
 
 	token = COM_ParseExt(text, qfalse);
@@ -1758,7 +1759,6 @@ static qboolean ParseShader(char **text)
 {
 	char *token;
 	int  s;
-
 
 	s = 0;
 
@@ -2503,6 +2503,8 @@ static void FixRenderCommandList(int newShader)
 
 		while (1)
 		{
+			curCmd = PADP(curCmd, sizeof(void *));
+
 			switch (*(const int *)curCmd)
 			{
 			case RC_SET_COLOR:
@@ -3771,7 +3773,7 @@ qhandle_t RE_RegisterShaderLightMap(const char *name, int lightmapIndex)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_Printf("Shader name exceeds MAX_QPATH\n");
+		ri.Printf( PRINT_ALL, "Shader name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -3808,7 +3810,7 @@ qhandle_t RE_RegisterShader(const char *name)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_Printf("Shader name exceeds MAX_QPATH\n");
+		ri.Printf( PRINT_ALL, "Shader name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -3841,7 +3843,7 @@ qhandle_t RE_RegisterShaderNoMip(const char *name)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_Printf("Shader name exceeds MAX_QPATH\n");
+		ri.Printf( PRINT_ALL, "Shader name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -4603,7 +4605,6 @@ void R_InitShaders(void)
 	ri.Printf(PRINT_ALL, "Initializing Shaders\n");
 
 	memset(hashTable, 0, sizeof(hashTable));
-	deferLoad = qfalse;
 
 	CreateInternalShaders();
 
