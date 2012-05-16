@@ -902,16 +902,5 @@ qboolean CG_DrawScoreboard(void)
 		}
 	}
 
-	/*  if(!CG_IsSinglePlayer()) {
-	        qtime_t ct;
-
-	        G_showWindowMessages();
-	        trap_RealTime(&ct);
-	        s = va("^3%02d:%02d:%02d - %02d %s %d",
-	                            ct.tm_hour, ct.tm_min, ct.tm_sec,
-	                            ct.tm_mday, aMonths[ct.tm_mon], 1900 + ct.tm_year);
-	        CG_DrawStringExt(444, 12, s, colorWhite, qfalse, qtrue, 8, 8, 0);
-	    }
-	*/
 	return qtrue;
 }

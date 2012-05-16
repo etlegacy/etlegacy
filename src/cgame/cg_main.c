@@ -2937,9 +2937,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	}
 
 	CG_ClearTrails();
-	CG_ClearParticles();
-
-	InitSmokeSprites();
 
 	// check version
 	s = CG_ConfigString(CS_GAME_VERSION);
@@ -3060,10 +3057,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_SetupCabinets();
 
-	if (!CG_IsSinglePlayer())
-	{
-		trap_S_FadeAllSound(1.0f, 0, qfalse);     // fade sound up
-	}
+	trap_S_FadeAllSound(1.0f, 0, qfalse);     // fade sound up
 
 	// OSP
 	cgs.dumpStatsFile = 0;
@@ -3088,17 +3082,6 @@ void CG_Shutdown(void)
 	{
 		trap_Cvar_Set("timescale", "1");
 	}
-}
-
-// returns true if game is single player (or coop)
-qboolean CG_IsSinglePlayer(void)
-{
-	if (cg_gameType.integer == GT_SINGLE_PLAYER || cgs.gametype == GT_COOP)
-	{
-		return qtrue;
-	}
-
-	return qfalse;
 }
 
 

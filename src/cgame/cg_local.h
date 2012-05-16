@@ -3209,8 +3209,6 @@ void CG_CampaignBriefingSetup(void);
 
 int CG_GetFirstSelectedBot(void);
 void CG_AddToJournal(char *text);
-// returns true if game is single player (or coop)
-qboolean CG_IsSinglePlayer(void);
 
 // END Mad Doc - TDF
 

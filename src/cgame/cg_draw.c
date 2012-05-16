@@ -3355,7 +3355,7 @@ static void CG_DrawFlashFade(void)
 	static int lastTime;
 	int        elapsed, time;
 	vec4_t     col;
-	qboolean   fBlackout = (!CG_IsSinglePlayer() && int_ui_blackout.integer > 0);
+	qboolean   fBlackout = (int_ui_blackout.integer > 0);
 
 	if (cgs.fadeStartTime + cgs.fadeDuration < cg.time)
 	{
@@ -3980,21 +3980,12 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 
 	angle = ((angles[YAW] + 180.f) / 360.f - (0.50 / 2.f)) * pi2;
 
-
-//  if (!CG_IsSinglePlayer()) {
 	w /= 2;
 	h /= 2;
 
 	x += w;
 	y += h;
 
-
-//      if (CG_IsSinglePlayer())
-	/*      if (0)
-	        {
-	            w = 80; // hardcoded, because it has to fit the art
-	        }
-	        else*/
 	{
 		w = sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
 	}
