@@ -1632,7 +1632,7 @@ int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *animModelInfo, sc
 	int                 state          = ps->aiState;
 
 	// Allow fallen movetype while dead
-	if (ps->eFlags & EF_DEAD && movetype != ANIM_MT_FALLEN && movetype != ANIM_MT_FLAILING)
+	if ((ps->eFlags & EF_DEAD) && movetype != ANIM_MT_FALLEN && movetype != ANIM_MT_FLAILING)
 	{
 		return -1;
 	}
@@ -1746,7 +1746,7 @@ int BG_AnimScriptEvent(playerState_t *ps, animModelInfo_t *animModelInfo, script
 	animScriptItem_t    *scriptItem;
 	animScriptCommand_t *scriptCommand;
 
-	if (event != ANIM_ET_DEATH && ps->eFlags & EF_DEAD)
+	if (event != ANIM_ET_DEATH && (ps->eFlags & EF_DEAD))
 	{
 		return -1;
 	}
@@ -1980,7 +1980,7 @@ int BG_GetAnimScriptEvent(playerState_t *ps, scriptAnimEventTypes_t event)
 	animScriptItem_t    *scriptItem;
 	animScriptCommand_t *scriptCommand;
 
-	if (event != ANIM_ET_DEATH && ps->eFlags & EF_DEAD)
+	if (event != ANIM_ET_DEATH && (ps->eFlags & EF_DEAD))
 	{
 		return -1;
 	}
@@ -2043,7 +2043,7 @@ void BG_AnimUpdatePlayerStateConditions(pmove_t *pmove)
 	}
 
 	// MOUNTED
-	if (ps->eFlags & EF_MG42_ACTIVE || ps->eFlags & EF_MOUNTEDTANK)
+	if ((ps->eFlags & EF_MG42_ACTIVE) || (ps->eFlags & EF_MOUNTEDTANK))
 	{
 		BG_UpdateConditionValue(ps->clientNum, ANIM_COND_MOUNTED, MOUNTED_MG42, qtrue);
 	}

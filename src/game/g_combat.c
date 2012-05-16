@@ -576,9 +576,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 						if (g_complaintlimit.integer)
 						{
 
-							if (!(meansOfDeath == MOD_LANDMINE && g_disableComplaints.integer & TKFL_MINES) &&
-							    !((meansOfDeath == MOD_ARTY || meansOfDeath == MOD_AIRSTRIKE) && g_disableComplaints.integer & TKFL_AIRSTRIKE) &&
-							    !(meansOfDeath == MOD_MORTAR && g_disableComplaints.integer & TKFL_MORTAR))
+							if (!(meansOfDeath == MOD_LANDMINE && (g_disableComplaints.integer & TKFL_MINES)) &&
+							    !((meansOfDeath == MOD_ARTY || meansOfDeath == MOD_AIRSTRIKE) && (g_disableComplaints.integer & TKFL_AIRSTRIKE)) &&
+							    !(meansOfDeath == MOD_MORTAR && (g_disableComplaints.integer & TKFL_MORTAR)))
 							{
 								trap_SendServerCommand(self - g_entities, va("complaint %i", attacker->s.number));
 								self->client->pers.complaintClient  = attacker->s.clientNum;

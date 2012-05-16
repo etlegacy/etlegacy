@@ -137,8 +137,6 @@ qboolean G_ScriptAction_SetPosition(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-void SetPlayerSpawn(gentity_t *ent, int spawn, qboolean update);
-
 qboolean G_ScriptAction_SetAutoSpawn(gentity_t *ent, char *params)
 {
 	char      *pString, *token;
@@ -3883,7 +3881,6 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 }
 
 extern void Cmd_StartCamera_f(gentity_t *ent);
-extern void Cmd_StopCamera_f(gentity_t *ent);
 
 /*
 ===================
@@ -3955,8 +3952,6 @@ qboolean G_ScriptAction_SetInitialCamera(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetInitialCamera: black parameter required\n");
 	}
 
-//  Cmd_StartCamera_f( ent );
-
 	// issue a start camera command to the client
 	trap_SendServerCommand(ent - g_entities, va("SetInitialCamera %s %d", camfile, (int)atoi(token)));
 
@@ -3972,7 +3967,6 @@ G_ScriptAction_StopCam
 */
 qboolean G_ScriptAction_StopCam(gentity_t *ent, char *params)
 {
-
 	if (!ent->client)
 	{
 		return qfalse;
