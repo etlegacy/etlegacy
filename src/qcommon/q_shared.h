@@ -135,6 +135,16 @@ typedef int intptr_t;
 #include <sys/stat.h> // rain
 #include <float.h>
 
+
+#if defined (_WIN32)
+#define Q_vsnprintf _vsnprintf
+#define Q_snprintf _snprintf
+#else
+#include <stdint.h>
+#define Q_vsnprintf vsnprintf
+#define Q_snprintf  snprintf
+#endif
+
 #ifdef _MSC_VER
 #include <io.h>
 
@@ -146,16 +156,7 @@ typedef unsigned __int64 uint64_t;
 typedef unsigned __int32 uint32_t;
 typedef unsigned __int16 uint16_t;
 typedef unsigned __int8 uint8_t;
-
-// vsnprintf is ISO/IEC 9899:1999
-// abstracting this to make it portable
-int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap);
-#else
-  #include <stdint.h>
-
-  #define Q_vsnprintf vsnprintf
 #endif
-
 #endif
 
 
@@ -285,7 +286,6 @@ void Sys_PumpEvents(void);
 #endif
 
 //=============================================================
-
 
 typedef unsigned char byte;
 
@@ -1871,5 +1871,9 @@ typedef enum
 } gamestate_t;
 
 #define SQR(a) ((a) * (a))
+
+#ifdef _MSC_VER
+float rint(float v); 
+#endif
 
 #endif  // __Q_SHARED_H

@@ -1067,38 +1067,6 @@ char *Q_strrchr(const char *string, int c)
 	return sp;
 }
 
-#ifdef _MSC_VER
-/*
- * =============
- * Q_vsnprintf
- *
- * Special wrapper function for Microsoft's broken _vsnprintf() function.
- * MinGW comes with its own snprintf() which is not broken.
- * =============
- */
-int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap)
-{
-	int retval;
-
-	retval = _vsnprintf(str, size, format, ap);
-
-	if (retval < 0 || retval == size)
-	{
-		// Microsoft doesn't adhere to the C99 standard of vsnprintf,
-		// which states that the return value must be the number of
-		// bytes written if the output string had sufficient length.
-		//
-		// Obviously we cannot determine that value from Microsoft's
-		// implementation, so we have no choice but to return size.
-
-		str[size - 1] = '\0';
-		return size;
-	}
-
-	return retval;
-}
-#endif
-
 /*
 =============
 Q_strncpyz
@@ -1948,3 +1916,13 @@ char *Com_SkipTokens(char *s, int numTokens, char *sep)
 		return s;
 	}
 }
+
+#if defined _MSC_VER
+float rint( float v) {
+	if ( v >= 0.5f) {
+		return ceilf( v );
+	} else {
+		return floorf( v );
+	}
+}
+#endif

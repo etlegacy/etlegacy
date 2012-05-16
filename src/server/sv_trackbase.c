@@ -158,16 +158,17 @@ char *TB_makeClientInfo(int clientNum)
 
 void TB_requestWeaponStats()
 {
+	int i;
+	qboolean onlybots = qtrue;
+	char *P;
+
 	if (!maprunning)
 	{
 		return;
 	}
 
-	int i;
-	qboolean onlybots = qtrue;
-
 	strcpy(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
-	char *P = Info_ValueForKey(infostring, "P");
+	P = Info_ValueForKey(infostring, "P");
 
 	strcpy(expect, "ws");
 	for (i = 0; i < sv_maxclients->value; i++)
@@ -229,6 +230,8 @@ void TB_Frame(int msec)
 
 qboolean TB_catchServerCommand(int clientNum, char *msg)
 {
+	int slot;
+
 	if (clientNum != querycl)
 	{
 		return qfalse;
@@ -257,7 +260,7 @@ qboolean TB_catchServerCommand(int clientNum, char *msg)
 			strcpy(expect, "");
 			querycl = -1;
 		}
-		int slot = 0;
+		slot = 0;
 		sscanf(msg, "ws %i", &slot);
 		TB_Send("%s\\%s", msg, TB_makeClientInfo(slot));
 		return qtrue;
