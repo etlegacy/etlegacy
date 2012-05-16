@@ -173,7 +173,6 @@ char autoupdateFilename[MAX_QPATH];
 #define AUTOUPDATE_DIR "ni]Zm^l"
 #define AUTOUPDATE_DIR_SHIFT 7
 
-extern void SV_BotFrame(int time);
 void CL_CheckForResend(void);
 void CL_ShowIP_f(void);
 void CL_ServerStatus_f(void);
