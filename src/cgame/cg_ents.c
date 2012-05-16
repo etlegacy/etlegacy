@@ -413,8 +413,6 @@ static void CG_EntityEffects(centity_t *cent)
 
 }
 
-void CG_RailTrail2(clientInfo_t *ci, vec3_t start, vec3_t end);
-
 /*
 ==================
 CG_General
@@ -1828,9 +1826,6 @@ CG_ConstructibleMarker
 
 //----(SA) done
 
-// declaration for add bullet particles (might as well stick this one in a .h file I think)
-extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale);
-
 /*
 ===============
 CG_Mover
@@ -2001,7 +1996,7 @@ void CG_Mover_PostProcess(centity_t *cent)
 	}
 
 
-	if (cg.snap->ps.eFlags & EF_MOUNTEDTANK && cg_entities[cg.snap->ps.clientNum].tagParent == cent->currentState.effect3Time)
+	if ((cg.snap->ps.eFlags & EF_MOUNTEDTANK) && cg_entities[cg.snap->ps.clientNum].tagParent == cent->currentState.effect3Time)
 	{
 		i = cg.snap->ps.clientNum;
 	}
@@ -2949,8 +2944,6 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
 	return qtrue;
 }
 
-void CG_RailTrail2(clientInfo_t *ci, vec3_t start, vec3_t end);
-
 /*
 ==================
 CG_AddEntityToTag
@@ -3035,8 +3028,6 @@ qboolean CG_AddEntityToTag(centity_t *cent)
 	return qtrue;
 }
 
-extern int       cg_numSolidEntities;
-extern centity_t *cg_solidEntities[];
 /*
 ===============
 CG_AddPacketEntities
@@ -3217,7 +3208,7 @@ void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg
 		for (i = 0; i < MAX_CLIENTS; i++)
 		{
 			// Gordon: is this entity mounted on a tank, and attached to _OUR_ turret entity (which could be us)
-			if (cg_entities[i].currentValid && cg_entities[i].currentState.eFlags & EF_MOUNTEDTANK && cg_entities[i].tagParent == tank - cg_entities)
+			if (cg_entities[i].currentValid && (cg_entities[i].currentState.eFlags & EF_MOUNTEDTANK) && cg_entities[i].tagParent == tank - cg_entities)
 			{
 				angles[YAW]   -= tank->lerpAngles[YAW];
 				angles[PITCH] -= tank->lerpAngles[PITCH];
