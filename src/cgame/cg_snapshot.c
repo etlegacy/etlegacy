@@ -34,13 +34,6 @@
  */
 
 #include "cg_local.h"
-/*
-#if __MACOS__
-#ifdef GAMERANGER
-#include "GameRanger SDK/GameRanger.h"
-#endif
-#endif
-*/
 
 // rain - minor optimization - we only want to reset ents that were valid
 // in the last frame
@@ -93,7 +86,6 @@ static void CG_ResetEntity(centity_t *cent)
 }
 
 
-
 /*
 ===============
 CG_TransitionEntity
@@ -103,7 +95,6 @@ cent->nextState is moved to cent->currentState and events are fired
 */
 static void CG_TransitionEntity(centity_t *cent)
 {
-
 	// Ridah, update the fireDir if it's on fire
 	if (CG_EntOnFire(cent))
 	{
@@ -251,14 +242,6 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 		}
 	}
 	// OSP
-	/*
-	#if __MACOS__
-	#ifdef GAMERANGER
-	// LBO 12/13/04. Add support for GameRanger team voice IDs
-	GRSetMyTeamID(cg.snap->ps.persistant[PERS_TEAM]);
-	#endif
-	#endif
-	*/
 }
 
 
@@ -506,7 +489,7 @@ static snapshot_t *CG_ReadNextSnapshot(void)
 				cg.landTime   = -1;
 				cg.stepTime   = -1;
 			}
-//
+
 			return dest;
 		}
 
