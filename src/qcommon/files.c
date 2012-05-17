@@ -3640,11 +3640,15 @@ static void FS_Startup(const char *gameName)
 	fs_buildpath = Cvar_Get("fs_buildpath", "", CVAR_INIT);
 	fs_buildgame = Cvar_Get("fs_buildgame", BASEGAME, CVAR_INIT);
 	fs_basegame  = Cvar_Get("fs_basegame", "", CVAR_INIT);
+#ifdef WIN32
+	homePath = fs_basepath->string;
+#else
 	homePath     = Sys_DefaultHomePath();
 	if (!homePath || !homePath[0])
 	{
 		homePath = fs_basepath->string;
 	}
+#endif
 	fs_homepath   = Cvar_Get("fs_homepath", homePath, CVAR_INIT);
 	fs_gamedirvar = Cvar_Get("fs_game", "", CVAR_INIT | CVAR_SYSTEMINFO);
 
