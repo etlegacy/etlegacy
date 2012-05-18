@@ -1383,43 +1383,6 @@ void CG_DrawAutoMap(void)
 	CG_DrawMap(x, y, w, h, cgs.ccFilter, &mapScissor, qfalse, 1.f, qfalse);
 }
 
-/*void CG_DrawWaypointInfo( int x, int y, int w, int h ) {
-    snapshot_t  *snap;
-    vec2_t      pos;
-    int         i;
-
-    if( cgs.ccFilter & CC_FILTER_WAYPOINTS ) {
-        return;
-    }
-
-    if ( cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport ) {
-        snap = cg.nextSnap;
-    } else {
-        snap = cg.snap;
-    }
-
-    for ( i = 0; i < snap->numEntities; i++ ) {
-        entityState_t *ent = &snap->entities[i];
-
-        if ( ent->eType != ET_WAYPOINT )
-            continue;
-
-        // see if the waypoint owner is someone that you accept waypoints from
-        if(!CG_IsOnSameFireteam( cg.clientNum, ent->clientNum )) {
-            continue;
-        }
-
-        pos[0] = x + ((ent->pos.trBase[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w;
-        pos[1] = y + ((ent->pos.trBase[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h;
-
-        switch( ent->frame ) {
-            case WAYP_ATTACK:   CG_DrawPic( pos[0] - 6, pos[1] - 6, 12, 12, cgs.media.waypointAttackShader ); break;
-            case WAYP_DEFEND:   CG_DrawPic( pos[0] - 6, pos[1] - 6, 12, 12, cgs.media.waypointDefendShader ); break;
-            case WAYP_REGROUP:  CG_DrawPic( pos[0] - 6, pos[1] - 6, 12, 12, cgs.media.waypointRegroupShader ); break;
-        }
-    }
-}*/
-
 int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScissor_t *scissor, int expand)
 {
 	int    i;
@@ -1713,36 +1676,6 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 		}
 	}
 }
-
-/*void CG_DrawCommandCentreLayers( void ) {
-    int x, y;
-    int i;
-    char *s;
-
-    if( !cgs.ccLayers )
-        return;
-
-    x = CC_2D_X + CC_2D_W - 32;
-    y = CC_2D_Y + CC_2D_H - 32;
-
-    for( i = 0; i < cgs.ccLayers; i++ ) {
-        if( i == cgs.ccSelectedLayer )
-            CG_FillRect( x, y, 32, 32, clrBrownTextLt );
-        else
-            CG_FillRect( x, y, 32, 32, clrBrownText );
-        CG_DrawRect( x, y, 32, 32, 1, colorBlack );
-
-        if( i == 0 )
-            s = "G";
-        else
-            s =  va( "%i", i );
-
-        CG_Text_Paint( x + 1 + ( ( 32 - CG_Text_Width( s, .5f, 0 ) ) * .5f ),
-                       y + 16 +( ( 32 - CG_Text_Height( s, .5f, 0 ) ) *.5f ),
-                       .5f, clrBrownTextDk, s, 0, 0, 0 );
-        y -= 34;
-    }
-}*/
 
 mapEntityData_t *CG_ScanForCommandCentreEntity(void)
 {

@@ -722,7 +722,6 @@ static void CG_Item(centity_t *cent)
 	refEntity_t   ent;
 	entityState_t *es;
 	gitem_t       *item;
-//  float               scale;
 	qboolean hasStand, highlight;
 	float    highlightFadeScale = 1.0f;
 
@@ -745,8 +744,6 @@ static void CG_Item(centity_t *cent)
 	}
 
 	item = &bg_itemlist[es->modelindex];
-
-//  scale = 0.005 + cent->currentState.number * 0.00001;
 
 	memset(&ent, 0, sizeof(ent));
 
@@ -1750,43 +1747,7 @@ static void CG_Constructible(centity_t *cent)
 	//  trap_R_AddRefEntityToScene(&ent);
 }
 
-/*
-===============
-CG_Waypoint
-===============
-*/
-/*
-static void CG_Waypoint( centity_t *cent ) {
-    refEntity_t ent;
 
-    memset( &ent, 0, sizeof( ent ) );
-    ent.reType = RT_SPRITE;
-    VectorCopy( cent->lerpOrigin, ent.origin );
-    ent.origin[2] += 24;
-    VectorCopy( ent.origin, ent.oldorigin );
-    ent.radius = 14;
-
-    switch( cent->currentState.frame ) {
-        case WAYP_ATTACK: ent.customShader = cgs.media.waypointAttackShader; break;
-        case WAYP_DEFEND: ent.customShader = cgs.media.waypointDefendShader; break;
-        case WAYP_REGROUP: ent.customShader = cgs.media.waypointRegroupShader; break;
-        // TAT 8/29/2002 - Use the bot shader for bots
-        case WAYP_BOT:
-            ent.customShader = cgs.media.waypointBotShader;
-            break;
-        // TAT 1/13/2003 - and the queued shader for queued commands
-        case WAYP_BOTQUEUED:
-            ent.customShader = cgs.media.waypointBotQueuedShader;
-            break;
-    }
-
-    ent.shaderRGBA[0] = 255;
-    ent.shaderRGBA[1] = 255;
-    ent.shaderRGBA[2] = 255;
-    ent.shaderRGBA[3] = 255;
-    trap_R_AddRefEntityToScene(&ent);
-}
-*/
 /*
 ===============
 CG_ConstructibleMarker
@@ -2691,11 +2652,6 @@ static void CG_ProcessEntity(centity_t *cent)
 	case ET_CONSTRUCTIBLE:
 		CG_Constructible(cent);
 		break;
-	/*  case ET_WAYPOINT:
-	    // TAT - 8/29/2002 - draw the botgoal indicator the same way you draw the waypoint flag
-	    case ET_BOTGOAL_INDICATOR:
-	        CG_Waypoint( cent );
-	        break;*/
 	/*  case ET_CONSTRUCTIBLE_MARKER:
 	        CG_ConstructibleMarker( cent );
 	        break;*/
