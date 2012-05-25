@@ -1226,19 +1226,10 @@ void R_Register(void)
 	r_simpleMipMaps     = ri.Cvar_Get("r_simpleMipMaps", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_uiFullScreen      = ri.Cvar_Get("r_uifullscreen", "0", 0);
 	r_subdivisions      = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
+	r_smp               = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_stereoEnabled     = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
-#ifdef MACOS_X
-	// Default to using SMP on Mac OS X if we have multiple processors
-	r_smp = ri.Cvar_Get("r_smp", Sys_ProcessorCount() > 1 ? "1" : "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-#elif defined _WIN32
-	// ydnar: r_smp is nonfunctional on windows
-	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE | CVAR_ROM);
-	Cvar_Set("r_smp", "0");
-#else
-	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-#endif
-	r_ignoreFastPath = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH);    // ydnar: use fast path by default
-	r_greyscale      = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_ignoreFastPath    = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH); // ydnar: use fast path by default
+	r_greyscale         = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	//
 	// temporary latched variables that can only change over a restart
@@ -1464,12 +1455,10 @@ void R_Init(void)
 		max_polyverts = MAX_POLYVERTS;
 	}
 
-//      backEndData[0] = ri.Hunk_Alloc( sizeof( *backEndData[0] ), h_low );
 	backEndData[0] = ri.Hunk_Alloc(sizeof(*backEndData[0]) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
 
 	if (r_smp->integer)
 	{
-//              backEndData[1] = ri.Hunk_Alloc( sizeof( *backEndData[1] ), h_low );
 		backEndData[1] = ri.Hunk_Alloc(sizeof(*backEndData[1]) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
 	}
 	else

@@ -99,6 +99,11 @@ project "etlegacy"
 	-- Options Configurations
 	--
 	newoption {
+		trigger	=	"enable-smp",
+		description = 	"Enable SMP (multicore support)",
+	}
+	
+	newoption {
 		trigger	=	"with-freetype",
 		description = 	"Use freetype font library",
 	}
@@ -126,6 +131,9 @@ project "etlegacy"
 		_OPTIONS["netlib"] = "curl"
 	end
 	
+	configuration "enable-smp"
+		defines      	{ "SMP" }
+
 	configuration "with-freetype"
 		if not _OPTIONS["static"] then
 			buildoptions 	{ "`pkg-config --cflags freetype2`" }

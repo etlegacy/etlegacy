@@ -32,7 +32,10 @@
  */
 
 #include <SDL/SDL.h>
-#include <SDL/SDL_thread.h>
+
+#ifdef SMP
+#   include <SDL/SDL_thread.h>
+#endif
 
 #include <stdarg.h>
 #include <stdio.h>
