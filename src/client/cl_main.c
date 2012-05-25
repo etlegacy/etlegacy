@@ -2747,7 +2747,7 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 
 	if (msg->cursize < 4)
 	{
-		Com_Printf("%s: Runt packet\n", NET_AdrToStringwPort(from));
+		Com_Printf("%s: Runt packet\n", NET_AdrToString(from));
 		return;
 	}
 
@@ -4214,7 +4214,7 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 		{
 			strncat(info, "\n", sizeof(info));
 		}
-		Com_Printf("%s: %s", NET_AdrToStringwPort(from), info);
+		Com_Printf("%s: %s", NET_AdrToString(from), info);
 	}
 }
 
