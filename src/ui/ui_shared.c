@@ -5124,7 +5124,7 @@ static bind_t g_bindings[] =
 	{ "weaponbank 8",     '8',             -1,  '8',             -1,  -1, -1 },
 	{ "weaponbank 9",     '9',             -1,  '9',             -1,  -1, -1 },
 	{ "+sprint",          K_SHIFT,         -1,  K_MOUSE3,        -1,  -1, -1 },
-	{ "+speed",           K_CAPSLOCK,      -1,  K_CAPSLOCK,      -1,  -1, -1 },
+//  { "+speed",           K_CAPSLOCK,      -1,  K_CAPSLOCK,      -1,  -1, -1 },
 	{ "+activate",        'f',             -1,  K_ENTER,         -1,  -1, -1 },
 	{ "+zoom",            'b',             -1,  'b',             -1,  -1, -1 },
 	{ "+mapexpand",       'g',             -1,  '#',             -1,  -1, -1 },
