@@ -33,25 +33,32 @@
 
 #include "../client/client.h"
 
-void IN_Init( void ) {
+void IN_Init(void)
+{
 }
 
-void IN_Frame( void ) {
+void IN_Frame(void)
+{
 }
 
-void IN_Shutdown( void ) {
+void IN_Shutdown(void)
+{
 }
 
-void Sys_SendKeyEvents( void ) {
+void Sys_SendKeyEvents(void)
+{
 }
 
 // TTimo: added for win32 dedicated
-void IN_MouseEvent( int mstate ) {
+void IN_MouseEvent(int mstate)
+{
 }
 
-void    IN_Activate( qboolean active ) {
+void    IN_Activate(qboolean active)
+{
 }
 
-void IN_Restart( void ) {
+void IN_Restart(void)
+{
 }
 

@@ -1065,7 +1065,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				}
 
 				// copy the define to the strings list
-				defineStr[defineType][numDefines[defineType]].string = BG_CopyStringIntoBuffer( token, defineStrings, sizeof(defineStrings), (unsigned int *)&defineStringsOffset );
+				defineStr[defineType][numDefines[defineType]].string = BG_CopyStringIntoBuffer(token, defineStrings, sizeof(defineStrings), (unsigned int *)&defineStringsOffset);
 				defineStr[defineType][numDefines[defineType]].hash   = BG_StringHashValue(defineStr[defineType][numDefines[defineType]].string);
 				// expecting an =
 				token = COM_ParseExt(&text_p, qfalse);

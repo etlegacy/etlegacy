@@ -201,10 +201,10 @@ botlib_export_t *GetBotLibAPI(int apiVersion, botlib_import_t *import)
 		return NULL;
 	}
 
-	be_botlib_export.BotLibSetup               = Export_BotLibSetup;
-	be_botlib_export.BotLibShutdown            = Export_BotLibShutdown;
-	be_botlib_export.BotLibVarSet              = Export_BotLibVarSet;
-	be_botlib_export.BotLibVarGet              = Export_BotLibVarGet;
+	be_botlib_export.BotLibSetup    = Export_BotLibSetup;
+	be_botlib_export.BotLibShutdown = Export_BotLibShutdown;
+	be_botlib_export.BotLibVarSet   = Export_BotLibVarSet;
+	be_botlib_export.BotLibVarGet   = Export_BotLibVarGet;
 
 	be_botlib_export.PC_AddGlobalDefine        = PC_AddGlobalDefine;
 	be_botlib_export.PC_RemoveAllGlobalDefines = PC_RemoveAllGlobalDefines;

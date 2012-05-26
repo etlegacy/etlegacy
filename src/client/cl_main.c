@@ -132,16 +132,16 @@ cvar_t *cl_waverecording;  //bani
 cvar_t *cl_wavefilename;  //bani
 cvar_t *cl_waveoffset;  //bani
 
-cvar_t *cl_packetloss;          //bani
-cvar_t *cl_packetdelay;          //bani
+cvar_t          *cl_packetloss; //bani
+cvar_t          *cl_packetdelay; //bani
 extern qboolean sv_cheats;  //bani
 
 cvar_t *cl_consoleKeys;
 
-clientActive_t cl;
+clientActive_t     cl;
 clientConnection_t clc;
-clientStatic_t cls;
-vm_t *cgvm;
+clientStatic_t     cls;
+vm_t               *cgvm;
 
 // Structure containing functions exported from refresh DLL
 refexport_t re;
@@ -153,16 +153,16 @@ ping_t cl_pinglist[MAX_PINGREQUESTS];
 
 typedef struct serverStatus_s
 {
-	char     string[BIG_INFO_STRING];
+	char string[BIG_INFO_STRING];
 	netadr_t address;
-	int      time, startTime;
+	int time, startTime;
 	qboolean pending;
 	qboolean print;
 	qboolean retrieved;
 } serverStatus_t;
 
 serverStatus_t cl_serverStatusList[MAX_SERVERSTATUSREQUESTS];
-int serverStatusCount;
+int            serverStatusCount;
 
 // DHM - Nerve :: Have we heard from the auto-update server this session?
 qboolean autoupdateChecked;
@@ -423,13 +423,13 @@ void CL_Record_f(void)
 
 void CL_Record(const char *name)
 {
-	int i;
-	msg_t buf;
-	byte  bufData[MAX_MSGLEN];
+	int           i;
+	msg_t         buf;
+	byte          bufData[MAX_MSGLEN];
 	entityState_t *ent;
 	entityState_t nullstate;
-	char *s;
-	int  len;
+	char          *s;
+	int           len;
 
 	// open the demo file
 
@@ -557,10 +557,10 @@ CL_ReadDemoMessage
 
 void CL_ReadDemoMessage(void)
 {
-	int r;
+	int   r;
 	msg_t buf;
 	byte  bufData[MAX_MSGLEN];
-	int s;
+	int   s;
 
 	if (!clc.demofile)
 	{
@@ -644,12 +644,12 @@ typedef struct wav_hdr_s
 	unsigned int ChunkSize;     // little endian
 	unsigned int Format;        // big endian
 
-	unsigned int   Subchunk1ID; // big endian
-	unsigned int   Subchunk1Size; // little endian
+	unsigned int Subchunk1ID;   // big endian
+	unsigned int Subchunk1Size;   // little endian
 	unsigned short AudioFormat; // little endian
 	unsigned short NumChannels; // little endian
-	unsigned int   SampleRate;  // little endian
-	unsigned int   ByteRate;    // little endian
+	unsigned int SampleRate;    // little endian
+	unsigned int ByteRate;      // little endian
 	unsigned short BlockAlign;  // little endian
 	unsigned short BitsPerSample;   // little endian
 
@@ -1036,7 +1036,7 @@ size_t curl_write_etkey(void *ptr, size_t size, size_t nmemb, FILE *stream)
 static void CL_UpdateGUID(void)
 {
 	fileHandle_t f;
-	int len;
+	int          len;
 
 	len = FS_SV_FOpenFileRead(BASEGAME "/" ETKEY_FILE, &f);
 	FS_FCloseFile(f);
@@ -1437,9 +1437,9 @@ CL_Connect_f
 */
 void CL_Connect_f(void)
 {
-	char *server;
-	const char *ip_port;
-	int argc            = Cmd_Argc();
+	char         *server;
+	const char   *ip_port;
+	int          argc   = Cmd_Argc();
 	netadrtype_t family = NA_UNSPEC;
 
 	if (argc != 2 && argc != 3)
@@ -1581,7 +1581,7 @@ static void CL_CompleteRcon(char *args, int argNum)
  */
 void CL_Rcon_f(void)
 {
-	char message[MAX_RCON_MESSAGE];
+	char     message[MAX_RCON_MESSAGE];
 	netadr_t to;
 
 	if (!rcon_client_password->string)
@@ -1636,8 +1636,8 @@ CL_SendPureChecksums
 void CL_SendPureChecksums(void)
 {
 	const char *pChecksums;
-	char cMsg[MAX_INFO_VALUE];
-	int  i;
+	char       cMsg[MAX_INFO_VALUE];
+	int        i;
 
 	// if we are pure we need to send back a command with our referenced pk3 checksums
 	pChecksums = FS_ReferencedPakPureChecksums();
@@ -2427,11 +2427,11 @@ CL_ServersResponsePacket
 */
 void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extended)
 {
-	int i, count, total;
+	int      i, count, total;
 	netadr_t addresses[MAX_SERVERSPERPACKET];
-	int numservers;
-	byte *buffptr;
-	byte *buffend;
+	int      numservers;
+	byte     *buffptr;
+	byte     *buffend;
 
 	Com_Printf("CL_ServersResponsePacket\n");
 
@@ -2853,8 +2853,8 @@ CL_WWWDownload
 */
 void CL_WWWDownload(void)
 {
-	char *to_ospath;
-	dlStatus_t ret;
+	char            *to_ospath;
+	dlStatus_t      ret;
 	static qboolean bAbort = qfalse;
 
 	if (clc.bWWWDlAborting)
@@ -3072,8 +3072,8 @@ void CL_Frame(int msec)
 typedef struct
 {
 	char name[MAX_QPATH];
-	int  hits;
-	int  lastSetIndex;
+	int hits;
+	int lastSetIndex;
 } cacheItem_t;
 typedef enum
 {
@@ -3092,7 +3092,7 @@ static cacheItem_t cacheGroups[CACHE_NUMGROUPS] =
 #define MAX_CACHE_ITEMS     4096
 #define CACHE_HIT_RATIO     0.75        // if hit on this percentage of maps, it'll get cached
 
-static int cacheIndex;
+static int         cacheIndex;
 static cacheItem_t cacheItems[CACHE_NUMGROUPS][MAX_CACHE_ITEMS];
 
 static void CL_Cache_StartGather_f(void)
@@ -3105,9 +3105,9 @@ static void CL_Cache_StartGather_f(void)
 
 static void CL_Cache_UsedFile_f(void)
 {
-	char groupStr[MAX_QPATH];
-	char itemStr[MAX_QPATH];
-	int  i, group;
+	char        groupStr[MAX_QPATH];
+	char        itemStr[MAX_QPATH];
+	int         i, group;
 	cacheItem_t *item;
 
 	if (Cmd_Argc() < 2)
@@ -3243,7 +3243,7 @@ DLL glue
 static __attribute__ ((format(printf, 2, 3))) void QDECL CL_RefPrintf(int print_level, const char *fmt, ...)
 {
 	va_list argptr;
-	char msg[MAXPRINTMSG];
+	char    msg[MAXPRINTMSG];
 
 	va_start(argptr, fmt);
 	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
@@ -3560,7 +3560,7 @@ void CL_InitRef(void)
 	refexport_t *ret;
 	#ifdef USE_RENDERER_DLOPEN
 	GetRefAPI_t GetRefAPI;
-	char dllName[MAX_OSPATH];
+	char        dllName[MAX_OSPATH];
 	#endif
 
 	Com_Printf("----- Initializing Renderer ----\n");
@@ -4303,8 +4303,8 @@ CL_ServerStatus
 */
 int CL_ServerStatus(char *serverAddress, char *serverStatusString, int maxLen)
 {
-	int i;
-	netadr_t to;
+	int            i;
+	netadr_t       to;
 	serverStatus_t *serverStatus;
 
 	// if no server address then reset all server status requests
@@ -4375,10 +4375,10 @@ CL_ServerStatusResponse
 */
 void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 {
-	char *s;
-	char info[MAX_INFO_STRING];
-	int  i, l, score, ping;
-	int  len;
+	char           *s;
+	char           info[MAX_INFO_STRING];
+	int            i, l, score, ping;
+	int            len;
 	serverStatus_t *serverStatus;
 
 	serverStatus = NULL;
@@ -4493,8 +4493,8 @@ CL_LocalServers_f
 */
 void CL_LocalServers_f(void)
 {
-	char *message;
-	int  i, j;
+	char     *message;
+	int      i, j;
 	netadr_t to;
 
 	Com_Printf("Scanning for servers on the local network...\n");
@@ -4543,11 +4543,11 @@ CL_GlobalServers_f
 void CL_GlobalServers_f(void)
 {
 	netadr_t to;
-	int i;
-	int count;
-	char *buffptr;
-	char command[1024];
-	char *cmdname;
+	int      i;
+	int      count;
+	char     *buffptr;
+	char     command[1024];
+	char     *cmdname;
 
 	if (Cmd_Argc() < 3)
 	{
@@ -4605,8 +4605,8 @@ CL_GetPing
 void CL_GetPing(int n, char *buf, int buflen, int *pingtime)
 {
 	const char *str;
-	int time;
-	int maxPing;
+	int        time;
+	int        maxPing;
 
 	if (n < 0 || n >= MAX_PINGREQUESTS || !cl_pinglist[n].adr.port)
 	{
@@ -4698,8 +4698,8 @@ CL_GetPingQueueCount
 */
 int CL_GetPingQueueCount(void)
 {
-	int i;
-	int count;
+	int    i;
+	int    count;
 	ping_t *pingptr;
 
 	count   = 0;
@@ -4725,9 +4725,9 @@ ping_t *CL_GetFreePing(void)
 {
 	ping_t *pingptr;
 	ping_t *best;
-	int oldest;
-	int i;
-	int time;
+	int    oldest;
+	int    i;
+	int    time;
 
 	pingptr = cl_pinglist;
 	for (i = 0; i < MAX_PINGREQUESTS; i++, pingptr++)
@@ -4780,10 +4780,10 @@ CL_Ping_f
 */
 void CL_Ping_f(void)
 {
-	netadr_t to;
-	ping_t   *pingptr;
-	char *server;
-	int  argc;
+	netadr_t     to;
+	ping_t       *pingptr;
+	char         *server;
+	int          argc;
 	netadrtype_t family = NA_UNSPEC;
 
 	argc = Cmd_Argc();
@@ -4841,10 +4841,10 @@ CL_UpdateVisiblePings_f
 */
 qboolean CL_UpdateVisiblePings_f(int source)
 {
-	int  slots, i;
-	char buff[MAX_STRING_CHARS];
-	int  pingTime;
-	int  max;
+	int      slots, i;
+	char     buff[MAX_STRING_CHARS];
+	int      pingTime;
+	int      max;
 	qboolean status = qfalse;
 
 	if (source < 0 || source > AS_FAVORITES)
@@ -4964,11 +4964,11 @@ CL_ServerStatus_f
 */
 void CL_ServerStatus_f(void)
 {
-	netadr_t to, *toptr = NULL;
-	char *server;
+	netadr_t       to, *toptr = NULL;
+	char           *server;
 	serverStatus_t *serverStatus;
-	int argc;
-	netadrtype_t family = NA_UNSPEC;
+	int            argc;
+	netadrtype_t   family = NA_UNSPEC;
 
 	argc = Cmd_Argc();
 
@@ -5044,7 +5044,7 @@ CL_AddToLimboChat
 */
 void CL_AddToLimboChat(const char *str)
 {
-	int len;
+	int  len;
 	char *p, *ls;
 	int  lastcolor;
 	int  chatHeight;
@@ -5119,12 +5119,12 @@ qboolean CL_GetLimboString(int index, char *buf)
 #ifndef __MACOS__   //DAJ USA
 typedef struct trans_s
 {
-	char            original[MAX_TRANS_STRING];
-	char            translated[MAX_LANGUAGES][MAX_TRANS_STRING];
+	char original[MAX_TRANS_STRING];
+	char translated[MAX_LANGUAGES][MAX_TRANS_STRING];
 	struct  trans_s *next;
-	float           x_offset;
-	float           y_offset;
-	qboolean        fromFile;
+	float x_offset;
+	float y_offset;
+	qboolean fromFile;
 } trans_t;
 
 static trans_t *transTable[FILE_HASH_SIZE];
@@ -5137,7 +5137,7 @@ AllocTrans
 static trans_t *AllocTrans(char *original, char *translated[MAX_LANGUAGES])
 {
 	trans_t *t;
-	int i;
+	int     i;
 
 	t = malloc(sizeof(trans_t));
 	memset(t, 0, sizeof(trans_t));
@@ -5187,7 +5187,7 @@ LookupTrans
 static trans_t *LookupTrans(char *original, char *translated[MAX_LANGUAGES], qboolean isLoading)
 {
 	trans_t *t, *newt, *prev = NULL;
-	long hash;
+	long    hash;
 
 	hash = generateHashValue(original);
 
@@ -5235,12 +5235,12 @@ CL_SaveTransTable
 */
 void CL_SaveTransTable(const char *fileName, qboolean newOnly)
 {
-	int bucketlen, bucketnum, maxbucketlen, avebucketlen;
-	int untransnum, transnum;
-	const char *buf;
+	int          bucketlen, bucketnum, maxbucketlen, avebucketlen;
+	int          untransnum, transnum;
+	const char   *buf;
 	fileHandle_t f;
-	trans_t *t;
-	int i, j, len;
+	trans_t      *t;
+	int          i, j, len;
 
 	if (cl.corruptedTranslationFile)
 	{
@@ -5420,16 +5420,16 @@ CL_LoadTransTable
 */
 void CL_LoadTransTable(const char *fileName)
 {
-	char translated[MAX_LANGUAGES][MAX_VA_STRING];
-	char original[MAX_VA_STRING];
-	qboolean aborted;
-	char *text;
+	char         translated[MAX_LANGUAGES][MAX_VA_STRING];
+	char         original[MAX_VA_STRING];
+	qboolean     aborted;
+	char         *text;
 	fileHandle_t f;
-	char *text_p;
-	char *token;
-	int  len, i;
-	trans_t *t;
-	int count;
+	char         *text_p;
+	char         *token;
+	int          len, i;
+	trans_t      *t;
+	int          count;
 
 	count                       = 0;
 	aborted                     = qfalse;
@@ -5667,10 +5667,10 @@ void CL_InitTranslation()
 #else
 typedef struct trans_s
 {
-	char            original[MAX_TRANS_STRING];
+	char original[MAX_TRANS_STRING];
 	struct  trans_s *next;
-	float           x_offset;
-	float           y_offset;
+	float x_offset;
+	float y_offset;
 } trans_t;
 
 #endif  //DAJ USA
@@ -5682,10 +5682,10 @@ CL_TranslateString
 */
 void CL_TranslateString(const char *string, char *dest_buffer)
 {
-	int i, count, currentLanguage;
+	int      i, count, currentLanguage;
 	trans_t  *t;
 	qboolean newline = qfalse;
-	char *buf;
+	char     *buf;
 
 	buf             = dest_buffer;
 	currentLanguage = cl_language->integer - 1;
@@ -5767,7 +5767,7 @@ void CL_TranslateString(const char *string, char *dest_buffer)
 
 		if (cl_debugTranslation->integer >= 1)
 		{
-			int len2            = strlen(buf);
+			int      len2       = strlen(buf);
 			qboolean addnewline = qfalse;
 
 			if (buf[len2 - 1] == '\n')
@@ -5797,8 +5797,8 @@ TTimo - handy, stores in a static buf, converts \n to chr(13)
 =======================*/
 const char *CL_TranslateStringBuf(const char *string)
 {
-	char *p;
-	int  i, l;
+	char        *p;
+	int         i, l;
 	static char buf[MAX_VA_STRING];
 	CL_TranslateString(string, buf);
 	while ((p = strstr(buf, "\\n")) != NULL)

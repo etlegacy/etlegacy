@@ -768,7 +768,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			else if (!Q_stricmp(token, "$lightmap"))
 			{
 				stage->bundle[0].isLightmap = qtrue;
-				if (shader.lightmapIndex < 0 || !tr.lightmaps )
+				if (shader.lightmapIndex < 0 || !tr.lightmaps)
 				{
 					stage->bundle[0].image[0] = tr.whiteImage;
 				}
@@ -801,7 +801,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 
 			// TODO GL_CLAMP_TO_EDGE
-			stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_CLAMP/*_TO_EDGE*/, qfalse);
+			stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_CLAMP /*_TO_EDGE*/, qfalse);
 			if (!stage->bundle[0].image[0])
 			{
 				ri.Printf(PRINT_WARNING, "WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
@@ -1725,7 +1725,7 @@ surfaceparm <name>
 static void ParseSurfaceParm(char **text)
 {
 	char *token;
-	int  numInfoParms = ARRAY_LEN( infoParms );// sizeof(infoParms) / sizeof(infoParms[0]);
+	int  numInfoParms = ARRAY_LEN(infoParms);  // sizeof(infoParms) / sizeof(infoParms[0]);
 	int  i;
 
 	token = COM_ParseExt(text, qfalse);
@@ -2543,7 +2543,7 @@ static void FixRenderCommandList(int newShader)
 						sortedIndex++;
 						drawSurf->sort = (sortedIndex << QSORT_SHADERNUM_SHIFT)
 						                 | (entityNum << QSORT_ENTITYNUM_SHIFT) | (fogNum << QSORT_FOGNUM_SHIFT) | (frontFace << QSORT_FRONTFACE_SHIFT) | dlightMap;
-						                 
+
 					}
 				}
 				curCmd = (const void *)(ds_cmd + 1);
@@ -3773,7 +3773,7 @@ qhandle_t RE_RegisterShaderLightMap(const char *name, int lightmapIndex)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		ri.Printf( PRINT_ALL, "Shader name exceeds MAX_QPATH\n");
+		ri.Printf(PRINT_ALL, "Shader name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -3810,7 +3810,7 @@ qhandle_t RE_RegisterShader(const char *name)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		ri.Printf( PRINT_ALL, "Shader name exceeds MAX_QPATH\n");
+		ri.Printf(PRINT_ALL, "Shader name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -3843,7 +3843,7 @@ qhandle_t RE_RegisterShaderNoMip(const char *name)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		ri.Printf( PRINT_ALL, "Shader name exceeds MAX_QPATH\n");
+		ri.Printf(PRINT_ALL, "Shader name exceeds MAX_QPATH\n");
 		return 0;
 	}
 

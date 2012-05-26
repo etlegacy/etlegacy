@@ -294,7 +294,7 @@ Transform Q3 colour codes to ANSI escape sequences
 void Sys_AnsiColorPrint(const char *msg)
 {
 	static char buffer[MAXPRINTMSG];
-	int         length      = 0;
+	int         length = 0;
 
 	// colors hash from http://wolfwiki.anime.net/index.php/Color_Codes
 	static int etAnsiHash[][6] =
@@ -389,14 +389,14 @@ void Sys_AnsiColorPrint(const char *msg)
 							if (etAnsiHash[i][2] == 0)
 							{
 								Com_sprintf(buffer, sizeof(buffer), "\033[%d;%dm",
-											etAnsiHash[i][0], etAnsiHash[i][1]);
+								            etAnsiHash[i][0], etAnsiHash[i][1]);
 								_found = 1;
 								break;
 							}
 							else
 							{
 								Com_sprintf(buffer, sizeof(buffer), "\033[%d;%d;%dm",
-											etAnsiHash[i][0], etAnsiHash[i][1], etAnsiHash[i][2]);
+								            etAnsiHash[i][0], etAnsiHash[i][1], etAnsiHash[i][2]);
 								_found = 1;
 								break;
 							}

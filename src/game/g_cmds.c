@@ -2900,18 +2900,18 @@ void Cmd_InterruptCamera_f(gentity_t *ent)
 
 	if (g_gametype.integer != GT_SINGLE_PLAYER && g_gametype.integer != GT_COOP)
 	{
-		return;
+	    return;
 	}
 
 	player = BotFindEntityForName("player"); // BotFindEntityForName is obsolete use FindEntityForName?
 
 	if (!player)
 	{
-		return;
+	    return;
 	}
 
 	G_Script_ScriptEvent(player, "trigger", "cameraInterrupt");
-*/
+	*/
 }
 
 extern vec3_t playerMins;

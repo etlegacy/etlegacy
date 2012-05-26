@@ -1875,8 +1875,8 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				// RF, entity scripting
 				if (targ->health <= 0)       // might have revived itself in death function
 				{
-					if ( (!(targ->r.svFlags & SVF_BOT) && targ->s.eType != ET_CONSTRUCTIBLE && targ->s.eType != ET_EXPLOSIVE) ||
-					         ( targ->s.eType == ET_CONSTRUCTIBLE && !targ->desstages) )          // call manually if using desstages
+					if ((!(targ->r.svFlags & SVF_BOT) && targ->s.eType != ET_CONSTRUCTIBLE && targ->s.eType != ET_EXPLOSIVE) ||
+					    (targ->s.eType == ET_CONSTRUCTIBLE && !targ->desstages))                 // call manually if using desstages
 					{
 						G_Script_ScriptEvent(targ, "death", "");
 					}

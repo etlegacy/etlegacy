@@ -34,46 +34,58 @@
 
 #include "../client/client.h"
 
-qboolean SNDDMA_Init( void ) {
-    return qfalse;
+qboolean SNDDMA_Init(void)
+{
+	return qfalse;
 }
 
-int SNDDMA_GetDMAPos( void ) {
-    return 0;
+int SNDDMA_GetDMAPos(void)
+{
+	return 0;
 }
 
-void SNDDMA_Shutdown( void ) {
+void SNDDMA_Shutdown(void)
+{
 }
 
-void SNDDMA_BeginPainting( void ) {
+void SNDDMA_BeginPainting(void)
+{
 }
 
-void SNDDMA_Submit( void ) {
+void SNDDMA_Submit(void)
+{
 }
 
 // bk001119 - added boolean flag, match client/snd_public.h
-sfxHandle_t S_RegisterSound( const char *name, qboolean compressed ) {
-    return 0;
+sfxHandle_t S_RegisterSound(const char *name, qboolean compressed)
+{
+	return 0;
 }
 
-void S_StartLocalSound( sfxHandle_t sfxHandle, int channelNum, int volume ) {
+void S_StartLocalSound(sfxHandle_t sfxHandle, int channelNum, int volume)
+{
 }
 
-void S_ClearSoundBuffer( qboolean killStreaming ) {
+void S_ClearSoundBuffer(qboolean killStreaming)
+{
 }
 
 // TTimo: added for win32 dedicated
-void SNDDMA_Activate( void ) {
+void SNDDMA_Activate(void)
+{
 }
 
 // show_bug.cgi?id=574
-int S_GetSoundLength( sfxHandle_t sfxHandle ) {
-    Com_Error( ERR_DROP, "null_snddma.c: S_GetSoundLength\n" );
-    return 0;
+int S_GetSoundLength(sfxHandle_t sfxHandle)
+{
+	Com_Error(ERR_DROP, "null_snddma.c: S_GetSoundLength\n");
+	return 0;
 }
 
-void S_UpdateThread( void ) {
+void S_UpdateThread(void)
+{
 }
 
-void S_AddLoopSounds( void ) {
+void S_AddLoopSounds(void)
+{
 }

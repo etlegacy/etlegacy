@@ -1873,7 +1873,7 @@ typedef enum
 #define SQR(a) ((a) * (a))
 
 #ifdef _MSC_VER
-float rint(float v); 
+float rint(float v);
 #endif
 
 #endif  // __Q_SHARED_H

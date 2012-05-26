@@ -276,16 +276,19 @@ int trap_BotAllocateClient(int clientNum)
 	return syscall(G_BOT_ALLOCATE_CLIENT, clientNum);
 }
 
-int trap_BotGetServerCommand(int clientNum, char *message, int size) {
-	return syscall( BOTLIB_GET_CONSOLE_MESSAGE, clientNum, message, size );
+int trap_BotGetServerCommand(int clientNum, char *message, int size)
+{
+	return syscall(BOTLIB_GET_CONSOLE_MESSAGE, clientNum, message, size);
 }
 
-void trap_BotUserCommand(int clientNum, usercmd_t *ucmd) {
-	syscall( BOTLIB_USER_COMMAND, clientNum, ucmd );
+void trap_BotUserCommand(int clientNum, usercmd_t *ucmd)
+{
+	syscall(BOTLIB_USER_COMMAND, clientNum, ucmd);
 }
 
-void trap_EA_Command(int client, char *command) {
-	syscall( BOTLIB_EA_COMMAND, client, command );
+void trap_EA_Command(int client, char *command)
+{
+	syscall(BOTLIB_EA_COMMAND, client, command);
 }
 // omnibot usage end
 

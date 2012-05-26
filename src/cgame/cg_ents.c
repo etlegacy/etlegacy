@@ -722,8 +722,8 @@ static void CG_Item(centity_t *cent)
 	refEntity_t   ent;
 	entityState_t *es;
 	gitem_t       *item;
-	qboolean hasStand, highlight;
-	float    highlightFadeScale = 1.0f;
+	qboolean      hasStand, highlight;
+	float         highlightFadeScale = 1.0f;
 
 	es = &cent->currentState;
 

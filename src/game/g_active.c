@@ -1156,7 +1156,8 @@ void ClientThink_real(gentity_t *ent)
 		{
 			client->ps.pm_type = PM_FREEZE;
 		}
-		else if ((client->ps.eFlags & EF_VIEWING_CAMERA)) {
+		else if ((client->ps.eFlags & EF_VIEWING_CAMERA))
+		{
 			VectorClear(client->ps.velocity);
 			client->ps.pm_type = PM_FREEZE;
 		}

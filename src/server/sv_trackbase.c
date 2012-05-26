@@ -37,15 +37,16 @@
 #include "sv_trackbase.h"
 
 long t;
-int waittime = 15; // seconds
+int  waittime = 15; // seconds
 char expect[16];
-int expectnum;
+int  expectnum;
 
 qboolean maprunning = qfalse;
 
 int querycl = -1;
 
-enum {
+enum
+{
 	TB_BOT_NONE,
 	TB_BOT_CONNECT
 } catchBot;
@@ -77,7 +78,7 @@ void TB_Send(char *format, ...)
 
 void TB_Init()
 {
-	t = time(0);
+	t         = time(0);
 	expectnum = 0;
 
 	NET_StringToAdr(TRACKBASE_ADDR, &addr, NA_IP);
@@ -158,9 +159,9 @@ char *TB_makeClientInfo(int clientNum)
 
 void TB_requestWeaponStats()
 {
-	int i;
+	int      i;
 	qboolean onlybots = qtrue;
-	char *P;
+	char     *P;
 
 	if (!maprunning)
 	{
@@ -178,7 +179,7 @@ void TB_requestWeaponStats()
 			if (svs.clients[i].netchan.remoteAddress.type != NA_BOT)
 			{
 				onlybots = qfalse;
-				querycl = i;
+				querycl  = i;
 			}
 			expectnum++;
 		}

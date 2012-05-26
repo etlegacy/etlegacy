@@ -92,11 +92,11 @@ void SV_SetConfigstring(int index, const char *val)
 
 void SV_UpdateConfigStrings(void)
 {
-	client_t 	*client;
-	int			len, i, index, sent, remaining;
-	int			maxChunkSize = MAX_STRING_CHARS - 24;
-	char 		*cmd;
-	char 		buf[MAX_STRING_CHARS];
+	client_t *client;
+	int      len, i, index, sent, remaining;
+	int      maxChunkSize = MAX_STRING_CHARS - 24;
+	char     *cmd;
+	char     buf[MAX_STRING_CHARS];
 
 	for (index = 0; index < MAX_CONFIGSTRINGS; index++)
 	{
@@ -132,7 +132,7 @@ void SV_UpdateConfigStrings(void)
 				/*
 				if ((SV_GameIsSinglePlayer() || SV_GameIsCoop()) && client->gentity && (client->gentity->r.svFlags & SVF_BOT))
 				{
-					continue;
+				    continue;
 				}
 				*/
 
@@ -864,11 +864,11 @@ void SV_Init(void)
 	sv_zombietime      = Cvar_Get("sv_zombietime", "2", CVAR_TEMP);
 	Cvar_Get("nextmap", "", CVAR_TEMP);
 
-	sv_allowDownload  = Cvar_Get("sv_allowDownload", "1", CVAR_ARCHIVE);
+	sv_allowDownload = Cvar_Get("sv_allowDownload", "1", CVAR_ARCHIVE);
 
 	// master servers
 	sv_master[0] = Cvar_Get("sv_master1", MASTER_SERVER_NAME, 0);
-	for(index = 1; index < MAX_MASTER_SERVERS; index++)
+	for (index = 1; index < MAX_MASTER_SERVERS; index++)
 	{
 		sv_master[index] = Cvar_Get(va("sv_master%d", index + 1), "", CVAR_ARCHIVE);
 	}
@@ -876,9 +876,9 @@ void SV_Init(void)
 	sv_reconnectlimit = Cvar_Get("sv_reconnectlimit", "3", 0);
 	sv_tempbanmessage = Cvar_Get("sv_tempbanmessage", "You have been kicked and are temporarily banned from joining this server.", 0);
 
-	sv_padPackets     = Cvar_Get("sv_padPackets", "0", 0);
-	sv_killserver     = Cvar_Get("sv_killserver", "0", 0);
-	sv_mapChecksum    = Cvar_Get("sv_mapChecksum", "", CVAR_ROM);
+	sv_padPackets  = Cvar_Get("sv_padPackets", "0", 0);
+	sv_killserver  = Cvar_Get("sv_killserver", "0", 0);
+	sv_mapChecksum = Cvar_Get("sv_mapChecksum", "", CVAR_ROM);
 
 	sv_lanForceRate = Cvar_Get("sv_lanForceRate", "1", CVAR_ARCHIVE);
 

@@ -3643,7 +3643,7 @@ static void FS_Startup(const char *gameName)
 #ifdef WIN32
 	homePath = fs_basepath->string;
 #else
-	homePath     = Sys_DefaultHomePath();
+	homePath = Sys_DefaultHomePath();
 	if (!homePath || !homePath[0])
 	{
 		homePath = fs_basepath->string;

@@ -56,9 +56,9 @@ void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
 
 /*
 int PASSFLOAT( float x ) {
-	floatint_t fi;
-	fi.f = x;
-	return fi.i;
+    floatint_t fi;
+    fi.f = x;
+    return fi.i;
 }
 */
 

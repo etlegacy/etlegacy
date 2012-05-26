@@ -641,7 +641,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 		if (SVC_RateLimitAddress(from, 10, 1000))
 		{
 			Com_DPrintf("SVC_Status: rate limit from %s exceeded, dropping request\n",
-						NET_AdrToString(from));
+			            NET_AdrToString(from));
 			return;
 		}
 
@@ -904,7 +904,7 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 	if (SVC_RateLimitAddress(from, 10, 1000))
 	{
 		Com_Printf("Bad rcon - rate limit from %s exceeded, dropping request\n",
-		            NET_AdrToString(from));
+		           NET_AdrToString(from));
 		return;
 	}
 

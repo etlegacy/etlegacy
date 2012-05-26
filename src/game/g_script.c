@@ -1068,19 +1068,28 @@ void script_mover_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker
 script_mover_think
 ================
 */
-void script_mover_think( gentity_t *ent )
+void script_mover_think(gentity_t *ent)
 {
-	if( ent->spawnflags & 128 ) {
-		if( !ent->tankLink ) {
-			if( ent->mg42weapHeat ) {
+	if (ent->spawnflags & 128)
+	{
+		if (!ent->tankLink)
+		{
+			if (ent->mg42weapHeat)
+			{
 				ent->mg42weapHeat -= (300.f * 100 * 0.001);
 
-				if( ent->mg42weapHeat < 0 )
+				if (ent->mg42weapHeat < 0)
+				{
 					ent->mg42weapHeat = 0;
+				}
 			}
-			if( ent->backupWeaponTime ) {
+			if (ent->backupWeaponTime)
+			{
 				ent->backupWeaponTime -= 100;
-				if( ent->backupWeaponTime < 0 ) ent->backupWeaponTime = 0;
+				if (ent->backupWeaponTime < 0)
+				{
+					ent->backupWeaponTime = 0;
+				}
 			}
 		}
 	}
@@ -1143,7 +1152,7 @@ void script_mover_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 			ent->die = script_mover_die;
 
-			ent->think = script_mover_think;
+			ent->think     = script_mover_think;
 			ent->nextthink = level.time + 200;
 		}
 	}

@@ -2521,12 +2521,15 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 		}
 
 		{
-			int num=0, i;
+			int num = 0, i;
 			// sigh, searching..
-			for ( i=MAX_CLIENTS ; i< level.num_entities; ++i ){
+			for (i = MAX_CLIENTS ; i < level.num_entities; ++i)
+			{
 
-				if ( !(g_entities[i].etpro_misc_1 & 1))
+				if (!(g_entities[i].etpro_misc_1 & 1))
+				{
 					continue;
+				}
 // FIXME
 //				if ( g_entities[i].etpro_misc_2 != target-g_entities)
 //					continue;

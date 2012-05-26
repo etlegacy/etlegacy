@@ -1918,11 +1918,15 @@ char *Com_SkipTokens(char *s, int numTokens, char *sep)
 }
 
 #if defined _MSC_VER
-float rint( float v) {
-	if ( v >= 0.5f) {
-		return ceilf( v );
-	} else {
-		return floorf( v );
+float rint(float v)
+{
+	if (v >= 0.5f)
+	{
+		return ceilf(v);
+	}
+	else
+	{
+		return floorf(v);
 	}
 }
 #endif

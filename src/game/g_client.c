@@ -926,7 +926,7 @@ SetWolfSpawnWeapons
 */
 void SetWolfSpawnWeapons(gclient_t *client)
 {
-	int      pc    = client->sess.playerType;
+	int pc = client->sess.playerType;
 	// qboolean isBot = (g_entities[client->ps.clientNum].r.svFlags & SVF_BOT) ? qtrue : qfalse;
 
 	if (client->sess.sessionTeam == TEAM_SPECTATOR)
@@ -1823,7 +1823,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	if (isBot)
 	{
-		ent->s.number = clientNum;
+		ent->s.number   = clientNum;
 		ent->r.svFlags |= SVF_BOT;
 		ent->inuse      = qtrue;
 

@@ -141,14 +141,14 @@ R_ProcessLightmap
 */
 float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte **pic_out)
 {
-	int    j;
-	float  maxIntensity = 0;
+	int   j;
+	float maxIntensity = 0;
 
 	if (r_lightmap->integer > 1)     // color code by intensity as development tool (FIXME: check range)
 	{
 		double sumIntensity = 0;
-		float r, g, b, intensity;
-		float out[3] = { 0, 0, 0 };
+		float  r, g, b, intensity;
+		float  out[3] = { 0, 0, 0 };
 
 		for (j = 0; j < width * height; j++)
 		{
