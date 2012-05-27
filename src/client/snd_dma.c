@@ -825,7 +825,7 @@ void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 		SNDDMA_BeginPainting();
 		if (dma.buffer)
 		{
-			Com_Memset(dma.buffer, clear, dma.samples * dma.samplebits / 8);
+			Snd_Memset(dma.buffer, clear, dma.samples * dma.samplebits / 8);
 		}
 		SNDDMA_Submit();
 

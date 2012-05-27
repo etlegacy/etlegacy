@@ -466,6 +466,14 @@ void *Hunk_AllocDebug(int size, ha_pref preference, char *label, char *file, int
 void *Hunk_Alloc(int size, ha_pref preference);
 #endif
 
+// Dushan
+#ifdef __linux__
+// custom Snd_Memset implementation for glibc memset bug workaround
+void Snd_Memset(void *dest, const int val, const size_t count);
+#else
+#define Snd_Memset Com_Memset
+#endif
+
 #define Com_Memset memset
 #define Com_Memcpy memcpy
 
