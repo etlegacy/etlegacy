@@ -1,4 +1,7 @@
-build/
+/build/
+/obj/
 *.sh
 *.kdev4
 *~
+/Makefile
+/*.make
