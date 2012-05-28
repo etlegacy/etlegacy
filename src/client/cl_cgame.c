@@ -987,7 +987,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return 0;
 
 	case CG_TESTPRINTINT:
-		Com_Printf("%s%i\n", (char *)VMA(1), args[2]);
+		Com_Printf("%s%li\n", (char *)VMA(1), (long)args[2]);
 		return 0;
 	case CG_TESTPRINTFLOAT:
 		Com_Printf("%s%f\n", (char *)VMA(1), VMF(2));

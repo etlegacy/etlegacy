@@ -975,7 +975,7 @@ done:
 
 	if (opStack != &stack[1])
 	{
-		Com_Error(ERR_DROP, "Interpreter error: opStack = %i", opStack - stack);
+		Com_Error(ERR_DROP, "Interpreter error: opStack = %li", (long)(opStack - stack));
 	}
 
 	vm->programStack = stackOnEntry;

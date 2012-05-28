@@ -1325,7 +1325,7 @@ char *CL_GenHWInfo(void)
 		return NULL;
 	}
 	#else
-	return va("%x", gethostid());
+	return va("%lx", gethostid());
 	#endif
 }
 
