@@ -1061,7 +1061,7 @@ int PC_Directive_include(source_t *source)
 			{
 				break;
 			}
-			strncat(path, token.string, _MAX_PATH);
+			strncat(path, token.string, sizeof(path) - strlen(path) - 1);
 		} //end while
 		if (*token.string != '>')
 		{
