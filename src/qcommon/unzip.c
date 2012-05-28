@@ -1135,12 +1135,23 @@ static int unzlocal_getByte(FILE *fin,int *pi)
 static int unzlocal_getShort (FILE* fin, uLong *pX)
 {
 	short	v;
+	size_t	count;
 
-	fread( &v, sizeof(v), 1, fin );
+	count = fread( &v, 1, sizeof(v), fin );
+	if (count == sizeof(v))
+	{
+		*pX = LittleShort( v);
+		return UNZ_OK;
+	}
+	else
+	{
+		if (ferror(fin)) 
+			return UNZ_ERRNO;
+		else
+			return UNZ_EOF;
+	}
 
-	*pX = LittleShort( v);
-	return UNZ_OK;
-
+		
 /*
     uLong x ;
     int i;
@@ -1164,11 +1175,21 @@ static int unzlocal_getShort (FILE* fin, uLong *pX)
 static int unzlocal_getLong (FILE *fin, uLong *pX)
 {
 	int		v;
+	size_t	count;
 
-	fread( &v, sizeof(v), 1, fin );
-
-	*pX = LittleLong( v);
-	return UNZ_OK;
+	count = fread( &v, 1, sizeof(v), fin );
+	if (count == sizeof(v))
+	{
+		*pX = LittleLong( v);
+		return UNZ_OK;
+	}
+	else
+	{
+		if (ferror(fin)) 
+			return UNZ_ERRNO;
+		else
+			return UNZ_EOF;
+	}
 
 /*
     uLong x ;
