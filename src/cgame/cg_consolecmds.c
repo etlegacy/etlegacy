@@ -522,7 +522,7 @@ static void CG_FTSayPlayerClass_f(void)
 	{
 		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
 		{
-			CG_Printf(CG_TranslateString("Can't team voice chat as a spectator.\n"));
+			CG_Printf("%s", CG_TranslateString("Can't team voice chat as a spectator.\n"));
 			return;
 		}
 	}
@@ -562,7 +562,7 @@ static void CG_SayPlayerClass_f(void)
 	{
 		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
 		{
-			CG_Printf(CG_TranslateString("Can't team voice chat as a spectator.\n"));
+			CG_Printf("%s", CG_TranslateString("Can't team voice chat as a spectator.\n"));
 			return;
 		}
 	}
@@ -585,7 +585,7 @@ static void CG_VoiceChat_f(void)
 	{
 		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
 		{
-			CG_Printf(CG_TranslateString("Can't voice chat as a spectator.\n"));
+			CG_Printf("%s", CG_TranslateString("Can't voice chat as a spectator.\n"));
 			return;
 		}
 	}
@@ -610,7 +610,7 @@ static void CG_TeamVoiceChat_f(void)
 	{
 		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
 		{
-			CG_Printf(CG_TranslateString("Can't team voice chat as a spectator.\n"));
+			CG_Printf("%s", CG_TranslateString("Can't team voice chat as a spectator.\n"));
 			return;
 		}
 	}
@@ -635,7 +635,7 @@ static void CG_BuddyVoiceChat_f(void)
 	{
 		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
 		{
-			CG_Printf(CG_TranslateString("Can't buddy voice chat as a spectator.\n"));
+			CG_Printf("%s", CG_TranslateString("Can't buddy voice chat as a spectator.\n"));
 			return;
 		}
 	}
