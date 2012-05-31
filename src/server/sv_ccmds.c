@@ -187,8 +187,6 @@ static void SV_Map_f(void)
 /*
 ================
 SV_CheckTransitionGameState
-
-NERVE - SMF
 ================
 */
 static qboolean SV_CheckTransitionGameState(gamestate_t new_gs, gamestate_t old_gs)
@@ -219,8 +217,6 @@ static qboolean SV_CheckTransitionGameState(gamestate_t new_gs, gamestate_t old_
 /*
 ================
 SV_TransitionGameState
-
-NERVE - SMF
 ================
 */
 static qboolean SV_TransitionGameState(gamestate_t new_gs, gamestate_t old_gs, int delay)
@@ -412,6 +408,7 @@ static void SV_MapRestart_f(void)
 
 /*
 ==================
+SV_TempBanNetAddress
 ==================
 */
 void SV_TempBanNetAddress(netadr_t address, int length)
@@ -483,9 +480,11 @@ static void SV_Status_f(void)
 	}
 
 	Com_Printf("map: %s\n", sv_mapname->string);
-
 	Com_Printf("num score ping name            lastmsg address               qport rate\n");
 	Com_Printf("--- ----- ---- --------------- ------- --------------------- ----- -----\n");
+
+	// FIXME: extend player name lenght (>16 chars) ? - they are printed!
+	// FIXME: do a Com_Printf per line! ... create the row at first
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
 		if (!cl->state)
@@ -513,21 +512,25 @@ static void SV_Status_f(void)
 		Com_Printf("%s", rc(cl->name));
 		l = 16 - strlen(cl->name);
 		for (j = 0 ; j < l ; j++)
+		{
 			Com_Printf(" ");
+		}
 
 		Com_Printf("%7i ", svs.time - cl->lastPacketTime);
 
-		s = NET_AdrToString(cl->netchan.remoteAddress);
+		s = NET_AdrToStringwPort(cl->netchan.remoteAddress);
 		Com_Printf("%s", s);
+
 		l = 22 - strlen(s);
 		for (j = 0 ; j < l ; j++)
+		{
 			Com_Printf(" ");
+		}
 
 		Com_Printf("%5i", cl->netchan.qport);
 
-		Com_Printf(" %5i", cl->rate);
+		Com_Printf(" %5i\n", cl->rate);
 
-		Com_Printf("\n");
 	}
 	Com_Printf("\n");
 }
@@ -568,7 +571,6 @@ static void SV_ConSay_f(void)
 	SV_SendServerCommand(NULL, "chat \"%s\"", text);
 }
 
-
 /*
 ==================
 SV_Heartbeat_f
@@ -580,7 +582,6 @@ void SV_Heartbeat_f(void)
 {
 	svs.nextHeartbeatTime = -9999999;
 }
-
 
 /*
 ===========
@@ -595,7 +596,6 @@ static void SV_Serverinfo_f(void)
 	Info_Print(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
 }
 
-
 /*
 ===========
 SV_Systeminfo_f
@@ -608,7 +608,6 @@ static void SV_Systeminfo_f(void)
 	Com_Printf("System info settings:\n");
 	Info_Print(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
 }
-
 
 /*
 ===========
@@ -630,7 +629,7 @@ static void SV_DumpUser_f(void)
 
 	if (Cmd_Argc() != 2)
 	{
-		Com_Printf("Usage: info <userid>\n");
+		Com_Printf("Usage: dumpuser <userid>\n");
 		return;
 	}
 
@@ -641,11 +640,9 @@ static void SV_DumpUser_f(void)
 		return;
 	}
 
-	Com_Printf("userinfo\n");
-	Com_Printf("--------\n");
+	Com_Printf("userinfo\n--------\n");
 	Info_Print(cl->userinfo);
 }
-
 
 /*
 =================
@@ -673,8 +670,6 @@ static void SV_CompleteMapName(char *args, int argNum)
 /*
 =================
 SV_GameCompleteStatus_f
-
-NERVE - SMF
 =================
 */
 void SV_GameCompleteStatus_f(void)
