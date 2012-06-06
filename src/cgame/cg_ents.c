@@ -2340,9 +2340,8 @@ void CG_Cabinet(centity_t *cent, cabinetType_t type)
 	refEntity_t cabinet;
 	refEntity_t mini_me;
 	int         i, cnt;
-//  int k;
 
-	if (type < 0 || type >= CT_MAX)
+	if (type >= CT_MAX)
 	{
 		return;
 	}

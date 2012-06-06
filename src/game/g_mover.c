@@ -5750,7 +5750,7 @@ void func_constructiblespawn(gentity_t *ent)
 
 					while ((tent = G_Find(tent, FOFS(target), ent->targetname)) != NULL)
 					{
-						if ((tent->s.eType == ET_OID_TRIGGER))
+						if (tent->s.eType == ET_OID_TRIGGER)
 						{
 							if (tent->spawnflags & 8)
 							{
@@ -5777,7 +5777,7 @@ void func_constructiblespawn(gentity_t *ent)
 					gentity_t *tent = NULL;
 					while ((tent = G_Find(tent, FOFS(target), ent->targetname)) != NULL)
 					{
-						if ((tent->s.eType == ET_OID_TRIGGER))
+						if (tent->s.eType == ET_OID_TRIGGER)
 						{
 							ent->parent = tent;
 							e->parent   = tent;

@@ -1364,7 +1364,7 @@ static qboolean TryConstructing(gentity_t *ent)
 					gentity_t *tent = NULL;
 					while ((tent = G_Find(tent, FOFS(target), constructible->targetname)) != NULL)
 					{
-						if ((tent->s.eType == ET_OID_TRIGGER))
+						if (tent->s.eType == ET_OID_TRIGGER)
 						{
 							e->parent = tent;
 						}
@@ -1570,7 +1570,7 @@ void AutoBuildConstruction(gentity_t *constructible)
 
 			while ((tent = G_Find(tent, FOFS(target), constructible->targetname)) != NULL)
 			{
-				if ((tent->s.eType == ET_OID_TRIGGER))
+				if (tent->s.eType == ET_OID_TRIGGER)
 				{
 					if (tent->spawnflags & 8)
 					{
@@ -1584,7 +1584,7 @@ void AutoBuildConstruction(gentity_t *constructible)
 				gentity_t *tent = NULL;
 				while ((tent = G_Find(tent, FOFS(target), constructible->targetname)) != NULL)
 				{
-					if ((tent->s.eType == ET_OID_TRIGGER))
+					if (tent->s.eType == ET_OID_TRIGGER)
 					{
 						e->parent = tent;
 					}
@@ -2172,7 +2172,7 @@ evilbanigoto:
 						continue;
 					}
 
-					if ((hit->s.eType == ET_OID_TRIGGER))
+					if (hit->s.eType == ET_OID_TRIGGER)
 					{
 						if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
 						{
@@ -2254,7 +2254,7 @@ evilbanigoto:
 					{
 						continue;
 					}
-					if ((hit->s.eType == ET_OID_TRIGGER))
+					if (hit->s.eType == ET_OID_TRIGGER)
 					{
 
 						if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
@@ -2450,7 +2450,7 @@ evilbanigoto:
 						{
 							continue;
 						}
-						if ((hit->s.eType == ET_OID_TRIGGER))
+						if (hit->s.eType == ET_OID_TRIGGER)
 						{
 
 							if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
