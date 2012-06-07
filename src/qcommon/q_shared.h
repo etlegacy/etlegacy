@@ -135,16 +135,6 @@ typedef int intptr_t;
 #include <sys/stat.h> // rain
 #include <float.h>
 
-
-#if defined (_WIN32)
-#define Q_vsnprintf _vsnprintf
-#define Q_snprintf _snprintf
-#else
-#include <stdint.h>
-#define Q_vsnprintf vsnprintf
-#define Q_snprintf  snprintf
-#endif
-
 #ifdef _MSC_VER
 #include <io.h>
 
@@ -156,6 +146,13 @@ typedef unsigned __int64 uint64_t;
 typedef unsigned __int32 uint32_t;
 typedef unsigned __int16 uint16_t;
 typedef unsigned __int8 uint8_t;
+
+#define Q_vsnprintf _vsnprintf
+#define Q_snprintf _snprintf
+#else
+#include <stdint.h>
+#define Q_vsnprintf vsnprintf
+#define Q_snprintf  snprintf
 #endif
 #endif
 
