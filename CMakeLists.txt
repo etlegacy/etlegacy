@@ -39,7 +39,7 @@ option(TRACKBASE_SUPPORT 	"Enable extended server statistics (server only)" 		ON
 # Platform-specific settings
 #-----------------------------------------------------------------
 
-if(CROSS_COMPILE32) # 32-bit build
+if(UNIX AND CROSS_COMPILE32) # 32-bit build
     set(CMAKE_SYSTEM_PROCESSOR i386)
     set(CMAKE_SYSTEM_LIBRARY_PATH /lib32 /usr/lib32 /usr/local/lib32)
     set(FIND_LIBRARY_USE_LIB64_PATHS OFF)
@@ -48,7 +48,11 @@ if(CROSS_COMPILE32) # 32-bit build
     set(CMAKE_EXE_LINKER_FLAGS "-m32")
     set(CMAKE_SHARED_LINKER_FLAGS "-m32")
     set(CMAKE_MODULE_LINKER_FLAGS "-m32")
-endif(CROSS_COMPILE32)
+endif(UNIX AND CROSS_COMPILE32)
+
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
+endif(MSVC)
 
 if(UNIX)
         set(OS_LIBRARIES dl m)
@@ -64,7 +68,7 @@ if(WIN32)
 else()
         set(ARCH "i386")
 endif()
-elseif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "sparc" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "powerpc")
+elseif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" OR "${CMAKE_SYSTEM_PROCESSOR}")
         set(ARCH ${CMAKE_SYSTEM_PROCESSOR})
 else()
         set(ARCH "none")
@@ -143,21 +147,21 @@ FILE(GLOB UI_SRC
 #-----------------------------------------------------------------
 if(USE_CURL)
 	add_definitions(-DUSE_CURL)
-	find_package(CURL REQUIRED)
+        find_package(CURL)
 	set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_curl.c")
 else(USE_CURL)
 	set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
 endif(USE_CURL)
 
 if(USE_FREETYPE)
-#	add_definitions(-DUSE_FREETYPE)
-# 	find_package(Freetype REQUIRED)
+    add_definitions(-DUSE_FREETYPE)
+    find_package(Freetype)
 endif(USE_FREETYPE)
 
 if(USE_OPENAL)
-#	add_definitions(-DUSE_OPENAL)
-# 	add_definitions(-DUSE_OPENAL_DLOPEN)
-# 	TODO: find_package(OpenAL REQUIRED)
+    add_definitions(-DUSE_OPENAL)
+    add_definitions(-DUSE_OPENAL_DLOPEN)
+    find_package(OpenAL REQUIRED)
 endif(USE_OPENAL)
 
 if(USE_CODEC_VORBIS)
@@ -183,22 +187,25 @@ endif(TRACKBASE_SUPPORT)
 if(BUILD_CLIENT)
 	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC})
 	include_directories(
-		${CURL_INCLUDE_DIRS}
+                ${CURL_INCLUDE_DIR}
 		${OPENGL_INCLUDE_DIR}
 		${JPEG_INCLUDE_DIR}
                 ${SDL32_INCLUDE_DIR}
+                ${FREETYPE_INCLUDE_DIRS}
+                ${OPENAL_INCLUDE_DIR}
+
 	)
 	target_link_libraries(etl
 		${OS_LIBRARIES}
                 ${SDL32_LIBRARIES}
-		#SDLmain - Windows?
-		${OPENGL_LIBRARY}
-		${CURL_LIBRARY}
-		${JPEG_LIBRARY}
+                ${OPENGL_LIBRARIES}
+                ${CURL_LIBRARIES}
+                ${JPEG_LIBRARIES}
+                ${FREETYPE_LIBRARIES}
+                ${OPENAL_LIBRARIES}
 	)
 	set_target_properties(etl
                 PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
-        install(TARGETS etl DESTINATION build/linux-i386)
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
@@ -206,21 +213,23 @@ if(BUILD_SERVER)
 	target_link_libraries(etlded
 		${OS_LIBRARIES})
 	set_target_properties(etlded
-		PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
-	install(TARGETS etlded DESTINATION build/linux-i386)
+                PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
 endif(BUILD_SERVER)
 
 if(BUILD_MOD)
+        # cgame
 	add_library(cgame.mp.${ARCH} SHARED ${CGAME_SRC})
 	set_target_properties(cgame.mp.${ARCH}
 		PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
 			PREFIX ""
 			LIBRARY_OUTPUT_DIRECTORY "etmain")
+        # qagame
 	add_library(qagame.mp.${ARCH} SHARED ${QAGAME_SRC})
 	set_target_properties(qagame.mp.${ARCH}
 		PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
 			PREFIX ""
 			LIBRARY_OUTPUT_DIRECTORY "etmain")
+        # ui
 	add_library(ui.mp.${ARCH} SHARED ${UI_SRC})
 	set_target_properties(ui.mp.${ARCH}
 		PROPERTIES
