@@ -63,12 +63,12 @@ endif()
 
 # Get the system architecture
 if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i686" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i386")
-if(WIN32)
-        set(ARCH "x86")
-else()
-        set(ARCH "i386")
-endif()
-elseif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" OR "${CMAKE_SYSTEM_PROCESSOR}")
+        if(WIN32)
+                set(ARCH "x86")
+        else()
+                set(ARCH "i386")
+        endif()
+elseif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
         set(ARCH ${CMAKE_SYSTEM_PROCESSOR})
 else()
         set(ARCH "none")
@@ -78,7 +78,7 @@ endif()
 # Dependencies
 #-----------------------------------------------------------------
 Find_Package(SDL32) # FindSDL doesn't detect 32bit lib when crosscompiling
-Find_Package(OpenGL)
+Find_Package(OpenGL REQUIRED)
 Find_Package(JPEG)
 
 #-----------------------------------------------------------------
@@ -180,6 +180,22 @@ endif(GUIDMASTER_SUPPORT)
 if(TRACKBASE_SUPPORT)
 	add_definitions(-DTRACKBASE_SUPPORT)
 endif(TRACKBASE_SUPPORT)
+
+# Use bundled libraries
+if(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL)
+    if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
+        message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
+        add_subdirectory(libs)
+    else()
+        message(STATUS "=============================================================")
+        message(STATUS "Some of the required libraries were not found on your system!")
+        message(STATUS "=============================================================")
+        message(STATUS "Check the log and install the missing libraries.")
+        message(STATUS "You need the *multilib* package to crosscompile ET:L on a 64bit system.")
+        message(STATUS "Alternatively clone etlegacy repository and then run 'git submodule update' and compile the libraries from source.")
+        message(FATAL_ERROR "Build stopped because of missing libraries.")
+    endif()
+endif(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL)
 
 #-----------------------------------------------------------------
 # Build
