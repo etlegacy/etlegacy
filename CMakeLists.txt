@@ -7,8 +7,6 @@ cmake_minimum_required(VERSION 2.6)
 
 project(ETLEGACY C)
 
-set(CMAKE_BUILD_TYPE Release CACHE STRING "Build configuration (Debug, Release)")
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 set(ETLEGACY_VERSION_MAJOR  "2")
@@ -75,11 +73,13 @@ else()
 endif()
 
 #-----------------------------------------------------------------
-# Dependencies
+# Client dependencies
 #-----------------------------------------------------------------
-Find_Package(SDL32) # FindSDL doesn't detect 32bit lib when crosscompiling
-Find_Package(OpenGL REQUIRED)
-Find_Package(JPEG)
+if(BUILD_CLIENT)
+        Find_Package(SDL32) # FindSDL doesn't detect 32bit lib when crosscompiling
+        Find_Package(OpenGL REQUIRED)
+        Find_Package(JPEG)
+endif(BUILD_CLIENT)
 
 #-----------------------------------------------------------------
 # Sources
@@ -143,59 +143,64 @@ FILE(GLOB UI_SRC
 )
 
 #-----------------------------------------------------------------
-# User selected features
+# Client features
 #-----------------------------------------------------------------
-if(USE_CURL)
-	add_definitions(-DUSE_CURL)
-        find_package(CURL)
-	set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_curl.c")
-else(USE_CURL)
-	set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
-endif(USE_CURL)
+if(BUILD_CLIENT)
+        if(USE_CURL)
+                add_definitions(-DUSE_CURL)
+                find_package(CURL)
+                set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_curl.c")
+        else(USE_CURL)
+                set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
+        endif(USE_CURL)
 
-if(USE_FREETYPE)
-    add_definitions(-DUSE_FREETYPE)
-    find_package(Freetype)
-endif(USE_FREETYPE)
+        if(USE_FREETYPE)
+                add_definitions(-DUSE_FREETYPE)
+                find_package(Freetype)
+        endif(USE_FREETYPE)
 
-if(USE_OPENAL)
-    add_definitions(-DUSE_OPENAL)
-    add_definitions(-DUSE_OPENAL_DLOPEN)
-    find_package(OpenAL)
-endif(USE_OPENAL)
+        if(USE_OPENAL)
+                add_definitions(-DUSE_OPENAL)
+                add_definitions(-DUSE_OPENAL_DLOPEN)
+                find_package(OpenAL)
+        endif(USE_OPENAL)
 
-if(USE_CODEC_VORBIS)
-    add_definitions(-DUSE_CODEC_VORBIS)
-    find_package(Vorbis)
-endif(USE_CODEC_VORBIS)
+        if(USE_CODEC_VORBIS)
+                add_definitions(-DUSE_CODEC_VORBIS)
+                find_package(Vorbis)
+        endif(USE_CODEC_VORBIS)
 
-if(SMP_SUPPORT)
-	add_definitions(-DSMP)
-endif(SMP_SUPPORT)
+        if(SMP_SUPPORT)
+                add_definitions(-DSMP)
+        endif(SMP_SUPPORT)
 
-if(GUIDMASTER_SUPPORT)
-	add_definitions(-DGUIDMASTER_SUPPORT)
-endif(GUIDMASTER_SUPPORT)
+        if(GUIDMASTER_SUPPORT)
+                add_definitions(-DGUIDMASTER_SUPPORT)
+        endif(GUIDMASTER_SUPPORT)
 
+        # Use bundled libraries
+        if(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL)
+                if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
+                        message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
+                        add_subdirectory(libs)
+                else()
+                        message(STATUS "=============================================================")
+                        message(STATUS "Some of the required libraries were not found on your system!")
+                        message(STATUS "=============================================================")
+                        message(STATUS "Check the log and install the missing libraries.")
+                        message(STATUS "You need the *multilib* package to crosscompile ET:L on a 64bit system.")
+                        message(STATUS "Alternatively clone etlegacy repository and then run 'git submodule init' followed by 'git submodule update' and compile the libraries from source.")
+                        message(FATAL_ERROR "Build stopped because of missing libraries.")
+                endif()
+        endif(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL)
+endif(BUILD_CLIENT)
+
+#-----------------------------------------------------------------
+# Server features
+#-----------------------------------------------------------------
 if(TRACKBASE_SUPPORT)
-	add_definitions(-DTRACKBASE_SUPPORT)
+        add_definitions(-DTRACKBASE_SUPPORT)
 endif(TRACKBASE_SUPPORT)
-
-# Use bundled libraries
-if(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL)
-    if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
-        message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
-        add_subdirectory(libs)
-    else()
-        message(STATUS "=============================================================")
-        message(STATUS "Some of the required libraries were not found on your system!")
-        message(STATUS "=============================================================")
-        message(STATUS "Check the log and install the missing libraries.")
-        message(STATUS "You need the *multilib* package to crosscompile ET:L on a 64bit system.")
-        message(STATUS "Alternatively clone etlegacy repository and then run 'git submodule update' and compile the libraries from source.")
-        message(FATAL_ERROR "Build stopped because of missing libraries.")
-    endif()
-endif(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL)
 
 #-----------------------------------------------------------------
 # Build
