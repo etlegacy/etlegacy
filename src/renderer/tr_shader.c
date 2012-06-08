@@ -800,8 +800,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				return qfalse;
 			}
 
-			// TODO GL_CLAMP_TO_EDGE
-			stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_CLAMP /*_TO_EDGE*/, qfalse);
+			stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_CLAMP_TO_EDGE, qfalse);
 			if (!stage->bundle[0].image[0])
 			{
 				ri.Printf(PRINT_WARNING, "WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
@@ -849,7 +848,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else
 			{
-				stage->bundle[0].image[0] = R_FindImageFile(token, qfalse, qfalse, GL_CLAMP, qtrue);
+				stage->bundle[0].image[0] = R_FindImageFile(token, qfalse, qfalse, GL_CLAMP_TO_EDGE, qtrue);
 				if (!stage->bundle[0].image[0])
 				{
 					ri.Printf(PRINT_WARNING, "WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
@@ -1521,8 +1520,7 @@ static void ParseSkyParms(char **text)
 		{
 			Com_sprintf(pathname, sizeof(pathname), "%s_%s.tga"
 			            , token, suf[i]);
-			// FIXME GL_CLAMP_TO_EDGE
-			shader.sky.outerbox[i] = R_FindImageFile(( char * ) pathname, qtrue, qtrue, GL_CLAMP, qfalse);
+			shader.sky.outerbox[i] = R_FindImageFile(( char * ) pathname, qtrue, qtrue, GL_CLAMP_TO_EDGE, qfalse);
 			if (!shader.sky.outerbox[i])
 			{
 				shader.sky.outerbox[i] = tr.defaultImage;
@@ -3486,7 +3484,7 @@ void R_FindLightmap(int *lightmapIndex)
 
 	// attempt to load an external lightmap
 	sprintf(fileName, "%s/" EXTERNAL_LIGHTMAP, tr.worldDir, *lightmapIndex);
-	image = R_FindImageFile(fileName, qfalse, qfalse, GL_CLAMP, qtrue);
+	image = R_FindImageFile(fileName, qfalse, qfalse, GL_CLAMP_TO_EDGE, qtrue);
 	if (image == NULL)
 	{
 		*lightmapIndex = LIGHTMAP_BY_VERTEX;
@@ -3684,7 +3682,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 
 	// if not defined in the in-memory shader descriptions,
 	// look for a single TGA, BMP, or PCX
-	image = R_FindImageFile(fileName, !shader.noMipMaps, !shader.noPicMip, mipRawImage ? GL_REPEAT : GL_CLAMP, qfalse);
+	image = R_FindImageFile(fileName, !shader.noMipMaps, !shader.noPicMip, mipRawImage ? GL_REPEAT : GL_CLAMP_TO_EDGE, qfalse);
 	if (!image)
 	{
 		//ri.Printf( PRINT_DEVELOPER, "Couldn't find image for shader %s\n", name );
