@@ -44,8 +44,8 @@
 #define PERS_SCORE              0       // !!! MUST NOT CHANGE, SERVER AND
                                         // GAME BOTH REFERENCE !!!
 // advert control
-#define SVA_MASTER   0x0001 // 1  - master server  
-#define SVA_TRACBASE 0x0002 // 2  - tracbase
+#define SVA_MASTER   0x0001  // 1  - master server
+#define SVA_TRACKBASE 0x0002 // 2  - trackbase
 
 
 #define MAX_ENT_CLUSTERS    16

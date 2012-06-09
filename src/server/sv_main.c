@@ -93,7 +93,7 @@ cvar_t *sv_fullmsg;
 
 // do we communicate with others ?
 cvar_t *sv_advert;		// 1 - communicate with master server
-						// 2 - send tracbase infos
+						// 2 - send trackbase infos
 
 static void SVC_Status(netadr_t from, qboolean force);
 

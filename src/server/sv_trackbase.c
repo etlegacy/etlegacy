@@ -78,7 +78,7 @@ void TB_Send(char *format, ...)
 
 void TB_Init()
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		t         = time(0);
 		expectnum = 0;
@@ -87,16 +87,16 @@ void TB_Init()
 #ifdef TRACKBASE_DEBUG
 		NET_StringToAdr("127.0.0.1:6066", &local, NA_IP);
 #endif
-		Com_Printf("Tracbase: Server communication enabled.\n");
+		Com_Printf("Trackbase: Server communication enabled.\n");
 	}
 	else {
-		Com_Printf("Tracbase: Server communication disabled by sv_advert.\n");
+		Com_Printf("Trackbase: Server communication disabled by sv_advert.\n");
 	}
 }
 
 void TB_ServerStart()
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		TB_Send("start");
 	}
@@ -104,7 +104,7 @@ void TB_ServerStart()
 
 void TB_ServerStop()
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		TB_Send("stop");
 	}
@@ -112,7 +112,7 @@ void TB_ServerStop()
 
 void TB_ClientConnect(client_t *cl)
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		TB_Send("connect %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), cl->name);
 	}
@@ -120,7 +120,7 @@ void TB_ClientConnect(client_t *cl)
 
 void TB_ClientDisconnect(client_t *cl)
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		TB_Send("disconnect %i", (int)(cl - svs.clients));
 	}
@@ -128,7 +128,7 @@ void TB_ClientDisconnect(client_t *cl)
 
 void TB_ClientName(client_t *cl)
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		if (!*cl->name)
 		{
@@ -151,7 +151,7 @@ void TB_ClientTeam(client_t *cl)
 
 void TB_Map(char *mapname)
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		TB_Send("map %s", mapname);
 		maprunning = qtrue;
@@ -160,7 +160,7 @@ void TB_Map(char *mapname)
 
 void TB_MapRestart()
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		TB_Send("maprestart");
 		maprunning = qtrue;
@@ -169,7 +169,7 @@ void TB_MapRestart()
 
 void TB_MapEnd()
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		TB_Send("mapend");
 		TB_requestWeaponStats();
@@ -245,7 +245,7 @@ void TB_requestWeaponStats()
 
 void TB_Frame(int msec)
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		if (catchBot == TB_BOT_CONNECT)
 		{
@@ -269,7 +269,7 @@ void TB_Frame(int msec)
 
 qboolean TB_catchServerCommand(int clientNum, char *msg)
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		int slot;
 
@@ -312,7 +312,7 @@ qboolean TB_catchServerCommand(int clientNum, char *msg)
 
 void TB_catchBotConnect(int clientNum)
 {
-	if (sv_advert->integer & SVA_TRACBASE)
+	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		catchBot    = TB_BOT_CONNECT;
 		catchBotNum = clientNum;
