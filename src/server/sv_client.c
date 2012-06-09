@@ -1393,9 +1393,12 @@ void SV_UserinfoChanged(client_t *cl)
 	int  i;
 
 #ifdef TRACKBASE_SUPPORT
-	if (strcmp(cl->name, Info_ValueForKey(cl->userinfo, "name")))
+	if (sv_advert->integer & SVA_TRACBASE)
 	{
-		TB_ClientName(cl);
+		if (strcmp(cl->name, Info_ValueForKey(cl->userinfo, "name")))
+		{
+			TB_ClientName(cl);
+		}
 	}
 #endif
 

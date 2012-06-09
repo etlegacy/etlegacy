@@ -91,6 +91,10 @@ cvar_t *sv_packetdelay;
 
 cvar_t *sv_fullmsg;
 
+// do we communicate with others ?
+cvar_t *sv_advert;		// 1 - communicate with master server
+						// 2 - send tracbase infos
+
 static void SVC_Status(netadr_t from, qboolean force);
 
 #define LL(x) x = LittleLong(x)
@@ -246,6 +250,11 @@ void SV_MasterHeartbeat(const char *message)
 	int             res;
 	int             netenabled;
 
+	if (!(sv_advert->integer & SVA_MASTER))
+	{
+		return;
+	}
+
 	netenabled = Cvar_VariableIntegerValue("net_enabled");
 
 	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
@@ -361,6 +370,12 @@ void SV_MasterGameCompleteStatus()
 		return;     // only dedicated servers send master game status
 	}
 
+
+	if (!(sv_advert->integer & SVA_MASTER))
+	{
+		return;
+	}
+
 	// send to group masters
 	for (i = 0 ; i < MAX_MASTER_SERVERS ; i++)
 	{
@@ -414,10 +429,6 @@ void SV_MasterShutdown(void)
 	// send a hearbeat right now
 	svs.nextHeartbeatTime = -9999;
 	SV_MasterHeartbeat(HEARTBEAT_DEAD);                 // NERVE - SMF - changed to flatline
-
-	// send it again to minimize chance of drops
-//	svs.nextHeartbeatTime = -9999;
-//	SV_MasterHeartbeat( HEARTBEAT_DEAD );
 
 	// when the master tries to poll the server, it won't respond, so
 	// it will be removed from the list

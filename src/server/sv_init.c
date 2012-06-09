@@ -793,7 +793,13 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	sv.state = SS_GAME;
 
 	// send a heartbeat now so the master will get up to date info
-	SV_Heartbeat_f();
+	if (sv_advert->integer & SVA_MASTER)
+	{
+		SV_Heartbeat_f();	}
+	else // let admin's know it's disabled
+	{
+		Com_Printf("Master servers: heartbeats disabled by sv_advert.\n");
+	}
 
 	Hunk_SetMark();
 
@@ -927,6 +933,8 @@ void SV_Init(void)
 	// fretn - note: redirecting of clients to other servers relies on this,
 	// ET://someserver.com
 	sv_fullmsg = Cvar_Get("sv_fullmsg", "Server is full.", CVAR_ARCHIVE);
+
+	sv_advert = Cvar_Get("sv_advert", "3", CVAR_ARCHIVE);
 
 	// init the botlib here because we need the pre-compiler in the UI
 	SV_BotInitBotLib();

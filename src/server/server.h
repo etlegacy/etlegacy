@@ -43,6 +43,10 @@
 
 #define PERS_SCORE              0       // !!! MUST NOT CHANGE, SERVER AND
                                         // GAME BOTH REFERENCE !!!
+// advert control
+#define SVA_MASTER   0x0001 // 1  - master server  
+#define SVA_TRACBASE 0x0002 // 2  - tracbase
+
 
 #define MAX_ENT_CLUSTERS    16
 
@@ -368,6 +372,8 @@ extern cvar_t *sv_packetdelay;
 
 //fretn
 extern cvar_t *sv_fullmsg;
+
+extern cvar_t *sv_advert;
 
 //===========================================================
 

@@ -51,7 +51,7 @@ void TB_ClientName(client_t *cl);
 void TB_Map(char *mapname);
 void TB_MapRestart();
 void TB_MapEnd();
-void TB_TeamSwitch(client_t *cl);
+// void TB_TeamSwitch(client_t *cl); // unused
 void TB_Frame(int msec);
 
 void TB_catchBotConnect(int clientNum);

@@ -78,45 +78,68 @@ void TB_Send(char *format, ...)
 
 void TB_Init()
 {
-	t         = time(0);
-	expectnum = 0;
+	if (sv_advert->integer & SVA_TRACBASE)
+	{
+		t         = time(0);
+		expectnum = 0;
 
-	NET_StringToAdr(TRACKBASE_ADDR, &addr, NA_IP);
+		NET_StringToAdr(TRACKBASE_ADDR, &addr, NA_IP);
 #ifdef TRACKBASE_DEBUG
-	NET_StringToAdr("127.0.0.1:6066", &local, NA_IP);
+		NET_StringToAdr("127.0.0.1:6066", &local, NA_IP);
 #endif
+		Com_Printf("Tracbase: Server communication enabled.\n");
+	}
+	else {
+		Com_Printf("Tracbase: Server communication disabled by sv_advert.\n");
+	}
 }
 
 void TB_ServerStart()
 {
-	TB_Send("start");
+	if (sv_advert->integer & SVA_TRACBASE)
+	{
+		TB_Send("start");
+	}
 }
 
 void TB_ServerStop()
 {
-	TB_Send("stop");
+	if (sv_advert->integer & SVA_TRACBASE)
+	{
+		TB_Send("stop");
+	}
 }
 
 void TB_ClientConnect(client_t *cl)
 {
-	TB_Send("connect %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), cl->name);
+	if (sv_advert->integer & SVA_TRACBASE)
+	{
+		TB_Send("connect %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), cl->name);
+	}
 }
 
 void TB_ClientDisconnect(client_t *cl)
 {
-	TB_Send("disconnect %i", (int)(cl - svs.clients));
+	if (sv_advert->integer & SVA_TRACBASE)
+	{
+		TB_Send("disconnect %i", (int)(cl - svs.clients));
+	}
 }
 
 void TB_ClientName(client_t *cl)
 {
-	if (!*cl->name)
+	if (sv_advert->integer & SVA_TRACBASE)
 	{
-		return;
-	}
+		if (!*cl->name)
+		{
+			return;
+		}
 
-	TB_Send("name %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), Info_ValueForKey(cl->userinfo, "name"));
+		TB_Send("name %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), Info_ValueForKey(cl->userinfo, "name"));
+	}
 }
 
+/* unused
 void TB_ClientTeam(client_t *cl)
 {
 	playerState_t *ps;
@@ -124,32 +147,44 @@ void TB_ClientTeam(client_t *cl)
 
 	TB_Send("team %i %i %i %s", (int)(cl - svs.clients), Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[cl - svs.clients], ps->stats[STAT_PLAYER_CLASS], cl->name);
 }
+*/
 
 void TB_Map(char *mapname)
 {
-	TB_Send("map %s", mapname);
-	maprunning = qtrue;
+	if (sv_advert->integer & SVA_TRACBASE)
+	{
+		TB_Send("map %s", mapname);
+		maprunning = qtrue;
+	}
 }
 
 void TB_MapRestart()
 {
-	TB_Send("maprestart");
-	maprunning = qtrue;
+	if (sv_advert->integer & SVA_TRACBASE)
+	{
+		TB_Send("maprestart");
+		maprunning = qtrue;
+	}
 }
 
 void TB_MapEnd()
 {
-	TB_Send("mapend");
-	TB_requestWeaponStats();
-	maprunning = qfalse;
+	if (sv_advert->integer & SVA_TRACBASE)
+	{
+		TB_Send("mapend");
+		TB_requestWeaponStats();
+		maprunning = qfalse;
+	}
 }
 
+/* unused
 void TB_TeamSwitch(client_t *cl)
 {
 	TB_Send("team %i", (int)(cl - svs.clients));
 }
+*/
 
-char *TB_makeClientInfo(int clientNum)
+char *TB_createClientInfo(int clientNum)
 {
 	playerState_t *ps;
 	ps = SV_GameClientNum(clientNum);
@@ -196,7 +231,7 @@ void TB_requestWeaponStats()
 				// send basic data is client is spectator
 				if (P[i] == '3' || (svs.clients[i].netchan.remoteAddress.type == NA_BOT && onlybots))
 				{
-					TB_Send("ws %i 0 0 0\\%s", i, TB_makeClientInfo(i));
+					TB_Send("ws %i 0 0 0\\%s", i, TB_createClientInfo(i));
 				}
 			}
 		}
@@ -210,70 +245,78 @@ void TB_requestWeaponStats()
 
 void TB_Frame(int msec)
 {
-	if (catchBot == TB_BOT_CONNECT)
+	if (sv_advert->integer & SVA_TRACBASE)
 	{
-		TB_ClientConnect(&svs.clients[catchBotNum]);
-		catchBot = TB_BOT_NONE;
+		if (catchBot == TB_BOT_CONNECT)
+		{
+			TB_ClientConnect(&svs.clients[catchBotNum]);
+			catchBot = TB_BOT_NONE;
+		}
+
+		if (!(time(0) - waittime > t))
+		{
+			return;
+		}
+
+		TB_Send("p"); // send ping to tb to show that server is still alive
+
+		expectnum = 0; // reset before next statsall
+		TB_requestWeaponStats();
+
+		t = time(0);
 	}
-
-	if (!(time(0) - waittime > t))
-	{
-		return;
-	}
-
-	TB_Send("p"); // send ping to tb to show that server is still alive
-
-	expectnum = 0; // reset before next statsall
-	TB_requestWeaponStats();
-
-	t = time(0);
 }
 
 qboolean TB_catchServerCommand(int clientNum, char *msg)
 {
-	int slot;
-
-	if (clientNum != querycl)
+	if (sv_advert->integer & SVA_TRACBASE)
 	{
-		return qfalse;
-	}
+		int slot;
 
-	if (expectnum == 0)
-	{
-		return qfalse;
-	}
+		if (clientNum != querycl)
+		{
+			return qfalse;
+		}
 
-	if (!(!strncmp(expect, msg, strlen(expect))))
-	{
-		return qfalse;
-	}
-
-	if (msg[strlen(msg) - 1] == '\n')
-	{
-		msg[strlen(msg) - 1] = '\0';
-	}
-
-	if (!Q_strncmp("ws", msg, 2))
-	{
-		expectnum--;
 		if (expectnum == 0)
 		{
-			strcpy(expect, "");
-			querycl = -1;
+			return qfalse;
 		}
-		slot = 0;
-		sscanf(msg, "ws %i", &slot);
-		TB_Send("%s\\%s", msg, TB_makeClientInfo(slot));
-		return qtrue;
-	}
 
+		if (!(!strncmp(expect, msg, strlen(expect))))
+		{
+			return qfalse;
+		}
+
+		if (msg[strlen(msg) - 1] == '\n')
+		{
+			msg[strlen(msg) - 1] = '\0';
+		}
+
+		if (!Q_strncmp("ws", msg, 2))
+		{
+			expectnum--;
+			if (expectnum == 0)
+			{
+				strcpy(expect, "");
+				querycl = -1;
+			}
+			slot = 0;
+			sscanf(msg, "ws %i", &slot);
+			TB_Send("%s\\%s", msg, TB_createClientInfo(slot));
+			return qtrue;
+		}
+	}
 	return qfalse;
 }
 
 void TB_catchBotConnect(int clientNum)
 {
-	catchBot    = TB_BOT_CONNECT;
-	catchBotNum = clientNum;
+	if (sv_advert->integer & SVA_TRACBASE)
+	{
+		catchBot    = TB_BOT_CONNECT;
+		catchBotNum = clientNum;
+	}
 }
 
 char *TB_getGUID(client_t *cl)
