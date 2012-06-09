@@ -86,7 +86,6 @@ cvar_t *com_cl_running;
 cvar_t *com_logfile;        // 1 = buffer log, 2 = flush after each print
 cvar_t *com_showtrace;
 cvar_t *com_version;
-//cvar_t	*com_blood;
 cvar_t *com_buildScript;    // for automated data building scripts
 cvar_t *con_drawnotify;
 cvar_t *com_introPlayed;
@@ -113,9 +112,6 @@ cvar_t *com_recommendedSet;
 
 cvar_t *com_watchdog;
 cvar_t *com_watchdog_cmd;
-
-// Rafael Notebook
-cvar_t *cl_notebook;
 
 cvar_t *com_hunkused;       // Ridah
 
