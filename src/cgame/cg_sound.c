@@ -378,7 +378,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 
 			if (numSoundScripts == MAX_SOUND_SCRIPTS)
 			{
-				CG_Error("MAX_SOUND_SCRIPTS exceeded.\nReduce number of sound scripts.\n");
+				CG_Error("MAX_SOUND_SCRIPTS exceeded. Reduce number of sound scripts.\n");
 			}
 
 			inSound       = qfalse;
@@ -549,7 +549,7 @@ static void CG_SoundLoadSoundFiles(void)
 		{
 			if (i != (numSounds - 1))
 			{
-				CG_Error("Couldn't load %s", filename);
+				CG_Error("Couldn't load %s\n", filename);
 			}
 			continue;
 		}

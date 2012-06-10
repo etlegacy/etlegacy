@@ -2186,7 +2186,7 @@ static void CG_SetWeapLerpFrameAnimation(weaponInfo_t *wi, lerpFrame_t *lf, int 
 
 	if (newAnimation < 0 || newAnimation >= MAX_WP_ANIMATIONS)
 	{
-		CG_Error("Bad animation number (CG_SWLFA): %i", newAnimation);
+		CG_Error("Bad animation number (CG_SWLFA): %i\n", newAnimation);
 	}
 
 	anim = &wi->weapAnimations[newAnimation];
@@ -5738,7 +5738,7 @@ void CG_FireWeapon(centity_t *cent)
 	}
 	if (ent->weapon >= WP_NUM_WEAPONS)
 	{
-		CG_Error("CG_FireWeapon: ent->weapon >= WP_NUM_WEAPONS");
+		CG_Error("CG_FireWeapon: ent->weapon >= WP_NUM_WEAPONS\n");
 		return;
 	}
 	weap = &cg_weapons[ent->weapon];

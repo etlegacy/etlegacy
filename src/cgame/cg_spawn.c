@@ -41,7 +41,7 @@ qboolean CG_SpawnString(const char *key, const char *defaultString, char **out)
 	if (!cg.spawning)
 	{
 		*out = (char *)defaultString;
-		CG_Error("CG_SpawnString() called while not spawning");
+		CG_Error("CG_SpawnString() called while not spawning\n");
 	}
 
 	for (i = 0 ; i < cg.numSpawnVars ; i++)
@@ -210,7 +210,7 @@ void SP_misc_gamemodel(void)
 
 	if (cg.numMiscGameModels >= MAX_STATIC_GAMEMODELS)
 	{
-		CG_Error("^1MAX_STATIC_GAMEMODELS(%i) hit", MAX_STATIC_GAMEMODELS);
+		CG_Error("^1MAX_STATIC_GAMEMODELS(%i) hit\n", MAX_STATIC_GAMEMODELS);
 	}
 
 	CG_SpawnString("model", "", &model);
@@ -341,7 +341,7 @@ char *CG_AddSpawnVarToken(const char *string)
 	l = strlen(string);
 	if (cg.numSpawnVarChars + l + 1 > MAX_SPAWN_VARS_CHARS)
 	{
-		CG_Error("CG_AddSpawnVarToken: MAX_SPAWN_VARS");
+		CG_Error("CG_AddSpawnVarToken: MAX_SPAWN_VARS\n");
 	}
 
 	dest = cg.spawnVarChars + cg.numSpawnVarChars;
@@ -378,7 +378,7 @@ qboolean CG_ParseSpawnVars(void)
 	}
 	if (com_token[0] != '{')
 	{
-		CG_Error("CG_ParseSpawnVars: found %s when expecting {", com_token);
+		CG_Error("CG_ParseSpawnVars: found %s when expecting {\n", com_token);
 	}
 
 	// go through all the key / value pairs
@@ -387,7 +387,7 @@ qboolean CG_ParseSpawnVars(void)
 		// parse key
 		if (!trap_GetEntityToken(keyname, sizeof(keyname)))
 		{
-			CG_Error("CG_ParseSpawnVars: EOF without closing brace");
+			CG_Error("CG_ParseSpawnVars: EOF without closing brace\n");
 		}
 
 		if (keyname[0] == '}')
@@ -398,16 +398,16 @@ qboolean CG_ParseSpawnVars(void)
 		// parse value
 		if (!trap_GetEntityToken(com_token, sizeof(com_token)))
 		{
-			CG_Error("CG_ParseSpawnVars: EOF without closing brace");
+			CG_Error("CG_ParseSpawnVars: EOF without closing brace\n");
 		}
 
 		if (com_token[0] == '}')
 		{
-			CG_Error("CG_ParseSpawnVars: closing brace without data");
+			CG_Error("CG_ParseSpawnVars: closing brace without data\n");
 		}
 		if (cg.numSpawnVars == MAX_SPAWN_VARS)
 		{
-			CG_Error("CG_ParseSpawnVars: MAX_SPAWN_VARS");
+			CG_Error("CG_ParseSpawnVars: MAX_SPAWN_VARS\n");
 		}
 		cg.spawnVars[cg.numSpawnVars][0] = CG_AddSpawnVarToken(keyname);
 		cg.spawnVars[cg.numSpawnVars][1] = CG_AddSpawnVarToken(com_token);
@@ -425,7 +425,7 @@ void SP_worldspawn(void)
 	CG_SpawnString("classname", "", &s);
 	if (Q_stricmp(s, "worldspawn"))
 	{
-		CG_Error("SP_worldspawn: The first entity isn't 'worldspawn'");
+		CG_Error("SP_worldspawn: The first entity isn't 'worldspawn'\n");
 	}
 
 	cgs.ccLayers = 0;
@@ -594,7 +594,7 @@ void CG_ParseEntitiesFromString(void)
 	// needed by a level (setting configstrings or cvars, etc)
 	if (!CG_ParseSpawnVars())
 	{
-		CG_Error("ParseEntities: no entities");
+		CG_Error("ParseEntities: no entities\n");
 	}
 	SP_worldspawn();
 

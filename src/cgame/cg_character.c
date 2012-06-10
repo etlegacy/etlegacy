@@ -226,7 +226,7 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 			{
 				if (trap_R_LerpTag(&o[k], &refent, tags[k], 0) < 0)
 				{
-					CG_Error("CG_CalcMoveSpeeds: unable to find tag %s, cannot calculate movespeed", tags[k]);
+					CG_Error("CG_CalcMoveSpeeds: unable to find tag %s, cannot calculate movespeed\n", tags[k]);
 				}
 			}
 

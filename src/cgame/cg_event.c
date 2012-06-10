@@ -60,7 +60,7 @@ static void CG_Obituary(entityState_t *ent)
 
 	if (target < 0 || target >= MAX_CLIENTS)
 	{
-		CG_Error("CG_Obituary: target out of range");
+		CG_Error("CG_Obituary: target out of range\n");
 	}
 	ci = &cgs.clientinfo[target];
 
@@ -3344,7 +3344,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	default:
 		DEBUGNAME("UNKNOWN");
-		CG_Error("Unknown event: %i", event);
+		CG_Error("Unknown event: %i\n", event);
 		break;
 	}
 

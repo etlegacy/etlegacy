@@ -260,11 +260,11 @@ static void CG_TransitionSnapshot(void)
 
 	if (!cg.snap)
 	{
-		CG_Error("CG_TransitionSnapshot: NULL cg.snap");
+		CG_Error("CG_TransitionSnapshot: NULL cg.snap\n");
 	}
 	if (!cg.nextSnap)
 	{
-		CG_Error("CG_TransitionSnapshot: NULL cg.nextSnap");
+		CG_Error("CG_TransitionSnapshot: NULL cg.nextSnap\n");
 	}
 
 	// execute any server string commands before transitioning entities
@@ -541,7 +541,7 @@ void CG_ProcessSnapshots(void)
 		if (n < cg.latestSnapshotNum)
 		{
 			// this should never happen
-			CG_Error("CG_ProcessSnapshots: n < cg.latestSnapshotNum");
+			CG_Error("CG_ProcessSnapshots: n < cg.latestSnapshotNum\n");
 		}
 		cg.latestSnapshotNum = n;
 	}
@@ -589,7 +589,7 @@ void CG_ProcessSnapshots(void)
 			// if time went backwards, we have a level restart
 			if (cg.nextSnap->serverTime < cg.snap->serverTime)
 			{
-				CG_Error("CG_ProcessSnapshots: Server time went backwards");
+				CG_Error("CG_ProcessSnapshots: Server time went backwards\n");
 			}
 		}
 
@@ -607,7 +607,7 @@ void CG_ProcessSnapshots(void)
 	// assert our valid conditions upon exiting
 	if (cg.snap == NULL)
 	{
-		CG_Error("CG_ProcessSnapshots: cg.snap == NULL");
+		CG_Error("CG_ProcessSnapshots: cg.snap == NULL\n");
 	}
 	if (cg.time < cg.snap->serverTime)
 	{
@@ -617,7 +617,7 @@ void CG_ProcessSnapshots(void)
 	}
 	if (cg.nextSnap != NULL && cg.nextSnap->serverTime <= cg.time)
 	{
-		CG_Error("CG_ProcessSnapshots: cg.nextSnap->serverTime <= cg.time");
+		CG_Error("CG_ProcessSnapshots: cg.nextSnap->serverTime <= cg.time\n");
 	}
 
 }

@@ -468,7 +468,7 @@ static void CG_SetLerpFrameAnimation(centity_t *cent, clientInfo_t *ci, lerpFram
 
 	if (newAnimation < 0 || newAnimation >= character->animModelInfo->numAnimations)
 	{
-		CG_Error("CG_SetLerpFrameAnimation: Bad animation number: %i", newAnimation);
+		CG_Error("CG_SetLerpFrameAnimation: Bad animation number: %i\n", newAnimation);
 	}
 
 	anim = character->animModelInfo->animations[newAnimation];
@@ -632,7 +632,7 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 
 	if (newAnimation < 0 || newAnimation >= character->animModelInfo->numAnimations)
 	{
-		CG_Error("CG_SetLerpFrameAnimationRate: Bad animation number: %i", newAnimation);
+		CG_Error("CG_SetLerpFrameAnimationRate: Bad animation number: %i\n", newAnimation);
 	}
 
 	anim = character->animModelInfo->animations[newAnimation];
@@ -2122,7 +2122,7 @@ void CG_Player(centity_t *cent)
 	clientNum = cent->currentState.clientNum;
 	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 	{
-		CG_Error("Bad clientNum on player entity");
+		CG_Error("Bad clientNum on player entity\n");
 	}
 	ci = &cgs.clientinfo[clientNum];
 
@@ -3358,7 +3358,7 @@ void CG_SetHudHeadLerpFrameAnimation(bg_character_t *ch, lerpFrame_t *lf, int ne
 
 	if (newAnimation < 0 || newAnimation >= MAX_HD_ANIMATIONS)
 	{
-		CG_Error("Bad animation number (CG_SetHudHeadLerpFrameAnimation): %i", newAnimation);
+		CG_Error("Bad animation number (CG_SetHudHeadLerpFrameAnimation): %i\n", newAnimation);
 	}
 
 	anim = &ch->hudheadanimations[newAnimation];

@@ -734,7 +734,7 @@ static void CG_Item(centity_t *cent)
 
 	if (es->modelindex >= bg_numItems)
 	{
-		CG_Error("Bad item index %i on entity", es->modelindex);
+		CG_Error("Bad item index %i on entity\n", es->modelindex);
 	}
 
 	// if set to invisible, skip

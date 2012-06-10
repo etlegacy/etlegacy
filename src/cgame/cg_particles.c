@@ -1609,7 +1609,7 @@ void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration
 	    // debugging thing anyway, so I'm killing it for now
 	if (animStr < (char *)10)
 	{
-		CG_Error("CG_ParticleExplosion: animStr is probably an index rather than a string");
+		CG_Error("CG_ParticleExplosion: animStr is probably an index rather than a string\n");
 	}
 #endif
 

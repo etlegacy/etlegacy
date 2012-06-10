@@ -1112,7 +1112,7 @@ static void CG_RegisterItemSounds(int itemNum)
 		len = s - start;
 		if (len >= MAX_QPATH || len < 5)
 		{
-			CG_Error("PrecacheItem: %s has bad precache string",
+			CG_Error("PrecacheItem: %s has bad precache string\n",
 			         item->classname);
 			return;
 		}
@@ -2121,7 +2121,7 @@ const char *CG_ConfigString(int index)
 {
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
-		CG_Error("CG_ConfigString: bad index: %i", index);
+		CG_Error("CG_ConfigString: bad index: %i\n", index);
 	}
 	return cgs.gameState.stringData + cgs.gameState.stringOffsets[index];
 }
@@ -2942,7 +2942,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	s = CG_ConfigString(CS_GAME_VERSION);
 	if (strcmp(s, GAME_VERSION))
 	{
-		CG_Error("Client/Server game mismatch: '%s/%s'", GAME_VERSION, s);
+		CG_Error("Client/Server game mismatch: '%s/%s'\n", GAME_VERSION, s);
 	}
 	trap_Cvar_Set("cg_etVersion", GAME_VERSION_DATED);   // So server can check
 
