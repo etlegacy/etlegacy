@@ -162,7 +162,7 @@ static int CIN_HandleForVideo(void)
 			return i;
 		}
 	}
-	Com_Error(ERR_DROP, "CIN_HandleForVideo: none free");
+	Com_Error(ERR_DROP, "CIN_HandleForVideo: none free\n");
 	return -1;
 }
 

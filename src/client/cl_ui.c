@@ -1299,7 +1299,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	default:
-		Com_Error(ERR_DROP, "Bad UI system trap: %ld", (long int) args[0]);
+		Com_Error(ERR_DROP, "Bad UI system trap: %ld\n", (long int) args[0]);
 		break;
 	}
 
@@ -1337,14 +1337,14 @@ void CL_InitUI(void)
 	uivm = VM_Create("ui", CL_UISystemCalls, VMI_NATIVE);
 	if (!uivm)
 	{
-		Com_Error(ERR_FATAL, "VM_Create on UI failed");
+		Com_Error(ERR_FATAL, "VM_Create on UI failed\n");
 	}
 
 	// sanity check
 	v = VM_Call(uivm, UI_GETAPIVERSION);
 	if (v != UI_API_VERSION)
 	{
-		Com_Error(ERR_FATAL, "User Interface is version %d, expected %d", v, UI_API_VERSION);
+		Com_Error(ERR_FATAL, "User Interface is version %d, expected %d\n", v, UI_API_VERSION);
 		cls.uiStarted = qfalse;
 	}
 

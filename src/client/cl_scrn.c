@@ -509,7 +509,7 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 		switch (cls.state)
 		{
 		default:
-			Com_Error(ERR_FATAL, "SCR_DrawScreenField: bad cls.state");
+			Com_Error(ERR_FATAL, "SCR_DrawScreenField: bad cls.state\n");
 			break;
 		case CA_CINEMATIC:
 			SCR_DrawCinematic();

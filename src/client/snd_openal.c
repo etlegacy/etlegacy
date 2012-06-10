@@ -235,7 +235,7 @@ static sfxHandle_t S_AL_BufferFindFree(void)
 	}
 
 	// Shit...
-	Com_Error(ERR_FATAL, "S_AL_BufferFindFree: No free sound handles");
+	Com_Error(ERR_FATAL, "S_AL_BufferFindFree: No free sound handles\n");
 	return -1;
 }
 
@@ -1269,7 +1269,7 @@ void S_AL_UpdateEntityPosition(int entityNum, const vec3_t origin)
 	S_AL_SanitiseVector(sanOrigin);
 	if (entityNum < 0 || entityNum > MAX_GENTITIES)
 	{
-		Com_Error(ERR_DROP, "S_UpdateEntityPosition: bad entitynum %i", entityNum);
+		Com_Error(ERR_DROP, "S_UpdateEntityPosition: bad entitynum %i\n", entityNum);
 	}
 	VectorCopy(sanOrigin, entityPositions[entityNum]);
 }
@@ -1285,7 +1285,7 @@ static qboolean S_AL_CheckInput(int entityNum, sfxHandle_t sfx)
 {
 	if (entityNum < 0 || entityNum > MAX_GENTITIES)
 	{
-		Com_Error(ERR_DROP, "ERROR: S_AL_CheckInput: bad entitynum %i", entityNum);
+		Com_Error(ERR_DROP, "ERROR: S_AL_CheckInput: bad entitynum %i\n", entityNum);
 	}
 
 	if (sfx < 0 || sfx >= numSfx)

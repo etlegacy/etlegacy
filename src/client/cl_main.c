@@ -254,7 +254,7 @@ void CL_AddReliableCommand(const char *cmd)
 	// we must drop the connection
 	if (clc.reliableSequence - clc.reliableAcknowledge > MAX_RELIABLE_COMMANDS)
 	{
-		Com_Error(ERR_DROP, "Client command overflow");
+		Com_Error(ERR_DROP, "Client command overflow\n");
 	}
 	clc.reliableSequence++;
 	index = clc.reliableSequence & (MAX_RELIABLE_COMMANDS - 1);
@@ -597,7 +597,7 @@ void CL_ReadDemoMessage(void)
 	}
 	if (buf.cursize > buf.maxsize)
 	{
-		Com_Error(ERR_DROP, "CL_ReadDemoMessage: demoMsglen > MAX_MSGLEN");
+		Com_Error(ERR_DROP, "CL_ReadDemoMessage: demoMsglen > MAX_MSGLEN\n");
 	}
 	r = FS_Read(buf.data, buf.cursize, clc.demofile);
 	if (r != buf.cursize)
@@ -836,7 +836,7 @@ void CL_PlayDemo_f(void)
 	}
 	if (!clc.demofile)
 	{
-		Com_Error(ERR_DROP, "couldn't open %s", name);
+		Com_Error(ERR_DROP, "couldn't open %s\n", name);
 		return;
 	}
 	Q_strncpyz(clc.demoName, Cmd_Argv(1), sizeof(clc.demoName));
@@ -1408,7 +1408,7 @@ void CL_Disconnect_f(void)
 
 	if (cls.state != CA_DISCONNECTED && cls.state != CA_CINEMATIC)
 	{
-		Com_Error(ERR_DISCONNECT, "Disconnected from server");
+		Com_Error(ERR_DISCONNECT, "Disconnected from server\n");
 	}
 }
 
@@ -2244,7 +2244,7 @@ void CL_CheckForResend(void)
 		break;
 
 	default:
-		Com_Error(ERR_FATAL, "CL_CheckForResend: bad cls.state");
+		Com_Error(ERR_FATAL, "CL_CheckForResend: bad cls.state\n");
 	}
 }
 
@@ -2355,24 +2355,24 @@ void CL_PrintPacket(netadr_t from, msg_t *msg)
 	{
 		Q_strncpyz(clc.serverMessage, s + 12, sizeof(clc.serverMessage));
 		// Cvar_Set("com_errorMessage", clc.serverMessage );
-		Com_Error(ERR_DROP, "%s", clc.serverMessage);
+		Com_Error(ERR_DROP, "%s\n", clc.serverMessage);
 	}
 	else if (!Q_stricmpn(s, "[err_prot]", 10))
 	{
 		Q_strncpyz(clc.serverMessage, s + 10, sizeof(clc.serverMessage));
 		// Cvar_Set("com_errorMessage", CL_TranslateStringBuf( PROTOCOL_MISMATCH_ERROR_LONG ) );
-		Com_Error(ERR_DROP, "%s", CL_TranslateStringBuf(PROTOCOL_MISMATCH_ERROR_LONG));
+		Com_Error(ERR_DROP, "%s\n", CL_TranslateStringBuf(PROTOCOL_MISMATCH_ERROR_LONG));
 	}
 	else if (!Q_stricmpn(s, "[err_update]", 12))
 	{
 		Q_strncpyz(clc.serverMessage, s + 12, sizeof(clc.serverMessage));
-		Com_Error(ERR_AUTOUPDATE, "%s", clc.serverMessage);
+		Com_Error(ERR_AUTOUPDATE, "%s\n", clc.serverMessage);
 	}
 	else if (!Q_stricmpn(s, "ET://", 5))                // fretn
 	{
 		Q_strncpyz(clc.serverMessage, s, sizeof(clc.serverMessage));
 		Cvar_Set("com_errorMessage", clc.serverMessage);
-		Com_Error(ERR_DROP, "%s", clc.serverMessage);
+		Com_Error(ERR_DROP, "%s\n", clc.serverMessage);
 	}
 	else
 	{
@@ -3581,13 +3581,13 @@ void CL_InitRef(void)
 	if (!rendererLib)
 	{
 		Com_Printf("failed:\n\"%s\"\n", Sys_LibraryError());
-		Com_Error(ERR_FATAL, "Failed to load renderer");
+		Com_Error(ERR_FATAL, "Failed to load renderer\n");
 	}
 
 	GetRefAPI = Sys_LoadFunction(rendererLib, "GetRefAPI");
 	if (!GetRefAPI)
 	{
-		Com_Error(ERR_FATAL, "Can't load symbol GetRefAPI: '%s'", Sys_LibraryError());
+		Com_Error(ERR_FATAL, "Can't load symbol GetRefAPI: '%s'\n", Sys_LibraryError());
 	}
 	#endif
 
@@ -3654,7 +3654,7 @@ void CL_InitRef(void)
 
 	if (!ret)
 	{
-		Com_Error(ERR_FATAL, "Couldn't initialize refresh");
+		Com_Error(ERR_FATAL, "Couldn't initialize refresh\n");
 	}
 
 	re = *ret;
