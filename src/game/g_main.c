@@ -3750,7 +3750,7 @@ void G_RunThink(gentity_t *ent)
 	ent->nextthink = 0;
 	if (!ent->think)
 	{
-		G_Error("NULL ent->think");
+		G_Error("NULL ent->think\n");
 	}
 	ent->think(ent);
 }

@@ -104,7 +104,7 @@ mapEntityData_t *G_FreeMapEntityData(mapEntityData_Team_t *teamList, mapEntityDa
 
 	if (!mEnt->prev)
 	{
-		G_Error("G_FreeMapEntityData: not active");
+		G_Error("G_FreeMapEntityData: not active\n");
 	}
 
 	// remove from the doubly linked active list
@@ -130,7 +130,7 @@ mapEntityData_t *G_AllocMapEntityData(mapEntityData_Team_t *teamList)
 	if (!teamList->freeMapEntityData)
 	{
 		// no free entities - bomb out
-		G_Error("G_AllocMapEntityData: out of entities");
+		G_Error("G_AllocMapEntityData: out of entities\n");
 	}
 
 	mEnt                        = teamList->freeMapEntityData;

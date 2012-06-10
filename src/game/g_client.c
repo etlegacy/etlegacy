@@ -247,7 +247,7 @@ gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 	// find a single player start spot
 	if (!spot)
 	{
-		G_Error("Couldn't find a spawn point");
+		G_Error("Couldn't find a spawn point\n");
 	}
 
 	VectorCopy(spot->r.currentOrigin, origin);

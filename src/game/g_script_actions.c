@@ -1843,7 +1843,7 @@ qboolean G_ScriptAction_MusicStart(gentity_t *ent, char *params)
 	token   = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: syntax: mu_start <musicfile> <fadeuptime>");
+		G_Error("G_Scripting: syntax: mu_start <musicfile> <fadeuptime>\n");
 	}
 	Q_strncpyz(cvarName, token, sizeof(cvarName));
 
@@ -1874,7 +1874,7 @@ qboolean G_ScriptAction_MusicPlay(gentity_t *ent, char *params)
 	token   = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: syntax: mu_play <musicfile> [fadeup time]");
+		G_Error("G_Scripting: syntax: mu_play <musicfile> [fadeup time]\n");
 	}
 	Q_strncpyz(cvarName, token, sizeof(cvarName));
 
@@ -1920,7 +1920,7 @@ qboolean G_ScriptAction_MusicQueue(gentity_t *ent, char *params)
 	token   = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: syntax: mu_queue <musicfile>");
+		G_Error("G_Scripting: syntax: mu_queue <musicfile>\n");
 	}
 	Q_strncpyz(cvarName, token, sizeof(cvarName));
 
@@ -1944,18 +1944,18 @@ qboolean G_ScriptAction_MusicFade(gentity_t *ent, char *params)
 	token   = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>");
+		G_Error("G_Scripting: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
 	}
 	targetVol = atof(token);
 	if (targetVol < 0 || targetVol >= 1)
 	{
-		G_Error("G_Scripting: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>");
+		G_Error("G_Scripting: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0] || token[0] < '0' || token[0] > '9')
 	{
-		G_Error("G_Scripting: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>");
+		G_Error("G_Scripting: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
 	}
 	fadeoutTime = atoi(token);
 
@@ -2053,7 +2053,7 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 			token = COM_ParseExt(&pString, qfalse);
 			if (!token[0])
 			{
-				G_Error("G_Scripting: playanim has RATE parameter without an actual rate specified");
+				G_Error("G_Scripting: playanim has RATE parameter without an actual rate specified\n");
 			}
 			rate = atoi(token);
 		}
@@ -2998,7 +2998,7 @@ qboolean G_ScriptAction_TagConnect(gentity_t *ent, char *params)
 		parent = G_Find(NULL, FOFS(scriptName), token);
 		if (!parent)
 		{
-			G_Error("G_ScriptAction_TagConnect: unable to find entity with targetname \"%s\"", token);
+			G_Error("G_ScriptAction_TagConnect: unable to find entity with targetname \"%s\"\n", token);
 		}
 	}
 
@@ -4081,7 +4081,7 @@ qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params)
 	}
 	else
 	{
-		G_Error("G_Scripting: sethqstatus with bad team set");
+		G_Error("G_Scripting: sethqstatus with bad team set\n");
 	}
 
 	return qtrue;
@@ -4119,7 +4119,7 @@ qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params)
 	bufferIndex = atoi(token);
 	if ((bufferIndex < 0) || (bufferIndex >= G_MAX_SCRIPT_ACCUM_BUFFERS))
 	{
-		G_Error("G_ScriptAction_PrintAccum: buffer is outside range (0 - %i)", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
+		G_Error("G_ScriptAction_PrintAccum: buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 	G_Printf("(G_Script) %s: Accum[%i] = %d\n", ent->scriptName, bufferIndex, ent->scriptAccumBuffer[bufferIndex]);
@@ -4160,7 +4160,7 @@ qboolean G_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params)
 	bufferIndex = atoi(token);
 	if ((bufferIndex < 0) || (bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS))
 	{
-		G_Error("PrintGlobalAccum: buffer is outside range (0 - %i)", MAX_SCRIPT_ACCUM_BUFFERS - 1);
+		G_Error("PrintGlobalAccum: buffer is outside range (0 - %i)\n", MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 	G_Printf("(G_Script) GlobalAccum[%i] = %d\n", bufferIndex, level.globalAccumBuffer[bufferIndex]);
@@ -4705,7 +4705,7 @@ qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 		token = COM_ParseExt(&p, qfalse);
 		if (!token[0])
 		{
-			G_Error("key \"%s\" has no value", key);
+			G_Error("key \"%s\" has no value\n", key);
 			break;
 		}
 
@@ -4727,7 +4727,7 @@ qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 		// rain - add spawn var so that spawn functions can use them
 		if (level.numSpawnVars == MAX_SPAWN_VARS)
 		{
-			G_Error("G_ParseSpawnVars: MAX_SPAWN_VARS");
+			G_Error("G_ParseSpawnVars: MAX_SPAWN_VARS\n");
 		}
 		level.spawnVars[level.numSpawnVars][0] = G_AddSpawnVarToken(key);
 		level.spawnVars[level.numSpawnVars][1] = G_AddSpawnVarToken(value);

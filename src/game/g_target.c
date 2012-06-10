@@ -268,7 +268,7 @@ void target_speaker_multiple(gentity_t *ent)
 	}
 	else
 	{
-		G_Error("target_speaker cant find vis_dummy_multiple %s", vtos(ent->s.origin));
+		G_Error("target_speaker cant find vis_dummy_multiple %s\n", vtos(ent->s.origin));
 	}
 
 }
@@ -283,7 +283,7 @@ void SP_target_speaker(gentity_t *ent)
 
 	if (!G_SpawnString("noise", "NOSOUND", &s))
 	{
-		G_Error("target_speaker without a noise key at %s", vtos(ent->s.origin));
+		G_Error("target_speaker without a noise key at %s\n", vtos(ent->s.origin));
 	}
 
 	// force all client reletive sounds to be "activator" speakers that

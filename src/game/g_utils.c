@@ -133,7 +133,7 @@ int G_FindConfigstringIndex(const char *name, int start, int max, qboolean creat
 
 	if (i == max)
 	{
-		G_Error("G_FindConfigstringIndex: overflow");
+		G_Error("G_FindConfigstringIndex: overflow\n");
 	}
 
 	trap_SetConfigstring(start + i, name);
@@ -688,7 +688,7 @@ gentity_t *G_Spawn(void)
 		{
 			G_Printf("%4i: %s\n", i, g_entities[i].classname);
 		}
-		G_Error("G_Spawn: no free entities");
+		G_Error("G_Spawn: no free entities\n");
 	}
 
 	// open up a new slot

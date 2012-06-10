@@ -2641,7 +2641,7 @@ void misc_firetrails_think(gentity_t *ent)
 	airplane = G_FindByTargetname(NULL, ent->target);
 	if (!airplane)
 	{
-		G_Error("can't find airplane with targetname \"%s\" for firetrails", ent->target);
+		G_Error("can't find airplane with targetname \"%s\" for firetrails\n", ent->target);
 	}
 
 	// left fire trail

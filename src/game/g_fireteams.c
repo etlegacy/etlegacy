@@ -160,7 +160,7 @@ qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum)
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
-		G_Error("G_IsOnFireteam: invalid client");
+		G_Error("G_IsOnFireteam: invalid client\n");
 	}
 
 	for (i = 0; i < MAX_FIRETEAMS; i++)
@@ -201,7 +201,7 @@ qboolean G_IsFireteamLeader(int entityNum, fireteamData_t **teamNum)
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
-		G_Error("G_IsFireteamLeader: invalid client");
+		G_Error("G_IsFireteamLeader: invalid client\n");
 	}
 
 	for (i = 0; i < MAX_FIRETEAMS; i++)
@@ -269,7 +269,7 @@ void G_RegisterFireteam(/*const char* name,*/ int entityNum)
 
 	if (entityNum < 0 || entityNum >= MAX_CLIENTS)
 	{
-		G_Error("G_RegisterFireteam: invalid client");
+		G_Error("G_RegisterFireteam: invalid client\n");
 	}
 
 	leader = &g_entities[entityNum];
@@ -340,12 +340,12 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
-		G_Error("G_AddClientToFireteam: invalid client");
+		G_Error("G_AddClientToFireteam: invalid client\n");
 	}
 
 	if ((leaderNum < 0 || leaderNum >= MAX_CLIENTS) || !g_entities[leaderNum].client)
 	{
-		G_Error("G_AddClientToFireteam: invalid client");
+		G_Error("G_AddClientToFireteam: invalid client\n");
 	}
 
 	if (g_entities[leaderNum].client->sess.sessionTeam != g_entities[entityNum].client->sess.sessionTeam)
@@ -392,7 +392,7 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
-		G_Error("G_RemoveClientFromFireteams: invalid client");
+		G_Error("G_RemoveClientFromFireteams: invalid client\n");
 	}
 
 	if (G_IsOnFireteam(entityNum, &ft))
@@ -462,12 +462,12 @@ void G_InviteToFireTeam(int entityNum, int otherEntityNum)
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
-		G_Error("G_InviteToFireTeam: invalid client");
+		G_Error("G_InviteToFireTeam: invalid client\n");
 	}
 
 	if ((otherEntityNum < 0 || otherEntityNum >= MAX_CLIENTS) || !g_entities[otherEntityNum].client)
 	{
-		G_Error("G_InviteToFireTeam: invalid client");
+		G_Error("G_InviteToFireTeam: invalid client\n");
 	}
 
 	if (!G_IsFireteamLeader(entityNum, &ft))
@@ -505,12 +505,12 @@ void G_DestroyFireteam(int entityNum)
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
-		G_Error("G_DestroyFireteam: invalid client");
+		G_Error("G_DestroyFireteam: invalid client\n");
 	}
 
 	if (!G_IsFireteamLeader(entityNum, &ft))
 	{
-		G_ClientPrintAndReturn(entityNum, "You are not the leader of a fireteam");
+		G_ClientPrintAndReturn(entityNum, "You are not the leader of a fireteam\n");
 	}
 
 	while (ft->joinOrder[0] != -1)
@@ -537,12 +537,12 @@ void G_WarnFireTeamPlayer(int entityNum, int otherEntityNum)
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
-		G_Error("G_WarnFireTeamPlayer: invalid client");
+		G_Error("G_WarnFireTeamPlayer: invalid client\n");
 	}
 
 	if ((otherEntityNum < 0 || otherEntityNum >= MAX_CLIENTS) || !g_entities[otherEntityNum].client)
 	{
-		G_Error("G_WarnFireTeamPlayer: invalid client");
+		G_Error("G_WarnFireTeamPlayer: invalid client\n");
 	}
 
 	if (!G_IsFireteamLeader(entityNum, &ft))
@@ -569,12 +569,12 @@ void G_KickFireTeamPlayer(int entityNum, int otherEntityNum)
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
-		G_Error("G_KickFireTeamPlayer: invalid client");
+		G_Error("G_KickFireTeamPlayer: invalid client\n");
 	}
 
 	if ((otherEntityNum < 0 || otherEntityNum >= MAX_CLIENTS) || !g_entities[otherEntityNum].client)
 	{
-		G_Error("G_KickFireTeamPlayer: invalid client");
+		G_Error("G_KickFireTeamPlayer: invalid client\n");
 	}
 
 	if (!G_IsFireteamLeader(entityNum, &ft))
@@ -601,7 +601,7 @@ void G_ApplyToFireTeam(int entityNum, int fireteamNum)
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
-		G_Error("G_AddClientToFireteam: invalid client");
+		G_Error("G_AddClientToFireteam: invalid client\n");
 	}
 
 	if (G_IsOnFireteam(entityNum, NULL))
@@ -647,12 +647,12 @@ void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
-		G_Error("G_ProposeFireTeamPlayer: invalid client");
+		G_Error("G_ProposeFireTeamPlayer: invalid client\n");
 	}
 
 	if ((otherEntityNum < 0 || otherEntityNum >= MAX_CLIENTS) || !g_entities[otherEntityNum].client)
 	{
-		G_Error("G_ProposeFireTeamPlayer: invalid client");
+		G_Error("G_ProposeFireTeamPlayer: invalid client\n");
 	}
 
 	if (G_IsOnFireteam(otherEntityNum, NULL))
@@ -675,7 +675,7 @@ void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 	leader = &g_entities[(int)ft->joinOrder[0]];
 	if (!leader->client)
 	{
-		G_Error("G_ProposeFireTeamPlayer: invalid client");
+		G_Error("G_ProposeFireTeamPlayer: invalid client\n");
 	}
 
 	trap_SendServerCommand(entityNum, va("proposition -1"));

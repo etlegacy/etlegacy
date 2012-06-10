@@ -324,7 +324,7 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 	// save off the old position
 	if (pushed_p > &pushed[MAX_GENTITIES])
 	{
-		G_Error("pushed_p > &pushed[MAX_GENTITIES]");
+		G_Error("pushed_p > &pushed[MAX_GENTITIES]\n");
 	}
 	pushed_p->ent = check;
 	VectorCopy(check->s.pos.trBase, pushed_p->origin);
@@ -1247,7 +1247,7 @@ void Reached_BinaryMover(gentity_t *ent)
 	}
 	else
 	{
-		G_Error("Reached_BinaryMover: bad moverState");
+		G_Error("Reached_BinaryMover: bad moverState\n");
 	}
 
 //  ent->flags &= ~(FL_KICKACTIVATE|FL_SOFTACTIVATE);   // (SA) it was not opened normally.  Clear this so it thinks it's closed normally
@@ -1414,7 +1414,7 @@ void Reached_TrinaryMover(gentity_t *ent)
 	}
 	else
 	{
-		G_Error("Reached_BinaryMover: bad moverState");
+		G_Error("Reached_BinaryMover: bad moverState\n");
 	}
 }
 // END JOSEPH
@@ -3308,7 +3308,7 @@ void info_limbo_camera_setup(gentity_t *self)
 
 	if (level.numLimboCams >= MAX_LIMBO_CAMS)
 	{
-		G_Error("info_limbo_camera: MAX_LIMBO_CAMS (%i) hit", MAX_LIMBO_CAMS);
+		G_Error("info_limbo_camera: MAX_LIMBO_CAMS (%i) hit\n", MAX_LIMBO_CAMS);
 	}
 
 	caminfo = &level.limboCams[level.numLimboCams];
@@ -3316,13 +3316,13 @@ void info_limbo_camera_setup(gentity_t *self)
 
 	if (!self->target || !*self->target)
 	{
-		G_Error("info_limbo_camera with no target");
+		G_Error("info_limbo_camera with no target\n");
 	}
 
 	target = G_FindByTargetname(NULL, self->target);
 	if (!target)
 	{
-		G_Error("info_limbo_camera cannot find target");
+		G_Error("info_limbo_camera cannot find target\n");
 	}
 
 	VectorCopy(self->s.origin, caminfo->origin);
@@ -4222,7 +4222,7 @@ void SP_func_door_rotating(gentity_t *ent)
 
 	if (VectorLengthSquared(ent->rotate) > SQR(1))         // check that rotation is only set for one axis
 	{
-		G_Error("Too many axis marked in func_door_rotating entity.  Only choose one axis of rotation. (defaulting to standard door rotation)");
+		G_Error("Too many axis marked in func_door_rotating entity. Only choose one axis of rotation. (defaulting to standard door rotation)\n");
 		VectorClear(ent->rotate);
 		ent->rotate[1] = 1;
 	}
@@ -5940,7 +5940,7 @@ debrisChunk_t *G_AllocDebrisChunk(void)
 {
 	if (level.numDebrisChunks >= MAX_DEBRISCHUNKS)
 	{
-		G_Error("ERROR: MAX_DEBRISCHUNKS(%i) hit.", MAX_DEBRISCHUNKS);
+		G_Error("ERROR: MAX_DEBRISCHUNKS(%i) hit.\n", MAX_DEBRISCHUNKS);
 		return NULL;
 	}
 
@@ -5960,11 +5960,11 @@ void SP_func_debris(gentity_t *ent)
 
 	if (!ent->target || !*ent->target)
 	{
-		G_Error("ERROR: func_debris with no target");
+		G_Error("ERROR: func_debris with no target\n");
 	}
 	if (!ent->targetname || !*ent->targetname)
 	{
-		G_Error("ERROR: func_debris with no targetname");
+		G_Error("ERROR: func_debris with no targetname\n");
 	}
 
 	debris = G_AllocDebrisChunk();

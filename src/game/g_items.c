@@ -866,7 +866,7 @@ void RespawnItem(gentity_t *ent)
 
 		if (!ent->teammaster)
 		{
-			G_Error("RespawnItem: bad teammaster");
+			G_Error("RespawnItem: bad teammaster\n");
 		}
 		master = ent->teammaster;
 

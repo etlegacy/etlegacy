@@ -123,7 +123,7 @@ void QDECL PrintMsg(gentity_t *ent, const char *fmt, ...)
 	va_start(argptr, fmt);
 	if (Q_vsnprintf(msg, sizeof(msg), fmt, argptr) > sizeof(msg))
 	{
-		G_Error("PrintMsg overrun");
+		G_Error("PrintMsg overrun\n");
 	}
 	va_end(argptr);
 

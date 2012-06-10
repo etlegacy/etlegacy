@@ -41,7 +41,7 @@ qboolean G_SpawnStringExt(const char *key, const char *defaultString, char **out
 		*out = (char *)defaultString;
 		// Gordon: 26/11/02: re-enabling
 		// see InitMover
-		G_Error("G_SpawnString() called while not spawning, file %s, line %i", file, line);
+		G_Error("G_SpawnString() called while not spawning, file %s, line %i\n", file, line);
 	}
 
 	for (i = 0 ; i < level.numSpawnVars ; i++)
@@ -892,7 +892,7 @@ char *G_AddSpawnVarToken(const char *string)
 	l = strlen(string);
 	if (level.numSpawnVarChars + l + 1 > MAX_SPAWN_VARS_CHARS)
 	{
-		G_Error("G_AddSpawnVarToken: MAX_SPAWN_VARS");
+		G_Error("G_AddSpawnVarToken: MAX_SPAWN_VARS\n");
 	}
 
 	dest = level.spawnVarChars + level.numSpawnVarChars;
@@ -929,7 +929,7 @@ qboolean G_ParseSpawnVars(void)
 	}
 	if (com_token[0] != '{')
 	{
-		G_Error("G_ParseSpawnVars: found %s when expecting {", com_token);
+		G_Error("G_ParseSpawnVars: found %s when expecting {\n", com_token);
 	}
 
 	// go through all the key / value pairs
@@ -938,7 +938,7 @@ qboolean G_ParseSpawnVars(void)
 		// parse key
 		if (!trap_GetEntityToken(keyname, sizeof(keyname)))
 		{
-			G_Error("G_ParseSpawnVars: EOF without closing brace");
+			G_Error("G_ParseSpawnVars: EOF without closing brace\n");
 		}
 
 		if (keyname[0] == '}')
@@ -949,16 +949,16 @@ qboolean G_ParseSpawnVars(void)
 		// parse value
 		if (!trap_GetEntityToken(com_token, sizeof(com_token)))
 		{
-			G_Error("G_ParseSpawnVars: EOF without closing brace");
+			G_Error("G_ParseSpawnVars: EOF without closing brace\n");
 		}
 
 		if (com_token[0] == '}')
 		{
-			G_Error("G_ParseSpawnVars: closing brace without data");
+			G_Error("G_ParseSpawnVars: closing brace without data\n");
 		}
 		if (level.numSpawnVars == MAX_SPAWN_VARS)
 		{
-			G_Error("G_ParseSpawnVars: MAX_SPAWN_VARS");
+			G_Error("G_ParseSpawnVars: MAX_SPAWN_VARS\n");
 		}
 		level.spawnVars[level.numSpawnVars][0] = G_AddSpawnVarToken(keyname);
 		level.spawnVars[level.numSpawnVars][1] = G_AddSpawnVarToken(com_token);
@@ -986,7 +986,7 @@ void SP_worldspawn(void)
 	G_SpawnString("classname", "", &s);
 	if (Q_stricmp(s, "worldspawn"))
 	{
-		G_Error("SP_worldspawn: The first entity isn't 'worldspawn'");
+		G_Error("SP_worldspawn: The first entity isn't 'worldspawn'\n");
 	}
 
 	// make some data visible to connecting client
@@ -1061,7 +1061,7 @@ void G_SpawnEntitiesFromString(void)
 	// needed by a level (setting configstrings or cvars, etc)
 	if (!G_ParseSpawnVars())
 	{
-		G_Error("SpawnEntities: no entities");
+		G_Error("SpawnEntities: no entities\n");
 	}
 	SP_worldspawn();
 

@@ -1640,7 +1640,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir)
 
 	if (dir != 1 && dir != -1)
 	{
-		G_Error("Cmd_FollowCycle_f: bad dir %i", dir);
+		G_Error("Cmd_FollowCycle_f: bad dir %i\n", dir);
 	}
 
 	clientnum = ent->client->sess.spectatorClient;
@@ -3597,7 +3597,7 @@ void Cmd_SetSniperSpot_f(gentity_t *clent)
 	Com_sprintf(filename, sizeof(filename), "maps/%s.botents", cvar_mapname.string);
 	if (trap_FS_FOpenFile(filename, &f, FS_APPEND) < 0)
 	{
-		G_Error("Cmd_SetSniperSpot_f: cannot open %s for writing", filename);
+		G_Error("Cmd_SetSniperSpot_f: cannot open %s for writing\n", filename);
 	}
 
 	Com_sprintf(buf, sizeof(buf), "{\n\"classname\" \"%s\"\n\"origin\" \"%.3f %.3f %.3f\"\n\"angles\" \"%.2f %.2f %.2f\"\n\"aiTeam\" \"%i\"\n}\n\n", spot->classname, spot->s.origin[0], spot->s.origin[1], spot->s.origin[2], spot->s.angles[0], spot->s.angles[1], spot->s.angles[2], spot->aiTeam);
