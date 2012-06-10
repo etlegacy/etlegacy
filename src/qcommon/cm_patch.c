@@ -596,7 +596,7 @@ int CM_FindPlane2(float plane[4], int *flipped)
 	// add a new plane
 	if (numPlanes == MAX_PATCH_PLANES)
 	{
-		Com_Error(ERR_DROP, "MAX_PATCH_PLANES");
+		Com_Error(ERR_DROP, "MAX_PATCH_PLANES\n");
 	}
 
 	Vector4Copy(plane, planes[numPlanes].plane);
@@ -658,7 +658,7 @@ static int CM_FindPlane(float *p1, float *p2, float *p3)
 	// add a new plane
 	if (numPlanes == MAX_PATCH_PLANES)
 	{
-		Com_Error(ERR_DROP, "MAX_PATCH_PLANES");
+		Com_Error(ERR_DROP, "MAX_PATCH_PLANES\n");
 	}
 
 	Vector4Copy(plane, planes[numPlanes].plane);
@@ -783,7 +783,7 @@ static int CM_EdgePlaneNum(cGrid_t *grid, int gridPlanes[MAX_GRID_SIZE][MAX_GRID
 
 	}
 
-	Com_Error(ERR_DROP, "CM_EdgePlaneNum: bad k");
+	Com_Error(ERR_DROP, "CM_EdgePlaneNum: bad k\n");
 	return -1;
 }
 
@@ -821,7 +821,7 @@ static void CM_SetBorderInward(facet_t *facet, cGrid_t *grid, int gridPlanes[MAX
 		numPoints = 3;
 		break;
 	default:
-		Com_Error(ERR_FATAL, "CM_SetBorderInward: bad parameter");
+		Com_Error(ERR_FATAL, "CM_SetBorderInward: bad parameter\n");
 		numPoints = 0;
 		break;
 	}
@@ -1287,7 +1287,7 @@ static void CM_PatchCollideFromGrid(cGrid_t *grid, patchCollide_t *pf, qboolean 
 
 			if (numFacets == MAX_FACETS)
 			{
-				Com_Error(ERR_DROP, "MAX_FACETS");
+				Com_Error(ERR_DROP, "MAX_FACETS\n");
 			}
 			facet = &facets[numFacets];
 			Com_Memset(facet, 0, sizeof(*facet));
@@ -1348,7 +1348,7 @@ static void CM_PatchCollideFromGrid(cGrid_t *grid, patchCollide_t *pf, qboolean 
 
 				if (numFacets == MAX_FACETS)
 				{
-					Com_Error(ERR_DROP, "MAX_FACETS");
+					Com_Error(ERR_DROP, "MAX_FACETS\n");
 				}
 				facet = &facets[numFacets];
 				Com_Memset(facet, 0, sizeof(*facet));
@@ -1409,18 +1409,18 @@ struct patchCollide_s *CM_GeneratePatchCollide(int width, int height, vec3_t *po
 
 	if (width <= 2 || height <= 2 || !points)
 	{
-		Com_Error(ERR_DROP, "CM_GeneratePatchFacets: bad parameters: (%i, %i, %p)",
+		Com_Error(ERR_DROP, "CM_GeneratePatchFacets: bad parameters: (%i, %i, %p)\n",
 		          width, height, points);
 	}
 
 	if (!(width & 1) || !(height & 1))
 	{
-		Com_Error(ERR_DROP, "CM_GeneratePatchFacets: even sizes are invalid for quadratic meshes");
+		Com_Error(ERR_DROP, "CM_GeneratePatchFacets: even sizes are invalid for quadratic meshes\n");
 	}
 
 	if (width > MAX_GRID_SIZE || height > MAX_GRID_SIZE)
 	{
-		Com_Error(ERR_DROP, "CM_GeneratePatchFacets: source is > MAX_GRID_SIZE");
+		Com_Error(ERR_DROP, "CM_GeneratePatchFacets: source is > MAX_GRID_SIZE\n");
 	}
 
 	// build a grid

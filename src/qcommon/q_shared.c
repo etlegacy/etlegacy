@@ -730,7 +730,7 @@ void COM_MatchToken(char **buf_p, char *match)
 	token = COM_Parse(buf_p);
 	if (strcmp(token, match))
 	{
-		Com_Error(ERR_DROP, "MatchToken: %s != %s", token, match);
+		Com_Error(ERR_DROP, "MatchToken: %s != %s\n", token, match);
 	}
 }
 
@@ -1078,15 +1078,15 @@ void Q_strncpyz(char *dest, const char *src, int destsize)
 {
 	if (!dest)
 	{
-		Com_Error(ERR_FATAL, "Q_strncpyz: NULL dest");
+		Com_Error(ERR_FATAL, "Q_strncpyz: NULL dest\n");
 	}
 	if (!src)
 	{
-		Com_Error(ERR_FATAL, "Q_strncpyz: NULL src");
+		Com_Error(ERR_FATAL, "Q_strncpyz: NULL src\n");
 	}
 	if (destsize < 1)
 	{
-		Com_Error(ERR_FATAL, "Q_strncpyz: destsize < 1");
+		Com_Error(ERR_FATAL, "Q_strncpyz: destsize < 1\n");
 	}
 
 	strncpy(dest, src, destsize - 1);
@@ -1212,7 +1212,7 @@ void Q_strcat(char *dest, int size, const char *src)
 	l1 = strlen(dest);
 	if (l1 >= size)
 	{
-		Com_Error(ERR_FATAL, "Q_strcat: already overflowed");
+		Com_Error(ERR_FATAL, "Q_strcat: already overflowed\n");
 	}
 	Q_strncpyz(dest + l1, src, size - l1);
 }
@@ -1482,7 +1482,7 @@ char *Info_ValueForKey(const char *s, const char *key)
 
 	if (strlen(s) >= BIG_INFO_STRING)
 	{
-		Com_Error(ERR_DROP, "Info_ValueForKey: oversize infostring [%s] [%s]", s, key);
+		Com_Error(ERR_DROP, "Info_ValueForKey: oversize infostring [%s] [%s]\n", s, key);
 	}
 
 	valueindex ^= 1;
@@ -1588,7 +1588,7 @@ void Info_RemoveKey(char *s, const char *key)
 
 	if (strlen(s) >= MAX_INFO_STRING)
 	{
-		Com_Error(ERR_DROP, "Info_RemoveKey: oversize infostring [%s] [%s]", s, key);
+		Com_Error(ERR_DROP, "Info_RemoveKey: oversize infostring [%s] [%s]\n", s, key);
 	}
 
 	if (strchr(key, '\\'))
@@ -1656,7 +1656,7 @@ void Info_RemoveKey_Big(char *s, const char *key)
 
 	if (strlen(s) >= BIG_INFO_STRING)
 	{
-		Com_Error(ERR_DROP, "Info_RemoveKey_Big: oversize infostring [%s] [%s]", s, key);
+		Com_Error(ERR_DROP, "Info_RemoveKey_Big: oversize infostring [%s] [%s]\n", s, key);
 	}
 
 	if (strchr(key, '\\'))
@@ -1745,7 +1745,7 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 
 	if (strlen(s) >= MAX_INFO_STRING)
 	{
-		Com_Error(ERR_DROP, "Info_SetValueForKey: oversize infostring [%s] [%s] [%s]", s, key, value);
+		Com_Error(ERR_DROP, "Info_SetValueForKey: oversize infostring [%s] [%s] [%s]\n", s, key, value);
 	}
 
 	if (strchr(key, '\\') || strchr(value, '\\'))
@@ -1796,7 +1796,7 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 
 	if (strlen(s) >= BIG_INFO_STRING)
 	{
-		Com_Error(ERR_DROP, "Info_SetValueForKey: oversize infostring [%s] [%s] [%s]", s, key, value);
+		Com_Error(ERR_DROP, "Info_SetValueForKey: oversize infostring [%s] [%s] [%s]\n", s, key, value);
 	}
 
 	if (strchr(key, '\\') || strchr(value, '\\'))

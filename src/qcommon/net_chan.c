@@ -183,7 +183,7 @@ void Netchan_Transmit(netchan_t *chan, int length, const byte *data)
 
 	if (length > MAX_MSGLEN)
 	{
-		Com_Error(ERR_DROP, "Netchan_Transmit: length = %i", length);
+		Com_Error(ERR_DROP, "Netchan_Transmit: length = %i\n", length);
 	}
 	chan->unsentFragmentStart = 0;
 

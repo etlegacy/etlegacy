@@ -391,7 +391,7 @@ static fileHandle_t FS_HandleForFile(void)
 			return i;
 		}
 	}
-	Com_Error(ERR_DROP, "FS_HandleForFile: none free");
+	Com_Error(ERR_DROP, "FS_HandleForFile: none free\n");
 	return 0;
 }
 
@@ -399,15 +399,15 @@ static FILE *FS_FileForHandle(fileHandle_t f)
 {
 	if (f < 1 || f > MAX_FILE_HANDLES)
 	{
-		Com_Error(ERR_DROP, "FS_FileForHandle: %d out of range", f);
+		Com_Error(ERR_DROP, "FS_FileForHandle: %d out of range\n", f);
 	}
 	if (fsh[f].zipFile == qtrue)
 	{
-		Com_Error(ERR_DROP, "FS_FileForHandle: can't get FILE on zip file");
+		Com_Error(ERR_DROP, "FS_FileForHandle: can't get FILE on zip file\n");
 	}
 	if (!fsh[f].handleFiles.file.o)
 	{
-		Com_Error(ERR_DROP, "FS_FileForHandle: NULL");
+		Com_Error(ERR_DROP, "FS_FileForHandle: NULL\n");
 	}
 
 	return fsh[f].handleFiles.file.o;
@@ -524,7 +524,7 @@ qboolean FS_CreatePath(char *OSPath)
 			*ofs = 0;
 			if (!Sys_Mkdir(path))
 			{
-				Com_Error(ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"",
+				Com_Error(ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"\n",
 				          path);
 			}
 			*ofs = PATH_SEP;
@@ -596,7 +596,7 @@ static void FS_CheckFilenameIsNotExecutable(const char *filename,
 	if (COM_CompareExtension(filename, DLL_EXT))
 	{
 		Com_Error(ERR_FATAL, "%s: Not allowed to manipulate '%s' due "
-		                     "to %s extension", function, filename, DLL_EXT);
+		                     "to %s extension\n", function, filename, DLL_EXT);
 	}
 }
 
@@ -1249,7 +1249,7 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFI
 						fsh[*file].handleFiles.file.z = unzReOpen(pak->pakFilename, pak->handle);
 						if (fsh[*file].handleFiles.file.z == NULL)
 						{
-							Com_Error(ERR_FATAL, "Couldn't reopen %s", pak->pakFilename);
+							Com_Error(ERR_FATAL, "Couldn't reopen %s\n", pak->pakFilename);
 						}
 					}
 					else
@@ -1772,7 +1772,7 @@ int FS_Read(void *buffer, int len, fileHandle_t f)
 
 			if (read == -1)
 			{
-				Com_Error(ERR_FATAL, "FS_Read: -1 bytes read");
+				Com_Error(ERR_FATAL, "FS_Read: -1 bytes read\n");
 			}
 
 			remaining -= read;
@@ -2106,7 +2106,7 @@ int FS_ReadFile(const char *qpath, void **buffer)
 			r = FS_Read(buf, len, com_journalDataFile);
 			if (r != len)
 			{
-				Com_Error(ERR_FATAL, "Read from journalDataFile failed");
+				Com_Error(ERR_FATAL, "Read from journalDataFile failed\n");
 			}
 
 			fs_loadCount++;
@@ -2190,7 +2190,7 @@ void FS_FreeFile(void *buffer)
 	}
 	if (!buffer)
 	{
-		Com_Error(ERR_FATAL, "FS_FreeFile( NULL )");
+		Com_Error(ERR_FATAL, "FS_FreeFile( NULL )\n");
 	}
 	fs_loadStack--;
 
@@ -2221,7 +2221,7 @@ void FS_WriteFile(const char *qpath, const void *buffer, int size)
 
 	if (!qpath || !buffer)
 	{
-		Com_Error(ERR_FATAL, "FS_WriteFile: NULL parameter");
+		Com_Error(ERR_FATAL, "FS_WriteFile: NULL parameter\n");
 	}
 
 	f = FS_FOpenFileWrite(qpath);
@@ -2449,7 +2449,7 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 
 	if (!fs_searchpaths)
 	{
-		Com_Error(ERR_FATAL, "Filesystem call made without initialization");
+		Com_Error(ERR_FATAL, "Filesystem call made without initialization\n");
 	}
 
 	if (!path)
@@ -4495,7 +4495,7 @@ void FS_InitFilesystem(void)
 	// Arnout: we want the nice error message here as well
 	if (FS_ReadFile("default.cfg", NULL) <= 0)
 	{
-		Com_Error(ERR_FATAL, "Couldn't load default.cfg - I am missing essential files - verify your installation?");
+		Com_Error(ERR_FATAL, "Couldn't load default.cfg - I am missing essential files - verify your installation?\n");
 	}
 
 	Q_strncpyz(lastValidBase, fs_basepath->string, sizeof(lastValidBase));
@@ -4536,7 +4536,7 @@ void FS_Restart(int checksumFeed)
 			return;
 		}
 		// TTimo - added some verbosity, 'couldn't load default.cfg' confuses the hell out of users
-		Com_Error(ERR_FATAL, "Couldn't load default.cfg - I am missing essential files - verify your installation?");
+		Com_Error(ERR_FATAL, "Couldn't load default.cfg - I am missing essential files - verify your installation?\n");
 	}
 
 	// bk010116 - new check before safeMode
@@ -4635,7 +4635,7 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode)
 		}
 		break;
 	default:
-		Com_Error(ERR_FATAL, "FSH_FOpenFile: bad mode");
+		Com_Error(ERR_FATAL, "FSH_FOpenFile: bad mode\n");
 		return -1;
 	}
 
