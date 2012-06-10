@@ -185,7 +185,7 @@ void SV_GetConfigstring(int index, char *buffer, int bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetConfigstring: bufferSize == %i", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetConfigstring: bufferSize == %i\n", bufferSize);
 	}
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
@@ -232,7 +232,7 @@ void SV_GetUserinfo(int index, char *buffer, int bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetUserinfo: bufferSize == %i", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetUserinfo: bufferSize == %i\n", bufferSize);
 	}
 	if (index < 0 || index >= sv_maxclients->integer)
 	{
@@ -312,7 +312,7 @@ void SV_Startup(void)
 {
 	if (svs.initialized)
 	{
-		Com_Error(ERR_FATAL, "SV_Startup: svs.initialized");
+		Com_Error(ERR_FATAL, "SV_Startup: svs.initialized\n");
 	}
 	SV_BoundMaxClients(1);
 
@@ -320,7 +320,7 @@ void SV_Startup(void)
 	svs.clients = calloc(sizeof(client_t) * sv_maxclients->integer, 1);
 	if (!svs.clients)
 	{
-		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients");
+		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients\n");
 	}
 
 	if (com_dedicated->integer)
@@ -398,7 +398,7 @@ void SV_ChangeMaxClients(void)
 	svs.clients = calloc(sizeof(client_t) * sv_maxclients->integer, 1);
 	if (!svs.clients)
 	{
-		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients");
+		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients\n");
 	}
 
 	Com_Memset(svs.clients, 0, sv_maxclients->integer * sizeof(client_t));
@@ -536,7 +536,7 @@ void SV_TouchCGameDLL(void)
 	else if (sv_pure->integer)       // ydnar: so we can work the damn game
 	{
 		Com_Error(ERR_DROP, "Failed to locate cgame %s for pure server mode"
-		                    "Probably you'll need cgame for other platforms too",
+		                    "Probably you'll need cgame for other platforms too\n",
 		          filename);
 	}
 }

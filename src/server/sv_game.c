@@ -41,11 +41,6 @@
 
 botlib_export_t *botlib_export;
 
-void SV_GameError(const char *string)
-{
-	Com_Error(ERR_DROP, "%s", string);
-}
-
 void SV_GamePrint(const char *string)
 {
 	Com_Printf("%s", string);
@@ -84,7 +79,7 @@ svEntity_t *SV_SvEntityForGentity(sharedEntity_t *gEnt)
 {
 	if (!gEnt || gEnt->s.number < 0 || gEnt->s.number >= MAX_GENTITIES)
 	{
-		Com_Error(ERR_DROP, "SV_SvEntityForGentity: bad gEnt");
+		Com_Error(ERR_DROP, "SV_SvEntityForGentity: bad gEnt\n");
 	}
 	return &sv.svEntities[gEnt->s.number];
 }
@@ -156,12 +151,12 @@ void SV_SetBrushModel(sharedEntity_t *ent, const char *name)
 
 	if (!name)
 	{
-		Com_Error(ERR_DROP, "SV_SetBrushModel: NULL");
+		Com_Error(ERR_DROP, "SV_SetBrushModel: NULL\n");
 	}
 
 	if (name[0] != '*')
 	{
-		Com_Error(ERR_DROP, "SV_SetBrushModel: %s isn't a brush model", name);
+		Com_Error(ERR_DROP, "SV_SetBrushModel: %s isn't a brush model\n", name);
 	}
 
 
@@ -294,7 +289,7 @@ void SV_GetServerinfo(char *buffer, int bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetServerinfo: bufferSize == %i", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetServerinfo: bufferSize == %i\n", bufferSize);
 	}
 	Q_strncpyz(buffer, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), bufferSize);
 }
@@ -327,7 +322,7 @@ void SV_GetUsercmd(int clientNum, usercmd_t *cmd)
 {
 	if (clientNum < 0 || clientNum >= sv_maxclients->integer)
 	{
-		Com_Error(ERR_DROP, "SV_GetUsercmd: bad clientNum:%i", clientNum);
+		Com_Error(ERR_DROP, "SV_GetUsercmd: bad clientNum:%i\n", clientNum);
 	}
 	*cmd = svs.clients[clientNum].lastUsercmd;
 }
@@ -341,13 +336,13 @@ static void SV_SendBinaryMessage(int cno, char *buf, int buflen)
 {
 	if (cno < 0 || cno >= sv_maxclients->integer)
 	{
-		Com_Error(ERR_DROP, "SV_SendBinaryMessage: bad client %i", cno);
+		Com_Error(ERR_DROP, "SV_SendBinaryMessage: bad client %i\n", cno);
 		return;
 	}
 
 	if (buflen < 0 || buflen > MAX_BINARY_MESSAGE)
 	{
-		Com_Error(ERR_DROP, "SV_SendBinaryMessage: bad length %i", buflen);
+		Com_Error(ERR_DROP, "SV_SendBinaryMessage: bad length %i\n", buflen);
 		svs.clients[cno].binaryMessageLength = 0;
 		return;
 	}
@@ -647,7 +642,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return SV_BinaryMessageStatus(args[1]);
 
 	default:
-		Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int) args[0]);
+		Com_Error(ERR_DROP, "Bad game system trap: %ld\n", (long int) args[0]);
 		break;
 	}
 	return -1;
@@ -718,7 +713,7 @@ void SV_RestartGameProgs(void)
 	gvm = VM_Restart(gvm);
 	if (!gvm)
 	{
-		Com_Error(ERR_FATAL, "VM_Restart on game failed");
+		Com_Error(ERR_FATAL, "VM_Restart on game failed\n");
 	}
 
 	SV_InitGameVM(qtrue);
@@ -745,7 +740,7 @@ void SV_InitGameProgs(void)
 	gvm = VM_Create("qagame", SV_GameSystemCalls, VMI_NATIVE);
 	if (!gvm)
 	{
-		Com_Error(ERR_FATAL, "VM_Create on game failed");
+		Com_Error(ERR_FATAL, "VM_Create on game failed\n");
 	}
 
 	SV_InitGameVM(qfalse);
