@@ -381,7 +381,9 @@ static const char *IN_TranslateSDLToQ3Key(SDL_keysym *keysym,
 			}
 		// fallthrough
 
-		default: *buf = ch; break;
+		default:
+			*buf = ch;
+			break;
 		}
 	}
 
@@ -1112,7 +1114,7 @@ void IN_Init(void)
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
-		Com_Error(ERR_FATAL, "IN_Init called before SDL_Init( SDL_INIT_VIDEO )");
+		Com_Error(ERR_FATAL, "IN_Init called before SDL_Init( SDL_INIT_VIDEO )\n");
 		return;
 	}
 
