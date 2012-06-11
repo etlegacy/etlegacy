@@ -46,8 +46,13 @@
 #       define Sys_LibraryError()   dlerror()
 #   endif
 #else
-#   include <SDL/SDL.h>
-#   include <SDL/SDL_loadso.h>
+#   ifdef BUNDLED_LIBS
+#       include "SDL.h"
+#       include "SDL_loadso.h"
+#   else
+#       include <SDL/SDL.h>
+#       include <SDL/SDL_loadso.h>
+#   endif
 #   define Sys_LoadLibrary(f)   SDL_LoadObject(f)
 #   define Sys_UnloadLibrary(h)     SDL_UnloadObject(h)
 #   define Sys_LoadFunction(h, fn)   SDL_LoadFunction(h, fn)

@@ -34,7 +34,11 @@
 #ifndef __QGL_H__
 #define __QGL_H__
 
-#include <SDL/SDL_opengl.h>
+#ifdef BUNDLED_LIBS
+#    include "SDL_opengl.h"
+#else
+#    include <SDL/SDL_opengl.h>
+#endif
 
 extern void (APIENTRYP qglActiveTextureARB)(GLenum texture);
 extern void (APIENTRYP qglClientActiveTextureARB)(GLenum texture);

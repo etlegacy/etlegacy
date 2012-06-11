@@ -31,10 +31,14 @@
  * @file sdl_snd.c
  */
 
+#ifdef BUNDLED_LIBS
+#    include "SDL.h"
+#else
+#    include <SDL/SDL.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
-
-#include <SDL/SDL.h>
 
 #include "../qcommon/q_shared.h"
 #include "../client/snd_local.h"
@@ -62,16 +66,19 @@ Snd_Memset
 #ifdef Snd_Memset
 #undef Snd_Memset
 #endif
-void Snd_Memset (void* dest, const int val, const size_t count) {
+void Snd_Memset(void *dest, const int val, const size_t count)
+{
 	int *pDest, i, iterate;
 
-	if (!use_custom_memset) {
-		Com_Memset(dest,val,count);
+	if (!use_custom_memset)
+	{
+		Com_Memset(dest, val, count);
 		return;
 	}
 	iterate = count / sizeof(int);
-	pDest = (int*)dest;
-	for(i=0; i<iterate; i++) {
+	pDest   = (int *)dest;
+	for (i = 0; i < iterate; i++)
+	{
 		pDest[i] = val;
 	}
 }

@@ -34,7 +34,11 @@
  */
 
 #ifndef DEDICATED
-#include <SDL/SDL_video.h>
+#    ifdef BUNDLED_LIBS
+#        include "SDL_video.h"
+#    else
+#        include <SDL/SDL_video.h>
+#    endif
 #endif
 
 #ifdef _WIN32

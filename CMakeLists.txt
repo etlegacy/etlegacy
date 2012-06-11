@@ -213,29 +213,37 @@ endif(TRACKBASE_SUPPORT)
 if(BUILD_CLIENT)
 	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC})
 	include_directories(
-                ${CURL_INCLUDE_DIR}
-		${OPENGL_INCLUDE_DIR}
-		${JPEG_INCLUDE_DIR}
-                ${SDL32_INCLUDE_DIR}
+                ${OPENGL_INCLUDE_DIR}
                 ${FREETYPE_INCLUDE_DIRS}
                 ${OPENAL_INCLUDE_DIR}
                 ${VORBIS_INCLUDE_DIR}
-	)
-	target_link_libraries(etl
-		${OS_LIBRARIES}
-                ${SDL32_LIBRARIES}
+        )
+        target_link_libraries(etl
+                ${OS_LIBRARIES}
                 ${OPENGL_LIBRARIES}
-                ${CURL_LIBRARIES}
-                ${JPEG_LIBRARIES}
                 ${FREETYPE_LIBRARIES}
                 ${OPENAL_LIBRARIES}
                 ${VORBIS_FILE_LIBRARY} # This links only libvorbisfile
         )
         if(BUNDLED_LIBS)
+                add_definitions(-DBUNDLED_LIBS)
                 target_link_libraries(etl ${BUNDLED_LIBRARIES})
+                include_directories(${BUNDLED_INCLUDE_DIRS})
                 add_dependencies(etl bundled_curl bundled_sdl bundled_jpeg)
+        elseif(BUNDLED_LIBS)
+                # Using system libraries
+                target_link_libraries(etl 
+                        ${SDL32_LIBRARIES}
+                        ${CURL_LIBRARIES}
+                        ${JPEG_LIBRARIES}                
+                )
+                include_directories(
+                        ${SDL32_INCLUDE_DIR}
+                        ${CURL_INCLUDE_DIR}
+                        ${JPEG_INCLUDE_DIR}                        
+                )
         endif(BUNDLED_LIBS)
-	set_target_properties(etl
+        set_target_properties(etl
                 PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
 endif(BUILD_CLIENT)
 

@@ -31,7 +31,11 @@
  * @file sdl_input.c
  */
 
-#include <SDL/SDL.h>
+#ifdef BUNDLED_LIBS
+#    include "SDL.h"
+#else
+#    include <SDL/SDL.h>
+#endif
 
 #include <stdarg.h>
 #include <stdio.h>

@@ -31,7 +31,11 @@
  * @file sdl_gamma.c
  */
 
-#include <SDL/SDL.h>
+#ifdef BUNDLED_LIBS
+#    include "SDL.h"
+#else
+#    include <SDL/SDL.h>
+#endif
 
 #include "../renderer/tr_local.h"
 #include "../qcommon/qcommon.h"

@@ -32,7 +32,12 @@
  */
 
 #include "client.h"
-#include <SDL/SDL_video.h>
+
+#ifdef BUNDLED_LIBS
+#    include "SDL_video.h"
+#else
+#    include <SDL/SDL_video.h>
+#endif
 
 /*
 
