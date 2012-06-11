@@ -230,8 +230,7 @@ if(BUILD_CLIENT)
                 target_link_libraries(etl ${BUNDLED_LIBRARIES})
                 include_directories(${BUNDLED_INCLUDE_DIRS})
                 add_dependencies(etl bundled_curl bundled_sdl bundled_jpeg)
-        elseif(BUNDLED_LIBS)
-                # Using system libraries
+        else() # Using system libraries
                 target_link_libraries(etl 
                         ${SDL32_LIBRARIES}
                         ${CURL_LIBRARIES}
@@ -242,7 +241,7 @@ if(BUILD_CLIENT)
                         ${CURL_INCLUDE_DIR}
                         ${JPEG_INCLUDE_DIR}                        
                 )
-        endif(BUNDLED_LIBS)
+        endif()
         set_target_properties(etl
                 PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
 endif(BUILD_CLIENT)
