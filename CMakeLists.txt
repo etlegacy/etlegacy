@@ -7,7 +7,8 @@ cmake_minimum_required(VERSION 2.6)
 
 project(ETLEGACY C)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+include(Build)
 
 set(ETLEGACY_VERSION_MAJOR  "2")
 set(ETLEGACY_VERSION_MINOR  "7")
@@ -134,6 +135,15 @@ FILE(GLOB UI_SRC
 	"src/game/bg_classes.c"
 	"src/game/bg_misc.c"
 )
+
+# If we change architecture we need to force rescan of libraries
+if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
+        force_rescan_library(SDL32)
+        force_rescan_library(CURL)
+        force_rescan_library(JPEG)
+        # TODO: recheck optional libs
+        set(OLD_CROSS_COMPILE32 ${CROSS_COMPILE32} CACHE INTERNAL "Previous value for CROSS_COMPILE32")
+endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 
 #-----------------------------------------------------------------
 # Client features
