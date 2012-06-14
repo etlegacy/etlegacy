@@ -51,15 +51,20 @@ if(UNIX AND CROSS_COMPILE32) # 32-bit build
     set(CMAKE_MODULE_LINKER_FLAGS "-m32")
 endif(UNIX AND CROSS_COMPILE32)
 
-if(MSVC)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
-endif(MSVC)
-
 if(UNIX)
         set(OS_LIBRARIES dl m)
+        if(NOT APPLE) # Linux and *BSD
+                set(ETLEGACY_INSTALL_DIRECTORY "games/etlegacy/")
+        else() # Mac OS X
+                set(ETLEGACY_INSTALL_DIRECTORY "etlegacy") # TODO: correct this
+        endif()
 elseif(WIN32)
         add_definitions(-DWINVER=0x501)
         set(OS_LIBRARIES ws2_32 psapi winmm)
+        set(ETLEGACY_INSTALL_DIRECTORY "etlegacy")
+        if(MSVC)
+                add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
+        endif(MSVC)
 endif()
 
 # Get the system architecture
@@ -254,14 +259,17 @@ if(BUILD_CLIENT)
         endif()
         set_target_properties(etl
                 PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
+        install(TARGETS etl
+                RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${ETLEGACY_INSTALL_DIRECTORY}")
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
-	add_executable(etlded ${COMMON_SRC} ${SERVER_SRC})
-	target_link_libraries(etlded
-		${OS_LIBRARIES})
-	set_target_properties(etlded
+        add_executable(etlded ${COMMON_SRC} ${SERVER_SRC})
+        target_link_libraries(etlded ${OS_LIBRARIES})
+        set_target_properties(etlded
                 PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
+        install(TARGETS etlded
+                RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${ETLEGACY_INSTALL_DIRECTORY}")
 endif(BUILD_SERVER)
 
 if(BUILD_MOD)
@@ -283,4 +291,66 @@ if(BUILD_MOD)
 		PROPERTIES
 			PREFIX ""
 			LIBRARY_OUTPUT_DIRECTORY "etmain")
+        install(TARGETS cgame.mp.${ARCH} qagame.mp.${ARCH} ui.mp.${ARCH}
+                LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/${ETLEGACY_INSTALL_DIRECTORY}/etmain")
 endif(BUILD_MOD)
+
+#-----------------------------------------------------------------
+# Installer/Package generation
+#-----------------------------------------------------------------
+
+# General
+set(CPACK_PACKAGE_NAME                  "etlegacy")
+set(CPACK_PACKAGE_CONTACT               "http://etlegacy.com <mail@etlegacy.com>")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "ET: Legacy is an online FPS game compatible with Wolfenstein: Enemy Territory 2.60b.")
+set(CPACK_PACKAGE_DESCRIPTION           ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}) # TODO: expand
+set(CPACK_PACKAGE_DESCRIPTION_FILE      "${CMAKE_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_SOURCE_DIR}/COPYING.txt")
+set(CPACK_PACKAGE_VERSION_MAJOR         ${ETLEGACY_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR         ${ETLEGACY_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH         ${ETLEGACY_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION               ${ETLEGACY_VERSION})
+set(CPACK_PACKAGE_FILE_NAME             "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${ARCH}")
+
+# Uninstall target
+configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Uninstall.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/Uninstall.cmake"
+        IMMEDIATE @ONLY
+)
+add_custom_target(uninstall
+        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/Uninstall.cmake
+)
+
+# Linux
+if("${CMAKE_SYSTEM}" MATCHES "Linux")
+        set(CPACK_GENERATOR                     "DEB") # TODO: separate configuration for each generator
+        set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE   "i386") # compatibility with W:ET 2.60b
+        set(CPACK_DEBIAN_PACKAGE_SECTION        "games")
+        set(CPACK_DEBIAN_PACKAGE_PRIORITY       "optional")
+        set(CPACK_DEBIAN_PACKAGE_RECOMMENDS     "")
+        set(CPACK_DEBIAN_PACKAGE_SUGGESTS       "")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS        "libcurl3, libsdl1.2debian, libjpeg8")
+        
+        # Create symlinks (works only with 'make install') and add them as uninstall targets
+        if(BUILD_CLIENT)
+                INSTALL(CODE "
+                        execute_process(
+                                COMMAND \${CMAKE_COMMAND} -E remove /usr/bin/etl
+                                COMMAND \${CMAKE_COMMAND} -E create_symlink \${CMAKE_INSTALL_PREFIX}/games/etlegacy/etl /usr/bin/etl
+                        )
+                        LIST(APPEND CMAKE_INSTALL_MANIFEST_FILES /usr/bin/etl)
+                ")
+        endif(BUILD_CLIENT)
+        if(BUILD_SERVER)
+                INSTALL(CODE "
+                        execute_process(
+                                COMMAND \${CMAKE_COMMAND} -E remove /usr/bin/etlded
+                                COMMAND \${CMAKE_COMMAND} -E create_symlink \${CMAKE_INSTALL_PREFIX}/games/etlegacy/etlded /usr/bin/etlded
+                        )
+                        LIST(APPEND CMAKE_INSTALL_MANIFEST_FILES /usr/bin/etlded)
+                ")
+        endif(BUILD_SERVER)                
+endif()
+
+include(CPack) # Has to be included after the package configuration!
