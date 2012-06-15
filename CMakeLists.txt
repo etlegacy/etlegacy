@@ -338,14 +338,14 @@ if("${CMAKE_SYSTEM}" MATCHES "Linux")
                 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/etl.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/etl.sh")
                 install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/etl.sh"
                         RENAME "etl"
-                        DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
+                        DESTINATION "/usr/bin"
                 )
         endif(BUILD_CLIENT)
         if(BUILD_SERVER)
                 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/etlded.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/etlded.sh")
                 install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/etlded.sh" 
                         RENAME "etlded"
-                        DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
+                        DESTINATION "/usr/bin"
                 )
         endif(BUILD_SERVER)
 endif()
