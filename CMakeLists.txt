@@ -333,7 +333,7 @@ if("${CMAKE_SYSTEM}" MATCHES "Linux")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS        "libcurl3, libsdl1.2debian, libjpeg8")
         set(CPACK_SET_DESTDIR ON)
 
-        # Create launchers for etl and etlded (symlinks don't work with packages)
+        # Create launchers for etl and etlded (symlinks don't work with CPack packages)
         if(BUILD_CLIENT)
                 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/etl.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/etl.sh")
                 install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/etl.sh"

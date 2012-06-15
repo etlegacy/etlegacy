@@ -3,6 +3,12 @@ ET: Legacy
 
 *A second breath of life for Wolfenstein: Enemy Territory*
 
+Website: [http://etlegacy.com](http://etlegacy.com)
+
+IRC: \#etlegacy on irc.freenode.net
+
+Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
+
 INTRODUCTION
 ============
 
@@ -19,26 +25,49 @@ Game data and patching:
 -----------------------------------------------------------------------------
 
 Wolfenstein: Enemy Territory is a free release, and can be downloaded from
-http://www.splashdamage.com/content/wolfenstein-enemy-territory-barracks
+http://www.splashdamage.com/content/download-wolfenstein-enemy-territory
 
 This source release does not contain any game data, the game data is still
 covered by the original EULA and must be obeyed as usual.
 
-Compiling
+Dependencies
 -----------------------------------------------------------------------------
 
-Install [mercurial](mercurial.selenic.com) and [premake4](ndustriousone.com/premake).
+* **CMake** (compile-time only)
+* **libSDL 1.2**
+* **libjpeg 8**
+* **libcurl** (optional)
+* **OGG Vorbis File** (optional)
+* **OpenAL** (optional)
+* **Freetype** (optional)
 
-Download the latest source code from the repository hosted at 
-sourceforge.net: _hg clone http://hg.code.sf.net/p/etlegacy/code etlegacy-code_
+To get the latest source code install [git](http://git-scm.com/) and
+clone our repository hosted at Github.com:
 
-To **build linux binary** run _premake4 gmake_ followed by _make_
+    $ git clone git://github.com/etlegacy/etlegacy.git
 
-To **cross-compile windows binary** on linux run _premake4 gmake_ followed by _make config=mingw32_
-(you must have cross-compiling toolchain set up for this)
+If the required dependencies are not installed on your system run:
 
-To **build windows binary** run _premake4 vs2010_ (or any other VS version) and
-open the produced solution in Visual Studio.
+    $ git submodule init
+    $ git submodule update
+
+This downloads them into the libs/ directory. Also, enable BUNDLED_LIBS in CMake.
+
+Compile and install
+-----------------------------------------------------------------------------
+
+On **Linux** run:
+
+    $ mkdir build && cd build && cmake ..
+    $ make
+
+To install the binaries system-wide, run as root:
+
+    # make install
+
+Alternatively you can run the game by specifying the full path to the `etl` binary in the `build` directory.
+
+On **Windows** open the CMakeLists.txt file in [QT Creator](http://qt.nokia.com/products/developer-tools).
 
 LICENSE
 =======
