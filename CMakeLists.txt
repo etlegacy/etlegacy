@@ -301,7 +301,7 @@ endif(BUILD_MOD)
 
 # General
 set(CPACK_PACKAGE_NAME                  "etlegacy")
-set(CPACK_PACKAGE_CONTACT               "http://etlegacy.com <mail@etlegacy.com>")
+set(CPACK_PACKAGE_CONTACT               "mail@etlegacy.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "ET: Legacy is an online FPS game compatible with Wolfenstein: Enemy Territory 2.60b.")
 set(CPACK_PACKAGE_DESCRIPTION           ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}) # TODO: expand
 set(CPACK_PACKAGE_DESCRIPTION_FILE      "${CMAKE_SOURCE_DIR}/README.md")
@@ -331,26 +331,23 @@ if("${CMAKE_SYSTEM}" MATCHES "Linux")
         set(CPACK_DEBIAN_PACKAGE_RECOMMENDS     "")
         set(CPACK_DEBIAN_PACKAGE_SUGGESTS       "")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS        "libcurl3, libsdl1.2debian, libjpeg8")
-        
-        # Create symlinks (works only with 'make install') and add them as uninstall targets
+        set(CPACK_SET_DESTDIR ON)
+
+        # Create launchers for etl and etlded (symlinks don't work with packages)
         if(BUILD_CLIENT)
-                INSTALL(CODE "
-                        execute_process(
-                                COMMAND \${CMAKE_COMMAND} -E remove /usr/bin/etl
-                                COMMAND \${CMAKE_COMMAND} -E create_symlink \${CMAKE_INSTALL_PREFIX}/games/etlegacy/etl /usr/bin/etl
-                        )
-                        LIST(APPEND CMAKE_INSTALL_MANIFEST_FILES /usr/bin/etl)
-                ")
+                configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/etl.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/etl.sh")
+                install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/etl.sh"
+                        RENAME "etl"
+                        DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
+                )
         endif(BUILD_CLIENT)
         if(BUILD_SERVER)
-                INSTALL(CODE "
-                        execute_process(
-                                COMMAND \${CMAKE_COMMAND} -E remove /usr/bin/etlded
-                                COMMAND \${CMAKE_COMMAND} -E create_symlink \${CMAKE_INSTALL_PREFIX}/games/etlegacy/etlded /usr/bin/etlded
-                        )
-                        LIST(APPEND CMAKE_INSTALL_MANIFEST_FILES /usr/bin/etlded)
-                ")
-        endif(BUILD_SERVER)                
+                configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/etlded.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/etlded.sh")
+                install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/etlded.sh" 
+                        RENAME "etlded"
+                        DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
+                )
+        endif(BUILD_SERVER)
 endif()
 
 include(CPack) # Has to be included after the package configuration!
