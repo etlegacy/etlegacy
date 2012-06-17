@@ -20,7 +20,7 @@ set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 add_definitions(-DBOTLIB)
 
 # Options
-option(BUILD_SERVER	"Build the dedicated server executable"                                 OFF)
+option(BUILD_SERVER	"Build the dedicated server executable"                                 ON)
 option(BUILD_CLIENT	"Build the client executable"                                           ON)
 option(BUILD_MOD	"Build the mod libraries"                                               ON)
 
@@ -54,7 +54,7 @@ endif(UNIX AND CROSS_COMPILE32)
 if(UNIX)
         set(OS_LIBRARIES dl m)
         if(NOT APPLE) # Linux and *BSD
-                set(ETLEGACY_INSTALL_DIRECTORY "games/etlegacy/")
+                set(ETLEGACY_INSTALL_DIRECTORY "games/etlegacy") # FIXME: needs to be unset for CPack packages. How???
         else() # Mac OS X
                 set(ETLEGACY_INSTALL_DIRECTORY "etlegacy") # TODO: correct this
         endif()
@@ -260,7 +260,7 @@ if(BUILD_CLIENT)
         set_target_properties(etl
                 PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
         install(TARGETS etl
-                RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${ETLEGACY_INSTALL_DIRECTORY}")
+                RUNTIME DESTINATION ${ETLEGACY_INSTALL_DIRECTORY})
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
@@ -269,7 +269,7 @@ if(BUILD_SERVER)
         set_target_properties(etlded
                 PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
         install(TARGETS etlded
-                RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${ETLEGACY_INSTALL_DIRECTORY}")
+                RUNTIME DESTINATION ${ETLEGACY_INSTALL_DIRECTORY})
 endif(BUILD_SERVER)
 
 if(BUILD_MOD)
@@ -292,25 +292,12 @@ if(BUILD_MOD)
 			PREFIX ""
 			LIBRARY_OUTPUT_DIRECTORY "etmain")
         install(TARGETS cgame.mp.${ARCH} qagame.mp.${ARCH} ui.mp.${ARCH}
-                LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/${ETLEGACY_INSTALL_DIRECTORY}/etmain")
+                LIBRARY DESTINATION "${ETLEGACY_INSTALL_DIRECTORY}/etmain")
 endif(BUILD_MOD)
 
 #-----------------------------------------------------------------
 # Installer/Package generation
 #-----------------------------------------------------------------
-
-# General
-set(CPACK_PACKAGE_NAME                  "etlegacy")
-set(CPACK_PACKAGE_CONTACT               "mail@etlegacy.com")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "ET: Legacy is an online FPS game compatible with Wolfenstein: Enemy Territory 2.60b.")
-set(CPACK_PACKAGE_DESCRIPTION           ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}) # TODO: expand
-set(CPACK_PACKAGE_DESCRIPTION_FILE      "${CMAKE_SOURCE_DIR}/README.md")
-set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_SOURCE_DIR}/COPYING.txt")
-set(CPACK_PACKAGE_VERSION_MAJOR         ${ETLEGACY_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR         ${ETLEGACY_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH         ${ETLEGACY_VERSION_PATCH})
-set(CPACK_PACKAGE_VERSION               ${ETLEGACY_VERSION})
-set(CPACK_PACKAGE_FILE_NAME             "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${ARCH}")
 
 # Uninstall target
 configure_file(
@@ -324,30 +311,46 @@ add_custom_target(uninstall
 
 # Linux
 if("${CMAKE_SYSTEM}" MATCHES "Linux")
-        set(CPACK_GENERATOR                     "DEB") # TODO: separate configuration for each generator
-        set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE   "i386") # compatibility with W:ET 2.60b
-        set(CPACK_DEBIAN_PACKAGE_SECTION        "games")
-        set(CPACK_DEBIAN_PACKAGE_PRIORITY       "optional")
-        set(CPACK_DEBIAN_PACKAGE_RECOMMENDS     "")
-        set(CPACK_DEBIAN_PACKAGE_SUGGESTS       "")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS        "libcurl3, libsdl1.2debian, libjpeg8")
-        set(CPACK_SET_DESTDIR ON)
-
-        # Create launchers for etl and etlded (symlinks don't work with CPack packages)
+        # Create symlinks (works only with 'make install') and add them as uninstall targets
         if(BUILD_CLIENT)
-                configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/etl.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/etl.sh")
-                install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/etl.sh"
-                        RENAME "etl"
-                        DESTINATION "/usr/bin"
-                )
+                install(CODE "
+                        execute_process(
+                                COMMAND \${CMAKE_COMMAND} -E remove \${CMAKE_INSTALL_PREFIX}/bin/etl
+                                COMMAND \${CMAKE_COMMAND} -E create_symlink \"\${CMAKE_INSTALL_PREFIX}/games/etlegacy/etl\" \${CMAKE_INSTALL_PREFIX}/bin/etl
+                        )
+                        list(APPEND CMAKE_INSTALL_MANIFEST_FILES \${CMAKE_INSTALL_PREFIX}/bin/etl)
+                ")
         endif(BUILD_CLIENT)
         if(BUILD_SERVER)
-                configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/etlded.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/etlded.sh")
-                install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/etlded.sh" 
-                        RENAME "etlded"
-                        DESTINATION "/usr/bin"
-                )
-        endif(BUILD_SERVER)
+                install(CODE "
+                        execute_process(
+                                COMMAND \${CMAKE_COMMAND} -E remove \${CMAKE_INSTALL_PREFIX}/bin/etlded
+                                COMMAND \${CMAKE_COMMAND} -E create_symlink \${CMAKE_INSTALL_PREFIX}/games/etlegacy/etlded \${CMAKE_INSTALL_PREFIX}/bin/etlded
+                        )
+                        list(APPEND CMAKE_INSTALL_MANIFEST_FILES \${CMAKE_INSTALL_PREFIX}/bin/etlded)
+                ")
+        endif(BUILD_SERVER) 
 endif()
+
+# CPack general configuration
+set(CPACK_PACKAGE_NAME                  "etlegacy")
+set(CPACK_PACKAGE_CONTACT               "mail@etlegacy.com")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "ET: Legacy is an online FPS game compatible with Wolfenstein: Enemy Territory 2.60b.")
+set(CPACK_PACKAGE_DESCRIPTION           ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}) # TODO: expand
+set(CPACK_PACKAGE_DESCRIPTION_FILE      "${CMAKE_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_SOURCE_DIR}/COPYING.txt")
+set(CPACK_PACKAGE_VERSION_MAJOR         ${ETLEGACY_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR         ${ETLEGACY_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH         ${ETLEGACY_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION               ${ETLEGACY_VERSION})
+set(CPACK_PACKAGE_FILE_NAME             "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${ARCH}")
+set(CPACK_PROJECT_CONFIG_FILE           "${CMAKE_CURRENT_BINARY_DIR}/CPackOptions.cmake")
+
+# CPack generator-specific configuration
+configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPackOptions.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/CPackOptions.cmake"
+        IMMEDIATE @ONLY
+)
 
 include(CPack) # Has to be included after the package configuration!

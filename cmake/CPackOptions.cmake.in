@@ -1,0 +1,16 @@
+# This file is configured at cmake time, and loaded at cpack time.
+# To pass variables to cpack from cmake, they must be configured in this file.  
+
+if(CPACK_GENERATOR MATCHES "DEB")
+        set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE   "i386") # compatibility with W:ET 2.60b
+        set(CPACK_DEBIAN_PACKAGE_HOMEPAGE       "http://www.etlegacy.com")
+        set(CPACK_DEBIAN_PACKAGE_SECTION        "games")
+        set(CPACK_DEBIAN_PACKAGE_PRIORITY       "optional")
+        set(CPACK_DEBIAN_PACKAGE_RECOMMENDS     "")
+        set(CPACK_DEBIAN_PACKAGE_SUGGESTS       "")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS        "libcurl3, libsdl1.2debian, libjpeg8")
+endif(CPACK_GENERATOR MATCHES "DEB")
+
+if(CPACK_GENERATOR MATCHES "TGZ")
+        set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY    0)
+endif(CPACK_GENERATOR MATCHES "TGZ")
