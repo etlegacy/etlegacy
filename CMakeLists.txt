@@ -68,16 +68,17 @@ elseif(WIN32)
 endif()
 
 # Get the system architecture
-if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i686" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i386")
+if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i686" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i386" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86")
         if(WIN32)
                 set(ARCH "x86")
         else()
                 set(ARCH "i386")
         endif()
-elseif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
-        set(ARCH ${CMAKE_SYSTEM_PROCESSOR})
+elseif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "AMD64")
+        set(ARCH "x86_64")
 else()
-        set(ARCH "none")
+        set(ARCH "${CMAKE_SYSTEM_PROCESSOR}")
+        message(STATUS "Warning: processor architecture not recognised (${CMAKE_SYSTEM_PROCESSOR})")
 endif()
 
 #-----------------------------------------------------------------
@@ -292,7 +293,9 @@ if(BUILD_MOD)
 			PREFIX ""
 			LIBRARY_OUTPUT_DIRECTORY "etmain")
         install(TARGETS cgame.mp.${ARCH} qagame.mp.${ARCH} ui.mp.${ARCH}
-                LIBRARY DESTINATION "${ETLEGACY_INSTALL_DIRECTORY}/etmain")
+                LIBRARY DESTINATION "${ETLEGACY_INSTALL_DIRECTORY}/etmain"
+                ARCHIVE DESTINATION "${ETLEGACY_INSTALL_DIRECTORY}/etmain"
+        )
 endif(BUILD_MOD)
 
 #-----------------------------------------------------------------
