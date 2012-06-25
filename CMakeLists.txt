@@ -41,18 +41,17 @@ option(TRACKBASE_SUPPORT 	"Enable extended server statistics (server only)" 		ON
 #-----------------------------------------------------------------
 
 if(UNIX AND CROSS_COMPILE32) # 32-bit build
-    set(CMAKE_SYSTEM_PROCESSOR i386)
-    set(CMAKE_SYSTEM_LIBRARY_PATH /lib32 /usr/lib32 /usr/local/lib32)
-    set(FIND_LIBRARY_USE_LIB64_PATHS OFF)
-    set(CMAKE_IGNORE_PATH /lib /usr/lib /usr/local/lib)
-    set(CMAKE_C_FLAGS "-m32")
-    set(CMAKE_EXE_LINKER_FLAGS "-m32")
-    set(CMAKE_SHARED_LINKER_FLAGS "-m32")
-    set(CMAKE_MODULE_LINKER_FLAGS "-m32")
+        set(CMAKE_SYSTEM_PROCESSOR i386)
+        set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
+        set(CMAKE_C_FLAGS "-m32")
+        set(CMAKE_EXE_LINKER_FLAGS "-m32")
+        set(CMAKE_SHARED_LINKER_FLAGS "-m32")
+        set(CMAKE_MODULE_LINKER_FLAGS "-m32")
 endif(UNIX AND CROSS_COMPILE32)
 
 if(UNIX)
         set(OS_LIBRARIES dl m)
+        set(LIB_SUFFIX ".mp.")
         if(NOT APPLE) # Linux and *BSD
                 set(ETLEGACY_INSTALL_DIRECTORY "games/etlegacy") # FIXME: needs to be unset for CPack packages. How???
         else() # Mac OS X
@@ -61,6 +60,7 @@ if(UNIX)
 elseif(WIN32)
         add_definitions(-DWINVER=0x501)
         set(OS_LIBRARIES ws2_32 psapi winmm)
+        set(LIB_SUFFIX "_mp_")
         set(ETLEGACY_INSTALL_DIRECTORY "etlegacy")
         if(MSVC)
                 add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
@@ -277,24 +277,24 @@ endif(BUILD_SERVER)
 
 if(BUILD_MOD)
         # cgame
-	add_library(cgame.mp.${ARCH} SHARED ${CGAME_SRC})
-	set_target_properties(cgame.mp.${ARCH}
-		PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
-			PREFIX ""
-			LIBRARY_OUTPUT_DIRECTORY "etmain")
+        add_library(cgame${LIB_SUFFIX}${ARCH} SHARED ${CGAME_SRC})
+        set_target_properties(cgame${LIB_SUFFIX}${ARCH}
+                PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
+                        PREFIX ""
+                        LIBRARY_OUTPUT_DIRECTORY "etmain")
         # qagame
-	add_library(qagame.mp.${ARCH} SHARED ${QAGAME_SRC})
-	set_target_properties(qagame.mp.${ARCH}
-		PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
-			PREFIX ""
-			LIBRARY_OUTPUT_DIRECTORY "etmain")
+        add_library(qagame${LIB_SUFFIX}${ARCH} SHARED ${QAGAME_SRC})
+        set_target_properties(qagame${LIB_SUFFIX}${ARCH}
+                PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
+                        PREFIX ""
+                        LIBRARY_OUTPUT_DIRECTORY "etmain")
         # ui
-	add_library(ui.mp.${ARCH} SHARED ${UI_SRC})
-	set_target_properties(ui.mp.${ARCH}
-		PROPERTIES
-			PREFIX ""
-			LIBRARY_OUTPUT_DIRECTORY "etmain")
-        install(TARGETS cgame.mp.${ARCH} qagame.mp.${ARCH} ui.mp.${ARCH}
+        add_library(ui${LIB_SUFFIX}${ARCH} SHARED ${UI_SRC})
+        set_target_properties(ui${LIB_SUFFIX}${ARCH}
+                PROPERTIES
+                        PREFIX ""
+                        LIBRARY_OUTPUT_DIRECTORY "etmain")
+        install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
                 LIBRARY DESTINATION "${ETLEGACY_INSTALL_DIRECTORY}/etmain"
                 ARCHIVE DESTINATION "${ETLEGACY_INSTALL_DIRECTORY}/etmain"
         )
