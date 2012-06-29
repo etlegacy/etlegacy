@@ -28,13 +28,12 @@ option(CROSS_COMPILE32  "Compile 32-bit version of ET:L (64bit is incompatible w
 option(BUNDLED_LIBS     "Use bundled libraries instead of the system ones."                     OFF)
 
 # Optional features
-option(SMP_SUPPORT 		"Enable SMP (multicore support) (client only)"			ON)
-option(USE_CURL 		"Enable auto-download support using cURL (client only)" 	ON)
-option(USE_CODEC_VORBIS 	"Enable OGG Vorbis support (client only)" 			OFF)
-option(USE_OPENAL		"Enable OpenAL sound backend (client only)" 			OFF)
-option(USE_FREETYPE		"Enable Freetype font library support (client only)" 		OFF)
-option(GUIDMASTER_SUPPORT 	"Enable client registration with guidmaster (client only)" 	ON)
-option(TRACKBASE_SUPPORT 	"Enable extended server statistics (server only)" 		ON)
+option(SMP_SUPPORT              "Enable SMP (multicore support) (client)"                       ON)
+option(USE_CURL                 "Enable auto-download support using cURL (client)"              ON)
+option(USE_CODEC_VORBIS         "Enable OGG Vorbis support (client)"                            OFF)
+option(USE_OPENAL               "Enable OpenAL sound backend (client) [BROKEN]"                 OFF)
+option(USE_FREETYPE             "Enable Freetype font library support (client)"                 OFF)
+option(TRACKBASE_SUPPORT        "Enable extended server statistics (server)"                    ON)
 
 #-----------------------------------------------------------------
 # Platform-specific settings
@@ -194,14 +193,11 @@ if(BUILD_CLIENT)
                 add_definitions(-DSMP)
         endif(SMP_SUPPORT)
 
-        if(GUIDMASTER_SUPPORT)
-                add_definitions(-DGUIDMASTER_SUPPORT)
-        endif(GUIDMASTER_SUPPORT)
-
         # Use bundled libraries
         if(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL OR BUNDLED_LIBS)
                 if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
                         message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
+                        set(BUNDLED_LIBS ON)
                         add_subdirectory(libs) 
                 else()
                         message(STATUS "=============================================================")

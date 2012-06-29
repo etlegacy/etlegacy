@@ -37,25 +37,12 @@
 
 #include <limits.h>
 
-#if GUIDMASTER_SUPPORT
-#define MASTERGUIDSERVER0 "auth1.etlegacy.com:27955"
-#define MASTERGUIDSERVER1 "auth2.etlegacy.com:27955"
-	#ifdef _WIN32
-		#include <windows.h>
-	#endif
-#endif
-
 #include "../sys/sys_local.h"
 #include "../sys/sys_loadlib.h"
 
 #ifdef USE_RENDERER_DLOPEN
 cvar_t *cl_renderer;
 #endif
-
-#ifdef USE_CURL
-#   include <curl/curl.h>
-#   include <curl/easy.h>
-#endif /* USE_CURL */
 
 cvar_t *cl_wavefilerecord;
 cvar_t *cl_nodelta;
@@ -1020,18 +1007,7 @@ void CL_MapLoading(void)
 }
 
 /*
- * @brief passed to libcurl in CURLOPT_WRITEFUNCTION.
- * This is required on Windows
- */
-size_t curl_write_etkey(void *ptr, size_t size, size_t nmemb, FILE *stream)
-{
-	FS_WriteFile(ETKEY_FILE, (char *)ptr, size * nmemb);
-	return size * nmemb;
-}
-
-/*
- * @brief Update cl_guid using ETKEY_FILE and optional prefix
- * @author ioquake3
+ * @brief Update cl_guid using ETKEY_FILE
  */
 static void CL_UpdateGUID(void)
 {
@@ -1043,11 +1019,8 @@ static void CL_UpdateGUID(void)
 
 	if (len < ETKEY_SIZE)
 	{
-#ifdef GUIDMASTER_SUPPORT
-		CL_GetAndRegGUID();
-#else
-		Com_Printf("^3Support for GUID server disabled. Can't create guid!\n");
-#endif
+		Com_Printf(S_COLOR_RED "ERROR: Could not set etkey (size mismatch).\n");
+		Cvar_Set("cl_guid", "");
 	}
 	else
 	{
@@ -1060,27 +1033,35 @@ static void CL_UpdateGUID(void)
 }
 
 /*
- * @brief test for the existence of a valid ETKEY_FILE
- * @author ioquake3
- *
- * 1. if the key exists and has the right size use it
- * 2. if the key exists, but does not have the right size use it anyway
- * 3. if the key does not exist download a new key from ETkey.org
- * 4. if all else fails generate a new etkey
+ * @brief test for the existence of a valid ETKEY_FILE and generate new one
+ * if it doesn't exist
  */
-static void CL_GenerateETKey(char *guid)
+static void CL_GenerateETKey(void)
 {
+	int          len = 0;
+	char         buff[ETKEY_SIZE];
 	fileHandle_t f;
-	f = FS_SV_FOpenFileWrite(BASEGAME "/" ETKEY_FILE);
-	if (!f)
+
+	len = FS_SV_FOpenFileRead(BASEGAME "/" ETKEY_FILE, &f);
+	FS_FCloseFile(f);
+	if (len > 0)
 	{
-		Com_Printf(S_COLOR_CYAN "ERROR: could not open %s file for write\n",
-		           ETKEY_FILE);
+		Com_Printf("ETKEY found.\n");
 		return;
 	}
-	FS_Write(guid, strlen(guid), f);
-	FS_FCloseFile(f);
-	Com_Printf(S_COLOR_CYAN "New ETKey %s file generated\n", ETKEY_FILE);
+	else
+	{
+		Com_RandomBytes(buff, sizeof(buff));
+		f = FS_SV_FOpenFileWrite(BASEGAME "/" ETKEY_FILE);
+		if (!f)
+		{
+			Com_Printf(S_COLOR_RED "ERROR: Could not open %s for write\n", ETKEY_FILE);
+			return;
+		}
+		FS_Write(buff, sizeof(buff), f);
+		FS_FCloseFile(f);
+		Com_Printf(S_COLOR_CYAN "ETKEY file generated.\n");
+	}
 }
 
 /*
@@ -1310,49 +1291,6 @@ void CL_ForwardToServer_f(void)
 		CL_AddReliableCommand(Cmd_Args());
 	}
 }
-
-#if GUIDMASTER_SUPPORT
-char *CL_GenHWInfo(void)
-{
-	#ifdef _WIN32
-	HW_PROFILE_INFO HWInfo;
-	if (GetCurrentHwProfileA(&HWInfo) != NULL)
-	{
-		return HWInfo.szHwProfileGuid;
-	}
-	else
-	{
-		return NULL;
-	}
-	#else
-	return va("%lx", gethostid());
-	#endif
-}
-
-void CL_GetAndRegGUID(void)
-{
-	netadr_t addr;
-	if (!NET_StringToAdr(MASTERGUIDSERVER0, &addr, NA_IP))
-	{
-		if (!NET_StringToAdr(MASTERGUIDSERVER1, &addr, NA_IP))
-		{
-			Com_Printf("^3Can't connect to GUID server! ETKey generation is impossible.\n");
-		}
-	}
-	else
-	{
-		NET_StringToAdr(MASTERGUIDSERVER0, &addr, NA_IP);
-	}
-	NET_OutOfBandPrint(NS_CLIENT, addr, "getguid %s", CL_GenHWInfo());
-}
-
-void CL_CmdGetGuid_f(void)
-{
-	CL_GetAndRegGUID();
-	Com_Printf("Request has been sent.\n");
-}
-
-#endif
 
 /*
 ==================
@@ -2404,22 +2342,6 @@ void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
 
 #define MAX_SERVERSPERPACKET    256
 
-#if GUIDMASTER_SUPPORT
-void CL_GenGuid(msg_t *msg)
-{
-	char *s;
-	char *guid;
-	Com_Printf("CL_GenGuidResponse\n");
-
-	MSG_BeginReadingOOB(msg);
-	MSG_ReadLong(msg);
-
-	s    = MSG_ReadStringLine(msg);
-	guid = Cmd_Argv(1);
-	CL_GenerateETKey(guid);
-}
-#endif
-
 /*
 ===================
 CL_ServersResponsePacket
@@ -2694,15 +2616,8 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		CL_UpdateInfoPacket(from);
 		return;
 	}
-#if GUIDMASTER_SUPPORT
-	if (!Q_stricmp(c, "guidresponse"))
-	{
-		CL_GenGuid(msg);
-	}
-#endif
-	// DHM - Nerve
 
-	// NERVE - SMF - bugfix, make this compare first n chars so it doesnt bail if token is parsed incorrectly
+	// make this compare first n chars so it doesnt bail if token is parsed incorrectly
 	// echo request from server
 	if (!Q_strncmp(c, "getserversResponse", 18))
 	{
@@ -3869,9 +3784,6 @@ void CL_Init(void)
 	// register our commands
 	//
 	Cmd_AddCommand("cmd", CL_ForwardToServer_f);
-#if GUIDMASTER_SUPPORT
-	Cmd_AddCommand("getguid", CL_CmdGetGuid_f);
-#endif
 	Cmd_AddCommand("configstrings", CL_Configstrings_f);
 	Cmd_AddCommand("clientinfo", CL_Clientinfo_f);
 	Cmd_AddCommand("snd_reload", CL_Snd_Reload_f);
@@ -3929,6 +3841,7 @@ void CL_Init(void)
 
 	Cvar_Set("cl_running", "1");
 
+	CL_GenerateETKey();
 	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM);
 	CL_UpdateGUID();
 
