@@ -27,8 +27,23 @@ Game data and patching:
 Wolfenstein: Enemy Territory is a free release, and can be downloaded from
 http://www.splashdamage.com/content/download-wolfenstein-enemy-territory
 
-This source release does not contain any game data, the game data is still
-covered by the original EULA and must be obeyed as usual.
+This source release contains only the engine and mod code and not any game data, 
+the game data is still covered by the original EULA and must be obeyed as usual.
+
+Compatibility with Enemy Territory 2.60b
+----------------------------------------------------------------------------
+
+Please remember that only if you compile ET:L on a 32bit system or crosscompile it
+for 32bit architecture on a 64bit system will you be able to play on 2.60b servers.
+
+In case you are a running a 64bit system, you will probably want to use the 
+**bundled libraries** which are located in a separate *etlegacy-libs* repository and
+can be automatically downloaded using the `git submodule` command. See the next section 
+for more details.
+
+NOTE: Even if you have a 64bit linux distribution which provides 32bit versions of all
+the required libraries, cURL library also needs source code (package with -devel suffix) 
+configured for the different architecture and it is rarely packaged on 64bit distributions.
 
 Dependencies
 -----------------------------------------------------------------------------
@@ -36,7 +51,7 @@ Dependencies
 * **CMake** (compile-time only)
 * **libSDL 1.2**
 * **libjpeg 8**
-* **libcurl** (optional)
+* **libcurl** (optional, enabled by default)
 * **OGG Vorbis File** (optional)
 * **OpenAL** (optional)
 * **Freetype** (optional)
@@ -51,12 +66,17 @@ If the required dependencies are not installed on your system run:
     $ git submodule init
     $ git submodule update
 
-This downloads them into the libs/ directory. Also, enable BUNDLED_LIBS in CMake.
+This downloads the essential dependencies (libjpeg, libSDL and libcurl) into the `libs/` 
+directory. If one of those libraries is not installed on your system CMake will use the
+ones located in the `libs/` directory automatically. Otherwise, you can control this 
+by changing the `BUNDLED_LIBS` variable in the CMake script.
 
 Compile and install
 -----------------------------------------------------------------------------
 
-On **Linux** run:
+### Linux
+
+In terminal run:
 
     $ mkdir build && cd build && cmake ..
     $ make
@@ -67,7 +87,17 @@ To install the binaries system-wide, run as root:
 
 Alternatively you can run the game by specifying the full path to the `etl` binary in the `build` directory.
 
-On **Windows** open the CMakeLists.txt file in [QT Creator](http://qt.nokia.com/products/developer-tools).
+### Windows
+
+* option A: **Visual Studio**
+
+    1. download free Visual Studio C++ Express 2010
+    2. when you install CMake, make sure it is added into your system PATH
+    3. open `Visual Studio Command Prompt (2010)` (search for it in the Start menu)
+    4. run `cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake` in the ET:L directory
+       ... or `cmake -G "Visual Studio 10" ..` and open the resulting project in VS 2010
+
+* option B: open the CMakeLists.txt file in [QT Creator](http://qt.nokia.com/products/developer-tools).
 
 LICENSE
 =======
