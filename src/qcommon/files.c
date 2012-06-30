@@ -232,7 +232,6 @@ typedef struct searchpath_s
 	directory_t *dir;
 } searchpath_t;
 
-//bani - made fs_gamedir non-static
 char          fs_gamedir[MAX_OSPATH]; // this will be a single file name with no separators
 static cvar_t *fs_debug;
 static cvar_t *fs_homepath;
@@ -241,8 +240,6 @@ static cvar_t *fs_homepath;
 static cvar_t *fs_apppath;
 #endif
 static cvar_t       *fs_basepath;
-static cvar_t       *fs_buildpath;
-static cvar_t       *fs_buildgame;
 static cvar_t       *fs_basegame;
 static cvar_t       *fs_copyfiles;
 static cvar_t       *fs_gamedirvar;
@@ -1280,35 +1277,6 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFI
 						Com_Printf("FS_FOpenFileRead: %s (found in '%s')\n",
 						           filename, pak->pakFilename);
 					}
-
-					// Arnout: let's make this thing work from pakfiles as well
-					// FIXME: doing this seems to break things?
-					/*if ( fs_copyfiles->integer && fs_buildpath->string[0] && Q_stricmpn( fs_buildpath->string, pak->pakFilename, strlen(fs_buildpath->string) ) ) {
-					    char            copypath[MAX_OSPATH];
-					    fileHandle_t    f;
-					    byte            *srcData;
-					    int             len = zfi->cur_file_info.uncompressed_size;
-
-					    Q_strncpyz( copypath, FS_BuildOSPath( fs_buildpath->string, fs_buildgame->string, filename ), sizeof(copypath) );
-					    netpath = FS_BuildOSPath( fs_basepath->string, fs_gamedir, filename );
-
-					    f = FS_FOpenFileWrite( filename );
-					    if ( !f ) {
-					        Com_Printf( "FS_FOpenFileRead Failed to open %s for copying\n", filename );
-					    } else {
-					        srcData = Hunk_AllocateTempMemory( len) ;
-					        FS_Read( srcData, len, *file );
-					        FS_Write( srcData, len, f );
-					        FS_FCloseFile( f );
-					        Hunk_FreeTempMemory( srcData );
-
-					        if (rename( netpath, copypath )) {
-					            // Failed, try copying it and deleting the original
-					            FS_CopyFile ( netpath, copypath );
-					            FS_Remove ( netpath );
-					        }
-					    }
-					}*/
 
 					return zfi->cur_file_info.uncompressed_size;
 				}
@@ -3637,8 +3605,6 @@ static void FS_Startup(const char *gameName)
 	fs_debug     = Cvar_Get("fs_debug", "0", 0);
 	fs_copyfiles = Cvar_Get("fs_copyfiles", "0", CVAR_INIT);
 	fs_basepath  = Cvar_Get("fs_basepath", Sys_DefaultInstallPath(), CVAR_INIT);
-	fs_buildpath = Cvar_Get("fs_buildpath", "", CVAR_INIT);
-	fs_buildgame = Cvar_Get("fs_buildgame", BASEGAME, CVAR_INIT);
 	fs_basegame  = Cvar_Get("fs_basegame", "", CVAR_INIT);
 #ifdef WIN32
 	homePath = fs_basepath->string;
@@ -4480,8 +4446,6 @@ void FS_InitFilesystem(void)
 	// line variable sets don't happen until after the filesystem
 	// has already been initialized
 	Com_StartupVariable("fs_basepath");
-	Com_StartupVariable("fs_buildpath");
-	Com_StartupVariable("fs_buildgame");
 	Com_StartupVariable("fs_homepath");
 	Com_StartupVariable("fs_game");
 	Com_StartupVariable("fs_copyfiles");
