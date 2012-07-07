@@ -165,6 +165,9 @@ if(BUILD_CLIENT)
                 add_definitions(-DUSE_CURL)
                 if(NOT BUNDLED_LIBS)
                         find_package(CURL)
+                        if(MINGW)
+                                add_definitions(-DCURL_STATICLIB)
+                        endif(MINGW)
                 else(NOT BUNDLED_LIBS)
                         add_definitions(-DCURL_STATICLIB)
                 endif(NOT BUNDLED_LIBS)
@@ -194,7 +197,7 @@ if(BUILD_CLIENT)
         endif(SMP_SUPPORT)
 
         # Use bundled libraries
-        if(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL OR BUNDLED_LIBS)
+        if(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL OR BUNDLED_LIBS AND NOT MINGW)
                 if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
                         message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
                         set(BUNDLED_LIBS ON)
@@ -211,7 +214,7 @@ if(BUILD_CLIENT)
                         message(STATUS "and enable BUNDLED_LIBS in CMake configuration.")
                         message(FATAL_ERROR "Build stopped because of missing libraries.")
                 endif()
-        endif(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL OR BUNDLED_LIBS)
+        endif(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL OR BUNDLED_LIBS AND NOT MINGW)
 endif(BUILD_CLIENT)
 
 #-----------------------------------------------------------------
@@ -232,13 +235,6 @@ if(BUILD_CLIENT)
                 ${OPENAL_INCLUDE_DIR}
                 ${VORBIS_INCLUDE_DIR}
         )
-        target_link_libraries(etl
-                ${OS_LIBRARIES}
-                ${OPENGL_LIBRARIES}
-                ${FREETYPE_LIBRARIES}
-                ${OPENAL_LIBRARIES}
-                ${VORBIS_FILE_LIBRARY} # This links only libvorbisfile
-        )
         if(BUNDLED_LIBS)
                 add_definitions(-DBUNDLED_LIBS)
                 target_link_libraries(etl ${BUNDLED_LIBRARIES})
@@ -256,6 +252,13 @@ if(BUILD_CLIENT)
                         ${JPEG_INCLUDE_DIR}                        
                 )
         endif()
+        target_link_libraries(etl
+                ${OS_LIBRARIES} # Has to go after cURL and SDL
+                ${OPENGL_LIBRARIES}
+                ${FREETYPE_LIBRARIES}
+                ${OPENAL_LIBRARIES}
+                ${VORBIS_FILE_LIBRARY} # This links only libvorbisfile
+        )
         set_target_properties(etl
                 PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
         install(TARGETS etl

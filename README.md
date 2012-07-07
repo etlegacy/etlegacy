@@ -87,6 +87,17 @@ To install the binaries system-wide, run as root:
 
 Alternatively you can run the game by specifying the full path to the `etl` binary in the `build` directory.
 
+### Crosscompiling on linux with mingw32
+
+In terminal run:
+
+    $ mkdir build && cd build
+    $ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-cross-mingw32-linux.cmake ..
+    $ make
+
+Mingw32 name is set to *i686-pc-mingw32* by default. You may have to change that
+in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on your system.
+
 ### Windows
 
 * option A: **Visual Studio**
