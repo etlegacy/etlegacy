@@ -1542,7 +1542,7 @@ void CL_Rcon_f(void)
 
 	Q_strcat(message, MAX_RCON_MESSAGE, Cmd_Cmd() + 5);
 
-	if (clc.state >= CA_CONNECTED)
+	if (cls.state >= CA_CONNECTED)
 	{
 		to = clc.netchan.remoteAddress;
 	}
