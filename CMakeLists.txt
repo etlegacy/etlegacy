@@ -20,9 +20,10 @@ set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 add_definitions(-DBOTLIB)
 
 # Options
-option(BUILD_SERVER	"Build the dedicated server executable"                                 ON)
-option(BUILD_CLIENT	"Build the client executable"                                           ON)
-option(BUILD_MOD	"Build the mod libraries"                                               ON)
+option(BUILD_SERVER     "Build the dedicated server executable"                                 ON)
+option(BUILD_CLIENT     "Build the client executable"                                           ON)
+option(BUILD_MOD        "Build the mod libraries"                                               ON)
+option(BUILD_MOD_PK3    "Pack the mod libraries into mp_bin.pk3"                                OFF)
 
 option(CROSS_COMPILE32  "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)"     ON)
 option(BUNDLED_LIBS     "Use bundled libraries instead of the system ones."                     OFF)
@@ -297,6 +298,20 @@ if(BUILD_MOD)
                 LIBRARY DESTINATION "${ETLEGACY_INSTALL_DIRECTORY}/etmain"
                 ARCHIVE DESTINATION "${ETLEGACY_INSTALL_DIRECTORY}/etmain"
         )
+
+        # mp_bin.pk3
+        if(BUILD_MOD_PK3)
+                add_custom_target(mod_pk3 ALL DEPENDS etmain/mp_bin.pk3)
+                add_custom_command(
+                        OUTPUT etmain/mp_bin.pk3
+                        COMMAND zip mp_bin.pk3 cgame${LIB_SUFFIX}${ARCH}* ui${LIB_SUFFIX}${ARCH}*
+                        DEPENDS cgame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
+                        WORKING_DIRECTORY etmain/
+                )
+
+                install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etmain/mp_bin.pk3
+                        DESTINATION ${ETLEGACY_INSTALL_DIRECTORY}/etmain)
+        endif()
 endif(BUILD_MOD)
 
 #-----------------------------------------------------------------
