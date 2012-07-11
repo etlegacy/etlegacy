@@ -168,25 +168,18 @@ typedef unsigned __int8 uint8_t;
 #undef QDECL
 #define QDECL   __cdecl
 
-// buildstring will be incorporated into the version string
-#ifdef NDEBUG
-#ifdef _M_IX86
+/*
+ * @def CPUSTRING
+ * @brief Platform and architecture string incorporated into the version string.
+ *
+ * To maintain compatibility with ET 2.60b mods these values must be set:
+ *      windows: win-x86
+ *      linux:   linux-i386
+ *      mac:     ?
+ *
+ * See FAKE_VERSION
+ */
 #define CPUSTRING   "win-x86"
-#elif defined _M_ALPHA
-#define CPUSTRING   "win-AXP"
-#else
-#define CPUSTRING   "win-x86"
-#endif
-#else
-#ifdef _M_IX86
-#define CPUSTRING   "win-x86-debug"
-#elif defined _M_ALPHA
-#define CPUSTRING   "win-AXP-debug"
-#else
-#define CPUSTRING   "win-x86-debug"
-#endif
-#endif
-
 
 #define PATH_SEP '\\'
 
