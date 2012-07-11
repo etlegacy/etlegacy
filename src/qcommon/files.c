@@ -3273,16 +3273,6 @@ qboolean FS_idPak(char *pak, char *base)
 		{
 			break;
 		}
-		/*
-		// JPW NERVE -- this fn prevents external sources from downloading/overwriting official files, so exclude both SP and MP files from this list as well
-		        if ( !FS_FilenameCompare(pak, va("%s/mp_pak%d",base,i)) ) {
-		            break;
-		        }
-		        if ( !FS_FilenameCompare(pak, va("%s/sp_pak%d",base,i)) ) {
-		            break;
-		        }
-		// jpw
-		*/
 	}
 	if (i < NUM_ID_PAKS)
 	{

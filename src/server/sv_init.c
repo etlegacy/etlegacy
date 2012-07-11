@@ -497,31 +497,9 @@ void SV_ClearServer(void)
 }
 
 /*
-================
-SV_TouchCGame
-
-  touch the cgame.vm so that a pure client can load it if it's in a seperate pk3
-================
-*/
-void SV_TouchCGame(void)
-{
-	fileHandle_t f;
-	char         filename[MAX_QPATH];
-
-	Com_sprintf(filename, sizeof(filename), "vm/%s.qvm", "cgame");
-	FS_FOpenFileRead(filename, &f, qfalse);
-	if (f)
-	{
-		FS_FCloseFile(f);
-	}
-}
-
-/*
-================
-SV_TouchCGameDLL
-  touch the cgame DLL so that a pure client (with DLL sv_pure support) can load do the correct checks
-================
-*/
+ * @brief Touch the cgame DLL so that a pure client (with DLL sv_pure support) 
+ * can load do the correct checks
+ */
 void SV_TouchCGameDLL(void)
 {
 	fileHandle_t f;
@@ -533,10 +511,10 @@ void SV_TouchCGameDLL(void)
 	{
 		FS_FCloseFile(f);
 	}
-	else if (sv_pure->integer)       // ydnar: so we can work the damn game
+	else if (sv_pure->integer)
 	{
-		Com_Error(ERR_DROP, "Failed to locate cgame %s for pure server mode"
-		                    "Probably you'll need cgame for other platforms too\n",
+		Com_Error(ERR_DROP, "Failed to locate %s for pure server mode. "
+		                    "You'll probably need cgame for other platforms too.\n",
 		          filename);
 	}
 }
