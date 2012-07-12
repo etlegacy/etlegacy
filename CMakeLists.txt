@@ -52,6 +52,7 @@ endif(UNIX AND CROSS_COMPILE32)
 if(UNIX)
         set(OS_LIBRARIES dl m)
         set(LIB_SUFFIX ".mp.")
+        #set(CMAKE_SHARED_LIBRARY_C_FLAGS "-fPIC -fvisibility=hidden")
         if(NOT APPLE) # Linux and *BSD
                 set(ETLEGACY_INSTALL_DIRECTORY "games/etlegacy") # FIXME: needs to be unset for CPack packages. How???
         else() # Mac OS X

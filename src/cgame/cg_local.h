@@ -2851,7 +2851,7 @@ void trap_PumpEventLoop(void);
 void        trap_Print(const char *fmt);
 
 // abort the game
-void        trap_Error(const char *fmt);
+void        trap_Error(const char *fmt) __attribute__((noreturn));
 
 // milliseconds should only be used for performance tuning, never
 // for anything game related.  Get time from the CG_DrawActiveFrame parameter

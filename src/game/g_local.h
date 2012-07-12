@@ -1757,7 +1757,7 @@ extern vmCvar_t bot_debug_anim;             // what animation is the bot playing
 
 
 void    trap_Printf(const char *fmt);
-void    trap_Error(const char *fmt);
+void    trap_Error(const char *fmt) __attribute__((noreturn));
 int     trap_Milliseconds(void);
 int     trap_Argc(void);
 void    trap_Argv(int n, char *buffer, int bufferLength);

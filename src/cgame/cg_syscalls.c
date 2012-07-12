@@ -37,30 +37,10 @@
 
 static intptr_t (QDECL *syscall)(intptr_t arg, ...) = (intptr_t ( QDECL * )(intptr_t, ...)) - 1;
 
-#if __GNUC__ >= 4
-#pragma GCC visibility push(default)
-#endif
-void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
+Q_EXPORT void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
 {
 	syscall = syscallptr;
 }
-#if __GNUC__ >= 4
-#pragma GCC visibility pop
-#endif
-
-/*int PASSFLOAT( float x ) {
-    float   floatTemp;
-    floatTemp = x;
-    return *(int *)&floatTemp;
-}*/
-
-/*
-int PASSFLOAT( float x ) {
-    floatint_t fi;
-    fi.f = x;
-    return fi.i;
-}
-*/
 
 #define PASSFLOAT(x) (*(int *)&x)
 
@@ -82,6 +62,8 @@ void    trap_Print(const char *fmt)
 void    trap_Error(const char *fmt)
 {
 	syscall(CG_ERROR, fmt);
+	// shut up GCC warning about returning functions, because we know better
+	exit(1);
 }
 
 int     trap_Milliseconds(void)
