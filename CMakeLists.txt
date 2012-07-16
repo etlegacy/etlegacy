@@ -160,7 +160,7 @@ if(BUILD_CLIENT)
 
         if(NOT BUNDLED_LIBS)
                 Find_Package(SDL32) # FindSDL doesn't detect 32bit lib when crosscompiling
-                Find_Package(JPEG)
+                Find_Package(JPEG 8)
         endif(NOT BUNDLED_LIBS)
         
         if(USE_CURL)
