@@ -528,8 +528,16 @@ const char *NET_AdrToString(netadr_t a)
 	{
 		Com_sprintf(s, sizeof(s), "bot");
 	}
-	else if (a.type == NA_IP || a.type == NA_IP6)
+	else if (a.type == NA_IP)
 	{
+		// Port has to be returned along with ip address because of compatibility
+		Com_sprintf(s, sizeof(s), "%i.%i.%i.%i:%hu",
+		            a.ip[0], a.ip[1], a.ip[2], a.ip[3], BigShort(a.port));
+	}
+	else if (a.type == NA_IP6)
+	{
+		// FIXME: add port for compatibility
+		// (joining a server through the server browser)
 		struct sockaddr_storage sadr;
 
 		memset(&sadr, 0, sizeof(sadr));
