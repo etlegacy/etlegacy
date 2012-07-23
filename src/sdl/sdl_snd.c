@@ -220,7 +220,8 @@ qboolean SNDDMA_Init(void)
 
 	Com_Printf("OK\n");
 
-	if (SDL_AudioDriverName(drivername, sizeof(drivername)) == NULL)
+	strcpy(drivername, SDL_GetAudioDriver(0));	  
+	if ( strcmp( drivername, "" ) )
 	{
 		strcpy(drivername, "(UNKNOWN)");
 	}

@@ -39,8 +39,11 @@
 #    else
 #        include <SDL/SDL_video.h>
 #    endif
-#endif
 
+      // @todo SDL 2.0 window pointer from sdl_glimp.c
+      extern SDL_Window* screen;
+#endif
+  
 #ifdef _WIN32
 
 #include "../qcommon/q_shared.h"
@@ -60,7 +63,7 @@
 #include <wincrypt.h>
 #include <shlobj.h>
 #include <psapi.h>
-
+  
 // Used to determine where to store user-specific files
 static char homePath[MAX_OSPATH] = { 0 };
 
@@ -954,7 +957,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 		Cbuf_ExecuteText(EXEC_APPEND, "quit\n");
 	}
 
-	SDL_WM_IconifyWindow();
+	SDL_MinimizeWindow(screen);
 #endif
 }
 
@@ -976,7 +979,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 #include <pwd.h>
 #include <libgen.h>
 #include <fcntl.h>
-
+  
 qboolean stdinIsATTY;
 
 // Used to determine where to store user-specific files
@@ -1837,7 +1840,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 	Com_sprintf(cmdline, MAX_CMD, "xdg-open '%s' &", url);
 	Sys_StartProcess(cmdline, doexit);
 
-	SDL_WM_IconifyWindow();
+	SDL_MinimizeWindow(screen);
 #endif
 }
 
