@@ -73,6 +73,7 @@ cvar_t *sv_maxlives;            // NERVE - SMF
 cvar_t *sv_needpass;
 
 cvar_t *sv_dl_maxRate;
+cvar_t *sv_dl_timeout;          // IRATA - seconds without any message when cl->state != CS_ACTIVE
 
 cvar_t *g_gameType;
 
@@ -1183,13 +1184,11 @@ static void SV_CalcPings(void)
  */
 static void SV_CheckTimeouts(void)
 {
-	int      i;
 	client_t *cl;
-	int      droppoint;
-	int      zombiepoint;
-
-	droppoint   = svs.time - 1000 * sv_timeout->integer;
-	zombiepoint = svs.time - 1000 * sv_zombietime->integer;
+	int      i;
+	int      droppoint   = svs.time - 1000 * sv_timeout->integer;	 // default 15
+	int      zombiepoint = svs.time - 1000 * sv_zombietime->integer; // default 2
+	int 	 droppoint_dl= svs.time - 1000 * sv_dl_timeout->integer; // default 240
 
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
@@ -1207,19 +1206,30 @@ static void SV_CheckTimeouts(void)
 
 			continue;
 		}
-		if (cl->state >= CS_CONNECTED && cl->lastPacketTime < droppoint)
+		
+		if (cl->state == CS_ACTIVE && cl->lastPacketTime < droppoint)
 		{
 			// wait several frames so a debugger session doesn't
 			// cause a timeout
 			if (++cl->timeoutCount > 5)
 			{
-				SV_DropClient(cl, va("timed out %i\n", cl->state));
+				SV_DropClient(cl, va("game timed out %i\n", cl->state));
+				cl->state = CS_FREE;    // don't bother with zombie state
+			}
+		}
+		else if ((cl->state == CS_CONNECTED || cl->state == CS_PRIMED) && cl->lastPacketTime < droppoint_dl)
+		{
+			// wait several frames so a debugger session doesn't
+			// cause a timeout
+			if (++cl->timeoutCount > 5)
+			{
+				SV_DropClient(cl, va("preparation timed out %i\n", cl->state));
 				cl->state = CS_FREE;    // don't bother with zombie state
 			}
 		}
 		else
 		{
-			cl->timeoutCount = 0;
+			cl->timeoutCount = 0; // CS_FREE
 		}
 	}
 }

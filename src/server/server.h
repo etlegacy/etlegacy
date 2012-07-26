@@ -356,6 +356,7 @@ extern cvar_t *g_gameType;
 
 // TTimo - autodl
 extern cvar_t *sv_dl_maxRate;
+extern cvar_t *sv_dl_timeout;
 
 // TTimo
 extern cvar_t *sv_wwwDownload; // general flag to enable/disable www download redirects
