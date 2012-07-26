@@ -3,7 +3,7 @@ ET: Legacy
 
 *A second breath of life for Wolfenstein: Enemy Territory*
 
-Website: [http://etlegacy.com](http://etlegacy.com)
+Website: [http://www.etlegacy.com](http://etlegacy.com)
 
 IRC: \#etlegacy on irc.freenode.net
 
