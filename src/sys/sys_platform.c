@@ -1514,35 +1514,38 @@ void Sys_ErrorDialog(const char *error)
 Sys_ZenityCommand
 ==============
 */
-static int Sys_ZenityCommand(dialogType_t type, const char *message, const char *title)
+static void Sys_ZenityCommand(dialogType_t type, const char *message, const char *title)
 {
-	const char *options = "";
-	char       command[1024];
+	Sys_ClearExecBuffer( );
+	Sys_AppendToExecBuffer( "zenity" );
 
 	switch (type)
 	{
 	default:
-	case DT_INFO:
-		options = "--info";
-		break;
-	case DT_WARNING:
-		options = "--warning";
-		break;
-	case DT_ERROR:
-		options = "--error";
-		break;
-	case DT_YES_NO:
-		options = "--question --ok-label=\"Yes\" --cancel-label=\"No\"";
-		break;
-	case DT_OK_CANCEL:
-		options = "--question --ok-label=\"OK\" --cancel-label=\"Cancel\"";
-		break;
+		case DT_INFO:
+			Sys_AppendToExecBuffer( "--info" );
+			break;
+		case DT_WARNING:
+			Sys_AppendToExecBuffer( "--warning" );
+			break;
+		case DT_ERROR:
+			Sys_AppendToExecBuffer( "--error" );
+			break;
+		case DT_YES_NO:
+			Sys_AppendToExecBuffer( "--question" );
+			Sys_AppendToExecBuffer( "--ok-label=Yes" );
+			Sys_AppendToExecBuffer( "--cancel-label=No" );
+			break;
+
+		case DT_OK_CANCEL:
+			Sys_AppendToExecBuffer( "--question" );
+			Sys_AppendToExecBuffer( "--ok-label=OK" );
+			Sys_AppendToExecBuffer( "--cancel-label=Cancel" );
+			break;
 	}
 
-	Com_sprintf(command, sizeof(command), "zenity %s --text=\"%s\" --title=\"%s\"",
-	            options, message, title);
-
-	return system(command);
+	Sys_AppendToExecBuffer( va( "--text=%s", message ) );
+	Sys_AppendToExecBuffer( va( "--title=%s", title ) );
 }
 
 /*
@@ -1552,33 +1555,31 @@ Sys_KdialogCommand
 */
 static int Sys_KdialogCommand(dialogType_t type, const char *message, const char *title)
 {
-	const char *options = "";
-	char       command[1024];
+	Sys_ClearExecBuffer( );
+	Sys_AppendToExecBuffer( "kdialog" );
 
 	switch (type)
 	{
-	default:
-	case DT_INFO:
-		options = "--msgbox";
-		break;
-	case DT_WARNING:
-		options = "--sorry";
-		break;
-	case DT_ERROR:
-		options = "--error";
-		break;
-	case DT_YES_NO:
-		options = "--warningyesno";
-		break;
-	case DT_OK_CANCEL:
-		options = "--warningcontinuecancel";
-		break;
+		default:
+		case DT_INFO:
+			Sys_AppendToExecBuffer( "--msgbox" );
+			break;
+		case DT_WARNING:
+			Sys_AppendToExecBuffer( "--sorry" );
+			break;
+		case DT_ERROR:
+			Sys_AppendToExecBuffer( "--error" );
+			break;
+		case DT_YES_NO:
+			Sys_AppendToExecBuffer( "--warningyesno" );
+			break;
+		case DT_OK_CANCEL:
+			Sys_AppendToExecBuffer( "--warningcontinuecancel" );
+			break;
 	}
 
-	Com_sprintf(command, sizeof(command), "kdialog %s \"%s\" --title \"%s\"",
-	            options, message, title);
-
-	return system(command);
+	Sys_AppendToExecBuffer( message );
+	Sys_AppendToExecBuffer( va( "--title=%s", title ) );
 }
 
 /*
@@ -1586,28 +1587,21 @@ static int Sys_KdialogCommand(dialogType_t type, const char *message, const char
 Sys_XmessageCommand
 ==============
 */
-static int Sys_XmessageCommand(dialogType_t type, const char *message, const char *title)
+static void Sys_XmessageCommand(dialogType_t type, const char *message, const char *title)
 {
-	const char *options = "";
-	char       command[1024];
+	Sys_ClearExecBuffer( );
+	Sys_AppendToExecBuffer( "xmessage" );
+	Sys_AppendToExecBuffer( "-buttons" );
 
 	switch (type)
 	{
-	default:
-		options = "-buttons OK";
-		break;
-	case DT_YES_NO:
-		options = "-buttons Yes:0,No:1";
-		break;
-	case DT_OK_CANCEL:
-		options = "-buttons OK:0,Cancel:1";
-		break;
+		default:           Sys_AppendToExecBuffer( "OK:0" ); break;
+		case DT_YES_NO:    Sys_AppendToExecBuffer( "Yes:0,No:1" ); break;
+		case DT_OK_CANCEL: Sys_AppendToExecBuffer( "OK:0,Cancel:1" ); break;
 	}
 
-	Com_sprintf(command, sizeof(command), "xmessage -center %s \"%s\"",
-	            options, message);
-
-	return system(command);
+	Sys_AppendToExecBuffer( "-center" );
+	Sys_AppendToExecBuffer( message );
 }
 
 /*
@@ -1622,7 +1616,7 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	typedef enum
 	{
 		NONE = 0,
-		ZENITY,
+		ZENITY = 1,
 		KDIALOG,
 		XMESSAGE,
 		NUM_DIALOG_PROGRAMS
@@ -1630,6 +1624,7 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	typedef int (*dialogCommandBuilder_t)(dialogType_t, const char *, const char *);
 
 	const char             *session                      = getenv("DESKTOP_SESSION");
+	int i;
 	qboolean               tried[NUM_DIALOG_PROGRAMS]    = { qfalse };
 	dialogCommandBuilder_t commands[NUM_DIALOG_PROGRAMS] = { NULL };
 	dialogCommandType_t    preferredCommandType          = NONE;
@@ -1639,21 +1634,24 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	commands[XMESSAGE] = &Sys_XmessageCommand;
 
 	// This may not be the best way
-	if (!Q_stricmp(session, "gnome"))
+	if (!Q_stricmp(session, "gnome")) //  // && if getenv('GNOME_DESKTOP_SESSION_ID')
 	{
 		preferredCommandType = ZENITY;
 	}
-	else if (!Q_stricmp(session, "kde"))
+	else if (!Q_stricmp(session, "kde")) // && getenv('KDE_FULL_SESSION') == 'true'
 	{
 		preferredCommandType = KDIALOG;
+	}
+	else {
+		// FIXME
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: unsupported desktop session.\n");
 	}
 
 	while (1)
 	{
-		int i;
 		int exitCode;
 
-		for (i = NONE + 1; i < NUM_DIALOG_PROGRAMS; i++)
+		for (i = ZENITY; i < NUM_DIALOG_PROGRAMS; i++)
 		{
 			if (preferredCommandType != NONE && preferredCommandType != i)
 			{
@@ -1662,7 +1660,9 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 
 			if (!tried[i])
 			{
-				exitCode = commands[i](type, message, title);
+				commands[i](type, message, title);
+
+				exitCode = Sys_Exec( );
 
 				if (exitCode >= 0)
 				{
