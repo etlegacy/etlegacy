@@ -1220,8 +1220,6 @@ typedef enum
 
 dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title);
 
-qboolean Sys_WritePIDFile(void);
-
 // NOTE TTimo - on win32 the cwd is prepended .. non portable behaviour
 void Sys_StartProcess(char *exeName, qboolean doexit);              // NERVE - SMF
 void Sys_OpenURL(const char *url, qboolean doexit);                         // NERVE - SMF
