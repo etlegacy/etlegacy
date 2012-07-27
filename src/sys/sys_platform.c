@@ -117,28 +117,6 @@ char *Sys_DefaultHomePath(void)
 
 /*
 ================
-Sys_TempPath
-================
-*/
-const char *Sys_TempPath(void)
-{
-	static TCHAR path[MAX_PATH];
-	DWORD        length;
-
-	length = GetTempPath(sizeof(path), path);
-
-	if (length > sizeof(path) || length == 0)
-	{
-		return Sys_DefaultHomePath();
-	}
-	else
-	{
-		return path;
-	}
-}
-
-/*
-================
 Sys_Milliseconds
 ================
 */
@@ -1007,27 +985,6 @@ char *Sys_DefaultHomePath(void)
 
 	return homePath;
 }
-
-#ifndef MACOS_X
-/*
-================
-Sys_TempPath
-================
-*/
-const char *Sys_TempPath(void)
-{
-	const char *TMPDIR = getenv("TMPDIR");
-
-	if (TMPDIR == NULL || TMPDIR[0] == '\0')
-	{
-		return "/tmp";
-	}
-	else
-	{
-		return TMPDIR;
-	}
-}
-#endif
 
 /*
 ==================

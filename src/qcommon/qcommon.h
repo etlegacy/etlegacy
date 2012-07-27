@@ -1187,7 +1187,6 @@ char *Sys_Cwd(void);
 char *Sys_DefaultBasePath(void);
 char *Sys_DefaultInstallPath(void);
 char *Sys_DefaultHomePath(void);
-const char *Sys_TempPath(void);
 const char *Sys_Dirname(char *path);
 const char *Sys_Basename(char *path);
 char *Sys_ConsoleInput(void);
