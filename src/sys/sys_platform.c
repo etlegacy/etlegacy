@@ -84,7 +84,7 @@ char *Sys_DefaultHomePath(void)
 	FARPROC qSHGetFolderPath;
 	HMODULE shfolder = LoadLibrary("shfolder.dll");
 
-	if (!*homePath && !com_homepath)
+	if (!*homePath /*&& !com_homepath*/)
 	{
 		if (shfolder == NULL)
 		{
@@ -970,7 +970,7 @@ char *Sys_DefaultHomePath(void)
 {
 	char *p;
 
-	if (!*homePath && com_homepath != NULL )
+	if (!*homePath /*&& com_homepath != NULL*/ )
 	{
 		if ((p = getenv("HOME")) != NULL)
 		{
