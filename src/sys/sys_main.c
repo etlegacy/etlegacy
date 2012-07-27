@@ -155,7 +155,12 @@ Sys_PIDFileName
 */
 static char *Sys_PIDFileName(void)
 {
-	return va("%s/%s", Sys_DefaultHomePath(), PID_FILENAME);
+	const char *homePath = Sys_DefaultHomePath();
+
+	if( *homePath != '\0' ) {
+		return va("%s/%s", homePath, PID_FILENAME);
+	}
+	return NULL;
 }
 
 /*
@@ -214,7 +219,11 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 	if (exitCode < 2)
 	{
 		// Normal exit
-		remove(Sys_PIDFileName());
+		char *pidFile = Sys_PIDFileName();
+
+		if(pidFile != NULL) {
+			remove(pidFile);
+		}
 	}
 
 	exit(exitCode);
