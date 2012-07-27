@@ -371,9 +371,9 @@ void SV_MasterGameCompleteStatus()
 		return;     // only dedicated servers send master game status
 	}
 
-
 	if (!(sv_advert->integer & SVA_MASTER))
 	{
+		Com_Printf("Not sending ending gameCompleteStatus to master servers - disabled by sv_advert.\n");
 		return;
 	}
 

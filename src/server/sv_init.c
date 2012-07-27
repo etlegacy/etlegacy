@@ -123,19 +123,6 @@ void SV_UpdateConfigStrings(void)
 					continue;
 				}
 
-				// RF, don't send to bot/AI
-				// Gordon: Note: might want to re-enable later for bot support
-				// RF, re-enabled
-				// Arnout: removed hardcoded gametype
-				// Arnout: added coop
-				// Ir4T4: fully disabled never true for MP - FIXME: do we have to send to OB ?
-				/*
-				if ((SV_GameIsSinglePlayer() || SV_GameIsCoop()) && client->gentity && (client->gentity->r.svFlags & SVF_BOT))
-				{
-				    continue;
-				}
-				*/
-
 				len = strlen(sv.configstrings[index]);
 				if (len >= maxChunkSize)
 				{
@@ -776,7 +763,7 @@ void SV_SpawnServer(char *server, qboolean killBots)
 		SV_Heartbeat_f();	}
 	else // let admin's know it's disabled
 	{
-		Com_Printf("Master servers: heartbeats disabled by sv_advert.\n");
+		Com_Printf("Not sending heartbeats to master servers - disabled by sv_advert.\n");
 	}
 
 	Hunk_SetMark();
@@ -786,7 +773,6 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	Cvar_Set("sv_serverRestarting", "0");
 
 	Com_Printf("-----------------------------------\n");
-
 }
 
 /*
@@ -913,7 +899,7 @@ void SV_Init(void)
 	// ET://someserver.com
 	sv_fullmsg = Cvar_Get("sv_fullmsg", "Server is full.", CVAR_ARCHIVE);
 
-	sv_advert = Cvar_Get("sv_advert", "3", CVAR_ARCHIVE);
+	sv_advert = Cvar_Get("sv_advert", "1", CVAR_ARCHIVE);
 
 	// init the botlib here because we need the pre-compiler in the UI
 	SV_BotInitBotLib();
