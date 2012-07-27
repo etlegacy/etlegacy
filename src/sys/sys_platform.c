@@ -84,7 +84,7 @@ char *Sys_DefaultHomePath(void)
 	FARPROC qSHGetFolderPath;
 	HMODULE shfolder = LoadLibrary("shfolder.dll");
 
-	if (!*homePath)
+	if (!*homePath && !com_homepath)
 	{
 		if (shfolder == NULL)
 		{
@@ -954,6 +954,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 #include <pwd.h>
 #include <libgen.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 qboolean stdinIsATTY;
 
@@ -969,7 +970,7 @@ char *Sys_DefaultHomePath(void)
 {
 	char *p;
 
-	if (!*homePath)
+	if (!*homePath && com_homepath != NULL )
 	{
 		if ((p = getenv("HOME")) != NULL)
 		{
