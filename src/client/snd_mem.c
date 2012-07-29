@@ -80,12 +80,6 @@ redo:
 	return v;
 }
 
-void SND_shutdown(void)
-{
-	free(sfxScratchBuffer);
-	free(buffer);
-}
-
 void SND_setup(void)
 {
 	sndBuffer *p, *q;
@@ -111,6 +105,12 @@ void SND_setup(void)
 	freelist         = p + scs - 1;
 
 	Com_Printf("Sound memory manager started\n");
+}
+
+void SND_shutdown(void)
+{
+	free(sfxScratchBuffer);
+	free(buffer);
 }
 
 /*

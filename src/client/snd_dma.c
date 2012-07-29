@@ -2230,7 +2230,7 @@ void S_Base_Shutdown(void)
 	}
 
 	SNDDMA_Shutdown();
-	S_Base_Shutdown();
+	SND_shutdown();
 
 	s_soundStarted = 0;
 	numSfx         = 0;
