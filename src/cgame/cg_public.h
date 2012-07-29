@@ -50,9 +50,9 @@ typedef struct
 	int snapFlags;                      // SNAPFLAG_RATE_DELAYED, etc
 	int ping;
 
-	int serverTime;                 	// server time the message is valid for (in msec)
+	int serverTime;                     // server time the message is valid for (in msec)
 
-	byte areamask[MAX_MAP_AREA_BYTES];	// portalarea visibility bits
+	byte areamask[MAX_MAP_AREA_BYTES];  // portalarea visibility bits
 
 	playerState_t ps;                   // complete information about the current player at this time
 

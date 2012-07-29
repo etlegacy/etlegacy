@@ -157,7 +157,8 @@ static char *Sys_PIDFileName(void)
 {
 	const char *homePath = Sys_DefaultHomePath();
 
-	if( *homePath != '\0' ) {
+	if (*homePath != '\0')
+	{
 		return va("%s/%s", homePath, PID_FILENAME);
 	}
 	return NULL;
@@ -179,7 +180,7 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 		// Normal exit
 		char *pidFile = Sys_PIDFileName();
 
-		if(pidFile != NULL)
+		if (pidFile != NULL)
 		{
 			remove(pidFile);
 		}

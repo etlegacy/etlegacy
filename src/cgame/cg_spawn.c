@@ -451,7 +451,7 @@ void SP_worldspawn(void)
 	{
 		cgs.ccLayers = MAX_COMMANDMAP_LAYERS;
 		CG_Printf("^3Warning: The maximum number (%i) of command map layers is exceeded.\n",
-		             MAX_COMMANDMAP_LAYERS);
+		          MAX_COMMANDMAP_LAYERS);
 	}
 
 	for (i = 0; i < cgs.ccLayers; i++)

@@ -484,7 +484,7 @@ void SV_ClearServer(void)
 }
 
 /*
- * @brief Touch the cgame DLL so that a pure client (with DLL sv_pure support) 
+ * @brief Touch the cgame DLL so that a pure client (with DLL sv_pure support)
  * can load do the correct checks
  */
 void SV_TouchCGameDLL(void)
@@ -760,7 +760,8 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	// send a heartbeat now so the master will get up to date info
 	if (sv_advert->integer & SVA_MASTER)
 	{
-		SV_Heartbeat_f();	}
+		SV_Heartbeat_f();
+	}
 	else // let admin's know it's disabled
 	{
 		Com_Printf("Not sending heartbeats to master servers - disabled by sv_advert.\n");

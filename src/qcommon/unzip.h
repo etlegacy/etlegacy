@@ -1,29 +1,29 @@
 /* unzip.h -- IO for uncompress .zip files using zlib
  *   Version 1.01e, February 12th, 2005
- * 
+ *
  *   Copyright (C) 1998-2005 Gilles Vollant
- * 
+ *
  *   This unzip package allow extract file from .ZIP file, compatible with PKZip 2.04g
  *     WinZip, InfoZip tools and compatible.
- * 
+ *
  *   Multi volume ZipFile (span) are not supported.
  *   Encryption compatible with pkzip 2.04g only supported
  *   Old compressions used by old PKZip 1.x are not supported
- * 
- * 
+ *
+ *
  *   I WAIT FEEDBACK at mail info@winimage.com
  *   Visit also http://www.winimage.com/zLibDll/unzip.htm for evolution
- * 
+ *
  *   Condition of use and distribution are the same than zlib :
- * 
+ *
  *  This software is provided 'as-is', without any express or implied
  *  warranty.  In no event will the authors be held liable for any damages
  *  arising from the use of this software.
- * 
+ *
  *  Permission is granted to anyone to use this software for any purpose,
  *  including commercial applications, and to alter it and redistribute it
  *  freely, subject to the following restrictions:
- * 
+ *
  *  1. The origin of this software must not be misrepresented; you must not
  *     claim that you wrote the original software. If you use this software
  *     in a product, an acknowledgment in the product documentation would be

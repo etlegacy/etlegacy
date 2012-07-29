@@ -3648,14 +3648,14 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 	case UI_OPPONENT_NAME:
 		UI_DrawOpponentName(&rect, scale, color, textStyle);
 		break;
-    /* Kept as reminder
-        case UI_BOTNAME:
-            UI_DrawBotName(&rect, scale, color, textStyle);
-            break;
-              case UI_BOTSKILL:
-                    UI_DrawBotSkill(&rect, scale, color, textStyle);
-                    break;
-    */
+	/* Kept as reminder
+	    case UI_BOTNAME:
+	        UI_DrawBotName(&rect, scale, color, textStyle);
+	        break;
+	          case UI_BOTSKILL:
+	                UI_DrawBotSkill(&rect, scale, color, textStyle);
+	                break;
+	*/
 	case UI_REDBLUE:
 		UI_DrawRedBlue(&rect, scale, color, textStyle);
 		break;
@@ -4395,14 +4395,14 @@ static qboolean UI_OwnerDrawHandleKey(int ownerDraw, int flags, float *special, 
 	case UI_OPPONENT_NAME:
 		UI_OpponentName_HandleKey(flags, special, key);
 		break;
-    /* Kept as reminder
-        case UI_BOTNAME:
-            return UI_BotName_HandleKey(flags, special, key);
-            break;
-        case UI_BOTSKILL:
-            return UI_BotSkill_HandleKey(flags, special, key);
-            break;
-    */
+	/* Kept as reminder
+	    case UI_BOTNAME:
+	        return UI_BotName_HandleKey(flags, special, key);
+	        break;
+	    case UI_BOTSKILL:
+	        return UI_BotSkill_HandleKey(flags, special, key);
+	        break;
+	*/
 	case UI_REDBLUE:
 		UI_RedBlue_HandleKey(flags, special, key);
 		break;

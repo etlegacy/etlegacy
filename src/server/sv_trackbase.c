@@ -89,7 +89,8 @@ void TB_Init()
 #endif
 		Com_Printf("Trackbase: Server communication enabled.\n");
 	}
-	else {
+	else
+	{
 		Com_Printf("Trackbase: Server communication disabled by sv_advert.\n");
 	}
 }
@@ -142,10 +143,10 @@ void TB_ClientName(client_t *cl)
 /* unused
 void TB_ClientTeam(client_t *cl)
 {
-	playerState_t *ps;
-	ps = SV_GameClientNum(cl - svs.clients);
+    playerState_t *ps;
+    ps = SV_GameClientNum(cl - svs.clients);
 
-	TB_Send("team %i %i %i %s", (int)(cl - svs.clients), Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[cl - svs.clients], ps->stats[STAT_PLAYER_CLASS], cl->name);
+    TB_Send("team %i %i %i %s", (int)(cl - svs.clients), Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[cl - svs.clients], ps->stats[STAT_PLAYER_CLASS], cl->name);
 }
 */
 
@@ -180,7 +181,7 @@ void TB_MapEnd()
 /* unused
 void TB_TeamSwitch(client_t *cl)
 {
-	TB_Send("team %i", (int)(cl - svs.clients));
+    TB_Send("team %i", (int)(cl - svs.clients));
 }
 */
 

@@ -93,8 +93,8 @@ cvar_t *sv_packetdelay;
 cvar_t *sv_fullmsg;
 
 // do we communicate with others ?
-cvar_t *sv_advert;		// 1 - communicate with master server
-						// 2 - send trackbase infos
+cvar_t *sv_advert;      // 1 - communicate with master server
+                        // 2 - send trackbase infos
 
 static void SVC_Status(netadr_t from, qboolean force);
 
@@ -1187,9 +1187,9 @@ static void SV_CheckTimeouts(void)
 {
 	client_t *cl;
 	int      i;
-	int      droppoint   = svs.time - 1000 * sv_timeout->integer;	 // default 15
-	int      zombiepoint = svs.time - 1000 * sv_zombietime->integer; // default 2
-	int 	 droppoint_dl= svs.time - 1000 * sv_dl_timeout->integer; // default 240
+	int      droppoint    = svs.time - 1000 * sv_timeout->integer;   // default 15
+	int      zombiepoint  = svs.time - 1000 * sv_zombietime->integer; // default 2
+	int      droppoint_dl = svs.time - 1000 * sv_dl_timeout->integer; // default 240
 
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
@@ -1207,7 +1207,7 @@ static void SV_CheckTimeouts(void)
 
 			continue;
 		}
-		
+
 		if (cl->state == CS_ACTIVE && cl->lastPacketTime < droppoint)
 		{
 			// wait several frames so a debugger session doesn't

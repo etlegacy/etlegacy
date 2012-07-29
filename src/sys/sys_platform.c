@@ -970,7 +970,7 @@ char *Sys_DefaultHomePath(void)
 {
 	char *p;
 
-	if (!*homePath /*&& com_homepath != NULL*/ )
+	if (!*homePath /*&& com_homepath != NULL*/)
 	{
 		if ((p = getenv("HOME")) != NULL)
 		{
@@ -1510,20 +1510,20 @@ void Sys_ErrorDialog(const char *error)
 }
 
 #ifndef MACOS_X
-static char execBuffer[ 1024 ];
+static char execBuffer[1024];
 static char *execBufferPointer;
-static char *execArgv[ 16 ];
-static int execArgc;
+static char *execArgv[16];
+static int  execArgc;
 
 /*
 ==============
 Sys_ClearExecBuffer
 ==============
 */
-static void Sys_ClearExecBuffer( void )
+static void Sys_ClearExecBuffer(void)
 {
 	execBufferPointer = execBuffer;
-	Com_Memset( execArgv, 0, sizeof( execArgv ) );
+	Com_Memset(execArgv, 0, sizeof(execArgv));
 	execArgc = 0;
 }
 
@@ -1532,16 +1532,18 @@ static void Sys_ClearExecBuffer( void )
 Sys_AppendToExecBuffer
 ==============
 */
-static void Sys_AppendToExecBuffer( const char *text )
+static void Sys_AppendToExecBuffer(const char *text)
 {
-	size_t size = sizeof( execBuffer ) - ( execBufferPointer - execBuffer );
-	int length = strlen( text ) + 1;
+	size_t size   = sizeof(execBuffer) - (execBufferPointer - execBuffer);
+	int    length = strlen(text) + 1;
 
-	if( length > size || execArgc >= ARRAY_LEN( execArgv ) )
+	if (length > size || execArgc >= ARRAY_LEN(execArgv))
+	{
 		return;
+	}
 
-	Q_strncpyz( execBufferPointer, text, size );
-	execArgv[ execArgc++ ] = execBufferPointer;
+	Q_strncpyz(execBufferPointer, text, size);
+	execArgv[execArgc++] = execBufferPointer;
 
 	execBufferPointer += length;
 }
@@ -1551,29 +1553,31 @@ static void Sys_AppendToExecBuffer( const char *text )
 Sys_Exec
 ==============
 */
-static int Sys_Exec( void )
+static int Sys_Exec(void)
 {
-	pid_t pid = fork( );
+	pid_t pid = fork();
 
-	if( pid < 0 )
+	if (pid < 0)
+	{
 		return -1;
+	}
 
-	if( pid )
+	if (pid)
 	{
 		// Parent
 		int exitCode;
 
-		wait( &exitCode );
+		wait(&exitCode);
 
-		return WEXITSTATUS( exitCode );
+		return WEXITSTATUS(exitCode);
 	}
 	else
 	{
 		// Child
-		execvp( execArgv[ 0 ], execArgv );
+		execvp(execArgv[0], execArgv);
 
 		// Failed to execute
-		exit( -1 );
+		exit(-1);
 
 		return -1;
 	}
@@ -1587,36 +1591,36 @@ Sys_ZenityCommand
 */
 static void Sys_ZenityCommand(dialogType_t type, const char *message, const char *title)
 {
-	Sys_ClearExecBuffer( );
-	Sys_AppendToExecBuffer( "zenity" );
+	Sys_ClearExecBuffer();
+	Sys_AppendToExecBuffer("zenity");
 
 	switch (type)
 	{
 	default:
-		case DT_INFO:
-			Sys_AppendToExecBuffer( "--info" );
-			break;
-		case DT_WARNING:
-			Sys_AppendToExecBuffer( "--warning" );
-			break;
-		case DT_ERROR:
-			Sys_AppendToExecBuffer( "--error" );
-			break;
-		case DT_YES_NO:
-			Sys_AppendToExecBuffer( "--question" );
-			Sys_AppendToExecBuffer( "--ok-label=Yes" );
-			Sys_AppendToExecBuffer( "--cancel-label=No" );
-			break;
+	case DT_INFO:
+		Sys_AppendToExecBuffer("--info");
+		break;
+	case DT_WARNING:
+		Sys_AppendToExecBuffer("--warning");
+		break;
+	case DT_ERROR:
+		Sys_AppendToExecBuffer("--error");
+		break;
+	case DT_YES_NO:
+		Sys_AppendToExecBuffer("--question");
+		Sys_AppendToExecBuffer("--ok-label=Yes");
+		Sys_AppendToExecBuffer("--cancel-label=No");
+		break;
 
-		case DT_OK_CANCEL:
-			Sys_AppendToExecBuffer( "--question" );
-			Sys_AppendToExecBuffer( "--ok-label=OK" );
-			Sys_AppendToExecBuffer( "--cancel-label=Cancel" );
-			break;
+	case DT_OK_CANCEL:
+		Sys_AppendToExecBuffer("--question");
+		Sys_AppendToExecBuffer("--ok-label=OK");
+		Sys_AppendToExecBuffer("--cancel-label=Cancel");
+		break;
 	}
 
-	Sys_AppendToExecBuffer( va( "--text=%s", message ) );
-	Sys_AppendToExecBuffer( va( "--title=%s", title ) );
+	Sys_AppendToExecBuffer(va("--text=%s", message));
+	Sys_AppendToExecBuffer(va("--title=%s", title));
 }
 
 /*
@@ -1626,31 +1630,31 @@ Sys_KdialogCommand
 */
 static int Sys_KdialogCommand(dialogType_t type, const char *message, const char *title)
 {
-	Sys_ClearExecBuffer( );
-	Sys_AppendToExecBuffer( "kdialog" );
+	Sys_ClearExecBuffer();
+	Sys_AppendToExecBuffer("kdialog");
 
 	switch (type)
 	{
-		default:
-		case DT_INFO:
-			Sys_AppendToExecBuffer( "--msgbox" );
-			break;
-		case DT_WARNING:
-			Sys_AppendToExecBuffer( "--sorry" );
-			break;
-		case DT_ERROR:
-			Sys_AppendToExecBuffer( "--error" );
-			break;
-		case DT_YES_NO:
-			Sys_AppendToExecBuffer( "--warningyesno" );
-			break;
-		case DT_OK_CANCEL:
-			Sys_AppendToExecBuffer( "--warningcontinuecancel" );
-			break;
+	default:
+	case DT_INFO:
+		Sys_AppendToExecBuffer("--msgbox");
+		break;
+	case DT_WARNING:
+		Sys_AppendToExecBuffer("--sorry");
+		break;
+	case DT_ERROR:
+		Sys_AppendToExecBuffer("--error");
+		break;
+	case DT_YES_NO:
+		Sys_AppendToExecBuffer("--warningyesno");
+		break;
+	case DT_OK_CANCEL:
+		Sys_AppendToExecBuffer("--warningcontinuecancel");
+		break;
 	}
 
-	Sys_AppendToExecBuffer( message );
-	Sys_AppendToExecBuffer( va( "--title=%s", title ) );
+	Sys_AppendToExecBuffer(message);
+	Sys_AppendToExecBuffer(va("--title=%s", title));
 }
 
 /*
@@ -1660,19 +1664,19 @@ Sys_XmessageCommand
 */
 static void Sys_XmessageCommand(dialogType_t type, const char *message, const char *title)
 {
-	Sys_ClearExecBuffer( );
-	Sys_AppendToExecBuffer( "xmessage" );
-	Sys_AppendToExecBuffer( "-buttons" );
+	Sys_ClearExecBuffer();
+	Sys_AppendToExecBuffer("xmessage");
+	Sys_AppendToExecBuffer("-buttons");
 
 	switch (type)
 	{
-		default:           Sys_AppendToExecBuffer( "OK:0" ); break;
-		case DT_YES_NO:    Sys_AppendToExecBuffer( "Yes:0,No:1" ); break;
-		case DT_OK_CANCEL: Sys_AppendToExecBuffer( "OK:0,Cancel:1" ); break;
+	default:           Sys_AppendToExecBuffer("OK:0"); break;
+	case DT_YES_NO:    Sys_AppendToExecBuffer("Yes:0,No:1"); break;
+	case DT_OK_CANCEL: Sys_AppendToExecBuffer("OK:0,Cancel:1"); break;
 	}
 
-	Sys_AppendToExecBuffer( "-center" );
-	Sys_AppendToExecBuffer( message );
+	Sys_AppendToExecBuffer("-center");
+	Sys_AppendToExecBuffer(message);
 }
 
 /*
@@ -1686,7 +1690,7 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 {
 	typedef enum
 	{
-		NONE = 0,
+		NONE   = 0,
 		ZENITY = 1,
 		KDIALOG,
 		XMESSAGE,
@@ -1694,8 +1698,8 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	} dialogCommandType_t;
 	typedef int (*dialogCommandBuilder_t)(dialogType_t, const char *, const char *);
 
-	const char             *session                      = getenv("DESKTOP_SESSION");
-	int i;
+	const char             *session = getenv("DESKTOP_SESSION");
+	int                    i;
 	qboolean               tried[NUM_DIALOG_PROGRAMS]    = { qfalse };
 	dialogCommandBuilder_t commands[NUM_DIALOG_PROGRAMS] = { NULL };
 	dialogCommandType_t    preferredCommandType          = NONE;
@@ -1713,7 +1717,8 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	{
 		preferredCommandType = KDIALOG;
 	}
-	else {
+	else
+	{
 		// FIXME
 		Com_DPrintf(S_COLOR_YELLOW "WARNING: unsupported desktop session.\n");
 	}
