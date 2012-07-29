@@ -2230,8 +2230,10 @@ void S_Base_Shutdown(void)
 	}
 
 	SNDDMA_Shutdown();
+	S_Base_Shutdown();
 
 	s_soundStarted = 0;
+	numSfx = 0;
 
 	Cmd_RemoveCommand("s_info");
 }

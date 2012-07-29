@@ -80,6 +80,12 @@ redo:
 	return v;
 }
 
+void SND_shutdown(void)
+{
+		free(sfxScratchBuffer);
+		free(buffer);
+}
+
 void SND_setup(void)
 {
 	sndBuffer *p, *q;
