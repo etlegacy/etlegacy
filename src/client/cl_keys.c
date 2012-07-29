@@ -36,7 +36,7 @@
 #ifdef BUNDLED_LIBS
 #    include "SDL_video.h"
 #else
-#    include <SDL/SDL_video.h>
+#    include <SDL2/SDL_video.h>
 #endif
 
 // @todo SDL 2.0 window pointer from sdl_glimp.c

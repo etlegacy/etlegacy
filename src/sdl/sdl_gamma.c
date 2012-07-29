@@ -34,7 +34,7 @@
 #ifdef BUNDLED_LIBS
 #    include "SDL.h"
 #else
-#    include <SDL/SDL.h>
+#    include <SDL2/SDL.h>
 #endif
 
 #include "../renderer/tr_local.h"

@@ -34,7 +34,7 @@
 #ifdef BUNDLED_LIBS
 #    include "SDL.h"
 #else
-#    include <SDL/SDL.h>
+#    include <SDL2/SDL.h>
 #endif
 
 #include <stdlib.h>
@@ -221,7 +221,7 @@ qboolean SNDDMA_Init(void)
 	Com_Printf("OK\n");
 
 	strcpy(drivername, SDL_GetAudioDriver(0));	  
-	if ( strcmp( drivername, "" ) )
+	if ( drivername[0] == NULL )
 	{
 		strcpy(drivername, "(UNKNOWN)");
 	}

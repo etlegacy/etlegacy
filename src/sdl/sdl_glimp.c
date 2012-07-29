@@ -34,14 +34,14 @@
 #ifdef BUNDLED_LIBS
 #    include "SDL.h"
 #else
-#    include <SDL/SDL.h>
+#    include <SDL2/SDL.h>
 #endif
 
 #ifdef SMP
 #    ifdef BUNDLED_LIBS
 #        include "SDL_thread.h"
 #    else
-#        include <SDL/SDL_thread.h>
+#        include <SDL2/SDL_thread.h>
 #    endif
 #endif
 
@@ -83,8 +83,6 @@ typedef enum
 static int displayIndex = 0;
 SDL_Window         *screen    = NULL;
 static SDL_Renderer* renderer = NULL;
-static SDL_DisplayMode desktopMode;
-static SDL_DisplayMode fullscreenMode;
 
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
@@ -247,18 +245,14 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		flags |= SDL_WINDOW_RESIZABLE;
 	}
 
-	// get desktop display mode
+	// find matching display mode to desktop
+	SDL_DisplayMode desktopMode;
 	if( SDL_GetCurrentDisplayMode(displayIndex, &desktopMode) )
 	{
-		ri.Printf(PRINT_DEVELOPER, "SDL_GetCurrentDisplayMode failed: %s\n", SDL_GetError());
+	  ri.Printf(PRINT_DEVELOPER, "SDL_GetCurrentDisplayMode failed: %s\n", SDL_GetError());
 	}
-
-	// find matching display mode to desktop
-	// @todo use this instead of guessing aspect ratio ?
-	//SDL_GetClosestDisplayMode( target, closest );
-
 	
-	if (desktopMode.h > 0)
+	if( desktopMode.h > 0)
 	{
 		// Guess the display aspect ratio through the desktop resolution
 		// by assuming (relatively safely) that it is set at or close to
@@ -273,13 +267,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			  "Cannot estimate display aspect, assuming 1.333\n");
 	}
 	
-	fullscreenMode.w = glConfig.vidWidth;
-	fullscreenMode.h = glConfig.vidHeight;
-	fullscreenMode.format = 0;
-	fullscreenMode.refresh_rate = 0;
-	
-	SDL_GetClosestDisplayMode(displayIndex, &fullscreenMode, &fullscreenMode);
-
 	ri.Printf(PRINT_ALL, "...setting mode %d:", mode);
 
 	if (!R_GetModeInfo(&glConfig.vidWidth, &glConfig.vidHeight, &glConfig.windowAspect, mode))
@@ -288,6 +275,19 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		return RSERR_INVALID_MODE;
 	}
 	ri.Printf(PRINT_ALL, " %d %d\n", glConfig.vidWidth, glConfig.vidHeight);
+
+	/* @todo 2.0
+	 * use this instead ?
+	fullscreenMode.w = glConfig.vidWidth;
+	fullscreenMode.h = glConfig.vidHeight;
+	fullscreenMode.format = 0;
+	fullscreenMode.refresh_rate = 0;
+	
+	SDL_GetClosestDisplayMode(displayIndex, &fullscreenMode, &fullscreenMode);
+	
+	glConfig.vidWidth = fullscreenMode.w;
+	glConfig.vidHeight = fullscreenMode.h;
+	*/
 
 	if (fullscreen)
 	{
@@ -424,6 +424,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, samples ? 1 : 0);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
 
+		// SDL 2 uses opengl by default, if we want opengl es we need to set this attribute
+		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
+		
 		if (r_stereoEnabled->integer)
 		{
 			glConfig.stereoEnabled = qtrue;
@@ -448,8 +451,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			}
 		}
 #endif
-		
-		// @todo remove ? SDL_WM_SetCaption(CLIENT_WINDOW_TITLE, CLIENT_WINDOW_MIN_TITLE);
+
 		SDL_ShowCursor(0);
 
 		// Create the window where we will draw.
@@ -889,18 +891,6 @@ void GLimp_EndFrame(void)
 			ri.Cmd_ExecuteText(EXEC_APPEND, "vid_restart");
 			IN_Restart();
 		}
-		
-		/*
-		if( r_fullscreen->integer )
-		{
-		  SDL_SetWindowDisplayMode( screen, &fullscreenMode );
-		}
-		else
-		{
-		  SDL_SetWindowDisplayMode( screen, &desktopMode );
-		}
-		*/
-		
 		
 		r_fullscreen->modified = qfalse;
 	}

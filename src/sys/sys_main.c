@@ -47,8 +47,8 @@
 #        include "SDL.h"
 #        include "SDL_cpuinfo.h"
 #    else
-#        include <SDL/SDL.h>
-#        include <SDL/SDL_cpuinfo.h>
+#        include <SDL2/SDL.h>
+#        include <SDL2/SDL_cpuinfo.h>
 #    endif
 #endif
 

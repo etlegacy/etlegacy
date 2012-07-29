@@ -37,7 +37,7 @@
 #ifdef BUNDLED_LIBS
 #    include "SDL_opengl.h"
 #else
-#    include <SDL/SDL_opengl.h>
+#    include <SDL2/SDL_opengl.h>
 #endif
 
 extern void (APIENTRYP qglActiveTextureARB)(GLenum texture);

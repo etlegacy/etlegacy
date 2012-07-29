@@ -34,7 +34,7 @@
 #ifdef BUNDLED_LIBS
 #    include "SDL.h"
 #else
-#    include <SDL/SDL.h>
+#    include <SDL2/SDL.h>
 #endif
 
 #include <stdarg.h>
@@ -56,7 +56,6 @@
 #include <IOKit/hidsystem/IOHIDLib.h>
 #include <IOKit/hidsystem/IOHIDParameter.h>
 #include <IOKit/hidsystem/event_status_driver.h>
-#include <SDL/SDL_keyboard.h>
 #endif
 
 // @todo SDL 2.0 window pointer from SDL_glimp.c
@@ -154,13 +153,13 @@ static void IN_PrintKey(const SDL_Keysym *keysym, keyNum_t key, qboolean down)
 
 	Com_Printf(" Q:0x%02x(%s)", key, Key_KeynumToString(key));
 
-	if (keysym->unicode)
+	if (keysym->sym)
 	{
-		Com_Printf(" U:0x%02x", keysym->unicode);
+		Com_Printf(" U:0x%02x", keysym->sym);
 
-		if (keysym->unicode > ' ' && keysym->unicode < '~')
+		if (keysym->sym > ' ' && keysym->sym < '~')
 		{
-			Com_Printf("(%c)", (char)keysym->unicode);
+			Com_Printf("(%c)", (char)keysym->sym);
 		}
 	}
 
@@ -363,18 +362,17 @@ static const char *IN_TranslateSDLToQ3Key(SDL_Keysym *keysym,
 		case SDLK_CAPSLOCK:     *key = K_CAPSLOCK;      break;
 
 		default:
-			//if (keysym->sym >= SDLK_WORLD_0 && keysym->sym <= SDLK_WORLD_95)
-			//*key = (keysym->sym - SDLK_WORLD_0) + K_WORLD_0;
-			
-			// @todo in SDL 2.0 keys are UTF-16, so range is full 16 bit ?
-			*key = keysym->sym;
+			/* @todo SDL 2.0
+			if (keysym->sym >= SDLK_WORLD_0 && keysym->sym <= SDLK_WORLD_95)
+			  *key = (keysym->sym - SDLK_WORLD_0) + K_WORLD_0;
+			*/  
 			break;
 		}
 	}
 
-	if (down && keysym->unicode && !(keysym->unicode & 0xFF00))
+	if (down && keysym->sym && !(keysym->sym & 0xFF00))
 	{
-		unsigned char ch = (unsigned char)keysym->unicode & 0xFF;
+		unsigned char ch = (unsigned char)keysym->sym;
 
 		switch (ch)
 		{
@@ -401,7 +399,7 @@ static const char *IN_TranslateSDLToQ3Key(SDL_Keysym *keysym,
 	// Keys that have ASCII names but produce no character are probably
 	// dead keys -- ignore them
 	if (down && strlen(Key_KeynumToString(*key)) == 1 &&
-	    keysym->unicode == 0)
+	    keysym->sym == 0)
 	{
 		if (in_keyboardDebug->integer)
 		{
@@ -518,7 +516,7 @@ static void IN_ActivateMouse(void)
 		SDL_ShowCursor(1);
 		SDL_ShowCursor(0);
 #endif
-		// @todo SDL_SetWindowGrab(screen, SDL_TRUE);
+		SDL_SetWindowGrab(screen, SDL_TRUE);
 
 		IN_GobbleMotionEvents();
 	}
@@ -534,7 +532,7 @@ static void IN_ActivateMouse(void)
 			}
 			else
 			{
-				// @todo SDL_SetWindowGrab(screen, SDL_TRUE);
+				SDL_SetWindowGrab(screen, SDL_TRUE);
 			}
 
 			in_nograb->modified = qfalse;

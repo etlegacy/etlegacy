@@ -50,8 +50,8 @@
 #       include "SDL.h"
 #       include "SDL_loadso.h"
 #   else
-#       include <SDL/SDL.h>
-#       include <SDL/SDL_loadso.h>
+#       include <SDL2/SDL.h>
+#       include <SDL2/SDL_loadso.h>
 #   endif
 #   define Sys_LoadLibrary(f)   SDL_LoadObject(f)
 #   define Sys_UnloadLibrary(h)     SDL_UnloadObject(h)
