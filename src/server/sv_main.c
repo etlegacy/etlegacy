@@ -192,6 +192,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 	// see http://aluigi.altervista.org/adv/q3msgboom-adv.txt
 	if (strlen((char *)message) > 1022)
 	{
+		Com_Printf("Warning: q3infoboom/q3msgboom exploit attack.\n");
 		return;
 	}
 
