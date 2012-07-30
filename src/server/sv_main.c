@@ -301,7 +301,7 @@ void SV_MasterHeartbeat(const char *message)
 
 				if (res)
 				{
-					Com_Printf("%s resolved to %s\n", sv_master[i]->string, NET_AdrToStringwPort(adr[i][0]));
+					Com_Printf("%s resolved to %s\n", sv_master[i]->string, NET_AdrToString(adr[i][0]));
 				}
 				else
 				{
@@ -322,7 +322,7 @@ void SV_MasterHeartbeat(const char *message)
 
 				if (res)
 				{
-					Com_Printf("%s resolved to %s\n", sv_master[i]->string, NET_AdrToStringwPort(adr[i][1]));
+					Com_Printf("%s resolved to %s\n", sv_master[i]->string, NET_AdrToString(adr[i][1]));
 				}
 				else
 				{

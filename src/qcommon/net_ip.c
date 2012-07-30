@@ -505,12 +505,8 @@ qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
 
 
 /*
-===================
-NET_CompareBaseAdr
-
-Compares without the port
-===================
-*/
+ * @brief Compares ip addresses without the port.
+ */
 qboolean NET_CompareBaseAdr(netadr_t a, netadr_t b)
 {
 	return NET_CompareBaseAdrMask(a, b, -1);
@@ -548,6 +544,10 @@ const char *NET_AdrToString(netadr_t a)
 	return s;
 }
 
+/*
+ * @warning Function is broken, because NET_AdrToString already adds port to IPv4 addresses.
+ * @deprecated Use NET_AdrToString for compatibility with W:ET 2.60b.
+ */
 const char *NET_AdrToStringwPort(netadr_t a)
 {
 	static char s[NET_ADDRSTRMAXLEN];
