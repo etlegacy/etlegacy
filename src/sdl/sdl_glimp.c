@@ -80,9 +80,9 @@ typedef enum
 } rserr_t;
 
 // @todo SDL 2.0 howto make screen available to cl_keys.c, etc. without extern
-static int displayIndex = 0;
-SDL_Window         *screen    = NULL;
-static SDL_Renderer* renderer = NULL;
+static int          displayIndex = 0;
+SDL_Window          *screen      = NULL;
+static SDL_Renderer *renderer    = NULL;
 
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
@@ -105,18 +105,18 @@ void GLimp_Shutdown(void)
 {
 	IN_Shutdown();
 
-	if( renderer )
+	if (renderer)
 	{
-	  SDL_DestroyRenderer(renderer);
-	  renderer = NULL;
+		SDL_DestroyRenderer(renderer);
+		renderer = NULL;
 	}
-	
-	if( screen )
+
+	if (screen)
 	{
-	  SDL_DestroyWindow(screen); 
-	  screen = NULL;
+		SDL_DestroyWindow(screen);
+		screen = NULL;
 	}
-	
+
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 
 	Com_Memset(&glConfig, 0, sizeof(glConfig));
@@ -180,21 +180,21 @@ GLimp_DetectAvailableModes
 */
 static void GLimp_DetectAvailableModes(void)
 {
-	char     buf[MAX_STRING_CHARS] = { 0 };
+	char            buf[MAX_STRING_CHARS] = { 0 };
 	SDL_DisplayMode mode;
-	int      numModes;
-	int      i;
+	int             numModes;
+	int             i;
 
 	numModes = SDL_GetNumDisplayModes(displayIndex);
-	
+
 	i = 0;
-	while( !SDL_GetDisplayMode(displayIndex, i, &mode) )
+	while (!SDL_GetDisplayMode(displayIndex, i, &mode))
 	{
 		const char *newModeString = va("%ux%u ", mode.w, mode.h);
 
 		if (strlen(newModeString) < (int)sizeof(buf) - strlen(buf))
 		{
-			Q_strcat(buf, sizeof(buf), newModeString);	
+			Q_strcat(buf, sizeof(buf), newModeString);
 		}
 		else
 		{
@@ -225,21 +225,22 @@ GLimp_SetMode
 */
 static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 {
-	const char  *glstring;
-	int         sdlcolorbits;
-	int         colorbits, depthbits, stencilbits;
-	int         tcolorbits, tdepthbits, tstencilbits;
-	int         samples;
-	int         i          = 0;
+	const char *glstring;
+	int        sdlcolorbits;
+	int        colorbits, depthbits, stencilbits;
+	int        tcolorbits, tdepthbits, tstencilbits;
+	int        samples;
+	int        i          = 0;
 	SDL_Window *vidscreen = NULL;
-	Uint32      flags      = SDL_WINDOW_OPENGL;
+	Uint32     flags      = SDL_WINDOW_OPENGL;
 
 	ri.Printf(PRINT_ALL, "Initializing OpenGL display\n");
 
-	if( screen ) {
-	  return RSERR_OK;
+	if (screen)
+	{
+		return RSERR_OK;
 	}
-	
+
 	if (r_allowResize->integer)
 	{
 		flags |= SDL_WINDOW_RESIZABLE;
@@ -247,12 +248,12 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 	// find matching display mode to desktop
 	SDL_DisplayMode desktopMode;
-	if( SDL_GetCurrentDisplayMode(displayIndex, &desktopMode) )
+	if (SDL_GetCurrentDisplayMode(displayIndex, &desktopMode))
 	{
-	  ri.Printf(PRINT_DEVELOPER, "SDL_GetCurrentDisplayMode failed: %s\n", SDL_GetError());
+		ri.Printf(PRINT_DEVELOPER, "SDL_GetCurrentDisplayMode failed: %s\n", SDL_GetError());
 	}
-	
-	if( desktopMode.h > 0)
+
+	if (desktopMode.h > 0)
 	{
 		// Guess the display aspect ratio through the desktop resolution
 		// by assuming (relatively safely) that it is set at or close to
@@ -264,9 +265,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	else
 	{
 		ri.Printf(PRINT_ALL,
-			  "Cannot estimate display aspect, assuming 1.333\n");
+		          "Cannot estimate display aspect, assuming 1.333\n");
 	}
-	
+
 	ri.Printf(PRINT_ALL, "...setting mode %d:", mode);
 
 	if (!R_GetModeInfo(&glConfig.vidWidth, &glConfig.vidHeight, &glConfig.windowAspect, mode))
@@ -282,9 +283,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	fullscreenMode.h = glConfig.vidHeight;
 	fullscreenMode.format = 0;
 	fullscreenMode.refresh_rate = 0;
-	
+
 	SDL_GetClosestDisplayMode(displayIndex, &fullscreenMode, &fullscreenMode);
-	
+
 	glConfig.vidWidth = fullscreenMode.w;
 	glConfig.vidHeight = fullscreenMode.h;
 	*/
@@ -426,7 +427,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 		// SDL 2 uses opengl by default, if we want opengl es we need to set this attribute
 		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
-		
+
 		if (r_stereoEnabled->integer)
 		{
 			glConfig.stereoEnabled = qtrue;
@@ -456,16 +457,16 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 		// Create the window where we will draw.
 		vidscreen = SDL_CreateWindow(CLIENT_WINDOW_TITLE,
-				SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-				glConfig.vidWidth, glConfig.vidHeight,
-				flags|SDL_WINDOW_SHOWN);
+		                             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		                             glConfig.vidWidth, glConfig.vidHeight,
+		                             flags | SDL_WINDOW_SHOWN);
 
-		if (!vidscreen )
+		if (!vidscreen)
 		{
 			ri.Printf(PRINT_DEVELOPER, "SDL_CreateWindow failed: %s\n", SDL_GetError());
 			continue;
 		}
-		
+
 		#ifdef USE_ICON
 		{
 			SDL_Surface *icon = SDL_CreateRGBSurfaceFrom(
@@ -489,13 +490,13 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		// We must call SDL_CreateRenderer in order for draw calls to affect this window.
 		renderer = SDL_CreateRenderer(vidscreen, -1, SDL_RENDERER_ACCELERATED);
 
-		if (!renderer )
+		if (!renderer)
 		{
 			ri.Printf(PRINT_DEVELOPER, "SDL_CreateRenderer failed: %s\n", SDL_GetError());
 			continue;
 		}
-		
-		if (SDL_GL_SetSwapInterval( r_swapInterval->integer) )
+
+		if (SDL_GL_SetSwapInterval(r_swapInterval->integer))
 		{
 			ri.Printf(PRINT_ALL, "r_swapInterval requires libSDL >= 1.2.10\n");
 		}
@@ -547,7 +548,7 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 			return qfalse;
 		}
 
-		strcpy( driverName, SDL_GetCurrentVideoDriver() );
+		strcpy(driverName, SDL_GetCurrentVideoDriver());
 		ri.Printf(PRINT_ALL, "SDL using driver \"%s\"\n", driverName);
 		Cvar_Set("r_sdlDriver", driverName);
 	}
@@ -870,8 +871,8 @@ void GLimp_EndFrame(void)
 
 	if (r_fullscreen->modified)
 	{
-		qboolean    fullscreen;
-		Uint32 flags = SDL_GetWindowFlags(screen);
+		qboolean fullscreen;
+		Uint32   flags = SDL_GetWindowFlags(screen);
 
 		// Find out the current state
 		fullscreen = !!(flags & SDL_WINDOW_FULLSCREEN);
@@ -883,15 +884,15 @@ void GLimp_EndFrame(void)
 			r_fullscreen->modified = qfalse;
 		}
 
-		if( SDL_SetWindowFullscreen( screen, r_fullscreen->integer ) )
+		if (SDL_SetWindowFullscreen(screen, r_fullscreen->integer))
 		{
-			// SDL_SetWindowFullscreen didn't work, so do it the slow way		  
+			// SDL_SetWindowFullscreen didn't work, so do it the slow way
 			ri.Printf(PRINT_ALL, "SDL_SetWindowFullscreen failed: %s\n", SDL_GetError());
-			
+
 			ri.Cmd_ExecuteText(EXEC_APPEND, "vid_restart");
 			IN_Restart();
 		}
-		
+
 		r_fullscreen->modified = qfalse;
 	}
 }

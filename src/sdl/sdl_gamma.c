@@ -41,7 +41,7 @@
 #include "../qcommon/qcommon.h"
 
 // @todo SDL 2.0 window pointer from sdl_glimp.c
-extern SDL_Window* screen;
+extern SDL_Window *screen;
 
 /*
 =================
@@ -110,4 +110,3 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 
 	SDL_SetWindowGammaRamp(screen, table[0], table[1], table[2]);
 }
-

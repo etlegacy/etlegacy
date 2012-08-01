@@ -59,7 +59,7 @@
 #endif
 
 // @todo SDL 2.0 window pointer from SDL_glimp.c
-extern SDL_Window* screen;
+extern SDL_Window *screen;
 
 static cvar_t *in_nograb;
 static cvar_t *in_keyboardDebug = NULL;
@@ -286,41 +286,41 @@ static const char *IN_TranslateSDLToQ3Key(SDL_Keysym *keysym,
 	{
 		switch (keysym->sym)
 		{
-		case SDLK_PAGEUP:       *key = K_PGUP;          break;
+		case SDLK_PAGEUP:       *key  = K_PGUP;          break;
 		case SDLK_KP_9:          *key = K_KP_PGUP;       break;
-		case SDLK_PAGEDOWN:     *key = K_PGDN;          break;
+		case SDLK_PAGEDOWN:     *key  = K_PGDN;          break;
 		case SDLK_KP_3:          *key = K_KP_PGDN;       break;
 		case SDLK_KP_7:          *key = K_KP_HOME;       break;
-		case SDLK_HOME:         *key = K_HOME;          break;
+		case SDLK_HOME:         *key  = K_HOME;          break;
 		case SDLK_KP_1:          *key = K_KP_END;        break;
-		case SDLK_END:          *key = K_END;           break;
+		case SDLK_END:          *key  = K_END;           break;
 		case SDLK_KP_4:          *key = K_KP_LEFTARROW;  break;
-		case SDLK_LEFT:         *key = K_LEFTARROW;     break;
+		case SDLK_LEFT:         *key  = K_LEFTARROW;     break;
 		case SDLK_KP_6:          *key = K_KP_RIGHTARROW; break;
-		case SDLK_RIGHT:        *key = K_RIGHTARROW;    break;
+		case SDLK_RIGHT:        *key  = K_RIGHTARROW;    break;
 		case SDLK_KP_2:          *key = K_KP_DOWNARROW;  break;
-		case SDLK_DOWN:         *key = K_DOWNARROW;     break;
+		case SDLK_DOWN:         *key  = K_DOWNARROW;     break;
 		case SDLK_KP_8:          *key = K_KP_UPARROW;    break;
-		case SDLK_UP:           *key = K_UPARROW;       break;
-		case SDLK_ESCAPE:       *key = K_ESCAPE;        break;
-		case SDLK_KP_ENTER:     *key = K_KP_ENTER;      break;
-		case SDLK_RETURN:       *key = K_ENTER;         break;
-		case SDLK_TAB:          *key = K_TAB;           break;
-		case SDLK_F1:           *key = K_F1;            break;
-		case SDLK_F2:           *key = K_F2;            break;
-		case SDLK_F3:           *key = K_F3;            break;
-		case SDLK_F4:           *key = K_F4;            break;
-		case SDLK_F5:           *key = K_F5;            break;
-		case SDLK_F6:           *key = K_F6;            break;
-		case SDLK_F7:           *key = K_F7;            break;
-		case SDLK_F8:           *key = K_F8;            break;
-		case SDLK_F9:           *key = K_F9;            break;
-		case SDLK_F10:          *key = K_F10;           break;
-		case SDLK_F11:          *key = K_F11;           break;
-		case SDLK_F12:          *key = K_F12;           break;
-		case SDLK_F13:          *key = K_F13;           break;
-		case SDLK_F14:          *key = K_F14;           break;
-		case SDLK_F15:          *key = K_F15;           break;
+		case SDLK_UP:           *key  = K_UPARROW;       break;
+		case SDLK_ESCAPE:       *key  = K_ESCAPE;        break;
+		case SDLK_KP_ENTER:     *key  = K_KP_ENTER;      break;
+		case SDLK_RETURN:       *key  = K_ENTER;         break;
+		case SDLK_TAB:          *key  = K_TAB;           break;
+		case SDLK_F1:           *key  = K_F1;            break;
+		case SDLK_F2:           *key  = K_F2;            break;
+		case SDLK_F3:           *key  = K_F3;            break;
+		case SDLK_F4:           *key  = K_F4;            break;
+		case SDLK_F5:           *key  = K_F5;            break;
+		case SDLK_F6:           *key  = K_F6;            break;
+		case SDLK_F7:           *key  = K_F7;            break;
+		case SDLK_F8:           *key  = K_F8;            break;
+		case SDLK_F9:           *key  = K_F9;            break;
+		case SDLK_F10:          *key  = K_F10;           break;
+		case SDLK_F11:          *key  = K_F11;           break;
+		case SDLK_F12:          *key  = K_F12;           break;
+		case SDLK_F13:          *key  = K_F13;           break;
+		case SDLK_F14:          *key  = K_F14;           break;
+		case SDLK_F15:          *key  = K_F15;           break;
 
 		case SDLK_BACKSPACE:    *key = K_BACKSPACE;     break;
 		case SDLK_KP_PERIOD:    *key = K_KP_DEL;        break;
@@ -335,37 +335,37 @@ static const char *IN_TranslateSDLToQ3Key(SDL_Keysym *keysym,
 
 		case SDLK_RGUI:
 		case SDLK_LGUI:        *key = K_COMMAND;       break; // @todo SDL 2.0 maps GUI to SUPER as well as COMMAND (*key = K_SUPER;         break;)
-		
+
 		case SDLK_RALT:
 		case SDLK_LALT:         *key = K_ALT;           break;
 
 
 		case SDLK_KP_5:          *key = K_KP_5;          break;
-		case SDLK_INSERT:       *key = K_INS;           break;
+		case SDLK_INSERT:       *key  = K_INS;           break;
 		case SDLK_KP_0:          *key = K_KP_INS;        break;
-		case SDLK_KP_MULTIPLY:  *key = K_KP_STAR;       break;
-		case SDLK_KP_PLUS:      *key = K_KP_PLUS;       break;
-		case SDLK_KP_MINUS:     *key = K_KP_MINUS;      break;
-		case SDLK_KP_DIVIDE:    *key = K_KP_SLASH;      break;
+		case SDLK_KP_MULTIPLY:  *key  = K_KP_STAR;       break;
+		case SDLK_KP_PLUS:      *key  = K_KP_PLUS;       break;
+		case SDLK_KP_MINUS:     *key  = K_KP_MINUS;      break;
+		case SDLK_KP_DIVIDE:    *key  = K_KP_SLASH;      break;
 
-		case SDLK_MODE:         *key = K_MODE;          break;
-		case SDLK_APPLICATION:      *key = K_COMPOSE;       break;
-		case SDLK_HELP:         *key = K_HELP;          break;
-		case SDLK_PRINTSCREEN:  *key = K_PRINT;         break;
-		case SDLK_SYSREQ:       *key = K_SYSREQ;        break;
-		case SDLK_MENU:         *key = K_MENU;          break;
-		case SDLK_POWER:        *key = K_POWER;         break;
+		case SDLK_MODE:         *key         = K_MODE;          break;
+		case SDLK_APPLICATION:      *key     = K_COMPOSE;       break;
+		case SDLK_HELP:         *key         = K_HELP;          break;
+		case SDLK_PRINTSCREEN:  *key         = K_PRINT;         break;
+		case SDLK_SYSREQ:       *key         = K_SYSREQ;        break;
+		case SDLK_MENU:         *key         = K_MENU;          break;
+		case SDLK_POWER:        *key         = K_POWER;         break;
 		case SDLK_CURRENCYUNIT:         *key = K_EURO;          break;
-		case SDLK_UNDO:         *key = K_UNDO;          break;
-		case SDLK_SCROLLLOCK:    *key = K_SCROLLOCK;     break;
-		case SDLK_NUMLOCKCLEAR:      *key = K_KP_NUMLOCK;    break;
-		case SDLK_CAPSLOCK:     *key = K_CAPSLOCK;      break;
+		case SDLK_UNDO:         *key         = K_UNDO;          break;
+		case SDLK_SCROLLLOCK:    *key        = K_SCROLLOCK;     break;
+		case SDLK_NUMLOCKCLEAR:      *key    = K_KP_NUMLOCK;    break;
+		case SDLK_CAPSLOCK:     *key         = K_CAPSLOCK;      break;
 
 		default:
 			/* @todo SDL 2.0
 			if (keysym->sym >= SDLK_WORLD_0 && keysym->sym <= SDLK_WORLD_95)
 			  *key = (keysym->sym - SDLK_WORLD_0) + K_WORLD_0;
-			*/  
+			*/
 			break;
 		}
 	}
@@ -555,8 +555,8 @@ static void IN_DeactivateMouse(void)
 	{
 		if ((Key_GetCatcher() == KEYCATCH_UI) &&
 		    screen == SDL_GetMouseFocus())
-		    // @todo (SDL_GetAppState() & SDL_APPMOUSEFOCUS))
 		{
+			// @todo (SDL_GetAppState() & SDL_APPMOUSEFOCUS))
 			SDL_ShowCursor(0);
 		}
 		else
@@ -600,7 +600,7 @@ static void IN_DeactivateMouse(void)
 		SDL_SetWindowGrab(screen, SDL_FALSE);
 
 		// Don't warp the mouse unless the cursor is within the window
-		if (screen == SDL_GetMouseFocus() )
+		if (screen == SDL_GetMouseFocus())
 		{
 			SDL_WarpMouseInWindow(screen, cls.glconfig.vidWidth / 2, cls.glconfig.vidHeight / 2);
 		}
@@ -980,86 +980,86 @@ static void IN_ProcessEvents(void)
 	{
 		switch (e.type)
 		{
-			case SDL_KEYDOWN:
-				character = IN_TranslateSDLToQ3Key(&e.key.keysym, &key, qtrue);
-				if (key)
-				{
-					Com_QueueEvent(0, SE_KEY, key, qtrue, 0, NULL);
-				}
-
-				if (character)
-				{
-					Com_QueueEvent(0, SE_CHAR, *character, 0, 0, NULL);
-				}
-				break;
-
-			case SDL_KEYUP:
-				IN_TranslateSDLToQ3Key(&e.key.keysym, &key, qfalse);
-
-				if (key)
-				{
-					Com_QueueEvent(0, SE_KEY, key, qfalse, 0, NULL);
-				}
-				break;
-			case SDL_MOUSEMOTION:
-				if (mouseActive)
-				{
-					Com_QueueEvent(0, SE_MOUSE, e.motion.xrel, e.motion.yrel, 0, NULL);
-				}
-				break;
-			case SDL_MOUSEBUTTONDOWN:
-			case SDL_MOUSEBUTTONUP:
+		case SDL_KEYDOWN:
+			character = IN_TranslateSDLToQ3Key(&e.key.keysym, &key, qtrue);
+			if (key)
 			{
-				unsigned char b;
-				switch (e.button.button)
-				{
-				case 1:   b = K_MOUSE1;     break;
-				case 2:   b = K_MOUSE3;     break;
-				case 3:   b = K_MOUSE2;     break;
-				case 4:   b = K_MWHEELUP;   break;
-				case 5:   b = K_MWHEELDOWN; break;
-				case 6:   b = K_MOUSE4;     break;
-				case 7:   b = K_MOUSE5;     break;
-				default:  b = K_AUX1 + (e.button.button - 8) % 16; break;
-				}
-				Com_QueueEvent(0, SE_KEY, b,
-					      (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
+				Com_QueueEvent(0, SE_KEY, key, qtrue, 0, NULL);
+			}
+
+			if (character)
+			{
+				Com_QueueEvent(0, SE_CHAR, *character, 0, 0, NULL);
 			}
 			break;
 
-			case SDL_QUIT:
-				Cbuf_ExecuteText(EXEC_NOW, "quit Closed window\n");
-				break;
-			case SDL_WINDOWEVENT_RESIZED:
+		case SDL_KEYUP:
+			IN_TranslateSDLToQ3Key(&e.key.keysym, &key, qfalse);
+
+			if (key)
 			{
-				char width[32], height[32];
-				Com_sprintf(width, sizeof(width), "%d", e.window.data1);
-				Com_sprintf(height, sizeof(height), "%d", e.window.data2);
-				Cvar_Set("r_customwidth", width);
-				Cvar_Set("r_customheight", height);
-				Cvar_Set("r_mode", "-1");
-				/* wait until user stops dragging for 1 second, so
-				  we aren't constantly recreating the GL context while
-				  he tries to drag...*/
-				vidRestartTime = Sys_Milliseconds() + 1000;
+				Com_QueueEvent(0, SE_KEY, key, qfalse, 0, NULL);
 			}
-				break;
-			case SDL_WINDOWEVENT_ENTER:
-			case SDL_WINDOWEVENT_FOCUS_GAINED:
-				Cvar_SetValue("com_unfocused", qfalse);
-				break;
-			case SDL_WINDOWEVENT_LEAVE:
-			case SDL_WINDOWEVENT_FOCUS_LOST:
-				Cvar_SetValue("com_unfocused", qtrue);
-				break;
-			case SDL_WINDOWEVENT_MINIMIZED:
-				Cvar_SetValue("com_minimized", qtrue);
-				break;
-			case SDL_WINDOWEVENT_MAXIMIZED:
-				Cvar_SetValue("com_minimized", qfalse);
-				break;
-			default:
-				break;
+			break;
+		case SDL_MOUSEMOTION:
+			if (mouseActive)
+			{
+				Com_QueueEvent(0, SE_MOUSE, e.motion.xrel, e.motion.yrel, 0, NULL);
+			}
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONUP:
+		{
+			unsigned char b;
+			switch (e.button.button)
+			{
+			case 1:   b = K_MOUSE1;     break;
+			case 2:   b = K_MOUSE3;     break;
+			case 3:   b = K_MOUSE2;     break;
+			case 4:   b = K_MWHEELUP;   break;
+			case 5:   b = K_MWHEELDOWN; break;
+			case 6:   b = K_MOUSE4;     break;
+			case 7:   b = K_MOUSE5;     break;
+			default:  b = K_AUX1 + (e.button.button - 8) % 16; break;
+			}
+			Com_QueueEvent(0, SE_KEY, b,
+			               (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
+		}
+		break;
+
+		case SDL_QUIT:
+			Cbuf_ExecuteText(EXEC_NOW, "quit Closed window\n");
+			break;
+		case SDL_WINDOWEVENT_RESIZED:
+		{
+			char width[32], height[32];
+			Com_sprintf(width, sizeof(width), "%d", e.window.data1);
+			Com_sprintf(height, sizeof(height), "%d", e.window.data2);
+			Cvar_Set("r_customwidth", width);
+			Cvar_Set("r_customheight", height);
+			Cvar_Set("r_mode", "-1");
+			/* wait until user stops dragging for 1 second, so
+			  we aren't constantly recreating the GL context while
+			  he tries to drag...*/
+			vidRestartTime = Sys_Milliseconds() + 1000;
+		}
+		break;
+		case SDL_WINDOWEVENT_ENTER:
+		case SDL_WINDOWEVENT_FOCUS_GAINED:
+			Cvar_SetValue("com_unfocused", qfalse);
+			break;
+		case SDL_WINDOWEVENT_LEAVE:
+		case SDL_WINDOWEVENT_FOCUS_LOST:
+			Cvar_SetValue("com_unfocused", qtrue);
+			break;
+		case SDL_WINDOWEVENT_MINIMIZED:
+			Cvar_SetValue("com_minimized", qtrue);
+			break;
+		case SDL_WINDOWEVENT_MAXIMIZED:
+			Cvar_SetValue("com_minimized", qfalse);
+			break;
+		default:
+			break;
 		} // end switch( event type )
 	}
 }
@@ -1084,7 +1084,7 @@ void IN_Frame(void)
 		// Loading in windowed mode
 		IN_DeactivateMouse();
 	}
-	else if (screen != SDL_GetMouseFocus() )
+	else if (screen != SDL_GetMouseFocus())
 	{
 		// Window not got focus
 		IN_DeactivateMouse();

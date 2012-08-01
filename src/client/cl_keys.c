@@ -40,7 +40,7 @@
 #endif
 
 // @todo SDL 2.0 window pointer from sdl_glimp.c
-extern SDL_Window* screen;
+extern SDL_Window *screen;
 
 /*
 
