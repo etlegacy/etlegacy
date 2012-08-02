@@ -3638,7 +3638,7 @@ void CL_Init(void)
 	cl_motd       = Cvar_Get("cl_motd", "1", 0);
 	cl_autoupdate = Cvar_Get("cl_autoupdate", "1", CVAR_ARCHIVE);
 
-	cl_timeout = Cvar_Get("cl_timeout", "200", 0);
+	cl_timeout = Cvar_Get("cl_timeout", "60", 0);
 
 	cl_wavefilerecord = Cvar_Get("cl_wavefilerecord", "0", CVAR_TEMP);
 
