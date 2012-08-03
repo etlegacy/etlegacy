@@ -139,7 +139,7 @@ menuDef {
 
 // Window //
 
-	WINDOW( "^1 ET:XreaL", 50 )
+	WINDOW( "^1ET:Legacy", 50 )
 	
 // Buttons //
 

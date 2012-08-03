@@ -1,13 +1,11 @@
 #include "ui/menudef.h"
+#include "ui/menumacros.h"
 
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
 #define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpOptionsGraphicsGamma"
-
-
-#include "ui/menumacros.h"
 		
 // Gamma Menu //
 	

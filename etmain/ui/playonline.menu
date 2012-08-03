@@ -1,4 +1,5 @@
 #include "ui/menudef.h"
+#include "ui/menumacros.h"
 
 // Defines //
 
@@ -7,10 +8,6 @@
 #define WINDOW_WIDTH	608
 #define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpPlayOnline"
-
-// Macros //
-
-#include "ui/menumacros.h"
 		
 // System Menu //
 	
@@ -59,11 +56,6 @@ menuDef {
 		close playonline ;
 		open main
 	}
-
-//	onClose {
-//		close backgroundmusic_server ; 
-//		open backgroundmusic
-//	}
 
 // Window //
 
@@ -610,58 +602,14 @@ menuDef {
 		}
 		
 		onEnter {
-			/*close playonline ;*/
 			uiScript JoinServer
 		}
 	}
 
 	// Status bar
 
-/*	itemDef {
-		name			"refreshDate"
-		group			GROUP_NAME
-		rect			12 372 $evalfloat(.5*((SUBWINDOW_WIDTH)-12)+1) 16
-		ownerDraw		UI_SERVERREFRESHDATE
-		textfont		UI_FONT_COURBD_21
-		textstyle		ITEM_TEXTSTYLE_SHADOWED
-		textscale		.2
-		textalignx		4
-		textaligny		11
-		forecolor		.6 .6 .6 1
-		border			WINDOW_BORDER_FULL
-		bordercolor		.5 .5 .5 .5
-		visible			1
-		decoration
-	}
-	
-	itemDef {
-		name			"messageOfTheDay"
-		group			GROUP_NAME
-		rect			$evalfloat(12+.5*((SUBWINDOW_WIDTH)-12)) 372 $evalfloat(.5*((SUBWINDOW_WIDTH)-12)) 16
-		ownerDraw		UI_SERVERMOTD
-		textfont		UI_FONT_COURBD_21
-		textstyle		ITEM_TEXTSTYLE_SHADOWED
-		textscale		.2
-		textalignx		4
-		textaligny		11
-		forecolor		.6 .6 .6 1
-		border			WINDOW_BORDER_FULL
-		bordercolor		.5 .5 .5 .5
-		visible			1
-		decoration
-	}
-*/
 	
 	// Misc Buttons
-
-/*
-	BUTTON( 12, 102+316-24, .33*((SUBWINDOW_WIDTH)-24), 18, "REFRESH LIST", .3, 14, uiScript RefreshServers )
-	BUTTON( 6+6+(.33*((SUBWINDOW_WIDTH)-24))+6, 102+316-24, .34*((SUBWINDOW_WIDTH)-24), 18, "CONNECT TO IP", .3, 14, clearFocus ; open playonline_connecttoip )
-	BUTTON( 6+6+(.33*((SUBWINDOW_WIDTH)-24))+6+(.34*((SUBWINDOW_WIDTH)-24))+6, 102+316-24, .33*((SUBWINDOW_WIDTH)-24), 18, "^1SERVER INFO", .3, 14, clearFocus ; open playonline_serverinfo )
-*/
-/*	BUTTON( 12, 102+316-20, .33*((SUBWINDOW_WIDTH)-24), 14, "REFRESH LIST", .24, 11, uiScript RefreshServers )
-	BUTTON( 6+6+(.33*((SUBWINDOW_WIDTH)-24))+6, 102+316-20, .34*((SUBWINDOW_WIDTH)-24), 14, "CONNECT TO IP", .24, 11, clearFocus ; open playonline_connecttoip )
-	BUTTON( 6+6+(.33*((SUBWINDOW_WIDTH)-24))+6+(.34*((SUBWINDOW_WIDTH)-24))+6, 102+316-20, .33*((SUBWINDOW_WIDTH)-24), 14, "^1SERVER INFO", .24, 11, clearFocus ; open playonline_serverinfo )*/
 	
 	BUTTON( 12, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "REFRESH LIST", .24, 11, uiScript RefreshServers )
 	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "CONNECT TO IP", .24, 11, clearFocus ; open playonline_connecttoip )

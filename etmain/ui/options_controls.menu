@@ -1,4 +1,5 @@
 #include "ui/menudef.h"
+#include "ui/menumacros.h"
 
 // Defines //
 
@@ -7,10 +8,6 @@
 #define WINDOW_WIDTH	608
 #define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpOptionsControls"
-
-// Macros //
-
-#include "ui/menumacros.h"
 		
 // Controls Menu //
 	
@@ -53,8 +50,6 @@ menuDef {
 // Input //
 
 	SUBWINDOW( 6, 198, (SUBWINDOW_WIDTH), 40, "INPUT" )
-//	YESNOACTION( 8, 214, (SUBWINDOW_WIDTH)-4, 10, "Invert Mouse:", .2, 8, "ui_mousePitch", uiScript update ui_mousePitch )
-//	YESNO( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Smooth Mouse:", .2, 8, "m_filter" )
 	CHECKBOXALIGNXACTION( 8, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Invert Mouse:", .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, "Inverts mouse pitch" )
 	CHECKBOXALIGNX( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Smooth Mouse:", .2, 24, 8, "m_filter", "Smooths out the mouse using interpolation" )
 	SLIDER( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Mouse Sensitivity:", .2, 8, "sensitivity" 5 1 30, "Use the slider to increase or decrease mouse sensitivity" )

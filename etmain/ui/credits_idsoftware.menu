@@ -1,4 +1,5 @@
 #include "ui/menudef.h"
+#include "ui/menumacros.h"
 
 // Defines //
 
@@ -7,10 +8,6 @@
 #define WINDOW_WIDTH	608
 #define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpCreditsIdSoftware"
-
-// Macros //
-
-#include "ui/menumacros.h"
 		
 // System Menu //
 	

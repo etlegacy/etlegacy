@@ -1,4 +1,5 @@
 #include "ui/menudef.h"
+#include "ui/menumacros.h"
 
 // Defines //
 
@@ -8,10 +9,6 @@
 #define WINDOW_HEIGHT	480
 #define GROUP_NAME		"grpRecRestart"
 
-// Macros //
-
-#include "ui/menumacros.h"
-		
 // Restart Video Mode Menu //
 	
 menuDef

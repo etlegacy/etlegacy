@@ -1,4 +1,5 @@
 #include "ui/menudef.h"
+#include "ui/menumacros.h"
 
 // Defines //
 
@@ -7,10 +8,6 @@
 #define WINDOW_WIDTH	640
 #define WINDOW_HEIGHT	480
 #define GROUP_NAME		"grpPopupServerRedirect"
-
-// Macros //
-
-#include "ui/menumacros.h"
 		
 // Redirect Popup //
 	
@@ -81,17 +78,6 @@ menuDef {
 	LABEL( (SUBWINDOW_X+4)+26+6, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Do you want to redirect to:", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	CVARLABEL( (SUBWINDOW_X+4)+26+6, SUBWINDOW_Y+26, (SUBWINDOW_WIDTH)-8-56-6, 10, "com_errorMessage", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	
-	/*itemDef {
-		name		"efleftbackRedirect:"
-		group		GROUP_NAME
-		rect		$evalfloat((SUBWINDOW_X+4)+56+6) $evalfloat(SUBWINDOW_Y+16) $evalfloat((SUBWINDOW_WIDTH)-8-56-6) $evalfloat(10)
-		style		WINDOW_STYLE_FILLED
-		backcolor	.5 .5 .5 .2
-		visible		1
-		decoration
-	}
-	*/
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "NO", .3, 14, uiScript clearError ; close popupServerRedirect ; open main_opener )
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "YES", .3, 14, close popupServerRedirect ; uiScript redirect )
 }
-

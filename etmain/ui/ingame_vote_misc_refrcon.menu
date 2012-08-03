@@ -1,17 +1,13 @@
 #include "ui/menudef.h"
+#include "ui/menumacros.h"
 
 // Defines //
 
 #define WINDOW_X		16
 #define WINDOW_Y		16
-//#define WINDOW_WIDTH	128
 #define WINDOW_WIDTH	296
 #define WINDOW_HEIGHT	276
 #define GROUP_NAME		"grpIngameVoteMiscRefRcon"
-
-// Macros //
-
-#include "ui/menumacros.h"
 
 // Misc Ref/Rcon Menu //
 
@@ -23,8 +19,6 @@ menuDef {
 	style		WINDOW_STYLE_FILLED
 
 	onOpen {
-		//copyCvar g_gametype ui_netgametype ;
-		
 		conditionalScript g_gametype 3	// 3: cvartest
 			( "hide bttn_nextmap ; show bttn_nextcampaign" )
 			( "show bttn_nextmap ; hide bttn_nextcampaign" ) "4" ;

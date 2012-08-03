@@ -1,20 +1,13 @@
-// $Id: mods.menu,v 1.1.2.2 2004/03/14 02:47:52 rain Exp $
-
-// rain - hacked the demo menu into a mods menu
 #include "ui/menudef.h"
+#include "ui/menumacros.h"
 
 // Defines //
 
 #define WINDOW_X		16
 #define WINDOW_Y		16
-//#define WINDOW_WIDTH	400
 #define WINDOW_WIDTH	608
 #define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpMods"
-
-// Macros //
-
-#include "ui/menumacros.h"
 
 // View Mods Menu //
 	
