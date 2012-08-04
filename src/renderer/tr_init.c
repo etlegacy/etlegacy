@@ -52,12 +52,10 @@ cvar_t *r_flareFade;
 cvar_t *r_flareCoeff;
 
 cvar_t *r_railWidth;
-cvar_t *r_railCoreWidth;
 cvar_t *r_railSegmentLength;
 
 cvar_t *r_ignoreFastPath;
 
-cvar_t *r_verbose;
 cvar_t *r_ignore;
 
 cvar_t *r_displayRefresh;
@@ -73,7 +71,6 @@ cvar_t *r_showSmp;
 cvar_t *r_skipBackEnd;
 
 cvar_t *r_stereoEnabled;
-cvar_t *r_anaglyphMode;
 
 cvar_t *r_greyscale;
 
@@ -186,8 +183,6 @@ cvar_t *r_cacheModels;
 
 cvar_t *r_cacheGathering;
 
-cvar_t *r_buildScript;
-
 cvar_t *r_bonesDebug;
 // done.
 
@@ -196,9 +191,7 @@ cvar_t *r_wolffog;
 // done
 
 cvar_t *r_highQualityVideo;
-cvar_t *r_rmse;
 
-cvar_t *r_aviMotionJpegQuality;
 cvar_t *r_screenshotJpegQuality;
 
 cvar_t *r_maxpolys;
@@ -935,86 +928,6 @@ void R_ScreenShotJPEG_f(void)
 	}
 }
 
-
-//============================================================================
-
-/*
- = =================                                                            *
- RB_TakeVideoFrameCmd
- ==================
- */
-// const void *RB_TakeVideoFrameCmd( const void *data )
-// {
-//         const videoFrameCommand_t       *cmd;
-//         byte                            *cBuf;
-//         size_t                          memcount, linelen;
-//         int                             padwidth, avipadwidth, padlen, avipadlen;
-//         GLint packAlign;
-//
-//         cmd = (const videoFrameCommand_t *)data;
-//
-//         qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
-//
-//         linelen = cmd->width * 3;
-//
-//         // Alignment stuff for glReadPixels
-//         padwidth = PAD(linelen, packAlign);
-//         padlen = padwidth - linelen;
-//         // AVI line padding
-//         avipadwidth = PAD(linelen, AVI_LINE_PADDING);
-//         avipadlen = avipadwidth - linelen;
-//
-//         cBuf = PADP(cmd->captureBuffer, packAlign);
-//
-//         qglReadPixels(0, 0, cmd->width, cmd->height, GL_RGB,
-//                       GL_UNSIGNED_BYTE, cBuf);
-//
-//         memcount = padwidth * cmd->height;
-//
-//         // gamma correct
-//         if(glConfig.deviceSupportsGamma)
-//                 R_GammaCorrect(cBuf, memcount);
-//
-//         if(cmd->motionJpeg)
-//         {
-//                 memcount = RE_SaveJPGToBuffer(cmd->encodeBuffer, linelen * cmd->height,
-//                                               r_aviMotionJpegQuality->integer,
-//                                               cmd->width, cmd->height, cBuf, padlen);
-//                 ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, memcount);
-//         }
-//         else
-//         {
-//                 byte *lineend, *memend;
-//                 byte *srcptr, *destptr;
-//
-//                 srcptr = cBuf;
-//                 destptr = cmd->encodeBuffer;
-//                 memend = srcptr + memcount;
-//
-//                 // swap R and B and remove line paddings
-//                 while(srcptr < memend)
-//                 {
-//                         lineend = srcptr + linelen;
-//                         while(srcptr < lineend)
-//                         {
-//                                 *destptr++ = srcptr[2];
-//                                 *destptr++ = srcptr[1];
-//                                 *destptr++ = srcptr[0];
-//                                 srcptr += 3;
-//                         }
-//
-//                         Com_Memset(destptr, '\0', avipadlen);
-//                         destptr += avipadlen;
-//
-//                         srcptr += padlen;
-//                 }
-//
-//                 ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, avipadwidth * cmd->height);
-//         }
-//
-//         return (const void *)(cmd + 1);
-// }
-
 //============================================================================
 
 /*
@@ -1198,18 +1111,16 @@ void R_Register(void)
 
 	r_picmip          = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH); //----(SA)   mod for DM and DK for id build.  was "1" // JPW NERVE pushed back to 1
 	r_roundImagesDown = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_rmse            = ri.Cvar_Get("r_rmse", "0.0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_colorMipLevels  = ri.Cvar_Get("r_colorMipLevels", "0", CVAR_LATCH);
+
+	r_colorMipLevels = ri.Cvar_Get("r_colorMipLevels", "0", CVAR_LATCH);
 	AssertCvarRange(r_picmip, 0, 3, qtrue);
 	r_detailTextures = ri.Cvar_Get("r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_texturebits    = ri.Cvar_Get("r_texturebits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_colorbits      = ri.Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_stereo         = ri.Cvar_Get("r_stereo", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-#ifdef __linux__
+
 	r_stencilbits = ri.Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-#else
-	r_stencilbits = ri.Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-#endif
+
 	r_depthbits       = ri.Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	AssertCvarRange(r_ext_multisample, 0, 4, qtrue);
@@ -1270,7 +1181,6 @@ void R_Register(void)
 	r_facePlaneCull = ri.Cvar_Get("r_facePlaneCull", "1", CVAR_ARCHIVE);
 
 	r_railWidth         = ri.Cvar_Get("r_railWidth", "16", CVAR_ARCHIVE);
-	r_railCoreWidth     = ri.Cvar_Get("r_railCoreWidth", "1", CVAR_ARCHIVE);
 	r_railSegmentLength = ri.Cvar_Get("r_railSegmentLength", "32", CVAR_ARCHIVE);
 
 	r_primitives = ri.Cvar_Get("r_primitives", "0", CVAR_ARCHIVE);
@@ -1278,32 +1188,22 @@ void R_Register(void)
 	r_ambientScale  = ri.Cvar_Get("r_ambientScale", "0.5", CVAR_CHEAT);
 	r_directedScale = ri.Cvar_Get("r_directedScale", "1", CVAR_CHEAT);
 
-	r_anaglyphMode = ri.Cvar_Get("r_anaglyphMode", "0", CVAR_ARCHIVE);
-
-	//
 	// temporary variables that can change at any time
-	//
 	r_showImages = ri.Cvar_Get("r_showImages", "0", CVAR_TEMP);
 
 	r_debugLight   = ri.Cvar_Get("r_debuglight", "0", CVAR_TEMP);
 	r_debugSort    = ri.Cvar_Get("r_debugSort", "0", CVAR_CHEAT);
 	r_printShaders = ri.Cvar_Get("r_printShaders", "0", 0);
 	r_saveFontData = ri.Cvar_Get("r_saveFontData", "0", 0);
-    \
 
 	// Ridah
 	// TTimo show_bug.cgi?id=440
 	//   with r_cache enabled, non-win32 OSes were leaking 24Mb per R_Init..
-	r_cache = ri.Cvar_Get("r_cache", "1", CVAR_LATCH);    // leaving it as this for backwards compability. but it caches models and shaders also
-// (SA) disabling cacheshaders
-//      ri.Cvar_Set( "r_cacheShaders", "0");
-	// Gordon: enabling again..
+	r_cache        = ri.Cvar_Get("r_cache", "1", CVAR_LATCH); // leaving it as this for backwards compability. but it caches models and shaders also
 	r_cacheShaders = ri.Cvar_Get("r_cacheShaders", "1", CVAR_LATCH);
-//----(SA)      end
 
 	r_cacheModels    = ri.Cvar_Get("r_cacheModels", "1", CVAR_LATCH);
 	r_cacheGathering = ri.Cvar_Get("cl_cacheGathering", "0", 0);
-	r_buildScript    = ri.Cvar_Get("com_buildscript", "0", 0);
 	r_bonesDebug     = ri.Cvar_Get("r_bonesDebug", "0", CVAR_CHEAT);
 	// done.
 
@@ -1333,7 +1233,7 @@ void R_Register(void)
 	r_novis           = ri.Cvar_Get("r_novis", "0", CVAR_CHEAT);
 	r_showcluster     = ri.Cvar_Get("r_showcluster", "0", CVAR_CHEAT);
 	r_speeds          = ri.Cvar_Get("r_speeds", "0", CVAR_CHEAT);
-	r_verbose         = ri.Cvar_Get("r_verbose", "0", CVAR_CHEAT);
+
 	r_logFile         = ri.Cvar_Get("r_logFile", "0", CVAR_CHEAT);
 	r_debugSurface    = ri.Cvar_Get("r_debugSurface", "0", CVAR_CHEAT);
 	r_nobind          = ri.Cvar_Get("r_nobind", "0", CVAR_CHEAT);
@@ -1351,8 +1251,6 @@ void R_Register(void)
 	r_noportals       = ri.Cvar_Get("r_noportals", "0", CVAR_CHEAT);
 	r_shadows         = ri.Cvar_Get("cg_shadows", "1", 0);
 
-//         r_marksOnTriangleMeshes = ri.Cvar_Get("r_marksOnTriangleMeshes", "0", CVAR_ARCHIVE);
-	r_aviMotionJpegQuality  = ri.Cvar_Get("r_aviMotionJpegQuality", "90", CVAR_ARCHIVE);
 	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE);
 
 	r_portalsky    = ri.Cvar_Get("cg_skybox", "1", 0);
@@ -1407,9 +1305,7 @@ void R_Init(void)
 	}
 	Com_Memset(tess.constantColor255, 255, sizeof(tess.constantColor255));
 
-	//
 	// init function tables
-	//
 	for (i = 0; i < FUNCTABLE_SIZE; i++)
 	{
 		tr.sinTable[i]             = sin(DEG2RAD(i * 360.0f / (( float ) (FUNCTABLE_SIZE - 1))));
