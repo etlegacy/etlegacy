@@ -89,7 +89,7 @@ static int UI_GetIndexFromSelection(int actual);
 static const char *UI_SelectedCampaign(int index, int *actual);
 static int UI_CampaignCount(qboolean singlePlayer);
 
-qboolean    UI_CheckExecKey(int key);
+qboolean UI_CheckExecKey(int key);
 // -NERVE - SMF - enabled for multiplayer
 
 static void UI_ParseGameInfo(const char *teamFile);
@@ -4909,7 +4909,18 @@ void UI_Update(const char *name)
 	else if (Q_stricmp(name, "ui_setRate") == 0)
 	{
 		float rate = trap_Cvar_VariableValue("ui_rate");
-		if (rate >= 5000)
+
+		if (rate >= 20000)
+		{
+			trap_Cvar_Set("ui_cl_maxpackets", "100");
+			trap_Cvar_Set("ui_cl_packetdup", "1");
+		}
+		else if (rate >= 10000)
+		{
+			trap_Cvar_Set("ui_cl_maxpackets", "60");
+			trap_Cvar_Set("ui_cl_packetdup", "1");
+		}
+		else if (rate >= 5000)
 		{
 			trap_Cvar_Set("ui_cl_maxpackets", "30");
 			trap_Cvar_Set("ui_cl_packetdup", "1");
