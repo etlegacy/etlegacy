@@ -70,6 +70,7 @@ cvar_t *cl_showServerCommands;  // NERVE - SMF
 cvar_t *cl_timedemo;
 cvar_t *cl_avidemo;
 cvar_t *cl_forceavidemo;
+cvar_t *cl_avidemotype;
 
 cvar_t *cl_freelook;
 cvar_t *cl_sensitivity;
@@ -2922,7 +2923,14 @@ void CL_Frame(int msec)
 		// save the current screen
 		if (cls.state == CA_ACTIVE || cl_forceavidemo->integer)
 		{
-			Cbuf_ExecuteText(EXEC_NOW, "screenshot silent\n");
+			switch (cl_avidemotype->integer)
+			{
+			case 1:
+				Cbuf_ExecuteText(EXEC_NOW, "screenshotJPEG silent\n");
+				break;
+			default:
+				Cbuf_ExecuteText(EXEC_NOW, "screenshot silent\n");
+			}
 		}
 		// fixed time for next frame
 		msec = (1000 / cl_avidemo->integer) * com_timescale->value;
@@ -3657,6 +3665,7 @@ void CL_Init(void)
 	cl_timedemo     = Cvar_Get("timedemo", "0", 0);
 	cl_avidemo      = Cvar_Get("cl_avidemo", "0", 0);
 	cl_forceavidemo = Cvar_Get("cl_forceavidemo", "0", 0);
+	cl_avidemotype  = Cvar_Get("cl_avidemotype", "0", CVAR_TEMP);
 
 	rconAddress = Cvar_Get("rconAddress", "", 0);
 

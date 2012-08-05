@@ -523,6 +523,79 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 	return buffer;
 }
 
+byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
+{
+	byte  *buffer, *bufstart;
+	int   padwidth, linelen;
+	GLint packAlign;
+
+	qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
+
+	linelen  = width;
+	padwidth = PAD(linelen, packAlign);
+
+	// Allocate a few more bytes so that we can choose an alignment we like
+	buffer = ri.Hunk_AllocateTempMemory(padwidth * height + packAlign - 1);
+
+	bufstart = PADP(( intptr_t ) buffer, packAlign);
+	qglDepthRange(0.0f, 1.0f);
+	qglReadPixels(x, y, width, height, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, bufstart);
+
+	*padlen = padwidth - linelen;
+
+	return buffer;
+}
+
+void RB_TakeDepthshot(int x, int y, int width, int height, char *fileName)
+{
+	byte *allbuf, *buffer;
+	byte *srcptr, *destptr;
+	byte *endline, *endmem;
+
+	int    linelen, padlen;
+	size_t offset = 18, memcount;
+
+	allbuf = RB_ReadZBuffer(x, y, width, height, &padlen);
+	buffer = ri.Hunk_AllocateTempMemory(width * height * 3 + offset);;
+
+	Com_Memset(buffer, 0, 18);
+	buffer[2]  = 2;         // uncompressed type
+	buffer[12] = width & 255;
+	buffer[13] = width >> 8;
+	buffer[14] = height & 255;
+	buffer[15] = height >> 8;
+	buffer[16] = 24;        // pixel size
+
+	linelen = width;
+
+	srcptr  = allbuf;
+	destptr = buffer + offset;
+	endmem  = srcptr + (linelen + padlen) * height;
+	while (srcptr < endmem)
+	{
+		endline = srcptr + linelen;
+
+		while (srcptr < endline)
+		{
+			*destptr++ = srcptr[0];
+			*destptr++ = srcptr[0];
+			*destptr++ = srcptr[0];
+
+			srcptr++;
+		}
+
+		// Skip the pad
+		srcptr += padlen;
+	}
+
+	memcount = linelen * 3 * height + offset;
+
+	ri.FS_WriteFile(fileName, buffer, memcount);
+
+	ri.Hunk_FreeTempMemory(allbuf);
+	ri.Hunk_FreeTempMemory(buffer);
+}
+
 /*
  * ==================
  * RB_TakeScreenshot
@@ -836,7 +909,7 @@ void R_ScreenShot_f(void)
 			lastNumber = 0;
 		}
 		// scan for a free number
-		for ( ; lastNumber <= 9999 ; lastNumber++)
+		for ( ; lastNumber <= 99999 ; lastNumber++)
 		{
 			R_ScreenshotFilename(lastNumber, checkname);
 
@@ -846,7 +919,7 @@ void R_ScreenShot_f(void)
 			}
 		}
 
-		if (lastNumber >= 9999)
+		if (lastNumber >= 99999)
 		{
 			ri.Printf(PRINT_ALL, "ScreenShot: Couldn't create a file\n");
 			return;
@@ -901,7 +974,7 @@ void R_ScreenShotJPEG_f(void)
 			lastNumber = 0;
 		}
 		// scan for a free number
-		for ( ; lastNumber <= 9999 ; lastNumber++)
+		for ( ; lastNumber <= 99999 ; lastNumber++)
 		{
 			R_ScreenshotFilenameJPEG(lastNumber, checkname);
 
@@ -911,7 +984,7 @@ void R_ScreenShotJPEG_f(void)
 			}
 		}
 
-		if (lastNumber == 10000)
+		if (lastNumber == 100000)
 		{
 			ri.Printf(PRINT_ALL, "ScreenShot: Couldn't create a file\n");
 			return;

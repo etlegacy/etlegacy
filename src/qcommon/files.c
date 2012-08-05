@@ -3602,7 +3602,13 @@ static void FS_Startup(const char *gameName)
 	{
 		homePath = fs_basepath->string;
 	}
-	fs_homepath   = Cvar_Get("fs_homepath", homePath, CVAR_INIT);
+
+#ifdef _WIN32 //Use user home path only in linux
+	fs_homepath = Cvar_Get("fs_homepath", fs_basepath->string, CVAR_INIT);
+#else
+	fs_homepath = Cvar_Get("fs_homepath", homePath, CVAR_INIT);
+#endif // _WIN32
+
 	fs_gamedirvar = Cvar_Get("fs_game", "", CVAR_INIT | CVAR_SYSTEMINFO);
 
 	// add search path elements in reverse priority order
@@ -4420,7 +4426,7 @@ void FS_PureServerSetReferencedPaks(const char *pakSums, const char *pakNames)
 
 /*
 ================
-FS_InitFilesystem
+fFilesystem
 
 Called only at inital startup, not when the filesystem
 is resetting due to a game change
