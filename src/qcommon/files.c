@@ -187,7 +187,6 @@ or configs will never get loaded from disk!
   game directory passing and restarting
 
 =============================================================================
-
 */
 
 #define MAX_ZPATH           256
@@ -410,7 +409,7 @@ static FILE *FS_FileForHandle(fileHandle_t f)
 	return fsh[f].handleFiles.file.o;
 }
 
-void    FS_ForceFlush(fileHandle_t f)
+void FS_ForceFlush(fileHandle_t f)
 {
 	FILE *file;
 
@@ -586,8 +585,7 @@ void FS_CopyFile(char *fromOSPath, char *toOSPath)
 /*
  * ERR_FATAL if trying to manipulate a file with the platform library extension
  */
-static void FS_CheckFilenameIsNotExecutable(const char *filename,
-                                            const char *function)
+static void FS_CheckFilenameIsNotExecutable(const char *filename, const char *function)
 {
 	// Check if the filename ends with the library extension
 	if (COM_CompareExtension(filename, DLL_EXT))
@@ -611,7 +609,6 @@ void FS_HomeRemove(const char *homePath)
 	remove(FS_BuildOSPath(fs_homepath->string,
 	                      fs_gamedir, homePath));
 }
-
 
 /*
  * @brief Tests if path and file exists
@@ -714,9 +711,6 @@ int FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp)
 
 	Q_strncpyz(fsh[f].name, filename, sizeof(fsh[f].name));
 
-	// don't let sound stutter
-	//S_ClearSoundBuffer();
-
 	// search homepath
 	ospath = FS_BuildOSPath(fs_homepath->string, filename, "");
 	// remove trailing slash
@@ -770,9 +764,6 @@ void FS_SV_Rename(const char *from, const char *to)
 		Com_Error(ERR_FATAL, "Filesystem call made without initialization\n");
 	}
 
-	// don't let sound stutter
-	//S_ClearSoundBuffer();
-
 	from_ospath                          = FS_BuildOSPath(fs_homepath->string, from, "");
 	to_ospath                            = FS_BuildOSPath(fs_homepath->string, to, "");
 	from_ospath[strlen(from_ospath) - 1] = '\0';
@@ -791,8 +782,6 @@ void FS_SV_Rename(const char *from, const char *to)
 	}
 }
 
-
-
 /*
 ===========
 FS_Rename
@@ -807,9 +796,6 @@ void FS_Rename(const char *from, const char *to)
 	{
 		Com_Error(ERR_FATAL, "Filesystem call made without initialization\n");
 	}
-
-	// don't let sound stutter
-	//S_ClearSoundBuffer();
 
 	from_ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, from);
 	to_ospath   = FS_BuildOSPath(fs_homepath->string, fs_gamedir, to);
@@ -929,9 +915,6 @@ fileHandle_t FS_FOpenFileAppend(const char *filename)
 	fsh[f].zipFile = qfalse;
 
 	Q_strncpyz(fsh[f].name, filename, sizeof(fsh[f].name));
-
-	// don't let sound stutter
-	//S_ClearSoundBuffer();
 
 	ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, filename);
 
@@ -1663,7 +1646,6 @@ int FS_Delete(char *filename)
 	return 0;
 }
 
-
 /*
 =================
 FS_Read
@@ -2203,8 +2185,6 @@ void FS_WriteFile(const char *qpath, const void *buffer, int size)
 
 	FS_FCloseFile(f);
 }
-
-
 
 /*
 ==========================================================================
@@ -2839,9 +2819,6 @@ int FS_GetModList(char *listbuf, int bufsize)
 	return nMods;
 }
 
-
-
-
 //============================================================================
 
 /*
@@ -3085,57 +3062,6 @@ void FS_TouchFile_f(void)
 	{
 		FS_FCloseFile(f);
 	}
-}
-
-/**/
-qboolean FS_Which(const char *filename, void *searchPath)
-{
-//     searchpath_t *search = searchPath;
-//
-//     if(FS_FOpenFileReadDir(filename, search, NULL, qfalse, qfalse) > 0)
-//     {
-//         if(search->pack)
-//         {
-//             Com_Printf("File \"%s\" found in \"%s\"\n", filename, search->pack->pakFilename);
-//             return qtrue;
-//         }
-//         else if(search->dir)
-//         {
-//             Com_Printf( "File \"%s\" found at \"%s\"\n", filename, search->dir->fullpath);
-//             return qtrue;
-//         }
-//     }
-
-	return qfalse;
-}
-
-/**/
-void FS_Which_f(void)
-{
-//     searchpath_t    *search;
-//     char        *filename;
-//
-//     filename = Cmd_Argv(1);
-//
-//     if ( !filename[0] ) {
-//         Com_Printf( "Usage: which <file>\n" );
-//         return;
-//     }
-//
-//     // qpaths are not supposed to have a leading slash
-//     if ( filename[0] == '/' || filename[0] == '\\' ) {
-//         filename++;
-//     }
-//
-//     // just wants to see if file is there
-//     for(search = fs_searchpaths; search; search = search->next)
-//     {
-//         if(FS_Which(filename, search))
-//             return;
-//     }
-//
-//     Com_Printf("File not found: \"%s\"\n", filename);
-	return;
 }
 
 //===========================================================================
@@ -3526,7 +3452,6 @@ void FS_Shutdown(qboolean closemfp)
 	Cmd_RemoveCommand("dir");
 	Cmd_RemoveCommand("fdir");
 	Cmd_RemoveCommand("touchFile");
-	Cmd_RemoveCommand("which");
 
 #ifdef FS_MISSING
 	if (closemfp)
@@ -3655,7 +3580,6 @@ static void FS_Startup(const char *gameName)
 	Cmd_AddCommand("dir", FS_Dir_f);
 	Cmd_AddCommand("fdir", FS_NewDir_f);
 	Cmd_AddCommand("touchFile", FS_TouchFile_f);
-	Cmd_AddCommand("which", FS_Which_f);
 
 	// show_bug.cgi?id=506
 	// reorder the pure pk3 files according to server order
@@ -3676,7 +3600,6 @@ static void FS_Startup(const char *gameName)
 #endif
 	Com_Printf("%d files in pk3 files\n", fs_packFiles);
 }
-
 
 /*
 =====================
@@ -4307,7 +4230,6 @@ void FS_ClearPakReferences(int flags)
 	}
 }
 
-
 /*
  * If the string is empty, all data sources will be allowed.
  * If not empty, only pk3 files that match one of the space separated checksums
@@ -4426,7 +4348,7 @@ void FS_PureServerSetReferencedPaks(const char *pakSums, const char *pakNames)
 
 /*
 ================
-fFilesystem
+FS_InitFilesystem
 
 Called only at inital startup, not when the filesystem
 is resetting due to a game change
@@ -4461,7 +4383,6 @@ void FS_InitFilesystem(void)
 
 void FS_Restart(int checksumFeed)
 {
-
 	// free anything we currently have loaded
 	FS_Shutdown(qfalse);
 
@@ -4624,7 +4545,7 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode)
 	return r;
 }
 
-int     FS_FTell(fileHandle_t f)
+int FS_FTell(fileHandle_t f)
 {
 	int pos;
 	if (fsh[f].zipFile == qtrue)
@@ -4638,12 +4559,12 @@ int     FS_FTell(fileHandle_t f)
 	return pos;
 }
 
-void    FS_Flush(fileHandle_t f)
+void FS_Flush(fileHandle_t f)
 {
 	fflush(fsh[f].handleFiles.file.o);
 }
 
-void    FS_FilenameCompletion(const char *dir, const char *ext,
+void FS_FilenameCompletion(const char *dir, const char *ext,
                               qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk)
 {
 	char **filenames;
