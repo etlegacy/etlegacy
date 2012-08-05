@@ -93,8 +93,14 @@ cvar_t *sv_packetdelay;
 cvar_t *sv_fullmsg;
 
 // do we communicate with others ?
-cvar_t *sv_advert;      // 1 - communicate with master server
+cvar_t *sv_advert;      // 0 - no big brothers
+						// 1 - communicate with master server
                         // 2 - send trackbase infos
+
+// server attack protection
+cvar_t	*sv_protect; 	// 0 - unprotected
+						// 1 - ioquake3 method (default)
+						// 2 - OPenWolf method
 
 static void SVC_Status(netadr_t from, qboolean force);
 
@@ -445,6 +451,7 @@ CONNECTIONLESS COMMANDS
 ==============================================================================
 */
 
+
 typedef struct leakyBucket_s leakyBucket_t;
 struct leakyBucket_s
 {
@@ -590,6 +597,7 @@ static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int peri
 	return NULL;
 }
 
+// @note  Don't call if sv_protect 1 (SVP_IOQ3) flag is not set!
 static qboolean SVC_RateLimit(leakyBucket_t *bucket, int burst, int period)
 {
 	if (bucket != NULL)
@@ -623,6 +631,7 @@ static qboolean SVC_RateLimit(leakyBucket_t *bucket, int burst, int period)
 
 /*
  * @brief Rate limit for a particular address
+ * @note  Don't call if sv_protect 1 (SVP_IOQ3) flag is not set!
  */
 static qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period)
 {
@@ -648,7 +657,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 	int                  playerLength;
 	char                 infostring[MAX_INFO_STRING];
 
-	if (!force)
+	if (!force && sv_protect->integer & SVP_IOQ3)
 	{
 		// Prevent using getstatus as an amplifier
 		if (SVC_RateLimitAddress(from, 10, 1000))
@@ -666,6 +675,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 			return;
 		}
 	}
+
 	strcpy(infostring, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
 
 	// echo back the parameter to status. so master servers can use it as a challenge
@@ -710,20 +720,22 @@ void SVC_Info(netadr_t from)
 	char *weaprestrict;
 	char *balancedteams;
 
-	// Prevent using getinfo as an amplifier
-	if ( SVC_RateLimitAddress( from, 10, 1000 ) )
-	{
-		Com_DPrintf( "SVC_Info: rate limit from %s exceeded, dropping request\n",
-			NET_AdrToString( from ) );
-		return;
-	}
+	if (sv_protect->integer & SVP_IOQ3) {
+		// Prevent using getinfo as an amplifier
+		if (SVC_RateLimitAddress( from, 10, 1000 ) )
+		{
+			Com_DPrintf( "SVC_Info: rate limit from %s exceeded, dropping request\n",
+				NET_AdrToString( from ) );
+			return;
+		}
 
-	// Allow getinfo to be DoSed relatively easily, but prevent
-	// excess outbound bandwidth usage when being flooded inbound
-	if ( SVC_RateLimit( &outboundLeakyBucket, 10, 100 ) )
-	{
-		Com_DPrintf( "SVC_Info: rate limit exceeded, dropping request\n" );
-		return;
+		// Allow getinfo to be DoSed relatively easily, but prevent
+		// excess outbound bandwidth usage when being flooded inbound
+		if ( SVC_RateLimit( &outboundLeakyBucket, 10, 100 ) )
+		{
+			Com_DPrintf( "SVC_Info: rate limit exceeded, dropping request\n" );
+			return;
+		}
 	}
 
 	// Check whether Cmd_Argv(1) has a sane length. This was not done in the original Quake3 version which led
@@ -818,6 +830,8 @@ static void SV_FlushRedirect(char *outputbuf)
  *
  * @retval qfalse if we're good.
  * @retval qtrue return value means we need to block.
+ *
+ * @note Don't call this if sv_protect 2 flag is not set!
  */
 qboolean SV_CheckDRDoS(netadr_t from)
 {
@@ -927,7 +941,7 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 	char *cmd_aux;
 
 	// Prevent using rcon as an amplifier and make dictionary attacks impractical
-	if (SVC_RateLimitAddress(from, 10, 1000))
+	if ((sv_protect->integer & SVP_IOQ3) && SVC_RateLimitAddress(from, 10, 1000))
 	{
 		Com_Printf("Bad rcon - rate limit from %s exceeded, dropping request\n",
 		           NET_AdrToString(from));
@@ -940,7 +954,7 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 		static leakyBucket_t bucket;
 
 		// Make DoS via rcon impractical
-		if (SVC_RateLimit(&bucket, 10, 1000))
+		if ((sv_protect->integer & SVP_IOQ3) && SVC_RateLimit(&bucket, 10, 1000))
 		{
 			Com_Printf("Bad rcon - rate limit exceeded, dropping request\n");
 			return;
@@ -1025,10 +1039,18 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 
 	if (!Q_stricmp(c, "getstatus"))
 	{
+		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
+		{
+			return;
+		}
 		SVC_Status(from, qfalse);
 	}
 	else if (!Q_stricmp(c, "getinfo"))
 	{
+		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
+		{
+			return;
+		}
 		SVC_Info(from);
 	}
 	else if (!Q_stricmp(c, "getchallenge"))

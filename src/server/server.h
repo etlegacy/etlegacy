@@ -44,9 +44,12 @@
 #define PERS_SCORE              0       // !!! MUST NOT CHANGE, SERVER AND
                                         // GAME BOTH REFERENCE !!!
 // advert control
-#define SVA_MASTER   0x0001  // 1  - master server
-#define SVA_TRACKBASE 0x0002 // 2  - trackbase
+#define SVA_MASTER   	0x0001  // 1  - master server
+#define SVA_TRACKBASE 	0x0002 	// 2  - trackbase
 
+// server attack protection
+#define SVP_IOQ3 		0x0001  // 1  - ioQuake3 way
+#define SVP_OWOLF		0x0002  // 2  - OpenWolf way
 
 #define MAX_ENT_CLUSTERS    16
 
@@ -375,6 +378,7 @@ extern cvar_t *sv_packetdelay;
 extern cvar_t *sv_fullmsg;
 
 extern cvar_t *sv_advert;
+extern cvar_t *sv_protect;
 
 //===========================================================
 
