@@ -10,7 +10,8 @@ assetGlobalDef {
 	cursor		"ui/assets/3_cursor3"			// cursor	
 	gradientBar "ui/assets/gradientbar1.tga"	// gradient bar
 	
-	itemFocusSound "sound/misc/menu2.wav"		// sound for item getting focus (via keyboard or mouse )
+	// sound/misc/menu2.wav is not in path
+	// itemFocusSound "sound/misc/menu2.wav"		// sound for item getting focus (via keyboard or mouse )
 
 	fadeClamp	1.0							// sets the fadeup alpha
 	fadeCycle	1							// how often fade happens in milliseconds
