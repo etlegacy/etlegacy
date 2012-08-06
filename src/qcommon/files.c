@@ -725,7 +725,7 @@ int FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp)
 	fsh[f].handleSync         = qfalse;
 	if (!fsh[f].handleFiles.file.o)
 	{
-		// NOTE TTimo on non *nix systems, fs_homepath == fs_basepath, might want to avoid
+		// If fs_homepath == fs_basepath, don't bother
 		if (Q_stricmp(fs_homepath->string, fs_basepath->string))
 		{
 			// search basepath
@@ -739,12 +739,13 @@ int FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp)
 
 			fsh[f].handleFiles.file.o = fopen(ospath, "rb");
 			fsh[f].handleSync         = qfalse;
-
-			if (!fsh[f].handleFiles.file.o)
-			{
-				f = 0;
-			}
 		}
+	}
+
+	// File not found
+	if (!fsh[f].handleFiles.file.o)
+	{
+		f = 0;
 	}
 
 	*fp = f;
@@ -4561,7 +4562,7 @@ void FS_Flush(fileHandle_t f)
 }
 
 void FS_FilenameCompletion(const char *dir, const char *ext,
-                              qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk)
+                           qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk)
 {
 	char **filenames;
 	int  nfiles;
