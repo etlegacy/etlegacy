@@ -119,7 +119,7 @@ extern vmCvar_t ui_browserShowEmptyOrFull;
 extern vmCvar_t ui_browserShowPasswordProtected;
 extern vmCvar_t ui_browserShowFriendlyFire;
 extern vmCvar_t ui_browserShowMaxlives;
-extern vmCvar_t ui_browserShowPunkBuster;
+
 extern vmCvar_t ui_browserShowAntilag;
 extern vmCvar_t ui_browserShowWeaponsRestricted;
 extern vmCvar_t ui_browserShowTeamBalanced;

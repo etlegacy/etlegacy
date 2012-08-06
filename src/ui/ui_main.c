@@ -6825,17 +6825,13 @@ static void UI_BuildServerDisplayList(qboolean force)
 				}
 			}
 
-			trap_Cvar_Update(&ui_browserShowPunkBuster);
-			if (ui_browserShowPunkBuster.integer)
-			{
-				punkbuster = atoi(Info_ValueForKey(info, "punkbuster"));
+			// don't show punkbuster servers for ET legacy
+			punkbuster = atoi(Info_ValueForKey(info, "punkbuster"));
 
-				if ((punkbuster && ui_browserShowPunkBuster.integer == 2) ||
-				    (!punkbuster && ui_browserShowPunkBuster.integer == 1))
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
+			if (punkbuster)
+			{
+				trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+				continue;
 			}
 
 			trap_Cvar_Update(&ui_browserShowAntilag);
@@ -9817,7 +9813,7 @@ vmCvar_t ui_browserShowEmptyOrFull;
 vmCvar_t ui_browserShowPasswordProtected;
 vmCvar_t ui_browserShowFriendlyFire;            // NERVE - SMF
 vmCvar_t ui_browserShowMaxlives;                // NERVE - SMF
-vmCvar_t ui_browserShowPunkBuster;              // DHM - Nerve
+
 vmCvar_t ui_browserShowAntilag;     // TTimo
 vmCvar_t ui_browserShowWeaponsRestricted;
 vmCvar_t ui_browserShowTeamBalanced;
@@ -9970,7 +9966,6 @@ cvarTable_t cvarTable[] =
 	{ &ui_browserShowPasswordProtected, "ui_browserShowPasswordProtected", "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowFriendlyFire,      "ui_browserShowFriendlyFire",      "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowMaxlives,          "ui_browserShowMaxlives",          "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowPunkBuster,        "ui_browserShowPunkBuster",        "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowAntilag,           "ui_browserShowAntilag",           "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowWeaponsRestricted, "ui_browserShowWeaponsRestricted", "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowTeamBalanced,      "ui_browserShowTeamBalanced",      "0",                          CVAR_ARCHIVE                   },

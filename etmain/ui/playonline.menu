@@ -144,7 +144,7 @@ menuDef {
 		decoration
 	}
 	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 92, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowWeaponsRestricted", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Weapon Restrictions", "Includes or excludes servers that limit the number of available heavy weapons, from the server list" )
-
+/*
 	itemDef {
 		name		"filtericonPunkBuster"
 		rect		$evalfloat(8+.5*((FILTERS_WIDTH)-6)+2+2) 104 10 10
@@ -155,7 +155,7 @@ menuDef {
 		decoration
 	}
 	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 104, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowPunkBuster", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting PunkBuster Servers", "Includes or excludes Punk Buster servers from the server list" )
-
+*/
 	itemDef {
 		name		"filtericonAntilag"
 		rect		$evalfloat(8+.5*((FILTERS_WIDTH)-6)+2+2) 116 10 10
