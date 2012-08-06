@@ -6884,13 +6884,15 @@ static void UI_BuildServerDisplayList(qboolean force)
 				}
 			}
 
-			/*trap_Cvar_Update( &ui_serverFilterType );
-			if (ui_serverFilterType.integer > 0) {
-			    if (Q_stricmp(Info_ValueForKey(info, "game"), serverFilters[ui_serverFilterType.integer].basedir) != 0) {
-			        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-			        continue;
-			    }
-			}*/
+			// ET Legacy doesn't display etpro servers :/
+			{
+				const char	*gamename = Info_ValueForKey( info, "game" );
+
+				if(Q_stricmp( gamename, "etpro") == 0) {
+					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+					continue;
+				}
+			}
 
 			// make sure we never add a favorite server twice
 			if (ui_netSource.integer == AS_FAVORITES)
