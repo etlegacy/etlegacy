@@ -24,7 +24,7 @@ option(BUILD_SERVER     "Build the dedicated server executable"                 
 option(BUILD_CLIENT     "Build the client executable"                                           ON)
 option(BUILD_MOD        "Build the mod libraries"                                               ON)
 option(BUILD_MOD_PK3    "Pack the mod libraries into mp_bin.pk3"                                OFF)
-option(BUILD_PAK3_PK3   "Pack updated game scripts into pak3.pk3"                               ON)
+option(BUILD_PAK3_PK3   "Pack updated game scripts into pak3.pk3"                               OFF)
 
 option(CROSS_COMPILE32  "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)"     ON)
 option(BUNDLED_LIBS     "Use bundled libraries instead of the system ones."                     OFF)
@@ -317,11 +317,11 @@ if(BUILD_MOD)
 endif(BUILD_MOD)
 
 if(BUILD_PAK3_PK3)
-        add_custom_target(pak3_pk3 ALL DEPENDS etmain/pak3.pk3)
+        add_custom_target(pak3_pk3 ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/etmain/pak3.pk3)
         add_custom_command(
-                OUTPUT etmain/pak3.pk3
-                COMMAND zip -r pak3.pk3 *
-                WORKING_DIRECTORY etmain/
+                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/etmain/pak3.pk3
+                COMMAND zip -r ${CMAKE_CURRENT_BINARY_DIR}/etmain/pak3.pk3 *
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/etmain/
         )
 
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etmain/pak3.pk3
