@@ -100,7 +100,7 @@ char *Sys_DefaultHomePath(void)
 			return NULL;
 		}
 
-		if (!SUCCEEDED(qSHGetFolderPath(NULL, CSIDL_APPDATA,
+		if (!SUCCEEDED(qSHGetFolderPath(NULL, CSIDL_MYDOCUMENTS,
 		                                NULL, 0, szPath)))
 		{
 			Com_Printf("Unable to detect CSIDL_APPDATA\n");

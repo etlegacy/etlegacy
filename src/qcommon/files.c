@@ -3522,17 +3522,13 @@ static void FS_Startup(const char *gameName)
 	fs_basepath  = Cvar_Get("fs_basepath", Sys_DefaultInstallPath(), CVAR_INIT);
 	fs_basegame  = Cvar_Get("fs_basegame", "", CVAR_INIT);
 
-	homePath = Sys_DefaultHomePath();
+	homePath = Sys_DefaultHomePath(); //Returns My Documents path on windows now ex: C:\Users\username\Documents where also other games add their data
 	if (!homePath || !homePath[0])
 	{
 		homePath = fs_basepath->string;
 	}
 
-#ifdef _WIN32 //Use user home path only in linux
-	fs_homepath = Cvar_Get("fs_homepath", fs_basepath->string, CVAR_INIT);
-#else
 	fs_homepath = Cvar_Get("fs_homepath", homePath, CVAR_INIT);
-#endif // _WIN32
 
 	fs_gamedirvar = Cvar_Get("fs_game", "", CVAR_INIT | CVAR_SYSTEMINFO);
 
