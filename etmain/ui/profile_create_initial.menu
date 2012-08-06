@@ -127,8 +127,7 @@ menuDef {
 																													( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
 																													( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1" )
 	
-	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+264, (SUBWINDOW_WIDTH)-8-4, 10, "PunkBuster is a powerful cheat protection technology that prevents dishonest players from gaining an unfair advantage. Many games servers will not allow you to join unless PunkBuster is enabled.", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	NAMEDBUTTON( "bttn_pbenable", (SUBWINDOW_X+4)+.5*((SUBWINDOW_WIDTH)-164), SUBWINDOW_Y+312, 164, 14, "ENABLE PUNKBUSTER", .24, 11, clearFocus ; open playonline_enablepb )
+	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+264, (SUBWINDOW_WIDTH)-8-4, 10, "^3Thank you for installing ET:Legacy.\n\n^3Visit ^1www.etlegacy.com^3 for more information.\n\n^3Let's keep ET alive!", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "QUIT", .3, 14, close profile_create_initial ; close main ; open credits_quit )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "CREATE", .3, 14, conditionalscript UIProfileValidName 2
