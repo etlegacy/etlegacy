@@ -1,12 +1,8 @@
-	#include "ui/menudef.h"
-
-	#define DEFAULT_TEXT_SCALE 0.25
-
-	#define ORIGIN_QUICKMESSAGE		10 10
-
-	#define QM_MENU_GRADIENT_START_OFFSET
-
-	#define QM_MENU_START( WINDOWNAME )																			\
+#include "ui/menudef.h"
+#define DEFAULT_TEXT_SCALE 0.25
+#define ORIGIN_QUICKMESSAGE		10 10
+#define QM_MENU_GRADIENT_START_OFFSET
+#define QM_MENU_START( WINDOWNAME )																				\
 																												\
 menuDef {																										\
 	name		WINDOWNAME																						\

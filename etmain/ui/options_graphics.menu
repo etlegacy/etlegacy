@@ -64,8 +64,7 @@ menuDef {
 																					uiScript systemCvarsReset ;
 																					open rec_restart )
 		
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14,
-		uiScript vidReset ; close options_graphics ; open options )
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, uiScript vidReset ; close options_graphics ; open options )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "APPLY", .3, 14,
 		conditionalScript vidrestartIsRequired 2
 		( "open vid_restart" )

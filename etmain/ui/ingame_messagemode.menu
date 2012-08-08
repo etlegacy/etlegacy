@@ -54,14 +54,10 @@ menuDef
 		visible		1
 		decoration
 	}
-	EDITFIELDLEFT( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-12, 10,
-		"Say:", .2, 8, "cg_messageText" onEsc { close ingame_messagemode }, 128, 128, "Enter text here - press ESCAPE twice to cancel" )
+	EDITFIELDLEFT( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-12, 10, "Say:", .2, 8, "cg_messageText" onEsc { close ingame_messagemode }, 128, 128, "Enter text here - press ESCAPE twice to cancel" )
 	
-	MULTILEFT( SUBWINDOW_X+4, SUBWINDOW_Y+28, (SUBWINDOW_WIDTH)-12, 10,
-		"To:", .2, 8, "cg_messageType", cvarFloatList { "All" 1 "Team" 2 "Fireteam" 3 }, "Select the desitnation for your text (To all, team only or fire-team only)" )
+	MULTILEFT( SUBWINDOW_X+4, SUBWINDOW_Y+28, (SUBWINDOW_WIDTH)-12, 10, "To:", .2, 8, "cg_messageType", cvarFloatList { "All" 1 "Team" 2 "Fireteam" 3 }, "Select the desitnation for your text (To all, team only or fire-team only)" )
 	
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18,
-		"CANCEL", .3, 14, close ingame_messagemode ; )
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18,
-		"SEND", .3, 14, close ingame_messagemode ; exec messageSend ; )
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "CANCEL", .3, 14, close ingame_messagemode ; )
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "SEND", .3, 14, close ingame_messagemode ; exec messageSend ; )
 }

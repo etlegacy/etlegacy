@@ -9,7 +9,6 @@
 #define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpCreditsAdditional"
 
-		
 // Additional Menu //
 	
 menuDef {
@@ -183,7 +182,7 @@ menuDef {
 
 	LABELWHITE( 6, CREDITS_Y+52, .5*(WINDOW_WIDTH-24), 10, "Tony Ray", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+52, .5*(WINDOW_WIDTH-24), 10, "President", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+64, .5*(WINDOW_WIDTH-24), 10, "Bj�rn Christoph", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+64, .5*(WINDOW_WIDTH-24), 10, "Björn Christoph", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+64, .5*(WINDOW_WIDTH-24), 10, "Senior Project Leader", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Voice Artists //
