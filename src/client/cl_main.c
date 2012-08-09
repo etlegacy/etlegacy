@@ -5247,6 +5247,22 @@ void CL_SaveTransTable(const char *fileName, qboolean newOnly)
 				len = strlen(buf);
 				FS_Write(buf, len, f);
 
+				buf = va("\tpolish\t\t\"%s\"\n", t->translated[LANGUAGE_POLISH]);
+				len = strlen(buf);
+				FS_Write(buf, len, f);
+
+				buf = va("\tdutch\t\t\"%s\"\n", t->translated[LANGUAGE_DUTCH]);
+				len = strlen(buf);
+				FS_Write(buf, len, f);
+
+				buf = va("\tczech\t\t\"%s\"\n", t->translated[LANGUAGE_CZECH]);
+				len = strlen(buf);
+				FS_Write(buf, len, f);
+
+				buf = va("\trussian\t\t\"%s\"\n", t->translated[LANGUAGE_RUSSIAN]);
+				len = strlen(buf);
+				FS_Write(buf, len, f);
+
 				buf = "}\n";
 				len = strlen(buf);
 				FS_Write(buf, len, f);
@@ -5344,17 +5360,15 @@ void CL_LoadTransTable(const char *fileName)
 {
 	char         translated[MAX_LANGUAGES][MAX_VA_STRING];
 	char         original[MAX_VA_STRING];
-	qboolean     aborted;
+	qboolean     aborted = qfalse;
 	char         *text;
 	fileHandle_t f;
 	char         *text_p;
 	char         *token;
 	int          len, i;
 	trans_t      *t;
-	int          count;
+	int          count = 0;
 
-	count                       = 0;
-	aborted                     = qfalse;
 	cl.corruptedTranslationFile = qfalse;
 
 	len = FS_FOpenFileByMode(fileName, &f, FS_READ);
@@ -5421,7 +5435,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_FRENCH], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_FRENCH]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Translation formatting doesn't match up with English version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: French translation formatting doesn't match up with English version!\n");
 			aborted = qtrue;
 			break;
 		}
@@ -5438,7 +5452,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_GERMAN], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_GERMAN]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Translation formatting doesn't match up with English version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: German translation formatting doesn't match up with English version!\n");
 			aborted = qtrue;
 			break;
 		}
@@ -5455,7 +5469,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_ITALIAN], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_ITALIAN]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Translation formatting doesn't match up with English version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Italian translation formatting doesn't match up with English version!\n");
 			aborted = qtrue;
 			break;
 		}
@@ -5472,7 +5486,92 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_SPANISH], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_SPANISH]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Translation formatting doesn't match up with English version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Spanish translation formatting doesn't match up with English version!\n");
+			aborted = qtrue;
+			break;
+		}
+
+		// polish
+		token = COM_Parse(&text_p);
+		if (Q_stricmp("polish", token))
+		{
+			aborted = qtrue;
+			break;
+		}
+
+		token = COM_Parse(&text_p);
+		strcpy(translated[LANGUAGE_POLISH], token);
+		if (!CL_CheckTranslationString(original, translated[LANGUAGE_POLISH]))
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: Polish translation formatting doesn't match up with English version!\n");
+			aborted = qtrue;
+			break;
+		}
+
+		// dutch
+		token = COM_Parse(&text_p);
+		if (Q_stricmp("dutch", token))
+		{
+			aborted = qtrue;
+			break;
+		}
+
+		token = COM_Parse(&text_p);
+		strcpy(translated[LANGUAGE_DUTCH], token);
+		if (!CL_CheckTranslationString(original, translated[LANGUAGE_DUTCH]))
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: Dutch translation formatting doesn't match up with English version!\n");
+			aborted = qtrue;
+			break;
+		}
+
+		// czech
+		token = COM_Parse(&text_p);
+		if (Q_stricmp("czech", token))
+		{
+			aborted = qtrue;
+			break;
+		}
+
+		token = COM_Parse(&text_p);
+		strcpy(translated[LANGUAGE_CZECH], token);
+		if (!CL_CheckTranslationString(original, translated[LANGUAGE_CZECH]))
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: Czech translation formatting doesn't match up with English version!\n");
+			aborted = qtrue;
+			break;
+		}
+
+		// russian
+		token = COM_Parse(&text_p);
+		if (Q_stricmp("russian", token))
+		{
+			aborted = qtrue;
+			break;
+		}
+
+		token = COM_Parse(&text_p);
+		strcpy(translated[LANGUAGE_RUSSIAN], token);
+		if (!CL_CheckTranslationString(original, translated[LANGUAGE_RUSSIAN]))
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: Russian translation formatting doesn't match up with English version!\n");
+			aborted = qtrue;
+			break;
+		}
+
+		// finnish
+		token = COM_Parse(&text_p);
+		if (Q_stricmp("finnish", token))
+		{
+			aborted = qtrue;
+			break;
+		}
+
+		token = COM_Parse(&text_p);
+		strcpy(translated[LANGUAGE_FINNISH], token);
+		if (!CL_CheckTranslationString(original, translated[LANGUAGE_FINNISH]))
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: Finnish translation formatting doesn't match up with English version!\n");
 			aborted = qtrue;
 			break;
 		}
