@@ -34,7 +34,6 @@
 #ifndef __TR_TYPES_H
 #define __TR_TYPES_H
 
-
 #define MAX_CORONAS     32          //----(SA)  not really a reason to limit this other than trying to keep a reasonable count
 #define MAX_DLIGHTS     32          // can't be increased, because bit flags are used on surfaces
 #define MAX_ENTITIES    1023        // can't be increased without changing drawsurf bit packing
@@ -68,7 +67,6 @@
 #define RDF_UNDERWATER      (1 << 4)    // so the renderer knows to use underwater fog when the player is underwater
 #define RDF_DRAWINGSKY      (1 << 5)
 #define RDF_SNOOPERVIEW     (1 << 6)    //----(SA)  added
-
 
 typedef struct
 {
@@ -192,7 +190,6 @@ typedef enum
 	NUM_FOGS
 } glfogType_t;
 
-
 typedef struct
 {
 	int mode;                   // GL_LINEAR, GL_EXP
@@ -211,7 +208,6 @@ typedef struct
 
 //----(SA)  end
 
-
 #define MAX_RENDER_STRINGS          8
 #define MAX_RENDER_STRING_LENGTH    32
 
@@ -228,9 +224,6 @@ typedef struct
 	// 1 bits will prevent the associated area from rendering at all
 	byte areamask[MAX_MAP_AREA_BYTES];
 
-
-
-
 	// text messages for deform text shaders
 	char text[MAX_RENDER_STRINGS][MAX_RENDER_STRING_LENGTH];
 
@@ -241,14 +234,12 @@ typedef struct
 
 } refdef_t;
 
-
 typedef enum
 {
 	STEREO_CENTER,
 	STEREO_LEFT,
 	STEREO_RIGHT
 } stereoFrame_t;
-
 
 /*
 ** glconfig_t
@@ -291,7 +282,8 @@ typedef struct
 	char renderer_string[MAX_STRING_CHARS];
 	char vendor_string[MAX_STRING_CHARS];
 	char version_string[MAX_STRING_CHARS];
-	char extensions_string[MAX_STRING_CHARS * 4];                  // TTimo - bumping, some cards have a big extension string
+	char extensions_string[MAX_STRING_CHARS * 4];	// TTimo - bumping, some cards have a big extension string
+													// no need to increase MAX_STRING_CHARS *4 - console doesn't print more
 
 	int maxTextureSize;                             // queried from GL
 	int maxActiveTextures;                          // multitexture ability
@@ -313,8 +305,8 @@ typedef struct
 	int NVFogMode;                                  //----(SA)  added
 	// ATI
 	int ATIMaxTruformTess;                          // for truform support
-	int ATINormalMode;                          // for truform support
-	int ATIPointMode;                           // for truform support
+	int ATINormalMode;                          	// for truform support
+	int ATIPointMode;                           	// for truform support
 
 	int vidWidth, vidHeight;
 	// aspect is the screen's physical width / height, which may be different

@@ -176,7 +176,6 @@ cvar_t *r_debugSort;
 cvar_t *r_printShaders;
 cvar_t *r_saveFontData;
 
-// Ridah
 cvar_t *r_cache;
 cvar_t *r_cacheShaders;
 cvar_t *r_cacheModels;
@@ -184,11 +183,8 @@ cvar_t *r_cacheModels;
 cvar_t *r_cacheGathering;
 
 cvar_t *r_bonesDebug;
-// done.
 
-// Rafael - wolf fog
 cvar_t *r_wolffog;
-// done
 
 cvar_t *r_highQualityVideo;
 
@@ -239,20 +235,16 @@ The tessellation level and normal generation mode are specified with:
         An INVALID_VALUE error will be generated if the value for <param> is less than zero or greater than the max value.
 
 Associated 'gets':
-Get Value                               Get Command Type     Minimum Value                                                              Attribute
----------                               ----------- ----     ------------                                                               ---------
-PN_TRIANGLES_ATI                                                IsEnabled   B           False                                       PN Triangles/enable
-PN_TRIANGLES_NORMAL_MODE_ATI                    GetIntegerv Z2          PN_TRIANGLES_NORMAL_MODE_QUADRATIC_ATI          PN Triangles
-PN_TRIANGLES_POINT_MODE_ATI                             GetIntegerv Z2          PN_TRIANGLES_POINT_MODE_CUBIC_ATI                       PN Triangles
-PN_TRIANGLES_TESSELATION_LEVEL_ATI              GetIntegerv Z+          1                                                                                       PN Triangles
+Get Value                               Get Command Type     Minimum Value                                  Attribute
+---------                               ----------- ----     ------------                                   ---------
+PN_TRIANGLES_ATI                        IsEnabled   B           False                                       PN Triangles/enable
+PN_TRIANGLES_NORMAL_MODE_ATI            GetIntegerv Z2          PN_TRIANGLES_NORMAL_MODE_QUADRATIC_ATI      PN Triangles
+PN_TRIANGLES_POINT_MODE_ATI             GetIntegerv Z2          PN_TRIANGLES_POINT_MODE_CUBIC_ATI           PN Triangles
+PN_TRIANGLES_TESSELATION_LEVEL_ATI      GetIntegerv Z+          1                                           PN Triangles
 MAX_PN_TRIANGLES_TESSELATION_LEVEL_ATI  GetIntegerv Z+          1                                                                                       -
-
-
-
 
 */
 //----(SA)      end
-
 
 static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
 {
@@ -276,7 +268,6 @@ static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean sho
 		ri.Cvar_Set(cv->name, va("%f", maxVal));
 	}
 }
-
 
 /*
  * @brief This function is responsible for initializing a valid OpenGL subsystem
@@ -377,7 +368,6 @@ void GL_CheckErrors(void)
 	ri.Error(ERR_VID_FATAL, "GL_CheckErrors: %s", s);
 }
 
-
 /*
 ** R_GetModeInfo
 */
@@ -445,7 +435,6 @@ qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode)
 	*windowAspect = ( float ) *width / (*height * pixelAspect);
 
 	return qtrue;
-
 }
 
 /*
@@ -462,7 +451,6 @@ static void R_ModeList_f(void)
 	}
 	ri.Printf(PRINT_ALL, "\n");
 }
-
 
 /*
  * ==============================================================================
@@ -499,7 +487,6 @@ static void R_ModeList_f(void)
  * Return value must be freed with ri.Hunk_FreeTempMemory()
  * ==================
  */
-
 byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *padlen)
 {
 	byte  *buffer, *bufstart;
@@ -663,7 +650,6 @@ void RB_TakeScreenshot(int x, int y, int width, int height, char *fileName)
  * RB_TakeScreenshotJPEG
  * ==================
  */
-
 void RB_TakeScreenshotJPEG(int x, int y, int width, int height, char *fileName)
 {
 	byte   *buffer;
@@ -1070,11 +1056,12 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "\nGL_VENDOR: %s\n", glConfig.vendor_string);
 	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string);
 	ri.Printf(PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string);
-	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: %s\n", glConfig.extensions_string);
-	ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
+	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: %s", glConfig.extensions_string);
+	ri.Printf(PRINT_ALL, "\n\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 	ri.Printf(PRINT_ALL, "GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
-	ri.Printf(PRINT_ALL, "\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
+	ri.Printf(PRINT_ALL, "PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
 	ri.Printf(PRINT_ALL, "MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1]);
+
 	if (glConfig.displayFrequency)
 	{
 		ri.Printf(PRINT_ALL, "%d\n", glConfig.displayFrequency);
@@ -1083,6 +1070,7 @@ void GfxInfo_f(void)
 	{
 		ri.Printf(PRINT_ALL, "N/A\n");
 	}
+
 	if (glConfig.deviceSupportsGamma)
 	{
 		ri.Printf(PRINT_ALL, "GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
@@ -1291,9 +1279,7 @@ void R_Register(void)
 	r_bonesDebug     = ri.Cvar_Get("r_bonesDebug", "0", CVAR_CHEAT);
 	// done.
 
-	// Rafael - wolf fog
 	r_wolffog = ri.Cvar_Get("r_wolffog", "1", CVAR_CHEAT);    // JPW NERVE cheat protected per id request
-	// done
 
 	r_nocurves    = ri.Cvar_Get("r_nocurves", "0", CVAR_CHEAT);
 	r_drawworld   = ri.Cvar_Get("r_drawworld", "1", CVAR_CHEAT);
@@ -1482,7 +1468,6 @@ RE_Shutdown
 */
 void RE_Shutdown(qboolean destroyWindow)
 {
-
 	ri.Printf(PRINT_ALL, "RE_Shutdown( %i )\n", destroyWindow);
 
 	ri.Cmd_RemoveCommand("modellist");
@@ -1549,7 +1534,6 @@ void RE_Shutdown(qboolean destroyWindow)
 	tr.registered = qfalse;
 }
 
-
 /*
  * @brief Touch all images to make sure they are resident
  */
@@ -1592,10 +1576,10 @@ refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
 	re.BeginRegistration = RE_BeginRegistration;
 	re.RegisterModel     = RE_RegisterModel;
 	re.RegisterSkin      = RE_RegisterSkin;
-//----(SA) added
+
 	re.GetSkinModel       = RE_GetSkinModel;
 	re.GetShaderFromModel = RE_GetShaderFromModel;
-//----(SA) end
+
 	re.RegisterShader      = RE_RegisterShader;
 	re.RegisterShaderNoMip = RE_RegisterShaderNoMip;
 	re.LoadWorld           = RE_LoadWorldMap;
@@ -1619,10 +1603,10 @@ refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
 	re.AddPolysToScene = RE_AddPolysToScene;
 	// done.
 	re.AddLightToScene = RE_AddLightToScene;
-//----(SA)
+
 	re.AddCoronaToScene = RE_AddCoronaToScene;
 	re.SetFog           = R_SetFog;
-//----(SA)
+
 	re.RenderScene      = RE_RenderScene;
 	re.SaveViewParms    = RE_SaveViewParms;
 	re.RestoreViewParms = RE_RestoreViewParms;
