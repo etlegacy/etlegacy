@@ -33,11 +33,9 @@
  */
 
 #include "client.h"
-
 #include "../botlib/botlib.h"
 
 extern botlib_export_t *botlib_export;
-
 
 // NERVE - SMF
 void Key_GetBindingBuf(int keynum, char *buf, int buflen);
@@ -46,7 +44,6 @@ void Key_KeynumToStringBuf(int keynum, char *buf, int buflen);
 
 // ydnar: can we put this in a header, pls?
 void Key_GetBindingByString(const char *binding, int *key1, int *key2);
-
 
 /*
 ====================
@@ -67,7 +64,6 @@ void CL_GetGlconfig(glconfig_t *glconfig)
 {
 	*glconfig = cls.glconfig;
 }
-
 
 /*
 ====================
@@ -101,13 +97,12 @@ int CL_GetCurrentCmdNumber(void)
 	return cl.cmdNumber;
 }
 
-
 /*
 ====================
 CL_GetParseEntityState
 ====================
 */
-qboolean    CL_GetParseEntityState(int parseEntityNumber, entityState_t *state)
+qboolean CL_GetParseEntityState(int parseEntityNumber, entityState_t *state)
 {
 	// can't return anything that hasn't been parsed yet
 	if (parseEntityNumber >= cl.parseEntitiesNum)
@@ -131,7 +126,7 @@ qboolean    CL_GetParseEntityState(int parseEntityNumber, entityState_t *state)
 CL_GetCurrentSnapshotNumber
 ====================
 */
-void    CL_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime)
+void CL_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime)
 {
 	*snapshotNumber = cl.snap.messageNum;
 	*serverTime     = cl.snap.serverTime;
@@ -142,7 +137,7 @@ void    CL_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime)
 CL_GetSnapshot
 ====================
 */
-qboolean    CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
+qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
 {
 	clSnapshot_t *clSnap;
 	int          i, count;
@@ -244,7 +239,6 @@ qboolean CL_CGameCheckKeyExec(int key)
 	}
 }
 
-
 /*
 =====================
 CL_ConfigstringModified
@@ -313,9 +307,7 @@ void CL_ConfigstringModified(void)
 		// parse serverId and other cvars
 		CL_SystemInfoChanged();
 	}
-
 }
-
 
 /*
 ===================
@@ -814,14 +806,9 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_R_ADDPOLYBUFFERTOSCENE:
 		re.AddPolyBufferToScene(VMA(1));
 		break;
-//	case CG_R_LIGHTFORPOINT:
-//		return re.LightForPoint( VMA(1), VMA(2), VMA(3), VMA(4) );
 	case CG_R_ADDLIGHTTOSCENE:
 		re.AddLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), args[7], args[8]);
 		return 0;
-//	case CG_R_ADDADDITIVELIGHTTOSCENE:
-//		re.AddAdditiveLightToScene( VMA(1), VMF(2), VMF(3), VMF(4), VMF(5) );
-//		return 0;
 	case CG_R_ADDCORONATOSCENE:
 		re.AddCoronaToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), args[6], args[7]);
 		return 0;
@@ -902,9 +889,6 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		Key_SetOverstrikeMode(args[1]);
 		return 0;
 
-
-
-
 	case CG_MEMSET:
 		return (intptr_t)memset(VMA(1), args[2], args[3]);
 	case CG_MEMCPY:
@@ -978,27 +962,6 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		Com_Printf("%s%f\n", (char *)VMA(1), VMF(2));
 		return 0;
 
-	case CG_LOADCAMERA:
-		//return loadCamera( args[1], VMA( 2 ) );
-		return 0;
-
-	case CG_STARTCAMERA:
-		//if ( args[1] == 0 ) {  // CAM_PRIMARY
-		//	cl.cameraMode = qtrue;
-		//}
-		//startCamera( args[1], args[2] );
-		return 0;
-
-	case CG_STOPCAMERA:
-		//if ( args[1] == 0 ) {  // CAM_PRIMARY
-		//	cl.cameraMode = qfalse;
-		//}
-		return 0;
-
-	case CG_GETCAMERAINFO:
-		//return getCameraInfo( args[1], args[2], VMA( 3 ), VMA( 4 ), VMA( 5 ) );
-		return 0;
-
 	case CG_GET_ENTITY_TOKEN:
 		return re.GetEntityToken(VMA(1), args[2]);
 
@@ -1010,9 +973,6 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 				VM_Call(uivm, UI_SET_ACTIVE_MENU, args[1]);
 			}
 		}
-		return 0;
-
-	case CG_INGAME_CLOSEPOPUP:
 		return 0;
 
 	case CG_KEY_GETBINDINGBUF:
@@ -1046,11 +1006,6 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		Com_GetHunkInfo(VMA(1), VMA(2));
 		return 0;
 
-	case CG_PUMPEVENTLOOP:
-//		Com_EventLoop();
-//		CL_WritePacket();
-		return 0;
-
 	//zinx - binary channel
 	case CG_SENDMESSAGE:
 		CL_SendBinaryMessage(VMA(1), args[2]);
@@ -1071,6 +1026,17 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_R_FINISH:
 		re.Finish();
 		return 0;
+
+	case CG_LOADCAMERA:
+	case CG_STARTCAMERA:
+	case CG_STOPCAMERA:
+	case CG_GETCAMERAINFO:
+	case CG_PUMPEVENTLOOP:
+	case CG_INGAME_CLOSEPOPUP:
+	case CG_R_LIGHTFORPOINT: // re-added to avoid a crash when called - still in enum of cgameImport_t
+		Com_Printf("Obsolete cgame system trap: %ld\n", (long int) args[0]);
+		return 0;
+
 	default:
 		assert(0);
 		Com_Error(ERR_DROP, "Bad cgame system trap: %ld\n", (long int) args[0]);
@@ -1246,12 +1212,7 @@ void CL_InitCGame(void)
 
 	// Ridah, update the memory usage file
 	CL_UpdateLevelHunkUsage();
-
-//	if( cl_autorecord->integer ) {
-//		Cvar_Set( "g_synchronousClients", "1" );
-//	}
 }
-
 
 /*
 ====================
@@ -1270,8 +1231,6 @@ qboolean CL_GameCommand(void)
 	return VM_Call(cgvm, CG_CONSOLE_COMMAND);
 }
 
-
-
 /*
 =====================
 CL_CGameRendering
@@ -1282,7 +1241,6 @@ void CL_CGameRendering(stereoFrame_t stereo)
 	VM_Call(cgvm, CG_DRAW_ACTIVE_FRAME, cl.serverTime, stereo, clc.demoplaying);
 	VM_Debug(0);
 }
-
 
 /*
 =================
@@ -1368,7 +1326,6 @@ void CL_AdjustTimeDelta(void)
 		Com_Printf("%i ", cl.serverTimeDelta);
 	}
 }
-
 
 /*
 ==================
@@ -1551,7 +1508,6 @@ void CL_SetCGameTime(void)
 			return;     // end of demo
 		}
 	}
-
 }
 
 /*
