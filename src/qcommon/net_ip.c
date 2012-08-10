@@ -213,30 +213,33 @@ char *NET_ErrorString(void)
 
 static void NetadrToSockadr(netadr_t *a, struct sockaddr *s)
 {
-	if (a->type == NA_BROADCAST)
+
+	switch (a->type)
 	{
-		((struct sockaddr_in *)s)->sin_family      = AF_INET;
-		((struct sockaddr_in *)s)->sin_port        = a->port;
-		((struct sockaddr_in *)s)->sin_addr.s_addr = INADDR_BROADCAST;
-	}
-	else if (a->type == NA_IP)
-	{
-		((struct sockaddr_in *)s)->sin_family      = AF_INET;
-		((struct sockaddr_in *)s)->sin_addr.s_addr = *(int *)&a->ip;
-		((struct sockaddr_in *)s)->sin_port        = a->port;
-	}
-	else if (a->type == NA_IP6)
-	{
-		((struct sockaddr_in6 *)s)->sin6_family   = AF_INET6;
-		((struct sockaddr_in6 *)s)->sin6_addr     = *((struct in6_addr *) &a->ip6);
-		((struct sockaddr_in6 *)s)->sin6_port     = a->port;
-		((struct sockaddr_in6 *)s)->sin6_scope_id = a->scope_id;
-	}
-	else if (a->type == NA_MULTICAST6)
-	{
-		((struct sockaddr_in6 *)s)->sin6_family = AF_INET6;
-		((struct sockaddr_in6 *)s)->sin6_addr   = curgroup.ipv6mr_multiaddr;
-		((struct sockaddr_in6 *)s)->sin6_port   = a->port;
+		case NA_BROADCAST:
+			((struct sockaddr_in *)s)->sin_family      = AF_INET;
+			((struct sockaddr_in *)s)->sin_port        = a->port;
+			((struct sockaddr_in *)s)->sin_addr.s_addr = INADDR_BROADCAST;
+			break;
+		case NA_IP:
+			((struct sockaddr_in *)s)->sin_family      = AF_INET;
+			((struct sockaddr_in *)s)->sin_addr.s_addr = *(int *)&a->ip;
+			((struct sockaddr_in *)s)->sin_port        = a->port;
+			break;
+		case NA_IP6:
+			((struct sockaddr_in6 *)s)->sin6_family   = AF_INET6;
+			((struct sockaddr_in6 *)s)->sin6_addr     = *((struct in6_addr *) &a->ip6);
+			((struct sockaddr_in6 *)s)->sin6_port     = a->port;
+			((struct sockaddr_in6 *)s)->sin6_scope_id = a->scope_id;
+			break;
+		case NA_MULTICAST6:
+			((struct sockaddr_in6 *)s)->sin6_family = AF_INET6;
+			((struct sockaddr_in6 *)s)->sin6_addr   = curgroup.ipv6mr_multiaddr;
+			((struct sockaddr_in6 *)s)->sin6_port   = a->port;
+			break;
+		default:
+			Com_Printf("NetadrToSockadr: bad address type\n");
+			break;
 	}
 }
 
@@ -813,7 +816,7 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
 			return;
 		}
 
-		Com_Printf("SYS_SendPacket: %s\n", NET_ErrorString());
+		Com_Printf("Sys_SendPacket: %s\n", NET_ErrorString());
 	}
 }
 
