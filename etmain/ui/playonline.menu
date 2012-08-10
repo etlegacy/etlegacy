@@ -88,7 +88,7 @@ menuDef {
 	SUBWINDOW( 6, 64, (FILTERS_WIDTH), 94, "FILTERS" )
 	
 	MULTIACTIONLEFT( 8, 80, .5*((FILTERS_WIDTH)-6), 10, "Source:", .2, 8, "ui_netSource", cvarFloatList { "Local" 0 "Internet" 1 "Favorites" 2 }, uiScript UpdateFilter, "Choose the type of game servers to display, from Internet, local and the favorites list" )
-	MULTIACTIONLEFT( 8+.5*((FILTERS_WIDTH)-6)+2, 80, .5*((FILTERS_WIDTH)-6), 10, "Game Type:", .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "Last Man Standing" 5 }, uiScript RefreshFilter, "Displays only game servers offering this Game Type" )
+	MULTIACTIONLEFT( 8+.5*((FILTERS_WIDTH)-6)+2, 80, .5*((FILTERS_WIDTH)-6), 10, "Game Type:", .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "Last Man Standing" 5 "Map Voting" 6 }, uiScript RefreshFilter, "Displays only game servers offering this Game Type" )
 
 	itemDef {
 		name		"filtericonEmptyFull"
@@ -158,25 +158,25 @@ menuDef {
 */
 	itemDef {
 		name		"filtericonAntilag"
-		rect		$evalfloat(8+.5*((FILTERS_WIDTH)-6)+2+2) 116 10 10
+		rect		$evalfloat(8+.5*((FILTERS_WIDTH)-6)+2+2) 104 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_antilag"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 116, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Anti-Lag Servers", "Includes or excludes servers with support for modem players, from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 104, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Anti-Lag Servers", "Includes or excludes servers with support for modem players, from the server list" )
 
 	itemDef {
 		name		"filtericonTeamBalance"
-		rect		$evalfloat(8+.5*((FILTERS_WIDTH)-6)+2+2) 128 10 10
+		rect		$evalfloat(8+.5*((FILTERS_WIDTH)-6)+2+2) 116 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_balance"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 128, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowTeamBalanced", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Force Team Balance", "Includes or excludes servers that enforce balanced teams, from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 116, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowTeamBalanced", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Force Team Balance", "Includes or excludes servers that enforce balanced teams, from the server list" )
 
 	itemDef {
 		name			"descriptionFilters"
