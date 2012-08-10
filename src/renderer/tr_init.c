@@ -1208,8 +1208,11 @@ void R_Register(void)
 	r_customPixelAspect = ri.Cvar_Get("r_customPixelAspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_simpleMipMaps     = ri.Cvar_Get("r_simpleMipMaps", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_uiFullScreen      = ri.Cvar_Get("r_uifullscreen", "0", 0);
+
 	r_subdivisions      = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
+#ifdef SMP
 	r_smp               = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
+#endif
 	r_stereoEnabled     = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_ignoreFastPath    = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH); // ydnar: use fast path by default
 	r_greyscale         = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1423,6 +1426,7 @@ void R_Init(void)
 
 	backEndData[0] = ri.Hunk_Alloc(sizeof(*backEndData[0]) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
 
+#ifdef SMP
 	if (r_smp->integer)
 	{
 		backEndData[1] = ri.Hunk_Alloc(sizeof(*backEndData[1]) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
@@ -1431,6 +1435,10 @@ void R_Init(void)
 	{
 		backEndData[1] = NULL;
 	}
+#else
+	backEndData[1] = NULL;
+#endif
+
 	R_ToggleSmpFrame();
 
 	InitOpenGL();

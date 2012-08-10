@@ -3593,12 +3593,14 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	}
 #endif
 
+#ifdef SMP
 	// make sure the render thread is stopped, because we are probably
 	// going to have to upload an image
 	if (r_smp->integer)
 	{
 		R_SyncRenderThread();
 	}
+#endif
 
 	// Ridah, check the cache
 	// assignment used as truth value
@@ -3723,12 +3725,14 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 		}
 	}
 
+#ifdef SMP
 	// make sure the render thread is stopped, because we are probably
 	// going to have to upload an image
 	if (r_smp->integer)
 	{
 		R_SyncRenderThread();
 	}
+#endif
 
 	// clear the global shader
 	Com_Memset(&shader, 0, sizeof(shader));

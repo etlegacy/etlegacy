@@ -68,6 +68,7 @@ R_ToggleSmpFrame
 */
 void R_ToggleSmpFrame(void)
 {
+#ifdef SMP
 	if (r_smp->integer)
 	{
 		// use the other buffers next frame, because another CPU
@@ -78,6 +79,9 @@ void R_ToggleSmpFrame(void)
 	{
 		tr.smpFrame = 0;
 	}
+#else
+	tr.smpFrame = 0;
+#endif
 
 	backEndData[tr.smpFrame]->commands.used = 0;
 
