@@ -1068,9 +1068,10 @@ Loads any of the supported image types into a cannonical
 void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 {
 	qboolean   orgNameFailed = qfalse;
-	int        i;
-	char       localName[MAX_QPATH];
+	int i,j;
+	char localName[MAX_QPATH];
 	const char *ext;
+	char *altName;
 
 	*pic    = NULL;
 	*width  = 0;
@@ -1113,21 +1114,24 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 
 	// Try and find a suitable match using all
 	// the image formats supported
-	for (i = 0; i < numImageLoaders; i++)
+	for (j = 0; j < numImageLoaders; j++)
 	{
-		char *altName = va("%s.%s", localName, imageLoaders[i].ext);
+		altName = va("%s.%s", localName, imageLoaders[j].ext);
+
+		if (j == i)
+		{
+			continue;
+		}
 
 		// Load
-		imageLoaders[i].ImageLoader(altName, pic, width, height);
+		imageLoaders[j].ImageLoader(altName, pic, width, height);
 
 		if (*pic)
 		{
 			if (orgNameFailed)
 			{
-				ri.Printf(PRINT_DEVELOPER, "WARNING: %s not present, using %s instead\n",
-				          name, altName);
+				ri.Printf(PRINT_DEVELOPER, "WARNING: %s not present, using %s instead\n", name, altName);
 			}
-
 			break;
 		}
 	}
@@ -1629,7 +1633,7 @@ void R_SetColorMappings(void)
 R_InitImages
 ===============
 */
-void    R_InitImages(void)
+void R_InitImages(void)
 {
 	Com_Memset(hashTable, 0, sizeof(hashTable));
 	// build brightness translation tables
@@ -2106,7 +2110,6 @@ void    R_SkinList_f(void)
 	ri.Printf(PRINT_ALL, "------------------\n");
 }
 
-
 /*
 ==============
 R_CropImage
@@ -2122,7 +2125,6 @@ qboolean R_CropImage(char *name, byte **pic, int border, int *width, int *height
 {
 	return qtrue;   // shutup the compiler
 }
-
 
 /*
 ===============
@@ -2497,8 +2499,6 @@ void R_FindFreeTexnum(image_t *inImage)
 	}
 }
 #endif
-
-
 
 /*
 ===============
