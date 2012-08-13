@@ -100,6 +100,11 @@ char *Sys_DefaultHomePath(void)
 			return NULL;
 		}
 
+		// mingw doesn't have CSIDL_MYDOCUMENTS, but according to the MSDN
+		// CSIDL_PERSONAL should be its equivalent
+		#ifndef CSIDL_MYDOCUMENTS
+		#define CSIDL_MYDOCUMENTS CSIDL_PERSONAL
+		#endif
 		if (!SUCCEEDED(qSHGetFolderPath(NULL, CSIDL_MYDOCUMENTS,
 		                                NULL, 0, szPath)))
 		{
@@ -1713,14 +1718,14 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	{
 		preferredCommandType = ZENITY;
 	}
-	else if (!Q_stricmp(session, "kde")) // && getenv('KDE_FULL_SESSION') == 'true'
+	else if (!Q_stricmp(session, "kde") || !Q_stricmp(session, "kde-4")) // && getenv('KDE_FULL_SESSION') == 'true'
 	{
 		preferredCommandType = KDIALOG;
 	}
 	else
 	{
 		// FIXME
-		Com_DPrintf(S_COLOR_YELLOW "WARNING: unsupported desktop session.\n");
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: unsupported desktop session in Sys_Dialog().\n");
 	}
 
 	while (1)
