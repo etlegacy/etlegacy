@@ -134,29 +134,6 @@ void COM_StripFilename(char *in, char *out)
 }
 
 /*
- * @brief string compare the end of the strings and return qtrue if strings match
- */
-qboolean COM_CompareExtension(const char *in, const char *ext)
-{
-	int inlen, extlen;
-
-	inlen  = strlen(in);
-	extlen = strlen(ext);
-
-	if (extlen <= inlen)
-	{
-		in += inlen - extlen;
-
-		if (!Q_stricmp(in, ext))
-		{
-			return qtrue;
-		}
-	}
-
-	return qfalse;
-}
-
-/*
  * @brief if path doesn't have an extension, then append the specified one
  * (which should include the .)
  */
