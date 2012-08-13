@@ -65,10 +65,9 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType)
 		{
 			free(imageBufferPtr[bufferType]);
 		}
-//DAJ TEST		Z_Free( imageBufferPtr[bufferType] );
+
 		imageBufferSize[bufferType] = size;
 		imageBufferPtr[bufferType]  = malloc(imageBufferSize[bufferType]);
-//DAJ TEST		imageBufferPtr[bufferType] = Z_Malloc( imageBufferSize[bufferType] );
 	}
 
 	return imageBufferPtr[bufferType];
@@ -84,7 +83,7 @@ void R_FreeImageBuffer(void)
 			return;
 		}
 		free(imageBufferPtr[bufferType]);
-//DAJ TEST		Z_Free( imageBufferPtr[bufferType] );
+
 		imageBufferSize[bufferType] = 0;
 		imageBufferPtr[bufferType]  = NULL;
 	}
@@ -125,12 +124,10 @@ return a hash value for the filename
 */
 static long generateHashValue(const char *fname)
 {
-	int  i;
-	long hash;
+	int  i = 0;
+	long hash = 0;
 	char letter;
 
-	hash = 0;
-	i    = 0;
 	while (fname[i] != '\0')
 	{
 		letter = tolower(fname[i]);
@@ -175,7 +172,6 @@ void GL_TextureMode(const char *string)
 		i = 3;
 	}
 
-
 	if (i == 6)
 	{
 		ri.Printf(PRINT_ALL, "bad filter name\n");
@@ -205,10 +201,9 @@ R_SumOfUsedImages
 */
 int R_SumOfUsedImages(void)
 {
-	int total;
+	int total = 0;
 	int i;
 
-	total = 0;
 	for (i = 0; i < tr.numImages; i++)
 	{
 		if (tr.images[i]->frameUsed == tr.frameCount)
@@ -426,7 +421,6 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean only_
 	}
 }
 
-
 /*
 ================
 R_MipMap2
@@ -541,7 +535,6 @@ static void R_MipMap(byte *in, int width, int height)
 	}
 }
 
-
 /*
 ==================
 R_BlendOverTexture
@@ -588,7 +581,6 @@ byte mipBlendColors[16][4] =
 	{ 0,   0,   255, 128 },
 };
 
-
 /*
 ===============
 Upload32
@@ -613,9 +605,7 @@ static void Upload32(unsigned *data,
 	GLenum   internalFormat = GL_RGB;
 	float    rMax           = 0, gMax = 0, bMax = 0;
 
-	//
 	// convert to exact power of 2 sizes
-	//
 	for (scaled_width = 1 ; scaled_width < width ; scaled_width <<= 1)
 		;
 	for (scaled_height = 1 ; scaled_height < height ; scaled_height <<= 1)
@@ -638,18 +628,14 @@ static void Upload32(unsigned *data,
 		height = scaled_height;
 	}
 
-	//
 	// perform optional picmip operation
-	//
 	if (picmip)
 	{
 		scaled_width  >>= r_picmip->integer;
 		scaled_height >>= r_picmip->integer;
 	}
 
-	//
 	// clamp to minimum size
-	//
 	if (scaled_width < 1)
 	{
 		scaled_width = 1;
@@ -659,11 +645,9 @@ static void Upload32(unsigned *data,
 		scaled_height = 1;
 	}
 
-	//
 	// clamp to the current upper OpenGL limit
 	// scale both axis down equally so we don't have to
 	// deal with a half mip resampling
-	//
 	while (scaled_width > glConfig.maxTextureSize
 	       || scaled_height > glConfig.maxTextureSize)
 	{
@@ -674,10 +658,8 @@ static void Upload32(unsigned *data,
 	//scaledBuffer = ri.Hunk_AllocateTempMemory( sizeof( unsigned ) * scaled_width * scaled_height );
 	scaledBuffer = R_GetImageBuffer(sizeof(unsigned) * scaled_width * scaled_height, BUFFER_SCALED);
 
-	//
 	// scan the texture for each channel's max values
 	// and verify if the alpha channel is being used or not
-	//
 	c       = width * height;
 	scan    = ((byte *)data);
 	samples = 3;
@@ -892,11 +874,6 @@ done:
 	}
 
 	GL_CheckErrors();
-
-	//if ( scaledBuffer != 0 )
-	//	ri.Hunk_FreeTempMemory( scaledBuffer );
-	//if ( resampledBuffer != 0 )
-	//	ri.Hunk_FreeTempMemory( resampledBuffer );
 }
 
 
@@ -963,16 +940,6 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 	// Ridah
 	image = tr.images[tr.numImages] = R_CacheImageAlloc(sizeof(image_t));
-
-	// ydnar: not exactly sure why this mechanism is here at all, but it's generating
-	// bad texture names (not that the rest of the code is a saint, but hey...)
-	//%	image->texnum = 1024 + tr.numImages;
-
-	// Ridah
-	//%	if (r_cacheShaders->integer) {
-	//%		R_FindFreeTexnum(image);
-	//%	}
-	// done.
 
 	// ydnar: ok, let's try the recommended way
 	qglGenTextures(1, &image->texnum);
@@ -1054,8 +1021,7 @@ static imageExtToLoaderMap_t imageLoaders[] =
 	{ "bmp",  R_LoadBMP }
 };
 
-static int numImageLoaders = sizeof(imageLoaders) /
-                             sizeof(imageLoaders[0]);
+static int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
 
 /*
 =================
@@ -1116,13 +1082,12 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 	// the image formats supported
 	for (j = 0; j < numImageLoaders; j++)
 	{
-		altName = va("%s.%s", localName, imageLoaders[j].ext);
-
 		if (j == i)
 		{
 			continue;
 		}
 
+		altName = va("%s.%s", localName, imageLoaders[j].ext);
 		// Load
 		imageLoaders[j].ImageLoader(altName, pic, width, height);
 
@@ -1136,7 +1101,6 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 		}
 	}
 }
-
 
 /*
 ===============
@@ -1167,9 +1131,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 		ri.Cmd_ExecuteText(EXEC_NOW, va("cache_usedfile image %s %i %i %i\n", name, mipmap, allowPicmip, glWrapClampMode));
 	}
 
-	//
 	// see if the image is already loaded
-	//
 	for (image = hashTable[hash]; image; image = image->next)
 	{
 		if (!strcmp(name, image->imgName))
@@ -1206,9 +1168,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 		}
 	}
 
-	//
 	// load the pic from disk
-	//
 	R_LoadImage(name, &pic, &width, &height);
 	if (pic == NULL)
 	{
@@ -1235,7 +1195,6 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 	}
 
 	image = R_CreateImage(( char * ) name, pic, width, height, mipmap, allowPicmip, glWrapClampMode);
-	//ri.Free( pic );
 
 	// ydnar: no texture compression
 	if (lightmap)
@@ -1246,7 +1205,6 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 	return image;
 }
 
-
 /*
 ================
 R_CreateDlightImage
@@ -1255,17 +1213,15 @@ R_CreateDlightImage
 #define DLIGHT_SIZE 16
 static void R_CreateDlightImage(void)
 {
-	int  x, y;
+	float d;
+	int  x, y, b;
 	byte data[DLIGHT_SIZE][DLIGHT_SIZE][4];
-	int  b;
 
 	// make a centered inverse-square falloff blob for dynamic lighting
 	for (x = 0 ; x < DLIGHT_SIZE ; x++)
 	{
 		for (y = 0 ; y < DLIGHT_SIZE ; y++)
 		{
-			float d;
-
 			d = (DLIGHT_SIZE / 2 - 0.5f - x) * (DLIGHT_SIZE / 2 - 0.5f - x) +
 			    (DLIGHT_SIZE / 2 - 0.5f - y) * (DLIGHT_SIZE / 2 - 0.5f - y);
 			b = 4000 / d;
@@ -1286,7 +1242,6 @@ static void R_CreateDlightImage(void)
 	tr.dlightImage = R_CreateImage("*dlight", (byte *)data, DLIGHT_SIZE, DLIGHT_SIZE, qfalse, qfalse, GL_CLAMP_TO_EDGE);
 }
 
-
 /*
 =================
 R_InitFogTable
@@ -1296,9 +1251,7 @@ void R_InitFogTable(void)
 {
 	int   i;
 	float d;
-	float exp;
-
-	exp = 0.5;
+	float exp = 0.5f;
 
 	for (i = 0 ; i < FOG_TABLE_SIZE ; i++)
 	{
@@ -1353,11 +1306,6 @@ float   R_FogFactor(float s, float t)
 R_CreateFogImage
 ================
 */
-/*
-================
-R_CreateFogImage
-================
-*/
 #define FOG_S       16
 #define FOG_T       16  // ydnar: used to be 32
                         // arnout: yd changed it to 256, changing to 16
@@ -1365,28 +1313,10 @@ static void R_CreateFogImage(void)
 {
 	int  x, y, alpha;
 	byte *data;
-	//float	d;
 	float borderColor[4];
-
 
 	// allocate table for image
 	data = ri.Hunk_AllocateTempMemory(FOG_S * FOG_T * 4);
-
-	// ydnar: old fog texture generating algo
-
-	// S is distance, T is depth
-	/*for (x=0 ; x<FOG_S ; x++) {
-	    for (y=0 ; y<FOG_T ; y++) {
-	        d = R_FogFactor( ( x + 0.5f ) / FOG_S, ( y + 0.5f ) / FOG_T );
-
-	        data[(y*FOG_S+x)*4+0] =
-	        data[(y*FOG_S+x)*4+1] =
-	        data[(y*FOG_S+x)*4+2] = 255;
-	        data[(y*FOG_S+x)*4+3] = 255 * d;
-	    }
-	}*/
-
-	//%	SaveTGAAlpha( "fog_q3.tga", &data, FOG_S, FOG_T );
 
 	// ydnar: new, linear fog texture generating algo for GL_CLAMP_TO_EDGE (OpenGL 1.2+)
 
@@ -1421,8 +1351,6 @@ static void R_CreateFogImage(void)
 			data[(y * FOG_S + x) * 4 + 3]         = alpha; //%	255*d;
 		}
 	}
-
-	//%	SaveTGAAlpha( "fog_yd.tga", &data, FOG_S, FOG_T );
 
 	// standard openGL clamping doesn't really do what we want -- it includes
 	// the border color at the edges.  OpenGL 1.2 has clamp-to-edge, which does
@@ -1511,7 +1439,6 @@ void R_CreateBuiltinImages(void)
 
 	tr.identityLightImage = R_CreateImage("*identityLight", (byte *)data, 8, 8, qfalse, qfalse, GL_REPEAT);
 
-
 	for (x = 0; x < 32; x++)
 	{
 		// scratchimage is usually used for cinematic drawing
@@ -1521,7 +1448,6 @@ void R_CreateBuiltinImages(void)
 	R_CreateDlightImage();
 	R_CreateFogImage();
 }
-
 
 /*
 ===============
@@ -1660,9 +1586,6 @@ void R_DeleteTextures(void)
 		qglDeleteTextures(1, &tr.images[i]->texnum);
 	}
 	Com_Memset(tr.images, 0, sizeof(tr.images));
-	// Ridah
-	//%	R_InitTexnumImages(qtrue);
-	// done.
 
 	tr.numImages = 0;
 
@@ -1698,12 +1621,11 @@ compatable with our normal parsing rules.
 */
 static char *CommaParse(char **data_p)
 {
-	int         c = 0, len;
+	int         c = 0, len = 0;
 	char        *data;
 	static char com_token[MAX_TOKEN_CHARS];
 
 	data         = *data_p;
-	len          = 0;
 	com_token[0] = 0;
 
 	// make sure incoming data is valid
@@ -1845,9 +1767,6 @@ RE_GetShaderFromModel
 qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap)
 {
 	model_t    *model;
-	bmodel_t   *bmodel;
-	msurface_t *surf;
-	shader_t   *shd;
 
 	if (surfnum < 0)
 	{
@@ -1858,9 +1777,13 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 
 	if (model)
 	{
-		bmodel = model->model.bmodel;
+		bmodel_t   *bmodel = model->model.bmodel;
+
 		if (bmodel && bmodel->firstSurface)
 		{
+			msurface_t *surf;
+			shader_t   *shd;
+
 			if (surfnum >= bmodel->numSurfaces)     // if it's out of range, return the first surface
 			{
 				surfnum = 0;
@@ -1872,7 +1795,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 			{
 				return 0;
 			}
-//			if(surf->shader->lightmapIndex != LIGHTMAP_NONE) {
+
 			if (surf->shader->lightmapIndex > LIGHTMAP_NONE)
 			{
 				image_t  *image;
@@ -1889,7 +1812,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 						break;
 					}
 				}
-				shd                    = R_FindShader(surf->shader->name, LIGHTMAP_NONE, mip);
+				shd = R_FindShader(surf->shader->name, LIGHTMAP_NONE, mip);
 				shd->stages[0]->rgbGen = CGEN_LIGHTING_DIFFUSE; // (SA) new
 			}
 			else
@@ -1938,7 +1861,6 @@ qhandle_t RE_RegisterSkin(const char *name)
 		Com_Printf("Skin name exceeds MAX_QPATH\n");
 		return 0;
 	}
-
 
 	// see if the skin is already loaded
 	for (hSkin = 1; hSkin < tr.numSkins ; hSkin++)
@@ -2040,7 +1962,6 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 	ri.FS_FreeFile(text.v);
 
-
 	// never let a skin have 0 shaders
 	if (skin->numSurfaces == 0)
 	{
@@ -2050,13 +1971,12 @@ qhandle_t RE_RegisterSkin(const char *name)
 	return hSkin;
 }
 
-
 /*
 ===============
 R_InitSkins
 ===============
 */
-void    R_InitSkins(void)
+void R_InitSkins(void)
 {
 	skin_t *skin;
 
@@ -2110,39 +2030,6 @@ void    R_SkinList_f(void)
 	ri.Printf(PRINT_ALL, "------------------\n");
 }
 
-/*
-==============
-R_CropImage
-==============
-*/
-#define CROPIMAGES_ENABLED
-//#define FUNNEL_HACK
-#define RESIZE
-//#define QUICKTIME_BANNER
-#define TWILTB2_HACK
-
-qboolean R_CropImage(char *name, byte **pic, int border, int *width, int *height, int lastBox[2])
-{
-	return qtrue;   // shutup the compiler
-}
-
-/*
-===============
-R_CropAndNumberImagesInDirectory
-===============
-*/
-void    R_CropAndNumberImagesInDirectory(char *dir, char *ext, int maxWidth, int maxHeight, int withAlpha)
-{
-}
-
-/*
-==============
-R_CropImages_f
-==============
-*/
-void R_CropImages_f(void)
-{
-}
 // done.
 
 //==========================================================================================
@@ -2150,8 +2037,6 @@ void R_CropImages_f(void)
 
 static int     numBackupImages = 0;
 static image_t *backupHashTable[FILE_HASH_SIZE];
-
-//%	static image_t	*texnumImages[MAX_DRAWIMAGES*2];
 
 /*
 ===============
@@ -2164,9 +2049,7 @@ void *R_CacheImageAlloc(int size)
 {
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
-//		return ri.Z_Malloc( size );
 		return malloc(size);    // ri.Z_Malloc causes load times about twice as long?... Gordon
-//DAJ TEST		return ri.Z_Malloc( size );	//DAJ was CO
 	}
 	else
 	{
@@ -2183,9 +2066,7 @@ void R_CacheImageFree(void *ptr)
 {
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
-//		ri.Free( ptr );
 		free(ptr);
-//DAJ TEST		ri.Free( ptr );	//DAJ was CO
 	}
 }
 
@@ -2262,9 +2143,6 @@ R_PurgeImage
 */
 void R_PurgeImage(image_t *image)
 {
-
-	//%	texnumImages[image->texnum - 1024] = NULL;
-
 	qglDeleteTextures(1, &image->texnum);
 
 	R_CacheImageFree(image);
@@ -2340,7 +2218,6 @@ R_BackupImages
 */
 void R_BackupImages(void)
 {
-
 	if (!r_cache->integer)
 	{
 		return;
@@ -2423,7 +2300,6 @@ int R_GetTextureId(const char *name)
 	int i;
 
 //	ri.Printf( PRINT_ALL, "R_GetTextureId [%s].\n", name );
-
 	for (i = 0 ; i < tr.numImages ; i++)
 	{
 		if (!strcmp(name, tr.images[i]->imgName))
