@@ -88,6 +88,7 @@ void R_FreeImageBuffer(void)
 		imageBufferPtr[bufferType]  = NULL;
 	}
 }
+
 /*
 ** R_GammaCorrect
 */
@@ -875,7 +876,6 @@ done:
 
 	GL_CheckErrors();
 }
-
 
 /*
 ================
@@ -2312,69 +2312,6 @@ int R_GetTextureId(const char *name)
 //	ri.Printf( PRINT_ALL, "Image not found.\n" );
 	return -1;
 }
-
-// ydnar: glGenTextures, sir...
-
-#if 0
-/*
-===============
-R_InitTexnumImages
-===============
-*/
-static int last_i;
-void R_InitTexnumImages(qboolean force)
-{
-	if (force || !numBackupImages)
-	{
-		Com_Memset(texnumImages, 0, sizeof(texnumImages));
-		last_i = 0;
-	}
-}
-
-/*
-============
-R_FindFreeTexnum
-============
-*/
-void R_FindFreeTexnum(image_t *inImage)
-{
-	int     i, max;
-	image_t **image;
-
-	max = (MAX_DRAWIMAGES * 2);
-	if (last_i && !texnumImages[last_i + 1])
-	{
-		i = last_i + 1;
-	}
-	else
-	{
-		i     = 0;
-		image = (image_t **)&texnumImages;
-		while (i < max && *(image++))
-		{
-			i++;
-		}
-	}
-
-	if (i < max)
-	{
-		if (i < max - 1)
-		{
-			last_i = i;
-		}
-		else
-		{
-			last_i = 0;
-		}
-		inImage->texnum = 1024 + i;
-		texnumImages[i] = inImage;
-	}
-	else
-	{
-		ri.Error(ERR_DROP, "R_FindFreeTexnum: MAX_DRAWIMAGES hit\n");
-	}
-}
-#endif
 
 /*
 ===============

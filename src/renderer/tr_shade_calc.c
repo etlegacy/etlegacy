@@ -33,7 +33,6 @@
 
 #include "tr_local.h"
 
-
 #define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int)((((phase) + tess.shaderTime * (freq)) *FUNCTABLE_SIZE)) & FUNCTABLE_MASK] * (amplitude))
 
 static float *TableForFunc(genFunc_t func)
@@ -329,7 +328,6 @@ void RB_CalcMoveVertexes(deformStage_t *ds)
 	}
 }
 
-
 /*
 =============
 DeformText
@@ -506,7 +504,6 @@ static void AutospriteDeform(void)
 	}
 }
 
-
 /*
 =====================
 Autosprite2Deform
@@ -644,7 +641,6 @@ static void Autosprite2Deform(void)
 	}
 }
 
-
 /*
 =====================
 RB_DeformTessGeometry
@@ -706,7 +702,6 @@ COLORS
 
 ====================================================================
 */
-
 
 /*
 ** RB_CalcColorFromEntity
@@ -848,7 +843,6 @@ void RB_CalcWaveAlpha(const waveForm_t *wf, unsigned char *dstColors)
 	int   v;
 	float glow;
 
-
 	// ydnar: added alphaGen noise support
 	if (wf->func == GF_NOISE)
 	{
@@ -874,7 +868,6 @@ void RB_CalcModulateAlphasByFog(unsigned char *colors)
 {
 	int   i;
 	float f, texCoords[SHADER_MAX_VERTEXES][2];
-
 
 	// ydnar: no world, no fogging
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
@@ -916,7 +909,6 @@ void RB_CalcModulateColorsByFog(unsigned char *colors)
 {
 	int   i;
 	float f, texCoords[SHADER_MAX_VERTEXES][2];
-
 
 	// ydnar: no world, no fogging
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
@@ -963,7 +955,6 @@ void RB_CalcModulateRGBAsByFog(unsigned char *colors)
 	int   i;
 	float f, texCoords[SHADER_MAX_VERTEXES][2];
 
-
 	// ydnar: no world, no fogging
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
@@ -1003,7 +994,6 @@ void RB_CalcModulateRGBAsByFog(unsigned char *colors)
 	}
 }
 
-
 /*
 ====================================================================
 
@@ -1033,7 +1023,6 @@ void RB_CalcFogTexCoords(float *st)
 	vec3_t   local, viewOrigin;
 	vec4_t   fogSurface, fogDistanceVector, fogDepthVector;
 	bmodel_t *bmodel;
-
 
 	// Gordon: rarrrrr, stop stupid msvc debug thing
 	fogDepthVector[0] = 0;
@@ -1134,14 +1123,9 @@ void RB_CalcFogTexCoords(float *st)
 	}
 }
 
-
-
 /*
 ** RB_CalcEnvironmentTexCoords
 */
-
-#if 1
-
 void RB_CalcEnvironmentTexCoords(float *st)
 {
 	int    i;
@@ -1193,71 +1177,6 @@ void RB_CalcEnvironmentTexCoords(float *st)
 	}
 }
 
-#else
-
-void RB_CalcEnvironmentTexCoords(float *st)
-{
-	int    i;
-	float  *v, *normal;
-	vec3_t viewOrigin, viewer, reflected, reflectedTransformed;
-	float  d;
-
-
-	// ydnar: optimization
-	VectorCopy(backEnd.orientation.viewOrigin, viewOrigin);
-
-	// debug
-	#undef DEBUG_ENVMAPPING
-	#ifdef DEBUG_ENVMAPPING
-	GL_Bind(tr.whiteImage);
-	GL_State(GLS_DEPTHMASK_TRUE);
-	qglLineWidth(2);
-	qglBegin(GL_LINES);
-	qglColor3f(0.3, 0.4, 1);
-	#endif
-
-
-	// setup
-	v      = tess.xyz[0].v;
-	normal = tess.normal[0].v;
-
-	// walk verts
-	for (i = 0 ; i < tess.numVertexes ; i++, v += 4, normal += 4, st += 2)
-	{
-		VectorSubtract(viewOrigin, v, viewer);
-		VectorNormalizeFast(viewer);
-
-		d = DotProduct(normal, viewer);
-
-		reflected[0] = normal[0] * 2 * d - viewer[0];
-		reflected[1] = normal[1] * 2 * d - viewer[1];
-		reflected[2] = normal[2] * 2 * d - viewer[2];
-
-		reflectedTransformed[0] = reflected[0] * backEnd.orientation.axis[0][0] + reflected[1] * backEnd.orientation.axis[1][0] + reflected[2] * backEnd.orientation.axis[2][0];
-		reflectedTransformed[1] = reflected[0] * backEnd.orientation.axis[0][1] + reflected[1] * backEnd.orientation.axis[1][1] + reflected[2] * backEnd.orientation.axis[2][1];
-		reflectedTransformed[2] = reflected[0] * backEnd.orientation.axis[0][2] + reflected[1] * backEnd.orientation.axis[1][2] + reflected[2] * backEnd.orientation.axis[2][2];
-
-		VectorCopy(reflectedTransformed, reflected);
-
-		st[0] = 0.5 + reflectedTransformed[1] * 0.5;
-		st[1] = 0.5 - reflectedTransformed[2] * 0.5;
-
-		#ifdef DEBUG_ENVMAPPING
-		qglVertex3f(v[0], v[1], v[2]);
-		qglVertex3f(v[0] + reflected[0] * 2, v[1] + reflected[1] * 2, v[2] + reflected[2] * 2);
-		#endif
-	}
-
-	#ifdef DEBUG_ENVMAPPING
-	qglEnd();
-	qglLineWidth(1);
-	#endif
-}
-
-#endif
-
-
-
 /*
 ** RB_CalcFireRiseEnvTexCoords
 */
@@ -1286,7 +1205,6 @@ void RB_CalcFireRiseEnvTexCoords(float *st)
 		st[1] = 0.5 - reflected[2] * 0.5;
 	}
 }
-
 
 /*
 ** RB_CalcSwapTexCoords
@@ -1479,8 +1397,6 @@ void RB_CalcSpecularAlpha(unsigned char *alphas)
 ** The basic vertex lighting calc
 */
 
-#if 1
-
 // ydnar: faster, table-based version of this function
 // saves about 1-2ms per frame on my machine with 64 x 1000 triangle models in scene
 void RB_CalcDiffuseColor(unsigned char *colors)
@@ -1521,68 +1437,3 @@ void RB_CalcDiffuseColor(unsigned char *colors)
 		}
 	}
 }
-
-#else
-
-void RB_CalcDiffuseColor(unsigned char *colors)
-{
-	int           i, j;
-	float         *v, *normal;
-	float         incoming;
-	trRefEntity_t *ent;
-	int           ambientLightInt;
-	vec3_t        ambientLight;
-	vec3_t        lightDir;
-	vec3_t        directedLight;
-	int           numVertexes;
-
-	if (r_dynamiclight->integer)
-	{
-		RB_CalcDiffuseColorFast(colors);
-		return;
-	}
-
-	ent             = backEnd.currentEntity;
-	ambientLightInt = ent->ambientLightInt;
-	VectorCopy(ent->ambientLight, ambientLight);
-	VectorCopy(ent->directedLight, directedLight);
-	VectorCopy(ent->lightDir, lightDir);
-
-	v      = tess.xyz[0].v;
-	normal = tess.normal[0].v;
-
-	numVertexes = tess.numVertexes;
-	for (i = 0 ; i < numVertexes ; i++, v += 4, normal += 4)
-	{
-		incoming = DotProduct(normal, lightDir);
-		if (incoming <= 0)
-		{
-			*(int *)&colors[i * 4] = ambientLightInt;
-			continue;
-		}
-		j = (int)(ambientLight[0] + incoming * directedLight[0]);
-		if (j > 255)
-		{
-			j = 255;
-		}
-		colors[i * 4 + 0] = j;
-
-		j = (int)(ambientLight[1] + incoming * directedLight[1]);
-		if (j > 255)
-		{
-			j = 255;
-		}
-		colors[i * 4 + 1] = j;
-
-		j = (int)(ambientLight[2] + incoming * directedLight[2]);
-		if (j > 255)
-		{
-			j = 255;
-		}
-		colors[i * 4 + 2] = j;
-
-		colors[i * 4 + 3] = 255;
-	}
-}
-
-#endif

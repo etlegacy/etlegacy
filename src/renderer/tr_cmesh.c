@@ -178,7 +178,6 @@ static int R_CullModel(mdcHeader_t *header, trRefEntity_t *ent)
 	}
 }
 
-
 /*
 =================
 R_ComputeLOD
@@ -338,12 +337,10 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 		ent->e.oldframe %= tr.currentModel->model.mdc[0]->numFrames;
 	}
 
-	//
 	// Validate the frames so there is no chance of a crash.
 	// This will write directly into the entity structure, so
 	// when the surfaces are rendered, they don't need to be
 	// range checked again.
-	//
 	if ((ent->e.frame >= tr.currentModel->model.mdc[0]->numFrames)
 	    || (ent->e.frame < 0)
 	    || (ent->e.oldframe >= tr.currentModel->model.mdc[0]->numFrames)
@@ -356,9 +353,7 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 		ent->e.oldframe = 0;
 	}
 
-	//
 	// compute LOD
-	//
 	if (ent->e.renderfx & RF_FORCENOLOD)
 	{
 		lod = 0;
@@ -370,36 +365,27 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 
 	header = tr.currentModel->model.mdc[lod];
 
-	//
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum.
-	//
 	cull = R_CullModel(header, ent);
 	if (cull == CULL_OUT)
 	{
 		return;
 	}
 
-	//
 	// set up lighting now that we know we aren't culled
-	//
 	if (!personalModel || r_shadows->integer > 1)
 	{
 		R_SetupEntityLighting(&tr.refdef, ent);
 	}
 
-	//
 	// see if we are in a fog volume
-	//
 	fogNum = R_ComputeFogNum(header, ent);
 
-	//
 	// draw all surfaces
-	//
 	surface = ( mdcSurface_t * )((byte *)header + header->ofsSurfaces);
 	for (i = 0 ; i < header->numSurfaces ; i++)
 	{
-
 		if (ent->e.customShader)
 		{
 			shader = R_GetShaderByHandle(ent->e.customShader);
@@ -463,7 +449,6 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 			shader     = tr.shaders[md3Shader->shaderIndex];
 		}
 
-
 		// we will add shadows even if the main object isn't visible in the view
 
 		// stencil shadows can't do personal models unless I polyhedron clip
@@ -501,5 +486,4 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 
 		surface = ( mdcSurface_t * )((byte *)surface + surface->ofsEnd);
 	}
-
 }

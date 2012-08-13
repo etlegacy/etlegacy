@@ -39,7 +39,6 @@
 #define DLIGHT_MINIMUM_RADIUS   16
 // never calculate a range less than this to prevent huge light numbers
 
-
 /*
 ===============
 R_TransformDlights
@@ -63,17 +62,14 @@ void R_TransformDlights(int count, dlight_t *dl, orientationr_t *or)
 	}
 }
 
-
 /*
 R_CullDlights()
 frustum culls dynamic lights
 */
-
 void R_CullDlights(void)
 {
 	int      i, numDlights, dlightBits;
 	dlight_t *dl;
-
 
 	/* limit */
 	if (tr.refdef.num_dlights > MAX_DLIGHTS)
@@ -100,8 +96,6 @@ void R_CullDlights(void)
 	tr.refdef.dlightBits = dlightBits;
 }
 
-
-
 /*
 =============
 R_DlightBmodel
@@ -113,13 +107,12 @@ void R_DlightBmodel(bmodel_t *bmodel)
 {
 	int        i, j;
 	dlight_t   *dl;
-	int        mask;
+	int        mask = 0;
 	msurface_t *surf;
 
 	// transform all the lights
 	R_TransformDlights(tr.refdef.num_dlights, tr.refdef.dlights, &tr.orientation);
 
-	mask = 0;
 	for (i = 0 ; i < tr.refdef.num_dlights ; i++)
 	{
 		dl = &tr.refdef.dlights[i];
@@ -149,9 +142,6 @@ void R_DlightBmodel(bmodel_t *bmodel)
 		mask |= 1 << i;
 	}
 
-	// RF, this is why some dlights wouldn't light up bmodels
-
-	//tr.currentEntity->needDlights = (mask != 0);
 
 	// (SA) isn't this dangerous to do to an enumerated type? (setting it to an int)
 	//		meaning, shouldn't ->needDlights be changed to an int rather than a qbool?
@@ -174,7 +164,6 @@ void R_DlightBmodel(bmodel_t *bmodel)
 		}
 		else if (*surf->data == SF_TRIANGLES)
 		{
-//			((srfTriangles_t *)surf->data)->dlightBits[ tr.smpFrame ] = mask;
 			((srfTriangles2_t *)surf->data)->dlightBits[tr.smpFrame] = mask;
 		}
 		else if (*surf->data == SF_FOLIAGE)         // ydnar
@@ -183,7 +172,6 @@ void R_DlightBmodel(bmodel_t *bmodel)
 		}
 	}
 }
-
 
 /*
 =============================================================================
@@ -213,6 +201,11 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	int    gridStep[3];
 	vec3_t direction;
 	float  totalFactor;
+	float  factor;
+	byte   *data;
+	int    lat, lng;
+	vec3_t normal;
+	float v;
 
 	if (ent->e.renderfx & RF_LIGHTING_ORIGIN)
 	{
@@ -229,8 +222,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	VectorSubtract(lightOrigin, tr.world->lightGridOrigin, lightOrigin);
 	for (i = 0 ; i < 3 ; i++)
 	{
-		float v;
-
 		v       = lightOrigin[i] * tr.world->lightGridInverseSize[i];
 		pos[i]  = floor(v);
 		frac[i] = v - pos[i];
@@ -260,11 +251,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	totalFactor = 0;
 	for (i = 0 ; i < 8 ; i++)
 	{
-		float  factor;
-		byte   *data;
-		int    lat, lng;
-		vec3_t normal;
-
 		factor = 1.0;
 		data   = gridData;
 		for (j = 0 ; j < 3 ; j++)
@@ -343,7 +329,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	//%	VectorSubtract( vec3_origin, direction, ent->lightDir );
 }
 
-
 /*
 ===============
 LogLight
@@ -400,7 +385,6 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 	vec3_t   lightValue;
 	byte     *entityLight;
 
-
 	// lighting calculations
 	if (ent->lightingCalculated)
 	{
@@ -408,9 +392,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 	}
 	ent->lightingCalculated = qtrue;
 
-	//
 	// trace a sample point down to find ambient light
-	//
 	if (ent->e.renderfx & RF_LIGHTING_ORIGIN)
 	{
 		// seperate lightOrigins are needed so an object that is
@@ -466,10 +448,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 		VectorSet(ent->ambientLight, 245, 245, 245);      // allow a little room for flicker from directed light
 	}
 
-
-	//
 	// modify the light by dynamic lights
-	//
 	d = VectorLength(ent->directedLight);
 	VectorScale(ent->lightDir, d, lightDir);
 
@@ -482,19 +461,6 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 			continue;
 		}
 
-
-
-		#if 0
-		VectorSubtract(dl->origin, lightOrigin, dir);
-		d        = VectorNormalize(dir);
-		modulate = DLIGHT_AT_RADIUS * (dl->radius * dl->radius);
-		if (d < DLIGHT_MINIMUM_RADIUS)
-		{
-			d = DLIGHT_MINIMUM_RADIUS;
-		}
-
-		modulate = modulate / (d * d);
-		#else
 		// directional dlight, origin is a directional normal
 		if (dl->flags & REF_DIRECTED_DLIGHT)
 		{
@@ -515,7 +481,6 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 				modulate = dl->intensity * d;
 			}
 		}
-		#endif
 
 		VectorMA(ent->directedLight, modulate, dl->color, ent->directedLight);
 		VectorMA(lightDir, modulate, dir, lightDir);

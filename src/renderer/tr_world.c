@@ -34,127 +34,6 @@
 #include "tr_local.h"
 
 /*
-=================
-R_CullGenericSurface - ydnar
-based on R_CullTriSurf()
-this culls the basic subset of all triangle/mesh map drawsurfaces
-=================
-*/
-
-#if 0
-
-#define SPHERE_CULL
-
-#ifdef SPHERE_CULL
-
-/*static qboolean   R_CullGenericSurface( srfGeneric_t *surface )
-{
-    int     cull;
-
-
-    // allow disabling of foliage
-    if( surface->surfaceType == SF_FOLIAGE && !r_drawfoliage->integer )
-        return qtrue;
-
-    // allow disabling of foliage
-    if( surface->surfaceType == SF_GRID && r_nocurves->integer )
-        return qtrue;
-
-    // try sphere cull
-    if( tr.currentEntityNum != ENTITYNUM_WORLD )
-        cull = R_CullLocalPointAndRadius( surface->origin, surface->radius );
-    else
-        cull = R_CullPointAndRadius( surface->origin, surface->radius );
-    if( cull == CULL_OUT )
-        return qtrue;
-
-    // it's ok
-    return qfalse;
-}*/
-
-#else
-
-static qboolean R_CullTriSurf(srfTriangles_t *cv)
-{
-	int boxCull;
-
-	boxCull = R_CullLocalBox(cv->bounds);
-
-	if (boxCull == CULL_OUT)
-	{
-		return qtrue;
-	}
-	return qfalse;
-}
-
-
-/*
-=================
-R_CullGrid
-
-Returns true if the grid is completely culled away.
-Also sets the clipped hint bit in tess
-=================
-*/
-static qboolean R_CullGrid(srfGridMesh_t *cv)
-{
-	int boxCull;
-	int sphereCull;
-
-	if (r_nocurves->integer)
-	{
-		return qtrue;
-	}
-
-	if (tr.currentEntityNum != ENTITYNUM_WORLD)
-	{
-		sphereCull = R_CullLocalPointAndRadius(cv->localOrigin, cv->meshRadius);
-	}
-	else
-	{
-		sphereCull = R_CullPointAndRadius(cv->localOrigin, cv->meshRadius);
-	}
-
-	// check for trivial reject
-	if (sphereCull == CULL_OUT)
-	{
-		tr.pc.c_sphere_cull_patch_out++;
-		return qtrue;
-	}
-	// check bounding box if necessary
-	else if (sphereCull == CULL_CLIP)
-	{
-		tr.pc.c_sphere_cull_patch_clip++;
-
-		boxCull = R_CullLocalBox(cv->meshBounds);
-
-		if (boxCull == CULL_OUT)
-		{
-			tr.pc.c_box_cull_patch_out++;
-			return qtrue;
-		}
-		else if (boxCull == CULL_IN)
-		{
-			tr.pc.c_box_cull_patch_in++;
-		}
-		else
-		{
-			tr.pc.c_box_cull_patch_clip++;
-		}
-	}
-	else
-	{
-		tr.pc.c_sphere_cull_patch_in++;
-	}
-
-	return qfalse;
-}
-
-#endif
-
-#endif // 0
-
-/*
 ================
 R_CullSurface
 
@@ -169,7 +48,6 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	srfGeneric_t *gen;
 	int          cull;
 	float        d;
-
 
 	// force to non-front facing
 	*frontFace = 0;
@@ -261,121 +139,6 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	return qfalse;
 }
 
-#if 0
-static int R_DlightFace(srfSurfaceFace_t *face, int dlightBits)
-{
-	float    d;
-	int      i;
-	dlight_t *dl;
-
-
-	// ydnar: quick hack, need to rewrite for generic surfaces
-	return dlightBits;
-
-	for (i = 0 ; i < tr.refdef.num_dlights ; i++)
-	{
-		if (!(dlightBits & (1 << i)))
-		{
-			continue;
-		}
-		dl = &tr.refdef.dlights[i];
-		d  = DotProduct(dl->origin, face->plane.normal) - face->plane.dist;
-		if (d < -dl->radius || d > dl->radius)
-		{
-			// dlight doesn't reach the plane
-			dlightBits &= ~(1 << i);
-		}
-	}
-
-	if (!dlightBits)
-	{
-		tr.pc.c_dlightSurfacesCulled++;
-	}
-
-	face->dlightBits[tr.smpFrame] = dlightBits;
-	return dlightBits;
-}
-
-/*static int R_DlightGrid( srfGridMesh_t *grid, int dlightBits ) {
-    int         i;
-    dlight_t    *dl;
-
-    for ( i = 0 ; i < tr.refdef.num_dlights ; i++ ) {
-        if ( ! ( dlightBits & ( 1 << i ) ) ) {
-            continue;
-        }
-        dl = &tr.refdef.dlights[i];
-        if ( dl->origin[0] - dl->radius > grid->bounds[1][0]
-            || dl->origin[0] + dl->radius < grid->bounds[0][0]
-            || dl->origin[1] - dl->radius > grid->bounds[1][1]
-            || dl->origin[1] + dl->radius < grid->bounds[0][1]
-            || dl->origin[2] - dl->radius > grid->bounds[1][2]
-            || dl->origin[2] + dl->radius < grid->bounds[0][2] ) {
-            // dlight doesn't reach the bounds
-            dlightBits &= ~( 1 << i );
-        }
-    }
-
-    if ( !dlightBits ) {
-        tr.pc.c_dlightSurfacesCulled++;
-    }
-
-    grid->dlightBits[ tr.smpFrame ] = dlightBits;
-    return dlightBits;
-}*/
-
-
-// ydnar: fixed this function (can be used for trisurfs and foliage)
-
-static int R_DlightTrisurf(srfTriangles_t *srf, int dlightBits)
-
-#if 0
-{
-	// FIXME: more dlight culling to trisurfs...
-	surf->dlightBits[tr.smpFrame] = dlightBits;
-	return dlightBits;
-}
-#else
-{
-	int      i;
-	dlight_t *dl;
-	vec3_t   origin, delta;
-	float    radius2, dist2;
-
-
-	VectorCopy(srf->origin, origin);
-	radius2 = srf->radius * srf->radius;
-
-	for (i = 0; i < tr.refdef.num_dlights; i++)
-	{
-		if (!(dlightBits & (1 << i)))
-		{
-			continue;
-		}
-
-		dl = &tr.refdef.dlights[i];
-
-		VectorSubtract(dl->origin, srf->origin, delta);
-		dist2 = DotProduct(delta, delta) - (dl->radius * dl->radius);
-		if (dist2 > radius2)
-		{
-			dlightBits &= ~(1 << i);
-		}
-	}
-
-	// Com_Printf( "Surf: 0x%08X dlightBits: 0x%08X\n", srf, dlightBits );
-
-	if (!dlightBits)
-	{
-		tr.pc.c_dlightSurfacesCulled++;
-	}
-
-	srf->dlightBits[tr.smpFrame] = dlightBits;
-	return dlightBits;
-}
-#endif
-#endif // 0
-
 /*
 ====================
 R_DlightSurface
@@ -383,42 +146,10 @@ R_DlightSurface
 The given surface is going to be drawn, and it touches a leaf
 that is touched by one or more dlights, so try to throw out
 more dlights if possible.
+
+ ydnar: made this use generic surface
 ====================
 */
-
-#if 0
-
-static int R_DlightSurface(msurface_t *surf, int dlightBits)
-{
-	if (*surf->data == SF_FACE)
-	{
-		dlightBits = R_DlightFace((srfSurfaceFace_t *)surf->data, dlightBits);
-	}
-	else if (*surf->data == SF_GRID)
-	{
-		dlightBits = R_DlightGrid((srfGridMesh_t *)surf->data, dlightBits);
-	}
-	else if (*surf->data == SF_TRIANGLES || *surf->data == SF_FOLIAGE)          // ydnar
-	{
-		dlightBits = R_DlightTrisurf((srfTriangles_t *)surf->data, dlightBits);
-	}
-	else
-	{
-		dlightBits = 0;
-	}
-
-	if (dlightBits)
-	{
-		tr.pc.c_dlightSurfaces++;
-	}
-
-	return dlightBits;
-}
-
-#else
-
-// ydnar: made this use generic surface
-
 static int R_DlightSurface(msurface_t *surface, int dlightBits)
 {
 	int          i;
@@ -501,10 +232,6 @@ static int R_DlightSurface(msurface_t *surface, int dlightBits)
 	return dlightBits;
 }
 
-#endif
-
-
-
 /*
 ======================
 R_AddWorldSurface
@@ -568,14 +295,11 @@ R_BmodelFogNum
 
 See if a sprite is inside a fog volume
 Return positive with /any part/ of the brush falling within a fog volume
+
+ydnar: the original implementation of this function is a bit flaky...
 =================
 */
-
-// ydnar: the original implementation of this function is a bit flaky...
 int R_BmodelFogNum(trRefEntity_t *re, bmodel_t *bmodel)
-
-#if 1
-
 {
 	int   i, j;
 	fog_t *fog;
@@ -603,55 +327,7 @@ int R_BmodelFogNum(trRefEntity_t *re, bmodel_t *bmodel)
 	return 0;
 }
 
-#else
-
-{
-	int   i, j;
-	fog_t *fog;
-
-	for (i = 1 ; i < tr.world->numfogs ; i++)
-	{
-		fog = &tr.world->fogs[i];
-		for (j = 0 ; j < 3 ; j++)
-		{
-			if (re->e.origin[j] + bmodel->bounds[0][j] > fog->bounds[1][j])
-			{
-				break;
-			}
-			if (re->e.origin[j] + bmodel->bounds[0][j] < fog->bounds[0][j])
-			{
-				break;
-			}
-		}
-		if (j == 3)
-		{
-			return i;
-		}
-		for (j = 0 ; j < 3 ; j++)
-		{
-			if (re->e.origin[j] + bmodel->bounds[1][j] > fog->bounds[1][j])
-			{
-				break;
-			}
-			if (bmodel->bounds[1][j] < fog->bounds[0][j])
-			{
-				break;
-			}
-		}
-		if (j == 3)
-		{
-			return i;
-		}
-	}
-
-	return 0;
-}
-
-#endif
-
 //----(SA) done
-
-
 
 /*
 =================
@@ -753,7 +429,6 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 	tr.currentBModel = NULL;
 }
 
-
 /*
 =============================================================
 
@@ -761,7 +436,6 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 
 =============================================================
 */
-
 
 /*
 R_AddLeafSurfaces() - ydnar
@@ -772,7 +446,6 @@ static void R_AddLeafSurfaces(mnode_t *node, int dlightBits, int decalBits)
 {
 	int        c;
 	msurface_t *surf, **mark;
-
 
 	// add to count
 	tr.pc.c_leafs++;
@@ -817,7 +490,6 @@ static void R_AddLeafSurfaces(mnode_t *node, int dlightBits, int decalBits)
 	}
 }
 
-
 /*
 ================
 R_RecursiveWorldNode
@@ -827,7 +499,6 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 {
 	int      i, r;
 	dlight_t *dl;
-
 
 	do
 	{
@@ -976,7 +647,6 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 	R_AddLeafSurfaces(node, dlightBits, decalBits);
 }
 
-
 /*
 ===============
 R_PointInLeaf
@@ -1050,7 +720,6 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 	}
 	return qtrue;
 }
-
 
 /*
 ===============
@@ -1160,7 +829,6 @@ static void R_MarkLeaves(void)
 		while (parent);
 	}
 }
-
 
 /*
 =============

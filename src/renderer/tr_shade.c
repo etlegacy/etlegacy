@@ -162,8 +162,6 @@ static void R_DrawStripElements(int numIndexes, const glIndex_t *indexes, void (
 	qglEnd();
 }
 
-
-
 /*
 ==================
 R_DrawElements
@@ -175,9 +173,7 @@ without compiled vertex arrays.
 */
 static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 {
-	int primitives;
-
-	primitives = r_primitives->integer;
+	int primitives = r_primitives->integer;
 
 	// default is to use triangles if compiled vertex arrays are present
 	if (primitives == 0)
@@ -191,7 +187,6 @@ static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 			primitives = 1;
 		}
 	}
-
 
 	if (primitives == 2)
 	{
@@ -216,7 +211,6 @@ static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 
 	// anything else will cause no drawing
 }
-
 
 /*
 =============================================================
@@ -388,7 +382,6 @@ static void DrawTris(shaderCommands_t *input)
 	qglDisable(GL_POLYGON_OFFSET_LINE);
 }
 
-
 /*
 ================
 DrawNormals
@@ -491,7 +484,6 @@ void RB_BeginSurface(shader_t *shader, int fogNum)
 	{
 		tess.shaderTime = tess.shader->clampTime;
 	}
-	// done.
 }
 
 /*
@@ -534,16 +526,12 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 		qglPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	//
 	// base
-	//
 	GL_SelectTexture(0);
 	qglTexCoordPointer(2, GL_FLOAT, 0, input->svars.texcoords[0]);
 	R_BindAnimatedImage(&pStage->bundle[0]);
 
-	//
 	// lightmap/secondary pass
-	//
 	GL_SelectTexture(1);
 	qglEnable(GL_TEXTURE_2D);
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -563,21 +551,17 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 
 	R_DrawElements(input->numIndexes, input->indexes);
 
-	//
 	// disable texturing on TEXTURE1, then select TEXTURE0
-	//
 	//qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
 	qglDisable(GL_TEXTURE_2D);
 
 	GL_SelectTexture(0);
 }
 
-
 /*
 DynamicLightSinglePass()
 perform all dynamic lighting with a single rendering pass
 */
-
 static void DynamicLightSinglePass(void)
 {
 	int      i, l, a, b, c, color, *intColors;
@@ -727,8 +711,6 @@ static void DynamicLightSinglePass(void)
 	R_FogOn();
 }
 
-
-
 /*
 DynamicLightPass()
 perform dynamic lighting with multiple rendering passes
@@ -745,7 +727,6 @@ static void DynamicLightPass(void)
 	float    intensity, remainder, modulate;
 	vec3_t   floatColor, dir;
 	dlight_t *dl;
-
 
 	// early out
 	if (backEnd.refdef.num_dlights == 0)
@@ -882,8 +863,6 @@ static void DynamicLightPass(void)
 	}
 }
 
-
-
 /*
 ===================
 RB_FogPass
@@ -895,7 +874,6 @@ static void RB_FogPass(void)
 {
 	fog_t *fog;
 	int   i;
-
 
 	// no fog pass in snooper
 	if (tr.refdef.rdflags & RDF_SNOOPERVIEW || tess.shader->noFog || !r_wolffog->integer)
@@ -947,9 +925,7 @@ static void ComputeColors(shaderStage_t *pStage)
 {
 	int i;
 
-	//
 	// rgbGen
-	//
 	switch (pStage->rgbGen)
 	{
 	case CGEN_IDENTITY:
@@ -1030,9 +1006,7 @@ static void ComputeColors(shaderStage_t *pStage)
 		break;
 	}
 
-	//
 	// alphaGen
-	//
 	switch (pStage->alphaGen)
 	{
 	case AGEN_SKIP:
@@ -1216,9 +1190,7 @@ static void ComputeColors(shaderStage_t *pStage)
 	break;
 	}
 
-	//
 	// fog adjustment for colors to fade out as fog increases
-	//
 	if (tess.fogNum && !tess.shader->noFog)
 	{
 		switch (pStage->adjustColorsForFog)
@@ -1252,9 +1224,7 @@ static void ComputeTexCoords(shaderStage_t *pStage)
 	{
 		int tm;
 
-		//
 		// generate the texture coordinates
-		//
 		switch (pStage->bundle[b].tcGen)
 		{
 		case TCGEN_IDENTITY:
@@ -1351,8 +1321,6 @@ static void ComputeTexCoords(shaderStage_t *pStage)
 		}
 	}
 }
-
-
 
 extern void R_Fog(glfog_t *curfog);
 
@@ -1452,9 +1420,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 				qglTexCoordPointer(2, GL_FLOAT, 0, input->svars.texcoords[0]);
 			}
 
-			//
 			// set state
-			//
 			R_BindAnimatedImage(&pStage->bundle[0]);
 
 			// Ridah, per stage fogging (detail textures)
@@ -1528,9 +1494,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 				GL_State(pStage->stateBits);
 			}
 
-			//
 			// draw
-			//
 			R_DrawElements(input->numIndexes, input->indexes);
 		}
 
@@ -1541,7 +1505,6 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 		}
 	}
 }
-
 
 /*
 ** RB_StageIteratorGeneric
@@ -1556,9 +1519,7 @@ void RB_StageIteratorGeneric(void)
 
 	RB_DeformTessGeometry();
 
-	//
 	// log this call
-	//
 	if (r_logFile->integer)
 	{
 		// don't just call LogComment, or we will get
@@ -1569,10 +1530,7 @@ void RB_StageIteratorGeneric(void)
 	// set GL fog
 	SetIteratorFog();
 
-
-	//
 	// set face culling appropriately
-	//
 	GL_Cull(shader->cullType);
 
 	// set polygon offset if necessary
@@ -1582,7 +1540,6 @@ void RB_StageIteratorGeneric(void)
 		qglPolygonOffset(r_offsetFactor->value, r_offsetUnits->value);
 	}
 
-	//
 	// if there is only a single pass then we can enable color
 	// and texture arrays before we compile, otherwise we need
 	// to avoid compiling those arrays since they will change
@@ -1605,9 +1562,7 @@ void RB_StageIteratorGeneric(void)
 		qglTexCoordPointer(2, GL_FLOAT, 0, tess.svars.texcoords[0]);
 	}
 
-	//
 	// lock XYZ
-	//
 	qglVertexPointer(3, GL_FLOAT, 16, input->xyz);   // padded for SIMD
 	if (qglLockArraysEXT)
 	{
@@ -1615,9 +1570,7 @@ void RB_StageIteratorGeneric(void)
 		GLimp_LogComment("glLockArraysEXT\n");
 	}
 
-	//
 	// enable color and texcoord arrays after the lock if necessary
-	//
 	if (!setArraysOnce)
 	{
 		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1629,9 +1582,7 @@ void RB_StageIteratorGeneric(void)
 	//
 	RB_IterateStagesGeneric(input);
 
-	//
 	// now do any dynamic lighting needed
-	//
 	//% tess.dlightBits = 255;  // HACK!
 	//% if( tess.dlightBits && tess.shader->sort <= SS_OPAQUE &&
 	if (tess.dlightBits && tess.shader->fogPass &&
@@ -1647,32 +1598,25 @@ void RB_StageIteratorGeneric(void)
 		}
 	}
 
-	//
 	// now do fog
-	//
 	if (tess.fogNum && tess.shader->fogPass)
 	{
 		RB_FogPass();
 	}
 
-	//
 	// unlock arrays
-	//
 	if (qglUnlockArraysEXT)
 	{
 		qglUnlockArraysEXT();
 		GLimp_LogComment("glUnlockArraysEXT\n");
 	}
 
-	//
 	// reset polygon offset
-	//
 	if (shader->polygonOffset)
 	{
 		qglDisable(GL_POLYGON_OFFSET_FILL);
 	}
 }
-
 
 /*
 ** RB_StageIteratorVertexLitTexture
@@ -1685,14 +1629,10 @@ void RB_StageIteratorVertexLitTexture(void)
 	input  = &tess;
 	shader = input->shader;
 
-	//
 	// compute colors
-	//
 	RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
 
-	//
 	// log this call
-	//
 	if (r_logFile->integer)
 	{
 		// don't just call LogComment, or we will get
@@ -1700,18 +1640,13 @@ void RB_StageIteratorVertexLitTexture(void)
 		GLimp_LogComment(va("--- RB_StageIteratorVertexLitTexturedUnfogged( %s ) ---\n", tess.shader->name));
 	}
 
-
 	// set GL fog
 	SetIteratorFog();
 
-	//
 	// set face culling appropriately
-	//
 	GL_Cull(input->shader->cullType);
 
-	//
 	// set arrays and lock
-	//
 	qglEnableClientState(GL_COLOR_ARRAY);
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
@@ -1725,16 +1660,12 @@ void RB_StageIteratorVertexLitTexture(void)
 		GLimp_LogComment("glLockArraysEXT\n");
 	}
 
-	//
 	// call special shade routine
-	//
 	R_BindAnimatedImage(&tess.xstages[0]->bundle[0]);
 	GL_State(tess.xstages[0]->stateBits);
 	R_DrawElements(input->numIndexes, input->indexes);
 
-	//
 	// now do any dynamic lighting needed
-	//
 	//% if ( tess.dlightBits && tess.shader->sort <= SS_OPAQUE )
 	if (tess.dlightBits && tess.shader->fogPass &&
 	    !(tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY)))
@@ -1749,18 +1680,13 @@ void RB_StageIteratorVertexLitTexture(void)
 		}
 	}
 
-
-	//
 	// now do fog
-	//
 	if (tess.fogNum && tess.shader->fogPass)
 	{
 		RB_FogPass();
 	}
 
-	//
 	// unlock arrays
-	//
 	if (qglUnlockArraysEXT)
 	{
 		qglUnlockArraysEXT();
@@ -1778,9 +1704,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	input  = &tess;
 	shader = input->shader;
 
-	//
 	// log this call
-	//
 	if (r_logFile->integer)
 	{
 		// don't just call LogComment, or we will get
@@ -1791,14 +1715,10 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	// set GL fog
 	SetIteratorFog();
 
-	//
 	// set face culling appropriately
-	//
 	GL_Cull(shader->cullType);
 
-	//
 	// set color, pointers, and lock
-	//
 	GL_State(GLS_DEFAULT);
 	qglVertexPointer(3, GL_FLOAT, 16, input->xyz);
 
@@ -1811,18 +1731,14 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.constantColor255);
 #endif
 
-	//
 	// select base stage
-	//
 	GL_SelectTexture(0);
 
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	R_BindAnimatedImage(&tess.xstages[0]->bundle[0]);
 	qglTexCoordPointer(2, GL_FLOAT, 8, tess.texCoords0);
 
-	//
 	// configure second stage
-	//
 	GL_SelectTexture(1);
 	qglEnable(GL_TEXTURE_2D);
 	if (r_lightmap->integer)
@@ -1847,9 +1763,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	qglTexCoordPointer(2, GL_FLOAT, 8, tess.texCoords1);
 
-	//
 	// lock arrays
-	//
 	if (qglLockArraysEXT)
 	{
 		qglLockArraysEXT(0, input->numVertexes);
@@ -1858,9 +1772,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 
 	R_DrawElements(input->numIndexes, input->indexes);
 
-	//
 	// disable texturing on TEXTURE1, then select TEXTURE0
-	//
 	qglDisable(GL_TEXTURE_2D);
 	qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
@@ -1870,9 +1782,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	qglShadeModel(GL_SMOOTH);
 #endif
 
-	//
 	// now do any dynamic lighting needed
-	//
 	//% if ( tess.dlightBits && tess.shader->sort <= SS_OPAQUE )
 	if (tess.dlightBits && tess.shader->fogPass &&
 	    !(tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY)))
@@ -1887,17 +1797,13 @@ void RB_StageIteratorLightmappedMultitexture(void)
 		}
 	}
 
-	//
 	// now do fog
-	//
 	if (tess.fogNum && tess.shader->fogPass)
 	{
 		RB_FogPass();
 	}
 
-	//
 	// unlock arrays
-	//
 	if (qglUnlockArraysEXT)
 	{
 		qglUnlockArraysEXT();
@@ -1940,22 +1846,16 @@ void RB_EndSurface(void)
 		return;
 	}
 
-	//
 	// update performance counters
-	//
 	backEnd.pc.c_shaders++;
 	backEnd.pc.c_vertexes     += tess.numVertexes;
 	backEnd.pc.c_indexes      += tess.numIndexes;
 	backEnd.pc.c_totalIndexes += tess.numIndexes * tess.numPasses;
 
-	//
 	// call off to shader specific tess end function
-	//
 	tess.currentStageIteratorFunc();
 
-	//
 	// draw debugging stuff
-	//
 	if (r_showtris->integer)
 	{
 		DrawTris(input);
@@ -1964,7 +1864,6 @@ void RB_EndSurface(void)
 	{
 		DrawNormals(input);
 	}
-
 
 	// clear shader so we can tell we don't have any unclosed surfaces
 	tess.numIndexes = 0;

@@ -31,13 +31,11 @@
  * @file tr_cmds.c
  */
 
-
 #include "tr_local.h"
 
 volatile renderCommandList_t *renderCommandList;
 
 volatile qboolean renderThreadActive;
-
 
 /*
 =====================
@@ -54,7 +52,7 @@ void R_PerformanceCounters(void)
 		return;
 	}
 
-	if (r_speeds->integer)     //%  == 1)
+	if (r_speeds->integer)
 	{
 		ri.Printf(PRINT_ALL, "%i/%i shaders/surfs %i leafs %i verts %i/%i tris %.2f mtex %.2f dc\n",
 		          backEnd.pc.c_shaders, backEnd.pc.c_surfaces, tr.pc.c_leafs, backEnd.pc.c_vertexes,
@@ -98,7 +96,6 @@ void R_PerformanceCounters(void)
 	memset(&tr.pc, 0, sizeof(tr.pc));
 	memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
-
 
 /*
 ====================
@@ -206,7 +203,6 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	}
 }
 
-
 /*
 ====================
 R_SyncRenderThread
@@ -262,7 +258,6 @@ void *R_GetCommandBuffer(int bytes)
 	return cmdList->cmds + cmdList->used - bytes;
 }
 
-
 /*
 =============
 R_AddDrawSurfCmd
@@ -286,7 +281,6 @@ void    R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
 	cmd->refdef    = tr.refdef;
 	cmd->viewParms = tr.viewParms;
 }
-
 
 /*
 =============
@@ -317,7 +311,6 @@ void    RE_SetColor(const float *rgba)
 	cmd->color[2] = rgba[2];
 	cmd->color[3] = rgba[3];
 }
-
 
 /*
 =============
@@ -376,7 +369,6 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 
 	r_numpolyverts += numverts;
 }
-
 
 /*
 =============
@@ -537,9 +529,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	tr.frameCount++;
 	tr.frameSceneNum = 0;
 
-	//
 	// do overdraw measurement
-	//
 	if (r_measureOverdraw->integer)
 	{
 		if (glConfig.stencilBits < 4)
@@ -576,9 +566,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		r_measureOverdraw->modified = qfalse;
 	}
 
-	//
 	// texturemode stuff
-	//
 	if (r_textureMode->modified)
 	{
 		R_SyncRenderThread();
@@ -586,9 +574,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		r_textureMode->modified = qfalse;
 	}
 
-	//
 	// gamma stuff
-	//
 	if (r_gamma->modified)
 	{
 		r_gamma->modified = qfalse;
@@ -609,9 +595,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		}
 	}
 
-	//
 	// draw buffer stuff
-	//
 	cmd = R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
@@ -650,7 +634,6 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		}
 	}
 }
-
 
 /*
 =============

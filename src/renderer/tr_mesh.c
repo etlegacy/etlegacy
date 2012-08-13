@@ -178,7 +178,6 @@ static int R_CullModel(md3Header_t *header, trRefEntity_t *ent)
 	}
 }
 
-
 /*
 =================
 R_ComputeLOD
@@ -221,7 +220,7 @@ int R_ComputeLOD(trRefEntity_t *ent)
 			// right now this is for trees, and pushes the lod distance way in.
 			// this is not the intended purpose, but is helpful for the new
 			// terrain level that has loads of trees
-//          radius = radius/2.0f;
+			//          radius = radius/2.0f;
 		}
 		//----(SA)  end
 
@@ -338,9 +337,7 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 		ent->e.oldframe %= tr.currentModel->model.md3[0]->numFrames;
 	}
 
-	//
 	// compute LOD
-	//
 	if (ent->e.renderfx & RF_FORCENOLOD)
 	{
 		lod = 0;
@@ -350,12 +347,10 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 		lod = R_ComputeLOD(ent);
 	}
 
-	//
 	// Validate the frames so there is no chance of a crash.
 	// This will write directly into the entity structure, so
 	// when the surfaces are rendered, they don't need to be
 	// range checked again.
-	//
 	if ((ent->e.frame >= tr.currentModel->model.md3[lod]->numFrames)
 	    || (ent->e.frame < 0)
 	    || (ent->e.oldframe >= tr.currentModel->model.md3[lod]->numFrames)
@@ -371,32 +366,24 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 
 	header = tr.currentModel->model.md3[lod];
 
-	//
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum.
-	//
 	cull = R_CullModel(header, ent);
 	if (cull == CULL_OUT)
 	{
 		return;
 	}
 
-	//
 	// set up lighting now that we know we aren't culled
-	//
 	if (!personalModel || r_shadows->integer > 1)
 	{
 		R_SetupEntityLighting(&tr.refdef, ent);
 	}
 
-	//
 	// see if we are in a fog volume
-	//
 	fogNum = R_ComputeFogNum(header, ent);
 
-	//
 	// draw all surfaces
-	//
 	surface = ( md3Surface_t * )((byte *)header + header->ofsSurfaces);
 	for (i = 0 ; i < header->numSurfaces ; i++)
 	{

@@ -46,7 +46,6 @@ static float s_flipMatrix[16] =
 	0,  0, 0,  1
 };
 
-
 refimport_t ri;
 
 // entities that will have procedurally generated surfaces will just
@@ -57,7 +56,6 @@ surfaceType_t entitySurface = SF_ENTITY;
 glfog_t     glfogsettings[NUM_FOGS];
 glfogType_t glfogNum = FOG_NONE;
 qboolean    fogIsOn  = qfalse;
-
 
 /*
 =================
@@ -93,46 +91,27 @@ void R_Fog(glfog_t *curfog)
 	{
 		curfog->mode = GL_LINEAR;
 	}
-	//----(SA)  end
-
 
 	R_FogOn();
 
-	// only send changes if necessary
-
-//  if(curfog->mode != setfog.mode || !setfog.registered) {
 	qglFogi(GL_FOG_MODE, curfog->mode);
-//      setfog.mode = curfog->mode;
-//  }
-//  if(curfog->color[0] != setfog.color[0] || curfog->color[1] != setfog.color[1] || curfog->color[2] != setfog.color[2] || !setfog.registered) {
+
 	qglFogfv(GL_FOG_COLOR, curfog->color);
-//      VectorCopy(setfog.color, curfog->color);
-//  }
-//  if(curfog->density != setfog.density || !setfog.registered) {
+
 	qglFogf(GL_FOG_DENSITY, curfog->density);
-//      setfog.density = curfog->density;
-//  }
-//  if(curfog->hint != setfog.hint || !setfog.registered) {
+
 	qglHint(GL_FOG_HINT, curfog->hint);
-//      setfog.hint = curfog->hint;
-//  }
-//  if(curfog->start != setfog.start || !setfog.registered) {
+
 	qglFogf(GL_FOG_START, curfog->start);
-//      setfog.start = curfog->start;
-//  }
 
 	if (r_zfar->value)                 // (SA) allow override for helping level designers test fog distances
-	{ //      if(setfog.end != r_zfar->value || !setfog.registered) {
+	{
 		qglFogf(GL_FOG_END, r_zfar->value);
-//          setfog.end = r_zfar->value;
-//      }
+
 	}
 	else
 	{
-//      if(curfog->end != setfog.end || !setfog.registered) {
 		qglFogf(GL_FOG_END, curfog->end);
-//          setfog.end = curfog->end;
-//      }
 	}
 
 	setfog.registered = qtrue;
@@ -160,20 +139,10 @@ void R_FogOn(void)
 		return;
 	}
 
-//  if(r_uiFullScreen->integer) {   // don't fog in the menu
-//      R_FogOff();
-//      return;
-//  }
-
 	if (!r_wolffog->integer)
 	{
 		return;
 	}
-
-//  if(backEnd.viewParms.isGLFogged) {
-//      if(!(backEnd.viewParms.glFog.registered))
-//          return;
-//  }
 
 	if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)     // don't force world fog on portal sky
 	{
@@ -191,8 +160,6 @@ void R_FogOn(void)
 	fogIsOn = qtrue;
 }
 // done.
-
-
 
 //----(SA)
 /*
@@ -653,7 +620,6 @@ R_SetFrameFog
 */
 void R_SetFrameFog(void)
 {
-
 	// Arnout: new style global fog transitions
 	if (tr.world->globalFogTransEndTime)
 	{
@@ -769,7 +735,6 @@ void R_SetFrameFog(void)
 		memcpy(&glfogsettings[FOG_CURRENT], &glfogsettings[FOG_TARGET], sizeof(glfog_t));
 	}
 
-
 	// shorten the far clip if the fog opaque distance is closer than the procedural farcip dist
 
 	if (glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
@@ -779,9 +744,6 @@ void R_SetFrameFog(void)
 			tr.viewParms.zFar = glfogsettings[FOG_CURRENT].end;
 		}
 	}
-//  else
-//      glfogsettings[FOG_CURRENT].end = 5;
-
 
 	if (r_speeds->integer == 5)
 	{
@@ -795,7 +757,6 @@ void R_SetFrameFog(void)
 		}
 	}
 }
-
 
 /*
 ==============
@@ -831,9 +792,7 @@ static void SetFarClip(void)
 		return;
 	}
 
-	//
 	// set far clipping planes dynamically
-	//
 	farthestCornerDistance = 0;
 	for (i = 0; i < 8; i++)
 	{
@@ -889,7 +848,6 @@ static void SetFarClip(void)
 	R_SetFrameFog();
 }
 
-
 /*
 =================
 R_SetupFrustum
@@ -937,7 +895,6 @@ void R_SetupFrustum(void)
 	SetPlaneSignbits(&tr.viewParms.frustum[4]);
 }
 
-
 /*
 ===============
 R_SetupProjection
@@ -955,9 +912,7 @@ void R_SetupProjection(void)
 	// ydnar: set frustum planes (this happens here because of zfar manipulation)
 	R_SetupFrustum();
 
-	//
 	// set up projection matrix
-	//
 	zNear = r_znear->value;
 
 	// ydnar: high fov values let players see through walls
@@ -1009,7 +964,6 @@ void R_SetupProjection(void)
 	tr.viewParms.projectionMatrix[15] = 0;
 }
 
-
 /*
 =================
 R_MirrorPoint
@@ -1047,7 +1001,6 @@ void R_MirrorVector(vec3_t in, orientation_t *surface, orientation_t *camera, ve
 	}
 }
 
-
 /*
 =============
 R_PlaneForSurface
@@ -1066,6 +1019,7 @@ void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
 		plane->normal[0] = 1;
 		return;
 	}
+
 	switch (*surfType)
 	{
 	case SF_FACE:
@@ -1315,6 +1269,8 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	int          i;
 	unsigned int pointOr  = 0;
 	unsigned int pointAnd = (unsigned int)~0;
+	int          j;
+	unsigned int pointFlags;
 
 	if (glConfig.smpActive)         // FIXME!  we can't do RB_BeginSurface/RB_EndSurface stuff with smp!
 	{
@@ -1331,8 +1287,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 
 	for (i = 0; i < tess.numVertexes; i++)
 	{
-		int          j;
-		unsigned int pointFlags = 0;
+		pointFlags = 0;
 
 		R_TransformModelToClip(tess.xyz[i].v, tr.orientation.modelMatrix, tr.viewParms.projectionMatrix, eye, clip);
 
@@ -1423,7 +1378,6 @@ qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf, int entityNum)
 		return qfalse;
 	}
 
-//  if ( r_noportals->integer || r_fastsky->integer || tr.levelGLFog) {
 	if (r_noportals->integer || r_fastsky->integer)
 	{
 		return qfalse;
@@ -1512,7 +1466,6 @@ DRAWSURF SORTING
 
 ==========================================================================================
 */
-
 
 /*
 ===============
@@ -1695,11 +1648,9 @@ void R_AddEntitySurfaces(void)
 		// preshift the value we are going to OR into the drawsurf sort
 		tr.shiftedEntityNum = tr.currentEntityNum << QSORT_ENTITYNUM_SHIFT;
 
-		//
 		// the weapon model must be handled special --
 		// we don't want the hacked weapon position showing in
 		// mirrors, because the true body position will already be drawn
-		//
 		if ((ent->e.renderfx & RF_FIRST_PERSON) && tr.viewParms.isPortal)
 		{
 			continue;
@@ -1776,10 +1727,7 @@ void R_AddEntitySurfaces(void)
 			ri.Error(ERR_DROP, "R_AddEntitySurfaces: Bad reType");
 		}
 	}
-
 }
-
-
 
 /*
 ====================
@@ -1801,7 +1749,6 @@ void R_GenerateDrawSurfs(void)
 		VectorCopy(tr.world->nodes->mins, tr.viewParms.visBounds[0]);
 		VectorCopy(tr.world->nodes->maxs, tr.viewParms.visBounds[1]);
 	}
-
 
 	R_SetupProjection();
 
@@ -1836,7 +1783,6 @@ void R_DebugPolygon(int color, int numPoints, float *points)
 	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
 	// draw solid shade
-
 	qglColor3f(color & 1, (color >> 1) & 1, (color >> 2) & 1);
 	qglBegin(GL_POLYGON);
 	for (i = 0 ; i < numPoints ; i++)
@@ -1909,7 +1855,6 @@ void R_DebugGraphics(void)
 	ri.CM_DrawDebugSurface(R_DebugPolygon);
 }
 
-
 /*
 ================
 R_RenderView
@@ -1957,10 +1902,6 @@ void R_RenderView(viewParms_t *parms)
 	// set viewParms.world
 	R_RotateForViewer();
 
-	// ydnar: removed this because we do a full frustum/projection setup
-	// based on world bounds zfar or fog bounds
-	// R_SetupFrustum ();
-
 	R_GenerateDrawSurfs();
 
 	R_SortDrawSurfs(tr.refdef.drawSurfs + firstDrawSurf, tr.refdef.numDrawSurfs - firstDrawSurf);
@@ -1969,5 +1910,4 @@ void R_RenderView(viewParms_t *parms)
 	R_FogOff();
 	R_DebugGraphics();
 	R_FogOn();
-
 }

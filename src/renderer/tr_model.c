@@ -86,13 +86,10 @@ model_t *R_AllocModel(void)
 	return mod;
 }
 
-
-
 /*
 R_LoadModelShadow()
 loads a model's shadow script
 */
-
 void R_LoadModelShadow(model_t *mod)
 {
 	unsigned *buf;
@@ -144,8 +141,6 @@ void R_LoadModelShadow(model_t *mod)
 	}
 }
 
-
-
 /*
 ====================
 RE_RegisterModel
@@ -188,9 +183,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		ri.Cmd_ExecuteText(EXEC_NOW, va("cache_usedfile model %s\n", name));
 	}
 
-	//
 	// search the currently loaded models
-	//
 	for (hModel = 1 ; hModel < tr.numModels; hModel++)
 	{
 		mod = tr.models[hModel];
@@ -231,9 +224,7 @@ qhandle_t RE_RegisterModel(const char *name)
 
 	mod->numLods = 0;
 
-	//
 	// load the files
-	//
 	numLoaded = 0;
 
 	if (strstr(name, ".mds") || strstr(name, ".mdm") || strstr(name, ".mdx"))              // try loading skeletal file
@@ -269,7 +260,6 @@ qhandle_t RE_RegisterModel(const char *name)
 
 	for (lod = MD3_MAX_LODS - 1 ; lod >= 0 ; lod--)
 	{
-
 		strcpy(filename, name);
 
 		if (lod != 0)
@@ -344,7 +334,6 @@ qhandle_t RE_RegisterModel(const char *name)
 		}
 	}
 
-
 	if (numLoaded)
 	{
 		// duplicate into higher lod spots that weren't
@@ -407,7 +396,6 @@ unsigned char R_MDC_GetAnorm(const vec3_t dir)
 	float *this_norm;
 
 	// find best Z match
-
 	if (dir[2] > 0.097545f)
 	{
 		next_start = 144;
@@ -468,13 +456,7 @@ unsigned char R_MDC_GetAnorm(const vec3_t dir)
 		{
 			break; // done checking the group
 		}
-		/*
-		        if (    (this_norm[0] < 0 && dir[0] > 0)
-		            ||  (this_norm[0] > 0 && dir[0] < 0)
-		            ||  (this_norm[1] < 0 && dir[1] > 0)
-		            ||  (this_norm[1] > 0 && dir[1] < 0))
-		            continue;
-		*/
+
 		diff = DotProduct(dir, this_norm);
 
 		if (diff > best_diff)
@@ -1280,7 +1262,6 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 	return qtrue;
 }
 
-
 /*
 =================
 R_LoadMDS
@@ -1803,7 +1784,6 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 	return qtrue;
 }
 
-
 //=============================================================================
 
 /*
@@ -1847,9 +1827,7 @@ void R_ModelInit(void)
 
 	// Ridah, load in the cacheModels
 	R_LoadCacheModels();
-	// done.
 }
-
 
 /*
 ================
@@ -1889,9 +1867,7 @@ void R_Modellist_f(void)
 #endif
 }
 
-
 //=============================================================================
-
 
 /*
 ================
@@ -1923,13 +1899,6 @@ static int R_GetTag(byte *mod, int frame, const char *tagName, int startTagIndex
 	{
 		if ((i >= startTagIndex) && !strcmp(tag->name, tagName))
 		{
-
-			// if we are looking for an indexed tag, wait until we find the correct number of matches
-			//if (startTagIndex) {
-			//  startTagIndex--;
-			//  continue;
-			//}
-
 			*outTag = tag;
 			return i;   // found it
 		}
@@ -1987,44 +1956,6 @@ static int R_GetMDCTag(byte *mod, int frame, const char *tagName, int startTagIn
 
 /*
 ================
-R_GetMDSTag
-================
-*/
-/*
-// TTimo: unused
-static int R_GetMDSTag( byte *mod, const char *tagName, int startTagIndex, mdsTag_t **outTag ) {
-    mdsTag_t        *tag;
-    int             i;
-    mdsHeader_t     *mds;
-
-    mds = (mdsHeader_t *) mod;
-
-    if (startTagIndex > mds->numTags) {
-        *outTag = NULL;
-        return -1;
-    }
-
-    tag = (mdsTag_t *)((byte *)mod + mds->ofsTags);
-    for ( i = 0 ; i < mds->numTags ; i++ ) {
-        if ( (i >= startTagIndex) && !strcmp( tag->name, tagName ) ) {
-            break;  // found it
-        }
-
-        tag = (mdsTag_t *) ((byte *)tag + sizeof(mdsTag_t) - sizeof(mdsBoneFrameCompressed_t) + mds->numFrames * sizeof(mdsBoneFrameCompressed_t) );
-    }
-
-    if (i >= mds->numTags) {
-        *outTag = NULL;
-        return -1;
-    }
-
-    *outTag = tag;
-    return i;
-}
-*/
-
-/*
-================
 R_LerpTag
 
   returns the index of the tag it found, for cycling through tags with the same name
@@ -2050,14 +1981,7 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 	frac       = 1.0 - refent->backlerp;
 
 	Q_strncpyz(tagName, tagNameIn, MAX_QPATH);
-	/*
-	    // if the tagName has a space in it, then it is passing through the starting tag number
-	    if (ch = strrchr(tagName, ' ')) {
-	        *ch = 0;
-	        ch++;
-	        startIndex = atoi(ch);
-	    }
-	*/
+
 	model = R_GetModelByHandle(handle);
 	if (!model->model.md3[0] && !model->model.mdc[0] && !model->model.mds)
 	{

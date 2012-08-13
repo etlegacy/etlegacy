@@ -76,38 +76,6 @@ void R_AddEdgeDef(int i1, int i2, int facing)
 void R_RenderShadowEdges(void)
 {
 	int i;
-
-#if 0
-	int numTris;
-
-	// dumb way -- render every triangle's edges
-	numTris = tess.numIndexes / 3;
-
-	for (i = 0 ; i < numTris ; i++)
-	{
-		int i1, i2, i3;
-
-		if (!facing[i])
-		{
-			continue;
-		}
-
-		i1 = tess.indexes[i * 3 + 0];
-		i2 = tess.indexes[i * 3 + 1];
-		i3 = tess.indexes[i * 3 + 2];
-
-		qglBegin(GL_TRIANGLE_STRIP);
-		qglVertex3fv(tess.xyz[i1].v);
-		qglVertex3fv(tess.xyz[i1 + tess.numVertexes].v);
-		qglVertex3fv(tess.xyz[i2].v);
-		qglVertex3fv(tess.xyz[i2 + tess.numVertexes].v);
-		qglVertex3fv(tess.xyz[i3].v);
-		qglVertex3fv(tess.xyz[i3 + tess.numVertexes].v);
-		qglVertex3fv(tess.xyz[i1].v);
-		qglVertex3fv(tess.xyz[i1 + tess.numVertexes].v);
-		qglEnd();
-	}
-#else
 	int c, c2;
 	int j, k;
 	int i2;
@@ -162,7 +130,6 @@ void R_RenderShadowEdges(void)
 			}
 		}
 	}
-#endif
 }
 
 /*
@@ -285,7 +252,6 @@ void RB_ShadowTessEnd(void)
 	qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
-
 /*
 =================
 RB_ShadowFinish
@@ -319,9 +285,6 @@ void RB_ShadowFinish(void)
 	qglColor3f(0.6f, 0.6f, 0.6f);
 	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO);
 
-//	qglColor3f( 1, 0, 0 );
-//	GL_State( GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO );
-
 	qglBegin(GL_QUADS);
 	qglVertex3f(-100, 100, -10);
 	qglVertex3f(100, 100, -10);
@@ -332,7 +295,6 @@ void RB_ShadowFinish(void)
 	qglColor4f(1, 1, 1, 1);
 	qglDisable(GL_STENCIL_TEST);
 }
-
 
 /*
 =================

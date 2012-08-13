@@ -57,7 +57,7 @@ typedef struct shaderStringPointer_s
 	char *pStr;
 	struct shaderStringPointer_s *next;
 } shaderStringPointer_t;
-//
+
 shaderStringPointer_t shaderChecksumLookup[FILE_HASH_SIZE];
 // done.
 
@@ -68,12 +68,10 @@ return a hash value for the filename
 */
 static long generateHashValue(const char *fname)
 {
-	int  i;
-	long hash;
+	int  i = 0;
+	long hash = 0;
 	char letter;
 
-	hash = 0;
-	i    = 0;
 	while (fname[i] != '\0')
 	{
 		letter = tolower(fname[i]);
@@ -191,7 +189,6 @@ static qboolean ParseVector(char **text, int count, float *v)
 	return qtrue;
 }
 
-
 /*
 ===============
 NameToAFunc
@@ -215,7 +212,6 @@ static unsigned NameToAFunc(const char *funcname)
 	ri.Printf(PRINT_WARNING, "WARNING: invalid alphaFunc name '%s' in shader '%s'\n", funcname, shader.name);
 	return 0;
 }
-
 
 /*
 ===============
@@ -420,16 +416,13 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 
 	token = COM_ParseExt(text, qfalse);
 
-	//
 	// swap
-	//
 	if (!Q_stricmp(token, "swap"))       // swap S/T coords (rotate 90d)
 	{
 		tmi->type = TMOD_SWAP;
 	}
-	//
+
 	// turb
-	//
 	// (SA) added 'else' so it wouldn't claim 'swap' was unknown.
 	else if (!Q_stricmp(token, "turb"))
 	{
@@ -464,9 +457,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 
 		tmi->type = TMOD_TURBULENT;
 	}
-	//
 	// scale
-	//
 	else if (!Q_stricmp(token, "scale"))
 	{
 		token = COM_ParseExt(text, qfalse);
@@ -486,9 +477,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 		tmi->scale[1] = atof(token);
 		tmi->type     = TMOD_SCALE;
 	}
-	//
 	// scroll
-	//
 	else if (!Q_stricmp(token, "scroll"))
 	{
 		token = COM_ParseExt(text, qfalse);
@@ -507,9 +496,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 		tmi->scroll[1] = atof(token);
 		tmi->type      = TMOD_SCROLL;
 	}
-	//
 	// stretch
-	//
 	else if (!Q_stricmp(token, "stretch"))
 	{
 		token = COM_ParseExt(text, qfalse);
@@ -554,9 +541,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 
 		tmi->type = TMOD_STRETCH;
 	}
-	//
 	// transform
-	//
 	else if (!Q_stricmp(token, "transform"))
 	{
 		token = COM_ParseExt(text, qfalse);
@@ -609,9 +594,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 
 		tmi->type = TMOD_TRANSFORM;
 	}
-	//
 	// rotate
-	//
 	else if (!Q_stricmp(token, "rotate"))
 	{
 		token = COM_ParseExt(text, qfalse);
@@ -623,9 +606,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 		tmi->rotateSpeed = atof(token);
 		tmi->type        = TMOD_ROTATE;
 	}
-	//
 	// entityTranslate
-	//
 	else if (!Q_stricmp(token, "entityTranslate"))
 	{
 		tmi->type = TMOD_ENTITY_TRANSLATE;
@@ -635,7 +616,6 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 		ri.Printf(PRINT_WARNING, "WARNING: unknown tcMod '%s' in shader '%s'\n", token, shader.name);
 	}
 }
-
 
 /*
 ===================
@@ -788,9 +768,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				}
 			}
 		}
-		//
 		// clampmap <name>
-		//
 		else if (!Q_stricmp(token, "clampmap"))
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -807,9 +785,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				return qfalse;
 			}
 		}
-		//
 		// lightmap <name>
-		//
 		else if (!Q_stricmp(token, "lightmap"))
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -857,9 +833,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				stage->bundle[0].isLightmap = qtrue;
 			}
 		}
-		//
 		// animMap <frequency> <image1> .... <imageN>
-		//
 		else if (!Q_stricmp(token, "animMap"))
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -908,9 +882,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				stage->bundle[0].image[0]   = tr.scratchImage[stage->bundle[0].videoMapHandle];
 			}
 		}
-		//
 		// alphafunc <func>
-		//
 		else if (!Q_stricmp(token, "alphaFunc"))
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -922,9 +894,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 
 			atestBits = NameToAFunc(token);
 		}
-		//
 		// depthFunc <func>
-		//
 		else if (!Q_stricmp(token, "depthfunc"))
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -949,16 +919,12 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				continue;
 			}
 		}
-		//
 		// detail
-		//
 		else if (!Q_stricmp(token, "detail"))
 		{
 			stage->isDetail = qtrue;
 		}
-		//
 		// fog
-		//
 		else if (!Q_stricmp(token, "fog"))
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -976,10 +942,8 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				stage->isFogged = qfalse;
 			}
 		}
-		//
 		// blendfunc <srcFactor> <dstFactor>
 		// or blendfunc <add|filter|blend>
-		//
 		else if (!Q_stricmp(token, "blendfunc"))
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -1024,9 +988,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				depthMaskBits = 0;
 			}
 		}
-		//
 		// rgbGen
-		//
 		else if (!Q_stricmp(token, "rgbGen"))
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -1094,9 +1056,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				continue;
 			}
 		}
-		//
 		// alphaGen
-		//
 		else if (!Q_stricmp(token, "alphaGen"))
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -1190,9 +1150,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				continue;
 			}
 		}
-		//
 		// tcGen <function>
-		//
 		else if (!Q_stricmp(token, "texgen") || !Q_stricmp(token, "tcGen"))
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -1230,9 +1188,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				ri.Printf(PRINT_WARNING, "WARNING: unknown texgen parm in shader '%s'\n", shader.name);
 			}
 		}
-		//
 		// tcMod <type> <...>
-		//
 		else if (!Q_stricmp(token, "tcMod"))
 		{
 			char buffer[1024] = "";
@@ -1252,9 +1208,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 
 			continue;
 		}
-		//
 		// depthmask
-		//
 		else if (!Q_stricmp(token, "depthwrite"))
 		{
 			depthMaskBits     = GLS_DEPTHMASK_TRUE;
@@ -1269,9 +1223,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		}
 	}
 
-	//
 	// if cgen isn't explicitly specified, use either identity or identitylighting
-	//
 	if (stage->rgbGen == CGEN_BAD)
 	{
 		if (blendSrcBits == 0 ||
@@ -1295,10 +1247,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		stage->rgbGen = CGEN_EXACT_VERTEX;
 	}
 
-
-	//
 	// implicitly assume that a GL_ONE GL_ZERO blend mask disables blending
-	//
 	if ((blendSrcBits == GLS_SRCBLEND_ONE) &&
 	    (blendDstBits == GLS_DSTBLEND_ZERO))
 	{
@@ -1316,9 +1265,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		}
 	}
 
-	//
 	// compute state bits
-	//
 	stage->stateBits = depthMaskBits |
 	                   blendSrcBits | blendDstBits |
 	                   atestBits |
@@ -1492,7 +1439,6 @@ static void ParseDeform(char **text)
 	ri.Printf(PRINT_WARNING, "WARNING: unknown deformVertexes subtype '%s' found in shader '%s'\n", token, shader.name);
 }
 
-
 /*
 ===============
 ParseSkyParms
@@ -1567,7 +1513,6 @@ static void ParseSkyParms(char **text)
 	shader.isSky = qtrue;
 }
 
-
 /*
 =================
 ParseSort
@@ -1625,7 +1570,6 @@ void ParseSort(char **text)
 		shader.sort = atof(token);
 	}
 }
-
 
 
 // this table is also present in q3map
@@ -1712,7 +1656,6 @@ infoParm_t infoParms[] =
 
 };
 
-
 /*
 ===============
 ParseSurfaceParm
@@ -1756,9 +1699,7 @@ will optimize it.
 static qboolean ParseShader(char **text)
 {
 	char *token;
-	int  s;
-
-	s = 0;
+	int  s = 0;
 
 	tr.allowCompress = qtrue;   // Arnout: allow compression by default
 
@@ -2234,9 +2175,7 @@ static void ComputeStageIteratorFunc(void)
 {
 	shader.optimalStageIteratorFunc = RB_StageIteratorGeneric;
 
-	//
 	// see if this should go into the sky path
-	//
 	if (shader.isSky)
 	{
 		shader.optimalStageIteratorFunc = RB_StageIteratorSky;
@@ -2255,9 +2194,7 @@ static void ComputeStageIteratorFunc(void)
 		return;
 	}
 
-	//
 	// see if this can go into the vertex lit fast path
-	//
 	if (shader.numUnfoggedPasses == 1)
 	{
 		if (stages[0].rgbGen == CGEN_LIGHTING_DIFFUSE)
@@ -2282,9 +2219,7 @@ static void ComputeStageIteratorFunc(void)
 		}
 	}
 
-	//
 	// see if this can go into an optimized LM, multitextured path
-	//
 	if (shader.numUnfoggedPasses == 1)
 	{
 		if ((stages[0].rgbGen == CGEN_IDENTITY) && (stages[0].alphaGen == AGEN_IDENTITY))
@@ -2472,9 +2407,7 @@ static qboolean CollapseMultitexture(void)
 	stages[0].stateBits   &= ~(GLS_DSTBLEND_BITS | GLS_SRCBLEND_BITS);
 	stages[0].stateBits   |= collapse[i].multitextureBlend;
 
-	//
 	// move down subsequent shaders
-	//
 	memmove(&stages[1], &stages[2], sizeof(stages[0]) * (MAX_SHADER_STAGES - 2));
 	memset(&stages[MAX_SHADER_STAGES - 1], 0, sizeof(stages[0]));
 
@@ -2567,7 +2500,6 @@ static void FixRenderCommandList(int newShader)
 	}
 }
 
-
 /*
 ==============
 SortNewShader
@@ -2605,7 +2537,6 @@ static void SortNewShader(void)
 	newShader->sortedIndex  = i + 1;
 	tr.sortedShaders[i + 1] = newShader;
 }
-
 
 /*
 ====================
@@ -2702,7 +2633,6 @@ static void VertexLightingCollapse(void)
 	// if we aren't opaque, just use the first pass
 	if (shader.sort == SS_OPAQUE)
 	{
-
 		// pick the best texture for the single pass
 		bestStage     = &stages[0];
 		bestImageRank = -999999;
@@ -2792,12 +2722,10 @@ static void VertexLightingCollapse(void)
 	}
 }
 
-
 /*
 SetImplicitShaderStages() - ydnar
 sets a shader's stages to one of several defaults
 */
-
 static void SetImplicitShaderStages(image_t *image)
 {
 	// set implicit cull type
@@ -2870,68 +2798,7 @@ static void SetImplicitShaderStages(image_t *image)
 		}
 		break;
 	}
-
-#if 0
-	if (shader.lightmapIndex == LIGHTMAP_NONE)
-	{
-		// dynamic colors at vertexes
-		stages[0].bundle[0].image[0] = image;
-		stages[0].active             = qtrue;
-		stages[0].rgbGen             = CGEN_LIGHTING_DIFFUSE;
-		stages[0].stateBits          = GLS_DEFAULT;
-	}
-	else if (shader.lightmapIndex == LIGHTMAP_BY_VERTEX)
-	{
-		// explicit colors at vertexes
-		stages[0].bundle[0].image[0] = image;
-		stages[0].active             = qtrue;
-		stages[0].rgbGen             = CGEN_EXACT_VERTEX;
-		stages[0].alphaGen           = AGEN_SKIP;
-		stages[0].stateBits          = GLS_DEFAULT;
-	}
-	else if (shader.lightmapIndex == LIGHTMAP_2D)
-	{
-		// GUI elements
-		stages[0].bundle[0].image[0] = image;
-		stages[0].active             = qtrue;
-		stages[0].rgbGen             = CGEN_VERTEX;
-		stages[0].alphaGen           = AGEN_VERTEX;
-		stages[0].stateBits          = GLS_DEPTHTEST_DISABLE |
-		                               GLS_SRCBLEND_SRC_ALPHA |
-		                               GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
-	}
-	else if (shader.lightmapIndex == LIGHTMAP_WHITEIMAGE)
-	{
-		// fullbright level
-		stages[0].bundle[0].image[0] = tr.whiteImage;
-		stages[0].active             = qtrue;
-		stages[0].rgbGen             = CGEN_IDENTITY_LIGHTING;
-		stages[0].stateBits          = GLS_DEFAULT;
-
-		stages[1].bundle[0].image[0] = image;
-		stages[1].active             = qtrue;
-		stages[1].rgbGen             = CGEN_IDENTITY;
-		stages[1].stateBits         |= GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO;
-	}
-	else
-	{
-		// two pass lightmap
-		stages[0].bundle[0].image[0]   = tr.lightmaps[shader.lightmapIndex];
-		stages[0].bundle[0].isLightmap = qtrue;
-		stages[0].active               = qtrue;
-		stages[0].rgbGen               = CGEN_IDENTITY; // lightmaps are scaled on creation for identitylight
-		stages[0].stateBits            = GLS_DEFAULT;
-
-		stages[1].bundle[0].image[0] = image;
-		stages[1].active             = qtrue;
-		stages[1].rgbGen             = CGEN_IDENTITY;
-		stages[1].stateBits         |= GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO;
-	}
-#endif
 }
-
-
-
 
 /*
 =========================
@@ -2948,25 +2815,19 @@ static shader_t *FinishShader(void)
 
 	hasLightmapStage = qfalse;
 
-	//
 	// set sky stuff appropriate
-	//
 	if (shader.isSky)
 	{
 		shader.sort = SS_ENVIRONMENT;
 	}
 
-	//
 	// set polygon offset
-	//
 	if (shader.polygonOffset && !shader.sort)
 	{
 		shader.sort = SS_DECAL;
 	}
 
-	//
 	// set appropriate stage information
-	//
 	for (stage = 0; stage < MAX_SHADER_STAGES; stage++)
 	{
 		shaderStage_t *pStage = &stages[stage];
@@ -2984,9 +2845,7 @@ static shader_t *FinishShader(void)
 			continue;
 		}
 
-		//
 		// ditch this stage if it's detail and detail textures are disabled
-		//
 		if (pStage->isDetail && !r_detailTextures->integer)
 		{
 			if (stage < (MAX_SHADER_STAGES - 1))
@@ -3010,9 +2869,7 @@ static shader_t *FinishShader(void)
 			continue;
 		}
 
-		//
 		// default texture coordinate generation
-		//
 		if (pStage->bundle[0].isLightmap)
 		{
 			if (pStage->bundle[0].tcGen == TCGEN_BAD)
@@ -3030,17 +2887,7 @@ static shader_t *FinishShader(void)
 		}
 
 
-		// not a true lightmap but we want to leave existing
-		// behaviour in place and not print out a warning
-		//if (pStage->rgbGen == CGEN_VERTEX) {
-		//  vertexLightmap = qtrue;
-		//}
-
-
-
-		//
 		// determine sort order and fog color adjustment
-		//
 		if ((pStage->stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) &&
 		    (stages[0].stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)))
 		{
@@ -3102,9 +2949,7 @@ static shader_t *FinishShader(void)
 		shader.sort = SS_OPAQUE;
 	}
 
-	//
 	// if we are using permedia hw, never use a lightmap texture
-	//
 	// NERVE - SMF - temp fix, terrain is having problems with lighting collapse
 	if (0 && (stage > 1 && (glConfig.hardwareType == GLHW_PERMEDIA2)))
 	{
@@ -3113,9 +2958,7 @@ static shader_t *FinishShader(void)
 		hasLightmapStage = qfalse;
 	}
 
-	//
 	// look for multitexture potential
-	//
 	if (stage > 1 && CollapseMultitexture())
 	{
 		stage--;
@@ -3127,10 +2970,7 @@ static shader_t *FinishShader(void)
 		shader.lightmapIndex = LIGHTMAP_NONE;
 	}
 
-
-	//
 	// compute number of passes
-	//
 	shader.numUnfoggedPasses = stage;
 
 	// fogonly shaders don't have any normal passes
@@ -3459,7 +3299,6 @@ void R_FindLightmap(int *lightmapIndex)
 	image_t *image;
 	char    fileName[MAX_QPATH];
 
-
 	// don't fool with bogus lightmap indexes
 	if (*lightmapIndex < 0)
 	{
@@ -3498,8 +3337,6 @@ void R_FindLightmap(int *lightmapIndex)
 	}
 	tr.lightmaps[*lightmapIndex] = image;
 }
-
-
 
 /*
 ===============
@@ -3551,9 +3388,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 
 	hash = generateHashValue(strippedName);
 
-	//
 	// see if the shader is already loaded
-	//
 #if 1
 	for (sh = hashTable[hash]; sh; sh = sh->next)
 	{
@@ -3699,7 +3534,6 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	return FinishShader();
 }
 
-
 qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_t *image, qboolean mipRawImage)
 {
 	int      i, hash;
@@ -3707,9 +3541,7 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 
 	hash = generateHashValue(name);
 
-	//
 	// see if the shader is already loaded
-	//
 	for (sh = hashTable[hash]; sh; sh = sh->next)
 	{
 		// NOTE: if there was no shader or image available with the name strippedName
@@ -3757,7 +3589,6 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 	return sh->index;
 }
 
-
 /*
 ====================
 RE_RegisterShaderLightMap
@@ -3793,7 +3624,6 @@ qhandle_t RE_RegisterShaderLightMap(const char *name, int lightmapIndex)
 
 	return sh->index;
 }
-
 
 /*
 ====================
@@ -3831,7 +3661,6 @@ qhandle_t RE_RegisterShader(const char *name)
 	return sh->index;
 }
 
-
 /*
 ====================
 RE_RegisterShaderNoMip
@@ -3863,7 +3692,6 @@ qhandle_t RE_RegisterShaderNoMip(const char *name)
 
 	return sh->index;
 }
-
 
 /*
 ====================
@@ -4023,15 +3851,6 @@ static void BuildShaderChecksumLookup(void)
 			break;
 		}
 
-		// Gordon: NOTE this is WRONG, need to either unget the {, or as i'm gonna do, assume the shader section follows, if it doesnt, it's b0rked anyway
-		/*      if (!Q_stricmp( token, "{" )) {
-		            // Gordon: ok, lets try the unget method
-		            COM_RestoreParseSession( &p );
-		            // skip braced section
-		            SkipBracedSection( &p );
-		            continue;
-		        }*/
-
 		// get it's checksum
 		checksum = generateHashValue(token);
 
@@ -4063,7 +3882,6 @@ static void BuildShaderChecksumLookup(void)
 	}
 }
 // done.
-
 
 /*
 ====================
@@ -4139,9 +3957,7 @@ static void ScanAndLoadShaderFiles(void)
 	{
 		BuildShaderChecksumLookup();
 	}
-	// done.
 }
-
 
 /*
 ====================
@@ -4174,7 +3990,6 @@ static void CreateExternalShaders(void)
 {
 	tr.projectionShadowShader = R_FindShader("projectionShadow", LIGHTMAP_NONE, qtrue);
 	tr.flareShader            = R_FindShader("flareShader", LIGHTMAP_NONE, qtrue);
-//  tr.sunShader = R_FindShader( "sun", LIGHTMAP_NONE, qtrue ); //----(SA)  let sky shader set this
 	tr.sunflareShader[0] = R_FindShader("sunflare1", LIGHTMAP_NONE, qtrue);
 	tr.dlightShader      = R_FindShader("dlightshader", LIGHTMAP_NONE, qtrue);
 }
@@ -4243,43 +4058,6 @@ R_PurgeShaders
 qboolean purgeallshaders = qfalse;
 void R_PurgeShaders(int count)
 {
-	/*int i, j, c, b;
-	shader_t **sh;
-	static int lastPurged = 0;
-
-	if (!numBackupShaders) {
-	    lastPurged = 0;
-	    return;
-	}
-
-	// find the first shader still in memory
-	c = 0;
-	sh = (shader_t **)&backupShaders;
-	for (i = lastPurged; i < numBackupShaders; i++, sh++) {
-	    if (*sh) {
-	        // free all memory associated with this shader
-	        for ( j = 0 ; j < (*sh)->numUnfoggedPasses ; j++ ) {
-	            if ( !(*sh)->stages[j] ) {
-	                break;
-	            }
-	            for ( b = 0 ; b < NUM_TEXTURE_BUNDLES ; b++ ) {
-	                if ((*sh)->stages[j]->bundle[b].texMods)
-	                    R_CacheShaderFree( NULL, (*sh)->stages[j]->bundle[b].texMods );
-	            }
-	            R_CacheShaderFree( NULL, (*sh)->stages[j] );
-	        }
-	        R_CacheShaderFree( (*sh)->lightmapIndex ? va( "%s lm: %i", (*sh)->name, (*sh)->lightmapIndex) : NULL, *sh );
-	        *sh = NULL;
-
-	        if (++c >= count) {
-	            lastPurged = i;
-	            return;
-	        }
-	    }
-	}
-	lastPurged = 0;
-	numBackupShaders = 0;*/
-
 	if (!numBackupShaders)
 	{
 		return;
@@ -4601,7 +4379,6 @@ R_InitShaders
 */
 void R_InitShaders(void)
 {
-
 	glfogNum = FOG_NONE;
 
 	ri.Printf(PRINT_ALL, "Initializing Shaders\n");

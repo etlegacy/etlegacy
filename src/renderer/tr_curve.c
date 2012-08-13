@@ -119,7 +119,6 @@ static void Transpose(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX_
 
 }
 
-
 /*
 =================
 MakeMeshNormals
@@ -174,7 +173,6 @@ static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE
 	{
 		wrapHeight = qtrue;
 	}
-
 
 	for (i = 0 ; i < width ; i++)
 	{
@@ -272,7 +270,6 @@ static void InvertCtrl(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX
 	}
 }
 
-
 /*
 =================
 InvertErrorTable
@@ -294,7 +291,6 @@ static void InvertErrorTable(float errorTable[2][MAX_GRID_SIZE], int width, int 
 	{
 		errorTable[0][i] = copy[1][height - 1 - i];
 	}
-
 }
 
 /*
@@ -329,7 +325,6 @@ static void PutPointsOnCurve(drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE],
 		}
 	}
 }
-
 
 /*
 =================
@@ -431,7 +426,6 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 
 	for (dir = 0 ; dir < 2 ; dir++)
 	{
-
 		for (j = 0 ; j < MAX_GRID_SIZE ; j++)
 		{
 			errorTable[dir][j] = 0;
@@ -530,7 +524,6 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 		height = t;
 	}
 
-
 	// put all the aproximating points on the curve
 	PutPointsOnCurve(ctrl, width, height);
 
@@ -569,7 +562,6 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 		height--;
 	}
 
-#if 1
 	// flip for longest tristrips as an optimization
 	// the results should be visually identical with or
 	// without this step
@@ -582,7 +574,6 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 		height = t;
 		InvertCtrl(width, height, ctrl);
 	}
-#endif
 
 	// calculate normals
 	MakeMeshNormals(width, height, ctrl);

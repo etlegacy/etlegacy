@@ -49,18 +49,13 @@ PNG LOADING
 /*
  *  Quake 3 image format : RGBA
  */
-
 #define Q3IMAGE_BYTESPERPIXEL (4)
 
 /*
  *  PNG specifications
- */
-
-/*
  *  The first 8 Bytes of every PNG-File are a fixed signature
  *  to identify the file as a PNG.
  */
-
 #define PNG_Signature "\x89\x50\x4E\x47\xD\xA\x1A\xA"
 #define PNG_Signature_Size (8)
 
@@ -69,7 +64,6 @@ PNG LOADING
  *  A chunk consists of a header and if Length
  *  is bigger than 0 a body and a CRC of the body follow.
  */
-
 struct PNG_ChunkHeader
 {
 	uint32_t Length;
@@ -86,7 +80,6 @@ typedef uint32_t PNG_ChunkCRC;
  *  We use the following ChunkTypes.
  *  All others are ignored.
  */
-
 #define MAKE_CHUNKTYPE(a, b, c, d) (((a) << 24) | ((b) << 16) | ((c) << 8) | ((d)))
 
 #define PNG_ChunkType_IHDR MAKE_CHUNKTYPE('I', 'H', 'D', 'R')
@@ -98,7 +91,6 @@ typedef uint32_t PNG_ChunkCRC;
 /*
  *  Per specification the first chunk after the signature SHALL be IHDR.
  */
-
 struct PNG_Chunk_IHDR
 {
 	uint32_t Width;
@@ -115,7 +107,6 @@ struct PNG_Chunk_IHDR
 /*
  *  ColourTypes
  */
-
 #define PNG_ColourType_Grey      (0)
 #define PNG_ColourType_True      (2)
 #define PNG_ColourType_Indexed   (3)
@@ -131,7 +122,6 @@ struct PNG_Chunk_IHDR
  *  GreyAlpha : 1 grey, 1 alpha
  *  TrueAlpha : 1 R, 1 G, 1 B, 1 alpha
  */
-
 #define PNG_NumColourComponents_Grey      (1)
 #define PNG_NumColourComponents_True      (3)
 #define PNG_NumColourComponents_Indexed   (1)
@@ -142,7 +132,6 @@ struct PNG_Chunk_IHDR
  *  For the different ColourTypes
  *  different BitDepths are specified.
  */
-
 #define PNG_BitDepth_1  (1)
 #define PNG_BitDepth_2  (2)
 #define PNG_BitDepth_4  (4)
@@ -152,19 +141,16 @@ struct PNG_Chunk_IHDR
 /*
  *  Only one valid CompressionMethod is standardized.
  */
-
 #define PNG_CompressionMethod_0 (0)
 
 /*
  *  Only one valid FilterMethod is currently standardized.
  */
-
 #define PNG_FilterMethod_0 (0)
 
 /*
  *  This FilterMethod defines 5 FilterTypes
  */
-
 #define PNG_FilterType_None    (0)
 #define PNG_FilterType_Sub     (1)
 #define PNG_FilterType_Up      (2)
@@ -176,20 +162,17 @@ struct PNG_Chunk_IHDR
  *  0 - NonInterlaced
  *  1 - Interlaced
  */
-
 #define PNG_InterlaceMethod_NonInterlaced (0)
 #define PNG_InterlaceMethod_Interlaced    (1)
 
 /*
  *  The Adam7 interlace method uses 7 passes.
  */
-
 #define PNG_Adam7_NumPasses (7)
 
 /*
  *  The compressed data starts with a header ...
  */
-
 struct PNG_ZlibHeader
 {
 	uint8_t CompressionMethod;
@@ -201,7 +184,6 @@ struct PNG_ZlibHeader
 /*
  *  ... and is followed by a check value
  */
-
 #define PNG_ZlibCheckValue_Size (4)
 
 /*
@@ -211,7 +193,6 @@ struct PNG_ZlibHeader
 /*
  *  buffered file representation
  */
-
 struct BufferedFile
 {
 	byte *Buffer;
@@ -223,7 +204,6 @@ struct BufferedFile
 /*
  *  Read a file into a buffer.
  */
-
 static struct BufferedFile *ReadBufferedFile(const char *name)
 {
 	struct BufferedFile *BF;
@@ -233,45 +213,31 @@ static struct BufferedFile *ReadBufferedFile(const char *name)
 		void *v;
 	} buffer;
 
-	/*
-	 *  input verification
-	 */
-
+	//  input verification
 	if (!name)
 	{
 		return(NULL);
 	}
 
-	/*
-	 *  Allocate control struct.
-	 */
-
+	//  Allocate control struct.
 	BF = ri.Z_Malloc(sizeof(struct BufferedFile));
 	if (!BF)
 	{
 		return(NULL);
 	}
 
-	/*
-	 *  Initialize the structs components.
-	 */
-
+	//  Initialize the structs components.
 	BF->Length    = 0;
 	BF->Buffer    = NULL;
 	BF->Ptr       = NULL;
 	BF->BytesLeft = 0;
 
-	/*
-	 *  Read the file.
-	 */
-
+	// Read the file.
 	BF->Length = ri.FS_ReadFile((char *) name, &buffer.v);
 	BF->Buffer = buffer.b;
 
-	/*
-	 *  Did we get it? Is it big enough?
-	 */
 
+	//  Did we get it? Is it big enough?
 	if (!(BF->Buffer && (BF->Length > 0)))
 	{
 		ri.Free(BF);
@@ -279,10 +245,7 @@ static struct BufferedFile *ReadBufferedFile(const char *name)
 		return(NULL);
 	}
 
-	/*
-	 *  Set the pointers and counters.
-	 */
-
+	// Set the pointers and counters.
 	BF->Ptr       = BF->Buffer;
 	BF->BytesLeft = BF->Length;
 
@@ -292,7 +255,6 @@ static struct BufferedFile *ReadBufferedFile(const char *name)
 /*
  *  Close a buffered file.
  */
-
 static void CloseBufferedFile(struct BufferedFile *BF)
 {
 	if (BF)
@@ -309,39 +271,26 @@ static void CloseBufferedFile(struct BufferedFile *BF)
 /*
  *  Get a pointer to the requested bytes.
  */
-
 static void *BufferedFileRead(struct BufferedFile *BF, unsigned Length)
 {
 	void *RetVal;
 
-	/*
-	 *  input verification
-	 */
-
+	//  input verification
 	if (!(BF && Length))
 	{
 		return(NULL);
 	}
 
-	/*
-	 *  not enough bytes left
-	 */
-
+	//  not enough bytes left
 	if (Length > BF->BytesLeft)
 	{
 		return(NULL);
 	}
 
-	/*
-	 *  the pointer to the requested data
-	 */
-
+	// the pointer to the requested data
 	RetVal = BF->Ptr;
 
-	/*
-	 *  Raise the pointer and counter.
-	 */
-
+	// Raise the pointer and counter.
 	BF->Ptr       += Length;
 	BF->BytesLeft -= Length;
 
@@ -351,24 +300,17 @@ static void *BufferedFileRead(struct BufferedFile *BF, unsigned Length)
 /*
  *  Rewind the buffer.
  */
-
 static qboolean BufferedFileRewind(struct BufferedFile *BF, unsigned Offset)
 {
 	unsigned BytesRead;
 
-	/*
-	 *  input verification
-	 */
-
+	// input verification
 	if (!BF)
 	{
 		return(qfalse);
 	}
 
-	/*
-	 *  special trick to rewind to the beginning of the buffer
-	 */
-
+	// special trick to rewind to the beginning of the buffer
 	if (Offset == (unsigned)-1)
 	{
 		BF->Ptr       = BF->Buffer;
@@ -377,25 +319,16 @@ static qboolean BufferedFileRewind(struct BufferedFile *BF, unsigned Offset)
 		return(qtrue);
 	}
 
-	/*
-	 *  How many bytes do we have already read?
-	 */
-
+	// How many bytes do we have already read?
 	BytesRead = BF->Ptr - BF->Buffer;
 
-	/*
-	 *  We can only rewind to the beginning of the BufferedFile.
-	 */
-
+	// We can only rewind to the beginning of the BufferedFile.
 	if (Offset > BytesRead)
 	{
 		return(qfalse);
 	}
 
-	/*
-	 *  lower the pointer and counter.
-	 */
-
+	// lower the pointer and counter.
 	BF->Ptr       -= Offset;
 	BF->BytesLeft += Offset;
 
@@ -405,31 +338,21 @@ static qboolean BufferedFileRewind(struct BufferedFile *BF, unsigned Offset)
 /*
  *  Skip some bytes.
  */
-
 static qboolean BufferedFileSkip(struct BufferedFile *BF, unsigned Offset)
 {
-	/*
-	 *  input verification
-	 */
-
+	// input verification
 	if (!BF)
 	{
 		return(qfalse);
 	}
 
-	/*
-	 *  We can only skip to the end of the BufferedFile.
-	 */
-
+	// We can only skip to the end of the BufferedFile.
 	if (Offset > BF->BytesLeft)
 	{
 		return(qfalse);
 	}
 
-	/*
-	 *  lower the pointer and counter.
-	 */
-
+	// lower the pointer and counter.
 	BF->Ptr       += Offset;
 	BF->BytesLeft -= Offset;
 
@@ -439,7 +362,6 @@ static qboolean BufferedFileSkip(struct BufferedFile *BF, unsigned Offset)
 /*
  *  Find a chunk
  */
-
 static qboolean FindChunk(struct BufferedFile *BF, uint32_t ChunkType)
 {
 	struct PNG_ChunkHeader *CH;
@@ -447,59 +369,37 @@ static qboolean FindChunk(struct BufferedFile *BF, uint32_t ChunkType)
 	uint32_t Length;
 	uint32_t Type;
 
-	/*
-	 *  input verification
-	 */
-
+	// input verification
 	if (!BF)
 	{
 		return(qfalse);
 	}
 
-	/*
-	 *  cycle trough the chunks
-	 */
-
+	// cycle trough the chunks
 	while (qtrue)
 	{
-		/*
-		 *  Read the chunk-header.
-		 */
-
+		// Read the chunk-header.
 		CH = BufferedFileRead(BF, PNG_ChunkHeader_Size);
 		if (!CH)
 		{
 			return(qfalse);
 		}
 
-		/*
-		 *  Do not swap the original types
-		 *  they might be needed later.
-		 */
-
+		// Do not swap the original types
+		// they might be needed later.
 		Length = BigLong(CH->Length);
 		Type   = BigLong(CH->Type);
 
-		/*
-		 *  We found it!
-		 */
-
+		// We found it!
 		if (Type == ChunkType)
 		{
-			/*
-			 *  Rewind to the start of the chunk.
-			 */
-
+			// Rewind to the start of the chunk.
 			BufferedFileRewind(BF, PNG_ChunkHeader_Size);
-
 			break;
 		}
 		else
 		{
-			/*
-			 *  Skip the rest of the chunk.
-			 */
-
+			// Skip the rest of the chunk.
 			if (Length)
 			{
 				if (!BufferedFileSkip(BF, Length + PNG_ChunkCRC_Size))
@@ -516,7 +416,6 @@ static qboolean FindChunk(struct BufferedFile *BF, uint32_t ChunkType)
 /*
  *  Decompress all IDATs
  */
-
 static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 {
 	uint8_t  *DecompressedData;
@@ -539,19 +438,13 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 	uint8_t  *puffSrc;
 	uint32_t puffSrcLen;
 
-	/*
-	 *  input verification
-	 */
-
+	//  input verification
 	if (!(BF && Buffer))
 	{
 		return(-1);
 	}
 
-	/*
-	 *  some zeroing
-	 */
-
+	// some zeroing
 	DecompressedData       = NULL;
 	DecompressedDataLength = 0;
 	*Buffer                = DecompressedData;
@@ -561,49 +454,31 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 
 	BytesToRewind = 0;
 
-	/*
-	 *  Find the first IDAT chunk.
-	 */
-
+	// Find the first IDAT chunk.
 	if (!FindChunk(BF, PNG_ChunkType_IDAT))
 	{
 		return(-1);
 	}
 
-	/*
-	 *  Count the size of the uncompressed data
-	 */
-
+	// Count the size of the uncompressed data
 	while (qtrue)
 	{
-		/*
-		 *  Read chunk header
-		 */
-
+		// Read chunk header
 		CH = BufferedFileRead(BF, PNG_ChunkHeader_Size);
 		if (!CH)
 		{
-			/*
-			 *  Rewind to the start of this adventure
-			 *  and return unsuccessfull
-			 */
-
+			// Rewind to the start of this adventure
+			// and return unsuccessfull
 			BufferedFileRewind(BF, BytesToRewind);
 
 			return(-1);
 		}
 
-		/*
-		 *  Length and Type of chunk
-		 */
-
+		// Length and Type of chunk
 		Length = BigLong(CH->Length);
 		Type   = BigLong(CH->Type);
 
-		/*
-		 *  We have reached the end of the IDAT chunks
-		 */
-
+		// We have reached the end of the IDAT chunks
 		if (!(Type == PNG_ChunkType_IDAT))
 		{
 			BufferedFileRewind(BF, PNG_ChunkHeader_Size);
@@ -611,16 +486,10 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 			break;
 		}
 
-		/*
-		 *  Add chunk header to count.
-		 */
-
+		// Add chunk header to count.
 		BytesToRewind += PNG_ChunkHeader_Size;
 
-		/*
-		 *  Skip to next chunk
-		 */
-
+		// Skip to next chunk
 		if (Length)
 		{
 			if (!BufferedFileSkip(BF, Length + PNG_ChunkCRC_Size))
@@ -645,16 +514,10 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 
 	CompressedDataPtr = CompressedData;
 
-	/*
-	 *  Collect the compressed Data
-	 */
-
+	// Collect the compressed Data
 	while (qtrue)
 	{
-		/*
-		 *  Read chunk header
-		 */
-
+		// Read chunk header
 		CH = BufferedFileRead(BF, PNG_ChunkHeader_Size);
 		if (!CH)
 		{
@@ -663,17 +526,11 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 			return(-1);
 		}
 
-		/*
-		 *  Length and Type of chunk
-		 */
-
+		// Length and Type of chunk
 		Length = BigLong(CH->Length);
 		Type   = BigLong(CH->Type);
 
-		/*
-		 *  We have reached the end of the IDAT chunks
-		 */
-
+		// We have reached the end of the IDAT chunks
 		if (!(Type == PNG_ChunkType_IDAT))
 		{
 			BufferedFileRewind(BF, PNG_ChunkHeader_Size);
@@ -681,10 +538,7 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 			break;
 		}
 
-		/*
-		 *  Copy the Data
-		 */
-
+		// Copy the Data
 		if (Length)
 		{
 			uint8_t *OrigCompressedData;
@@ -709,24 +563,15 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 		}
 	}
 
-	/*
-	 *  Let puff() calculate the decompressed data length.
-	 */
-
+	// Let puff() calculate the decompressed data length.
 	puffDest    = NULL;
 	puffDestLen = 0;
 
-	/*
-	 *  The zlib header and checkvalue don't belong to the compressed data.
-	 */
-
+	// The zlib header and checkvalue don't belong to the compressed data.
 	puffSrc    = CompressedData + PNG_ZlibHeader_Size;
 	puffSrcLen = CompressedDataLength - PNG_ZlibHeader_Size - PNG_ZlibCheckValue_Size;
 
-	/*
-	 *  first puff() to calculate the size of the uncompressed data
-	 */
-
+	// first puff() to calculate the size of the uncompressed data
 	puffResult = puff(puffDest, &puffDestLen, puffSrc, &puffSrcLen);
 	if (!((puffResult == 0) && (puffDestLen > 0)))
 	{
@@ -735,10 +580,7 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 		return(-1);
 	}
 
-	/*
-	 *  Allocate the buffer for the uncompressed data.
-	 */
-
+	// Allocate the buffer for the uncompressed data.
 	DecompressedData = ri.Z_Malloc(puffDestLen);
 	if (!DecompressedData)
 	{
@@ -747,30 +589,18 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 		return(-1);
 	}
 
-	/*
-	 *  Set the input again in case something was changed by the last puff() .
-	 */
-
+	// Set the input again in case something was changed by the last puff() .
 	puffDest   = DecompressedData;
 	puffSrc    = CompressedData + PNG_ZlibHeader_Size;
 	puffSrcLen = CompressedDataLength - PNG_ZlibHeader_Size - PNG_ZlibCheckValue_Size;
 
-	/*
-	 *  decompression puff()
-	 */
-
+	// decompression puff()
 	puffResult = puff(puffDest, &puffDestLen, puffSrc, &puffSrcLen);
 
-	/*
-	 *  The compressed data is not needed anymore.
-	 */
-
+	// The compressed data is not needed anymore.
 	ri.Free(CompressedData);
 
-	/*
-	 *  Check if the last puff() was successfull.
-	 */
-
+	// Check if the last puff() was successfull.
 	if (!((puffResult == 0) && (puffDestLen > 0)))
 	{
 		ri.Free(DecompressedData);
@@ -778,10 +608,7 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 		return(-1);
 	}
 
-	/*
-	 *  Set the output of this function.
-	 */
-
+	// Set the output of this function.
 	DecompressedDataLength = puffDestLen;
 	*Buffer                = DecompressedData;
 
@@ -791,7 +618,6 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 /*
  *  the Paeth predictor
  */
-
 static uint8_t PredictPaeth(uint8_t a, uint8_t b, uint8_t c)
 {
 	/*
@@ -823,13 +649,11 @@ static uint8_t PredictPaeth(uint8_t a, uint8_t b, uint8_t c)
 	}
 
 	return(Pr);
-
 }
 
 /*
  *  Reverse the filters.
  */
-
 static qboolean UnfilterImage(uint8_t *DecompressedData,
                               uint32_t ImageHeight,
                               uint32_t BytesPerScanline,
@@ -840,65 +664,38 @@ static qboolean UnfilterImage(uint8_t *DecompressedData,
 	uint8_t  *PixelLeft, *PixelUp, *PixelUpLeft;
 	uint32_t w, h, p;
 
-	/*
-	 *  some zeros for the filters
-	 */
-
+	// some zeros for the filters
 	uint8_t Zeros[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	/*
-	 *  input verification
-	 */
-
+	// input verification
 	if (!(DecompressedData && BytesPerPixel))
 	{
 		return(qfalse);
 	}
 
-	/*
-	 *  ImageHeight and BytesPerScanline can be zero in small interlaced images.
-	 */
-
+	// ImageHeight and BytesPerScanline can be zero in small interlaced images.
 	if ((!ImageHeight) || (!BytesPerScanline))
 	{
 		return(qtrue);
 	}
 
-	/*
-	 *  Set the pointer to the start of the decompressed Data.
-	 */
-
+	// Set the pointer to the start of the decompressed Data.
 	DecompPtr = DecompressedData;
 
-	/*
-	 *  Un-filtering is done in place.
-	 */
+	// Un-filtering is done in place.
 
-	/*
-	 *  Go trough all scanlines.
-	 */
-
+	// Go trough all scanlines.
 	for (h = 0; h < ImageHeight; h++)
 	{
-		/*
-		 *  Every scanline starts with a FilterType byte.
-		 */
-
+		// Every scanline starts with a FilterType byte.
 		FilterType = *DecompPtr;
 		DecompPtr++;
 
-		/*
-		 *  Left pixel of the first byte in a scanline is zero.
-		 */
-
+		// Left pixel of the first byte in a scanline is zero.
 		PixelLeft = Zeros;
 
-		/*
-		 *  Set PixelUp to previous line only if we are on the second line or above.
-		 *
-		 *  Plus one byte for the FilterType
-		 */
-
+		// Set PixelUp to previous line only if we are on the second line or above.
+		// Plus one byte for the FilterType
 		if (h > 0)
 		{
 			PixelUp = DecompPtr - (BytesPerScanline + 1);
@@ -908,32 +705,20 @@ static qboolean UnfilterImage(uint8_t *DecompressedData,
 			PixelUp = Zeros;
 		}
 
-		/*
-		 * The pixel left to the first pixel of the previous scanline is zero too.
-		 */
-
+		// The pixel left to the first pixel of the previous scanline is zero too.
 		PixelUpLeft = Zeros;
 
-		/*
-		 *  Cycle trough all pixels of the scanline.
-		 */
-
+		// Cycle trough all pixels of the scanline.
 		for (w = 0; w < (BytesPerScanline / BytesPerPixel); w++)
 		{
-			/*
-			 *  Cycle trough the bytes of the pixel.
-			 */
-
+			// Cycle trough the bytes of the pixel.
 			for (p = 0; p < BytesPerPixel; p++)
 			{
 				switch (FilterType)
 				{
 				case PNG_FilterType_None:
 				{
-					/*
-					 *  The byte is unfiltered.
-					 */
-
+					// The byte is unfiltered.
 					break;
 				}
 
@@ -974,25 +759,16 @@ static qboolean UnfilterImage(uint8_t *DecompressedData,
 
 			PixelLeft = DecompPtr;
 
-			/*
-			 *  We only have a upleft pixel if we are on the second line or above.
-			 */
-
+			// We only have a upleft pixel if we are on the second line or above.
 			if (h > 0)
 			{
 				PixelUpLeft = DecompPtr - (BytesPerScanline + 1);
 			}
 
-			/*
-			 *  Skip to the next pixel.
-			 */
-
+			// Skip to the next pixel.
 			DecompPtr += BytesPerPixel;
 
-			/*
-			 *  We only have a previous line if we are on the second line and above.
-			 */
-
+			// We only have a previous line if we are on the second line and above.
 			if (h > 0)
 			{
 				PixelUp = DecompPtr - (BytesPerScanline + 1);
@@ -1006,7 +782,6 @@ static qboolean UnfilterImage(uint8_t *DecompressedData,
 /*
  *  Convert a raw input pixel to Quake 3 RGA format.
  */
-
 static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
                              byte *OutPtr,
                              uint8_t *DecompPtr,
@@ -1014,10 +789,7 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
                              uint8_t *TransparentColour,
                              uint8_t *OutPal)
 {
-	/*
-	 *  input verification
-	 */
-
+	// input verification
 	if (!(IHDR && OutPtr && DecompPtr && TransparentColour && OutPal))
 	{
 		return(qfalse);
@@ -1045,10 +817,7 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 			OutPtr[2] = GreyValue;
 			OutPtr[3] = 0xFF;
 
-			/*
-			 *  Grey supports full transparency for one specified colour
-			 */
-
+			// Grey supports full transparency for one specified colour
 			if (HasTransparentColour)
 			{
 				if (TransparentColour[1] == DecompPtr[0])
@@ -1069,10 +838,7 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 			OutPtr[2] = DecompPtr[0];
 			OutPtr[3] = 0xFF;
 
-			/*
-			 *  Grey supports full transparency for one specified colour
-			 */
-
+			// Grey supports full transparency for one specified colour
 			if (HasTransparentColour)
 			{
 				if (IHDR->BitDepth == PNG_BitDepth_8)
@@ -1114,10 +880,7 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 			OutPtr[2] = DecompPtr[2];
 			OutPtr[3] = 0xFF;
 
-			/*
-			 *  True supports full transparency for one specified colour
-			 */
-
+			// True supports full transparency for one specified colour
 			if (HasTransparentColour)
 			{
 				if ((TransparentColour[1] == DecompPtr[0]) &&
@@ -1133,19 +896,13 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 
 		case PNG_BitDepth_16:
 		{
-			/*
-			 *  We use only the upper byte.
-			 */
-
+			// We use only the upper byte.
 			OutPtr[0] = DecompPtr[0];
 			OutPtr[1] = DecompPtr[2];
 			OutPtr[2] = DecompPtr[4];
 			OutPtr[3] = 0xFF;
 
-			/*
-			 *  True supports full transparency for one specified colour
-			 */
-
+			// True supports full transparency for one specified colour
 			if (HasTransparentColour)
 			{
 				if ((TransparentColour[0] == DecompPtr[0]) && (TransparentColour[1] == DecompPtr[1]) &&
@@ -1194,10 +951,7 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 
 		case PNG_BitDepth_16:
 		{
-			/*
-			 *  We use only the upper byte.
-			 */
-
+			// We use only the upper byte.
 			OutPtr[0] = DecompPtr[0];
 			OutPtr[1] = DecompPtr[0];
 			OutPtr[2] = DecompPtr[0];
@@ -1231,10 +985,7 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 
 		case PNG_BitDepth_16:
 		{
-			/*
-			 *  We use only the upper byte.
-			 */
-
+			// We use only the upper byte.
 			OutPtr[0] = DecompPtr[0];
 			OutPtr[1] = DecompPtr[2];
 			OutPtr[2] = DecompPtr[4];
@@ -1261,11 +1012,9 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 	return(qtrue);
 }
 
-
 /*
  *  Decode a non-interlaced image.
  */
-
 static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
                                          byte *OutBuffer,
                                          uint8_t *DecompressedData,
@@ -1281,26 +1030,17 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	byte     *OutPtr;
 	uint8_t  *DecompPtr;
 
-	/*
-	 *  input verification
-	 */
-
+	// input verification
 	if (!(IHDR && OutBuffer && DecompressedData && DecompressedDataLength && TransparentColour && OutPal))
 	{
 		return(qfalse);
 	}
 
-	/*
-	 *  byte swapping
-	 */
-
+	// byte swapping
 	IHDR_Width  = BigLong(IHDR->Width);
 	IHDR_Height = BigLong(IHDR->Height);
 
-	/*
-	 *  information for un-filtering
-	 */
-
+	// information for un-filtering
 	switch (IHDR->ColourType)
 	{
 	case PNG_ColourType_Grey:
@@ -1438,59 +1178,35 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	}
 	}
 
-	/*
-	 *  Calculate the size of one scanline
-	 */
-
+	// Calculate the size of one scanline
 	BytesPerScanline = (IHDR_Width * BytesPerPixel + (PixelsPerByte - 1)) / PixelsPerByte;
 
-	/*
-	 *  Check if we have enough data for the whole image.
-	 */
-
+	// Check if we have enough data for the whole image.
 	if (!(DecompressedDataLength == ((BytesPerScanline + 1) * IHDR_Height)))
 	{
 		return(qfalse);
 	}
 
-	/*
-	 *  Unfilter the image.
-	 */
-
+	// Unfilter the image.
 	if (!UnfilterImage(DecompressedData, IHDR_Height, BytesPerScanline, BytesPerPixel))
 	{
 		return(qfalse);
 	}
 
-	/*
-	 *  Set the working pointers to the beginning of the buffers.
-	 */
-
+	// Set the working pointers to the beginning of the buffers.
 	OutPtr    = OutBuffer;
 	DecompPtr = DecompressedData;
 
-	/*
-	 *  Create the output image.
-	 */
-
+	// Create the output image.
 	for (h = 0; h < IHDR_Height; h++)
 	{
-		/*
-		 *  Count the pixels on the scanline for those multipixel bytes
-		 */
-
+		// Count the pixels on the scanline for those multipixel bytes
 		uint32_t CurrPixel;
 
-		/*
-		 *  skip FilterType
-		 */
-
+		// skip FilterType
 		DecompPtr++;
 
-		/*
-		 *  Reset the pixel count.
-		 */
-
+		// Reset the pixel count.
 		CurrPixel = 0;
 
 		for (w = 0; w < (BytesPerScanline / BytesPerPixel); w++)
@@ -1542,7 +1258,6 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 /*
  *  Decode an interlaced image.
  */
-
 static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
                                       byte *OutBuffer,
                                       uint8_t *DecompressedData,
@@ -1561,26 +1276,17 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	uint8_t  *DecompPtr;
 	uint32_t TargetLength;
 
-	/*
-	 *  input verification
-	 */
-
+	// input verification
 	if (!(IHDR && OutBuffer && DecompressedData && DecompressedDataLength && TransparentColour && OutPal))
 	{
 		return(qfalse);
 	}
 
-	/*
-	 *  byte swapping
-	 */
-
+	// byte swapping
 	IHDR_Width  = BigLong(IHDR->Width);
 	IHDR_Height = BigLong(IHDR->Height);
 
-	/*
-	 *  Skip and Offset for the passes.
-	 */
-
+	// Skip and Offset for the passes.
 	WSkip[0]   = 8;
 	WOffset[0] = 0;
 	HSkip[0]   = 8;
@@ -1616,10 +1322,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	HSkip[6]   = 2;
 	HOffset[6] = 1;
 
-	/*
-	 *  Calculate the sizes of the passes.
-	 */
-
+	// Calculate the sizes of the passes.
 	PassWidth[0]  = (IHDR_Width  + 7) / 8;
 	PassHeight[0] = (IHDR_Height + 7) / 8;
 
@@ -1641,10 +1344,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	PassWidth[6]  = (IHDR_Width  + 0) / 1;
 	PassHeight[6] = (IHDR_Height + 0) / 2;
 
-	/*
-	 *  information for un-filtering
-	 */
-
+	// information for un-filtering
 	switch (IHDR->ColourType)
 	{
 	case PNG_ColourType_Grey:
@@ -1782,19 +1482,13 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	}
 	}
 
-	/*
-	 *  Calculate the size of the scanlines per pass
-	 */
-
+	// Calculate the size of the scanlines per pass
 	for (a = 0; a < PNG_Adam7_NumPasses; a++)
 	{
 		BytesPerScanline[a] = (PassWidth[a] * BytesPerPixel + (PixelsPerByte - 1)) / PixelsPerByte;
 	}
 
-	/*
-	 *  Calculate the size of all passes
-	 */
-
+	// Calculate the size of all passes
 	TargetLength = 0;
 
 	for (a = 0; a < PNG_Adam7_NumPasses; a++)
@@ -1802,19 +1496,13 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 		TargetLength += ((BytesPerScanline[a] + (BytesPerScanline[a] ? 1 : 0)) * PassHeight[a]);
 	}
 
-	/*
-	 *  Check if we have enough data for the whole image.
-	 */
-
+	// Check if we have enough data for the whole image.
 	if (!(DecompressedDataLength == TargetLength))
 	{
 		return(qfalse);
 	}
 
-	/*
-	 *  Unfilter the image.
-	 */
-
+	// Unfilter the image.
 	DecompPtr = DecompressedData;
 
 	for (a = 0; a < PNG_Adam7_NumPasses; a++)
@@ -1827,40 +1515,25 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 		DecompPtr += ((BytesPerScanline[a] + (BytesPerScanline[a] ? 1 : 0)) * PassHeight[a]);
 	}
 
-	/*
-	 *  Set the working pointers to the beginning of the buffers.
-	 */
-
+	// Set the working pointers to the beginning of the buffers.
 	DecompPtr = DecompressedData;
 
-	/*
-	 *  Create the output image.
-	 */
-
+	// Create the output image.
 	for (a = 0; a < PNG_Adam7_NumPasses; a++)
 	{
 		for (h = 0; h < PassHeight[a]; h++)
 		{
-			/*
-			 *  Count the pixels on the scanline for those multipixel bytes
-			 */
-
+			// Count the pixels on the scanline for those multipixel bytes
 			uint32_t CurrPixel;
 
-			/*
-			 *  skip FilterType
-			 *  but only when the pass has a width bigger than zero
-			 */
-
+			// skip FilterType
+			//  but only when the pass has a width bigger than zero
 			if (BytesPerScanline[a])
 			{
 				DecompPtr++;
 			}
 
-			/*
-			 *  Reset the pixel count.
-			 */
-
+			// Reset the pixel count.
 			CurrPixel = 0;
 
 			for (w = 0; w < (BytesPerScanline[a] / BytesPerPixel); w++)
@@ -1913,7 +1586,6 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 /*
  *  The PNG loader
  */
-
 void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 {
 	struct BufferedFile    *ThePNG;
@@ -1931,32 +1603,20 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 	uint32_t               DecompressedDataLength;
 	uint32_t               i;
 
-	/*
-	 *  palette with 256 RGBA entries
-	 */
-
+	// palette with 256 RGBA entries
 	uint8_t OutPal[1024];
 
-	/*
-	 *  transparent colour from the tRNS chunk
-	 */
-
+	// transparent colour from the tRNS chunk
 	qboolean HasTransparentColour = qfalse;
 	uint8_t  TransparentColour[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
-	/*
-	 *  input verification
-	 */
-
+	// input verification
 	if (!(name && pic))
 	{
 		return;
 	}
 
-	/*
-	 *  Zero out return values.
-	 */
-
+	// Zero out return values.
 	*pic = NULL;
 
 	if (width)
@@ -1969,20 +1629,14 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		*height = 0;
 	}
 
-	/*
-	 *  Read the file.
-	 */
-
+	// Read the file.
 	ThePNG = ReadBufferedFile(name);
 	if (!ThePNG)
 	{
 		return;
 	}
 
-	/*
-	 *  Read the siganture of the file.
-	 */
-
+	// Read the siganture of the file.
 	Signature = BufferedFileRead(ThePNG, PNG_Signature_Size);
 	if (!Signature)
 	{
@@ -1991,10 +1645,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Is it a PNG?
-	 */
-
+	// Is it a PNG?
 	if (memcmp(Signature, PNG_Signature, PNG_Signature_Size))
 	{
 		CloseBufferedFile(ThePNG);
@@ -2002,10 +1653,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Read the first chunk-header.
-	 */
-
+	// Read the first chunk-header.
 	CH = BufferedFileRead(ThePNG, PNG_ChunkHeader_Size);
 	if (!CH)
 	{
@@ -2014,17 +1662,11 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  PNG multi-byte types are in Big Endian
-	 */
-
+	// PNG multi-byte types are in Big Endian
 	ChunkHeaderLength = BigLong(CH->Length);
 	ChunkHeaderType   = BigLong(CH->Type);
 
-	/*
-	 *  Check if the first chunk is an IHDR.
-	 */
-
+	// Check if the first chunk is an IHDR.
 	if (!((ChunkHeaderType == PNG_ChunkType_IHDR) && (ChunkHeaderLength == PNG_Chunk_IHDR_Size)))
 	{
 		CloseBufferedFile(ThePNG);
@@ -2032,10 +1674,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Read the IHDR.
-	 */
-
+	// Read the IHDR.
 	IHDR = BufferedFileRead(ThePNG, PNG_Chunk_IHDR_Size);
 	if (!IHDR)
 	{
@@ -2044,10 +1683,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Read the CRC for IHDR
-	 */
-
+	// Read the CRC for IHDR
 	CRC = BufferedFileRead(ThePNG, PNG_ChunkCRC_Size);
 	if (!CRC)
 	{
@@ -2056,21 +1692,13 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Here we could check the CRC if we wanted to.
-	 */
+	// Here we could check the CRC if we wanted to.
 
-	/*
-	 *  multi-byte type swapping
-	 */
-
+	// multi-byte type swapping
 	IHDR_Width  = BigLong(IHDR->Width);
 	IHDR_Height = BigLong(IHDR->Height);
 
-	/*
-	 *  Check if Width and Height are valid.
-	 */
-
+	// Check if Width and Height are valid.
 	if (!((IHDR_Width > 0) && (IHDR_Height > 0))
 	    || IHDR_Width > INT_MAX / Q3IMAGE_BYTESPERPIXEL / IHDR_Height)
 	{
@@ -2081,14 +1709,9 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Do we need to check if the dimensions of the image are valid for Quake3?
-	 */
+	// Do we need to check if the dimensions of the image are valid for Quake3?
 
-	/*
-	 *  Check if CompressionMethod and FilterMethod are valid.
-	 */
-
+	// Check if CompressionMethod and FilterMethod are valid.
 	if (!((IHDR->CompressionMethod == PNG_CompressionMethod_0) && (IHDR->FilterMethod == PNG_FilterMethod_0)))
 	{
 		CloseBufferedFile(ThePNG);
@@ -2096,10 +1719,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Check if InterlaceMethod is valid.
-	 */
-
+	// Check if InterlaceMethod is valid.
 	if (!((IHDR->InterlaceMethod == PNG_InterlaceMethod_NonInterlaced)  || (IHDR->InterlaceMethod == PNG_InterlaceMethod_Interlaced)))
 	{
 		CloseBufferedFile(ThePNG);
@@ -2107,16 +1727,10 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Read palette for an indexed image.
-	 */
-
+	// Read palette for an indexed image.
 	if (IHDR->ColourType == PNG_ColourType_Indexed)
 	{
-		/*
-		 *  We need the palette first.
-		 */
-
+		// We need the palette first.
 		if (!FindChunk(ThePNG, PNG_ChunkType_PLTE))
 		{
 			CloseBufferedFile(ThePNG);
@@ -2124,10 +1738,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			return;
 		}
 
-		/*
-		 *  Read the chunk-header.
-		 */
-
+		// Read the chunk-header.
 		CH = BufferedFileRead(ThePNG, PNG_ChunkHeader_Size);
 		if (!CH)
 		{
@@ -2136,17 +1747,11 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			return;
 		}
 
-		/*
-		 *  PNG multi-byte types are in Big Endian
-		 */
-
+		// PNG multi-byte types are in Big Endian
 		ChunkHeaderLength = BigLong(CH->Length);
 		ChunkHeaderType   = BigLong(CH->Type);
 
-		/*
-		 *  Check if the chunk is an PLTE.
-		 */
-
+		// Check if the chunk is an PLTE.
 		if (!(ChunkHeaderType == PNG_ChunkType_PLTE))
 		{
 			CloseBufferedFile(ThePNG);
@@ -2154,10 +1759,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			return;
 		}
 
-		/*
-		 *  Check if Length is divisible by 3
-		 */
-
+		// Check if Length is divisible by 3
 		if (ChunkHeaderLength % 3)
 		{
 			CloseBufferedFile(ThePNG);
@@ -2165,10 +1767,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			return;
 		}
 
-		/*
-		 *  Read the raw palette data
-		 */
-
+		// Read the raw palette data
 		InPal = BufferedFileRead(ThePNG, ChunkHeaderLength);
 		if (!InPal)
 		{
@@ -2177,10 +1776,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			return;
 		}
 
-		/*
-		 *  Read the CRC for the palette
-		 */
-
+		// Read the CRC for the palette
 		CRC = BufferedFileRead(ThePNG, PNG_ChunkCRC_Size);
 		if (!CRC)
 		{
@@ -2189,10 +1785,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			return;
 		}
 
-		/*
-		 *  Set some default values.
-		 */
-
+		// Set some default values.
 		for (i = 0; i < 256; i++)
 		{
 			OutPal[i * Q3IMAGE_BYTESPERPIXEL + 0] = 0x00;
@@ -2201,10 +1794,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			OutPal[i * Q3IMAGE_BYTESPERPIXEL + 3] = 0xFF;
 		}
 
-		/*
-		 *  Convert to the Quake3 RGBA-format.
-		 */
-
+		// Convert to the Quake3 RGBA-format.
 		for (i = 0; i < (ChunkHeaderLength / 3); i++)
 		{
 			OutPal[i * Q3IMAGE_BYTESPERPIXEL + 0] = InPal[i * 3 + 0];
@@ -2214,22 +1804,14 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		}
 	}
 
-	/*
-	 *  transparency information is sometimes stored in an tRNS chunk
-	 */
+	// transparency information is sometimes stored in an tRNS chunk
 
-	/*
-	 *  Let's see if there is a tRNS chunk
-	 */
-
+	// Let's see if there is a tRNS chunk
 	if (FindChunk(ThePNG, PNG_ChunkType_tRNS))
 	{
 		uint8_t *Trans;
 
-		/*
-		 *  Read the chunk-header.
-		 */
-
+		//  Read the chunk-header.
 		CH = BufferedFileRead(ThePNG, PNG_ChunkHeader_Size);
 		if (!CH)
 		{
@@ -2238,17 +1820,11 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			return;
 		}
 
-		/*
-		 *  PNG multi-byte types are in Big Endian
-		 */
-
+		//  PNG multi-byte types are in Big Endian
 		ChunkHeaderLength = BigLong(CH->Length);
 		ChunkHeaderType   = BigLong(CH->Type);
 
-		/*
-		 *  Check if the chunk is an tRNS.
-		 */
-
+		// Check if the chunk is an tRNS.
 		if (!(ChunkHeaderType == PNG_ChunkType_tRNS))
 		{
 			CloseBufferedFile(ThePNG);
@@ -2256,10 +1832,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			return;
 		}
 
-		/*
-		 *  Read the transparency information.
-		 */
-
+		//  Read the transparency information.
 		Trans = BufferedFileRead(ThePNG, ChunkHeaderLength);
 		if (!Trans)
 		{
@@ -2268,10 +1841,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			return;
 		}
 
-		/*
-		 *  Read the CRC.
-		 */
-
+		//  Read the CRC.
 		CRC = BufferedFileRead(ThePNG, PNG_ChunkCRC_Size);
 		if (!CRC)
 		{
@@ -2280,10 +1850,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			return;
 		}
 
-		/*
-		 *  Only for Grey, True and Indexed ColourType should tRNS exist.
-		 */
-
+		// Only for Grey, True and Indexed ColourType should tRNS exist.
 		switch (IHDR->ColourType)
 		{
 		case PNG_ColourType_Grey:
@@ -2297,11 +1864,8 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 
 			HasTransparentColour = qtrue;
 
-			/*
-			 *  Grey can have one colour which is completely transparent.
-			 *  This colour is always stored in 16 bits.
-			 */
-
+			//  Grey can have one colour which is completely transparent.
+			//  This colour is always stored in 16 bits.
 			TransparentColour[0] = Trans[0];
 			TransparentColour[1] = Trans[1];
 
@@ -2319,11 +1883,9 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 
 			HasTransparentColour = qtrue;
 
-			/*
-			 *  True can have one colour which is completely transparent.
-			 *  This colour is always stored in 16 bits.
-			 */
 
+			//  True can have one colour which is completely transparent.
+			//  This colour is always stored in 16 bits.
 			TransparentColour[0] = Trans[0];
 			TransparentColour[1] = Trans[1];
 			TransparentColour[2] = Trans[2];
@@ -2336,10 +1898,8 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 
 		case PNG_ColourType_Indexed:
 		{
-			/*
-			 *  Maximum of 256 one byte transparency entries.
-			 */
 
+			// Maximum of 256 one byte transparency entries.
 			if (ChunkHeaderLength > 256)
 			{
 				CloseBufferedFile(ThePNG);
@@ -2349,10 +1909,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 
 			HasTransparentColour = qtrue;
 
-			/*
-			 *  alpha values for palette entries
-			 */
-
+			// alpha values for palette entries
 			for (i = 0; i < ChunkHeaderLength; i++)
 			{
 				OutPal[i * Q3IMAGE_BYTESPERPIXEL + 3] = Trans[i];
@@ -2361,10 +1918,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 			break;
 		}
 
-		/*
-		 *  All other ColourTypes should not have tRNS chunks
-		 */
-
+		//  All other ColourTypes should not have tRNS chunks
 		default:
 		{
 			CloseBufferedFile(ThePNG);
@@ -2374,10 +1928,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		}
 	}
 
-	/*
-	 *  Rewind to the start of the file.
-	 */
-
+	// Rewind to the start of the file.
 	if (!BufferedFileRewind(ThePNG, -1))
 	{
 		CloseBufferedFile(ThePNG);
@@ -2385,10 +1936,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Skip the signature
-	 */
-
+	//  Skip the signature
 	if (!BufferedFileSkip(ThePNG, PNG_Signature_Size))
 	{
 		CloseBufferedFile(ThePNG);
@@ -2396,10 +1944,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Decompress all IDAT chunks
-	 */
-
+	//  Decompress all IDAT chunks
 	DecompressedDataLength = DecompressIDATs(ThePNG, &DecompressedData);
 	if (!(DecompressedDataLength && DecompressedData))
 	{
@@ -2408,10 +1953,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Allocate output buffer.
-	 */
-
+	//  Allocate output buffer.
 	OutBuffer = ri.Z_Malloc(IHDR_Width * IHDR_Height * Q3IMAGE_BYTESPERPIXEL);
 	if (!OutBuffer)
 	{
@@ -2421,10 +1963,7 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		return;
 	}
 
-	/*
-	 *  Interlaced and Non-interlaced images need to be handled differently.
-	 */
-
+	// Interlaced and Non-interlaced images need to be handled differently.
 	switch (IHDR->InterlaceMethod)
 	{
 	case PNG_InterlaceMethod_NonInterlaced:
@@ -2465,16 +2004,10 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 	}
 	}
 
-	/*
-	 *  update the pointer to the image data
-	 */
-
+	//  update the pointer to the image data
 	*pic = OutBuffer;
 
-	/*
-	 *  Fill width and height.
-	 */
-
+	//  Fill width and height.
 	if (width)
 	{
 		*width = IHDR_Width;
@@ -2485,15 +2018,9 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height)
 		*height = IHDR_Height;
 	}
 
-	/*
-	 *  DecompressedData is not needed anymore.
-	 */
-
+	//  DecompressedData is not needed anymore.
 	ri.Free(DecompressedData);
 
-	/*
-	 *  We have all data, so close the file.
-	 */
-
+	//  We have all data, so close the file.
 	CloseBufferedFile(ThePNG);
 }

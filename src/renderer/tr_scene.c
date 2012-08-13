@@ -60,6 +60,7 @@ int r_firstSceneDecal;
 int r_numDecals;
 
 int skyboxportal;
+
 /*
 ====================
 R_ToggleSmpFrame
@@ -112,7 +113,6 @@ void R_ToggleSmpFrame(void)
 	r_firstSceneDecal          = 0;
 }
 
-
 /*
 ====================
 RE_ClearScene
@@ -122,7 +122,6 @@ RE_ClearScene
 void RE_ClearScene(void)
 {
 	int i;
-
 
 	// ydnar: clear model stuff for dynamic fog
 	if (tr.world != NULL)
@@ -350,7 +349,6 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 }
 // done.
 
-
 /*
 =====================
 R_AddPolygonSurfaces
@@ -427,9 +425,7 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 	pPolySurf->fogIndex = fogIndex;
 }
 
-
 //=================================================================================
-
 
 /*
 =====================
@@ -463,8 +459,6 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 	R_AddModelShadow((refEntity_t *) ent);
 }
 
-
-
 /*
 RE_AddLightToScene()
 ydnar: modified dlight system to support seperate radius and intensity
@@ -473,7 +467,6 @@ ydnar: modified dlight system to support seperate radius and intensity
 void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
 	dlight_t *dl;
-
 
 	// early out
 	if (!tr.registered || r_numdlights >= MAX_DLIGHTS || radius <= 0 || intensity <= 0)
@@ -514,8 +507,6 @@ void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r
 	}
 	dl->flags = flags;
 }
-
-
 
 /*
 ==============
@@ -670,11 +661,9 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.sceneCount++;
 
 	// setup view parms for the initial view
-	//
 	// set up viewport
 	// The refdef takes 0-at-the-top y coordinates, so
 	// convert to GL's 0-at-the-bottom space
-	//
 	memset(&parms, 0, sizeof(parms));
 	parms.viewportX      = tr.refdef.x;
 	parms.viewportY      = glConfig.vidHeight - (tr.refdef.y + tr.refdef.height);
@@ -704,12 +693,9 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.frontEndMsec += ri.Milliseconds() - startTime;
 }
 
-
 // Temp storage for saving view paramters.  Drawing the animated head in the corner
 // was creaming important view info.
 viewParms_t g_oldViewParms;
-
-
 
 /*
 ================
@@ -725,7 +711,6 @@ void RE_SaveViewParms()
 	g_oldViewParms = tr.viewParms;
 }
 
-
 /*
 ================
 RE_RestoreViewParms
@@ -739,6 +724,4 @@ void RE_RestoreViewParms()
 
 	// This was killing the LOD computation
 	tr.viewParms = g_oldViewParms;
-
-
 }

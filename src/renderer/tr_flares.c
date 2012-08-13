@@ -92,7 +92,6 @@ typedef struct flare_s
 flare_t r_flareStructs[MAX_FLARES];
 flare_t *r_activeFlares, *r_inactiveFlares;
 
-
 /*
 ==================
 R_ClearFlares
@@ -112,7 +111,6 @@ void R_ClearFlares(void)
 		r_inactiveFlares       = &r_flareStructs[i];
 	}
 }
-
 
 /*
 ==================
@@ -161,8 +159,6 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 	// see if a flare with a matching surface, scene, and view exists
 	for (f = r_activeFlares ; f ; f = f->next)
 	{
-//      if ( f->surface == surface && f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal ) {
-
 		// (SA) added back in more checks for different scenes
 		if (f->id == id && f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal)
 		{
@@ -268,7 +264,6 @@ void RB_AddDlightFlares(void)
 		RB_AddFlare((void *)l, j, l->origin, l->color, 1.0f, NULL, id++, qtrue);    //----(SA)  also set scale
 	}
 }
-
 
 /*
 ==============
@@ -393,7 +388,6 @@ void RB_TestFlare(flare_t *f)
 	f->drawIntensity = fade;
 }
 
-
 /*
 ==================
 RB_RenderFlare
@@ -414,7 +408,6 @@ void RB_RenderFlare(flare_t *f)
 //      be changed back to additive since there's nearly no hit for that
 //      but the alpha blend is noticably slower.
 
-//  VectorScale( f->color, f->drawIntensity*tr.identityLight, color );
 	VectorScale(f->color, tr.identityLight, color);         //----(SA)  mod for alpha blend rather than additive
 
 	iColor[0] = color[0] * 255;

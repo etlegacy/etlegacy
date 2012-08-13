@@ -218,8 +218,6 @@ static void R_LoadLightmaps(lump_t *l)
 	MAC_STATIC byte image[LIGHTMAP_SIZE * LIGHTMAP_SIZE * 4];
 	int             i /*, j*/;
 	float           intensity, maxIntensity = 0;
-//  double sumIntensity = 0;
-
 
 	// ydnar: clear lightmaps first
 	tr.numLightmaps = 0;
@@ -272,7 +270,6 @@ static void R_LoadLightmaps(lump_t *l)
 	}
 }
 
-
 /*
 =================
 RE_SetWorldVisData
@@ -285,7 +282,6 @@ void RE_SetWorldVisData(const byte *vis)
 {
 	tr.externalVisData = vis;
 }
-
 
 /*
 =================
@@ -328,7 +324,6 @@ static void R_LoadVisibility(lump_t *l)
 }
 
 //===============================================================================
-
 
 /*
 ===============
@@ -407,12 +402,10 @@ void *R_GetSurfMemory(int size)
 	return (void *)retval;
 }
 
-
 /*
 SphereFromBounds() - ydnar
 creates a bounding sphere from a bounding box
 */
-
 static void SphereFromBounds(vec3_t mins, vec3_t maxs, vec3_t origin, float *radius)
 {
 	vec3_t temp;
@@ -428,7 +421,6 @@ static void SphereFromBounds(vec3_t mins, vec3_t maxs, vec3_t origin, float *rad
 FinishGenericSurface() - ydnar
 handles final surface classification
 */
-
 static void FinishGenericSurface(dsurface_t *ds, srfGeneric_t *gen, vec3_t pt)
 {
 	// set bounding sphere
@@ -442,7 +434,6 @@ static void FinishGenericSurface(dsurface_t *ds, srfGeneric_t *gen, vec3_t pt)
 	SetPlaneSignbits(&gen->plane);
 	gen->plane.type = PlaneTypeForNormal(gen->plane.normal);
 }
-
 
 /*
 ===============
@@ -520,204 +511,11 @@ static void ParseMesh(dsurface_t *ds, drawVert_t *verts, msurface_t *surf)
 	FinishGenericSurface(ds, (srfGeneric_t *) grid, grid->verts[0].xyz);
 }
 
-
-/*
-===============
-ParseFace
-===============
-*/
-#if 0 // rain - unused
-static void ParseFace(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, int *indexes)
-{
-	int              i, j;
-	srfSurfaceFace_t *cv;
-	int              numPoints, numIndexes;
-	int              lightmapNum;
-	int              sfaceSize, ofsIndexes;
-
-
-	lightmapNum = LittleLong(ds->lightmapNum);
-
-	// get fog volume
-	surf->fogIndex = LittleLong(ds->fogNum) + 1;
-
-	// get shader value
-	surf->shader = ShaderForShaderNum(ds->shaderNum, lightmapNum);
-	if (r_singleShader->integer && !surf->shader->isSky)
-	{
-		surf->shader = tr.defaultShader;
-	}
-
-	numPoints = LittleLong(ds->numVerts);
-	if (numPoints > MAX_FACE_POINTS)
-	{
-		ri.Printf(PRINT_WARNING, "WARNING: MAX_FACE_POINTS exceeded: %i\n", numPoints);
-		numPoints    = MAX_FACE_POINTS;
-		surf->shader = tr.defaultShader;
-	}
-
-	numIndexes = LittleLong(ds->numIndexes);
-
-	// create the srfSurfaceFace_t
-	sfaceSize  = ( int ) &((srfSurfaceFace_t *)0)->points[numPoints];
-	ofsIndexes = sfaceSize;
-	sfaceSize += sizeof(int) * numIndexes;
-
-	//cv = ri.Hunk_Alloc( sfaceSize );
-	cv = R_GetSurfMemory(sfaceSize);
-
-	cv->surfaceType = SF_FACE;
-	cv->numPoints   = numPoints;
-	cv->numIndices  = numIndexes;
-	cv->ofsIndices  = ofsIndexes;
-
-	ClearBounds(cv->bounds[0], cv->bounds[1]);
-	verts += LittleLong(ds->firstVert);
-	for (i = 0 ; i < numPoints ; i++)
-	{
-		for (j = 0 ; j < 3 ; j++)
-		{
-			cv->points[i][j] = LittleFloat(verts[i].xyz[j]);
-		}
-		AddPointToBounds(cv->points[i], cv->bounds[0], cv->bounds[1]);
-		for (j = 0 ; j < 2 ; j++)
-		{
-			cv->points[i][3 + j] = LittleFloat(verts[i].st[j]);
-			cv->points[i][5 + j] = LittleFloat(verts[i].lightmap[j]);
-		}
-		R_ColorShiftLightingBytes(verts[i].color, (byte *)&cv->points[i][7]);
-	}
-
-	indexes += LittleLong(ds->firstIndex);
-	for (i = 0 ; i < numIndexes ; i++)
-	{
-		(( int * )((byte *)cv + cv->ofsIndices))[i] = LittleLong(indexes[i]);
-	}
-
-#if 0
-	// take the plane information from the lightmap vector
-	for (i = 0 ; i < 3 ; i++)
-	{
-		cv->plane.normal[i] = LittleFloat(ds->lightmapVecs[2][i]);
-	}
-	cv->plane.dist = DotProduct(cv->points[0], cv->plane.normal);
-	SetPlaneSignbits(&cv->plane);
-	cv->plane.type = PlaneTypeForNormal(cv->plane.normal);
-#endif
-
-	surf->data = (surfaceType_t *) cv;
-
-	// finish surface
-	FinishGenericSurface(ds, (srfGeneric_t *) cv, cv->points[0]);
-}
-#endif
-
-
 /*
 ===============
 ParseTriSurf
 ===============
 */
-#if 0
-static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, int *indexes)
-{
-	srfTriangles2_t *tri;
-	int             i, j;
-	int             numVerts, numIndexes;
-	int             lightmapNum;
-
-
-	// get lightmap num
-	lightmapNum = LittleLong(ds->lightmapNum);
-
-	// get fog volume
-	surf->fogIndex = LittleLong(ds->fogNum) + 1;
-
-	// get shader
-	surf->shader = ShaderForShaderNum(ds->shaderNum, lightmapNum);      //% LIGHTMAP_BY_VERTEX );
-	if (r_singleShader->integer && !surf->shader->isSky)
-	{
-		surf->shader = tr.defaultShader;
-	}
-
-	numVerts   = LittleLong(ds->numVerts);
-	numIndexes = LittleLong(ds->numIndexes);
-
-
-	tri = R_GetSurfMemory(sizeof(*tri) + (numVerts + 1) * (sizeof(vec4hack_t) + sizeof(vec2hack_t) + sizeof(vec2hack_t) + sizeof(vec4hack_t) + sizeof(color4ubhack_t)) + numIndexes * sizeof(tri->indexes[0]));
-
-	tri->surfaceType = SF_TRIANGLES;
-	tri->numVerts    = numVerts;
-	tri->numIndexes  = numIndexes;
-
-	tri->xyz      = ( vec4hack_t * )(tri +              1);
-	tri->st       = ( vec2hack_t * )(tri->xyz +         tri->numVerts + 1);
-	tri->lightmap = ( vec2hack_t * )(tri->st +          tri->numVerts + 1);
-	tri->normal   = ( vec4hack_t * )(tri->lightmap +    tri->numVerts + 1);
-	tri->color    = ( color4ubhack_t * )(tri->normal +      tri->numVerts + 1);
-	tri->indexes  = ( int * )(tri->color +       tri->numVerts + 1);
-
-	surf->data = (surfaceType_t *)tri;
-
-	// copy vertexes
-	ClearBounds(tri->bounds[0], tri->bounds[1]);
-	verts += LittleLong(ds->firstVert);
-
-
-	if (LittleLong(256) != 256)
-	{
-		for (i = 0 ; i < numVerts ; i++)
-		{
-			for (j = 0 ; j < 3 ; j++)
-			{
-				tri->xyz[i].v[j]    = LittleFloat(verts[i].xyz[j]);
-				tri->normal[i].v[j] = LittleFloat(verts[i].normal[j]);
-			}
-			AddPointToBounds(tri->xyz[i].v, tri->bounds[0], tri->bounds[1]);
-			for (j = 0 ; j < 2 ; j++)
-			{
-				tri->st[i].v[j]       = LittleFloat(verts[i].st[j]);
-				tri->lightmap[i].v[j] = LittleFloat(verts[i].lightmap[j]);
-			}
-
-			R_ColorShiftLightingBytes(verts[i].color, tri->color[i].v);
-		}
-	}
-	else     // Gordon: OPT: removed the littlefloats from when they aint needed
-	{
-		for (i = 0 ; i < numVerts ; i++)
-		{
-			for (j = 0 ; j < 3 ; j++)
-			{
-				tri->xyz[i].v[j]    = verts[i].xyz[j];
-				tri->normal[i].v[j] = verts[i].normal[j];
-			}
-			AddPointToBounds(tri->xyz[i].v, tri->bounds[0], tri->bounds[1]);
-			for (j = 0 ; j < 2 ; j++)
-			{
-				tri->st[i].v[j]       = verts[i].st[j];
-				tri->lightmap[i].v[j] = verts[i].lightmap[j];
-			}
-
-			R_ColorShiftLightingBytes(verts[i].color, tri->color[i].v);
-		}
-	}
-
-	// copy indexes
-	indexes += LittleLong(ds->firstIndex);
-	for (i = 0 ; i < numIndexes ; i++)
-	{
-		tri->indexes[i] = LittleLong(indexes[i]);
-		if (tri->indexes[i] < 0 || tri->indexes[i] >= numVerts)
-		{
-			ri.Error(ERR_DROP, "Bad index in triangle surface");
-		}
-	}
-
-	// finish surface
-	FinishGenericSurface(ds, (srfGeneric_t *) tri, tri->xyz[0].v);
-}
-#else
 static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, int *indexes)
 {
 	srfTriangles_t *tri;
@@ -788,20 +586,16 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	// finish surface
 	FinishGenericSurface(ds, (srfGeneric_t *) tri, tri->verts[0].xyz);
 }
-#endif // 0
-
 
 /*
 ParseFoliage() - ydnar
 parses a foliage drawsurface
 */
-
 static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, int *indexes)
 {
 	srfFoliage_t *foliage;
 	int          i, j, numVerts, numIndexes, numInstances, size;
-	vec4_t       *xyz, *normal /*, *origin*/;
-//  fcolor4ub_t     *color;
+	vec4_t       *xyz, *normal;
 	vec3_t bounds[2], boundsTranslated[2];
 	float  scale;
 
@@ -920,13 +714,11 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	FinishGenericSurface(ds, (srfGeneric_t *) foliage, foliage->xyz[0]);
 }
 
-
 /*
 ===============
 ParseFlare
 ===============
 */
-
 static void ParseFlare(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, int *indexes)
 {
 	srfFlare_t *flare;
@@ -954,7 +746,6 @@ static void ParseFlare(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, int 
 		flare->normal[i] = LittleFloat(ds->lightmapVecs[2][i]);
 	}
 }
-
 
 /*
 =================
@@ -1068,11 +859,10 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 		{
 			continue;
 		}
-		//
+
 		touch = qfalse;
 		for (n = 0; n < 2; n++)
 		{
-			//
 			if (n)
 			{
 				offset1 = (grid1->height - 1) * grid1->width;
@@ -1292,7 +1082,6 @@ void R_FixSharedVertexLodError(void)
 	}
 }
 
-
 /*
 ===============
 R_StitchPatches
@@ -1308,7 +1097,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 	grid2 = (srfGridMesh_t *) s_worldData.surfaces[grid2num].data;
 	for (n = 0; n < 2; n++)
 	{
-		//
 		if (n)
 		{
 			offset1 = (grid1->height - 1) * grid1->width;
@@ -1321,9 +1109,9 @@ int R_StitchPatches(int grid1num, int grid2num)
 		{
 			continue;
 		}
+
 		for (k = 0; k < grid1->width - 2; k += 2)
 		{
-
 			for (m = 0; m < 2; m++)
 			{
 
@@ -1382,7 +1170,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					//ri.Printf( PRINT_ALL, "found highest LoD crack between two patches\n" );
 					// insert column into grid2 right after after column l
 					if (m)
@@ -1402,7 +1190,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 			}
 			for (m = 0; m < 2; m++)
 			{
-
 				if (grid2->height >= MAX_GRID_SIZE)
 				{
 					break;
@@ -1480,7 +1267,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 	}
 	for (n = 0; n < 2; n++)
 	{
-		//
 		if (n)
 		{
 			offset1 = grid1->width - 1;
@@ -1497,7 +1283,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 		{
 			for (m = 0; m < 2; m++)
 			{
-
 				if (grid2->width >= MAX_GRID_SIZE)
 				{
 					break;
@@ -1553,7 +1338,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					//ri.Printf( PRINT_ALL, "found highest LoD crack between two patches\n" );
 					// insert column into grid2 right after after column l
 					if (m)
@@ -1573,7 +1358,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 			}
 			for (m = 0; m < 2; m++)
 			{
-
 				if (grid2->height >= MAX_GRID_SIZE)
 				{
 					break;
@@ -1590,7 +1374,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 				//  continue;
 				for (l = 0; l < grid2->height - 1; l++)
 				{
-					//
 					v1 = grid1->verts[grid1->width * k + offset1].xyz;
 					v2 = grid2->verts[grid2->width * l + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) > .1)
@@ -1620,7 +1403,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					v1 = grid2->verts[grid2->width * l + offset2].xyz;
 					v2 = grid2->verts[grid2->width * (l + 1) + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) < .01 &&
@@ -1629,7 +1412,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					//ri.Printf( PRINT_ALL, "found highest LoD crack between two patches\n" );
 					// insert row into grid2 right after after row l
 					if (m)
@@ -1651,7 +1434,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 	}
 	for (n = 0; n < 2; n++)
 	{
-		//
 		if (n)
 		{
 			offset1 = (grid1->height - 1) * grid1->width;
@@ -1666,10 +1448,8 @@ int R_StitchPatches(int grid1num, int grid2num)
 		}
 		for (k = grid1->width - 1; k > 1; k -= 2)
 		{
-
 			for (m = 0; m < 2; m++)
 			{
-
 				if (grid2->width >= MAX_GRID_SIZE)
 				{
 					break;
@@ -1725,7 +1505,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					//ri.Printf( PRINT_ALL, "found highest LoD crack between two patches\n" );
 					// insert column into grid2 right after after column l
 					if (m)
@@ -1745,7 +1525,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 			}
 			for (m = 0; m < 2; m++)
 			{
-
 				if (grid2->height >= MAX_GRID_SIZE)
 				{
 					break;
@@ -1792,7 +1571,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					v1 = grid2->verts[grid2->width * l + offset2].xyz;
 					v2 = grid2->verts[grid2->width * (l + 1) + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) < .01 &&
@@ -1801,7 +1580,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					//ri.Printf( PRINT_ALL, "found highest LoD crack between two patches\n" );
 					// insert row into grid2 right after after row l
 					if (m)
@@ -1827,7 +1606,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 	}
 	for (n = 0; n < 2; n++)
 	{
-		//
 		if (n)
 		{
 			offset1 = grid1->width - 1;
@@ -1844,7 +1622,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 		{
 			for (m = 0; m < 2; m++)
 			{
-
 				if (grid2->width >= MAX_GRID_SIZE)
 				{
 					break;
@@ -1861,7 +1638,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 				//  continue;
 				for (l = 0; l < grid2->width - 1; l++)
 				{
-					//
 					v1 = grid1->verts[grid1->width * k + offset1].xyz;
 					v2 = grid2->verts[l + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) > .1)
@@ -1900,7 +1676,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					//ri.Printf( PRINT_ALL, "found highest LoD crack between two patches\n" );
 					// insert column into grid2 right after after column l
 					if (m)
@@ -1920,7 +1696,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 			}
 			for (m = 0; m < 2; m++)
 			{
-
 				if (grid2->height >= MAX_GRID_SIZE)
 				{
 					break;
@@ -1937,7 +1712,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 				//  continue;
 				for (l = 0; l < grid2->height - 1; l++)
 				{
-					//
 					v1 = grid1->verts[grid1->width * k + offset1].xyz;
 					v2 = grid2->verts[grid2->width * l + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) > .1)
@@ -1967,7 +1741,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					v1 = grid2->verts[grid2->width * l + offset2].xyz;
 					v2 = grid2->verts[grid2->width * (l + 1) + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) < .01 &&
@@ -1976,7 +1750,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					//ri.Printf( PRINT_ALL, "found highest LoD crack between two patches\n" );
 					// insert row into grid2 right after after row l
 					if (m)
@@ -2046,7 +1820,7 @@ int R_TryStitchingPatch(int grid1num)
 		{
 			continue;
 		}
-		//
+
 		while (R_StitchPatches(grid1num, j))
 		{
 			numstitches++;
@@ -2106,14 +1880,13 @@ void R_MovePatchSurfacesToHunk(void)
 
 	for (i = 0; i < s_worldData.numsurfaces; i++)
 	{
-		//
 		grid = (srfGridMesh_t *) s_worldData.surfaces[i].data;
 		// if this surface is not a grid
 		if (grid->surfaceType != SF_GRID)
 		{
 			continue;
 		}
-		//
+
 		size     = (grid->width * grid->height - 1) * sizeof(drawVert_t) + sizeof(*grid);
 		hunkgrid = ri.Hunk_Alloc(size, h_low);
 		Com_Memcpy(hunkgrid, grid, size);
@@ -2143,14 +1916,8 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	drawVert_t *dv;
 	int        *indexes;
 	int        count;
-	int        numFaces, numMeshes, numTriSurfs, numFlares, numFoliage;
+	int        numFaces = 0, numMeshes = 0, numTriSurfs = 0, numFlares = 0, numFoliage = 0;
 	int        i;
-
-	numFaces    = 0;
-	numMeshes   = 0;
-	numTriSurfs = 0;
-	numFlares   = 0;
-	numFoliage  = 0;
 
 	in = ( void * )(fileBase + surfs->fileofs);
 	if (surfs->filelen % sizeof(*in))
@@ -2195,7 +1962,6 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 			break;
 		case MST_PLANAR:
 			// ydnar: faces and triangle surfaces are now homogenous
-			//% ParseFace( in, dv, out, indexes );
 			ParseTriSurf(in, dv, out, indexes);
 			numFaces++;
 			break;
@@ -2226,7 +1992,6 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	ri.Printf(PRINT_ALL, "...loaded %d faces, %i meshes, %i trisurfs, %i flares %i foliage\n",
 	          numFaces, numMeshes, numTriSurfs, numFlares, numFoliage);
 }
-
 
 /*
 =================
@@ -2281,7 +2046,6 @@ static void R_LoadSubmodels(lump_t *l)
 		memset(out->decals, 0, j * sizeof(*out->decals));
 	}
 }
-
 
 //==================================================================
 
@@ -2465,7 +2229,6 @@ static void R_LoadShaders(lump_t *l)
 	}
 }
 
-
 /*
 =================
 R_LoadMarksurfaces
@@ -2494,7 +2257,6 @@ static void R_LoadMarksurfaces(lump_t *l)
 		out[i] = s_worldData.surfaces + j;
 	}
 }
-
 
 /*
 =================
@@ -2688,9 +2450,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 
 		out++;
 	}
-
 }
-
 
 /*
 ==============
@@ -2702,7 +2462,6 @@ void R_FindLightGridBounds(vec3_t mins, vec3_t maxs)
 	world_t          *w;
 	msurface_t       *surf;
 	srfSurfaceFace_t *surfFace;
-//  cplane_t    *plane;
 	struct shader_s *shd;
 
 	qboolean foundGridBrushes = qfalse;
@@ -2812,7 +2571,6 @@ void R_LoadLightGrid(lump_t *l)
 	vec3_t  maxs;
 	int     numGridPoints;
 	world_t *w;
-//  float   *wMins, *wMaxs;
 	vec3_t wMins, wMaxs;
 
 	w = &s_worldData;
@@ -2821,11 +2579,7 @@ void R_LoadLightGrid(lump_t *l)
 	w->lightGridInverseSize[1] = 1.0 / w->lightGridSize[1];
 	w->lightGridInverseSize[2] = 1.0 / w->lightGridSize[2];
 
-//----(SA)  modified
 	R_FindLightGridBounds(wMins, wMaxs);
-//  wMins = w->bmodels[0].bounds[0];
-//  wMaxs = w->bmodels[0].bounds[1];
-//----(SA)  end
 
 	for (i = 0 ; i < 3 ; i++)
 	{
