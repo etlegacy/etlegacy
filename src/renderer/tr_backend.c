@@ -1571,8 +1571,11 @@ void RB_ExecuteRenderCommands(const void *data)
 	int t1, t2;
 
 	t1 = ri.Milliseconds();
-
+#ifdef SMP
 	if (!r_smp->integer || data == backEndData[0]->commands.cmds)
+#else
+	if (data == backEndData[0]->commands.cmds)
+#endif
 	{
 		backEnd.smpFrame = 0;
 	}
