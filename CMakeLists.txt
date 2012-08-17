@@ -26,7 +26,13 @@ option(BUILD_MOD        "Build the mod libraries"                               
 option(BUILD_MOD_PK3    "Pack the mod libraries into mp_bin.pk3"                                OFF)
 option(BUILD_PAK3_PK3   "Pack updated game scripts into pak3.pk3"                               OFF)
 
-option(CROSS_COMPILE32  "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)"     ON)
+# no support for 32 bit binaries on OpenBSD/amd64
+if (CMAKE_SYSTEM MATCHES "OpenBSD*")
+        option(CROSS_COMPILE32  "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)"     OFF)
+else()
+        option(CROSS_COMPILE32  "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)"     ON)
+endif()
+
 option(BUNDLED_LIBS     "Use bundled libraries instead of the system ones."                     OFF)
 
 # Optional features
@@ -51,8 +57,13 @@ if(UNIX AND CROSS_COMPILE32) # 32-bit build
 endif(UNIX AND CROSS_COMPILE32)
 
 if(UNIX)
-        set(OS_LIBRARIES dl m)
-        set(LIB_SUFFIX ".mp.")
+        if (CMAKE_SYSTEM MATCHES "OpenBSD*")
+                set(OS_LIBRARIES m pthread)
+                set(LIB_SUFFIX ".mp.obsd.")
+        else()
+                set(OS_LIBRARIES dl m)
+                set(LIB_SUFFIX ".mp.")
+        endif()
         #set(CMAKE_SHARED_LIBRARY_C_FLAGS "-fPIC -fvisibility=hidden")
         if(NOT APPLE) # Linux and *BSD
                 set(ETLEGACY_INSTALL_DIRECTORY "games/etlegacy") # FIXME: needs to be unset for CPack packages. How???

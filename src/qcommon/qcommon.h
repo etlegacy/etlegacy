@@ -1120,6 +1120,8 @@ void Sys_LeaveCriticalSection(void *ptr);
 
 #ifdef _WIN32
 #define Sys_GetDLLName(x) x "_mp_" ARCH_STRING DLL_EXT
+#elif __OpenBSD__ //TODO: detect the *BSD variant
+#define Sys_GetDLLName(x) x ".mp.obsd." ARCH_STRING DLL_EXT
 #else
 #define Sys_GetDLLName(x) x ".mp." ARCH_STRING DLL_EXT
 #endif
