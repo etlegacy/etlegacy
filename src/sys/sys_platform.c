@@ -975,7 +975,7 @@ char *Sys_DefaultHomePath(void)
 {
 	char *p;
 
-	if (!*homePath /*&& com_homepath != NULL*/)
+	if (!*homePath)
 	{
 		if ((p = getenv("HOME")) != NULL)
 		{
@@ -1001,6 +1001,7 @@ void Sys_Chmod(char *file, int mode)
 {
 	struct stat s_buf;
 	int         perm;
+
 	if (stat(file, &s_buf) != 0)
 	{
 		Com_Printf("stat('%s')  failed: errno %d\n", file, errno);
@@ -1047,7 +1048,6 @@ int Sys_Milliseconds(void)
 	return curtime;
 }
 
-// #if !id386
 /*
 ==================
 fastftol
@@ -1069,8 +1069,6 @@ void Sys_SnapVector(float *v)
 	v[1] = rint(v[1]);
 	v[2] = rint(v[2]);
 }
-// #endif
-
 
 /*
 ==================
@@ -1291,8 +1289,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 	char          *list[MAX_FOUND_FILES];
 	int           i;
 	struct stat   st;
-
-	int extLen;
+	int 		  extLen;
 
 	if (filter)
 	{
@@ -1588,7 +1585,6 @@ static int Sys_Exec(void)
 	}
 }
 
-
 /*
 ==============
 Sys_ZenityCommand
@@ -1704,7 +1700,7 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	typedef int (*dialogCommandBuilder_t)(dialogType_t, const char *, const char *);
 
 	const char             *session = getenv("DESKTOP_SESSION");
-	int                    i;
+	int                    i, exitCode;
 	qboolean               tried[NUM_DIALOG_PROGRAMS]    = { qfalse };
 	dialogCommandBuilder_t commands[NUM_DIALOG_PROGRAMS] = { NULL };
 	dialogCommandType_t    preferredCommandType          = NONE;
@@ -1730,8 +1726,6 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 
 	while (1)
 	{
-		int exitCode;
-
 		for (i = ZENITY; i < NUM_DIALOG_PROGRAMS; i++)
 		{
 			if (preferredCommandType != NONE && preferredCommandType != i)

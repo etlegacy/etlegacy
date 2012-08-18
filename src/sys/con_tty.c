@@ -149,7 +149,6 @@ static void CON_HistNext(void)
 	qconsole_linelen = strlen(qconsole_line);
 }
 
-
 /*
 ==================
 CON_Show
@@ -255,7 +254,12 @@ void CON_Init(void)
 	GetConsoleScreenBufferInfo(qconsole_hout, &info);
 	qconsole_attrib = info.wAttributes;
 
-	SetConsoleTitle(ET_VERSION "Dedicated Server Console"); // TODO: Add version infos
+#ifdef DEDICATED
+	SetConsoleTitle(ET_VERSION "Dedicated Server Console");
+#else
+	SetConsoleTitle(ET_VERSION "Client Console");
+#endif
+
 
 	// make cursor invisible
 	GetConsoleCursorInfo(qconsole_hout, &qconsole_orig_cursorinfo);
@@ -584,13 +588,15 @@ Hist_Add
 */
 void Hist_Add(field_t *field)
 {
+	int i;
+
 	// Don't save blank lines in history.
 	if (!field->cursor)
 	{
 		return;
 	}
 
-	int i;
+
 	assert(hist_count <= CON_HISTORY);
 	assert(hist_count >= 0);
 	assert(hist_current >= -1);
@@ -706,8 +712,7 @@ void CON_Init(void)
 	characters  EOF,  EOL,  EOL2, ERASE, KILL, REPRINT,
 	STATUS, and WERASE, and buffers by lines.
 	ISIG: when any of the characters  INTR,  QUIT,  SUSP,  or
-	DSUSP are received, generate the corresponding sig
-	nal
+	DSUSP are received, generate the corresponding signal
 	*/
 	tc.c_lflag &= ~(ECHO | ICANON);
 
