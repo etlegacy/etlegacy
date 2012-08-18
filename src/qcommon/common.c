@@ -176,7 +176,6 @@ void QDECL Com_Printf(const char *fmt, ...)
 	char            msg[MAXPRINTMSG];
 	static qboolean opening_qconsole = qfalse;
 
-
 	va_start(argptr, fmt);
 	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
 	va_end(argptr);
@@ -523,9 +522,8 @@ will keep the demoloop from immediately starting
 qboolean Com_AddStartupCommands(void)
 {
 	int      i;
-	qboolean added;
+	qboolean added = qfalse;
 
-	added = qfalse;
 	// quote every token, so args with semicolons can work
 	for (i = 0 ; i < com_numConsoleLines ; i++)
 	{
@@ -787,6 +785,7 @@ int Com_FilterPath(char *filter, char *name, int casesensitive)
 			new_filter[i] = filter[i];
 		}
 	}
+
 	new_filter[i] = '\0';
 	for (i = 0; i < MAX_QPATH - 1 && name[i]; i++)
 	{
@@ -851,7 +850,6 @@ int Com_RealTime(qtime_t *qtime)
 	}
 	return t;
 }
-
 
 /*
 ==============================================================================
@@ -2399,9 +2397,7 @@ Com_RunAndTimeServerPacket
 */
 void Com_RunAndTimeServerPacket(netadr_t *evFrom, msg_t *buf)
 {
-	int t1, t2, msec;
-
-	t1 = 0;
+	int t1 = 0, t2, msec;
 
 	if (com_speeds->integer)
 	{
@@ -2566,7 +2562,6 @@ int Com_Milliseconds(void)
 	// get events and push them until we get a null event with the current time
 	do
 	{
-
 		ev = Com_GetRealEvent();
 		if (ev.evType != SE_NONE)
 		{
@@ -2920,6 +2915,8 @@ void Com_Init(char *commandLine)
 #elif __linux__
 	pid = getpid();
 #elif __MACOS__
+	pid = getpid();
+#elif __OpenBSD__
 	pid = getpid();
 #endif
 	s       = va("%d", pid);
