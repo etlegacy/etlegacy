@@ -756,12 +756,12 @@ void Con_DrawSolidConsole(float frac)
 
 	re.SetColor(g_color_table[ColorIndex(COLNSOLE_COLOR)]);
 
-	i = strlen(Q3_VERSION);
+	i = strlen(ET_VERSION);
 
 	for (x = 0 ; x < i ; x++)
 	{
 		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x) * SMALLCHAR_WIDTH,
-		                  (lines - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2)), Q3_VERSION[x]);
+		                  (lines - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2)), ET_VERSION[x]);
 	}
 
 
