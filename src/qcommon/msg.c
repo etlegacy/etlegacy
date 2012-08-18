@@ -88,7 +88,6 @@ void MSG_Clear(msg_t *buf)
 	buf->bit        = 0;            //<- in bits
 }
 
-
 void MSG_Bitstream(msg_t *buf)
 {
 	buf->oob = qfalse;
@@ -329,8 +328,6 @@ int MSG_ReadBits(msg_t *msg, int bits)
 	return value;
 }
 
-
-
 //================================================================================
 
 //
@@ -474,7 +471,6 @@ void MSG_WriteAngle16(msg_t *sb, float f)
 {
 	MSG_WriteShort(sb, ANGLE2SHORT(f));
 }
-
 
 //============================================================
 
@@ -658,7 +654,6 @@ void MSG_ReadData(msg_t *msg, void *data, int len)
 	}
 }
 
-
 /*
 =============================================================================
 
@@ -781,7 +776,6 @@ float MSG_ReadDeltaKeyFloat(msg_t *msg, int key, float oldV)
 	return oldV;
 }
 
-
 /*
 ============================================================================
 
@@ -830,7 +824,6 @@ void MSG_WriteDeltaUsercmd(msg_t *msg, usercmd_t *from, usercmd_t *to)
 	MSG_WriteDelta(msg, from->doubleTap, to->doubleTap, 3);
 	MSG_WriteDelta(msg, from->identClient, to->identClient, 8);             // NERVE - SMF
 }
-
 
 /*
 =====================
@@ -911,7 +904,6 @@ void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *t
 	MSG_WriteDeltaKey(msg, key, from->identClient, to->identClient, 8);         // NERVE - SMF
 }
 
-
 /*
 =====================
 MSG_ReadDeltaUsercmd
@@ -959,7 +951,6 @@ void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to
 		to->identClient = from->identClient;            // NERVE - SMF
 	}
 }
-
 
 /*
 =============================================================================
@@ -1073,7 +1064,6 @@ netField_t entityStateFields[] =
 	{ NETF(animMovetype),    4               },
 	{ NETF(aiState),         2               },
 };
-
 
 static int QDECL qsort_entitystatefields(const void *a, const void *b)
 {
@@ -1459,7 +1449,6 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to,
 	}
 }
 
-
 /*
 ============================================================================
 
@@ -1541,7 +1530,6 @@ netField_t playerStateFields[] =
 	{ PSF(viewlocked_entNum),    16              },
 	{ PSF(nextWeapon),           8               },
 	{ PSF(teamNum),              8               },
-//{ PSF(gunfx), 8},
 	{ PSF(onFireStart),          32              },
 	{ PSF(curWeapHeat),          8               },
 	{ PSF(aimSpreadScale),       8               },
@@ -1592,8 +1580,6 @@ void MSG_PrioritisePlayerStateFields(void)
 	}
 	Com_Printf("};\n");
 }
-
-
 
 /*
 =============
@@ -1838,109 +1824,10 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 		oldsize += 4;
 	}
 
-
-#if 0
-// RF, optimization
-//      Send a single bit to signify whether or not the ammo/clip info changed.
-//      If it did, send individual segments specifying offset values for each item.
-	{
-		int ammo_ofs;
-		int clip_ofs;
-
-		ammobits = 0;
-
-		// ammo
-		for (i = 0 ; i < 32 ; i++)
-		{
-			if (to->ammo[i] != from->ammo[i])
-			{
-				ammobits |= 1 << i;
-			}
-		}
-		// ammoclip (just add these changes to the ammo changes. if either changes, we should send both, since they are likely to both change at once anyway)
-		for (i = 0 ; i < 32 ; i++)
-		{
-			if (to->ammoclip[i] != from->ammoclip[i])
-			{
-				ammobits |= 1 << i;
-			}
-		}
-
-		if (ammobits)
-		{
-			MSG_WriteBits(msg, 1, 1);   // changed
-
-			// send each changed item
-			for (i = 0 ; i < 32 ; i++)
-			{
-				if (ammobits & (1 << i))
-				{
-					ammo_ofs = to->ammo[i] - from->ammo[i];
-					clip_ofs = to->ammoclip[i] - from->ammoclip[i];
-
-					while (ammo_ofs || clip_ofs)
-					{
-						MSG_WriteBits(msg, 1, 1);    // signify that another index is present
-						MSG_WriteBits(msg, i, 5);    // index number
-
-						// ammo
-						if (abs(ammo_ofs) > 127)
-						{
-							if (ammo_ofs > 0)
-							{
-								MSG_WriteChar(msg, 127);
-								ammo_ofs -= 127;
-							}
-							else
-							{
-								MSG_WriteChar(msg, -127);
-								ammo_ofs += 127;
-							}
-						}
-						else
-						{
-							MSG_WriteChar(msg, ammo_ofs);
-							ammo_ofs = 0;
-						}
-
-						// clip
-						if (abs(clip_ofs) > 127)
-						{
-							if (clip_ofs > 0)
-							{
-								MSG_WriteChar(msg, 127);
-								clip_ofs -= 127;
-							}
-							else
-							{
-								MSG_WriteChar(msg, -127);
-								clip_ofs += 127;
-							}
-						}
-						else
-						{
-							MSG_WriteChar(msg, clip_ofs);
-							clip_ofs = 0;
-						}
-					}
-				}
-			}
-
-			// signify the end of changes
-			MSG_WriteBits(msg, 0, 1);
-
-		}
-		else
-		{
-			MSG_WriteBits(msg, 0, 1);   // no change
-		}
-	}
-
-#else
-//----(SA)  I split this into two groups using shorts so it wouldn't have
-//          to use a long every time ammo changed for any weap.
-//          this seemed like a much friendlier option than making it
-//          read/write a long for any ammo change.
+	//----(SA)  I split this into two groups using shorts so it wouldn't have
+	//          to use a long every time ammo changed for any weap.
+	//          this seemed like a much friendlier option than making it
+	//          read/write a long for any ammo change.
 
 	// j == 0 : weaps 0-15
 	// j == 1 : weaps 16-31
@@ -2014,7 +1901,6 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 			MSG_WriteBits(msg, 0, 1);   // no change
 		}
 	}
-#endif
 
 
 	if (print)
@@ -2031,7 +1917,6 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 	}
 
 }
-
 
 /*
 ===================
@@ -2200,27 +2085,11 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 		}
 	}
 
-#if 0
-// RF, optimization
-//      Send a single bit to signify whether or not the ammo/clip info changed.
-//      If it did, send individual segments specifying offset values for each item.
 
-	if (MSG_ReadBits(msg, 1))           // it changed
-	{
-		while (MSG_ReadBits(msg, 1))
-		{
-			i = MSG_ReadBits(msg, 5);       // read the index number
-			// now read the offsets
-			to->ammo[i]     += MSG_ReadChar(msg);
-			to->ammoclip[i] += MSG_ReadChar(msg);
-		}
-	}
-
-#else
-//----(SA)  I split this into two groups using shorts so it wouldn't have
-//          to use a long every time ammo changed for any weap.
-//          this seemed like a much friendlier option than making it
-//          read/write a long for any ammo change.
+	//----(SA)  I split this into two groups using shorts so it wouldn't have
+	//          to use a long every time ammo changed for any weap.
+	//          this seemed like a much friendlier option than making it
+	//          read/write a long for any ammo change.
 
 	// parse ammo
 
@@ -2265,8 +2134,6 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 			}
 		}
 	}
-
-#endif
 
 
 	if (print)
@@ -2558,40 +2425,5 @@ void MSG_initHuffman(void)
 		}
 	}
 }
-
-/*
-void MSG_NUinitHuffman() {
-    byte    *data;
-    int     size, i, ch;
-    int     array[256];
-
-    msgInit = qtrue;
-
-    Huff_Init(&msgHuff);
-    // load it in
-    size = FS_ReadFile( "netchan/netchan.bin", (void **)&data );
-
-    for(i=0;i<256;i++) {
-        array[i] = 0;
-    }
-    for(i=0;i<size;i++) {
-        ch = data[i];
-        Huff_addRef(&msgHuff.compressor,    ch);            // Do update
-        Huff_addRef(&msgHuff.decompressor,  ch);            // Do update
-        array[ch]++;
-    }
-    Com_Printf("msg_hData {\n");
-    for(i=0;i<256;i++) {
-        if (array[i] == 0) {
-            Huff_addRef(&msgHuff.compressor,    i);         // Do update
-            Huff_addRef(&msgHuff.decompressor,  i);         // Do update
-        }
-        Com_Printf("%d,         // %d\n", array[i], i);
-    }
-    Com_Printf("};\n");
-    FS_FreeFile( data );
-    Cbuf_AddText( "condump dump.txt\n" );
-}
-*/
 
 //===========================================================================
