@@ -189,7 +189,10 @@ static qboolean IN_IsConsoleKey(keyNum_t key, const unsigned char character)
 	// Only parse the variable when it changes
 	if (cl_consoleKeys->modified)
 	{
+		consoleKey_t *c;
 		char *text_p, *token;
+		int charCode;
+
 
 		cl_consoleKeys->modified = qfalse;
 		text_p                   = cl_consoleKeys->string;
@@ -197,8 +200,8 @@ static qboolean IN_IsConsoleKey(keyNum_t key, const unsigned char character)
 
 		while (numConsoleKeys < MAX_CONSOLE_KEYS)
 		{
-			consoleKey_t *c       = &consoleKeys[numConsoleKeys];
-			int          charCode = 0;
+			c = &consoleKeys[numConsoleKeys];
+			charCode = 0;
 
 			token = COM_Parse(&text_p);
 			if (!token[0])
@@ -1068,19 +1071,21 @@ static void IN_ProcessEvents(void)
 void IN_Frame(void)
 {
 	qboolean loading;
+	qboolean fullscreen;
 
 	IN_JoyMove();
 	IN_ProcessEvents();
 
 	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
 	loading = !!(cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
+	fullscreen = Cvar_VariableIntegerValue("r_fullscreen");
 
-	if (!Cvar_VariableIntegerValue("r_fullscreen") && (Key_GetCatcher() & KEYCATCH_CONSOLE))
+	if (!fullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
 		// Console is down in windowed mode
 		IN_DeactivateMouse();
 	}
-	else if (!Cvar_VariableIntegerValue("r_fullscreen") && loading)
+	else if (!fullscreen && loading)
 	{
 		// Loading in windowed mode
 		IN_DeactivateMouse();
