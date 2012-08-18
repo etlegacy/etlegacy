@@ -454,7 +454,7 @@ typedef enum
 
 #define UI_SMALLFONT75  0x00100000
 
-#if !defined(NDEBUG)
+#ifdef _DEBUG
 #define HUNK_DEBUG
 #endif
 

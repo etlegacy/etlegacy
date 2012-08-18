@@ -946,7 +946,7 @@ temp file loading
 --- high memory ---
 */
 
-#if !defined(NDEBUG)
+#ifdef _DEBUG
 #define ZONE_DEBUG
 #endif
 
