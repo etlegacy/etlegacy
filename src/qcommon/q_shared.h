@@ -37,16 +37,21 @@
 #define __Q_SHARED_H
 
 #define PRODUCT_NAME            "etlegacy"
-#define CLIENT_WINDOW_TITLE     "ET: Legacy"
-#define CLIENT_WINDOW_MIN_TITLE "ET: Legacy"
-#define GAMENAME_FOR_MASTER     "etlegacy"
-#define Q3_VERSION              "ET Legacy 2.70"
+#define PRODUCT_LABEL			"ET Legacy"
+#define CLIENT_WINDOW_TITLE     PRODUCT_LABEL
+#define CLIENT_WINDOW_MIN_TITLE PRODUCT_LABEL
+#define GAMENAME_FOR_MASTER		PRODUCT_NAME
+
+#define Q3_VERSION_MAJOR 		"2"
+#define Q3_VERSION_MINOR 		"7"
+#define Q3_VERSION_BUILD 		"0"
+#define Q3_VERSION_NUMBER		Q3_VERSION_MAJOR "." Q3_VERSION_MINOR Q3_VERSION_BUILD
+
+#define Q3_VERSION              PRODUCT_LABEL " " Q3_VERSION_NUMBER
 #define ET_VERSION              Q3_VERSION " " CPUSTRING " " __DATE__
 #define FAKE_VERSION            "ET 2.60b " CPUSTRING " May  8 2006"
 #define CONFIG_NAME             "etconfig.cfg"
 
-#define NEW_ANIMS
-#define MAX_TEAMNAME    32
 #define MAX_MASTER_SERVERS      5   // number of supported master servers
 
 #define DEMOEXT "dm_"           // standard demo extension
@@ -155,7 +160,6 @@ typedef unsigned __int8 uint8_t;
 #define Q_snprintf  snprintf
 #endif
 #endif
-
 
 #include "q_platform.h"
 
@@ -352,9 +356,6 @@ typedef int clipHandle_t;
 #define YAW                 1       // left / right
 #define ROLL                2       // fall over
 
-// RF, this is just here so different elements of the engine can be aware of this setting as it changes
-#define MAX_SP_CLIENTS      64      // increasing this will increase memory usage significantly
-
 // the game guarantees that no string from the network will ever
 // exceed MAX_STRING_CHARS
 #define MAX_STRING_CHARS    1024    // max length of a string passed to Cmd_TokenizeString
@@ -384,7 +385,7 @@ typedef int clipHandle_t;
 typedef enum
 {
 	MESSAGE_EMPTY = 0,
-	MESSAGE_WAITING,        // rate/packet limited
+	MESSAGE_WAITING,        	// rate/packet limited
 	MESSAGE_WAITING_OVERFLOW,   // packet too large with message
 } messageStatus_t;
 
@@ -392,17 +393,13 @@ typedef enum
 typedef enum
 {
 	EXEC_NOW,           // don't return until completed, a VM should NEVER use this,
-	// because some commands might cause the VM to be unloaded...
+						// because some commands might cause the VM to be unloaded...
 	EXEC_INSERT,        // insert at current position, but don't run yet
 	EXEC_APPEND         // add to end of the command buffer (normal case)
 } cbufExec_t;
 
-
-//
 // these aren't needed by any of the VMs.  put in another header?
-//
 #define MAX_MAP_AREA_BYTES      32      // bit vector of area visibility
-
 
 // print levels from renderer (FIXME: set up for game / cgame?)
 typedef enum
@@ -428,7 +425,6 @@ typedef enum
 	ERR_NEED_CD,                // pop up the need-cd dialog
 	ERR_AUTOUPDATE
 } errorParm_t;
-
 
 // font rendering values used by ui and cgame
 
@@ -493,7 +489,6 @@ void Snd_Memset(void *dest, const int val, const size_t count);
 #define CIN_silent  8
 #define CIN_shader  16
 
-
 /*
 ==============================================================
 
@@ -501,7 +496,6 @@ MATHLIB
 
 ==============================================================
 */
-
 
 typedef float vec_t;
 typedef vec_t vec2_t[2];
@@ -596,7 +590,6 @@ extern vec4_t clrBrownLineFull;
 #define COLOR_MDCYAN    'B'
 #define COLOR_MDPURPLE  'C'
 #define COLOR_NULL      '*'
-
 
 #define COLOR_BITS  31
 #define ColorIndex(c)   (((c) - '0') & COLOR_BITS)
@@ -836,7 +829,6 @@ void AxisToAngles(/*const*/ vec3_t axis[3], vec3_t angles);
 float VectorDistance(vec3_t v1, vec3_t v2);
 float VectorDistanceSquared(vec3_t v1, vec3_t v2);
 
-
 void AxisClear(vec3_t axis[3]);
 void AxisCopy(vec3_t in[3], vec3_t out[3]);
 
@@ -1035,9 +1027,7 @@ void Com_TruncateLongString(char *buffer, const char *s);
 
 //=============================================
 
-//
 // key / value info strings
-//
 char *Info_ValueForKey(const char *s, const char *key);
 void Info_RemoveKey(char *s, const char *key);
 void Info_RemoveKey_big(char *s, const char *key);
@@ -1063,7 +1053,6 @@ void QDECL Com_Printf(const char *msg, ...) __attribute__ ((format(printf, 1, 2)
 #define RELOAD_NEXTMAP_WAITING  0x04
 #define RELOAD_FAILED           0x08
 #define RELOAD_ENDGAME          0x10
-
 
 /*
 ==========================================================
@@ -1148,7 +1137,6 @@ COLLISION DETECTION
 #define PLANE_NON_AXIAL     3
 #define PLANE_NON_PLANAR    4
 
-
 /*
 =================
 PlaneTypeForNormal
@@ -1157,7 +1145,6 @@ PlaneTypeForNormal
 
 //#define PlaneTypeForNormal(x) (x[0] == 1.0 ? PLANE_X : (x[1] == 1.0 ? PLANE_Y : (x[2] == 1.0 ? PLANE_Z : PLANE_NON_AXIAL) ) )
 #define PlaneTypeForNormal(x) (x[0] == 1.0 ? PLANE_X : (x[1] == 1.0 ? PLANE_Y : (x[2] == 1.0 ? PLANE_Z : (x[0] == 0.f && x[1] == 0.f && x[2] == 0.f ? PLANE_NON_PLANAR : PLANE_NON_AXIAL))))
-
 
 // plane_t structure
 // !!! if this is changed, it must be changed in asm code too !!!
@@ -1171,7 +1158,6 @@ typedef struct cplane_s
 } cplane_t;
 
 #define CPLANE
-
 
 // a trace is returned when a box is swept through the world
 typedef struct
@@ -1189,15 +1175,12 @@ typedef struct
 // trace->entityNum can also be 0 to (MAX_GENTITIES-1)
 // or ENTITYNUM_NONE, ENTITYNUM_WORLD
 
-
 // markfragments are returned by CM_MarkFragments()
 typedef struct
 {
 	int firstPoint;
 	int numPoints;
 } markFragment_t;
-
-
 
 typedef struct
 {
@@ -1207,14 +1190,12 @@ typedef struct
 
 //=====================================================================
 
-
 // in order from highest priority to lowest
 // if none of the catchers are active, bound key strings will be executed
 #define KEYCATCH_CONSOLE        0x0001
 #define KEYCATCH_UI             0x0002
 #define KEYCATCH_MESSAGE        0x0004
 #define KEYCATCH_CGAME          0x0008
-
 
 // sound channels
 // channel 0 never willingly overrides
@@ -1232,7 +1213,6 @@ typedef enum
 	CHAN_VOICE_BG,  // xkan - background sound for voice (radio static, etc.)
 } soundChannel_t;
 
-
 /*
 ========================================================================
 
@@ -1249,9 +1229,7 @@ typedef enum
 #define SNAPFLAG_NOT_ACTIVE     2   // snapshot used during connection and for zombies
 #define SNAPFLAG_SERVERCOUNT    4   // toggled every map_restart so transitions can be detected
 
-//
 // per-level limits
-//
 #define MAX_CLIENTS         64 // JPW NERVE back to q3ta default was 128        // absolute limit
 
 #define GENTITYNUM_BITS     10  // JPW NERVE put q3ta default back for testing  // don't need to send any more
@@ -1263,7 +1241,6 @@ typedef enum
 #define ENTITYNUM_NONE      (MAX_GENTITIES - 1)
 #define ENTITYNUM_WORLD     (MAX_GENTITIES - 2)
 #define ENTITYNUM_MAX_NORMAL    (MAX_GENTITIES - 2)
-
 
 #define MAX_MODELS          256     // these are sent over the net as 8 bits (Gordon: upped to 9 bits, erm actually it was already at 9 bits, wtf? NEVAR TRUST GAMECODE COMMENTS, comments are evil :E, lets hope it doesnt horribly break anything....)
 #define MAX_SOUNDS          256     // so they cannot be blindly increased
@@ -1362,7 +1339,6 @@ typedef struct playerState_s
 	// this is the amount of time left before the grenade goes off (or if it
 	// gets to 0 while in players hand, it explodes)
 
-
 	int gravity;
 	float leanf;                // amount of 'lean' when player is looking around corner //----(SA) added
 
@@ -1382,8 +1358,6 @@ typedef struct playerState_s
 	// of movement to the view angle (axial and diagonals)
 	// when at rest, the value will remain unchanged
 	// used to twist the legs during strafing
-
-
 
 	int eFlags;                 // copied to entityState_t->eFlags
 
@@ -1440,9 +1414,6 @@ typedef struct playerState_s
 	int nextWeapon;
 	int teamNum;                        // Arnout: doesn't seem to be communicated over the net
 
-	// Rafael
-	//int           gunfx;
-
 	// RF, burning effect is required for view blending effect
 	int onFireStart;
 
@@ -1483,8 +1454,6 @@ typedef struct playerState_s
 
 	int leanStopDebounceTime;
 
-//----(SA)  added
-
 	// seems like heat and aimspread could be tied together somehow, however, they (appear to) change at different rates and
 	// I can't currently see how to optimize this to one server->client transmission "weapstatus" value.
 	int weapHeat[MAX_WEAPONS];          // some weapons can overheat.  this tracks (server-side) how hot each weapon currently is.
@@ -1495,9 +1464,7 @@ typedef struct playerState_s
 	aistateEnum_t aiState;          // xkan, 1/10/2003
 } playerState_t;
 
-
 //====================================================================
-
 
 //
 // usercmd_t->button bits, many of which are generated by the client system,
@@ -1518,9 +1485,6 @@ typedef struct playerState_s
 //----(SA)  end
 
 #define BUTTON_ANY          128         // any key whatsoever
-
-
-
 
 //----(SA) wolf buttons
 #define WBUTTON_ATTACK2     1
@@ -1816,7 +1780,6 @@ typedef struct
 // real time
 //=============================================
 
-
 typedef struct qtime_s
 {
 	int tm_sec;     /* seconds after the minute - [0,59] */
@@ -1829,7 +1792,6 @@ typedef struct qtime_s
 	int tm_yday;    /* days since January 1 - [0,365] */
 	int tm_isdst;   /* daylight savings time flag */
 } qtime_t;
-
 
 // server browser sources
 #define AS_LOCAL        0
@@ -1856,8 +1818,6 @@ typedef enum _flag_status
 	FLAG_TAKEN_BLUE,    // One Flag CTF
 	FLAG_DROPPED
 } flagStatus_t;
-
-
 
 #define MAX_GLOBAL_SERVERS          4096
 #define MAX_OTHER_SERVERS           128

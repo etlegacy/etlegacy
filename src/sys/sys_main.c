@@ -577,7 +577,7 @@ void Sys_ParseArgs(int argc, char **argv)
 		    !strcmp(argv[1], "-v"))
 		{
 #ifdef DEDICATED
-			fprintf(stdout, Q3_VERSION " dedicated server (%s)\n", __DATE__);
+			fprintf(stdout, Q3_VERSION " " CPUSTRING " dedicated server (%s)\n", __DATE__);
 #else
 			fprintf(stdout, "Client: " ET_VERSION "\n");
 			fprintf(stdout, "Masked as: " FAKE_VERSION "\n");
