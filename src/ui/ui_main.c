@@ -824,7 +824,7 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 		while (s && *s && count < len)
 		{
 			glyph = &font->glyphs[(unsigned char)*s];           // NERVE - SMF - this needs to be an unsigned cast for localization
-			yadj = useScale * glyph->top;
+			yadj  = useScale * glyph->top;
 
 			if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 			{
@@ -832,40 +832,40 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 				colorBlack[3] = newColor[3];
 				trap_R_SetColor(colorBlack);
 				Text_PaintChar(x + (glyph->pitch * useScale) + ofs, y - yadj + ofs,
-							   glyph->imageWidth,
-							   glyph->imageHeight,
-							   useScale,
-							   glyph->s,
-							   glyph->t,
-							   glyph->s2,
-							   glyph->t2,
-							   glyph->glyph);
+				               glyph->imageWidth,
+				               glyph->imageHeight,
+				               useScale,
+				               glyph->s,
+				               glyph->t,
+				               glyph->s2,
+				               glyph->t2,
+				               glyph->glyph);
 				colorBlack[3] = 1.0;
 				trap_R_SetColor(newColor);
 			}
 			Text_PaintChar(x + (glyph->pitch * useScale), y - yadj,
-						   glyph->imageWidth,
-						   glyph->imageHeight,
-						   useScale,
-						   glyph->s,
-						   glyph->t,
-						   glyph->s2,
-						   glyph->t2,
-						   glyph->glyph);
+			               glyph->imageWidth,
+			               glyph->imageHeight,
+			               useScale,
+			               glyph->s,
+			               glyph->t,
+			               glyph->s2,
+			               glyph->t2,
+			               glyph->glyph);
 
 			// CG_DrawPic(x, y - yadj, scale * uiDC.Assets.textFont.glyphs[text[i]].imageWidth, scale * uiDC.Assets.textFont.glyphs[text[i]].imageHeight, uiDC.Assets.textFont.glyphs[text[i]].glyph);
 			yadj = useScale * glyph2->top;
 			if (count == cursorPos && !((uiInfo.uiDC.realTime / BLINK_DIVISOR) & 1))
 			{
 				Text_PaintChar(x + (glyph->pitch * useScale), y - yadj,
-							   glyph2->imageWidth,
-							   glyph2->imageHeight,
-							   useScale,
-							   glyph2->s,
-							   glyph2->t,
-							   glyph2->s2,
-							   glyph2->t2,
-							   glyph2->glyph);
+				               glyph2->imageWidth,
+				               glyph2->imageHeight,
+				               useScale,
+				               glyph2->s,
+				               glyph2->t,
+				               glyph2->s2,
+				               glyph2->t2,
+				               glyph2->glyph);
 			}
 
 			x += (glyph->xSkip * useScale);
@@ -1332,7 +1332,7 @@ qboolean Load_Menu(int handle)
 {
 	pc_token_t token;
 #ifdef LOCALIZATION_SUPPORT
-	int cl_language;    // NERVE - SMF
+	int cl_language;
 #endif // LOCALIZATION_SUPPORT
 
 	if (!trap_PC_ReadToken(handle, &token))
@@ -1362,7 +1362,6 @@ qboolean Load_Menu(int handle)
 		}
 
 #ifdef LOCALIZATION_SUPPORT
-		// NERVE - SMF - localization crap
 		cl_language = atoi(UI_Cvar_VariableString("cl_language"));
 
 		if (cl_language)
@@ -1391,13 +1390,32 @@ qboolean Load_Menu(int handle)
 			{
 				s = va("%s%s", out, "spanish/");
 			}
+			else if (cl_language == 5)
+			{
+				s = va("%s%s", out, "polish/");
+			}
+			else if (cl_language == 6)
+			{
+				s = va("%s%s", out, "dutch/");
+			}
+			else if (cl_language == 7)
+			{
+				s = va("%s%s", out, "czech/");
+			}
+			else if (cl_language == 8)
+			{
+				s = va("%s%s", out, "russian/");
+			}
+			else if (cl_language == 9)
+			{
+				s = va("%s%s", out, "finnish/");
+			}
 
 			if (UI_ParseMenu(va("%s%s", s, filename)))
 			{
 				continue;
 			}
 		}
-		// -NERVE
 #endif // LOCALIZATION_SUPPORT
 
 		UI_ParseMenu(token.string);
@@ -6316,9 +6334,10 @@ static void UI_BuildServerDisplayList(qboolean force)
 
 			// ET Legacy doesn't display etpro servers :/
 			{
-				const char	*gamename = Info_ValueForKey( info, "game" );
+				const char *gamename = Info_ValueForKey(info, "game");
 
-				if(Q_stricmp( gamename, "etpro") == 0) {
+				if (Q_stricmp(gamename, "etpro") == 0)
+				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
