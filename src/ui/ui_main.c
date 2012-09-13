@@ -5726,27 +5726,30 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "systemCvarsGet") == 0)
 		{
-			int   ui_r_mode                    = trap_Cvar_VariableValue("r_mode");
-			float ui_r_gamma                   = trap_Cvar_VariableValue("r_gamma");
-			int   ui_rate                      = trap_Cvar_VariableValue("rate");
-			int   ui_cl_maxpackets             = trap_Cvar_VariableValue("cl_maxpackets");
-			int   ui_cl_packetdup              = trap_Cvar_VariableValue("cl_packetdup");
-			float ui_sensitivity               = trap_Cvar_VariableValue("sensitivity");
-			int   ui_r_colorbits               = trap_Cvar_VariableValue("r_colorbits");
-			int   ui_r_fullscreen              = trap_Cvar_VariableValue("r_fullscreen");
-			int   ui_r_lodbias                 = trap_Cvar_VariableValue("r_lodbias");
-			int   ui_r_subdivisions            = trap_Cvar_VariableValue("r_subdivisions");
-			int   ui_r_picmip                  = trap_Cvar_VariableValue("r_picmip");
-			int   ui_r_texturebits             = trap_Cvar_VariableValue("r_texturebits");
-			int   ui_r_depthbits               = trap_Cvar_VariableValue("r_depthbits");
-			int   ui_r_ext_compressed_textures = trap_Cvar_VariableValue("r_ext_compressed_textures");
-			int   ui_r_finish                  = trap_Cvar_VariableValue("r_finish");
-			int   ui_r_dynamiclight            = trap_Cvar_VariableValue("r_dynamiclight");
-			int   ui_r_allowextensions         = trap_Cvar_VariableValue("r_allowextensions");
-			int   ui_m_filter                  = trap_Cvar_VariableValue("m_filter");
-			int   ui_s_khz                     = trap_Cvar_VariableValue("s_khz");
-			int   ui_r_detailtextures          = trap_Cvar_VariableValue("r_detailtextures");
+			int   ui_r_mode                           = trap_Cvar_VariableValue("r_mode");
+			float ui_r_gamma                          = trap_Cvar_VariableValue("r_gamma");
+			int   ui_rate                             = trap_Cvar_VariableValue("rate");
+			int   ui_cl_maxpackets                    = trap_Cvar_VariableValue("cl_maxpackets");
+			int   ui_cl_packetdup                     = trap_Cvar_VariableValue("cl_packetdup");
+			float ui_sensitivity                      = trap_Cvar_VariableValue("sensitivity");
+			int   ui_r_colorbits                      = trap_Cvar_VariableValue("r_colorbits");
+			int   ui_r_fullscreen                     = trap_Cvar_VariableValue("r_fullscreen");
+			int   ui_r_lodbias                        = trap_Cvar_VariableValue("r_lodbias");
+			int   ui_r_subdivisions                   = trap_Cvar_VariableValue("r_subdivisions");
+			int   ui_r_picmip                         = trap_Cvar_VariableValue("r_picmip");
+			int   ui_r_texturebits                    = trap_Cvar_VariableValue("r_texturebits");
+			int   ui_r_depthbits                      = trap_Cvar_VariableValue("r_depthbits");
+			int   ui_r_ext_compressed_textures        = trap_Cvar_VariableValue("r_ext_compressed_textures");
+			int   ui_r_finish                         = trap_Cvar_VariableValue("r_finish");
+			int   ui_r_dynamiclight                   = trap_Cvar_VariableValue("r_dynamiclight");
+			int   ui_r_allowextensions                = trap_Cvar_VariableValue("r_allowextensions");
+			int   ui_m_filter                         = trap_Cvar_VariableValue("m_filter");
+			int   ui_s_khz                            = trap_Cvar_VariableValue("s_khz");
+			int   ui_r_detailtextures                 = trap_Cvar_VariableValue("r_detailtextures");
+			int   ui_r_ext_texture_filter_anisotropic = trap_Cvar_VariableValue("r_ext_texture_filter_anisotropic");
+			int   ui_cg_shadows                       = trap_Cvar_VariableValue("cg_shadows");
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
+
 			trap_Cvar_VariableStringBuffer("r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
 
 			trap_Cvar_Set("ui_r_mode", va("%i", ui_r_mode));
@@ -5769,6 +5772,8 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_m_filter", va("%i", ui_m_filter));
 			trap_Cvar_Set("ui_s_khz", va("%i", ui_s_khz));
 			trap_Cvar_Set("ui_r_detailtextures", va("%i", ui_r_detailtextures));
+			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", va("%i", ui_r_ext_texture_filter_anisotropic));
+			trap_Cvar_Set("ui_cg_shadows", va("%i", ui_cg_shadows));
 			trap_Cvar_Set("ui_r_texturemode", ui_r_texturemode);
 		}
 		else if (Q_stricmp(name, "systemCvarsReset") == 0)
@@ -5793,31 +5798,36 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_m_filter", "");
 			trap_Cvar_Set("ui_s_khz", "");
 			trap_Cvar_Set("ui_r_detailtextures", "");
+			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", "");
+			trap_Cvar_Set("ui_cg_shadows", "");
 			trap_Cvar_Set("ui_r_texturemode", "");
 		}
 		else if (Q_stricmp(name, "systemCvarsApply") == 0)
 		{
-			int   ui_r_mode                    = trap_Cvar_VariableValue("ui_r_mode");
-			float ui_r_gamma                   = trap_Cvar_VariableValue("ui_r_gamma");
-			int   ui_rate                      = trap_Cvar_VariableValue("ui_rate");
-			int   ui_cl_maxpackets             = trap_Cvar_VariableValue("ui_cl_maxpackets");
-			int   ui_cl_packetdup              = trap_Cvar_VariableValue("ui_cl_packetdup");
-			float ui_sensitivity               = trap_Cvar_VariableValue("ui_sensitivity");
-			int   ui_r_colorbits               = trap_Cvar_VariableValue("ui_r_colorbits");
-			int   ui_r_fullscreen              = trap_Cvar_VariableValue("ui_r_fullscreen");
-			int   ui_r_lodbias                 = trap_Cvar_VariableValue("ui_r_lodbias");
-			int   ui_r_subdivisions            = trap_Cvar_VariableValue("ui_r_subdivisions");
-			int   ui_r_picmip                  = trap_Cvar_VariableValue("ui_r_picmip");
-			int   ui_r_texturebits             = trap_Cvar_VariableValue("ui_r_texturebits");
-			int   ui_r_depthbits               = trap_Cvar_VariableValue("ui_r_depthbits");
-			int   ui_r_ext_compressed_textures = trap_Cvar_VariableValue("ui_r_ext_compressed_textures");
-			int   ui_r_finish                  = trap_Cvar_VariableValue("ui_r_finish");
-			int   ui_r_dynamiclight            = trap_Cvar_VariableValue("ui_r_dynamiclight");
-			int   ui_r_allowextensions         = trap_Cvar_VariableValue("ui_r_allowextensions");
-			int   ui_m_filter                  = trap_Cvar_VariableValue("ui_m_filter");
-			int   ui_s_khz                     = trap_Cvar_VariableValue("ui_s_khz");
-			int   ui_r_detailtextures          = trap_Cvar_VariableValue("ui_r_detailtextures");
+			int   ui_r_mode                           = trap_Cvar_VariableValue("ui_r_mode");
+			float ui_r_gamma                          = trap_Cvar_VariableValue("ui_r_gamma");
+			int   ui_rate                             = trap_Cvar_VariableValue("ui_rate");
+			int   ui_cl_maxpackets                    = trap_Cvar_VariableValue("ui_cl_maxpackets");
+			int   ui_cl_packetdup                     = trap_Cvar_VariableValue("ui_cl_packetdup");
+			float ui_sensitivity                      = trap_Cvar_VariableValue("ui_sensitivity");
+			int   ui_r_colorbits                      = trap_Cvar_VariableValue("ui_r_colorbits");
+			int   ui_r_fullscreen                     = trap_Cvar_VariableValue("ui_r_fullscreen");
+			int   ui_r_lodbias                        = trap_Cvar_VariableValue("ui_r_lodbias");
+			int   ui_r_subdivisions                   = trap_Cvar_VariableValue("ui_r_subdivisions");
+			int   ui_r_picmip                         = trap_Cvar_VariableValue("ui_r_picmip");
+			int   ui_r_texturebits                    = trap_Cvar_VariableValue("ui_r_texturebits");
+			int   ui_r_depthbits                      = trap_Cvar_VariableValue("ui_r_depthbits");
+			int   ui_r_ext_compressed_textures        = trap_Cvar_VariableValue("ui_r_ext_compressed_textures");
+			int   ui_r_finish                         = trap_Cvar_VariableValue("ui_r_finish");
+			int   ui_r_dynamiclight                   = trap_Cvar_VariableValue("ui_r_dynamiclight");
+			int   ui_r_allowextensions                = trap_Cvar_VariableValue("ui_r_allowextensions");
+			int   ui_m_filter                         = trap_Cvar_VariableValue("ui_m_filter");
+			int   ui_s_khz                            = trap_Cvar_VariableValue("ui_s_khz");
+			int   ui_r_detailtextures                 = trap_Cvar_VariableValue("ui_r_detailtextures");
+			int   ui_r_ext_texture_filter_anisotropic = trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic");
+			int   ui_cg_shadows                       = trap_Cvar_VariableValue("ui_cg_shadows");
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
+
 			trap_Cvar_VariableStringBuffer("ui_r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
 
 			// failsafe
@@ -5848,6 +5858,8 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("m_filter", va("%i", ui_m_filter));
 			trap_Cvar_Set("s_khz", va("%i", ui_s_khz));
 			trap_Cvar_Set("r_detailtextures", va("%i", ui_r_detailtextures));
+			trap_Cvar_Set("r_ext_texture_filter_anisotropic", va("%i", ui_r_ext_texture_filter_anisotropic));
+			trap_Cvar_Set("cg_shadows", va("%i", ui_cg_shadows));
 			trap_Cvar_Set("r_texturemode", ui_r_texturemode);
 
 			trap_Cvar_Set("ui_r_mode", "");
@@ -5870,6 +5882,8 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_m_filter", "");
 			trap_Cvar_Set("ui_s_khz", "");
 			trap_Cvar_Set("ui_r_detailtextures", "");
+			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", "");
+			trap_Cvar_Set("ui_cg_shadows", "");
 			trap_Cvar_Set("ui_r_texturemode", "");
 		}
 		else if (Q_stricmp(name, "profileCvarsGet") == 0)
@@ -8723,11 +8737,9 @@ vmCvar_t ui_master;
 vmCvar_t ui_brassTime;
 vmCvar_t ui_drawCrosshair;
 vmCvar_t ui_drawCrosshairNames;
-vmCvar_t ui_drawCrosshairPickups;       //----(SA) added
+vmCvar_t ui_drawCrosshairPickups;
 vmCvar_t ui_marks;
-// JOSEPH 12-3-99
 vmCvar_t ui_autoactivate;
-// END JOSEPH
 
 vmCvar_t ui_server1;
 vmCvar_t ui_server2;
@@ -8752,7 +8764,6 @@ vmCvar_t ui_netSource;
 vmCvar_t ui_menuFiles;
 vmCvar_t ui_gameType;
 vmCvar_t ui_netGameType;
-//vmCvar_t  ui_actualNetGameType;
 vmCvar_t ui_joinGameType;
 vmCvar_t ui_dedicated;
 
@@ -8809,8 +8820,7 @@ vmCvar_t ui_friendlyFire;
 vmCvar_t ui_userTimeLimit;
 vmCvar_t ui_userAlliedRespawnTime;
 vmCvar_t ui_userAxisRespawnTime;
-vmCvar_t ui_glCustom;    // JPW NERVE missing from q3ta
-// -NERVE - SMF
+vmCvar_t ui_glCustom;
 
 vmCvar_t g_gameType;
 
@@ -8821,7 +8831,7 @@ vmCvar_t ui_currentNetCampaign;
 vmCvar_t ui_currentCampaign;
 vmCvar_t ui_campaignIndex;
 vmCvar_t ui_currentCampaignCompleted;
-// OSP
+
 // cgame mappings
 vmCvar_t ui_blackout;       // For speclock
 vmCvar_t cg_crosshairColor;
@@ -8829,257 +8839,236 @@ vmCvar_t cg_crosshairColorAlt;
 vmCvar_t cg_crosshairAlpha;
 vmCvar_t cg_crosshairAlphaAlt;
 vmCvar_t cg_crosshairSize;
-// OSP
 
 vmCvar_t cl_bypassMouseInput;
 
-//bani
 vmCvar_t ui_autoredirect;
 
 cvarTable_t cvarTable[] =
 {
 
-	{ &ui_glCustom,                     "ui_glCustom",                     "4",                          CVAR_ARCHIVE                   }, // JPW NERVE missing from q3ta
-	{ &ui_ffa_fraglimit,                "ui_ffa_fraglimit",                "20",                         CVAR_ARCHIVE                   },
-	{ &ui_ffa_timelimit,                "ui_ffa_timelimit",                "0",                          CVAR_ARCHIVE                   },
+	{ &ui_glCustom,                     "ui_glCustom",                         "4",                          CVAR_ARCHIVE                   },
+	{ &ui_ffa_fraglimit,                "ui_ffa_fraglimit",                    "20",                         CVAR_ARCHIVE                   },
+	{ &ui_ffa_timelimit,                "ui_ffa_timelimit",                    "0",                          CVAR_ARCHIVE                   },
 
-	{ &ui_team_fraglimit,               "ui_team_fraglimit",               "0",                          CVAR_ARCHIVE                   },
-	{ &ui_team_timelimit,               "ui_team_timelimit",               "20",                         CVAR_ARCHIVE                   },
-	{ &ui_team_friendly,                "ui_team_friendly",                "1",                          CVAR_ARCHIVE                   },
+	{ &ui_team_fraglimit,               "ui_team_fraglimit",                   "0",                          CVAR_ARCHIVE                   },
+	{ &ui_team_timelimit,               "ui_team_timelimit",                   "20",                         CVAR_ARCHIVE                   },
+	{ &ui_team_friendly,                "ui_team_friendly",                    "1",                          CVAR_ARCHIVE                   },
 
-	{ &ui_ctf_capturelimit,             "ui_ctf_capturelimit",             "8",                          CVAR_ARCHIVE                   },
-	{ &ui_ctf_timelimit,                "ui_ctf_timelimit",                "30",                         CVAR_ARCHIVE                   },
-	{ &ui_ctf_friendly,                 "ui_ctf_friendly",                 "0",                          CVAR_ARCHIVE                   },
+	{ &ui_ctf_capturelimit,             "ui_ctf_capturelimit",                 "8",                          CVAR_ARCHIVE                   },
+	{ &ui_ctf_timelimit,                "ui_ctf_timelimit",                    "30",                         CVAR_ARCHIVE                   },
+	{ &ui_ctf_friendly,                 "ui_ctf_friendly",                     "0",                          CVAR_ARCHIVE                   },
 
-	{ &ui_arenasFile,                   "g_arenasFile",                    "",                           CVAR_INIT | CVAR_ROM           },
-	{ &ui_spScores1,                    "g_spScores1",                     "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spScores2,                    "g_spScores2",                     "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spScores3,                    "g_spScores3",                     "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spScores4,                    "g_spScores4",                     "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spScores5,                    "g_spScores5",                     "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spAwards,                     "g_spAwards",                      "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spVideos,                     "g_spVideos",                      "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spSkill,                      "g_spSkill",                       "2",                          CVAR_ARCHIVE | CVAR_LATCH      },
+	{ &ui_arenasFile,                   "g_arenasFile",                        "",                           CVAR_INIT | CVAR_ROM           },
+	{ &ui_spScores1,                    "g_spScores1",                         "",                           CVAR_ARCHIVE | CVAR_ROM        },
+	{ &ui_spScores2,                    "g_spScores2",                         "",                           CVAR_ARCHIVE | CVAR_ROM        },
+	{ &ui_spScores3,                    "g_spScores3",                         "",                           CVAR_ARCHIVE | CVAR_ROM        },
+	{ &ui_spScores4,                    "g_spScores4",                         "",                           CVAR_ARCHIVE | CVAR_ROM        },
+	{ &ui_spScores5,                    "g_spScores5",                         "",                           CVAR_ARCHIVE | CVAR_ROM        },
+	{ &ui_spAwards,                     "g_spAwards",                          "",                           CVAR_ARCHIVE | CVAR_ROM        },
+	{ &ui_spVideos,                     "g_spVideos",                          "",                           CVAR_ARCHIVE | CVAR_ROM        },
+	{ &ui_spSkill,                      "g_spSkill",                           "2",                          CVAR_ARCHIVE | CVAR_LATCH      },
+	{ &ui_friendlyFire,                 "g_friendlyFire",                      "1",                          CVAR_ARCHIVE                   },
 
-	// NERVE - SMF
-	{ &ui_friendlyFire,                 "g_friendlyFire",                  "1",                          CVAR_ARCHIVE                   },
+	{ &ui_userTimeLimit,                "ui_userTimeLimit",                    "0",                          0                              },
+	{ &ui_userAlliedRespawnTime,        "ui_userAlliedRespawnTime",            "0",                          0                              },
+	{ &ui_userAxisRespawnTime,          "ui_userAxisRespawnTime",              "0",                          0                              },
+	{ &ui_teamArenaFirstRun,            "ui_teamArenaFirstRun",                "0",                          CVAR_ARCHIVE                   }, // so sound stuff latches, strange as that seems
 
-	{ &ui_userTimeLimit,                "ui_userTimeLimit",                "0",                          0                              },
-	{ &ui_userAlliedRespawnTime,        "ui_userAlliedRespawnTime",        "0",                          0                              },
-	{ &ui_userAxisRespawnTime,          "ui_userAxisRespawnTime",          "0",                          0                              },
-	// -NERVE - SMF
+	{ &ui_spSelection,                  "ui_spSelection",                      "",                           CVAR_ROM                       },
+	{ &ui_master,                       "ui_master",                           "0",                          CVAR_ARCHIVE                   },
 
-// JPW NERVE
-	{ &ui_teamArenaFirstRun,            "ui_teamArenaFirstRun",            "0",                          CVAR_ARCHIVE                   }, // so sound stuff latches, strange as that seems
-// jpw
+	{ &ui_brassTime,                    "cg_brassTime",                        "2500",                       CVAR_ARCHIVE                   },
+	{ &ui_drawCrosshair,                "cg_drawCrosshair",                    "4",                          CVAR_ARCHIVE                   },
+	{ &ui_drawCrosshairNames,           "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE                   },
+	{ &ui_drawCrosshairPickups,         "cg_drawCrosshairPickups",             "1",                          CVAR_ARCHIVE                   },
+	{ &ui_marks,                        "cg_marktime",                         "20000",                      CVAR_ARCHIVE                   },
+	{ &ui_autoactivate,                 "cg_autoactivate",                     "1",                          CVAR_ARCHIVE                   },
 
-	{ &ui_spSelection,                  "ui_spSelection",                  "",                           CVAR_ROM                       },
-	{ &ui_master,                       "ui_master",                       "0",                          CVAR_ARCHIVE                   },
+	{ &ui_server1,                      "server1",                             "",                           CVAR_ARCHIVE                   },
+	{ &ui_server2,                      "server2",                             "",                           CVAR_ARCHIVE                   },
+	{ &ui_server3,                      "server3",                             "",                           CVAR_ARCHIVE                   },
+	{ &ui_server4,                      "server4",                             "",                           CVAR_ARCHIVE                   },
+	{ &ui_server5,                      "server5",                             "",                           CVAR_ARCHIVE                   },
+	{ &ui_server6,                      "server6",                             "",                           CVAR_ARCHIVE                   },
+	{ &ui_server7,                      "server7",                             "",                           CVAR_ARCHIVE                   },
+	{ &ui_server8,                      "server8",                             "",                           CVAR_ARCHIVE                   },
+	{ &ui_server9,                      "server9",                             "",                           CVAR_ARCHIVE                   },
+	{ &ui_server10,                     "server10",                            "",                           CVAR_ARCHIVE                   },
+	{ &ui_server11,                     "server11",                            "",                           CVAR_ARCHIVE                   },
+	{ &ui_server12,                     "server12",                            "",                           CVAR_ARCHIVE                   },
+	{ &ui_server13,                     "server13",                            "",                           CVAR_ARCHIVE                   },
+	{ &ui_server14,                     "server14",                            "",                           CVAR_ARCHIVE                   },
+	{ &ui_server15,                     "server15",                            "",                           CVAR_ARCHIVE                   },
+	{ &ui_server16,                     "server16",                            "",                           CVAR_ARCHIVE                   },
 
-	{ &ui_brassTime,                    "cg_brassTime",                    "2500",                       CVAR_ARCHIVE                   }, // JPW NERVE
-	{ &ui_drawCrosshair,                "cg_drawCrosshair",                "4",                          CVAR_ARCHIVE                   },
-	{ &ui_drawCrosshairNames,           "cg_drawCrosshairNames",           "1",                          CVAR_ARCHIVE                   },
-	{ &ui_drawCrosshairPickups,         "cg_drawCrosshairPickups",         "1",                          CVAR_ARCHIVE                   }, //----(SA) added
-	{ &ui_marks,                        "cg_marktime",                     "20000",                      CVAR_ARCHIVE                   },
-	// JOSEPH 12-2-99
-	{ &ui_autoactivate,                 "cg_autoactivate",                 "1",                          CVAR_ARCHIVE                   },
-	// END JOSEPH
+	{ &ui_dedicated,                    "ui_dedicated",                        "0",                          CVAR_ARCHIVE                   },
+	{ &ui_selectedPlayer,               "cg_selectedPlayer",                   "0",                          CVAR_ARCHIVE                   },
+	{ &ui_selectedPlayerName,           "cg_selectedPlayerName",               "",                           CVAR_ARCHIVE                   },
+	{ &ui_netSource,                    "ui_netSource",                        "1",                          CVAR_ARCHIVE                   },
+	{ &ui_menuFiles,                    "ui_menuFiles",                        "ui/menus.txt",               CVAR_ARCHIVE                   },
+	{ &ui_gameType,                     "ui_gametype",                         "3",                          CVAR_ARCHIVE                   },
+	{ &ui_joinGameType,                 "ui_joinGametype",                     "-1",                         CVAR_ARCHIVE                   },
+	{ &ui_netGameType,                  "ui_netGametype",                      "4",                          CVAR_ARCHIVE                   }, // NERVE - SMF - hardwired for now
 
-	{ &ui_server1,                      "server1",                         "",                           CVAR_ARCHIVE                   },
-	{ &ui_server2,                      "server2",                         "",                           CVAR_ARCHIVE                   },
-	{ &ui_server3,                      "server3",                         "",                           CVAR_ARCHIVE                   },
-	{ &ui_server4,                      "server4",                         "",                           CVAR_ARCHIVE                   },
-	{ &ui_server5,                      "server5",                         "",                           CVAR_ARCHIVE                   },
-	{ &ui_server6,                      "server6",                         "",                           CVAR_ARCHIVE                   },
-	{ &ui_server7,                      "server7",                         "",                           CVAR_ARCHIVE                   },
-	{ &ui_server8,                      "server8",                         "",                           CVAR_ARCHIVE                   },
-	{ &ui_server9,                      "server9",                         "",                           CVAR_ARCHIVE                   },
-	{ &ui_server10,                     "server10",                        "",                           CVAR_ARCHIVE                   },
-	{ &ui_server11,                     "server11",                        "",                           CVAR_ARCHIVE                   },
-	{ &ui_server12,                     "server12",                        "",                           CVAR_ARCHIVE                   },
-	{ &ui_server13,                     "server13",                        "",                           CVAR_ARCHIVE                   },
-	{ &ui_server14,                     "server14",                        "",                           CVAR_ARCHIVE                   },
-	{ &ui_server15,                     "server15",                        "",                           CVAR_ARCHIVE                   },
-	{ &ui_server16,                     "server16",                        "",                           CVAR_ARCHIVE                   },
+	{ &ui_notebookCurrentPage,          "ui_notebookCurrentPage",              "1",                          CVAR_ROM                       },
+	{ &ui_clipboardName,                "cg_clipboardName",                    "",                           CVAR_ROM                       },
 
-	{ &ui_dedicated,                    "ui_dedicated",                    "0",                          CVAR_ARCHIVE                   },
-	{ &ui_selectedPlayer,               "cg_selectedPlayer",               "0",                          CVAR_ARCHIVE                   },
-	{ &ui_selectedPlayerName,           "cg_selectedPlayerName",           "",                           CVAR_ARCHIVE                   },
-	{ &ui_netSource,                    "ui_netSource",                    "1",                          CVAR_ARCHIVE                   },
-	{ &ui_menuFiles,                    "ui_menuFiles",                    "ui/menus.txt",               CVAR_ARCHIVE                   },
-	{ &ui_gameType,                     "ui_gametype",                     "3",                          CVAR_ARCHIVE                   },
-	{ &ui_joinGameType,                 "ui_joinGametype",                 "-1",                         CVAR_ARCHIVE                   },
-	{ &ui_netGameType,                  "ui_netGametype",                  "4",                          CVAR_ARCHIVE                   }, // NERVE - SMF - hardwired for now
-//  { &ui_actualNetGameType, "ui_actualNetGametype", "5", CVAR_ARCHIVE },       // NERVE - SMF - hardwired for now
+	// multiplayer cvars
+	{ &ui_mapIndex,                     "ui_mapIndex",                         "0",                          CVAR_ARCHIVE                   },
+	{ &ui_currentMap,                   "ui_currentMap",                       "0",                          CVAR_ARCHIVE                   },
+	{ &ui_currentNetMap,                "ui_currentNetMap",                    "0",                          CVAR_ARCHIVE                   },
 
-	{ &ui_notebookCurrentPage,          "ui_notebookCurrentPage",          "1",                          CVAR_ROM                       },
-	{ &ui_clipboardName,                "cg_clipboardName",                "",                           CVAR_ROM                       },
+	{ &ui_browserMaster,                "ui_browserMaster",                    "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserGameType,              "ui_browserGameType",                  "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserSortKey,               "ui_browserSortKey",                   "4",                          CVAR_ARCHIVE                   },
+	{ &ui_browserShowEmptyOrFull,       "ui_browserShowEmptyOrFull",           "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserShowPasswordProtected, "ui_browserShowPasswordProtected",     "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserShowFriendlyFire,      "ui_browserShowFriendlyFire",          "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserShowMaxlives,          "ui_browserShowMaxlives",              "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserShowAntilag,           "ui_browserShowAntilag",               "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserShowWeaponsRestricted, "ui_browserShowWeaponsRestricted",     "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserShowTeamBalanced,      "ui_browserShowTeamBalanced",          "0",                          CVAR_ARCHIVE                   },
 
-	// NERVE - SMF - multiplayer cvars
-	{ &ui_mapIndex,                     "ui_mapIndex",                     "0",                          CVAR_ARCHIVE                   },
-	{ &ui_currentMap,                   "ui_currentMap",                   "0",                          CVAR_ARCHIVE                   },
-	{ &ui_currentNetMap,                "ui_currentNetMap",                "0",                          CVAR_ARCHIVE                   },
+	{ &ui_serverStatusTimeOut,          "ui_serverStatusTimeOut",              "7000",                       CVAR_ARCHIVE                   },
 
-	{ &ui_browserMaster,                "ui_browserMaster",                "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserGameType,              "ui_browserGameType",              "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserSortKey,               "ui_browserSortKey",               "4",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowEmptyOrFull,       "ui_browserShowEmptyOrFull",       "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowPasswordProtected, "ui_browserShowPasswordProtected", "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowFriendlyFire,      "ui_browserShowFriendlyFire",      "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowMaxlives,          "ui_browserShowMaxlives",          "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowAntilag,           "ui_browserShowAntilag",           "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowWeaponsRestricted, "ui_browserShowWeaponsRestricted", "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowTeamBalanced,      "ui_browserShowTeamBalanced",      "0",                          CVAR_ARCHIVE                   },
+	{ &ui_Q3Model,                      "ui_Q3Model",                          "1",                          0                              },
+	{ &ui_headModel,                    "headModel",                           "",                           0                              },
 
-	{ &ui_serverStatusTimeOut,          "ui_serverStatusTimeOut",          "7000",                       CVAR_ARCHIVE                   },
+	{ &ui_limboOptions,                 "ui_limboOptions",                     "0",                          0                              },
+	{ &ui_limboPrevOptions,             "ui_limboPrevOptions",                 "0",                          0                              },
+	{ &ui_limboObjective,               "ui_limboObjective",                   "0",                          0                              },
+	{ &ui_cmd,                          "ui_cmd",                              "",                           0                              },
 
-	{ &ui_Q3Model,                      "ui_Q3Model",                      "1",                          0                              },
-	{ &ui_headModel,                    "headModel",                       "",                           0                              },
+	{ &ui_prevTeam,                     "ui_prevTeam",                         "-1",                         0                              },
+	{ &ui_prevClass,                    "ui_prevClass",                        "-1",                         0                              },
+	{ &ui_prevWeapon,                   "ui_prevWeapon",                       "-1",                         0                              },
 
-	{ &ui_limboOptions,                 "ui_limboOptions",                 "0",                          0                              },
-	{ &ui_limboPrevOptions,             "ui_limboPrevOptions",             "0",                          0                              },
-	{ &ui_limboObjective,               "ui_limboObjective",               "0",                          0                              },
-	{ &ui_cmd,                          "ui_cmd",                          "",                           0                              },
+	{ &ui_limboMode,                    "ui_limboMode",                        "0",                          0                              },
+	{ &ui_objective,                    "ui_objective",                        "",                           0                              },
 
-	{ &ui_prevTeam,                     "ui_prevTeam",                     "-1",                         0                              },
-	{ &ui_prevClass,                    "ui_prevClass",                    "-1",                         0                              },
-	{ &ui_prevWeapon,                   "ui_prevWeapon",                   "-1",                         0                              },
+	{ &ui_team,                         "ui_team",                             "Axis",                       0                              },
+	{ &ui_class,                        "ui_class",                            "Soldier",                    0                              },
+	{ &ui_weapon,                       "ui_weapon",                           "MP 40",                      0                              },
 
-	{ &ui_limboMode,                    "ui_limboMode",                    "0",                          0                              },
-	{ &ui_objective,                    "ui_objective",                    "",                           0                              },
+	{ &ui_isSpectator,                  "ui_isSpectator",                      "1",                          0                              },
 
-	{ &ui_team,                         "ui_team",                         "Axis",                       0                              },
-	{ &ui_class,                        "ui_class",                        "Soldier",                    0                              },
-	{ &ui_weapon,                       "ui_weapon",                       "MP 40",                      0                              },
+	{ &g_gameType,                      "g_gameType",                          "4",                          CVAR_SERVERINFO | CVAR_LATCH   },
+	{ NULL,                             "cg_drawBuddies",                      "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_drawRoundTimer",                   "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_showblood",                        "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_bloodFlash",                       "1.0",                        CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_autoReload",                       "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_noAmmoAutoSwitch",                 "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_useWeapsForZoom",                  "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_zoomDefaultSniper",                "20",                         CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_zoomstepsniper",                   "2",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_voicespritetime",                  "6000",                       CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_complaintPopUp",                   "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_announcer",                        "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_printObjectiveInfo",               "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_useScreenshotJPEG",                "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_drawGun",                          "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_drawCompass",                      "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_drawRoundTimer",                   "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_drawReinforcementTime",            "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_cursorHints",                      "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_crosshairPulse",                   "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_coronafardist",                    "1536",                       CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_wolfparticles",                    "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_password",                          "none",                       CVAR_USERINFO                  },
+	{ NULL,                             "g_antilag",                           "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE },
+	{ NULL,                             "g_warmup",                            "60",                         CVAR_ARCHIVE                   },
+	{ NULL,                             "g_lms_roundlimit",                    "3",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_lms_matchlimit",                    "2",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_lms_followTeamOnly",                "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_heavyWeaponRestriction",            "100",                        CVAR_ARCHIVE | CVAR_SERVERINFO },
+	{ &cl_profile,                      "cl_profile",                          "",                           CVAR_ROM                       },
+	{ &cl_defaultProfile,               "cl_defaultProfile",                   "",                           CVAR_ROM                       },
+	{ &ui_profile,                      "ui_profile",                          "",                           CVAR_ROM                       },
+	{ &ui_currentCampaign,              "ui_currentCampaign",                  "0",                          CVAR_ARCHIVE                   },
+	{ &ui_currentNetCampaign,           "ui_currentNetCampaign",               "0",                          CVAR_ARCHIVE                   },
+	{ &ui_campaignIndex,                "ui_campaignIndex",                    "0",                          CVAR_ARCHIVE                   },
+	{ &ui_currentCampaignCompleted,     "ui_currentCampaignCompleted",         "0",                          CVAR_ARCHIVE                   },
 
-	{ &ui_isSpectator,                  "ui_isSpectator",                  "1",                          0                              },
-	// -NERVE - SMF
-
-
-	{ &g_gameType,                      "g_gameType",                      "4",                          CVAR_SERVERINFO | CVAR_LATCH   },
-	{ NULL,                             "cg_drawBuddies",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawRoundTimer",               "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_showblood",                    "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_bloodFlash",                   "1.0",                        CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_autoReload",                   "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_noAmmoAutoSwitch",             "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_useWeapsForZoom",              "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_zoomDefaultSniper",            "20",                         CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_zoomstepsniper",               "2",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_voicespritetime",              "6000",                       CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_complaintPopUp",               "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_announcer",                    "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_printObjectiveInfo",           "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_useScreenshotJPEG",            "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawGun",                      "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawCompass",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawRoundTimer",               "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawReinforcementTime",        "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_cursorHints",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_crosshairPulse",               "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawCrosshairNames",           "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_crosshairColor",               "White",                      CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_crosshairAlpha",               "1.0",                        CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_crosshairColorAlt",            "White",                      CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_coronafardist",                "1536",                       CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_wolfparticles",                "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_password",                      "none",                       CVAR_USERINFO                  },
-	{ NULL,                             "g_antilag",                       "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE },
-	{ NULL,                             "g_warmup",                        "60",                         CVAR_ARCHIVE                   },
-	{ NULL,                             "g_lms_roundlimit",                "3",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_lms_matchlimit",                "2",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_lms_followTeamOnly",            "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_heavyWeaponRestriction",        "100",                        CVAR_ARCHIVE | CVAR_SERVERINFO },
-	{ &cl_profile,                      "cl_profile",                      "",                           CVAR_ROM                       },
-	{ &cl_defaultProfile,               "cl_defaultProfile",               "",                           CVAR_ROM                       },
-	{ &ui_profile,                      "ui_profile",                      "",                           CVAR_ROM                       },
-	{ &ui_currentCampaign,              "ui_currentCampaign",              "0",                          CVAR_ARCHIVE                   },
-	{ &ui_currentNetCampaign,           "ui_currentNetCampaign",           "0",                          CVAR_ARCHIVE                   },
-	{ &ui_campaignIndex,                "ui_campaignIndex",                "0",                          CVAR_ARCHIVE                   },
-	{ &ui_currentCampaignCompleted,     "ui_currentCampaignCompleted",     "0",                          CVAR_ARCHIVE                   },
-
-	// START - TAT 9/16/2002
-	// cvar used to implement context sensitive bot menu
-	//      if this is set to "engineer", for instance, then only engineer commands will show up
-	{ NULL,                             "cg_botMenuType",                  "0",                          CVAR_TEMP                      },
-	// END - TAT 9/15/2002
-
-	// OSP
 	// cgame mappings
-	{ &ui_blackout,                     "ui_blackout",                     "0",                          CVAR_ROM                       },
-	{ &cg_crosshairAlpha,               "cg_crosshairAlpha",               "1.0",                        CVAR_ARCHIVE                   },
-	{ &cg_crosshairAlphaAlt,            "cg_crosshairAlphaAlt",            "1.0",                        CVAR_ARCHIVE                   },
-	{ &cg_crosshairColor,               "cg_crosshairColor",               "White",                      CVAR_ARCHIVE                   },
-	{ &cg_crosshairColorAlt,            "cg_crosshairColorAlt",            "White",                      CVAR_ARCHIVE                   },
-	{ &cg_crosshairSize,                "cg_crosshairSize",                "48",                         CVAR_ARCHIVE                   },
+	{ &ui_blackout,                     "ui_blackout",                         "0",                          CVAR_ROM                       },
+	{ &cg_crosshairAlpha,               "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE                   },
+	{ &cg_crosshairAlphaAlt,            "cg_crosshairAlphaAlt",                "1.0",                        CVAR_ARCHIVE                   },
+	{ &cg_crosshairColor,               "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE                   },
+	{ &cg_crosshairColorAlt,            "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE                   },
+	{ &cg_crosshairSize,                "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE                   },
+
 	// game mappings (for create server option)
-	{ NULL,                             "bot_enable",                      "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "bot_minplayers",                  "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_altStopwatchMode",              "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_ipcomplaintlimit",              "3",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_complaintlimit",                "6",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_doWarmup",                      "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_inactivity",                    "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_maxLives",                      "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "refereePassword",                 "none",                       CVAR_ARCHIVE                   },
-	{ NULL,                             "g_teamForceBalance",              "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "sv_maxRate",                      "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_spectatorInactivity",           "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "match_latejoin",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "match_minplayers",                MATCH_MINPLAYERS,             CVAR_ARCHIVE                   },
-	{ NULL,                             "match_mutespecs",                 "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "match_readypercent",              "100",                        CVAR_ARCHIVE                   },
-	{ NULL,                             "match_timeoutcount",              "3",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "match_timeoutlength",             "180",                        CVAR_ARCHIVE                   },
-	{ NULL,                             "match_warmupDamage",              "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "server_autoconfig",               "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd0",                    " ^NEnemy Territory ^7MOTD ", CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd1",                    "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd2",                    "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd3",                    "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd4",                    "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd5",                    "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "team_maxPanzers",                 "-1",                         CVAR_ARCHIVE                   },
-	{ NULL,                             "team_maxplayers",                 "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "team_nocontrols",                 "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_comp",                 "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_gametype",             "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_kick",                 "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_map",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_mutespecs",            "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_nextmap",              "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_pub",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_referee",              "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_shuffleteamsxp",       "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_swapteams",            "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_friendlyfire",         "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_timelimit",            "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_warmupdamage",         "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_antilag",              "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_muting",               "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_kick",                 "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_limit",                      "5",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_percent",                    "50",                         CVAR_ARCHIVE                   },
-	// OSP
+	{ NULL,                             "bot_enable",                          "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "bot_minplayers",                      "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_altStopwatchMode",                  "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_ipcomplaintlimit",                  "3",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_complaintlimit",                    "6",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_doWarmup",                          "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_inactivity",                        "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_maxLives",                          "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "refereePassword",                     "none",                       CVAR_ARCHIVE                   },
+	{ NULL,                             "g_teamForceBalance",                  "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "sv_maxRate",                          "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_spectatorInactivity",               "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "match_latejoin",                      "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "match_minplayers",                    MATCH_MINPLAYERS,             CVAR_ARCHIVE                   },
+	{ NULL,                             "match_mutespecs",                     "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "match_readypercent",                  "100",                        CVAR_ARCHIVE                   },
+	{ NULL,                             "match_timeoutcount",                  "3",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "match_timeoutlength",                 "180",                        CVAR_ARCHIVE                   },
+	{ NULL,                             "match_warmupDamage",                  "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "server_autoconfig",                   "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "server_motd0",                        " ^NEnemy Territory ^7MOTD ", CVAR_ARCHIVE                   },
+	{ NULL,                             "server_motd1",                        "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "server_motd2",                        "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "server_motd3",                        "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "server_motd4",                        "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "server_motd5",                        "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "team_maxPanzers",                     "-1",                         CVAR_ARCHIVE                   },
+	{ NULL,                             "team_maxplayers",                     "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "team_nocontrols",                     "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_comp",                     "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_gametype",                 "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_kick",                     "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_map",                      "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_mutespecs",                "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_nextmap",                  "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_pub",                      "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_referee",                  "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_shuffleteamsxp",           "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_swapteams",                "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_friendlyfire",             "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_timelimit",                "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_warmupdamage",             "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_antilag",                  "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_muting",                   "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_allow_kick",                     "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_limit",                          "5",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "vote_percent",                        "50",                         CVAR_ARCHIVE                   },
 
-	//{ NULL, "ui_creatingprofile", "", CVAR_ARCHIVE },
-	{ NULL,                             "ui_r_mode",                       "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_r_gamma",                      "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_rate",                         "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_handedness",                   "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_sensitivity",                  "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_profile_mousePitch",           "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_r_mode",                           "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_r_gamma",                          "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_r_ext_texture_filter_anisotropic", "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_cg_shadows",                       "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_rate",                             "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_handedness",                       "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_sensitivity",                      "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_profile_mousePitch",               "",                           CVAR_ARCHIVE                   },
 
-	{ &cl_bypassMouseInput,             "cl_bypassMouseInput",             "0",                          CVAR_TEMP                      },
+	{ &cl_bypassMouseInput,             "cl_bypassMouseInput",                 "0",                          CVAR_TEMP                      },
 
-	{ NULL,                             "g_oldCampaign",                   "",                           CVAR_ROM,                      },
-	{ NULL,                             "g_currentCampaign",               "",                           CVAR_WOLFINFO | CVAR_ROM,      },
-	{ NULL,                             "g_currentCampaignMap",            "0",                          CVAR_WOLFINFO | CVAR_ROM,      },
+	{ NULL,                             "g_oldCampaign",                       "",                           CVAR_ROM,                      },
+	{ NULL,                             "g_currentCampaign",                   "",                           CVAR_WOLFINFO | CVAR_ROM,      },
+	{ NULL,                             "g_currentCampaignMap",                "0",                          CVAR_WOLFINFO | CVAR_ROM,      },
 
-	{ NULL,                             "ui_showtooltips",                 "1",                          CVAR_ARCHIVE                   },
-
-	//bani
-	{ &ui_autoredirect,                 "ui_autoredirect",                 "0",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_showtooltips",                     "1",                          CVAR_ARCHIVE                   },
+	{ &ui_autoredirect,                 "ui_autoredirect",                     "0",                          CVAR_ARCHIVE                   },
 };
 
 int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

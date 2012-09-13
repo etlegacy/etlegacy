@@ -398,8 +398,7 @@ vidmode_t r_vidModes[] =
 	{ "Mode 15: 1600x1200",         1600, 1200, 1 },
 	{ "Mode 16: 1920x1080 (16:9)",  1920, 1080, 1 },
 	{ "Mode 17: 1920x1200 (16:10)", 1920, 1200, 1 },
-	{ "Mode 18: 2048x1536",         2048, 1536, 1 },
-	{ "Mode 19: 2560x1600 (16:10)", 2560, 1600, 1 },
+	{ "Mode 18: 2560x1600 (16:10)", 2560, 1600, 1 },
 };
 static int s_numVidModes = ARRAY_LEN(r_vidModes);
 
@@ -1167,7 +1166,7 @@ void R_Register(void)
 	r_ext_compiled_vertex_array = ri.Cvar_Get("r_ext_compiled_vertex_array", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_texture_env_add       = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
-	r_ext_texture_filter_anisotropic = ri.Cvar_Get("r_ext_texture_filter_anisotropic", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_ext_texture_filter_anisotropic = ri.Cvar_Get("r_ext_texture_filter_anisotropic", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_max_anisotropy             = ri.Cvar_Get("r_ext_max_anisotropy", "2", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_picmip          = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH); //----(SA)   mod for DM and DK for id build.  was "1" // JPW NERVE pushed back to 1

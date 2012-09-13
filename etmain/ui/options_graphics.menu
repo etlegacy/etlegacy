@@ -17,13 +17,13 @@ menuDef {
 	
 	onOpen
 	{
-		uiScript graphicsCvarsGet ;
+		uiScript systemCvarsGet ;
 		uiScript vidSave ;
 		uiScript glCustom	// really should find something better here
 	}
 	
 	onESC {
-		uiScript graphicsCvarsReset ;
+		uiScript systemCvarsReset ;
 		uiScript vidReset ;
 		close options_graphics ;
 		open options
@@ -37,16 +37,16 @@ menuDef {
 
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 66, "SIMPLE" )
 	MULTIACTION( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Overall Quality:", .2, 8, "ui_glCustom", cvarFloatList { "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glcustom", "" )
-	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Resolution:", .2, 8, "ui_r_mode", cvarFloatList { "320*240" 0 "400*300" 1 "512*384" 2 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*720" 8 "1280*768" 9 "1280*800" 10 "1280*1024" 11 "1360*768" 12 "1440*900" 13 "1680*1050" 14 "1600*1200" 15 "1920*1080" 16 "1920*1200" 17 "2048*1536" 18 "2560*1600" 19}, uiScript glCustom, "" )
+	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Resolution:", .2, 8, "ui_r_mode", cvarFloatList { "desktop resolution" -2 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 Wide Screen" 11 "1360x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1600 (16:10)" 18 }, uiScript glCustom, "" )
 	YESNOACTION( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Fullscreen:", .2, 8, "ui_r_fullscreen", uiScript glCustom, "" )
-	SLIDER( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Brightness:", .2, 8, "r_gamma" 1.3 1 3, "" )
+	SLIDER( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Brightness:", .2, 8, "ui_r_gamma" 1.3 1 3, "" )
 
 
 // Advanced settings //
 
 	SUBWINDOW( 6, 104, (SUBWINDOW_WIDTH), 256, "ADVANCED" )
 	YESNO( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Low Quality Sky:", .2, 8, "r_fastsky", "" )
-	MULTIACTION( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Shadow Detail:", .2, 8, "ui_cg_shadows", cvarFloatList { "None (fastest)" 0 "Blob (old style)" 1 "Stencil shadows" 2 "Projection shadows" 3 "Polygon shadows" 4}, uiScript glCustom ; uiScript update "cg_shadows", "" )
+	MULTIACTION( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Shadow Detail:", .2, 8, "ui_cg_shadows", cvarFloatList { "None (fastest)" 0 "Blob (old style)" 1 "Stencil shadows" 2 "Projection shadows" 3 "Polygon shadows" 4 }, uiScript glCustom, "" )
 	MULTIACTION( 8, 144, (SUBWINDOW_WIDTH)-4, 10, "Texture Detail:", .2, 8, "ui_r_picmip", cvarFloatList { "Low" 2 "Medium" 1 "High" 0 }, uiScript glCustom, "" )
 	// add options 0 - disabled, 1 - single path, 2 - path
 	YESNOACTION( 8, 156, (SUBWINDOW_WIDTH)-4, 10, "Dynamic Lights:", .2, 8, "ui_r_dynamiclight", uiScript glCustom; uiScript update "r_dynamicLight", "" )
@@ -55,7 +55,7 @@ menuDef {
 	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Texture Quality:", .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
 	MULTIACTION( 8, 192, (SUBWINDOW_WIDTH)-4, 10, "Texture Filter:", .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glCustom, "" )
-	MULTIACTION( 8, 204, (SUBWINDOW_WIDTH)-4, 10, "Anisotric Filter:", .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Disabled" 0 "Medium" 4 "High" 8 }, uiScript glCustom; uiScript update "r_ext_texture_filter_anisotropic", "" )
+	MULTIACTION( 8, 204, (SUBWINDOW_WIDTH)-4, 10, "Anisotropic Filter:", .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Disabled" 0 "Medium" 4 "High" 8 }, uiScript glCustom, "" )
 
 	// did not update the box size because we will add more here
 	// 216 228 240 252 264 276
@@ -68,5 +68,5 @@ menuDef {
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "APPLY", .3, 14,
 		conditionalScript vidrestartIsRequired 2
 		( "open vid_restart" )
-		( "uiScript vidReset ; uiScript graphicsCvarsApply ; close options_graphics ; open options" ) )
+		( "uiScript vidReset ; uiScript systemCvarsApply ; close options_graphics ; open options" ) )
 }
