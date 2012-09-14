@@ -1012,14 +1012,11 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return 0;
 	case CG_MESSAGESTATUS:
 		return CL_BinaryMessageStatus();
-	//bani - dynamic shaders
 	case CG_R_LOADDYNAMICSHADER:
 		return re.LoadDynamicShader(VMA(1), VMA(2));
-	// fretn - render to texture
 	case CG_R_RENDERTOTEXTURE:
 		re.RenderToTexture(args[1], args[2], args[3], args[4], args[5]);
 		return 0;
-	//bani
 	case CG_R_GETTEXTUREID:
 		return re.GetTextureId(VMA(1));
 	//bani - flush gl rendering buffers
@@ -1034,10 +1031,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_PUMPEVENTLOOP:
 	case CG_INGAME_CLOSEPOPUP:
 	case CG_R_LIGHTFORPOINT: // re-added to avoid a crash when called - still in enum of cgameImport_t
-
-		// TODO: change this to debug print on release
-		// Com_DPrintf("Obsolete cgame system trap: %ld\n", (long int) args[0]);
-		Com_Printf("Obsolete cgame system trap: %ld\n", (long int) args[0]);
+		Com_DPrintf("Obsolete cgame system trap: %ld\n", (long int) args[0]);
 		return 0;
 
 	default:
