@@ -268,7 +268,7 @@ Transform Q3 colour codes to ANSI escape sequences
 void Sys_AnsiColorPrint(const char *msg)
 {
 	static char buffer[MAXPRINTMSG];
-	int i, j, _found, length = 0;
+	int         i, j, _found, length = 0;
 
 	// colors hash from http://wolfwiki.anime.net/index.php/Color_Codes
 	static int etAnsiHash[][6] =
@@ -486,10 +486,18 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 
 	if (!libHandle)
 	{
-		Com_Printf("Sys_LoadDll(%s) failed:\n\"%s\"\n", fn, Sys_LibraryError());
-		return NULL;
-	}
+		// HACK: sometimes a library is loaded from the mod dir when it shouldn't. Why?
+		Com_Printf("Sys_LoadDll(%s) failed:\n\t\"%s\"\n", fn, Sys_LibraryError());
 
+		fn        = FS_BuildOSPath(base, BASEGAME, fname);
+		libHandle = Sys_LoadLibrary(fn);
+
+		if (!libHandle)
+		{
+			Com_Printf("Fail-safe Sys_LoadDll(%s) failed:\n\t\"%s\"\n", fn, Sys_LibraryError());
+			return NULL;
+		}
+	}
 	Com_Printf("Sys_LoadDll(%s): succeeded ...\n", fn);
 	Q_strncpyz(fqpath, fn, MAX_QPATH) ;
 
