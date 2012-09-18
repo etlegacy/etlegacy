@@ -776,14 +776,10 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return re.RegisterModel(VMA(1));
 	case CG_R_REGISTERSKIN:
 		return re.RegisterSkin(VMA(1));
-
-	//----(SA)	added
 	case CG_R_GETSKINMODEL:
 		return re.GetSkinModel(args[1], VMA(2), VMA(3));
 	case CG_R_GETMODELSHADER:
 		return re.GetShaderFromModel(args[1], args[2], args[3]);
-	//----(SA)	end
-
 	case CG_R_REGISTERSHADER:
 		return re.RegisterShader(VMA(1));
 	case CG_R_REGISTERSHADERNOMIP:
@@ -1019,7 +1015,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return 0;
 	case CG_R_GETTEXTUREID:
 		return re.GetTextureId(VMA(1));
-	//bani - flush gl rendering buffers
+	// flush gl rendering buffers
 	case CG_R_FINISH:
 		re.Finish();
 		return 0;
@@ -1031,7 +1027,13 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_PUMPEVENTLOOP:
 	case CG_INGAME_CLOSEPOPUP:
 	case CG_R_LIGHTFORPOINT: // re-added to avoid a crash when called - still in enum of cgameImport_t
+		// TODO: Remove or at least _limit_ when not needed anymore?
+		// This shows when the vanilla mod code is loaded.
+#ifndef NDEBUG
+		Com_Printf("Obsolete cgame system trap: %ld\n", (long int) args[0]);
+#else
 		Com_DPrintf("Obsolete cgame system trap: %ld\n", (long int) args[0]);
+#endif // !NDEBUG
 		return 0;
 
 	default:
