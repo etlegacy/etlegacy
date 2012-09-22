@@ -205,7 +205,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	byte   *data;
 	int    lat, lng;
 	vec3_t normal;
-	float v;
+	float  v;
 
 	if (ent->e.renderfx & RF_LIGHTING_ORIGIN)
 	{

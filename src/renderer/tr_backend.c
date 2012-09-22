@@ -471,7 +471,6 @@ void RB_BeginDrawingView(void)
 	{
 		clearBits |= GL_STENCIL_BUFFER_BIT;
 	}
-
 	// ydnar: global q3 fog volume
 	else if (tr.world && tr.world->globalFog >= 0)
 	{

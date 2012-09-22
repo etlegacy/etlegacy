@@ -125,7 +125,7 @@ return a hash value for the filename
 */
 static long generateHashValue(const char *fname)
 {
-	int  i = 0;
+	int  i    = 0;
 	long hash = 0;
 	char letter;
 
@@ -163,14 +163,6 @@ void GL_TextureMode(const char *string)
 		{
 			break;
 		}
-	}
-
-	// hack to prevent trilinear from being set on voodoo,
-	// because their driver freaks...
-	if (i == 5 && glConfig.hardwareType == GLHW_3DFX_2D3D)
-	{
-		ri.Printf(PRINT_ALL, "Refusing to set trilinear on a voodoo.\n");
-		i = 3;
 	}
 
 	if (i == 6)
@@ -1034,10 +1026,10 @@ Loads any of the supported image types into a cannonical
 void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 {
 	qboolean   orgNameFailed = qfalse;
-	int i,j;
-	char localName[MAX_QPATH];
+	int        i, j;
+	char       localName[MAX_QPATH];
 	const char *ext;
-	char *altName;
+	char       *altName;
 
 	*pic    = NULL;
 	*width  = 0;
@@ -1214,8 +1206,8 @@ R_CreateDlightImage
 static void R_CreateDlightImage(void)
 {
 	float d;
-	int  x, y, b;
-	byte data[DLIGHT_SIZE][DLIGHT_SIZE][4];
+	int   x, y, b;
+	byte  data[DLIGHT_SIZE][DLIGHT_SIZE][4];
 
 	// make a centered inverse-square falloff blob for dynamic lighting
 	for (x = 0 ; x < DLIGHT_SIZE ; x++)
@@ -1311,8 +1303,8 @@ R_CreateFogImage
                         // arnout: yd changed it to 256, changing to 16
 static void R_CreateFogImage(void)
 {
-	int  x, y, alpha;
-	byte *data;
+	int   x, y, alpha;
+	byte  *data;
 	float borderColor[4];
 
 	// allocate table for image
@@ -1766,7 +1758,7 @@ RE_GetShaderFromModel
 */
 qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap)
 {
-	model_t    *model;
+	model_t *model;
 
 	if (surfnum < 0)
 	{
@@ -1777,7 +1769,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 
 	if (model)
 	{
-		bmodel_t   *bmodel = model->model.bmodel;
+		bmodel_t *bmodel = model->model.bmodel;
 
 		if (bmodel && bmodel->firstSurface)
 		{
@@ -1812,7 +1804,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 						break;
 					}
 				}
-				shd = R_FindShader(surf->shader->name, LIGHTMAP_NONE, mip);
+				shd                    = R_FindShader(surf->shader->name, LIGHTMAP_NONE, mip);
 				shd->stages[0]->rgbGen = CGEN_LIGHTING_DIFFUSE; // (SA) new
 			}
 			else

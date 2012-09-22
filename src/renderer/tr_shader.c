@@ -68,7 +68,7 @@ return a hash value for the filename
 */
 static long generateHashValue(const char *fname)
 {
-	int  i = 0;
+	int  i    = 0;
 	long hash = 0;
 	char letter;
 
@@ -421,7 +421,6 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 	{
 		tmi->type = TMOD_SWAP;
 	}
-
 	// turb
 	// (SA) added 'else' so it wouldn't claim 'swap' was unknown.
 	else if (!Q_stricmp(token, "turb"))
@@ -2312,16 +2311,6 @@ static qboolean CollapseMultitexture(void)
 		return qfalse;
 	}
 
-	// on voodoo2, don't combine different tmus
-	if (glConfig.driverType == GLDRV_VOODOO)
-	{
-		if (stages[0].bundle[0].image[0]->TMU ==
-		    stages[1].bundle[0].image[0]->TMU)
-		{
-			return qfalse;
-		}
-	}
-
 	abits = stages[0].stateBits;
 	bbits = stages[1].stateBits;
 
@@ -2947,15 +2936,6 @@ static shader_t *FinishShader(void)
 	if (!shader.sort)
 	{
 		shader.sort = SS_OPAQUE;
-	}
-
-	// if we are using permedia hw, never use a lightmap texture
-	// NERVE - SMF - temp fix, terrain is having problems with lighting collapse
-	if (0 && (stage > 1 && (glConfig.hardwareType == GLHW_PERMEDIA2)))
-	{
-		VertexLightingCollapse();
-		stage            = 1;
-		hasLightmapStage = qfalse;
 	}
 
 	// look for multitexture potential
@@ -3990,8 +3970,8 @@ static void CreateExternalShaders(void)
 {
 	tr.projectionShadowShader = R_FindShader("projectionShadow", LIGHTMAP_NONE, qtrue);
 	tr.flareShader            = R_FindShader("flareShader", LIGHTMAP_NONE, qtrue);
-	tr.sunflareShader[0] = R_FindShader("sunflare1", LIGHTMAP_NONE, qtrue);
-	tr.dlightShader      = R_FindShader("dlightshader", LIGHTMAP_NONE, qtrue);
+	tr.sunflareShader[0]      = R_FindShader("sunflare1", LIGHTMAP_NONE, qtrue);
+	tr.dlightShader           = R_FindShader("dlightshader", LIGHTMAP_NONE, qtrue);
 }
 
 //=============================================================================

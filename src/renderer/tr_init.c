@@ -1123,18 +1123,6 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
 	ri.Printf(PRINT_ALL, "compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
 
-	if (glConfig.hardwareType == GLHW_PERMEDIA2)
-	{
-		ri.Printf(PRINT_ALL, "HACK: using vertex lightmap approximation\n");
-	}
-	if (glConfig.hardwareType == GLHW_RAGEPRO)
-	{
-		ri.Printf(PRINT_ALL, "HACK: ragePro approximations\n");
-	}
-	if (glConfig.hardwareType == GLHW_RIVA128)
-	{
-		ri.Printf(PRINT_ALL, "HACK: riva128 approximations\n");
-	}
 	if (glConfig.smpActive)
 	{
 		ri.Printf(PRINT_ALL, "Using dual processor acceleration\n");
@@ -1181,7 +1169,7 @@ void R_Register(void)
 
 	r_stencilbits = ri.Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
-	r_depthbits       = ri.Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_depthbits = ri.Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
 #if defined(__linux__)
 	// r_depthbits values > 24 are invalid (no visual) - the var is latched so let's adjust it here
@@ -1208,13 +1196,13 @@ void R_Register(void)
 	r_simpleMipMaps     = ri.Cvar_Get("r_simpleMipMaps", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_uiFullScreen      = ri.Cvar_Get("r_uifullscreen", "0", 0);
 
-	r_subdivisions      = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
+	r_subdivisions = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
 #ifdef SMP
-	r_smp               = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
 #endif
-	r_stereoEnabled     = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_ignoreFastPath    = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH); // ydnar: use fast path by default
-	r_greyscale         = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_stereoEnabled  = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_ignoreFastPath = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH);    // ydnar: use fast path by default
+	r_greyscale      = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	//
 	// temporary latched variables that can only change over a restart

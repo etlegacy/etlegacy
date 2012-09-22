@@ -186,39 +186,39 @@ int trap_CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const v
 }
 
 void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
-                         const vec3_t mins, const vec3_t maxs,
-                         clipHandle_t model, int brushmask)
+                      const vec3_t mins, const vec3_t maxs,
+                      clipHandle_t model, int brushmask)
 {
 	syscall(CG_CM_BOXTRACE, results, start, end, mins, maxs, model, brushmask);
 }
 
 void trap_CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
-                                    const vec3_t mins, const vec3_t maxs,
-                                    clipHandle_t model, int brushmask,
-                                    const vec3_t origin, const vec3_t angles)
+                                 const vec3_t mins, const vec3_t maxs,
+                                 clipHandle_t model, int brushmask,
+                                 const vec3_t origin, const vec3_t angles)
 {
 	syscall(CG_CM_TRANSFORMEDBOXTRACE, results, start, end, mins, maxs, model, brushmask, origin, angles);
 }
 
 void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
-                             const vec3_t mins, const vec3_t maxs,
-                             clipHandle_t model, int brushmask)
+                          const vec3_t mins, const vec3_t maxs,
+                          clipHandle_t model, int brushmask)
 {
 	syscall(CG_CM_CAPSULETRACE, results, start, end, mins, maxs, model, brushmask);
 }
 
 void trap_CM_TransformedCapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
-                                        const vec3_t mins, const vec3_t maxs,
-                                        clipHandle_t model, int brushmask,
-                                        const vec3_t origin, const vec3_t angles)
+                                     const vec3_t mins, const vec3_t maxs,
+                                     clipHandle_t model, int brushmask,
+                                     const vec3_t origin, const vec3_t angles)
 {
 	syscall(CG_CM_TRANSFORMEDCAPSULETRACE, results, start, end, mins, maxs, model, brushmask, origin, angles);
 }
 
 int trap_CM_MarkFragments(int numPoints, const vec3_t *points,
-                              const vec3_t projection,
-                              int maxPoints, vec3_t pointBuffer,
-                              int maxFragments, markFragment_t *fragmentBuffer)
+                          const vec3_t projection,
+                          int maxPoints, vec3_t pointBuffer,
+                          int maxFragments, markFragment_t *fragmentBuffer)
 {
 	return syscall(CG_CM_MARKFRAGMENTS, numPoints, points, projection, maxPoints, pointBuffer, maxFragments, fragmentBuffer);
 }
@@ -425,20 +425,20 @@ void trap_R_SetColor(const float *rgba)
 }
 
 void trap_R_DrawStretchPic(float x, float y, float w, float h,
-                              float s1, float t1, float s2, float t2, qhandle_t hShader)
+                           float s1, float t1, float s2, float t2, qhandle_t hShader)
 {
 	syscall(CG_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader);
 }
 
 void trap_R_DrawRotatedPic(float x, float y, float w, float h,
-                              float s1, float t1, float s2, float t2, qhandle_t hShader, float angle)
+                           float s1, float t1, float s2, float t2, qhandle_t hShader, float angle)
 {
 	syscall(CG_R_DRAWROTATEDPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader, PASSFLOAT(angle));
 }
 
 void trap_R_DrawStretchPicGradient(float x, float y, float w, float h,
-                                      float s1, float t1, float s2, float t2, qhandle_t hShader,
-                                      const float *gradientColor, int gradientType)
+                                   float s1, float t1, float s2, float t2, qhandle_t hShader,
+                                   const float *gradientColor, int gradientType)
 {
 	syscall(CG_R_DRAWSTRETCHPIC_GRADIENT, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader, gradientColor, gradientType);
 }

@@ -258,23 +258,17 @@ typedef enum
 typedef enum
 {
 	GLDRV_ICD,                  // driver is integrated with window system
-	// WARNING: there are tests that check for
-	// > GLDRV_ICD for minidriverness, so this
-	// should always be the lowest value in this
-	// enum set
-	GLDRV_STANDALONE,           // driver is a non-3Dfx standalone driver
-	GLDRV_VOODOO                // driver is a 3Dfx standalone driver
+	GLDRV_STANDALONE,           // deprecated
+	GLDRV_VOODOO                // deprecated
 } glDriverType_t;
 
 typedef enum
 {
 	GLHW_GENERIC,           // where everthing works the way it should
-	GLHW_3DFX_2D3D,         // Voodoo Banshee or Voodoo3, relevant since if this is
-	// the hardware type then there can NOT exist a secondary
-	// display adapter
-	GLHW_RIVA128,           // where you can't interpolate alpha
-	GLHW_RAGEPRO,           // where you can't modulate alpha on alpha textures
-	GLHW_PERMEDIA2          // where you don't have src*dst
+	GLHW_3DFX_2D3D,         // deprecated
+	GLHW_RIVA128,           // deprecated
+	GLHW_RAGEPRO,           // deprecated
+	GLHW_PERMEDIA2          // deprecated
 } glHardwareType_t;
 
 typedef struct
@@ -282,8 +276,8 @@ typedef struct
 	char renderer_string[MAX_STRING_CHARS];
 	char vendor_string[MAX_STRING_CHARS];
 	char version_string[MAX_STRING_CHARS];
-	char extensions_string[MAX_STRING_CHARS * 4];	// TTimo - bumping, some cards have a big extension string
-													// no need to increase MAX_STRING_CHARS *4 - console doesn't print more
+	char extensions_string[MAX_STRING_CHARS * 4];   // TTimo - bumping, some cards have a big extension string
+	                                                // no need to increase MAX_STRING_CHARS *4 - console doesn't print more
 
 	int maxTextureSize;                             // queried from GL
 	int maxActiveTextures;                          // multitexture ability
@@ -305,8 +299,8 @@ typedef struct
 	int NVFogMode;                                  //----(SA)  added
 	// ATI
 	int ATIMaxTruformTess;                          // for truform support
-	int ATINormalMode;                          	// for truform support
-	int ATIPointMode;                           	// for truform support
+	int ATINormalMode;                              // for truform support
+	int ATIPointMode;                               // for truform support
 
 	int vidWidth, vidHeight;
 	// aspect is the screen's physical width / height, which may be different

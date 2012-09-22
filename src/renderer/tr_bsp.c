@@ -242,12 +242,6 @@ static void R_LoadLightmaps(lump_t *l)
 		tr.numLightmaps++;
 	}
 
-	// permedia doesn't support lightmaps
-	if (glConfig.hardwareType == GLHW_PERMEDIA2)
-	{
-		return;
-	}
-
 	for (i = 0 ; i < tr.numLightmaps ; i++)
 	{
 		// expand the 24 bit on-disk to 32 bit
@@ -341,11 +335,6 @@ static shader_t *ShaderForShaderNum(int shaderNum, int lightmapNum)
 		ri.Error(ERR_DROP, "ShaderForShaderNum: bad num %i", shaderNum);
 	}
 	dsh = &s_worldData.shaders[shaderNum];
-
-	if (glConfig.hardwareType == GLHW_PERMEDIA2)
-	{
-		lightmapNum = LIGHTMAP_BY_VERTEX;
-	}
 
 	shader = R_FindShader(dsh->shader, lightmapNum, qtrue);
 
@@ -596,8 +585,8 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	srfFoliage_t *foliage;
 	int          i, j, numVerts, numIndexes, numInstances, size;
 	vec4_t       *xyz, *normal;
-	vec3_t bounds[2], boundsTranslated[2];
-	float  scale;
+	vec3_t       bounds[2], boundsTranslated[2];
+	float        scale;
 
 
 	// get fog volume
@@ -2462,7 +2451,7 @@ void R_FindLightGridBounds(vec3_t mins, vec3_t maxs)
 	world_t          *w;
 	msurface_t       *surf;
 	srfSurfaceFace_t *surfFace;
-	struct shader_s *shd;
+	struct shader_s  *shd;
 
 	qboolean foundGridBrushes = qfalse;
 	int      i, j;
@@ -2571,7 +2560,7 @@ void R_LoadLightGrid(lump_t *l)
 	vec3_t  maxs;
 	int     numGridPoints;
 	world_t *w;
-	vec3_t wMins, wMaxs;
+	vec3_t  wMins, wMaxs;
 
 	w = &s_worldData;
 

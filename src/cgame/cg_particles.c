@@ -503,11 +503,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 			invratio = 1 * p->alpha;
 		}
 
-		if (cgs.glconfig.hardwareType == GLHW_RAGEPRO)
-		{
-			invratio = 1;
-		}
-
 		if (invratio > 1)
 		{
 			invratio = 1;
@@ -612,11 +607,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		float  alpha;
 
 		alpha = p->alpha;
-
-		if (cgs.glconfig.hardwareType == GLHW_RAGEPRO)
-		{
-			alpha = 1;
-		}
 
 		if (p->roll)
 		{
