@@ -36,7 +36,11 @@ endif()
 option(BUNDLED_LIBS     "Use bundled libraries instead of the system ones."                     OFF)
 
 # Optional features
-option(SMP_SUPPORT              "Enable SMP (multicore support) (client)"                       ON)
+if (CMAKE_SYSTEM MATCHES "Darwin")
+	option(SMP_SUPPORT              "Enable SMP (multicore support) (client)"                       OFF)
+else()
+	option(SMP_SUPPORT              "Enable SMP (multicore support) (client)"                       ON)
+endif()
 option(USE_CURL                 "Enable auto-download support using cURL (client)"              ON)
 option(USE_CODEC_VORBIS         "Enable OGG Vorbis support (client)"                            OFF)
 option(USE_OPENAL               "Enable OpenAL sound backend (client) [BROKEN]"                 OFF)
@@ -60,6 +64,14 @@ if(UNIX)
         if (CMAKE_SYSTEM MATCHES "OpenBSD*")
                 set(OS_LIBRARIES m pthread)
                 set(LIB_SUFFIX ".mp.obsd.")
+        elseif(CMAKE_SYSTEM MATCHES "Darwin")
+		        set(OS_LIBRARIES dl m)
+				set(CMAKE_EXE_LINKER_FLAGS "-lobjc -framework Cocoa -framework IOKit -framework CoreFoundation")
+				if(BUILD_CLIENT)
+					set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon -lSDLmain")
+				endif()
+				set(LIB_SUFFIX ".mp.")
+				add_definitions("-DMACOS_X")
         else()
                 set(OS_LIBRARIES dl m)
                 set(LIB_SUFFIX ".mp.")
@@ -101,6 +113,10 @@ endif()
 FILE(GLOB COMMON_SRC
 	"src/qcommon/*.c"
 )
+if(CMAKE_SYSTEM MATCHES "Darwin")
+	LIST(APPEND COMMON_SRC "src/sys/sys_osx.m")
+	SET_SOURCE_FILES_PROPERTIES("src/sys/sys_osx.m"	PROPERTIES LANGUAGE C)
+endif()
 
 FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"

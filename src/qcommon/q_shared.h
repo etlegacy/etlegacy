@@ -193,8 +193,6 @@ typedef unsigned __int8 uint8_t;
 
 #if defined(MACOS_X)
 
-#error WTF
-
 #define MAC_STATIC
 
 #define CPUSTRING   "MacOS_X"
@@ -208,14 +206,15 @@ typedef unsigned __int8 uint8_t;
 // This is about 12.4 times faster than sqrt() and according to my testing (not exhaustive)
 // it returns fairly accurate results (error below 1.0e-5 up to 100000.0 in 0.1 increments).
 
-static inline float idSqrt(float x)
+// TODO: check if x86 arch has speed increase. fix this function
+/*static inline float idSqrt(float x)
 {
 	const float half = 0.5;
 	const float one  = 1.0;
 	float       B, y0, y1;
 
 	// This'll NaN if it hits frsqrte. Handle both +0.0 and -0.0
-	if (Q_fabs(x) == 0.0)
+	if (fabs(x) == 0.0)
 	{
 		return x;
 	}
@@ -226,19 +225,20 @@ static inline float idSqrt(float x)
 #else
 	y0 = __frsqrte(B);
 #endif
-	/* First refinement step */
+	// First refinement step
 
 	y1 = y0 + half * y0 * (one - B * y0 * y0);
 
-	/* Second refinement step -- copy the output of the last step to the input of this step */
+	// Second refinement step -- copy the output of the last step to the input of this step
 
 	y0 = y1;
 	y1 = y0 + half * y0 * (one - B * y0 * y0);
 
-	/* Get sqrt(x) from x * 1/sqrt(x) */
+	// Get sqrt(x) from x * 1/sqrt(x)
 	return x * y1;
 }
 #define sqrt idSqrt
+*/
 
 
 #endif
