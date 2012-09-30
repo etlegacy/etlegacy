@@ -35,6 +35,15 @@ endif()
 
 option(BUNDLED_LIBS     "Use bundled libraries instead of the system ones."                     OFF)
 
+# Installation options
+set(INSTALL_DEFAULT_BASEDIR     ""                     CACHE STRING "Should be CMAKE_INSTALL_PREFIX + INSTALL_DEFAULT_MODDIR")
+set(INSTALL_DEFAULT_BINDIR      "bin"                  CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
+set(INSTALL_DEFAULT_MODDIR      "share/etlegacy"       CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
+
+if(INSTALL_DEFAULT_BASEDIR)
+        add_definitions(-DDEFAULT_BASEDIR=\"${INSTALL_DEFAULT_BASEDIR}\")
+endif(INSTALL_DEFAULT_BASEDIR)
+
 # Optional features
 if (CMAKE_SYSTEM MATCHES "Darwin")
 	option(SMP_SUPPORT              "Enable SMP (multicore support) (client)"                       OFF)
@@ -65,28 +74,23 @@ if(UNIX)
                 set(OS_LIBRARIES m pthread)
                 set(LIB_SUFFIX ".mp.obsd.")
         elseif(CMAKE_SYSTEM MATCHES "Darwin")
-		        set(OS_LIBRARIES dl m)
-				set(CMAKE_EXE_LINKER_FLAGS "-lobjc -framework Cocoa -framework IOKit -framework CoreFoundation")
-				if(BUILD_CLIENT)
-					set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon -lSDLmain")
-				endif()
-				set(LIB_SUFFIX ".mp.")
-				add_definitions("-DMACOS_X")
+                set(OS_LIBRARIES dl m)
+                set(CMAKE_EXE_LINKER_FLAGS "-lobjc -framework Cocoa -framework IOKit -framework CoreFoundation")
+                if(BUILD_CLIENT)
+                        # TODO: -lSDLmain belongs to FindSDL32.cmake
+                        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon -lSDLmain")
+                endif()
+                set(LIB_SUFFIX ".mp.")
+                add_definitions("-DMACOS_X")
         else()
                 set(OS_LIBRARIES dl m)
                 set(LIB_SUFFIX ".mp.")
         endif()
         #set(CMAKE_SHARED_LIBRARY_C_FLAGS "-fPIC -fvisibility=hidden")
-        if(NOT APPLE) # Linux and *BSD
-                set(ETLEGACY_INSTALL_DIRECTORY "games/etlegacy") # FIXME: needs to be unset for CPack packages. How???
-        else() # Mac OS X
-                set(ETLEGACY_INSTALL_DIRECTORY "etlegacy") # TODO: correct this
-        endif()
 elseif(WIN32)
         add_definitions(-DWINVER=0x501)
         set(OS_LIBRARIES ws2_32 psapi winmm)
         set(LIB_SUFFIX "_mp_")
-        set(ETLEGACY_INSTALL_DIRECTORY "etlegacy")
         if(MSVC)
                 add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
         endif(MSVC)
@@ -292,7 +296,7 @@ if(BUILD_CLIENT)
         set_target_properties(etl
                 PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
         install(TARGETS etl
-                RUNTIME DESTINATION ${ETLEGACY_INSTALL_DIRECTORY})
+                RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
@@ -301,7 +305,7 @@ if(BUILD_SERVER)
         set_target_properties(etlded
                 PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
         install(TARGETS etlded
-                RUNTIME DESTINATION ${ETLEGACY_INSTALL_DIRECTORY})
+                RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
 endif(BUILD_SERVER)
 
 if(BUILD_MOD)
@@ -324,8 +328,8 @@ if(BUILD_MOD)
                         PREFIX ""
                         LIBRARY_OUTPUT_DIRECTORY "etmain")
         install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
-                LIBRARY DESTINATION "${ETLEGACY_INSTALL_DIRECTORY}/etmain"
-                ARCHIVE DESTINATION "${ETLEGACY_INSTALL_DIRECTORY}/etmain"
+                LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+                ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
         )
 
         # mp_bin.pk3
@@ -339,7 +343,7 @@ if(BUILD_MOD)
                 )
 
                 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etmain/mp_bin.pk3
-                        DESTINATION ${ETLEGACY_INSTALL_DIRECTORY}/etmain)
+                        DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain")
         endif()
 endif(BUILD_MOD)
 
@@ -352,7 +356,7 @@ if(BUILD_PAK3_PK3)
         )
 
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etmain/pak3.pk3
-                DESTINATION ${ETLEGACY_INSTALL_DIRECTORY}/etmain)
+                DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain")
 endif(BUILD_PAK3_PK3)
 
 #-----------------------------------------------------------------
@@ -368,29 +372,6 @@ configure_file(
 add_custom_target(uninstall
         COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/Uninstall.cmake
 )
-
-# Linux
-if("${CMAKE_SYSTEM}" MATCHES "Linux")
-        # Create symlinks (works only with 'make install') and add them as uninstall targets
-        if(BUILD_CLIENT)
-                install(CODE "
-                        execute_process(
-                                COMMAND \${CMAKE_COMMAND} -E remove \${CMAKE_INSTALL_PREFIX}/bin/etl
-                                COMMAND \${CMAKE_COMMAND} -E create_symlink \"\${CMAKE_INSTALL_PREFIX}/games/etlegacy/etl\" \${CMAKE_INSTALL_PREFIX}/bin/etl
-                        )
-                        list(APPEND CMAKE_INSTALL_MANIFEST_FILES \${CMAKE_INSTALL_PREFIX}/bin/etl)
-                ")
-        endif(BUILD_CLIENT)
-        if(BUILD_SERVER)
-                install(CODE "
-                        execute_process(
-                                COMMAND \${CMAKE_COMMAND} -E remove \${CMAKE_INSTALL_PREFIX}/bin/etlded
-                                COMMAND \${CMAKE_COMMAND} -E create_symlink \${CMAKE_INSTALL_PREFIX}/games/etlegacy/etlded \${CMAKE_INSTALL_PREFIX}/bin/etlded
-                        )
-                        list(APPEND CMAKE_INSTALL_MANIFEST_FILES \${CMAKE_INSTALL_PREFIX}/bin/etlded)
-                ")
-        endif(BUILD_SERVER) 
-endif()
 
 # CPack general configuration
 set(CPACK_PACKAGE_NAME                  "etlegacy")
