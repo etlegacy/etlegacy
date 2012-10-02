@@ -80,7 +80,8 @@ if(UNIX)
                         # TODO: -lSDLmain belongs to FindSDL32.cmake
                         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon -lSDLmain")
                 endif()
-                set(LIB_SUFFIX ".mp.")
+                set(LIB_SUFFIX "_mac")
+                set(CMAKE_SHARED_MODULE_SUFFIX "")
                 add_definitions("-DMACOS_X")
         else()
                 set(OS_LIBRARIES dl m)
@@ -97,18 +98,20 @@ elseif(WIN32)
 endif()
 
 # Get the system architecture
-if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i686" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i386" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86")
-        if(WIN32)
-                set(ARCH "x86")
+if(NOT CMAKE_SYSTEM MATCHES "Darwin")
+        if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i686" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i386" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86")
+                if(WIN32)
+                        set(ARCH "x86")
+                else()
+                        set(ARCH "i386")
+                endif()
+        elseif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "AMD64")
+                set(ARCH "x86_64")
         else()
-                set(ARCH "i386")
+                set(ARCH "${CMAKE_SYSTEM_PROCESSOR}")
+                message(STATUS "Warning: processor architecture not recognised (${CMAKE_SYSTEM_PROCESSOR})")
         endif()
-elseif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "AMD64")
-        set(ARCH "x86_64")
-else()
-        set(ARCH "${CMAKE_SYSTEM_PROCESSOR}")
-        message(STATUS "Warning: processor architecture not recognised (${CMAKE_SYSTEM_PROCESSOR})")
-endif()
+endif(NOT CMAKE_SYSTEM MATCHES "Darwin")
 
 #-----------------------------------------------------------------
 # Sources
@@ -310,19 +313,19 @@ endif(BUILD_SERVER)
 
 if(BUILD_MOD)
         # cgame
-        add_library(cgame${LIB_SUFFIX}${ARCH} SHARED ${CGAME_SRC})
+        add_library(cgame${LIB_SUFFIX}${ARCH} MODULE ${CGAME_SRC})
         set_target_properties(cgame${LIB_SUFFIX}${ARCH}
                 PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
                         PREFIX ""
                         LIBRARY_OUTPUT_DIRECTORY "etmain")
         # qagame
-        add_library(qagame${LIB_SUFFIX}${ARCH} SHARED ${QAGAME_SRC})
+        add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
         set_target_properties(qagame${LIB_SUFFIX}${ARCH}
                 PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
                         PREFIX ""
                         LIBRARY_OUTPUT_DIRECTORY "etmain")
         # ui
-        add_library(ui${LIB_SUFFIX}${ARCH} SHARED ${UI_SRC})
+        add_library(ui${LIB_SUFFIX}${ARCH} MODULE ${UI_SRC})
         set_target_properties(ui${LIB_SUFFIX}${ARCH}
                 PROPERTIES
                         PREFIX ""

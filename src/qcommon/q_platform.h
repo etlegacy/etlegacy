@@ -174,7 +174,7 @@
 #define Q3_LITTLE_ENDIAN
 #endif
 
-#define DLL_EXT ".dylib"
+#define DLL_EXT "_mac"
 
 #endif
 

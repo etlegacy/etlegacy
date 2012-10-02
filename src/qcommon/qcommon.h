@@ -1122,6 +1122,8 @@ void Sys_LeaveCriticalSection(void *ptr);
 #define Sys_GetDLLName(x) x "_mp_" ARCH_STRING DLL_EXT
 #elif __OpenBSD__ //TODO: detect the *BSD variant
 #define Sys_GetDLLName(x) x ".mp.obsd." ARCH_STRING DLL_EXT
+#elif __APPLE__
+#define Sys_GetDLLName(x) x DLL_EXT
 #else
 #define Sys_GetDLLName(x) x ".mp." ARCH_STRING DLL_EXT
 #endif
