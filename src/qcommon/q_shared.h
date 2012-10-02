@@ -207,7 +207,8 @@ typedef unsigned __int8 uint8_t;
 // it returns fairly accurate results (error below 1.0e-5 up to 100000.0 in 0.1 increments).
 
 // TODO: check if x86 arch has speed increase. fix this function
-/*static inline float idSqrt(float x)
+// Waiting for MAC dev to inspect ... see notes
+static inline float idSqrt(float x)
 {
 	const float half = 0.5;
 	const float one  = 1.0;
@@ -238,7 +239,6 @@ typedef unsigned __int8 uint8_t;
 	return x * y1;
 }
 #define sqrt idSqrt
-*/
 
 
 #endif
