@@ -4490,7 +4490,6 @@ void UI_RunMenuScript(char **args)
 
 		if (Q_stricmp(name, "StartServer") == 0)
 		{
-			float skill;
 			int   pb_sv, pb_cl;
 
 			// DHM - Nerve
@@ -4523,8 +4522,6 @@ void UI_RunMenuScript(char **args)
 			{
 				trap_Cmd_ExecuteText(EXEC_APPEND, va("wait ; wait ; map %s\n", uiInfo.mapList[ui_currentNetMap.integer].mapLoadName));
 			}
-
-			skill = trap_Cvar_VariableValue("g_spSkill");
 
 			// NERVE - SMF - set user cvars here
 			// set timelimit
@@ -4645,8 +4642,6 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "LoadMovies") == 0)
 		{
 			UI_LoadMovies();
-
-//----(SA)  added
 		}
 		else if (Q_stricmp(name, "LoadSaveGames") == 0)          // get the list
 		{
@@ -4663,8 +4658,6 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "DelSavegame") == 0)
 		{
 			UI_DelSavegame();
-//----(SA)  end
-
 		}
 		else if (Q_stricmp(name, "LoadMods") == 0)
 		{
@@ -6148,7 +6141,7 @@ UI_BuildServerDisplayList
 */
 static void UI_BuildServerDisplayList(qboolean force)
 {
-	int  i, count, clients, maxClients, ping, game, len, visible, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
+	int  i, count, clients, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
 	char info[MAX_STRING_CHARS];
 	//qboolean startRefresh = qtrue; // TTimo: unused
 	static int numinvisible;
@@ -6209,7 +6202,6 @@ static void UI_BuildServerDisplayList(qboolean force)
 		uiInfo.serverStatus.currentServerPreview = 0;
 	}
 
-	visible = qfalse;
 	for (i = 0; i < count; i++)
 	{
 		// if we already got info for this server
@@ -6217,7 +6209,6 @@ static void UI_BuildServerDisplayList(qboolean force)
 		{
 			continue;
 		}
-		visible = qtrue;
 		// get the ping for this server
 		ping = trap_LAN_GetServerPing(ui_netSource.integer, i);
 		if (ping > /*=*/ 0 || ui_netSource.integer == AS_FAVORITES)
@@ -6989,8 +6980,7 @@ static const char *UI_SelectedMap(qboolean singlePlayer, int index, int *actual)
 
 static const char *UI_SelectedCampaign(int index, int *actual)
 {
-	int i, c;
-	c       = 0;
+	int i;
 	*actual = 0;
 	for (i = 0; i < uiInfo.campaignCount; i++)
 	{
@@ -7498,21 +7488,10 @@ void UI_FeederSelection(float feederID, int index)
 	}
 	else if (feederID == FEEDER_MAPS || feederID == FEEDER_ALLMAPS)
 	{
-		int actual, map;
+		int actual;
 		int game;
 
-		map  = (feederID == FEEDER_ALLMAPS) ? ui_currentNetMap.integer : ui_currentMap.integer;
 		game = feederID == FEEDER_MAPS ? uiInfo.gameTypes[ui_gameType.integer].gtEnum : ui_netGameType.integer;
-		/*if( game == GT_WOLF_CAMPAIGN ) {
-		    if (uiInfo.campaignList[map].campaignCinematic >= 0) {
-		        trap_CIN_StopCinematic(uiInfo.campaignList[map].campaignCinematic);
-		        uiInfo.campaignList[map].campaignCinematic = -1;
-		    }
-		} else
-		    if (uiInfo.mapList[map].cinematic >= 0) {
-		        trap_CIN_StopCinematic(uiInfo.mapList[map].cinematic);
-		        uiInfo.mapList[map].cinematic = -1;
-		    }*/
 
 		UI_SelectedMap(feederID == FEEDER_MAPS ? qtrue : qfalse, index, &actual);
 		trap_Cvar_Set("ui_mapIndex", va("%d", index));
@@ -8029,7 +8008,7 @@ UI_Init
 */
 void _UI_Init(qboolean inGameLoad)
 {
-	int start, x;
+	int x;
 
 	//uiInfo.inGameLoad = inGameLoad;
 
@@ -8150,8 +8129,6 @@ void _UI_Init(qboolean inGameLoad)
 	uiInfo.teamBalanceFilter        = trap_R_RegisterShaderNoMip("ui/assets/filter_balance.tga");
 
 	uiInfo.campaignMap = trap_R_RegisterShaderNoMip("gfx/loading/camp_map.tga");
-
-	start = trap_Milliseconds();
 
 	uiInfo.teamCount      = 0;
 	uiInfo.characterCount = 0;

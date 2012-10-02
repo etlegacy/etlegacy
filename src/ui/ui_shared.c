@@ -2657,12 +2657,8 @@ int Item_Slider_OverSlider(itemDef_t *item, float x, float y)
 int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 {
 	rectDef_t    r;
-	listBoxDef_t *listPtr;
 	int          thumbstart;
-	int          count;
 
-	count   = DC->feederCount(item->special);
-	listPtr = (listBoxDef_t *)item->typeData;
 	if (item->window.flags & WINDOW_HORIZONTAL)
 	{
 		// check if on left arrow
@@ -5414,10 +5410,8 @@ char *BindingFromName(const char *cvar)
 void Item_Slider_Paint(itemDef_t *item)
 {
 	vec4_t    newColor, lowLight;
-	float     x, y, value;
+	float     x, y;
 	menuDef_t *parent = (menuDef_t *)item->parent;
-
-	value = (item->cvar) ? DC->getCVarValue(item->cvar) : 0;
 
 	if (item->window.flags & WINDOW_HASFOCUS && item->window.flags & WINDOW_FOCUSPULSE)
 	{
@@ -5996,14 +5990,10 @@ void Item_ListBox_Paint(itemDef_t *item)
 
 void Item_OwnerDraw_Paint(itemDef_t *item)
 {
-	menuDef_t *parent;
-
 	if (item == NULL)
 	{
 		return;
 	}
-
-	parent = (menuDef_t *)item->parent;
 
 	if (DC->ownerDrawItem)
 	{
@@ -6850,8 +6840,6 @@ qboolean ItemParse_text(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-//----(SA)  added
-
 // textfile <string>
 // read an external textfile into item->text
 qboolean ItemParse_textfile(itemDef_t *item, int handle)
@@ -6869,7 +6857,6 @@ qboolean ItemParse_textfile(itemDef_t *item, int handle)
 
 	return qtrue;
 }
-//----(SA)
 
 // group <string>
 qboolean ItemParse_group(itemDef_t *item, int handle)
@@ -6886,9 +6873,7 @@ qboolean ItemParse_group(itemDef_t *item, int handle)
 qboolean ItemParse_asset_model(itemDef_t *item, int handle)
 {
 	const char *temp = NULL;
-	modelDef_t *modelPtr;
 	Item_ValidateTypeData(item);
-	modelPtr = (modelDef_t *)item->typeData;
 
 	if (!PC_String_Parse(handle, &temp))
 	{
@@ -6897,7 +6882,6 @@ qboolean ItemParse_asset_model(itemDef_t *item, int handle)
 	if (!(item->asset))
 	{
 		item->asset = DC->registerModel(temp);
-//      modelPtr->angle = rand() % 360;
 	}
 	return qtrue;
 }
