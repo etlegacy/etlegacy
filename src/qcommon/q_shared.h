@@ -207,7 +207,8 @@ typedef unsigned __int8 uint8_t;
 // it returns fairly accurate results (error below 1.0e-5 up to 100000.0 in 0.1 increments).
 
 // TODO: check if x86 arch has speed increase. fix this function
-// Waiting for MAC dev to inspect ... see notes
+// Waiting for MAC dev to inspect ... see notes and Q_fabs() definition below
+
 static inline float idSqrt(float x)
 {
 	const float half = 0.5;
@@ -215,7 +216,7 @@ static inline float idSqrt(float x)
 	float       B, y0, y1;
 
 	// This'll NaN if it hits frsqrte. Handle both +0.0 and -0.0
-	if (fabs(x) == 0.0)
+	if (Q_fabs(x) == 0.0)
 	{
 		return x;
 	}
