@@ -120,11 +120,6 @@ endif(NOT CMAKE_SYSTEM MATCHES "Darwin")
 FILE(GLOB COMMON_SRC
 	"src/qcommon/*.c"
 )
-if(CMAKE_SYSTEM MATCHES "Darwin")
-	LIST(APPEND COMMON_SRC "src/sys/sys_osx.m")
-	SET_SOURCE_FILES_PROPERTIES("src/sys/sys_osx.m"	PROPERTIES LANGUAGE C)
-endif()
-
 FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_stubs.c"
@@ -132,14 +127,27 @@ FILE(GLOB COMMON_SRC_REMOVE
 )
 LIST(REMOVE_ITEM COMMON_SRC ${COMMON_SRC_REMOVE})
 
+# Platform specific code for server and client
+if(UNIX)
+        if(CMAKE_SYSTEM MATCHES "Darwin")
+                LIST(APPEND PLATFORM_SRC "src/sys/sys_osx.m")
+                SET_SOURCE_FILES_PROPERTIES("src/sys/sys_osx.m" PROPERTIES LANGUAGE C)
+        endif(CMAKE_SYSTEM MATCHES "Darwin")
+
+        LIST(APPEND PLATFORM_SRC "src/sys/sys_unix.c")
+        LIST(APPEND PLATFORM_SRC "src/sys/con_tty.c")
+elseif(WIN32)
+        LIST(APPEND PLATFORM_SRC "src/sys/sys_win32.c")
+        LIST(APPEND PLATFORM_SRC "src/sys/con_win32.c")
+endif()
+
 FILE(GLOB SERVER_SRC
 	"src/server/*.c"
 	"src/null/*.c"
 	"src/botlib/be*.c"
 	"src/botlib/l_*.c"
-	"src/sys/sys_*.c"
+	"src/sys/sys_main.c"
 	"src/sys/con_log.c"
-	"src/sys/con_tty.c"
 	"src/qcommon/dl_main_stubs.c"
 )
 
@@ -148,9 +156,8 @@ FILE(GLOB CLIENT_SRC
 	"src/client/*.c"
 	"src/botlib/be*.c"
 	"src/botlib/l_*.c"
-	"src/sys/sys_*.c"
+	"src/sys/sys_main.c"
 	"src/sys/con_log.c"
-	"src/sys/con_tty.c"
 	"src/renderer/*.c"
 	"src/sdl/*.c"
 )
@@ -265,7 +272,7 @@ endif(TRACKBASE_SUPPORT)
 # Build
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
-	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC})
+	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC})
 	include_directories(
                 ${OPENGL_INCLUDE_DIR}
                 ${FREETYPE_INCLUDE_DIRS}
@@ -303,7 +310,7 @@ if(BUILD_CLIENT)
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
-        add_executable(etlded ${COMMON_SRC} ${SERVER_SRC})
+        add_executable(etlded ${COMMON_SRC} ${SERVER_SRC} ${PLATFORM_SRC})
         target_link_libraries(etlded ${OS_LIBRARIES})
         set_target_properties(etlded
                 PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
