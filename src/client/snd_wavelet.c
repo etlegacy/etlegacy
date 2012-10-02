@@ -145,7 +145,7 @@ short MuLawDecode(byte uLaw)
 	return (uLaw & 0x80) ? adjusted : -adjusted;
 }
 
-short           mulawToShort[256];
+short mulawToShort[256];
 static qboolean madeTable = qfalse;
 
 static int NXStreamCount;
@@ -154,7 +154,6 @@ void NXPutc(NXStream *stream, char out)
 {
 	stream[NXStreamCount++] = out;
 }
-
 
 void encodeWavelet(sfx_t *sfx, short *packets)
 {
@@ -250,7 +249,6 @@ void decodeWavelet(sndBuffer *chunk, short *to)
 		to[i] = wksp[i];
 	}
 }
-
 
 void encodeMuLaw(sfx_t *sfx, short *packets)
 {
