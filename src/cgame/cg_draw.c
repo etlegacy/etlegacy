@@ -950,10 +950,7 @@ Adds the current interpolate / extrapolate bar for this frame
 */
 void CG_AddLagometerFrameInfo(void)
 {
-	int offset;
-
-	offset                                                           = cg.time - cg.latestSnapshotTime;
-	lagometer.frameSamples[lagometer.frameCount & (LAG_SAMPLES - 1)] = offset;
+	lagometer.frameSamples[lagometer.frameCount & (LAG_SAMPLES - 1)] = cg.time - cg.latestSnapshotTime;
 	lagometer.frameCount++;
 }
 
@@ -4586,7 +4583,6 @@ static void CG_DrawPlayerStatus(void)
 	int weap;
 	playerState_t *ps;
 	rectDef_t rect;
-//  vec4_t          colorFaded = { 1.f, 1.f, 1.f, 0.3f };
 
 	ps = &cg.snap->ps;
 
