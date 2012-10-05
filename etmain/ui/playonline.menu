@@ -615,8 +615,9 @@ menuDef {
 	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "CONNECT TO IP", .24, 11, clearFocus ; open playonline_connecttoip )
 	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "SERVER INFO", .24, 11, clearFocus ; open playonline_serverinfo )
 	
-	NAMEDBUTTON( "bttn_pbenable", 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "ENABLE PUNKBUSTER", .24, 11, clearFocus ; open playonline_enablepb )
-	NAMEDBUTTON( "bttn_pbdisable", 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "DISABLE PUNKBUSTER", .24, 11, clearFocus ; open playonline_disablepb )
+	// FIXME: set linky buttons to etlegacy.com?
+	// NAMEDBUTTON( "bttn_pbenable", 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "ENABLE PUNKBUSTER", .24, 11, clearFocus ; open playonline_enablepb )
+	// NAMEDBUTTON( "bttn_pbdisable", 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "DISABLE PUNKBUSTER", .24, 11, clearFocus ; open playonline_disablepb )
 
 // Buttons //
 	

@@ -13,13 +13,11 @@
 	loadMenu { "ui/playonline.menu" }
 	loadMenu { "ui/playonline_connecttoip.menu" }
 	loadMenu { "ui/playonline_serverinfo.menu" }
-	loadMenu { "ui/playonline_disablepb.menu" }
-	loadMenu { "ui/playonline_enablepb.menu" }
 	loadMenu { "ui/hostgame.menu" }
 	loadMenu { "ui/hostgame_advanced.menu" }
 	loadMenu { "ui/hostgame_advanced_default.menu" }
 	loadMenu { "ui/hostgame_dedicated_warning.menu" }
-	loadMenu { "ui/mods.menu" } // fretn (rain) adding mods menu
+	loadMenu { "ui/mods.menu" }
 	loadMenu { "ui/viewreplay.menu" }
 	loadMenu { "ui/viewreplay_delete.menu" }
 	loadMenu { "ui/options.menu" }
