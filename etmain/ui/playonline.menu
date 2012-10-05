@@ -19,9 +19,6 @@ menuDef {
 	style		WINDOW_STYLE_FILLED
 	
 	onOpen {
-		conditionalScript cl_punkbuster 0
-			( "hide bttn_pbenable ; show bttn_pbdisable" )
-			( "show bttn_pbenable ; hide bttn_pbdisable" )
 			
 		// sort by servername ?
 		conditionalScript serversort_0 2

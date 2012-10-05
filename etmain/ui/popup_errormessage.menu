@@ -26,10 +26,6 @@ menuDef {
 		uiScript ServerStatus_diagnose ;
 		setitemcolor background backcolor 0 0 0 0 ;
 		fadein background
-		
-		conditionalScript cl_punkbuster 0
-			( "hide bttn_pbenable" )
-			( "show bttn_pbenable" )
 	}
 	
 	onESC {

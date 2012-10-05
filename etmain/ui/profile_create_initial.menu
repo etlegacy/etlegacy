@@ -66,10 +66,6 @@ menuDef {
 		fadein background ;
 		setEditFocus "efleftProfile Name:" ;
 
-		conditionalScript cl_punkbuster 0
-			( "hide bttn_pbenable" )
-			( "show bttn_pbenable" )
-
 		/*conditionalscript com_recommendedSet 0
 			( "clearfocus" )
 			( "abort" )
