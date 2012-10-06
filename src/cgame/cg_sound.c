@@ -312,13 +312,11 @@ CG_SoundParseSounds
 static void CG_SoundParseSounds(char *filename, char *buffer)
 {
 	char               *token, **text;
-	int                s;
 	long               hash;
 	soundScript_t      sound;           // the current sound being read
 	soundScriptSound_t *scriptSound = NULL;
 	qboolean           inSound, wantSoundName;
 
-	s             = 0;
 	inSound       = qfalse;
 	wantSoundName = qtrue;
 	text          = &buffer;
@@ -403,7 +401,6 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 			// setup the new sound defaults
 			sound.channel     = CHAN_AUTO;
 			sound.attenuation = 1;  // default to fade away with distance (for streaming sounds)
-			//
 			continue;
 		}
 

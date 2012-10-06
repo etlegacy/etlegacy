@@ -378,20 +378,15 @@ static qboolean CG_RainParticleCheckVisible(cg_atmosphericParticle_t *particle)
 static void CG_RainParticleRender(cg_atmosphericParticle_t *particle)
 {
 	// Draw a raindrop
-
 	vec3_t     forward, right;
 	polyVert_t verts[3];
 	vec2_t     line;
-	float      len, frac, dist;
+	float      len, dist;
 	vec3_t     start, finish;
 	float      groundHeight;
-//  int         msec = trap_Milliseconds();
-
-//  n_rendertime++;
 
 	if (particle->active == ACT_NOT)
 	{
-//      rendertime += trap_Milliseconds() - msec;
 		return;
 	}
 
@@ -410,14 +405,12 @@ static void CG_RainParticleRender(cg_atmosphericParticle_t *particle)
 	if (start[2] <= groundHeight)
 	{
 		// Stop snow going through surfaces.
-		len  = particle->height - groundHeight + start[2];
-		frac = start[2];
+		len = particle->height - groundHeight + start[2];
 		VectorMA(start, len - particle->height, particle->deltaNormalized, start);
 	}
 
 	if (len <= 0)
 	{
-//      rendertime += trap_Milliseconds() - msec;
 		return;
 	}
 
@@ -440,8 +433,6 @@ static void CG_RainParticleRender(cg_atmosphericParticle_t *particle)
 	VectorScale(cg.refdef_current->viewaxis[1], line[1], right);
 	VectorMA(right, -line[0], cg.refdef_current->viewaxis[2], right);
 	VectorNormalize(right);
-
-	// dist = 1.0;
 
 	VectorCopy(finish, verts[0].xyz);
 	verts[0].st[0]       = 0.5f;
@@ -468,8 +459,6 @@ static void CG_RainParticleRender(cg_atmosphericParticle_t *particle)
 	verts[2].modulate[3] = 200 * dist;
 
 	CG_AddPolyToPool(*particle->effectshader, verts);
-
-//  rendertime += trap_Milliseconds() - msec;
 }
 
 /*
@@ -588,20 +577,15 @@ static qboolean CG_SnowParticleCheckVisible(cg_atmosphericParticle_t *particle)
 static void CG_SnowParticleRender(cg_atmosphericParticle_t *particle)
 {
 	// Draw a snowflake
-
 	vec3_t     forward, right;
 	polyVert_t verts[3];
 	vec2_t     line;
-	float      len, frac, sinTumbling, cosTumbling, particleWidth, dist;
+	float      len, sinTumbling, cosTumbling, particleWidth, dist;
 	vec3_t     start, finish;
 	float      groundHeight;
-//  int         msec = trap_Milliseconds();
-
-//  n_rendertime++;
 
 	if (particle->active == ACT_NOT)
 	{
-//      rendertime += trap_Milliseconds() - msec;
 		return;
 	}
 
@@ -623,14 +607,12 @@ static void CG_SnowParticleRender(cg_atmosphericParticle_t *particle)
 	if (start[2] <= groundHeight)
 	{
 		// Stop snow going through surfaces.
-		len  = particle->height - groundHeight + start[2];
-		frac = start[2];
+		len = particle->height - groundHeight + start[2];
 		VectorMA(start, len - particle->height, particle->deltaNormalized, start);
 	}
 
 	if (len <= 0)
 	{
-//      rendertime += trap_Milliseconds() - msec;
 		return;
 	}
 
@@ -687,8 +669,6 @@ static void CG_SnowParticleRender(cg_atmosphericParticle_t *particle)
 	verts[2].modulate[3] = 255;
 
 	CG_AddPolyToPool(*particle->effectshader, verts);
-
-//  rendertime += trap_Milliseconds() - msec;
 }
 
 /*

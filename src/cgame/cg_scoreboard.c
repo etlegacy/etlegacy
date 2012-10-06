@@ -59,8 +59,8 @@ WM_DrawObjectives
 int WM_DrawObjectives(int x, int y, int width, float fade)
 {
 	const char *s, *str;
-	int        tempy, rows;
-	int        msec, mins, seconds, tens; // JPW NERVE
+	int        rows;
+	int        msec, mins, seconds, tens;
 	vec4_t     tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
@@ -147,11 +147,10 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		}
 		return y;
 	}
-// JPW NERVE -- mission time & reinforce time
+	// mission time & reinforce time
 	else
 	{
-		tempy = y;
-		rows  = 1;
+		rows = 1;
 
 		CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBack);
 		CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBar);
@@ -218,8 +217,6 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				CG_Text_Paint_Ext(640 - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1), y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 			}
 		}
-
-		// NERVE - SMF
 		if (cgs.gametype == GT_WOLF_STOPWATCH)
 		{
 			int w;
@@ -248,8 +245,6 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		y += SMALLCHAR_HEIGHT * 2;
 	}
-// jpw
-
 	return y;
 }
 
@@ -619,14 +614,13 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 {
 	vec4_t   hcolor;
 	float    tempx, tempy;
-	int      height, width;
+	int      width;
 	int      i;
 	int      count          = 0;
 	qboolean use_mini_chars = qfalse;
 	vec4_t   tclr           = { 0.6f, 0.6f, 0.6f, 1.0f };
 
-	height = SMALLCHAR_HEIGHT * maxrows;
-	width  = INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
+	width = INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
 
 	CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBack);
 	CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBar);

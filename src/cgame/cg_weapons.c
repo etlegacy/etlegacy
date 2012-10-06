@@ -4798,9 +4798,6 @@ CG_LastWeaponUsed_f
 */
 void CG_LastWeaponUsed_f(void)
 {
-	int lastweap;
-
-	//fretn - #447
 	//osp-rtcw & et pause bug
 	if (cg.snap->ps.pm_type == PM_FREEZE)
 	{
@@ -4833,7 +4830,6 @@ void CG_LastWeaponUsed_f(void)
 
 	if (CG_WeaponSelectable(cg.switchbackWeapon))
 	{
-		lastweap = cg.weaponSelect;
 		CG_FinishWeaponChange(cg.weaponSelect, cg.switchbackWeapon);
 	}
 	else        // switchback no longer selectable, reset cycle
@@ -6107,7 +6103,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	qhandle_t     mod, mark, shader;
 	sfxHandle_t   sfx, sfx2;
 	localEntity_t *le;
-	qboolean      isSprite, alphaFade = qfalse;
+	qboolean      isSprite;
 	int           r, duration, lightOverdraw, i, j, markDuration, volume;
 	trace_t       trace;
 	vec3_t        lightColor, tmpv, tmpv2, sprOrg, sprVel;
@@ -6260,36 +6256,30 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			{
 				// mark and sound can potentially use the surface for override values
 
-				mark      = cgs.media.bulletMarkShader; // default
-				alphaFade = qtrue;      // max made the bullet mark alpha (he'll make everything in the game out of 1024 textures, all with alpha blend funcs yet...)
-				//% radius = 1.5f + rand()%2;   // slightly larger for DM
+				mark   = cgs.media.bulletMarkShader;    // default
 				radius = 1.0f + 0.5f * (rand() % 2);
 
 #define MAX_IMPACT_SOUNDS 5
 				if (surfFlags & SURF_METAL || surfFlags & SURF_ROOF)
 				{
-					sfx       = cgs.media.sfx_bullet_metalhit[rand() % MAX_IMPACT_SOUNDS];
-					mark      = cgs.media.bulletMarkShaderMetal;
-					alphaFade = qtrue;
+					sfx  = cgs.media.sfx_bullet_metalhit[rand() % MAX_IMPACT_SOUNDS];
+					mark = cgs.media.bulletMarkShaderMetal;
 				}
 				else if (surfFlags & SURF_WOOD)
 				{
-					sfx       = cgs.media.sfx_bullet_woodhit[rand() % MAX_IMPACT_SOUNDS];
-					mark      = cgs.media.bulletMarkShaderWood;
-					alphaFade = qtrue;
-					radius   += 0.4f; // experimenting with different mark sizes per surface
+					sfx     = cgs.media.sfx_bullet_woodhit[rand() % MAX_IMPACT_SOUNDS];
+					mark    = cgs.media.bulletMarkShaderWood;
+					radius += 0.4f;   // experimenting with different mark sizes per surface
 				}
 				else if (surfFlags & SURF_GLASS)
 				{
-					sfx       = cgs.media.sfx_bullet_glasshit[rand() % MAX_IMPACT_SOUNDS];
-					mark      = cgs.media.bulletMarkShaderGlass;
-					alphaFade = qtrue;
+					sfx  = cgs.media.sfx_bullet_glasshit[rand() % MAX_IMPACT_SOUNDS];
+					mark = cgs.media.bulletMarkShaderGlass;
 				}
 				else
 				{
-					sfx       = cgs.media.sfx_bullet_stonehit[rand() % MAX_IMPACT_SOUNDS];
-					mark      = cgs.media.bulletMarkShader;
-					alphaFade = qtrue;
+					sfx  = cgs.media.sfx_bullet_stonehit[rand() % MAX_IMPACT_SOUNDS];
+					mark = cgs.media.bulletMarkShader;
 				}
 
 				// ydnar: set mark duration
@@ -6897,7 +6887,6 @@ void CG_Tracer(vec3_t source, vec3_t dest, int sparks)
 {
 	float len, begin, end;
 	vec3_t start, finish;
-	vec3_t midpoint;
 	vec3_t forward;
 
 	// tracer
@@ -6919,10 +6908,6 @@ void CG_Tracer(vec3_t source, vec3_t dest, int sparks)
 	VectorMA(source, end, forward, finish);
 
 	CG_DrawTracer(start, finish);
-
-	midpoint[0] = (start[0] + finish[0]) * 0.5;
-	midpoint[1] = (start[1] + finish[1]) * 0.5;
-	midpoint[2] = (start[2] + finish[2]) * 0.5;
 }
 
 

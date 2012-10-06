@@ -193,7 +193,7 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 	int           i, j, k;
 	float         totalSpeed;
 	int           numSpeed;
-	int           lastLow, low;
+	int           low;
 	orientation_t o[2];
 
 	memset(&refent, 0, sizeof(refent));
@@ -210,7 +210,6 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 		}
 
 		totalSpeed = 0;
-		lastLow    = -1;
 		numSpeed   = 0;
 
 		// for each frame
@@ -263,7 +262,6 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 			{
 				VectorCopy(o[k].origin, oldPos[k]);
 			}
-			lastLow = low;
 		}
 
 		// record the speed

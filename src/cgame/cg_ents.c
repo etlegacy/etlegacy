@@ -150,7 +150,6 @@ void CG_AddLightstyle(centity_t *cent)
 	int   r, g, b;
 	int   stringlength;
 	float offset;
-	int   offsetwhole;
 	int   otime;
 	int   lastch, nextch;
 
@@ -170,13 +169,9 @@ void CG_AddLightstyle(centity_t *cent)
 		cent->dl_backlerp = 0;
 	}
 
-	cent->dl_time = cg.time;
-
-	offset      = ((float)otime) / LS_FRAMETIME;
-	offsetwhole = (int)offset;
-
+	cent->dl_time      = cg.time;
+	offset             = ((float)otime) / LS_FRAMETIME;
 	cent->dl_backlerp += offset;
-
 
 	if (cent->dl_backlerp > 1)                         // we're moving on to the next frame
 	{
@@ -199,13 +194,12 @@ void CG_AddLightstyle(centity_t *cent)
 		cent->dl_backlerp = cent->dl_backlerp - (int)cent->dl_backlerp;
 	}
 
-
 	lastch = cent->dl_stylestring[cent->dl_oldframe] - 'a';
 	nextch = cent->dl_stylestring[cent->dl_frame] - 'a';
 
 	lightval = (lastch * (1.0 - cent->dl_backlerp)) + (nextch * cent->dl_backlerp);
 
-	// ydnar: dlight values go from 0-1.5ish
+	// dlight values go from 0-1.5ish
 #if 0
 	lightval = (lightval * (1000.0f / 24.0f)) - 200.0f;     // they want 'm' as the "middle" value as 300
 	lightval = MAX(0.0f, lightval);
@@ -221,9 +215,7 @@ void CG_AddLightstyle(centity_t *cent)
 	g  = (cl >> 8) & 255;
 	b  = (cl >> 16) & 255;
 
-	//% trap_R_AddLightToScene( cent->lerpOrigin, lightval, 1.0, (float)r/255.0f, (float)g/255.0f, (float)b/255.0f, 0, 0 ); // overdraw forced to 0 for now
-
-	// ydnar: if the dlight has angles, then it is a directional global dlight
+	// if the dlight has angles, then it is a directional global dlight
 	if (cent->currentState.angles[0] || cent->currentState.angles[1] || cent->currentState.angles[2])
 	{
 		vec3_t normal;
@@ -241,8 +233,7 @@ void CG_AddLightstyle(centity_t *cent)
 	}
 }
 
-
-void CG_GetWindVector(vec3_t dir);   // JPW NERVE
+void CG_GetWindVector(vec3_t dir);
 
 /*
 ==================

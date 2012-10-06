@@ -3673,7 +3673,7 @@ static void CG_DrawObjectiveInfo(void)
 {
 	char   *start;
 	int    l;
-	int    x, y, w, h;
+	int    x, y, w;
 	int    x1, y1, x2, y2;
 	float  *color;
 	vec4_t backColor;
@@ -3698,14 +3698,11 @@ static void CG_DrawObjectiveInfo(void)
 
 	start = cg.oidPrint;
 
-// JPW NERVE
-	//  y = cg.oidPrintY - cg.oidPrintLines * BIGCHAR_HEIGHT / 2;
 	y = 400 - cg.oidPrintLines * BIGCHAR_HEIGHT / 2;
 
 	x1 = 319;
 	y1 = y - 2;
 	x2 = 321;
-// jpw
 
 	// first just find the bounding rect
 	while (1)
@@ -3723,19 +3720,15 @@ static void CG_DrawObjectiveInfo(void)
 		linebuffer[l] = 0;
 
 		w = cg.oidPrintCharWidth * CG_DrawStrlen(linebuffer) + 10;
-// JPW NERVE
+
 		if (320 - w / 2 < x1)
 		{
 			x1 = 320 - w / 2;
 			x2 = 320 + w / 2;
 		}
 
-		/*
-		        if ( x1 + w > x2 )
-		            x2 = x1 + w;
-		*/
 		x = 320 - w / 2;
-// jpw
+
 		y += cg.oidPrintCharWidth * 1.5;
 
 		while (*start && (*start != '\n'))
@@ -3752,8 +3745,6 @@ static void CG_DrawObjectiveInfo(void)
 	x2 = x2 + 4;
 	y2 = y - cg.oidPrintCharWidth * 1.5 + 4;
 
-	h = y2 - y1; // JPW NERVE
-
 	VectorCopy(color, backColor);
 	backColor[3] = 0.5 * color[3];
 	trap_R_SetColor(backColor);
@@ -3767,8 +3758,7 @@ static void CG_DrawObjectiveInfo(void)
 
 	// do the actual drawing
 	start = cg.oidPrint;
-//  y = cg.oidPrintY - cg.oidPrintLines * BIGCHAR_HEIGHT / 2;
-	y = 400 - cg.oidPrintLines * BIGCHAR_HEIGHT / 2; // JPW NERVE
+	y     = 400 - cg.oidPrintLines * BIGCHAR_HEIGHT / 2;
 
 
 	while (1)
@@ -3791,7 +3781,7 @@ static void CG_DrawObjectiveInfo(void)
 			x2 = x1 + w;
 		}
 
-		x = 320 - w / 2; // JPW NERVE
+		x = 320 - w / 2;
 
 		CG_DrawStringExt(x, y, linebuffer, color, qfalse, qtrue,
 		                 cg.oidPrintCharWidth, (int)(cg.oidPrintCharWidth * 1.5), 0);

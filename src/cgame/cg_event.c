@@ -1562,7 +1562,6 @@ pass:
 
 }
 
-
 /*
 ==============
 CG_Effect
@@ -1707,11 +1706,6 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		             7 + rand() % 2);   // count
 	}
 }
-
-
-
-
-
 
 /*
 CG_Shard
@@ -1882,14 +1876,10 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 
 }
 
-
 void CG_ShardJunk(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le;
 	refEntity_t   *re;
-	int           type;
-
-	type = cent->currentState.density;
 
 	le = CG_AllocLocalEntity();
 	re = &le->refEntity;
@@ -1935,14 +1925,11 @@ void CG_ShardJunk(centity_t *cent, vec3_t origin, vec3_t dir)
 
 }
 
-// Gordon: debris test
+// debris test
 void CG_Debris(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le;
 	refEntity_t   *re;
-	int           type;
-
-	type = cent->currentState.density;
 
 	le = CG_AllocLocalEntity();
 	re = &le->refEntity;
@@ -1981,12 +1968,6 @@ void CG_Debris(centity_t *cent, vec3_t origin, vec3_t dir)
 	le->angles.trDelta[2] = (50 + (rand() & 400)) - 100;
 	le->angles.trDelta[2] = (50 + (rand() & 400)) - 100;
 }
-// ===================
-
-//void CG_BatDeath( centity_t *cent )
-//{
-//  CG_ParticleExplosion( "blood", cent->lerpOrigin, vec3_origin, 400, 20, 30, qfalse );
-//}
 
 void CG_MortarImpact(centity_t *cent, vec3_t origin, int sfx, qboolean dist)
 {
