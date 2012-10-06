@@ -2656,8 +2656,8 @@ int Item_Slider_OverSlider(itemDef_t *item, float x, float y)
 
 int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 {
-	rectDef_t    r;
-	int          thumbstart;
+	rectDef_t r;
+	int       thumbstart;
 
 	if (item->window.flags & WINDOW_HORIZONTAL)
 	{

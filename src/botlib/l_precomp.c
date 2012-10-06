@@ -1812,22 +1812,22 @@ int PC_OperatorPriority(int op)
 #define MAX_VALUES      64
 #define MAX_OPERATORS   64
 #define AllocValue(val)                                 \
-    if (numvalues >= MAX_VALUES) {                      \
+	if (numvalues >= MAX_VALUES) {                      \
 		SourceError(source, "out of value space\n");      \
 		error = 1;                                      \
 		break;                                          \
 	}                                                   \
-    else { \
+	else { \
 		val = &value_heap[numvalues++]; }
 #define FreeValue(val)
 //
 #define AllocOperator(op)                               \
-    if (numoperators >= MAX_OPERATORS) {                \
+	if (numoperators >= MAX_OPERATORS) {                \
 		SourceError(source, "out of operator space\n");   \
 		error = 1;                                      \
 		break;                                          \
 	}                                                   \
-    else { \
+	else { \
 		op = &operator_heap[numoperators++]; }
 #define FreeOperator(op)
 

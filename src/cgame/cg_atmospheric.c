@@ -261,7 +261,7 @@ static qboolean CG_RainParticleGenerate(cg_atmosphericParticle_t *particle, vec3
 //  n_generatetime++;
 
 	angle    = random() * 2 * M_PI;
-	distance = 20 + MAX_ATMOSPHERIC_DISTANCE *random();
+	distance = 20 + MAX_ATMOSPHERIC_DISTANCE * random();
 
 	particle->pos[0] = cg.refdef_current->vieworg[0] + sin(angle) * distance;
 	particle->pos[1] = cg.refdef_current->vieworg[1] + cos(angle) * distance;
@@ -487,7 +487,7 @@ static qboolean CG_SnowParticleGenerate(cg_atmosphericParticle_t *particle, vec3
 //  n_generatetime++;
 
 	angle    = random() * 2 * M_PI;
-	distance = 20 + MAX_ATMOSPHERIC_DISTANCE *random();
+	distance = 20 + MAX_ATMOSPHERIC_DISTANCE * random();
 
 	particle->pos[0] = cg.refdef_current->vieworg[0] + sin(angle) * distance;
 	particle->pos[1] = cg.refdef_current->vieworg[1] + cos(angle) * distance;

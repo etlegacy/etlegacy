@@ -432,11 +432,11 @@ const char *UI_DownloadInfo(const char *downloadName)
 
 void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 {
-	uiClientState_t    cstate;
-	char               downloadName[MAX_INFO_VALUE];
-	char               buff[2560];
-	char               *p, *s = "";
-	float              y;
+	uiClientState_t cstate;
+	char            downloadName[MAX_INFO_VALUE];
+	char            buff[2560];
+	char            *p, *s = "";
+	float           y;
 
 	trap_GetClientState(&cstate);
 

@@ -386,7 +386,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 	char          *list[MAX_FOUND_FILES];
 	int           i;
 	struct stat   st;
-	int 		  extLen;
+	int           extLen;
 
 	if (filter)
 	{

@@ -4490,7 +4490,7 @@ void UI_RunMenuScript(char **args)
 
 		if (Q_stricmp(name, "StartServer") == 0)
 		{
-			int   pb_sv, pb_cl;
+			int pb_sv, pb_cl;
 
 			// DHM - Nerve
 			if (!ui_dedicated.integer)

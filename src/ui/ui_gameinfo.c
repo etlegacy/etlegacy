@@ -745,4 +745,3 @@ void UI_LoadCampaigns(void)
 	// Sorting the campaign list
 	qsort(uiInfo.campaignList, uiInfo.campaignCount, sizeof(uiInfo.campaignList[0]), UI_SortCampaigns);
 }
-

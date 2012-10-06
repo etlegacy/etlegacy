@@ -3280,7 +3280,7 @@ Com_Frame
 */
 void Com_Frame(void)
 {
-	int msec, minMsec;
+	int        msec, minMsec;
 	static int lastTime;
 
 	int timeBeforeFirstEvents;

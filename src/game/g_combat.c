@@ -847,7 +847,7 @@ qboolean IsHeadShotWeapon(int mod)
 
 gentity_t *G_BuildHead(gentity_t *ent)
 {
-	gentity_t *head;
+	gentity_t     *head;
 	orientation_t or;           // DHM - Nerve
 
 	head = G_Spawn();
@@ -1325,52 +1325,52 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		// 512 Satchel only
 		if ((targ->spawnflags & 32) || (targ->spawnflags & 64) || (targ->spawnflags & 256) || (targ->spawnflags & 512))
 		{
-		    switch (mod)
-		    {
-		    case MOD_GRENADE:
-		    case MOD_GRENADE_LAUNCHER:
-		    case MOD_ROCKET:
-		    case MOD_GRENADE_PINEAPPLE:
-		    case MOD_MAPMORTAR:
-		    case MOD_EXPLOSIVE:
-		    case MOD_LANDMINE:
-		    case MOD_GPG40:
-		    case MOD_M7:
-		        if (!(targ->spawnflags & 32))
-		        {
-		            return;
-		        }
-		        break;
-		    case MOD_SATCHEL:
-		        if (!(targ->spawnflags & 512))
-		        {
-		            return;
-		        }
-		        break;
-		    case MOD_ARTY:
-		    case MOD_AIRSTRIKE:
-		        if (!(targ->spawnflags & 256))
-		        {
-		            return;
-		        }
-		        break;
-		    case MOD_DYNAMITE:
-		        if (!(targ->spawnflags & 64))
-		        {
-		            return;
-		        }
-		        break;
-		    default:
-		        return;
-		    }
+			switch (mod)
+			{
+			case MOD_GRENADE:
+			case MOD_GRENADE_LAUNCHER:
+			case MOD_ROCKET:
+			case MOD_GRENADE_PINEAPPLE:
+			case MOD_MAPMORTAR:
+			case MOD_EXPLOSIVE:
+			case MOD_LANDMINE:
+			case MOD_GPG40:
+			case MOD_M7:
+				if (!(targ->spawnflags & 32))
+				{
+					return;
+				}
+				break;
+			case MOD_SATCHEL:
+				if (!(targ->spawnflags & 512))
+				{
+					return;
+				}
+				break;
+			case MOD_ARTY:
+			case MOD_AIRSTRIKE:
+				if (!(targ->spawnflags & 256))
+				{
+					return;
+				}
+				break;
+			case MOD_DYNAMITE:
+				if (!(targ->spawnflags & 64))
+				{
+					return;
+				}
+				break;
+			default:
+				return;
+			}
 
-		    // check for team
-		    if (targ->s.teamNum == inflictor->s.teamNum)
-		    {
-		        return;
-		    }
+			// check for team
+			if (targ->s.teamNum == inflictor->s.teamNum)
+			{
+				return;
+			}
 		}
-		*/
+		* /
 
 		if (targ->parent && G_GetWeaponClassForMOD(mod) == 2)
 		{

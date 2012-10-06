@@ -588,7 +588,7 @@ void FS_CopyFile(char *fromOSPath, char *toOSPath)
 static void FS_CheckFilenameIsNotExecutable(const char *filename, const char *function)
 {
 	// Check if the filename ends with the library extension
-	if(!Q_stricmp( COM_GetExtension( filename ), DLL_EXT ))
+	if (!Q_stricmp(COM_GetExtension(filename), DLL_EXT))
 	{
 		Com_Error(ERR_FATAL, "%s: Not allowed to manipulate '%s' due "
 		                     "to %s extension\n", function, filename, DLL_EXT);

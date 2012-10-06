@@ -44,12 +44,12 @@
 #define PERS_SCORE              0       // !!! MUST NOT CHANGE, SERVER AND
                                         // GAME BOTH REFERENCE !!!
 // advert control
-#define SVA_MASTER   	0x0001  // 1  - master server
-#define SVA_TRACKBASE 	0x0002 	// 2  - trackbase
+#define SVA_MASTER      0x0001  // 1  - master server
+#define SVA_TRACKBASE   0x0002  // 2  - trackbase
 
 // server attack protection
-#define SVP_IOQ3 		0x0001  // 1  - ioQuake3 way
-#define SVP_OWOLF		0x0002  // 2  - OpenWolf way
+#define SVP_IOQ3        0x0001  // 1  - ioQuake3 way
+#define SVP_OWOLF       0x0002  // 2  - OpenWolf way
 
 #define MAX_ENT_CLUSTERS    16
 
@@ -467,7 +467,7 @@ void        SV_InitGameProgs(void);
 void        SV_ShutdownGameProgs(void);
 void        SV_RestartGameProgs(void);
 qboolean    SV_inPVS(const vec3_t p1, const vec3_t p2);
-qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t * or);
+qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *or);
 int         SV_LoadTag(const char *mod_name);
 
 void        SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int commandTime);

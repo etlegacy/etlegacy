@@ -190,8 +190,8 @@ static qboolean IN_IsConsoleKey(keyNum_t key, const unsigned char character)
 	if (cl_consoleKeys->modified)
 	{
 		consoleKey_t *c;
-		char *text_p, *token;
-		int charCode;
+		char         *text_p, *token;
+		int          charCode;
 
 
 		cl_consoleKeys->modified = qfalse;
@@ -200,7 +200,7 @@ static qboolean IN_IsConsoleKey(keyNum_t key, const unsigned char character)
 
 		while (numConsoleKeys < MAX_CONSOLE_KEYS)
 		{
-			c = &consoleKeys[numConsoleKeys];
+			c        = &consoleKeys[numConsoleKeys];
 			charCode = 0;
 
 			token = COM_Parse(&text_p);
@@ -1077,7 +1077,7 @@ void IN_Frame(void)
 	IN_ProcessEvents();
 
 	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
-	loading = !!(cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
+	loading    = !!(cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
 	fullscreen = Cvar_VariableIntegerValue("r_fullscreen");
 
 	if (!fullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))

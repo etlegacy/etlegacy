@@ -107,4 +107,3 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 
 	SDL_SetGammaRamp(table[0], table[1], table[2]);
 }
-

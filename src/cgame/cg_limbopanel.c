@@ -165,7 +165,7 @@ panel_button_t rightLimboPannel =
 #define MEDAL_PIC_X     450.f
 #define MEDAL_PIC_SIZE  (630.f - MEDAL_PIC_X)
 #define MEDAL_PIC(number)                \
-    panel_button_t medalPic ## number = {         \
+	panel_button_t medalPic ## number = {         \
 		NULL,                                   \
 		NULL,                                   \
 		{ MEDAL_PIC_X + MEDAL_PIC_GAP + (number * (MEDAL_PIC_GAP + MEDAL_PIC_WIDTH)),119,                                                                         MEDAL_PIC_WIDTH, 26 }, \
@@ -195,7 +195,7 @@ MEDAL_PIC(6);
 #define TEAM_COUNTER_SPACING    4.f
 
 #define TEAM_COUNTER(number)             \
-    panel_button_t teamCounter ## number = {      \
+	panel_button_t teamCounter ## number = {      \
 		NULL,                                   \
 		NULL,                                   \
 		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + (number * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH)),236,                                                                                     TEAM_COUNTER_WIDTH, 14 },  \
@@ -206,7 +206,7 @@ MEDAL_PIC(6);
 		CG_LimboPanel_RenderCounter,            \
 		NULL,                                   \
 	};                                          \
-    panel_button_t teamCounterLight ## number = { \
+	panel_button_t teamCounterLight ## number = { \
 		NULL,                                   \
 		NULL,                                   \
 		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + (number * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH)) - 20,236,                                                                                          16, 16 }, \
@@ -217,7 +217,7 @@ MEDAL_PIC(6);
 		CG_LimboPanel_RenderLight,              \
 		NULL,                                   \
 	};                                          \
-    panel_button_t teamButton ## number = {       \
+	panel_button_t teamButton ## number = {       \
 		NULL,                                   \
 		NULL,                                   \
 		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + (number * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH) + (TEAM_COUNTER_BUTTON_DIFF / 2.f)) - 17 + TEAM_COUNTER_SPACING, \
@@ -244,7 +244,7 @@ TEAM_COUNTER(2);
 #define CLASS_COUNTER_LIGHT_DIFF 4.f
 #define CLASS_COUNTER_BUTTON_DIFF -18.f
 #define CLASS_COUNTER(number)            \
-    panel_button_t classCounter ## number = {     \
+	panel_button_t classCounter ## number = {     \
 		NULL,                                   \
 		NULL,                                   \
 		{ CLASS_COUNTER_X + CLASS_COUNTER_GAP + (number * (CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)),302,                                                                                         CLASS_COUNTER_WIDTH, 14 }, \
@@ -255,7 +255,7 @@ TEAM_COUNTER(2);
 		CG_LimboPanel_RenderCounter,            \
 		NULL,                                   \
 	};                                          \
-    panel_button_t classButton ## number = {      \
+	panel_button_t classButton ## number = {      \
 		NULL,                                   \
 		NULL,                                   \
 		{ CLASS_COUNTER_X + CLASS_COUNTER_GAP + (number * (CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)) + (CLASS_COUNTER_BUTTON_DIFF / 2.f),266,                                                                                                                             CLASS_COUNTER_WIDTH - CLASS_COUNTER_BUTTON_DIFF, 34 },   \
@@ -311,7 +311,7 @@ CLASS_COUNTER(3);
 CLASS_COUNTER(4);
 
 #define FILTER_BUTTON(number) \
-    panel_button_t filterButton ## number = { \
+	panel_button_t filterButton ## number = { \
 		NULL,                               \
 		NULL,                               \
 		{ 15,                      54 + (number * 31), 26, 26 },     \
@@ -346,7 +346,7 @@ panel_button_t filterTitleText =
 };
 
 #define LEFT_FRAME(shader, number, x, y, w, h) \
-    panel_button_t leftFrame0 ## number = {   \
+	panel_button_t leftFrame0 ## number = {   \
 		shader,                             \
 		NULL,                               \
 		{ x,                       y, w, h },                     \

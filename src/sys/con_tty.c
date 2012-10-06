@@ -61,9 +61,9 @@ FIXME relevant?
 */
 static void CON_FlushIn(void)
 {
-  char key;
-  while (read(STDIN_FILENO, &key, 1) != -1)
-    ;
+	char key;
+	while (read(STDIN_FILENO, &key, 1) != -1)
+		;
 }
 
 /*
@@ -77,17 +77,17 @@ send "\b \b"
 (FIXME there may be a way to find out if '\b' alone would work though)
 ==================
 */
-  static void CON_Back(void)
+static void CON_Back(void)
 {
-  char              key;
-  size_t UNUSED_VAR size;
+	char              key;
+	size_t UNUSED_VAR size;
 
-  key  = '\b';
-  size = write(STDOUT_FILENO, &key, 1);
-  key  = ' ';
-  size = write(STDOUT_FILENO, &key, 1);
-  key  = '\b';
-  size = write(STDOUT_FILENO, &key, 1);
+	key  = '\b';
+	size = write(STDOUT_FILENO, &key, 1);
+	key  = ' ';
+	size = write(STDOUT_FILENO, &key, 1);
+	key  = '\b';
+	size = write(STDOUT_FILENO, &key, 1);
 }
 
 /*
@@ -100,28 +100,28 @@ bring cursor back to beginning of line
 */
 static void CON_Hide(void)
 {
-  if (ttycon_on)
-    {
-      int i;
-      if (ttycon_hide)
+	if (ttycon_on)
 	{
-	  ttycon_hide++;
-	  return;
+		int i;
+		if (ttycon_hide)
+		{
+			ttycon_hide++;
+			return;
+		}
+		if (TTY_con.cursor > 0)
+		{
+			for (i = 0; i < TTY_con.cursor; i++)
+			{
+				CON_Back();
+			}
+		}
+		// Delete prompt
+		for (i = strlen(TTY_CONSOLE_PROMPT); i > 0; i--)
+		{
+			CON_Back();
+		}
+		ttycon_hide++;
 	}
-      if (TTY_con.cursor > 0)
-	{
-	  for (i = 0; i < TTY_con.cursor; i++)
-	    {
-	      CON_Back();
-	    }
-	}
-      // Delete prompt
-      for (i = strlen(TTY_CONSOLE_PROMPT); i > 0; i--)
-	{
-	  CON_Back();
-	}
-      ttycon_hide++;
-    }
 }
 
 /*
@@ -134,25 +134,25 @@ FIXME need to position the cursor if needed?
 */
 static void CON_Show(void)
 {
-  if (ttycon_on)
-    {
-      int i;
-
-      assert(ttycon_hide > 0);
-      ttycon_hide--;
-      if (ttycon_hide == 0)
+	if (ttycon_on)
 	{
-	  size_t UNUSED_VAR size;
-	  size = write(STDOUT_FILENO, TTY_CONSOLE_PROMPT, strlen(TTY_CONSOLE_PROMPT));
-	  if (TTY_con.cursor)
-	    {
-	      for (i = 0; i < TTY_con.cursor; i++)
+		int i;
+
+		assert(ttycon_hide > 0);
+		ttycon_hide--;
+		if (ttycon_hide == 0)
 		{
-		  size = write(STDOUT_FILENO, TTY_con.buffer + i, 1);
+			size_t UNUSED_VAR size;
+			size = write(STDOUT_FILENO, TTY_CONSOLE_PROMPT, strlen(TTY_CONSOLE_PROMPT));
+			if (TTY_con.cursor)
+			{
+				for (i = 0; i < TTY_con.cursor; i++)
+				{
+					size = write(STDOUT_FILENO, TTY_con.buffer + i, 1);
+				}
+			}
 		}
-	    }
 	}
-    }
 }
 
 /*
@@ -164,14 +164,14 @@ Never exit without calling this, or your terminal will be left in a pretty bad s
 */
 void CON_Shutdown(void)
 {
-  if (ttycon_on)
-    {
-      CON_Hide();
-      tcsetattr(STDIN_FILENO, TCSADRAIN, &TTY_tc);
-    }
+	if (ttycon_on)
+	{
+		CON_Hide();
+		tcsetattr(STDIN_FILENO, TCSADRAIN, &TTY_tc);
+	}
 
-  // Restore blocking to stdin reads
-  fcntl(STDIN_FILENO, F_SETFL, fcntl(STDIN_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
+	// Restore blocking to stdin reads
+	fcntl(STDIN_FILENO, F_SETFL, fcntl(STDIN_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
 }
 
 /*
@@ -181,30 +181,30 @@ Hist_Add
 */
 void Hist_Add(field_t *field)
 {
-  int i;
+	int i;
 
-  // Don't save blank lines in history.
-  if (!field->cursor)
-    {
-      return;
-    }
+	// Don't save blank lines in history.
+	if (!field->cursor)
+	{
+		return;
+	}
 
 
-  assert(hist_count <= CON_HISTORY);
-  assert(hist_count >= 0);
-  assert(hist_current >= -1);
-  assert(hist_current <= hist_count);
-  // make some room
-  for (i = CON_HISTORY - 1; i > 0; i--)
-    {
-      ttyEditLines[i] = ttyEditLines[i - 1];
-    }
-  ttyEditLines[0] = *field;
-  if (hist_count < CON_HISTORY)
-    {
-      hist_count++;
-    }
-  hist_current = -1; // re-init
+	assert(hist_count <= CON_HISTORY);
+	assert(hist_count >= 0);
+	assert(hist_current >= -1);
+	assert(hist_current <= hist_count);
+	// make some room
+	for (i = CON_HISTORY - 1; i > 0; i--)
+	{
+		ttyEditLines[i] = ttyEditLines[i - 1];
+	}
+	ttyEditLines[0] = *field;
+	if (hist_count < CON_HISTORY)
+	{
+		hist_count++;
+	}
+	hist_current = -1; // re-init
 }
 
 /*
@@ -214,18 +214,18 @@ Hist_Prev
 */
 field_t *Hist_Prev(void)
 {
-  int hist_prev;
-  assert(hist_count <= CON_HISTORY);
-  assert(hist_count >= 0);
-  assert(hist_current >= -1);
-  assert(hist_current <= hist_count);
-  hist_prev = hist_current + 1;
-  if (hist_prev >= hist_count)
-    {
-      return NULL;
-    }
-  hist_current++;
-  return &(ttyEditLines[hist_current]);
+	int hist_prev;
+	assert(hist_count <= CON_HISTORY);
+	assert(hist_count >= 0);
+	assert(hist_current >= -1);
+	assert(hist_current <= hist_count);
+	hist_prev = hist_current + 1;
+	if (hist_prev >= hist_count)
+	{
+		return NULL;
+	}
+	hist_current++;
+	return &(ttyEditLines[hist_current]);
 }
 
 /*
@@ -235,19 +235,19 @@ Hist_Next
 */
 field_t *Hist_Next(void)
 {
-  assert(hist_count <= CON_HISTORY);
-  assert(hist_count >= 0);
-  assert(hist_current >= -1);
-  assert(hist_current <= hist_count);
-  if (hist_current >= 0)
-    {
-      hist_current--;
-    }
-  if (hist_current == -1)
-    {
-      return NULL;
-    }
-  return &(ttyEditLines[hist_current]);
+	assert(hist_count <= CON_HISTORY);
+	assert(hist_count >= 0);
+	assert(hist_current >= -1);
+	assert(hist_current <= hist_count);
+	if (hist_current >= 0)
+	{
+		hist_current--;
+	}
+	if (hist_current == -1)
+	{
+		return NULL;
+	}
+	return &(ttyEditLines[hist_current]);
 }
 
 /*
@@ -260,7 +260,7 @@ set attributes if user did CTRL+Z and then does fg again.
 
 void CON_SigCont(int signum)
 {
-  CON_Init();
+	CON_Init();
 }
 
 /*
@@ -272,54 +272,54 @@ Initialize the console input (tty mode if possible)
 */
 void CON_Init(void)
 {
-  struct termios tc;
+	struct termios tc;
 
-  // If the process is backgrounded (running non interactively)
-  // then SIGTTIN or SIGTOU is emitted, if not caught, turns into a SIGSTP
-  signal(SIGTTIN, SIG_IGN);
-  signal(SIGTTOU, SIG_IGN);
+	// If the process is backgrounded (running non interactively)
+	// then SIGTTIN or SIGTOU is emitted, if not caught, turns into a SIGSTP
+	signal(SIGTTIN, SIG_IGN);
+	signal(SIGTTOU, SIG_IGN);
 
-  // If SIGCONT is received, reinitialize console
-  signal(SIGCONT, CON_SigCont);
+	// If SIGCONT is received, reinitialize console
+	signal(SIGCONT, CON_SigCont);
 
-  // Make stdin reads non-blocking
-  fcntl(STDIN_FILENO, F_SETFL, fcntl(STDIN_FILENO, F_GETFL, 0) | O_NONBLOCK);
+	// Make stdin reads non-blocking
+	fcntl(STDIN_FILENO, F_SETFL, fcntl(STDIN_FILENO, F_GETFL, 0) | O_NONBLOCK);
 
-  if (!stdinIsATTY)
-    {
-      Com_Printf("tty console mode disabled\n");
-      ttycon_on    = qfalse;
-      stdin_active = qtrue;
-      return;
-    }
+	if (!stdinIsATTY)
+	{
+		Com_Printf("tty console mode disabled\n");
+		ttycon_on    = qfalse;
+		stdin_active = qtrue;
+		return;
+	}
 
-  Field_Clear(&TTY_con);
-  tcgetattr(STDIN_FILENO, &TTY_tc);
-  TTY_erase = TTY_tc.c_cc[VERASE];
-  TTY_eof   = TTY_tc.c_cc[VEOF];
-  tc        = TTY_tc;
+	Field_Clear(&TTY_con);
+	tcgetattr(STDIN_FILENO, &TTY_tc);
+	TTY_erase = TTY_tc.c_cc[VERASE];
+	TTY_eof   = TTY_tc.c_cc[VEOF];
+	tc        = TTY_tc;
 
-  /*
-    ECHO: don't echo input characters
-    ICANON: enable canonical mode.  This  enables  the  special
-    characters  EOF,  EOL,  EOL2, ERASE, KILL, REPRINT,
-    STATUS, and WERASE, and buffers by lines.
-    ISIG: when any of the characters  INTR,  QUIT,  SUSP,  or
-    DSUSP are received, generate the corresponding signal
-  */
-  tc.c_lflag &= ~(ECHO | ICANON);
+	/*
+	  ECHO: don't echo input characters
+	  ICANON: enable canonical mode.  This  enables  the  special
+	  characters  EOF,  EOL,  EOL2, ERASE, KILL, REPRINT,
+	  STATUS, and WERASE, and buffers by lines.
+	  ISIG: when any of the characters  INTR,  QUIT,  SUSP,  or
+	  DSUSP are received, generate the corresponding signal
+	*/
+	tc.c_lflag &= ~(ECHO | ICANON);
 
-  /*
-    ISTRIP strip off bit 8
-    INPCK enable input parity checking
-  */
-  tc.c_iflag    &= ~(ISTRIP | INPCK);
-  tc.c_cc[VMIN]  = 1;
-  tc.c_cc[VTIME] = 0;
-  tcsetattr(STDIN_FILENO, TCSADRAIN, &tc);
-  ttycon_on   = qtrue;
-  ttycon_hide = 1; // Mark as hidden, so prompt is shown in CON_Show
-  CON_Show();
+	/*
+	  ISTRIP strip off bit 8
+	  INPCK enable input parity checking
+	*/
+	tc.c_iflag    &= ~(ISTRIP | INPCK);
+	tc.c_cc[VMIN]  = 1;
+	tc.c_cc[VTIME] = 0;
+	tcsetattr(STDIN_FILENO, TCSADRAIN, &tc);
+	ttycon_on   = qtrue;
+	ttycon_hide = 1; // Mark as hidden, so prompt is shown in CON_Show
+	CON_Show();
 }
 
 /*
@@ -329,177 +329,177 @@ CON_Input
 */
 char *CON_Input(void)
 {
-  // we use this when sending back commands
-  static char       text[MAX_EDIT_LINE];
-  int               avail;
-  char              key;
-  field_t           *history;
-  size_t UNUSED_VAR size;
+	// we use this when sending back commands
+	static char       text[MAX_EDIT_LINE];
+	int               avail;
+	char              key;
+	field_t           *history;
+	size_t UNUSED_VAR size;
 
-  if (ttycon_on)
-    {
-      avail = read(STDIN_FILENO, &key, 1);
-      if (avail != -1)
+	if (ttycon_on)
 	{
-	  // we have something
-	  // backspace?
-	  // NOTE TTimo testing a lot of values .. seems it's the only way to get it to work everywhere
-	  if ((key == TTY_erase) || (key == 127) || (key == 8))
-	    {
-	      if (TTY_con.cursor > 0)
+		avail = read(STDIN_FILENO, &key, 1);
+		if (avail != -1)
 		{
-		  TTY_con.cursor--;
-		  TTY_con.buffer[TTY_con.cursor] = '\0';
-		  CON_Back();
-		}
-	      return NULL;
-	    }
-	  // check if this is a control char
-	  if ((key) && (key) < ' ')
-	    {
-	      if (key == '\n')
-		{
+			// we have something
+			// backspace?
+			// NOTE TTimo testing a lot of values .. seems it's the only way to get it to work everywhere
+			if ((key == TTY_erase) || (key == 127) || (key == 8))
+			{
+				if (TTY_con.cursor > 0)
+				{
+					TTY_con.cursor--;
+					TTY_con.buffer[TTY_con.cursor] = '\0';
+					CON_Back();
+				}
+				return NULL;
+			}
+			// check if this is a control char
+			if ((key) && (key) < ' ')
+			{
+				if (key == '\n')
+				{
 #ifndef DEDICATED
-		  // if not in the game explicitly prepend a slash if needed
-		  if (clc.state != CA_ACTIVE && TTY_con.cursor &&
-		      TTY_con.buffer[0] != '/' && TTY_con.buffer[0] != '\\')
-		    {
-		      memmove(TTY_con.buffer + 1, TTY_con.buffer, sizeof(TTY_con.buffer) - 1);
-		      TTY_con.buffer[0] = '\\';
-		      TTY_con.cursor++;
-		    }
+					// if not in the game explicitly prepend a slash if needed
+					if (clc.state != CA_ACTIVE && TTY_con.cursor &&
+					    TTY_con.buffer[0] != '/' && TTY_con.buffer[0] != '\\')
+					{
+						memmove(TTY_con.buffer + 1, TTY_con.buffer, sizeof(TTY_con.buffer) - 1);
+						TTY_con.buffer[0] = '\\';
+						TTY_con.cursor++;
+					}
 
-		  if (TTY_con.buffer[0] == '/' || TTY_con.buffer[0] == '\\')
-		    {
-		      Q_strncpyz(text, TTY_con.buffer + 1, sizeof(text));
-		    }
-		  else if (TTY_con.cursor)
-		    {
-		      Com_sprintf(text, sizeof(text), "cmd say %s", TTY_con.buffer);
-		    }
-		  else
-		    {
-		      text[0] = '\0';
-		    }
+					if (TTY_con.buffer[0] == '/' || TTY_con.buffer[0] == '\\')
+					{
+						Q_strncpyz(text, TTY_con.buffer + 1, sizeof(text));
+					}
+					else if (TTY_con.cursor)
+					{
+						Com_sprintf(text, sizeof(text), "cmd say %s", TTY_con.buffer);
+					}
+					else
+					{
+						text[0] = '\0';
+					}
 
-		  // push it in history
-		  Hist_Add(&TTY_con);
-		  CON_Hide();
-		  Com_Printf("%s%s\n", TTY_CONSOLE_PROMPT, TTY_con.buffer);
-		  Field_Clear(&TTY_con);
-		  CON_Show();
+					// push it in history
+					Hist_Add(&TTY_con);
+					CON_Hide();
+					Com_Printf("%s%s\n", TTY_CONSOLE_PROMPT, TTY_con.buffer);
+					Field_Clear(&TTY_con);
+					CON_Show();
 #else
-		  // push it in history
-		  Hist_Add(&TTY_con);
-		  Q_strncpyz(text, TTY_con.buffer, sizeof(text));
-		  Field_Clear(&TTY_con);
-		  key  = '\n';
-		  size = write(STDOUT_FILENO, &key, 1);
-		  size = write(STDOUT_FILENO, TTY_CONSOLE_PROMPT, strlen(TTY_CONSOLE_PROMPT));
+					// push it in history
+					Hist_Add(&TTY_con);
+					Q_strncpyz(text, TTY_con.buffer, sizeof(text));
+					Field_Clear(&TTY_con);
+					key  = '\n';
+					size = write(STDOUT_FILENO, &key, 1);
+					size = write(STDOUT_FILENO, TTY_CONSOLE_PROMPT, strlen(TTY_CONSOLE_PROMPT));
 #endif
 
-		  return text;
-		}
-	      if (key == '\t')
-		{
-		  CON_Hide();
-		  Field_AutoComplete(&TTY_con);
-		  CON_Show();
-		  return NULL;
-		}
-	      avail = read(STDIN_FILENO, &key, 1);
-	      if (avail != -1)
-		{
-		  // VT 100 keys
-		  if (key == '[' || key == 'O')
-		    {
-		      avail = read(STDIN_FILENO, &key, 1);
-		      if (avail != -1)
-			{
-			  switch (key)
-			    {
-			    case 'A':
-			      history = Hist_Prev();
-			      if (history)
-				{
-				  CON_Hide();
-				  TTY_con = *history;
-				  CON_Show();
+					return text;
 				}
-			      CON_FlushIn();
-			      return NULL;
-			      break;
-			    case 'B':
-			      history = Hist_Next();
-			      CON_Hide();
-			      if (history)
+				if (key == '\t')
 				{
-				  TTY_con = *history;
+					CON_Hide();
+					Field_AutoComplete(&TTY_con);
+					CON_Show();
+					return NULL;
 				}
-			      else
+				avail = read(STDIN_FILENO, &key, 1);
+				if (avail != -1)
 				{
-				  Field_Clear(&TTY_con);
+					// VT 100 keys
+					if (key == '[' || key == 'O')
+					{
+						avail = read(STDIN_FILENO, &key, 1);
+						if (avail != -1)
+						{
+							switch (key)
+							{
+							case 'A':
+								history = Hist_Prev();
+								if (history)
+								{
+									CON_Hide();
+									TTY_con = *history;
+									CON_Show();
+								}
+								CON_FlushIn();
+								return NULL;
+								break;
+							case 'B':
+								history = Hist_Next();
+								CON_Hide();
+								if (history)
+								{
+									TTY_con = *history;
+								}
+								else
+								{
+									Field_Clear(&TTY_con);
+								}
+								CON_Show();
+								CON_FlushIn();
+								return NULL;
+								break;
+							case 'C':
+								return NULL;
+							case 'D':
+								return NULL;
+							}
+						}
+					}
 				}
-			      CON_Show();
-			      CON_FlushIn();
-			      return NULL;
-			      break;
-			    case 'C':
-			      return NULL;
-			    case 'D':
-			      return NULL;
-			    }
+				Com_DPrintf("droping ISCTL sequence: %d, TTY_erase: %d\n", key, TTY_erase);
+				CON_FlushIn();
+				return NULL;
 			}
-		    }
+			if (TTY_con.cursor >= sizeof(text) - 1)
+			{
+				return NULL;
+			}
+			// push regular character
+			TTY_con.buffer[TTY_con.cursor] = key;
+			TTY_con.cursor++; // next char will always be '\0'
+			// print the current line (this is differential)
+			size = write(STDOUT_FILENO, &key, 1);
 		}
-	      Com_DPrintf("droping ISCTL sequence: %d, TTY_erase: %d\n", key, TTY_erase);
-	      CON_FlushIn();
-	      return NULL;
-	    }
-	  if (TTY_con.cursor >= sizeof(text) - 1)
-	    {
-	      return NULL;
-	    }
-	  // push regular character
-	  TTY_con.buffer[TTY_con.cursor] = key;
-	  TTY_con.cursor++; // next char will always be '\0'
-	  // print the current line (this is differential)
-	  size = write(STDOUT_FILENO, &key, 1);
+
+		return NULL;
 	}
-
-      return NULL;
-    }
-  else if (stdin_active)
-    {
-      int            len;
-      fd_set         fdset;
-      struct timeval timeout;
-
-      FD_ZERO(&fdset);
-      FD_SET(STDIN_FILENO, &fdset); // stdin
-      timeout.tv_sec  = 0;
-      timeout.tv_usec = 0;
-      if (select(STDIN_FILENO + 1, &fdset, NULL, NULL, &timeout) == -1 || !FD_ISSET(STDIN_FILENO, &fdset))
+	else if (stdin_active)
 	{
-	  return NULL;
-	}
+		int            len;
+		fd_set         fdset;
+		struct timeval timeout;
 
-      len = read(STDIN_FILENO, text, sizeof(text));
-      if (len == 0) // eof!
-	{
-	  stdin_active = qfalse;
-	  return NULL;
-	}
+		FD_ZERO(&fdset);
+		FD_SET(STDIN_FILENO, &fdset); // stdin
+		timeout.tv_sec  = 0;
+		timeout.tv_usec = 0;
+		if (select(STDIN_FILENO + 1, &fdset, NULL, NULL, &timeout) == -1 || !FD_ISSET(STDIN_FILENO, &fdset))
+		{
+			return NULL;
+		}
 
-      if (len < 1)
-	{
-	  return NULL;
-	}
-      text[len - 1] = 0;    // rip off the /n and terminate
+		len = read(STDIN_FILENO, text, sizeof(text));
+		if (len == 0) // eof!
+		{
+			stdin_active = qfalse;
+			return NULL;
+		}
 
-      return text;
-    }
-  return NULL;
+		if (len < 1)
+		{
+			return NULL;
+		}
+		text[len - 1] = 0;  // rip off the /n and terminate
+
+		return text;
+	}
+	return NULL;
 }
 
 /*
@@ -509,44 +509,44 @@ CON_Print
 */
 void CON_Print(const char *msg)
 {
-  if (!msg[0])
-    {
-      return;
-    }
-
-  CON_Hide();
-
-  if (com_ansiColor && com_ansiColor->integer)
-    {
-      Sys_AnsiColorPrint(msg);
-    }
-  else
-    {
-      fputs(msg, stderr);
-    }
-
-  if (!ttycon_on)
-    {
-      // CON_Hide didn't do anything.
-      return;
-    }
-
-  // Only print prompt when msg ends with a newline, otherwise the console
-  //   might get garbled when output does not fit on one line.
-  if (msg[strlen(msg) - 1] == '\n')
-    {
-      CON_Show();
-
-      // Run CON_Show the number of times it was deferred.
-      while (ttycon_show_overdue > 0)
+	if (!msg[0])
 	{
-	  CON_Show();
-	  ttycon_show_overdue--;
+		return;
 	}
-    }
-  else
-    {
-      // Defer calling CON_Show
-      ttycon_show_overdue++;
-    }
+
+	CON_Hide();
+
+	if (com_ansiColor && com_ansiColor->integer)
+	{
+		Sys_AnsiColorPrint(msg);
+	}
+	else
+	{
+		fputs(msg, stderr);
+	}
+
+	if (!ttycon_on)
+	{
+		// CON_Hide didn't do anything.
+		return;
+	}
+
+	// Only print prompt when msg ends with a newline, otherwise the console
+	//   might get garbled when output does not fit on one line.
+	if (msg[strlen(msg) - 1] == '\n')
+	{
+		CON_Show();
+
+		// Run CON_Show the number of times it was deferred.
+		while (ttycon_show_overdue > 0)
+		{
+			CON_Show();
+			ttycon_show_overdue--;
+		}
+	}
+	else
+	{
+		// Defer calling CON_Show
+		ttycon_show_overdue++;
+	}
 }

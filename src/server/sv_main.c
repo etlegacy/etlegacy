@@ -94,13 +94,13 @@ cvar_t *sv_fullmsg;
 
 // do we communicate with others ?
 cvar_t *sv_advert;      // 0 - no big brothers
-						// 1 - communicate with master server
+                        // 1 - communicate with master server
                         // 2 - send trackbase infos
 
 // server attack protection
-cvar_t	*sv_protect; 	// 0 - unprotected
-						// 1 - ioquake3 method (default)
-						// 2 - OPenWolf method
+cvar_t *sv_protect;     // 0 - unprotected
+                        // 1 - ioquake3 method (default)
+                        // 2 - OPenWolf method
 
 static void SVC_Status(netadr_t from, qboolean force);
 
@@ -648,14 +648,14 @@ static qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period)
  */
 static void SVC_Status(netadr_t from, qboolean force)
 {
-	char                 player[1024];
-	char                 status[MAX_MSGLEN];
-	int                  i;
-	client_t             *cl;
-	playerState_t        *ps;
-	int                  statusLength;
-	int                  playerLength;
-	char                 infostring[MAX_INFO_STRING];
+	char          player[1024];
+	char          status[MAX_MSGLEN];
+	int           i;
+	client_t      *cl;
+	playerState_t *ps;
+	int           statusLength;
+	int           playerLength;
+	char          infostring[MAX_INFO_STRING];
 
 	if (!force && sv_protect->integer & SVP_IOQ3)
 	{
@@ -663,7 +663,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 		if (SVC_RateLimitAddress(from, 10, 1000))
 		{
 			Com_Printf("SVC_Status: rate limit from %s exceeded, dropping request\n",
-			            NET_AdrToString(from));
+			           NET_AdrToString(from));
 			return;
 		}
 
@@ -720,20 +720,21 @@ void SVC_Info(netadr_t from)
 	char *weaprestrict;
 	char *balancedteams;
 
-	if (sv_protect->integer & SVP_IOQ3) {
+	if (sv_protect->integer & SVP_IOQ3)
+	{
 		// Prevent using getinfo as an amplifier
-		if (SVC_RateLimitAddress( from, 10, 1000 ) )
+		if (SVC_RateLimitAddress(from, 10, 1000))
 		{
-			Com_Printf( "SVC_Info: rate limit from %s exceeded, dropping request\n",
-				NET_AdrToString( from ) );
+			Com_Printf("SVC_Info: rate limit from %s exceeded, dropping request\n",
+			           NET_AdrToString(from));
 			return;
 		}
 
 		// Allow getinfo to be DoSed relatively easily, but prevent
 		// excess outbound bandwidth usage when being flooded inbound
-		if ( SVC_RateLimit( &outboundLeakyBucket, 10, 100 ) )
+		if (SVC_RateLimit(&outboundLeakyBucket, 10, 100))
 		{
-			Com_Printf( "SVC_Info: rate limit exceeded, dropping request\n" );
+			Com_Printf("SVC_Info: rate limit exceeded, dropping request\n");
 			return;
 		}
 	}

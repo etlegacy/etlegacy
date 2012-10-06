@@ -37,15 +37,15 @@
 #define __Q_SHARED_H
 
 #define PRODUCT_NAME            "etlegacy"
-#define PRODUCT_LABEL			"ET Legacy"
+#define PRODUCT_LABEL           "ET Legacy"
 #define CLIENT_WINDOW_TITLE     PRODUCT_LABEL
 #define CLIENT_WINDOW_MIN_TITLE PRODUCT_LABEL
-#define GAMENAME_FOR_MASTER		PRODUCT_NAME
+#define GAMENAME_FOR_MASTER     PRODUCT_NAME
 
-#define Q3_VERSION_MAJOR 		"2"
-#define Q3_VERSION_MINOR 		"7"
-#define Q3_VERSION_BUILD 		"0"
-#define Q3_VERSION_NUMBER		Q3_VERSION_MAJOR "." Q3_VERSION_MINOR Q3_VERSION_BUILD
+#define Q3_VERSION_MAJOR        "2"
+#define Q3_VERSION_MINOR        "7"
+#define Q3_VERSION_BUILD        "0"
+#define Q3_VERSION_NUMBER       Q3_VERSION_MAJOR "." Q3_VERSION_MINOR Q3_VERSION_BUILD
 
 #define Q3_VERSION              PRODUCT_LABEL " " Q3_VERSION_NUMBER
 #define ET_VERSION              Q3_VERSION " " CPUSTRING " " __DATE__
@@ -212,33 +212,33 @@ typedef unsigned __int8 uint8_t;
 
 static inline float idSqrt(float x)
 {
-	const float half = 0.5;
-	const float one  = 1.0;
-	float       B, y0, y1;
+    const float half = 0.5;
+    const float one  = 1.0;
+    float       B, y0, y1;
 
-	// This'll NaN if it hits frsqrte. Handle both +0.0 and -0.0
-	if (Q_fabs(x) == 0.0)
-	{
-		return x;
-	}
-	B = x;
+    // This'll NaN if it hits frsqrte. Handle both +0.0 and -0.0
+    if (Q_fabs(x) == 0.0)
+    {
+        return x;
+    }
+    B = x;
 
 #ifdef __GNUC__
-	asm ("frsqrte %0,%1" : "=f" (y0) : "f" (B));
+    asm ("frsqrte %0,%1" : "=f" (y0) : "f" (B));
 #else
-	y0 = __frsqrte(B);
+    y0 = __frsqrte(B);
 #endif
-	// First refinement step
+    // First refinement step
 
-	y1 = y0 + half * y0 * (one - B * y0 * y0);
+    y1 = y0 + half * y0 * (one - B * y0 * y0);
 
-	// Second refinement step -- copy the output of the last step to the input of this step
+    // Second refinement step -- copy the output of the last step to the input of this step
 
-	y0 = y1;
-	y1 = y0 + half * y0 * (one - B * y0 * y0);
+    y0 = y1;
+    y1 = y0 + half * y0 * (one - B * y0 * y0);
 
-	// Get sqrt(x) from x * 1/sqrt(x)
-	return x * y1;
+    // Get sqrt(x) from x * 1/sqrt(x)
+    return x * y1;
 }
 #define sqrt idSqrt
 */
@@ -387,7 +387,7 @@ typedef int clipHandle_t;
 typedef enum
 {
 	MESSAGE_EMPTY = 0,
-	MESSAGE_WAITING,        	// rate/packet limited
+	MESSAGE_WAITING,            // rate/packet limited
 	MESSAGE_WAITING_OVERFLOW,   // packet too large with message
 } messageStatus_t;
 
@@ -395,7 +395,7 @@ typedef enum
 typedef enum
 {
 	EXEC_NOW,           // don't return until completed, a VM should NEVER use this,
-						// because some commands might cause the VM to be unloaded...
+	                    // because some commands might cause the VM to be unloaded...
 	EXEC_INSERT,        // insert at current position, but don't run yet
 	EXEC_APPEND         // add to end of the command buffer (normal case)
 } cbufExec_t;
@@ -668,7 +668,7 @@ extern void (QDECL *Q_SnapVector)(vec3_t vec);
 // its address
 #define Q_ftol lrintf
 #define Q_SnapVector(vec) \
-    do \
+	do \
 	{ \
 		vec3_t *temp = (vec); \
 \

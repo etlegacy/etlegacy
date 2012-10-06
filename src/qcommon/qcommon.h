@@ -821,14 +821,14 @@ extern gameInfo_t com_gameInfo;
 // returned by Sys_GetProcessorFeatures
 typedef enum
 {
-	CF_RDTSC     = 1 << 0,
-	CF_MMX       = 1 << 1,
-	CF_MMX_EXT   = 1 << 2,
-	CF_3DNOW     = 1 << 3,
-	CF_3DNOW_EXT = 1 << 4,
-	CF_SSE       = 1 << 5,
-	CF_SSE2      = 1 << 6,
-	CF_ALTIVEC   = 1 << 7
+	CF_RDTSC         = 1 << 0,
+	    CF_MMX       = 1 << 1,
+	    CF_MMX_EXT   = 1 << 2,
+	    CF_3DNOW     = 1 << 3,
+	    CF_3DNOW_EXT = 1 << 4,
+	    CF_SSE       = 1 << 5,
+	    CF_SSE2      = 1 << 6,
+	    CF_ALTIVEC   = 1 << 7
 } cpuFeatures_t;
 
 // TTimo
