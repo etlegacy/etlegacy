@@ -1319,7 +1319,8 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 	else if (targ->s.eType == ET_EXPLOSIVE)
 	{
-		/*/ / 32 Explosive
+#if 0
+		// 32 Explosive
 		// 64 Dynamite only
 		// 256 Airstrike/artillery only
 		// 512 Satchel only
@@ -1370,7 +1371,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				return;
 			}
 		}
-		* /
+#endif // 0
 
 		if (targ->parent && G_GetWeaponClassForMOD(mod) == 2)
 		{
