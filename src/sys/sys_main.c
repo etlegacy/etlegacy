@@ -482,6 +482,17 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	fn = FS_BuildOSPath(base, gamedir, fname);
 	Com_Printf("Sys_LoadDll(%s)... \n", fn);
 
+#ifdef __APPLE__
+	// HACK: this monstrosity is only temporary
+	Com_Printf("Extracting library from bundle...\n");
+	char buffer[1024];
+	Com_sprintf(buffer, sizeof(buffer), "unzip -o -j %s %s.bundle/Contents/MacOS/%s -d /tmp", fn, fname, fname);
+	Com_Printf("%s", buffer);
+	system(buffer);
+	Com_sprintf(buffer, sizeof(buffer), "/tmp/%s", fname);
+	fn = buffer;
+#endif // __APPLE__
+
 	libHandle = Sys_LoadLibrary(fn);
 
 	if (!libHandle)
