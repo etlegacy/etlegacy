@@ -78,14 +78,27 @@ Compile and install
 
 In terminal run:
 
-    $ mkdir build && cd build && cmake ..
+    $ mkdir build && cd build && cmake-gui ..
+
+If you do not wish to install ET:L system-wide simply run:
+
     $ make
 
-To install the binaries system-wide, run as root:
+To install the binaries system-wide, you need to compile ET:L with hardcoded fs_basepath.
 
+* first adjust the following variables in CMake:
+  * **INSTALL_DEFAULT_BASEDIR**: sets default *fs_basepath*, i.e. where etl and etlded
+    executables look for data files. In most cases it is CMAKE_INSTALL_PREFIX+INSTALL_DEFAULT_MODDIR.
+    Defaults to empty value, because we want *fs_basepath* to be the current working directory
+    when not installing the game system-wide.
+  * (optional) **INSTALL_DEFAULT_BINDIR**: Location for executables. Appended to CMAKE_INSTALL_PREFIX.
+    Defaults to "bin".
+  * (optional) **INSTALL_DEFAULT_MODDIR**: Location for libraries and paks. Appended to
+    CMAKE_INSTALL_PREFIX. Defaults to "share/etlegacy" and then "etmain" is appended to it.
+* then compile ET:L:
+
+    $ make
     # make install
-
-Alternatively you can run the game by specifying the full path to the `etl` binary in the `build` directory.
 
 ### Crosscompiling on linux with mingw32
 
