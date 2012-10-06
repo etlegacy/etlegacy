@@ -199,6 +199,8 @@ typedef unsigned __int8 uint8_t;
 
 #define PATH_SEP    '/'
 
+/*
+
 // Vanilla PPC code, but since PPC has a reciprocal square root estimate instruction,
 // runs *much* faster than calling sqrt(). We'll use two Newton-Raphson
 // refinement steps to get bunch more precision in the 1/sqrt() value for very little cost.
@@ -206,8 +208,7 @@ typedef unsigned __int8 uint8_t;
 // This is about 12.4 times faster than sqrt() and according to my testing (not exhaustive)
 // it returns fairly accurate results (error below 1.0e-5 up to 100000.0 in 0.1 increments).
 
-// TODO: check if x86 arch has speed increase. fix this function
-// Waiting for MAC dev to inspect ... see notes and Q_fabs() definition below
+// Note ET:L uses BSD Library functions for this
 
 static inline float idSqrt(float x)
 {
@@ -240,7 +241,7 @@ static inline float idSqrt(float x)
 	return x * y1;
 }
 #define sqrt idSqrt
-
+*/
 
 #endif
 
@@ -1836,7 +1837,7 @@ typedef enum
 	LANGUAGE_POLISH,
 	LANGUAGE_DUTCH,
 	LANGUAGE_CZECH,
-	LANGUAGE_RUSSIAN,
+	LANGUAGE_RUSSIAN, // FIXME: NO SUPPORT of ISO-8859-1
 	LANGUAGE_FINNISH,
 #endif
 	MAX_LANGUAGES
