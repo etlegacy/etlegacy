@@ -662,7 +662,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 		// Prevent using getstatus as an amplifier
 		if (SVC_RateLimitAddress(from, 10, 1000))
 		{
-			Com_DPrintf("SVC_Status: rate limit from %s exceeded, dropping request\n",
+			Com_Printf("SVC_Status: rate limit from %s exceeded, dropping request\n",
 			            NET_AdrToString(from));
 			return;
 		}
@@ -671,7 +671,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 		// excess outbound bandwidth usage when being flooded inbound
 		if (SVC_RateLimit(&outboundLeakyBucket, 10, 100))
 		{
-			Com_DPrintf("SVC_Status: rate limit exceeded, dropping request\n");
+			Com_Printf("SVC_Status: rate limit exceeded, dropping request\n");
 			return;
 		}
 	}
@@ -724,7 +724,7 @@ void SVC_Info(netadr_t from)
 		// Prevent using getinfo as an amplifier
 		if (SVC_RateLimitAddress( from, 10, 1000 ) )
 		{
-			Com_DPrintf( "SVC_Info: rate limit from %s exceeded, dropping request\n",
+			Com_Printf( "SVC_Info: rate limit from %s exceeded, dropping request\n",
 				NET_AdrToString( from ) );
 			return;
 		}
@@ -733,7 +733,7 @@ void SVC_Info(netadr_t from)
 		// excess outbound bandwidth usage when being flooded inbound
 		if ( SVC_RateLimit( &outboundLeakyBucket, 10, 100 ) )
 		{
-			Com_DPrintf( "SVC_Info: rate limit exceeded, dropping request\n" );
+			Com_Printf( "SVC_Info: rate limit exceeded, dropping request\n" );
 			return;
 		}
 	}
