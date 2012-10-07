@@ -758,7 +758,7 @@ static void CG_SelectBuddy_f(void)
 			break;     // Gordon: we aren't a leader, so dont allow selection
 		}
 
-		ci = CG_SortedFireTeamPlayerForPosition(pos, 6);
+		ci = CG_SortedFireTeamPlayerForPosition(pos, MAX_FIRETEAM_MEMBERS);
 		if (!ci)
 		{
 			break;     // there was no-one in this position
@@ -776,7 +776,7 @@ static void CG_SelectBuddy_f(void)
 
 		for (i = 0; i < 6; i++)
 		{
-			ci = CG_SortedFireTeamPlayerForPosition(i, 6);
+			ci = CG_SortedFireTeamPlayerForPosition(i, MAX_FIRETEAM_MEMBERS);
 			if (!ci)
 			{
 				break;     // there was no-one in this position
@@ -794,7 +794,7 @@ static void CG_SelectBuddy_f(void)
 
 		for (i = 0; i < 6; i++)
 		{
-			ci = CG_SortedFireTeamPlayerForPosition(i, 6);
+			ci = CG_SortedFireTeamPlayerForPosition(i, MAX_FIRETEAM_MEMBERS);
 			if (!ci)
 			{
 				break;     // there was no-one in this position
