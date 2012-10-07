@@ -8981,8 +8981,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_crosshairSize,                "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE                   },
 
 	// game mappings (for create server option)
-	{ NULL,                             "bot_enable",                          "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "bot_minplayers",                      "0",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "g_altStopwatchMode",                  "0",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "g_ipcomplaintlimit",                  "3",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "g_complaintlimit",                    "6",                          CVAR_ARCHIVE                   },
