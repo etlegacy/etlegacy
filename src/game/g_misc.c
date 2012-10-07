@@ -40,7 +40,6 @@ extern float AngleDifference(float ang1, float ang2);
 Used to group brushes together just for editor convenience.  They are turned into normal brushes by the utilities.
 */
 
-
 /*QUAKED info_camp (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for calculations in the utilities (spotlights, etc), but removed during gameplay.
 */
@@ -48,7 +47,6 @@ void SP_info_camp(gentity_t *self)
 {
 	G_SetOrigin(self, self->s.origin);
 }
-
 
 /*QUAKED info_null (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for calculations in the utilities (spotlights, etc), but removed during gameplay.
@@ -65,7 +63,6 @@ void SP_info_null(gentity_t *self)
 	self->nextthink = level.time + (FRAMETIME * 2);
 }
 
-
 /*QUAKED info_notnull (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for in-game calculation, like jumppad targets.
 target_position does the same thing
@@ -74,7 +71,6 @@ void SP_info_notnull(gentity_t *self)
 {
 	G_SetOrigin(self, self->s.origin);
 }
-
 
 /*QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) nonlinear angle negative_spot negative_point q3map_non-dynamic
 Non-displayed light.
@@ -104,8 +100,6 @@ void SP_lightJunior(gentity_t *self)
 {
 	G_FreeEntity(self);
 }
-
-
 
 /*
 =================================================================================
@@ -181,7 +175,6 @@ void SP_misc_teleporter_dest(gentity_t *ent)
     misc_grabber_trap
 
 */
-
 
 static int attackDurations[] = { (11 * 1000) / 15,
 	                             (16 * 1000) / 15,
@@ -283,8 +276,6 @@ void grabber_close(gentity_t *ent, gentity_t *other, trace_t *trace)
 	grabber_attack(ent->parent);
 }
 
-
-
 /*
 ==============
 grabber_pain
@@ -295,7 +286,6 @@ void grabber_pain(gentity_t *ent, gentity_t *attacker, int damage, vec3_t point)
 {
 	G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound2to1);   // sound2to1 is the 'pain' sound
 }
-
 
 /*
 ==============
@@ -341,7 +331,6 @@ void grabber_wake(gentity_t *ent)
 
 	G_AddEvent(ent, EV_GENERAL_SOUND, ent->soundPos1);   // soundPos1 is the 'wake' sound
 }
-
 
 /*
 ==============
@@ -494,7 +483,6 @@ void use_spotlight(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	}
 }
 
-
 void spotlight_finish_spawning(gentity_t *ent)
 {
 	if (ent->spawnflags & 1)       // START_ON
@@ -508,8 +496,6 @@ void spotlight_finish_spawning(gentity_t *ent)
 	ent->nextthink = 0;
 }
 
-
-//----(SA)  added
 /*QUAKED misc_spotlight (1 0 0) (-16 -16 -16) (16 16 16) START_ON BACK_AND_FORTH
 "model" - 'base' model that moves with the light.  Default: "models/mapobjects/light/searchlight_pivot.md3"
 "target" - .camera (spline) file for light to track.  do not specify file extension.
@@ -541,7 +527,6 @@ void SP_misc_spotlight(gentity_t *ent)
 
 }
 
-//----(SA)  end
 
 //===========================================================
 
@@ -557,7 +542,6 @@ void SP_misc_model(gentity_t *ent)
 	G_FreeEntity(ent);
 }
 
-//----(SA)
 /*QUAKED misc_gamemodel (1 0 0) (-16 -16 -16) (16 16 16) ORIENT_LOD START_ANIMATE
 md3 placed in the game at runtime (rather than in the bsp)
 "model"         arbitrary .md3 file to display
@@ -679,11 +663,6 @@ void SP_misc_gamemodel(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-
-
-
-//----(SA)
-
 void locateMaster(gentity_t *ent)
 {
 	ent->target_ent = G_FindByTargetname(NULL, ent->target);
@@ -705,7 +684,6 @@ For safety, you should have each dummy only point at one entity (however, it's o
 */
 void SP_misc_vis_dummy(gentity_t *ent)
 {
-
 	if (!ent->target)     //----(SA)    added safety check
 	{
 		G_Printf("No target specified for misc_vis_dummy at %s\n", vtos(ent->r.currentOrigin));
@@ -741,13 +719,10 @@ void SP_misc_vis_dummy_multiple(gentity_t *ent)
 	ent->r.svFlags |= SVF_VISDUMMY_MULTIPLE;
 	G_SetOrigin(ent, ent->s.origin);
 	trap_LinkEntity(ent);
-
 }
-
 
 //===========================================================
 
-//----(SA)
 /*QUAKED misc_light_surface (1 .5 0) (-8 -8 -8) (8 8 8)
 The surfaces nearest these entities will be the only surfaces lit by the targeting light
 This must be within 64 world units of the surface to be lit!
@@ -756,8 +731,6 @@ void SP_misc_light_surface(gentity_t *ent)
 {
 	G_FreeEntity(ent);
 }
-
-//----(SA) end
 
 //===========================================================
 
@@ -902,11 +875,6 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		SnapVector(ent->s.pos.trDelta);             // save net bandwidth
 		break;
 
-	/*  case WP_SPEARGUN:
-	    case WP_SPEARGUN_CO2:
-	        fire_speargun(ent, ent->s.origin, dir);
-	        break;*/
-
 	case WP_MAPMORTAR:
 		AimAtTarget(ent);     // store in ent->s.origin2 the direction/force needed to pass through the target
 		VectorScale(dir, VectorLength(ent->s.origin2), dir);
@@ -1017,7 +985,6 @@ void use_corona(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	}
 }
 
-
 /*
 ==============
 SP_corona
@@ -1053,7 +1020,6 @@ void SP_corona(gentity_t *ent)
 	}
 }
 
-
 // (SA) dlights and dlightstyles
 // TTimo gcc: lots of braces around scalar initializer
 // char* predef_lightstyles[] = {
@@ -1082,7 +1048,6 @@ char *predef_lightstyles[] =
 	"aaaaaaaaaaaaaaaazzzzzzzz"
 };
 
-
 /*
 ==============
 dlight_finish_spawning
@@ -1096,7 +1061,6 @@ void dlight_finish_spawning(gentity_t *ent)
 }
 
 static int dlightstarttime = 0;
-
 
 /*QUAKED dlight (0 1 0) (-12 -12 -12) (12 12 12) FORCEACTIVE STARTOFF ONETIME
 "style": value is an int from 1-19 that contains a pre-defined 'flicker' string.
@@ -1133,7 +1097,6 @@ styles:
 19 - "aaaaaaaaaaaaaaaazzzzzzzz"
 */
 
-
 /*
 ==============
 shutoff_dlight
@@ -1151,7 +1114,6 @@ void shutoff_dlight(gentity_t *ent)
 	ent->think     = 0;
 	ent->nextthink = 0;
 }
-
 
 /*
 ==============
@@ -1176,8 +1138,6 @@ void use_dlight(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		}
 	}
 }
-
-
 
 /*
 ==============
@@ -1259,8 +1219,6 @@ void SP_dlight(gentity_t *ent)
 
 }
 // done (SA)
-
-
 
 void flakPuff(vec3_t origin)
 {
@@ -1447,15 +1405,6 @@ void clamp_hweapontofirearc(gentity_t *self, vec3_t dang)
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
 
 // Gordon: quad 20mm specs from marauder
 // Fire each barrel every 1s, so 250ms per shot total
@@ -1702,10 +1651,6 @@ void SP_aagun(gentity_t *self)
 	aagun_spawn(self);
 }
 
-
-
-
-
 void mg42_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	vec3_t dang;
@@ -1724,11 +1669,6 @@ void mg42_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 		// now tell the client to lock the view in the direction of the gun
 		other->client->ps.viewlocked        = 3;
 		other->client->ps.viewlocked_entNum = self->s.number;
-
-		//if (self->s.frame)
-		//  other->client->ps.gunfx = 1;
-		//else
-		//  other->client->ps.gunfx = 0;
 
 		// clamp player behind the gun
 		clamp_playerbehindgun(self, other, dang);
@@ -1876,7 +1816,6 @@ void mg42_think(gentity_t *self)
 		owner->client->ps.persistant[PERS_HWEAPON_USE] = 0;
 		owner->client->ps.viewlocked                   = 0; // let them look around
 		owner->active                                  = qfalse;
-		//owner->client->ps.gunfx = 0;
 
 		// need this here for players that get killed while on the MG42
 		self->backupWeaponTime = owner->client->ps.weaponTime;
@@ -1938,7 +1877,6 @@ void mg42_stopusing(gentity_t *self)
 		self->r.ownerNum                               = self->s.number;
 		owner->client->ps.viewlocked                   = 0; // let them look around
 		owner->active                                  = qfalse;
-		//owner->client->ps.gunfx = 0;
 
 		//owner->client->ps.weapHeat[WP_DUMMY_MG42] = 0;
 		self->mg42weapHeat           = owner->client->ps.weapHeat[WP_DUMMY_MG42];
@@ -2004,8 +1942,6 @@ void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 		self->s.otherEntityNum       = self->s.number;
 		owner->client->ps.viewlocked = 0;   // let them look around
 
-		//owner->client->ps.gunfx = 0;
-
 		gun->mg42weapHeat     = 0;
 		gun->backupWeaponTime = 0;
 
@@ -2032,7 +1968,7 @@ void mg42_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		ent->s.otherEntityNum                          = ent->s.number;
 		owner->client->ps.viewlocked                   = 0; // let them look around
 		owner->active                                  = qfalse;
-		//owner->client->ps.gunfx = 0;
+
 		other->client->ps.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
 		ent->backupWeaponTime                     = owner->client->ps.weaponTime;
 		owner->backupWeaponTime                   = owner->client->ps.weaponTime;
@@ -2301,7 +2237,6 @@ void Flak_Animate(gentity_t *ent)
 	}
 }
 
-
 void flak_spawn(gentity_t *ent)
 {
 	gentity_t *gun;
@@ -2335,7 +2270,6 @@ void flak_spawn(gentity_t *ent)
 	gun->mg42BaseEnt = ent->s.number;
 
 	trap_LinkEntity(gun);
-
 }
 
 /*QUAKED misc_flak (1 0 0) (-32 -32 0) (32 32 100)
@@ -2859,7 +2793,6 @@ void SP_misc_commandmap_marker(gentity_t *ent)
 	G_SetOrigin(ent, ent->s.origin);
 }
 
-
 // Gordon: system to temporarily ignore certain ents during traces
 
 void G_InitTempTraceIgnoreEnts(void)
@@ -2957,7 +2890,6 @@ qboolean G_ConstructionIsPartlyBuilt(gentity_t *ent)
 	return qfalse;
 }
 
-
 // returns the constructible for this team that is attached to this toi
 gentity_t *G_ConstructionForTeam(gentity_t *toi, team_t team)
 {
@@ -3038,7 +2970,6 @@ float AngleDifference(float ang1, float ang2)
 	}
 	return diff;
 }
-
 
 /*
 ==================
