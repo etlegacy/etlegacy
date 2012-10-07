@@ -36,7 +36,6 @@
 #include "bg_public.h"
 #include "g_public.h"
 
-
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date
@@ -141,7 +140,7 @@ typedef struct gclient_s gclient_t;
 typedef struct g_serverEntity_s g_serverEntity_t;
 
 //====================================================================
-//
+
 // Scripting, these structure are not saved into savegames (parsed each start)
 typedef struct
 {
@@ -152,12 +151,11 @@ typedef struct
 //
 typedef struct
 {
-	//
 	// set during script parsing
 	g_script_stack_action_t *action;                // points to an action to perform
 	char *params;
 } g_script_stack_item_t;
-//
+
 // Gordon: need to up this, forest has a HUGE script for the tank.....
 //#define   G_MAX_SCRIPT_STACK_ITEMS    128
 //#define   G_MAX_SCRIPT_STACK_ITEMS    176
@@ -170,26 +168,26 @@ typedef struct
 	g_script_stack_item_t items[G_MAX_SCRIPT_STACK_ITEMS];
 	int numItems;
 } g_script_stack_t;
-//
+
 typedef struct
 {
 	int eventNum;                           // index in scriptEvents[]
 	char *params;                           // trigger targetname, etc
 	g_script_stack_t stack;
 } g_script_event_t;
-//
+
 typedef struct
 {
 	char *eventStr;
 	qboolean (*eventMatch)(g_script_event_t *event, char *eventParm);
 	int hash;
 } g_script_event_define_t;
-//
+
 // Script Flags
 #define SCFL_GOING_TO_MARKER    0x1
 #define SCFL_ANIMATING          0x2
 #define SCFL_FIRST_CALL         0x4
-//
+
 // Scripting Status (NOTE: this MUST NOT contain any pointer vars)
 typedef struct
 {
@@ -201,9 +199,9 @@ typedef struct
 	int actionEndTime;              // time to end the current action
 	char *animatingParams;          // Gordon: read 8 lines up for why i love this code ;)
 } g_script_status_t;
-//
+
 #define G_MAX_SCRIPT_ACCUM_BUFFERS 10
-//
+
 void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params);
 //====================================================================
 
@@ -512,6 +510,11 @@ struct gentity_s
 
 	//bani
 	int etpro_misc_1;
+
+#ifdef OMNIBOTS
+	//Omni-bot increment dyno count
+	int numPlanted;
+#endif
 };
 
 typedef enum
@@ -567,7 +570,6 @@ typedef struct
 #define FOLLOW_ACTIVE1  -1
 #define FOLLOW_ACTIVE2  -2
 
-
 // OSP - weapon stat counters
 typedef struct
 {
@@ -577,7 +579,6 @@ typedef struct
 	unsigned int hits;
 	unsigned int kills;
 } weapon_stat_t;
-
 
 // client data that stays across multiple levels or tournament restarts
 // this is achieved by writing all the data to cvar strings at game shutdown
@@ -624,6 +625,13 @@ typedef struct
 	// OSP
 
 	qboolean versionOK;
+
+#ifdef OMNIBOTS
+	//Omni-bot
+	qboolean	botSuicide;			// /kill before next spawn
+	qboolean	botPush;			// allow for disabling of bot pushing via script
+#endif
+
 } clientSession_t;
 
 //
@@ -1124,6 +1132,13 @@ typedef struct
 	int commanderLastSoundTime[2];
 
 	qboolean tempTraceIgnoreEnts[MAX_GENTITIES];
+
+#ifdef OMNIBOTS
+	//Omni-bot time triggers
+	qboolean			twoMinute;
+	qboolean			thirtySecond;
+#endif
+
 } level_locals_t;
 
 typedef struct
@@ -1136,6 +1151,13 @@ typedef struct
 	char shortname[256];
 	char next[256];
 	int typeBits;
+
+#ifdef OMNIBOTS
+	//Omni-bot time triggers
+	qboolean	twoMinute;
+	qboolean	thirtySecond;
+#endif
+
 } g_campaignInfo_t;
 
 //
@@ -1173,6 +1195,11 @@ void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updat
 void Cmd_FollowCycle_f(gentity_t *ent, int dir);
 void Cmd_Kill_f(gentity_t *ent);
 void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
+
+#ifdef OMNIBOTS
+void Cmd_SwapPlacesWithBot_f( gentity_t *ent, int botNum );
+#endif
+
 void G_EntitySound(gentity_t *ent, const char *soundId, int volume);
 void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume);
 int ClientNumberFromString(gentity_t *to, char *s);
@@ -1431,19 +1458,6 @@ void FireWeapon(gentity_t *ent);
 void G_BurnMeGood(gentity_t *self, gentity_t *body);
 
 //
-// IsSilencedWeapon
-//
-// Description: Is the specified weapon a silenced weapon?
-// Written: 12/26/2002
-//
-qboolean IsSilencedWeapon
-(
-    // The type of weapon in question.  Is it silenced?
-    int weaponType
-);
-
-
-//
 // p_hud.c
 //
 void MoveClientToIntermission(gentity_t *client);
@@ -1460,11 +1474,6 @@ void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0);
 void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void Cmd_SetWeapons_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void Cmd_SetClass_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
-
-//
-// g_pweapon.c
-//
-
 
 //
 // g_main.c
@@ -1506,14 +1515,11 @@ qboolean ReadyToThrowSmoke(gentity_t *ent);
 // Are we ready to construct?  Optionally, will also update the time while we are constructing
 qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean updateState);
 
-
-
 //
 // g_team.c
 //
 qboolean OnSameTeam(gentity_t *ent1, gentity_t *ent2);
 int Team_ClassForString(char *string);
-
 
 //
 // g_mem.c
@@ -1532,7 +1538,6 @@ void G_InitWorldSession(void);
 void G_WriteSessionData(qboolean restart);
 
 void G_CalcRank(gclient_t *client);
-
 
 // ai_main.c
 // TTimo - wraps to BotGetTargetExplosives, without dependency to bot_target_s (which breaks gcc build)
@@ -1568,6 +1573,16 @@ extern gentity_t        g_entities[];   //DAJ was explicit set to MAX_ENTITIES
 extern g_campaignInfo_t g_campaigns[];
 
 #define FOFS(x) ((size_t)&(((gentity_t *)0)->x))
+
+#ifdef OMNIBOTS
+extern	vmCvar_t	g_OmniBotPath;
+extern	vmCvar_t	g_OmniBotEnable;
+extern	vmCvar_t	g_OmniBotFlags;
+extern	vmCvar_t	g_OmniBotPlaying;
+#ifdef DEBUG
+extern	vmCvar_t	g_allowBotSwap;
+#endif
+#endif
 
 extern vmCvar_t g_gametype;
 
@@ -1733,7 +1748,6 @@ extern vmCvar_t vote_limit;
 extern vmCvar_t vote_percent;
 extern vmCvar_t z_serverflags;
 extern vmCvar_t g_letterbox;
-extern vmCvar_t bot_enable;
 
 extern vmCvar_t g_debugSkills;
 extern vmCvar_t g_heavyWeaponRestriction;
@@ -1743,18 +1757,6 @@ extern vmCvar_t g_nextmap;
 extern vmCvar_t g_nextcampaign;
 
 extern vmCvar_t g_disableComplaints;
-
-extern vmCvar_t bot_debug;                  // if set, draw "thought bubbles" for crosshair-selected bot
-extern vmCvar_t bot_debug_curAINode;        // the text of the current ainode for the bot begin debugged
-extern vmCvar_t bot_debug_alertState;       // alert state of the bot being debugged
-extern vmCvar_t bot_debug_pos;              // coords of the bot being debugged
-extern vmCvar_t bot_debug_weaponAutonomy;   // weapon autonomy of the bot being debugged
-extern vmCvar_t bot_debug_movementAutonomy; // movement autonomy of the bot being debugged
-extern vmCvar_t bot_debug_cover_spot;       // What cover spot are we going to?
-extern vmCvar_t bot_debug_anim;             // what animation is the bot playing?
-
-
-
 
 void    trap_Printf(const char *fmt);
 void    trap_Error(const char *fmt) __attribute__((noreturn));
@@ -1817,7 +1819,6 @@ int     trap_BotGetServerCommand(int clientNum, char *message, int size);
 void    trap_BotUserCommand(int client, usercmd_t *ucmd);
 
 
-
 void    trap_SnapVector(float *v);
 
 void    trap_SendMessage(int clientNum, char *buf, int buflen);
@@ -1862,13 +1863,7 @@ typedef struct
 void Cmd_FireTeam_MP_f(gentity_t *ent);
 int G_IsOnAFireTeam(int clientNum);
 
-/*
-void G_SetWayPoint( gentity_t* ent, wayPointType_t wayPointType, vec3_t loc );
-void G_RemoveWayPoint( gclient_t *client );
-*/
-
 void G_RemoveFromAllIgnoreLists(int clientNum);
-
 
 //g_teammapdata.c
 
@@ -1994,14 +1989,10 @@ struct g_serverEntity_s
 	void (*setup)(g_serverEntity_t *self);              // Setup function called once after all server objects are created
 };
 
-
 // get the server entity with the passed in number
 g_serverEntity_t *GetServerEntity(int num);
 
-
-
 #define SE_FOFS(x) ((int)&(((g_serverEntity_t *)0)->x))
-
 
 // Match settings
 #define PAUSE_NONE      0x00    // Match is NOT paused.
@@ -2032,7 +2023,6 @@ g_serverEntity_t *GetServerEntity(int num);
 #define AA_STATSALL     0x01    // Client AutoAction: Dump ALL player stats
 #define AA_STATSTEAM    0x02    // Client AutoAction: Dump TEAM player stats
 
-
 // "Delayed Print" ent enumerations
 typedef enum
 {
@@ -2055,15 +2045,11 @@ typedef struct
 	int timeouts;
 } team_info;
 
-
-
 ///////////////////////
 // g_main.c
 //
 void G_UpdateCvars(void);
 void G_wipeCvars(void);
-
-
 
 ///////////////////////
 // g_cmds_ext.c
@@ -2087,14 +2073,10 @@ void G_weaponStats_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);
 void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow);
 void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly);
 
-
-
 ///////////////////////
 // g_config.c
 //
 void G_configSet(int mode, qboolean doComp);
-
-
 
 ///////////////////////
 // g_match.c
@@ -2137,8 +2119,6 @@ void G_smvRemoveInvalidClients(gentity_t *ent, int nTeam);
 qboolean G_smvRunCamera(gentity_t *ent);
 void G_smvUpdateClientCSList(gentity_t *ent);
 
-
-
 ///////////////////////
 // g_referee.c
 //
@@ -2163,8 +2143,6 @@ void G_RemoveReferee(void);
 void G_MuteClient(void);
 void G_UnMuteClient(void);
 
-
-
 ///////////////////////
 // g_team.c
 //
@@ -2184,8 +2162,6 @@ int  G_teamID(gentity_t *ent);
 void G_teamReset(int team_num, qboolean fClearSpecLock);
 void G_verifyMatchState(int team_id);
 void G_updateSpecLock(int nTeam, qboolean fLock);
-
-
 
 ///////////////////////
 // g_vote.c
@@ -2261,7 +2237,6 @@ void weapon_checkAirStrikeThink1(gentity_t *ent);
 void weapon_callSecondPlane(gentity_t *ent);
 qboolean weapon_checkAirStrike(gentity_t *ent);
 
-
 void G_MakeReady(gentity_t *ent);
 void G_MakeUnready(gentity_t *ent);
 
@@ -2279,3 +2254,5 @@ void G_TempTraceIgnorePlayersAndBodies(void);
 qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent);
 
 qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
+
+#define LOGOPTS_SCRIPTEVENTS	32		// Log script events (dyna-defuse/-planted/objective)

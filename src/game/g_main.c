@@ -33,6 +33,11 @@
 
 #include "g_local.h"
 
+#ifdef OMNIBOTS
+#include "g_etbot_interface.h"
+#endif
+
+
 level_locals_t level;
 
 typedef struct
@@ -54,6 +59,15 @@ g_campaignInfo_t g_campaigns[MAX_CAMPAIGNS];
 
 mapEntityData_Team_t mapEntityData[2];
 
+#ifdef OMNIBOTS
+vmCvar_t	g_OmniBotPath;
+vmCvar_t	g_OmniBotEnable;
+vmCvar_t	g_OmniBotFlags;
+vmCvar_t	g_OmniBotPlaying;
+#ifdef DEBUG
+vmCvar_t	g_allowBotSwap;
+#endif
+#endif
 vmCvar_t g_gametype;
 vmCvar_t g_fraglimit;
 vmCvar_t g_timelimit;
@@ -218,7 +232,6 @@ vmCvar_t mod_url;
 vmCvar_t url;
 
 vmCvar_t g_letterbox;
-vmCvar_t bot_enable;
 
 vmCvar_t g_debugSkills;
 vmCvar_t g_heavyWeaponRestriction;
@@ -409,6 +422,17 @@ cvarTable_t gameCvarTable[] =
 //	{ &g_movespeed, "g_movespeed", "127", CVAR_CHEAT, 0, qfalse },
 	{ &g_movespeed,               "g_movespeed",               "76",                                                     CVAR_CHEAT,                                      0, qfalse},
 
+#ifdef OMNIBOTS
+	// Omni-bot user defined path to load bot library from.
+	{ &g_OmniBotPath,			  "omnibot_path",		"",																CVAR_ARCHIVE | CVAR_NORESTART,					  0,		qfalse },
+	{ &g_OmniBotEnable,			  "omnibot_enable",				"0",													CVAR_ARCHIVE | CVAR_NORESTART,					  0,		qfalse },
+	{ &g_OmniBotPlaying,		  "omnibot_playing",			"0",													CVAR_SERVERINFO_NOUPDATE | CVAR_ROM,			  0,		qfalse },
+	{ &g_OmniBotFlags,			  "omnibot_flags",				"0",													CVAR_ARCHIVE | CVAR_NORESTART,					  0,		qfalse },
+#ifdef DEBUG
+	{ &g_allowBotSwap,			  "g_allowBotSwap",				"0",													CVAR_ARCHIVE,									   0,		qfalse },
+#endif
+#endif
+
 	// Arnout: LMS
 	{ &g_lms_teamForceBalance,    "g_lms_teamForceBalance",    "1",                                                      CVAR_ARCHIVE },
 	{ &g_lms_roundlimit,          "g_lms_roundlimit",          "3",                                                      CVAR_ARCHIVE },
@@ -431,7 +455,6 @@ cvarTable_t gameCvarTable[] =
 	{ &url,                       "URL",                       "",                                                       CVAR_SERVERINFO | CVAR_ARCHIVE,                  0, qfalse},
 
 	{ &g_letterbox,               "cg_letterbox",              "0",                                                      CVAR_TEMP },
-	{ &bot_enable,                "bot_enable",                "0",                                                      0 },
 
 	{ &g_debugSkills,             "g_debugSkills",             "0",                                                      0 },
 
@@ -481,7 +504,24 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	switch (command)
 	{
 	case GAME_INIT:
+	{
+		float time = trap_Milliseconds();
+#ifdef OMNIBOTS
+
+		Bot_Interface_InitHandles();
+#endif
 		G_InitGame(arg0, arg1, arg2);
+		G_Printf( "Game Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds()-time)/1000.f );
+#ifdef OMNIBOTS
+
+			time = trap_Milliseconds();
+
+			if (!Bot_Interface_Init())
+				G_Printf(S_COLOR_RED "Unable to Initialize Omni-Bot.\n");
+
+			G_Printf( "Omni-Bot Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds()-time)/1000.f );
+#endif
+	}
 		return 0;
 	case GAME_SHUTDOWN:
 		G_ShutdownGame(arg0);
@@ -505,6 +545,9 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return 0;
 	case GAME_RUN_FRAME:
 		G_RunFrame(arg0);
+#ifdef OMNIBOTS
+		Bot_Interface_Update();
+#endif
 		return 0;
 	case GAME_CONSOLE_COMMAND:
 		return ConsoleCommand();
@@ -2139,6 +2182,17 @@ void G_ShutdownGame(int restart)
 
 	G_Printf("==== ShutdownGame ====\n");
 
+#ifdef OMNIBOTS
+	if (!Bot_Interface_Shutdown())
+	{
+		G_Printf(S_COLOR_RED "Error shutting down Omni-Bot.\n");
+	}
+	else
+	{
+		G_Printf("^2ShutdownOmniBot\n");
+	}
+#endif
+
 	G_DebugCloseSkillLog();
 
 	if (level.logFile)
@@ -3123,6 +3177,10 @@ void LogExit(const char *string)
 		//bani - #113
 		bani_storemapxp();
 	}
+
+#ifdef OMNIBOTS
+	Bot_Util_SendTrigger(NULL, NULL, "Round End.", "roundend");
+#endif
 
 	G_BuildEndgameStats();
 }

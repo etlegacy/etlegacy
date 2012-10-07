@@ -1132,19 +1132,20 @@ void SP_trigger_aidoor(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-
-
 /*QUAKED test_gas (0 0.5 0) (-4 -4 -4) (4 4 4)
 */
 void SP_gas(gentity_t *self)
 {
 }
 
-
 // DHM - Nerve :: Multiplayer triggers
 
 #define RED_FLAG 1
 #define BLUE_FLAG 2
+
+#ifdef OMNIBOTS
+void Bot_Util_SendTrigger(gentity_t *_ent, gentity_t *_activator, const char *_tagname, const char *_action);
+#endif
 
 void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 {
@@ -1154,7 +1155,6 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 	{
 		return;
 	}
-
 
 	if ((ent->spawnflags & RED_FLAG) && other->client->ps.powerups[PW_REDFLAG])
 	{
@@ -1174,6 +1174,10 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 		G_Script_ScriptEvent(ent, "death", "");
 
 		G_Script_ScriptEvent(&g_entities[other->client->flagParent], "trigger", "captured");
+
+#ifdef OMNIBOTS
+		Bot_Util_SendTrigger(ent, NULL, va("Allies captured %s", ent->scriptName), "");
+#endif
 
 		ent->parent = tmp;
 
@@ -1202,6 +1206,10 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 		G_Script_ScriptEvent(&g_entities[other->client->flagParent], "trigger", "captured");
 
+#ifdef OMNIBOTS
+		Bot_Util_SendTrigger(ent, NULL, va("Axis captured %s", ent->scriptName), "");
+#endif
+
 		ent->parent = tmp;
 
 		// Removes itself
@@ -1210,9 +1218,6 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 		ent->think     = G_FreeEntity;
 	}
 }
-
-
-
 
 void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 {
@@ -1239,6 +1244,10 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 		G_Script_ScriptEvent(&g_entities[other->client->flagParent], "trigger", "captured");
 
+#ifdef OMNIBOTS
+		Bot_Util_SendTrigger(ent, NULL, va("Allies captured %s", ent->scriptName), "");
+#endif
+
 		ent->parent = tmp;
 	}
 	else if ((ent->spawnflags & BLUE_FLAG) && other->client->ps.powerups[PW_BLUEFLAG])
@@ -1257,6 +1266,10 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 		G_Script_ScriptEvent(ent, "death", "");
 
 		G_Script_ScriptEvent(&g_entities[other->client->flagParent], "trigger", "captured");
+
+#ifdef OMNIBOTS
+		Bot_Util_SendTrigger(ent, NULL, va("Axis captured %s", ent->scriptName), "");
+#endif
 
 		ent->parent = tmp;
 	}

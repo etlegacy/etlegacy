@@ -35,6 +35,9 @@
 
 #include "g_local.h"
 
+#ifdef OMNIBOTS
+#include "g_etbot_interface.h"
+#endif
 
 /*
 ==============================================================================
@@ -1494,6 +1497,13 @@ qboolean    ConsoleCommand(void)
 		return qtrue;
 	}
 	// -fretn
+
+#ifdef OMNIBOTS
+	if ( !Q_stricmp(cmd, "bot") ) {
+		Bot_Interface_ConsoleCommand();
+		return qtrue;
+	}
+#endif
 
 	if (g_dedicated.integer)
 	{

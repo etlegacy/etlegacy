@@ -33,6 +33,10 @@
 
 #include "g_local.h"
 
+#ifdef OMNIBOTS
+#include "g_etbot_interface.h"
+#endif
+
 /*
 ===============
 G_DamageFeedback
@@ -240,39 +244,47 @@ void G_SetClientSound(gentity_t *ent)
 	ent->s.loopSound = 0;
 }
 
+#ifdef OMNIBOTS
 /*
 ==============
 PushBot
 ==============
 */
-
-void PushBot(gentity_t *ent, gentity_t *other)
+void PushBot( gentity_t *ent, gentity_t *other )
 {
 	vec3_t dir, ang, f, r;
-	float  oldspeed;
-	//
-	oldspeed = VectorLength(other->client->ps.velocity);
-	if (oldspeed < 200)
+	float oldspeed;
+	float s;
+
+	// dont push when mounted in certain stationary weapons or scripted not to be pushed
+	if(other->client)
 	{
+		if (Bot_Util_AllowPush(other->client->ps.weapon) == qfalse || !other->client->sess.botPush)
+			return;
+	}
+
+	oldspeed = VectorLength( other->client->ps.velocity );
+	if (oldspeed < 200) {
 		oldspeed = 200;
 	}
-	//
-	VectorSubtract(other->r.currentOrigin, ent->r.currentOrigin, dir);
-	VectorNormalize(dir);
-	vectoangles(dir, ang);
-	AngleVectors(ang, f, r, NULL);
+
+	VectorSubtract( other->r.currentOrigin, ent->r.currentOrigin, dir );
+	VectorNormalize( dir );
+	vectoangles( dir, ang );
+	AngleVectors( ang, f, r, NULL );
 	f[2] = 0;
 	r[2] = 0;
-	//
-	VectorMA(other->client->ps.velocity, 200, f, other->client->ps.velocity);
-	VectorMA(other->client->ps.velocity, 100 * ((level.time + (ent->s.number * 1000)) % 4000 < 2000 ? 1.0 : -1.0), r, other->client->ps.velocity);
-	//
-	if (VectorLengthSquared(other->client->ps.velocity) > SQR(oldspeed))
-	{
-		VectorNormalize(other->client->ps.velocity);
-		VectorScale(other->client->ps.velocity, oldspeed, other->client->ps.velocity);
+
+	VectorMA( other->client->ps.velocity, 200, f, other->client->ps.velocity );
+	s = 100 * ((level.time+(ent->s.number*1000))%4000 < 2000 ? 1.0 : -1.0);
+	VectorMA( other->client->ps.velocity, s, r, other->client->ps.velocity );
+
+	if (VectorLengthSquared( other->client->ps.velocity ) > SQR(oldspeed)) {
+		VectorNormalize( other->client->ps.velocity );
+		VectorScale( other->client->ps.velocity, oldspeed, other->client->ps.velocity );
 	}
 }
+#endif
 
 /*
 ==============
@@ -382,30 +394,18 @@ void ClientImpacts(gentity_t *ent, pmove_t *pm)
 		}
 		other = &g_entities[pm->touchents[i]];
 
-		if ((ent->r.svFlags & SVF_BOT) && (ent->touch))
-		{
-			ent->touch(ent, other, &trace);
-		}
-
-		// RF, bot should get pushed out the way
-		if ((ent->client) /*&& !(ent->r.svFlags & SVF_BOT)*/ && (other->r.svFlags & SVF_BOT))
-		{
-/*			vec3_t dir;
-            // if we are not heading for them, ignore
-            VectorSubtract( other->r.currentOrigin, ent->r.currentOrigin, dir );
-            VectorNormalize( dir );
-            if (DotProduct( ent->client->ps.velocity, dir ) > 0) {
-                PushBot( ent, other );
-            }
-*/
-			PushBot(ent, other);
+#ifdef OMNIBOTS
+		if ( (ent->client) /*&& !(ent->r.svFlags & SVF_BOT)*/ && (other->r.svFlags & SVF_BOT) &&
+			!other->client->ps.powerups[PW_INVULNERABLE] ) {
+			PushBot( ent, other );
 		}
 
 		// if we are standing on their head, then we should be pushed also
-		if ((ent->r.svFlags & SVF_BOT) && ent->s.groundEntityNum == other->s.number && other->client)
-		{
-			PushBot(other, ent);
+		if ( (ent->r.svFlags & SVF_BOT) && (ent->s.groundEntityNum == other->s.number && other->client) &&
+			!other->client->ps.powerups[PW_INVULNERABLE]) {
+			PushBot( other, ent );
 		}
+#endif
 
 		if (!other->touch)
 		{
@@ -414,7 +414,6 @@ void ClientImpacts(gentity_t *ent, pmove_t *pm)
 
 		other->touch(other, ent, &trace);
 	}
-
 }
 
 /*
@@ -622,14 +621,18 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		{
 			Cmd_FollowCycle_f(ent, 1);
 		}
+#ifdef DEBUG
+#ifdef OMNIBOTS
 		// activate button swaps places with bot
-		else if (client->sess.sessionTeam != TEAM_SPECTATOR &&
-		         ((client->buttons & BUTTON_ACTIVATE) && !(client->oldbuttons & BUTTON_ACTIVATE)) &&
-		         (g_entities[ent->client->sess.spectatorClient].client) &&
-		         (g_entities[ent->client->sess.spectatorClient].r.svFlags & SVF_BOT))
+		else if( client->sess.sessionTeam != TEAM_SPECTATOR && g_allowBotSwap.integer &&
+				( ( client->buttons & BUTTON_ACTIVATE ) && ! ( client->oldbuttons & BUTTON_ACTIVATE ) ) &&
+				( g_entities[ent->client->sess.spectatorClient].client ) &&
+				( g_entities[ent->client->sess.spectatorClient].r.svFlags & SVF_BOT ) )
 		{
-			Cmd_SwapPlacesWithBot_f(ent, ent->client->sess.spectatorClient);
+			Cmd_SwapPlacesWithBot_f( ent, ent->client->sess.spectatorClient );
 		}
+#endif
+#endif
 		else if (
 		    (client->sess.sessionTeam == TEAM_SPECTATOR) &&   // don't let dead team players do free fly
 		    (client->sess.spectatorState == SPECTATOR_FOLLOW) &&
@@ -653,10 +656,18 @@ Returns qfalse if the client is dropped
 */
 qboolean ClientInactivityTimer(gclient_t *client)
 {
+/* FIXME: Adjust for OMNIBOT
+	// inactivity timer broken in 2.60 ?
+#ifdef OMNIBOTS
+	qboolean	doDrop = (g_spectatorInactivity.integer && (g_maxclients.integer - level.numNonSpectatorClients + g_OmniBotPlaying.integer <= 0))? qtrue : qfalse;
+#else
+	qboolean	doDrop = (g_spectatorInactivity.integer && (g_maxclients.integer - level.numNonSpectatorClients <= 0))? qtrue : qfalse;
+#endif
+*/
+
 	// OSP - modified
 	if ((g_inactivity.integer == 0 && client->sess.sessionTeam != TEAM_SPECTATOR) || (g_spectatorInactivity.integer == 0 && client->sess.sessionTeam == TEAM_SPECTATOR))
 	{
-
 		// give everyone some time, so if the operator sets g_inactivity during
 		// gameplay, everyone isn't kicked
 		client->inactivityTime    = level.time + 60 * 1000;
@@ -1427,6 +1438,11 @@ void ClientThink_real(gentity_t *ent)
 		ent->client->ps.identifyClient       = -1;
 		ent->client->ps.identifyClientHealth = 0;
 	}
+
+#ifdef OMNIBOTS
+	// Omni-bot: used for class changes, bot will /kill 2 seconds before spawn
+	Bot_Util_CheckForSuicide(ent);
+#endif
 
 	// check for respawning
 	if (client->ps.stats[STAT_HEALTH] <= 0)

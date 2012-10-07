@@ -1979,6 +1979,10 @@ void mg42_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	trap_LinkEntity(ent);
 }
 
+#ifdef OMNIBOTS
+void UpdateGoalEntity(gentity_t *oldent, gentity_t *newent);
+#endif
+
 void mg42_spawn(gentity_t *ent)
 {
 	gentity_t *base, *gun;
@@ -2104,6 +2108,10 @@ void mg42_spawn(gentity_t *ent)
 		}
 
 		trap_LinkEntity(gun);
+
+#ifdef OMNIBOTS
+		UpdateGoalEntity( ent, gun );
+#endif
 	}
 
 	G_FreeEntity(ent);

@@ -40,7 +40,9 @@
 
 #include "g_local.h"
 
-
+#ifdef OMNIBOTS
+#include "g_etbot_interface.h"
+#endif
 
 #define RESPAWN_SP          -1
 #define RESPAWN_KEY         4
@@ -53,7 +55,6 @@
 #define RESPAWN_POWERUP     120
 #define RESPAWN_PARTIAL     998     // for multi-stage ammo/health
 #define RESPAWN_PARTIAL_DONE 999    // for multi-stage ammo/health
-
 
 //======================================================================
 
@@ -616,6 +617,10 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 
 //  ent2->item->quantity = client->ps.ammoclip[BG_FindClipForWeapon(weapon)]; // Gordon: um, modifying an item is not a good idea
 	client->ps.ammoclip[BG_FindClipForWeapon(weapon)] = 0;
+
+#ifdef OMNIBOTS
+	Bot_Event_RemoveWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
+#endif
 }
 
 qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
@@ -686,6 +691,14 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				ent->parent->client->PCSpecialPickedUpCount++;
 				G_AddSkillPoints(ent->parent, SK_SIGNALS, 1.f);
 				G_DebugAddSkillPoints(ent->parent, SK_SIGNALS, 1.f, "ammo pack picked up");
+
+#ifdef OMNIBOTS
+				//omni-bot event
+				if ( ent->parent )
+				{
+					Bot_Event_RecievedAmmo(other-g_entities, ent->parent);
+				}
+#endif
 
 				// extracted code originally here into AddMagicAmmo -xkan, 9/18/2002
 				// add 1 clip of magic ammo for any two-handed weapon
@@ -805,6 +818,10 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		}
 	}
 
+#ifdef OMNIBOTS
+	Bot_Event_AddWeapon(other->client->ps.clientNum, Bot_WeaponGameToBot(ent->item->giTag));
+#endif
+
 	return -1;
 }
 
@@ -844,6 +861,14 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 		other->health = max;
 	}
 	other->client->ps.stats[STAT_HEALTH] = other->health;
+
+#ifdef OMNIBOTS
+	//omni-bot event
+	if ( ent->parent )
+	{
+		Bot_Event_Healed(other-g_entities, ent->parent);
+	}
+#endif
 
 	return -1;
 }

@@ -36,6 +36,10 @@
 #include "../game/g_local.h"
 #include "../qcommon/q_shared.h"
 
+#ifdef OMNIBOTS
+#include "g_etbot_interface.h"
+#endif
+
 /*
 Scripting that allows the designers to control the behaviour of entities
 according to each different scenario.
@@ -915,6 +919,51 @@ void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 	{
 		G_Script_ScriptChange(ent, i);
 	}
+
+#ifdef OMNIBOT
+	// skip these
+	if(!Q_stricmp(eventStr, "trigger") ||
+		!Q_stricmp(eventStr, "activate") ||
+		!Q_stricmp(eventStr, "spawn") ||
+		!Q_stricmp(eventStr, "death") ||
+		!Q_stricmp(eventStr, "pain") ||
+		!Q_stricmp(eventStr, "playerstart"))
+		return;
+
+	if(!Q_stricmp(eventStr, "defused"))
+	{
+		Bot_Util_SendTrigger(ent, NULL,
+			va("Defused at %s.", ent->parent ? ent->parent->track : ent->track),
+			eventStr);
+
+		// pheno: log script defused actions (ETPro behavior)
+		G_LogPrintf("etpub popup: %s defused \"%s\"\n",
+			params,
+			ent->parent ? ent->parent->track : ent->track);
+	}
+	else if(!Q_stricmp(eventStr, "dynamited"))
+	{
+		Bot_Util_SendTrigger(ent, NULL,
+			va("Planted at %s.", ent->parent ? ent->parent->track : ent->track),
+			eventStr);
+
+		// pheno: log script dynamited actions (ETPro behavior)
+		G_LogPrintf("etpub popup: %s planted \"%s\"\n",
+			params,
+			ent->parent ? ent->parent->track : ent->track);
+	}
+	else if(!Q_stricmp(eventStr, "destroyed"))
+	{
+		Bot_Util_SendTrigger(ent, NULL,
+			va("%s Destroyed.", ent->parent ? ent->parent->track : ent->track),
+			eventStr);
+	}
+	else if(!Q_stricmp(eventStr, "exploded"))
+	{
+		Bot_Util_SendTrigger(ent, NULL,
+			va("Explode_%s Exploded.", _GetEntityName(ent) ),eventStr);
+	}
+#endif
 }
 
 /*

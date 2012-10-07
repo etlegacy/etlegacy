@@ -35,6 +35,10 @@
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
 
+#ifdef OMNIBOTS
+#include "g_etbot_interface.h"
+#endif
+
 // Ridah, new bounding box
 //static vec3_t	playerMins = {-15, -15, -24};
 //static vec3_t	playerMaxs = {15, 15, 32};
@@ -591,6 +595,9 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 		ent->client->ps.pm_flags |= PMF_LIMBO;
 		ent->client->ps.pm_flags |= PMF_FOLLOW;
 
+#ifdef OMNIBOTS
+		ent->client->sess.botSuicide = qfalse; // cs: avoid needlessly /killing at next spawn
+#endif
 
 		if (makeCorpse)
 		{
@@ -916,6 +923,10 @@ qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int amm
 	// skill handling
 	AddExtraSpawnAmmo(client, weapon);
 
+#ifdef OMNIBOTS
+	Bot_Event_AddWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
+#endif
+
 	return qtrue;
 }
 
@@ -933,6 +944,10 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	{
 		return;
 	}
+
+#ifdef OMNIBOTS
+	Bot_Event_ResetWeapons(client->ps.clientNum);
+#endif
 
 	// Reset special weapon time
 	client->ps.classWeaponTime = -999999;
@@ -1841,6 +1856,11 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	// get and distribute relevent paramters
 	G_LogPrintf("ClientConnect: %i\n", clientNum);
+
+#ifdef OMNIBOTS
+	Bot_Event_ClientConnected(clientNum, isBot);
+#endif
+
 	G_UpdateCharacter(client);
 	ClientUserinfoChanged(clientNum);
 
@@ -1926,7 +1946,9 @@ void ClientBegin(int clientNum)
 		lives_left = client->ps.persistant[PERS_RESPAWNS_LEFT];
 	}
 	flags = client->ps.eFlags;
+
 	memset(&client->ps, 0, sizeof(client->ps));
+
 	client->ps.eFlags                         = flags;
 	client->ps.persistant[PERS_SPAWN_COUNT]   = spawn_count;
 	client->ps.persistant[PERS_RESPAWNS_LEFT] = lives_left;
@@ -1934,6 +1956,12 @@ void ClientBegin(int clientNum)
 
 	client->pers.complaintClient  = -1;
 	client->pers.complaintEndTime = -1;
+
+#ifdef OMNIBOTS
+	//Omni-bot
+	client->sess.botSuicide = qfalse; // make sure this is not set
+	client->sess.botPush = (ent->r.svFlags & SVF_BOT) ? qtrue : qfalse;
+#endif
 
 	// locate ent at a spawn point
 	ClientSpawn(ent, qfalse);
@@ -2524,6 +2552,10 @@ void ClientDisconnect(int clientNum)
 		return;
 	}
 
+#ifdef OMNIBOTS
+	Bot_Event_ClientDisConnected(clientNum);
+#endif
+
 #ifdef USEXPSTORAGE
 	G_AddXPBackup(ent);
 #endif // USEXPSTORAGE
@@ -2637,6 +2669,12 @@ void ClientDisconnect(int clientNum)
 			flag                = LaunchItem(item, ent->r.currentOrigin, launchvel, ent - g_entities);
 			flag->s.modelindex2 = ent->s.otherEntityNum2;    // JPW NERVE FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
 			flag->message       = ent->message; // DHM - Nerve :: also restore item name
+
+#ifdef OMNIBOTS
+			// FIXME: see ETPub G_DropItems()
+			Bot_Util_SendTrigger(flag, NULL, va("%s dropped.", flag->message), "dropped");
+#endif
+
 			// Clear out player's temp copies
 			ent->s.otherEntityNum2 = 0;
 			ent->message           = NULL;

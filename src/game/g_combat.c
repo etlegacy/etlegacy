@@ -34,6 +34,10 @@
 #include "g_local.h"
 #include "../qcommon/q_shared.h"
 
+#ifdef OMNIBOTS
+#include "g_etbot_interface.h"
+#endif
+
 extern vec3_t muzzleTrace;
 
 /*
@@ -524,6 +528,12 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			obit = modNames[meansOfDeath];
 		}
 
+#ifdef OMNIBOTS
+		// send the events
+		Bot_Event_Death(self-g_entities, &g_entities[attacker-g_entities], obit);
+		Bot_Event_KilledSomeone(attacker-g_entities, &g_entities[self-g_entities], obit);
+#endif
+
 		G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, obit);
 	}
 
@@ -671,6 +681,12 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		if (self->health > GIB_HEALTH && meansOfDeath != MOD_SUICIDE && meansOfDeath != MOD_SWITCHTEAM)
 		{
 			G_AddEvent(self, EV_MEDIC_CALL, 0);
+#ifdef OMNIBOTS
+			// ATM: only register the goal if the target isn't in water.
+			if(self->waterlevel <= 1) {
+				Bot_AddFallenTeammateGoals(self, self->client->sess.sessionTeam);
+			}
+#endif
 		}
 	}
 
@@ -1909,6 +1925,15 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		// RF, entity scripting
 		G_Script_ScriptEvent(targ, "pain", va("%d %d", targ->health, targ->health + take));
 
+#ifdef OMNIBOTS
+		// RF, record bot pain
+		if (targ->s.number < level.maxclients)
+		{
+			// notify omni-bot framework
+			Bot_Event_TakeDamage(targ-g_entities, attacker);
+		}
+#endif
+
 		// Ridah, this needs to be done last, incase the health is altered in one of the event calls
 		if (targ->client)
 		{
@@ -1916,7 +1941,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 	}
 }
-
 
 /*
 ============

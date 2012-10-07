@@ -266,7 +266,8 @@ qboolean trap_EntityContactCapsule(const vec3_t mins, const vec3_t maxs, const g
 	return syscall(G_ENTITY_CONTACTCAPSULE, mins, maxs, ent);
 }
 
-// these are used by omnibots
+
+// #ifdef OMNIBOTS FIXME: precompiler macros for engine ?
 int trap_BotAllocateClient(int clientNum)
 {
 	return syscall(G_BOT_ALLOCATE_CLIENT, clientNum);
@@ -286,7 +287,7 @@ void trap_EA_Command(int client, char *command)
 {
 	syscall(BOTLIB_EA_COMMAND, client, command);
 }
-// omnibot usage end
+// #endif
 
 int trap_GetSoundLength(sfxHandle_t sfxHandle)
 {

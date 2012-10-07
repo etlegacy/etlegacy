@@ -34,6 +34,10 @@
 
 #include "g_local.h"
 
+#ifdef OMNIBOTS
+#include "g_etbot_interface.h"
+#endif
+
 typedef struct
 {
 	char oldShader[MAX_QPATH];
@@ -630,6 +634,11 @@ void G_InitGentity(gentity_t *e)
 	e->spawnCount++;
 	// mark the time
 	e->spawnTime = level.time;
+
+#ifdef OMNIBOTS
+	// Notify omni-bot
+	Bot_Queue_EntityCreated(e);
+#endif
 }
 
 /*
@@ -735,6 +744,10 @@ Marks the entity as free
 void G_FreeEntity(gentity_t *ed)
 {
 	int spawnCount;
+
+#ifdef OMNIBOTS
+	Bot_Event_EntityDeleted(ed);
+#endif
 
 	if (ed->free)
 	{

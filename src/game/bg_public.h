@@ -63,6 +63,8 @@
 
 #define MAX_ITEMS           256
 
+#define MAX_FIRETEAM_MEMBERS	6
+
 #define RANK_TIED_FLAG      0x4000
 
 //#define DEFAULT_SHOTGUN_SPREAD	700

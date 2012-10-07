@@ -56,6 +56,11 @@ option(USE_OPENAL               "Enable OpenAL sound backend (client) [BROKEN]" 
 option(USE_FREETYPE             "Enable Freetype font library support (client)"                 OFF)
 option(TRACKBASE_SUPPORT        "Enable extended server statistics (server)"                    ON)
 
+# FIXME
+#if (CMAKE_SYSTEM MATCHES TODO)
+	option(OMNIBOTS     		"Enable omnibot build in mod code (Win & Linux server only!)"   OFF)
+#endif()
+
 #-----------------------------------------------------------------
 # Platform-specific settings
 #-----------------------------------------------------------------
@@ -239,6 +244,10 @@ if(BUILD_CLIENT)
         if(SMP_SUPPORT)
                 add_definitions(-DSMP)
         endif(SMP_SUPPORT)
+
+		if(OMNIBOTS)
+                add_definitions(-DOMNIBOTS)
+		endif(OMNIBOTS)
 
         # Use bundled libraries
         if(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL OR BUNDLED_LIBS AND NOT MINGW)
