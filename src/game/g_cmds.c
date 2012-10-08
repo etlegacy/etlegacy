@@ -834,8 +834,6 @@ void Cmd_Kill_f(gentity_t *ent)
 			return;
 		}
 #endif
-		SP("^9You must be alive to use ^3/kill.\n");
-
 		trap_SendServerCommand(ent - g_entities, "cp \"^9You must be alive to use ^3/kill.\n\"");
 
 		return;
