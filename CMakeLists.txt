@@ -56,9 +56,9 @@ option(USE_OPENAL               "Enable OpenAL sound backend (client) [BROKEN]" 
 option(USE_FREETYPE             "Enable Freetype font library support (client)"                 OFF)
 option(TRACKBASE_SUPPORT        "Enable extended server statistics (server)"                    ON)
 
-#FIXME: only 32bit, UNIX includes openBSD - no clue if this works properly
+#FIXME: only 32bit WIN & Linux, UNIX includes openBSD - no clue if this works properly
 if(WIN32 OR UNIX)
-	option(OMNIBOTS     		"Enable omnibot build in mod code (Win & Linux server only!)"   OFF)
+	option(USE_OMNIBOTS     	"Enable omnibot build in mod code (Win & Linux server only!)"   OFF)
 endif()
 
 #-----------------------------------------------------------------
@@ -332,13 +332,16 @@ if(BUILD_MOD)
                         LIBRARY_OUTPUT_DIRECTORY "etmain")
                         
         # qagame      
-        if(OMNIBOTS)
-                add_definitions(-DOMNIBOTS)
-                #INCLUDE_DIRECTORIES( src/Omnibot )
-                #FIXME: add to source list        
-    			# "src/game/g_etbot_interface.cpp"
-				# "src/Omnibot/Common/BotLoadLibrary.cpp"	
-		endif(OMNIBOTS)
+        if(USE_OMNIBOTS)
+        		#FIXME: only 32bit WIN & Linux, UNIX includes openBSD - no clue if this works properly
+        		if(WIN32 OR UNIX)
+                		add_definitions(-DOMNIBOTS)
+                		#include_directories( src/Omnibot )
+                		#FIXME: add to source list        
+    					# "src/game/g_etbot_interface.cpp"
+						# "src/Omnibot/Common/BotLoadLibrary.cpp"
+				endif()
+		endif(USE_OMNIBOTS)
         
         add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
         set_target_properties(qagame${LIB_SUFFIX}${ARCH}
