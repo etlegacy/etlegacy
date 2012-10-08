@@ -205,7 +205,6 @@ qboolean    CheatsOk(gentity_t *ent)
 	return qtrue;
 }
 
-
 /*
 ==================
 ConcatArgs
@@ -346,7 +345,6 @@ Cmd_ListBotGoals_f
 
 =================
 */
-
 void Cmd_ListBotGoals_f(gentity_t *ent)
 {
 	int    i;
@@ -559,8 +557,8 @@ void Cmd_Give_f(gentity_t *ent)
 		}
 	}
 
-	//  "give allammo <n>" allows you to give a specific amount of ammo to /all/ weapons while
-	//  allowing "give ammo <n>" to only give to the selected weap.
+	// "give allammo <n>" allows you to give a specific amount of ammo to /all/ weapons while
+	// allowing "give ammo <n>" to only give to the selected weap.
 	if (Q_stricmpn(name, "allammo", 7) == 0 && amount)
 	{
 		for (i = 1 ; i < WP_NUM_WEAPONS; i++)
@@ -604,7 +602,6 @@ void Cmd_Give_f(gentity_t *ent)
 	    }
 	}*/
 }
-
 
 /*
 ==================
@@ -710,11 +707,9 @@ Sets client to nofatigue
 argv(0) nofatigue
 ==================
 */
-
 void Cmd_Nofatigue_f(gentity_t *ent)
 {
 	char *msg;
-
 	char *name = ConcatArgs(1);
 
 	if (!CheatsOk(ent))
@@ -778,7 +773,6 @@ void Cmd_Notarget_f(gentity_t *ent)
 	trap_SendServerCommand(ent - g_entities, va("print \"%s\"", msg));
 }
 
-
 /*
 ==================
 Cmd_Noclip_f
@@ -830,15 +824,20 @@ Cmd_Kill_f
 void Cmd_Kill_f(gentity_t *ent)
 {
 
-	if(ent->health <= 0) {
+	if(ent->health <= 0)
+	{
 #ifdef OMNIBOTS
 		// cs: bots have to go to limbo when issuing /kill otherwise it's trouble
-		if (ent->r.svFlags & SVF_BOT) {
+		if (ent->r.svFlags & SVF_BOT)
+		{
 			limbo(ent,qtrue);
 			return;
 		}
 #endif
 		SP("^9You must be alive to use ^3/kill.\n");
+
+		trap_SendServerCommand(ent - g_entities, "cp \"^9You must be alive to use ^3/kill.\n\"");
+
 		return;
 	}
 
@@ -914,9 +913,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 	int              specClient;
 	int              respawnsLeft;
 
-	//
 	// see what change is requested
-	//
 	client = ent->client;
 
 	clientNum  = client - level.clients;
@@ -970,9 +967,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 		team = TEAM_SPECTATOR;
 	}
 
-	//
 	// decide if we will allow the change
-	//
 	oldTeam = client->sess.sessionTeam;
 	if (team == oldTeam && team != TEAM_SPECTATOR)
 	{
@@ -1005,13 +1000,8 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 	    }*/
 	// dhm
 
-	//
 	// execute the team change
-	//
 
-
-	// DHM - Nerve
-	// OSP
 	if (team != TEAM_SPECTATOR)
 	{
 		client->pers.initialSpawn = qfalse;
@@ -1383,7 +1373,6 @@ void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updat
 	}
 }
 
-
 /*
 =================
 Cmd_Team_f
@@ -1483,9 +1472,6 @@ void Cmd_SetWeapons_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
 }
 
-
-
-// START Mad Doc - TDF
 /*
 =================
 Cmd_TeamBot_f
@@ -1533,7 +1519,6 @@ void Cmd_TeamBot_f(gentity_t *foo)
 	SetWolfSpawnWeapons(ent->client);
 }
 
-// END Mad Doc - TDF
 /*
 =================
 Cmd_Follow_f
@@ -1721,7 +1706,6 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir)
 	// leave it where it was
 }
 
-
 /*======================
 G_EntitySound
     Mad Doc xkan, 11/06/2002 -
@@ -1757,7 +1741,6 @@ void G_EntitySoundNoCut(
 	trap_SendServerCommand(-1, va("entitySound %d %s %d %i %i %i noCut", ent->s.number, soundId, volume,
 	                              (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2]));
 }
-
 
 /*
 ==================
@@ -1882,7 +1865,6 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 	}
 }
 
-
 /*
 ==================
 Cmd_Say_f
@@ -1965,9 +1947,10 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 	}
 
 	//if bots we don't send voices (no matter if omnibot or not)
-	if(other->r.svFlags & SVF_BOT) {
+	if(other->r.svFlags & SVF_BOT)
+	{
 #ifdef OMNIBOTS
-	// Omni-bot Send this voice macro to the bot as an event.
+		// Omni-bot Send this voice macro to the bot as an event.
 		Bot_Event_VoiceMacro(other-g_entities, ent, mode, id);
 #endif
 		return;
@@ -2776,16 +2759,12 @@ void Cmd_Vote_f(gentity_t *ent)
 	// for players entering or leaving
 }
 
-
 qboolean G_canPickupMelee(gentity_t *ent)
 {
 // JPW NERVE -- no "melee" weapons in net play
 	return qfalse;
 }
 // jpw
-
-
-
 
 /*
 =================
@@ -2988,7 +2967,6 @@ qboolean G_TankIsMountable(gentity_t *ent, gentity_t *other)
 	return qtrue;
 }
 
-// Rafael
 /*
 ==================
 Cmd_Activate_f
@@ -3386,7 +3364,6 @@ tryagain:
 	}
 }
 
-
 void Cmd_Activate2_f(gentity_t *ent)
 {
 	trace_t   tr;
@@ -3417,10 +3394,12 @@ void Cmd_Activate2_f(gentity_t *ent)
 	/* FIXME OMNIBOT
 	// look for a guy to push
 #ifdef OMNIBOTS
-	if ( g_OmniBotFlags.integer & OBF_SHOVING || !(ent->r.svFlags & SVF_BOT) ) {
+	if ( g_OmniBotFlags.integer & OBF_SHOVING || !(ent->r.svFlags & SVF_BOT) )
+	{
 #endif
 		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, CONTENTS_BODY);
-		if(tr.entityNum >= 0) {
+		if(tr.entityNum >= 0)
+		{
 			traceEnt = &g_entities[tr.entityNum];
 			if(traceEnt->client) {
 				if(traceEnt->client->ps.eFlags & EF_PLAYDEAD)
@@ -3452,47 +3431,6 @@ tryagain:
 		goto tryagain;
 	}
 }
-
-/*
-============================
-Cmd_ClientMonsterSlickAngle
-============================
-*/
-/*
-void Cmd_ClientMonsterSlickAngle (gentity_t *clent) {
-
-    char s[MAX_STRING_CHARS];
-    int entnum;
-    int angle;
-    gentity_t *ent;
-    vec3_t  dir, kvel;
-    vec3_t  forward;
-
-    if (trap_Argc() != 3) {
-        G_Printf( "ClientDamage command issued with incorrect number of args\n" );
-    }
-
-    trap_Argv( 1, s, sizeof( s ) );
-    entnum = atoi(s);
-    ent = &g_entities[entnum];
-
-    trap_Argv( 2, s, sizeof( s ) );
-    angle = atoi(s);
-
-    // sanity check (also protect from cheaters)
-    if (g_gametype.integer != GT_SINGLE_PLAYER && entnum != clent->s.number) {
-        trap_DropClient( clent->s.number, "Dropped due to illegal ClientMonsterSlick command\n" );
-        return;
-    }
-
-    VectorClear (dir);
-    dir[YAW] = angle;
-    AngleVectors (dir, forward, NULL, NULL);
-
-    VectorScale (forward, 32, kvel);
-    VectorAdd (ent->client->ps.velocity, kvel, ent->client->ps.velocity);
-}
-*/
 
 void G_UpdateSpawnCounts(void)
 {
@@ -3613,6 +3551,7 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent)
 Cmd_SetSniperSpot_f
 ============
 */
+// TODO: remove this
 void Cmd_SetSniperSpot_f(gentity_t *clent)
 {
 	gentity_t *spot;
@@ -3662,58 +3601,6 @@ void Cmd_SetSniperSpot_f(gentity_t *clent)
 }
 
 void G_PrintAccuracyLog(gentity_t *ent);
-
-/*
-============
-Cmd_SetWayPoint_f
-============
-*/
-/*void Cmd_SetWayPoint_f( gentity_t *ent ) {
-    char    arg[MAX_TOKEN_CHARS];
-    vec3_t  forward, muzzlePoint, end, loc;
-    trace_t trace;
-
-    if ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
-        trap_SendServerCommand( ent-g_entities, "print \"Not allowed to set waypoints as spectator.\n\"" );
-        return;
-    }
-
-    if ( trap_Argc() != 2 ) {
-        return;
-    }
-
-    trap_Argv( 1, arg, sizeof( arg ) );
-
-    AngleVectors( ent->client->ps.viewangles, forward, NULL, NULL );
-
-    VectorCopy( ent->r.currentOrigin, muzzlePoint );
-    muzzlePoint[2] += ent->client->ps.viewheight;
-
-    VectorMA( muzzlePoint, 8192, forward, end );
-    trap_Trace( &trace, muzzlePoint, NULL, NULL, end, ent->s.number, MASK_SHOT );
-
-    if( trace.surfaceFlags & SURF_NOIMPACT )
-        return;
-
-    VectorCopy( trace.endpos, loc );
-
-    G_SetWayPoint( ent, atoi(arg), loc );
-}*/
-
-/*
-============
-Cmd_ClearWayPoint_f
-============
-*/
-/*void Cmd_ClearWayPoint_f( gentity_t *ent ) {
-
-    if ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
-        trap_SendServerCommand( ent-g_entities, "print \"Not allowed to clear waypoints as spectator.\n\"" );
-        return;
-    }
-
-    G_RemoveWayPoint( ent->client );
-}*/
 
 void Cmd_WeaponStat_f(gentity_t *ent)
 {
@@ -3840,7 +3727,6 @@ void G_CalcClientAccuracies(void)
 		}
 	}
 }
-
 
 void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent)
 {
@@ -4045,7 +3931,6 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 	client->pers.lastReinforceTime = 0;
 }
 
-
 /*
 =================
 ClientCommand
@@ -4237,7 +4122,6 @@ void ClientCommand(int clientNum)
 	// ignore all other commands when at intermission
 	if (level.intermissiontime)
 	{
-//      Cmd_Say_f (ent, qfalse, qtrue);         // NERVE - SMF - we don't want to spam the clients with this.
 		CPx(clientNum, va("print \"^3%s^7 not allowed during intermission.\n\"", cmd));
 		return;
 	}
@@ -4307,11 +4191,7 @@ void ClientCommand(int clientNum)
 	else if (Q_stricmp(cmd, "setsniperspot") == 0)
 	{
 		Cmd_SetSniperSpot_f(ent);
-//  } else if (Q_stricmp (cmd, "waypoint") == 0) {
-//      Cmd_SetWayPoint_f( ent );
-//  } else if (Q_stricmp (cmd, "clearwaypoint") == 0) {
-//      Cmd_ClearWayPoint_f( ent );
-		// OSP
+
 	}
 	else if (G_commandCheck(ent, cmd, qfalse))
 	{
