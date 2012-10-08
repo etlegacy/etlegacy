@@ -56,10 +56,10 @@ option(USE_OPENAL               "Enable OpenAL sound backend (client) [BROKEN]" 
 option(USE_FREETYPE             "Enable Freetype font library support (client)"                 OFF)
 option(TRACKBASE_SUPPORT        "Enable extended server statistics (server)"                    ON)
 
-# FIXME
-#if (CMAKE_SYSTEM MATCHES TODO)
+#FIXME: only 32bit, UNIX includes openBSD - no clue if this works properly
+if(WIN32 OR UNIX)
 	option(OMNIBOTS     		"Enable omnibot build in mod code (Win & Linux server only!)"   OFF)
-#endif()
+endif()
 
 #-----------------------------------------------------------------
 # Platform-specific settings
@@ -245,10 +245,6 @@ if(BUILD_CLIENT)
                 add_definitions(-DSMP)
         endif(SMP_SUPPORT)
 
-		if(OMNIBOTS)
-                add_definitions(-DOMNIBOTS)
-		endif(OMNIBOTS)
-
         # Use bundled libraries
         if(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL OR BUNDLED_LIBS AND NOT MINGW)
                 if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
@@ -334,12 +330,22 @@ if(BUILD_MOD)
                 PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
                         PREFIX ""
                         LIBRARY_OUTPUT_DIRECTORY "etmain")
-        # qagame
+                        
+        # qagame      
+        if(OMNIBOTS)
+                add_definitions(-DOMNIBOTS)
+                #INCLUDE_DIRECTORIES( src/Omnibot )
+                #FIXME: add to source list        
+    			# "src/game/g_etbot_interface.cpp"
+				# "src/Omnibot/Common/BotLoadLibrary.cpp"	
+		endif(OMNIBOTS)
+        
         add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
         set_target_properties(qagame${LIB_SUFFIX}${ARCH}
                 PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
                         PREFIX ""
                         LIBRARY_OUTPUT_DIRECTORY "etmain")
+                        
         # ui
         add_library(ui${LIB_SUFFIX}${ARCH} MODULE ${UI_SRC})
         set_target_properties(ui${LIB_SUFFIX}${ARCH}
