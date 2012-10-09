@@ -67,6 +67,7 @@ R_DrawStripElements
 */
 static int c_vertexes;          // for seeing how long our average strips are
 static int c_begins;
+
 static void R_DrawStripElements(int numIndexes, const glIndex_t *indexes, void (APIENTRY *element)(GLint))
 {
 	int      i;
@@ -467,7 +468,6 @@ to overflow.
 */
 void RB_BeginSurface(shader_t *shader, int fogNum)
 {
-
 	shader_t *state = (shader->remappedShader) ? shader->remappedShader : shader;
 
 	tess.numIndexes               = 0;
@@ -502,7 +502,6 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 
 	pStage = tess.xstages[stage];
 
-	// Ridah
 	if (tess.shader->noFog && pStage->isFogged)
 	{
 		R_FogOn();
@@ -511,11 +510,10 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 	{
 		R_FogOff(); // turn it back off
 	}
-	else        // make sure it's on
+	else        	// make sure it's on
 	{
 		R_FogOn();
 	}
-	// done.
 
 	GL_State(pStage->stateBits);
 
@@ -559,8 +557,11 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 }
 
 /*
+===================
 DynamicLightSinglePass()
+
 perform all dynamic lighting with a single rendering pass
+===================
 */
 static void DynamicLightSinglePass(void)
 {
@@ -573,7 +574,6 @@ static void DynamicLightSinglePass(void)
 	float    intensity, remainder, modulate;
 	vec3_t   floatColor, dir;
 	dlight_t *dl;
-
 
 	// early out
 	if (backEnd.refdef.num_dlights == 0)
@@ -712,10 +712,12 @@ static void DynamicLightSinglePass(void)
 }
 
 /*
+===================
 DynamicLightPass()
-perform dynamic lighting with multiple rendering passes
-*/
 
+perform dynamic lighting with multiple rendering passes
+===================
+*/
 static void DynamicLightPass(void)
 {
 	int      i, l, a, b, c, color, *intColors;
@@ -1045,7 +1047,6 @@ static void ComputeColors(shaderStage_t *pStage)
 	case AGEN_ONE_MINUS_ENTITY:
 		RB_CalcAlphaFromOneMinusEntity(( unsigned char * ) tess.svars.colors);
 		break;
-	// Ridah
 	case AGEN_NORMALZFADE:
 	{
 		float    alpha, range, lowest, highest, dot;
@@ -1141,7 +1142,6 @@ static void ComputeColors(shaderStage_t *pStage)
 		}
 	}
 	break;
-	// done.
 	case AGEN_VERTEX:
 		if (pStage->rgbGen != CGEN_VERTEX)
 		{
@@ -1160,12 +1160,11 @@ static void ComputeColors(shaderStage_t *pStage)
 	case AGEN_PORTAL:
 	{
 		unsigned char alpha;
+		float  len;
+		vec3_t v;
 
 		for (i = 0; i < tess.numVertexes; i++)
 		{
-			float  len;
-			vec3_t v;
-
 			VectorSubtract(tess.xyz[i].v, backEnd.viewParms.orientation.origin, v);
 			len = VectorLength(v);
 
@@ -1219,11 +1218,10 @@ static void ComputeTexCoords(shaderStage_t *pStage)
 {
 	int i;
 	int b;
+	int tm;
 
 	for (b = 0; b < NUM_TEXTURE_BUNDLES; b++)
 	{
-		int tm;
-
 		// generate the texture coordinates
 		switch (pStage->bundle[b].tcGen)
 		{
@@ -1264,9 +1262,7 @@ static void ComputeTexCoords(shaderStage_t *pStage)
 			return;
 		}
 
-		//
 		// alter texture coordinates
-		//
 		for (tm = 0; tm < pStage->bundle[b].numTexMods ; tm++)
 		{
 			switch (pStage->bundle[b].texMods[tm].type)
@@ -1333,7 +1329,7 @@ SetIteratorFog
 void SetIteratorFog(void)
 {
 	// changed for problem when you start the game with r_fastsky set to '1'
-//  if(r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL ) {
+	//  if(r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL ) {
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		R_FogOff();
@@ -1378,9 +1374,11 @@ void SetIteratorFog(void)
 	}
 }
 
-
 /*
-** RB_IterateStagesGeneric
+===================
+RB_IterateStagesGeneric
+
+===================
 */
 static void RB_IterateStagesGeneric(shaderCommands_t *input)
 {
@@ -1404,9 +1402,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 			qglColorPointer(4, GL_UNSIGNED_BYTE, 0, input->svars.colors);
 		}
 
-		//
 		// do multitexture
-		//
 		if (pStage->bundle[1].image[0] != 0)
 		{
 			DrawMultitextured(input, stage);
@@ -1507,7 +1503,10 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 }
 
 /*
-** RB_StageIteratorGeneric
+===================
+RB_StageIteratorGeneric
+
+===================
 */
 void RB_StageIteratorGeneric(void)
 {
@@ -1544,7 +1543,6 @@ void RB_StageIteratorGeneric(void)
 	// and texture arrays before we compile, otherwise we need
 	// to avoid compiling those arrays since they will change
 	// during multipass rendering
-	//
 	if (tess.numPasses > 1 || shader->multitextureEnv)
 	{
 		setArraysOnce = qfalse;
@@ -1577,9 +1575,7 @@ void RB_StageIteratorGeneric(void)
 		qglEnableClientState(GL_COLOR_ARRAY);
 	}
 
-	//
 	// call shader function
-	//
 	RB_IterateStagesGeneric(input);
 
 	// now do any dynamic lighting needed
@@ -1619,7 +1615,10 @@ void RB_StageIteratorGeneric(void)
 }
 
 /*
-** RB_StageIteratorVertexLitTexture
+===================
+RB_StageIteratorVertexLitTexture
+
+===================
 */
 void RB_StageIteratorVertexLitTexture(void)
 {
@@ -1696,6 +1695,12 @@ void RB_StageIteratorVertexLitTexture(void)
 
 //define    REPLACE_MODE
 
+/*
+===================
+RB_StageIteratorLightmappedMultitexture
+
+===================
+*/
 void RB_StageIteratorLightmappedMultitexture(void)
 {
 	shaderCommands_t *input;
@@ -1812,7 +1817,10 @@ void RB_StageIteratorLightmappedMultitexture(void)
 }
 
 /*
-** RB_EndSurface
+===================
+RB_EndSurface
+
+===================
 */
 void RB_EndSurface(void)
 {
