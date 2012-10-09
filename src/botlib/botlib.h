@@ -81,17 +81,6 @@ typedef void (*BotPolyFunc)(int color, int numPoints, float *points);
 #define ACTION_PRONE            16384
 // END      xkan, 9/16/2002
 
-//the bot input, will be converted to an usercmd_t
-typedef struct bot_input_s
-{
-	float thinktime;        //time since last output (in seconds)
-	vec3_t dir;             //movement direction
-	float speed;            //speed in the range [0, 400]
-	vec3_t viewangles;      //the view angles
-	int actionflags;        //one of the ACTION_? flags
-	int weapon;             //weapon to use
-} bot_input_t;
-
 //entity state
 typedef struct bot_entitystate_s
 {
