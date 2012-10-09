@@ -824,13 +824,13 @@ Cmd_Kill_f
 void Cmd_Kill_f(gentity_t *ent)
 {
 
-	if(ent->health <= 0)
+	if (ent->health <= 0)
 	{
 #ifdef OMNIBOTS
 		// cs: bots have to go to limbo when issuing /kill otherwise it's trouble
 		if (ent->r.svFlags & SVF_BOT)
 		{
-			limbo(ent,qtrue);
+			limbo(ent, qtrue);
 			return;
 		}
 #endif
@@ -1790,7 +1790,7 @@ void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *
 		trap_SendServerCommand(other - g_entities, va("%s \"%s%c%c%s\" %i %i", mode == SAY_TEAM || mode == SAY_BUDDY ? "tchat" : "chat", name, Q_COLOR_ESCAPE, color, message, (int)(ent - g_entities), localize));
 #ifdef OMNIBOTS
 		// Omni-bot: Tell the bot about the chat message
-		Bot_Event_ChatMessage(other-g_entities, ent, mode, message);
+		Bot_Event_ChatMessage(other - g_entities, ent, mode, message);
 #endif
 	}
 }
@@ -1945,11 +1945,11 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 	}
 
 	//if bots we don't send voices (no matter if omnibot or not)
-	if(other->r.svFlags & SVF_BOT)
+	if (other->r.svFlags & SVF_BOT)
 	{
 #ifdef OMNIBOTS
 		// Omni-bot Send this voice macro to the bot as an event.
-		Bot_Event_VoiceMacro(other-g_entities, ent, mode, id);
+		Bot_Event_VoiceMacro(other - g_entities, ent, mode, id);
 #endif
 		return;
 	}
@@ -3391,25 +3391,25 @@ void Cmd_Activate2_f(gentity_t *ent)
 
 	/* FIXME OMNIBOT
 	// look for a guy to push
-#ifdef OMNIBOTS
+	#ifdef OMNIBOTS
 	if ( g_OmniBotFlags.integer & OBF_SHOVING || !(ent->r.svFlags & SVF_BOT) )
 	{
-#endif
-		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, CONTENTS_BODY);
-		if(tr.entityNum >= 0)
-		{
-			traceEnt = &g_entities[tr.entityNum];
-			if(traceEnt->client) {
-				if(traceEnt->client->ps.eFlags & EF_PLAYDEAD)
-					G_DragCorpse(ent, traceEnt);
-				else
-					G_PushPlayer(ent, traceEnt);
-				return;
-			}
-		}
-#ifdef OMNIBOTS
+	#endif
+	    trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, CONTENTS_BODY);
+	    if(tr.entityNum >= 0)
+	    {
+	        traceEnt = &g_entities[tr.entityNum];
+	        if(traceEnt->client) {
+	            if(traceEnt->client->ps.eFlags & EF_PLAYDEAD)
+	                G_DragCorpse(ent, traceEnt);
+	            else
+	                G_PushPlayer(ent, traceEnt);
+	            return;
+	        }
+	    }
+	#ifdef OMNIBOTS
 	}
-#endif
+	#endif
 	*/
 tryagain:
 

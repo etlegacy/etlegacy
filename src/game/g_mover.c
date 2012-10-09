@@ -4562,9 +4562,9 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 
 #ifdef OMNIBOTS
 	// Omnibot trigger support
-	if  ( self->constructibleStats.constructxpbonus == 5 )
+	if  (self->constructibleStats.constructxpbonus == 5)
 	{
-		G_Script_ScriptEvent( self, "exploded", "" );
+		G_Script_ScriptEvent(self, "exploded", "");
 	}
 #endif
 

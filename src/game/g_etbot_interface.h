@@ -22,14 +22,14 @@
 // g_OmniBotFlags bits
 enum BotFlagOptions
 {
-	OBF_DONT_XPSAVE			= (1<<0), // Disables XPSave for bots
-	OBF_DONT_MOUNT_TANKS	= (1<<1), // Bots cannot mount tanks
-	OBF_DONT_MOUNT_GUNS		= (1<<2), // Bots cannot mount emplaced guns
-	OBF_DONT_SHOW_BOTCOUNT	= (1<<3), // Don't count bots
-	OBF_GIBBING				= (1<<4), // Bots will target ungibbed enemies
-	OBF_TRIGGER_MINES		= (1<<5), // Bots will trigger team and spotted mines
-	OBF_SHOVING				= (1<<6), // Bots can use g_shove
-	OBF_NEXT_FLAG			= (1<<16), // mod specific flags start from here
+	OBF_DONT_XPSAVE        = (1 << 0), // Disables XPSave for bots
+	OBF_DONT_MOUNT_TANKS   = (1 << 1), // Bots cannot mount tanks
+	OBF_DONT_MOUNT_GUNS    = (1 << 2), // Bots cannot mount emplaced guns
+	OBF_DONT_SHOW_BOTCOUNT = (1 << 3), // Don't count bots
+	OBF_GIBBING            = (1 << 4), // Bots will target ungibbed enemies
+	OBF_TRIGGER_MINES      = (1 << 5), // Bots will trigger team and spotted mines
+	OBF_SHOVING            = (1 << 6), // Bots can use g_shove
+	OBF_NEXT_FLAG          = (1 << 16), // mod specific flags start from here
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -96,6 +96,6 @@ void Bot_AddDynamiteGoal(gentity_t *_ent, int _team, const char *_tag);
 void Bot_AddFallenTeammateGoals(gentity_t *_teammate, int _team);
 // void AddDeferredGoal(gentity_t *ent);
 void UpdateGoalEntity(gentity_t *oldent, gentity_t *newent);
-void GetEntityCenter( gentity_t *ent, vec3_t pos );
+void GetEntityCenter(gentity_t *ent, vec3_t pos);
 
 #endif

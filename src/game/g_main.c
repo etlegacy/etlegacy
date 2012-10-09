@@ -60,12 +60,12 @@ g_campaignInfo_t g_campaigns[MAX_CAMPAIGNS];
 mapEntityData_Team_t mapEntityData[2];
 
 #ifdef OMNIBOTS
-vmCvar_t	g_OmniBotPath;
-vmCvar_t	g_OmniBotEnable;
-vmCvar_t	g_OmniBotFlags;
-vmCvar_t	g_OmniBotPlaying;
+vmCvar_t g_OmniBotPath;
+vmCvar_t g_OmniBotEnable;
+vmCvar_t g_OmniBotFlags;
+vmCvar_t g_OmniBotPlaying;
 #ifdef DEBUG
-vmCvar_t	g_allowBotSwap;
+vmCvar_t g_allowBotSwap;
 #endif
 #endif
 vmCvar_t g_gametype;
@@ -424,12 +424,12 @@ cvarTable_t gameCvarTable[] =
 
 #ifdef OMNIBOTS
 	// Omni-bot user defined path to load bot library from.
-	{ &g_OmniBotPath,			  "omnibot_path",		"",																CVAR_ARCHIVE | CVAR_NORESTART,					  0,		qfalse },
-	{ &g_OmniBotEnable,			  "omnibot_enable",				"0",													CVAR_ARCHIVE | CVAR_NORESTART,					  0,		qfalse },
-	{ &g_OmniBotPlaying,		  "omnibot_playing",			"0",													CVAR_SERVERINFO_NOUPDATE | CVAR_ROM,			  0,		qfalse },
-	{ &g_OmniBotFlags,			  "omnibot_flags",				"0",													CVAR_ARCHIVE | CVAR_NORESTART,					  0,		qfalse },
+	{ &g_OmniBotPath,             "omnibot_path",              "",                                                       CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse},
+	{ &g_OmniBotEnable,           "omnibot_enable",            "0",                                                      CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse},
+	{ &g_OmniBotPlaying,          "omnibot_playing",           "0",                                                      CVAR_SERVERINFO_NOUPDATE | CVAR_ROM,             0, qfalse},
+	{ &g_OmniBotFlags,            "omnibot_flags",             "0",                                                      CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse},
 #ifdef DEBUG
-	{ &g_allowBotSwap,			  "g_allowBotSwap",				"0",													CVAR_ARCHIVE,									   0,		qfalse },
+	{ &g_allowBotSwap,            "g_allowBotSwap",            "0",                                                      CVAR_ARCHIVE,                                    0, qfalse},
 #endif
 #endif
 
@@ -511,15 +511,17 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		Bot_Interface_InitHandles();
 #endif
 		G_InitGame(arg0, arg1, arg2);
-		G_Printf( "Game Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds()-time)/1000.f );
+		G_Printf("Game Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
 #ifdef OMNIBOTS
 
-			time = trap_Milliseconds();
+		time = trap_Milliseconds();
 
-			if (!Bot_Interface_Init())
-				G_Printf(S_COLOR_RED "Unable to Initialize Omni-Bot.\n");
+		if (!Bot_Interface_Init())
+		{
+			G_Printf(S_COLOR_RED "Unable to Initialize Omni-Bot.\n");
+		}
 
-			G_Printf( "Omni-Bot Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds()-time)/1000.f );
+		G_Printf("Omni-Bot Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
 #endif
 	}
 		return 0;

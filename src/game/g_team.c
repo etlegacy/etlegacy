@@ -429,7 +429,7 @@ void Team_ResetFlag(gentity_t *ent)
 			RespawnItem(ent);
 #ifdef OMNIBOTS
 
-		Bot_Util_SendTrigger(ent, NULL, va("Flag returned %s!", _GetEntityName(ent)), "returned");
+			Bot_Util_SendTrigger(ent, NULL, va("Flag returned %s!", _GetEntityName(ent)), "returned");
 #endif
 		}
 	}
@@ -590,7 +590,7 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 			G_Script_ScriptEvent(&g_entities[ent->s.otherEntityNum], "trigger", "returned");
 #ifdef OMNIBOTS
 			{
-				const char *pName = ent->message?ent->message:_GetEntityName(ent);
+				const char *pName = ent->message ? ent->message : _GetEntityName(ent);
 				Bot_Util_SendTrigger(ent, NULL, va("Axis have returned %s!", pName ? pName : ""), "returned");
 			}
 #endif
@@ -608,7 +608,7 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 			G_Script_ScriptEvent(&g_entities[ent->s.otherEntityNum], "trigger", "returned");
 #ifdef OMNIBOTS
 			{
-				const char *pName = ent->message?ent->message:_GetEntityName(ent);
+				const char *pName = ent->message ? ent->message : _GetEntityName(ent);
 				Bot_Util_SendTrigger(ent, NULL, va("Allies have returned %s!", pName ? pName : ""), "returned");
 			}
 #endif

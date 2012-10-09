@@ -694,9 +694,9 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 
 #ifdef OMNIBOTS
 				//omni-bot event
-				if ( ent->parent )
+				if (ent->parent)
 				{
-					Bot_Event_RecievedAmmo(other-g_entities, ent->parent);
+					Bot_Event_RecievedAmmo(other - g_entities, ent->parent);
 				}
 #endif
 
@@ -864,9 +864,9 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 
 #ifdef OMNIBOTS
 	//omni-bot event
-	if ( ent->parent )
+	if (ent->parent)
 	{
-		Bot_Event_Healed(other-g_entities, ent->parent);
+		Bot_Event_Healed(other - g_entities, ent->parent);
 	}
 #endif
 

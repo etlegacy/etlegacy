@@ -63,7 +63,7 @@
 
 #define MAX_ITEMS           256
 
-#define MAX_FIRETEAM_MEMBERS	6
+#define MAX_FIRETEAM_MEMBERS    6
 
 #define RANK_TIED_FLAG      0x4000
 

@@ -1960,7 +1960,7 @@ void ClientBegin(int clientNum)
 #ifdef OMNIBOTS
 	//Omni-bot
 	client->sess.botSuicide = qfalse; // make sure this is not set
-	client->sess.botPush = (ent->r.svFlags & SVF_BOT) ? qtrue : qfalse;
+	client->sess.botPush    = (ent->r.svFlags & SVF_BOT) ? qtrue : qfalse;
 #endif
 
 	// locate ent at a spawn point

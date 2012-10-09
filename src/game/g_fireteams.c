@@ -334,8 +334,8 @@ void G_RegisterFireteam(/*const char* name,*/ int entityNum)
 //	Q_strncpyz(ft->name, name, 32);
 
 #ifdef OMNIBOTS
-	Bot_Event_FireTeamCreated(entityNum,ft->ident);
-	Bot_Event_JoinedFireTeam(leader - g_entities,leader);
+	Bot_Event_FireTeamCreated(entityNum, ft->ident);
+	Bot_Event_JoinedFireTeam(leader - g_entities, leader);
 #endif
 
 	G_UpdateFireteamConfigString(ft);
@@ -387,7 +387,7 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 			ft->joinOrder[i] = entityNum;
 
 #ifdef OMNIBOTS
-			Bot_Event_JoinedFireTeam(entityNum,&g_entities[leaderNum]);
+			Bot_Event_JoinedFireTeam(entityNum, &g_entities[leaderNum]);
 #endif
 
 			G_UpdateFireteamConfigString(ft);
@@ -400,24 +400,37 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 // core: Check if the fireteam contains only bots..
 // excludeEntityNum will be excluded from the test (if -1, it has no effect)
 // firstHuman returns the joinOrder of the first human found in the fireteam (-1 if none is found)
-qboolean G_OnlyBotsInFireteam( fireteamData_t* ft, int excludeEntityNum, int *firstHuman ) {
-	int			i;
-	qboolean	botFound = qfalse;
+qboolean G_OnlyBotsInFireteam(fireteamData_t *ft, int excludeEntityNum, int *firstHuman)
+{
+	int      i;
+	qboolean botFound = qfalse;
 
 	*firstHuman = -1;
-	if ( !ft || !ft->inuse ) return qfalse;
+	if (!ft || !ft->inuse)
+	{
+		return qfalse;
+	}
 
-	for(i = 0; i < MAX_FIRETEAM_MEMBERS && i < g_maxclients.integer; i++) {
-		if(ft->joinOrder[i] == excludeEntityNum) {
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS && i < g_maxclients.integer; i++)
+	{
+		if (ft->joinOrder[i] == excludeEntityNum)
+		{
 			continue;
 		}
-		if(ft->joinOrder[i] == -1) {
+		if (ft->joinOrder[i] == -1)
+		{
 			return botFound;
 		}
-		if ( g_entities[(int)(ft->joinOrder[i])].r.svFlags & SVF_BOT ) {
+		if (g_entities[(int)(ft->joinOrder[i])].r.svFlags & SVF_BOT)
+		{
 			botFound = qtrue;
-		} else {
-			if ( *firstHuman == -1 ) *firstHuman = i;
+		}
+		else
+		{
+			if (*firstHuman == -1)
+			{
+				*firstHuman = i;
+			}
 			return qfalse;
 		}
 	}
@@ -427,23 +440,24 @@ qboolean G_OnlyBotsInFireteam( fireteamData_t* ft, int excludeEntityNum, int *fi
 // The only way a client should be removed from a fireteam
 void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 {
-	fireteamData_t* ft;
-	int i, firstHuman;
+	fireteamData_t *ft;
+	int            i, firstHuman;
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
 		G_Error("G_RemoveClientFromFireteams: invalid client\n");
 	}
 
-	if(G_IsOnFireteam( entityNum, &ft )) {
+	if (G_IsOnFireteam(entityNum, &ft))
+	{
 		int j;
-		for(i = 0; i < MAX_FIRETEAM_MEMBERS && i < g_maxclients.integer; ++i)
+		for (i = 0; i < MAX_FIRETEAM_MEMBERS && i < g_maxclients.integer; ++i)
 		{
-			if(ft->joinOrder[i] == entityNum)
+			if (ft->joinOrder[i] == entityNum)
 			{
-				if(i == 0)
+				if (i == 0)
 				{
-					if(ft->joinOrder[1] == -1)
+					if (ft->joinOrder[1] == -1)
 					{
 						ft->inuse = qfalse;
 						ft->ident = -1;
@@ -451,10 +465,10 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 					else
 					{
 						// core: only bots left in the fireteam? we disband the fireteam..
-						if ( G_OnlyBotsInFireteam(ft,entityNum,&firstHuman) )
+						if (G_OnlyBotsInFireteam(ft, entityNum, &firstHuman))
 						{
 							// empty the fireteam
-							for ( j=0; j < g_maxclients.integer-1; j++ )
+							for (j = 0; j < g_maxclients.integer - 1; j++)
 							{
 #ifdef OMNIBOTS
 								Bot_Event_LeftFireTeam(ft->joinOrder[j]);
@@ -463,20 +477,20 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 							}
 							ft->inuse = qfalse;
 							ft->ident = -1;
-							G_UpdateFireteamConfigString( ft );
+							G_UpdateFireteamConfigString(ft);
 							return;
 						}
 						else
 						{
 							// core: a bot as FT-leader? we try to pick a human..
-							if ( g_entities[(int)(ft->joinOrder[1])].r.svFlags & SVF_BOT )
+							if (g_entities[(int)(ft->joinOrder[1])].r.svFlags & SVF_BOT)
 							{
-								if ( firstHuman != -1 )
+								if (firstHuman != -1)
 								{
 									// Swap first human with first bot..
 									int tmp = ft->joinOrder[1];
 
-									ft->joinOrder[1] = ft->joinOrder[firstHuman];
+									ft->joinOrder[1]          = ft->joinOrder[firstHuman];
 									ft->joinOrder[firstHuman] = tmp;
 								}
 							}
@@ -485,16 +499,18 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 								firstHuman = 1;
 							}
 							// Inform client of promotion to leader
-							if ( firstHuman != -1 ) {
-								trap_SendServerCommand( ft->joinOrder[firstHuman], "cpm \"You are now the leader of your fireteam\"\n" );
+							if (firstHuman != -1)
+							{
+								trap_SendServerCommand(ft->joinOrder[firstHuman], "cpm \"You are now the leader of your fireteam\"\n");
 							}
 						}
 					}
 				}
-				for(j = i; j < g_maxclients.integer-1; j++) {
-					ft->joinOrder[j] = ft->joinOrder[j+1];
+				for (j = i; j < g_maxclients.integer - 1; j++)
+				{
+					ft->joinOrder[j] = ft->joinOrder[j + 1];
 				}
-				ft->joinOrder[g_maxclients.integer-1] = -1;
+				ft->joinOrder[g_maxclients.integer - 1] = -1;
 
 				break;
 			}
@@ -772,7 +788,7 @@ void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 	leader->client->pers.propositionEndTime = level.time + 20000;
 
 #ifdef OMNIBOTS
-	Bot_Event_FireTeam_Proposal(leader-g_entities,otherEntityNum);
+	Bot_Event_FireTeam_Proposal(leader - g_entities, otherEntityNum);
 #endif
 }
 

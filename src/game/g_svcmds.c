@@ -1499,7 +1499,8 @@ qboolean    ConsoleCommand(void)
 	// -fretn
 
 #ifdef OMNIBOTS
-	if ( !Q_stricmp(cmd, "bot") ) {
+	if (!Q_stricmp(cmd, "bot"))
+	{
 		Bot_Interface_ConsoleCommand();
 		return qtrue;
 	}

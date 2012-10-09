@@ -530,8 +530,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 #ifdef OMNIBOTS
 		// send the events
-		Bot_Event_Death(self-g_entities, &g_entities[attacker-g_entities], obit);
-		Bot_Event_KilledSomeone(attacker-g_entities, &g_entities[self-g_entities], obit);
+		Bot_Event_Death(self - g_entities, &g_entities[attacker - g_entities], obit);
+		Bot_Event_KilledSomeone(attacker - g_entities, &g_entities[self - g_entities], obit);
 #endif
 
 		G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, obit);
@@ -683,7 +683,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			G_AddEvent(self, EV_MEDIC_CALL, 0);
 #ifdef OMNIBOTS
 			// ATM: only register the goal if the target isn't in water.
-			if(self->waterlevel <= 1) {
+			if (self->waterlevel <= 1)
+			{
 				Bot_AddFallenTeammateGoals(self, self->client->sess.sessionTeam);
 			}
 #endif
@@ -1930,7 +1931,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		if (targ->s.number < level.maxclients)
 		{
 			// notify omni-bot framework
-			Bot_Event_TakeDamage(targ-g_entities, attacker);
+			Bot_Event_TakeDamage(targ - g_entities, attacker);
 		}
 #endif
 

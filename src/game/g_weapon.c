@@ -299,12 +299,12 @@ void Weapon_Medic(gentity_t *ent)
 	ent2->nextthink = level.time + 30000;
 //  ent2->timestamp = level.time + 31200;
 
-	ent2->parent = ent; // JPW NERVE so we can score properly later
+	ent2->parent    = ent; // JPW NERVE so we can score properly later
 	ent2->s.teamNum = ent->client->sess.sessionTeam;
 
 #ifdef OMNIBOTS
 	// Omni-bot - Send a fire event.
-	Bot_Event_FireWeapon(ent-g_entities, Bot_WeaponGameToBot(ent->s.weapon), ent2);
+	Bot_Event_FireWeapon(ent - g_entities, Bot_WeaponGameToBot(ent->s.weapon), ent2);
 #endif
 }
 
@@ -492,7 +492,7 @@ void Weapon_MagicAmmo(gentity_t *ent)
 
 #ifdef OMNIBOTS
 	// Omni-bot - Send a fire event.
-	Bot_Event_FireWeapon(ent-g_entities, Bot_WeaponGameToBot(ent->s.weapon), ent2);
+	Bot_Event_FireWeapon(ent - g_entities, Bot_WeaponGameToBot(ent->s.weapon), ent2);
 #endif
 }
 // jpw
@@ -539,7 +539,7 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	ClientSpawn(traceEnt, qtrue);
 
 #ifdef OMNIBOTS
-	Bot_Event_Revived(traceEnt-g_entities, ent);
+	Bot_Event_Revived(traceEnt - g_entities, ent);
 #endif
 
 	traceEnt->client->ps.stats[STAT_PLAYER_CLASS] = traceEnt->client->sess.playerType;
@@ -2304,7 +2304,7 @@ evilbanigoto:
 						                                 ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS))))
 						{
 #ifdef OMNIBOTS
-							const char *Goalname = _GetEntityName( hit );
+							const char *Goalname = _GetEntityName(hit);
 #endif
 							gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
 							pm->s.effect2Time = 0;
@@ -2391,7 +2391,7 @@ evilbanigoto:
 						if (hit->parent)
 						{
 #ifdef OMNIBOTS
-							const char *Goalname = _GetEntityName( hit->parent );
+							const char *Goalname = _GetEntityName(hit->parent);
 #endif
 							gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
 							pm->s.effect2Time = 0;     // 0 = planted
@@ -3327,7 +3327,7 @@ void Weapon_Artillery(gentity_t *ent)
 	ent->client->sess.aWeaponStats[WS_ARTILLERY].atts++;
 #ifdef OMNIBOTS
 	// Omni-bot - Send a fire event.
-	Bot_Event_FireWeapon(ent-g_entities, Bot_WeaponGameToBot(WP_ARTY), 0);
+	Bot_Event_FireWeapon(ent - g_entities, Bot_WeaponGameToBot(WP_ARTY), 0);
 #endif
 }
 
@@ -4294,10 +4294,10 @@ static vec3_t flameChunkMaxs = { 4, 4, 4 };
 
 gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 {
-	vec3_t    start;
-	vec3_t    trace_start;
-	vec3_t    trace_end;
-	trace_t   trace;
+	vec3_t  start;
+	vec3_t  trace_start;
+	vec3_t  trace_end;
+	trace_t trace;
 
 	VectorCopy(ent->r.currentOrigin, start);
 	start[2] += ent->client->ps.viewheight;
@@ -4576,9 +4576,9 @@ FireWeapon
 */
 void FireWeapon(gentity_t *ent)
 {
-	gentity_t	*pFiredShot = 0; // Omni-bot To tell bots about projectiles
-	float aimSpreadScale;
-	int   shots = 1;
+	gentity_t *pFiredShot = 0;   // Omni-bot To tell bots about projectiles
+	float     aimSpreadScale;
+	int       shots = 1;
 #ifdef OMNIBOTS
 	qboolean callEvent = qtrue;
 #endif
@@ -4823,7 +4823,7 @@ void FireWeapon(gentity_t *ent)
 		}
 
 		ent->client->ps.classWeaponTime += .5f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-		pFiredShot = weapon_gpg40_fire(ent, ent->s.weapon);
+		pFiredShot                       = weapon_gpg40_fire(ent, ent->s.weapon);
 		break;
 	case WP_MORTAR_SET:
 		if (level.time - ent->client->ps.classWeaponTime > level.soldierChargeTime[ent->client->sess.sessionTeam - 1])
@@ -4914,9 +4914,9 @@ void FireWeapon(gentity_t *ent)
 
 #ifdef OMNIBOTS
 	// Omni-bot - Send a fire event.
-	if(callEvent)
+	if (callEvent)
 	{
-		Bot_Event_FireWeapon(ent-g_entities, Bot_WeaponGameToBot(ent->s.weapon), pFiredShot);
+		Bot_Event_FireWeapon(ent - g_entities, Bot_WeaponGameToBot(ent->s.weapon), pFiredShot);
 	}
 #endif
 

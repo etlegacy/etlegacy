@@ -628,8 +628,8 @@ typedef struct
 
 #ifdef OMNIBOTS
 	//Omni-bot
-	qboolean	botSuicide;			// /kill before next spawn
-	qboolean	botPush;			// allow for disabling of bot pushing via script
+	qboolean botSuicide;            // /kill before next spawn
+	qboolean botPush;               // allow for disabling of bot pushing via script
 #endif
 
 } clientSession_t;
@@ -1135,8 +1135,8 @@ typedef struct
 
 #ifdef OMNIBOTS
 	//Omni-bot time triggers
-	qboolean			twoMinute;
-	qboolean			thirtySecond;
+	qboolean twoMinute;
+	qboolean thirtySecond;
 #endif
 
 } level_locals_t;
@@ -1154,8 +1154,8 @@ typedef struct
 
 #ifdef OMNIBOTS
 	//Omni-bot time triggers
-	qboolean	twoMinute;
-	qboolean	thirtySecond;
+	qboolean twoMinute;
+	qboolean thirtySecond;
 #endif
 
 } g_campaignInfo_t;
@@ -1197,7 +1197,7 @@ void Cmd_Kill_f(gentity_t *ent);
 void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 
 #ifdef OMNIBOTS
-void Cmd_SwapPlacesWithBot_f( gentity_t *ent, int botNum );
+void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 #endif
 
 void G_EntitySound(gentity_t *ent, const char *soundId, int volume);
@@ -1575,12 +1575,12 @@ extern g_campaignInfo_t g_campaigns[];
 #define FOFS(x) ((size_t)&(((gentity_t *)0)->x))
 
 #ifdef OMNIBOTS
-extern	vmCvar_t	g_OmniBotPath;
-extern	vmCvar_t	g_OmniBotEnable;
-extern	vmCvar_t	g_OmniBotFlags;
-extern	vmCvar_t	g_OmniBotPlaying;
+extern vmCvar_t g_OmniBotPath;
+extern vmCvar_t g_OmniBotEnable;
+extern vmCvar_t g_OmniBotFlags;
+extern vmCvar_t g_OmniBotPlaying;
 #ifdef DEBUG
-extern	vmCvar_t	g_allowBotSwap;
+extern vmCvar_t g_allowBotSwap;
 #endif
 #endif
 
@@ -2255,4 +2255,4 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent);
 
 qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 
-#define LOGOPTS_SCRIPTEVENTS	32		// Log script events (dyna-defuse/-planted/objective)
+#define LOGOPTS_SCRIPTEVENTS    32      // Log script events (dyna-defuse/-planted/objective)

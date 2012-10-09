@@ -1417,14 +1417,14 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 			}
 			ent->reached = NULL;
 
-#ifdef	OMNIBOTS
+#ifdef  OMNIBOTS
 			// Send a trigger to omni-bot
 			{
 				const char *pName = _GetEntityName(ent);
 				Bot_Util_SendTrigger(ent,
-					NULL,
-					va("%s_goto", pName ? pName : "<unknown>"),
-					va("%.2f %.2f %.2f", ent->s.pos.trDelta[0], ent->s.pos.trDelta[1], ent->s.pos.trDelta[2]));
+				                     NULL,
+				                     va("%s_goto", pName ? pName : "<unknown>"),
+				                     va("%.2f %.2f %.2f", ent->s.pos.trDelta[0], ent->s.pos.trDelta[1], ent->s.pos.trDelta[2]));
 			}
 #endif
 
@@ -2946,7 +2946,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 		{
 			const char *pName = _GetEntityName(ent);
 			Bot_Util_SendTrigger(ent, NULL, va("%s_start", pName ? pName : "<unknown>"),
-				va("%.2f %.2f %.2f", ent->s.apos.trDelta[0], ent->s.apos.trDelta[1], ent->s.apos.trDelta[2]));
+			                     va("%.2f %.2f %.2f", ent->s.apos.trDelta[0], ent->s.apos.trDelta[1], ent->s.apos.trDelta[2]));
 		}
 #endif
 	}
@@ -2965,7 +2965,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 		{
 			const char *pName = _GetEntityName(ent);
 			Bot_Util_SendTrigger(ent, NULL, va("%s_stop", pName ? pName : "<unknown>"),
-				va("%.2f %.2f %.2f", ent->s.apos.trDelta[0], ent->s.apos.trDelta[1], ent->s.apos.trDelta[2]));
+			                     va("%.2f %.2f %.2f", ent->s.apos.trDelta[0], ent->s.apos.trDelta[1], ent->s.apos.trDelta[2]));
 		}
 #endif
 
@@ -3322,7 +3322,7 @@ qboolean G_ScriptAction_ObjectiveStatus(gentity_t *ent, char *params)
 #ifdef OMNIBOTS
 	{
 		const char *pTagName = _GetEntityName(ent);
-		switch(atoi(token))
+		switch (atoi(token))
 		{
 		case 0:
 			Bot_Util_SendTrigger(ent, NULL, pTagName, parm[0] == 'x' ? "axis_default" : "allied_default");
@@ -3651,7 +3651,7 @@ qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 	tent->r.svFlags   = SVF_BROADCAST;
 
 #ifdef OMNIBOTS
-		Bot_Util_SendTrigger(ent, NULL, token, "team_announce");
+	Bot_Util_SendTrigger(ent, NULL, token, "team_announce");
 #endif
 
 	return qtrue;

@@ -1887,13 +1887,13 @@ void G_LandmineThink(gentity_t *self)
 		//% }
 
 #ifdef OMNIBOTS
-		if( !(g_OmniBotFlags.integer & OBF_TRIGGER_MINES) && ent->r.svFlags & SVF_BOT )
+		if (!(g_OmniBotFlags.integer & OBF_TRIGGER_MINES) && ent->r.svFlags & SVF_BOT)
 		{
-			if (G_LandmineTeam( self ) == ent->client->sess.sessionTeam )
+			if (G_LandmineTeam(self) == ent->client->sess.sessionTeam)
 			{
 				continue;
 			}
-			if ( G_LandmineSpotted(self) )
+			if (G_LandmineSpotted(self))
 			{
 				continue;
 			}
@@ -1911,7 +1911,7 @@ void G_LandmineThink(gentity_t *self)
 	if (trigger)
 	{
 #ifdef OMNIBOTS
-		Bot_Event_PreTriggerMine(ent-g_entities, self);
+		Bot_Event_PreTriggerMine(ent - g_entities, self);
 #endif
 		LandMineTrigger(self);
 	}
@@ -1953,7 +1953,7 @@ void LandminePostThink(gentity_t *self)
 	if (!trigger)
 	{
 #ifdef OMNIBOTS
-		Bot_Event_PostTriggerMine(ent-g_entities, self);
+		Bot_Event_PostTriggerMine(ent - g_entities, self);
 #endif
 		LandMinePostTrigger(self);
 	}

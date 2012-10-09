@@ -2110,7 +2110,7 @@ void mg42_spawn(gentity_t *ent)
 		trap_LinkEntity(gun);
 
 #ifdef OMNIBOTS
-		UpdateGoalEntity( ent, gun );
+		UpdateGoalEntity(ent, gun);
 #endif
 	}
 
