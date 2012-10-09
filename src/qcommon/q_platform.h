@@ -34,11 +34,6 @@
 #ifndef __Q_PLATFORM_H
 #define __Q_PLATFORM_H
 
-// FIXME: add llvm/clang support
-#ifdef __llvm__
-#error Although ET:L can be compiled with gcc-llvm/clang, it will crash upon start up!
-#endif // __llvm__
-
 // this is for determining if we have an asm version of a C function
 #define idx64 0
 
