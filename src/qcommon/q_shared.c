@@ -707,7 +707,7 @@ void COM_MatchToken(char **buf_p, char *match)
 	token = COM_Parse(buf_p);
 	if (strcmp(token, match))
 	{
-		Com_Error(ERR_DROP, "MatchToken: %s != %s\n", token, match);
+		Com_Error(ERR_DROP, "COM_MatchToken: %s != %s\n", token, match);
 	}
 }
 
@@ -1773,7 +1773,7 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 
 	if (strlen(s) >= BIG_INFO_STRING)
 	{
-		Com_Error(ERR_DROP, "Info_SetValueForKey: oversize infostring [%s] [%s] [%s]\n", s, key, value);
+		Com_Error(ERR_DROP, "Info_SetValueForKey_Big: oversize infostring [%s] [%s] [%s]\n", s, key, value);
 	}
 
 	if (strchr(key, '\\') || strchr(value, '\\'))

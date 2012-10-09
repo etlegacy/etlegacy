@@ -1121,9 +1121,7 @@ void *Z_TagMalloc(int size, int tag)
 	}
 	while (base->tag || base->size < size);
 
-	//
 	// found a block big enough
-	//
 	extra = base->size - size;
 	if (extra > MINFRAGMENT)
 	{
@@ -1738,7 +1736,7 @@ void Com_InitHunkMemory(void)
 	// memory systems
 	if (FS_LoadStack() != 0)
 	{
-		Com_Error(ERR_FATAL, "Hunk initialization failed. File system load stack not zero\n");
+		Com_Error(ERR_FATAL, "Com_InitHunkMemory: Hunk initialization failed. File system load stack not zero\n");
 	}
 
 	// allocate the stack based hunk allocator
@@ -1769,7 +1767,7 @@ void Com_InitHunkMemory(void)
 	s_hunkData = calloc(s_hunkTotal + 31, 1);
 	if (!s_hunkData)
 	{
-		Com_Error(ERR_FATAL, "Hunk data failed to allocate %i megs\n", s_hunkTotal / (1024 * 1024));
+		Com_Error(ERR_FATAL, "Com_InitHunkMemory: Hunk data failed to allocate %i megs\n", s_hunkTotal / (1024 * 1024));
 	}
 	// cacheline align
 	s_hunkData = ( byte * )(((intptr_t)s_hunkData + 31) & ~31);
@@ -2289,7 +2287,7 @@ sysEvent_t  Com_GetRealEvent(void)
 		r = FS_Read(&ev, sizeof(ev), com_journalFile);
 		if (r != sizeof(ev))
 		{
-			Com_Error(ERR_FATAL, "Error reading from journal file\n");
+			Com_Error(ERR_FATAL, "Com_GetRealEvent: Error reading from journal file\n");
 		}
 		if (ev.evPtrLength)
 		{
@@ -2297,7 +2295,7 @@ sysEvent_t  Com_GetRealEvent(void)
 			r        = FS_Read(ev.evPtr, ev.evPtrLength, com_journalFile);
 			if (r != ev.evPtrLength)
 			{
-				Com_Error(ERR_FATAL, "Error reading from journal file\n");
+				Com_Error(ERR_FATAL, "Com_GetRealEvent: Error reading from journal file\n");
 			}
 		}
 	}
@@ -2311,14 +2309,14 @@ sysEvent_t  Com_GetRealEvent(void)
 			r = FS_Write(&ev, sizeof(ev), com_journalFile);
 			if (r != sizeof(ev))
 			{
-				Com_Error(ERR_FATAL, "Error writing to journal file\n");
+				Com_Error(ERR_FATAL, "Com_GetRealEvent: Error writing to journal file\n");
 			}
 			if (ev.evPtrLength)
 			{
 				r = FS_Write(ev.evPtr, ev.evPtrLength, com_journalFile);
 				if (r != ev.evPtrLength)
 				{
-					Com_Error(ERR_FATAL, "Error writing to journal file\n");
+					Com_Error(ERR_FATAL, "Com_GetRealEvent: Error writing to journal file\n");
 				}
 			}
 		}
@@ -3219,9 +3217,7 @@ int Com_ModifyMsec(int msec)
 {
 	int clampTime;
 
-	//
 	// modify time for debugging values
-	//
 	if (com_fixedtime->integer)
 	{
 		msec = com_fixedtime->integer;
@@ -3314,9 +3310,7 @@ void Com_Frame(void)
 		com_viewlog->modified = qfalse;
 	}
 
-	//
 	// main event loop
-	//
 	if (com_speeds->integer)
 	{
 		timeBeforeFirstEvents = Sys_Milliseconds();
@@ -3349,9 +3343,7 @@ void Com_Frame(void)
 	com_frameMsec = msec;
 	msec          = Com_ModifyMsec(msec);
 
-	//
 	// server side
-	//
 	if (com_speeds->integer)
 	{
 		timeBeforeServer = Sys_Milliseconds();
@@ -3378,15 +3370,11 @@ void Com_Frame(void)
 		}
 	}
 
-	//
 	// client system
-	//
 	if (!com_dedicated->integer)
 	{
-		//
 		// run event loop a second time to get server to client packets
 		// without a frame of latency
-		//
 		if (com_speeds->integer)
 		{
 			timeBeforeEvents = Sys_Milliseconds();
@@ -3394,9 +3382,7 @@ void Com_Frame(void)
 		Com_EventLoop();
 		Cbuf_Execute();
 
-		//
 		// client side
-		//
 		if (com_speeds->integer)
 		{
 			timeBeforeClient = Sys_Milliseconds();
@@ -3414,9 +3400,7 @@ void Com_Frame(void)
 		timeAfter = Sys_Milliseconds();
 	}
 
-	//
 	// watchdog
-	//
 	if (com_dedicated->integer && !com_sv_running->integer && com_watchdog->integer)
 	{
 		if (watchdogTime == 0)
@@ -3447,9 +3431,7 @@ void Com_Frame(void)
 		}
 	}
 
-	//
 	// report timing information
-	//
 	if (com_speeds->integer)
 	{
 		int all, sv, sev, cev, cl;
@@ -3466,9 +3448,7 @@ void Com_Frame(void)
 		           com_frameNumber, all, sv, sev, cev, cl, time_game, time_frontend, time_backend);
 	}
 
-	//
 	// trace optimization tracking
-	//
 	if (com_showtrace->integer)
 	{
 
@@ -3494,7 +3474,6 @@ Com_Shutdown
 void Com_Shutdown(qboolean badProfile)
 {
 	char *cl_profileStr = Cvar_VariableString("cl_profile");
-
 
 	// delete pid file
 	if (com_gameInfo.usesProfiles && cl_profileStr[0] && !badProfile)

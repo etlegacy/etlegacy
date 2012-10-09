@@ -61,7 +61,7 @@ static long generateHashValue(const char *fname)
 
 	if (!fname)
 	{
-		Com_Error(ERR_DROP, "null name in generateHashValue\n");         //gjd
+		Com_Error(ERR_DROP, "generateHashValue: null name\n");         //gjd
 	}
 	hash = 0;
 	i    = 0;
@@ -231,7 +231,7 @@ void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bu
 Cvar_CommandCompletion
 ============
 */
-void    Cvar_CommandCompletion(void (*callback)(const char *s))
+void Cvar_CommandCompletion(void (*callback)(const char *s))
 {
 	cvar_t *cvar;
 
@@ -363,12 +363,10 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 		return var;
 	}
 
-	//
 	// allocate a new cvar
-	//
 	if (cvar_numIndexes >= MAX_CVARS)
 	{
-		Com_Error(ERR_FATAL, "MAX_CVARS (%d) hit -- too many cvars!\n", MAX_CVARS);
+		Com_Error(ERR_FATAL, "Cvar_Get: MAX_CVARS (%d) hit -- too many cvars!\n", MAX_CVARS);
 	}
 	var = &cvar_indexes[cvar_numIndexes];
 	cvar_numIndexes++;
@@ -520,7 +518,6 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 			var->modificationCount++;
 			return var;
 		}
-
 	}
 	else
 	{
@@ -587,7 +584,6 @@ void Cvar_SetValue(const char *var_name, float value)
 	}
 	Cvar_Set(var_name, val);
 }
-
 
 /*
 ============
@@ -691,7 +687,6 @@ void Cvar_Toggle_f(void)
 	Cvar_Set2(Cmd_Argv(1), va("%i", v), qfalse);
 }
 
-
 /*
 ============
 Cvar_Cycle_f - ydnar
@@ -747,7 +742,6 @@ void Cvar_Cycle_f(void)
 
 	Cvar_Set2(Cmd_Argv(1), va("%i", value), qfalse);
 }
-
 
 /*
 ============
@@ -1088,8 +1082,6 @@ void Cvar_Restart_f(void)
 	}
 }
 
-
-
 /*
 =====================
 Cvar_InfoString
@@ -1136,8 +1128,6 @@ char *Cvar_InfoString_Big(int bit)
 	return info;
 }
 
-
-
 /*
 =====================
 Cvar_InfoStringBuffer
@@ -1149,9 +1139,9 @@ void Cvar_InfoStringBuffer(int bit, char *buff, int buffsize)
 }
 
 /*
- * =====================
- * Cvar_CheckRange
- * =====================
+=====================
+Cvar_CheckRange
+=====================
  */
 void Cvar_CheckRange(cvar_t *var, float min, float max, qboolean integral)
 {
@@ -1193,7 +1183,7 @@ Cvar_Update
 updates an interpreted modules' version of a cvar
 =====================
 */
-void    Cvar_Update(vmCvar_t *vmCvar)
+void Cvar_Update(vmCvar_t *vmCvar)
 {
 	cvar_t *cv = NULL;
 	assert(vmCvar);

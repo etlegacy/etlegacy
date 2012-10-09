@@ -34,7 +34,6 @@
 
 #include "cm_local.h"
 
-
 // counters are only bumped when running single threaded,
 // because they are an awefull coherence problem
 int c_active_windings;
@@ -46,9 +45,10 @@ void pw(winding_t *w)
 {
 	int i;
 	for (i = 0 ; i < w->numpoints ; i++)
+	{
 		printf("(%5.1f, %5.1f, %5.1f)\n", w->p[i][0], w->p[i][1], w->p[i][2]);
+	}
 }
-
 
 /*
 =============
@@ -93,7 +93,7 @@ RemoveColinearPoints
 */
 int c_removed;
 
-void    RemoveColinearPoints(winding_t *w)
+void RemoveColinearPoints(winding_t *w)
 {
 	int    i, j, k;
 	vec3_t v1, v2;
@@ -140,7 +140,6 @@ void WindingPlane(winding_t *w, vec3_t normal, vec_t *dist)
 	CrossProduct(v2, v1, normal);
 	VectorNormalize2(normal, normal);
 	*dist = DotProduct(w->p[0], normal);
-
 }
 
 /*
@@ -148,7 +147,7 @@ void WindingPlane(winding_t *w, vec3_t normal, vec_t *dist)
 WindingArea
 =============
 */
-vec_t   WindingArea(winding_t *w)
+vec_t WindingArea(winding_t *w)
 {
 	int    i;
 	vec3_t d1, d2, cross;
@@ -165,7 +164,7 @@ vec_t   WindingArea(winding_t *w)
 	return total;
 }
 
-void    WindingBounds(winding_t *w, vec3_t mins, vec3_t maxs)
+void WindingBounds(winding_t *w, vec3_t mins, vec3_t maxs)
 {
 	vec_t v;
 	int   i, j;
@@ -195,7 +194,7 @@ void    WindingBounds(winding_t *w, vec3_t mins, vec3_t maxs)
 WindingCenter
 =============
 */
-void    WindingCenter(winding_t *w, vec3_t center)
+void WindingCenter(winding_t *w, vec3_t center)
 {
 	int   i;
 	float scale;
@@ -316,13 +315,12 @@ winding_t *ReverseWinding(winding_t *w)
 	return c;
 }
 
-
 /*
 =============
 ClipWindingEpsilon
 =============
 */
-void    ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
+void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
                            vec_t epsilon, winding_t **front, winding_t **back)
 {
 	vec_t        dists[MAX_POINTS_ON_WINDING + 4];
@@ -436,14 +434,13 @@ void    ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
 
 	if (f->numpoints > maxpts || b->numpoints > maxpts)
 	{
-		Com_Error(ERR_DROP, "ClipWinding: points exceeded estimate\n");
+		Com_Error(ERR_DROP, "ClipWindingEpsilon: points exceeded estimate\n");
 	}
 	if (f->numpoints > MAX_POINTS_ON_WINDING || b->numpoints > MAX_POINTS_ON_WINDING)
 	{
-		Com_Error(ERR_DROP, "ClipWinding: MAX_POINTS_ON_WINDING\n");
+		Com_Error(ERR_DROP, "ClipWindingEpsilon: MAX_POINTS_ON_WINDING\n");
 	}
 }
-
 
 /*
 =============
@@ -466,7 +463,7 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
 	in        = *inout;
 	counts[0] = counts[1] = counts[2] = 0;
 
-// determine sides for each point
+	// determine sides for each point
 	for (i = 0 ; i < in->numpoints ; i++)
 	{
 		dot      = DotProduct(in->p[i], normal);
@@ -553,17 +550,16 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
 
 	if (f->numpoints > maxpts)
 	{
-		Com_Error(ERR_DROP, "ClipWinding: points exceeded estimate\n");
+		Com_Error(ERR_DROP, "ChopWindingInPlace: points exceeded estimate\n");
 	}
 	if (f->numpoints > MAX_POINTS_ON_WINDING)
 	{
-		Com_Error(ERR_DROP, "ClipWinding: MAX_POINTS_ON_WINDING\n");
+		Com_Error(ERR_DROP, "ChopWindingInPlace: MAX_POINTS_ON_WINDING\n");
 	}
 
 	FreeWinding(in);
 	*inout = f;
 }
-
 
 /*
 =================
@@ -585,7 +581,6 @@ winding_t *ChopWinding(winding_t *in, vec3_t normal, vec_t dist)
 	}
 	return f;
 }
-
 
 /*
 =================
@@ -622,7 +617,7 @@ void CheckWinding(winding_t *w)
 		for (j = 0 ; j < 3 ; j++)
 			if (p1[j] > MAX_MAP_BOUNDS || p1[j] < -MAX_MAP_BOUNDS)
 			{
-				Com_Error(ERR_DROP, "CheckFace: MAX_MAP_BOUNDS: %f\n", p1[j]);
+				Com_Error(ERR_DROP, "CheckWinding: MAX_MAP_BOUNDS: %f\n", p1[j]);
 			}
 
 		j = i + 1 == w->numpoints ? 0 : i + 1;
@@ -664,13 +659,12 @@ void CheckWinding(winding_t *w)
 	}
 }
 
-
 /*
 ============
 WindingOnPlaneSide
 ============
 */
-int     WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist)
+int WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist)
 {
 	qboolean front, back;
 	int      i;
@@ -712,7 +706,6 @@ int     WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist)
 	return SIDE_ON;
 }
 
-
 /*
 =================
 AddWindingToConvexHull
@@ -721,7 +714,8 @@ Both w and *hull are on the same plane
 =================
 */
 #define MAX_HULL_POINTS     128
-void    AddWindingToConvexHull(winding_t *w, winding_t **hull, vec3_t normal)
+
+void AddWindingToConvexHull(winding_t *w, winding_t **hull, vec3_t normal)
 {
 	int      i, j, k;
 	float    *p, *copy;

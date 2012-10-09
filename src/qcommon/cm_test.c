@@ -33,7 +33,6 @@
 
 #include "cm_local.h"
 
-
 /*
 ==================
 CM_PointLeafnum_r
@@ -83,7 +82,6 @@ int CM_PointLeafnum(const vec3_t p)
 	return CM_PointLeafnum_r(p, 0);
 }
 
-
 /*
 ======================================================================
 
@@ -91,7 +89,6 @@ LEAF LISTING
 
 ======================================================================
 */
-
 
 void CM_StoreLeafs(leafList_t *ll, int nodenum)
 {
@@ -203,7 +200,6 @@ void CM_BoxLeafnums_r(leafList_t *ll, int nodenum)
 			CM_BoxLeafnums_r(ll, node->children[0]);
 			nodenum = node->children[1];
 		}
-
 	}
 }
 
@@ -258,9 +254,7 @@ int CM_BoxBrushes(const vec3_t mins, const vec3_t maxs, cbrush_t **list, int lis
 	return ll.count;
 }
 
-
 //====================================================================
-
 
 /*
 ==================
@@ -354,8 +348,6 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 	return CM_PointContents(p_l, model);
 }
 
-
-
 /*
 ===============================================================================
 
@@ -373,8 +365,6 @@ byte *CM_ClusterPVS(int cluster)
 
 	return cm.visibility + cluster * cm.clusterBytes;
 }
-
-
 
 /*
 ===============================================================================
@@ -398,7 +388,7 @@ void CM_FloodArea_r(int areaNum, int floodnum)
 		{
 			return;
 		}
-		Com_Error(ERR_DROP, "FloodArea_r: reflooded\n");
+		Com_Error(ERR_DROP, "CM_FloodArea_r: reflooded\n");
 	}
 
 	area->floodnum   = floodnum;
@@ -419,7 +409,7 @@ CM_FloodAreaConnections
 
 ====================
 */
-void    CM_FloodAreaConnections(void)
+void CM_FloodAreaConnections(void)
 {
 	int     i;
 	cArea_t *area;
@@ -439,7 +429,6 @@ void    CM_FloodAreaConnections(void)
 		floodnum++;
 		CM_FloodArea_r(i, floodnum);
 	}
-
 }
 
 /*
@@ -448,7 +437,7 @@ CM_AdjustAreaPortalState
 
 ====================
 */
-void    CM_AdjustAreaPortalState(int area1, int area2, qboolean open)
+void CM_AdjustAreaPortalState(int area1, int area2, qboolean open)
 {
 	if (area1 < 0 || area2 < 0)
 	{
@@ -484,7 +473,7 @@ CM_AreasConnected
 
 ====================
 */
-qboolean    CM_AreasConnected(int area1, int area2)
+qboolean CM_AreasConnected(int area1, int area2)
 {
 	if (cm_noAreas->integer)
 	{
@@ -498,7 +487,7 @@ qboolean    CM_AreasConnected(int area1, int area2)
 
 	if (area1 >= cm.numAreas || area2 >= cm.numAreas)
 	{
-		Com_Error(ERR_DROP, "area >= cm.numAreas\n");
+		Com_Error(ERR_DROP, "CM_AreasConnected: area >= cm.numAreas\n");
 	}
 
 	if (cm.areas[area1].floodnum == cm.areas[area2].floodnum)
@@ -507,7 +496,6 @@ qboolean    CM_AreasConnected(int area1, int area2)
 	}
 	return qfalse;
 }
-
 
 /*
 =================

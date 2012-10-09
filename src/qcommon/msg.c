@@ -213,7 +213,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 		}
 		else
 		{
-			Com_Error(ERR_DROP, "can't read %d bits\n", bits);
+			Com_Error(ERR_DROP, "MSG_WriteBits: can't read %d bits\n", bits);
 		}
 	}
 	else
@@ -289,7 +289,7 @@ int MSG_ReadBits(msg_t *msg, int bits)
 		}
 		else
 		{
-			Com_Error(ERR_DROP, "can't read %d bits\n", bits);
+			Com_Error(ERR_DROP, "MSG_ReadBits: can't read %d bits\n", bits);
 		}
 	}
 	else
@@ -1310,7 +1310,7 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to,
 
 	if (number < 0 || number >= MAX_GENTITIES)
 	{
-		Com_Error(ERR_DROP, "Bad delta entity number: %i\n", number);
+		Com_Error(ERR_DROP, "MSG_ReadDeltaEntity: Bad delta entity number: %i\n", number);
 	}
 
 	if (msg->bit == 0)

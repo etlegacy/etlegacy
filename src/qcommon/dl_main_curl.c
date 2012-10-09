@@ -52,7 +52,9 @@ static CURL  *dl_request = NULL;
 static FILE  *dl_file    = NULL;
 
 /*
-** Write to file
+============
+Write to file
+============
 */
 static size_t DL_cb_FWriteFile(void *ptr, size_t size, size_t nmemb, void *stream)
 {
@@ -61,7 +63,9 @@ static size_t DL_cb_FWriteFile(void *ptr, size_t size, size_t nmemb, void *strea
 }
 
 /*
-** Print progress
+============
+Print progress
+============
 */
 static int DL_cb_Progress(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
 {
@@ -121,7 +125,7 @@ int DL_BeginDownload(const char *localName, const char *remoteName, int debug)
 
 	if (dl_request)
 	{
-		Com_Printf("ERROR: DL_BeginDownload called with a download request already active\n");
+		Com_Printf("DL_BeginDownload: ERROR -  called with a download request already active\n");
 		return 0;
 	}
 
@@ -135,7 +139,7 @@ int DL_BeginDownload(const char *localName, const char *remoteName, int debug)
 	dl_file = fopen(localName, "wb+");
 	if (!dl_file)
 	{
-		Com_Printf("ERROR: DL_BeginDownload unable to open '%s' for writing\n", localName);
+		Com_Printf("DL_BeginDownload: ERROR - unable to open '%s' for writing\n", localName);
 		return 0;
 	}
 

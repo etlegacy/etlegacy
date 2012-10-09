@@ -73,7 +73,6 @@ void Cmd_Wait_f(void)
 	}
 }
 
-
 /*
 =============================================================================
 
@@ -116,7 +115,6 @@ void Cbuf_AddText(const char *text)
 	cmd_text.cursize += l;
 }
 
-
 /*
 ============
 Cbuf_InsertText
@@ -151,7 +149,6 @@ void Cbuf_InsertText(const char *text)
 
 	cmd_text.cursize += len;
 }
-
 
 /*
 ============
@@ -280,12 +277,10 @@ void Cbuf_Execute(void)
 			memmove(text, text + i, cmd_text.cursize);
 		}
 
-// execute the command line
-
+		// execute the command line
 		Cmd_ExecuteString(line);
 	}
 }
-
 
 /*
 ==============================================================================
@@ -294,7 +289,6 @@ void Cbuf_Execute(void)
 
 ==============================================================================
 */
-
 
 /*
 ===============
@@ -331,7 +325,6 @@ void Cmd_Exec_f(void)
 	FS_FreeFile(f.v);
 }
 
-
 /*
 ===============
 Cmd_Vstr_f
@@ -353,7 +346,6 @@ void Cmd_Vstr_f(void)
 	Cbuf_InsertText(va("%s\n", v));
 }
 
-
 /*
 ===============
 Cmd_Echo_f
@@ -373,7 +365,6 @@ void Cmd_Echo_f(void)
 	Cbuf_AddText("\"\n");
 }
 
-
 /*
 =============================================================================
 
@@ -390,7 +381,6 @@ typedef struct cmd_function_s
 	completionFunc_t complete;
 } cmd_function_t;
 
-
 static int  cmd_argc;
 static char *cmd_argv[MAX_STRING_TOKENS];               // points into cmd_tokenized
 static char cmd_tokenized[BIG_INFO_STRING + MAX_STRING_TOKENS];         // will have 0 bytes inserted
@@ -403,7 +393,7 @@ static cmd_function_t *cmd_functions;       // possible commands to execute
 Cmd_Argc
 ============
 */
-int     Cmd_Argc(void)
+int Cmd_Argc(void)
 {
 	return cmd_argc;
 }
@@ -430,7 +420,7 @@ The interpreted versions use this because
 they can't have pointers returned to them
 ============
 */
-void    Cmd_ArgvBuffer(int arg, char *buffer, int bufferLength)
+void Cmd_ArgvBuffer(int arg, char *buffer, int bufferLength)
 {
 	Q_strncpyz(buffer, Cmd_Argv(arg), bufferLength);
 }
@@ -498,7 +488,7 @@ The interpreted versions use this because
 they can't have pointers returned to them
 ============
 */
-void    Cmd_ArgsBuffer(char *buffer, int bufferLength)
+void Cmd_ArgsBuffer(char *buffer, int bufferLength)
 {
 	Q_strncpyz(buffer, Cmd_Args(), bufferLength);
 }
@@ -677,7 +667,6 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 			return;     // all tokens parsed
 		}
 	}
-
 }
 
 void Cmd_TokenizeString(const char *text_in)
@@ -711,7 +700,7 @@ cmd_function_t *Cmd_FindCommand(const char *cmd_name)
 Cmd_AddCommand
 ============
 */
-void    Cmd_AddCommand(const char *cmd_name, xcommand_t function)
+void Cmd_AddCommand(const char *cmd_name, xcommand_t function)
 {
 	cmd_function_t *cmd;
 
@@ -758,7 +747,7 @@ void Cmd_SetCommandCompletionFunc(const char *command, completionFunc_t complete
 Cmd_RemoveCommand
 ============
 */
-void    Cmd_RemoveCommand(const char *cmd_name)
+void Cmd_RemoveCommand(const char *cmd_name)
 {
 	cmd_function_t *cmd, **back;
 
@@ -785,13 +774,12 @@ void    Cmd_RemoveCommand(const char *cmd_name)
 	}
 }
 
-
 /*
 ============
 Cmd_CommandCompletion
 ============
 */
-void    Cmd_CommandCompletion(void (*callback)(const char *s))
+void Cmd_CommandCompletion(void (*callback)(const char *s))
 {
 	cmd_function_t *cmd;
 
@@ -826,7 +814,7 @@ Cmd_ExecuteString
 A complete command line has been parsed, so try to execute it
 ============
 */
-void    Cmd_ExecuteString(const char *text)
+void Cmd_ExecuteString(const char *text)
 {
 	cmd_function_t *cmd, **prev;
 

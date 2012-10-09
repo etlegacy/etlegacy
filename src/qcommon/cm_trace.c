@@ -76,6 +76,7 @@ TransposeMatrix
 void TransposeMatrix(/*const*/ vec3_t matrix[3], vec3_t transpose[3])
 {
 	int i, j;
+
 	for (i = 0; i < 3; i++)
 	{
 		for (j = 0; j < 3; j++)
@@ -202,7 +203,6 @@ float SquareRootFloat(float number)
 	return number * y;
 }
 
-
 /*
 ===============================================================================
 
@@ -300,8 +300,6 @@ void CM_TestBoxInBrush(traceWork_t *tw, cbrush_t *brush)
 	tw->trace.fraction   = 0;
 	tw->trace.contents   = brush->contents;
 }
-
-
 
 /*
 ================
@@ -542,7 +540,6 @@ TRACING
 ===============================================================================
 */
 
-
 /*
 ================
 CM_TraceThroughPatch
@@ -724,11 +721,9 @@ static void CM_TraceThroughBrush(traceWork_t *tw, cbrush_t *brush)
 
 	if (tw->sphere.use)
 	{
-		//
 		// compare the trace against all planes of the brush
 		// find the latest time the trace crosses a plane towards the interior
 		// and the earliest time the trace crosses a plane towards the exterior
-		//
 		for (i = 0; i < brush->numsides; i++)
 		{
 			side  = brush->sides + i;
@@ -805,11 +800,9 @@ static void CM_TraceThroughBrush(traceWork_t *tw, cbrush_t *brush)
 	}
 	else
 	{
-		//
 		// compare the trace against all planes of the brush
 		// find the latest time the trace crosses a plane towards the interior
 		// and the earliest time the trace crosses a plane towards the exterior
-		//
 		for (i = 0; i < brush->numsides; i++)
 		{
 			side  = brush->sides + i;
@@ -872,10 +865,8 @@ static void CM_TraceThroughBrush(traceWork_t *tw, cbrush_t *brush)
 		}
 	}
 
-	//
 	// all planes have been checked, and the trace was not
 	// completely outside the brush
-	//
 	if (!startout)        // original point was inside brush
 	{
 		tw->trace.startsolid = qtrue;
@@ -1486,9 +1477,7 @@ static void CM_TraceThroughTree(traceWork_t *tw, int num, float p1f, float p2f, 
 	CM_TraceThroughTree(tw, node->children[side ^ 1], midf, p2f, mid, p2);
 }
 
-
 //======================================================================
-
 
 /*
 ==================
@@ -1698,9 +1687,7 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 
 #endif
 
-	//
 	// check for position test special case
-	//
 	if (positionTest)
 	{
 		if (model)
@@ -1743,9 +1730,7 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 	else
 	{
 
-		//
 		// general sweeping through world
-		//
 		if (model)
 		{
 #ifdef ALWAYS_BBOX_VS_BBOX

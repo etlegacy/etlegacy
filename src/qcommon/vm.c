@@ -377,7 +377,7 @@ vm_t *VM_Restart(vm_t *vm)
 	FS_ReadFile(filename, (void **)&header);
 	if (!header)
 	{
-		Com_Error(ERR_DROP, "VM_Restart failed.\n");
+		Com_Error(ERR_DROP, "VM_Restart: restart failed.\n");
 	}
 
 	// byte swap the header
@@ -391,7 +391,7 @@ vm_t *VM_Restart(vm_t *vm)
 	    || header->bssLength < 0 || header->dataLength < 0 || header->litLength < 0 || header->codeLength <= 0)
 	{
 		VM_Free(vm);
-		Com_Error(ERR_FATAL, "%s has bad header\n", filename);
+		Com_Error(ERR_FATAL, "VM_Restart: %s has bad header\n", filename);
 	}
 
 	// round up to next power of 2 so all data operations can
@@ -684,7 +684,7 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
 
 	if (!vm)
 	{
-		Com_Error(ERR_FATAL, "VM_Call with NULL vm\n");
+		Com_Error(ERR_FATAL, "VM_Call: NULL vm\n");
 	}
 
 	oldVM     = currentVM;
@@ -727,7 +727,7 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
 #else
 	else
 	{
-		Com_Error(ERR_FATAL, "VM_Call without entrypoint\n");
+		Com_Error(ERR_FATAL, "VM_Call: call without entrypoint\n");
 	}
 #endif
 
