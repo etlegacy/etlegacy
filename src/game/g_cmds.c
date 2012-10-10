@@ -314,7 +314,7 @@ int ClientNumberFromString(gentity_t *to, char *s)
 		{
 			return(idnum);
 		}
-	}F
+	}
 
 	// numeric values are just slot numbers
 	if (fIsNumber)
