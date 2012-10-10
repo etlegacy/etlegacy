@@ -18,7 +18,8 @@
 #include <cstdlib>
 
 // activate comment to do 32bit build on 64bit system
-// #include <cstdio>
+// FIXME: add precompiler definition so we include this ONLY for 32b builds
+#include <cstdio>
 
 //////////////////////////////////////////////////////////////////////////
 
