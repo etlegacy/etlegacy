@@ -261,7 +261,7 @@ void SV_AdjustAreaPortalState(sharedEntity_t *ent, qboolean open)
 SV_GameAreaEntities
 ==================
 */
-qboolean    SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedEntity_t *gEnt, const int capsule)
+qboolean SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedEntity_t *gEnt, const int capsule)
 {
 	const float  *origin, *angles;
 	clipHandle_t ch;
@@ -388,7 +388,7 @@ void SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int comm
 
 //==============================================
 
-static int  FloatAsInt(float f)
+static int FloatAsInt(float f)
 {
 	floatint_t fi;
 	fi.f = f;
