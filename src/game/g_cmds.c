@@ -314,7 +314,7 @@ int ClientNumberFromString(gentity_t *to, char *s)
 		{
 			return(idnum);
 		}
-	}
+	}F
 
 	// numeric values are just slot numbers
 	if (fIsNumber)
@@ -1317,7 +1317,8 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 {
 	int count, wcount;
 
-	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
+	// redeye - allow selecting weapons as spectator for bots (to avoid endless loops in pfnChangeTeam())
+	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR && !(ent->r.svFlags & SVF_BOT))
 	{
 		return qtrue;
 	}
