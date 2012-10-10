@@ -3270,7 +3270,7 @@ Returns false if the item should not be picked up.
 This needs to be the same for client side prediction and server use.
 ================
 */
-qboolean    BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum)
+qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum)
 {
 	gitem_t *item;
 
@@ -4237,7 +4237,7 @@ Handles the sequence numbers
 ===============
 */
 
-void    trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
 
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps)
 {
@@ -4263,7 +4263,7 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 
 // Gordon: would like to just inline this but would likely break qvm support
 #define SETUP_MOUNTEDGUN_STATUS(ps)                           \
-	switch (ps->persistant[PERS_HWEAPON_USE]) {                \
+    switch (ps->persistant[PERS_HWEAPON_USE]) {                \
 	case 1:                                                 \
 		ps->eFlags                    |= EF_MG42_ACTIVE;                       \
 		ps->eFlags                    &= ~EF_AAGUN_ACTIVE;                     \

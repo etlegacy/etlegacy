@@ -426,7 +426,7 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 }
 
 /* Traces all player bboxes -- body and legs */
-void    PM_TraceAllLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
+void PM_TraceAllLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
 {
 	pm->trace(trace, start, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
 

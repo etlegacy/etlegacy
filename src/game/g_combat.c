@@ -864,7 +864,7 @@ qboolean IsHeadShotWeapon(int mod)
 
 gentity_t *G_BuildHead(gentity_t *ent)
 {
-	gentity_t     *head;
+	gentity_t *head;
 	orientation_t or;           // DHM - Nerve
 
 	head = G_Spawn();

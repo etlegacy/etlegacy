@@ -190,7 +190,7 @@ void Cmd_Score_f(gentity_t *ent)
 CheatsOk
 ==================
 */
-qboolean    CheatsOk(gentity_t *ent)
+qboolean CheatsOk(gentity_t *ent)
 {
 	if (!g_cheats.integer)
 	{
