@@ -5,7 +5,7 @@
 #------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 
-project(ETLEGACY C)
+project(ETLEGACY C CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(Build)
@@ -125,11 +125,13 @@ endif(NOT CMAKE_SYSTEM MATCHES "Darwin")
 FILE(GLOB COMMON_SRC
 	"src/qcommon/*.c"
 )
+
 FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_stubs.c"
 	"src/botlib/botlib_stub.c"
 )
+
 LIST(REMOVE_ITEM COMMON_SRC ${COMMON_SRC_REMOVE})
 
 # Platform specific code for server and client
@@ -331,24 +333,26 @@ if(BUILD_MOD)
                         PREFIX ""
                         LIBRARY_OUTPUT_DIRECTORY "etmain")
                         
-        # qagame      
-        if(USE_OMNIBOTS)
-        		#FIXME: only 32bit WIN & Linux, UNIX includes openBSD - no clue if this works properly
-        		if(WIN32 OR UNIX)
-                		add_definitions(-DOMNIBOTS)
-                		#include_directories( src/Omnibot )
-                		#FIXME: add to source list        
-    					# "src/game/g_etbot_interface.cpp"
-						# "src/Omnibot/Common/BotLoadLibrary.cpp"
-				endif()
-		endif(USE_OMNIBOTS)
-        
+        # qagame  
+      	if(USE_OMNIBOTS)
+			#FIXME: only 32bit WIN & Linux, UNIX includes openBSD - no clue if this works properly
+        	if(WIN32 OR UNIX)
+        		add_definitions(-DOMNIBOTS)
+        	    set(CMAKE_CXX_FLAGS "-m32")
+        	        
+        		#include_directories("src/Omnibot")
+      			LIST(APPEND QAGAME_SRC "src/game/g_etbot_interface.cpp")
+      			LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
+            
+            endif()
+      	endif(USE_OMNIBOTS)		    
+		    
         add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
         set_target_properties(qagame${LIB_SUFFIX}${ARCH}
                 PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
                         PREFIX ""
                         LIBRARY_OUTPUT_DIRECTORY "etmain")
-                        
+                	        
         # ui
         add_library(ui${LIB_SUFFIX}${ARCH} MODULE ${UI_SRC})
         set_target_properties(ui${LIB_SUFFIX}${ARCH}
