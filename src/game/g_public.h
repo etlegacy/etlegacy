@@ -31,6 +31,8 @@
  * @file g_public.h
  * @brief game module information visible to server
  */
+#ifndef __G_PUBLIC_H__
+#define __G_PUBLIC_H__
 
 #define GAME_API_VERSION    8
 
@@ -335,3 +337,5 @@ typedef enum
 	GAME_MESSAGERECEIVED = 14,          // ( int cno, const char *buf, int buflen, int commandTime );
 	// -zinx
 } gameExport_t;
+
+#endif

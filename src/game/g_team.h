@@ -31,6 +31,9 @@
  * @file g_team.h
  */
 
+#ifndef __G_TEAM_H__
+#define __G_TEAM_H__
+
 // JPW NERVE -- more #defs for GT_WOLF gametype
 #define WOLF_CAPTURE_BONUS      15      // capturing major game objective
 #define WOLF_STEAL_OBJ_BONUS    10      // stealing objective (first part of capture)
@@ -121,3 +124,5 @@ void TeamplayInfoMessage(team_t team);
 void CheckTeamStatus(void);
 
 int Pickup_Team(gentity_t *ent, gentity_t *other);
+
+#endif

@@ -30,7 +30,8 @@
  *
  * @file g_funcs.h
  */
-
+#ifndef __G_FUNCS_H__
+#define __G_FUNCS_H__
 
 { "Info_SetValueForKey_Big", (byte *)Info_SetValueForKey_Big },
 { "Info_SetValueForKey", (byte *)Info_SetValueForKey },
@@ -1292,3 +1293,5 @@
 { "BG_StringHashValue_Lwr", (byte *)BG_StringHashValue_Lwr },
 { "BG_StringHashValue", (byte *)BG_StringHashValue },
 { 0, 0 }
+
+#endif

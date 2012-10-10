@@ -31,6 +31,8 @@
  * @file surfaceflags.h
  * @brief This file must be identical in the quake and utils directories
  */
+#ifndef __SURFACEFLAGS_H__
+#define __SURFACEFLAGS_H__
 
 /*
  * contents flags are seperate bits
@@ -98,3 +100,5 @@
 #define SURF_MONSLICK_S         0x40000000
 
 #define SURF_LANDMINE           0x80000000  // ydnar: ok to place landmines on this surface
+
+#endif

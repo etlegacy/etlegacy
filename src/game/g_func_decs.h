@@ -30,6 +30,8 @@
  *
  * @file g_func_decs.h
  */
+#ifndef __G_FUNC_DECS_H__
+#define __G_FUNC_DECS_H__
 
 extern void Info_SetValueForKey_Big(char *s, const char *key, const char *value) ;
 extern void Info_SetValueForKey(char *s, const char *key, const char *value) ;
@@ -1292,3 +1294,5 @@ extern animation_t *BG_AnimationForString(char *string, animModelInfo_t *animMod
 extern void QDECL BG_AnimParseError(const char *msg, ...) ;
 extern long BG_StringHashValue_Lwr(const char *fname) ;
 extern long BG_StringHashValue(const char *fname) ;
+
+#endif

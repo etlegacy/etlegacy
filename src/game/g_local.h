@@ -31,6 +31,8 @@
  * @file g_local.h
  * @brief local definitions for game module
  */
+#ifndef __G_LOCAL_H__
+#define __G_LOCAL_H__
 
 #include "../qcommon/q_shared.h"
 #include "bg_public.h"
@@ -1163,19 +1165,19 @@ typedef struct
 //
 // g_spawn.c
 //
-#define     G_SpawnString(key, def, out) G_SpawnStringExt(key, def, out, __FILE__, __LINE__)
-#define     G_SpawnFloat(key, def, out) G_SpawnFloatExt(key, def, out, __FILE__, __LINE__)
-#define     G_SpawnInt(key, def, out) G_SpawnIntExt(key, def, out, __FILE__, __LINE__)
-#define     G_SpawnVector(key, def, out) G_SpawnVectorExt(key, def, out, __FILE__, __LINE__)
-#define     G_SpawnVector2D(key, def, out) G_SpawnVector2DExt(key, def, out, __FILE__, __LINE__)
+#define G_SpawnString(key, def, out) G_SpawnStringExt(key, def, out, __FILE__, __LINE__)
+#define G_SpawnFloat(key, def, out) G_SpawnFloatExt(key, def, out, __FILE__, __LINE__)
+#define G_SpawnInt(key, def, out) G_SpawnIntExt(key, def, out, __FILE__, __LINE__)
+#define G_SpawnVector(key, def, out) G_SpawnVectorExt(key, def, out, __FILE__, __LINE__)
+#define G_SpawnVector2D(key, def, out) G_SpawnVector2DExt(key, def, out, __FILE__, __LINE__)
 
-qboolean    G_SpawnStringExt(const char *key, const char *defaultString, char **out, const char *file, int line);   // spawn string returns a temporary reference, you must CopyString() if you want to keep it
-qboolean    G_SpawnFloatExt(const char *key, const char *defaultString, float *out, const char *file, int line);
-qboolean    G_SpawnIntExt(const char *key, const char *defaultString, int *out, const char *file, int line);
-qboolean    G_SpawnVectorExt(const char *key, const char *defaultString, float *out, const char *file, int line);
-qboolean    G_SpawnVector2DExt(const char *key, const char *defaultString, float *out, const char *file, int line);
+qboolean G_SpawnStringExt(const char *key, const char *defaultString, char **out, const char *file, int line);      // spawn string returns a temporary reference, you must CopyString() if you want to keep it
+qboolean G_SpawnFloatExt(const char *key, const char *defaultString, float *out, const char *file, int line);
+qboolean G_SpawnIntExt(const char *key, const char *defaultString, int *out, const char *file, int line);
+qboolean G_SpawnVectorExt(const char *key, const char *defaultString, float *out, const char *file, int line);
+qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *out, const char *file, int line);
 
-void        G_SpawnEntitiesFromString(void);
+void G_SpawnEntitiesFromString(void);
 char *G_NewString(const char *string);
 // Ridah
 qboolean G_CallSpawn(gentity_t *ent);
@@ -1240,35 +1242,35 @@ void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, int quantity, int type);
 int G_FindConfigstringIndex(const char *name, int start, int max, qboolean create);
 void G_RemoveConfigstringIndex(const char *name, int start, int max);
 // done.
-int     G_ModelIndex(char *name);
-int     G_SoundIndex(const char *name);
-int     G_SkinIndex(const char *name);
-int     G_ShaderIndex(char *name);
-int     G_CharacterIndex(const char *name);
-int     G_StringIndex(const char *string);
+int G_ModelIndex(char *name);
+int G_SoundIndex(const char *name);
+int G_SkinIndex(const char *name);
+int G_ShaderIndex(char *name);
+int G_CharacterIndex(const char *name);
+int G_StringIndex(const char *string);
 qboolean G_AllowTeamsAllowed(gentity_t *ent, gentity_t *activator);
-void    G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator);
+void G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator);
 qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon);
-void    G_TeamCommand(team_t team, char *cmd);
-void    G_KillBox(gentity_t *ent);
+void G_TeamCommand(team_t team, char *cmd);
+void G_KillBox(gentity_t *ent);
 gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match);
 gentity_t *G_FindByTargetname(gentity_t *from, const char *match);
 gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash);
 gentity_t *G_PickTarget(char *targetname);
-void    G_UseTargets(gentity_t *ent, gentity_t *activator);
-void    G_SetMovedir(vec3_t angles, vec3_t movedir);
+void G_UseTargets(gentity_t *ent, gentity_t *activator);
+void G_SetMovedir(vec3_t angles, vec3_t movedir);
 
-void    G_InitGentity(gentity_t *e);
+void G_InitGentity(gentity_t *e);
 gentity_t *G_Spawn(void);
 gentity_t *G_TempEntity(vec3_t origin, int event);
 gentity_t *G_PopupMessage(popupMessageType_t type);
-void    G_Sound(gentity_t *ent, int soundIndex);
-void    G_AnimScriptSound(int soundIndex, vec3_t org, int client);
-void    G_FreeEntity(gentity_t *e);
+void G_Sound(gentity_t *ent, int soundIndex);
+void G_AnimScriptSound(int soundIndex, vec3_t org, int client);
+void G_FreeEntity(gentity_t *e);
 //qboolean  G_EntitiesFree( void );
 
-void    G_TouchTriggers(gentity_t *ent);
-void    G_TouchSolids(gentity_t *ent);
+void G_TouchTriggers(gentity_t *ent);
+void G_TouchSolids(gentity_t *ent);
 
 float *tv(float x, float y, float z);
 char *vtos(const vec3_t v);
@@ -1758,70 +1760,77 @@ extern vmCvar_t g_nextcampaign;
 
 extern vmCvar_t g_disableComplaints;
 
-void    trap_Printf(const char *fmt);
-void    trap_Error(const char *fmt) __attribute__((noreturn));
-int     trap_Milliseconds(void);
-int     trap_Argc(void);
-void    trap_Argv(int n, char *buffer, int bufferLength);
-void    trap_Args(char *buffer, int bufferLength);
-int     trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
-void    trap_FS_Read(void *buffer, int len, fileHandle_t f);
-int     trap_FS_Write(const void *buffer, int len, fileHandle_t f);
-int     trap_FS_Rename(const char *from, const char *to);
-void    trap_FS_FCloseFile(fileHandle_t f);
-int     trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
-void    trap_SendConsoleCommand(int exec_when, const char *text);
-void    trap_Cvar_Register(vmCvar_t *cvar, const char *var_name, const char *value, int flags);
-void    trap_Cvar_Update(vmCvar_t *cvar);
-void    trap_Cvar_Set(const char *var_name, const char *value);
-int     trap_Cvar_VariableIntegerValue(const char *var_name);
-float   trap_Cvar_VariableValue(const char *var_name);
-void    trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-void    trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-void    trap_LocateGameData(gentity_t *gEnts, int numGEntities, int sizeofGEntity_t, playerState_t *gameClients, int sizeofGameClient);
-void    trap_DropClient(int clientNum, const char *reason, int length);
-void    trap_SendServerCommand(int clientNum, const char *text);
-void    trap_SetConfigstring(int num, const char *string);
-void    trap_GetConfigstring(int num, char *buffer, int bufferSize);
-void    trap_GetUserinfo(int num, char *buffer, int bufferSize);
-void    trap_SetUserinfo(int num, const char *buffer);
-void    trap_GetServerinfo(char *buffer, int bufferSize);
-void    trap_SetBrushModel(gentity_t *ent, const char *name);
-void    trap_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
-void    trap_TraceCapsule(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
-void    trap_TraceCapsuleNoEnts(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
-void    trap_TraceNoEnts(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
-int     trap_PointContents(const vec3_t point, int passEntityNum);
+void trap_Printf(const char *fmt);
+void trap_Error(const char *fmt) __attribute__((noreturn));
+int trap_Milliseconds(void);
+int trap_Argc(void);
+void trap_Argv(int n, char *buffer, int bufferLength);
+void trap_Args(char *buffer, int bufferLength);
+int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
+void trap_FS_Read(void *buffer, int len, fileHandle_t f);
+int trap_FS_Write(const void *buffer, int len, fileHandle_t f);
+int trap_FS_Rename(const char *from, const char *to);
+void trap_FS_FCloseFile(fileHandle_t f);
+int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
+void trap_SendConsoleCommand(int exec_when, const char *text);
+void trap_Cvar_Register(vmCvar_t *cvar, const char *var_name, const char *value, int flags);
+void trap_Cvar_Update(vmCvar_t *cvar);
+void trap_Cvar_Set(const char *var_name, const char *value);
+int trap_Cvar_VariableIntegerValue(const char *var_name);
+float trap_Cvar_VariableValue(const char *var_name);
+void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+void trap_LocateGameData(gentity_t *gEnts, int numGEntities, int sizeofGEntity_t, playerState_t *gameClients, int sizeofGameClient);
+void trap_DropClient(int clientNum, const char *reason, int length);
+void trap_SendServerCommand(int clientNum, const char *text);
+void trap_SetConfigstring(int num, const char *string);
+void trap_GetConfigstring(int num, char *buffer, int bufferSize);
+void trap_GetUserinfo(int num, char *buffer, int bufferSize);
+void trap_SetUserinfo(int num, const char *buffer);
+void trap_GetServerinfo(char *buffer, int bufferSize);
+void trap_SetBrushModel(gentity_t *ent, const char *name);
+void trap_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
+void trap_TraceCapsule(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
+void trap_TraceCapsuleNoEnts(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
+void trap_TraceNoEnts(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
+int trap_PointContents(const vec3_t point, int passEntityNum);
 qboolean trap_InPVS(const vec3_t p1, const vec3_t p2);
 qboolean trap_InPVSIgnorePortals(const vec3_t p1, const vec3_t p2);
-void    trap_AdjustAreaPortalState(gentity_t *ent, qboolean open);
+void trap_AdjustAreaPortalState(gentity_t *ent, qboolean open);
 qboolean trap_AreasConnected(int area1, int area2);
-void    trap_LinkEntity(gentity_t *ent);
-void    trap_UnlinkEntity(gentity_t *ent);
-int     trap_EntitiesInBox(const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount);
+void trap_LinkEntity(gentity_t *ent);
+void trap_UnlinkEntity(gentity_t *ent);
+int trap_EntitiesInBox(const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount);
 qboolean trap_EntityContact(const vec3_t mins, const vec3_t maxs, const gentity_t *ent);
 qboolean trap_EntityContactCapsule(const vec3_t mins, const vec3_t maxs, const gentity_t *ent);
-int     trap_BotAllocateClient(int clientNum);
 
-void    trap_GetUsercmd(int clientNum, usercmd_t *cmd);
-qboolean    trap_GetEntityToken(char *buffer, int bufferSize);
-qboolean trap_GetTag(int clientNum, int tagFileNumber, char *tagName, orientation_t *or);
+int trap_BotAllocateClient(int clientNum); // FIXME: precompiler macros for engine ?
+#ifdef OMNIBOTS
+//int trap_BotAllocateClient(int clientNum); // FIXME: precompiler macros for engine ?
+int trap_BotGetServerCommand(int clientNum, char *message, int size);
+void trap_BotUserCommand(int client, usercmd_t *ucmd);
+void trap_EA_Command(int client, char *command);
+#endif
+
+void trap_GetUsercmd(int clientNum, usercmd_t *cmd);
+qboolean trap_GetEntityToken(char *buffer, int bufferSize);
+qboolean trap_GetTag(int clientNum, int tagFileNumber, char *tagName, orientation_t *orientation);
 qboolean trap_LoadTag(const char *filename);
 
-int     trap_RealTime(qtime_t *qtime);
+int trap_RealTime(qtime_t *qtime);
 
-int     trap_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
-void    trap_DebugPolygonDelete(int id);
+int trap_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
+void trap_DebugPolygonDelete(int id);
 
-int     trap_BotGetSnapshotEntity(int clientNum, int sequence);
-int     trap_BotGetServerCommand(int clientNum, char *message, int size);
+int trap_BotGetSnapshotEntity(int clientNum, int sequence);
+int trap_BotGetServerCommand(int clientNum, char *message, int size);
 
-void    trap_BotUserCommand(int client, usercmd_t *ucmd);
+void trap_BotUserCommand(int client, usercmd_t *ucmd);
 
 
-void    trap_SnapVector(float *v);
+void trap_SnapVector(float *v);
 
-void    trap_SendMessage(int clientNum, char *buf, int buflen);
+void trap_SendMessage(int clientNum, char *buf, int buflen);
 messageStatus_t trap_MessageStatus(int clientNum);
 
 void G_ExplodeMissile(gentity_t *ent);
@@ -2135,7 +2144,7 @@ void G_refSpeclockTeams_cmd(gentity_t *ent, qboolean fLock);
 void G_refWarmup_cmd(gentity_t *ent);
 void G_refWarning_cmd(gentity_t *ent);
 void G_refMute_cmd(gentity_t *ent, qboolean mute);
-int  G_refClientnumForName(gentity_t *ent, const char *name);
+int G_refClientnumForName(gentity_t *ent, const char *name);
 void G_refPrintf(gentity_t *ent, const char *fmt, ...) _attribute((format(printf, 2, 3)));
 void G_PlayerBan(void);
 void G_MakeReferee(void);
@@ -2158,7 +2167,7 @@ void G_shuffleTeams(void);
 void G_swapTeamLocks(void);
 void G_swapTeams(void);
 qboolean G_teamJoinCheck(int team_num, gentity_t *ent);
-int  G_teamID(gentity_t *ent);
+int G_teamID(gentity_t *ent);
 void G_teamReset(int team_num, qboolean fClearSpecLock);
 void G_verifyMatchState(int team_id);
 void G_updateSpecLock(int nTeam, qboolean fLock);
@@ -2166,7 +2175,7 @@ void G_updateSpecLock(int nTeam, qboolean fLock);
 ///////////////////////
 // g_vote.c
 //
-int  G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd);
 void G_voteFlags(void);
 void G_voteHelp(gentity_t *ent, qboolean fShowVote);
 void G_playersMessage(gentity_t *ent);
@@ -2256,3 +2265,29 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent);
 qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 
 #define LOGOPTS_SCRIPTEVENTS    32      // Log script events (dyna-defuse/-planted/objective)
+
+// Spawnflags
+
+// trigger_objective_info spawnflags (objective info display)
+#define OBJECTIVE_INFO_AXIS_OBJECTIVE       1
+#define OBJECTIVE_INFO_ALLIED_OBJECTIVE     2
+#define OBJECTIVE_INFO_MESSAGE_OVERRIDE     4
+#define OBJECTIVE_INFO_TANK                 8
+#define OBJECTIVE_INFO_IS_OBJECTIVE         16  //(see cg_commandmap - TODO: make these available to client)
+#define OBJECTIVE_INFO_IS_HEALTHAMMOCABINET 32  //(see cg_commandmap)
+#define OBJECTIVE_INFO_IS_COMMANDPOST       64  //(see cg_commandmap)
+                                                // 128 is disabled
+
+// script_mover spawnflags
+#define MOVER_TRIGGERSPAWN              1
+#define MOVER_SOLID                     2
+#define MOVER_EXPLOSIVEDAMAGEONLY       4
+#define MOVER_RESURECTABLE              8
+#define MOVER_COMPASS                   16
+#define MOVER_ALLIED                    32
+#define MOVER_AXIS                      64
+#define MOVER_MOUNTEDGUN                128
+
+// Spawnflags end
+
+#endif
