@@ -7,7 +7,7 @@
 #define __G_ETBOT_INTERFACE_H__
 
 //#include "q_shared.h"
-// ********** #include "g_local.h"
+#include "g_local.h"
 
 //#define NO_BOT_SUPPORT
 
