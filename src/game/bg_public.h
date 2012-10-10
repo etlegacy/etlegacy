@@ -935,15 +935,15 @@ extern int weapAlts[];  // defined in bg_misc.c
 // NOTE: what about WP_VENOM and other XP weapons?
 // rain - #81 - added added akimbo weapons and deployed MG42
 #define IS_AUTORELOAD_WEAPON(weapon) \
-	(   \
-	    weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
-	    weapon == WP_THOMPSON || weapon == WP_STEN      || \
-	    weapon == WP_KAR98    || weapon == WP_CARBINE       || weapon == WP_GARAND_SCOPE  || \
-	    weapon == WP_FG42     || weapon == WP_K43           || weapon == WP_MOBILE_MG42   || \
-	    weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
-	    weapon == WP_GARAND   || weapon == WP_K43_SCOPE     || weapon == WP_FG42SCOPE     || \
-	    BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET \
-	)
+    (   \
+        weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
+        weapon == WP_THOMPSON || weapon == WP_STEN      || \
+        weapon == WP_KAR98    || weapon == WP_CARBINE       || weapon == WP_GARAND_SCOPE  || \
+        weapon == WP_FG42     || weapon == WP_K43           || weapon == WP_MOBILE_MG42   || \
+        weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
+        weapon == WP_GARAND   || weapon == WP_K43_SCOPE     || weapon == WP_FG42SCOPE     || \
+        BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET \
+    )
 
 // entityState_t->event values
 // entity events are for effects that take place reletive
@@ -1571,7 +1571,7 @@ int BG_AkimboSidearm(int weaponNum);
 
 qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon);
 
-qboolean    BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum);
+qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum);
 
 
 // content masks
@@ -1648,24 +1648,24 @@ typedef enum
 
 
 
-void    BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath);
+void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath);
 void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splineData);
-void    BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out);
+void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out);
 
-void    BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps);
+void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps);
 
 //void	BG_TouchJumpPad( playerState_t *ps, entityState_t *jumppad );
 
-void    BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean snap);
-void    BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s, int time, qboolean snap);
+void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean snap);
+void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s, int time, qboolean snap);
 weapon_t BG_DuplicateWeapon(weapon_t weap);
 gitem_t *BG_ValidStatWeapon(weapon_t weap);
 weapon_t BG_WeaponForMOD(int MOD);
 
-qboolean    BG_WeaponInWolfMP(int weapon);
-qboolean    BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime);
-qboolean    BG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime);
-qboolean    BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfClips);
+qboolean BG_WeaponInWolfMP(int weapon);
+qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime);
+qboolean BG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime);
+qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfClips);
 
 #define OVERCLIP        1.001
 
