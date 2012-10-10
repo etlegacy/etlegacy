@@ -57,7 +57,7 @@ qboolean G_SpawnStringExt(const char *key, const char *defaultString, char **out
 	return qfalse;
 }
 
-qboolean    G_SpawnFloatExt(const char *key, const char *defaultString, float *out, const char *file, int line)
+qboolean G_SpawnFloatExt(const char *key, const char *defaultString, float *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
@@ -67,7 +67,7 @@ qboolean    G_SpawnFloatExt(const char *key, const char *defaultString, float *o
 	return present;
 }
 
-qboolean    G_SpawnIntExt(const char *key, const char *defaultString, int *out, const char *file, int line)
+qboolean G_SpawnIntExt(const char *key, const char *defaultString, int *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
@@ -77,7 +77,7 @@ qboolean    G_SpawnIntExt(const char *key, const char *defaultString, int *out, 
 	return present;
 }
 
-qboolean    G_SpawnVectorExt(const char *key, const char *defaultString, float *out, const char *file, int line)
+qboolean G_SpawnVectorExt(const char *key, const char *defaultString, float *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
@@ -87,7 +87,7 @@ qboolean    G_SpawnVectorExt(const char *key, const char *defaultString, float *
 	return present;
 }
 
-qboolean    G_SpawnVector2DExt(const char *key, const char *defaultString, float *out, const char *file, int line)
+qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
@@ -96,8 +96,6 @@ qboolean    G_SpawnVector2DExt(const char *key, const char *defaultString, float
 	sscanf(s, "%f %f", &out[0], &out[1]);
 	return present;
 }
-
-
 
 //
 // fields are needed for spawning from the entity string

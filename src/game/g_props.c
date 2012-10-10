@@ -4252,7 +4252,7 @@ void props_locker_spawn_item(gentity_t *ent)
 	}
 }
 
-extern qhandle_t    trap_R_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);
+extern qhandle_t trap_R_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);
 
 void props_locker_mass(gentity_t *ent)
 {

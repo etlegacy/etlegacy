@@ -49,53 +49,53 @@ int PASSFLOAT(float x)
 	return *(int *)&floatTemp;
 }
 
-void    trap_Printf(const char *fmt)
+void trap_Printf(const char *fmt)
 {
 	syscall(G_PRINT, fmt);
 }
 
-void    trap_Error(const char *fmt)
+void trap_Error(const char *fmt)
 {
 	syscall(G_ERROR, fmt);
 	// shut up GCC warning about returning functions, because we know better
 	exit(1);
 }
 
-int     trap_Milliseconds(void)
+int trap_Milliseconds(void)
 {
 	return syscall(G_MILLISECONDS);
 }
-int     trap_Argc(void)
+int trap_Argc(void)
 {
 	return syscall(G_ARGC);
 }
 
-void    trap_Argv(int n, char *buffer, int bufferLength)
+void trap_Argv(int n, char *buffer, int bufferLength)
 {
 	syscall(G_ARGV, n, buffer, bufferLength);
 }
 
-int     trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode)
+int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode)
 {
 	return syscall(G_FS_FOPEN_FILE, qpath, f, mode);
 }
 
-void    trap_FS_Read(void *buffer, int len, fileHandle_t f)
+void trap_FS_Read(void *buffer, int len, fileHandle_t f)
 {
 	syscall(G_FS_READ, buffer, len, f);
 }
 
-int     trap_FS_Write(const void *buffer, int len, fileHandle_t f)
+int trap_FS_Write(const void *buffer, int len, fileHandle_t f)
 {
 	return syscall(G_FS_WRITE, buffer, len, f);
 }
 
-int     trap_FS_Rename(const char *from, const char *to)
+int trap_FS_Rename(const char *from, const char *to)
 {
 	return syscall(G_FS_RENAME, from, to);
 }
 
-void    trap_FS_FCloseFile(fileHandle_t f)
+void trap_FS_FCloseFile(fileHandle_t f)
 {
 	syscall(G_FS_FCLOSE_FILE, f);
 }
@@ -105,17 +105,17 @@ int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, 
 	return syscall(G_FS_GETFILELIST, path, extension, listbuf, bufsize);
 }
 
-void    trap_SendConsoleCommand(int exec_when, const char *text)
+void trap_SendConsoleCommand(int exec_when, const char *text)
 {
 	syscall(G_SEND_CONSOLE_COMMAND, exec_when, text);
 }
 
-void    trap_Cvar_Register(vmCvar_t *cvar, const char *var_name, const char *value, int flags)
+void trap_Cvar_Register(vmCvar_t *cvar, const char *var_name, const char *value, int flags)
 {
 	syscall(G_CVAR_REGISTER, cvar, var_name, value, flags);
 }
 
-void    trap_Cvar_Update(vmCvar_t *cvar)
+void trap_Cvar_Update(vmCvar_t *cvar)
 {
 	syscall(G_CVAR_UPDATE, cvar);
 }

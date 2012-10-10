@@ -639,7 +639,7 @@ void ClearMaxLivesBans()
 Svcmd_EntityList_f
 ===================
 */
-void    Svcmd_EntityList_f(void)
+void Svcmd_EntityList_f(void)
 {
 	int       e;
 	gentity_t *check;
@@ -1359,7 +1359,7 @@ ConsoleCommand
 
 =================
 */
-qboolean    ConsoleCommand(void)
+qboolean ConsoleCommand(void)
 {
 	char cmd[MAX_TOKEN_CHARS];
 
