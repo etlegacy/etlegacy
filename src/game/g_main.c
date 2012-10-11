@@ -37,7 +37,6 @@
 #include "g_etbot_interface.h"
 #endif
 
-
 level_locals_t level;
 
 typedef struct
@@ -241,7 +240,6 @@ vmCvar_t g_nextmap;
 vmCvar_t g_nextcampaign;
 
 vmCvar_t g_disableComplaints;
-
 
 cvarTable_t gameCvarTable[] =
 {
@@ -469,7 +467,6 @@ cvarTable_t gameCvarTable[] =
 
 // bk001129 - made static to avoid aliasing
 static int gameCvarTableSize = sizeof(gameCvarTable) / sizeof(gameCvarTable[0]);
-
 
 void G_InitGame(int levelTime, int randomSeed, int restart);
 void G_RunFrame(int levelTime);
@@ -934,7 +931,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 		if (checkEnt)
 		{
-
 			// TDF This entire function could be the poster boy for converting to OO programming!!!
 			// I'm making this into a switch in a vain attempt to make this readable so I can find which
 			// brackets don't match!!!
@@ -1409,7 +1405,6 @@ void G_FindTeams(void)
 	G_Printf("%i teams with %i entities\n", c, c2);
 }
 
-
 /*
 ==============
 G_RemapTeamShaders
@@ -1418,7 +1413,6 @@ G_RemapTeamShaders
 void G_RemapTeamShaders(void)
 {
 }
-
 
 /*
 =================
@@ -1481,7 +1475,6 @@ void G_RegisterCvars(void)
 	{
 		trap_Cvar_Set("pmove_msec", "33");
 	}
-
 }
 
 /*
@@ -2132,8 +2125,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	G_Printf("-----------------------------------\n");
 
-	trap_PbStat(-1, "INIT", "GAME") ;
-
 	G_RemapTeamShaders();
 
 	BG_ClearAnimationPool();
@@ -2151,8 +2142,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	// --- maybe not the best place to do this... seems to be some race conditions on map_restart
 	G_spawnPrintf(DP_MVSPAWN, level.time + 2000, NULL);
 }
-
-
 
 /*
 =================
@@ -2208,8 +2197,6 @@ void G_ShutdownGame(int restart)
 	// write all the client session data so we can get it back
 	G_WriteSessionData(restart);
 }
-
-
 
 //===================================================================
 
@@ -2554,7 +2541,6 @@ void CalculateRanks(void)
 	}
 }
 
-
 /*
 ========================================================================
 
@@ -2633,7 +2619,6 @@ void MoveClientToIntermission(gentity_t *ent)
 	ent->s.event           = 0;
 	ent->s.events[0]       = ent->s.events[1] = ent->s.events[2] = ent->s.events[3] = 0; // DHM - Nerve
 	ent->r.contents        = 0;
-
 }
 
 /*
@@ -2754,7 +2739,6 @@ void BeginIntermission(void)
 	SendScoreboardMessageToAllClients();
 
 }
-
 
 /*
 =============
@@ -3187,7 +3171,6 @@ void LogExit(const char *string)
 	G_BuildEndgameStats();
 }
 
-
 /*
 =================
 CheckIntermissionExit
@@ -3241,7 +3224,6 @@ void CheckIntermissionExit(void)
 			notReady++;
 		}
 	}
-
 
 	// rain - #105 - use the same code as the beginning of round ready to
 	// decide whether enough players are ready to exceed
@@ -3463,8 +3445,6 @@ void CheckExitRules(void)
 		}
 	}
 }
-
-
 
 /*
 ========================================================================
