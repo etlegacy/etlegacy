@@ -1518,392 +1518,392 @@ RB_MDM_SurfaceAnim
 */
 void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 {
-	int         i, j, k;
-	refEntity_t *refent;
-	int         *boneList;
-	mdmHeader_t *header;
+    int         i, j, k;
+    refEntity_t *refent;
+    int         *boneList;
+    mdmHeader_t *header;
 
 #ifdef DBG_PROFILE_BONES
-	int di = 0, dt, ldt;
+    int di = 0, dt, ldt;
 
-	dt  = ri.Milliseconds();
-	ldt = dt;
+    dt  = ri.Milliseconds();
+    ldt = dt;
 #endif
 
-	refent   = &backEnd.currentEntity->e;
-	boneList = ( int * )((byte *)surface + surface->ofsBoneReferences);
-	header   = ( mdmHeader_t * )((byte *)surface + surface->ofsHeader);
+    refent   = &backEnd.currentEntity->e;
+    boneList = ( int * )((byte *)surface + surface->ofsBoneReferences);
+    header   = ( mdmHeader_t * )((byte *)surface + surface->ofsHeader);
 
-	R_CalcBones((const refEntity_t *)refent, boneList, surface->numBoneReferences);
+    R_CalcBones((const refEntity_t *)refent, boneList, surface->numBoneReferences);
 
-	DBG_SHOWTIME
+    DBG_SHOWTIME
 
-	// calculate LOD
-	// TODO: lerp the radius and origin
-	VectorAdd(refent->origin, frame->localOrigin, vec);
-	lodRadius = frame->radius;
-	lodScale  = R_CalcMDMLod(refent, vec, lodRadius, header->lodBias, header->lodScale);
+    // calculate LOD
+    // TODO: lerp the radius and origin
+    VectorAdd(refent->origin, frame->localOrigin, vec);
+    lodRadius = frame->radius;
+    lodScale  = R_CalcMDMLod(refent, vec, lodRadius, header->lodBias, header->lodScale);
 
-	// ydnar: debug code
-	//%	lodScale = 0.15;
+    // ydnar: debug code
+    //%	lodScale = 0.15;
 
 //DBG_SHOWTIME
 
 //----(SA)	modification to allow dead skeletal bodies to go below minlod (experiment)
-	if (refent->reFlags & REFLAG_DEAD_LOD)
-	{
-		if (lodScale < 0.35)       // allow dead to lod down to 35% (even if below surf->minLod) (%35 is arbitrary and probably not good generally.  worked for the blackguard/infantry as a test though)
-		{
-			lodScale = 0.35;
+    if (refent->reFlags & REFLAG_DEAD_LOD)
+    {
+        if (lodScale < 0.35)       // allow dead to lod down to 35% (even if below surf->minLod) (%35 is arbitrary and probably not good generally.  worked for the blackguard/infantry as a test though)
+        {
+            lodScale = 0.35;
 		}
-		render_count = (int)((float) surface->numVerts * lodScale);
+        render_count = (int)((float) surface->numVerts * lodScale);
 
 	}
-	else
-	{
-		render_count = (int)((float) surface->numVerts * lodScale);
-		if (render_count < surface->minLod)
-		{
-			if (!(refent->reFlags & REFLAG_DEAD_LOD))
-			{
-				render_count = surface->minLod;
+    else
+    {
+        render_count = (int)((float) surface->numVerts * lodScale);
+        if (render_count < surface->minLod)
+        {
+            if (!(refent->reFlags & REFLAG_DEAD_LOD))
+            {
+                render_count = surface->minLod;
 			}
 		}
 	}
 //----(SA)	end
 
-	if (render_count > surface->numVerts)
-	{
-		render_count = surface->numVerts;
+    if (render_count > surface->numVerts)
+    {
+        render_count = surface->numVerts;
 	}
 
-	// ydnar: to profile bone transform performance only
-	if (r_bonesDebug->integer == 10)
-	{
-		return;
+    // ydnar: to profile bone transform performance only
+    if (r_bonesDebug->integer == 10)
+    {
+        return;
 	}
 
 
-	RB_CheckOverflow(render_count, surface->numTriangles * 3);
+    RB_CheckOverflow(render_count, surface->numTriangles * 3);
 
 //DBG_SHOWTIME
 
-	//
-	// setup triangle list
-	//
-	// ydnar: no need to do this twice
-	//%	RB_CheckOverflow( surface->numVerts, surface->numTriangles * 3);
+    //
+    // setup triangle list
+    //
+    // ydnar: no need to do this twice
+    //%	RB_CheckOverflow( surface->numVerts, surface->numTriangles * 3);
 
 //DBG_SHOWTIME
 
-	collapse_map = ( int * )(( byte * )surface + surface->ofsCollapseMap);
-	triangles    = ( int * )((byte *)surface + surface->ofsTriangles);
-	indexes      = surface->numTriangles * 3;
-	baseIndex    = tess.numIndexes;
-	baseVertex   = tess.numVertexes;
-	oldIndexes   = baseIndex;
+    collapse_map = ( int * )(( byte * )surface + surface->ofsCollapseMap);
+    triangles    = ( int * )((byte *)surface + surface->ofsTriangles);
+    indexes      = surface->numTriangles * 3;
+    baseIndex    = tess.numIndexes;
+    baseVertex   = tess.numVertexes;
+    oldIndexes   = baseIndex;
 
-	tess.numVertexes += render_count;
+    tess.numVertexes += render_count;
 
-	pIndexes = &tess.indexes[baseIndex];
+    pIndexes = &tess.indexes[baseIndex];
 
 //DBG_SHOWTIME
 
-	if (render_count == surface->numVerts)
-	{
-		memcpy(pIndexes, triangles, sizeof(triangles[0]) * indexes);
-		if (baseVertex)
-		{
-			int *indexesEnd;
-			for (indexesEnd = pIndexes + indexes ; pIndexes < indexesEnd ; pIndexes++)
-			{
-				*pIndexes += baseVertex;
+    if (render_count == surface->numVerts)
+    {
+        memcpy(pIndexes, triangles, sizeof(triangles[0]) * indexes);
+        if (baseVertex)
+        {
+            int *indexesEnd;
+            for (indexesEnd = pIndexes + indexes ; pIndexes < indexesEnd ; pIndexes++)
+            {
+                *pIndexes += baseVertex;
 			}
 		}
-		tess.numIndexes += indexes;
+        tess.numIndexes += indexes;
 	}
-	else
-	{
-		int *collapseEnd;
+    else
+    {
+        int *collapseEnd;
 
-		pCollapse = collapse;
-		for (j = 0; j < render_count; pCollapse++, j++)
-		{
-			*pCollapse = j;
+        pCollapse = collapse;
+        for (j = 0; j < render_count; pCollapse++, j++)
+        {
+            *pCollapse = j;
 		}
 
-		pCollapseMap = &collapse_map[render_count];
-		for (collapseEnd = collapse + surface->numVerts ; pCollapse < collapseEnd; pCollapse++, pCollapseMap++)
-		{
-			*pCollapse = collapse[*pCollapseMap];
+        pCollapseMap = &collapse_map[render_count];
+        for (collapseEnd = collapse + surface->numVerts ; pCollapse < collapseEnd; pCollapse++, pCollapseMap++)
+        {
+            *pCollapse = collapse[*pCollapseMap];
 		}
 
-		for (j = 0 ; j < indexes ; j += 3)
-		{
-			p0 = collapse[*(triangles++)];
-			p1 = collapse[*(triangles++)];
-			p2 = collapse[*(triangles++)];
+        for (j = 0 ; j < indexes ; j += 3)
+        {
+            p0 = collapse[*(triangles++)];
+            p1 = collapse[*(triangles++)];
+            p2 = collapse[*(triangles++)];
 
-			// FIXME
-			// note:  serious optimization opportunity here,
-			//  by sorting the triangles the following "continue"
-			//  could have been made into a "break" statement.
-			if (p0 == p1 || p1 == p2 || p2 == p0)
-			{
-				continue;
+            // FIXME
+            // note:  serious optimization opportunity here,
+            //  by sorting the triangles the following "continue"
+            //  could have been made into a "break" statement.
+            if (p0 == p1 || p1 == p2 || p2 == p0)
+            {
+                continue;
 			}
 
-			*(pIndexes++)    = baseVertex + p0;
-			*(pIndexes++)    = baseVertex + p1;
-			*(pIndexes++)    = baseVertex + p2;
-			tess.numIndexes += 3;
+            *(pIndexes++)    = baseVertex + p0;
+            *(pIndexes++)    = baseVertex + p1;
+            *(pIndexes++)    = baseVertex + p2;
+            tess.numIndexes += 3;
 		}
 
-		baseIndex = tess.numIndexes;
+        baseIndex = tess.numIndexes;
 	}
 
 //DBG_SHOWTIME
 
-	// deform the vertexes by the lerped bones
-	numVerts   = surface->numVerts;
-	v          = ( mdmVertex_t * )((byte *)surface + surface->ofsVerts);
-	tempVert   = ( float * )(tess.xyz + baseVertex);
-	tempNormal = ( float * )(tess.normal + baseVertex);
-	for (j = 0; j < render_count; j++, tempVert += 4, tempNormal += 4)
-	{
-		mdmWeight_t *w;
+    // deform the vertexes by the lerped bones
+    numVerts   = surface->numVerts;
+    v          = ( mdmVertex_t * )((byte *)surface + surface->ofsVerts);
+    tempVert   = ( float * )(tess.xyz + baseVertex);
+    tempNormal = ( float * )(tess.normal + baseVertex);
+    for (j = 0; j < render_count; j++, tempVert += 4, tempNormal += 4)
+    {
+        mdmWeight_t *w;
 
-		VectorClear(tempVert);
+        VectorClear(tempVert);
 
-		w = v->weights;
-		for (k = 0 ; k < v->numWeights ; k++, w++)
-		{
-			bone = &bones[w->boneIndex];
-			LocalAddScaledMatrixTransformVectorTranslate(w->offset, w->boneWeight, bone->matrix, bone->translation, tempVert);
+        w = v->weights;
+        for (k = 0 ; k < v->numWeights ; k++, w++)
+        {
+            bone = &bones[w->boneIndex];
+            LocalAddScaledMatrixTransformVectorTranslate(w->offset, w->boneWeight, bone->matrix, bone->translation, tempVert);
 		}
 
-		LocalMatrixTransformVector(v->normal, bones[v->weights[0].boneIndex].matrix, tempNormal);
+        LocalMatrixTransformVector(v->normal, bones[v->weights[0].boneIndex].matrix, tempNormal);
 
-		tess.texCoords0[baseVertex + j].v[0] = v->texCoords[0];
-		tess.texCoords0[baseVertex + j].v[1] = v->texCoords[1];
+        tess.texCoords0[baseVertex + j].v[0] = v->texCoords[0];
+        tess.texCoords0[baseVertex + j].v[1] = v->texCoords[1];
 
-		v = (mdmVertex_t *)&v->weights[v->numWeights];
+        v = (mdmVertex_t *)&v->weights[v->numWeights];
 	}
 
-	DBG_SHOWTIME
+    DBG_SHOWTIME
 
-	if (r_bonesDebug->integer)
-	{
-		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
-		if (r_bonesDebug->integer < 3 || r_bonesDebug->integer == 5 || r_bonesDebug->integer == 8 || r_bonesDebug->integer == 9)
-		{
-			// DEBUG: show the bones as a stick figure with axis at each bone
-			boneRefs = ( int * )((byte *)surface + surface->ofsBoneReferences);
-			for (i = 0; i < surface->numBoneReferences; i++, boneRefs++)
-			{
-				bonePtr = &bones[*boneRefs];
+    if (r_bonesDebug->integer)
+    {
+        GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
+        if (r_bonesDebug->integer < 3 || r_bonesDebug->integer == 5 || r_bonesDebug->integer == 8 || r_bonesDebug->integer == 9)
+        {
+            // DEBUG: show the bones as a stick figure with axis at each bone
+            boneRefs = ( int * )((byte *)surface + surface->ofsBoneReferences);
+            for (i = 0; i < surface->numBoneReferences; i++, boneRefs++)
+            {
+                bonePtr = &bones[*boneRefs];
 
-				GL_Bind(tr.whiteImage);
-				if (r_bonesDebug->integer != 9)
-				{
-					qglLineWidth(1);
-					qglBegin(GL_LINES);
-					for (j = 0; j < 3; j++)
-					{
-						VectorClear(vec);
-						vec[j] = 1;
-						qglColor3fv(vec);
-						qglVertex3fv(bonePtr->translation);
-						VectorMA(bonePtr->translation, (r_bonesDebug->integer == 8 ? 1.5 : 5), bonePtr->matrix[j], vec);
-						qglVertex3fv(vec);
+                GL_Bind(tr.whiteImage);
+                if (r_bonesDebug->integer != 9)
+                {
+                    qglLineWidth(1);
+                    qglBegin(GL_LINES);
+                    for (j = 0; j < 3; j++)
+                    {
+                        VectorClear(vec);
+                        vec[j] = 1;
+                        qglColor3fv(vec);
+                        qglVertex3fv(bonePtr->translation);
+                        VectorMA(bonePtr->translation, (r_bonesDebug->integer == 8 ? 1.5 : 5), bonePtr->matrix[j], vec);
+                        qglVertex3fv(vec);
 					}
-					qglEnd();
+                    qglEnd();
 				}
 
-				// connect to our parent if it's valid
-				if (validBones[boneInfo[*boneRefs].parent])
-				{
-					qglLineWidth(r_bonesDebug->integer == 8 ? 4 : 2);
-					qglBegin(GL_LINES);
-					qglColor3f(.6, .6, .6);
-					qglVertex3fv(bonePtr->translation);
-					qglVertex3fv(bones[boneInfo[*boneRefs].parent].translation);
-					qglEnd();
+                // connect to our parent if it's valid
+                if (validBones[boneInfo[*boneRefs].parent])
+                {
+                    qglLineWidth(r_bonesDebug->integer == 8 ? 4 : 2);
+                    qglBegin(GL_LINES);
+                    qglColor3f(.6, .6, .6);
+                    qglVertex3fv(bonePtr->translation);
+                    qglVertex3fv(bones[boneInfo[*boneRefs].parent].translation);
+                    qglEnd();
 				}
 
-				qglLineWidth(1);
+                qglLineWidth(1);
 			}
 
-			if (r_bonesDebug->integer == 8)
-			{
-				// FIXME: Actually draw the whole skeleton
-				//if( surface == (mdmSurface_t *)((byte *)header + header->ofsSurfaces) ) {
-				mdxHeader_t *mdxHeader = R_GetModelByHandle(refent->frameModel)->model.mdx;
-				boneRefs = ( int * )((byte *)surface + surface->ofsBoneReferences);
+            if (r_bonesDebug->integer == 8)
+            {
+                // FIXME: Actually draw the whole skeleton
+                //if( surface == (mdmSurface_t *)((byte *)header + header->ofsSurfaces) ) {
+                mdxHeader_t *mdxHeader = R_GetModelByHandle(refent->frameModel)->model.mdx;
+                boneRefs = ( int * )((byte *)surface + surface->ofsBoneReferences);
 
-				qglDepthRange(0, 0);        // never occluded
-				qglBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                qglDepthRange(0, 0);        // never occluded
+                qglBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-				for (i = 0; i < surface->numBoneReferences; i++, boneRefs++)
-				{
-					vec3_t        diff;
-					mdxBoneInfo_t *mdxBoneInfo = ( mdxBoneInfo_t * )((byte *)mdxHeader + mdxHeader->ofsBones + *boneRefs * sizeof(mdxBoneInfo_t));
-					bonePtr = &bones[*boneRefs];
+                for (i = 0; i < surface->numBoneReferences; i++, boneRefs++)
+                {
+                    vec3_t        diff;
+                    mdxBoneInfo_t *mdxBoneInfo = ( mdxBoneInfo_t * )((byte *)mdxHeader + mdxHeader->ofsBones + *boneRefs * sizeof(mdxBoneInfo_t));
+                    bonePtr = &bones[*boneRefs];
 
-					VectorSet(vec, 0.f, 0.f, 32.f);
-					VectorSubtract(bonePtr->translation, vec, diff);
-					vec[0] = vec[0] + diff[0] * 6;
-					vec[1] = vec[1] + diff[1] * 6;
-					vec[2] = vec[2] + diff[2] * 3;
+                    VectorSet(vec, 0.f, 0.f, 32.f);
+                    VectorSubtract(bonePtr->translation, vec, diff);
+                    vec[0] = vec[0] + diff[0] * 6;
+                    vec[1] = vec[1] + diff[1] * 6;
+                    vec[2] = vec[2] + diff[2] * 3;
 
-					qglEnable(GL_BLEND);
-					qglBegin(GL_LINES);
-					qglColor4f(1.f, .4f, .05f, .35f);
-					qglVertex3fv(bonePtr->translation);
-					qglVertex3fv(vec);
-					qglEnd();
-					qglDisable(GL_BLEND);
+                    qglEnable(GL_BLEND);
+                    qglBegin(GL_LINES);
+                    qglColor4f(1.f, .4f, .05f, .35f);
+                    qglVertex3fv(bonePtr->translation);
+                    qglVertex3fv(vec);
+                    qglEnd();
+                    qglDisable(GL_BLEND);
 
-					R_DebugText(vec, 1.f, 1.f, 1.f, mdxBoneInfo->name, qfalse);         // qfalse, as there is no reason to set depthrange again
+                    R_DebugText(vec, 1.f, 1.f, 1.f, mdxBoneInfo->name, qfalse);         // qfalse, as there is no reason to set depthrange again
 				}
 
-				qglDepthRange(0, 1);
-				//}
+                qglDepthRange(0, 1);
+                //}
 			}
-			else if (r_bonesDebug->integer == 9)
-			{
-				if (surface == ( mdmSurface_t * )((byte *)header + header->ofsSurfaces))
-				{
-					mdmTag_t *pTag = ( mdmTag_t * )((byte *)header + header->ofsTags);
+            else if (r_bonesDebug->integer == 9)
+            {
+                if (surface == ( mdmSurface_t * )((byte *)header + header->ofsSurfaces))
+                {
+                    mdmTag_t *pTag = ( mdmTag_t * )((byte *)header + header->ofsTags);
 
-					qglDepthRange(0, 0);    // never occluded
-					qglBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                    qglDepthRange(0, 0);    // never occluded
+                    qglBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-					for (i = 0; i < header->numTags; i++)
-					{
-						mdxBoneFrame_t *tagBone;
-						orientation_t  outTag;
-						vec3_t         diff;
+                    for (i = 0; i < header->numTags; i++)
+                    {
+                        mdxBoneFrame_t *tagBone;
+                        orientation_t  outTag;
+                        vec3_t         diff;
 
-						// now extract the orientation for the bone that represents our tag
-						tagBone = &bones[pTag->boneIndex];
-						VectorClear(outTag.origin);
-						LocalAddScaledMatrixTransformVectorTranslate(pTag->offset, 1.f, tagBone->matrix, tagBone->translation, outTag.origin);
-						for (j = 0; j < 3; j++)
-						{
-							LocalMatrixTransformVector(pTag->axis[j], bone->matrix, outTag.axis[j]);
+                        // now extract the orientation for the bone that represents our tag
+                        tagBone = &bones[pTag->boneIndex];
+                        VectorClear(outTag.origin);
+                        LocalAddScaledMatrixTransformVectorTranslate(pTag->offset, 1.f, tagBone->matrix, tagBone->translation, outTag.origin);
+                        for (j = 0; j < 3; j++)
+                        {
+                            LocalMatrixTransformVector(pTag->axis[j], bone->matrix, outTag.axis[j]);
 						}
 
-						GL_Bind(tr.whiteImage);
-						qglLineWidth(2);
-						qglBegin(GL_LINES);
-						for (j = 0; j < 3; j++)
-						{
-							VectorClear(vec);
-							vec[j] = 1;
-							qglColor3fv(vec);
-							qglVertex3fv(outTag.origin);
-							VectorMA(outTag.origin, 5, outTag.axis[j], vec);
-							qglVertex3fv(vec);
+                        GL_Bind(tr.whiteImage);
+                        qglLineWidth(2);
+                        qglBegin(GL_LINES);
+                        for (j = 0; j < 3; j++)
+                        {
+                            VectorClear(vec);
+                            vec[j] = 1;
+                            qglColor3fv(vec);
+                            qglVertex3fv(outTag.origin);
+                            VectorMA(outTag.origin, 5, outTag.axis[j], vec);
+                            qglVertex3fv(vec);
 						}
-						qglEnd();
+                        qglEnd();
 
-						VectorSet(vec, 0.f, 0.f, 32.f);
-						VectorSubtract(outTag.origin, vec, diff);
-						vec[0] = vec[0] + diff[0] * 2;
-						vec[1] = vec[1] + diff[1] * 2;
-						vec[2] = vec[2] + diff[2] * 1.5;
+                        VectorSet(vec, 0.f, 0.f, 32.f);
+                        VectorSubtract(outTag.origin, vec, diff);
+                        vec[0] = vec[0] + diff[0] * 2;
+                        vec[1] = vec[1] + diff[1] * 2;
+                        vec[2] = vec[2] + diff[2] * 1.5;
 
-						qglLineWidth(1);
-						qglEnable(GL_BLEND);
-						qglBegin(GL_LINES);
-						qglColor4f(1.f, .4f, .05f, .35f);
-						qglVertex3fv(outTag.origin);
-						qglVertex3fv(vec);
-						qglEnd();
-						qglDisable(GL_BLEND);
+                        qglLineWidth(1);
+                        qglEnable(GL_BLEND);
+                        qglBegin(GL_LINES);
+                        qglColor4f(1.f, .4f, .05f, .35f);
+                        qglVertex3fv(outTag.origin);
+                        qglVertex3fv(vec);
+                        qglEnd();
+                        qglDisable(GL_BLEND);
 
-						R_DebugText(vec, 1.f, 1.f, 1.f, pTag->name, qfalse);    // qfalse, as there is no reason to set depthrange again
+                        R_DebugText(vec, 1.f, 1.f, 1.f, pTag->name, qfalse);    // qfalse, as there is no reason to set depthrange again
 
-						pTag = ( mdmTag_t * )((byte *)pTag + pTag->ofsEnd);
+                        pTag = ( mdmTag_t * )((byte *)pTag + pTag->ofsEnd);
 					}
-					qglDepthRange(0, 1);
+                    qglDepthRange(0, 1);
 				}
 			}
 		}
 
-		if (r_bonesDebug->integer >= 3 && r_bonesDebug->integer <= 6)
-		{
-			int render_indexes = (tess.numIndexes - oldIndexes);
+        if (r_bonesDebug->integer >= 3 && r_bonesDebug->integer <= 6)
+        {
+            int render_indexes = (tess.numIndexes - oldIndexes);
 
-			// show mesh edges
-			tempVert   = ( float * )(tess.xyz + baseVertex);
-			tempNormal = ( float * )(tess.normal + baseVertex);
+            // show mesh edges
+            tempVert   = ( float * )(tess.xyz + baseVertex);
+            tempNormal = ( float * )(tess.normal + baseVertex);
 
-			GL_Bind(tr.whiteImage);
-			qglLineWidth(1);
-			qglBegin(GL_LINES);
-			qglColor3f(.0, .0, .8);
+            GL_Bind(tr.whiteImage);
+            qglLineWidth(1);
+            qglBegin(GL_LINES);
+            qglColor3f(.0, .0, .8);
 
-			pIndexes = &tess.indexes[oldIndexes];
-			for (j = 0; j < render_indexes / 3; j++, pIndexes += 3)
-			{
-				qglVertex3fv(tempVert + 4 * pIndexes[0]);
-				qglVertex3fv(tempVert + 4 * pIndexes[1]);
+            pIndexes = &tess.indexes[oldIndexes];
+            for (j = 0; j < render_indexes / 3; j++, pIndexes += 3)
+            {
+                qglVertex3fv(tempVert + 4 * pIndexes[0]);
+                qglVertex3fv(tempVert + 4 * pIndexes[1]);
 
-				qglVertex3fv(tempVert + 4 * pIndexes[1]);
-				qglVertex3fv(tempVert + 4 * pIndexes[2]);
+                qglVertex3fv(tempVert + 4 * pIndexes[1]);
+                qglVertex3fv(tempVert + 4 * pIndexes[2]);
 
-				qglVertex3fv(tempVert + 4 * pIndexes[2]);
-				qglVertex3fv(tempVert + 4 * pIndexes[0]);
+                qglVertex3fv(tempVert + 4 * pIndexes[2]);
+                qglVertex3fv(tempVert + 4 * pIndexes[0]);
 			}
 
-			qglEnd();
+            qglEnd();
 
 
-			if (r_bonesDebug->integer == 4) //----(SA)	track debug stats
-			{
-				totalrv += render_count;
-				totalrt += render_indexes / 3;
-				totalv  += surface->numVerts;
-				totalt  += surface->numTriangles;
+            if (r_bonesDebug->integer == 4) //----(SA)	track debug stats
+            {
+                totalrv += render_count;
+                totalrt += render_indexes / 3;
+                totalv  += surface->numVerts;
+                totalt  += surface->numTriangles;
 			}
 
-			if (r_bonesDebug->integer == 3)
-			{
-				ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count, surface->numVerts, render_indexes / 3, surface->numTriangles,
-				          ( float )(100.0 * render_indexes / 3) / (float) surface->numTriangles);
+            if (r_bonesDebug->integer == 3)
+            {
+                ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n", lodScale, render_count, surface->numVerts, render_indexes / 3, surface->numTriangles,
+                          ( float )(100.0 * render_indexes / 3) / (float) surface->numTriangles);
 			}
 		}
 
-		if (r_bonesDebug->integer == 6 || r_bonesDebug->integer == 7)
-		{
-			v        = ( mdmVertex_t * )((byte *)surface + surface->ofsVerts);
-			tempVert = ( float * )(tess.xyz + baseVertex);
-			GL_Bind(tr.whiteImage);
-			qglPointSize(5);
-			qglBegin(GL_POINTS);
-			for (j = 0; j < render_count; j++, tempVert += 4)
-			{
-				if (v->numWeights > 1)
-				{
-					if (v->numWeights == 2)
-					{
-						qglColor3f(.4f, .4f, 0.f);
+        if (r_bonesDebug->integer == 6 || r_bonesDebug->integer == 7)
+        {
+            v        = ( mdmVertex_t * )((byte *)surface + surface->ofsVerts);
+            tempVert = ( float * )(tess.xyz + baseVertex);
+            GL_Bind(tr.whiteImage);
+            qglPointSize(5);
+            qglBegin(GL_POINTS);
+            for (j = 0; j < render_count; j++, tempVert += 4)
+            {
+                if (v->numWeights > 1)
+                {
+                    if (v->numWeights == 2)
+                    {
+                        qglColor3f(.4f, .4f, 0.f);
 					}
-					else if (v->numWeights == 3)
-					{
-						qglColor3f(.8f, .4f, 0.f);
+                    else if (v->numWeights == 3)
+                    {
+                        qglColor3f(.8f, .4f, 0.f);
 					}
-					else
-					{
-						qglColor3f(1.f, .4f, 0.f);
+                    else
+                    {
+                        qglColor3f(1.f, .4f, 0.f);
 					}
-					qglVertex3fv(tempVert);
+                    qglVertex3fv(tempVert);
 				}
-				v = (mdmVertex_t *)&v->weights[v->numWeights];
+                v = (mdmVertex_t *)&v->weights[v->numWeights];
 			}
-			qglEnd();
+            qglEnd();
 		}
 	}
 
@@ -1966,16 +1966,16 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
         qglEnd();
     }*/
 
-	if (r_bonesDebug->integer > 1)
-	{
-		// dont draw the actual surface
-		tess.numIndexes  = oldIndexes;
-		tess.numVertexes = baseVertex;
-		return;
+    if (r_bonesDebug->integer > 1)
+    {
+        // dont draw the actual surface
+        tess.numIndexes  = oldIndexes;
+        tess.numVertexes = baseVertex;
+        return;
 	}
 
 #ifdef DBG_PROFILE_BONES
-	Com_Printf("\n");
+    Com_Printf("\n");
 #endif
 }
 
@@ -1986,53 +1986,53 @@ R_GetBoneTag
 */
 int R_MDM_GetBoneTag(orientation_t *outTag, mdmHeader_t *mdm, int startTagIndex, const refEntity_t *refent, const char *tagName)
 {
-	int      i, j;
-	mdmTag_t *pTag;
-	int      *boneList;
+    int      i, j;
+    mdmTag_t *pTag;
+    int      *boneList;
 
-	if (startTagIndex > mdm->numTags)
-	{
-		memset(outTag, 0, sizeof(*outTag));
-		return -1;
+    if (startTagIndex > mdm->numTags)
+    {
+        memset(outTag, 0, sizeof(*outTag));
+        return -1;
 	}
 
-	// find the correct tag
-	pTag = ( mdmTag_t * )((byte *)mdm + mdm->ofsTags);
+    // find the correct tag
+    pTag = ( mdmTag_t * )((byte *)mdm + mdm->ofsTags);
 
-	if (startTagIndex)
-	{
-		for (i = 0; i < startTagIndex; i++)
-		{
-			pTag = ( mdmTag_t * )((byte *)pTag + pTag->ofsEnd);
+    if (startTagIndex)
+    {
+        for (i = 0; i < startTagIndex; i++)
+        {
+            pTag = ( mdmTag_t * )((byte *)pTag + pTag->ofsEnd);
 		}
 	}
 
-	for (i = startTagIndex; i < mdm->numTags; i++)
-	{
-		if (!strcmp(pTag->name, tagName))
-		{
-			break;
+    for (i = startTagIndex; i < mdm->numTags; i++)
+    {
+        if (!strcmp(pTag->name, tagName))
+        {
+            break;
 		}
-		pTag = ( mdmTag_t * )((byte *)pTag + pTag->ofsEnd);
+        pTag = ( mdmTag_t * )((byte *)pTag + pTag->ofsEnd);
 	}
 
-	if (i >= mdm->numTags)
-	{
-		memset(outTag, 0, sizeof(*outTag));
-		return -1;
+    if (i >= mdm->numTags)
+    {
+        memset(outTag, 0, sizeof(*outTag));
+        return -1;
 	}
 
-	// calc the bones
-	boneList = ( int * )((byte *)pTag + pTag->ofsBoneReferences);
-	R_CalcBones(refent, boneList, pTag->numBoneReferences);
+    // calc the bones
+    boneList = ( int * )((byte *)pTag + pTag->ofsBoneReferences);
+    R_CalcBones(refent, boneList, pTag->numBoneReferences);
 
-	// now extract the orientation for the bone that represents our tag
-	bone = &bones[pTag->boneIndex];
-	VectorClear(outTag->origin);
-	LocalAddScaledMatrixTransformVectorTranslate(pTag->offset, 1.f, bone->matrix, bone->translation, outTag->origin);
-	for (j = 0; j < 3; j++)
-	{
-		LocalMatrixTransformVector(pTag->axis[j], bone->matrix, outTag->axis[j]);
+    // now extract the orientation for the bone that represents our tag
+    bone = &bones[pTag->boneIndex];
+    VectorClear(outTag->origin);
+    LocalAddScaledMatrixTransformVectorTranslate(pTag->offset, 1.f, bone->matrix, bone->translation, outTag->origin);
+    for (j = 0; j < 3; j++)
+    {
+        LocalMatrixTransformVector(pTag->axis[j], bone->matrix, outTag->axis[j]);
 	}
-	return i;
+    return i;
 }

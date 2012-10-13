@@ -1343,7 +1343,7 @@ void RB_SurfaceFace(srfSurfaceFace_t *surf)
 }
 
 
-static float    LodErrorForVolume(vec3_t local, float radius)
+static float LodErrorForVolume(vec3_t local, float radius)
 {
 	vec3_t world;
 	float  d;

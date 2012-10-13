@@ -1262,7 +1262,7 @@ This is called for each texel of the fog texture on startup
 and for each vertex of transparent shaders in fog dynamically
 ================
 */
-float   R_FogFactor(float s, float t)
+float R_FogFactor(float s, float t)
 {
 	float d;
 
@@ -1819,8 +1819,6 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 	return 0;
 }
 
-//----(SA) end
-
 /*
 ===============
 RE_RegisterSkin
@@ -2001,7 +1999,7 @@ skin_t *R_GetSkinByHandle(qhandle_t hSkin)
 R_SkinList_f
 ===============
 */
-void    R_SkinList_f(void)
+void R_SkinList_f(void)
 {
 	int    i, j;
 	skin_t *skin;
@@ -2021,8 +2019,6 @@ void    R_SkinList_f(void)
 	}
 	ri.Printf(PRINT_ALL, "------------------\n");
 }
-
-// done.
 
 //==========================================================================================
 // Ridah, caching system
@@ -2347,5 +2343,3 @@ void R_LoadCacheImages(void)
 
 	ri.Hunk_FreeTempMemory(buf);
 }
-// done.
-//==========================================================================================

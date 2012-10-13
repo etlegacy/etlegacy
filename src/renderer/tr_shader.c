@@ -2140,10 +2140,8 @@ static qboolean ParseShader(char **text)
 		}
 	}
 
-	//
 	// ignore shaders that don't have any stages, unless it is a sky or fog
 	// ydnar: or have implicit mapping
-	//
 	if (s == 0 && !shader.isSky && !(shader.contentFlags & CONTENTS_FOG) && implicitMap[0] == '\0')
 	{
 		return qfalse;
@@ -3704,7 +3702,7 @@ Dump information on all valid shaders to the console
 A second parameter will cause it to print in sorted order
 ===============
 */
-void    R_ShaderList_f(void)
+void R_ShaderList_f(void)
 {
 	int      i;
 	int      count;

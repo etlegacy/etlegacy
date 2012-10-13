@@ -264,7 +264,7 @@ R_AddDrawSurfCmd
 
 =============
 */
-void    R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
+void R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
 {
 	drawSurfsCommand_t *cmd;
 
@@ -289,7 +289,7 @@ RE_SetColor
 Passing NULL will set the color to white
 =============
 */
-void    RE_SetColor(const float *rgba)
+void RE_SetColor(const float *rgba)
 {
 	setColorCommand_t *cmd;
 
@@ -407,7 +407,6 @@ void RE_RotatedPic(float x, float y, float w, float h,
 	cmd->t2    = t2;
 }
 
-//----(SA)  added
 /*
 ==============
 RE_StretchPicGradient
@@ -447,7 +446,6 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
 	cmd->gradientColor[3] = gradientColor[3] * 255;
 	cmd->gradientType     = gradientType;
 }
-//----(SA)  end
 
 /*
 ====================

@@ -139,7 +139,6 @@ typedef enum
 	SS_NEAREST          // blood blobs
 } shaderSort_t;
 
-
 #define MAX_SHADER_STAGES 8
 
 typedef enum
@@ -155,7 +154,6 @@ typedef enum
 	GF_NOISE
 
 } genFunc_t;
-
 
 typedef enum
 {
@@ -267,7 +265,6 @@ typedef struct
 	float bulgeSpeed;
 } deformStage_t;
 
-
 typedef struct
 {
 	texMod_t type;
@@ -292,7 +289,6 @@ typedef struct
 	float rotateSpeed;
 
 } texModInfo_t;
-
 
 // RF increased this for onfire animation
 #define MAX_IMAGE_ANIMATIONS    16
@@ -376,7 +372,6 @@ typedef struct
 	unsigned colorInt;                  // in packed byte format
 	float tcScale;                      // texture coordinate vector scales
 } fogParms_t;
-
 
 typedef struct shader_s
 {
@@ -537,7 +532,6 @@ typedef struct
 	struct drawSurf_s *drawSurfs;
 } trRefdef_t;
 
-
 //=================================================================================
 
 // skins allow models to be retextured without modifying the model file
@@ -602,7 +596,6 @@ typedef struct
 	glfog_t glFog;                  // fog parameters   //----(SA)  added
 
 } viewParms_t;
-
 
 /*
 ==============================================================================
@@ -709,7 +702,6 @@ typedef struct srfFlare_s
 	vec3_t color;
 } srfFlare_t;
 
-
 // ydnar: normal map drawsurfaces must match this header
 typedef struct srfGeneric_s
 {
@@ -725,7 +717,6 @@ typedef struct srfGeneric_s
 	int dlightBits[SMP_FRAMES];
 }
 srfGeneric_t;
-
 
 typedef struct srfGridMesh_s
 {
@@ -755,7 +746,6 @@ typedef struct srfGridMesh_s
 	drawVert_t verts[1];            // variable sized
 } srfGridMesh_t;
 
-
 #define VERTEXSIZE  8
 
 typedef struct srfSurfaceFace_s
@@ -779,7 +769,6 @@ typedef struct srfSurfaceFace_s
 	// there is a variable length list of indices here also
 }
 srfSurfaceFace_t;
-
 
 // misc_models in maps are turned into direct geometry by q3map2 ;D
 typedef struct srfTriangles_s
@@ -872,7 +861,6 @@ typedef struct
 }
 srfFoliage_t;
 
-
 extern void(*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *);
 
 /*
@@ -883,10 +871,7 @@ BRUSH MODELS
 ==============================================================================
 */
 
-
-//
 // in memory representation
-//
 
 #define SIDE_FRONT  0
 #define SIDE_BACK   1
@@ -913,8 +898,8 @@ typedef struct decal_s
 }
 decal_t;
 
-
 #define CONTENTS_NODE       -1
+
 typedef struct mnode_s
 {
 	// common with leaf and node
@@ -935,8 +920,6 @@ typedef struct mnode_s
 	msurface_t **firstmarksurface;
 	int nummarksurfaces;
 } mnode_t;
-
-
 
 typedef struct bmodel_s
 {
@@ -1055,12 +1038,12 @@ typedef struct model_s
 
 #define MAX_MOD_KNOWN   2048
 
-void        R_ModelInit(void);
+void R_ModelInit(void);
 model_t *R_GetModelByHandle(qhandle_t hModel);
-int         R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex);
-void        R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs);
+int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex);
+void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs);
 
-void        R_Modellist_f(void);
+void R_Modellist_f(void);
 
 //====================================================
 extern refimport_t ri;
@@ -1068,7 +1051,6 @@ extern refimport_t ri;
 #define MAX_DRAWIMAGES          2048
 #define MAX_LIGHTMAPS           256
 #define MAX_SKINS               1024
-
 
 #define MAX_DRAWSURFS           0x40000
 #define DRAWSURF_MASK           (MAX_DRAWSURFS - 1)
@@ -1153,7 +1135,6 @@ typedef struct
 	int faceCulling;
 	unsigned long glStateBits;
 } glstate_t;
-
 
 typedef struct
 {
@@ -1315,9 +1296,8 @@ extern qboolean textureFilterAnisotropic;
 extern int      maxAnisotropy;
 extern float    displayAspect;
 
-//
 // cvars
-//
+
 extern cvar_t *r_flareSize;
 extern cvar_t *r_flareFade;
 
@@ -1468,7 +1448,7 @@ extern cvar_t *r_highQualityVideo;
 //====================================================================
 
 float R_NoiseGet4f(float x, float y, float z, float t);
-void  R_NoiseInit(void);
+void R_NoiseInit(void);
 
 void R_SwapBuffers(int);
 
@@ -1491,7 +1471,6 @@ void R_DecomposeSort(unsigned sort, int *entityNum, shader_t **shader,
 
 void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int fogNum, int frontFace, int dlightMap);
 
-
 #define CULL_IN     0       // completely unclipped
 #define CULL_CLIP   1       // clipped by one or more planes
 #define CULL_OUT    2       // completely outside the clipping planes
@@ -1501,20 +1480,19 @@ int R_CullLocalBox(vec3_t bounds[2]);
 int R_CullPointAndRadius(vec3_t origin, float radius);
 int R_CullLocalPointAndRadius(vec3_t origin, float radius);
 
-
 void R_RotateForEntity(const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *orientation);
 
 /*
 ** GL wrapper/helper functions
 */
-void    GL_Bind(image_t *image);
-void    GL_SetDefaultState(void);
-void    GL_SelectTexture(int unit);
-void    GL_TextureMode(const char *string);
-void    GL_CheckErrors(void);
-void    GL_State(unsigned long stateVector);
-void    GL_TexEnv(int env);
-void    GL_Cull(int cullType);
+void GL_Bind(image_t *image);
+void GL_SetDefaultState(void);
+void GL_SelectTexture(int unit);
+void GL_TextureMode(const char *string);
+void GL_CheckErrors(void);
+void GL_State(unsigned long stateVector);
+void GL_TexEnv(int env);
+void GL_Cull(int cullType);
 
 #define GLS_SRCBLEND_ZERO                       0x00000001
 #define GLS_SRCBLEND_ONE                        0x00000002
@@ -1551,68 +1529,67 @@ void    GL_Cull(int cullType);
 
 #define GLS_DEFAULT         GLS_DEPTHMASK_TRUE
 
-void    RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
-void    RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
+void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
+void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
 
-void        RE_BeginFrame(stereoFrame_t stereoFrame);
-void        RE_BeginRegistration(glconfig_t *glconfig);
-void        RE_LoadWorldMap(const char *mapname);
-void        RE_SetWorldVisData(const byte *vis);
-qhandle_t   RE_RegisterModel(const char *name);
-qhandle_t   RE_RegisterSkin(const char *name);
-void        RE_Shutdown(qboolean destroyWindow);
+void RE_BeginFrame(stereoFrame_t stereoFrame);
+void RE_BeginRegistration(glconfig_t *glconfig);
+void RE_LoadWorldMap(const char *mapname);
+void RE_SetWorldVisData(const byte *vis);
+qhandle_t RE_RegisterModel(const char *name);
+qhandle_t RE_RegisterSkin(const char *name);
+void RE_Shutdown(qboolean destroyWindow);
 
-qboolean    R_GetEntityToken(char *buffer, int size);
+qboolean R_GetEntityToken(char *buffer, int size);
 
-float       R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte **pic_out);    // Arnout
+float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte **pic_out);          // Arnout
 
-qboolean    RE_GetSkinModel(qhandle_t skinid, const char *type, char *name);
-qhandle_t   RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);      //----(SA)
+qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name);
+qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);        //----(SA)
 
 model_t *R_AllocModel(void);
 
-void        R_Init(void);
+void R_Init(void);
 image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip, int glWrapClampMode, qboolean lightmap);
 
 image_t *R_CreateImage(const char *name, const byte *pic, int width, int height, qboolean mipmap
                        , qboolean allowPicmip, int wrapClampMode);
-qboolean    R_GetModeInfo(int *width, int *height, float *windowAspect, int mode);
+qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode);
 
-void        R_SetColorMappings(void);
-void        R_GammaCorrect(byte *buffer, int bufSize);
+void R_SetColorMappings(void);
+void R_GammaCorrect(byte *buffer, int bufSize);
 
-void    R_ImageList_f(void);
-void    R_SkinList_f(void);
+void R_ImageList_f(void);
+void R_SkinList_f(void);
 
 const void *RB_TakeScreenshotCmd(const void *data);
-void    R_ScreenShot_f(void);
-void    R_ScreenShotJPEG_f(void);
+void R_ScreenShot_f(void);
+void R_ScreenShotJPEG_f(void);
 
-void    R_InitFogTable(void);
-float   R_FogFactor(float s, float t);
-void    R_InitImages(void);
-void    R_DeleteTextures(void);
-int     R_SumOfUsedImages(void);
-void    R_InitSkins(void);
+void R_InitFogTable(void);
+float R_FogFactor(float s, float t);
+void R_InitImages(void);
+void R_DeleteTextures(void);
+int R_SumOfUsedImages(void);
+void R_InitSkins(void);
 skin_t *R_GetSkinByHandle(qhandle_t hSkin);
 
-void    R_DebugText(const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude);
+void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude);
 
-//
 // tr_shader.c
-//
-qhandle_t        RE_RegisterShaderLightMap(const char *name, int lightmapIndex);
-qhandle_t        RE_RegisterShader(const char *name);
-qhandle_t        RE_RegisterShaderNoMip(const char *name);
+
+qhandle_t RE_RegisterShaderLightMap(const char *name, int lightmapIndex);
+qhandle_t RE_RegisterShader(const char *name);
+qhandle_t RE_RegisterShaderNoMip(const char *name);
 qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_t *image, qboolean mipRawImage);
 
 shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage);
 shader_t *R_GetShaderByHandle(qhandle_t hShader);
 shader_t *R_GetShaderByState(int index, long *cycleTime);
 shader_t *R_FindShaderByName(const char *name);
-void        R_InitShaders(void);
-void        R_ShaderList_f(void);
-void    R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
+void R_InitShaders(void);
+void R_ShaderList_f(void);
+void R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
 //bani
 qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext);
 
@@ -1632,24 +1609,23 @@ IMPLEMENTATION SPECIFIC FUNCTIONS
 
 extern int gl_NormalFontBase;
 
-void        GLimp_Init(void);
-void        GLimp_Shutdown(void);
-void        GLimp_EndFrame(void);
+void GLimp_Init(void);
+void GLimp_Shutdown(void);
+void GLimp_EndFrame(void);
 
 qboolean GLimp_SpawnRenderThread(void (*function)(void));
 void *GLimp_RendererSleep(void);
-void        GLimp_FrontEndSleep(void);
-void        GLimp_WakeRenderer(void *data);
+void GLimp_FrontEndSleep(void);
+void GLimp_WakeRenderer(void *data);
 
-void        GLimp_LogComment(char *comment);
-void        GLimp_Minimize(void);
+void GLimp_LogComment(char *comment);
+void GLimp_Minimize(void);
 
 // NOTE linux works with float gamma value, not the gamma table
 // the params won't be used, getting the r_gamma cvar directly
 void GLimp_SetGamma(unsigned char red[256],
                     unsigned char green[256],
                     unsigned char blue[256]);
-
 
 /*
 ====================================================================
@@ -1722,7 +1698,6 @@ void RB_ShowImages(void);
 
 void RB_DrawBounds(vec3_t mins, vec3_t maxs);    // ydnar
 
-
 /*
 ============================================================
 
@@ -1733,7 +1708,6 @@ WORLD MAP
 
 void R_AddBrushModelSurfaces(trRefEntity_t *e);
 void R_AddWorldSurfaces(void);
-
 
 /*
 ============================================================
@@ -1762,7 +1736,6 @@ void R_CullDlights(void);
 void R_DlightBmodel(bmodel_t *bmodel);
 void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent);
 int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir);
-
 
 /*
 ============================================================
@@ -1817,7 +1790,6 @@ MARKERS, POLYGON PROJECTION ON WORLD POLYGONS
 int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projection,
                     int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
 
-
 /*
 ============================================================
 
@@ -1840,7 +1812,6 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t 
 void R_AddDecalSurface(decal_t *decal);
 void R_AddDecalSurfaces(bmodel_t *bmodel);
 void R_CullDecalProjectors(void);
-
 
 /*
 ============================================================
@@ -1908,33 +1879,33 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height);
 =============================================================
 =============================================================
 */
-void    R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const float *projectionMatrix,
-                               vec4_t eye, vec4_t dst);
-void    R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window);
+void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const float *projectionMatrix,
+                            vec4_t eye, vec4_t dst);
+void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window);
 
-void    RB_DeformTessGeometry(void);
+void RB_DeformTessGeometry(void);
 
-void    RB_CalcEnvironmentTexCoords(float *dstTexCoords);
-void    RB_CalcFireRiseEnvTexCoords(float *st);
-void    RB_CalcFogTexCoords(float *dstTexCoords);
-void    RB_CalcScrollTexCoords(const float scroll[2], float *dstTexCoords);
-void    RB_CalcRotateTexCoords(float rotSpeed, float *dstTexCoords);
-void    RB_CalcScaleTexCoords(const float scale[2], float *dstTexCoords);
-void    RB_CalcSwapTexCoords(float *dstTexCoords);
-void    RB_CalcTurbulentTexCoords(const waveForm_t *wf, float *dstTexCoords);
-void    RB_CalcTransformTexCoords(const texModInfo_t *tmi, float *dstTexCoords);
-void    RB_CalcModulateColorsByFog(unsigned char *dstColors);
-void    RB_CalcModulateAlphasByFog(unsigned char *dstColors);
-void    RB_CalcModulateRGBAsByFog(unsigned char *dstColors);
-void    RB_CalcWaveAlpha(const waveForm_t *wf, unsigned char *dstColors);
-void    RB_CalcWaveColor(const waveForm_t *wf, unsigned char *dstColors);
-void    RB_CalcAlphaFromEntity(unsigned char *dstColors);
-void    RB_CalcAlphaFromOneMinusEntity(unsigned char *dstColors);
-void    RB_CalcStretchTexCoords(const waveForm_t *wf, float *texCoords);
-void    RB_CalcColorFromEntity(unsigned char *dstColors);
-void    RB_CalcColorFromOneMinusEntity(unsigned char *dstColors);
-void    RB_CalcSpecularAlpha(unsigned char *alphas);
-void    RB_CalcDiffuseColor(unsigned char *colors);
+void RB_CalcEnvironmentTexCoords(float *dstTexCoords);
+void RB_CalcFireRiseEnvTexCoords(float *st);
+void RB_CalcFogTexCoords(float *dstTexCoords);
+void RB_CalcScrollTexCoords(const float scroll[2], float *dstTexCoords);
+void RB_CalcRotateTexCoords(float rotSpeed, float *dstTexCoords);
+void RB_CalcScaleTexCoords(const float scale[2], float *dstTexCoords);
+void RB_CalcSwapTexCoords(float *dstTexCoords);
+void RB_CalcTurbulentTexCoords(const waveForm_t *wf, float *dstTexCoords);
+void RB_CalcTransformTexCoords(const texModInfo_t *tmi, float *dstTexCoords);
+void RB_CalcModulateColorsByFog(unsigned char *dstColors);
+void RB_CalcModulateAlphasByFog(unsigned char *dstColors);
+void RB_CalcModulateRGBAsByFog(unsigned char *dstColors);
+void RB_CalcWaveAlpha(const waveForm_t *wf, unsigned char *dstColors);
+void RB_CalcWaveColor(const waveForm_t *wf, unsigned char *dstColors);
+void RB_CalcAlphaFromEntity(unsigned char *dstColors);
+void RB_CalcAlphaFromOneMinusEntity(unsigned char *dstColors);
+void RB_CalcStretchTexCoords(const waveForm_t *wf, float *texCoords);
+void RB_CalcColorFromEntity(unsigned char *dstColors);
+void RB_CalcColorFromOneMinusEntity(unsigned char *dstColors);
+void RB_CalcSpecularAlpha(unsigned char *alphas);
+void RB_CalcDiffuseColor(unsigned char *colors);
 
 /*
 =============================================================
@@ -2116,7 +2087,6 @@ extern volatile renderCommandList_t *renderCommandList;
 
 extern volatile qboolean renderThreadActive;
 
-
 void *R_GetCommandBuffer(int bytes);
 void RB_ExecuteRenderCommands(const void *data);
 
@@ -2195,7 +2165,6 @@ void R_BackupShaders(void);
 void R_PurgeShaders(int count);
 void R_PurgeLightmapShaders(void);
 void R_LoadCacheShaders(void);
-// done.
 
 //------------------------------------------------------------------------------
 // Ridah, mesh compression
@@ -2220,18 +2189,17 @@ extern float r_anormals[NUMMDCVERTEXNORMALS][3];
 void R_MDC_DecodeXyzCompressed(mdcXyzCompressed_t *xyzComp, vec3_t out, vec3_t normal);
 #else   // optimized version
 #define R_MDC_DecodeXyzCompressed(ofsVec, out, normal) \
-	(out)[0] = ((float)((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[1] = ((float)((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[2] = ((float)((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
+    (out)[0] = ((float)((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+    (out)[1] = ((float)((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+    (out)[2] = ((float)((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+    VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
 #endif
 
 void R_AddMDCSurfaces(trRefEntity_t *ent);
-// done.
+
 //------------------------------------------------------------------------------
 
 void R_LatLongToNormal(vec3_t outNormal, short latLong);
-
 
 /*
 ============================================================
@@ -2247,8 +2215,8 @@ extern glfogType_t glfogNum;                    // fog type to use (from the fog
 
 extern qboolean fogIsOn;
 
-extern void         R_FogOff(void);
-extern void         R_FogOn(void);
+extern void R_FogOff(void);
+extern void R_FogOn(void);
 
 extern void R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density);
 

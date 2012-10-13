@@ -834,7 +834,7 @@ RB_SetGL2D
 
 ================
 */
-void    RB_SetGL2D(void)
+void RB_SetGL2D(void)
 {
 	backEnd.projection2D = qtrue;
 
