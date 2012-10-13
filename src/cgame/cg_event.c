@@ -446,7 +446,6 @@ static void CG_Obituary(entityState_t *ent)
 // from cg_weapons.c
 extern int CG_WeaponIndex(int weapnum, int *bank, int *cycle);
 
-
 /*
 ================
 CG_ItemPickup
@@ -473,7 +472,6 @@ static void CG_ItemPickup(int itemNum)
 
 		if (cg_autoswitch.integer && cg.predictedPlayerState.weaponstate != WEAPON_RELOADING)
 		{
-
 			//  0 - "Off"
 			//  1 - "Always Switch"
 			//  2 - "If New"
@@ -539,7 +537,6 @@ static void CG_ItemPickup(int itemNum)
 	}   // end bg_itemlist[itemNum].giType == IT_WEAPON
 }
 
-
 /*
 ================
 CG_PainEvent
@@ -589,10 +586,6 @@ void CG_PainEvent(centity_t *cent, int health, qboolean crouching)
 	cent->pe.painTime       = cg.time;
 	cent->pe.painDirection ^= 1;
 }
-
-
-
-
 
 /*
 ==============
@@ -793,7 +786,6 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 		            );
 	}
 }
-
 
 /*
 ==============
@@ -1559,7 +1551,6 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 pass:
 		continue;
 	}
-
 }
 
 /*
@@ -1639,7 +1630,6 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		trap_R_ProjectDecal(cgs.media.burnMarkShader, 1, (vec3_t *) origin, projection, color, cg_markTime.integer, (cg_markTime.integer >> 4));
 	}
 
-
 	if (cent->currentState.eventParm & 8)     // rubble
 	{   // share the cg_explode code with func_explosives
 		const char *s;
@@ -1662,7 +1652,6 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		cent->currentState.dl_intensity = 0;        // no sound
 		CG_Explode(cent, origin, newdir, sh);
 	}
-
 
 	if (cent->currentState.eventParm & 16)     // gore
 	{
@@ -1755,7 +1744,6 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 
 			isflyingdebris = qtrue;
 		}
-
 
 		le->lifeRate     = 1.0 / (le->endTime - le->startTime);
 		le->leFlags      = LEF_TUMBLE;
@@ -1871,9 +1859,7 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 		le->angles.trDelta[0] = (100 + (rand() & 500)) - 300;
 		le->angles.trDelta[1] = (100 + (rand() & 500)) - 300;
 		le->angles.trDelta[2] = (100 + (rand() & 500)) - 300;
-
 	}
-
 }
 
 void CG_ShardJunk(centity_t *cent, vec3_t origin, vec3_t dir)
@@ -1922,7 +1908,6 @@ void CG_ShardJunk(centity_t *cent, vec3_t origin, vec3_t dir)
 	//le->angles.trDelta[0] = (100 + (rand()&500)) - 300;
 	//le->angles.trDelta[1] = (100 + (rand()&500)) - 300;
 	le->angles.trDelta[2] = (100 + (rand() & 500)) - 300;
-
 }
 
 // debris test
@@ -3329,7 +3314,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	}
 
-
 	{
 		int rval;
 
@@ -3365,7 +3349,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 	}
 }
-
 
 /*
 ==============
