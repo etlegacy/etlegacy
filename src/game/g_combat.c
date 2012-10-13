@@ -281,7 +281,6 @@ void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 	}
 }
 
-
 // these are just for logging, the client prints its own messages
 char *modNames[] =
 {
@@ -394,8 +393,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		if (self->client)
 		{
 			self->client->pers.playerStats.suicides++;
-			trap_PbStat(self - g_entities, "suicide",
-			            va("%d %d %d", self->client->sess.sessionTeam, self->client->sess.playerType, weap)) ;
 		}
 	}
 	else if (OnSameTeam(self, attacker))
@@ -609,7 +606,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		}
 		else
 		{
-
 			//G_AddExperience( attacker, 1 );
 
 			// JPW NERVE -- mostly added as conveneience so we can tweak from the #defines all in one place
@@ -774,15 +770,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		            }
 		        } else*/
 
-		// DHM - Play death animation, and set pm_time to delay 'fallen' animation
-		//if( G_IsSinglePlayerGame() && self->client->sess.sessionTeam == TEAM_ALLIES ) {
-		//  // play "falldown" animation since allies bots won't ever die completely
-		//  self->client->ps.pm_time = BG_AnimScriptEvent( &self->client->ps, self->client->pers.character->animModelInfo, ANIM_ET_FALLDOWN, qfalse, qtrue );
-		//  G_StartPlayerAppropriateSound(self, "death");
-		//} else {
 		self->client->ps.pm_time = BG_AnimScriptEvent(&self->client->ps, self->client->pers.character->animModelInfo, ANIM_ET_DEATH, qfalse, qtrue);
-		// death animation script already contains sound
-		//}
 
 		// record the death animation to be used later on by the corpse
 		self->client->torsoDeathAnim = self->client->ps.torsoAnim;
@@ -1847,8 +1835,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			}
 			else
 			{
-
-
 				targ->sound1to2 = hr;
 				targ->sound2to1 = mod;
 				targ->sound2to3 = (dflags & DAMAGE_RADIUS) ? 1 : 0;
