@@ -101,7 +101,6 @@ void SP_target_remove_powerups(gentity_t *ent)
 	ent->use = Use_target_remove_powerups;
 }
 
-
 //==========================================================
 
 /*QUAKED target_delay (1 1 0) (-8 -8 -8) (8 8 8)
@@ -135,7 +134,6 @@ void SP_target_delay(gentity_t *ent)
 	ent->use = Use_Target_Delay;
 }
 
-
 //==========================================================
 
 /*QUAKED target_score (1 0 0) (-8 -8 -8) (8 8 8)
@@ -157,8 +155,6 @@ void SP_target_score(gentity_t *ent)
 	}
 	ent->use = Use_Target_Score;
 }
-
-
 
 //==========================================================
 
@@ -202,7 +198,6 @@ void SP_target_print(gentity_t *ent)
 {
 	ent->use = Use_Target_Print;
 }
-
 
 //==========================================================
 
@@ -631,7 +626,6 @@ void SP_target_laser(gentity_t *self)
 	self->nextthink = level.time + FRAMETIME;
 }
 
-
 //==========================================================
 
 void target_teleporter_use(gentity_t *self, gentity_t *other, gentity_t *activator)
@@ -754,12 +748,10 @@ void target_relay_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 	G_UseTargets(self, activator);
 }
 
-
 void relay_AIScript_AlertEntity(gentity_t *self)
 {
 	G_UseEntity(self, NULL, NULL);
 }
-
 
 /*
 ==============
@@ -783,9 +775,7 @@ void SP_target_relay(gentity_t *self)
 			self->soundPos1 = G_SoundIndex("sound/movers/doors/default_door_locked.wav");
 		}
 	}
-
 }
-
 
 //==========================================================
 
@@ -914,7 +904,6 @@ void Use_Target_Lock(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		t->key = ent->key;
 
 	}
-
 }
 
 //==========================================================
@@ -978,8 +967,6 @@ void SP_target_counter(gentity_t *ent)
 	ent->use = Use_Target_Counter;
 }
 
-
-
 /*QUAKED target_autosave (1 1 0) (-8 -8 -8) (8 8 8)
 saves game to 'autosave.sav' when triggered then dies.
 */
@@ -1002,8 +989,6 @@ void SP_target_lock(gentity_t *ent)
 {
 	ent->use = Use_Target_Lock;
 }
-
-
 
 void Use_Target_Alarm(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
@@ -1221,9 +1206,7 @@ void SP_target_smoke(gentity_t *ent)
 	{
 		trap_LinkEntity(ent);
 	}
-
 }
-
 
 /*QUAKED target_script_trigger (1 .7 .2) (-8 -8 -8) (8 8 8)
 must have an aiName
@@ -1269,7 +1252,6 @@ void target_script_trigger_use(gentity_t *ent, gentity_t *other, gentity_t *acti
 	}
 
 	G_UseTargets(ent, other);
-
 }
 
 void SP_target_script_trigger(gentity_t *ent)
@@ -1279,7 +1261,6 @@ void SP_target_script_trigger(gentity_t *ent)
 	ent->s.eType   = ET_GENERAL;
 	ent->use       = target_script_trigger_use;
 }
-
 
 /*QUAKED target_rumble (0 0.75 0.8) (-8 -8 -8) (8 8 8) STARTOFF
 wait = default is 2 seconds = time the entity will enable rumble effect
@@ -1368,7 +1349,6 @@ void target_rumble_think(gentity_t *ent)
 	{
 		ent->nextthink = level.time + 50;
 	}
-
 }
 
 void target_rumble_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
