@@ -36,7 +36,6 @@
 
 vec3_t ejectBrassCasingOrigin;
 
-//----(SA)
 // forward decs
 static int getAltWeapon(int weapnum);
 int getEquivWeapon(int weapnum);
@@ -44,9 +43,6 @@ int CG_WeaponIndex(int weapnum, int *bank, int *cycle);
 static qboolean CG_WeaponHasAmmo(int i);
 char       cg_fxflags;
 extern int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP]; // JPW NERVE moved to bg_misc.c so I can get a droplist
-// jpw
-
-//----(SA)  end
 
 /*
 ==============
@@ -154,7 +150,6 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 	le->angles.trDelta[2] = 0;
 
 	le->leFlags = LEF_TUMBLE;
-
 
 	{
 		int    contents;
@@ -320,7 +315,6 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	le->leMarkType = LEMT_NONE;
 }
 
-
 //----(SA)  added
 /*
 ==============
@@ -414,6 +408,7 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 
 	le->leMarkType = LEMT_NONE;
 }
+
 /*
 ==============
 CG_SpearTrail
@@ -602,10 +597,9 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 		*/
 	}
 }
-// jpw
-
 
 // Ridah, new trail effects
+
 /*
 ==========================
 CG_RocketTrail
@@ -764,7 +758,6 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 // done.
 }
 
-// JPW NERVE
 /*
 ==========================
 CG_DynamiteTrail
@@ -789,9 +782,7 @@ static void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
 		trap_R_AddLightToScene(origin, 320, mult, 1.0, 1.0, 0, 0, REF_FORCE_DLIGHT);
 	}
 }
-// jpw
 
-// Ridah
 /*
 ==========================
 CG_GrenadeTrail
@@ -853,9 +844,6 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 //----(SA)  end
 }
 // done.
-
-
-
 
 /*
 ==========================
@@ -980,7 +968,6 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type)      //-
 	CG_RailTrail2(ci, v2, v4);
 	CG_RailTrail2(ci, v4, v3);
 	CG_RailTrail2(ci, v3, v5);
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1055,7 +1042,6 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 		}
 		Com_Printf("unknown token in weapon cfg '%s' is %s\n", token, filename);
 	}
-
 
 	for (i = 0 ; i < MAX_WP_ANIMATIONS  ; i++)
 	{
@@ -1143,10 +1129,8 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 		return qfalse;
 	}
 
-
 	return qtrue;
 }
-
 
 static qboolean CG_RW_ParseError(int handle, char *format, ...)
 {
@@ -2110,7 +2094,6 @@ void CG_RegisterItemVisuals(int itemNum)
 	itemInfo->registered = qtrue;   //----(SA)  moved this down after the registerweapon()
 }
 
-
 /*
 ========================================================================================
 
@@ -2119,10 +2102,7 @@ VIEW WEAPON
 ========================================================================================
 */
 
-
-//
 // weapon animations
-//
 
 /*
 ==============
@@ -2200,7 +2180,6 @@ static void CG_SetWeapLerpFrameAnimation(weaponInfo_t *wi, lerpFrame_t *lf, int 
 	}
 }
 
-
 /*
 ===============
 CG_ClearWeapLerpFrame
@@ -2213,7 +2192,6 @@ void CG_ClearWeapLerpFrame(weaponInfo_t *wi, lerpFrame_t *lf, int animationNumbe
 	lf->oldFrame      = lf->frame = lf->animation->firstFrame;
 	lf->oldFrameModel = lf->frameModel = lf->animation->mdxFile;
 }
-
 
 /*
 ===============
@@ -2324,8 +2302,6 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 	}
 }
 
-
-
 /*
 ==============
 CG_WeaponAnimation
@@ -2358,11 +2334,8 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 }
 
 ////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-
 
 // (SA) it wasn't used anyway
-
 
 /*
 ==============
@@ -2447,7 +2420,6 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 		VectorMA(origin, -cg.predictedPlayerState.leanf / 4.0f, right, origin);
 	}
 
-
 	// on odd legs, invert some angles
 	if (cg.bobcycle & 1)
 	{
@@ -2506,8 +2478,6 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	VectorMA(angles, -1.0, cg.kickAngles, angles);
 }
 
-
-// Ridah
 /*
 ===============
 CG_FlamethrowerFlame
@@ -2524,7 +2494,6 @@ static void CG_FlamethrowerFlame(centity_t *cent, vec3_t origin)
 	CG_FireFlameChunks(cent, origin, cent->lerpAngles, 1.0, qtrue);
 	return;
 }
-// done.
 
 /*
 ========================
@@ -2658,7 +2627,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 		// Gordon: FIXME: alternate for other clients, store flip-flop on cent or smuffin
 	}
-
 
 	// add the weapon
 	memset(&gun, 0, sizeof(gun));
@@ -3588,14 +3556,12 @@ void CG_AddViewWeapon(playerState_t *ps)
 			CG_WeaponAnimation(ps, weapon, &hand.oldframe, &hand.frame, &hand.backlerp);     //----(SA) changed
 		}
 
-
 		hand.hModel   = weapon->handsModel;
 		hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;   //----(SA)
 
 		// add everything onto the hand
 		CG_AddPlayerWeapon(&hand, ps, &cg.predictedPlayerEntity);
 		// Ridah
-
 	}
 }
 
@@ -3799,7 +3765,6 @@ static int getPrevWeapInBank(int bank, int cycle)
 	return weapBanksMultiPlayer[bank][cycle];
 }
 
-
 static int getPrevWeapInBankBynum(int weapnum)
 {
 	int bank, cycle;
@@ -3811,7 +3776,6 @@ static int getPrevWeapInBankBynum(int weapnum)
 
 	return getPrevWeapInBank(bank, cycle);
 }
-
 
 
 /*
@@ -3947,9 +3911,6 @@ int getEquivWeapon(int weapnum)
 	}
 	return num;
 }
-
-
-
 
 /*
 ==============
@@ -4347,7 +4308,6 @@ void CG_AltWeapon_f(void)
 		CG_FinishWeaponChange(original, num);
 	}
 }
-
 
 /*
 ==============
@@ -4790,7 +4750,6 @@ void CG_PrevWeap(qboolean switchBanks)
 	CG_FinishWeaponChange(curweap, num);   //----(SA)
 }
 
-
 /*
 ==============
 CG_LastWeaponUsed_f
@@ -4836,7 +4795,6 @@ void CG_LastWeaponUsed_f(void)
 	{
 		cg.switchbackWeapon = 0;
 	}
-
 }
 
 /*
@@ -4846,7 +4804,6 @@ CG_NextWeaponInBank_f
 */
 void CG_NextWeaponInBank_f(void)
 {
-
 	//fretn - #447
 	//osp-rtcw & et pause bug
 	if (cg.snap->ps.pm_type == PM_FREEZE)
@@ -4887,7 +4844,6 @@ CG_PrevWeaponInBank_f
 */
 void CG_PrevWeaponInBank_f(void)
 {
-
 	//fretn - #447
 	//osp-rtcw & et pause bug
 	if (cg.snap->ps.pm_type == PM_FREEZE)
@@ -4921,7 +4877,6 @@ void CG_PrevWeaponInBank_f(void)
 	CG_PrevWeap(qfalse);
 }
 
-
 /*
 ==============
 CG_NextWeapon_f
@@ -4929,7 +4884,6 @@ CG_NextWeapon_f
 */
 void CG_NextWeapon_f(void)
 {
-
 	if (!cg.snap)
 	{
 		return;
@@ -4993,7 +4947,6 @@ void CG_NextWeapon_f(void)
 	CG_NextWeap(qtrue);
 }
 
-
 /*
 ==============
 CG_PrevWeapon_f
@@ -5056,7 +5009,6 @@ void CG_PrevWeapon_f(void)
 
 	CG_PrevWeap(qtrue);
 }
-
 
 /*
 ==============
@@ -5395,7 +5347,6 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			}
 		}
 
-
 		// now try the opposite team's equivalent weap
 		equiv = getEquivWeapon(cg.weaponSelect);
 
@@ -5407,9 +5358,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 		}
 	}
 
-	//
 	// more complicated selection
-	//
 
 	// didn't have available alternative or equivalent, try another weap in the bank
 	CG_WeaponIndex(cg.weaponSelect, &bank, &cycle);       // get bank/cycle of current weapon
@@ -5446,11 +5395,9 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 		}
 	}
 
-
 	// still nothing available, just go to the next
 	// available weap using the regular selection scheme
 	CG_NextWeap(qtrue);
-
 }
 
 /*
@@ -5646,7 +5593,6 @@ void CG_WeaponFireRecoil(int weapon)
 		pitchAdd  = 1 + rand() % 3;
 		yawRandom = 2;
 
-
 		pitchAdd  *= 0.3;
 		yawRandom *= 0.3;
 		break;
@@ -5671,7 +5617,6 @@ void CG_WeaponFireRecoil(int weapon)
 	// set the recoil
 	cg.recoilPitch -= pitchRecoilAdd;
 }
-
 
 /*
 ================
@@ -5876,11 +5821,9 @@ void CG_FireWeapon(centity_t *cent)
 		{
 			weap->ejectBrassFunc(cent);
 		}
-	} // jpw
+	}
 }
 
-
-// Ridah
 /*
 =================
 CG_AddSparks
@@ -5923,6 +5866,7 @@ void CG_AddSparks(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 //      le->leMarkType = LEMT_BLOOD;
 	}
 }
+
 /*
 =================
 CG_AddBulletParticles
@@ -5977,7 +5921,6 @@ void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, i
 		VectorMA(pos, 2 + random() * 4, dir, pos);
 
 		CG_ParticleBulletDebris(pos, velocity, 300 + rand() % 300);
-
 	}
 }
 
@@ -6055,8 +5998,6 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count)
 //      le->leMarkType = LEMT_BLOOD;
 	}
 }
-// done.
-
 
 /*
 ==============
@@ -6612,7 +6553,6 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	}
 }
 
-
 /*
 ==============
 CG_MissileHitWallSmall
@@ -6634,7 +6574,6 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 	vec3_t sprOrg, sprVel;
 	vec4_t projection, color;
 
-
 	mark          = 0;
 	radius        = 32;
 	sfx           = 0;
@@ -6644,7 +6583,6 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 	lightColor[0] = 1;
 	lightColor[1] = 1;
 	lightColor[2] = 0;
-	// Ridah
 	lightOverdraw = 0;
 
 	// set defaults
@@ -6680,9 +6618,7 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 		trap_S_StartSound(origin, -1, CHAN_AUTO, sfx);
 	}
 
-	//
 	// create the explosion
-	//
 	if (mod)
 	{
 		le        = CG_MakeExplosion(origin, dir, mod, shader, duration, isSprite);
@@ -6692,10 +6628,7 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 		VectorCopy(lightColor, le->lightColor);
 	}
 
-	//
 	// impact mark
-	//
-
 	// ydnar: testing omnidirectional marks
 #if 0
 	VectorSubtract(vec3_origin, dir, projection);
@@ -6736,8 +6669,6 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 		break;
 	}
 }
-
-
 
 /*
 ============================================================================
@@ -6909,7 +6840,6 @@ void CG_Tracer(vec3_t source, vec3_t dest, int sparks)
 
 	CG_DrawTracer(start, finish);
 }
-
 
 /*
 ======================
@@ -7088,7 +7018,6 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 	}
 
 	return qtrue;
-
 }
 
 void SnapVectorTowards(vec3_t v, vec3_t to)

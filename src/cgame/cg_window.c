@@ -37,13 +37,10 @@
 
 extern pmove_t cg_pmove;        // cg_predict.c
 
-
 vec4_t colorClear = { 0.0f, 0.0f, 0.0f, 0.0f };     // Transparent
 vec4_t colorBrown1 = { 0.3f, 0.2f, 0.1f, 0.9f };    // Brown
 vec4_t colorGreen1 = { 0.21f, 0.3f, 0.0f, 0.9f };   // Greenish (darker)
 vec4_t colorGreen2 = { 0.305f, 0.475f, 0.305f, 0.48f }; // Slightly off from default fill
-
-
 
 void CG_createStatsWindow(void)
 {
@@ -65,7 +62,6 @@ void CG_createStatsWindow(void)
 	sw->y = (cg.snap->ps.pm_type == PM_INTERMISSION) ? -20 : -100;    // Align from bottom minus offset and height
 }
 
-
 void CG_createTopShotsWindow(void)
 {
 	cg_window_t *sw = CG_windowAlloc(WFX_TEXTSIZING | WFX_FLASH | WFX_FADEIN | WFX_SCROLLUP | WFX_TRUETYPE, 190);
@@ -85,7 +81,6 @@ void CG_createTopShotsWindow(void)
 	sw->flashMidpoint = sw->flashPeriod * 0.8f;
 	memcpy(&sw->colorBackground2, &colorGreen2, sizeof(vec4_t));
 }
-
 
 void CG_createMOTDWindow(void)
 {
@@ -316,8 +311,6 @@ void CG_createSpecHelpWindow(void)
 }
 */
 
-
-
 //////////////////////////////////////////////
 //////////////////////////////////////////////
 //
@@ -325,7 +318,6 @@ void CG_createSpecHelpWindow(void)
 //
 //////////////////////////////////////////////
 //////////////////////////////////////////////
-
 
 // Windowing system setup
 void CG_windowInit(void)
@@ -343,7 +335,6 @@ void CG_windowInit(void)
 	cg.statsWindow        = NULL;
 	cg.topshotsWindow     = NULL;
 }
-
 
 // Window stuct "constructor" with some common defaults
 void CG_windowReset(cg_window_t *w, int fx, int startupLength)
@@ -396,7 +387,6 @@ cg_window_t *CG_windowAlloc(int fx, int startupLength)
 	return(NULL);
 }
 
-
 // Free up a window reservation
 void CG_windowFree(cg_window_t *w)
 {
@@ -440,7 +430,6 @@ void CG_windowFree(cg_window_t *w)
 	}
 }
 
-
 void CG_windowCleanup(void)
 {
 	int                i;
@@ -457,7 +446,6 @@ void CG_windowCleanup(void)
 		}
 	}
 }
-
 
 void CG_demoAviFPSDraw(void)
 {
@@ -484,7 +472,6 @@ void CG_demoTimescaleDraw(void)
 		CG_DrawStringExt(42, 400, s, colorWhite, qfalse, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0);
 	}
 }
-
 
 // Main window-drawing handler
 void CG_windowDraw(void)
@@ -662,7 +649,6 @@ void CG_windowDraw(void)
 	}
 }
 
-
 // Set the window width and height based on the windows text/font parameters
 void CG_windowNormalizeOnText(cg_window_t *w)
 {
@@ -728,7 +714,6 @@ void CG_windowNormalizeOnText(cg_window_t *w)
 	}
 }
 
-
 void CG_printWindow(char *str)
 {
 	int         pos = 0, pos2 = 0;
@@ -773,11 +758,7 @@ void CG_printWindow(char *str)
 	}
 }
 
-
-
-//
 // String buffer handling
-//
 void CG_initStrings(void)
 {
 	int i;
@@ -856,12 +837,7 @@ void CG_removeStrings(cg_window_t *w)
 	}
 }
 
-
-
-
-//
 // cgame cursor handling
-//
 
 // Mouse overlay for controlling multiview windows
 void CG_cursorUpdate(void)
