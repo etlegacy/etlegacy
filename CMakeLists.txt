@@ -14,9 +14,14 @@ set(ETLEGACY_VERSION_MAJOR  "2")
 set(ETLEGACY_VERSION_MINOR  "7")
 set(ETLEGACY_VERSION_PATCH  "0")
 set(ETLEGACY_VERSION "${ETLEGACY_VERSION_MAJOR}.${ETLEGACY_VERSION_MINOR}${ETLEGACY_VERSION_PATCH}")
+# Used to store real system processor when we overwrite CMAKE_SYSTEM_PROCESSOR for cross-compile builds
+# See IS_64_BIT_BUILD_SYSTEM
+set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
 
 # has to be set to "", otherwise CMake will pass -rdynamic resulting in a client crash
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+
+# this is hardly used .. we may delete that
 add_definitions(-DBOTLIB)
 
 # Options
@@ -24,7 +29,7 @@ option(BUILD_SERVER     "Build the dedicated server executable"                 
 option(BUILD_CLIENT     "Build the client executable"                                           ON)
 option(BUILD_MOD        "Build the mod libraries"                                               ON)
 option(BUILD_MOD_PK3    "Pack the mod libraries into mp_bin.pk3"                                OFF)
-option(BUILD_PAK3_PK3   "Pack updated game scripts into pak3.pk3"                               OFF)
+option(BUILD_PAK3_PK3   "Pack updated game scripts into etl_pak3.pk3"                           OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
 if (CMAKE_SYSTEM MATCHES "OpenBSD*")
@@ -33,7 +38,7 @@ else()
         option(CROSS_COMPILE32  "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)"     ON)
 endif()
 
-option(BUNDLED_LIBS     "Use bundled libraries instead of the system ones."                     OFF)
+option(BUNDLED_LIBS     "Use bundled libraries instead of the system ones"                     OFF)
 
 # Installation options
 set(INSTALL_DEFAULT_BASEDIR     ""                     CACHE STRING "Should be CMAKE_INSTALL_PREFIX + INSTALL_DEFAULT_MODDIR")
@@ -56,7 +61,7 @@ option(USE_OPENAL               "Enable OpenAL sound backend (client) [BROKEN]" 
 option(USE_FREETYPE             "Enable Freetype font library support (client)"                 OFF)
 option(TRACKBASE_SUPPORT        "Enable extended server statistics (server)"                    ON)
 
-#FIXME: only 32bit WIN & Linux, UNIX includes openBSD - no clue if this works properly
+#This check isn't exact - we do deeper check when option is finally set
 if(WIN32 OR UNIX)
 	option(USE_OMNIBOTS     	"Enable omnibot build in mod code (Win & Linux server only!)"   OFF)
 endif()
@@ -66,7 +71,10 @@ endif()
 #-----------------------------------------------------------------
 
 if(UNIX AND CROSS_COMPILE32) # 32-bit build
+		MESSAGE(STATUS "System: ${ETLEGACY_SYSTEM_PROCESSOR}")
+
         set(CMAKE_SYSTEM_PROCESSOR i386)
+        MESSAGE(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
         set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
         set(CMAKE_C_FLAGS "-m32")
         set(CMAKE_EXE_LINKER_FLAGS "-m32")
@@ -199,6 +207,7 @@ if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
         force_rescan_library(JPEG)
         # TODO: recheck optional libs
         set(OLD_CROSS_COMPILE32 ${CROSS_COMPILE32} CACHE INTERNAL "Previous value for CROSS_COMPILE32")
+        MESSAGE(STATUS "Libraries rescanned")
 endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 
 #-----------------------------------------------------------------
@@ -326,24 +335,37 @@ if(BUILD_SERVER)
 endif(BUILD_SERVER)
 
 if(BUILD_MOD)
+		#
         # cgame
+        #
         add_library(cgame${LIB_SUFFIX}${ARCH} MODULE ${CGAME_SRC})
         set_target_properties(cgame${LIB_SUFFIX}${ARCH}
                 PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
                         PREFIX ""
                         LIBRARY_OUTPUT_DIRECTORY "etmain")
-                        
-        # qagame  
+
+		#               
+        # qagame
+        #
       	if(USE_OMNIBOTS)
-			#FIXME: only 32bit WIN & Linux, UNIX includes openBSD - no clue if this works properly
-        	if(WIN32 OR UNIX)
+			# 32bit WIN & Linux only
+        	# note: 'Get the system architecture' above sets ARCH for cross compile
+        	if("${ARCH}" STREQUAL "i386" OR "${ARCH}" STREQUAL "x86")
         		add_definitions(-DOMNIBOTS)
+        		# TODO: move to Platform-specific settings?
         	    set(CMAKE_CXX_FLAGS "-m32")
-        	        
-        		#include_directories("src/Omnibot")
+
       			LIST(APPEND QAGAME_SRC "src/game/g_etbot_interface.cpp")
       			LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
-            
+      			
+      			if("${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "i686" OR "${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "i386" OR "${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "x86")
+					#message(STATUS "omni-bot 32bit on 32bit")
+				else()
+					message(STATUS "omni-bot BotLoadLibrary includes cstdio.")
+					add_definitions(-DIS_64_BIT_BUILD_SYSTEM)
+				endif()      			
+            else()
+            	message(STATUS "Warning: omni-bot support is 32bit Win & Linux only - build skipped")
             endif()
       	endif(USE_OMNIBOTS)		    
 		    
@@ -352,8 +374,10 @@ if(BUILD_MOD)
                 PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
                         PREFIX ""
                         LIBRARY_OUTPUT_DIRECTORY "etmain")
-                	        
+
+		#       	        
         # ui
+        #
         add_library(ui${LIB_SUFFIX}${ARCH} MODULE ${UI_SRC})
         set_target_properties(ui${LIB_SUFFIX}${ARCH}
                 PROPERTIES
@@ -364,7 +388,9 @@ if(BUILD_MOD)
                 ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
         )
 
+		#
         # mp_bin.pk3
+        #
         if(BUILD_MOD_PK3)
                 add_custom_target(mod_pk3 ALL DEPENDS etmain/mp_bin.pk3)
                 add_custom_command(
@@ -419,11 +445,13 @@ set(CPACK_PACKAGE_VERSION               ${ETLEGACY_VERSION})
 set(CPACK_PACKAGE_FILE_NAME             "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${ARCH}")
 set(CPACK_PROJECT_CONFIG_FILE           "${CMAKE_CURRENT_BINARY_DIR}/CPackOptions.cmake")
 
+
 # CPack generator-specific configuration
 configure_file(
         "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPackOptions.cmake.in"
         "${CMAKE_CURRENT_BINARY_DIR}/CPackOptions.cmake"
         IMMEDIATE @ONLY
 )
+
 
 include(CPack) # Has to be included after the package configuration!
