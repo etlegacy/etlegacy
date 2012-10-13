@@ -345,7 +345,6 @@ int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeig
 		l = width;
 	}
 
-	// NERVE - SMF
 	if (!leftAlign)
 	{
 		x -= 2 + charWidth * (l);
@@ -376,7 +375,6 @@ int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeig
 
 	return startx;
 }
-// -NERVE - SMF
 
 /*
 ================
@@ -569,7 +567,6 @@ static float CG_DrawFPS(float y)
 CG_DrawTimer
 =================
 */
-
 static float CG_DrawTimer(float y)
 {
 	char   *s;
@@ -628,7 +625,6 @@ static float CG_DrawTimer(float y)
 	return y + 12 + 4;
 }
 
-// START    xkan, 8/29/2002
 int CG_BotIsSelected(int clientNum)
 {
 	int i;
@@ -646,7 +642,6 @@ int CG_BotIsSelected(int clientNum)
 	}
 	return 0;
 }
-// END      xkan, 8/29/2002
 
 /*
 =================
@@ -1038,7 +1033,6 @@ static void CG_DrawDisconnect(void)
 	CG_DrawPic(x, y, 48, 48, cgs.media.disconnectIcon);
 }
 
-
 #define MAX_LAGOMETER_PING  900
 #define MAX_LAGOMETER_RANGE 300
 
@@ -1055,16 +1049,13 @@ static void CG_DrawLagometer(void)
 	int   color;
 	float vscale;
 
-	if (!cg_lagometer.integer || cgs.localServer)
+	if (!cg_lagometer.integer) // || cgs.localServer)
 	{
-//  if(0) {
 		CG_DrawDisconnect();
 		return;
 	}
 
-	//
 	// draw the graph
-	//
 	x = 640 - 48;
 	y = 480 - 200;
 
@@ -1176,7 +1167,6 @@ static void CG_DrawLagometer(void)
 	CG_DrawDisconnect();
 }
 
-
 void CG_DrawLivesLeft(void)
 {
 	if (cg_gameType.integer == GT_WOLF_LMS)
@@ -1202,7 +1192,6 @@ CENTER PRINTING
 ===============================================================================
 */
 
-
 /*
 ==============
 CG_CenterPrint
@@ -1211,13 +1200,13 @@ Called for important messages that should stay in the center of the screen
 for a few moments
 ==============
 */
-#define CP_LINEWIDTH 56         // NERVE - SMF
+#define CP_LINEWIDTH 56
 
 void CG_CenterPrint(const char *str, int y, int charWidth)
 {
 	char     *s;
-	int      i, len;                    // NERVE - SMF
-	qboolean neednewline = qfalse;      // NERVE - SMF
+	int      i, len;
+	qboolean neednewline = qfalse;
 	int      priority    = 0;
 
 	// NERVE - SMF - don't draw if this print message is less important
@@ -1245,7 +1234,6 @@ void CG_CenterPrint(const char *str, int y, int charWidth)
 			neednewline       = qfalse;
 		}
 	}
-	// -NERVE - SMF
 
 	cg.centerPrintTime      = cg.time;
 	cg.centerPrintY         = y;
@@ -1264,7 +1252,6 @@ void CG_CenterPrint(const char *str, int y, int charWidth)
 	}
 }
 
-// NERVE - SMF
 /*
 ==============
 CG_PriorityCenterPrint
@@ -1304,7 +1291,6 @@ void CG_PriorityCenterPrint(const char *str, int y, int charWidth, int priority)
 			neednewline       = qfalse;
 		}
 	}
-	// -NERVE - SMF
 
 	cg.centerPrintTime      = cg.time + 2000;
 	cg.centerPrintY         = y;
@@ -1322,7 +1308,6 @@ void CG_PriorityCenterPrint(const char *str, int y, int charWidth, int priority)
 		s++;
 	}
 }
-// -NERVE - SMF
 
 /*
 ===================
@@ -1390,8 +1375,6 @@ static void CG_DrawCenterString(void)
 
 	trap_R_SetColor(NULL);
 }
-
-
 
 /*
 ================================================================================
@@ -1871,7 +1854,6 @@ static void CG_DrawBinocReticle(void)
 
 void CG_FinishWeaponChange(int lastweap, int newweap);   // JPW NERVE
 
-
 /*
 =================
 CG_DrawCrosshair
@@ -2162,8 +2144,6 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 	return dist;
 }
 
-
-
 #define CH_KNIFE_DIST       48  // from g_weapon.c
 #define CH_LADDER_DIST      100
 #define CH_WATER_DIST       100
@@ -2185,7 +2165,6 @@ void CG_CheckForCursorHints(void)
 	centity_t *tracent;
 	vec3_t    pforward, eforward;
 	float     dist;
-
 
 	if (cg.renderingThirdPerson)
 	{
@@ -2229,9 +2208,7 @@ void CG_CheckForCursorHints(void)
 		return;
 	}
 
-	//
 	// world
-	//
 	if (trace.entityNum == ENTITYNUM_WORLD)
 	{
 		if ((trace.surfaceFlags & SURF_LADDER) && !(cg.snap->ps.pm_flags & PMF_LADDER))
@@ -2244,8 +2221,6 @@ void CG_CheckForCursorHints(void)
 				cg.cursorHintValue = 0;
 			}
 		}
-
-
 	}
 	else if (trace.entityNum < MAX_CLIENTS)       // people
 	{   // knife
@@ -2268,8 +2243,6 @@ void CG_CheckForCursorHints(void)
 		}
 	}
 }
-
-
 
 /*
 =====================
@@ -2535,8 +2508,6 @@ static void CG_DrawCrosshairNames(void)
 	}
 }
 
-
-
 //==============================================================================
 
 /*
@@ -2651,7 +2622,6 @@ static void CG_DrawVote(void)
 		CG_DrawStringExt(8, 214, s, color, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 80);
 		return;
 	}
-
 
 	if (cgs.voteTime)
 	{
@@ -2999,7 +2969,6 @@ static void CG_DrawSpectatorMessage(void)
 #endif
 }
 
-
 float CG_CalculateReinfTime_Float(qboolean menu)
 {
 	team_t team;
@@ -3029,7 +2998,6 @@ int CG_CalculateReinfTime(qboolean menu)
 {
 	return((int)CG_CalculateReinfTime_Float(menu));
 }
-
 
 /*
 =================
@@ -3081,16 +3049,13 @@ static void CG_DrawLimboMessage(void)
 		return;
 	}
 
-	// JPW NERVE
 	str = (ps->persistant[PERS_RESPAWNS_LEFT] == 0) ? CG_TranslateString("No more reinforcements this round.") : va(CG_TranslateString("Reinforcements deploy in %d seconds."), CG_CalculateReinfTime(qfalse));
 
 	CG_DrawSmallStringColor(INFOTEXT_STARTX, y, str, color);
 	y += 18;
-	// jpw
 
 	trap_R_SetColor(NULL);
 }
-// -NERVE - SMF
 
 /*
 =================
@@ -3163,7 +3128,6 @@ static qboolean CG_DrawFollow(void)
 
 	return(qtrue);
 }
-
 
 /*
 =================
@@ -3401,8 +3365,7 @@ static void CG_DrawFlashFade(void)
 	{
 		VectorClear(col);
 		col[3] = (fBlackout) ? 1.0f : cgs.fadeAlphaCurrent;
-//      CG_FillRect( -10, -10, 650, 490, col );
-		CG_FillRect(0, 0, 640, 480, col);   // why do a bunch of these extend outside 640x480?
+		CG_FillRect(0, 0, 640, 480, col);
 
 		//bani - #127 - bail out if we're a speclocked spectator with cg_draw2d = 0
 		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && !cg_draw2D.integer)
@@ -3430,8 +3393,6 @@ static void CG_DrawFlashFade(void)
 		}
 	}
 }
-
-
 
 /*
 ==============
@@ -3473,11 +3434,9 @@ static void CG_DrawFlashZoomTransition(void)
 	{
 		frac = frac / (float)fadeTime;
 		Vector4Set(color, 0, 0, 0, 1.0f - frac);
-		CG_FillRect(-10, -10, 650, 490, color);
+		CG_FillRect(-10, -10, 640, 480, color);
 	}
 }
-
-
 
 /*
 =================
@@ -3509,10 +3468,9 @@ static void CG_DrawFlashDamage(void)
 		                                   (cg_bloodFlash.value < 0.0) ? 0.0 :
 		                                   cg_bloodFlash.value);
 
-		CG_FillRect(-10, -10, 650, 490, col);
+		CG_FillRect(-10, -10, 640, 480, col);
 	}
 }
-
 
 /*
 =================
@@ -3565,7 +3523,7 @@ static void CG_DrawFlashFire(void)
 		col[2] = alpha;
 		col[3] = alpha;
 		trap_R_SetColor(col);
-		CG_DrawPic(-10, -10, 650, 490, cgs.media.viewFlashFire[(cg.time / 50) % 16]);
+		CG_DrawPic(-10, -10, 640, 480, cgs.media.viewFlashFire[(cg.time / 50) % 16]);
 		trap_R_SetColor(NULL);
 
 		trap_S_AddLoopingSound(cg.snap->ps.origin, vec3_origin, cgs.media.flameSound, (int)(255.0 * alpha), 0);
@@ -3576,8 +3534,6 @@ static void CG_DrawFlashFire(void)
 		cg.v_noFireTime = cg.time;
 	}
 }
-
-
 
 /*
 ==============
@@ -3590,7 +3546,6 @@ static void CG_DrawFlashBlendBehindHUD(void)
 	CG_DrawFlashZoomTransition();
 	CG_DrawFlashFade();
 }
-
 
 /*
 =================
@@ -4975,14 +4930,10 @@ static void CG_Draw2D(void)
 			// don't draw any status if dead
 			if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 			{
-
 				CG_DrawCrosshair();
-
 				CG_DrawCrosshairNames();
-
 				CG_DrawNoShootIcon();
-
-//              CG_DrawPickupItem();
+				// CG_DrawPickupItem();
 			}
 
 			CG_DrawTeamInfo();
@@ -5088,7 +5039,6 @@ static void CG_Draw2D(void)
 	CG_DrawDemoRecording();
 }
 
-// NERVE - SMF
 void CG_StartShakeCamera(float p)
 {
 	cg.cameraShakeScale = p;
