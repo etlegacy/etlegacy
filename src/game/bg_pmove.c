@@ -454,43 +454,6 @@ void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end)
 }
 
 /*
-========================
-PM_ExertSound
-
-plays random exertion sound when sprint key is press
-========================
-*/
-/*static void PM_ExertSound (void)
-{
-    int rval;
-    static int  oldexerttime = 0;
-    static int  oldexertcnt = 0;
-
-    if (pm->cmd.serverTime > oldexerttime + 500)
-        oldexerttime = pm->cmd.serverTime;
-    else
-        return;
-
-    rval = rand()%3;
-
-    if (oldexertcnt != rval)
-         oldexertcnt = rval;
-    else
-        oldexertcnt++;
-
-    if (oldexertcnt > 2)
-        oldexertcnt = 0;
-
-    if (oldexertcnt == 1)
-        PM_AddEvent (EV_EXERT2);
-    else if (oldexertcnt == 2)
-        PM_AddEvent (EV_EXERT3);
-    else
-        PM_AddEvent (EV_EXERT1);
-}*/
-
-
-/*
 ==================
 PM_Friction
 
@@ -592,7 +555,6 @@ static void PM_Friction(void)
 	VectorScale(vel, newspeed, vel);
 }
 
-
 /*
 ==============
 PM_Accelerate
@@ -653,8 +615,6 @@ static void PM_Accelerate(vec3_t wishdir, float wishspeed, float accel)
 	VectorMA(pm->ps->velocity, canPush, pushDir, pm->ps->velocity);
 #endif
 }
-
-
 
 // JPW NERVE -- added because I need to check single/multiplayer instances and branch accordingly
 #ifdef CGAMEDLL
@@ -750,7 +710,6 @@ static float PM_CmdScale(usercmd_t *cmd)
 		}
 	}
 
-
 	if (gametype == GT_SINGLE_PLAYER || gametype == GT_COOP)
 	{
 		// Adjust the movespeed
@@ -760,7 +719,6 @@ static float PM_CmdScale(usercmd_t *cmd)
 
 	return scale;
 }
-
 
 /*
 ================
@@ -867,7 +825,6 @@ static void PM_SetMovementDir(void)
 	}
 #endif
 }
-
 
 /*
 =============
@@ -1427,7 +1384,6 @@ static void PM_FlyMove(void)
 	PM_StepSlideMove(qfalse);
 }
 
-
 /*
 ===================
 PM_AirMove
@@ -1514,8 +1470,6 @@ static void PM_AirMove(void)
 	// set the movementDir so clients can rotate the legs for strafing
 	PM_SetMovementDir();
 }
-
-
 
 /*
 ===================
@@ -1729,7 +1683,6 @@ static void PM_WalkMove(void)
 	PM_SetMovementDir();
 }
 
-
 /*
 ==============
 PM_DeadMove
@@ -1758,7 +1711,6 @@ static void PM_DeadMove(void)
 		VectorScale(pm->ps->velocity, forward, pm->ps->velocity);
 	}
 }
-
 
 /*
 ===============
@@ -1981,8 +1933,6 @@ static void PM_CrashLand(void)
 	pm->ps->bobCycle = 0;
 }
 
-
-
 /*
 =============
 PM_CorrectAllSolid
@@ -2030,7 +1980,6 @@ static int PM_CorrectAllSolid(trace_t *trace)
 
 	return qfalse;
 }
-
 
 /*
 =============
@@ -2084,7 +2033,6 @@ static void PM_GroundTraceMissed(void)
 	pml.groundPlane = qfalse;
 	pml.walking     = qfalse;
 }
-
 
 /*
 =============
@@ -2208,7 +2156,6 @@ static void PM_GroundTrace(void)
 	PM_AddTouchEnt(trace.entityNum);
 }
 
-
 /*
 =============
 PM_SetWaterLevel    FIXME: avoid this twice?  certainly if not moving
@@ -2318,10 +2265,7 @@ static void PM_CheckDuck(void)
 	// done.
 }
 
-
-
 //===================================================================
-
 
 /*
 ===============
@@ -2611,9 +2555,6 @@ static void PM_Footsteps(void)
 	else if (((old + 64) ^ (pm->ps->bobCycle + 64)) & 128)
 	{
 
-		/*      if (pm->ps->sprintExertTime && pm->waterlevel <= 2)
-		            PM_ExertSound ();*/
-
 		if (pm->waterlevel == 0)
 		{
 			// on ground will only play sounds if running
@@ -2687,7 +2628,6 @@ static void PM_WaterEvents(void)            // FIXME?
 		}
 	}
 }
-
 
 /*
 ==============
@@ -3017,7 +2957,6 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 	pm->ps->weaponTime += switchtime;
 }
 
-
 /*
 ===============
 PM_FinishWeaponChange
@@ -3265,7 +3204,6 @@ static void PM_FinishWeaponChange(void)
 	}
 }
 
-
 /*
 ==============
 PM_ReloadClip
@@ -3310,7 +3248,6 @@ static void PM_FinishWeaponReload(void)
 	pm->ps->weaponstate = WEAPON_READY;     // ready to fire
 	PM_StartWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
 }
-
 
 /*
 ==============
@@ -3418,9 +3355,6 @@ void PM_CheckForReload(int weapon)
 			PM_BeginWeaponReload(weapon);
 		}
 	}
-
-
-
 }
 
 /*
@@ -3466,7 +3400,6 @@ static void PM_SwitchIfEmpty(void)
 
 	PM_AddEvent(EV_NOAMMO);
 }
-
 
 /*
 ==============
@@ -3556,7 +3489,6 @@ int PM_WeaponClipEmpty(int wp)
 	return 0;
 }
 
-
 /*
 ==============
 PM_CoolWeapons
@@ -3568,7 +3500,6 @@ void PM_CoolWeapons(void)
 
 	for (wp = 0; wp < WP_NUM_WEAPONS; wp++)
 	{
-
 		// if you have the weapon
 		if (COM_BitCheck(pm->ps->weapons, wp))
 		{
@@ -3620,7 +3551,6 @@ void PM_CoolWeapons(void)
 //      if(pm->ps->weapHeat[pm->ps->weapon])
 //          Com_Printf("pm heat: %d, %d\n", pm->ps->weapHeat[pm->ps->weapon], pm->ps->curWeapHeat);
 	}
-
 }
 
 /*
@@ -5315,7 +5245,6 @@ static void PM_Weapon(void)
 	PM_SwitchIfEmpty();
 }
 
-
 /*
 ================
 PM_Animate
@@ -5374,8 +5303,6 @@ static void PM_DropTimers(void)
 		}
 	}
 }
-
-
 
 #define LEAN_MAX    28.0f
 #define LEAN_TIME_TO    200.0f  // time to get to/from full lean
@@ -5516,8 +5443,6 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 
 	}
 }
-
-
 
 /*
 ================
@@ -6190,7 +6115,6 @@ void PM_LadderMove(void)
 	pm->ps->movementDir = 0;
 }
 
-
 /*
 ==============
 PM_Sprint
@@ -6681,7 +6605,6 @@ void PmoveSingle(pmove_t *pmove)
 //  SnapVector( pm->ps->velocity );
 }
 
-
 /*
 ================
 Pmove
@@ -6786,5 +6709,4 @@ int Pmove(pmove_t *pmove)
 	{
 		return (0);
 	}
-
 }
