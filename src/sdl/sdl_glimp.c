@@ -51,7 +51,6 @@
 #include <math.h>
 
 #include "../renderer/tr_local.h"
-#include "../client/client.h"
 #include "../sys/sys_local.h"
 #include "sdl_icon.h"
 
@@ -158,7 +157,6 @@ static int GLimp_CompareModes(const void *a, const void *b)
 		return areaA - areaB;
 	}
 }
-
 
 /*
 ===============
@@ -579,7 +577,6 @@ static qboolean GLimp_HaveExtension(const char *ext)
 	return ((*ptr == ' ') || (*ptr == '\0'));  // verify it's complete string.
 }
 
-
 /*
 ===============
 GLimp_InitExtensions
@@ -636,7 +633,6 @@ static void GLimp_InitExtensions(void)
 			ri.Printf(PRINT_ALL, "...GL_S3_s3tc not found\n");
 		}
 	}
-
 
 	// GL_EXT_texture_env_add
 	glConfig.textureEnvAddAvailable = qfalse;
@@ -843,7 +839,6 @@ success:
 	IN_Init();
 }
 
-
 /*
 ===============
 GLimp_EndFrame
@@ -900,8 +895,6 @@ void GLimp_EndFrame(void)
 		r_fullscreen->modified = qfalse;
 	}
 }
-
-
 
 #ifdef SMP
 /*
