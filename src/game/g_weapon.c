@@ -3482,7 +3482,6 @@ int G_GetWeaponDamage(int weapon)
 	}
 }
 
-
 float G_GetWeaponSpread(int weapon)
 {
 	switch (weapon)
@@ -3590,9 +3589,7 @@ void RubbleFlagCheck(gentity_t *ent, trace_t tr)
 
 	// (SA) moving client-side
 
-	return;
-
-
+	return; // FIXME: remove ?
 
 
 	if ((tr.surfaceFlags & SURF_RUBBLE) || (tr.surfaceFlags & SURF_GRAVEL))
@@ -3640,7 +3637,6 @@ void RubbleFlagCheck(gentity_t *ent, trace_t tr)
 			sfx->s.frame = 3 + (rand() % 3) ;
 
 			trap_LinkEntity(sfx);
-
 		}
 	}
 }
@@ -3746,7 +3742,6 @@ void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_fal
 
 	G_HistoricalTraceEnd(ent);
 }
-
 
 /*
 ==============
@@ -3942,8 +3937,6 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	}
 	return hitClient;
 }
-
-
 
 /*
 ======================================================================
@@ -4236,21 +4229,6 @@ gentity_t *Weapon_Panzerfaust_Fire(gentity_t *ent)
 	return fire_rocket(ent, muzzleEffect, forward);
 }
 
-
-/*
-======================================================================
-
-SPEARGUN
-
-======================================================================
-*/
-/*void Weapon_Speargun_Fire (gentity_t *ent) {
-    gentity_t   *m;
-
-    m = fire_speargun (ent, muzzleEffect, forward);
-}*/
-
-
 /*
 ======================================================================
 
@@ -4332,7 +4310,6 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 
 //======================================================================
 
-
 /*
 ==============
 AddLean
@@ -4396,7 +4373,6 @@ qboolean AccuracyHit(gentity_t *target, gentity_t *attacker)
 
 	return qtrue;
 }
-
 
 /*
 ===============
