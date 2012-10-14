@@ -103,11 +103,11 @@ cvar_t *cl_waitForFire;
 // NERVE - SMF - localization
 cvar_t *cl_language;
 cvar_t *cl_debugTranslation;
-// -NERVE - SMF
+
 // DHM - Nerve :: Auto-Update
 cvar_t *cl_updateavailable;
 cvar_t *cl_updatefiles;
-// DHM - Nerve
+
 
 cvar_t *cl_profile;
 cvar_t *cl_defaultProfile;
@@ -298,7 +298,6 @@ void CL_WriteDemoMessage(msg_t *msg, int headerBytes)
 	FS_Write(&swlen, 4, clc.demofile);
 	FS_Write(msg->data + headerBytes, len, clc.demofile);
 }
-
 
 /*
 ====================
@@ -510,7 +509,6 @@ CLIENT SIDE DEMO PLAYBACK
 CL_DemoCompleted
 =================
 */
-
 void CL_DemoCompleted(void)
 {
 	if (cl_timedemo && cl_timedemo->integer)
@@ -534,7 +532,6 @@ void CL_DemoCompleted(void)
 
 	CL_Disconnect(qtrue);
 	CL_NextDemo();
-
 }
 
 /*
@@ -801,9 +798,7 @@ void CL_PlayDemo_f(void)
 
 	CL_Disconnect(qtrue);
 
-
 //  CL_FlushMemory();   //----(SA)  MEM NOTE: in missionpack, this is moved to CL_DownloadsComplete
-
 
 	// open the demo file
 	arg      = Cmd_Argv(1);
@@ -880,7 +875,6 @@ void CL_NextDemo(void)
 	Cbuf_AddText("\n");
 	Cbuf_Execute();
 }
-
 
 //======================================================================
 
@@ -1190,7 +1184,6 @@ void CL_Disconnect(qboolean showMainMenu)
 	}
 }
 
-
 /*
 ===================
 CL_ForwardCommandToServer
@@ -1335,7 +1328,6 @@ void CL_Setenv_f(void)
 	}
 }
 
-
 /*
 ==================
 CL_Disconnect_f
@@ -1350,7 +1342,6 @@ void CL_Disconnect_f(void)
 		Com_Error(ERR_DISCONNECT, "Disconnected from server\n");
 	}
 }
-
 
 /*
 ================
@@ -1619,7 +1610,6 @@ extern void Sys_In_Restart_f(void);    // fretn
 
 void CL_Vid_Restart_f(void)
 {
-
 	// RF, don't show percent bar, since the memory usage will just sit at the same level anyway
 	com_expectedhunkusage = -1;
 
@@ -1709,7 +1699,6 @@ void CL_Snd_Reload_f(void)
 	S_Reload();
 }
 
-
 /*
 =================
 CL_Snd_Restart_f
@@ -1726,7 +1715,6 @@ void CL_Snd_Restart_f(void)
 
 	CL_Vid_Restart_f();
 }
-
 
 /*
 ==================
@@ -1807,7 +1795,6 @@ void CL_EatMe_f(void)
 CL_WavRecord_f
 ==============
 */
-
 void CL_WavRecord_f(void)
 {
 	if (clc.wavefile)
@@ -1824,7 +1811,6 @@ void CL_WavRecord_f(void)
 CL_WavStopRecord_f
 ==============
 */
-
 void CL_WavStopRecord_f(void)
 {
 	if (!clc.wavefile)
@@ -1839,7 +1825,6 @@ void CL_WavStopRecord_f(void)
 	Cvar_Set("cl_waveoffset", "0");
 	clc.waverecording = qfalse;
 }
-
 
 //====================================================================
 
@@ -2240,7 +2225,6 @@ void CL_DisconnectPacket(netadr_t from)
 	}
 }
 
-
 /*
 ===================
 CL_MotdPacket
@@ -2293,13 +2277,11 @@ void CL_PrintPacket(netadr_t from, msg_t *msg)
 	if (!Q_stricmpn(s, "[err_dialog]", 12))
 	{
 		Q_strncpyz(clc.serverMessage, s + 12, sizeof(clc.serverMessage));
-		// Cvar_Set("com_errorMessage", clc.serverMessage );
 		Com_Error(ERR_DROP, "%s\n", clc.serverMessage);
 	}
 	else if (!Q_stricmpn(s, "[err_prot]", 10))
 	{
 		Q_strncpyz(clc.serverMessage, s + 10, sizeof(clc.serverMessage));
-		// Cvar_Set("com_errorMessage", CL_TranslateStringBuf( PROTOCOL_MISMATCH_ERROR_LONG ) );
 		Com_Error(ERR_DROP, "%s\n", CL_TranslateStringBuf(PROTOCOL_MISMATCH_ERROR_LONG));
 	}
 	else if (!Q_stricmpn(s, "[err_update]", 12))
@@ -2307,7 +2289,7 @@ void CL_PrintPacket(netadr_t from, msg_t *msg)
 		Q_strncpyz(clc.serverMessage, s + 12, sizeof(clc.serverMessage));
 		Com_Error(ERR_AUTOUPDATE, "%s\n", clc.serverMessage);
 	}
-	else if (!Q_stricmpn(s, "ET://", 5))                // fretn
+	else if (!Q_stricmpn(s, "ET://", 5)) // fretn
 	{
 		Q_strncpyz(clc.serverMessage, s, sizeof(clc.serverMessage));
 		Cvar_Set("com_errorMessage", clc.serverMessage);
@@ -2467,8 +2449,6 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 
 	Com_Printf("%d servers parsed (total %d)\n", numservers, total);
 }
-
-
 
 /*
 =================
@@ -2636,7 +2616,6 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	Com_DPrintf("Unknown connectionless packet command.\n");
 }
 
-
 /*
 =================
 CL_PacketEvent
@@ -2667,9 +2646,7 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 		return;
 	}
 
-	//
 	// packet from server
-	//
 	if (!NET_CompareAdr(from, clc.netchan.remoteAddress))
 	{
 		Com_DPrintf("%s:sequenced packet without connection\n"
@@ -2694,11 +2671,8 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 	clc.lastPacketTime = cls.realtime;
 	CL_ParseServerMessage(msg);
 
-	//
 	// we don't know if it is ok to save a demo message until
 	// after we have parsed the frame
-	//
-
 	if (clc.demorecording && !clc.demowaiting)
 	{
 		CL_WriteDemoMessage(msg, headerBytes);
@@ -2713,9 +2687,7 @@ CL_CheckTimeout
 */
 void CL_CheckTimeout(void)
 {
-	//
 	// check timeout
-	//
 	if ((!cl_paused->integer || !sv_paused->integer)
 	    && cls.state >= CA_CONNECTED && cls.state != CA_CINEMATIC
 	    && cls.realtime - clc.lastPacketTime > cl_timeout->value * 1000)
@@ -2732,7 +2704,6 @@ void CL_CheckTimeout(void)
 		cl.timeoutcount = 0;
 	}
 }
-
 
 //============================================================================
 
@@ -2897,7 +2868,6 @@ CL_Frame
 */
 void CL_Frame(int msec)
 {
-
 	if (!com_cl_running->integer)
 	{
 		return;
@@ -2989,8 +2959,8 @@ void CL_Frame(int msec)
 	cls.framecount++;
 }
 
-
 //============================================================================
+
 // Ridah, startup-caching system
 typedef struct
 {
@@ -3141,7 +3111,6 @@ static void CL_Cache_EndGather_f(void)
 	Cvar_Set("cl_cacheGathering", "0");
 }
 
-// done.
 //============================================================================
 
 /*
@@ -3153,8 +3122,6 @@ void CL_SetRecommended_f(void)
 {
 	Com_SetRecommended();
 }
-
-
 
 /*
 ================
@@ -3178,15 +3145,13 @@ static __attribute__ ((format(printf, 2, 3))) void QDECL CL_RefPrintf(int print_
 	}
 	else if (print_level == PRINT_WARNING)
 	{
-		Com_Printf(S_COLOR_YELLOW "%s", msg);         // yellow
+		Com_Printf(S_COLOR_YELLOW "%s", msg); // yellow
 	}
 	else if (print_level == PRINT_DEVELOPER)
 	{
-		Com_DPrintf(S_COLOR_RED "%s", msg);       // red
+		Com_DPrintf(S_COLOR_RED "%s", msg); // red
 	}
 }
-
-
 
 /*
 ============
@@ -3216,8 +3181,6 @@ void CL_InitRenderer(void)
 	// load character sets
 	cls.charSetShader = re.RegisterShader("gfx/2d/consolechars");
 	cls.whiteShader   = re.RegisterShader("white");
-
-// JPW NERVE
 
 	cls.consoleShader  = re.RegisterShader("console-16bit");   // JPW NERVE shader works with 16bit
 	cls.consoleShader2 = re.RegisterShader("console2-16bit");    // JPW NERVE same
@@ -3271,7 +3234,6 @@ void CL_StartHunkUsers(void)
 	}
 }
 
-// DHM - Nerve
 void CL_CheckAutoUpdate(void)
 {
 	if (!cl_autoupdate->integer)
@@ -3370,7 +3332,6 @@ qboolean CL_NextUpdateServer(void)
 
 void CL_GetAutoUpdate(void)
 {
-
 	// Don't try and get an update if we haven't checked for one
 	if (!autoupdateChecked)
 	{
@@ -3437,7 +3398,6 @@ void CL_GetAutoUpdate(void)
 	// server connection string
 	Cvar_Set("cl_currentServerAddress", "Auto-Updater");
 }
-// DHM - Nerve
 
 /*
 ============
@@ -3481,14 +3441,14 @@ void CL_InitRef(void)
 {
 	refimport_t ri;
 	refexport_t *ret;
-	#ifdef USE_RENDERER_DLOPEN
+#ifdef USE_RENDERER_DLOPEN
 	GetRefAPI_t GetRefAPI;
 	char        dllName[MAX_OSPATH];
-	#endif
+#endif
 
 	Com_Printf("----- Initializing Renderer ----\n");
 
-	#ifdef USE_RENDERER_DLOPEN
+#ifdef USE_RENDERER_DLOPEN
 	cl_renderer = Cvar_Get("cl_renderer", "opengl1", CVAR_ARCHIVE | CVAR_LATCH);
 
 	Com_sprintf(dllName, sizeof(dllName), "renderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
@@ -3512,7 +3472,7 @@ void CL_InitRef(void)
 	{
 		Com_Error(ERR_FATAL, "Can't load symbol GetRefAPI: '%s'\n", Sys_LibraryError());
 	}
-	#endif
+#endif
 
 	ri.Cmd_AddCommand    = Cmd_AddCommand;
 	ri.Cmd_RemoveCommand = Cmd_RemoveCommand;
@@ -3600,7 +3560,7 @@ void CL_SaveTranslations_f(void)
 
 void CL_SaveNewTranslations_f(void)
 {
-	char fileName[512];
+	char fileName[MAX_QPATH];
 
 	if (Cmd_Argc() != 2)
 	{
@@ -3617,7 +3577,6 @@ void CL_LoadTranslations_f(void)
 {
 	CL_ReloadTranslation();
 }
-// -NERVE - SMF
 #endif
 
 //===========================================================================================
@@ -3639,9 +3598,7 @@ void CL_Init(void)
 
 	CL_InitInput();
 
-	//
 	// register our variables
-	//
 	cl_noprint    = Cvar_Get("cl_noprint", "0", 0);
 	cl_motd       = Cvar_Get("cl_motd", "1", 0);
 	cl_autoupdate = Cvar_Get("cl_autoupdate", "1", CVAR_ARCHIVE);
@@ -3749,7 +3706,6 @@ void CL_Init(void)
 	Cvar_Get("cg_drawCrosshair", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_zoomDefaultSniper", "20", CVAR_ARCHIVE);
 	Cvar_Get("cg_zoomstepsniper", "2", CVAR_ARCHIVE);
-	// -NERVE - SMF
 
 	// userinfo
 	Cvar_Get("name", "ETPlayer", CVAR_USERINFO | CVAR_ARCHIVE);
@@ -3761,9 +3717,7 @@ void CL_Init(void)
 	Cvar_Get("password", "", CVAR_USERINFO);
 	Cvar_Get("cg_predictItems", "1", CVAR_ARCHIVE);
 
-//----(SA) added
 	Cvar_Get("cg_autoactivate", "1", CVAR_ARCHIVE);
-//----(SA) end
 
 	// cgame might not be initialized before menu is used
 	Cvar_Get("cg_viewsize", "100", CVAR_ARCHIVE);
@@ -3787,11 +3741,8 @@ void CL_Init(void)
 	Q_strncpyz(cls.autoupdateServerNames[2], AUTOUPDATE_SERVER3_NAME, MAX_QPATH);
 	Q_strncpyz(cls.autoupdateServerNames[3], AUTOUPDATE_SERVER4_NAME, MAX_QPATH);
 	Q_strncpyz(cls.autoupdateServerNames[4], AUTOUPDATE_SERVER5_NAME, MAX_QPATH);
-	// DHM - Nerve
 
-	//
 	// register our commands
-	//
 	Cmd_AddCommand("cmd", CL_ForwardToServer_f);
 	Cmd_AddCommand("configstrings", CL_Configstrings_f);
 	Cmd_AddCommand("clientinfo", CL_Clientinfo_f);
@@ -3865,7 +3816,6 @@ void CL_Init(void)
 	Com_Printf("----- Client Initialization Complete -----\n");
 }
 
-
 /*
 ===============
 CL_Shutdown
@@ -3929,7 +3879,6 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("updatehunkusage");
 	Cmd_RemoveCommand("wav_record");
 	Cmd_RemoveCommand("wav_stoprecord");
-	// done.
 
 	Cvar_Set("cl_running", "0");
 
@@ -3939,7 +3888,6 @@ void CL_Shutdown(void)
 
 	Com_Printf("-----------------------\n");
 }
-
 
 static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 {
@@ -3998,7 +3946,6 @@ static void CL_SetServerInfoByAddress(netadr_t from, const char *info, int ping)
 			CL_SetServerInfo(&cls.favoriteServers[i], info, ping);
 		}
 	}
-
 }
 
 /*
@@ -4175,7 +4122,6 @@ void CL_UpdateInfoPacket(netadr_t from)
 		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_WM_AUTOUPDATE);
 	}
 }
-// DHM - Nerve
 
 /*
 ===================
@@ -4621,10 +4567,9 @@ CL_GetPingQueueCount
 int CL_GetPingQueueCount(void)
 {
 	int    i;
-	int    count;
+	int    count = 0;
 	ping_t *pingptr;
 
-	count   = 0;
 	pingptr = cl_pinglist;
 
 	for (i = 0; i < MAX_PINGREQUESTS; i++, pingptr++)
@@ -4957,7 +4902,6 @@ void CL_ShowIP_f(void)
 	Sys_ShowIP();
 }
 
-// NERVE - SMF
 /*
 =======================
 CL_AddToLimboChat
@@ -5085,12 +5029,10 @@ generateHashValue
 */
 static long generateHashValue(const char *fname)
 {
-	int  i;
-	long hash;
+	int  i    = 0;
+	long hash = 0;
 	char letter;
 
-	hash = 0;
-	i    = 0;
 	while (fname[i] != '\0')
 	{
 		letter = tolower(fname[i]);
@@ -5157,12 +5099,10 @@ CL_SaveTransTable
 */
 void CL_SaveTransTable(const char *fileName, qboolean newOnly)
 {
-	int          bucketlen, bucketnum, maxbucketlen, avebucketlen;
-	int          untransnum, transnum;
+	int          i, j, len, bucketlen, bucketnum = 0, maxbucketlen = 0, avebucketlen = 0, untransnum = 0, transnum = 0 ;
 	const char   *buf;
 	fileHandle_t f;
 	trans_t      *t;
-	int          i, j, len;
 
 	if (cl.corruptedTranslationFile)
 	{
@@ -5171,12 +5111,6 @@ void CL_SaveTransTable(const char *fileName, qboolean newOnly)
 	}
 
 	FS_FOpenFileByMode(fileName, &f, FS_WRITE);
-
-	bucketnum    = 0;
-	maxbucketlen = 0;
-	avebucketlen = 0;
-	transnum     = 0;
-	untransnum   = 0;
 
 	// write out version, if one
 	if (strlen(cl.translationVersion))
@@ -5194,7 +5128,6 @@ void CL_SaveTransTable(const char *fileName, qboolean newOnly)
 	// write out translated strings
 	for (j = 0; j < 2; j++)
 	{
-
 		for (i = 0; i < FILE_HASH_SIZE; i++)
 		{
 			t = transTable[i];
@@ -5311,7 +5244,6 @@ qboolean CL_CheckTranslationString(char *original, char *translated)
 		{
 			continue;
 		}
-
 		strcat(format_org, va("%c%c ", '%', original[i + 1]));
 	}
 
@@ -5328,7 +5260,6 @@ qboolean CL_CheckTranslationString(char *original, char *translated)
 		{
 			continue;
 		}
-
 		strcat(format_trans, va("%c%c ", '%', translated[i + 1]));
 	}
 
@@ -5694,7 +5625,7 @@ typedef struct trans_s
 	float y_offset;
 } trans_t;
 
-#endif  //DAJ USA
+#endif
 
 /*
 =======================
@@ -5722,6 +5653,7 @@ void CL_TranslateString(const char *string, char *dest_buffer)
 		strcpy(buf, string);
 		return;
 	}
+
 #if !defined(__MACOS__)
 	// ignore newlines
 	if (string[strlen(string) - 1] == '\n')
@@ -5809,7 +5741,9 @@ void CL_TranslateString(const char *string, char *dest_buffer)
 			}
 		}
 	}
-#endif //DAJ USA
+
+#endif
+
 }
 
 /*=======================
@@ -5821,6 +5755,7 @@ const char *CL_TranslateStringBuf(const char *string)
 	char        *p;
 	int         i, l;
 	static char buf[MAX_VA_STRING];
+
 	CL_TranslateString(string, buf);
 	while ((p = strstr(buf, "\\n")) != NULL)
 	{
