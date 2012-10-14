@@ -259,10 +259,10 @@ void SV_DirectConnect(netadr_t from)
 
 			// this doesn't work because it nukes the players userinfo
 
-//          // disconnect the client from the game first so any flags the
-//          // player might have are dropped
-//          VM_Call( gvm, GAME_CLIENT_DISCONNECT, newcl - svs.clients );
-			//
+			// disconnect the client from the game first so any flags the
+			// player might have are dropped
+			//VM_Call( gvm, GAME_CLIENT_DISCONNECT, newcl - svs.clients );
+
 			goto gotnewcl;
 		}
 	}
@@ -1968,7 +1968,7 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 
 	SV_ParseBinaryMessage(cl, msg);
 
-//  if ( msg->readcount != msg->cursize ) {
-//      Com_Printf( "WARNING: Junk at end of packet for client %i\n", cl - svs.clients );
-//  }
+	//  if ( msg->readcount != msg->cursize ) {
+	//      Com_Printf( "WARNING: Junk at end of packet for client %i\n", cl - svs.clients );
+	//  }
 }

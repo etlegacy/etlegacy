@@ -231,7 +231,6 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 	}
 }
 
-
 /*
 ==============================================================================
 
@@ -442,7 +441,6 @@ void SV_MasterShutdown(void)
 	// it will be removed from the list
 }
 
-
 /*
 ==============================================================================
 
@@ -450,7 +448,6 @@ CONNECTIONLESS COMMANDS
 
 ==============================================================================
 */
-
 
 typedef struct leakyBucket_s leakyBucket_t;
 struct leakyBucket_s
@@ -1007,7 +1004,6 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 		Q_strcat(remaining, sizeof(remaining), cmd_aux);
 
 		Cmd_ExecuteString(remaining);
-
 	}
 
 	Com_EndRedirect();
@@ -1174,6 +1170,10 @@ static void SV_CalcPings(void)
 		if (cl->gentity->r.svFlags & SVF_BOT)
 		{
 			cl->ping = 0;
+
+			// let the game dll know about the ping - we are using mod based bots
+			ps       = SV_GameClientNum(i);
+			ps->ping = cl->ping;
 			continue;
 		}
 

@@ -60,8 +60,6 @@ clipHandle_t SV_ClipHandleForEntity(const sharedEntity_t *ent)
 	return CM_TempBoxModel(ent->r.mins, ent->r.maxs, qfalse);
 }
 
-
-
 /*
 ===============================================================================
 
@@ -88,7 +86,6 @@ typedef struct worldSector_s
 
 worldSector_t sv_worldSectors[AREA_NODES];
 int           sv_numworldSectors;
-
 
 /*
 ===============
@@ -181,7 +178,6 @@ void SV_ClearWorld(void)
 	SV_CreateworldSector(0, mins, maxs);
 }
 
-
 /*
 ===============
 SV_UnlinkEntity
@@ -223,7 +219,6 @@ void SV_UnlinkEntity(sharedEntity_t *gEnt)
 	Com_Printf("WARNING: SV_UnlinkEntity: not found in worldSector\n");
 }
 
-
 /*
 ===============
 SV_LinkEntity
@@ -231,6 +226,7 @@ SV_LinkEntity
 ===============
 */
 #define MAX_TOTAL_ENT_LEAFS     128
+
 void SV_LinkEntity(sharedEntity_t *gEnt)
 {
 	worldSector_t *node;
@@ -453,7 +449,6 @@ typedef struct
 	int count, maxcount;
 } areaParms_t;
 
-
 /*
 ====================
 SV_AreaEntities_r
@@ -532,10 +527,7 @@ int SV_AreaEntities(const vec3_t mins, const vec3_t maxs, int *entityList, int m
 	return ap.count;
 }
 
-
-
 //===========================================================================
-
 
 typedef struct
 {
@@ -549,7 +541,6 @@ typedef struct
 	int contentmask;
 	int capsule;
 } moveclip_t;
-
 
 /*
 ====================
@@ -601,7 +592,6 @@ void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, cons
 		trace->entityNum = touch->s.number;
 	}
 }
-
 
 // FIXME: Copied from cm_local.h
 #define BOX_MODEL_HANDLE        511
@@ -734,7 +724,6 @@ void SV_ClipMoveToEntities(moveclip_t *clip)
 	}
 }
 
-
 /*
 ==================
 SV_Trace
@@ -770,7 +759,7 @@ void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec
 
 	clip.contentmask = contentmask;
 	clip.start       = start;
-//	VectorCopy( clip.trace.endpos, clip.end );
+	//	VectorCopy( clip.trace.endpos, clip.end );
 	VectorCopy(end, clip.end);
 	clip.mins          = mins;
 	clip.maxs          = maxs;
@@ -800,8 +789,6 @@ void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec
 
 	*results = clip.trace;
 }
-
-
 
 /*
 =============

@@ -33,7 +33,6 @@
 
 #include "server.h"
 
-
 /*
 =============================================================================
 
@@ -136,8 +135,6 @@ static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, 
 
 	MSG_WriteBits(msg, (MAX_GENTITIES - 1), GENTITYNUM_BITS);       // end of packetentities
 }
-
-
 
 /*
 ==================
@@ -243,7 +240,6 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 	}
 }
 
-
 /*
 ==================
 SV_UpdateServerCommandsToClient
@@ -306,7 +302,6 @@ static int QDECL SV_QsortEntityNumbers(const void *a, const void *b)
 
 	return 1;
 }
-
 
 /*
 ===============
@@ -582,8 +577,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 
 		// if its a portal entity, add everything visible from its camera position
 		if (ent->r.svFlags & SVF_PORTAL)
-		{
-//          SV_AddEntitiesVisibleFromPoint( ent->s.origin2, frame, eNums, qtrue, oldframe, localClient );
+		{;
 			SV_AddEntitiesVisibleFromPoint(ent->s.origin2, frame, eNums /*, qtrue, localClient*/);
 		}
 
@@ -710,7 +704,6 @@ static void SV_BuildClientSnapshot(client_t *client)
 		frame->num_entities++;
 	}
 }
-
 
 /*
 ====================
@@ -850,7 +843,7 @@ void SV_SendClientIdle(client_t *client)
 
 	// send over all the relevant entityState_t
 	// and the playerState_t
-//  SV_WriteSnapshotToClient( client, &msg );
+	//  SV_WriteSnapshotToClient( client, &msg );
 
 	// Add any download data if the client is downloading
 	SV_WriteDownloadToClient(client, &msg);
@@ -938,7 +931,6 @@ void SV_SendClientSnapshot(client_t *client)
 	sv.bpsTotalBytes  += msg.cursize;           // NERVE - SMF - net debugging
 	sv.ubpsTotalBytes += msg.uncompsize / 8;    // NERVE - SMF - net debugging
 }
-
 
 /*
 =======================

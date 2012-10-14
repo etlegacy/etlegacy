@@ -115,7 +115,6 @@ void SV_GameSendServerCommand(int clientNum, const char *text)
 	}
 }
 
-
 /*
 ===============
 SV_GameDropClient
@@ -135,7 +134,6 @@ void SV_GameDropClient(int clientNum, const char *reason, int length)
 		SV_TempBanNetAddress(svs.clients[clientNum].netchan.remoteAddress, length);
 	}
 }
-
 
 /*
 =================
@@ -173,8 +171,6 @@ void SV_SetBrushModel(sharedEntity_t *ent, const char *name)
 	SV_LinkEntity(ent);         // FIXME: remove
 }
 
-
-
 /*
 =================
 SV_inPVS
@@ -208,7 +204,6 @@ qboolean SV_inPVS(const vec3_t p1, const vec3_t p2)
 	return qtrue;
 }
 
-
 /*
 =================
 SV_inPVSIgnorePortals
@@ -237,7 +232,6 @@ qboolean SV_inPVSIgnorePortals(const vec3_t p1, const vec3_t p2)
 	return qtrue;
 }
 
-
 /*
 ========================
 SV_AdjustAreaPortalState
@@ -254,7 +248,6 @@ void SV_AdjustAreaPortalState(sharedEntity_t *ent, qboolean open)
 	}
 	CM_AdjustAreaPortalState(svEnt->areanum, svEnt->areanum2, open);
 }
-
 
 /*
 ==================
@@ -277,7 +270,6 @@ qboolean SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedEnti
 
 	return trace.startsolid;
 }
-
 
 /*
 ===============
@@ -310,7 +302,6 @@ void SV_LocateGameData(sharedEntity_t *gEnts, int numGEntities, int sizeofGEntit
 	sv.gameClients    = clients;
 	sv.gameClientSize = sizeofGameClient;
 }
-
 
 /*
 ===============
@@ -692,8 +683,6 @@ static void SV_InitGameVM(qboolean restart)
 	VM_Call(gvm, GAME_INIT, svs.time, Com_Milliseconds(), restart);
 }
 
-
-
 /*
 ===================
 SV_RestartGameProgs
@@ -723,7 +712,6 @@ void SV_RestartGameProgs(void)
 #endif
 }
 
-
 /*
 ===============
 SV_InitGameProgs
@@ -749,7 +737,6 @@ void SV_InitGameProgs(void)
 	TB_Map(sv_mapname->string);
 #endif
 }
-
 
 /*
 ====================

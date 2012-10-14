@@ -238,7 +238,6 @@ void BotImport_EntityTrace(bsp_trace_t *bsptrace, vec3_t start, vec3_t mins, vec
 	bsptrace->contents       = 0;
 }
 
-
 /*
 ==================
 BotImport_PointContents
@@ -502,7 +501,6 @@ void BotImport_DebugLineShow(int line, vec3_t start, vec3_t end, int color)
 	BotImport_DebugPolygonShow(line, color, 4, points);
 }
 
-
 /*
 ==================
 SV_BotClientCommand
@@ -574,10 +572,7 @@ void SV_BotInitBotLib(void)
 	botlib_export = (botlib_export_t *)GetBotLibAPI(BOTLIB_API_VERSION, &botlib_import);
 }
 
-
-//
 //  * * * BOT AI CODE IS BELOW THIS POINT * * *
-//
 
 /*
 ==================

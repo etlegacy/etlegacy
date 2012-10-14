@@ -127,7 +127,6 @@ typedef struct
 	int num_tags;
 } server_t;
 
-
 typedef struct
 {
 	int areabytes;
@@ -237,7 +236,6 @@ typedef struct client_s
 
 //=============================================================================
 
-
 // MAX_CHALLENGES is made large to prevent a denial
 // of service attack that could cycle all of them
 // out before legitimate users connected
@@ -279,7 +277,6 @@ typedef struct tempBan_s
 	int endtime;
 } tempBan_t;
 
-
 #define MAX_MASTERS                         8               // max recipients for heartbeat packets
 #define MAX_TEMPBAN_ADDRESSES               MAX_CLIENTS
 
@@ -312,13 +309,11 @@ typedef struct
 	int serverLoad;
 } serverStatic_t;
 
-
 //=============================================================================
 
 extern serverStatic_t svs;                  // persistant server info across maps
 extern server_t       sv;                   // cleared each map
 extern vm_t           *gvm;                 // game virtual machine
-
 
 #define MAX_MASTER_SERVERS  5
 
@@ -382,9 +377,8 @@ extern cvar_t *sv_protect;
 
 //===========================================================
 
-//
 // sv_main.c
-//
+
 void SV_FinalCommand(char *cmd, qboolean disconnect);   // ydnar: added disconnect flag so map changes can use this function as well
 void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
 
@@ -397,10 +391,8 @@ void SV_MasterShutdown(void);
 
 void SV_MasterGameCompleteStatus(void);       // NERVE - SMF
 
-
-//
 // sv_init.c
-//
+
 void SV_SetConfigstringNoUpdate(int index, const char *val);
 void SV_SetConfigstring(int index, const char *val);
 void SV_UpdateConfigStrings(void);
@@ -412,10 +404,8 @@ void SV_GetUserinfo(int index, char *buffer, int bufferSize);
 void SV_ChangeMaxClients(void);
 void SV_SpawnServer(char *server, qboolean killBots);
 
-
-//
 // sv_client.c
-//
+
 void SV_GetChallenge(netadr_t from);
 
 void SV_DirectConnect(netadr_t from);
@@ -433,17 +423,15 @@ void SV_ClientThink(client_t *cl, usercmd_t *cmd);
 
 void SV_WriteDownloadToClient(client_t *cl, msg_t *msg);
 
-//
 // sv_ccmds.c
-//
+
 void SV_Heartbeat_f(void);
 
 qboolean SV_TempBanIsBanned(netadr_t address);
 void SV_TempBanNetAddress(netadr_t address, int length);
 
-//
 // sv_snapshot.c
-//
+
 void SV_AddServerCommand(client_t *client, const char *cmd);
 void SV_UpdateServerCommandsToClient(client_t *client, msg_t *msg);
 void SV_WriteFrameToClient(client_t *client, msg_t *msg);
@@ -453,9 +441,8 @@ void SV_SendClientSnapshot(client_t *client);
 void SV_CheckClientUserinfoTimer(void);
 void SV_SendClientIdle(client_t *client);
 
-//
 // sv_game.c
-//
+
 int SV_NumForGentity(sharedEntity_t *ent);
 
 sharedEntity_t *SV_GentityNum(int num);
@@ -472,9 +459,8 @@ int SV_LoadTag(const char *mod_name);
 
 void SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int commandTime);
 
-//
 // sv_bot.c
-//
+
 int SV_BotAllocateClient(int clientNum);
 void SV_BotFreeClient(int clientNum);
 
@@ -484,9 +470,8 @@ int BotImport_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
 void BotImport_DebugPolygonDelete(int id);
 
 //============================================================
-//
+
 // high level object sorting to reduce interaction tests
-//
 
 void SV_ClearWorld(void);
 // called after the world model has been loaded, before linking any entities
@@ -502,12 +487,9 @@ void SV_LinkEntity(sharedEntity_t *ent);
 // sets ent->leafnums[] for pvs determination even if the entity
 // is not solid
 
-
 clipHandle_t SV_ClipHandleForEntity(const sharedEntity_t *ent);
 
-
 void SV_SectorList_f(void);
-
 
 int SV_AreaEntities(const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount);
 // fills in a table of entity numbers with entities that have bounding boxes
@@ -517,10 +499,8 @@ int SV_AreaEntities(const vec3_t mins, const vec3_t maxs, int *entityList, int m
 // returns the number of pointers filled in
 // The world entity is never returned in this list.
 
-
 int SV_PointContents(const vec3_t p, int passEntityNum);
 // returns the CONTENTS_* value from the world and all entities at the given point.
-
 
 void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, int capsule);
 // mins and maxs are relative
@@ -533,13 +513,11 @@ void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec
 
 // passEntityNum is explicitly excluded from clipping checks (normally ENTITYNUM_NONE)
 
-
 void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int entityNum, int contentmask, int capsule);
 // clip to a specific entity
 
-//
 // sv_net_chan.c
-//
+
 void SV_Netchan_Transmit(client_t *client, msg_t *msg);
 void SV_Netchan_TransmitNextFragment(client_t *client);
 qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
