@@ -37,7 +37,6 @@
 
 #include "snd_local.h"
 
-
 /* Intel ADPCM step variation table */
 static int indexTable[16] =
 {
@@ -184,7 +183,6 @@ void S_AdpcmEncode(short indata[], char outdata[], int len, struct adpcm_state *
 	state->index  = index;
 }
 
-
 /* static */ void S_AdpcmDecode(const char indata[], short *outdata, int len, struct adpcm_state *state)
 {
 	signed char *inp;       /* Input buffer pointer */
@@ -287,7 +285,6 @@ void S_AdpcmEncode(short indata[], char outdata[], int len, struct adpcm_state *
 	state->index  = index;
 }
 
-
 /*
 ====================
 S_AdpcmMemoryNeeded
@@ -325,7 +322,6 @@ int S_AdpcmMemoryNeeded(const wavinfo_t *info)
 	return sampleMemory + headerMemory;
 }
 
-
 /*
 ====================
 S_AdpcmGetSamples
@@ -344,7 +340,6 @@ void S_AdpcmGetSamples(sndBuffer *chunk, short *to)
 	// get samples
 	S_AdpcmDecode((char *) out, to, SND_CHUNK_SIZE_BYTE * 2, &state);
 }
-
 
 /*
 ====================

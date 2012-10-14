@@ -594,7 +594,7 @@ void CL_ShutdownCGame(void)
 	cgvm = NULL;
 }
 
-static int  FloatAsInt(float f)
+static int FloatAsInt(float f)
 {
 	floatint_t fi;
 	fi.f = f;

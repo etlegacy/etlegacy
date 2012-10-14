@@ -188,7 +188,6 @@ void S_TransferPaintBuffer(int endtime)
 
 	pbuf = (unsigned long *)dma.buffer;
 
-
 	if (s_testsound->integer)
 	{
 		int i;
@@ -199,7 +198,6 @@ void S_TransferPaintBuffer(int endtime)
 		for (i = 0 ; i < count ; i++)
 			paintbuffer[i].left = paintbuffer[i].right = sin((s_paintedtime + i) * 0.1) * 20000 * 256;
 	}
-
 
 	if (dma.samplebits == 16 && dma.channels == 2)     // optimized case
 	{
@@ -253,7 +251,6 @@ void S_TransferPaintBuffer(int endtime)
 		}
 	}
 }
-
 
 /*
 ===============================================================================
@@ -504,12 +501,8 @@ static void S_PaintChannelFrom16_scalar(channel_t *ch, const sfx_t *sc, int coun
 		ooff    = sampleOffset;
 		samples = chunk->sndChunk;
 
-
-
-
 		for (i = 0 ; i < count ; i++)
 		{
-
 			aoff  = ooff;
 			ooff  = ooff + ch->dopplerScale;
 			boff  = ooff;

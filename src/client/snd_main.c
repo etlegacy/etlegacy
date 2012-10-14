@@ -344,7 +344,6 @@ void S_UpdateEntityPosition(int entityNum, const vec3_t origin)
 
 void S_Update(void)
 {
-
 	if (s_muted->integer)
 	{
 		if (!(s_muteWhenMinimized->integer && Cvar_VariableIntegerValue("com_minimized")) &&
@@ -567,7 +566,6 @@ void S_Music_f(void)
 		Com_Printf("music <musicfile> [loopfile] [fadeupTime]\n");
 		return;
 	}
-
 }
 
 void S_Stream_f(void)
@@ -612,7 +610,6 @@ void S_Stream_f(void)
 		Com_Printf("stream <streamfile> [loopfile] [entnum] [channel] [attenuation]\n");
 		return;
 	}
-
 }
 
 void S_StopMusic_f(void)
@@ -650,7 +647,6 @@ void S_Init(void)
 	}
 	else
 	{
-
 		S_CodecInit();
 
 		Cmd_AddCommand("play", S_Play_f);

@@ -34,7 +34,6 @@
 
 #include "client.h"
 
-
 int g_console_field_width = 78;
 
 #define COLNSOLE_COLOR  COLOR_WHITE //COLOR_BLACK
@@ -52,7 +51,6 @@ cvar_t *con_restricted;
 
 vec4_t console_color = { 1.0, 1.0, 1.0, 1.0 };
 vec4_t console_highlightcolor = { 0.5, 0.5, 0.2, 0.45 };
-
 
 /*
 ================
@@ -83,7 +81,7 @@ void Con_ToggleConsole_f(void)
 	if (cls.keyCatchers & KEYCATCH_CONSOLE)
 	{
 		cls.keyCatchers &= ~KEYCATCH_CONSOLE;
-		con.desiredFrac  = 0.0;
+		con.desiredFrac  = 0.0f;
 	}
 	else
 	{
@@ -147,7 +145,6 @@ void Con_MessageMode3_f(void)
 	chatField.widthInChars = 26;
 	cls.keyCatchers       ^= KEYCATCH_MESSAGE;
 }
-
 
 /*
 ================
@@ -235,7 +232,6 @@ void Con_Dump_f(void)
 	FS_FCloseFile(f);
 }
 
-
 /*
 ================
 Con_ClearNotify
@@ -250,8 +246,6 @@ void Con_ClearNotify(void)
 		con.times[i] = 0;
 	}
 }
-
-
 
 /*
 ================
@@ -368,7 +362,6 @@ void Con_Init(void)
 	Cmd_AddCommand("condump", Con_Dump_f);
 	Cmd_SetCommandCompletionFunc("condump", Cmd_CompleteTxtName);
 }
-
 
 /*
 ===============
@@ -541,7 +534,6 @@ DRAWING
 ==============================================================================
 */
 
-
 /*
 ================
 Con_DrawInput
@@ -583,7 +575,6 @@ void Con_DrawInput(void)
 	           SCREEN_WIDTH - 3 * SMALLCHAR_WIDTH, qtrue);
 }
 
-
 /*
 ================
 Con_DrawNotify
@@ -598,7 +589,7 @@ void Con_DrawNotify(void)
 	int   i;
 	int   time;
 	int   skip;
-	int   currentColor;
+	int   currentColor = 7;
 
 	currentColor = 7;
 	re.SetColor(g_color_table[currentColor]);
@@ -681,7 +672,6 @@ void Con_DrawNotify(void)
 
 		v += BIGCHAR_HEIGHT;
 	}
-
 }
 
 /*
@@ -742,13 +732,13 @@ void Con_DrawSolidConsole(float frac)
 	}
 
 	// ydnar: matching light text
-	color[0] = 0.75;
-	color[1] = 0.75;
-	color[2] = 0.75;
+	color[0] = 0.75f;
+	color[1] = 0.75f;
+	color[2] = 0.75f;
 	color[3] = 1.0f;
-	if (frac < 1.0)
+	if (frac < 1)
 	{
-		SCR_FillRect(0, y, SCREEN_WIDTH, 1.25, color);
+		SCR_FillRect(0, y, SCREEN_WIDTH, 1.25f, color);
 	}
 
 
@@ -845,7 +835,7 @@ void Con_DrawConsole(void)
 	{
 		if (!(cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME)))
 		{
-			Con_DrawSolidConsole(1.0);
+			Con_DrawSolidConsole(1.0f);
 			return;
 		}
 	}
@@ -907,7 +897,6 @@ void Con_RunConsole(void)
 
 }
 
-
 void Con_PageUp(void)
 {
 	con.display -= 2;
@@ -939,7 +928,6 @@ void Con_Bottom(void)
 {
 	con.display = con.current;
 }
-
 
 void Con_Close(void)
 {

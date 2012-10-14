@@ -54,7 +54,7 @@ short *sfxScratchBuffer  = NULL;
 sfx_t *sfxScratchPointer = NULL;
 int   sfxScratchIndex    = 0;
 
-void    SND_free(sndBuffer *v)
+void SND_free(sndBuffer *v)
 {
 	*(sndBuffer **)v = freelist;
 	freelist         = (sndBuffer *)v;
@@ -225,7 +225,6 @@ qboolean S_LoadSound(sfx_t *sfx)
 	byte       *data;
 	short      *samples;
 	snd_info_t info;
-//  int     size;
 
 	// player specific sounds are never directly loaded
 	if (sfx->soundName[0] == '*')

@@ -80,10 +80,6 @@ void IN_MLookDown(void)
 void IN_MLookUp(void)
 {
 	kb[KB_MLOOK].active = qfalse;
-	if (!cl_freelook->integer)
-	{
-//      IN_CenterView ();
-	}
 }
 
 void IN_KeyDown(kbutton_t *b)
@@ -186,8 +182,6 @@ void IN_KeyUp(kbutton_t *b)
 	b->active = qfalse;
 }
 
-
-
 /*
 ===============
 CL_KeyState
@@ -236,8 +230,6 @@ float CL_KeyState(kbutton_t *key)
 
 	return val;
 }
-
-
 
 void IN_UpDown(void)
 {
@@ -396,7 +388,6 @@ void IN_SprintUp(void)
 	IN_KeyUp(&kb[KB_BUTTONS5]);
 }
 
-
 // wbuttons (wolf buttons)
 void IN_Wbutton0Down(void)
 {
@@ -459,19 +450,6 @@ void IN_ButtonUp(void)
 	IN_KeyUp(&kb[KB_BUTTONS1]);
 }
 
-/*
-void IN_CenterView (void) {
-    cl.viewangles[PITCH] = -SHORT2ANGLE(cl.snap.ps.delta_angles[PITCH]);
-}
-*/
-
-void IN_Notebook(void)
-{
-	//if ( cls.state == CA_ACTIVE && !clc.demoplaying ) {
-	//VM_Call( uivm, UI_SET_ACTIVE_MENU, UIMENU_NOTEBOOK);  // startup notebook
-	//}
-}
-
 void IN_Help(void)
 {
 	if (cls.state == CA_ACTIVE && !clc.demoplaying)
@@ -479,7 +457,6 @@ void IN_Help(void)
 		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_HELP);          // startup help system
 	}
 }
-
 
 //==========================================================================
 cvar_t *cl_yawspeed;
@@ -537,11 +514,10 @@ void CL_KeyMove(usercmd_t *cmd)
 	int movespeed;
 	int forward, side, up;
 
-	//
 	// adjust for speed key / running
 	// the walking flag is to keep animations consistant
 	// even during acceleration and develeration
-	//
+
 	if (kb[KB_SPEED].active ^ cl_run->integer)
 	{
 		movespeed     = 127;
@@ -642,7 +618,6 @@ void CL_MouseEvent(int dx, int dy, int time)
 {
 	if (cls.keyCatchers & KEYCATCH_UI)
 	{
-
 		// NERVE - SMF - if we just want to pass it along to game
 		if (cl_bypassMouseInput->integer == 1)
 		{
@@ -653,7 +628,6 @@ void CL_MouseEvent(int dx, int dy, int time)
 		{
 			VM_Call(uivm, UI_MOUSE_EVENT, dx, dy);
 		}
-
 	}
 	else if (cls.keyCatchers & KEYCATCH_CGAME)
 	{
@@ -769,22 +743,12 @@ void CL_MouseMove(usercmd_t *cmd)
 	// scale by FOV
 	accelSensitivity *= cl.cgameSensitivity;
 
-	/*  NERVE - SMF - this has moved to CG_CalcFov to fix zoomed-in/out transition movement bug
-	    if ( cl.snap.ps.stats[STAT_ZOOMED_VIEW] ) {
-	        if(cl.snap.ps.weapon == WP_SNIPERRIFLE) {
-	            accelSensitivity *= 0.1;
-	        }
-	        else if(cl.snap.ps.weapon == WP_SNOOPERSCOPE) {
-	            accelSensitivity *= 0.2;
-	        }
-	    }
-	*/
 	if (rate && cl_showMouseRate->integer)
 	{
 		Com_Printf("%f : %f\n", rate, accelSensitivity);
 	}
 
-// Ridah, experimenting with a slow tracking gun
+	// Ridah, experimenting with a slow tracking gun
 
 	// Rafael - mg42
 	if (cl.snap.ps.persistant[PERS_HWEAPON_USE])
@@ -823,7 +787,6 @@ void CL_MouseMove(usercmd_t *cmd)
 	}
 }
 
-
 /*
 ==============
 CL_CmdButtons
@@ -833,11 +796,10 @@ void CL_CmdButtons(usercmd_t *cmd)
 {
 	int i;
 
-	//
 	// figure button bits
 	// send a button bit even if the key was pressed and released in
 	// less than a frame
-	//
+
 	for (i = 0 ; i < 7 ; i++)
 	{
 		if (kb[KB_BUTTONS0 + i].active || kb[KB_BUTTONS0 + i].wasPressed)
@@ -875,7 +837,6 @@ void CL_CmdButtons(usercmd_t *cmd)
 	}
 }
 
-
 /*
 ==============
 CL_FinishMove
@@ -901,7 +862,6 @@ void CL_FinishMove(usercmd_t *cmd)
 		cmd->angles[i] = ANGLE2SHORT(cl.viewangles[i]);
 	}
 }
-
 
 /*
 =================
@@ -969,7 +929,6 @@ usercmd_t CL_CreateCmd(void)
 
 	return cmd;
 }
-
 
 /*
 =================
@@ -1198,9 +1157,7 @@ void CL_WritePacket(void)
 		}
 	}
 
-	//
 	// deliver the message
-	//
 	packetNum                             = clc.netchan.outgoingSequence & PACKET_MASK;
 	cl.outPackets[packetNum].p_realtime   = cls.realtime;
 	cl.outPackets[packetNum].p_serverTime = oldcmd->serverTime;
@@ -1336,13 +1293,11 @@ void CL_InitInput(void)
 	Cmd_AddCommand("+mlook", IN_MLookDown);
 	Cmd_AddCommand("-mlook", IN_MLookUp);
 
-	//Cmd_AddCommand ("notebook",IN_Notebook);
 	Cmd_AddCommand("help", IN_Help);
 
 	cl_nodelta   = Cvar_Get("cl_nodelta", "0", 0);
 	cl_debugMove = Cvar_Get("cl_debugMove", "0", 0);
 }
-
 
 /*
 ============

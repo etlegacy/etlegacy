@@ -190,7 +190,6 @@ demo through a file.
 =============================================================================
 */
 
-
 typedef struct
 {
 
@@ -393,10 +392,8 @@ extern vm_t        *cgvm;       // interface to cgame dll or vm
 extern vm_t        *uivm;       // interface to ui dll or vm
 extern refexport_t re;          // interface to refresh .dll
 
-
-//
 // cvars
-//
+
 extern cvar_t *cl_nodelta;
 extern cvar_t *cl_debugMove;
 extern cvar_t *cl_noprint;
@@ -449,7 +446,6 @@ extern cvar_t *cl_waitForFire;
 
 // NERVE - SMF - localization
 extern cvar_t *cl_language;
-// -NERVE - SMF
 
 extern cvar_t *cl_profile;
 extern cvar_t *cl_defaultProfile;
@@ -461,9 +457,7 @@ extern qboolean sv_cheats;
 
 //=================================================
 
-//
 // cl_main
-//
 
 void CL_Init(void);
 void CL_FlushMemory(void);
@@ -510,9 +504,8 @@ void CL_OpenURL(const char *url);   // TTimo
 
 void CL_Record(const char *name);
 
-//
 // cl_input
-//
+
 typedef struct
 {
 	int down[2];                // key nums holding it down
@@ -556,7 +549,6 @@ typedef enum
 	NUM_BUTTONS
 } kbuttons_t;
 
-
 void CL_ClearKeys(void);
 
 void CL_InitInput(void);
@@ -565,13 +557,10 @@ void CL_ClearState(void);
 void CL_ReadPackets(void);
 
 void CL_WritePacket(void);
-//void IN_CenterView (void);
-void IN_Notebook(void);
 void IN_Help(void);
 
 //----(SA) salute
 void IN_Salute(void);
-//----(SA)
 
 void CL_VerifyCode(void);
 
@@ -579,9 +568,8 @@ float CL_KeyState(kbutton_t *key);
 int Key_StringToKeynum(char *str);
 char *Key_KeynumToString(int keynum);
 
-//
 // cl_parse.c
-//
+
 extern int cl_connectedToPureServer;
 
 void CL_SystemInfoChanged(void);
@@ -589,19 +577,17 @@ void CL_ParseServerMessage(msg_t *msg);
 
 //====================================================================
 
-void    CL_UpdateInfoPacket(netadr_t from);         // DHM - Nerve
+void CL_UpdateInfoPacket(netadr_t from);            // DHM - Nerve
 
-void    CL_ServerInfoPacket(netadr_t from, msg_t *msg);
-void    CL_LocalServers_f(void);
-void    CL_GlobalServers_f(void);
+void CL_ServerInfoPacket(netadr_t from, msg_t *msg);
+void CL_LocalServers_f(void);
+void CL_GlobalServers_f(void);
 //FIXME: void    CL_FavoriteServers_f( void );
-void    CL_Ping_f(void);
+void CL_Ping_f(void);
 qboolean CL_UpdateVisiblePings_f(int source);
 
-
-//
 // console
-//
+
 #define NUM_CON_TIMES 4
 
 //#define       CON_TEXTSIZE    32768
@@ -652,31 +638,27 @@ void Con_Top(void);
 void Con_Bottom(void);
 void Con_Close(void);
 
-//
 // cl_scrn.c
-//
-void    SCR_Init(void);
-void    SCR_UpdateScreen(void);
 
-void    SCR_DebugGraph(float value);
+void SCR_Init(void);
+void SCR_UpdateScreen(void);
 
-int     SCR_GetBigStringWidth(const char *str);     // returns in virtual 640x480 coordinates
+void SCR_DebugGraph(float value);
 
-void    SCR_AdjustFrom640(float *x, float *y, float *w, float *h);
-void    SCR_FillRect(float x, float y, float width, float height,
-                     const float *color);
-void    SCR_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
-void    SCR_DrawNamedPic(float x, float y, float width, float height, const char *picname);
+int SCR_GetBigStringWidth(const char *str);         // returns in virtual 640x480 coordinates
 
-void    SCR_DrawBigString(int x, int y, const char *s, float alpha);            // draws a string with embedded color control characters with fade
-void    SCR_DrawBigStringColor(int x, int y, const char *s, vec4_t color);      // ignores embedded color control characters
-void    SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, qboolean forceColor);
-void    SCR_DrawSmallChar(int x, int y, int ch);
+void SCR_AdjustFrom640(float *x, float *y, float *w, float *h);
+void SCR_FillRect(float x, float y, float width, float height,
+                  const float *color);
+void SCR_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
+void SCR_DrawNamedPic(float x, float y, float width, float height, const char *picname);
 
+void SCR_DrawBigString(int x, int y, const char *s, float alpha);               // draws a string with embedded color control characters with fade
+void SCR_DrawBigStringColor(int x, int y, const char *s, vec4_t color);         // ignores embedded color control characters
+void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, qboolean forceColor);
+void SCR_DrawSmallChar(int x, int y, int ch);
 
-//
 // cl_cin.c
-//
 
 void CL_PlayCinematic_f(void);
 void SCR_DrawCinematic(void);
@@ -691,9 +673,8 @@ void CIN_SetLooping(int handle, qboolean loop);
 void CIN_UploadCinematic(int handle);
 void CIN_CloseAllVideos(void);
 
-//
 // cl_cgame.c
-//
+
 void CL_InitCGame(void);
 void CL_ShutdownCGame(void);
 qboolean CL_GameCommand(void);
@@ -704,9 +685,8 @@ void CL_ShaderStateChanged(void);
 void CL_UpdateLevelHunkUsage(void);
 void CL_CGameBinaryMessageReceived(const char *buf, int buflen, int serverTime);
 
-//
 // cl_ui.c
-//
+
 void CL_InitUI(void);
 void CL_ShutdownUI(void);
 int Key_GetCatcher(void);
@@ -714,10 +694,8 @@ void Key_SetCatcher(int catcher);
 void LAN_LoadCachedServers(void);
 void LAN_SaveServersToCache(void);
 
-
-//
 // cl_net_chan.c
-//
+
 void CL_Netchan_Transmit(netchan_t *chan, msg_t *msg);   //int length, const byte *data );
 void CL_Netchan_TransmitNextFragment(netchan_t *chan);
 qboolean CL_Netchan_Process(netchan_t *chan, msg_t *msg);

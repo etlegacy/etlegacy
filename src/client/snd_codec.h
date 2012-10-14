@@ -31,7 +31,6 @@
  * @file snd_codec.h
  */
 
-
 #ifndef _SND_CODEC_H_
 #define _SND_CODEC_H_
 

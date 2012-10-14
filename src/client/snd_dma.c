@@ -100,11 +100,9 @@ static int         numLoopSounds;
 int                   s_rawend[MAX_RAW_STREAMS];
 portable_samplepair_t s_rawsamples[MAX_RAW_STREAMS][MAX_RAW_SAMPLES];
 
-
 // ====================================================================
 // User-setable variables
 // ====================================================================
-
 
 void S_Base_SoundInfo(void)
 {
@@ -134,7 +132,6 @@ void S_Base_SoundInfo(void)
 	}
 	Com_Printf("----------------------\n");
 }
-
 
 #ifdef USE_VOIP
 static
@@ -169,8 +166,6 @@ void S_Base_MasterGain(float val)
 }
 #endif
 
-
-
 /*
 =================
 S_Base_SoundList
@@ -201,8 +196,6 @@ void S_Base_SoundList(void)
 	Com_Printf("Total resident: %i\n", total);
 	S_DisplayFreeMemory();
 }
-
-
 
 void S_ChannelFree(channel_t *v)
 {
@@ -243,8 +236,6 @@ void S_ChannelSetup(void)
 	Com_DPrintf("Channel memory manager started\n");
 }
 
-
-
 // =======================================================================
 // Load a sound
 // =======================================================================
@@ -256,12 +247,10 @@ return a hash value for the sfx name
 */
 static long S_HashSFXName(const char *name)
 {
-	int  i;
-	long hash;
+	int  i    = 0;
+	long hash = 0;
 	char letter;
 
-	hash = 0;
-	i    = 0;
 	while (name[i] != '\0')
 	{
 		letter = tolower(name[i]);
@@ -359,13 +348,11 @@ S_DefaultSound
 */
 void S_DefaultSound(sfx_t *sfx)
 {
-
 	int i;
 
 	sfx->soundLength     = 512;
 	sfx->soundData       = SND_malloc();
 	sfx->soundData->next = NULL;
-
 
 	for (i = 0 ; i < sfx->soundLength ; i++)
 	{
@@ -512,8 +499,8 @@ Used for spatializing s_channels
 void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right_vol, float range, int no_attenuation)
 {
 	vec_t lscale, rscale;
-
 	float dist_fullvol;
+
 	dist_fullvol = range * 0.064f;
 
 	if (dma.channels == 1 || no_attenuation)     // no attenuation = no spatialization
@@ -758,7 +745,6 @@ void S_Base_StartLocalSound(sfxHandle_t sfxHandle, int channelNum, int volume)
 	S_Base_StartSound(NULL, listener_number, channelNum, sfxHandle, volume);
 }
 
-
 /*
 =================
 S_ClearSounds
@@ -834,7 +820,6 @@ void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 	}
 }
 
-
 /*
 ==================
 S_ClearSoundBuffer
@@ -860,7 +845,6 @@ S_StopAllSounds
 */
 void S_Base_StopAllSounds(void)
 {
-
 	if (!s_soundStarted)
 	{
 		return;
@@ -878,6 +862,7 @@ S_ClearLoopingSounds
 void S_Base_ClearLoopingSounds(void)
 {
 	int i;
+
 	for (i = 0 ; i < numLoopSounds ; i++)
 	{
 		loopSounds[i].active = qfalse;
@@ -1042,8 +1027,6 @@ void S_Base_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, int 
 	loopSounds[numLoopSounds].volume = (int)((float)volume * s_volCurrent);
 	numLoopSounds++;
 }
-
-
 
 /*
 ==================
@@ -1332,7 +1315,6 @@ void S_Base_UpdateEntityPosition(int entnum, const vec3_t origin)
 	VectorCopy(origin, entityPositions[entnum]);
 }
 
-
 /*
 ============
 S_Respatialize
@@ -1389,7 +1371,6 @@ void S_Base_Respatialize(int entnum, const vec3_t head, vec3_t axis[3], int inwa
 	// add loopsounds
 	S_AddLoopSounds();
 }
-
 
 /*
 ========================
@@ -1452,9 +1433,7 @@ void S_Base_Update(void)
 		return;
 	}
 
-	//
 	// debugging output
-	//
 	if (s_show->integer == 2)
 	{
 		total = 0;
@@ -1530,7 +1509,6 @@ void S_GetSoundtime(void)
 		s_paintedtime = s_soundtime + dma.submission_chunk;
 	}
 }
-
 
 void S_Update_(void)
 {
@@ -1623,8 +1601,6 @@ void S_Update_(void)
 
 	lastTime = thisTime;
 }
-
-
 
 /*
 ===============================================================================
@@ -1824,7 +1800,6 @@ void S_FreeStreamingSound(int stream)
 	ss->queueStream[0]  = '\0';
 	ss->queueStreamType = 0;
 }
-
 
 /*
 ==============
