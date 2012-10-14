@@ -589,7 +589,7 @@ void Con_DrawNotify(void)
 	int   i;
 	int   time;
 	int   skip;
-	int   currentColor = 7;
+	int   currentColor;
 
 	currentColor = 7;
 	re.SetColor(g_color_table[currentColor]);
