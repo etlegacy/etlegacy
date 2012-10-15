@@ -367,7 +367,7 @@ void CG_OffsetThirdPersonView(void)
 	{
 		focusDist = 1;  // should never happen
 	}
-	cg.refdefViewAngles[PITCH] = -180 / M_PI * atan2(focusPoint[2], focusDist);
+	cg.refdefViewAngles[PITCH] = -180 / M_PI *atan2(focusPoint[2], focusDist);
 	cg.refdefViewAngles[YAW]  -= cg_thirdPersonAngle.value;
 }
 
@@ -2050,274 +2050,274 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
 
 void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback)
 {
-	int inwater;
+    int inwater;
 
 #ifdef DEBUGTIME_ENABLED
-	int dbgTime = trap_Milliseconds(), elapsed;
-	int dbgCnt  = 0;
+    int dbgTime = trap_Milliseconds(), elapsed;
+    int dbgCnt  = 0;
 #endif
 
-	cg.time         = serverTime;
-	cgDC.realTime   = cg.time;
-	cg.demoPlayback = demoPlayback;
+    cg.time         = serverTime;
+    cgDC.realTime   = cg.time;
+    cg.demoPlayback = demoPlayback;
 
 #ifdef FAKELAG
-	cg.time -= snapshotDelayTime;
+    cg.time -= snapshotDelayTime;
 #endif // _DEBUG
 
 
 #ifdef DEBUGTIME_ENABLED
-	CG_Printf("\n");
+    CG_Printf("\n");
 #endif
-	DEBUGTIME
+    DEBUGTIME
 
-	// update cvars
-	CG_UpdateCvars();
+    // update cvars
+    CG_UpdateCvars();
 
-	DEBUGTIME
+    DEBUGTIME
 
-	// if we are only updating the screen as a loading
-	// pacifier, don't even try to read snapshots
-	if (cg.infoScreenText[0] != 0)
-	{
-		CG_DrawInformation(qfalse);
-		return;
+    // if we are only updating the screen as a loading
+    // pacifier, don't even try to read snapshots
+    if (cg.infoScreenText[0] != 0)
+    {
+        CG_DrawInformation(qfalse);
+        return;
 	}
 
-	CG_PB_ClearPolyBuffers();
+    CG_PB_ClearPolyBuffers();
 
-	CG_UpdatePMLists();
+    CG_UpdatePMLists();
 
-	// any looped sounds will be respecified as entities
-	// are added to the render list
-	trap_S_ClearLoopingSounds();
+    // any looped sounds will be respecified as entities
+    // are added to the render list
+    trap_S_ClearLoopingSounds();
 
-	CG_UpdateBufferedSoundScripts();
+    CG_UpdateBufferedSoundScripts();
 
-	DEBUGTIME
+    DEBUGTIME
 
-	// set up cg.snap and possibly cg.nextSnap
-	CG_ProcessSnapshots();
+    // set up cg.snap and possibly cg.nextSnap
+    CG_ProcessSnapshots();
 
-	DEBUGTIME
+    DEBUGTIME
 
-	// if we haven't received any snapshots yet, all
-	// we can draw is the information screen
-	if (!cg.snap || (cg.snap->snapFlags & SNAPFLAG_NOT_ACTIVE))
-	{
-		CG_DrawInformation(qfalse);
-		return;
+    // if we haven't received any snapshots yet, all
+    // we can draw is the information screen
+    if (!cg.snap || (cg.snap->snapFlags & SNAPFLAG_NOT_ACTIVE))
+    {
+        CG_DrawInformation(qfalse);
+        return;
 	}
 
-	// check for server set weapons we might not know about
-	// (FIXME: this is a hack for the time being since a scripted "selectweapon" does
-	// not hit the first snap, the server weapon set in cg_playerstate.c line 219 doesn't
-	// do the trick)
-	if (!cg.weaponSelect && cg.snap->ps.weapon)
-	{
-		cg.weaponSelect     = cg.snap->ps.weapon;
-		cg.weaponSelectTime = cg.time;
+    // check for server set weapons we might not know about
+    // (FIXME: this is a hack for the time being since a scripted "selectweapon" does
+    // not hit the first snap, the server weapon set in cg_playerstate.c line 219 doesn't
+    // do the trick)
+    if (!cg.weaponSelect && cg.snap->ps.weapon)
+    {
+        cg.weaponSelect     = cg.snap->ps.weapon;
+        cg.weaponSelectTime = cg.time;
 	}
 
-	if (cg.weaponSelect == WP_FG42SCOPE)
-	{
-		float spd;
-		spd = VectorLength(cg.snap->ps.velocity);
-		if (spd > 180.0f)
-		{
-			CG_FinishWeaponChange(WP_FG42SCOPE, WP_FG42);
+    if (cg.weaponSelect == WP_FG42SCOPE)
+    {
+        float spd;
+        spd = VectorLength(cg.snap->ps.velocity);
+        if (spd > 180.0f)
+        {
+            CG_FinishWeaponChange(WP_FG42SCOPE, WP_FG42);
 		}
 	}
 
-	DEBUGTIME
+    DEBUGTIME
 
-	if (!cg.lightstylesInited)
-	{
-		CG_SetupDlightstyles();
+    if (!cg.lightstylesInited)
+    {
+        CG_SetupDlightstyles();
 	}
 
-	DEBUGTIME
+    DEBUGTIME
 
-	// if we have been told not to render, don't
-	if (cg_norender.integer)
-	{
-		return;
+    // if we have been told not to render, don't
+    if (cg_norender.integer)
+    {
+        return;
 	}
 
-	// this counter will be bumped for every valid scene we generate
-	cg.clientFrame++;
+    // this counter will be bumped for every valid scene we generate
+    cg.clientFrame++;
 
-	// update cg.predictedPlayerState
-	CG_PredictPlayerState();
+    // update cg.predictedPlayerState
+    CG_PredictPlayerState();
 
-	DEBUGTIME
+    DEBUGTIME
 
 
-	// OSP -- MV handling
-	if (cg.mvCurrentMainview != NULL && cg.snap->ps.pm_type != PM_INTERMISSION)
-	{
-		CG_mvDraw(cg.mvCurrentMainview);
-		// FIXME: not valid for demo playback
-		cg.zoomSensitivity = mv_sensitivity.value / int_sensitivity.value;
+    // OSP -- MV handling
+    if (cg.mvCurrentMainview != NULL && cg.snap->ps.pm_type != PM_INTERMISSION)
+    {
+        CG_mvDraw(cg.mvCurrentMainview);
+        // FIXME: not valid for demo playback
+        cg.zoomSensitivity = mv_sensitivity.value / int_sensitivity.value;
 	}
-	else
-	{
-		// clear all the render lists
-		trap_R_ClearScene();
+    else
+    {
+        // clear all the render lists
+        trap_R_ClearScene();
 
-		DEBUGTIME
+        DEBUGTIME
 
-		// decide on third person view
-		cg.renderingThirdPerson = cg_thirdPerson.integer || (cg.snap->ps.stats[STAT_HEALTH] <= 0) || cg.showGameView;
+        // decide on third person view
+        cg.renderingThirdPerson = cg_thirdPerson.integer || (cg.snap->ps.stats[STAT_HEALTH] <= 0) || cg.showGameView;
 
-		// build cg.refdef
-		inwater = CG_CalcViewValues();
-		CG_SetupFrustum();
+        // build cg.refdef
+        inwater = CG_CalcViewValues();
+        CG_SetupFrustum();
 
-		DEBUGTIME
+        DEBUGTIME
 
-		// RF, draw the skyboxportal
-		CG_DrawSkyBoxPortal(qtrue);
+        // RF, draw the skyboxportal
+        CG_DrawSkyBoxPortal(qtrue);
 
-		DEBUGTIME
+        DEBUGTIME
 
-		if (inwater)
-		{
-			CG_UnderwaterSounds();
+        if (inwater)
+        {
+            CG_UnderwaterSounds();
 		}
 
-		DEBUGTIME
+        DEBUGTIME
 
-		// first person blend blobs, done after AnglesToAxis
-		if (!cg.renderingThirdPerson)
-		{
-			CG_DamageBlendBlob();
+        // first person blend blobs, done after AnglesToAxis
+        if (!cg.renderingThirdPerson)
+        {
+            CG_DamageBlendBlob();
 		}
 
-		DEBUGTIME
+        DEBUGTIME
 
-		// build the render lists
-		if (!cg.hyperspace)
-		{
-			CG_AddPacketEntities();         // adter calcViewValues, so predicted player state is correct
-			CG_AddMarks();
+        // build the render lists
+        if (!cg.hyperspace)
+        {
+            CG_AddPacketEntities();         // adter calcViewValues, so predicted player state is correct
+            CG_AddMarks();
 
-			DEBUGTIME
+            DEBUGTIME
 
-			CG_AddScriptSpeakers();
+            CG_AddScriptSpeakers();
 
-			DEBUGTIME
+            DEBUGTIME
 
-			// Rafael particles
-			CG_AddParticles();
-			// done.
+            // Rafael particles
+            CG_AddParticles();
+            // done.
 
-			DEBUGTIME
+            DEBUGTIME
 
-			CG_AddLocalEntities();
+            CG_AddLocalEntities();
 
-			DEBUGTIME
+            DEBUGTIME
 
-			CG_AddSmokeSprites();
+            CG_AddSmokeSprites();
 
-			DEBUGTIME
+            DEBUGTIME
 
-			CG_AddAtmosphericEffects();
+            CG_AddAtmosphericEffects();
 		}
 
-		// Rafael mg42
-		if (!cg.showGameView && !cgs.dbShowing)
-		{
-			if (!cg.snap->ps.persistant[PERS_HWEAPON_USE])
-			{
-				CG_AddViewWeapon(&cg.predictedPlayerState);
+        // Rafael mg42
+        if (!cg.showGameView && !cgs.dbShowing)
+        {
+            if (!cg.snap->ps.persistant[PERS_HWEAPON_USE])
+            {
+                CG_AddViewWeapon(&cg.predictedPlayerState);
 			}
-			else
-			{
-				if (cg.time - cg.predictedPlayerEntity.overheatTime < 3000)
-				{
-					vec3_t muzzle;
+            else
+            {
+                if (cg.time - cg.predictedPlayerEntity.overheatTime < 3000)
+                {
+                    vec3_t muzzle;
 
-					CG_CalcMuzzlePoint(cg.snap->ps.clientNum, muzzle);
+                    CG_CalcMuzzlePoint(cg.snap->ps.clientNum, muzzle);
 
-					muzzle[2] -= 32;
+                    muzzle[2] -= 32;
 
-					if (!(rand() % 3))
-					{
-						float alpha;
-						alpha  = 1.0f - ((float)(cg.time - cg.predictedPlayerEntity.overheatTime) / 3000.0f);
-						alpha *= 0.25f;     // .25 max alpha
-						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, muzzle, 1000, 8, 20, 30, alpha, 8.f);
+                    if (!(rand() % 3))
+                    {
+                        float alpha;
+                        alpha  = 1.0f - ((float)(cg.time - cg.predictedPlayerEntity.overheatTime) / 3000.0f);
+                        alpha *= 0.25f;     // .25 max alpha
+                        CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, muzzle, 1000, 8, 20, 30, alpha, 8.f);
 					}
 				}
 			}
 		}
 
-		// NERVE - SMF - play buffered voice chats
-		CG_PlayBufferedVoiceChats();
+        // NERVE - SMF - play buffered voice chats
+        CG_PlayBufferedVoiceChats();
 
-		DEBUGTIME
-		// Ridah, trails
-		if (!cg.hyperspace)
-		{
-			CG_AddFlameChunks();
-			CG_AddTrails();         // this must come last, so the trails dropped this frame get drawn
+        DEBUGTIME
+        // Ridah, trails
+        if (!cg.hyperspace)
+        {
+            CG_AddFlameChunks();
+            CG_AddTrails();         // this must come last, so the trails dropped this frame get drawn
 		}
-		// done.
+        // done.
 
-		DEBUGTIME
+        DEBUGTIME
 
-		// finish up the rest of the refdef
-		if (cg.testModelEntity.hModel)
-		{
-			CG_AddTestModel();
+        // finish up the rest of the refdef
+        if (cg.testModelEntity.hModel)
+        {
+            CG_AddTestModel();
 		}
-		cg.refdef.time = cg.time;
-		memcpy(cg.refdef.areamask, cg.snap->areamask, sizeof(cg.refdef.areamask));
+        cg.refdef.time = cg.time;
+        memcpy(cg.refdef.areamask, cg.snap->areamask, sizeof(cg.refdef.areamask));
 
-		DEBUGTIME
+        DEBUGTIME
 
-		// warning sounds when powerup is wearing off
-		//CG_PowerupTimerSounds();
+        // warning sounds when powerup is wearing off
+        //CG_PowerupTimerSounds();
 
-		// make sure the lagometerSample and frame timing isn't done twice when in stereo
-		if (stereoView != STEREO_RIGHT)
-		{
-			cg.frametime = cg.time - cg.oldTime;
-			if (cg.frametime < 0)
-			{
-				cg.frametime = 0;
+        // make sure the lagometerSample and frame timing isn't done twice when in stereo
+        if (stereoView != STEREO_RIGHT)
+        {
+            cg.frametime = cg.time - cg.oldTime;
+            if (cg.frametime < 0)
+            {
+                cg.frametime = 0;
 			}
-			cg.oldTime = cg.time;
-			CG_AddLagometerFrameInfo();
+            cg.oldTime = cg.time;
+            CG_AddLagometerFrameInfo();
 		}
 
-		DEBUGTIME
+        DEBUGTIME
 
-		// Ridah, fade the screen
-		CG_DrawScreenFade();
+        // Ridah, fade the screen
+        CG_DrawScreenFade();
 
-		DEBUGTIME
+        DEBUGTIME
 
-		// DHM - Nerve :: let client system know our predicted origin
-		trap_SetClientLerpOrigin(cg.refdef.vieworg[0], cg.refdef.vieworg[1], cg.refdef.vieworg[2]);
+        // DHM - Nerve :: let client system know our predicted origin
+        trap_SetClientLerpOrigin(cg.refdef.vieworg[0], cg.refdef.vieworg[1], cg.refdef.vieworg[2]);
 
-		// actually issue the rendering calls
-		CG_DrawActive(stereoView);
+        // actually issue the rendering calls
+        CG_DrawActive(stereoView);
 
-		DEBUGTIME
+        DEBUGTIME
 
-		// update audio positions
-		trap_S_Respatialize(cg.snap->ps.clientNum, cg.refdef.vieworg, cg.refdef.viewaxis, inwater);
+        // update audio positions
+        trap_S_Respatialize(cg.snap->ps.clientNum, cg.refdef.vieworg, cg.refdef.viewaxis, inwater);
 	}
 
-	if (cg_stats.integer)
-	{
-		CG_Printf("cg.clientFrame:%i\n", cg.clientFrame);
+    if (cg_stats.integer)
+    {
+        CG_Printf("cg.clientFrame:%i\n", cg.clientFrame);
 	}
 
-	DEBUGTIME
+    DEBUGTIME
 
-	// let the client system know what our weapon, holdable item and zoom settings are
-	trap_SetUserCmdValue(cg.weaponSelect, cg.showGameView ? 0x01 : 0x00, cg.zoomSensitivity, cg.identifyClientRequest);
+    // let the client system know what our weapon, holdable item and zoom settings are
+    trap_SetUserCmdValue(cg.weaponSelect, cg.showGameView ? 0x01 : 0x00, cg.zoomSensitivity, cg.identifyClientRequest);
 }

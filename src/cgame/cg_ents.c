@@ -2539,7 +2539,7 @@ static void CG_ProcessEntity(centity_t *cent)
 		CG_Corona(cent);
 		break;
 	/*case ET_BOMB: // was TRIPMINE
-		break;*/
+	    break;*/
 	case ET_BEAM_2:
 		CG_Beam_2(cent);
 		break;
