@@ -55,10 +55,6 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	int       hitTime;
 	gentity_t *ground;
 
-//  if(ent->s.weapon == WP_GPG40 || ent->s.weapon == WP_M7) {
-//      G_ExplodeMissile( ent );
-//      return;
-//  }
 	// boom after 750 msecs
 	if (ent->s.weapon == WP_M7 || ent->s.weapon == WP_GPG40)
 	{
@@ -143,7 +139,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 		if (trace->plane.normal[2] > 0.2 && VectorLengthSquared(relativeDelta) < SQR(40))
 		{
 //----(SA)  make the world the owner of the dynamite, so the player can shoot it after it stops moving
-			if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_TRIPMINE || ent->s.weapon == WP_SMOKE_BOMB)
+			if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB)
 			{
 				ent->r.ownerNum = ENTITYNUM_WORLD;
 			}
@@ -226,13 +222,6 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 //      }
 		return;
 	}
-
-	// Gordon: unused?
-	/*  if (other->takedamage && ent->s.density == 1)
-	    {
-	        G_ExplodeMissilePoisonGas (ent);
-	        return;
-	    }*/
 
 	// impact damage
 	if (other->takedamage || other->dmgparent)
@@ -372,7 +361,6 @@ void M_think(gentity_t *ent)
 	tent->s.angles2[2] = 50;
 
 	ent->nextthink = level.time + FRAMETIME;
-
 }
 
 /*
@@ -388,7 +376,6 @@ void G_ExplodeMissile(gentity_t *ent)
 	vec3_t   origin;
 	qboolean small = qfalse;
 	int      etype;
-
 
 	if (ent->s.weapon == WP_SMOKE_MARKER && ent->active)
 	{
@@ -552,7 +539,7 @@ void G_ExplodeMissile(gentity_t *ent)
 		// give big weapons the shakey shakey
 		if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_PANZERFAUST || ent->s.weapon == WP_GRENADE_LAUNCHER ||
 		    ent->s.weapon == WP_GRENADE_PINEAPPLE || ent->s.weapon == WP_MAPMORTAR || ent->s.weapon == WP_ARTY || ent->s.weapon == WP_SMOKE_MARKER
-		    || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_TRIPMINE     /*|| ent->s.weapon == WP_SMOKE_BOMB*/
+		    || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL /*|| ent->s.weapon == WP_SMOKE_BOMB*/
 		    )
 		{
 
@@ -581,44 +568,6 @@ void G_MissileDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, in
 
 /*
 ================
-G_ExplodeMissilePoisonGas
-
-Explode a missile without an impact
-================
-*/
-/*void G_ExplodeMissilePoisonGas( gentity_t *ent ) {
-    vec3_t      dir;
-    vec3_t      origin;
-
-    BG_EvaluateTrajectory( &ent->s.pos, level.time, origin );
-    SnapVector( origin );
-    G_SetOrigin( ent, origin );
-
-    // we don't have a valid direction, so just point straight up
-    dir[0] = dir[1] = 0;
-    dir[2] = 1;
-
-    ent->freeAfterEvent = qtrue;
-
-
-    {
-        gentity_t *gas;
-
-        gas = G_Spawn();
-        gas->think = gas_think;
-        gas->nextthink = level.time + FRAMETIME;
-        gas->r.contents = CONTENTS_TRIGGER;
-        gas->touch = gas_touch;
-        gas->health = 100;
-        G_SetOrigin (gas, origin);
-
-        trap_LinkEntity (gas);
-    }
-
-}*/
-
-/*
-================
 G_RunBomb
 ================
 */
@@ -635,7 +584,6 @@ Landmine_Check_Ground
 
 =================
 */
-
 void Landmine_Check_Ground(gentity_t *self)
 {
 	vec3_t  mins, maxs;
@@ -1769,59 +1717,6 @@ void LandMinePostTrigger(gentity_t *self)
 	self->think     = G_ExplodeMissile;
 }
 
-
-/*
-==========
-G_TripMineThink
-==========
-*/
-
-void G_TripMineThink(gentity_t *ent)
-{
-	trace_t   trace;
-	vec3_t    start, end;
-	gentity_t *traceEnt;
-
-	VectorMA(ent->r.currentOrigin, 2, ent->s.origin2, start);
-	VectorMA(start, 2048, ent->s.origin2, end);
-
-	trap_Trace(&trace, start, NULL, NULL, end, ent->s.number, MASK_SHOT);
-
-	ent->nextthink = level.time + FRAMETIME;
-
-	if (trace.fraction == 1.f)     // Gordon: shouldnt really happen once we do a proper range check on placing
-	{   /*      ent->nextthink = level.time;
-		        ent->think = DynaSink;
-		        ent->timestamp = level.time + 1500;*/
-		return;
-	}
-
-	if (trace.entityNum >= ENTITYNUM_NONE)
-	{
-		return;
-	}
-
-	traceEnt = &g_entities[trace.entityNum];
-
-	if (!Q_stricmp(traceEnt->classname, "player"))
-	{
-		ent->think = G_ExplodeMissile;
-//      return;
-	}
-}
-
-/*
-==========
-G_TripMinePrime
-==========
-*/
-
-void G_TripMinePrime(gentity_t *ent)
-{
-	ent->think     = G_TripMineThink;
-	ent->nextthink = level.time + 500;
-}
-
 /*107     11      20      0       0       0       0       //fire gren
 
 ==========
@@ -2216,7 +2111,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 
 // JPW NERVE -- blast radius proportional to damage
 	bolt->splashRadius = G_GetWeaponDamage(grenadeWPID);
-// jpw
 
 	bolt->clipmask = MASK_MISSILESHOT;
 
@@ -2275,7 +2169,6 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->splashRadius        = 300; //G_GetWeaponDamage(WP_PANZERFAUST);  // Arnout : hardcoded bleh hack
 	bolt->methodOfDeath       = MOD_PANZERFAUST;
 	bolt->splashMethodOfDeath = MOD_PANZERFAUST;
-//  bolt->clipmask = MASK_SHOT;
 	bolt->clipmask = MASK_MISSILESHOT;
 
 	bolt->s.pos.trType = TR_LINEAR;
@@ -2283,7 +2176,7 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 	VectorCopy(start, bolt->s.pos.trBase);
 // JPW NERVE
 	VectorScale(dir, 2500, bolt->s.pos.trDelta);
-// jpw
+
 	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
 	VectorCopy(start, bolt->r.currentOrigin);
 
@@ -2296,12 +2189,12 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 }
 
 // Rafael flamebarrel
+
 /*
 ======================
 fire_flamebarrel
 ======================
 */
-
 gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 {
 	gentity_t *bolt;
@@ -2342,15 +2235,14 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 }
 
 // Rafael sniper
+
 /*
 =================
 fire_lead
 =================
 */
-
 void fire_lead(gentity_t *self, vec3_t start, vec3_t dir, int damage)
 {
-
 	trace_t   tr;
 	vec3_t    end;
 	gentity_t *tent;
@@ -2358,7 +2250,6 @@ void fire_lead(gentity_t *self, vec3_t start, vec3_t dir, int damage)
 	vec3_t    forward, right, up;
 	vec3_t    angles;
 	float     r, u;
-//  qboolean anti_tank_enable = qfalse;
 
 	r = crandom() * self->random;
 	u = crandom() * self->random;
@@ -2400,7 +2291,6 @@ void fire_lead(gentity_t *self, vec3_t start, vec3_t dir, int damage)
 		VectorNormalize(reflect);
 
 		tent->s.eventParm = DirToByte(reflect);
-		// done.
 	}
 	tent->s.otherEntityNum = self->s.number;
 
@@ -2411,9 +2301,7 @@ void fire_lead(gentity_t *self, vec3_t start, vec3_t dir, int damage)
 	}
 }
 
-
 // Rafael sniper
-// visible
 
 /*
 ==============
@@ -2422,8 +2310,6 @@ visible
 */
 qboolean visible(gentity_t *self, gentity_t *other)
 {
-//  vec3_t      spot1;
-//  vec3_t      spot2;
 	trace_t   tr;
 	gentity_t *traceEnt;
 
@@ -2437,7 +2323,6 @@ qboolean visible(gentity_t *self, gentity_t *other)
 	}
 
 	return qfalse;
-
 }
 
 
