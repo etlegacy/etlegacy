@@ -1221,7 +1221,7 @@
 
 { "ReadyToConstruct", (byte *)ReadyToConstruct },
 { "ReadyToCallArtillery", (byte *)ReadyToCallArtillery },
-{ "ClientNeedsAmmo", (byte *)ClientNeedsAmmo },
+
 { "PushBot", (byte *)PushBot },
 { "G_SetClientSound", (byte *)G_SetClientSound },
 { "P_WorldEffects", (byte *)P_WorldEffects },

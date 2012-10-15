@@ -1223,7 +1223,7 @@ extern void ClientImpacts(gentity_t *ent, pmove_t *pm) ;
 
 extern qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean updateState) ;
 extern qboolean ReadyToCallArtillery(gentity_t *ent) ;
-extern qboolean ClientNeedsAmmo(int client) ;
+
 extern void PushBot(gentity_t *ent, gentity_t *other) ;
 extern void G_SetClientSound(gentity_t *ent) ;
 extern void P_WorldEffects(gentity_t *ent) ;

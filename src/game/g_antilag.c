@@ -262,7 +262,7 @@ int G_SwitchBodyPartEntity(gentity_t *ent)
 }
 
 #define POSITION_READJUST                       \
-	if (res != results->entityNum) {               \
+    if (res != results->entityNum) {               \
 		VectorSubtract(end, start, dir);          \
 		VectorNormalizeFast(dir);             \
                                     \

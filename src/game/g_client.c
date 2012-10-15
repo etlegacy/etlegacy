@@ -1552,6 +1552,9 @@ void ClientUserinfoChanged(int clientNum)
 		client->sess.referee     = RL_REFEREE;
 	}
 
+	// added for zinx etpro antiwarp
+	client->pers.pmoveMsec = pmove_msec.integer;
+
 	// OSP - extra client info settings
 	//		 FIXME: move other userinfo flag settings in here
 	if (ent->r.svFlags & SVF_BOT)
@@ -1560,6 +1563,7 @@ void ClientUserinfoChanged(int clientNum)
 		client->pers.bAutoReloadAux    = qtrue;
 		client->pmext.bAutoReload      = qtrue;
 		client->pers.predictItemPickup = qfalse;
+		client->pers.pmoveFixed        = qfalse;
 	}
 	else
 	{

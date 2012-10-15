@@ -2168,7 +2168,7 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->splashRadius        = 300; //G_GetWeaponDamage(WP_PANZERFAUST);  // Arnout : hardcoded bleh hack
 	bolt->methodOfDeath       = MOD_PANZERFAUST;
 	bolt->splashMethodOfDeath = MOD_PANZERFAUST;
-	bolt->clipmask = MASK_MISSILESHOT;
+	bolt->clipmask            = MASK_MISSILESHOT;
 
 	bolt->s.pos.trType = TR_LINEAR;
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame

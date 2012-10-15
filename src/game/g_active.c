@@ -290,16 +290,6 @@ void PushBot(gentity_t *ent, gentity_t *other)
 }
 #endif
 
-/*
-==============
-ClientNeedsAmmo
-==============
-*/
-qboolean ClientNeedsAmmo(int client)
-{
-	return AddMagicAmmo(&g_entities[client], 0) ? qtrue : qfalse;
-}
-
 // Does ent have enough "energy" to call artillery?
 qboolean ReadyToCallArtillery(gentity_t *ent)
 {
@@ -1075,27 +1065,48 @@ void ClientThink_real(gentity_t *ent)
 		client->pmext.centerangles[PITCH] = ent->tagParent->r.currentAngles[PITCH];
 	}
 
-/*	if (client->cameraPortal) {
-        G_SetOrigin( client->cameraPortal, client->ps.origin );
-        trap_LinkEntity(client->cameraPortal);
-        VectorCopy( client->cameraOrigin, client->cameraPortal->s.origin2);
-    }*/
+	/*if (client->cameraPortal) {
+	    G_SetOrigin( client->cameraPortal, client->ps.origin );
+	    trap_LinkEntity(client->cameraPortal);
+	    VectorCopy( client->cameraOrigin, client->cameraPortal->s.origin2);
+	}*/
 
 	// mark the time, so the connection sprite can be removed
 	ucmd = &ent->client->pers.cmd;
 
 	ent->client->ps.identifyClient = ucmd->identClient;     // NERVE - SMF
 
+	// zinx etpro antiwarp
+	if (client->warping && g_maxWarp.integer && G_DoAntiwarp(ent))
+	{
+		int frames = (level.framenum - client->lastUpdateFrame);
+
+		if (frames > g_maxWarp.integer)
+		{
+			frames = g_maxWarp.integer;
+		}
+		// if the difference between commandTime and the last command
+		// time is small, you won't move as far since it's doing
+		// velocity*time for updating your position
+		client->ps.commandTime = level.previousTime -
+		                         (frames  * (level.time - level.previousTime));
+		client->warped = qtrue;
+	}
+
+	client->warping         = qfalse;
+	client->lastUpdateFrame = level.framenum;
+	// end zinx etpro antiwarp
+
 	// sanity check the command time to prevent speedup cheating
-	if (ucmd->serverTime > level.time + 200)
+	if (ucmd->serverTime > level.time + 200 && !G_DoAntiwarp(ent))
 	{
 		ucmd->serverTime = level.time + 200;
-//		G_Printf("serverTime <<<<<\n" );
+		//		G_Printf("serverTime <<<<<\n" );
 	}
-	if (ucmd->serverTime < level.time - 1000)
+	if (ucmd->serverTime < level.time - 1000 && !G_DoAntiwarp(ent))
 	{
 		ucmd->serverTime = level.time - 1000;
-//		G_Printf("serverTime >>>>>\n" );
+		//		G_Printf("serverTime >>>>>\n" );
 	}
 
 	msec = ucmd->serverTime - client->ps.commandTime;
@@ -1110,9 +1121,22 @@ void ClientThink_real(gentity_t *ent)
 		msec = 200;
 	}
 
-	if (pmove_fixed.integer || client->pers.pmoveFixed)
+	// pmove fix
+	if (pmove_msec.integer < 8)
 	{
-		ucmd->serverTime = ((ucmd->serverTime + pmove_msec.integer - 1) / pmove_msec.integer) * pmove_msec.integer;
+		trap_Cvar_Set("pmove_msec", "8");
+	}
+	else if (pmove_msec.integer > 33)
+	{
+		trap_Cvar_Set("pmove_msec", "33");
+	}
+
+	// zinx etpro antiwarp
+	client->pers.pmoveMsec = pmove_msec.integer;
+	if (G_DoAntiwarp(ent) && (pmove_fixed.integer || client->pers.pmoveFixed))
+	{
+		ucmd->serverTime = ((ucmd->serverTime + client->pers.pmoveMsec - 1) /
+		                    client->pers.pmoveMsec) * client->pers.pmoveMsec;
 	}
 
 	if (client->wantsscore)
@@ -1121,9 +1145,7 @@ void ClientThink_real(gentity_t *ent)
 		client->wantsscore = qfalse;
 	}
 
-	//
 	// check for exiting intermission
-	//
 	if (level.intermissiontime)
 	{
 		ClientIntermissionThink(client);
@@ -1508,6 +1530,14 @@ void ClientThink_real(gentity_t *ent)
 	}
 }
 
+// zinx etpro antiwarp
+void ClientThink_cmd(gentity_t *ent, usercmd_t *cmd)
+{
+	ent->client->pers.oldcmd = ent->client->pers.cmd;
+	ent->client->pers.cmd    = *cmd;
+	ClientThink_real(ent);
+}
+
 /*
 ==================
 ClientThink
@@ -1531,10 +1561,18 @@ void ClientThink(int clientNum)
 	if (!g_synchronousClients.integer)
 #endif // ALLOW_GSYNC
 	{
-		ClientThink_real(ent);
+		if (G_DoAntiwarp(ent))
+		{
+			// zinx etpro antiwarp
+			etpro_AddUsercmd(clientNum, &ent->client->pers.cmd);
+			DoClientThinks(ent);
+		}
+		else
+		{
+			ClientThink_cmd(ent, &ent->client->pers.cmd);
+		}
 	}
 }
-
 
 void G_RunClient(gentity_t *ent)
 {
@@ -1898,7 +1936,7 @@ while a slow client may have multiple ClientEndFrame between ClientThink.
 void ClientEndFrame(gentity_t *ent)
 {
 	int i;
-
+	int frames;
 
 	// used for informing of speclocked teams.
 	// Zero out here and set only for certain specs
@@ -2057,6 +2095,14 @@ void ClientEndFrame(gentity_t *ent)
 
 	// run entity scripting
 	G_Script_ScriptRun(ent);
+
+	// zinx etpro antiwarp
+	frames = level.framenum - ent->client->lastUpdateFrame - 1;
+	if (g_maxWarp.integer && frames > g_maxWarp.integer && G_DoAntiwarp(ent))
+	{
+		ent->client->warping = qtrue;
+	}
+	ent->client->warped = qfalse;
 
 	// store the client's current position for antilag traces
 	G_StoreClientPosition(ent);

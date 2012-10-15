@@ -241,6 +241,10 @@ vmCvar_t g_nextcampaign;
 
 vmCvar_t g_disableComplaints;
 
+// zinx etpro antiwarp
+vmCvar_t g_antiwarp;
+vmCvar_t g_maxWarp;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -463,6 +467,10 @@ cvarTable_t gameCvarTable[] =
 	{ &g_nextcampaign,            "nextcampaign",              "",                                                       CVAR_TEMP },
 
 	{ &g_disableComplaints,       "g_disableComplaints",       "0",                                                      CVAR_ARCHIVE },
+
+	// zinx etpro antiwarp
+	{ &g_maxWarp,                 "g_maxWarp",                 "4",                                                      0 },
+	{ &g_antiwarp,                "g_antiwarp",                "1",                                                      0 },
 };
 
 // bk001129 - made static to avoid aliasing

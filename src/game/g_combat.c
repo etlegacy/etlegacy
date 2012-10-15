@@ -337,7 +337,7 @@ char *modNames[] =
 	"MOD_M7",
 	"MOD_LANDMINE",
 	"MOD_SATCHEL",
-	"MOD_TRIPMINE",	// unused
+	"MOD_TRIPMINE",                          // unused
 	"MOD_SMOKEBOMB",
 	"MOD_MOBILE_MG42",
 	"MOD_SILENCED_COLT",
