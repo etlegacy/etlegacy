@@ -66,7 +66,6 @@ static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =
 	{ WP_AMMO,                 WS_MAX             },
 	{ WP_ARTY,                 WS_ARTILLERY       },
 
-
 	{ WP_SILENCER,             WS_LUGER           }, // 20
 	{ WP_DYNAMITE,             WS_DYNAMITE        },
 	{ WP_SMOKETRAIL,           WS_ARTILLERY       },
@@ -84,15 +83,15 @@ static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =
 	{ WP_LANDMINE,             WS_LANDMINE        }, // 35
 	{ WP_SATCHEL,              WS_MAX             },
 	{ WP_SATCHEL_DET,          WS_SATCHEL         },
-	{ WP_TRIPMINE,             WS_LANDMINE        },
-	{ WP_SMOKE_BOMB,           WS_SMOKE           },
+	{ WP_TRIPMINE,             WS_LANDMINE        }, // unused
+	{ WP_SMOKE_BOMB,           WS_SMOKE           }, // unused
 
 	{ WP_MOBILE_MG42,          WS_MG42            }, // 40
 	{ WP_MOBILE_MG42_SET,      WS_MG42            },
 	{ WP_K43,                  WS_K43             },
 	{ WP_FG42,                 WS_FG42            },
 	{ WP_DUMMY_MG42,           WS_MG42            }, // ??
-	{ WP_LOCKPICK,             WS_MAX             },
+	{ WP_LOCKPICK,             WS_MAX             }, // unused
 
 	{ WP_GPG40,                WS_GRENADELAUNCHER },
 	{ WP_M7,                   WS_GRENADELAUNCHER },
@@ -109,7 +108,6 @@ static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =
 	{ WP_AKIMBO_COLT,          WS_COLT            },
 	{ WP_AKIMBO_LUGER,         WS_LUGER           },
 };
-
 
 // Get right stats index based on weapon id
 extWeaponStats_t BG_WeapStatForWeapon(weapon_t iWeaponID)
