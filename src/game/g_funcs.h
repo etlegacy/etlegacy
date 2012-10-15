@@ -166,7 +166,7 @@
 { "Weapon_Syringe", (byte *)Weapon_Syringe },
 { "ReviveEntity", (byte *)ReviveEntity },
 { "Weapon_MagicAmmo", (byte *)Weapon_MagicAmmo },
-{ "G_PlaceTripmine", (byte *)G_PlaceTripmine },
+
 { "Weapon_Medic", (byte *)Weapon_Medic },
 { "MagicSink", (byte *)MagicSink },
 { "Weapon_Knife", (byte *)Weapon_Knife },
@@ -866,8 +866,7 @@
 { "LandminePostThink", (byte *)LandminePostThink },
 { "G_LandmineThink", (byte *)G_LandmineThink },
 { "sEntWillTriggerMine", (byte *)sEntWillTriggerMine },
-{ "G_TripMinePrime", (byte *)G_TripMinePrime },
-{ "G_TripMineThink", (byte *)G_TripMineThink },
+
 { "LandMinePostTrigger", (byte *)LandMinePostTrigger },
 { "LandMineTrigger", (byte *)LandMineTrigger },
 { "G_FreeSatchel", (byte *)G_FreeSatchel },

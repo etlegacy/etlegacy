@@ -67,7 +67,6 @@ void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, cons
 	MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, entity->axis);
 }
 
-
 /*
 ======================
 CG_PositionRotatedEntityOnTag
@@ -97,7 +96,6 @@ void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *paren
 	MatrixMultiply(entity->axis, lerped.axis, tempAxis);
 	MatrixMultiply(tempAxis, ((refEntity_t *)parent)->axis, entity->axis);
 }
-
 
 /*
 ==========================================================================
@@ -131,11 +129,7 @@ void CG_SetEntitySoundPosition(centity_t *cent)
 	}
 }
 
-
-
-
 #define LS_FRAMETIME 100 // (ms)  cycle through lightstyle characters at 10fps
-
 
 /*
 ==============
@@ -398,10 +392,6 @@ static void CG_EntityEffects(centity_t *cent)
 			             cg.time, 0, 0, cgs.media.smokePuffShader);
 		}
 	}
-// jpw
-
-
-
 }
 
 /*
@@ -441,7 +431,6 @@ static void CG_General(centity_t *cent)
 			ent.fadeStartTime = cent->currentState.time;
 			ent.fadeEndTime   = cent->currentState.time2;
 		}
-
 	}
 
 	VectorCopy(cent->lerpOrigin, ent.origin);
@@ -699,9 +688,7 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 	}
 
 	return qtrue;
-
 }
-
 
 /*
 ==================
@@ -838,7 +825,6 @@ static void CG_Item(centity_t *cent)
 		}
 	}
 
-
 	if (es->modelindex2)       // modelindex2 was specified for the ent, meaning it probably has an alternate model (as opposed to the one in the itemlist)
 	{   // try to load it first, and if it fails, default to the itemlist model
 		ent.hModel = cgs.gameModels[es->modelindex2];
@@ -961,63 +947,6 @@ static void CG_Item(centity_t *cent)
 }
 
 //============================================================================
-
-/*
-===============
-CG_Bomb
-===============
-*/
-
-static void CG_Bomb(centity_t *cent)
-{
-	refEntity_t        ent, beam;
-	entityState_t      *s1;
-	const weaponInfo_t *weapon;
-	vec3_t             end;
-	trace_t            trace;
-
-	memset(&ent, 0, sizeof(ent));
-
-	s1 = &cent->currentState;
-
-	weapon = &cg_weapons[WP_TRIPMINE];
-
-	VectorCopy(s1->origin2, ent.axis[0]);
-	PerpendicularVector(ent.axis[1], ent.axis[0]);
-	CrossProduct(ent.axis[0], ent.axis[1], ent.axis[2]);
-
-	VectorCopy(cent->lerpOrigin, ent.origin);
-	VectorCopy(cent->lerpOrigin, ent.oldorigin);
-
-	ent.hModel   = weapon->missileModel;
-	ent.renderfx = weapon->missileRenderfx | RF_NOSHADOW;
-
-	CG_AddRefEntityWithPowerups(&ent, s1->powerups, TEAM_FREE, s1, vec3_origin);
-
-
-	memset(&beam, 0, sizeof(beam));
-
-	VectorCopy(cent->lerpOrigin, beam.origin);
-	VectorMA(cent->lerpOrigin, 4096, s1->origin2, end);
-
-
-	trap_CM_BoxTrace(&trace, cent->lerpOrigin, end, NULL, NULL, 0, MASK_SHOT);
-
-	VectorCopy(trace.endpos, beam.oldorigin);
-
-	beam.reType        = RT_RAIL_CORE;
-	beam.renderfx      = RF_NOSHADOW;
-	beam.customShader  = cgs.media.railCoreShader;
-	beam.shaderRGBA[0] = 255;
-	beam.shaderRGBA[1] = 0;
-	beam.shaderRGBA[2] = 0;
-	beam.shaderRGBA[3] = 255;
-
-
-	AxisClear(beam.axis);
-
-	trap_R_AddRefEntityToScene(&beam);
-}
 
 /*
 ===============
@@ -1402,7 +1331,6 @@ static animation_t multi_flagpoleAnims[] =
 
 extern void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, float speedScale);
 
-
 /*
 ==============
 CG_TrapSetAnim
@@ -1479,8 +1407,6 @@ static void CG_Trap(centity_t *cent)
 
 	memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
 }
-//----(SA)  end
-
 
 /*
 ==============
@@ -1548,7 +1474,6 @@ static void CG_Corona(centity_t *cent)
 	}
 }
 
-
 /*
 ==============
 CG_Efx
@@ -1593,7 +1518,6 @@ static void CG_SpotlightEfx(centity_t *cent)
 		}
 	}
 
-
 	normalized_direction[0] = direction[0] = targetpos[0] - cent->currentState.origin[0];
 	normalized_direction[1] = direction[1] = targetpos[1] - cent->currentState.origin[1];
 	normalized_direction[2] = direction[2] = targetpos[2] - cent->currentState.origin[2];
@@ -1607,7 +1531,6 @@ static void CG_SpotlightEfx(centity_t *cent)
 
 	CG_Spotlight(cent, color, cent->currentState.origin, normalized_direction, 999, 2048, 10, fov, 0);
 }
-
 
 //----(SA) adding func_explosive
 
@@ -1660,7 +1583,6 @@ static void CG_Explosive(centity_t *cent)
 	{
 		trap_R_AddRefEntityToScene(&ent);
 	}
-
 }
 
 /*
@@ -1738,46 +1660,6 @@ static void CG_Constructible(centity_t *cent)
 	//  trap_R_AddRefEntityToScene(&ent);
 }
 
-
-/*
-===============
-CG_ConstructibleMarker
-===============
-*/
-/*static void CG_ConstructibleMarker( centity_t *cent ) {
-    refEntity_t         ent;
-    entityState_t       *s1;
-
-    s1 = &cent->currentState;
-
-    // create the render entity
-    memset (&ent, 0, sizeof(ent));
-
-    VectorCopy( cent->lerpOrigin, ent.origin);
-    VectorCopy( cent->lerpOrigin, ent.oldorigin);
-
-    // special shader if under construction
-    if( cent->currentState.powerups == STATE_UNDERCONSTRUCTION )
-        ent.customShader = cgs.media.genericConstructionShader;
-
-    // add the secondary model
-    if ( s1->modelindex2 ) {
-        AnglesToAxis( cent->lerpAngles, ent.axis );
-        ent.skinNum = 0;
-        ent.hModel = cgs.gameModels[s1->modelindex2];
-        ent.frame = s1->frame;
-        if( s1->effect1Time )
-            ent.customSkin = cgs.gameModelSkins[s1->effect1Time];
-        trap_R_AddRefEntityToScene(&ent);
-        memcpy( &cent->refEnt, &ent, sizeof(refEntity_t) );
-    } else {
-        AnglesToAxis( vec3_origin, ent.axis );
-        trap_R_AddRefEntityToScene(&ent);
-    }
-}*/
-
-//----(SA) done
-
 /*
 ===============
 CG_Mover
@@ -1821,12 +1703,10 @@ static void CG_Mover(centity_t *cent)
 		ent.nonNormalizedAxes = qtrue;
 	}
 
-
 	if (cent->currentState.eType == ET_ALARMBOX)
 	{
 		ent.renderfx |= RF_MINLIGHT;
 	}
-
 
 	// special shader if under construction
 	if (cent->currentState.powerups == STATE_UNDERCONSTRUCTION)
@@ -2014,8 +1894,6 @@ void CG_Mover_PostProcess(centity_t *cent)
 	}
 }
 
-
-
 /*
 ===============
 CG_Beam_2
@@ -2096,7 +1974,6 @@ void CG_Beam(centity_t *cent)
 	// add to refresh list
 	trap_R_AddRefEntityToScene(&ent);
 }
-
 
 /*
 ===============
@@ -2242,7 +2119,6 @@ static void CG_Prop(centity_t *cent)
 	{
 		trap_R_AddRefEntityToScene(&ent);
 	}
-
 }
 
 typedef enum cabinetType_e
@@ -2481,7 +2357,6 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 	// Gordon: Added
 }
 
-
 /*
 =============================
 CG_InterpolateEntityPosition
@@ -2520,7 +2395,6 @@ static void CG_InterpolateEntityPosition(centity_t *cent)
 	cent->lerpAngles[0] = LerpAngle(current[0], next[0], f);
 	cent->lerpAngles[1] = LerpAngle(current[1], next[1], f);
 	cent->lerpAngles[2] = LerpAngle(current[2], next[2], f);
-
 }
 
 /*
@@ -2643,7 +2517,6 @@ static void CG_ProcessEntity(centity_t *cent)
 		CG_Constructible(cent);
 		break;
 	/*  case ET_CONSTRUCTIBLE_MARKER:
-	        CG_ConstructibleMarker( cent );
 	        break;*/
 	case ET_TRAP:
 		CG_Trap(cent);
@@ -2665,9 +2538,8 @@ static void CG_ProcessEntity(centity_t *cent)
 	case ET_CORONA:
 		CG_Corona(cent);
 		break;
-	case ET_BOMB:
-		CG_Bomb(cent);
-		break;
+	/*case ET_BOMB: // was TRIPMINE
+		break;*/
 	case ET_BEAM_2:
 		CG_Beam_2(cent);
 		break;

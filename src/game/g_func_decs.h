@@ -166,7 +166,7 @@ extern void Weapon_AdrenalineSyringe(gentity_t *ent) ;
 extern void Weapon_Syringe(gentity_t *ent) ;
 extern qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt) ;
 extern void Weapon_MagicAmmo(gentity_t *ent) ;
-extern void G_PlaceTripmine(gentity_t *ent) ;
+
 extern void Weapon_Medic(gentity_t *ent) ;
 extern void MagicSink(gentity_t *self) ;
 extern void Weapon_Knife(gentity_t *ent) ;
@@ -868,8 +868,7 @@ extern void G_LandminePrime(gentity_t *self) ;
 extern void LandminePostThink(gentity_t *self) ;
 extern void G_LandmineThink(gentity_t *self) ;
 extern qboolean sEntWillTriggerMine(gentity_t *ent, gentity_t *mine) ;
-extern void G_TripMinePrime(gentity_t *ent) ;
-extern void G_TripMineThink(gentity_t *ent) ;
+
 extern void LandMinePostTrigger(gentity_t *self) ;
 extern void LandMineTrigger(gentity_t *self) ;
 extern void G_FreeSatchel(gentity_t *ent) ;

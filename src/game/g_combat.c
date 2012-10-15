@@ -154,10 +154,8 @@ void TossClientItems(gentity_t *self)
 	    case WP_BINOCULARS:
 	    case WP_PLIERS:
 	    case WP_SMOKE_MARKER:
-	    case WP_TRIPMINE:
 	    case WP_SMOKE_BOMB:
 	    case WP_DUMMY_MG42:
-	    case WP_LOCKPICK:
 	    case WP_MEDIC_ADRENALINE:
 	        return;
 	    case WP_MORTAR_SET:
@@ -339,7 +337,7 @@ char *modNames[] =
 	"MOD_M7",
 	"MOD_LANDMINE",
 	"MOD_SATCHEL",
-	"MOD_TRIPMINE",
+	"MOD_TRIPMINE",	// unused
 	"MOD_SMOKEBOMB",
 	"MOD_MOBILE_MG42",
 	"MOD_SILENCED_COLT",
@@ -546,7 +544,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	self->client->ps.persistant[PERS_KILLED]++;
 
 	// JPW NERVE -- if player is holding ticking grenade, drop it
-	if ((self->client->ps.grenadeTimeLeft) && (self->s.weapon != WP_DYNAMITE) && (self->s.weapon != WP_LANDMINE) && (self->s.weapon != WP_SATCHEL) && (self->s.weapon != WP_TRIPMINE))
+	if ((self->client->ps.grenadeTimeLeft) && (self->s.weapon != WP_DYNAMITE) && (self->s.weapon != WP_LANDMINE) && (self->s.weapon != WP_SATCHEL))
 	{
 		vec3_t launchvel, launchspot;
 

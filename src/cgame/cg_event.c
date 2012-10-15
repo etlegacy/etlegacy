@@ -154,9 +154,6 @@ static void CG_Obituary(entityState_t *ent)
 		case MOD_SATCHEL: // rain
 			message = "embraced his own satchel explosion";
 			break;
-		case MOD_TRIPMINE: // rain - dormant code
-			message = "forgot where his tripmine was";
-			break;
 		case MOD_CRUSH_CONSTRUCTION: // rain
 			message = "engineered himself into oblivion";
 			break;
@@ -398,11 +395,6 @@ static void CG_Obituary(entityState_t *ent)
 			message2 = "'s Satchel Charge";
 			break;
 
-		case MOD_TRIPMINE: // rain - dormant code
-			message  = "was detonated by";
-			message2 = "'s trip mine";
-			break;
-
 		case MOD_SMOKEGRENADE: // rain
 			message  = "stood on";
 			message2 = "'s airstrike marker";
@@ -590,7 +582,6 @@ void CG_PainEvent(centity_t *cent, int health, qboolean crouching)
 /*
 ==============
 CG_Explode
-
 
     if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
 
@@ -2470,7 +2461,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		    (es->weapon != WP_LANDMINE) &&
 		    (es->weapon != WP_SATCHEL) &&
 		    (es->weapon != WP_SATCHEL_DET) &&
-		    (es->weapon != WP_TRIPMINE) &&
 		    (es->weapon != WP_SMOKE_BOMB) &&
 		    (es->weapon != WP_AMMO) &&
 		    (es->weapon != WP_MEDKIT))
@@ -2491,7 +2481,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		        es->weapon == WP_LANDMINE ||
 		        es->weapon == WP_SATCHEL ||
 		        es->weapon == WP_SATCHEL_DET ||
-		        es->weapon == WP_TRIPMINE ||
 		        es->weapon == WP_SMOKE_BOMB ||
 		        es->weapon == WP_AMMO ||
 		        es->weapon == WP_MEDKIT))
@@ -3384,7 +3373,6 @@ void CG_CheckEvents(centity_t *cent)
 	}
 	else
 	{
-
 		// DHM - Nerve :: Entities that make it here are Not TempEntities.
 		//      As far as we could tell, for all non-TempEntities, the
 		//      circular 'events' list contains the valid events.  So we

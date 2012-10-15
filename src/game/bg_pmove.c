@@ -91,9 +91,6 @@ float pm_spectatorfriction = 5.0f;
 
 int c_pmove = 0;
 
-#define TRIPMINE_RANGE 512.f
-
-
 #ifdef GAMEDLL
 
 // In just the GAME DLL, we want to store the groundtrace surface stuff,
@@ -101,7 +98,6 @@ int c_pmove = 0;
 void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags);
 
 #endif
-
 
 /*
 ===============
@@ -2683,7 +2679,6 @@ static void PM_BeginWeaponReload(int weapon)
 	case WP_GRENADE_LAUNCHER:
 	case WP_GRENADE_PINEAPPLE:
 //      case WP_LANDMINE:
-//      case WP_TRIPMINE:
 	case WP_SMOKE_BOMB:
 		break;
 
@@ -4398,49 +4393,6 @@ static void PM_Weapon(void)
 		}
 	}
 
-	/*  if( pm->ps->weapon == WP_TRIPMINE ) {
-	        trace_t trace;
-	        vec3_t start, end, forward;
-
-	        VectorCopy( pm->ps->origin, start );
-	        start[2] += pm->ps->viewheight;
-
-	        AngleVectors(pm->ps->viewangles, forward, NULL, NULL);
-
-	        VectorMA(start, 64, forward, end);
-
-	        pm->trace(&trace, start, NULL, NULL, end, pm->ps->clientNum, MASK_SHOT);
-
-	        if(trace.fraction == 1.f) {
-	            return; // didnt hit a nearby wall
-	        }
-
-	        if(trace.surfaceFlags & SURF_NOIMPACT) {
-	            return;
-	        }
-
-	        if(trace.entityNum != ENTITYNUM_WORLD) {
-	            return; // hit a player, door, etc
-	        }
-
-	        VectorCopy(trace.endpos, start);
-	        VectorMA(start, TRIPMINE_RANGE, trace.plane.normal, end);
-
-	        pm->trace(&trace, start, NULL, NULL, end, pm->ps->clientNum, MASK_SHOT);
-
-	        if(trace.fraction == 1.f) {
-	            return; // gap to opposite wall was too big
-	        }
-
-	        if(trace.surfaceFlags & SURF_NOIMPACT) {
-	            return;
-	        }
-
-	        if(trace.entityNum != ENTITYNUM_WORLD) {
-	            return; // hit a player, door, etc
-	        }
-	    }*/
-
 	// check for fire
 	// if not on fire button and there's not a delayed shot this frame...
 	// consider also leaning, with delayed attack reset
@@ -4489,7 +4441,6 @@ static void PM_Weapon(void)
 		    pm->ps->weapon != WP_DYNAMITE &&
 		    pm->ps->weapon != WP_PLIERS &&
 		    pm->ps->weapon != WP_LANDMINE &&
-		    pm->ps->weapon != WP_TRIPMINE &&
 		    pm->ps->weapon != WP_MEDIC_ADRENALINE &&
 		    pm->ps->weapon != WP_SMOKE_BOMB)
 		{
@@ -4681,7 +4632,6 @@ static void PM_Weapon(void)
 			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
 		}
 		break;
-	case WP_TRIPMINE:
 	case WP_SATCHEL:
 		if (!delayedFire)
 		{
@@ -4751,7 +4701,6 @@ static void PM_Weapon(void)
 			case WP_GRENADE_LAUNCHER:
 			case WP_GRENADE_PINEAPPLE:
 			case WP_LANDMINE:
-			case WP_TRIPMINE:
 			case WP_SMOKE_BOMB:
 				playswitchsound = qfalse;
 				break;
@@ -4901,7 +4850,6 @@ static void PM_Weapon(void)
 	case WP_CARBINE:
 	case WP_M7:
 	case WP_LANDMINE:
-	case WP_TRIPMINE:
 	case WP_SMOKE_BOMB:
 		PM_StartWeaponAnim(weapattackanim);
 		break;
@@ -4997,7 +4945,6 @@ static void PM_Weapon(void)
 	case WP_GPG40:
 	case WP_M7:
 	case WP_LANDMINE:
-	case WP_TRIPMINE:
 	case WP_SMOKE_BOMB:
 	case WP_MORTAR_SET:
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
@@ -6572,7 +6519,6 @@ void PmoveSingle(pmove_t *pmove)
 
 		BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLE, qtrue);
 	}
-
 
 	/*if( pm->ps->eFlags & EF_PRONE && !pml.walking ) {
 	    // can't be prone in midair

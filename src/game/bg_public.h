@@ -819,7 +819,7 @@ typedef enum
 	WP_LANDMINE,            // 26
 	WP_SATCHEL,             // 27
 	WP_SATCHEL_DET,         // 28
-	WP_TRIPMINE,            // 29
+	WP_TRIPMINE,            // 29	// unused
 	WP_SMOKE_BOMB,          // 30
 
 	WP_MOBILE_MG42,         // 31
@@ -1472,7 +1472,7 @@ typedef enum
 	MOD_M7,
 	MOD_LANDMINE,
 	MOD_SATCHEL,
-	MOD_TRIPMINE,
+	MOD_TRIPMINE, // unused
 	MOD_SMOKEBOMB,
 	MOD_MOBILE_MG42,
 	MOD_SILENCED_COLT,

@@ -1319,7 +1319,7 @@ gentity_t *G_BuildLeg(gentity_t *ent);
 void G_RunMissile(gentity_t *ent);
 void G_RunBomb(gentity_t *ent);
 int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allowBounce);
-void G_TripMinePrime(gentity_t *ent);
+
 qboolean G_HasDroppedItem(gentity_t *ent, int modType);
 
 // Rafael zombiespit
@@ -1388,7 +1388,7 @@ qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
 void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
 void SnapVectorTowards(vec3_t v, vec3_t to);
 gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenadeWPID);
-void G_PlaceTripmine(gentity_t *ent);
+
 void G_FadeItems(gentity_t *ent, int modType);
 gentity_t *G_FindSatchel(gentity_t *ent);
 void G_ExplodeMines(gentity_t *ent);

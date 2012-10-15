@@ -755,7 +755,6 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 	        ent->lastTrailTime = cg.time;
 	    }
 	*/
-// done.
 }
 
 /*
@@ -843,7 +842,6 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 	}
 //----(SA)  end
 }
-// done.
 
 /*
 ==========================
@@ -3238,7 +3236,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	    weaponNum == WP_LANDMINE ||
 	    weaponNum == WP_SATCHEL ||
 	    weaponNum == WP_SATCHEL_DET ||
-	    weaponNum == WP_TRIPMINE ||
 	    weaponNum == WP_SMOKE_BOMB ||
 	    weaponNum == WP_MEDIC_SYRINGE ||
 	    weaponNum == WP_MEDIC_ADRENALINE
@@ -5723,7 +5720,6 @@ void CG_FireWeapon(centity_t *cent)
 	         ent->weapon == WP_SMOKE_MARKER
 	         || ent->weapon == WP_LANDMINE
 	         || ent->weapon == WP_SATCHEL
-	         || ent->weapon == WP_TRIPMINE
 	         || ent->weapon == WP_SMOKE_BOMB
 	         )    // JPW NERVE
 	{
@@ -6281,7 +6277,6 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		break;
 
 	case WP_DYNAMITE:
-	case WP_TRIPMINE:
 		shader        = cgs.media.rocketExplosionShader;
 		sfx           = cgs.media.sfx_dynamiteexp;
 		sfx2          = cgs.media.sfx_dynamiteexpDist;
