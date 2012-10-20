@@ -1303,7 +1303,6 @@ void CG_InitConsoleCommands(void)
 	// forwarded to the server after they are not recognized locally
 	trap_AddCommand("kill");
 	trap_AddCommand("say");
-	trap_AddCommand("listbotgoals");
 	trap_AddCommand("give");
 	trap_AddCommand("god");
 	trap_AddCommand("notarget");
