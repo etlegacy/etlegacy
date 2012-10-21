@@ -851,6 +851,7 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 		else
 		{
 			int k;
+
 			for (k = 0; k < numOutVerts / 3; k++)
 			{
 				trap_R_AddPolyToScene(trail->shader, 3, &outVerts[k * 3]);

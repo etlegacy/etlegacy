@@ -625,24 +625,6 @@ static float CG_DrawTimer(float y)
 	return y + 12 + 4;
 }
 
-int CG_BotIsSelected(int clientNum)
-{
-	int i;
-
-	for (i = 0; i < MAX_NUM_BUDDY; i++)
-	{
-		if (cg.selectedBotClientNumber[i] == 0)
-		{
-			return 0;
-		}
-		else if (cg.selectedBotClientNumber[i] == clientNum)
-		{
-			return 1;
-		}
-	}
-	return 0;
-}
-
 /*
 =================
 CG_DrawTeamOverlay
@@ -2496,7 +2478,6 @@ static void CG_DrawCrosshairNames(void)
 		CG_FilledBar(320 - 110 /*w*/ / 2, 190, 110, 10, c, NULL, bgcolor, barFrac, 16);
 	}
 
-	// -NERVE - SMF
 	if (isTank)
 	{
 		return;
@@ -2881,39 +2862,6 @@ static void CG_DrawIntermission(void)
 	/*  cg.scoreFadeTime = cg.time;
 	    CG_DrawScoreboard();
 	*/
-}
-
-/*
-=================
-CG_ActivateLimboMenu
-
-NERVE - SMF
-=================
-*/
-static void CG_ActivateLimboMenu(void)
-{
-	/*  static qboolean latch = qfalse;
-	    qboolean test;
-
-	    // should we open the limbo menu (make allowances for MV clients)
-	    test = ((cg.snap->ps.pm_flags & PMF_LIMBO) ||
-	            ( (cg.mvTotalClients < 1 && (
-	                (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) ||
-	                (cg.warmup))
-	              )
-	            && cg.snap->ps.pm_type != PM_INTERMISSION ) );
-
-
-	    // auto open/close limbo mode
-	    if(cg_popupLimboMenu.integer && !cg.demoPlayback) {
-	        if(test && !latch) {
-	            CG_LimboMenu_f();
-	            latch = qtrue;
-	        } else if(!test && latch && cg.showGameView) {
-	            CG_EventHandling(CGAME_EVENT_NONE, qfalse);
-	            latch = qfalse;
-	        }
-	    }*/
 }
 
 /*
@@ -3565,7 +3513,6 @@ static void CG_DrawFlashBlend(void)
 	CG_DrawFlashDamage();
 }
 
-// NERVE - SMF
 /*
 =================
 CG_DrawObjectiveInfo
@@ -3605,7 +3552,6 @@ void CG_ObjectivePrint(const char *str, int charWidth)
 			neednewline    = qfalse;
 		}
 	}
-	// -NERVE - SMF
 
 	cg.oidPrintTime      = cg.time;
 	cg.oidPrintY         = OID_TOP;
@@ -3780,7 +3726,6 @@ CG_Fade
 */
 void CG_Fade(int r, int g, int b, int a, int time, int duration)
 {
-
 	// incorporate this into the current fade scheme
 
 	cgs.fadeAlpha     = (float)a / 255.0f;
@@ -3944,7 +3889,6 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 else
 {
 	int iconWidth, iconHeight;
-	// START Mad Doc - TDF
 	// talk about fitting a square peg into a round hole...
 	// we're now putting the compass icons around the square automap instead of the round compass
 
@@ -4005,10 +3949,6 @@ else
 
 
 	CG_DrawPic(x, y, iconWidth, iconHeight, shader);
-
-
-	// END Mad Doc - TDF
-
 }
 #endif
 }
@@ -4405,7 +4345,6 @@ static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 		frac = cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH];
 	}
 
-
 	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, colour, NULL, bgcolour, frac, flags);
 
 	trap_R_SetColor(NULL);
@@ -4704,7 +4643,6 @@ static void CG_DrawPlayerStats(void)
 	{
 		clr = colorWhite;
 	}
-
 
 	str = va("%i", cg.snap->ps.stats[STAT_XP]);
 	w   = CG_Text_Width_Ext(str, 0.25f, 0, &cgs.media.limboFont1);
@@ -5082,7 +5020,6 @@ void CG_ShakeCamera(void)
 
 	AnglesToAxis(cg.refdefViewAngles, cg.refdef.viewaxis);
 }
-// -NERVE - SMF
 
 void CG_DrawMiscGamemodels(void)
 {
@@ -5215,7 +5152,6 @@ void CG_DrawActive(stereoFrame_t stereoView)
 
 	cg.refdef_current->glfog.registered = 0;    // make sure it doesn't use fog from another scene
 
-	CG_ActivateLimboMenu();
 
 //  if( cgs.ccCurrentCamObjective == -1 ) {
 //      if( cg.showGameView ) {
@@ -5243,12 +5179,10 @@ void CG_DrawActive(stereoFrame_t stereoView)
 		CG_Letterbox((LIMBO_3D_W / 640.f) * 100, (LIMBO_3D_H / 480.f) * 100, qfalse);
 	}
 
-	CG_ShakeCamera();       // NERVE - SMF
+	CG_ShakeCamera();
 
-	// Gordon
 	CG_PB_RenderPolyBuffers();
 
-	// Gordon
 	CG_DrawMiscGamemodels();
 
 	if (!(cg.limboEndCinematicTime > cg.time && cg.showGameView))

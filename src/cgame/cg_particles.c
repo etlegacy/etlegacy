@@ -112,7 +112,9 @@ static char *shaderAnimNames[MAX_SHADER_ANIMS] =
 //	"blood",
 	NULL
 };
+
 static qhandle_t shaderAnims[MAX_SHADER_ANIMS][MAX_SHADER_ANIM_FRAMES];
+
 static int       shaderAnimCounts[MAX_SHADER_ANIMS] =
 {
 	23,
@@ -123,6 +125,7 @@ static int       shaderAnimCounts[MAX_SHADER_ANIMS] =
 	23,
 	5,
 };
+
 static float shaderAnimSTRatio[MAX_SHADER_ANIMS] =
 {
 	1, // NERVE - SMF - changed from 1.405 to 1
@@ -134,7 +137,6 @@ static float shaderAnimSTRatio[MAX_SHADER_ANIMS] =
 	1,
 };
 static int numShaderAnims;
-// done.
 
 #define     PARTICLE_GRAVITY    40
 #define     MAX_PARTICLES   1024 * 8
@@ -183,7 +185,6 @@ void CG_ClearParticles(void)
 		}
 	}
 	numShaderAnims = i;
-	// done.
 
 	initparticles = qtrue;
 }
@@ -198,7 +199,6 @@ CG_AddParticleToScene
 
 void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 {
-
 	vec3_t     point;
 	polyVert_t verts[4];
 	float      width;
@@ -230,7 +230,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 						p->vel[0] = crandom() * 4;
 						p->vel[1] = crandom() * 4;
 					}
-
 				}
 			}
 			else
@@ -245,16 +244,13 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 						p->org[2] += (p->start - p->end);
 					}
 
-
 					if (p->type == P_WEATHER_TURBULENT)
 					{
 						p->vel[0] = crandom() * 16;
 						p->vel[1] = crandom() * 16;
 					}
-
 				}
 			}
-
 
 			// Rafael snow pvs check
 			if (!p->link)
@@ -270,7 +266,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		{
 			return;
 		}
-		// done.
 
 		if (p->type == P_BUBBLE || p->type == P_BUBBLE_TURBULENT)
 		{
@@ -346,7 +341,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 			TRIverts[2].modulate[2] = 255;
 			TRIverts[2].modulate[3] = 255 * p->alpha;
 		}
-
 	}
 	else if (p->type == P_SPRITE)
 	{
@@ -828,7 +822,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 			p->pshader       = getTestShader();
 			rotate_ang[ROLL] = 90;
 		}
-		// jpw
 
 		if (p->roll)
 		{
@@ -903,7 +896,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[3].modulate[2] = 255;
 		verts[3].modulate[3] = 255;
 	}
-	// done.
 
 	if (!cg_wolfparticles.integer)
 	{
@@ -912,8 +904,8 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 
 	if (!p->pshader)
 	{
-// (SA) temp commented out for DM again.  FIXME: TODO: this needs to be addressed
-//		CG_Printf ("CG_AddParticleToScene type %d p->pshader == ZERO\n", p->type);
+		// (SA) temp commented out for DM again.  FIXME: TODO: this needs to be addressed
+		//		CG_Printf ("CG_AddParticleToScene type %d p->pshader == ZERO\n", p->type);
 		return;
 	}
 
@@ -968,7 +960,6 @@ void CG_AddParticles(void)
 
 	for (p = active_particles ; p ; p = next)
 	{
-
 		next = p->next;
 
 		time = (cg.time - p->time) * 0.001;
@@ -1148,7 +1139,6 @@ void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent)
 		p->accel[0] = crandom() * 16;
 		p->accel[1] = crandom() * 16;
 	}
-
 }
 
 void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb, float range, int snum)
@@ -1274,12 +1264,10 @@ void CG_ParticleBubble(qhandle_t pshader, vec3_t origin, vec3_t origin2, int tur
 	// Rafael snow pvs check
 	p->snum = snum;
 	p->link = qtrue;
-
 }
 
 void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 {
-
 	// using cent->density = enttime
 	//		 cent->frame = startfade
 	cparticle_t *p;
@@ -1391,7 +1379,6 @@ void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 		}
 	}
 
-
 	p->type = P_SMOKE;
 
 	//VectorCopy(cent->currentState.origin, p->org);
@@ -1438,10 +1425,8 @@ void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 	p->roll = 8 + (crandom() * 4);
 }
 
-
 void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration)
 {
-
 	cparticle_t *p;
 
 	if (!free_particles)
@@ -1479,7 +1464,6 @@ void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration)
 
 	p->accel[2] = -60;
 	p->vel[2]  += -20;
-
 }
 
 // DHM - Nerve :: bullets hitting dirt
@@ -1582,14 +1566,11 @@ void CG_ParticleDirtBulletDebris_Core(vec3_t org, vec3_t vel, int duration, floa
 	VectorSet(p->accel, 0, 0, -330);
 }
 
-// DHM - Nerve :: end
-
 /*
 ======================
 CG_ParticleExplosion
 ======================
 */
-
 void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration, int sizeStart, int sizeEnd, qboolean dlight)
 {
 	cparticle_t *p;
@@ -1662,15 +1643,7 @@ void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration
 	VectorCopy(origin, p->org);
 	VectorCopy(vel, p->vel);
 	VectorClear(p->accel);
-
 }
-
-// Rafael Shrapnel
-void CG_AddParticleShrapnel(localEntity_t *le)
-{
-	return;
-}
-// done.
 
 int CG_NewParticleArea(int num)
 {

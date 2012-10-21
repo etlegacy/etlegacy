@@ -110,7 +110,6 @@ int CG_TrimLeftPixels(char *instr, float scale, float w, int size)
 	return -1;
 }
 
-
 void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo_t *font)
 {
 	char buffer[1024];
@@ -265,7 +264,6 @@ static int weapIconDrawSize(int weap)
 	case WP_STEN:
 	case WP_PANZERFAUST:
 	case WP_FLAMETHROWER:
-//      case WP_SPEARGUN:
 	case WP_GARAND:
 	case WP_FG42:
 	case WP_FG42SCOPE:
@@ -285,7 +283,6 @@ static int weapIconDrawSize(int weap)
 
 	return 1;
 }
-
 
 /*
 ==============
@@ -336,8 +333,6 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 			icon = cg_weapons[realweap].weaponIcon[1];
 		}
 	}
-
-
 
 	// pulsing grenade icon to help the player 'count' in their head
 	if (cg.predictedPlayerState.grenadeTimeLeft)       // grenades and dynamite set this
@@ -414,7 +409,6 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 			w = rect->w + scale;
 			h = rect->h + scale;
 		}
-
 
 		trap_R_SetColor(hcolor);   // JPW NERVE
 		CG_DrawPic(x, y, w, h, icon);
@@ -596,7 +590,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	case HINT_DYNAMITE:
 		icon = cgs.media.dynamiteHintShader;
 		break;
-	// dhm - end
 
 	// Mad Doc - TDF
 	case HINT_LOCKPICK:
@@ -611,12 +604,10 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		break;
 	}
 
-
 	if (!icon)
 	{
 		return;
 	}
-
 
 	// color
 	color = CG_FadeColor(cg.cursorHintTime, cg.cursorHintFade);
@@ -630,7 +621,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	{
 		color[3] *= 0.5 + 0.5 * sin((float)cg.time / 150.0);
 	}
-
 
 	// size
 	if (cg_cursorHints.integer >= 3)       // no size pulsing
@@ -675,7 +665,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		}
 		CG_FilledBar(rect->x, rect->y + rect->h + 4, rect->w, 8, color, NULL, NULL, (float)cg.cursorHintValue / 255.0f, 0);
 	}
-
 }
 
 float CG_GetValue(int ownerDraw, int type)
@@ -699,7 +688,6 @@ qboolean CG_YourTeamHasFlag()
 }
 
 // THINKABOUTME: should these be exclusive or inclusive..
-//
 qboolean CG_OwnerDrawVisible(int flags)
 {
 	return qfalse;
@@ -747,7 +735,6 @@ void CG_DrawWeapStability(rectDef_t *rect)
 
 	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, 2 | 4 | 256);   // flags (BAR_CENTER|BAR_VERT|BAR_LERP_COLOR)
 }
-
 
 /*
 ==============
@@ -964,10 +951,8 @@ void CG_EventHandling(int type, qboolean fForced)
 			trap_UI_Popup(UIMENU_INGAME);
 		}
 
-
 		break;
 	}
-
 
 	cgs.eventHandling = type;
 

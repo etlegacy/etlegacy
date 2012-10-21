@@ -39,7 +39,7 @@
 //#define   MAX_LOCAL_ENTITIES  512
 #define MAX_LOCAL_ENTITIES  768     // renderer can only handle 1024 entities max, so we should avoid
 // overwriting game entities
-// done.
+
 
 localEntity_t cg_localEntities[MAX_LOCAL_ENTITIES];
 localEntity_t cg_activeLocalEntities;       // double linked list
@@ -72,7 +72,6 @@ void    CG_InitLocalEntities(void)
 	localEntCount = 0;
 }
 
-
 /*
 ==================
 CG_FreeLocalEntity
@@ -88,7 +87,6 @@ void CG_FreeLocalEntity(localEntity_t *le)
 	// Ridah, debugging
 	localEntCount--;
 //  trap_Print( va("FreeLocalEntity: locelEntCount = %d\n", localEntCount) );
-	// done.
 
 	// remove from the doubly linked active list
 	le->prev->next = le->next;
@@ -120,7 +118,6 @@ localEntity_t *CG_AllocLocalEntity(void)
 	// Ridah, debugging
 	localEntCount++;
 //  trap_Print( va("AllocLocalEntity: locelEntCount = %d\n", localEntCount) );
-	// done.
 
 	le                   = cg_freeLocalEntities;
 	cg_freeLocalEntities = cg_freeLocalEntities->next;
@@ -134,7 +131,6 @@ localEntity_t *CG_AllocLocalEntity(void)
 	cg_activeLocalEntities.next       = le;
 	return le;
 }
-
 
 /*
 ====================================================================================
@@ -225,7 +221,6 @@ void CG_BloodTrail(localEntity_t *le)
 
 	}
 }
-
 
 /*
 ================
@@ -318,7 +313,6 @@ void CG_FragmentBounceSound(localEntity_t *le, trace_t *trace)
 	le->leBounceSoundType = LEBS_NONE;
 }
 
-
 /*
 ================
 CG_ReflectVelocity
@@ -366,9 +360,6 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace)
 	}
 }
 
-
-//----(SA)  added
-
 /*
 ==============
 CG_AddEmitter
@@ -388,9 +379,6 @@ void CG_AddEmitter(localEntity_t *le)
 
 	le->breakCount = cg.time + 50;
 }
-
-//----(SA)  end
-
 
 void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound, int forceLowGrav, qhandle_t shader);
 
@@ -441,7 +429,6 @@ void CG_AddFragment(localEntity_t *le)
 		trap_S_AddLoopingSound(le->refEntity.origin, vec3_origin, cgs.media.flameCrackSound, (int)(20.0 * flameAlpha), 0);
 	}
 
-//----(SA)  added
 	if (le->leFlags & LEF_SMOKING)
 	{
 		float       alpha;
@@ -460,7 +447,6 @@ void CG_AddFragment(localEntity_t *le)
 			CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 20, alpha, 8.f);
 		}
 	}
-//----(SA)  end
 
 	if (le->pos.trType == TR_STATIONARY)
 	{
@@ -518,8 +504,6 @@ void CG_AddFragment(localEntity_t *le)
 
 		t = le->endTime - cg.time;
 		trap_R_AddRefEntityToScene(&le->refEntity);
-
-
 		// trace a line from previous position down, to see if I should start falling again
 
 		VectorCopy(le->refEntity.origin, newOrigin);
@@ -558,7 +542,6 @@ void CG_AddFragment(localEntity_t *le)
 			trap_S_AddLoopingSound(newOrigin, vec3_origin, cgs.media.flameBlowSound, (int)(0.3 * 255.0 * flameAlpha), 0);
 		}
 	}
-
 
 	// trace a line from previous position to new position
 	CG_Trace(&trace, le->refEntity.origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
@@ -753,7 +736,6 @@ void CG_AddFragment(localEntity_t *le)
 	trap_R_AddRefEntityToScene(&le->refEntity);
 }
 
-// Ridah
 /*
 ================
 CG_AddMovingTracer
@@ -865,7 +847,6 @@ CG_AddFuseSparkElements
 */
 void CG_AddFuseSparkElements(localEntity_t *le)
 {
-
 	float FUSE_SPARK_WIDTH = 1.0;
 
 	int           step = 10;
@@ -961,7 +942,6 @@ void CG_AddBloodElements(localEntity_t *le)
 			return;
 		}
 	}
-
 }
 
 /*
@@ -1064,10 +1044,8 @@ void CG_AddDebrisElements(localEntity_t *le)
 
 		le->lastTrailTime = t;
 	}
-
 }
 
-// Rafael Shrapnel
 /*
 ===============
 CG_AddShrapnel
@@ -1100,7 +1078,6 @@ void CG_AddShrapnel(localEntity_t *le)
 		else
 		{
 			trap_R_AddRefEntityToScene(&le->refEntity);
-			CG_AddParticleShrapnel(le);
 		}
 
 		return;
@@ -1125,7 +1102,6 @@ void CG_AddShrapnel(localEntity_t *le)
 		}
 
 		trap_R_AddRefEntityToScene(&le->refEntity);
-		CG_AddParticleShrapnel(le);
 		return;
 	}
 
@@ -1148,9 +1124,7 @@ void CG_AddShrapnel(localEntity_t *le)
 	CG_ReflectVelocity(le, &trace);
 
 	trap_R_AddRefEntityToScene(&le->refEntity);
-	CG_AddParticleShrapnel(le);
 }
-// done.
 
 /*
 =====================================================================
@@ -1239,7 +1213,6 @@ static void CG_AddMoveScaleFade(localEntity_t *le)
 	trap_R_AddRefEntityToScene(re);
 }
 
-
 /*
 ===================
 CG_AddScaleFade
@@ -1279,7 +1252,6 @@ static void CG_AddScaleFade(localEntity_t *le)
 
 	trap_R_AddRefEntityToScene(re);
 }
-
 
 /*
 =================
@@ -1321,8 +1293,6 @@ static void CG_AddFallScaleFade(localEntity_t *le)
 
 	trap_R_AddRefEntityToScene(re);
 }
-
-
 
 /*
 ================
@@ -1425,10 +1395,8 @@ static void CG_AddSpriteExplosion(localEntity_t *le)
 		}
 		//% trap_R_AddLightToScene(re.origin, le->light, light*le->lightColor[0], light*le->lightColor[1], light*le->lightColor[2], 0 );
 		trap_R_AddLightToScene(re.origin, 320, light, le->lightColor[0], le->lightColor[1], le->lightColor[2], 0, 0);
-		// done.
 	}
 }
-
 
 //==============================================================================
 
@@ -1482,7 +1450,6 @@ void CG_AddLocalEntities(void)
 		        case LE_ZOMBIE_BAT:
 		            CG_AddClientCritter( le );
 		            break;*/
-		// done.
 
 		case LE_MARK:
 			break;
@@ -1518,7 +1485,6 @@ void CG_AddLocalEntities(void)
 		case LE_EMITTER:
 			CG_AddEmitter(le);
 			break;
-
 		}
 	}
 }

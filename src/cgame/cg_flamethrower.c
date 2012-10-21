@@ -345,7 +345,6 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 	}
 	else
 	{
-
 		centInfo->lastFiring = firing;
 
 		// just fire a single chunk to get us started
@@ -829,7 +828,6 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 	{
 		return;
 	}
-
 
 	if ((rotatingFlames) && (!(cg_fxflags & 1)))           // JPW NERVE no rotate for alt flame shaders
 	{

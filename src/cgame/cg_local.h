@@ -42,7 +42,6 @@
 #include "cg_public.h"
 #include "../ui/ui_shared.h"
 
-
 #define MAX_LOCATIONS       256
 #define POWERUP_BLINKS      5
 
@@ -90,7 +89,7 @@
 
 #define NUM_CROSSHAIRS      10
 
-// Ridah, trails
+// trails
 #define STYPE_STRETCH   0
 #define STYPE_REPEAT    1
 
@@ -100,9 +99,7 @@
 #define TJFL_FIXDISTORT (1 << 3)
 #define TJFL_SPARKHEADFLARE (1 << 4)
 #define TJFL_NOPOLYMERGE    (1 << 5)
-// done.
 
-// OSP
 // Autoaction values
 #define AA_DEMORECORD   0x01
 #define AA_SCREENSHOT   0x02
@@ -212,14 +209,8 @@ typedef struct
 	qboolean fActive;           // Overlay element is active
 	cg_window_t *w;         // Window handle (may be NULL)
 } cg_mvinfo_t;
-// OSP
 
-
-
-
-// START Mad Doc - TDF
 #define NUM_OVERLAY_FACES 1
-// END Mad Doc - TDF
 
 //=================================================
 
@@ -260,7 +251,6 @@ typedef struct
 	float animSpeedScale;
 	int oldFrameSnapshotTime;
 	headAnimation_t *headAnim;
-	// done.
 
 } lerpFrame_t;
 
@@ -295,7 +285,6 @@ typedef struct tag_s
 	vec3_t origin;
 	vec3_t axis[3];
 } tag_t;
-
 
 // centity_t have a direct corespondence with gentity_t in the game, but
 // only the entityState_t is directly communicated to the cgame
@@ -388,7 +377,6 @@ typedef struct centity_s
 	char tagName[MAX_QPATH];
 } centity_t;
 
-
 //======================================================================
 
 // local entities are created as a result of events or predicted actions,
@@ -426,8 +414,6 @@ typedef enum
 } EZoomInOut_t;
 
 extern float zoomTable[ZOOM_MAX_ZOOMS][2];
-
-//----(SA)  end
 
 typedef enum
 {
@@ -525,7 +511,6 @@ typedef struct localEntity_s
 
 //======================================================================
 
-
 typedef struct
 {
 	int client;
@@ -534,8 +519,8 @@ typedef struct
 	int time;
 	int powerUps;
 	int team;
-	int playerClass;                    // NERVE - SMF
-	int respawnsLeft;                   // NERVE - SMF
+	int playerClass;
+	int respawnsLeft;
 } score_t;
 
 // each client has an associated clientInfo_t
@@ -562,7 +547,7 @@ typedef struct clientInfo_s
 	int powerups;                   // so can display quad/flag status
 	int breathPuffTime;
 	int cls;
-	int blinkTime;              //----(SA)
+	int blinkTime;
 
 	int handshake;
 	int rank;
@@ -643,8 +628,7 @@ typedef struct weaponModel_s
 } weaponModel_t;
 
 // each WP_* weapon enum has an associated weaponInfo_t
-// that contains media references necessary to present the
-// weapon and its effects
+// that contains media references necessary to present the weapon and its effects
 typedef struct weaponInfo_s
 {
 	qboolean registered;
@@ -692,7 +676,6 @@ typedef struct weaponInfo_s
 	sfxHandle_t switchSound;
 } weaponInfo_t;
 
-
 // each IT_* item has an associated itemInfo_t
 // that constains media references necessary to present the
 // item and its effects
@@ -702,7 +685,6 @@ typedef struct
 	qhandle_t models[MAX_ITEM_MODELS];
 	qhandle_t icons[MAX_ITEM_ICONS];
 } itemInfo_t;
-
 
 typedef struct
 {
@@ -783,10 +765,8 @@ typedef struct
 	team_t team;
 } mapEntityData_t;
 
-// START    xkan, 8/29/2002
 // the most buddies we can have
-#define MAX_NUM_BUDDY  6
-// END      xkan, 8/29/2002
+#define MAX_NUM_BUDDY  6 // obsolete
 
 typedef enum
 {
@@ -956,13 +936,11 @@ typedef struct
 //  int         identifyClientHealth;       // NERVE - SMF
 	int identifyClientRequest;              // NERVE - SMF
 
-//----(SA)  added
 	// cursorhints
 	int cursorHintIcon;
 	int cursorHintTime;
 	int cursorHintFade;
 	int cursorHintValue;
-//----(SA)  end
 
 	// powerup active flashing
 	int powerupActive;
@@ -1085,7 +1063,6 @@ typedef struct
 
 	qboolean latchAutoActions;
 	qboolean latchVictorySound;
-	// -NERVE - SMF
 
 	// spawn variables
 	qboolean spawning;                  // the CG_Spawn*() functions are valid
@@ -1099,9 +1076,7 @@ typedef struct
 	vec2_t mapcoordsScale;
 	qboolean mapcoordsValid;
 
-
 	int numMiscGameModels;
-
 
 	qboolean showCampaignBriefing;
 	qboolean showGameView;
@@ -1161,25 +1136,22 @@ typedef struct
 	int engineerChargeTime[2];
 	int medicChargeTime[2];
 	int covertopsChargeTime[2];
-	// START    xkan, 8/29/2002
+
 	// which bots are currently selected
-	int selectedBotClientNumber[MAX_NUM_BUDDY];
+	int selectedBotClientNumber[MAX_NUM_BUDDY]; // obsolete/unused
 	// END      xkan, 8/29/2002
 	int binocZoomTime;
 	int limboEndCinematicTime;
 	int proneMovingTime;
 	fireteamData_t fireTeams[32];
 
-	// TAT 10/23/2002
 	//      For the bot hud, we keep a bit mask for which bot_action icons to show
 	int botMenuIcons;
 	//      And we need to know which one is the selected one
 	int botSelectedCommand;
 
-	// START Mad Doc - TDF
 	int orderFade;
 	int orderTime;
-	// END Mad Doc - TDF
 
 	centity_t *satchelCharge;
 
@@ -1243,13 +1215,12 @@ typedef struct
 
 	qhandle_t armorModel;
 
-// JPW NERVE
 	qhandle_t hudSprintBar;
 	qhandle_t hudAxisHelmet;
 	qhandle_t hudAlliedHelmet;
 	qhandle_t redColorBar;
 	qhandle_t blueColorBar;
-// jpw
+
 	qhandle_t teamStatusBar;
 
 	qhandle_t deferShader;
@@ -1277,7 +1248,6 @@ typedef struct
 	qhandle_t machinegunBrassModel;
 	qhandle_t panzerfaustBrassModel;    //----(SA)  added
 
-	// Rafael
 	qhandle_t smallgunBrassModel;
 
 	qhandle_t shotgunBrassModel;
@@ -1315,7 +1285,7 @@ typedef struct
 //  qhandle_t   snooperShaderSimple;
 	qhandle_t binocShader;
 	qhandle_t binocShaderSimple;
-// JPW NERVE
+
 	qhandle_t fleshSmokePuffShader;   // JPW NERVE for bullet hit flesh smoke puffs
 	qhandle_t nerveTestShader;
 	qhandle_t idTestShader;
@@ -1324,7 +1294,7 @@ typedef struct
 	qhandle_t hud3Shader;
 	qhandle_t hud4Shader;
 	qhandle_t hud5Shader;
-// jpw
+
 	qhandle_t smokePuffShader;
 	qhandle_t smokePuffRageProShader;
 	qhandle_t shotgunSmokePuffShader;
@@ -1374,8 +1344,6 @@ typedef struct
 	qhandle_t disarmHintShader;
 	qhandle_t reviveHintShader;
 	qhandle_t dynamiteHintShader;
-	// dhm - end
-
 
 	qhandle_t tankHintShader;
 	qhandle_t satchelchargeHintShader;
@@ -1440,7 +1408,6 @@ typedef struct
 	qhandle_t viewBloodAni[5];
 	qhandle_t viewFlashBlood;
 	qhandle_t viewFlashFire[16];
-	// done
 
 	// Rafael shards
 	qhandle_t shardGlass1;
@@ -1451,7 +1418,6 @@ typedef struct
 	qhandle_t shardMetal2;
 //  qhandle_t   shardCeramic1;
 //  qhandle_t   shardCeramic2;
-	// done
 
 	qhandle_t shardRubble1;
 	qhandle_t shardRubble2;
@@ -1738,8 +1704,6 @@ typedef struct
 
 	qhandle_t cursorIcon;
 
-
-
 	qhandle_t hudPowerIcon;
 	qhandle_t hudSprintIcon;
 	qhandle_t hudHealthIcon;
@@ -1842,7 +1806,6 @@ typedef struct oidInfo_s
 
 #define NUM_ENDGAME_AWARDS 14
 
-
 // The client game static (cgs) structure hold everything
 // loaded or calculated from the gamestate.  It will NOT
 // be cleared when a tournement restart is done, allowing
@@ -1887,9 +1850,7 @@ typedef struct
 	int levelStartTime;
 	int intermissionStartTime;
 
-	//
 	// locally derived information from gamestate
-	//
 	qhandle_t gameModels[MAX_MODELS];
 	char gameShaderNames[MAX_CS_SHADERS][MAX_QPATH];
 	qhandle_t gameShaders[MAX_CS_SHADERS];
@@ -1981,7 +1942,6 @@ typedef struct
 
 	int autoFireteamJoinEndTime;
 	int autoFireteamJoinNum;
-
 
 	qboolean autoMapExpanded;
 	int autoMapExpandTime;
@@ -2159,8 +2119,8 @@ extern vmCvar_t cg_blood;
 extern vmCvar_t cg_predictItems;
 extern vmCvar_t cg_deferPlayers;
 extern vmCvar_t cg_teamChatsOnly;
-extern vmCvar_t cg_noVoiceChats;                    // NERVE - SMF
-extern vmCvar_t cg_noVoiceText;                     // NERVE - SMF
+extern vmCvar_t cg_noVoiceChats;
+extern vmCvar_t cg_noVoiceText;
 extern vmCvar_t cg_enableBreath;
 extern vmCvar_t cg_autoactivate;
 extern vmCvar_t cg_smoothClients;
@@ -2175,25 +2135,21 @@ extern vmCvar_t cg_timescale;
 extern vmCvar_t cg_cameraMode;
 extern vmCvar_t cg_smallFont;
 extern vmCvar_t cg_bigFont;
-extern vmCvar_t cg_noTaunt;             // NERVE - SMF
-extern vmCvar_t cg_voiceSpriteTime;             // DHM - Nerve
+extern vmCvar_t cg_noTaunt;
+extern vmCvar_t cg_voiceSpriteTime;
 
-extern vmCvar_t cg_blinktime;           //----(SA)  added
+extern vmCvar_t cg_blinktime;
 
 // Rafael - particle switch
 extern vmCvar_t cg_wolfparticles;
-// done
 
-// Ridah
 extern vmCvar_t cg_gameType;
 extern vmCvar_t cg_bloodTime;
 extern vmCvar_t cg_norender;
 extern vmCvar_t cg_skybox;
 
-// JPW NERVE
 extern vmCvar_t cg_redlimbotime;
 extern vmCvar_t cg_bluelimbotime;
-// jpw
 
 extern vmCvar_t cg_movespeed;
 
@@ -2204,13 +2160,11 @@ extern vmCvar_t cg_drawNotifyText;
 extern vmCvar_t cg_quickMessageAlt;
 extern vmCvar_t cg_popupLimboMenu;
 extern vmCvar_t cg_descriptiveText;
-// -NERVE - SMF
 
 extern vmCvar_t cg_antilag;
 
 extern vmCvar_t developer;
 
-// OSP
 extern vmCvar_t authLevel;
 extern vmCvar_t cf_wstats;
 extern vmCvar_t cf_wtopshots;
@@ -2249,7 +2203,6 @@ extern vmCvar_t int_cl_timenudge;
 extern vmCvar_t int_m_pitch;
 extern vmCvar_t int_sensitivity;
 extern vmCvar_t int_ui_blackout;
-// -OSP
 
 extern vmCvar_t cg_rconPassword;
 extern vmCvar_t cg_refereePassword;
@@ -2274,9 +2227,7 @@ extern vmCvar_t cl_wavefilename;
 extern vmCvar_t cl_waveoffset;
 extern vmCvar_t cg_recording_statusline;
 
-//
 // cg_main.c
-//
 const char *CG_ConfigString(int index);
 int CG_ConfigStringCopy(int index, char *buff, int buffsize);
 const char *CG_Argv(int arg);
@@ -2307,9 +2258,7 @@ void CG_EventHandling(int type, qboolean fForced);
 qboolean CG_GetTag(int clientNum, char *tagname, orientation_t * orientation);
 qboolean CG_GetWeaponTag(int clientNum, char *tagname, orientation_t * orientation);
 
-//
 // cg_view.c
-//
 void CG_TestModel_f(void);
 void CG_TestGun_f(void);
 void CG_TestModelNextFrame_f(void);
@@ -2331,9 +2280,7 @@ void CG_Concussive(centity_t *cent);
 
 void CG_Letterbox(float xsize, float ysize, qboolean center);
 
-//
 // cg_drawtools.c
-//
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
 void CG_FillRect(float x, float y, float width, float height, const float *color);
 void CG_HorizontalPercentBar(float x, float y, float width, float height, float percent);
@@ -2342,9 +2289,9 @@ void CG_DrawPicST(float x, float y, float width, float height, float s0, float t
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle);        // NERVE - SMF
 void CG_DrawChar(int x, int y, int width, int height, int ch);
 void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags);
-// JOSEPH 10-26-99
+
 void CG_DrawStretchPic(float x, float y, float width, float height, qhandle_t hShader);
-// END JOSEPH
+
 void CG_DrawString(float x, float y, const char *string,
                    float charWidth, float charHeight, const float *modulate);
 
@@ -2352,20 +2299,20 @@ void CG_DrawString(float x, float y, const char *string,
 void CG_DrawStringExt(int x, int y, const char *string, float *setColor,
                       qboolean forceColor, qboolean shadow, int charWidth,
                       int charHeight, int maxChars);
-// JOSEPH 4-17-00
+
 void CG_DrawStringExt2(int x, int y, const char *string, const float *setColor,
                        qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars);
 void CG_DrawStringExt_Shadow(int x, int y, const char *string, const float *setColor,
                              qboolean forceColor, int shadow, int charWidth, int charHeight, int maxChars);
-// END JOSEPH
+
 void CG_DrawBigString(int x, int y, const char *s, float alpha);
 void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color);
 void CG_DrawSmallString(int x, int y, const char *s, float alpha);
 void CG_DrawSmallStringColor(int x, int y, const char *s, vec4_t color);
-// JOSEPH 4-25-00
+
 void CG_DrawBigString2(int x, int y, const char *s, float alpha);
 void CG_DrawBigStringColor2(int x, int y, const char *s, vec4_t color);
-// END JOSEPH
+
 int CG_DrawStrlen(const char *str);
 
 float *CG_FadeColor(int startMsec, int totalMsec);
@@ -2389,11 +2336,8 @@ void CG_InitTranslation(void);
 char *CG_TranslateString(const char *string);
 void CG_SaveTransTable(void);
 void CG_ReloadTranslation(void);
-// -NERVE - SMF
 
-//
 // cg_draw.c, cg_newDraw.c
-//
 extern char cg_fxflags;  // JPW NERVE
 
 void CG_InitStatsDebug(void);
@@ -2433,12 +2377,7 @@ int CG_CalculateReinfTime(qboolean menu);
 float CG_CalculateReinfTime_Float(qboolean menu);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
-
-
-
-//
 // cg_player.c
-//
 qboolean CG_EntOnFire(centity_t *cent);      // Ridah
 void CG_Player(centity_t *cent);
 void CG_ResetPlayerEntity(centity_t *cent);
@@ -2447,15 +2386,11 @@ void CG_NewClientInfo(int clientNum);
 sfxHandle_t CG_CustomSound(int clientNum, const char *soundName);
 void CG_ParseTeamXPs(int n);
 
-
-
 // Rafael particles
 extern qboolean initparticles;
 int CG_NewParticleArea(int num);
 
-//
 // cg_predict.c
-//
 void CG_BuildSolidList(void);
 int CG_PointContents(const vec3_t point, int passEntityNum);
 void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);
@@ -2463,19 +2398,13 @@ void CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const ve
 void CG_PredictPlayerState(void);
 //void CG_LoadDeferredPlayers( void );
 
-
-//
 // cg_events.c
-//
 void CG_CheckEvents(centity_t *cent);
 void CG_EntityEvent(centity_t *cent, vec3_t position);
 void CG_PainEvent(centity_t *cent, int health, qboolean crouching);
 void CG_PrecacheFXSounds(void);
 
-
-//
 // cg_ents.c
-//
 void CG_SetEntitySoundPosition(centity_t *cent);
 void CG_AddPacketEntities(void);
 void CG_Beam(centity_t *cent);
@@ -2486,10 +2415,7 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime);
 void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName, int startIndex, vec3_t *offset);
 void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName);
 
-
-//
 // cg_weapons.c
-//
 void CG_LastWeaponUsed_f(void);       //----(SA)    added
 void CG_NextWeaponInBank_f(void);     //----(SA)    added
 void CG_PrevWeaponInBank_f(void);     //----(SA)    added
@@ -2512,19 +2438,15 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir);
 void CG_DrawTracer(vec3_t start, vec3_t finish);
 
-// Rafael
 void CG_MG42EFX(centity_t *cent);
 
 void CG_FLAKEFX(centity_t *cent, int whichgun);
 
 void CG_MortarEFX(centity_t *cent);
 
-// Ridah
 qboolean CG_MonsterUsingWeapon(centity_t *cent, int aiChar, int weaponNum);
 
-// Rafael
 void CG_MissileHitWall2(int weapon, int clientNum, vec3_t origin, vec3_t dir);
-// done
 
 void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir, int entityNum);
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
@@ -2540,13 +2462,10 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch);
 
 //----(SA) added to header to access from outside cg_weapons.c
 void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count);
-//----(SA) done
 
 //void CG_ClientDamage( int entnum, int enemynum, int id );
 
-//
 // cg_marks.c
-//
 void    CG_InitMarkPolys(void);
 void    CG_AddMarks(void);
 void    CG_ImpactMark(qhandle_t markShader,
@@ -2554,14 +2473,11 @@ void    CG_ImpactMark(qhandle_t markShader,
                       float r, float g, float b, float a, int lifeTime);
 
 // Rafael particles
-//
 // cg_particles.c
-//
 void    CG_ClearParticles(void);
 void    CG_AddParticles(void);
 void    CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb, float range, int snum);
 void    CG_ParticleSmoke(qhandle_t pshader, centity_t *cent);
-void    CG_AddParticleShrapnel(localEntity_t *le);
 void    CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent);
 void    CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration);
 void    CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration);       // DHM - Nerve
@@ -2570,12 +2486,10 @@ void    CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y
 void    CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir);
 void    CG_ParticleMisc(qhandle_t pshader, vec3_t origin, int size, int duration, float alpha);
 
-// Ridah
 void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration, int sizeStart, int sizeEnd, qboolean dlight);
 
 // Rafael snow pvs check
 void    CG_SnowLink(centity_t *cent, qboolean particleOn);
-// done.
 
 void CG_ParticleImpactSmokePuff(qhandle_t pshader, vec3_t origin);
 void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int lifetime, int vel, int acc, int maxroll, float alpha, float size);        // (SA) so I can add more parameters without screwing up the one that's there
@@ -2586,24 +2500,17 @@ void CG_Particle_OilSlick(qhandle_t pshader, centity_t *cent);
 void CG_OilSlickRemove(centity_t *cent);
 void CG_ParticleBloodCloudZombie(centity_t *cent, vec3_t origin, vec3_t dir);
 void CG_ParticleBloodCloud(centity_t *cent, vec3_t origin, vec3_t dir);
-// done
 
 // Ridah, trails
-//
 // cg_trails.c
-//
 // rain - usedby for zinx's trail fixes
 int CG_AddTrailJunc(int headJuncIndex, void *usedby, qhandle_t shader, int spawnTime, int sType, vec3_t pos, int trailLife, float alphaStart, float alphaEnd, float startWidth, float endWidth, int flags, vec3_t colorStart, vec3_t colorEnd, float sRatio, float animSpeed);
 int CG_AddSparkJunc(int headJuncIndex, void *usedby, qhandle_t shader, vec3_t pos, int trailLife, float alphaStart, float alphaEnd, float startWidth, float endWidth);
 int CG_AddSmokeJunc(int headJuncIndex, void *usedby, qhandle_t shader, vec3_t pos, int trailLife, float alpha, float startWidth, float endWidth);
 void CG_AddTrails(void);
 void CG_ClearTrails(void);
-// done.
 
-//
 // cg_sound.c
-//
-
 // Ridah, sound scripting
 int CG_SoundScriptPrecache(const char *name);
 int CG_SoundPlaySoundScript(const char *name, vec3_t org, int entnum, qboolean buffer);
@@ -2611,7 +2518,7 @@ void CG_UpdateBufferedSoundScripts(void);
 // TTimo: prototype must match animScriptData_t::playSound
 void CG_SoundPlayIndexedScript(int index, vec3_t org, int entnum);
 void CG_SoundInit(void);
-// done.
+
 void CG_SetViewanglesForSpeakerEditor(void);
 void CG_SpeakerEditorDraw(void);
 void CG_SpeakerEditor_KeyHandling(int key, qboolean down);
@@ -2632,18 +2539,13 @@ void CG_InitFlameChunks(void);
 void CG_AddFlameChunks(void);
 void CG_UpdateFlamethrowerSounds(void);
 void CG_FlameDamage(int owner, vec3_t org, float radius);
-// done.
 
-//
 // cg_localents.c
-//
 void    CG_InitLocalEntities(void);
 localEntity_t *CG_AllocLocalEntity(void);
 void    CG_AddLocalEntities(void);
 
-//
 // cg_effects.c
-//
 int CG_GetOriginForTag(centity_t * cent, refEntity_t * parent, char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
 localEntity_t *CG_SmokePuff(const vec3_t p,
                             const vec3_t vel,
@@ -2665,13 +2567,11 @@ void CG_Bleed(vec3_t origin, int entityNum);
 localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
                                 qhandle_t hModel, qhandle_t shader, int msec,
                                 qboolean isSprite);
-// Ridah
+
 void CG_SparklerSparks(vec3_t origin, int count);
 void CG_ClearFlameChunks(void);
 void CG_ProjectedSpotLight(vec3_t start, vec3_t dir);
-// done.
 
-//----(SA)
 void CG_Spotlight(centity_t *cent, float *color, vec3_t start, vec3_t dir, int segs, float range, int startWidth, float coneAngle, int flags);
 #define SL_NOTRACE          0x001   // don't do a trace check for shortening the beam, always draw at full 'range' length
 #define SL_NODLIGHT         0x002   // don't put a dlight at the end
@@ -2682,7 +2582,6 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t start, vec3_t dir, int s
 #define SL_LOCKUV           0x080   // lock the texture coordinates at the 'true' length of the requested beam.
 #define SL_NOCORE           0x100   // don't draw the center 'core' beam
 #define SL_TRACEWORLDONLY   0x200
-//----(SA)  done
 
 void CG_RumbleEfx(float pitch, float yaw);
 
@@ -2690,14 +2589,10 @@ void InitSmokeSprites(void);
 void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon);
 void CG_AddSmokeSprites(void);
 
-//
 // cg_snapshot.c
-//
 void CG_ProcessSnapshots(void);
 
-//
 // cg_spawn.c
-//
 qboolean    CG_SpawnString(const char *key, const char *defaultString, char **out);
 // spawn string returns a temporary reference, you must CopyString() if you want to keep it
 qboolean    CG_SpawnFloat(const char *key, const char *defaultString, float *out);
@@ -2705,9 +2600,7 @@ qboolean    CG_SpawnInt(const char *key, const char *defaultString, int *out);
 qboolean    CG_SpawnVector(const char *key, const char *defaultString, float *out);
 void        CG_ParseEntitiesFromString(void);
 
-//
 // cg_info.c
-//
 void CG_LoadingString(const char *s);
 //void CG_LoadingItem( int itemNum );
 void CG_LoadingClient(int clientNum);
@@ -2717,9 +2610,7 @@ void CG_ShowHelp_Off(int *status);
 void CG_ShowHelp_On(int *status);
 qboolean CG_ViewingDraw(void);
 
-//
 // cg_scoreboard.c
-//
 qboolean CG_DrawScoreboard(void);
 //void CG_DrawTourneyScoreboard( void );
 
@@ -2786,9 +2677,7 @@ void CG_ParseFireteams(void);
 void CG_ParseOIDInfos(void);
 oidInfo_t *CG_OIDInfoForEntityNum(int num);
 
-//
 // cg_consolecmds.c
-//
 extern const char *aMonths[12];
 qboolean CG_ConsoleCommand(void);
 void CG_InitConsoleCommands(void);
@@ -2801,9 +2690,7 @@ void CG_keyOff_f(void);
 void CG_dumpStats_f(void);
 void CG_toggleSwing_f(void);
 
-//
 // cg_servercmds.c
-//
 void CG_ExecuteNewServerCommands(int latestSequence);
 void CG_ParseServerinfo(void);
 void CG_ParseWolfinfo(void);            // NERVE - SMF
@@ -2824,25 +2711,19 @@ void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
 void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
 void CG_scores_cmd(void);
 
-//
 // cg_playerstate.c
-//
 void CG_Respawn(qboolean revived);
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops);
 
-//
 // cg_atmospheric.c
-//
 void CG_GenerateTracemap(void);
 void CG_EffectParse(const char *effectstr);
 void CG_AddAtmosphericEffects(void);
 
 //===============================================
 
-//
 // system traps
 // These functions are how the cgame communicates with the main game system
-//
 
 // no engine implementation
 void trap_PumpEventLoop(void);
@@ -2864,7 +2745,6 @@ void        trap_Cvar_Update(vmCvar_t *vmCvar);
 void        trap_Cvar_Set(const char *var_name, const char *value);
 void        trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
 void        trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-
 
 // ServerCommand and ConsoleCommand parameter access
 int         trap_Argc(void);
@@ -2950,7 +2830,6 @@ void        trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin);
 
 // Ridah, talking animations
 int         trap_S_GetVoiceAmplitude(int entityNum);
-// done.
 
 // repatialize recalculates the volumes of sound as they should be heard by the
 // given entityNum and position
@@ -2983,9 +2862,9 @@ void        trap_R_AddRefEntityToScene(const refEntity_t *re);
 // significant construction
 void        trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts);
 void        trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
-// Ridah
+
 void        trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys);
-// done.
+
 void        trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags);
 void        trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);
 void        trap_R_RenderScene(const refdef_t *fd);
@@ -3066,19 +2945,16 @@ int         trap_Key_GetKey(const char *binding);
 qboolean    trap_Key_GetOverstrikeMode(void);
 void        trap_Key_SetOverstrikeMode(qboolean state);
 
-// RF
 void trap_SendMoveSpeedsToGame(int entnum, char *movespeeds);
 
 //void trap_UI_Popup(const char *arg0); //----(SA)  added
 void trap_UI_Popup(int arg0);
 
-// NERVE - SMF
 qhandle_t getTestShader(void);   // JPW NERVE shhh
 void trap_UI_ClosePopup(const char *arg0);
 void trap_Key_GetBindingBuf(int keynum, char *buf, int buflen);
 void trap_Key_SetBinding(int keynum, const char *binding);
 void trap_Key_KeynumToStringBuf(int keynum, char *buf, int buflen);
-// -NERVE - SMF
 
 void trap_TranslateString(const char *string, char *buf);       // NERVE - SMF - localization
 
@@ -3117,10 +2993,8 @@ void        CG_StartCamera(const char *name, qboolean startBlack);
 void        CG_StartInitialCamera(void);
 void        CG_StopCamera(void);
 
-//----(SA)  added
 int         CG_LoadCamera(const char *name);
 void        CG_FreeCamera(int camNum);
-//----(SA)  end
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 
@@ -3184,18 +3058,12 @@ extern rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2];
 
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2);
 
-
-// START Mad Doc - TDF
-
 #define MAX_SQUAD_SIZE 6
 
-//
 // merged the common UI elements
-//
 #define UI_CAMPAIGN_BRIEFING 0
 #define UI_COMMAND_MAP 1
 #define UI_SQUAD_SELECT 2
-
 
 void CG_DrawUITabs(void);
 void CG_DrawUICurrentSquad(void);
@@ -3204,16 +3072,12 @@ void CG_DrawUISelectedSoldier(void);
 void CG_UICurrentSquadSetup(void);
 void CG_CampaignBriefingSetup(void);
 
-
 #define ORDER_ICON_FADE_TIME 3500
 
 int CG_GetFirstSelectedBot(void);
 void CG_AddToJournal(char *text);
 
-// END Mad Doc - TDF
-
 // Gordon: Fireteam stuff
-
 //fireteamData_t* CG_IsOnFireteam(      int clientNum );
 #define /*fireteamData_t**/ CG_IsOnFireteam(/*int*/ clientNum) /*{ return*/ cgs.clientinfo[clientNum].fireteamData   /*}*/
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2);
@@ -3230,7 +3094,6 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos, int max);
 qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly);
 const char *CG_BuildSelectedFirteamString(void);
 
-// OSP
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
 #define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.2), SMALLCHAR_WIDTH);
 
@@ -3242,7 +3105,7 @@ void CG_mvShowView_f(void);
 void CG_mvSwapViews_f(void);
 void CG_mvToggleAll_f(void);
 void CG_mvToggleView_f(void);
-//
+
 cg_window_t *CG_mvClientLocate(int pID);
 void CG_mvCreate(int pID);
 cg_window_t *CG_mvCurrent(void);
@@ -3279,7 +3142,6 @@ void CG_windowDraw(void);
 void CG_windowFree(cg_window_t *w);
 void CG_windowInit(void);
 void CG_windowNormalizeOnText(cg_window_t *w);
-// OSP
 
 void CG_SetupCabinets(void);
 
@@ -3288,34 +3150,22 @@ void CG_ParseSkyBox(void);
 void CG_ParseTagConnect(int tagNum);
 void CG_ParseTagConnects(void);
 
-//
 // cg_ents.c
-//
-
 void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg42upper, refEntity_t *mg42gun, refEntity_t *player, refEntity_t *flash, vec_t *playerangles, const char *tagName, qboolean browning);
 
-//
 // cg_character.c
-//
-
 qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *character);
 bg_character_t *CG_CharacterForClientinfo(clientInfo_t *ci, centity_t *cent);
 bg_character_t *CG_CharacterForPlayerstate(playerState_t *ps);
 void CG_RegisterPlayerClasses(void);
 
-//
 // cg_polybus.c
-//
-
 polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIndicies);
 void CG_PB_ClearPolyBuffers(void);
 void CG_PB_RenderPolyBuffers(void);
 
 
-//
 // cg_limbopanel.c
-//
-
 void CG_LimboPanel_KeyHandling(int key, qboolean down);
 int CG_LimboPanel_GetMaxObjectives(void);
 
@@ -3380,9 +3230,7 @@ int                 CG_LimboPanel_GetWeaponNumberForPos(int pos);
 void                CG_LimboPanel_SetSelectedWeaponNumForSlot(int index, int number);
 weapon_t            CG_LimboPanel_GetSelectedWeaponForSlot(int index);
 
-//
 // cg_commandmap.c
-//
 // A scissored map always has the player in the center
 typedef struct mapScissor_s
 {
@@ -3412,10 +3260,7 @@ qboolean CG_CommandCentreSpawnPointClick(void);
 
 void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_t *headcharacter, float yaw, float pitch, qboolean drawHat, hudHeadAnimNumber_t animation, qhandle_t painSkin, int rank, qboolean spectator);
 
-//
 // cg_popupmessages.c
-//
-
 void CG_InitPM(void);
 void CG_InitPMGraphics(void);
 void CG_UpdatePMLists(void);
@@ -3428,10 +3273,8 @@ void CG_PlayPMItemSound(centity_t *cent);
 qhandle_t CG_GetPMItemIcon(centity_t *cent);
 void CG_DrawKeyHint(rectDef_t *rect, const char *binding);
 
-//
-// cg_debriefing.c
-//
 
+// cg_debriefing.c
 clientInfo_t *CG_Debriefing_GetSelectedClientInfo(void);
 void CG_Debrieing_SetSelectedClient(int clientNum);
 
@@ -3459,7 +3302,6 @@ void CG_Debriefing_PlayerTime_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerXP_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button);
-
 
 void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button);
 
@@ -3520,10 +3362,7 @@ team_t CG_Debriefing_FindWinningTeamForMap(void);
 int CG_CalcViewValues(void);
 void CG_HudHeadAnimation(bg_character_t *ch, lerpFrame_t *lf, int *oldframe, int *frame, float *backlerp, hudHeadAnimNumber_t animation);
 
-//
 // cg_fireteams.c
-//
-
 void CG_Fireteams_KeyHandling(int key, qboolean down);
 qboolean CG_FireteamCheckExecKey(int key, qboolean doaction);
 void CG_Fireteams_Draw(void);
