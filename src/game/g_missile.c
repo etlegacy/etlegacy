@@ -456,7 +456,7 @@ void G_ExplodeMissile(gentity_t *ent)
 
 	trap_LinkEntity(ent);
 
-	if (etype == ET_MISSILE || etype == ET_BOMB)
+	if (etype == ET_MISSILE)
 	{
 
 		if (ent->s.weapon == WP_LANDMINE)
@@ -604,42 +604,7 @@ void Landmine_Check_Ground(gentity_t *self)
 	{
 		self->s.groundEntityNum = -1;
 	}
-
-	/*vec3_t        oldorigin;
-	vec3_t      origin;
-	trace_t     tr;
-
-	// Backup origin
-	VectorCopy( self->r.currentOrigin, oldorigin );
-
-	// See if we can fall down this frame
-	self->s.pos.trType = TR_GRAVITY;
-	self->s.pos.trTime = level.time;
-	BG_EvaluateTrajectory( &self->s.pos, level.time, origin, qfalse, self->s.effect2Time );
-
-	// This is likely overkill, but just in case (synced to G_RunMissile)
-	if( (self->clipmask & CONTENTS_BODY) && (self->s.weapon == WP_DYNAMITE || self->s.weapon == WP_ARTY  || ent->s.weapon == WP_SMOKE_MARKER
-	    || self->s.weapon == WP_GRENADE_LAUNCHER || self->s.weapon == WP_GRENADE_PINEAPPLE
-	    || self->s.weapon == WP_LANDMINE || self->s.weapon == WP_SATCHEL || self->s.weapon == WP_SMOKE_BOMB
-	    ) ) {
-
-	    if( !self->s.pos.trDelta[0] && !self->s.pos.trDelta[1] && !self->s.pos.trDelta[2] ) {
-	        self->clipmask &= ~CONTENTS_BODY;
-	    }
-	}
-
-	// trace a line from the previous position to the current position,
-	// ignoring interactions with the missile owner
-	trap_Trace( &tr, self->r.currentOrigin, self->r.mins, self->r.maxs, origin,
-	    self->r.ownerNum, self->clipmask );
-
-	if (tr.fraction == 1)
-	    self->s.groundEntityNum = -1;
-
-	// Reset origin
-	G_SetOrigin( self, oldorigin );*/
 }
-
 
 /*
 ================
@@ -1045,7 +1010,7 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 		return;
 	}
 
-// JPW NERVE don't catch fire if invulnerable or same team in no FF
+	// JPW NERVE don't catch fire if invulnerable or same team in no FF
 	if (body->client)
 	{
 		if (body->client->ps.powerups[PW_INVULNERABLE] >= level.time)
@@ -1055,24 +1020,22 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 			return;
 		}
 
-//      if( !self->count2 && body == self->parent )
-//          return;
+		//      if( !self->count2 && body == self->parent )
+		//          return;
 
 		if (!(g_friendlyFire.integer) && OnSameTeam(body, self->parent))
 		{
 			return;
 		}
 	}
-// jpw
 
-// JPW NERVE don't catch fire if under water or invulnerable
+	// JPW NERVE don't catch fire if under water or invulnerable
 	if (body->waterlevel >= 3)
 	{
 		body->flameQuota  = 0;
 		body->s.onFireEnd = level.time - 1;
 		return;
 	}
-// jpw
 
 	if (!body->r.bmodel)
 	{
@@ -1132,7 +1095,6 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 	{
 		return;
 	}
-	// jpw
 
 	// now check the damageQuota to see if we should play a pain animation
 	// first reduce the current damageQuota with time
@@ -2324,8 +2286,6 @@ qboolean visible(gentity_t *self, gentity_t *other)
 	return qfalse;
 }
 
-
-
 /*
 ==============
 fire_mortar
@@ -2336,7 +2296,7 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 {
 	gentity_t *bolt;
 
-//  VectorNormalize (dir);
+	//  VectorNormalize (dir);
 
 	if (self->spawnflags)
 	{
@@ -2371,7 +2331,7 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.pos.trType = TR_GRAVITY;
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
 	VectorCopy(start, bolt->s.pos.trBase);
-//  VectorScale( dir, 900, bolt->s.pos.trDelta );
+	//  VectorScale( dir, 900, bolt->s.pos.trDelta );
 	VectorCopy(dir, bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
 	VectorCopy(start, bolt->r.currentOrigin);

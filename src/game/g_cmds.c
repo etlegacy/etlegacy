@@ -340,51 +340,6 @@ int ClientNumberFromString(gentity_t *to, char *s)
 }
 
 /*
-=================
-Cmd_ListBotGoals_f
-
-=================
-*/
-void Cmd_ListBotGoals_f(gentity_t *ent)
-{
-	int    i;
-	team_t t;
-
-	if (!CheatsOk(ent))
-	{
-		return;
-	}
-
-	for (t = TEAM_AXIS; t <= TEAM_ALLIES; t++)
-	{
-		gentity_t *list = g_entities, *targ;
-
-		G_Printf("\n%s bot goals\n=====================\n", (t == TEAM_AXIS ? "Axis" : "Allies"));
-
-
-		for (i = 0; i < level.num_entities; i++, list++)
-		{
-			if (!list->inuse)
-			{
-				continue;
-			}
-
-			if (!(list->aiInactive & (1 << t)))
-			{
-				G_Printf("%s (%s)", (list->scriptName ? list->scriptName : (list->targetname ? list->targetname : "NONE")), list->classname);
-				if (list->target_ent)
-				{
-					targ = list->target_ent;
-					G_Printf(" -> ");
-					G_Printf("%s (%s)", (targ->scriptName ? targ->scriptName : (targ->targetname ? targ->targetname : "NONE")), targ->classname);
-				}
-				G_Printf("\n");
-			}
-		}
-	}
-}
-
-/*
 ==================
 Cmd_Give_f
 
@@ -1473,53 +1428,6 @@ void Cmd_SetWeapons_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 
 /*
 =================
-Cmd_TeamBot_f
-=================
-*/
-void Cmd_TeamBot_f(gentity_t *foo)
-{
-	char ptype[4], weap[4], fireteam[4];
-	char entNumStr[4];
-	int  entNum;
-	char *weapon;
-	char weaponBuf[MAX_INFO_STRING];
-	char userinfo[MAX_INFO_STRING];
-
-	gentity_t *ent;
-
-	trap_Argv(1, entNumStr, sizeof(entNumStr));
-	entNum = atoi(entNumStr);
-
-	ent = g_entities + entNum;
-
-	trap_Argv(3, ptype, sizeof(ptype));
-	trap_Argv(4, weap, sizeof(weap));
-	trap_Argv(5, fireteam, sizeof(fireteam));
-
-
-
-	ent->client->sess.latchPlayerType    = atoi(ptype);
-	ent->client->sess.latchPlayerWeapon  = atoi(weap);
-	ent->client->sess.latchPlayerWeapon2 = 0;
-	ent->client->sess.playerType         = atoi(ptype);
-	ent->client->sess.playerWeapon       = atoi(weap);
-
-	// remove any weapon info from the userinfo, so SetWolfSpawnWeapons() doesn't reset the weapon as that
-	trap_GetUserinfo(entNum, userinfo, sizeof(userinfo));
-
-	weapon = Info_ValueForKey(userinfo, "pWeapon");
-	if (weapon[0])
-	{
-		Q_strncpyz(weaponBuf, weapon, sizeof(weaponBuf));
-		Info_RemoveKey(userinfo, "pWeapon");
-		trap_SetUserinfo(entNum, userinfo);
-	}
-
-	SetWolfSpawnWeapons(ent->client);
-}
-
-/*
-=================
 Cmd_Follow_f
 =================
 */
@@ -2164,102 +2072,6 @@ static void Cmd_VoiceTell_f(gentity_t *ent, qboolean voiceonly)
 		G_Voice(ent, ent, SAY_TELL, id, voiceonly);
 	}
 }
-#endif
-
-// TTimo gcc: defined but not used
-#if 0
-/*
-==================
-Cmd_VoiceTaunt_f
-==================
-*/
-static void Cmd_VoiceTaunt_f(gentity_t *ent)
-{
-	gentity_t *who;
-	int       i;
-
-	if (!ent->client)
-	{
-		return;
-	}
-
-	// insult someone who just killed you
-	if (ent->enemy && ent->enemy->client && ent->enemy->client->lastkilled_client == ent->s.number)
-	{
-		// i am a dead corpse
-		if (!(ent->enemy->r.svFlags & SVF_BOT))
-		{
-//          G_Voice( ent, ent->enemy, SAY_TELL, VOICECHAT_DEATHINSULT, qfalse );
-		}
-		if (!(ent->r.svFlags & SVF_BOT))
-		{
-//          G_Voice( ent, ent,        SAY_TELL, VOICECHAT_DEATHINSULT, qfalse );
-		}
-		ent->enemy = NULL;
-		return;
-	}
-	// insult someone you just killed
-	if (ent->client->lastkilled_client >= 0 && ent->client->lastkilled_client != ent->s.number)
-	{
-		who = g_entities + ent->client->lastkilled_client;
-		if (who->client)
-		{
-			// who is the person I just killed
-			if (who->client->lasthurt_mod == MOD_GAUNTLET)
-			{
-				if (!(who->r.svFlags & SVF_BOT))
-				{
-//                  G_Voice( ent, who, SAY_TELL, VOICECHAT_KILLGAUNTLET, qfalse );  // and I killed them with a gauntlet
-				}
-				if (!(ent->r.svFlags & SVF_BOT))
-				{
-//                  G_Voice( ent, ent, SAY_TELL, VOICECHAT_KILLGAUNTLET, qfalse );
-				}
-			}
-			else
-			{
-				if (!(who->r.svFlags & SVF_BOT))
-				{
-//                  G_Voice( ent, who, SAY_TELL, VOICECHAT_KILLINSULT, qfalse );    // and I killed them with something else
-				}
-				if (!(ent->r.svFlags & SVF_BOT))
-				{
-//                  G_Voice( ent, ent, SAY_TELL, VOICECHAT_KILLINSULT, qfalse );
-				}
-			}
-			ent->client->lastkilled_client = -1;
-			return;
-		}
-	}
-
-	if (g_gametype.integer >= GT_TEAM)
-	{
-		// praise a team mate who just got a reward
-		for (i = 0; i < MAX_CLIENTS; i++)
-		{
-			who = g_entities + i;
-			if (who->client && who != ent && who->client->sess.sessionTeam == ent->client->sess.sessionTeam)
-			{
-				if (who->client->rewardTime > level.time)
-				{
-					if (!(who->r.svFlags & SVF_BOT))
-					{
-//                      G_Voice( ent, who, SAY_TELL, VOICECHAT_PRAISE, qfalse );
-					}
-					if (!(ent->r.svFlags & SVF_BOT))
-					{
-//                      G_Voice( ent, ent, SAY_TELL, VOICECHAT_PRAISE, qfalse );
-					}
-					return;
-				}
-			}
-		}
-	}
-
-	// just say something
-//  G_Voice( ent, NULL, SAY_ALL, VOICECHAT_TAUNT, qfalse );
-}
-// -NERVE - SMF
 #endif
 
 /*
@@ -4128,10 +3940,6 @@ void ClientCommand(int clientNum)
 	if (Q_stricmp(cmd, "give") == 0)
 	{
 		Cmd_Give_f(ent);
-	}
-	else if (Q_stricmp(cmd, "listbotgoals") == 0)
-	{
-		Cmd_ListBotGoals_f(ent);
 	}
 	else if (Q_stricmp(cmd, "god") == 0)
 	{

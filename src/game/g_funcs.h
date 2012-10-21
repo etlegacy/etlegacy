@@ -1119,7 +1119,7 @@
 { "G_EntitySound", (byte *)G_EntitySound },
 { "Cmd_FollowCycle_f", (byte *)Cmd_FollowCycle_f },
 { "Cmd_Follow_f", (byte *)Cmd_Follow_f },
-{ "Cmd_TeamBot_f", (byte *)Cmd_TeamBot_f },
+
 { "Cmd_SetWeapons_f", (byte *)Cmd_SetWeapons_f },
 { "Cmd_SetClass_f", (byte *)Cmd_SetClass_f },
 { "Cmd_ResetSetup_f", (byte *)Cmd_ResetSetup_f },
@@ -1139,7 +1139,7 @@
 { "Cmd_Nofatigue_f", (byte *)Cmd_Nofatigue_f },
 { "Cmd_God_f", (byte *)Cmd_God_f },
 { "Cmd_Give_f", (byte *)Cmd_Give_f },
-{ "Cmd_ListBotGoals_f", (byte *)Cmd_ListBotGoals_f },
+
 { "ClientNumberFromString", (byte *)ClientNumberFromString },
 { "SanitizeString", (byte *)SanitizeString },
 { "ConcatArgs", (byte *)ConcatArgs },

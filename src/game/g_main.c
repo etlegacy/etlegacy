@@ -199,7 +199,6 @@ vmCvar_t vote_limit;
 vmCvar_t vote_percent;
 vmCvar_t z_serverflags;
 
-
 vmCvar_t g_covertopsChargeTime;
 vmCvar_t refereePassword;
 vmCvar_t g_debugConstruct;
@@ -290,7 +289,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_warmup,                  "g_warmup",                  "60",                                                     CVAR_ARCHIVE,                                    0, qtrue},
 	{ &g_doWarmup,                "g_doWarmup",                "0",                                                      CVAR_ARCHIVE,                                    0, qtrue},
 
-	// NERVE - SMF
 	{ &g_warmupLatch,             "g_warmupLatch",             "1",                                                      0,                                               0, qfalse},
 
 	{ &g_nextTimeLimit,           "g_nextTimeLimit",           "0",                                                      CVAR_WOLFINFO,                                   0, qfalse},
@@ -307,7 +305,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_userAxisRespawnTime,     "g_userAxisRespawnTime",     "0",                                                      0,                                               0, qfalse, qtrue},
 
 	{ &g_swapteams,               "g_swapteams",               "0",                                                      CVAR_ROM,                                        0, qfalse, qtrue},
-	// -NERVE - SMF
 
 	{ &g_log,                     "g_log",                     "",                                                       CVAR_ARCHIVE,                                    0, qfalse},
 	{ &g_logSync,                 "g_logSync",                 "0",                                                      CVAR_ARCHIVE,                                    0, qfalse},
@@ -421,7 +418,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_scriptDebugLevel,        "g_scriptDebugLevel",        "0",                                                      CVAR_CHEAT,                                      0, qfalse},
 
 	// How fast do we want Allied single player movement?
-//	{ &g_movespeed, "g_movespeed", "127", CVAR_CHEAT, 0, qfalse },
 	{ &g_movespeed,               "g_movespeed",               "76",                                                     CVAR_CHEAT,                                      0, qfalse},
 
 #ifdef OMNIBOTS
@@ -562,6 +558,9 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return G_SnapshotCallback(arg0, arg1);
 	case GAME_MESSAGERECEIVED:
 		return -1;
+	default:
+		G_Printf("Bad game export type: %ld\n", (long int) command);
+		break;
 	}
 
 	return -1;
@@ -936,7 +935,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 			}
 		}
 
-
 		if (checkEnt)
 		{
 			// TDF This entire function could be the poster boy for converting to OO programming!!!
@@ -1236,7 +1234,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 				break;
 			case ET_MISSILE:
-			case ET_BOMB:
 				if (ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 				{
 					hintDist = CH_BREAKABLE_DIST;
@@ -1971,18 +1968,11 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 		trap_SetConfigstring(CS_ROUNDSCORES2, va("%i", g_alliedwins.integer));
 	}
 
-	if (g_gametype.integer == GT_WOLF)
+	if (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_STOPWATCH)
 	{
 		//bani - #113
 		bani_clearmapxp();
 	}
-
-	if (g_gametype.integer == GT_WOLF_STOPWATCH)
-	{
-		//bani - #113
-		bani_clearmapxp();
-	}
-
 
 	trap_GetServerinfo(cs, sizeof(cs));
 	Q_strncpyz(level.rawmapname, Info_ValueForKey(cs, "mapname"), sizeof(level.rawmapname));
@@ -2526,10 +2516,6 @@ void CalculateRanks(void)
 		}
 	}
 
-	// set the CS_SCORES1/2 configstrings, which will be visible to everyone
-//	trap_SetConfigstring( CS_SCORES1, va("%i", level.teamScores[TEAM_AXIS] ) );
-//	trap_SetConfigstring( CS_SCORES2, va("%i", level.teamScores[TEAM_ALLIES] ) );
-
 	trap_SetConfigstring(CS_FIRSTBLOOD, va("%i", level.firstbloodTeam));
 	trap_SetConfigstring(CS_ROUNDSCORES1, va("%i", g_axiswins.integer));
 	trap_SetConfigstring(CS_ROUNDSCORES2, va("%i", g_alliedwins.integer));
@@ -2707,7 +2693,6 @@ void FindIntermissionPoint(void)
 			}
 		}
 	}
-
 }
 
 /*
@@ -2745,7 +2730,6 @@ void BeginIntermission(void)
 
 	// send the current scoring to all clients
 	SendScoreboardMessageToAllClients();
-
 }
 
 /*
@@ -2839,7 +2823,7 @@ void ExitLevel(void)
 		}
 	}
 
-	// we need to do this here before chaning to CON_CONNECTING
+	// we need to do this here before changing to CON_CONNECTING
 	G_WriteSessionData(qfalse);
 
 	// change all client states to connecting, so the early players into the
@@ -3462,105 +3446,12 @@ FUNCTIONS CALLED EVERY FRAME
 ========================================================================
 */
 
-
-/*
-=============
-CheckWolfMP
-
-NERVE - SMF
-=============
-*/
-/*
-void CheckGameState() {
-    gamestate_t current_gs;
-
-    current_gs = trap_Cvar_VariableIntegerValue( "gamestate" );
-
-    if ( level.intermissiontime && current_gs != GS_INTERMISSION ) {
-        trap_Cvar_Set( "gamestate", va( "%i", GS_INTERMISSION ) );
-        return;
-    }
-
-    if ( g_noTeamSwitching.integer && !trap_Cvar_VariableIntegerValue( "sv_serverRestarting" ) ) {
-        if ( current_gs != GS_WAITING_FOR_PLAYERS && level.numPlayingClients <= 1 && level.lastRestartTime + 1000 < level.time ) {
-            level.lastRestartTime = level.time;
-            trap_SendConsoleCommand( EXEC_APPEND, va( "map_restart 0 %i\n", GS_WAITING_FOR_PLAYERS ) );
-        }
-    }
-
-    if ( current_gs == GS_WAITING_FOR_PLAYERS && g_minGameClients.integer > 1 &&
-        level.numPlayingClients >= g_minGameClients.integer && level.lastRestartTime + 1000 < level.time ) {
-
-        level.lastRestartTime = level.time;
-        trap_SendConsoleCommand( EXEC_APPEND, va( "map_restart 0 %i\n", GS_WARMUP ) );
-    }
-
-    if( g_gametype.integer == GT_WOLF_LMS && current_gs == GS_WAITING_FOR_PLAYERS && level.numPlayingClients > 1
-        && level.lastRestartTime + 1000 < level.time ) {
-        level.lastRestartTime = level.time;
-        trap_SendConsoleCommand( EXEC_APPEND, va( "map_restart 0 %i\n", GS_WARMUP ) );
-    }
-
-    // if the warmup is changed at the console, restart it
-    if ( current_gs == GS_WARMUP_COUNTDOWN && g_warmup.modificationCount != level.warmupModificationCount ) {
-        level.warmupModificationCount = g_warmup.modificationCount;
-        current_gs = GS_WARMUP;
-    }
-
-    // check warmup latch
-    if ( current_gs == GS_WARMUP ) {
-        int delay = g_warmup.integer;
-
-        if( g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_LMS )
-            delay *= 2;
-
-        delay++;
-
-        if ( delay < 6 ) {
-            trap_Cvar_Set( "g_warmup", "5" );
-            delay = 7;
-        }
-
-        level.warmupTime = level.time + ( delay * 1000 );
-        trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
-        trap_Cvar_Set( "gamestate", va( "%i", GS_WARMUP_COUNTDOWN ) );
-    }
-}
-*/
-
 /*
 =============
 CheckWolfMP
 
 NERVE - SMF - Once a frame, check for changes in wolf MP player state
 =============
-*/
-/*
-void CheckWolfMP() {
-  // TTimo unused
-//	static qboolean latch = qfalse;
-
-    // NERVE - SMF - check game state
-    CheckGameState();
-
-    if ( level.warmupTime == 0 ) {
-        return;
-    }
-
-
-    // Only do the restart for MP
-    if(g_gametype.integer != GT_SINGLE_PLAYER && g_gametype.integer != GT_COOP)
-
-    // if the warmup time has counted down, restart
-    if ( level.time > level.warmupTime ) {
-        level.warmupTime += 10000;
-        trap_Cvar_Set( "g_restarted", "1" );
-        trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
-        level.restarted = qtrue;
-        return;
-    }
-}
-// -NERVE - SMF
 */
 void CheckWolfMP(void)
 {
@@ -3585,14 +3476,6 @@ void CheckWolfMP(void)
 			     level.lastRestartTime + 1000 < level.time && G_readyMatchState()))
 			{
 				int delay = (g_warmup.integer < 10) ? 11 : g_warmup.integer + 1;
-
-				// Why scale these at all?  Minimum would mean 22s on Campaign and 44 on LMS....
-				// Once people are ready, they want to get the show rolling :)
-/*				if( g_gametype.integer == GT_WOLF_CAMPAIGN )
-                    delay *= 2;
-                else if( g_gametype.integer == GT_WOLF_LMS && !g_doWarmup.integer )
-                    delay *= 4;
-*/
 
 				level.warmupTime = level.time + (delay * 1000);
 				trap_Cvar_Set("gamestate", va("%i", GS_WARMUP_COUNTDOWN));

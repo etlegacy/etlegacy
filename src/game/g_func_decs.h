@@ -1121,7 +1121,7 @@ extern void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume) 
 extern void G_EntitySound(gentity_t *ent, const char *soundId, int volume) ;
 extern void Cmd_FollowCycle_f(gentity_t *ent, int dir) ;
 extern void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue) ;
-extern void Cmd_TeamBot_f(gentity_t *foo) ;
+
 extern void Cmd_SetWeapons_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue) ;
 extern void Cmd_SetClass_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue) ;
 extern void Cmd_ResetSetup_f(gentity_t *ent) ;
@@ -1141,7 +1141,7 @@ extern void Cmd_Notarget_f(gentity_t *ent) ;
 extern void Cmd_Nofatigue_f(gentity_t *ent) ;
 extern void Cmd_God_f(gentity_t *ent) ;
 extern void Cmd_Give_f(gentity_t *ent) ;
-extern void Cmd_ListBotGoals_f(gentity_t *ent) ;
+
 extern int ClientNumberFromString(gentity_t *to, char *s) ;
 extern void SanitizeString(char *in, char *out, qboolean fToLower) ;
 extern char *ConcatArgs(int start) ;
