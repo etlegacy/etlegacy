@@ -211,8 +211,8 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 	MSG_WriteData(msg, frame->areabits, frame->areabytes);
 
 	{
-//      int sz = msg->cursize;
-//      int usz = msg->uncompsize;
+		//      int sz = msg->cursize;
+		//      int usz = msg->uncompsize;
 
 		// delta encode the playerstate
 		if (oldframe)
@@ -224,7 +224,7 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 			MSG_WriteDeltaPlayerstate(msg, NULL, &frame->ps);
 		}
 
-//      Com_Printf( "Playerstate delta size: %f\n", ((msg->cursize - sz) * sv_fps->integer) / 8.f );
+		//      Com_Printf( "Playerstate delta size: %f\n", ((msg->cursize - sz) * sv_fps->integer) / 8.f );
 	}
 
 	// delta encode the entities
@@ -340,10 +340,7 @@ static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sh
 SV_AddEntitiesVisibleFromPoint
 ===============
 */
-static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *frame,
-//                                  snapshotEntityNumbers_t *eNums, qboolean portal, clientSnapshot_t *oldframe, qboolean localClient ) {
-//                                  snapshotEntityNumbers_t *eNums, qboolean portal ) {
-                                           snapshotEntityNumbers_t *eNums /*, qboolean portal, qboolean localClient*/)
+static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *frame, snapshotEntityNumbers_t *eNums)
 {
 	int            e, i;
 	sharedEntity_t *ent, *playerEnt;
@@ -516,7 +513,6 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 			}
 			continue;   // master needs to be added, but not this dummy ent
 		}
-		//----(SA) end
 		else if (ent->r.svFlags & SVF_VISDUMMY_MULTIPLE)
 		{
 			{
@@ -577,7 +573,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 
 		// if its a portal entity, add everything visible from its camera position
 		if (ent->r.svFlags & SVF_PORTAL)
-		{;
+		{
 			SV_AddEntitiesVisibleFromPoint(ent->s.origin2, frame, eNums /*, qtrue, localClient*/);
 		}
 
@@ -601,7 +597,6 @@ For viewing through other player's eyes, clent can be something other than clien
 static void SV_BuildClientSnapshot(client_t *client)
 {
 	vec3_t org;
-//  clientSnapshot_t            *frame, *oldframe;
 	clientSnapshot_t        *frame;
 	snapshotEntityNumbers_t entityNumbers;
 	int                     i;
@@ -657,7 +652,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 	}
 	org[2] += ps->viewheight;
 
-//----(SA)  added for 'lean'
+	//----(SA)  added for 'lean'
 	// need to account for lean, so areaportal doors draw properly
 	if (frame->ps.leanf != 0)
 	{
@@ -667,7 +662,6 @@ static void SV_BuildClientSnapshot(client_t *client)
 		AngleVectors(v3ViewAngles, NULL, right, NULL);
 		VectorMA(org, frame->ps.leanf, right, org);
 	}
-//----(SA)  end
 
 	// add all the entities directly visible to the eye, which
 	// may include portal entities that merge other viewpoints
@@ -815,13 +809,11 @@ void SV_SendMessageToClient(msg_t *msg, client_t *client)
 	}
 }
 
-
-//bani
 /*
 =======================
 SV_SendClientIdle
 
-There is no need to send full snapshots to clients who are loading a map.
+bani - There is no need to send full snapshots to clients who are loading a map.
 So we send them "idle" packets with the bare minimum required to keep them on the server.
 
 =======================
@@ -877,7 +869,6 @@ void SV_SendClientSnapshot(client_t *client)
 	byte  msg_buf[MAX_MSGLEN];
 	msg_t msg;
 
-	//bani
 	if (client->state < CS_ACTIVE)
 	{
 		// bani - #760 - zombie clients need full snaps so they can still process reliable commands
@@ -937,7 +928,6 @@ void SV_SendClientSnapshot(client_t *client)
 SV_SendClientMessages
 =======================
 */
-
 void SV_SendClientMessages(void)
 {
 	int      i;
