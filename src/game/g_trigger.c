@@ -33,7 +33,6 @@
 
 #include "g_local.h"
 
-
 void InitTrigger(gentity_t *self)
 {
 	if (!VectorCompare(self->s.angles, vec3_origin))
@@ -47,13 +46,11 @@ void InitTrigger(gentity_t *self)
 	self->r.svFlags  = SVF_NOCLIENT;
 }
 
-
 // the wait time has passed, so set back up for another activation
 void multi_wait(gentity_t *ent)
 {
 	ent->nextthink = 0;
 }
-
 
 // the trigger was just activated
 // ent->activator should be set to the activator so it can be held through a delay
@@ -206,8 +203,6 @@ void SP_trigger_multiple(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-
-
 /*
 ==============================================================================
 
@@ -232,7 +227,6 @@ void SP_trigger_always(gentity_t *ent)
 	ent->think     = trigger_always_think;
 }
 
-
 /*
 ==============================================================================
 
@@ -244,7 +238,6 @@ trigger_push
 void trigger_push_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 }
-
 
 /*
 =================
@@ -301,7 +294,6 @@ This will be client side predicted, unlike target_push
 void SP_trigger_push(gentity_t *self)
 {
 }
-
 
 void Use_target_push(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
@@ -408,8 +400,6 @@ void SP_trigger_teleport(gentity_t *self)
 
 	trap_LinkEntity(self);
 }
-
-
 
 /*
 ==============================================================================
@@ -531,8 +521,6 @@ void SP_trigger_hurt(gentity_t *self)
 	{
 		self->damage = 5;
 	}
-
-	self->r.contents = CONTENTS_TRIGGER;
 
 //----(SA)
 //	if ( self->spawnflags & 2 ) {
@@ -1454,7 +1442,6 @@ void G_SetConfigStringValue(int num, const char *key, const char *value)
 
 void Touch_ObjectiveInfo(gentity_t *ent, gentity_t *other, trace_t *trace)
 {
-
 	if (!other->client)
 	{
 		return;
@@ -1467,7 +1454,6 @@ void Touch_ObjectiveInfo(gentity_t *ent, gentity_t *other, trace_t *trace)
 // of func_constructible and spawning the right indicator
 void Think_SetupObjectiveInfo(gentity_t *ent)
 {
-
 	ent->target_ent = G_FindByTargetname(NULL, ent->target);
 
 	if (!ent->target_ent)
@@ -1776,7 +1762,6 @@ void SP_trigger_objective_info(gentity_t *ent)
 		ent->think     = Think_SetupObjectiveInfo;
 	}
 }
-// dhm - end
 
 // JPW NERVE -- field which is acted upon (cgame side) by screenshakes to drop dust particles
 void trigger_concussive_touch(gentity_t *ent, gentity_t *other, trace_t *trace)
@@ -1808,4 +1793,3 @@ void SP_trigger_concussive_dust(gentity_t *self)
 
 	trap_LinkEntity(self);
 }
-// jpw
