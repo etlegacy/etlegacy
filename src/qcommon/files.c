@@ -32,8 +32,6 @@
  * @brief handle based filesystem for Quake III Arena
  */
 
-#define MP_LEGACY_PAK 0x7776DC09
-
 #include "q_shared.h"
 #include "qcommon.h"
 #include "unzip.h"
@@ -305,8 +303,6 @@ FILE *missingFiles = NULL;
 #   define __func__ "(unknown)"
 #endif
 
-qboolean legacy_mp_bin = qfalse;
-
 qboolean FS_Initialized(void)
 {
 	return (fs_searchpaths != NULL);
@@ -352,6 +348,7 @@ static long FS_HashFileName(const char *fname, int hashSize)
 
 	hash = 0;
 	i    = 0;
+
 	while (fname[i] != '\0')
 	{
 		letter = tolower(fname[i]);
@@ -373,6 +370,7 @@ static long FS_HashFileName(const char *fname, int hashSize)
 	}
 	hash  = (hash ^ (hash >> 10) ^ (hash >> 20));
 	hash &= (hashSize - 1);
+
 	return hash;
 }
 
@@ -688,6 +686,7 @@ fileHandle_t FS_SV_FOpenFileWrite(const char *filename)
 	{
 		f = 0;
 	}
+
 	return f;
 }
 
@@ -752,6 +751,7 @@ int FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp)
 	{
 		return FS_filelength(f);
 	}
+
 	return 0;
 }
 
@@ -1963,15 +1963,6 @@ int FS_FileIsInPAK(const char *filename, int *pChecksum)
 					if (pChecksum)
 					{
 						*pChecksum = pak->pure_checksum;
-					}
-					// Mac hack
-					if (pak->checksum == MP_LEGACY_PAK)
-					{
-						legacy_mp_bin = qtrue;
-					}
-					else
-					{
-						legacy_mp_bin = qfalse;
 					}
 					return 1;
 				}
@@ -3929,6 +3920,7 @@ randomize the order of the 5 checksums we rely on
 void FS_InitRandomFeed()
 {
 	int i, swap, aux;
+
 	for (i = 0; i < 5; i++)
 	{
 		swap                    = (int)(5.0 * rand() / (RAND_MAX + 1.0));
@@ -3961,6 +3953,7 @@ int FS_RandChecksumFeed()
 		FS_InitRandomFeed();
 	}
 	feed_index = (feed_index + 1) % 5;
+
 	return feeds[lookup_randomized[feed_index]];
 }
 
@@ -4189,7 +4182,6 @@ const char *FS_ReferencedPakNames(void)
 
 	return info;
 }
-
 #endif
 
 /*
@@ -4396,6 +4388,7 @@ void FS_Restart(int checksumFeed)
 			lastValidGame[0] = '\0';
 			FS_Restart(checksumFeed);
 			Com_Error(ERR_DROP, "Invalid game folder\n");
+
 			return;
 		}
 		// TTimo - added some verbosity, 'couldn't load default.cfg' confuses the hell out of users
@@ -4459,8 +4452,10 @@ qboolean FS_ConditionalRestart(int checksumFeed)
 	if (fs_gamedirvar->modified || checksumFeed != fs_checksumFeed)
 	{
 		FS_Restart(checksumFeed);
+
 		return qtrue;
 	}
+
 	return qfalse;
 }
 
@@ -4499,6 +4494,7 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode)
 		break;
 	default:
 		Com_Error(ERR_FATAL, "FS_FOpenFileByMode: bad mode\n");
+
 		return -1;
 	}
 
@@ -4541,6 +4537,7 @@ int FS_FTell(fileHandle_t f)
 	{
 		pos = ftell(fsh[f].handleFiles.file.o);
 	}
+
 	return pos;
 }
 
@@ -4597,6 +4594,7 @@ qboolean FS_VerifyPak(const char *pak)
 			}
 		}
 	}
+
 	return qfalse;
 }
 
@@ -4633,5 +4631,6 @@ unsigned int FS_ChecksumOSPath(char *OSPath)
 	checksum = LittleLong(Com_BlockChecksum(buf, len));
 
 	free(buf);
+
 	return checksum;
 }
