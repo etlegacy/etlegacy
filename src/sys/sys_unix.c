@@ -77,7 +77,7 @@ char *Sys_DefaultHomePath(void)
 		if ((p = getenv("HOME")) != NULL)
 		{
 			Q_strncpyz(homePath, p, sizeof(homePath));
-			Q_strcat(homePath, sizeof(homePath), "/.etwolf");
+			Q_strcat(homePath, sizeof(homePath), "/.etlwolf");
 		}
 	}
 
@@ -721,7 +721,7 @@ static void Sys_ZenityCommand(dialogType_t type, const char *message, const char
 Sys_KdialogCommand
 ==============
 */
-static int Sys_KdialogCommand(dialogType_t type, const char *message, const char *title)
+static void Sys_KdialogCommand(dialogType_t type, const char *message, const char *title)
 {
 	Sys_ClearExecBuffer();
 	Sys_AppendToExecBuffer("kdialog");
@@ -794,12 +794,7 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	const char             *session = getenv("DESKTOP_SESSION");
 	int                    i, exitCode;
 	qboolean               tried[NUM_DIALOG_PROGRAMS]    = { qfalse };
-	dialogCommandBuilder_t commands[NUM_DIALOG_PROGRAMS] = { NULL };
 	dialogCommandType_t    preferredCommandType          = NONE;
-
-	commands[ZENITY]   = &Sys_ZenityCommand;
-	commands[KDIALOG]  = &Sys_KdialogCommand;
-	commands[XMESSAGE] = &Sys_XmessageCommand;
 
 	// This may not be the best way
 	if (!Q_stricmp(session, "gnome")) //  // && if getenv('GNOME_DESKTOP_SESSION_ID')
@@ -810,9 +805,14 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	{
 		preferredCommandType = KDIALOG;
 	}
-	else
+	else // preferredCommandType == NONE;
 	{
-		// FIXME
+		// FIXME see #91
+		// ... XMESSAGE ?!
+		// ... MAC OS ?!
+		// ... AROS ?!
+		// ... OpenBSD
+		// ... others?
 		Com_DPrintf(S_COLOR_YELLOW "WARNING: unsupported desktop session in Sys_Dialog().\n");
 	}
 
@@ -827,7 +827,18 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 
 			if (!tried[i])
 			{
-				commands[i](type, message, title);
+				switch (i)
+				{
+				case ZENITY:
+					Sys_ZenityCommand(type, message, title);
+					break;
+				case KDIALOG:
+					Sys_KdialogCommand(type, message, title);
+					break;
+				case XMESSAGE:
+					Sys_XmessageCommand(type, message, title);
+					break;
+				}
 
 				exitCode = Sys_Exec();
 
@@ -855,6 +866,7 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 			}
 		}
 
+		// What is this for ??? ... looks like relic
 		for (i = NONE + 1; i < NUM_DIALOG_PROGRAMS; i++)
 		{
 			if (!tried[i])
