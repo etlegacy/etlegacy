@@ -110,7 +110,7 @@ char *Sys_DefaultHomePath(void)
 			return NULL;
 		}
 		Q_strncpyz(homePath, szPath, sizeof(homePath));
-		Q_strcat(homePath, sizeof(homePath), "\\WolfET");
+		Q_strcat(homePath, sizeof(homePath), "\\WolfETL");
 		FreeLibrary(shfolder);
 	}
 
@@ -138,34 +138,6 @@ int Sys_Milliseconds(void)
 	return sys_curtime;
 }
 
-// #ifndef __GNUC__ //see snapvectora.s
-/*
-================
-Sys_SnapVector
-================
-*/
-// void Sys_SnapVector( float *v )
-// {
-//  int i;
-//  float f;
-//
-//  f = *v;
-//  __asm   fld     f;
-//  __asm   fistp   i;
-//  *v = i;
-//  v++;
-//  f = *v;
-//  __asm   fld     f;
-//  __asm   fistp   i;
-//  *v = i;
-//  v++;
-//  f = *v;
-//  __asm   fld     f;
-//  __asm   fistp   i;
-//  *v = i;
-// }
-// #endif
-
 /*
 ==================
 Sys_SnapVector
@@ -177,7 +149,6 @@ void Sys_SnapVector(float *v)
 	v[1] = rint(v[1]);
 	v[2] = rint(v[2]);
 }
-// #endif
 
 /*
 ================
@@ -603,7 +574,6 @@ void Sys_FreeFileList(char **list)
 
 	Z_Free(list);
 }
-
 
 /*
 ==============
