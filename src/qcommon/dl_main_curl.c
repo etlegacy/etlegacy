@@ -119,7 +119,7 @@ inspired from http://www.w3.org/Library/Examples/LoadToFile.c
 setup the download, return once we have a connection
 ===============
 */
-int DL_BeginDownload(const char *localName, const char *remoteName, int debug)
+int DL_BeginDownload(char *localName, const char *remoteName, int debug)
 {
 	char referer[MAX_STRING_CHARS + 5 /*"ET://"*/];
 
