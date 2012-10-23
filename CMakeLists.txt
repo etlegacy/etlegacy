@@ -434,8 +434,13 @@ endif(BUILD_PAK3_PK3)
 #-----------------------------------------------------------------
 
 # install adds ...
+
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.sh"
-	DESTINATION "${INSTALL_DEFAULT_MODDIR}")
+	DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+	PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacyded.sh"
+	DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+	PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/wolfet.ico"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}")
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etmain/etl_server.cfg"

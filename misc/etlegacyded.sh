@@ -3,4 +3,4 @@
 #
 # There is no benefit if you don't start with 'fs_game legacy'!
 #
-./etl +set fs_game legacy +exec etl_server.cfg
+./etlded +set fs_game legacy exec +etl_server.cfg
