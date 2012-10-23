@@ -10,6 +10,10 @@ project(ETLEGACY C CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(Build)
 
+# TODO/FIXME
+# - make uninstall doesn't delete pathes ('etlegacy' & subfolders - test case: INSTALL_DEFAULT_ dirs are equal)
+# - should 'make uninstall' delete fs_homepath ?
+
 set(ETLEGACY_VERSION_MAJOR  "2")
 set(ETLEGACY_VERSION_MINOR  "7")
 set(ETLEGACY_VERSION_PATCH  "0")
@@ -28,8 +32,8 @@ add_definitions(-DBOTLIB)
 option(BUILD_SERVER     "Build the dedicated server executable"                                 ON)
 option(BUILD_CLIENT     "Build the client executable"                                           ON)
 option(BUILD_MOD        "Build the mod libraries"                                               ON)
-option(BUILD_MOD_PK3    "Pack the mod libraries into mp_bin.pk3"                                OFF)
-option(BUILD_PAK3_PK3   "Pack updated game scripts into etl_pak3.pk3"                           OFF)
+option(BUILD_MOD_PK3    "Pack the mod libraries into etl_bin.pk3"                               OFF)
+option(BUILD_PAK3_PK3   "Pack updated game scripts into pak3.pk3"	                            OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
 if (CMAKE_SYSTEM MATCHES "OpenBSD*")
@@ -51,9 +55,9 @@ endif(INSTALL_DEFAULT_BASEDIR)
 
 # Optional features
 if (CMAKE_SYSTEM MATCHES "Darwin")
-	option(SMP_SUPPORT              "Enable SMP (multicore support) (client)"                       OFF)
+	option(SMP_SUPPORT              "Enable SMP (multicore support) (client)"                   OFF)
 else()
-	option(SMP_SUPPORT              "Enable SMP (multicore support) (client)"                       ON)
+	option(SMP_SUPPORT              "Enable SMP (multicore support) (client)"                   ON)
 endif()
 option(USE_CURL                 "Enable auto-download support using cURL (client)"              ON)
 option(USE_CODEC_VORBIS         "Enable OGG Vorbis support (client)"                            OFF)
@@ -61,7 +65,7 @@ option(USE_OPENAL               "Enable OpenAL sound backend (client) [BROKEN]" 
 option(USE_FREETYPE             "Enable Freetype font library support (client)"                 OFF)
 option(TRACKBASE_SUPPORT        "Enable extended server statistics (server)"                    ON)
 
-#This check isn't exact - we do deeper check when option is finally set
+#This check isn't exact - we do a deeper check when option is finally set
 if(WIN32 OR UNIX)
 	option(USE_OMNIBOTS     	"Enable omnibot build in mod code (Win & Linux server only!)"   OFF)
 endif()
@@ -342,7 +346,7 @@ if(BUILD_MOD)
         set_target_properties(cgame${LIB_SUFFIX}${ARCH}
                 PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
                         PREFIX ""
-                        LIBRARY_OUTPUT_DIRECTORY "etmain")
+                        LIBRARY_OUTPUT_DIRECTORY "legacy")
 
 		#               
         # qagame
@@ -361,7 +365,7 @@ if(BUILD_MOD)
       			if("${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "i686" OR "${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "i386" OR "${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "x86")
 					#message(STATUS "omni-bot 32bit on 32bit")
 				else()
-					message(STATUS "omni-bot BotLoadLibrary includes cstdio.")
+					message(STATUS "omni-bot BotLoadLibrary includes cstdio")
 					add_definitions(-DIS_64_BIT_BUILD_SYSTEM)
 				endif()      			
             else()
@@ -373,7 +377,7 @@ if(BUILD_MOD)
         set_target_properties(qagame${LIB_SUFFIX}${ARCH}
                 PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
                         PREFIX ""
-                        LIBRARY_OUTPUT_DIRECTORY "etmain")
+                        LIBRARY_OUTPUT_DIRECTORY "legacy")
 
 		#       	        
         # ui
@@ -382,44 +386,64 @@ if(BUILD_MOD)
         set_target_properties(ui${LIB_SUFFIX}${ARCH}
                 PROPERTIES
                         PREFIX ""
-                        LIBRARY_OUTPUT_DIRECTORY "etmain")
-        install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
-                LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
-                ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
-        )
+                        LIBRARY_OUTPUT_DIRECTORY "legacy")
+                        
 
+        # install qgame only
+        install(TARGETS qagame${LIB_SUFFIX}${ARCH}
+                LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
+                ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy")
+                
+        #install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
+        #        LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+        #        ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain")
+ 
+ 
 		#
-        # mp_bin.pk3
+        # etl_bin.pk3
         #
         if(BUILD_MOD_PK3)
-                add_custom_target(mod_pk3 ALL DEPENDS etmain/mp_bin.pk3)
+                add_custom_target(mod_pk3 ALL DEPENDS legacy/etl_bin.pk3)
                 add_custom_command(
-                        OUTPUT etmain/mp_bin.pk3
-                        COMMAND zip mp_bin.pk3 cgame${LIB_SUFFIX}${ARCH}* ui${LIB_SUFFIX}${ARCH}*
+                        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin.pk3
+                        COMMAND zip etl_bin.pk3 cgame${LIB_SUFFIX}${ARCH}* ui${LIB_SUFFIX}${ARCH}*
                         DEPENDS cgame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
-                        WORKING_DIRECTORY etmain/
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy/
                 )
 
-                install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etmain/mp_bin.pk3
-                        DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain")
-        endif()
+                install(FILES ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin.pk3
+                        DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy")
+        endif()       
+        
 endif(BUILD_MOD)
 
 if(BUILD_PAK3_PK3)
-        add_custom_target(pak3_pk3 ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/etmain/pak3.pk3)
+        add_custom_target(pak3_pk3 ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3.pk3)
         add_custom_command(
-                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/etmain/pak3.pk3
-                COMMAND zip -r ${CMAKE_CURRENT_BINARY_DIR}/etmain/pak3.pk3 *
+                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3.pk3
+                COMMAND zip -r ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3.pk3 *
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/etmain/
         )
 
-        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etmain/pak3.pk3
-                DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain")
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3.pk3
+                DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy")
 endif(BUILD_PAK3_PK3)
 
 #-----------------------------------------------------------------
 # Installer/Package generation
 #-----------------------------------------------------------------
+
+# install adds ...
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.sh"
+	DESTINATION "${INSTALL_DEFAULT_MODDIR}")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/wolfet.ico"
+	DESTINATION "${INSTALL_DEFAULT_MODDIR}")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etmain/etl_server.cfg"
+	DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
+	DESTINATION "${INSTALL_DEFAULT_MODDIR}")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt"
+	DESTINATION "${INSTALL_DEFAULT_MODDIR}")
 
 # Uninstall target
 configure_file(
