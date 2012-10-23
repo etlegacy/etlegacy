@@ -4351,7 +4351,7 @@ void FS_InitFilesystem(void)
 	// Arnout: we want the nice error message here as well
 	if (FS_ReadFile("default.cfg", NULL) <= 0)
 	{
-		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg - I am missing essential files - verify your installation?\n");
+		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg - I am missing essential files!\nVerify your installation and make sure genuine ET files\n- mp_bin.pk3\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' of fs_homepath.\n");
 	}
 
 	Q_strncpyz(lastValidBase, fs_basepath->string, sizeof(lastValidBase));

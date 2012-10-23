@@ -570,7 +570,7 @@ void Sys_ErrorDialog(const char *error)
 	Sys_Print(va("%s\n", error));
 
 #ifndef DEDICATED
-	Sys_Dialog(DT_ERROR, va("%s. See \"%s\" for details.", error, ospath), "Error");
+	Sys_Dialog(DT_ERROR, va("%s\nSee \"%s\" for details.\n", error, ospath), "Error");
 #endif
 
 	// Make sure the write path for the crashlog exists...
