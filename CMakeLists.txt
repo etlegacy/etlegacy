@@ -455,7 +455,7 @@ if(INSTALL_OMNIBOTS)
 		
 			message(STATUS "Adding Omni-Bot to installer scripts")
 		    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/omnibot/"
-		        	DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omnibot${OB_RELEASE}")      	
+		        	DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot${OB_RELEASE}")      	
     else()
     	message(STATUS "Installing Omni-Bot is Linux only")
     endif(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
@@ -466,6 +466,12 @@ endif(INSTALL_OMNIBOTS)
 #-----------------------------------------------------------------
 
 # install adds ...
+
+# misc/etmain/ adds
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/misc/etmain/"
+	DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain")	
+
+# misc adds
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.sh"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 	PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE)
@@ -474,12 +480,13 @@ install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacyded.sh"
 	PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/wolfet.ico"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etmain/etl_server.cfg"
-	DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain")
+	
+# project adds
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}")
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}")
+
 
 # Uninstall target
 configure_file(

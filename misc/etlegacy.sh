@@ -1,6 +1,6 @@
 #!/bin/sh
 # Simple script to start ET Legacy client/listen server
 #
-# There is no benefit if you don't start with 'fs_game legacy'!
+# Don't add any exec config file here until your profile is created!
 #
-./etl +set fs_game legacy +exec etl_server.cfg
+./etl +set fs_game legacy +set omnibot_enable 1 +set omnibot_path "./legacy/omni-bot0.82"
