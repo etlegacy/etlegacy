@@ -66,7 +66,6 @@ static void CG_ParseScore(team_t team)
 		offset = 2;
 	}
 
-
 	numScores = atoi(CG_Argv(offset - 1));
 
 	for (j = 0; j < numScores; j++)
@@ -450,7 +449,6 @@ static void CG_ParseScreenFade(void)
 	}
 }
 
-
 /*
 ==============
 CG_ParseFog
@@ -566,7 +564,6 @@ void CG_ParseReinforcementTimes(const char *pszReinfSeedString)
 	}
 }
 
-
 /*
 ================
 CG_SetConfigValues
@@ -597,10 +594,8 @@ void CG_SetConfigValues(void)
     cg.teamWonRounds[1] = atoi(CG_ConfigString(CS_ROUNDSCORES1));
     cg.teamWonRounds[0] = atoi(CG_ConfigString(CS_ROUNDSCORES2));
 
-    // OSP
     CG_ParseServerVersionInfo(CG_ConfigString(CS_VERSIONINFO));
     CG_ParseReinforcementTimes(CG_ConfigString(CS_REINFSEEDS));
-    // OSP
 }
 
 /*
@@ -714,7 +709,7 @@ static void CG_ConfigStringModified(void)
     {
         CG_ParseWarmup();
 	}
-    else if (num == CS_WOLFINFO)            // NERVE - SMF
+    else if (num == CS_WOLFINFO)
     {
         CG_ParseWolfinfo();
 	}
@@ -1027,8 +1022,7 @@ void CG_AddToNotify(const char *str)
 		}
         while (*str == '\n')
         {
-            // TTimo gcc warning: value computed is not used
-            // was *str++;
+            // TTimo gcc warning: value computed is not used was *str++;
             str++;
 		}
 
@@ -1132,10 +1126,8 @@ static void CG_MapRestart(void)
 //  CG_ClearTrails ();
     // done.
 
-    // Ridah
     CG_ClearFlameChunks();
     CG_SoundInit();
-    // done.
 
     cg.intermissionStarted = qfalse;
     cg.lightstylesInited   = qfalse;
@@ -1149,14 +1141,13 @@ static void CG_MapRestart(void)
     trap_S_ClearLoopingSounds();
     trap_S_ClearSounds(qfalse);
 
-    // ydnar
     trap_R_ClearDecals();
 
     cg.latchAutoActions  = qfalse;
-    cg.latchVictorySound = qfalse;          // NERVE - SMF
-// JPW NERVE -- reset render flags
+    cg.latchVictorySound = qfalse;
+    // JPW NERVE -- reset render flags
     cg_fxflags = 0;
-// jpw
+
 
     // we really should clear more parts of cg here and stop sounds
     cg.v_dmg_time   = 0;
@@ -1179,8 +1170,6 @@ static void CG_MapRestart(void)
 
     trap_Cvar_Set("cg_thirdPerson", "0");
 }
-// NERVE - SMF
-
 
 #define MAX_VOICEFILES      8
 
@@ -1348,7 +1337,6 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
                     voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShader("sprites/voiceChat");
 				}
 			}
-            // dhm - end
 
             voiceChats[voiceChatList->numVoiceChats].numSounds++;
             current = voiceChats[voiceChatList->numVoiceChats].numSounds;
@@ -1439,7 +1427,6 @@ int CG_HeadModelVoiceChats(char *filename)
     return -1;
 }
 
-
 /*
 =================
 CG_GetVoiceChat
@@ -1480,7 +1467,7 @@ voiceChatList_t *CG_VoiceChatListForClient(int clientNum)
 	}
 }
 
-#define MAX_VOICECHATBUFFER     32
+#define MAX_VOICECHATBUFFER 32
 
 typedef struct bufferedVoiceChat_s
 {
@@ -1490,7 +1477,7 @@ typedef struct bufferedVoiceChat_s
     int voiceOnly;
     char cmd[MAX_SAY_TEXT];
     char message[MAX_SAY_TEXT];
-    vec3_t origin;          // NERVE - SMF
+    vec3_t origin;
 } bufferedVoiceChat_t;
 
 bufferedVoiceChat_t voiceChatBuffer[MAX_VOICECHATBUFFER];
@@ -1542,7 +1529,6 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
                     cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
 				}
 			}
-            // dhm - end
 		}
 
 	}
@@ -1565,9 +1551,8 @@ void CG_PlayBufferedVoiceChats(void)
     {
         if (cg.voiceChatBufferOut != cg.voiceChatBufferIn && voiceChatBuffer[cg.voiceChatBufferOut].snd)
         {
-            //
             CG_PlayVoiceChat(&voiceChatBuffer[cg.voiceChatBufferOut]);
-            //
+
             cg.voiceChatBufferOut = (cg.voiceChatBufferOut + 1) % MAX_VOICECHATBUFFER;
             cg.voiceChatTime      = cg.time + 1000;
 		}
@@ -1581,7 +1566,7 @@ CG_AddBufferedVoiceChat
 */
 void CG_AddBufferedVoiceChat(bufferedVoiceChat_t *vchat)
 {
-// JPW NERVE new system doesn't buffer but overwrites vchats FIXME put this on a cvar to choose which to use
+	// JPW NERVE new system doesn't buffer but overwrites vchats FIXME put this on a cvar to choose which to use
     memcpy(&voiceChatBuffer[0], vchat, sizeof(bufferedVoiceChat_t));
     cg.voiceChatBufferIn = 0;
     CG_PlayVoiceChat(&voiceChatBuffer[0]);
@@ -1699,7 +1684,6 @@ void CG_VoiceChat(int mode)
 
     CG_VoiceChatLocal(mode, voiceOnly, clientNum, color, cmd, origin);
 }
-// -NERVE - SMF
 
 /*
 =================
@@ -1793,10 +1777,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 
     return token;
 }
-// -NERVE - SMF
 
-
-// OSP
 void CG_wstatsParse_cmd(void)
 {
     if (cg.showStats)
@@ -1890,7 +1871,6 @@ void CG_ParsePortalPos(void)
 	}
 }
 
-
 // Cached stats
 void CG_parseWeaponStatsGS_cmd(void)
 {
@@ -1910,9 +1890,6 @@ void CG_parseWeaponStatsGS_cmd(void)
     gs->nRounds   = nRounds;
 
     ci = &cgs.clientinfo[nClientID];
-
-//  Q_strncpyz(strName, ci->name, sizeof(strName));
-//  BG_cleanName(cgs.clientinfo[gs->nClientID].name, strName, sizeof(strName), qfalse);
 
     if (weaponMask != 0)
     {
@@ -1981,7 +1958,6 @@ void CG_parseWeaponStatsGS_cmd(void)
 
         for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
         {
-
             if ((skillMask & (1 << i)) == 0)
             {
                 continue;
@@ -2008,7 +1984,6 @@ void CG_parseWeaponStatsGS_cmd(void)
 	}
 }
 
-
 // Client-side stat presentation
 void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 {
@@ -2029,7 +2004,6 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
     Q_strncpyz(strName, ci->name, sizeof(strName));
     BG_cleanName(cgs.clientinfo[nClient].name, strName, sizeof(strName), qfalse);
     txt_dump(va("^7Overall stats for: ^3%s ^7(^2%d^7 Round%s)\n\n", strName, nRounds, ((nRounds != 1) ? "s" : "")));
-//  txt_dump(va("^7Overall stats for: ^3%s\n\n", strName));
 
     if (fFull)
     {
@@ -2348,8 +2322,6 @@ void CG_dumpStats(void)
         trap_SendClientCommand("scores");
 	}
 }
-// -OSP
-
 
 /*
 =================
@@ -2374,7 +2346,6 @@ static void CG_ServerCommand(void)
         // server claimed the command
         return;
 	}
-
     if (!strcmp(cmd, "tinfo"))
     {
         CG_ParseTeamInfo();
@@ -2390,7 +2361,6 @@ static void CG_ServerCommand(void)
         CG_ParseScore(TEAM_ALLIES);
         return;
 	}
-
     if (!strcmp(cmd, "WeaponStats"))
     {
         int i, start = 1;
@@ -2425,13 +2395,11 @@ static void CG_ServerCommand(void)
 
         return;
 	}
-
     if (!Q_stricmp(cmd, "cpm"))
     {
         CG_AddPMItem(PM_MESSAGE, CG_LocalizeServerCommand(CG_Argv(1)), cgs.media.voiceChatShader);
         return;
 	}
-
     if (!Q_stricmp(cmd, "cp"))
     {
         // NERVE - SMF
@@ -2460,7 +2428,6 @@ static void CG_ServerCommand(void)
 		}
         return;
 	}
-
     if (!Q_stricmp(cmd, "reqforcespawn"))
     {
         if (cg_instanttapout.integer)
@@ -2480,25 +2447,21 @@ static void CG_ServerCommand(void)
 		}
         return;
 	}
-
     if (!Q_stricmp(cmd, "sdbg"))
     {
         CG_StatsDebugAddText(CG_Argv(1));
         return;
 	}
-
     if (!Q_stricmp(cmd, "cs"))
     {
         CG_ConfigStringModified();
         return;
 	}
-
     if (!Q_stricmp(cmd, "print"))
     {
         CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(CG_Argv(1)));
         return;
 	}
-
     if (!Q_stricmp(cmd, "entnfo"))
     {
         char buffer[16];
@@ -2514,7 +2477,6 @@ static void CG_ServerCommand(void)
 
         return;
 	}
-
     if (!Q_stricmp(cmd, "chat"))
     {
         const char *s;
@@ -2540,7 +2502,6 @@ static void CG_ServerCommand(void)
 
         return;
 	}
-
     if (!Q_stricmp(cmd, "tchat"))
     {
         const char *s;
@@ -2561,25 +2522,21 @@ static void CG_ServerCommand(void)
 
         return;
 	}
-
     if (!Q_stricmp(cmd, "vchat"))
     {
         CG_VoiceChat(SAY_ALL);              // NERVE - SMF - enabled support
         return;
 	}
-
     if (!Q_stricmp(cmd, "vtchat"))
     {
         CG_VoiceChat(SAY_TEAM);             // NERVE - SMF - enabled support
         return;
 	}
-
     if (!Q_stricmp(cmd, "vbchat"))
     {
         CG_VoiceChat(SAY_BUDDY);
         return;
 	}
-
     // DHM - Nerve :: Allow client to lodge a complaing
     if (!Q_stricmp(cmd, "complaint") && cgs.gamestate == GS_PLAYING)
     {
@@ -2598,21 +2555,17 @@ static void CG_ServerCommand(void)
 
         return;
 	}
-    // dhm
-
     if (!Q_stricmp(cmd, "map_restart"))
     {
         CG_MapRestart();
         return;
 	}
-
     // OSP - match stats
     if (!Q_stricmp(cmd, "sc"))
     {
         CG_scores_cmd();
         return;
 	}
-
     // OSP - weapon stats parsing
     if (!Q_stricmp(cmd, "ws"))
     {
@@ -2638,7 +2591,6 @@ static void CG_ServerCommand(void)
         CG_parseWeaponStatsGS_cmd();
         return;
 	}
-
     // OSP - "topshots"-related commands
     if (!Q_stricmp(cmd, "astats"))
     {
@@ -2669,7 +2621,6 @@ static void CG_ServerCommand(void)
         CG_topshotsParse_cmd(qtrue);
         return;
 	}
-
     // Gordon: single weapon stat (requested weapon stats)
     if (!Q_stricmp(cmd, "rws"))
     {
@@ -2681,31 +2632,26 @@ static void CG_ServerCommand(void)
         CG_ParsePortalPos();
         return;
 	}
-
     if (!Q_stricmp(cmd, "startCam"))
     {
         CG_StartCamera(CG_Argv(1), atoi(CG_Argv(2)));
         return;
 	}
-
     if (!Q_stricmp(cmd, "SetInitialCamera"))
     {
         CG_SetInitialCamera(CG_Argv(1), atoi(CG_Argv(2)));
         return;
 	}
-
     if (!Q_stricmp(cmd, "stopCam"))
     {
         CG_StopCamera();
         return;
 	}
-
     if (!Q_stricmp(cmd, "setspawnpt"))
     {
         cg.selectedSpawnPoint = atoi(CG_Argv(1)) + 1;
         return;
 	}
-
     if (!strcmp(cmd, "rockandroll"))         // map loaded, game is ready to begin.
     {   // Arnout: FIXME: re-enable when we get menus that deal with fade properly
 //      CG_Fade(0, 0, 0, 255, cg.time, 0);      // go black
@@ -2716,7 +2662,6 @@ static void CG_ServerCommand(void)
 
         return;
 	}
-
     if (!Q_stricmp(cmd, "application"))
     {
         cgs.applicationEndTime = cg.time + 20000;
@@ -2729,7 +2674,6 @@ static void CG_ServerCommand(void)
 
         return;
 	}
-
     if (!Q_stricmp(cmd, "invitation"))
     {
         cgs.invitationEndTime = cg.time + 20000;
@@ -2742,7 +2686,6 @@ static void CG_ServerCommand(void)
 
         return;
 	}
-
     if (!Q_stricmp(cmd, "proposition"))
     {
         cgs.propositionEndTime = cg.time + 20000;
@@ -2756,7 +2699,6 @@ static void CG_ServerCommand(void)
 
         return;
 	}
-
     if (!Q_stricmp(cmd, "aft"))
     {
         cgs.autoFireteamEndTime = cg.time + 20000;
@@ -2768,7 +2710,6 @@ static void CG_ServerCommand(void)
 		}
         return;
 	}
-
     if (!Q_stricmp(cmd, "aftc"))
     {
         cgs.autoFireteamCreateEndTime = cg.time + 20000;
@@ -2780,7 +2721,6 @@ static void CG_ServerCommand(void)
 		}
         return;
 	}
-
     if (!Q_stricmp(cmd, "aftj"))
     {
         cgs.autoFireteamJoinEndTime = cg.time + 20000;
@@ -2792,19 +2732,25 @@ static void CG_ServerCommand(void)
 		}
         return;
 	}
-
     if (Q_stricmp(cmd, "remapShader") == 0)
     {
         if (trap_Argc() == 4)
         {
-            trap_R_RemapShader(CG_Argv(1), CG_Argv(2), CG_Argv(3));
+			char shader1[MAX_QPATH];
+			char shader2[MAX_QPATH];
+			char shader3[MAX_QPATH];
+
+			Q_strncpyz(shader1, CG_Argv(1), sizeof(shader1));
+			Q_strncpyz(shader2, CG_Argv(2), sizeof(shader2));
+			Q_strncpyz(shader3, CG_Argv(3), sizeof(shader3));
+
+			trap_R_RemapShader(shader1, shader2, shader3);
 		}
 	}
 
-//GS Copied in code from old source for mu_start, mu_play & mu_stop
-    //
+    //GS Copied in code from old source for mu_start, mu_play & mu_stop
+
     // music
-    //
 
     // loops \/
     if (!Q_stricmp(cmd, "mu_start"))         // has optional parameter for fade-up time
@@ -2834,7 +2780,6 @@ static void CG_ServerCommand(void)
         trap_S_StartBackgroundTrack(CG_Argv(1), "onetimeonly", fadeTime);
         return;
 	}
-
     if (!Q_stricmp(cmd, "mu_stop"))          // has optional parameter for fade-down time
     {
         int fadeTime = 0;   // default to instant stop
@@ -2854,13 +2799,11 @@ static void CG_ServerCommand(void)
         trap_S_FadeBackgroundTrack(atof(CG_Argv(1)), atoi(CG_Argv(2)), 0);
         return;
 	}
-
     if (!Q_stricmp(cmd, "snd_fade"))
     {
         trap_S_FadeAllSound(atof(CG_Argv(1)), atoi(CG_Argv(2)), atoi(CG_Argv(3)));
         return;
 	}
-
     if (!Q_stricmp(cmd, "ftCommands"))
     {
         char info[MAX_INFO_STRING];
@@ -2870,7 +2813,6 @@ static void CG_ServerCommand(void)
 
         return;
 	}
-
     // ensure a file gets into a build (mainly for scripted music calls)
     if (!Q_stricmp(cmd, "addToBuild"))
     {
@@ -2887,7 +2829,6 @@ static void CG_ServerCommand(void)
         trap_FS_FCloseFile(f);
         return;
 	}
-
     // ydnar: bug 267: server sends this command when it's about to kill the current server, before the client can reconnect
     if (!Q_stricmp(cmd, "spawnserver"))
     {
@@ -2902,7 +2843,6 @@ static void CG_ServerCommand(void)
 
         return;
 	}
-
     if (CG_Debriefing_ServerCommand(cmd))
     {
         return;
@@ -2910,7 +2850,6 @@ static void CG_ServerCommand(void)
 
     CG_Printf("Unknown client game command: %s\n", cmd);
 }
-
 
 /*
 ====================
