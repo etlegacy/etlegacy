@@ -38,6 +38,103 @@
 #endif
 
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
+
+/*
+==================
+G_SendScore_Add
+
+	Add score with clientNum at index i of level.sortedClients[] to the string buf.
+
+	returns qtrue if the score was appended to buf, qfalse otherwise.
+==================
+*/
+qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize) {
+	gclient_t *cl = &level.clients[level.sortedClients[i]];
+	int ping, respawnsLeft = -1;
+	char entry[128];
+	int totalXP = 0;
+	int	miscFlags = 0; // 1 - ready 2 - is bot
+
+	entry[0] = '\0';
+
+	//	playerClass = 0;
+	// tjw: spectators should be able to see the player's class,
+	//      but apperantly the client won't draw them even if we
+	//      send it.  *clientmod*
+/*	if(
+#ifdef MV_SUPPORT
+	G_smvLocateEntityInMVList(ent, level.sortedClients[i], qfalse) ||
+#endif
+		cl->sess.sessionTeam == ent->client->sess.sessionTeam ||
+		ent->client->sess.sessionTeam == TEAM_SPECTATOR) {
+
+		playerClass = cl->sess.playerType;
+	}*/
+
+	// NERVE - SMF - number of respawns left
+	if(g_gametype.integer == GT_WOLF_LMS) {
+		if(g_entities[level.sortedClients[i]].health <= 0) {
+			respawnsLeft = -2;
+		}
+	}
+
+	if ( cl->pers.connected == CON_CONNECTING )
+	{
+		ping = -1;
+	}
+	else
+	{
+		//unlagged - true ping
+		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
+		//ping = cl->pers.realPing < 999 ? cl->pers.realPing : 999;
+		//unlagged - true ping
+	}
+
+	if( g_gametype.integer == GT_WOLF_LMS )
+	{
+		totalXP = cl->ps.persistant[PERS_SCORE];
+	}
+	else
+	{
+		int j;
+
+		for(j = SK_BATTLE_SENSE; j < SK_NUM_SKILLS; j++)
+		{
+			totalXP += cl->sess.skillpoints[j];
+		}
+	}
+
+	if ( cl->ps.eFlags & EF_READY ) {
+		miscFlags |= 1;
+	}
+
+	if ( g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT )
+	{
+		miscFlags |= 2;
+	}
+
+	Com_sprintf(entry,
+		sizeof(entry),
+		" %i %i %i %i %i %i %i",
+		level.sortedClients[i],
+		totalXP,
+		ping,
+		(level.time - cl->pers.enterTime) / 60000,
+		g_entities[level.sortedClients[i]].s.powerups,
+		miscFlags,
+		//playerClass,
+		respawnsLeft
+		);
+
+	if((strlen(buf) + strlen(entry) + 1) > bufsize)
+	{
+		return qfalse;
+	}
+	Q_strcat(buf, bufsize, entry);
+
+	return qtrue;
+}
+
 /*
 ==================
 G_SendScore
@@ -47,121 +144,65 @@ Sends current scoreboard information
 */
 void G_SendScore(gentity_t *ent)
 {
-	char      entry[128];
-	int       i = 0;
-	gclient_t *cl;
-	int       numSorted = level.numConnectedClients;
+	int i = 0;
+	int numSorted = level.numConnectedClients; // send the latest information on all clients
+	int count = 0;
 	// tjw: commands over 1022 will crash the client so they're
 	//      pruned in trap_SendServerCommand()
 	//      1022 -32 for the startbuffer -3 for the clientNum
-	char 	buffer[987];
-	char 	startbuffer[32];
-	int 	team, size, count, ping, playerClass, respawnsLeft;
+	char	buffer[987];
+	char	startbuffer[32];
 
-	// Gordon: team doesnt actually mean team, ignore...
-	for (team = 0; team < 2; team++)
+	*buffer = '\0';
+	*startbuffer = '\0';
+
+	Q_strncpyz(startbuffer, va(
+		"sc0 %i %i",
+		level.teamScores[TEAM_AXIS],
+		level.teamScores[TEAM_ALLIES]),
+		sizeof(startbuffer));
+
+	// tjw: keep adding scores to the sc0 command until we fill
+	//      up the buffer.  Any scores that are left will be
+	//      added on to the sc1 command.
+	for(; i < numSorted; ++i)
 	{
-		*buffer      = '\0';
-		*startbuffer = '\0';
-		if (team == 0)
+		// tjw: the old version of SendScore() did this.  I removed it
+		//      originally because it seemed like an unneccessary hack.
+		//      perhaps it is necessary for compat with CG_Argv()?
+		if(count == 33)
 		{
-			Q_strncpyz(startbuffer, va("sc0 %i %i", level.teamScores[TEAM_AXIS], level.teamScores[TEAM_ALLIES]), 32);
+			break;
 		}
-		else
-		{
-			Q_strncpyz(startbuffer, "sc1", 32);
+		if(!G_SendScore_Add(ent, i, buffer, sizeof(buffer))) {
+			break;
 		}
-		size  = strlen(startbuffer) + 1;
-		count = 0;
-
-		for (; i < numSorted ; i++)
-		{
-			cl = &level.clients[level.sortedClients[i]];
-
-			if (g_entities[level.sortedClients[i]].r.svFlags & SVF_POW)
-			{
-				continue;
-			}
-
-			// NERVE - SMF - if on same team, send across player class
-			// Gordon: FIXME: remove/move elsewhere?
-			if (cl->ps.persistant[PERS_TEAM] == ent->client->ps.persistant[PERS_TEAM] || G_smvLocateEntityInMVList(ent, level.sortedClients[i], qfalse))
-			{
-				playerClass = cl->ps.stats[STAT_PLAYER_CLASS];
-			}
-			else
-			{
-				playerClass = 0;
-			}
-
-			// NERVE - SMF - number of respawns left
-			respawnsLeft = cl->ps.persistant[PERS_RESPAWNS_LEFT];
-			if (g_gametype.integer == GT_WOLF_LMS)
-			{
-				if (g_entities[level.sortedClients[i]].health <= 0)
-				{
-					respawnsLeft = -2;
-				}
-			}
-			else
-			{
-				if ((respawnsLeft == 0 && ((cl->ps.pm_flags & PMF_LIMBO) || ((level.intermissiontime) && g_entities[level.sortedClients[i]].health <= 0))))
-				{
-					respawnsLeft = -2;
-				}
-			}
-
-			if (cl->pers.connected == CON_CONNECTING)
-			{
-				ping = -1;
-			}
-			else
-			{
-				ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
-			}
-
-			if (g_gametype.integer == GT_WOLF_LMS)
-			{
-				Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i %i %i", level.sortedClients[i], cl->ps.persistant[PERS_SCORE], ping,
-				            (level.time - cl->pers.enterTime - (level.time - level.intermissiontime)) / 60000, g_entities[level.sortedClients[i]].s.powerups, playerClass, respawnsLeft);
-			}
-			else
-			{
-				int j, totalXP;
-
-				for (totalXP = 0, j = 0; j < SK_NUM_SKILLS; j++)
-				{
-					totalXP += cl->sess.skillpoints[j];
-				}
-
-				Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i %i %i", level.sortedClients[i], totalXP, ping,
-				            (level.time - cl->pers.enterTime - (level.time - level.intermissiontime)) / 60000, g_entities[level.sortedClients[i]].s.powerups, playerClass, respawnsLeft);
-			}
-
-			// Make sure the entry can fit in the buffer.
-			// If not break away and send the buffer content
-			if (size + strlen(entry) > 1000)
-			{
-				break;
-			}
-
-			// Copy the entry into the send buffer
-			size += strlen(entry);
-			Q_strcat(buffer, 1024, entry);
-
-			// Send a maximum of 31 players in one packet
-			if (++count >= 32)
-			{
-				i++;
-				break;
-			}
-		}
-
-		if (count > 0 || team == 0)
-		{
-			trap_SendServerCommand(ent - g_entities, va("%s %i%s", startbuffer, count, buffer));
-		}
+		count++;
 	}
+	trap_SendServerCommand(ent-g_entities, va("%s %i%s", startbuffer, count, buffer));
+
+	if(i == numSorted)
+	{
+		return;
+	}
+
+	count = 0;
+	*buffer = '\0';
+	*startbuffer = '\0';
+	Q_strncpyz(startbuffer, "sc1", sizeof(startbuffer));
+	for(; i < numSorted; ++i) {
+		if(!G_SendScore_Add(ent, i, buffer, sizeof(buffer)))
+		{
+			G_Printf("ERROR: G_SendScore() buffer overflow\n");
+			break;
+		}
+		count++;
+	}
+	if(!count) {
+		return;
+	}
+
+	trap_SendServerCommand(ent-g_entities, va("%s %i%s", startbuffer, count, buffer));
 }
 
 /*
