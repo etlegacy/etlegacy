@@ -38,7 +38,6 @@
 #endif
 
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
-
 /*
 ==================
 G_SendScore
@@ -49,21 +48,16 @@ Sends current scoreboard information
 void G_SendScore(gentity_t *ent)
 {
 	char      entry[128];
-	int       i;
+	int       i = 0;
 	gclient_t *cl;
-	int       numSorted;
-	int       team, size, count;
-	char      buffer[1024];
-	char      startbuffer[32];
+	int       numSorted = level.numConnectedClients;
+	// tjw: commands over 1022 will crash the client so they're
+	//      pruned in trap_SendServerCommand()
+	//      1022 -32 for the startbuffer -3 for the clientNum
+	char 	buffer[987];
+	char 	startbuffer[32];
+	int 	team, size, count, ping, playerClass, respawnsLeft;
 
-	// send the latest information on all clients
-	numSorted = level.numConnectedClients;
-	if (numSorted > MAX_CLIENTS)
-	{
-		numSorted = MAX_CLIENTS;
-	}
-
-	i = 0;
 	// Gordon: team doesnt actually mean team, ignore...
 	for (team = 0; team < 2; team++)
 	{
@@ -82,8 +76,6 @@ void G_SendScore(gentity_t *ent)
 
 		for (; i < numSorted ; i++)
 		{
-			int ping, playerClass, respawnsLeft;
-
 			cl = &level.clients[level.sortedClients[i]];
 
 			if (g_entities[level.sortedClients[i]].r.svFlags & SVF_POW)
