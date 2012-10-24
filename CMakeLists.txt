@@ -65,10 +65,12 @@ option(USE_OPENAL               "Enable OpenAL sound backend (client) [BROKEN]" 
 option(USE_FREETYPE             "Enable Freetype font library support (client)"                 OFF)
 option(TRACKBASE_SUPPORT        "Enable extended server statistics (server)"                    ON)
 
-#This check isn't exact - we do a deeper check when option is finally set
-if(WIN32 OR UNIX)
-	option(USE_OMNIBOTS     	"Enable omnibot build in mod code (Win & Linux server only!)"   OFF)
+if((WIN32 OR UNIX) AND NOT CMAKE_SYSTEM MATCHES "Darwin")
+	option(BUILD_OMNIBOTS     	"Enable omnibot build in mod code (Win & Linux server only!)"   OFF)
+	option(INSTALL_OMNIBOTS     "Install Omni-Bot - LINUX only"   								OFF)
 endif()
+
+option(BUILD_MV_SUPPORT     	"Compile the mod files with multiview support (broken?!)"  		OFF)
 
 #-----------------------------------------------------------------
 # Platform-specific settings
@@ -339,22 +341,26 @@ if(BUILD_SERVER)
 endif(BUILD_SERVER)
 
 if(BUILD_MOD)
+		if(BUILD_MV_SUPPORT) 
+				add_definitions(-DMV_SUPPORT)
+		endif(BUILD_MV_SUPPORT)
+
 		#
         # cgame
         #
         add_library(cgame${LIB_SUFFIX}${ARCH} MODULE ${CGAME_SRC})
         set_target_properties(cgame${LIB_SUFFIX}${ARCH}
-                PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
+        	PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
                         PREFIX ""
                         LIBRARY_OUTPUT_DIRECTORY "legacy")
 
 		#               
         # qagame
         #
-      	if(USE_OMNIBOTS)
+      	if(BUILD_OMNIBOTS)
 			# 32bit WIN & Linux only
         	# note: 'Get the system architecture' above sets ARCH for cross compile
-        	if("${ARCH}" STREQUAL "i386" OR "${ARCH}" STREQUAL "x86")
+        	if(("${ARCH}" STREQUAL "i386" OR "${ARCH}" STREQUAL "x86") AND NOT CMAKE_SYSTEM MATCHES "Darwin")
         		add_definitions(-DOMNIBOTS)
         		# TODO: move to Platform-specific settings?
         	    set(CMAKE_CXX_FLAGS "-m32")
@@ -371,7 +377,7 @@ if(BUILD_MOD)
             else()
             	message(STATUS "Warning: omni-bot support is 32bit Win & Linux only - build skipped")
             endif()
-      	endif(USE_OMNIBOTS)		    
+      	endif(BUILD_OMNIBOTS)		    
 		    
         add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
         set_target_properties(qagame${LIB_SUFFIX}${ARCH}
@@ -429,12 +435,37 @@ if(BUILD_PAK3_PK3)
                 DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy")
 endif(BUILD_PAK3_PK3)
 
+if(INSTALL_OMNIBOTS)
+	## FIXME: exclude MAC
+	if(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
+			# We have to host these files on our web-server - I couldn't find a good and reliable server hosting omnibot
+			# Note: used zip (16MB) doesn't contain windows and other unwanted files
+			# FIXME: change to tar or rar ...
+			set(ETLEGACY_OMNIBOT_L_DL_URL "file:///home/etlegacy/Omni-Bot_0.82_ET_LEGACY_LINUX.zip")
+			#set(ETLEGACY_OMNIBOT_L_DL_URL "http://www.etlegacy.com/files/Omni-Bot_0.82_ET_LEGACY_LINUX.zip")
+			set(OB_RELEASE 0.82)
+			
+			message(STATUS "Downloading Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/omnibot.zip")
+			file(DOWNLOAD ${ETLEGACY_OMNIBOT_L_DL_URL} "${CMAKE_CURRENT_BINARY_DIR}/omnibot.zip")
+		
+			message(STATUS "Unzipping Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/omnibot")
+			execute_process(
+		    		COMMAND unzip -o -q ${CMAKE_CURRENT_BINARY_DIR}/omnibot.zip -domnibot
+		    		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+		
+			message(STATUS "Adding Omni-Bot to installer scripts")
+		    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/omnibot/"
+		        	DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omnibot${OB_RELEASE}")      	
+    else()
+    	message(STATUS "Installing Omni-Bot is Linux only")
+    endif(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
+endif(INSTALL_OMNIBOTS)
+
 #-----------------------------------------------------------------
 # Installer/Package generation
 #-----------------------------------------------------------------
 
 # install adds ...
-
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.sh"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 	PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE)
@@ -474,13 +505,11 @@ set(CPACK_PACKAGE_VERSION               ${ETLEGACY_VERSION})
 set(CPACK_PACKAGE_FILE_NAME             "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${ARCH}")
 set(CPACK_PROJECT_CONFIG_FILE           "${CMAKE_CURRENT_BINARY_DIR}/CPackOptions.cmake")
 
-
 # CPack generator-specific configuration
 configure_file(
         "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPackOptions.cmake.in"
         "${CMAKE_CURRENT_BINARY_DIR}/CPackOptions.cmake"
         IMMEDIATE @ONLY
 )
-
 
 include(CPack) # Has to be included after the package configuration!
