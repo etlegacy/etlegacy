@@ -1078,7 +1078,7 @@
 { "ClientCommand", (byte *)ClientCommand },
 { "Cmd_SwapPlacesWithBot_f", (byte *)Cmd_SwapPlacesWithBot_f },
 { "Cmd_UnIgnore_f", (byte *)Cmd_UnIgnore_f },
-{ "Cmd_TicketTape_f", (byte *)Cmd_TicketTape_f },
+
 { "Cmd_Ignore_f", (byte *)Cmd_Ignore_f },
 { "Cmd_SelectedObjective_f", (byte *)Cmd_SelectedObjective_f },
 { "Cmd_IntermissionWeaponAccuracies_f", (byte *)Cmd_IntermissionWeaponAccuracies_f },

@@ -1080,7 +1080,7 @@ extern qboolean G_commandCheck(gentity_t *ent, char *cmd, qboolean fDoAnytime) ;
 extern void ClientCommand(int clientNum) ;
 extern void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum) ;
 extern void Cmd_UnIgnore_f(gentity_t *ent) ;
-extern void Cmd_TicketTape_f(void) ;
+
 extern void Cmd_Ignore_f(gentity_t *ent) ;
 extern void Cmd_SelectedObjective_f(gentity_t *ent) ;
 extern void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent) ;
