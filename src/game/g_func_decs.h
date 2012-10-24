@@ -103,7 +103,6 @@ extern qboolean COM_BitCheck(const int array[], int bitNum) ;
 extern void COM_DefaultExtension(char *path, int maxSize, const char *extension) ;
 extern void COM_StripFilename(char *in, char *out) ;
 extern void COM_StripExtension(const char *in, char *out, int destsize) ;
-extern void COM_StripExtension(const char *in, char *out) ;
 extern char *COM_SkipPath(char *pathname) ;
 extern void COM_FixPath(char *pathname) ;
 extern float Com_Clamp(float min, float max, float value) ;
