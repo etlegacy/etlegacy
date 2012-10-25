@@ -89,7 +89,7 @@ cvar_t *r_lodscale;
 cvar_t *r_norefresh;
 cvar_t *r_drawentities;
 cvar_t *r_drawworld;
-cvar_t *r_drawfoliage;      // ydnar
+cvar_t *r_drawfoliage;
 cvar_t *r_speeds;
 //cvar_t        *r_fullbright; // JPW NERVE removed per atvi request
 cvar_t *r_novis;
@@ -124,10 +124,10 @@ cvar_t *r_drawBuffer;
 cvar_t *r_lightmap;
 cvar_t *r_uiFullScreen;
 cvar_t *r_shadows;
-cvar_t *r_portalsky;    //----(SA)      added
+cvar_t *r_portalsky;
 cvar_t *r_flares;
 cvar_t *r_mode;
-cvar_t *r_oldMode;      // ydnar
+cvar_t *r_oldMode;
 cvar_t *r_nobind;
 cvar_t *r_singleShader;
 cvar_t *r_roundImagesDown;
@@ -244,7 +244,6 @@ PN_TRIANGLES_TESSELATION_LEVEL_ATI      GetIntegerv Z+          1               
 MAX_PN_TRIANGLES_TESSELATION_LEVEL_ATI  GetIntegerv Z+          1                                                                                       -
 
 */
-//----(SA)      end
 
 static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
 {
@@ -369,7 +368,9 @@ void GL_CheckErrors(void)
 }
 
 /*
-** R_GetModeInfo
+==================
+R_GetModeInfo
+==================
 */
 typedef struct vidmode_s
 {
@@ -437,7 +438,9 @@ qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode)
 }
 
 /*
-** R_ModeList_f
+==================
+R_ModeList_f
+==================
 */
 static void R_ModeList_f(void)
 {
@@ -471,21 +474,21 @@ static void R_ModeList_f(void)
  */
 
 /*
- * ==================
- * RB_ReadPixels
- *
- * Reads an image but takes care of alignment issues for reading RGB images.
- *
- * Reads a minimum offset for where the RGB data starts in the image from
- * integer stored at pointer offset. When the function has returned the actual
- * offset was written back to address offset. This address will always have an
- * alignment of packAlign to ensure efficient copying.
- *
- * Stores the length of padding after a line of pixels to address padlen
- *
- * Return value must be freed with ri.Hunk_FreeTempMemory()
- * ==================
- */
+==================
+RB_ReadPixels
+
+Reads an image but takes care of alignment issues for reading RGB images.
+
+Reads a minimum offset for where the RGB data starts in the image from
+integer stored at pointer offset. When the function has returned the actual
+offset was written back to address offset. This address will always have an
+alignment of packAlign to ensure efficient copying.
+
+Stores the length of padding after a line of pixels to address padlen
+
+Return value must be freed with ri.Hunk_FreeTempMemory()
+==================
+*/
 byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *padlen)
 {
 	byte  *buffer, *bufstart;
@@ -583,8 +586,9 @@ void RB_TakeDepthshot(int x, int y, int width, int height, char *fileName)
 }
 
 /*
- * ==================
- * RB_TakeScreenshot
+==================
+RB_TakeScreenshot
+==================
 */
 void RB_TakeScreenshot(int x, int y, int width, int height, char *fileName)
 {
@@ -645,9 +649,9 @@ void RB_TakeScreenshot(int x, int y, int width, int height, char *fileName)
 }
 
 /*
- * ==================
- * RB_TakeScreenshotJPEG
- * ==================
+==================
+RB_TakeScreenshotJPEG
+==================
  */
 void RB_TakeScreenshotJPEG(int x, int y, int width, int height, char *fileName)
 {
@@ -669,10 +673,10 @@ void RB_TakeScreenshotJPEG(int x, int y, int width, int height, char *fileName)
 }
 
 /*
- * ==================
- * RB_TakeScreenshotCmd
- * ==================
- */
+==================
+RB_TakeScreenshotCmd
+==================
+*/
 const void *RB_TakeScreenshotCmd(const void *data)
 {
 	const screenshotCommand_t *cmd;
@@ -692,9 +696,9 @@ const void *RB_TakeScreenshotCmd(const void *data)
 }
 
 /*
- * ==================
- * R_TakeScreenshot
- * ==================
+==================
+R_TakeScreenshot
+==================
  */
 void R_TakeScreenshot(int x, int y, int width, int height, char *name, qboolean jpeg)
 {
@@ -745,10 +749,10 @@ void R_ScreenshotFilename(int lastNumber, char *fileName)
 }
 
 /*
- * ==================
- * R_ScreenshotFilename
- * ==================
- */
+==================
+R_ScreenshotFilename
+==================
+*/
 void R_ScreenshotFilenameJPEG(int lastNumber, char *fileName)
 {
 	int a, b, c, d;
@@ -772,13 +776,13 @@ void R_ScreenshotFilenameJPEG(int lastNumber, char *fileName)
 }
 
 /*
- * ====================
- * R_LevelShot
- *
- * levelshots are specialized 128*128 thumbnails for
- * the menu system, sampled down from full screen distorted images
- * ====================
- */
+====================
+R_LevelShot
+
+levelshots are specialized 128*128 thumbnails for
+the menu system, sampled down from full screen distorted images
+====================
+*/
 void R_LevelShot(void)
 {
 	char   checkname[MAX_OSPATH];
@@ -845,17 +849,17 @@ void R_LevelShot(void)
 }
 
 /*
- * ==================
- * R_ScreenShot_f
- *
- * screenshot
- * screenshot [silent]
- * screenshot [levelshot]
- * screenshot [filename]
- *
- * Doesn't print the pacifier message if there is a second arg
- * ==================
- */
+==================
+R_ScreenShot_f
+
+screenshot
+screenshot [silent]
+screenshot [levelshot]
+screenshot [filename]
+
+Doesn't print the pacifier message if there is a second arg
+==================
+*/
 void R_ScreenShot_f(void)
 {
 	char       checkname[MAX_OSPATH];
@@ -989,7 +993,9 @@ void R_ScreenShotJPEG_f(void)
 //============================================================================
 
 /*
-** GL_SetDefaultState
+==================
+GL_SetDefaultState
+==================
 */
 void GL_SetDefaultState(void)
 {
@@ -1144,9 +1150,7 @@ void R_Register(void)
 	com_altivec = ri.Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
 	#endif
 
-	//
 	// latched and archived variables
-	//
 	r_allowExtensions           = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_compressed_textures   = ri.Cvar_Get("r_ext_compressed_textures", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);  // (SA) ew, a spelling change I missed from the missionpack
 	r_ext_gamma_control         = ri.Cvar_Get("r_ext_gamma_control", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
@@ -1204,9 +1208,7 @@ void R_Register(void)
 	r_ignoreFastPath = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH);    // ydnar: use fast path by default
 	r_greyscale      = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
-	//
 	// temporary latched variables that can only change over a restart
-	//
 	r_displayRefresh = ri.Cvar_Get("r_displayRefresh", "0", CVAR_LATCH | CVAR_UNSAFE);
 	AssertCvarRange(r_displayRefresh, 0, 200, qtrue);
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
@@ -1215,17 +1217,14 @@ void R_Register(void)
 	AssertCvarRange(r_intensity, 0, 1.5, qfalse);
 	r_singleShader = ri.Cvar_Get("r_singleShader", "0", CVAR_CHEAT | CVAR_LATCH);
 
-	//
 	// archived variables that can change at any time
-	//
 	r_lodCurveError = ri.Cvar_Get("r_lodCurveError", "250", CVAR_ARCHIVE);
 	r_lodbias       = ri.Cvar_Get("r_lodbias", "0", CVAR_ARCHIVE);
 	r_flares        = ri.Cvar_Get("r_flares", "1", CVAR_ARCHIVE);
 	r_znear         = ri.Cvar_Get("r_znear", "3", CVAR_CHEAT); // ydnar: changed it to 3 (from 4) because of lean/fov cheats
 	AssertCvarRange(r_znear, 0.001f, 200, qtrue);
-//----(SA)      added
 	r_zfar = ri.Cvar_Get("r_zfar", "0", CVAR_CHEAT);
-//----(SA)      end
+
 	r_ignoreGLErrors = ri.Cvar_Get("r_ignoreGLErrors", "1", CVAR_ARCHIVE);
 	r_fastsky        = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE);
 	r_inGameVideo    = ri.Cvar_Get("r_inGameVideo", "1", CVAR_ARCHIVE);
@@ -1267,7 +1266,6 @@ void R_Register(void)
 	r_cacheModels    = ri.Cvar_Get("r_cacheModels", "1", CVAR_LATCH);
 	r_cacheGathering = ri.Cvar_Get("cl_cacheGathering", "0", 0);
 	r_bonesDebug     = ri.Cvar_Get("r_bonesDebug", "0", CVAR_CHEAT);
-	// done.
 
 	r_wolffog = ri.Cvar_Get("r_wolffog", "1", CVAR_CHEAT);    // JPW NERVE cheat protected per id request
 
@@ -1477,8 +1475,6 @@ void RE_Shutdown(qboolean destroyWindow)
 	ri.Cmd_RemoveCommand("shaderstate");
 	ri.Cmd_RemoveCommand("taginfo");
 
-	ri.Cmd_RemoveCommand("cropimages");
-
 	R_ShutdownCommandBuffers();
 
 	// Ridah, keep a backup of the current images if possible
@@ -1544,10 +1540,9 @@ void RE_EndRegistration(void)
 void R_DebugPolygon(int color, int numPoints, float *points);
 
 /*
-@@@@@@@@@@@@@@@@@@@@@
+==================
 GetRefAPI
-
-@@@@@@@@@@@@@@@@@@@@@
+==================
 */
 refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
 {
