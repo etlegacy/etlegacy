@@ -465,7 +465,7 @@ void SV_DropClient(client_t *drop, const char *reason)
 		// tell everyone why they got dropped
 
 		// Gordon: we want this displayed elsewhere now
-		SV_SendServerCommand(NULL, "cpm \"%s" S_COLOR_WHITE " %s\n\"", rc(drop->name), reason);
+		SV_SendServerCommand(NULL, "cpm \"%s" S_COLOR_WHITE " %s\"\n", rc(drop->name), reason);
 //      SV_SendServerCommand( NULL, "print \"[lof]%s" S_COLOR_WHITE " [lon]%s\n\"", drop->name, reason );
 	}
 
