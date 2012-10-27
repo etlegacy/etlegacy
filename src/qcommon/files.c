@@ -108,7 +108,7 @@ Additionaly, we search in several subdirectories:
 current game is the current mode
 base game is a variable to allow mods based on other mods
 (such as baseq3 + missionpack content combination in a mod for instance)
-BASEGAME is the hardcoded base game ("baseq3")
+BASEGAME is the hardcoded base game ("etmain")
 
 e.g. the qpath "sound/newstuff/test.wav" would be searched for in the following places:
 
@@ -4333,6 +4333,8 @@ is resetting due to a game change
 */
 void FS_InitFilesystem(void)
 {
+	cvar_t *tmp_fs_game;
+
 	// allow command line parms to override our defaults
 	// we have to specially handle this, because normal command
 	// line variable sets don't happen until after the filesystem
@@ -4340,6 +4342,21 @@ void FS_InitFilesystem(void)
 	Com_StartupVariable("fs_basepath");
 	Com_StartupVariable("fs_homepath");
 	Com_StartupVariable("fs_game");
+
+	// ET:Legacy start
+	// at his point fs_game is set with game/mod path or not - set 'legacy' mod as default fs_game
+	// this 'optimization' grants us 2.60 compatibilty w/o deeper changes and users
+	// don't have to set fs_game param run latest mod code
+	tmp_fs_game = Cvar_Get("fs_game", "", 0);
+	if (!strcmp(tmp_fs_game->string, ""))
+	{
+		Cvar_Set("fs_game", DEFAULT_MODGAME);
+		tmp_fs_game         = Cvar_Get("fs_game", "", 0);
+		tmp_fs_game->flags |= CVAR_USER_CREATED; // deal as startup var
+
+		Com_Printf("^2Info: fs_game is set to 'legacy' mod. Start ET:L with param '+set etmain' for adoring history.\n" , tmp_fs_game->string );
+	}
+
 	Com_StartupVariable("fs_copyfiles");
 
 	// try to start up normally
@@ -4434,7 +4451,6 @@ void FS_Restart(int checksumFeed)
 
 	Q_strncpyz(lastValidBase, fs_basepath->string, sizeof(lastValidBase));
 	Q_strncpyz(lastValidGame, fs_gamedirvar->string, sizeof(lastValidGame));
-
 }
 
 /*
@@ -4529,6 +4545,7 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode)
 int FS_FTell(fileHandle_t f)
 {
 	int pos;
+
 	if (fsh[f].zipFile == qtrue)
 	{
 		pos = unztell(fsh[f].handleFiles.file.z);

@@ -594,6 +594,7 @@ issues.
 ==============================================================*/
 
 #define BASEGAME "etmain"
+#define DEFAULT_MODGAME "legacy" // see files.c
 
 // referenced flags
 // these are in loop specific order so don't change the order
@@ -831,8 +832,7 @@ typedef enum
 	    CF_ALTIVEC   = 1 << 7
 } cpuFeatures_t;
 
-// TTimo
-// centralized and cleaned, that's the max string you can send to a Com_Printf / Com_DPrintf (above gets truncated)
+// TTimo - centralized and cleaned, that's the max string you can send to a Com_Printf / Com_DPrintf (above gets truncated)
 #define MAXPRINTMSG 4096
 
 char *CopyString(const char *in);
@@ -1055,7 +1055,6 @@ void S_ClearSoundBuffer(qboolean killStreaming);    //----(SA)  modified
 
 void SCR_DebugGraph(float value);     // FIXME: move logging to common?
 
-
 //
 // server interface
 //
@@ -1064,7 +1063,6 @@ void SV_Shutdown(char *finalmsg);
 void SV_Frame(int msec);
 void SV_PacketEvent(netadr_t from, msg_t *msg);
 qboolean SV_GameCommand(void);
-
 
 //
 // UI interface
@@ -1148,7 +1146,6 @@ void    Sys_Quit(void) __attribute__ ((noreturn));
 char *Sys_GetClipboardData(void);       // note that this isn't journaled...
 
 void    Sys_Print(const char *msg);
-
 
 // Sys_Milliseconds should only be used for profiling purposes,
 // any game related timing information should come from event timestamps
