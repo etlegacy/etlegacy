@@ -91,7 +91,7 @@ cvar_t *r_drawentities;
 cvar_t *r_drawworld;
 cvar_t *r_drawfoliage;
 cvar_t *r_speeds;
-//cvar_t        *r_fullbright; // JPW NERVE removed per atvi request
+
 cvar_t *r_novis;
 cvar_t *r_nocull;
 cvar_t *r_facePlaneCull;
@@ -1027,9 +1027,7 @@ void GL_SetDefaultState(void)
 	// arrays are enabled and disabled around the compiled vertex array call
 	qglEnableClientState(GL_VERTEX_ARRAY);
 
-	//
 	// make sure our GL state vector is set correctly
-	//
 	glState.glStateBits = GLS_DEPTHTEST_DISABLE | GLS_DEPTHMASK_TRUE;
 
 	qglPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -1038,6 +1036,29 @@ void GL_SetDefaultState(void)
 	qglEnable(GL_SCISSOR_TEST);
 	qglDisable(GL_CULL_FACE);
 	qglDisable(GL_BLEND);
+}
+
+/*
+================
+R_PrintLongString
+
+Workaround for ri.Printf's 1024 characters buffer limit.
+================
+*/
+void R_PrintLongString(const char *string)
+{
+    char buffer[1024];
+    const char *p;
+    int size = strlen(string);
+
+    p = string;
+    while(size > 0)
+    {
+        Q_strncpyz(buffer, p, sizeof (buffer) );
+        ri.Printf( PRINT_ALL, "%s", buffer );
+        p += 1023;
+        size -= 1023;
+    }
 }
 
 /*
@@ -1061,8 +1082,11 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "\nGL_VENDOR: %s\n", glConfig.vendor_string);
 	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string);
 	ri.Printf(PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string);
-	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: %s", glConfig.extensions_string);
-	ri.Printf(PRINT_ALL, "\n\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
+
+	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: %s");
+	R_PrintLongString( glConfig.extensions_string );
+
+	ri.Printf(PRINT_ALL, "\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 	ri.Printf(PRINT_ALL, "GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
 	ri.Printf(PRINT_ALL, "PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
 	ri.Printf(PRINT_ALL, "MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1]);
