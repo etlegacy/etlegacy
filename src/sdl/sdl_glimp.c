@@ -268,7 +268,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		}
 	}
 
-	ri.Printf(PRINT_ALL, "...setting mode %d:", mode);
+	ri.Printf(PRINT_ALL, "...setting mode %d:\n", mode);
 
 	if (mode == -2)
 	{
@@ -569,6 +569,7 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 static qboolean GLimp_HaveExtension(const char *ext)
 {
 	const char *ptr = Q_stristr(glConfig.extensions_string, ext);
+
 	if (ptr == NULL)
 	{
 		return qfalse;
@@ -704,7 +705,7 @@ static void GLimp_InitExtensions(void)
 			qglUnlockArraysEXT = (void ( APIENTRY * )(void))SDL_GL_GetProcAddress("glUnlockArraysEXT");
 			if (!qglLockArraysEXT || !qglUnlockArraysEXT)
 			{
-				ri.Error(ERR_FATAL, "bad getprocaddress");
+				ri.Error(ERR_FATAL, "bad getprocaddress\n");
 			}
 		}
 		else
@@ -1018,7 +1019,7 @@ qboolean GLimp_SpawnRenderThread(void (*function)(void))
 	renderThread      = SDL_CreateThread(GLimp_RenderThreadWrapper, NULL);
 	if (renderThread == NULL)
 	{
-		ri.Printf(PRINT_ALL, "SDL_CreateThread() returned %s", SDL_GetError());
+		ri.Printf(PRINT_ALL, "SDL_CreateThread() returned %s\n", SDL_GetError());
 		GLimp_ShutdownRenderThread();
 		return qfalse;
 	}
