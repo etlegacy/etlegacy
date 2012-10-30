@@ -487,123 +487,6 @@ static void CG_InterpolatePlayerState(qboolean grabAngles)
 }
 
 /*
-===================
-CG_TouchItem
-===================
-*/
-static void CG_TouchItem(centity_t *cent)
-{
-	gitem_t *item;
-
-	return;
-
-	if (!cg_predictItems.integer)
-	{
-		return;
-	}
-
-	if (!cg_autoactivate.integer)
-	{
-		return;
-	}
-
-	if (!BG_PlayerTouchesItem(&cg.predictedPlayerState, &cent->currentState, cg.time))
-	{
-		return;
-	}
-
-	// never pick an item up twice in a prediction
-	if (cent->miscTime == cg.time)
-	{
-		return;
-	}
-
-	if (!BG_CanItemBeGrabbed(&cent->currentState, &cg.predictedPlayerState, cgs.clientinfo[cg.snap->ps.clientNum].skill, cgs.clientinfo[cg.snap->ps.clientNum].team))
-	{
-		return;     // can't hold it
-	}
-
-	item = &bg_itemlist[cent->currentState.modelindex];
-
-	// force activate only for weapons you don't have
-	if (item->giType == IT_WEAPON)
-	{
-		if (item->giTag != WP_AMMO)
-		{
-			if (!COM_BitCheck(cg.predictedPlayerState.weapons, item->giTag))
-			{
-				return; // force activate only
-			}
-		}
-	}
-
-	// OSP - Do it here rather than forcing gamestate into BG_CanItemBeGrabbed
-	if (cgs.gamestate != GS_PLAYING &&
-	    item->giType != IT_WEAPON &&
-	    item->giType != IT_AMMO &&
-	    item->giType != IT_HEALTH)
-	{
-		return;
-	}
-
-	// OSP - special case for panzers, as server may not allow us to pick them up
-	//       let the server tell us for sure that we got it
-	if (item->giType == IT_WEAPON && item->giTag == WP_PANZERFAUST)
-	{
-		return;
-	}
-
-
-	// (SA) no prediction of books/clipboards
-	if (item->giType == IT_HOLDABLE)
-	{
-		if (item->giTag >= HI_BOOK1 && item->giTag <= HI_BOOK3)
-		{
-			return;
-		}
-	}
-
-	// (SA) treasure needs to be activeated, no touch
-	if (item->giType == IT_TREASURE)
-	{
-		return;
-	}
-
-	// Special case for flags.
-	// We don't predict touching our own flag
-	if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS &&
-	    item->giTag == PW_REDFLAG)
-	{
-		return;
-	}
-	if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES &&
-	    item->giTag == PW_BLUEFLAG)
-	{
-		return;
-	}
-
-	// grab it
-	BG_AddPredictableEventToPlayerstate(EV_ITEM_PICKUP, cent->currentState.modelindex, &cg.predictedPlayerState);
-
-	// remove it from the frame so it won't be drawn
-	cent->currentState.eFlags |= EF_NODRAW;
-
-	// don't touch it again this prediction
-	cent->miscTime = cg.time;
-
-	// if its a weapon, give them some predicted ammo so the autoswitch will work
-	if (item->giType == IT_WEAPON)
-	{
-		COM_BitSet(cg.predictedPlayerState.weapons, item->giTag);
-
-		if (!cg.predictedPlayerState.ammo[BG_FindAmmoForWeapon(item->giTag)])
-		{
-			cg.predictedPlayerState.ammo[BG_FindAmmoForWeapon(item->giTag)] = 1;
-		}
-	}
-}
-
-/*
 =========================
 CG_TouchTriggerPrediction
 
@@ -641,7 +524,6 @@ static void CG_TouchTriggerPrediction(void)
 
 		if (ent->eType == ET_ITEM && !spectator && (cg.predictedPlayerState.groundEntityNum == ENTITYNUM_WORLD))
 		{
-			// CG_TouchItem(cent); // does return (only)
 			continue;
 		}
 
