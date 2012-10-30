@@ -123,6 +123,10 @@ in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on 
 
 * option B: open the CMakeLists.txt file in [QT Creator](http://qt.nokia.com/products/developer-tools).
 
+NOTE: In order to compile the jpeg library properly there is a need for a file named 'win32.mak'. 
+Unfortunately this file isn't shipped with later Windows SDK versions. Solution: Get the Windows 
+SDK 6 and copy 'win32.mak' to libs\jpeg\. 
+
 LICENSE
 =======
 
