@@ -64,7 +64,6 @@ int skyboxportal;
 /*
 ====================
 R_ToggleSmpFrame
-
 ====================
 */
 void R_ToggleSmpFrame(void)
@@ -116,7 +115,6 @@ void R_ToggleSmpFrame(void)
 /*
 ====================
 RE_ClearScene
-
 ====================
 */
 void RE_ClearScene(void)
@@ -172,7 +170,6 @@ void R_AddPolygonSurfaces(void)
 /*
 =====================
 RE_AddPolyToScene
-
 =====================
 */
 void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
@@ -245,11 +242,9 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 	poly->fogIndex = fogIndex;
 }
 
-// Ridah
 /*
 =====================
 RE_AddPolysToScene
-
 =====================
 */
 void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys)
@@ -276,7 +271,7 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 	{
 		if (r_numpolyverts + numVerts > max_polyverts || r_numpolys >= max_polys)
 		{
-//			ri.Printf( PRINT_WARNING, "WARNING: RE_AddPolysToScene: MAX_POLYS or MAX_POLYVERTS reached\n");
+			//			ri.Printf( PRINT_WARNING, "WARNING: RE_AddPolysToScene: MAX_POLYS or MAX_POLYVERTS reached\n");
 			return;
 		}
 
@@ -331,7 +326,6 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 		poly->fogIndex = fogIndex;
 	}
 }
-// done.
 
 /*
 =====================
@@ -360,7 +354,6 @@ void R_AddPolygonBufferSurfaces(void)
 /*
 =====================
 RE_AddPolyBufferToScene
-
 =====================
 */
 void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
@@ -414,7 +407,6 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 /*
 =====================
 RE_AddRefEntityToScene
-
 =====================
 */
 void RE_AddRefEntityToScene(const refEntity_t *ent)
@@ -445,9 +437,8 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 
 /*
 RE_AddLightToScene()
-ydnar: modified dlight system to support seperate radius and intensity
+	ydnar: modified dlight system to support seperate radius and intensity
 */
-
 void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
 	dlight_t *dl;
@@ -593,7 +584,6 @@ void RE_RenderScene(const refdef_t *fd)
 		}
 	}
 
-
 	// derived info
 
 	tr.refdef.floatTime = tr.refdef.time * 0.001f;
@@ -692,7 +682,6 @@ when we do a second render.
 */
 void RE_RestoreViewParms()
 {
-
 	// This was killing the LOD computation
 	tr.viewParms = g_oldViewParms;
 }

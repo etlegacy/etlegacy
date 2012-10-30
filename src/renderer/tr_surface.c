@@ -310,7 +310,6 @@ static void RB_SurfaceSprite(void)
 	RB_AddQuadStamp(backEnd.currentEntity->e.origin, left, up, backEnd.currentEntity->e.shaderRGBA);
 }
 
-
 /*
 =============
 RB_SurfacePolychain
@@ -346,7 +345,6 @@ void RB_SurfacePolychain(srfPoly_t *p)
 
 	tess.numVertexes = numv;
 }
-
 
 /*
 =============
@@ -767,7 +765,7 @@ static void DoRailDiscs(int numSegs, const vec3_t start, const vec3_t dir, const
 }
 
 /*
-** RB_SurfaceRailRinges
+RB_SurfaceRailRinges
 */
 void RB_SurfaceRailRings(void)
 {
@@ -799,7 +797,7 @@ void RB_SurfaceRailRings(void)
 }
 
 /*
-** RB_SurfaceRailCore
+RB_SurfaceRailCore
 */
 void RB_SurfaceRailCore(void)
 {
@@ -830,7 +828,7 @@ void RB_SurfaceRailCore(void)
 }
 
 /*
-** RB_SurfaceLightningBolt
+RB_SurfaceLightningBolt
 */
 void RB_SurfaceLightningBolt(void)
 {
@@ -870,7 +868,7 @@ void RB_SurfaceLightningBolt(void)
 }
 
 /*
-** LerpMeshVertexes
+LerpMeshVertexes
 */
 static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 {
@@ -1044,7 +1042,7 @@ void RB_SurfaceMesh(md3Surface_t *surface)
 }
 
 /*
-** R_LatLongToNormal
+R_LatLongToNormal
 */
 void R_LatLongToNormal(vec3_t outNormal, short latLong)
 {
@@ -1064,9 +1062,8 @@ void R_LatLongToNormal(vec3_t outNormal, short latLong)
 	outNormal[2] = tr.sinTable[(lng + (FUNCTABLE_SIZE / 4)) & FUNCTABLE_MASK];
 }
 
-// Ridah
 /*
-** LerpCMeshVertexes
+LerpCMeshVertexes
 */
 static void LerpCMeshVertexes(mdcSurface_t *surf, float backlerp)
 {
@@ -1282,7 +1279,6 @@ void RB_SurfaceCMesh(mdcSurface_t *surface)
 	}
 
 	tess.numVertexes += surface->numVerts;
-
 }
 
 /*
@@ -1338,10 +1334,8 @@ void RB_SurfaceFace(srfSurfaceFace_t *surf)
 		*( unsigned int * ) &tess.vertexColors[ndx].v = *( unsigned int * ) &v[7];
 	}
 
-
 	tess.numVertexes += surf->numPoints;
 }
-
 
 static float LodErrorForVolume(vec3_t local, float radius)
 {
@@ -1511,7 +1505,6 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 			}
 		}
 
-
 		// add the indexes
 		{
 			int numIndexes;
@@ -1670,7 +1663,6 @@ void RB_SurfaceFlare(srfFlare_t *surf)
 }
 
 #else
-
 void RB_SurfaceFlare(srfFlare_t *surf)
 {
 #if 0
@@ -1692,9 +1684,7 @@ void RB_SurfaceFlare(srfFlare_t *surf)
 	RB_AddQuadStampExt(surf->origin, left, up, color, 0, 0, 1, 1);
 #endif
 }
-
 #endif
-
 
 void RB_SurfaceDisplayList(srfDisplayList_t *surf)
 {

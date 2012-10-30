@@ -279,7 +279,6 @@ static void InitOpenGL(void)
 {
 	char renderer_buffer[1024];
 
-	//
 	// initialize OS specific portions of the renderer
 	//
 	// GLimp_Init directly or indirectly references the following cvars:
@@ -288,7 +287,6 @@ static void InitOpenGL(void)
 	//          - r_(color|depth|stencil)bits
 	//          - r_ignorehwgamma
 	//          - r_gamma
-	//
 
 	if (glConfig.vidWidth == 0)
 	{
@@ -1295,7 +1293,7 @@ void R_Register(void)
 
 	r_nocurves    = ri.Cvar_Get("r_nocurves", "0", CVAR_CHEAT);
 	r_drawworld   = ri.Cvar_Get("r_drawworld", "1", CVAR_CHEAT);
-	r_drawfoliage = ri.Cvar_Get("r_drawfoliage", "1", CVAR_CHEAT);    // ydnar
+	r_drawfoliage = ri.Cvar_Get("r_drawfoliage", "1", CVAR_CHEAT);
 	r_lightmap    = ri.Cvar_Get("r_lightmap", "0", CVAR_CHEAT); // DHM - NERVE :: cheat protect
 	r_portalOnly  = ri.Cvar_Get("r_portalOnly", "0", CVAR_CHEAT);
 
@@ -1612,10 +1610,9 @@ refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
 
 	re.ClearScene          = RE_ClearScene;
 	re.AddRefEntityToScene = RE_AddRefEntityToScene;
+
 	re.AddPolyToScene      = RE_AddPolyToScene;
-	// Ridah
 	re.AddPolysToScene = RE_AddPolysToScene;
-	// done.
 	re.AddLightToScene = RE_AddLightToScene;
 
 	re.AddCoronaToScene = RE_AddCoronaToScene;
@@ -1627,7 +1624,7 @@ refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
 
 	re.SetColor               = RE_SetColor;
 	re.DrawStretchPic         = RE_StretchPic;
-	re.DrawRotatedPic         = RE_RotatedPic;  // NERVE - SMF
+	re.DrawRotatedPic         = RE_RotatedPic;
 	re.Add2dPolys             = RE_2DPolyies;
 	re.DrawStretchPicGradient = RE_StretchPicGradient;
 	re.DrawStretchRaw         = RE_StretchRaw;
@@ -1647,12 +1644,11 @@ refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
 
 	re.purgeCache = R_PurgeCache;
 
-	//bani
 	re.LoadDynamicShader = RE_LoadDynamicShader;
 	re.GetTextureId      = R_GetTextureId;
-	// fretn
+
 	re.RenderToTexture = RE_RenderToTexture;
-	//bani
+
 	re.Finish = RE_Finish;
 
 	return &re;

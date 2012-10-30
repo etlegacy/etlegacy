@@ -142,7 +142,6 @@ void R_DlightBmodel(bmodel_t *bmodel)
 		mask |= 1 << i;
 	}
 
-
 	// (SA) isn't this dangerous to do to an enumerated type? (setting it to an int)
 	//		meaning, shouldn't ->needDlights be changed to an int rather than a qbool?
 
@@ -311,7 +310,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	VectorScale(ent->ambientLight, r_ambientScale->value, ent->ambientLight);
 	VectorScale(ent->directedLight, r_directedScale->value, ent->directedLight);
 
-//----(SA)	added
 	// cheats?  check for single player?
 	if (tr.lightGridMulDirected)
 	{
@@ -321,7 +319,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	{
 		VectorScale(ent->ambientLight, tr.lightGridMulAmbient, ent->ambientLight);
 	}
-//----(SA)	end
 
 	VectorNormalize2(direction, ent->lightDir);
 

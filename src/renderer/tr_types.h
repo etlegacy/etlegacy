@@ -60,13 +60,11 @@
 #define RDF_NOWORLDMODEL    1       // used for player configuration screen
 #define RDF_HYPERSPACE      4       // teleportation effect
 
-// Rafael
 #define RDF_SKYBOXPORTAL    8
 
-//----(SA)
 #define RDF_UNDERWATER      (1 << 4)    // so the renderer knows to use underwater fog when the player is underwater
 #define RDF_DRAWINGSKY      (1 << 5)
-#define RDF_SNOOPERVIEW     (1 << 6)    //----(SA)  added
+#define RDF_SNOOPERVIEW     (1 << 6)
 
 typedef struct
 {
@@ -148,21 +146,18 @@ typedef struct
 	float radius;
 	float rotation;
 
-	// Ridah
 	vec3_t fireRiseDir;
 
 	// Ridah, entity fading (gibs, debris, etc)
 	int fadeStartTime, fadeEndTime;
 
-	float hilightIntensity;         //----(SA)  added
+	float hilightIntensity;
 
 	int reFlags;
 
 	int entityNum;                  // currentState.number, so we can attach rendering effects to specific entities (Zombie)
 
 } refEntity_t;
-
-//----(SA)
 
 //                                                                  //
 // WARNING:: synch FOG_SERVER in sv_ccmds.c if you change anything  //
@@ -206,8 +201,6 @@ typedef struct
 	qboolean clearscreen;       // clear the GL color buffer
 } glfog_t;
 
-//----(SA)  end
-
 #define MAX_RENDER_STRINGS          8
 #define MAX_RENDER_STRING_LENGTH    32
 
@@ -228,9 +221,8 @@ typedef struct
 	char text[MAX_RENDER_STRINGS][MAX_RENDER_STRING_LENGTH];
 
 
-//----(SA)  added (needed to pass fog infos into the portal sky scene)
+	//----(SA)  added (needed to pass fog infos into the portal sky scene)
 	glfog_t glfog;
-//----(SA)  end
 
 } refdef_t;
 
@@ -242,11 +234,11 @@ typedef enum
 } stereoFrame_t;
 
 /*
-** glconfig_t
-**
-** Contains variables specific to the OpenGL configuration
-** being run right now.  These are constant once the OpenGL
-** subsystem is initialized.
+glconfig_t
+
+Contains variables specific to the OpenGL configuration
+being run right now.  These are constant once the OpenGL
+subsystem is initialized.
 */
 typedef enum
 {
@@ -290,13 +282,13 @@ typedef struct
 	qboolean deviceSupportsGamma;
 	textureCompression_t textureCompression;
 	qboolean textureEnvAddAvailable;
-	qboolean anisotropicAvailable;                  //----(SA)  added
-	float maxAnisotropy;                            //----(SA)  added
+	qboolean anisotropicAvailable;
+	float maxAnisotropy;
 
 	// vendor-specific support
 	// NVidia
-	qboolean NVFogAvailable;                        //----(SA)  added
-	int NVFogMode;                                  //----(SA)  added
+	qboolean NVFogAvailable;
+	int NVFogMode;
 	// ATI
 	int ATIMaxTruformTess;                          // for truform support
 	int ATINormalMode;                              // for truform support

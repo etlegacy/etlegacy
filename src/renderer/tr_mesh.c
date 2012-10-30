@@ -181,7 +181,6 @@ static int R_CullModel(md3Header_t *header, trRefEntity_t *ent)
 /*
 =================
 R_ComputeLOD
-
 =================
 */
 int R_ComputeLOD(trRefEntity_t *ent)
@@ -215,14 +214,13 @@ int R_ComputeLOD(trRefEntity_t *ent)
 		radius = RadiusFromBounds(frame->bounds[0], frame->bounds[1]);
 
 		//----(SA)  testing
-		if (ent->e.reFlags & REFLAG_ORIENT_LOD)
-		{
+		//if (ent->e.reFlags & REFLAG_ORIENT_LOD)
+		//{
 			// right now this is for trees, and pushes the lod distance way in.
 			// this is not the intended purpose, but is helpful for the new
 			// terrain level that has loads of trees
 			//          radius = radius/2.0f;
-		}
-		//----(SA)  end
+		//}
 
 		if ((projectedRadius = ProjectRadius(radius, ent->e.origin)) != 0)
 		{
@@ -269,7 +267,6 @@ int R_ComputeLOD(trRefEntity_t *ent)
 /*
 =================
 R_ComputeFogNum
-
 =================
 */
 static int R_ComputeFogNum(md3Header_t *header, trRefEntity_t *ent)
@@ -313,7 +310,6 @@ static int R_ComputeFogNum(md3Header_t *header, trRefEntity_t *ent)
 /*
 =================
 R_AddMD3Surfaces
-
 =================
 */
 void R_AddMD3Surfaces(trRefEntity_t *ent)
@@ -403,7 +399,7 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 			// match the surface name to something in the skin file
 			shader = tr.defaultShader;
 
-//----(SA)  added blink
+			//----(SA)  added blink
 			if (ent->e.renderfx & RF_BLINK)
 			{
 				char *s = va("%s_b", surface->name);   // append '_b' for 'blink'
@@ -439,7 +435,7 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 					}
 				}
 			}
-//----(SA)  end
+
 
 			if (shader == tr.defaultShader)
 			{
@@ -460,7 +456,6 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 			md3Shader += ent->e.skinNum % surface->numShaders;
 			shader     = tr.shaders[md3Shader->shaderIndex];
 		}
-
 
 		// we will add shadows even if the main object isn't visible in the view
 
@@ -483,13 +478,11 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 			R_AddDrawSurf((void *)surface, tr.projectionShadowShader, 0, 0, 0);
 		}
 
-
 		// for testing polygon shadows (on /all/ models)
 		if (r_shadows->integer == 4)
 		{
 			R_AddDrawSurf((void *)surface, tr.projectionShadowShader, 0, 0, 0);
 		}
-
 
 		// don't add third_person objects if not viewing through a portal
 		if (!personalModel)

@@ -49,7 +49,6 @@ static cullType_t implicitCullType;
 #define FILE_HASH_SIZE      4096
 static shader_t *hashTable[FILE_HASH_SIZE];
 
-// Ridah
 // Table containing string indexes for each shader found in the scripts, referenced by their checksum
 // values.
 typedef struct shaderStringPointer_s
@@ -59,7 +58,6 @@ typedef struct shaderStringPointer_s
 } shaderStringPointer_t;
 
 shaderStringPointer_t shaderChecksumLookup[FILE_HASH_SIZE];
-// done.
 
 /*
 ================
@@ -341,7 +339,6 @@ static genFunc_t NameToGenFunc(const char *funcname)
 	return GF_SIN;
 }
 
-
 /*
 ===================
 ParseWaveForm
@@ -392,7 +389,6 @@ static void ParseWaveForm(char **text, waveForm_t *wave)
 	}
 	wave->frequency = atof(token);
 }
-
 
 /*
 ===================
@@ -642,7 +638,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		{
 			break;
 		}
-		//
+
 		// check special case for map16/map32/mapcomp/mapnocomp (compression enabled)
 		if (!Q_stricmp(token, "map16"))          // only use this texture if 16 bit color depth
 		{
@@ -718,9 +714,8 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				continue;
 			}
 		}
-		//
+
 		// map <name>
-		//
 		if (!Q_stricmp(token, "map"))
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -730,20 +725,17 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				return qfalse;
 			}
 
-//----(SA)  fixes startup error and allows polygon shadows to work again
+			//----(SA)  fixes startup error and allows polygon shadows to work again
 			if (!Q_stricmp(token, "$whiteimage") || !Q_stricmp(token, "*white"))
 			{
-//----(SA)  end
 				stage->bundle[0].image[0] = tr.whiteImage;
 				continue;
 			}
-//----(SA) added
 			else if (!Q_stricmp(token, "$dlight"))
 			{
 				stage->bundle[0].image[0] = tr.dlightImage;
 				continue;
 			}
-//----(SA) end
 			else if (!Q_stricmp(token, "$lightmap"))
 			{
 				stage->bundle[0].isLightmap = qtrue;
@@ -794,20 +786,17 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				return qfalse;
 			}
 
-//----(SA)  fixes startup error and allows polygon shadows to work again
+			//----(SA)  fixes startup error and allows polygon shadows to work again
 			if (!Q_stricmp(token, "$whiteimage") || !Q_stricmp(token, "*white"))
 			{
-//----(SA)  end
 				stage->bundle[0].image[0] = tr.whiteImage;
 				continue;
 			}
-//----(SA) added
 			else if (!Q_stricmp(token, "$dlight"))
 			{
 				stage->bundle[0].image[0] = tr.dlightImage;
 				continue;
 			}
-//----(SA) end
 			else if (!Q_stricmp(token, "$lightmap"))
 			{
 				stage->bundle[0].isLightmap = qtrue;
@@ -1237,7 +1226,6 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		}
 	}
 
-
 	// ydnar: if shader stage references a lightmap, but no lightmap is present
 	// (vertex-approximated surfaces), then set cgen to vertex
 	if (stage->bundle[0].isLightmap && shader.lightmapIndex < 0 &&
@@ -1570,7 +1558,6 @@ void ParseSort(char **text)
 	}
 }
 
-
 // this table is also present in q3map
 
 typedef struct
@@ -1583,15 +1570,13 @@ infoParm_t infoParms[] =
 {
 	// server relevant contents
 
-//----(SA)  modified
 	{ "clipmissile",       1, 0,                 CONTENTS_MISSILECLIP      }, // impact only specific weapons (rl, gl)
-//----(SA)  end
 
 	{ "water",             1, 0,                 CONTENTS_WATER            },
 	{ "slag",              1, 0,                 CONTENTS_SLIME            }, // uses the CONTENTS_SLIME flag, but the shader reference is changed to 'slag'
 	// to idendify that this doesn't work the same as 'slime' did.
 	// (slime hurts instantly, slag doesn't)
-//  {"slime",       1,  0,  CONTENTS_SLIME },       // mildly damaging
+	//  {"slime",       1,  0,  CONTENTS_SLIME },       // mildly damaging
 	{ "lava",              1, 0,                 CONTENTS_LAVA             }, // very damaging
 	{ "playerclip",        1, 0,                 CONTENTS_PLAYERCLIP       },
 	{ "monsterclip",       1, 0,                 CONTENTS_MONSTERCLIP      },
@@ -1625,7 +1610,6 @@ infoParm_t infoParms[] =
 
 	{ "monsterslick",      0, SURF_MONSTERSLICK, 0                         }, // surf only slick for monsters
 
-//  {"flesh",       0,  SURF_FLESH,     0 },
 	{ "glass",             0, SURF_GLASS,        0                         }, //----(SA) added
 	{ "splash",            0, SURF_SPLASH,       0                         }, //----(SA) added
 
@@ -2064,7 +2048,6 @@ static qboolean ParseShader(char **text)
 		{
 			int i;
 
-
 			for (i = 0; i < 3; i++)
 			{
 				token = COM_ParseExt(text, qfalse);
@@ -2366,6 +2349,7 @@ static qboolean CollapseMultitexture(void)
 			return qfalse;
 		}
 	}
+
 	if (stages[0].alphaGen == AGEN_WAVEFORM)
 	{
 		if (memcmp(&stages[0].alphaWave,
@@ -2375,7 +2359,6 @@ static qboolean CollapseMultitexture(void)
 			return qfalse;
 		}
 	}
-
 
 	// make sure that lightmaps are in bundle 1 for 3dfx
 	if (stages[0].bundle[0].isLightmap)
@@ -3187,7 +3170,6 @@ static char *FindShaderInShaderText(const char *shadername)
 			return NULL;
 		}
 	}
-	// done.
 
 	// look for label
 	// note that this could get confused if a shader name is used inside
@@ -3426,7 +3408,6 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 			return sh;
 		}
 	}
-	// done.
 
 	// clear the global shader
 	memset(&shader, 0, sizeof(shader));
@@ -3475,7 +3456,6 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 			return sh;
 		}
 	}
-
 
 	// ydnar: allow implicit mapping ('-' = use shader name)
 	if (implicitMap[0] == '\0' || implicitMap[0] == '-')
@@ -3732,6 +3712,7 @@ void R_ShaderList_f(void)
 		{
 			ri.Printf(PRINT_ALL, "  ");
 		}
+
 		if (shader->multitextureEnv == GL_ADD)
 		{
 			ri.Printf(PRINT_ALL, "MT(a) ");
@@ -3748,6 +3729,7 @@ void R_ShaderList_f(void)
 		{
 			ri.Printf(PRINT_ALL, "      ");
 		}
+
 		if (shader->explicitlyDefined)
 		{
 			ri.Printf(PRINT_ALL, "E ");
@@ -3859,7 +3841,6 @@ static void BuildShaderChecksumLookup(void)
 		SkipBracedSection(&p);
 	}
 }
-// done.
 
 /*
 ====================
@@ -4021,8 +4002,8 @@ void R_CacheShaderFreeExt(const char *name, void *ptr, const char *file, int lin
 //      if( name ) {
 //          Com_Printf( "Zone Free from %s: pointer %p: %i in use\n", name, ptr, g_numshaderallocs );
 //      }
-
 		//free( ptr );
+
 		ri.Free(ptr);
 	}
 }
@@ -4347,7 +4328,7 @@ void R_LoadCacheShaders(void)
 
 	ri.Hunk_FreeTempMemory(buf);
 }
-// done.
+
 //=============================================================================
 
 /*
@@ -4362,13 +4343,8 @@ void R_InitShaders(void)
 	ri.Printf(PRINT_ALL, "Initializing Shaders\n");
 
 	memset(hashTable, 0, sizeof(hashTable));
-
 	CreateInternalShaders();
-
 	ScanAndLoadShaderFiles();
-
 	CreateExternalShaders();
-
-	// Ridah
 	R_LoadCacheShaders();
 }

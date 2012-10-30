@@ -80,12 +80,10 @@ static int                      collapse[MDS_MAX_VERTS], *pCollapse;
 static int                      p0, p1, p2;
 static qboolean                 isTorso, fullTorso;
 static vec4_t                   m1[4], m2[4];
-// static  vec4_t m3[4], m4[4]; // TTimo unused
-// static  vec4_t tmp1[4], tmp2[4]; // TTimo unused
 static vec3_t      t;
 static refEntity_t lastBoneEntity;
 
-static int totalrv, totalrt, totalv, totalt;    //----(SA)
+static int totalrv, totalrt, totalv, totalt;
 
 //-----------------------------------------------------------------------------
 
@@ -250,7 +248,7 @@ float R_CalcMDSLod(refEntity_t *refent, vec3_t origin, float radius, float model
 	if (projectedRadius != 0)
 	{
 
-//		ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
+		// ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
 
 		lodScale = r_lodscale->value;   // fudge factor since MDS uses a much smoother method of LOD
 		flod     = projectedRadius * lodScale * modelScale;
@@ -265,7 +263,7 @@ float R_CalcMDSLod(refEntity_t *refent, vec3_t origin, float radius, float model
 	{
 		flod *= 0.5;
 	}
-//----(SA)	like reflag_force_lod, but separate for the moment
+	//----(SA)	like reflag_force_lod, but separate for the moment
 	if (refent->reFlags & REFLAG_DEAD_LOD)
 	{
 		flod *= 0.8;
@@ -347,27 +345,21 @@ void R_AddAnimSurfaces(trRefEntity_t *ent)
 
 	header = tr.currentModel->model.mds;
 
-	//
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum.
-	//
 	cull = R_CullModel(header, ent);
 	if (cull == CULL_OUT)
 	{
 		return;
 	}
 
-	//
 	// set up lighting now that we know we aren't culled
-	//
 	if (!personalModel || r_shadows->integer > 1)
 	{
 		R_SetupEntityLighting(&tr.refdef, ent);
 	}
 
-	//
 	// see if we are in a fog volume
-	//
 	fogNum = R_ComputeFogNum(header, ent);
 
 	surface = ( mdsSurface_t * )((byte *)header + header->ofsSurfaces);
@@ -507,7 +499,6 @@ static __inline void LocalAddScaledMatrixTransformVector(vec3_t in, float s, vec
 
 static float LAVangle;
 static float sp, sy, cp, cy;
-//static float    sr, cr;// TTimo: unused
 
 static __inline void LocalAngleVector(vec3_t angles, vec3_t forward)
 {
@@ -1000,7 +991,6 @@ void R_CalcBoneLerp(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 	// rotation (take into account 170 to -170 lerps, which need to take the shortest route)
 	if (fullTorso)
 	{
-
 		sh  = (short *)cTBonePtr->angles;
 		sh2 = (short *)cOldTBonePtr->angles;
 		pf  = angles;
@@ -1015,7 +1005,6 @@ void R_CalcBoneLerp(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 	}
 	else
 	{
-
 		sh  = (short *)cBonePtr->angles;
 		sh2 = (short *)cOldBonePtr->angles;
 		pf  = angles;
@@ -1029,7 +1018,6 @@ void R_CalcBoneLerp(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 
 		if (isTorso)
 		{
-
 			sh  = (short *)cTBonePtr->angles;
 			sh2 = (short *)cOldTBonePtr->angles;
 			pf  = tangles;
@@ -1059,7 +1047,6 @@ void R_CalcBoneLerp(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 
 	if (parentBone)
 	{
-
 		if (fullTorso)
 		{
 			sh  = (short *)cTBonePtr->ofsAngles;
@@ -1120,27 +1107,23 @@ void R_CalcBoneLerp(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 		}
 
 		LocalVectorMA(parentBone->translation, thisBoneInfo->parentDist, dir, bonePtr->translation);
-
 	}
 	else        // just interpolate the frame positions
 	{
 		bonePtr->translation[0] = frontlerp * frame->parentOffset[0] + backlerp * oldFrame->parentOffset[0];
 		bonePtr->translation[1] = frontlerp * frame->parentOffset[1] + backlerp * oldFrame->parentOffset[1];
 		bonePtr->translation[2] = frontlerp * frame->parentOffset[2] + backlerp * oldFrame->parentOffset[2];
-
 	}
-	//
+
 	if (boneNum == header->torsoParent)     // this is the torsoParent
 	{
 		VectorCopy(bonePtr->translation, torsoParentOffset);
 	}
 	validBones[boneNum] = 1;
-	//
+
 	rawBones[boneNum] = *bonePtr;
 	newBones[boneNum] = 1;
-
 }
-
 
 /*
 ==============
@@ -1151,14 +1134,11 @@ R_CalcBones
 */
 void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, int numBones)
 {
-
 	int   i;
 	int   *boneRefs;
 	float torsoWeight;
 
-	//
 	// if the entity has changed since the last time the bones were built, reset them
-	//
 	if (memcmp(&lastBoneEntity, refent, sizeof(refEntity_t)))
 	{
 		// different, cached bones are not valid
@@ -1166,7 +1146,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 		lastBoneEntity = *refent;
 
 		// (SA) also reset these counter statics
-//----(SA)	print stats for the complete model (not per-surface)
+		//----(SA)	print stats for the complete model (not per-surface)
 		if (r_bonesDebug->integer == 4 && totalrt)
 		{
 			ri.Printf(PRINT_ALL, "Lod %.2f  verts %4d/%4d  tris %4d/%4d  (%.2f%%)\n",
@@ -1177,9 +1157,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 			          totalt,
 			          ( float )(100.0 * totalrt) / (float) totalt);
 		}
-//----(SA)	end
 		totalrv = totalrt = totalv = totalt = 0;
-
 	}
 
 	memset(newBones, 0, header->numBones);
@@ -1217,9 +1195,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 	oldTorsoFrame = ( mdsFrame_t * )((byte *)header + header->ofsFrames +
 	                                 refent->oldTorsoFrame * frameSize);
 
-	//
 	// lerp all the needed bones (torsoParent is always the first bone in the list)
-	//
 	cBoneList      = frame->bones;
 	cBoneListTorso = torsoFrame->bones;
 
@@ -1235,10 +1211,8 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 	if (!backlerp && !torsoBacklerp)
 	{
 #endif
-
 		for (i = 0; i < numBones; i++, boneRefs++)
 		{
-
 			if (validBones[*boneRefs])
 			{
 				// this bone is still in the cache
@@ -1253,9 +1227,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 			}
 
 			R_CalcBone(header, refent, *boneRefs);
-
 		}
-
 	}
 	else        // interpolated
 	{
@@ -1264,7 +1236,6 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 
 		for (i = 0; i < numBones; i++, boneRefs++)
 		{
-
 			if (validBones[*boneRefs])
 			{
 				// this bone is still in the cache
@@ -1279,9 +1250,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 			}
 
 			R_CalcBoneLerp(header, refent, *boneRefs);
-
 		}
-
 	}
 
 	// adjust for torso rotations
@@ -1289,13 +1258,11 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 	boneRefs    = boneList;
 	for (i = 0; i < numBones; i++, boneRefs++)
 	{
-
 		thisBoneInfo = &boneInfo[*boneRefs];
 		bonePtr      = &bones[*boneRefs];
 		// add torso rotation
 		if (thisBoneInfo->torsoWeight > 0)
 		{
-
 			if (!newBones[*boneRefs])
 			{
 				// just copy it back from the previous calc
@@ -1305,7 +1272,6 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 
 			if (!(thisBoneInfo->flags & BONEFLAG_TAG))
 			{
-
 				// 1st multiply with the bone->matrix
 				// 2nd translation for rotation relative to bone around torso parent offset
 				VectorSubtract(bonePtr->translation, torsoParentOffset, t);
@@ -1333,7 +1299,6 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 				VectorSubtract(bonePtr->translation, torsoParentOffset, t);
 				LocalScaledMatrixTransformVector(t, thisBoneInfo->torsoWeight, torsoAxis, bonePtr->translation);
 				VectorAdd(bonePtr->translation, torsoParentOffset, bonePtr->translation);
-
 			}
 		}
 	}
@@ -1375,9 +1340,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
     DBG_SHOWTIME
 
-    //
     // calculate LOD
-    //
     // TODO: lerp the radius and origin
     VectorAdd(refent->origin, frame->localOrigin, vec);
     lodRadius = frame->radius;
@@ -1386,7 +1349,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 //DBG_SHOWTIME
 
-//----(SA)	modification to allow dead skeletal bodies to go below minlod (experiment)
+    //----(SA)	modification to allow dead skeletal bodies to go below minlod (experiment)
     if (refent->reFlags & REFLAG_DEAD_LOD)
     {
         if (lodScale < 0.35)       // allow dead to lod down to 35% (even if below surf->minLod) (%35 is arbitrary and probably not good generally.  worked for the blackguard/infantry as a test though)
@@ -1407,8 +1370,6 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 			}
 		}
 	}
-//----(SA)	end
-
 
     if (render_count > surface->numVerts)
     {
@@ -1419,9 +1380,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 //DBG_SHOWTIME
 
-    //
     // setup triangle list
-    //
     RB_CheckOverflow(surface->numVerts, surface->numTriangles * 3);
 
 //DBG_SHOWTIME
@@ -1591,7 +1550,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
             qglEnd();
 
-//----(SA)	track debug stats
+            //----(SA)	track debug stats
             if (r_bonesDebug->integer == 4)
             {
                 totalrv += render_count;
@@ -1599,7 +1558,6 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
                 totalv  += surface->numVerts;
                 totalt  += surface->numTriangles;
 			}
-//----(SA)	end
 
             if (r_bonesDebug->integer == 3)
             {
@@ -1620,7 +1578,6 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 #ifdef DBG_PROFILE_BONES
     Com_Printf("\n");
 #endif
-
 }
 
 /*
@@ -1630,7 +1587,6 @@ R_RecursiveBoneListAdd
 */
 void R_RecursiveBoneListAdd(int bi, int *boneList, int *numBones, mdsBoneInfo_t *boneInfoList)
 {
-
     if (boneInfoList[bi].parent >= 0)
     {
 
@@ -1639,7 +1595,6 @@ void R_RecursiveBoneListAdd(int bi, int *boneList, int *numBones, mdsBoneInfo_t 
 	}
 
     boneList[(*numBones)++] = bi;
-
 }
 
 /*
@@ -1649,7 +1604,6 @@ R_GetBoneTag
 */
 int R_GetBoneTag(orientation_t *outTag, mdsHeader_t *mds, int startTagIndex, const refEntity_t *refent, const char *tagName)
 {
-
     int           i;
     mdsTag_t      *pTag;
     mdsBoneInfo_t *boneInfoList;

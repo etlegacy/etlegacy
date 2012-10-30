@@ -287,8 +287,6 @@ static void R_AddWorldSurface(msurface_t *surf, shader_t *shader, int dlightMap,
 =============================================================
 */
 
-//----(SA) added
-
 /*
 =================
 R_BmodelFogNum
@@ -326,8 +324,6 @@ int R_BmodelFogNum(trRefEntity_t *re, bmodel_t *bmodel)
 
 	return 0;
 }
-
-//----(SA) done
 
 /*
 =================
@@ -441,7 +437,6 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 R_AddLeafSurfaces() - ydnar
 adds a leaf's drawsurfaces
 */
-
 static void R_AddLeafSurfaces(mnode_t *node, int dlightBits, int decalBits)
 {
 	int        c;

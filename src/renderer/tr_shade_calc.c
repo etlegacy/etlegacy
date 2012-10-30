@@ -59,9 +59,9 @@ static float *TableForFunc(genFunc_t func)
 }
 
 /*
-** EvalWaveForm
-**
-** Evaluates a given waveForm_t, referencing backEnd.refdef.time directly
+EvalWaveForm
+
+	Evaluates a given waveForm_t, referencing backEnd.refdef.time directly
 */
 static float EvalWaveForm(const waveForm_t *wf)
 {
@@ -90,7 +90,7 @@ static float EvalWaveFormClamped(const waveForm_t *wf)
 }
 
 /*
-** RB_CalcStretchTexCoords
+RB_CalcStretchTexCoords
 */
 void RB_CalcStretchTexCoords(const waveForm_t *wf, float *st)
 {
@@ -121,7 +121,6 @@ DEFORMATIONS
 /*
 ========================
 RB_CalcDeformVertexes
-
 ========================
 */
 void RB_CalcDeformVertexes(deformStage_t *ds)
@@ -133,7 +132,6 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 	float  *normal = ( float * ) tess.normal;
 	float  *table;
 
-	// Ridah
 	if (ds->deformationWave.frequency < 0)
 	{
 		qboolean inverse = qfalse;
@@ -194,7 +192,6 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 		}
 		ds->deformationWave.frequency *= -1;
 	}
-	// done.
 	else if (ds->deformationWave.frequency == 0)
 	{
 		scale = EvalWaveForm(&ds->deformationWave);
@@ -295,7 +292,6 @@ void RB_CalcBulgeVertexes(deformStage_t *ds)
 		xyz[2] += normal[2] * scale;
 	}
 }
-
 
 /*
 ======================
@@ -644,7 +640,6 @@ static void Autosprite2Deform(void)
 /*
 =====================
 RB_DeformTessGeometry
-
 =====================
 */
 void RB_DeformTessGeometry(void)
@@ -704,7 +699,7 @@ COLORS
 */
 
 /*
-** RB_CalcColorFromEntity
+RB_CalcColorFromEntity
 */
 void RB_CalcColorFromEntity(unsigned char *dstColors)
 {
@@ -726,7 +721,7 @@ void RB_CalcColorFromEntity(unsigned char *dstColors)
 }
 
 /*
-** RB_CalcColorFromOneMinusEntity
+RB_CalcColorFromOneMinusEntity
 */
 void RB_CalcColorFromOneMinusEntity(unsigned char *dstColors)
 {
@@ -754,7 +749,7 @@ void RB_CalcColorFromOneMinusEntity(unsigned char *dstColors)
 }
 
 /*
-** RB_CalcAlphaFromEntity
+RB_CalcAlphaFromEntity
 */
 void RB_CalcAlphaFromEntity(unsigned char *dstColors)
 {
@@ -774,7 +769,7 @@ void RB_CalcAlphaFromEntity(unsigned char *dstColors)
 }
 
 /*
-** RB_CalcAlphaFromOneMinusEntity
+RB_CalcAlphaFromOneMinusEntity
 */
 void RB_CalcAlphaFromOneMinusEntity(unsigned char *dstColors)
 {
@@ -794,7 +789,7 @@ void RB_CalcAlphaFromOneMinusEntity(unsigned char *dstColors)
 }
 
 /*
-** RB_CalcWaveColor
+RB_CalcWaveColor
 */
 void RB_CalcWaveColor(const waveForm_t *wf, unsigned char *dstColors)
 {
@@ -803,7 +798,6 @@ void RB_CalcWaveColor(const waveForm_t *wf, unsigned char *dstColors)
 	float glow;
 	int   *colors = ( int * ) dstColors;
 	byte  color[4];
-
 
 	if (wf->func == GF_NOISE)
 	{
@@ -835,7 +829,7 @@ void RB_CalcWaveColor(const waveForm_t *wf, unsigned char *dstColors)
 }
 
 /*
-** RB_CalcWaveAlpha
+RB_CalcWaveAlpha
 */
 void RB_CalcWaveAlpha(const waveForm_t *wf, unsigned char *dstColors)
 {
@@ -862,7 +856,7 @@ void RB_CalcWaveAlpha(const waveForm_t *wf, unsigned char *dstColors)
 }
 
 /*
-** RB_CalcModulateAlphasByFog
+RB_CalcModulateAlphasByFog
 */
 void RB_CalcModulateAlphasByFog(unsigned char *colors)
 {
@@ -903,7 +897,7 @@ void RB_CalcModulateAlphasByFog(unsigned char *colors)
 }
 
 /*
-** RB_CalcModulateColorsByFog
+RB_CalcModulateColorsByFog
 */
 void RB_CalcModulateColorsByFog(unsigned char *colors)
 {
@@ -948,7 +942,7 @@ void RB_CalcModulateColorsByFog(unsigned char *colors)
 }
 
 /*
-** RB_CalcModulateRGBAsByFog
+RB_CalcModulateRGBAsByFog
 */
 void RB_CalcModulateRGBAsByFog(unsigned char *colors)
 {
@@ -1011,7 +1005,6 @@ projected textures, but I don't trust the drivers and it
 doesn't fit our shader data.
 ========================
 */
-
 void RB_CalcFogTexCoords(float *st)
 {
 	int      i;
@@ -1035,8 +1028,8 @@ void RB_CalcFogTexCoords(float *st)
 	bmodel = tr.world->bmodels + fog->modelNum;
 
 	// if the brush model containing the fog volume wasn't in the scene, then don't bother rendering the fog
-//	if( bmodel->visible[ backEnd.smpFrame ] == qfalse )
-//		return;
+	//	if( bmodel->visible[ backEnd.smpFrame ] == qfalse )
+	//		return;
 
 	// all fogging distance is based on world Z units
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
@@ -1085,7 +1078,6 @@ void RB_CalcFogTexCoords(float *st)
 		else
 		{
 			eyeT = 1;   // non-surface fog always has eye inside
-
 		}
 		// see if the viewpoint is outside
 		eyeInside = eyeT < 0 ? qfalse : qtrue;
@@ -1124,14 +1116,13 @@ void RB_CalcFogTexCoords(float *st)
 }
 
 /*
-** RB_CalcEnvironmentTexCoords
+RB_CalcEnvironmentTexCoords
 */
 void RB_CalcEnvironmentTexCoords(float *st)
 {
 	int    i;
 	float  d2, *v, *normal, sAdjust, tAdjust;
 	vec3_t viewOrigin, ia1, ia2, viewer, reflected;
-
 
 	// setup
 	v      = tess.xyz[0].v;
@@ -1178,7 +1169,7 @@ void RB_CalcEnvironmentTexCoords(float *st)
 }
 
 /*
-** RB_CalcFireRiseEnvTexCoords
+RB_CalcFireRiseEnvTexCoords
 */
 void RB_CalcFireRiseEnvTexCoords(float *st)
 {
@@ -1207,7 +1198,7 @@ void RB_CalcFireRiseEnvTexCoords(float *st)
 }
 
 /*
-** RB_CalcSwapTexCoords
+RB_CalcSwapTexCoords
 */
 void RB_CalcSwapTexCoords(float *st)
 {
@@ -1224,7 +1215,7 @@ void RB_CalcSwapTexCoords(float *st)
 }
 
 /*
-** RB_CalcTurbulentTexCoords
+RB_CalcTurbulentTexCoords
 */
 void RB_CalcTurbulentTexCoords(const waveForm_t *wf, float *st)
 {
@@ -1244,7 +1235,7 @@ void RB_CalcTurbulentTexCoords(const waveForm_t *wf, float *st)
 }
 
 /*
-** RB_CalcScaleTexCoords
+RB_CalcScaleTexCoords
 */
 void RB_CalcScaleTexCoords(const float scale[2], float *st)
 {
@@ -1258,7 +1249,7 @@ void RB_CalcScaleTexCoords(const float scale[2], float *st)
 }
 
 /*
-** RB_CalcScrollTexCoords
+RB_CalcScrollTexCoords
 */
 void RB_CalcScrollTexCoords(const float scrollSpeed[2], float *st)
 {
@@ -1282,7 +1273,7 @@ void RB_CalcScrollTexCoords(const float scrollSpeed[2], float *st)
 }
 
 /*
-** RB_CalcTransformTexCoords
+RB_CalcTransformTexCoords
 */
 void RB_CalcTransformTexCoords(const texModInfo_t *tmi, float *st)
 {
@@ -1299,7 +1290,7 @@ void RB_CalcTransformTexCoords(const texModInfo_t *tmi, float *st)
 }
 
 /*
-** RB_CalcRotateTexCoords
+RB_CalcRotateTexCoords
 */
 void RB_CalcRotateTexCoords(float degsPerSecond, float *st)
 {
@@ -1327,9 +1318,9 @@ void RB_CalcRotateTexCoords(float degsPerSecond, float *st)
 }
 
 /*
-** RB_CalcSpecularAlpha
-**
-** Calculates specular coefficient and places it in the alpha channel
+RB_CalcSpecularAlpha
+
+	Calculates specular coefficient and places it in the alpha channel
 */
 vec3_t lightOrigin = { -960, 1980, 96 };        // FIXME: track dynamically
 
@@ -1392,9 +1383,9 @@ void RB_CalcSpecularAlpha(unsigned char *alphas)
 }
 
 /*
-** RB_CalcDiffuseColor
-**
-** The basic vertex lighting calc
+RB_CalcDiffuseColor
+
+	The basic vertex lighting calc
 */
 
 // ydnar: faster, table-based version of this function

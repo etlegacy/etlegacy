@@ -87,7 +87,7 @@ typedef struct flare_s
 	int id;
 } flare_t;
 
-#define     MAX_FLARES      128
+#define MAX_FLARES      128
 
 flare_t r_flareStructs[MAX_FLARES];
 flare_t *r_activeFlares, *r_inactiveFlares;

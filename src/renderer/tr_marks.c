@@ -147,7 +147,6 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 		}
 
 		// clip xyz
-
 		for (j = 0 ; j < 3 ; j++)
 		{
 			clip[j] = p1[j] + dot * (p2[j] - p1[j]);
@@ -165,7 +164,6 @@ R_BoxSurfaces_r
 */
 void R_BoxSurfaces_r(mnode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **list, int listsize, int *listlength, vec3_t dir)
 {
-
 	int        s, c;
 	msurface_t *surf, **mark;
 
@@ -205,12 +203,11 @@ void R_BoxSurfaces_r(mnode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **li
 	c    = node->nummarksurfaces;
 	while (c--)
 	{
-		//
 		if (*listlength >= listsize)
 		{
 			break;
 		}
-		//
+
 		surf = *mark;
 
 		// check if the surface has NOIMPACT or NOMARKS set
@@ -256,7 +253,6 @@ void R_BoxSurfaces_r(mnode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **li
 /*
 =================
 R_AddMarkFragments
-
 =================
 */
 void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POLY],
@@ -312,7 +308,6 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
 /*
 =================
 R_OldMarkFragments
-
 =================
 */
 int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t projection,
@@ -393,10 +388,8 @@ int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t project
 
 	for (i = 0 ; i < numsurfaces ; i++)
 	{
-
 		if (*surfaces[i] == SF_GRID)
 		{
-
 			cv = (srfGridMesh_t *) surfaces[i];
 			for (m = 0 ; m < cv->height - 1 ; m++)
 			{
@@ -483,7 +476,6 @@ int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t project
 		}
 		else if (*surfaces[i] == SF_FACE)
 		{
-
 			surf = ( srfSurfaceFace_t * ) surfaces[i];
 			// check the normal of this face
 			if (DotProduct(surf->plane.normal, projectionDir) > -0.5)
@@ -555,7 +547,6 @@ int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t project
 /*
 =================
 R_MarkFragments
-
 =================
 */
 int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projection,
@@ -660,10 +651,8 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 
 	for (i = 0 ; i < numsurfaces ; i++)
 	{
-
 		if (*surfaces[i] == SF_GRID)
 		{
-
 			cv = (srfGridMesh_t *) surfaces[i];
 			for (m = 0 ; m < cv->height - 1 ; m++)
 			{

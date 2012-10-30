@@ -72,7 +72,7 @@ void R_Fog(glfog_t *curfog)
 		return;
 	}
 
-	if (!curfog->registered)       //----(SA)
+	if (!curfog->registered)
 	{
 		R_FogOff();
 		return;
@@ -117,8 +117,6 @@ void R_Fog(glfog_t *curfog)
 	setfog.registered = qtrue;
 
 	qglClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
-
-
 }
 
 // Ridah, allow disabling fog temporarily
@@ -159,9 +157,7 @@ void R_FogOn(void)
 	qglEnable(GL_FOG);
 	fogIsOn = qtrue;
 }
-// done.
 
-//----(SA)
 /*
 ==============
 R_SetFog
@@ -244,8 +240,6 @@ void R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float d
 	glfogsettings[FOG_TARGET].finishTime = tr.refdef.time + var2;
 }
 
-//----(SA) end
-
 /*
 =================
 R_CullLocalBox
@@ -321,7 +315,7 @@ int R_CullLocalBox(vec3_t bounds[2])
 }
 
 /*
-** R_CullLocalPointAndRadius
+R_CullLocalPointAndRadius
 */
 int R_CullLocalPointAndRadius(vec3_t pt, float radius)
 {
@@ -333,7 +327,7 @@ int R_CullLocalPointAndRadius(vec3_t pt, float radius)
 }
 
 /*
-** R_CullPointAndRadius
+R_CullPointAndRadius
 */
 int R_CullPointAndRadius(vec3_t pt, float radius)
 {
@@ -371,7 +365,6 @@ int R_CullPointAndRadius(vec3_t pt, float radius)
 	return CULL_IN;     // completely inside frustum
 }
 
-
 /*
 =================
 R_LocalNormalToWorld
@@ -388,7 +381,6 @@ void R_LocalNormalToWorld(vec3_t local, vec3_t world)
 /*
 =================
 R_LocalPointToWorld
-
 =================
 */
 void R_LocalPointToWorld(vec3_t local, vec3_t world)
@@ -401,7 +393,6 @@ void R_LocalPointToWorld(vec3_t local, vec3_t world)
 /*
 =================
 R_WorldToLocal
-
 =================
 */
 void R_WorldToLocal(vec3_t world, vec3_t local)
@@ -414,7 +405,6 @@ void R_WorldToLocal(vec3_t world, vec3_t local)
 /*
 ==========================
 R_TransformModelToClip
-
 ==========================
 */
 void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const float *projectionMatrix,
@@ -444,7 +434,6 @@ void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const fl
 /*
 ==========================
 R_TransformClipToWindow
-
 ==========================
 */
 void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window)
@@ -461,11 +450,9 @@ void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t 
 	window[1] = (int) (window[1] + 0.5);
 }
 
-
 /*
 ==========================
 myGlMultMatrix
-
 ==========================
 */
 void myGlMultMatrix(const float *a, const float *b, float *out)
@@ -608,10 +595,7 @@ void R_RotateForViewer(void)
 	myGlMultMatrix(viewerMatrix, s_flipMatrix, tr.orientation.modelMatrix);
 
 	tr.viewParms.world = tr.orientation;
-
 }
-
-
 
 /*
 ==============
@@ -1252,9 +1236,9 @@ static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
 }
 
 /*
-** SurfIsOffscreen
-**
-** Determines if a surface is completely offscreen.
+SurfIsOffscreen
+
+	Determines if a surface is completely offscreen.
 */
 static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128])
 {
@@ -1887,7 +1871,6 @@ void R_RenderView(viewParms_t *parms)
 			lastTime = tr.refdef.time;
 		}
 	}
-	// done.
 
 	tr.viewCount++;
 

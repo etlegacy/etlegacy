@@ -38,9 +38,8 @@
 
 #define REF_API_VERSION     8
 
-//
+
 // these are the functions exported by the refresh module
-//
 typedef struct
 {
 	// called before the library is unloaded
@@ -133,18 +132,15 @@ typedef struct
 
 	void (*purgeCache)(void);
 
-	//bani
 	qboolean (*LoadDynamicShader)(const char *shadername, const char *shadertext);
-	// fretn
+
 	void (*RenderToTexture)(int textureid, int x, int y, int w, int h);
-	//bani
+
 	int (*GetTextureId)(const char *imagename);
 	void (*Finish)(void);
 } refexport_t;
 
-//
 // these are the functions imported by the refresh module
-//
 typedef struct
 {
 	// print message on the local console
@@ -207,7 +203,6 @@ typedef struct
 	e_status (*CIN_RunCinematic)(int handle);
 
 } refimport_t;
-
 
 // this is the only function actually exported at the linker level
 // If the module can't init to a valid rendering state, NULL will be

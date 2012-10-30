@@ -39,6 +39,7 @@
  * srfGridMesh_t *R_SubdividePatchToGrid( int width, int height,
  *      drawVert_t points[MAX_PATCH_SIZE*MAX_PATCH_SIZE] ) {
  */
+
 #include "tr_local.h"
 
 /*
@@ -116,7 +117,6 @@ static void Transpose(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX_
 			}
 		}
 	}
-
 }
 
 /*
@@ -384,7 +384,7 @@ srfGridMesh_t *R_CreateSurfaceGridMesh(int width, int height,
 
 	VectorCopy(grid->origin, grid->lodOrigin);
 	grid->lodRadius = grid->radius;
-	//
+
 	return grid;
 }
 

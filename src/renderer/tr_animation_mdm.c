@@ -84,7 +84,7 @@ static vec4_t                   m1[4], m2[4];
 static vec3_t                   t;
 static refEntity_t              lastBoneEntity;
 
-static int totalrv, totalrt, totalv, totalt;                //----(SA)
+static int totalrv, totalrt, totalv, totalt;
 
 //-----------------------------------------------------------------------------
 
@@ -259,7 +259,7 @@ static float R_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, floa
 	projectedRadius = ProjectRadius(radius, origin);
 	if (projectedRadius != 0)
 	{
-//		ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
+		// ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
 
 		lodScale = r_lodscale->value;   // fudge factor since MDS uses a much smoother method of LOD
 		flod     = projectedRadius * lodScale * modelScale;
@@ -274,7 +274,7 @@ static float R_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, floa
 	{
 		flod *= 0.5;
 	}
-//----(SA)	like reflag_force_lod, but separate for the moment
+	//----(SA)	like reflag_force_lod, but separate for the moment
 	if (refent->reFlags & REFLAG_DEAD_LOD)
 	{
 		flod *= 0.8;
@@ -297,7 +297,6 @@ static float R_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, floa
 /*
 =================
 R_ComputeFogNum
-
 =================
 */
 static int R_ComputeFogNum(trRefEntity_t *ent)
@@ -1069,7 +1068,6 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
 	AnglesToAxis(angles, bonePtr->matrix);
 
 #else
-
 	// ydnar: ingles-based bone code
 	if (fullTorso)
 	{
@@ -1125,7 +1123,6 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
 	}
 
 	InglesToAxis(ingles, bonePtr->matrix);
-
 #endif
 
 	if (parentBone)
@@ -1549,7 +1546,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 
 //DBG_SHOWTIME
 
-//----(SA)	modification to allow dead skeletal bodies to go below minlod (experiment)
+    //----(SA)	modification to allow dead skeletal bodies to go below minlod (experiment)
     if (refent->reFlags & REFLAG_DEAD_LOD)
     {
         if (lodScale < 0.35)       // allow dead to lod down to 35% (even if below surf->minLod) (%35 is arbitrary and probably not good generally.  worked for the blackguard/infantry as a test though)
@@ -1570,7 +1567,6 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 			}
 		}
 	}
-//----(SA)	end
 
     if (render_count > surface->numVerts)
     {
@@ -1582,7 +1578,6 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
     {
         return;
 	}
-
 
     RB_CheckOverflow(render_count, surface->numTriangles * 3);
 

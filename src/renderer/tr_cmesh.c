@@ -215,14 +215,14 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 		radius = RadiusFromBounds(frame->bounds[0], frame->bounds[1]);
 
 		//----(SA)  testing
-		if (ent->e.reFlags & REFLAG_ORIENT_LOD)
-		{
+		//if (ent->e.reFlags & REFLAG_ORIENT_LOD)
+		//{
 			// right now this is for trees, and pushes the lod distance way in.
 			// this is not the intended purpose, but is helpful for the new
 			// terrain level that has loads of trees
-//          radius = radius/2.0f;
-		}
-		//----(SA)  end
+			//          radius = radius/2.0f;
+		//}
+
 
 		if ((projectedRadius = ProjectRadius(radius, ent->e.origin)) != 0)
 		{
@@ -400,7 +400,7 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 
 			// match the surface name to something in the skin file
 			shader = tr.defaultShader;
-//----(SA)  added blink
+			//----(SA)  added blink
 			if (ent->e.renderfx & RF_BLINK)
 			{
 				char *s = va("%s_b", surface->name);   // append '_b' for 'blink'
@@ -436,7 +436,6 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 					}
 				}
 			}
-//----(SA)  end
 		}
 		else if (surface->numShaders <= 0)
 		{
@@ -470,13 +469,11 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 			R_AddDrawSurf((void *)surface, tr.projectionShadowShader, 0, 0, 0);
 		}
 
-//----(SA)  for testing polygon shadows (on /all/ models)
+		//----(SA)  for testing polygon shadows (on /all/ models)
 		if (r_shadows->integer == 4)
 		{
 			R_AddDrawSurf((void *)surface, tr.projectionShadowShader, 0, 0, 0);
 		}
-
-//----(SA)  done testing
 
 		// don't add third_person objects if not viewing through a portal
 		if (!personalModel)

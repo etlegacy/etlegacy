@@ -226,14 +226,14 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 			return &glyph;
 		}
 
-/*
-    // need to convert to power of 2 sizes so we do not get
-    // any scaling from the gl upload
-    for (scaled_width = 1 ; scaled_width < glyph.pitch ; scaled_width<<=1)
-        ;
-    for (scaled_height = 1 ; scaled_height < glyph.height ; scaled_height<<=1)
-        ;
-*/
+		/*
+    	// need to convert to power of 2 sizes so we do not get
+    	// any scaling from the gl upload
+    	for (scaled_width = 1 ; scaled_width < glyph.pitch ; scaled_width<<=1)
+        	;
+    	for (scaled_height = 1 ; scaled_height < glyph.height ; scaled_height<<=1)
+        	;
+		 */
 
 		scaled_width  = glyph.pitch;
 		scaled_height = glyph.height;
@@ -429,7 +429,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 		font->glyphScale = readFloat();
 		Com_Memcpy(font->name, &fdFile[fdOffset], MAX_QPATH);
 
-//		Com_Memcpy(font, faceData, sizeof(fontInfo_t));
+		//		Com_Memcpy(font, faceData, sizeof(fontInfo_t));
 		Q_strncpyz(font->name, name, sizeof(font->name));
 		for (i = GLYPH_START; i < GLYPH_END; i++)
 		{
@@ -455,7 +455,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 		return;
 	}
 
-// allocate on the stack first in case we fail
+	// allocate on the stack first in case we fail
 	if (FT_New_Memory_Face(ftLibrary, faceData, len, 0, &face))
 	{
 		ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType, unable to allocate new face.\n");
@@ -468,10 +468,10 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 		return;
 	}
 
-//*font = &registeredFonts[registeredFontCount++];
+	//*font = &registeredFonts[registeredFontCount++];
 
-// make a 256x256 image buffer, once it is full, register it, clean it and keep going
-// until all glyphs are rendered
+	// make a 256x256 image buffer, once it is full, register it, clean it and keep going
+	// until all glyphs are rendered
 
 	out = ri.Z_Malloc(1024 * 1024);
 	if (out == NULL)
@@ -503,7 +503,6 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 		{
 			// ran out of room
 			// we need to create an image from the bitmap, set all the handles in the glyphs to this point
-			//
 
 			scaledSize = 256 * 256;
 			newSize    = scaledSize * 4;
@@ -581,8 +580,6 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 #endif
 }
 
-
-
 void R_InitFreeType(void)
 {
 #ifdef USE_FREETYPE
@@ -593,7 +590,6 @@ void R_InitFreeType(void)
 #endif
 	registeredFontCount = 0;
 }
-
 
 void R_DoneFreeType(void)
 {

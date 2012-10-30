@@ -47,7 +47,7 @@ static float s_flipMatrix[16] =
 };
 
 /*
-** GL_Bind
+GL_Bind
 */
 void GL_Bind(image_t *image)
 {
@@ -77,7 +77,7 @@ void GL_Bind(image_t *image)
 }
 
 /*
-** GL_SelectTexture
+GL_SelectTexture
 */
 void GL_SelectTexture(int unit)
 {
@@ -109,7 +109,7 @@ void GL_SelectTexture(int unit)
 }
 
 /*
-** GL_BindMultitexture
+GL_BindMultitexture
 */
 void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint env1)
 {
@@ -139,9 +139,8 @@ void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint e
 	}
 }
 
-
 /*
-** GL_Cull
+GL_Cull
 */
 void GL_Cull(int cullType)
 {
@@ -186,7 +185,7 @@ void GL_Cull(int cullType)
 }
 
 /*
-** GL_TexEnv
+GL_TexEnv
 */
 void GL_TexEnv(int env)
 {
@@ -219,10 +218,9 @@ void GL_TexEnv(int env)
 }
 
 /*
-** GL_State
-**
-** This routine is responsible for setting the most commonly changed state
-** in Q3.
+GL_State
+
+	This routine is responsible for setting the most commonly changed state in Q3.
 */
 void GL_State(unsigned long stateBits)
 {
@@ -462,7 +460,7 @@ void RB_BeginDrawingView(void)
 	GL_State(GLS_DEFAULT);
 
 
-////////// (SA) modified to ensure one glclear() per frame at most
+	////////// (SA) modified to ensure one glclear() per frame at most
 
 	// clear relevant buffers
 	clearBits = 0;
@@ -554,7 +552,6 @@ void RB_BeginDrawingView(void)
 		{
 			clearBits &= ~GL_COLOR_BUFFER_BIT;
 		}
-		// -NERVE - SMF
 		else if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 		{
 
@@ -583,7 +580,6 @@ void RB_BeginDrawingView(void)
 		}
 	}
 
-
 	// ydnar: don't clear the color buffer when no world model is specified
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
@@ -594,8 +590,6 @@ void RB_BeginDrawingView(void)
 	{
 		qglClear(clearBits);
 	}
-
-//----(SA)  done
 
 	if ((backEnd.refdef.rdflags & RDF_HYPERSPACE))
 	{
@@ -696,7 +690,6 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 		oldSort = drawSurf->sort;
 		R_DecomposeSort(drawSurf->sort, &entityNum, &shader, &fogNum, &frontFace, &dlighted);
 
-		//
 		// change the tess parameters if needed
 		// a "entityMergable" shader is a shader that can have surfaces from seperate
 		// entities merged into a single batch, like smoke and blood puff sprites
@@ -1123,7 +1116,6 @@ const void *RB_Draw2dPolys(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
-// NERVE - SMF
 /*
 =============
 RB_RotatedPic
@@ -1208,7 +1200,6 @@ const void *RB_RotatedPic(const void *data)
 
 	return ( const void * ) (cmd + 1);
 }
-// -NERVE - SMF
 
 /*
 ==============
@@ -1293,7 +1284,6 @@ const void *RB_StretchPicGradient(const void *data)
 /*
 =============
 RB_DrawSurfs
-
 =============
 */
 const void *RB_DrawSurfs(const void *data)
@@ -1319,7 +1309,6 @@ const void *RB_DrawSurfs(const void *data)
 /*
 =============
 RB_DrawBuffer
-
 =============
 */
 const void *RB_DrawBuffer(const void *data)
@@ -1409,7 +1398,6 @@ void RB_ShowImages(void)
 RB_DrawBounds - ydnar
 =============
 */
-
 void RB_DrawBounds(vec3_t mins, vec3_t maxs)
 {
 	vec3_t center;
@@ -1456,7 +1444,6 @@ void RB_DrawBounds(vec3_t mins, vec3_t maxs)
 /*
 =============
 RB_SwapBuffers
-
 =============
 */
 const void *RB_SwapBuffers(const void *data)
@@ -1512,7 +1499,6 @@ const void *RB_SwapBuffers(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
-//bani
 /*
 =============
 RB_RenderToTexture
@@ -1537,7 +1523,6 @@ const void *RB_RenderToTexture(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
-//bani
 /*
 =============
 RB_Finish

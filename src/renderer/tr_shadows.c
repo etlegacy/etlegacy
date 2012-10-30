@@ -35,7 +35,6 @@
 
 
 /*
-
   for a projection shadow:
 
   point[x] += light vector * ( z - shadow plane )
@@ -43,7 +42,6 @@
   point[z] = shadow plane
 
   1 0 light[x] / light[z]
-
 */
 
 typedef struct
@@ -246,7 +244,6 @@ void RB_ShadowTessEnd(void)
 
 		R_RenderShadowEdges();
 	}
-
 
 	// reenable writing to the color buffer
 	qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);

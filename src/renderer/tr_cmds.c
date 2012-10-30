@@ -261,7 +261,6 @@ void *R_GetCommandBuffer(int bytes)
 /*
 =============
 R_AddDrawSurfCmd
-
 =============
 */
 void R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
@@ -675,7 +674,6 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	backEnd.pc.msec = 0;
 }
 
-//bani
 /*
 ==================
 RE_RenderToTexture
@@ -685,7 +683,7 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 {
 	renderToTextureCommand_t *cmd;
 
-//  ri.Printf( PRINT_ALL, "RE_RenderToTexture\n" );
+	//  ri.Printf( PRINT_ALL, "RE_RenderToTexture\n" );
 
 	if (textureid > tr.numImages || textureid < 0)
 	{
@@ -706,7 +704,6 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 	cmd->h         = h;
 }
 
-//bani
 /*
 ==================
 RE_Finish

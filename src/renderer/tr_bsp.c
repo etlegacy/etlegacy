@@ -99,7 +99,6 @@ static void HSVtoRGB(float h, float s, float v, float rgb[3])
 /*
 ===============
 R_ColorShiftLightingBytes
-
 ===============
 */
 static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
@@ -207,7 +206,6 @@ float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte 
 /*
 ===============
 R_LoadLightmaps
-
 ===============
 */
 #define LIGHTMAP_SIZE   128
@@ -405,7 +403,6 @@ static void SphereFromBounds(vec3_t mins, vec3_t maxs, vec3_t origin, float *rad
 	*radius = VectorLength(temp);
 }
 
-
 /*
 FinishGenericSurface() - ydnar
 handles final surface classification
@@ -578,7 +575,8 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 
 /*
 ParseFoliage() - ydnar
-parses a foliage drawsurface
+
+	parses a foliage drawsurface
 */
 static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, int *indexes)
 {
@@ -940,7 +938,6 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 		}
 		for (n = 0; n < 2; n++)
 		{
-			//
 			if (n)
 			{
 				offset1 = grid1->width - 1;
@@ -957,7 +954,6 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 			{
 				for (m = 0; m < 2; m++)
 				{
-
 					if (m)
 					{
 						offset2 = (grid2->height - 1) * grid2->width;
@@ -972,7 +968,6 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 					}
 					for (l = 1; l < grid2->width - 1; l++)
 					{
-						//
 						if (Q_fabs(grid1->verts[grid1->width * k + offset1].xyz[0] - grid2->verts[l + offset2].xyz[0]) > .1)
 						{
 							continue;
@@ -992,7 +987,6 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 				}
 				for (m = 0; m < 2; m++)
 				{
-
 					if (m)
 					{
 						offset2 = grid2->width - 1;
@@ -1007,7 +1001,6 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 					}
 					for (l = 1; l < grid2->height - 1; l++)
 					{
-						//
 						if (Q_fabs(grid1->verts[grid1->width * k + offset1].xyz[0] - grid2->verts[grid2->width * l + offset2].xyz[0]) > .1)
 						{
 							continue;
@@ -1052,19 +1045,18 @@ void R_FixSharedVertexLodError(void)
 
 	for (i = 0; i < s_worldData.numsurfaces; i++)
 	{
-		//
 		grid1 = (srfGridMesh_t *) s_worldData.surfaces[i].data;
 		// if this surface is not a grid
 		if (grid1->surfaceType != SF_GRID)
 		{
 			continue;
 		}
-		//
+
 		if (grid1->lodFixed)
 		{
 			continue;
 		}
-		//
+
 		grid1->lodFixed = 2;
 		// recursively fix other patches in the same LOD group
 		R_FixSharedVertexLodError_r(i + 1, grid1);
@@ -1120,7 +1112,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 				//  continue;
 				for (l = 0; l < grid2->width - 1; l++)
 				{
-					//
 					v1 = grid1->verts[k + offset1].xyz;
 					v2 = grid2->verts[l + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) > .1)
@@ -1150,7 +1141,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					v1 = grid2->verts[l + offset2].xyz;
 					v2 = grid2->verts[l + 1 + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) < .01 &&
@@ -1195,7 +1186,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 				//  continue;
 				for (l = 0; l < grid2->height - 1; l++)
 				{
-					//
 					v1 = grid1->verts[k + offset1].xyz;
 					v2 = grid2->verts[grid2->width * l + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) > .1)
@@ -1225,7 +1215,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					v1 = grid2->verts[grid2->width * l + offset2].xyz;
 					v2 = grid2->verts[grid2->width * (l + 1) + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) < .01 &&
@@ -1234,7 +1224,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					//
+
 					//ri.Printf( PRINT_ALL, "found highest LoD crack between two patches\n" );
 					// insert row into grid2 right after after row l
 					if (m)
@@ -1530,7 +1520,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 				//  continue;
 				for (l = 0; l < grid2->height - 1; l++)
 				{
-					//
 					v1 = grid1->verts[k + offset1].xyz;
 					v2 = grid2->verts[grid2->width * l + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) > .1)
@@ -1834,22 +1823,21 @@ void R_StitchAllPatches(void)
 		stitched = qfalse;
 		for (i = 0; i < s_worldData.numsurfaces; i++)
 		{
-			//
 			grid1 = (srfGridMesh_t *) s_worldData.surfaces[i].data;
 			// if this surface is not a grid
 			if (grid1->surfaceType != SF_GRID)
 			{
 				continue;
 			}
-			//
+
 			if (grid1->lodStitched)
 			{
 				continue;
 			}
-			//
+
 			grid1->lodStitched = qtrue;
 			stitched           = qtrue;
-			//
+
 			numstitches += R_TryStitchingPatch(i);
 		}
 	}
@@ -2462,7 +2450,7 @@ void R_FindLightGridBounds(vec3_t mins, vec3_t maxs)
 	VectorCopy(w->bmodels[0].bounds[0], mins);
 	VectorCopy(w->bmodels[0].bounds[1], maxs);
 	return;
-//----(SA)  temp
+
 
 	ClearBounds(mins, maxs);
 
@@ -2818,12 +2806,11 @@ void RE_LoadWorldMap(const char *name)
 	// reset fog to world fog (if present)
 	R_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
 
-//----(SA)  set the sun shader if there is one
+	//----(SA)  set the sun shader if there is one
 	if (tr.sunShaderName)
 	{
 		tr.sunShader = R_FindShader(tr.sunShaderName, LIGHTMAP_NONE, qtrue);
 	}
 
-//----(SA)  end
 	ri.FS_FreeFile(buffer);
 }

@@ -45,8 +45,8 @@ decalVert_t;
 
 /*
 MakeTextureMatrix()
-generates a texture projection matrix for a triangle
-returns qfalse if a texture matrix cannot be created
+	generates a texture projection matrix for a triangle
+	returns qfalse if a texture matrix cannot be created
 */
 
 typedef double dvec3_t[3];
@@ -58,7 +58,6 @@ static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert
 	dvec3_t pa, pb, pc;
 	dvec3_t bary, origin, xyz;
 	vec3_t  vecs[3], axis[3], lengths;
-
 
 	/* project triangle onto plane of projection */
 	d = DotProduct(a->xyz, projection) - projection[3];
@@ -131,13 +130,12 @@ static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert
 
 /*
 RE_ProjectDecal()
-creates a new decal projector from a triangle
-projected polygons should be 3 or 4 points
-if a single point is passed in (numPoints == 1) then the decal will be omnidirectional
-omnidirectional decals use points[ 0 ] as center and projection[ 3 ] as radius
-pass in lifeTime < 0 for a temporary mark
+	creates a new decal projector from a triangle
+	projected polygons should be 3 or 4 points
+	if a single point is passed in (numPoints == 1) then the decal will be omnidirectional
+	omnidirectional decals use points[ 0 ] as center and projection[ 3 ] as radius
+	pass in lifeTime < 0 for a temporary mark
 */
-
 void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime)
 {
 	int              i;
@@ -307,7 +305,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 
 /*
 R_AddModelShadow()
-adds a simple shadow projector to the scene
+	adds a simple shadow projector to the scene
 */
 void R_AddModelShadow(refEntity_t *ent)
 {
@@ -349,9 +347,8 @@ void R_AddModelShadow(refEntity_t *ent)
 
 /*
 RE_ClearDecals()
-clears decals from the world and entities
+	clears decals from the world and entities
 */
-
 void RE_ClearDecals(void)
 {
 	int i, j;
@@ -429,9 +426,8 @@ void R_TransformDecalProjector(decalProjector_t *in, vec3_t axis[3], vec3_t orig
 
 /*
 R_TestDecalBoundingBox()
-return qtrue if the decal projector intersects the bounding box
+	return qtrue if the decal projector intersects the bounding box
 */
-
 qboolean R_TestDecalBoundingBox(decalProjector_t *dp, vec3_t mins, vec3_t maxs)
 {
 	if (mins[0] >= (dp->center[0] + dp->radius) || maxs[0] <= (dp->center[0] - dp->radius) ||
@@ -445,7 +441,7 @@ qboolean R_TestDecalBoundingBox(decalProjector_t *dp, vec3_t mins, vec3_t maxs)
 
 /*
 R_TestDecalBoundingSphere()
-return qtrue if the decal projector intersects the bounding sphere
+	return qtrue if the decal projector intersects the bounding sphere
 */
 qboolean R_TestDecalBoundingSphere(decalProjector_t *dp, vec3_t center, float radius2)
 {
@@ -463,7 +459,7 @@ qboolean R_TestDecalBoundingSphere(decalProjector_t *dp, vec3_t center, float ra
 
 /*
 ChopWindingBehindPlane()
-clips a winding to the fragment behind the plane
+	clips a winding to the fragment behind the plane
 */
 
 #define SIDE_FRONT  0
@@ -569,7 +565,7 @@ static void ChopWindingBehindPlane(int numInPoints, vec3_t inPoints[MAX_DECAL_VE
 
 /*
 ProjectDecalOntoWinding()
-projects decal onto a polygon
+	projects decal onto a polygon
 */
 static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t points[2][MAX_DECAL_VERTS], msurface_t *surf, bmodel_t *bmodel)
 {
@@ -724,7 +720,7 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 
 /*
 ProjectDecalOntoTriangles()
-projects a decal onto a triangle surface (brush faces, misc_models, metasurfaces)
+	projects a decal onto a triangle surface (brush faces, misc_models, metasurfaces)
 */
 static void ProjectDecalOntoTriangles(decalProjector_t *dp, msurface_t *surf, bmodel_t *bmodel)
 {
@@ -788,7 +784,7 @@ static void ProjectDecalOntoGrid(decalProjector_t *dp, msurface_t *surf, bmodel_
 
 /*
 R_ProjectDecalOntoSurface()
-projects a decal onto a world surface
+	projects a decal onto a world surface
 */
 void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t *bmodel)
 {
@@ -867,7 +863,7 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t 
 
 /*
 AddDecalSurface()
-adds a decal surface to the scene
+	adds a decal surface to the scene
 */
 void R_AddDecalSurface(decal_t *decal)
 {
@@ -929,7 +925,7 @@ void R_AddDecalSurface(decal_t *decal)
 
 /*
 R_AddDecalSurfaces()
-adds decal surfaces to the scene
+	adds decal surfaces to the scene
 */
 void R_AddDecalSurfaces(bmodel_t *bmodel)
 {
@@ -947,7 +943,7 @@ void R_AddDecalSurfaces(bmodel_t *bmodel)
 
 /*
 R_CullDecalProjectors()
-frustum culls decal projector list
+	frustum culls decal projector list
 */
 void R_CullDecalProjectors(void)
 {

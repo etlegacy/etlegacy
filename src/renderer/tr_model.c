@@ -47,7 +47,7 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *name);
 model_t *loadmodel;
 
 /*
-** R_GetModelByHandle
+R_GetModelByHandle
 */
 model_t *R_GetModelByHandle(qhandle_t index)
 {
@@ -67,7 +67,7 @@ model_t *R_GetModelByHandle(qhandle_t index)
 //===============================================================================
 
 /*
-** R_AllocModel
+R_AllocModel
 */
 model_t *R_AllocModel(void)
 {
@@ -88,7 +88,7 @@ model_t *R_AllocModel(void)
 
 /*
 R_LoadModelShadow()
-loads a model's shadow script
+	loads a model's shadow script
 */
 void R_LoadModelShadow(model_t *mod)
 {
@@ -353,7 +353,6 @@ qhandle_t RE_RegisterModel(const char *name)
 			{
 				mod->model.mdc[lod] = mod->model.mdc[lod + 1];
 			}
-			// done.
 		}
 
 		return mod->index;
@@ -929,7 +928,6 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 	surf = ( mdcSurface_t * )((byte *)mod->model.mdc[lod] + mod->model.mdc[lod]->ofsSurfaces);
 	for (i = 0 ; i < mod->model.mdc[lod]->numSurfaces ; i++)
 	{
-
 		LL(surf->ident);
 		LL(surf->flags);
 		LL(surf->numBaseFrames);
@@ -991,7 +989,6 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 		// Ridah, optimization, only do the swapping if we really need to
 		if (LittleShort(1) != 1)
 		{
-
 			// swap all the triangles
 			tri = ( md3Triangle_t * )((byte *)surf + surf->ofsTriangles);
 			for (j = 0 ; j < surf->numTriangles ; j++, tri++)
@@ -1041,7 +1038,6 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 				*ps = LittleShort(*ps);
 			}
 		}
-		// done.
 
 		// find the next surface
 		surf = ( mdcSurface_t * )((byte *)surf + surf->ofsEnd);
@@ -1050,7 +1046,6 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 	return qtrue;
 }
 
-// done.
 //-------------------------------------------------------------------------------
 
 /*
@@ -1165,7 +1160,6 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 	surf = ( md3Surface_t * )((byte *)mod->model.md3[lod] + mod->model.md3[lod]->ofsSurfaces);
 	for (i = 0 ; i < mod->model.md3[lod]->numSurfaces ; i++)
 	{
-
 		LL(surf->ident);
 		LL(surf->flags);
 		LL(surf->numFrames);
@@ -1253,7 +1247,6 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 			}
 
 		}
-		// done.
 
 		// find the next surface
 		surf = ( md3Surface_t * )((byte *)surf + surf->ofsEnd);
@@ -1787,7 +1780,7 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 //=============================================================================
 
 /*
-** RE_BeginRegistration
+RE_BeginRegistration
 */
 void RE_BeginRegistration(glconfig_t *glconfigOut)
 {
@@ -1834,7 +1827,6 @@ void R_ModelInit(void)
 R_Modellist_f
 ================
 */
-
 void R_Modellist_f(void)
 {
 	int     i, j;
@@ -2088,9 +2080,7 @@ R_TagInfo_f
 */
 void R_TagInfo_f(void)
 {
-
 	Com_Printf("command not functional\n");
-
 	/*
 	    int handle;
 	    orientation_t tag;
@@ -2164,7 +2154,6 @@ void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs)
 
 	VectorClear(mins);
 	VectorClear(maxs);
-	// done.
 }
 
 //---------------------------------------------------------------------------
@@ -2436,7 +2425,6 @@ void R_BackupModels(void)
 	}
 }
 
-
 /*
 =================
 R_RegisterMDCShaders
@@ -2644,5 +2632,5 @@ void R_LoadCacheModels(void)
 
 	ri.Hunk_FreeTempMemory(buf);
 }
-// done.
+
 //========================================================================

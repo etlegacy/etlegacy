@@ -1474,7 +1474,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 					}
 				}
 			}
-			//----(SA)  end
+
 			// ydnar: lightmap stages should be GL_ONE GL_ZERO so they can be seen
 			else if (r_lightmap->integer && (pStage->bundle[0].isLightmap || pStage->bundle[1].isLightmap))
 			{

@@ -338,9 +338,9 @@ CLOUD VERTEX GENERATION
 */
 
 /*
-** MakeSkyVec
-**
-** Parms: s, t range from -1 to 1
+MakeSkyVec
+
+Parms: s, t range from -1 to 1
 */
 static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ)
 {
@@ -361,26 +361,27 @@ static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ
 	int    j, k;
 	float  boxSize;
 
-// JPW NERVE swiped from Sherman SP fix
-//  if(glfogNum > FOG_NONE && glfogsettings[FOG_CURRENT].mode == GL_EXP) {
+	// JPW NERVE swiped from Sherman SP fix
+	//  if(glfogNum > FOG_NONE && glfogsettings[FOG_CURRENT].mode == GL_EXP) {
 	if (glfogsettings[FOG_SKY].registered)         // (SA) trying this...
-	{ ///     boxSize = backEnd.viewParms.zFar / 1.75;        // div sqrt(3)
-//      boxSize = glfogsettings[FOG_CURRENT].end / 1.75;
+	{
+		// boxSize = backEnd.viewParms.zFar / 1.75;        // div sqrt(3)
+		// boxSize = glfogsettings[FOG_CURRENT].end / 1.75;
 		boxSize = glfogsettings[FOG_SKY].end;       // (SA) trying this...
-// jpw
+
 	}
 	else
 	{
 		boxSize = backEnd.viewParms.zFar / 1.75;        // div sqrt(3)
 
 	}
-// JPW NERVE swiped from Sherman
+	// JPW NERVE swiped from Sherman
 	// make sure the sky is not near clipped
 	if (boxSize < r_znear->value * 2.0)
 	{
 		boxSize = r_znear->value * 2.0;
 	}
-// jpw
+
 	b[0] = s * boxSize;
 	b[1] = t * boxSize;
 	b[2] = boxSize;
@@ -550,9 +551,7 @@ static void DrawSkyBox(shader_t *shader)
 			sky_maxs_subd[1] = HALF_SKY_SUBDIVISIONS;
 		}
 
-		//
 		// iterate through the subdivisions
-		//
 		for (t = sky_mins_subd[1] + HALF_SKY_SUBDIVISIONS; t <= sky_maxs_subd[1] + HALF_SKY_SUBDIVISIONS; t++)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
@@ -569,9 +568,7 @@ static void DrawSkyBox(shader_t *shader)
 		            sky_mins_subd,
 		            sky_maxs_subd);
 	}
-
 }
-
 
 static void DrawSkyBoxInner(shader_t *shader)
 {
@@ -634,9 +631,7 @@ static void DrawSkyBoxInner(shader_t *shader)
 			sky_maxs_subd[1] = HALF_SKY_SUBDIVISIONS;
 		}
 
-		//
 		// iterate through the subdivisions
-		//
 		for (t = sky_mins_subd[1] + HALF_SKY_SUBDIVISIONS; t <= sky_maxs_subd[1] + HALF_SKY_SUBDIVISIONS; t++)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
@@ -653,7 +648,6 @@ static void DrawSkyBoxInner(shader_t *shader)
 		                 sky_mins_subd,
 		                 sky_maxs_subd);
 	}
-
 }
 
 static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean addIndexes)
@@ -661,7 +655,6 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 	int s, t;
 	int vertexStart = tess.numVertexes;
 	int tHeight, sWidth;
-
 
 	tHeight = maxs[1] - mins[1] + 1;
 	sWidth  = maxs[0] - mins[0] + 1;
@@ -801,9 +794,7 @@ static void FillCloudBox(const shader_t *shader, int stage)
 			sky_maxs_subd[1] = HALF_SKY_SUBDIVISIONS;
 		}
 
-		//
 		// iterate through the subdivisions
-		//
 		for (t = sky_mins_subd[1] + HALF_SKY_SUBDIVISIONS; t <= sky_maxs_subd[1] + HALF_SKY_SUBDIVISIONS; t++)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
@@ -825,11 +816,10 @@ static void FillCloudBox(const shader_t *shader, int stage)
 }
 
 /*
-** R_BuildCloudData
+R_BuildCloudData
 */
 void R_BuildCloudData(shaderCommands_t *input)
 {
-	// int          i;
 	shader_t *shader;
 
 	shader = input->shader;
@@ -849,6 +839,8 @@ void R_BuildCloudData(shaderCommands_t *input)
 		// which is unecessary for a multi-stage sky shader, as far as i can tell
 		// nuking this
 #if 0
+		// int          i;
+
 		for (i = 0; i < MAX_SHADER_STAGES; i++)
 		{
 			if (!tess.xstages[i])
@@ -864,8 +856,8 @@ void R_BuildCloudData(shaderCommands_t *input)
 }
 
 /*
-** R_InitSkyTexCoords
-** Called when a sky shader is parsed
+R_InitSkyTexCoords
+	Called when a sky shader is parsed
 */
 void R_InitSkyTexCoords(float heightCloud)
 {
@@ -1066,8 +1058,6 @@ void RB_DrawSun(void)
 	qglPopMatrix();
 }
 
-
-
 extern void R_Fog(glfog_t *curfog);
 
 /*
@@ -1108,9 +1098,7 @@ void RB_StageIteratorSky(void)
 		}
 	}
 
-
 	backEnd.refdef.rdflags |= RDF_DRAWINGSKY;
-
 
 	// go through all the polygons and project them onto
 	// the sky box to see which blocks on each side need
@@ -1163,7 +1151,6 @@ void RB_StageIteratorSky(void)
 
 		qglPopMatrix();
 	}
-	// Rafael - end
 
 	// back to normal depth range
 	qglDepthRange(0.0, 1.0);

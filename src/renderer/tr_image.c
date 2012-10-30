@@ -987,7 +987,6 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	image->next     = hashTable[hash];
 	hashTable[hash] = image;
 
-	// Ridah
 	image->hash = hash;
 
 	return image;
@@ -1707,7 +1706,7 @@ static char *CommaParse(char **data_p)
 
 	if (len == MAX_TOKEN_CHARS)
 	{
-//		Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
+		//		Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
 		len = 0;
 	}
 	com_token[len] = 0;
@@ -1829,7 +1828,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 {
 	qhandle_t     hSkin;
 	skin_t        *skin;
-	skinModel_t   *model;        //----(SA) added
+	skinModel_t   *model;
 	skinSurface_t *surf;
 	union
 	{
@@ -2279,7 +2278,6 @@ image_t *R_FindCachedImage(const char *name, int hash)
 	return NULL;
 }
 
-//bani
 /*
 R_GetTextureId
 */
@@ -2287,17 +2285,17 @@ int R_GetTextureId(const char *name)
 {
 	int i;
 
-//	ri.Printf( PRINT_ALL, "R_GetTextureId [%s].\n", name );
+	//	ri.Printf( PRINT_ALL, "R_GetTextureId [%s].\n", name );
 	for (i = 0 ; i < tr.numImages ; i++)
 	{
 		if (!strcmp(name, tr.images[i]->imgName))
 		{
-//			ri.Printf( PRINT_ALL, "Found textureid %d\n", i );
+			//			ri.Printf( PRINT_ALL, "Found textureid %d\n", i );
 			return i;
 		}
 	}
 
-//	ri.Printf( PRINT_ALL, "Image not found.\n" );
+	//	ri.Printf( PRINT_ALL, "Image not found.\n" );
 	return -1;
 }
 
