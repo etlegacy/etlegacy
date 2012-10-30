@@ -44,7 +44,6 @@
 //static vec3_t	playerMaxs = {15, 15, 32};
 vec3_t playerMins = { -18, -18, -24 };
 vec3_t playerMaxs = { 18, 18, 48 };
-// done.
 
 /*QUAKED info_player_deathmatch (1 0 1) (-18 -18 -24) (18 18 48)
 potential spawning position for deathmatch games.
@@ -78,7 +77,6 @@ void SP_info_player_deathmatch(gentity_t *ent)
 
 }
 
-//----(SA) added
 /*QUAKED info_player_checkpoint (1 0 0) (-16 -16 -24) (16 16 32) a b c d
 these are start points /after/ the level start
 the letter (a b c d) designates the checkpoint that needs to be complete in order to use this start position
@@ -88,9 +86,6 @@ void SP_info_player_checkpoint(gentity_t *ent)
 	ent->classname = "info_player_checkpoint";
 	SP_info_player_deathmatch(ent);
 }
-
-//----(SA) end
-
 
 /*QUAKED info_player_start (1 0 0) (-18 -18 -24) (18 18 48)
 equivelant to info_player_deathmatch
@@ -106,10 +101,7 @@ The intermission will be viewed from this point.  Target an info_notnull for the
 */
 void SP_info_player_intermission(gentity_t *ent)
 {
-
 }
-
-
 
 /*
 =======================================================================
@@ -183,7 +175,6 @@ gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from)
 	return nearestSpot;
 }
 
-
 /*
 ================
 SelectRandomDeathmatchSpawnPoint
@@ -220,7 +211,6 @@ gentity_t *SelectRandomDeathmatchSpawnPoint(void)
 	selection = rand() % count;
 	return spots[selection];
 }
-
 
 /*
 ===========
@@ -391,7 +381,6 @@ void BodySink(gentity_t *ent)
 	BodySink2(ent);
 }
 
-
 /*
 =============
 CopyToBodyQue
@@ -514,13 +503,11 @@ void CopyToBodyQue(gentity_t *ent)
 		body->takedamage = qtrue;
 	}
 
-
 	VectorCopy(body->s.pos.trBase, body->r.currentOrigin);
 	trap_LinkEntity(body);
 }
 
 //======================================================================
-
 
 /*
 ==================
@@ -555,7 +542,7 @@ void SetClientViewAnglePitch(gentity_t *ent, vec_t angle)
 	VectorCopy(ent->s.angles, ent->client->ps.viewangles);
 }
 
-/* JPW NERVE
+/*
 ================
 limbo
 ================
@@ -573,7 +560,6 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 
 	if (!(ent->client->ps.pm_flags & PMF_LIMBO))
 	{
-
 		if (ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0)
 		{
 			if (g_maxlivesRespawnPenalty.integer)
@@ -659,15 +645,15 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 	}
 }
 
-/* JPW NERVE
+/*
 ================
 reinforce
+	called when time expires for a team deployment cycle and there is at least one guy ready to go
 ================
-// -- called when time expires for a team deployment cycle and there is at least one guy ready to go
 */
 void reinforce(gentity_t *ent)
 {
-	int       p, team; // numDeployable=0, finished=0; // TTimo unused
+	int       p, team;
 	char      *classname;
 	gclient_t *rclient;
 	char      userinfo[MAX_INFO_STRING], *respawnStr;
@@ -714,13 +700,12 @@ void reinforce(gentity_t *ent)
 	// DHM - Nerve :: restore persistant data now that we're out of Limbo
 	rclient = ent->client;
 	for (p = 0; p < MAX_PERSISTANT; p++)
+	{
 		rclient->ps.persistant[p] = rclient->saved_persistant[p];
-	// dhm
+	}
 
 	respawn(ent);
 }
-// jpw
-
 
 /*
 ================
@@ -764,12 +749,12 @@ void respawn(gentity_t *ent)
 	//tent->s.clientNum = ent->s.clientNum;
 }
 
-// NERVE - SMF - merge from team arena
 /*
 ================
 TeamCount
 
-Returns number of players on a team
+	Returns number of players on a team
+	NERVE - SMF - merge from team arena
 ================
 */
 team_t TeamCount(int ignoreClientNum, int team)
@@ -790,12 +775,10 @@ team_t TeamCount(int ignoreClientNum, int team)
 
 	return(count);
 }
-// -NERVE - SMF
 
 /*
 ================
 PickTeam
-
 ================
 */
 team_t PickTeam(int ignoreClientNum)
@@ -1372,9 +1355,7 @@ int G_CountTeamMedics(team_t team, qboolean alivecheck)
 	return numMedics;
 }
 
-//
 // AddMedicTeamBonus
-//
 void AddMedicTeamBonus(gclient_t *client)
 {
 	int numMedics = G_CountTeamMedics(client->sess.sessionTeam, qfalse);
@@ -1487,10 +1468,6 @@ static void ClientCleanName(const char *in, char *out, int outSize)
 	{
 		Q_strncpyz(p, "UnnamedPlayer", outSize);
 	}
-}
-
-void G_StartPlayerAppropriateSound(gentity_t *ent, char *soundType)
-{
 }
 
 /*
@@ -1761,7 +1738,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 			}
 		}
 	}
-	// End Xian
 
 	// we don't check password for bots and local client
 	// NOTE: local client <-> "ip" "localhost"
@@ -1792,16 +1768,14 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	ent->client = level.clients + clientNum;
 	client      = ent->client;
 
-
-
 	memset(client, 0, sizeof(*client));
 
 	client->pers.connected   = CON_CONNECTING;
-	client->pers.connectTime = level.time;          // DHM - Nerve
+	client->pers.connectTime = level.time;
 
 	if (firstTime)
 	{
-		client->pers.initialSpawn = qtrue;              // DHM - Nerve
+		client->pers.initialSpawn = qtrue;
 
 	}
 	// read or initialize the session data
@@ -1882,9 +1856,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	return NULL;
 }
 
-//
 // Scaling for late-joiners of maxlives based on current game time
-//
 int G_ComputeMaxLives(gclient_t *cl, int maxRespawns)
 {
 	float scaled = (float)(maxRespawns - 1) * (1.0f - ((float)(level.time - level.startTime) / (g_timelimit.value * 60000.0f)));
@@ -1914,7 +1886,7 @@ void ClientBegin(int clientNum)
 	gentity_t *ent;
 	gclient_t *client;
 	int       flags;
-	int       spawn_count, lives_left;          // DHM - Nerve
+	int       spawn_count, lives_left;
 
 	ent = g_entities + clientNum;
 
@@ -1975,7 +1947,6 @@ void ClientBegin(int clientNum)
 	{
 		if ((client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES))
 		{
-
 			if (!client->maxlivescalced)
 			{
 				if (g_maxlives.integer > 0)
@@ -2076,7 +2047,6 @@ void ClientBegin(int clientNum)
 			AddMaxLivesBan(value);
 		}
 	}
-	// End Xian
 
 	// count current clients and rank for scoreboard
 	CalculateRanks();
@@ -2084,9 +2054,7 @@ void ClientBegin(int clientNum)
 	// No surface determined yet.
 	ent->surfaceFlags = 0;
 
-	// OSP
 	G_smvUpdateClientCSList(ent);
-	// OSP
 }
 
 gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spawn_angles)
@@ -2135,7 +2103,6 @@ gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spaw
 
 	return spawnPoint;
 }
-
 
 #if 0 // rain - not used
 static char *G_CheckVersion(gentity_t *ent)
@@ -2249,9 +2216,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	savedSess = client->sess;
 	savedPing = client->ps.ping;
 	savedTeam = client->ps.teamNum;
-	// START	xkan, 8/27/2002
+
 	savedSlotNumber = client->botSlotNumber;
-	// END		xkan, 8/27/2002
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
@@ -2270,9 +2236,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	client->sess       = savedSess;
 	client->ps.ping    = savedPing;
 	client->ps.teamNum = savedTeam;
-	// START	xkan, 8/27/2002
+
 	client->botSlotNumber = savedSlotNumber;
-	// END		xkan, 8/27/2002
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
@@ -2341,17 +2306,13 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	client->ps.crouchSpeedScale = 0.25;
 	client->ps.weaponstate      = WEAPON_READY;
 
-	// Rafael
 	client->pmext.sprintTime   = SPRINTTIME;
 	client->ps.sprintExertTime = 0;
 
 	client->ps.friction = 1.0;
-	// done.
 
-	// TTimo
 	// retrieve from the persistant storage (we use this in pmoveExt_t beause we need it in bg_*)
 	client->pmext.bAutoReload = client->pers.bAutoReloadAux;
-	// done
 
 	client->ps.clientNum = index;
 
@@ -2414,24 +2375,18 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 			client->ps.powerups[PW_INVULNERABLE] = level.time + 3000;
 		}
 	}
-	// End Xian
 
 	G_UpdateCharacter(client);
 
 	SetWolfSpawnWeapons(client);
 
-	// START	Mad Doctor I changes, 8/17/2002
-
 	// JPW NERVE -- increases stats[STAT_MAX_HEALTH] based on # of medics in game
 	AddMedicTeamBonus(client);
-
-	// END		Mad Doctor I changes, 8/17/2002
 
 	if (!revived)
 	{
 		client->pers.cmd.weapon = ent->client->ps.weapon;
 	}
-// dhm - end
 
 	// JPW NERVE ***NOTE*** the following line is order-dependent and must *FOLLOW* SetWolfSpawnWeapons() in multiplayer
 	// AddMedicTeamBonus() now adds medic team bonus and stores in ps.stats[STAT_MAX_HEALTH].
@@ -2477,7 +2432,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	client->respawnTime      = level.timeCurrent;
 	client->inactivityTime   = level.time + g_inactivity.integer * 1000;
 	client->latched_buttons  = 0;
-	client->latched_wbuttons = 0;   //----(SA)	added
+	client->latched_wbuttons = 0;
 
 	// xkan, 1/13/2003 - reset death time
 	client->deathTime = 0;
@@ -2528,7 +2483,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 		G_Script_ScriptEvent(ent, "playerstart", "");
 	}
 }
-
 
 /*
 ===========
@@ -2702,13 +2656,10 @@ void ClientDisconnect(int clientNum)
 
 	trap_SetConfigstring(CS_PLAYERS + clientNum, "");
 
-
 	CalculateRanks();
 
-	// OSP
 	G_verifyMatchState(i);
 	G_smvAllRemoveSingleClient(ent - g_entities);
-	// OSP
 }
 
 // In just the GAME DLL, we want to store the groundtrace surface stuff,
@@ -2721,5 +2672,4 @@ void ClientStoreSurfaceFlags
 {
 	// Store the surface flags
 	g_entities[clientNum].surfaceFlags = surfaceFlags;
-
 }
