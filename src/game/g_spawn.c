@@ -32,6 +32,7 @@
  */
 
 #include "g_local.h"
+
 qboolean G_SpawnStringExt(const char *key, const char *defaultString, char **out, const char *file, int line)
 {
 	int i;
@@ -97,9 +98,7 @@ qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *o
 	return present;
 }
 
-//
 // fields are needed for spawning from the entity string
-//
 typedef enum
 {
 	F_INT,
@@ -206,7 +205,6 @@ field_t fields[] =
 	{ NULL }
 };
 
-
 typedef struct
 {
 	char *name;
@@ -220,7 +218,7 @@ void SP_info_player_intermission(gentity_t *ent);
 
 void SP_func_plat(gentity_t *ent);
 void SP_func_static(gentity_t *ent);
-void SP_func_leaky(gentity_t *ent);   //----(SA)	added
+void SP_func_leaky(gentity_t *ent);
 void SP_func_rotating(gentity_t *ent);
 void SP_func_bobbing(gentity_t *ent);
 void SP_func_pendulum(gentity_t *ent);
@@ -229,13 +227,12 @@ void SP_func_explosive(gentity_t *ent);
 void SP_func_door(gentity_t *ent);
 void SP_func_train(gentity_t *ent);
 void SP_func_timer(gentity_t *self);
-// JOSEPH 1-26-00
+
 void SP_func_train_rotating(gentity_t *ent);
 void SP_func_secret(gentity_t *ent);
-// END JOSEPH
-// Rafael
+
 void SP_func_door_rotating(gentity_t *ent);
-// RF
+
 void SP_func_constructible(gentity_t *ent);
 void SP_func_brushmodel(gentity_t *ent);
 void SP_misc_constructiblemarker(gentity_t *ent);
@@ -258,7 +255,6 @@ void SP_misc_cabinet_supply(gentity_t *self);
 //---- (SA) Wolf triggers
 void SP_trigger_concussive_dust(gentity_t *ent);   // JPW NERVE
 void SP_trigger_once(gentity_t *ent);
-//---- done
 
 void SP_target_remove_powerups(gentity_t *ent);
 void SP_target_give(gentity_t *ent);
@@ -278,7 +274,6 @@ void SP_target_script_trigger(gentity_t *ent);
 void SP_misc_beam(gentity_t *self);
 
 //---- (SA) Wolf targets
-// targets
 void SP_target_alarm(gentity_t *ent);
 void SP_target_counter(gentity_t *ent);
 void SP_target_lock(gentity_t *ent);
@@ -289,8 +284,6 @@ void SP_target_autosave(gentity_t *ent);
 // entity visibility dummy
 void SP_misc_vis_dummy(gentity_t *ent);
 void SP_misc_vis_dummy_multiple(gentity_t *ent);
-
-//----(SA) done
 
 void SP_light(gentity_t *self);
 void SP_info_null(gentity_t *self);
@@ -309,7 +302,7 @@ void SP_misc_portal_camera(gentity_t *ent);
 void SP_misc_portal_surface(gentity_t *ent);
 void SP_misc_light_surface(gentity_t *ent);
 void SP_misc_grabber_trap(gentity_t *ent);
-void SP_misc_spotlight(gentity_t *ent);   //----(SA)	added
+void SP_misc_spotlight(gentity_t *ent);
 
 void SP_misc_commandmap_marker(gentity_t *ent);
 
@@ -324,39 +317,33 @@ void SP_team_CTF_bluespawn(gentity_t *ent);
 
 // JPW NERVE for multiplayer spawnpoint selection
 void SP_team_WOLF_objective(gentity_t *ent);
-// jpw
 
-void SP_team_WOLF_checkpoint(gentity_t *ent);       // DHM - Nerve
+void SP_team_WOLF_checkpoint(gentity_t *ent);
 
-// JOSEPH 1-18-00
 void SP_props_box_32(gentity_t *self);
 void SP_props_box_48(gentity_t *self);
 void SP_props_box_64(gentity_t *self);
-// END JOSEPH
 
 // Rafael particles
 void SP_target_smoke(gentity_t *ent);
-// done.
 
 // (SA) dlights
 void SP_dlight(gentity_t *ent);
-// done
+
 void SP_corona(gentity_t *ent);
 
 void SP_mg42(gentity_t *ent);
 void SP_aagun(gentity_t *ent);
 
-//----(SA)
 //void SP_shooter_zombiespit (gentity_t *ent);
 void SP_shooter_mortar(gentity_t *ent);
 
 // alarm
 void SP_alarm_box(gentity_t *ent);
-//----(SA)	end
 
-void SP_trigger_flagonly(gentity_t *ent);       // DHM - Nerve
-void SP_trigger_flagonly_multiple(gentity_t *ent);          // DHM - Nerve
-void SP_trigger_objective_info(gentity_t *ent);     // DHM - Nerve
+void SP_trigger_flagonly(gentity_t *ent);
+void SP_trigger_flagonly_multiple(gentity_t *ent);
+void SP_trigger_objective_info(gentity_t *ent);
 
 void SP_gas(gentity_t *ent);
 void SP_target_rumble(gentity_t *ent);
@@ -365,7 +352,6 @@ void SP_target_rumble(gentity_t *ent);
 // put this back in for single player bots
 void SP_trigger_aidoor(gentity_t *ent);
 
-// Rafael
 //void SP_trigger_aidoor (gentity_t *ent);
 void SP_SmokeDust(gentity_t *ent);
 void SP_Dust(gentity_t *ent);
@@ -411,7 +397,7 @@ void SP_skyportal(gentity_t *ent);
 // RF, scripting
 void SP_script_model_med(gentity_t *ent);
 void SP_script_mover(gentity_t *ent);
-void SP_script_multiplayer(gentity_t *ent);           // DHM - Nerve
+void SP_script_multiplayer(gentity_t *ent);
 
 void SP_props_footlocker(gentity_t *self);
 void SP_misc_firetrails(gentity_t *ent);
@@ -423,6 +409,9 @@ void SP_props_decor_Scale(gentity_t *ent);
 // Gordon: debris test
 void SP_func_debris(gentity_t *ent);
 // ===================
+
+// forty - etpro mapscripting - spawn function for fakebrushes
+void SP_func_fakebrush( gentity_t *ent );
 
 spawn_t spawns[] =
 {
@@ -452,11 +441,10 @@ spawn_t spawns[] =
 	{ "func_pendulum",             SP_func_pendulum             },
 	{ "func_train",                SP_func_train                },
 	{ "func_group",                SP_info_null                 },
-	// JOSEPH 1-26-00
+
 	{ "func_train_rotating",       SP_func_train_rotating       },
 	{ "func_secret",               SP_func_secret               },
-	// END JOSEPH
-	// Rafael
+
 	{ "func_door_rotating",        SP_func_door_rotating        },
 
 	{ "func_timer",                SP_func_timer                }, // rename trigger_timer?
@@ -477,21 +465,17 @@ spawn_t spawns[] =
 	//---- (SA) Wolf triggers
 	{ "trigger_concussive_dust",   SP_trigger_concussive_dust   }, // JPW NERVE
 	{ "trigger_once",              SP_trigger_once              },
-	//---- done
 
 	// Mad Doc - TDf
 	// I'm going to put trigger_aidoors back in. I'll make sure they only work in single player
 	{ "trigger_aidoor",            SP_trigger_aidoor            },
-	// START	xkan,	9/17/2002
+
 	{ "trigger_heal",              SP_trigger_heal              },
 	{ "trigger_ammo",              SP_trigger_ammo              },
-	// END		xkan,	9/17/2002
 
 	// Gordon: 16/12/02: adding the model things to go with the triggers
 	{ "misc_cabinet_health",       SP_misc_cabinet_health       },
 	{ "misc_cabinet_supply",       SP_misc_cabinet_supply       },
-	// end
-
 
 	// Rafael
 //	{"trigger_aidoor", SP_trigger_aidoor},
@@ -521,10 +505,8 @@ spawn_t spawns[] =
 	{ "target_effect",             SP_target_effect             },
 	{ "target_fog",                SP_target_fog                },
 	{ "target_autosave",           SP_target_autosave           }, // obsolete
-	//---- done
 
 	{ "target_rumble",             SP_target_rumble             },
-
 
 	{ "light",                     SP_light                     },
 
@@ -638,6 +620,8 @@ spawn_t spawns[] =
 	{ "target_explosion",          SP_target_explosion          },
 	{ "misc_landmine",             SP_misc_landmine             },
 
+	{"func_fakebrush",             SP_func_fakebrush            },
+
 	{ 0,                           0                            }
 };
 
@@ -700,6 +684,7 @@ qboolean G_CallSpawn(gentity_t *ent)
 		}
 	}
 	G_Printf("%s doesn't have a spawn function\n", ent->classname);
+
 	return qfalse;
 }
 
@@ -745,9 +730,6 @@ char *G_NewString(const char *string)
 
 	return newb;
 }
-
-
-
 
 /*
 ===============
@@ -802,9 +784,6 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent)
 		}
 	}
 }
-
-
-
 
 /*
 ===================
@@ -874,8 +853,6 @@ void G_SpawnGEntityFromSpawnVars(void)
 		G_FreeEntity(ent);
 	}
 }
-
-
 
 /*
 ====================
@@ -966,7 +943,6 @@ qboolean G_ParseSpawnVars(void)
 	return qtrue;
 }
 
-
 /*QUAKED worldspawn (0 0 0) ? NO_GT_WOLF NO_GT_STOPWATCH NO_GT_CHECKPOINT NO_LMS
 
 Every map should have exactly one worldspawn.
@@ -1039,6 +1015,20 @@ void SP_worldspawn(void)
 	}
 }
 
+/*
+==============
+SP_func_fakebrush
+
+forty - etpro mapscripting - spawn function for fake brushes
+==============
+*/
+void SP_func_fakebrush(gentity_t *ent)
+{
+	ent->s.eFlags |= EF_FAKEBMODEL;
+	G_SetOrigin(ent, ent->s.origin);
+
+	return;
+}
 
 /*
 ==============

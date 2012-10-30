@@ -666,7 +666,7 @@ typedef enum
 #define EF_TAGCONNECT       0x00008000      // connected to another entity via tag
 #define EF_MOUNTEDTANK      EF_TAGCONNECT   // Gordon: duplicated for clarity
 
-#define EF_SPARE3           0x00010000      // Gordon: freed
+#define EF_FAKEBMODEL		0x00010000		// from etpro
 #define EF_PATH_LINK        0x00020000      // Gordon: linking trains together
 #define EF_ZOOMING          0x00040000      // client is zooming
 #define EF_PRONE            0x00080000      // player is prone

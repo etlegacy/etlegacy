@@ -306,7 +306,7 @@ static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, cons
 CG_Trace
 ================
 */
-void    CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
+void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
                  int skipNumber, int mask)
 {
 	trace_t t;
@@ -319,7 +319,7 @@ void    CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const v
 	*result = t;
 }
 
-void    CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
+void CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
                        int skipNumber, int mask)
 {
 	trace_t t;
@@ -330,7 +330,7 @@ void    CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, c
 	*result = t;
 }
 
-void    CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask)
+void CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask)
 {
 	trace_t t;
 
@@ -343,7 +343,6 @@ void    CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const
 
 	*result = t;
 }
-
 
 /*
 ================
@@ -375,7 +374,7 @@ void CG_TraceCapsule_World(trace_t *result, const vec3_t start, const vec3_t min
 CG_PointContents
 ================
 */
-int     CG_PointContents(const vec3_t point, int passEntityNum)
+int CG_PointContents(const vec3_t point, int passEntityNum)
 {
 	int           i;
 	entityState_t *ent;
@@ -414,7 +413,6 @@ int     CG_PointContents(const vec3_t point, int passEntityNum)
 
 	return contents;
 }
-
 
 /*
 ========================
@@ -486,7 +484,6 @@ static void CG_InterpolatePlayerState(qboolean grabAngles)
 		out->velocity[i] = prev->ps.velocity[i] +
 		                   f * (next->ps.velocity[i] - prev->ps.velocity[i]);
 	}
-
 }
 
 /*
@@ -585,7 +582,6 @@ static void CG_TouchItem(centity_t *cent)
 		return;
 	}
 
-
 	// grab it
 	BG_AddPredictableEventToPlayerstate(EV_ITEM_PICKUP, cent->currentState.modelindex, &cg.predictedPlayerState);
 
@@ -645,21 +641,23 @@ static void CG_TouchTriggerPrediction(void)
 
 		if (ent->eType == ET_ITEM && !spectator && (cg.predictedPlayerState.groundEntityNum == ENTITYNUM_WORLD))
 		{
-			CG_TouchItem(cent);
+			// CG_TouchItem(cent); // does return (only)
 			continue;
 		}
 
-		if (ent->solid != SOLID_BMODEL)
+		if(!(ent->eFlags & EF_FAKEBMODEL))
 		{
-			continue;
-		}
+			if (ent->solid != SOLID_BMODEL)
+			{
+				continue;
+			}
 
-		// Gordon: er, this lookup was wrong...
-		cmodel = cgs.inlineDrawModel[ent->modelindex];
-//      cmodel = trap_CM_InlineModel( ent->modelindex );
-		if (!cmodel)
-		{
-			continue;
+			cmodel = cgs.inlineDrawModel[ent->modelindex];
+
+			if (!cmodel)
+			{
+				continue;
+			}
 		}
 
 		if (ent->eType == ET_CONSTRUCTIBLE ||
@@ -678,7 +676,19 @@ static void CG_TouchTriggerPrediction(void)
 				continue;
 			}
 
-			trap_R_ModelBounds(cmodel, mins, maxs);
+			if(ent->solid != SOLID_BMODEL) {
+				int x = (ent->solid & 255);
+				int zd = ((ent->solid>>8) & 255);
+				int zu = ((ent->solid>>16) & 255) - 32;
+
+				mins[0] = mins[1] = -x;
+				mins[2] = -zd;
+				maxs[0] = maxs[1] = x;
+				maxs[2] = zu;
+			}
+			else {
+				trap_R_ModelBounds(cmodel, mins, maxs);
+			}
 
 			VectorAdd(cent->lerpOrigin, mins, mins);
 			VectorAdd(cent->lerpOrigin, maxs, maxs);
@@ -726,7 +736,6 @@ static void CG_TouchTriggerPrediction(void)
 		}
 	}
 }
-
 
 #define MAX_PREDICT_ORIGIN_DELTA        0.1f
 #define MAX_PREDICT_VELOCITY_DELTA      0.1f
@@ -1276,7 +1285,6 @@ void CG_PredictPlayerState(void)
 	// fire events and other transition triggered things
 	CG_TransitionPlayerState(&cg.predictedPlayerState, &oldPlayerState);
 
-
 	// ydnar: shake player view here, rather than fiddle with view angles
 	if (cg.time > cg.cameraShakeTime)
 	{
@@ -1285,7 +1293,6 @@ void CG_PredictPlayerState(void)
 	else
 	{
 		float x;
-
 
 		// starts at 1, approaches 0 over time
 		x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
