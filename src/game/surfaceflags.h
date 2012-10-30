@@ -43,7 +43,7 @@
 #define CONTENTS_SOLID              0x00000001
 #define CONTENTS_LIGHTGRID          0x00000004
 #define CONTENTS_LAVA               0x00000008
-#define CONTENTS_SLIME              0x00000010
+#define CONTENTS_SLIME              0x00000010	// slag uses the CONTENTS_SLIME flag, the shader reference is changed to 'slag'
 #define CONTENTS_WATER              0x00000020
 #define CONTENTS_FOG                0x00000040
 #define CONTENTS_MISSILECLIP        0x00000080
