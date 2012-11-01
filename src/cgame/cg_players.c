@@ -81,14 +81,14 @@ qboolean CG_IsCrouchingAnim(animModelInfo_t *animModelInfo, int animNum)
 
 	// FIXME: make compatible with new scripting
 	animNum &= ~ANIM_TOGGLEBIT;
-	//
+
 	anim = BG_GetAnimationForIndex(animModelInfo, animNum);
-	//
+
 	if (anim->movetype & ((1 << ANIM_MT_IDLECR) | (1 << ANIM_MT_WALKCR) | (1 << ANIM_MT_WALKCRBK)))
 	{
 		return qtrue;
 	}
-	//
+
 	return qfalse;
 }
 
@@ -395,7 +395,6 @@ void CG_NewClientInfo(int clientNum)
 		}
 	}
 
-
 	// rain - passing the clientNum since that's all we need, and we
 	// can't calculate it properly from the clientinfo
 	CG_LoadClientInfo(clientNum);
@@ -580,7 +579,6 @@ void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int new
 		lf->backlerp = 1.0 - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
 	}
 }
-
 
 /*
 ===============
@@ -1473,45 +1471,6 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 
 /*
 ===============
-CG_TrailItem
-===============
-*/
-/*static void CG_TrailItem( centity_t *cent, qhandle_t hModel ) {
-    refEntity_t     ent;
-    vec3_t          angles;
-    qboolean        ducking;
-
-    // DHM - Nerve :: Don't draw icon above your own head
-    if ( cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson )
-        return;
-
-    memset( &ent, 0, sizeof( ent ) );
-
-    VectorCopy( cent->lerpAngles, angles );
-    angles[PITCH] = 0;
-    angles[ROLL] = 0;
-    AnglesToAxis( angles, ent.axis );
-
-    // DHM - Nerve :: adjusted values
-    VectorCopy( cent->lerpOrigin, ent.origin );
-
-    // Account for ducking
-    if ( cent->currentState.clientNum == cg.snap->ps.clientNum )
-        ducking = (cg.snap->ps.pm_flags & PMF_DUCKED);
-    else
-        ducking = (qboolean)cent->currentState.animMovetype;
-
-    if ( ducking )
-        ent.origin[2] += 38;
-    else
-        ent.origin[2] += 56;
-
-    ent.hModel = hModel;
-    trap_R_AddRefEntityToScene( &ent );
-}*/
-
-/*
-===============
 CG_PlayerFloatSprite
 
 Float a sprite over the player's head
@@ -1562,8 +1521,6 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height)
 	ent.shaderRGBA[3] = 255;
 	trap_R_AddRefEntityToScene(&ent);
 }
-
-
 
 /*
 ===============
@@ -2004,7 +1961,6 @@ char *vtosf(const vec3_t v)
 	return s;
 }
 
-
 /*
 ===============
 CG_AnimPlayerConditions
@@ -2079,9 +2035,7 @@ void CG_AnimPlayerConditions(bg_character_t *character, centity_t *cent)
 	{
 		BG_UpdateConditionValue(es->clientNum, ANIM_COND_MOVETYPE, character->animModelInfo->animations[legsAnim]->movetype, qfalse);
 	}
-
 }
-
 
 /*
 ===============
@@ -2107,8 +2061,8 @@ void CG_Player(centity_t *cent)
 
 	cgsnap = &cg_entities[cg.snap->ps.clientNum];
 
-	shadow      = qfalse;                                           // gjd added to make sure it was initialized
-	shadowPlane = 0.0;                                              // ditto
+	shadow      = qfalse;	// gjd added to make sure it was initialized
+	shadowPlane = 0.0;      // ditto
 
 	// if set to invisible, skip
 	if (cent->currentState.eFlags & EF_NODRAW)
@@ -2265,9 +2219,7 @@ void CG_Player(centity_t *cent)
 	head.hilightIntensity = hilightIntensity;
 	acc.hilightIntensity  = hilightIntensity;
 
-	//
 	// add the body
-	//
 	if (cent->currentState.eType == ET_CORPSE && cent->currentState.time2 == 1)
 	{
 		body.hModel     = character->undressedCorpseModel;
@@ -2411,10 +2363,7 @@ void CG_Player(centity_t *cent)
 	}*/
 // DEBUG
 
-	//
 	// add the head
-	//
-
 	if (!(head.hModel = character->hudhead))
 	{
 		return;
@@ -2483,27 +2432,21 @@ void CG_Player(centity_t *cent)
 
 	CG_BreathPuffs(cent, &head);
 
-	//
 	// add the gun / barrel / flash
-	//
 	if (!(cent->currentState.eFlags & EF_DEAD) /*&& !usingBinocs*/)                // NERVE - SMF
 	{
 		CG_AddPlayerWeapon(&body, NULL, cent);
 	}
 
-	//
 	// add binoculars (if it's not the player)
-	//
-	if (usingBinocs)             // NERVE - SMF
+	if (usingBinocs)
 	{
 		acc.hModel = cgs.media.thirdPersonBinocModel;
 		CG_PositionEntityOnTag(&acc, &body, "tag_weapon", 0, NULL);
 		CG_AddRefEntityWithPowerups(&acc, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
 	}
 
-	//
 	// add accessories
-	//
 	for (i = ACC_BELT_LEFT; i < ACC_MAX; i++)
 	{
 		if (!(character->accModels[i]))
@@ -2598,7 +2541,7 @@ void CG_ResetPlayerEntity(centity_t *cent)
 		cent->pe.legs.pitchAngle = 0;
 		cent->pe.legs.pitching   = qfalse;
 
-		memset(&cent->pe.torso, 0, sizeof(cent->pe.legs));
+		memset(&cent->pe.torso, 0, sizeof(cent->pe.torso));
 		cent->pe.torso.yawAngle   = cent->rawAngles[YAW];
 		cent->pe.torso.yawing     = qfalse;
 		cent->pe.torso.pitchAngle = cent->rawAngles[PITCH];
@@ -2619,7 +2562,6 @@ void CG_ResetPlayerEntity(centity_t *cent)
 	cent->pe.painAnimLegs  = -1;
 	cent->pe.painAnimTorso = -1;
 	cent->pe.animSpeed     = 1.0;
-
 }
 
 void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNum)
@@ -2900,7 +2842,7 @@ void CG_PlayerAngles_Limbo(playerInfo_t *pi, vec3_t legs[3], vec3_t torso[3], ve
 	AnglesSubtract(headAngles, torsoAngles, headAngles);
 	AnglesSubtract(torsoAngles, legsAngles, torsoAngles);
 
-	AnglesSubtract(legsAngles, pi->moveAngles, legsAngles);         // NERVE - SMF
+	AnglesSubtract(legsAngles, pi->moveAngles, legsAngles);
 
 	AnglesToAxis(legsAngles, legs);
 	AnglesToAxis(torsoAngles, torso);
@@ -3012,11 +2954,7 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 
 	acc.renderfx = renderfx;
 
-
-	//
 	// add the body
-	//
-
 	body.hModel     = character->mesh;
 	body.customSkin = character->skin;
 
@@ -3094,10 +3032,7 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 
 	trap_R_AddRefEntityToScene(&body);
 
-	//
 	// add the head
-	//
-
 	head.hModel = character->hudhead;
 	if (!head.hModel)
 	{
@@ -3168,9 +3103,7 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 		trap_R_AddRefEntityToScene(&acc);
 	}
 
-	//
 	// add the gun
-	//
 	{
 		int weap = CG_GetSelectedWeapon();
 
@@ -3188,9 +3121,7 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 	// Save out the old render info so we don't kill the LOD system here
 	trap_R_SaveViewParms();
 
-	//
 	// add an accent light
-	//
 	origin[0] -= 100;   // + = behind, - = in front
 	origin[1] += 100;   // + = left, - = right
 	origin[2] += 100;   // + = above, - = below
@@ -3348,7 +3279,6 @@ void CG_MenuCheckPendingAnimation(playerInfo_t *pi)
 	}
 }
 
-
 void CG_SetHudHeadLerpFrameAnimation(bg_character_t *ch, lerpFrame_t *lf, int newAnimation)
 {
 	animation_t *anim;
@@ -3379,8 +3309,6 @@ void CG_RunHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int newAnimatio
 {
 	int         f;
 	animation_t *anim;
-
-
 
 	// see if the animation sequence is switching
 	if (!lf->animation)
