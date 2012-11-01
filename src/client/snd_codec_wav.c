@@ -228,7 +228,10 @@ void *S_WAV_CodecLoad(const char *filename, snd_info_t *info)
 	FS_FOpenFileRead(filename, &file, qtrue);
 	if (!file)
 	{
-		Com_Printf(S_COLOR_RED "ERROR: Could not open \"%s\"\n", filename);
+		if (com_developer->integer)
+		{
+			Com_Printf(S_COLOR_RED "ERROR: Could not open \"%s\"\n", filename);
+		}
 		return NULL;
 	}
 
@@ -236,7 +239,10 @@ void *S_WAV_CodecLoad(const char *filename, snd_info_t *info)
 	if (!S_ReadRIFFHeader(file, info))
 	{
 		FS_FCloseFile(file);
-		Com_Printf(S_COLOR_RED "ERROR: Incorrect/unsupported format in \"%s\"\n", filename);
+		if (com_developer->integer)
+		{
+			Com_Printf(S_COLOR_RED "ERROR: Incorrect/unsupported format in \"%s\"\n", filename);
+		}
 		return NULL;
 	}
 
