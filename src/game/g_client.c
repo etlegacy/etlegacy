@@ -1693,6 +1693,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	char      *value;
 	gclient_t *client;
 	char      userinfo[MAX_INFO_STRING];
+	char      cs_name[MAX_NETNAME];
 	gentity_t *ent;
 #ifdef USEXPSTORAGE
 	ipXPStorage_t *xpBackup;
@@ -1711,6 +1712,28 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	if (G_FilterIPBanPacket(value))
 	{
 		return "You are banned from this server.";
+	}
+
+
+	value = Info_ValueForKey (userinfo, "name");
+	Q_strncpyz(cs_name, value, sizeof(cs_name));
+
+	// don't permit long names ... - see also MAX_NETNAME
+	if (strlen(cs_name) >= MAX_NAME_LENGTH )
+	{
+			return "Bad name: Name too long. Please change your name.";
+	}
+
+	{
+		int i;
+
+		// Avoid ext. ASCII chars in the CS
+		for (i = 0; i < strlen(cs_name); ++i)
+		{
+			if (cs_name[i] < 0) {// extended ASCII chars have values between -128 and 0 (signed char)
+				return "Bad name: Extended ASCII characters. Please change your name.";
+			}
+		}
 	}
 
 	// Xian - check for max lives enforcement ban
@@ -1775,10 +1798,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	{
 		client->pers.initialSpawn = qtrue;
 
-	}
-	// read or initialize the session data
-	if (firstTime)
-	{
+		// read or initialize the session data
 		G_InitSessionData(client, userinfo);
 		client->pers.enterTime            = level.time;
 		client->ps.persistant[PERS_SCORE] = 0;
