@@ -1509,7 +1509,7 @@ void ClientUserinfoChanged(int clientNum)
 	if (!Info_Validate(userinfo))
 	{
 		Q_strncpyz(userinfo, "\\name\\badinfo", sizeof(userinfo));
-		trap_DropClient(clientNum, "Invalid userinfo");
+		trap_DropClient(clientNum, "Invalid userinfo", 300);
 	}
 
 #ifndef DEBUG_STATS
