@@ -302,14 +302,12 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		bg_neutralpin = DC->registerShaderNoMip("gfx/loading/pin_neutral");
 		bg_pin        = DC->registerShaderNoMip("gfx/loading/pin_shot");
 
-
 		bg_filter_pb = DC->registerShaderNoMip("ui/assets/filter_pb");
 		bg_filter_ff = DC->registerShaderNoMip("ui/assets/filter_ff");
 		bg_filter_hw = DC->registerShaderNoMip("ui/assets/filter_weap");
 		bg_filter_lv = DC->registerShaderNoMip("ui/assets/filter_lives");
 		bg_filter_al = DC->registerShaderNoMip("ui/assets/filter_antilag");
 		bg_filter_bt = DC->registerShaderNoMip("ui/assets/filter_balance");
-
 
 		bg_mappic = 0;
 
@@ -332,15 +330,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		qboolean   enabled = qfalse;
 		float      x, y;
 		int        i;
-//      vec4_t clr1 = { 41/255.f,   51/255.f,   43/255.f,   204/255.f };
-//      vec4_t clr2 = { 0.f,        0.f,        0.f,        225/255.f };
 		vec4_t clr3 = { 1.f, 1.f, 1.f, .6f };
-
-		/*      CG_FillRect( 8, 8, 230, 16, clr1 );
-		        CG_DrawRect_FixedBorder( 8, 8, 230, 16, 1, colorMdGrey );
-
-		        CG_FillRect( 8, 23, 230, 210, clr2 );
-		        CG_DrawRect_FixedBorder( 8, 23, 230, 216, 1, colorMdGrey );*/
 
 		y = 322;
 		CG_Text_Paint_Centred_Ext(540, y, 0.22f, 0.22f, clr3, "SERVER INFO", 0, 0, 0, &bg_loadscreenfont1);
@@ -489,33 +479,16 @@ void CG_LoadPanel_RenderLoadingBar(panel_button_t *button)
 
 void CG_LoadPanel_RenderCampaignTypeText(panel_button_t *button)
 {
-	/*  char buffer[1024];
-	    const char* str;
-	    DC->getConfigString( CS_SERVERINFO, buffer, sizeof( buffer ) );
-	    if( !*buffer ) {
-	        return;
-	    }
-
-	    str = Info_ValueForKey( buffer, "g_gametype" );
-	*/
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%s:", CG_LoadPanel_GameTypeName(cgs.gametype)), 0, 0, button->font->style, button->font->font);
 }
-
 
 void CG_LoadPanel_RenderCampaignNameText(panel_button_t *button)
 {
 	const char *cs;
 	float      w;
-	//char buffer[1024];
-	//int gametype;
-
-	//DC->getConfigString( CS_SERVERINFO, buffer, sizeof( buffer ) );
-	//cs = Info_ValueForKey( buffer, "g_gametype" );
-	//gametype = atoi(cs);
 
 	if (cgs.gametype == GT_WOLF_CAMPAIGN)
 	{
-
 		cs = DC->nameForCampaign();
 		if (!cs)
 		{
@@ -530,7 +503,6 @@ void CG_LoadPanel_RenderCampaignNameText(panel_button_t *button)
 	}
 	else
 	{
-
 		if (!cgs.arenaInfoLoaded)
 		{
 			return;
@@ -547,13 +519,6 @@ void CG_LoadPanel_RenderMissionDescriptionText(panel_button_t *button)
 	char       *s, *p;
 	char       buffer[1024];
 	float      y;
-	//int gametype;
-
-	//DC->getConfigString( CS_SERVERINFO, buffer, sizeof( buffer ) );
-	//cs = Info_ValueForKey( buffer, "g_gametype" );
-	//gametype = atoi(cs);
-
-//  DC->fillRect( button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorRed );
 
 	if (cgs.gametype == GT_WOLF_CAMPAIGN)
 	{
@@ -567,20 +532,15 @@ void CG_LoadPanel_RenderMissionDescriptionText(panel_button_t *button)
 	}
 	else if (cgs.gametype == GT_WOLF_LMS)
 	{
-
-		//cs = CG_ConfigString( CS_MULTI_MAPDESC3 );
-
 		if (!cgs.arenaInfoLoaded)
 		{
 			return;
 		}
 
 		cs = cgs.arenaData.lmsdescription;
-
 	}
 	else
 	{
-
 		if (!cgs.arenaInfoLoaded)
 		{
 			return;
@@ -635,7 +595,6 @@ qboolean CG_LoadPanel_ContinueButtonKeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
-
 void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float sy, qhandle_t shader, float pinsize, float backheight)
 {
 	float  w;
@@ -676,13 +635,6 @@ void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 {
 	int       i;
 	qhandle_t shader;
-	/*char buffer[1024];
-	char *s;
-	int gametype;
-
-	DC->getConfigString( CS_SERVERINFO, buffer, sizeof( buffer ) );
-	s = Info_ValueForKey( buffer, "g_gametype" );
-	gametype = atoi(s);*/
 
 	if (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF)
 	{
