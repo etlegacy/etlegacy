@@ -1331,16 +1331,6 @@ typedef struct
 	qhandle_t tankHintShader;
 	qhandle_t satchelchargeHintShader;
 	qhandle_t uniformHintShader;
-	qhandle_t waypointAttackShader;
-	qhandle_t waypointDefendShader;
-	qhandle_t waypointRegroupShader;
-	// TAT 8/29/2002 - a shader for the bot indicator
-	qhandle_t waypointBotShader;
-	//      for a queued bot order (Listen Up/Go Go Go)
-	qhandle_t waypointBotQueuedShader;
-	qhandle_t waypointCompassAttackShader;
-	qhandle_t waypointCompassDefendShader;
-	qhandle_t waypointCompassRegroupShader;
 	qhandle_t commandCentreWoodShader;
 	qhandle_t commandCentreMapShader[MAX_COMMANDMAP_LAYERS];
 	qhandle_t commandCentreMapShaderTrans[MAX_COMMANDMAP_LAYERS];
@@ -1361,8 +1351,6 @@ typedef struct
 	qhandle_t buddyShader;
 	qhandle_t hudBorderVert;
 	qhandle_t hudBorderVert2;
-
-	qhandle_t waypointMarker;
 
 	qhandle_t slashShader;
 	qhandle_t compassShader;
@@ -2579,7 +2567,6 @@ void        CG_ParseEntitiesFromString(void);
 // cg_info.c
 void CG_LoadingString(const char *s);
 //void CG_LoadingItem( int itemNum );
-void CG_LoadingClient(int clientNum);
 void CG_DrawInformation(qboolean forcerefresh);
 void CG_DemoClick(int key, qboolean down);
 void CG_ShowHelp_Off(int *status);
@@ -3014,8 +3001,6 @@ void CG_MenuSetAnimation(playerInfo_t *pi, const char *legsAnim, const char *tor
 #define CC_FILTER_CONSTRUCTIONS (1 << 5)
 #define CC_FILTER_DESTRUCTIONS  (1 << 6)
 #define CC_FILTER_OBJECTIVES    (1 << 7)
-//#define CC_FILTER_WAYPOINTS       (1 << 7)
-//#define CC_FILTER_OBJECTIVES  (1 << 8)
 
 typedef struct
 {
