@@ -59,7 +59,6 @@
 #define ZOOM_TIME           150
 #define MUZZLE_FLASH_TIME   30
 #define SINK_TIME           1000        // time for fragments to sink into ground before going away
-#define REWARD_TIME         3000
 
 #define PRONE_TIME          500
 
@@ -298,7 +297,7 @@ typedef struct centity_s
 	int muzzleFlashTime;                // move to playerEntity?
 	int overheatTime;
 	int previousEvent;
-	int previousEventSequence;              // Ridah
+	int previousEventSequence;
 	int teleportFlag;
 
 	int trailTime;                  // so missile trails can handle dropped initial packets
@@ -325,7 +324,6 @@ typedef struct centity_s
 	// Ridah, trail effects
 	int headJuncIndex, headJuncIndex2;
 	int lastTrailTime;
-	// done.
 
 	// Ridah
 	vec3_t fireRiseDir;             // if standing still this will be up, otherwise it'll point away from movement dir
@@ -340,15 +338,15 @@ typedef struct centity_s
 	int dl_sound;
 	int dl_atten;
 
-	lerpFrame_t lerpFrame;      //----(SA)  added
+	lerpFrame_t lerpFrame;
 	vec3_t highlightOrigin;             // center of the geometry.  for things like corona placement on treasure
 	qboolean usehighlightOrigin;
 
 	refEntity_t refEnt;
 	int processedFrame;                 // frame we were last added to the scene
 
-	int voiceChatSprite;                    // DHM - Nerve
-	int voiceChatSpriteTime;                // DHM - Nerve
+	int voiceChatSprite;
+	int voiceChatSpriteTime;
 
 	// item highlighting
 	int highlightTime;
@@ -505,7 +503,6 @@ typedef struct localEntity_s
 
 	int breakCount;                     // break-up this many times before we can break no more
 	float sizeScale;
-	// done.
 
 } localEntity_t;
 
@@ -896,7 +893,7 @@ typedef struct
 	int centerPrintY;
 	char centerPrint[1024];
 	int centerPrintLines;
-	int centerPrintPriority;                    // NERVE - SMF
+	int centerPrintPriority;
 
 	// fade in/out
 	int fadeTime;
@@ -932,9 +929,7 @@ typedef struct
 	int crosshairPowerupNum;
 	int crosshairPowerupTime;
 
-//  int         identifyClientNum;          // NERVE - SMF
-//  int         identifyClientHealth;       // NERVE - SMF
-	int identifyClientRequest;              // NERVE - SMF
+	int identifyClientRequest;
 
 	// cursorhints
 	int cursorHintIcon;
@@ -949,13 +944,6 @@ typedef struct
 	// attacking player
 	int attackerTime;
 	int voiceTime;
-
-	// reward tmedals
-	int rewardStack;
-	int rewardTime;
-	int rewardCount[MAX_REWARDSTACK];
-	qhandle_t rewardShader[MAX_REWARDSTACK];
-	qhandle_t rewardSound[MAX_REWARDSTACK];
 
 	// warmup countdown
 	int warmup;
@@ -1034,9 +1022,7 @@ typedef struct
 	// is rare enough that we can transmit that as an event
 	float recoilPitch, recoilPitchAngle;
 
-	// Duffy
 	qboolean cameraMode;        // if rendering from a camera
-	// Duffy end
 
 	// NERVE - SMF - Objective info display
 	qboolean limboMenu;
@@ -1139,7 +1125,7 @@ typedef struct
 
 	// which bots are currently selected
 	int selectedBotClientNumber[MAX_NUM_BUDDY]; // obsolete/unused
-	// END      xkan, 8/29/2002
+
 	int binocZoomTime;
 	int limboEndCinematicTime;
 	int proneMovingTime;
@@ -1205,9 +1191,9 @@ typedef struct
 typedef struct
 {
 	qhandle_t charsetShader;
-	// JOSEPH 4-17-00
+
 	qhandle_t menucharsetShader;
-	// END JOSEPH
+
 	qhandle_t charsetProp;
 	qhandle_t charsetPropGlow;
 	qhandle_t charsetPropB;
@@ -1246,7 +1232,7 @@ typedef struct
 	qhandle_t targetEffectExplosionShader;
 
 	qhandle_t machinegunBrassModel;
-	qhandle_t panzerfaustBrassModel;    //----(SA)  added
+	qhandle_t panzerfaustBrassModel;
 
 	qhandle_t smallgunBrassModel;
 
@@ -1271,7 +1257,6 @@ typedef struct
 	qhandle_t vehicleShader;
 	qhandle_t destroyShader;
 
-//  qhandle_t   selectShader;
 	qhandle_t viewBloodShader;
 	qhandle_t tracerShader;
 	qhandle_t crosshairShader[NUM_CROSSHAIRS];
@@ -1282,7 +1267,7 @@ typedef struct
 	qhandle_t reticleShader;
 	qhandle_t reticleShaderSimple;
 	qhandle_t snooperShader;
-//  qhandle_t   snooperShaderSimple;
+
 	qhandle_t binocShader;
 	qhandle_t binocShaderSimple;
 
@@ -1301,9 +1286,7 @@ typedef struct
 	qhandle_t waterBubbleShader;
 	qhandle_t bloodTrailShader;
 
-//  qhandle_t   nailPuffShader;
-
-//----(SA)  cursor hints
+	//----(SA)  cursor hints
 	// would be nice to specify these in the menu scripts instead of permanent handles...
 	qhandle_t usableHintShader;
 	qhandle_t notUsableHintShader;
@@ -1370,7 +1353,6 @@ typedef struct
 	qhandle_t commandCentreAlliedMineShader;
 	qhandle_t commandCentreSpawnShader[2];
 
-	// Mad Doc - TDF
 	qhandle_t ingameAutomapBackground;
 
 	qhandle_t landmineHintShader;
@@ -1386,11 +1368,9 @@ typedef struct
 	qhandle_t compassShader;
 	qhandle_t compass2Shader;
 
-	// Rafael
 	qhandle_t snowShader;
 	qhandle_t oilParticle;
 	qhandle_t oilSlick;
-	// done.
 
 	// Rafael - cannon
 	qhandle_t smokePuffShaderdirty;
@@ -1399,7 +1379,6 @@ typedef struct
 	qhandle_t smokePuffShaderb3;
 	qhandle_t smokePuffShaderb4;
 	qhandle_t smokePuffShaderb5;
-	// done
 
 	// Rafael - blood pool
 	qhandle_t bloodPool;
@@ -1448,7 +1427,7 @@ typedef struct
 	qhandle_t waterSplashModel;
 	qhandle_t waterSplashShader;
 
-	qhandle_t thirdPersonBinocModel;    //----(SA)  added
+	qhandle_t thirdPersonBinocModel;
 
 	// weapon effect shaders
 	qhandle_t railExplosionShader;
@@ -1564,7 +1543,7 @@ typedef struct
 	//sfxHandle_t grenadebounce2;
 	sfxHandle_t grenadebounce[FOOTSTEP_TOTAL][2];
 
-	sfxHandle_t dynamitebounce1;    //----(SA)  added
+	sfxHandle_t dynamitebounce1;
 	sfxHandle_t landminebounce1;
 
 	sfxHandle_t fkickwall;
@@ -1904,8 +1883,8 @@ typedef struct
 	char *currentCampaign;
 	int currentCampaignMap;
 
-	int complaintClient;        // DHM - Nerve
-	int complaintEndTime;       // DHM - Nerve
+	int complaintClient;
+	int complaintEndTime;
 	float smokeWindDir; // JPW NERVE for smoke puffs & wind (arty, airstrikes, bullet impacts)
 
 	playerStats_t playerStats;
@@ -1950,7 +1929,6 @@ typedef struct
 
 	bg_character_t *offscreenCmdr;
 
-	// OSP
 	int aviDemoRate;                                    // Demo playback recording
 	int aReinfOffset[TEAM_NUM_TEAMS];                   // Team reinforcement offsets
 	int cursorUpdate;                                   // Timeout for mouse pointer view
@@ -1990,8 +1968,6 @@ typedef struct
 	int ccLastObjectiveRequestTime;
 
 	int loadingLatch;                 // ( 0 = nothing yet, 1 = latched )
-
-//  qboolean            playedLimboMusic;
 
 	int dbSortedClients[MAX_CLIENTS];
 	int dbSelectedClient;
@@ -2055,7 +2031,7 @@ extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_drawCrosshairNames;
 extern vmCvar_t cg_drawCrosshairPickups;
 extern vmCvar_t cg_useWeapsForZoom;
-extern vmCvar_t cg_weaponCycleDelay;            //----(SA)  added
+extern vmCvar_t cg_weaponCycleDelay;
 extern vmCvar_t cg_cycleAllWeaps;
 extern vmCvar_t cg_drawTeamOverlay;
 extern vmCvar_t cg_crosshairX;
@@ -2082,7 +2058,7 @@ extern vmCvar_t cg_gun_y;
 extern vmCvar_t cg_gun_z;
 extern vmCvar_t cg_drawGun;
 extern vmCvar_t cg_cursorHints;
-extern vmCvar_t cg_letterbox;           //----(SA)  added
+extern vmCvar_t cg_letterbox;
 extern vmCvar_t cg_tracerChance;
 extern vmCvar_t cg_tracerWidth;
 extern vmCvar_t cg_tracerLength;
@@ -2207,9 +2183,9 @@ extern vmCvar_t int_ui_blackout;
 extern vmCvar_t cg_rconPassword;
 extern vmCvar_t cg_refereePassword;
 extern vmCvar_t cg_atmosphericEffects;
-// START Mad Doc - TDF
+
 extern vmCvar_t cg_drawRoundTimer;
-// END Mad Doc - TDF
+
 extern vmCvar_t cg_debugSkills;
 extern vmCvar_t cg_drawFireteamOverlay;
 extern vmCvar_t cg_drawSmallPopupIcons;
@@ -2338,7 +2314,7 @@ void CG_SaveTransTable(void);
 void CG_ReloadTranslation(void);
 
 // cg_draw.c, cg_newDraw.c
-extern char cg_fxflags;  // JPW NERVE
+extern char cg_fxflags;
 
 void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
@@ -2378,7 +2354,7 @@ float CG_CalculateReinfTime_Float(qboolean menu);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
 // cg_player.c
-qboolean CG_EntOnFire(centity_t *cent);      // Ridah
+qboolean CG_EntOnFire(centity_t *cent);
 void CG_Player(centity_t *cent);
 void CG_ResetPlayerEntity(centity_t *cent);
 void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entityState_t *es, const vec3_t fireRiseDir);
@@ -2416,9 +2392,9 @@ void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, cons
 void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName);
 
 // cg_weapons.c
-void CG_LastWeaponUsed_f(void);       //----(SA)    added
-void CG_NextWeaponInBank_f(void);     //----(SA)    added
-void CG_PrevWeaponInBank_f(void);     //----(SA)    added
+void CG_LastWeaponUsed_f(void);
+void CG_NextWeaponInBank_f(void);
+void CG_PrevWeaponInBank_f(void);
 void CG_AltWeapon_f(void);
 void CG_NextWeapon_f(void);
 void CG_PrevWeapon_f(void);
@@ -2431,8 +2407,8 @@ void CG_FinishWeaponChange(int lastweap, int newweap);
 void CG_RegisterWeapon(int weaponNum, qboolean force);
 void CG_RegisterItemVisuals(int itemNum);
 
-void CG_FireWeapon(centity_t *cent);     //----(SA) modified.
-//void CG_EndFireWeapon( centity_t *cent, int firemode );   //----(SA)  added
+void CG_FireWeapon(centity_t *cent);
+//void CG_EndFireWeapon( centity_t *cent, int firemode );
 void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfaceFlags);     //  (SA) modified to send missilehitwall surface parameters
 
 void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir);
@@ -2688,20 +2664,19 @@ void CG_autoScreenShot_f(void);
 void CG_keyOn_f(void);
 void CG_keyOff_f(void);
 void CG_dumpStats_f(void);
-void CG_toggleSwing_f(void);
 
 // cg_servercmds.c
 void CG_ExecuteNewServerCommands(int latestSequence);
 void CG_ParseServerinfo(void);
-void CG_ParseWolfinfo(void);            // NERVE - SMF
+void CG_ParseWolfinfo(void);
 void CG_ParseSpawns(void);
 void CG_ParseServerVersionInfo(const char *pszVersionInfo);
 void CG_ParseReinforcementTimes(const char *pszReinfSeedString);
 void CG_SetConfigValues(void);
 void CG_ShaderStateChanged(void);
 void CG_ChargeTimesChanged(void);
-void CG_LoadVoiceChats(void);                 // NERVE - SMF
-void CG_PlayBufferedVoiceChats(void);         // NERVE - SMF
+void CG_LoadVoiceChats(void);
+void CG_PlayBufferedVoiceChats(void);
 void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
@@ -2818,7 +2793,7 @@ void        trap_S_StartSoundEx(vec3_t origin, int entityNum, int entchannel, sf
 void        trap_S_StartSoundExVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags, int volume);
 void        trap_S_StopStreamingSound(int entnum);    // usually AI.  character is talking and needs to be shut up /now/
 int         trap_S_GetSoundLength(sfxHandle_t sfx);
-int         trap_S_GetCurrentSoundTime(void);   // ydnar
+int         trap_S_GetCurrentSoundTime(void);
 
 // a local sound is always played full volume
 void        trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum);
@@ -2947,7 +2922,6 @@ void        trap_Key_SetOverstrikeMode(qboolean state);
 
 void trap_SendMoveSpeedsToGame(int entnum, char *movespeeds);
 
-//void trap_UI_Popup(const char *arg0); //----(SA)  added
 void trap_UI_Popup(int arg0);
 
 qhandle_t getTestShader(void);   // JPW NERVE shhh
