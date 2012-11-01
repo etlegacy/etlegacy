@@ -50,7 +50,6 @@ extern vmCvar_t ui_gameType;
 
 #define BG_IsSinglePlayerGame() (gametypeCvar.integer == GT_SINGLE_PLAYER) || (gametypeCvar.integer == GT_COOP)
 
-
 const char *skillNames[SK_NUM_SKILLS] =
 {
 	"Battle Sense",
@@ -136,7 +135,6 @@ int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 	{ 0,                   0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         },
 };
 
-// TAT 10/4/2002
 //      Using one unified list for which weapons can received ammo
 //      This is used both by the ammo pack code and by the bot code to determine if reloads are needed
 int reloadableWeapons[] =
@@ -291,7 +289,6 @@ int weapAlts[] =
 	WP_NONE,            // 48 WP_AKIMBO_SILENCEDLUGER
 	WP_MOBILE_MG42,     // 49 WP_MOBILE_MG42_SET
 };
-
 
 // new (10/18/00)
 char *animStrings[] =
@@ -451,7 +448,6 @@ char *animStrings[] =
 	"LEGS_EXTRA10",
 };
 
-
 // old
 char *animStringsOld[] =
 {
@@ -579,7 +575,6 @@ An item fires all of its targets when it is picked up.  If the toucher can't car
 "stand" if the item has a stand (ex: mp40_stand.md3) this specifies which stand tag to attach the weapon to ("stand":"4" would mean "tag_stand4" for example)  only weapons support stands currently
 */
 
-// JOSEPH 5-2-00
 //----(SA) the addition of the 'ammotype' field was added by me, not removed by id (SA)
 gitem_t bg_itemlist[] =
 {
@@ -603,9 +598,6 @@ gitem_t bg_itemlist[] =
 		"",          // sounds
 //      {0,0,0,0,0}
 	},  // leave index 0 alone
-
-
-
 	/*QUAKED item_treasure (1 1 0) (-8 -8 -8) (8 8 8) suspended
 	Items the player picks up that are just used to tally a score at end-level
 	"model" defaults to 'models/powerups/treasure/goldbar.md3'
@@ -619,9 +611,9 @@ gitem_t bg_itemlist[] =
 	*/
 	{
 		"item_treasure",
-		"sound/pickup/treasure/gold.wav",
+		"", // was "sound/pickup/treasure/gold.wav",
 		{
-			"models/powerups/treasure/goldbar.md3",
+			0, // not in path "models/powerups/treasure/goldbar.md3",
 			0,
 			0
 		},
@@ -638,11 +630,9 @@ gitem_t bg_itemlist[] =
 //      {0,0,0,0,0}
 	},
 
-
 	//
 	// ARMOR/HEALTH/STAMINA
 	//
-
 
 	/*QUAKED item_health_small (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -650,7 +640,7 @@ gitem_t bg_itemlist[] =
 	*/
 	{
 		"item_health_small",
-		"sound/items/n_health.wav",
+		"sound/misc/health_pickup.wav", // was "sound/items/n_health.wav"
 		{
 			"models/powerups/health/health_s.md3",
 			0,
@@ -668,7 +658,6 @@ gitem_t bg_itemlist[] =
 		"",
 //      {10,5,5,5,5}
 	},
-
 	/*QUAKED item_health (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/health/health_m.md3"
@@ -694,7 +683,6 @@ gitem_t bg_itemlist[] =
 		"",
 //      {50,25,20,15,15}
 	},
-
 	/*QUAKED item_health_large (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/health/health_m.md3"
@@ -720,11 +708,9 @@ gitem_t bg_itemlist[] =
 		"",
 //      {50,25,20,15,15}
 	},
-
 	{
 		"item_health_cabinet",
 		"sound/misc/health_pickup.wav",
-//      "sound/multiplayer/health_pickup.wav",
 		{
 			0,
 			0,
@@ -741,7 +727,6 @@ gitem_t bg_itemlist[] =
 		"",
 		"",
 	},
-
 	/*QUAKED item_health_turkey (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	multi-stage health item.
 	gives 40 on first use, then gives 20 on "finishing up"
@@ -769,8 +754,6 @@ gitem_t bg_itemlist[] =
 		"",
 		"",
 	},
-
-	// xkan, 1/6/2002 - updated
 	/*QUAKED item_health_breadandmeat (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	multi-stage health item.
 	gives 30 on first use, then gives 15 on "finishing up"
@@ -795,8 +778,6 @@ gitem_t bg_itemlist[] =
 		"",
 		"",
 	},
-
-	// xkan, 1/6/2002 - updated
 	/*QUAKED item_health_wall (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	defaults to 50 pts health
 	you will probably want to check the 'suspended' box to keep it from falling to the ground
@@ -805,7 +786,7 @@ gitem_t bg_itemlist[] =
 	*/
 	{
 		"item_health_wall",
-		"sound/items/n_health.wav",
+		"sound/misc/health_pickup.wav", // was "sound/items/n_health.wav"
 		{
 			"models/powerups/health/health_w.md3",
 			0,
@@ -827,7 +808,6 @@ gitem_t bg_itemlist[] =
 	//
 	// STAMINA
 	//
-
 
 	//
 	// WEAPONS
@@ -859,7 +839,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_luger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/luger/luger.md3"
@@ -885,7 +864,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_akimboluger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/akimbo_luger/luger.md3"
@@ -911,7 +889,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_akimbosilencedluger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/akimbo_luger/luger.md3"
@@ -937,7 +914,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_thompson (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/thompson/thompson.md3"
@@ -964,7 +940,6 @@ gitem_t bg_itemlist[] =
 		"",                  // sounds
 //      {0,0,0,0,0}
 	},
-
 	{
 		"weapon_dummy",
 		"",
@@ -985,8 +960,6 @@ gitem_t bg_itemlist[] =
 		"",                      // precache
 		"",                      // sounds
 	},
-
-
 	/*QUAKED weapon_sten (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/sten/sten.md3"
@@ -1011,7 +984,6 @@ gitem_t bg_itemlist[] =
 		"",                  // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_colt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/colt/colt.md3"
@@ -1037,7 +1009,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_akimbocolt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/akimbo_colt/colt.md3"
@@ -1063,7 +1034,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_akimbosilencedcolt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/akimbo_colt/colt.md3"
@@ -1089,7 +1059,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_mp40 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	"stand" values:
 	    no value:   laying in a default position on it's side (default)
@@ -1118,7 +1087,6 @@ gitem_t bg_itemlist[] =
 		"",                  // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_panzerfaust (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/panzerfaust/pf.md3"
@@ -1144,7 +1112,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 //----(SA)  removed the quaked for this.  we don't actually have a grenade launcher as such.  It's given implicitly
 //          by virtue of getting grenade ammo.  So we don't need to have them in maps
 	/*
@@ -1171,7 +1138,6 @@ gitem_t bg_itemlist[] =
 		"",              // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*
 	weapon_grenadePineapple
 	*/
@@ -1196,7 +1162,6 @@ gitem_t bg_itemlist[] =
 		"",              // sounds
 //      {0,0,0,0,0}
 	},
-
 	/* JPW NERVE
 	weapon_grenadesmoke
 	*/
@@ -1221,8 +1186,6 @@ gitem_t bg_itemlist[] =
 		"",              // sounds
 //      {0,0,0,0,0}
 	},
-// jpw
-
 	/* JPW NERVE
 	weapon_smoketrail -- only used as a special effects emitter for smoke trails (artillery spotter etc)
 	*/
@@ -1247,9 +1210,6 @@ gitem_t bg_itemlist[] =
 		"",              // sounds
 //      {0,0,0,0,0}
 	},
-// jpw
-
-// DHM - Nerve
 	/*
 	weapon_medic_heal
 	*/
@@ -1274,8 +1234,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-// dhm
-
 	/*
 	weapon_dynamite
 	*/
@@ -1300,7 +1258,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_flamethrower (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/flamethrower/flamethrower.md3"
@@ -1326,7 +1283,6 @@ gitem_t bg_itemlist[] =
 		"",                          // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*
 	weapon_mortar (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	*/
@@ -1347,11 +1303,9 @@ gitem_t bg_itemlist[] =
 		WP_MAPMORTAR,
 		WP_MAPMORTAR,
 		"",                      // precache
-		"sound/weapons/mortar/mortarf1.wav",             // sounds
+		"",                      // sounds - was sound/weapons/mortar/mortarf1.wav
 //      {0,0,0,0,0}
 	},
-
-
 // JPW NERVE -- class-specific multiplayer weapon, can't be picked up, dropped, or placed in map
 	/*
 	weapon_class_special (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -1377,7 +1331,6 @@ gitem_t bg_itemlist[] =
 		"",  // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*
 	weapon_arty (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	*/
@@ -1402,7 +1355,6 @@ gitem_t bg_itemlist[] =
 		"",  // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*
 	weapon_medic_syringe (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	*/
@@ -1427,7 +1379,6 @@ gitem_t bg_itemlist[] =
 		"sound/misc/vo_revive.wav",  // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*
 	weapon_medic_adrenaline (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	*/
@@ -1476,7 +1427,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	{
 		"weapon_magicammo2",
 		"sound/misc/w_pkup.wav",
@@ -1500,7 +1450,6 @@ gitem_t bg_itemlist[] =
 		"",                      // precache
 		"",                      // sounds
 	},
-
 	/*
 	weapon_binoculars (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	*/
@@ -1525,7 +1474,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_k43 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model=""
@@ -1551,7 +1499,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_kar43_scope (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model=""
@@ -1577,8 +1524,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
-
 	/*QUAKED weapon_kar98Rifle (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/mauser/mauser.md3"
@@ -1612,7 +1557,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_gpg40 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/mauser/mauser.md3"
@@ -1638,7 +1582,6 @@ gitem_t bg_itemlist[] =
 		"",                          // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_gpg40_allied (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/mauser/mauser.md3"
@@ -1664,7 +1607,6 @@ gitem_t bg_itemlist[] =
 		"",                          // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED weapon_M1CarbineRifle (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/mauser/mauser.md3"
@@ -1695,7 +1637,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*
 	weapon_garandRifle (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1722,7 +1663,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0}
 	},
-
 	/*
 	weapon_garandRifleScope (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1749,7 +1689,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0}
 	},
-
 	/*QUAKED weapon_fg42 (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/fg42/fg42.md3"
@@ -1775,7 +1714,6 @@ gitem_t bg_itemlist[] =
 		"",                  // sounds
 //      {0,0,0,0}
 	},
-
 	/*QUAKED weapon_fg42scope (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/fg42/fg42.md3"
@@ -1799,7 +1737,6 @@ gitem_t bg_itemlist[] =
 		"",                          // sounds
 //      {0,0,0,0}
 	},
-
 	/*
 	weapon_mortar (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1824,7 +1761,6 @@ gitem_t bg_itemlist[] =
 		"",                          // sounds
 //      {0,0,0,0}
 	},
-
 	{
 		"weapon_mortar_set",
 		"sound/misc/w_pkup.wav",
@@ -1844,7 +1780,6 @@ gitem_t bg_itemlist[] =
 		"",                          // sounds
 //      {0,0,0,0}
 	},
-
 	/*
 	weapon_landmine
 	*/
@@ -1869,7 +1804,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*
 	weapon_satchel (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	*/
@@ -1941,10 +1875,10 @@ gitem_t bg_itemlist[] =
 
 	{
 		"weapon_tripmine",
-		"sound/misc/w_pkup.wav",
+		"", // was "sound/misc/w_pkup.wav",
 		{
-			"models/multiplayer/dynamite/dynamite_3rd.md3",
-			"models/weapons2/dynamite/v_dynamite.md3",
+			0, // was"models/multiplayer/dynamite/dynamite_3rd.md3",
+			0, // was "models/weapons2/dynamite/v_dynamite.md3",
 			0
 		},
 
@@ -1956,7 +1890,7 @@ gitem_t bg_itemlist[] =
 		WP_TRIPMINE,
 		WP_TRIPMINE,
 		WP_TRIPMINE,
-		"models/multiplayer/dynamite/dynamite.md3 models/multiplayer/dynamite/dynamite_3rd.md3",
+		"", // was "models/multiplayer/dynamite/dynamite.md3 models/multiplayer/dynamite/dynamite_3rd.md3", // precache
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
@@ -2029,7 +1963,6 @@ gitem_t bg_itemlist[] =
 		"",                  // sounds
 //      {0,0,0,0}
 	},
-
 	/*QUAKED weapon_colt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/colt/colt.md3"
@@ -2055,8 +1988,6 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-
-// DHM - Nerve
 	/*
 	weapon_medic_heal
 	*/
@@ -2081,12 +2012,8 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-// dhm
-
-
 	/*QUAKED ammo_syringe (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: medic
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/syringe/syringe.md3
 	*/
@@ -2106,12 +2033,8 @@ gitem_t bg_itemlist[] =
 		"",                  // precache
 		"",                  // sounds
 	},
-
-
-
 	/*QUAKED ammo_smoke_grenade (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: engineer
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/smoke_grenade/smoke_grenade.md3"
 	*/
@@ -2131,10 +2054,8 @@ gitem_t bg_itemlist[] =
 		"",                  // precache
 		"",                  // sounds
 	},
-
 	/*QUAKED ammo_dynamite (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: engineer
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/dynamite/dynamite.md3"
 	*/
@@ -2154,11 +2075,8 @@ gitem_t bg_itemlist[] =
 		"",                  // precache
 		"",                  // sounds
 	},
-
-
 	/*QUAKED ammo_disguise (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: covertops
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/disguise/disguise.md3"
 	*/
@@ -2178,10 +2096,8 @@ gitem_t bg_itemlist[] =
 		"",                  // precache
 		"",                  // sounds
 	},
-
 	/*QUAKED ammo_airstrike (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/airstrike/airstrike.md3"
 	*/
@@ -2201,10 +2117,8 @@ gitem_t bg_itemlist[] =
 		"",                  // precache
 		"",                  // sounds
 	},
-
 	/*QUAKED ammo_landmine (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/landmine/landmine.md3"
 	*/
@@ -2224,10 +2138,8 @@ gitem_t bg_itemlist[] =
 		"",                  // precache
 		"",                  // sounds
 	},
-
 	/*QUAKED ammo_satchel_charge (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/satchel/satchel.md3"
 	*/
@@ -2252,11 +2164,8 @@ gitem_t bg_itemlist[] =
 	// AMMO ITEMS
 	//
 
-
-
 	/*QUAKED ammo_9mm_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Luger pistol, MP40 machinegun
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am9mm_s.md3"
 	*/
@@ -2279,7 +2188,6 @@ gitem_t bg_itemlist[] =
 	},
 	/*QUAKED ammo_9mm (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Luger pistol, MP40 machinegun
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am9mm_m.md3"
 	*/
@@ -2302,7 +2210,6 @@ gitem_t bg_itemlist[] =
 	},
 	/*QUAKED ammo_9mm_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Luger pistol, MP40 machinegun
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am9mm_l.md3"
 	*/
@@ -2323,11 +2230,8 @@ gitem_t bg_itemlist[] =
 		"",                  // sounds
 //      {96,64,48,48}
 	},
-
-
 	/*QUAKED ammo_45cal_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am45cal_s.md3"
 	*/
@@ -2350,7 +2254,6 @@ gitem_t bg_itemlist[] =
 	},
 	/*QUAKED ammo_45cal (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am45cal_m.md3"
 	*/
@@ -2373,7 +2276,6 @@ gitem_t bg_itemlist[] =
 	},
 	/*QUAKED ammo_45cal_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am45cal_l.md3"
 	*/
@@ -2397,7 +2299,6 @@ gitem_t bg_itemlist[] =
 
 	/*QUAKED ammo_30cal_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am30cal_s.md3"
 	*/
@@ -2420,7 +2321,6 @@ gitem_t bg_itemlist[] =
 	},
 	/*QUAKED ammo_30cal (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am30cal_m.md3"
 	*/
@@ -2443,7 +2343,6 @@ gitem_t bg_itemlist[] =
 	},
 	/*QUAKED ammo_30cal_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
-
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am30cal_l.md3"
 	*/
@@ -2465,11 +2364,9 @@ gitem_t bg_itemlist[] =
 //      {10,10,10,5}
 	},
 
-
 	//
 	// POWERUP ITEMS
 	//
-
 
 	/*QUAKED team_CTF_redflag (1 0 0) (-16 -16 -16) (16 16 16)
 	Only in CTF games
@@ -2496,7 +2393,6 @@ gitem_t bg_itemlist[] =
 		"",  // sounds
 //      {0,0,0,0,0}
 	},
-
 	/*QUAKED team_CTF_blueflag (0 0 1) (-16 -16 -16) (16 16 16)
 	Only in CTF games
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -2527,7 +2423,6 @@ gitem_t bg_itemlist[] =
 
 	/* QUAKED key_1 (1 1 0) (-8 -8 -8) (8 8 8) SUSPENDED SPIN - RESPAWN
 	key 1
-
 	pickup sound : "sound/misc/w_pkup.wav"
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/xp_key/key.md3"
@@ -2558,7 +2453,6 @@ gitem_t bg_itemlist[] =
 	// end of list marker
 	{ NULL }
 };
-// END JOSEPH
 
 int bg_numItems = sizeof(bg_itemlist) / sizeof(bg_itemlist[0]) - 1;
 
@@ -2580,10 +2474,8 @@ gitem_t *BG_FindItemForHoldable(holdable_t pw)
 	}
 
 //  Com_Error( ERR_DROP, "HoldableItem not found" );
-
 	return NULL;
 }
-
 
 /*
 ===============
@@ -2607,10 +2499,7 @@ gitem_t *BG_FindItemForWeapon(weapon_t weapon)
 	return NULL;
 }
 
-//----(SA) added
-
 #define DEATHMATCH_SHARED_AMMO 0
-
 
 /*
 ==============
@@ -2631,8 +2520,6 @@ weapon_t BG_FindClipForWeapon(weapon_t weapon)
 
 	return 0;
 }
-
-
 
 /*
 ==============
@@ -2776,7 +2663,6 @@ BG_AkimboForSideArm
     }
 }*/
 
-
 //----(SA) Added keys
 /*
 ==============
@@ -2800,10 +2686,7 @@ BG_FindItemForKey
     Com_Error( ERR_DROP, "Key %d not found\n", k );
     return NULL;
 }*/
-//----(SA) end
 
-
-//----(SA) added
 /*
 ==============
 BG_FindItemForAmmo
@@ -2823,8 +2706,6 @@ gitem_t *BG_FindItemForAmmo(int ammo)
 	Com_Error(ERR_DROP, "Item not found for ammo: %d\n", ammo);
 	return NULL;
 }
-//----(SA) end
-
 
 /*
 ===============
@@ -2860,7 +2741,6 @@ gitem_t *BG_FindItemForClassName(const char *className)
 
 	return NULL;
 }
-
 
 // DHM - Nerve :: returns qtrue if a weapon is indeed used in multiplayer
 // Gordon: FIXME: er, we shouldnt really need this, just remove all the weapons we dont actually want :)
@@ -2947,7 +2827,6 @@ qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime
 
 	return qtrue;
 }
-
 
 /*
 =================================
@@ -3139,7 +3018,6 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 BG_CanUseWeapon: can a player of the specified team and class use this weapon?
 extracted and adapted from Bot_GetWeaponForClassAndTeam.
 ================
-- added by xkan, 01/02/03
 */
 qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon)
 {
@@ -3262,6 +3140,7 @@ qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon)
 }
 
 #define AMMOFORWEAP BG_FindAmmoForWeapon(item->giTag)
+
 /*
 ================
 BG_CanItemBeGrabbed
@@ -3321,7 +3200,6 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 		return qtrue;
 
 	case IT_TEAM: // team items, such as flags
-
 		// density tracks how many uses left
 		if ((ent->density < 1) || (((ps->persistant[PERS_TEAM] == TEAM_AXIS) ? ps->powerups[PW_BLUEFLAG] : ps->powerups[PW_REDFLAG]) != 0))
 		{
@@ -3352,7 +3230,6 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 		}
 
 		return qfalse;
-
 
 	case IT_HOLDABLE:
 		return qtrue;
@@ -3387,7 +3264,7 @@ void BG_CalculateSpline_r(splinePath_t *spline, vec3_t out1, vec3_t out2, float 
 	if (!spline->next)
 	{
 		return;
-//      Com_Error( ERR_DROP, "Spline (%s) with no target referenced\n", spline->point.name );
+		//      Com_Error( ERR_DROP, "Spline (%s) with no target referenced\n", spline->point.name );
 	}
 	VectorCopy(spline->next->point.origin, points[i + 1]);
 
@@ -3418,7 +3295,7 @@ qboolean BG_TraverseSpline(float *deltaTime, splinePath_t **pSpline)
 		if (!(*pSpline)->next || !(*pSpline)->next->length)
 		{
 			return qfalse;
-//          Com_Error( ERR_DROP, "Spline path end passed (%s)\n", (*pSpline)->point.name );
+			//          Com_Error( ERR_DROP, "Spline path end passed (%s)\n", (*pSpline)->point.name );
 		}
 
 		(*pSpline) = (*pSpline)->next;
@@ -3432,7 +3309,7 @@ qboolean BG_TraverseSpline(float *deltaTime, splinePath_t **pSpline)
 		if (!(*pSpline)->prev || !(*pSpline)->prev->length)
 		{
 			return qfalse;
-//          Com_Error( ERR_DROP, "Spline path end passed (%s)\n", (*pSpline)->point.name );
+			//          Com_Error( ERR_DROP, "Spline path end passed (%s)\n", (*pSpline)->point.name );
 		}
 
 		(*pSpline)   = (*pSpline)->prev;
@@ -3660,7 +3537,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 	{
 	case TR_STATIONARY:
 	case TR_INTERPOLATE:
-	case TR_GRAVITY_PAUSED: //----(SA)
+	case TR_GRAVITY_PAUSED:
 		VectorCopy(tr->trBase, result);
 		break;
 	case TR_LINEAR:
@@ -3672,7 +3549,6 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 		phase     = sin(deltaTime * M_PI * 2);
 		VectorMA(tr->trBase, phase, tr->trDelta, result);
 		break;
-//----(SA)  removed
 	case TR_LINEAR_STOP:
 		if (atTime > tr->trTime + tr->trDuration)
 		{
@@ -3690,20 +3566,16 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 		VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
 		result[2] -= 0.5 * DEFAULT_GRAVITY * deltaTime * deltaTime;     // FIXME: local gravity...
 		break;
-	// Ridah
 	case TR_GRAVITY_LOW:
 		deltaTime = (atTime - tr->trTime) * 0.001;      // milliseconds to seconds
 		VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
 		result[2] -= 0.5 * (DEFAULT_GRAVITY * 0.3) * deltaTime * deltaTime;       // FIXME: local gravity...
 		break;
-	// done.
-//----(SA)
 	case TR_GRAVITY_FLOAT:
 		deltaTime = (atTime - tr->trTime) * 0.001;      // milliseconds to seconds
 		VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
 		result[2] -= 0.5 * (DEFAULT_GRAVITY * 0.2) * deltaTime;
 		break;
-//----(SA)  end
 	// RF, acceleration
 	case TR_ACCELERATE:     // trDelta is the ultimate speed
 		if (atTime > tr->trTime + tr->trDuration)
@@ -3773,7 +3645,6 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 
 			if (tr->trBase[0])
 			{
-//              int pos = 0;
 				vec3_t       result2;
 				splinePath_t *pSp2 = pSpline;
 
@@ -3781,7 +3652,6 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 
 				if (BG_TraverseSpline(&deltaTime2, &pSp2))
 				{
-
 					VectorSubtract(vec[1], vec[0], result);
 					VectorMA(vec[0], deltaTime, result, result);
 
@@ -3920,7 +3790,6 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 			{
 				vectoangles(pSpline->segments[pos].v_norm, result);
 			}
-
 		}
 		else
 		{
@@ -3946,7 +3815,6 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 		break;
 	}
 }
-
 
 /*
 ================
@@ -3975,7 +3843,6 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 		phase    *= 0.5;
 		VectorScale(tr->trDelta, phase, result);
 		break;
-//----(SA)  removed
 	case TR_LINEAR_STOP:
 		if (atTime > tr->trTime + tr->trDuration)
 		{
@@ -3989,20 +3856,16 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 		VectorCopy(tr->trDelta, result);
 		result[2] -= DEFAULT_GRAVITY * deltaTime;       // FIXME: local gravity...
 		break;
-	// Ridah
 	case TR_GRAVITY_LOW:
 		deltaTime = (atTime - tr->trTime) * 0.001;      // milliseconds to seconds
 		VectorCopy(tr->trDelta, result);
 		result[2] -= (DEFAULT_GRAVITY * 0.3) * deltaTime;         // FIXME: local gravity...
 		break;
-	// done.
-//----(SA)
 	case TR_GRAVITY_FLOAT:
 		deltaTime = (atTime - tr->trTime) * 0.001;      // milliseconds to seconds
 		VectorCopy(tr->trDelta, result);
 		result[2] -= (DEFAULT_GRAVITY * 0.2) * deltaTime;
 		break;
-//----(SA)  end
 	// RF, acceleration
 	case TR_ACCELERATE: // trDelta is eventual speed
 		if (atTime > tr->trTime + tr->trDuration)
@@ -4094,7 +3957,6 @@ void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out)
 
 	VectorCopy(ndir, out);
 }
-
 
 char *eventnames[] =
 {
@@ -4358,7 +4220,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 		s->eFlags &= ~EF_DEAD;
 	}
 
-// from MP
+	// from MP
 	if (ps->externalEvent)
 	{
 		s->event     = ps->externalEvent;
@@ -4377,7 +4239,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 		s->eventParm = ps->eventParms[seq];
 		ps->entityEventSequence++;
 	}
-// end
+
 	// Ridah, now using a circular list of events for all entities
 	// add any new events that have been added to the playerState_t
 	// (possibly overwriting entityState_t events)
@@ -4401,10 +4263,10 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 		}
 	}
 
-	s->nextWeapon = ps->nextWeapon; // Ridah
+	s->nextWeapon = ps->nextWeapon;
 //  s->loopSound = ps->loopSound;
 	s->teamNum = ps->teamNum;
-	s->aiState = ps->aiState;       // xkan, 1/10/2003
+	s->aiState = ps->aiState;
 }
 
 /*
@@ -4522,9 +4384,9 @@ void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s,
 		}
 	}
 
-	s->nextWeapon = ps->nextWeapon; // Ridah
+	s->nextWeapon = ps->nextWeapon;
 	s->teamNum    = ps->teamNum;
-	s->aiState    = ps->aiState;    // xkan, 1/10/2003
+	s->aiState    = ps->aiState;
 }
 
 // Gordon: some weapons are duplicated for code puposes.... just want to treat them as a single
@@ -4650,9 +4512,6 @@ const char *rankNames_Allies[NUM_EXPERIENCE_LEVELS] =
 	"Lieutenant General",
 	"General",
 };
-
-
-
 
 const char *miniRankNames_Axis[NUM_EXPERIENCE_LEVELS] =
 {
@@ -5046,8 +4905,6 @@ void BG_RotatePoint(vec3_t point, const vec3_t matrix[3])
 	point[2] = DotProduct(matrix[2], tvec);
 }
 
-
-
 /*
 ================
 BG_AdjustAAGunMuzzleForBarrel
@@ -5246,6 +5103,7 @@ qboolean PC_Int_Parse(int handle, int *i)
 }
 
 #ifdef GAMEDLL
+
 /*
 =================
 PC_String_Parse
@@ -5348,10 +5206,10 @@ const weap_ws_t aWeaponInfo[WS_MAX] =
 	{ qtrue,  "TMPS", "Thompson"  },      // 4
 	{ qtrue,  "STEN", "Sten"      },      // 5
 	{ qtrue,  "FG42", "FG-42"     },      // 6
-	{ qtrue,  "PNZR", "Panzer"    },  // 7
+	{ qtrue,  "PNZR", "Panzer"    },      // 7
 	{ qtrue,  "FLAM", "F.Thrower" },      // 8
 	{ qfalse, "GRND", "Grenade"   },      // 9
-	{ qfalse, "MRTR", "Mortar"    },  // 10
+	{ qfalse, "MRTR", "Mortar"    },      // 10
 	{ qfalse, "DYNA", "Dynamite"  },      // 11
 	{ qfalse, "ARST", "Airstrike" },      // 12
 	{ qfalse, "ARTY", "Artillery" },      // 13
@@ -5361,7 +5219,7 @@ const weap_ws_t aWeaponInfo[WS_MAX] =
 	{ qfalse, "GRLN", "G.Launchr" },      // 17
 	{ qfalse, "LNMN", "Landmine"  },      // 18
 	{ qtrue,  "MG42", "MG-42 Gun" },      // 19
-	{ qtrue,  "GARN", "Garand"    },  // 20
+	{ qtrue,  "GARN", "Garand"    },      // 20
 	{ qtrue,  "K-43", "K43 Rifle" }       // 21
 };
 
@@ -5387,7 +5245,6 @@ int BG_simpleWeaponState(int ws)
 
 	return(WSTATE_IDLE);
 }
-
 
 // Multiview: Reduce hint info to 2 bits.  However, we can really
 // have up to 8 values, as some hints will have a 0 value for
@@ -5428,7 +5285,6 @@ int BG_simpleHintsCollapse(int hint, int val)
 	return(0);
 }
 
-
 // Multiview: Expand the hints.  Because we map a couple hints
 // into a single value, we can't replicate the proper hint back
 // in all cases.
@@ -5468,7 +5324,6 @@ int BG_drawStrlen(const char *str)
 	}
 	return(cnt);
 }
-
 
 // Copies a color string, with limit of real chars to print
 //      in = reference buffer w/color
