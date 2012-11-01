@@ -74,7 +74,6 @@ void SP_info_player_deathmatch(gentity_t *ent)
 		VectorSubtract(ent->enemy->s.origin, ent->s.origin, dir);
 		vectoangles(dir, ent->s.angles);
 	}
-
 }
 
 /*QUAKED info_player_checkpoint (1 0 0) (-16 -16 -24) (16 16 32) a b c d
@@ -408,7 +407,7 @@ void CopyToBodyQue(gentity_t *ent)
 	level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
 
 	// Gordon: um, what on earth was this here for?
-//	trap_UnlinkEntity (body);
+	//	trap_UnlinkEntity (body);
 
 	body->s        = ent->s;
 	body->s.eFlags = EF_DEAD;       // clear EF_TALK, etc
@@ -443,7 +442,6 @@ void CopyToBodyQue(gentity_t *ent)
 		body->s.events[i] = 0;
 	body->s.eventSequence = 0;
 
-	// DHM - Nerve
 	// change the animation to the last-frame only, so the sequence
 	// doesn't repeat anew for the body
 	switch (body->s.legsAnim & ~ANIM_TOGGLEBIT)
@@ -1511,6 +1509,7 @@ void ClientUserinfoChanged(int clientNum)
 	if (!Info_Validate(userinfo))
 	{
 		Q_strncpyz(userinfo, "\\name\\badinfo", sizeof(userinfo));
+		trap_DropClient(clientNum, "Invalid userinfo");
 	}
 
 #ifndef DEBUG_STATS
@@ -1668,7 +1667,6 @@ void ClientUserinfoChanged(int clientNum)
 	G_LogPrintf("ClientUserinfoChanged: %i %s\n", clientNum, s);
 	G_DPrintf("ClientUserinfoChanged: %i :: %s\n", clientNum, s);
 }
-
 
 /*
 ===========
@@ -1998,7 +1996,6 @@ void ClientBegin(int clientNum)
 			}
 		}
 	}
-
 
 	// DHM - Nerve :: Start players in limbo mode if they change teams during the match
 	if (client->sess.sessionTeam != TEAM_SPECTATOR && (level.time - level.startTime > FRAMETIME * GAME_INIT_FRAMES))
