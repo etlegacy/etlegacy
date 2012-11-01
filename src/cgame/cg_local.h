@@ -1553,7 +1553,6 @@ typedef struct
 	sfxHandle_t buildDecayedSound;
 
 	sfxHandle_t sndLimboSelect;
-	sfxHandle_t sndLimboFocus;
 	sfxHandle_t sndLimboFilter;
 	sfxHandle_t sndLimboCancel;
 

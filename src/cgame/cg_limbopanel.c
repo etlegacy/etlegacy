@@ -36,7 +36,6 @@
 #define SOUNDEVENT(sound) trap_S_StartLocalSound(sound, CHAN_LOCAL_SOUND)
 
 #define SOUND_SELECT    SOUNDEVENT(cgs.media.sndLimboSelect)
-#define SOUND_FOCUS     SOUNDEVENT(cgs.media.sndLimboFocus)
 #define SOUND_FILTER    SOUNDEVENT(cgs.media.sndLimboFilter)
 #define SOUND_CANCEL    SOUNDEVENT(cgs.media.sndLimboCancel)
 
@@ -2243,8 +2242,6 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 		{
 			if (button->data[7] != 0)
 			{
-				SOUND_FOCUS;
-
 				button->data[7] = 0;
 			}
 		}
@@ -2262,8 +2259,6 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 				{
 					if (button->data[7] != x)
 					{
-						SOUND_FOCUS;
-
 						button->data[7] = x;
 					}
 				}
@@ -2822,7 +2817,6 @@ qboolean CG_LimboPanel_Draw(void)
 	if (hilight && hilight != lastHighlight)
 	{
 		lastHighlight = hilight;
-//      SOUND_FOCUS;
 	}
 
 	if (cg.limboEndCinematicTime > cg.time)
