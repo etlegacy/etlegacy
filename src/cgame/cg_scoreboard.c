@@ -106,26 +106,14 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		else if (atoi(buf))
 		{
 			str = "ALLIES";
-//          shader = "ui/assets/portraits/allies_win";
 			flagshader = "ui/assets/portraits/allies_win_flag.tga";
 			nameshader = "ui/assets/portraits/text_allies.tga";
-
-			/*          if ( !cg.latchVictorySound ) {
-			                cg.latchVictorySound = qtrue;
-			                trap_S_StartLocalSound( trap_S_RegisterSound( "sound/music/allies_win.wav", qtrue ), CHAN_LOCAL_SOUND );    // FIXME: stream
-			            }*/
 		}
 		else
 		{
 			str = "AXIS";
-//          shader = "ui/assets/portraits/axis_win";
 			flagshader = "ui/assets/portraits/axis_win_flag.tga";
 			nameshader = "ui/assets/portraits/text_axis.tga";
-
-			/*          if ( !cg.latchVictorySound ) {
-			                cg.latchVictorySound = qtrue;
-			                trap_S_StartLocalSound( trap_S_RegisterSound( "sound/music/axis_win.wav", qtrue ), CHAN_LOCAL_SOUND );  // FIXME: stream
-			            }*/
 		}
 
 		y += SMALLCHAR_HEIGHT * ((rows - 2) / 2);
@@ -278,7 +266,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	tempx = x;
 
-	// DHM - Nerve
 	VectorSet(hcolor, 1, 1, 1);
 	hcolor[3] = fade;
 
@@ -514,7 +501,6 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team)
 	{
 		CG_DrawStringExt(tempx, y, CG_TranslateString(BG_ShortClassnameForNumber(score->playerClass)), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
-//      CG_DrawSmallString( tempx, y, CG_TranslateString( s ), fade );
 	}
 	tempx += INFO_CLASS_WIDTH;
 
@@ -605,7 +591,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
 	CG_Text_Paint_Ext(320 - w * 0.5f, y + 15, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
-//  CG_DrawSmallString( 320 - w/2, ( y + INFO_LINE_HEIGHT / 2 ) - SMALLCHAR_HEIGHT / 2, s, fade );
+
 	return y + INFO_LINE_HEIGHT + 6;
 }
 
@@ -820,8 +806,10 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 }
 
 /*
- * Draw the normal in-game scoreboard
- */
+=================
+Draw the normal in-game scoreboard
+=================
+*/
 qboolean CG_DrawScoreboard(void)
 {
 	int   x = 0, y = 0, x_right;
