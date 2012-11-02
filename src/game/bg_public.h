@@ -49,14 +49,13 @@
 #define _attribute(x)
 #endif
 
-
 #define SPRINTTIME 20000.0f
 
 #define DEBUG_BOT_RETREATBEHAVIOR 1
 
 #define DEFAULT_GRAVITY     800
-#define FORCE_LIMBO_HEALTH  -75 // JPW NERVE
-#define GIB_HEALTH          -175 // JPW NERVE
+#define FORCE_LIMBO_HEALTH  -75
+#define GIB_HEALTH          -175
 #define ARMOR_PROTECTION    0.66
 
 #define HOLDBREATHTIME      12000
@@ -66,9 +65,6 @@
 #define MAX_FIRETEAM_MEMBERS    6
 
 #define RANK_TIED_FLAG      0x4000
-
-//#define DEFAULT_SHOTGUN_SPREAD	700
-//#define DEFAULT_SHOTGUN_COUNT	11
 
 //#define	ITEM_RADIUS			15		// item sizes are needed for client side pickup detection
 #define ITEM_RADIUS     10 // Rafael changed the radius so that the items would fit in the 3 new containers
@@ -81,24 +77,11 @@
 
 #define FLAMETHROWER_RANGE  2500        // DHM - Nerve :: multiplayer range, was 850 in SP
 
-//#define ZOMBIE_FLAME_RADIUS 300
-
-// RF, AI effects
-//#define	PORTAL_ZOMBIE_SPAWNTIME		3000
-//#define	PORTAL_FEMZOMBIE_SPAWNTIME	3000
-
 #define SCORE_NOT_PRESENT   -9999   // for the CS_SCORES[12] when only one player is present
 
 #define VOTE_TIME           30000   // 30 seconds before vote times out
 
-// Ridah, disabled these
-//#define	MINS_Z				-24
-//#define	DEFAULT_VIEWHEIGHT	26
-//#define CROUCH_VIEWHEIGHT	12
-// done.
-
-// Rafael
-// note to self: Corky test
+// Rafael note to self: Corky test
 //#define	DEFAULT_VIEWHEIGHT	26
 //#define CROUCH_VIEWHEIGHT	12
 #define DEFAULT_VIEWHEIGHT  40
@@ -166,48 +149,6 @@ typedef enum
 
 } SelectBuddyFlag;
 
-// START - TAT 10/21/2002
-// New icon based bot action command system
-typedef enum
-{
-	BOT_ACTION_ATTACK = 0,
-	BOT_ACTION_COVER,           // 1
-	BOT_ACTION_MOUNTGUN,        // 2
-	BOT_ACTION_OPENDOOR,        // 3
-	BOT_ACTION_USEDYNAMITE,     // 4
-	BOT_ACTION_DISARM,          // 5
-	BOT_ACTION_CONSTRUCT,       // 6
-	BOT_ACTION_REPAIR,          // 7
-	BOT_ACTION_REVIVE,          // 8
-	BOT_ACTION_GETDISGUISE,     // 9
-	BOT_ACTION_HEAL,            // 10
-	BOT_ACTION_AMMO,            // 11
-	BOT_ACTION_GRENADELAUNCH,   // 12
-	BOT_ACTION_PICKUPITEM,      // 13
-	BOT_ACTION_PANZERFAUST,     // 14
-	BOT_ACTION_FLAMETHROW,      // 15
-	BOT_ACTION_MG42,            // 16
-	BOT_ACTION_MOUNTEDATTACK,   // 17		-- attack when mounted on mg42
-	BOT_ACTION_KNIFEATTACK,     // 18
-	BOT_ACTION_LOCKPICK,        // 19
-
-	BOT_ACTION_MAXENTITY,
-
-	// None of these need an entity...
-	BOT_ACTION_RECON = BOT_ACTION_MAXENTITY,    // 20
-	BOT_ACTION_SMOKEBOMB,       // 21
-	BOT_ACTION_FINDMINES,       // 22
-	BOT_ACTION_PLANTMINE,       // 23
-	BOT_ACTION_ARTILLERY,       // 24
-	BOT_ACTION_AIRSTRIKE,       // 25
-	BOT_ACTION_MOVETOLOC,       // 26
-
-	// NOTE: if this gets bigger than 32 items, need to make botMenuIcons bigger
-	BOT_ACTION_MAX
-} botAction_t;
-// END - TAT 10/21/2002
-
-// RF
 #define MAX_TAGCONNECTS     64
 
 // (SA) zoom sway values
@@ -219,10 +160,9 @@ typedef enum
 #define ZOOM_YAW_FREQUENCY          0.12f
 #define ZOOM_YAW_MIN_AMPLITUDE      0.2f
 
-// DHM - Nerve
+
 #define MAX_OBJECTIVES      8
 #define MAX_OID_TRIGGERS    18
-// dhm
 
 #define MAX_GAMETYPES 16
 
@@ -243,11 +183,9 @@ typedef struct
 	qhandle_t levelShot;
 	qboolean active;
 
-	// NERVE - SMF
 	int Timelimit;
 	int AxisRespawnTime;
 	int AlliedRespawnTime;
-	// -NERVE - SMF
 
 	vec2_t mappos;
 
@@ -260,10 +198,8 @@ typedef struct
 // rain - 128 -> 512, campaigns are commonplace
 #define MAX_CAMPAIGNS           512
 
-// START Mad Doc - TDF
 // changed this from 6 to 10
 #define MAX_MAPS_PER_CAMPAIGN   10
-// END Mad Doc - TDF
 
 #define CPS_IDENT   (('S' << 24) + ('P' << 16) + ('C' << 8) + 'I')
 #define CPS_VERSION 1
@@ -345,10 +281,8 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 
 #define MAX_CHARACTERS  16
 
-//
 // config strings are a general means of communicating variable length strings
 // from the server to all connected clients.
-//
 
 // CS_SERVERINFO and CS_SYSTEMINFO are defined in q_shared.h
 #define CS_MUSIC                        2
@@ -371,8 +305,8 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_FOGVARS                      18      //----(SA) used for saving the current state/settings of the fog
 #define CS_SKYBOXORG                    19      // this is where we should view the skybox from
 
-#define CS_TARGETEFFECT                 20      //----(SA)
-#define CS_WOLFINFO                     21      // NERVE - SMF
+#define CS_TARGETEFFECT                 20
+#define CS_WOLFINFO                     21
 #define CS_FIRSTBLOOD                   22      // Team that has first blood
 #define CS_ROUNDSCORES1                 23      // Axis round wins
 #define CS_ROUNDSCORES2                 24      // Allied round wins
@@ -388,7 +322,7 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_GLOBALFOGVARS                33
 #define CS_AXIS_MAPS_XP                 34
 #define CS_ALLIED_MAPS_XP               35
-#define CS_INTERMISSION_START_TIME      36      //
+#define CS_INTERMISSION_START_TIME      36
 #define CS_ENDGAME_STATS                37
 #define CS_CHARGETIMES                  38
 #define CS_FILTERCAMS                   39
@@ -415,8 +349,6 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #error overflow: (CS_MAX) > MAX_CONFIGSTRINGS
 #endif
 
-//#ifndef GAMETYPES
-//#define GAMETYPES
 typedef enum
 {
 	GT_SINGLE_PLAYER,   // obsolete
@@ -462,7 +394,7 @@ typedef enum
 	WEAPON_RELAXING,    // weapon is ready, but since not firing, it's on it's way to a "relaxed" stance
 	WEAPON_FIRING,
 	WEAPON_FIRINGALT,
-	WEAPON_RELOADING,   //----(SA)	added
+	WEAPON_RELOADING,
 } weaponstate_t;
 
 typedef enum
@@ -544,13 +476,12 @@ typedef struct
 	qboolean noWeapClips;               // if the game is setup for no weapon clips by the server
 	qboolean gauntletHit;           // true if a gauntlet attack would actually hit something
 
-	// NERVE - SMF (in)
 	int gametype;
 	int ltChargeTime;
 	int soldierChargeTime;
 	int engineerChargeTime;
 	int medicChargeTime;
-	// -NERVE - SMF
+
 	int covertopsChargeTime;
 
 	// results (out)
@@ -594,10 +525,8 @@ int Pmove(pmove_t *pmove);
 
 #define NUM_PLAYER_CLASSES      5
 
-// JPW NERVE
 #define MAX_WEAPS_IN_BANK_MP    12
 #define MAX_WEAP_BANKS_MP       10
-// jpw
 
 // player_state->stats[] indexes
 typedef enum
@@ -693,10 +622,10 @@ typedef enum
 
 	// (SA) for Wolf
 	PW_INVULNERABLE,
-	PW_FIRE,            //----(SA)
-	PW_ELECTRIC,        //----(SA)
-	PW_BREATHER,        //----(SA)
-	PW_NOFATIGUE,       //----(SA)
+	PW_FIRE,
+	PW_ELECTRIC,
+	PW_BREATHER,
+	PW_NOFATIGUE,
 
 	PW_REDFLAG,
 	PW_BLUEFLAG,
@@ -756,9 +685,9 @@ typedef enum
 	HI_ELECTRIC,
 	HI_FIRE,
 	HI_STAMINA,
-	HI_BOOK1,   //----(SA)	added
-	HI_BOOK2,   //----(SA)	added
-	HI_BOOK3,   //----(SA)	added
+	HI_BOOK1,
+	HI_BOOK2,
+	HI_BOOK3,
 	HI_11,
 	HI_12,
 	HI_13,
@@ -767,20 +696,6 @@ typedef enum
 
 	HI_NUM_HOLDABLE
 } holdable_t;
-
-#ifdef KITS
-// START Mad Doc - TDF
-// for kits dropped by allied bots in SP
-typeef enum
-{
-	KIT_SOLDIER,
-	KIT_MEDIC,
-	KIT_ENGINEER,
-	KIT_LT,
-	KIT_COVERTOPS
-} kit_t;
-// END Mad Doc - TDF
-#endif
 
 // NOTE: we can only use up to 15 in the client-server stream
 // SA NOTE: should be 31 now (I added 1 bit in msg.c)
@@ -852,9 +767,7 @@ typedef enum
 
 // JPW NERVE moved from cg_weapons (now used in g_active) for drop command, actual array in bg_misc.c
 extern int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP];
-// jpw
 
-// TAT 10/4/2002
 //		Using one unified list for which weapons can received ammo
 //		This is used both by the ammo pack code and by the bot code to determine if reloads are needed
 extern int reloadableWeapons[];
@@ -885,6 +798,13 @@ typedef enum
 	SK_NUM_SKILLS
 } skillType_t;
 
+// skill name 'shortcuts'
+#define SK_SOLDIER		SK_HEAVY_WEAPONS
+#define SK_MEDIC		SK_FIRST_AID
+#define SK_ENGINEER		SK_EXPLOSIVES_AND_CONSTRUCTION
+#define SK_FIELDOPS		SK_SIGNALS
+#define SK_COVERTOPS	SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS
+
 extern const char *skillNames[SK_NUM_SKILLS];
 extern const char *skillNamesLine1[SK_NUM_SKILLS];
 extern const char *skillNamesLine2[SK_NUM_SKILLS];
@@ -906,33 +826,29 @@ typedef struct ammotable_s
 	int maxammo;            //
 	int uses;               //
 	int maxclip;            //
-	int defaultStartingAmmo;        // Mad Doc - TDF
-	int defaultStartingClip;        // Mad Doc - TDF
+	int defaultStartingAmmo;
+	int defaultStartingClip;
 	int reloadTime;         //
 	int fireDelayTime;      //
 	int nextShotTime;       //
-//----(SA)	added
+
 	int maxHeat;            // max active firing time before weapon 'overheats' (at which point the weapon will fail)
 	int coolRate;           // how fast the weapon cools down. (per second)
-//----(SA)	end
+
 	int mod;                // means of death
 } ammotable_t;
-
 
 // Lookup table to find ammo table entry
 extern ammotable_t *GetAmmoTableData(int ammoIndex);
 
 extern int weapAlts[];  // defined in bg_misc.c
 
-
-//----(SA)
 // for routines that need to check if a WP_ is </=/> a given set of weapons
 #define WP_BEGINSECONDARY   WP_GPG40
 #define WP_LASTSECONDARY    WP_SILENCED_COLT
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
-// TTimo
-// NOTE: what about WP_VENOM and other XP weapons?
+// TTimo NOTE: what about WP_VENOM and other XP weapons?
 // rain - #81 - added added akimbo weapons and deployed MG42
 #define IS_AUTORELOAD_WEAPON(weapon) \
     (   \
@@ -996,7 +912,7 @@ typedef enum
 	EV_WEAPONSWITCHED,
 	EV_EMPTYCLIP,
 	EV_FILL_CLIP,
-	EV_MG42_FIXED, // JPW NERVE
+	EV_MG42_FIXED,
 	EV_WEAP_OVERHEAT,
 	EV_CHANGE_WEAPON,
 	EV_CHANGE_WEAPON_2,
@@ -1024,7 +940,7 @@ typedef enum
 	EV_RAILTRAIL,
 	EV_VENOM,
 	EV_BULLET,              // otherEntity is the shooter
-	EV_LOSE_HAT,            //----(SA)
+	EV_LOSE_HAT,
 	EV_PAIN,
 	EV_CROUCH_PAIN,
 	EV_DEATH1,
@@ -1057,7 +973,7 @@ typedef enum
 	EV_SPIT_MISS,
 	EV_SHARD,
 	EV_JUNK,
-	EV_EMITTER, //----(SA)	added // generic particle emitter that uses client-side particle scripts
+	EV_EMITTER, //----(SA)	added - generic particle emitter that uses client-side particle scripts
 	EV_OILPARTICLES,
 	EV_OILSLICK,
 	EV_OILSLICKREMOVE,
@@ -1093,8 +1009,6 @@ typedef enum
 	EV_MAX_EVENTS   // just added as an 'endcap'
 } entity_event_t;
 
-
-// new (10/18/00)
 typedef enum
 {
 	BOTH_DEATH1,
@@ -1258,7 +1172,6 @@ typedef enum
 extern char *animStrings[];     // defined in bg_misc.c
 extern char *animStringsOld[];      // defined in bg_misc.c
 
-
 typedef enum
 {
 	WEAP_IDLE1,
@@ -1318,9 +1231,7 @@ typedef struct animation_s
 	int moveSpeed;
 	int animBlend;                  // take this long to blend to next anim
 
-	//
 	// derived
-	//
 	int duration;
 	int nameHash;
 	int flags;
@@ -1354,7 +1265,6 @@ typedef struct headAnimation_s
 	int firstFrame;
 	int numFrames;
 } headAnimation_t;
-// done.
 
 // flip the togglebit every time an animation
 // changes so a restart of the same anim can be detected
@@ -1433,7 +1343,7 @@ typedef enum
 	MOD_STEN,
 	MOD_GARAND,
 	MOD_SNOOPERSCOPE,
-	MOD_SILENCER,   //----(SA)
+	MOD_SILENCER,
 	MOD_FG42,
 	MOD_FG42SCOPE,
 	MOD_PANZERFAUST,
@@ -1441,7 +1351,6 @@ typedef enum
 	MOD_FLAMETHROWER,
 	MOD_GRENADE_PINEAPPLE,
 	MOD_CROSS,
-	// end
 
 	MOD_MAPMORTAR,
 	MOD_MAPMORTAR_SPLASH,
@@ -1450,10 +1359,10 @@ typedef enum
 	MOD_GRABBER,
 
 	MOD_DYNAMITE,
-	MOD_AIRSTRIKE, // JPW NERVE
-	MOD_SYRINGE,    // JPW NERVE
-	MOD_AMMO,   // JPW NERVE
-	MOD_ARTY,   // JPW NERVE
+	MOD_AIRSTRIKE,
+	MOD_SYRINGE,
+	MOD_AMMO,
+	MOD_ARTY,
 
 	MOD_WATER,
 	MOD_SLIME,
@@ -1494,7 +1403,6 @@ typedef enum
 
 	MOD_SMOKEGRENADE,
 
-	// RF
 	MOD_SWAP_PLACES,
 
 	// OSP -- keep these 2 entries last
@@ -1503,7 +1411,6 @@ typedef enum
 	MOD_NUM_MODS
 
 } meansOfDeath_t;
-
 
 //---------------------------------------------------------
 
@@ -1573,7 +1480,6 @@ qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon);
 
 qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum);
 
-
 // content masks
 #define MASK_ALL                (-1)
 #define MASK_SOLID              (CONTENTS_SOLID)
@@ -1585,9 +1491,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 #define MASK_SHOT               (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE)
 #define MASK_MISSILESHOT        (MASK_SHOT | CONTENTS_MISSILECLIP)
 
-//
 // entityState_t->eType
-//
 
 // cursorhints (stored in ent->s.dmgFlags since that's only used for players at the moment)
 typedef enum
@@ -1630,10 +1534,10 @@ typedef enum
 	HINT_PLYR_NEUTRAL,
 	HINT_PLYR_ENEMY,
 	HINT_PLYR_UNKNOWN,
-	HINT_BUILD,             // DHM - Nerve
-	HINT_DISARM,            // DHM - Nerve
-	HINT_REVIVE,            // DHM - Nerve
-	HINT_DYNAMITE,          // DHM - Nerve
+	HINT_BUILD,
+	HINT_DISARM,
+	HINT_REVIVE,
+	HINT_DYNAMITE,
 	HINT_CONSTRUCTIBLE,
 	HINT_UNIFORM,
 	HINT_LANDMINE,
@@ -1646,15 +1550,11 @@ typedef enum
 	HINT_NUM_HINTS
 } hintType_t;
 
-
-
 void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath);
 void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splineData);
 void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out);
 
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps);
-
-//void	BG_TouchJumpPad( playerState_t *ps, entityState_t *jumppad );
 
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean snap);
 void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s, int time, qboolean snap);
@@ -1905,9 +1805,8 @@ typedef struct
 //	int					clientModels[MAX_CLIENTS];		// so we know which model each client is using
 	animModelInfo_t modelInfo[MAX_ANIMSCRIPT_MODELS];
 	int clientConditions[MAX_CLIENTS][NUM_ANIM_CONDITIONS][2];
-	//
+
 	// pointers to functions from the owning module
-	//
 	// TTimo: constify the arg
 	int (*soundIndex)(const char *name);
 	void (*playSound)(int soundIndex, vec3_t org, int clientNum);
@@ -2043,7 +1942,6 @@ typedef struct bg_character_s
 
 /*
 ==============================================================
-
 SAVE
 
     12 -
@@ -2194,7 +2092,6 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill);
 void BG_InitLocations(vec2_t world_mins, vec2_t world_maxs);
 char *BG_GetLocationString(vec_t *pos);
 
-// START Mad Doc - TDF
 typedef struct botpool_x
 {
 	int num;
@@ -2202,8 +2099,6 @@ typedef struct botpool_x
 	int rank;
 	struct botpool_x *next;
 } botpool_t;
-
-// END Mad Doc - TDF
 
 #define MAX_FIRETEAMS       12
 
@@ -2323,15 +2218,12 @@ float BG_GetGroundHeightAtPoint(vec3_t pos);
 int BG_GetTracemapGroundFloor(void);
 int BG_GetTracemapGroundCeil(void);
 
-//
 // bg_animgroup.c
-//
+
 void BG_ClearAnimationPool(void);
 qboolean BG_R_RegisterAnimationGroup(const char *filename, animModelInfo_t *animModelInfo);
 
-//
 // bg_character.c
-//
 
 typedef struct bg_characterDef_s
 {
@@ -2353,9 +2245,8 @@ void BG_ClearCharacterPool(void);
 bg_character_t *BG_FindFreeCharacter(const char *characterFile);
 bg_character_t *BG_FindCharacter(const char *characterFile);
 
-//
 // bg_sscript.c
-//
+
 typedef enum
 {
 	S_LT_NOT_LOOPED,
@@ -2408,9 +2299,7 @@ qboolean BG_BBoxCollision(vec3_t min1, vec3_t max1, vec3_t min2, vec3_t max2);
 
 //#define VISIBLE_TRIGGERS
 
-//
 // bg_stats.c
-//
 
 typedef struct weap_ws_convert_s
 {

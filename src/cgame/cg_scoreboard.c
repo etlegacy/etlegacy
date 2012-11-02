@@ -236,6 +236,25 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	return y;
 }
 
+int SkillNumForClass( int classNum )
+{
+	switch( classNum )
+	{
+		case PC_SOLDIER:
+			return SK_SOLDIER;
+		case PC_MEDIC:
+			return SK_MEDIC;
+		case PC_ENGINEER:
+			return SK_ENGINEER;
+		case PC_FIELDOPS:
+			return SK_SIGNALS;
+		case PC_COVERTOPS:
+			return SK_COVERTOPS;
+		default:
+			return SK_BATTLE_SENSE;
+	}
+}
+
 static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float fade)
 {
 	int          maxchars, offset;
@@ -342,9 +361,10 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		return;
 	}
 	// OSP - allow MV clients see the class of its merged client's on the scoreboard
-	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || CG_mvMergedClientLocate(score->client))
+	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR
+			|| CG_mvMergedClientLocate(score->client))
 	{
-		CG_DrawSmallString(tempx, y, CG_TranslateString(BG_ShortClassnameForNumber(score->playerClass)), fade);
+		CG_DrawPic( tempx - 3 , y + 1, 14, 14, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 	}
 	tempx += INFO_CLASS_WIDTH;
 
@@ -394,10 +414,8 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	float        tempx;
 	vec4_t       hcolor;
 	clientInfo_t *ci;
-
-	// To draw medals
-	int  i, j;
-	char buf[64];
+	int          i, j; // To draw medals
+	char         buf[64]; // To draw medals
 
 	if (y + MINICHAR_HEIGHT >= 470)
 	{
@@ -498,9 +516,9 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		                 MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
 		return;
 	}
-	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team)
+	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
-		CG_DrawStringExt(tempx, y, CG_TranslateString(BG_ShortClassnameForNumber(score->playerClass)), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+		CG_DrawPic( tempx, y-2, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 	}
 	tempx += INFO_CLASS_WIDTH;
 
