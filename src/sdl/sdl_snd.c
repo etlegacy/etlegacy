@@ -179,6 +179,8 @@ static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
 	Com_Printf("  Freq:     %d\n", (int) spec->freq);
 	Com_Printf("  Samples:  %d\n", (int) spec->samples);
 	Com_Printf("  Channels: %d\n", (int) spec->channels);
+	Com_Printf("  Silence:  %d\n", (int) spec->silence);
+	Com_Printf("  Size:     %d\n", (int) spec->size);
 }
 
 /*
@@ -198,14 +200,11 @@ qboolean SNDDMA_Init(void)
 		return qtrue;
 	}
 
-	if (!s_sdlBits)
-	{
-		s_sdlBits     = Cvar_Get("s_sdlBits", "16", CVAR_ARCHIVE);
-		s_sdlSpeed    = Cvar_Get("s_sdlSpeed", "0", CVAR_ARCHIVE);
-		s_sdlChannels = Cvar_Get("s_sdlChannels", "2", CVAR_ARCHIVE);
-		s_sdlDevSamps = Cvar_Get("s_sdlDevSamps", "0", CVAR_ARCHIVE);
-		s_sdlMixSamps = Cvar_Get("s_sdlMixSamps", "0", CVAR_ARCHIVE);
-	}
+	s_sdlBits     = Cvar_Get("s_sdlBits", "16", CVAR_LATCH | CVAR_ARCHIVE);
+	s_sdlSpeed    = Cvar_Get("s_sdlSpeed", "22050", CVAR_LATCH | CVAR_ARCHIVE);
+	s_sdlChannels = Cvar_Get("s_sdlChannels", "2", CVAR_LATCH | CVAR_ARCHIVE);
+	s_sdlDevSamps = Cvar_Get("s_sdlDevSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
+	s_sdlMixSamps = Cvar_Get("s_sdlMixSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
 
 	Com_Printf("SDL_Init( SDL_INIT_AUDIO )... ");
 
