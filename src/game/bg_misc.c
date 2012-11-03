@@ -48,8 +48,6 @@ extern vmCvar_t ui_gameType;
 #define gametypeCvar ui_gameType
 #endif
 
-#define BG_IsSinglePlayerGame() (gametypeCvar.integer == GT_SINGLE_PLAYER) || (gametypeCvar.integer == GT_COOP)
-
 const char *skillNames[SK_NUM_SKILLS] =
 {
 	"Battle Sense",
@@ -135,8 +133,8 @@ int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 	{ 0,                   0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         },
 };
 
-//      Using one unified list for which weapons can received ammo
-//      This is used both by the ammo pack code and by the bot code to determine if reloads are needed
+// Using one unified list for which weapons can received ammo
+// This is used both by the ammo pack code and by the bot code to determine if reloads are needed
 int reloadableWeapons[] =
 {
 	WP_MP40,                WP_THOMPSON,             WP_STEN,        WP_GARAND,       WP_PANZERFAUST, WP_FLAMETHROWER,
@@ -163,9 +161,7 @@ int reloadableWeapons[] =
 // ammoWarning      -   amount we give the player a 'low on ammo' warning (just a HUD color change or something)
 // clipWarning      -   amount we give the player a 'low in clip' warning (just a HUD color change or something)
 // maxclip2         -   allow the player to (mod/powerup) upgrade clip size when aplicable (luger has 8 round standard clip and 32 round snail magazine, for ex.)
-//
-//
-//
+
 
 // Separate table for SP and MP allow us to make the ammo and med packs function differently and may allow use to balance
 // weapons separately for each game.
@@ -245,9 +241,9 @@ int weapAlts[] =
 	WP_NONE,            // 8 WP_THOMPSON
 	WP_NONE,            // 9 WP_GRENADE_PINEAPPLE
 	WP_NONE,            // 10 WP_STEN
-	WP_NONE,            // 11 WP_MEDIC_SYRINGE  // JPW NERVE
-	WP_NONE,            // 12 WP_AMMO       // JPW NERVE
-	WP_NONE,            // 13 WP_ARTY       // JPW NERVE
+	WP_NONE,            // 11 WP_MEDIC_SYRINGE
+	WP_NONE,            // 12 WP_AMMO
+	WP_NONE,            // 13 WP_ARTY
 
 	WP_LUGER,           // 14 WP_SILENCER   //----(SA)  was sp5
 	WP_NONE,            // 15 WP_DYNAMITE   //----(SA)  modified (not in rotation yet)
@@ -273,7 +269,7 @@ int weapAlts[] =
 	WP_FG42SCOPE,       // 33 WP_FG42
 	WP_NONE,            // 34 WP_DUMMY_MG42
 	WP_MORTAR_SET,      // 35 WP_MORTAR
-	WP_NONE,            // 36 WP_LOCKPICK Mad Doc - TDF
+	WP_NONE,            // 36 WP_LOCKPICK
 	WP_NONE,            // 37 WP_AKIMBO_COLT
 	WP_NONE,            // 38 WP_AKIMBO_LUGER
 
@@ -290,7 +286,6 @@ int weapAlts[] =
 	WP_MOBILE_MG42,     // 49 WP_MOBILE_MG42_SET
 };
 
-// new (10/18/00)
 char *animStrings[] =
 {
 	"BOTH_DEATH1",
@@ -446,114 +441,6 @@ char *animStrings[] =
 	"LEGS_EXTRA8",
 	"LEGS_EXTRA9",
 	"LEGS_EXTRA10",
-};
-
-// old
-char *animStringsOld[] =
-{
-	"BOTH_DEATH1",
-	"BOTH_DEAD1",
-	"BOTH_DEATH2",
-	"BOTH_DEAD2",
-	"BOTH_DEATH3",
-	"BOTH_DEAD3",
-
-	"BOTH_CLIMB",
-	"BOTH_CLIMB_DOWN",
-	"BOTH_CLIMB_DISMOUNT",
-
-	"BOTH_SALUTE",
-
-	"BOTH_PAIN1",
-	"BOTH_PAIN2",
-	"BOTH_PAIN3",
-	"BOTH_PAIN4",
-	"BOTH_PAIN5",
-	"BOTH_PAIN6",
-	"BOTH_PAIN7",
-	"BOTH_PAIN8",
-
-	"BOTH_EXTRA1",
-	"BOTH_EXTRA2",
-	"BOTH_EXTRA3",
-	"BOTH_EXTRA4",
-	"BOTH_EXTRA5",
-
-	"TORSO_GESTURE",
-	"TORSO_GESTURE2",
-	"TORSO_GESTURE3",
-	"TORSO_GESTURE4",
-
-	"TORSO_DROP",
-
-	"TORSO_RAISE",        // (low)
-	"TORSO_ATTACK",
-	"TORSO_STAND",
-	"TORSO_READY",
-	"TORSO_RELAX",
-
-	"TORSO_RAISE2",       // (high)
-	"TORSO_ATTACK2",
-	"TORSO_STAND2",
-	"TORSO_READY2",
-	"TORSO_RELAX2",
-
-	"TORSO_RAISE3",       // (pistol)
-	"TORSO_ATTACK3",
-	"TORSO_STAND3",
-	"TORSO_READY3",
-	"TORSO_RELAX3",
-
-	"TORSO_RAISE4",       // (shoulder)
-	"TORSO_ATTACK4",
-	"TORSO_STAND4",
-	"TORSO_READY4",
-	"TORSO_RELAX4",
-
-	"TORSO_RAISE5",       // (throw)
-	"TORSO_ATTACK5",
-	"TORSO_ATTACK5B",
-	"TORSO_STAND5",
-	"TORSO_READY5",
-	"TORSO_RELAX5",
-
-	"TORSO_RELOAD1",      // (low)
-	"TORSO_RELOAD2",      // (high)
-	"TORSO_RELOAD3",      // (pistol)
-	"TORSO_RELOAD4",      // (shoulder)
-
-	"TORSO_MG42",         // firing tripod mounted weapon animation
-
-	"TORSO_MOVE",         // torso anim to play while moving and not firing (swinging arms type thing)
-
-	"TORSO_EXTRA2",
-	"TORSO_EXTRA3",
-	"TORSO_EXTRA4",
-	"TORSO_EXTRA5",
-
-	"LEGS_WALKCR",
-	"LEGS_WALKCR_BACK",
-	"LEGS_WALK",
-	"LEGS_RUN",
-	"LEGS_BACK",
-	"LEGS_SWIM",
-
-	"LEGS_JUMP",
-	"LEGS_LAND",
-
-	"LEGS_IDLE",
-	"LEGS_IDLE2",
-	"LEGS_IDLECR",
-
-	"LEGS_TURN",
-
-	"LEGS_BOOT",          // kicking animation
-
-	"LEGS_EXTRA1",
-	"LEGS_EXTRA2",
-	"LEGS_EXTRA3",
-	"LEGS_EXTRA4",
-	"LEGS_EXTRA5",
 };
 
 /*QUAKED item_***** ( 0 0 0 ) (-16 -16 -16) (16 16 16) SUSPENDED SPIN PERSISTANT
@@ -3021,9 +2908,6 @@ extracted and adapted from Bot_GetWeaponForClassAndTeam.
 */
 qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon)
 {
-	// TAT 1/11/2003 - is this SP game? - different weapons available in SP
-	qboolean isSinglePlayer = BG_IsSinglePlayerGame() ? qtrue : qfalse;
-
 	switch (classNum)
 	{
 	case PC_ENGINEER:
@@ -3033,23 +2917,15 @@ qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon)
 		{
 			return qtrue;
 		}
-		else if (weapon == WP_MP40
-		         || weapon == WP_KAR98)
+		else if (weapon == WP_MP40 || weapon == WP_KAR98)
 		{
 			return (teamNum == TEAM_AXIS);
 		}
-		else if (weapon == WP_THOMPSON
-		         || weapon == WP_CARBINE)
+		else if (weapon == WP_THOMPSON || weapon == WP_CARBINE)
 		{
 			return (teamNum == TEAM_ALLIES);
 		}
 	case PC_FIELDOPS:
-		// TAT 1/11/2003 - in SP, field op can only use handgun, check after switch below
-		if (isSinglePlayer && teamNum == TEAM_ALLIES)
-		{
-			break;
-		}
-
 		if (weapon == WP_STEN)
 		{
 			return qtrue;
@@ -3087,15 +2963,9 @@ qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon)
 		break;
 
 	case PC_MEDIC:
-		if (weapon == WP_MEDIC_SYRINGE
-		    || weapon == WP_MEDKIT)
+		if (weapon == WP_MEDIC_SYRINGE || weapon == WP_MEDKIT)
 		{
 			return qtrue;
-		}
-		// TAT 1/11/2003 - in SP, medic can only use handgun, check after switch below
-		else if (isSinglePlayer && teamNum == TEAM_ALLIES)
-		{
-			break;
 		}
 		else if (weapon == WP_MP40)
 		{
@@ -5103,7 +4973,6 @@ qboolean PC_Int_Parse(int handle, int *i)
 }
 
 #ifdef GAMEDLL
-
 /*
 =================
 PC_String_Parse
@@ -5121,7 +4990,9 @@ const char *PC_String_Parse(int handle)
 	Q_strncpyz(buf, token.string, MAX_TOKEN_CHARS);
 	return buf;
 }
+
 #else
+
 /*
 =================
 PC_String_Parse

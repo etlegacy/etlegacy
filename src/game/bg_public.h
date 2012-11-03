@@ -1170,7 +1170,6 @@ typedef enum
 
 // text represenation for scripting
 extern char *animStrings[];     // defined in bg_misc.c
-extern char *animStringsOld[];      // defined in bg_misc.c
 
 typedef enum
 {
