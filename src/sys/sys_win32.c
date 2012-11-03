@@ -55,7 +55,7 @@
 #include <io.h>
 #include <conio.h>
 #include <wincrypt.h>
-#include <shlobj.h>
+#include <shlobj.h> // for SHGetFolderPath
 #include <psapi.h>
 
 // Used to determine where to store user-specific files
@@ -71,47 +71,28 @@ void Sys_SnapVector(float *v)
 #endif
 
 /*
-================
-Sys_DefaultHomePath
-================
-*/
+ * @return homepath pointing to "My Documents\WolfETL"
+ */
 char *Sys_DefaultHomePath(void)
 {
 	TCHAR   szPath[MAX_PATH];
-	FARPROC qSHGetFolderPath;
-	HMODULE shfolder = LoadLibrary("shfolder.dll");
+	HRESULT found;
 
 	if (!*homePath /*&& !com_homepath*/)
 	{
-		if (shfolder == NULL)
-		{
-			Com_Printf("Unable to load SHFolder.dll\n");
-			return NULL;
-		}
+		// FIXME: forcing SHGFP_TYPE_DEFAULT because file creation fails
+		//        when real CSIDL_PERSONAL is on a mapped drive
+		// NOTE: SHGetFolderPath is marked as deprecated
+		found = SHGetFolderPath(NULL, CSIDL_PERSONAL,
+		                        NULL, SHGFP_TYPE_DEFAULT, szPath);
 
-		qSHGetFolderPath = GetProcAddress(shfolder, "SHGetFolderPathA");
-		if (qSHGetFolderPath == NULL)
+		if (found != S_OK)
 		{
-			Com_Printf("Unable to find SHGetFolderPath in SHFolder.dll\n");
-			FreeLibrary(shfolder);
-			return NULL;
-		}
-
-		// mingw doesn't have CSIDL_MYDOCUMENTS, but according to the MSDN
-		// CSIDL_PERSONAL should be its equivalent
-		#ifndef CSIDL_MYDOCUMENTS
-		#define CSIDL_MYDOCUMENTS CSIDL_PERSONAL
-		#endif
-		if (!SUCCEEDED(qSHGetFolderPath(NULL, CSIDL_MYDOCUMENTS,
-		                                NULL, 0, szPath)))
-		{
-			Com_Printf("Unable to detect CSIDL_APPDATA\n");
-			FreeLibrary(shfolder);
+			Com_Printf("Unable to detect CSIDL_PERSONAL\n");
 			return NULL;
 		}
 		Q_strncpyz(homePath, szPath, sizeof(homePath));
 		Q_strcat(homePath, sizeof(homePath), "\\WolfETL");
-		FreeLibrary(shfolder);
 	}
 
 	return homePath;
@@ -162,7 +143,6 @@ qboolean Sys_RandomBytes(byte *string, int len)
 	if (!CryptAcquireContext(&prov, NULL, NULL,
 	                         PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
 	{
-
 		return qfalse;
 	}
 
