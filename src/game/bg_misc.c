@@ -2344,27 +2344,6 @@ gitem_t bg_itemlist[] =
 int bg_numItems = sizeof(bg_itemlist) / sizeof(bg_itemlist[0]) - 1;
 
 /*
-==============
-BG_FindItemForHoldable
-==============
-*/
-gitem_t *BG_FindItemForHoldable(holdable_t pw)
-{
-	int i;
-
-	for (i = 0 ; i < bg_numItems ; i++)
-	{
-		if (bg_itemlist[i].giType == IT_HOLDABLE && bg_itemlist[i].giTag == pw)
-		{
-			return &bg_itemlist[i];
-		}
-	}
-
-//  Com_Error( ERR_DROP, "HoldableItem not found" );
-	return NULL;
-}
-
-/*
 ===============
 BG_FindItemForWeapon
 

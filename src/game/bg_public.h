@@ -72,8 +72,6 @@
 // RF, zombie getup
 //#define	TIMER_RESPAWN	(38*(1000/15)+100)
 
-//#define	LIGHTNING_RANGE		600
-//#define	TESLA_RANGE			800
 
 #define FLAMETHROWER_RANGE  2500        // DHM - Nerve :: multiplayer range, was 850 in SP
 
@@ -81,9 +79,6 @@
 
 #define VOTE_TIME           30000   // 30 seconds before vote times out
 
-// Rafael note to self: Corky test
-//#define	DEFAULT_VIEWHEIGHT	26
-//#define CROUCH_VIEWHEIGHT	12
 #define DEFAULT_VIEWHEIGHT  40
 #define CROUCH_VIEWHEIGHT   16
 #define DEAD_VIEWHEIGHT     -16
@@ -94,9 +89,6 @@ extern vec3_t playerlegsProneMins;
 extern vec3_t playerlegsProneMaxs;
 
 #define MAX_COMMANDMAP_LAYERS   16
-
-#define DEFAULT_MODEL       "multi"
-#define DEFAULT_HEAD        "default"    // technically the default head skin.  this means "head_default.skin" for the head
 
 // RF, on fire effects
 #define FIRE_FLASH_TIME         2000
@@ -440,9 +432,6 @@ typedef struct
 	float varc, harc;
 	vec3_t centerangles;
 
-	int dtmove;         // doubletap move
-
-	int dodgeTime;
 	int proneTime;                  // time a go-prone or stop-prone move starts, to sync the animation to
 
 	int proneGroundTime;            // time a prone player last had ground under him
@@ -1422,7 +1411,7 @@ typedef enum
 	IT_AMMO,                // EFX: rotate
 	IT_ARMOR,               // EFX: rotate + minlight
 	IT_HEALTH,              // EFX: static external sphere + rotating internal
-	IT_HOLDABLE,            // single use, holdable item
+	IT_HOLDABLE,            // obsolete - remove! (also HINT_HOLDABLE)
 	                        // EFX: rotate + bob
 	IT_KEY,
 	IT_TREASURE,            // gold bars, etc.  things that can be picked up and counted for a tally at end-level
@@ -1462,7 +1451,7 @@ gitem_t *BG_FindItem(const char *pickupName);
 gitem_t *BG_FindItemForClassName(const char *className);
 gitem_t *BG_FindItemForWeapon(weapon_t weapon);
 gitem_t *BG_FindItemForPowerup(powerup_t pw);
-gitem_t *BG_FindItemForHoldable(holdable_t pw);
+
 gitem_t *BG_FindItemForAmmo(int weapon);
 //gitem_t *BG_FindItemForKey		( wkey_t k, int *index );
 weapon_t BG_FindAmmoForWeapon(weapon_t weapon);
