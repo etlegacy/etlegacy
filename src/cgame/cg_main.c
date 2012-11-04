@@ -183,7 +183,7 @@ vmCvar_t cg_paused;
 vmCvar_t cg_blood;
 vmCvar_t cg_predictItems;
 vmCvar_t cg_deferPlayers;
-vmCvar_t cg_drawTeamOverlay;
+
 vmCvar_t cg_enableBreath;
 vmCvar_t cg_autoactivate;
 vmCvar_t cg_blinktime;
@@ -396,7 +396,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_coronas,               "cg_coronas",               "1",     CVAR_ARCHIVE                 },
 	{ &cg_predictItems,          "cg_predictItems",          "1",     CVAR_ARCHIVE                 },
 	{ &cg_deferPlayers,          "cg_deferPlayers",          "1",     CVAR_ARCHIVE                 },
-	{ &cg_drawTeamOverlay,       "cg_drawTeamOverlay",       "2",     CVAR_ARCHIVE                 },
 	{ &cg_stats,                 "cg_stats",                 "0",     0                            },
 	{ &cg_blinktime,             "cg_blinktime",             "100",   CVAR_ARCHIVE                 },
 

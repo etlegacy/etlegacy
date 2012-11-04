@@ -2020,7 +2020,6 @@ extern vmCvar_t cg_drawCrosshairPickups;
 extern vmCvar_t cg_useWeapsForZoom;
 extern vmCvar_t cg_weaponCycleDelay;
 extern vmCvar_t cg_cycleAllWeaps;
-extern vmCvar_t cg_drawTeamOverlay;
 extern vmCvar_t cg_crosshairX;
 extern vmCvar_t cg_crosshairY;
 extern vmCvar_t cg_crosshairSize;

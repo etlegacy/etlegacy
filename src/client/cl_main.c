@@ -3698,7 +3698,7 @@ void CL_Init(void)
 	Cvar_Get("cg_quickMessageAlt", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_popupLimboMenu", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_descriptiveText", "1", CVAR_ARCHIVE);
-	Cvar_Get("cg_drawTeamOverlay", "2", CVAR_ARCHIVE);
+	Cvar_Get("cg_drawTeamOverlay", "2", CVAR_ARCHIVE); // not used in legacy mod, kept for compatibility
 	Cvar_Get("cg_drawGun", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_cursorHints", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_voiceSpriteTime", "6000", CVAR_ARCHIVE);
