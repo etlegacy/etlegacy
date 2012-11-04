@@ -439,11 +439,9 @@ if(INSTALL_OMNIBOTS)
 	## FIXME: exclude MAC
 	if(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 			# We have to host these files on our web-server - I couldn't find a good and reliable server hosting omnibot
-			# Note: used zip (16MB) doesn't contain windows and other unwanted files
+			# Note: used zip (16MB) doesn't contain windows, incomplete nav- and other unwanted files
 			# FIXME: change to tar or rar ...
-			set(ETLEGACY_OMNIBOT_L_DL_URL "file:///home/etlegacy/Omni-Bot_0.82_ET_LEGACY_LINUX.zip")
-			#set(ETLEGACY_OMNIBOT_L_DL_URL "http://www.etlegacy.com/files/Omni-Bot_0.82_ET_LEGACY_LINUX.zip")
-			set(OB_RELEASE 0.82)
+			set(ETLEGACY_OMNIBOT_L_DL_URL "http://mirror.etlegacy.com/omnibot/OmniBot_ETLegacy_Linux_r2497.zip")
 			
 			message(STATUS "Downloading Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/omnibot.zip")
 			file(DOWNLOAD ${ETLEGACY_OMNIBOT_L_DL_URL} "${CMAKE_CURRENT_BINARY_DIR}/omnibot.zip")
@@ -455,7 +453,7 @@ if(INSTALL_OMNIBOTS)
 		
 			message(STATUS "Adding Omni-Bot to installer scripts")
 		    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/omnibot/"
-		        	DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot${OB_RELEASE}")      	
+		        	DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot")      	
     else()
     	message(STATUS "Installing Omni-Bot is Linux only")
     endif(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
