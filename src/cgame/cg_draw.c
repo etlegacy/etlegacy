@@ -459,6 +459,7 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
 */
 
 #define UPPERRIGHT_X 634
+
 /*
 ==================
 CG_DrawSnapshot
@@ -484,6 +485,7 @@ CG_DrawFPS
 ==================
 */
 #define FPS_FRAMES  4
+
 static float CG_DrawFPS(float y)
 {
 	char       *s;
@@ -653,39 +655,48 @@ static void CG_DrawUpperRight(void)
 CG_DrawTeamInfo
 =================
 */
-static void CG_DrawTeamInfo(void)
+static void CG_DrawTeamInfo( void )
 {
-	int    h;
-	int    i;
-	vec4_t hcolor;
-	int    chatHeight;
-	float  alphapercent;
-	float  lineHeight = 9.f;
+	int		chatHeight = TEAMCHAT_HEIGHT;
+	float	lineHeight = 9.f;
+	float	scale = 0.2f;
+	float	icon_width = 12.f;
+	float	icon_height = 10.f;
+	int		x_offset = 0;
 
-	int chatWidth = 640 - CHATLOC_X - 100;
+	/*
+	if ( cg_smallFont.integer & SMALLFONT_CHATS )
+	{
+		lineHeight = 7.5f;
+		scale = 0.16f;
+		icon_width = 11.f;
+		icon_height = 9.f;
+		x_offset = 2;
+	}
+	*/
 
-	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
+	// no need to adjust chat height for intermission here - CG_DrawTeamInfo is called from CG_Draw2D
+	if(cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
 	{
 		chatHeight = cg_teamChatHeight.integer;
 	}
-	else
-	{
-		chatHeight = TEAMCHAT_HEIGHT;
-	}
 
-	if (chatHeight <= 0)
-	{
+	if(chatHeight <= 0) {
 		return; // disabled
 	}
 
-	if (cgs.teamLastChatPos != cgs.teamChatPos)
+	if(cgs.teamLastChatPos != cgs.teamChatPos)
 	{
-		if (cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
+		int i;
+		vec4_t	hcolor;
+		float	alphapercent;
+		int		chatWidth = 640 - CHATLOC_X - 80 /*(cg_drawHUDHead.integer ? 80 : 0)*/;
+		int		chatPosX = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)? 20 : CHATLOC_TEXT_X - x_offset;
+
+		if(cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
 		{
 			cgs.teamLastChatPos++;
 		}
-
-		h = (cgs.teamChatPos - cgs.teamLastChatPos) * lineHeight;
 
 		for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i--)
 		{
@@ -694,25 +705,25 @@ static void CG_DrawTeamInfo(void)
 			{
 				alphapercent = 1.0f;
 			}
-			else if (alphapercent < 0.f)
+			else if (alphapercent < 0)
 			{
 				alphapercent = 0.f;
 			}
 
-			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS)
+			// chatter team instead
+			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
 			{
 				hcolor[0] = 1;
 				hcolor[1] = 0;
 				hcolor[2] = 0;
 			}
-			else if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_ALLIES)
+			else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_ALLIES)
 			{
 				hcolor[0] = 0;
 				hcolor[1] = 0;
 				hcolor[2] = 1;
 			}
-			else
-			{
+			else {
 				hcolor[0] = 0;
 				hcolor[1] = 1;
 				hcolor[2] = 0;
@@ -721,13 +732,22 @@ static void CG_DrawTeamInfo(void)
 			hcolor[3] = 0.33f * alphapercent;
 
 			trap_R_SetColor(hcolor);
-			CG_DrawPic(CHATLOC_X, CHATLOC_Y - (cgs.teamChatPos - i) * lineHeight, chatWidth, lineHeight, cgs.media.teamStatusBar);
+			CG_DrawPic(chatPosX, CHATLOC_Y - (cgs.teamChatPos - i) * lineHeight, chatWidth, lineHeight, cgs.media.teamStatusBar);
 
 			hcolor[0] = hcolor[1] = hcolor[2] = 1.0;
 			hcolor[3] = alphapercent;
-			trap_R_SetColor(hcolor);
+			trap_R_SetColor( hcolor );
 
-			CG_Text_Paint_Ext(CHATLOC_TEXT_X, CHATLOC_Y - (cgs.teamChatPos - i - 1) * lineHeight - 1, 0.2f, 0.2f, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, 0, &cgs.media.limboFont2);
+			// chat icons
+			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
+			{
+				CG_DrawPic(chatPosX, CHATLOC_Y - (cgs.teamChatPos - i - 0.9f) * lineHeight - 8, icon_width, icon_height, cgs.media.axisFlag);
+			}
+			else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_ALLIES)
+			{
+				CG_DrawPic(chatPosX, CHATLOC_Y - (cgs.teamChatPos - i - 0.9f) * lineHeight - 8, icon_width, icon_height, cgs.media.alliedFlag);
+			}
+			CG_Text_Paint_Ext(chatPosX + 16, CHATLOC_Y - (cgs.teamChatPos - i - 1) * lineHeight - 1, scale, scale, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, 0, &cgs.media.limboFont2);
 		}
 	}
 }
