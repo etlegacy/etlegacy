@@ -1005,6 +1005,9 @@ static qboolean PM_CheckProne(void)
 
 	if (pm->ps->eFlags & EF_PRONE)
 	{
+		float    spd;
+		qboolean userinput;
+
 		if (pm->waterlevel > 1 ||
 		    pm->ps->pm_type == PM_DEAD ||
 		    pm->ps->eFlags & EF_MOUNTEDTANK ||
@@ -1049,10 +1052,9 @@ static qboolean PM_CheckProne(void)
 			}
 		}
 
-
 		// See if we are moving
-		float    spd       = VectorLength(pm->ps->velocity);
-		qboolean userinput = abs(pm->cmd.forwardmove) + abs(pm->cmd.rightmove) > 10 ? qtrue : qfalse;
+		spd       = VectorLength(pm->ps->velocity);
+		userinput = abs(pm->cmd.forwardmove) + abs(pm->cmd.rightmove) > 10 ? qtrue : qfalse;
 
 		if (userinput && spd > 40.f && !(pm->ps->eFlags & EF_PRONE_MOVING))
 		{
