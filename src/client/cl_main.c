@@ -5513,6 +5513,24 @@ void CL_LoadTransTable(const char *fileName)
 			break;
 		}
 
+		// danish
+		token = COM_Parse(&text_p);
+		if (Q_stricmp("danish", token))
+		{
+			aborted = qtrue;
+			break;
+		}
+
+		token = COM_Parse(&text_p);
+		strcpy(translated[LANGUAGE_DANISH], token);
+		if (!CL_CheckTranslationString(original, translated[LANGUAGE_DANISH]))
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: Danish translation formatting doesn't match up with English version!\n");
+			aborted = qtrue;
+			break;
+		}
+
+
 		// do lookup
 		t = LookupTrans(original, NULL, qtrue);
 

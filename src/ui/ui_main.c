@@ -1410,6 +1410,10 @@ qboolean Load_Menu(int handle)
 			{
 				s = va("%s%s", out, "finnish/");
 			}
+			else if (cl_language == 10)
+			{
+				s = va("%s%s", out, "danish/");
+			}
 
 			if (UI_ParseMenu(va("%s%s", s, filename)))
 			{
