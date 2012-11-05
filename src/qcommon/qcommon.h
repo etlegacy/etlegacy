@@ -108,7 +108,6 @@ char *MSG_ReadStringLine(msg_t *sb);
 float   MSG_ReadAngle16(msg_t *sb);
 void    MSG_ReadData(msg_t *sb, void *buffer, int size);
 
-
 void MSG_WriteDeltaUsercmd(msg_t *msg, struct usercmd_s *from, struct usercmd_s *to);
 void MSG_ReadDeltaUsercmd(msg_t *msg, struct usercmd_s *from, struct usercmd_s *to);
 
@@ -126,9 +125,11 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pla
 
 void MSG_ReportChangeVectors_f(void);
 
-/*==============================================================
+/*
+==============================================================
 NET
-==============================================================*/
+==============================================================
+*/
 
 #define NET_ENABLEV4            0x01
 #define NET_ENABLEV6            0x02
@@ -271,10 +272,11 @@ void Netchan_TransmitNextFragment(netchan_t *chan);
 
 qboolean Netchan_Process(netchan_t *chan, msg_t *msg);
 
-
-/*==============================================================
+/*
+==============================================================
 PROTOCOL
-==============================================================*/
+==============================================================
+*/
 
 // sent by the server, printed on connection screen, works for all clients
 // (restrictions: does not handle \n, no more than 256 chars)
@@ -297,11 +299,12 @@ You or the server may be running older versions of the game. Press the auto-upda
 #ifndef MASTER_SERVER_NAME
 #define MASTER_SERVER_NAME      "etmaster.idsoftware.com"
 #endif // MASTER_SERVER_NAME
+
 #define MOTD_SERVER_NAME            "etmaster.idsoftware.com"
 
 // TTimo: override autoupdate server for testing
 #ifndef AUTOUPDATE_SERVER_NAME
-#define AUTOUPDATE_SERVER_NAME "au2rtcw2.activision.com"
+#define AUTOUPDATE_SERVER_NAME "aupdates.etlegacy.com"
 #endif
 
 // TTimo: allow override for easy dev/testing..
@@ -335,9 +338,8 @@ You or the server may be running older versions of the game. Press the auto-upda
 #define NUM_SERVER_PORTS    4
 
 // the svc_strings[] array in cl_parse.c should mirror this
-//
+
 // server to client
-//
 enum svc_ops_e
 {
 	svc_bad,
@@ -351,10 +353,7 @@ enum svc_ops_e
 	svc_EOF
 };
 
-
-//
 // client to server
-//
 enum clc_ops_e
 {
 	clc_bad,
@@ -497,9 +496,11 @@ void    Cmd_ExecuteString(const char *text);
 // as if it was typed at the console
 
 
-/*==============================================================
+/*
+==============================================================
 CVAR
-==============================================================*/
+==============================================================
+*/
 
 /*
 cvar_t variables are used to hold scalar or string variables that can be changed
@@ -586,12 +587,14 @@ extern int cvar_modifiedFlags;
 // etc, variables have been modified since the last check.  The bit
 // can then be cleared to allow another change detection.
 
-/*==============================================================
+/*
+==============================================================
 FILESYSTEM
 No stdio calls should be used by any part of the game, because
 we need to deal with all sorts of directory and seperator char
 issues.
-==============================================================*/
+==============================================================
+*/
 
 #define BASEGAME "etmain"
 #define DEFAULT_MODGAME "legacy" // see files.c
@@ -775,15 +778,19 @@ qboolean FS_IsPure(void);
 
 unsigned int FS_ChecksumOSPath(char *OSPath);
 
-/*==============================================================
+/*
+==============================================================
 DOWNLOAD
-==============================================================*/
+==============================================================
+*/
 
 #include "dl_public.h"
 
-/*==============================================================
+/*
+==============================================================
 Edit fields and command line history/completion
-==============================================================*/
+==============================================================
+*/
 
 #define MAX_EDIT_LINE   256
 typedef struct
@@ -883,7 +890,6 @@ extern cvar_t *com_sv_running;
 extern cvar_t *com_cl_running;
 extern cvar_t *com_viewlog;             // 0 = hidden, 1 = visible, 2 = minimized
 extern cvar_t *com_version;
-//extern    cvar_t  *com_blood;
 extern cvar_t *com_buildScript;         // for building release pak files
 extern cvar_t *com_journal;
 extern cvar_t *com_cameraMode;
@@ -987,9 +993,11 @@ void Com_Frame(void);
 void Com_Shutdown(qboolean badProfile);
 
 
-/*==============================================================
+/*
+==============================================================
 CLIENT / SERVER SYSTEMS
-==============================================================*/
+==============================================================
+*/
 
 //
 // client interface
@@ -1050,7 +1058,7 @@ void Key_KeynameCompletion(void (*callback)(const char *s));
 void Key_WriteBindings(fileHandle_t f);
 // for writing the config files
 
-void S_ClearSoundBuffer(qboolean killStreaming);    //----(SA)  modified
+void S_ClearSoundBuffer(qboolean killStreaming);
 // call before filesystem access
 
 void SCR_DebugGraph(float value);     // FIXME: move logging to common?
@@ -1210,8 +1218,8 @@ typedef enum
 dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title);
 
 // NOTE TTimo - on win32 the cwd is prepended .. non portable behaviour
-void Sys_StartProcess(char *exeName, qboolean doexit);              // NERVE - SMF
-void Sys_OpenURL(const char *url, qboolean doexit);                         // NERVE - SMF
+void Sys_StartProcess(char *exeName, qboolean doexit);
+void Sys_OpenURL(const char *url, qboolean doexit);
 
 #ifdef __linux__
 // TTimo only on linux .. maybe on Mac too?
@@ -1221,7 +1229,8 @@ void Sys_Chmod(char *file, int mode);
 
 /* This is based on the Adaptive Huffman algorithm described in Sayood's Data
  * Compression book.  The ranks are not actually stored, but implicitly defined
- * by the location of a node within a doubly-linked list */
+ * by the location of a node within a doubly-linked list
+ */
 
 #define NYT HMAX                    /* NYT = Not Yet Transmitted */
 #define INTERNAL_NODE (HMAX + 1)
