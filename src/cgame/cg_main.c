@@ -156,15 +156,8 @@ vmCvar_t cg_tracerSpeed;
 vmCvar_t cg_autoswitch;
 vmCvar_t cg_ignore;
 vmCvar_t cg_fov;
-vmCvar_t cg_zoomFov;
-vmCvar_t cg_zoomStepBinoc;
 vmCvar_t cg_zoomStepSniper;
-vmCvar_t cg_zoomStepSnooper;
-vmCvar_t cg_zoomStepFG;
-vmCvar_t cg_zoomDefaultBinoc;
 vmCvar_t cg_zoomDefaultSniper;
-vmCvar_t cg_zoomDefaultSnooper;
-vmCvar_t cg_zoomDefaultFG;
 vmCvar_t cg_thirdPerson;
 vmCvar_t cg_thirdPersonRange;
 vmCvar_t cg_thirdPersonAngle;
@@ -214,7 +207,7 @@ vmCvar_t cg_timescaleFadeSpeed;
 vmCvar_t cg_timescale;
 vmCvar_t cg_smallFont;
 vmCvar_t cg_bigFont;
-vmCvar_t cg_noTaunt;
+
 vmCvar_t cg_voiceSpriteTime;
 
 vmCvar_t cg_animState;
@@ -256,8 +249,6 @@ vmCvar_t cg_specHelp;
 vmCvar_t cg_uinfo;
 vmCvar_t cg_useScreenshotJPEG;
 
-vmCvar_t ch_font;
-
 vmCvar_t demo_avifpsF1;
 vmCvar_t demo_avifpsF2;
 vmCvar_t demo_avifpsF3;
@@ -281,7 +272,6 @@ vmCvar_t cg_atmosphericEffects;
 
 vmCvar_t cg_drawRoundTimer;
 
-vmCvar_t cg_fastSolids;
 vmCvar_t cg_instanttapout;
 
 vmCvar_t cg_debugSkills;
@@ -314,15 +304,8 @@ cvarTable_t cvarTable[] =
 	{ &cg_drawGun,               "cg_drawGun",               "1",     CVAR_ARCHIVE                 },
 	{ &cg_gun_frame,             "cg_gun_frame",             "0",     CVAR_TEMP                    },
 	{ &cg_cursorHints,           "cg_cursorHints",           "1",     CVAR_ARCHIVE                 },
-	{ &cg_zoomFov,               "cg_zoomfov",               "22.5",  CVAR_ARCHIVE                 },
-	{ &cg_zoomDefaultBinoc,      "cg_zoomDefaultBinoc",      "22.5",  CVAR_ARCHIVE                 },
 	{ &cg_zoomDefaultSniper,     "cg_zoomDefaultSniper",     "20",    CVAR_ARCHIVE                 }, // JPW NERVE changed per atvi req
-	{ &cg_zoomDefaultSnooper,    "cg_zoomDefaultSnooper",    "40",    CVAR_ARCHIVE                 }, // JPW NERVE made temp
-	{ &cg_zoomDefaultFG,         "cg_zoomDefaultFG",         "55",    CVAR_ARCHIVE                 }, //----(SA)    added // JPW NERVE made temp
-	{ &cg_zoomStepBinoc,         "cg_zoomStepBinoc",         "3",     CVAR_ARCHIVE                 },
 	{ &cg_zoomStepSniper,        "cg_zoomStepSniper",        "2",     CVAR_ARCHIVE                 },
-	{ &cg_zoomStepSnooper,       "cg_zoomStepSnooper",       "5",     CVAR_ARCHIVE                 },
-	{ &cg_zoomStepFG,            "cg_zoomStepFG",            "10",    CVAR_ARCHIVE                 },
 	{ &cg_fov,                   "cg_fov",                   "90",    CVAR_ARCHIVE                 },
 	{ &cg_letterbox,             "cg_letterbox",             "0",     CVAR_TEMP                    },
 	{ &cg_stereoSeparation,      "cg_stereoSeparation",      "0.4",   CVAR_ARCHIVE                 },
@@ -339,13 +322,13 @@ cvarTable_t cvarTable[] =
 	{ &cg_drawCrosshairNames,    "cg_drawCrosshairNames",    "1",     CVAR_ARCHIVE                 },
 	{ &cg_drawCrosshairPickups,  "cg_drawCrosshairPickups",  "1",     CVAR_ARCHIVE                 },
 	{ &cg_useWeapsForZoom,       "cg_useWeapsForZoom",       "1",     CVAR_ARCHIVE                 },
-	{ &cg_weaponCycleDelay,      "cg_weaponCycleDelay",      "150",   CVAR_ARCHIVE                 }, //----(SA)    added
+	{ &cg_weaponCycleDelay,      "cg_weaponCycleDelay",      "150",   CVAR_ARCHIVE                 },
 	{ &cg_cycleAllWeaps,         "cg_cycleAllWeaps",         "1",     CVAR_ARCHIVE                 },
 	{ &cg_crosshairSize,         "cg_crosshairSize",         "48",    CVAR_ARCHIVE                 },
 	{ &cg_crosshairHealth,       "cg_crosshairHealth",       "0",     CVAR_ARCHIVE                 },
 	{ &cg_crosshairX,            "cg_crosshairX",            "0",     CVAR_ARCHIVE                 },
 	{ &cg_crosshairY,            "cg_crosshairY",            "0",     CVAR_ARCHIVE                 },
-	{ &cg_brassTime,             "cg_brassTime",             "2500",  CVAR_ARCHIVE                 }, // JPW NERVE
+	{ &cg_brassTime,             "cg_brassTime",             "2500",  CVAR_ARCHIVE                 },
 	{ &cg_markTime,              "cg_marktime",              "20000", CVAR_ARCHIVE                 },
 	{ &cg_lagometer,             "cg_lagometer",             "0",     CVAR_ARCHIVE                 },
 	{ &cg_railTrailTime,         "cg_railTrailTime",         "400",   CVAR_ARCHIVE                 },
@@ -411,7 +394,6 @@ cvarTable_t cvarTable[] =
 	{ &pmove_fixed,              "pmove_fixed",              "0",     0                            },
 	{ &pmove_msec,               "pmove_msec",               "8",     0                            },
 
-	{ &cg_noTaunt,               "cg_noTaunt",               "0",     CVAR_ARCHIVE                 },
 	{ &cg_voiceSpriteTime,       "cg_voiceSpriteTime",       "6000",  CVAR_ARCHIVE                 },
 
 	{ &cg_smallFont,             "ui_smallFont",             "0.25",  CVAR_ARCHIVE                 },
@@ -495,14 +477,11 @@ cvarTable_t cvarTable[] =
 
 	{ &cg_drawRoundTimer,        "cg_drawRoundTimer",        "1",     CVAR_ARCHIVE                 },
 
-	// Gordon: optimization cvars: 18/12/02 enabled by default now
-	{ &cg_fastSolids,            "cg_fastSolids",            "1",     CVAR_ARCHIVE                 },
-
 	{ &cg_instanttapout,         "cg_instanttapout",         "0",     CVAR_ARCHIVE                 },
 	{ &cg_debugSkills,           "cg_debugSkills",           "0",     0                            },
 	{ NULL,                      "cg_etVersion",             "",      CVAR_USERINFO | CVAR_ROM     },
 	{ &cg_drawFireteamOverlay,   "cg_drawFireteamOverlay",   "1",     CVAR_ARCHIVE                 },
-	{ &cg_drawSmallPopupIcons,   "cg_drawSmallPopupIcons",   "0",     CVAR_ARCHIVE                 },
+	{ &cg_drawSmallPopupIcons,   "cg_drawSmallPopupIcons",   "1",     CVAR_ARCHIVE                 },
 
 	//bani - demo recording cvars
 	{ &cl_demorecording,         "cl_demorecording",         "0",     CVAR_ROM                     },
@@ -821,13 +800,10 @@ void CG_nameCleanFilename(const char *pszIn, char *pszOut, unsigned int dwOutSiz
 char *CG_generateFilename(void)
 {
 	qtime_t ct;
-//  int index = (cg.snap == NULL || (cg.snap->ps.pm_flags & PMF_LIMBO)) ? cg.clientNum : cg.snap->ps.clientNum;
-//  char strCleanName[64];
 	const char *pszServerInfo = CG_ConfigString(CS_SERVERINFO);
-//  const char *pszPlayerInfo = CG_ConfigString(CS_PLAYERS + index);
 
 	trap_RealTime(&ct);
-//  CG_nameCleanFilename(Info_ValueForKey(pszPlayerInfo, "n"), strCleanName, sizeof(strCleanName));
+
 	return(va("%d-%02d-%02d-%02d%02d%02d-%s%s",
 	          1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday,
 	          ct.tm_hour, ct.tm_min, ct.tm_sec,
@@ -2087,7 +2063,6 @@ int CG_ConfigStringCopy(int index, char *buff, int buffsize)
 	return strlen(buff);
 }
 
-
 //==================================================================
 
 /*
@@ -2132,34 +2107,6 @@ void CG_QueueMusic(void)
 	//              it doesn't have to go through startbackgroundtrack() (which is stupid)
 	trap_S_StartBackgroundTrack(parm, "", -2);    // '-2' for 'queue looping track' (QUEUED_PLAY_LOOPED)
 }
-
-#if 0   //DAJ unused
-char *CG_GetMenuBuffer(const char *filename)
-{
-	int          len;
-	fileHandle_t f;
-	static char  buf[MAX_MENUFILE];
-
-	len = trap_FS_FOpenFile(filename, &f, FS_READ);
-	if (!f)
-	{
-		trap_Print(va(S_COLOR_RED "menu file not found: %s, using default\n", filename));
-		return NULL;
-	}
-	if (len >= MAX_MENUFILE)
-	{
-		trap_Print(va(S_COLOR_RED "menu file too large: %s is %i, max allowed is %i", filename, len, MAX_MENUFILE));
-		trap_FS_FCloseFile(f);
-		return NULL;
-	}
-
-	trap_FS_Read(buf, len, f);
-	buf[len] = 0;
-	trap_FS_FCloseFile(f);
-
-	return buf;
-}
-#endif
 
 // ==============================
 // new hud stuff ( mission pack )
@@ -2352,16 +2299,6 @@ void CG_ParseMenu(const char *menuFile)
 			break;
 		}
 
-		//if ( Q_stricmp( token, "{" ) ) {
-		//  Com_Printf( "Missing { in menu file\n" );
-		//  break;
-		//}
-
-		//if ( menuCount == MAX_MENUS ) {
-		//  Com_Printf( "Too many menus!\n" );
-		//  break;
-		//}
-
 		if (token.string[0] == '}')
 		{
 			break;
@@ -2464,16 +2401,6 @@ void CG_LoadMenus(const char *menuFile)
 		{
 			break;
 		}
-
-		//if ( Q_stricmp( token, "{" ) ) {
-		//  Com_Printf( "Missing { in menu file\n" );
-		//  break;
-		//}
-
-		//if ( menuCount == MAX_MENUS ) {
-		//  Com_Printf( "Too many menus!\n" );
-		//  break;
-		//}
 
 		if (Q_stricmp(token, "}") == 0)
 		{
@@ -2754,8 +2681,6 @@ void CG_LoadHudMenu(void)
 
 	Menu_Reset();
 
-//  CG_LoadMenus("ui/hud.txt");
-
 	CG_Text_SetActiveFont(0);
 }
 
@@ -2801,7 +2726,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	int        i;
 #ifdef _DEBUG
 	DEBUG_INITPROFILE_INIT
-#endif // _DEBUG
+#endif
 
 //  int startat = trap_Milliseconds();
 
@@ -2908,7 +2833,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 #ifdef _DEBUG
 	DEBUG_INITPROFILE_EXEC("initialization")
-#endif // DEBUG
+#endif
 
 	// load the new map
 	CG_LoadingString("collision map");

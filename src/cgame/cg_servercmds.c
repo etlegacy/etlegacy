@@ -1189,7 +1189,7 @@ typedef struct voiceChat_s
     int numSounds;
     sfxHandle_t sounds[MAX_VOICESOUNDS];
     char chats[MAX_VOICESOUNDS][MAX_CHATSIZE];
-    qhandle_t sprite[MAX_VOICESOUNDS];          // DHM - Nerve
+    qhandle_t sprite[MAX_VOICESOUNDS];
 } voiceChat_t;
 
 typedef struct voiceChatList_s
@@ -1613,7 +1613,7 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
             vchat.snd       = snd;
             vchat.sprite    = sprite;
             vchat.voiceOnly = voiceOnly;
-            VectorCopy(origin, vchat.origin);       // NERVE - SMF
+            VectorCopy(origin, vchat.origin);
             Q_strncpyz(vchat.cmd, cmd, sizeof(vchat.cmd));
 
             if (mode != SAY_ALL)
@@ -1656,7 +1656,7 @@ void CG_VoiceChat(int mode)
     const char *cmd;
     int        clientNum, color;
     qboolean   voiceOnly;
-    vec3_t     origin;      // NERVE - SMF
+    vec3_t     origin;
 
     voiceOnly = atoi(CG_Argv(1));
     clientNum = atoi(CG_Argv(2));
@@ -1671,16 +1671,6 @@ void CG_VoiceChat(int mode)
 	}
 
     cmd = CG_Argv(4);
-
-    if (cg_noTaunt.integer != 0)
-    {
-        if (!strcmp(cmd, VOICECHAT_KILLINSULT)  || !strcmp(cmd, VOICECHAT_TAUNT) || \
-            !strcmp(cmd, VOICECHAT_DEATHINSULT) || !strcmp(cmd, VOICECHAT_KILLGAUNTLET) ||  \
-            !strcmp(cmd, VOICECHAT_PRAISE))
-        {
-            return;
-		}
-	}
 
     CG_VoiceChatLocal(mode, voiceOnly, clientNum, color, cmd, origin);
 }
@@ -2402,7 +2392,6 @@ static void CG_ServerCommand(void)
 	}
     if (!Q_stricmp(cmd, "cp"))
     {
-        // NERVE - SMF
         int  args = trap_Argc();
         char *s;
 

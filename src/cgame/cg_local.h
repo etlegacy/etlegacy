@@ -2052,15 +2052,10 @@ extern vmCvar_t cg_tracerSpeed;
 extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_ignore;
 extern vmCvar_t cg_fov;
-extern vmCvar_t cg_zoomFov;
-extern vmCvar_t cg_zoomDefaultBinoc;
+
 extern vmCvar_t cg_zoomDefaultSniper;
-extern vmCvar_t cg_zoomDefaultFG;
-extern vmCvar_t cg_zoomDefaultSnooper;
-extern vmCvar_t cg_zoomStepBinoc;
+
 extern vmCvar_t cg_zoomStepSniper;
-extern vmCvar_t cg_zoomStepSnooper;
-extern vmCvar_t cg_zoomStepFG;
 extern vmCvar_t cg_thirdPersonRange;
 extern vmCvar_t cg_thirdPersonAngle;
 extern vmCvar_t cg_thirdPerson;
@@ -2097,7 +2092,7 @@ extern vmCvar_t cg_timescale;
 extern vmCvar_t cg_cameraMode;
 extern vmCvar_t cg_smallFont;
 extern vmCvar_t cg_bigFont;
-extern vmCvar_t cg_noTaunt;
+
 extern vmCvar_t cg_voiceSpriteTime;
 
 extern vmCvar_t cg_blinktime;
@@ -2150,7 +2145,7 @@ extern vmCvar_t cg_specHelp;
 extern vmCvar_t cg_specSwing;
 extern vmCvar_t cg_uinfo;
 extern vmCvar_t cg_useScreenshotJPEG;
-extern vmCvar_t ch_font;
+
 extern vmCvar_t demo_avifpsF1;
 extern vmCvar_t demo_avifpsF2;
 extern vmCvar_t demo_avifpsF3;
@@ -2177,7 +2172,6 @@ extern vmCvar_t cg_drawFireteamOverlay;
 extern vmCvar_t cg_drawSmallPopupIcons;
 
 // Gordon: some optimization cvars
-extern vmCvar_t cg_fastSolids;
 extern vmCvar_t cg_instanttapout;
 
 // bani - demo recording cvars

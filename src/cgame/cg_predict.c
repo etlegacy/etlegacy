@@ -114,33 +114,12 @@ void CG_BuildSolidList(void)
 
 		if (cent->nextState.solid)
 		{
-			/*          if(cg_fastSolids.integer) { // Gordon: "optimization" (disabling until i fix it)
-			                vec3_t vec;
-			                float len;
-
-			                cg_solidFTEntities[cg_numSolidFTEntities] = cent;
-			                cg_numSolidFTEntities++;
-
-			                // FIXME: use range to bbox, not to origin
-			                if ( cent->nextState.solid == SOLID_BMODEL ) {
-			                    VectorAdd( cgs.inlineModelMidpoints[ cent->currentState.modelindex ], cent->lerpOrigin, vec );
-			                    VectorSubtract( vec, cg.predictedPlayerEntity.lerpOrigin, vec );
-			                } else {
-			                    VectorSubtract( cent->lerpOrigin, cg.predictedPlayerEntity.lerpOrigin, vec );
-			                }
-			                if((len = DotProduct( vec, vec )) < (512 * 512)) {
-			                    cg_solidEntities[cg_numSolidEntities] = cent;
-			                    cg_numSolidEntities++;
-			                    continue;
-			                }
-			            } else*/{
 				cg_solidEntities[cg_numSolidEntities] = cent;
 				cg_numSolidEntities++;
 
 				cg_solidFTEntities[cg_numSolidFTEntities] = cent;
 				cg_numSolidFTEntities++;
 				continue;
-			}
 		}
 	}
 }
