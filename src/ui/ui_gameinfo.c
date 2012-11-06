@@ -313,13 +313,11 @@ UI_LoadArenas
 void UI_LoadArenas(void)
 {
 	int numdirs;
-//	vmCvar_t	arenasFile;
 	char filename[128];
 	char dirlist[1024];
 	char *dirptr;
-	int  i /*, n*/;
+	int  i;
 	int  dirlen;
-	//char		*type, *str;
 
 	ui_numArenas    = 0;
 	uiInfo.mapCount = 0;

@@ -79,7 +79,6 @@ tryagain:
 		pi->weaponModel = trap_R_RegisterModel("models/multiplayer/panzerfaust/multi_pf.md3");
 		return;
 	}
-	// -NERVE - SMF
 
 	for (item = bg_itemlist + 1; item->classname ; item++)
 	{
@@ -440,7 +439,7 @@ static void UI_PlayerFloatSprite(playerInfo_t *pi, vec3_t origin, qhandle_t shad
 UI_MachinegunSpinAngle
 ======================
 */
-float   UI_MachinegunSpinAngle(playerInfo_t *pi)
+float UI_MachinegunSpinAngle(playerInfo_t *pi)
 {
 	int   delta;
 	float angle;
@@ -1274,10 +1273,10 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName)
 	}
 
 	// load the animations
-//----(SA) changing name of config file to avoid backwards or alternate compatibility confustion
-//  Com_sprintf( filename, sizeof( filename ), "models/players/%s/animation.cfg", modelName );
+	//----(SA) changing name of config file to avoid backwards or alternate compatibility confustion
+	//Com_sprintf( filename, sizeof( filename ), "models/players/%s/animation.cfg", modelName );
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/wolfanim.cfg", modelName);
-//----(SA) end
+
 	if (!UI_ParseAnimationFile(filename, pi))               // NERVE - SMF - make this work with wolf
 	{
 		Com_Printf("Failed to load animation file %s\n", filename);
@@ -1286,7 +1285,6 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName)
 
 	return qtrue;
 }
-
 
 /*
 ===============

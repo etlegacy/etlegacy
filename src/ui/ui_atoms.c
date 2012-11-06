@@ -40,7 +40,6 @@ qboolean   m_entersound;            // after a frame, so caching won't disrupt t
 // these are here so the functions in q_shared.c can link
 #ifndef UI_HARD_LINKED
 
-
 // JPW NERVE added Com_DPrintf
 #define MAXPRINTMSG 4096
 void QDECL Com_DPrintf(const char *fmt, ...)
@@ -61,7 +60,6 @@ void QDECL Com_DPrintf(const char *fmt, ...)
 
 	Com_Printf("%s", msg);
 }
-// jpw
 
 void QDECL Com_Error(int level, const char *error, ...)
 {
@@ -116,7 +114,6 @@ char *UI_Argv(int arg)
 	return buffer;
 }
 
-
 char *UI_Cvar_VariableString(const char *var_name)
 {
 	static char buffer[2][MAX_STRING_CHARS];
@@ -129,37 +126,10 @@ char *UI_Cvar_VariableString(const char *var_name)
 	return buffer[toggle];
 }
 
-
-
-void UI_LoadBestScores(const char *map, int game)
-{
-}
-
-/*
-===============
-UI_ClearScores
-===============
-*/
-void UI_ClearScores()
-{
-}
-
-
-
 static void UI_Cache_f(void)
 {
 	Display_CacheAll();
 }
-
-/*
-=======================
-UI_CalcPostGameStats
-=======================
-*/
-static void UI_CalcPostGameStats(void)
-{
-}
-
 
 /*
 =================
@@ -196,21 +166,9 @@ qboolean UI_ConsoleCommand(int realTime)
 		return qtrue;
 	}
 
-	// Arnout: we DEFINATELY do NOT want this here
-	/*if ( Q_stricmp (cmd, "remapShader") == 0 ) {
-	    if (trap_Argc() == 4) {
-	        char shader1[MAX_QPATH];
-	        char shader2[MAX_QPATH];
-	        Q_strncpyz(shader1, UI_Argv(1), sizeof(shader1));
-	        Q_strncpyz(shader2, UI_Argv(2), sizeof(shader2));
-	        trap_R_RemapShader(shader1, shader2, UI_Argv(3));
-	        return qtrue;
-	    }
-	}*/
-
 	if (Q_stricmp(cmd, "postgame") == 0)
 	{
-		UI_CalcPostGameStats();
+		// UI_CalcPostGameStats();
 		return qtrue;
 	}
 
@@ -347,7 +305,6 @@ Coordinates are 640*480 virtual values
 */
 void UI_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle)
 {
-
 	UI_AdjustFrom640(&x, &y, &width, &height);
 
 	trap_R_DrawRotatedPic(x, y, width, height, 0, 0, 1, 1, hShader, angle);
@@ -383,6 +340,7 @@ void UI_DrawTopBottom(float x, float y, float w, float h)
 	trap_R_DrawStretchPic(x, y, w, 1, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 	trap_R_DrawStretchPic(x, y + h - 1, w, 1, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 }
+
 /*
 ================
 UI_DrawRect
@@ -409,7 +367,6 @@ void UI_UpdateScreen(void)
 {
 	trap_UpdateScreen();
 }
-
 
 void UI_DrawTextBox(int x, int y, int width, int lines)
 {

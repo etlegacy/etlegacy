@@ -69,11 +69,11 @@ extern vmCvar_t ui_master;
 extern vmCvar_t ui_brassTime;
 extern vmCvar_t ui_drawCrosshair;
 extern vmCvar_t ui_drawCrosshairNames;
-extern vmCvar_t ui_drawCrosshairPickups;    //----(SA) added
+extern vmCvar_t ui_drawCrosshairPickups;
 extern vmCvar_t ui_marks;
-// JOSEPH 12-3-99
+
 extern vmCvar_t ui_autoactivate;
-// END JOSEPH
+
 
 extern vmCvar_t ui_server1;
 extern vmCvar_t ui_server2;
@@ -100,7 +100,6 @@ extern vmCvar_t ui_netSource;
 extern vmCvar_t ui_menuFiles;
 extern vmCvar_t ui_gameType;
 extern vmCvar_t ui_netGameType;
-//extern vmCvar_t	ui_actualNetGameType;
 extern vmCvar_t ui_joinGameType;
 extern vmCvar_t ui_dedicated;
 extern vmCvar_t ui_notebookCurrentPage;
@@ -111,7 +110,6 @@ extern vmCvar_t ui_serverFilterType;
 extern vmCvar_t ui_currentNetMap;
 extern vmCvar_t ui_currentMap;
 extern vmCvar_t ui_mapIndex;
-
 extern vmCvar_t ui_browserMaster;
 extern vmCvar_t ui_browserGameType;
 extern vmCvar_t ui_browserSortKey;
@@ -119,16 +117,12 @@ extern vmCvar_t ui_browserShowEmptyOrFull;
 extern vmCvar_t ui_browserShowPasswordProtected;
 extern vmCvar_t ui_browserShowFriendlyFire;
 extern vmCvar_t ui_browserShowMaxlives;
-
 extern vmCvar_t ui_browserShowAntilag;
 extern vmCvar_t ui_browserShowWeaponsRestricted;
 extern vmCvar_t ui_browserShowTeamBalanced;
-
 extern vmCvar_t ui_serverStatusTimeOut;
 extern vmCvar_t ui_limboOptions;
-
 extern vmCvar_t ui_isSpectator;
-// -NERVE - SMF
 
 extern vmCvar_t g_gameType;
 
@@ -148,12 +142,9 @@ extern vmCvar_t cg_crosshairSize;
 
 extern vmCvar_t cl_bypassMouseInput;
 
-//bani
 extern vmCvar_t ui_autoredirect;
 
-//
 // ui_qmenu.c
-//
 
 #define RCOLUMN_OFFSET          (BIGCHAR_WIDTH)
 #define LCOLUMN_OFFSET          (-BIGCHAR_WIDTH)
@@ -163,7 +154,6 @@ extern vmCvar_t ui_autoredirect;
 
 #define MAX_MENUDEPTH           8
 #define MAX_MENUITEMS           128 // JPW NERVE put this back for MP
-//#define MAX_MENUITEMS			256
 
 #define MTYPE_NULL              0
 #define MTYPE_SLIDER            1
@@ -219,9 +209,8 @@ typedef struct _tag_menuframework
 	qboolean fullscreen;
 	qboolean showlogo;
 
-	// JOSEPH 11-9-99
 	int specialmenutype;
-	// END JOSEPH
+
 } menuframework_s;
 
 typedef struct
@@ -322,9 +311,9 @@ extern void         Menu_Focus(menucommon_s *m);
 extern void         Menu_AddItem(menuframework_s *menu, void *item);
 extern void         Menu_AdjustCursor(menuframework_s *menu, int dir);
 extern void         Menu_Draw(menuframework_s *menu);
-// JOSEPH 11-9-99
+
 extern void         Menu_Draw_Inactive(menuframework_s *menu);
-// END JOSEPH
+
 extern void *Menu_ItemAtCursor(menuframework_s *m);
 extern sfxHandle_t  Menu_ActivateItem(menuframework_s *s, menucommon_s *item);
 extern void         Menu_SetCursor(menuframework_s *s, int cursor);
@@ -333,9 +322,9 @@ extern sfxHandle_t  Menu_DefaultKey(menuframework_s *s, int key);
 extern void         Bitmap_Init(menubitmap_s *b);
 extern void         Bitmap_Draw(menubitmap_s *b);
 extern void         ScrollList_Draw(menulist_s *l);
-// JOSEPH 11-23-99
+
 extern void         ScrollList_Draw2(menulist_s *l);
-// END JOSEPH
+
 extern sfxHandle_t  ScrollList_Key(menulist_s *l, int key);
 extern sfxHandle_t menu_in_sound;
 extern sfxHandle_t menu_move_sound;
@@ -350,9 +339,9 @@ extern vec4_t      menu_red_color;
 extern vec4_t      menu_black_color;
 extern vec4_t      menu_dim_color;
 extern vec4_t      color_black;
-// JOSEPH 11-29-99
+
 extern vec4_t color_halfblack;
-// END JOSEPH
+
 extern vec4_t color_white;
 extern vec4_t color_yellow;
 extern vec4_t color_blue;
@@ -362,9 +351,8 @@ extern vec4_t color_dim;
 extern vec4_t name_color;
 extern vec4_t list_color;
 extern vec4_t listbar_color;
-// JOSEPH 11-23-99
 extern vec4_t listbar_color2;
-// END JOSEPH
+
 extern vec4_t text_color_disabled;
 extern vec4_t text_color_normal;
 extern vec4_t text_color_highlight;
@@ -373,23 +361,19 @@ extern char *ui_medalNames[];
 extern char *ui_medalPicNames[];
 extern char *ui_medalSounds[];
 
-//
 // ui_mfield.c
-//
 extern void         MField_Clear(mfield_t *edit);
 extern void         MField_KeyDownEvent(mfield_t *edit, int key);
 extern void         MField_CharEvent(mfield_t *edit, int ch);
 extern void         MField_Draw(mfield_t *edit, int x, int y, int style, vec4_t color);
-// JOSEPH 11-23-99
+
 extern void         MenuField_Draw2(menufield_s *f, int specialtype);
-// END JOSEPH
+
 extern void         MenuField_Init(menufield_s *m);
 extern void         MenuField_Draw(menufield_s *f);
 extern sfxHandle_t  MenuField_Key(menufield_s *m, int *key);
 
-//
 // ui_main.c
-//
 void            UI_Report(void);
 void            UI_Load(void);
 void            UI_LoadMenus(const char *menuFile, qboolean reset);
@@ -397,7 +381,6 @@ void            _UI_SetActiveMenu(uiMenuCommand_t menu);
 uiMenuCommand_t _UI_GetActiveMenu(void);
 int             UI_AdjustTimeByGame(int time);
 void            UI_ShowPostGame(qboolean newHigh);
-void            UI_ClearScores(void);
 void            UI_LoadArenas(void);
 void            UI_LoadCampaigns(void);
 mapInfo *UI_FindMapInfoByMapname(const char *name);
@@ -410,128 +393,87 @@ void UI_ListCampaigns_f(void);
 
 #define GLINFO_LINES        128
 
-//
 // ui_menu.c
-//
 extern void MainMenu_Cache(void);
 extern void UI_MainMenu(void);
 extern void UI_RegisterCvars(void);
 extern void UI_UpdateCvars(void);
 
-
-//
 // ui_credits.c
-//
 extern void UI_CreditMenu(void);
 
-//
 // ui_ingame.c
-//
 extern void InGame_Cache(void);
 extern void UI_InGameMenu(void);
 
-//
 // ui_confirm.c
-//
 extern void ConfirmMenu_Cache(void);
 extern void UI_ConfirmMenu(const char *question, void (*draw)(void), void (*action)(qboolean result));
 
-//
 // ui_setup.c
-//
 extern void UI_SetupMenu_Cache(void);
 extern void UI_SetupMenu(void);
 
-//
 // ui_team.c
-//
 extern void UI_TeamMainMenu(void);
 extern void TeamMain_Cache(void);
 
-//
 // ui_connect.c
-//
 extern void UI_DrawConnectScreen(qboolean overlay);
 
-//
 // ui_controls2.c
-//
 extern void UI_ControlsMenu(void);
 extern void Controls_Cache(void);
 
-//
 // ui_demo2.c
-//
 extern void UI_DemosMenu(void);
 extern void Demos_Cache(void);
 
-//
 // ui_cinematics.c
-//
 extern void UI_CinematicsMenu(void);
 extern void UI_CinematicsMenu_f(void);
 extern void UI_CinematicsMenu_Cache(void);
 
-//
 // ui_loadpanel.c
-//
 extern void UI_DrawLoadPanel(qboolean forcerefresh, qboolean ownerdraw, qboolean uihack);
 
-//
 // ui_playermodel.c
-//
 extern void UI_PlayerModelMenu(void);
 extern void PlayerModel_Cache(void);
 
-//
 // ui_playersettings.c
-//
 extern void UI_PlayerSettingsMenu(void);
 extern void PlayerSettings_Cache(void);
 
-//
 // ui_preferences.c
-//
 extern void UI_PreferencesMenu(void);
 extern void Preferences_Cache(void);
 
-//
 // ui_specifyserver.c
-//
 extern void UI_SpecifyServerMenu(void);
 extern void SpecifyServer_Cache(void);
 
-//
 // ui_servers2.c
-//
 #define MAX_FAVORITESERVERS 16
 
 extern void UI_ArenaServersMenu(void);
 extern void ArenaServers_Cache(void);
 
-//
 // ui_startserver.c
-//
 extern void UI_StartServerMenu(qboolean multiplayer);
 extern void StartServer_Cache(void);
 extern void ServerOptions_Cache(void);
 
-//
 // ui_serverinfo.c
-//
 extern void UI_ServerInfoMenu(void);
 extern void ServerInfo_Cache(void);
 
-//
 // ui_video.c
-//
 extern void UI_GraphicsOptionsMenu(void);
 extern void GraphicsOptions_Cache(void);
 extern void DriverInfo_Cache(void);
 
-//
 // ui_players.c
-//
 
 //FIXME ripped from cg_local.h
 typedef struct
@@ -614,7 +556,7 @@ typedef struct
 
 	qhandle_t backpackModel;
 	qhandle_t helmetModel;
-	// -NERVE - SMF
+
 } playerInfo_t;
 
 void UI_DrawPlayer(float x, float y, float w, float h, playerInfo_t *pi, int time);
@@ -622,9 +564,7 @@ void UI_PlayerInfo_SetModel(playerInfo_t *pi, const char *model);
 void UI_PlayerInfo_SetInfo(playerInfo_t *pi, int legsAnim, int torsoAnim, vec3_t viewAngles, vec3_t moveAngles, weapon_t weaponNum, qboolean chat);
 qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName);
 
-//
 // ui_atoms.c
-//
 typedef struct
 {
 	int frametime;
@@ -646,14 +586,14 @@ typedef struct
 	qhandle_t cursor;
 	qhandle_t rb_on;
 	qhandle_t rb_off;
-	// JOSEPH 11-9-99
+
 	qhandle_t menu;
 	qhandle_t menu1a;
 	qhandle_t menu1b;
 	qhandle_t menu2a;
 	qhandle_t menu2b;
 	qhandle_t menuchars;
-	// END JOSEPH
+
 	float scale;
 	float bias;
 	qboolean demoversion;
@@ -687,17 +627,16 @@ typedef struct
 #define GAMES_TEAMPLAY      2
 #define GAMES_TOURNEY       3
 #define GAMES_CTF           4
-//#define MAPS_PER_TIER 3
-//#define MAX_TIERS 16
+
 #define MAX_MODS 64
 #define MAX_DEMOS 256
 #define MAX_MOVIES 256
 #define MAX_PLAYERMODELS 256
 #define MAX_SAVEGAMES 256
-#define MAX_SPAWNPOINTS 128     // NERVE - SMF
-#define MAX_SPAWNDESC   128     // NERVE - SMF
-#define MAX_PBLINES     128     // DHM - Nerve
-#define MAX_PBWIDTH     42      // DHM - Nerve
+#define MAX_SPAWNPOINTS 128
+#define MAX_SPAWNDESC   128
+#define MAX_PBLINES     128
+#define MAX_PBWIDTH     42
 
 #define MAX_PROFILES 64
 
@@ -709,13 +648,11 @@ typedef struct
 	qboolean female;
 } characterInfo;
 
-//----(SA)	added
 typedef struct
 {
 	const char *name;
 	qhandle_t sshotImage;
 } savegameInfo;
-//----(SA)	end
 
 typedef struct
 {
@@ -742,13 +679,6 @@ typedef struct
 	int gtEnum;
 	const char *gameTypeDescription;
 } gameTypeInfo;
-
-/*typedef struct {
-    const char *tierName;
-    const char *maps[MAPS_PER_TIER];
-    int gameTypes[MAPS_PER_TIER];
-    qhandle_t mapHandles[MAPS_PER_TIER];
-} tierInfo;*/
 
 typedef struct
 {
@@ -789,7 +719,6 @@ typedef struct serverStatus_s
 	int motdTime;
 	char motd[MAX_STRING_CHARS];
 } serverStatus_t;
-
 
 typedef struct
 {
@@ -864,9 +793,6 @@ typedef struct
 	int mapCount;
 	mapInfo mapList[MAX_MAPS];
 
-	//int tierCount;
-	//tierInfo tierList[MAX_TIERS];
-
 	int campaignCount;
 	campaignInfo_t campaignList[MAX_CAMPAIGNS];
 
@@ -891,12 +817,9 @@ typedef struct
 	int movieIndex;
 	int previewMovie;
 
-//----(SA)	added
-//	const char		*savegameList[MAX_SAVEGAMES];
 	savegameInfo savegameList[MAX_SAVEGAMES];
 	int savegameCount;
 	int savegameIndex;
-//----(SA)	end
 
 	serverStatus_t serverStatus;
 
@@ -950,7 +873,6 @@ typedef struct
 
 extern uiInfo_t uiInfo;
 
-
 extern void         UI_Init(void);
 extern void         UI_Shutdown(void);
 extern void         UI_KeyEvent(int key);
@@ -985,38 +907,28 @@ extern char *UI_Argv(int arg);
 extern char *UI_Cvar_VariableString(const char *var_name);
 extern void         UI_Refresh(int time);
 extern void         UI_KeyEvent(int key);
-void                UI_LoadBestScores(const char *map, int game);             // NERVE - SMF
+
 extern qboolean   m_entersound;
 extern uiStatic_t uis;
 
-//
 // ui_spLevel.c
-//
 void UI_SPLevelMenu_Cache(void);
 void UI_SPLevelMenu(void);
 void UI_SPLevelMenu_f(void);
 void UI_SPLevelMenu_ReInit(void);
 
-//
 // ui_spArena.c
-//
 void UI_SPArena_Start(const char *arenaInfo);
 
-//
 // ui_spPostgame.c
-//
 void UI_SPPostgameMenu_Cache(void);
 void UI_SPPostgameMenu_f(void);
 
-//
 // ui_spSkill.c
-//
 void UI_SPSkillMenu(const char *arenaInfo);
 void UI_SPSkillMenu_Cache(void);
 
-//
 // ui_syscalls.c
-//
 void            trap_Print(const char *string);
 void            trap_Error(const char *string) __attribute__((noreturn));
 int             trap_Milliseconds(void);
@@ -1100,11 +1012,9 @@ void            trap_LAN_SaveCachedServers(void);
 void            trap_LAN_LoadCachedServers(void);
 qboolean        trap_LAN_ServerIsInFavoriteList(int source, int n);
 
-void            trap_SetPbClStatus(int status);                                 // DHM - Nerve
-void            trap_SetPbSvStatus(int status);                                 // TTimo
+void            trap_SetPbClStatus(int status);
+void            trap_SetPbSvStatus(int status);
 
-
-// -NERVE - SMF
 
 void            trap_R_RegisterFont(const char *pFontname, int pointSize, fontInfo_t *font);
 void            trap_S_StopBackgroundTrack(void);
@@ -1117,56 +1027,42 @@ void            trap_CIN_DrawCinematic(int handle);
 void            trap_CIN_SetExtents(int handle, int x, int y, int w, int h);
 int             trap_RealTime(qtime_t *qtime);
 void            trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
-qboolean        trap_GetLimboString(int index, char *buf);              // NERVE - SMF
-void            trap_CheckAutoUpdate(void);                             // DHM - Nerve
-void            trap_GetAutoUpdate(void);                               // DHM - Nerve
+qboolean        trap_GetLimboString(int index, char *buf);
+void            trap_CheckAutoUpdate(void);
+void            trap_GetAutoUpdate(void);
 
-void            trap_openURL(const char *url);   // TTimo
+void            trap_openURL(const char *url);
 void            trap_GetHunkData(int *hunkused, int *hunkexpected);
 
 
 char *trap_TranslateString(const char *string);                         // NERVE - SMF - localization
 
-//
 // ui_teamorders.c
-//
 extern void UI_TeamOrdersMenu(void);
 extern void UI_TeamOrdersMenu_f(void);
 extern void UI_TeamOrdersMenu_Cache(void);
 
-//
 // ui_loadconfig.c
-//
 void UI_LoadConfig_Cache(void);
 void UI_LoadConfigMenu(void);
 
-//
 // ui_saveconfig.c
-//
 void UI_SaveConfigMenu_Cache(void);
 void UI_SaveConfigMenu(void);
 
-//
 // ui_display.c
-//
 void UI_DisplayOptionsMenu_Cache(void);
 void UI_DisplayOptionsMenu(void);
 
-//
 // ui_sound.c
-//
 void UI_SoundOptionsMenu_Cache(void);
 void UI_SoundOptionsMenu(void);
 
-//
 // ui_network.c
-//
 void UI_NetworkOptionsMenu_Cache(void);
 void UI_NetworkOptionsMenu(void);
 
-//
 // ui_gameinfo.c
-//
 typedef enum
 {
 	AWARD_ACCURACY,

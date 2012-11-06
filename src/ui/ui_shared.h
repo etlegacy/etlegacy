@@ -34,7 +34,6 @@
 #ifndef __UI_SHARED_H
 #define __UI_SHARED_H
 
-
 #include "../qcommon/q_shared.h"
 #include "../renderer/tr_types.h"
 #include "keycodes.h"
@@ -173,7 +172,6 @@ typedef struct
 
 typedef windowDef_t Window;
 
-
 typedef struct
 {
 	vec4_t color;
@@ -307,14 +305,12 @@ typedef struct itemDef_s
 	int cursorPos;                  // cursor position in characters
 	void *typeData;                 // type specific data ptr's
 
-	// START - TAT 9/16/2002
 	//      For the bot menu, we have context sensitive menus
 	//      the way it works, we could have multiple items in a menu with the same hotkey
 	//      so in the mission pack, we search through all the menu items to find the one that is applicable to this key press
 	//      so the item has to store both the hotkey and the command to execute
 	int hotkey;
 	const char *onKey;
-	// END - TAT 9/16/2002
 
 	// OSP - on-the-fly enable/disable of items
 	int settingTest;
@@ -355,11 +351,9 @@ typedef struct
 	vec4_t disableColor;            // focus color for items
 	itemDef_t *items[MAX_MENUITEMS]; // items this menu contains
 
-	// START - TAT 9/16/2002
 	// should we search through all the items to find the hotkey instead of using the onKey array?
 	//      The bot command menu needs to do this, see note above
 	qboolean itemHotkeyMode;
-	// END - TAT 9/16/2002
 } menuDef_t;
 
 typedef struct
@@ -425,7 +419,7 @@ typedef struct
 	int (*textHeight)(const char *text, float scale, int limit);
 	int (*textHeightExt)(const char *text, float scale, int limit, fontInfo_t *font);
 	int (*multiLineTextHeight)(const char *text, float scale, int limit);
-	void (*textFont)(int font);              // NERVE - SMF
+	void (*textFont)(int font);
 	qhandle_t (*registerModel)(const char *p);
 	void (*modelBounds)(qhandle_t model, vec3_t min, vec3_t max);
 	void (*fillRect)(float x, float y, float w, float h, const vec4_t color);
@@ -455,10 +449,10 @@ typedef struct
 	qhandle_t (*feederItemImage)(float feederID, int index);
 	void (*feederSelection)(float feederID, int index);
 	qboolean (*feederSelectionClick)(itemDef_t *item);
-	void (*feederAddItem)(float feederID, const char *name, int index);               // NERVE - SMF
-	char * (*translateString)(const char *string);                                    // NERVE - SMF
-	void (*checkAutoUpdate)(void);                                             // DHM - Nerve
-	void (*getAutoUpdate)(void);                                               // DHM - Nerve
+	void (*feederAddItem)(float feederID, const char *name, int index);
+	char * (*translateString)(const char *string);
+	void (*checkAutoUpdate)(void);
+	void (*getAutoUpdate)(void);
 
 	void (*keynumToStringBuf)(int keynum, char *buf, int buflen);
 	void (*getBindingBuf)(int keynum, char *buf, int buflen);
@@ -487,7 +481,6 @@ typedef struct
 	void (*updateScreen)(void);
 	void (*getHunkData)(int *hunkused, int *hunkexpected);
 	int (*getConfigString)(int index, char *buff, int buffsize);
-
 
 	float yscale;
 	float xscale;
@@ -533,7 +526,7 @@ qboolean PC_Int_Parse(int handle, int *i);
 qboolean PC_Rect_Parse(int handle, rectDef_t *r);
 qboolean PC_String_Parse(int handle, const char **out);
 qboolean PC_Script_Parse(int handle, const char **out);
-qboolean PC_Char_Parse(int handle, char *out);                // NERVE - SMF
+qboolean PC_Char_Parse(int handle, char *out);
 int Menu_Count(void);
 menuDef_t *Menu_Get(int handle);
 void Menu_New(int handle);
@@ -560,7 +553,6 @@ void        Menu_Paint(menuDef_t *menu, qboolean forcePaint);
 void        Menu_SetFeederSelection(menuDef_t *menu, int feeder, int index, const char *name);
 void        Display_CacheAll(void);
 
-// TTimo
 void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
 void *UI_Alloc(int size);
@@ -579,10 +571,7 @@ int         trap_PC_ReadToken(int handle, pc_token_t *pc_token);
 int         trap_PC_SourceFileAndLine(int handle, char *filename, int *line);
 int         trap_PC_UnReadToken(int handle);
 
-
-//
 // panelhandling
-//
 
 typedef struct panel_button_s panel_button_t;
 

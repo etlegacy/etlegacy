@@ -470,21 +470,20 @@ void trap_LAN_MarkServerVisible(int source, int n, qboolean visible)
 // DHM - Nerve :: PunkBuster
 void trap_SetPbClStatus(int status)
 {
-	syscall(UI_SET_PBCLSTATUS, status);
+	//syscall(UI_SET_PBCLSTATUS, status);
 }
 // DHM - Nerve
 
 // TTimo: also for Sv
 void trap_SetPbSvStatus(int status)
 {
-	syscall(UI_SET_PBSVSTATUS, status);
+	//syscall(UI_SET_PBSVSTATUS, status);
 }
 
 void trap_LAN_ResetPings(int n)
 {
 	syscall(UI_LAN_RESETPINGS, n);
 }
-// -NERVE - SMF
 
 int trap_MemoryRemaining(void)
 {
@@ -554,13 +553,11 @@ e_status trap_CIN_StopCinematic(int handle)
 	return syscall(UI_CIN_STOPCINEMATIC, handle);
 }
 
-
 // will run a frame of the cinematic but will not draw it.  Will return FMV_EOF if the end of the cinematic has been reached.
 e_status trap_CIN_RunCinematic(int handle)
 {
 	return syscall(UI_CIN_RUNCINEMATIC, handle);
 }
-
 
 // draws the current frame
 void trap_CIN_DrawCinematic(int handle)
@@ -568,20 +565,17 @@ void trap_CIN_DrawCinematic(int handle)
 	syscall(UI_CIN_DRAWCINEMATIC, handle);
 }
 
-
 // allows you to resize the animation dynamically
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h)
 {
 	syscall(UI_CIN_SETEXTENTS, handle, x, y, w, h);
 }
 
-
 void    trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset)
 {
 	syscall(UI_R_REMAP_SHADER, oldShader, newShader, timeOffset);
 }
 
-// NERVE - SMF
 qboolean trap_GetLimboString(int index, char *buf)
 {
 	return syscall(UI_CL_GETLIMBOSTRING, index, buf);
@@ -604,9 +598,7 @@ char *trap_TranslateString(const char *string)
 #endif // LOCALIZATION_SUPPORT
 	return buf;
 }
-// -NERVE - SMF
 
-// DHM - Nerve
 void trap_CheckAutoUpdate(void)
 {
 	syscall(UI_CHECKAUTOUPDATE);
@@ -616,7 +608,6 @@ void trap_GetAutoUpdate(void)
 {
 	syscall(UI_GET_AUTOUPDATE);
 }
-// DHM - Nerve
 
 void trap_openURL(const char *s)
 {
