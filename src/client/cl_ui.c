@@ -39,10 +39,8 @@ extern botlib_export_t *botlib_export;
 
 vm_t *uivm;
 
-
 // ydnar: can we put this in a header, pls?
 void Key_GetBindingByString(const char *binding, int *key1, int *key2);
-
 
 /*
 ====================
@@ -83,7 +81,6 @@ void LAN_LoadCachedServers(void)
 	}
 
 	// Arnout: moved to mod/profiles dir
-	//if (FS_SV_FOpenFileRead(filename, &fileIn)) {
 	if (FS_FOpenFileRead(filename, &fileIn, qtrue))
 	{
 		FS_Read(&cls.numglobalservers, sizeof(int), fileIn);
@@ -124,7 +121,6 @@ void LAN_SaveServersToCache(void)
 	}
 
 	// Arnout: moved to mod/profiles dir
-	//fileOut = FS_SV_FOpenFileWrite(filename);
 	fileOut = FS_FOpenFileWrite(filename);
 	FS_Write(&cls.numglobalservers, sizeof(int), fileOut);
 	FS_Write(&cls.numfavoriteservers, sizeof(int), fileOut);
@@ -134,7 +130,6 @@ void LAN_SaveServersToCache(void)
 	FS_Write(&cls.favoriteServers, sizeof(cls.favoriteServers), fileOut);
 	FS_FCloseFile(fileOut);
 }
-
 
 /*
 ====================
@@ -269,7 +264,6 @@ static void LAN_RemoveServer(int source, const char *addr)
 	}
 }
 
-
 /*
 ====================
 LAN_GetServerCount
@@ -373,12 +367,12 @@ static void LAN_GetServerInfo(int source, int n, char *buf, int buflen)
 		Info_SetValueForKey(info, "nettype", va("%i", server->netType));
 		Info_SetValueForKey(info, "addr", NET_AdrToString(server->adr));
 		Info_SetValueForKey(info, "sv_allowAnonymous", va("%i", server->allowAnonymous));
-		Info_SetValueForKey(info, "friendlyFire", va("%i", server->friendlyFire));                   // NERVE - SMF
-		Info_SetValueForKey(info, "maxlives", va("%i", server->maxlives));                           // NERVE - SMF
-		Info_SetValueForKey(info, "needpass", va("%i", server->needpass));                           // NERVE - SMF
-		Info_SetValueForKey(info, "punkbuster", va("%i", server->punkbuster));                       // DHM - Nerve
-		Info_SetValueForKey(info, "gamename", server->gameName);                                  // Arnout
-		Info_SetValueForKey(info, "g_antilag", va("%i", server->antilag));     // TTimo
+		Info_SetValueForKey(info, "friendlyFire", va("%i", server->friendlyFire));
+		Info_SetValueForKey(info, "maxlives", va("%i", server->maxlives));
+		Info_SetValueForKey(info, "needpass", va("%i", server->needpass));
+		Info_SetValueForKey(info, "punkbuster", va("%i", server->punkbuster));
+		Info_SetValueForKey(info, "gamename", server->gameName);
+		Info_SetValueForKey(info, "g_antilag", va("%i", server->antilag));
 		Info_SetValueForKey(info, "weaprestrict", va("%i", server->weaprestrict));
 		Info_SetValueForKey(info, "balancedteams", va("%i", server->balancedteams));
 		Q_strncpyz(buf, info, buflen);
@@ -622,7 +616,6 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible)
 				server[n].visible = visible;
 			}
 		}
-
 	}
 	else
 	{
@@ -649,7 +642,6 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible)
 		}
 	}
 }
-
 
 /*
 =======================
@@ -838,7 +830,6 @@ void Key_SetCatcher(int catcher)
 	{
 		cls.keyCatchers = catcher;
 	}
-
 }
 
 /*
@@ -1000,15 +991,12 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		re.AddPolyToScene(args[1], args[2], VMA(3));
 		return 0;
 
-	// Ridah
 	case UI_R_ADDPOLYSTOSCENE:
 		re.AddPolysToScene(args[1], args[2], VMA(3), args[4]);
 		return 0;
-	// done.
 
 	case UI_R_ADDLIGHTTOSCENE:
 		// ydnar: new dlight code
-		//% re.AddLightToScene( VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), args[6] );
 		re.AddLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), args[7], args[8]);
 		return 0;
 
@@ -1077,7 +1065,6 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 	case UI_KEY_BINDINGTOKEYS:
 		Key_GetBindingByString(VMA(1), VMA(2), VMA(3));
 		return 0;
-
 
 	case UI_KEY_ISDOWN:
 		return Key_IsDown(args[1]);
@@ -1179,12 +1166,6 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 	case UI_LAN_SERVERISINFAVORITELIST:
 		return LAN_ServerIsInFavoriteList(args[1], args[2]);
 
-	case UI_SET_PBCLSTATUS:
-		return 0;
-
-	case UI_SET_PBSVSTATUS:
-		return 0;
-
 	case UI_LAN_COMPARESERVERS:
 		return LAN_CompareServers(args[1], args[2], args[3], args[4], args[5]);
 
@@ -1271,16 +1252,13 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		re.RemapShader(VMA(1), VMA(2), VMA(3));
 		return 0;
 
-	// NERVE - SMF
 	case UI_CL_GETLIMBOSTRING:
 		return CL_GetLimboString(args[1], VMA(2));
 
 	case UI_CL_TRANSLATE_STRING:
 		CL_TranslateString(VMA(1), VMA(2));
 		return 0;
-	// -NERVE - SMF
 
-	// DHM - Nerve
 	case UI_CHECKAUTOUPDATE:
 		CL_CheckAutoUpdate();
 		return 0;
@@ -1288,7 +1266,6 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 	case UI_GET_AUTOUPDATE:
 		CL_GetAutoUpdate();
 		return 0;
-	// DHM - Nerve
 
 	case UI_OPENURL:
 		CL_OpenURL((const char *)VMA(1));
@@ -1296,6 +1273,11 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 
 	case UI_GETHUNKDATA:
 		Com_GetHunkInfo(VMA(1), VMA(2));
+		return 0;
+
+	// obolete
+	case UI_SET_PBCLSTATUS:
+	case UI_SET_PBSVSTATUS:
 		return 0;
 
 	default:
@@ -1329,7 +1311,6 @@ void CL_ShutdownUI(void)
 CL_InitUI
 ====================
 */
-
 void CL_InitUI(void)
 {
 	int v;
