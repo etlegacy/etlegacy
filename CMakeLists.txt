@@ -72,6 +72,10 @@ endif()
 
 option(BUILD_MV_SUPPORT     	"Compile the mod files with multiview support (broken?!)"  		OFF)
 
+set(ET_FS_BASEPATH 				"" 						CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
+option(ET_KEY     				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
+
+
 #-----------------------------------------------------------------
 # Platform-specific settings
 #-----------------------------------------------------------------
@@ -436,8 +440,9 @@ if(BUILD_PAK3_PK3)
 endif(BUILD_PAK3_PK3)
 
 if(INSTALL_OMNIBOTS)
-	## FIXME: exclude MAC
 	if(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
+			message(STATUS "Installing Omni-Bot")
+	
 			# We have to host these files on our web-server - I couldn't find a good and reliable server hosting omnibot
 			# Note: used zip (16MB) doesn't contain windows, incomplete nav- and other unwanted files
 			# FIXME: change to tar or rar ...
@@ -487,6 +492,38 @@ install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}")
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}")
+
+
+# copy required genuine files
+if (ET_FS_BASEPATH)
+
+	install(FILES "${ET_FS_BASEPATH}/etmain/mp_bin.pk3"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+		PERMISSIONS OWNER_WRITE OWNER_READ)
+
+	install(FILES "${ET_FS_BASEPATH}/etmain/pak0.pk3"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+		PERMISSIONS OWNER_WRITE OWNER_READ)
+
+	install(FILES "${ET_FS_BASEPATH}/etmain/pak1.pk3"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+		PERMISSIONS OWNER_WRITE OWNER_READ)
+
+	install(FILES "${ET_FS_BASEPATH}/etmain/pak2.pk3"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+		PERMISSIONS OWNER_WRITE OWNER_READ)
+
+	install(FILES "${ET_FS_BASEPATH}/etmain/video/etintro.roq"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain/video"
+		PERMISSIONS OWNER_WRITE OWNER_READ)
+						
+	if (ET_KEY)
+		install(FILES "${ET_FS_BASEPATH}/etmain/etkey"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+		PERMISSIONS OWNER_WRITE OWNER_READ)						
+	endif(ET_KEY)
+	
+endif(ET_FS_BASEPATH)
 
 
 # Uninstall target
