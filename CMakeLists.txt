@@ -109,7 +109,14 @@ if(UNIX)
 		set(OS_LIBRARIES dl m)
 		set(LIB_SUFFIX ".mp.")
 	endif()
-	#set(CMAKE_SHARED_LIBRARY_C_FLAGS "-fPIC -fvisibility=hidden")
+	if(NOT MSYS)
+		include(CheckCCompilerFlag)
+		check_c_compiler_flag("-fvisibility=hidden" SUPPORT_VISIBILITY)
+		if(SUPPORT_VISIBILITY)
+			message(STATUS "Compiling with -fvisibility=hidden")
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
+		endif(SUPPORT_VISIBILITY)
+	endif()
 elseif(WIN32)
 	add_definitions(-DWINVER=0x501)
 	set(OS_LIBRARIES ws2_32 psapi winmm)
@@ -228,6 +235,13 @@ if(BUILD_CLIENT)
 	if(NOT BUNDLED_LIBS)
 		Find_Package(SDL32) # FindSDL doesn't detect 32bit lib when crosscompiling
 		Find_Package(JPEG 8)
+
+		# Check for libjpeg v8
+		include(CheckFunctionExists)
+		set(CMAKE_REQUIRED_INCLUDES ${JPEG_INCLUDE_DIR})
+		set(CMAKE_REQUIRED_LIBRARIES ${JPEG_LIBRARY})
+		# FIXME: function is checked, but HAVE_JPEG_MEM_SRC is empty. Why?
+		check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
 	endif(NOT BUNDLED_LIBS)
 
 	if(USE_CURL)
@@ -445,7 +459,6 @@ if(INSTALL_OMNIBOTS)
 	if(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 		message(STATUS "Installing Omni-Bot")
 
-		# We have to host these files on our web-server - I couldn't find a good and reliable server hosting omnibot
 		# Note: used zip (16MB) doesn't contain windows, incomplete nav- and other unwanted files
 		# FIXME: change to tar or rar ...
 		set(ETLEGACY_OMNIBOT_L_DL_URL "http://mirror.etlegacy.com/omnibot/OmniBot_ETLegacy_Linux_r2497.zip")
