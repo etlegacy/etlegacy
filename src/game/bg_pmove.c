@@ -4498,11 +4498,7 @@ static void PM_Weapon(void)
 
 			if (playswitchsound)
 			{
-				if (reloading)
-				{
-					PM_AddEvent(EV_EMPTYCLIP);
-				}
-				else
+				if (!reloading)
 				{
 					PM_AddEvent(EV_NOAMMO);
 				}

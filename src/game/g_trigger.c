@@ -171,7 +171,6 @@ void Touch_Multi(gentity_t *self, gentity_t *other, trace_t *trace)
 	multi_trigger(self, other);
 }
 
-
 /*QUAKED trigger_multiple (.5 .5 .5) ? AXIS_ONLY ALLIED_ONLY NOBOT BOTONLY SOLDIERONLY LTONLY MEDICONLY ENGINEERONLY COVERTOPSONLY
 "wait" : Seconds between triggerings, 0.5 default, -1 = one time only.
 "random"	wait variance, default is 0
@@ -380,7 +379,6 @@ void trigger_teleporter_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	TeleportPlayer(other, dest->s.origin, dest->s.angles);
 }
 
-
 /*QUAKED trigger_teleport (.5 .5 .5) ?
 Allows client side prediction of teleportation events.
 Must point at a target_position, which will be the teleport destination.
@@ -522,10 +520,9 @@ void SP_trigger_hurt(gentity_t *self)
 		self->damage = 5;
 	}
 
-//----(SA)
-//	if ( self->spawnflags & 2 ) {
-//		self->use = hurt_use;
-//	}
+	//	if ( self->spawnflags & 2 ) {
+	//		self->use = hurt_use;
+	//	}
 
 	self->use = hurt_use;
 
@@ -533,17 +530,15 @@ void SP_trigger_hurt(gentity_t *self)
 	if (!(self->spawnflags & 1))
 	{
 		//----(SA)	any reason this needs to be linked? (predicted?)
-//		trap_LinkEntity (self);
+		//		trap_LinkEntity (self);
 		self->touch = hurt_touch;
 	}
 
 	G_SpawnString("life", "0", &life);
 	dalife      = atof(life);
 	self->delay = dalife;
-
 }
 
-// START	xkan, 9/17/2002
 /*
 ==============================================================================
 
@@ -564,7 +559,7 @@ maximum.
 
 qboolean G_IsAllowedHeal(gentity_t *ent)
 {
-//	int i;
+	//	int i;
 
 	if (!ent || !ent->client)
 	{
@@ -576,7 +571,7 @@ qboolean G_IsAllowedHeal(gentity_t *ent)
 		return qfalse;
 	}
 
-/*	for( i = 0; i < 2; i++ ) {
+	/*	for( i = 0; i < 2; i++ ) {
         if( !ent->client->lastHealTimes[i] || (level.time - ent->client->lastHealTimes[i] > 60000) ) {
             ent->client->lastHealTimes[i] = level.time;
             return qtrue;
@@ -708,7 +703,6 @@ SP_trigger_heal
 */
 void SP_trigger_heal(gentity_t *self)
 {
-
 	char *spawnstr;
 	int  healvalue;
 
@@ -745,9 +739,7 @@ void SP_trigger_heal(gentity_t *self)
 	healvalue    = atoi(spawnstr);
 	self->damage = healvalue;   // store the rate of heal in damage
 }
-// END		xkan, 9/17/2002
 
-// START	xkan, 9/17/2002
 /*
 ==============================================================================
 
@@ -768,7 +760,7 @@ specified maximum.
 
 qboolean G_IsAllowedAmmo(gentity_t *ent)
 {
-//	int i;
+	//	int i;
 
 	if (!ent || !ent->client)
 	{
@@ -785,7 +777,7 @@ qboolean G_IsAllowedAmmo(gentity_t *ent)
 		return qfalse;
 	}
 
-/*	for( i = 0; i < 2; i++ ) {
+	/*	for( i = 0; i < 2; i++ ) {
         if( !ent->client->lastAmmoTimes[i] || (level.time - ent->client->lastAmmoTimes[i] > 60000) ) {
             ent->client->lastAmmoTimes[i] = level.time;
 
@@ -793,7 +785,8 @@ qboolean G_IsAllowedAmmo(gentity_t *ent)
         }
     }
 
-    return qfalse;*/
+    return qfalse;
+    */
 
 	return qtrue;
 }
@@ -868,7 +861,7 @@ void ammo_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 void trigger_ammo_think(gentity_t *self)
 {
 	self->nextthink = level.time + AMMO_REGENTIME;
-/*	if(self->timestamp - level.time > -AMMO_REGENTIME) {
+	/*	if(self->timestamp - level.time > -AMMO_REGENTIME) {
         return;
     }*/
 
@@ -925,7 +918,6 @@ SP_trigger_ammo
 */
 void SP_trigger_ammo(gentity_t *self)
 {
-
 	char *spawnstr;
 	int  ammovalue;
 
@@ -964,7 +956,6 @@ void SP_trigger_ammo(gentity_t *self)
 	self->damage = ammovalue;
 
 }
-// END		xkan, 9/17/2002
 
 /*
 ==============================================================================
@@ -973,7 +964,6 @@ timer
 
 ==============================================================================
 */
-
 
 /*QUAKED func_timer (0.3 0.1 0.6) (-8 -8 -8) (8 8 8) START_ON
 This should be renamed trigger_timer...
@@ -1031,11 +1021,7 @@ void SP_func_timer(gentity_t *self)
 	self->r.svFlags = SVF_NOCLIENT;
 }
 
-
-
-
 //---- (SA) Wolf triggers
-
 
 /*QUAKED trigger_once (.5 .5 .5) ? AI_Touch
 Must be targeted at one or more entities.
@@ -1054,8 +1040,7 @@ void SP_trigger_once(gentity_t *ent)
 
 //---- end
 
-// Mad Doc - TDF
-// put this back in and modifyed for single player bots
+// Mad Doc - TDF put this back in and modifyed for single player bots
 
 void trigger_aidoor_stayopen(gentity_t *ent, gentity_t *other, trace_t *trace)
 {
@@ -1106,8 +1091,6 @@ void trigger_aidoor_stayopen(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 }
 
-
-
 void SP_trigger_aidoor(gentity_t *ent)
 {
 	if (!ent->targetname)
@@ -1146,7 +1129,6 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 	if ((ent->spawnflags & RED_FLAG) && other->client->ps.powerups[PW_REDFLAG])
 	{
-
 		if (ent->spawnflags & 4)
 		{
 			other->client->ps.powerups[PW_REDFLAG] = 0;
@@ -1176,7 +1158,6 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 	else if ((ent->spawnflags & BLUE_FLAG) && other->client->ps.powerups[PW_BLUEFLAG])
 	{
-
 		if (ent->spawnflags & 4)
 		{
 			other->client->ps.powerups[PW_BLUEFLAG] = 0;
@@ -1218,7 +1199,6 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 	if ((ent->spawnflags & RED_FLAG) && other->client->ps.powerups[PW_REDFLAG])
 	{
-
 		other->client->ps.powerups[PW_REDFLAG] = 0;
 		other->client->speedScale              = 0;
 
@@ -1240,7 +1220,6 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 	else if ((ent->spawnflags & BLUE_FLAG) && other->client->ps.powerups[PW_BLUEFLAG])
 	{
-
 		other->client->ps.powerups[PW_BLUEFLAG] = 0;
 		other->client->speedScale               = 0;
 
@@ -1330,7 +1309,6 @@ void explosive_indicator_think(gentity_t *ent)
 
 	if (!parent->inuse || (parent->s.eType == ET_CONSTRUCTIBLE && !parent->r.linked))
 	{
-
 		// update our map
 		{
 			mapEntityData_t *mEnt;
@@ -1413,7 +1391,6 @@ void constructible_indicator_think(gentity_t *ent)
 				}
 			}
 		}
-
 
 		parent->count2 = 0;
 
@@ -1563,8 +1540,8 @@ void Think_SetupObjectiveInfo(gentity_t *ent)
 		// if already constructed (in case of START_BUILT)
 		if (constructibles[0]->s.angles2[1] != 0)
 		{
-//			trap_UnlinkEntity( ent );
-//			return;
+			//			trap_UnlinkEntity( ent );
+			//			return;
 		}
 		else
 		{
@@ -1662,8 +1639,8 @@ void SP_trigger_objective_info(gentity_t *ent)
 		G_Error("'trigger_objective_info' does not have a 'track' \n");
 	}
 
-/*	if ( !ent->message )
-        G_Error ("'trigger_objective_info' does not have a 'shortname' \n");*/
+	//	if ( !ent->message )
+    //    G_Error ("'trigger_objective_info' does not have a 'shortname' \n");
 
 	if (ent->spawnflags & MESSAGE_OVERRIDE)
 	{
@@ -1785,8 +1762,8 @@ void SP_trigger_concussive_dust(gentity_t *self)
 	InitTrigger(self);
 
 	// unlike other triggers, we need to send this one to the client
-//	self->r.svFlags &= ~SVF_NOCLIENT;
-//	self->r.svFlags |= SVF_BROADCAST;
+	//	self->r.svFlags &= ~SVF_NOCLIENT;
+	//	self->r.svFlags |= SVF_BROADCAST;
 
 	self->s.eType = ET_CONCUSSIVE_TRIGGER;
 	self->touch   = trigger_concussive_touch;

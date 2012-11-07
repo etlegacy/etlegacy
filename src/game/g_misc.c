@@ -110,21 +110,6 @@ TELEPORTERS
 */
 void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
 {
-//  gentity_t   *tent;
-
-	// use temp events at source and destination to prevent the effect
-	// from getting dropped by a second player event
-	/*  if ( player->client->sess.sessionTeam != TEAM_SPECTATOR ) {
-	        tent = G_TempEntity( player->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
-	        tent->s.clientNum = player->s.clientNum;
-
-	        tent = G_TempEntity( origin, EV_PLAYER_TELEPORT_IN );
-	        tent->s.clientNum = player->s.clientNum;
-	    }*/
-
-	// unlink to make sure it can't possibly interfere with G_KillBox
-//  trap_UnlinkEntity (player);
-
 	VectorCopy(origin, player->client->ps.origin);
 	player->client->ps.origin[2] += 1;
 

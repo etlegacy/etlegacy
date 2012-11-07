@@ -1738,35 +1738,6 @@ int CG_NewParticleArea(int num)
 	return (1);
 }
 
-void    CG_SnowLink(centity_t *cent, qboolean particleOn)
-{
-	cparticle_t *p, *next;
-	int         id;
-
-	id = cent->currentState.frame;
-
-	for (p = active_particles ; p ; p = next)
-	{
-		next = p->next;
-
-		if (p->type == P_WEATHER || p->type == P_WEATHER_TURBULENT)
-		{
-			if (p->snum == id)
-			{
-				if (particleOn)
-				{
-					p->link = qtrue;
-				}
-				else
-				{
-					p->link = qfalse;
-				}
-			}
-		}
-
-	}
-}
-
 void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int lifetime, int vel, int acc, int maxroll, float alpha, float size)
 {
 	cparticle_t *p;

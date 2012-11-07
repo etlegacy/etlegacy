@@ -214,12 +214,9 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		{
 			return;
 		}
-		// jpw
-		/*      if (!Q_stricmp (ent->classname, "flamebarrel")) {
-		            G_AddEvent( ent, EV_FLAMEBARREL_BOUNCE, 0 );
-		        } else {*/
+
 		G_AddEvent(ent, EV_GRENADE_BOUNCE, BG_FootstepForSurface(trace->surfaceFlags));
-//      }
+
 		return;
 	}
 

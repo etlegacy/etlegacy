@@ -40,8 +40,6 @@
 #endif
 
 // Ridah, new bounding box
-//static vec3_t	playerMins = {-15, -15, -24};
-//static vec3_t	playerMaxs = {15, 15, 32};
 vec3_t playerMins = { -18, -18, -24 };
 vec3_t playerMaxs = { 18, 18, 48 };
 
@@ -113,7 +111,6 @@ void SP_info_player_intermission(gentity_t *ent)
 /*
 ================
 SpotWouldTelefrag
-
 ================
 */
 qboolean SpotWouldTelefrag(gentity_t *spot)
@@ -740,11 +737,6 @@ void respawn(gentity_t *ent)
 	G_DPrintf("Respawning %s, %i lives left\n", ent->client->pers.netname, ent->client->ps.persistant[PERS_RESPAWNS_LEFT]);
 
 	ClientSpawn(ent, qfalse);
-
-	// DHM - Nerve :: Add back if we decide to have a spawn effect
-	// add a teleportation effect
-	//tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
-	//tent->s.clientNum = ent->s.clientNum;
 }
 
 /*
@@ -2344,10 +2336,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 		{
 			update = qtrue;
 		}
-
-		//if ( update || client->sess.playerWeapon != client->sess.latchPlayerWeapon) {
-		//	G_ExplodeMines(ent);
-		//}
 
 		client->sess.playerType = client->sess.latchPlayerType;
 

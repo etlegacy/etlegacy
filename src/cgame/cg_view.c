@@ -191,10 +191,7 @@ static void CG_AddTestModel(void)
 	trap_R_AddRefEntityToScene(&cg.testModelEntity);
 }
 
-
-
 //============================================================================
-
 
 /*
 =================
@@ -357,7 +354,6 @@ void CG_OffsetThirdPersonView(void)
 		VectorCopy(trace.endpos, view);
 	}
 
-
 	VectorCopy(view, cg.refdef_current->vieworg);
 
 	// select pitch to look at focus point from vieword
@@ -370,7 +366,6 @@ void CG_OffsetThirdPersonView(void)
 	cg.refdefViewAngles[PITCH] = -180 / M_PI *atan2(focusPoint[2], focusDist);
 	cg.refdefViewAngles[YAW]  -= cg_thirdPersonAngle.value;
 }
-
 
 // this causes a compiler bug on mac MrC compiler
 static void CG_StepOffset(void)
@@ -407,7 +402,7 @@ void CG_KickAngles(void)
 	int          i, frametime, t;
 	float        ft;
 #define STEP 20
-	char buf[32];               // NERVE - SMF
+	char buf[32];
 
 	// this code is frametime-dependant, so split it up into small chunks
 	//cg.kickAngles[PITCH] = 0;
@@ -515,68 +510,6 @@ void CG_KickAngles(void)
 	}
 }
 
-
-/*
-CG_Concussive
-*/
-void CG_Concussive(centity_t *cent)
-{
-	float length;
-//  vec3_t  dir, forward;
-	vec3_t vec;
-//  float   dot;
-
-	//
-	float  pitchRecoilAdd, pitchAdd;
-	float  yawRandom;
-	vec3_t recoil;
-	//
-
-	if (!cg.renderingThirdPerson && cent->currentState.density == cg.snap->ps.clientNum)
-	{
-		//
-		pitchRecoilAdd = 0;
-		pitchAdd       = 0;
-		yawRandom      = 0;
-		//
-
-		VectorSubtract(cg.snap->ps.origin, cent->currentState.origin, vec);
-		length = VectorLength(vec);
-
-		// pitchAdd = 12+rand()%3;
-		// yawRandom = 6;
-
-		if (length > 1024)
-		{
-			return;
-		}
-
-		pitchAdd  = (32 / length) * 64;
-		yawRandom = (32 / length) * 64;
-
-		// recoil[YAW] = crandom()*yawRandom;
-		if (rand() % 100 > 50)
-		{
-			recoil[YAW] = -yawRandom;
-		}
-		else
-		{
-			recoil[YAW] = yawRandom;
-		}
-
-		recoil[ROLL]  = -recoil[YAW];   // why not
-		recoil[PITCH] = -pitchAdd;
-		// scale it up a bit (easier to modify this while tweaking)
-		VectorScale(recoil, 30, recoil);
-		// set the recoil
-		VectorCopy(recoil, cg.kickAVel);
-		// set the recoil
-		cg.recoilPitch -= pitchRecoilAdd;
-
-	}
-}
-
-
 /*
 ==============
 CG_ZoomSway
@@ -606,10 +539,7 @@ static void CG_ZoomSway(void)
 
 	phase                     = cg.time / 1000.0 * ZOOM_YAW_FREQUENCY * M_PI * 2;
 	cg.refdefViewAngles[YAW] += ZOOM_YAW_AMPLITUDE * sin(phase) * (spreadfrac + ZOOM_YAW_MIN_AMPLITUDE);
-
 }
-
-
 
 /*
 ===============
@@ -899,10 +829,7 @@ static void CG_OffsetFirstPersonView(void)
 
 //======================================================================
 
-//
 // Zoom controls
-//
-
 
 // probably move to server variables
 float zoomTable[ZOOM_MAX_ZOOMS][2] =
@@ -914,7 +841,7 @@ float zoomTable[ZOOM_MAX_ZOOMS][2] =
 	{ 20, 4  }, //  sniper
 	{ 60, 20 }, //  snooper
 	{ 55, 55 }, //  fg42
-	{ 55, 55 }    //  mg42
+	{ 55, 55 }  //  mg42
 };
 
 void CG_AdjustZoomVal(float val, int type)
@@ -963,7 +890,6 @@ void CG_ZoomOut_f(void)
 		CG_AdjustZoomVal(cg_zoomStepSniper.value, ZOOM_SNIPER);   // JPW NERVE per atvi request BINOC);
 	}
 }
-
 
 /*
 ==============
@@ -1034,8 +960,8 @@ void CG_Zoom(void)
 		}
 		else
 		{
-//bani - we now sanity check to make sure we can't zoom non-zoomable weapons
-//zinx - fix for #423 - don't sanity check while following
+			//bani - we now sanity check to make sure we can't zoom non-zoomable weapons
+			//zinx - fix for #423 - don't sanity check while following
 			if (!((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback))
 			{
 				switch (cg.weaponSelect)
@@ -1052,7 +978,6 @@ void CG_Zoom(void)
 		}
 	}
 }
-
 
 /*
 ====================
@@ -1228,13 +1153,11 @@ static int CG_CalcFov(void)
 		if (cg.zoomval)
 		{
 			cg.zoomSensitivity = 0.6 * (cg.zoomval / 90.f);     // NERVE - SMF - changed to get less sensitive as you zoom in
-//              cg.zoomSensitivity = 0.1;
 		}
 		else
 		{
 			cg.zoomSensitivity = 1;
 		}
-		// -NERVE - SMF
 	}
 	else
 	{
@@ -1244,7 +1167,6 @@ static int CG_CalcFov(void)
 	return inwater;
 }
 
-
 /*
 ==============
 CG_UnderwaterSounds
@@ -1253,10 +1175,8 @@ CG_UnderwaterSounds
 #define UNDERWATER_BIT 16
 static void CG_UnderwaterSounds(void)
 {
-//  trap_S_AddLoopingSound( cent->lerpOrigin, vec3_origin, cgs.media.underWaterSound, 255, 0 );
 	trap_S_AddLoopingSound(cg.snap->ps.origin, vec3_origin, cgs.media.underWaterSound, 255 | (1 << UNDERWATER_BIT), 0);
 }
-
 
 /*
 ===============
@@ -1418,8 +1338,8 @@ int CG_CalcViewValues(void)
 
 			// FIXME: this is really really bad
 			trap_SendClientCommand(va("setCameraOrigin %f %f %f", origin[0], origin[1], origin[2]));
+			
 			return 0;
-
 		}
 		else
 		{
@@ -1439,6 +1359,7 @@ int CG_CalcViewValues(void)
 		VectorCopy(ps->origin, cg.refdef_current->vieworg);
 		VectorCopy(ps->viewangles, cg.refdefViewAngles);
 		AnglesToAxis(cg.refdefViewAngles, cg.refdef_current->viewaxis);
+		
 		return CG_CalcFov();
 	}
 
@@ -1543,7 +1464,6 @@ int CG_CalcViewValues(void)
 		}
 		else
 		{
-
 			// offset for local bobbing and kicks
 			CG_OffsetFirstPersonView();
 
@@ -1587,7 +1507,6 @@ int CG_CalcViewValues(void)
 			}
 			cg.refdef_current->vieworg[2] = oldZ;
 		}
-		// done.
 	}
 
 	// position eye reletive to origin
@@ -1601,7 +1520,6 @@ int CG_CalcViewValues(void)
 	// field of view
 	return CG_CalcFov();
 }
-
 
 //=========================================================================
 
@@ -1939,9 +1857,7 @@ typedef struct plane_s
 
 static plane_t frustum[4];
 
-//
 //  CG_SetupFrustum
-//
 void CG_SetupFrustum(void)
 {
 	int   i;
@@ -1974,9 +1890,7 @@ void CG_SetupFrustum(void)
 	}
 }
 
-//
 //  CG_CullPoint - returns true if culled
-//
 qboolean CG_CullPoint(vec3_t pt)
 {
 	int     i;
@@ -2041,10 +1955,6 @@ CG_DrawActiveFrame
 Generates and draws a game scene and status information at the given time.
 =================
 */
-
-//static int lightningtime = 0;
-//static int lightningsequencetime = 0;
-//static int lightningsequencecounter = 0;
 
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
 
@@ -2151,7 +2061,6 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
     CG_PredictPlayerState();
 
     DEBUGTIME
-
 
     // OSP -- MV handling
     if (cg.mvCurrentMainview != NULL && cg.snap->ps.pm_type != PM_INTERMISSION)
@@ -2263,7 +2172,6 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
             CG_AddFlameChunks();
             CG_AddTrails();         // this must come last, so the trails dropped this frame get drawn
 		}
-        // done.
 
         DEBUGTIME
 

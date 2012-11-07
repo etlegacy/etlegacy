@@ -100,13 +100,10 @@ void P_DamageFeedback(gentity_t *player)
 
 	client->ps.damageCount = count;
 
-	//
 	// clear totals
-	//
 	client->damage_blood     = 0;
 	client->damage_knockback = 0;
 }
-
 
 #define MIN_BURN_INTERVAL 399 // JPW NERVE set burn timeinterval so we can do more precise damage (was 199 old model)
 
@@ -129,9 +126,7 @@ void P_WorldEffects(gentity_t *ent)
 
 	waterlevel = ent->waterlevel;
 
-	//
 	// check for drowning
-	//
 	if (waterlevel == 3)
 	{
 		// if out of air, start drowning
@@ -186,9 +181,7 @@ void P_WorldEffects(gentity_t *ent)
 		ent->damage             = 2;
 	}
 
-	//
 	// check for sizzle damage (move to pmove?)
-	//
 	if (waterlevel && (ent->watertype & CONTENTS_LAVA))
 	{
 		if (ent->health > 0 && ent->pain_debounce_time <= level.time)
@@ -203,10 +196,7 @@ void P_WorldEffects(gentity_t *ent)
 		}
 	}
 
-	//
-	// check for burning from flamethrower
-	//
-	// JPW NERVE MP way
+	// check for burning from flamethrower - JPW NERVE MP way
 	if (ent->s.onFireEnd && ent->client)
 	{
 		if (level.time - ent->client->lastBurnTime >= MIN_BURN_INTERVAL)
@@ -226,10 +216,7 @@ void P_WorldEffects(gentity_t *ent)
 			}
 		}
 	}
-	// jpw
 }
-
-
 
 /*
 ===============
@@ -237,10 +224,7 @@ G_SetClientSound
 ===============
 */
 void G_SetClientSound(gentity_t *ent)
-{
-/*	if (ent->waterlevel && (ent->watertype & CONTENTS_LAVA) )	//----(SA)	modified since slime is no longer deadly
-        ent->s.loopSound = level.snd_fry;
-    else*/                                                                                                                                                            // Gordon: doesnt exist
+{                                                                                                                                                           // Gordon: doesnt exist
 	ent->s.loopSound = 0;
 }
 
@@ -308,7 +292,6 @@ qboolean ReadyToCallArtillery(gentity_t *ent)
 	return qtrue;
 }
 
-
 // Are we ready to construct?  Optionally, will also update the time while we are constructing
 qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean updateState)
 {
@@ -357,7 +340,6 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 
 	return qtrue;
 }
-
 
 //==============================================================
 
@@ -580,7 +562,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		pm.trace         = trap_TraceCapsuleNoEnts;
 		pm.pointcontents = trap_PointContents;
 
-		Pmove(&pm);   // JPW NERVE
+		Pmove(&pm);
 
 		// Rafael - Activate
 		// Ridah, made it a latched event (occurs on keydown only)
@@ -601,11 +583,9 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		ent->client->pmext.sprintTime = SPRINTTIME;
 	}
 
-
 	client->oldbuttons = client->buttons;
 	client->buttons    = ucmd->buttons;
 
-//----(SA)	added
 	client->oldwbuttons = client->wbuttons;
 	client->wbuttons    = ucmd->wbuttons;
 
@@ -641,7 +621,6 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		}
 	}
 }
-
 
 /*
 =================
@@ -774,11 +753,9 @@ void ClientIntermissionThink(gclient_t *client)
 	client->oldbuttons = client->buttons;
 	client->buttons    = client->pers.cmd.buttons;
 
-//----(SA)	added
 	client->oldwbuttons = client->wbuttons;
 	client->wbuttons    = client->pers.cmd.wbuttons;
 }
-
 
 /*
 ================
@@ -813,9 +790,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 		case EV_FALL_DMG_10:
 		case EV_FALL_DMG_15:
 		case EV_FALL_DMG_25:
-		//case EV_FALL_DMG_30:
 		case EV_FALL_DMG_50:
-			//case EV_FALL_DMG_75:
 
 			// rain - VectorClear() used to be done here whenever falling
 			// damage occured, but I moved it to bg_pmove where it belongs.
@@ -947,13 +922,11 @@ void SendPendingPredictableEvents(playerState_t *ps)
 	*/
 }
 
-// DHM - Nerve
 void WolfFindMedic(gentity_t *self)
 {
 	int       i, medic = -1;
 	gclient_t *cl;
 	vec3_t    start, end;
-//	vec3_t	temp;	// rain - unused
 	trace_t tr;
 	float   bestdist = 1024, dist;
 
@@ -1031,9 +1004,6 @@ void WolfFindMedic(gentity_t *self)
 	}
 }
 
-
-//void ClientDamage( gentity_t *clent, int entnum, int enemynum, int id );		// NERVE - SMF
-
 /*
 ==============
 ClientThink
@@ -1051,7 +1021,6 @@ void ClientThink_real(gentity_t *ent)
 	pmove_t   pm;
 	usercmd_t *ucmd;
 	gclient_t *client = ent->client;
-
 
 	// don't think if the client is not yet connected (and thus not yet spawned in)
 	if (client->pers.connected != CON_CONNECTED)
@@ -1074,7 +1043,7 @@ void ClientThink_real(gentity_t *ent)
 	// mark the time, so the connection sprite can be removed
 	ucmd = &ent->client->pers.cmd;
 
-	ent->client->ps.identifyClient = ucmd->identClient;     // NERVE - SMF
+	ent->client->ps.identifyClient = ucmd->identClient;
 
 	// zinx etpro antiwarp
 	if (client->warping && g_maxWarp.integer && G_DoAntiwarp(ent))
@@ -1268,13 +1237,11 @@ void ClientThink_real(gentity_t *ent)
 
 	VectorCopy(client->ps.origin, client->oldOrigin);
 
-	// NERVE - SMF
 	pm.gametype           = g_gametype.integer;
 	pm.ltChargeTime       = level.lieutenantChargeTime[client->sess.sessionTeam - 1];
 	pm.soldierChargeTime  = level.soldierChargeTime[client->sess.sessionTeam - 1];
 	pm.engineerChargeTime = level.engineerChargeTime[client->sess.sessionTeam - 1];
 	pm.medicChargeTime    = level.medicChargeTime[client->sess.sessionTeam - 1];
-	// -NERVE - SMF
 
 	pm.skill = client->sess.skill;
 
@@ -1352,7 +1319,6 @@ void ClientThink_real(gentity_t *ent)
 	// ikkyo - fix leaning players bug
 	VectorCopy(client->ps.velocity, ent->s.pos.trDelta);
 	SnapVector(ent->s.pos.trDelta);
-	// end
 
 	// server cursor hints
 	// TAT 1/10/2003 - bots don't need to check for cursor hints
@@ -1395,11 +1361,10 @@ void ClientThink_real(gentity_t *ent)
 		client->fireHeld = qfalse;      // for grapple
 	}
 
-//
-//	// use the precise origin for linking
-//	VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
-//
-//	// use the snapped origin for linking so it matches client predicted versions
+	// use the precise origin for linking
+	//VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
+
+	// use the snapped origin for linking so it matches client predicted versions
 	VectorCopy(ent->s.pos.trBase, ent->r.currentOrigin);
 
 	VectorCopy(pm.mins, ent->r.mins);
@@ -1437,13 +1402,12 @@ void ClientThink_real(gentity_t *ent)
 	client->oldbuttons      = client->buttons;
 	client->buttons         = ucmd->buttons;
 	client->latched_buttons = client->buttons & ~client->oldbuttons;
-//	client->latched_buttons |= client->buttons & ~client->oldbuttons;	// FIXME:? (SA) MP method (causes problems for us.  activate 'sticks')
+	//	client->latched_buttons |= client->buttons & ~client->oldbuttons;	// FIXME:? (SA) MP method (causes problems for us.  activate 'sticks')
 
-	//----(SA)	added
 	client->oldwbuttons      = client->wbuttons;
 	client->wbuttons         = ucmd->wbuttons;
 	client->latched_wbuttons = client->wbuttons & ~client->oldwbuttons;
-//	client->latched_wbuttons |= client->wbuttons & ~client->oldwbuttons;	// FIXME:? (SA) MP method
+	//	client->latched_wbuttons |= client->wbuttons & ~client->oldwbuttons;	// FIXME:? (SA) MP method
 
 	// Rafael - Activate
 	// Ridah, made it a latched event (occurs on keydown only)
@@ -1475,8 +1439,6 @@ void ClientThink_real(gentity_t *ent)
 	// check for respawning
 	if (client->ps.stats[STAT_HEALTH] <= 0)
 	{
-
-		// DHM - Nerve
 		WolfFindMedic(ent);
 
 		// See if we need to hop to limbo
@@ -1614,7 +1576,6 @@ void SpectatorClientEndFrame(gentity_t *ent)
 	{
 		ent->client->pers.mvScoreUpdate = level.time + MV_SCOREUPDATE_INTERVAL;
 		ent->client->wantsscore         = qtrue;
-//		G_SendScore(ent);
 	}
 
 	// if we are doing a chase cam or a remote view, grab the latest info
@@ -2019,10 +1980,8 @@ void ClientEndFrame(gentity_t *ent)
 	}
 #endif
 
-	//
 	// If the end of unit layout is displayed, don't give
 	// the player any normal movement attributes
-	//
 	if (level.intermissiontime)
 	{
 		return;
@@ -2086,7 +2045,6 @@ void ClientEndFrame(gentity_t *ent)
 	{
 		ent->count2 = 0;
 	}
-	// dhm
 
 	// zinx - #280 - run touch functions here too, so movers don't have to wait
 	// until the next ClientThink, which will be too late for some map

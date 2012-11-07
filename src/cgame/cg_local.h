@@ -2221,7 +2221,6 @@ qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius);
 
 void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback);
 void CG_DrawSkyBoxPortal(qboolean fLocalView);
-void CG_Concussive(centity_t *cent);
 
 void CG_Letterbox(float xsize, float ysize, qboolean center);
 
@@ -2377,7 +2376,7 @@ void CG_RegisterWeapon(int weaponNum, qboolean force);
 void CG_RegisterItemVisuals(int itemNum);
 
 void CG_FireWeapon(centity_t *cent);
-//void CG_EndFireWeapon( centity_t *cent, int firemode );
+
 void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfaceFlags);     //  (SA) modified to send missilehitwall surface parameters
 
 void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir);
@@ -2408,8 +2407,6 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch);
 //----(SA) added to header to access from outside cg_weapons.c
 void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count);
 
-//void CG_ClientDamage( int entnum, int enemynum, int id );
-
 // cg_marks.c
 void    CG_InitMarkPolys(void);
 void    CG_AddMarks(void);
@@ -2432,9 +2429,6 @@ void    CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir);
 void    CG_ParticleMisc(qhandle_t pshader, vec3_t origin, int size, int duration, float alpha);
 
 void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration, int sizeStart, int sizeEnd, qboolean dlight);
-
-// Rafael snow pvs check
-void    CG_SnowLink(centity_t *cent, qboolean particleOn);
 
 void CG_ParticleImpactSmokePuff(qhandle_t pshader, vec3_t origin);
 void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int lifetime, int vel, int acc, int maxroll, float alpha, float size);        // (SA) so I can add more parameters without screwing up the one that's there
@@ -2547,7 +2541,6 @@ void        CG_ParseEntitiesFromString(void);
 
 // cg_info.c
 void CG_LoadingString(const char *s);
-//void CG_LoadingItem( int itemNum );
 void CG_DrawInformation(qboolean forcerefresh);
 void CG_DemoClick(int key, qboolean down);
 void CG_ShowHelp_Off(int *status);
@@ -2556,11 +2549,9 @@ qboolean CG_ViewingDraw(void);
 
 // cg_scoreboard.c
 qboolean CG_DrawScoreboard(void);
-//void CG_DrawTourneyScoreboard( void );
 
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 
-//qboolean CG_DrawCommandMap( void );
 void CG_CommandCentreClick(int key);
 void CG_DrawAutoMap(void);
 
@@ -2866,27 +2857,27 @@ qboolean    trap_GetServerCommand(int serverCommandNumber);
 // this will always be at least one higher than the number in the current
 // snapshot, and it may be quite a few higher if it is a fast computer on
 // a lagged connection
-int         trap_GetCurrentCmdNumber(void);
+int trap_GetCurrentCmdNumber(void);
 
-qboolean    trap_GetUserCmd(int cmdNumber, usercmd_t *ucmd);
+qboolean trap_GetUserCmd(int cmdNumber, usercmd_t *ucmd);
 
 // used for the weapon/holdable select and zoom
-void        trap_SetUserCmdValue(int stateValue, int flags, float sensitivityScale, int mpIdentClient);
-void        trap_SetClientLerpOrigin(float x, float y, float z);        // DHM - Nerve
+void trap_SetUserCmdValue(int stateValue, int flags, float sensitivityScale, int mpIdentClient);
+void trap_SetClientLerpOrigin(float x, float y, float z);
 
 // aids for VM testing
-void        testPrintInt(char *string, int i);
-void        testPrintFloat(char *string, float f);
+void testPrintInt(char *string, int i);
+void testPrintFloat(char *string, float f);
 
-int         trap_MemoryRemaining(void);
-void        trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font);
-qboolean    trap_Key_IsDown(int keynum);
-int         trap_Key_GetCatcher(void);
-void        trap_Key_SetCatcher(int catcher);
-void        trap_Key_KeysForBinding(const char *binding, int *key1, int *key2);
-int         trap_Key_GetKey(const char *binding);
-qboolean    trap_Key_GetOverstrikeMode(void);
-void        trap_Key_SetOverstrikeMode(qboolean state);
+int trap_MemoryRemaining(void);
+void trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font);
+qboolean trap_Key_IsDown(int keynum);
+int trap_Key_GetCatcher(void);
+void trap_Key_SetCatcher(int catcher);
+void trap_Key_KeysForBinding(const char *binding, int *key1, int *key2);
+int trap_Key_GetKey(const char *binding);
+qboolean trap_Key_GetOverstrikeMode(void);
+void trap_Key_SetOverstrikeMode(qboolean state);
 
 void trap_SendMoveSpeedsToGame(int entnum, char *movespeeds);
 
@@ -2908,35 +2899,35 @@ void trap_CIN_SetExtents(int handle, int x, int y, int w, int h);
 
 void trap_SnapVector(float *v);
 
-qboolean    trap_GetEntityToken(char *buffer, int bufferSize);
-qboolean    trap_R_inPVS(const vec3_t p1, const vec3_t p2);
-void        trap_GetHunkData(int *hunkused, int *hunkexpected);
+qboolean trap_GetEntityToken(char *buffer, int bufferSize);
+qboolean trap_R_inPVS(const vec3_t p1, const vec3_t p2);
+void trap_GetHunkData(int *hunkused, int *hunkexpected);
 
 //zinx - binary message channel
-void        trap_SendMessage(char *buf, int buflen);
+void trap_SendMessage(char *buf, int buflen);
 messageStatus_t trap_MessageStatus(void);
 
 //bani - dynamic shaders
-qboolean    trap_R_LoadDynamicShader(const char *shadername, const char *shadertext);
+qboolean trap_R_LoadDynamicShader(const char *shadername, const char *shadertext);
 //fretn - render to texture
-void    trap_R_RenderToTexture(int textureid, int x, int y, int w, int h);
+void trap_R_RenderToTexture(int textureid, int x, int y, int w, int h);
 int trap_R_GetTextureId(const char *name);
 //bani - flush rendering buffer
-void    trap_R_Finish(void);
+void trap_R_Finish(void);
 
 // Duffy, camera stuff
 #define CAM_PRIMARY 0   // the main camera for cutscenes, etc.
-qboolean    trap_loadCamera(int camNum, const char *name);
-void        trap_startCamera(int camNum, int time);
-void        trap_stopCamera(int camNum);
-qboolean    trap_getCameraInfo(int camNum, int time, vec3_t *origin, vec3_t *angles, float *fov);
-void        CG_SetInitialCamera(const char *name, qboolean startBlack);
-void        CG_StartCamera(const char *name, qboolean startBlack);
-void        CG_StartInitialCamera(void);
-void        CG_StopCamera(void);
+qboolean trap_loadCamera(int camNum, const char *name);
+void trap_startCamera(int camNum, int time);
+void trap_stopCamera(int camNum);
+qboolean trap_getCameraInfo(int camNum, int time, vec3_t *origin, vec3_t *angles, float *fov);
+void CG_SetInitialCamera(const char *name, qboolean startBlack);
+void CG_StartCamera(const char *name, qboolean startBlack);
+void CG_StartInitialCamera(void);
+void CG_StopCamera(void);
 
-int         CG_LoadCamera(const char *name);
-void        CG_FreeCamera(int camNum);
+int CG_LoadCamera(const char *name);
+void CG_FreeCamera(int camNum);
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 
@@ -3066,8 +3057,6 @@ void CG_mvZoomSniper(float x, float y, float w, float h);
 
 // cg_window.c
 qboolean CG_addString(cg_window_t *w, char *buf);
-//void CG_createDemoHelpWindow(void);
-//void CG_createSpecHelpWindow(void);
 void CG_createStatsWindow(void);
 void CG_createTopShotsWindow(void);
 void CG_createWstatsMsgWindow(void);
@@ -3212,7 +3201,6 @@ const char *CG_GetPMItemText(centity_t *cent);
 void CG_PlayPMItemSound(centity_t *cent);
 qhandle_t CG_GetPMItemIcon(centity_t *cent);
 void CG_DrawKeyHint(rectDef_t *rect, const char *binding);
-
 
 // cg_debriefing.c
 clientInfo_t *CG_Debriefing_GetSelectedClientInfo(void);

@@ -75,7 +75,7 @@ vmCvar_t g_password;
 vmCvar_t sv_privatepassword;
 vmCvar_t g_maxclients;
 vmCvar_t g_maxGameClients;
-vmCvar_t g_minGameClients;          // NERVE - SMF
+vmCvar_t g_minGameClients;
 vmCvar_t g_dedicated;
 vmCvar_t g_speed;
 vmCvar_t g_gravity;
@@ -87,14 +87,13 @@ vmCvar_t g_inactivity;
 vmCvar_t g_debugMove;
 vmCvar_t g_debugDamage;
 vmCvar_t g_debugAlloc;
-vmCvar_t g_debugBullets;    //----(SA)	added
+vmCvar_t g_debugBullets;
 vmCvar_t g_motd;
 #ifdef ALLOW_GSYNC
 vmCvar_t g_synchronousClients;
 #endif // ALLOW_GSYNC
 vmCvar_t g_warmup;
 
-// NERVE - SMF
 vmCvar_t g_warmupLatch;
 vmCvar_t g_nextTimeLimit;
 vmCvar_t g_showHeadshotRatio;
@@ -106,7 +105,6 @@ vmCvar_t g_noTeamSwitching;
 vmCvar_t g_altStopwatchMode;
 vmCvar_t g_gamestate;
 vmCvar_t g_swapteams;
-// -NERVE - SMF
 
 vmCvar_t g_restarted;
 vmCvar_t g_log;
@@ -114,17 +112,17 @@ vmCvar_t g_logSync;
 vmCvar_t g_podiumDist;
 vmCvar_t g_podiumDrop;
 vmCvar_t voteFlags;
-vmCvar_t g_complaintlimit;          // DHM - Nerve
+vmCvar_t g_complaintlimit;
 vmCvar_t g_ipcomplaintlimit;
 vmCvar_t g_filtercams;
-vmCvar_t g_maxlives;                // DHM - Nerve
+vmCvar_t g_maxlives;
 vmCvar_t g_maxlivesRespawnPenalty;
-vmCvar_t g_voiceChatsAllowed;       // DHM - Nerve
-vmCvar_t g_alliedmaxlives;          // Xian
-vmCvar_t g_axismaxlives;            // Xian
-vmCvar_t g_fastres;                 // Xian
-vmCvar_t g_knifeonly;               // Xian
-vmCvar_t g_enforcemaxlives;         // Xian
+vmCvar_t g_voiceChatsAllowed;
+vmCvar_t g_alliedmaxlives;
+vmCvar_t g_axismaxlives;
+vmCvar_t g_fastres;
+vmCvar_t g_knifeonly;
+vmCvar_t g_enforcemaxlives;
 
 vmCvar_t g_needpass;
 vmCvar_t g_balancedteams;
@@ -138,8 +136,7 @@ vmCvar_t g_smoothClients;
 vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
 
-// Rafael
-vmCvar_t g_scriptName;          // name of script file to run (instead of default for that map)
+vmCvar_t g_scriptName; // name of script file to run (instead of default for that map)
 
 vmCvar_t g_developer;
 
@@ -156,10 +153,8 @@ vmCvar_t g_LTChargeTime;
 vmCvar_t g_soldierChargeTime;
 // screen shakey magnitude multiplier
 
-// Gordon
 vmCvar_t g_antilag;
 
-// OSP
 vmCvar_t g_spectatorInactivity;
 vmCvar_t match_latejoin;
 vmCvar_t match_minplayers;
@@ -258,21 +253,20 @@ cvarTable_t gameCvarTable[] =
 	// latched vars
 	{ &g_gametype,                "g_gametype",                "4",                                                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse}, // Arnout: default to GT_WOLF_CAMPAIGN
 
-// JPW NERVE multiplayer stuffs
+	// JPW NERVE multiplayer stuffs
 	{ &g_redlimbotime,            "g_redlimbotime",            "30000",                                                  CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse},
 	{ &g_bluelimbotime,           "g_bluelimbotime",           "30000",                                                  CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse},
 	{ &g_medicChargeTime,         "g_medicChargeTime",         "45000",                                                  CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
 	{ &g_engineerChargeTime,      "g_engineerChargeTime",      "30000",                                                  CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
 	{ &g_LTChargeTime,            "g_LTChargeTime",            "40000",                                                  CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
 	{ &g_soldierChargeTime,       "g_soldierChargeTime",       "20000",                                                  CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
-// jpw
 
 	{ &g_covertopsChargeTime,     "g_covertopsChargeTime",     "30000",                                                  CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
 	{ &g_landminetimeout,         "g_landminetimeout",         "1",                                                      CVAR_ARCHIVE,                                    0, qfalse, qtrue},
 
 	{ &g_maxclients,              "sv_maxclients",             "20",                                                     CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse}, // NERVE - SMF - made 20 from 8
 	{ &g_maxGameClients,          "g_maxGameClients",          "0",                                                      CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse},
-	{ &g_minGameClients,          "g_minGameClients",          "8",                                                      CVAR_SERVERINFO,                                 0, qfalse}, // NERVE - SMF
+	{ &g_minGameClients,          "g_minGameClients",          "8",                                                      CVAR_SERVERINFO,                                 0, qfalse},
 
 	// change anytime vars
 	{ &g_fraglimit,               "fraglimit",                 "0",                                                      /*CVAR_SERVERINFO |*/ CVAR_ARCHIVE | CVAR_NORESTART,0, qtrue },
@@ -330,7 +324,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_debugMove,               "g_debugMove",               "0",                                                      0,                                               0, qfalse},
 	{ &g_debugDamage,             "g_debugDamage",             "0",                                                      CVAR_CHEAT,                                      0, qfalse},
 	{ &g_debugAlloc,              "g_debugAlloc",              "0",                                                      0,                                               0, qfalse},
-	{ &g_debugBullets,            "g_debugBullets",            "0",                                                      CVAR_CHEAT,                                      0, qfalse}, //----(SA)	added
+	{ &g_debugBullets,            "g_debugBullets",            "0",                                                      CVAR_CHEAT,                                      0, qfalse},
 	{ &g_motd,                    "g_motd",                    "",                                                       CVAR_ARCHIVE,                                    0, qfalse},
 
 	{ &g_podiumDist,              "g_podiumDist",              "80",                                                     0,                                               0, qfalse},
@@ -338,15 +332,15 @@ cvarTable_t gameCvarTable[] =
 
 	{ &voteFlags,                 "voteFlags",                 "0",                                                      CVAR_TEMP | CVAR_ROM | CVAR_SERVERINFO,          0, qfalse},
 
-	{ &g_complaintlimit,          "g_complaintlimit",          "6",                                                      CVAR_ARCHIVE,                                    0, qtrue}, // DHM - Nerve
+	{ &g_complaintlimit,          "g_complaintlimit",          "6",                                                      CVAR_ARCHIVE,                                    0, qtrue},
 	{ &g_ipcomplaintlimit,        "g_ipcomplaintlimit",        "3",                                                      CVAR_ARCHIVE,                                    0, qtrue},
 	{ &g_filtercams,              "g_filtercams",              "0",                                                      CVAR_ARCHIVE,                                    0, qfalse},
-	{ &g_maxlives,                "g_maxlives",                "0",                                                      CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO,     0, qtrue}, // DHM - Nerve
+	{ &g_maxlives,                "g_maxlives",                "0",                                                      CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO,     0, qtrue},
 	{ &g_maxlivesRespawnPenalty,  "g_maxlivesRespawnPenalty",  "0",                                                      CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO,     0, qtrue},
-	{ &g_voiceChatsAllowed,       "g_voiceChatsAllowed",       "4",                                                      CVAR_ARCHIVE,                                    0, qfalse}, // DHM - Nerve
+	{ &g_voiceChatsAllowed,       "g_voiceChatsAllowed",       "4",                                                      CVAR_ARCHIVE,                                    0, qfalse},
 
-	{ &g_alliedmaxlives,          "g_alliedmaxlives",          "0",                                                      CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue}, // Xian
-	{ &g_axismaxlives,            "g_axismaxlives",            "0",                                                      CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue}, // Xian
+	{ &g_alliedmaxlives,          "g_alliedmaxlives",          "0",                                                      CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue},
+	{ &g_axismaxlives,            "g_axismaxlives",            "0",                                                      CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue},
 	{ &g_fastres,                 "g_fastres",                 "0",                                                      CVAR_ARCHIVE,                                    0, qtrue, qtrue}, // Xian - Fast Medic Resing
 	{ &g_knifeonly,               "g_knifeonly",               "0",                                                      0,                                               0, qtrue}, // Xian - Fast Medic Resing
 	{ &g_enforcemaxlives,         "g_enforcemaxlives",         "1",                                                      CVAR_ARCHIVE,                                    0, qtrue}, // Xian - Gestapo enforce maxlives stuff by temp banning
@@ -577,7 +571,7 @@ void QDECL G_Printf(const char *fmt, ...)
 
 	trap_Printf(text);
 }
-//bani
+
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 void QDECL G_DPrintf(const char *fmt, ...)
@@ -596,7 +590,7 @@ void QDECL G_DPrintf(const char *fmt, ...)
 
 	trap_Printf(text);
 }
-//bani
+
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 void QDECL G_Error(const char *fmt, ...)
@@ -610,7 +604,7 @@ void QDECL G_Error(const char *fmt, ...)
 
 	trap_Error(text);
 }
-//bani
+
 void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 
@@ -753,7 +747,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 	static int    hintValMax = 255; // Breakable damage indicator can wrap when the entity has a lot of health
 	int           hintType, hintDist, hintVal;
 	qboolean      zooming, indirectHit; // indirectHit means the checkent was not the ent hit by the trace (checkEnt!=traceEnt)
-	int           trace_contents;       // DHM - Nerve
+	int           trace_contents;
 	int           numOfIgnoredEnts = 0;
 
 	if (!ent->client)
@@ -872,7 +866,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 	else if (tr->entityNum < MAX_CLIENTS)
 	{
 		// Show medics a syringe if they can revive someone
-
 		if (traceEnt->client && traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 		{
 			if (ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC && traceEnt->client->ps.pm_type == PM_DEAD && !(traceEnt->client->ps.pm_flags & PMF_LIMBO))
@@ -923,7 +916,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 					hintDist = CH_ACTIVATE_DIST;
 					checkEnt = 0;
 				}
-				else     // use target for hint icon
+				else // use target for hint icon
 				{
 					checkEnt = G_FindByTargetname(NULL, traceEnt->target);
 					if (!checkEnt)         // no target found
@@ -940,7 +933,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 			// TDF This entire function could be the poster boy for converting to OO programming!!!
 			// I'm making this into a switch in a vain attempt to make this readable so I can find which
 			// brackets don't match!!!
-
 			switch (checkEnt->s.eType)
 			{
 			case ET_CORPSE:
@@ -1245,7 +1237,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 					}
 				}
 
-
 				// hint icon specified in entity (and proper contact was made, so hintType was set)
 				// first try the checkent...
 				if (checkEnt->s.dmgFlags && hintType)
@@ -1271,7 +1262,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 				// zooming can eat a lot of potential hints
 				switch (hintType)
 				{
-
 				// allow while zooming
 				case HINT_PLAYER:
 				case HINT_TREASURE:
@@ -1296,7 +1286,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 		ps->serverCursorHint    = hintType;
 		ps->serverCursorHintVal = hintVal;
 	}
-
 }
 
 void G_SetTargetName(gentity_t *ent, char *targetname)
@@ -1462,14 +1451,11 @@ void G_RegisterCvars(void)
 		trap_Cvar_Update(&g_gametype);
 	}
 
-	// OSP
-	if (!G_IsSinglePlayerGame())
+	// multiplayer
+	trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
+	if (match_readypercent.integer < 1)
 	{
-		trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
-		if (match_readypercent.integer < 1)
-		{
-			trap_Cvar_Set("match_readypercent", "1");
-		}
+		trap_Cvar_Set("match_readypercent", "1");
 	}
 
 	if (pmove_msec.integer < 8)
@@ -1520,8 +1506,7 @@ void G_UpdateCvars(void)
 				{
 					trap_SetConfigstring(CS_FILTERCAMS, va("%i", g_filtercams.integer));
 				}
-
-				if (cv->vmCvar == &g_soldierChargeTime)
+				else if (cv->vmCvar == &g_soldierChargeTime)
 				{
 					level.soldierChargeTime[0] = g_soldierChargeTime.integer * level.soldierChargeTimeModifier[0];
 					level.soldierChargeTime[1] = g_soldierChargeTime.integer * level.soldierChargeTimeModifier[1];
@@ -1657,7 +1642,6 @@ void G_UpdateCvars(void)
 						fToggles = (G_checkServerToggle(cv->vmCvar) || fToggles);
 					}
 				}
-
 			}
 		}
 	}
@@ -1680,6 +1664,7 @@ void G_UpdateCvars(void)
 	if (chargetimechanged)
 	{
 		char cs[MAX_INFO_STRING];
+
 		cs[0] = '\0';
 		Info_SetValueForKey(cs, "axs_sld", va("%i", level.soldierChargeTime[0]));
 		Info_SetValueForKey(cs, "ald_sld", va("%i", level.soldierChargeTime[1]));
@@ -1725,6 +1710,7 @@ char *strcut(char *dest, char *src, int num)
 	{
 		return NULL;
 	}
+
 	for (i = 0 ; i < num ; i++)
 	{
 		if ((char)*src)
@@ -1739,6 +1725,7 @@ char *strcut(char *dest, char *src, int num)
 		}
 	}
 	*dest = (char)0;
+
 	return src;
 }
 
@@ -2115,9 +2102,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	// Link all the splines up
 	BG_BuildSplinePaths();
 
-	// create the camera entity that will communicate with the scripts
-//	G_SpawnScriptCamera();
-
 	// general initialization
 	G_FindTeams();
 
@@ -2212,7 +2196,7 @@ void QDECL Com_Error(int level, const char *error, ...)
 
 	G_Error("%s", text);
 }
-//bani
+
 void QDECL Com_Error(int level, const char *error, ...) _attribute((format(printf, 2, 3)));
 
 void QDECL Com_Printf(const char *msg, ...)
@@ -2226,7 +2210,7 @@ void QDECL Com_Printf(const char *msg, ...)
 
 	G_Printf("%s", text);
 }
-//bani
+
 void QDECL Com_Printf(const char *msg, ...) _attribute((format(printf, 1, 2)));
 
 #endif
@@ -2271,7 +2255,6 @@ int QDECL SortRanks(const void *a, const void *b)
 	{
 		return -1;
 	}
-
 
 	// then spectators
 	if (ca->sess.sessionTeam == TEAM_SPECTATOR && cb->sess.sessionTeam == TEAM_SPECTATOR)
@@ -2393,10 +2376,7 @@ and team change.
 void CalculateRanks(void)
 {
 	int i;
-//	int		rank;
-//	int		score;
-//	int		newScore;
-	char      teaminfo[TEAM_NUM_TEAMS][256]; // OSP
+	char      teaminfo[TEAM_NUM_TEAMS][256];
 	gclient_t *cl;
 
 	level.follow1                   = -1;
@@ -2404,10 +2384,10 @@ void CalculateRanks(void)
 	level.numConnectedClients       = 0;
 	level.numNonSpectatorClients    = 0;
 	level.numPlayingClients         = 0;
-	level.voteInfo.numVotingClients = 0;        // don't count bots
+	level.voteInfo.numVotingClients = 0; // don't count bots
 
-	level.numFinalDead[0] = 0;      // NERVE - SMF
-	level.numFinalDead[1] = 0;      // NERVE - SMF
+	level.numFinalDead[0] = 0;
+	level.numFinalDead[1] = 0;
 
 	level.voteInfo.numVotingTeamClients[0] = 0;
 	level.voteInfo.numVotingTeamClients[1] = 0;
@@ -2418,7 +2398,7 @@ void CalculateRanks(void)
 		{
 			level.numTeamClients[i] = 0;
 		}
-		teaminfo[i][0] = 0;         // OSP
+		teaminfo[i][0] = 0;
 	}
 
 	for (i = 0 ; i < level.maxclients ; i++)
@@ -2434,7 +2414,6 @@ void CalculateRanks(void)
 			{
 				level.numNonSpectatorClients++;
 
-				// OSP
 				Q_strcat(teaminfo[team], sizeof(teaminfo[team]) - 1, va("%d ", level.numConnectedClients));
 
 				// decide if this should be auto-followed
@@ -2485,7 +2464,6 @@ void CalculateRanks(void)
 		}
 	}
 
-	// OSP
 	for (i = 0; i < TEAM_NUM_TEAMS; i++)
 	{
 		if (0 == teaminfo[i][0])
@@ -2659,7 +2637,6 @@ void FindIntermissionPoint(void)
 		winner = TEAM_ALLIES;
 	}
 
-
 	if (!ent)
 	{
 		ent = G_Find(NULL, FOFS(classname), "info_player_intermission");
@@ -2674,7 +2651,7 @@ void FindIntermissionPoint(void)
 		}
 	}
 
-	if (!ent)        // the map creator forgot to put in an intermission point...
+	if (!ent) // the map creator forgot to put in an intermission point...
 	{
 		SelectSpawnPoint(vec3_origin, level.intermission_origin, level.intermission_angle);
 	}
@@ -2738,7 +2715,6 @@ ExitLevel
 
 When the intermission has been exited, the server is either killed
 or moved to a new level based on the "nextmap" cvar
-
 =============
 */
 void ExitLevel(void)
@@ -2881,7 +2857,7 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 
 	trap_FS_Write(string, strlen(string), level.logFile);
 }
-//bani
+
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 /*
@@ -2953,7 +2929,6 @@ void LogExit(const char *string)
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 		winner = atoi(Info_ValueForKey(cs, "winner"));
 
-		// NERVE - SMF
 		if (!g_currentRound.integer)
 		{
 			if (winner == defender)
@@ -2978,7 +2953,6 @@ void LogExit(const char *string)
 		//bani - #113
 		bani_storemapxp();
 	}
-	// -NERVE - SMF
 	else if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
 		char cs[MAX_STRING_CHARS];
@@ -3151,7 +3125,6 @@ void LogExit(const char *string)
 	}
 	else if (g_gametype.integer == GT_WOLF)
 	{
-
 		//bani - #113
 		bani_storemapxp();
 	}
@@ -3246,7 +3219,7 @@ ScoreIsTied
 */
 qboolean ScoreIsTied(void)
 {
-	int  a /*, b*/;
+	int  a;
 	char cs[MAX_STRING_CHARS];
 	char *buf;
 
@@ -3289,11 +3262,8 @@ void CheckExitRules(void)
 
 	if (g_timelimit.value && !level.warmupTime)
 	{
-		// OSP
 		if ((level.timeCurrent - level.startTime) >= (g_timelimit.value * 60000))
 		{
-			// OSP
-
 			// Check who has the most players alive
 			if (g_gametype.integer == GT_WOLF_LMS)
 			{
@@ -3960,7 +3930,6 @@ void G_RunEntity(gentity_t *ent, int msec)
 		}
 	}
 
-
 	// clear events that are too old
 	if (level.time - ent->eventTime > EVENT_VALID_MSEC)
 	{
@@ -4030,7 +3999,6 @@ void G_RunEntity(gentity_t *ent, int msec)
 			}
 			G_RunThink(ent);
 		}
-		// OSP
 
 		return;
 	}
@@ -4109,7 +4077,6 @@ Advances the non-player objects in the world
 void G_RunFrame(int levelTime)
 {
 	int i, msec;
-//	int			pass = 0;
 
 	// if we are waiting for the level to restart, do nothing
 	if (level.restarted)
@@ -4191,7 +4158,6 @@ uebrgpiebrpgibqeripgubeqrpigubqifejbgipegbrtibgurepqgbn%i", level.time)
 		ClientEndFrame(&g_entities[level.sortedClients[i]]);
 	}
 
-	// NERVE - SMF
 	CheckWolfMP();
 
 	// see if it is time to end the level

@@ -108,9 +108,9 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 	le = CG_AllocLocalEntity();
 	re = &le->refEntity;
 
-	velocity[0] = -50 + 25 * crandom(); // JPW NERVE
-	velocity[1] = -100 + 40 * crandom(); // JPW NERVE
-	velocity[2] = 200 + 50 * random(); // JPW NERVE
+	velocity[0] = -50 + 25 * crandom();
+	velocity[1] = -100 + 40 * crandom();
+	velocity[2] = 200 + 50 * random();
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
@@ -175,7 +175,6 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 CG_MachineGunEjectBrass
 ==========================
 */
-
 void CG_MachineGunEjectBrass(centity_t *cent)
 {
 	localEntity_t *le;
@@ -215,8 +214,8 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		offset[1]             = -4;
 		offset[2]             = 28;
 		velocity[0]           = -20 + 40 * crandom(); // JPW NERVE -- more reasonable brass ballistics for a machinegun
-		velocity[1]           = -150 + 40 * crandom(); // JPW NERVE
-		velocity[2]           = 100 + 50 * crandom(); // JPW NERVE
+		velocity[1]           = -150 + 40 * crandom();
+		velocity[2]           = 100 + 50 * crandom();
 		re->hModel            = cgs.media.machinegunBrassModel;
 		le->angles.trBase[0]  = 90; //rand()&31; // JPW NERVE belt-fed rounds should come out horizontal
 		le->angles.trBase[1]  = rand() & 255;
@@ -268,7 +267,6 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		le->angles.trDelta[1] = 1;
 		le->angles.trDelta[2] = 0;
 	}
-// jpw
 
 	xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
 	xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
@@ -315,7 +313,6 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	le->leMarkType = LEMT_NONE;
 }
 
-//----(SA)  added
 /*
 ==============
 CG_PanzerFaustEjectBrass
@@ -450,7 +447,6 @@ void CG_GetWindVector(vec3_t dir)
 	dir[2] = random(); // one direction (so smoke goes side-like)
 	VectorNormalize(dir);
 }
-// jpw
 
 // JPW NERVE -- LT pyro for marking air strikes
 /*
@@ -840,42 +836,7 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 		                                     1000, 0.3, 2, 20);
 		ent->lastTrailTime = cg.time;
 	}
-//----(SA)  end
 }
-
-/*
-==========================
-CG_NailgunEjectBrass
-==========================
-*/
-/*
-// TTimo: defined but not used
-static void CG_NailgunEjectBrass( centity_t *cent ) {
-    localEntity_t   *smoke;
-    vec3_t          origin;
-    vec3_t          v[3];
-    vec3_t          offset;
-    vec3_t          xoffset;
-    vec3_t          up;
-
-    AnglesToAxis( cent->lerpAngles, v );
-
-    offset[0] = 0;
-    offset[1] = -12;
-    offset[2] = 24;
-
-    xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
-    xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
-    xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
-    VectorAdd( cent->lerpOrigin, xoffset, origin );
-
-    VectorSet( up, 0, 0, 64 );
-
-    smoke = CG_SmokePuff( origin, up, 32, 1, 1, 1, 0.33f, 700, cg.time, 0, 0, cgs.media.smokePuffShader );
-    // use the optimized local entity add
-    smoke->leType = LE_SCALE_FADE;
-}
-*/
 
 /*
 ==========================
@@ -984,7 +945,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 	int          i;
 	float        fps;
 	char         *token;
-	qboolean     newfmt = qfalse;   //----(SA)
+	qboolean     newfmt = qfalse;
 	char         text[20000];
 	fileHandle_t f;
 
@@ -3166,11 +3127,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	if ((weaponNum == WP_FLAMETHROWER) && (nonPredictedCent->currentState.eFlags & EF_FIRING))
 	{
 		// continuous flash
-
 	}
 	else
 	{
-
 		// continuous smoke after firing
 #define BARREL_SMOKE_TIME 1000
 
@@ -3223,7 +3182,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				return;
 			}
 		}
-
 	}
 
 	// weapons that don't need to go any further as they have no flash or light
@@ -3298,7 +3256,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			{
 				vec3_t angles;
 				AxisToAngles(flash.axis, angles);
-// JPW NERVE
+
 				weaponNum = BG_FindAmmoForWeapon(WP_FLAMETHROWER);
 				if (ps)
 				{
@@ -3311,7 +3269,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				{
 					CG_FireFlameChunks(cent, flash.origin, angles, 1.0, qfalse);
 				}
-// jpw
 			}
 		}
 	}
@@ -3501,8 +3458,6 @@ void CG_AddViewWeapon(playerState_t *ps)
 		gunoff[1] = cg_gun_y.value;
 		gunoff[2] = cg_gun_z.value;
 
-//----(SA)  removed
-
 		VectorMA(hand.origin, gunoff[0], cg.refdef_current->viewaxis[0], hand.origin);
 		VectorMA(hand.origin, gunoff[1], cg.refdef_current->viewaxis[1], hand.origin);
 		VectorMA(hand.origin, (gunoff[2] + fovOffset), cg.refdef_current->viewaxis[2], hand.origin);
@@ -3550,15 +3505,14 @@ void CG_AddViewWeapon(playerState_t *ps)
 					}
 				}
 			}
-			CG_WeaponAnimation(ps, weapon, &hand.oldframe, &hand.frame, &hand.backlerp);     //----(SA) changed
+			CG_WeaponAnimation(ps, weapon, &hand.oldframe, &hand.frame, &hand.backlerp); changed
 		}
 
 		hand.hModel   = weapon->handsModel;
-		hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;   //----(SA)
+		hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
 
 		// add everything onto the hand
 		CG_AddPlayerWeapon(&hand, ps, &cg.predictedPlayerEntity);
-		// Ridah
 	}
 }
 
@@ -3687,7 +3641,6 @@ int CG_WeaponIndex(int weapnum, int *bank, int *cycle)
 				}
 				return 1;
 			}
-// jpw
 		}
 	}
 
@@ -3749,7 +3702,6 @@ static int getPrevWeapInBank(int bank, int cycle)
 		cycle = MAX_WEAPS_IN_BANK_MP - 1;
 	}
 
-
 	while (!weapBanksMultiPlayer[bank][cycle])
 	{
 		cycle--;
@@ -3773,7 +3725,6 @@ static int getPrevWeapInBankBynum(int weapnum)
 
 	return getPrevWeapInBank(bank, cycle);
 }
-
 
 /*
 ==============
@@ -3815,7 +3766,7 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
 
 	if (bank < 0)          // don't go below 0, cycle up to top
 	{
-		bank += MAX_WEAP_BANKS_MP; // JPW NERVE
+		bank += MAX_WEAP_BANKS_MP;
 
 	}
 	bank = bank % MAX_WEAP_BANKS_MP;
@@ -3992,8 +3943,6 @@ CG_PlaySwitchSound
 */
 void CG_PlaySwitchSound(int lastweap, int newweap)
 {
-//  weaponInfo_t    *weap;
-//  weap = &cg_weapons[ ent->weapon ];
 	sfxHandle_t switchsound;
 
 	switchsound = cgs.media.selectSound;
@@ -4128,13 +4077,11 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 
 	cg.weaponSelectTime = cg.time;  // flash the weapon icon
 
-	// NERVE - SMF
 	if (cg.newCrosshairIndex)
 	{
 		trap_Cvar_Set("cg_drawCrossHair", va("%d", cg.newCrosshairIndex - 1));
 	}
 	cg.newCrosshairIndex = 0;
-	// -NERVE - SMF
 
 	// remember which weapon in this bank was last selected so when cycling back
 	// to this bank, that weap will be highlighted first
@@ -4525,7 +4472,7 @@ void CG_NextWeap(qboolean switchBanks)
 		}
 	}
 
-	CG_FinishWeaponChange(curweap, num);   //----(SA)
+	CG_FinishWeaponChange(curweap, num);
 }
 
 /*
@@ -4744,7 +4691,7 @@ void CG_PrevWeap(qboolean switchBanks)
 		}
 	}
 
-	CG_FinishWeaponChange(curweap, num);   //----(SA)
+	CG_FinishWeaponChange(curweap, num);
 }
 
 /*
@@ -5128,7 +5075,6 @@ void CG_WeaponBank_f(void)
 	}
 
 	CG_FinishWeaponChange(curweap, num);
-
 }
 
 /*
@@ -5166,59 +5112,13 @@ void CG_Weapon_f(void)
 
 	num = atoi(CG_Argv(1));
 
-// JPW NERVE
-// weapon bind should execute weaponbank instead -- for splitting out class weapons, per Id request
+
+	// weapon bind should execute weaponbank instead -- for splitting out class weapons, per Id request
 	if (num < MAX_WEAP_BANKS_MP)
 	{
 		CG_WeaponBank_f();
 	}
 	return;
-// jpw
-
-	/*  cg.weaponSelectTime = cg.time;  // flash the current weapon icon
-
-	    // Don't try to switch when in the middle of reloading.
-	    if ( cg.snap->ps.weaponstate == WEAPON_RELOADING )
-	        return;
-
-
-	    if ( num <= WP_NONE || num > WP_NUM_WEAPONS ) {
-	        return;
-	    }
-
-	    curweap = cg.weaponSelect;
-
-	    CG_WeaponIndex(curweap, &bank, &cycle);     // get bank/cycle of current weapon
-	    banked = CG_WeaponIndex(num, &newbank, &newcycle);      // get bank/cycle of requested weapon
-
-	    // the new weapon was not found in the reglar banks
-	    // assume the player want's to go directly to it if possible
-	    if(!banked) {
-	        if(CG_WeaponSelectable(num)) {
-	            CG_FinishWeaponChange(curweap, num);
-	            return;
-	        }
-	    }
-
-	    if(bank != newbank)
-	        cycle = newcycle - 1;   //  drop down one from the requested weap's cycle so it will
-	                                //  try to initially cycle up to the requested weapon
-
-	    for(i = 0; i < MAX_WEAPS_IN_BANK; i++) {
-	        num = getNextWeapInBank(newbank, cycle+i);
-
-	        if(num == curweap)  // no other weapons in bank
-	            return;
-
-	        if(CG_WeaponSelectable(num)) {
-	            break;
-	        }
-	    }
-
-	    if(i == MAX_WEAPS_IN_BANK)
-	        return;
-
-	    CG_FinishWeaponChange(curweap, num);*/
 }
 
 /*
@@ -5234,9 +5134,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 	int bank  = 0, cycle = 0;
 	int equiv = WP_NONE;
 
-	//
 	// trivial switching
-	//
 
 	if (cg.weaponSelect == WP_PLIERS || (cg.weaponSelect == WP_SATCHEL_DET && cg.predictedPlayerState.ammo[WP_SATCHEL_DET]))
 	{
@@ -5387,7 +5285,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 		if (CG_WeaponSelectable(equiv))        // found a reasonable replacement
 		{
 			cg.weaponSelect = equiv;
-			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);   //----(SA)
+			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
 			return;
 		}
 	}
@@ -5439,68 +5337,11 @@ void CG_MG42EFX(centity_t *cent)
 			// ydnar: add dynamic light
 			trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128,
 			                       1.0, 0.6, 0.23, 0, 0);
-
 			return;
 		}
 	}
-
 }
 
-// Note to self this is dead code
-/*void CG_FLAKEFX (centity_t *cent, int whichgun)
-{
-    entityState_t *ent;
-    vec3_t          forward, right, up;
-    vec3_t          point;
-    refEntity_t     flash;
-
-    ent = &cent->currentState;
-
-    VectorCopy (cent->currentState.pos.trBase, point);
-    AngleVectors (cent->currentState.apos.trBase, forward, right, up);
-
-    // gun 1 and 2 were switched
-    if (whichgun == 2)
-    {
-        VectorMA (point, 136, forward, point);
-        VectorMA (point, 31, up, point);
-        VectorMA (point, 22, right, point);
-    }
-    else if (whichgun == 1)
-    {
-        VectorMA (point, 136, forward, point);
-        VectorMA (point, 31, up, point);
-        VectorMA (point, -22, right, point);
-    }
-    else if (whichgun == 3)
-    {
-        VectorMA (point, 136, forward, point);
-        VectorMA (point, 10, up, point);
-        VectorMA (point, 22, right, point);
-    }
-    else if (whichgun == 4)
-    {
-        VectorMA (point, 136, forward, point);
-        VectorMA (point, 10, up, point);
-        VectorMA (point, -22, right, point);
-    }
-
-    trap_R_AddLightToScene( point, 200 + (rand()&31),1.0, 0.6, 0.23, 0 );
-
-    memset (&flash, 0, sizeof (flash));
-    flash.renderfx = RF_LIGHTING_ORIGIN;
-    flash.hModel = cgs.media.mg42muzzleflash;
-
-    VectorCopy( point, flash.origin );
-    AnglesToAxis (cg.refdefViewAngles, flash.axis);
-
-    trap_R_AddRefEntityToScene( &flash );
-
-    trap_S_StartSound( NULL, ent->number , CHAN_WEAPON, hflakWeaponSnd );
-}*/
-
-
-//----(SA)
 /*
 ==============
 CG_MortarEFX
@@ -5533,10 +5374,6 @@ void CG_MortarEFX(centity_t *cent)
 	}
 }
 
-//----(SA)  end
-
-
-// RF
 /*
 ==============
 CG_WeaponFireRecoil
@@ -5548,11 +5385,11 @@ void CG_WeaponFireRecoil(int weapon)
 	float  pitchRecoilAdd, pitchAdd;
 	float  yawRandom;
 	vec3_t recoil;
-	//
+
 	pitchRecoilAdd = 0;
 	pitchAdd       = 0;
 	yawRandom      = 0;
-	//
+
 	switch (weapon)
 	{
 	case WP_LUGER:
@@ -5721,7 +5558,7 @@ void CG_FireWeapon(centity_t *cent)
 	         || ent->weapon == WP_LANDMINE
 	         || ent->weapon == WP_SATCHEL
 	         || ent->weapon == WP_SMOKE_BOMB
-	         )    // JPW NERVE
+	         )
 	{
 		if (ent->apos.trBase[0] > 0)     // underhand
 		{
@@ -5770,11 +5607,6 @@ void CG_FireWeapon(centity_t *cent)
 		firesound     = &weap->flashSound[0];
 		fireEchosound = &weap->flashEchoSound[0];
 	}
-
-	/*  // JPW NERVE -- special case medic tool
-	    if( ent->weapon == WP_MEDKIT ) {
-	        firesound = &cg_weapons[ WP_MEDKIT ].flashSound[0];
-	    }*/
 
 	if (!(cent->currentState.eFlags & EF_ZOOMING))       // JPW NERVE -- don't play sounds or eject brass if zoomed in
 	{   // play a sound

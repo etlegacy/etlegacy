@@ -283,7 +283,6 @@ void UseHoldableItem(gentity_t *ent, int item)
 	case HI_BOOK1:
 	case HI_BOOK2:
 	case HI_BOOK3:
-		//G_AddEvent(   ent, EV_POPUPBOOK, (item - HI_BOOK1)+1 );
 		break;
 	}
 }
@@ -909,9 +908,6 @@ void RespawnItem(gentity_t *ent)
 	ent->flags     &= ~FL_NODRAW;
 	ent->r.svFlags &= ~SVF_NOCLIENT;
 	trap_LinkEntity(ent);
-
-	// play the normal respawn sound only to nearby clients
-	G_AddEvent(ent, EV_ITEM_RESPAWN, 0);
 
 	ent->nextthink = 0;
 }
