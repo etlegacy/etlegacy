@@ -6,8 +6,8 @@ LIBRARIES=( ui cgame qagame )
 for LIB in "${LIBRARIES[@]}"
 do
 
-if [ ! -f ./etmain/${LIB}_mac ] ; then
-  echo "Missing ./etmain/${LIB}_mac"
+if [ ! -f ./legacy/${LIB}_mac ] ; then
+  echo "Missing ./legacy/${LIB}_mac"
   exit
 fi
 
@@ -15,7 +15,7 @@ echo "Creating ${LIB}_mac.bundle"
 
 rm -rf ${LIB}_mac.bundle
 mkdir -p ${LIB}_mac.bundle/Contents/MacOS
-cp ./etmain/${LIB}_mac ${LIB}_mac.bundle/Contents/MacOS/${LIB}_mac
+cp ./legacy/${LIB}_mac ${LIB}_mac.bundle/Contents/MacOS/${LIB}_mac
 
 cat << EOF > ${LIB}_mac.bundle/Contents/Info.plist
 <?xml version="1.0" encoding="UTF-8"?>
@@ -71,7 +71,7 @@ fi
 if [ "$?" != "0" ] ; then
   echo "Error - couldn't create zipfile"
 else
-  mv ${LIB}_mac.zip ./etmain/${LIB}_mac
+  mv ${LIB}_mac.zip ./legacy/${LIB}_mac
 fi
 
 done
