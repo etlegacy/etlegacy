@@ -115,6 +115,7 @@ COM_StripExtension
 void COM_StripExtension(const char *in, char *out, int destsize)
 {
 	const char *dot = strrchr(in, '.'), *slash;
+
 	if (dot && (!(slash = strrchr(in, '/')) || slash < dot))
 	{
 		Q_strncpyz(out, in, (destsize < dot - in + 1 ? destsize : dot - in + 1));
@@ -123,6 +124,10 @@ void COM_StripExtension(const char *in, char *out, int destsize)
 	{
 		Q_strncpyz(out, in, destsize);
 	}
+
+	// DEBUG
+	//Com_Printf("##########################################\nCOM_StripExtension: in  %s\n", in);
+	//Com_Printf("COM_StripExtension: out %s\n##########################################", out);
 }
 
 void COM_StripFilename(char *in, char *out)
