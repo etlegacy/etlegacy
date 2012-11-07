@@ -1513,6 +1513,11 @@ typedef struct
 	sfxHandle_t fireSound;
 	sfxHandle_t waterSound;
 
+	// osp
+	sfxHandle_t countFight;
+	sfxHandle_t countPrepare;
+	sfxHandle_t goatAxis;
+
 	sfxHandle_t grenadePulseSound4;
 	sfxHandle_t grenadePulseSound3;
 	sfxHandle_t grenadePulseSound2;
@@ -1527,8 +1532,6 @@ typedef struct
 	sfxHandle_t flameCrackSound;
 	sfxHandle_t boneBounceSound;
 
-	//sfxHandle_t grenadebounce1;
-	//sfxHandle_t grenadebounce2;
 	sfxHandle_t grenadebounce[FOOTSTEP_TOTAL][2];
 
 	sfxHandle_t dynamitebounce1;

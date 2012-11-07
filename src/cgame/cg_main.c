@@ -1224,15 +1224,12 @@ static void CG_RegisterSounds(void)
 		}
 	}
 
-	/*
-	    // OSP
-	    cgs.media.countFight = trap_S_RegisterSound( "sound/osp/fight.wav" );
-	    cgs.media.countPrepare = trap_S_RegisterSound( "sound/osp/prepare.wav" );
-	    cgs.media.goatAxis = trap_S_RegisterSound( "sound/osp/goat.wav" );
-	    cgs.media.winAllies = trap_S_RegisterSound( "sound/osp/winallies.wav" );
-	    cgs.media.winAxis = trap_S_RegisterSound( "sound/osp/winaxis.wav" );
-	    // OSP
-	*/
+	// OSP
+	cgs.media.countFight   = trap_S_RegisterSound( "sound/osp/fight.wav",qfalse );
+	cgs.media.countPrepare = trap_S_RegisterSound( "sound/osp/prepare.wav",qfalse );
+	cgs.media.goatAxis     = trap_S_RegisterSound( "sound/osp/goat.wav", qfalse );
+	//cgs.media.winAllies = trap_S_RegisterSound( "sound/osp/winallies.wav",qfalse );
+	//cgs.media.winAxis = trap_S_RegisterSound( "sound/osp/winaxis.wav",qfalse );
 
 	cgs.media.flameSound         = trap_S_RegisterSound("sound/weapons/flamethrower/flame_burn.wav", qfalse);
 	cgs.media.flameBlowSound     = trap_S_RegisterSound("sound/weapons/flamethrower/flame_pilot.wav", qfalse);
@@ -1243,7 +1240,6 @@ static void CG_RegisterSounds(void)
 	cgs.media.grenadePulseSound3 = trap_S_RegisterSound("sound/weapons/grenade/gren_timer3.wav", qfalse);
 	cgs.media.grenadePulseSound2 = trap_S_RegisterSound("sound/weapons/grenade/gren_timer2.wav", qfalse);
 	cgs.media.grenadePulseSound1 = trap_S_RegisterSound("sound/weapons/grenade/gren_timer1.wav", qfalse);
-
 
 	cgs.media.boneBounceSound = trap_S_RegisterSound("sound/world/boardbreak.wav", qfalse);          // TODO: need a real sound for this
 
@@ -1320,10 +1316,7 @@ static void CG_RegisterSounds(void)
 	trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_3.wav", qfalse);
 	trap_S_RegisterSound("sound/weapons/airstrike/airstrike_plane.wav", qfalse);
 
-	if (cg_buildScript.integer)
-	{
-		CG_PrecacheFXSounds();
-	}
+	CG_PrecacheFXSounds();
 }
 
 //===================================================================================
