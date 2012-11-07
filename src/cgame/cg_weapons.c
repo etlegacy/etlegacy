@@ -3505,7 +3505,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 					}
 				}
 			}
-			CG_WeaponAnimation(ps, weapon, &hand.oldframe, &hand.frame, &hand.backlerp); changed
+			CG_WeaponAnimation(ps, weapon, &hand.oldframe, &hand.frame, &hand.backlerp);
 		}
 
 		hand.hModel   = weapon->handsModel;
