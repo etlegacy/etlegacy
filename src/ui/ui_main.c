@@ -940,7 +940,6 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 
 void UI_ShowPostGame(qboolean newHigh)
 {
-	trap_Cvar_Set("cg_cameraOrbit", "0");
 	trap_Cvar_Set("cg_thirdPerson", "0");
 	trap_Cvar_Set("sv_killserver", "1");
 	uiInfo.soundHighScore = newHigh;
@@ -4466,7 +4465,6 @@ void UI_RunMenuScript(char **args)
 
 			trap_Cvar_Set("ui_connecting", "1");
 			trap_Cvar_Set("cg_thirdPerson", "0");
-			trap_Cvar_Set("cg_cameraOrbit", "0");
 			trap_Cvar_Set("ui_singlePlayerActive", "0");
 			trap_Cvar_SetValue("dedicated", Com_Clamp(0, 2, ui_dedicated.integer));
 			trap_Cvar_SetValue("g_gametype", Com_Clamp(0, 8, ui_netGameType.integer));
@@ -4776,7 +4774,6 @@ void UI_RunMenuScript(char **args)
 				Menus_CloseAll();
 				trap_Cvar_Set("ui_connecting", "1");
 				trap_Cvar_Set("cg_thirdPerson", "0 ");
-				trap_Cvar_Set("cg_cameraOrbit", "0");
 				trap_Cvar_Set("ui_singlePlayerActive", "0");
 				trap_LAN_GetServerAddressString(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer], buff, 1024);
 				trap_Cmd_ExecuteText(EXEC_APPEND, va("connect %s\n", buff));
@@ -4787,7 +4784,6 @@ void UI_RunMenuScript(char **args)
 			Menus_CloseAll();
 			trap_Cvar_Set("ui_connecting", "1");
 			trap_Cvar_Set("cg_thirdPerson", "0");
-			trap_Cvar_Set("cg_cameraOrbit", "0");
 			trap_Cvar_Set("ui_singlePlayerActive", "0");
 			trap_Cmd_ExecuteText(EXEC_APPEND, va("connect %s\n", UI_Cvar_VariableString("ui_connectToIPAddress")));
 		}

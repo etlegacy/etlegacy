@@ -2070,35 +2070,25 @@ extern vmCvar_t cg_synchronousClients;
 extern vmCvar_t cg_teamChatTime;
 extern vmCvar_t cg_teamChatHeight;
 extern vmCvar_t cg_stats;
-extern vmCvar_t cg_forceModel;
 extern vmCvar_t cg_coronafardist;
 extern vmCvar_t cg_coronas;
 extern vmCvar_t cg_buildScript;
 extern vmCvar_t cg_paused;
 extern vmCvar_t cg_blood;
 extern vmCvar_t cg_predictItems;
-extern vmCvar_t cg_deferPlayers;
 extern vmCvar_t cg_teamChatsOnly;
 extern vmCvar_t cg_noVoiceChats;
 extern vmCvar_t cg_noVoiceText;
 extern vmCvar_t cg_enableBreath;
 extern vmCvar_t cg_autoactivate;
-extern vmCvar_t cg_smoothClients;
 extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
 
-extern vmCvar_t cg_cameraOrbit;
-extern vmCvar_t cg_cameraOrbitDelay;
-extern vmCvar_t cg_timescaleFadeEnd;
-extern vmCvar_t cg_timescaleFadeSpeed;
 extern vmCvar_t cg_timescale;
-extern vmCvar_t cg_cameraMode;
 extern vmCvar_t cg_smallFont;
 extern vmCvar_t cg_bigFont;
 
 extern vmCvar_t cg_voiceSpriteTime;
-
-extern vmCvar_t cg_blinktime;
 
 // Rafael - particle switch
 extern vmCvar_t cg_wolfparticles;
@@ -2113,12 +2103,10 @@ extern vmCvar_t cg_bluelimbotime;
 
 extern vmCvar_t cg_movespeed;
 
-extern vmCvar_t cg_animState;
-
 extern vmCvar_t cg_drawCompass;
 extern vmCvar_t cg_drawNotifyText;
 extern vmCvar_t cg_quickMessageAlt;
-extern vmCvar_t cg_popupLimboMenu;
+
 extern vmCvar_t cg_descriptiveText;
 
 extern vmCvar_t cg_antilag;
@@ -2141,11 +2129,9 @@ extern vmCvar_t cg_crosshairColorAlt;
 extern vmCvar_t cg_crosshairPulse;
 extern vmCvar_t cg_drawReinforcementTime;
 extern vmCvar_t cg_drawWeaponIconFlash;
-extern vmCvar_t cg_muzzleFlash;
 extern vmCvar_t cg_noAmmoAutoSwitch;
 extern vmCvar_t cg_printObjectiveInfo;
 extern vmCvar_t cg_specHelp;
-extern vmCvar_t cg_specSwing;
 extern vmCvar_t cg_uinfo;
 extern vmCvar_t cg_useScreenshotJPEG;
 

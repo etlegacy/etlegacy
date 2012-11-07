@@ -175,13 +175,10 @@ vmCvar_t cg_coronas;
 vmCvar_t cg_paused;
 vmCvar_t cg_blood;
 vmCvar_t cg_predictItems;
-vmCvar_t cg_deferPlayers;
 
 vmCvar_t cg_enableBreath;
 vmCvar_t cg_autoactivate;
-vmCvar_t cg_blinktime;
 
-vmCvar_t cg_smoothClients;
 vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
 
@@ -199,23 +196,15 @@ vmCvar_t cg_messageType;
 vmCvar_t cg_messagePlayer;
 vmCvar_t cg_messagePlayerName;
 vmCvar_t cg_movespeed;
-vmCvar_t cg_cameraMode;
-vmCvar_t cg_cameraOrbit;
-vmCvar_t cg_cameraOrbitDelay;
-vmCvar_t cg_timescaleFadeEnd;
-vmCvar_t cg_timescaleFadeSpeed;
 vmCvar_t cg_timescale;
 vmCvar_t cg_smallFont;
 vmCvar_t cg_bigFont;
 
 vmCvar_t cg_voiceSpriteTime;
 
-vmCvar_t cg_animState;
-
 vmCvar_t cg_drawCompass;
 vmCvar_t cg_drawNotifyText;
 vmCvar_t cg_quickMessageAlt;
-vmCvar_t cg_popupLimboMenu;
 vmCvar_t cg_descriptiveText;
 
 vmCvar_t cg_redlimbotime;
@@ -378,18 +367,10 @@ cvarTable_t cvarTable[] =
 	{ &cg_coronafardist,         "cg_coronafardist",         "1536",  CVAR_ARCHIVE                 },
 	{ &cg_coronas,               "cg_coronas",               "1",     CVAR_ARCHIVE                 },
 	{ &cg_predictItems,          "cg_predictItems",          "1",     CVAR_ARCHIVE                 },
-	{ &cg_deferPlayers,          "cg_deferPlayers",          "1",     CVAR_ARCHIVE                 },
 	{ &cg_stats,                 "cg_stats",                 "0",     0                            },
-	{ &cg_blinktime,             "cg_blinktime",             "100",   CVAR_ARCHIVE                 },
 
 	{ &cg_enableBreath,          "cg_enableBreath",          "1",     CVAR_SERVERINFO              },
-	{ &cg_cameraOrbit,           "cg_cameraOrbit",           "0",     CVAR_CHEAT                   },
-	{ &cg_cameraOrbitDelay,      "cg_cameraOrbitDelay",      "50",    CVAR_ARCHIVE                 },
-	{ &cg_timescaleFadeEnd,      "cg_timescaleFadeEnd",      "1",     0                            },
-	{ &cg_timescaleFadeSpeed,    "cg_timescaleFadeSpeed",    "0",     0                            },
 	{ &cg_timescale,             "timescale",                "1",     0                            },
-	//  { &cg_smoothClients, "cg_smoothClients", "0", CVAR_USERINFO | CVAR_ARCHIVE},
-	{ &cg_cameraMode,            "com_cameraMode",           "0",     CVAR_CHEAT                   },
 
 	{ &pmove_fixed,              "pmove_fixed",              "0",     0                            },
 	{ &pmove_msec,               "pmove_msec",               "8",     0                            },
@@ -421,11 +402,9 @@ cvarTable_t cvarTable[] =
 	{ &cg_bluelimbotime,         "",                         "30000", 0                            }, // communicated by systeminfo
 	{ &cg_redlimbotime,          "",                         "30000", 0                            }, // communicated by systeminfo
 	{ &cg_movespeed,             "g_movespeed",              "76",    0                            }, // actual movespeed of player
-	{ &cg_animState,             "cg_animState",             "0",     CVAR_CHEAT                   },
 	{ &cg_drawCompass,           "cg_drawCompass",           "1",     CVAR_ARCHIVE                 },
 	{ &cg_drawNotifyText,        "cg_drawNotifyText",        "1",     CVAR_ARCHIVE                 },
 	{ &cg_quickMessageAlt,       "cg_quickMessageAlt",       "0",     CVAR_ARCHIVE                 },
-	{ &cg_popupLimboMenu,        "cg_popupLimboMenu",        "1",     CVAR_ARCHIVE                 },
 	{ &cg_descriptiveText,       "cg_descriptiveText",       "1",     CVAR_ARCHIVE                 },
 	{ &cg_antilag,               "g_antilag",                "1",     0                            },
 	{ &developer,                "developer",                "0",     CVAR_CHEAT                   },
