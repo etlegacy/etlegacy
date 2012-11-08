@@ -3719,7 +3719,7 @@ void CL_Init(void)
 	Cvar_Get("cg_zoomstepsniper", "2", CVAR_ARCHIVE);
 
 	// userinfo
-	Cvar_Get("name", "ETPlayer", CVAR_USERINFO | CVAR_ARCHIVE);
+	Cvar_Get("name", "ETLegacyPlayer", CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("rate", "5000", CVAR_USERINFO | CVAR_ARCHIVE);       // NERVE - SMF - changed from 3000
 	Cvar_Get("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE);
 

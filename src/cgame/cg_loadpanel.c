@@ -333,7 +333,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		vec4_t clr3 = { 1.f, 1.f, 1.f, .6f };
 
 		y = 322;
-		CG_Text_Paint_Centred_Ext(540, y, 0.22f, 0.22f, clr3, "SERVER INFO", 0, 0, 0, &bg_loadscreenfont1);
+		CG_Text_Paint_Centred_Ext(540, y, 0.22f, 0.22f, clr3, ("^1" PRODUCT_LABEL " ^0" Q3_VERSION_NUMBER), 0, 0, 0, &bg_loadscreenfont1);
 
 		y   = 340;
 		str = Info_ValueForKey(buffer, "sv_hostname");
