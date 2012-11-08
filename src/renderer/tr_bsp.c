@@ -866,6 +866,7 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 			{
 				for (m = 0; m < 2; m++)
 				{
+
 					if (m)
 					{
 						offset2 = (grid2->height - 1) * grid2->width;
@@ -880,6 +881,7 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 					}
 					for (l = 1; l < grid2->width - 1; l++)
 					{
+						//
 						if (Q_fabs(grid1->verts[k + offset1].xyz[0] - grid2->verts[l + offset2].xyz[0]) > .1)
 						{
 							continue;
@@ -899,6 +901,7 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 				}
 				for (m = 0; m < 2; m++)
 				{
+
 					if (m)
 					{
 						offset2 = grid2->width - 1;
@@ -1092,6 +1095,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 		{
 			for (m = 0; m < 2; m++)
 			{
+
 				if (grid2->width >= MAX_GRID_SIZE)
 				{
 					break;
@@ -1240,7 +1244,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 			}
 		}
 	}
-
 	for (n = 0; n < 2; n++)
 	{
 		if (n)
@@ -1275,6 +1278,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 				//  continue;
 				for (l = 0; l < grid2->width - 1; l++)
 				{
+					//
 					v1 = grid1->verts[grid1->width * k + offset1].xyz;
 					v2 = grid2->verts[l + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) > .1)
@@ -1304,7 +1308,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-
+					//
 					v1 = grid2->verts[l + offset2].xyz;
 					v2 = grid2->verts[(l + 1) + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) < .01 &&
@@ -1407,7 +1411,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 			}
 		}
 	}
-
 	for (n = 0; n < 2; n++)
 	{
 		if (n)
@@ -1442,7 +1445,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 				//  continue;
 				for (l = 0; l < grid2->width - 1; l++)
 				{
-
+					//
 					v1 = grid1->verts[k + offset1].xyz;
 					v2 = grid2->verts[l + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) > .1)
@@ -1472,7 +1475,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-
+					//
 					v1 = grid2->verts[l + offset2].xyz;
 					v2 = grid2->verts[(l + 1) + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) < .01 &&
@@ -1579,7 +1582,6 @@ int R_StitchPatches(int grid1num, int grid2num)
 			}
 		}
 	}
-
 	for (n = 0; n < 2; n++)
 	{
 		if (n)
@@ -1643,7 +1645,7 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-
+					//
 					v1 = grid2->verts[l + offset2].xyz;
 					v2 = grid2->verts[(l + 1) + offset2].xyz;
 					if (Q_fabs(v1[0] - v2[0]) < .01 &&
@@ -2679,6 +2681,19 @@ qboolean R_GetEntityToken(char *buffer, int size)
 	}
 }
 
+
+/*
+============
+RE__StripExtensionForWorldDir
+============
+*/
+void RE_StripExtensionForWorldDir( const char *in, char *out ) {
+	while ( *in && *in != '.' ) {
+		*out++ = *in++;
+	}
+	*out = 0;
+}
+
 /*
 =================
 RE_LoadWorldMap
@@ -2733,6 +2748,11 @@ void RE_LoadWorldMap(const char *name)
 		ri.Error(ERR_DROP, "RE_LoadWorldMap: %s not found", name);
 	}
 
+	// ydnar: set map meta dir for lightmaps
+	// THIS MUST BE IN SYNC WITH Q3MAP2
+	tr.worldDir = CopyString(name);
+	RE_StripExtensionForWorldDir(tr.worldDir, tr.worldDir);
+
 	// clear tr.world so if the level fails to load, the next
 	// try will not look at the partially loaded version
 	tr.world = NULL;
@@ -2742,10 +2762,6 @@ void RE_LoadWorldMap(const char *name)
 
 	Q_strncpyz(s_worldData.baseName, COM_SkipPath(s_worldData.name), sizeof(s_worldData.name));
 	COM_StripExtension(s_worldData.baseName, s_worldData.baseName, sizeof(s_worldData.baseName));
-
-	// ydnar: set map meta dir for lightmaps
-	// THIS MUST BE IN SYNC WITH Q3MAP2 ... and there is a static path structure
-	tr.worldDir = va("maps/%s", s_worldData.baseName);
 
 	startMarker = ri.Hunk_Alloc(0, h_low);
 	c_gridVerts = 0;
@@ -2757,7 +2773,7 @@ void RE_LoadWorldMap(const char *name)
 	if (i != BSP_VERSION)
 	{
 		ri.Error(ERR_DROP, "RE_LoadWorldMap: %s has wrong version number (%i should be %i)",
-				name, i, BSP_VERSION);
+		         name, i, BSP_VERSION);
 	}
 
 	// swap all the lumps
