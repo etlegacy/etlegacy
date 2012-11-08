@@ -1658,6 +1658,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		    )
 		{
 			G_addStatsHeadShot(attacker, mod);
+			attacker->client->ps.persistant[PERS_HEADSHOTS]++;
 		}
 
 		if (g_debugBullets.integer)

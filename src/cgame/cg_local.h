@@ -36,6 +36,9 @@
  * in the server stored userinfos, or stashed in a cvar.
  */
 
+#ifndef _CG_LOCAL_H
+#define _CG_LOCAL_H
+
 #include "../qcommon/q_shared.h"
 #include "../renderer/tr_types.h"
 #include "../game/bg_public.h"
@@ -1518,11 +1521,16 @@ typedef struct
 	sfxHandle_t countPrepare;
 	sfxHandle_t goatAxis;
 
+	// hitsounds
+	sfxHandle_t	headShot;
+	sfxHandle_t	bodyShot;
+	sfxHandle_t	teamShot;
+
 	sfxHandle_t grenadePulseSound4;
 	sfxHandle_t grenadePulseSound3;
 	sfxHandle_t grenadePulseSound2;
 	sfxHandle_t grenadePulseSound1;
-//  sfxHandle_t sparkSounds;
+	//  sfxHandle_t sparkSounds;
 
 	// Ridah
 	sfxHandle_t flameSound;
@@ -1599,7 +1607,7 @@ typedef struct
 	qhandle_t hWeaponEchoSnd_2;
 	qhandle_t hWeaponHeatSnd_2;
 
-//  qhandle_t   hflakWeaponSnd;
+	//  qhandle_t   hflakWeaponSnd;
 
 	qhandle_t hMountedMG42Base;     //  trap_R_RegisterModel( "models/mapobjects/tanks_sd/mg42nestbase.md3" );
 	qhandle_t hMountedMG42Nest;     //  trap_R_RegisterModel( "models/mapobjects/tanks_sd/mg42nest.md3" );
@@ -2116,7 +2124,7 @@ extern vmCvar_t developer;
 extern vmCvar_t authLevel;
 extern vmCvar_t cf_wstats;
 extern vmCvar_t cf_wtopshots;
-//extern vmCvar_t           cg_announcer;
+//extern vmCvar_t cg_announcer;
 extern vmCvar_t cg_autoAction;
 extern vmCvar_t cg_autoReload;
 extern vmCvar_t cg_bloodDamageBlend;
@@ -2171,6 +2179,8 @@ extern vmCvar_t cl_waverecording;
 extern vmCvar_t cl_wavefilename;
 extern vmCvar_t cl_waveoffset;
 extern vmCvar_t cg_recording_statusline;
+
+extern vmCvar_t cg_hitSounds;
 
 // cg_main.c
 const char *CG_ConfigString(int index);
@@ -2237,17 +2247,16 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 void CG_DrawStretchPic(float x, float y, float width, float height, qhandle_t hShader);
 
 void CG_DrawString(float x, float y, const char *string,
-                   float charWidth, float charHeight, const float *modulate);
-
+		float charWidth, float charHeight, const float *modulate);
 
 void CG_DrawStringExt(int x, int y, const char *string, float *setColor,
-                      qboolean forceColor, qboolean shadow, int charWidth,
-                      int charHeight, int maxChars);
+		qboolean forceColor, qboolean shadow, int charWidth,
+		int charHeight, int maxChars);
 
 void CG_DrawStringExt2(int x, int y, const char *string, const float *setColor,
                        qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars);
 void CG_DrawStringExt_Shadow(int x, int y, const char *string, const float *setColor,
-                             qboolean forceColor, int shadow, int charWidth, int charHeight, int maxChars);
+		qboolean forceColor, int shadow, int charWidth, int charHeight, int maxChars);
 
 void CG_DrawBigString(int x, int y, const char *s, float alpha);
 void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color);
@@ -2408,25 +2417,25 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch);
 void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count);
 
 // cg_marks.c
-void    CG_InitMarkPolys(void);
-void    CG_AddMarks(void);
-void    CG_ImpactMark(qhandle_t markShader,
-                      vec3_t origin, vec4_t projection, float radius, float orientation,
-                      float r, float g, float b, float a, int lifeTime);
+void CG_InitMarkPolys(void);
+void CG_AddMarks(void);
+void CG_ImpactMark(qhandle_t markShader,
+		vec3_t origin, vec4_t projection, float radius, float orientation,
+		float r, float g, float b, float a, int lifeTime);
 
 // Rafael particles
 // cg_particles.c
-void    CG_ClearParticles(void);
-void    CG_AddParticles(void);
-void    CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb, float range, int snum);
-void    CG_ParticleSmoke(qhandle_t pshader, centity_t *cent);
-void    CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent);
-void    CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration);
-void    CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration);       // DHM - Nerve
-void    CG_ParticleDirtBulletDebris_Core(vec3_t org, vec3_t vel, int duration, float width, float height, float alpha, qhandle_t shader);
-void    CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, float speed);
-void    CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir);
-void    CG_ParticleMisc(qhandle_t pshader, vec3_t origin, int size, int duration, float alpha);
+void CG_ClearParticles(void);
+void CG_AddParticles(void);
+void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb, float range, int snum);
+void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent);
+void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent);
+void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration);
+void CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration);       // DHM - Nerve
+void CG_ParticleDirtBulletDebris_Core(vec3_t org, vec3_t vel, int duration, float width, float height, float alpha, qhandle_t shader);
+void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, float speed);
+void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir);
+void CG_ParticleMisc(qhandle_t pshader, vec3_t origin, int size, int duration, float alpha);
 
 void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration, int sizeStart, int sizeEnd, qboolean dlight);
 
@@ -2487,25 +2496,24 @@ void    CG_AddLocalEntities(void);
 // cg_effects.c
 int CG_GetOriginForTag(centity_t * cent, refEntity_t * parent, char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
 localEntity_t *CG_SmokePuff(const vec3_t p,
-                            const vec3_t vel,
-                            float radius,
-                            float r, float g, float b, float a,
-                            float duration,
-                            int startTime,
-                            int fadeInTime,
-                            int leFlags,
-                            qhandle_t hShader);
+		const vec3_t vel,
+		float radius,
+		float r, float g, float b, float a,
+		float duration,
+		int startTime,
+		int fadeInTime,
+		int leFlags,
+		qhandle_t hShader);
 
 void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing);
 void CG_SpawnEffect(vec3_t org);
 void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir);
-void CG_LoseHat(centity_t *cent, vec3_t dir);           //----(SA)  added
+void CG_LoseHat(centity_t *cent, vec3_t dir);
 
 void CG_Bleed(vec3_t origin, int entityNum);
 
 localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
-                                qhandle_t hModel, qhandle_t shader, int msec,
-                                qboolean isSprite);
+		qhandle_t hModel, qhandle_t shader, int msec, qboolean isSprite);
 
 void CG_SparklerSparks(vec3_t origin, int count);
 void CG_ClearFlameChunks(void);
@@ -2663,155 +2671,155 @@ void CG_AddAtmosphericEffects(void);
 void trap_PumpEventLoop(void);
 
 // print message on the local console
-void        trap_Print(const char *fmt);
+void trap_Print(const char *fmt);
 
 // abort the game
-void        trap_Error(const char *fmt) __attribute__((noreturn));
+void trap_Error(const char *fmt) __attribute__((noreturn));
 
 // milliseconds should only be used for performance tuning, never
 // for anything game related.  Get time from the CG_DrawActiveFrame parameter
-int         trap_Milliseconds(void);
-int         trap_RealTime(qtime_t *qtime);
+int trap_Milliseconds(void);
+int trap_RealTime(qtime_t *qtime);
 
 // console variable interaction
-void        trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
-void        trap_Cvar_Update(vmCvar_t *vmCvar);
-void        trap_Cvar_Set(const char *var_name, const char *value);
-void        trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-void        trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+void trap_Cvar_Update(vmCvar_t *vmCvar);
+void trap_Cvar_Set(const char *var_name, const char *value);
+void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
 
 // ServerCommand and ConsoleCommand parameter access
-int         trap_Argc(void);
-void        trap_Argv(int n, char *buffer, int bufferLength);
-void        trap_Args(char *buffer, int bufferLength);
+int trap_Argc(void);
+void trap_Argv(int n, char *buffer, int bufferLength);
+void trap_Args(char *buffer, int bufferLength);
 
 // filesystem access
 // returns length of file
-int         trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
-void        trap_FS_Read(void *buffer, int len, fileHandle_t f);
-void        trap_FS_Write(const void *buffer, int len, fileHandle_t f);
-void        trap_FS_FCloseFile(fileHandle_t f);
-int         trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
-int         trap_FS_Delete(const char *filename);
+int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
+void trap_FS_Read(void *buffer, int len, fileHandle_t f);
+void trap_FS_Write(const void *buffer, int len, fileHandle_t f);
+void trap_FS_FCloseFile(fileHandle_t f);
+int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
+int trap_FS_Delete(const char *filename);
 
 // add commands to the local console as if they were typed in
 // for map changing, etc.  The command is not executed immediately,
 // but will be executed in order the next time console commands
 // are processed
-void        trap_SendConsoleCommand(const char *text);
+void trap_SendConsoleCommand(const char *text);
 
 // register a command name so the console can perform command completion.
 // FIXME: replace this with a normal console command "defineCommand"?
-void        trap_AddCommand(const char *cmdName);
+void trap_AddCommand(const char *cmdName);
 
 // send a string to the server over the network
-void        trap_SendClientCommand(const char *s);
+void trap_SendClientCommand(const char *s);
 
 // force a screen update, only used during gamestate load
-void        trap_UpdateScreen(void);
+void trap_UpdateScreen(void);
 
 // model collision
-void        trap_CM_LoadMap(const char *mapname);
-int         trap_CM_NumInlineModels(void);
+void trap_CM_LoadMap(const char *mapname);
+int  trap_CM_NumInlineModels(void);
 clipHandle_t trap_CM_InlineModel(int index);        // 0 = world, 1+ = bmodels
 clipHandle_t trap_CM_TempBoxModel(const vec3_t mins, const vec3_t maxs);
 clipHandle_t trap_CM_TempCapsuleModel(const vec3_t mins, const vec3_t maxs);
-int         trap_CM_PointContents(const vec3_t p, clipHandle_t model);
-int         trap_CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t origin, const vec3_t angles);
-void        trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
-                             const vec3_t mins, const vec3_t maxs,
-                             clipHandle_t model, int brushmask);
-void        trap_CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
-                                        const vec3_t mins, const vec3_t maxs,
-                                        clipHandle_t model, int brushmask,
-                                        const vec3_t origin, const vec3_t angles);
+int trap_CM_PointContents(const vec3_t p, clipHandle_t model);
+int trap_CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t origin, const vec3_t angles);
+void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
+		const vec3_t mins, const vec3_t maxs,
+		clipHandle_t model, int brushmask);
+void trap_CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
+		const vec3_t mins, const vec3_t maxs,
+        clipHandle_t model, int brushmask,
+        const vec3_t origin, const vec3_t angles);
 
-void        trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
-                                 const vec3_t mins, const vec3_t maxs,
-                                 clipHandle_t model, int brushmask);
-void        trap_CM_TransformedCapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
-                                            const vec3_t mins, const vec3_t maxs,
-                                            clipHandle_t model, int brushmask,
-                                            const vec3_t origin, const vec3_t angles);
+void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
+		const vec3_t mins, const vec3_t maxs,
+        clipHandle_t model, int brushmask);
+void trap_CM_TransformedCapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
+        const vec3_t mins, const vec3_t maxs,
+        clipHandle_t model, int brushmask,
+        const vec3_t origin, const vec3_t angles);
 
 // Returns the projection of a polygon onto the solid brushes in the world
-int         trap_CM_MarkFragments(int numPoints, const vec3_t *points,
-                                  const vec3_t projection,
-                                  int maxPoints, vec3_t pointBuffer,
-                                  int maxFragments, markFragment_t *fragmentBuffer);
+int trap_CM_MarkFragments(int numPoints, const vec3_t *points,
+		const vec3_t projection,
+		int maxPoints, vec3_t pointBuffer,
+		int maxFragments, markFragment_t *fragmentBuffer);
 
 // ydnar: projects a decal onto brush model surfaces
-void        trap_R_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime);
-void        trap_R_ClearDecals(void);
+void trap_R_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime);
+void trap_R_ClearDecals(void);
 
 // normal sounds will have their volume dynamically changed as their entity
 // moves and the listener moves
-void        trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx);
-void        trap_S_StartSoundVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int volume);
-void        trap_S_StartSoundEx(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags);
-void        trap_S_StartSoundExVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags, int volume);
-void        trap_S_StopStreamingSound(int entnum);    // usually AI.  character is talking and needs to be shut up /now/
-int         trap_S_GetSoundLength(sfxHandle_t sfx);
-int         trap_S_GetCurrentSoundTime(void);
+void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx);
+void trap_S_StartSoundVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int volume);
+void trap_S_StartSoundEx(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags);
+void trap_S_StartSoundExVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags, int volume);
+void trap_S_StopStreamingSound(int entnum);    // usually AI.  character is talking and needs to be shut up /now/
+int trap_S_GetSoundLength(sfxHandle_t sfx);
+int trap_S_GetCurrentSoundTime(void);
 
 // a local sound is always played full volume
-void        trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum);
-void        trap_S_ClearLoopingSounds(void);
-void        trap_S_ClearSounds(qboolean killmusic);
-void        trap_S_AddLoopingSound(const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int volume, int soundTime);
-void        trap_S_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range, int volume, int soundTime);
-void        trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin);
+void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum);
+void trap_S_ClearLoopingSounds(void);
+void trap_S_ClearSounds(qboolean killmusic);
+void trap_S_AddLoopingSound(const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int volume, int soundTime);
+void trap_S_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range, int volume, int soundTime);
+void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin);
 
 // Ridah, talking animations
-int         trap_S_GetVoiceAmplitude(int entityNum);
+int trap_S_GetVoiceAmplitude(int entityNum);
 
 // repatialize recalculates the volumes of sound as they should be heard by the
 // given entityNum and position
 void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater);
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed);          // returns buzz if not found
-void        trap_S_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTime);   // empty name stops music
-void        trap_S_FadeBackgroundTrack(float targetvol, int time, int num);
-void        trap_S_StopBackgroundTrack(void);
-int         trap_S_StartStreamingSound(const char *intro, const char *loop, int entnum, int channel, int attenuation);
-void        trap_S_FadeAllSound(float targetvol, int time, qboolean stopsounds);
+void trap_S_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTime);   // empty name stops music
+void trap_S_FadeBackgroundTrack(float targetvol, int time, int num);
+void trap_S_StopBackgroundTrack(void);
+int trap_S_StartStreamingSound(const char *intro, const char *loop, int entnum, int channel, int attenuation);
+void trap_S_FadeAllSound(float targetvol, int time, qboolean stopsounds);
 
-void        trap_R_LoadWorldMap(const char *mapname);
+void trap_R_LoadWorldMap(const char *mapname);
 
 // all media should be registered during level startup to prevent
 // hitches during gameplay
-qhandle_t   trap_R_RegisterModel(const char *name);             // returns rgb axis if not found
-qhandle_t   trap_R_RegisterSkin(const char *name);              // returns all white if not found
-qhandle_t   trap_R_RegisterShader(const char *name);            // returns all white if not found
-qhandle_t   trap_R_RegisterShaderNoMip(const char *name);           // returns all white if not found
+qhandle_t trap_R_RegisterModel(const char *name);             // returns rgb axis if not found
+qhandle_t trap_R_RegisterSkin(const char *name);              // returns all white if not found
+qhandle_t trap_R_RegisterShader(const char *name);            // returns all white if not found
+qhandle_t trap_R_RegisterShaderNoMip(const char *name);       // returns all white if not found
 
-qboolean    trap_R_GetSkinModel(qhandle_t skinid, const char *type, char *name);            //----(SA) added
-qhandle_t   trap_R_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);    //----(SA)  added
+qboolean trap_R_GetSkinModel(qhandle_t skinid, const char *type, char *name);
+qhandle_t trap_R_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);
 
 // a scene is built up by calls to R_ClearScene and the various R_Add functions.
 // Nothing is drawn until R_RenderScene is called.
-void        trap_R_ClearScene(void);
-void        trap_R_AddRefEntityToScene(const refEntity_t *re);
+void trap_R_ClearScene(void);
+void trap_R_AddRefEntityToScene(const refEntity_t *re);
 
 // polys are intended for simple wall marks, not really for doing
 // significant construction
-void        trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts);
-void        trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
+void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts);
+void trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
 
-void        trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys);
+void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys);
 
-void        trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags);
-void        trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);
-void        trap_R_RenderScene(const refdef_t *fd);
-void        trap_R_SetColor(const float *rgba);     // NULL = 1,1,1,1
-void        trap_R_DrawStretchPic(float x, float y, float w, float h,
-                                  float s1, float t1, float s2, float t2, qhandle_t hShader);
-void        trap_R_DrawRotatedPic(float x, float y, float w, float h,
-                                  float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);      // NERVE - SMF
-void        trap_R_DrawStretchPicGradient(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor, int gradientType);
-void        trap_R_Add2dPolys(polyVert_t *verts, int numverts, qhandle_t hShader);
-void        trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
-int         trap_R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex);
-void        trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
+void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags);
+void trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);
+void trap_R_RenderScene(const refdef_t *fd);
+void trap_R_SetColor(const float *rgba);     // NULL = 1,1,1,1
+void trap_R_DrawStretchPic(float x, float y, float w, float h,
+		float s1, float t1, float s2, float t2, qhandle_t hShader);
+void trap_R_DrawRotatedPic(float x, float y, float w, float h,
+		float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
+void trap_R_DrawStretchPicGradient(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor, int gradientType);
+void trap_R_Add2dPolys(polyVert_t *verts, int numverts, qhandle_t hShader);
+void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
+int trap_R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex);
+void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
 
 // Save out the old render info so we don't kill the LOD system here
 void trap_R_SaveViewParms(void);
@@ -2826,32 +2834,32 @@ void trap_R_SaveViewParms(void);
 void trap_R_RestoreViewParms(void);
 
 // Set fog
-void    trap_R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density);
-void    trap_R_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
+void trap_R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density);
+void trap_R_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
 
 // The glconfig_t will not change during the life of a cgame.
 // If it needs to change, the entire cgame will be restarted, because
 // all the qhandle_t are then invalid.
-void        trap_GetGlconfig(glconfig_t *glconfig);
+void trap_GetGlconfig(glconfig_t *glconfig);
 
 // the gamestate should be grabbed at startup, and whenever a
 // configstring changes
-void        trap_GetGameState(gameState_t *gamestate);
+void trap_GetGameState(gameState_t *gamestate);
 
 // cgame will poll each frame to see if a newer snapshot has arrived
 // that it is interested in.  The time is returned seperately so that
 // snapshot latency can be calculated.
-void        trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime);
+void trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime);
 
 // a snapshot get can fail if the snapshot (or the entties it holds) is so
 // old that it has fallen out of the client system queue
-qboolean    trap_GetSnapshot(int snapshotNumber, snapshot_t *snapshot);
+qboolean trap_GetSnapshot(int snapshotNumber, snapshot_t *snapshot);
 
 // retrieve a text command from the server stream
 // the current snapshot will hold the number of the most recent command
 // qfalse can be returned if the client system handled the command
 // argc() / argv() can be used to examine the parameters of the command
-qboolean    trap_GetServerCommand(int serverCommandNumber);
+qboolean trap_GetServerCommand(int serverCommandNumber);
 
 // returns the most recent command number that can be passed to GetUserCmd
 // this will always be at least one higher than the number in the current
@@ -3093,7 +3101,6 @@ polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIn
 void CG_PB_ClearPolyBuffers(void);
 void CG_PB_RenderPolyBuffers(void);
 
-
 // cg_limbopanel.c
 void CG_LimboPanel_KeyHandling(int key, qboolean down);
 int CG_LimboPanel_GetMaxObjectives(void);
@@ -3154,7 +3161,6 @@ extWeaponStats_t    CG_LimboPanel_GetSelectedWeaponStat(void);
 qboolean            CG_LimboPanel_WeaponIsDisabled(int weap);
 qboolean            CG_LimboPanel_RealWeaponIsDisabled(weapon_t weap);
 int                 CG_LimboPanel_GetWeaponNumberForPos(int pos);
-
 
 void                CG_LimboPanel_SetSelectedWeaponNumForSlot(int index, int number);
 weapon_t            CG_LimboPanel_GetSelectedWeaponForSlot(int index);
@@ -3298,3 +3304,10 @@ void CG_Fireteams_Setup(void);
 
 void CG_Fireteams_MenuText_Draw(panel_button_t *button);
 void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
+
+#define HITSOUNDS_ON				0x01
+#define HITSOUNDS_NOTEAMSHOT		0x02
+#define HITSOUNDS_NOHEADSHOT		0x04
+#define HITSOUNDS_NOBODYSHOT		0x08
+
+#endif

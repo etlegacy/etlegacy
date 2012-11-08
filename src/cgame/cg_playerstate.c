@@ -69,6 +69,7 @@ void CG_CheckAmmo(void)
 		}
 		switch (i)
 		{
+		// FIXME: early return for non ammo weapons - plier ...
 		case WP_PANZERFAUST:
 		case WP_GRENADE_LAUNCHER:
 		case WP_GRENADE_PINEAPPLE:
@@ -260,9 +261,6 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 	cg.damageIndex     = slot;
 }
 
-
-
-
 /*
 ================
 CG_Respawn
@@ -300,7 +298,6 @@ void CG_Respawn(qboolean revived)
 	trap_SendConsoleCommand("-zoom\n");
 	cg.binocZoomTime = 0;
 
-
 	// clear pmext
 	memset(&cg.pmext, 0, sizeof(cg.pmext));
 
@@ -322,7 +319,6 @@ void CG_Respawn(qboolean revived)
 
 	// reset fog to world fog (if present)
 	trap_R_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
-	// dhm - end
 }
 
 extern char *eventnames[];
@@ -458,12 +454,37 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops)
 		}
 	}
 
+	// hitsounds
+	// FIXME: add server control cvars?!
+	if (ops->persistant[PERS_HITS] != ps->persistant[PERS_HITS] && cg_hitSounds.integer & HITSOUNDS_ON)
+	{
+		if (ps->persistant[PERS_HITS] < ops->persistant[PERS_HITS])
+		{
+			if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
+			{
+				trap_S_StartSound(NULL, ps->clientNum, CHAN_AUTO, cgs.media.teamShot);
+			}
+		}
+		else if (ps->persistant[PERS_HEADSHOTS] > ops->persistant[PERS_HEADSHOTS])
+		{
+			if ( !(cg_hitSounds.integer & HITSOUNDS_NOHEADSHOT))
+			{
+				trap_S_StartSound(NULL, ps->clientNum, CHAN_AUTO, cgs.media.headShot);
+			}
+		}
+		else
+		{
+			if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
+			{
+				trap_S_StartSound(NULL, ps->clientNum, CHAN_AUTO, cgs.media.bodyShot);
+			}
+		}
+	}
+
 	// timelimit warnings
 	if (cgs.timelimit > 0 && cgs.gamestate == GS_PLAYING)
 	{
-		int msec;
-
-		msec = cg.time - cgs.levelStartTime;
+		int msec = cg.time - cgs.levelStartTime;
 
 		if (cgs.timelimit > 5 && !(cg.timelimitWarnings & 1) && (msec > (cgs.timelimit - 5) * 60 * 1000) &&
 		    (msec < (cgs.timelimit - 5) * 60 * 1000 + 1000))

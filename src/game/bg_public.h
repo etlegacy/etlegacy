@@ -548,15 +548,14 @@ typedef enum
 	PERS_RESPAWNS_PENALTY,          // how many respawns you have to sit through before respawning again
 
 	PERS_REVIVE_COUNT,
-	PERS_BLEH_2,
+	PERS_HEADSHOTS,
 	PERS_BLEH_3,
 
-	// Rafael - mg42		// (SA) I don't understand these here.  can someone explain?
+	// Rafael - mg42                // (SA) I don't understand these here.  can someone explain?
 	PERS_HWEAPON_USE,
 	// Rafael wolfkick
 	PERS_WOLFKICK
 } persEnum_t;
-
 
 // entityState_t->eFlags
 #define EF_DEAD             0x00000001      // don't draw a foe marker over players with EF_DEAD

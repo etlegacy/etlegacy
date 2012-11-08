@@ -277,6 +277,8 @@ vmCvar_t cl_wavefilename;
 vmCvar_t cl_waveoffset;
 vmCvar_t cg_recording_statusline;
 
+vmCvar_t	cg_hitSounds;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -471,6 +473,8 @@ cvarTable_t cvarTable[] =
 	{ &cl_wavefilename,          "cl_wavefilename",          "",      CVAR_ROM                     },
 	{ &cl_waveoffset,            "cl_waveoffset",            "0",     CVAR_ROM                     },
 	{ &cg_recording_statusline,  "cg_recording_statusline",  "9",     CVAR_ARCHIVE                 },
+
+	{ &cg_hitSounds,             "cg_hitSounds",             "0",     CVAR_ARCHIVE                 },
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -1100,7 +1104,6 @@ static void CG_RegisterSounds(void)
 	for (i = 0; i < BG_NumScriptSpeakers(); i++)
 	{
 		speaker = BG_GetScriptSpeaker(i);
-
 		speaker->noise = trap_S_RegisterSound(speaker->filename, qfalse);
 	}
 
@@ -1204,11 +1207,15 @@ static void CG_RegisterSounds(void)
 	}
 
 	// OSP
-	cgs.media.countFight   = trap_S_RegisterSound( "sound/osp/fight.wav",qfalse );
-	cgs.media.countPrepare = trap_S_RegisterSound( "sound/osp/prepare.wav",qfalse );
-	cgs.media.goatAxis     = trap_S_RegisterSound( "sound/osp/goat.wav", qfalse );
+	cgs.media.countFight   = trap_S_RegisterSound( "sound/osp/fight.wav",qfalse);
+	cgs.media.countPrepare = trap_S_RegisterSound( "sound/osp/prepare.wav",qfalse);
+	cgs.media.goatAxis     = trap_S_RegisterSound( "sound/osp/goat.wav", qfalse);
 	//cgs.media.winAllies = trap_S_RegisterSound( "sound/osp/winallies.wav",qfalse );
 	//cgs.media.winAxis = trap_S_RegisterSound( "sound/osp/winaxis.wav",qfalse );
+
+	cgs.media.headShot = trap_S_RegisterSound( "sound/hitsounds/hithead.wav", qfalse);
+	cgs.media.bodyShot = trap_S_RegisterSound( "sound/hitsounds/hit.wav", qfalse);
+	cgs.media.teamShot = trap_S_RegisterSound( "sound/hitsounds/hitteam.wav", qfalse);
 
 	cgs.media.flameSound         = trap_S_RegisterSound("sound/weapons/flamethrower/flame_burn.wav", qfalse);
 	cgs.media.flameBlowSound     = trap_S_RegisterSound("sound/weapons/flamethrower/flame_pilot.wav", qfalse);
