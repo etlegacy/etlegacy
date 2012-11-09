@@ -1855,7 +1855,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	// don't do the "xxx connected" messages if they were caried over from previous level
 	//		TAT 12/10/2002 - Don't display connected messages in single player
-	if (firstTime && !G_IsSinglePlayerGame())
+	if (firstTime)
 	{
 		trap_SendServerCommand(-1, va("cpm \"%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
 	}
@@ -2267,8 +2267,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	// clear entity values
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 	client->ps.eFlags                 = flags;
-	// MrE: use capsules for AI and player
-	//client->ps.eFlags |= EF_CAPSULE;
 
 	ent->s.groundEntityNum = ENTITYNUM_NONE;
 	ent->client            = &level.clients[index];

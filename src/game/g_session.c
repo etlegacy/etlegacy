@@ -34,7 +34,6 @@
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
 
-
 /*
 =======================================================================
 
@@ -86,12 +85,9 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.suicides,
 	       client->sess.team_kills,
 	       (mvc & 0xFFFF),
-	       ((mvc >> 16) & 0xFFFF)
+	       ((mvc >> 16) & 0xFFFF),
 	       // Damage and rounds played rolled in with weapon stats (below)
-	       // OSP
 
-	       ,
-//		client->sess.experience,
 	       client->sess.muted,
 	       client->sess.ignoreClients[0],
 	       client->sess.ignoreClients[1],
@@ -130,9 +126,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	{
 		trap_Cvar_Set(va("wstats%i", (int)(client - level.clients)), G_createStats(&g_entities[client - level.clients]));
 	}
-	// OSP
 }
-
 
 /*
 ================
@@ -179,7 +173,6 @@ void G_ClientSwap(gclient_t *client)
 
 	client->sess.spec_team = flags;
 }
-
 
 void G_CalcRank(gclient_t *client)
 {
@@ -245,7 +238,6 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.latchPlayerWeapon,  // DHM - Nerve
 	       &client->sess.latchPlayerWeapon2,
 
-	       // OSP
 	       &client->sess.coach_team,
 	       &client->sess.deaths,
 	       &client->sess.game_points,
@@ -256,12 +248,8 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.suicides,
 	       &client->sess.team_kills,
 	       &mvc_l,
-	       &mvc_h
+	       &mvc_h,
 	       // Damage and round count rolled in with weapon stats (below)
-	       // OSP
-
-	       ,
-//		&client->sess.experience,
 	       (int *)&client->sess.muted,
 	       &client->sess.ignoreClients[0],
 	       &client->sess.ignoreClients[1],
@@ -271,7 +259,6 @@ void G_ReadSessionData(gclient_t *client)
 
 	// OSP -- reinstate MV clients
 	client->pers.mvReferenceList = (mvc_h << 16) | mvc_l;
-	// OSP
 
 	// OSP -- pull and parse weapon stats
 	*s = 0;
@@ -284,7 +271,6 @@ void G_ReadSessionData(gclient_t *client)
 			client->sess.rounds++;
 		}
 	}
-	// OSP
 
 	// Arnout: likely there are more cases in which we don't want this
 	if (g_gametype.integer != GT_SINGLE_PLAYER &&
@@ -314,7 +300,6 @@ void G_ReadSessionData(gclient_t *client)
 		       &client->sess.medals[5],
 		       &client->sess.medals[6]
 		       );
-
 	}
 
 	G_CalcRank(client);
@@ -344,7 +329,6 @@ void G_ReadSessionData(gclient_t *client)
 	}
 }
 
-
 /*
 ================
 G_InitSessionData
@@ -355,7 +339,6 @@ Called on a first-time connect
 void G_InitSessionData(gclient_t *client, char *userinfo)
 {
 	clientSession_t *sess;
-//	const char		*value;
 
 	sess = &client->sess;
 
@@ -365,16 +348,14 @@ void G_InitSessionData(gclient_t *client, char *userinfo)
 	sess->spectatorState = SPECTATOR_FREE;
 	sess->spectatorTime  = level.time;
 
-	// DHM - Nerve
 	sess->latchPlayerType    = sess->playerType = 0;
 	sess->latchPlayerWeapon  = sess->playerWeapon = 0;
 	sess->latchPlayerWeapon2 = sess->playerWeapon2 = 0;
 
 	sess->spawnObjectiveIndex = 0;
-	// dhm - end
 
 	memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
-//	sess->experience = 0;
+
 	sess->muted = qfalse;
 	memset(sess->skill, 0, sizeof(sess->skill));
 	memset(sess->skillpoints, 0, sizeof(sess->skillpoints));
@@ -383,17 +364,14 @@ void G_InitSessionData(gclient_t *client, char *userinfo)
 	sess->rank         = 0;
 	sess->startxptotal = 0;
 
-	// OSP
 	sess->coach_team  = 0;
 	sess->referee     = (client->pers.localClient) ? RL_REFEREE : RL_NONE;
 	sess->spec_invite = 0;
 	sess->spec_team   = 0;
 	G_deleteStats(client - level.clients);
-	// OSP
 
 	G_WriteClientSessionData(client, qfalse);
 }
-
 
 /*
 ==================

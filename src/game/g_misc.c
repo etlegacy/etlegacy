@@ -1292,12 +1292,6 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 
 		tent = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_WALL);
 
-		// Gordon: bleugh, lets broadcast this in SP, (trainwreck issues)
-		if (G_IsSinglePlayerGame())
-		{
-			tent->r.svFlags |= SVF_BROADCAST;
-		}
-
 		dot = DotProduct(forward, tr.plane.normal);
 		VectorMA(forward, -2 * dot, tr.plane.normal, reflect);
 		VectorNormalize(reflect);

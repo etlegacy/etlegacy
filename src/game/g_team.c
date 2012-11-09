@@ -628,43 +628,28 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 	int       team;
 	gclient_t *cl = other->client;
 
-	// START Mad Doc - TDF
-	if ((g_gametype.integer != GT_SINGLE_PLAYER) && (g_gametype.integer != GT_COOP))
+	// figure out what team this flag is
+	if (strcmp(ent->classname, "team_CTF_redflag") == 0)
 	{
-
-		// figure out what team this flag is
-		if (strcmp(ent->classname, "team_CTF_redflag") == 0)
-		{
-			team = TEAM_AXIS;
-		}
-		else if (strcmp(ent->classname, "team_CTF_blueflag") == 0)
-		{
-			team = TEAM_ALLIES;
-		}
-		else
-		{
-			PrintMsg(other, "Don't know what team the flag is on.\n");
-			return 0;
-		}
-
-		// JPW NERVE -- set flag model in carrying entity if multiplayer and flagmodel is set
-		other->message           = ent->message;
-		other->s.otherEntityNum2 = ent->s.modelindex2;
-		// jpw
-
-		return ((team == cl->sess.sessionTeam) ?
-		        Team_TouchOurFlag : Team_TouchEnemyFlag)
-		           (ent, other, team);
+		team = TEAM_AXIS;
+	}
+	else if (strcmp(ent->classname, "team_CTF_blueflag") == 0)
+	{
+		team = TEAM_ALLIES;
 	}
 	else
 	{
-		other->message           = ent->message;
-		other->s.otherEntityNum2 = ent->s.modelindex2;
-
-		// for single player, we want the allies to be able to pick up both flags
-		return Team_TouchEnemyFlag(ent, other, TEAM_ALLIES);
-
+		PrintMsg(other, "Don't know what team the flag is on.\n");
+		return 0;
 	}
+
+	// JPW NERVE -- set flag model in carrying entity if multiplayer and flagmodel is set
+	other->message           = ent->message;
+	other->s.otherEntityNum2 = ent->s.modelindex2;
+
+	return ((team == cl->sess.sessionTeam) ?
+			Team_TouchOurFlag : Team_TouchEnemyFlag)
+			   (ent, other, team);
 }
 
 /*---------------------------------------------------------------------------*/

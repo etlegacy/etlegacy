@@ -4655,7 +4655,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 					terminate = qtrue;
 				}
 			}
-			//
+
 			if (terminate)
 			{
 				return qfalse;
@@ -4701,7 +4701,7 @@ qboolean G_ScriptAction_AbortIfWarmup(gentity_t *ent, char *params)
 		// abort the current script
 		ent->scriptStatus.scriptStackHead = ent->scriptEvents[ent->scriptStatus.scriptEventIndex].stack.numItems;
 	}
-	//
+
 	return qtrue;
 }
 
@@ -4712,12 +4712,7 @@ G_ScriptAction_AbortIfNotSinglePlayer
 */
 qboolean G_ScriptAction_AbortIfNotSinglePlayer(gentity_t *ent, char *params)
 {
-	if (!G_IsSinglePlayerGame())
-	{
-		// abort the current script
-		ent->scriptStatus.scriptStackHead = ent->scriptEvents[ent->scriptStatus.scriptEventIndex].stack.numItems;
-	}
-	//
+	ent->scriptStatus.scriptStackHead = ent->scriptEvents[ent->scriptStatus.scriptEventIndex].stack.numItems;
 	return qtrue;
 }
 

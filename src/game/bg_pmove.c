@@ -686,13 +686,6 @@ static float PM_CmdScale(usercmd_t *cmd)
 		}
 	}
 
-	if (gametype == GT_SINGLE_PLAYER || gametype == GT_COOP)
-	{
-		// Adjust the movespeed
-		scale *= (((float) movespeed) / (float) 127);
-
-	} // if (gametype == GT_SINGLE_PLAYER)...
-
 	return scale;
 }
 

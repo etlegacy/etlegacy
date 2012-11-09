@@ -46,7 +46,7 @@ vec3_t muzzleTrace;
 void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_falloff);
 qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, float spread, int damage, qboolean distance_falloff);
 
-int G_GetWeaponDamage(int weapon);   // JPW
+int G_GetWeaponDamage(int weapon);
 
 qboolean G_WeaponIsExplosive(meansOfDeath_t mod)
 {
@@ -292,7 +292,7 @@ void Weapon_Medic(gentity_t *ent)
 	ent2            = LaunchItem(item, tosspos, velocity, ent->s.number);
 	ent2->think     = MagicSink;
 	ent2->nextthink = level.time + 30000;
-//  ent2->timestamp = level.time + 31200;
+	//  ent2->timestamp = level.time + 31200;
 
 	ent2->parent    = ent; // JPW NERVE so we can score properly later
 	ent2->s.teamNum = ent->client->sess.sessionTeam;
@@ -378,7 +378,7 @@ void Weapon_MagicAmmo(gentity_t *ent)
 	ent2            = LaunchItem(item, tosspos, velocity, ent->s.number);
 	ent2->think     = MagicSink;
 	ent2->nextthink = level.time + 30000;
-//  ent2->timestamp = level.time + 31200;
+	//  ent2->timestamp = level.time + 31200;
 
 	ent2->parent = ent;
 
@@ -802,7 +802,6 @@ static void HandleEntsThatBlockConstructible(gentity_t *constructor, gentity_t *
 			//trap_LinkEntity( check );
 			MakeTemporarySolid(check);
 		}
-
 	}
 	else
 	{
@@ -1618,8 +1617,8 @@ void Weapon_Engineer(gentity_t *ent)
 {
 	trace_t   tr;
 	gentity_t *traceEnt, *hit;
-	vec3_t    mins, maxs;   // JPW NERVE
-	int       i, num, touch[MAX_GENTITIES], scored = 0;   // JPW NERVE
+	vec3_t    mins, maxs;
+	int       i, num, touch[MAX_GENTITIES], scored = 0;
 	int       dynamiteDropTeam;
 	vec3_t    end;
 	vec3_t    origin;
@@ -1768,7 +1767,7 @@ void Weapon_Engineer(gentity_t *ent)
 				}
 				ent->client->sess.aWeaponStats[WS_LANDMINE].atts--;
 				return;
-				// bani
+
 				// rain - #384 - check landmine team so that enemy mines can be disarmed
 				// even if you're using all of yours :x
 			}
@@ -1971,7 +1970,6 @@ evilbanigoto:
 		else
 		if (traceEnt->methodOfDeath == MOD_DYNAMITE)
 		{
-
 			// Not armed
 			if (traceEnt->s.teamNum >= 4)
 			{
@@ -2319,7 +2317,7 @@ evilbanigoto:
 
 				if (traceEnt->health >= 248)
 				{
-					//bani
+
 					qboolean defusedObj = qfalse;
 
 					traceEnt->health = 255;
@@ -2396,7 +2394,7 @@ evilbanigoto:
 								}
 
 								// trap_SendServerCommand(-1, "cp \"Axis engineer disarmed the Dynamite!\n\"");
-								//bani
+
 								defusedObj = qtrue;
 							}
 							else         // TEAM_ALLIES
@@ -2658,12 +2656,6 @@ qboolean weapon_checkAirStrike(gentity_t *ent)
 
 			G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 0, ent->parent - g_entities);
 
-			/*          te = G_TempEntity( ent->parent->s.pos.trBase, EV_GLOBAL_CLIENT_SOUND );
-			            te->s.eventParm = G_SoundIndex( "axis_hq_airstrike_denied" );
-			            te->s.teamNum = ent->parent->s.clientNum;*/
-
-			//          te->s.effect1Time = 1;  // don't buffer
-
 			ent->active = qfalse;
 			if (ent->s.teamNum == TEAM_AXIS)
 			{
@@ -2683,12 +2675,6 @@ qboolean weapon_checkAirStrike(gentity_t *ent)
 			G_SayTo(ent->parent, ent->parent, 2, COLOR_YELLOW, "HQ: ", "All available planes are already en-route.", qtrue);
 
 			G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 0, ent->parent - g_entities);
-
-			/*          te = G_TempEntity( ent->parent->s.pos.trBase, EV_GLOBAL_CLIENT_SOUND );
-			            te->s.eventParm = G_SoundIndex( "allies_hq_airstrike_denied" );
-			            te->s.teamNum = ent->parent->s.clientNum;*/
-
-			//          te->s.effect1Time = 1;  // don't buffer
 
 			ent->active = qfalse;
 			if (ent->s.teamNum == TEAM_AXIS)
@@ -2738,16 +2724,6 @@ void weapon_callAirStrike(gentity_t *ent)
 
 		G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 1, ent->parent - g_entities);
 
-		/*      te = G_TempEntity( ent->parent->s.pos.trBase, EV_GLOBAL_CLIENT_SOUND );
-		        if ( ent->s.teamNum == TEAM_ALLIES ) {
-		            te->s.eventParm = G_SoundIndex( "allies_hq_airstrike_abort" );
-		        } else {
-		            te->s.eventParm = G_SoundIndex( "axis_hq_airstrike_abort" );
-		        }
-		        te->s.teamNum = ent->parent->s.clientNum;*/
-
-		//      te->s.effect1Time = 1;  // don't buffer
-
 		if (ent->s.teamNum == TEAM_AXIS)
 		{
 			level.numActiveAirstrikes[0]--;
@@ -2761,15 +2737,6 @@ void weapon_callAirStrike(gentity_t *ent)
 	}
 
 	G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 2, ent->parent - g_entities);
-
-	/*  te = G_TempEntity( ent->parent->s.pos.trBase, EV_GLOBAL_CLIENT_SOUND );
-	    if ( ent->parent->client->sess.sessionTeam == TEAM_ALLIES ) {
-	        te->s.eventParm = G_SoundIndex( "allies_hq_airstrike" );
-	    } else {
-	        te->s.eventParm = G_SoundIndex( "axis_hq_airstrike" );
-	    }
-	    te->s.teamNum = ent->parent->s.clientNum;*/
-	//  te->s.effect1Time = 1;  // don't buffer
 
 	VectorCopy(tr.endpos, bomboffset);
 	VectorCopy(tr.endpos, skypoint);
@@ -2986,9 +2953,6 @@ void Weapon_Artillery(gentity_t *ent)
 
 			G_GlobalClientEvent(EV_ARTYMESSAGE, 0, ent - g_entities);
 
-			/*          te = G_TempEntity( ent->s.pos.trBase, EV_GLOBAL_CLIENT_SOUND );
-			            te->s.eventParm = G_SoundIndex( "axis_hq_airstrike_denied" );
-			            te->s.teamNum = ent-g_entities;*/
 			return;
 		}
 	}
@@ -3000,10 +2964,6 @@ void Weapon_Artillery(gentity_t *ent)
 			ent->active = qfalse;
 
 			G_GlobalClientEvent(EV_ARTYMESSAGE, 0, ent - g_entities);
-
-			/*          te = G_TempEntity( ent->s.pos.trBase, EV_GLOBAL_CLIENT_SOUND );
-			            te->s.eventParm = G_SoundIndex( "allies_hq_airstrike_denied" );
-			            te->s.teamNum = ent-g_entities;*/
 
 			return;
 		}
@@ -3033,15 +2993,6 @@ void Weapon_Artillery(gentity_t *ent)
 
 		G_GlobalClientEvent(EV_ARTYMESSAGE, 1, ent - g_entities);
 
-		/*      te = G_TempEntity( ent->s.pos.trBase, EV_GLOBAL_CLIENT_SOUND );
-		        if ( ent->client->sess.sessionTeam == TEAM_ALLIES ) {
-		            te->s.eventParm = G_SoundIndex( "allies_hq_ffe_abort" );
-		        } else {
-		            te->s.eventParm = G_SoundIndex( "axis_hq_ffe_abort" );
-		        }
-		        te->s.teamNum = ent->s.clientNum;*/
-
-		//      te->s.effect1Time = 1;  // don't buffer
 		return;
 	}
 
@@ -3051,20 +3002,9 @@ void Weapon_Artillery(gentity_t *ent)
 
 	G_GlobalClientEvent(EV_ARTYMESSAGE, 2, ent - g_entities);
 
-	/*  te = G_TempEntity( ent->s.pos.trBase, EV_GLOBAL_CLIENT_SOUND );
-	    if ( ent->client->sess.sessionTeam == TEAM_ALLIES ) {
-	        te->s.eventParm = G_SoundIndex( "allies_hq_ffe" );
-	    } else {
-	        te->s.eventParm = G_SoundIndex( "axis_hq_ffe" );
-	    }
-	    te->s.teamNum = ent->s.clientNum;*/
-
-	//  te->s.effect1Time = 1;  // don't buffer
-
 	VectorCopy(trace.endpos, bomboffset);
 	traceheight       = bomboffset[2];
 	bottomtraceheight = traceheight - 8192;
-
 
 	// "spotter" round (i == 0)
 	// i == 1->4 is regular explosives
@@ -3241,7 +3181,6 @@ void weapon_smokeBombExplode(gentity_t *ent)
 }
 
 gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNum);
-// jpw
 
 /*
 ======================================================================
@@ -3286,7 +3225,6 @@ void SnapVectorTowards(vec3_t v, vec3_t to)
 	}
 }
 
-// JPW
 // mechanism allows different weapon damage for single/multiplayer; we want "balanced" weapons
 // in multiplayer but don't want to alter the existing single-player damage items that have already
 // been changed
@@ -3381,12 +3319,12 @@ float G_GetWeaponSpread(int weapon)
 	}
 
 	G_Printf("shouldn't ever get here (weapon %d)\n", weapon);
-	// jpw
+
 	return 0;   // shouldn't get here
 }
 
 #define LUGER_SPREAD    G_GetWeaponSpread(WP_LUGER)
-#define LUGER_DAMAGE    G_GetWeaponDamage(WP_LUGER)   // JPW
+#define LUGER_DAMAGE    G_GetWeaponDamage(WP_LUGER)
 
 #define SILENCER_DAMAGE     G_GetWeaponDamage(WP_SILENCER)
 #define SILENCER_SPREAD     G_GetWeaponSpread(WP_SILENCER)
@@ -3398,7 +3336,7 @@ float G_GetWeaponSpread(int weapon)
 #define AKIMBO_SILENCEDLUGER_SPREAD G_GetWeaponSpread(WP_AKIMBO_SILENCEDLUGER)
 
 #define COLT_SPREAD     G_GetWeaponSpread(WP_COLT)
-#define COLT_DAMAGE     G_GetWeaponDamage(WP_COLT)   // JPW
+#define COLT_DAMAGE     G_GetWeaponDamage(WP_COLT)
 
 #define SILENCED_COLT_DAMAGE    G_GetWeaponDamage(WP_SILENCED_COLT)
 #define SILENCED_COLT_SPREAD    G_GetWeaponSpread(WP_SILENCED_COLT)
@@ -3410,14 +3348,14 @@ float G_GetWeaponSpread(int weapon)
 #define AKIMBO_SILENCEDCOLT_SPREAD  G_GetWeaponSpread(WP_AKIMBO_SILENCEDCOLT)
 
 #define MP40_SPREAD     G_GetWeaponSpread(WP_MP40)
-#define MP40_DAMAGE     G_GetWeaponDamage(WP_MP40)   // JPW
+#define MP40_DAMAGE     G_GetWeaponDamage(WP_MP40)
 #define THOMPSON_SPREAD G_GetWeaponSpread(WP_THOMPSON)
-#define THOMPSON_DAMAGE G_GetWeaponDamage(WP_THOMPSON)   // JPW
+#define THOMPSON_DAMAGE G_GetWeaponDamage(WP_THOMPSON)
 #define STEN_SPREAD     G_GetWeaponSpread(WP_STEN)
-#define STEN_DAMAGE     G_GetWeaponDamage(WP_STEN)   // JPW
+#define STEN_DAMAGE     G_GetWeaponDamage(WP_STEN)
 
 #define GARAND_SPREAD   G_GetWeaponSpread(WP_GARAND)
-#define GARAND_DAMAGE   G_GetWeaponDamage(WP_GARAND)   // JPW
+#define GARAND_DAMAGE   G_GetWeaponDamage(WP_GARAND)
 
 #define KAR98_SPREAD    G_GetWeaponSpread(WP_KAR98)
 #define KAR98_DAMAGE    G_GetWeaponDamage(WP_KAR98)
@@ -3431,10 +3369,10 @@ float G_GetWeaponSpread(int weapon)
 #define MOBILE_MG42_DAMAGE  G_GetWeaponDamage(WP_MOBILE_MG42)
 
 #define FG42_SPREAD     G_GetWeaponSpread(WP_FG42)
-#define FG42_DAMAGE     G_GetWeaponDamage(WP_FG42)   // JPW
+#define FG42_DAMAGE     G_GetWeaponDamage(WP_FG42)
 
 #define FG42SCOPE_SPREAD    G_GetWeaponSpread(WP_FG42SCOPE)
-#define FG42SCOPE_DAMAGE    G_GetWeaponDamage(WP_FG42SCOPE)   // JPW
+#define FG42SCOPE_DAMAGE    G_GetWeaponDamage(WP_FG42SCOPE)
 #define K43_SPREAD  G_GetWeaponSpread(WP_K43)
 #define K43_DAMAGE  G_GetWeaponDamage(WP_K43)
 
@@ -3529,7 +3467,6 @@ void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
 		VectorCopy(tr->plane.normal, tent->s.origin2);
 	}
 }
-
 
 /*
 ==============
@@ -3872,20 +3809,9 @@ gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
 	// check for valid start spot (so you don't throw through or get stuck in a wall)
 	VectorMA(launchPos, 32, forward, testPos);
 
-	// Gordon: hack so i can do inverse trajectory calcs easily :p
-	if (G_IsSinglePlayerGame() && (ent->r.svFlags & SVF_BOT))
-	{
-		/*      forward[0] *= 3000;
-		        forward[1] *= 3000;
-		        forward[2] *= 3000;*/
-		VectorCopy(ent->gDelta, forward);
-	}
-	else
-	{
-		forward[0] *= 3000 * 1.1f;
-		forward[1] *= 3000 * 1.1f;
-		forward[2] *= 1500 * 1.1f;
-	}
+	forward[0] *= 3000 * 1.1f;
+	forward[1] *= 3000 * 1.1f;
+	forward[2] *= 1500 * 1.1f;
 
 	trap_Trace(&tr, testPos, tv(-4.f, -4.f, 0.f), tv(4.f, 4.f, 6.f), launchPos, ent->s.number, MASK_MISSILESHOT);
 
@@ -4047,7 +3973,6 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 		m->think         = weapon_smokeBombExplode;
 	}
 
-	// JPW NERVE
 	if (grenType == WP_SMOKE_MARKER)
 	{
 		m->s.teamNum = ent->client->sess.sessionTeam;   // store team so we can generate red or blue smoke
@@ -4064,7 +3989,6 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 			m->think     = weapon_checkAirStrikeThink1;
 		}
 	}
-	// jpw
 
 	//----(SA)  adjust for movement of character.  TODO: Probably comment in later, but only for forward/back not strafing
 	//VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );    // "real" physics
@@ -4741,7 +4665,6 @@ void FireWeapon(gentity_t *ent)
 	}
 #endif
 
-	// OSP
 #ifndef DEBUG_STATS
 	if (g_gamestate.integer == GS_PLAYING)
 #endif

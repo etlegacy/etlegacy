@@ -115,15 +115,6 @@ static float G_CmdScale(gentity_t *ent, usercmd_t *cmd)
 	}
 #endif
 
-#if 0 // ET:L no single player
-	if (gametype == GT_SINGLE_PLAYER || gametype == GT_COOP)
-	{
-		// Adjust the movespeed
-		scale *= (((float) movespeed) / (float) 127);
-
-	}
-#endif
-
 #if 0   // zinx - not letting them go at sprint speed for now.
 	if (ent->client->ps.eFlags & EF_PRONE)
 	{

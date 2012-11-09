@@ -106,12 +106,6 @@ typedef enum
 	MOVER_2TO1ROTATE
 } moverState_t;
 
-// door AI sound ranges
-#define HEAR_RANGE_DOOR_LOCKED      128 // really close since this is a cruel check
-#define HEAR_RANGE_DOOR_KICKLOCKED  512
-#define HEAR_RANGE_DOOR_OPEN        256
-#define HEAR_RANGE_DOOR_KICKOPEN    768
-
 // DHM - Nerve :: Worldspawn spawnflags to indicate if a gametype is not supported
 #define NO_GT_WOLF      1
 #define NO_STOPWATCH    2
@@ -123,15 +117,6 @@ typedef enum
 #define ALLOW_AXIS_TEAM         1
 #define ALLOW_ALLIED_TEAM       2
 #define ALLOW_DISGUISED_CVOPS   4
-
-// RF, different types of dynamic area flags
-#define AAS_AREA_ENABLED                    0x0000
-#define AAS_AREA_DISABLED                   0x0001
-#define AAS_AREA_AVOID                      0x0010
-#define AAS_AREA_TEAM_AXIS                  0x0020
-#define AAS_AREA_TEAM_ALLIES                0x0040
-#define AAS_AREA_TEAM_AXIS_DISGUISED        0x0080
-#define AAS_AREA_TEAM_ALLIES_DISGUISED      0x0100
 
 //============================================================================
 
@@ -1443,8 +1428,6 @@ void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_Error(const char *fmt, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
-// Is this a single player type game - sp or coop?
-qboolean G_IsSinglePlayerGame(void);
 
 // g_client.c
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);

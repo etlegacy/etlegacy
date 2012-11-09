@@ -999,13 +999,6 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 		}
 	}
 
-	// he starts at 'base'
-	// RF, in single player, bots always use regular spawn points
-	if (!((g_gametype.integer == GT_SINGLE_PLAYER || g_gametype.integer == GT_COOP) && (ent->r.svFlags & SVF_BOT)))
-	{
-		client->pers.teamState.state = TEAM_BEGIN;
-	}
-
 	if (oldTeam != TEAM_SPECTATOR)
 	{
 		if (!(ent->client->ps.pm_flags & PMF_LIMBO))
@@ -2741,33 +2734,6 @@ void Cmd_SetCameraOrigin_f(gentity_t *ent)
 	}
 }
 
-/*
-==============
-Cmd_InterruptCamera_f
-==============
-*/
-void Cmd_InterruptCamera_f(gentity_t *ent)
-{
-
-	/* FIXME
-	gentity_t *player;
-
-	if (g_gametype.integer != GT_SINGLE_PLAYER && g_gametype.integer != GT_COOP)
-	{
-	    return;
-	}
-
-	player = BotFindEntityForName("player"); // BotFindEntityForName is obsolete use FindEntityForName?
-
-	if (!player)
-	{
-	    return;
-	}
-
-	G_Script_ScriptEvent(player, "trigger", "cameraInterrupt");
-	*/
-}
-
 extern vec3_t playerMins;
 extern vec3_t playerMaxs;
 
@@ -4007,9 +3973,9 @@ void ClientCommand(int clientNum)
 	{
 		Cmd_SetCameraOrigin_f(ent);
 	}
-	else if (Q_stricmp(cmd, "cameraInterrupt") == 0)
+	else if (Q_stricmp(cmd, "cameraInterrupt") == 0) // FIXME: remove
 	{
-		Cmd_InterruptCamera_f(ent);
+		// Cmd_InterruptCamera_f(ent);
 	}
 	else if (Q_stricmp(cmd, "setviewpos") == 0)
 	{

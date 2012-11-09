@@ -77,10 +77,10 @@ char *hintStrings[HINT_NUM_HINTS] =
 	"HINT_PLYR_NEUTRAL",
 	"HINT_PLYR_ENEMY",
 	"HINT_PLYR_UNKNOWN",
-	"HINT_BUILD",               // DHM - Nerve
-	"HINT_DISARM",              // DHM - Nerve
-	"HINT_REVIVE",              // DHM - Nerve
-	"HINT_DYNAMITE",            // DHM - Nerve
+	"HINT_BUILD",
+	"HINT_DISARM",
+	"HINT_REVIVE",
+	"HINT_DYNAMITE",
 
 	"HINT_CONSTRUCTIBLE",
 	"HINT_UNIFORM",
@@ -859,7 +859,7 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 	qboolean kicked = qfalse, soft = qfalse;
 
 	kicked = (qboolean)(ent->flags & FL_KICKACTIVATE);
-	soft   = (qboolean)(ent->flags & FL_SOFTACTIVATE);    //----(SA)    added
+	soft   = (qboolean)(ent->flags & FL_SOFTACTIVATE);
 
 	ent->moverState    = moverState;
 	ent->s.pos.trTime  = time;
@@ -876,7 +876,6 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 		ent->s.pos.trType = TR_STATIONARY;
 		break;
 
-	// JOSEPH 1-26-00
 	case MOVER_POS3:
 		VectorCopy(ent->pos3, ent->s.pos.trBase);
 		ent->s.pos.trType = TR_STATIONARY;
@@ -896,12 +895,11 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 		VectorScale(delta, f, ent->s.pos.trDelta);
 		ent->s.pos.trType = TR_LINEAR_STOP;
 		break;
-	// END JOSEPH
 
 	case MOVER_1TO2:        // opening
 		VectorCopy(ent->pos1, ent->s.pos.trBase);
 		VectorSubtract(ent->pos2, ent->pos1, delta);
-//----(SA)  numerous changes start here
+		//----(SA)  numerous changes start here
 		ent->s.pos.trDuration = ent->gDuration;
 		f                     = 1000.0 / ent->s.pos.trDuration;
 		VectorScale(delta, f, ent->s.pos.trDelta);
@@ -1025,7 +1023,6 @@ void MatchTeam(gentity_t *teamLeader, int moverState, int time)
 
 	for (slave = teamLeader ; slave ; slave = slave->teamchain)
 	{
-
 		// pass along flags for how door was activated
 		if (teamLeader->flags & FL_KICKACTIVATE)
 		{
@@ -1083,7 +1080,6 @@ void ReturnToPos1(gentity_t *ent)
 	ent->s.loopSound = 0;
 	// set looping sound
 	ent->s.loopSound = ent->sound3to2;
-
 }
 
 /*
@@ -1277,7 +1273,6 @@ void Reached_BinaryMover(gentity_t *ent)
 
 //  ent->flags &= ~(FL_KICKACTIVATE|FL_SOFTACTIVATE);   // (SA) it was not opened normally.  Clear this so it thinks it's closed normally
 	ent->flags &= ~FL_KICKACTIVATE; // (SA) it was not opened normally.  Clear this so it thinks it's closed normally
-
 }
 
 /*
@@ -1356,7 +1351,6 @@ qboolean IsBinaryMoverBlocked(gentity_t *ent, gentity_t *other, gentity_t *activ
 		{
 			return qfalse;
 		}
-
 	}
 
 	return qfalse;
@@ -1369,7 +1363,6 @@ Reached_TrinaryMover
 */
 void Reached_TrinaryMover(gentity_t *ent)
 {
-
 	// stop the looping sound
 	ent->s.loopSound = ent->soundLoop;
 
@@ -1502,7 +1495,6 @@ void Use_TrinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	if (ent->moverState == MOVER_POS2)
 	{
-
 		// start moving 50 msec later, becase if this was player
 		// triggered, level.time hasn't been advanced yet
 		MatchTeam(ent, MOVER_2TO3, level.time + 50);
@@ -1663,8 +1655,6 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			}
 			else
 			{
-//              if(activator)
-//                  AICast_AudibleEvent( activator->s.number, ent->s.origin, HEAR_RANGE_DOOR_KICKOPEN );    // "someone kicked open a door near me!"
 				G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound1to2);
 			}
 		}
@@ -1743,8 +1733,6 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			}
 			else
 			{
-//              if(activator)
-//                  AICast_AudibleEvent( activator->s.number, ent->s.origin, HEAR_RANGE_DOOR_OPEN );    // "someone opened a door near me!"
 				G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound1to2);
 			}
 		}
@@ -2394,7 +2382,6 @@ void DoorSetSounds(gentity_t *ent, int doortype, qboolean isRotating)
 	ent->sound3to2 = G_SoundIndex(va("sound/movers/doors/door%i_loopc.wav", doortype));          // loopclosed
 	ent->soundPos3 = G_SoundIndex(va("sound/movers/doors/door%i_locked.wav", doortype));     // locked
 
-
 	ent->soundSoftopen  = G_SoundIndex(va("sound/movers/doors/door%i_openq.wav", doortype));     // opening quietly
 	ent->soundSoftendo  = G_SoundIndex(va("sound/movers/doors/door%i_endoq.wav", doortype));     // open quietly
 	ent->soundSoftclose = G_SoundIndex(va("sound/movers/doors/door%i_closeq.wav", doortype));        // closing quietly
@@ -2419,32 +2406,11 @@ void G_TryDoor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	{
 		if (ent->active == qfalse)
 		{
-			if (ent->key < 0
-			    || !G_AllowTeamsAllowed(ent, activator)
-			    || (G_IsSinglePlayerGame() && ent->key == KEY_LOCKED_PICKABLE))           // door force locked
-			{ //              if(!walking && activator)   // only send audible event if not trying to open slowly
-//                  AICast_AudibleEvent( activator->s.clientNum, ent->s.origin, HEAR_RANGE_DOOR_LOCKED );   // "someone tried locked door near me!"
-				G_AddEvent(ent, EV_GENERAL_SOUND, ent->soundPos3);
+			if (ent->key < 0 || !G_AllowTeamsAllowed(ent, activator))           // door force locked
+			{
+				if (ent->soundPos3) G_AddEvent(ent, EV_GENERAL_SOUND, ent->soundPos3);
 				return;
 			}
-
-			/*          // TAT 2/3/2003 - want keys in SP
-			            if (G_IsSinglePlayerGame()
-			                && activator
-			                // door requires key
-			                && ent->key > 0)
-			            {
-			                gitem_t *item = BG_FindItemForKey(ent->key, 0);
-			                if(!(activator->client->ps.stats[STAT_KEYS] & (1<<item->giTag)))
-			                {
-			//                  if(!walking)    // only send audible event if not trying to open slowly
-			//                      AICast_AudibleEvent( activator->s.clientNum, ent->s.origin, HEAR_RANGE_DOOR_LOCKED );   // "someone tried locked door near me!"
-			                    // player does not have key
-			                    G_AddEvent( ent, EV_GENERAL_SOUND, ent->soundPos3);
-			                    return;
-			                }
-			            }
-			*/
 
 			if (ent->teammaster && ent->team && ent != ent->teammaster)
 			{
@@ -2452,11 +2418,6 @@ void G_TryDoor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 				if (walking)
 				{
 					ent->teammaster->flags |= FL_SOFTACTIVATE;      // no noise generated
-				}
-				else
-				{
-//                  if(activator)
-//                      AICast_AudibleEvent( activator->s.clientNum, ent->s.origin, HEAR_RANGE_DOOR_OPEN ); // "someone opened door near me!"
 				}
 
 				Use_BinaryMover(ent->teammaster, activator, activator);
@@ -2468,11 +2429,6 @@ void G_TryDoor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 				if (walking)
 				{
 					ent->flags |= FL_SOFTACTIVATE;      // no noise
-				}
-				else
-				{
-//                  if(activator)
-//                      AICast_AudibleEvent( activator->s.clientNum, ent->s.origin, HEAR_RANGE_DOOR_OPEN ); // "someone opened door near me!"
 				}
 
 				Use_BinaryMover(ent, activator, activator);
@@ -4143,7 +4099,6 @@ void SP_func_door_rotating(gentity_t *ent)
 	}
 
 	//---- (SA) door keys
-
 	if (G_SpawnInt("key", "", &key))       // if door has a key entered, set it
 	{
 		ent->key = key;
@@ -4152,14 +4107,6 @@ void SP_func_door_rotating(gentity_t *ent)
 	{
 		ent->key = -2;                  // otherwise, set the key when this ent finishes spawning
 	}
-	// special case for single player
-	if (G_IsSinglePlayerGame() && (ent->key == 99))
-	{
-		ent->key = KEY_LOCKED_PICKABLE;
-
-		// TAT 1/29/2003 - also load how long it takes to pick the lock - default to 30 seconds
-		G_SpawnInt("lockpickTime", "30", &ent->grenadeFired);
-	}
 
 	// if the key is invalid, set the key in the finishSpawning routine
 	if (ent->key > KEY_NUM_KEYS || ent->key < -2)
@@ -4167,8 +4114,6 @@ void SP_func_door_rotating(gentity_t *ent)
 		G_Error("invalid key number: %d in func_door_rotating\n", ent->key);
 		ent->key = -2;
 	}
-	//---- (SA) end
-
 
 	// set the rotation axis
 	VectorClear(ent->rotate);
@@ -5040,15 +4985,6 @@ void G_Activate(gentity_t *ent, gentity_t *activator)
 			return;
 		}
 
-		/*      // TAT 2/3/2003 - want keys for SP
-		        if (G_IsSinglePlayerGame() && ent->key > 0) // ent requires key
-		        {
-		            gitem_t *item = BG_FindItemForKey(ent->key, 0);
-		            if (!(activator->client->ps.stats[STAT_KEYS] & (1<<item->giTag)))
-		                return;
-		        }
-		        */
-
 		if (!Q_stricmp(ent->classname, "script_mover"))        // RF, dont activate script_mover's
 		{
 			return;
@@ -5190,19 +5126,6 @@ void func_constructible_spawn(gentity_t *self, gentity_t *other, gentity_t *acti
 	trap_LinkEntity(self);
 	self->use = func_constructible_use;
 	// turn the brush to visible
-
-	// RF, AAS areas are now occupied
-	// Arnout: make solid when building finishes
-//  G_SetAASBlockingEntity( self, AAS_AREA_DISABLED );
-
-	// unlink the objective info to get rid of the indicator for now
-//  if( self->parent )
-//      trap_UnlinkEntity( self->parent );
-
-	// don't do this here, set it manually
-//  if( !(self->spawnflags & 2) ) {
-//      self->takedamage = qtrue;
-//  }
 }
 
 /*

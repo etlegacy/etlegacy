@@ -1428,10 +1428,7 @@ void G_RegisterCvars(void)
 		{
 			cv->modificationCount = cv->vmCvar->modificationCount;
 			// OSP - Update vote info for clients, if necessary
-			if (!G_IsSinglePlayerGame())
-			{
-				G_checkServerToggle(cv->vmCvar);
-			}
+			G_checkServerToggle(cv->vmCvar);
 		}
 
 		remapped = (remapped || cv->teamShader);
@@ -1549,7 +1546,7 @@ void G_UpdateCvars(void)
 				}
 				else if (cv->vmCvar == &g_warmup)
 				{
-					if (g_gamestate.integer != GS_PLAYING && !G_IsSinglePlayerGame())
+					if (g_gamestate.integer != GS_PLAYING)
 					{
 						level.warmupTime = level.time + (((g_warmup.integer < 10) ? 11 : g_warmup.integer + 1) * 1000);
 						trap_SetConfigstring(CS_WARMUP, va("%i", level.warmupTime));
@@ -1621,27 +1618,26 @@ void G_UpdateCvars(void)
 						trap_Cvar_Set(cv->cvarName, "33");
 					}
 				}
+
 				// OSP - Update vote info for clients, if necessary
-				else if (!G_IsSinglePlayerGame())
+				if (cv->vmCvar == &vote_allow_comp          || cv->vmCvar == &vote_allow_gametype       ||
+					cv->vmCvar == &vote_allow_kick          || cv->vmCvar == &vote_allow_map            ||
+					cv->vmCvar == &vote_allow_matchreset    ||
+					cv->vmCvar == &vote_allow_mutespecs     || cv->vmCvar == &vote_allow_nextmap        ||
+					cv->vmCvar == &vote_allow_pub           || cv->vmCvar == &vote_allow_referee        ||
+					cv->vmCvar == &vote_allow_shuffleteamsxp    || cv->vmCvar == &vote_allow_swapteams      ||
+					cv->vmCvar == &vote_allow_friendlyfire  || cv->vmCvar == &vote_allow_timelimit      ||
+					cv->vmCvar == &vote_allow_warmupdamage  || cv->vmCvar == &vote_allow_antilag        ||
+					cv->vmCvar == &vote_allow_balancedteams || cv->vmCvar == &vote_allow_muting
+					)
 				{
-					if (cv->vmCvar == &vote_allow_comp           || cv->vmCvar == &vote_allow_gametype       ||
-					    cv->vmCvar == &vote_allow_kick          || cv->vmCvar == &vote_allow_map            ||
-					    cv->vmCvar == &vote_allow_matchreset    ||
-					    cv->vmCvar == &vote_allow_mutespecs     || cv->vmCvar == &vote_allow_nextmap        ||
-					    cv->vmCvar == &vote_allow_pub           || cv->vmCvar == &vote_allow_referee        ||
-					    cv->vmCvar == &vote_allow_shuffleteamsxp    || cv->vmCvar == &vote_allow_swapteams      ||
-					    cv->vmCvar == &vote_allow_friendlyfire  || cv->vmCvar == &vote_allow_timelimit      ||
-					    cv->vmCvar == &vote_allow_warmupdamage  || cv->vmCvar == &vote_allow_antilag        ||
-					    cv->vmCvar == &vote_allow_balancedteams || cv->vmCvar == &vote_allow_muting
-					    )
-					{
-						fVoteFlags = qtrue;
-					}
-					else
-					{
-						fToggles = (G_checkServerToggle(cv->vmCvar) || fToggles);
-					}
+					fVoteFlags = qtrue;
 				}
+				else
+				{
+					fToggles = (G_checkServerToggle(cv->vmCvar) || fToggles);
+				}
+
 			}
 		}
 	}
@@ -4179,15 +4175,4 @@ uebrgpiebrpgibqeripgubeqrpigubqifejbgipegbrtibgurepqgbn%i", level.time)
 		level.gameManager->s.otherEntityNum  = MAX_TEAM_LANDMINES - G_CountTeamLandmines(TEAM_AXIS);
 		level.gameManager->s.otherEntityNum2 = MAX_TEAM_LANDMINES - G_CountTeamLandmines(TEAM_ALLIES);
 	}
-}
-
-// Is this a single player type game - sp or coop?
-qboolean G_IsSinglePlayerGame()
-{
-	if (g_gametype.integer == GT_SINGLE_PLAYER || g_gametype.integer == GT_COOP)
-	{
-		return qtrue;
-	}
-
-	return qfalse;
 }
