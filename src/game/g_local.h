@@ -53,10 +53,8 @@
 #define MG42_MULTIPLAYER_HEALTH 350
 
 // How long do bodies last?
-// SP : Axis: 20 seconds
-//      Allies: 30 seconds
-// MP : Both 10 seconds
-#define BODY_TIME(t) ((g_gametype.integer != GT_SINGLE_PLAYER || g_gametype.integer == GT_COOP) ? 10000 : (t) == TEAM_AXIS ? 20000 : 30000)
+// Both teams 10 seconds
+#define BODY_TIME(t) 10000
 
 #define MAX_MG42_HEAT           1500.f
 

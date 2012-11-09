@@ -143,7 +143,6 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
 	}
 }
 
-
 /*QUAKED misc_teleporter_dest (1 0 0) (-32 -32 -24) (32 32 -16)
 Point teleporters at these.
 Now that we don't have teleport destination pads, this is just
@@ -152,7 +151,6 @@ an info_notnull
 void SP_misc_teleporter_dest(gentity_t *ent)
 {
 }
-
 
 /*
 =================================================================================
@@ -198,7 +196,6 @@ void grabber_think_hit(gentity_t *ent)
 	ent->think     = grabber_think_idle;
 }
 
-
 /*
 ==============
 grabber_die
@@ -227,9 +224,6 @@ void grabber_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int 
 	ent->nextthink = level.time + FRAMETIME;
 //  G_FreeEntity(ent);
 }
-
-
-
 
 /*
 ==============
@@ -350,7 +344,6 @@ void grabber_wake_touch(gentity_t *ent, gentity_t *other, trace_t *trace)
 	grabber_wake(ent);
 }
 
-
 /*QUAKED misc_grabber_trap (1 0 0) (-8 -8 -8) (8 8 8)
 fields:
 "adist"  - radius of 'wakeup' box.  player passing closer than distance activates grabber (def: 64)
@@ -447,7 +440,6 @@ void SP_misc_grabber_trap(gentity_t *ent)
 	trig->r.svFlags  = SVF_NOCLIENT;
 	trig->touch      = grabber_wake_touch;
 	trap_LinkEntity(trig);
-
 }
 
 void use_spotlight(gentity_t *ent, gentity_t *other, gentity_t *activator)
@@ -490,7 +482,6 @@ BACK_AND_FORTH - when end of target spline is hit, reverse direction rather than
 */
 void SP_misc_spotlight(gentity_t *ent)
 {
-
 	ent->s.eType = ET_EF_SPOTLIGHT;
 
 	ent->think     = spotlight_finish_spawning;
@@ -509,9 +500,7 @@ void SP_misc_spotlight(gentity_t *ent)
 	{
 		ent->s.density = G_FindConfigstringIndex(ent->target, CS_SPLINES, MAX_SPLINE_CONFIGSTRINGS, qtrue);
 	}
-
 }
-
 
 //===========================================================
 
@@ -684,8 +673,6 @@ void SP_misc_vis_dummy(gentity_t *ent)
 	ent->nextthink = level.time + 1000;
 
 }
-
-//----(SA) end
 
 /*QUAKED misc_vis_dummy_multiple (1 .5 0) (-8 -8 -8) (8 8 8)
 If this entity is "visible" (in player's PVS) then it's target is forced to be active whether it is in the player's PVS or not.
@@ -1201,9 +1188,7 @@ void SP_dlight(gentity_t *ent)
 	{
 		trap_LinkEntity(ent);
 	}
-
 }
-// done (SA)
 
 void flakPuff(vec3_t origin)
 {
@@ -2041,7 +2026,6 @@ void mg42_spawn(gentity_t *ent)
 
 		VectorCopy(ent->s.angles, gun->s.angles2);
 
-
 		gun->touch = mg42_touch;
 		gun->think = mg42_think;
 		gun->use   = mg42_use;
@@ -2063,7 +2047,7 @@ void mg42_spawn(gentity_t *ent)
 
 		// Gordon: storing heat now
 		gun->mg42weapHeat = 0;
-//      gun->mg42firetime    =      0;
+		//      gun->mg42firetime    =      0;
 
 		// Arnout: move track and targetname over to these entities for construction system
 		gun->track = ent->track;
@@ -2301,7 +2285,6 @@ spawnitem
 
 void misc_spawner_think(gentity_t *ent)
 {
-
 	gitem_t   *item;
 	gentity_t *drop = NULL;
 
@@ -2314,7 +2297,6 @@ void misc_spawner_think(gentity_t *ent)
 		G_Printf("-----> WARNING <-------\n");
 		G_Printf("misc_spawner used at %s failed to drop!\n", vtos(ent->r.currentOrigin));
 	}
-
 }
 
 void misc_spawner_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
@@ -2343,189 +2325,12 @@ void SP_misc_spawner(gentity_t *ent)
 	ent->use = misc_spawner_use;
 
 	trap_LinkEntity(ent);
-
 }
 
 //===========================================================================
 //
 // Mounted Gun, attached to a moving vehicle of some-sort
 //
-
-/*QUAKED func_mounted_gun (.4 .9 .7) (-16 -16 -24) (16 16 64)
-an MG42 to be mounted onto a vehicle.
-
-Gun must be able to rotate full 360 degrees, with slight pitching.
-
-Fields:
-
-*IMPORTANT* color = vector offest of gun mount tag on truck, from truck's origin
-*IMPORTANT* delay = offset distance of gunnner mount tag on gun model, from gun's origin
-target = targetname of vehicle we are attached to
-aiTeam = 0 for Nazi, 1 for Allies, 2 for Monster
-harc = visible arc, for initially sighting enemies Default  is 220
-radius = visible distance, for sighting enemies Default is 4096
-
-varc = vertical fire arc Default is 90 (45 above and below)
-health = how much damage can it take default is 50
-accuracy = all guns are 100% accurate an entry of 0.5 would make it 50%
-damage = damage caused by each bullet
-*/
-
-/*void miscGunnerEnemyScan(gentity_t *ent, vec3_t angles)
-{
-    gentity_t *t;
-    vec3_t v, tang;
-
-    for (t=g_entities; t<g_entities+level.maxclients; t++) {
-        if (!t->inuse)
-            continue;
-        if (t->health < 0)
-            continue;
-        if (VectorDistanceSquared(ent->r.currentOrigin, t->r.currentOrigin) > SQR(ent->radius))
-            continue;
-        VectorSubtract( t->r.currentOrigin, ent->r.currentOrigin, v );
-        vectoangles( v, tang );
-        if (!AICast_InFieldOfVision( angles, ent->harc, tang ))
-            continue;
-        if (!AICast_VisibleFromPos( ent->r.currentOrigin, ent->s.number, t->r.currentOrigin, t->s.number, qfalse ))
-            continue;
-        // found an enemy
-        ent->enemy = t;
-        break;
-    }
-}*/
-
-/*void miscGunnerThink(gentity_t *ent)
-{
-    gentity_t   *truck, *gun, *enemy;
-    vec3_t      vec, trang, gspot, gang;
-    vec3_t      fwd, r, u;
-    qboolean    fire=qfalse;
-    float       yawspeed, diff;
-    vec3_t      dang;
-    qboolean    clamped = qfalse;
-    int         i;
-
-    // find the entities
-    gun = &g_entities[ent->mg42BaseEnt];
-    truck = &g_entities[gun->mg42BaseEnt];
-
-    // calculate our position based on that of the truck and gun angles
-    BG_EvaluateTrajectory( &truck->s.apos, level.time, trang );
-    AngleVectors( trang, fwd, r, u );
-    BG_EvaluateTrajectory( &truck->s.pos, level.time, gspot );
-    VectorMA( gspot, ent->dl_color[0], fwd, gspot );
-    VectorMA( gspot, -ent->dl_color[1], r, gspot );
-    VectorMA( gspot, ent->dl_color[2], u, gspot );
-    G_SetOrigin( ent, gspot );
-    G_SetOrigin( gun, gspot );
-
-    // calculate our facing angles
-    //VectorAdd( trang, gun->r.currentAngles, gang );
-    if (!gun->s.density)
-        VectorCopy( trang, gang );
-    else
-        BG_EvaluateTrajectory( &gun->s.apos, level.time, gang );
-
-    // look for an enemy
-    if (ent->enemy) {
-        if (ent->enemy->health <= 0) {
-            ent->enemy = NULL;
-        } else if (AICast_VisibleFromPos(ent->r.currentOrigin, ent->s.number, ent->enemy->r.currentOrigin, ent->enemy->s.number, qfalse)) {
-            fire = qtrue;
-        }
-    }
-
-    if (!fire) {
-        miscGunnerEnemyScan(ent, trang);
-        if (ent->enemy) {
-            fire = qtrue;
-
-            // if we have just found our first enemy, release us from the "fixed tag" angles
-            // so we can track them
-            if (!gun->s.density) {
-                gun->s.density = 1;
-                // start facing the same direct, so we don't snap to a different angle immediately
-                BG_EvaluateTrajectory( &truck->s.apos, level.time, ent->s.angles );
-                VectorCopy( gun->s.angles, gun->s.apos.trBase );
-                gun->s.apos.trTime = level.time;
-                gun->s.apos.trDuration = 0;
-                gun->s.apos.trType = TR_STATIONARY;
-                VectorClear( gun->s.apos.trDelta );
-            }
-        }
-    }
-
-    // third, attack that enemy if possible
-    if (fire) {
-
-        // get the enemy
-        enemy = ent->enemy;
-
-        // rotate to them
-        VectorSubtract( enemy->r.currentOrigin, gun->r.currentOrigin, vec );
-        vectoangles( vec, gun->TargetAngles );
-        VectorCopy (gun->TargetAngles, dang);
-        for (i=0; i<3; i++) {
-            dang[i] = AngleNormalize180(dang[i]);
-        }
-
-        // restrict vertical range
-        if (dang[0] < 0 && fabs(dang[0]) > (gun->varc/2)) {
-            clamped = qtrue;
-            if (dang[0] < 0)
-                dang[0] = -(gun->varc/2);
-            else
-                dang[0] =  (gun->varc/2);
-        }
-
-        // dang is now the ideal angles, restrict movement by speed
-        yawspeed = 60;
-        for (i=0; i<3; i++) {
-            BG_EvaluateTrajectory( &gun->s.apos, level.time, gun->r.currentAngles );
-            diff = AngleDifference( dang[i], gun->r.currentAngles[i] );
-            if (fabs(diff) > (yawspeed * ((float)FRAMETIME/1000.0))) {
-                clamped = qtrue;
-                if (diff > 0) {
-                    dang[i] = AngleMod(gun->r.currentAngles[i] + (yawspeed * ((float)FRAMETIME/1000.0)));
-                } else {
-                    dang[i] = AngleMod(gun->r.currentAngles[i] - (yawspeed * ((float)FRAMETIME/1000.0)));
-                }
-            }
-        }
-
-        // move to the position over the next frame
-        VectorSubtract( dang, gun->r.currentAngles, gun->s.apos.trDelta );
-        for (i=0; i<3; i++) {
-            gun->s.apos.trDelta[i] = AngleNormalize180( gun->s.apos.trDelta[i] );
-        }
-        VectorCopy( gun->r.currentAngles, gun->s.apos.trBase );
-        VectorScale( gun->s.apos.trDelta, 1000/50, gun->s.apos.trDelta );
-        gun->s.apos.trTime = level.time;
-        gun->s.apos.trType = TR_LINEAR_STOP;
-        gun->s.apos.trDuration = 50;
-
-        // if we are facing them, fire
-        if (fabs( AngleNormalize180(gun->r.currentAngles[YAW] - gun->TargetAngles[YAW]) ) < 10) {
-            AngleVectors (gun->r.currentAngles, forward, right, up);
-            VectorCopy (gspot, muzzle);
-
-            VectorMA (muzzle, 16, forward, muzzle);
-            VectorMA (muzzle, 16, up, muzzle);
-
-            // snap to integer coordinates for more efficient network bandwidth usage
-            SnapVector( muzzle);
-
-            if (gun->damage)
-                Fire_Lead (gun, gun, MG42_SPREAD/gun->accuracy, gun->damage);
-            else
-                Fire_Lead (gun, gun, MG42_SPREAD/gun->accuracy, MG42_DAMAGE_AI);
-        }
-    }
-
-    ent->think = miscGunnerThink;
-    ent->nextthink = level.time + 50;
-}*/
 
 void firetrail_die(gentity_t *ent)
 {
@@ -2544,7 +2349,6 @@ void firetrail_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	}
 
 	trap_LinkEntity(ent);
-
 }
 
 /*QUAKED misc_firetrails (.4 .9 .7) (-16 -16 -16) (16 16 16)
@@ -2592,14 +2396,12 @@ void misc_firetrails_think(gentity_t *ent)
 	G_SetTargetName(right, ent->targetname);
 	G_ProcessTagConnect(right, qtrue);
 	trap_LinkEntity(right);
-
 }
 
 void SP_misc_firetrails(gentity_t *ent)
 {
 	ent->think     = misc_firetrails_think;
 	ent->nextthink = level.time + 100;
-
 }
 
 /*QUAKED misc_constructiblemarker (1 0.85 0) ?

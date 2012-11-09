@@ -403,7 +403,6 @@ void Cmd_Give_f(gentity_t *ent)
 		hasAmount = qtrue;
 	}
 	amount = atoi(amt);
-	//----(SA)  end
 
 	name = ConcatArgs(1);
 
@@ -974,20 +973,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 		}
 	}
 
-	// DHM - Nerve :: Force players to wait 30 seconds before they can join a new team.
-	// OSP - changed to 5 seconds
-	// Gordon: disabling if in dev mode: cuz it sucks
-	// Gordon: bleh, half of these variables don't mean what they used to, so this doesn't work
-	/*  if ( !g_cheats.integer ) {
-	         if ( team != oldTeam && level.warmupTime == 0 && !client->pers.initialSpawn && ( (level.time - client->pers.connectTime) > 10000 ) && ( (level.time - client->pers.enterTime) < 5000 ) && !force ) {
-	            CP(va("cp \"^3You must wait %i seconds before joining ^3a new team.\n\" 3", (int)(5 - ((level.time - client->pers.enterTime)/1000))));
-	            return qfalse;
-	        }
-	    }*/
-	// dhm
-
 	// execute the team change
-
 	if (team != TEAM_SPECTATOR)
 	{
 		client->pers.initialSpawn = qfalse;
@@ -2539,7 +2525,6 @@ void Cmd_Vote_f(gentity_t *ent)
 	ent->client->pers.propositionClient  = -1;
 	ent->client->pers.propositionClient2 = -1;
 
-	// dhm
 	// Reset this ent's complainEndTime so they can't send multiple complaints
 	ent->client->pers.complaintEndTime = -1;
 	ent->client->pers.complaintClient  = -1;
@@ -2598,10 +2583,9 @@ void Cmd_Vote_f(gentity_t *ent)
 
 qboolean G_canPickupMelee(gentity_t *ent)
 {
-// JPW NERVE -- no "melee" weapons in net play
+	// JPW NERVE -- no "melee" weapons in net play
 	return qfalse;
 }
-// jpw
 
 /*
 =================
@@ -3356,60 +3340,6 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent)
 	}
 }
 
-/*
-============
-Cmd_SetSniperSpot_f
-============
-*/
-// TODO: remove this
-void Cmd_SetSniperSpot_f(gentity_t *clent)
-{
-	gentity_t *spot;
-
-	vmCvar_t     cvar_mapname;
-	char         filename[MAX_QPATH];
-	fileHandle_t f;
-	char         buf[1024];
-
-	if (!g_cheats.integer)
-	{
-		return;
-	}
-	if (!trap_Cvar_VariableIntegerValue("cl_running"))
-	{
-		return;                                                 // only allow locally playing client
-	}
-	if (clent->s.number != 0)
-	{
-		return;                         // only allow locally playing client
-
-	}
-	// drop a sniper spot here
-	spot            = G_Spawn();
-	spot->classname = "bot_sniper_spot";
-	VectorCopy(clent->r.currentOrigin, spot->s.origin);
-	VectorCopy(clent->client->ps.viewangles, spot->s.angles);
-	spot->aiTeam = clent->client->sess.sessionTeam;
-
-	// output to text file
-	trap_Cvar_Register(&cvar_mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM);
-
-	Com_sprintf(filename, sizeof(filename), "maps/%s.botents", cvar_mapname.string);
-	if (trap_FS_FOpenFile(filename, &f, FS_APPEND) < 0)
-	{
-		G_Error("Cmd_SetSniperSpot_f: cannot open %s for writing\n", filename);
-	}
-
-	Com_sprintf(buf, sizeof(buf), "{\n\"classname\" \"%s\"\n\"origin\" \"%.3f %.3f %.3f\"\n\"angles\" \"%.2f %.2f %.2f\"\n\"aiTeam\" \"%i\"\n}\n\n", spot->classname, spot->s.origin[0], spot->s.origin[1], spot->s.origin[2], spot->s.angles[0], spot->s.angles[1], spot->s.angles[2], spot->aiTeam);
-	trap_FS_Write(buf, strlen(buf), f);
-
-	trap_FS_FCloseFile(f);
-
-	G_Printf("dropped sniper spot\n");
-
-	return;
-}
-
 void G_PrintAccuracyLog(gentity_t *ent);
 
 void Cmd_WeaponStat_f(gentity_t *ent)
@@ -3918,7 +3848,6 @@ void ClientCommand(int clientNum)
 	{
 		return;
 	}
-	// OSP
 
 	// ignore all other commands when at intermission
 	if (level.intermissiontime)
@@ -3961,9 +3890,7 @@ void ClientCommand(int clientNum)
 	}
 	else if (Q_stricmp(cmd, "where") == 0)
 	{
-		Cmd_Where_f(ent);
-//  } else if (Q_stricmp (cmd, "startCamera") == 0) {
-//      Cmd_StartCamera_f( ent );
+		Cmd_Where_f(ent);;
 	}
 	else if (Q_stricmp(cmd, "stopCamera") == 0)
 	{
@@ -3973,10 +3900,6 @@ void ClientCommand(int clientNum)
 	{
 		Cmd_SetCameraOrigin_f(ent);
 	}
-	else if (Q_stricmp(cmd, "cameraInterrupt") == 0) // FIXME: remove
-	{
-		// Cmd_InterruptCamera_f(ent);
-	}
 	else if (Q_stricmp(cmd, "setviewpos") == 0)
 	{
 		Cmd_SetViewpos_f(ent);
@@ -3984,11 +3907,6 @@ void ClientCommand(int clientNum)
 	else if (Q_stricmp(cmd, "setspawnpt") == 0)
 	{
 		Cmd_SetSpawnPoint_f(ent);
-	}
-	else if (Q_stricmp(cmd, "setsniperspot") == 0)
-	{
-		Cmd_SetSniperSpot_f(ent);
-
 	}
 	else if (G_commandCheck(ent, cmd, qfalse))
 	{

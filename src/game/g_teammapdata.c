@@ -872,13 +872,10 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 		}
 
 		ax_cnt++;
-
-
 	}
 
 	// Allied data init
 	teamList = &mapEntityData[1];
-
 
 	al_cnt = 0;
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
