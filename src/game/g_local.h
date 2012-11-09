@@ -41,7 +41,7 @@
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date
-#define GAMEVERSION         "etmain"
+#define GAMEVERSION         "legacy"
 
 #define BODY_QUEUE_SIZE     8
 

@@ -15,7 +15,7 @@
 #define OMNIBOT_NAME "Omni-Bot:etmain"
 
 // #define OMNIBOT_MODNAME GAMEVERSION
-#define OMNIBOT_MODNAME "etmain"
+#define OMNIBOT_MODNAME "etmain" // don't change to 'legacy' !
 #define OMNIBOT_MODVERSION "2.60"
 
 //////////////////////////////////////////////////////////////////////////
