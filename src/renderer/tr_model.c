@@ -36,9 +36,7 @@
 
 #define LL(x) x = LittleLong(x)
 
-// Ridah
 static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_name);
-// done.
 static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *name);
 static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *name);
 static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name);
@@ -191,14 +189,16 @@ qhandle_t RE_RegisterModel(const char *name)
 		{
 			if (mod->type == MOD_BAD)
 			{
+				ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: bad model '%s'\n", name);
 				return 0;
 			}
+			
+			// ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: model already loaded '%s'\n", name);
 			return hModel;
 		}
 	}
 
 	// allocate a new model_t
-
 	if ((mod = R_AllocModel()) == NULL)
 	{
 		ri.Printf(PRINT_WARNING, "RE_RegisterModel: R_AllocModel() failed for '%s'\n", name);
@@ -218,7 +218,6 @@ qhandle_t RE_RegisterModel(const char *name)
 		R_LoadModelShadow(mod);
 		return mod->index;
 	}
-	// done.
 
 	R_LoadModelShadow(mod);
 
@@ -305,7 +304,6 @@ qhandle_t RE_RegisterModel(const char *name)
 		{
 			loaded = R_LoadMDC(mod, lod, buf, name);
 		}
-		// done.
 
 		ri.FS_FreeFile(buf);
 
@@ -361,6 +359,7 @@ qhandle_t RE_RegisterModel(const char *name)
 fail:
 	// we still keep the model_t around, so if the model name is asked for
 	// again, we won't bother scanning the filesystem
+	ri.Printf(PRINT_DEVELOPER, "^6RE_RegisterModel: model not loaded %s\n", name);
 	mod->type = MOD_BAD;
 	return 0;
 }
@@ -1846,7 +1845,7 @@ void R_Modellist_f(void)
 				lods++;
 			}
 		}
-		ri.Printf(PRINT_ALL, "%8i : (%i) %s\n", mod->dataSize, lods, mod->name);
+		ri.Printf(PRINT_ALL, "%8i : (%i) %s   %s\n", mod->dataSize, lods, mod->name, (mod->type == MOD_BAD? "BAD":"OK")); // "^1BAD":"^2OK"));
 		total += mod->dataSize;
 	}
 	ri.Printf(PRINT_ALL, "%8i : Total models\n", total);
