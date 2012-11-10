@@ -4528,7 +4528,7 @@ static void PM_Weapon(void)
 		{
 		case WP_MOBILE_MG42:
 			fwdmove_knockback = 4000.f;
-			fwdmove_knockback = 400.f;
+			bckmove_knockback = 400.f;
 			break;
 		case WP_PANZERFAUST:
 			fwdmove_knockback = 32000.f;
@@ -4613,40 +4613,40 @@ static void PM_Weapon(void)
 
 	switch (pm->ps->weapon)
 	{
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_DYNAMITE:
-	case WP_K43:
-	case WP_KAR98:
-	case WP_GPG40:
-	case WP_CARBINE:
-	case WP_M7:
-	case WP_LANDMINE:
-	case WP_SMOKE_BOMB:
-		PM_StartWeaponAnim(weapattackanim);
-		break;
+		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADE_PINEAPPLE:
+		case WP_DYNAMITE:
+		case WP_K43:
+		case WP_KAR98:
+		case WP_GPG40:
+		case WP_CARBINE:
+		case WP_M7:
+		case WP_LANDMINE:
+		case WP_SMOKE_BOMB:
+			PM_StartWeaponAnim(weapattackanim);
+			break;
 
-	case WP_MP40:
-	case WP_THOMPSON:
-	case WP_STEN:
-	case WP_MEDKIT:
-	case WP_PLIERS:
-	case WP_SMOKE_MARKER:
-	case WP_SATCHEL_DET:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_LOCKPICK:
-		PM_ContinueWeaponAnim(weapattackanim);
-		break;
+		case WP_MP40:
+		case WP_THOMPSON:
+		case WP_STEN:
+		case WP_MEDKIT:
+		case WP_PLIERS:
+		case WP_SMOKE_MARKER:
+		case WP_SATCHEL_DET:
+		case WP_MOBILE_MG42:
+		case WP_MOBILE_MG42_SET:
+		case WP_LOCKPICK:
+			PM_ContinueWeaponAnim(weapattackanim);
+			break;
 
-	case WP_MORTAR_SET:
-		break;      // no animation
+		case WP_MORTAR_SET:
+			break;      // no animation
 
-	default:
-		// RF, testing
-		//PM_ContinueWeaponAnim(weapattackanim);
-		PM_StartWeaponAnim(weapattackanim);
-		break;
+		default:
+			// RF, testing
+			//PM_ContinueWeaponAnim(weapattackanim);
+			PM_StartWeaponAnim(weapattackanim);
+			break;
 	}
 
 	// JPW NERVE -- in multiplayer, pfaust fires once then switches to pistol since it's useless for a while
