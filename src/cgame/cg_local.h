@@ -1856,7 +1856,7 @@ typedef struct
 
 	int cursorX;
 	int cursorY;
-	qboolean eventHandling;
+	qboolean eventHandling; // FIXME: actually an int
 	qboolean mouseCaptured;
 	qboolean sizingHud;
 	void *capturedItem;
