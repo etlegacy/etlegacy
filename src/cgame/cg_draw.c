@@ -209,6 +209,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 			else
 			{
 				float yadj = scaley * glyph->top;
+
 				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 				{
 					int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
@@ -791,6 +792,7 @@ CG_DrawNotify
 #define NOTIFYLOC_X 0
 #define NOTIFYLOC_Y_SP 128
 
+// FIXME: remove? early return ...
 static void CG_DrawNotify(void)
 {
 	int    w, h;
@@ -3492,9 +3494,9 @@ static void CG_DrawObjectiveInfo(void)
 	int    x1, y1, x2, y2;
 	float  *color;
 	vec4_t backColor;
+
 	backColor[0] = 0.2f;
 	backColor[1] = 0.2f;
-	backColor[2] = 0.2f;
 	backColor[2] = 1.f;
 
 	if (!cg.oidPrintTime)
