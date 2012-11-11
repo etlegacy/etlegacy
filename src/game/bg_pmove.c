@@ -3503,12 +3503,6 @@ Generates weapon events and modifes the weapon counter
 ==============
 */
 
-#define VENOM_LOW_IDLE  WEAP_IDLE1
-#define VENOM_HI_IDLE   WEAP_IDLE2
-#define VENOM_RAISE     WEAP_ATTACK1
-#define VENOM_ATTACK    WEAP_ATTACK2
-#define VENOM_LOWER     WEAP_ATTACK_LASTSHOT
-
 //#define DO_WEAPON_DBG 1
 
 static void PM_Weapon(void)
@@ -4552,6 +4546,7 @@ static void PM_Weapon(void)
 			}
 			else
 			{
+				// FIXME: same as forward move - change to backward
 				VectorScale(pml.forward, -1.f * (fwdmove_knockback / mass), kvel);        // -1 as we get knocked backwards
 			}
 
