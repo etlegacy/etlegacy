@@ -67,18 +67,6 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 		}
 	}
 
-// Arnout: removed this for MP as well (was already gone from SP)
-	/*
-	        // Ridah, if we are a grenade, and we have hit an AI that is waiting to catch us, give them a grenade, and delete ourselves
-	    if ((ent->splashMethodOfDeath == MOD_GRENADE_SPLASH) && (g_entities[trace->entityNum].flags & FL_AI_GRENADE_KICK) &&
-	        (trace->endpos[2] > g_entities[trace->entityNum].r.currentOrigin[2])) {
-	        g_entities[trace->entityNum].grenadeExplodeTime = ent->nextthink;
-	        g_entities[trace->entityNum].flags &= ~FL_AI_GRENADE_KICK;
-	        Add_Ammo( &g_entities[trace->entityNum], WP_GRENADE_LAUNCHER, 1, qfalse );  //----(SA)  modified
-	        G_FreeEntity( ent );
-	        return;
-	    }
-	*/
 	// reflect the velocity on the trace plane
 	hitTime = level.previousTime + (level.time - level.previousTime) * trace->fraction;
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
@@ -138,12 +126,12 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 		//% if ( trace->plane.normal[2] > 0.2 && VectorLengthSquared( ent->s.pos.trDelta ) < SQR(40) )
 		if (trace->plane.normal[2] > 0.2 && VectorLengthSquared(relativeDelta) < SQR(40))
 		{
-//----(SA)  make the world the owner of the dynamite, so the player can shoot it after it stops moving
+			//----(SA)  make the world the owner of the dynamite, so the player can shoot it after it stops moving
 			if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB)
 			{
 				ent->r.ownerNum = ENTITYNUM_WORLD;
 			}
-//----(SA)  end
+
 			G_SetOrigin(ent, trace->endpos);
 			ent->s.time = level.time; // final rotation value
 			if (ent->s.weapon == WP_M7 || ent->s.weapon == WP_GPG40)
@@ -532,14 +520,12 @@ void G_ExplodeMissile(gentity_t *ent)
 			}
 		}
 
-
 		// give big weapons the shakey shakey
 		if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_PANZERFAUST || ent->s.weapon == WP_GRENADE_LAUNCHER ||
 		    ent->s.weapon == WP_GRENADE_PINEAPPLE || ent->s.weapon == WP_MAPMORTAR || ent->s.weapon == WP_ARTY || ent->s.weapon == WP_SMOKE_MARKER
 		    || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL /*|| ent->s.weapon == WP_SMOKE_BOMB*/
 		    )
 		{
-
 			gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
 			tent->s.onFireStart = ent->splashDamage * 4;
 			tent->r.svFlags    |= SVF_BROADCAST;
@@ -636,7 +622,6 @@ void G_RunMissile(gentity_t *ent)
 	                                        || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB
 	                                        ))
 	{
-
 		if (!ent->s.pos.trDelta[0] && !ent->s.pos.trDelta[1] && !ent->s.pos.trDelta[2])
 		{
 			ent->clipmask &= ~CONTENTS_BODY;
@@ -806,7 +791,7 @@ void G_RunMissile(gentity_t *ent)
 			return;
 		}
 
-//      G_SetOrigin( ent, tr.endpos );
+		//      G_SetOrigin( ent, tr.endpos );
 
 		if (ent->s.weapon == WP_PANZERFAUST || ent->s.weapon == WP_MORTAR_SET)
 		{
@@ -914,7 +899,6 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 
 	for (time = level.time + FRAMETIME; time < level.time + duration; time += FRAMETIME)
 	{
-
 		// get current position
 		BG_EvaluateTrajectory(&pos, time, origin, qfalse, ent->s.effect2Time);
 
@@ -1147,7 +1131,6 @@ void G_RunFlamechunk(gentity_t *ent)
 	float     speed, dot;
 	gentity_t *ignoreent = NULL;
 
-	// TAT 11/12/2002
 	//      vel was only being set if (level.time - ent->timestamp > 50
 	//      However, below, it was being used when we hit something and it was
 	//      uninitialized
@@ -1303,13 +1286,10 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 
 //=============================================================================
 
-//----(SA) removed unused quake3 weapons.
-
-int G_GetWeaponDamage(int weapon);   // JPW NERVE
+int G_GetWeaponDamage(int weapon);
 
 void DynaSink(gentity_t *self)
 {
-
 	self->clipmask   = 0;
 	self->r.contents = 0;
 
@@ -1373,11 +1353,11 @@ void DynaFree(gentity_t *self)
 /*
 ==========
 G_FadeItems
+
+remove any items that the player should no longer have, on disconnect/class change etc
+Gordon: changed to just set the parent to NULL
 ==========
 */
-
-// remove any items that the player should no longer have, on disconnect/class change etc
-// Gordon: changed to just set the parent to NULL
 void G_FadeItems(gentity_t *ent, int modType)
 {
 	gentity_t *e;
@@ -1682,7 +1662,6 @@ G_LandmineThink
 ==========
 */
 
-// TAT 11/20/2002
 //      Function to check if an entity will set off a landmine
 #define LANDMINE_TRIGGER_DIST 64.0f
 
@@ -1817,7 +1796,6 @@ void LandminePostThink(gentity_t *self)
 G_LandminePrime
 ==========
 */
-
 void G_LandminePrime(gentity_t *self)
 {
 	self->nextthink = level.time + FRAMETIME;
@@ -1868,7 +1846,6 @@ fire_grenade
 
     This accepts a /non-normalized/ direction vector to allow specification
     of how hard it's thrown.  Please scale the vector before calling.
-
 =================
 */
 gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWPID)
@@ -1937,11 +1914,10 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	bolt->parent     = self;
 	bolt->s.teamNum  = self->client->sess.sessionTeam;
 
-// JPW NERVE -- commented out bolt->damage and bolt->splashdamage, override with G_GetWeaponDamage()
-// so it works with different netgame balance.  didn't uncomment bolt->damage on dynamite 'cause its so *special*
+	// JPW NERVE -- commented out bolt->damage and bolt->splashdamage, override with G_GetWeaponDamage()
+	// so it works with different netgame balance.  didn't uncomment bolt->damage on dynamite 'cause its so *special*
 	bolt->damage       = G_GetWeaponDamage(grenadeWPID); // overridden for dynamite
 	bolt->splashDamage = G_GetWeaponDamage(grenadeWPID);
-// jpw
 
 	switch (grenadeWPID)
 	{
@@ -1962,11 +1938,10 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->nextthink           = level.time + 4000;
 		break;
 	case WP_SMOKE_BOMB:
-		// xkan 11/25/2002, fixed typo, classname used to be "somke_bomb"
-		bolt->classname = "smoke_bomb";
-		bolt->s.eFlags  = EF_BOUNCE_HALF | EF_BOUNCE;
+		bolt->classname           = "smoke_bomb";
+		bolt->s.eFlags            = EF_BOUNCE_HALF | EF_BOUNCE;
 		// rain - this is supposed to be MOD_SMOKEBOMB, not SMOKEGRENADE
-		bolt->methodOfDeath = MOD_SMOKEBOMB;
+		bolt->methodOfDeath       = MOD_SMOKEBOMB;
 		break;
 	case WP_GRENADE_LAUNCHER:
 		bolt->classname           = "grenade";
@@ -2067,7 +2042,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		break;
 	}
 
-// JPW NERVE -- blast radius proportional to damage
+	// JPW NERVE -- blast radius proportional to damage
 	bolt->splashRadius = G_GetWeaponDamage(grenadeWPID);
 
 	bolt->clipmask = MASK_MISSILESHOT;
@@ -2132,7 +2107,7 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.pos.trType = TR_LINEAR;
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
 	VectorCopy(start, bolt->s.pos.trBase);
-// JPW NERVE
+
 	VectorScale(dir, 2500, bolt->s.pos.trDelta);
 
 	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
@@ -2145,8 +2120,6 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 
 	return bolt;
 }
-
-// Rafael flamebarrel
 
 /*
 ======================
@@ -2318,8 +2291,8 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.weapon            = WP_MAPMORTAR;
 	bolt->r.ownerNum          = self->s.number;
 	bolt->parent              = self;
-	bolt->damage              = G_GetWeaponDamage(WP_MAPMORTAR); // JPW NERVE
-	bolt->splashDamage        = G_GetWeaponDamage(WP_MAPMORTAR); // JPW NERVE
+	bolt->damage              = G_GetWeaponDamage(WP_MAPMORTAR);
+	bolt->splashDamage        = G_GetWeaponDamage(WP_MAPMORTAR);
 	bolt->splashRadius        = 120;
 	bolt->methodOfDeath       = MOD_MAPMORTAR;
 	bolt->splashMethodOfDeath = MOD_MAPMORTAR_SPLASH;
