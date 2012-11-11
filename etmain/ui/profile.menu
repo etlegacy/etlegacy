@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	376
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpProfile"
 
 // Profile Menu //
-	
 menuDef {
 	name		"profile"
 	visible		0
@@ -28,11 +26,9 @@ menuDef {
 	}
 
 // Window //
-
 	WINDOW( "PROFILE", 90 )
 
 // Profile List //
-
 	itemDef {
 		name			"profileList"
 		group			GROUP_NAME
@@ -63,7 +59,6 @@ menuDef {
 	}
 	
 // Buttons //
-
 	BUTTON( 252, 32, WINDOW_WIDTH-252-6, 14, "CREATE", .24, 11, clearFocus ; open profile_create )
 	BUTTON( 252, 50, WINDOW_WIDTH-252-6, 14, "DELETE", .24, 11, clearFocus ; conditionalscript UIProfileIsActiveProfile 2
 																			( "open profile_delete_error" )

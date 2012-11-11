@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpPlayOnline"
 		
 // System Menu //
-	
 menuDef {
 	name		"playonline"
 	visible		0
@@ -55,15 +53,12 @@ menuDef {
 	}
 
 // Window //
-
 	WINDOW( "PLAY ONLINE", 146 )
 	
 // Subwindows //
-
-#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
+	#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
 
 // Filters //
-
 	#define FILTERS_WIDTH		.75*(WINDOW_WIDTH-18)
 	
 	SUBWINDOW( 6, 32, (FILTERS_WIDTH), 28, "MESSAGE OF THE DAY" )
@@ -141,18 +136,7 @@ menuDef {
 		decoration
 	}
 	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 92, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowWeaponsRestricted", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Weapon Restrictions", "Includes or excludes servers that limit the number of available heavy weapons, from the server list" )
-/*
-	itemDef {
-		name		"filtericonPunkBuster"
-		rect		$evalfloat(8+.5*((FILTERS_WIDTH)-6)+2+2) 104 10 10
-		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/filter_pb"
-		forecolor	1 1 1 1
-		visible		1
-		decoration
-	}
-	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 104, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowPunkBuster", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting PunkBuster Servers", "Includes or excludes Punk Buster servers from the server list" )
-*/
+
 	itemDef {
 		name		"filtericonAntilag"
 		rect		$evalfloat(8+.5*((FILTERS_WIDTH)-6)+2+2) 104 10 10
@@ -210,7 +194,6 @@ menuDef {
 	}
 
 // Server Browser //
-
 	SUBWINDOW( 6, 162, (SUBWINDOW_WIDTH), 256, "SERVER BROWSER" )
 	
 	// Rows
@@ -607,7 +590,6 @@ menuDef {
 
 	
 	// Misc Buttons
-	
 	BUTTON( 12, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "REFRESH LIST", .24, 11, uiScript RefreshServers )
 	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "CONNECT TO IP", .24, 11, clearFocus ; open playonline_connecttoip )
 	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "SERVER INFO", .24, 11, clearFocus ; open playonline_serverinfo )
@@ -617,7 +599,6 @@ menuDef {
 	// NAMEDBUTTON( "bttn_pbdisable", 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "DISABLE PUNKBUSTER", .24, 11, clearFocus ; open playonline_disablepb )
 
 // Buttons //
-	
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, close playonline ; open main )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "JOIN SERVER", .3, 14, uiScript JoinServer )
 }

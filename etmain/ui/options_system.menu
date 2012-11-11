@@ -6,6 +6,7 @@
 
 #include "ui/menudef.h"
 #include "ui/menumacros.h"
+
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	400
@@ -37,7 +38,6 @@ menuDef {
 	WINDOW( "SYSTEM", 90 )
 	
 // Audio //
-
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 64, "AUDIO" )
 	SLIDER( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Effects Volume:", .2, 8, "s_volume" .7 0 1, "" )
 	SLIDER( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Music Volume:", .2, 8, "s_musicvolume" .25 0 1, "" )
@@ -45,7 +45,6 @@ menuDef {
 	YESNO( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Doppler FX:", .2, 8, "s_doppler", "" )
 
 // Networking //
-
 	SUBWINDOW( 6, 102, (SUBWINDOW_WIDTH), 64, "NETWORKING" )
 	MULTIACTION( 8, 118, (SUBWINDOW_WIDTH)-4, 10, "Connection:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "LAN/CABLE/xDSL" 25000 } cvarListUndefined "Unselected", uiScript update "ui_setRate", "Choose your connection type" )
 	MULTIACTION( 8, 130, (SUBWINDOW_WIDTH)-4, 10, "Max Packets:", .2, 8, "ui_cl_maxpackets", cvarFloatList { "Low" 30 "Medium" 60 "High" 100 } , uiScript update "ui_cl_maxpackets", "cap for upstream data packet transmissions" )

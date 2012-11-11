@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpHostGameAdvanced"
 		
 // Host Game Advanced Menu //
-
 menuDef {
 	name		"hostgame_advanced"
 	visible		0
@@ -24,15 +22,12 @@ menuDef {
 	}
 
 // Window //
-
 	WINDOW( "HOST GAME: ADVANCED", 266 )
 	
 // Subwindows //
-
 #define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
 
 // General //
-
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 76, "GENERAL" )
 	NUMERICFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Minimum Ping:", .2, 8, "sv_minping", 4, "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)" )
 	NUMERICFIELD( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Maximum Ping:", .2, 8, "sv_maxping", 4, "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)" )
@@ -41,7 +36,6 @@ menuDef {
 	NUMERICFIELD( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Spectator Inactivity:", .2, 8, "g_spectatorInactivity", 3, "Max time (in sec) a spectator can remain idle before being kicked from the server (0 = disabled)" )
 	
 // Match //
-
 	SUBWINDOW( 6, 114, (SUBWINDOW_WIDTH), 220, "MATCH" )
 	YESNO( 8, 130, (SUBWINDOW_WIDTH)-4, 10, "Wait for Ready:", .2, 8, "g_doWarmup", "Whether the server should require players to be ready before a match can start" )
 	NUMERICFIELD( 8, 142, (SUBWINDOW_WIDTH)-4, 10, "Minimum Players:", .2, 8, "match_minplayers", 2, "Specifies the minimum number of players required before a match can start" )
@@ -62,7 +56,6 @@ menuDef {
 	MULTI( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Stopwatch Round-Type:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain sides)" )	
 	
 // LMS //
-
 	SUBWINDOW( 6, 340, (SUBWINDOW_WIDTH), 64, "LAST MAN STANDING" )
 	
 	NUMERICFIELD( 8, 356, (SUBWINDOW_WIDTH)-4, 10, "LMS Rounds Per Match:", .2, 8, "g_lms_roundlimit", 2, "Override the default LMS rounds per match" )	// fixme: range check
@@ -71,7 +64,6 @@ menuDef {
 	YESNO( 8, 392, (SUBWINDOW_WIDTH)-4, 10, "LMS Locked Teams:", .2, 8, "g_lms_lockTeams", "Stops players being able to switch teams" )
 
 // Admin //
-
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 64, "ADMIN" )
 	YESNO( 6+(SUBWINDOW_WIDTH)+6+2, 48, (SUBWINDOW_WIDTH)-4, 10, "Pure Server:", .2, 8, "sv_pure", "Limits game content to that contained in PK3 files on both the client and server with matching CRCs" )
 	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 60, (SUBWINDOW_WIDTH)-4, 10, "Password:", .2, 8, "g_password", 25, 18, "Sets the password required for players to join the server" )
@@ -79,7 +71,6 @@ menuDef {
 	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 84, (SUBWINDOW_WIDTH)-4, 10, "RCON Password:", .2, 8, "rconPassword", 25, 18, "Password to utilize the remote game server console (very powerful, so keep this password safe)" )
 
 // Voting //
-
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 102, (SUBWINDOW_WIDTH), 40, "VOTING" )
 	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 118, (SUBWINDOW_WIDTH)-4, 10, "Max Votes per Player:", .2, 8, "vote_limit", 2, "Specifies the maximum number of votes per player per match" )
 	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Successful voting %:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "75%" 75 "100%" 100 }, "Specifies the minimum percentage required for a vote to pass" )
@@ -104,7 +95,6 @@ menuDef {
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Anti-Lag:", .2, 24, 8, "vote_allow_antilag", "Allow players to vote for antilag to be enabled or disabled" )
 	
 // Message of the Day //
-
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 266, (SUBWINDOW_WIDTH), 76, "MESSAGE OF THE DAY" )
 
 	itemDef {
@@ -163,7 +153,6 @@ menuDef {
 	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 330, (SUBWINDOW_WIDTH)-8, 10, "Line 5:", .2, 8, "server_motd4", 26, 35, "Specifies the message clients will see when connecting to the server" )
 	
 // Download //
-
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 348, (SUBWINDOW_WIDTH), 64/*72*/, "DOWNLOAD" )
 	YESNO( 6+(SUBWINDOW_WIDTH)+6+2, 364, (SUBWINDOW_WIDTH)-4, 10, "Client Downloads:", .2, 8, "sv_allowDownload", "Allows players to download missing files from the server" )
 	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 376, (SUBWINDOW_WIDTH)-4, 10, "Maximum Download Rate:", .2, 8, "sv_dl_maxRate", 6, "Specifies the maximum download rate from the server for players with missing files" )
@@ -171,7 +160,6 @@ menuDef {
 	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 400, (SUBWINDOW_WIDTH)-4, 10, "Base URL:", .2, 8, "sv_wwwBaseUrl", 64, 18, "Used to build the URL given to clients for download" )
 
 // Buttons //
-	
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, close hostgame_advanced ; open hostgame )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "DEFAULT", .3, 14, open hostgame_advanced_default )
 }

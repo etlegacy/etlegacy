@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	400
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpOptionsCustomiseGame"
 		
 // Customise Game Menu //
-	
 menuDef {
 	name		"options_customise_game"
 	visible		0
@@ -24,11 +22,9 @@ menuDef {
 	}
 
 // Window //
-
 	WINDOW( "GAME", 94 )
 	
 // Subwindows //
-
 #define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
 	
 // Player //

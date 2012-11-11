@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		0
 #define WINDOW_Y		0
 #define WINDOW_WIDTH	640
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpHostgameDedicatedWarning"
 		
 // Dedicated Server Starting Warning Menu //
-	
 menuDef
 {
 	name		"hostgame_dedicated_warning"
@@ -35,7 +33,6 @@ menuDef
 	}
 	
 // Background //
-
 	itemDef {
 		name		"background"
 		rect		0 0 640 480
@@ -47,7 +44,6 @@ menuDef
 	}
 
 // Subwindows //
-
 #define SUBWINDOW_WIDTH		256
 #define SUBWINDOW_HEIGHT	128
 #define SUBWINDOW_X			.5 * (WINDOW_WIDTH - SUBWINDOW_WIDTH)

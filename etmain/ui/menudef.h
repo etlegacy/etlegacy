@@ -325,14 +325,10 @@
 #define UI_MAPS_SELECTION           256
 #define UI_LOADPANEL                257
 
-//----(SA)	added
 #define UI_MENUMODEL                257
 #define UI_SAVEGAME_SHOT            258
-//----(SA)	end
 
-// NERVE - SMF
 #define UI_LIMBOCHAT                259
-// -NERVE - SMF
 
 // Arnout: Enemy Territory
 #define UI_CAMPAIGNCINEMATIC        260
@@ -421,4 +417,3 @@
 #define RL_NONE                 0
 #define RL_REFEREE              1
 #define RL_RCON                 2
-// -OSP

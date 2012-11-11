@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpOptionsControls"
 		
 // Controls Menu //
-	
 menuDef {
 	name		"options_controls"
 	visible		0
@@ -24,15 +22,12 @@ menuDef {
 	}
 
 // Window //
-
 	WINDOW( "CONTROLS", 90 )
 	
 // Subwindows //
-
 #define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
 	
 // Move //
-
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 160, "MOVE" )
 	BIND( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Forward:", .2, 8, "+forward", "" )
 	BIND( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Back:", .2, 8, "+back", "" )
@@ -48,7 +43,6 @@ menuDef {
 	BIND( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Use (Activate):", .2, 8, "+activate", "" )
 	
 // Input //
-
 	SUBWINDOW( 6, 198, (SUBWINDOW_WIDTH), 40, "INPUT" )
 	CHECKBOXALIGNXACTION( 8, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Invert Mouse:", .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, "Inverts mouse pitch" )
 	CHECKBOXALIGNX( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Smooth Mouse:", .2, 24, 8, "m_filter", "Smooths out the mouse using interpolation" )
@@ -56,7 +50,6 @@ menuDef {
 	CVARFLOATLABEL( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
 
 // Chat //
-
 	SUBWINDOW( 6, 244, (SUBWINDOW_WIDTH), 64, "CHAT" )
 	BIND( 8, 260, .5*((SUBWINDOW_WIDTH)-6), 10, "Chat:", .2, 8, "messagemode", "" )
 	BIND( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 260, .5*((SUBWINDOW_WIDTH)-6), 10, "Team Chat:", .2, 8, "messagemode2", "" )
@@ -65,7 +58,6 @@ menuDef {
 	BIND( 8, 296, (SUBWINDOW_WIDTH)-4, 10, "Fire-Team Quick Chat:", .2, 8, "mp_fireteammsg", "" )
 
 // Pop-Ups //
-
 	SUBWINDOW( 6, 314, (SUBWINDOW_WIDTH), 100, "POP-UPS" )
 	BIND( 8, 330, (SUBWINDOW_WIDTH)-4, 10, "Show Scores:", .2, 8, "+scores", "" )
 	BIND( 8, 342, (SUBWINDOW_WIDTH)-4, 10, "Show Limbo Menu:", .2, 8, "OpenLimboMenu", "" )
@@ -77,7 +69,6 @@ menuDef {
 //	BIND( 8, 402, (SUBWINDOW_WIDTH)-4, 10, "Multiview:", .2, 8, "mvactivate", "" )
 	
 // Use Weapons //
-
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 64, "USE WEAPONS" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 48, (SUBWINDOW_WIDTH)-4, 10, "Attack:", .2, 8, "+attack", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 60, (SUBWINDOW_WIDTH)-4, 10, "Switch to Alternate:", .2, 8, "weapalt", "" )
@@ -85,7 +76,6 @@ menuDef {
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 84, (SUBWINDOW_WIDTH)-4, 10, "Binocular Zoom:", .2, 8, "+zoom", "" )
 	
 // Select Weapons //
-
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 102, (SUBWINDOW_WIDTH), 124, "SELECT WEAPONS" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 118, (SUBWINDOW_WIDTH)-4, 10, "Next Weapon:", .2, 8, "weapnext", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Previous Weapon:", .2, 8, "weapprev", "" )
@@ -98,7 +88,6 @@ menuDef {
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 214, (SUBWINDOW_WIDTH)-4, 10, "Slot 7 - Special 3:", .2, 8, "weaponbank 7", "" )
 
 // Miscellaneous //
-
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 232, (SUBWINDOW_WIDTH), 52, "MISCELLANEOUS" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Vote Yes:", .2, 8, "vote yes", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Vote No:", .2, 8, "vote no", "" )
@@ -106,7 +95,6 @@ menuDef {
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 272, (SUBWINDOW_WIDTH)-4, 10, "Record Replay:", .2, 8, "autoRecord", "" )
 
 // Fire-Teams //
-
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 290, (SUBWINDOW_WIDTH), 124, "FIRE-TEAMS" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 306, (SUBWINDOW_WIDTH)-4, 10, "Select All Members:", .2, 8, "selectbuddy -2", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 318, (SUBWINDOW_WIDTH)-4, 10, "Select Member #1:", .2, 8, "selectbuddy 0", "" )
@@ -119,7 +107,6 @@ menuDef {
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 402, (SUBWINDOW_WIDTH)-4, 10, "Fire-Team Admin:", .2, 8, "mp_fireteamadmin", "" )
 
 // Buttons //
-
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, close options_controls ; open options )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "DEFAULT", .3, 14, open options_controls_default )
 }

@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	296
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpIngameVoteMisc"
 
 // Misc Vote Menu //
-
 menuDef {
 	name		"ingame_vote_misc"
 	visible		0
@@ -37,11 +35,9 @@ menuDef {
 	}
 
 // Window //
-
 	WINDOW( "MISC", 50)
 
 // Buttons //
-
 	BUTTON( 6, 32, .5*(WINDOW_WIDTH-18), 14, "START MATCH", .24, 11, exec "cmd callvote startmatch"; uiScript closeingame )
 	BUTTONEXT( 6, 50, .5*(WINDOW_WIDTH-18), 14, "RESET MATCH", .24, 11, exec "cmd callvote matchreset"; uiScript closeingame, voteFlag CV_SVF_MATCHRESET )
 	BUTTON( 6, 68, .5*(WINDOW_WIDTH-18), 14, "RESTART MAP", .24, 11, exec "cmd callvote maprestart"; uiScript closeingame )
@@ -75,6 +71,7 @@ menuDef {
 		voteFlag	CV_SVF_TIMELIMIT
 		decoration
 	}
+	
 	NUMERICFIELDLEFTEXT( 8, 176+2, .66*(WINDOW_WIDTH-18), 10, "Time Limit:", .2, 8, "ui_voteTimelimit", 6, voteFlag CV_SVF_TIMELIMIT, "Specify a time limit to vote on" )
 	NAMEDBUTTONEXT( "bttnextTimelimit", 6+.80*(WINDOW_WIDTH-18)+6, 176, .20*(WINDOW_WIDTH-18), 14, "OK", .24, 11, uiScript voteTimelimit; uiScript closeingame, voteFlag CV_SVF_TIMELIMIT )
 

@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		0
 #define WINDOW_Y		0
 #define WINDOW_WIDTH	640
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpProfileCreateInitial"
 		
 // Create Profile Menu //
-
 #define INITIAL_PROFILEDEFAULT_SETTINGS		uiScript systemCvarsGet ;				\
 											uiScript profileCvarsGet ;				\
 											setcvar ui_glCustom 1 ;					\
@@ -22,7 +20,6 @@
 											uiScript update ui_glCustom				\
 
 // Opener //
-
 menuDef {
 	name		"profile_create_initial_opener"
 	visible		0
@@ -80,7 +77,6 @@ menuDef {
 
 
 // Subwindows //
-
 #define SUBWINDOW_WIDTH		350
 #define SUBWINDOW_HEIGHT	362
 #define SUBWINDOW_X			.5*(WINDOW_WIDTH-SUBWINDOW_WIDTH)
@@ -115,36 +111,36 @@ menuDef {
 	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+220, (SUBWINDOW_WIDTH)-8, 10, "Handedness:", .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, "Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu" )
 	
 	BUTTON( (SUBWINDOW_X+4)+.5*((SUBWINDOW_WIDTH)-164), SUBWINDOW_Y+234, 164, 14, "DEFAULT SETTINGS", .24, 11, DEFAULT_SETTINGS ;
-																												conditionalscript com_recommendedSet 0
-																													( "clearfocus" )
-																													( "abort" )
-
-																												conditionalscript com_recommended 3
-																													( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
-																													( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1" )
+		conditionalscript com_recommendedSet 0
+		( "clearfocus" )
+		( "abort" )
+		
+		conditionalscript com_recommended 3
+		( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
+		( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1" )
 	
 	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+264, (SUBWINDOW_WIDTH)-8-4, 10, "^3Thank you for installing ET:Legacy.\n\n^3Visit ^1www.etlegacy.com^3 for more information.\n\n^3Let's keep ET alive!", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "QUIT", .3, 14, close profile_create_initial ; close main ; open credits_quit )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "CREATE", .3, 14, conditionalscript UIProfileValidName 2
-																																		( "clearFocus" )
-																																		( "setcvar ui_profile_create_error \\\"Can't create profile. Please enter a valid player alias.\\\" ; open profile_create_error ; abort" )
-																																	 conditionalscript ui_rate 0
-																																		( "clearFocus" )
-																																		( "setcvar ui_profile_create_error \\\"Can't create profile. Please select your connection type. If you are unsure what to select, choose Modem.\\\" ; open profile_create_error ; abort" )
-																																	 conditionalscript UIProfileAlreadyExists 2
-																																		( "setcvar ui_profile_create_error \\\"Can't create profile. A profile with the same name already exists.\\\" ; open profile_create_error ; abort" )
-																																		( "clearFocus" )
+		( "clearFocus" )
+		( "setcvar ui_profile_create_error \\\"Can't create profile. Please enter a valid player alias.\\\" ; open profile_create_error ; abort" )
+		conditionalscript ui_rate 0
+		( "clearFocus" )
+		( "setcvar ui_profile_create_error \\\"Can't create profile. Please select your connection type. If you are unsure what to select, choose Modem.\\\" ; open profile_create_error ; abort" )
+		conditionalscript UIProfileAlreadyExists 2
+		( "setcvar ui_profile_create_error \\\"Can't create profile. A profile with the same name already exists.\\\" ; open profile_create_error ; abort" )
+		( "clearFocus" )
 																																		
-																																	close profile_create_initial ;
-																																	uiscript createProfile ;
-																																	uiScript vidSave ;
-																																	uiscript setDefaultProfile ;
-																																	uiscript applyProfile ;
-																																	execwolfconfig 1 ;
-																																	uiscript systemCvarsApply ;
-																																	uiscript profileCvarsApply ;
-																																	setcvar ui_showtooltips 1 ;
-																																	uiscript loadCachedServers ;
-																																	exec vid_restart ; )
+		close profile_create_initial ;
+		uiscript createProfile ;
+		uiScript vidSave ;
+		uiscript setDefaultProfile ;
+		uiscript applyProfile ;
+		execwolfconfig 1 ;
+		uiscript systemCvarsApply ;
+		uiscript profileCvarsApply ;
+		setcvar ui_showtooltips 1 ;
+		uiscript loadCachedServers ;
+		exec vid_restart ; )
 }

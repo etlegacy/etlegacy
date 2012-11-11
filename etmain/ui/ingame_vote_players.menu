@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	348
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpIngameVotePlayers"
 
 // Players Vote Menu //
-
 menuDef {
 	name		"ingame_vote_players"
 	visible		0
@@ -24,11 +22,9 @@ menuDef {
 	}
 
 // Window //
-
 	WINDOW( "MISC", 50)
 
 // Map Selection //
-	
 	itemDef {
 		name			"playerList"
 		group			GROUP_NAME
@@ -50,7 +46,6 @@ menuDef {
 	}
 
 // Buttons //
-
 	BUTTONEXT( 208, 32, WINDOW_WIDTH-208-6, 14, "KICK", .24, 11, uiScript voteKick ; uiScript closeingame,  cvarTest "authLevel" showCVar { RL_NONE } voteFlag CV_SVF_KICK )
 	BUTTONEXT( 208, 32, WINDOW_WIDTH-208-6, 14, "KICK", .24, 11, uiScript refKick ; uiScript closeingame,  cvarTest "authLevel" showCVar { RL_REFEREE } )
 	BUTTONEXT( 208, 32, WINDOW_WIDTH-208-6, 14, "KICK", .24, 11, uiScript rconKick ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_RCON } )

@@ -28,7 +28,6 @@ menuDef {
 
 
 // Hud Display //
-
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 76, "HUD DISPLAY" )
 	YESNO( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Draw Gun:", .2, 8, "cg_drawGun", "Show gun model on-screen" )
 	YESNO( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Show Compass:", .2, 8, "cg_drawCompass", "Displays compass (with icons when near select events)" )
@@ -37,7 +36,6 @@ menuDef {
 	MULTI( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Cursor Hints:", .2, 8, "cg_cursorHints", cvarFloatList { "Off" 0 "Size Pulse" 1 "Strobe Pulse" 2 "Alpha Pulse" 3 "Solid" 4 }, "Icon display format when near an action item" )
 
 // Crosshair //
-
 	SUBWINDOW( 6, 114, (SUBWINDOW_WIDTH), 178, "CROSSHAIR" )
 	MULTI( 8, 130, (SUBWINDOW_WIDTH)-4, 10, "Crosshair Size:", .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, "Sets the size of the displayed crosshair" )
 	YESNO( 8, 142, (SUBWINDOW_WIDTH)-4, 10, "Crosshair Pulsing:", .2, 8, "cg_crosshairPulse", "Toggles crosshair spread sizing while moving/firing" )
@@ -71,7 +69,6 @@ menuDef {
 	SLIDER( 8, 280, (SUBWINDOW_WIDTH)-4, 10, "Secondary Alpha:", .2, 8, "cg_crosshairAlphaAlt" 1 0 1, "Set the transparency level for the secondary crosshair" )
 	
 // In-Game Display //
-
 	SUBWINDOW( 6, 298, (SUBWINDOW_WIDTH), 112, "IN-GAME DISPLAY" )
 	MULTI( 8, 314, (SUBWINDOW_WIDTH)-4, 10, "Ejecting Brass:", .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, "" )
 	SLIDER( 8, 326, (SUBWINDOW_WIDTH)-4, 10, "Field Of View:", .2, 8, "cg_fov" 1.3 80 120, "" )
@@ -83,6 +80,5 @@ menuDef {
 	YESNO( 8, 398, (SUBWINDOW_WIDTH)-4, 10, "Atmospheric Effects:", .2, 8, "cg_atmosphericEffects", "" )
 	
 // Buttons //
-
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "BACK", .3, 14, close options_customise_hud ; open options )
 }

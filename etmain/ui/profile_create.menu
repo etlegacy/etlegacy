@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		0
 #define WINDOW_Y		0
 #define WINDOW_WIDTH	640
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpProfileCreate"
 		
 // Create Profile Menu //
-
 #define DEFAULT_SETTINGS	setcvar ui_glCustom 1 ;					\
 							setcvar ui_r_gamma 1.3 ;				\
 							setcvar ui_rate 0 ;						\
@@ -61,7 +59,6 @@ menuDef {
 	}
 	
 // Background //
-
 	itemDef {
 		name		"background"
 		rect		0 0 640 480
@@ -73,7 +70,6 @@ menuDef {
 	}
 
 // Subwindows //
-
 #define SUBWINDOW_WIDTH		350
 #define SUBWINDOW_HEIGHT	278
 #define SUBWINDOW_X			.5*(WINDOW_WIDTH-SUBWINDOW_WIDTH)

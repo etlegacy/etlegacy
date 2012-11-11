@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		0
 #define WINDOW_Y		0
 #define WINDOW_WIDTH	640
@@ -31,7 +30,6 @@ menuDef
 	}
 	
 // Background //
-
 	itemDef {
 		name		"background"
 		rect		0 0 640 480
@@ -43,7 +41,6 @@ menuDef
 	}
 
 // Subwindows //
-
 #define SUBWINDOW_WIDTH		340
 #define SUBWINDOW_HEIGHT	64
 #define SUBWINDOW_X			.5 * (WINDOW_WIDTH - SUBWINDOW_WIDTH)

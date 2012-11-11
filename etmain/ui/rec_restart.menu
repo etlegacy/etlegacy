@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		0
 #define WINDOW_Y		0
 #define WINDOW_WIDTH	640
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpRecRestart"
 
 // Restart Video Mode Menu //
-	
 menuDef
 {
 	name		"rec_restart"
@@ -36,7 +34,6 @@ menuDef
 	}
 	
 // Background //
-
 	itemDef {
 		name		"background"
 		rect		0 0 640 480
@@ -48,7 +45,6 @@ menuDef
 	}
 
 // Subwindows //
-
 #define SUBWINDOW_WIDTH		200
 #define SUBWINDOW_HEIGHT	64
 #define SUBWINDOW_X			.5 * (WINDOW_WIDTH - SUBWINDOW_WIDTH)

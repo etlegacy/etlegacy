@@ -1,5 +1,4 @@
 // menu defs
-// 
 {	
 	loadMenu { "ui/global.menu" }	
 	loadMenu { "ui/main.menu" }

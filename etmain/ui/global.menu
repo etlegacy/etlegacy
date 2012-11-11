@@ -31,7 +31,6 @@ menuDef {
 }
 
 // Backgrounds //
-
 menuDef {
 	name		"background_1"
 	fullScreen	0
@@ -84,7 +83,6 @@ menuDef {
 }
 
 // Fadebox //
-
 menuDef {
 	name		"fadebox_black"
 	fullScreen	0

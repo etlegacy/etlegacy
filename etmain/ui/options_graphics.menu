@@ -34,7 +34,6 @@ menuDef {
 	
 	
 // Simple settings //
-
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 66, "SIMPLE" )
 	MULTIACTION( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Overall Quality:", .2, 8, "ui_glCustom", cvarFloatList { "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glcustom", "" )
 	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Resolution:", .2, 8, "ui_r_mode", cvarFloatList { "desktop resolution" -2 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 Wide Screen" 11 "1360x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1600 (16:10)" 18 }, uiScript glCustom, "" )
@@ -43,7 +42,6 @@ menuDef {
 
 
 // Advanced settings //
-
 	SUBWINDOW( 6, 104, (SUBWINDOW_WIDTH), 256, "ADVANCED" )
 	YESNO( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Low Quality Sky:", .2, 8, "r_fastsky", "" )
 	MULTIACTION( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Shadow Detail:", .2, 8, "ui_cg_shadows", cvarFloatList { "None (fastest)" 0 "Blob (old style)" 1 "Stencil shadows" 2 "Projection shadows" 3 "Polygon shadows" 4 }, uiScript glCustom, "" )

@@ -2,7 +2,6 @@
 #include "ui/menumacros.h"
 
 // Defines //
-
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
@@ -10,7 +9,6 @@
 #define GROUP_NAME		"grpHostGame"
 		
 // System Menu //
-	
 menuDef {
 	name		"hostgame"
 	visible		0
@@ -30,15 +28,12 @@ menuDef {
 	}
 
 // Window //
-
 	WINDOW( "HOST GAME", 126 )
 	
 // Subwindows //
-
 #define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
 
 // Settings //
-
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 88, "SETTINGS" )
 	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Server Name:", .2, 8, "sv_hostname", 32, 18, "Specifies the name of your game server" )
 	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Game Type:", .2, 8, "ui_netGameType", cvarFloatList { "Campaign" 4 "Last Man Standing" 5 "Single-Map Objective" 2 "Stopwatch" 3 }, show labelDetailsGametype ; hide labelDetailsCampaign ; uiScript updateGameType, "Click to specify the type of game to load" )
@@ -48,7 +43,6 @@ menuDef {
 	EDITFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Password:", .2, 8, "g_password", 25, 18, "Password clients must set to join the server" )
 
 // Settings //
-
 	SUBWINDOW( 6, 126, (SUBWINDOW_WIDTH), 52, "FEATURES" )
 	
 	itemDef {
@@ -127,7 +121,6 @@ menuDef {
 	CHECKBOXNOTEXTACTION( "labelBalanced Teams", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 166, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "g_teamforcebalance", copycvar g_teamforcebalance g_lms_teamforcebalance, "Enforces balanced teams by forcing players to join the team with the lowest player count"  )
 	
 // Map Selection //
-
 	SUBWINDOW( 6, 184, (SUBWINDOW_WIDTH), 132, "NAME" )
 	
 	itemDef {
@@ -157,7 +150,6 @@ menuDef {
 	}
 	
 // Map Preview //
-
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 284, "PREVIEW" )
 
 	itemDef {
@@ -175,7 +167,6 @@ menuDef {
 	}
 	
 // Details //
-
 	SUBWINDOW( 6, 320, WINDOW_WIDTH-12, 96, "DETAILS" )
 
 	itemDef {
@@ -211,10 +202,9 @@ menuDef {
     }
 
 // Buttons //
-	
 	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BACK", .3, 14, close hostgame ; open main )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "ADVANCED", .3, 14, close hostgame ; open hostgame_advanced )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "START SERVER", .3, 14, conditionalScript ui_dedicated 0
-																										( "open hostgame_dedicated_warning" )
-																										( "uiScript StartServer" ) )
+		( "open hostgame_dedicated_warning" )
+		( "uiScript StartServer" ) )
 }
