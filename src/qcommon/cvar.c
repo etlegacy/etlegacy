@@ -141,7 +141,6 @@ float Cvar_VariableValue(const char *var_name)
 	return var->value;
 }
 
-
 /*
 ============
 Cvar_VariableIntegerValue
@@ -159,7 +158,6 @@ int Cvar_VariableIntegerValue(const char *var_name)
 	return var->integer;
 }
 
-
 /*
 ============
 Cvar_VariableString
@@ -176,7 +174,6 @@ char *Cvar_VariableString(const char *var_name)
 	}
 	return var->string;
 }
-
 
 /*
 ============
@@ -224,7 +221,6 @@ void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bu
 		}
 	}
 }
-
 
 /*
 ============
@@ -346,6 +342,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 		if (flags & CVAR_USERINFO)
 		{
 			char *cleaned = Cvar_ClearForeignCharacters(var->string);   // NOTE: it is probably harmless to call Cvar_Set2 in all cases, but I don't want to risk it
+
 			if (strcmp(var->string, cleaned))
 			{
 				Cvar_Set2(var->name, var->string, qfalse);   // call Cvar_Set2 with the value to be cleaned up for verbosity
@@ -596,10 +593,10 @@ void Cvar_Reset(const char *var_name)
 }
 
 /*
- * ============
- * Cvar_ForceReset
- * ============
- */
+============
+Cvar_ForceReset
+============
+*/
 void Cvar_ForceReset(const char *var_name)
 {
 	Cvar_Set2(var_name, NULL, qtrue);
@@ -662,7 +659,6 @@ qboolean Cvar_Command(void)
 	Cvar_Set2(v->name, Cmd_Argv(1), qfalse);
 	return qtrue;
 }
-
 
 /*
 ============
@@ -1070,9 +1066,10 @@ void Cvar_Restart_f(void)
 			{
 				Z_Free(var->resetString);
 			}
+			
 			// clear the var completely, since we
 			// can't remove the index from the list
-			memset(var, 0, sizeof(var));
+			memset(var, 0, sizeof(*var));
 			continue;
 		}
 
@@ -1080,6 +1077,7 @@ void Cvar_Restart_f(void)
 
 		prev = &var->next;
 	}
+	Com_Printf("Cvars have been reset\n");
 }
 
 /*
@@ -1161,7 +1159,7 @@ Cvar_Register
 basically a slightly modified Cvar_Get for the interpreted modules
 =====================
 */
-void    Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags)
+void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags)
 {
 	cvar_t *cv;
 
@@ -1174,7 +1172,6 @@ void    Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *default
 	vmCvar->modificationCount = -1;
 	Cvar_Update(vmCvar);
 }
-
 
 /*
 =====================
