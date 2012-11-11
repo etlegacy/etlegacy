@@ -170,6 +170,7 @@ if(UNIX)
 elseif(WIN32)
 	LIST(APPEND PLATFORM_SRC "src/sys/sys_win32.c")
 	LIST(APPEND PLATFORM_SRC "src/sys/con_win32.c")
+	LIST(APPEND PLATFORM_SRC "src/sys/win_resource.rc")
 endif()
 
 FILE(GLOB SERVER_SRC
