@@ -748,11 +748,6 @@ void target_relay_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 	G_UseTargets(self, activator);
 }
 
-void relay_AIScript_AlertEntity(gentity_t *self)
-{
-	G_UseEntity(self, NULL, NULL);
-}
-
 /*
 ==============
 SP_target_relay
@@ -881,7 +876,7 @@ void Use_Target_Counter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	ent->count -= 1;    // dec count
 
-//	G_Printf("count at: %d\n", ent->count);
+	//	G_Printf("count at: %d\n", ent->count);
 
 	if (!ent->count)       // specified count is now hit
 	{ //		G_Printf("firing!!\n");
@@ -900,7 +895,7 @@ void Use_Target_Lock(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	while ((t = G_Find(t, FOFS(targetname), ent->target)) != NULL)
 	{
-//		G_Printf("target_lock locking entity with key: %d\n", ent->count);
+		//		G_Printf("target_lock locking entity with key: %d\n", ent->count);
 		t->key = ent->key;
 
 	}

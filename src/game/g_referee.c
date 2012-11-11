@@ -35,11 +35,6 @@
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
 
-
-//
-// UGH!  Clean me!!!!
-//
-
 // Parses for a referee command.
 //  --> ref arg allows for the server console to utilize all referee commands (ent == NULL)
 //
@@ -113,7 +108,6 @@ qboolean G_refCommandCheck(gentity_t *ent, char *cmd)
 	return(qtrue);
 }
 
-
 // Lists ref commands.
 void G_refHelp_cmd(gentity_t *ent)
 {
@@ -148,12 +142,10 @@ void G_refHelp_cmd(gentity_t *ent)
 	}
 }
 
-
 // Request for ref status or lists ref commands.
 void G_ref_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
 	char arg[MAX_TOKEN_CHARS];
-
 
 	// Roll through ref commands if already a ref
 	if (ent == NULL || ent->client->sess.referee)
@@ -214,7 +206,6 @@ void G_ref_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	}
 }
 
-
 // Readies all players in the game.
 void G_refAllReady_cmd(gentity_t *ent)
 {
@@ -223,8 +214,7 @@ void G_refAllReady_cmd(gentity_t *ent)
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
-// rain - #105 - allow allready in intermission
-//  || g_gamestate.integer == GS_INTERMISSION) {
+		// rain - #105 - allow allready in intermission
 		G_refPrintf(ent, "Match already in progress!");
 		return;
 	}
@@ -243,7 +233,6 @@ void G_refAllReady_cmd(gentity_t *ent)
 	level.ref_allready = qtrue;
 	G_readyMatchState();
 }
-
 
 // Changes team lock status
 void G_refLockTeams_cmd(gentity_t *ent, qboolean fLock)
@@ -268,7 +257,6 @@ void G_refLockTeams_cmd(gentity_t *ent, qboolean fLock)
 	}
 	trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
 }
-
 
 // Pause/unpause a match.
 void G_refPause_cmd(gentity_t *ent, qboolean fPause)
@@ -307,7 +295,6 @@ void G_refPause_cmd(gentity_t *ent, qboolean fPause)
 		return;
 	}
 }
-
 
 // Puts a player on a team.
 void G_refPlayerPut_cmd(gentity_t *ent, int team_id)
@@ -363,7 +350,6 @@ void G_refPlayerPut_cmd(gentity_t *ent, int team_id)
 	}
 }
 
-
 // Removes a player from a team.
 void G_refRemove_cmd(gentity_t *ent)
 {
@@ -406,7 +392,6 @@ void G_refRemove_cmd(gentity_t *ent)
 	}
 }
 
-
 // Changes team spectator lock status
 void G_refSpeclockTeams_cmd(gentity_t *ent, qboolean fLock)
 {
@@ -419,9 +404,6 @@ void G_refSpeclockTeams_cmd(gentity_t *ent, qboolean fLock)
 	status = va("Referee has ^3SPECTATOR %sLOCKED^7 teams", ((fLock) ? "" : "UN"));
 
 	G_printFull(status, NULL);
-
-	// Update viewers as necessary
-//  G_pollMultiPlayers();
 
 	if (fLock)
 	{
@@ -542,7 +524,6 @@ void Cmd_AuthRcon_f(gentity_t *ent)
 		ent->client->sess.referee = RL_RCON;
 	}
 }
-
 
 //////////////////////////////
 //  Console admin commands
@@ -698,7 +679,6 @@ void G_UnMuteClient()
 		}
 	}
 }
-
 
 /////////////////
 //   Utility
