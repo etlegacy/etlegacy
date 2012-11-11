@@ -2531,9 +2531,6 @@ void landmine_setup(gentity_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 	ent->think     = G_LandmineThink;
 
-	// RF, record the time for AI
-	ent->awaitingHelpTime = level.time;
-
 	ent->damage = 0;
 
 	if (ent->s.teamNum == TEAM_AXIS)     // store team so we can generate red or blue smoke

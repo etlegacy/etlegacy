@@ -623,15 +623,12 @@ void G_InitGentity(gentity_t *e)
 	e->classname  = "noclass";
 	e->s.number   = e - g_entities;
 	e->r.ownerNum = ENTITYNUM_NONE;
-	e->aiInactive = 0xffffffff;
 	e->nextthink  = 0;
-	memset(e->goalPriority, 0, sizeof(e->goalPriority));
 	e->free = NULL;
 
 	// RF, init scripting
 	e->scriptStatus.scriptEventIndex = -1;
-	// inc the spawncount
-	e->spawnCount++;
+
 	// mark the time
 	e->spawnTime = level.time;
 
@@ -743,7 +740,6 @@ Marks the entity as free
 */
 void G_FreeEntity(gentity_t *ed)
 {
-	int spawnCount;
 
 #ifdef OMNIBOTS
 	Bot_Event_EntityDeleted(ed);
@@ -761,13 +757,10 @@ void G_FreeEntity(gentity_t *ed)
 		return;
 	}
 
-	spawnCount = ed->spawnCount;
-
 	memset(ed, 0, sizeof(*ed));
 	ed->classname  = "freed";
 	ed->freetime   = level.time;
 	ed->inuse      = qfalse;
-	ed->spawnCount = spawnCount;
 }
 
 /*
