@@ -1453,10 +1453,6 @@ void G_WriteSessionData(qboolean restart);
 
 void G_CalcRank(gclient_t *client);
 
-// ai_main.c
-// TTimo - wraps to BotGetTargetExplosives, without dependency to bot_target_s (which breaks gcc build)
-int GetTargetExplosives(team_t team, qboolean ignoreDynamite);
-
 // g_cmd.c
 void Cmd_Activate_f(gentity_t *ent);
 void Cmd_Activate2_f(gentity_t *ent);
@@ -1536,8 +1532,8 @@ extern vmCvar_t g_filtercams;
 extern vmCvar_t g_maxlives;                 // DHM - Nerve :: number of respawns allowed (0==infinite)
 extern vmCvar_t g_maxlivesRespawnPenalty;
 extern vmCvar_t g_voiceChatsAllowed;        // DHM - Nerve :: number before spam control
-extern vmCvar_t g_alliedmaxlives;           // Xian
-extern vmCvar_t g_axismaxlives;             // Xian
+extern vmCvar_t g_alliedmaxlives;
+extern vmCvar_t g_axismaxlives;
 extern vmCvar_t g_fastres;                  // Xian - Fast medic res'ing
 extern vmCvar_t g_knifeonly;                // Xian - Wacky Knife-Only rounds
 extern vmCvar_t g_enforcemaxlives;          // Xian - Temp ban with maxlives between rounds
@@ -1919,7 +1915,7 @@ g_serverEntity_t *GetServerEntity(int num);
 #define G_NOTFOUND  -2
 
 #define AP(x) trap_SendServerCommand(-1, x)                     // Print to all
-#define CP(x) trap_SendServerCommand(ent - g_entities, x)         // Print to an ent
+#define CP(x) trap_SendServerCommand(ent - g_entities, x)       // Print to an ent
 #define CPx(x, y) trap_SendServerCommand(x, y)                  // Print to id = x
 
 #define PAUSE_NONE      0x00    // Match is NOT paused.
