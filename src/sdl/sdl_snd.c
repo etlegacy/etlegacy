@@ -55,35 +55,6 @@ cvar_t *s_sdlMixSamps;
 static int dmapos  = 0;
 static int dmasize = 0;
 
-static qboolean use_custom_memset = qfalse;
-
-/*
-===============
-Snd_Memset
-===============
-*/
-#ifdef __linux__
-#ifdef Snd_Memset
-#undef Snd_Memset
-#endif
-void Snd_Memset(void *dest, const int val, const size_t count)
-{
-	int *pDest, i, iterate;
-
-	if (!use_custom_memset)
-	{
-		Com_Memset(dest, val, count);
-		return;
-	}
-	iterate = count / sizeof(int);
-	pDest   = (int *)dest;
-	for (i = 0; i < iterate; i++)
-	{
-		pDest[i] = val;
-	}
-}
-#endif
-
 /*
 ===============
 SNDDMA_AudioCallback
