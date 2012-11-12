@@ -941,7 +941,7 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 		vec3_t out;
 		float  lena, lenb;
 
-		// don't do the doppler effect when trumpets of train and station are at same the position
+		// don't do the doppler effect when trumpets of train and station are at the same position
 		if (entityPositions[listener_number] != entityPositions[numLoopSounds])
 		{
 			loopSounds[numLoopSounds].doppler = qtrue;
@@ -1830,7 +1830,6 @@ void S_StopStreamingSound(int stream)
 /*
 ==============
 S_StopEntStreamingSound
-
 ==============
 */
 void S_Base_StopEntStreamingSound(int entnum)
@@ -1855,7 +1854,6 @@ void S_Base_StopEntStreamingSound(int entnum)
 /*
 ==============
 S_FadeAllSounds
-
 ==============
 */
 void S_Base_FadeAllSounds(float targetVol, int time, qboolean stopsounds)
@@ -2253,7 +2251,6 @@ qboolean S_Base_Init(soundInterface_t *si)
 	{
 		s_soundStarted = 1;
 		s_soundMuted   = 1;
-//		numSfx = 0;
 
 		Com_Memset(streamingSounds, 0, sizeof(streamingSound_t) * MAX_STREAMING_SOUNDS);
 		Com_Memset(sfxHash, 0, sizeof(sfx_t *) * LOOP_HASH);
