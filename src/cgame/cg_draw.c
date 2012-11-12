@@ -3082,7 +3082,7 @@ static void CG_DrawWarmup(void)
 		const char *cs;
 		int        defender;
 
-		s = va("%s %i", CG_TranslateString("Stopwatch Round"), cgs.currentRound + 1);
+		s = va("%s %i", CG_TranslateString("STOPWATCH ROUND"), cgs.currentRound + 1);
 
 		cs       = CG_ConfigString(CS_MULTI_INFO);
 		defender = atoi(Info_ValueForKey(cs, "defender"));

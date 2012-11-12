@@ -1599,7 +1599,7 @@ void CG_DebriefingTitle_Draw(panel_button_t *button)
 		if (cgs.currentRound)
 		{
 			// first round
-			s = va(CG_TranslateString("Clock is now set to %s!"), CG_Debriefing_TimeToString(cgs.nextTimeLimit * 60.f * 1000.f));
+			s = va(CG_TranslateString("CLOCK IS NOW SET TO %s!"), CG_Debriefing_TimeToString(cgs.nextTimeLimit * 60.f * 1000.f));
 		}
 		else
 		{
@@ -2741,7 +2741,7 @@ void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button)
 		if (cgs.currentRound)
 		{
 			// first round
-			s = va(CG_TranslateString("Clock is now set to %s!"), CG_Debriefing_TimeToString(cgs.nextTimeLimit * 60.f * 1000.f));
+			s = va(CG_TranslateString("CLOCK IS NOW SET TO %s!"), CG_Debriefing_TimeToString(cgs.nextTimeLimit * 60.f * 1000.f));
 		}
 		else
 		{
