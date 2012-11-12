@@ -460,7 +460,6 @@ void G_AddXPBackup(gentity_t *ent)
 }
 #endif // USEXPSTORAGE
 
-
 /*
 =================
 AddIP
@@ -760,8 +759,6 @@ gclient_t *ClientForString(const char *s)
 	return NULL;
 }
 
-// fretn
-
 static qboolean G_Is_SV_Running(void)
 {
 
@@ -779,7 +776,6 @@ G_GetPlayerByNum
 gclient_t *G_GetPlayerByNum(int clientNum)
 {
 	gclient_t *cl;
-
 
 	// make sure server is running
 	if (!G_Is_SV_Running())
@@ -811,7 +807,6 @@ gclient_t *G_GetPlayerByNum(int clientNum)
 		return cl;
 	}
 
-
 	G_Printf("User %d is not on the server\n", clientNum);
 
 	return NULL;
@@ -824,7 +819,6 @@ G_GetPlayerByName
 */
 gclient_t *G_GetPlayerByName(char *name)
 {
-
 	int       i;
 	gclient_t *cl;
 	char      cleanName[64];
@@ -862,8 +856,6 @@ gclient_t *G_GetPlayerByName(char *name)
 
 	return NULL;
 }
-
-// -fretn
 
 /*
 ===================
@@ -978,7 +970,6 @@ void Svcmd_SwapTeams_f(void)
 	Svcmd_ResetMatch_f(qfalse, qtrue);
 }
 
-
 /*
 ====================
 Svcmd_ShuffleTeams_f
@@ -1078,8 +1069,6 @@ void Svcmd_ListCampaigns_f(void)
 	}
 }
 
-
-
 // ydnar: modified from maddoc sp func
 extern void ReviveEntity(gentity_t *ent, gentity_t *traceEnt);
 extern int FindClientByName(char *name);
@@ -1088,7 +1077,6 @@ void Svcmd_RevivePlayer(char *name)
 {
 	int       clientNum;
 	gentity_t *player;
-
 
 	if (!g_cheats.integer)
 	{
@@ -1104,9 +1092,7 @@ void Svcmd_RevivePlayer(char *name)
 	player = &g_entities[clientNum];
 
 	ReviveEntity(player, player);
-
 }
-
 
 // fretn - kicking
 
@@ -1162,7 +1148,6 @@ static void Svcmd_Kick_f(void)
 		{
 			for (i = 0, cl = level.clients; i < level.numConnectedClients; i++, cl++)
 			{
-
 				// dont kick localclients ...
 				if (cl->pers.localClient)
 				{
@@ -1199,7 +1184,6 @@ static void Svcmd_Kick_f(void)
 							AddIPBan(ip);
 						}
 					}
-
 				}
 				else
 				{
@@ -1241,7 +1225,6 @@ static void Svcmd_Kick_f(void)
 			// use engine banning system, mods may choose to use their own banlist
 			if (USE_ENGINE_BANLIST)
 			{
-
 				// kick but dont ban bots, they arent that lame
 				if ((g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
 				{
@@ -1259,7 +1242,6 @@ static void Svcmd_Kick_f(void)
 					AddIPBan(ip);
 				}
 			}
-
 		}
 		else
 		{
@@ -1346,10 +1328,6 @@ static void Svcmd_KickNum_f(void)
 		}
 	}
 }
-
-// -fretn
-
-
 
 char *ConcatArgs(int start);
 
@@ -1474,15 +1452,12 @@ qboolean ConsoleCommand(void)
 		return qtrue;
 	}
 
-
-// START - Mad Doc - TDF
 	if (Q_stricmp(cmd, "revive") == 0)
 	{
 		trap_Argv(1, cmd, sizeof(cmd));
 		Svcmd_RevivePlayer(cmd);
 		return qtrue;
 	}
-// END - Mad Doc - TDF
 
 	// fretn - moved from engine
 	if (!Q_stricmp(cmd, "kick"))
@@ -1496,7 +1471,6 @@ qboolean ConsoleCommand(void)
 		Svcmd_KickNum_f();
 		return qtrue;
 	}
-	// -fretn
 
 #ifdef OMNIBOTS
 	if (!Q_stricmp(cmd, "bot"))
@@ -1505,6 +1479,12 @@ qboolean ConsoleCommand(void)
 		return qtrue;
 	}
 #endif
+
+	if (!Q_stricmp(cmd, "playsound") || !Q_stricmp(cmd, "playsound_env"))
+	{
+		G_PlaySound_Cmd();
+		return qtrue;
+	}
 
 	if (g_dedicated.integer)
 	{
@@ -1527,7 +1507,7 @@ qboolean ConsoleCommand(void)
 		}
 
 		// everything else will also be printed as a say command
-//      trap_SendServerCommand( -1, va("cpm \"server: %s\n\"", ConcatArgs(0) ) );
+		//      trap_SendServerCommand( -1, va("cpm \"server: %s\n\"", ConcatArgs(0) ) );
 
 		// prints to the console instead now
 		return qfalse;

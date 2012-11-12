@@ -214,7 +214,6 @@ int G_StringIndex(const char *string)
 
 //=====================================================================
 
-
 /*
 ================
 G_TeamCommand
@@ -237,7 +236,6 @@ void G_TeamCommand(team_t team, char *cmd)
 		}
 	}
 }
-
 
 /*
 =============
@@ -350,6 +348,7 @@ gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash)
 
 	return NULL;
 }
+
 /*
 =============
 G_PickTarget
@@ -517,7 +516,6 @@ void G_UseTargets(gentity_t *ent, gentity_t *activator)
 	}
 }
 
-
 /*
 =============
 TempVector
@@ -582,7 +580,6 @@ char *vtosf(const vec3_t v)
 	return s;
 }
 
-
 /*
 ===============
 G_SetMovedir
@@ -614,8 +611,6 @@ void G_SetMovedir(vec3_t angles, vec3_t movedir)
 	}
 	VectorClear(angles);
 }
-
-
 
 void G_InitGentity(gentity_t *e)
 {
@@ -814,9 +809,6 @@ gentity_t *G_PopupMessage(popupMessageType_t type)
 	return e;
 }
 
-
-
-
 /*
 ==============================================================================
 
@@ -860,7 +852,6 @@ void G_KillBox(gentity_t *ent)
 		G_Damage(hit, ent, ent, NULL, NULL,
 		         100000, DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
 	}
-
 }
 
 //==============================================================================
@@ -882,7 +873,6 @@ void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm)
 	}
 	BG_AddPredictableEventToPlayerstate(event, eventParm, &ent->client->ps);
 }
-
 
 /*
 ===============
@@ -916,7 +906,6 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 //		ent->client->ps.externalEvent = event | bits;
 //		ent->client->ps.externalEventParm = eventParm;
 //		ent->client->ps.externalEventTime = level.time;
-		// -NERVE - SMF
 	}
 	else
 	{
@@ -931,12 +920,10 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 //		bits = ( bits + EV_EVENT_BIT1 ) & EV_EVENT_BITS;
 //		ent->s.event = event | bits;
 //		ent->s.eventParm = eventParm;
-		// -NERVE - SMF
 	}
 	ent->eventTime   = level.time;
 	ent->r.eventTime = level.time;
 }
-
 
 /*
 =============
@@ -951,6 +938,22 @@ void G_Sound(gentity_t *ent, int soundIndex)
 
 	te              = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
 	te->s.eventParm = soundIndex;
+}
+
+/*
+=============
+G_ClientSound
+=============
+*/
+void G_ClientSound(gentity_t *ent, int soundIndex)
+{
+	if( ent && ent->client )
+	{
+		gentity_t       *te = G_TempEntity( ent->client->ps.origin, EV_GLOBAL_CLIENT_SOUND );
+
+		te->s.teamNum = ( ent->client - level.clients );
+		te->s.eventParm = soundIndex;
+	}
 }
 
 /*

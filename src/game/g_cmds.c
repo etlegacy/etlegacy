@@ -39,6 +39,154 @@
 
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
 
+qboolean G_MatchOnePlayer(int *plist, char *err, int len)
+{
+	gclient_t *cl;
+	int *p;
+	char line[MAX_NAME_LENGTH+10];
+
+	err[0] = '\0';
+	line[0] = '\0';
+	if (plist[0] == -1)
+	{
+		Q_strcat(err, len, "no connected player by that name or slot #");
+		return qfalse;
+	}
+	if (plist[1] != -1)
+	{
+		Q_strcat(err, len, "more than one player name matches be more specific or use the slot #:\n");
+		for (p = plist;*p != -1; p++)
+		{
+			cl = &level.clients[*p];
+			if (cl->pers.connected == CON_CONNECTED)
+			{
+				Com_sprintf(line, MAX_NAME_LENGTH + 10, "%2i - %s^7\n", *p, cl->pers.netname);
+				if (strlen(err)+strlen(line) > len)
+				{
+					break;
+				}
+				Q_strcat(err, len, line);
+			}
+		}
+		return qfalse;
+	}
+	return qtrue;
+}
+
+/*
+==================
+ClientNumbersFromString
+
+Sets plist to an array of integers that represent client numbers that have
+names that are a partial match for s. List is terminated by a -1.
+
+Returns number of matching clientids.
+==================
+*/
+int ClientNumbersFromString( char *s, int *plist)
+{
+	gclient_t *p;
+	int i, found = 0;
+	char s2[MAX_STRING_CHARS];
+	char n2[MAX_STRING_CHARS];
+	char *m;
+	char *end = NULL;
+
+	*plist = -1;
+
+	// if a number is provided, it might be a slot #
+	// redeye - check the whole string is a number and only if so assume it is a slot number
+	//          still fails for players with a name like "23" and there are 24 slots used
+	i = (int) strtol(s, &end, 10); // end will be "" when s contains only digits
+
+	if ((!end || !*end) && i >= 0)
+	{
+		if (i >= 0 && i < level.maxclients)
+		{
+			p = &level.clients[i];
+			if(p->pers.connected == CON_CONNECTED || p->pers.connected == CON_CONNECTING)
+			{
+				*plist++ = i;
+				*plist = -1;
+				return 1;
+			}
+		}
+	}
+
+	// now look for name matches
+	SanitizeString(s, s2, qtrue);
+	if (strlen(s2) < 1) return 0;
+	for (i=0; i < level.maxclients; ++i)
+	{
+		p = &level.clients[i];
+		if (p->pers.connected != CON_CONNECTED && p->pers.connected != CON_CONNECTING)
+		{
+
+			continue;
+		}
+		SanitizeString(p->pers.netname, n2, qtrue);
+		m = strstr(n2, s2);
+		if (m != NULL)
+		{
+			*plist++ = i;
+			found++;
+		}
+	}
+	*plist = -1;
+	return found;
+}
+
+void G_PlaySound_Cmd(void)
+{
+	char sound[MAX_QPATH], name[MAX_NAME_LENGTH], cmd[32] = {"playsound"};
+
+	if (trap_Argc() < 2)
+	{
+		G_Printf("usage: playsound [name|slot#] sound\n");
+		return;
+	}
+
+	if (trap_Argc() > 2)
+	{
+		trap_Argv(0, cmd, sizeof(cmd));
+		trap_Argv(1, name, sizeof(name));
+		trap_Argv(2, sound, sizeof(sound));
+	}
+	else
+	{
+		trap_Argv(1, sound, sizeof(sound));
+		name[0] = '\0';
+	}
+
+	if (name[0])
+	{
+		int pids[MAX_CLIENTS];
+		char err[MAX_STRING_CHARS];
+		gentity_t *victim;
+
+		if (ClientNumbersFromString(name, pids) != 1)
+		{
+			G_MatchOnePlayer(pids, err, sizeof(err));
+			G_Printf("playsound: %s\n", err);
+			return;
+		}
+		victim = &level.gentities[pids[0]];
+
+		if (!Q_stricmp(cmd, "playsound_env"))
+		{
+			G_AddEvent(victim, EV_GENERAL_SOUND, G_SoundIndex(sound));
+		}
+		else
+		{
+			G_ClientSound(victim, G_SoundIndex(sound));
+		}
+	}
+	else
+	{
+		G_globalSound(sound);
+	}
+}
+
 /*
 ==================
 G_SendScore_Add

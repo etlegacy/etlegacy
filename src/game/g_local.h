@@ -1218,6 +1218,7 @@ void G_Sound(gentity_t *ent, int soundIndex);
 void G_AnimScriptSound(int soundIndex, vec3_t org, int client);
 void G_FreeEntity(gentity_t *e);
 //qboolean  G_EntitiesFree( void );
+void G_ClientSound( gentity_t *ent, int soundIndex );
 
 void G_TouchTriggers(gentity_t *ent);
 void G_TouchSolids(gentity_t *ent);
@@ -1396,6 +1397,7 @@ void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0);
 void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void Cmd_SetWeapons_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void Cmd_SetClass_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
+void G_PlaySound_Cmd(void);
 
 // g_main.c
 void FindIntermissionPoint(void);
@@ -1916,7 +1918,6 @@ g_serverEntity_t *GetServerEntity(int num);
 #define G_INVALID       -1
 #define G_NOTFOUND  -2
 
-
 #define AP(x) trap_SendServerCommand(-1, x)                     // Print to all
 #define CP(x) trap_SendServerCommand(ent - g_entities, x)         // Print to an ent
 #define CPx(x, y) trap_SendServerCommand(x, y)                  // Print to id = x
@@ -1944,7 +1945,6 @@ typedef enum
 	DP_CONNECTINFO,     // Display OSP info on connect
 	DP_MVSPAWN          // Set up MV views for clients who need them
 } enum_t_dp;
-
 
 // Remember: Axis = RED, Allies = BLUE ... right?!
 
