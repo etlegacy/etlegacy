@@ -941,10 +941,22 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 		vec3_t out;
 		float  lena, lenb;
 
-		loopSounds[numLoopSounds].doppler = qtrue;
-		lena                              = DistanceSquared(entityPositions[listener_number], entityPositions[numLoopSounds]);
+		// don't do the doppler effect when trumpets of train and station are at same the position
+		if (entityPositions[listener_number] != entityPositions[numLoopSounds])
+		{
+			loopSounds[numLoopSounds].doppler = qtrue;
+		}
+		else
+		{
+			loopSounds[numLoopSounds].doppler = qfalse;
+		}
+		
+		lena = DistanceSquared(entityPositions[listener_number], entityPositions[numLoopSounds]);
+
 		VectorAdd(entityPositions[numLoopSounds], loopSounds[numLoopSounds].velocity, out);
+
 		lenb = DistanceSquared(entityPositions[listener_number], out);
+
 		if ((loopSounds[numLoopSounds].framenum + 1) != cls.framecount)
 		{
 			loopSounds[numLoopSounds].oldDopplerScale = 1.0;
@@ -953,6 +965,7 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 		{
 			loopSounds[numLoopSounds].oldDopplerScale = loopSounds[numLoopSounds].dopplerScale;
 		}
+
 		loopSounds[numLoopSounds].dopplerScale = lenb / (lena * 100);
 		if (loopSounds[numLoopSounds].dopplerScale <= 1.0)
 		{

@@ -750,9 +750,11 @@ void S_PaintChannels(int endtime)
 				// copy from the streaming sound source
 				const portable_samplepair_t *rawsamples = s_rawsamples[stream];
 				const int                   stop        = (end < s_rawend[stream]) ? end : s_rawend[stream];
+
 				for (i = s_paintedtime ; i < stop ; i++)
 				{
 					const int s = i & (MAX_RAW_SAMPLES - 1);
+
 					paintbuffer[i - s_paintedtime].left  += rawsamples[s].left;
 					paintbuffer[i - s_paintedtime].right += rawsamples[s].right;
 				}
