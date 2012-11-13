@@ -45,9 +45,10 @@
 
 qboolean snd_inited = qfalse;
 
-cvar_t *s_sdlBits;
-cvar_t *s_sdlSpeed;
-cvar_t *s_sdlChannels;
+
+cvar_t *s_bits;     // before rc2 -> *s_sdlBits;
+cvar_t *s_khz;      // before rc2 -> *s_sdlSpeed
+cvar_t *s_sdlChannels; // external s_channels (GPL: cvar_t s_numchannels )
 cvar_t *s_sdlDevSamps;
 cvar_t *s_sdlMixSamps;
 
@@ -63,6 +64,7 @@ SNDDMA_AudioCallback
 static void SNDDMA_AudioCallback(void *userdata, Uint8 *stream, int len)
 {
 	int pos = (dmapos * (dma.samplebits / 8));
+
 	if (pos >= dmasize)
 	{
 		dmapos = pos = 0;
@@ -171,9 +173,14 @@ qboolean SNDDMA_Init(void)
 		return qtrue;
 	}
 
-	s_sdlBits     = Cvar_Get("s_sdlBits", "16", CVAR_LATCH | CVAR_ARCHIVE);
-	s_sdlSpeed    = Cvar_Get("s_sdlSpeed", "44100", CVAR_LATCH | CVAR_ARCHIVE);
-	s_sdlChannels = Cvar_Get("s_sdlChannels", "2", CVAR_LATCH | CVAR_ARCHIVE);
+	// before rc 2 we have had own s_sdl_ cvars to set this
+	// changed back to use genuine cvar names
+	// - it's more compatible when existing profiles are used
+	// - we don't have to touch menu & ui to make speed/khz work (uses s_khz!)
+	s_bits        = Cvar_Get("s_bits", "16", CVAR_LATCH | CVAR_ARCHIVE);
+	s_khz         = Cvar_Get("s_khz", "44", CVAR_LATCH | CVAR_ARCHIVE);
+	s_sdlChannels = Cvar_Get("s_channels", "2", CVAR_LATCH | CVAR_ARCHIVE);
+
 	s_sdlDevSamps = Cvar_Get("s_sdlDevSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
 	s_sdlMixSamps = Cvar_Get("s_sdlMixSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
 
@@ -199,17 +206,36 @@ qboolean SNDDMA_Init(void)
 	memset(&desired, '\0', sizeof(desired));
 	memset(&obtained, '\0', sizeof(obtained));
 
-	tmp = ((int) s_sdlBits->value);
+	tmp = ((int) s_bits->value);
 	if ((tmp != 16) && (tmp != 8))
 	{
 		tmp = 16;
 	}
 
-	desired.freq = (int) s_sdlSpeed->value;
+	desired.freq = (int) s_khz->value * 1000; // desired freq expects Hz not kHz
+
 	if (!desired.freq)
 	{
 		desired.freq = 22050;
 	}
+
+	// dirty correction for profile values
+	if (desired.freq == 11000)
+	{
+		desired.freq = 11025;
+	}
+	else if (desired.freq == 22000)
+	{
+		desired.freq = 22050;
+	}
+	else if (desired.freq == 44000)
+	{
+		desired.freq = 44100;
+	}
+	else {
+		desired.freq = 22050;
+	}
+
 	desired.format = ((tmp == 16) ? AUDIO_S16SYS : AUDIO_U8);
 
 	// I dunno if this is the best idea, but I'll give it a try...
