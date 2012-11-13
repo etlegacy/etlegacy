@@ -474,14 +474,6 @@ void *Hunk_AllocDebug(int size, ha_pref preference, char *label, char *file, int
 void *Hunk_Alloc(int size, ha_pref preference);
 #endif
 
-// Dushan
-#ifdef __linux__
-// custom Snd_Memset implementation for glibc memset bug workaround
-void Snd_Memset(void *dest, const int val, const size_t count);
-#else
-#define Snd_Memset Com_Memset
-#endif
-
 #define Com_Memset memset
 #define Com_Memcpy memcpy
 
@@ -1603,7 +1595,7 @@ typedef enum
 	ET_TRAP,
 
 	ET_GAMEMODEL,           // misc_gamemodel.  similar to misc_model, but it's a dynamic model so we have LOD
-	ET_FOOTLOCKER,  		//----(SA)  added
+	ET_FOOTLOCKER,          //----(SA)  added
 
 	ET_FLAMEBARREL,
 	ET_FP_PARTS,
@@ -1627,14 +1619,14 @@ typedef enum
 	ET_CONSTRUCTIBLE_INDICATOR,
 	ET_CONSTRUCTIBLE,
 	ET_CONSTRUCTIBLE_MARKER,
-	ET_BOMB,					// obsolete/unused (tripmines)
-	ET_WAYPOINT,				// obsolete/unused
+	ET_BOMB,                    // obsolete/unused (tripmines)
+	ET_WAYPOINT,                // obsolete/unused
 	ET_BEAM_2,
 	ET_TANK_INDICATOR,
 	ET_TANK_INDICATOR_DEAD,
 	// Start - TAT - 8/29/2002
 	// An indicator object created by the bot code to show where the bots are moving to
-	ET_BOTGOAL_INDICATOR,	// obsolete/unused
+	ET_BOTGOAL_INDICATOR,   // obsolete/unused
 	// End - TA - 8/29/2002
 	ET_CORPSE,              // Arnout: dead player
 	ET_SMOKER,              // Arnout: target_smoke entity

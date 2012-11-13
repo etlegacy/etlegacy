@@ -811,7 +811,7 @@ void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 		SNDDMA_BeginPainting();
 		if (dma.buffer)
 		{
-			Snd_Memset(dma.buffer, clear, dma.samples * dma.samplebits / 8);
+			Com_Memset(dma.buffer, clear, dma.samples * dma.samplebits / 8);
 		}
 		SNDDMA_Submit();
 
@@ -950,7 +950,7 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 		{
 			loopSounds[numLoopSounds].doppler = qfalse;
 		}
-		
+
 		lena = DistanceSquared(entityPositions[listener_number], entityPositions[numLoopSounds]);
 
 		VectorAdd(entityPositions[numLoopSounds], loopSounds[numLoopSounds].velocity, out);
