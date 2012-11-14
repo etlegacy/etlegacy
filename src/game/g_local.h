@@ -646,7 +646,7 @@ typedef struct
 	int connectTime;                // DHM - Nerve :: level.time the client first connected to the server
 	playerTeamState_t teamState;    // status in teamplay games
 	int voteCount;                  // to prevent people from constantly calling votes
-	int teamVoteCount;              // to prevent people from constantly calling votes
+	int teamVoteCount;              // FIXME: unused - to prevent people from constantly calling votes
 
 	int complaints;                     // DHM - Nerve :: number of complaints lodged against this client
 	int complaintClient;                // DHM - Nerve :: able to lodge complaint against this client
@@ -1216,7 +1216,7 @@ void G_Sound(gentity_t *ent, int soundIndex);
 void G_AnimScriptSound(int soundIndex, vec3_t org, int client);
 void G_FreeEntity(gentity_t *e);
 //qboolean  G_EntitiesFree( void );
-void G_ClientSound( gentity_t *ent, int soundIndex );
+void G_ClientSound(gentity_t *ent, int soundIndex);
 
 void G_TouchTriggers(gentity_t *ent);
 void G_TouchSolids(gentity_t *ent);
@@ -1342,7 +1342,7 @@ void BeginIntermission(void);
 void InitClientPersistant(gclient_t *client);
 void InitClientResp(gclient_t *client);
 void InitBodyQue(void);
-void ClientSpawn(gentity_t *ent, qboolean revived);
+void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth);
 void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
 void AddScore(gentity_t *ent, int score);
 void AddKillScore(gentity_t *ent, int score);
@@ -1353,6 +1353,11 @@ qboolean G_CheckForExistingModelInfo(bg_playerclass_t *classInfo, const char *mo
 void SetWolfSpawnWeapons(gclient_t *client);
 void limbo(gentity_t *ent, qboolean makeCorpse);
 void reinforce(gentity_t *ent);
+
+#ifdef LUA_SUPPORT
+// *LUA* g_sha1.c
+char *G_SHA1(char *string);
+#endif
 
 // g_character.c
 qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *character);
@@ -1659,6 +1664,11 @@ extern vmCvar_t g_disableComplaints;
 
 extern vmCvar_t g_antiwarp;
 extern vmCvar_t g_maxWarp;
+
+#ifdef LUA_SUPPORT
+extern vmCvar_t lua_modules;
+extern vmCvar_t lua_allowedModules;
+#endif
 
 void trap_Printf(const char *fmt);
 void trap_Error(const char *fmt) __attribute__((noreturn));
@@ -2170,5 +2180,27 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define MOVER_MOUNTEDGUN                128
 
 // Spawnflags end
+
+typedef enum
+{
+	F_INT,
+	F_FLOAT,
+	F_LSTRING,          // string on disk, pointer in memory, TAG_LEVEL
+	F_GSTRING,          // string on disk, pointer in memory, TAG_GAME
+	F_VECTOR,
+	F_ANGLEHACK,
+	F_ENTITY,           // index on disk, pointer in memory
+	F_ITEM,             // index on disk, pointer in memory
+	F_CLIENT,           // index on disk, pointer in memory
+	F_IGNORE
+} fieldtype_t;
+
+typedef struct
+{
+	char *name;
+	int ofs;
+	fieldtype_t type;
+	int flags;
+} field_t;
 
 #endif

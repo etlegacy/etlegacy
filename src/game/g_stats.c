@@ -33,6 +33,10 @@
 
 #include "g_local.h"
 
+#ifdef LUA_SUPPORT
+#include "g_lua.h"
+#endif
+
 void G_LogDeath(gentity_t *ent, weapon_t weap)
 {
 	weap = BG_DuplicateWeapon(weap);
@@ -142,6 +146,14 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 {
 	int i;
 
+#ifdef LUA_SUPPORT
+	// *LUA* API callbacks
+	if (G_LuaHook_SetPlayerSkill(client - level.clients, skill))
+	{
+		return;
+	}
+#endif
+
 	for (i = NUM_SKILL_LEVELS - 1; i >= 0; i--)
 	{
 		if (client->sess.skillpoints[skill] >= skillLevels[i])
@@ -161,6 +173,14 @@ extern qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, 
 static void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 {
 	int i, cnt = 0;
+
+#ifdef LUA_SUPPORT
+	// *LUA* API callbacks
+	if (G_LuaHook_UpgradeSkill(g_entities - ent, skill))
+	{
+		return;
+	}
+#endif
 
 	// See if this is the first time we've reached this skill level
 	for (i = 0; i < SK_NUM_SKILLS; i++)

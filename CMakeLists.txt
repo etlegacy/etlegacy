@@ -75,6 +75,8 @@ option(BUILD_MV_SUPPORT		"Compile the mod files with multiview support (broken?!
 set(ET_FS_BASEPATH			""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 option(ET_KEY				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
 
+option(BUILD_LUA_SUPPORT	"Enable Lua support in game code"					OFF)
+
 #-----------------------------------------------------------------
 # Platform-specific settings
 #-----------------------------------------------------------------
@@ -397,6 +399,11 @@ if(BUILD_MOD)
 			message(STATUS "Warning: omni-bot support is 32bit Win & Linux only - build skipped")
 		endif()
 	endif(BUILD_OMNIBOTS)
+	
+	if(BUILD_LUA_SUPPORT)
+		message(STATUS "Lua support enabled")
+		add_definitions(-DLUA_SUPPORT)
+	endif(BUILD_LUA_SUPPORT)
 		    
 	add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
 	set_target_properties(qagame${LIB_SUFFIX}${ARCH}

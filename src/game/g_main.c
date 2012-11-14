@@ -37,6 +37,10 @@
 #include "g_etbot_interface.h"
 #endif
 
+#ifdef LUA_SUPPORT
+#include "g_lua.h"
+#endif
+
 level_locals_t level;
 
 typedef struct
@@ -237,6 +241,11 @@ vmCvar_t g_disableComplaints;
 // zinx etpro antiwarp
 vmCvar_t g_antiwarp;
 vmCvar_t g_maxWarp;
+
+#ifdef LUA_SUPPORT
+vmCvar_t lua_modules;
+vmCvar_t lua_allowedModules;
+#endif
 
 cvarTable_t gameCvarTable[] =
 {
@@ -458,6 +467,11 @@ cvarTable_t gameCvarTable[] =
 	// zinx etpro antiwarp
 	{ &g_maxWarp,                 "g_maxWarp",                 "4",                                                      0 },
 	{ &g_antiwarp,                "g_antiwarp",                "1",                                                      0 },
+#ifdef LUA_SUPPORT
+	{ &lua_modules,               "lua_modules",               "",                                                       0 },
+	{ &lua_allowedModules,        "lua_allowedModules",        "",                                                       0 },
+#endif
+
 };
 
 // bk001129 - made static to avoid aliasing
@@ -565,6 +579,11 @@ void QDECL G_Printf(const char *fmt, ...)
 	va_start(argptr, fmt);
 	Q_vsnprintf(text, sizeof(text), fmt, argptr);
 	va_end(argptr);
+
+#ifdef LUA_SUPPORT
+	// LUA* API callbacks
+	G_LuaHook_Print(text);
+#endif
 
 	trap_Printf(text);
 }
@@ -1615,18 +1634,24 @@ void G_UpdateCvars(void)
 						trap_Cvar_Set(cv->cvarName, "33");
 					}
 				}
+#ifdef LUA_SUPPORT
+				else if (cv->vmCvar == &lua_modules || cv->vmCvar == &lua_allowedModules)
+				{
+					G_LuaShutdown();
+				}
+#endif
 
 				// OSP - Update vote info for clients, if necessary
 				if (cv->vmCvar == &vote_allow_comp          || cv->vmCvar == &vote_allow_gametype       ||
-					cv->vmCvar == &vote_allow_kick          || cv->vmCvar == &vote_allow_map            ||
-					cv->vmCvar == &vote_allow_matchreset    ||
-					cv->vmCvar == &vote_allow_mutespecs     || cv->vmCvar == &vote_allow_nextmap        ||
-					cv->vmCvar == &vote_allow_pub           || cv->vmCvar == &vote_allow_referee        ||
-					cv->vmCvar == &vote_allow_shuffleteamsxp    || cv->vmCvar == &vote_allow_swapteams      ||
-					cv->vmCvar == &vote_allow_friendlyfire  || cv->vmCvar == &vote_allow_timelimit      ||
-					cv->vmCvar == &vote_allow_warmupdamage  || cv->vmCvar == &vote_allow_antilag        ||
-					cv->vmCvar == &vote_allow_balancedteams || cv->vmCvar == &vote_allow_muting
-					)
+				    cv->vmCvar == &vote_allow_kick          || cv->vmCvar == &vote_allow_map            ||
+				    cv->vmCvar == &vote_allow_matchreset    ||
+				    cv->vmCvar == &vote_allow_mutespecs     || cv->vmCvar == &vote_allow_nextmap        ||
+				    cv->vmCvar == &vote_allow_pub           || cv->vmCvar == &vote_allow_referee        ||
+				    cv->vmCvar == &vote_allow_shuffleteamsxp    || cv->vmCvar == &vote_allow_swapteams      ||
+				    cv->vmCvar == &vote_allow_friendlyfire  || cv->vmCvar == &vote_allow_timelimit      ||
+				    cv->vmCvar == &vote_allow_warmupdamage  || cv->vmCvar == &vote_allow_antilag        ||
+				    cv->vmCvar == &vote_allow_balancedteams || cv->vmCvar == &vote_allow_muting
+				    )
 				{
 					fVoteFlags = qtrue;
 				}
@@ -2112,7 +2137,10 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	// Match init work
 	G_loadMatchGame();
-
+#ifdef LUA_SUPPORT
+	G_LuaInit();
+	G_LuaHook_InitGame(levelTime, randomSeed, restart);
+#endif
 	// Reinstate any MV views for clients -- need to do this after all init is complete
 	// --- maybe not the best place to do this... seems to be some race conditions on map_restart
 	G_spawnPrintf(DP_MVSPAWN, level.time + 2000, NULL);
@@ -2125,7 +2153,10 @@ G_ShutdownGame
 */
 void G_ShutdownGame(int restart)
 {
-
+#ifdef LUA_SUPPORT
+	G_LuaHook_ShutdownGame(restart);
+	G_LuaShutdown();
+#endif
 	// Arnout: gametype latching
 	if  (
 	    ((g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_CAMPAIGN) && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_GT_WOLF)) ||
@@ -2368,7 +2399,7 @@ and team change.
 */
 void CalculateRanks(void)
 {
-	int i;
+	int       i;
 	char      teaminfo[TEAM_NUM_TEAMS][256];
 	gclient_t *cl;
 
@@ -4172,4 +4203,7 @@ uebrgpiebrpgibqeripgubeqrpigubqifejbgipegbrtibgurepqgbn%i", level.time)
 		level.gameManager->s.otherEntityNum  = MAX_TEAM_LANDMINES - G_CountTeamLandmines(TEAM_AXIS);
 		level.gameManager->s.otherEntityNum2 = MAX_TEAM_LANDMINES - G_CountTeamLandmines(TEAM_ALLIES);
 	}
+#ifdef LUA_SUPPORT
+	G_LuaHook_RunFrame(levelTime);
+#endif
 }

@@ -39,6 +39,10 @@
 #include "g_etbot_interface.h"
 #endif
 
+#ifdef LUA_SUPPORT
+#include "g_lua.h"
+#endif
+
 // Ridah, new bounding box
 vec3_t playerMins = { -18, -18, -24 };
 vec3_t playerMaxs = { 18, 18, 48 };
@@ -643,7 +647,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 /*
 ================
 reinforce
-	called when time expires for a team deployment cycle and there is at least one guy ready to go
+    called when time expires for a team deployment cycle and there is at least one guy ready to go
 ================
 */
 void reinforce(gentity_t *ent)
@@ -726,15 +730,15 @@ void respawn(gentity_t *ent)
 
 	G_DPrintf("Respawning %s, %i lives left\n", ent->client->pers.netname, ent->client->ps.persistant[PERS_RESPAWNS_LEFT]);
 
-	ClientSpawn(ent, qfalse);
+	ClientSpawn(ent, qfalse, qfalse, qtrue);
 }
 
 /*
 ================
 TeamCount
 
-	Returns number of players on a team
-	NERVE - SMF - merge from team arena
+    Returns number of players on a team
+    NERVE - SMF - merge from team arena
 ================
 */
 team_t TeamCount(int ignoreClientNum, int team)
@@ -1586,20 +1590,20 @@ void ClientUserinfoChanged(int clientNum)
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
 	s = va("n\\%s\\t\\%i\\c\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i",
-		   client->pers.netname,
-		   client->sess.sessionTeam,
-		   client->sess.playerType,
-		   client->sess.rank,
-		   medalStr,
-		   skillStr,
-		   client->disguiseNetname,
-		   client->disguiseRank,
-		   client->sess.playerWeapon,
-		   client->sess.latchPlayerWeapon,
-		   client->sess.latchPlayerWeapon2,
-		   client->sess.muted ? 1 : 0,
-		   client->sess.referee
-		   );
+	       client->pers.netname,
+	       client->sess.sessionTeam,
+	       client->sess.playerType,
+	       client->sess.rank,
+	       medalStr,
+	       skillStr,
+	       client->disguiseNetname,
+	       client->disguiseRank,
+	       client->sess.playerWeapon,
+	       client->sess.latchPlayerWeapon,
+	       client->sess.latchPlayerWeapon2,
+	       client->sess.muted ? 1 : 0,
+	       client->sess.referee
+	       );
 
 
 	trap_GetConfigstring(CS_PLAYERS + clientNum, oldname, sizeof(oldname));
@@ -1610,6 +1614,12 @@ void ClientUserinfoChanged(int clientNum)
 	{
 		return;
 	}
+
+#ifdef LUA_SUPPORT
+	// *LUA* API callbacks
+	// This only gets called when the ClientUserinfo is changed, replicating ETPro's behaviour.
+	G_LuaHook_ClientUserinfoChanged(clientNum);
+#endif
 
 	G_LogPrintf("ClientUserinfoChanged: %i %s\n", clientNum, s);
 	G_DPrintf("ClientUserinfoChanged: %i :: %s\n", clientNum, s);
@@ -1641,6 +1651,9 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	gclient_t *client;
 	char      userinfo[MAX_INFO_STRING];
 	char      cs_name[MAX_NETNAME];
+#ifdef LUA_SUPPORT
+	char reason[MAX_STRING_CHARS] = "";
+#endif
 	gentity_t *ent;
 #ifdef USEXPSTORAGE
 	ipXPStorage_t *xpBackup;
@@ -1662,13 +1675,13 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	}
 
 
-	value = Info_ValueForKey (userinfo, "name");
+	value = Info_ValueForKey(userinfo, "name");
 	Q_strncpyz(cs_name, value, sizeof(cs_name));
 
 	// don't permit long names ... - see also MAX_NETNAME
-	if (strlen(cs_name) >= MAX_NAME_LENGTH )
+	if (strlen(cs_name) >= MAX_NAME_LENGTH)
 	{
-			return "Bad name: Name too long. Please change your name.";
+		return "Bad name: Name too long. Please change your name.";
 	}
 
 	{
@@ -1677,7 +1690,8 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		// Avoid ext. ASCII chars in the CS
 		for (i = 0; i < strlen(cs_name); ++i)
 		{
-			if (cs_name[i] < 0) {// extended ASCII chars have values between -128 and 0 (signed char)
+			if (cs_name[i] < 0)  // extended ASCII chars have values between -128 and 0 (signed char)
+			{
 				return "Bad name: Extended ASCII characters. Please change your name.";
 			}
 		}
@@ -1797,6 +1811,17 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		trap_UnlinkEntity(ent);
 	}
 
+#ifdef LUA_SUPPORT
+	// LUA API callbacks (check with Lua scripts)
+	if (G_LuaHook_ClientConnect(clientNum, firstTime, isBot, reason))
+	{
+		if (!isBot && !(ent->r.svFlags & SVF_BOT))
+		{
+			return va("You are excluded from this server. %s\n", reason);
+		}
+	}
+#endif
+
 	// get and distribute relevent paramters
 	G_LogPrintf("ClientConnect: %i\n", clientNum);
 
@@ -1849,14 +1874,19 @@ and on transition between teams, but doesn't happen on respawns
 */
 void ClientBegin(int clientNum)
 {
-	gentity_t *ent;
-	gclient_t *client;
+	gentity_t *ent    = g_entities + clientNum;
+	gclient_t *client = level.clients + clientNum;
 	int       flags;
 	int       spawn_count, lives_left;
 
-	ent = g_entities + clientNum;
-
-	client = level.clients + clientNum;
+#ifdef LUA_SUPPORT
+	// call LUA clientBegin only once when player connects
+	qboolean firsttime = qfalse;
+	if (client->pers.connected == CON_CONNECTING)
+	{
+		firsttime = qtrue;
+	}
+#endif
 
 	if (ent->r.linked)
 	{
@@ -1905,8 +1935,8 @@ void ClientBegin(int clientNum)
 	client->sess.botPush    = (ent->r.svFlags & SVF_BOT) ? qtrue : qfalse;
 #endif
 
-	// locate ent at a spawn point
-	ClientSpawn(ent, qfalse);
+
+	ClientSpawn(ent, qfalse, qtrue, qtrue);
 
 	// Xian -- Changed below for team independant maxlives
 	if (g_gametype.integer != GT_WOLF_LMS)
@@ -2020,6 +2050,15 @@ void ClientBegin(int clientNum)
 	ent->surfaceFlags = 0;
 
 	G_smvUpdateClientCSList(ent);
+
+#ifdef LUA_SUPPORT
+	//IlDuca - call LUA clientBegin only once
+	if (firsttime == qtrue)
+	{
+		// LUA API callbacks
+		G_LuaHook_ClientBegin(clientNum);
+	}
+#endif
 }
 
 gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spawn_angles)
@@ -2096,7 +2135,7 @@ after the first ClientBegin, and after each respawn
 Initializes all non-persistant parts of playerState
 ============
 */
-void ClientSpawn(gentity_t *ent, qboolean revived)
+void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth)
 {
 	int                index;
 	vec3_t             spawn_origin, spawn_angles;
@@ -2401,10 +2440,16 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 		}
 	}
 
+#ifdef LUA_SUPPORT
+	// *LUA* API callbacks
+	G_LuaHook_ClientSpawn(ent - g_entities, revived, teamChange, restoreHealth);
+#endif
+
 	// run a client frame to drop exactly to the floor,
 	// initialize animations and other things
 	client->ps.commandTime           = level.time - 100;
 	ent->client->pers.cmd.serverTime = level.time;
+
 	ClientThink(ent - g_entities);
 
 	// positively link the client, even if the command times are weird
@@ -2460,6 +2505,11 @@ void ClientDisconnect(int clientNum)
 	{
 		return;
 	}
+
+#ifdef LUA_SUPPORT
+	// LUA API callbacks
+	G_LuaHook_ClientDisconnect(clientNum);
+#endif
 
 #ifdef OMNIBOTS
 	Bot_Event_ClientDisConnected(clientNum);

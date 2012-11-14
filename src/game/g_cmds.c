@@ -37,15 +37,19 @@
 #include "g_etbot_interface.h"
 #endif
 
+#ifdef LUA_SUPPORT
+#include "g_lua.h"
+#endif
+
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
 
 qboolean G_MatchOnePlayer(int *plist, char *err, int len)
 {
 	gclient_t *cl;
-	int *p;
-	char line[MAX_NAME_LENGTH+10];
+	int       *p;
+	char      line[MAX_NAME_LENGTH + 10];
 
-	err[0] = '\0';
+	err[0]  = '\0';
 	line[0] = '\0';
 	if (plist[0] == -1)
 	{
@@ -55,13 +59,13 @@ qboolean G_MatchOnePlayer(int *plist, char *err, int len)
 	if (plist[1] != -1)
 	{
 		Q_strcat(err, len, "more than one player name matches be more specific or use the slot #:\n");
-		for (p = plist;*p != -1; p++)
+		for (p = plist; *p != -1; p++)
 		{
 			cl = &level.clients[*p];
 			if (cl->pers.connected == CON_CONNECTED)
 			{
 				Com_sprintf(line, MAX_NAME_LENGTH + 10, "%2i - %s^7\n", *p, cl->pers.netname);
-				if (strlen(err)+strlen(line) > len)
+				if (strlen(err) + strlen(line) > len)
 				{
 					break;
 				}
@@ -83,14 +87,14 @@ names that are a partial match for s. List is terminated by a -1.
 Returns number of matching clientids.
 ==================
 */
-int ClientNumbersFromString( char *s, int *plist)
+int ClientNumbersFromString(char *s, int *plist)
 {
 	gclient_t *p;
-	int i, found = 0;
-	char s2[MAX_STRING_CHARS];
-	char n2[MAX_STRING_CHARS];
-	char *m;
-	char *end = NULL;
+	int       i, found = 0;
+	char      s2[MAX_STRING_CHARS];
+	char      n2[MAX_STRING_CHARS];
+	char      *m;
+	char      *end = NULL;
 
 	*plist = -1;
 
@@ -104,10 +108,10 @@ int ClientNumbersFromString( char *s, int *plist)
 		if (i >= 0 && i < level.maxclients)
 		{
 			p = &level.clients[i];
-			if(p->pers.connected == CON_CONNECTED || p->pers.connected == CON_CONNECTING)
+			if (p->pers.connected == CON_CONNECTED || p->pers.connected == CON_CONNECTING)
 			{
 				*plist++ = i;
-				*plist = -1;
+				*plist   = -1;
 				return 1;
 			}
 		}
@@ -115,8 +119,11 @@ int ClientNumbersFromString( char *s, int *plist)
 
 	// now look for name matches
 	SanitizeString(s, s2, qtrue);
-	if (strlen(s2) < 1) return 0;
-	for (i=0; i < level.maxclients; ++i)
+	if (strlen(s2) < 1)
+	{
+		return 0;
+	}
+	for (i = 0; i < level.maxclients; ++i)
 	{
 		p = &level.clients[i];
 		if (p->pers.connected != CON_CONNECTED && p->pers.connected != CON_CONNECTING)
@@ -138,7 +145,7 @@ int ClientNumbersFromString( char *s, int *plist)
 
 void G_PlaySound_Cmd(void)
 {
-	char sound[MAX_QPATH], name[MAX_NAME_LENGTH], cmd[32] = {"playsound"};
+	char sound[MAX_QPATH], name[MAX_NAME_LENGTH], cmd[32] = { "playsound" };
 
 	if (trap_Argc() < 2)
 	{
@@ -160,8 +167,8 @@ void G_PlaySound_Cmd(void)
 
 	if (name[0])
 	{
-		int pids[MAX_CLIENTS];
-		char err[MAX_STRING_CHARS];
+		int       pids[MAX_CLIENTS];
+		char      err[MAX_STRING_CHARS];
 		gentity_t *victim;
 
 		if (ClientNumbersFromString(name, pids) != 1)
@@ -191,17 +198,18 @@ void G_PlaySound_Cmd(void)
 ==================
 G_SendScore_Add
 
-	Add score with clientNum at index i of level.sortedClients[] to the string buf.
+    Add score with clientNum at index i of level.sortedClients[] to the string buf.
 
-	returns qtrue if the score was appended to buf, qfalse otherwise.
+    returns qtrue if the score was appended to buf, qfalse otherwise.
 ==================
 */
-qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize) {
+qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
+{
 	gclient_t *cl = &level.clients[level.sortedClients[i]];
-	int ping, respawnsLeft = -1;
-	char entry[128];
-	int totalXP = 0;
-	int	miscFlags = 0; // 1 - ready 2 - is bot
+	int       ping, respawnsLeft = -1;
+	char      entry[128];
+	int       totalXP   = 0;
+	int       miscFlags = 0; // 1 - ready 2 - is bot
 
 	entry[0] = '\0';
 
@@ -211,22 +219,24 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize) {
 	//      send it.  *clientmod*
 /*	if(
 #ifdef MV_SUPPORT
-	G_smvLocateEntityInMVList(ent, level.sortedClients[i], qfalse) ||
+    G_smvLocateEntityInMVList(ent, level.sortedClients[i], qfalse) ||
 #endif
-		cl->sess.sessionTeam == ent->client->sess.sessionTeam ||
-		ent->client->sess.sessionTeam == TEAM_SPECTATOR) {
+        cl->sess.sessionTeam == ent->client->sess.sessionTeam ||
+        ent->client->sess.sessionTeam == TEAM_SPECTATOR) {
 
-		playerClass = cl->sess.playerType;
-	}*/
+        playerClass = cl->sess.playerType;
+    }*/
 
 	// NERVE - SMF - number of respawns left
-	if(g_gametype.integer == GT_WOLF_LMS) {
-		if(g_entities[level.sortedClients[i]].health <= 0) {
+	if (g_gametype.integer == GT_WOLF_LMS)
+	{
+		if (g_entities[level.sortedClients[i]].health <= 0)
+		{
 			respawnsLeft = -2;
 		}
 	}
 
-	if ( cl->pers.connected == CON_CONNECTING )
+	if (cl->pers.connected == CON_CONNECTING)
 	{
 		ping = -1;
 	}
@@ -238,7 +248,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize) {
 		//unlagged - true ping
 	}
 
-	if( g_gametype.integer == GT_WOLF_LMS )
+	if (g_gametype.integer == GT_WOLF_LMS)
 	{
 		totalXP = cl->ps.persistant[PERS_SCORE];
 	}
@@ -246,35 +256,36 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize) {
 	{
 		int j;
 
-		for(j = SK_BATTLE_SENSE; j < SK_NUM_SKILLS; j++)
+		for (j = SK_BATTLE_SENSE; j < SK_NUM_SKILLS; j++)
 		{
 			totalXP += cl->sess.skillpoints[j];
 		}
 	}
 
-	if ( cl->ps.eFlags & EF_READY ) {
+	if (cl->ps.eFlags & EF_READY)
+	{
 		miscFlags |= 1;
 	}
 
-	if ( g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT )
+	if (g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT)
 	{
 		miscFlags |= 2;
 	}
 
 	Com_sprintf(entry,
-		sizeof(entry),
-		" %i %i %i %i %i %i %i",
-		level.sortedClients[i],
-		totalXP,
-		ping,
-		(level.time - cl->pers.enterTime) / 60000,
-		g_entities[level.sortedClients[i]].s.powerups,
-		miscFlags,
-		//playerClass,
-		respawnsLeft
-		);
+	            sizeof(entry),
+	            " %i %i %i %i %i %i %i",
+	            level.sortedClients[i],
+	            totalXP,
+	            ping,
+	            (level.time - cl->pers.enterTime) / 60000,
+	            g_entities[level.sortedClients[i]].s.powerups,
+	            miscFlags,
+	            //playerClass,
+	            respawnsLeft
+	            );
 
-	if((strlen(buf) + strlen(entry) + 1) > bufsize)
+	if ((strlen(buf) + strlen(entry) + 1) > bufsize)
 	{
 		return qfalse;
 	}
@@ -292,65 +303,68 @@ Sends current scoreboard information
 */
 void G_SendScore(gentity_t *ent)
 {
-	int i = 0;
+	int i         = 0;
 	int numSorted = level.numConnectedClients; // send the latest information on all clients
-	int count = 0;
+	int count     = 0;
 	// tjw: commands over 1022 will crash the client so they're
 	//      pruned in trap_SendServerCommand()
 	//      1022 -32 for the startbuffer -3 for the clientNum
-	char	buffer[987];
-	char	startbuffer[32];
+	char buffer[987];
+	char startbuffer[32];
 
-	*buffer = '\0';
+	*buffer      = '\0';
 	*startbuffer = '\0';
 
 	Q_strncpyz(startbuffer, va(
-		"sc0 %i %i",
-		level.teamScores[TEAM_AXIS],
-		level.teamScores[TEAM_ALLIES]),
-		sizeof(startbuffer));
+	               "sc0 %i %i",
+	               level.teamScores[TEAM_AXIS],
+	               level.teamScores[TEAM_ALLIES]),
+	           sizeof(startbuffer));
 
 	// tjw: keep adding scores to the sc0 command until we fill
 	//      up the buffer.  Any scores that are left will be
 	//      added on to the sc1 command.
-	for(; i < numSorted; ++i)
+	for (; i < numSorted; ++i)
 	{
 		// tjw: the old version of SendScore() did this.  I removed it
 		//      originally because it seemed like an unneccessary hack.
 		//      perhaps it is necessary for compat with CG_Argv()?
-		if(count == 33)
+		if (count == 33)
 		{
 			break;
 		}
-		if(!G_SendScore_Add(ent, i, buffer, sizeof(buffer))) {
+		if (!G_SendScore_Add(ent, i, buffer, sizeof(buffer)))
+		{
 			break;
 		}
 		count++;
 	}
-	trap_SendServerCommand(ent-g_entities, va("%s %i%s", startbuffer, count, buffer));
+	trap_SendServerCommand(ent - g_entities, va("%s %i%s", startbuffer, count, buffer));
 
-	if(i == numSorted)
+	if (i == numSorted)
 	{
 		return;
 	}
 
-	count = 0;
-	*buffer = '\0';
+	count        = 0;
+	*buffer      = '\0';
 	*startbuffer = '\0';
 	Q_strncpyz(startbuffer, "sc1", sizeof(startbuffer));
-	for(; i < numSorted; ++i) {
-		if(!G_SendScore_Add(ent, i, buffer, sizeof(buffer)))
+	for (; i < numSorted; ++i)
+	{
+		if (!G_SendScore_Add(ent, i, buffer, sizeof(buffer)))
 		{
 			G_Printf("ERROR: G_SendScore() buffer overflow\n");
 			break;
 		}
 		count++;
 	}
-	if(!count) {
+	if (!count)
+	{
 		return;
 	}
 
-	trap_SendServerCommand(ent-g_entities, va("%s %i%s", startbuffer, count, buffer));
+	trap_SendServerCommand(ent - g_entities, va("%s %i%s", startbuffer, count, buffer));
 }
 
 /*
@@ -3738,6 +3752,8 @@ void Cmd_UnIgnore_f(gentity_t *ent)
 	}
 }
 
+#ifdef DEBUG
+#ifdef OMNIBOTS
 /*
 =================
 Cmd_SwapPlacesWithBot_f
@@ -3809,6 +3825,8 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 	// make sure they dont respawn immediately after they die
 	client->pers.lastReinforceTime = 0;
 }
+#endif
+#endif
 
 /*
 =================
@@ -3827,6 +3845,21 @@ void ClientCommand(int clientNum)
 	}
 
 	trap_Argv(0, cmd, sizeof(cmd));
+
+#ifdef LUA_SUPPORT
+	// LUA API callbacks
+	if (G_LuaHook_ClientCommand(clientNum, cmd))
+	{
+		return;
+	}
+
+	if (Q_stricmp(cmd, "lua_status") == 0)
+	{
+		G_LuaStatus(ent);
+		return;
+	}
+#endif
+
 
 	if (Q_stricmp(cmd, "say") == 0)
 	{

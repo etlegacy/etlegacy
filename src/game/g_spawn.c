@@ -98,29 +98,6 @@ qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *o
 	return present;
 }
 
-// fields are needed for spawning from the entity string
-typedef enum
-{
-	F_INT,
-	F_FLOAT,
-	F_LSTRING,          // string on disk, pointer in memory, TAG_LEVEL
-	F_GSTRING,          // string on disk, pointer in memory, TAG_GAME
-	F_VECTOR,
-	F_ANGLEHACK,
-	F_ENTITY,           // index on disk, pointer in memory
-	F_ITEM,             // index on disk, pointer in memory
-	F_CLIENT,           // index on disk, pointer in memory
-	F_IGNORE
-} fieldtype_t;
-
-typedef struct
-{
-	char *name;
-	int ofs;
-	fieldtype_t type;
-	int flags;
-} field_t;
-
 field_t fields[] =
 {
 	{ "classname",    FOFS(classname),      F_LSTRING   },
@@ -411,7 +388,7 @@ void SP_func_debris(gentity_t *ent);
 // ===================
 
 // forty - etpro mapscripting - spawn function for fakebrushes
-void SP_func_fakebrush( gentity_t *ent );
+void SP_func_fakebrush(gentity_t *ent);
 
 spawn_t spawns[] =
 {
@@ -620,7 +597,7 @@ spawn_t spawns[] =
 	{ "target_explosion",          SP_target_explosion          },
 	{ "misc_landmine",             SP_misc_landmine             },
 
-	{"func_fakebrush",             SP_func_fakebrush            },
+	{ "func_fakebrush",            SP_func_fakebrush            },
 
 	{ 0,                           0                            }
 };

@@ -39,6 +39,10 @@
 #include "g_etbot_interface.h"
 #endif
 
+#ifdef LUA_SUPPORT
+#include "g_lua.h"
+#endif
+
 /*
 ==============================================================================
 
@@ -1331,6 +1335,20 @@ qboolean ConsoleCommand(void)
 	char cmd[MAX_TOKEN_CHARS];
 
 	trap_Argv(0, cmd, sizeof(cmd));
+
+#ifdef LUA_SUPPORT
+	if (!Q_stricmp(cmd, "lua_status"))
+	{
+		G_LuaStatus(NULL);
+		return qtrue;
+	}
+
+	// *LUA* API callbacks
+	if (G_LuaHook_ConsoleCommand(cmd))
+	{
+		return qtrue;
+	}
+#endif
 
 	if (Q_stricmp(cmd, "entitylist") == 0)
 	{

@@ -38,6 +38,10 @@
 #include "g_etbot_interface.h"
 #endif
 
+#ifdef LUA_SUPPORT
+#include "g_lua.h"
+#endif
+
 extern vec3_t muzzleTrace;
 
 /*
@@ -524,6 +528,18 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, obit);
 	}
 
+#ifdef LUA_SUPPORT
+	// pheno: Lua API callbacks
+	// IRATA NQ like rework (Etpro style)
+	if (G_LuaHook_Obituary(self->s.number, killer, meansOfDeath))
+	{
+		if (self->s.number < 0 || self->s.number >= MAX_CLIENTS)
+		{
+			G_Error("G_LuaHook_Obituary: target out of range");
+		}
+	}
+#endif
+
 	// broadcast the death event to everyone
 	ent                    = G_TempEntity(self->r.currentOrigin, EV_OBITUARY);
 	ent->s.eventParm       = meansOfDeath;
@@ -532,6 +548,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	ent->r.svFlags         = SVF_BROADCAST; // send to everyone
 
 	self->enemy = attacker;
+
+	// CHRUKER: b010 - Make sure covert ops lose their disguises
+	self->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 	self->client->ps.persistant[PERS_KILLED]++;
 
@@ -563,11 +582,12 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			{
 				if (attacker->client->pers.localClient)
 				{
-					if(attacker->r.svFlags & SVF_BOT)
+					if (attacker->r.svFlags & SVF_BOT)
 					{
-						trap_SendServerCommand( self-g_entities, "complaint -5" );
+						trap_SendServerCommand(self - g_entities, "complaint -5");
 					}
-					else {
+					else
+					{
 						trap_SendServerCommand(self - g_entities, "complaint -4");
 					}
 				}
@@ -793,7 +813,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	CalculateRanks();
 
 	// Gordon: automatically go to limbo from tank
-	if (killedintank )
+	if (killedintank)
 	{
 		limbo(self, qfalse);   // but no corpse
 	}

@@ -435,7 +435,7 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	memcpy(ammoclip, traceEnt->client->ps.ammoclip, sizeof(int) * MAX_WEAPONS);
 	memcpy(weapons, traceEnt->client->ps.weapons, sizeof(int) * (MAX_WEAPONS / (sizeof(int) * 8)));
 
-	ClientSpawn(traceEnt, qtrue);
+	ClientSpawn(traceEnt, qtrue, qfalse, qtrue);
 
 #ifdef OMNIBOTS
 	Bot_Event_Revived(traceEnt - g_entities, ent);
