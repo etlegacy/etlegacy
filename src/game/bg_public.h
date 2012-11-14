@@ -1384,10 +1384,10 @@ typedef enum
 	IT_AMMO,                // EFX: rotate
 	IT_ARMOR,               // EFX: rotate + minlight
 	IT_HEALTH,              // EFX: static external sphere + rotating internal
-	IT_HOLDABLE,            // obsolete - remove! (also HINT_HOLDABLE)
+	IT_HOLDABLE,            // #100 obsolete - remove! (also HINT_HOLDABLE)
 	                        // EFX: rotate + bob
 	IT_KEY,
-	IT_TREASURE,            // gold bars, etc.  things that can be picked up and counted for a tally at end-level
+	IT_TREASURE,            // #100 obsolete - remove! gold bars, etc.  things that can be picked up and counted for a tally at end-level
 	IT_TEAM,
 } itemType_t;
 
