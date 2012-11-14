@@ -1191,18 +1191,7 @@ static void Svcmd_Kick_f(void)
 				}
 			}
 		}
-		else if (!Q_stricmp(name, "allbots"))
-		{
-			for (i = 0, cl = level.clients; i < level.numConnectedClients; i++, cl++)
-			{
-				if (!(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
-				{
-					continue;
-				}
-				// kick but dont ban bots, they arent that lame
-				trap_DropClient(cl->ps.clientNum, "player kicked", 0);
-			}
-		}
+
 		return;
 	}
 	else

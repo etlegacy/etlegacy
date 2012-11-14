@@ -489,11 +489,6 @@ void G_TouchTriggers(gentity_t *ent)
 		{
 			hit->touch(hit, ent, &trace);
 		}
-
-		if ((ent->r.svFlags & SVF_BOT) && (ent->touch))
-		{
-			ent->touch(ent, hit, &trace);
-		}
 	}
 }
 

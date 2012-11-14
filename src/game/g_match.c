@@ -35,7 +35,6 @@
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
 
-
 void G_initMatch(void)
 {
 	int i;
@@ -45,7 +44,6 @@ void G_initMatch(void)
 		G_teamReset(i, qfalse);
 	}
 }
-
 
 // Setting initialization
 void G_loadMatchGame(void)
@@ -72,9 +70,6 @@ void G_loadMatchGame(void)
 	// Voting flags
 	G_voteFlags();
 
-	// Set version info for demoplayback compatibility
-//  trap_SetConfigstring(CS_OSPVERSION, va("%s", G_BASEVERSION));   // Add more tokens as needed
-
 	// Set up the random reinforcement seeds for both teams and send to clients
 	dwBlueOffset = rand() % MAX_REINFSEEDS;
 	dwRedOffset  = rand() % MAX_REINFSEEDS;
@@ -93,7 +88,6 @@ void G_loadMatchGame(void)
 	trap_SetConfigstring(CS_REINFSEEDS, strReinfSeeds);
 }
 
-
 // Simple alias for sure-fire print :)
 void G_printFull(char *str, gentity_t *ent)
 {
@@ -109,15 +103,14 @@ void G_printFull(char *str, gentity_t *ent)
 	}
 }
 
-
 // Plays specified sound globally.
 void G_globalSound(char *sound)
 {
 	gentity_t *te = G_TempEntity(level.intermission_origin, EV_GLOBAL_SOUND);
+
 	te->s.eventParm = G_SoundIndex(sound);
 	te->r.svFlags  |= SVF_BROADCAST;
 }
-
 
 void G_delayPrint(gentity_t *dpent)
 {
@@ -240,12 +233,10 @@ void G_spawnPrintf(int print_type, int print_time, gentity_t *owner)
 	ent->think     = G_delayPrint;
 }
 
-
 // Records accuracy, damage, and kill/death stats.
 void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 {
 	int dmg, ref;
-
 
 	// Keep track of only active player-to-player interactions in a real game
 	if (!targ || !targ->client ||
@@ -273,7 +264,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 		return;
 	}
 
-//  G_Printf("mod: %d, Index: %d, dmg: %d\n", mod, G_weapStatIndex_MOD(mod), dmg_ref);
+	//  G_Printf("mod: %d, Index: %d, dmg: %d\n", mod, G_weapStatIndex_MOD(mod), dmg_ref);
 
 	// Suicides only affect the player specifically
 	if (targ == attacker || !attacker || !attacker->client || mod == MOD_SUICIDE)
@@ -336,7 +327,6 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 		targ->client->sess.aWeaponStats[ref].deaths++;
 	}
 }
-
 
 // Records weapon headshots
 void G_addStatsHeadShot(gentity_t *attacker, int mod)
@@ -440,7 +430,6 @@ static const weap_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 
 };
 
-
 // Get right stats index based on weapon mod
 unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD)
 {
@@ -453,7 +442,6 @@ unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD)
 		}
 	return(WS_MAX);
 }
-
 
 // Generates weapon stat info for given ent
 char *G_createStats(gentity_t *refEnt)
@@ -511,7 +499,6 @@ char *G_createStats(gentity_t *refEnt)
 	          ));
 }
 
-
 // Resets player's current stats
 void G_deleteStats(int nClient)
 {
@@ -530,7 +517,6 @@ void G_deleteStats(int nClient)
 	memset(&cl->sess.aWeaponStats, 0, sizeof(cl->sess.aWeaponStats));
 	trap_Cvar_Set(va("wstats%i", nClient), va("%d", nClient));
 }
-
 
 // Parses weapon stat info for given ent
 //  ---> The given string must be space delimited and contain only integers
@@ -572,7 +558,6 @@ void G_parseStats(char *pszStatsInfo)
 	    GETVAL(cl->sess.team_damage);
 	}
 }
-
 
 // Prints current player match info.
 //  --> FIXME: put the pretty print on the client
@@ -684,7 +669,6 @@ void G_printMatchInfo(gentity_t *ent)
     CP(va("sc \"%s\n\n\" 0", ((!cnt) ? "^3\nNo scores to report." : "")));
 }
 
-
 // Dumps end-of-match info
 void G_matchInfoDump(unsigned int dwDumpType)
 {
@@ -783,7 +767,6 @@ void G_matchInfoDump(unsigned int dwDumpType)
 	}
 }
 
-
 // Update configstring for vote info
 int G_checkServerToggle(vmCvar_t *cv)
 {
@@ -859,7 +842,6 @@ int G_checkServerToggle(vmCvar_t *cv)
 
     return(qtrue);
 }
-
 
 // Sends a player's stats to the requesting client.
 void G_statsPrint(gentity_t *ent, int nType)
@@ -971,7 +953,6 @@ void G_resetRoundState(void)
         trap_Cvar_Set("g_lms_currentMatch", "0");
 	}
 }
-
 
 void G_resetModeState(void)
 {

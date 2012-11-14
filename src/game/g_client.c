@@ -653,16 +653,6 @@ void reinforce(gentity_t *ent)
 	gclient_t *rclient;
 	char      userinfo[MAX_INFO_STRING], *respawnStr;
 
-	if (ent->r.svFlags & SVF_BOT)
-	{
-		trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
-		respawnStr = Info_ValueForKey(userinfo, "respawn");
-		if (!Q_stricmp(respawnStr, "no") || !Q_stricmp(respawnStr, "off"))
-		{
-			return; // no respawns
-		}
-	}
-
 	if (!(ent->client->ps.pm_flags & PMF_LIMBO))
 	{
 		G_Printf("player already deployed, skipping\n");
@@ -1483,7 +1473,6 @@ void ClientUserinfoChanged(int clientNum)
 	char      medalStr[16] = "";
 	int       characterIndex;
 
-
 	ent    = g_entities + clientNum;
 	client = ent->client;
 
@@ -1596,56 +1585,22 @@ void ClientUserinfoChanged(int clientNum)
 
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
-	if (ent->r.svFlags & SVF_BOT)
-	{
-		// n: netname
-		// t: sessionTeam
-		// c1: color
-		// hc: maxHealth
-		// skill: skill
-		// c: playerType (class?)
-		// r: rank
-		// f: fireteam
-		// bot: botSlotNumber
-		// nwp: noWeapon
-		// m: medals
-		// ch: character
+	s = va("n\\%s\\t\\%i\\c\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i",
+		   client->pers.netname,
+		   client->sess.sessionTeam,
+		   client->sess.playerType,
+		   client->sess.rank,
+		   medalStr,
+		   skillStr,
+		   client->disguiseNetname,
+		   client->disguiseRank,
+		   client->sess.playerWeapon,
+		   client->sess.latchPlayerWeapon,
+		   client->sess.latchPlayerWeapon2,
+		   client->sess.muted ? 1 : 0,
+		   client->sess.referee
+		   );
 
-		s = va("n\\%s\\t\\%i\\skill\\%s\\c\\%i\\r\\%i\\m\\%s\\s\\%s%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i",
-		       client->pers.netname,
-		       client->sess.sessionTeam,
-		       Info_ValueForKey(userinfo, "skill"),
-		       client->sess.playerType,
-		       client->sess.rank,
-		       medalStr,
-		       skillStr,
-		       characterIndex >= 0 ? va("\\ch\\%i", characterIndex) : "",
-		       client->disguiseNetname,
-		       client->disguiseRank,
-		       client->sess.playerWeapon,
-		       client->sess.latchPlayerWeapon,
-		       client->sess.latchPlayerWeapon2,
-		       client->sess.muted ? 1 : 0
-		       );
-	}
-	else
-	{
-		s = va("n\\%s\\t\\%i\\c\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i",
-		       client->pers.netname,
-		       client->sess.sessionTeam,
-		       client->sess.playerType,
-		       client->sess.rank,
-		       medalStr,
-		       skillStr,
-		       client->disguiseNetname,
-		       client->disguiseRank,
-		       client->sess.playerWeapon,
-		       client->sess.latchPlayerWeapon,
-		       client->sess.latchPlayerWeapon2,
-		       client->sess.muted ? 1 : 0,
-		       client->sess.referee
-		       );
-	}
 
 	trap_GetConfigstring(CS_PLAYERS + clientNum, oldname, sizeof(oldname));
 
@@ -1855,7 +1810,8 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	// don't do the "xxx connected" messages if they were caried over from previous level
 	//		TAT 12/10/2002 - Don't display connected messages in single player
-	if (firstTime)
+	// disabled for bots - see join message
+	if (firstTime && !(ent->r.svFlags & SVF_BOT))
 	{
 		trap_SendServerCommand(-1, va("cpm \"%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
 	}
@@ -2272,17 +2228,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	ent->client            = &level.clients[index];
 	ent->takedamage        = qtrue;
 	ent->inuse             = qtrue;
-	if (ent->r.svFlags & SVF_BOT)
-	{
-		ent->classname = "bot";
-	}
-	else
-	{
-		ent->classname = "player";
-	}
-	ent->r.contents = CONTENTS_BODY;
-
-	ent->clipmask = MASK_PLAYERSOLID;
+	ent->classname         = "player";
+	ent->r.contents        = CONTENTS_BODY;
+	ent->clipmask          = MASK_PLAYERSOLID;
 
 	// DHM - Nerve :: Init to -1 on first spawn;
 	if (!revived)
