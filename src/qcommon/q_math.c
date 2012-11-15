@@ -34,10 +34,8 @@
 
 #include "q_shared.h"
 
-
 vec3_t vec3_origin = { 0, 0, 0 };
 vec3_t axisDefault[3] = { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
-
 
 vec4_t colorBlack = { 0, 0, 0, 1 };
 vec4_t colorRed = { 1, 0, 0, 1 };
@@ -105,8 +103,6 @@ vec4_t g_color_table[32] =
 	{ 1.0,  1.0,  0.75, 1.0 },          // N                30
 	{ 1.0,  1.0,  0.5,  1.0 },          // O                31
 };
-
-
 
 vec3_t bytedirs[NUMVERTEXNORMALS] =
 {
@@ -195,18 +191,18 @@ vec3_t bytedirs[NUMVERTEXNORMALS] =
 
 //==============================================================
 
-int     Q_rand(int *seed)
+int Q_rand(int *seed)
 {
 	*seed = (69069 * *seed + 1);
 	return *seed;
 }
 
-float   Q_random(int *seed)
+float Q_random(int *seed)
 {
 	return (Q_rand(seed) & 0xffff) / (float)0x10000;
 }
 
-float   Q_crandom(int *seed)
+float Q_crandom(int *seed)
 {
 	return 2.0 * (Q_random(seed) - 0.5);
 }
@@ -239,7 +235,6 @@ signed short ClampShort(int i)
 	}
 	return i;
 }
-
 
 // this isn't a real cheap function to call!
 int DirToByte(vec3_t dir)
@@ -276,7 +271,6 @@ void ByteToDir(int b, vec3_t dir)
 	}
 	VectorCopy(bytedirs[b], dir);
 }
-
 
 unsigned ColorBytes3(float r, float g, float b)
 {
@@ -327,7 +321,6 @@ float NormalizeColor(const vec3_t in, vec3_t out)
 	}
 	return max;
 }
-
 
 /*
 =====================
@@ -428,11 +421,6 @@ Rotate a point around a vertex
 void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, const vec3_t origin)
 {
 	float tmp[11];
-	//float rad_x, rad_y, rad_z;
-
-	/*rad_x = DEG2RAD( rot_x );
-	rad_y = DEG2RAD( rot_y );
-	rad_z = DEG2RAD( rot_z );*/
 
 	// move pnt to rel{0,0,0}
 	VectorSubtract(pnt, origin, pnt);
@@ -451,7 +439,8 @@ void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, 
 	tmp[10] = pnt[2] * tmp[3];
 
 	// rotate point
-	pnt[0] = (tmp[3] * (tmp[8] - tmp[9]) + pnt[3] * tmp[2]);
+	// pnt[0] = (tmp[3] * (tmp[8] - tmp[9]) + pnt[3] * tmp[2]);
+	pnt[0] = (tmp[3] * (tmp[8] - tmp[9]) + tmp[3] * tmp[2]);
 	pnt[1] = (tmp[0] * (tmp[2] * tmp[8] - tmp[2] * tmp[9] - tmp[10]) + tmp[1] * (tmp[7] + tmp[6]));
 	pnt[2] = (tmp[1] * (-tmp[2] * tmp[8] + tmp[2] * tmp[9] + tmp[10]) + tmp[0] * (tmp[7] + tmp[6]));
 
@@ -466,7 +455,6 @@ RotateAroundDirection
 */
 void RotateAroundDirection(vec3_t axis[3], float yaw)
 {
-
 	// create an arbitrary axis[1]
 	PerpendicularVector(axis[1], axis[0]);
 
@@ -482,8 +470,6 @@ void RotateAroundDirection(vec3_t axis[3], float yaw)
 	// cross to get axis[2]
 	CrossProduct(axis[0], axis[1], axis[2]);
 }
-
-
 
 void vectoangles(const vec3_t value1, vec3_t angles)
 {
@@ -533,7 +519,6 @@ void vectoangles(const vec3_t value1, vec3_t angles)
 	angles[YAW]   = yaw;
 	angles[ROLL]  = 0;
 }
-
 
 /*
 =================
@@ -611,7 +596,6 @@ void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up)
 	VectorNormalize(right);
 	CrossProduct(right, forward, up);
 }
-
 
 void VectorRotate(vec3_t in, vec3_t matrix[3], vec3_t out)
 {
@@ -710,14 +694,12 @@ float AngleSubtract(float a1, float a2)
 	return a;
 }
 
-
 void AnglesSubtract(vec3_t v1, vec3_t v2, vec3_t v3)
 {
 	v3[0] = AngleSubtract(v1[0], v2[0]);
 	v3[1] = AngleSubtract(v1[1], v2[1]);
 	v3[2] = AngleSubtract(v1[2], v2[2]);
 }
-
 
 float AngleMod(float a)
 {
@@ -748,7 +730,6 @@ float AngleNormalize360(float angle)
 	return (360.0 / 65536) * ((int)(angle * (65536 / 360.0)) & 65535);
 }
 
-
 /*
 =================
 AngleNormalize180
@@ -766,7 +747,6 @@ float AngleNormalize180(float angle)
 	return angle;
 }
 
-
 /*
 =================
 AngleDelta
@@ -779,9 +759,7 @@ float AngleDelta(float angle1, float angle2)
 	return AngleNormalize180(angle1 - angle2);
 }
 
-
 //============================================================
-
 
 /*
 =================
@@ -803,7 +781,6 @@ void SetPlaneSignbits(cplane_t *out)
 	}
 	out->signbits = bits;
 }
-
 
 /*
 ==================
@@ -852,7 +829,7 @@ int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 	float dist1, dist2;
 	int   sides;
 
-// fast axial cases
+	// fast axial cases
 	if (p->type < 3)
 	{
 		if (p->dist <= emins[p->type])
@@ -866,7 +843,7 @@ int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 		return 3;
 	}
 
-// general case
+	// general case
 	switch (p->signbits)
 	{
 	case 0:
@@ -1197,7 +1174,6 @@ float RadiusFromBounds(const vec3_t mins, const vec3_t maxs)
 	return VectorLength(corner);
 }
 
-
 void ClearBounds(vec3_t mins, vec3_t maxs)
 {
 	mins[0] = mins[1] = mins[2] = 99999;
@@ -1266,7 +1242,6 @@ qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs)
 	return qtrue;
 }
 
-
 int VectorCompare(const vec3_t v1, const vec3_t v2)
 {
 	if (v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2])
@@ -1276,7 +1251,6 @@ int VectorCompare(const vec3_t v1, const vec3_t v2)
 
 	return 1;
 }
-
 
 vec_t VectorNormalize(vec3_t v)
 {
@@ -1296,10 +1270,10 @@ vec_t VectorNormalize(vec3_t v)
 	return length;
 }
 
-//
+
 // fast vector normalize routine that does not check to make sure
 // that length != 0, nor does it return length
-//
+
 void VectorNormalizeFast(vec3_t v)
 {
 	float ilength;
@@ -1340,7 +1314,6 @@ void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc)
 	vecc[1] = veca[1] + scale * vecb[1];
 	vecc[2] = veca[2] + scale * vecb[2];
 }
-
 
 vec_t _DotProduct(const vec3_t v1, const vec3_t v2)
 {
@@ -1408,7 +1381,6 @@ vec_t DistanceSquared(const vec3_t p1, const vec3_t p2)
 	return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 }
 
-
 void VectorInverse(vec3_t v)
 {
 	v[0] = -v[0];
@@ -1423,7 +1395,6 @@ void Vector4Scale(const vec4_t in, vec_t scale, vec4_t out)
 	out[2] = in[2] * scale;
 	out[3] = in[3] * scale;
 }
-
 
 int Q_log2(int val)
 {
@@ -1455,7 +1426,6 @@ int PlaneTypeForNormal (vec3_t normal) {
 }
 */
 
-
 /*
 ================
 MatrixMultiply
@@ -1473,7 +1443,6 @@ void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3])
 	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] + in1[2][2] * in2[2][1];
 	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] + in1[2][2] * in2[2][2];
 }
-
 
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
 {
@@ -1548,7 +1517,6 @@ void PerpendicularVector(vec3_t dst, const vec3_t src)
 	VectorNormalize(dst);
 }
 
-// Ridah
 /*
 =================
 GetPerpendicularViewVector
@@ -1755,7 +1723,6 @@ float VectorDistanceSquared(vec3_t v1, vec3_t v2)
 	VectorSubtract(v2, v1, dir);
 	return VectorLengthSquared(dir);
 }
-// done.
 
 /*
 ================
