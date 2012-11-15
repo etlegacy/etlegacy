@@ -67,9 +67,9 @@ cvar_t *sv_pure;
 cvar_t *sv_floodProtect;
 cvar_t *sv_allowAnonymous;
 cvar_t *sv_lanForceRate;  // TTimo - dedicated 1 (LAN) server forces local client rates to 99999 (bug #491)
-cvar_t *sv_onlyVisibleClients;  // DHM - Nerve
-cvar_t *sv_friendlyFire;        // NERVE - SMF
-cvar_t *sv_maxlives;            // NERVE - SMF
+cvar_t *sv_onlyVisibleClients;
+cvar_t *sv_friendlyFire;
+cvar_t *sv_maxlives;
 cvar_t *sv_needpass;
 
 cvar_t *sv_dl_maxRate;
@@ -101,6 +101,7 @@ cvar_t *sv_advert;      // 0 - no big brothers
 cvar_t *sv_protect;     // 0 - unprotected
                         // 1 - ioquake3 method (default)
                         // 2 - OPenWolf method
+cvar_t *sv_protectLog;  // name of log file
 
 static void SVC_Status(netadr_t from, qboolean force);
 
@@ -788,12 +789,11 @@ void SVC_Info(netadr_t from)
 	}
 	Info_SetValueForKey(infostring, "sv_allowAnonymous", va("%i", sv_allowAnonymous->integer));
 
-	Info_SetValueForKey(infostring, "friendlyFire", va("%i", sv_friendlyFire->integer));            // NERVE - SMF
-	Info_SetValueForKey(infostring, "maxlives", va("%i", sv_maxlives->integer ? 1 : 0));            // NERVE - SMF
+	Info_SetValueForKey(infostring, "friendlyFire", va("%i", sv_friendlyFire->integer));
+	Info_SetValueForKey(infostring, "maxlives", va("%i", sv_maxlives->integer ? 1 : 0));
 	Info_SetValueForKey(infostring, "needpass", va("%i", sv_needpass->integer ? 1 : 0));
-	Info_SetValueForKey(infostring, "gamename", GAMENAME_STRING);                                 // Arnout: to be able to filter out Quake servers
+	Info_SetValueForKey(infostring, "gamename", GAMENAME_STRING); // Arnout: to be able to filter out Quake servers
 
-	// TTimo
 	antilag = Cvar_VariableString("g_antilag");
 	if (antilag)
 	{
@@ -1140,7 +1140,6 @@ void SV_PacketEvent(netadr_t from, msg_t *msg)
 	// send an out of band disconnect packet to it
 	NET_OutOfBandPrint(NS_SERVER, from, "disconnect");
 }
-
 
 /*
  * @brief Updates the cl->ping variables

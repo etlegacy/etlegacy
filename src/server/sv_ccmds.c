@@ -103,7 +103,7 @@ static void SV_Map_f(void)
 	char     *cmd;
 	char     *map;
 	char     mapname[MAX_QPATH];
-	qboolean killBots, cheat;
+	qboolean cheat;
 	char     expanded[MAX_QPATH];
 
 	map = Cmd_Argv(1);
@@ -149,18 +149,15 @@ static void SV_Map_f(void)
 	if (!Q_stricmp(cmd, "devmap"))
 	{
 		cheat    = qtrue;
-		killBots = qtrue;
 	}
 	else
-	if (!Q_stricmp(Cmd_Argv(0), "spdevmap"))
+	if (!Q_stricmp(cmd, "spdevmap"))
 	{
 		cheat    = qtrue;
-		killBots = qtrue;
 	}
 	else
 	{
 		cheat    = qfalse;
-		killBots = qfalse;
 	}
 
 	// save the map name here cause on a map restart we reload the q3config.cfg
@@ -168,7 +165,7 @@ static void SV_Map_f(void)
 	Q_strncpyz(mapname, map, sizeof(mapname));
 
 	// start up the map
-	SV_SpawnServer(mapname, killBots);
+	SV_SpawnServer(mapname);
 
 	// set the cheat value
 	// if the level was started with "map <levelname>", then
@@ -267,7 +264,7 @@ static void SV_MapRestart_f(void)
 	char        *denied;
 	qboolean    isBot;
 	int         delay = 0;
-	gamestate_t new_gs, old_gs;     // NERVE - SMF
+	gamestate_t new_gs, old_gs;
 
 	// make sure we aren't restarting twice in the same frame
 	if (com_frameTime == sv.serverId)
@@ -281,7 +278,6 @@ static void SV_MapRestart_f(void)
 		Com_Printf("Server is not running.\n");
 		return;
 	}
-
 
 	if (Cmd_Argc() > 1)
 	{
@@ -322,7 +318,7 @@ static void SV_MapRestart_f(void)
 		// restart the map the slow way
 		Q_strncpyz(mapname, Cvar_VariableString("mapname"), sizeof(mapname));
 
-		SV_SpawnServer(mapname, qfalse);
+		SV_SpawnServer(mapname);
 		return;
 	}
 
@@ -592,6 +588,13 @@ Examine the serverinfo string
 */
 static void SV_Serverinfo_f(void)
 {
+	// make sure server is running
+	if (!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running.\n");
+		return;
+	}
+
 	Com_Printf("Server info settings:\n");
 	Info_Print(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
 }
@@ -704,7 +707,7 @@ void SV_AddOperatorCommands(void)
 	Cmd_AddCommand("sectorlist", SV_SectorList_f);
 	Cmd_AddCommand("map", SV_Map_f);
 	Cmd_SetCommandCompletionFunc("map", SV_CompleteMapName);
-	Cmd_AddCommand("gameCompleteStatus", SV_GameCompleteStatus_f);        // NERVE - SMF
+	Cmd_AddCommand("gameCompleteStatus", SV_GameCompleteStatus_f);
 
 	Cmd_AddCommand("devmap", SV_Map_f);
 	Cmd_SetCommandCompletionFunc("devmap", SV_CompleteMapName);

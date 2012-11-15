@@ -118,7 +118,6 @@ typedef struct
 
 	float ucompAve;
 	int ucompNum;
-	// -NERVE - SMF
 
 	md3Tag_t tags[MAX_SERVER_TAGS];
 	tagHeaderExt_t tagHeadersExt[MAX_TAG_FILES];
@@ -323,8 +322,8 @@ extern cvar_t *sv_zombietime;
 extern cvar_t *sv_rconPassword;
 extern cvar_t *sv_privatePassword;
 extern cvar_t *sv_allowDownload;
-extern cvar_t *sv_friendlyFire;         // NERVE - SMF
-extern cvar_t *sv_maxlives;             // NERVE - SMF
+extern cvar_t *sv_friendlyFire;
+extern cvar_t *sv_maxlives;
 extern cvar_t *sv_maxclients;
 extern cvar_t *sv_needpass;
 
@@ -356,7 +355,6 @@ extern cvar_t *g_gameType;
 extern cvar_t *sv_dl_maxRate;
 extern cvar_t *sv_dl_timeout;
 
-// TTimo
 extern cvar_t *sv_wwwDownload; // general flag to enable/disable www download redirects
 extern cvar_t *sv_wwwBaseURL; // the base URL of all the files
 // tell clients to perform their downloads while disconnected from the server
@@ -364,16 +362,16 @@ extern cvar_t *sv_wwwBaseURL; // the base URL of all the files
 extern cvar_t *sv_wwwDlDisconnected;
 extern cvar_t *sv_wwwFallbackURL;
 
-//bani
 extern cvar_t *sv_cheats;
 extern cvar_t *sv_packetloss;
 extern cvar_t *sv_packetdelay;
 
-//fretn
 extern cvar_t *sv_fullmsg;
 
 extern cvar_t *sv_advert;
+
 extern cvar_t *sv_protect;
+extern cvar_t *sv_protectLog;
 
 //===========================================================
 
@@ -385,11 +383,10 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) __attribute_
 void SV_AddOperatorCommands(void);
 void SV_RemoveOperatorCommands(void);
 
-
 void SV_MasterHeartbeat(const char *hbname);
 void SV_MasterShutdown(void);
 
-void SV_MasterGameCompleteStatus(void);       // NERVE - SMF
+void SV_MasterGameCompleteStatus(void);
 
 // sv_init.c
 
@@ -402,7 +399,7 @@ void SV_SetUserinfo(int index, const char *val);
 void SV_GetUserinfo(int index, char *buffer, int bufferSize);
 
 void SV_ChangeMaxClients(void);
-void SV_SpawnServer(char *server, qboolean killBots);
+void SV_SpawnServer(char *server);
 
 // sv_client.c
 
@@ -454,7 +451,7 @@ void SV_InitGameProgs(void);
 void SV_ShutdownGameProgs(void);
 void SV_RestartGameProgs(void);
 qboolean SV_inPVS(const vec3_t p1, const vec3_t p2);
-qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t * or);
+qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *orientation);
 int SV_LoadTag(const char *mod_name);
 
 void SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int commandTime);

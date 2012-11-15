@@ -251,9 +251,7 @@ void SV_CreateBaseline(void)
 		}
 		svent->s.number = entnum;
 
-		//
 		// take current state as baseline
-		//
 		sv.svEntities[entnum].baseline = svent->s;
 	}
 }
@@ -268,9 +266,9 @@ void SV_BoundMaxClients(int minimum)
 {
 	// get the current maxclients value
 #ifdef __MACOS__
-	Cvar_Get("sv_maxclients", "16", 0);           //DAJ HOG
+	Cvar_Get("sv_maxclients", "16", 0);
 #else
-	Cvar_Get("sv_maxclients", "20", 0);           // NERVE - SMF - changed to 20 from 8
+	Cvar_Get("sv_maxclients", "20", 0); // NERVE - SMF - changed to 20 from 8
 #endif
 
 	sv_maxclients->modified = qfalse;
@@ -515,7 +513,7 @@ clients along with it.
 This is NOT called for map_restart
 ================
 */
-void SV_SpawnServer(char *server, qboolean killBots)
+void SV_SpawnServer(char *server)
 {
 	int        i;
 	int        checksum;
@@ -658,11 +656,6 @@ void SV_SpawnServer(char *server, qboolean killBots)
 
 			if (svs.clients[i].netchan.remoteAddress.type == NA_BOT)
 			{
-				if (killBots)
-				{
-					SV_DropClient(&svs.clients[i], "");
-					continue;
-				}
 				isBot = qtrue;
 			}
 			else
@@ -802,9 +795,9 @@ void SV_Init(void)
 	sv_hostname       = Cvar_Get("sv_hostname", "ETHost", CVAR_SERVERINFO | CVAR_ARCHIVE);
 	//
 #ifdef __MACOS__
-	sv_maxclients = Cvar_Get("sv_maxclients", "16", CVAR_SERVERINFO | CVAR_LATCH);                 //DAJ HOG
+	sv_maxclients = Cvar_Get("sv_maxclients", "16", CVAR_SERVERINFO | CVAR_LATCH);
 #else
-	sv_maxclients = Cvar_Get("sv_maxclients", "20", CVAR_SERVERINFO | CVAR_LATCH);                 // NERVE - SMF - changed to 20 from 8
+	sv_maxclients = Cvar_Get("sv_maxclients", "20", CVAR_SERVERINFO | CVAR_LATCH); // NERVE - SMF - changed to 20 from 8
 #endif
 
 	sv_maxRate        = Cvar_Get("sv_maxRate", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
@@ -853,9 +846,9 @@ void SV_Init(void)
 
 	sv_lanForceRate = Cvar_Get("sv_lanForceRate", "1", CVAR_ARCHIVE);
 
-	sv_onlyVisibleClients = Cvar_Get("sv_onlyVisibleClients", "0", 0);         // DHM - Nerve
+	sv_onlyVisibleClients = Cvar_Get("sv_onlyVisibleClients", "0", 0);
 
-	sv_showAverageBPS = Cvar_Get("sv_showAverageBPS", "0", 0);             // NERVE - SMF - net debugging
+	sv_showAverageBPS = Cvar_Get("sv_showAverageBPS", "0", 0); // NERVE - SMF - net debugging
 
 	// NERVE - SMF - create user set cvars
 	Cvar_Get("g_userTimeLimit", "0", 0);
@@ -868,7 +861,6 @@ void SV_Init(void)
 	Cvar_Get("gamestate", "-1", CVAR_WOLFINFO | CVAR_ROM);
 	Cvar_Get("g_currentRound", "0", CVAR_WOLFINFO);
 	Cvar_Get("g_nextTimeLimit", "0", CVAR_WOLFINFO);
-	// -NERVE - SMF
 
 	Cvar_Get("g_fastres", "0", CVAR_ARCHIVE);
 	Cvar_Get("g_fastResMsec", "1000", CVAR_ARCHIVE);
@@ -891,7 +883,6 @@ void SV_Init(void)
 	sv_wwwDlDisconnected = Cvar_Get("sv_wwwDlDisconnected", "0", CVAR_ARCHIVE);
 	sv_wwwFallbackURL    = Cvar_Get("sv_wwwFallbackURL", "", CVAR_ARCHIVE);
 
-	//bani
 	sv_packetloss  = Cvar_Get("sv_packetloss", "0", CVAR_CHEAT);
 	sv_packetdelay = Cvar_Get("sv_packetdelay", "0", CVAR_CHEAT);
 
@@ -900,7 +891,9 @@ void SV_Init(void)
 	sv_fullmsg = Cvar_Get("sv_fullmsg", "Server is full.", CVAR_ARCHIVE);
 
 	sv_advert  = Cvar_Get("sv_advert", "1", CVAR_ARCHIVE);
-	sv_protect = Cvar_Get("sv_protect", "1", CVAR_ARCHIVE);
+
+	sv_protect    = Cvar_Get("sv_protect", "1", CVAR_ARCHIVE);
+	sv_protectLog = Cvar_Get("sv_protectLog", "sv_attack.log", CVAR_ARCHIVE);
 
 	// init the botlib here because we need the pre-compiler in the UI
 	SV_BotInitBotLib();

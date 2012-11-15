@@ -286,7 +286,6 @@ void BotImport_BSPModelMinsMaxsOrigin(int modelnum, vec3_t angles, vec3_t outmin
 	if ((angles[0] || angles[1] || angles[2]))
 	{
 		// expand for rotation
-
 		max = RadiusFromBounds(mins, maxs);
 		for (i = 0; i < 3; i++)
 		{
@@ -381,7 +380,7 @@ int BotImport_DebugPolygonCreate(int color, int numPoints, vec3_t *points)
 	poly->color     = color;
 	poly->numPoints = numPoints;
 	memcpy(poly->points, points, numPoints * sizeof(vec3_t));
-	//
+
 	return i;
 }
 

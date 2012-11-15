@@ -764,7 +764,7 @@ SV_GetTag
 */
 extern qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *or);
 
-qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *or)
+qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *orientation)
 {
 	int i;
 
@@ -774,10 +774,10 @@ qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_
 		{
 			if (!Q_stricmp(sv.tags[i].name, tagname))
 			{
-				VectorCopy(sv.tags[i].origin, or->origin);
-				VectorCopy(sv.tags[i].axis[0], or->axis[0]);
-				VectorCopy(sv.tags[i].axis[1], or->axis[1]);
-				VectorCopy(sv.tags[i].axis[2], or->axis[2]);
+				VectorCopy(sv.tags[i].origin, orientation->origin);
+				VectorCopy(sv.tags[i].axis[0], orientation->axis[0]);
+				VectorCopy(sv.tags[i].axis[1], orientation->axis[1]);
+				VectorCopy(sv.tags[i].axis[2], orientation->axis[2]);
 				return qtrue;
 			}
 		}
@@ -791,7 +791,7 @@ qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_
 		return qfalse;
 	}
 
-	return CL_GetTag(clientNum, tagname, or);
+	return CL_GetTag(clientNum, tagname, orientation);
 #else
 	return qfalse;
 #endif
