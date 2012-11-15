@@ -320,6 +320,7 @@ static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sh
 	// if we are full, silently discard entities
 	if (eNums->numSnapshotEntities == MAX_SNAPSHOT_ENTITIES)
 	{
+		Com_Printf("Warning: MAX_SNAPSHOT_ENTITIES reached. Ignoring ent.\n");
 		return;
 	}
 
