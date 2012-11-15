@@ -37,10 +37,8 @@
 
 extern botlib_export_t *botlib_export;
 
-// NERVE - SMF
 void Key_GetBindingBuf(int keynum, char *buf, int buflen);
 void Key_KeynumToStringBuf(int keynum, char *buf, int buflen);
-// -NERVE - SMF
 
 // ydnar: can we put this in a header, pls?
 void Key_GetBindingByString(const char *binding, int *key1, int *key2);
@@ -202,7 +200,7 @@ void CL_SetUserCmdValue(int userCmdValue, int flags, float sensitivityScale, int
 	cl.cgameUserCmdValue  = userCmdValue;
 	cl.cgameFlags         = flags;
 	cl.cgameSensitivity   = sensitivityScale;
-	cl.cgameMpIdentClient = mpIdentClient;              // NERVE - SMF
+	cl.cgameMpIdentClient = mpIdentClient;
 }
 
 /*
@@ -345,7 +343,7 @@ qboolean CL_GetServerCommand(int serverCommandNumber)
 	s                             = clc.serverCommands[serverCommandNumber & (MAX_RELIABLE_COMMANDS - 1)];
 	clc.lastExecutedServerCommand = serverCommandNumber;
 
-	if (cl_showServerCommands->integer)             // NERVE - SMF
+	if (cl_showServerCommands->integer)
 	{
 		Com_DPrintf("serverCommand: %i : %s\n", serverCommandNumber, s);
 	}
@@ -498,8 +496,6 @@ void CL_SetExpectedHunkUsage(const char *mapname)
 	// just set it to a negative number,so the cgame knows not to draw the percent bar
 	com_expectedhunkusage = -1;
 }
-
-// dhm - nerve
 
 /*
 ====================
@@ -745,10 +741,10 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_S_UPDATEENTITYPOSITION:
 		S_UpdateEntityPosition(args[1], VMA(2));
 		return 0;
-// Ridah, talking animations
+	// Ridah, talking animations
 	case CG_S_GETVOICEAMPLITUDE:
 		return S_GetVoiceAmplitude(args[1]);
-// done.
+
 	case CG_S_GETSOUNDLENGTH:
 		return S_GetSoundLength(args[1]);
 
@@ -1089,10 +1085,10 @@ void CL_UpdateLevelHunkUsage(void)
 			if (!Q_stricmp(token, cl.mapname))
 			{
 				// found a match
-				token = COM_Parse(&buftrav);    // read the size
+				token = COM_Parse(&buftrav); // read the size
 				if (token && token[0])
 				{
-					if (atoi(token) == memusage)        // if it is the same, abort this process
+					if (atoi(token) == memusage) // if it is the same, abort this process
 					{
 						Z_Free(buf);
 						Z_Free(outbuf);
@@ -1100,7 +1096,7 @@ void CL_UpdateLevelHunkUsage(void)
 					}
 				}
 			}
-			else        // send it to the outbuf
+			else // send it to the outbuf
 			{
 				Q_strcat(outbuftrav, len + 1, token);
 				Q_strcat(outbuftrav, len + 1, " ");
@@ -1428,7 +1424,6 @@ void CL_SetCGameTime(void)
 	if (clc.demoplaying && cl_freezeDemo->integer)
 	{
 		// cl_freezeDemo is used to lock a demo in place for single frame advances
-
 	}
 	else
 	{
@@ -1514,12 +1509,12 @@ void CL_SetCGameTime(void)
 CL_GetTag
 ====================
 */
-qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *or)
+qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientation)
 {
 	if (!cgvm)
 	{
 		return qfalse;
 	}
 
-	return VM_Call(cgvm, CG_GET_TAG, clientNum, tagname, or);
+	return VM_Call(cgvm, CG_GET_TAG, clientNum, tagname, orientation);
 }

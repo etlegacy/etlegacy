@@ -762,7 +762,7 @@ SV_GetTag
   return qfalse if unable to retrieve tag information for this client
 ====================
 */
-extern qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *or);
+extern qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientation);
 
 qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *orientation)
 {
