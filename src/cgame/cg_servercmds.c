@@ -2059,10 +2059,14 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 
             if (!fFull)
             {
-                txt_dump("\n\n");
+                txt_dump("\n\n\n");
 			}
+            else
+            {
+            	txt_dump("\n");
+            }
 
-            txt_dump(va("\n^3Damage Given: ^7%-6d  ^3Team Damage: ^7%d\n", dmg_given, team_dmg));
+            txt_dump(va("^3Damage Given: ^7%-6d  ^3Team Damage: ^7%d\n", dmg_given, team_dmg));
             txt_dump(va("^3Damage Recvd: ^7%d\n", dmg_rcvd));
 		}
 	}
@@ -2071,6 +2075,10 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
     {
         txt_dump("\n\n\n");
 	}
+    else
+    {
+    	txt_dump("\n");
+    }
 
     // Derive XP from individual skill XP
     dwSkillPointMask = atoi(CG_Argv(iArg++));
@@ -2083,7 +2091,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 		}
 	}
 
-    txt_dump(va("\n^2Rank: ^7%s (%d XP)\n", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp));
+    txt_dump(va("^2Rank: ^7%s (%d XP)\n", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp));
 
     if (!fFull)
     {
