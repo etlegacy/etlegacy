@@ -51,31 +51,20 @@
 
 #define SPRINTTIME 20000.0f
 
-#define DEBUG_BOT_RETREATBEHAVIOR 1
-
 #define DEFAULT_GRAVITY     800
 #define FORCE_LIMBO_HEALTH  -75
 #define GIB_HEALTH          -175
-#define ARMOR_PROTECTION    0.66
 
 #define HOLDBREATHTIME      12000
 
 #define MAX_ITEMS           256
 
-#define MAX_FIRETEAM_MEMBERS    6
-
 #define RANK_TIED_FLAG      0x4000
 
-//#define	ITEM_RADIUS			15		// item sizes are needed for client side pickup detection
-#define ITEM_RADIUS     10 // Rafael changed the radius so that the items would fit in the 3 new containers
+#define	ITEM_RADIUS			10		// item sizes are needed for client side pickup detection
+                                    // Rafael changed the radius so that the items would fit in the 3 new containers
 
-// RF, zombie getup
-//#define	TIMER_RESPAWN	(38*(1000/15)+100)
-
-
-#define FLAMETHROWER_RANGE  2500        // DHM - Nerve :: multiplayer range, was 850 in SP
-
-#define SCORE_NOT_PRESENT   -9999   // for the CS_SCORES[12] when only one player is present
+#define FLAMETHROWER_RANGE  2500    // DHM - Nerve :: multiplayer range, was 850 in SP
 
 #define VOTE_TIME           30000   // 30 seconds before vote times out
 
@@ -151,7 +140,6 @@ typedef enum
 #define ZOOM_YAW_AMPLITUDE          0.7f
 #define ZOOM_YAW_FREQUENCY          0.12f
 #define ZOOM_YAW_MIN_AMPLITUDE      0.2f
-
 
 #define MAX_OBJECTIVES      8
 #define MAX_OID_TRIGGERS    18
@@ -446,6 +434,7 @@ typedef struct
 	int lastRecoilDeltaTime;
 
 	qboolean releasedFire;
+
 } pmoveExt_t;   // data used both in client and server - store it here
                 // instead of playerstate to prevent different engine versions of playerstate between XP and MP
 
@@ -637,7 +626,6 @@ typedef enum
 	//			id and DM don't want references to 'keys' in the game.
 	//			I'll change to 'INV' as the item becomes 'permanent' and not a test item.
 
-
 	KEY_NONE,
 	KEY_1,      // skull
 	KEY_2,      // chalice
@@ -663,7 +651,6 @@ typedef enum
 {
 	HI_NONE,
 
-//	HI_TELEPORTER,
 	HI_MEDKIT,
 
 	// new for Wolf
@@ -687,7 +674,6 @@ typedef enum
 
 // NOTE: we can only use up to 15 in the client-server stream
 // SA NOTE: should be 31 now (I added 1 bit in msg.c)
-// RF NOTE: if this changes, please update etmain\botfiles\inv.h
 typedef enum
 {
 	WP_NONE,                // 0
@@ -841,7 +827,7 @@ extern int weapAlts[];  // defined in bg_misc.c
 #define IS_AUTORELOAD_WEAPON(weapon) \
     (   \
         weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
-        weapon == WP_THOMPSON || weapon == WP_STEN      || \
+        weapon == WP_THOMPSON || weapon == WP_STEN          || \
         weapon == WP_KAR98    || weapon == WP_CARBINE       || weapon == WP_GARAND_SCOPE  || \
         weapon == WP_FG42     || weapon == WP_K43           || weapon == WP_MOBILE_MG42   || \
         weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
@@ -1283,7 +1269,6 @@ typedef struct
 } weap_ws_t;
 
 extern const weap_ws_t aWeaponInfo[WS_MAX];
-// OSP
 
 // means of death
 typedef enum
@@ -1536,9 +1521,6 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce);
 //#define ARENAS_PER_TIER		4
 #define MAX_ARENAS          64
 #define MAX_ARENAS_TEXT     8192
-
-#define MAX_BOTS            64
-#define MAX_BOTS_TEXT       8192
 
 #define MAX_CAMPAIGNS_TEXT  8192
 
@@ -1901,27 +1883,6 @@ typedef struct bg_character_s
 	animModelInfo_t *animModelInfo;
 } bg_character_t;
 
-/*
-==============================================================
-SAVE
-
-    12 -
-    13 - (SA) added 'episode' tracking to savegame
-    14 - RF added 'skill'
-    15 - (SA) moved time info above the main game reading
-    16 - (SA) added fog
-    17 - (SA) rats, changed fog.
-    18 - TTimo targetdeath fix
-       show_bug.cgi?id=434
-    30 - Arnout: initial Enemy Territory implementation
-    31 - Arnout: added new global fog
-
-==============================================================
-*/
-
-#define SAVE_VERSION            31
-#define SAVE_INFOSTRING_LENGTH  256
-
 //------------------------------------------------------------------
 // Global Function Decs
 
@@ -2053,15 +2014,9 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill);
 void BG_InitLocations(vec2_t world_mins, vec2_t world_maxs);
 char *BG_GetLocationString(vec_t *pos);
 
-typedef struct botpool_x
-{
-	int num;
-	int playerclass;
-	int rank;
-	struct botpool_x *next;
-} botpool_t;
 
-#define MAX_FIRETEAMS       12
+#define MAX_FIRETEAMS           12
+#define MAX_FIRETEAM_MEMBERS    6
 
 extern const char *bg_fireteamNames[MAX_FIRETEAMS / 2];
 
