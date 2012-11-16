@@ -163,8 +163,6 @@ const char *ftMenuRootStringsAlphachars[] =
 	NULL
 };
 
-
-
 const char *ftMenuSoliderStrings[] =
 {
 	"Cover Me",
@@ -188,8 +186,6 @@ const char *ftMenuSoliderStringsMsg[] =
 	"FTMortar",
 	NULL
 };
-
-
 
 const char *ftMenuMedicStrings[] =
 {
@@ -252,7 +248,6 @@ const char *ftMenuEngineerStringsMsg[] =
 	NULL
 };
 
-
 const char *ftMenuFieldOpsStrings[] =
 {
 	"Call Air-Strike",
@@ -279,7 +274,6 @@ const char *ftMenuFieldOpsStringsMsg[] =
 	"FTResupplyMe",
 	NULL
 };
-
 
 const char *ftMenuCovertOpsStrings[] =
 {

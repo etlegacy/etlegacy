@@ -28,24 +28,12 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file cg_fireteamoverlay.c
+ * @file cg_fireteamoverlay.c - teh firetams! (sic)
  */
-
-/******************************************************************************
-***** teh firetams! (sic)
-****/
 
 #include "cg_local.h"
 
-/******************************************************************************
-***** Defines, constants, etc
-****/
-
 static int sortedFireTeamClients[MAX_CLIENTS];
-
-/******************************************************************************
-***** Support Routines
-****/
 
 int QDECL CG_SortFireTeam(const void *a, const void *b)
 {
@@ -323,9 +311,7 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos, int max)
 	return NULL;
 }
 
-/******************************************************************************
-***** Main Functions
-****/
+// Main Functions
 
 #define FT_BAR_YSPACING 2.f
 #define FT_BAR_HEIGHT 10.f

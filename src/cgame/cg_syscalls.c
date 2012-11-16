@@ -244,12 +244,10 @@ void trap_S_StartSoundVControl(vec3_t origin, int entityNum, int entchannel, sfx
 	syscall(CG_S_STARTSOUND, origin, entityNum, entchannel, sfx, volume);
 }
 
-//----(SA)  added
 void trap_S_StartSoundEx(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags)
 {
 	syscall(CG_S_STARTSOUNDEX, origin, entityNum, entchannel, sfx, flags, 127 /* Gordon: default volume always for the moment*/);
 }
-//----(SA)  end
 
 void trap_S_StartSoundExVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags, int volume)
 {
@@ -296,7 +294,6 @@ int trap_S_GetVoiceAmplitude(int entityNum)
 {
 	return syscall(CG_S_GETVOICEAMPLITUDE, entityNum);
 }
-// done.
 
 void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater)
 {
@@ -334,7 +331,6 @@ int trap_S_StartStreamingSound(const char *intro, const char *loop, int entnum, 
 	return syscall(CG_S_STARTSTREAMINGSOUND, intro, loop, entnum, channel, attenuation);
 }
 
-//----(SA)  added
 qboolean trap_R_GetSkinModel(qhandle_t skinid, const char *type, char *name)
 {
 	return syscall(CG_R_GETSKINMODEL, skinid, type, name);
@@ -344,7 +340,6 @@ qhandle_t trap_R_GetShaderFromModel(qhandle_t modelid, int surfnum, int withligh
 {
 	return syscall(CG_R_GETMODELSHADER, modelid, surfnum, withlightmap);
 }
-//----(SA)  end
 
 void trap_R_ClearScene(void)
 {
@@ -366,12 +361,10 @@ void trap_R_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 	syscall(CG_R_ADDPOLYBUFFERTOSCENE, pPolyBuffer);
 }
 
-// Ridah
 void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys)
 {
 	syscall(CG_R_ADDPOLYSTOSCENE, hShader, numVerts, verts, numPolys);
 }
-// done.
 
 // ydnar: new dlight system
 //% void    trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b, int overdraw ) {
@@ -383,19 +376,15 @@ void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, flo
 	        PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), hShader, flags);
 }
 
-//----(SA)
 void trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible)
 {
 	syscall(CG_R_ADDCORONATOSCENE, org, PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), PASSFLOAT(scale), id, visible);
 }
-//----(SA)
 
-//----(SA)
 void trap_R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density)
 {
 	syscall(CG_R_SETFOG, fogvar, var1, var2, PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), PASSFLOAT(density));
 }
-//----(SA)
 
 void trap_R_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque)
 {
@@ -407,13 +396,11 @@ void trap_R_RenderScene(const refdef_t *fd)
 	syscall(CG_R_RENDERSCENE, fd);
 }
 
-// Mad Doctor I, 11/4/2002.
 void trap_R_SaveViewParms()
 {
 	syscall(CG_R_SAVEVIEWPARMS);
 }
 
-// Mad Doctor I, 11/4/2002.
 void trap_R_RestoreViewParms()
 {
 	syscall(CG_R_RESTOREVIEWPARMS);
@@ -487,7 +474,7 @@ static qboolean   skiponeget;
 #endif // FAKELAG
 #endif // _DEBUG
 
-void        trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime)
+void trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime)
 {
 	syscall(CG_GETCURRENTSNAPSHOTNUMBER, snapshotNumber, serverTime);
 
@@ -520,7 +507,7 @@ void        trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime)
 #endif // FAKELAG
 }
 
-qboolean    trap_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
+qboolean trap_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
 {
 #ifndef FAKELAG
 	return syscall(CG_GETSNAPSHOT, snapshotNumber, snapshot);
@@ -789,7 +776,6 @@ void trap_TranslateString(const char *string, char *buf)
 {
 	syscall(CG_TRANSLATE_STRING, string, buf);
 }
-// -NERVE - SMF
 
 // Media register functions
 #ifdef _DEBUG

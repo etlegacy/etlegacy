@@ -697,7 +697,6 @@ void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 		            shader
 		            );
 	}
-
 }
 
 /*
@@ -1156,7 +1155,6 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 pass:
 		continue;
 	}
-
 }
 
 /*
@@ -1684,6 +1682,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 
 /*
 CG_Shard
+
     We should keep this separate since there will be considerable differences
     in the physical properties of shard vrs debris. not to mention the fact
     there is no way we can quantify what type of effects the designers will
@@ -2730,7 +2729,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			Q_strcat(tempStr, sizeof(tempStr), ".wav");
 			s = tempStr;
 		}
-		// done.
+
 		if (cgs.gameSounds[sound])
 		{
 			trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, cgs.gameSounds[sound], volume);

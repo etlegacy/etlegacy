@@ -2112,7 +2112,7 @@ void CG_LimboPanel_WeaponPanel_DrawWeapon(rectDef_t *rect, weapon_t weap, qboole
 	}
 
 	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, shader);
-//  CG_DrawRect( rect->x, rect->y, rect->w, rect->h, 1, colorWhite );
+
 	if (wt->desc)
 	{
 		if (highlight && BG_CursorInRect(rect))
@@ -2203,7 +2203,6 @@ void CG_LimboPanel_Border_Draw(panel_button_t *button)
 {
 	CG_DrawBorder(button->rect.x, button->rect.y, button->rect.w, button->rect.h, qtrue, qtrue);
 }
-
 
 void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 {
@@ -2517,8 +2516,6 @@ qboolean CG_LimboPanel_RenderCounter_StartSet(panel_button_t *button)
 	return qfalse;
 }
 
-
-
 void CG_LimboPanel_RenderMedal(panel_button_t *button)
 {
 	CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.medal_back);
@@ -2811,7 +2808,6 @@ qboolean CG_LimboPanel_Draw(void)
 {
 	static panel_button_t *lastHighlight;
 	panel_button_t        *hilight;
-//  panel_button_t** buttons = limboPanelButtons;
 
 	hilight = BG_PanelButtonsGetHighlightButton(limboPanelButtons);
 	if (hilight && hilight != lastHighlight)
@@ -2821,7 +2817,6 @@ qboolean CG_LimboPanel_Draw(void)
 
 	if (cg.limboEndCinematicTime > cg.time)
 	{
-		//% CG_DrawPic( LIMBO_3D_X, LIMBO_3D_Y, LIMBO_3D_W, LIMBO_3D_H, cgs.media.limboRadioBroadcast );
 		CG_DrawPic(LIMBO_3D_X + 4, LIMBO_3D_Y - 8, LIMBO_3D_W - 8, LIMBO_3D_W - 8, cgs.media.limboRadioBroadcast);
 	}
 

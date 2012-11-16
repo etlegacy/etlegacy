@@ -293,7 +293,6 @@ static void CG_EntityEffects(centity_t *cent)
 		int cl;
 		int i, r, g, b;
 
-
 		if (cent->dl_stylestring[0] != 0)      // it's probably a dlight
 		{
 			CG_AddLightstyle(cent);
@@ -354,23 +353,22 @@ static void CG_EntityEffects(centity_t *cent)
 		{
 			cent->lastTrailTime = cg.time + 100;
 
-// JPW NERVE -- use wind vector for smoke
+			// JPW NERVE -- use wind vector for smoke
 			CG_GetWindVector(dir);
 			VectorScale(dir, 20, dir); // was 75, before that 55
 			if (dir[2] < 10)
 			{
 				dir[2] += 10;
 			}
-//          dir[0] = crandom() * 10;
-//          dir[1] = crandom() * 10;
-//          dir[2] = 10 + rnd * 30;
-// jpw
+			//          dir[0] = crandom() * 10;
+			//          dir[1] = crandom() * 10;
+			//          dir[2] = 10 + rnd * 30;
 			CG_SmokePuff(cent->lerpOrigin, dir, 15 + (random() * 10),
 			             0.3 + rnd, 0.3 + rnd, 0.3 + rnd, 0.4, 1500 + (rand() % 500),
 			             cg.time, cg.time + 500, 0, cgs.media.smokePuffShader);
 		}
 	}
-	// dhm - end
+
 	// JPW NERVE same thing but for smoking barrels instead of nasty server-side effect from single player
 	else if (cent->currentState.eFlags & EF_SMOKINGBLACK)
 	{
@@ -415,7 +413,6 @@ static void CG_General(centity_t *cent)
 	memset(&ent, 0, sizeof(ent));
 
 	// set frame
-
 	ent.frame    = s1->frame;
 	ent.oldframe = ent.frame;
 	ent.backlerp = 0;
@@ -764,7 +761,6 @@ static void CG_Item(centity_t *cent)
 			VectorScale(stand.axis[1], 1.5, stand.axis[1]);
 			VectorScale(stand.axis[2], 1.5, stand.axis[2]);
 
-//----(SA)  modified
 			if (cent->currentState.frame)
 			{
 				CG_PositionEntityOnTag(&ent, &stand, va("tag_stand%d", cent->currentState.frame), 0, NULL);
@@ -773,11 +769,9 @@ static void CG_Item(centity_t *cent)
 			{
 				CG_PositionEntityOnTag(&ent, &stand, "tag_stand", 0, NULL);
 			}
-//----(SA)  end
 
 			VectorCopy(ent.origin, ent.oldorigin);
 			ent.nonNormalizedAxes = qtrue;
-
 		}
 		else                                    // then default to laying it on it's side
 		{
@@ -810,7 +804,6 @@ static void CG_Item(centity_t *cent)
 				}
 			}
 		}
-
 	}
 	else
 	{
@@ -909,7 +902,7 @@ static void CG_Item(centity_t *cent)
 			}
 		}
 
-//----(SA)  added fixed item highlight fading
+		//----(SA)  added fixed item highlight fading
 
 		if (highlight)
 		{
@@ -939,8 +932,6 @@ static void CG_Item(centity_t *cent)
 			ent.hilightIntensity = 1.0;
 		}
 	}
-//----(SA)  end
-
 
 	// add to refresh list
 	trap_R_AddRefEntityToScene(&ent);
@@ -1107,7 +1098,7 @@ static void CG_Missile(centity_t *cent)
 		                       weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2], 0, 0);
 	}
 
-//----(SA)  whoops, didn't mean to check it in with the missile flare
+	//----(SA)  whoops, didn't mean to check it in with the missile flare
 
 	// add missile sound
 	if (weapon->missileSound)
@@ -1310,7 +1301,6 @@ static void CG_Missile(centity_t *cent)
 		// add to refresh list, possibly with quad glow
 		CG_AddRefEntityWithPowerups(&ent, s1->powerups, TEAM_FREE, s1, vec3_origin);
 	}
-
 }
 
 // DHM - Nerve :: capture and hold flag
@@ -1326,8 +1316,6 @@ static animation_t multi_flagpoleAnims[] =
 	{ 0, "", 510, 15,  0,   1000 / 15, 1000 / 15 },                  // (axis flag falling)
 	{ 0, "", 530, 15,  0,   1000 / 15, 1000 / 15 }                   // (american flag falling)
 };
-
-// dhm - end
 
 extern void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, float speedScale);
 
@@ -1452,14 +1440,13 @@ static void CG_Corona(centity_t *cent)
 	}
 	// yeah, I could calc side planes to clip against, but would that be worth it? (much better than dumb dot>= thing?)
 
-//  CG_Printf("dot: %f\n", dot);
+	//  CG_Printf("dot: %f\n", dot);
 
 	if (cg_coronas.integer == 2)       // if set to '2' trace everything
 	{
 		behind = qfalse;
 		toofar = qfalse;
 	}
-
 
 	if (!behind && !toofar)
 	{
@@ -1549,7 +1536,6 @@ static void CG_Explosive(centity_t *cent)
 
 	s1 = &cent->currentState;
 
-
 	// create the render entity
 	memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
@@ -1604,12 +1590,12 @@ static void CG_Constructible(centity_t *cent)
 	memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
 	VectorCopy(cent->lerpOrigin, ent.oldorigin);
-//  VectorCopy( ent.origin, cent->lerpOrigin);
+	//  VectorCopy( ent.origin, cent->lerpOrigin);
 	AnglesToAxis(cent->lerpAngles, ent.axis);
 
 	ent.renderfx = RF_NOSHADOW;
 
-//  CG_Printf( "Adding constructible: %s\n", CG_ConfigString( CS_OID_NAMES + cent->currentState.otherEntityNum2 ) );
+	//  CG_Printf( "Adding constructible: %s\n", CG_ConfigString( CS_OID_NAMES + cent->currentState.otherEntityNum2 ) );
 
 	if (s1->modelindex)
 	{
@@ -1693,7 +1679,6 @@ static void CG_Mover(centity_t *cent)
 		ent.hModel = cgs.gameModels[s1->modelindex];
 	}
 
-	// Rafael
 	//  testing for mike to get movers to scale
 	if (cent->currentState.density & 1)
 	{
@@ -1918,7 +1903,7 @@ void CG_Beam_2(centity_t *cent)
 	VectorCopy(origin, ent.origin);
 	VectorCopy(origin2, ent.oldorigin);
 
-//  CG_Printf( "O: %i %i %i OO: %i %i %i\n", (int)origin[0], (int)origin[1], (int)origin[2], (int)origin2[0], (int)origin2[1], (int)origin2[2] );
+	//  CG_Printf( "O: %i %i %i OO: %i %i %i\n", (int)origin[0], (int)origin[1], (int)origin[2], (int)origin2[0], (int)origin2[1], (int)origin2[2] );
 	AxisClear(ent.axis);
 	ent.reType       = RT_RAIL_CORE;
 	ent.customShader = cgs.gameShaders[s1->modelindex2];
@@ -2217,7 +2202,6 @@ void CG_Cabinet(centity_t *cent, cabinetType_t type)
 	memset(&mini_me, 0, sizeof(mini_me));
 
 	cabinet.hModel = cabinetInfo[type].model;
-//  cabinet.hModel =    cabinetInfo[type].itemmodels[0];
 	cabinet.frame    = 0;
 	cabinet.oldframe = 0;
 	cabinet.backlerp = 0.f;
@@ -2419,7 +2403,6 @@ void CG_CalcEntityLerpPositions(centity_t *cent)
 		CG_InterpolateEntityPosition(cent);
 		return;
 	}
-	// -NERVE - SMF
 
 	// backup
 	VectorCopy(cent->lerpAngles, cent->lastLerpAngles);
@@ -2460,7 +2443,7 @@ static void CG_ProcessEntity(centity_t *cent)
 	case ET_TELEPORT_TRIGGER:
 	case ET_OID_TRIGGER:
 	case ET_AI_EFFECT:
-	case ET_EXPLOSIVE_INDICATOR:        // NERVE - SMF
+	case ET_EXPLOSIVE_INDICATOR:
 	case ET_CONSTRUCTIBLE_INDICATOR:
 	case ET_TANK_INDICATOR:
 	case ET_TANK_INDICATOR_DEAD:
@@ -2740,7 +2723,6 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
 				VectorClear(cent->lerpAngles);
 			}
 			cent->moving = qtrue;
-
 		}
 		else
 		{
@@ -2878,7 +2860,6 @@ void CG_AddPacketEntities(void)
 {
 	int           num;
 	playerState_t *ps;
-	//int                   clcount;
 
 	// set cg.frameInterpolation
 	if (cg.nextSnap)
@@ -2950,6 +2931,7 @@ void CG_AddPacketEntities(void)
 void CGRefEntityToTag(refEntity_t *ent, tag_t *tag)
 {
 	int i;
+
 	VectorCopy(ent->origin, tag->origin);
 	for (i = 0; i < 3; i++)
 	{
@@ -2960,6 +2942,7 @@ void CGRefEntityToTag(refEntity_t *ent, tag_t *tag)
 void CGTagToRefEntity(refEntity_t *ent, tag_t *tag)
 {
 	int i;
+
 	VectorCopy(tag->origin, ent->origin);
 	for (i = 0; i < 3; i++)
 	{

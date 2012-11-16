@@ -154,6 +154,7 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 	{
 		int    contents;
 		vec3_t end;
+
 		VectorCopy(cent->lerpOrigin, end);
 		end[2]  -= 24;
 		contents = CG_PointContents(end, 0);
@@ -207,7 +208,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 	AnglesToAxis(cent->lerpAngles, v);
 
-// JPW NERVE new brass handling behavior because the SP stuff just doesn't cut it for MP
+	// JPW NERVE new brass handling behavior because the SP stuff just doesn't cut it for MP
 	if (cent->currentState.eFlags & EF_MG42_ACTIVE || cent->currentState.eFlags & EF_AAGUN_ACTIVE)
 	{
 		offset[0]             = 25;
@@ -275,7 +276,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 	VectorCopy(re->origin, le->pos.trBase);
 
-	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME))         //----(SA)    modified since slime is no longer deadly
+	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME)) //----(SA)    modified since slime is no longer deadly
 	{ //  if ( CG_PointContents( re->origin, -1 ) & CONTENTS_WATER ) {
 		waterScale = 0.10;
 	}
@@ -525,7 +526,6 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 	// drop fire trail sprites
 	for ( ; t <= ent->trailTime ; t += step)
 	{
-
 		BG_EvaluateTrajectory(&es->pos, t, lastPos, qfalse, es->effect2Time);
 		rnd = random();
 
@@ -930,7 +930,6 @@ void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type)      //-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
 
 /*
 ======================
@@ -1004,7 +1003,6 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 
 	for (i = 0 ; i < MAX_WP_ANIMATIONS  ; i++)
 	{
-
 		token = COM_Parse(&text_p);     // first frame
 		if (!token)
 		{
@@ -2678,7 +2676,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 	}
 
-	// Ridah
 	firing = ((cent->currentState.eFlags & EF_FIRING) != 0);
 
 	if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weapon == WP_MORTAR_SET && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
@@ -5085,8 +5082,6 @@ CG_Weapon_f
 void CG_Weapon_f(void)
 {
 	int num;
-//  int bank = 0, cycle = 0, newbank = 0, newcycle = 0;
-//  qboolean banked = qfalse;
 
 	if (!cg.snap)
 	{
@@ -5111,7 +5106,6 @@ void CG_Weapon_f(void)
 	}
 
 	num = atoi(CG_Argv(1));
-
 
 	// weapon bind should execute weaponbank instead -- for splitting out class weapons, per Id request
 	if (num < MAX_WEAP_BANKS_MP)
@@ -5237,7 +5231,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			cg.weaponSelect = equiv = getAltWeapon(cg.weaponSelect);      // base any further changes on the parent
 			if (CG_WeaponSelectable(equiv))          // the parent was selectable, drop back to that
 			{
-				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);   //----(SA)
+				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
 				return;
 			}
 		}
@@ -5248,7 +5242,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 		if (equiv != cg.weaponSelect && CG_WeaponSelectable(equiv))
 		{
 			cg.weaponSelect = equiv;
-			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);   //----(SA)
+			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
 			return;
 		}
 	}
@@ -5520,7 +5514,7 @@ void CG_FireWeapon(centity_t *cent)
 
 	if (cent->currentState.clientNum == cg.snap->ps.clientNum)
 	{
-		cg.lastFiredWeapon = ent->weapon;   //----(SA)  added
+		cg.lastFiredWeapon = ent->weapon;
 	}
 
 	// mark the entity as muzzle flashing, so when it is added it will
@@ -6327,7 +6321,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		return;
 		break;
 	}
-	// done.
+
 
 	if (sfx)
 	{
@@ -6864,7 +6858,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 	trace_t trace, trace2;
 	int sourceContentType, destContentType;
 	vec3_t dir;
-	vec3_t start, trend;      // JPW
+	vec3_t start, trend;
 	vec4_t projection;
 	static int lastBloodSpat;
 	centity_t *cent;
@@ -6959,10 +6953,10 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 	if (flesh)
 	{
 		vec3_t origin;
-		localEntity_t *le; // JPW NERVE
-		float rnd, tmpf; // JPW NERVE
-		vec3_t smokedir, tmpv, tmpv2; // JPW NERVE
-		int i, headshot; // JPW NERVE
+		localEntity_t *le;
+		float rnd, tmpf;
+		vec3_t smokedir, tmpv, tmpv2;
+		int i, headshot;
 
 		if (fleshEntityNum < MAX_CLIENTS)
 		{
@@ -7017,7 +7011,6 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 				le = CG_SmokePuff(origin, tmpv, 5 + rnd * 10, rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, 0.125f, 500 + (rand() % 300), cg.time, 0, 0, cgs.media.smokePuffShader);
 			}
 		}
-// jpw
 
 		// play the bullet hit flesh sound
 		// HACK, if this is not us getting hit, make it quieter // JPW NERVE pulled hack, we like loud impact sounds for MP

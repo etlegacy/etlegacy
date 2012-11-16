@@ -55,10 +55,8 @@ static void CG_ResetEntity(centity_t *cent)
 
 	cent->trailTime = cg.snap->serverTime;
 
-	// Ridah
 	cent->headJuncIndex  = 0;
 	cent->headJuncIndex2 = 0;
-	// done.
 
 	VectorCopy(cent->currentState.origin, cent->lerpOrigin);
 	VectorCopy(cent->currentState.angles, cent->lerpAngles);
@@ -84,7 +82,6 @@ static void CG_ResetEntity(centity_t *cent)
 	cent->moving     = qfalse;
 	cent->akimboFire = qfalse;
 }
-
 
 /*
 ===============
@@ -137,7 +134,6 @@ static void CG_TransitionEntity(centity_t *cent)
 	CG_CheckEvents(cent);
 }
 
-
 /*
 ==================
 CG_SetInitialSnapshot
@@ -158,7 +154,7 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 
 	cg.snap = snap;
 
-//  trap_S_ClearSounds( qtrue );
+	//  trap_S_ClearSounds( qtrue );
 
 	BG_PlayerStateToEntityState(&snap->ps, &cg_entities[snap->ps.clientNum].currentState, qfalse);
 
@@ -241,9 +237,7 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 			CG_ShowHelp_On(&cg.demohelpWindow);
 		}
 	}
-	// OSP
 }
-
 
 /*
 ===================
@@ -363,9 +357,7 @@ static void CG_TransitionSnapshot(void)
 			CG_TransitionPlayerState(ps, ops);
 		}
 	}
-
 }
-
 
 /*
 ===================
@@ -432,7 +424,6 @@ static void CG_SetNextSnap(snapshot_t *snap)
 	// sort out solid entities
 	CG_BuildSolidList();
 }
-
 
 /*
 ========================
@@ -508,7 +499,6 @@ static snapshot_t *CG_ReadNextSnapshot(void)
 	// nothing left to read
 	return NULL;
 }
-
 
 /*
 ============
@@ -619,5 +609,4 @@ void CG_ProcessSnapshots(void)
 	{
 		CG_Error("CG_ProcessSnapshots: cg.nextSnap->serverTime <= cg.time\n");
 	}
-
 }

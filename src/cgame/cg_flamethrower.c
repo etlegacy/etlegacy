@@ -999,10 +999,8 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 				}
 			}
 
-
 			if (!skip)
 			{
-
 				// just call this for damage checking
 				//if (!f->ignitionOnly)
 				//CG_AddFlameSpriteToScene( f, f->lifeFrac, -1 );
@@ -1405,7 +1403,7 @@ CG_UpdateFlamethrowerSounds
 */
 void CG_UpdateFlamethrowerSounds(void)
 {
-	flameChunk_t *f, *trav; // , *lastSoundFlameChunk=NULL; // TTimo: unused
+	flameChunk_t *f, *trav;
 #define MIN_BLOW_VOLUME     30
 
 	// draw each of the headFlameChunk's

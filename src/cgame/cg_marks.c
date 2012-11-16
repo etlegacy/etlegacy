@@ -42,7 +42,6 @@ MARK POLYS
 ===================================================================
 */
 
-
 markPoly_t cg_activeMarkPolys;          // double linked list
 markPoly_t *cg_freeMarkPolys;           // single linked list
 markPoly_t cg_markPolys[MAX_MARK_POLYS];
@@ -70,7 +69,6 @@ void    CG_InitMarkPolys(void)
 		lasttrav           = trav;
 	}
 }
-
 
 /*
 ==================
@@ -135,8 +133,6 @@ markPoly_t *CG_AllocMark(int endTime)
 	return le;
 }
 
-
-
 /*
 CG_ImpactMark()
 projection is a normal and distance (not a plane, but rather how far to project)
@@ -150,10 +146,6 @@ if lifeTime < 0, then generate a temporary mark
 //#define	MAX_MARK_FRAGMENTS	128
 //#define	MAX_MARK_POINTS		384
 
-// these are ignored now for the most part
-//#define	MARK_TOTAL_TIME		20000	// (SA) made this a cvar: cg_markTime  (we could cap the time or remove marks quicker if too long a time starts to cause new marks to not appear)
-#define MARK_FADE_TIME      10000
-
 // comment out to use old-style mark code
 #define YDNAR_DECAL_MARKS
 
@@ -165,7 +157,6 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 	vec4_t color;
 	int    fadeTime;
 	vec3_t points[4];
-
 
 	/* early out */
 	if (lifeTime == 0)
@@ -190,12 +181,6 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 	/* create the full polygon */
 	for (i = 0; i < 3; i++)
 	{
-		/* old */
-		//%	points[ 0 ][ i ] = pushedOrigin[ i ] - radius * axis[ 1 ][ i ] - radius * axis[ 2 ][ i ];
-		//%	points[ 1 ][ i ] = pushedOrigin[ i ] + radius * axis[ 1 ][ i ] - radius * axis[ 2 ][ i ];
-		//%	points[ 2 ][ i ] = pushedOrigin[ i ] + radius * axis[ 1 ][ i ] + radius * axis[ 2 ][ i ];
-		//%	points[ 3 ][ i ] = pushedOrigin[ i ] - radius * axis[ 1 ][ i ] + radius * axis[ 2 ][ i ];
-
 		/* new */
 		points[0][i] = pushedOrigin[i] - radius * axis[1][i] - radius * axis[2][i];
 		points[1][i] = pushedOrigin[i] - radius * axis[1][i] + radius * axis[2][i];
@@ -362,14 +347,11 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 }
 #endif
 
-
-
 /*
 ===============
 CG_AddMarks
 ===============
 */
-
 void CG_AddMarks(void)
 {
 	int        j;

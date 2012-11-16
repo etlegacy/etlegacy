@@ -48,7 +48,6 @@ void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y)
 	*coord_y = CC_2D_Y + ((*coord_y - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * CC_2D_H;
 }
 
-// START    xkan, 9/19/2002
 //static float automapZoom = 3.583; // apporoximately 1.2^7
 static float automapZoom = 5.159;
 
@@ -171,7 +170,6 @@ void CG_AdjustAutomapZoom(int zoomIn)
 	// recalculate the screen coordinates since the zoom changed
 	CG_TransformAutomapEntity();
 }
-// END      xkan, 9/19/2002
 
 void CG_ParseMapEntity(int *mapEntityCount, int *offset, team_t team)
 {
@@ -461,7 +459,6 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 	}
 }
 
-
 #define COMMANDMAP_PLAYER_ICON_SIZE 6
 #define AUTOMAP_PLAYER_ICON_SIZE 5
 
@@ -559,7 +556,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				return;
 			}
 		}
-
 
 		// now check to see if the entity is within our clip region
 		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor))
@@ -660,7 +656,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				if (!scissor)
 				{
 					CG_Text_Paint_Ext(string_pos[0], string_pos[1], 0.2f, 0.2f, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-//                  CG_DrawStringExt_Shadow( string_pos[0], string_pos[1], ci->name, colorWhite, qfalse, 1, 8, 12, 0 );
 				}
 
 				if (cent->voiceChatSpriteTime > cg.time)
@@ -1032,9 +1027,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend)
 {
-	int        i /*, j = 1*/;
+	int        i;
 	snapshot_t *snap;
-//  vec4_t c_clr = {1.f, 1.f, 1.f, 1.f};
 	mapEntityData_t *mEnt = &mapEntities[0];
 	int             icon_size;
 	int             exspawn;
@@ -1166,7 +1160,6 @@ void CG_DrawExpandedAutoMap(void)
 	float x, y, w, h;
 	float b_x, b_y, b_w, b_h;
 	float s1, t1, s2, t2;
-//  vec4_t colour = { 1.f, 1.f, 1.f, .5f };
 
 	x = SCREEN_WIDTH + 10.f;
 	y = 20.f;
@@ -1565,7 +1558,6 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 		}
 		else
 		{
-
 			//vec4_t colour = { .77f, .1f, .1f, 1.f };
 			vec4_t colour = { 1.f, 1.f, 1.f, 1.f };
 			vec3_t point;
@@ -1843,6 +1835,7 @@ void CG_CommandCentreClick(int key)
 
 char      cg_highlightText[256];
 rectDef_t cg_highlightTextRect;
+
 void CG_CommandMap_SetHighlightText(const char *text, float x, float y)
 {
 	Q_strncpyz(cg_highlightText, text, sizeof(cg_highlightText));

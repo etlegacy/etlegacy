@@ -35,7 +35,6 @@
 
 #include "cg_local.h"
 
-
 /*
 ==================
 CG_BubbleTrail
@@ -77,8 +76,7 @@ void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing)
 
 		re->reType   = RT_SPRITE;
 		re->rotation = 0;
-//		re->radius = 3;
-		re->radius        = size; // (SA)
+		re->radius        = size;
 		re->customShader  = cgs.media.waterBubbleShader;
 		re->shaderRGBA[0] = 0xff;
 		re->shaderRGBA[1] = 0xff;
@@ -92,8 +90,8 @@ void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing)
 		VectorCopy(move, le->pos.trBase);
 		le->pos.trDelta[0] = crandom() * 3;
 		le->pos.trDelta[1] = crandom() * 3;
-//		le->pos.trDelta[2] = crandom()*5 + 6;
-		le->pos.trDelta[2] = crandom() * 5 + 20;  // (SA)
+		//		le->pos.trDelta[2] = crandom()*5 + 6;
+		le->pos.trDelta[2] = crandom() * 5 + 20;
 
 		VectorAdd(move, vec, move);
 	}
@@ -147,11 +145,11 @@ localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel,
 	{
 		le->lifeRate = 1.0 / (le->endTime - le->startTime);
 	}
+
 	le->color[0] = r;
 	le->color[1] = g;
 	le->color[2] = b;
 	le->color[3] = a;
-
 
 	le->pos.trType = TR_LINEAR;
 	le->pos.trTime = startTime;
@@ -296,7 +294,6 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 	ex->pos.trTime = cg.time;
 	VectorCopy(newOrigin, ex->pos.trBase);
 	VectorScale(dir, 48, ex->pos.trDelta);
-	// done.
 
 	ex->color[0] = ex->color[1] = ex->color[2] = 1.0;
 
@@ -441,7 +438,6 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
-	// le->endTime = le->startTime + 60000 + random() * 60000;
 	le->endTime    = le->startTime + 20000 + (crandom() * 5000);
 	le->breakCount = breakCount;
 	le->sizeScale  = sizeScale;
@@ -491,12 +487,8 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 	}
 }
 
-//#define	GIB_VELOCITY	250
-//#define	GIB_JUMP		250
-
 #define GIB_VELOCITY    75
 #define GIB_JUMP        250
-
 
 /*
 ==============
@@ -640,7 +632,6 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 	bg_character_t *character;
 	vec4_t         projection, color;
 
-	// Rafael
 	// BloodCloud
 	qboolean newjunction[MAXJUNCTIONS];
 	vec3_t   junctionOrigin[MAXJUNCTIONS];
@@ -831,7 +822,6 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 	}
 }
 
-
 /*
 ==============
 CG_SparklerSparks
@@ -851,7 +841,6 @@ void CG_SparklerSparks(vec3_t origin, int count)
 
 	for (i = 0; i < count; i++)
 	{
-
 		// spawn the spark
 		le = CG_AllocLocalEntity();
 		re = &le->refEntity;
@@ -869,7 +858,6 @@ void CG_SparklerSparks(vec3_t origin, int count)
 		VectorNormalize(le->pos.trDelta);
 		VectorScale(le->pos.trDelta, FUSE_SPARK_SPEED, le->pos.trDelta);
 		le->pos.trTime = cg.time;
-
 	}
 }
 
@@ -962,6 +950,7 @@ void CG_ProjectedSpotLight(vec3_t start, vec3_t dir)
 
 #define MAX_SPOT_SEGS 20
 #define MAX_SPOT_RANGE 2000
+
 /*
 ==============
 CG_Spotlight
@@ -980,17 +969,11 @@ CG_Spotlight
     SL_LOCKUV			- lock the texture coordinates at the 'true' length of the requested beam.
     SL_NOCORE			- don't draw the center 'core' beam
 
-
-
-
-
-
   I know, this is a bit kooky right now.  It evolved big, but now that I know what it should do, it'll get
   crunched down to a bunch of table driven stuff.  once it works, I'll make it work well...
 
 ==============
 */
-
 void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightDir, int segs, float range, int startWidth, float coneAngle, int flags)
 {
 	int         i, j;
@@ -1093,7 +1076,6 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 		beamLen = range;
 	}
 
-
 	if (flags & SL_LOCKUV)
 	{
 		if (beamLen < range)
@@ -1101,7 +1083,6 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 			endAlpha = 255.0f * (color[3] - (color[3] * beamLen / range));
 		}
 	}
-
 
 	if (segs >= MAX_SPOT_SEGS)
 	{
@@ -1148,9 +1129,8 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 	coreEndRadius = VectorLength(coreverts[3].xyz);
 #define CORESCALE 0.6f
 
-//
-//	generate the flat beam 'core'
-//
+	//	generate the flat beam 'core'
+
 	if (!(flags & SL_NOCORE))
 	{
 		VectorSubtract(start, cg.refdef_current->vieworg, v1);
@@ -1183,12 +1163,7 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 		trap_R_AddPolyToScene(cgs.media.spotLightBeamShader, 4, &coreverts[0]);
 	}
 
-
-//
-// generate the beam cylinder
-//
-
-
+	// generate the beam cylinder
 
 	for (i = 0; i <= segs; i++)
 	{
@@ -1201,7 +1176,6 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 
 	for (i = 0; i < segs; i++)
 	{
-
 		j = (i * 4);
 
 		VectorCopy(start_points[i], verts[(i * 4)].xyz);
@@ -1260,7 +1234,6 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 		trap_R_AddPolyToScene(cgs.media.spotLightBeamShader, segs, &plugVerts[0]);
 	}
 
-
 	// show the endpoint
 
 	if (!(flags & SL_NOIMPACT))
@@ -1281,8 +1254,6 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 		}
 	}
 
-
-
 	// add d light at end
 	if (!(flags & SL_NODLIGHT))
 	{
@@ -1290,8 +1261,6 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 		VectorMA(tr.endpos, 0, lightDir, dlightLoc);      // back away from the hit
 		trap_R_AddLightToScene(dlightLoc, radius * 2, 0.3, 1.0, 1.0, 1.0, 0, 0);
 	}
-
-
 
 	// draw flare at source
 	if (!(flags & SL_NOFLARE))
@@ -1326,7 +1295,6 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 			{
 				lightInEyes = qfalse;
 			}
-
 		}
 
 		if (lightInEyes)
@@ -1345,9 +1313,7 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 			trap_R_AddCoronaToScene(start, colorNorm[0], colorNorm[1], colorNorm[2], 0, cent->currentState.number, qfalse);
 		}
 	}
-
 }
-
 
 
 /*
@@ -1361,11 +1327,9 @@ void CG_RumbleEfx(float pitch, float yaw)
 	float  yawRandom;
 	vec3_t recoil;
 
-	//
 	pitchRecoilAdd = 0;
 	pitchAdd       = 0;
 	yawRandom      = 0;
-	//
 
 	if (pitch < 1)
 	{

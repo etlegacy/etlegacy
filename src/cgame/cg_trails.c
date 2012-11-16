@@ -184,11 +184,10 @@ trailJunc_t *CG_SpawnTrailJunc(trailJunc_t *headJunc)
 	numTrailsInuse++;
 
 	// debugging
-//  CG_Printf( "NumTrails: %i\n", numTrailsInuse );
+	//  CG_Printf( "NumTrails: %i\n", numTrailsInuse );
 
 	return j;
 }
-
 
 /*
 ===============
@@ -226,7 +225,7 @@ int CG_AddTrailJunc(int headJuncIndex, void *usedby, qhandle_t shader, int spawn
 	j = CG_SpawnTrailJunc(headJunc);
 	if (!j)
 	{
-//      CG_Printf("couldnt spawn trail junc\n");
+		// CG_Printf("couldnt spawn trail junc\n");
 		return 0;
 	}
 
@@ -884,7 +883,6 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 			CG_AddTrailToScene(trail, iteration + 1, numJuncs);
 		}
 	}
-
 }
 
 /*

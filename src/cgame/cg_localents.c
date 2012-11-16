@@ -117,7 +117,7 @@ localEntity_t *CG_AllocLocalEntity(void)
 
 	// Ridah, debugging
 	localEntCount++;
-//  trap_Print( va("AllocLocalEntity: locelEntCount = %d\n", localEntCount) );
+	//  trap_Print( va("AllocLocalEntity: locelEntCount = %d\n", localEntCount) );
 
 	le                   = cg_freeLocalEntities;
 	cg_freeLocalEntities = cg_freeLocalEntities->next;
@@ -218,7 +218,6 @@ void CG_BloodTrail(localEntity_t *le)
 		                                    col, col,
 		                                    0, 0);
 #endif
-
 	}
 }
 
@@ -392,12 +391,11 @@ void CG_AddFragment(localEntity_t *le)
 	vec3_t      newOrigin;
 	trace_t     trace;
 	refEntity_t *re;
-	float       flameAlpha = 0.0;     // TTimo: init
+	float       flameAlpha = 0.0;
 	vec3_t      flameDir;
 	qboolean    hasFlame = qfalse;
 	int         i;
 
-	// Ridah
 	re = &le->refEntity;
 	if (!re->fadeStartTime || re->fadeEndTime < le->endTime)
 	{
@@ -837,7 +835,6 @@ void CG_AddSparkElements(localEntity_t *le)
 			return;
 		}
 	}
-
 }
 
 /*
@@ -875,7 +872,6 @@ void CG_AddFuseSparkElements(localEntity_t *le)
 
 		le->lastTrailTime = time;
 	}
-
 }
 
 /*

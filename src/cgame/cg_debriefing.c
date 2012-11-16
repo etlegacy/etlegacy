@@ -200,10 +200,6 @@ panel_button_t debriefPlayerHeaderBackBorder =
 	NULL,
 };
 
-
-
-
-
 panel_button_t debriefPlayerSkillsBackBorderLower =
 {
 	NULL,
@@ -255,10 +251,6 @@ panel_button_t debriefPlayerSkillsBackBorder =
 	BG_PanelButtonsRender_Img,
 	NULL,
 };
-
-
-
-
 
 panel_button_t debriefPlayerWeaponStatsHeader =
 {
@@ -350,9 +342,6 @@ panel_button_t debriefPlayerWeaponStatsListScroll =
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
 };
-
-
-
 
 panel_button_t debriefTitleWindow =
 {
@@ -483,9 +472,6 @@ panel_button_t debriefMissionStatsLoser =
 	CG_Debriefing2TeamSkillXP_Draw,
 	NULL,
 };
-
-
-
 
 panel_button_t debriefPlayerListWindow =
 {
@@ -626,9 +612,6 @@ panel_button_t debriefPlayerListScroll =
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
 };
-
-
-
 
 panel_button_text_t debriefPlayerInfoFont =
 {
@@ -778,7 +761,6 @@ panel_button_t *debriefPanelButtons[] =
 	NULL
 };
 
-
 panel_button_t teamDebriefOutcome =
 {
 	"white",
@@ -791,9 +773,6 @@ panel_button_t teamDebriefOutcome =
 	CG_TeamDebriefingOutcome_Draw,
 	NULL,
 };
-
-
-
 
 panel_button_t teamDebriefMapListBackBorderLower =
 {
@@ -922,8 +901,6 @@ panel_button_t teamDebriefMapWinnerText =
 	CG_TeamDebriefingMapWinner_Draw,
 	NULL,
 };
-
-
 
 panel_button_t teamDebriefMapWinnerBackBorderLower =
 {
@@ -1078,14 +1055,6 @@ panel_button_t *teamDebriefPanelButtons[] =
 	NULL
 };
 
-
-
-
-
-
-
-
-
 panel_button_text_t chatPanelButtonFont =
 {
 	0.20f,          0.20f,
@@ -1101,7 +1070,6 @@ panel_button_text_t chatPanelButtonFontRed =
 	0,              ITEM_ALIGN_CENTER,
 	DB_MASTER_FONT,
 };
-
 
 panel_button_t chatPanelWindow =
 {
@@ -1222,7 +1190,6 @@ panel_button_t charPanelEdit =
 
 void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 {
-//  qboolean useCvar = button->data[0] ? qfalse : qtrue;
 	int        offset = -1;
 	char       buffer[256 + 1];
 	const char *cs;
@@ -1270,7 +1237,6 @@ void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 		cs = "";
 		break;
 	}
-
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->scaley, button->font->colour, cs, 0, 0, button->font->style, button->font->font);
 }
@@ -1343,7 +1309,6 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 		}
 	}
 }
-
 
 panel_button_t *chatPanelButtons[] =
 {
@@ -1540,7 +1505,6 @@ void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button)
 	int   i;
 	float y   = button->rect.y + 12;
 	int   pos = 0;
-//  float x;
 
 	if (!cgs.dbWeaponStatsRecieved)
 	{
@@ -1566,7 +1530,6 @@ void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button)
 		y += 12;
 	}
 }
-
 
 const char *CG_Debriefing_TimeToString(float msec)
 {
@@ -1630,7 +1593,6 @@ void CG_DebriefingTitle_Draw(panel_button_t *button)
 	}
 	else
 	{
-
 		s   = CG_ConfigString(CS_MULTI_MAPWINNER);
 		buf = Info_ValueForKey(s, "winner");
 
@@ -1741,24 +1703,6 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 		y += 12;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 int QDECL CG_SortPlayersByXP(const void *a, const void *b)
 {
@@ -2028,7 +1972,6 @@ void CG_Debriefing_MouseEvent(int x, int y)
 		break;
 	}
 
-
 	cgs.cursorX += x;
 	if (cgs.cursorX < 0)
 	{
@@ -2155,7 +2098,6 @@ void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 		trap_R_SetColor(clr);
 		for (i = ci->skill[button->data[0]]; i < 4; i++)
 		{
-
 			CG_DrawPicST(x, button->rect.y, button->rect.w, button->rect.h, 0, 0, 1.f, 0.5f, cgs.media.limboStar_roll);
 
 			x += button->rect.w + 2;
@@ -2163,7 +2105,6 @@ void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 		trap_R_SetColor(NULL);
 	}
 }
-
 
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 {
@@ -2186,7 +2127,6 @@ void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
-
 
 void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 {
@@ -2358,7 +2298,6 @@ void CG_Debriefing_ChatButton_Draw(panel_button_t *button)
 	CG_PanelButtonsRender_Button_Ext(&button->rect, str);
 }
 
-
 void CG_QuickMessage_f(void);
 
 qboolean CG_Debriefing_ReadyButton_KeyDown(panel_button_t *button, int key)
@@ -2523,7 +2462,6 @@ void CG_TeamDebriefingOutcome_Draw(panel_button_t *button)
 		}
 	}
 }
-
 
 void CG_TeamDebriefingMapList_Draw(panel_button_t *button)
 {
@@ -2702,7 +2640,6 @@ void CG_PanelButtonsRender_Window_Ext(rectDef_t *r, const char *text, int align,
 		CG_Text_Paint_Ext(x, r->y + yofs, fontscale, fontscale, clrTxtBck, text, 0, 0, 0, &cgs.media.limboFont1);
 	}
 }
-
 
 void CG_PanelButtonsRender_Window(panel_button_t *button)
 {

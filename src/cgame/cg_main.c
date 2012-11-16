@@ -1206,7 +1206,6 @@ static void CG_RegisterSounds(void)
 		}
 	}
 
-	// OSP
 	cgs.media.countFight   = trap_S_RegisterSound( "sound/osp/fight.wav",qfalse);
 	cgs.media.countPrepare = trap_S_RegisterSound( "sound/osp/prepare.wav",qfalse);
 	cgs.media.goatAxis     = trap_S_RegisterSound( "sound/osp/goat.wav", qfalse);
@@ -1775,6 +1774,7 @@ static void CG_RegisterGraphics(void)
 	for (i = 0 ; i < 5 ; i++)
 	{
 		char name[32];
+
 		//Com_sprintf( name, sizeof(name), "textures/decals/blood%i", i+1 );
 		//cgs.media.bloodMarkShaders[i] = trap_R_RegisterShader( name );
 		Com_sprintf(name, sizeof(name), "blood_dot%i", i + 1);

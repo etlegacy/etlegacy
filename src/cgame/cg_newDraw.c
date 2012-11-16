@@ -292,7 +292,7 @@ CG_DrawPlayerWeaponIcon
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor)
 {
 	int       size;
-	int       realweap;             // DHM - Nerve
+	int       realweap;
 	qhandle_t icon;
 	float     scale, halfScale;
 	vec4_t    hcolor;
@@ -375,7 +375,6 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	{
 		scale = halfScale = 0;
 	}
-
 
 	if (icon)
 	{
@@ -591,7 +590,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		icon = cgs.media.dynamiteHintShader;
 		break;
 
-	// Mad Doc - TDF
 	case HINT_LOCKPICK:
 		icon      = cgs.media.doorLockHintShader;       // TAT 1/30/2003 - use the locked door hint cursor
 		yellowbar = qtrue;      // draw the status bar in yellow so it shows up better

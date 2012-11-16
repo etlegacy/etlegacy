@@ -100,7 +100,6 @@ void CG_FillRectGradient(float x, float y, float width, float height, const floa
 	trap_R_SetColor(NULL);
 }
 
-
 /*
 ==============
 CG_HorizontalPercentBar
@@ -118,7 +117,6 @@ flags:
     lerp color  - 256   // use an average of the start and end colors to set the fill color
 ==============
 */
-
 
 // TODO: these flags will be shared, but it was easier to work on stuff if I wasn't changing header files a lot
 #define BAR_LEFT        0x0001
@@ -187,7 +185,6 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		}
 	}
 
-
 	// adjust for horiz/vertical and draw the fractional box
 	if (flags & BAR_VERT)
 	{
@@ -209,7 +206,6 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 //          CG_FillRectGradient ( x, y, w, h * frac, startColor, endColor, 0 );
 			CG_FillRect(x, y, w, h * frac, startColor);
 		}
-
 	}
 	else
 	{
@@ -233,9 +229,7 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 			CG_FillRect(x, y, w * frac, h, startColor);
 		}
 	}
-
 }
-
 
 /*
 =================
@@ -248,7 +242,6 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 	       color   = { 1.0f, 1.0f, 1.0f, 0.3f };
 	CG_FilledBar(x, y, width, height, color, NULL, bgcolor, percent, BAR_BG | BAR_NOHUDALPHA);
 }
-
 
 /*
 ================
@@ -320,7 +313,6 @@ void CG_DrawRect_FixedBorder(float x, float y, float width, float height, int bo
 	trap_R_SetColor(NULL);
 }
 
-
 /*
 ================
 CG_DrawPicST
@@ -378,7 +370,6 @@ void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader)
 	trap_R_DrawStretchPic(x, y, width, height, s0, t0, s1, t1, hShader);
 }
 
-// NERVE - SMF
 /*
 ================
 CG_DrawRotatedPic
@@ -393,7 +384,6 @@ void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hS
 
 	trap_R_DrawRotatedPic(x, y, width, height, 0, 0, 1, 1, hShader, angle);
 }
-// -NERVE - SMF
 
 /*
 ===============
@@ -475,7 +465,6 @@ void CG_DrawChar2(int x, int y, int width, int height, int ch)
 	                      cgs.media.menucharsetShader);
 }
 
-// JOSEPH 4-25-00
 /*
 ==================
 CG_DrawStringExt
@@ -815,9 +804,7 @@ void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color)
 	//CG_DrawStringExt( x, y, s, color, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
 	CG_DrawStringExt2(x, y, s, color, qfalse, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0);
 }
-// END JOSEPH
 
-// JOSEPH 4-25-00
 void CG_DrawBigString2(int x, int y, const char *s, float alpha)
 {
 	float color[4];
@@ -831,7 +818,6 @@ void CG_DrawBigStringColor2(int x, int y, const char *s, vec4_t color)
 {
 	CG_DrawStringExt3(x, y, s, color, qfalse, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0);
 }
-// END JOSEPH
 
 void CG_DrawSmallString(int x, int y, const char *s, float alpha)
 {
@@ -893,8 +879,6 @@ static void CG_TileClearBox(int x, int y, int w, int h, qhandle_t hShader)
 	trap_R_DrawStretchPic(x, y, w, h, s1, t1, s2, t2, hShader);
 }
 
-
-
 /*
 ==============
 CG_TileClear
@@ -934,8 +918,6 @@ void CG_TileClear(void)
 	CG_TileClearBox(right, top, w - right, bottom - top + 1, cgs.media.backTileShader);
 }
 
-
-
 /*
 ================
 CG_FadeColor
@@ -972,7 +954,6 @@ float *CG_FadeColor(int startMsec, int totalMsec)
 	return color;
 }
 
-
 /*
 ================
 CG_TeamColor
@@ -997,7 +978,6 @@ float *CG_TeamColor(int team)
 		return other;
 	}
 }
-
 
 /*
 =================
@@ -1093,9 +1073,6 @@ void CG_ColorForHealth(vec4_t hcolor)
 		hcolor[1] = (health - 30) / 30.0;
 	}
 }
-
-
-
 
 /*
 =================
@@ -1350,7 +1327,6 @@ void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 	UI_DrawBannerString2(x, y, str, color);
 }
 
-
 int UI_ProportionalStringWidth(const char *str)
 {
 	const char *s;
@@ -1444,7 +1420,6 @@ float UI_ProportionalSizeScale(int style)
 	return 1.00;
 }
 
-
 /*
 =================
 UI_DrawProportionalString
@@ -1492,7 +1467,6 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 		return;
 	}
 
-	// JOSEPH 12-29-99
 	if (style & UI_PULSE)
 	{
 		//drawcolor[0] = color[0] * 0.8;
@@ -1508,7 +1482,6 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 		UI_DrawProportionalString2(x, y, str, drawcolor, sizeScale, cgs.media.charsetPropGlow);
 		return;
 	}
-	// END JOSEPH
 
 	UI_DrawProportionalString2(x, y, str, color, sizeScale, cgs.media.charsetProp);
 }

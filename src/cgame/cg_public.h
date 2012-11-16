@@ -69,7 +69,7 @@ typedef enum cgameEvent_e
 	CGAME_EVENT_GAMEVIEW,
 	CGAME_EVENT_SPEAKEREDITOR,
 	CGAME_EVENT_CAMPAIGNBREIFING,
-	CGAME_EVENT_DEMO,               // OSP
+	CGAME_EVENT_DEMO,
 	CGAME_EVENT_FIRETEAMMSG,
 } cgameEvent_t;
 
@@ -124,19 +124,19 @@ typedef enum
 	CG_R_PROJECTDECAL,          // ydnar: projects a decal onto brush models
 	CG_R_CLEARDECALS,           // ydnar: clears world/entity decals
 	CG_S_STARTSOUND,
-	CG_S_STARTSOUNDEX,  //----(SA)  added
+	CG_S_STARTSOUNDEX,
 	CG_S_STARTLOCALSOUND,
 	CG_S_CLEARLOOPINGSOUNDS,
 	CG_S_CLEARSOUNDS,
 	CG_S_ADDLOOPINGSOUND,
 	CG_S_UPDATEENTITYPOSITION,
-// Ridah, talking animations
-	CG_S_GETVOICEAMPLITUDE,
-// done.
+
+	CG_S_GETVOICEAMPLITUDE,     // Ridah, talking animations
+
 	CG_S_RESPATIALIZE,
 	CG_S_REGISTERSOUND,
 	CG_S_STARTBACKGROUNDTRACK,
-	CG_S_FADESTREAMINGSOUND,    //----(SA)  modified
+	CG_S_FADESTREAMINGSOUND,
 	CG_S_FADEALLSOUNDS,         //----(SA)  added for fading out everything
 	CG_S_STARTSTREAMINGSOUND,
 	CG_S_GETSOUNDLENGTH,        // xkan - get the length (in milliseconds) of the sound
@@ -154,9 +154,9 @@ typedef enum
 	CG_R_ADDREFENTITYTOSCENE,
 	CG_GET_ENTITY_TOKEN,
 	CG_R_ADDPOLYTOSCENE,
-// Ridah
+
 	CG_R_ADDPOLYSTOSCENE,
-// done.
+
 	CG_R_ADDPOLYBUFFERTOSCENE,
 	CG_R_ADDLIGHTTOSCENE,
 
@@ -169,7 +169,7 @@ typedef enum
 	CG_R_RESTOREVIEWPARMS,
 	CG_R_SETCOLOR,
 	CG_R_DRAWSTRETCHPIC,
-	CG_R_DRAWSTRETCHPIC_GRADIENT,   //----(SA)  added
+	CG_R_DRAWSTRETCHPIC_GRADIENT,
 	CG_R_MODELBOUNDS,
 	CG_R_LERPTAG,
 	CG_GETGLCONFIG,
@@ -180,7 +180,7 @@ typedef enum
 	CG_GETCURRENTCMDNUMBER,
 	CG_GETUSERCMD,
 	CG_SETUSERCMDVALUE,
-	CG_SETCLIENTLERPORIGIN,         // DHM - Nerve
+	CG_SETCLIENTLERPORIGIN,
 	CG_R_REGISTERSHADERNOMIP,
 	CG_MEMORY_REMAINING,
 
@@ -211,7 +211,7 @@ typedef enum
 	CG_CIN_SETEXTENTS,
 	CG_R_REMAP_SHADER,
 	CG_S_ADDREALLOOPINGSOUND,
-	CG_S_STOPSTREAMINGSOUND,    //----(SA)  added
+	CG_S_STOPSTREAMINGSOUND,
 
 	CG_LOADCAMERA,
 	CG_STARTCAMERA,
@@ -232,9 +232,8 @@ typedef enum
 	CG_TESTPRINTFLOAT,
 	CG_ACOS,
 
-	CG_INGAME_POPUP,        //----(SA)  added
+	CG_INGAME_POPUP,
 
-	// NERVE - SMF
 	CG_INGAME_CLOSEPOPUP,
 
 	CG_R_DRAWROTATEDPIC,
@@ -246,31 +245,23 @@ typedef enum
 	CG_KEY_BINDINGTOKEYS,
 
 	CG_TRANSLATE_STRING,
-	// -NERVE - SMF
 
 	CG_R_INPVS,
 	CG_GETHUNKDATA,
 
 	CG_PUMPEVENTLOOP,
 
-	// zinx
 	CG_SENDMESSAGE,
 	CG_MESSAGESTATUS,
-	// -zinx
 
-	// bani
 	CG_R_LOADDYNAMICSHADER,
-	// -bani
 
-	// fretn
 	CG_R_RENDERTOTEXTURE,
-	// -fretn
-	// bani
+
 	CG_R_GETTEXTUREID,
-	// -bani
-	// bani
+
 	CG_R_FINISH,
-	// -bani
+
 } cgameImport_t;
 
 
@@ -285,7 +276,7 @@ functions exported to the main executable
 typedef enum
 {
 	CG_INIT,
-//  void CG_Init( int serverMessageNum, int serverCommandSequence )
+	//  void CG_Init( int serverMessageNum, int serverCommandSequence )
 	// called when the level loads or when the renderer is restarted
 	// all media should be registered at this time
 	// cgame will display loading status by calling SCR_Update, which
@@ -294,45 +285,43 @@ typedef enum
 	// demos, tourney restarts, or vid_restarts
 
 	CG_SHUTDOWN,
-//  void (*CG_Shutdown)( void );
+	//  void (*CG_Shutdown)( void );
 	// oportunity to flush and close any open files
 
 	CG_CONSOLE_COMMAND,
-//  qboolean (*CG_ConsoleCommand)( void );
+	//  qboolean (*CG_ConsoleCommand)( void );
 	// a console command has been issued locally that is not recognized by the
 	// main game system.
 	// use Cmd_Argc() / Cmd_Argv() to read the command, return qfalse if the
 	// command is not known to the game
 
 	CG_DRAW_ACTIVE_FRAME,
-//  void (*CG_DrawActiveFrame)( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback );
+	//  void (*CG_DrawActiveFrame)( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback );
 	// Generates and draws a game scene and status information at the given time.
 	// If demoPlayback is set, local movement prediction will not be enabled
 
 	CG_CROSSHAIR_PLAYER,
-//  int (*CG_CrosshairPlayer)( void );
+	//  int (*CG_CrosshairPlayer)( void );
 
 	CG_LAST_ATTACKER,
-//  int (*CG_LastAttacker)( void );
+	//  int (*CG_LastAttacker)( void );
 
 	CG_KEY_EVENT,
-//  void    (*CG_KeyEvent)( int key, qboolean down );
+	//  void    (*CG_KeyEvent)( int key, qboolean down );
 
 	CG_MOUSE_EVENT,
-//  void    (*CG_MouseEvent)( int dx, int dy );
+	//  void    (*CG_MouseEvent)( int dx, int dy );
 	CG_EVENT_HANDLING,
-//  void (*CG_EventHandling)(int type, qboolean fForced);
+	//  void (*CG_EventHandling)(int type, qboolean fForced);
 
 	CG_GET_TAG,
-//  qboolean CG_GetTag( int clientNum, char *tagname, orientation_t *or );
+	//  qboolean CG_GetTag( int clientNum, char *tagname, orientation_t *or );
 
 	CG_CHECKEXECKEY,
 
 	CG_WANTSBINDKEYS,
 
-	// zinx
 	CG_MESSAGERECEIVED,
-//  void (*CG_MessageReceived)( const char *buf, int buflen, int serverTime );
-	// -zinx
+	//  void (*CG_MessageReceived)( const char *buf, int buflen, int serverTime );
 
 } cgameExport_t;

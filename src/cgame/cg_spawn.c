@@ -325,7 +325,6 @@ void CG_ParseEntityFromSpawnVars(void)
 			}
 		}
 	}
-
 }
 
 /*

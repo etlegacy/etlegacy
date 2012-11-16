@@ -225,17 +225,6 @@ static void CG_LoadWeapons_f(void)
 	}
 }
 
-/*
-static void CG_InventoryDown_f( void ) {
-    cg.showItems = qtrue;
-}
-
-static void CG_InventoryUp_f( void ) {
-    cg.showItems = qfalse;
-    cg.itemFadeTime = cg.time;
-}
-*/
-
 static void CG_TellTarget_f(void)
 {
 	int  clientNum;
@@ -278,7 +267,7 @@ qboolean cameraInuse[MAX_CAMERAS];
 int CG_LoadCamera(const char *name)
 {
 	int i;
-	for (i = 1; i < MAX_CAMERAS; i++)        // start at '1' since '0' is always taken by the cutscene camera
+	for (i = 1; i < MAX_CAMERAS; i++) // start at '1' since '0' is always taken by the cutscene camera
 	{
 		if (!cameraInuse[i])
 		{
@@ -313,7 +302,6 @@ void CG_SetInitialCamera(const char *name, qboolean startBlack)
 	g_initialCameraStartBlack = startBlack;
 }
 
-
 /*
 ==============
 CG_StartCamera
@@ -326,7 +314,7 @@ void CG_StartCamera(const char *name, qboolean startBlack)
 	//if ( cg.predictedPlayerState.stats[STAT_HEALTH] <= 0 )    // don't allow camera to start if you're dead
 	//  return;
 
-	COM_StripExtension(name, lname, sizeof(lname));      //----(SA)    added
+	COM_StripExtension(name, lname, sizeof(lname));
 	strcat(lname, ".camera");
 
 	if (trap_loadCamera(CAM_PRIMARY, va("cameras/%s", lname)))
@@ -342,7 +330,7 @@ void CG_StartCamera(const char *name, qboolean startBlack)
 	}
 	else
 	{
-//----(SA)  removed check for cams in main dir
+		//----(SA)  removed check for cams in main dir
 		cg.cameraMode = qfalse;                 // camera off in cgame
 		trap_SendClientCommand("stopCamera");      // camera off in game
 		trap_stopCamera(CAM_PRIMARY);             // camera off in client
@@ -380,14 +368,13 @@ CG_StopCamera
 void CG_StopCamera(void)
 {
 	cg.cameraMode = qfalse;                 // camera off in cgame
-	trap_SendClientCommand("stopCamera");      // camera off in game
-	trap_stopCamera(CAM_PRIMARY);             // camera off in client
+	trap_SendClientCommand("stopCamera");   // camera off in game
+	trap_stopCamera(CAM_PRIMARY);           // camera off in client
 	trap_Cvar_Set("cg_letterbox", "0");
 
 	// fade back into world
 	CG_Fade(0, 0, 0, 255, 0, 0);
 	CG_Fade(0, 0, 0, 0, cg.time + 500, 2000);
-
 }
 
 static void CG_Fade_f(void)
@@ -645,7 +632,6 @@ static void CG_BuddyVoiceChat_f(void)
 	trap_SendConsoleCommand(va("cmd vsay_buddy -1 %s %s\n", CG_BuildSelectedFirteamString(), chatCmd));
 }
 
-
 // ydnar: say, team say, etc
 static void CG_MessageMode_f(void)
 {
@@ -687,7 +673,6 @@ static void CG_MessageSend_f(void)
 	char messageText[256];
 	int  messageType;
 
-
 	// get values
 	trap_Cvar_VariableStringBuffer("cg_messageType", messageText, 256);
 	messageType = atoi(messageText);
@@ -704,26 +689,19 @@ static void CG_MessageSend_f(void)
 		return;
 	}
 
-	// team say
-	if (messageType == 2)
+	if (messageType == 2) // team say
 	{
 		trap_SendConsoleCommand(va("say_team \"%s\"\n", messageText));
-
-		// fireteam say
 	}
-	else if (messageType == 3)
+	else if (messageType == 3) // fireteam say
 	{
 		trap_SendConsoleCommand(va("say_buddy \"%s\"\n", messageText));
-
-		// normal say
 	}
-	else
+	else // normal say
 	{
 		trap_SendConsoleCommand(va("say \"%s\"\n", messageText));
 	}
 }
-
-
 
 static void CG_SetWeaponCrosshair_f(void)
 {
@@ -732,7 +710,6 @@ static void CG_SetWeaponCrosshair_f(void)
 	trap_Argv(1, crosshair, 64);
 	cg.newCrosshairIndex = atoi(crosshair) + 1;
 }
-// -NERVE - SMF
 
 static void CG_SelectBuddy_f(void)
 {
@@ -765,7 +742,6 @@ static void CG_SelectBuddy_f(void)
 		}
 
 		ci->selected ^= qtrue;
-
 		break;
 
 	case -1:
@@ -803,7 +779,6 @@ static void CG_SelectBuddy_f(void)
 			ci->selected = qtrue;
 		}
 		break;
-
 	}
 }
 
@@ -862,7 +837,6 @@ static void CG_ToggleAutomap_f(void)
 	cgs.autoMapOff = !cgs.autoMapOff;
 }
 
-// OSP
 const char *aMonths[12] =
 {
 	"Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -948,6 +922,7 @@ void CG_dumpStats_f(void)
 		trap_SendClientCommand((cg.mvTotalClients < 1) ? "weaponstats" : "statsall");
 	}
 }
+
 void CG_wStatsDown_f(void)
 {
 	int i = (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) : cg.snap->ps.clientNum;
@@ -988,7 +963,6 @@ void CG_toggleSpecHelp_f(void)
 		}
 	}
 }
-// -OSP
 
 void CG_Obj_f(void)
 {
@@ -1179,7 +1153,7 @@ static consoleCommand_t commands[] =
 	{ "tell_target",         CG_TellTarget_f         },
 	{ "tell_attacker",       CG_TellAttacker_f       },
 	{ "tcmd",                CG_TargetCommand_f      },
-	{ "fade",                CG_Fade_f               }, // duffy
+	{ "fade",                CG_Fade_f               },
 	{ "loadhud",             CG_LoadHud_f            },
 	{ "loadweapons",         CG_LoadWeapons_f        },
 
@@ -1200,7 +1174,6 @@ static consoleCommand_t commands[] =
 	{ "messageSend",         CG_MessageSend_f        },
 
 	{ "SetWeaponCrosshair",  CG_SetWeaponCrosshair_f },
-	// -NERVE - SMF
 
 	{ "VoiceFireTeamChat",   CG_BuddyVoiceChat_f     },
 
@@ -1211,7 +1184,6 @@ static consoleCommand_t commands[] =
 	{ "+topshots",           CG_topshotsDown_f       },
 	{ "-topshots",           CG_topshotsUp_f         },
 
-	// OSP
 	{ "autoRecord",          CG_autoRecord_f         },
 	{ "autoScreenshot",      CG_autoScreenShot_f     },
 	{ "currentTime",         CG_currentTime_f        },
@@ -1230,7 +1202,6 @@ static consoleCommand_t commands[] =
 	{ "statsdump",           CG_dumpStats_f          },
 	{ "+vstr",               CG_vstrDown_f           },
 	{ "-vstr",               CG_vstrUp_f             },
-	// OSP
 
 	{ "selectbuddy",         CG_SelectBuddy_f        },
 
@@ -1240,8 +1211,8 @@ static consoleCommand_t commands[] =
 	{ "-mapexpand",          CG_AutomapExpandUp_f    },
 
 	{ "generateTracemap",    CG_GenerateTracemap     },
-	// xkan, 11/27/2002, toggle automap on/off
-	{ "ToggleAutoMap",       CG_ToggleAutomap_f      },
+
+	{ "ToggleAutoMap",       CG_ToggleAutomap_f      }, // xkan, 11/27/2002, toggle automap on/off
 
 	{ "editSpeakers",        CG_EditSpeakers_f       },
 	{ "dumpSpeaker",         CG_DumpSpeaker_f        },
@@ -1250,7 +1221,6 @@ static consoleCommand_t commands[] =
 	{ "cpm",                 CG_CPM_f                },
 	{ "forcetapout",         CG_ForceTapOut_f        },
 };
-
 
 /*
 =================

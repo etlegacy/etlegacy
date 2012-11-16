@@ -70,7 +70,6 @@ pmListItemBig_t *cg_pmWaitingListBig;
 
 pmListItemBig_t cg_pmStackBig[NUM_PM_STACK_ITEMS_BIG];
 
-
 const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1] =
 {
 	{ "Binoculars",                               "Improved Physical Fitness",                 "Improved Health",                       "Trap Awareness"           }, // battle sense
@@ -83,9 +82,6 @@ const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1] =
 };
 
 void CG_PMItemBigSound(pmListItemBig_t *item);
-
-
-
 
 void CG_InitPMGraphics(void)
 {
@@ -154,6 +150,7 @@ void CG_UpdatePMLists(void)
 	if ((listItem = cg_pmWaitingList))
 	{
 		int t = (CG_TimeForPopup(listItem->type) + listItem->time);
+
 		if (cg.time > t)
 		{
 			if (listItem->next)
@@ -186,6 +183,7 @@ void CG_UpdatePMLists(void)
 	while (listItem)
 	{
 		int t = (CG_TimeForPopup(listItem->type) + listItem->time + PM_WAITTIME + PM_FADETIME);
+
 		if (cg.time > t)
 		{
 			// nuke this, and everything below it (though there shouldn't BE anything below us anyway)
@@ -223,6 +221,7 @@ void CG_UpdatePMLists(void)
 	if ((listItem2 = cg_pmWaitingListBig))
 	{
 		int t = CG_TimeForBigPopup(listItem2->type) + listItem2->time;
+
 		if (cg.time > t)
 		{
 			if (listItem2->next)
@@ -257,6 +256,7 @@ void CG_UpdatePMLists(void)
 pmListItemBig_t *CG_FindFreePMItem2(void)
 {
 	int i = 0;
+
 	for ( ; i < NUM_PM_STACK_ITEMS_BIG; i++)
 	{
 		if (!cg_pmStackBig[i].inuse)
@@ -272,8 +272,8 @@ pmListItem_t *CG_FindFreePMItem(void)
 {
 	pmListItem_t *listItem;
 	pmListItem_t *lastItem;
-
 	int i = 0;
+
 	for ( ; i < NUM_PM_STACK_ITEMS; i++)
 	{
 		if (!cg_pmStack[i].inuse)
@@ -719,8 +719,7 @@ qhandle_t CG_GetPMItemIcon(centity_t *cent)
 	return 0;
 }
 
-
-
+// FIXME: remove me
 void CG_DrawKeyHint(rectDef_t *rect, const char *binding)
 {
 	/*  int k1, k2;

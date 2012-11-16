@@ -152,7 +152,6 @@ void CG_ShowHelp_Off(int *status)
 	}
 }
 
-
 // Demo playback key catcher support
 void CG_DemoClick(int key, qboolean down)
 {
@@ -427,11 +426,7 @@ void CG_DemoClick(int key, qboolean down)
 	}
 }
 
-
-
-//
 // Color/font info used for all overlays (below)
-//
 #define COLOR_BG            { 0.0f, 0.0f, 0.0f, 0.6f }
 #define COLOR_BORDER        { 0.5f, 0.5f, 0.5f, 0.5f }
 #define COLOR_BG_TITLE      { 0.16, 0.2f, 0.17f, 0.8f }
@@ -445,9 +440,6 @@ void CG_DemoClick(int key, qboolean down)
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_SUBHEADER      &cgs.media.limboFont1_lo
 #define FONT_TEXT           &cgs.media.limboFont2
-
-
-
 
 vec4_t color_bg     = COLOR_BG_VIEW;
 vec4_t color_border = COLOR_BORDER_VIEW;
@@ -500,8 +492,6 @@ qboolean CG_ViewingDraw()
 		return(qtrue);
 	}
 }
-
-
 
 #define GS_X    166
 #define GS_Y    10
@@ -596,8 +586,6 @@ void CG_GameStatsDraw(void)
 		CG_DrawRect(GS_X, y, GS_W, h, 1, borderColor);
 		CG_FillRect(GS_X, y, GS_W, h, bgColor);
 
-
-
 		// Header
 		CG_FillRect(GS_X, y, GS_W, tSpacing + 4, bgColorTitle);
 		CG_DrawRect(GS_X, y, GS_W, tSpacing + 4, 1, borderColorTitle);
@@ -608,8 +596,6 @@ void CG_GameStatsDraw(void)
 		y += 3;
 
 		y += 2;
-
-
 
 		// Weapon stats
 		y += 2;
@@ -664,7 +650,6 @@ void CG_GameStatsDraw(void)
 			return;
 		}
 
-
 		// Rank/XP info
 		y += tSpacing;
 		y += 2;
@@ -681,8 +666,6 @@ void CG_GameStatsDraw(void)
 		y += 1;
 		y += tSpacing;
 		CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, gs->strRank, 0.0f, 0, tStyle, tFont);
-
-
 
 		// Skill info
 		y += tSpacing;
@@ -810,8 +793,6 @@ void CG_TopShotsDraw(void)
 		CG_DrawRect(x, y, TS_W, h, 1, borderColor);
 		CG_FillRect(x, y, TS_W, h, bgColor);
 
-
-
 		// Header
 		CG_FillRect(x, y, TS_W, tSpacing + 4, bgColorTitle);
 		CG_DrawRect(x, y, TS_W, tSpacing + 4, 1, borderColorTitle);
@@ -820,8 +801,6 @@ void CG_TopShotsDraw(void)
 		y += tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, "\"TOPSHOT\" ACCURACIES", 0.0f, 0, hStyle, hFont);
 		y += 4;
-
-
 
 		// Weapon stats
 		y += 2;
@@ -858,8 +837,6 @@ void CG_TopShotsDraw(void)
 		}
 	}
 }
-
-
 
 #define DH_X    -20     // spacing from right
 #define DH_Y    -60     // spacing from bottom
@@ -968,8 +945,6 @@ void CG_DemoHelpDraw(void)
 		CG_DrawRect(x, y, w, h, 1, borderColor);
 		CG_FillRect(x, y, w, h, bgColor);
 
-
-
 		// Header
 		CG_FillRect(x, y, w, tSpacing + 4, bgColorTitle);
 		CG_DrawRect(x, y, w, tSpacing + 4, 1, borderColorTitle);
@@ -979,8 +954,6 @@ void CG_DemoHelpDraw(void)
 		y += tSpacing;
 		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor2, "DEMO CONTROLS", 0.0f, 0, hStyle, hFont);
 		y += 3;
-
-
 
 		// Control info
 		for (i = 0; i < sizeof(help) / sizeof(char *); i++)
@@ -1008,9 +981,6 @@ void CG_DemoHelpDraw(void)
 		CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "^nBACKSPACE ^mhelp on/off", 0.0f, 0, tStyle, tFont);
 	}
 }
-
-
-
 
 char *CG_getBindKeyName(const char *cmd, char *buf, int len)
 {
@@ -1042,7 +1012,6 @@ typedef struct
 	char *info;
 } helpType_t;
 
-
 #define SH_X    2       // spacing from left
 #define SH_Y    155     // spacing from top
 
@@ -1051,7 +1020,6 @@ void CG_SpecHelpDraw(void)
 	if (cg.spechelpWindow == SHOW_OFF)
 	{
 		return;
-
 	}
 	else
 	{
@@ -1164,8 +1132,6 @@ void CG_SpecHelpDraw(void)
 		CG_DrawRect(x, y, w, h, 1, borderColor);
 		CG_FillRect(x, y, w, h, bgColor);
 
-
-
 		// Header
 		CG_FillRect(x, y, w, tSpacing + 4, bgColorTitle);
 		CG_DrawRect(x, y, w, tSpacing + 4, 1, borderColorTitle);
@@ -1175,8 +1141,6 @@ void CG_SpecHelpDraw(void)
 		y += tSpacing;
 		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor2, "SPECTATOR CONTROLS", 0.0f, 0, hStyle, hFont);
 		y += 3;
-
-
 
 		// Control info
 		for (i = 0; i < sizeof(help) / sizeof(helpType_t); i++)
@@ -1189,7 +1153,6 @@ void CG_SpecHelpDraw(void)
 		}
 	}
 }
-
 
 void CG_DrawOverlays(void)
 {
