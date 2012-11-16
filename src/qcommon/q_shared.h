@@ -1817,10 +1817,9 @@ typedef enum _flag_status
 #define MAX_PINGREQUESTS            16
 #define MAX_SERVERSTATUSREQUESTS    16
 
-// NERVE - SMF - localization
+// Localization
 typedef enum
 {
-#ifndef __MACOS__   //DAJ USA
 	LANGUAGE_FRENCH = 0,
 	LANGUAGE_GERMAN,
 	LANGUAGE_ITALIAN,
@@ -1831,7 +1830,6 @@ typedef enum
 	LANGUAGE_RUSSIAN, // FIXME: NO SUPPORT of ISO-8859-1
 	LANGUAGE_FINNISH,
 	LANGUAGE_DANISH,
-#endif
 	MAX_LANGUAGES
 } languages_t;
 

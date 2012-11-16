@@ -100,11 +100,11 @@ cvar_t *cl_trn;
 cvar_t *cl_missionStats;
 cvar_t *cl_waitForFire;
 
-// NERVE - SMF - localization
+// Localization
 cvar_t *cl_language;
 cvar_t *cl_debugTranslation;
 
-// DHM - Nerve :: Auto-Update
+// Auto-Update
 cvar_t *cl_updateavailable;
 cvar_t *cl_updatefiles;
 
@@ -3282,7 +3282,7 @@ void CL_CheckAutoUpdate(void)
 	cls.autoupdateServer.port = BigShort(PORT_SERVER);
 	Com_DPrintf("Auto-update server at: %i.%i.%i.%i:%i (%s)\n", cls.autoupdateServer.ip[0], cls.autoupdateServer.ip[1],
 	            cls.autoupdateServer.ip[2], cls.autoupdateServer.ip[3],
-	            BigShort(cls.autoupdateServer.port) , cls.autoupdateServerNames[0]);
+	            BigShort(cls.autoupdateServer.port), cls.autoupdateServerNames[0]);
 
 	NET_OutOfBandPrint(NS_CLIENT, cls.autoupdateServer, "getUpdateInfo \"%s\" \"%s\"\n", Q3_VERSION, CPUSTRING);
 
@@ -3738,11 +3738,11 @@ void CL_Init(void)
 	cl_missionStats = Cvar_Get("g_missionStats", "0", CVAR_ROM);
 	cl_waitForFire  = Cvar_Get("cl_waitForFire", "0", CVAR_ROM);
 
-	// NERVE - SMF - localization
+	// Localization
 	cl_language         = Cvar_Get("cl_language", "0", CVAR_ARCHIVE);
 	cl_debugTranslation = Cvar_Get("cl_debugTranslation", "0", 0);
 
-	// DHM - Nerve :: Auto-update
+	// Auto-update
 	cl_updateavailable = Cvar_Get("cl_updateavailable", "0", CVAR_ROM);
 	cl_updatefiles     = Cvar_Get("cl_updatefiles", "", CVAR_ROM);
 
@@ -4981,7 +4981,7 @@ qboolean CL_GetLimboString(int index, char *buf)
 	return qtrue;
 }
 
-// NERVE - SMF - Localization code
+// Localization code
 #define FILE_HASH_SIZE      1024
 #define MAX_VA_STRING       32000
 #define MAX_TRANS_STRING    4096
