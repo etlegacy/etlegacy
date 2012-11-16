@@ -1371,4 +1371,7 @@ void CG_InitConsoleCommands(void)
 	trap_AddCommand("vsay_buddy");
 	trap_AddCommand("vsay_team");
 	trap_AddCommand("where");
+#ifdef LUA_SUPPORT
+	trap_AddCommand ("lua_status");
+#endif
 }
