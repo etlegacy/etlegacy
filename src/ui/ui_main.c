@@ -419,7 +419,7 @@ int Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 			}
 			else
 			{
-				glyph = &font->glyphs[(unsigned char)*s];           // NERVE - SMF - this needs to be an unsigned cast for localization
+				glyph = &font->glyphs[(unsigned char)*s]; // this needs to be an unsigned cast for localization
 				if (max < glyph->height)
 				{
 					max = glyph->height;
@@ -478,7 +478,7 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 				}
 				else
 				{
-					glyph = &font->glyphs[(unsigned char)*s];           // NERVE - SMF - this needs to be an unsigned cast for localization
+					glyph = &font->glyphs[(unsigned char)*s]; // this needs to be an unsigned cast for localization
 					if (max < glyph->height)
 					{
 						max = glyph->height;
@@ -649,7 +649,7 @@ char *Text_AutoWrap_Paint_Chunk(float x, float y, int width, float scale, vec4_t
 				continue;
 			}
 
-			glyph = &font->glyphs[index];           // NERVE - SMF - this needs to be an unsigned cast for localization
+			glyph = &font->glyphs[index]; // this needs to be an unsigned cast for localization
 			if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
@@ -801,7 +801,7 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 		glyph2 = &font->glyphs[(unsigned char)cursor];
 		while (s && *s && count < len)
 		{
-			glyph = &font->glyphs[(unsigned char)*s];           // NERVE - SMF - this needs to be an unsigned cast for localization
+			glyph = &font->glyphs[(unsigned char)*s]; // this needs to be an unsigned cast for localization
 			yadj  = useScale * glyph->top;
 
 			if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
@@ -895,7 +895,7 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 		count = 0;
 		while (s && *s && count < len)
 		{
-			glyph = &font->glyphs[(unsigned char)*s];           // NERVE - SMF - this needs to be an unsigned cast for localization
+			glyph = &font->glyphs[(unsigned char)*s]; // this needs to be an unsigned cast for localization
 			if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
@@ -4003,8 +4003,8 @@ static void UI_LoadProfiles(void)
 	int  numdirs;
 	char dirlist[2048];
 	char *dirptr;
-	int i;
-	int dirlen;
+	int  i;
+	int  dirlen;
 
 	uiInfo.profileCount = 0;
 	uiInfo.profileIndex = -1;
@@ -4215,7 +4215,7 @@ static void UI_LoadDemos(void)
 			if (!Q_stricmp(demoname +  len - strlen(demoExt), demoExt))
 			{
 				demoname[len - strlen(demoExt)] = '\0';
-			};
+			}
 			uiInfo.demoList[i] = String_Alloc(demoname);
 			demoname          += len + 1;
 		}
