@@ -1853,7 +1853,7 @@ void CL_DownloadsComplete(void)
 #endif
 	char *fn;
 
-	// DHM - Nerve :: Auto-update (not finished yet)
+	// Auto-update (not finished yet)
 	if (autoupdateStarted)
 	{
 
@@ -1865,9 +1865,7 @@ void CL_DownloadsComplete(void)
 #else
 			fs_write_path = Cvar_VariableString("fs_homepath");
 			fn            = FS_BuildOSPath(fs_write_path, FS_ShiftStr(AUTOUPDATE_DIR, AUTOUPDATE_DIR_SHIFT), autoupdateFilename);
-#ifndef __MACOS__
 			Sys_Chmod(fn, S_IXUSR);
-#endif
 #endif
 			// will either exit with a successful process spawn, or will Com_Error ERR_DROP
 			// so we need to clear the disconnected download data if needed
@@ -3565,7 +3563,6 @@ void CL_ClientDamageCommand(void)
 	// do nothing
 }
 
-#if !defined(__MACOS__)
 void CL_SaveTranslations_f(void)
 {
 	CL_SaveTransTable("scripts/translation.cfg", qfalse);
@@ -3590,7 +3587,6 @@ void CL_LoadTranslations_f(void)
 {
 	CL_ReloadTranslation();
 }
-#endif
 
 //===========================================================================================
 
@@ -3789,11 +3785,9 @@ void CL_Init(void)
 	Cmd_AddCommand("updatehunkusage", CL_UpdateLevelHunkUsage);
 	Cmd_AddCommand("updatescreen", SCR_UpdateScreen);
 
-#ifndef __MACOS__
 	Cmd_AddCommand("SaveTranslations", CL_SaveTranslations_f);
 	Cmd_AddCommand("SaveNewTranslations", CL_SaveNewTranslations_f);
 	Cmd_AddCommand("LoadTranslations", CL_LoadTranslations_f);
-#endif
 
 	Cmd_AddCommand("setRecommended", CL_SetRecommended_f);
 
@@ -3818,9 +3812,7 @@ void CL_Init(void)
 	autoupdateChecked = qfalse;
 	autoupdateStarted = qfalse;
 
-#ifndef __MACOS__
 	CL_InitTranslation();
-#endif
 
 	Com_Printf("----- Client Initialization Complete -----\n");
 }
@@ -4986,7 +4978,6 @@ qboolean CL_GetLimboString(int index, char *buf)
 #define MAX_VA_STRING       32000
 #define MAX_TRANS_STRING    4096
 
-#ifndef __MACOS__
 typedef struct trans_s
 {
 	char original[MAX_TRANS_STRING];
@@ -5640,17 +5631,6 @@ void CL_InitTranslation()
 	}
 }
 
-#else
-typedef struct trans_s
-{
-	char original[MAX_TRANS_STRING];
-	struct  trans_s *next;
-	float x_offset;
-	float y_offset;
-} trans_t;
-
-#endif
-
 /*
 =======================
 CL_TranslateString
@@ -5678,7 +5658,6 @@ void CL_TranslateString(const char *string, char *dest_buffer)
 		return;
 	}
 
-#if !defined(__MACOS__)
 	// ignore newlines
 	if (string[strlen(string) - 1] == '\n')
 	{
@@ -5765,9 +5744,6 @@ void CL_TranslateString(const char *string, char *dest_buffer)
 			}
 		}
 	}
-
-#endif
-
 }
 
 /*

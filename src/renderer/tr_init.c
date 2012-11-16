@@ -1045,18 +1045,18 @@ Workaround for ri.Printf's 1024 characters buffer limit.
 */
 void R_PrintLongString(const char *string)
 {
-    char buffer[1024];
-    const char *p;
-    int size = strlen(string);
+	char       buffer[1024];
+	const char *p;
+	int        size = strlen(string);
 
-    p = string;
-    while(size > 0)
-    {
-        Q_strncpyz(buffer, p, sizeof (buffer) );
-        ri.Printf( PRINT_ALL, "%s", buffer );
-        p += 1023;
-        size -= 1023;
-    }
+	p = string;
+	while (size > 0)
+	{
+		Q_strncpyz(buffer, p, sizeof(buffer));
+		ri.Printf(PRINT_ALL, "%s", buffer);
+		p    += 1023;
+		size -= 1023;
+	}
 }
 
 /*
@@ -1082,7 +1082,7 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string);
 
 	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: %s");
-	R_PrintLongString( glConfig.extensions_string );
+	R_PrintLongString(glConfig.extensions_string);
 
 	ri.Printf(PRINT_ALL, "\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 	ri.Printf(PRINT_ALL, "GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
@@ -1256,11 +1256,8 @@ void R_Register(void)
 	r_finish         = ri.Cvar_Get("r_finish", "0", CVAR_ARCHIVE);
 	r_textureMode    = ri.Cvar_Get("r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
 	r_swapInterval   = ri.Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
-#ifdef __MACOS__
-	r_gamma = ri.Cvar_Get("r_gamma", "1.2", CVAR_ARCHIVE);
-#else
-	r_gamma = ri.Cvar_Get("r_gamma", "1.3", CVAR_ARCHIVE);
-#endif
+	r_gamma          = ri.Cvar_Get("r_gamma", "1.3", CVAR_ARCHIVE);
+
 	r_facePlaneCull = ri.Cvar_Get("r_facePlaneCull", "1", CVAR_ARCHIVE);
 
 	r_railWidth         = ri.Cvar_Get("r_railWidth", "16", CVAR_ARCHIVE);
@@ -1611,7 +1608,7 @@ refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
 	re.ClearScene          = RE_ClearScene;
 	re.AddRefEntityToScene = RE_AddRefEntityToScene;
 
-	re.AddPolyToScene      = RE_AddPolyToScene;
+	re.AddPolyToScene  = RE_AddPolyToScene;
 	re.AddPolysToScene = RE_AddPolysToScene;
 	re.AddLightToScene = RE_AddLightToScene;
 

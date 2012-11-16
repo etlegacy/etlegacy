@@ -3710,51 +3710,51 @@ void Item_StartCapture(itemDef_t *item, int key)
 	int flags;
 	switch (item->type)
 	{
-		case ITEM_TYPE_EDITFIELD:
-		case ITEM_TYPE_NUMERICFIELD:
+	case ITEM_TYPE_EDITFIELD:
+	case ITEM_TYPE_NUMERICFIELD:
 
-		case ITEM_TYPE_LISTBOX:
+	case ITEM_TYPE_LISTBOX:
+	{
+		flags = Item_ListBox_OverLB(item, DC->cursorx, DC->cursory);
+		if (flags & (WINDOW_LB_LEFTARROW | WINDOW_LB_RIGHTARROW))
 		{
-			flags = Item_ListBox_OverLB(item, DC->cursorx, DC->cursory);
-			if (flags & (WINDOW_LB_LEFTARROW | WINDOW_LB_RIGHTARROW))
-			{
-				scrollInfo.nextScrollTime = DC->realTime + SCROLL_TIME_START;
-				scrollInfo.nextAdjustTime = DC->realTime + SCROLL_TIME_ADJUST;
-				scrollInfo.adjustValue    = SCROLL_TIME_START;
-				scrollInfo.scrollKey      = key;
-				scrollInfo.scrollDir      = (flags & WINDOW_LB_LEFTARROW) ? qtrue : qfalse;
-				scrollInfo.item           = item;
-				captureData               = &scrollInfo;
-				captureFunc               = &Scroll_ListBox_AutoFunc;
-				itemCapture               = item;
-			}
-			else if (flags & WINDOW_LB_THUMB)
-			{
-				scrollInfo.scrollKey = key;
-				scrollInfo.item      = item;
-				scrollInfo.xStart    = DC->cursorx;
-				scrollInfo.yStart    = DC->cursory;
-				captureData          = &scrollInfo;
-				captureFunc          = &Scroll_ListBox_ThumbFunc;
-				itemCapture          = item;
-			}
-			break;
+			scrollInfo.nextScrollTime = DC->realTime + SCROLL_TIME_START;
+			scrollInfo.nextAdjustTime = DC->realTime + SCROLL_TIME_ADJUST;
+			scrollInfo.adjustValue    = SCROLL_TIME_START;
+			scrollInfo.scrollKey      = key;
+			scrollInfo.scrollDir      = (flags & WINDOW_LB_LEFTARROW) ? qtrue : qfalse;
+			scrollInfo.item           = item;
+			captureData               = &scrollInfo;
+			captureFunc               = &Scroll_ListBox_AutoFunc;
+			itemCapture               = item;
 		}
-		case ITEM_TYPE_SLIDER:
+		else if (flags & WINDOW_LB_THUMB)
 		{
-			flags = Item_Slider_OverSlider(item, DC->cursorx, DC->cursory);
-			if (flags & WINDOW_LB_THUMB)
-			{
-				scrollInfo.scrollKey = key;
-				scrollInfo.item      = item;
-				scrollInfo.xStart    = DC->cursorx;
-				scrollInfo.yStart    = DC->cursory;
-				captureData          = &scrollInfo;
-				captureFunc          = &Scroll_Slider_ThumbFunc;
-				itemCapture          = item;
-			}
-			break;
+			scrollInfo.scrollKey = key;
+			scrollInfo.item      = item;
+			scrollInfo.xStart    = DC->cursorx;
+			scrollInfo.yStart    = DC->cursory;
+			captureData          = &scrollInfo;
+			captureFunc          = &Scroll_ListBox_ThumbFunc;
+			itemCapture          = item;
 		}
+		break;
+	}
+	case ITEM_TYPE_SLIDER:
+	{
+		flags = Item_Slider_OverSlider(item, DC->cursorx, DC->cursory);
+		if (flags & WINDOW_LB_THUMB)
+		{
+			scrollInfo.scrollKey = key;
+			scrollInfo.item      = item;
+			scrollInfo.xStart    = DC->cursorx;
+			scrollInfo.yStart    = DC->cursory;
+			captureData          = &scrollInfo;
+			captureFunc          = &Scroll_Slider_ThumbFunc;
+			itemCapture          = item;
+		}
+		break;
+	}
 	}
 }
 
@@ -5252,12 +5252,10 @@ void Controls_SetConfig(qboolean restart)
 		}
 	}
 
-#if !defined(__MACOS__)
 	if (restart)
 	{
 		DC->executeText(EXEC_APPEND, "in_restart\n");
 	}
-#endif
 	//trap_Cmd_ExecuteText( EXEC_APPEND, "in_restart\n" );
 }
 

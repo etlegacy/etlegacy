@@ -1287,7 +1287,8 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFI
 				    && Q_stricmp(filename + l - 4, ".dat")       // for journal files
 				    && Q_stricmp(filename + l - 8, "bots.txt")
 				    && Q_stricmp(filename + l - 8, ".botents")
-#ifdef __MACOS__
+#ifdef __APPLE__
+				    // FIXME: was #ifdef __MACOS__. Why is this exception only for qagame_mac?
 				    // even when pure is on, let the server game be loaded
 				    && Q_stricmp(filename, "qagame_mac")
 #endif
@@ -4354,7 +4355,7 @@ void FS_InitFilesystem(void)
 		tmp_fs_game         = Cvar_Get("fs_game", "", 0);
 		tmp_fs_game->flags |= CVAR_USER_CREATED; // deal as startup var
 
-		Com_Printf("^2Info: fs_game is set to 'legacy' mod. Start ET:L with param '+set etmain' for adoring history.\n" , tmp_fs_game->string );
+		Com_Printf("^2Info: fs_game is set to 'legacy' mod. Start ET:L with param '+set etmain' for adoring history.\n", tmp_fs_game->string);
 	}
 
 	Com_StartupVariable("fs_copyfiles");

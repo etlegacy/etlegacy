@@ -220,7 +220,7 @@ void GL_TexEnv(int env)
 /*
 GL_State
 
-	This routine is responsible for setting the most commonly changed state in Q3.
+    This routine is responsible for setting the most commonly changed state in Q3.
 */
 void GL_State(unsigned long stateBits)
 {
@@ -632,8 +632,6 @@ void RB_BeginDrawingView(void)
 	}
 }
 
-#define MAC_EVENT_PUMP_MSEC     5
-
 /*
 ==================
 RB_RenderDrawSurfList
@@ -651,15 +649,6 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 	drawSurf_t *drawSurf;
 	int        oldSort;
 	float      originalTime;
-#ifdef __MACOS__
-	int macEventTime;
-
-	Sys_PumpEvents();       // crutch up the mac's limited buffer queue size
-
-	// we don't want to pump the event loop too often and waste time, so
-	// we are going to check every shader change
-	macEventTime = ri.Milliseconds() + MAC_EVENT_PUMP_MSEC;
-#endif
 
 	// save original time for entity shader offsets
 	originalTime = backEnd.refdef.floatTime;
@@ -698,16 +687,6 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 		{
 			if (oldShader != NULL)
 			{
-#ifdef __MACOS__    // crutch up the mac's limited buffer queue size
-				int t;
-
-				t = ri.Milliseconds();
-				if (t > macEventTime)
-				{
-					macEventTime = t + MAC_EVENT_PUMP_MSEC;
-					Sys_PumpEvents();
-				}
-#endif
 				RB_EndSurface();
 			}
 			RB_BeginSurface(shader, fogNum);
@@ -807,10 +786,6 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 
 	// add light flares on lights that aren't obscured
 	RB_RenderFlares();
-
-#ifdef __MACOS__
-	Sys_PumpEvents();       // crutch up the mac's limited buffer queue size
-#endif
 }
 
 /*

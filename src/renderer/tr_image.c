@@ -910,15 +910,6 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	{
 		noCompress = qtrue;
 	}
-#if __MACOS__
-	// LBO 2/8/05. Work around apparent bug in OSX. Some mipmap textures draw incorrectly when
-	// texture compression is enabled. Examples include brick edging on fueldump level appearing
-	// bluish-green from a distance.
-	else if (mipmap)
-	{
-		noCompress = qtrue;
-	}
-#endif
 	// ydnar: don't compress textures smaller or equal to 128x128 pixels
 	else if ((width * height) <= (128 * 128))
 	{

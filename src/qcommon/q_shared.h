@@ -189,7 +189,7 @@ typedef unsigned __int8 uint8_t;
 
 #endif
 
-//======================= MAC OS X SERVER DEFINES =====================
+//======================= MAC OS X DEFINES =====================
 
 #if defined(MACOS_X)
 
@@ -242,20 +242,6 @@ static inline float idSqrt(float x)
 }
 #define sqrt idSqrt
 */
-
-#endif
-
-//======================= MAC DEFINES =================================
-
-#ifdef __MACOS__
-
-#define MAC_STATIC
-
-#define CPUSTRING   "OSX-universal"
-
-#define PATH_SEP '/'
-
-void Sys_PumpEvents(void);
 
 #endif
 

@@ -265,11 +265,7 @@ SV_BoundMaxClients
 void SV_BoundMaxClients(int minimum)
 {
 	// get the current maxclients value
-#ifdef __MACOS__
-	Cvar_Get("sv_maxclients", "16", 0);
-#else
 	Cvar_Get("sv_maxclients", "20", 0); // NERVE - SMF - changed to 20 from 8
-#endif
 
 	sv_maxclients->modified = qfalse;
 
@@ -793,13 +789,7 @@ void SV_Init(void)
 	sv_mapname        = Cvar_Get("mapname", "nomap", CVAR_SERVERINFO | CVAR_ROM);
 	sv_privateClients = Cvar_Get("sv_privateClients", "0", CVAR_SERVERINFO);
 	sv_hostname       = Cvar_Get("sv_hostname", "ETHost", CVAR_SERVERINFO | CVAR_ARCHIVE);
-	//
-#ifdef __MACOS__
-	sv_maxclients = Cvar_Get("sv_maxclients", "16", CVAR_SERVERINFO | CVAR_LATCH);
-#else
-	sv_maxclients = Cvar_Get("sv_maxclients", "20", CVAR_SERVERINFO | CVAR_LATCH); // NERVE - SMF - changed to 20 from 8
-#endif
-
+	sv_maxclients     = Cvar_Get("sv_maxclients", "20", CVAR_SERVERINFO | CVAR_LATCH);
 	sv_maxRate        = Cvar_Get("sv_maxRate", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_minPing        = Cvar_Get("sv_minPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_maxPing        = Cvar_Get("sv_maxPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
@@ -890,7 +880,7 @@ void SV_Init(void)
 	// ET://someserver.com
 	sv_fullmsg = Cvar_Get("sv_fullmsg", "Server is full.", CVAR_ARCHIVE);
 
-	sv_advert  = Cvar_Get("sv_advert", "1", CVAR_ARCHIVE);
+	sv_advert = Cvar_Get("sv_advert", "1", CVAR_ARCHIVE);
 
 	sv_protect    = Cvar_Get("sv_protect", "1", CVAR_ARCHIVE);
 	sv_protectLog = Cvar_Get("sv_protectLog", "sv_attack.log", CVAR_ARCHIVE);

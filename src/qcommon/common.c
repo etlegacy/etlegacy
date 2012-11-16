@@ -2912,7 +2912,7 @@ void Com_Init(char *commandLine)
 	pid = GetCurrentProcessId();
 #elif __linux__
 	pid = getpid();
-#elif __MACOS__
+#elif __APPLE__
 	pid = getpid();
 #elif __OpenBSD__
 	pid = getpid();

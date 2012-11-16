@@ -577,16 +577,10 @@ void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, cons
 		angles = vec3_origin;   // boxes don't rotate
 	}
 
-#ifdef __MACOS__
-	// compiler bug with const
-	CM_TransformedBoxTrace(trace, (float *)start, (float *)end,
-	                       (float *)mins, (float *)maxs, clipHandle, contentmask,
-	                       origin, angles, capsule);
-#else
 	CM_TransformedBoxTrace(trace, start, end,
 	                       mins, maxs, clipHandle, contentmask,
 	                       origin, angles, capsule);
-#endif
+
 	if (trace->fraction < 1)
 	{
 		trace->entityNum = touch->s.number;
@@ -683,16 +677,10 @@ void SV_ClipMoveToEntities(moveclip_t *clip)
 			angles = vec3_origin;   // boxes don't rotate
 		}
 
-#ifdef __MACOS__
-		// compiler bug with const
-		CM_TransformedBoxTrace(&trace, (float *)clip->start, (float *)clip->end,
-		                       (float *)clip->mins, (float *)clip->maxs, clipHandle, clip->contentmask,
-		                       origin, angles, clip->capsule);
-#else
 		CM_TransformedBoxTrace(&trace, clip->start, clip->end,
 		                       clip->mins, clip->maxs, clipHandle, clip->contentmask,
 		                       origin, angles, clip->capsule);
-#endif
+
 		if (trace.allsolid)
 		{
 			clip->trace.allsolid = qtrue;

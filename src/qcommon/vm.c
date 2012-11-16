@@ -851,18 +851,3 @@ void VM_LogSyscalls(int *args)
 	fprintf(f, "%i: %p (%i) = %i %i %i %i\n", callnum, (void *)(args - (int *)currentVM->dataBase),
 	        args[0], args[1], args[2], args[3], args[4]);
 }
-
-#if defined(__MACOS__)
-#define DLL_ONLY                //DAJ
-#endif
-
-#ifdef DLL_ONLY                 // bk010215 - for DLL_ONLY dedicated servers/builds w/o VM
-int VM_CallCompiled(vm_t *vm, int *args)
-{
-	return (0);
-}
-
-void VM_Compile(vm_t *vm, vmHeader_t *header)
-{
-}
-#endif                          // DLL_ONLY
