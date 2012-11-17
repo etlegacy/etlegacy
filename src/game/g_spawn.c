@@ -7,6 +7,10 @@
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
+ * Portions of this file were taken from the ETPub project.
+ * Credit goes to "core"
+ * http://etpub.org
+ *
  * ET: Legacy is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -1038,4 +1042,33 @@ void G_SpawnEntitiesFromString(void)
 
 	G_Printf("Disable spawning!\n");
 	level.spawning = qfalse;            // any future calls to G_Spawn*() will be errors
+}
+
+//===============================================================
+// Some helper functions for entity property handling..
+// these functions are used by Lua.
+
+// return the index in the fiels[] array of the given fieldname,
+// return -1 if not found..
+int GetFieldIndex(char *fieldname)
+{
+	int i;
+	for (i = 0; fields[i].name; i++)
+		if (!Q_stricmp(fields[i].name, fieldname))
+		{
+			return i;
+		}
+	return -1;
+}
+
+// return the fieldType of the given fieldname..
+// return F_IGNORE if the field is not found.
+fieldtype_t GetFieldType(char *fieldname)
+{
+	int index = GetFieldIndex(fieldname);
+	if (index == -1)
+	{
+		return F_IGNORE;
+	}
+	return fields[index].type;
 }

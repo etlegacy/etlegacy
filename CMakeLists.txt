@@ -64,6 +64,7 @@ option(USE_CODEC_VORBIS		"Enable OGG Vorbis support (client)"				OFF)
 option(USE_OPENAL			"Enable OpenAL sound backend (client) [BROKEN]"		OFF)
 option(USE_FREETYPE			"Enable Freetype font library support (client)"		OFF)
 option(TRACKBASE_SUPPORT	"Enable extended server statistics (server)"		ON)
+option(USE_LUA				"Enable Lua support in game code"					OFF)
 
 if((WIN32 OR UNIX) AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 	option(BUILD_OMNIBOTS	"Enable omnibot build in mod code (Win & Linux server only!)"	OFF)
@@ -75,7 +76,6 @@ option(BUILD_MV_SUPPORT		"Compile the mod files with multiview support (broken?!
 set(ET_FS_BASEPATH			""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 option(ET_KEY				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
 
-option(BUILD_LUA_SUPPORT	"Enable Lua support in game code"					OFF)
 
 #-----------------------------------------------------------------
 # Platform-specific settings
@@ -108,7 +108,7 @@ if(UNIX)
 		set(CMAKE_SHARED_MODULE_SUFFIX "")
 		add_definitions("-DMACOS_X")
 	else()
-		set(OS_LIBRARIES dl m)
+		set(OS_LIBRARIES dl m rt)
 		set(LIB_SUFFIX ".mp.")
 	endif()
 	if(NOT MSYS)
@@ -206,6 +206,8 @@ FILE(GLOB CGAME_SRC
 
 FILE(GLOB QAGAME_SRC
 	"src/game/*.c"
+	"src/game/sha-1/sha.c"
+	"src/game/sha-1/sha1.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
 )
@@ -304,6 +306,17 @@ if(BUILD_CLIENT)
 endif(BUILD_CLIENT)
 
 #-----------------------------------------------------------------
+# Mod features
+#-----------------------------------------------------------------
+if(BUILD_MOD)
+	if(USE_LUA)
+		#find_package(Lua51 REQUIRED)
+		message(STATUS "Lua support enabled")
+		add_definitions(-DLUA_SUPPORT)
+	endif(USE_LUA)
+endif(BUILD_MOD)
+
+#-----------------------------------------------------------------
 # Server features
 #-----------------------------------------------------------------
 if(TRACKBASE_SUPPORT)
@@ -399,13 +412,13 @@ if(BUILD_MOD)
 			message(STATUS "Warning: omni-bot support is 32bit Win & Linux only - build skipped")
 		endif()
 	endif(BUILD_OMNIBOTS)
-	
-	if(BUILD_LUA_SUPPORT)
-		message(STATUS "Lua support enabled")
-		add_definitions(-DLUA_SUPPORT)
-	endif(BUILD_LUA_SUPPORT)
-		    
+
 	add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
+	if(BUNDLED_LIBS AND USE_LUA)
+		add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_lua)
+		target_link_libraries(qagame${LIB_SUFFIX}${ARCH} ${LUA_LIBRARY})
+	endif(BUNDLED_LIBS AND USE_LUA)
+
 	set_target_properties(qagame${LIB_SUFFIX}${ARCH}
 		PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
 		PREFIX ""

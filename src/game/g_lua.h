@@ -15,9 +15,15 @@
 #include "../qcommon/q_shared.h"
 #include "g_local.h"
 
-#include "../lua/include/lua.h"
-#include "../lua/include/lauxlib.h"
-#include "../lua/include/lualib.h"
+#ifdef BUNDLED_LIBS
+#    include "lua.h"
+#    include "lauxlib.h"
+#    include "lualib.h"
+#else
+#    include <lua.h>
+#    include <lauxlib.h>
+#    include <lualib.h>
+#endif
 
 #define LUA_NUM_VM 16
 #define LUA_MAX_FSIZE 1024 * 1024 // 1MB

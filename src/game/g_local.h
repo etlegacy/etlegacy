@@ -2203,4 +2203,7 @@ typedef struct
 	int flags;
 } field_t;
 
+int GetFieldIndex(char *fieldname);
+fieldtype_t GetFieldType(char *fieldname);
+
 #endif
