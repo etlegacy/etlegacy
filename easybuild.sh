@@ -41,14 +41,19 @@ _detectlinuxdistro() {
 		"/etc/SuSE-release" "/etc/novell-release" "/etc/sles-release"
 	)
 	for distro in ${_DISTROFILES}; do
-		[ -e "${distro}" ] && echo $(<${distro}) && return
+		[ -e "${distro}" ] && echo $(<${distro}) && exit
 	done
 
 	# archlinux has empty file...
-	[ -e "/etc/arch-release" ] && echo "Arch Linux" && return
+	[ -e "/etc/arch-release" ] && echo "Arch Linux" && exit
 
 	# oh, maybe we have /etc/lsb-release?
-	[ -e "/etc/lsb-release"] && . "/etc/lsb-release" && echo "${DISTRIB_ID}" && return
+	if [ -e "/etc/lsb-release" ]; then
+		. "/etc/lsb-release"
+		[ ! ${DISTRIB_DESCRIPTION} ] && DISTRIB_DESCRIPTION="${DISTRIB_ID} ${DISTRIB_RELEASE}"
+		echo "${DISTRIB_DESCRIPTION}"
+		exit
+	fi
 	
 	echo "Unknown Linux"
 }
