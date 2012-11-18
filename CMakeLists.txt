@@ -83,11 +83,11 @@ option(ET_KEY				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
 
 if(UNIX AND CROSS_COMPILE32) # 32-bit build
 	message(STATUS "System: ${ETLEGACY_SYSTEM_PROCESSOR}")
-
 	set(CMAKE_SYSTEM_PROCESSOR i386)
 	message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
 	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
 	set(CMAKE_C_FLAGS "-m32")
+	set(CMAKE_CXX_FLAGS "-m32")
 	set(CMAKE_EXE_LINKER_FLAGS "-m32")
 	set(CMAKE_SHARED_LINKER_FLAGS "-m32")
 	set(CMAKE_MODULE_LINKER_FLAGS "-m32")
@@ -310,9 +310,16 @@ endif(BUILD_CLIENT)
 #-----------------------------------------------------------------
 if(BUILD_MOD)
 	if(USE_LUA)
-		#find_package(Lua51 REQUIRED)
 		message(STATUS "Lua support enabled")
 		add_definitions(-DLUA_SUPPORT)
+		if(NOT BUNDLED_LIBS)
+			find_package(Lua REQUIRED)
+			if(${LUA_VERSION_STRING} MATCHES "^5.2")
+				add_definitions(-DLUA_5_2)
+			elseif(NOT LUA_VERSION_STRING)
+				message(WARNING "Unable to detect Lua version, assuming 5.1")
+			endif()
+		endif(NOT BUNDLED_LIBS)
 	endif(USE_LUA)
 endif(BUILD_MOD)
 
@@ -396,8 +403,6 @@ if(BUILD_MOD)
 		# note: 'Get the system architecture' above sets ARCH for cross compile
 		if(("${ARCH}" STREQUAL "i386" OR "${ARCH}" STREQUAL "x86") AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 			add_definitions(-DOMNIBOTS)
-			# TODO: move to Platform-specific settings?
-			set(CMAKE_CXX_FLAGS "-m32")
 
 			LIST(APPEND QAGAME_SRC "src/game/g_etbot_interface.cpp")
 			LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
@@ -414,10 +419,12 @@ if(BUILD_MOD)
 	endif(BUILD_OMNIBOTS)
 
 	add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
-	if(BUNDLED_LIBS AND USE_LUA)
-		add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_lua)
+	if(USE_LUA)
+		if(BUNDLED_LIBS)
+			add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_lua)
+		endif(BUNDLED_LIBS)
 		target_link_libraries(qagame${LIB_SUFFIX}${ARCH} ${LUA_LIBRARY})
-	endif(BUNDLED_LIBS AND USE_LUA)
+	endif(USE_LUA)
 
 	set_target_properties(qagame${LIB_SUFFIX}${ARCH}
 		PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
