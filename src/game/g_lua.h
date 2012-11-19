@@ -1,11 +1,10 @@
 /*
  * ET <-> *Lua* interface header file.
  *
- * This code is taken from ETPub. All credits go to their team especially quad and pheno!
+ * This code is taken from ETPub. All credits go to their team especially to quad and pheno!
  * http://etpub.org
  *
- * Find the ETPub Lua code by doing a text seach for "*LUA*"
- *
+ * Find the Lua code by doing a text seach for "LUA_SUPPORT"
  */
 #ifdef LUA_SUPPORT
 

@@ -1,11 +1,11 @@
 /*
 * ET <-> *Lua* interface source file.
 *
-* This code is taken from ETPub. All credits go to their team especially quad and pheno!
+* This code is taken from ETPub and partially from NQ. All credits go to the teams especially to quad and pheno!
 * http://etpub.org
+* http://shitstorm.org
 *
-* Find the ETPub Lua code by doing a text seach for "*LUA*"
-*
+* Find the Lua code by doing a text seach for "LUA_SUPPORT"
 */
 #ifdef LUA_SUPPORT
 

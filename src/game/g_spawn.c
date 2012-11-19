@@ -7,9 +7,8 @@
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
- * Portions of this file were taken from the ETPub project.
- * Credit goes to "core"
- * http://etpub.org
+ * Portions of this file were taken from the NQ project.
+ * Credit goes to core
  *
  * ET: Legacy is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +109,7 @@ field_t fields[] =
 	{ "model2",       FOFS(model2),         F_LSTRING   },
 	{ "spawnflags",   FOFS(spawnflags),     F_INT       },
 	{ "speed",        FOFS(speed),          F_FLOAT     },
-	{ "closespeed",   FOFS(closespeed),     F_FLOAT     }, //----(SA)	added
+	{ "closespeed",   FOFS(closespeed),     F_FLOAT     },
 	{ "target",       FOFS(target),         F_LSTRING   },
 	{ "targetname",   FOFS(targetname),     F_LSTRING   },
 	{ "message",      FOFS(message),        F_LSTRING   },
@@ -125,30 +124,26 @@ field_t fields[] =
 	{ "dmg",          FOFS(damage),         F_INT       },
 	{ "angles",       FOFS(s.angles),       F_VECTOR    },
 	{ "angle",        FOFS(s.angles),       F_ANGLEHACK },
-	// JOSEPH 9-27-99
+
 	{ "duration",     FOFS(duration),       F_FLOAT     },
 	{ "rotate",       FOFS(rotate),         F_VECTOR    },
-	// END JOSEPH
+
 	{ "degrees",      FOFS(angle),          F_FLOAT     },
 	{ "time",         FOFS(speed),          F_FLOAT     },
 
 	//----(SA) additional ai field
 	{ "skin",         FOFS(aiSkin),         F_LSTRING   },
 
-	//----(SA) done
 
 	// (SA) dlight lightstyles (made all these unique variables for testing)
 	{ "_color",       FOFS(dl_color),       F_VECTOR    }, // color of the light	(the underscore is inserted by the color picker in QER)
 	{ "color",        FOFS(dl_color),       F_VECTOR    }, // color of the light
 	{ "stylestring",  FOFS(dl_stylestring), F_LSTRING   }, // user defined stylestring "fffndlsfaaaaaa" for example
-	// done
 
-	//----(SA)
 	{ "shader",       FOFS(dl_shader),      F_LSTRING   }, // shader to use for a target_effect or dlight
 
 	// (SA) for target_unlock
 	{ "key",          FOFS(key),            F_INT       },
-	// done
 
 	// Rafael - mg42
 	{ "harc",         FOFS(harc),           F_FLOAT     },
@@ -226,15 +221,15 @@ void SP_trigger_push(gentity_t *ent);
 void SP_trigger_teleport(gentity_t *ent);
 void SP_trigger_hurt(gentity_t *ent);
 
-void SP_trigger_heal(gentity_t *ent);     // xkan,	9/17/2002
-void SP_trigger_ammo(gentity_t *ent);     // xkan,	9/17/2002
+void SP_trigger_heal(gentity_t *ent);
+void SP_trigger_ammo(gentity_t *ent);
 
 // Gordon
 void SP_misc_cabinet_health(gentity_t *self);
 void SP_misc_cabinet_supply(gentity_t *self);
 
 //---- (SA) Wolf triggers
-void SP_trigger_concussive_dust(gentity_t *ent);   // JPW NERVE
+void SP_trigger_concussive_dust(gentity_t *ent);
 void SP_trigger_once(gentity_t *ent);
 
 void SP_target_remove_powerups(gentity_t *ent);
@@ -274,7 +269,6 @@ void SP_path_corner(gentity_t *self);
 void SP_path_corner_2(gentity_t *self);
 void SP_info_limbo_camera(gentity_t *self);
 void SP_info_train_spline_main(gentity_t *self);
-//void SP_bazooka (gentity_t *self);
 
 void SP_misc_teleporter_dest(gentity_t *self);
 void SP_misc_model(gentity_t *ent);
@@ -329,11 +323,9 @@ void SP_trigger_objective_info(gentity_t *ent);
 void SP_gas(gentity_t *ent);
 void SP_target_rumble(gentity_t *ent);
 
-// Mad Doc - TDF
 // put this back in for single player bots
-void SP_trigger_aidoor(gentity_t *ent);
+void SP_trigger_aidoor(gentity_t *ent); // FIXME: remove
 
-//void SP_trigger_aidoor (gentity_t *ent);
 void SP_SmokeDust(gentity_t *ent);
 void SP_Dust(gentity_t *ent);
 void SP_props_sparks(gentity_t *ent);
@@ -364,7 +356,6 @@ void SP_func_invisible_user(gentity_t *ent);
 
 void SP_lightJunior(gentity_t *self);
 
-//void SP_props_me109 (gentity_t *ent);
 void SP_misc_flak(gentity_t *ent);
 
 void SP_props_snowGenerator(gentity_t *ent);
@@ -444,12 +435,11 @@ spawn_t spawns[] =
 	{ "trigger_hurt",              SP_trigger_hurt              },
 
 	//---- (SA) Wolf triggers
-	{ "trigger_concussive_dust",   SP_trigger_concussive_dust   }, // JPW NERVE
+	{ "trigger_concussive_dust",   SP_trigger_concussive_dust   },
 	{ "trigger_once",              SP_trigger_once              },
 
-	// Mad Doc - TDf
 	// I'm going to put trigger_aidoors back in. I'll make sure they only work in single player
-	{ "trigger_aidoor",            SP_trigger_aidoor            },
+	{ "trigger_aidoor",            SP_trigger_aidoor            }, // obsolete
 
 	{ "trigger_heal",              SP_trigger_heal              },
 	{ "trigger_ammo",              SP_trigger_ammo              },
@@ -457,10 +447,6 @@ spawn_t spawns[] =
 	// Gordon: 16/12/02: adding the model things to go with the triggers
 	{ "misc_cabinet_health",       SP_misc_cabinet_health       },
 	{ "misc_cabinet_supply",       SP_misc_cabinet_supply       },
-
-	// Rafael
-//	{"trigger_aidoor", SP_trigger_aidoor},
-//	{"trigger_deathCheck",SP_trigger_deathCheck},
 
 	// targets perform no action by themselves, but must be triggered
 	// by another entity
@@ -1044,6 +1030,7 @@ void G_SpawnEntitiesFromString(void)
 	level.spawning = qfalse;            // any future calls to G_Spawn*() will be errors
 }
 
+#ifdef LUA_SUPPORT
 //===============================================================
 // Some helper functions for entity property handling..
 // these functions are used by Lua.
@@ -1072,3 +1059,4 @@ fieldtype_t GetFieldType(char *fieldname)
 	}
 	return fields[index].type;
 }
+#endif // LUA_SUPPORT
