@@ -33,7 +33,7 @@
 
 #include "server.h"
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 #include "sv_trackbase.h"
 #endif
 
@@ -317,7 +317,7 @@ void SV_Startup(void)
 
 	Cvar_Set("sv_running", "1");
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 	TB_ServerStart();
 #endif
 }
@@ -890,7 +890,7 @@ void SV_Init(void)
 
 	svs.serverLoad = -1;
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 	TB_Init();
 #endif
 }
@@ -982,7 +982,7 @@ void SV_Shutdown(char *finalmsg)
 	// disconnect any local clients
 	CL_Disconnect(qfalse);
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 	TB_ServerStop();
 #endif
 }

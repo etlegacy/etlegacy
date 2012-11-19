@@ -32,7 +32,7 @@
  * @file sv_trackbase.h
  * @brief Sends game statistics to Trackbase
  */
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 
 #include "sv_trackbase.h"
 
@@ -336,4 +336,4 @@ char *TB_getGUID(client_t *cl)
 	}
 }
 
-#endif // TRACKBASE_SUPPORT
+#endif // FEATURE_TRACKBASE

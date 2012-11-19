@@ -105,7 +105,7 @@ R_InitCommandBuffers
 void R_InitCommandBuffers(void)
 {
 	glConfig.smpActive = qfalse; // do we still have to set this if smp is disabled?
-#ifdef SMP
+#ifdef FEATURE_SMP
 	if (r_smp->integer)
 	{
 		ri.Printf(PRINT_ALL, "Trying SMP acceleration...\n");

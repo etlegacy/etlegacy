@@ -283,7 +283,7 @@ static void CG_TransitionSnapshot(void)
 	}
 
 	// OSP -- check for MV updates from new snapshot info
-#ifdef MV_SUPPORT
+#ifdef FEATURE_MULTIVIEW
 	if (cg.snap->ps.powerups[PW_MVCLIENTLIST] != cg.mvClientList)
 	{
 		CG_mvProcessClientList();

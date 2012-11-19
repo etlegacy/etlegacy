@@ -1223,7 +1223,7 @@ void R_Register(void)
 	r_uiFullScreen      = ri.Cvar_Get("r_uifullscreen", "0", 0);
 
 	r_subdivisions = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
-#ifdef SMP
+#ifdef FEATURE_SMP
 	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
 #endif
 	r_stereoEnabled  = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1430,7 +1430,7 @@ void R_Init(void)
 
 	backEndData[0] = ri.Hunk_Alloc(sizeof(*backEndData[0]) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
 
-#ifdef SMP
+#ifdef FEATURE_SMP
 	if (r_smp->integer)
 	{
 		backEndData[1] = ri.Hunk_Alloc(sizeof(*backEndData[1]) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);

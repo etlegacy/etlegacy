@@ -36,7 +36,7 @@
 #include "../game/g_local.h"
 #include "../qcommon/q_shared.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
@@ -1417,7 +1417,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 			}
 			ent->reached = NULL;
 
-#ifdef  OMNIBOTS
+#ifdef  FEATURE_OMNIBOT
 			// Send a trigger to omni-bot
 			{
 				const char *pName = _GetEntityName(ent);
@@ -2942,7 +2942,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 			}
 			ent->s.apos.trType = trType;
 		}
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		{
 			const char *pName = _GetEntityName(ent);
 			Bot_Util_SendTrigger(ent, NULL, va("%s_start", pName ? pName : "<unknown>"),
@@ -2961,7 +2961,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 		ent->s.apos.trType     = TR_STATIONARY;
 		VectorClear(ent->s.apos.trDelta);
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		{
 			const char *pName = _GetEntityName(ent);
 			Bot_Util_SendTrigger(ent, NULL, va("%s_stop", pName ? pName : "<unknown>"),
@@ -3319,7 +3319,7 @@ qboolean G_ScriptAction_ObjectiveStatus(gentity_t *ent, char *params)
 	Info_SetValueForKey(cs, va("%s%i", parm, num), token);
 	trap_SetConfigstring(CS_MULTI_OBJECTIVE, cs);
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	{
 		const char *pTagName = _GetEntityName(ent);
 		switch (atoi(token))
@@ -3650,7 +3650,7 @@ qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 	tent->s.eventParm = G_SoundIndex(token);
 	tent->r.svFlags   = SVF_BROADCAST;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Util_SendTrigger(ent, NULL, token, "team_announce");
 #endif
 
@@ -3695,7 +3695,7 @@ qboolean G_ScriptAction_Announce_Icon(gentity_t *ent, char *params)
 
 	trap_SendServerCommand(-1, va("cpmi %i \"%s\"", iconnumber, token));
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Util_SendTrigger(ent, NULL, token, "announce_icon");
 #endif
 
@@ -3728,7 +3728,7 @@ qboolean G_ScriptAction_Announce(gentity_t *ent, char *params)
 	trap_SendServerCommand(-1, va("cpm \"%s\"", token));
 //  trap_SendServerCommand( -1, va("cp \"%s\" 2", token ));
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Util_SendTrigger(ent, NULL, token, "announce");
 #endif
 
@@ -4085,7 +4085,7 @@ qboolean G_ScriptAction_RepairMG42(gentity_t *ent, char *params)
 		target->takedamage = qtrue;
 		target->s.eFlags  &= ~EF_SMOKING;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, name, "repair_mg42");
 #endif
 

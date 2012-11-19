@@ -35,7 +35,7 @@
 #include "snd_codec.h"
 #include "client.h"
 
-#ifdef USE_OPENAL
+#ifdef FEATURE_OPENAL
 
 #include "qal.h"
 
@@ -2870,7 +2870,7 @@ S_AL_Init
 */
 qboolean S_AL_Init(soundInterface_t *si)
 {
-#ifdef USE_OPENAL
+#ifdef FEATURE_OPENAL
 	const char *device = NULL;
 	int        i;
 

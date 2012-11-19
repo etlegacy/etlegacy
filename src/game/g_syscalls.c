@@ -267,7 +267,7 @@ qboolean trap_EntityContactCapsule(const vec3_t mins, const vec3_t maxs, const g
 }
 
 
-// #ifdef OMNIBOTS FIXME: precompiler macros for engine ?
+// #ifdef FEATURE_OMNIBOT FIXME: precompiler macros for engine ?
 int trap_BotAllocateClient(int clientNum)
 {
 	return syscall(G_BOT_ALLOCATE_CLIENT, clientNum);

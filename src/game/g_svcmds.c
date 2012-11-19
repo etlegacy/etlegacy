@@ -35,11 +35,11 @@
 
 #include "g_local.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 #include "g_lua.h"
 #endif
 
@@ -1336,7 +1336,7 @@ qboolean ConsoleCommand(void)
 
 	trap_Argv(0, cmd, sizeof(cmd));
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	if (!Q_stricmp(cmd, "lua_status"))
 	{
 		G_LuaStatus(NULL);
@@ -1479,7 +1479,7 @@ qboolean ConsoleCommand(void)
 		return qtrue;
 	}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	if (!Q_stricmp(cmd, "bot"))
 	{
 		Bot_Interface_ConsoleCommand();

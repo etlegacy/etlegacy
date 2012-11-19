@@ -20,8 +20,7 @@ set(ETLEGACY_VERSION_MINOR  "7")
 set(ETLEGACY_VERSION_PATCH  "0")
 set(ETLEGACY_VERSION "${ETLEGACY_VERSION_MAJOR}.${ETLEGACY_VERSION_MINOR}${ETLEGACY_VERSION_PATCH}")
 # Used to store real system processor when we overwrite CMAKE_SYSTEM_PROCESSOR for cross-compile builds
-# See IS_64_BIT_BUILD_SYSTEM
-set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
+set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR}) # See IS_64_BIT_BUILD_SYSTEM
 
 # has to be set to "", otherwise CMake will pass -rdynamic resulting in a client crash
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
@@ -38,7 +37,7 @@ option(BUILD_PAK3_PK3	"Pack updated game scripts into pak3.pk3"			OFF)
 option(BUNDLED_LIBS		"Use bundled libraries instead of the system ones"	OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
-if (CMAKE_SYSTEM MATCHES "OpenBSD*")
+if(CMAKE_SYSTEM MATCHES "OpenBSD*")
 	option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" OFF)
 else()
 	option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON)
@@ -54,24 +53,24 @@ if(INSTALL_DEFAULT_BASEDIR)
 endif(INSTALL_DEFAULT_BASEDIR)
 
 # Optional features
-if (CMAKE_SYSTEM MATCHES "Darwin")
-	option(SMP_SUPPORT		"Enable SMP (multicore support) (client)"			OFF)
+if(CMAKE_SYSTEM MATCHES "Darwin")
+	option(FEATURE_SMP		"Enable SMP (multicore support) (client)"			OFF)
 else()
-	option(SMP_SUPPORT		"Enable SMP (multicore support) (client)"			ON)
+	option(FEATURE_SMP		"Enable SMP (multicore support) (client)"			ON)
 endif()
-option(USE_CURL				"Enable auto-download support using cURL (client)"	ON)
-option(USE_CODEC_VORBIS		"Enable OGG Vorbis support (client)"				OFF)
-option(USE_OPENAL			"Enable OpenAL sound backend (client) [BROKEN]"		OFF)
-option(USE_FREETYPE			"Enable Freetype font library support (client)"		OFF)
-option(TRACKBASE_SUPPORT	"Enable extended server statistics (server)"		ON)
-option(USE_LUA				"Enable Lua support in game code"					OFF)
+option(FEATURE_CURL			"Enable auto-download support using cURL (client)"	ON)
+option(FEATURE_OGG_VORBIS	"Enable OGG Vorbis support (client)"				OFF)
+option(FEATURE_OPENAL		"Enable OpenAL sound backend (client) [BROKEN]"		OFF)
+option(FEATURE_FREETYPE		"Enable Freetype font library support (client)"		OFF)
+option(FEATURE_TRACKBASE	"Enable extended server statistics (server)"		ON)
+option(FEATURE_LUA			"Enable Lua support in game code"					OFF)
 
 if((WIN32 OR UNIX) AND NOT CMAKE_SYSTEM MATCHES "Darwin")
-	option(BUILD_OMNIBOTS	"Enable omnibot build in mod code (Win & Linux server only!)"	OFF)
-	option(INSTALL_OMNIBOTS	"Install Omni-Bot - LINUX only"									OFF)
+	option(FEATURE_OMNIBOT	"Enable omnibot build in mod code (Win & Linux server only!)"	OFF)
+	option(INSTALL_OMNIBOT	"Install Omni-Bot - LINUX only"									OFF)
 endif()
 
-option(BUILD_MV_SUPPORT		"Compile the mod files with multiview support (broken?!)"		OFF)
+option(FEATURE_MULTIVIEW	"Compile the mod files with multiview support (broken?!)"		OFF)
 
 set(ET_FS_BASEPATH			""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 option(ET_KEY				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
@@ -118,7 +117,7 @@ if(UNIX)
 			message(STATUS "Compiling with -fvisibility=hidden")
 			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 		endif(SUPPORT_VISIBILITY)
-	endif()
+	endif(NOT MSYS)
 elseif(WIN32)
 	add_definitions(-DWINVER=0x501)
 	set(OS_LIBRARIES ws2_32 psapi winmm)
@@ -235,11 +234,11 @@ endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 # Client features
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
-	Find_Package(OpenGL REQUIRED)
+	find_package(OpenGL REQUIRED)
 
 	if(NOT BUNDLED_LIBS)
-		Find_Package(SDL32) # FindSDL doesn't detect 32bit lib when crosscompiling
-		Find_Package(JPEG 8)
+		find_package(SDL32 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
+		find_package(JPEG 8 REQUIRED)
 
 		# Check for libjpeg v8
 		include(CheckFunctionExists)
@@ -249,8 +248,7 @@ if(BUILD_CLIENT)
 		check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
 	endif(NOT BUNDLED_LIBS)
 
-	if(USE_CURL)
-		add_definitions(-DUSE_CURL)
+	if(FEATURE_CURL)
 		if(NOT BUNDLED_LIBS)
 			find_package(CURL)
 			if(MINGW)
@@ -260,32 +258,32 @@ if(BUILD_CLIENT)
 			add_definitions(-DCURL_STATICLIB)
 		endif(NOT BUNDLED_LIBS)
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_curl.c")
-	else(USE_CURL)
+	else(FEATURE_CURL)
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
-	endif(USE_CURL)
+	endif(FEATURE_CURL)
 
-	if(USE_FREETYPE)
-		add_definitions(-DUSE_FREETYPE)
+	if(FEATURE_FREETYPE)
+		add_definitions(-DFEATURE_FREETYPE)
 		find_package(Freetype)
-	endif(USE_FREETYPE)
+	endif(FEATURE_FREETYPE)
 
-	if(USE_OPENAL)
-		add_definitions(-DUSE_OPENAL)
-		add_definitions(-DUSE_OPENAL_DLOPEN)
-	find_package(OpenAL)
-	endif(USE_OPENAL)
+	if(FEATURE_OPENAL)
+		add_definitions(-DFEATURE_OPENAL)
+		add_definitions(-DFEATURE_OPENAL_DLOPEN)
+		find_package(OpenAL)
+	endif(FEATURE_OPENAL)
 
-	if(USE_CODEC_VORBIS)
-		add_definitions(-DUSE_CODEC_VORBIS)
+	if(FEATURE_OGG_VORBIS)
+		add_definitions(-DFEATURE_OGG_VORBIS)
 		find_package(Vorbis)
-	endif(USE_CODEC_VORBIS)
+	endif(FEATURE_OGG_VORBIS)
 
-	if(SMP_SUPPORT)
-		add_definitions(-DSMP)
-	endif(SMP_SUPPORT)
+	if(FEATURE_SMP)
+		add_definitions(-DFEATURE_SMP)
+	endif(FEATURE_SMP)
 
 	# Use bundled libraries
-	if(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL OR BUNDLED_LIBS AND NOT MINGW)
+	if(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND FEATURE_CURL OR BUNDLED_LIBS AND NOT MINGW)
 		if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
 			message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
 			set(BUNDLED_LIBS ON)
@@ -302,16 +300,16 @@ if(BUILD_CLIENT)
 			message(STATUS "and enable BUNDLED_LIBS in CMake configuration.")
 			message(FATAL_ERROR "Build stopped because of missing libraries.")
 		endif()
-	endif(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND USE_CURL OR BUNDLED_LIBS AND NOT MINGW)
+	endif(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND FEATURE_CURL OR BUNDLED_LIBS AND NOT MINGW)
 endif(BUILD_CLIENT)
 
 #-----------------------------------------------------------------
 # Mod features
 #-----------------------------------------------------------------
 if(BUILD_MOD)
-	if(USE_LUA)
+	if(FEATURE_LUA)
 		message(STATUS "Lua support enabled")
-		add_definitions(-DLUA_SUPPORT)
+		add_definitions(-DFEATURE_LUA)
 		if(NOT BUNDLED_LIBS)
 			find_package(Lua REQUIRED)
 			if(${LUA_VERSION_STRING} MATCHES "^5.2")
@@ -320,15 +318,15 @@ if(BUILD_MOD)
 				message(WARNING "Unable to detect Lua version, assuming 5.1")
 			endif()
 		endif(NOT BUNDLED_LIBS)
-	endif(USE_LUA)
+	endif(FEATURE_LUA)
 endif(BUILD_MOD)
 
 #-----------------------------------------------------------------
 # Server features
 #-----------------------------------------------------------------
-if(TRACKBASE_SUPPORT)
-	add_definitions(-DTRACKBASE_SUPPORT)
-endif(TRACKBASE_SUPPORT)
+if(FEATURE_TRACKBASE)
+	add_definitions(-DFEATURE_TRACKBASE)
+endif(FEATURE_TRACKBASE)
 
 #-----------------------------------------------------------------
 # Build
@@ -381,9 +379,9 @@ if(BUILD_SERVER)
 endif(BUILD_SERVER)
 
 if(BUILD_MOD)
-	if(BUILD_MV_SUPPORT)
-		add_definitions(-DMV_SUPPORT)
-	endif(BUILD_MV_SUPPORT)
+	if(FEATURE_MULTIVIEW)
+		add_definitions(-DFEATURE_MULTIVIEW)
+	endif(FEATURE_MULTIVIEW)
 
 	#
 	# cgame
@@ -398,11 +396,11 @@ if(BUILD_MOD)
 	#
 	# qagame
 	#
-	if(BUILD_OMNIBOTS)
+	if(FEATURE_OMNIBOT)
 		# 32bit WIN & Linux only
 		# note: 'Get the system architecture' above sets ARCH for cross compile
 		if(("${ARCH}" STREQUAL "i386" OR "${ARCH}" STREQUAL "x86") AND NOT CMAKE_SYSTEM MATCHES "Darwin")
-			add_definitions(-DOMNIBOTS)
+			add_definitions(-DFEATURE_OMNIBOT)
 
 			LIST(APPEND QAGAME_SRC "src/game/g_etbot_interface.cpp")
 			LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
@@ -416,15 +414,15 @@ if(BUILD_MOD)
 		else()
 			message(STATUS "Warning: omni-bot support is 32bit Win & Linux only - build skipped")
 		endif()
-	endif(BUILD_OMNIBOTS)
+	endif(FEATURE_OMNIBOT)
 
 	add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
-	if(USE_LUA)
+	if(FEATURE_LUA)
 		if(BUNDLED_LIBS)
 			add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_lua)
 		endif(BUNDLED_LIBS)
 		target_link_libraries(qagame${LIB_SUFFIX}${ARCH} ${LUA_LIBRARY})
-	endif(USE_LUA)
+	endif(FEATURE_LUA)
 
 	set_target_properties(qagame${LIB_SUFFIX}${ARCH}
 		PROPERTIES COMPILE_DEFINITIONS "GAMEDLL"
@@ -483,7 +481,7 @@ if(BUILD_PAK3_PK3)
 	)
 endif(BUILD_PAK3_PK3)
 
-if(INSTALL_OMNIBOTS)
+if(INSTALL_OMNIBOT)
 	if(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 		message(STATUS "Installing Omni-Bot")
 
@@ -507,7 +505,7 @@ if(INSTALL_OMNIBOTS)
 	else()
 		message(STATUS "Installing Omni-Bot is Linux only")
 	endif(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
-endif(INSTALL_OMNIBOTS)
+endif(INSTALL_OMNIBOT)
 
 #-----------------------------------------------------------------
 # Installer/Package generation
@@ -521,7 +519,7 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/misc/etmain/"
 )
 
 # misc adds
-if(INSTALL_OMNIBOTS)
+if(INSTALL_OMNIBOT)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl_bot.sh"
 		DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 		PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE
@@ -530,7 +528,7 @@ if(INSTALL_OMNIBOTS)
 		DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 		PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE
 	)
-endif(INSTALL_OMNIBOTS)
+endif(INSTALL_OMNIBOT)
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}"

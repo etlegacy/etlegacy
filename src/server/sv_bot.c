@@ -34,7 +34,7 @@
 #include "server.h"
 #include "../botlib/botlib.h"
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 #include "sv_trackbase.h"
 #endif
 
@@ -100,7 +100,7 @@ int SV_BotAllocateClient(int clientNum)
 	cl->netchan.remoteAddress.type = NA_BOT;
 	cl->rate                       = 16384;
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 	TB_catchBotConnect(cl - svs.clients);
 #endif
 

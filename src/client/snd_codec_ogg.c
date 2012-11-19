@@ -32,7 +32,7 @@
  */
 
 // OGG support is enabled by this define
-#ifdef USE_CODEC_VORBIS
+#ifdef FEATURE_OGG_VORBIS
 
 // includes for the Q3 sound system
 #include "client.h"
@@ -483,4 +483,4 @@ void *S_OGG_CodecLoad(const char *filename, snd_info_t *info)
 	return buffer;
 }
 
-#endif // USE_CODEC_VORBIS
+#endif // FEATURE_OGG_VORBIS

@@ -35,7 +35,7 @@
 #include "server.h"
 #include "../botlib/botlib.h"
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 #include "sv_trackbase.h"
 #endif
 
@@ -459,7 +459,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		SV_GameDropClient(args[1], VMA(2), args[3]);
 		return 0;
 	case G_SEND_SERVER_COMMAND:
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 		if (!TB_catchServerCommand(args[1], VMA(2)))
 #endif
 		{
@@ -707,7 +707,7 @@ void SV_RestartGameProgs(void)
 
 	SV_InitGameVM(qtrue);
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 	TB_MapRestart();
 #endif
 }
@@ -733,7 +733,7 @@ void SV_InitGameProgs(void)
 
 	SV_InitGameVM(qfalse);
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 	TB_Map(sv_mapname->string);
 #endif
 }

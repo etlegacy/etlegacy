@@ -40,7 +40,7 @@
 
 #include "g_local.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
@@ -574,7 +574,7 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	//  ent2->item->quantity = client->ps.ammoclip[BG_FindClipForWeapon(weapon)]; // Gordon: um, modifying an item is not a good idea
 	client->ps.ammoclip[BG_FindClipForWeapon(weapon)] = 0;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_RemoveWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
 #endif
 }
@@ -647,7 +647,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				G_AddSkillPoints(ent->parent, SK_SIGNALS, 1.f);
 				G_DebugAddSkillPoints(ent->parent, SK_SIGNALS, 1.f, "ammo pack picked up");
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 				//omni-bot event
 				if (ent->parent)
 				{
@@ -772,7 +772,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		}
 	}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_AddWeapon(other->client->ps.clientNum, Bot_WeaponGameToBot(ent->item->giTag));
 #endif
 
@@ -814,7 +814,7 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 	}
 	other->client->ps.stats[STAT_HEALTH] = other->health;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	//omni-bot event
 	if (ent->parent)
 	{

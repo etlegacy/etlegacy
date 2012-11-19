@@ -33,11 +33,11 @@
 
 #include "g_local.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 #include "g_lua.h"
 #endif
 
@@ -62,7 +62,7 @@ g_campaignInfo_t g_campaigns[MAX_CAMPAIGNS];
 
 mapEntityData_Team_t mapEntityData[2];
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 vmCvar_t g_OmniBotPath;
 vmCvar_t g_OmniBotEnable;
 vmCvar_t g_OmniBotFlags;
@@ -242,7 +242,7 @@ vmCvar_t g_disableComplaints;
 vmCvar_t g_antiwarp;
 vmCvar_t g_maxWarp;
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 vmCvar_t lua_modules;
 vmCvar_t lua_allowedModules;
 #endif
@@ -420,7 +420,7 @@ cvarTable_t gameCvarTable[] =
 	// How fast do we want Allied single player movement?
 	{ &g_movespeed,               "g_movespeed",               "76",                                                     CVAR_CHEAT,                                      0, qfalse},
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	// Omni-bot user defined path to load bot library from.
 	{ &g_OmniBotPath,             "omnibot_path",              "",                                                       CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse},
 	{ &g_OmniBotEnable,           "omnibot_enable",            "0",                                                      CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse},
@@ -467,7 +467,7 @@ cvarTable_t gameCvarTable[] =
 	// zinx etpro antiwarp
 	{ &g_maxWarp,                 "g_maxWarp",                 "4",                                                      0 },
 	{ &g_antiwarp,                "g_antiwarp",                "1",                                                      0 },
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	{ &lua_modules,               "lua_modules",               "",                                                       0 },
 	{ &lua_allowedModules,        "lua_allowedModules",        "",                                                       0 },
 #endif
@@ -512,13 +512,13 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_INIT:
 	{
 		float time = trap_Milliseconds();
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 
 		Bot_Interface_InitHandles();
 #endif
 		G_InitGame(arg0, arg1, arg2);
 		G_Printf("Game Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 
 		time = trap_Milliseconds();
 
@@ -553,7 +553,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return 0;
 	case GAME_RUN_FRAME:
 		G_RunFrame(arg0);
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		Bot_Interface_Update();
 #endif
 		return 0;
@@ -580,7 +580,7 @@ void QDECL G_Printf(const char *fmt, ...)
 	Q_vsnprintf(text, sizeof(text), fmt, argptr);
 	va_end(argptr);
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	// LUA* API callbacks
 	G_LuaHook_Print(text);
 #endif
@@ -1634,7 +1634,7 @@ void G_UpdateCvars(void)
 						trap_Cvar_Set(cv->cvarName, "33");
 					}
 				}
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 				else if (cv->vmCvar == &lua_modules || cv->vmCvar == &lua_allowedModules)
 				{
 					G_LuaShutdown();
@@ -2137,7 +2137,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	// Match init work
 	G_loadMatchGame();
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	G_LuaInit();
 	G_LuaHook_InitGame(levelTime, randomSeed, restart);
 #endif
@@ -2153,7 +2153,7 @@ G_ShutdownGame
 */
 void G_ShutdownGame(int restart)
 {
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	G_LuaHook_ShutdownGame(restart);
 	G_LuaShutdown();
 #endif
@@ -2179,7 +2179,7 @@ void G_ShutdownGame(int restart)
 
 	G_Printf("==== ShutdownGame ====\n");
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	if (!Bot_Interface_Shutdown())
 	{
 		G_Printf(S_COLOR_RED "Error shutting down Omni-Bot.\n");
@@ -3153,7 +3153,7 @@ void LogExit(const char *string)
 		bani_storemapxp();
 	}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Util_SendTrigger(NULL, NULL, "Round End.", "roundend");
 #endif
 
@@ -4203,7 +4203,7 @@ uebrgpiebrpgibqeripgubeqrpigubqifejbgipegbrtibgurepqgbn%i", level.time)
 		level.gameManager->s.otherEntityNum  = MAX_TEAM_LANDMINES - G_CountTeamLandmines(TEAM_AXIS);
 		level.gameManager->s.otherEntityNum2 = MAX_TEAM_LANDMINES - G_CountTeamLandmines(TEAM_ALLIES);
 	}
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	G_LuaHook_RunFrame(levelTime);
 #endif
 }

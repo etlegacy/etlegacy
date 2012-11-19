@@ -1158,7 +1158,7 @@ void CG_DrawOverlays(void)
 {
 	CG_GameStatsDraw();
 	CG_TopShotsDraw();
-#ifdef MV_SUPPORT
+#ifdef FEATURE_MULTIVIEW
 	CG_SpecHelpDraw();
 #endif
 	if (cg.demoPlayback)

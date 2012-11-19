@@ -33,7 +33,7 @@
 
 #include "server.h"
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 #include "sv_trackbase.h"
 #endif
 
@@ -424,7 +424,7 @@ void SV_MasterGameCompleteStatus()
 		SVC_Status(adr[i], qtrue);
 	}
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 	TB_MapEnd();
 #endif
 }
@@ -1527,7 +1527,7 @@ void SV_Frame(int msec)
 		svs.serverLoad = -1;
 	}
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 	TB_Frame(msec);
 #endif
 }

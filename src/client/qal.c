@@ -32,11 +32,11 @@
  * @brief dynamically loads OpenAL
  */
 
-#ifdef USE_OPENAL
+#ifdef FEATURE_OPENAL
 
 #include "qal.h"
 
-#ifdef USE_OPENAL_DLOPEN
+#ifdef FEATURE_OPENAL_DLOPEN
 
 #include "../sys/sys_loadlib.h"
 

@@ -34,11 +34,11 @@
 #include "g_local.h"
 #include "../qcommon/q_shared.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 #include "g_lua.h"
 #endif
 
@@ -519,7 +519,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			obit = modNames[meansOfDeath];
 		}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		// send the events
 		Bot_Event_Death(self - g_entities, &g_entities[attacker - g_entities], obit);
 		Bot_Event_KilledSomeone(attacker - g_entities, &g_entities[self - g_entities], obit);
@@ -528,7 +528,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, obit);
 	}
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	// pheno: Lua API callbacks
 	// IRATA NQ like rework (Etpro style)
 	if (G_LuaHook_Obituary(self->s.number, killer, meansOfDeath))
@@ -688,7 +688,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		if (self->health > GIB_HEALTH && meansOfDeath != MOD_SUICIDE && meansOfDeath != MOD_SWITCHTEAM && self->waterlevel < 3)
 		{
 			G_AddEvent(self, EV_MEDIC_CALL, 0);
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 			// ATM: only register the goal if the target isn't in water.
 			if (self->waterlevel <= 1)
 			{
@@ -864,7 +864,7 @@ qboolean IsHeadShotWeapon(int mod)
 
 gentity_t *G_BuildHead(gentity_t *ent)
 {
-	gentity_t *head;
+	gentity_t     *head;
 	orientation_t or;
 
 	head = G_Spawn();
@@ -1893,7 +1893,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		// RF, entity scripting
 		G_Script_ScriptEvent(targ, "pain", va("%d %d", targ->health, targ->health + take));
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		// RF, record bot pain
 		if (targ->s.number < level.maxclients)
 		{

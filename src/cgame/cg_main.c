@@ -277,7 +277,7 @@ vmCvar_t cl_wavefilename;
 vmCvar_t cl_waveoffset;
 vmCvar_t cg_recording_statusline;
 
-vmCvar_t	cg_hitSounds;
+vmCvar_t cg_hitSounds;
 
 typedef struct
 {
@@ -439,7 +439,7 @@ cvarTable_t cvarTable[] =
 	{ &demo_drawTimeScale,       "demo_drawTimeScale",       "1",     CVAR_ARCHIVE                 },
 	{ &demo_infoWindow,          "demo_infoWindow",          "1",     CVAR_ARCHIVE                 },
 
-#ifdef MV_SUPPORT
+#ifdef FEATURE_MULTIVIEW
 	{ &mv_sensitivity,           "mv_sensitivity",           "20",    CVAR_ARCHIVE                 },
 #endif
 
@@ -782,7 +782,7 @@ void CG_nameCleanFilename(const char *pszIn, char *pszOut, unsigned int dwOutSiz
 // Standard naming for screenshots/demos
 char *CG_generateFilename(void)
 {
-	qtime_t ct;
+	qtime_t    ct;
 	const char *pszServerInfo = CG_ConfigString(CS_SERVERINFO);
 
 	trap_RealTime(&ct);
@@ -1103,7 +1103,7 @@ static void CG_RegisterSounds(void)
 
 	for (i = 0; i < BG_NumScriptSpeakers(); i++)
 	{
-		speaker = BG_GetScriptSpeaker(i);
+		speaker        = BG_GetScriptSpeaker(i);
 		speaker->noise = trap_S_RegisterSound(speaker->filename, qfalse);
 	}
 
@@ -1206,15 +1206,15 @@ static void CG_RegisterSounds(void)
 		}
 	}
 
-	cgs.media.countFight   = trap_S_RegisterSound( "sound/osp/fight.wav",qfalse);
-	cgs.media.countPrepare = trap_S_RegisterSound( "sound/osp/prepare.wav",qfalse);
-	cgs.media.goatAxis     = trap_S_RegisterSound( "sound/osp/goat.wav", qfalse);
+	cgs.media.countFight   = trap_S_RegisterSound("sound/osp/fight.wav", qfalse);
+	cgs.media.countPrepare = trap_S_RegisterSound("sound/osp/prepare.wav", qfalse);
+	cgs.media.goatAxis     = trap_S_RegisterSound("sound/osp/goat.wav", qfalse);
 	//cgs.media.winAllies = trap_S_RegisterSound( "sound/osp/winallies.wav",qfalse );
 	//cgs.media.winAxis = trap_S_RegisterSound( "sound/osp/winaxis.wav",qfalse );
 
-	cgs.media.headShot = trap_S_RegisterSound( "sound/hitsounds/hithead.wav", qfalse);
-	cgs.media.bodyShot = trap_S_RegisterSound( "sound/hitsounds/hit.wav", qfalse);
-	cgs.media.teamShot = trap_S_RegisterSound( "sound/hitsounds/hitteam.wav", qfalse);
+	cgs.media.headShot = trap_S_RegisterSound("sound/hitsounds/hithead.wav", qfalse);
+	cgs.media.bodyShot = trap_S_RegisterSound("sound/hitsounds/hit.wav", qfalse);
+	cgs.media.teamShot = trap_S_RegisterSound("sound/hitsounds/hitteam.wav", qfalse);
 
 	cgs.media.flameSound         = trap_S_RegisterSound("sound/weapons/flamethrower/flame_burn.wav", qfalse);
 	cgs.media.flameBlowSound     = trap_S_RegisterSound("sound/weapons/flamethrower/flame_pilot.wav", qfalse);

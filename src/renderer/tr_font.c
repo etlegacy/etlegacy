@@ -66,7 +66,7 @@
 #include "tr_local.h"
 #include "../qcommon/qcommon.h"
 
-#ifdef USE_FREETYPE
+#ifdef FEATURE_FREETYPE
 #include <ft2build.h>
 #include FT_ERRORS_H
 #include FT_SYSTEM_H
@@ -85,7 +85,7 @@ FT_Library ftLibrary = NULL;
 static int        registeredFontCount = 0;
 static fontInfo_t registeredFont[MAX_FONTS];
 
-#ifdef USE_FREETYPE
+#ifdef FEATURE_FREETYPE
 void R_GetGlyphInfo(FT_GlyphSlot glyph, int *left, int *right, int *width, int *top, int *bottom, int *height, int *pitch)
 {
 
@@ -227,12 +227,12 @@ static glyphInfo_t *RE_ConstructGlyphInfo(unsigned char *imageOut, int *xOut, in
 		}
 
 		/*
-    	// need to convert to power of 2 sizes so we do not get
-    	// any scaling from the gl upload
-    	for (scaled_width = 1 ; scaled_width < glyph.pitch ; scaled_width<<=1)
-        	;
-    	for (scaled_height = 1 ; scaled_height < glyph.height ; scaled_height<<=1)
-        	;
+		// need to convert to power of 2 sizes so we do not get
+		// any scaling from the gl upload
+		for (scaled_width = 1 ; scaled_width < glyph.pitch ; scaled_width<<=1)
+		    ;
+		for (scaled_height = 1 ; scaled_height < glyph.height ; scaled_height<<=1)
+		    ;
 		 */
 
 		scaled_width  = glyph.pitch;
@@ -357,7 +357,7 @@ float readFloat(void)
 
 void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 {
-#ifdef USE_FREETYPE
+#ifdef FEATURE_FREETYPE
 	FT_Face       face;
 	int           j, k, xOut, yOut, lastStart, imageNumber;
 	int           scaledSize, newSize, maxHeight, left, satLevels;
@@ -439,7 +439,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 		return;
 	}
 
-#ifndef USE_FREETYPE
+#ifndef FEATURE_FREETYPE
 	ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType code not available\n");
 #else
 	if (ftLibrary == NULL)
@@ -582,7 +582,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 
 void R_InitFreeType(void)
 {
-#ifdef USE_FREETYPE
+#ifdef FEATURE_FREETYPE
 	if (FT_Init_FreeType(&ftLibrary))
 	{
 		ri.Printf(PRINT_WARNING, "R_InitFreeType: Unable to initialize FreeType.\n");
@@ -593,7 +593,7 @@ void R_InitFreeType(void)
 
 void R_DoneFreeType(void)
 {
-#ifdef USE_FREETYPE
+#ifdef FEATURE_FREETYPE
 	if (ftLibrary)
 	{
 		FT_Done_FreeType(ftLibrary);

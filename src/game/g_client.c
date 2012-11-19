@@ -35,11 +35,11 @@
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 #include "g_lua.h"
 #endif
 
@@ -580,7 +580,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 		ent->client->ps.pm_flags |= PMF_LIMBO;
 		ent->client->ps.pm_flags |= PMF_FOLLOW;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		ent->client->sess.botSuicide = qfalse; // cs: avoid needlessly /killing at next spawn
 #endif
 
@@ -890,7 +890,7 @@ qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int amm
 	// skill handling
 	AddExtraSpawnAmmo(client, weapon);
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_AddWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
 #endif
 
@@ -912,7 +912,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		return;
 	}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_ResetWeapons(client->ps.clientNum);
 #endif
 
@@ -1615,7 +1615,7 @@ void ClientUserinfoChanged(int clientNum)
 		return;
 	}
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	// *LUA* API callbacks
 	// This only gets called when the ClientUserinfo is changed, replicating ETPro's behaviour.
 	G_LuaHook_ClientUserinfoChanged(clientNum);
@@ -1651,7 +1651,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	gclient_t *client;
 	char      userinfo[MAX_INFO_STRING];
 	char      cs_name[MAX_NETNAME];
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	char reason[MAX_STRING_CHARS] = "";
 #endif
 	gentity_t *ent;
@@ -1811,7 +1811,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		trap_UnlinkEntity(ent);
 	}
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	// LUA API callbacks (check with Lua scripts)
 	if (G_LuaHook_ClientConnect(clientNum, firstTime, isBot, reason))
 	{
@@ -1825,7 +1825,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	// get and distribute relevent paramters
 	G_LogPrintf("ClientConnect: %i\n", clientNum);
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_ClientConnected(clientNum, isBot);
 #endif
 
@@ -1879,7 +1879,7 @@ void ClientBegin(int clientNum)
 	int       flags;
 	int       spawn_count, lives_left;
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	// call LUA clientBegin only once when player connects
 	qboolean firsttime = qfalse;
 	if (client->pers.connected == CON_CONNECTING)
@@ -1929,7 +1929,7 @@ void ClientBegin(int clientNum)
 	client->pers.complaintClient  = -1;
 	client->pers.complaintEndTime = -1;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	//Omni-bot
 	client->sess.botSuicide = qfalse; // make sure this is not set
 	client->sess.botPush    = (ent->r.svFlags & SVF_BOT) ? qtrue : qfalse;
@@ -2051,7 +2051,7 @@ void ClientBegin(int clientNum)
 
 	G_smvUpdateClientCSList(ent);
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	//IlDuca - call LUA clientBegin only once
 	if (firsttime == qtrue)
 	{
@@ -2440,7 +2440,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		}
 	}
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	// *LUA* API callbacks
 	G_LuaHook_ClientSpawn(ent - g_entities, revived, teamChange, restoreHealth);
 #endif
@@ -2506,12 +2506,12 @@ void ClientDisconnect(int clientNum)
 		return;
 	}
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	// LUA API callbacks
 	G_LuaHook_ClientDisconnect(clientNum);
 #endif
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_ClientDisConnected(clientNum);
 #endif
 
@@ -2629,7 +2629,7 @@ void ClientDisconnect(int clientNum)
 			flag->s.modelindex2 = ent->s.otherEntityNum2;    // JPW NERVE FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
 			flag->message       = ent->message; // DHM - Nerve :: also restore item name
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 			// FIXME: see ETPub G_DropItems()
 			Bot_Util_SendTrigger(flag, NULL, va("%s dropped.", flag->message), "dropped");
 #endif

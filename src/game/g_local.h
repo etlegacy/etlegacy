@@ -1354,7 +1354,7 @@ void SetWolfSpawnWeapons(gclient_t *client);
 void limbo(gentity_t *ent, qboolean makeCorpse);
 void reinforce(gentity_t *ent);
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 // *LUA* g_sha1.c
 char *G_SHA1(char *string);
 #endif
@@ -1665,7 +1665,7 @@ extern vmCvar_t g_disableComplaints;
 extern vmCvar_t g_antiwarp;
 extern vmCvar_t g_maxWarp;
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 extern vmCvar_t lua_modules;
 extern vmCvar_t lua_allowedModules;
 #endif

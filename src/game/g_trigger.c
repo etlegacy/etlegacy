@@ -572,13 +572,13 @@ qboolean G_IsAllowedHeal(gentity_t *ent)
 	}
 
 	/*	for( i = 0; i < 2; i++ ) {
-        if( !ent->client->lastHealTimes[i] || (level.time - ent->client->lastHealTimes[i] > 60000) ) {
-            ent->client->lastHealTimes[i] = level.time;
-            return qtrue;
-        }
-    }
+	    if( !ent->client->lastHealTimes[i] || (level.time - ent->client->lastHealTimes[i] > 60000) ) {
+	        ent->client->lastHealTimes[i] = level.time;
+	        return qtrue;
+	    }
+	}
 
-    return qfalse;*/
+	return qfalse;*/
 
 	return qtrue;
 }
@@ -778,15 +778,15 @@ qboolean G_IsAllowedAmmo(gentity_t *ent)
 	}
 
 	/*	for( i = 0; i < 2; i++ ) {
-        if( !ent->client->lastAmmoTimes[i] || (level.time - ent->client->lastAmmoTimes[i] > 60000) ) {
-            ent->client->lastAmmoTimes[i] = level.time;
+	    if( !ent->client->lastAmmoTimes[i] || (level.time - ent->client->lastAmmoTimes[i] > 60000) ) {
+	        ent->client->lastAmmoTimes[i] = level.time;
 
-            return qtrue;
-        }
-    }
+	        return qtrue;
+	    }
+	}
 
-    return qfalse;
-    */
+	return qfalse;
+	*/
 
 	return qtrue;
 }
@@ -862,8 +862,8 @@ void trigger_ammo_think(gentity_t *self)
 {
 	self->nextthink = level.time + AMMO_REGENTIME;
 	/*	if(self->timestamp - level.time > -AMMO_REGENTIME) {
-        return;
-    }*/
+	    return;
+	}*/
 
 	self->health += self->damage;
 	if (self->health > self->count)
@@ -1114,7 +1114,7 @@ void SP_gas(gentity_t *self)
 #define RED_FLAG 1
 #define BLUE_FLAG 2
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 void Bot_Util_SendTrigger(gentity_t *_ent, gentity_t *_activator, const char *_tagname, const char *_action);
 #endif
 
@@ -1145,7 +1145,7 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 		G_Script_ScriptEvent(&g_entities[other->client->flagParent], "trigger", "captured");
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, va("Allies captured %s", ent->scriptName), "");
 #endif
 
@@ -1175,7 +1175,7 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 		G_Script_ScriptEvent(&g_entities[other->client->flagParent], "trigger", "captured");
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, va("Axis captured %s", ent->scriptName), "");
 #endif
 
@@ -1212,7 +1212,7 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 		G_Script_ScriptEvent(&g_entities[other->client->flagParent], "trigger", "captured");
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, va("Allies captured %s", ent->scriptName), "");
 #endif
 
@@ -1234,7 +1234,7 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 		G_Script_ScriptEvent(&g_entities[other->client->flagParent], "trigger", "captured");
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, va("Axis captured %s", ent->scriptName), "");
 #endif
 
@@ -1640,7 +1640,7 @@ void SP_trigger_objective_info(gentity_t *ent)
 	}
 
 	//	if ( !ent->message )
-    //    G_Error ("'trigger_objective_info' does not have a 'shortname' \n");
+	//    G_Error ("'trigger_objective_info' does not have a 'shortname' \n");
 
 	if (ent->spawnflags & MESSAGE_OVERRIDE)
 	{

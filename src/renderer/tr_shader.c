@@ -3388,7 +3388,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	}
 #endif
 
-#ifdef SMP
+#ifdef FEATURE_SMP
 	// make sure the render thread is stopped, because we are probably
 	// going to have to upload an image
 	if (r_smp->integer)
@@ -3515,7 +3515,7 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 		}
 	}
 
-#ifdef SMP
+#ifdef FEATURE_SMP
 	// make sure the render thread is stopped, because we are probably
 	// going to have to upload an image
 	if (r_smp->integer)

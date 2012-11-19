@@ -33,7 +33,7 @@
 
 #include "g_local.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
@@ -1718,7 +1718,7 @@ void G_LandmineThink(gentity_t *self)
 		//%     continue;
 		//% }
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		if (!(g_OmniBotFlags.integer & OBF_TRIGGER_MINES) && ent->r.svFlags & SVF_BOT)
 		{
 			if (G_LandmineTeam(self) == ent->client->sess.sessionTeam)
@@ -1742,7 +1742,7 @@ void G_LandmineThink(gentity_t *self)
 
 	if (trigger)
 	{
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		Bot_Event_PreTriggerMine(ent - g_entities, self);
 #endif
 		LandMineTrigger(self);
@@ -1784,7 +1784,7 @@ void LandminePostThink(gentity_t *self)
 
 	if (!trigger)
 	{
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		Bot_Event_PostTriggerMine(ent - g_entities, self);
 #endif
 		LandMinePostTrigger(self);
@@ -1938,10 +1938,10 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->nextthink           = level.time + 4000;
 		break;
 	case WP_SMOKE_BOMB:
-		bolt->classname           = "smoke_bomb";
-		bolt->s.eFlags            = EF_BOUNCE_HALF | EF_BOUNCE;
+		bolt->classname = "smoke_bomb";
+		bolt->s.eFlags  = EF_BOUNCE_HALF | EF_BOUNCE;
 		// rain - this is supposed to be MOD_SMOKEBOMB, not SMOKEGRENADE
-		bolt->methodOfDeath       = MOD_SMOKEBOMB;
+		bolt->methodOfDeath = MOD_SMOKEBOMB;
 		break;
 	case WP_GRENADE_LAUNCHER:
 		bolt->classname           = "grenade";

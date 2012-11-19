@@ -4,9 +4,9 @@
  * This code is taken from ETPub. All credits go to their team especially to quad and pheno!
  * http://etpub.org
  *
- * Find the Lua code by doing a text seach for "LUA_SUPPORT"
+ * Find the Lua code by doing a text seach for "FEATURE_LUA"
  */
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 
 #ifndef _G_LUA_H
 #define _G_LUA_H
@@ -123,4 +123,4 @@ qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, int 
 
 #endif /* ifndef _G_LUA_H */
 
-#endif // LUA_SUPPORT
+#endif // FEATURE_LUA

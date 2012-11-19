@@ -34,7 +34,7 @@
 
 #include "g_local.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
@@ -619,7 +619,7 @@ void G_InitGentity(gentity_t *e)
 	e->s.number   = e - g_entities;
 	e->r.ownerNum = ENTITYNUM_NONE;
 	e->nextthink  = 0;
-	e->free = NULL;
+	e->free       = NULL;
 
 	// RF, init scripting
 	e->scriptStatus.scriptEventIndex = -1;
@@ -627,7 +627,7 @@ void G_InitGentity(gentity_t *e)
 	// mark the time
 	e->spawnTime = level.time;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	// Notify omni-bot
 	Bot_Queue_EntityCreated(e);
 #endif
@@ -736,7 +736,7 @@ Marks the entity as free
 void G_FreeEntity(gentity_t *ed)
 {
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_EntityDeleted(ed);
 #endif
 
@@ -753,9 +753,9 @@ void G_FreeEntity(gentity_t *ed)
 	}
 
 	memset(ed, 0, sizeof(*ed));
-	ed->classname  = "freed";
-	ed->freetime   = level.time;
-	ed->inuse      = qfalse;
+	ed->classname = "freed";
+	ed->freetime  = level.time;
+	ed->inuse     = qfalse;
 }
 
 /*
@@ -947,11 +947,11 @@ G_ClientSound
 */
 void G_ClientSound(gentity_t *ent, int soundIndex)
 {
-	if( ent && ent->client )
+	if (ent && ent->client)
 	{
-		gentity_t       *te = G_TempEntity( ent->client->ps.origin, EV_GLOBAL_CLIENT_SOUND );
+		gentity_t *te = G_TempEntity(ent->client->ps.origin, EV_GLOBAL_CLIENT_SOUND);
 
-		te->s.teamNum = ( ent->client - level.clients );
+		te->s.teamNum   = (ent->client - level.clients);
 		te->s.eventParm = soundIndex;
 	}
 }

@@ -33,7 +33,7 @@
 
 #include "g_local.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
@@ -228,7 +228,7 @@ void G_SetClientSound(gentity_t *ent)
 	ent->s.loopSound = 0;
 }
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 /*
 ==============
 PushBot
@@ -370,7 +370,7 @@ void ClientImpacts(gentity_t *ent, pmove_t *pm)
 		}
 		other = &g_entities[pm->touchents[i]];
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		if ((ent->client) /*&& !(ent->r.svFlags & SVF_BOT)*/ && (other->r.svFlags & SVF_BOT) &&
 		    !other->client->ps.powerups[PW_INVULNERABLE])
 		{
@@ -593,7 +593,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 			Cmd_FollowCycle_f(ent, 1);
 		}
 #ifdef DEBUG
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		// activate button swaps places with bot
 		else if (client->sess.sessionTeam != TEAM_SPECTATOR && g_allowBotSwap.integer &&
 		         ((client->buttons & BUTTON_ACTIVATE) && !(client->oldbuttons & BUTTON_ACTIVATE)) &&
@@ -628,7 +628,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 {
 /* FIXME: Adjust for OMNIBOT
     // inactivity timer broken in 2.60 ?
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
     qboolean	doDrop = (g_spectatorInactivity.integer && (g_maxclients.integer - level.numNonSpectatorClients + g_OmniBotPlaying.integer <= 0))? qtrue : qfalse;
 #else
     qboolean	doDrop = (g_spectatorInactivity.integer && (g_maxclients.integer - level.numNonSpectatorClients <= 0))? qtrue : qfalse;
@@ -922,8 +922,8 @@ void WolfFindMedic(gentity_t *self)
 	int       i, medic = -1;
 	gclient_t *cl;
 	vec3_t    start, end;
-	trace_t tr;
-	float   bestdist = 1024, dist;
+	trace_t   tr;
+	float     bestdist = 1024, dist;
 
 	self->client->ps.viewlocked_entNum    = 0;
 	self->client->ps.viewlocked           = 0;
@@ -1426,7 +1426,7 @@ void ClientThink_real(gentity_t *ent)
 		ent->client->ps.identifyClientHealth = 0;
 	}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	// Omni-bot: used for class changes, bot will /kill 2 seconds before spawn
 	Bot_Util_CheckForSuicide(ent);
 #endif

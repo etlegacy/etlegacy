@@ -33,7 +33,7 @@
 
 #include "g_local.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
@@ -333,7 +333,7 @@ void G_RegisterFireteam(/*const char* name,*/ int entityNum)
 
 //	Q_strncpyz(ft->name, name, 32);
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_FireTeamCreated(entityNum, ft->ident);
 	Bot_Event_JoinedFireTeam(leader - g_entities, leader);
 #endif
@@ -386,7 +386,7 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 			// found a free position
 			ft->joinOrder[i] = entityNum;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 			Bot_Event_JoinedFireTeam(entityNum, &g_entities[leaderNum]);
 #endif
 
@@ -470,7 +470,7 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 							// empty the fireteam
 							for (j = 0; j < g_maxclients.integer - 1; j++)
 							{
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 								Bot_Event_LeftFireTeam(ft->joinOrder[j]);
 #endif
 								ft->joinOrder[j] = -1;
@@ -521,7 +521,7 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 		return;
 	}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_LeftFireTeam(entityNum);
 #endif
 
@@ -587,7 +587,7 @@ void G_InviteToFireTeam(int entityNum, int otherEntityNum)
 		g_entities[otherEntityNum].client->pers.invitationEndTime = level.time + 20500;
 	}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_InviteFireTeam(entityNum, otherEntityNum);
 #endif
 }
@@ -610,7 +610,7 @@ void G_DestroyFireteam(int entityNum)
 	{
 		if (ft->joinOrder[0] != entityNum)
 		{
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 			Bot_Event_FireTeamDestroyed(ft->joinOrder[0]);
 #endif
 			trap_SendServerCommand(ft->joinOrder[0], "cpm \"The Fireteam you are on has been disbanded\"\n");
@@ -653,7 +653,7 @@ void G_WarnFireTeamPlayer(int entityNum, int otherEntityNum)
 
 	trap_SendServerCommand(otherEntityNum, "cpm \"You have been warned by your Fireteam Commander\n\"");
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_FireTeam_Warn(entityNum, otherEntityNum);
 #endif
 }
@@ -687,7 +687,7 @@ void G_KickFireTeamPlayer(int entityNum, int otherEntityNum)
 		G_ClientPrintAndReturn(entityNum, "You are not on the same Fireteam as the other player");
 	}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_LeftFireTeam(otherEntityNum);
 #endif
 
@@ -787,7 +787,7 @@ void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 	leader->client->pers.propositionClient2 = entityNum;
 	leader->client->pers.propositionEndTime = level.time + 20000;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_FireTeam_Proposal(leader - g_entities, otherEntityNum);
 #endif
 }

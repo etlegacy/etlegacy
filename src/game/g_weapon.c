@@ -34,7 +34,7 @@
 
 #include "g_local.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
@@ -297,7 +297,7 @@ void Weapon_Medic(gentity_t *ent)
 	ent2->parent    = ent; // JPW NERVE so we can score properly later
 	ent2->s.teamNum = ent->client->sess.sessionTeam;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	// Omni-bot - Send a fire event.
 	Bot_Event_FireWeapon(ent - g_entities, Bot_WeaponGameToBot(ent->s.weapon), ent2);
 #endif
@@ -393,7 +393,7 @@ void Weapon_MagicAmmo(gentity_t *ent)
 		ent2->s.density = 1;
 	}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	// Omni-bot - Send a fire event.
 	Bot_Event_FireWeapon(ent - g_entities, Bot_WeaponGameToBot(ent->s.weapon), ent2);
 #endif
@@ -437,7 +437,7 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 
 	ClientSpawn(traceEnt, qtrue, qfalse, qtrue);
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	Bot_Event_Revived(traceEnt - g_entities, ent);
 #endif
 
@@ -2172,7 +2172,7 @@ evilbanigoto:
 						if (!(hit->spawnflags & 128) && (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_ALLIES)) ||
 						                                 ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS))))
 						{
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 							const char *Goalname = _GetEntityName(hit);
 #endif
 							gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
@@ -2182,7 +2182,7 @@ evilbanigoto:
 
 							G_Script_ScriptEvent(hit, "dynamited", "");
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 							// notify omni-bot framework of planted dynamite
 							hit->numPlanted += 1;
 							Bot_AddDynamiteGoal(traceEnt, traceEnt->s.teamNum, va("%s_%i", Goalname, hit->numPlanted));
@@ -2259,7 +2259,7 @@ evilbanigoto:
 
 						if (hit->parent)
 						{
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 							const char *Goalname = _GetEntityName(hit->parent);
 #endif
 							gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
@@ -2269,7 +2269,7 @@ evilbanigoto:
 
 							G_Script_ScriptEvent(hit, "dynamited", "");
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 							// notify omni-bot framework of planted dynamite
 							hit->numPlanted += 1;
 							Bot_AddDynamiteGoal(traceEnt, traceEnt->s.teamNum, va("%s_%i", Goalname, hit->numPlanted));
@@ -3129,7 +3129,7 @@ void Weapon_Artillery(gentity_t *ent)
 	if (g_gamestate.integer == GS_PLAYING)
 #endif
 	ent->client->sess.aWeaponStats[WS_ARTILLERY].atts++;
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	// Omni-bot - Send a fire event.
 	Bot_Event_FireWeapon(ent - g_entities, Bot_WeaponGameToBot(WP_ARTY), 0);
 #endif
@@ -4331,7 +4331,7 @@ void FireWeapon(gentity_t *ent)
 	gentity_t *pFiredShot = 0;   // Omni-bot To tell bots about projectiles
 	float     aimSpreadScale;
 	int       shots = 1;
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	qboolean callEvent = qtrue;
 #endif
 
@@ -4416,7 +4416,7 @@ void FireWeapon(gentity_t *ent)
 		Weapon_Knife(ent);
 		break;
 	case WP_MEDKIT:
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		callEvent = qfalse;
 #endif
 		Weapon_Medic(ent);
@@ -4448,7 +4448,7 @@ void FireWeapon(gentity_t *ent)
 		Weapon_AdrenalineSyringe(ent);
 		break;
 	case WP_AMMO:
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		callEvent = qfalse;
 #endif
 		Weapon_MagicAmmo(ent);
@@ -4657,7 +4657,7 @@ void FireWeapon(gentity_t *ent)
 		break;
 	}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	// Omni-bot - Send a fire event.
 	if (callEvent)
 	{

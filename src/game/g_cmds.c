@@ -33,11 +33,11 @@
 
 #include "g_local.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 #include "g_lua.h"
 #endif
 
@@ -218,7 +218,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	//      but apperantly the client won't draw them even if we
 	//      send it.  *clientmod*
 /*	if(
-#ifdef MV_SUPPORT
+#ifdef FEATURE_MULTIVIEW
     G_smvLocateEntityInMVList(ent, level.sortedClients[i], qfalse) ||
 #endif
         cl->sess.sessionTeam == ent->client->sess.sessionTeam ||
@@ -975,7 +975,7 @@ void Cmd_Kill_f(gentity_t *ent)
 
 	if (ent->health <= 0)
 	{
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		// cs: bots have to go to limbo when issuing /kill otherwise it's trouble
 		if (ent->r.svFlags & SVF_BOT)
 		{
@@ -1871,7 +1871,7 @@ void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *
 		}
 
 		trap_SendServerCommand(other - g_entities, va("%s \"%s%c%c%s\" %i %i", mode == SAY_TEAM || mode == SAY_BUDDY ? "tchat" : "chat", name, Q_COLOR_ESCAPE, color, message, (int)(ent - g_entities), localize));
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		// Omni-bot: Tell the bot about the chat message
 		Bot_Event_ChatMessage(other - g_entities, ent, mode, message);
 #endif
@@ -2030,7 +2030,7 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 	//if bots we don't send voices (no matter if omnibot or not)
 	if (other->r.svFlags & SVF_BOT)
 	{
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		// Omni-bot Send this voice macro to the bot as an event.
 		Bot_Event_VoiceMacro(other - g_entities, ent, mode, id);
 #endif
@@ -3349,7 +3349,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 
 	/* FIXME OMNIBOT
 	// look for a guy to push
-	#ifdef OMNIBOTS
+	#ifdef FEATURE_OMNIBOT
 	if ( g_OmniBotFlags.integer & OBF_SHOVING || !(ent->r.svFlags & SVF_BOT) )
 	{
 	#endif
@@ -3365,7 +3365,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 	            return;
 	        }
 	    }
-	#ifdef OMNIBOTS
+	#ifdef FEATURE_OMNIBOT
 	}
 	#endif
 	*/
@@ -3753,7 +3753,7 @@ void Cmd_UnIgnore_f(gentity_t *ent)
 }
 
 #ifdef DEBUG
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 /*
 =================
 Cmd_SwapPlacesWithBot_f
@@ -3846,7 +3846,7 @@ void ClientCommand(int clientNum)
 
 	trap_Argv(0, cmd, sizeof(cmd));
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 	// LUA API callbacks
 	if (G_LuaHook_ClientCommand(clientNum, cmd))
 	{

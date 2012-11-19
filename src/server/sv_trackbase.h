@@ -32,7 +32,7 @@
  * @file sv_trackbase.h
  * @brief Sends game statistics to Trackbase
  */
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 
 #ifndef _TRACKBASE_H
 #define _TRACKBASE_H
@@ -61,4 +61,4 @@ void TB_requestWeaponStats();
 
 #endif // _TRACKBASE_H
 
-#endif // TRACKBASE_SUPPORT
+#endif // FEATURE_TRACKBASE

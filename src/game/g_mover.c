@@ -33,7 +33,7 @@
 
 #include "g_local.h"
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
 
@@ -904,7 +904,7 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 		f                     = 1000.0 / ent->s.pos.trDuration;
 		VectorScale(delta, f, ent->s.pos.trDelta);
 		ent->s.pos.trType = TR_LINEAR_STOP;
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		{
 			const char *pName = _GetEntityName(ent);
 			if (Q_stricmp(pName, ""))
@@ -929,7 +929,7 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 		}
 		VectorScale(delta, f, ent->s.pos.trDelta);
 		ent->s.pos.trType = TR_LINEAR_STOP;
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		{
 			const char *pName = _GetEntityName(ent);
 			if (Q_stricmp(pName, ""))
@@ -943,7 +943,7 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 	case MOVER_POS1ROTATE:      // at close
 		VectorCopy(ent->r.currentAngles, ent->s.apos.trBase);
 		ent->s.apos.trType = TR_STATIONARY;
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		{
 			const char *pName = _GetEntityName(ent);
 			if (Q_stricmp(pName, ""))
@@ -956,7 +956,7 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 	case MOVER_POS2ROTATE:      // at open
 		VectorCopy(ent->r.currentAngles, ent->s.apos.trBase);
 		ent->s.apos.trType = TR_STATIONARY;
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 		{
 			const char *pName = _GetEntityName(ent);
 			if (Q_stricmp(pName, ""))
@@ -1623,7 +1623,7 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		return;
 	}
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	// generic func_button trigger for bots
 	if (ent->target)
 	{
@@ -2408,7 +2408,10 @@ void G_TryDoor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		{
 			if (ent->key < 0 || !G_AllowTeamsAllowed(ent, activator))           // door force locked
 			{
-				if (ent->soundPos3) G_AddEvent(ent, EV_GENERAL_SOUND, ent->soundPos3);
+				if (ent->soundPos3)
+				{
+					G_AddEvent(ent, EV_GENERAL_SOUND, ent->soundPos3);
+				}
 				return;
 			}
 
@@ -4414,7 +4417,7 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 
 	G_AddEvent(self, EV_EXPLODE, DirToByte(dir));
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	// Omnibot trigger support
 	if  (self->constructibleStats.constructxpbonus == 5)
 	{

@@ -4,11 +4,11 @@
  * This code is taken from ETPub. All credits go to their team especially quad and pheno!
  * http://etpub.org
  *
- * Find the ETPub Lua code by doing a text seach for "LUA_SUPPORT"
+ * Find the ETPub Lua code by doing a text seach for "FEATURE_LUA"
  *
  *
 */
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 
 #include "g_local.h"
 

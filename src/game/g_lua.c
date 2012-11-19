@@ -5,9 +5,9 @@
 * http://etpub.org
 * http://shitstorm.org
 *
-* Find the Lua code by doing a text seach for "LUA_SUPPORT"
+* Find the Lua code by doing a text seach for "FEATURE_LUA"
 */
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 
 #include "g_lua.h"
 
@@ -2590,4 +2590,4 @@ qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, int 
 	return qfalse;
 }
 
-#endif // LUA_SUPPORT
+#endif // FEATURE_LUA

@@ -1030,7 +1030,7 @@ void G_SpawnEntitiesFromString(void)
 	level.spawning = qfalse;            // any future calls to G_Spawn*() will be errors
 }
 
-#ifdef LUA_SUPPORT
+#ifdef FEATURE_LUA
 //===============================================================
 // Some helper functions for entity property handling..
 // these functions are used by Lua.
@@ -1059,4 +1059,4 @@ fieldtype_t GetFieldType(char *fieldname)
 	}
 	return fields[index].type;
 }
-#endif // LUA_SUPPORT
+#endif // FEATURE_LUA

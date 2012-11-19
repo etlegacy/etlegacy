@@ -37,7 +37,7 @@
 #    include <SDL/SDL.h>
 #endif
 
-#ifdef SMP
+#ifdef FEATURE_SMP
 #    ifdef BUNDLED_LIBS
 #        include "SDL_thread.h"
 #    else
@@ -897,7 +897,7 @@ void GLimp_EndFrame(void)
 	}
 }
 
-#ifdef SMP
+#ifdef FEATURE_SMP
 /*
 ===========================================================
 

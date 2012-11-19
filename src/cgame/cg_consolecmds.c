@@ -1189,7 +1189,7 @@ static consoleCommand_t commands[] =
 	{ "currentTime",         CG_currentTime_f        },
 	{ "keyoff",              CG_keyOff_f             },
 	{ "keyon",               CG_keyOn_f              },
-#ifdef MV_SUPPORT
+#ifdef FEATURE_MULTIVIEW
 	{ "mvactivate",          CG_mvToggleAll_f        },
 	{ "mvdel",               CG_mvDelete_f           },
 	{ "mvhide",              CG_mvHideView_f         },
@@ -1296,7 +1296,7 @@ void CG_InitConsoleCommands(void)
 	trap_AddCommand("bottomshots");
 	trap_AddCommand("commands");
 	trap_AddCommand("lock");
-#ifdef MV_SUPPORT
+#ifdef FEATURE_MULTIVIEW
 	trap_AddCommand("mvadd");
 	trap_AddCommand("mvaxis");
 	trap_AddCommand("mvallies");
@@ -1341,7 +1341,7 @@ void CG_InitConsoleCommands(void)
 	trap_AddCommand("vsay_buddy");
 	trap_AddCommand("vsay_team");
 	trap_AddCommand("where");
-#ifdef LUA_SUPPORT
-	trap_AddCommand ("lua_status");
+#ifdef FEATURE_LUA
+	trap_AddCommand("lua_status");
 #endif
 }

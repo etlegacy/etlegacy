@@ -38,7 +38,7 @@
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 
-#ifdef USE_OPENAL_DLOPEN
+#ifdef FEATURE_OPENAL_DLOPEN
 #define AL_NO_PROTOTYPES
 #define ALC_NO_PROTOTYPES
 #endif
@@ -62,7 +62,7 @@
 #  define ALC_ALL_DEVICES_SPECIFIER                0x1013
 #endif
 
-#ifdef USE_OPENAL_DLOPEN
+#ifdef FEATURE_OPENAL_DLOPEN
 extern LPALENABLE               qalEnable;
 extern LPALDISABLE              qalDisable;
 extern LPALISENABLED            qalIsEnabled;

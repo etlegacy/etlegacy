@@ -37,7 +37,7 @@
 
 qboolean G_smvCommands(gentity_t *ent, char *cmd)
 {
-#ifdef MV_SUPPORT
+#ifdef FEATURE_MULTIVIEW
 	if (!Q_stricmp(cmd, "mvadd"))
 	{
 		G_smvAdd_cmd(ent);

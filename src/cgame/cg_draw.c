@@ -656,45 +656,46 @@ static void CG_DrawUpperRight(void)
 CG_DrawTeamInfo
 =================
 */
-static void CG_DrawTeamInfo( void )
+static void CG_DrawTeamInfo(void)
 {
-	int		chatHeight = TEAMCHAT_HEIGHT;
-	float	lineHeight = 9.f;
-	float	scale = 0.2f;
-	float	icon_width = 12.f;
-	float	icon_height = 10.f;
-	int		x_offset = 0;
+	int   chatHeight  = TEAMCHAT_HEIGHT;
+	float lineHeight  = 9.f;
+	float scale       = 0.2f;
+	float icon_width  = 12.f;
+	float icon_height = 10.f;
+	int   x_offset    = 0;
 
 	/*
 	if ( cg_smallFont.integer & SMALLFONT_CHATS )
 	{
-		lineHeight = 7.5f;
-		scale = 0.16f;
-		icon_width = 11.f;
-		icon_height = 9.f;
-		x_offset = 2;
+	    lineHeight = 7.5f;
+	    scale = 0.16f;
+	    icon_width = 11.f;
+	    icon_height = 9.f;
+	    x_offset = 2;
 	}
 	*/
 
 	// no need to adjust chat height for intermission here - CG_DrawTeamInfo is called from CG_Draw2D
-	if(cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
+	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
 	{
 		chatHeight = cg_teamChatHeight.integer;
 	}
 
-	if(chatHeight <= 0) {
+	if (chatHeight <= 0)
+	{
 		return; // disabled
 	}
 
-	if(cgs.teamLastChatPos != cgs.teamChatPos)
+	if (cgs.teamLastChatPos != cgs.teamChatPos)
 	{
-		int i;
-		vec4_t	hcolor;
-		float	alphapercent;
-		int		chatWidth = 640 - CHATLOC_X - 80 /*(cg_drawHUDHead.integer ? 80 : 0)*/;
-		int		chatPosX = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)? 20 : CHATLOC_TEXT_X - x_offset;
+		int    i;
+		vec4_t hcolor;
+		float  alphapercent;
+		int    chatWidth = 640 - CHATLOC_X - 80 /*(cg_drawHUDHead.integer ? 80 : 0)*/;
+		int    chatPosX  = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) ? 20 : CHATLOC_TEXT_X - x_offset;
 
-		if(cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
+		if (cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
 		{
 			cgs.teamLastChatPos++;
 		}
@@ -724,7 +725,8 @@ static void CG_DrawTeamInfo( void )
 				hcolor[1] = 0;
 				hcolor[2] = 1;
 			}
-			else {
+			else
+			{
 				hcolor[0] = 0;
 				hcolor[1] = 1;
 				hcolor[2] = 0;
@@ -737,7 +739,7 @@ static void CG_DrawTeamInfo( void )
 
 			hcolor[0] = hcolor[1] = hcolor[2] = 1.0;
 			hcolor[3] = alphapercent;
-			trap_R_SetColor( hcolor );
+			trap_R_SetColor(hcolor);
 
 			// chat icons
 			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
@@ -1443,10 +1445,10 @@ CG_DrawMortarReticle
 */
 static void CG_DrawMortarReticle(void)
 {
-	vec4_t color          = { 1.f, 1.f, 1.f, .5f };
-	vec4_t color_back     = { 0.f, 0.f, 0.f, .25f };
-	vec4_t color_extends  = { .77f, .73f, .1f, 1.f };
-	vec4_t color_lastfire = { .77f, .1f, .1f, 1.f };
+	vec4_t   color             = { 1.f, 1.f, 1.f, .5f };
+	vec4_t   color_back        = { 0.f, 0.f, 0.f, .25f };
+	vec4_t   color_extends     = { .77f, .73f, .1f, 1.f };
+	vec4_t   color_lastfire    = { .77f, .1f, .1f, 1.f };
 	vec4_t   color_firerequest = { 1.f, 1.f, 1.f, 1.f };
 	float    offset, localOffset;
 	int      i, min, majorOffset, val, printval, fadeTime;
@@ -2847,7 +2849,7 @@ static void CG_DrawSpectatorMessage(void)
 	str  = va(CG_TranslateString("Press %s to follow next player"), str2);
 	CG_DrawStringExt(8, 172, str, colorWhite, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0);
 
-#ifdef MV_SUPPORT
+#ifdef FEATURE_MULTIVIEW
 	str2 = BindingFromName("mvactivate");
 	str  = va(CG_TranslateString("- Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? "disable" : "activate"));
 	CG_DrawStringExt(x, y, str, colorWhite, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0);
@@ -3493,7 +3495,7 @@ static void CG_DrawObjectiveInfo(void)
 	int    x, y, w;
 	int    x1, y1, x2, y2;
 	float  *color;
-	vec4_t backColor = {0.2f, 0.2f, 0.2f, 1.f};
+	vec4_t backColor = { 0.2f, 0.2f, 0.2f, 1.f };
 
 	if (!cg.oidPrintTime)
 	{
@@ -4137,7 +4139,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 static void CG_DrawPlayerStatusHead(void)
 {
 	hudHeadAnimNumber_t anim;
-	rectDef_t headRect = { 44, 480 - 92, 62, 80 };
+	rectDef_t headRect            = { 44, 480 - 92, 62, 80 };
 	bg_character_t *character     = CG_CharacterForPlayerstate(&cg.snap->ps);
 	bg_character_t *headcharacter = BG_GetCharacter(cgs.clientinfo[cg.snap->ps.clientNum].team, cgs.clientinfo[cg.snap->ps.clientNum].cls);
 

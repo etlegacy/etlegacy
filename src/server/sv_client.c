@@ -34,7 +34,7 @@
 
 #include "server.h"
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 #include "sv_trackbase.h"
 #endif
 
@@ -405,7 +405,7 @@ gotnewcl:
 
 	newcl->protocol = atoi(Info_ValueForKey(userinfo, "protocol"));
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 	TB_ClientConnect(newcl);
 #endif
 }
@@ -509,7 +509,7 @@ void SV_DropClient(client_t *drop, const char *reason)
 		SV_Heartbeat_f();
 	}
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 	TB_ClientDisconnect(drop);
 #endif
 }
@@ -1392,7 +1392,7 @@ void SV_UserinfoChanged(client_t *cl)
 	char *val;
 	int  i;
 
-#ifdef TRACKBASE_SUPPORT
+#ifdef FEATURE_TRACKBASE
 	if (sv_advert->integer & SVA_TRACKBASE)
 	{
 		if (strcmp(cl->name, Info_ValueForKey(cl->userinfo, "name")))

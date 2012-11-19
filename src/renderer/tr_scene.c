@@ -68,7 +68,7 @@ R_ToggleSmpFrame
 */
 void R_ToggleSmpFrame(void)
 {
-#ifdef SMP
+#ifdef FEATURE_SMP
 	if (r_smp->integer)
 	{
 		// use the other buffers next frame, because another CPU
@@ -437,7 +437,7 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 
 /*
 RE_AddLightToScene()
-	ydnar: modified dlight system to support seperate radius and intensity
+    ydnar: modified dlight system to support seperate radius and intensity
 */
 void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
