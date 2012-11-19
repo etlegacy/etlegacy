@@ -229,13 +229,9 @@ typedef struct searchpath_s
 	directory_t *dir;
 } searchpath_t;
 
-char          fs_gamedir[MAX_OSPATH]; // this will be a single file name with no separators
-static cvar_t *fs_debug;
-static cvar_t *fs_homepath;
-#ifdef MACOS_X
-// Also search the .app bundle for .pk3 files
-static cvar_t *fs_apppath;
-#endif
+char                fs_gamedir[MAX_OSPATH]; // this will be a single file name with no separators
+static cvar_t       *fs_debug;
+static cvar_t       *fs_homepath;
 static cvar_t       *fs_basepath;
 static cvar_t       *fs_basegame;
 static cvar_t       *fs_copyfiles;
@@ -4454,16 +4450,10 @@ void FS_Restart(int checksumFeed)
 	Q_strncpyz(lastValidGame, fs_gamedirvar->string, sizeof(lastValidGame));
 }
 
-/*
-=================
-FS_ConditionalRestart
-restart if necessary
-
-FIXME TTimo
-this doesn't catch all cases where an FS_Restart is necessary
-see show_bug.cgi?id=478
-=================
-*/
+/**
+ * @brief Restart if necessary.
+ * @todo This doesn't catch all cases where an FS_Restart is necessary
+ */
 qboolean FS_ConditionalRestart(int checksumFeed)
 {
 	if (fs_gamedirvar->modified || checksumFeed != fs_checksumFeed)
