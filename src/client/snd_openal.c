@@ -156,7 +156,7 @@ typedef struct alSfx_s
 	qboolean isLocked;                  // Sound is locked (can not be unloaded)
 	int lastUsedTime;                   // Time last used
 
-	int loopCnt;                    // number of loops using this sfx
+	int loopCnt;                        // number of loops using this sfx
 	int loopActiveCnt;                  // number of playing loops using this sfx
 	int masterLoopSrc;                  // All other sources looping this buffer are synced to this master src
 } alSfx_t;
@@ -182,7 +182,7 @@ int S_AL_GetVoiceAmplitude(int entnum)
 
 /*
 ======================
-S_GetCurrentSoundTime
+S_AL_GetSoundLength
 Returns how long the sound lasts in milliseconds
 ======================
 */
@@ -198,7 +198,7 @@ int S_AL_GetSoundLength(sfxHandle_t sfxHandle)
 
 /*
 ======================
-S_GetCurrentSoundTime
+S_AL_GetCurrentSoundTime
 For looped sound synchronisation
 ======================
 */
@@ -541,7 +541,9 @@ static void S_AL_BufferShutdown(void)
 
 	// Free all used effects
 	for (i = 0; i < numSfx; i++)
+	{
 		S_AL_BufferUnload(i);
+	}
 
 	// Clear the tables
 	memset(knownSfx, 0, sizeof(knownSfx));
@@ -897,7 +899,7 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 
 /*
 =================
-S_AL_NewLoopMaster
+S_AL_SaveLoopPos
 Remove given source as loop master if it is the master and hand off master status to another source in this case.
 =================
 */
@@ -1195,6 +1197,7 @@ Returns -1 if there isn't one
 static srcHandle_t S_AL_SrcFind(int entnum, int channel)
 {
 	int i;
+
 	for (i = 0; i < srcCount; i++)
 	{
 		if (!srcList[i].isActive)
@@ -1399,8 +1402,11 @@ S_AL_ClearLoopingSounds
 static void S_AL_ClearLoopingSounds(void)
 {
 	int i;
+
 	for (i = 0; i < numLoopingSounds; i++)
+	{
 		loopSounds[i].loopAddedThisFrame = qfalse;
+	}
 	numLoopingSounds = 0;
 }
 
@@ -1736,8 +1742,11 @@ S_AL_SrcShutup
 static void S_AL_SrcShutup(void)
 {
 	int i;
+
 	for (i = 0; i < srcCount; i++)
+	{
 		S_AL_SrcKill(i);
+	}
 }
 
 /*
@@ -1745,8 +1754,7 @@ static void S_AL_SrcShutup(void)
 S_AL_SrcGet
 =================
 */
-static
-ALuint S_AL_SrcGet(srcHandle_t src)
+static ALuint S_AL_SrcGet(srcHandle_t src)
 {
 	return srcList[src].alSource;
 }
@@ -2008,7 +2016,7 @@ static void S_AL_SSSourceFree(int ss)
 
 /*
 =================
-S_AL_CloseStremFiles
+S_AL_CloseSSFiles
 =================
 */
 static void S_AL_CloseSSFiles(int ss)
@@ -2022,7 +2030,7 @@ static void S_AL_CloseSSFiles(int ss)
 
 /*
 =================
-S_AL_StopBackgroundTrack
+S_AL_StopStreamingSound
 =================
 */
 static void S_AL_StopStreamingSound(int ss)
@@ -2062,13 +2070,13 @@ static void S_AL_StopBackgroundTrack(void)
 
 /*
 ==============
-S_StopEntStreamingSound
-
+S_AL_StopEntStreamingSound
 ==============
 */
 void S_AL_StopEntStreamingSound(int entnum)
 {
 	int i;
+
 	for (i = 1; i < MAX_STREAMING_SOUNDS; i++)
 	{
 		// is the stream active
@@ -2087,13 +2095,13 @@ void S_AL_StopEntStreamingSound(int entnum)
 
 /*
 ==============
-S_FadeAllSounds
-
+S_AL_FadeAllSounds
 ==============
 */
 void S_AL_FadeAllSounds(float targetVol, int time, qboolean stopsounds)
 {
 	int currentTime = Sys_Milliseconds();
+
 	s_volStart  = s_volCurrent;
 	s_volTarget = targetVol;
 
@@ -2112,7 +2120,7 @@ void S_AL_FadeAllSounds(float targetVol, int time, qboolean stopsounds)
 
 /*
 ==============
-S_FadeStreamingSound
+S_AL_FadeStreamingSound
 ==============
 */
 void S_AL_FadeStreamingSound(float targetVol, int time, int ss)
@@ -2170,8 +2178,10 @@ static void S_AL_SSProcess(int ss, ALuint b)
 
 	l = S_CodecReadStream(curstream, STREAM_BUFFER_SIZE, decode_buffer);
 
+	// FIXME: background music in game
 	// Run out data to read, start at the beginning again
-	if (l == 0)
+	// if (l == 0)
+	if (0)
 	{
 		S_AL_CloseSSFiles(ss);
 		curstream = NULL;
@@ -2386,7 +2396,9 @@ static float S_AL_StartStreamingSoundEx(const char *intro, const char *loop, int
 
 	// Queue the musicBuffers up
 	for (i = 0; i < NUM_STREAM_BUFFERS; i++)
+	{
 		S_AL_SSProcess(ss, ssBuffers[ss][i]);
+	}
 
 	qalSourceQueueBuffers(ssSource[ss], NUM_STREAM_BUFFERS, ssBuffers[ss]);
 
@@ -2539,9 +2551,13 @@ void S_AL_StopAllSounds(void)
 
 	S_AL_SrcShutup();
 	for (i = 0; i < MAX_STREAMING_SOUNDS; i++)
+	{
 		S_AL_StopStreamingSound(i);
+	}
 	for (i = 0; i < MAX_RAW_STREAMS; i++)
+	{
 		S_AL_StreamDie(i);
+	}
 }
 
 /*
@@ -2565,7 +2581,9 @@ static void S_AL_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 		}
 	}
 	for (i = 0; i < MAX_RAW_STREAMS; i++)
+	{
 		S_AL_StreamDie(i);
+	}
 }
 
 /*
@@ -2573,8 +2591,7 @@ static void S_AL_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 S_AL_Respatialize
 =================
 */
-static
-void S_AL_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater)
+static void S_AL_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater)
 {
 	float  velocity[3] = { 0.0f, 0.0f, 0.0f };
 	float  orientation[6];
@@ -2605,8 +2622,8 @@ void S_AL_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int i
 /*
 =================
 S_AL_Update
-================= */static
-void S_AL_Update(void)
+================= */
+static void S_AL_Update(void)
 {
 	int i;
 	int currentTime = Sys_Milliseconds();
@@ -2655,10 +2672,14 @@ void S_AL_Update(void)
 
 	// Update raw streams
 	for (i = 0; i < MAX_RAW_STREAMS; i++)
+	{
 		S_AL_StreamUpdate(i);
+	}
 	// Update streaming sounds
 	for (i = 0; i < MAX_STREAMING_SOUNDS; i++)
+	{
 		S_AL_SSUpdate(i);
+	}
 
 	// Doppler
 	if (s_doppler->modified)
@@ -2718,8 +2739,7 @@ static void S_AL_BeginRegistration(void)
 S_AL_ClearSoundBuffer
 =================
 */
-static
-void S_AL_ClearSoundBuffer(qboolean killStreaming)
+static void S_AL_ClearSoundBuffer(qboolean killStreaming)
 {
 	S_ClearSounds(killStreaming, qtrue);
 }
@@ -2809,8 +2829,11 @@ static void S_AL_Shutdown(void)
 {
 	// Shut down everything
 	int i;
+
 	for (i = 0; i < MAX_RAW_STREAMS; i++)
+	{
 		S_AL_StreamDie(i);
+	}
 	S_AL_StopBackgroundTrack();
 	S_AL_SrcShutdown();
 	S_AL_BufferShutdown();
