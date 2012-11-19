@@ -145,7 +145,6 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 {
 	clientSnapshot_t *frame, *oldframe;
 	int              lastframe;
-	int              i;
 	int              snapFlags;
 
 	// this is the snapshot we are creating
@@ -233,6 +232,8 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 	// padding for rate debugging
 	if (sv_padPackets->integer)
 	{
+		int i;
+
 		for (i = 0 ; i < sv_padPackets->integer ; i++)
 		{
 			MSG_WriteByte(msg, svc_nop);
@@ -597,7 +598,7 @@ For viewing through other player's eyes, clent can be something other than clien
 */
 static void SV_BuildClientSnapshot(client_t *client)
 {
-	vec3_t org;
+	vec3_t                  org;
 	clientSnapshot_t        *frame;
 	snapshotEntityNumbers_t entityNumbers;
 	int                     i;
