@@ -44,12 +44,12 @@
 #include "../client/client.h"
 #include "../sys/sys_local.h"
 
-#ifdef MACOS_X
+#ifdef __APPLE__
 // Mouse acceleration needs to be disabled
 #define MACOS_X_ACCELERATION_HACK
 // Cursor needs hack to hide
 #define MACOS_X_CURSOR_HACK
-#endif
+#endif // __APPLE__
 
 #ifdef MACOS_X_ACCELERATION_HACK
 #include <IOKit/IOTypes.h>

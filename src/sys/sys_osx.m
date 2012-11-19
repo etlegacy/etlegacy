@@ -31,7 +31,7 @@
  * @file sys_osx.m
  */
 
-#ifndef MACOS_X
+#ifndef __APPLE__
 #error This file is for Mac OS X only. You probably should not compile it.
 #endif
 

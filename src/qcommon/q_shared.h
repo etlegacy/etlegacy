@@ -191,7 +191,7 @@ typedef unsigned __int8 uint8_t;
 
 //======================= MAC OS X DEFINES =====================
 
-#if defined(MACOS_X)
+#if defined(__APPLE__)
 
 #define MAC_STATIC
 

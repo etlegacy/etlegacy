@@ -603,7 +603,7 @@ void Sys_ErrorDialog(const char *error)
 	close(f);
 }
 
-#ifndef MACOS_X
+#ifndef __APPLE__
 static char execBuffer[1024];
 static char *execBufferPointer;
 static char *execArgv[16];
@@ -791,10 +791,10 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	} dialogCommandType_t;
 	typedef int (*dialogCommandBuilder_t)(dialogType_t, const char *, const char *);
 
-	const char             *session = getenv("DESKTOP_SESSION");
-	int                    i, exitCode;
-	qboolean               tried[NUM_DIALOG_PROGRAMS]    = { qfalse };
-	dialogCommandType_t    preferredCommandType          = NONE;
+	const char          *session = getenv("DESKTOP_SESSION");
+	int                 i, exitCode;
+	qboolean            tried[NUM_DIALOG_PROGRAMS] = { qfalse };
+	dialogCommandType_t preferredCommandType       = NONE;
 
 	// This may not be the best way
 	if (!Q_stricmp(session, "gnome")) //  // && if getenv('GNOME_DESKTOP_SESSION_ID')

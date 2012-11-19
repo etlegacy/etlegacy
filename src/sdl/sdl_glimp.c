@@ -54,8 +54,8 @@
 #include "../sys/sys_local.h"
 #include "sdl_icon.h"
 
-/* Just hack it for now. */
-#ifdef MACOS_X
+/* HACK: Just hack it for now. */
+#ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
 typedef CGLContextObj QGLContext;
 #define GLimp_GetCurrentContext() CGLGetCurrentContext()
@@ -979,7 +979,7 @@ qboolean GLimp_SpawnRenderThread(void (*function)(void))
 		warned = qtrue;
 	}
 
-#ifndef MACOS_X
+#ifndef __APPLE__
 	return qfalse;  /* better safe than sorry for now. */
 #endif
 
