@@ -34,7 +34,11 @@ option(BUILD_CLIENT		"Build the client executable"						ON)
 option(BUILD_MOD		"Build the mod libraries"							ON)
 option(BUILD_MOD_PK3	"Pack the mod libraries into etl_bin.pk3"			OFF)
 option(BUILD_PAK3_PK3	"Pack updated game scripts into pak3.pk3"			OFF)
-option(BUNDLED_LIBS		"Use bundled libraries instead of the system ones"	OFF)
+
+option(BUNDLED_SDL		"Use bundled SDL library instead of the system one."	OFF)
+option(BUNDLED_CURL		"Use bundled CURL library instead of the system one."	OFF)
+option(BUNDLED_JPEG		"Use bundled JPEG library instead of the system one."	OFF)
+option(BUNDLED_LUA		"Use bundled LUA library instead of the system one."	OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
 if(CMAKE_SYSTEM MATCHES "OpenBSD*")
@@ -64,17 +68,15 @@ option(FEATURE_OPENAL		"Enable OpenAL sound backend (client) [BROKEN]"		OFF)
 option(FEATURE_FREETYPE		"Enable Freetype font library support (client)"		OFF)
 option(FEATURE_TRACKBASE	"Enable extended server statistics (server)"		ON)
 option(FEATURE_LUA			"Enable Lua support in game code"					OFF)
+option(FEATURE_MULTIVIEW	"Compile the mod files with multiview support (broken?!)"		OFF)
 
 if((WIN32 OR UNIX) AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 	option(FEATURE_OMNIBOT	"Enable omnibot build in mod code (Win & Linux server only!)"	OFF)
 	option(INSTALL_OMNIBOT	"Install Omni-Bot - LINUX only"									OFF)
 endif()
 
-option(FEATURE_MULTIVIEW	"Compile the mod files with multiview support (broken?!)"		OFF)
-
 set(ET_FS_BASEPATH			""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 option(ET_KEY				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
-
 
 #-----------------------------------------------------------------
 # Platform-specific settings
@@ -100,8 +102,7 @@ if(UNIX)
 		set(OS_LIBRARIES dl m)
 		set(CMAKE_EXE_LINKER_FLAGS "-lobjc -framework Cocoa -framework IOKit -framework CoreFoundation")
 		if(BUILD_CLIENT)
-			# TODO: -lSDLmain belongs to FindSDL32.cmake
-			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon -lSDLmain")
+			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioUnit -framework Carbon")
 		endif()
 		set(LIB_SUFFIX "_mac")
 		set(CMAKE_SHARED_MODULE_SUFFIX "")
@@ -229,15 +230,48 @@ if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 	message(STATUS "Libraries rescanned")
 endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 
+# Use bundled libraries
+if(BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA AND NOT MINGW)
+	if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
+		message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
+		add_subdirectory(libs)
+	else()
+		message(STATUS "======================================================")
+		message(STATUS "Bundled libraries were not found on your system!")
+		message(STATUS "======================================================")
+		message(STATUS "You need the *multilib* package to crosscompile ET:L on a 64bit system.")
+		message(STATUS "Alternatively clone etlegacy repository and then run")
+		message(STATUS "        'git submodule init && git submodule update'")
+		message(STATUS "and enable BUNDLED_* in CMake configuration.")
+		message(FATAL_ERROR "Build stopped because of missing libraries.")
+	endif()
+endif(BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA AND NOT MINGW)
+
 #-----------------------------------------------------------------
 # Client features
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
 	find_package(OpenGL REQUIRED)
+	list(APPEND CLIENT_LIBRARIES ${OPENGL_LIBRARIES})
+	list(APPEND CLIENT_INCLUDE_DIRS ${OPENGL_INCLUDE_DIR})
 
-	if(NOT BUNDLED_LIBS)
+	if(NOT BUNDLED_SDL)
 		find_package(SDL32 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
+		if(WIN32 OR CMAKE_SYSTEM MATCHES "Darwin")
+			list(APPEND CLIENT_LIBRARIES ${SDL32MAIN_LIBRARY})
+		endif(WIN32 OR CMAKE_SYSTEM MATCHES "Darwin")
+		list(APPEND CLIENT_LIBRARIES ${SDL32_LIBRARIES})
+		list(APPEND CLIENT_INCLUDE_DIRS ${SDL32_INCLUDE_DIR})
+	else()
+		list(APPEND CLIENT_LIBRARIES ${SDL32_BUNDLED_LIBRARIES})
+		list(APPEND CLIENT_INCLUDE_DIRS ${SDL32_BUNDLED_INCLUDE_DIR})
+		add_definitions(-DBUNDLED_SDL)
+	endif()
+
+	if(NOT BUNDLED_JPEG)
 		find_package(JPEG 8 REQUIRED)
+		list(APPEND CLIENT_LIBRARIES ${JPEG_LIBRARIES})
+		list(APPEND CLIENT_INCLUDE_DIRS ${JPEG_INCLUDE_DIR})
 
 		# Check for libjpeg v8
 		include(CheckFunctionExists)
@@ -245,83 +279,102 @@ if(BUILD_CLIENT)
 		set(CMAKE_REQUIRED_LIBRARIES ${JPEG_LIBRARY})
 		# FIXME: function is checked, but HAVE_JPEG_MEM_SRC is empty. Why?
 		check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
-	endif(NOT BUNDLED_LIBS)
+	else()
+		list(APPEND CLIENT_LIBRARIES ${JPEG_BUNDLED_LIBRARIES})
+		list(APPEND CLIENT_INCLUDE_DIRS ${JPEG_BUNDLED_INCLUDE_DIR})
+	endif()
 
 	if(FEATURE_CURL)
-		if(NOT BUNDLED_LIBS)
-			find_package(CURL)
+		if(NOT BUNDLED_CURL)
+			find_package(CURL REQUIRED)
+			list(APPEND CLIENT_LIBRARIES ${CURL_LIBRARIES})
+			list(APPEND CLIENT_INCLUDE_DIRS ${CURL_INCLUDE_DIR})
 			if(MINGW)
-			add_definitions(-DCURL_STATICLIB)
+				add_definitions(-DCURL_STATICLIB)
 			endif(MINGW)
-		else(NOT BUNDLED_LIBS)
+		else() # BUNDLED_CURL
+			list(APPEND CLIENT_LIBRARIES ${CURL_BUNDLED_LIBRARY}) # NOTE: LIBRARY not LIBRARIES
+			list(APPEND CLIENT_INCLUDE_DIRS ${CURL_BUNDLED_INCLUDE_DIR})
 			add_definitions(-DCURL_STATICLIB)
-		endif(NOT BUNDLED_LIBS)
+		endif()
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_curl.c")
 	else(FEATURE_CURL)
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
 	endif(FEATURE_CURL)
 
 	if(FEATURE_FREETYPE)
+		find_package(Freetype REQUIRED)
+		list(APPEND CLIENT_LIBRARIES ${FREETYPE_LIBRARIES})
+		list(APPEND CLIENT_INCLUDE_DIRS ${FREETYPE_INCLUDE_DIRS})
 		add_definitions(-DFEATURE_FREETYPE)
-		find_package(Freetype)
 	endif(FEATURE_FREETYPE)
 
 	if(FEATURE_OPENAL)
+		find_package(OpenAL REQUIRED)
+		list(APPEND CLIENT_LIBRARIES ${OPENAL_LIBRARIES})
+		list(APPEND CLIENT_INCLUDE_DIRS ${OPENAL_INCLUDE_DIR})
 		add_definitions(-DFEATURE_OPENAL)
 		add_definitions(-DFEATURE_OPENAL_DLOPEN)
-		find_package(OpenAL)
 	endif(FEATURE_OPENAL)
 
 	if(FEATURE_OGG_VORBIS)
+		find_package(Vorbis REQUIRED)
+		list(APPEND CLIENT_LIBRARIES ${VORBIS_FILE_LIBRARY}) # This links only libvorbisfile
+		list(APPEND CLIENT_INCLUDE_DIRS ${VORBIS_INCLUDE_DIR})
 		add_definitions(-DFEATURE_OGG_VORBIS)
-		find_package(Vorbis)
 	endif(FEATURE_OGG_VORBIS)
 
 	if(FEATURE_SMP)
 		add_definitions(-DFEATURE_SMP)
 	endif(FEATURE_SMP)
-
-	# Use bundled libraries
-	if(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND FEATURE_CURL OR BUNDLED_LIBS AND NOT MINGW)
-		if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
-			message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
-			set(BUNDLED_LIBS ON)
-			add_subdirectory(libs)
-		else()
-			message(STATUS "=============================================================")
-			message(STATUS "Some of the required libraries were not found on your system!")
-			message(STATUS "=============================================================")
-			message(STATUS "Check the log and install the missing libraries.")
-			message(STATUS "You need the *multilib* package to crosscompile ET:L on a 64bit system.")
-			message(STATUS "Alternatively clone etlegacy repository and then run")
-			message(STATUS "        'git submodule init'" )
-			message(STATUS "        'git submodule update'")
-			message(STATUS "and enable BUNDLED_LIBS in CMake configuration.")
-			message(FATAL_ERROR "Build stopped because of missing libraries.")
-		endif()
-	endif(NOT SDL32_FOUND OR NOT JPEG_FOUND OR NOT CURL_FOUND AND FEATURE_CURL OR BUNDLED_LIBS AND NOT MINGW)
 endif(BUILD_CLIENT)
 
 #-----------------------------------------------------------------
 # Mod features
 #-----------------------------------------------------------------
 if(BUILD_MOD)
+	if(FEATURE_MULTIVIEW)
+		add_definitions(-DFEATURE_MULTIVIEW)
+	endif(FEATURE_MULTIVIEW)
+
 	if(FEATURE_LUA)
-		message(STATUS "Lua support enabled")
-		add_definitions(-DFEATURE_LUA)
-		if(NOT BUNDLED_LIBS)
+		if(NOT BUNDLED_LUA)
 			find_package(Lua REQUIRED)
+			list(APPEND MOD_LIBRARIES ${LUA_LIBRARIES})
+			list(APPEND MOD_INCLUDE_DIRS ${LUA_INCLUDE_DIR})
+
 			if(${LUA_VERSION_STRING} MATCHES "^5.2")
 				add_definitions(-DLUA_5_2)
 			elseif(NOT LUA_VERSION_STRING)
 				message(WARNING "Unable to detect Lua version, assuming 5.1")
 			endif()
-		endif(NOT BUNDLED_LIBS)
+		else() # BUNDLED_LUA
+			list(APPEND MOD_LIBRARIES ${LUA_BUNDLED_LIBRARIES})
+			list(APPEND MOD_INCLUDE_DIRS ${LUA_BUNDLED_INCLUDE_DIR})
+			add_definitions(-DBUNDLED_LUA)
+		endif()
+		add_definitions(-DFEATURE_LUA)
 	endif(FEATURE_LUA)
+
+	if(FEATURE_OMNIBOT)	# 32bit WIN & Linux only
+		# note: 'Get the system architecture' above sets ARCH for cross compile
+		if(("${ARCH}" STREQUAL "i386" OR "${ARCH}" STREQUAL "x86") AND NOT CMAKE_SYSTEM MATCHES "Darwin")
+			LIST(APPEND QAGAME_SRC "src/game/g_etbot_interface.cpp")
+			LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
+			add_definitions(-DFEATURE_OMNIBOT)
+
+			if(NOT ("${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "i686" OR "${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "i386" OR "${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "x86"))
+				message(STATUS "omni-bot BotLoadLibrary includes cstdio")
+				add_definitions(-DIS_64_BIT_BUILD_SYSTEM)
+			endif()
+		else()
+			message(STATUS "Warning: omni-bot support is 32bit Win & Linux only - build skipped")
+		endif()
+	endif(FEATURE_OMNIBOT)
 endif(BUILD_MOD)
 
 #-----------------------------------------------------------------
-# Server features
+# Server/Common features
 #-----------------------------------------------------------------
 if(FEATURE_TRACKBASE)
 	add_definitions(-DFEATURE_TRACKBASE)
@@ -332,35 +385,19 @@ endif(FEATURE_TRACKBASE)
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
 	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC})
-	include_directories(
-		${OPENGL_INCLUDE_DIR}
-		${FREETYPE_INCLUDE_DIRS}
-		${OPENAL_INCLUDE_DIR}
-		${VORBIS_INCLUDE_DIR}
-	)
-	if(BUNDLED_LIBS)
-		add_definitions(-DBUNDLED_LIBS)
-		target_link_libraries(etl ${BUNDLED_LIBRARIES})
-		include_directories(${BUNDLED_INCLUDE_DIRS})
-		add_dependencies(etl bundled_curl bundled_sdl bundled_jpeg)
-	else() # Using system libraries
-		target_link_libraries(etl
-			${SDL32_LIBRARIES}
-			${CURL_LIBRARIES}
-			${JPEG_LIBRARIES}
-		)
-		include_directories(
-			${SDL32_INCLUDE_DIR}
-			${CURL_INCLUDE_DIR}
-			${JPEG_INCLUDE_DIR}
-		)
-	endif()
+	include_directories(${CLIENT_INCLUDE_DIRS})
+	if(BUNDLED_SDL)
+		add_dependencies(etl bundled_sdl)
+	endif(BUNDLED_SDL)
+	if(BUNDLED_CURL)
+		add_dependencies(etl bundled_curl)
+	endif(BUNDLED_CURL)
+	if(BUNDLED_JPEG)
+		add_dependencies(etl bundled_jpeg)
+	endif(BUNDLED_JPEG)
 	target_link_libraries(etl
 		${OS_LIBRARIES} # Has to go after cURL and SDL
-		${OPENGL_LIBRARIES}
-		${FREETYPE_LIBRARIES}
-		${OPENAL_LIBRARIES}
-		${VORBIS_FILE_LIBRARY} # This links only libvorbisfile
+		${CLIENT_LIBRARIES}
 	)
 	set_target_properties(etl
 		PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
@@ -371,17 +408,11 @@ endif(BUILD_CLIENT)
 if(BUILD_SERVER)
 	add_executable(etlded ${COMMON_SRC} ${SERVER_SRC} ${PLATFORM_SRC})
 	target_link_libraries(etlded ${OS_LIBRARIES})
-	set_target_properties(etlded
-		PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
-	install(TARGETS etlded
-		RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
+	set_target_properties(etlded PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
+	install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
 endif(BUILD_SERVER)
 
 if(BUILD_MOD)
-	if(FEATURE_MULTIVIEW)
-		add_definitions(-DFEATURE_MULTIVIEW)
-	endif(FEATURE_MULTIVIEW)
-
 	#
 	# cgame
 	#
@@ -395,32 +426,13 @@ if(BUILD_MOD)
 	#
 	# qagame
 	#
-	if(FEATURE_OMNIBOT)
-		# 32bit WIN & Linux only
-		# note: 'Get the system architecture' above sets ARCH for cross compile
-		if(("${ARCH}" STREQUAL "i386" OR "${ARCH}" STREQUAL "x86") AND NOT CMAKE_SYSTEM MATCHES "Darwin")
-			add_definitions(-DFEATURE_OMNIBOT)
-
-			LIST(APPEND QAGAME_SRC "src/game/g_etbot_interface.cpp")
-			LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
-
-			if("${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "i686" OR "${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "i386" OR "${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "x86")
-				#message(STATUS "omni-bot 32bit on 32bit")
-			else()
-				message(STATUS "omni-bot BotLoadLibrary includes cstdio")
-				add_definitions(-DIS_64_BIT_BUILD_SYSTEM)
-			endif()
-		else()
-			message(STATUS "Warning: omni-bot support is 32bit Win & Linux only - build skipped")
-		endif()
-	endif(FEATURE_OMNIBOT)
-
 	add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
 	if(FEATURE_LUA)
-		if(BUNDLED_LIBS)
+		if(BUNDLED_LUA)
 			add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_lua)
-		endif(BUNDLED_LIBS)
-		target_link_libraries(qagame${LIB_SUFFIX}${ARCH} ${LUA_LIBRARY})
+		endif(BUNDLED_LUA)
+		target_link_libraries(qagame${LIB_SUFFIX}${ARCH} ${MOD_LIBRARIES})
+		include_directories(${MOD_INCLUDE_DIRS})
 	endif(FEATURE_LUA)
 
 	set_target_properties(qagame${LIB_SUFFIX}${ARCH}
@@ -542,7 +554,7 @@ install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt"
 )
 
 # copy required genuine files
-if (ET_FS_BASEPATH)
+if(ET_FS_BASEPATH)
 	message(STATUS "Installing genuine ET files")
 
 	install(FILES "${ET_FS_BASEPATH}/etmain/mp_bin.pk3"

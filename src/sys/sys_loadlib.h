@@ -46,7 +46,7 @@
 #       define Sys_LibraryError()   dlerror()
 #   endif
 #else
-#   ifdef BUNDLED_LIBS
+#   ifdef BUNDLED_SDL
 #       include "SDL.h"
 #       include "SDL_loadso.h"
 #   else

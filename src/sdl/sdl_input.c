@@ -31,7 +31,7 @@
  * @file sdl_input.c
  */
 
-#ifdef BUNDLED_LIBS
+#ifdef BUNDLED_SDL
 	#include "SDL.h"
 #else
 	#include <SDL/SDL.h>

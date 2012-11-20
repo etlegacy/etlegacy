@@ -34,7 +34,7 @@
 #ifndef __QGL_H__
 #define __QGL_H__
 
-#ifdef BUNDLED_LIBS
+#ifdef BUNDLED_SDL
 #    include "SDL_opengl.h"
 #else
 #    include <SDL/SDL_opengl.h>

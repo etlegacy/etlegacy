@@ -33,7 +33,7 @@
 
 #include "client.h"
 
-#ifdef BUNDLED_LIBS
+#ifdef BUNDLED_SDL
 #    include "SDL_video.h"
 #else
 #    include <SDL/SDL_video.h>

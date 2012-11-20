@@ -31,7 +31,7 @@
  * @file sdl_snd.c
  */
 
-#ifdef BUNDLED_LIBS
+#ifdef BUNDLED_SDL
 #    include "SDL.h"
 #else
 #    include <SDL/SDL.h>
@@ -232,7 +232,8 @@ qboolean SNDDMA_Init(void)
 	{
 		desired.freq = 44100;
 	}
-	else {
+	else
+	{
 		desired.freq = 22050;
 	}
 

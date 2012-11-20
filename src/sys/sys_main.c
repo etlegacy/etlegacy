@@ -43,7 +43,7 @@
 #include <errno.h>
 
 #ifndef DEDICATED
-#    ifdef BUNDLED_LIBS
+#    ifdef BUNDLED_SDL
 #        include "SDL.h"
 #        include "SDL_cpuinfo.h"
 #    else

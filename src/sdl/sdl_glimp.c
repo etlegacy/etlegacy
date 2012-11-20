@@ -31,14 +31,14 @@
  * @file sdl_glimp.c
  */
 
-#ifdef BUNDLED_LIBS
+#ifdef BUNDLED_SDL
 #    include "SDL.h"
 #else
 #    include <SDL/SDL.h>
 #endif
 
 #ifdef FEATURE_SMP
-#    ifdef BUNDLED_LIBS
+#    ifdef BUNDLED_SDL
 #        include "SDL_thread.h"
 #    else
 #        include <SDL/SDL_thread.h>

@@ -14,7 +14,7 @@
 #include "../qcommon/q_shared.h"
 #include "g_local.h"
 
-#ifdef BUNDLED_LIBS
+#ifdef BUNDLED_LUA
 #    include "lua.h"
 #    include "lauxlib.h"
 #    include "lualib.h"
