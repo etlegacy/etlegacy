@@ -1650,7 +1650,6 @@ extern vmCvar_t vote_allow_muting;
 extern vmCvar_t vote_limit;
 extern vmCvar_t vote_percent;
 extern vmCvar_t z_serverflags;
-extern vmCvar_t g_letterbox;
 
 extern vmCvar_t g_debugSkills;
 extern vmCvar_t g_heavyWeaponRestriction;
@@ -1668,6 +1667,8 @@ extern vmCvar_t g_maxWarp;
 extern vmCvar_t lua_modules;
 extern vmCvar_t lua_allowedModules;
 #endif
+
+extern vmCvar_t g_protect;
 
 void trap_Printf(const char *fmt);
 void trap_Error(const char *fmt) __attribute__((noreturn));
@@ -2202,7 +2203,11 @@ typedef struct
 	int flags;
 } field_t;
 
+#ifdef FEATURE_LUA
 int GetFieldIndex(char *fieldname);
 fieldtype_t GetFieldType(char *fieldname);
+#endif
+
+#define G_PROTECT_LOCALHOST_REF  1
 
 #endif

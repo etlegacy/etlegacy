@@ -253,35 +253,6 @@ gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 
 /*
 ===========
-SelectInitialSpawnPoint
-
-Try to find a spawn point marked 'initial', otherwise
-use normal spawn selection.
-============
-*/
-/*gentity_t *SelectInitialSpawnPoint( vec3_t origin, vec3_t angles ) {
-    gentity_t	*spot;
-
-    spot = NULL;
-    while ((spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != NULL) {
-        if ( spot->spawnflags & 1 ) {
-            break;
-        }
-    }
-
-    if ( !spot || SpotWouldTelefrag( spot ) ) {
-        return SelectSpawnPoint( vec3_origin, origin, angles );
-    }
-
-    VectorCopy (spot->r.currentOrigin, origin);
-    origin[2] += 9;
-    VectorCopy (spot->s.angles, angles);
-
-    return spot;
-}*/
-
-/*
-===========
 SelectSpectatorSpawnPoint
 
 ============
@@ -517,12 +488,11 @@ SetClientViewAngle
 void SetClientViewAngle(gentity_t *ent, vec3_t angle)
 {
 	int i;
+	int cmdAngle;
 
 	// set the delta angle
 	for (i = 0 ; i < 3 ; i++)
 	{
-		int cmdAngle;
-
 		cmdAngle                        = ANGLE2SHORT(angle[i]);
 		ent->client->ps.delta_angles[i] = cmdAngle - ent->client->pers.cmd.angles[i];
 	}
@@ -532,12 +502,8 @@ void SetClientViewAngle(gentity_t *ent, vec3_t angle)
 
 void SetClientViewAnglePitch(gentity_t *ent, vec_t angle)
 {
-	int cmdAngle;
-
-	cmdAngle                            = ANGLE2SHORT(angle);
-	ent->client->ps.delta_angles[PITCH] = cmdAngle - ent->client->pers.cmd.angles[PITCH];
-
-	ent->s.angles[PITCH] = 0;
+	ent->client->ps.delta_angles[PITCH] = ANGLE2SHORT(angle) - ent->client->pers.cmd.angles[PITCH];
+	ent->s.angles[PITCH]                = 0;
 	VectorCopy(ent->s.angles, ent->client->ps.viewangles);
 }
 
@@ -548,10 +514,6 @@ limbo
 */
 void limbo(gentity_t *ent, qboolean makeCorpse)
 {
-	int i, contents;
-	//int startclient = ent->client->sess.spectatorClient;
-	int startclient = ent->client->ps.clientNum;
-
 	if (ent->r.svFlags & SVF_POW)
 	{
 		return;
@@ -559,6 +521,9 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 
 	if (!(ent->client->ps.pm_flags & PMF_LIMBO))
 	{
+		int i, contents;
+		int startclient = ent->client->ps.clientNum;
+
 		if (ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0)
 		{
 			if (g_maxlivesRespawnPenalty.integer)
@@ -838,17 +803,6 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 			}
 		}
 		break;
-	/*case WP_MOBILE_MG42:
-	case WP_PANZERFAUST:
-	case WP_FLAMETHROWER:
-	    if( client->sess.skill[SK_HEAVY_WEAPONS] >= 1 )
-	        client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += GetAmmoTableData(weaponNum)->maxclip;
-	    break;
-	case WP_MORTAR:
-	case WP_MORTAR_SET:
-	    if( client->sess.skill[SK_HEAVY_WEAPONS] >= 1 )
-	        client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += 2;
-	    break;*/
 	case WP_MEDIC_SYRINGE:
 	case WP_MEDIC_ADRENALINE:
 		if (client->sess.skill[SK_FIRST_AID] >= 2)
@@ -905,7 +859,6 @@ SetWolfSpawnWeapons
 void SetWolfSpawnWeapons(gclient_t *client)
 {
 	int pc = client->sess.playerType;
-	// qboolean isBot = (g_entities[client->ps.clientNum].r.svFlags & SVF_BOT) ? qtrue : qfalse;
 
 	if (client->sess.sessionTeam == TEAM_SPECTATOR)
 	{
@@ -1342,10 +1295,8 @@ int G_CountTeamMedics(team_t team, qboolean alivecheck)
 // AddMedicTeamBonus
 void AddMedicTeamBonus(gclient_t *client)
 {
-	int numMedics = G_CountTeamMedics(client->sess.sessionTeam, qfalse);
-
 	// compute health mod
-	client->pers.maxHealth = 100 + 10 * numMedics;
+	client->pers.maxHealth = 100 + 10 * G_CountTeamMedics(client->sess.sessionTeam, qfalse);
 
 	if (client->pers.maxHealth > 125)
 	{
@@ -1454,6 +1405,188 @@ static void ClientCleanName(const char *in, char *out, int outSize)
 	}
 }
 
+// courtesy of Dens
+// FIXME: @IP6
+const char *GetParsedIP(const char *ipadd)
+{
+	// code by Dan Pop, http://bytes.com/forum/thread212174.html
+	unsigned      b1, b2, b3, b4, port = 0;
+	unsigned char c;
+	int           rc;
+	static char   ipge[20];
+
+	if (!Q_strncmp(ipadd, "localhost", 9))
+	{
+		return "localhost";
+	}
+
+	rc = sscanf(ipadd, "%3u.%3u.%3u.%3u:%u%c", &b1, &b2, &b3, &b4, &port, &c);
+	if (rc < 4 || rc > 5)
+	{
+		return NULL;
+	}
+	if ((b1 | b2 | b3 | b4) > 255 || port > 65535)
+	{
+		return NULL;
+	}
+	if (strspn(ipadd, "0123456789.:") < strlen(ipadd))
+	{
+		return NULL;
+	}
+	sprintf(ipge, "%u.%u.%u.%u", b1, b2, b3, b4);
+	return ipge;
+}
+
+// Dens: based on reyalp's userinfocheck.lua and combinedfixes.lua
+// FIXME: @IP6
+char *CheckUserinfo(int clientNum, char *userinfo)
+{
+	char *value;
+	int  length = strlen(userinfo);
+	int  i, slashCount = 0, count = 0;
+
+	if (length < 1)
+	{
+		return "Userinfo too short";
+	}
+
+	// Dens: 44 is a bit random now: MAX_INFO_STRING - 44 = 980. The LUA script
+	// uses 980, but I don't know if there is a specific reason for that
+	// number. Userinfo should never get this big anyway, unless someone is
+	// trying to force the engine to truncate it, so that the real IP is lost
+	if (length > MAX_INFO_STRING - 44)
+	{
+		return "Userinfo too long.";
+	}
+
+	// Dens: userinfo always has to have a leading slash
+	if (userinfo[0] != '\\')
+	{
+		return "Missing leading slash in userinfo.";
+	}
+	// Dens: the engine always adds ip\ip:port at the end, so there will never
+	// be a trailing slash
+	if (userinfo[length - 1] == '\\')
+	{
+		return "Trailing slash in userinfo.";
+	}
+
+	for (i = 0; userinfo[i]; ++i)
+	{
+		if (userinfo[i] == '\\')
+		{
+			slashCount++;
+		}
+	}
+	if (slashCount % 2 != 0)
+	{
+		return "Bad number of slashes in userinfo.";
+	}
+
+	// Dens: make sure there is only one ip, cl_guid, name and cl_punkbuster field
+	if (length > 4)
+	{
+		for (i = 0; userinfo[i + 3]; ++i)
+		{
+			if (userinfo[i] == '\\' && userinfo[i + 1] == 'i' &&
+			    userinfo[i + 2] == 'p' && userinfo[i + 3] == '\\')
+			{
+				count++;
+			}
+		}
+	}
+	if (count == 0)
+	{
+		return "Missing IP in userinfo.";
+	}
+	else if (count > 1)
+	{
+		return "Too many IP fields in userinfo.";
+	}
+	else
+	{
+		if (GetParsedIP(Info_ValueForKey(userinfo, "ip")) == NULL)
+		{
+			return "Malformed IP in userinfo.";
+		}
+	}
+	count = 0;
+
+	if (length > 9)
+	{
+		for (i = 0; userinfo[i + 8]; ++i)
+		{
+			if (userinfo[i] == '\\' && userinfo[i + 1] == 'c' &&
+			    userinfo[i + 2] == 'l' && userinfo[i + 3] == '_' &&
+			    userinfo[i + 4] == 'g' && userinfo[i + 5] == 'u' &&
+			    userinfo[i + 6] == 'i' && userinfo[i + 7] == 'd' &&
+			    userinfo[i + 8] == '\\')
+			{
+				count++;
+			}
+		}
+	}
+	if (count > 1)
+	{
+		return "Too many cl_guid fields in userinfo.";
+	}
+	count = 0;
+
+	if (length > 6)
+	{
+		for (i = 0; userinfo[i + 5]; ++i)
+		{
+			if (userinfo[i] == '\\' && userinfo[i + 1] == 'n' &&
+			    userinfo[i + 2] == 'a' && userinfo[i + 3] == 'm' &&
+			    userinfo[i + 4] == 'e' && userinfo[i + 5] == '\\')
+			{
+				count++;
+			}
+		}
+	}
+	if (count == 0)
+	{
+		// if an empty name is entered, the userinfo will not contain a /name key/value at all..
+		// FIXME: replace ?
+		return "Missing name field in userinfo.";
+	}
+	else if (count > 1)
+	{
+		return "Too many name fields in userinfo.";
+	}
+	count = 0;
+
+	if (length > 15)
+	{
+		for (i = 0; userinfo[i + 14]; ++i)
+		{
+			if (userinfo[i] == '\\' && userinfo[i + 1] == 'c' &&
+			    userinfo[i + 2] == 'l' && userinfo[i + 3] == '_' &&
+			    userinfo[i + 4] == 'p' && userinfo[i + 5] == 'u' &&
+			    userinfo[i + 6] == 'n' && userinfo[i + 7] == 'k' &&
+			    userinfo[i + 8] == 'b' && userinfo[i + 9] == 'u' &&
+			    userinfo[i + 10] == 's' && userinfo[i + 11] == 't' &&
+			    userinfo[i + 12] == 'e' && userinfo[i + 13] == 'r' &&
+			    userinfo[i + 14] == '\\')
+			{
+				count++;
+			}
+		}
+	}
+	if (count > 1)
+	{
+		return "Too many cl_punkbuster fields in userinfo.";
+	}
+
+	value = Info_ValueForKey(userinfo, "rate");
+	if (value == NULL || value[0] == '\0')
+	{
+		return "Wrong rate field in userinfo.";
+	}
+
+	return 0;
+}
+
 /*
 ===========
 ClientUserInfoChanged
@@ -1467,18 +1600,16 @@ if desired.
 */
 void ClientUserinfoChanged(int clientNum)
 {
-	gentity_t *ent;
+	gentity_t *ent    = g_entities + clientNum;
+	gclient_t *client = ent->client;
+	int       i;
+	int       characterIndex;
+	char      *reason;
 	char      *s;
 	char      oldname[MAX_STRING_CHARS];
 	char      userinfo[MAX_INFO_STRING];
-	gclient_t *client;
-	int       i;
 	char      skillStr[16] = "";
 	char      medalStr[16] = "";
-	int       characterIndex;
-
-	ent    = g_entities + clientNum;
-	client = ent->client;
 
 	client->ps.clientNum = clientNum;
 
@@ -1490,10 +1621,21 @@ void ClientUserinfoChanged(int clientNum)
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
+	if (!(ent->r.svFlags & SVF_BOT))
+	{
+		reason = CheckUserinfo(clientNum, userinfo);
+		if (reason)
+		{
+			G_Printf("ClientUserinfoChanged: CheckUserinfo: client %d: %s\n", clientNum, reason);
+			trap_DropClient(clientNum, va("^1%s", "Bad userinfo."), 99999);
+		}
+	}
+
 	// check for malformed or illegal info strings
 	if (!Info_Validate(userinfo))
 	{
 		Q_strncpyz(userinfo, "\\name\\badinfo", sizeof(userinfo));
+		G_Printf("ClientUserinfoChanged: CheckUserinfo: client %d: Invalid userinfo\n", clientNum);
 		trap_DropClient(clientNum, "Invalid userinfo", 300);
 	}
 
@@ -1504,13 +1646,16 @@ void ClientUserinfoChanged(int clientNum)
 		G_Printf("Userinfo: %s\n", userinfo);
 	}
 
-	// check for local client
-	s = Info_ValueForKey(userinfo, "ip");
-	if (s && !strcmp(s, "localhost"))
+	if (!(g_protect.integer & G_PROTECT_LOCALHOST_REF))
 	{
-		client->pers.localClient = qtrue;
-		level.fLocalHost         = qtrue;
-		client->sess.referee     = RL_REFEREE;
+		// check for local client and set ref
+		s = Info_ValueForKey(userinfo, "ip");
+		if (s && !strcmp(s, "localhost"))
+		{
+			client->pers.localClient = qtrue;
+			level.fLocalHost         = qtrue;
+			client->sess.referee     = RL_REFEREE;
+		}
 	}
 
 	// added for zinx etpro antiwarp
@@ -2665,11 +2810,7 @@ void ClientDisconnect(int clientNum)
 
 // In just the GAME DLL, we want to store the groundtrace surface stuff,
 // so we don't have to keep tracing.
-void ClientStoreSurfaceFlags
-(
-    int clientNum,
-    int surfaceFlags
-)
+void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags)
 {
 	// Store the surface flags
 	g_entities[clientNum].surfaceFlags = surfaceFlags;

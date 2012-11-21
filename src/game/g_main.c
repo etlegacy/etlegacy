@@ -227,8 +227,6 @@ vmCvar_t g_lms_followTeamOnly;
 vmCvar_t mod_url;
 vmCvar_t url;
 
-vmCvar_t g_letterbox;
-
 vmCvar_t g_debugSkills;
 vmCvar_t g_heavyWeaponRestriction;
 vmCvar_t g_autoFireteams;
@@ -246,6 +244,10 @@ vmCvar_t g_maxWarp;
 vmCvar_t lua_modules;
 vmCvar_t lua_allowedModules;
 #endif
+
+vmCvar_t g_protect; // similar to sv_protect game cvar
+                    // 0 - no protection - default to have ref for localhost clients on listen servers
+                    // 1 - disabled auto ref for localhost clients
 
 cvarTable_t gameCvarTable[] =
 {
@@ -452,8 +454,6 @@ cvarTable_t gameCvarTable[] =
 	// configured by the server admin, points to the web pages for the server
 	{ &url,                       "URL",                       "",                                                       CVAR_SERVERINFO | CVAR_ARCHIVE,                  0, qfalse},
 
-	{ &g_letterbox,               "cg_letterbox",              "0",                                                      CVAR_TEMP },
-
 	{ &g_debugSkills,             "g_debugSkills",             "0",                                                      0 },
 
 	{ &g_heavyWeaponRestriction,  "g_heavyWeaponRestriction",  "100",                                                    CVAR_ARCHIVE | CVAR_SERVERINFO },
@@ -471,6 +471,8 @@ cvarTable_t gameCvarTable[] =
 	{ &lua_modules,               "lua_modules",               "",                                                       0 },
 	{ &lua_allowedModules,        "lua_allowedModules",        "",                                                       0 },
 #endif
+
+	{ &g_protect,                 "g_protect",                 "0",                                                      CVAR_ARCHIVE },                                  // reset on startup?
 
 };
 
@@ -3718,7 +3720,7 @@ qboolean G_PositionEntityOnTag(gentity_t *entity, gentity_t *parent, char *tagNa
 		// 3.265625, -1.359375, 2.96875
 		// this is a hack, by the way.
 		entity->r.currentOrigin[0] += 0.03125 + 3.265625;
-		entity->r.currentOrigin[1] += -1.171875 + -1.359375;
+		entity->r.currentOrigin[1] += -1.171875 + - 1.359375;
 		entity->r.currentOrigin[2] += 27.984375 + 2.96875;
 	}
 
