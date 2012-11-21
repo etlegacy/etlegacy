@@ -920,7 +920,7 @@ void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 		G_Script_ScriptChange(ent, i);
 	}
 
-#ifdef OMNIBOT
+#ifdef FEATURE_OMNIBOT
 	// skip these
 	if (!Q_stricmp(eventStr, "trigger") ||
 	    !Q_stricmp(eventStr, "activate") ||

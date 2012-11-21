@@ -233,7 +233,7 @@ typedef enum
 	G_ENTITY_CONTACT,   // ( const vec3_t mins, const vec3_t maxs, const gentity_t *ent );
 	// perform an exact check against inline brush models of non-square shape
 
-// #ifdef OMNIBOTS FIXME: precompiler macros for engine ?
+// #ifdef FEATURE_OMNIBOT FIXME: precompiler macros for engine ?
 	G_BOT_ALLOCATE_CLIENT = 36, // ( int clientNum ); -  used by OmniBot
 // #endif
 
@@ -266,7 +266,7 @@ typedef enum
 	G_REGISTERSOUND,    // xkan, 10/28/2002 - register the sound
 	G_GET_SOUND_LENGTH, // xkan, 10/28/2002 - get the length of the sound
 
-//#ifdef OMNIBOTS - fixme: precompiler marcos for engine ?
+//#ifdef FEATURE_OMNIBOT - fixme: precompiler marcos for engine ?
 	// 200
 	BOTLIB_GET_CONSOLE_MESSAGE = 210, // ( int client, char *message, int size );
 	BOTLIB_USER_COMMAND        = 211,    // ( int client, usercmd_t *ucmd );

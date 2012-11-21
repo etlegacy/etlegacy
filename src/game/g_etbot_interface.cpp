@@ -2,11 +2,10 @@
 * ET <-> Omni-Bot interface source file.
 *
 */
+#ifdef FEATURE_OMNIBOT
 
 #include <sstream>
 #include <iomanip>
-
-#ifdef OMNIBOTS
 
 extern "C"
 {
@@ -7099,4 +7098,4 @@ void Bot_AddFallenTeammateGoals(gentity_t *_teammate, int _team)
 };
 
 
-#endif // OMNIBOTS
+#endif // FEATURE_OMNIBOT

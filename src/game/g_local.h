@@ -466,9 +466,8 @@ struct gentity_s
 
 	int etpro_misc_1;
 
-#ifdef OMNIBOTS
-	//Omni-bot increment dyno count
-	int numPlanted;
+#ifdef FEATURE_OMNIBOT
+	int numPlanted; // Omni-bot increment dyno count
 #endif
 };
 
@@ -579,7 +578,7 @@ typedef struct
 
 	qboolean versionOK;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	//Omni-bot
 	qboolean botSuicide;            // /kill before next spawn
 	qboolean botPush;               // allow for disabling of bot pushing via script
@@ -1092,7 +1091,7 @@ typedef struct
 
 	qboolean tempTraceIgnoreEnts[MAX_GENTITIES];
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	//Omni-bot time triggers
 	qboolean twoMinute;
 	qboolean thirtySecond;
@@ -1111,7 +1110,7 @@ typedef struct
 	char next[256];
 	int typeBits;
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 	//Omni-bot time triggers
 	qboolean twoMinute;
 	qboolean thirtySecond;
@@ -1151,7 +1150,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir);
 void Cmd_Kill_f(gentity_t *ent);
 void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 #endif
 
@@ -1486,7 +1485,7 @@ extern g_campaignInfo_t g_campaigns[];
 
 #define FOFS(x) ((size_t)&(((gentity_t *)0)->x))
 
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 extern vmCvar_t g_OmniBotPath;
 extern vmCvar_t g_OmniBotEnable;
 extern vmCvar_t g_OmniBotFlags;
@@ -1715,7 +1714,7 @@ qboolean trap_EntityContact(const vec3_t mins, const vec3_t maxs, const gentity_
 qboolean trap_EntityContactCapsule(const vec3_t mins, const vec3_t maxs, const gentity_t *ent);
 
 int trap_BotAllocateClient(int clientNum); // FIXME: precompiler macros for engine ?
-#ifdef OMNIBOTS
+#ifdef FEATURE_OMNIBOT
 //int trap_BotAllocateClient(int clientNum); // FIXME: precompiler macros for engine ?
 int trap_BotGetServerCommand(int clientNum, char *message, int size);
 void trap_BotUserCommand(int client, usercmd_t *ucmd);
