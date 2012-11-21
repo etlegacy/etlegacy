@@ -849,7 +849,7 @@ struct gclient_s
 	int lastSpammyCentrePrintTime;
 	pmoveExt_t pmext;
 	qboolean isCivilian;            // whether this is a civilian
-	int deathTime;                  // if we are dead, when did we die
+	int deathTime;                  // if we are dead, when did we die (not used for real)
 
 	int lastHealTimes[2];
 	int lastAmmoTimes[2];

@@ -305,7 +305,6 @@ char *modNames[] =
 	"MOD_FLAMETHROWER",
 	"MOD_GRENADE_PINEAPPLE",
 	"MOD_CROSS",
-	// end
 
 	"MOD_MAPMORTAR",
 	"MOD_MAPMORTAR_SPLASH",
@@ -358,7 +357,6 @@ char *modNames[] =
 
 	"MOD_SMOKEGRENADE",
 
-	// RF
 	"MOD_SWAP_PLACES",
 
 	// OSP -- keep these 2 entries last
@@ -1010,6 +1008,7 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 	{
 		gentity_t *tent;
 		vec3_t    b1, b2;
+
 		VectorCopy(head->r.currentOrigin, b1);
 		VectorCopy(head->r.currentOrigin, b2);
 		VectorAdd(b1, head->r.mins, b1);
@@ -1290,26 +1289,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// 4 means destructible
 	if (targ->s.eType == ET_MOVER && (targ->spawnflags & 4) && !targ->isProp)
 	{
-		/*switch (mod) {
-		case MOD_GRENADE:
-		case MOD_GRENADE_LAUNCHER:
-		case MOD_ROCKET:
-		case MOD_AIRSTRIKE:
-		case MOD_ARTY:
-		case MOD_GRENADE_PINEAPPLE:
-		case MOD_MAPMORTAR:
-		case MOD_EXPLOSIVE:
-		case MOD_DYNAMITE:
-		case MOD_LANDMINE:
-		case MOD_GPG40:
-		case MOD_M7:
-		case MOD_TELEFRAG:
-		case MOD_PANZERFAUST:
-		case MOD_SATCHEL:
-		    break;
-		default:
-		    return; // no damage from other weapons
-		}*/
 		if (!G_WeaponIsExplosive(mod))
 		{
 			return;
@@ -1383,9 +1362,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 
 		// check for team
-		//      if( G_GetWeaponClassForMOD( mod ) != -1 && targ->s.teamNum == inflictor->s.teamNum ) {
-		//          return;
-		//      }
 		if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
 		{
 			return;
@@ -1504,9 +1480,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	if (knockback && targ->client)
 	{
 		vec3_t kvel;
-		float  mass;
-
-		mass = 200;
+		float  mass = 200;
 
 		VectorScale(dir, g_knockback.value * (float)knockback / mass, kvel);
 		VectorAdd(targ->client->ps.velocity, kvel, targ->client->ps.velocity);
@@ -1547,7 +1521,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// check for completely getting out of the damage
 	if (!(dflags & DAMAGE_NO_PROTECTION))
 	{
-
 		// if TF_NO_FRIENDLY_FIRE is set, don't do damage to the target
 		// if the attacker was on the same team
 		if (targ != attacker && OnSameTeam(targ, attacker))
@@ -1763,12 +1736,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	{
 		targ->health -= take;
 
-		// Gordon: don't ever gib POWS
-		if ((targ->health <= 0) && (targ->r.svFlags & SVF_POW))
-		{
-			targ->health = -1;
-		}
-
 		// Ridah, can't gib with bullet weapons (except VENOM)
 		// Arnout: attacker == inflictor can happen in other cases as well! (movers trying to gib things)
 		//if ( attacker == inflictor && targ->health <= GIB_HEALTH) {
@@ -1783,7 +1750,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		// JPW NERVE overcome previous chunk of code for making grenades work again
 		// if ((take > 190)) // 190 is greater than 2x mauser headshot, so headshots don't gib
 		// Arnout: only player entities! messes up ents like func_constructibles and func_explosives otherwise
-		if (((targ->s.number < MAX_CLIENTS) && (take > 190)) && !(targ->r.svFlags & SVF_POW))
+		if (targ->s.number < MAX_CLIENTS && take > 190)
 		{
 			targ->health = GIB_HEALTH - 1;
 		}
