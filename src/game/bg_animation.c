@@ -768,31 +768,31 @@ qboolean BG_ParseConditions(char **text_pp, animScriptItem_t *scriptItem)
 
 		switch (animConditionsTable[conditionIndex].type)
 		{
-			case ANIM_CONDTYPE_BITFLAGS:
-				BG_ParseConditionBits(text_pp, animConditionsTable[conditionIndex].values, conditionIndex, conditionValue);
-				break;
-			case ANIM_CONDTYPE_VALUE:
-				if (animConditionsTable[conditionIndex].values)
+		case ANIM_CONDTYPE_BITFLAGS:
+			BG_ParseConditionBits(text_pp, animConditionsTable[conditionIndex].values, conditionIndex, conditionValue);
+			break;
+		case ANIM_CONDTYPE_VALUE:
+			if (animConditionsTable[conditionIndex].values)
+			{
+				token = COM_ParseExt(text_pp, qfalse);
+				if (!token || !token[0])
 				{
-					token = COM_ParseExt(text_pp, qfalse);
-					if (!token || !token[0])
-					{
-						BG_AnimParseError("BG_AnimParseAnimScript: expected condition value, found end of line");    // RF modification
-					}
-					// check for a comma (condition divider)
-					if (token[strlen(token) - 1] == ',')
-					{
-						token[strlen(token) - 1] = '\0';
-					}
-					conditionValue[0] = BG_IndexForString(token, animConditionsTable[conditionIndex].values, qfalse);
+					BG_AnimParseError("BG_AnimParseAnimScript: expected condition value, found end of line");        // RF modification
 				}
-				else
+				// check for a comma (condition divider)
+				if (token[strlen(token) - 1] == ',')
 				{
-					conditionValue[0] = 1;  // not used, just check for a positive condition
+					token[strlen(token) - 1] = '\0';
 				}
-				break;
-			default: // TTimo gcc: NUM_ANIM_CONDTYPES not handled in switch
-				break;
+				conditionValue[0] = BG_IndexForString(token, animConditionsTable[conditionIndex].values, qfalse);
+			}
+			else
+			{
+				conditionValue[0] = 1;      // not used, just check for a positive condition
+			}
+			break;
+		default:     // TTimo gcc: NUM_ANIM_CONDTYPES not handled in switch
+			break;
 		}
 
 		// now append this condition to the item
@@ -1369,21 +1369,21 @@ qboolean BG_EvaluateConditions(int client, animScriptItem_t *scriptItem)
 	{
 		switch (animConditionsTable[cond->index].type)
 		{
-			case ANIM_CONDTYPE_BITFLAGS:
-				if (!(globalScriptData->clientConditions[client][cond->index][0] & cond->value[0]) &&
-					!(globalScriptData->clientConditions[client][cond->index][1] & cond->value[1]))
-				{
-					return qfalse;
-				}
-				break;
-			case ANIM_CONDTYPE_VALUE:
-				if (!(globalScriptData->clientConditions[client][cond->index][0] == cond->value[0]))
-				{
-					return qfalse;
-				}
-				break;
-			default: // TTimo NUM_ANIM_CONDTYPES not handled
-				break;
+		case ANIM_CONDTYPE_BITFLAGS:
+			if (!(globalScriptData->clientConditions[client][cond->index][0] & cond->value[0]) &&
+			    !(globalScriptData->clientConditions[client][cond->index][1] & cond->value[1]))
+			{
+				return qfalse;
+			}
+			break;
+		case ANIM_CONDTYPE_VALUE:
+			if (!(globalScriptData->clientConditions[client][cond->index][0] == cond->value[0]))
+			{
+				return qfalse;
+			}
+			break;
+		default:     // TTimo NUM_ANIM_CONDTYPES not handled
+			break;
 		}
 	}
 
@@ -1427,20 +1427,20 @@ void BG_ClearAnimTimer(playerState_t *ps, animBodyPart_t bodyPart)
 {
 	switch (bodyPart)
 	{
-		case ANIM_BP_LEGS:
+	case ANIM_BP_LEGS:
 
-			ps->legsTimer = 0;
-			break;
+		ps->legsTimer = 0;
+		break;
 
-		case ANIM_BP_TORSO:
-			ps->torsoTimer = 0;
-			break;
+	case ANIM_BP_TORSO:
+		ps->torsoTimer = 0;
+		break;
 
-		case ANIM_BP_BOTH:
-		default:
-			ps->legsTimer  = 0;
-			ps->torsoTimer = 0;
-			break;
+	case ANIM_BP_BOTH:
+	default:
+		ps->legsTimer  = 0;
+		ps->torsoTimer = 0;
+		break;
 	}
 }
 
@@ -1465,50 +1465,50 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 
 	switch (bodyPart)
 	{
-		case ANIM_BP_BOTH:
-		case ANIM_BP_LEGS:
-			if ((ps->legsTimer < 50) || force)
+	case ANIM_BP_BOTH:
+	case ANIM_BP_LEGS:
+		if ((ps->legsTimer < 50) || force)
+		{
+			if (!isContinue || !((ps->legsAnim & ~ANIM_TOGGLEBIT) == animNum))
 			{
-				if (!isContinue || !((ps->legsAnim & ~ANIM_TOGGLEBIT) == animNum))
-				{
-					wasSet       = qtrue;
-					ps->legsAnim = ((ps->legsAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | animNum;
-					if (setTimer)
-					{
-						ps->legsTimer = duration;
-					}
-				}
-				else if (setTimer && animModelInfo->animations[animNum]->loopFrames)
+				wasSet       = qtrue;
+				ps->legsAnim = ((ps->legsAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | animNum;
+				if (setTimer)
 				{
 					ps->legsTimer = duration;
 				}
 			}
-
-			if (bodyPart == ANIM_BP_LEGS)
+			else if (setTimer && animModelInfo->animations[animNum]->loopFrames)
 			{
-				break;
+				ps->legsTimer = duration;
 			}
+		}
 
-		case ANIM_BP_TORSO:
-			if ((ps->torsoTimer < 50) || force)
+		if (bodyPart == ANIM_BP_LEGS)
+		{
+			break;
+		}
+
+	case ANIM_BP_TORSO:
+		if ((ps->torsoTimer < 50) || force)
+		{
+			if (!isContinue || !((ps->torsoAnim & ~ANIM_TOGGLEBIT) == animNum))
 			{
-				if (!isContinue || !((ps->torsoAnim & ~ANIM_TOGGLEBIT) == animNum))
-				{
-					ps->torsoAnim = ((ps->torsoAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | animNum;
-					if (setTimer)
-					{
-						ps->torsoTimer = duration;
-					}
-				}
-				else if (setTimer && animModelInfo->animations[animNum]->loopFrames)
+				ps->torsoAnim = ((ps->torsoAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | animNum;
+				if (setTimer)
 				{
 					ps->torsoTimer = duration;
 				}
 			}
+			else if (setTimer && animModelInfo->animations[animNum]->loopFrames)
+			{
+				ps->torsoTimer = duration;
+			}
+		}
 
-			break;
-		default: // TTimo default ANIM_BP_UNUSED NUM_ANIM_BODYPARTS not handled
-			break;
+		break;
+	default:     // TTimo default ANIM_BP_UNUSED NUM_ANIM_BODYPARTS not handled
+		break;
 	}
 
 	if (!wasSet)

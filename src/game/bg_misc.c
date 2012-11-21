@@ -650,7 +650,7 @@ gitem_t bg_itemlist[] =
 	{
 		"item_health_breadandmeat",
 		"sound/items/cold_pickup.wav",
-		{ 0, // we can't load what's not in - "models/powerups/health/health_b3.md3",       // just plate (should now be destructable)
+		{ 0,                                         // we can't load what's not in - "models/powerups/health/health_b3.md3",       // just plate (should now be destructable)
 		  0, // we can't load what's not in - "models/powerups/health/health_b2.md3",    // half eaten
 		  0, // we can't load what's not in - "models/powerups/health/health_b1.md3"     // whole turkey
 		},
@@ -1833,7 +1833,7 @@ gitem_t bg_itemlist[] =
 	{
 		"weapon_silencer",
 		"sound/misc/w_pkup.wav",
-		{ "models/weapons2/silencer/silencer.md3",      //----(SA) changed 10/25
+		{ "models/weapons2/silencer/silencer.md3",   //----(SA) changed 10/25
 		  "models/weapons2/silencer/v_silencer.md3",
 		  "models/weapons2/silencer/pu_silencer.md3" },
 
@@ -1907,7 +1907,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_syringe",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/ammo/syringe/syringe.md3",
+		{ 0,                                         // we can't load what's not in - "models/ammo/syringe/syringe.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -1928,7 +1928,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_smoke_grenade",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/ammo/smoke_grenade/smoke_grenade.md3",
+		{ 0,                                         // we can't load what's not in - "models/ammo/smoke_grenade/smoke_grenade.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -1949,7 +1949,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_dynamite",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/ammo/dynamite/dynamite.md3",
+		{ 0,                                         // we can't load what's not in - "models/ammo/dynamite/dynamite.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -1970,7 +1970,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_disguise",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/ammo/disguise/disguise.md3",
+		{ 0,                                         // we can't load what's not in - "models/ammo/disguise/disguise.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -1991,7 +1991,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_airstrike",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/ammo/disguise/disguise.md3"
+		{ 0,                                         // we can't load what's not in - "models/ammo/disguise/disguise.md3"
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -2012,7 +2012,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_landmine",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/ammo/landmine/landmine.md3",
+		{ 0,                                         // we can't load what's not in - "models/ammo/landmine/landmine.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -2033,7 +2033,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_satchel_charge",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/ammo/satchel/satchel.md3",
+		{ 0,                                         // we can't load what's not in - "models/ammo/satchel/satchel.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -2059,7 +2059,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_9mm_small",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/powerups/ammo/am9mm_s.md3",
+		{ 0,                                         // we can't load what's not in - "models/powerups/ammo/am9mm_s.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -2081,7 +2081,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_9mm",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/powerups/ammo/am9mm_m.md3",
+		{ 0,                                         // we can't load what's not in - "models/powerups/ammo/am9mm_m.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -2103,7 +2103,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_9mm_large",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/powerups/ammo/am9mm_l.md3",
+		{ 0,                                         // we can't load what's not in - "models/powerups/ammo/am9mm_l.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -2125,7 +2125,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_45cal_small",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/powerups/ammo/am45cal_s.md3",
+		{ 0,                                         // we can't load what's not in - "models/powerups/ammo/am45cal_s.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -2147,7 +2147,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_45cal",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/powerups/ammo/am45cal_m.md3",
+		{ 0,                                         // we can't load what's not in - "models/powerups/ammo/am45cal_m.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -2169,7 +2169,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_45cal_large",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/powerups/ammo/am45cal_l.md3",
+		{ 0,                                         // we can't load what's not in - "models/powerups/ammo/am45cal_l.md3",
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
@@ -2192,7 +2192,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_30cal_small",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/powerups/ammo/am30cal_s.md3",
+		{ 0,                                         // we can't load what's not in - "models/powerups/ammo/am30cal_s.md3",
 		  0, 0 },
 		"",  // icon
 		NULL,                       // ammo icon
@@ -2214,7 +2214,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_30cal",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/powerups/ammo/am30cal_m.md3",
+		{ 0,                                         // we can't load what's not in - "models/powerups/ammo/am30cal_m.md3",
 		  0, 0 },
 		"",  // icon
 		NULL,                       // ammo icon
@@ -2236,7 +2236,7 @@ gitem_t bg_itemlist[] =
 	{
 		"ammo_30cal_large",
 		"sound/misc/am_pkup.wav",
-		{ 0, // we can't load what's not in - "models/powerups/ammo/am30cal_l.md3",
+		{ 0,                                         // we can't load what's not in - "models/powerups/ammo/am30cal_l.md3",
 		  0, 0 },
 		"",  // icon
 		NULL,                       // ammo icon

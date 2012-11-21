@@ -61,7 +61,7 @@
 
 #define RANK_TIED_FLAG      0x4000
 
-#define	ITEM_RADIUS			10		// item sizes are needed for client side pickup detection
+#define ITEM_RADIUS         10      // item sizes are needed for client side pickup detection
                                     // Rafael changed the radius so that the items would fit in the 3 new containers
 
 #define FLAMETHROWER_RANGE  2500    // DHM - Nerve :: multiplayer range, was 850 in SP
@@ -572,7 +572,7 @@ typedef enum
 #define EF_TAGCONNECT       0x00008000      // connected to another entity via tag
 #define EF_MOUNTEDTANK      EF_TAGCONNECT   // Gordon: duplicated for clarity
 
-#define EF_FAKEBMODEL		0x00010000		// from etpro
+#define EF_FAKEBMODEL       0x00010000      // from etpro
 #define EF_PATH_LINK        0x00020000      // Gordon: linking trains together
 #define EF_ZOOMING          0x00040000      // client is zooming
 #define EF_PRONE            0x00080000      // player is prone
@@ -773,11 +773,11 @@ typedef enum
 } skillType_t;
 
 // skill name 'shortcuts'
-#define SK_SOLDIER		SK_HEAVY_WEAPONS
-#define SK_MEDIC		SK_FIRST_AID
-#define SK_ENGINEER		SK_EXPLOSIVES_AND_CONSTRUCTION
-#define SK_FIELDOPS		SK_SIGNALS
-#define SK_COVERTOPS	SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS
+#define SK_SOLDIER      SK_HEAVY_WEAPONS
+#define SK_MEDIC        SK_FIRST_AID
+#define SK_ENGINEER     SK_EXPLOSIVES_AND_CONSTRUCTION
+#define SK_FIELDOPS     SK_SIGNALS
+#define SK_COVERTOPS    SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS
 
 extern const char *skillNames[SK_NUM_SKILLS];
 extern const char *skillNamesLine1[SK_NUM_SKILLS];

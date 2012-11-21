@@ -865,13 +865,13 @@ qboolean IsHeadShotWeapon(int mod)
 gentity_t *G_BuildHead(gentity_t *ent)
 {
 	gentity_t     *head;
-	orientation_t or;
+	orientation_t orientation;
 
 	head = G_Spawn();
 
-	if (trap_GetTag(ent->s.number, 0, "tag_head", &or))
+	if (trap_GetTag(ent->s.number, 0, "tag_head", &orientation))
 	{
-		G_SetOrigin(head, or.origin);
+		G_SetOrigin(head, orientation.origin);
 	}
 	else
 	{

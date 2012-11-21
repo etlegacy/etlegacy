@@ -223,8 +223,8 @@ void P_WorldEffects(gentity_t *ent)
 G_SetClientSound
 ===============
 */
-void G_SetClientSound(gentity_t *ent)
-{                                                                                                                                                           // Gordon: doesnt exist
+void G_SetClientSound(gentity_t *ent)                                                                                                                       // Gordon: doesnt exist
+{
 	ent->s.loopSound = 0;
 }
 

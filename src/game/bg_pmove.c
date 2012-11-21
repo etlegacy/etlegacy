@@ -1082,7 +1082,7 @@ static qboolean PM_CheckProne(void)
 		// tjw: it appears that 12 is the magic number
 		//      for the minimum maxs[2] that prevents
 		//      player from getting stuck into the world.
-		pm->maxs[2] = 12;
+		pm->maxs[2]        = 12;
 		pm->ps->viewheight = PRONE_VIEWHEIGHT;
 
 		return(qtrue);
@@ -1986,8 +1986,8 @@ static void PM_SetWaterLevel(void)
 
 	if (cont & MASK_WATER)
 	{
-		int    sample1;
-		int    sample2;
+		int sample1;
+		int sample2;
 
 		sample2 = pm->ps->viewheight - pm->ps->mins[2];
 		sample1 = sample2 / 2;
@@ -2645,7 +2645,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 	case WP_SILENCER:
 		if (newweapon == weapAlts[oldweapon])
 		{
-			switchtime = 1000;
+			switchtime    = 1000;
 			altSwitchAnim = qtrue;
 		}
 		break;
@@ -2658,7 +2658,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 	case WP_SILENCED_COLT:
 		if (newweapon == weapAlts[oldweapon])
 		{
-			switchtime = 1000;
+			switchtime    = 1000;
 			altSwitchAnim = qtrue;
 		}
 		break;
@@ -2827,7 +2827,7 @@ static void PM_FinishWeaponChange(void)
 	case WP_LUGER:
 		if (newweapon == weapAlts[oldweapon])
 		{
-			switchtime = 0;
+			switchtime    = 0;
 			altSwitchAnim = qtrue ;
 		}
 		break;
@@ -2841,7 +2841,7 @@ static void PM_FinishWeaponChange(void)
 	case WP_COLT:
 		if (newweapon == weapAlts[oldweapon])
 		{
-			switchtime = 0;
+			switchtime    = 0;
 			altSwitchAnim = qtrue ;
 		}
 		break;
@@ -3035,33 +3035,34 @@ void PM_CheckForReload(int weapon)
 	}
 
 	// some weapons don't reload
-	switch(weapon) {
-		case WP_GPG40:
-		case WP_M7:
-		case WP_FLAMETHROWER:
-		case WP_KNIFE:
-		case WP_GRENADE_LAUNCHER:
-		case WP_PANZERFAUST:
-		case WP_GRENADE_PINEAPPLE:
-		case WP_MEDIC_SYRINGE:
-		case WP_AMMO:
-		case WP_ARTY:
-		case WP_DYNAMITE:
-		case WP_SMOKETRAIL:
-		case WP_MEDKIT:
-		case WP_BINOCULARS:
-		case WP_PLIERS:
-		case WP_SMOKE_MARKER:
-		case WP_LANDMINE:
-		case WP_SATCHEL:
-		case WP_SATCHEL_DET:
-		case WP_SMOKE_BOMB:
-		case WP_DUMMY_MG42:
-		case WP_MEDIC_ADRENALINE:
-		case WP_NONE:
-			return;
-		default:
-			break;
+	switch (weapon)
+	{
+	case WP_GPG40:
+	case WP_M7:
+	case WP_FLAMETHROWER:
+	case WP_KNIFE:
+	case WP_GRENADE_LAUNCHER:
+	case WP_PANZERFAUST:
+	case WP_GRENADE_PINEAPPLE:
+	case WP_MEDIC_SYRINGE:
+	case WP_AMMO:
+	case WP_ARTY:
+	case WP_DYNAMITE:
+	case WP_SMOKETRAIL:
+	case WP_MEDKIT:
+	case WP_BINOCULARS:
+	case WP_PLIERS:
+	case WP_SMOKE_MARKER:
+	case WP_LANDMINE:
+	case WP_SATCHEL:
+	case WP_SATCHEL_DET:
+	case WP_SMOKE_BOMB:
+	case WP_DUMMY_MG42:
+	case WP_MEDIC_ADRENALINE:
+	case WP_NONE:
+		return;
+	default:
+		break;
 	}
 
 
@@ -3592,7 +3593,7 @@ static void PM_Weapon(void)
 
 			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= MAX_MG42_HEAT)
 			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = MAX_MG42_HEAT;	// cap heat to max
+				pm->ps->weapHeat[WP_DUMMY_MG42] = MAX_MG42_HEAT;    // cap heat to max
 				PM_AddEvent(EV_WEAP_OVERHEAT);
 				pm->ps->weaponTime = 2000;          // force "heat recovery minimum" to 2 sec right now
 			}
@@ -4608,40 +4609,40 @@ static void PM_Weapon(void)
 
 	switch (pm->ps->weapon)
 	{
-		case WP_GRENADE_LAUNCHER:
-		case WP_GRENADE_PINEAPPLE:
-		case WP_DYNAMITE:
-		case WP_K43:
-		case WP_KAR98:
-		case WP_GPG40:
-		case WP_CARBINE:
-		case WP_M7:
-		case WP_LANDMINE:
-		case WP_SMOKE_BOMB:
-			PM_StartWeaponAnim(weapattackanim);
-			break;
+	case WP_GRENADE_LAUNCHER:
+	case WP_GRENADE_PINEAPPLE:
+	case WP_DYNAMITE:
+	case WP_K43:
+	case WP_KAR98:
+	case WP_GPG40:
+	case WP_CARBINE:
+	case WP_M7:
+	case WP_LANDMINE:
+	case WP_SMOKE_BOMB:
+		PM_StartWeaponAnim(weapattackanim);
+		break;
 
-		case WP_MP40:
-		case WP_THOMPSON:
-		case WP_STEN:
-		case WP_MEDKIT:
-		case WP_PLIERS:
-		case WP_SMOKE_MARKER:
-		case WP_SATCHEL_DET:
-		case WP_MOBILE_MG42:
-		case WP_MOBILE_MG42_SET:
-		case WP_LOCKPICK:
-			PM_ContinueWeaponAnim(weapattackanim);
-			break;
+	case WP_MP40:
+	case WP_THOMPSON:
+	case WP_STEN:
+	case WP_MEDKIT:
+	case WP_PLIERS:
+	case WP_SMOKE_MARKER:
+	case WP_SATCHEL_DET:
+	case WP_MOBILE_MG42:
+	case WP_MOBILE_MG42_SET:
+	case WP_LOCKPICK:
+		PM_ContinueWeaponAnim(weapattackanim);
+		break;
 
-		case WP_MORTAR_SET:
-			break;      // no animation
+	case WP_MORTAR_SET:
+		break;          // no animation
 
-		default:
-			// RF, testing
-			//PM_ContinueWeaponAnim(weapattackanim);
-			PM_StartWeaponAnim(weapattackanim);
-			break;
+	default:
+		// RF, testing
+		//PM_ContinueWeaponAnim(weapattackanim);
+		PM_StartWeaponAnim(weapattackanim);
+		break;
 	}
 
 	// JPW NERVE -- in multiplayer, pfaust fires once then switches to pistol since it's useless for a while
@@ -4791,7 +4792,7 @@ static void PM_Weapon(void)
 
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
-		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		aimSpreadScaleAdd = 200;
 		break;
 

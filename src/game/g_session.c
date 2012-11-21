@@ -404,7 +404,7 @@ void G_InitWorldSession(void)
 
 
 #define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; \
-} x = atoi(++tmp);
+					   } x = atoi(++tmp);
 
 		// Get team lock stuff
 		GETVAL(gt);
@@ -415,14 +415,14 @@ void G_InitWorldSession(void)
 		// FIXME: deal with the multi-map missions
 		if (g_gametype.integer != GT_WOLF_CAMPAIGN)
 		{
-			if ((tmp = strchr(va("%s", tmp), ' ')) != NULL)
-			{
-				tmp++;
-				trap_GetServerinfo(s, sizeof(s));
-				if (Q_stricmp(tmp, Info_ValueForKey(s, "mapname")))
-				{
-					level.fResetStats = qtrue;
-					G_Printf("Map changed, clearing player stats.\n");
+		    if ((tmp = strchr(va("%s", tmp), ' ')) != NULL)
+		    {
+		        tmp++;
+		        trap_GetServerinfo(s, sizeof(s));
+		        if (Q_stricmp(tmp, Info_ValueForKey(s, "mapname")))
+		        {
+		            level.fResetStats = qtrue;
+		            G_Printf("Map changed, clearing player stats.\n");
 				}
 			}
 		}
@@ -430,20 +430,20 @@ void G_InitWorldSession(void)
 		// OSP - have to make sure spec locks follow the right teams
 		if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer != GS_PLAYING && test)
 		{
-			G_swapTeamLocks();
+		    G_swapTeamLocks();
 		}
 
 		if (g_swapteams.integer)
 		{
-			G_swapTeamLocks();
+		    G_swapTeamLocks();
 		}
 	}
 
 	for (i = 0; i < MAX_FIRETEAMS; i++)
 	{
-		char *p, *c;
+	    char *p, *c;
 
-		trap_Cvar_VariableStringBuffer(va("fireteam%i", i), s, sizeof(s));
+	    trap_Cvar_VariableStringBuffer(va("fireteam%i", i), s, sizeof(s));
 
 /*		p = Info_ValueForKey( s, "n" );
 
@@ -455,47 +455,48 @@ void G_InitWorldSession(void)
             level.fireTeams[i].inuse = qfalse;
         }*/
 
-		p = Info_ValueForKey(s, "id");
-		j = atoi(p);
-		if (!*p || j == -1)
-		{
-			level.fireTeams[i].inuse = qfalse;
+	    p = Info_ValueForKey(s, "id");
+	    j = atoi(p);
+	    if (!*p || j == -1)
+	    {
+	        level.fireTeams[i].inuse = qfalse;
 		}
-		else
-		{
-			level.fireTeams[i].inuse = qtrue;
+	    else
+	    {
+	        level.fireTeams[i].inuse = qtrue;
 		}
-		level.fireTeams[i].ident = j + 1;
+	    level.fireTeams[i].ident = j + 1;
 
-		p                       = Info_ValueForKey(s, "p");
-		level.fireTeams[i].priv = !atoi(p) ? qfalse : qtrue;
+	    p                       = Info_ValueForKey(s, "p");
+	    level.fireTeams[i].priv = !atoi(p) ? qfalse : qtrue;
 
-		p = Info_ValueForKey(s, "i");
+	    p = Info_ValueForKey(s, "i");
 
-		j = 0;
-		if (p && *p)
-		{
-			c = p;
-			for (c = strchr(c, ' ') + 1; c && *c; )
-			{
-				char str[8];
-				char *l = strchr(c, ' ');
-				if (!l)
-				{
-					break;
+	    j = 0;
+	    if (p && *p)
+	    {
+	        c = p;
+	        for (c = strchr(c, ' ') + 1; c && *c; )
+	        {
+	            char str[8];
+	            char *l = strchr(c, ' ');
+
+	            if (!l)
+	            {
+	                break;
 				}
-				Q_strncpyz(str, c, l - c + 1);
-				str[l - c]                        = '\0';
-				level.fireTeams[i].joinOrder[j++] = atoi(str);
-				c                                 = l + 1;
+	            Q_strncpyz(str, c, l - c + 1);
+	            str[l - c]                        = '\0';
+	            level.fireTeams[i].joinOrder[j++] = atoi(str);
+	            c                                 = l + 1;
 			}
 		}
 
-		for ( ; j < MAX_CLIENTS; j++)
-		{
-			level.fireTeams[i].joinOrder[j] = -1;
+	    for ( ; j < MAX_CLIENTS; j++)
+	    {
+	        level.fireTeams[i].joinOrder[j] = -1;
 		}
-		G_UpdateFireteamConfigString(&level.fireTeams[i]);
+	    G_UpdateFireteamConfigString(&level.fireTeams[i]);
 	}
 }
 
@@ -507,65 +508,66 @@ G_WriteSessionData
 */
 void G_WriteSessionData(qboolean restart)
 {
-	int  i;
-	char strServerInfo[MAX_INFO_STRING];
-	int  j;
+    int  i;
+    char strServerInfo[MAX_INFO_STRING];
+    int  j;
 
 #ifdef USEXPSTORAGE
-	G_StoreXPBackup();
+    G_StoreXPBackup();
 #endif // USEXPSTORAGE
 
-	trap_GetServerinfo(strServerInfo, sizeof(strServerInfo));
-	trap_Cvar_Set("session", va("%i %i %s", g_gametype.integer,
-	                            (teamInfo[TEAM_AXIS].spec_lock * TEAM_AXIS | teamInfo[TEAM_ALLIES].spec_lock * TEAM_ALLIES),
-	                            Info_ValueForKey(strServerInfo, "mapname")));
+    trap_GetServerinfo(strServerInfo, sizeof(strServerInfo));
+    trap_Cvar_Set("session", va("%i %i %s", g_gametype.integer,
+                                (teamInfo[TEAM_AXIS].spec_lock * TEAM_AXIS | teamInfo[TEAM_ALLIES].spec_lock * TEAM_ALLIES),
+                                Info_ValueForKey(strServerInfo, "mapname")));
 
-	// Keep stats for all players in sync
-	for (i = 0; !level.fResetStats && i < level.numConnectedClients; i++)
-	{
-		if ((g_gamestate.integer == GS_WARMUP_COUNTDOWN &&
-		     ((g_gametype.integer == GT_WOLF_STOPWATCH && level.clients[level.sortedClients[i]].sess.rounds >= 2) ||
-		      (g_gametype.integer != GT_WOLF_STOPWATCH && level.clients[level.sortedClients[i]].sess.rounds >= 1))))
-		{
-			level.fResetStats = qtrue;
+    // Keep stats for all players in sync
+    for (i = 0; !level.fResetStats && i < level.numConnectedClients; i++)
+    {
+        if ((g_gamestate.integer == GS_WARMUP_COUNTDOWN &&
+             ((g_gametype.integer == GT_WOLF_STOPWATCH && level.clients[level.sortedClients[i]].sess.rounds >= 2) ||
+              (g_gametype.integer != GT_WOLF_STOPWATCH && level.clients[level.sortedClients[i]].sess.rounds >= 1))))
+        {
+            level.fResetStats = qtrue;
 		}
 	}
 
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		if (level.clients[level.sortedClients[i]].pers.connected == CON_CONNECTED)
-		{
-			G_WriteClientSessionData(&level.clients[level.sortedClients[i]], restart);
-			// For slow connecters and a short warmup
+    for (i = 0; i < level.numConnectedClients; i++)
+    {
+        if (level.clients[level.sortedClients[i]].pers.connected == CON_CONNECTED)
+        {
+            G_WriteClientSessionData(&level.clients[level.sortedClients[i]], restart);
+            // For slow connecters and a short warmup
 		}
-		else if (level.fResetStats)
-		{
-			G_deleteStats(level.sortedClients[i]);
+        else if (level.fResetStats)
+        {
+            G_deleteStats(level.sortedClients[i]);
 		}
 	}
 
-	for (i = 0; i < MAX_FIRETEAMS; i++)
-	{
-		char buffer[MAX_STRING_CHARS];
-		if (!level.fireTeams[i].inuse)
-		{
-			Com_sprintf(buffer, MAX_STRING_CHARS, "\\id\\-1");
-		}
-		else
-		{
-			char buffer2[MAX_STRING_CHARS];
+    for (i = 0; i < MAX_FIRETEAMS; i++)
+    {
+        char buffer[MAX_STRING_CHARS];
 
-			*buffer2 = '\0';
-			for (j = 0; j < MAX_CLIENTS; j++)
-			{
-				char p[8];
-				Com_sprintf(p, 8, " %i", level.fireTeams[i].joinOrder[j]);
-				Q_strcat(buffer2, MAX_STRING_CHARS, p);
+        if (!level.fireTeams[i].inuse)
+        {
+            Com_sprintf(buffer, MAX_STRING_CHARS, "\\id\\-1");
+		}
+        else
+        {
+            char buffer2[MAX_STRING_CHARS];
+            char p[8];
+
+            *buffer2 = '\0';
+            for (j = 0; j < MAX_CLIENTS; j++)
+            {
+                Com_sprintf(p, 8, " %i", level.fireTeams[i].joinOrder[j]);
+                Q_strcat(buffer2, MAX_STRING_CHARS, p);
 			}
-			//		Com_sprintf(buffer, MAX_STRING_CHARS, "\\n\\%s\\i\\%s", level.fireTeams[i].name, buffer2);
-			Com_sprintf(buffer, MAX_STRING_CHARS, "\\id\\%i\\i\\%s\\p\\%i", level.fireTeams[i].ident - 1, buffer2, level.fireTeams[i].priv ? 1 : 0);
+            //		Com_sprintf(buffer, MAX_STRING_CHARS, "\\n\\%s\\i\\%s", level.fireTeams[i].name, buffer2);
+            Com_sprintf(buffer, MAX_STRING_CHARS, "\\id\\%i\\i\\%s\\p\\%i", level.fireTeams[i].ident - 1, buffer2, level.fireTeams[i].priv ? 1 : 0);
 		}
 
-		trap_Cvar_Set(va("fireteam%i", i), buffer);
+        trap_Cvar_Set(va("fireteam%i", i), buffer);
 	}
 }
