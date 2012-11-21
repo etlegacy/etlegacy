@@ -105,13 +105,13 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		}
 		else if (atoi(buf))
 		{
-			str = "ALLIES";
+			str        = "ALLIES";
 			flagshader = "ui/assets/portraits/allies_win_flag.tga";
 			nameshader = "ui/assets/portraits/text_allies.tga";
 		}
 		else
 		{
-			str = "AXIS";
+			str        = "AXIS";
 			flagshader = "ui/assets/portraits/axis_win_flag.tga";
 			nameshader = "ui/assets/portraits/text_axis.tga";
 		}
@@ -236,22 +236,22 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	return y;
 }
 
-int SkillNumForClass( int classNum )
+int SkillNumForClass(int classNum)
 {
-	switch( classNum )
+	switch (classNum)
 	{
-		case PC_SOLDIER:
-			return SK_SOLDIER;
-		case PC_MEDIC:
-			return SK_MEDIC;
-		case PC_ENGINEER:
-			return SK_ENGINEER;
-		case PC_FIELDOPS:
-			return SK_SIGNALS;
-		case PC_COVERTOPS:
-			return SK_COVERTOPS;
-		default:
-			return SK_BATTLE_SENSE;
+	case PC_SOLDIER:
+		return SK_SOLDIER;
+	case PC_MEDIC:
+		return SK_MEDIC;
+	case PC_ENGINEER:
+		return SK_ENGINEER;
+	case PC_FIELDOPS:
+		return SK_SIGNALS;
+	case PC_COVERTOPS:
+		return SK_COVERTOPS;
+	default:
+		return SK_BATTLE_SENSE;
 	}
 }
 
@@ -362,9 +362,9 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	}
 	// OSP - allow MV clients see the class of its merged client's on the scoreboard
 	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR
-			|| CG_mvMergedClientLocate(score->client))
+	         || CG_mvMergedClientLocate(score->client))
 	{
-		CG_DrawPic( tempx - 3 , y + 1, 14, 14, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
+		CG_DrawPic(tempx - 3, y + 1, 14, 14, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 	}
 	tempx += INFO_CLASS_WIDTH;
 
@@ -518,7 +518,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	}
 	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
-		CG_DrawPic( tempx, y-2, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
+		CG_DrawPic(tempx, y - 2, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 	}
 	tempx += INFO_CLASS_WIDTH;
 

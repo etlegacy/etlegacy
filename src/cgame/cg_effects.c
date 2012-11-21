@@ -74,8 +74,8 @@ void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing)
 		re             = &le->refEntity;
 		re->shaderTime = cg.time / 1000.0f;
 
-		re->reType   = RT_SPRITE;
-		re->rotation = 0;
+		re->reType        = RT_SPRITE;
+		re->rotation      = 0;
 		re->radius        = size;
 		re->customShader  = cgs.media.waterBubbleShader;
 		re->shaderRGBA[0] = 0xff;
@@ -436,8 +436,8 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 	le = CG_AllocLocalEntity();
 	re = &le->refEntity;
 
-	le->leType    = LE_FRAGMENT;
-	le->startTime = cg.time;
+	le->leType     = LE_FRAGMENT;
+	le->startTime  = cg.time;
 	le->endTime    = le->startTime + 20000 + (crandom() * 5000);
 	le->breakCount = breakCount;
 	le->sizeScale  = sizeScale;

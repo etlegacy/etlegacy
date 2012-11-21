@@ -1027,8 +1027,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend)
 {
-	int        i;
-	snapshot_t *snap;
+	int             i;
+	snapshot_t      *snap;
 	mapEntityData_t *mEnt = &mapEntities[0];
 	int             icon_size;
 	int             exspawn;

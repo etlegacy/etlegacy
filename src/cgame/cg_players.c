@@ -2061,7 +2061,7 @@ void CG_Player(centity_t *cent)
 
 	cgsnap = &cg_entities[cg.snap->ps.clientNum];
 
-	shadow      = qfalse;	// gjd added to make sure it was initialized
+	shadow      = qfalse;   // gjd added to make sure it was initialized
 	shadowPlane = 0.0;      // ditto
 
 	// if set to invisible, skip

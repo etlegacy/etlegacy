@@ -1566,7 +1566,7 @@ CG_AddBufferedVoiceChat
 */
 void CG_AddBufferedVoiceChat(bufferedVoiceChat_t *vchat)
 {
-	// JPW NERVE new system doesn't buffer but overwrites vchats FIXME put this on a cvar to choose which to use
+    // JPW NERVE new system doesn't buffer but overwrites vchats FIXME put this on a cvar to choose which to use
     memcpy(&voiceChatBuffer[0], vchat, sizeof(bufferedVoiceChat_t));
     cg.voiceChatBufferIn = 0;
     CG_PlayVoiceChat(&voiceChatBuffer[0]);
@@ -2063,8 +2063,8 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 			}
             else
             {
-            	txt_dump("\n");
-            }
+                txt_dump("\n");
+			}
 
             txt_dump(va("^3Damage Given: ^7%-6d  ^3Team Damage: ^7%d\n", dmg_given, team_dmg));
             txt_dump(va("^3Damage Recvd: ^7%d\n", dmg_rcvd));
@@ -2077,8 +2077,8 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 	}
     else
     {
-    	txt_dump("\n");
-    }
+        txt_dump("\n");
+	}
 
     // Derive XP from individual skill XP
     dwSkillPointMask = atoi(CG_Argv(iArg++));
@@ -2733,15 +2733,15 @@ static void CG_ServerCommand(void)
     {
         if (trap_Argc() == 4)
         {
-			char shader1[MAX_QPATH];
-			char shader2[MAX_QPATH];
-			char shader3[MAX_QPATH];
+            char shader1[MAX_QPATH];
+            char shader2[MAX_QPATH];
+            char shader3[MAX_QPATH];
 
-			Q_strncpyz(shader1, CG_Argv(1), sizeof(shader1));
-			Q_strncpyz(shader2, CG_Argv(2), sizeof(shader2));
-			Q_strncpyz(shader3, CG_Argv(3), sizeof(shader3));
+            Q_strncpyz(shader1, CG_Argv(1), sizeof(shader1));
+            Q_strncpyz(shader2, CG_Argv(2), sizeof(shader2));
+            Q_strncpyz(shader3, CG_Argv(3), sizeof(shader3));
 
-			trap_R_RemapShader(shader1, shader2, shader3);
+            trap_R_RemapShader(shader1, shader2, shader3);
 		}
 	}
 

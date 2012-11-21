@@ -272,7 +272,7 @@ pmListItem_t *CG_FindFreePMItem(void)
 {
 	pmListItem_t *listItem;
 	pmListItem_t *lastItem;
-	int i = 0;
+	int          i = 0;
 
 	for ( ; i < NUM_PM_STACK_ITEMS; i++)
 	{

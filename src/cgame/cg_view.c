@@ -1338,7 +1338,7 @@ int CG_CalcViewValues(void)
 
 			// FIXME: this is really really bad
 			trap_SendClientCommand(va("setCameraOrigin %f %f %f", origin[0], origin[1], origin[2]));
-			
+
 			return 0;
 		}
 		else
@@ -1359,7 +1359,7 @@ int CG_CalcViewValues(void)
 		VectorCopy(ps->origin, cg.refdef_current->vieworg);
 		VectorCopy(ps->viewangles, cg.refdefViewAngles);
 		AnglesToAxis(cg.refdefViewAngles, cg.refdef_current->viewaxis);
-		
+
 		return CG_CalcFov();
 	}
 

@@ -114,12 +114,12 @@ void CG_BuildSolidList(void)
 
 		if (cent->nextState.solid)
 		{
-				cg_solidEntities[cg_numSolidEntities] = cent;
-				cg_numSolidEntities++;
+			cg_solidEntities[cg_numSolidEntities] = cent;
+			cg_numSolidEntities++;
 
-				cg_solidFTEntities[cg_numSolidFTEntities] = cent;
-				cg_numSolidFTEntities++;
-				continue;
+			cg_solidFTEntities[cg_numSolidFTEntities] = cent;
+			cg_numSolidFTEntities++;
+			continue;
 		}
 	}
 }
@@ -286,7 +286,7 @@ CG_Trace
 ================
 */
 void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
-                 int skipNumber, int mask)
+              int skipNumber, int mask)
 {
 	trace_t t;
 
@@ -299,7 +299,7 @@ void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3
 }
 
 void CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
-                       int skipNumber, int mask)
+                    int skipNumber, int mask)
 {
 	trace_t t;
 
@@ -506,7 +506,7 @@ static void CG_TouchTriggerPrediction(void)
 			continue;
 		}
 
-		if(!(ent->eFlags & EF_FAKEBMODEL))
+		if (!(ent->eFlags & EF_FAKEBMODEL))
 		{
 			if (ent->solid != SOLID_BMODEL)
 			{
@@ -537,17 +537,19 @@ static void CG_TouchTriggerPrediction(void)
 				continue;
 			}
 
-			if(ent->solid != SOLID_BMODEL) {
-				int x = (ent->solid & 255);
-				int zd = ((ent->solid>>8) & 255);
-				int zu = ((ent->solid>>16) & 255) - 32;
+			if (ent->solid != SOLID_BMODEL)
+			{
+				int x  = (ent->solid & 255);
+				int zd = ((ent->solid >> 8) & 255);
+				int zu = ((ent->solid >> 16) & 255) - 32;
 
 				mins[0] = mins[1] = -x;
 				mins[2] = -zd;
 				maxs[0] = maxs[1] = x;
 				maxs[2] = zu;
 			}
-			else {
+			else
+			{
 				trap_R_ModelBounds(cmodel, mins, maxs);
 			}
 

@@ -115,7 +115,7 @@ static char *shaderAnimNames[MAX_SHADER_ANIMS] =
 
 static qhandle_t shaderAnims[MAX_SHADER_ANIMS][MAX_SHADER_ANIM_FRAMES];
 
-static int       shaderAnimCounts[MAX_SHADER_ANIMS] =
+static int shaderAnimCounts[MAX_SHADER_ANIMS] =
 {
 	23,
 	23, // (SA) removing warning messages from startup

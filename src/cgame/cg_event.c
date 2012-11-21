@@ -82,35 +82,35 @@ static void CG_Obituary(entityState_t *ent)
 	// check for single client messages
 	switch (mod)
 	{
-		case MOD_SUICIDE:
-			message = "committed suicide";
-			break;
-		case MOD_FALLING:
-			message = "fell to his death";
-			break;
-		case MOD_CRUSH:
-			message = "was crushed";
-			break;
-		case MOD_WATER:
-			message = "drowned";
-			break;
-		case MOD_SLIME:
-			message = "died by toxic materials";
-			break;
-		case MOD_TRIGGER_HURT:
-		case MOD_TELEFRAG: // rain - added TELEFRAG and TARGET_LASER, just in case
-		case MOD_TARGET_LASER:
-			message = "was killed";
-			break;
-		case MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER:
-			message = "got buried under a pile of rubble";
-			break;
-		case MOD_LAVA: // rain
-			message = "was incinerated";
-			break;
-		default:
-			message = NULL;
-			break;
+	case MOD_SUICIDE:
+		message = "committed suicide";
+		break;
+	case MOD_FALLING:
+		message = "fell to his death";
+		break;
+	case MOD_CRUSH:
+		message = "was crushed";
+		break;
+	case MOD_WATER:
+		message = "drowned";
+		break;
+	case MOD_SLIME:
+		message = "died by toxic materials";
+		break;
+	case MOD_TRIGGER_HURT:
+	case MOD_TELEFRAG:     // rain - added TELEFRAG and TARGET_LASER, just in case
+	case MOD_TARGET_LASER:
+		message = "was killed";
+		break;
+	case MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER:
+		message = "got buried under a pile of rubble";
+		break;
+	case MOD_LAVA:     // rain
+		message = "was incinerated";
+		break;
+	default:
+		message = NULL;
+		break;
 	}
 
 	if (attacker == target)
@@ -2338,7 +2338,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			if (*item->pickup_sound)
 			{
 				// powerup pickups are global
-		        // FIXME: precache - add to media
+				// FIXME: precache - add to media
 				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, trap_S_RegisterSound(item->pickup_sound, qfalse));
 			}
 
@@ -2400,7 +2400,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 		break;
 
-		
+
 	case EV_MG42_FIXED:
 		DEBUGNAME("EV_MG42_FIXED");
 		// FIXME? JPW NERVE play a sound when engineer fixes MG42
@@ -2578,7 +2578,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 
 	// missile impacts
-		
+
 	case EV_MISSILE_HIT:
 		DEBUGNAME("EV_MISSILE_HIT");
 		ByteToDir(es->eventParm, dir);
@@ -2709,7 +2709,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, sound, 255);
 	}
-		break;
+	break;
 	case EV_GENERAL_SOUND_VOLUME:
 	{
 		int sound  = es->eventParm;
@@ -2741,7 +2741,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 	}
 	break;
-	
+
 	case EV_GLOBAL_TEAM_SOUND:
 		DEBUGNAME("EV_GLOBAL_TEAM_SOUND");
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team != es->teamNum)
@@ -3027,7 +3027,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		{
 			int i;
 			int rval;
-			
+
 			rval = rand() % 3 + 3;
 
 			for (i = 0; i < rval; i++)
@@ -3283,7 +3283,7 @@ void CG_CheckEvents(centity_t *cent)
 //          cent->currentState.number = cent->currentState.otherEntityNum;
 //      }
 
-		cent->previousEvent = 1;
+		cent->previousEvent      = 1;
 		cent->currentState.event = cent->currentState.eType - ET_EVENTS;
 	}
 	else

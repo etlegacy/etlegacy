@@ -225,7 +225,7 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 		{
 			front = 0.1;
 		}
-		vd->damageX = crandom() * 0.3 + -left / front;
+		vd->damageX = crandom() * 0.3 + - left / front;
 		vd->damageY = crandom() * 0.3 + up / dist;
 	}
 
@@ -467,7 +467,7 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops)
 		}
 		else if (ps->persistant[PERS_HEADSHOTS] > ops->persistant[PERS_HEADSHOTS])
 		{
-			if ( !(cg_hitSounds.integer & HITSOUNDS_NOHEADSHOT))
+			if (!(cg_hitSounds.integer & HITSOUNDS_NOHEADSHOT))
 			{
 				trap_S_StartSound(NULL, ps->clientNum, CHAN_AUTO, cgs.media.headShot);
 			}

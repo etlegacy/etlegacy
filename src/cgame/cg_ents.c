@@ -368,7 +368,6 @@ static void CG_EntityEffects(centity_t *cent)
 			             cg.time, cg.time + 500, 0, cgs.media.smokePuffShader);
 		}
 	}
-
 	// JPW NERVE same thing but for smoking barrels instead of nasty server-side effect from single player
 	else if (cent->currentState.eFlags & EF_SMOKINGBLACK)
 	{
@@ -2201,7 +2200,7 @@ void CG_Cabinet(centity_t *cent, cabinetType_t type)
 	memset(&cabinet, 0, sizeof(cabinet));
 	memset(&mini_me, 0, sizeof(mini_me));
 
-	cabinet.hModel = cabinetInfo[type].model;
+	cabinet.hModel   = cabinetInfo[type].model;
 	cabinet.frame    = 0;
 	cabinet.oldframe = 0;
 	cabinet.backlerp = 0.f;

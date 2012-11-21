@@ -1522,9 +1522,9 @@ typedef struct
 	sfxHandle_t goatAxis;
 
 	// hitsounds
-	sfxHandle_t	headShot;
-	sfxHandle_t	bodyShot;
-	sfxHandle_t	teamShot;
+	sfxHandle_t headShot;
+	sfxHandle_t bodyShot;
+	sfxHandle_t teamShot;
 
 	sfxHandle_t grenadePulseSound4;
 	sfxHandle_t grenadePulseSound3;
@@ -2210,8 +2210,8 @@ void CG_KeyEvent(int key, qboolean down);
 void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type, qboolean fForced);
 
-qboolean CG_GetTag(int clientNum, char *tagname, orientation_t * orientation);
-qboolean CG_GetWeaponTag(int clientNum, char *tagname, orientation_t * orientation);
+qboolean CG_GetTag(int clientNum, char *tagname, orientation_t *orientation);
+qboolean CG_GetWeaponTag(int clientNum, char *tagname, orientation_t *orientation);
 
 // cg_view.c
 void CG_TestModel_f(void);
@@ -2247,16 +2247,16 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 void CG_DrawStretchPic(float x, float y, float width, float height, qhandle_t hShader);
 
 void CG_DrawString(float x, float y, const char *string,
-		float charWidth, float charHeight, const float *modulate);
+                   float charWidth, float charHeight, const float *modulate);
 
 void CG_DrawStringExt(int x, int y, const char *string, float *setColor,
-		qboolean forceColor, qboolean shadow, int charWidth,
-		int charHeight, int maxChars);
+                      qboolean forceColor, qboolean shadow, int charWidth,
+                      int charHeight, int maxChars);
 
 void CG_DrawStringExt2(int x, int y, const char *string, const float *setColor,
                        qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars);
 void CG_DrawStringExt_Shadow(int x, int y, const char *string, const float *setColor,
-		qboolean forceColor, int shadow, int charWidth, int charHeight, int maxChars);
+                             qboolean forceColor, int shadow, int charWidth, int charHeight, int maxChars);
 
 void CG_DrawBigString(int x, int y, const char *s, float alpha);
 void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color);
@@ -2420,8 +2420,8 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count)
 void CG_InitMarkPolys(void);
 void CG_AddMarks(void);
 void CG_ImpactMark(qhandle_t markShader,
-		vec3_t origin, vec4_t projection, float radius, float orientation,
-		float r, float g, float b, float a, int lifeTime);
+                   vec3_t origin, vec4_t projection, float radius, float orientation,
+                   float r, float g, float b, float a, int lifeTime);
 
 // Rafael particles
 // cg_particles.c
@@ -2496,14 +2496,14 @@ void    CG_AddLocalEntities(void);
 // cg_effects.c
 int CG_GetOriginForTag(centity_t * cent, refEntity_t * parent, char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
 localEntity_t *CG_SmokePuff(const vec3_t p,
-		const vec3_t vel,
-		float radius,
-		float r, float g, float b, float a,
-		float duration,
-		int startTime,
-		int fadeInTime,
-		int leFlags,
-		qhandle_t hShader);
+                            const vec3_t vel,
+                            float radius,
+                            float r, float g, float b, float a,
+                            float duration,
+                            int startTime,
+                            int fadeInTime,
+                            int leFlags,
+                            qhandle_t hShader);
 
 void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing);
 void CG_SpawnEffect(vec3_t org);
@@ -2513,7 +2513,7 @@ void CG_LoseHat(centity_t *cent, vec3_t dir);
 void CG_Bleed(vec3_t origin, int entityNum);
 
 localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
-		qhandle_t hModel, qhandle_t shader, int msec, qboolean isSprite);
+                                qhandle_t hModel, qhandle_t shader, int msec, qboolean isSprite);
 
 void CG_SparklerSparks(vec3_t origin, int count);
 void CG_ClearFlameChunks(void);
@@ -2727,26 +2727,26 @@ clipHandle_t trap_CM_TempCapsuleModel(const vec3_t mins, const vec3_t maxs);
 int trap_CM_PointContents(const vec3_t p, clipHandle_t model);
 int trap_CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t origin, const vec3_t angles);
 void trap_CM_BoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
-		const vec3_t mins, const vec3_t maxs,
-		clipHandle_t model, int brushmask);
+                      const vec3_t mins, const vec3_t maxs,
+                      clipHandle_t model, int brushmask);
 void trap_CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t end,
-		const vec3_t mins, const vec3_t maxs,
-        clipHandle_t model, int brushmask,
-        const vec3_t origin, const vec3_t angles);
+                                 const vec3_t mins, const vec3_t maxs,
+                                 clipHandle_t model, int brushmask,
+                                 const vec3_t origin, const vec3_t angles);
 
 void trap_CM_CapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
-		const vec3_t mins, const vec3_t maxs,
-        clipHandle_t model, int brushmask);
+                          const vec3_t mins, const vec3_t maxs,
+                          clipHandle_t model, int brushmask);
 void trap_CM_TransformedCapsuleTrace(trace_t *results, const vec3_t start, const vec3_t end,
-        const vec3_t mins, const vec3_t maxs,
-        clipHandle_t model, int brushmask,
-        const vec3_t origin, const vec3_t angles);
+                                     const vec3_t mins, const vec3_t maxs,
+                                     clipHandle_t model, int brushmask,
+                                     const vec3_t origin, const vec3_t angles);
 
 // Returns the projection of a polygon onto the solid brushes in the world
 int trap_CM_MarkFragments(int numPoints, const vec3_t *points,
-		const vec3_t projection,
-		int maxPoints, vec3_t pointBuffer,
-		int maxFragments, markFragment_t *fragmentBuffer);
+                          const vec3_t projection,
+                          int maxPoints, vec3_t pointBuffer,
+                          int maxFragments, markFragment_t *fragmentBuffer);
 
 // ydnar: projects a decal onto brush model surfaces
 void trap_R_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime);
@@ -2812,9 +2812,9 @@ void trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float 
 void trap_R_RenderScene(const refdef_t *fd);
 void trap_R_SetColor(const float *rgba);     // NULL = 1,1,1,1
 void trap_R_DrawStretchPic(float x, float y, float w, float h,
-		float s1, float t1, float s2, float t2, qhandle_t hShader);
+                           float s1, float t1, float s2, float t2, qhandle_t hShader);
 void trap_R_DrawRotatedPic(float x, float y, float w, float h,
-		float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
+                           float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
 void trap_R_DrawStretchPicGradient(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor, int gradientType);
 void trap_R_Add2dPolys(polyVert_t *verts, int numverts, qhandle_t hShader);
 void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
@@ -3305,9 +3305,9 @@ void CG_Fireteams_Setup(void);
 void CG_Fireteams_MenuText_Draw(panel_button_t *button);
 void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
 
-#define HITSOUNDS_ON				0x01
-#define HITSOUNDS_NOTEAMSHOT		0x02
-#define HITSOUNDS_NOHEADSHOT		0x04
-#define HITSOUNDS_NOBODYSHOT		0x08
+#define HITSOUNDS_ON                0x01
+#define HITSOUNDS_NOTEAMSHOT        0x02
+#define HITSOUNDS_NOHEADSHOT        0x04
+#define HITSOUNDS_NOBODYSHOT        0x08
 
 #endif
