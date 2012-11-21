@@ -1687,8 +1687,8 @@ CL_UI_Restart_f
 Restart the ui subsystem
 =================
 */
-void CL_UI_Restart_f(void)
-{   // shutdown the UI
+void CL_UI_Restart_f(void) // shutdown the UI
+{
 	CL_ShutdownUI();
 
 	autoupdateChecked = qfalse;

@@ -193,7 +193,7 @@ static qboolean S_ValidSoundInterface(soundInterface_t *si)
 }
 
 void S_StartSound(vec3_t origin, int entnum, int entchannel,
-		sfxHandle_t sfx, int volume)
+                  sfxHandle_t sfx, int volume)
 {
 	if (si.StartSound)
 	{
@@ -236,7 +236,7 @@ void S_StopBackgroundTrack(void)
 }
 
 float S_StartStreamingSound(const char *intro, const char *loop,
-		int entnum, int channel, int attenuation)
+                            int entnum, int channel, int attenuation)
 {
 	if (si.StartStreamingSound)
 	{
@@ -265,7 +265,7 @@ void S_FadeStreamingSound(float targetvol, int time, int stream)
 }
 
 void S_RawSamples(int stream, int samples, int rate, int width, int channels,
-		const byte *data, float lvol, float rvol)
+                  const byte *data, float lvol, float rvol)
 {
 	if (si.RawSamples)
 	{
@@ -306,8 +306,8 @@ void S_ClearLoopingSounds(void)
 }
 
 void S_AddLoopingSound(const vec3_t origin, const vec3_t velocity,
-		int range, sfxHandle_t sfx,
-		int volume, int soundTime)
+                       int range, sfxHandle_t sfx,
+                       int volume, int soundTime)
 {
 	if (si.AddLoopingSound)
 	{
@@ -316,8 +316,8 @@ void S_AddLoopingSound(const vec3_t origin, const vec3_t velocity,
 }
 
 void S_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity,
-		int range, sfxHandle_t sfx,
-		int volume, int soundTime)
+                           int range, sfxHandle_t sfx,
+                           int volume, int soundTime)
 {
 	if (si.AddRealLoopingSound)
 	{
@@ -326,7 +326,7 @@ void S_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity,
 }
 
 void S_Respatialize(int entityNum, const vec3_t origin,
-		vec3_t axis[3], int inwater)
+                    vec3_t axis[3], int inwater)
 {
 	if (si.Respatialize)
 	{
