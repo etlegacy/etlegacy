@@ -514,11 +514,6 @@ limbo
 */
 void limbo(gentity_t *ent, qboolean makeCorpse)
 {
-	if (ent->r.svFlags & SVF_POW)
-	{
-		return;
-	}
-
 	if (!(ent->client->ps.pm_flags & PMF_LIMBO))
 	{
 		int i, contents;
