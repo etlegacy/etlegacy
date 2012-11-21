@@ -927,10 +927,6 @@ void TeamplayInfoMessage(team_t team)
 				}
 			}
 
-			if (player->r.svFlags & SVF_POW)
-			{
-				continue;
-			}
 			Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i", level.sortedClients[i], player->client->pers.teamState.location[0], player->client->pers.teamState.location[1], h, player->s.powerups);
 
 			j = strlen(entry);
