@@ -667,20 +667,10 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
  * An interpreted function will immediately execute an OP_ENTER instruction,
  * which will subtract space for locals from sp
  */
-#define MAX_STACK   256
-#define STACK_MASK  (MAX_STACK - 1)
-
 intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
 {
 	vm_t     *oldVM;
 	intptr_t r;
-
-	//rcg010207 see dissertation at top of VM_DllSyscall() in this file.
-#if ((defined __linux__) && (defined __powerpc__)) || (defined __APPLE__)
-	int     i;
-	int     args[16];
-	va_list ap;
-#endif
 
 	if (!vm)
 	{

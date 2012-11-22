@@ -360,7 +360,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 #ifdef FEATURE_FREETYPE
 	FT_Face       face;
 	int           j, k, xOut, yOut, lastStart, imageNumber;
-	int           scaledSize, newSize, maxHeight, left, satLevels;
+	int           scaledSize, newSize, maxHeight, left;
 	unsigned char *out, *imageBuff;
 	glyphInfo_t   *glyph;
 	image_t       *image;

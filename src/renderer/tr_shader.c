@@ -2584,15 +2584,11 @@ static shader_t *GeneratePermanentShader(void)
 	return newShader;
 }
 
-/*
-=================
-VertexLightingCollapse
-
-If vertex lighting is enabled, only render a single
-pass, trying to guess which is the correct one to best aproximate
-what it is supposed to look like.
-=================
-*/
+/**
+ * @brief If vertex lighting is enabled, only render a single pass, trying to guess
+ * which is the correct one to best aproximate what it is supposed to look like.
+ * @note Unused in ET:L, but can be enabled with patches from the ioquake3 project.
+ */
 static void VertexLightingCollapse(void)
 {
 	int           stage;
