@@ -43,7 +43,7 @@
 #define SVF_NOCLIENT            0x00000001  // don't send entity to clients, even if it has effects
 #define SVF_VISDUMMY            0x00000004  // this ent is a "visibility dummy" and needs it's master to be sent to clients that can see it even if they can't see the master ent
 #define SVF_BOT                 0x00000008
-#define SVF_POW                 0x00000010  // Gordon: stole SVF_CASTAI as it's no longer used
+#define SVF_POW                 0x00000010  // unused
 
 #define SVF_BROADCAST           0x00000020  // send to all connected clients
 #define SVF_PORTAL              0x00000040  // merge a second pvs at origin2 into snapshots
@@ -106,7 +106,7 @@ typedef struct
 	int ownerNum;
 	int eventTime;
 
-	int worldflags;             // DHM - Nerve
+	int worldflags;
 
 	qboolean snapshotCallback;
 } entityShared_t;
@@ -124,9 +124,7 @@ typedef struct
 
 //===============================================================
 
-//
 // system traps provided by the main engine
-//
 typedef enum
 {
 	//============== general Quake services ==================
@@ -249,14 +247,12 @@ typedef enum
 	G_DEBUG_POLYGON_DELETE,
 	G_REAL_TIME,
 	G_SNAPVECTOR,
-// MrE:
 
 	G_TRACECAPSULE, // ( trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask );
 	// collision detection using capsule against all linked entities
 
 	G_ENTITY_CONTACTCAPSULE,    // ( const vec3_t mins, const vec3_t maxs, const gentity_t *ent );
 	// perform an exact check against inline brush models of non-square shape
-// done.
 
 	G_GETTAG,
 
@@ -285,16 +281,12 @@ typedef enum
 
 	PB_STAT_REPORT = 584, // don't remove, vanilla clients might call this
 
-	// zinx
 	G_SENDMESSAGE = 585,
 	G_MESSAGESTATUS,
-	// -zinx
 } gameImport_t;
 
 
-//
 // functions exported by the game subsystem
-//
 typedef enum
 {
 	GAME_INIT = 0,  // ( int levelTime, int randomSeed, int restart );
@@ -333,9 +325,8 @@ typedef enum
 	// BOT_VISIBLEFROMPOS,
 	// BOT_CHECKATTACKATPOS,
 
-	// zinx
 	GAME_MESSAGERECEIVED = 14,          // ( int cno, const char *buf, int buflen, int commandTime );
-	// -zinx
+
 } gameExport_t;
 
 #endif
