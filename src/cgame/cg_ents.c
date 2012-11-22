@@ -2429,8 +2429,8 @@ static void CG_ProcessEntity(centity_t *cent)
 	switch (cent->currentState.eType)
 	{
 	default:
-		// ydnar: test for actual bad entity type
-		if (cent->currentState.eType < 0 || cent->currentState.eType >= ET_EVENTS)
+		// test for actual bad entity type
+		if (cent->currentState.eType >= ET_EVENTS)
 		{
 			CG_Error("Bad entity type: %i\n", cent->currentState.eType);
 		}

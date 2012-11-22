@@ -576,7 +576,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 /*
 ParseFoliage() - ydnar
 
-	parses a foliage drawsurface
+    parses a foliage drawsurface
 */
 static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, int *indexes)
 {
@@ -624,7 +624,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	foliage->normal       = ( vec4_t * )(foliage->xyz + foliage->numVerts);
 	foliage->texCoords    = ( vec2_t * )(foliage->normal + foliage->numVerts);
 	foliage->lmTexCoords  = ( vec2_t * )(foliage->texCoords + foliage->numVerts);
-	foliage->indexes      = ( int * )(foliage->lmTexCoords + foliage->numVerts);
+	foliage->indexes      = ( unsigned int * )(foliage->lmTexCoords + foliage->numVerts);
 	foliage->instances    = ( foliageInstance_t * )(foliage->indexes + foliage->numIndexes);
 
 	surf->data = (surfaceType_t *) foliage;
@@ -674,7 +674,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	for (i = 0; i < numIndexes; i++)
 	{
 		foliage->indexes[i] = LittleLong(indexes[i]);
-		if (foliage->indexes[i] < 0 || foliage->indexes[i] >= numVerts)
+		if (foliage->indexes[i] >= numVerts)
 		{
 			ri.Error(ERR_DROP, "Bad index in triangle surface");
 		}
@@ -2687,8 +2687,10 @@ qboolean R_GetEntityToken(char *buffer, int size)
 RE__StripExtensionForWorldDir
 ============
 */
-void RE_StripExtensionForWorldDir( const char *in, char *out ) {
-	while ( *in && *in != '.' ) {
+void RE_StripExtensionForWorldDir(const char *in, char *out)
+{
+	while (*in && *in != '.')
+	{
 		*out++ = *in++;
 	}
 	*out = 0;
