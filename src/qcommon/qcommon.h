@@ -1217,15 +1217,10 @@ typedef enum
 
 dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title);
 
-// NOTE TTimo - on win32 the cwd is prepended .. non portable behaviour
+// NOTE: on win32 the cwd is prepended .. non portable behaviour
 void Sys_StartProcess(char *exeName, qboolean doexit);
 void Sys_OpenURL(const char *url, qboolean doexit);
-
-#ifdef __linux__
-// TTimo only on linux .. maybe on Mac too?
-// will OR with the existing mode (chmod ..+..)
 void Sys_Chmod(char *file, int mode);
-#endif
 
 /* This is based on the Adaptive Huffman algorithm described in Sayood's Data
  * Compression book.  The ranks are not actually stored, but implicitly defined

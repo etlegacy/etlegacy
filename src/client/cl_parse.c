@@ -755,7 +755,7 @@ void CL_ParseGamestate(msg_t *msg)
 	// be downloading them, we should be kicked for not having them.
 	if (cl_connectedToPureServer && !FS_VerifyOfficialPaks())
 	{
-		Com_Printf(S_COLOR_YELLOW, "WARNING: Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version.\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version.\n");
 	}
 
 	// reinitialize the filesystem if the game directory has changed
