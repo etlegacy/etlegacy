@@ -803,20 +803,12 @@ AnimParseAnimConfig
 */
 static qboolean AnimParseAnimConfig(playerInfo_t *animModelInfo, const char *filename, const char *input)
 {
-	char            *text_p, *token;
-	animation_t     *animations;
-	headAnimation_t *headAnims;
-	int             i, fps, skip = -1;
-
-//  if (!weaponStringsInited) {
-//      BG_InitWeaponStrings();
-//  }
-
-//  globalFilename = (char *)filename;
+	char        *text_p, *token;
+	animation_t *animations;
+	int         i, fps, skip = -1;
 
 	animations                   = animModelInfo->animations;
 	animModelInfo->numAnimations = 0;
-//  headAnims = animModelInfo->headAnims;
 
 	text_p = (char *)input;
 	COM_BeginParseSession("AnimParseAnimConfig");

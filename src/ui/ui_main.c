@@ -69,8 +69,6 @@ static char *netnames[] =
 static int gamecodetoui[] = { 4, 2, 3, 0, 5, 1, 6 };
 static int uitogamecode[] = { 4, 6, 2, 3, 1, 5, 7 };
 
-
-// NERVE - SMF - enabled for multiplayer
 static void UI_StartServerRefresh(qboolean full);
 static void UI_StopServerRefresh(void);
 static void UI_DoServerRefresh(void);
@@ -88,62 +86,13 @@ static const char *UI_SelectedCampaign(int index, int *actual);
 static int UI_CampaignCount(qboolean singlePlayer);
 
 qboolean UI_CheckExecKey(int key);
-// -NERVE - SMF - enabled for multiplayer
 
 static void UI_ParseGameInfo(const char *teamFile);
 
 itemDef_t *Menu_FindItemByName(menuDef_t *menu, const char *p);
 void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
-#define ITEM_GRENADES       1
-#define ITEM_MEDKIT         2
-
-#define ITEM_PISTOL         1
-
-#define DEFAULT_PISTOL
-
-#define PT_KNIFE            (1)
-#define PT_PISTOL           (1 << 2)
-#define PT_RIFLE            (1 << 3)
-#define PT_LIGHTONLY        (1 << 4)
-#define PT_GRENADES         (1 << 5)
-#define PT_EXPLOSIVES       (1 << 6)
-#define PT_MEDKIT           (1 << 7)
-
 static char translated_yes[4], translated_no[4];
-
-typedef struct
-{
-	const char *name;
-	int items;
-} playerType_t;
-
-static playerType_t playerTypes[] =
-{
-	{ "player_window_soldier",    PT_KNIFE | PT_PISTOL | PT_RIFLE | PT_GRENADES     },
-	{ "player_window_medic",      PT_KNIFE | PT_PISTOL | PT_MEDKIT                  },
-	{ "player_window_engineer",   PT_KNIFE | PT_PISTOL | PT_LIGHTONLY | PT_GRENADES },
-	{ "player_window_lieutenant", PT_KNIFE | PT_PISTOL | PT_RIFLE | PT_EXPLOSIVES   },
-	{ "player_window_covertops",  PT_KNIFE | PT_PISTOL | PT_GRENADES                }
-};
-
-int numPlayerTypes = sizeof(playerTypes) / sizeof(playerTypes[0]);
-
-#define ENG_WEAPMASK_1 (0 | 1 | 2)
-#define ENG_WEAPMASK_2 (4 | 8)
-
-typedef struct
-{
-	char *name;
-	int flags;
-	char *shader;
-} uiitemType_t;
-
-#define UI_KNIFE_PIC    "window_knife_pic"
-#define UI_PISTOL_PIC   "window_pistol_pic"
-#define UI_WEAPON_PIC   "window_weapon_pic"
-#define UI_ITEM1_PIC    "window_item1_pic"
-#define UI_ITEM2_PIC    "window_item2_pic"
 
 extern displayContextDef_t *DC;
 
