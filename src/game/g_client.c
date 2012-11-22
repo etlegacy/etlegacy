@@ -620,7 +620,6 @@ void reinforce(gentity_t *ent)
 	int       p, team;
 	char      *classname;
 	gclient_t *rclient;
-	char      userinfo[MAX_INFO_STRING], *respawnStr;
 
 	if (!(ent->client->ps.pm_flags & PMF_LIMBO))
 	{

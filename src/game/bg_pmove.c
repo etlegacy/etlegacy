@@ -43,12 +43,6 @@
 
 #include "bg_local.h"
 
-#ifdef CGAMEDLL
-#define PM_GameType cg_gameType.integer
-#elif GAMEDLL
-#define PM_GameType g_gametype.integer
-#endif
-
 // JPW NERVE -- stuck this here so it can be seen client & server side
 float Com_GetFlamethrowerRange(void)
 {
@@ -592,16 +586,6 @@ static void PM_Accelerate(vec3_t wishdir, float wishspeed, float accel)
 #endif
 }
 
-// JPW NERVE -- added because I need to check single/multiplayer instances and branch accordingly
-#ifdef CGAMEDLL
-extern vmCvar_t cg_gameType;
-extern vmCvar_t cg_movespeed;
-#endif
-#ifdef GAMEDLL
-extern vmCvar_t g_gametype;
-extern vmCvar_t g_movespeed;
-#endif
-
 /*
 ============
 PM_CmdScale
@@ -616,14 +600,6 @@ static float PM_CmdScale(usercmd_t *cmd)
 	int   max;
 	float total;
 	float scale;
-
-#ifdef CGAMEDLL
-	int gametype  = cg_gameType.integer;
-	int movespeed = cg_movespeed.integer;
-#elif GAMEDLL
-	int gametype  = g_gametype.integer;
-	int movespeed = g_movespeed.integer;
-#endif
 
 	max = abs(cmd->forwardmove);
 	if (abs(cmd->rightmove) > max)

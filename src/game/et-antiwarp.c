@@ -63,14 +63,6 @@ static float G_CmdScale(gentity_t *ent, usercmd_t *cmd)
 {
 	float scale;
 
-#ifdef CGAMEDLL
-	int gametype  = cg_gameType.integer;
-	int movespeed = cg_movespeed.integer;
-#elif GAMEDLL
-	int gametype  = g_gametype.integer;
-	int movespeed = g_movespeed.integer;
-#endif
-
 	scale = abs(cmd->forwardmove);
 	if (abs(cmd->rightmove) > scale)
 	{
