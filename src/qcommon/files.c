@@ -4342,7 +4342,7 @@ void FS_InitFilesystem(void)
 
 	// ET:Legacy start
 	// at his point fs_game is set with game/mod path or not - set 'legacy' mod as default fs_game
-	// this 'optimization' grants us 2.60 compatibilty w/o deeper changes and users
+	// this 'optimization' grants us 2.60b compatibilty w/o deeper changes and users
 	// don't have to set fs_game param run latest mod code
 	tmp_fs_game = Cvar_Get("fs_game", "", 0);
 	if (!strcmp(tmp_fs_game->string, ""))
@@ -4351,7 +4351,7 @@ void FS_InitFilesystem(void)
 		tmp_fs_game         = Cvar_Get("fs_game", "", 0);
 		tmp_fs_game->flags |= CVAR_USER_CREATED; // deal as startup var
 
-		Com_Printf("^2Info: fs_game is set to 'legacy' mod. Start ET:L with param '+set etmain' for adoring history.\n", tmp_fs_game->string);
+		Com_Printf("^2Info: fs_game is set to '%s' mod. Start ET:L with param '+set etmain' for adoring history.\n", tmp_fs_game->string);
 	}
 
 	Com_StartupVariable("fs_copyfiles");
