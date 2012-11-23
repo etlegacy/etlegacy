@@ -172,7 +172,7 @@ static int _et_G_LogPrint(lua_State *L)
 	char text[1024];
 	Q_strncpyz(text, luaL_checkstring(L, 1), sizeof(text));
 
-	G_Lua_Printf(text);
+	G_Lua_Printf("%s", text);
 
 	// Additional logging
 	if (level.logFile)

@@ -1186,6 +1186,7 @@ void Prop_Break_Sound(gentity_t *ent);
 void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, int quantity, int type);
 
 // g_utils.c
+qboolean G_EntitiesFree(void);
 int G_FindConfigstringIndex(const char *name, int start, int max, qboolean create);
 void G_RemoveConfigstringIndex(const char *name, int start, int max);
 
@@ -1392,6 +1393,7 @@ void G_SetStats(gentity_t *ent);
 void G_SendScore(gentity_t *client);
 
 // g_cmds.c
+void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText);
 void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, qboolean localize);   // JPW NERVE removed static declaration so it would link
 qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
@@ -1400,6 +1402,8 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void Cmd_SetWeapons_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void Cmd_SetClass_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void G_PlaySound_Cmd(void);
+int ClientNumbersFromString(char *s, int *plist);
+char *ConcatArgs(int start);
 
 // g_main.c
 void FindIntermissionPoint(void);
