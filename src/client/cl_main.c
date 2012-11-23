@@ -64,7 +64,6 @@ cvar_t *cl_freezeDemo;
 
 cvar_t *cl_shownet = NULL;      // NERVE - SMF - This is referenced in msg.c and we need to make sure it is NULL
 cvar_t *cl_shownuments;
-cvar_t *cl_visibleClients;
 cvar_t *cl_showSend;
 cvar_t *cl_showServerCommands;
 cvar_t *cl_timedemo;
@@ -400,7 +399,6 @@ void CL_Record(const char *name)
 	int           len;
 
 	// open the demo file
-
 	Com_Printf("recording to %s.\n", name);
 	clc.demofile = FS_FOpenFileWrite(name);
 	if (!clc.demofile)
@@ -504,7 +502,6 @@ void CL_DemoCompleted(void)
 		}
 	}
 
-	// fretn
 	if (clc.waverecording)
 	{
 		CL_WriteWaveClose();
@@ -777,8 +774,6 @@ void CL_PlayDemo_f(void)
 	Cvar_Set("sv_killserver", "1");
 
 	CL_Disconnect(qtrue);
-
-//  CL_FlushMemory();   //----(SA)  MEM NOTE: in missionpack, this is moved to CL_DownloadsComplete
 
 	// open the demo file
 	arg      = Cmd_Argv(1);
@@ -1387,7 +1382,7 @@ void CL_Connect_f(void)
 		server = Cmd_Argv(2);
 	}
 
-	S_StopAllSounds();      // NERVE - SMF
+	S_StopAllSounds();
 
 	// starting to load a map so we get out of full screen ui mode
 	Cvar_Set("r_uiFullScreen", "0");
@@ -2031,7 +2026,6 @@ void CL_InitDownloads(void)
 	char missingfiles[1024];
 	char *dir = FS_ShiftStr(AUTOUPDATE_DIR, AUTOUPDATE_DIR_SHIFT);
 
-	// TTimo
 	// init some of the www dl data
 	clc.bWWWDl             = qfalse;
 	clc.bWWWDlAborting     = qfalse;
@@ -3602,7 +3596,6 @@ void CL_Init(void)
 	cl_timeNudge          = Cvar_Get("cl_timeNudge", "0", CVAR_TEMP);
 	cl_shownet            = Cvar_Get("cl_shownet", "0", CVAR_TEMP);
 	cl_shownuments        = Cvar_Get("cl_shownuments", "0", CVAR_TEMP);
-	cl_visibleClients     = Cvar_Get("cl_visibleClients", "0", CVAR_TEMP);
 	cl_showServerCommands = Cvar_Get("cl_showServerCommands", "0", 0);
 	cl_showSend           = Cvar_Get("cl_showSend", "0", CVAR_TEMP);
 	cl_showTimeDelta      = Cvar_Get("cl_showTimeDelta", "0", CVAR_TEMP);
@@ -3772,7 +3765,7 @@ void CL_Init(void)
 
 	Cmd_AddCommand("setRecommended", CL_SetRecommended_f);
 
-	//bani - we eat these commands to prevent exploits
+	// bani - we eat these commands to prevent exploits
 	Cmd_AddCommand("userinfo", CL_EatMe_f);
 
 	Cmd_AddCommand("wav_record", CL_WavRecord_f);

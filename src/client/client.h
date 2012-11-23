@@ -401,10 +401,9 @@ extern cvar_t *cl_timegraph;
 extern cvar_t *cl_maxpackets;
 extern cvar_t *cl_packetdup;
 extern cvar_t *cl_shownet;
-extern cvar_t *cl_shownuments;              // DHM - Nerve
-extern cvar_t *cl_visibleClients;           // DHM - Nerve
+extern cvar_t *cl_shownuments;
 extern cvar_t *cl_showSend;
-extern cvar_t *cl_showServerCommands;       // NERVE - SMF
+extern cvar_t *cl_showServerCommands;
 extern cvar_t *cl_timeNudge;
 extern cvar_t *cl_showTimeDelta;
 extern cvar_t *cl_freezeDemo;
@@ -414,9 +413,9 @@ extern cvar_t *cl_pitchspeed;
 extern cvar_t *cl_run;
 extern cvar_t *cl_anglespeedkey;
 
-extern cvar_t *cl_recoilPitch;      // RF
+extern cvar_t *cl_recoilPitch;
 
-extern cvar_t *cl_bypassMouseInput;     // NERVE - SMF
+extern cvar_t *cl_bypassMouseInput;
 
 extern cvar_t *cl_doubletapdelay;
 
@@ -452,7 +451,6 @@ extern cvar_t *cl_defaultProfile;
 
 extern cvar_t *cl_consoleKeys;
 
-//bani
 extern qboolean sv_cheats;
 
 //=================================================
@@ -489,18 +487,17 @@ void CL_ShutdownRef(void);
 void CL_InitRef(void);
 int CL_ServerStatus(char *serverAddress, char *serverStatusString, int maxLen);
 
-void CL_AddToLimboChat(const char *str);                    // NERVE - SMF
-qboolean CL_GetLimboString(int index, char *buf);           // NERVE - SMF
+void CL_AddToLimboChat(const char *str);
+qboolean CL_GetLimboString(int index, char *buf);
 
 // NERVE - SMF - localization
 void CL_InitTranslation(void);
 void CL_SaveTransTable(const char *fileName, qboolean newOnly);
 void CL_ReloadTranslation(void);
 void CL_TranslateString(const char *string, char *dest_buffer);
-const char *CL_TranslateStringBuf(const char *string);   // TTimo
-// -NERVE - SMF
+const char *CL_TranslateStringBuf(const char *string);
 
-void CL_OpenURL(const char *url);   // TTimo
+void CL_OpenURL(const char *url);
 
 void CL_Record(const char *name);
 
@@ -577,7 +574,7 @@ void CL_ParseServerMessage(msg_t *msg);
 
 //====================================================================
 
-void CL_UpdateInfoPacket(netadr_t from);            // DHM - Nerve
+void CL_UpdateInfoPacket(netadr_t from);
 
 void CL_ServerInfoPacket(netadr_t from, msg_t *msg);
 void CL_LocalServers_f(void);
