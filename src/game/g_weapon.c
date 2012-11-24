@@ -108,7 +108,7 @@ int G_GetWeaponClassForMOD(meansOfDeath_t mod)
 
 /*
 ======================================================================
-KNIFE/GAUNTLET
+KNIFE
 ======================================================================
 */
 
@@ -512,7 +512,7 @@ void Weapon_Syringe(gentity_t *ent)
 {
 	vec3_t    end;
 	trace_t   tr;
-	qboolean  usedSyringe = qfalse;         // DHM - Nerve
+	qboolean  usedSyringe = qfalse;
 	gentity_t *traceEnt;
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
@@ -546,7 +546,7 @@ void Weapon_Syringe(gentity_t *ent)
 				}
 				if (ent && ent->client)
 				{
-					G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));                  // OSP
+					G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
 
 				}
 				if (!traceEnt->isProp)     // Gordon: flag for if they were teamkilled or not
@@ -1065,14 +1065,6 @@ static qboolean TryConstructing(gentity_t *ent)
 				te->s.eventParm = G_SoundIndex("sound/world/build.wav");
 			}
 
-
-			// Play sound
-			/*          if( constructible->parent->spawnflags & 8 ) {
-			                constructible->parent->s.loopSound = G_SoundIndex( va( "sound/world/build_stage%i.wav", constructible->s.frame ) );
-			            } else {
-			                constructible->s.loopSound = G_SoundIndex( va( "sound/world/build_stage%i.wav", constructible->s.frame ) );
-			            }*/
-
 			if (ent->client->touchingTOI->chain && ent->client->touchingTOI->count2)
 			{
 				// find the constructible indicator and change team
@@ -1117,14 +1109,11 @@ static qboolean TryConstructing(gentity_t *ent)
 			return(qtrue);      // properly constructed
 		}
 
-		//trap_SendServerCommand( ent-g_entities, "cp \"Job's done!\" 1");
-
 		// eeeh no point in doing this twice
 		//HandleEntsThatBlockConstructible( ent, constructible, qtrue, qfalse );
 		if (constructible->count2)
 		{
 			// backup...
-			//int constructibleModelindex = constructible->s.modelindex;
 			int constructibleClipmask       = constructible->clipmask;
 			int constructibleContents       = constructible->r.contents;
 			int constructibleNonSolidBModel = (constructible->s.eFlags & EF_NONSOLID_BMODEL);
@@ -1148,7 +1137,6 @@ static qboolean TryConstructing(gentity_t *ent)
 		else
 		{
 			// backup...
-			//int constructibleModelindex = constructible->s.modelindex;
 			int constructibleClipmask       = constructible->clipmask;
 			int constructibleContents       = constructible->r.contents;
 			int constructibleNonSolidBModel = (constructible->s.eFlags & EF_NONSOLID_BMODEL);
@@ -1355,14 +1343,12 @@ static qboolean TryConstructing(gentity_t *ent)
 
 void AutoBuildConstruction(gentity_t *constructible)
 {
-	int       i;
 	gentity_t *check;
 
 	HandleEntsThatBlockConstructible(NULL, constructible, qtrue, qfalse);
 	if (constructible->count2)
 	{
 		// backup...
-		//int constructibleModelindex = constructible->s.modelindex;
 		int constructibleClipmask       = constructible->clipmask;
 		int constructibleContents       = constructible->r.contents;
 		int constructibleNonSolidBModel = (constructible->s.eFlags & EF_NONSOLID_BMODEL);
@@ -1386,7 +1372,6 @@ void AutoBuildConstruction(gentity_t *constructible)
 	else
 	{
 		// backup...
-		//int constructibleModelindex = constructible->s.modelindex;
 		int constructibleClipmask       = constructible->clipmask;
 		int constructibleContents       = constructible->r.contents;
 		int constructibleNonSolidBModel = (constructible->s.eFlags & EF_NONSOLID_BMODEL);
@@ -1535,6 +1520,8 @@ void AutoBuildConstruction(gentity_t *constructible)
 		}
 		else
 		{
+			int i;
+
 			// find our marker and update it's coordinates
 			for (i = 0, check = g_entities; i < level.num_entities; i++, check++)
 			{
@@ -1699,7 +1686,7 @@ void Weapon_Engineer(gentity_t *ent)
 				traceEnt->health = MG42_MULTIPLAYER_HEALTH;
 			}
 
-			G_LogPrintf("Repair: %d\n", (int)(ent - g_entities));      // OSP
+			G_LogPrintf("Repair: %d\n", (int)(ent - g_entities));
 
 			if (traceEnt->sound3to2 != ent->client->sess.sessionTeam)
 			{
@@ -1806,7 +1793,6 @@ void Weapon_Engineer(gentity_t *ent)
 			}
 			else
 			{
-
 				if (G_LandmineUnarmed(traceEnt))
 				{
 					// Opposing team cannot accidentally arm it
@@ -1891,29 +1877,6 @@ evilbanigoto:
 						}
 
 						// update our map
-						/*{
-						    // if it's an enemy mine, update both teamlists
-						    int teamNum;
-						    mapEntityData_t *mEnt;
-						    mapEntityData_Team_t *teamList;
-
-						    teamNum = traceEnt->s.teamNum % 4;
-
-						    teamList = ent->client->sess.sessionTeam == TEAM_AXIS ? &mapEntityData[0] : &mapEntityData[1];
-						    if((mEnt = G_FindMapEntityData(teamList, traceEnt-g_entities)) != NULL) {
-						        G_FreeMapEntityData( teamList, mEnt );
-						    }
-
-						    teamList = ent->client->sess.sessionTeam == TEAM_AXIS ? &mapEntityData[1] : &mapEntityData[0];  // inverted
-						    if((mEnt = G_FindMapEntityData(teamList, traceEnt-g_entities)) != NULL) {
-						        if( teamNum != ent->client->sess.sessionTeam ) {
-						            G_FreeMapEntityData( teamList, mEnt );
-						        } else {
-						        //  mEnt->type = ME_LANDMINE;   // set it back to this as it might have been set to 'about to explode'.
-						            mEnt->entNum = -1;
-						        }
-						    }
-						}*/
 						{
 							mapEntityData_t *mEnt;
 
@@ -1973,7 +1936,6 @@ evilbanigoto:
 			// Not armed
 			if (traceEnt->s.teamNum >= 4)
 			{
-				//bani
 				qboolean friendlyObj = qfalse;
 				qboolean enemyObj    = qfalse;
 
@@ -2073,14 +2035,12 @@ evilbanigoto:
 						if (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS)) ||
 						    ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_ALLIES)))
 						{
-							// bani
 							// G_FreeEntity( traceEnt );
 							// trap_SendServerCommand( ent-g_entities, "cp \"You cannot arm dynamite near a friendly objective!\" 1");
 							// return;
 							friendlyObj = qtrue;
 						}
 
-						//bani
 						if (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_ALLIES)) ||
 						    ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS)))
 						{
@@ -2089,7 +2049,6 @@ evilbanigoto:
 					}
 				}
 
-				//bani
 				if (friendlyObj && !enemyObj)
 				{
 					G_FreeEntity(traceEnt);
@@ -2193,14 +2152,13 @@ evilbanigoto:
 								AddScore(traceEnt->parent, WOLF_DYNAMITE_PLANT);       // give drop score to guy who dropped it
 								if (traceEnt->parent && traceEnt->parent->client)
 								{
-									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));         // OSP
+									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));
 								}
 								traceEnt->parent = ent;     // give explode score to guy who armed it
 							}
 							//bani - fix #238
 							traceEnt->etpro_misc_1 |= 1;
 						}
-						//bani
 						// i = num;
 						return;     //bani - bail out here because primary obj's take precendence over constructibles
 					}
@@ -2281,7 +2239,7 @@ evilbanigoto:
 								AddScore(traceEnt->parent, WOLF_DYNAMITE_PLANT);       // give drop score to guy who dropped it
 								if (traceEnt->parent && traceEnt->parent->client)
 								{
-									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));         // OSP
+									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));
 								}
 								traceEnt->parent = ent;     // give explode score to guy who armed it
 							}
@@ -2393,8 +2351,6 @@ evilbanigoto:
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
 
-								// trap_SendServerCommand(-1, "cp \"Axis engineer disarmed the Dynamite!\n\"");
-
 								defusedObj = qtrue;
 							}
 							else         // TEAM_ALLIES
@@ -2419,8 +2375,6 @@ evilbanigoto:
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
 
-								// trap_SendServerCommand(-1, "cp \"Allied engineer disarmed the Dynamite!\n\"");
-								//bani
 								defusedObj = qtrue;
 							}
 						}
@@ -2477,7 +2431,7 @@ evilbanigoto:
 									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
 									if (ent && ent->client)
 									{
-										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));                        // OSP
+										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
 									}
 									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
 									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
@@ -2491,8 +2445,6 @@ evilbanigoto:
 									pm->s.effect3Time = hit->parent->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
-
-								// trap_SendServerCommand(-1, "cp \"Axis engineer disarmed the Dynamite!\" 2");
 							}
 							else         // TEAM_ALLIES
 							{
@@ -2501,7 +2453,7 @@ evilbanigoto:
 									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
 									if (ent && ent->client)
 									{
-										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));                        // OSP
+										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
 									}
 									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
 									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
@@ -2515,8 +2467,6 @@ evilbanigoto:
 									pm->s.effect3Time = hit->parent->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
-
-								// trap_SendServerCommand(-1, "cp \"Allied engineer disarmed the Dynamite!\" 2");
 							}
 
 							return;
@@ -2987,7 +2937,7 @@ void Weapon_Artillery(gentity_t *ent)
 	bomboffset[2] += 4096;
 
 	trap_Trace(&trace, pos, NULL, NULL, bomboffset, ent->s.number, MASK_SHOT);
-	if ((trace.fraction < 1.0) && (!(trace.surfaceFlags & SURF_NOIMPACT)))           // JPW NERVE was SURF_SKY)) ) {
+	if ((trace.fraction < 1.0) && (!(trace.surfaceFlags & SURF_NOIMPACT))) // JPW NERVE was SURF_SKY
 	{
 		G_SayTo(ent, ent, 2, COLOR_YELLOW, "Fire Mission: ", "Aborting, can't see target.", qtrue);
 
@@ -4219,7 +4169,6 @@ void CalcMuzzlePointForActivate(gentity_t *ent, vec3_t forward, vec3_t right, ve
 	SnapVector(muzzlePoint);
 }
 
-// Ridah
 void CalcMuzzlePoints(gentity_t *ent, int weapon)
 {
 	vec3_t viewang;
