@@ -588,7 +588,7 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 		return;
 	}
 
-	if (!origin && (entnum < 0 || entnum > MAX_GENTITIES))
+	if (!origin && (entnum < 0 || entnum >= MAX_GENTITIES))
 	{
 		Com_Error(ERR_DROP, "S_StartSound: bad entitynum %i\n", entnum);
 	}
@@ -1320,7 +1320,7 @@ let the sound system know where an entity currently is
 */
 void S_Base_UpdateEntityPosition(int entnum, const vec3_t origin)
 {
-	if (entnum < 0 || entnum > MAX_GENTITIES)
+	if (entnum < 0 || entnum >= MAX_GENTITIES)
 	{
 		Com_Error(ERR_DROP, "S_UpdateEntityPosition: bad entitynum %i\n", entnum);
 	}

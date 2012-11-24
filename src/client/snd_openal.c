@@ -1248,7 +1248,7 @@ static void S_AL_UpdateEntityPosition(int entityNum, const vec3_t origin)
 
 	VectorCopy(origin, sanOrigin);
 	S_AL_SanitiseVector(sanOrigin);
-	if (entityNum < 0 || entityNum > MAX_GENTITIES)
+	if (entityNum < 0 || entityNum >= MAX_GENTITIES)
 	{
 		Com_Error(ERR_DROP, "S_UpdateEntityPosition: bad entitynum %i\n", entityNum);
 	}
@@ -1264,7 +1264,7 @@ Necessary for i.g. Western Quake3 mod which is buggy.
 */
 static qboolean S_AL_CheckInput(int entityNum, sfxHandle_t sfx)
 {
-	if (entityNum < 0 || entityNum > MAX_GENTITIES)
+	if (entityNum < 0 || entityNum >= MAX_GENTITIES)
 	{
 		Com_Error(ERR_DROP, "ERROR: S_AL_CheckInput: bad entitynum %i\n", entityNum);
 	}
