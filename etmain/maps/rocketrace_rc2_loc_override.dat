@@ -1,0 +1,71 @@
+/////////////////////////////////////////////////////////
+// Map name       Rocket Race RC2                      //
+// Locations by   antman                               //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 25                //
+// Last edited    26-03-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+1636 2885 96 "Allies Delivery Point"
+162 3451 261 "Allies Level #1"
+163 4023 260 @
+162 3451 442 "Allies Level #2"
+163 4023 432 @
+162 3451 612 "Allies Level #3"
+163 4023 600 @
+162 3451 795 "Allies Level #4"
+163 4023 769 @
+162 3451 951 "Allies Level #5"
+163 4023 937 @
+162 3451 1116 "Allies Level #6"
+163 4023 1106 @
+162 3451 1421 "Allies Level #7"
+163 4023 1421 @
+162 3451 1740 "Allies Level #8"
+163 4023 1756 @
+162 3451 1964 "Allies Level #9"
+163 4023 1964 @
+162 3451 96 "Allies Main Spawn"
+163 4023 74 @
+1639 2312 96 "Axis Delivery Point"
+170 888 258 "Axis Level #1"
+180 379 247 @
+170 888 415 "Axis Level #2"
+180 379 432 @
+170 888 589 "Axis Level #3"
+180 379 600 @
+170 888 755 "Axis Level #4"
+180 379 769 @
+170 888 953 "Axis Level #5"
+180 379 932 @
+170 888 1130 "Axis Level #6"
+180 379 1106 @
+170 888 1421 "Axis Level #7"
+180 379 1421 @
+170 888 1740 "Axis Level #8"
+180 379 1756 @
+170 888 1964 "Axis Level #9"
+180 379 1964 @
+170 888 96 "Axis Main Spawn"
+180 379 96 @
+875 1922 96 "Command Post"
+1642 2621 96 "Delivery Point Tunnel"
+1082 2615 96 @
+830 2411 104 "Forward Flag"
+175 1050 1421 "Level #7 Tunnel"
+159 2178 1421 @
+161 3287 1421 @
+175 1050 1740 "Level #8 Tunnel"
+159 2178 1746 @
+161 3287 1740 @
+175 1050 1964 "Level #9 Tunnel"
+159 2178 1964 @
+161 3287 1964 @
+806 2613 96 "MG42"
+175 1050 96 "Main Floor Tunnel"
+159 2178 96 @
+-361 2171 96 @
+567 2178 96 @
+161 3287 96 @
+-683 2172 96 "Teleporter"
+2183 2612 96 "Teleporter Destination"

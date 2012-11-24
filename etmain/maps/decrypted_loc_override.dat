@@ -1,0 +1,75 @@
+/////////////////////////////////////////////////////////
+// Map name       Decrypted                            //
+// Locations by   antman                               //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 20                //
+// Last edited    31-07-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+9 -34 72 "Allied Barracks"
+1282 4 72 @
+633 7 72 "Allied Corridor"
+3195 -1370 -179 "Axis Balcony"
+3172 -1044 -175 "Axis Barracks"
+2755 -938 -175 @
+2721 -1136 -303 "Axis Bunker"
+1850 -1345 -303 @
+2488 -937 -255 @
+1505 -1007 -63 "Brick Wall"
+2833 -1986 -271 "Bridge"
+2443 -1992 -271 @
+3055 -2226 -303 "Bridge Area"
+3269 -2011 -303 @
+3407 -1917 -303 @
+2989 -1643 -303 @
+3195 -1370 -303 @
+2096 -1807 -303 @
+2311 -1545 -303 @
+2329 -2290 -303 @
+2060 -2330 -239 @
+2430 -2546 -127 "Bridge Area Balcony"
+2096 -1807 -111 "Bunker Tower"
+2258 -1251 -82 "Cliffs"
+2804 -1221 -39 @
+3674 -2273 -159 "Command Post"
+3674 -2273 -303 "Decripted Documents"
+1904 71 -7 "East Corridor"
+1013 -2105 -239 "Forward Bunker"
+1212 -2346 -239 @
+1525 -2174 -239 @
+1868 -2335 -239 @
+567 -2213 -235 "Forward Flag"
+1254 -2131 -239 "Health & Ammo"
+2079 -1583 -303 "MG42 Nest"
+2079 -1583 -159 "MG42 Nest Roof"
+1007 -1657 -239 "Main Doors"
+794 -546 -167 "Office"
+822 -782 -123 @
+636 -488 -167 "Office Corridor"
+594 -775 -167 @
+1245 -747 -119 "Office Vent"
+3519 -1915 -303 "Radar Station"
+3270 -2220 -303 @
+547 -1743 -91 "Stairwell"
+1363 -1874 -63 "Transmitter"
+1625 -1718 -63 "Transmitter Room"
+1662 -1415 -59 @
+1317 -1318 -63 @
+1662 -1415 -207 "Transmitter Storage"
+1317 -1318 -190 @
+821 -874 -207 "Warehouse"
+641 -897 -167 @
+546 -1620 -239 @
+1104 -1070 -239 @
+1228 -1322 -239 @
+546 -1620 -91 "Warehouse Balcony"
+1318 -745 -63 "Warehouse Corridor"
+1265 -1125 -111 "Warehouse Ladder"
+1047 -1763 -55 "Warehouse Vent"
+2833 -1986 -472 "Water"
+2443 -1992 -468 @
+2721 -1136 -486 @
+2851 -1653 -478 @
+2444 -1549 -469 @
+2434 -2292 -479 @
+636 -488 64 "West Corridor"

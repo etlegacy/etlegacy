@@ -1,0 +1,24 @@
+/////////////////////////////////////////////////////////
+// Map name       Hunt Place                           //
+// Locations by   antman                               //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 20                //
+// Last edited    28-05-2006                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+-1448 560 208 "Hunt Place Arena I"
+-1675 933 212 @
+-1617 68 64 @
+-1890 1468 -223 @
+-761 562 208 @
+856 352 208 "Hunt Place Arena II"
+1674 880 208 @
+1060 1504 -223 @
+1395 1371 -223 @
+409 1671 -247 @
+1020 74 208 @
+904 -1600 0 "Hunt Place Arena III"
+-86 -778 -223 @
+216 -938 -223 @
+59 -1705 208 @
+-742 -704 -242 @

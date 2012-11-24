@@ -1,0 +1,14 @@
+/////////////////////////////////////////////////////////
+// Map name       Rifletennis TE                       //
+// Locations by   antman                               //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 16                //
+// Last edited    24-07-2009                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+727 -7 192 "^1Axis Side"
+28 1 192 @
+836 -6 304 "^1Axis Spawn"
+-732 -5 192 "^4Allied Side"
+-28 0 192 @
+-848 -5 304 "^4Allied Spawn"

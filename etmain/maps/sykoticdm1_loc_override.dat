@@ -1,0 +1,20 @@
+/////////////////////////////////////////////////////////
+// Map name       Sykotic                              //
+// Locations by   antman                               //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 15                //
+// Last edited    28-05-2006                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+-2112 6360 72 "Allied Start"
+76 5425 72 "Axis Start"
+-2111 6228 112 "Sykotic Area"
+-1954 6326 72 @
+-2098 6509 74 @
+-2245 6378 176 @
+-2406 5266 74 @
+-90 5424 72 @
+72 5266 74 @
+63 5554 120 @
+197 5415 176 @
+365 6509 74 @

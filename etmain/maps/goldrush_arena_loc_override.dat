@@ -1,0 +1,16 @@
+/////////////////////////////////////////////////////////
+// Map name       Goldrush Arena TWL                   //
+// Locations by   antman                               //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 15                //
+// Last edited    28-05-2006                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+877 -992 -343 "Allied Spawn"
+790 -1232 -343 @
+2446 -446 -351 "Axis Spawn"
+2292 -429 -347 "Bank Courtyard"
+2304 -1838 -344 @
+1009 -996 -343 @
+825 -1361 -255 @
+1157 -1270 -343 @

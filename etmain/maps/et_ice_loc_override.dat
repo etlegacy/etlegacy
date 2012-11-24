@@ -1,0 +1,117 @@
+/////////////////////////////////////////////////////////
+// Map name       Ice                                  //
+// Locations by   KingJackaL                           //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 29                //
+// Last edited    15-10-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+-6157 2195 960 "^1Allied Command Post"
+-4018 1306 80 "^1Axis Command Post"
+-6030 2211 992 "^1Documents"
+-5067 1664 352 "^1Service Door"
+-5446 796 400 "^1Side Wall Breach"
+292 -2849 202 "^1Transmitter"
+-7705 2276 408 "^3Allied North Barracks"
+-7691 2302 680 "^3Allied North Barracks Roof"
+-8149 2279 408 "^3Allied North Barracks Tower"
+-8153 2222 688 @
+-6430 -1585 524 "^3Allied Storage Hill"
+-5744 -1133 501 @
+-6072 1688 384 "^3Allied Tower Basement"
+-6072 1942 384 @
+-5818 1393 384 @
+-6061 1416 384 @
+-5570 1526 384 @
+-5225 1760 364 @
+-6073 2171 1216 "^3Allied Tower Roof"
+-712 2957 136 "^3Axis Deployment"
+-734 1451 488 "^3Axis Lookout Post"
+2101 -2957 136 "^3Axis Transmitter Spawn"
+-4123 -706 80 "^3Central Service Halls"
+-4740 -706 80 @
+-4274 -441 80 @
+-5313 -374 80 @
+-5538 -702 80 @
+-3998 241 80 "^3Flag Room"
+-4227 -93 80 @
+-2419 -1487 136 "^3Half Track"
+-5581 1685 576 "^3Helipad"
+-5974 1693 568 @
+-5852 1361 576 @
+-6072 1369 576 @
+-6013 1916 580 @
+-5540 1400 576 @
+-5322 1466 576 "^3Helipad Tower Ladder"
+-5338 1466 927 @
+-5302 1388 1216 "^3Helipad Tower Ladder Roof"
+71 -2775 160 "^3Lower Transmitter"
+312 -2652 160 @
+636 -2669 160 @
+-2735 641 69 "^3North Connection"
+-2529 -46 64 @
+-1220 1703 72 @
+-3013 616 80 "^3North Service Halls"
+-3852 643 80 @
+-4277 639 80 @
+-6698 -1021 208 "^3Old Allied Storage"
+-6058 -701 202 @
+-1229 2236 64 "^3Outside Axis Deployment"
+-303 1943 97 @
+-145 2685 64 @
+-5265 309 403 "^3Outside Base Walls"
+-5879 353 359 @
+-6552 454 362 @
+-7161 808 324 @
+-7204 1414 362 @
+-199 -2210 162 "^3Outside Transmitter"
+-681 -2840 90 @
+271 -3015 201 @
+-12 -3054 245 @
+840 -2956 160 @
+1036 -3742 163 @
+957 -2297 165 @
+-4471 641 88 "^3Service Door Hallway"
+-4474 1122 88 @
+-4973 1724 352 @
+-5340 -378 400 "^3Service Halls Bunker"
+-5345 -355 528 "^3Service Halls Bunker Roof"
+-5654 -372 96 "^3Service Halls Exit"
+-8105 813 356 "^3Side MG"
+-8527 -661 408 "^3South Barracks"
+-2546 -215 64 "^3South Connection"
+-2637 -1124 64 @
+-2185 -1112 64 @
+-1945 -1603 65 @
+-967 -2206 79 @
+-7203 -242 578 "^3South Hill"
+-6558 -137 249 @
+-3941 -1093 80 "^3South Service Halls"
+-2907 -1126 80 @
+-4302 -1095 80 @
+-5011 1276 673 "^3South Tower Ladder"
+-4261 1116 80 "^3Supply Room"
+-3870 896 80 @
+-3785 1152 80 @
+-6547 2457 456 "^3Tower Courtyard"
+-6709 1788 362 @
+-6684 1008 362 @
+-5836 1046 362 @
+-6290 1660 368 @
+-6179 2433 680 "^3Tower Spawn Ladder"
+-6909 833 576 "^3Tower Walls"
+-5842 795 576 @
+-5090 806 608 @
+-6945 1485 576 @
+-6951 2098 576 @
+-6948 2677 608 @
+-6445 1937 768 "^3Tree Jumping"
+-6029 2404 960 "^3Upper Allied Tower"
+-5845 2192 960 @
+-5060 1424 960 @
+-5297 1681 960 @
+111 -2506 544 "^3Upper Transmitter"
+73 -2780 544 @
+-8871 -265 362 "^3West Hills"
+-8622 1913 371 @
+-8785 690 233 @

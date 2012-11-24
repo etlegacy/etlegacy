@@ -1,0 +1,147 @@
+/////////////////////////////////////////////////////////
+// Map name       SW Fuel Dump                         //
+// Locations by   Rain                                 //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 25                //
+// Last edited    28-05-2006                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+148 -7548 320 "Allied Entrance Spawn"
+-893 -8411 368 "Allied Hut"
+-3128 -8340 452 "Allied Health & Ammo"
+-2099 -1513 672 "Axis Command Post"
+-2070 -1203 709 "Axis Command Post Hut"
+-2387 -1529 684 @
+-3737 -5112 280 "Bridge"
+-3717 -4384 288 @
+-4016 -5444 266 "Bridge Supplies"
+-7548 -2833 275 "Cave Exit"
+-6826 -3267 311 "Cave Shortcut"
+-6271 -3291 327 @
+-8153 -4235 536 "Cave Storage"
+-8149 -4061 536 @
+-7964 -4453 561 "Cave Storage Corridor"
+-7930 -4030 572 @
+-8313 -4495 539 @
+-8994 -4582 338 "Cave Storage Exit"
+-8566 -4482 544 @
+-7713 -3826 472 "Cave Storage Stairs"
+-7040 -2682 286 "Caves"
+-11249 -2452 584 "Command Post"
+-11006 -2286 576 "Command Post Garage"
+-10294 -5502 696 "Depot Antenna"
+-10281 -5231 696 @
+-12113 -6428 272 "Depot Cache"
+-9776 -5133 240 "Depot Door"
+-9786 -5641 240 @
+-9765 -5402 240 @
+-9091 -5364 512 "Depot Facade"
+-9659 -5364 504 @
+-9909 -5375 504 @
+-9252 -5507 512 @
+-10679 -6692 302 "Depot Garage"
+-11235 -6362 412 @
+-10965 -6725 278 @
+-11139 -6751 472 "Depot Garage Office"
+-10625 -6061 240 "Depot Garage Path"
+-11236 -6069 240 @
+-10401 -5714 240 @
+-9526 -5206 244 "Depot Guard House"
+-12473 -7388 260 "Depot Hinterlands"
+-10290 -5246 512 "Depot MG Nest"
+-10282 -5581 464 "Depot MG Room"
+-10645 -6564 646 "Depot Roof"
+-10405 -6301 632 @
+-11156 -6595 668 @
+-10514 -6306 472 "Depot Roof Access"
+-11562 -5589 246 "Depot Side Wall"
+-11688 -5136 277 @
+-12180 -5806 240 @
+-11465 -5370 512 "Depot Sidewall Tower"
+-10259 -7175 255 "East Base Fortification"
+-10192 -6453 240 @
+-9545 -5588 344 "East Depot Stairs"
+-1212 -3013 458 "Foot Bridge"
+-1204 -4101 455 @
+-1196 -3537 436 @
+-1088 -4254 448 "Foot Bridge Supplies"
+-4718 -1606 864 "Forward Lookout"
+-614 -3501 138 "Frozen River"
+-4366 -4896 150 @
+-3150 -4653 139 @
+-2489 -3888 128 @
+-1554 -3461 128 @
+129 -3606 128 @
+-5137 -4590 147 "Frozen Tunnel"
+-5724 -3985 158 @
+-5649 -3392 296 "Frozen Tunnel Access"
+-10810 -7418 334 "Fuel Dump"
+-10949 -2256 1038 "Garage Roof"
+-2506 -5625 654 "Happy Trickjump Rock"
+-8689 -6637 272 "Lower Depot Spawn"
+-9191 -7337 280 "Lower Depot Spawn Exit"
+-5526 -1477 401 "Lower Office"
+-235 -4508 556 "North Footbridge Path"
+-10713 -1419 624 "Near Garage"
+-11545 -2207 617 @
+-11472 -2829 574 @
+-7723 -1403 498 "North Cave Exit"
+-7277 -1837 384 @
+-5883 -3054 262 "North Caves"
+-6031 -1667 400 @
+-6974 -1926 392 @
+-3794 -1736 720 "North Hill"
+-2789 -1989 727 @
+-1184 -2695 516 @
+-9476 -1207 1291 @
+-199 -2899 633 @
+-4584 -1859 635 @
+-4414 -1565 658 @
+-2837 -1045 721 @
+-1562 -1652 634 @
+-2708 -1476 619 @
+-3372 -1520 687 @
+-3532 -2199 681 @
+-1619 -2356 558 @
+-2276 -2164 625 @
+-2355 -2627 432 "North Hillside"
+-4598 -2352 371 @
+-4233 -2063 499 @
+-3147 -2662 484 @
+-3596 -2471 509 @
+-2051 -2593 439 @
+-3853 -2274 538 @
+-5116 -1784 613 "Office"
+-5651 -1543 694 @
+-5634 -2290 565 @
+-5407 -1754 560 @
+-5307 -2813 580 "Office Balcony"
+-2929 -7966 426 "Road MG"
+-269 -5870 555 "South Footbridge Path"
+-10165 -2713 547 "Side MG Nest"
+-9126 -5557 512 "Sock's Room"
+-7402 -3562 338 "South Caves"
+-10923 -2836 560 "South Garage Path"
+-382 -7577 280 "Tank Path"
+-1956 -7561 272 @
+-2848 -6922 288 @
+-3675 -5921 272 @
+-9365 -4102 270 "Tank Track"
+-5326 -2815 272 "Tunnel Doors"
+-5044 -4737 144 "Tunnel Grate"
+-3614 -1937 1028 "Tunnel MG"
+-3417 -1856 761 "Tunnel MG Supplies"
+-8611 -5940 370 "Upper Depot Spawn"
+-5292 -1566 826 "Upper Office"
+-10267 -5764 392 "Ventilation Unit"
+-10487 -6775 856 "Water Tower"
+-11462 -7348 240 "West Base Fortification"
+-11621 -6271 240 @
+-11050 -5213 276 "West Depot Wall"
+-10589 -5200 263 @
+-11116 -5363 243 @
+-11022 -5297 504 @
+-10546 -5310 504 "West Parapet"
+-8663 -3496 447 "Western Boulders"
+-12433 -3440 640 "Western Valley"
+-12354 -4465 615 @

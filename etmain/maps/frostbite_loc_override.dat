@@ -1,0 +1,99 @@
+/////////////////////////////////////////////////////////
+// Map name       Frostbite                            //
+// Locations by   KingJackaL                           //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 26                //
+// Last edited    15-10-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+-1795 377 384 "^1Allied Command Post"
+-5021 1920 -159 "^1Axis Command Post"
+-2027 700 64 "^1Main Door"
+-318 -515 306 "^1Service Door"
+-2850 1858 -86 "^1Storage Wall"
+815 172 448 "^1Supply Documents"
+-4494 2203 -47 "^1Transmitter"
+-4528 -421 -127 "^3Allied Deployment Huts"
+-4763 175 -127 @
+-4528 -421 96 "^3Allied Deployment Roofs"
+-4763 175 96 @
+-180 1199 320 "^3Axis Barracks"
+-175 1425 320 @
+-840 1193 64 "^3Axis Garage"
+-571 1192 64 @
+-1084 1357 64 @
+-893 1772 64 @
+-500 879 216 "^3Axis Spawn Stairwell"
+-1461 1377 64 "^3Axis Storage"
+-1461 1770 64 @
+-1890 1933 34 @
+-2571 2079 -89 @
+-2614 1689 -86 @
+-1636 377 384 "^3Command Post Room"
+-1343 377 384 @
+-1628 708 275 "^3Command Post Stairwell"
+-1472 678 64 @
+-85 89 64 "^3Courtyard"
+156 459 64 @
+472 -5 64 @
+552 379 160 "^3Courtyard Stairs"
+-1810 -147 320 "^3Front Balcony"
+-1757 76 320 @
+-1712 -42 320 @
+-1952 -161 147 "^3Front Ladder"
+-331 1277 365 "^3Gramophone"
+-1065 -363 320 "^3Green Office"
+-1284 -311 320 @
+-1429 -31 320 @
+-144 -752 288 "^3Health and Ammo Cabinets"
+-3553 -107 -143 "^3Main Attack Approach"
+-2858 -126 -64 @
+-2104 -151 -5 @
+-1420 346 64 "^3Main Door Foyer"
+-1874 346 64 @
+-2123 502 64 "^3Main Door Ramp"
+-723 -388 320 "^3Office Hallway"
+-4111 853 -131 "^3Outside Allied Spawn"
+-4150 199 -155 @
+-3840 -443 -143 @
+-4550 1380 -109 "^3Outside Transmitter"
+-4211 1523 -129 @
+1057 165 416 "^3Planning Room"
+-1522 1997 64 "^3Platform MG"
+561 -320 256 "^3Service Hall"
+172 -320 256 @
+-162 -320 256 @
+-489 -320 256 @
+963 -279 256 "^3Service Hall Stairwell"
+-342 -765 288 "^3Service Room"
+-684 -765 288 @
+-300 1191 64 "^3Shipping Tunnels"
+132 1224 64 @
+126 748 64 @
+539 705 256 "^3Spawn Hall"
+175 705 320 @
+-181 766 320 @
+-457 705 320 @
+976 653 313 "^3Spawn Hall Stairwell"
+-3168 1881 -98 "^3Storage Path"
+-3906 1862 -129 @
+-4799 1712 -79 "^3Transmitter First Floor"
+-4874 2287 -159 @
+-4718 2287 -159 @
+-4540 2082 -95 "^3Transmitter Platform"
+-4990 2102 192 "^3Transmitter Roof"
+-4613 2177 192 @
+-4669 1674 192 @
+-5169 1835 214 @
+-4943 1380 -109 "^3Transmitter Roof Ladder"
+-4818 2299 192 "^3Transmitter Second Floor"
+-4744 2456 5 "^3Transmitter Stairwell"
+-1077 468 64 "^3Warehouse"
+-769 511 64 @
+-678 6 64 @
+-1054 26 64 @
+-683 695 320 "^3Warehouse Catwalks"
+-759 277 320 @
+-1133 679 320 @
+-1125 -61 320 @
+-1145 420 328 @

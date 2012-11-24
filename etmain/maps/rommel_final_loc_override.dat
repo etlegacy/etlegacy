@@ -1,0 +1,161 @@
+/////////////////////////////////////////////////////////
+// Map name       Rommel                               //
+// Locations by   KingJackaL                           //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 25                //
+// Last edited    28-05-2006                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+2021 2136 -287 "Access Control"
+-34 -3653 168 "Allied Deployment"
+616 -3019 168 "Allied East Caves"
+-929 -4004 160 "Allied West Caves"
+12 3445 -235 "Axis Planning Room"
+379 3495 -187 @
+-41 3887 -235 @
+289 3664 -235 "Axis Planning Supplies"
+751 3589 8 "Axis Spawn Hill"
+1207 3607 -2 @
+440 3827 -75 @
+-199 3404 24 "Axis Spawn Roofs"
+-679 3978 156 @
+-684 3525 3 @
+418 2598 -289 "Central Base"
+-1208 1258 -7 "Central Building Stairs"
+-863 1547 48 "Central Buildings"
+-1257 1574 366 "Central Roofs"
+-129 1643 421 @
+286 2705 476 @
+2999 2404 -518 "Cistern"
+3005 2386 -265 "Cistern Controls"
+3197 2939 -315 "Cistern Courtyard"
+2424 3025 -315 @
+2354 2489 -306 @
+2506 2106 -315 @
+3149 1972 -311 @
+2096 2457 -319 "Cistern Gate"
+1967 3281 -47 "Cistern Hill"
+1533 3319 96 "Cistern Roofs"
+1368 3877 247 @
+777 3807 208 @
+2858 1892 24 "Cistern Walls"
+3486 2363 167 @
+3378 3186 104 @
+2530 3232 64 @
+2082 2340 96 @
+2197 1872 136 @
+3281 854 124 "Command Post"
+2667 965 204 "Command Post Balcony"
+2944 1381 204 @
+2198 -1079 134 "Command Post Spawn"
+2999 497 124 "Command Post Verandah"
+1207 -2185 110 "East Caves Exit"
+2417 -34 72 "East Gate"
+2412 -16 392 "East Gate Battlements"
+2584 318 28 "East Gate Hill"
+2563 763 -54 @
+2358 1185 -186 @
+2126 624 104 "East Gate Hill Roof"
+35 -738 116 "East Tunnels"
+1209 -691 150 @
+1182 -746 395 "East Tunnels Roof"
+-369 -869 52 "Forward Bunker"
+-1868 287 -85 "Inside West Gate"
+-782 663 -209 @
+-1811 926 -142 @
+-1031 839 -226 @
+-2561 2044 -195 "Keycard Basement"
+-2125 2282 -195 @
+-1859 2413 -195 @
+-1938 3200 358 "Keycard Hill"
+-2115 2308 220 "Keycard Roof"
+-2069 2290 32 "Keycard Room"
+-1860 2381 -3 @
+-2594 2044 -3 "Keycard Verandah"
+-2578 2589 -3 @
+-1850 2685 -3 @
+-1682 2265 -3 @
+-2554 -3783 112 "Lost at South Gate"
+886 2189 48 "Lower Central Roofs"
+812 2854 107 @
+-878 1999 -19 @
+-205 2041 -51 @
+-2499 1558 -81 "Lower Keycard Verandah"
+-185 2855 -291 "Outside Axis Spawn"
+-1037 2899 -274 @
+-778 2429 -283 @
+-402 2271 -289 @
+1694 2243 -297 "Outside Cistern"
+1220 2245 -304 @
+1069 1963 -292 @
+1036 2887 -284 @
+1803 2760 -295 @
+2623 -319 110 "Outside East Gate"
+2288 -300 103 @
+2191 -728 110 @
+1643 -954 114 @
+1817 -517 220 @
+-2137 1797 -238 "Outside Keycard House"
+-1933 1406 -212 @
+-1566 2413 -239 @
+-1203 2381 -259 @
+-1480 1908 -240 @
+1246 1038 -255 "Outside Team Door"
+-2050 -258 76 "Outside West Gate"
+-2413 -237 89 @
+-2484 -1093 116 @
+-2511 -550 110 @
+-1938 -815 110 @
+2409 3421 -213 "Rear Cistern Entry"
+1886 3858 -82 @
+1040 4003 -71 @
+-1174 3885 -145 "Rear Keycard Path"
+-2024 3616 -73 @
+-2548 3016 -182 @
+-2847 1983 -231 @
+-2939 2452 -200 @
+1538 1596 -83 "Roofs Access Ridge"
+820 1621 25 @
+-1147 -4117 759 "Sneaky Caves Camping"
+-469 -2034 110 "South Connection"
+0 -1986 113 @
+-1689 -1966 157 @
+910 -1894 110 @
+1431 -1551 171 @
+-652 -1260 116 "South Tunnels"
+-22 -1223 116 @
+-278 -1726 140 @
+-324 -1535 391 "South Tunnels Roof"
+2915 1657 -215 "South of Cistern"
+2328 1648 -262 @
+3108 823 124 "Supplies Room"
+700 527 -285 "Tank Garage"
+11 1018 -288 @
+-15 453 -253 @
+925 1148 176 "Tank Garage Roofs"
+865 414 84 @
+65 1035 -14 @
+-12 464 26 @
+960 1075 -284 "Team Door"
+554 1137 -290 "Team Door Hallway"
+1474 2025 -358 "Tiny Oasis"
+-332 4023 -35 "Upper Axis Spawn"
+487 1116 320 "Upper Tank Garage Roofs"
+449 364 321 @
+-1651 -3305 164 "West Caves Exit"
+-2138 -3010 110 @
+-1927 31 -6 "West Gate"
+-1943 26 296 "West Gate Battlements"
+-2333 29 164 @
+-2767 -657 380 "West Gate Roofs"
+-2718 -1168 394 @
+-2347 -1583 497 @
+-1542 -811 116 "West Tunnels"
+-965 -1049 116 @
+-1200 -2494 753 "haX jumper"
+-1043 -1049 759 @
+-1915 16 759 @
+2377 -1352 759 @
+2458 -30 759 @
+-2644 1023 371 @
+-820 3198 390 @

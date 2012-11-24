@@ -1,0 +1,71 @@
+/////////////////////////////////////////////////////////
+// Map name       Tram Siege                           //
+// Locations by   LowLife - Lefty - Heirpie            //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 30                //
+// Last edited    28-05-2006                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+4768 960 1792 "Castle Basement"
+4096 592 1712 "Castle Basement Door"
+4304 336 1792 "Castle Basement Entrance"
+4760 376 1792 "Castle Basement Hallway"
+5168 1512 1792 @
+5584 1040 1792 "Castle Basement Passage"
+6472 520 1832 "Castle Basement Stairs"
+5512 736 2176 "Castle Entrance Hallway"
+6736 1696 2176 "Castle Radio Room"
+4256 -64 2040 "Castle Tram Bay"
+5032 40 2056 "Castle Tram Bay Engines"
+5032 -200 2056 @
+5024 392 2112 "Castle Tram Bay Entrance"
+5760 -488 1888 "Castle Tram Bay Tunnel"
+5208 -512 2112 "Castle Tram Bay Tunnel Entrance"
+5888 1768 2176 "High Castle Hallway"
+-1312 696 168 "Lower Access Door"
+-3456 -944 -16 "Lower Bridge"
+5192 1928 1792 "Lower Castle Stairwell"
+-4856 -616 -752 "Lower Mountainside"
+-4896 672 -480 @
+-2024 -144 512 @
+-3576 -1960 352 @
+-2040 -1696 816 "Lower Outhouse"
+-1112 -608 800 "Lower Outpost Entrance Room"
+-912 -1032 1080 "Lower Outpost Side Passage"
+-636 -256 828 @
+-976 564 800 "Lower Outpost Supply Room"
+-1032 868 800 @
+-1088 -28 800 "Lower Outpost Tram Bay"
+-3272 -40 -64 "Lower Tram Tower"
+-3880 -56 -64 @
+6080 1056 2176 "Main Castle Hallway"
+-512 408 664 "Outpost Engine Room"
+-544 -280 664 @
+-924 -1368 1580 "Outpost Spiral Staircase"
+-864 -1436 1088 @
+-456 -744 1552 "Outpost Store Room"
+-540 -1544 1552 @
+6512 1264 2176 "Side Castle Hallway"
+1936 1088 1288 "Upper Bridge"
+5192 1928 2176 "Upper Castle Stairwell"
+904 816 1072 "Upper Mountainside"
+1008 -952 1072 @
+2856 -1184 2000 @
+2960 1128 1592 @
+0 392 720 "Upper Outpost Entrance"
+-284 -1056 1552 "Upper Outpost Hallway"
+-916 -1064 1552 @
+84 -60 848 "Upper Outpost Tram Bay"
+56 -840 1432 "Upper Outpost Tram Bay Steps"
+3304 2024 2128 "Upper Snow Hut"
+2200 2168 1488 "Upper Snow Hut Path"
+2408 -72 1840 "Upper Tram Tower"
+1736 -72 1416 @
+-6712 -88 -472 "Village Engine Room"
+-7176 -1032 -568 "Village Hall"
+-7176 -56 -472 @
+-6552 -720 -512 "Village Hall Side Passage"
+-6632 -920 -640 @
+-6280 432 -312 "Village Radio Room"
+-6544 320 -312 "Village Radio Room Passage"
+-6140 -56 -416 "Village Tram Bay"
