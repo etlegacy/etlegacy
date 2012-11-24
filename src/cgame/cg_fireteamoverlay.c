@@ -99,11 +99,11 @@ void CG_SortClientFireteam()
 
 	qsort(sortedFireTeamClients, MAX_CLIENTS, sizeof(sortedFireTeamClients[0]), CG_SortFireTeam);
 
-	/*  for(i = 0; i < MAX_CLIENTS; i++) {
-	        CG_Printf( "%i ", sortedFireTeamClients[i] );
-	    }
-
-	    CG_Printf( "\n" );*/
+	// debug
+	//for(i = 0; i < MAX_CLIENTS; i++) {
+	//	CG_Printf( "%i ", sortedFireTeamClients[i] );
+	//}
+	//C/G_Printf( "\n" );
 }
 
 // Parses fireteam servercommand
@@ -114,12 +114,6 @@ void CG_ParseFireteams()
 	const char *p;
 	int        clnts[2];
 
-	qboolean onFireteam2;
-	qboolean isLeader2;
-
-//  qboolean onFireteam =   CG_IsOnFireteam( cg.clientNum ) ? qtrue : qfalse;
-//  qboolean isLeader =     CG_IsFireTeamLeader( cg.clientNum ) ? qtrue : qfalse;
-
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
 		cgs.clientinfo[i].fireteamData = NULL;
@@ -128,6 +122,7 @@ void CG_ParseFireteams()
 	for (i = 0; i < MAX_FIRETEAMS; i++)
 	{
 		char hexbuffer[11] = "0x00000000";
+
 		p = CG_ConfigString(CS_FIRETEAMS + i);
 
 		/*      s = Info_ValueForKey(p, "n");
@@ -162,7 +157,7 @@ void CG_ParseFireteams()
 		Q_strncpyz(hexbuffer + 2, s + 8, 9);
 		sscanf(hexbuffer, "%x", &clnts[0]);
 
-		for (j = 0; j < MAX_CLIENTS; j++)
+		for (j = 0; j < cgs.maxclients; j++)
 		{
 			if (COM_BitCheck(clnts, j))
 			{
@@ -178,9 +173,6 @@ void CG_ParseFireteams()
 	}
 
 	CG_SortClientFireteam();
-
-	onFireteam2 = CG_IsOnFireteam(cg.clientNum) ? qtrue : qfalse;
-	isLeader2   = CG_IsFireTeamLeader(cg.clientNum) ? qtrue : qfalse;
 }
 
 // Fireteam that both specified clients are on, if they both are on the same team
@@ -284,17 +276,18 @@ clientInfo_t *CG_FireTeamPlayerForPosition(int pos, int max)
 }
 
 // Client, sorted by rank, on CLIENT'S fireteam
-clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos, int max)
+clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 {
-	int            i, cnt = 0;
-	fireteamData_t *f = CG_IsOnFireteam(cg.clientNum);
+	int            i;
+	int            cnt = 0;
+	fireteamData_t *f  = CG_IsOnFireteam(cg.clientNum);
 
 	if (!f)
 	{
 		return NULL;
 	}
 
-	for (i = 0; i < MAX_CLIENTS && cnt < max; i++)
+	for (i = 0; i < cgs.maxclients && cnt < MAX_FIRETEAM_MEMBERS; i++)
 	{
 		if (!(f == CG_IsOnFireteam(sortedFireTeamClients[i])))
 		{
@@ -314,97 +307,214 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos, int max)
 // Main Functions
 
 #define FT_BAR_YSPACING 2.f
-#define FT_BAR_HEIGHT 10.f
+#define FT_BAR_HEIGHT   10.f
+
+int weaponIconScale(int weap)
+{
+	switch (weap)
+	{
+	// weapons with 'wide' icons
+	case WP_THOMPSON:
+	case WP_MP40:
+	case WP_STEN:
+	case WP_PANZERFAUST:
+	case WP_FLAMETHROWER:
+	case WP_GARAND:
+	case WP_FG42:
+	case WP_FG42SCOPE:
+	case WP_KAR98:
+	case WP_GPG40:
+	case WP_CARBINE:
+	case WP_M7:
+	case WP_MOBILE_MG42:
+	case WP_MOBILE_MG42_SET:
+	case WP_K43:
+	case WP_GARAND_SCOPE:
+	case WP_K43_SCOPE:
+	case WP_MORTAR:
+	case WP_MORTAR_SET:
+		return 2;
+	}
+
+	return 1;
+}
+
+
+/*
+CG_DrawFireTeamOverlay
+
+	based on NQ CG_DrawFireTeamOverlay
+*/
+
+static vec4_t clr1 = { 0.0f, 0.0f, 0.0f, 0.8f };                // box itselfs - { 0.16f,	0.2f,	0.17f,	0.8f }
+static vec4_t clr2 = { 0.0f, 0.0f, 0.0f, 0.2f };                // not selected
+static vec4_t clr3 = { 0.25f, 0.0f, 0.0f, 0.6f };               // selected member
+static vec4_t tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
+static vec4_t bgColor = { 0.0f, 0.0f, 0.0f, 0.6f };       // window
+static vec4_t borderColor = { 0.5f, 0.5f, 0.5f, 0.5f };   // window
+
+// FIXME: add more options to shorten this box
 void CG_DrawFireTeamOverlay(rectDef_t *rect)
 {
 	int            x = rect->x;
-	int            y = rect->y + 1; // +1, jitter it into place in 1024 :)
-	float          h;
-	clientInfo_t   *ci = NULL;
-	char           buffer[64];
-	fireteamData_t *f = NULL;
+	int            y = rect->y + 1;             // +1, jitter it into place in 1024 :)
 	int            i;
-	vec4_t         clr1        = { .16f, .2f, .17f, .8f };
-	vec4_t         clr2        = { 0.f, 0.f, 0.f, .2f };
-	vec4_t         clr3        = { 0.25f, 0.f, 0.f, 153 / 255.f };
-	vec4_t         tclr        = { 0.6f, 0.6f, 0.6f, 1.0f };
-	vec4_t         bgColor     = { 0.0f, 0.0f, 0.0f, 0.6f }; // window
-	vec4_t         borderColor = { 0.5f, 0.5f, 0.5f, 0.5f }; // window
+	int            boxWidth  = 106;
+	int            bestWidth = -1;
+	char           buffer[64];
+	float          h   = 16;                    // 12 + 2 + 2
+	clientInfo_t   *ci = NULL;
+	fireteamData_t *f  = NULL;
+	char           *locStr[MAX_FIRETEAM_MEMBERS];
+	int            locwidth;
+	int            namewidth;
+	vec3_t         origin;
 
+	int curWeap;
+
+	// assign fireteam data, and early out if not on one
 	if (!(f = CG_IsOnFireteam(cg.clientNum)))
 	{
 		return;
 	}
 
-	h = 12 + 2 + 2;
-	for (i = 0; i < 6; i++)
+	memset(locStr, 0, sizeof(locStr));
+
+	// First get name and location width, also store location names
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
-		ci = CG_SortedFireTeamPlayerForPosition(i, 6);
+		ci = CG_SortedFireTeamPlayerForPosition(i);
+
+		// Make sure it's valid
 		if (!ci)
 		{
-			break;;
+			break;
 		}
 
-		h += FT_BAR_HEIGHT + FT_BAR_YSPACING;
+		origin[0] = ci->location[0];
+		origin[1] = ci->location[1];
+		origin[2] = ci->location[2];
+
+		locStr[i] = CG_BuildLocationString(ci->clientNum, origin, LOC_FTEAM);
+
+		if (!locStr[i][1] || !*locStr[i])
+		{
+			locStr[i] = "";
+		}
+
+		locwidth = CG_Text_Width_Ext(locStr[i], 0.2f, 0, &cgs.media.limboFont2);
+
+		//if ( cg_fixedFTeamSize.integer ) {
+		//	namewidth = 102;
+		//}
+		//else {
+		namewidth = CG_Text_Width_Ext(ci->name, 0.2f, 17, &cgs.media.limboFont2);
+
+		if (ci->health == 0)
+		{
+			namewidth += 7;
+		}
+		//}
+
+		if ((locwidth + namewidth) > bestWidth)
+		{
+			bestWidth = locwidth + namewidth;
+		}
+
+		h += 12.f;
 	}
 
-	CG_DrawRect(x, y, 204, h, 1, borderColor);
-	CG_FillRect(x + 1, y + 1, 204 - 2, h - 2, bgColor);
+	boxWidth += bestWidth;
+
+	CG_DrawRect(x, y, boxWidth, h, 1, borderColor);
+	CG_FillRect(x + 1, y + 1, boxWidth - 2, h - 2, bgColor);
 
 	x += 2;
 	y += 2;
 
-	CG_FillRect(x, y, 204 - 4, 12, clr1);
+	CG_FillRect(x, y, boxWidth - 4, 12, clr1);
 
-	sprintf(buffer, "Fireteam: %s", bg_fireteamNames[f->ident]);
+	Com_sprintf(buffer, 64, "Fireteam: %s", bg_fireteamNames[f->ident]);
 	Q_strupr(buffer);
 	CG_Text_Paint_Ext(x + 3, y + FT_BAR_HEIGHT, .19f, .19f, tclr, buffer, 0, 0, 0, &cgs.media.limboFont1);
 
 	x += 2;
-	//y += 2;
 
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
 		y += FT_BAR_HEIGHT + FT_BAR_YSPACING;
 		x  = rect->x + 2;
 
-		ci = CG_SortedFireTeamPlayerForPosition(i, 6);
+		// Grab a pointer to the current player
+		ci = CG_SortedFireTeamPlayerForPosition(i);
+
+		// Make sure it's valid
 		if (!ci)
 		{
-			break;;
+			break;
 		}
 
+		// hilight selected players
 		if (ci->selected)
 		{
-			CG_FillRect(x, y + FT_BAR_YSPACING, 204 - 4, FT_BAR_HEIGHT, clr3);
+			CG_FillRect(x, y + FT_BAR_YSPACING, boxWidth - 4, FT_BAR_HEIGHT, clr3);
 		}
 		else
 		{
-			CG_FillRect(x, y + FT_BAR_YSPACING, 204 - 4, FT_BAR_HEIGHT, clr2);
+			CG_FillRect(x, y + FT_BAR_YSPACING, boxWidth - 4, FT_BAR_HEIGHT, clr2);
 		}
 
 		x += 4;
 
-		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, BG_ClassLetterForNumber(ci->cls), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		x += 10;
+		// jet Pilot - draw class icon in fireteam overlay
+		CG_DrawPic(x, y, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
+		x += 14;
 
-		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, ci->team == TEAM_AXIS ? miniRankNames_Axis[ci->rank] : miniRankNames_Allies[ci->rank], 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		x += 22;
+		// draw the mute-icon in the fireteam overlay..
+		//if ( ci->muted ) {
+		//	CG_DrawPic( x, y, 12, 12, cgs.media.muteIcon );
+		//	x += 14;
+		//} else if
 
+		// ..or else draw objective icon (if they are carrying one) in fireteam overlay..
+		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+		{
+			CG_DrawPic(x, y, 12, 12, cgs.media.objectiveShader);
+			x += 14;
+		}
+		// core: ... or else draw the disguised icon in fireteam overlay..
+		else if (ci->powerups & (1 << PW_OPS_DISGUISED))
+		{
+			CG_DrawPic(x, y, 12, 12, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
+			x += 14;
+		}
+		// ..otherwise draw rank icon in fireteam overlay
+		//else {
+		//	if (ci->rank > 0) CG_DrawPic( x, y, 12, 12, rankicons[ ci->rank ][  ci->team == TEAM_AXIS ? 1 : 0 ][0].shader );
+		//	x += 14;
+		//}
+
+		// draw the player's name
 		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, ci->name, 0, 17, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		x += 90;
 
-		/*      CG_DrawPic(x + 2, y + 2, FT_BAR_HEIGHT - 4, FT_BAR_HEIGHT - 4, cgs.media.movementAutonomyIcons[0]);
-		        x += FT_BAR_HEIGHT;
+		// add space
+		//if ( cg_fixedFTeamSize.integer )
+		//	x += 115;
+		//else
+		x += 14 + CG_Text_Width_Ext(ci->name, 0.2f, 17, &cgs.media.limboFont2);
 
-		        CG_DrawPic(x + 2, y + 2, FT_BAR_HEIGHT - 4, FT_BAR_HEIGHT - 4, cgs.media.weaponAutonomyIcons[0]);
-		        x += FT_BAR_HEIGHT;
-		        x += 4;*/
+		// draw the player's weapon icon
+		curWeap = cg_entities[ci->clientNum].currentState.weapon;
+		if (cg_weapons[curWeap].weaponIcon[0])     // jaquboss - do not try to draw nothing
+		{
+			CG_DrawPic(x, y, weaponIconScale(curWeap) * 10, 10, cg_weapons[curWeap].weaponIcon[0]);
+		}
+		else if (cg_weapons[curWeap].weaponIcon[1])
+		{
+			CG_DrawPic(x, y, weaponIconScale(curWeap) * 10, 10, cg_weapons[curWeap].weaponIcon[1]);
+		}
 
-		/*      if( isLeader ) {
-		            CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, va("%i", i+4), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2 );
-		        }*/
-		x += 20;
+		x += 24;
 
 		if (ci->health > 80)
 		{
@@ -414,25 +524,21 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		{
 			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorYellow, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}
+		else if (ci->health == 0)
+		{
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ((cg.time % 500) > 250)  ? colorWhite : colorRed, "*", 0, 17, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			x += 7;
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ((cg.time % 500) > 250)  ? colorRed : colorWhite, "0", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			x -= 7;
+		}
 		else
 		{
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorRed, va("%i", ci->health < 0 ? 0 : ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorRed, "0", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}
-		//x += 20;
+		// Set hard limit on width
+		x += 24;
 
-		{
-			vec2_t loc;
-			char   *s;
-
-			loc[0] = ci->location[0];
-			loc[1] = ci->location[1];
-
-			s = va("^3(%s)", BG_GetLocationString(loc));
-
-			x = rect->x + (204 - 4 - CG_Text_Width_Ext(s, .2f, 0, &cgs.media.limboFont2));
-
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, va("^3(%s)", BG_GetLocationString(loc)), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		}
+		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, locStr[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 }
 
@@ -615,7 +721,7 @@ const char *CG_BuildSelectedFirteamString(void)
 	*buffer = '\0';
 	for (i = 0; i < 6; i++)
 	{
-		ci = CG_SortedFireTeamPlayerForPosition(i, 6);
+		ci = CG_SortedFireTeamPlayerForPosition(i);
 		if (!ci)
 		{
 			break;

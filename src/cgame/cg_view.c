@@ -1931,6 +1931,44 @@ qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius)
 
 //=========================================================================
 
+static void CG_RenderLocations(void)
+{
+	refEntity_t re;
+	location_t  *location;
+	int         i;
+
+	if (cgs.numLocations < 1)
+	{
+		return;
+	}
+
+	for (i = 0; i < cgs.numLocations; ++i)
+	{
+		location = &cgs.location[i];
+
+		if (!location)
+		{
+			break;
+		}
+
+		if (VectorDistance(cg.refdef.vieworg, location->origin) > 3000)
+		{
+			continue;
+		}
+
+		if (!trap_R_inPVS(cg.refdef.vieworg, location->origin))
+		{
+			continue;
+		}
+
+		memset(&re, 0, sizeof(re));
+		re.reType = RT_SPRITE;
+		VectorCopy(location->origin, re.origin);
+		VectorCopy(location->origin, re.oldorigin);
+		re.radius = 8;
+	}
+}
+
 extern void CG_SetupDlightstyles(void);
 
 
@@ -2114,6 +2152,13 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
             DEBUGTIME
 
             CG_AddScriptSpeakers();
+
+            DEBUGTIME
+
+            if (cg_locations.integer & LOC_DEBUG)
+            {
+                CG_RenderLocations();
+			}
 
             DEBUGTIME
 

@@ -278,6 +278,7 @@ vmCvar_t cl_waveoffset;
 vmCvar_t cg_recording_statusline;
 
 vmCvar_t cg_hitSounds;
+vmCvar_t cg_locations;
 
 typedef struct
 {
@@ -475,6 +476,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_recording_statusline,  "cg_recording_statusline",  "9",     CVAR_ARCHIVE                 },
 
 	{ &cg_hitSounds,             "cg_hitSounds",             "0",     CVAR_ARCHIVE                 },
+	{ &cg_locations,             "cg_locations",             "3",     CVAR_ARCHIVE                 },
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -492,7 +494,7 @@ void CG_RegisterCvars(void)
 	cvarTable_t *cv;
 	char        var[MAX_TOKEN_CHARS];
 
-	trap_Cvar_Set("cg_letterbox", "0");   // force this for people who might have it in their
+	trap_Cvar_Set("cg_letterbox", "0");   // force this for people who might have it in their cfg
 
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{
@@ -2909,6 +2911,10 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cgs.dumpStatsFile = 0;
 	cgs.dumpStatsTime = 0;
+
+	CG_LoadLocations();
+	memset(cgs.clientLocation, 0, sizeof(cgs.clientLocation));
+
 //  CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
 }
 

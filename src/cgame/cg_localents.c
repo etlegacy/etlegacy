@@ -48,6 +48,313 @@ localEntity_t *cg_freeLocalEntities;        // single linked list
 // Ridah, debugging
 int localEntCount = 0;
 
+location_t *CG_GetLocation(int client, vec3_t origin)
+{
+	location_t *curLoc;
+	location_t *bestLoc = NULL;
+	float      bestdist = 200000000.f;
+	float      len;
+	vec3_t     lenVec;
+	int        i;
+
+	if (ISVALIDCLIENTNUM(client) && cgs.clientLocation[client].lastLocation)
+	{
+		if ((cgs.clientLocation[client].lastX == origin[0]
+		     && cgs.clientLocation[client].lastY == origin[1]
+		     && cgs.clientLocation[client].lastZ == origin[2])
+		    && &cgs.location[cgs.clientLocation[client].lastLocation])
+		{
+			return &cgs.location[cgs.clientLocation[client].lastLocation];
+		}
+	}
+
+	for (i = 0; i < cgs.numLocations; ++i)
+	{
+		curLoc = &cgs.location[i];
+
+		if (!curLoc)
+		{
+			break;
+		}
+
+		VectorSubtract(origin, curLoc->origin, lenVec);
+		len = VectorLength(lenVec);
+
+		if (len > bestdist || !trap_R_inPVS(origin, curLoc->origin))
+		{
+
+			//CG_Printf("^6PVS %i \n", trap_R_inPVS(origin, curLoc->origin));
+			//CG_Printf("^6OR %i  %i   --  %i   %i\n", origin[0], origin[1], curLoc->origin[0], curLoc->origin[1]);
+			continue;
+		}
+
+
+		bestdist = len;
+		bestLoc  = curLoc;
+	}
+
+	// store new information
+	if (ISVALIDCLIENTNUM(client) && bestLoc != NULL)
+	{
+		cgs.clientLocation[client].lastX        = origin[0];
+		cgs.clientLocation[client].lastY        = origin[1];
+		cgs.clientLocation[client].lastZ        = origin[2];
+		cgs.clientLocation[client].lastLocation = bestLoc->index;
+	}
+
+	return bestLoc;
+}
+
+char *CG_GetLocationMsg(int clientNum, vec3_t origin)
+{
+	location_t *bestLoc = CG_GetLocation(clientNum, origin);
+
+	// Fast way out, there are no locations for the map
+	if (cgs.numLocations < 1)
+	{
+		return "Unknown";
+	}
+
+	if (bestLoc != NULL && strlen(bestLoc->message) > 1)
+	{
+		return va("%s", bestLoc->message);
+	}
+
+	return "Unknown";
+}
+
+char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
+{
+	char   *locStr = NULL;
+	vec2_t loc;
+
+	loc[0] = origin[0];
+	loc[1] = origin[1];
+
+	if (cg_locations.integer & flag)
+	{
+		qboolean locValid = qtrue;
+
+		if (cg_locations.integer & LOC_SHOWDISTANCE)
+		{
+			if (clientNum == cg.clientNum)
+			{
+				locStr = va("^3     ");
+				CG_Printf("same client\n");
+			}
+			else
+			{
+				vec3_t myOrigin, v;
+				float  dist;
+
+				myOrigin[0] = cgs.clientinfo[cg.clientNum].location[0];
+				myOrigin[1] = cgs.clientinfo[cg.clientNum].location[1];
+				myOrigin[2] = cgs.clientinfo[cg.clientNum].location[2];
+
+				VectorSubtract(origin, myOrigin, v);
+				dist   = VectorLength(v);
+				locStr = va("^3%5i", (int)dist);
+			}
+		}
+		else
+		{
+			locStr = va("^3%s", CG_GetLocationMsg(clientNum, origin));
+			if (!(cg_locations.integer & LOC_KEEPUNKNOWN))
+			{
+				if (!Q_stricmp(locStr, "Unknown"))
+				{
+					locStr   = va("^3(%s)", BG_GetLocationString(loc));
+					locValid = qfalse; // don't draw it twice..
+				}
+			}
+		}
+
+		if (cg_locations.integer & LOC_SHOWCOORDS && locValid)
+		{
+			Q_strcat(locStr, 64, va(" ^3(%s)", BG_GetLocationString(loc)));   // append a location
+		}
+	}
+	else
+	{
+		locStr = va("^3(%s)", BG_GetLocationString(loc));
+	}
+
+	return locStr;
+}
+
+/*
+===========
+Team_GetLocation
+
+Report a location for the player. Uses placed nearby target_location entities
+============
+*/
+void CG_LoadLocations(void)
+{
+	fileHandle_t f;                     // handle of file on disk
+	int          fLen = trap_FS_FOpenFile(va("maps/%s_loc_override.dat", cgs.rawmapname), &f, FS_READ);     // length of the file
+	char         fBuffer[32768];        // buffer to read the file into
+	char         message[64] = "\0";    // location description
+	char         temp[64]    = "\0";    // temporary buffer
+	int          x           = 0;       // x-coord of the location
+	int          y           = 0;       // y-coord of the location
+	int          z           = 0;       // z-coord of the location
+	int          p           = 0;       // current location in the file buffer
+	int          t           = 0;       // current location in the temp buffer
+
+	if (fLen < 0)
+	{
+		// open the location .dat file that matches the map's name
+		fLen = trap_FS_FOpenFile(va("maps/%s_loc.dat", cgs.rawmapname), &f, FS_READ);
+
+		if (fLen < 0)
+		{
+			CG_Printf("^dLoadLocations: ^3Warning: ^9No location data found for map ^2%s^9.\n", cgs.rawmapname);
+			return;
+		}
+	}
+
+	if (fLen > sizeof(fBuffer))
+	{
+		CG_Error("Location file is too big, make it smaller (max = %i bytes)\n", sizeof(fBuffer));
+		trap_FS_FCloseFile(f);
+	}
+
+	trap_FS_Read(&fBuffer, fLen, f);                    // read the file into the buffer
+	fBuffer[fLen] = '\0';                               // make sure it's null-terminated
+	trap_FS_FCloseFile(f);                              // close the file, we're done with it
+
+	CG_Printf("^dLoadLocations: ^9location data for map ^2%s ^9loaded\n", cgs.rawmapname);
+
+	// start parsing!
+	while (p < fLen)
+	{
+		// check for the beginning of a comment
+		if (fBuffer[p++] == '/')
+		{
+			//check for single line comment
+			if (fBuffer[p] == '/')
+			{
+				while (p < fLen && (fBuffer[p] != '\n' && fBuffer[p] != '\r'))
+				{
+					p++;
+				}
+			}
+			// check for multiline comment
+			else if (fBuffer[p] == '*')
+			{
+				while (p < fLen && (fBuffer[p] != '*' && fBuffer[p + 1] != '/'))
+				{
+					p++;
+				}
+			}
+		}
+
+		// parse the next line
+		while (p < fLen && (fBuffer[p] != '\n' || fBuffer[p] != '\r'))
+		{
+			// grab the x-coord
+			while (p < fLen && fBuffer[p] != ' ')
+			{
+				temp[t++] = fBuffer[p++];
+			}
+			temp[t] = '\0';
+			x       = atoi(temp);
+			t       = 0;
+			memset(&temp, 0, sizeof(temp));
+
+			if (p > fLen)
+			{
+				break;
+			}
+
+			p++;
+
+			// grab the y-coord
+			while (p < fLen && fBuffer[p] != ' ')
+			{
+				temp[t++] = fBuffer[p++];
+			}
+			temp[t] = '\0';
+			y       = atoi(temp);
+			t       = 0;
+			memset(&temp, 0, sizeof(temp));
+
+			if (p > fLen)
+			{
+				break;
+			}
+
+			p++;
+
+			// grab the z-coord
+			while (p < fLen && fBuffer[p] != ' ')
+			{
+				temp[t++] = fBuffer[p++];
+			}
+			temp[t] = '\0';
+			z       = atoi(temp);
+			t       = 0;
+
+			memset(&temp, 0, sizeof(temp));
+			if (p > fLen)
+			{
+				break;
+			}
+
+			p++;
+
+			// grab the description
+			while (p < fLen && fBuffer[p] != '\n' && fBuffer[p] != '\r')
+			{
+				// ignore quotation marks
+				if (fBuffer[p] != '\"')
+				{
+					temp[t++] = fBuffer[p++];
+				}
+				else
+				{
+					p++;
+				}
+			}
+			temp[t] = '\0';
+			t       = 0;
+
+			// if @, then keep the previous location name, otherwise, update message
+			if (Q_stricmp(temp, "@"))
+			{
+				strcpy(message, temp);
+			}
+
+			if (p > fLen)
+			{
+				break;
+			}
+
+			if ((x != 0 || y != 0 || z != 0) && strlen(message) > 0)
+			{
+				location_t *loc = &cgs.location[cgs.numLocations];
+
+				loc->index = cgs.numLocations;
+				strcpy(loc->message, message);
+				loc->origin[0] = x;
+				loc->origin[1] = y;
+				loc->origin[2] = z;
+				cgs.numLocations++;
+
+				if (cgs.numLocations == MAX_C_LOCATIONS)
+				{
+					CG_Printf("^9Too many locations specifed.\n");
+					break;
+				}
+			}
+		}
+	}
+	// ok we are succesfull
+	CG_Printf("^2%i ^9locations loaded.\n", cgs.numLocations);
+	cgs.locationsLoaded = qtrue;
+}
+
 /*
 ===================
 CG_InitLocalEntities
@@ -55,7 +362,7 @@ CG_InitLocalEntities
 This is called at startup and for tournement restarts
 ===================
 */
-void    CG_InitLocalEntities(void)
+void CG_InitLocalEntities(void)
 {
 	int i;
 

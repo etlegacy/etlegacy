@@ -1579,20 +1579,12 @@ CG_VoiceChatLocal
 */
 void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, const char *cmd, vec3_t origin)
 {
-    char                *chat;
-    voiceChatList_t     *voiceChatList;
-    clientInfo_t        *ci;
-    sfxHandle_t         snd;
-    qhandle_t           sprite;
-    bufferedVoiceChat_t vchat;
-    const char          *loc = " ";  // NERVE - SMF
+    char            *chat;
+    voiceChatList_t *voiceChatList;
+    clientInfo_t    *ci;
+    sfxHandle_t     snd;
+    qhandle_t       sprite;
 
-    /*  // NERVE - SMF - don't do this in wolfMP
-        // if we are going into the intermission, don't start any voices
-        if ( cg.intermissionStarted ) {
-            return;
-        }
-    */
 
     if (clientNum < 0 || clientNum >= MAX_CLIENTS)
     {
@@ -1609,6 +1601,9 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
         //
         if (mode == SAY_TEAM || !cg_teamChatsOnly.integer)
         {
+            bufferedVoiceChat_t vchat;
+            const char          *loc = " ";
+
             vchat.clientNum = clientNum;
             vchat.snd       = snd;
             vchat.sprite    = sprite;
@@ -1619,7 +1614,7 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
             if (mode != SAY_ALL)
             {
                 // NERVE - SMF - get location
-                loc = BG_GetLocationString(origin);
+                loc = CG_BuildLocationString(clientNum, origin, LOC_VCHAT);
                 if (!loc || !*loc)
                 {
                     loc = " ";
@@ -1629,17 +1624,17 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
             if (mode == SAY_TEAM)
             {
                 Com_sprintf(vchat.message, sizeof(vchat.message), "(%s)%c%c(%s): %c%c%s",
-                            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));
+                            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat)); // FIXME: CG_TranslateString doesn't make sense here
 			}
             else if (mode == SAY_BUDDY)
             {
                 Com_sprintf(vchat.message, sizeof(vchat.message), "<%s>%c%c<%s>: %c%c%s",
-                            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));
+                            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, loc, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));  // FIXME: CG_TranslateString doesn't make sense here
 			}
             else
             {
                 Com_sprintf(vchat.message, sizeof(vchat.message), "%s%c%c: %c%c%s",
-                            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));
+                            ci->name, Q_COLOR_ESCAPE, COLOR_YELLOW, Q_COLOR_ESCAPE, color, CG_TranslateString(chat));  // FIXME: CG_TranslateString doesn't make sense here
 			}
             CG_AddBufferedVoiceChat(&vchat);
 		}
@@ -1721,7 +1716,6 @@ const char *CG_LocalizeServerCommand(const char *buf)
 
     for (i = 0; *s; i++, s++)
     {
-        // TTimo:
         // line was: if ( *s == '[' && !Q_strncmp( s, "[lon]", 5 ) || !Q_strncmp( s, "[lof]", 5 ) ) {
         // || prevails on &&, gcc warning was 'suggest parentheses around && within ||'
         // modified to the correct behaviour

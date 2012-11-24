@@ -198,6 +198,7 @@ void CG_NewClientInfo(int clientNum)
 	// NOTE: why are we bothering to do all this setting up of a new clientInfo_t anyway? it was all for deffered clients iirc, which we dont have
 	newInfo.location[0]  = ci->location[0];
 	newInfo.location[1]  = ci->location[1];
+	newInfo.location[2]  = ci->location[2];
 	newInfo.health       = ci->health;
 	newInfo.fireteamData = ci->fireteamData;
 	newInfo.clientNum    = clientNum;
@@ -235,6 +236,7 @@ void CG_NewClientInfo(int clientNum)
 	{
 		int  i;
 		char buf[2];
+
 		buf[1] = '\0';
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{

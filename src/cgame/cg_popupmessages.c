@@ -538,6 +538,8 @@ void CG_DrawPMItemsBig(void)
 	CG_Text_Paint_Ext(640 - 4 - w, y + 56, 0.22f, 0.24f, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
 }
 
+#define TXTCOLOR_OBJ "^O"
+
 const char *CG_GetPMItemText(centity_t *cent)
 {
 	switch (cent->currentState.effect1Time)
@@ -579,7 +581,21 @@ const char *CG_GetPMItemText(centity_t *cent)
 		{
 			return NULL;
 		}
-		return va("Spotted by %s^7 at %s", cgs.clientinfo[cent->currentState.effect3Time].name, BG_GetLocationString(cent->currentState.origin));
+
+		if (cg_locations.integer & LOC_LANDMINES)
+		{
+			char *locStr = CG_BuildLocationString(-1, cent->currentState.origin, LOC_LANDMINES);
+			if (!locStr || !*locStr)
+			{
+				return va("%sSpotted by ^7%s", TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name);
+			}
+			return va("%sSpotted by ^7%s%s at %s", TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name, TXTCOLOR_OBJ, locStr);
+		}
+		else
+		{
+			return va("%sSpotted by ^7%s", TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name);
+		}
+		break;
 	case PM_OBJECTIVE:
 		switch (cent->currentState.density)
 		{

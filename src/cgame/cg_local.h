@@ -153,8 +153,11 @@
 #define WSTATE_SHUTDOWN     0x02    // Window is shutting down with effects
 #define WSTATE_OFF          0x04    // Window is completely shutdown
 
+//@multiview
 #define MV_PID              0x00FF  // Bits available for player IDs for MultiView windows
 #define MV_SELECTED         0x0100  // MultiView selected window flag is the 9th bit
+
+#define ISVALIDCLIENTNUM(clientNum) (clientNum >= 0 && clientNum < MAX_CLIENTS)
 
 typedef struct
 {
@@ -1781,13 +1784,45 @@ typedef struct oidInfo_s
 	vec3_t origin;
 } oidInfo_t;
 
+// locations
+#define MAX_C_LOCATIONS 1024
+// jaquboss - locations draw bits and cvar
+#define LOC_FTEAM                   1
+#define LOC_CHAT                    2
+#define LOC_VCHAT                   2
+#define LOC_TCHAT                   2
+#define LOC_LANDMINES               4
+#define LOC_KEEPUNKNOWN             8
+#define LOC_SHOWCOORDS              16
+#define LOC_SHOWCOORDS_FTEAM        16 // TODO divide these if requested..
+#define LOC_SHOWCOORDS_VCHAT        16
+#define LOC_SHOWCOORDS_TCHAT        16
+#define LOC_SHOWCOORDS_LANDMINES    16
+#define LOC_SHOWDISTANCE            32
+#define LOC_DEBUG                   512
+
+typedef struct location_s
+{
+	int index;
+	vec3_t origin;
+	char message[64];
+} location_t;
+
+typedef struct
+{
+	int lastLocation;
+	int lastX;
+	int lastY;
+	int lastZ;
+} clientLocation_t;
+
 #define NUM_ENDGAME_AWARDS 14
 
 // The client game static (cgs) structure hold everything
 // loaded or calculated from the gamestate.  It will NOT
 // be cleared when a tournement restart is done, allowing
 // all clients to begin playing instantly
-typedef struct
+typedef struct cgs_s
 {
 	gameState_t gameState;              // gamestate from server
 	glconfig_t glconfig;                // rendering configuration
@@ -2001,6 +2036,12 @@ typedef struct
 	oidInfo_t oidInfo[MAX_OID_TRIGGERS];
 
 	qboolean initing;
+
+	location_t location[MAX_C_LOCATIONS];
+	int numLocations;
+	qboolean locationsLoaded;
+	clientLocation_t clientLocation[MAX_CLIENTS];
+
 } cgs_t;
 
 //==============================================================================
@@ -2181,6 +2222,7 @@ extern vmCvar_t cl_waveoffset;
 extern vmCvar_t cg_recording_statusline;
 
 extern vmCvar_t cg_hitSounds;
+extern vmCvar_t cg_locations;
 
 // cg_main.c
 const char *CG_ConfigString(int index);
@@ -2489,9 +2531,14 @@ void CG_UpdateFlamethrowerSounds(void);
 void CG_FlameDamage(int owner, vec3_t org, float radius);
 
 // cg_localents.c
-void    CG_InitLocalEntities(void);
+void CG_InitLocalEntities(void);
 localEntity_t *CG_AllocLocalEntity(void);
-void    CG_AddLocalEntities(void);
+void CG_AddLocalEntities(void);
+
+char *CG_GetLocationMsg(int clientNum, vec3_t origin);
+char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag);
+void CG_LoadLocations(void);
+
 
 // cg_effects.c
 int CG_GetOriginForTag(centity_t * cent, refEntity_t * parent, char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
@@ -3029,7 +3076,7 @@ clientInfo_t *CG_FireTeamPlayerForPosition(int pos, int max);
 void CG_SortClientFireteam(void);
 
 void CG_DrawFireTeamOverlay(rectDef_t *rect);
-clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos, int max);
+clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos);
 qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly);
 const char *CG_BuildSelectedFirteamString(void);
 
