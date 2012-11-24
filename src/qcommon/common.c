@@ -88,9 +88,8 @@ cvar_t *com_showtrace;
 cvar_t *com_version;
 cvar_t *com_buildScript;    // for automated data building scripts
 cvar_t *con_drawnotify;
-cvar_t *com_introPlayed;
+cvar_t *com_introPlayed;    // Unused. TODO: do we want to enable it?
 cvar_t *com_ansiColor;
-cvar_t *com_logosPlaying;
 cvar_t *cl_paused;
 cvar_t *sv_paused;
 cvar_t *cl_packetdelay;
@@ -2792,13 +2791,13 @@ qboolean Com_CheckProfile(char *profile_path)
 	return qtrue;
 }
 
-//bani - from files.c
+// from files.c
 extern char fs_gamedir[MAX_OSPATH];
 char        last_fs_gamedir[MAX_OSPATH];
 char        last_profile_path[MAX_OSPATH];
 
-//bani - track profile changes, delete old profile.pid if we change fs_game(dir)
-//hackish, we fiddle with fs_gamedir to make FS_* calls work "right"
+// track profile changes, delete old profile.pid if we change fs_game(dir)
+// hackish, we fiddle with fs_gamedir to make FS_* calls work "right"
 void Com_TrackProfile(char *profile_path)
 {
 	char temp_fs_gamedir[MAX_OSPATH];
@@ -2994,7 +2993,7 @@ void Com_Init(char *commandLine)
 	Com_StartupVariable(NULL);
 
 #if DEDICATED
-	// TTimo: default to internet dedicated, not LAN dedicated
+	// default to internet dedicated, not LAN dedicated
 	com_dedicated = Cvar_Get("dedicated", "2", CVAR_ROM);
 #else
 	com_dedicated = Cvar_Get("dedicated", "0", CVAR_LATCH);
@@ -3040,7 +3039,6 @@ void Com_Init(char *commandLine)
 #else
 	com_ansiColor = Cvar_Get("com_ansiColor", "1", CVAR_ARCHIVE);
 #endif
-	com_logosPlaying   = Cvar_Get("com_logosPlaying", "0", CVAR_ROM);
 	com_recommendedSet = Cvar_Get("com_recommendedSet", "0", CVAR_ARCHIVE);
 
 	com_hunkused      = Cvar_Get("com_hunkused", "0", 0);
@@ -3104,13 +3102,15 @@ void Com_Init(char *commandLine)
 
 	if (!com_dedicated->integer)
 	{
-		//Cvar_Set( "com_logosPlaying", "1" );
 		Cbuf_AddText("cinematic etintro.roq\n");
-		/*Cvar_Set( "nextmap", "cinematic avlogo.roq" );
-		if( !com_introPlayed->integer ) {
-		    Cvar_Set( com_introPlayed->name, "1" );
-		    //Cvar_Set( "nextmap", "cinematic avlogo.roq" );
-		}*/
+		/*
+		// Don't play intro movie if already played
+		if (!com_introPlayed->integer)
+		{
+		    Cbuf_AddText("cinematic etintro.roq\n");
+		    Cvar_Set("com_introPlayed", "1");
+		}
+		*/
 	}
 
 	com_fullyInitialized = qtrue;
