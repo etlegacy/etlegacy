@@ -2598,6 +2598,7 @@ qboolean CG_ViewingDraw(void);
 
 // cg_scoreboard.c
 qboolean CG_DrawScoreboard(void);
+int SkillNumForClass(int classNum);
 
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 
