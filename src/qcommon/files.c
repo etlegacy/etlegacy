@@ -4351,7 +4351,7 @@ void FS_InitFilesystem(void)
 		tmp_fs_game         = Cvar_Get("fs_game", "", 0);
 		tmp_fs_game->flags |= CVAR_USER_CREATED; // deal as startup var
 
-		Com_Printf("^2Info: fs_game is set to '%s' mod. Start ET:L with param '+set etmain' for adoring history.\n", tmp_fs_game->string);
+		Com_Printf("Info: fs_game is set to '%s' mod. Start ET:L with param '+set etmain' for adoring history.\n", tmp_fs_game->string);
 	}
 
 	Com_StartupVariable("fs_copyfiles");
