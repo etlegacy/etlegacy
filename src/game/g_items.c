@@ -58,6 +58,9 @@
 
 //======================================================================
 
+/**
+ * @note Unused.
+ */
 int Pickup_Powerup(gentity_t *ent, gentity_t *other)
 {
 	int       quantity;
@@ -163,19 +166,18 @@ int Pickup_Powerup(gentity_t *ent, gentity_t *other)
 	return RESPAWN_POWERUP;
 }
 
-//----(SA) Wolf keys
-//======================================================================
+/**
+ * @note Unused.
+ */
 int Pickup_Key(gentity_t *ent, gentity_t *other)
 {
 	other->client->ps.stats[STAT_KEYS] |= (1 << ent->item->giTag);
 	return RESPAWN_KEY;
 }
 
-/*
-==============
-Pickup_Clipboard
-==============
-*/
+/**
+ * @note Unused.
+ */
 int Pickup_Clipboard(gentity_t *ent, gentity_t *other)
 {
 
@@ -187,22 +189,18 @@ int Pickup_Clipboard(gentity_t *ent, gentity_t *other)
 	return -1;
 }
 
-/*
-==============
-Pickup_Treasure
-==============
-*/
+/**
+ * @note Unused.
+ */
 int Pickup_Treasure(gentity_t *ent, gentity_t *other)
 {
 	return -1;
 }
 
-/*
-==============
-UseHoldableItem
-    server side handling of holdable item use
-==============
-*/
+/**
+ * @brief Server side handling of holdable item use.
+ * @note Unused.
+ */
 void UseHoldableItem(gentity_t *ent, int item)
 {
 	switch (item)
@@ -251,6 +249,9 @@ void UseHoldableItem(gentity_t *ent, int item)
 
 //======================================================================
 
+/**
+ * @note Unused.
+ */
 int Pickup_Holdable(gentity_t *ent, gentity_t *other)
 {
 	return RESPAWN_HOLDABLE;

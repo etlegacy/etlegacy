@@ -46,9 +46,6 @@
 #define BODY_QUEUE_SIZE     8
 
 #define EVENT_VALID_MSEC    300
-#define CARNAGE_REWARD_TIME 3000
-
-#define INTERMISSION_DELAY_TIME 1000
 
 #define MG42_MULTIPLAYER_HEALTH 350
 
@@ -66,19 +63,12 @@
 #define FL_DROPPED_ITEM         0x00001000
 #define FL_NO_BOTS              0x00002000  // spawn point not for bot use
 #define FL_NO_HUMANS            0x00004000  // spawn point just for bots
-#define FL_AI_GRENADE_KICK      0x00008000  // an AI has already decided to kick this grenade
-
 #define FL_NOFATIGUE            0x00010000  // cheat flag no fatigue
 
-#define FL_TOGGLE               0x00020000  //----(SA)  ent is toggling (doors use this for ex.)
-#define FL_KICKACTIVATE         0x00040000  //----(SA)  ent has been activated by a kick (doors use this too for ex.)
-#define FL_SOFTACTIVATE         0x00000040  //----(SA)  ent has been activated while 'walking' (doors use this too for ex.)
+#define FL_TOGGLE               0x00020000  // ent is toggling (doors use this for ex.)
+#define FL_KICKACTIVATE         0x00040000  // ent has been activated by a kick (doors use this too for ex.)
+#define FL_SOFTACTIVATE         0x00000040  // ent has been activated while 'walking' (doors use this too for ex.)
 #define FL_DEFENSE_GUARD        0x00080000  // warzombie defense pose
-
-#define FL_BLANK                0x00100000
-#define FL_BLANK2               0x00200000
-#define FL_NO_MONSTERSLICK      0x00400000
-#define FL_NO_HEADCHECK         0x00800000
 
 #define FL_NODRAW               0x01000000
 
@@ -104,7 +94,7 @@ typedef enum
 	MOVER_2TO1ROTATE
 } moverState_t;
 
-// DHM - Nerve :: Worldspawn spawnflags to indicate if a gametype is not supported
+// Worldspawn spawnflags to indicate if a gametype is not supported
 #define NO_GT_WOLF      1
 #define NO_STOPWATCH    2
 #define NO_CHECKPOINT   4
@@ -139,11 +129,7 @@ typedef struct
 	char *params;
 } g_script_stack_item_t;
 
-// Gordon: need to up this, forest has a HUGE script for the tank.....
-//#define   G_MAX_SCRIPT_STACK_ITEMS    128
-//#define   G_MAX_SCRIPT_STACK_ITEMS    176
-// RF, upped this again for the tank
-// Gordon: and again...
+// value set high for the tank
 #define G_MAX_SCRIPT_STACK_ITEMS    196
 
 typedef struct
@@ -519,12 +505,7 @@ typedef struct
 	float lastfraggedcarrier;
 } playerTeamState_t;
 
-// the auto following clients don't follow a specific client
-// number, but instead follow the first two active players
-#define FOLLOW_ACTIVE1  -1
-#define FOLLOW_ACTIVE2  -2
-
-// OSP - weapon stat counters
+// weapon stat counters
 typedef struct
 {
 	unsigned int atts;
@@ -586,8 +567,6 @@ typedef struct
 
 } clientSession_t;
 
-#define MAX_VOTE_COUNT      3
-
 #define PICKUP_ACTIVATE 0   // pickup items only when using "+activate"
 #define PICKUP_TOUCH    1   // pickup items when touched
 #define PICKUP_FORCE    2   // pickup the next item when touched (and reset to PICKUP_ACTIVATE when done)
@@ -599,7 +578,7 @@ typedef struct
 #define LAG_MIN_DROP_THRESHOLD (LAG_MAX_DROP_THRESHOLD - 200)
 #define LAG_DECAY 1.02f
 
-// OSP -- multiview handling
+// multiview handling
 #define MULTIVIEW_MAXVIEWS  16
 typedef struct
 {
@@ -717,7 +696,7 @@ typedef struct
 #define LT_SPECIAL_PICKUP_MOD   3       // # of times (minus one for modulo) LT must drop ammo before scoring a point
 #define MEDIC_SPECIAL_PICKUP_MOD    4   // same thing for medic
 
-// Gordon: debris test
+// debris test
 typedef struct debrisChunk_s
 {
 	vec3_t origin;
@@ -887,10 +866,7 @@ typedef struct limbo_cam_s
 #define MAX_SPAWN_VARS          64
 #define MAX_SPAWN_VARS_CHARS    2048
 #define VOTE_MAXSTRING          256     // Same value as MAX_STRING_TOKENS
-
 #define MAX_SCRIPT_ACCUM_BUFFERS    8
-
-#define MAX_BUFFERED_CONFIGSTRINGS 128
 
 typedef struct voteInfo_s
 {
@@ -1065,7 +1041,7 @@ typedef struct
 	char tinfoAxis[1400];
 	char tinfoAllies[1400];
 
-	// Gordon: debris test
+	// debris test
 	int numDebrisChunks;
 	debrisChunk_t debrisChunks[MAX_DEBRISCHUNKS];
 
@@ -1142,7 +1118,6 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent);
 // g_cmds.c
 void Cmd_Score_f(gentity_t *ent);
 void StopFollowing(gentity_t *ent);
-//void BroadcastTeamChange( gclient_t *client, int oldTeam );
 void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState, int *specClient);
 qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t w2, qboolean setweapons);
 void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updateclient);
@@ -1154,8 +1129,8 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 #endif
 
-void G_EntitySound(gentity_t *ent, const char *soundId, int volume);
-void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume);
+void G_EntitySound(gentity_t *ent, const char *soundId, int volume); // Unused.
+void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume); // Unused.
 int ClientNumberFromString(gentity_t *to, char *s);
 void SanitizeString(char *in, char *out, qboolean fToLower);
 
@@ -1163,8 +1138,7 @@ void SanitizeString(char *in, char *out, qboolean fToLower);
 void G_RunItem(gentity_t *ent);
 void RespawnItem(gentity_t *ent);
 
-void UseHoldableItem(gentity_t *ent, int item);
-void PrecacheItem(gitem_t *it);
+void UseHoldableItem(gentity_t *ent, int item); // Unused.
 gentity_t *Drop_Item(gentity_t *ent, gitem_t *item, float angle, qboolean novelocity);
 gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNum);
 void SetRespawn(gentity_t *ent, float delay);
@@ -1254,10 +1228,10 @@ gentity_t *G_BuildLeg(gentity_t *ent);
 
 // damage flags
 #define DAMAGE_RADIUS               0x00000001  // damage was indirect
-#define DAMAGE_HALF_KNOCKBACK       0x00000002  // Gordon: do less knockback
+#define DAMAGE_HALF_KNOCKBACK       0x00000002  // do less knockback
 #define DAMAGE_NO_KNOCKBACK         0x00000008  // do not affect velocity, just view angles
 #define DAMAGE_NO_PROTECTION        0x00000020  // armor, shields, invulnerability, and godmode have no effect
-#define DAMAGE_NO_TEAM_PROTECTION   0x00000010  // armor, shields, invulnerability, and godmode have no effect
+#define DAMAGE_NO_TEAM_PROTECTION   0x00000010  // Unused. Armor, shields, invulnerability, and godmode have no effect
 #define DAMAGE_DISTANCEFALLOFF      0x00000040  // distance falloff
 
 // g_missile.c
@@ -1265,17 +1239,12 @@ void G_RunMissile(gentity_t *ent);
 void G_RunBomb(gentity_t *ent);
 int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allowBounce);
 
-qboolean G_HasDroppedItem(gentity_t *ent, int modType);
+qboolean G_HasDroppedItem(gentity_t *ent, int modType); // Unused.
 
-// Rafael zombiespit
-void G_RunDebris(gentity_t *ent);
-
-//DHM - Nerve :: server side flamethrower collision
+// server side flamethrower collision
 void G_RunFlamechunk(gentity_t *ent);
 
-//----(SA) removed unused q3a weapon firing
 gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir);
-
 gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t aimdir, int grenadeWPID);
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir);
 gentity_t *fire_speargun(gentity_t *self, vec3_t start, vec3_t dir);
@@ -1333,7 +1302,7 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon);
 void CalcMuzzlePointForActivate(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
 
 // g_client.c
-team_t TeamCount(int ignoreClientNum, int team);            // NERVE - SMF - merge from team arena
+team_t TeamCount(int ignoreClientNum, int team);
 team_t PickTeam(int ignoreClientNum);
 void SetClientViewAngle(gentity_t *ent, vec3_t angle);
 gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles);
@@ -1484,7 +1453,7 @@ void Props_Chair_Skyboxtouch(gentity_t *ent);
 #include "g_team.h" // teamplay specific stuff
 
 extern level_locals_t   level;
-extern gentity_t        g_entities[];   //DAJ was explicit set to MAX_ENTITIES
+extern gentity_t        g_entities[];   // was explicitly set to MAX_ENTITIES
 extern g_campaignInfo_t g_campaigns[];
 
 #define FOFS(x) ((size_t)&(((gentity_t *)0)->x))
@@ -1506,7 +1475,7 @@ extern vmCvar_t g_dedicated;
 extern vmCvar_t g_cheats;
 extern vmCvar_t g_maxclients;               // allow this many total, including spectators
 extern vmCvar_t g_maxGameClients;           // allow this many active
-extern vmCvar_t g_minGameClients;           // NERVE - SMF - we need at least this many before match actually starts
+extern vmCvar_t g_minGameClients;           // we need at least this many before match actually starts
 extern vmCvar_t g_restarted;
 
 extern vmCvar_t g_fraglimit;
@@ -1531,18 +1500,17 @@ extern vmCvar_t g_motd;
 extern vmCvar_t g_warmup;
 extern vmCvar_t voteFlags;
 
-// DHM - Nerve :: The number of complaints allowed before kick/ban
-extern vmCvar_t g_complaintlimit;
+extern vmCvar_t g_complaintlimit;           // number of complaints allowed before kick/ban
 extern vmCvar_t g_ipcomplaintlimit;
 extern vmCvar_t g_filtercams;
-extern vmCvar_t g_maxlives;                 // DHM - Nerve :: number of respawns allowed (0==infinite)
+extern vmCvar_t g_maxlives;                 // number of respawns allowed (0==infinite)
 extern vmCvar_t g_maxlivesRespawnPenalty;
-extern vmCvar_t g_voiceChatsAllowed;        // DHM - Nerve :: number before spam control
+extern vmCvar_t g_voiceChatsAllowed;        // number before spam control
 extern vmCvar_t g_alliedmaxlives;
 extern vmCvar_t g_axismaxlives;
-extern vmCvar_t g_fastres;                  // Xian - Fast medic res'ing
-extern vmCvar_t g_knifeonly;                // Xian - Wacky Knife-Only rounds
-extern vmCvar_t g_enforcemaxlives;          // Xian - Temp ban with maxlives between rounds
+extern vmCvar_t g_fastres;                  // Fast medic res'ing
+extern vmCvar_t g_knifeonly;                // Wacky Knife-Only rounds
+extern vmCvar_t g_enforcemaxlives;          // Temp ban with maxlives between rounds
 
 extern vmCvar_t g_needpass;
 extern vmCvar_t g_balancedteams;
@@ -1557,13 +1525,12 @@ extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
 
 extern vmCvar_t g_scriptName;           // name of script file to run (instead of default for that map)
-
 extern vmCvar_t g_scriptDebug;
 
 extern vmCvar_t g_userAim;
 extern vmCvar_t g_developer;
 
-// JPW NERVE multiplayer
+// multiplayer
 extern vmCvar_t g_redlimbotime;
 extern vmCvar_t g_bluelimbotime;
 extern vmCvar_t g_medicChargeTime;
@@ -1588,7 +1555,7 @@ extern vmCvar_t g_oldCampaign;
 extern vmCvar_t g_currentCampaign;
 extern vmCvar_t g_currentCampaignMap;
 
-// Arnout: for LMS
+// For LMS
 extern vmCvar_t g_axiswins;
 extern vmCvar_t g_alliedwins;
 extern vmCvar_t g_lms_teamForceBalance;
@@ -1881,7 +1848,6 @@ void G_PrintClientSpammyCenterPrint(int entityNum, char *text);
 void aagun_fire(gentity_t *other);
 
 //      Server only entities
-
 struct g_serverEntity_s
 {
 	qboolean inuse;
@@ -1913,8 +1879,6 @@ struct g_serverEntity_s
 
 // get the server entity with the passed in number
 g_serverEntity_t *GetServerEntity(int num);
-
-#define SE_FOFS(x) ((int)&(((g_serverEntity_t *)0)->x))
 
 // Match settings
 #define PAUSE_NONE      0x00    // Match is NOT paused.

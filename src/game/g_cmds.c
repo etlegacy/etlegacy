@@ -1787,17 +1787,15 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir)
 	// leave it where it was
 }
 
-/*======================
-G_EntitySound
-    Mad Doc xkan, 11/06/2002 -
-
-    Plays a sound (wav file or sound script) on this entity
-
-    Note that calling G_AddEvent(..., EV_GENERAL_SOUND, ...) has the danger of
-    the event never getting through to the client because the entity might not
-    be visible (unless it has the SVF_BROADCAST flag), so if you want to make sure
-    the sound is heard, call this function instead.
-======================*/
+/**
+ * @brief Plays a sound (wav file or sound script) on this entity
+ * @note Unused.
+ *
+ * Note that calling G_AddEvent(..., EV_GENERAL_SOUND, ...) has the danger of
+ * the event never getting through to the client because the entity might not
+ * be visible (unless it has the SVF_BROADCAST flag), so if you want to make sure
+ * the sound is heard, call this function instead.
+ */
 void G_EntitySound(
     gentity_t *ent,         // entity to play the sound on
     const char *soundId,    // sound file name or sound script ID
@@ -1807,13 +1805,10 @@ void G_EntitySound(
 	                              (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2]));
 }
 
-/*======================
-G_EntitySoundNoCut
-    Mad Doc xkan, 1/16/2003 -
-
-    Similar to G_EntitySound, but do not cut this sound off
-
-======================*/
+/**
+ * @brief Similar to G_EntitySound, but do not cut this sound off
+ * @note Unused.
+ */
 void G_EntitySoundNoCut(
     gentity_t *ent,         // entity to play the sound on
     const char *soundId,    // sound file name or sound script ID

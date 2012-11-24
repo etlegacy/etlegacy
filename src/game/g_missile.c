@@ -1501,12 +1501,9 @@ gentity_t *G_FindSatchel(gentity_t *ent)
 	return NULL;
 }
 
-/*
-==========
-G_FindDroppedItem
-==========
-*/
-
+/**
+ * @note Unused.
+ */
 qboolean G_HasDroppedItem(gentity_t *ent, int modType)
 {
 	gentity_t *e;
