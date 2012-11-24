@@ -1,0 +1,148 @@
+/////////////////////////////////////////////////////////
+// Map name       Fuel Dump                            //
+// Locations by   Rain                                 //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 25                //
+// Last edited    14-10-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+-11249 -2452 584 "^1Command Post"
+-9765 -5402 240 "^1Depot Door"
+-11562 -5589 246 "^1Depot Side Wall"
+-10810 -7418 334 "^1Fuel Dump"
+148 -7548 320 "^3Allied Entrance Spawn"
+-3128 -8340 452 "^3Allied Health & Ammo"
+-893 -8411 368 "^3Allied Hut"
+-2099 -1513 672 "^3Axis Command Post"
+-2070 -1203 709 "^3Axis Command Post Hut"
+-2387 -1529 684 @
+-3737 -5112 280 "^3Bridge"
+-3717 -4384 288 @
+-4016 -5444 266 "^3Bridge Supplies"
+-7548 -2833 275 "^3Cave Exit"
+-6826 -3267 311 "^3Cave Shortcut"
+-6271 -3291 327 @
+-8153 -4235 536 "^3Cave Storage"
+-8149 -4061 536 @
+-7964 -4453 561 "^3Cave Storage Corridor"
+-7930 -4030 572 @
+-8313 -4495 539 @
+-8994 -4582 338 "^3Cave Storage Exit"
+-8566 -4482 544 @
+-7713 -3826 472 "^3Cave Storage Stairs"
+-7040 -2682 286 "^3Caves"
+-11006 -2286 576 "^3Command Post Garage"
+-10294 -5502 696 "^3Depot Antenna"
+-10281 -5231 696 @
+-12113 -6428 272 "^3Depot Cache"
+-9776 -5133 240 "^3Depot Door"
+-9786 -5641 240 @
+-9091 -5364 512 "^3Depot Facade"
+-9659 -5364 504 @
+-9909 -5375 504 @
+-9252 -5507 512 @
+-10679 -6692 302 "^3Depot Garage"
+-11235 -6362 412 @
+-10965 -6725 278 @
+-11139 -6751 472 "^3Depot Garage Office"
+-10625 -6061 240 "^3Depot Garage Path"
+-11236 -6069 240 @
+-10401 -5714 240 @
+-9526 -5206 244 "^3Depot Guard House"
+-12473 -7388 260 "^3Depot Hinterlands"
+-10290 -5246 512 "^3Depot MG Nest"
+-10282 -5581 464 "^3Depot MG Room"
+-10645 -6564 646 "^3Depot Roof"
+-10405 -6301 632 @
+-11156 -6595 668 @
+-10514 -6306 472 "^3Depot Roof Access"
+-11688 -5136 277 "^3Depot Side Wall"
+-12180 -5806 240 @
+-11465 -5370 512 "^3Depot Sidewall Tower"
+-10259 -7175 255 "^3East Base Fortification"
+-10192 -6453 240 @
+-9545 -5588 344 "^3East Depot Stairs"
+-1212 -3013 458 "^3Foot Bridge"
+-1204 -4101 455 @
+-1196 -3537 436 @
+-1088 -4254 448 "^3Foot Bridge Supplies"
+-4718 -1606 864 "^3Forward Lookout"
+-614 -3501 138 "^3Frozen River"
+-4366 -4896 150 @
+-3150 -4653 139 @
+-2489 -3888 128 @
+-1554 -3461 128 @
+129 -3606 128 @
+-5137 -4590 147 "^3Frozen Tunnel"
+-5724 -3985 158 @
+-5649 -3392 296 "^3Frozen Tunnel Access"
+-10949 -2256 1038 "^3Garage Roof"
+-2506 -5625 654 "^3Happy Trickjump Rock"
+-8689 -6637 272 "^3Lower Depot Spawn"
+-9191 -7337 280 "^3Lower Depot Spawn Exit"
+-5526 -1477 401 "^3Lower Office"
+-10713 -1419 624 "^3Near Garage"
+-11545 -2207 617 @
+-11472 -2829 574 @
+-7723 -1403 498 "^3North Cave Exit"
+-7277 -1837 384 @
+-5883 -3054 262 "^3North Caves"
+-6031 -1667 400 @
+-6974 -1926 392 @
+-235 -4508 556 "^3North Footbridge Path"
+-3794 -1736 720 "^3North Hill"
+-2789 -1989 727 @
+-1184 -2695 516 @
+-199 -2899 633 @
+-4584 -1859 635 @
+-4414 -1565 658 @
+-2837 -1045 721 @
+-1562 -1652 634 @
+-2708 -1476 619 @
+-3372 -1520 687 @
+-3532 -2199 681 @
+-1619 -2356 558 @
+-2276 -2164 625 @
+-2355 -2627 432 "^3North Hillside"
+-4598 -2352 371 @
+-4233 -2063 499 @
+-3147 -2662 484 @
+-3596 -2471 509 @
+-2051 -2593 439 @
+-3853 -2274 538 @
+-9492 -530 965 "^3North Path"
+-5116 -1784 613 "^3Office"
+-5651 -1543 694 @
+-5634 -2290 565 @
+-5407 -1754 560 @
+-5307 -2813 580 "^3Office Balcony"
+-2929 -7966 426 "^3Road MG"
+-10165 -2713 547 "^3Side MG Nest"
+-9476 -1207 1291 "^3Sniper Hill"
+-9126 -5557 512 "^3Sock's Room"
+-7402 -3562 338 "^3South Caves"
+-269 -5870 555 "^3South Footbridge Path"
+-10923 -2836 560 "^3South Garage Path"
+-382 -7577 280 "^3Tank Path"
+-1956 -7561 272 @
+-2848 -6922 288 @
+-3675 -5921 272 @
+-9365 -4102 270 "^3Tank Track"
+-5326 -2815 272 "^3Tunnel Doors"
+-5044 -4737 144 "^3Tunnel Grate"
+-3614 -1937 1028 "^3Tunnel MG"
+-3417 -1856 761 "^3Tunnel MG Supplies"
+-8611 -5940 370 "^3Upper Depot Spawn"
+-5292 -1566 826 "^3Upper Office"
+-10267 -5764 392 "^3Ventilation Unit"
+-10487 -6775 856 "^3Water Tower"
+-11462 -7348 240 "^3West Base Fortification"
+-11621 -6271 240 @
+-11050 -5213 276 "^3West Depot Wall"
+-10589 -5200 263 @
+-11116 -5363 243 @
+-11022 -5297 504 @
+-10546 -5310 504 "^3West Parapet"
+-8663 -3496 447 "^3Western Boulders"
+-12433 -3440 640 "^3Western Valley"
+-12354 -4465 615 @

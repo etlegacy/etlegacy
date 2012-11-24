@@ -1,0 +1,97 @@
+/////////////////////////////////////////////////////////
+// Map name       Gold Rush                            //
+// Locations by   Rain                                 //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 24                //
+// Last edited    14-10-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+-382 1154 360 "^1Command Post"
+2454 -2238 -267 "^1Gold Desk"
+792 188 4 "^1Tank Barrier #1"
+1838 74 -351 "^1Tank Barrier #2"
+355 -603 -192 "^1Truck Barrier #1"
+-2232 -775 6 "^1Truck Barrier #2"
+-3580 -220 -51 "^3Allied Spawn"
+2652 -818 -395 "^3Axis Spawn"
+1122 114 217 "^3Balcony"
+980 -189 218 @
+-110 -190 288 @
+539 -193 265 @
+257 -181 288 @
+-116 73 214 "^3Balcony Stairs"
+2303 -2070 -311 "^3Bank"
+1932 -2257 -311 @
+2564 -2501 -311 @
+2292 -2248 -311 @
+2488 -2022 -311 @
+850 -694 -326 "^3Bank Alley"
+598 -415 -241 @
+3138 -1818 -383 "^3Bank Alleyway"
+2816 -2785 -391 @
+2143 -2801 -348 @
+2954 -1332 -395 @
+1614 -1114 -308 "^3Bank Courtyard"
+1804 -433 -351 @
+2008 -1784 -301 @
+1093 -1580 -350 @
+1168 -964 -351 @
+1619 -1521 -348 @
+2161 -1133 -351 @
+1600 -1813 -287 "^3Bank Doors"
+1593 -2219 -311 "^3Bank Lobby"
+735 -1780 -159 "^3Bank MG42"
+-987 477 275 "^3Barrier #1 Alley"
+-393 439 202 @
+1565 -2861 -351 "^3Behind Bank"
+914 -2637 -336 @
+953 -2111 -351 @
+1824 67 -31 "^3Bridge"
+1315 17 -6 @
+1348 714 -200 "^3Bridge North Stairs"
+1448 -141 -127 "^3Bridge South Stairs"
+1058 1948 257 "^3Cart"
+-352 952 353 "^3Command Post Corridor"
+-2949 305 -24 "^3Depot Road"
+-2184 540 44 @
+-2138 1674 216 @
+-1576 1762 265 @
+2897 15 -191 "^3East Tank Path"
+217 -187 65 "^3Lower Colonnade"
+933 -179 38 @
+518 -179 54 @
+-143 -300 66 "^3Lower Colonnade Stairs"
+1439 307 -21 "^3Lower Ladder Room"
+1157 403 -31 @
+553 -376 70 "^3Mezzanine"
+1013 -417 8 "^3Mezzanine Access"
+-1857 556 96 "^3Narrow Alley"
+-1556 248 128 @
+2924 1085 -351 "^3North East Tank Path"
+2276 674 -347 "^3Pavilion"
+1981 1174 -351 @
+1938 1438 -159 "^3Pavilion MG"
+-771 -1681 -41 "^3South Courtyard"
+-413 -1342 -119 @
+-79 -968 -151 @
+52 -1598 -199 @
+-1289 -394 144 "^3South Courtyard Alley"
+-1296 323 232 @
+-1316 82 200 @
+-331 -1849 -147 "^3South Health & Ammo"
+-1187 -869 96 "^3South Platform"
+-1765 -1723 156 "^3South West MG Nest"
+290 2032 331 "^3Tank Depot Road"
+795 1411 229 @
+778 988 157 @
+0 3660 432 "^3Tank Depot Spawn"
+-1931 2073 216 "^3Tank Depot Supplies"
+-464 2031 378 "^3Tank Depot Yard"
+-388 1551 366 @
+240 359 132 "^3Tower"
+430 34 63 @
+-3290 -1066 -31 "^3Truck Escape"
+-2652 -785 -13 "^3Truck Path"
+-1856 -1071 11 @
+1439 286 225 "^3Upper Ladder Room"
+1140 395 224 @
