@@ -11,14 +11,12 @@
 cmake_minimum_required(VERSION 2.6)
 
 project(ETLEGACY C CXX)
+set(ETLEGACY_VERSION "2.70rc1")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(Build)
+include(GetGitRevisionDescription)
 
-set(ETLEGACY_VERSION_MAJOR  "2")
-set(ETLEGACY_VERSION_MINOR  "7")
-set(ETLEGACY_VERSION_PATCH  "0")
-set(ETLEGACY_VERSION "${ETLEGACY_VERSION_MAJOR}.${ETLEGACY_VERSION_MINOR}${ETLEGACY_VERSION_PATCH}")
 # Used to store real system processor when we overwrite CMAKE_SYSTEM_PROCESSOR for cross-compile builds
 set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR}) # See IS_64_BIT_BUILD_SYSTEM
 
@@ -221,6 +219,19 @@ FILE(GLOB UI_SRC
 	"src/game/bg_misc.c"
 )
 
+# Version generation
+git_describe(GIT_DESCRIBE)
+git_describe(GIT_DESCRIBE_TAG "--abbrev=0")
+if(GIT_DESCRIBE)
+	set(ETL_CMAKE_VERSION ${GIT_DESCRIBE})
+	set(ETL_CMAKE_VERSION_SHORT ${GIT_DESCRIBE_TAG})
+else() # Not using source from git repo
+	set(ETL_CMAKE_VERSION ${ETLEGACY_VERSION})
+	set(ETL_CMAKE_VERSION_SHORT ${ETLEGACY_VERSION})
+endif()
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/git_version.h" @ONLY)
+list(APPEND COMMON_SRC "${CMAKE_CURRENT_BINARY_DIR}/git_version.h")
+
 # If we change architecture we need to force rescan of libraries
 if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 	force_rescan_library(SDL32)
@@ -386,7 +397,7 @@ endif(FEATURE_TRACKBASE)
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
 	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC})
-	include_directories(${CLIENT_INCLUDE_DIRS})
+	include_directories(${CLIENT_INCLUDE_DIRS} ${PROJECT_BINARY_DIR})
 	if(BUNDLED_SDL)
 		add_dependencies(etl bundled_sdl)
 	endif(BUNDLED_SDL)
@@ -433,7 +444,7 @@ if(BUILD_MOD)
 			add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_lua)
 		endif(BUNDLED_LUA)
 		target_link_libraries(qagame${LIB_SUFFIX}${ARCH} ${MOD_LIBRARIES})
-		include_directories(${MOD_INCLUDE_DIRS})
+		include_directories(${MOD_INCLUDE_DIRS} ${PROJECT_BINARY_DIR})
 	endif(FEATURE_LUA)
 
 	set_target_properties(qagame${LIB_SUFFIX}${ARCH}
