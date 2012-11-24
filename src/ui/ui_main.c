@@ -8628,7 +8628,6 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "cg_zoomstepsniper",                   "2",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "cg_voicespritetime",                  "6000",                       CVAR_ARCHIVE                   },
 	{ NULL,                             "cg_complaintPopUp",                   "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_announcer",                        "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "cg_printObjectiveInfo",               "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "cg_useScreenshotJPEG",                "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "cg_drawGun",                          "1",                          CVAR_ARCHIVE                   },

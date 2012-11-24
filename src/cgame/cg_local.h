@@ -1788,16 +1788,11 @@ typedef struct oidInfo_s
 #define MAX_C_LOCATIONS 1024
 // jaquboss - locations draw bits and cvar
 #define LOC_FTEAM                   1
-#define LOC_CHAT                    2
 #define LOC_VCHAT                   2
 #define LOC_TCHAT                   2
 #define LOC_LANDMINES               4
 #define LOC_KEEPUNKNOWN             8
 #define LOC_SHOWCOORDS              16
-#define LOC_SHOWCOORDS_FTEAM        16 // TODO divide these if requested..
-#define LOC_SHOWCOORDS_VCHAT        16
-#define LOC_SHOWCOORDS_TCHAT        16
-#define LOC_SHOWCOORDS_LANDMINES    16
 #define LOC_SHOWDISTANCE            32
 #define LOC_DEBUG                   512
 
@@ -2165,7 +2160,6 @@ extern vmCvar_t developer;
 extern vmCvar_t authLevel;
 extern vmCvar_t cf_wstats;
 extern vmCvar_t cf_wtopshots;
-//extern vmCvar_t cg_announcer;
 extern vmCvar_t cg_autoAction;
 extern vmCvar_t cg_autoReload;
 extern vmCvar_t cg_bloodDamageBlend;

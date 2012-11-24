@@ -183,7 +183,9 @@ static void CG_ParseWarmup(void)
 	}
 	else if (warmup > 0 && cg.warmup <= 0 && cgs.gamestate != GS_WARMUP)
 	{
-//      if(cg_announcer.integer > 0) trap_S_StartLocalSound( cgs.media.countPrepare, CHAN_ANNOUNCER );
+		CG_Printf("WARMUP %i\n", warmup);
+
+		trap_S_StartLocalSound( cgs.media.countPrepare, CHAN_ANNOUNCER );
 		if (!cg.demoPlayback && (cg_autoAction.integer & AA_DEMORECORD))
 		{
 			CG_autoRecord_f();
@@ -328,7 +330,8 @@ void CG_ParseWolfinfo(void)
 	// OSP - Announce game in progress if we are really playing
 	if (old_gs != GS_PLAYING && cgs.gamestate == GS_PLAYING)
 	{
-//      if(cg_announcer.integer > 0) trap_S_StartLocalSound(cgs.media.countFight, CHAN_ANNOUNCER);
+		trap_S_StartLocalSound(cgs.media.countFight, CHAN_ANNOUNCER);
+
 		Pri("^1FIGHT!\n");
 		CPri("^1FIGHT!\n");
 	}
@@ -1535,7 +1538,7 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
     if (!vchat->voiceOnly && !cg_noVoiceText.integer)
     {
         CG_AddToTeamChat(vchat->message, vchat->clientNum);
-        CG_Printf("[skipnotify]: %s\n", vchat->message);     // JPW NERVE
+        CG_Printf("[skipnotify]: %s\n", vchat->message);
 	}
     voiceChatBuffer[cg.voiceChatBufferOut].snd = 0;
 }
@@ -2495,21 +2498,37 @@ static void CG_ServerCommand(void)
 	}
     if (!Q_stricmp(cmd, "tchat"))
     {
-        const char *s;
+		const	char *s;
+		vec3_t	origin;
+		char	*locStr = NULL;
+		int		clientNum = atoi(CG_Argv(2));
 
-        if (atoi(CG_Argv(3)))
-        {
-            s = CG_LocalizeServerCommand(CG_Argv(1));
+		if (atoi(CG_Argv(3)))
+		{
+			s = CG_LocalizeServerCommand(CG_Argv(1));
 		}
-        else
-        {
-            s = CG_Argv(1);
+		else
+		{
+			s = CG_Argv(1);
 		}
 
-        Q_strncpyz(text, s, MAX_SAY_TEXT);
-        CG_RemoveChatEscapeChar(text);
-        CG_AddToTeamChat(text, atoi(CG_Argv(2)));
-        CG_Printf("%s\n", text);   // JPW NERVE
+		origin[0] = atoi(CG_Argv(4));
+		origin[1] = atoi(CG_Argv(5));
+		origin[2] = atoi(CG_Argv(6));
+
+		locStr = CG_BuildLocationString(clientNum, origin, LOC_TCHAT);
+
+		if(!locStr || !*locStr)
+		{
+			locStr = "";
+		}
+
+		// process locations and name here
+		Com_sprintf(text, sizeof(text), "(%s^7)^3(%s):%s",cgs.clientinfo[clientNum].name, locStr, s);
+
+		CG_RemoveChatEscapeChar(text);
+		CG_AddToTeamChat(text, clientNum); // disguise ?
+		CG_Printf("%s\n", text);
 
         return;
 	}
