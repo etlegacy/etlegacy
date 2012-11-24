@@ -8730,6 +8730,8 @@ cvarTable_t cvarTable[] =
 
 	{ NULL,                             "ui_showtooltips",                     "1",                          CVAR_ARCHIVE                   },
 	{ &ui_autoredirect,                 "ui_autoredirect",                     "0",                          CVAR_ARCHIVE                   },
+
+	{ NULL,                             "cg_locations",                        "3",                          CVAR_ARCHIVE                   },
 };
 
 int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
