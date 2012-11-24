@@ -39,7 +39,7 @@
 #ifndef _WIN32
 #include <netinet/in.h>
 #include <sys/stat.h> // umask
-#include <unistd.h> // getpid() - this is POSIX check MAC build
+#include <unistd.h> // getpid()
 #else
 #include <winsock.h>
 #endif
@@ -65,11 +65,11 @@ static fileHandle_t logfile;
 fileHandle_t        com_journalFile;        // events are written here
 fileHandle_t        com_journalDataFile;    // config files are written here
 
-cvar_t *com_crashed = NULL;         // ydnar: set in case of a crash, prevents CVAR_UNSAFE variables from being set from a cfg
-//bani - explicit NULL to make win32 teh happy
+cvar_t *com_crashed = NULL;         // set in case of a crash, prevents CVAR_UNSAFE variables from being set from a cfg
+                                    // explicit NULL to make win32 teh happy
 
-cvar_t *com_ignorecrash = NULL;     // bani - let experienced users ignore crashes, explicit NULL to make win32 teh happy
-cvar_t *com_pid;        // bani - process id
+cvar_t *com_ignorecrash = NULL;     // let experienced users ignore crashes, explicit NULL to make win32 teh happy
+cvar_t *com_pid;                    // process id
 
 cvar_t *com_viewlog;
 cvar_t *com_speeds;
@@ -95,10 +95,6 @@ cvar_t *cl_paused;
 cvar_t *sv_paused;
 cvar_t *cl_packetdelay;
 cvar_t *sv_packetdelay;
-cvar_t *com_cameraMode;
-#if defined(_WIN32) && defined(_DEBUG)
-cvar_t *com_noErrorInterrupt;
-#endif
 
 #if idx64
 int (*Q_VMftol)(void); // Unused in ET:L. Used in ioquake’s VM code
@@ -380,7 +376,7 @@ void Com_Quit_f(void)
 	if (!com_errorEntered)
 	{
 		SV_Shutdown("Server quit\n");
-//bani
+
 #ifndef DEDICATED
 		CL_ShutdownCGame();
 #endif
@@ -2869,7 +2865,7 @@ void Com_Init(char *commandLine)
 {
 	char *s;
 	int  pid;
-	// TTimo gcc warning: variable `safeMode' might be clobbered by `longjmp' or `vfork'
+	// gcc warning: variable `safeMode' might be clobbered by `longjmp' or `vfork'
 	volatile qboolean safeMode = qtrue;
 
 	Com_Printf(ET_VERSION "\n");
@@ -2879,7 +2875,7 @@ void Com_Init(char *commandLine)
 		Sys_Error("Error during initialization");
 	}
 
-	// bk001129 - do this before anything else decides to push events
+	// do this before anything else decides to push events
 	Com_InitPushEvent();
 
 	Com_InitSmallZoneMemory();
@@ -2900,21 +2896,17 @@ void Com_Init(char *commandLine)
 	// get the developer cvar set as early as possible
 	Com_StartupVariable("developer");
 
-	// bani: init this early
+	// init this early
 	Com_StartupVariable("com_ignorecrash");
 	com_ignorecrash = Cvar_Get("com_ignorecrash", "0", 0);
 
-	// ydnar: init crashed variable as early as possible
+	// init crashed variable as early as possible
 	com_crashed = Cvar_Get("com_crashed", "0", CVAR_TEMP);
 
-	// bani: init pid
+	// init pid
 #ifdef _WIN32
 	pid = GetCurrentProcessId();
-#elif __linux__
-	pid = getpid();
-#elif __APPLE__
-	pid = getpid();
-#elif __OpenBSD__
+#else
 	pid = getpid();
 #endif
 	s       = va("%d", pid);
@@ -3017,21 +3009,19 @@ void Com_Init(char *commandLine)
 	//
 	// init commands and vars
 	//
-	// Gordon: no need to latch this in ET, our recoil is framerate independant
+	// no need to latch this in ET, our recoil is framerate independant
 	com_maxfps = Cvar_Get("com_maxfps", "85", CVAR_ARCHIVE /*|CVAR_LATCH*/);
-//	com_blood = Cvar_Get ("com_blood", "1", CVAR_ARCHIVE); // Gordon: no longer used?
 
 	com_developer = Cvar_Get("developer", "0", CVAR_TEMP);
 	com_logfile   = Cvar_Get("logfile", "0", CVAR_TEMP);
 
-	com_timescale  = Cvar_Get("timescale", "1", CVAR_CHEAT | CVAR_SYSTEMINFO);
-	com_fixedtime  = Cvar_Get("fixedtime", "0", CVAR_CHEAT);
-	com_showtrace  = Cvar_Get("com_showtrace", "0", CVAR_CHEAT);
-	com_dropsim    = Cvar_Get("com_dropsim", "0", CVAR_CHEAT);
-	com_viewlog    = Cvar_Get("viewlog", "0", CVAR_CHEAT);
-	com_speeds     = Cvar_Get("com_speeds", "0", 0);
-	com_timedemo   = Cvar_Get("timedemo", "0", CVAR_CHEAT);
-	com_cameraMode = Cvar_Get("com_cameraMode", "0", CVAR_CHEAT);
+	com_timescale = Cvar_Get("timescale", "1", CVAR_CHEAT | CVAR_SYSTEMINFO);
+	com_fixedtime = Cvar_Get("fixedtime", "0", CVAR_CHEAT);
+	com_showtrace = Cvar_Get("com_showtrace", "0", CVAR_CHEAT);
+	com_dropsim   = Cvar_Get("com_dropsim", "0", CVAR_CHEAT);
+	com_viewlog   = Cvar_Get("viewlog", "0", CVAR_CHEAT);
+	com_speeds    = Cvar_Get("com_speeds", "0", 0);
+	com_timedemo  = Cvar_Get("timedemo", "0", CVAR_CHEAT);
 
 	com_watchdog     = Cvar_Get("com_watchdog", "60", CVAR_ARCHIVE);
 	com_watchdog_cmd = Cvar_Get("com_watchdog_cmd", "", CVAR_ARCHIVE);
@@ -3052,11 +3042,6 @@ void Com_Init(char *commandLine)
 #endif
 	com_logosPlaying   = Cvar_Get("com_logosPlaying", "0", CVAR_ROM);
 	com_recommendedSet = Cvar_Get("com_recommendedSet", "0", CVAR_ARCHIVE);
-
-
-#if defined(_WIN32) && defined(_DEBUG)
-	com_noErrorInterrupt = Cvar_Get("com_noErrorInterrupt", "0", 0);
-#endif
 
 	com_hunkused      = Cvar_Get("com_hunkused", "0", 0);
 	com_hunkusedvalue = 0;
@@ -3109,7 +3094,7 @@ void Com_Init(char *commandLine)
 
 	CL_StartHunkUsers();
 
-	// NERVE - SMF - force recommendedSet and don't do vid_restart if in safe mode
+	// force recommendedSet and don't do vid_restart if in safe mode
 	if (!com_recommendedSet->integer && !safeMode)
 	{
 		Com_SetRecommended();
@@ -3225,8 +3210,6 @@ int Com_ModifyMsec(int msec)
 	else if (com_timescale->value)
 	{
 		msec *= com_timescale->value;
-//	} else if (com_cameraMode->integer) {
-//		msec *= com_timescale->value;
 	}
 
 	// don't let it scale below 1 msec
@@ -3293,8 +3276,8 @@ void Com_Frame(void)
 		return;         // an ERR_DROP was thrown
 	}
 
-	// bk001204 - init to zero.
-	//  also:  might be clobbered by `longjmp' or `vfork'
+	// init to zero.
+	// also: might be clobbered by `longjmp' or `vfork'
 	timeBeforeFirstEvents = 0;
 	timeBeforeServer      = 0;
 	timeBeforeEvents      = 0;
@@ -3524,7 +3507,6 @@ static field_t *completionField;
 /*
 ===============
 FindMatches
-
 ===============
 */
 static void FindMatches(const char *s)

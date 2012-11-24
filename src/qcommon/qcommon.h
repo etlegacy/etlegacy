@@ -871,16 +871,15 @@ void        Com_SetRecommended(void);
 // if match is NULL, all set commands will be executed, otherwise
 // only a set with the exact name.  Only used during startup.
 
-//bani - profile functions
+// profile functions
 void Com_TrackProfile(char *profile_path);
 qboolean Com_CheckProfile(char *profile_path);
 qboolean Com_WriteProfile(char *profile_path);
 
 extern cvar_t *com_crashed;
+extern cvar_t *com_ignorecrash;
 
-extern cvar_t *com_ignorecrash;     //bani
-
-extern cvar_t *com_pid;     //bani
+extern cvar_t *com_pid;
 
 extern cvar_t *com_developer;
 extern cvar_t *com_dedicated;
@@ -892,7 +891,6 @@ extern cvar_t *com_viewlog;             // 0 = hidden, 1 = visible, 2 = minimize
 extern cvar_t *com_version;
 extern cvar_t *com_buildScript;         // for building release pak files
 extern cvar_t *com_journal;
-extern cvar_t *com_cameraMode;
 extern cvar_t *com_ansiColor;
 extern cvar_t *com_unfocused;
 extern cvar_t *com_minimized;
