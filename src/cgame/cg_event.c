@@ -604,7 +604,7 @@ static fxSound_t fxSounds[POSSIBLE_PIECES] =
 	// metal
 	{ 1, { -1, -1, -1 }, { "sound/world/metalbreak.wav",  NULL,                          NULL                          } },
 	// gibs
-	{ 1, { -1, -1, -1 }, { "sound/world/gibsplit1.wav",   NULL,                          NULL                          } },
+	{ 1, { -1, -1, -1 }, { "sound/player/gib.wav",        NULL,                          NULL                          } }, // "sound/world/gibsplit1.wav"
 	// brick
 	{ 1, { -1, -1, -1 }, { "sound/world/debris1.wav",     NULL,                          NULL                          } },
 	// stone
