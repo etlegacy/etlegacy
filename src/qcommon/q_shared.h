@@ -1000,7 +1000,8 @@ float *tv(float x, float y, float z);
 
 #define rc(x) va("%s^7", x) // shortcut for color reset after printing variable
 
-char *QDECL va(char *format, ...) __attribute__ ((format(printf, 1, 2)));
+//char *QDECL va(char *format, ...) __attribute__ ((format(printf, 1, 2)));
+char *QDECL va(const char *format, ...) __attribute__ ((format(printf, 1, 2)));
 
 #define TRUNCATE_LENGTH 64
 void Com_TruncateLongString(char *buffer, const char *s);

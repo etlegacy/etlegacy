@@ -1364,26 +1364,73 @@ int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...)
 	return len;
 }
 
+
 /*
  * @brief Does a varargs printf into a temp buffer, so I don't need to have
  * varargs versions of all text functions.
- */
+
 char *QDECL va(char *format, ...)
 {
+    va_list     argptr;
+    static char string[2][32000]; // in case va is called by nested functions
+    static int  index = 0;
+    char        *buf;
+
+    buf = string[index & 1];
+    index++;
+
+    va_start(argptr, format);
+    Q_vsnprintf(buf, sizeof(*string), format, argptr);
+    va_end(argptr);
+
+    return buf;
+}
+ */
+
+#define MAX_VA_STRING   32000
+/*
+============
+va
+
+does a varargs printf into a temp buffer, so I don't need to have
+varargs versions of all text functions.
+FIXME: make this buffer size safe someday
+
+Ridah, modified this into a circular list, to further prevent stepping on
+previous strings
+============
+*/
+char *QDECL va(const char *format, ...)
+{
 	va_list     argptr;
-	static char string[2][32000]; // in case va is called by nested functions
+	static char temp_buffer[MAX_VA_STRING];
+	static char string[MAX_VA_STRING];  // in case va is called by nested functions
 	static int  index = 0;
 	char        *buf;
-
-	buf = string[index & 1];
-	index++;
+	int         len;
 
 	va_start(argptr, format);
-	Q_vsnprintf(buf, sizeof(*string), format, argptr);
+	vsprintf(temp_buffer, format, argptr); // Q_vsnprintf ???
 	va_end(argptr);
+
+	if ((len = strlen(temp_buffer)) >= MAX_VA_STRING)
+	{
+		Com_Error(ERR_DROP, "Attempted to overrun string in call to va()\n");
+	}
+
+	if (len + index >= MAX_VA_STRING - 1)
+	{
+		index = 0;
+	}
+
+	buf = &string[index];
+	memcpy(buf, temp_buffer, len + 1);
+
+	index += len + 1;
 
 	return buf;
 }
+
 
 /*
  * @brief Assumes buffer is atleast TRUNCATE_LENGTH big
