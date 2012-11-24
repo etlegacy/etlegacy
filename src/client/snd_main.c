@@ -507,34 +507,48 @@ void S_MasterGain(float gain)
 #endif
 // USE_VOIP
 
+/*
+=================
+S_Play_f
+=================
+*/
 void S_Play_f(void)
 {
-	int         i;
-	sfxHandle_t h;
-	char        name[256];
+	int 		i;
+	int			c;
+	sfxHandle_t	h;
 
-	if (!si.RegisterSound || !si.StartLocalSound)
+	if(!si.RegisterSound || !si.StartLocalSound)
 	{
 		return;
 	}
 
-	i = 1;
-	while (i < Cmd_Argc())
+	c = Cmd_Argc();
+
+	if (c < 2)
+	{
+		Com_Printf("Usage: play <sound filename> [sound filename] [sound filename] ...\n");
+		return;
+	}
+
+	for (i = 1; i < c; i++)
 	{
 		if (!Q_strrchr(Cmd_Argv(i), '.'))
 		{
-			Com_sprintf(name, sizeof(name), "%s.wav", Cmd_Argv(1));
+			//Com_sprintf(name, sizeof(name), "%s.wav", Cmd_Argv(1)); // genuine ET 'forces' wav
+			Com_Printf("Warning: S_Play_f sound name '%s' has no file extension", Cmd_Argv(i));
 		}
-		else
-		{
-			Q_strncpyz(name, Cmd_Argv(i), sizeof(name));
-		}
-		h = si.RegisterSound(name, qfalse);
-		if (h)
+
+		h = si.RegisterSound(Cmd_Argv(i), qfalse); // *qtrue* TODO: detect compression via extension?
+
+		if ( h )
 		{
 			si.StartLocalSound(h, CHAN_LOCAL_SOUND, 1.0f);
 		}
-		i++;
+		else
+		{
+			Com_Printf("Warning: S_Play_f sound '%s' not played.", Cmd_Argv(i));
+		}
 	}
 }
 
@@ -563,7 +577,7 @@ void S_Music_f(void)
 	}
 	else
 	{
-		Com_Printf("music <musicfile> [loopfile] [fadeupTime]\n");
+		Com_Printf("Usage: music <musicfile> [loopfile] [fadeupTime]\n");
 		return;
 	}
 }
@@ -607,7 +621,7 @@ void S_Stream_f(void)
 	}
 	else
 	{
-		Com_Printf("stream <streamfile> [loopfile] [entnum] [channel] [attenuation]\n");
+		Com_Printf("Usage: stream <streamfile> [loopfile] [entnum] [channel] [attenuation]\n");
 		return;
 	}
 }
