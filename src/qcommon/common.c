@@ -101,10 +101,10 @@ cvar_t *com_noErrorInterrupt;
 #endif
 
 #if idx64
-int (*Q_VMftol)(void);
+int (*Q_VMftol)(void); // Unused in ET:L. Used in ioquake’s VM code
 #elif id386
 long (QDECL *Q_ftol)(float f);
-int  (QDECL *Q_VMftol)(void);
+int  (QDECL *Q_VMftol)(void); // Unused.
 void (QDECL *Q_SnapVector)(vec3_t vec);
 #endif
 
@@ -113,7 +113,7 @@ cvar_t *com_recommendedSet;
 cvar_t *com_watchdog;
 cvar_t *com_watchdog_cmd;
 
-cvar_t *com_hunkused;       // Ridah
+cvar_t *com_hunkused;
 
 // com_speeds times
 int time_game;

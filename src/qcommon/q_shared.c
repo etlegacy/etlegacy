@@ -413,6 +413,9 @@ void COM_ParseError(char *format, ...)
 	Com_Printf("ERROR: %s, line %d: %s\n", com_parsename, com_lines, string);
 }
 
+/**
+ * @note Unused.
+ */
 void COM_ParseWarning(char *format, ...)
 {
 	va_list     argptr;

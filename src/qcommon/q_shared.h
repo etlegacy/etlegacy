@@ -192,7 +192,7 @@ typedef unsigned __int8 uint8_t;
 
 #define MAC_STATIC
 
-#define CPUSTRING   "MacOS_X"
+#define CPUSTRING   "MacOS_X" // TODO: check if some mods depend on the old Mac CPUSTRING
 
 #define PATH_SEP    '/'
 
@@ -359,8 +359,8 @@ typedef int clipHandle_t;
 #define MAX_OSPATH          256     // max length of a filesystem pathname
 #define MAX_CMD             1024    // max length of a command line
 
-// rain - increased to 36 to match MAX_NETNAME, fixes #13 - UI stuff breaks
-// with very long names
+// increased to 36 to match MAX_NETNAME
+// UI stuff breaks with very long names
 #define MAX_NAME_LENGTH     36      // max length of a client name
 
 #define MAX_SAY_TEXT        150
@@ -407,7 +407,8 @@ typedef enum
 	ERR_DROP,                   // print to console and disconnect from game
 	ERR_SERVERDISCONNECT,       // don't kill server
 	ERR_DISCONNECT,             // client disconnected from the server
-	ERR_NEED_CD,                // pop up the need-cd dialog
+	ERR_NEED_CD,                // pop up the need-cd dialog.
+	                            // FIXME: remove code using ERR_NEED_CD
 	ERR_AUTOUPDATE
 } errorParm_t;
 
@@ -595,7 +596,7 @@ extern vec4_t clrBrownLineFull;
 extern vec4_t g_color_table[32];
 
 #define MAKERGB(v, r, g, b) v[0]     = r; v[1] = g; v[2] = b
-#define MAKERGBA(v, r, g, b, a) v[0] = r; v[1] = g; v[2] = b; v[3] = a
+#define MAKERGBA(v, r, g, b, a) v[0] = r; v[1] = g; v[2] = b; v[3] = a // Unused.
 
 // Hex Color string support
 #define gethex(ch) ((ch) > '9' ? ((ch) >= 'a' ? ((ch) - 'a' + 10) : ((ch) - '7')) : ((ch) - '0'))
@@ -626,7 +627,7 @@ extern void qsnapvectorsse(vec3_t vec);
 #define Q_ftol qftolsse
 #define Q_SnapVector qsnapvectorsse
 
-extern int (*Q_VMftol)(void);
+extern int (*Q_VMftol)(void); // Unused.
 #elif id386
 extern long QDECL qftolx87(float f);
 extern long QDECL qftolsse(float f);
@@ -636,7 +637,7 @@ extern void QDECL qsnapvectorx87(vec3_t vec);
 extern void QDECL qsnapvectorsse(vec3_t vec);
 
 extern long (QDECL *Q_ftol)(float f);
-extern int  (QDECL *Q_VMftol)(void);
+extern int  (QDECL *Q_VMftol)(void); // Unused.
 extern void (QDECL *Q_SnapVector)(vec3_t vec);
 #else
 // Q_ftol must expand to a function name so the pluggable renderer can take
@@ -653,7 +654,7 @@ extern void (QDECL *Q_SnapVector)(vec3_t vec);
 	} while (0)
 #endif
 /*
- / / if *your system does not have lrintf() and round() you can try this block. Please also open a bug report at bugzilla.icculus.org
+ // if *your system does not have lrintf() and round() you can try this block. Please also open a bug report at bugzilla.icculus.org
  // or write a mail to the ioq3 mailing list.
  #else
  #define Q_ftol(v) ((long) (v))
@@ -704,7 +705,7 @@ float Q_rsqrt(float f);         // reciprocal square root
 #define SQRTFAST(x) (1.0f / Q_rsqrt(x))
 
 signed char ClampChar(int i);
-signed short ClampShort(int i);
+signed short ClampShort(int i); // Unused.
 
 // this isn't a real cheap function to call!
 int DirToByte(vec3_t dir);
@@ -746,12 +747,14 @@ typedef struct
 #define VectorNegate(a, b)           ((b)[0] = -(a)[0], (b)[1] = -(a)[1], (b)[2] = -(a)[2])
 #define VectorSet(v, x, y, z)       ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
 
+// Vector2 Set/Copy/Subtract are unused.
 #define Vector2Set(v, x, y)         ((v)[0] = (x), (v)[1] = (y))
 #define Vector2Copy(a, b)            ((b)[0] = (a)[0], (b)[1] = (a)[1])
 #define Vector2Subtract(a, b, c)      ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1])
 
 #define Vector4Set(v, x, y, z, n)   ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z), (v)[3] = (n))
 #define Vector4Copy(a, b)            ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2], (b)[3] = (a)[3])
+// Vector4MA: Unused.
 #define Vector4MA(v, s, b, o)       ((o)[0] = (v)[0] + (b)[0] * (s), (o)[1] = (v)[1] + (b)[1] * (s), (o)[2] = (v)[2] + (b)[2] * (s), (o)[3] = (v)[3] + (b)[3] * (s))
 #define Vector4Average(v, b, s, o)  ((o)[0] = ((v)[0] * (1 - (s))) + ((b)[0] * (s)), (o)[1] = ((v)[1] * (1 - (s))) + ((b)[1] * (s)), (o)[2] = ((v)[2] * (1 - (s))) + ((b)[2] * (s)), (o)[3] = ((v)[3] * (1 - (s))) + ((b)[3] * (s)))
 
@@ -765,15 +768,15 @@ void _VectorCopy(const vec3_t in, vec3_t out);
 void _VectorScale(const vec3_t in, float scale, vec3_t out);
 void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc);
 
-unsigned ColorBytes3(float r, float g, float b);
+unsigned ColorBytes3(float r, float g, float b); // Unused.
 unsigned ColorBytes4(float r, float g, float b, float a);
 
-float NormalizeColor(const vec3_t in, vec3_t out);
+float NormalizeColor(const vec3_t in, vec3_t out); // Unused.
 
 float RadiusFromBounds(const vec3_t mins, const vec3_t maxs);
 void ClearBounds(vec3_t mins, vec3_t maxs);
 void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs);
-qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs);
+qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs); // Unused.
 int VectorCompare(const vec3_t v1, const vec3_t v2);
 vec_t VectorLength(const vec3_t v);
 vec_t VectorLengthSquared(const vec3_t v);
@@ -784,9 +787,9 @@ vec_t VectorNormalize(vec3_t v);         // returns vector length
 void VectorNormalizeFast(vec3_t v);       // does NOT return vector length, uses rsqrt approximation
 vec_t VectorNormalize2(const vec3_t v, vec3_t out);
 void VectorInverse(vec3_t v);
-void Vector4Scale(const vec4_t in, vec_t scale, vec4_t out);
+void Vector4Scale(const vec4_t in, vec_t scale, vec4_t out); // Unused.
 void VectorRotate(vec3_t in, vec3_t matrix[3], vec3_t out);
-int Q_log2(int val);
+int Q_log2(int val); // Unused.
 
 float Q_acos(float c);
 
@@ -800,8 +803,7 @@ float   Q_crandom(int *seed);
 void vectoangles(const vec3_t value1, vec3_t angles);
 float vectoyaw(const vec3_t vec);
 void AnglesToAxis(const vec3_t angles, vec3_t axis[3]);
-// TTimo: const vec_t ** would require explicit casts for ANSI C conformance
-// see unix/const-arg.c
+// const vec_t ** would require explicit casts for ANSI C conformance, see unix/const-arg.c
 void AxisToAngles(/*const*/ vec3_t axis[3], vec3_t angles);
 float VectorDistance(vec3_t v1, vec3_t v2);
 float VectorDistanceSquared(vec3_t v1, vec3_t v2);
@@ -818,7 +820,7 @@ void    LerpPosition(vec3_t start, vec3_t end, float frac, vec3_t out);
 float   AngleSubtract(float a1, float a2);
 void    AnglesSubtract(vec3_t v1, vec3_t v2, vec3_t v3);
 
-float AngleNormalize2Pi(float angle);
+float AngleNormalize2Pi(float angle); // Unused.
 float AngleNormalize360(float angle);
 float AngleNormalize180(float angle);
 float AngleDelta(float angle1, float angle2);
@@ -826,7 +828,7 @@ float AngleDelta(float angle1, float angle2);
 qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c);
 void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
 void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, float degrees);
-void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, const vec3_t origin);
+void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, const vec3_t origin); // Unused.
 void RotateAroundDirection(vec3_t axis[3], float yaw);
 void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up);
 // perpendicular vector could be replaced by this
@@ -845,13 +847,11 @@ void PerpendicularVector(vec3_t dst, const vec3_t src);
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
 #endif
 
-// Ridah
 void GetPerpendicularViewVector(const vec3_t point, const vec3_t p1, const vec3_t p2, vec3_t up);
 void ProjectPointOntoVector(vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vProj);
 void ProjectPointOntoVectorBounded(vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vProj);
 float DistanceFromLineSquared(vec3_t p, vec3_t lp1, vec3_t lp2);
 float DistanceFromVectorSquared(vec3_t p, vec3_t lp1, vec3_t lp2);
-// done.
 
 int Q_isnan(float x);
 
@@ -875,8 +875,7 @@ char *COM_Parse(char **data_p);
 char *COM_ParseExt(char **data_p, qboolean allowLineBreak);
 int     COM_Compress(char *data_p);
 void    COM_ParseError(char *format, ...) __attribute__ ((format(printf, 1, 2)));
-void    COM_ParseWarning(char *format, ...) __attribute__ ((format(printf, 1, 2)));
-int COM_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING]);
+void    COM_ParseWarning(char *format, ...) __attribute__ ((format(printf, 1, 2))); // Unused
 
 qboolean COM_BitCheck(const int array[], int bitNum);
 void COM_BitSet(int array[], int bitNum);
@@ -1052,19 +1051,16 @@ default values.
 #define CVAR_INIT           16  // don't allow change from console at all,
 // but can be set from the command line
 #define CVAR_LATCH          32  // will only change when C code next does
-// a Cvar_Get(), so it can't be changed
-// without proper initialization.  modified
-// will be set, even though the value hasn't
-// changed yet
-#define CVAR_ROM            64  // display only, cannot be set by user at all
-#define CVAR_USER_CREATED   128 // created by a set command
-#define CVAR_TEMP           256 // can be set even when cheats are disabled, but is not archived
-#define CVAR_CHEAT          512 // can not be changed if cheats are disabled
-#define CVAR_NORESTART      1024    // do not clear when a cvar_restart is issued
-#define CVAR_WOLFINFO       2048    // DHM - NERVE :: Like userinfo, but for wolf multiplayer info
-
-#define CVAR_UNSAFE         4096    // ydnar: unsafe system cvars (renderer, sound settings, anything that might cause a crash)
-#define CVAR_SERVERINFO_NOUPDATE        8192    // gordon: WONT automatically send this to clients, but server browsers will see it
+// a Cvar_Get(), so it can't be changed without proper initialization.
+// will be set, even though the value hasn't changed yet
+#define CVAR_ROM                    64      // display only, cannot be set by user at all
+#define CVAR_USER_CREATED           128     // created by a set command
+#define CVAR_TEMP                   256     // can be set even when cheats are disabled, but is not archived
+#define CVAR_CHEAT                  512     // can not be changed if cheats are disabled
+#define CVAR_NORESTART              1024    // do not clear when a cvar_restart is issued
+#define CVAR_WOLFINFO               2048    // like userinfo, but for wolf multiplayer info
+#define CVAR_UNSAFE                 4096    // unsafe system cvars (renderer, sound settings, anything that might cause a crash)
+#define CVAR_SERVERINFO_NOUPDATE    8192    // WONT automatically send this to clients, but server browsers will see it
 
 // nothing outside the Cvar_*() functions should modify these fields!
 typedef struct cvar_s
@@ -1135,8 +1131,6 @@ typedef struct cplane_s
 	byte pad[2];
 } cplane_t;
 
-#define CPLANE
-
 // a trace is returned when a box is swept through the world
 typedef struct
 {
@@ -1181,14 +1175,14 @@ typedef struct
 typedef enum
 {
 	CHAN_AUTO,
-	CHAN_LOCAL,     // menu sounds, etc
+	CHAN_LOCAL,         // menu sounds, etc
 	CHAN_WEAPON,
 	CHAN_VOICE,
 	CHAN_ITEM,
 	CHAN_BODY,
 	CHAN_LOCAL_SOUND,   // chat messages, etc
 	CHAN_ANNOUNCER,     // announcer voices, etc
-	CHAN_VOICE_BG,  // xkan - background sound for voice (radio static, etc.)
+	CHAN_VOICE_BG,      // unused. Background sound for voice (radio static, etc.)
 } soundChannel_t;
 
 /*
@@ -1208,9 +1202,9 @@ typedef enum
 #define SNAPFLAG_SERVERCOUNT    4   // toggled every map_restart so transitions can be detected
 
 // per-level limits
-#define MAX_CLIENTS         64 // JPW NERVE back to q3ta default was 128        // absolute limit
+#define MAX_CLIENTS         64 // back to q3ta default was 128        // absolute limit
 
-#define GENTITYNUM_BITS     10  // JPW NERVE put q3ta default back for testing  // don't need to send any more
+#define GENTITYNUM_BITS     10  // put q3ta default back for testing  // don't need to send any more
 #define MAX_GENTITIES       (1 << GENTITYNUM_BITS)
 
 // entitynums are communicated with GENTITY_BITS, so any reserved
@@ -1229,7 +1223,7 @@ typedef enum
 #define MAX_SERVER_TAGS     256
 #define MAX_TAG_FILES       64
 
-#define MAX_MULTI_SPAWNTARGETS  16 // JPW NERVE
+#define MAX_MULTI_SPAWNTARGETS  16
 
 #define MAX_CONFIGSTRINGS   1024
 
@@ -1261,7 +1255,6 @@ typedef struct
 	int dataCount;
 } gameState_t;
 
-// xkan, 1/10/2003 - adapted from original SP
 typedef enum
 {
 	AISTATE_RELAXED,
@@ -1280,9 +1273,8 @@ typedef enum
 #define MAX_STATS               16
 #define MAX_PERSISTANT          16
 #define MAX_POWERUPS            16
-#define MAX_WEAPONS             64  // (SA) and yet more!
+#define MAX_WEAPONS             64
 
-//#define   MAX_PS_EVENTS           2
 #define MAX_EVENTS              4   // max events per frame before we drop events
 
 #define PS_PMOVEFRAMECOUNTBITS  6
@@ -1293,12 +1285,11 @@ typedef enum
 // will occur
 
 // you can't add anything to this without modifying the code in msg.c
-// (Gordon: unless it doesnt need transmitted over the network, in which case it should prolly go in the new pmext struct anyway)
+// (unless it doesnt need transmitted over the network, in which case it should prolly go in the new pmext struct anyway)
 
 // playerState_t is a full superset of entityState_t as it is used by players,
 // so if a playerState_t is transmitted, the entityState_t can be fully derived
 // from it.
-//
 // NOTE: all fields in here must be 32 bits (or those within sub-structures)
 typedef struct playerState_s
 {
@@ -1367,30 +1358,29 @@ typedef struct playerState_s
 	int damageCount;
 
 	int stats[MAX_STATS];
-	int persistant[MAX_PERSISTANT];         // stats that aren't cleared on death
-	int powerups[MAX_POWERUPS];         // level.time that the powerup runs out
-	int ammo[MAX_WEAPONS];              // total amount of ammo
-	int ammoclip[MAX_WEAPONS];          // ammo in clip
+	int persistant[MAX_PERSISTANT];                 // stats that aren't cleared on death
+	int powerups[MAX_POWERUPS];                     // level.time that the powerup runs out
+	int ammo[MAX_WEAPONS];                          // total amount of ammo
+	int ammoclip[MAX_WEAPONS];                      // ammo in clip
 	int holdable[16];
-	int holding;                        // the current item in holdable[] that is selected (held)
-	int weapons[MAX_WEAPONS / (sizeof(int) * 8)];       // 64 bits for weapons held
+	int holding;                                    // the current item in holdable[] that is selected (held)
+	int weapons[MAX_WEAPONS / (sizeof(int) * 8)];   // 64 bits for weapons held
 
-	// Ridah, allow for individual bounding boxes
+	// allow for individual bounding boxes
 	vec3_t mins, maxs;
 	float crouchMaxZ;
 	float crouchViewHeight, standViewHeight, deadViewHeight;
 	// variable movement speed
 	float runSpeedScale, sprintSpeedScale, crouchSpeedScale;
-	// done.
 
-	// Ridah, view locking for mg42
+	// view locking for mg42
 	int viewlocked;
 	int viewlocked_entNum;
 
 	float friction;
 
 	int nextWeapon;
-	int teamNum;                        // Arnout: doesn't seem to be communicated over the net
+	int teamNum;                        // doesn't seem to be communicated over the net
 
 	// RF, burning effect is required for view blending effect
 	int onFireStart;
@@ -1406,7 +1396,7 @@ typedef struct playerState_s
 	// before we read in the new values for the predictedPlayerState, then restore them
 	// after copying the structure recieved from the server.
 
-	// Arnout: use the pmoveExt_t structure in bg_public.h to store this kind of data now (presistant on client, not network transmitted)
+	// use the pmoveExt_t structure in bg_public.h to store this kind of data now (persistant on client, not network transmitted)
 
 	int ping;                   // server to game info for scoreboard
 	int pmove_framecount;
@@ -1414,32 +1404,29 @@ typedef struct playerState_s
 
 	int sprintExertTime;
 
-	// JPW NERVE -- value for all multiplayer classes with regenerating "class weapons" -- ie LT artillery, medic medpack, engineer build points, etc
-	int classWeaponTime;                // Arnout : DOES get send over the network
+	// value for all multiplayer classes with regenerating "class weapons" -- ie LT artillery, medic medpack, engineer build points, etc
+	int classWeaponTime;            // DOES get send over the network
 	int jumpTime;                   // used in MP to prevent jump accel
-	// jpw
 
-	int weapAnim;                   // mask off ANIM_TOGGLEBIT                                      //----(SA)  added       // Arnout : DOES get send over the network
+	int weapAnim;                   // mask off ANIM_TOGGLEBIT, DOES get send over the network
 
 	qboolean releasedFire;
 
-	float aimSpreadScaleFloat;          // (SA) the server-side aimspreadscale that lets it track finer changes but still only
+	float aimSpreadScaleFloat;          // the server-side aimspreadscale that lets it track finer changes but still only
 	// transmit the 8bit int to the client
 	int aimSpreadScale;                 // 0 - 255 increases with angular movement      // Arnout : DOES get send over the network
 	int lastFireTime;                   // used by server to hold last firing frame briefly when randomly releasing trigger (AI)
-
 	int quickGrenTime;
-
 	int leanStopDebounceTime;
 
 	// seems like heat and aimspread could be tied together somehow, however, they (appear to) change at different rates and
 	// I can't currently see how to optimize this to one server->client transmission "weapstatus" value.
 	int weapHeat[MAX_WEAPONS];          // some weapons can overheat.  this tracks (server-side) how hot each weapon currently is.
-	int curWeapHeat;                    // value for the currently selected weapon (for transmission to client)     // Arnout : DOES get send over the network
-	int identifyClient;                 // NERVE - SMF
+	int curWeapHeat;                    // value for the currently selected weapon (for transmission to client). DOES get send over the network
+	int identifyClient;
 	int identifyClientHealth;
 
-	aistateEnum_t aiState;          // xkan, 1/10/2003
+	aistateEnum_t aiState;
 } playerState_t;
 
 //====================================================================
@@ -1450,34 +1437,30 @@ typedef struct playerState_s
 //
 #define BUTTON_ATTACK       1
 #define BUTTON_TALK         2           // displays talk balloon and disables actions
-//#define   BUTTON_USE_HOLDABLE 4
+//#define   BUTTON_USE_HOLDABLE 4       // obsolete/unused
 #define BUTTON_GESTURE      8
 #define BUTTON_WALKING      16          // walking can't just be infered from MOVE_RUN
 // because a key pressed late in the frame will
 // only generate a small move value for that frame
 // walking will use different animations and
 // won't generate footsteps
-//----(SA)  added
+
 #define BUTTON_SPRINT       32
 #define BUTTON_ACTIVATE     64
-//----(SA)  end
-
 #define BUTTON_ANY          128         // any key whatsoever
 
-//----(SA) wolf buttons
 #define WBUTTON_ATTACK2     1
 #define WBUTTON_ZOOM        2
 #define WBUTTON_RELOAD      8
 #define WBUTTON_LEANLEFT    16
 #define WBUTTON_LEANRIGHT   32
-#define WBUTTON_DROP        64 // JPW NERVE
-#define WBUTTON_PRONE       128 // Arnout: wbutton now
-//----(SA) end
+#define WBUTTON_DROP        64
+#define WBUTTON_PRONE       128 // wbutton now
 
 #define MOVE_RUN            120         // if forwardmove or rightmove are >= MOVE_RUN,
 // then BUTTON_WALKING should be set
 
-// Arnout: doubleTap buttons - DT_NUM can be max 8
+// doubleTap buttons - DT_NUM can be max 8
 typedef enum
 {
 	DT_NONE,
@@ -1502,11 +1485,11 @@ typedef struct usercmd_s
 	int angles[3];
 
 	signed char forwardmove, rightmove, upmove;
-	byte doubleTap;             // Arnout: only 3 bits used
+	byte doubleTap;             // only 3 bits used
 
-	// rain - in ET, this can be any entity, and it's used as an array
+	// in ET, this can be any entity, and it's used as an array
 	// index, so make sure it's unsigned
-	byte identClient;           // NERVE - SMF
+	byte identClient;
 } usercmd_t;
 
 //===================================================================
@@ -1520,16 +1503,14 @@ typedef enum
 	TR_INTERPOLATE,             // non-parametric, but interpolate between snapshots
 	TR_LINEAR,
 	TR_LINEAR_STOP,
-	TR_LINEAR_STOP_BACK,        //----(SA)  added.  so reverse movement can be different than forward
+	TR_LINEAR_STOP_BACK,        // so reverse movement can be different than forward
 	TR_SINE,                    // value = base + sin( time / duration ) * delta
 	TR_GRAVITY,
-	// Ridah
 	TR_GRAVITY_LOW,
 	TR_GRAVITY_FLOAT,           // super low grav with no gravity acceleration (floating feathers/fabric/leaves/...)
-	TR_GRAVITY_PAUSED,          //----(SA)  has stopped, but will still do a short trace to see if it should be switched back to TR_GRAVITY
+	TR_GRAVITY_PAUSED,          // has stopped, but will still do a short trace to see if it should be switched back to TR_GRAVITY
 	TR_ACCELERATE,
 	TR_DECCELERATE,
-	// Gordon
 	TR_SPLINE,
 	TR_LINEAR_PATH
 } trType_t;
@@ -1539,10 +1520,8 @@ typedef struct
 	trType_t trType;
 	int trTime;
 	int trDuration;             // if non 0, trTime + trDuration = stop time
-//----(SA)  removed
 	vec3_t trBase;
 	vec3_t trDelta;             // velocity, etc
-//----(SA)  removed
 } trajectory_t;
 
 // entityState_t is the information conveyed from the server
@@ -1567,11 +1546,10 @@ typedef enum
 	ET_PUSH_TRIGGER,
 	ET_TELEPORT_TRIGGER,
 	ET_INVISIBLE,
-	ET_CONCUSSIVE_TRIGGER,  // JPW NERVE trigger for concussive dust particles
-	ET_OID_TRIGGER,         // DHM - Nerve :: Objective Info Display
-	ET_EXPLOSIVE_INDICATOR, // NERVE - SMF
+	ET_CONCUSSIVE_TRIGGER,  // trigger for concussive dust particles
+	ET_OID_TRIGGER,         // Objective Info Display
+	ET_EXPLOSIVE_INDICATOR,
 
-	//---- (SA) Wolf
 	ET_EXPLOSIVE,           // brush that will break into smaller bits when damaged
 	ET_EF_SPOTLIGHT,
 	ET_ALARMBOX,
@@ -1579,7 +1557,7 @@ typedef enum
 	ET_TRAP,
 
 	ET_GAMEMODEL,           // misc_gamemodel.  similar to misc_model, but it's a dynamic model so we have LOD
-	ET_FOOTLOCKER,          //----(SA)  added
+	ET_FOOTLOCKER,
 
 	ET_FLAMEBARREL,
 	ET_FP_PARTS,
@@ -1589,7 +1567,7 @@ typedef enum
 	ET_FIRE_COLUMN_SMOKE,
 	ET_RAMJET,
 
-	ET_FLAMETHROWER_CHUNK,      // DHM - NERVE :: Used in server side collision detection for flamethrower
+	ET_FLAMETHROWER_CHUNK,      // used in server side collision detection for flamethrower
 
 	ET_EXPLO_PART,
 
@@ -1608,16 +1586,14 @@ typedef enum
 	ET_BEAM_2,
 	ET_TANK_INDICATOR,
 	ET_TANK_INDICATOR_DEAD,
-	// Start - TAT - 8/29/2002
 	// An indicator object created by the bot code to show where the bots are moving to
 	ET_BOTGOAL_INDICATOR,   // obsolete/unused
-	// End - TA - 8/29/2002
-	ET_CORPSE,              // Arnout: dead player
-	ET_SMOKER,              // Arnout: target_smoke entity
+	ET_CORPSE,              // dead player
+	ET_SMOKER,              // target_smoke entity
 
-	ET_TEMPHEAD,            // Gordon: temporary head for clients for bullet traces
-	ET_MG42_BARREL,         // Arnout: MG42 barrel
-	ET_TEMPLEGS,            // Arnout: temporary leg for clients for bullet traces
+	ET_TEMPHEAD,            // temporary head for clients for bullet traces
+	ET_MG42_BARREL,         // MG42 barrel
+	ET_TEMPLEGS,            // temporary leg for clients for bullet traces
 	ET_TRIGGER_MULTIPLE,
 	ET_TRIGGER_FLAGONLY,
 	ET_TRIGGER_FLAGONLY_MULTIPLE,
@@ -1628,10 +1604,10 @@ typedef enum
 	ET_HEALER,
 	ET_SUPPLIER,
 
-	ET_LANDMINE_HINT,       // Gordon: landmine hint for botsetgoalstate filter
-	ET_ATTRACTOR_HINT,      // Gordon: attractor hint for botsetgoalstate filter
-	ET_SNIPER_HINT,         // Gordon: sniper hint for botsetgoalstate filter
-	ET_LANDMINESPOT_HINT,   // Gordon: landminespot hint for botsetgoalstate filter
+	ET_LANDMINE_HINT,       // landmine hint for botsetgoalstate filter
+	ET_ATTRACTOR_HINT,      // attractor hint for botsetgoalstate filter
+	ET_SNIPER_HINT,         // sniper hint for botsetgoalstate filter
+	ET_LANDMINESPOT_HINT,   // landminespot hint for botsetgoalstate filter
 
 	ET_COMMANDMAP_MARKER,
 
@@ -1689,13 +1665,11 @@ typedef struct entityState_s
 	int weapon;             // determines weapon and flash model, etc
 	int legsAnim;           // mask off ANIM_TOGGLEBIT
 	int torsoAnim;          // mask off ANIM_TOGGLEBIT
-//  int     weapAnim;       // mask off ANIM_TOGGLEBIT  //----(SA)  removed (weap anims will be client-side only)
 
 	int density;            // for particle effects
 
 	int dmgFlags;           // to pass along additional information for damage effects for players/ Also used for cursorhints for non-player entities
 
-	// Ridah
 	int onFireStart, onFireEnd;
 
 	int nextWeapon;
@@ -1703,7 +1677,7 @@ typedef struct entityState_s
 
 	int effect1Time, effect2Time, effect3Time;
 
-	aistateEnum_t aiState;      // xkan, 1/10/2003
+	aistateEnum_t aiState;
 	int animMovetype;       // clients can't derive movetype of other clients for anim scripting system
 } entityState_t;
 
@@ -1772,7 +1746,7 @@ typedef struct qtime_s
 
 // server browser sources
 #define AS_LOCAL        0
-#define AS_GLOBAL       1           // NERVE - SMF - modified
+#define AS_GLOBAL       1
 #define AS_FAVORITES    2
 
 // cinematic states
@@ -1817,7 +1791,7 @@ typedef enum
 	MAX_LANGUAGES
 } languages_t;
 
-// NERVE - SMF - wolf server/game states
+// server/game states
 typedef enum
 {
 	GS_INITIALIZE = -1,

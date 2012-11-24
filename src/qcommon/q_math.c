@@ -223,6 +223,9 @@ signed char ClampChar(int i)
 	return i;
 }
 
+/**
+ * @note Unused.
+ */
 signed short ClampShort(int i)
 {
 	if (i < -32768)
@@ -272,6 +275,9 @@ void ByteToDir(int b, vec3_t dir)
 	VectorCopy(bytedirs[b], dir);
 }
 
+/**
+ * @note Unused.
+ */
 unsigned ColorBytes3(float r, float g, float b)
 {
 	unsigned i;
@@ -295,6 +301,9 @@ unsigned ColorBytes4(float r, float g, float b, float a)
 	return i;
 }
 
+/**
+ * @note Unused.
+ */
 float NormalizeColor(const vec3_t in, vec3_t out)
 {
 	float max;
@@ -411,13 +420,10 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point,
 	}
 }
 
-/*
-===============
-RotatePointArountVertex
-
-Rotate a point around a vertex
-===============
-*/
+/**
+ * @brief Rotate a point around a vertex.
+ * @note Unused.
+ */
 void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, const vec3_t origin)
 {
 	float tmp[11];
@@ -706,13 +712,10 @@ float AngleMod(float a)
 	return((360.0 / 65536) * ((int)(a * (65536 / 360.0)) & 65535));
 }
 
-/*
-=================
-AngleNormalize2Pi
-
-returns angle normalized to the range [0 <= angle < 2*M_PI]
-=================
-*/
+/**
+ * @brief Returns angle normalized to the range [0 <= angle < 2*M_PI].
+ * @note Unused.
+ */
 float AngleNormalize2Pi(float angle)
 {
 	return DEG2RAD(AngleNormalize360(RAD2DEG(angle)));
@@ -933,199 +936,199 @@ initialized:
 		fld dword ptr[0 + edx]
 		fld st(0)
 		jmp dword ptr[Ljmptab + eax * 4]
-		Lcase0 :
-			fmul dword ptr[ebx]
-			fld dword ptr[0 + 4 + edx]
-			fxch st(2)
-			fmul dword ptr[ecx]
-			fxch st(2)
-			fld st(0)
-			fmul dword ptr[4 + ebx]
-			fld dword ptr[0 + 8 + edx]
-			fxch st(2)
-			fmul dword ptr[4 + ecx]
-			fxch st(2)
-			fld st(0)
-			fmul dword ptr[8 + ebx]
-			fxch st(5)
-			faddp st(3), st(0)
-			fmul dword ptr[8 + ecx]
-			fxch st(1)
-			faddp st(3), st(0)
-			fxch st(3)
-			faddp st(2), st(0)
-			jmp LSetSides
-			Lcase1 :
-				fmul dword ptr[ecx]
-				fld dword ptr[0 + 4 + edx]
-				fxch st(2)
-				fmul dword ptr[ebx]
-				fxch st(2)
-				fld st(0)
-				fmul dword ptr[4 + ebx]
-				fld dword ptr[0 + 8 + edx]
-				fxch st(2)
-				fmul dword ptr[4 + ecx]
-				fxch st(2)
-				fld st(0)
-				fmul dword ptr[8 + ebx]
-				fxch st(5)
-				faddp st(3), st(0)
-				fmul dword ptr[8 + ecx]
-				fxch st(1)
-				faddp st(3), st(0)
-				fxch st(3)
-				faddp st(2), st(0)
-				jmp LSetSides
-				Lcase2 :
-					fmul dword ptr[ebx]
-					fld dword ptr[0 + 4 + edx]
-					fxch st(2)
-					fmul dword ptr[ecx]
-					fxch st(2)
-					fld st(0)
-					fmul dword ptr[4 + ecx]
-					fld dword ptr[0 + 8 + edx]
-					fxch st(2)
-					fmul dword ptr[4 + ebx]
-					fxch st(2)
-					fld st(0)
-					fmul dword ptr[8 + ebx]
-					fxch st(5)
-					faddp st(3), st(0)
-					fmul dword ptr[8 + ecx]
-					fxch st(1)
-					faddp st(3), st(0)
-					fxch st(3)
-					faddp st(2), st(0)
-					jmp LSetSides
-					Lcase3 :
-						fmul dword ptr[ecx]
-						fld dword ptr[0 + 4 + edx]
-						fxch st(2)
-						fmul dword ptr[ebx]
-						fxch st(2)
-						fld st(0)
-						fmul dword ptr[4 + ecx]
-						fld dword ptr[0 + 8 + edx]
-						fxch st(2)
-						fmul dword ptr[4 + ebx]
-						fxch st(2)
-						fld st(0)
-						fmul dword ptr[8 + ebx]
-						fxch st(5)
-						faddp st(3), st(0)
-						fmul dword ptr[8 + ecx]
-						fxch st(1)
-						faddp st(3), st(0)
-						fxch st(3)
-						faddp st(2), st(0)
-						jmp LSetSides
-						Lcase4 :
-							fmul dword ptr[ebx]
-							fld dword ptr[0 + 4 + edx]
-							fxch st(2)
-							fmul dword ptr[ecx]
-							fxch st(2)
-							fld st(0)
-							fmul dword ptr[4 + ebx]
-							fld dword ptr[0 + 8 + edx]
-							fxch st(2)
-							fmul dword ptr[4 + ecx]
-							fxch st(2)
-							fld st(0)
-							fmul dword ptr[8 + ecx]
-							fxch st(5)
-							faddp st(3), st(0)
-							fmul dword ptr[8 + ebx]
-							fxch st(1)
-							faddp st(3), st(0)
-							fxch st(3)
-							faddp st(2), st(0)
-							jmp LSetSides
-							Lcase5 :
-								fmul dword ptr[ecx]
-								fld dword ptr[0 + 4 + edx]
-								fxch st(2)
-								fmul dword ptr[ebx]
-								fxch st(2)
-								fld st(0)
-								fmul dword ptr[4 + ebx]
-								fld dword ptr[0 + 8 + edx]
-								fxch st(2)
-								fmul dword ptr[4 + ecx]
-								fxch st(2)
-								fld st(0)
-								fmul dword ptr[8 + ecx]
-								fxch st(5)
-								faddp st(3), st(0)
-								fmul dword ptr[8 + ebx]
-								fxch st(1)
-								faddp st(3), st(0)
-								fxch st(3)
-								faddp st(2), st(0)
-								jmp LSetSides
-								Lcase6 :
-									fmul dword ptr[ebx]
-									fld dword ptr[0 + 4 + edx]
-									fxch st(2)
-									fmul dword ptr[ecx]
-									fxch st(2)
-									fld st(0)
-									fmul dword ptr[4 + ecx]
-									fld dword ptr[0 + 8 + edx]
-									fxch st(2)
-									fmul dword ptr[4 + ebx]
-									fxch st(2)
-									fld st(0)
-									fmul dword ptr[8 + ecx]
-									fxch st(5)
-									faddp st(3), st(0)
-									fmul dword ptr[8 + ebx]
-									fxch st(1)
-									faddp st(3), st(0)
-									fxch st(3)
-									faddp st(2), st(0)
-									jmp LSetSides
-									Lcase7 :
-										fmul dword ptr[ecx]
-										fld dword ptr[0 + 4 + edx]
-										fxch st(2)
-										fmul dword ptr[ebx]
-										fxch st(2)
-										fld st(0)
-										fmul dword ptr[4 + ecx]
-										fld dword ptr[0 + 8 + edx]
-										fxch st(2)
-										fmul dword ptr[4 + ebx]
-										fxch st(2)
-										fld st(0)
-										fmul dword ptr[8 + ecx]
-										fxch st(5)
-										faddp st(3), st(0)
-										fmul dword ptr[8 + ebx]
-										fxch st(1)
-										faddp st(3), st(0)
-										fxch st(3)
-										faddp st(2), st(0)
-										LSetSides :
-											faddp st(2), st(0)
-											fcomp dword ptr[12 + edx]
-											xor ecx, ecx
-											fnstsw ax
-											fcomp dword ptr[12 + edx]
-											and ah, 1
-											xor ah, 1
-											add cl, ah
-											fnstsw ax
-											and ah, 1
-											add ah, ah
-											add cl, ah
-											pop ebx
-											mov eax, ecx
-											ret
-											Lerror :
-												int 3
+Lcase0:
+		fmul dword ptr[ebx]
+		fld dword ptr[0 + 4 + edx]
+		fxch st(2)
+		fmul dword ptr[ecx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[4 + ebx]
+		fld dword ptr[0 + 8 + edx]
+		fxch st(2)
+		fmul dword ptr[4 + ecx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[8 + ebx]
+		fxch st(5)
+		faddp st(3), st(0)
+		fmul dword ptr[8 + ecx]
+		fxch st(1)
+		faddp st(3), st(0)
+		fxch st(3)
+		faddp st(2), st(0)
+		jmp LSetSides
+Lcase1:
+		fmul dword ptr[ecx]
+		fld dword ptr[0 + 4 + edx]
+		fxch st(2)
+		fmul dword ptr[ebx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[4 + ebx]
+		fld dword ptr[0 + 8 + edx]
+		fxch st(2)
+		fmul dword ptr[4 + ecx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[8 + ebx]
+		fxch st(5)
+		faddp st(3), st(0)
+		fmul dword ptr[8 + ecx]
+		fxch st(1)
+		faddp st(3), st(0)
+		fxch st(3)
+		faddp st(2), st(0)
+		jmp LSetSides
+Lcase2:
+		fmul dword ptr[ebx]
+		fld dword ptr[0 + 4 + edx]
+		fxch st(2)
+		fmul dword ptr[ecx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[4 + ecx]
+		fld dword ptr[0 + 8 + edx]
+		fxch st(2)
+		fmul dword ptr[4 + ebx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[8 + ebx]
+		fxch st(5)
+		faddp st(3), st(0)
+		fmul dword ptr[8 + ecx]
+		fxch st(1)
+		faddp st(3), st(0)
+		fxch st(3)
+		faddp st(2), st(0)
+		jmp LSetSides
+Lcase3:
+		fmul dword ptr[ecx]
+		fld dword ptr[0 + 4 + edx]
+		fxch st(2)
+		fmul dword ptr[ebx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[4 + ecx]
+		fld dword ptr[0 + 8 + edx]
+		fxch st(2)
+		fmul dword ptr[4 + ebx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[8 + ebx]
+		fxch st(5)
+		faddp st(3), st(0)
+		fmul dword ptr[8 + ecx]
+		fxch st(1)
+		faddp st(3), st(0)
+		fxch st(3)
+		faddp st(2), st(0)
+		jmp LSetSides
+Lcase4:
+		fmul dword ptr[ebx]
+		fld dword ptr[0 + 4 + edx]
+		fxch st(2)
+		fmul dword ptr[ecx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[4 + ebx]
+		fld dword ptr[0 + 8 + edx]
+		fxch st(2)
+		fmul dword ptr[4 + ecx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[8 + ecx]
+		fxch st(5)
+		faddp st(3), st(0)
+		fmul dword ptr[8 + ebx]
+		fxch st(1)
+		faddp st(3), st(0)
+		fxch st(3)
+		faddp st(2), st(0)
+		jmp LSetSides
+Lcase5:
+		fmul dword ptr[ecx]
+		fld dword ptr[0 + 4 + edx]
+		fxch st(2)
+		fmul dword ptr[ebx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[4 + ebx]
+		fld dword ptr[0 + 8 + edx]
+		fxch st(2)
+		fmul dword ptr[4 + ecx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[8 + ecx]
+		fxch st(5)
+		faddp st(3), st(0)
+		fmul dword ptr[8 + ebx]
+		fxch st(1)
+		faddp st(3), st(0)
+		fxch st(3)
+		faddp st(2), st(0)
+		jmp LSetSides
+Lcase6:
+		fmul dword ptr[ebx]
+		fld dword ptr[0 + 4 + edx]
+		fxch st(2)
+		fmul dword ptr[ecx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[4 + ecx]
+		fld dword ptr[0 + 8 + edx]
+		fxch st(2)
+		fmul dword ptr[4 + ebx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[8 + ecx]
+		fxch st(5)
+		faddp st(3), st(0)
+		fmul dword ptr[8 + ebx]
+		fxch st(1)
+		faddp st(3), st(0)
+		fxch st(3)
+		faddp st(2), st(0)
+		jmp LSetSides
+Lcase7:
+		fmul dword ptr[ecx]
+		fld dword ptr[0 + 4 + edx]
+		fxch st(2)
+		fmul dword ptr[ebx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[4 + ecx]
+		fld dword ptr[0 + 8 + edx]
+		fxch st(2)
+		fmul dword ptr[4 + ebx]
+		fxch st(2)
+		fld st(0)
+		fmul dword ptr[8 + ecx]
+		fxch st(5)
+		faddp st(3), st(0)
+		fmul dword ptr[8 + ebx]
+		fxch st(1)
+		faddp st(3), st(0)
+		fxch st(3)
+		faddp st(2), st(0)
+LSetSides:
+		faddp st(2), st(0)
+		fcomp dword ptr[12 + edx]
+		xor ecx, ecx
+		fnstsw ax
+		fcomp dword ptr[12 + edx]
+		and ah, 1
+		xor ah, 1
+		add cl, ah
+		fnstsw ax
+		and ah, 1
+		add ah, ah
+		add cl, ah
+		pop ebx
+		mov eax, ecx
+		ret
+Lerror:
+		int 3
 	}
 }
 
@@ -1210,6 +1213,9 @@ void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
 	}
 }
 
+/**
+ * @note Unused.
+ */
 qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs)
 {
 	if (v[0] < mins[0])
@@ -1388,6 +1394,9 @@ void VectorInverse(vec3_t v)
 	v[2] = -v[2];
 }
 
+/**
+ * @note Unused.
+ */
 void Vector4Scale(const vec4_t in, vec_t scale, vec4_t out)
 {
 	out[0] = in[0] * scale;
@@ -1396,6 +1405,9 @@ void Vector4Scale(const vec4_t in, vec_t scale, vec4_t out)
 	out[3] = in[3] * scale;
 }
 
+/**
+ * @note Unused.
+ */
 int Q_log2(int val)
 {
 	int answer;

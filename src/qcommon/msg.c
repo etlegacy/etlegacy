@@ -840,25 +840,25 @@ void MSG_ReadDeltaUsercmd(msg_t *msg, usercmd_t *from, usercmd_t *to)
 	{
 		to->serverTime = MSG_ReadBits(msg, 32);
 	}
-	to->angles[0]   = MSG_ReadDelta(msg, from->angles[0], 16);
-	to->angles[1]   = MSG_ReadDelta(msg, from->angles[1], 16);
-	to->angles[2]   = MSG_ReadDelta(msg, from->angles[2], 16);
+	to->angles[0] = MSG_ReadDelta(msg, from->angles[0], 16);
+	to->angles[1] = MSG_ReadDelta(msg, from->angles[1], 16);
+	to->angles[2] = MSG_ReadDelta(msg, from->angles[2], 16);
 
 	// disallow moves of -128 - see https://bugzilla.icculus.org/show_bug.cgi?id=5273 patch by /dev/humancontroller
 	to->forwardmove = MSG_ReadDelta(msg, from->forwardmove, 8);
-	if( to->forwardmove == -128 )
+	if (to->forwardmove == -128)
 	{
 		to->forwardmove = -127;
 	}
-	to->rightmove   = MSG_ReadDelta(msg, from->rightmove, 8);
-	if( to->rightmove == -128 )
+	to->rightmove = MSG_ReadDelta(msg, from->rightmove, 8);
+	if (to->rightmove == -128)
 	{
 		to->rightmove = -127;
 	}
-	to->upmove      = MSG_ReadDelta(msg, from->upmove, 8);
-	if( to->upmove == -128 )
+	to->upmove = MSG_ReadDelta(msg, from->upmove, 8);
+	if (to->upmove == -128)
 	{
-	to->upmove = -127;
+		to->upmove = -127;
 	}
 
 	to->buttons     = MSG_ReadDelta(msg, from->buttons, 8);
@@ -936,23 +936,24 @@ void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to
 	}
 	if (MSG_ReadBits(msg, 1))
 	{
-		key            ^= to->serverTime;
-		to->angles[0]   = MSG_ReadDeltaKey(msg, key, from->angles[0], 16);
-		to->angles[1]   = MSG_ReadDeltaKey(msg, key, from->angles[1], 16);
-		to->angles[2]   = MSG_ReadDeltaKey(msg, key, from->angles[2], 16);
+		key          ^= to->serverTime;
+		to->angles[0] = MSG_ReadDeltaKey(msg, key, from->angles[0], 16);
+		to->angles[1] = MSG_ReadDeltaKey(msg, key, from->angles[1], 16);
+		to->angles[2] = MSG_ReadDeltaKey(msg, key, from->angles[2], 16);
 
 		// disallow moves of -128 - see https://bugzilla.icculus.org/show_bug.cgi?id=5273 patch by /dev/humancontroller
 		to->forwardmove = MSG_ReadDeltaKey(msg, key, from->forwardmove, 8);
-		if( to->forwardmove == -128 ) {
+		if (to->forwardmove == -128)
+		{
 			to->forwardmove = -127;
 		}
-		to->rightmove   = MSG_ReadDeltaKey(msg, key, from->rightmove, 8);
-		if( to->rightmove == -128 )
+		to->rightmove = MSG_ReadDeltaKey(msg, key, from->rightmove, 8);
+		if (to->rightmove == -128)
 		{
 			to->rightmove = -127;
 		}
-		to->upmove      = MSG_ReadDeltaKey(msg, key, from->upmove, 8);
-		if( to->upmove == -128 )
+		to->upmove = MSG_ReadDeltaKey(msg, key, from->upmove, 8);
+		if (to->upmove == -128)
 		{
 			to->upmove = -127;
 		}
@@ -1562,9 +1563,9 @@ netField_t playerStateFields[] =
 	{ PSF(onFireStart),          32              },
 	{ PSF(curWeapHeat),          8               },
 	{ PSF(aimSpreadScale),       8               },
-	{ PSF(serverCursorHint),     8               }, //----(SA)   added
-	{ PSF(serverCursorHintVal),  8               }, //----(SA)    added
-	{ PSF(classWeaponTime),      32              }, // JPW NERVE
+	{ PSF(serverCursorHint),     8               },
+	{ PSF(serverCursorHintVal),  8               },
+	{ PSF(classWeaponTime),      32              },
 	{ PSF(identifyClient),       8               },
 	{ PSF(identifyClientHealth), 8               },
 	{ PSF(aiState),              2               },
