@@ -337,9 +337,11 @@ void TB_Frame(int msec)
  */
 qboolean TB_catchServerCommand(int clientNum, char *msg)
 {
+	int slot;
+
 	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		return;
+		return qfalse;
 	}
 
 	if (clientNum != querycl)
@@ -361,8 +363,6 @@ qboolean TB_catchServerCommand(int clientNum, char *msg)
 	{
 		msg[strlen(msg) - 1] = '\0';
 	}
-
-	int slot;
 
 	if (!Q_strncmp("ws", msg, 2))
 	{
