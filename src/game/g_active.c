@@ -37,16 +37,14 @@
 #include "g_etbot_interface.h"
 #endif
 
-/*
-===============
-G_DamageFeedback
-
-Called just before a snapshot is sent to the given player.
-Totals up all damage and generates both the player_state_t
-damage values to that client for pain blends and kicks, and
-global pain sound events for all clients.
-===============
-*/
+/**
+ * @param[in,out] player Player Entity
+ *
+ * Called just before a snapshot is sent to the given player.
+ * Totals up all damage and generates both the player_state_t
+ * damage values to that client for pain blends and kicks, and
+ * global pain sound events for all clients.
+ */
 void P_DamageFeedback(gentity_t *player)
 {
 	gclient_t *client;
@@ -107,13 +105,10 @@ void P_DamageFeedback(gentity_t *player)
 
 #define MIN_BURN_INTERVAL 399 // JPW NERVE set burn timeinterval so we can do more precise damage (was 199 old model)
 
-/*
-=============
-P_WorldEffects
-
-Check for lava / slime contents and drowning
-=============
-*/
+/**
+ * @brief Check for lava/slime contents and drowning
+ * @param[in,out] ent Entity
+ */
 void P_WorldEffects(gentity_t *ent)
 {
 	int waterlevel;
@@ -218,22 +213,16 @@ void P_WorldEffects(gentity_t *ent)
 	}
 }
 
-/*
-===============
-G_SetClientSound
-===============
-*/
-void G_SetClientSound(gentity_t *ent)                                                                                                                       // Gordon: doesnt exist
+/**
+ * @brief Disables sound looping in entity
+ * @param[in,out] ent Entity
+ */
+void G_SetClientSound(gentity_t *ent)
 {
 	ent->s.loopSound = 0;
 }
 
 #ifdef FEATURE_OMNIBOT
-/*
-==============
-PushBot
-==============
-*/
 void PushBot(gentity_t *ent, gentity_t *other)
 {
 	vec3_t dir, ang, f, r;
@@ -274,7 +263,10 @@ void PushBot(gentity_t *ent, gentity_t *other)
 }
 #endif
 
-// Does ent have enough "energy" to call artillery?
+/**
+ * @brief Does ent have enough "energy" to call artillery?
+ * @param[in] ent Entity
+ */
 qboolean ReadyToCallArtillery(gentity_t *ent)
 {
 	if (ent->client->sess.skill[SK_SIGNALS] >= 2)
@@ -292,7 +284,14 @@ qboolean ReadyToCallArtillery(gentity_t *ent)
 	return qtrue;
 }
 
-// Are we ready to construct?  Optionally, will also update the time while we are constructing
+/**
+ * @brief Are we ready to construct?
+ * @param[in,out] ent           Entity
+ * @param[in]     constructible Constructible Entity
+ * @param[in]     updateState   Do we want to update Entity weapon time?  
+ *
+ * Optionally, will also update the time while we are constructing
+ */
 qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean updateState)
 {
 	int weaponTime = ent->client->ps.classWeaponTime;
@@ -326,8 +325,10 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 	if (weaponTime > level.time)
 	{
 		// if we're supposed to update the state, reset the time to now
-//		if( updateState )
+//		if (updateState)
+//		{
 //			ent->client->ps.classWeaponTime = level.time;
+//		}
 
 		return qfalse;
 	}
@@ -343,11 +344,10 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 
 //==============================================================
 
-/*
-==============
-ClientImpacts
-==============
-*/
+/**
+ * @param[in] ent Entity
+ * @param[in] pm  Player Move
+ */
 void ClientImpacts(gentity_t *ent, pmove_t *pm)
 {
 	int       i, j;
@@ -364,6 +364,7 @@ void ClientImpacts(gentity_t *ent, pmove_t *pm)
 				break;
 			}
 		}
+
 		if (j != i)
 		{
 			continue;   // duplicated
@@ -394,14 +395,12 @@ void ClientImpacts(gentity_t *ent, pmove_t *pm)
 	}
 }
 
-/*
-============
-G_TouchTriggers
-
-Find all trigger entities that ent's current position touches.
-Spectators will only interact with teleporters.
-============
-*/
+/**
+ * @brief Find all trigger entities that ent's current position touches.
+ * @param[in,out] ent Entity
+ *
+ * Spectators will only interact with teleporters.
+ */
 void G_TouchTriggers(gentity_t *ent)
 {
 	int           i, num;
@@ -492,11 +491,6 @@ void G_TouchTriggers(gentity_t *ent)
 	}
 }
 
-/*
-=================
-SpectatorThink
-=================
-*/
 void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 {
 	pmove_t   pm;
@@ -617,13 +611,10 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	}
 }
 
-/*
-=================
-ClientInactivityTimer
-
-Returns qfalse if the client is dropped
-=================
-*/
+/**
+ * @return Returns qfalse if the client is dropped
+ * @param client Client
+ */
 qboolean ClientInactivityTimer(gclient_t *client)
 {
 /* FIXME: Adjust for OMNIBOT
@@ -684,12 +675,10 @@ qboolean ClientInactivityTimer(gclient_t *client)
 }
 
 /*
-==================
-ClientTimerActions
-
-Actions that happen once a second
-==================
-*/
+ * @brief Actions that happen once a second
+ * @param[in,out] ent  Entity
+ * @param         msec Scheduler time
+ */
 void ClientTimerActions(gentity_t *ent, int msec)
 {
 	gclient_t *client;
@@ -732,11 +721,9 @@ void ClientTimerActions(gentity_t *ent, int msec)
 	}
 }
 
-/*
-====================
-ClientIntermissionThink
-====================
-*/
+/**
+ * @param[in,out] client Client
+ */
 void ClientIntermissionThink(gclient_t *client)
 {
 	client->ps.eFlags &= ~EF_TALK;
@@ -752,14 +739,13 @@ void ClientIntermissionThink(gclient_t *client)
 	client->wbuttons    = client->pers.cmd.wbuttons;
 }
 
-/*
-================
-ClientEvents
-
-Events will be passed on to the clients for presentation,
-but any server game effects are handled here
-================
-*/
+/**
+ * @param[in] ent              Pointer to Entity
+ * @param     oldEventSequence Old event sequence number
+ *
+ * Events will be passed on to the clients for presentation,
+ * but any server game effects are handled here
+ */
 void ClientEvents(gentity_t *ent, int oldEventSequence)
 {
 	int       i;
@@ -879,11 +865,9 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 
 }
 
-/*
-==============
-SendPendingPredictableEvents
-==============
-*/
+/**
+ * @param[in,out] ps Player State
+ */
 void SendPendingPredictableEvents(playerState_t *ps)
 {
 	/*
@@ -892,11 +876,12 @@ void SendPendingPredictableEvents(playerState_t *ps)
 	int extEvent, number;
 
 	// if there are still events pending
-	if ( ps->entityEventSequence < ps->eventSequence ) {
+	if (ps->entityEventSequence < ps->eventSequence)
+	{
 	    // create a temporary entity for this event which is sent to everyone
 	    // except the client generated the event
 	    seq = ps->entityEventSequence & (MAX_EVENTS-1);
-	    event = ps->events[ seq ] | ( ( ps->entityEventSequence & 3 ) << 8 );
+	    event = ps->events[seq] | ((ps->entityEventSequence & 3) << 8);
 	    // set external event to zero before calling BG_PlayerStateToEntityState
 	    extEvent = ps->externalEvent;
 	    ps->externalEvent = 0;
@@ -917,6 +902,9 @@ void SendPendingPredictableEvents(playerState_t *ps)
 	*/
 }
 
+/**
+ * @param[in,out] self Current Player Entity
+ */
 void WolfFindMedic(gentity_t *self)
 {
 	int       i, medic = -1;
@@ -999,17 +987,15 @@ void WolfFindMedic(gentity_t *self)
 	}
 }
 
-/*
-==============
-ClientThink
-
-This will be called once for each client frame, which will
-usually be a couple times for each server frame on fast clients.
-
-If "g_synchronousClients 1" is set, this will be called exactly
-once for each server frame, which makes for smooth demo recording.
-==============
-*/
+/**
+ * @param[in,out] ent Entity
+ *
+ * This will be called once for each client frame, which will
+ * usually be a couple times for each server frame on fast clients.
+ *
+ * If "g_synchronousClients 1" is set, this will be called exactly
+ * once for each server frame, which makes for smooth demo recording.
+ */
 void ClientThink_real(gentity_t *ent)
 {
 	int       msec, oldEventSequence, monsterslick = 0;
@@ -1207,7 +1193,7 @@ void ClientThink_real(gentity_t *ent)
 	{
 		pm.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;
 		// DHM-Nerve added:: EF_DEAD is checked for in Pmove functions, but wasn't being set
-		//              until after Pmove
+		// until after Pmove
 		pm.ps->eFlags |= EF_DEAD;
 		// dhm-Nerve end
 	}
@@ -1246,12 +1232,20 @@ void ClientThink_real(gentity_t *ent)
 
 	if (client->ps.pm_type != PM_DEAD && level.timeCurrent - client->pers.lastBattleSenseBonusTime > 45000)
 	{
-		/*switch( client->combatState )
+		/*switch (client->combatState)
 		{
-		case COMBATSTATE_COLD:	G_AddSkillPoints( ent, SK_BATTLE_SENSE, 0.f ); G_DebugAddSkillPoints( ent, SK_BATTLE_SENSE, 0.f, "combatstate cold" ); break;
-		case COMBATSTATE_WARM:	G_AddSkillPoints( ent, SK_BATTLE_SENSE, 2.f ); G_DebugAddSkillPoints( ent, SK_BATTLE_SENSE, 2.f, "combatstate warm" ); break;
-		case COMBATSTATE_HOT:	G_AddSkillPoints( ent, SK_BATTLE_SENSE, 5.f ); G_DebugAddSkillPoints( ent, SK_BATTLE_SENSE, 5.f, "combatstate hot" ); break;
-		case COMBATSTATE_SUPERHOT:	G_AddSkillPoints( ent, SK_BATTLE_SENSE, 8.f ); G_DebugAddSkillPoints( ent, SK_BATTLE_SENSE, 8.f, "combatstate super-hot" ); break;
+		case COMBATSTATE_COLD:
+			G_AddSkillPoints(ent, SK_BATTLE_SENSE, 0.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 0.f, "combatstate cold");
+			break;
+		case COMBATSTATE_WARM:
+			G_AddSkillPoints(ent, SK_BATTLE_SENSE, 2.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 2.f, "combatstate warm");
+			break;
+		case COMBATSTATE_HOT:
+			G_AddSkillPoints(ent, SK_BATTLE_SENSE, 5.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 5.f, "combatstate hot");
+			break;
+		case COMBATSTATE_SUPERHOT:
+			G_AddSkillPoints(ent, SK_BATTLE_SENSE, 8.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 8.f, "combatstate super-hot");
+			break;
 		}*/
 
 		if (client->combatState != COMBATSTATE_COLD)
@@ -1275,34 +1269,40 @@ void ClientThink_real(gentity_t *ent)
 	}
 
 	pm.leadership = qfalse;
-	/*for ( i = 0 ; i < level.numConnectedClients; i++ ) {
-	    gclient_t *cl = &level.clients[level.sortedClients[i]];
-	    vec3_t dist;
+	/*for (i = 0 ; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+		vec3_t dist;
 
-	    if( cl->sess.sessionTeam != client->sess.sessionTeam ) {
-	        continue;
-	    }
+		if (cl->sess.sessionTeam != client->sess.sessionTeam)
+		{
+			continue;
+		}
 
-	    if( cl->sess.skill[SK_SIGNALS] < 5 ) {
-	        continue;
-	    }
+		if (cl->sess.skill[SK_SIGNALS] < 5)
+		{
+			continue;
+		}
 
-	    if( !trap_InPVS( g_entities[level.sortedClients[i]].r.currentOrigin, ent->r.currentOrigin ) ) {
-	        continue;
-	    }
+		if (!trap_InPVS(g_entities[level.sortedClients[i]].r.currentOrigin, ent->r.currentOrigin))
+		{
+			continue;
+		}
 
-	    VectorSubtract( g_entities[level.sortedClients[i]].r.currentOrigin, ent->r.currentOrigin, dist );
-	    if( VectorLengthSquared( dist ) > SQR(512) )
-	        continue;
+		VectorSubtract(g_entities[level.sortedClients[i]].r.currentOrigin, ent->r.currentOrigin, dist);
+		if (VectorLengthSquared(dist) > SQR(512))
+		{
+			continue;
+		}
 
-	    pm.leadership = qtrue;
+		pm.leadership = qtrue;
 
-	    break;
+		break;
 	}*/
 
 	// Gordon: bit hacky, stop the slight lag from client -> server even on locahost, switching back to the weapon you were holding
-	//			and then back to what weapon you should have, became VERY noticible for the kar98/carbine + gpg40, esp now i've added the
-	//			animation locking
+	// and then back to what weapon you should have, became VERY noticible for the kar98/carbine + gpg40, esp now i've added the
+	// animation locking
 	if (level.time - client->pers.lastSpawnTime < 1000)
 	{
 		pm.cmd.weapon = client->ps.weapon;
@@ -1487,7 +1487,12 @@ void ClientThink_real(gentity_t *ent)
 	}
 }
 
-// zinx etpro antiwarp
+/**
+ * @brief etpro antiwarp
+ * @author zinx
+ * @param[in,out] ent Entity
+ * @param[in]     cmd User Command
+ */
 void ClientThink_cmd(gentity_t *ent, usercmd_t *cmd)
 {
 	ent->client->pers.oldcmd = ent->client->pers.cmd;
@@ -1495,13 +1500,10 @@ void ClientThink_cmd(gentity_t *ent, usercmd_t *cmd)
 	ClientThink_real(ent);
 }
 
-/*
-==================
-ClientThink
-
-A new command has arrived from the client
-==================
-*/
+/**
+ * @brief A new command has arrived from the client
+ * @param clientNum Client Number from 0 to MAX_CLIENTS 
+ */
 void ClientThink(int clientNum)
 {
 	gentity_t *ent;
@@ -1531,6 +1533,9 @@ void ClientThink(int clientNum)
 	}
 }
 
+/**
+ * @param[int,out] ent Entity
+ */
 void G_RunClient(gentity_t *ent)
 {
 	// Gordon: special case for uniform grabbing
@@ -1558,12 +1563,9 @@ void G_RunClient(gentity_t *ent)
 	ClientThink_real(ent);
 }
 
-/*
-==================
-SpectatorClientEndFrame
-
-==================
-*/
+/**
+ * @param[in,out] ent Spectator Entity
+ */
 void SpectatorClientEndFrame(gentity_t *ent)
 {
 	// OSP - specs periodically get score updates for useful demo playback info
@@ -1734,6 +1736,9 @@ void SpectatorClientEndFrame(gentity_t *ent)
 // DHM - Nerve :: After reviving a player, their contents stay CONTENTS_CORPSE until it is determined
 //					to be safe to return them to PLAYERSOLID
 
+/**
+ * @param[in,out] self Current Player Entity
+ */
 qboolean StuckInClient(gentity_t *self)
 {
 	int       i;
@@ -1813,7 +1818,10 @@ void WolfRevivePushEnt(gentity_t *self, gentity_t *other)
 	VectorAdd(other->client->ps.velocity, push, other->client->ps.velocity);
 }
 
-// Arnout: completely revived for capsules
+/**
+ * @param[in,out] self Current Player Entity
+ * @note completely revived for capsules
+ */
 void WolfReviveBbox(gentity_t *self)
 {
 	int       touch[MAX_GENTITIES];
@@ -1880,15 +1888,13 @@ void WolfReviveBbox(gentity_t *self)
 	}
 }
 
-/*
-==============
-ClientEndFrame
-
-Called at the end of each server frame for each connected client
-A fast client will have multiple ClientThink for each ClientEndFrame,
-while a slow client may have multiple ClientEndFrame between ClientThink.
-==============
-*/
+/**
+ * @param[in,out] ent Entity
+ *
+ * Called at the end of each server frame for each connected client
+ * A fast client will have multiple ClientThink for each ClientEndFrame,
+ * while a slow client may have multiple ClientEndFrame between ClientThink.
+ */
 void ClientEndFrame(gentity_t *ent)
 {
 	int i;
