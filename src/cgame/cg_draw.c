@@ -3028,6 +3028,7 @@ static void CG_DrawWarmup(void)
 	int        sec;
 	int        cw;
 	const char *s, *s1, *s2;
+	static qboolean announced = qfalse;
 
 	sec = cg.warmup;
 	if (!sec)
@@ -3075,7 +3076,26 @@ static void CG_DrawWarmup(void)
 	w = CG_DrawStrlen(s);
 	CG_DrawStringExt(320 - w * 6, 120, s, colorYellow, qfalse, qtrue, 12, 18, 0);
 
-	// NERVE - SMF - stopwatch stuff
+	// pre start actions
+	if (sec == 3 && !announced)
+	{
+		trap_S_StartLocalSound(cgs.media.countPrepare, CHAN_ANNOUNCER);
+
+		CPri("^3PREPARE TO FIGHT!\n"); // @translate
+
+		if(!cg.demoPlayback && cg_autoAction.integer & AA_DEMORECORD)
+		{
+			CG_autoRecord_f();
+		}
+
+		announced = qtrue;
+	}
+	else if (sec != 3)
+	{
+		announced = qfalse;
+	}
+
+	// stopwatch stuff
 	s1 = "";
 	s2 = "";
 

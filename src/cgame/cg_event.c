@@ -51,7 +51,7 @@ static void CG_Obituary(entityState_t *ent)
 	char         *message2;
 	char         targetName[32];
 	char         attackerName[32];
-	clientInfo_t *ci, *ca;    // JPW NERVE ca = attacker
+	clientInfo_t *ci, *ca;    // ca = attacker
 	qhandle_t    deathShader = cgs.media.pmImages[PM_DEATH];
 
 	target   = ent->otherEntityNum;
@@ -105,7 +105,7 @@ static void CG_Obituary(entityState_t *ent)
 	case MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER:
 		message = "got buried under a pile of rubble";
 		break;
-	case MOD_LAVA:     // rain
+	case MOD_LAVA:
 		message = "was incinerated";
 		break;
 	default:
@@ -143,27 +143,27 @@ static void CG_Obituary(entityState_t *ent)
 		// resort existing messages to avoid differences between pre
 		// and post-patch code (for source patching)
 		case MOD_GPG40:
-		case MOD_M7: // rain
+		case MOD_M7:
 			//bani - more amusing, less wordy
 			message = "ate his own rifle grenade";
 			break;
-		case MOD_LANDMINE: // rain
+		case MOD_LANDMINE:
 			//bani - slightly more amusing
 			message = "failed to spot his own landmine";
 			break;
-		case MOD_SATCHEL: // rain
+		case MOD_SATCHEL:
 			message = "embraced his own satchel explosion";
 			break;
-		case MOD_CRUSH_CONSTRUCTION: // rain
+		case MOD_CRUSH_CONSTRUCTION:
 			message = "engineered himself into oblivion";
 			break;
-		case MOD_CRUSH_CONSTRUCTIONDEATH: // rain
+		case MOD_CRUSH_CONSTRUCTIONDEATH:
 			message = "buried himself alive";
 			break;
-		case MOD_MORTAR: // rain
+		case MOD_MORTAR:
 			message = "never saw his own mortar round coming";
 			break;
-		case MOD_SMOKEGRENADE: // rain
+		case MOD_SMOKEGRENADE:
 			// bani - more amusing
 			message = "danced on his airstrike marker";
 			break;
@@ -231,10 +231,14 @@ static void CG_Obituary(entityState_t *ent)
 		case MOD_KNIFE:
 			message  = "was stabbed by";
 			message2 = "'s knife";
-			// OSP - goat luvin
-//          if( attacker == cg.snap->ps.clientNum || target == cg.snap->ps.clientNum ) {
-//              trap_S_StartSound( cg.snap->ps.origin, cg.snap->ps.clientNum, CHAN_AUTO, cgs.media.goatAxis );
-//          }
+			// goat luvin
+			if(attacker == cg.snap->ps.clientNum || target == cg.snap->ps.clientNum)
+			{
+				if (ci->team != ca->team)
+				{
+					trap_S_StartSound(cg.snap->ps.origin, cg.snap->ps.clientNum, CHAN_AUTO, cgs.media.goatAxis);
+				}
+			}
 			break;
 
 		case MOD_AKIMBO_COLT:
@@ -395,7 +399,7 @@ static void CG_Obituary(entityState_t *ent)
 			message2 = "'s Satchel Charge";
 			break;
 
-		case MOD_SMOKEGRENADE: // rain
+		case MOD_SMOKEGRENADE:
 			message  = "stood on";
 			message2 = "'s airstrike marker";
 			break;
@@ -604,7 +608,7 @@ static fxSound_t fxSounds[POSSIBLE_PIECES] =
 	// metal
 	{ 1, { -1, -1, -1 }, { "sound/world/metalbreak.wav",  NULL,                          NULL                          } },
 	// gibs
-	{ 1, { -1, -1, -1 }, { "sound/world/gibsplit1.wav",        NULL,                          NULL                          } }, // "sound/world/gibsplit1.wav"
+	{ 1, { -1, -1, -1 }, { "sound/player/gib.wav",        NULL,                          NULL                          } }, // "sound/world/gibsplit1.wav"
 	// brick
 	{ 1, { -1, -1, -1 }, { "sound/world/debris1.wav",     NULL,                          NULL                          } },
 	// stone

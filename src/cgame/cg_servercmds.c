@@ -183,14 +183,6 @@ static void CG_ParseWarmup(void)
 	}
 	else if (warmup > 0 && cg.warmup <= 0 && cgs.gamestate != GS_WARMUP)
 	{
-		CG_Printf("WARMUP %i\n", warmup);
-
-		trap_S_StartLocalSound( cgs.media.countPrepare, CHAN_ANNOUNCER );
-		if (!cg.demoPlayback && (cg_autoAction.integer & AA_DEMORECORD))
-		{
-			CG_autoRecord_f();
-		}
-
 		if (cg.warmupCount >= 0)
 		{
 			Pri("^3All players ready!^7\nMatch starting...\n");
@@ -333,7 +325,7 @@ void CG_ParseWolfinfo(void)
 		trap_S_StartLocalSound(cgs.media.countFight, CHAN_ANNOUNCER);
 
 		Pri("^1FIGHT!\n");
-		CPri("^1FIGHT!\n");
+		CPri("^1FIGHT!\n"); // @translate
 	}
 
 	if (!cgs.localServer)
