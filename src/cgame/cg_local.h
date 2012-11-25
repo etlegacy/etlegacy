@@ -864,7 +864,6 @@ typedef struct
 	float zoomSensitivity;
 	float zoomval;
 
-
 	// information screen text during loading
 	char infoScreenText[MAX_STRING_CHARS];
 
@@ -1128,9 +1127,6 @@ typedef struct
 	int engineerChargeTime[2];
 	int medicChargeTime[2];
 	int covertopsChargeTime[2];
-
-	// which bots are currently selected
-	int selectedBotClientNumber[MAX_NUM_BUDDY]; // obsolete/unused
 
 	int binocZoomTime;
 	int limboEndCinematicTime;

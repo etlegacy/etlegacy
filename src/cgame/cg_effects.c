@@ -620,6 +620,7 @@ Generated a bunch of gibs launching out from the bodies location
 ===================
 */
 #define MAXJUNCTIONS 8
+#define GIB_BLOOD_DOTS  3
 
 void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 {
@@ -767,13 +768,8 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		}
 
 		// Ridah, spawn a bunch of blood dots around the place
-		#define GIB_BLOOD_DOTS  3
 		for (i = 0, count = 0; i < GIB_BLOOD_DOTS * 2; i++)
 		{
-			// TTimo: unused
-			//static vec3_t mins = {-10,-10,-10};
-			//static vec3_t maxs = { 10, 10, 10};
-
 			if (i > 0)
 			{
 				velocity[0] = ((i % 2) * 2 - 1) * (40 + 40 * random());

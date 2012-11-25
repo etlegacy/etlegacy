@@ -2528,10 +2528,6 @@ A player just came into view or teleported, so reset all animation info
 */
 void CG_ResetPlayerEntity(centity_t *cent)
 {
-	// Gordon: these are unused
-//  cent->errorTime = -99999;       // guarantee no error decay added
-//  cent->extrapolated = qfalse;
-
 	if (!(cent->currentState.eFlags & EF_DEAD))
 	{
 		CG_ClearLerpFrameRate(cent, &cgs.clientinfo[cent->currentState.clientNum], &cent->pe.legs, cent->currentState.legsAnim);

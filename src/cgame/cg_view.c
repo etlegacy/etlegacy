@@ -201,11 +201,10 @@ Sets the coordinates of the rendered window
 =================
 */
 
-//static float letterbox_frac = 1.0f;   // used for transitioning to letterbox for cutscenes // TODO: add to cg. // TTimo: unused
 void CG_Letterbox(float xsize, float ysize, qboolean center)
 {
-// normal aspect is xx:xx
-// letterbox is yy:yy  (85% of 'normal' height)
+	// normal aspect is xx:xx
+	// letterbox is yy:yy  (85% of 'normal' height)
 	if (cg_letterbox.integer)
 	{
 		float lbheight, lbdiff;
@@ -221,19 +220,6 @@ void CG_Letterbox(float xsize, float ysize, qboolean center)
 		}
 
 		ysize = lbheight;
-//      if(letterbox_frac != 0) {
-//          letterbox_frac -= 0.01f;    // (SA) TODO: make non fps dependant
-//          if(letterbox_frac < 0)
-//              letterbox_frac = 0;
-//          ysize += (lbdiff * letterbox_frac);
-//      }
-//  } else {
-//      if(letterbox_frac != 1) {
-//          letterbox_frac += 0.01f;    // (SA) TODO: make non fps dependant
-//          if(letterbox_frac > 1)
-//              letterbox_frac = 1;
-//          ysize = lbheight + (lbdiff * letterbox_frac);
-//      }
 	}
 
 	cg.refdef.width  = cgs.glconfig.vidWidth * xsize / 100;

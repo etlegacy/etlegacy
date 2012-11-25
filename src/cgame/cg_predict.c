@@ -475,12 +475,10 @@ Predict push triggers and items
 static void CG_TouchTriggerPrediction(void)
 {
 	int i;
-//  trace_t         trace;
 	entityState_t *ent;
 	clipHandle_t  cmodel;
 	centity_t     *cent;
 	qboolean      spectator;
-//  vec3_t          mins, maxs; // TTimo: unused
 	const char *cs;
 
 	// dead clients don't activate triggers
