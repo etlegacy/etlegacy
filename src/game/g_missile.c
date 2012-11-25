@@ -550,18 +550,6 @@ void G_MissileDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, in
 }
 
 /*
-================
-G_RunBomb
-================
-*/
-
-// just sits about doing nothing but tracing
-void G_RunBomb(gentity_t *ent)
-{
-	G_RunThink(ent);
-}
-
-/*
 =================
 Landmine_Check_Ground
 
@@ -598,7 +586,6 @@ void G_RunMissile(gentity_t *ent)
 {
 	vec3_t  origin;
 	trace_t tr;
-	int     impactDamage;
 
 	if (ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_SATCHEL)
 	{
@@ -764,6 +751,8 @@ void G_RunMissile(gentity_t *ent)
 
 	if (tr.fraction != 1)
 	{
+		int impactDamage;
+
 		if (level.tracemapLoaded &&
 		    (ent->s.weapon == WP_MORTAR_SET ||
 		     ent->s.weapon == WP_GPG40 ||
@@ -778,9 +767,7 @@ void G_RunMissile(gentity_t *ent)
 			G_RunThink(ent);
 			return; // keep flying
 		}
-		else
-		// never explode or bounce on sky
-		if (tr.surfaceFlags & SURF_NOIMPACT)
+		else if (tr.surfaceFlags & SURF_NOIMPACT) // never explode or bounce on sky
 		{
 			// If grapple, reset owner
 			if (ent->parent && ent->parent->client && ent->parent->client->hook == ent)
@@ -1501,42 +1488,6 @@ gentity_t *G_FindSatchel(gentity_t *ent)
 	return NULL;
 }
 
-/**
- * @note Unused.
- */
-qboolean G_HasDroppedItem(gentity_t *ent, int modType)
-{
-	gentity_t *e;
-	int       i;
-
-	e = &g_entities[MAX_CLIENTS];
-	for (i = MAX_CLIENTS ; i < level.num_entities ; i++, e++)
-	{
-		if (!e->inuse)
-		{
-			continue;
-		}
-
-		if (e->s.eType != ET_MISSILE)
-		{
-			continue;
-		}
-
-		if (e->methodOfDeath != modType)
-		{
-			continue;
-		}
-
-		if (e->parent != ent)
-		{
-			continue;
-		}
-
-		return qtrue;
-	}
-	return qfalse;
-}
-
 /*
 ==========
 G_ExplodeMines
@@ -1954,7 +1905,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->splashMethodOfDeath = MOD_GRENADE_LAUNCHER;
 		bolt->s.eFlags            = EF_BOUNCE_HALF | EF_BOUNCE;
 		break;
-// JPW NERVE
 	case WP_SMOKE_MARKER:
 		bolt->classname = "grenade";
 		bolt->s.eFlags  = EF_BOUNCE_HALF | EF_BOUNCE;
@@ -1962,7 +1912,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->methodOfDeath       = MOD_SMOKEGRENADE;
 		bolt->splashMethodOfDeath = MOD_SMOKEGRENADE;
 		break;
-// jpw
 	case WP_MORTAR_SET:
 		bolt->classname           = "mortar_grenade";
 		bolt->splashRadius        = 800;
@@ -2015,7 +1964,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->s.teamNum = self->client->sess.sessionTeam + 4;
 		bolt->classname = "dynamite";
 		bolt->damage    = 0;
-//          bolt->splashDamage          = 300;
 		bolt->splashRadius        = 400;
 		bolt->methodOfDeath       = MOD_DYNAMITE;
 		bolt->splashMethodOfDeath = MOD_DYNAMITE;
@@ -2091,8 +2039,8 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 
 	bolt->r.ownerNum          = self->s.number;
 	bolt->parent              = self;
-	bolt->damage              = G_GetWeaponDamage(WP_PANZERFAUST); // JPW NERVE
-	bolt->splashDamage        = G_GetWeaponDamage(WP_PANZERFAUST); // JPW NERVE
+	bolt->damage              = G_GetWeaponDamage(WP_PANZERFAUST);
+	bolt->splashDamage        = G_GetWeaponDamage(WP_PANZERFAUST);
 	bolt->splashRadius        = 300; //G_GetWeaponDamage(WP_PANZERFAUST);  // Arnout : hardcoded bleh hack
 	bolt->methodOfDeath       = MOD_PANZERFAUST;
 	bolt->splashMethodOfDeath = MOD_PANZERFAUST;

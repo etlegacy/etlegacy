@@ -1138,7 +1138,6 @@ void SanitizeString(char *in, char *out, qboolean fToLower);
 void G_RunItem(gentity_t *ent);
 void RespawnItem(gentity_t *ent);
 
-void UseHoldableItem(gentity_t *ent, int item); // Unused.
 gentity_t *Drop_Item(gentity_t *ent, gitem_t *item, float angle, qboolean novelocity);
 gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNum);
 void SetRespawn(gentity_t *ent, float delay);
@@ -1236,10 +1235,7 @@ gentity_t *G_BuildLeg(gentity_t *ent);
 
 // g_missile.c
 void G_RunMissile(gentity_t *ent);
-void G_RunBomb(gentity_t *ent);
 int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allowBounce);
-
-qboolean G_HasDroppedItem(gentity_t *ent, int modType); // Unused.
 
 // server side flamethrower collision
 void G_RunFlamechunk(gentity_t *ent);
@@ -1959,7 +1955,6 @@ void G_configSet(int mode, qboolean doComp);
 // g_match.c
 void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod);
 void G_addStatsHeadShot(gentity_t *attacker, int mod);
-qboolean G_allowPanzer(gentity_t *ent);
 int G_checkServerToggle(vmCvar_t *cv);
 char *G_createStats(gentity_t *refEnt);
 void G_deleteStats(int nClient);

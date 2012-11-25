@@ -310,7 +310,6 @@ void SP_corona(gentity_t *ent);
 void SP_mg42(gentity_t *ent);
 void SP_aagun(gentity_t *ent);
 
-//void SP_shooter_zombiespit (gentity_t *ent);
 void SP_shooter_mortar(gentity_t *ent);
 
 // alarm
@@ -349,7 +348,7 @@ void SP_crate_32(gentity_t *self);
 void SP_Props_Crate32x64(gentity_t *ent);
 void SP_Props_58x112tablew(gentity_t *ent);
 void SP_Props_RadioSEVEN(gentity_t *ent);
-//void SP_propsFireColumn (gentity_t *ent);
+
 void SP_props_flamethrower(gentity_t *ent);
 
 void SP_func_invisible_user(gentity_t *ent);
@@ -555,7 +554,7 @@ spawn_t spawns[] =
 	{ "props_58x112tablew",        SP_Props_58x112tablew        },
 	{ "props_radioSEVEN",          SP_Props_RadioSEVEN          },
 	{ "props_snowGenerator",       SP_props_snowGenerator       },
-//	{"props_FireColumn", SP_propsFireColumn},
+
 	{ "props_decoration",          SP_props_decoration          },
 	{ "props_decorBRUSH",          SP_props_decorBRUSH          },
 	{ "props_statue",              SP_props_statue              },

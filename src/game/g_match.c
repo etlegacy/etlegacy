@@ -563,14 +563,12 @@ void G_parseStats(char *pszStatsInfo)
 //  --> FIXME: put the pretty print on the client
 void G_printMatchInfo(gentity_t *ent)
 {
-	int       i, j, cnt, eff;
+	int       i, j, cnt = 0, eff;
 	int       tot_kills, tot_deaths, tot_gp, tot_sui, tot_tk, tot_dg, tot_dr, tot_td;
 	gclient_t *cl;
 	char      *ref;
 	char      n2[MAX_STRING_CHARS];
 
-
-	cnt = 0;
 	for (i = TEAM_AXIS; i <= TEAM_ALLIES; i++)
 	{
 		if (!TeamCount(-1, i))
@@ -885,61 +883,6 @@ void G_statsPrint(gentity_t *ent, int nType)
 		CP(va("%s %s\n", cmd, G_createStats(g_entities + pid)));
 	}
 }
-
-/*
-// See if the player is allowed to have a panzer
-qboolean G_allowPanzer(gentity_t *ent)
-{
-    int i, cPanzers = 0;
-    gclient_t *cl;
-
-    if(team_maxPanzers.integer < 0) return(qtrue);
-    if(ent->client->sess.latchPlayerType != PC_SOLDIER || ent->client->sess.latchPlayerWeapon != 8) {
-        ent->client->pers.panzerSelectTime = 0;
-        return(qtrue);
-    }
-
-    if(team_maxPanzers.integer == 0) {
-        if(ent->client->pers.cmd_debounce < level.time) {
-            ent->client->pers.cmd_debounce = level.time + 3000;
-            G_printFull("[lof]^3*** [lon]Panzers are disabled on this server[lof].", ent);
-        }
-        return(qfalse);
-    }
-
-    for(i=0; i<level.numConnectedClients; i++) {
-        cl = level.clients + level.sortedClients[i];
-
-        if(cl == ent->client) continue;
-        if(cl->sess.sessionTeam != ent->client->sess.sessionTeam) continue;
-        if(cl->sess.latchPlayerType != PC_SOLDIER) continue;
-
-        // ACTIVE panzers take precedence.  Limbo players will fight amongst themselves
-        if(COM_BitCheck(cl->ps.weapons, WP_PANZERFAUST) || cl->pers.panzerDropTime > level.time) {
-            cPanzers++;
-            continue;
-        }
-
-        // Deal with waiting-to-spawn clients where there is contention on who gets a panzer
-        if((cl->ps.pm_flags & PMF_LIMBO) &&
-          ((cl->pers.panzerSelectTime != 0 && ent->client->pers.panzerSelectTime == 0) ||
-           (cl->pers.panzerSelectTime > 0 && cl->pers.panzerSelectTime < ent->client->pers.panzerSelectTime)))
-        {
-            cPanzers++;
-            continue;
-        }
-    }
-
-    if(cPanzers < team_maxPanzers.integer) return(qtrue);
-
-    if(ent->client->pers.cmd_debounce < level.time) {
-        ent->client->pers.cmd_debounce = level.time + 3000;
-        G_printFull(va("[lof]^3*** [lon]Already[lof %d [lon]panzers in the game[lof].", team_maxPanzers.integer), ent);
-    }
-
-    return(qfalse);
-}
-*/
 
 void G_resetRoundState(void)
 {

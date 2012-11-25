@@ -647,31 +647,6 @@ typedef enum
 	KEY_NUM_KEYS
 } wkey_t;           // conflicts with types.h
 
-typedef enum
-{
-	HI_NONE,
-
-	HI_MEDKIT,
-
-	// new for Wolf
-	HI_WINE,
-	HI_SKULL,
-	HI_WATER,
-	HI_ELECTRIC,
-	HI_FIRE,
-	HI_STAMINA,
-	HI_BOOK1,
-	HI_BOOK2,
-	HI_BOOK3,
-	HI_11,
-	HI_12,
-	HI_13,
-	HI_14,
-//	HI_15,	// ?
-
-	HI_NUM_HOLDABLE
-} holdable_t;
-
 // NOTE: we can only use up to 15 in the client-server stream
 // SA NOTE: should be 31 now (I added 1 bit in msg.c)
 typedef enum
