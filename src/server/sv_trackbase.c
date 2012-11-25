@@ -31,6 +31,7 @@
  *
  * @file sv_trackbase.h
  * @brief Sends game statistics to Trackbase
+ * @author Konrad "morsik" Mosoń
  */
 #ifdef FEATURE_TRACKBASE
 
@@ -61,6 +62,10 @@ char infostring[MAX_INFO_STRING];
 
 char *TB_getGUID(client_t *cl);
 
+/**
+ * @brief Sends data to Trackbase
+ * @param[in] format Formatted data to send
+ */
 void TB_Send(char *format, ...)
 {
 	va_list argptr;
@@ -76,108 +81,152 @@ void TB_Send(char *format, ...)
 #endif
 }
 
+/**
+ * @brief Initialize Trackbase support
+ */
 void TB_Init()
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
-	{
-		t         = time(0);
-		expectnum = 0;
-
-		NET_StringToAdr(TRACKBASE_ADDR, &addr, NA_IP);
-#ifdef TRACKBASE_DEBUG
-		NET_StringToAdr("127.0.0.1:6066", &local, NA_IP);
-#endif
-		Com_Printf("Trackbase: Server communication enabled.\n");
-	}
-	else
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
 		Com_Printf("Trackbase: Server communication disabled by sv_advert.\n");
+		return;
 	}
+
+	t         = time(0);
+	expectnum = 0;
+
+	NET_StringToAdr(TRACKBASE_ADDR, &addr, NA_IP);
+#ifdef TRACKBASE_DEBUG
+	NET_StringToAdr("127.0.0.1:6066", &local, NA_IP);
+#endif
+	Com_Printf("Trackbase: Server communication enabled.\n");
 }
 
+/**
+ * @brief Send info about server startup
+ */
 void TB_ServerStart()
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		TB_Send("start");
+		return;
 	}
+
+	TB_Send("start");
 }
 
+/**
+ * @brief Send info about server shutdown
+ */
 void TB_ServerStop()
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		TB_Send("stop");
+		return;
 	}
+
+	TB_Send("stop");
 }
 
+/**
+ * @brief Send info about new client connected
+ * @param[in] cl Client
+ */
 void TB_ClientConnect(client_t *cl)
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		TB_Send("connect %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), cl->name);
+		return;
 	}
+
+	TB_Send("connect %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), cl->name);
 }
 
+/**
+ * @brief Send info when client disconnects
+ * @param[in] cl Client
+ */
 void TB_ClientDisconnect(client_t *cl)
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		TB_Send("disconnect %i", (int)(cl - svs.clients));
+		return;
 	}
+
+	TB_Send("disconnect %i", (int)(cl - svs.clients));
 }
 
+/**
+ * @brief Send info when player changes his name
+ * @param[in] cl Client
+ */
 void TB_ClientName(client_t *cl)
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		if (!*cl->name)
-		{
-			return;
-		}
-
-		TB_Send("name %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), Info_ValueForKey(cl->userinfo, "name"));
+		return;
 	}
+
+	if (!*cl->name)
+	{
+		return;
+	}
+
+	TB_Send("name %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), Info_ValueForKey(cl->userinfo, "name"));
 }
 
-/* unused
-void TB_ClientTeam(client_t *cl)
-{
-    playerState_t *ps;
-    ps = SV_GameClientNum(cl - svs.clients);
-
-    TB_Send("team %i %i %i %s", (int)(cl - svs.clients), Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[cl - svs.clients], ps->stats[STAT_PLAYER_CLASS], cl->name);
-}
-*/
-
+/**
+ * @brief Send info when map has changed
+ * @param[in] mapname Current Map
+ */
 void TB_Map(char *mapname)
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		TB_Send("map %s", mapname);
-		maprunning = qtrue;
+		return;
 	}
+
+	TB_Send("map %s", mapname);
+	maprunning = qtrue;
 }
 
+/**
+ * @brief Send info when map restarts
+ *
+ * Allows counting time from 0 again on TB
+ */
 void TB_MapRestart()
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		TB_Send("maprestart");
-		maprunning = qtrue;
+		return;
 	}
+
+	TB_Send("maprestart");
+	maprunning = qtrue;
 }
 
+/**
+ * @brief Send info when map has finished
+ * 
+ * Sometimes intermission is very long, so TB can show appropriate info to players
+ */
 void TB_MapEnd()
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		TB_Send("mapend");
-		TB_requestWeaponStats();
-		maprunning = qfalse;
+		return;
 	}
+
+	TB_Send("mapend");
+	TB_requestWeaponStats();
+	maprunning = qfalse;
 }
 
+/**
+ * @brief Send info when player changes his team
+ * @param[in] cl Client
+ */
 /* unused
 void TB_TeamSwitch(client_t *cl)
 {
@@ -185,6 +234,11 @@ void TB_TeamSwitch(client_t *cl)
 }
 */
 
+/**
+ * @brief Creates client information for other functions
+ * @param clientNum Client ID (from 0 to MAX_CLIENTS)
+ * @note Just for sv_trackbase.c internal use
+ */
 char *TB_createClientInfo(int clientNum)
 {
 	playerState_t *ps;
@@ -193,6 +247,9 @@ char *TB_createClientInfo(int clientNum)
 	return va("%i\\%i\\%c\\%i\\%s", svs.clients[clientNum].ping, ps->persistant[PERS_SCORE], Info_ValueForKey(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), "P")[clientNum], ps->stats[STAT_PLAYER_CLASS], svs.clients[clientNum].name);
 }
 
+/**
+ * @brief Request weapon stats data from mod
+ */
 void TB_requestWeaponStats()
 {
 	int      i;
@@ -244,82 +301,107 @@ void TB_requestWeaponStats()
 	}
 }
 
+/**
+ * @brief Frame function
+ */
 void TB_Frame(int msec)
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		if (catchBot == TB_BOT_CONNECT)
-		{
-			TB_ClientConnect(&svs.clients[catchBotNum]);
-			catchBot = TB_BOT_NONE;
-		}
-
-		if (!(time(0) - waittime > t))
-		{
-			return;
-		}
-
-		TB_Send("p"); // send ping to tb to show that server is still alive
-
-		expectnum = 0; // reset before next statsall
-		TB_requestWeaponStats();
-
-		t = time(0);
+		return;
 	}
+
+	if (catchBot == TB_BOT_CONNECT)
+	{
+		TB_ClientConnect(&svs.clients[catchBotNum]);
+		catchBot = TB_BOT_NONE;
+	}
+
+	if (!(time(0) - waittime > t))
+	{
+		return;
+	}
+
+	TB_Send("p"); // send ping to tb to show that server is still alive
+
+	expectnum = 0; // reset before next statsall
+	TB_requestWeaponStats();
+
+	t = time(0);
 }
 
+/**
+ * @brief Catches server command
+ * @param     clientNum Client ID (from 0 to MAX_CLIENTS)
+ * @param[in] msg       Message sends by backend
+ */
 qboolean TB_catchServerCommand(int clientNum, char *msg)
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		int slot;
+		return;
+	}
 
-		if (clientNum != querycl)
-		{
-			return qfalse;
-		}
+	if (clientNum != querycl)
+	{
+		return qfalse;
+	}
 
+	if (expectnum == 0)
+	{
+		return qfalse;
+	}
+
+	if (!(!strncmp(expect, msg, strlen(expect))))
+	{
+		return qfalse;
+	}
+
+	if (msg[strlen(msg) - 1] == '\n')
+	{
+		msg[strlen(msg) - 1] = '\0';
+	}
+
+	int slot;
+
+	if (!Q_strncmp("ws", msg, 2))
+	{
+		expectnum--;
 		if (expectnum == 0)
 		{
-			return qfalse;
+			strcpy(expect, "");
+			querycl = -1;
 		}
+		slot = 0;
+		sscanf(msg, "ws %i", &slot);
+		TB_Send("%s\\%s", msg, TB_createClientInfo(slot));
 
-		if (!(!strncmp(expect, msg, strlen(expect))))
-		{
-			return qfalse;
-		}
-
-		if (msg[strlen(msg) - 1] == '\n')
-		{
-			msg[strlen(msg) - 1] = '\0';
-		}
-
-		if (!Q_strncmp("ws", msg, 2))
-		{
-			expectnum--;
-			if (expectnum == 0)
-			{
-				strcpy(expect, "");
-				querycl = -1;
-			}
-			slot = 0;
-			sscanf(msg, "ws %i", &slot);
-			TB_Send("%s\\%s", msg, TB_createClientInfo(slot));
-			return qtrue;
-		}
+		return qtrue;
 	}
+
 	return qfalse;
 }
 
+/**
+ * @brief Catch bot connection
+ */
 void TB_catchBotConnect(int clientNum)
 {
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
-		catchBot    = TB_BOT_CONNECT;
-		catchBotNum = clientNum;
+		return;
 	}
+
+	catchBot    = TB_BOT_CONNECT;
+	catchBotNum = clientNum;
 }
 
+/**
+ * @brief Get guid for stats
+ * @param[in] cl Client
+ *
+ * We prefer to use original cl_guid, but some mods has their own guid values
+ */
 char *TB_getGUID(client_t *cl)
 {
 	if (*Info_ValueForKey(cl->userinfo, "cl_guid"))
