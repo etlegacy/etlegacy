@@ -44,25 +44,6 @@ cvar_t *cl_graphshift;
 
 /*
 ================
-SCR_DrawNamedPic
-
-Coordinates are 640*480 virtual values
-=================
-*/
-void SCR_DrawNamedPic(float x, float y, float width, float height, const char *picname)
-{
-	qhandle_t hShader;
-
-	assert(width != 0);
-
-	hShader = re.RegisterShader(picname);
-	SCR_AdjustFrom640(&x, &y, &width, &height);
-	re.DrawStretchPic(x, y, width, height, 0, 0, 1, 1, hShader);
-}
-
-
-/*
-================
 SCR_AdjustFrom640
 
 Adjusted for resolution and screen aspect ratio
@@ -119,7 +100,6 @@ void SCR_FillRect(float x, float y, float width, float height, const float *colo
 	re.SetColor(NULL);
 }
 
-
 /*
 ================
 SCR_DrawPic
@@ -132,8 +112,6 @@ void SCR_DrawPic(float x, float y, float width, float height, qhandle_t hShader)
 	SCR_AdjustFrom640(&x, &y, &width, &height);
 	re.DrawStretchPic(x, y, width, height, 0, 0, 1, 1, hShader);
 }
-
-
 
 /*
 ** SCR_DrawChar
@@ -211,7 +189,6 @@ void SCR_DrawSmallChar(int x, int y, int ch)
 	                  cls.charSetShader);
 }
 
-
 /*
 ==================
 SCR_DrawBigString[Color]
@@ -279,7 +256,6 @@ void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setC
 	re.SetColor(NULL);
 }
 
-
 void SCR_DrawBigString(int x, int y, const char *s, float alpha)
 {
 	float color[4];
@@ -293,7 +269,6 @@ void SCR_DrawBigStringColor(int x, int y, const char *s, vec4_t color)
 {
 	SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, s, color, qtrue);
 }
-
 
 /*
 ==================
@@ -342,8 +317,6 @@ void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, q
 	re.SetColor(NULL);
 }
 
-
-
 /*
 ** SCR_Strlen -- skips color escape codes
 */
@@ -376,7 +349,6 @@ int SCR_GetBigStringWidth(const char *str)
 	return SCR_Strlen(str) * 16;
 }
 
-
 //===============================================================================
 
 /*
@@ -391,10 +363,8 @@ void SCR_DrawDemoRecording(void)
 		return;
 	}
 
-	//bani
 	Cvar_Set("cl_demooffset", va("%d", FS_FTell(clc.demofile)));
 }
-
 
 /*
 ===============================================================================
@@ -428,9 +398,7 @@ void SCR_DrawDebugGraph(void)
 	int   a, x, y, w, i, h;
 	float v;
 
-	//
 	// draw the graph
-	//
 	w = cls.glconfig.vidWidth;
 	x = 0;
 	y = cls.glconfig.vidHeight;
@@ -471,7 +439,6 @@ void SCR_Init(void)
 
 	scr_initialized = qtrue;
 }
-
 
 //=======================================================
 
@@ -589,7 +556,7 @@ void SCR_UpdateScreen(void)
 		recursive = 0;
 		// Gordon: i'm breaking this again, because we've removed most of our cases but still have one which will not fix easily
 		return;
-//      Com_Error( ERR_FATAL, "SCR_UpdateScreen: recursively called" );
+		//Com_Error( ERR_FATAL, "SCR_UpdateScreen: recursively called" );
 	}
 	recursive = 1;
 
