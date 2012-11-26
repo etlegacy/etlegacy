@@ -30,6 +30,10 @@
  *
  * @file cl_cin.c
  * @brief video and cinematic playback
+ *
+ * A RoQ format is comprised of a series of chunks. These chunks may indicate the
+ * format signature or playback parameters, or may contain encoded pieces of video
+ * frames or audio wave forms.
  */
 
 #include "client.h"
@@ -55,15 +59,7 @@
 
 static void RoQ_init(void);
 
-/******************************************************************************
-*
-* Class:        trFMV
-*
-* Description:  RoQ/RnR manipulation routines
-*               not entirely complete for first run
-*
-******************************************************************************/
-
+// RoQ/RnR manipulation routines not entirely complete for first run
 static long           ROQ_YY_tab[256];
 static long           ROQ_UB_tab[256];
 static long           ROQ_UG_tab[256];
@@ -165,15 +161,9 @@ static int CIN_HandleForVideo(void)
 
 extern int CL_ScaledMilliseconds(void);
 
-//-----------------------------------------------------------------------------
-// RllSetupTable
-//
-// Allocates and initializes the square table.
-//
-// Parameters:  None
-//
-// Returns:     Nothing
-//-----------------------------------------------------------------------------
+/**
+ * @brief Allocates and initializes the square table.
+ */
 static void RllSetupTable(void)
 {
 	int z;
@@ -185,19 +175,15 @@ static void RllSetupTable(void)
 	}
 }
 
-//-----------------------------------------------------------------------------
-// RllDecodeMonoToMono
-//
-// Decode mono source data into a mono buffer.
-//
-// Parameters:  from -> buffer holding encoded data
-//              to ->   buffer to hold decoded data
-//              size =  number of bytes of input (= # of shorts of output)
-//              signedOutput = 0 for unsigned output, non-zero for signed output
-//              flag = flags from asset header
-//
-// Returns:     Number of samples placed in output buffer
-//-----------------------------------------------------------------------------
+/**
+ * @brief Decode mono source data into a mono buffer
+ * @param from          buffer holding encoded data
+ * @param to            buffer to hold decoded data
+ * @param size          number of bytes of input (= # of shorts of output)
+ * @param signedOutput  0 for unsigned output, non-zero for signed output
+ * @param flag          Flags from asset header
+ * @return Number of samples placed in output buffer
+ */
 long RllDecodeMonoToMono(unsigned char *from, short *to, unsigned int size, char signedOutput, unsigned short flag)
 {
 	unsigned int z;
@@ -336,14 +322,6 @@ long RllDecodeStereoToMono(unsigned char *from, short *to, unsigned int size, ch
 	return size;
 }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
-
 static void move8_32(byte *src, byte *dst, int spl)
 {
 	int i;
@@ -355,14 +333,6 @@ static void move8_32(byte *src, byte *dst, int spl)
 		dst += spl;
 	}
 }
-
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
 
 static void move4_32(byte *src, byte *dst, int spl)
 {
@@ -376,14 +346,6 @@ static void move4_32(byte *src, byte *dst, int spl)
 	}
 }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
-
 static void blit8_32(byte *src, byte *dst, int spl)
 {
 	int i;
@@ -396,13 +358,6 @@ static void blit8_32(byte *src, byte *dst, int spl)
 	}
 }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
 static void blit4_32(byte *src, byte *dst, int spl)
 {
 	int i;
@@ -415,27 +370,11 @@ static void blit4_32(byte *src, byte *dst, int spl)
 	}
 }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
-
 static void blit2_32(byte *src, byte *dst, int spl)
 {
 	memcpy(dst, src, 8);
 	memcpy(dst + spl, src + 8, 8);
 }
-
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
 
 static void blitVQQuad32fs(byte **status, unsigned char *data)
 {
@@ -527,14 +466,6 @@ static void blitVQQuad32fs(byte **status, unsigned char *data)
 	while (status[index] != NULL);
 }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
-
 static void ROQ_GenYUVTables(void)
 {
 	float t_ub, t_vr, t_ug, t_vg;
@@ -592,13 +523,6 @@ static void ROQ_GenYUVTables(void)
 		*d++ = *b;  \
 		a++; b++; }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
 
 static unsigned short yuv_to_rgb(long y, long u, long v)
 {
@@ -636,13 +560,6 @@ static unsigned short yuv_to_rgb(long y, long u, long v)
 	return (unsigned short)((r << 11) + (g << 5) + (b));
 }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
 static unsigned int yuv_to_rgb24(long y, long u, long v)
 {
 	long r, g, b, YY = (long)(ROQ_YY_tab[(y)]);
@@ -678,14 +595,6 @@ static unsigned int yuv_to_rgb24(long y, long u, long v)
 
 	return LittleLong((r) | (g << 8) | (b << 16) | (255 << 24));
 }
-
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
 
 static void decodeCodeBook(byte *input, unsigned short roq_flags)
 {
@@ -1003,14 +912,6 @@ static void decodeCodeBook(byte *input, unsigned short roq_flags)
 	}
 }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
-
 static void recurseQuad(long startX, long startY, long quadSize, long xOff, long yOff)
 {
 	byte *scroff;
@@ -1051,14 +952,6 @@ static void recurseQuad(long startX, long startY, long quadSize, long xOff, long
 	}
 }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
-
 static void setupQuad(long xOff, long yOff)
 {
 	long numQuadCels, i, x, y;
@@ -1096,14 +989,6 @@ static void setupQuad(long xOff, long yOff)
 		cin.qStatus[1][i] = temp;             // eoq
 	}
 }
-
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
 
 static void readQuadInfo(byte *qData)
 {
@@ -1159,14 +1044,6 @@ static void RoQPrepMcomp(long xoff, long yoff)
 	}
 }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
-
 static void initRoQ(void)
 {
 	if (currentHandle < 0)
@@ -1181,13 +1058,6 @@ static void initRoQ(void)
 	RllSetupTable();
 }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
 /*
 static byte* RoQFetchInterlaced( byte *source ) {
     int x, *src, *dst;
@@ -1220,14 +1090,6 @@ static void RoQReset(void)
 	RoQ_init();
 	cinTable[currentHandle].status = FMV_LOOPED;
 }
-
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
 
 static void RoQInterrupt(void)
 {
@@ -1392,14 +1254,6 @@ redump:
 	cinTable[currentHandle].RoQPlayed += cinTable[currentHandle].RoQFrameSize + 8;
 }
 
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
-
 static void RoQ_init(void)
 {
 	// we need to use CL_ScaledMilliseconds because of the smp mode calls from the renderer
@@ -1426,14 +1280,6 @@ static void RoQ_init(void)
 		return;
 	}
 }
-
-/******************************************************************************
-*
-* Function:
-*
-* Description:
-*
-******************************************************************************/
 
 static void RoQShutdown(void)
 {
@@ -1476,11 +1322,6 @@ static void RoQShutdown(void)
 	currentHandle                       = -1;
 }
 
-/*
-==================
-CIN_StopCinematic
-==================
-*/
 e_status CIN_StopCinematic(int handle)
 {
 	if (handle < 0 || handle >= MAX_VIDEO_HANDLES || cinTable[handle].status == FMV_EOF)
@@ -1509,13 +1350,9 @@ e_status CIN_StopCinematic(int handle)
 	return FMV_EOF;
 }
 
-/*
-==================
-CIN_RunCinematic
-
-Fetch and decompress the pending frame
-==================
-*/
+/**
+ * @brief Fetch and decompress the pending frame
+ */
 e_status CIN_RunCinematic(int handle)
 {
 	int start    = 0;
@@ -1599,12 +1436,6 @@ e_status CIN_RunCinematic(int handle)
 	return cinTable[currentHandle].status;
 }
 
-/*
-==================
-CIN_PlayCinematic
-
-==================
-*/
 int CIN_PlayCinematic(const char *arg, int x, int y, int w, int h, int systemBits)
 {
 	unsigned short RoQID;
@@ -1726,11 +1557,6 @@ void CIN_SetLooping(int handle, qboolean loop)
 	cinTable[handle].looping = loop;
 }
 
-/*
-==================
-CIN_DrawCinematic
-==================
-*/
 void CIN_DrawCinematic(int handle)
 {
 	float x, y, w, h;
@@ -1827,6 +1653,9 @@ void CIN_DrawCinematic(int handle)
 	cinTable[handle].dirty = qfalse;
 }
 
+/**
+ * @brief Plays a movie file. Executed by the "cinematic" command
+ */
 void CL_PlayCinematic_f(void)
 {
 	char     *arg, *s;

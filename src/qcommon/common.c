@@ -88,7 +88,7 @@ cvar_t *com_showtrace;
 cvar_t *com_version;
 cvar_t *com_buildScript;    // for automated data building scripts
 cvar_t *con_drawnotify;
-cvar_t *com_introPlayed;    // Unused. TODO: do we want to enable it?
+cvar_t *com_introPlayed;
 cvar_t *com_ansiColor;
 cvar_t *cl_paused;
 cvar_t *sv_paused;
@@ -3102,15 +3102,12 @@ void Com_Init(char *commandLine)
 
 	if (!com_dedicated->integer)
 	{
-		Cbuf_AddText("cinematic etintro.roq\n");
-		/*
 		// Don't play intro movie if already played
 		if (!com_introPlayed->integer)
 		{
-		    Cbuf_AddText("cinematic etintro.roq\n");
-		    Cvar_Set("com_introPlayed", "1");
+			Cbuf_AddText("cinematic etintro.roq\n");
+			Cvar_Set("com_introPlayed", "1");
 		}
-		*/
 	}
 
 	com_fullyInitialized = qtrue;

@@ -4478,11 +4478,11 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "resetDefaults") == 0)
 		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, "cvar_restart\n"); // NERVE - SMF - changed order
+			trap_Cmd_ExecuteText(EXEC_APPEND, "cvar_restart\n");
 			trap_Cmd_ExecuteText(EXEC_APPEND, "exec default.cfg\n");
 			trap_Cmd_ExecuteText(EXEC_APPEND, "setRecommended\n");
 			Controls_SetDefaults(qfalse);
-			trap_Cvar_Set("com_introPlayed", "1");
+			trap_Cvar_Set("com_introPlayed", "0");
 			trap_Cvar_Set("com_recommendedSet", "1");
 			trap_Cmd_ExecuteText(EXEC_APPEND, "vid_restart\n");
 		}
