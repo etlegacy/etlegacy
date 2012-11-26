@@ -975,13 +975,9 @@ qboolean GLimp_SpawnRenderThread(void (*function)(void))
 	static qboolean warned = qfalse;
 	if (!warned)
 	{
-		Com_Printf("WARNING: You enable r_smp at your own risk!\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: You enable r_smp at your own risk!\n");
 		warned = qtrue;
 	}
-
-#ifndef __APPLE__
-	return qfalse;  /* better safe than sorry for now. */
-#endif
 
 	if (renderThread != NULL)  /* hopefully just a zombie at this point... */
 	{
