@@ -343,7 +343,7 @@ void Con_Init(void)
 	con_notifytime = Cvar_Get("con_notifytime", "7", 0);   // JPW NERVE increased per id req for obits
 	con_conspeed   = Cvar_Get("scr_conspeed", "3", 0);
 	con_autoclear  = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE);
-	con_restricted = Cvar_Get("con_restricted", "0", CVAR_INIT);          // DHM - Nerve
+	con_restricted = Cvar_Get("con_restricted", "0", CVAR_INIT);
 
 	Field_Clear(&g_consoleField);
 	g_consoleField.widthInChars = g_console_field_width;
@@ -413,8 +413,8 @@ void CL_ConsolePrint(char *txt)
 	int      y;
 	int      c, l;
 	int      color;
-	qboolean skipnotify = qfalse;       // NERVE - SMF
-	int      prev;                      // NERVE - SMF
+	qboolean skipnotify = qfalse;
+	int      prev;
 
 	// NERVE - SMF - work around for text that shows up in console but not in notify
 	if (!Q_strncmp(txt, "[skipnotify]", 12))
@@ -504,7 +504,6 @@ void CL_ConsolePrint(char *txt)
 	// mark time for transparent overlay
 	if (con.current >= 0)
 	{
-		// NERVE - SMF
 		if (skipnotify)
 		{
 			prev = con.current % NUM_CON_TIMES - 1;
@@ -516,7 +515,6 @@ void CL_ConsolePrint(char *txt)
 		}
 		else
 		{
-			// -NERVE - SMF
 			con.times[con.current % NUM_CON_TIMES] = cls.realtime;
 		}
 	}
@@ -728,7 +726,6 @@ void Con_DrawSolidConsole(float frac)
 			SCR_DrawPic(192, 70, 256, 128, cls.consoleShader2);
 			re.SetColor(NULL);
 		}
-		// -NERVE - SMF
 	}
 
 	// ydnar: matching light text
@@ -741,7 +738,6 @@ void Con_DrawSolidConsole(float frac)
 		SCR_FillRect(0, y, SCREEN_WIDTH, 1.25f, color);
 	}
 
-
 	// draw the version number
 
 	re.SetColor(g_color_table[ColorIndex(COLNSOLE_COLOR)]);
@@ -753,7 +749,6 @@ void Con_DrawSolidConsole(float frac)
 		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x) * SMALLCHAR_WIDTH,
 		                  (lines - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2)), ET_VERSION[x]);
 	}
-
 
 	// draw the text
 	con.vislines = lines;
