@@ -964,24 +964,6 @@ qboolean FS_FilenameCompare(const char *s1, const char *s2)
 }
 
 /*
-===========
-FS_ShiftedStrStr
-===========
-*/
-char *FS_ShiftedStrStr(const char *string, const char *substring, int shift)
-{
-	char buf[MAX_STRING_TOKENS];
-	int  i;
-
-	for (i = 0; substring[i]; i++)
-	{
-		buf[i] = substring[i] + shift;
-	}
-	buf[i] = '\0';
-	return strstr(string, buf);
-}
-
-/*
 ==========
 FS_ShiftStr
 perform simple string shifting to avoid scanning from the exe
@@ -1334,7 +1316,6 @@ int FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean un
 	return ret;
 }
 
-// TTimo
 // relevant to client only
 #if !defined(DEDICATED)
 /*
@@ -3060,14 +3041,8 @@ static void FS_AddGameDirectory(const char *path, const char *dir)
 	int          numfiles;
 	char         **pakfiles;
 	char         *sorted[MAX_PAKFILES];
-// JPW NERVE
-	/*char          mpsppakfilestring[4];
 
-	sprintf( mpsppakfilestring, "msp" );*/
-// jpw
-
-	// this fixes the case where fs_basepath is the same as fs_cdpath
-	// which happens on full installs
+	// Unique
 	for (sp = fs_searchpaths ; sp ; sp = sp->next)
 	{
 		if (sp->dir && !Q_stricmp(sp->dir->path, path) && !Q_stricmp(sp->dir->gamedir, dir))
@@ -3106,8 +3081,6 @@ static void FS_AddGameDirectory(const char *path, const char *dir)
 
 		/*      if (!Q_strncmp(sorted[i],"mp_",3))
 		            memcpy(sorted[i],"zz",2);   */
-
-// jpw
 	}
 
 	qsort(sorted, numfiles, sizeof(char *), paksort);
@@ -3119,8 +3092,6 @@ static void FS_AddGameDirectory(const char *path, const char *dir)
 
 		            if (!Q_strncmp(sorted[i],"zz_",3))
 		                memcpy(sorted[i],"mp",2);
-
-		// jpw
 		*/
 		pakfile = FS_BuildOSPath(path, dir, sorted[i]);
 		if ((pak = FS_LoadZipFile(pakfile, sorted[i])) == 0)
@@ -3437,13 +3408,13 @@ static void FS_ReorderPurePaks(void)
 	searchpath_t **p_insert_index, // for linked list reordering
 	**p_previous;     // when doing the scan
 
+	fs_reordered = qfalse;
+
 	// only relevant when connected to pure server
 	if (!fs_numServerPaks)
 	{
 		return;
 	}
-
-	fs_reordered = qfalse;
 
 	p_insert_index = &fs_searchpaths; // we insert in order at the beginning of the list
 	for (i = 0 ; i < fs_numServerPaks ; i++)
@@ -3538,7 +3509,6 @@ static void FS_Startup(const char *gameName)
 	Cmd_AddCommand("fdir", FS_NewDir_f);
 	Cmd_AddCommand("touchFile", FS_TouchFile_f);
 
-	// show_bug.cgi?id=506
 	// reorder the pure pk3 files according to server order
 	FS_ReorderPurePaks();
 
@@ -3556,35 +3526,6 @@ static void FS_Startup(const char *gameName)
 	}
 #endif
 	Com_Printf("%d files in pk3 files\n", fs_packFiles);
-}
-
-/*
-=====================
-FS_GamePureChecksum
-Returns the checksum of the pk3 from which the server loaded the qagame.qvm
-NOTE TTimo: this is not used in RTCW so far
-=====================
-*/
-const char *FS_GamePureChecksum(void)
-{
-	static char  info[MAX_STRING_TOKENS];
-	searchpath_t *search;
-
-	info[0] = 0;
-
-	for (search = fs_searchpaths ; search ; search = search->next)
-	{
-		// is the element a pak file?
-		if (search->pack)
-		{
-			if (search->pack->referenced & FS_QAGAME_REF)
-			{
-				Com_sprintf(info, sizeof(info), "%d", search->pack->checksum);
-			}
-		}
-	}
-
-	return info;
 }
 
 #if !defined(DO_LIGHT_DEDICATED)

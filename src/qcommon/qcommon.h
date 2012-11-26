@@ -723,9 +723,6 @@ int     FS_Seek(fileHandle_t f, long offset, int origin);
 
 qboolean FS_FilenameCompare(const char *s1, const char *s2);
 
-const char *FS_GamePureChecksum(void);
-// Returns the checksum of the pk3 from which the server loaded the qagame.qvm
-
 const char *FS_LoadedPakNames(void);
 const char *FS_LoadedPakChecksums(void);
 const char *FS_LoadedPakPureChecksums(void);
@@ -767,7 +764,6 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 int FS_RandChecksumFeed();
 #endif
 
-char *FS_ShiftedStrStr(const char *string, const char *substring, int shift);
 char *FS_ShiftStr(const char *string, int shift);
 
 void FS_CopyFile(char *fromOSPath, char *toOSPath);
