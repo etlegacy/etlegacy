@@ -54,15 +54,6 @@ command line to allow code debugging in a different directory.  Basepath cannot
 be modified at all after startup.  Any files that are created (demos, screenshots,
 etc) will be created reletive to the base path, so base path should usually be writable.
 
-The "cd path" is the path to an alternate hierarchy that will be searched if a file
-is not located in the base path.  A user can do a partial install that copies some
-data to a base path created on their hard drive and leave the rest on the cd.  Files
-are never writen to the cd path.  It defaults to a value set by the installer, like
-"e:\quake3", but it can be overridden with "+set ds_cdpath g:\quake3".
-
-If a user runs the game directly from a CD, the base path would be on the CD.  This
-should still function correctly, but all file writes will fail (harmlessly).
-
 The "home path" is the path used for all write access. On win32 systems we have "base path"
 == "home path", but on *nix systems the base installation is usually readonly, and
 "home path" points to ~/.q3a or similar
@@ -95,10 +86,6 @@ Because we will have updated executables freely available online, there is no po
 trying to restrict demo / oem versions of the game with code changes.  Demo / oem versions
 should be exactly the same executables as release versions, but with different data that
 automatically restricts where game media can come from to prevent add-ons from working.
-
-If the "fs_copyfiles" cvar is set to 1, then every time a file is sourced from the cd
-path, it will be copied over to the base path.  This is a development aid to help build
-test releases and to copy working sets over slow network links.
 
 File search order: when FS_FOpenFileRead gets called it will go through the fs_searchpaths
 structure and stop on the first successful hit. fs_searchpaths is built with successive
@@ -176,7 +163,7 @@ Read / write config to floppy option.
 
 Different version coexistance?
 
-When building a pak file, make sure a wolfconfig.cfg isn't present in it,
+When building a pak file, make sure a etconfig.cfg isn't present in it,
 or configs will never get loaded from disk!
 
   todo:
@@ -234,7 +221,6 @@ static cvar_t       *fs_debug;
 static cvar_t       *fs_homepath;
 static cvar_t       *fs_basepath;
 static cvar_t       *fs_basegame;
-static cvar_t       *fs_copyfiles;
 static cvar_t       *fs_gamedirvar;
 static searchpath_t *fs_searchpaths;
 static int          fs_readCount;           // total bytes read
@@ -3024,8 +3010,7 @@ void FS_Path_f(void)
 }
 
 /*
- * The only purpose of this function is to allow game script files to copy
- * arbitrary files furing an "fs_copyfiles 1" run.
+ * @brief Simulates the 'touch' unix command
  */
 void FS_TouchFile_f(void)
 {
@@ -3494,10 +3479,9 @@ static void FS_Startup(const char *gameName)
 
 	Com_Printf("----- FS_Startup -----\n");
 
-	fs_debug     = Cvar_Get("fs_debug", "0", 0);
-	fs_copyfiles = Cvar_Get("fs_copyfiles", "0", CVAR_INIT);
-	fs_basepath  = Cvar_Get("fs_basepath", Sys_DefaultInstallPath(), CVAR_INIT);
-	fs_basegame  = Cvar_Get("fs_basegame", "", CVAR_INIT);
+	fs_debug    = Cvar_Get("fs_debug", "0", 0);
+	fs_basepath = Cvar_Get("fs_basepath", Sys_DefaultInstallPath(), CVAR_INIT);
+	fs_basegame = Cvar_Get("fs_basegame", "", CVAR_INIT);
 
 	homePath = Sys_DefaultHomePath(); //Returns My Documents path on windows now ex: C:\Users\username\Documents where also other games add their data
 	if (!homePath || !homePath[0])
@@ -4353,8 +4337,6 @@ void FS_InitFilesystem(void)
 
 		Com_Printf("Info: fs_game is set to '%s' mod. Start ET:L with param '+set etmain' for adoring history.\n", tmp_fs_game->string);
 	}
-
-	Com_StartupVariable("fs_copyfiles");
 
 	// try to start up normally
 	FS_Startup(BASEGAME);
