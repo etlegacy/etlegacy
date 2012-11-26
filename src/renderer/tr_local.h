@@ -1168,10 +1168,10 @@ typedef struct
 /*
 trGlobals_t
 
-	Most renderer globals are defined here.
-	backend functions should never modify any of these fields,
-	but may read fields that aren't dynamically modified
-	by the frontend.
+    Most renderer globals are defined here.
+    backend functions should never modify any of these fields,
+    but may read fields that aren't dynamically modified
+    by the frontend.
 */
 typedef struct
 {
@@ -1306,7 +1306,6 @@ extern cvar_t *r_zfar;                  // far Z clip plane
 extern cvar_t *r_stencilbits;           // number of desired stencil bits
 extern cvar_t *r_depthbits;             // number of desired depth bits
 extern cvar_t *r_colorbits;             // number of desired color bits, only relevant for fullscreen
-extern cvar_t *r_stereo;                // desired pixelformat stereo flag
 extern cvar_t *r_texturebits;           // number of desired texture bits
 // 0 = use framebuffer depth
 // 16 = use 16-bit textures
@@ -1330,7 +1329,6 @@ extern cvar_t *r_drawSun;               // controls drawing of sun quad
 // "1" draw sun
 // "2" also draw lens flare effect centered on sun
 extern cvar_t *r_dynamiclight;          // dynamic lights enabled/disabled
-extern cvar_t *r_dlightBacks;           // dlight non-facing surfaces for continuity
 
 extern cvar_t *r_norefresh;             // bypasses the ref rendering
 extern cvar_t *r_drawentities;          // disable/enable entity rendering
@@ -1349,12 +1347,10 @@ extern cvar_t *r_oldMode;               // ydnar: previous "good" video mode
 extern cvar_t *r_fullscreen;
 extern cvar_t *r_noborder;
 extern cvar_t *r_gamma;
-extern cvar_t *r_displayRefresh;        // optional display refresh option
 extern cvar_t *r_ignorehwgamma;         // overrides hardware gamma capabilities
 
 extern cvar_t *r_allowExtensions;               // global enable/disable of OpenGL extensions
 extern cvar_t *r_ext_compressed_textures;       // these control use of specific extensions
-extern cvar_t *r_ext_gamma_control;
 extern cvar_t *r_ext_texenv_op;
 extern cvar_t *r_ext_multitexture;
 extern cvar_t *r_ext_compiled_vertex_array;
@@ -1430,8 +1426,6 @@ extern cvar_t *r_cacheGathering;
 
 extern cvar_t *r_bonesDebug;
 
-
-// Rafael - wolf fog
 extern cvar_t *r_wolffog;
 
 extern cvar_t *r_highQualityVideo;
@@ -2137,9 +2131,6 @@ void R_LoadCacheImages(void);
 void R_PurgeBackupImages(int purgeCount);
 void R_BackupImages(void);
 
-//void *R_CacheShaderAlloc( int size );
-//void R_CacheShaderFree( void *ptr );
-
 void R_CacheShaderFreeExt(const char *name, void *ptr, const char *file, int line);
 void *R_CacheShaderAllocExt(const char *name, int size, const char *file, int line);
 
@@ -2175,10 +2166,10 @@ extern float r_anormals[NUMMDCVERTEXNORMALS][3];
 void R_MDC_DecodeXyzCompressed(mdcXyzCompressed_t *xyzComp, vec3_t out, vec3_t normal);
 #else   // optimized version
 #define R_MDC_DecodeXyzCompressed(ofsVec, out, normal) \
-    (out)[0] = ((float)((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-    (out)[1] = ((float)((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-    (out)[2] = ((float)((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-    VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
+	(out)[0] = ((float)((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+	(out)[1] = ((float)((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+	(out)[2] = ((float)((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+	VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
 #endif
 
 void R_AddMDCSurfaces(trRefEntity_t *ent);
@@ -2188,14 +2179,9 @@ void R_AddMDCSurfaces(trRefEntity_t *ent);
 void R_LatLongToNormal(vec3_t outNormal, short latLong);
 
 /*
-============================================================
+ * GL FOG
+ */
 
-GL FOG
-
-============================================================
-*/
-
-//extern glfog_t        glfogCurrent;
 extern glfog_t     glfogsettings[NUM_FOGS];     // [0] never used (FOG_NONE)
 extern glfogType_t glfogNum;                    // fog type to use (from the fog_t enum list)
 
@@ -2208,7 +2194,7 @@ extern void R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, 
 
 extern int skyboxportal;
 
-// Ridah, virtual memory
+// virtual memory
 void *R_Hunk_Begin(void);
 void R_Hunk_End(void);
 void R_FreeImageBuffer(void);

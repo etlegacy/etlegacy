@@ -3957,24 +3957,14 @@ static shader_t *backupHashTable[FILE_HASH_SIZE];
 
 /*
 ===============
-R_CacheShaderAlloc
+R_CacheShaderAllocExt
 ===============
 */
-//int g_numshaderallocs = 0;
-//void *R_CacheShaderAlloc( int size ) {
 void *R_CacheShaderAllocExt(const char *name, int size, const char *file, int line)
 {
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
 		void *ptr = ri.Z_Malloc(size);
-
-//      g_numshaderallocs++;
-
-//      if( name ) {
-//          Com_Printf( "Zone Malloc from %s: size %i: pointer %p: %i in use\n", name, size, ptr, g_numshaderallocs );
-//      }
-
-		//return malloc( size );
 		return ptr;
 	}
 	else
@@ -3985,21 +3975,13 @@ void *R_CacheShaderAllocExt(const char *name, int size, const char *file, int li
 
 /*
 ===============
-R_CacheShaderFree
+R_CacheShaderFreeExt
 ===============
 */
-//void R_CacheShaderFree( void *ptr ) {
 void R_CacheShaderFreeExt(const char *name, void *ptr, const char *file, int line)
 {
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
-//      g_numshaderallocs--;
-
-//      if( name ) {
-//          Com_Printf( "Zone Free from %s: pointer %p: %i in use\n", name, ptr, g_numshaderallocs );
-//      }
-		//free( ptr );
-
 		ri.Free(ptr);
 	}
 }

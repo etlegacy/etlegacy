@@ -58,8 +58,6 @@ cvar_t *r_ignoreFastPath;
 
 cvar_t *r_ignore;
 
-cvar_t *r_displayRefresh;
-
 cvar_t *r_detailTextures;
 
 cvar_t *r_znear;
@@ -83,7 +81,6 @@ cvar_t *r_inGameVideo;
 cvar_t *r_fastsky;
 cvar_t *r_drawSun;
 cvar_t *r_dynamiclight;
-cvar_t *r_dlightBacks;
 
 cvar_t *r_lodbias;
 cvar_t *r_lodscale;
@@ -103,7 +100,6 @@ cvar_t *r_nocurves;
 cvar_t *r_allowExtensions;
 
 cvar_t *r_ext_compressed_textures;
-cvar_t *r_ext_gamma_control;
 cvar_t *r_ext_multitexture;
 cvar_t *r_ext_compiled_vertex_array;
 cvar_t *r_ext_texture_env_add;
@@ -117,7 +113,6 @@ cvar_t *r_logFile;
 cvar_t *r_stencilbits;
 cvar_t *r_depthbits;
 cvar_t *r_colorbits;
-cvar_t *r_stereo;
 cvar_t *r_primitives;
 cvar_t *r_texturebits;
 cvar_t *r_ext_multisample;
@@ -210,42 +205,6 @@ void (APIENTRY *qglClientActiveTextureARB)(GLenum texture);
 
 void (APIENTRY *qglLockArraysEXT)(GLint, GLint);
 void (APIENTRY *qglUnlockArraysEXT)(void);
-
-//----(SA)      added
-void (APIENTRY *qglPNTrianglesiATI)(GLenum pname, GLint param);
-void (APIENTRY *qglPNTrianglesfATI)(GLenum pname, GLfloat param);
-/*
-The tessellation level and normal generation mode are specified with:
-
-        void qglPNTriangles{if}ATI(enum pname, T param)
-
-        If <pname> is:
-                GL_PN_TRIANGLES_NORMAL_MODE_ATI -
-                        <param> must be one of the symbolic constants:
-                                - GL_PN_TRIANGLES_NORMAL_MODE_LINEAR_ATI or
-                                - GL_PN_TRIANGLES_NORMAL_MODE_QUADRATIC_ATI
-                        which will select linear or quadratic normal interpolation respectively.
-                GL_PN_TRIANGLES_POINT_MODE_ATI -
-                        <param> must be one of the symbolic  constants:
-                                - GL_PN_TRIANGLES_POINT_MODE_LINEAR_ATI or
-                                - GL_PN_TRIANGLES_POINT_MODE_CUBIC_ATI
-                        which will select linear or cubic interpolation respectively.
-                GL_PN_TRIANGLES_TESSELATION_LEVEL_ATI -
-                        <param> should be a value specifying the number of evaluation points on each edge.  This value must be
-                        greater than 0 and less than or equal to the value given by GL_MAX_PN_TRIANGLES_TESSELATION_LEVEL_ATI.
-
-        An INVALID_VALUE error will be generated if the value for <param> is less than zero or greater than the max value.
-
-Associated 'gets':
-Get Value                               Get Command Type     Minimum Value                                  Attribute
----------                               ----------- ----     ------------                                   ---------
-PN_TRIANGLES_ATI                        IsEnabled   B           False                                       PN Triangles/enable
-PN_TRIANGLES_NORMAL_MODE_ATI            GetIntegerv Z2          PN_TRIANGLES_NORMAL_MODE_QUADRATIC_ATI      PN Triangles
-PN_TRIANGLES_POINT_MODE_ATI             GetIntegerv Z2          PN_TRIANGLES_POINT_MODE_CUBIC_ATI           PN Triangles
-PN_TRIANGLES_TESSELATION_LEVEL_ATI      GetIntegerv Z+          1                                           PN Triangles
-MAX_PN_TRIANGLES_TESSELATION_LEVEL_ATI  GetIntegerv Z+          1                                                                                       -
-
-*/
 
 static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
 {
@@ -535,6 +494,10 @@ byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
 	return buffer;
 }
 
+/**
+ * @brief zbuffer writer for the future implementation of the Depth of field effect
+ * @note Unused.
+ */
 void RB_TakeDepthshot(int x, int y, int width, int height, char *fileName)
 {
 	byte *allbuf, *buffer;
@@ -1176,8 +1139,7 @@ void R_Register(void)
 
 	// latched and archived variables
 	r_allowExtensions           = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_ext_compressed_textures   = ri.Cvar_Get("r_ext_compressed_textures", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);  // (SA) ew, a spelling change I missed from the missionpack
-	r_ext_gamma_control         = ri.Cvar_Get("r_ext_gamma_control", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_ext_compressed_textures   = ri.Cvar_Get("r_ext_compressed_textures", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_multitexture          = ri.Cvar_Get("r_ext_multitexture", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_compiled_vertex_array = ri.Cvar_Get("r_ext_compiled_vertex_array", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_texture_env_add       = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1193,12 +1155,9 @@ void R_Register(void)
 	r_detailTextures = ri.Cvar_Get("r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_texturebits    = ri.Cvar_Get("r_texturebits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_colorbits      = ri.Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_stereo         = ri.Cvar_Get("r_stereo", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-
-	r_stencilbits = ri.Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_stencilbits    = ri.Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
 	r_depthbits = ri.Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-
 #if defined(__linux__)
 	// r_depthbits values > 24 are invalid (no visual) - the var is latched so let's adjust it here
 	if (r_depthbits->value > 24)
@@ -1233,8 +1192,6 @@ void R_Register(void)
 	r_greyscale      = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	// temporary latched variables that can only change over a restart
-	r_displayRefresh = ri.Cvar_Get("r_displayRefresh", "0", CVAR_LATCH | CVAR_UNSAFE);
-	AssertCvarRange(r_displayRefresh, 0, 200, qtrue);
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
 	AssertCvarRange(r_mapOverBrightBits, 0, 3, qtrue);
 	r_intensity = ri.Cvar_Get("r_intensity", "1", CVAR_LATCH);
@@ -1254,7 +1211,6 @@ void R_Register(void)
 	r_inGameVideo    = ri.Cvar_Get("r_inGameVideo", "1", CVAR_ARCHIVE);
 	r_drawSun        = ri.Cvar_Get("r_drawSun", "1", CVAR_ARCHIVE);
 	r_dynamiclight   = ri.Cvar_Get("r_dynamiclight", "1", CVAR_ARCHIVE);
-	r_dlightBacks    = ri.Cvar_Get("r_dlightBacks", "1", CVAR_ARCHIVE);
 	r_finish         = ri.Cvar_Get("r_finish", "0", CVAR_ARCHIVE);
 	r_textureMode    = ri.Cvar_Get("r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
 	r_swapInterval   = ri.Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
@@ -1278,8 +1234,6 @@ void R_Register(void)
 	r_printShaders = ri.Cvar_Get("r_printShaders", "0", 0);
 	r_saveFontData = ri.Cvar_Get("r_saveFontData", "0", 0);
 
-	// Ridah
-	// TTimo show_bug.cgi?id=440
 	//   with r_cache enabled, non-win32 OSes were leaking 24Mb per R_Init..
 	r_cache        = ri.Cvar_Get("r_cache", "1", CVAR_LATCH); // leaving it as this for backwards compability. but it caches models and shaders also
 	r_cacheShaders = ri.Cvar_Get("r_cacheShaders", "1", CVAR_LATCH);
@@ -1288,12 +1242,12 @@ void R_Register(void)
 	r_cacheGathering = ri.Cvar_Get("cl_cacheGathering", "0", 0);
 	r_bonesDebug     = ri.Cvar_Get("r_bonesDebug", "0", CVAR_CHEAT);
 
-	r_wolffog = ri.Cvar_Get("r_wolffog", "1", CVAR_CHEAT);    // JPW NERVE cheat protected per id request
+	r_wolffog = ri.Cvar_Get("r_wolffog", "1", CVAR_CHEAT);
 
 	r_nocurves    = ri.Cvar_Get("r_nocurves", "0", CVAR_CHEAT);
 	r_drawworld   = ri.Cvar_Get("r_drawworld", "1", CVAR_CHEAT);
 	r_drawfoliage = ri.Cvar_Get("r_drawfoliage", "1", CVAR_CHEAT);
-	r_lightmap    = ri.Cvar_Get("r_lightmap", "0", CVAR_CHEAT); // DHM - NERVE :: cheat protect
+	r_lightmap    = ri.Cvar_Get("r_lightmap", "0", CVAR_CHEAT);
 	r_portalOnly  = ri.Cvar_Get("r_portalOnly", "0", CVAR_CHEAT);
 
 	r_flareSize = ri.Cvar_Get("r_flareSize", "40", CVAR_CHEAT);
@@ -1498,7 +1452,7 @@ void RE_Shutdown(qboolean destroyWindow)
 
 	R_ShutdownCommandBuffers();
 
-	// Ridah, keep a backup of the current images if possible
+	// keep a backup of the current images if possible
 	// clean out any remaining unused media from the last backup
 	R_PurgeCache();
 
@@ -1537,7 +1491,7 @@ void RE_Shutdown(qboolean destroyWindow)
 	{
 		GLimp_Shutdown();
 
-		// Ridah, release the virtual memory
+		// release the virtual memory
 		R_Hunk_End();
 		R_FreeImageBuffer();
 		ri.Tag_Free();  // wipe all render alloc'd zone memory
