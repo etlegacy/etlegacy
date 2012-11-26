@@ -1368,11 +1368,9 @@ void RB_ShowImages(void)
 	ri.Printf(PRINT_ALL, "%i msec to draw all images\n", end - start);
 }
 
-/*
-=============
-RB_DrawBounds - ydnar
-=============
-*/
+/**
+ * @note Unused.
+ */
 void RB_DrawBounds(vec3_t mins, vec3_t maxs)
 {
 	vec3_t center;

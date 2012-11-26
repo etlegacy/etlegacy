@@ -192,6 +192,7 @@ int    max_polys;
 cvar_t *r_maxpolyverts;
 int    max_polyverts;
 
+// TODO: check if this crazy stuff is needed
 vec4hack_t     tess_xyz[SHADER_MAX_VERTEXES];
 vec4hack_t     tess_normal[SHADER_MAX_VERTEXES];
 vec2hack_t     tess_texCoords0[SHADER_MAX_VERTEXES];
