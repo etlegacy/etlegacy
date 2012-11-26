@@ -3177,7 +3177,6 @@ void CheckIntermissionExit(void)
 	static int fActions = 0;
 	qboolean   exit     = qtrue;
 	int        i;
-	// rain - for #105
 	gclient_t *cl;
 	int       ready = 0, notReady = 0;
 
@@ -3194,48 +3193,66 @@ void CheckIntermissionExit(void)
 		fActions |= EOM_MATCHINFO;
 	}
 
-	for (i = 0; i < level.numConnectedClients; i++)
+	// crapshoot: empty servers will rotate immediatly
+	// IRATA but not in case of gt mapvote
+	if(level.numConnectedClients)
 	{
-		// rain - #105 - spectators and people who are still loading
-		// don't have to be ready at the end of the round.
-		// additionally, make readypercent apply here.
+		gclient_t *cl;
+		int ready = 0, notReady = 0, readyVoters = 0;
+		unsigned int i;
+		qboolean exit = qfalse;
 
-		cl = level.clients + level.sortedClients[i];
-
-		if (cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam == TEAM_SPECTATOR)
+		for(i = 0; i < level.numConnectedClients; ++i)
 		{
-			continue;
+			// rain - #105 - spectators and people who are still loading
+			// don't have to be ready at the end of the round.
+			// additionally, make readypercent apply here.
+
+			cl = level.clients + level.sortedClients[i];
+
+			// crapshoot: changed from counting bots to just ignoring them
+			if (cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam == TEAM_SPECTATOR
+					|| g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT)
+			{
+				continue;
+			}
+
+			readyVoters++;
+
+			if (cl->pers.ready)
+			{
+	    		ready++;
+			}
+			else
+			{
+				notReady++;
+			}
 		}
-		else if (cl->pers.ready || (g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT))
+
+		// if((100.0f * (ready / (level.numConnectedClients * 1.0f))) >=
+		// crapshoot: changed to not include spectators since they are excluded above
+		if (readyVoters /*&& g_gametype.integer != GT_WOLF_MAPVOTE*/)
 		{
-			ready++;
+			if((100.0f * (ready / (readyVoters * 1.0f))) >= (match_readypercent.value * 1.0f))
+			{
+				exit = qtrue;
+			}
 		}
-		else
+
+		if (level.ref_allready)
 		{
-			notReady++;
+			level.ref_allready = qfalse;
+			exit               = qtrue;
+		}
+
+		// Gordon: changing this to a minute for now
+		// tjw: making this a cvar
+		// IRATA: MAPVOTE note - if g_intermissionTime is low there is no time to vote for a map!
+		if(!exit && (level.time < (level.intermissiontime + 60000 /*(1000 * g_intermissionTime.integer)*/ )))
+		{
+			return;
 		}
 	}
-
-	// rain - #105 - use the same code as the beginning of round ready to
-	// decide whether enough players are ready to exceed
-	// match_readypercent
-	if (level.ref_allready || ((ready + notReady > 0) && 100 * ready / (ready + notReady) >= match_readypercent.integer))
-	{
-		level.ref_allready = qfalse;
-		exit               = qtrue;
-	}
-	else
-	{
-		exit = qfalse;
-	}
-
-	// Gordon: changing this to a minute for now
-	if (!exit && (level.time < level.intermissiontime + 60000))
-	{
-		return;
-	}
-
-	ExitLevel();
 }
 
 /*
