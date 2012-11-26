@@ -44,7 +44,7 @@
 #define RETRANSMIT_TIMEOUT  3000    // time between connection packet retransmits
 
 #define LIMBOCHAT_WIDTH     140     // NERVE - SMF - NOTE TTimo buffer size indicator, not related to screen bbox
-#define LIMBOCHAT_HEIGHT    7       // NERVE - SMF
+#define LIMBOCHAT_HEIGHT    7
 
 #define ETKEY_FILE "etkey"
 #define ETKEY_SIZE 28
@@ -127,14 +127,14 @@ typedef struct
 
 	int mouseDx[2], mouseDy[2];         // added to by mouse events
 	int mouseIndex;
-	int joystickAxis[MAX_JOYSTICK_AXIS];            // set by joystick events
+	int joystickAxis[MAX_JOYSTICK_AXIS]; // set by joystick events
 
 	// cgame communicates a few values to the client system
 	int cgameUserCmdValue;              // current weapon to add to usercmd_t
 	int cgameFlags;                     // flags that can be set by the gamecode
 	float cgameSensitivity;
-	int cgameMpIdentClient;             // NERVE - SMF
-	vec3_t cgameClientLerpOrigin;       // DHM - Nerve
+	int cgameMpIdentClient;
+	vec3_t cgameClientLerpOrigin;
 
 	// cmds[cmdNumber] is the predicted command, [cmdNumber-1] is the last
 	// properly generated command
@@ -163,7 +163,6 @@ typedef struct
 
 	entityState_t parseEntities[MAX_PARSE_ENTITIES];
 
-	// NERVE - SMF
 	// NOTE TTimo - UI uses LIMBOCHAT_WIDTH strings (140),
 	// but for the processing in CL_AddToLimboChat we need some safe room
 	char limboChatMsgs[LIMBOCHAT_HEIGHT][LIMBOCHAT_WIDTH * 3 + 1];
@@ -171,7 +170,6 @@ typedef struct
 
 	qboolean corruptedTranslationFile;
 	char translationVersion[MAX_STRING_TOKENS];
-	// -NERVE - SMF
 
 	qboolean cameraMode;
 } clientActive_t;
@@ -192,8 +190,7 @@ demo through a file.
 
 typedef struct
 {
-
-	connstate_t state;          // connection status
+	connstate_t state;                      // connection status
 
 	int clientNum;
 	int lastPacketSentTime;                 // for retransmits during connection
@@ -207,7 +204,7 @@ typedef struct
 	int challenge;                          // from the server to use for connecting
 	int checksumFeed;                       // from the server for checksum calculations
 
-	int onlyVisibleClients;                 // DHM - Nerve
+	int onlyVisibleClients;
 
 	// these are our reliable messages that go to the server
 	int reliableSequence;
@@ -303,14 +300,14 @@ typedef struct
 	int ping;
 	qboolean visible;
 	int allowAnonymous;
-	int friendlyFire;               // NERVE - SMF
-	int maxlives;                   // NERVE - SMF
+	int friendlyFire;
+	int maxlives;
 	int needpass;
-	int punkbuster;                 // DHM - Nerve
-	int antilag;         // TTimo
+	int punkbuster;
+	int antilag;
 	int weaprestrict;
 	int balancedteams;
-	char gameName[MAX_NAME_LENGTH];         // Arnout
+	char gameName[MAX_NAME_LENGTH];
 } serverInfo_t;
 
 typedef struct
@@ -322,7 +319,7 @@ typedef struct
 
 	qboolean doCachePurge;          // Arnout: empty the renderer cache as soon as possible
 
-	char servername[MAX_OSPATH];            // name of server from original connect (used by reconnect)
+	char servername[MAX_OSPATH];    // name of server from original connect (used by reconnect)
 
 	// when the server clears the hunk, all of these must be restarted
 	qboolean rendererStarted;
@@ -441,7 +438,6 @@ extern cvar_t *cl_conXOffset;
 extern cvar_t *cl_inGameVideo;
 
 extern cvar_t *cl_missionStats;
-extern cvar_t *cl_waitForFire;
 
 // NERVE - SMF - localization
 extern cvar_t *cl_language;
@@ -556,11 +552,6 @@ void CL_ReadPackets(void);
 void CL_WritePacket(void);
 void IN_Help(void);
 
-//----(SA) salute
-void IN_Salute(void);
-
-void CL_VerifyCode(void);
-
 float CL_KeyState(kbutton_t *key);
 int Key_StringToKeynum(char *str);
 char *Key_KeynumToString(int keynum);
@@ -587,7 +578,6 @@ qboolean CL_UpdateVisiblePings_f(int source);
 
 #define NUM_CON_TIMES 4
 
-//#define       CON_TEXTSIZE    32768
 #define     CON_TEXTSIZE    65536   // (SA) DM want's more console...
 
 typedef struct

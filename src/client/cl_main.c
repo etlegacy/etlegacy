@@ -95,9 +95,7 @@ cvar_t *cl_conXOffset;
 cvar_t *cl_inGameVideo;
 
 cvar_t *cl_serverStatusResendTime;
-cvar_t *cl_trn;
 cvar_t *cl_missionStats;
-cvar_t *cl_waitForFire;
 
 // Localization
 cvar_t *cl_language;
@@ -3706,7 +3704,6 @@ void CL_Init(void)
 	Cvar_Get("cg_autoReload", "1", CVAR_ARCHIVE);
 
 	cl_missionStats = Cvar_Get("g_missionStats", "0", CVAR_ROM);
-	cl_waitForFire  = Cvar_Get("cl_waitForFire", "0", CVAR_ROM);
 
 	// Localization
 	cl_language         = Cvar_Get("cl_language", "0", CVAR_ARCHIVE);
