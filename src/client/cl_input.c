@@ -461,15 +461,10 @@ void IN_Help(void)
 //==========================================================================
 cvar_t *cl_yawspeed;
 cvar_t *cl_pitchspeed;
-
 cvar_t *cl_run;
-
 cvar_t *cl_anglespeedkey;
-
 cvar_t *cl_recoilPitch;
-
-cvar_t *cl_bypassMouseInput;        // NERVE - SMF
-
+cvar_t *cl_bypassMouseInput;
 cvar_t *cl_doubletapdelay;
 
 /*
@@ -541,7 +536,6 @@ void CL_KeyMove(usercmd_t *cmd)
 	side += movespeed * CL_KeyState(&kb[KB_MOVERIGHT]);
 	side -= movespeed * CL_KeyState(&kb[KB_MOVELEFT]);
 
-//----(SA)  added
 	if (cmd->buttons & BUTTON_ACTIVATE)
 	{
 		if (side > 0)
@@ -555,7 +549,6 @@ void CL_KeyMove(usercmd_t *cmd)
 
 		side = 0;   // disallow the strafe when holding 'activate'
 	}
-//----(SA)  end
 
 	up += movespeed * CL_KeyState(&kb[KB_UP]);
 	up -= movespeed * CL_KeyState(&kb[KB_DOWN]);
@@ -563,13 +556,9 @@ void CL_KeyMove(usercmd_t *cmd)
 	forward += movespeed * CL_KeyState(&kb[KB_FORWARD]);
 	forward -= movespeed * CL_KeyState(&kb[KB_BACK]);
 
-	// fretn - moved this to bg_pmove.c
-	//if (!(cl.snap.ps.persistant[PERS_HWEAPON_USE]))
-	//{
 	cmd->forwardmove = ClampChar(forward);
 	cmd->rightmove   = ClampChar(side);
 	cmd->upmove      = ClampChar(up);
-	//}
 
 	// Arnout: double tap
 	cmd->doubleTap = DT_NONE; // reset
@@ -848,7 +837,7 @@ void CL_FinishMove(usercmd_t *cmd)
 
 	cmd->flags = cl.cgameFlags;
 
-	cmd->identClient = cl.cgameMpIdentClient;   // NERVE - SMF
+	cmd->identClient = cl.cgameMpIdentClient;
 
 	// send the current server time so the amount of movement
 	// can be determined without allowing cheating
@@ -1226,8 +1215,6 @@ CL_InitInput
 */
 void CL_InitInput(void)
 {
-//  Cmd_AddCommand ("centerview",IN_CenterView);    // this is an exploit nowadays
-
 	Cmd_AddCommand("+moveup", IN_UpDown);
 	Cmd_AddCommand("-moveup", IN_UpUp);
 	Cmd_AddCommand("+movedown", IN_DownDown);
@@ -1277,9 +1264,9 @@ void CL_InitInput(void)
 	// wolf buttons
 	Cmd_AddCommand("+attack2", IN_Wbutton0Down);          //----(SA) secondary firing
 	Cmd_AddCommand("-attack2", IN_Wbutton0Up);
-	Cmd_AddCommand("+zoom", IN_ZoomDown);             //
+	Cmd_AddCommand("+zoom", IN_ZoomDown);
 	Cmd_AddCommand("-zoom", IN_ZoomUp);
-	Cmd_AddCommand("+reload", IN_ReloadDown);             //
+	Cmd_AddCommand("+reload", IN_ReloadDown);
 	Cmd_AddCommand("-reload", IN_ReloadUp);
 	Cmd_AddCommand("+leanleft", IN_LeanLeftDown);
 	Cmd_AddCommand("-leanleft", IN_LeanLeftUp);
