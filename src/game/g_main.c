@@ -1402,8 +1402,7 @@ void G_FindTeams(void)
 				{
 					G_SetTargetName(e, e2->targetname);
 
-					// Rafael
-					// note to self: added this because of problems
+					// Rafael note to self: added this because of problems
 					// pertaining to keys and double doors
 					if (Q_stricmp(e2->classname, "func_door_rotating"))
 					{
@@ -1466,8 +1465,8 @@ void G_RegisterCvars(void)
 		trap_Cvar_Update(&g_gametype);
 	}
 
-	// multiplayer
 	trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
+
 	if (match_readypercent.integer < 1)
 	{
 		trap_Cvar_Set("match_readypercent", "1");
@@ -1813,11 +1812,10 @@ void bani_storemapxp(void)
 
 void bani_getmapxp(void)
 {
-	int  j;
+	int  j = 0;
 	char s[MAX_STRING_CHARS];
 	char t[MAX_STRING_CHARS];
 
-	j = 0;
 	trap_Cvar_VariableStringBuffer(va("%s_axismapxp%i", GAMEVERSION, j), s, sizeof(s));
 	//reassemble string...
 	while (strrchr(s, '+'))
@@ -1889,7 +1887,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	// NERVE - SMF - intialize gamestate
 	if (g_gamestate.integer == GS_INITIALIZE)
 	{
-		// OSP
 		trap_Cvar_Set("gamestate", va("%i", GS_WARMUP));
 	}
 
@@ -2579,19 +2576,11 @@ If a new client connects, this will be called after the spawn function.
 */
 void MoveClientToIntermission(gentity_t *ent)
 {
-//	float			timeLived;
-
 	// take out of follow mode if needed
 	if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
 	{
 		StopFollowing(ent);
 	}
-
-	/*if ( ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES ) {
-	    timeLived = (level.time - ent->client->pers.lastSpawnTime) * 0.001f;
-
-	    G_AddExperience( ent, MIN((timeLived * timeLived) * 0.00005f, 5) );
-	}*/
 
 	// move to the spot
 	VectorCopy(level.intermission_origin, ent->s.origin);
@@ -2615,7 +2604,7 @@ void MoveClientToIntermission(gentity_t *ent)
 	ent->s.modelindex      = 0;
 	ent->s.loopSound       = 0;
 	ent->s.event           = 0;
-	ent->s.events[0]       = ent->s.events[1] = ent->s.events[2] = ent->s.events[3] = 0; // DHM - Nerve
+	ent->s.events[0]       = ent->s.events[1] = ent->s.events[2] = ent->s.events[3] = 0;
 	ent->r.contents        = 0;
 }
 
@@ -2630,9 +2619,9 @@ void FindIntermissionPoint(void)
 {
 	gentity_t *ent = NULL, *target;
 	vec3_t    dir;
-	char      cs[MAX_STRING_CHARS];         // DHM - Nerve
-	char      *buf;                         // DHM - Nerve
-	int       winner;                       // DHM - Nerve
+	char      cs[MAX_STRING_CHARS];
+	char      *buf;
+	int       winner;
 
 	// NERVE - SMF - if the match hasn't ended yet, and we're just a spectator
 	if (!level.intermissiontime)
@@ -3181,7 +3170,6 @@ void CheckIntermissionExit(void)
 	int       ready = 0, notReady = 0;
 
 	// OSP - end-of-level auto-actions
-	//		  maybe make the weapon stats dump available to single player?
 	if (!(fActions & EOM_WEAPONSTATS) && level.time - level.intermissiontime > 300)
 	{
 		G_matchInfoDump(EOM_WEAPONSTATS);
@@ -3253,6 +3241,8 @@ void CheckIntermissionExit(void)
 			return;
 		}
 	}
+
+	ExitLevel();
 }
 
 /*
