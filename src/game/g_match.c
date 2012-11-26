@@ -585,8 +585,8 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_td     = 0;
 		tot_gp     = 0;
 
-		CP("sc \"\n^7TEAM   Player          Kll Dth Sui TK Eff  ^3GP^7    ^2DG    ^1DR   ^6TD  ^3Score\n"
-		   "^7---------------------------------------------------------------------\n\"");
+		CP("sc \"^7TEAM   Player          Kll Dth Sui TK Eff  ^3GP^7    ^2DG    ^1DR   ^6TD  ^3Score\n\"");
+		CP("sc \"^7---------------------------------------------------------------------\n\"");
 
 		for (j = 0; j < level.numPlayingClients; j++)
 		{
@@ -648,8 +648,8 @@ void G_printMatchInfo(gentity_t *ent)
 			eff = 0;
 		}
 
-		CP(va("sc \"^7---------------------------------------------------------------------\n"
-		      "%-10s ^5%-15s%4d%4d%4d%3d^5%4d^3%4d^2%6d^1%6d^6%5d^3%7d\n\"",
+		CP("sc \"^7---------------------------------------------------------------------\n\"");
+		CP(va("sc \"%-10s ^5%-15s%4d%4d%4d%3d^5%4d^3%4d^2%6d^1%6d^6%5d^3%7d\n\"",
 		      aTeams[i],
 		      "Totals",
 		      tot_kills,
