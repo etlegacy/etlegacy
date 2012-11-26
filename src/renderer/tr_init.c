@@ -66,7 +66,9 @@ cvar_t *r_znear;
 cvar_t *r_zfar;
 cvar_t *r_stereoSeparation;
 
+#ifdef FEATURE_SMP
 cvar_t *r_smp;
+#endif
 cvar_t *r_showSmp;
 cvar_t *r_skipBackEnd;
 
