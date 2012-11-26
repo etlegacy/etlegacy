@@ -33,13 +33,12 @@ checkapp() {
 
 _detectlinuxdistro() {
 	# check for most popular distro files
-	_DISTROFILES=(
-		"/etc/gentoo-release"
-		"/etc/debian_version" "/etc/debian_release" "/etc/ubuntu-release"
-		"/etc/redhat-release" "/etc/centos-release" "/etc/fedora-release"
-		"/etc/slackware-release"
-		"/etc/SuSE-release" "/etc/novell-release" "/etc/sles-release"
-	)
+	_DISTROFILES="
+		/etc/gentoo-release /etc/slackware-release
+		/etc/debian_version /etc/debian_release /etc/ubuntu-release
+		/etc/redhat-release /etc/centos-release /etc/fedora-release
+		/etc/SuSE-release /etc/novell-release /etc/sles-release"
+
 	for distro in ${_DISTROFILES}; do
 		[ -e "${distro}" ] && echo $(<${distro}) && exit
 	done
@@ -107,7 +106,8 @@ FEATURE_TRACKBASE=1
 FEATURE_OMNIBOT=1
 
 mkdir -p ${BUILDDIR}
-if [ -e "${_SRC}/libs/CMakeLists.txt" ]; then
+CLEANLIBS=0
+if [ -e "${_SRC}/libs/CMakeLists.txt" && ${CLEANLIBS} ]; then
 	einfo "Cleaning SDL..."
 	cd ${_SRC}/libs/sdl;  make clean
 	einfo "Cleaning libjpeg..."
