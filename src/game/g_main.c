@@ -85,7 +85,7 @@ vmCvar_t g_speed;
 vmCvar_t g_gravity;
 vmCvar_t g_cheats;
 vmCvar_t g_knockback;
-vmCvar_t g_quadfactor;
+
 vmCvar_t g_forcerespawn;
 vmCvar_t g_inactivity;
 vmCvar_t g_debugMove;
@@ -135,7 +135,7 @@ vmCvar_t g_teamAutoJoin;
 vmCvar_t g_teamForceBalance;
 vmCvar_t g_banIPs;
 vmCvar_t g_filterBan;
-vmCvar_t g_rankings;
+
 vmCvar_t g_smoothClients;
 vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
@@ -154,7 +154,7 @@ vmCvar_t g_medicChargeTime;
 vmCvar_t g_engineerChargeTime;
 vmCvar_t g_LTChargeTime;
 vmCvar_t g_soldierChargeTime;
-// screen shakey magnitude multiplier
+vmCvar_t g_covertopsChargeTime;
 
 vmCvar_t g_antilag;
 
@@ -197,7 +197,6 @@ vmCvar_t vote_limit;
 vmCvar_t vote_percent;
 vmCvar_t z_serverflags;
 
-vmCvar_t g_covertopsChargeTime;
 vmCvar_t refereePassword;
 vmCvar_t g_debugConstruct;
 vmCvar_t g_landminetimeout;
@@ -274,7 +273,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_covertopsChargeTime,     "g_covertopsChargeTime",     "30000",                                                  CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
 	{ &g_landminetimeout,         "g_landminetimeout",         "1",                                                      CVAR_ARCHIVE,                                    0, qfalse, qtrue},
 
-	{ &g_maxclients,              "sv_maxclients",             "20",                                                     CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse}, // NERVE - SMF - made 20 from 8
+	{ &g_maxclients,              "sv_maxclients",             "20",                                                     CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse},
 	{ &g_maxGameClients,          "g_maxGameClients",          "0",                                                      CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse},
 	{ &g_minGameClients,          "g_minGameClients",          "8",                                                      CVAR_SERVERINFO,                                 0, qfalse},
 
@@ -324,7 +323,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_speed,                   "g_speed",                   "320",                                                    0,                                               0, qtrue, qtrue},
 	{ &g_gravity,                 "g_gravity",                 "800",                                                    0,                                               0, qtrue, qtrue},
 	{ &g_knockback,               "g_knockback",               "1000",                                                   0,                                               0, qtrue, qtrue},
-	{ &g_quadfactor,              "g_quadfactor",              "3",                                                      0,                                               0, qtrue},
 
 	{ &g_needpass,                "g_needpass",                "0",                                                      CVAR_SERVERINFO | CVAR_ROM,                      0, qtrue},
 	{ &g_balancedteams,           "g_balancedteams",           "0",                                                      CVAR_SERVERINFO | CVAR_ROM,                      0, qtrue},
@@ -356,7 +354,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_enforcemaxlives,         "g_enforcemaxlives",         "1",                                                      CVAR_ARCHIVE,                                    0, qtrue}, // Xian - Gestapo enforce maxlives stuff by temp banning
 
 	{ &g_developer,               "developer",                 "0",                                                      CVAR_TEMP,                                       0, qfalse},
-	{ &g_rankings,                "g_rankings",                "0",                                                      0,                                               0, qfalse},
 	{ &g_userAim,                 "g_userAim",                 "1",                                                      CVAR_CHEAT,                                      0, qfalse},
 
 	{ &g_smoothClients,           "g_smoothClients",           "1",                                                      0,                                               0, qfalse},
@@ -450,7 +447,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_currentCampaignMap,      "g_currentCampaignMap",      "0",                                                      CVAR_WOLFINFO | CVAR_ROM,                        0,     },
 
 	// points to the URL for mod information, should not be modified by server admin
-	{ &mod_url,                   "mod_url",                   "",                                                       CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse},
+	{ &mod_url,                   "mod_url",                   "www.etlegacy.com",                                       CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse},
 	// configured by the server admin, points to the web pages for the server
 	{ &url,                       "URL",                       "",                                                       CVAR_SERVERINFO | CVAR_ARCHIVE,                  0, qfalse},
 
@@ -472,7 +469,7 @@ cvarTable_t gameCvarTable[] =
 	{ &lua_allowedModules,        "lua_allowedModules",        "",                                                       0 },
 #endif
 
-	{ &g_protect,                 "g_protect",                 "0",                                                      CVAR_ARCHIVE },                                  // reset on startup?
+	{ &g_protect,                 "g_protect",                 "0",                                                      CVAR_ARCHIVE },  // reset on startup?
 
 };
 
@@ -3453,7 +3450,7 @@ FUNCTIONS CALLED EVERY FRAME
 =============
 CheckWolfMP
 
-NERVE - SMF - Once a frame, check for changes in wolf MP player state
+Once a frame, check for changes in wolf MP player state
 =============
 */
 void CheckWolfMP(void)
