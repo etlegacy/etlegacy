@@ -149,7 +149,6 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 
 				myOrigin[0] = cgs.clientinfo[cg.clientNum].location[0];
 				myOrigin[1] = cgs.clientinfo[cg.clientNum].location[1];
-				myOrigin[2] = cgs.clientinfo[cg.clientNum].location[2];
 
 				VectorSubtract(origin, myOrigin, v);
 				dist   = VectorLength(v);
@@ -216,7 +215,7 @@ void CG_LoadLocations(void)
 
 	if (fLen > sizeof(fBuffer))
 	{
-		CG_Error("Location file is too big, make it smaller (max = %i bytes)\n", sizeof(fBuffer));
+		CG_Error("Location file is too big, make it smaller (max = %li bytes)\n", sizeof(fBuffer));
 		trap_FS_FCloseFile(f);
 	}
 
