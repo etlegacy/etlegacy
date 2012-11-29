@@ -352,7 +352,7 @@ static qboolean CG_CheckForExistingAnimModelInfo(const char *animationGroup, con
 	{
 		*animModelInfo = firstFree;
 		// clear the structure out ready for use
-		memset(*animModelInfo, 0, sizeof(*animModelInfo));
+		memset(*animModelInfo, 0, sizeof(**animModelInfo));
 	}
 
 	// qfalse signifies that we need to parse the information from the script files
