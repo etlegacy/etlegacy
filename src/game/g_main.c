@@ -72,7 +72,7 @@ vmCvar_t g_allowBotSwap;
 #endif
 #endif
 vmCvar_t g_gametype;
-vmCvar_t g_fraglimit;
+
 vmCvar_t g_timelimit;
 vmCvar_t g_friendlyFire;
 vmCvar_t g_password;
@@ -130,7 +130,7 @@ vmCvar_t g_enforcemaxlives;
 vmCvar_t g_needpass;
 vmCvar_t g_balancedteams;
 vmCvar_t g_doWarmup;
-vmCvar_t g_teamAutoJoin;
+
 vmCvar_t g_teamForceBalance;
 vmCvar_t g_banIPs;
 vmCvar_t g_filterBan;
@@ -208,7 +208,7 @@ vmCvar_t g_movespeed;
 
 vmCvar_t g_axismapxp;
 vmCvar_t g_alliedmapxp;
-vmCvar_t g_oldCampaign;
+
 vmCvar_t g_currentCampaign;
 vmCvar_t g_currentCampaignMap;
 
@@ -277,7 +277,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_minGameClients,          "g_minGameClients",          "8",                                                      CVAR_SERVERINFO,                                 0, qfalse},
 
 	// change anytime vars
-	{ &g_fraglimit,               "fraglimit",                 "0",                                                      /*CVAR_SERVERINFO |*/ CVAR_ARCHIVE | CVAR_NORESTART,0, qtrue },
 	{ &g_timelimit,               "timelimit",                 "0",                                                      CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0, qtrue},
 
 #ifdef ALLOW_GSYNC
@@ -438,7 +437,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_axismapxp,               "g_axismapxp",               "0",                                                      CVAR_ROM,                                        0, qfalse, qtrue},
 	{ &g_alliedmapxp,             "g_alliedmapxp",             "0",                                                      CVAR_ROM,                                        0, qfalse, qtrue},
 
-	{ &g_oldCampaign,             "g_oldCampaign",             "",                                                       CVAR_ROM,                                        0,     },
 	{ &g_currentCampaign,         "g_currentCampaign",         "",                                                       CVAR_WOLFINFO | CVAR_ROM,                        0,     },
 	{ &g_currentCampaignMap,      "g_currentCampaignMap",      "0",                                                      CVAR_WOLFINFO | CVAR_ROM,                        0,     },
 

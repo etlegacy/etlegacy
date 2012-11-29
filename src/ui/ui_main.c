@@ -8723,7 +8723,6 @@ cvarTable_t cvarTable[] =
 
 	{ &cl_bypassMouseInput,             "cl_bypassMouseInput",                 "0",                          CVAR_TEMP                      },
 
-	{ NULL,                             "g_oldCampaign",                       "",                           CVAR_ROM,                      },
 	{ NULL,                             "g_currentCampaign",                   "",                           CVAR_WOLFINFO | CVAR_ROM,      },
 	{ NULL,                             "g_currentCampaignMap",                "0",                          CVAR_WOLFINFO | CVAR_ROM,      },
 
@@ -8965,7 +8964,6 @@ void UI_Campaign_f(void)
 		return;
 	}
 
-	trap_Cvar_Set("g_oldCampaign", "");
 	trap_Cvar_Set("g_currentCampaign", campaign->campaignShortName);
 	trap_Cvar_Set("g_currentCampaignMap", "0");
 

@@ -1474,7 +1474,6 @@ extern vmCvar_t g_maxGameClients;           // allow this many active
 extern vmCvar_t g_minGameClients;           // we need at least this many before match actually starts
 extern vmCvar_t g_restarted;
 
-extern vmCvar_t g_fraglimit;
 extern vmCvar_t g_timelimit;
 extern vmCvar_t g_friendlyFire;
 extern vmCvar_t g_password;
@@ -1511,7 +1510,7 @@ extern vmCvar_t g_enforcemaxlives;          // Temp ban with maxlives between ro
 extern vmCvar_t g_needpass;
 extern vmCvar_t g_balancedteams;
 extern vmCvar_t g_doWarmup;
-extern vmCvar_t g_teamAutoJoin;
+
 extern vmCvar_t g_teamForceBalance;
 extern vmCvar_t g_banIPs;
 extern vmCvar_t g_filterBan;
@@ -1547,7 +1546,6 @@ extern vmCvar_t g_movespeed;
 extern vmCvar_t g_axismapxp;
 extern vmCvar_t g_alliedmapxp;
 
-extern vmCvar_t g_oldCampaign;
 extern vmCvar_t g_currentCampaign;
 extern vmCvar_t g_currentCampaignMap;
 

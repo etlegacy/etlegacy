@@ -1567,7 +1567,6 @@ void G_ParseCampaigns(void)
 
 	if (g_gametype.integer != GT_WOLF_CAMPAIGN)
 	{
-		trap_Cvar_Set("g_oldCampaign", "");
 		trap_Cvar_Set("g_currentCampaign", "");
 		trap_Cvar_Set("g_currentCampaignMap", "0");
 	}
@@ -1579,7 +1578,6 @@ void G_ParseCampaigns(void)
 			if (!Q_stricmp(g_campaigns[i].mapnames[0], level.rawmapname))
 			{
 				// someone manually specified a /map command, and it's the first map in a campaign
-				trap_Cvar_Set("g_oldCampaign", g_currentCampaign.string);
 				trap_Cvar_Set("g_currentCampaign", g_campaigns[i].shortname);
 				trap_Cvar_Set("g_currentCampaignMap", "0");
 

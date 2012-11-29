@@ -1022,7 +1022,6 @@ void Svcmd_Campaign_f(void)
 		return;
 	}
 
-	trap_Cvar_Set("g_oldCampaign", g_currentCampaign.string);
 	trap_Cvar_Set("g_currentCampaign", campaign->shortname);
 	trap_Cvar_Set("g_currentCampaignMap", "0");
 
