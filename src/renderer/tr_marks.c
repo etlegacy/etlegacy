@@ -904,7 +904,6 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 			// duplicated so we don't mess with the original clips for the curved surfaces
 			vec3_t lnormals[MAX_VERTS_ON_POLY + 2];
 			float  ldists[MAX_VERTS_ON_POLY + 2];
-			//vec3_t            lprojection, lprojectionDir;
 
 			srfTriangles_t *cts;
 			cts = ( srfTriangles_t * ) surfaces[i];

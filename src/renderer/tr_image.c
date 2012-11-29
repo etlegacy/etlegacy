@@ -76,6 +76,7 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType)
 void R_FreeImageBuffer(void)
 {
 	int bufferType;
+
 	for (bufferType = 0; bufferType < BUFFER_MAX_TYPES; bufferType++)
 	{
 		if (!imageBufferPtr[bufferType])
@@ -366,13 +367,13 @@ lighting range
 */
 void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean only_gamma)
 {
+	int  i, c;
+	byte *p;
+
 	if (only_gamma)
 	{
 		if (!glConfig.deviceSupportsGamma)
 		{
-			int  i, c;
-			byte *p;
-
 			p = (byte *)in;
 
 			c = inwidth * inheight;
@@ -386,9 +387,6 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean only_
 	}
 	else
 	{
-		int  i, c;
-		byte *p;
-
 		p = (byte *)in;
 
 		c = inwidth * inheight;
@@ -816,9 +814,8 @@ static void Upload32(unsigned *data,
 
 	if (mipmap)
 	{
-		int miplevel;
+		int miplevel = 0;
 
-		miplevel = 0;
 		while (scaled_width > 1 || scaled_height > 1)
 		{
 			R_MipMap((byte *)scaledBuffer, scaled_width, scaled_height);
@@ -921,7 +918,6 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 		ri.Error(ERR_DROP, "R_CreateImage: MAX_DRAWIMAGES hit\n");
 	}
 
-	// Ridah
 	image = tr.images[tr.numImages] = R_CacheImageAlloc(sizeof(image_t));
 
 	// ydnar: ok, let's try the recommended way
@@ -1587,9 +1583,7 @@ void R_DeleteTextures(void)
 
 /*
 ============================================================================
-
 SKINS
-
 ============================================================================
 */
 
@@ -1628,7 +1622,6 @@ static char *CommaParse(char **data_p)
 			}
 			data++;
 		}
-
 
 		c = *data;
 
@@ -1697,7 +1690,7 @@ static char *CommaParse(char **data_p)
 
 	if (len == MAX_TOKEN_CHARS)
 	{
-		//		Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
+		//Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
 		len = 0;
 	}
 	com_token[len] = 0;
@@ -1795,7 +1788,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 					}
 				}
 				shd                    = R_FindShader(surf->shader->name, LIGHTMAP_NONE, mip);
-				shd->stages[0]->rgbGen = CGEN_LIGHTING_DIFFUSE; // (SA) new
+				shd->stages[0]->rgbGen = CGEN_LIGHTING_DIFFUSE;
 			}
 			else
 			{
@@ -2076,7 +2069,6 @@ qboolean R_TouchImage(image_t *inImage)
 	bImagePrev = NULL;
 	while (bImage)
 	{
-
 		if (bImage == inImage)
 		{
 			// add it to the current images
@@ -2281,12 +2273,12 @@ int R_GetTextureId(const char *name)
 	{
 		if (!strcmp(name, tr.images[i]->imgName))
 		{
-			//			ri.Printf( PRINT_ALL, "Found textureid %d\n", i );
+			//ri.Printf( PRINT_ALL, "Found textureid %d\n", i );
 			return i;
 		}
 	}
 
-	//	ri.Printf( PRINT_ALL, "Image not found.\n" );
+	//ri.Printf( PRINT_ALL, "Image not found.\n" );
 	return -1;
 }
 

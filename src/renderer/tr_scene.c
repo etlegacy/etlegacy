@@ -137,9 +137,7 @@ void RE_ClearScene(void)
 
 /*
 ===========================================================================
-
 DISCRETE POLYS
-
 ===========================================================================
 */
 
@@ -271,7 +269,7 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 	{
 		if (r_numpolyverts + numVerts > max_polyverts || r_numpolys >= max_polys)
 		{
-			//			ri.Printf( PRINT_WARNING, "WARNING: RE_AddPolysToScene: MAX_POLYS or MAX_POLYVERTS reached\n");
+			//ri.Printf( PRINT_WARNING, "WARNING: RE_AddPolysToScene: MAX_POLYS or MAX_POLYVERTS reached\n");
 			return;
 		}
 

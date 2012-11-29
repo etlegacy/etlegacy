@@ -41,9 +41,7 @@ static float s_cloudTexP[6][SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 
 /*
 ===================================================================================
-
 POLYGON TO BOX SIDE PROJECTION
-
 ===================================================================================
 */
 
@@ -72,7 +70,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 	float  s, t, dv;
 	int    axis;
 	float  *vp;
-	// s = [0]/[2], t = [1]/[2]
+
 	static int vec_to_st[6][3] =
 	{
 		{ -2, 3,  1  },
@@ -83,9 +81,6 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 
 		{ -2, -1, 3  },
 		{ -2, 1,  -3 }
-
-		//  {-1,2,3},
-		//  {1,2,-3}
 	};
 
 	// decide which face it maps to
@@ -490,6 +485,8 @@ static void DrawSkySideInner(struct image_s *image, const int mins[2], const int
 static void DrawSkyBox(shader_t *shader)
 {
 	int i;
+	int sky_mins_subd[2], sky_maxs_subd[2];
+	int s, t;
 
 	memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
@@ -498,9 +495,6 @@ static void DrawSkyBox(shader_t *shader)
 
 	for (i = 0 ; i < 6 ; i++)
 	{
-		int sky_mins_subd[2], sky_maxs_subd[2];
-		int s, t;
-
 		sky_mins[0][i] = floor(sky_mins[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_mins[1][i] = floor(sky_mins[1][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_maxs[0][i] = ceil(sky_maxs[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
@@ -573,14 +567,13 @@ static void DrawSkyBox(shader_t *shader)
 static void DrawSkyBoxInner(shader_t *shader)
 {
 	int i;
+	int sky_mins_subd[2], sky_maxs_subd[2];
+	int s, t;
 
 	memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
 	for (i = 0 ; i < 6 ; i++)
 	{
-		int sky_mins_subd[2], sky_maxs_subd[2];
-		int s, t;
-
 		sky_mins[0][i] = floor(sky_mins[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_mins[1][i] = floor(sky_mins[1][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_maxs[0][i] = ceil(sky_maxs[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
@@ -707,13 +700,12 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 static void FillCloudBox(const shader_t *shader, int stage)
 {
 	int i;
+	int   sky_mins_subd[2], sky_maxs_subd[2];
+	int   s, t;
+	float MIN_T;
 
 	for (i = 0; i < 6; i++)
 	{
-		int   sky_mins_subd[2], sky_maxs_subd[2];
-		int   s, t;
-		float MIN_T;
-
 		if (1)     // FIXME? shader->sky.fullClouds )
 		{
 			MIN_T = -HALF_SKY_SUBDIVISIONS;

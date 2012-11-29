@@ -65,8 +65,8 @@ typedef struct
 	void (*RegisterFont)(const char *fontName, int pointSize, fontInfo_t *font);
 
 	void (*LoadWorld)(const char *name);
-	qboolean (*GetSkinModel)(qhandle_t skinid, const char *type, char *name);        //----(SA) added
-	qhandle_t (*GetShaderFromModel)(qhandle_t modelid, int surfnum, int withlightmap);                    //----(SA)    added
+	qboolean (*GetSkinModel)(qhandle_t skinid, const char *type, char *name);
+	qhandle_t (*GetShaderFromModel)(qhandle_t modelid, int surfnum, int withlightmap);
 
 	// the vis data is a large enough block of data that we go to the trouble
 	// of sharing it with the clipmodel subsystem
