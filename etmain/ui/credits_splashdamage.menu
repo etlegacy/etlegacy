@@ -183,5 +183,6 @@ menuDef {
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BACK", .3, 14, close credits_splashdamage ; open main )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "ET LEGACY", .3, 14, close credits_splashdamage ; open credits_etlegacy )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "ID SOFTWARE", .3, 14, close credits_splashdamage ; open credits_idsoftware )
 }
