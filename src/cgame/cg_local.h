@@ -1882,7 +1882,7 @@ typedef struct cgs_s
 
 	int cursorX;
 	int cursorY;
-	qboolean eventHandling; // FIXME: actually an int
+	int eventHandling;
 	qboolean mouseCaptured;
 	qboolean sizingHud;
 	void *capturedItem;
