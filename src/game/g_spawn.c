@@ -148,7 +148,6 @@ field_t fields[] =
 	// Rafael - mg42
 	{ "harc",         FOFS(harc),           F_FLOAT     },
 	{ "varc",         FOFS(varc),           F_FLOAT     },
-	// done.
 
 	// Rafael - sniper
 	{ "delay",        FOFS(delay),          F_FLOAT     },
@@ -157,13 +156,11 @@ field_t fields[] =
 	// Ridah, for reloading savegames at correct mission spot
 	{ "missionlevel", FOFS(missionLevel),   F_INT       },
 
-	// Rafel
 	{ "start_size",   FOFS(start_size),     F_INT       },
 	{ "end_size",     FOFS(end_size),       F_INT       },
 
 	{ "shard",        FOFS(count),          F_INT       },
 
-	// Rafael
 	{ "spawnitem",    FOFS(spawnitem),      F_LSTRING   },
 
 	{ "track",        FOFS(track),          F_LSTRING   },
@@ -177,6 +174,8 @@ field_t fields[] =
 	{ "override",     FOFS(spawnitem),      F_LSTRING   },
 
 	{ "damageparent", FOFS(damageparent),   F_LSTRING   },
+
+	{"numPlayers",    FOFS(numPlayers),     F_INT       }, // number of players needed to trigger this
 
 	{ NULL }
 };
@@ -319,11 +318,7 @@ void SP_trigger_flagonly(gentity_t *ent);
 void SP_trigger_flagonly_multiple(gentity_t *ent);
 void SP_trigger_objective_info(gentity_t *ent);
 
-void SP_gas(gentity_t *ent);
 void SP_target_rumble(gentity_t *ent);
-
-// put this back in for single player bots
-void SP_trigger_aidoor(gentity_t *ent); // FIXME: remove
 
 void SP_SmokeDust(gentity_t *ent);
 void SP_Dust(gentity_t *ent);
@@ -436,9 +431,6 @@ spawn_t spawns[] =
 	//---- (SA) Wolf triggers
 	{ "trigger_concussive_dust",   SP_trigger_concussive_dust   },
 	{ "trigger_once",              SP_trigger_once              },
-
-	// I'm going to put trigger_aidoors back in. I'll make sure they only work in single player
-	{ "trigger_aidoor",            SP_trigger_aidoor            }, // obsolete
 
 	{ "trigger_heal",              SP_trigger_heal              },
 	{ "trigger_ammo",              SP_trigger_ammo              },
@@ -571,7 +563,6 @@ spawn_t spawns[] =
 	{ "trigger_flagonly",          SP_trigger_flagonly          },
 	{ "trigger_flagonly_multiple", SP_trigger_flagonly_multiple },
 
-	{ "test_gas",                  SP_gas                       },
 	{ "trigger_objective_info",    SP_trigger_objective_info    },
 
 	// RF, scripting

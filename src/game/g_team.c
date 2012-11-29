@@ -227,8 +227,6 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		AddScore(attacker, WOLF_FRAG_CARRIER_BONUS);
 		attacker->client->pers.teamState.fragcarrier++;
 
-		//G_AddExperience( attacker, 0.5f );
-
 		// the target had the flag, clear the hurt carrier
 		// field on the other team
 		for (i = 0; i < g_maxclients.integer; i++)
@@ -295,7 +293,6 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 			// we defended the base flag
 			// JPW NERVE FIXME -- don't report flag defense messages, change to gooder message
 			AddScore(attacker, WOLF_FLAG_DEFENSE_BONUS);
-			//G_AddExperience( attacker, 0.5f );
 			attacker->client->pers.teamState.basedefense++;
 			return;
 		}
@@ -332,12 +329,10 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 				if (flag->spawnflags & 1)                         // protected spawnpoint
 				{
 					AddScore(attacker, WOLF_SP_PROTECT_BONUS);
-					//G_AddExperience( attacker, 0.5f );
 				}
 				else
 				{
 					AddScore(attacker, WOLF_CP_PROTECT_BONUS);    // protected checkpoint
-					//G_AddExperience( attacker, 0.5f );
 				}
 			}
 		}
@@ -474,17 +469,9 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 	{
 		// hey, its not home.  return it by teleporting it back
 		AddScore(other, WOLF_SECURE_OBJ_BONUS);
-		//G_AddExperience( other, 0.8f );
-//      te = G_TempEntity( other->s.pos.trBase, EV_GLOBAL_SOUND );
-//      te->r.svFlags |= SVF_BROADCAST;
-//      te->s.teamNum = cl->sess.sessionTeam;
 
 		if (cl->sess.sessionTeam == TEAM_AXIS)
 		{
-//          te->s.eventParm = G_SoundIndex( "sound/chat/axis/g-objective_secure.wav" );
-
-//          trap_SendServerCommand(-1, va("cp \"Axis have returned %s!\n\" 2", ent->message));
-
 			if (level.gameManager)
 			{
 				G_Script_ScriptEvent(level.gameManager, "trigger", "axis_object_returned");
@@ -527,18 +514,12 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 {
 	gclient_t *cl = other->client;
-//  gentity_t *te;
 	gentity_t *tmp;
 
 	ent->s.density--;
 
 	// hey, its not our flag, pick it up
-// JPW NERVE
 	AddScore(other, WOLF_STEAL_OBJ_BONUS);
-	//G_AddExperience( other, 0.8f );
-//  te = G_TempEntity( other->s.pos.trBase, EV_GLOBAL_SOUND );
-//  te->r.svFlags |= SVF_BROADCAST;
-//  te->s.teamNum = cl->sess.sessionTeam;
 
 	tmp         = ent->parent;
 	ent->parent = other;
@@ -549,10 +530,6 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 		pm->s.effect3Time = G_StringIndex(ent->message);
 		pm->s.effect2Time = TEAM_AXIS;
 		pm->s.density     = 0; // 0 = stolen
-
-//      te->s.eventParm = G_SoundIndex( "sound/chat/axis/g-objective_taken.wav" );
-
-//      trap_SendServerCommand(-1, va("cp \"Axis have stolen %s!\n\" 2", ent->message));
 
 		if (level.gameManager)
 		{
@@ -569,10 +546,6 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 		pm->s.effect3Time = G_StringIndex(ent->message);
 		pm->s.effect2Time = TEAM_ALLIES;
 		pm->s.density     = 0; // 0 = stolen
-
-//      te->s.eventParm = G_SoundIndex( "sound/chat/allies/a-objective_taken.wav" );
-
-//      trap_SendServerCommand(-1, va("cp \"Allies have stolen %s!\n\" 2", ent->message));
 
 		if (level.gameManager)
 		{
@@ -1489,12 +1462,10 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 	if (self->s.frame == WCP_ANIM_NOFLAG)
 	{
 		AddScore(other, WOLF_SP_CAPTURE);
-		//G_AddExperience( other, 0.8f );
 	}
 	else
 	{
 		AddScore(other, WOLF_SP_RECOVER);
-		//G_AddExperience( other, 0.8f );
 	}
 
 	if (self->count < 0)
