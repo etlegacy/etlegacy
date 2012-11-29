@@ -113,8 +113,7 @@ vmCvar_t g_swapteams;
 vmCvar_t g_restarted;
 vmCvar_t g_log;
 vmCvar_t g_logSync;
-vmCvar_t g_podiumDist;
-vmCvar_t g_podiumDrop;
+
 vmCvar_t voteFlags;
 vmCvar_t g_complaintlimit;
 vmCvar_t g_ipcomplaintlimit;
@@ -334,9 +333,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_debugAlloc,              "g_debugAlloc",              "0",                                                      0,                                               0, qfalse},
 	{ &g_debugBullets,            "g_debugBullets",            "0",                                                      CVAR_CHEAT,                                      0, qfalse},
 	{ &g_motd,                    "g_motd",                    "",                                                       CVAR_ARCHIVE,                                    0, qfalse},
-
-	{ &g_podiumDist,              "g_podiumDist",              "80",                                                     0,                                               0, qfalse},
-	{ &g_podiumDrop,              "g_podiumDrop",              "70",                                                     0,                                               0, qfalse},
 
 	{ &voteFlags,                 "voteFlags",                 "0",                                                      CVAR_TEMP | CVAR_ROM | CVAR_SERVERINFO,          0, qfalse},
 
