@@ -52,10 +52,11 @@ menuDef {
 	MULTIACTION( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Packet Duplication:", .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", "number of duplicates for every data packet sent upstream, minimized packetloss" )
 
 // Memory
+// NOTE: absolutely useless to set memory via UI ... only valid if done via start params
 	SUBWINDOW( 6, 172, (SUBWINDOW_WIDTH), 52, "MEMORY" )
 	MULTIACTION( 8, 188, (SUBWINDOW_WIDTH)-4, 10, "Hunk Megs:", .2, 8, "ui_com_hunkmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_hunkmegs", "amount of memory (MB) assign to the hunk" )
 	MULTIACTION( 8, 200, (SUBWINDOW_WIDTH)-4, 10, "Sound Megs:", .2, 8, "ui_com_soundmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_soundmegs", "sets the amount of memory (MB) to allocate for loaded sound files" )
-	MULTIACTION( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Zone Megs:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_zonemegs", "amount of RAM to allocate to map and texture loading" )
+	//MULTIACTION( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Zone Megs:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_zonemegs", "amount of RAM to allocate to map and texture loading" )
 
 //	SUBWINDOW( 6, 242, (SUBWINDOW_WIDTH), 52, "MULTI-CORE" )
 //	YESNO( 8, 258, (SUBWINDOW_WIDTH)-4, 10, "Multi-Core Supp:", .2, 8, "r_smp", "toogles symmetric multiprocessing (SMP)" )  
