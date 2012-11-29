@@ -454,11 +454,6 @@ int trap_PC_UnReadToken(int handle)
 	return syscall(BOTLIB_PC_UNREAD_TOKEN, handle);
 }
 
-void trap_PbStat(int clientNum, char *category, char *values)
-{
-	syscall(PB_STAT_REPORT, clientNum, category, values) ;
-}
-
 void trap_SendMessage(int clientNum, char *buf, int buflen)
 {
 	syscall(G_SENDMESSAGE, clientNum, buf, buflen);

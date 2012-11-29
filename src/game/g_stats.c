@@ -47,9 +47,6 @@ void G_LogDeath(gentity_t *ent, weapon_t weap)
 	}
 
 	ent->client->pers.playerStats.weaponStats[weap].killedby++;
-
-	trap_PbStat(ent - g_entities, "death",
-	            va("%d %d %d", ent->client->sess.sessionTeam, ent->client->sess.playerType, weap)) ;
 }
 
 void G_LogKill(gentity_t *ent, weapon_t weap)
@@ -62,9 +59,6 @@ void G_LogKill(gentity_t *ent, weapon_t weap)
 	}
 
 	ent->client->pers.playerStats.weaponStats[weap].kills++;
-
-	trap_PbStat(ent - g_entities, "kill",
-	            va("%d %d %d", ent->client->sess.sessionTeam, ent->client->sess.playerType, weap)) ;
 }
 
 void G_LogTeamKill(gentity_t *ent, weapon_t weap)
@@ -77,9 +71,6 @@ void G_LogTeamKill(gentity_t *ent, weapon_t weap)
 	}
 
 	ent->client->pers.playerStats.weaponStats[weap].teamkills++;
-
-	trap_PbStat(ent - g_entities, "tk",
-	            va("%d %d %d", ent->client->sess.sessionTeam, ent->client->sess.playerType, weap)) ;
 }
 
 void G_LogRegionHit(gentity_t *ent, hitRegion_t hr)
@@ -89,9 +80,6 @@ void G_LogRegionHit(gentity_t *ent, hitRegion_t hr)
 		return;
 	}
 	ent->client->pers.playerStats.hitRegions[hr]++;
-
-	trap_PbStat(ent - g_entities, "hr",
-	            va("%d %d %d", ent->client->sess.sessionTeam, ent->client->sess.playerType, hr)) ;
 }
 
 void G_PrintAccuracyLog(gentity_t *ent)
@@ -278,10 +266,6 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 	G_Printf("%s just lost %.0f skill points for skill %s\n", ent->client->pers.netname, oldskillpoints - ent->client->sess.skillpoints[skill], skillNames[skill]);
 
-	trap_PbStat(ent - g_entities, "loseskill",
-	            va("%d %d %d %f", ent->client->sess.sessionTeam, ent->client->sess.playerType,
-	               skill, oldskillpoints - ent->client->sess.skillpoints[skill])) ;
-
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]]        -= oldskillpoints - ent->client->sess.skillpoints[skill];
 	level.teamXP[skill][ent->client->sess.sessionTeam - TEAM_AXIS] -= oldskillpoints - ent->client->sess.skillpoints[skill];
 }
@@ -318,10 +302,6 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]] += points;
 
 	//	G_Printf( "%s just got %.0f skill points for skill %s\n", ent->client->pers.netname, points, skillNames[skill] );
-
-	trap_PbStat(ent - g_entities, "addskill",
-	            va("%d %d %d %f", ent->client->sess.sessionTeam, ent->client->sess.playerType,
-	               skill, points)) ;
 
 	// see if player increased in skill
 	oldskill = ent->client->sess.skill[skill];

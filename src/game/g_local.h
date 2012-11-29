@@ -1713,8 +1713,6 @@ void Svcmd_StartMatch_f(void);
 void Svcmd_ResetMatch_f(qboolean fDoReset, qboolean fDoRestart);
 void Svcmd_SwapTeams_f(void);
 
-void trap_PbStat(int clientNum, char *category, char *values) ;
-
 // g_antilag.c
 void G_StoreClientPosition(gentity_t *ent);
 void G_AdjustClientPositions(gentity_t *ent, int time, qboolean forward);
