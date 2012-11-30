@@ -208,7 +208,7 @@ void TB_MapRestart()
 
 /**
  * @brief Send info when map has finished
- * 
+ *
  * Sometimes intermission is very long, so TB can show appropriate info to players
  */
 void TB_MapEnd()

@@ -175,7 +175,7 @@ field_t fields[] =
 
 	{ "damageparent", FOFS(damageparent),   F_LSTRING   },
 
-	{"numPlayers",    FOFS(numPlayers),     F_INT       }, // number of players needed to trigger this
+	{ "numPlayers",   FOFS(numPlayers),     F_INT       }, // number of players needed to trigger this
 
 	{ NULL }
 };

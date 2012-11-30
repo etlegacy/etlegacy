@@ -61,13 +61,13 @@ void multi_trigger(gentity_t *ent, gentity_t *activator)
 
 	if (ent->numPlayers > 1)
 	{
-		gentity_t	*tnt; // temp ent for counting players
-		int			i;
-		int			entList[MAX_GENTITIES];	// list of entities
-		int			cnt = trap_EntitiesInBox( ent->r.mins, ent->r.maxs, entList, MAX_GENTITIES);
-		int			players = 0; // number of ents in trigger
+		gentity_t *tnt;   // temp ent for counting players
+		int       i;
+		int       entList[MAX_GENTITIES];   // list of entities
+		int       cnt     = trap_EntitiesInBox(ent->r.mins, ent->r.maxs, entList, MAX_GENTITIES);
+		int       players = 0;   // number of ents in trigger
 
-		for ( i = 0; i < cnt; i++)
+		for (i = 0; i < cnt; i++)
 		{
 			tnt = &g_entities[entList[i]];
 
@@ -306,7 +306,7 @@ void AimAtTarget(gentity_t *self)
 Must point at a target_position, which will be the apex of the leap.
 This will be client side predicted, unlike target_push
 */
-void SP_trigger_push( gentity_t *self )
+void SP_trigger_push(gentity_t *self)
 {
 	G_Printf("trigger_push has no effect. Please delete it.\n");
 }
@@ -637,7 +637,7 @@ void heal_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 void trigger_heal_think(gentity_t *self)
 {
 	self->nextthink = level.time + HEALTH_REGENTIME;
-	self->health += self->damage;
+	self->health   += self->damage;
 
 	if (self->health > self->count)
 	{
@@ -831,7 +831,7 @@ void ammo_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 void trigger_ammo_think(gentity_t *self)
 {
 	self->nextthink = level.time + AMMO_REGENTIME;
-	self->health += self->damage;
+	self->health   += self->damage;
 
 	if (self->health > self->count)
 	{

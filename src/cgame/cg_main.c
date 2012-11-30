@@ -1219,10 +1219,10 @@ static void CG_RegisterSounds(void)
 	cgs.media.bodyShot = trap_S_RegisterSound("sound/hitsounds/hit.wav", qfalse);
 	cgs.media.teamShot = trap_S_RegisterSound("sound/hitsounds/hitteam.wav", qfalse);
 
-	cgs.media.flameSound         = trap_S_RegisterSound("sound/weapons/flamethrower/flame_burn.wav", qfalse);
-	cgs.media.flameBlowSound     = trap_S_RegisterSound("sound/weapons/flamethrower/flame_pilot.wav", qfalse);
-	cgs.media.flameStartSound    = trap_S_RegisterSound("sound/weapons/flamethrower/flame_up.wav", qfalse);
-	cgs.media.flameStreamSound   = trap_S_RegisterSound("sound/weapons/flamethrower/flame_fire.wav", qfalse);
+	cgs.media.flameSound       = trap_S_RegisterSound("sound/weapons/flamethrower/flame_burn.wav", qfalse);
+	cgs.media.flameBlowSound   = trap_S_RegisterSound("sound/weapons/flamethrower/flame_pilot.wav", qfalse);
+	cgs.media.flameStartSound  = trap_S_RegisterSound("sound/weapons/flamethrower/flame_up.wav", qfalse);
+	cgs.media.flameStreamSound = trap_S_RegisterSound("sound/weapons/flamethrower/flame_fire.wav", qfalse);
 
 	cgs.media.grenadePulseSound4 = trap_S_RegisterSound("sound/weapons/grenade/gren_timer4.wav", qfalse);
 	cgs.media.grenadePulseSound3 = trap_S_RegisterSound("sound/weapons/grenade/gren_timer3.wav", qfalse);

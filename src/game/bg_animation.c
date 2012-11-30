@@ -569,12 +569,12 @@ BG_ParseConditionBits
 #define RESULT_SIZE 2
 void BG_ParseConditionBits(char **text_pp, animStringItem_t *stringTable, int condIndex, int result[RESULT_SIZE])
 {
-	qboolean           endFlag = qfalse;
-	int                indexFound;
-	int                tempBits[2];
-	char               currentString[MAX_QPATH];
-	qboolean           minus = qfalse;
-	char               *token;
+	qboolean endFlag = qfalse;
+	int      indexFound;
+	int      tempBits[2];
+	char     currentString[MAX_QPATH];
+	qboolean minus = qfalse;
+	char     *token;
 
 	currentString[0] = '\0';
 	memset(result, 0, sizeof(result[0]) * RESULT_SIZE);
@@ -1362,7 +1362,7 @@ BG_FirstValidItem
 animScriptItem_t *BG_FirstValidItem(int client, animScript_t *script)
 {
 	animScriptItem_t **ppScriptItem;
-	int i;
+	int              i;
 
 	for (i = 0, ppScriptItem = script->items; i < script->numItems; i++, ppScriptItem++)
 	{

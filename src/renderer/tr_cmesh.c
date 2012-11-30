@@ -216,10 +216,10 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 		//----(SA)  testing
 		//if (ent->e.reFlags & REFLAG_ORIENT_LOD)
 		//{
-			// right now this is for trees, and pushes the lod distance way in.
-			// this is not the intended purpose, but is helpful for the new
-			// terrain level that has loads of trees
-			//          radius = radius/2.0f;
+		// right now this is for trees, and pushes the lod distance way in.
+		// this is not the intended purpose, but is helpful for the new
+		// terrain level that has loads of trees
+		//          radius = radius/2.0f;
 		//}
 
 

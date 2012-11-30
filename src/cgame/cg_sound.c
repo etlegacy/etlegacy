@@ -2415,7 +2415,7 @@ void CG_AddScriptSpeakers(void)
 			if (cg.time >= speaker->nextActivateTime && (speaker->wait || speaker->random))
 			{
 				speaker->activated        = qtrue;
-				speaker->nextActivateTime = cg.time + speaker->wait + speaker->random *crandom();
+				speaker->nextActivateTime = cg.time + speaker->wait + speaker->random * crandom();
 			}
 		}
 

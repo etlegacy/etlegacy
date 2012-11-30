@@ -1235,7 +1235,7 @@ static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
 /*
 SurfIsOffscreen
 
-	Determines if a surface is completely offscreen.
+    Determines if a surface is completely offscreen.
 */
 static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128])
 {

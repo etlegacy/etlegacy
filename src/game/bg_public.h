@@ -800,15 +800,15 @@ extern int weapAlts[];  // defined in bg_misc.c
 // TTimo NOTE: what about WP_VENOM and other XP weapons?
 // rain - #81 - added added akimbo weapons and deployed MG42
 #define IS_AUTORELOAD_WEAPON(weapon) \
-    (   \
-        weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
-        weapon == WP_THOMPSON || weapon == WP_STEN          || \
-        weapon == WP_KAR98    || weapon == WP_CARBINE       || weapon == WP_GARAND_SCOPE  || \
-        weapon == WP_FG42     || weapon == WP_K43           || weapon == WP_MOBILE_MG42   || \
-        weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
-        weapon == WP_GARAND   || weapon == WP_K43_SCOPE     || weapon == WP_FG42SCOPE     || \
-        BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET \
-    )
+	(   \
+	    weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
+	    weapon == WP_THOMPSON || weapon == WP_STEN          || \
+	    weapon == WP_KAR98    || weapon == WP_CARBINE       || weapon == WP_GARAND_SCOPE  || \
+	    weapon == WP_FG42     || weapon == WP_K43           || weapon == WP_MOBILE_MG42   || \
+	    weapon == WP_SILENCED_COLT    || weapon == WP_SILENCER      || \
+	    weapon == WP_GARAND   || weapon == WP_K43_SCOPE     || weapon == WP_FG42SCOPE     || \
+	    BG_IsAkimboWeapon(weapon) || weapon == WP_MOBILE_MG42_SET \
+	)
 
 // entityState_t->event values
 // entity events are for effects that take place reletive

@@ -232,7 +232,7 @@ static void CG_Obituary(entityState_t *ent)
 			message  = "was stabbed by";
 			message2 = "'s knife";
 			// goat luvin
-			if(attacker == cg.snap->ps.clientNum || target == cg.snap->ps.clientNum)
+			if (attacker == cg.snap->ps.clientNum || target == cg.snap->ps.clientNum)
 			{
 				if (ci->team != ca->team)
 				{

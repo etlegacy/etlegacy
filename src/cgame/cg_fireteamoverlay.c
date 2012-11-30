@@ -343,7 +343,7 @@ int weaponIconScale(int weap)
 /*
 CG_DrawFireTeamOverlay
 
-	based on NQ CG_DrawFireTeamOverlay
+    based on NQ CG_DrawFireTeamOverlay
 */
 
 static vec4_t clr1 = { 0.0f, 0.0f, 0.0f, 0.8f };                // box itselfs - { 0.16f,	0.2f,	0.17f,	0.8f }

@@ -36,9 +36,9 @@
 #include "cg_local.h"
 
 // FIXME: use these in all functions below
-vec4_t HUD_Background = {0.16f, 0.2f, 0.17f, 0.8f};
-vec4_t HUD_Border     = {0.5f, 0.5f, 0.5f, 0.5f};
-vec4_t HUD_Text       = {0.625f, 0.625f, 0.6f, 1.0f};
+vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
+vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec4_t HUD_Text = { 0.625f, 0.625f, 0.6f, 1.0f };
 
 #define STATUSBARHEIGHT 452
 char *BindingFromName(const char *cvar);
@@ -218,7 +218,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 
 				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 				{
-					ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+					ofs           = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
 					colorBlack[3] = newColor[3];
 					trap_R_SetColor(colorBlack);
 					CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex) + ofs, y - yadj + ofs, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
@@ -489,9 +489,9 @@ static float CG_DrawSnapshot(float y)
 CG_DrawFPS
 ==================
 */
-#define	MAX_FPS_FRAMES	500
+#define MAX_FPS_FRAMES  500
 
-static float CG_DrawFPS( float y)
+static float CG_DrawFPS(float y)
 {
 	static int previousTimes[MAX_FPS_FRAMES];
 	static int previous;
@@ -500,10 +500,10 @@ static float CG_DrawFPS( float y)
 	char       *s;
 	// don't use serverTime, because that will be drifting to
 	// correct for internet lag changes, timescales, timedemos, etc
-	int        t = trap_Milliseconds();
-	int        frameTime = t - previous;
-	int        x, w, w2;
-	int        samples = cg_drawFPS.integer;
+	int t         = trap_Milliseconds();
+	int frameTime = t - previous;
+	int x, w, w2;
+	int samples = cg_drawFPS.integer;
 
 	previous = t;
 
@@ -520,7 +520,7 @@ static float CG_DrawFPS( float y)
 		index = 0;
 	}
 
-	oldSamples = samples;
+	oldSamples                     = samples;
 	previousTimes[index % samples] = frameTime;
 	index++;
 
@@ -539,20 +539,20 @@ static float CG_DrawFPS( float y)
 
 		fps = 1000 * samples / total;
 
-		s = va( "%i FPS", fps );
+		s = va("%i FPS", fps);
 	}
 	else
 	{
 		s = "estimating";
 	}
 
-	w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
-	w2 = (UPPERRIGHT_W > w)? UPPERRIGHT_W : w; // @widescreen
+	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w; // @widescreen
 
 	x = UPPERRIGHT_X - w2 - 2;
 	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
 	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
-	CG_Text_Paint_Ext(x + ((w2-w)/2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	return y + 12 + 4;
 }
@@ -3046,10 +3046,10 @@ CG_DrawWarmup
 */
 static void CG_DrawWarmup(void)
 {
-	int        w;
-	int        sec;
-	int        cw;
-	const char *s, *s1, *s2;
+	int             w;
+	int             sec;
+	int             cw;
+	const char      *s, *s1, *s2;
 	static qboolean announced = qfalse;
 
 	sec = cg.warmup;
@@ -3105,7 +3105,7 @@ static void CG_DrawWarmup(void)
 
 		CPri("^3PREPARE TO FIGHT!\n"); // @translate
 
-		if(!cg.demoPlayback && cg_autoAction.integer & AA_DEMORECORD)
+		if (!cg.demoPlayback && cg_autoAction.integer & AA_DEMORECORD)
 		{
 			CG_autoRecord_f();
 		}

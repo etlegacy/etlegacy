@@ -86,7 +86,7 @@ model_t *R_AllocModel(void)
 
 /*
 R_LoadModelShadow()
-	loads a model's shadow script
+    loads a model's shadow script
 */
 void R_LoadModelShadow(model_t *mod)
 {
@@ -192,7 +192,7 @@ qhandle_t RE_RegisterModel(const char *name)
 				ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: bad model '%s'\n", name);
 				return 0;
 			}
-			
+
 			// ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: model already loaded '%s'\n", name);
 			return hModel;
 		}
@@ -1845,7 +1845,7 @@ void R_Modellist_f(void)
 				lods++;
 			}
 		}
-		ri.Printf(PRINT_ALL, "%8i : (%i) %s   %s\n", mod->dataSize, lods, mod->name, (mod->type == MOD_BAD? "BAD":"OK")); // "^1BAD":"^2OK"));
+		ri.Printf(PRINT_ALL, "%8i : (%i) %s   %s\n", mod->dataSize, lods, mod->name, (mod->type == MOD_BAD ? "BAD" : "OK")); // "^1BAD":"^2OK"));
 		total += mod->dataSize;
 	}
 	ri.Printf(PRINT_ALL, "%8i : Total models\n", total);

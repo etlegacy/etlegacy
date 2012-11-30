@@ -2183,11 +2183,11 @@ obResult ChangeTeam(int _client, int _newteam, const MessageHelper *_data)
 
 	if (_newteam == ET_TEAM_AXIS)
 	{
-		teamName = va("%s","axis");
+		teamName = va("%s", "axis");
 	}
 	else
 	{
-		teamName = va("%s","allies");
+		teamName = va("%s", "allies");
 	}
 
 	// always go to spectator first to solve problems on map restarts

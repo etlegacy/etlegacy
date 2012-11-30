@@ -696,7 +696,7 @@ panel_button_t debriefPlayerInfoACC =
 };
 
 #define PLAYERHEADER_SKILLS(number)           \
-    panel_button_t debriefPlayerInfoSkills ## number = {      \
+	panel_button_t debriefPlayerInfoSkills ## number = {      \
 		NULL,                                       \
 		NULL,                                       \
 		{ 18 + (100 * (number % 2)),     140 + (number / 2 * 24),                        12, 12 },     \
@@ -964,7 +964,7 @@ panel_button_t teamDebriefAlliesXPText =
 };
 
 #define TDB_SKILL_TITLES_XP(number, title, x)             \
-    panel_button_t teamDebriefSkillXPText_ ## number = {          \
+	panel_button_t teamDebriefSkillXPText_ ## number = {          \
 		NULL,                                                   \
 		title,                                                  \
 		{ 100 + (number * 65),      304 - (x * 12),                 20, 200 },      \
@@ -986,7 +986,7 @@ TDB_SKILL_TITLES_XP(6, "Covert Ops", 0);
 TDB_SKILL_TITLES_XP(7, "Total", 1);
 
 #define TDB_SKILL_AXIS_XP(number)                         \
-    panel_button_t teamDebriefSkillXPText0_ ## number = {         \
+	panel_button_t teamDebriefSkillXPText0_ ## number = {         \
 		NULL,                                                   \
 		NULL,                                                   \
 		{ 110 + (number * 65),             320,                  470, 200 },                \
@@ -999,7 +999,7 @@ TDB_SKILL_TITLES_XP(7, "Total", 1);
 	}
 
 #define TDB_SKILL_ALLIES_XP(number)                       \
-    panel_button_t teamDebriefSkillXPText1_ ## number = {         \
+	panel_button_t teamDebriefSkillXPText1_ ## number = {         \
 		NULL,                                                   \
 		NULL,                                                   \
 		{ 110 + (number * 65),             340,                  470, 200 },                \
@@ -1620,8 +1620,8 @@ void CG_DebriefingXPHeader_Draw(panel_button_t *button)
 
 void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 {
-	int   i, j;
-	float y = button->rect.y + 12;
+	int     i, j;
+	float   y      = button->rect.y + 12;
 	score_t *score = NULL;
 
 	for (i = 0; i + cgs.dbPlayerListOffset < MAX_CLIENTS && i < 24; i++)
@@ -2695,7 +2695,7 @@ const char *awardNames[NUM_ENDGAME_AWARDS] =
 	"Highest Experience Points",
 	"Highest Ranking Officer",
 	"Most Highly Decorated",
-	"Highest Battle Sense",          // min lvl 1
+	"Highest Battle Sense",     // min lvl 1
 	"Best Engineer",
 	"Best Medic",
 	"Best Field Ops",
@@ -2703,8 +2703,8 @@ const char *awardNames[NUM_ENDGAME_AWARDS] =
 	"Best Soldier",
 	"Best Covert Ops",
 	"Highest Accuracy",
-	"I Ain't Got No Friends Award",  // min 5 tks
-	"Welcome Newbie! Award",         // dont get this if any other award given or > 100 xp (this map)
+	"I Ain't Got No Friends Award", // min 5 tks
+	"Welcome Newbie! Award",    // dont get this if any other award given or > 100 xp (this map)
 };
 
 void CG_Debreifing2_Awards_Parse(void)

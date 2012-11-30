@@ -321,7 +321,7 @@ ClipWindingEpsilon
 =============
 */
 void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
-                           vec_t epsilon, winding_t **front, winding_t **back)
+                        vec_t epsilon, winding_t **front, winding_t **back)
 {
 	vec_t        dists[MAX_POINTS_ON_WINDING + 4];
 	int          sides[MAX_POINTS_ON_WINDING + 4];

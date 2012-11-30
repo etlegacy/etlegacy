@@ -3948,7 +3948,7 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 
 // Gordon: would like to just inline this but would likely break qvm support
 #define SETUP_MOUNTEDGUN_STATUS(ps)                           \
-    switch (ps->persistant[PERS_HWEAPON_USE]) {                \
+	switch (ps->persistant[PERS_HWEAPON_USE]) {                \
 	case 1:                                                 \
 		ps->eFlags                    |= EF_MG42_ACTIVE;                       \
 		ps->eFlags                    &= ~EF_AAGUN_ACTIVE;                     \

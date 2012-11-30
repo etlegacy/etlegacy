@@ -148,16 +148,16 @@ static void SV_Map_f(void)
 
 	if (!Q_stricmp(cmd, "devmap"))
 	{
-		cheat    = qtrue;
+		cheat = qtrue;
 	}
 	else
 	if (!Q_stricmp(cmd, "spdevmap"))
 	{
-		cheat    = qtrue;
+		cheat = qtrue;
 	}
 	else
 	{
-		cheat    = qfalse;
+		cheat = qfalse;
 	}
 
 	// save the map name here cause on a map restart we reload the q3config.cfg

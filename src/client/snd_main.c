@@ -514,11 +514,11 @@ S_Play_f
 */
 void S_Play_f(void)
 {
-	int 		i;
-	int			c;
-	sfxHandle_t	h;
+	int         i;
+	int         c;
+	sfxHandle_t h;
 
-	if(!si.RegisterSound || !si.StartLocalSound)
+	if (!si.RegisterSound || !si.StartLocalSound)
 	{
 		return;
 	}
@@ -541,7 +541,7 @@ void S_Play_f(void)
 
 		h = si.RegisterSound(Cmd_Argv(i), qfalse); // *qtrue* TODO: detect compression via extension?
 
-		if ( h )
+		if (h)
 		{
 			si.StartLocalSound(h, CHAN_LOCAL_SOUND, 1.0f);
 		}

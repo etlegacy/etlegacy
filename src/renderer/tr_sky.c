@@ -699,7 +699,7 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 
 static void FillCloudBox(const shader_t *shader, int stage)
 {
-	int i;
+	int   i;
 	int   sky_mins_subd[2], sky_maxs_subd[2];
 	int   s, t;
 	float MIN_T;
@@ -849,7 +849,7 @@ void R_BuildCloudData(shaderCommands_t *input)
 
 /*
 R_InitSkyTexCoords
-	Called when a sky shader is parsed
+    Called when a sky shader is parsed
 */
 void R_InitSkyTexCoords(float heightCloud)
 {

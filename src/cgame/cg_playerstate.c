@@ -225,7 +225,7 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 		{
 			front = 0.1;
 		}
-		vd->damageX = crandom() * 0.3 + - left / front;
+		vd->damageX = crandom() * 0.3 + -left / front;
 		vd->damageY = crandom() * 0.3 + up / dist;
 	}
 

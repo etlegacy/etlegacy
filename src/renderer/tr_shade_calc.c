@@ -61,7 +61,7 @@ static float *TableForFunc(genFunc_t func)
 /*
 EvalWaveForm
 
-	Evaluates a given waveForm_t, referencing backEnd.refdef.time directly
+    Evaluates a given waveForm_t, referencing backEnd.refdef.time directly
 */
 static float EvalWaveForm(const waveForm_t *wf)
 {
@@ -132,8 +132,8 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 
 	if (ds->deformationWave.frequency < 0)
 	{
-		float off;
-		float dot;
+		float    off;
+		float    dot;
 		qboolean inverse = qfalse;
 		vec3_t   worldUp;
 
@@ -274,14 +274,14 @@ void RB_CalcBulgeVertexes(deformStage_t *ds)
 	float       *xyz    = ( float * ) tess.xyz;
 	float       *normal = ( float * ) tess.normal;
 	float       now;
-	int   off;
-	float scale;
+	int         off;
+	float       scale;
 
 	now = backEnd.refdef.time * ds->bulgeSpeed * 0.001f;
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, st += 4, normal += 4)
 	{
-		off = (float)(FUNCTABLE_SIZE / (M_PI * 2)) * (st[0] * ds->bulgeWidth + now);
+		off   = (float)(FUNCTABLE_SIZE / (M_PI * 2)) * (st[0] * ds->bulgeWidth + now);
 		scale = tr.sinTable[off & FUNCTABLE_MASK] * ds->bulgeHeight;
 
 		xyz[0] += normal[0] * scale;
@@ -337,8 +337,8 @@ void DeformText(const char *text)
 	byte   color[4];
 	float  bottom, top;
 	vec3_t mid;
-	int   row, col;
-	float frow, fcol, size;
+	int    row, col;
+	float  frow, fcol, size;
 
 	height[0] = 0;
 	height[1] = 0;
@@ -428,7 +428,7 @@ static void AutospriteDeform(void)
 	float  *xyz;
 	vec3_t mid, delta;
 	float  radius;
-	float axisLength;
+	float  axisLength;
 	vec3_t left, up;
 	vec3_t leftDir, upDir;
 
@@ -1267,7 +1267,7 @@ RB_CalcTransformTexCoords
 */
 void RB_CalcTransformTexCoords(const texModInfo_t *tmi, float *st)
 {
-	int i;
+	int   i;
 	float s, t;
 
 	for (i = 0; i < tess.numVertexes; i++, st += 2)
@@ -1311,7 +1311,7 @@ void RB_CalcRotateTexCoords(float degsPerSecond, float *st)
 /*
 RB_CalcSpecularAlpha
 
-	Calculates specular coefficient and places it in the alpha channel
+    Calculates specular coefficient and places it in the alpha channel
 */
 vec3_t lightOrigin = { -960, 1980, 96 };        // FIXME: track dynamically
 
@@ -1374,7 +1374,7 @@ void RB_CalcSpecularAlpha(unsigned char *alphas)
 /*
 RB_CalcDiffuseColor
 
-	The basic vertex lighting calc
+    The basic vertex lighting calc
 */
 
 // ydnar: faster, table-based version of this function

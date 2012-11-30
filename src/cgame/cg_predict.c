@@ -474,12 +474,12 @@ Predict push triggers and items
 */
 static void CG_TouchTriggerPrediction(void)
 {
-	int i;
+	int           i;
 	entityState_t *ent;
 	clipHandle_t  cmodel;
 	centity_t     *cent;
 	qboolean      spectator;
-	const char *cs;
+	const char    *cs;
 
 	// dead clients don't activate triggers
 	if (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0)
@@ -751,9 +751,9 @@ qboolean CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 }
 
 #define RESET_PREDICTION                        \
-    cg.lastPredictedCommand = 0;                \
-    cg.backupStateTail      = cg.backupStateTop;     \
-    useCommand              = current - CMD_BACKUP + 1;
+	cg.lastPredictedCommand = 0;                \
+	cg.backupStateTail      = cg.backupStateTop;     \
+	useCommand              = current - CMD_BACKUP + 1;
 
 
 /*

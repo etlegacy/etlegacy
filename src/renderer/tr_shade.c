@@ -510,7 +510,7 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 	{
 		R_FogOff(); // turn it back off
 	}
-	else        	// make sure it's on
+	else            // make sure it's on
 	{
 		R_FogOn();
 	}
@@ -1160,8 +1160,8 @@ static void ComputeColors(shaderStage_t *pStage)
 	case AGEN_PORTAL:
 	{
 		unsigned char alpha;
-		float  len;
-		vec3_t v;
+		float         len;
+		vec3_t        v;
 
 		for (i = 0; i < tess.numVertexes; i++)
 		{
@@ -1474,7 +1474,6 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 					}
 				}
 			}
-
 			// ydnar: lightmap stages should be GL_ONE GL_ZERO so they can be seen
 			else if (r_lightmap->integer && (pStage->bundle[0].isLightmap || pStage->bundle[1].isLightmap))
 			{

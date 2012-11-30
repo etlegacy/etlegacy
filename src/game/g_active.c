@@ -288,7 +288,7 @@ qboolean ReadyToCallArtillery(gentity_t *ent)
  * @brief Are we ready to construct?
  * @param[in,out] ent           Entity
  * @param[in]     constructible Constructible Entity
- * @param[in]     updateState   Do we want to update Entity weapon time?  
+ * @param[in]     updateState   Do we want to update Entity weapon time?
  *
  * Optionally, will also update the time while we are constructing
  */
@@ -1235,17 +1235,17 @@ void ClientThink_real(gentity_t *ent)
 		/*switch (client->combatState)
 		{
 		case COMBATSTATE_COLD:
-			G_AddSkillPoints(ent, SK_BATTLE_SENSE, 0.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 0.f, "combatstate cold");
-			break;
+		    G_AddSkillPoints(ent, SK_BATTLE_SENSE, 0.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 0.f, "combatstate cold");
+		    break;
 		case COMBATSTATE_WARM:
-			G_AddSkillPoints(ent, SK_BATTLE_SENSE, 2.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 2.f, "combatstate warm");
-			break;
+		    G_AddSkillPoints(ent, SK_BATTLE_SENSE, 2.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 2.f, "combatstate warm");
+		    break;
 		case COMBATSTATE_HOT:
-			G_AddSkillPoints(ent, SK_BATTLE_SENSE, 5.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 5.f, "combatstate hot");
-			break;
+		    G_AddSkillPoints(ent, SK_BATTLE_SENSE, 5.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 5.f, "combatstate hot");
+		    break;
 		case COMBATSTATE_SUPERHOT:
-			G_AddSkillPoints(ent, SK_BATTLE_SENSE, 8.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 8.f, "combatstate super-hot");
-			break;
+		    G_AddSkillPoints(ent, SK_BATTLE_SENSE, 8.f); G_DebugAddSkillPoints(ent, SK_BATTLE_SENSE, 8.f, "combatstate super-hot");
+		    break;
 		}*/
 
 		if (client->combatState != COMBATSTATE_COLD)
@@ -1271,33 +1271,33 @@ void ClientThink_real(gentity_t *ent)
 	pm.leadership = qfalse;
 	/*for (i = 0 ; i < level.numConnectedClients; i++)
 	{
-		gclient_t *cl = &level.clients[level.sortedClients[i]];
-		vec3_t dist;
+	    gclient_t *cl = &level.clients[level.sortedClients[i]];
+	    vec3_t dist;
 
-		if (cl->sess.sessionTeam != client->sess.sessionTeam)
-		{
-			continue;
-		}
+	    if (cl->sess.sessionTeam != client->sess.sessionTeam)
+	    {
+	        continue;
+	    }
 
-		if (cl->sess.skill[SK_SIGNALS] < 5)
-		{
-			continue;
-		}
+	    if (cl->sess.skill[SK_SIGNALS] < 5)
+	    {
+	        continue;
+	    }
 
-		if (!trap_InPVS(g_entities[level.sortedClients[i]].r.currentOrigin, ent->r.currentOrigin))
-		{
-			continue;
-		}
+	    if (!trap_InPVS(g_entities[level.sortedClients[i]].r.currentOrigin, ent->r.currentOrigin))
+	    {
+	        continue;
+	    }
 
-		VectorSubtract(g_entities[level.sortedClients[i]].r.currentOrigin, ent->r.currentOrigin, dist);
-		if (VectorLengthSquared(dist) > SQR(512))
-		{
-			continue;
-		}
+	    VectorSubtract(g_entities[level.sortedClients[i]].r.currentOrigin, ent->r.currentOrigin, dist);
+	    if (VectorLengthSquared(dist) > SQR(512))
+	    {
+	        continue;
+	    }
 
-		pm.leadership = qtrue;
+	    pm.leadership = qtrue;
 
-		break;
+	    break;
 	}*/
 
 	// Gordon: bit hacky, stop the slight lag from client -> server even on locahost, switching back to the weapon you were holding
@@ -1502,7 +1502,7 @@ void ClientThink_cmd(gentity_t *ent, usercmd_t *cmd)
 
 /**
  * @brief A new command has arrived from the client
- * @param clientNum Client Number from 0 to MAX_CLIENTS 
+ * @param clientNum Client Number from 0 to MAX_CLIENTS
  */
 void ClientThink(int clientNum)
 {

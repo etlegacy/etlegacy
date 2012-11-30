@@ -312,7 +312,7 @@ UI_LoadArenas
 */
 void UI_LoadArenas(void)
 {
-	int numdirs;
+	int  numdirs;
 	char filename[128];
 	char dirlist[1024];
 	char *dirptr;
