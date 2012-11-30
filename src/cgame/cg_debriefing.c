@@ -75,8 +75,6 @@ panel_button_text_t debriefPlayerHeadingSmallerFont =
 
 #define DB_RANK_X   213 + 4
 #define DB_NAME_X   DB_RANK_X   + 28
-/*#define DB_MEDALS_X DB_NAME_X + 180
-#define DB_TIME_X   DB_MEDALS_X + 64*/
 #define DB_TIME_X   DB_NAME_X + 180
 #define DB_KILLS_X  DB_TIME_X   + 48
 #define DB_DEATHS_X DB_KILLS_X  + 48
@@ -519,21 +517,6 @@ panel_button_t debriefHeadingName =
 	BG_PanelButtonsRender_Text,
 	NULL,
 };
-
-#if 0
-panel_button_t debriefHeadingMedals =
-{
-	NULL,
-	"Medals",
-	{ DB_MEDALS_X,             DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
-	BG_PanelButtonsRender_Text,
-	NULL,
-};
-#endif // 0
 
 panel_button_t debriefHeadingTime =
 {
@@ -1412,8 +1395,6 @@ qboolean CG_Debriefing_Draw(void)
 
 	CG_Debriefing_InfoRequests();
 
-//  CG_FillRect( 0, 0, 640, 480, colorBlack );
-
 	if (trap_Key_GetCatcher() & KEYCATCH_UI)
 	{
 		return qtrue;
@@ -1641,10 +1622,7 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 {
 	int   i, j;
 	float y = button->rect.y + 12;
-//  float x;
 	score_t *score = NULL;
-
-//  CG_FillRect( button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorRed );
 
 	for (i = 0; i + cgs.dbPlayerListOffset < MAX_CLIENTS && i < 24; i++)
 	{
@@ -1676,14 +1654,6 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 		CG_Text_Paint_Ext(DB_RANK_X, y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_RankNameForClientInfo(ci), 0, 0, 0, button->font->font);
 
 		CG_Text_Paint_Ext(DB_NAME_X, y, button->font->scalex, button->font->scaley, button->font->colour, ci->name, 0, 28, 0, button->font->font);
-
-		/*      x = DB_MEDALS_X;
-		        for( j = 0; j < SK_NUM_SKILLS; j++ ) {
-		            if( ci->medals[j] ) {
-		                CG_DrawPic( x, y - 9, 10, 10, cgs.media.medals[j] );
-		            }
-		            x += 12;
-		        }*/
 
 		CG_Text_Paint_Ext(DB_TIME_X, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", score->time), 0, 0, 0, button->font->font);
 
@@ -2414,8 +2384,6 @@ void CG_TeamDebriefingOutcome_Draw(panel_button_t *button)
 	char       buffer[1024];
 	float      y;
 
-//  DC->fillRect( button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorRed );
-
 	if (cgs.tdbSelectedMap == 0)
 	{
 		return;
@@ -2467,8 +2435,6 @@ void CG_TeamDebriefingMapList_Draw(panel_button_t *button)
 {
 	int   i;
 	float y = button->rect.y + 12;
-
-//  CG_FillRect( button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorRed );
 
 	for (i = 0; i + cgs.tdbMapListOffset <= MAX_MAPS_PER_CAMPAIGN && i < 4; i++)
 	{
@@ -2554,12 +2520,6 @@ void CG_TeamDebriefingTeamSkillXP_Draw(panel_button_t *button)
 	{
 		xp = CG_TeamDebriefing_CalcXP(team, cgs.tdbSelectedMap - 1, button->data[1]);
 	}
-
-//  const char* text = va( "%s: ", skillNames[ button->data[1] ] );
-
-//  float w = CG_Text_Width_Ext( text, button->font->scalex, 0, button->font->font );
-
-//  CG_Text_Paint_Ext( button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, text, 0, 0, 0, button->font->font );
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", xp), 0, 0, 0, button->font->font);
 }
@@ -2731,20 +2691,20 @@ void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button)
 
 const char *awardNames[NUM_ENDGAME_AWARDS] =
 {
-	"Highest Fragger",               //
-	"Highest Experience Points", //
-	"Highest Ranking Officer",       //
-	"Most Highly Decorated",     //
+	"Highest Fragger",
+	"Highest Experience Points",
+	"Highest Ranking Officer",
+	"Most Highly Decorated",
 	"Highest Battle Sense",          // min lvl 1
-	"Best Engineer",             // "
-	"Best Medic",                    // "
-	"Best Field Ops",                // "
-	"Highest Light Weapons",     // "
-	"Best Soldier",                  // "
-	"Best Covert Ops",               // "
-	"Highest Accuracy",              //
+	"Best Engineer",
+	"Best Medic",
+	"Best Field Ops",
+	"Highest Light Weapons",
+	"Best Soldier",
+	"Best Covert Ops",
+	"Highest Accuracy",
 	"I Ain't Got No Friends Award",  // min 5 tks
-	"Welcome Newbie! Award",     // dont get this if any other award given or > 100 xp (this map)
+	"Welcome Newbie! Award",         // dont get this if any other award given or > 100 xp (this map)
 };
 
 void CG_Debreifing2_Awards_Parse(void)
@@ -2857,9 +2817,6 @@ void CG_Debreifing2_Maps_Draw(panel_button_t *button)
 
 			y += 13;
 		}
-	}
-	else if (cg_gameType.integer == GT_WOLF_STOPWATCH)
-	{
 	}
 }
 

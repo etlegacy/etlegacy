@@ -769,10 +769,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			customimage = mEnt->team == TEAM_AXIS ? oidInfo->customimageaxis : oidInfo->customimageallies;
 		}
 
-		/*      if((mEnt->yaw & 0xFF) & (1 << (atoi(CG_ConfigString(mEnt->team == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE)) - 1))) {
-		            trap_R_SetColor( colorYellow );
-		        }*/
-
 		if (mEnt->type == ME_CONSTRUCT)
 		{
 			if (mEntFilter & CC_FILTER_CONSTRUCTIONS)
@@ -1558,10 +1554,8 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 		}
 		else
 		{
-			//vec4_t colour = { .77f, .1f, .1f, 1.f };
 			vec4_t colour = { 1.f, 1.f, 1.f, 1.f };
 			vec3_t point;
-//          int fadeTime = 0; // cg.time - (cg.predictedPlayerEntity.muzzleFlashTime + 5000);
 
 			if (scissor)
 			{
@@ -1619,14 +1613,13 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 
 	if (COM_BitCheck(cg.snap->ps.weapons, WP_MORTAR_SET))
 	{
-		int i;
+		vec4_t colour = { 1.f, 1.f, 1.f, 1.f };
+		vec3_t point;
+		int    i, fadeTime;
 
 		for (i = 0; i < MAX_CLIENTS; i++)
 		{
-			//vec4_t colour = { .23f, 1.f, .23f, 1.f };
-			vec4_t colour = { 1.f, 1.f, 1.f, 1.f };
-			vec3_t point;
-			int    fadeTime = cg.time - (cg.artilleryRequestTime[i] + 25000);
+			fadeTime = cg.time - (cg.artilleryRequestTime[i] + 25000);
 
 			if (fadeTime < 5000)
 			{
@@ -1662,8 +1655,6 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 				trap_R_SetColor(colour);
 				CG_DrawPic(point[0] - 8.f, point[1] - 8.f, 16, 16, cgs.media.ccMortarTarget);
 				trap_R_SetColor(NULL);
-
-				//CG_FillRect( point[0] - 8.f, point[1] - 8.f, 16, 16, colour );
 			}
 		}
 	}
@@ -1675,6 +1666,7 @@ mapEntityData_t *CG_ScanForCommandCentreEntity(void)
 	int             ent          = 0;
 	mapEntityData_t *mEnt        = &mapEntities[0];
 	int             i;
+	float           rngSquared;
 
 	if (mapEntityCount <= 0)
 	{
@@ -1683,8 +1675,6 @@ mapEntityData_t *CG_ScanForCommandCentreEntity(void)
 
 	for (i = 0; i < mapEntityCount; i++, mEnt++)
 	{
-		float rngSquared;
-
 		if (cgs.ccLayers)
 		{
 			if (CG_CurLayerForZ(mEnt->z) != cgs.ccSelectedLayer)

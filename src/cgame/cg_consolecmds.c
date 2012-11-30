@@ -204,13 +204,6 @@ void CG_ScoresUp_f(void)
 	}
 }
 
-static void CG_LoadHud_f(void)
-{
-//  String_Init();
-//  Menu_Reset();
-//  CG_LoadMenus("ui/hud.txt");
-}
-
 static void CG_LoadWeapons_f(void)
 {
 	int i;
@@ -310,9 +303,6 @@ CG_StartCamera
 void CG_StartCamera(const char *name, qboolean startBlack)
 {
 	char lname[MAX_QPATH];
-
-	//if ( cg.predictedPlayerState.stats[STAT_HEALTH] <= 0 )    // don't allow camera to start if you're dead
-	//  return;
 
 	COM_StripExtension(name, lname, sizeof(lname));
 	strcat(lname, ".camera");
@@ -1154,7 +1144,6 @@ static consoleCommand_t commands[] =
 	{ "tell_attacker",       CG_TellAttacker_f       },
 	{ "tcmd",                CG_TargetCommand_f      },
 	{ "fade",                CG_Fade_f               },
-	{ "loadhud",             CG_LoadHud_f            },
 	{ "loadweapons",         CG_LoadWeapons_f        },
 
 	{ "mp_QuickMessage",     CG_QuickMessage_f       },

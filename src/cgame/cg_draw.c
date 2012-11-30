@@ -35,13 +35,17 @@
 
 #include "cg_local.h"
 
+// FIXME: use these in all functions below
+vec4_t HUD_Background = {0.16f, 0.2f, 0.17f, 0.8f};
+vec4_t HUD_Border     = {0.5f, 0.5f, 0.5f, 0.5f};
+vec4_t HUD_Text       = {0.625f, 0.625f, 0.6f, 1.0f};
+
 #define STATUSBARHEIGHT 452
 char *BindingFromName(const char *cvar);
 void Controls_GetConfig(void);
 void SetHeadOrigin(clientInfo_t *ci, playerInfo_t *pi);
 void CG_DrawOverlays(void);
 int activeFont;
-
 
 ///////////////////////
 ////// new hud stuff
@@ -179,6 +183,8 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 	if (text)
 	{
 		const char *s = text;
+		float      yadj;
+		int        ofs;
 
 		trap_R_SetColor(color);
 		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
@@ -208,11 +214,11 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 			}
 			else
 			{
-				float yadj = scaley * glyph->top;
+				yadj = scaley * glyph->top;
 
 				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 				{
-					int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+					ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
 					colorBlack[3] = newColor[3];
 					trap_R_SetColor(colorBlack);
 					CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex) + ofs, y - yadj + ofs, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
@@ -453,14 +459,12 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
 
 /*
 ===========================================================================================
-
   UPPER RIGHT CORNER
-
 ===========================================================================================
 */
 
 #define UPPERRIGHT_X 634
-
+#define UPPERRIGHT_W 50
 /*
 ==================
 CG_DrawSnapshot
@@ -485,52 +489,70 @@ static float CG_DrawSnapshot(float y)
 CG_DrawFPS
 ==================
 */
-#define FPS_FRAMES  4
+#define	MAX_FPS_FRAMES	500
 
-static float CG_DrawFPS(float y)
+static float CG_DrawFPS( float y)
 {
-	char       *s;
-	int        w;
-	static int previousTimes[FPS_FRAMES];
-	static int index;
-	int        i, total;
-	int        fps;
+	static int previousTimes[MAX_FPS_FRAMES];
 	static int previous;
-	int        t, frameTime;
-	vec4_t     timerBackground = { 0.16f, 0.2f, 0.17f, 0.8f };
-	vec4_t     timerBorder     = { 0.5f, 0.5f, 0.5f, 0.5f };
-	vec4_t     tclr            = { 0.625f, 0.625f, 0.6f, 1.0f };
-
+	static int index;
+	static int oldSamples;
+	char       *s;
 	// don't use serverTime, because that will be drifting to
 	// correct for internet lag changes, timescales, timedemos, etc
-	t         = trap_Milliseconds();
-	frameTime = t - previous;
-	previous  = t;
+	int        t = trap_Milliseconds();
+	int        frameTime = t - previous;
+	int        x, w, w2;
+	int        samples = cg_drawFPS.integer;
 
-	previousTimes[index % FPS_FRAMES] = frameTime;
-	index++;
-	if (index > FPS_FRAMES)
+	previous = t;
+
+	if (samples < 4)
 	{
+		samples = 4;
+	}
+	if (samples > MAX_FPS_FRAMES)
+	{
+		samples = MAX_FPS_FRAMES;
+	}
+	if (samples != oldSamples)
+	{
+		index = 0;
+	}
+
+	oldSamples = samples;
+	previousTimes[index % samples] = frameTime;
+	index++;
+
+	if (index > samples)
+	{
+		int i, fps;
 		// average multiple frames together to smooth changes out a bit
-		total = 0;
-		for (i = 0 ; i < FPS_FRAMES ; i++)
+		int total = 0;
+
+		for (i = 0 ; i < samples ; ++i)
 		{
 			total += previousTimes[i];
 		}
-		if (!total)
-		{
-			total = 1;
-		}
-		fps = 1000 * FPS_FRAMES / total;
 
-		s = va("%i FPS", fps);
-		w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+		total = total ? total : 1;
 
-		CG_FillRect(UPPERRIGHT_X - w - 2, y, w + 5, 12 + 2, timerBackground);
-		CG_DrawRect_FixedBorder(UPPERRIGHT_X - w - 2, y, w + 5, 12 + 2, 1, timerBorder);
+		fps = 1000 * samples / total;
 
-		CG_Text_Paint_Ext(UPPERRIGHT_X - w, y + 11, 0.19f, 0.19f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+		s = va( "%i FPS", fps );
 	}
+	else
+	{
+		s = "estimating";
+	}
+
+	w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w)? UPPERRIGHT_W : w; // @widescreen
+
+	x = UPPERRIGHT_X - w2 - 2;
+	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_Text_Paint_Ext(x + ((w2-w)/2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	return y + 12 + 4;
 }
