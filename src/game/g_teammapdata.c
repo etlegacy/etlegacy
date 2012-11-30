@@ -1278,7 +1278,6 @@ void G_UpdateTeamMapData(void)
 													trap_SendServerCommand(ent - g_entities, "cp \"Landmine Revealed\n\"");
 
 													AddScore(ent, 1);
-													//G_AddExperience( ent, 1.f );
 
 													G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f);
 													G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "spotting a landmine");
@@ -1324,7 +1323,6 @@ void G_UpdateTeamMapData(void)
 													trap_SendServerCommand(ent - g_entities, "cp \"Landmine Revealed\n\"");
 
 													AddScore(ent, 1);
-													//G_AddExperience( ent, 1.f );
 
 													G_AddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f);
 													G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "spotting a landmine");
@@ -1366,7 +1364,6 @@ void G_UpdateTeamMapData(void)
                             trap_SendServerCommand( ent-g_entities, "cp \"Landmine Revealed\n\"" );
 
                             AddScore( ent, 1 );
-                            //G_AddExperience( ent, 1.f );
 
                             G_AddSkillPoints( ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f );
                             G_DebugAddSkillPoints( ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "spotting a landmine" );

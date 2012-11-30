@@ -410,44 +410,6 @@ void QDECL BG_AnimParseError(const char *msg, ...)
 
 /*
 =================
-BG_ModelInfoForClient
-=================
-*/
-/*animModelInfo_t *BG_ModelInfoForClient( int client ) {
-    if (!globalScriptData)
-        BG_AnimParseError( "BG_ModelInfoForClient: NULL globalScriptData" );
-    //
-    if (!globalScriptData->clientModels[client])
-        BG_AnimParseError( "BG_ModelInfoForClient: client %i has no modelinfo", client );
-    //
-    return &globalScriptData->modelInfo[globalScriptData->clientModels[client] - 1];
-}*/
-
-/*
-=================
-BG_ModelInfoForModelname
-=================
-*/
-/*animModelInfo_t *BG_ModelInfoForModelname( char *modelname ) {
-    int i;
-    animModelInfo_t *modelInfo;
-    //
-    if (!globalScriptData)
-        BG_AnimParseError( "BG_ModelInfoForModelname: NULL globalScriptData" );
-    //
-    for (i=0, modelInfo=globalScriptData->modelInfo; i<MAX_ANIMSCRIPT_MODELS; i++, modelInfo++) {
-        if (!modelInfo->modelname[0])
-            continue;
-        if (!Q_stricmp( modelname, modelInfo->modelname )) {
-            return modelInfo;
-        }
-    }
-    //
-    return NULL;
-}*/
-
-/*
-=================
 BG_AnimationIndexForString
 =================
 */
@@ -529,7 +491,7 @@ int BG_IndexForString(char *token, animStringItem_t *strings, qboolean allowFail
 	{
 		BG_AnimParseError("BG_IndexForString: unknown token '%s'", token);
 	}
-	//
+
 	return -1;
 }
 
@@ -609,12 +571,11 @@ void BG_ParseConditionBits(char **text_pp, animStringItem_t *stringTable, int co
 {
 	qboolean           endFlag = qfalse;
 	int                indexFound;
-	int /*indexBits,*/ tempBits[2];
+	int                tempBits[2];
 	char               currentString[MAX_QPATH];
 	qboolean           minus = qfalse;
 	char               *token;
 
-	//indexBits = 0;
 	currentString[0] = '\0';
 	memset(result, 0, sizeof(result[0]) * RESULT_SIZE);
 	memset(tempBits, 0, sizeof(tempBits));
@@ -732,7 +693,6 @@ void BG_ParseConditionBits(char **text_pp, animStringItem_t *stringTable, int co
 				minus = qtrue;
 			}
 		}
-
 	}
 }
 
@@ -778,7 +738,7 @@ qboolean BG_ParseConditions(char **text_pp, animScriptItem_t *scriptItem)
 				token = COM_ParseExt(text_pp, qfalse);
 				if (!token || !token[0])
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: expected condition value, found end of line");        // RF modification
+					BG_AnimParseError("BG_AnimParseAnimScript: expected condition value, found end of line");
 				}
 				// check for a comma (condition divider)
 				if (token[strlen(token) - 1] == ',')
@@ -805,7 +765,7 @@ qboolean BG_ParseConditions(char **text_pp, animScriptItem_t *scriptItem)
 
 	if (scriptItem->numConditions == 0)
 	{
-		BG_AnimParseError("BG_ParseConditions: no conditions found");    // RF mod
+		BG_AnimParseError("BG_ParseConditions: no conditions found");
 	}
 
 	return qtrue;
@@ -1345,14 +1305,12 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 	}
 
 	globalFilename = NULL;
-
 }
 
 //------------------------------------------------------------------------
-//
+
 // run-time gameplay functions, these are called during gameplay, so they must be
 // cpu efficient.
-//
 
 /*
 ===============
@@ -1404,7 +1362,6 @@ BG_FirstValidItem
 animScriptItem_t *BG_FirstValidItem(int client, animScript_t *script)
 {
 	animScriptItem_t **ppScriptItem;
-
 	int i;
 
 	for (i = 0, ppScriptItem = script->items; i < script->numItems; i++, ppScriptItem++)
@@ -1761,24 +1718,6 @@ int BG_AnimScriptEvent(playerState_t *ps, animModelInfo_t *animModelInfo, script
 
 /*
 ===============
-BG_ValidAnimScript
-
-  returns qtrue if the given client has animation scripts
-===============
-*/
-/*qboolean BG_ValidAnimScript( int clientNum )
-{
-    if (!globalScriptData->clientModels[clientNum])
-        return qfalse;
-    //
-    if (!globalScriptData->modelInfo[ globalScriptData->clientModels[clientNum] ].numScriptItems)
-        return qfalse;
-    //
-    return qtrue;
-}*/
-
-/*
-===============
 BG_GetAnimString
 ===============
 */
@@ -1811,7 +1750,6 @@ void BG_UpdateConditionValue(int client, int condition, int value, qboolean chec
 			//              COM_BitSet will OR values on top of each other, so clear it first.
 			globalScriptData->clientConditions[client][condition][0] = 0;
 			globalScriptData->clientConditions[client][condition][1] = 0;
-			// dhm - end
 
 			COM_BitSet(globalScriptData->clientConditions[client][condition], value);
 			return;
@@ -1861,9 +1799,13 @@ int BG_GetConditionValue(int client, int condition, qboolean checkConversion)
 	}
 }
 
-/*====================
-BG_GetConditionBitFlag: returns whether the specified bit flag is set
-====================*/
+/*
+====================
+BG_GetConditionBitFlag
+
+  returns whether the specified bit flag is set
+====================
+*/
 qboolean BG_GetConditionBitFlag(int client, int condition, int bitNumber)
 {
 	if (animConditionsTable[condition].type == ANIM_CONDTYPE_BITFLAGS)

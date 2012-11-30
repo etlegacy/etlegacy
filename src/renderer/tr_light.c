@@ -63,8 +63,11 @@ void R_TransformDlights(int count, dlight_t *dl, orientationr_t *or)
 }
 
 /*
+=================
 R_CullDlights()
+
 frustum culls dynamic lights
+=================
 */
 void R_CullDlights(void)
 {
@@ -165,7 +168,7 @@ void R_DlightBmodel(bmodel_t *bmodel)
 		{
 			((srfTriangles2_t *)surf->data)->dlightBits[tr.smpFrame] = mask;
 		}
-		else if (*surf->data == SF_FOLIAGE)         // ydnar
+		else if (*surf->data == SF_FOLIAGE)
 		{
 			((srfFoliage_t *)surf->data)->dlightBits[tr.smpFrame] = mask;
 		}
@@ -174,9 +177,7 @@ void R_DlightBmodel(bmodel_t *bmodel)
 
 /*
 =============================================================================
-
 LIGHT SAMPLING
-
 =============================================================================
 */
 
@@ -187,7 +188,6 @@ extern cvar_t *r_debugLight;
 /*
 =================
 R_SetupEntityLightingGrid
-
 =================
 */
 static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
@@ -547,7 +547,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 /*
 =================
 R_LightForPoint
-- never called/used -
+@brief unused
 =================
 */
 int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir)

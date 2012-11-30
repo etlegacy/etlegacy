@@ -181,7 +181,6 @@ static int R_CullModel(mdcHeader_t *header, trRefEntity_t *ent)
 /*
 =================
 R_ComputeLOD
-
 =================
 */
 static int R_ComputeLOD(trRefEntity_t *ent)
@@ -269,7 +268,6 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 /*
 =================
 R_ComputeFogNum
-
 =================
 */
 static int R_ComputeFogNum(mdcHeader_t *header, trRefEntity_t *ent)
@@ -313,7 +311,6 @@ static int R_ComputeFogNum(mdcHeader_t *header, trRefEntity_t *ent)
 /*
 =================
 R_AddMDCSurfaces
-
 =================
 */
 void R_AddMDCSurfaces(trRefEntity_t *ent)

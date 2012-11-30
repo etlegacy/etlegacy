@@ -67,7 +67,7 @@ typedef struct flare_s
 
 	int addedFrame;
 
-	qboolean inPortal;                  // true if in a portal view of the scene
+	qboolean inPortal;              // true if in a portal view of the scene
 	int frameSceneNum;
 	void *surface;
 	int fogNum;
@@ -199,7 +199,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 
 	VectorCopy(color, f->color);
 
-	f->scale = scale;   //----(SA)
+	f->scale = scale;
 
 	// fade the intensity of the flare down as the
 	// light surface turns away from the viewer
@@ -239,7 +239,6 @@ void RB_AddDlightFlares(void)
 	fog = tr.world->fogs;
 	for (i = 0 ; i < backEnd.refdef.num_dlights ; i++, l++)
 	{
-
 		// find which fog volume the light is in
 		for (j = 1 ; j < tr.world->numfogs ; j++)
 		{
@@ -290,7 +289,6 @@ void RB_AddCoronaFlares(void)
 	fog = tr.world->fogs;
 	for (i = 0 ; i < backEnd.refdef.num_coronas ; i++, cor++)
 	{
-
 		// find which fog volume the corona is in
 		for (j = 1 ; j < tr.world->numfogs ; j++)
 		{
@@ -401,12 +399,12 @@ void RB_RenderFlare(flare_t *f)
 
 	backEnd.pc.c_flareRenders++;
 
-//----(SA)  changed to use alpha blend rather than additive blend
-//          this is to accomidate the fact we can't right now do
-//          additive blends and have them fog correctly with our distance fog.
-//      /when/ we fix the blend problems with distance fog, this should
-//      be changed back to additive since there's nearly no hit for that
-//      but the alpha blend is noticably slower.
+	//----(SA)  changed to use alpha blend rather than additive blend
+	//          this is to accomidate the fact we can't right now do
+	//          additive blends and have them fog correctly with our distance fog.
+	//      /when/ we fix the blend problems with distance fog, this should
+	//      be changed back to additive since there's nearly no hit for that
+	//      but the alpha blend is noticably slower.
 
 	VectorScale(f->color, tr.identityLight, color);         //----(SA)  mod for alpha blend rather than additive
 
@@ -427,7 +425,6 @@ void RB_RenderFlare(flare_t *f)
 	tess.vertexColors[tess.numVertexes].v[1] = iColor[1];
 	tess.vertexColors[tess.numVertexes].v[2] = iColor[2];
 	tess.vertexColors[tess.numVertexes].v[3] = f->drawIntensity * 255;        //----(SA)    mod for alpha blend rather than additive
-//  tess.vertexColors[tess.numVertexes].v[3] = 255;     //----(SA)  mod for alpha blend rather than additive
 	tess.numVertexes++;
 
 	tess.xyz[tess.numVertexes].v[0]          = f->windowX - size;
@@ -438,7 +435,6 @@ void RB_RenderFlare(flare_t *f)
 	tess.vertexColors[tess.numVertexes].v[1] = iColor[1];
 	tess.vertexColors[tess.numVertexes].v[2] = iColor[2];
 	tess.vertexColors[tess.numVertexes].v[3] = f->drawIntensity * 255;        //----(SA)    mod for alpha blend rather than additive
-//  tess.vertexColors[tess.numVertexes].v[3] = 255;     //----(SA)  mod for alpha blend rather than additive
 	tess.numVertexes++;
 
 	tess.xyz[tess.numVertexes].v[0]          = f->windowX + size;
@@ -449,7 +445,6 @@ void RB_RenderFlare(flare_t *f)
 	tess.vertexColors[tess.numVertexes].v[1] = iColor[1];
 	tess.vertexColors[tess.numVertexes].v[2] = iColor[2];
 	tess.vertexColors[tess.numVertexes].v[3] = f->drawIntensity * 255;        //----(SA)    mod for alpha blend rather than additive
-//  tess.vertexColors[tess.numVertexes].v[3] = 255;     //----(SA)  mod for alpha blend rather than additive
 	tess.numVertexes++;
 
 	tess.xyz[tess.numVertexes].v[0]          = f->windowX + size;

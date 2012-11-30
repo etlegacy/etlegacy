@@ -83,7 +83,7 @@ static long generateHashValue(const char *fname)
 		}
 		if (letter == PATH_SEP)
 		{
-			letter = '/';                           // damn path names
+			letter = '/';                   // damn path names
 		}
 		hash += (long)(letter) * (i + 119);
 		i++;
@@ -1636,7 +1636,6 @@ infoParm_t infoParms[] =
 	{ "monsterslickeast",  0, SURF_MONSLICK_E,   0                         },
 	{ "monsterslicksouth", 0, SURF_MONSLICK_S,   0                         },
 	{ "monsterslickwest",  0, SURF_MONSLICK_W,   0                         }
-
 };
 
 /*
@@ -1890,7 +1889,6 @@ static qboolean ParseShader(char **text)
 			}
 			tr.sunShaderName = CopyString(token);
 		}
-//----(SA)  added
 		else if (!Q_stricmp(token, "lightgridmulamb"))       // ambient multiplier for lightgrid
 		{
 			token = COM_ParseExt(text, qfalse);
@@ -1917,7 +1915,6 @@ static qboolean ParseShader(char **text)
 				tr.lightGridMulDirected = atof(token);
 			}
 		}
-//----(SA)  end
 		else if (!Q_stricmp(token, "waterfogvars"))
 		{
 			vec3_t watercolor;
@@ -1993,14 +1990,12 @@ static qboolean ParseShader(char **text)
 
 			continue;
 		}
-		// done.
 		// Ridah, allow disable fog for some shaders
 		else if (!Q_stricmp(token, "nofog"))
 		{
 			shader.noFog = qtrue;
 			continue;
 		}
-		// done.
 		// RF, allow each shader to permit compression if available
 		else if (!Q_stricmp(token, "allowcompress"))
 		{
@@ -2012,7 +2007,6 @@ static qboolean ParseShader(char **text)
 			tr.allowCompress = -1;
 			continue;
 		}
-		// done.
 		// light <value> determines flaring in q3map, not needed here
 		else if (!Q_stricmp(token, "light"))
 		{
@@ -2137,9 +2131,7 @@ static qboolean ParseShader(char **text)
 
 /*
 ========================================================================================
-
 SHADER OPTIMIZATION AND FOGGING
-
 ========================================================================================
 */
 
@@ -2486,7 +2478,6 @@ static void SortNewShader(void)
 	int      i;
 	float    sort;
 	shader_t *newShader;
-
 
 	newShader = tr.shaders[tr.numShaders - 1];
 	sort      = newShader->sort;
@@ -2988,7 +2979,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 		return qfalse;
 	}
 
-	//empty the whole list
+	// empty the whole list
 	if (!shadername && !shadertext)
 	{
 		dptr = dshader;
@@ -3003,7 +2994,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 		return qtrue;
 	}
 
-	//walk list for existing shader to delete, or end of the list
+	// walk list for existing shader to delete, or end of the list
 	dptr     = dshader;
 	lastdptr = NULL;
 	while (dptr)
@@ -3014,7 +3005,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 
 		if ((token[0] != 0) && !Q_stricmp(token, shadername))
 		{
-			//request to nuke this dynamic shader
+			// request to nuke this dynamic shader
 			if (!shadertext)
 			{
 				if (!lastdptr)
@@ -3036,14 +3027,14 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 		dptr     = dptr->next;
 	}
 
-	//cant add a new one with empty shadertext
+	// cant add a new one with empty shadertext
 	if (!shadertext || !strlen(shadertext))
 	{
 		ri.Printf(PRINT_WARNING, "%s new shader %s has NULL shadertext!\n", func_err, shadername);
 		return qfalse;
 	}
 
-	//create a new shader
+	// create a new shader
 	dptr = (dynamicshader_t *)Z_Malloc(sizeof(*dptr));
 	if (!dptr)
 	{
@@ -3065,7 +3056,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 		dshader = dptr;
 	}
 
-//  ri.Printf( PRINT_ALL, "Loaded dynamic shader [%s] with shadertext [%s]\n", shadername, shadertext );
+	//ri.Printf( PRINT_ALL, "Loaded dynamic shader [%s] with shadertext [%s]\n", shadername, shadertext );
 
 	return qtrue;
 }
@@ -3097,7 +3088,7 @@ static char *FindShaderInShaderText(const char *shadername)
 		return NULL;
 	}
 
-	//bani - if we have any dynamic shaders loaded, check them first
+	// bani - if we have any dynamic shaders loaded, check them first
 	if (dshader)
 	{
 		dynamicshader_t *dptr;
@@ -3124,7 +3115,7 @@ static char *FindShaderInShaderText(const char *shadername)
 					total += Sys_Milliseconds() - start;
 					Com_Printf("Shader lookup: %i, total: %i\n", Sys_Milliseconds() - start, total);
 #endif // _DEBUG
-//                  ri.Printf( PRINT_ALL, "Found dynamic shader [%s] with shadertext [%s]\n", shadername, dptr->shadertext );
+					//ri.Printf( PRINT_ALL, "Found dynamic shader [%s] with shadertext [%s]\n", shadername, dptr->shadertext );
 					return q;
 				}
 			}
@@ -3211,7 +3202,7 @@ shader_t *R_FindShaderByName(const char *name)
 	int      hash;
 	shader_t *sh;
 
-	if ((name == NULL) || (name[0] == 0))          // bk001205
+	if ((name == NULL) || (name[0] == 0))
 	{
 		return tr.defaultShader;
 	}
@@ -3221,9 +3212,7 @@ shader_t *R_FindShaderByName(const char *name)
 
 	hash = generateHashValue(strippedName);
 
-	//
 	// see if the shader is already loaded
-	//
 	for (sh = hashTable[hash]; sh; sh = sh->next)
 	{
 		// NOTE: if there was no shader or image available with the name strippedName
@@ -3810,7 +3799,7 @@ static void BuildShaderChecksumLookup(void)
 		// get it's checksum
 		checksum = generateHashValue(token);
 
-//      Com_Printf( "Shader Found: %s\n", token );
+		//Com_Printf( "Shader Found: %s\n", token );
 
 		// if it's not currently used
 		if (!shaderChecksumLookup[checksum].pStr)
@@ -4109,8 +4098,7 @@ R_BackupShaders
 */
 void R_BackupShaders(void)
 {
-//  int i;
-//  long hash;
+	//int i;
 
 	if (!r_cache->integer)
 	{
@@ -4131,15 +4119,15 @@ void R_BackupShaders(void)
 	// Gordon: ditch all lightmapped shaders
 	R_PurgeLightmapShaders();
 
-//  Com_Printf( "Backing up %i images\n", numBackupShaders );
+	//Com_Printf( "Backing up %i images\n", numBackupShaders );
 
-//  for( i = 0; i < tr.numShaders; i++ ) {
-//      if( backupShaders[ i ] ) {
-//          Com_Printf( "Shader: %s: lm %i\n", backupShaders[ i ]->name, backupShaders[i]->lightmapIndex );
-//      }
-//  }
+	//for( i = 0; i < tr.numShaders; i++ ) {
+	//    if( backupShaders[ i ] ) {
+	//        Com_Printf( "Shader: %s: lm %i\n", backupShaders[ i ]->name, backupShaders[i]->lightmapIndex );
+	//    }
+	//}
 
-//  Com_Printf( "=======================================\n" );
+	//Com_Printf( "=======================================\n" );
 }
 
 /*
@@ -4252,7 +4240,7 @@ shader_t *R_FindCachedShader(const char *name, int lightmapIndex, int hash)
 
 			SortNewShader();    // make sure it renders in the right order
 
-//          Com_Printf( "Removing %s from the cache: lm: %i\n", sh->name, sh->lightmapIndex );
+			//Com_Printf( "Removing %s from the cache: lm: %i\n", sh->name, sh->lightmapIndex );
 
 			return sh;
 		}

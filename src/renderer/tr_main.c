@@ -681,13 +681,10 @@ void R_SetFrameFog(void)
 		// transitioning like fog modes
 		else
 		{
-
 			fadeTime = glfogsettings[FOG_TARGET].finishTime - glfogsettings[FOG_TARGET].startTime;
 			if (fadeTime <= 0)
 			{
 				fadeTime = 1;   // avoid divide by zero
-
-
 			}
 			lerpPos = (float)(tr.refdef.time - glfogsettings[FOG_TARGET].startTime) / (float)fadeTime;
 			if (lerpPos > 1)
@@ -1489,6 +1486,7 @@ Radix sort with 4 byte size buckets
 static void R_RadixSort(drawSurf_t *source, int size)
 {
 	static drawSurf_t scratch[MAX_DRAWSURFS];
+
 #ifdef Q3_LITTLE_ENDIAN
 	R_Radix(0, size, source, scratch);
 	R_Radix(1, size, scratch, source);
@@ -1679,11 +1677,9 @@ void R_AddEntitySurfaces(void)
 				case MOD_MESH:
 					R_AddMD3Surfaces(ent);
 					break;
-				// Ridah
 				case MOD_MDC:
 					R_AddMDCSurfaces(ent);
 					break;
-				// done.
 				case MOD_MDS:
 					R_AddAnimSurfaces(ent);
 					break;

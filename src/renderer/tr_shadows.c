@@ -33,7 +33,6 @@
 
 #include "tr_local.h"
 
-
 /*
   for a projection shadow:
 
@@ -136,7 +135,6 @@ RB_ShadowTessEnd
 
 triangleFromEdge[ v1 ][ v2 ]
 
-
   set triangle from edge( v1, v2, tri )
   if ( facing[ triangleFromEdge[ v1 ][ v2 ] ] && !facing[ triangleFromEdge[ v2 ][ v1 ] ) {
   }
@@ -171,40 +169,44 @@ void RB_ShadowTessEnd(void)
 	memset(numEdgeDefs, 0, 4 * tess.numVertexes);
 
 	numTris = tess.numIndexes / 3;
-	for (i = 0 ; i < numTris ; i++)
+
 	{
 		int    i1, i2, i3;
 		vec3_t d1, d2, normal;
 		float  *v1, *v2, *v3;
 		float  d;
 
-		i1 = tess.indexes[i * 3 + 0];
-		i2 = tess.indexes[i * 3 + 1];
-		i3 = tess.indexes[i * 3 + 2];
-
-		v1 = tess.xyz[i1].v;
-		v2 = tess.xyz[i2].v;
-		v3 = tess.xyz[i3].v;
-
-		VectorSubtract(v2, v1, d1);
-		VectorSubtract(v3, v1, d2);
-		CrossProduct(d1, d2, normal);
-
-		d = DotProduct(normal, lightDir);
-		if (d > 0)
+		for (i = 0 ; i < numTris ; i++)
 		{
-			facing[i] = 1;
-		}
-		else
-		{
-			facing[i] = 0;
-		}
+			i1 = tess.indexes[i * 3 + 0];
+			i2 = tess.indexes[i * 3 + 1];
+			i3 = tess.indexes[i * 3 + 2];
 
-		// create the edges
-		R_AddEdgeDef(i1, i2, facing[i]);
-		R_AddEdgeDef(i2, i3, facing[i]);
-		R_AddEdgeDef(i3, i1, facing[i]);
+			v1 = tess.xyz[i1].v;
+			v2 = tess.xyz[i2].v;
+			v3 = tess.xyz[i3].v;
+
+			VectorSubtract(v2, v1, d1);
+			VectorSubtract(v3, v1, d2);
+			CrossProduct(d1, d2, normal);
+
+			d = DotProduct(normal, lightDir);
+			if (d > 0)
+			{
+				facing[i] = 1;
+			}
+			else
+			{
+				facing[i] = 0;
+			}
+
+			// create the edges
+			R_AddEdgeDef(i1, i2, facing[i]);
+			R_AddEdgeDef(i2, i3, facing[i]);
+			R_AddEdgeDef(i3, i1, facing[i]);
+		}
 	}
+
 
 	// draw the silhouette edges
 

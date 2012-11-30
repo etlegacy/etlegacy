@@ -526,7 +526,7 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 			srcColor = *((int *) instance->color);
 		}
 
-		// Com_Printf( "Color: %d %d %d %d\n", srf->colors[ o ][ 0 ], srf->colors[ o ][ 1 ], srf->colors[ o ][ 2 ], alpha );
+		//Com_Printf( "Color: %d %d %d %d\n", srf->colors[ o ][ 0 ], srf->colors[ o ][ 1 ], srf->colors[ o ][ 2 ], alpha );
 
 		RB_CHECKOVERFLOW(numVerts, numIndexes);
 
@@ -695,7 +695,7 @@ static void DoRailCore(const vec3_t start, const vec3_t end, const vec3_t up, fl
 
 static void DoRailDiscs(int numSegs, const vec3_t start, const vec3_t dir, const vec3_t right, const vec3_t up)
 {
-	int    i;
+	int    i, j;
 	vec3_t pos[4];
 	vec3_t v;
 	int    spanWidth = r_railWidth->integer;
@@ -731,8 +731,6 @@ static void DoRailDiscs(int numSegs, const vec3_t start, const vec3_t dir, const
 
 	for (i = 0; i < numSegs; i++)
 	{
-		int j;
-
 		RB_CHECKOVERFLOW(4, 6);
 
 		for (j = 0; j < 4; j++)
@@ -831,6 +829,7 @@ void RB_SurfaceLightningBolt(void)
 	vec3_t      vec;
 	vec3_t      start, end;
 	vec3_t      v1, v2;
+	vec3_t      temp;
 	int         i;
 
 	e = &backEnd.currentEntity->e;
@@ -852,8 +851,6 @@ void RB_SurfaceLightningBolt(void)
 
 	for (i = 0 ; i < 4 ; i++)
 	{
-		vec3_t temp;
-
 		DoRailCore(start, end, right, len, 8);
 		RotatePointAroundVector(temp, vec, right, 45);
 		VectorCopy(temp, right);
@@ -1502,6 +1499,7 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 		{
 			int numIndexes;
 			int w, h;
+			int v1, v2, v3, v4;
 
 			h          = rows - 1;
 			w          = lodWidth - 1;
@@ -1510,8 +1508,6 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 			{
 				for (j = 0 ; j < w ; j++)
 				{
-					int v1, v2, v3, v4;
-
 					// vertex order to be reckognized as tristrips
 					v1 = numVertexes + i * lodWidth + j + 1;
 					v2 = v1 - 1;
@@ -1540,9 +1536,7 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 
 /*
 ===========================================================================
-
 NULL MODEL
-
 ===========================================================================
 */
 

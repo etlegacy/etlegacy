@@ -227,8 +227,6 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		AddScore(attacker, WOLF_FRAG_CARRIER_BONUS);
 		attacker->client->pers.teamState.fragcarrier++;
 
-		//G_AddExperience( attacker, 0.5f );
-
 		// the target had the flag, clear the hurt carrier
 		// field on the other team
 		for (i = 0; i < g_maxclients.integer; i++)
@@ -295,29 +293,9 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 			// we defended the base flag
 			// JPW NERVE FIXME -- don't report flag defense messages, change to gooder message
 			AddScore(attacker, WOLF_FLAG_DEFENSE_BONUS);
-			//G_AddExperience( attacker, 0.5f );
 			attacker->client->pers.teamState.basedefense++;
 			return;
 		}
-
-		/*      if (g_gametype.integer < GT_WOLF) { // JPW NERVE no attacker protect in wolf MP
-		            if (carrier && carrier != attacker) {
-		                VectorSubtract(targ->s.origin, carrier->s.origin, v1);
-		                VectorSubtract(attacker->s.origin, carrier->s.origin, v1);
-
-		                if (VectorLengthSquared(v1) < SQR(CTF_ATTACKER_PROTECT_RADIUS) ||
-		                    VectorLengthSquared(v2) < SQR(CTF_ATTACKER_PROTECT_RADIUS) ||
-		                    CanDamage(carrier, targ->s.origin) || CanDamage(carrier, attacker->s.origin)) {
-		                    AddScore(attacker, CTF_CARRIER_PROTECT_BONUS);
-		                    attacker->client->pers.teamState.carrierdefense++;
-		                    PrintMsg(NULL, "%s" S_COLOR_WHITE " defends the %s's flag carrier.\n",
-		                        attacker->client->pers.netname,
-		                        TeamName(attacker->client->sess.sessionTeam));
-		                    return;
-		                }
-		            }
-		        }*/
-
 	}
 
 	// JPW NERVE -- look for nearby checkpoints and spawnpoints
@@ -332,12 +310,10 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 				if (flag->spawnflags & 1)                         // protected spawnpoint
 				{
 					AddScore(attacker, WOLF_SP_PROTECT_BONUS);
-					//G_AddExperience( attacker, 0.5f );
 				}
 				else
 				{
 					AddScore(attacker, WOLF_CP_PROTECT_BONUS);    // protected checkpoint
-					//G_AddExperience( attacker, 0.5f );
 				}
 			}
 		}
@@ -387,7 +363,6 @@ void Team_ResetFlags(void)
 void Team_ReturnFlagSound(gentity_t *ent, int team)
 {
 	// play powerup spawn sound to all clients
-	//gentity_t *te;
 	gentity_t *pm;
 
 	if (ent == NULL)
@@ -400,12 +375,6 @@ void Team_ReturnFlagSound(gentity_t *ent, int team)
 	pm->s.effect3Time = G_StringIndex(ent->message);
 	pm->s.effect2Time = team;
 	pm->s.density     = 1; // 1 = returned
-
-	/*te = G_TempEntity( ent->s.pos.trBase, EV_GLOBAL_SOUND );
-	te->s.eventParm = G_SoundIndex( team == TEAM_AXIS ?
-	    "sound/chat/axis/g-objective_secure.wav" :
-	    "sound/chat/allies/a-objective_secure.wav" );
-	te->r.svFlags |= SVF_BROADCAST;*/
 }
 
 void Team_ReturnFlag(gentity_t *ent)
@@ -474,17 +443,9 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 	{
 		// hey, its not home.  return it by teleporting it back
 		AddScore(other, WOLF_SECURE_OBJ_BONUS);
-		//G_AddExperience( other, 0.8f );
-//      te = G_TempEntity( other->s.pos.trBase, EV_GLOBAL_SOUND );
-//      te->r.svFlags |= SVF_BROADCAST;
-//      te->s.teamNum = cl->sess.sessionTeam;
 
 		if (cl->sess.sessionTeam == TEAM_AXIS)
 		{
-//          te->s.eventParm = G_SoundIndex( "sound/chat/axis/g-objective_secure.wav" );
-
-//          trap_SendServerCommand(-1, va("cp \"Axis have returned %s!\n\" 2", ent->message));
-
 			if (level.gameManager)
 			{
 				G_Script_ScriptEvent(level.gameManager, "trigger", "axis_object_returned");
@@ -527,18 +488,12 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 {
 	gclient_t *cl = other->client;
-//  gentity_t *te;
 	gentity_t *tmp;
 
 	ent->s.density--;
 
 	// hey, its not our flag, pick it up
-// JPW NERVE
 	AddScore(other, WOLF_STEAL_OBJ_BONUS);
-	//G_AddExperience( other, 0.8f );
-//  te = G_TempEntity( other->s.pos.trBase, EV_GLOBAL_SOUND );
-//  te->r.svFlags |= SVF_BROADCAST;
-//  te->s.teamNum = cl->sess.sessionTeam;
 
 	tmp         = ent->parent;
 	ent->parent = other;
@@ -549,10 +504,6 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 		pm->s.effect3Time = G_StringIndex(ent->message);
 		pm->s.effect2Time = TEAM_AXIS;
 		pm->s.density     = 0; // 0 = stolen
-
-//      te->s.eventParm = G_SoundIndex( "sound/chat/axis/g-objective_taken.wav" );
-
-//      trap_SendServerCommand(-1, va("cp \"Axis have stolen %s!\n\" 2", ent->message));
 
 		if (level.gameManager)
 		{
@@ -569,10 +520,6 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 		pm->s.effect3Time = G_StringIndex(ent->message);
 		pm->s.effect2Time = TEAM_ALLIES;
 		pm->s.density     = 0; // 0 = stolen
-
-//      te->s.eventParm = G_SoundIndex( "sound/chat/allies/a-objective_taken.wav" );
-
-//      trap_SendServerCommand(-1, va("cp \"Allies have stolen %s!\n\" 2", ent->message));
 
 		if (level.gameManager)
 		{
@@ -653,71 +600,6 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 }
 
 /*---------------------------------------------------------------------------*/
-
-/*
-=======================
-FindFarthestObjectiveIndex
-
-pick MP objective farthest from passed in vector, return table index
-=======================
-*/
-int FindFarthestObjectiveIndex(vec3_t source)
-{
-	int    i, j = 0;
-	float  dist = 0, tdist;
-	vec3_t tmp;
-//  int cs_obj = CS_MULTI_SPAWNTARGETS;
-//  char    cs[MAX_STRING_CHARS];
-//  char *objectivename;
-
-	for (i = 0; i < level.numspawntargets; i++)
-	{
-		VectorSubtract(level.spawntargets[i], source, tmp);
-		tdist = VectorLength(tmp);
-		if (tdist > dist)
-		{
-			dist = tdist;
-			j    = i;
-		}
-	}
-
-	/*
-	    cs_obj += j;
-	    trap_GetConfigstring( cs_obj, cs, sizeof(cs) );
-	    objectivename = Info_ValueForKey( cs, "spawn_targ");
-
-	    G_Printf("got furthest dist (%f) at point %d (%s) of %d\n",dist,j,objectivename,i);
-	*/
-
-	return j;
-}
-
-/*
-=======================
-FindClosestObjectiveIndex
-
-NERVE - SMF - pick MP objective closest to the passed in vector, return table index
-=======================
-*/
-int FindClosestObjectiveIndex(vec3_t source)
-{
-	int    i, j = 0;
-	float  dist = 10E20, tdist;
-	vec3_t tmp;
-
-	for (i = 0; i < level.numspawntargets; i++)
-	{
-		VectorSubtract(level.spawntargets[i], source, tmp);
-		tdist = VectorLength(tmp);
-		if (tdist < dist)
-		{
-			dist = tdist;
-			j    = i;
-		}
-	}
-
-	return j;
-}
 
 /*
 ================
@@ -858,7 +740,6 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 /*
 ===========
 SelectCTFSpawnPoint
-
 ============
 */
 gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles, int spawnObjective)
@@ -887,7 +768,6 @@ TeamplayLocationsMessage
 
 Format:
     clientNum location health armor weapon powerups
-
 ==================
 */
 
@@ -988,18 +868,6 @@ void CheckTeamStatus(void)
 
 /*-----------------------------------------------------------------*/
 
-void Use_Team_InitialSpawnpoint(gentity_t *ent, gentity_t *other, gentity_t *activator)
-{
-	if (ent->spawnflags & 4)
-	{
-		ent->spawnflags &= ~4;
-	}
-	else
-	{
-		ent->spawnflags |= 4;
-	}
-}
-
 void Use_Team_Spawnpoint(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	if (ent->spawnflags & 2)
@@ -1033,13 +901,6 @@ void SP_team_CTF_redplayer(gentity_t *ent)
 	G_Printf("^1team_ctf_*player entities are now obsolete, please remove them!\n");
 	G_FreeEntity(ent);
 	return;
-
-	/*  ent->use = Use_Team_InitialSpawnpoint;
-
-	    VectorSet (ent->r.mins, -16, -16, -24);
-	    VectorSet (ent->r.maxs, 16, 16, 32);
-
-	    ent->think = DropToFloor;*/
 }
 
 /*QUAKED team_CTF_blueplayer (0 0 0.5) (-16 -16 -16) (16 16 32) INVULNERABLE - STARTDISABLED
@@ -1051,13 +912,6 @@ void SP_team_CTF_blueplayer(gentity_t *ent)
 	G_Printf("^1team_ctf_*player entities are now obsolete, please remove them!\n");
 	G_FreeEntity(ent);
 	return;
-
-	/*  ent->use = Use_Team_InitialSpawnpoint;
-
-	    VectorSet (ent->r.mins, -16, -16, -24);
-	    VectorSet (ent->r.maxs, 16, 16, 32);
-
-	    ent->think = DropToFloor;*/
 }
 
 // JPW NERVE edited quaked def
@@ -1254,7 +1108,6 @@ void checkpoint_use_think(gentity_t *self)
 
 void checkpoint_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-
 	int holderteam;
 	int time;
 
@@ -1349,7 +1202,6 @@ void checkpoint_hold_think(gentity_t *self)
 
 void checkpoint_think(gentity_t *self)
 {
-
 	switch (self->s.frame)
 	{
 
@@ -1395,7 +1247,6 @@ void checkpoint_think(gentity_t *self)
 
 void checkpoint_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
-
 	if (self->count == other->client->sess.sessionTeam)
 	{
 		return;
@@ -1489,12 +1340,10 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 	if (self->s.frame == WCP_ANIM_NOFLAG)
 	{
 		AddScore(other, WOLF_SP_CAPTURE);
-		//G_AddExperience( other, 0.8f );
 	}
 	else
 	{
 		AddScore(other, WOLF_SP_RECOVER);
-		//G_AddExperience( other, 0.8f );
 	}
 
 	if (self->count < 0)
@@ -1917,7 +1766,6 @@ qboolean G_checkReady(void)
 	int       i, ready = 0, notReady = match_minplayers.integer;
 	gclient_t *cl;
 
-
 	if (0 == g_doWarmup.integer)
 	{
 		return(qtrue);
@@ -1987,7 +1835,6 @@ qboolean G_readyMatchState(void)
 
 	return(qfalse);
 }
-
 
 // Check if we need to reset the game state due to an empty team
 void G_verifyMatchState(int nTeam)

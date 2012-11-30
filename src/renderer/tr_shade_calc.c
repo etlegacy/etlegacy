@@ -112,9 +112,7 @@ void RB_CalcStretchTexCoords(const waveForm_t *wf, float *st)
 
 /*
 ====================================================================
-
 DEFORMATIONS
-
 ====================================================================
 */
 
@@ -134,9 +132,10 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 
 	if (ds->deformationWave.frequency < 0)
 	{
+		float off;
+		float dot;
 		qboolean inverse = qfalse;
 		vec3_t   worldUp;
-		//static vec3_t up = {0,0,1};
 
 		if (VectorCompare(backEnd.currentEntity->e.fireRiseDir, vec3_origin))
 		{
@@ -166,8 +165,7 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 
 		for (i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4)
 		{
-			float off = (xyz[0] + xyz[1] + xyz[2]) * ds->deformationSpread;
-			float dot;
+			off = (xyz[0] + xyz[1] + xyz[2]) * ds->deformationSpread;
 
 			scale = WAVEVALUE(table, ds->deformationWave.base,
 			                  ds->deformationWave.amplitude,
@@ -207,11 +205,13 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 	}
 	else
 	{
+		float off;
+
 		table = TableForFunc(ds->deformationWave.func);
 
 		for (i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4)
 		{
-			float off = (xyz[0] + xyz[1] + xyz[2]) * ds->deformationSpread;
+			off = (xyz[0] + xyz[1] + xyz[2]) * ds->deformationSpread;
 
 			scale = WAVEVALUE(table, ds->deformationWave.base,
 			                  ds->deformationWave.amplitude,
@@ -265,7 +265,6 @@ void RB_CalcDeformNormals(deformStage_t *ds)
 /*
 ========================
 RB_CalcBulgeVertexes
-
 ========================
 */
 void RB_CalcBulgeVertexes(deformStage_t *ds)
@@ -275,16 +274,14 @@ void RB_CalcBulgeVertexes(deformStage_t *ds)
 	float       *xyz    = ( float * ) tess.xyz;
 	float       *normal = ( float * ) tess.normal;
 	float       now;
+	int   off;
+	float scale;
 
 	now = backEnd.refdef.time * ds->bulgeSpeed * 0.001f;
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, st += 4, normal += 4)
 	{
-		int   off;
-		float scale;
-
 		off = (float)(FUNCTABLE_SIZE / (M_PI * 2)) * (st[0] * ds->bulgeWidth + now);
-
 		scale = tr.sinTable[off & FUNCTABLE_MASK] * ds->bulgeHeight;
 
 		xyz[0] += normal[0] * scale;
@@ -340,6 +337,8 @@ void DeformText(const char *text)
 	byte   color[4];
 	float  bottom, top;
 	vec3_t mid;
+	int   row, col;
+	float frow, fcol, size;
 
 	height[0] = 0;
 	height[1] = 0;
@@ -389,9 +388,6 @@ void DeformText(const char *text)
 
 		if (ch != ' ')
 		{
-			int   row, col;
-			float frow, fcol, size;
-
 			row = ch >> 4;
 			col = ch & 15;
 
@@ -432,6 +428,7 @@ static void AutospriteDeform(void)
 	float  *xyz;
 	vec3_t mid, delta;
 	float  radius;
+	float axisLength;
 	vec3_t left, up;
 	vec3_t leftDir, upDir;
 
@@ -482,7 +479,6 @@ static void AutospriteDeform(void)
 		// compensate for scale in the axes if necessary
 		if (backEnd.currentEntity->e.nonNormalizedAxes)
 		{
-			float axisLength;
 			axisLength = VectorLength(backEnd.currentEntity->e.axis[0]);
 			if (!axisLength)
 			{
@@ -521,8 +517,15 @@ static void Autosprite2Deform(void)
 {
 	int    i, j, k;
 	int    indexes;
+	int    nums[2];
 	float  *xyz;
+	float  lengths[2];
+	float  l;
 	vec3_t forward;
+	vec3_t temp;
+	vec3_t mid[2];
+	vec3_t major, minor;
+	float  *v1, *v2;
 
 	if (tess.numVertexes & 3)
 	{
@@ -547,12 +550,6 @@ static void Autosprite2Deform(void)
 	// the shader abstraction
 	for (i = 0, indexes = 0 ; i < tess.numVertexes ; i += 4, indexes += 6)
 	{
-		float  lengths[2];
-		int    nums[2];
-		vec3_t mid[2];
-		vec3_t major, minor;
-		float  *v1, *v2;
-
 		// find the midpoint
 		xyz = tess.xyz[i].v;
 
@@ -562,9 +559,6 @@ static void Autosprite2Deform(void)
 
 		for (j = 0 ; j < 6 ; j++)
 		{
-			float  l;
-			vec3_t temp;
-
 			v1 = xyz + 4 * edgeVerts[j][0];
 			v2 = xyz + 4 * edgeVerts[j][1];
 
@@ -605,8 +599,6 @@ static void Autosprite2Deform(void)
 		// re-project the points
 		for (j = 0 ; j < 2 ; j++)
 		{
-			float l;
-
 			v1 = xyz + 4 * edgeVerts[nums[j]][0];
 			v2 = xyz + 4 * edgeVerts[nums[j]][1];
 
@@ -692,9 +684,7 @@ void RB_DeformTessGeometry(void)
 
 /*
 ====================================================================
-
 COLORS
-
 ====================================================================
 */
 
@@ -990,9 +980,7 @@ void RB_CalcModulateRGBAsByFog(unsigned char *colors)
 
 /*
 ====================================================================
-
 TEX COORDS
-
 ====================================================================
 */
 
@@ -1202,12 +1190,13 @@ RB_CalcSwapTexCoords
 */
 void RB_CalcSwapTexCoords(float *st)
 {
-	int i;
+	int   i;
+	float s, t;
 
 	for (i = 0; i < tess.numVertexes; i++, st += 2)
 	{
-		float s = st[0];
-		float t = st[1];
+		s = st[0];
+		t = st[1];
 
 		st[0] = t;
 		st[1] = 1.0 - s;    // err, flaming effect needs this
@@ -1221,13 +1210,14 @@ void RB_CalcTurbulentTexCoords(const waveForm_t *wf, float *st)
 {
 	int   i;
 	float now;
+	float s, t;
 
 	now = (wf->phase + tess.shaderTime * wf->frequency);
 
 	for (i = 0; i < tess.numVertexes; i++, st += 2)
 	{
-		float s = st[0];
-		float t = st[1];
+		s = st[0];
+		t = st[1];
 
 		st[0] = s + tr.sinTable[(( int ) (((tess.xyz[i].v[0] + tess.xyz[i].v[2]) * 1.0 / 128 * 0.125 + now) * FUNCTABLE_SIZE)) & (FUNCTABLE_MASK)] * wf->amplitude;
 		st[1] = t + tr.sinTable[(( int ) ((tess.xyz[i].v[1] * 1.0 / 128 * 0.125 + now) * FUNCTABLE_SIZE)) & (FUNCTABLE_MASK)] * wf->amplitude;
@@ -1278,11 +1268,12 @@ RB_CalcTransformTexCoords
 void RB_CalcTransformTexCoords(const texModInfo_t *tmi, float *st)
 {
 	int i;
+	float s, t;
 
 	for (i = 0; i < tess.numVertexes; i++, st += 2)
 	{
-		float s = st[0];
-		float t = st[1];
+		s = st[0];
+		t = st[1];
 
 		st[0] = s * tmi->matrix[0][0] + t * tmi->matrix[1][0] + tmi->translate[0];
 		st[1] = s * tmi->matrix[0][1] + t * tmi->matrix[1][1] + tmi->translate[1];
@@ -1329,7 +1320,7 @@ void RB_CalcSpecularAlpha(unsigned char *alphas)
 	int    i;
 	float  *v, *normal;
 	vec3_t viewer, reflected;
-	float  l, d;
+	float  l, d, ilength;
 	int    b;
 	vec3_t lightDir;
 	int    numVertexes;
@@ -1342,8 +1333,6 @@ void RB_CalcSpecularAlpha(unsigned char *alphas)
 	numVertexes = tess.numVertexes;
 	for (i = 0 ; i < numVertexes ; i++, v += 4, normal += 4, alphas += 4)
 	{
-		float ilength;
-
 		VectorSubtract(lightOrigin, v, lightDir);
 //		ilength = Q_rsqrt( DotProduct( lightDir, lightDir ) );
 		VectorNormalizeFast(lightDir);

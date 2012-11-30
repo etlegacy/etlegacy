@@ -452,6 +452,8 @@ struct gentity_s
 
 	int etpro_misc_1;
 
+	int numPlayers;
+
 #ifdef FEATURE_OMNIBOT
 	int numPlanted; // Omni-bot increment dyno count
 #endif
@@ -829,9 +831,6 @@ struct gclient_s
 	pmoveExt_t pmext;
 	qboolean isCivilian;            // whether this is a civilian
 	int deathTime;                  // if we are dead, when did we die (not used for real)
-
-	int lastHealTimes[2];
-	int lastAmmoTimes[2];
 
 	char disguiseNetname[MAX_NETNAME];
 	int disguiseRank;
@@ -1788,8 +1787,6 @@ void G_LogTeamKill(gentity_t *ent, weapon_t weap);
 void G_LogDeath(gentity_t *ent, weapon_t weap);
 void G_LogKill(gentity_t *ent, weapon_t weap);
 void G_LogRegionHit(gentity_t *ent, hitRegion_t hr);
-//void G_SetPlayerRank( gentity_t* ent );
-//void G_AddExperience( gentity_t* ent, float exp );
 
 // Skills
 void G_SetPlayerScore(gclient_t *client);
