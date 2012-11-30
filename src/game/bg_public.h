@@ -1415,6 +1415,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 // entityState_t->eType
 
 // cursorhints (stored in ent->s.dmgFlags since that's only used for players at the moment)
+// note: don't remove any of these see OB ET_Config.h
 typedef enum
 {
 	HINT_NONE,      // reserved
