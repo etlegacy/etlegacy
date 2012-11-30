@@ -149,6 +149,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 
 				myOrigin[0] = cgs.clientinfo[cg.clientNum].location[0];
 				myOrigin[1] = cgs.clientinfo[cg.clientNum].location[1];
+				myOrigin[2] = cgs.clientinfo[cg.clientNum].location[2];
 
 				VectorSubtract(origin, myOrigin, v);
 				dist   = VectorLength(v);
