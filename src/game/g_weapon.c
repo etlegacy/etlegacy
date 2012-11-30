@@ -104,8 +104,6 @@ int G_GetWeaponClassForMOD(meansOfDeath_t mod)
 	}
 }
 
-#define NUM_NAILSHOTS 10
-
 /*
 ======================================================================
 KNIFE
@@ -201,7 +199,7 @@ void Weapon_Knife(gentity_t *ent)
 	G_Damage(traceEnt, ent, ent, vec3_origin, tr.endpos, (damage + rand() % 5), 0, mod);
 }
 
-//make it TR_LINEAR so it doesnt chew bandwidth...
+// make it TR_LINEAR so it doesnt chew bandwidth...
 void MagicSink(gentity_t *self)
 {
 	self->clipmask   = 0;
@@ -499,7 +497,6 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 
 	// Tell the caller if we actually used a syringe
 	return usedSyringe;
-
 }
 
 /*

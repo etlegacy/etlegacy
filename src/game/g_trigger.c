@@ -308,7 +308,7 @@ This will be client side predicted, unlike target_push
 */
 void SP_trigger_push( gentity_t *self )
 {
-	G_Printf("trigger_push has no effect, delete it please \n");
+	G_Printf("trigger_push has no effect. Please delete it.\n");
 }
 
 void Use_target_push(gentity_t *self, gentity_t *other, gentity_t *activator)

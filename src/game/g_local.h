@@ -1560,7 +1560,7 @@ extern vmCvar_t g_lms_followTeamOnly;
 
 extern vmCvar_t g_warmupLatch;
 extern vmCvar_t g_nextTimeLimit;
-extern vmCvar_t g_showHeadshotRatio;
+
 extern vmCvar_t g_userTimeLimit;
 extern vmCvar_t g_userAlliedRespawnTime;
 extern vmCvar_t g_userAxisRespawnTime;

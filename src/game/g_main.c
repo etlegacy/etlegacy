@@ -100,7 +100,7 @@ vmCvar_t g_warmup;
 
 vmCvar_t g_warmupLatch;
 vmCvar_t g_nextTimeLimit;
-vmCvar_t g_showHeadshotRatio;
+
 vmCvar_t g_userTimeLimit;
 vmCvar_t g_userAlliedRespawnTime;
 vmCvar_t g_userAxisRespawnTime;
@@ -299,8 +299,6 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_noTeamSwitching,         "g_noTeamSwitching",         "0",                                                      CVAR_ARCHIVE,                                    0, qtrue},
 
-	{ &g_showHeadshotRatio,       "g_showHeadshotRatio",       "0",                                                      0,                                               0, qfalse},
-
 	{ &g_userTimeLimit,           "g_userTimeLimit",           "0",                                                      0,                                               0, qfalse, qtrue},
 	{ &g_userAlliedRespawnTime,   "g_userAlliedRespawnTime",   "0",                                                      0,                                               0, qfalse, qtrue},
 	{ &g_userAxisRespawnTime,     "g_userAxisRespawnTime",     "0",                                                      0,                                               0, qfalse, qtrue},
@@ -324,7 +322,6 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_needpass,                "g_needpass",                "0",                                                      CVAR_SERVERINFO | CVAR_ROM,                      0, qtrue},
 	{ &g_balancedteams,           "g_balancedteams",           "0",                                                      CVAR_SERVERINFO | CVAR_ROM,                      0, qtrue},
-	{ &g_forcerespawn,            "g_forcerespawn",            "0",                                                      0,                                               0, qtrue},
 	{ &g_forcerespawn,            "g_forcerespawn",            "0",                                                      0,                                               0, qtrue},
 	{ &g_inactivity,              "g_inactivity",              "0",                                                      0,                                               0, qtrue},
 	{ &g_debugMove,               "g_debugMove",               "0",                                                      0,                                               0, qfalse},
@@ -616,14 +613,11 @@ void QDECL G_Error(const char *fmt, ...)
 
 void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
-
-#define CH_KNIFE_DIST       48  // from g_weapon.c
 #define CH_LADDER_DIST      100
 #define CH_WATER_DIST       100
 #define CH_BREAKABLE_DIST   64
 #define CH_DOOR_DIST        96
 #define CH_ACTIVATE_DIST    96
-#define CH_EXIT_DIST        256
 #define CH_FRIENDLY_DIST    1024
 
 #define CH_MAX_DIST         1024    // use the largest value from above

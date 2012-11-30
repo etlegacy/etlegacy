@@ -36,7 +36,6 @@
 
 /*
 =======================================================================
-
   SESSION DATA
 
 Session data is the only data that stays persistant across level loads
@@ -67,14 +66,13 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.spectatorTime,
 	       client->sess.spectatorState,
 	       client->sess.spectatorClient,
-	       client->sess.playerType,         // DHM - Nerve
-	       client->sess.playerWeapon,       // DHM - Nerve
+	       client->sess.playerType,
+	       client->sess.playerWeapon,
 	       client->sess.playerWeapon2,
-	       client->sess.latchPlayerType,    // DHM - Nerve
-	       client->sess.latchPlayerWeapon,  // DHM - Nerve
+	       client->sess.latchPlayerType,
+	       client->sess.latchPlayerWeapon,
 	       client->sess.latchPlayerWeapon2,
 
-	       // OSP
 	       client->sess.coach_team,
 	       client->sess.deaths,
 	       client->sess.game_points,
@@ -231,11 +229,11 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.spectatorTime,
 	       (int *)&client->sess.spectatorState,
 	       &client->sess.spectatorClient,
-	       &client->sess.playerType,        // DHM - Nerve
-	       &client->sess.playerWeapon,      // DHM - Nerve
+	       &client->sess.playerType,
+	       &client->sess.playerWeapon,
 	       &client->sess.playerWeapon2,
-	       &client->sess.latchPlayerType,   // DHM - Nerve
-	       &client->sess.latchPlayerWeapon,  // DHM - Nerve
+	       &client->sess.latchPlayerType,
+	       &client->sess.latchPlayerWeapon,
 	       &client->sess.latchPlayerWeapon2,
 
 	       &client->sess.coach_team,
@@ -376,7 +374,6 @@ void G_InitSessionData(gclient_t *client, char *userinfo)
 /*
 ==================
 G_InitWorldSession
-
 ==================
 */
 void G_InitWorldSession(void)
@@ -503,7 +500,6 @@ void G_InitWorldSession(void)
 /*
 ==================
 G_WriteSessionData
-
 ==================
 */
 void G_WriteSessionData(qboolean restart)
@@ -564,7 +560,6 @@ void G_WriteSessionData(qboolean restart)
                 Com_sprintf(p, 8, " %i", level.fireTeams[i].joinOrder[j]);
                 Q_strcat(buffer2, MAX_STRING_CHARS, p);
 			}
-            //		Com_sprintf(buffer, MAX_STRING_CHARS, "\\n\\%s\\i\\%s", level.fireTeams[i].name, buffer2);
             Com_sprintf(buffer, MAX_STRING_CHARS, "\\id\\%i\\i\\%s\\p\\%i", level.fireTeams[i].ident - 1, buffer2, level.fireTeams[i].priv ? 1 : 0);
 		}
 
