@@ -1938,11 +1938,6 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entit
 
 		ent->customShader = cgs.media.onFireShader2;
 		trap_R_AddRefEntityToScene(ent);
-
-		if (ent->hModel == cent->pe.bodyRefEnt.hModel)
-		{
-			trap_S_AddLoopingSound(ent->origin, vec3_origin, cgs.media.flameCrackSound, (int)(255.0 * alpha), 0);
-		}
 	}
 
 	*ent = backupRefEnt;

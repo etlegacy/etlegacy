@@ -1223,7 +1223,7 @@ static void CG_RegisterSounds(void)
 	cgs.media.flameBlowSound     = trap_S_RegisterSound("sound/weapons/flamethrower/flame_pilot.wav", qfalse);
 	cgs.media.flameStartSound    = trap_S_RegisterSound("sound/weapons/flamethrower/flame_up.wav", qfalse);
 	cgs.media.flameStreamSound   = trap_S_RegisterSound("sound/weapons/flamethrower/flame_fire.wav", qfalse);
-	cgs.media.flameCrackSound    = 0;  // -trap_S_RegisterSound( "sound/world/firecrack1.wav", qfalse );
+
 	cgs.media.grenadePulseSound4 = trap_S_RegisterSound("sound/weapons/grenade/gren_timer4.wav", qfalse);
 	cgs.media.grenadePulseSound3 = trap_S_RegisterSound("sound/weapons/grenade/gren_timer3.wav", qfalse);
 	cgs.media.grenadePulseSound2 = trap_S_RegisterSound("sound/weapons/grenade/gren_timer2.wav", qfalse);
@@ -1364,8 +1364,8 @@ static void CG_RegisterGraphics(void)
 
 	CG_LoadingString(" - textures");
 
-//bani - dynamic shader api example
-//replaces a fueldump texture with a dynamically generated one.
+	//bani - dynamic shader api example
+	//replaces a fueldump texture with a dynamically generated one.
 #ifdef TEST_API_DYNAMICSHADER
 	trap_R_LoadDynamicShader("my_terrain1_2",
 	                         "my_terrain1_2\n"
@@ -1481,7 +1481,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.satchelchargeHintShader = trap_R_RegisterShaderNoMip("gfx/2d/satchelchargeHint"),
 	cgs.media.landmineHintShader      = trap_R_RegisterShaderNoMip("gfx/2d/landmineHint");
 	cgs.media.uniformHintShader       = trap_R_RegisterShaderNoMip("gfx/2d/uniformHint");
-//  cgs.media.commandCentreWoodShader       = trap_R_RegisterShaderNoMip( "ui/assets2/commandMap" );
+
 	if (cgs.ccLayers)
 	{
 		for (i = 0; i < cgs.ccLayers; i++)

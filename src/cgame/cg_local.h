@@ -1328,7 +1328,7 @@ typedef struct
 	qhandle_t tankHintShader;
 	qhandle_t satchelchargeHintShader;
 	qhandle_t uniformHintShader;
-	qhandle_t commandCentreWoodShader;
+
 	qhandle_t commandCentreMapShader[MAX_COMMANDMAP_LAYERS];
 	qhandle_t commandCentreMapShaderTrans[MAX_COMMANDMAP_LAYERS];
 	qhandle_t commandCentreAutomapShader[MAX_COMMANDMAP_LAYERS];
@@ -1531,7 +1531,7 @@ typedef struct
 	sfxHandle_t flameBlowSound;
 	sfxHandle_t flameStartSound;
 	sfxHandle_t flameStreamSound;
-	sfxHandle_t flameCrackSound;
+
 	sfxHandle_t boneBounceSound;
 
 	sfxHandle_t grenadebounce[FOOTSTEP_TOTAL][2];

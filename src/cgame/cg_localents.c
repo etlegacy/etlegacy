@@ -731,7 +731,6 @@ void CG_AddFragment(localEntity_t *le)
 		{
 			flameAlpha = 1.0;
 		}
-		trap_S_AddLoopingSound(le->refEntity.origin, vec3_origin, cgs.media.flameCrackSound, (int)(20.0 * flameAlpha), 0);
 	}
 
 	if (le->leFlags & LEF_SMOKING)
