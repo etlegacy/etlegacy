@@ -3138,25 +3138,17 @@ void LogExit(const char *string)
 	G_BuildEndgameStats();
 }
 
-/*
-=================
-CheckIntermissionExit
-
-The level will stay at the intermission for a minimum of 5 seconds
-If all players wish to continue, the level will then exit.
-If one or more players have not acknowledged the continue, the game will
-wait 10 seconds before going on.
-=================
-*/
+/**
+ * The level will stay at the intermission for a minimum of 5 seconds
+ * If all players wish to continue, the level will then exit.
+ * If one or more players have not acknowledged the continue, the game will
+ * wait 10 seconds before going on.
+ */
 void CheckIntermissionExit(void)
 {
 	static int fActions = 0;
-	qboolean   exit     = qtrue;
-	int        i;
-	gclient_t  *cl;
-	int        ready = 0, notReady = 0;
 
-	// OSP - end-of-level auto-actions
+	// end-of-level auto-actions
 	if (!(fActions & EOM_WEAPONSTATS) && level.time - level.intermissiontime > 300)
 	{
 		G_matchInfoDump(EOM_WEAPONSTATS);
@@ -3168,18 +3160,17 @@ void CheckIntermissionExit(void)
 		fActions |= EOM_MATCHINFO;
 	}
 
-	// crapshoot: empty servers will rotate immediatly
-	// IRATA but not in case of gt mapvote
+	// empty servers will rotate immediatly except in case of gt mapvote
 	if (level.numConnectedClients)
 	{
 		gclient_t    *cl;
-		int          ready = 0, notReady = 0, readyVoters = 0;
+		int          ready = 0, readyVoters = 0;
 		unsigned int i;
 		qboolean     exit = qfalse;
 
 		for (i = 0; i < level.numConnectedClients; ++i)
 		{
-			// rain - #105 - spectators and people who are still loading
+			// spectators and people who are still loading
 			// don't have to be ready at the end of the round.
 			// additionally, make readypercent apply here.
 
@@ -3198,14 +3189,10 @@ void CheckIntermissionExit(void)
 			{
 				ready++;
 			}
-			else
-			{
-				notReady++;
-			}
 		}
 
 		// if((100.0f * (ready / (level.numConnectedClients * 1.0f))) >=
-		// crapshoot: changed to not include spectators since they are excluded above
+		// changed to not include spectators since they are excluded above
 		if (readyVoters /*&& g_gametype.integer != GT_WOLF_MAPVOTE*/)
 		{
 			if ((100.0f * (ready / (readyVoters * 1.0f))) >= (match_readypercent.value * 1.0f))
@@ -3220,9 +3207,8 @@ void CheckIntermissionExit(void)
 			exit               = qtrue;
 		}
 
-		// Gordon: changing this to a minute for now
-		// tjw: making this a cvar
-		// IRATA: MAPVOTE note - if g_intermissionTime is low there is no time to vote for a map!
+		// time set to a minute
+		// MAPVOTE note - if g_intermissionTime is low there is no time to vote for a map!
 		if (!exit && (level.time < (level.intermissiontime + 60000 /*(1000 * g_intermissionTime.integer)*/)))
 		{
 			return;
