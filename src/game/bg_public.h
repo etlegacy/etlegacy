@@ -1861,7 +1861,6 @@ typedef struct bg_character_s
 //------------------------------------------------------------------
 // Global Function Decs
 
-//animModelInfo_t *BG_ModelInfoForModelname( char *modelname );
 void BG_InitWeaponStrings(void);
 void BG_AnimParseAnimScript(animModelInfo_t *modelInfo, animScriptData_t *scriptData, const char *filename, char *input);
 int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *modelInfo, scriptAnimMoveTypes_t movetype, qboolean isContinue);
@@ -1870,7 +1869,7 @@ int BG_AnimScriptEvent(playerState_t *ps, animModelInfo_t *modelInfo, scriptAnim
 int BG_IndexForString(char *token, animStringItem_t *strings, qboolean allowFail);
 int BG_PlayAnimName(playerState_t *ps, animModelInfo_t *animModelInfo, char *animName, animBodyPart_t bodyPart, qboolean setTimer, qboolean isContinue, qboolean force);
 void BG_ClearAnimTimer(playerState_t *ps, animBodyPart_t bodyPart);
-qboolean BG_ValidAnimScript(int clientNum);
+
 char *BG_GetAnimString(animModelInfo_t *animModelInfo, int anim);
 void BG_UpdateConditionValue(int client, int condition, int value, qboolean checkConversion);
 int BG_GetConditionValue(int client, int condition, qboolean checkConversion);
