@@ -4565,3 +4565,116 @@ unsigned int FS_ChecksumOSPath(char *OSPath)
 
 	return checksum;
 }
+
+/**
+ * @brief Extracts zipped file into the current gamedir
+ * @param[in] filename to extract
+ * @retval qtrue    if successfully extracted
+ * @retval qfalse   if extraction failed
+ */
+qboolean FS_Unzip(char *filename)
+{
+	char            zipPath[PATH_MAX];
+	unzFile         zipFile;
+	unz_global_info zipInfo;
+	int             err, i;
+	void            *buf = NULL;
+
+	Com_sprintf(zipPath, sizeof(zipPath), "%s", filename);
+	zipFile = unzOpen(zipPath);
+
+	if (!zipFile)
+	{
+		Com_Printf(S_COLOR_RED "ERROR: not a zip file (%s).\n", zipPath);
+		return qfalse;
+	}
+
+	err = unzGetGlobalInfo(zipFile, &zipInfo);
+
+	if (err != UNZ_OK)
+	{
+		Com_Printf(S_COLOR_RED "ERROR: unable to unzip file (%s).\n", zipPath);
+		return qfalse;
+	}
+
+	err = unzGoToFirstFile(zipFile);
+
+	for (i = 0; i < zipInfo.number_entry; i++)
+	{
+		unz_file_info file_info;
+		char          newFileName[256];
+		char          newFilePath[PATH_MAX];
+		FILE          *newFile;
+
+		err = unzGetCurrentFileInfo(zipFile, &file_info, newFileName, sizeof(newFileName), NULL, 0, NULL, 0);
+
+		Com_sprintf(newFilePath, sizeof(newFilePath), "%s%c%s%c%s", fs_homepath->string, PATH_SEP, fs_gamedir, PATH_SEP, newFileName);
+
+		if (newFilePath[strlen(newFilePath) - 1] == PATH_SEP)
+		{
+			Com_DPrintf("FS_Unzip: Creating directory %s...\n", newFilePath);
+			if (FS_CreatePath(newFilePath))
+			{
+				Com_Printf(S_COLOR_RED "ERROR: Unable to create directory (%s).\n", newFilePath);
+				return qfalse;
+			}
+		}
+		else
+		{
+			Com_DPrintf("FS_Unzip: Extracting %s...\n", newFilePath);
+
+			newFile = fopen(newFilePath, "wb");
+			if (!newFile)
+			{
+				break;
+			}
+
+			if (buf)
+			{
+				free(buf);
+			}
+
+			buf = malloc(file_info.uncompressed_size);
+
+			if (!buf)
+			{
+				break;
+			}
+
+			err = unzOpenCurrentFile(zipFile);
+			if (err)
+			{
+				break;
+			}
+
+			err = unzReadCurrentFile(zipFile, buf, file_info.uncompressed_size);
+			if ((err < 0) || (err != file_info.uncompressed_size))
+			{
+				break;
+			}
+
+			err = fwrite(buf, file_info.uncompressed_size, 1, newFile);
+			if (err != 1)
+			{
+				break;
+			}
+
+			fclose(newFile);
+
+			err = unzCloseCurrentFile(zipFile);
+		}
+
+		err = unzGoToNextFile(zipFile);
+		if (err)
+		{
+			break;
+		}
+	}
+
+	if (buf)
+	{
+		free(buf);
+	}
+
+	return qtrue;
+}

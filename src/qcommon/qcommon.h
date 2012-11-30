@@ -664,7 +664,6 @@ It is generally safe to always set uniqueFILE to true, because the majority of
 file IO goes through FS_ReadFile, which Does The Right Thing already.
 */
 /* TTimo
-show_bug.cgi?id=506
 added exclude flag to filter out regular dirs or pack files on demand
 would rather have used FS_FOpenFileRead(..., int filter_flag = 0)
 but that's a C++ construct ..
@@ -773,6 +772,8 @@ qboolean FS_VerifyPak(const char *pak);
 qboolean FS_IsPure(void);
 
 unsigned int FS_ChecksumOSPath(char *OSPath);
+
+qboolean FS_Unzip(char *filename);
 
 /*
 ==============================================================

@@ -480,19 +480,18 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	*fqpath = 0;
 
 	fn = FS_BuildOSPath(base, gamedir, fname);
-	Com_Printf("Sys_LoadDll(%s)... \n", fn);
 
 #ifdef __APPLE__
-	// HACK: this monstrosity is only temporary
-	Com_Printf("Extracting library from bundle...\n");
-	char buffer[1024];
-	Com_sprintf(buffer, sizeof(buffer), "unzip -o -j %s %s.bundle/Contents/MacOS/%s -d /tmp", fn, fname, fname);
-	Com_Printf("%s", buffer);
-	system(buffer);
-	Com_sprintf(buffer, sizeof(buffer), "/tmp/%s", fname);
-	fn = buffer;
+	// FIXME: fix & clean mod loading on Mac OS X
+	if (FS_Unzip(fn))
+	{
+		char buffer[256];
+		Com_sprintf(buffer, sizeof(buffer), "%s.bundle/Contents/MacOS/%s", fname, fname);
+		fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), gamedir, buffer);
+	}
 #endif // __APPLE__
 
+	Com_Printf("Sys_LoadDll(%s)... \n", fn);
 	libHandle = Sys_LoadLibrary(fn);
 
 	if (!libHandle)
@@ -500,7 +499,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		// HACK: sometimes a library is loaded from the mod dir when it shouldn't. Why?
 		Com_Printf("Sys_LoadDll(%s) failed:\n\t\"%s\"\n", fn, Sys_LibraryError());
 
-		fn        = FS_BuildOSPath(base, BASEGAME, fname);
+		fn        = FS_BuildOSPath(base, DEFAULT_MODGAME, fname);
 		libHandle = Sys_LoadLibrary(fn);
 
 		if (!libHandle)
