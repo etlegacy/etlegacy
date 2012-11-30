@@ -302,6 +302,15 @@ void AimAtTarget(gentity_t *self)
 	self->s.origin2[2] = time * gravity;
 }
 
+/*QUAKED trigger_push (.5 .5 .5) ? TOGGLE REMOVEAFTERTOUCH PUSHPLAYERONLY
+Must point at a target_position, which will be the apex of the leap.
+This will be client side predicted, unlike target_push
+*/
+void SP_trigger_push( gentity_t *self )
+{
+	G_Printf("trigger_push has no effect, delete it please \n");
+}
+
 void Use_target_push(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
 	if (!activator->client)
