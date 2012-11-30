@@ -8432,7 +8432,6 @@ vmCvar_t ui_dedicated;
 
 vmCvar_t ui_clipboardName;          // the name of the group for the current clipboard item //----(SA)  added
 
-vmCvar_t ui_notebookCurrentPage;        //----(SA)  added
 vmCvar_t ui_clipboardName;          // the name of the group for the current clipboard item //----(SA)  added
 
 // NERVE - SMF - cvars for multiplayer
@@ -8574,7 +8573,6 @@ cvarTable_t cvarTable[] =
 	{ &ui_joinGameType,                 "ui_joinGametype",                     "-1",                         CVAR_ARCHIVE                   },
 	{ &ui_netGameType,                  "ui_netGametype",                      "4",                          CVAR_ARCHIVE                   }, // NERVE - SMF - hardwired for now
 
-	{ &ui_notebookCurrentPage,          "ui_notebookCurrentPage",              "1",                          CVAR_ROM                       },
 	{ &ui_clipboardName,                "cg_clipboardName",                    "",                           CVAR_ROM                       },
 
 	// multiplayer cvars
@@ -8743,6 +8741,8 @@ void UI_RegisterCvars(void)
 {
 	int         i;
 	cvarTable_t *cv;
+
+	Com_Printf("%d UI cvars in use.\n", cvarTableSize);
 
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{

@@ -102,7 +102,7 @@ extern vmCvar_t ui_gameType;
 extern vmCvar_t ui_netGameType;
 extern vmCvar_t ui_joinGameType;
 extern vmCvar_t ui_dedicated;
-extern vmCvar_t ui_notebookCurrentPage;
+
 extern vmCvar_t ui_clipboardName;
 
 // NERVE - SMF - multiplayer cvars

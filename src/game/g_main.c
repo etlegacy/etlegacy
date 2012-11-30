@@ -1429,6 +1429,8 @@ void G_RegisterCvars(void)
 
 	level.server_settings = 0;
 
+	G_Printf("%d cvars in use.\n", gameCvarTableSize);
+
 	for (i = 0, cv = gameCvarTable; i < gameCvarTableSize; i++, cv++)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
