@@ -1472,12 +1472,6 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.friendShader = trap_R_RegisterShaderNoMip("gfx/2d/friendlycross.tga");
 
-	// (SA) not used yet
-//  cgs.media.hintPlrFriendShader   = trap_R_RegisterShader( "gfx/2d/hintPlrFriend" );
-//  cgs.media.hintPlrNeutralShader  = trap_R_RegisterShader( "gfx/2d/hintPlrNeutral" );
-//  cgs.media.hintPlrEnemyShader    = trap_R_RegisterShader( "gfx/2d/hintPlrEnemy" );
-//  cgs.media.hintPlrUnknownShader  = trap_R_RegisterShader( "gfx/2d/hintPlrUnknown" );
-
 	cgs.media.buildHintShader    = trap_R_RegisterShader("gfx/2d/buildHint");
 	cgs.media.disarmHintShader   = trap_R_RegisterShader("gfx/2d/disarmHint");
 	cgs.media.reviveHintShader   = trap_R_RegisterShader("gfx/2d/reviveHint");

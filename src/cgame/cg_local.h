@@ -1319,11 +1319,6 @@ typedef struct
 	qhandle_t holdableHintShader;
 	qhandle_t inventoryHintShader;
 
-	qhandle_t hintPlrFriendShader;
-	qhandle_t hintPlrNeutralShader;
-	qhandle_t hintPlrEnemyShader;
-	qhandle_t hintPlrUnknownShader;
-
 	// DHM - Nerve :: Multiplayer hints
 	qhandle_t buildHintShader;
 	qhandle_t disarmHintShader;

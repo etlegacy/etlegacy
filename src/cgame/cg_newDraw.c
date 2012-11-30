@@ -564,17 +564,10 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		icon = cgs.media.inventoryHintShader;
 		break;
 	case HINT_PLYR_FRIEND:
-		icon = cgs.media.hintPlrFriendShader;
-		break;
 	case HINT_PLYR_NEUTRAL:
-		icon = cgs.media.hintPlrNeutralShader;
-		break;
 	case HINT_PLYR_ENEMY:
-		icon = cgs.media.hintPlrEnemyShader;
-		break;
 	case HINT_PLYR_UNKNOWN:
-		icon = cgs.media.hintPlrUnknownShader;
-		break;
+		return;
 
 	// DHM - Nerve :: multiplayer hints
 	case HINT_BUILD:
