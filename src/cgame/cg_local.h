@@ -544,7 +544,7 @@ typedef struct clientInfo_s
 
 	int botSkill;                   // 0 = not bot, 1-5 = bot
 	int score;                      // updated by score servercmds
-	int location[3];                // location in 2d for team mode
+	int location[3];                // location in 3d for team mode (was 2d before)
 	int health;                     // you only get this info about your teammates
 	int curWeapon;
 	int powerups;                   // so can display quad/flag status
