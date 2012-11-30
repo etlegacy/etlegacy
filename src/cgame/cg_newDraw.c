@@ -791,7 +791,7 @@ void CG_OwnerDraw(float x, float y, float w, float h, float text_x, float text_y
 
 void CG_MouseEvent(int x, int y)
 {
-	switch (cgs.eventHandling) // FIXME: cgs.eventHandling is qboolean!
+	switch (cgs.eventHandling)
 	{
 	case CGAME_EVENT_SPEAKEREDITOR:
 	case CGAME_EVENT_GAMEVIEW:
