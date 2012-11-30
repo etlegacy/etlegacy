@@ -41,30 +41,7 @@
 #include "../game/bg_public.h"
 #include "ui_shared.h"
 
-extern vmCvar_t ui_ffa_fraglimit;
-extern vmCvar_t ui_ffa_timelimit;
-
-extern vmCvar_t ui_team_fraglimit;
-extern vmCvar_t ui_team_timelimit;
-extern vmCvar_t ui_team_friendly;
-
-extern vmCvar_t ui_ctf_capturelimit;
-extern vmCvar_t ui_ctf_timelimit;
-extern vmCvar_t ui_ctf_friendly;
-
 extern vmCvar_t ui_arenasFile;
-
-extern vmCvar_t ui_spScores1;
-extern vmCvar_t ui_spScores2;
-extern vmCvar_t ui_spScores3;
-extern vmCvar_t ui_spScores4;
-extern vmCvar_t ui_spScores5;
-extern vmCvar_t ui_spAwards;
-extern vmCvar_t ui_spVideos;
-extern vmCvar_t ui_spSkill;
-
-extern vmCvar_t ui_spSelection;
-extern vmCvar_t ui_master;
 
 extern vmCvar_t ui_brassTime;
 extern vmCvar_t ui_drawCrosshair;
@@ -73,7 +50,6 @@ extern vmCvar_t ui_drawCrosshairPickups;
 extern vmCvar_t ui_marks;
 
 extern vmCvar_t ui_autoactivate;
-
 
 extern vmCvar_t ui_server1;
 extern vmCvar_t ui_server2;
@@ -102,8 +78,6 @@ extern vmCvar_t ui_gameType;
 extern vmCvar_t ui_netGameType;
 extern vmCvar_t ui_joinGameType;
 extern vmCvar_t ui_dedicated;
-extern vmCvar_t ui_notebookCurrentPage;
-extern vmCvar_t ui_clipboardName;
 
 // NERVE - SMF - multiplayer cvars
 extern vmCvar_t ui_serverFilterType;
@@ -924,9 +898,6 @@ void UI_SPArena_Start(const char *arenaInfo);
 void UI_SPPostgameMenu_Cache(void);
 void UI_SPPostgameMenu_f(void);
 
-// ui_spSkill.c
-void UI_SPSkillMenu(const char *arenaInfo);
-void UI_SPSkillMenu_Cache(void);
 
 // ui_syscalls.c
 void            trap_Print(const char *string);

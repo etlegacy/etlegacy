@@ -8372,30 +8372,7 @@ typedef struct
 	int modificationCount;          // for tracking changes
 } cvarTable_t;
 
-vmCvar_t ui_ffa_fraglimit;
-vmCvar_t ui_ffa_timelimit;
-
-vmCvar_t ui_team_fraglimit;
-vmCvar_t ui_team_timelimit;
-vmCvar_t ui_team_friendly;
-
-vmCvar_t ui_ctf_capturelimit;
-vmCvar_t ui_ctf_timelimit;
-vmCvar_t ui_ctf_friendly;
-
 vmCvar_t ui_arenasFile;
-
-vmCvar_t ui_spScores1;
-vmCvar_t ui_spScores2;
-vmCvar_t ui_spScores3;
-vmCvar_t ui_spScores4;
-vmCvar_t ui_spScores5;
-vmCvar_t ui_spAwards;
-vmCvar_t ui_spVideos;
-vmCvar_t ui_spSkill;
-
-vmCvar_t ui_spSelection;
-vmCvar_t ui_master;
 
 vmCvar_t ui_brassTime;
 vmCvar_t ui_drawCrosshair;
@@ -8429,11 +8406,6 @@ vmCvar_t ui_gameType;
 vmCvar_t ui_netGameType;
 vmCvar_t ui_joinGameType;
 vmCvar_t ui_dedicated;
-
-vmCvar_t ui_clipboardName;          // the name of the group for the current clipboard item //----(SA)  added
-
-vmCvar_t ui_notebookCurrentPage;        //----(SA)  added
-vmCvar_t ui_clipboardName;          // the name of the group for the current clipboard item //----(SA)  added
 
 // NERVE - SMF - cvars for multiplayer
 vmCvar_t ui_serverFilterType;
@@ -8509,37 +8481,15 @@ vmCvar_t ui_autoredirect;
 
 cvarTable_t cvarTable[] =
 {
-
 	{ &ui_glCustom,                     "ui_glCustom",                         "4",                          CVAR_ARCHIVE                   },
-	{ &ui_ffa_fraglimit,                "ui_ffa_fraglimit",                    "20",                         CVAR_ARCHIVE                   },
-	{ &ui_ffa_timelimit,                "ui_ffa_timelimit",                    "0",                          CVAR_ARCHIVE                   },
-
-	{ &ui_team_fraglimit,               "ui_team_fraglimit",                   "0",                          CVAR_ARCHIVE                   },
-	{ &ui_team_timelimit,               "ui_team_timelimit",                   "20",                         CVAR_ARCHIVE                   },
-	{ &ui_team_friendly,                "ui_team_friendly",                    "1",                          CVAR_ARCHIVE                   },
-
-	{ &ui_ctf_capturelimit,             "ui_ctf_capturelimit",                 "8",                          CVAR_ARCHIVE                   },
-	{ &ui_ctf_timelimit,                "ui_ctf_timelimit",                    "30",                         CVAR_ARCHIVE                   },
-	{ &ui_ctf_friendly,                 "ui_ctf_friendly",                     "0",                          CVAR_ARCHIVE                   },
 
 	{ &ui_arenasFile,                   "g_arenasFile",                        "",                           CVAR_INIT | CVAR_ROM           },
-	{ &ui_spScores1,                    "g_spScores1",                         "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spScores2,                    "g_spScores2",                         "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spScores3,                    "g_spScores3",                         "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spScores4,                    "g_spScores4",                         "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spScores5,                    "g_spScores5",                         "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spAwards,                     "g_spAwards",                          "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spVideos,                     "g_spVideos",                          "",                           CVAR_ARCHIVE | CVAR_ROM        },
-	{ &ui_spSkill,                      "g_spSkill",                           "2",                          CVAR_ARCHIVE | CVAR_LATCH      },
 	{ &ui_friendlyFire,                 "g_friendlyFire",                      "1",                          CVAR_ARCHIVE                   },
 
 	{ &ui_userTimeLimit,                "ui_userTimeLimit",                    "0",                          0                              },
 	{ &ui_userAlliedRespawnTime,        "ui_userAlliedRespawnTime",            "0",                          0                              },
 	{ &ui_userAxisRespawnTime,          "ui_userAxisRespawnTime",              "0",                          0                              },
 	{ &ui_teamArenaFirstRun,            "ui_teamArenaFirstRun",                "0",                          CVAR_ARCHIVE                   }, // so sound stuff latches, strange as that seems
-
-	{ &ui_spSelection,                  "ui_spSelection",                      "",                           CVAR_ROM                       },
-	{ &ui_master,                       "ui_master",                           "0",                          CVAR_ARCHIVE                   },
 
 	{ &ui_brassTime,                    "cg_brassTime",                        "2500",                       CVAR_ARCHIVE                   },
 	{ &ui_drawCrosshair,                "cg_drawCrosshair",                    "4",                          CVAR_ARCHIVE                   },
@@ -8573,9 +8523,6 @@ cvarTable_t cvarTable[] =
 	{ &ui_gameType,                     "ui_gametype",                         "3",                          CVAR_ARCHIVE                   },
 	{ &ui_joinGameType,                 "ui_joinGametype",                     "-1",                         CVAR_ARCHIVE                   },
 	{ &ui_netGameType,                  "ui_netGametype",                      "4",                          CVAR_ARCHIVE                   }, // NERVE - SMF - hardwired for now
-
-	{ &ui_notebookCurrentPage,          "ui_notebookCurrentPage",              "1",                          CVAR_ROM                       },
-	{ &ui_clipboardName,                "cg_clipboardName",                    "",                           CVAR_ROM                       },
 
 	// multiplayer cvars
 	{ &ui_mapIndex,                     "ui_mapIndex",                         "0",                          CVAR_ARCHIVE                   },
@@ -8743,6 +8690,8 @@ void UI_RegisterCvars(void)
 {
 	int         i;
 	cvarTable_t *cv;
+
+	Com_Printf("%d UI cvars in use.\n", cvarTableSize);
 
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{
