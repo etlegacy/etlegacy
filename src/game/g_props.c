@@ -36,8 +36,6 @@
 #define GENERIC_DAMAGE  6
 
 int snd_chaircreak;
-int snd_chairthrow;
-int snd_chairhitground;
 
 void DropToFloorG(gentity_t *ent)
 {
@@ -991,7 +989,6 @@ void Just_Got_Thrown(gentity_t *self)
 	}
 	else
 	{
-		G_AddEvent(self, EV_GENERAL_SOUND, snd_chairhitground);
 		VectorSubtract(self->r.currentOrigin, self->s.origin2, vec);
 		len = VectorLength(vec);
 
@@ -1079,8 +1076,6 @@ void Props_Activated(gentity_t *self)
 		self->s.pos.trTime = level.time;
 
 		self->active = qfalse;
-
-		G_AddEvent(owner, EV_GENERAL_SOUND, snd_chairthrow);
 
 		AngleVectors(owner->client->ps.viewangles, velocity, NULL, NULL);
 		VectorScale(velocity, 250, velocity);
@@ -1728,9 +1723,7 @@ void SP_Props_ChairSide(gentity_t *ent)
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
 
-	snd_chaircreak     = G_SoundIndex("sound/world/chaircreak.wav");
-	snd_chairthrow     = G_SoundIndex("sound/props/throw/chairthudgrunt.wav");
-	snd_chairhitground = G_SoundIndex("sound/props/chair/chairthud.wav");
+	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 // can be one of two types, but they have the same animations/etc, so re-use what you can
@@ -1788,9 +1781,7 @@ void SP_Props_ChateauChair(gentity_t *ent)
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
 
-	snd_chaircreak     = G_SoundIndex("sound/world/chaircreak.wav");
-	snd_chairthrow     = G_SoundIndex("sound/props/throw/chairthudgrunt.wav");
-	snd_chairhitground = G_SoundIndex("sound/props/chair/chairthud.wav");
+	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
 /*
