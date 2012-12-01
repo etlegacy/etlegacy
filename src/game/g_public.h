@@ -73,10 +73,9 @@
 
 typedef qboolean (*addToSnapshotCallback)(int entityNum, int clientNum);
 
+// don't add or remove fields to keep 2.60 compatibility
 typedef struct
 {
-//  entityState_t   s;              // communicated by server to clients
-
 	qboolean linked;                // qfalse if not in any good cluster
 	int linkcount;
 
@@ -110,8 +109,6 @@ typedef struct
 
 	qboolean snapshotCallback;
 } entityShared_t;
-
-
 
 // the server looks at a sharedEntity, which is the start of the game's gentity_t structure
 typedef struct
