@@ -1964,7 +1964,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 }
 
 // Client-side stat presentation
-void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
+void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 {
 	clientInfo_t *ci;
 	qboolean     fFull     = (txt_dump != CG_printWindow);
@@ -2135,7 +2135,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 	}
 }
 
-void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *))
+void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 {
 	int      iArg  = 1;
 	qboolean fFull = (txt_dump != CG_printWindow);
@@ -2187,7 +2187,7 @@ void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *))
 	}
 }
 
-void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (char *))
+void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 {
 	int i, iArg = 1;
 	int cClients = atoi(CG_Argv(iArg++));

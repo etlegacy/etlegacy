@@ -696,7 +696,7 @@ panel_button_t debriefPlayerInfoACC =
 };
 
 #define PLAYERHEADER_SKILLS(number)           \
-    panel_button_t debriefPlayerInfoSkills ## number = {      \
+	panel_button_t debriefPlayerInfoSkills ## number = {      \
 		NULL,                                       \
 		NULL,                                       \
 		{ 18 + (100 * (number % 2)),     140 + (number / 2 * 24),                        12, 12 },     \
@@ -964,7 +964,7 @@ panel_button_t teamDebriefAlliesXPText =
 };
 
 #define TDB_SKILL_TITLES_XP(number, title, x)             \
-    panel_button_t teamDebriefSkillXPText_ ## number = {          \
+	panel_button_t teamDebriefSkillXPText_ ## number = {          \
 		NULL,                                                   \
 		title,                                                  \
 		{ 100 + (number * 65),      304 - (x * 12),                 20, 200 },      \
@@ -986,7 +986,7 @@ TDB_SKILL_TITLES_XP(6, "Covert Ops", 0);
 TDB_SKILL_TITLES_XP(7, "Total", 1);
 
 #define TDB_SKILL_AXIS_XP(number)                         \
-    panel_button_t teamDebriefSkillXPText0_ ## number = {         \
+	panel_button_t teamDebriefSkillXPText0_ ## number = {         \
 		NULL,                                                   \
 		NULL,                                                   \
 		{ 110 + (number * 65),             320,                  470, 200 },                \
@@ -999,7 +999,7 @@ TDB_SKILL_TITLES_XP(7, "Total", 1);
 	}
 
 #define TDB_SKILL_ALLIES_XP(number)                       \
-    panel_button_t teamDebriefSkillXPText1_ ## number = {         \
+	panel_button_t teamDebriefSkillXPText1_ ## number = {         \
 		NULL,                                                   \
 		NULL,                                                   \
 		{ 110 + (number * 65),             340,                  470, 200 },                \

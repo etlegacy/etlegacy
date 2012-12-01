@@ -86,12 +86,12 @@ cvar_t *r_allowResize; // make window resizable
 cvar_t *r_centerWindow;
 cvar_t *r_sdlDriver;
 
-void (APIENTRYP qglActiveTextureARB)(GLenum texture);
-void (APIENTRYP qglClientActiveTextureARB)(GLenum texture);
-void (APIENTRYP qglMultiTexCoord2fARB)(GLenum target, GLfloat s, GLfloat t);
+void(APIENTRYP qglActiveTextureARB) (GLenum texture);
+void(APIENTRYP qglClientActiveTextureARB) (GLenum texture);
+void(APIENTRYP qglMultiTexCoord2fARB) (GLenum target, GLfloat s, GLfloat t);
 
-void (APIENTRYP qglLockArraysEXT)(GLint first, GLsizei count);
-void (APIENTRYP qglUnlockArraysEXT)(void);
+void(APIENTRYP qglLockArraysEXT) (GLint first, GLsizei count);
+void(APIENTRYP qglUnlockArraysEXT) (void);
 
 /*
 ===============
@@ -701,8 +701,8 @@ static void GLimp_InitExtensions(void)
 		if (r_ext_compiled_vertex_array->value)
 		{
 			ri.Printf(PRINT_ALL, "...using GL_EXT_compiled_vertex_array\n");
-			qglLockArraysEXT   = (void ( APIENTRY * )(GLint, GLint))SDL_GL_GetProcAddress("glLockArraysEXT");
-			qglUnlockArraysEXT = (void ( APIENTRY * )(void))SDL_GL_GetProcAddress("glUnlockArraysEXT");
+			qglLockArraysEXT   = (void (APIENTRY *)(GLint, GLint))SDL_GL_GetProcAddress("glLockArraysEXT");
+			qglUnlockArraysEXT = (void (APIENTRY *)(void))SDL_GL_GetProcAddress("glUnlockArraysEXT");
 			if (!qglLockArraysEXT || !qglUnlockArraysEXT)
 			{
 				ri.Error(ERR_FATAL, "bad getprocaddress\n");
