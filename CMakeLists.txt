@@ -77,7 +77,8 @@ option(ET_KEY				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
 #-----------------------------------------------------------------
 
 if(UNIX AND CROSS_COMPILE32) # 32-bit build
-	message(STATUS "System: ${ETLEGACY_SYSTEM_PROCESSOR}")
+	message(STATUS "System: ${CMAKE_SYSTEM}")
+	message(STATUS "System processor: ${ETLEGACY_SYSTEM_PROCESSOR}")
 	set(CMAKE_SYSTEM_PROCESSOR i386)
 	message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
 	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
