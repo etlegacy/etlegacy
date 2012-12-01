@@ -590,11 +590,6 @@ static void CG_General(centity_t *cent)
 	// special shader if under construction
 	if (cent->currentState.powerups == STATE_UNDERCONSTRUCTION)
 	{
-		/*if( cent->currentState.solid == SOLID_BMODEL ) {
-		    ent.customShader = cgs.media.genericConstructionShaderBrush;
-		} else {
-		    ent.customShader = cgs.media.genericConstructionShaderModel;
-		}*/
 		ent.customShader = cgs.media.genericConstructionShader;
 	}
 
@@ -640,7 +635,7 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 
 	VectorCopy(ps->origin, vorigin);
 	vorigin[2] += ps->viewheight;           // get the view loc up to the viewheight
-//  eorigin[2] += 8;                        // and subtract the item's offset (that is used to place it on the ground)
+	//eorigin[2] += 8;                        // and subtract the item's offset (that is used to place it on the ground)
 
 
 	VectorSubtract(vorigin, eorigin, dir);
@@ -663,10 +658,10 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 
 	// give more range based on distance (the hit area is wider when closer)
 
-//  foo = -0.94f - (dist/255.0f) * 0.057f;  // (ranging from -0.94 to -0.997) (it happened to be a pretty good range)
+	//foo = -0.94f - (dist/255.0f) * 0.057f;  // (ranging from -0.94 to -0.997) (it happened to be a pretty good range)
 	foo = -0.94f - (dist * (1.0f / 255.0f)) * 0.057f;       // (ranging from -0.94 to -0.997) (it happened to be a pretty good range)
 
-/// Com_Printf("test: if(%f > %f) return qfalse (dot > foo)\n", dot, foo);
+	//Com_Printf("test: if(%f > %f) return qfalse (dot > foo)\n", dot, foo);
 	if (dot > foo)
 	{
 		return qfalse;
@@ -857,7 +852,7 @@ static void CG_Item(centity_t *cent)
 			offset[i] = mins[i] + 0.5 * (maxs[i] - mins[i]);    // find object-space center
 		}
 
-		VectorCopy(cent->lerpOrigin, cent->highlightOrigin);          // set 'midpoint' to origin
+		VectorCopy(cent->lerpOrigin, cent->highlightOrigin);    // set 'midpoint' to origin
 
 		for (i = 0 ; i < 3 ; i++)                               // adjust midpoint by offset and orientation
 		{
@@ -877,8 +872,6 @@ static void CG_Item(centity_t *cent)
 	// highlighting items the player looks at
 	if (cg_drawCrosshairPickups.integer)
 	{
-
-
 		if (cg_drawCrosshairPickups.integer == 2)      // '2' is 'force highlights'
 		{
 			highlight = qtrue;
@@ -1206,7 +1199,6 @@ static void CG_Missile(centity_t *cent)
 			{
 				if (cent->currentState.density - 1 == cg.snap->ps.clientNum)
 				{
-					//ent.customShader = cgs.media.genericConstructionShaderModel;
 					ent.customShader = cgs.media.genericConstructionShader;
 				}
 				else if (!cent->currentState.modelindex2)
@@ -1222,7 +1214,6 @@ static void CG_Missile(centity_t *cent)
 						}
 						else
 						{
-							//ent.customShader = cgs.media.genericConstructionShaderModel;
 							ent.customShader = cgs.media.genericConstructionShader;
 						}
 					}
@@ -1293,7 +1284,6 @@ static void CG_Missile(centity_t *cent)
 		RotateAroundDirection(ent.axis, s1->time);
 	}
 
-	// Rafael
 	// Added this since it may be a propExlosion
 	if (ent.hModel)
 	{
@@ -1439,7 +1429,7 @@ static void CG_Corona(centity_t *cent)
 	}
 	// yeah, I could calc side planes to clip against, but would that be worth it? (much better than dumb dot>= thing?)
 
-	//  CG_Printf("dot: %f\n", dot);
+	//CG_Printf("dot: %f\n", dot);
 
 	if (cg_coronas.integer == 2)       // if set to '2' trace everything
 	{
@@ -1472,7 +1462,6 @@ static void CG_SpotlightEfx(centity_t *cent)
 	vec4_t color        = { 1, 1, 1, .1 };
 	int    splinetarget = 0;
 	char   *cs;
-
 
 	VectorCopy(cent->currentState.origin2, targetpos);
 
@@ -1612,8 +1601,6 @@ static void CG_Constructible(centity_t *cent)
 		//  ent.shaderRGBA[3] = s1->density;
 
 		//if( s1->angles2[0] < 255 )
-		//if( cent->currentState.powerups == STATE_UNDERCONSTRUCTION )
-		//  ent.customShader = cgs.media.genericConstructionShaderBrush;
 
 		trap_R_AddRefEntityToScene(&ent);
 	}
@@ -1623,7 +1610,6 @@ static void CG_Constructible(centity_t *cent)
 	{
 		if (cent->currentState.powerups == STATE_UNDERCONSTRUCTION)
 		{
-			//ent.customShader = cgs.media.genericConstructionShaderBrush;
 			ent.customShader = cgs.media.genericConstructionShader;
 
 			/*switch( cent->currentState.frame ) {
@@ -1695,11 +1681,6 @@ static void CG_Mover(centity_t *cent)
 	// special shader if under construction
 	if (cent->currentState.powerups == STATE_UNDERCONSTRUCTION)
 	{
-		/*if( cent->currentState.solid == SOLID_BMODEL ) {
-		    ent.customShader = cgs.media.genericConstructionShaderBrush;
-		} else {
-		    ent.customShader = cgs.media.genericConstructionShaderModel;
-		}*/
 		ent.customShader = cgs.media.genericConstructionShader;
 	}
 
@@ -1781,19 +1762,6 @@ static void CG_Mover(centity_t *cent)
 	{
 		trap_R_AddRefEntityToScene(&ent);
 	}
-
-	// alarm box spark effects
-	/*  if( cent->currentState.eType == ET_ALARMBOX) {
-	        if(cent->currentState.frame == 2 ) {    // i'm dead
-	            if(rand()%50 == 1) {
-	                vec3_t  angNorm;                // normalized angles
-	                VectorNormalize2(cent->lerpAngles, angNorm);
-	                //      (origin, dir, speed, duration, count, 'randscale')
-	                CG_AddBulletParticles( cent->lerpOrigin, angNorm, 2, 800, 4, 16.0f );
-	                trap_S_StartSound (NULL, cent->currentState.number, CHAN_AUTO, cgs.media.sparkSounds );
-	            }
-	        }
-	    }*/
 }
 
 void CG_Mover_PostProcess(centity_t *cent)
@@ -1810,7 +1778,6 @@ void CG_Mover_PostProcess(centity_t *cent)
 	{
 		return;
 	}
-
 
 	if ((cg.snap->ps.eFlags & EF_MOUNTEDTANK) && cg_entities[cg.snap->ps.clientNum].tagParent == cent->currentState.effect3Time)
 	{
@@ -1902,7 +1869,7 @@ void CG_Beam_2(centity_t *cent)
 	VectorCopy(origin, ent.origin);
 	VectorCopy(origin2, ent.oldorigin);
 
-	//  CG_Printf( "O: %i %i %i OO: %i %i %i\n", (int)origin[0], (int)origin[1], (int)origin[2], (int)origin2[0], (int)origin2[1], (int)origin2[2] );
+	//CG_Printf( "O: %i %i %i OO: %i %i %i\n", (int)origin[0], (int)origin[1], (int)origin[2], (int)origin2[0], (int)origin2[1], (int)origin2[2] );
 	AxisClear(ent.axis);
 	ent.reType       = RT_RAIL_CORE;
 	ent.customShader = cgs.gameShaders[s1->modelindex2];
@@ -2082,11 +2049,6 @@ static void CG_Prop(centity_t *cent)
 	// special shader if under construction
 	if (cent->currentState.powerups == STATE_UNDERCONSTRUCTION)
 	{
-		/*if( cent->currentState.solid == SOLID_BMODEL ) {
-		    ent.customShader = cgs.media.genericConstructionShaderBrush;
-		} else {
-		    ent.customShader = cgs.media.genericConstructionShaderModel;
-		}*/
 		ent.customShader = cgs.media.genericConstructionShader;
 	}
 
@@ -2134,12 +2096,6 @@ cabinetTag_t cabinetInfo[CT_MAX] =
 			"tag_ammo04",
 			"tag_ammo05",
 			"tag_ammo06",
-			/*          "tag_obj1",
-			            "tag_obj1",
-			            "tag_obj1",
-			            "tag_obj1",
-			            "tag_obj1",
-			            "tag_obj1",*/
 		},
 		{
 			"models/multiplayer/supplies/ammobox_wm.md3",
@@ -2153,7 +2109,6 @@ cabinetTag_t cabinetInfo[CT_MAX] =
 			0, 0, 0, 0, 0, 0
 		},
 		"models/mapobjects/supplystands/stand_ammo.md3",
-//      "models/mapobjects/blitz_sd/blitzbody.md3",
 		0,
 	},
 	{
@@ -2537,7 +2492,6 @@ static void CG_ProcessEntity(centity_t *cent)
 /*
 ===============
 CG_AddCEntity
-
 ===============
 */
 void CG_AddCEntity(centity_t *cent)

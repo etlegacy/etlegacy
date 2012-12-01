@@ -751,9 +751,9 @@ qboolean CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 }
 
 #define RESET_PREDICTION                        \
-	cg.lastPredictedCommand = 0;                \
-	cg.backupStateTail      = cg.backupStateTop;     \
-	useCommand              = current - CMD_BACKUP + 1;
+    cg.lastPredictedCommand = 0;                \
+    cg.backupStateTail      = cg.backupStateTop;     \
+    useCommand              = current - CMD_BACKUP + 1;
 
 
 /*

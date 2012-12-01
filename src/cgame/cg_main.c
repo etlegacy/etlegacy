@@ -182,7 +182,7 @@ vmCvar_t cg_autoactivate;
 vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
 
-// Rafael - particle switch
+// particle switch
 vmCvar_t cg_wolfparticles;
 
 vmCvar_t cg_gameType;
@@ -190,7 +190,7 @@ vmCvar_t cg_bloodTime;
 vmCvar_t cg_norender;
 vmCvar_t cg_skybox;
 
-// ydnar: say, team say, etc.
+// say, team say, etc.
 vmCvar_t cg_message;
 vmCvar_t cg_messageType;
 vmCvar_t cg_messagePlayer;
@@ -266,11 +266,11 @@ vmCvar_t cg_debugSkills;
 vmCvar_t cg_drawFireteamOverlay;
 vmCvar_t cg_drawSmallPopupIcons;
 
-//bani - demo recording cvars
+// demo recording cvars
 vmCvar_t cl_demorecording;
 vmCvar_t cl_demofilename;
 vmCvar_t cl_demooffset;
-//bani - wav recording cvars
+// wav recording cvars
 vmCvar_t cl_waverecording;
 vmCvar_t cl_wavefilename;
 vmCvar_t cl_waveoffset;
@@ -464,11 +464,11 @@ cvarTable_t cvarTable[] =
 	{ &cg_drawFireteamOverlay,   "cg_drawFireteamOverlay",   "1",     CVAR_ARCHIVE                 },
 	{ &cg_drawSmallPopupIcons,   "cg_drawSmallPopupIcons",   "1",     CVAR_ARCHIVE                 },
 
-	//bani - demo recording cvars
+	// demo recording cvars
 	{ &cl_demorecording,         "cl_demorecording",         "0",     CVAR_ROM                     },
 	{ &cl_demofilename,          "cl_demofilename",          "",      CVAR_ROM                     },
 	{ &cl_demooffset,            "cl_demooffset",            "0",     CVAR_ROM                     },
-	//bani - wav recording cvars
+	// wav recording cvars
 	{ &cl_waverecording,         "cl_waverecording",         "0",     CVAR_ROM                     },
 	{ &cl_wavefilename,          "cl_wavefilename",          "",      CVAR_ROM                     },
 	{ &cl_waveoffset,            "cl_waveoffset",            "0",     CVAR_ROM                     },
@@ -1212,8 +1212,6 @@ static void CG_RegisterSounds(void)
 	cgs.media.countFight   = trap_S_RegisterSound("sound/osp/fight.wav", qfalse);
 	cgs.media.countPrepare = trap_S_RegisterSound("sound/osp/prepare.wav", qfalse);
 	cgs.media.goatAxis     = trap_S_RegisterSound("sound/osp/goat.wav", qfalse);
-	//cgs.media.winAllies = trap_S_RegisterSound( "sound/osp/winallies.wav",qfalse );
-	//cgs.media.winAxis = trap_S_RegisterSound( "sound/osp/winaxis.wav",qfalse );
 
 	cgs.media.headShot = trap_S_RegisterSound("sound/hitsounds/hithead.wav", qfalse);
 	cgs.media.bodyShot = trap_S_RegisterSound("sound/hitsounds/hit.wav", qfalse);
@@ -1405,7 +1403,7 @@ static void CG_RegisterGraphics(void)
 	// RF, blood cloud
 	cgs.media.bloodCloudShader = trap_R_RegisterShader("bloodCloud");
 
-	// OSP - MV cursor
+	// OSP - MV cursor @multiview
 	//  cgs.media.cursor = trap_R_RegisterShaderNoMip( "ui/assets/mvcursor.tga" );
 
 	// Rafael - cannon
@@ -1507,11 +1505,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.commandCentreSpawnShader[1]       = trap_R_RegisterShaderNoMip("gfx/limbo/cm_flagallied");
 	cgs.media.compassConstructShader            = trap_R_RegisterShaderNoMip("sprites/construct.tga");
 
-	//cgs.media.ingameAutomapBackground = trap_R_RegisterShaderNoMip("ui/assets2/ingame/mapbackground");
-
-	//cgs.media.hudBorderVert = trap_R_RegisterShaderNoMip( "ui/assets2/border_vert.tga" );
-	//cgs.media.hudBorderVert2 = trap_R_RegisterShaderNoMip( "ui/assets2/border_vert2.tga" );
-
 	cgs.media.compassDestroyShader = trap_R_RegisterShaderNoMip("sprites/destroy.tga");
 	cgs.media.slashShader          = trap_R_RegisterShaderNoMip("gfx/2d/numbers/slash");
 	cgs.media.compass2Shader       = trap_R_RegisterShaderNoMip("gfx/2d/compass2.tga");
@@ -1534,8 +1527,6 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.teamStatusBar = trap_R_RegisterShader("gfx/2d/colorbar.tga");
 
-	//cgs.media.redColorBar =       trap_R_RegisterShader("redcolorbar");
-	//cgs.media.blueColorBar =  trap_R_RegisterShader("bluecolorbar");
 	cgs.media.hudSprintBar = trap_R_RegisterShader("sprintbar");
 
 	cgs.media.hudAlliedHelmet = trap_R_RegisterShader("AlliedHelmet");
@@ -1576,7 +1567,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.scoreEliminatedShader = trap_R_RegisterShader("sprites/skull");
 	cgs.media.medicReviveShader     = trap_R_RegisterShader("sprites/medic_revive");
 
-	//cgs.media.vehicleShader = trap_R_RegisterShader( "sprites/vehicle" );
 	cgs.media.destroyShader = trap_R_RegisterShader("sprites/destroy");
 
 	cgs.media.voiceChatShader = trap_R_RegisterShader("sprites/voiceChat");
@@ -1586,8 +1576,6 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.bloodExplosionShader = trap_R_RegisterShader("bloodExplosion");
 
-	//cgs.media.bleedExplosionShader = trap_R_RegisterShader( "bleedExplosion" );
-
 	//----(SA)  water splash
 	cgs.media.waterSplashModel  = trap_R_RegisterModel("models/weaphits/bullet.md3");
 	cgs.media.waterSplashShader = trap_R_RegisterShader("waterSplash");
@@ -1595,7 +1583,7 @@ static void CG_RegisterGraphics(void)
 	// Ridah, spark particles
 	cgs.media.sparkParticleShader = trap_R_RegisterShader("sparkParticle");
 	cgs.media.smokeTrailShader    = trap_R_RegisterShader("smokeTrail");
-	//cgs.media.lightningBoltShader = trap_R_RegisterShader( "lightningBolt" );
+
 	cgs.media.flamethrowerFireStream    = trap_R_RegisterShader("flamethrowerFireStream");
 	cgs.media.flamethrowerBlueStream    = trap_R_RegisterShader("flamethrowerBlueStream");
 	cgs.media.onFireShader2             = trap_R_RegisterShader("entityOnFire1");
@@ -1613,8 +1601,7 @@ static void CG_RegisterGraphics(void)
 	//cgs.media.dirtParticle3Shader = trap_R_RegisterShader( "dirtParticle3" );
 
 	cgs.media.genericConstructionShader = trap_R_RegisterShader("textures/sfx/construction");
-	//cgs.media.genericConstructionShaderBrush =    trap_R_RegisterShader( "textures/sfx/construction" );
-	//cgs.media.genericConstructionShaderModel =    trap_R_RegisterShader( "textures/sfx/construction_model" );
+
 	cgs.media.alliedUniformShader = trap_R_RegisterShader("sprites/uniform_allied");
 	cgs.media.axisUniformShader   = trap_R_RegisterShader("sprites/uniform_axis");
 
@@ -1632,16 +1619,6 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.ccFilterBackOn  = trap_R_RegisterShaderNoMip("gfx/limbo/filter_back_on");
 	cgs.media.ccFilterBackOff = trap_R_RegisterShaderNoMip("gfx/limbo/filter_back_off");
-	/*
-	#define CC_FILTER_AXIS          (1 << 0)
-	#define CC_FILTER_ALLIES        (1 << 1)
-	#define CC_FILTER_SPAWNS        (1 << 2)
-	#define CC_FILTER_CMDPOST       (1 << 3) // TODO
-	#define CC_FILTER_HACABINETS    (1 << 4) // TODO
-	#define CC_FILTER_CONSTRUCTIONS (1 << 5)
-	#define CC_FILTER_DESTRUCTIONS  (1 << 6)
-	#define CC_FILTER_OBJECTIVES    (1 << 7) // TODO
-	*/
 
 	// used in:
 	//  statsranksmedals
@@ -1650,7 +1627,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.ccStamps[0] = trap_R_RegisterShaderNoMip("ui/assets2/stamp_complete");
 	cgs.media.ccStamps[1] = trap_R_RegisterShaderNoMip("ui/assets2/stamp_failed");
 
-	//cgs.media.ccArrow =                   trap_R_RegisterShaderNoMip( "ui/assets2/arrow_up" );
 	cgs.media.ccPlayerHighlight    = trap_R_RegisterShaderNoMip("ui/assets/mp_player_highlight.tga");
 	cgs.media.ccConstructIcon[0]   = trap_R_RegisterShaderNoMip("gfx/limbo/cm_constaxis");
 	cgs.media.ccConstructIcon[1]   = trap_R_RegisterShaderNoMip("gfx/limbo/cm_constallied");
@@ -1668,7 +1644,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.ccMortarHit         = trap_R_RegisterShaderNoMip("gfx/limbo/mort_hit");
 	cgs.media.ccMortarTarget      = trap_R_RegisterShaderNoMip("gfx/limbo/mort_target");
 	cgs.media.ccMortarTargetArrow = trap_R_RegisterShaderNoMip("gfx/limbo/mort_targetarrow");
-
 
 	cgs.media.skillPics[SK_BATTLE_SENSE]                             = trap_R_RegisterShaderNoMip("gfx/limbo/ic_battlesense");
 	cgs.media.skillPics[SK_EXPLOSIVES_AND_CONSTRUCTION]              = trap_R_RegisterShaderNoMip("gfx/limbo/ic_engineer");
@@ -1752,7 +1727,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.hWeaponEchoSnd_2 = trap_S_RegisterSound("sound/weapons/browning/browning_far.wav", qfalse);
 	cgs.media.hWeaponHeatSnd_2 = trap_S_RegisterSound("sound/weapons/browning/browning_heat.wav", qfalse);
 
-	//  cgs.media.hflakWeaponSnd =      trap_S_RegisterSound( "sound/vehicles/misc/20mm_fire.wav", qfalse );
+	//cgs.media.hflakWeaponSnd =      trap_S_RegisterSound( "sound/vehicles/misc/20mm_fire.wav", qfalse );
 
 	cgs.media.minePrimedSound = trap_S_RegisterSound("sound/weapons/landmine/mine_on.wav", qfalse);
 
@@ -1923,7 +1898,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.limboClassButtons[PC_MEDIC]     = trap_R_RegisterShaderNoMip("gfx/limbo/ic_medic");
 	cgs.media.limboSkillsBS                   = trap_R_RegisterShaderNoMip("gfx/limbo/ic_battlesense");
 	cgs.media.limboSkillsLW                   = trap_R_RegisterShaderNoMip("gfx/limbo/ic_lightweap");
-	//cgs.media.limboClassButtonBack =          trap_R_RegisterShaderNoMip( "gfx/limbo/but_class"       );
 
 	cgs.media.limboClassButton2Back_on         = trap_R_RegisterShaderNoMip("gfx/limbo/skill_back_on");
 	cgs.media.limboClassButton2Back_off        = trap_R_RegisterShaderNoMip("gfx/limbo/skill_back_off");
@@ -1943,9 +1917,6 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.limboBlendThingy       = trap_R_RegisterShaderNoMip("gfx/limbo/cc_blend");
 	cgs.media.limboWeaponBlendThingy = trap_R_RegisterShaderNoMip("gfx/limbo/weap_blend");
-
-	//cgs.media.limboCursor_on =                    trap_R_RegisterShaderNoMip( "gfx/limbo/et_cursor_on"    );
-	//cgs.media.limboCursor_off =                   trap_R_RegisterShaderNoMip( "gfx/limbo/et_cursor_off"   );
 
 	cgs.media.limboCounterBorder = trap_R_RegisterShaderNoMip("gfx/limbo/number_border");
 
@@ -1996,7 +1967,6 @@ static void CG_RegisterGraphics(void)
 /*
 ===================
 CG_RegisterClients
-
 ===================
 */
 static void CG_RegisterClients(void)
@@ -2023,7 +1993,6 @@ static void CG_RegisterClients(void)
 CG_ConfigString
 =================
 */
-
 const char *CG_ConfigString(int index)
 {
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
@@ -2583,7 +2552,6 @@ static void CG_RunCinematicFrame(int handle)
 /*
 =================
 CG_LoadHudMenu();
-
 =================
 */
 void CG_LoadHudMenu(void)
@@ -2704,7 +2672,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	DEBUG_INITPROFILE_INIT
 #endif
 
-//  int startat = trap_Milliseconds();
+	//int startat = trap_Milliseconds();
 
 	// clear everything
 	memset( &cgs, 0, sizeof(cgs));
@@ -2724,7 +2692,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cgs.ccZoomFactor = 1.f;
 
-	// OSP - sync to main refdef
+	// sync to main refdef
 	cg.refdef_current = &cg.refdef;
 
 	// get the rendering configuration from the client system
@@ -2732,11 +2700,11 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.screenXScale = cgs.glconfig.vidWidth / 640.0;
 	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0;
 
-	// RF, init the anim scripting
+	// init the anim scripting
 	cgs.animScriptData.soundIndex = CG_SoundScriptPrecache;
 	cgs.animScriptData.playSound  = CG_SoundPlayIndexedScript;
 
-	cg.clientNum = clientNum;       // NERVE - SMF - TA merge
+	cg.clientNum = clientNum;
 
 	cgs.processedSnapshotNum  = serverMessageNum;
 	cgs.serverCommandSequence = serverCommandSequence;
@@ -2749,9 +2717,9 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	// load a few needed things before we do any screen updates
 	cgs.media.charsetShader = trap_R_RegisterShader("gfx/2d/hudchars");       //trap_R_RegisterShader( "gfx/2d/bigchars" );
-	// JOSEPH 4-17-00
+
 	cgs.media.menucharsetShader = trap_R_RegisterShader("gfx/2d/hudchars");
-	// END JOSEPH
+
 	cgs.media.whiteShader     = trap_R_RegisterShader("white");
 	cgs.media.charsetProp     = trap_R_RegisterShaderNoMip("menu/art/font1_prop.tga");
 	cgs.media.charsetPropGlow = trap_R_RegisterShaderNoMip("menu/art/font1_prop_glo.tga");
@@ -2910,7 +2878,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_LoadLocations();
 	memset(cgs.clientLocation, 0, sizeof(cgs.clientLocation));
 
-//  CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
+	//CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
 }
 
 /*

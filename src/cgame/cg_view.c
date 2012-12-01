@@ -349,7 +349,7 @@ void CG_OffsetThirdPersonView(void)
 	{
 		focusDist = 1;  // should never happen
 	}
-	cg.refdefViewAngles[PITCH] = -180 / M_PI * atan2(focusPoint[2], focusDist);
+	cg.refdefViewAngles[PITCH] = -180 / M_PI *atan2(focusPoint[2], focusDist);
 	cg.refdefViewAngles[YAW]  -= cg_thirdPersonAngle.value;
 }
 

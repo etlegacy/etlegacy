@@ -70,7 +70,7 @@
 #define MAX_STEP_CHANGE     32
 
 #define MAX_VERTS_ON_POLY   10
-#define MAX_MARK_POLYS      256 // JPW NERVE was 1024
+#define MAX_MARK_POLYS      256 // was 1024
 
 #define STAT_MINUS          10  // num frame for '-' stats digit
 
@@ -250,8 +250,7 @@ typedef struct
 	animation_t *animation;
 	int animationTime;              // time when the first frame of the animation will be exact
 
-
-	// Ridah, variable speed anims
+	// variable speed anims
 	vec3_t oldFramePos;
 	float animSpeedScale;
 	int oldFrameSnapshotTime;
@@ -263,7 +262,7 @@ typedef struct
 {
 	lerpFrame_t legs, torso;
 	lerpFrame_t head;
-	lerpFrame_t weap;       //----(SA)  autonomous weapon animations
+	lerpFrame_t weap;       // autonomous weapon animations
 	lerpFrame_t hudhead;
 
 	int painTime;
@@ -327,11 +326,10 @@ typedef struct centity_s
 	vec3_t lastLerpAngles;          // (SA) for remembering the last position when a state changes
 	vec3_t lastLerpOrigin;          // Gordon: Added for linked trains player adjust prediction
 
-	// Ridah, trail effects
+	// trail effects
 	int headJuncIndex, headJuncIndex2;
 	int lastTrailTime;
 
-	// Ridah
 	vec3_t fireRiseDir;             // if standing still this will be up, otherwise it'll point away from movement dir
 	int lastFuseSparkTime;
 
@@ -364,7 +362,6 @@ typedef struct centity_s
 	float backdelta;
 	qboolean back;
 	qboolean moving;
-
 
 	int tankframe;
 	int tankparent;
@@ -433,8 +430,6 @@ typedef enum
 	LE_DEBRIS,
 	LE_BLOOD,
 	LE_FUSE_SPARK,
-//  LE_ZOMBIE_SPIRIT,
-//  LE_ZOMBIE_BAT,
 	LE_MOVING_TRACER,
 	LE_EMITTER
 } leType_t;
@@ -558,7 +553,7 @@ typedef struct clientInfo_s
 	int fireteam;
 	int medals[SK_NUM_SKILLS];
 	int skill[SK_NUM_SKILLS];
-	int skillpoints[SK_NUM_SKILLS];             // filled OOB by +wstats
+	int skillpoints[SK_NUM_SKILLS]; // filled OOB by +wstats
 
 	char disguiseName[MAX_QPATH];
 	int disguiseRank;
@@ -577,12 +572,12 @@ typedef struct clientInfo_s
 	// Gordon: for fireteams, has been selected
 	qboolean selected;
 
-	// Gordon: Intermission stats
+	// Intermission stats
 	int totalWeapAcc;
 	int kills;
 	int deaths;
 
-	// OSP - per client MV ps info
+	// per client MV ps info
 	int ammo;
 	int ammoclip;
 	int chargeTime;
@@ -646,14 +641,14 @@ typedef struct weaponInfo_s
 	weaponModel_t weaponModel[W_NUM_TYPES];
 	partModel_t partModels[W_NUM_TYPES][W_MAX_PARTS];
 	qhandle_t flashModel[W_NUM_TYPES];
-	qhandle_t modModels[6];         // like the scope for the rifles
+	qhandle_t modModels[6];             // like the scope for the rifles
 
 	vec3_t flashDlightColor;
 	sfxHandle_t flashSound[4];          // fast firing weapons randomly choose
-	sfxHandle_t flashEchoSound[4];      //----(SA)  added - distant gun firing sound
+	sfxHandle_t flashEchoSound[4];      // distant gun firing sound
 	sfxHandle_t lastShotSound[4];       // sound of the last shot can be different (mauser doesn't have bolt action on last shot for example)
 
-	qhandle_t weaponIcon[2];            //----(SA)  [0] is weap icon, [1] is highlight icon
+	qhandle_t weaponIcon[2];            // [0] is weap icon, [1] is highlight icon
 	qhandle_t ammoIcon;
 
 	qhandle_t missileModel;
@@ -673,8 +668,8 @@ typedef struct weaponInfo_s
 	sfxHandle_t reloadSound;
 	sfxHandle_t reloadFastSound;
 
-	sfxHandle_t spinupSound;        //----(SA)  added // sound started when fire button goes down, and stepped on when the first fire event happens
-	sfxHandle_t spindownSound;      //----(SA)  added // sound called if the above is running but player doesn't follow through and fire
+	sfxHandle_t spinupSound;        // sound started when fire button goes down, and stepped on when the first fire event happens
+	sfxHandle_t spindownSound;      // sound called if the above is running but player doesn't follow through and fire
 
 	sfxHandle_t switchSound;
 } weaponInfo_t;
@@ -758,9 +753,6 @@ typedef struct
 	int yaw;
 	int data;
 	char type;
-//  int             status;
-
-//  qboolean        selected;
 
 	vec2_t transformed;
 	vec2_t automapTransformed;
@@ -819,7 +811,7 @@ typedef struct
 
 	qboolean mapRestart;            // set on a map restart to set back the weapon
 
-	qboolean renderingThirdPerson;          // during deaths, chasecams, etc
+	qboolean renderingThirdPerson;      // during deaths, chasecams, etc
 
 	// prediction state
 	qboolean hyperspace;                // true if prediction has hit a trigger_teleport
@@ -859,7 +851,7 @@ typedef struct
 	// zoom key
 	qboolean zoomed;
 	qboolean zoomedBinoc;
-	int zoomedScope;            //----(SA)  changed to int
+	int zoomedScope;
 	int zoomTime;
 	float zoomSensitivity;
 	float zoomval;
@@ -878,17 +870,14 @@ typedef struct
 	qboolean scoreBoardShowing;
 	int scoreFadeTime;
 	char killerName[MAX_NAME_LENGTH];
-	char spectatorList[MAX_STRING_CHARS];                   // list of names
-	int spectatorLen;                                                           // length of list
-	float spectatorWidth;                                                   // width in device units
-	int spectatorTime;                                                      // next time to offset
-	int spectatorPaintX;                                                    // current paint x
-	int spectatorPaintX2;                                                   // current paint x
-	int spectatorOffset;                                                    // current offset from start
-	int spectatorPaintLen;                                              // current offset from start
-
-	//qboolean  showItems;
-	//int           itemFadeTime;
+	char spectatorList[MAX_STRING_CHARS];    // list of names
+	int spectatorLen;                        // length of list
+	float spectatorWidth;                    // width in device units
+	int spectatorTime;                       // next time to offset
+	int spectatorPaintX;                     // current paint x
+	int spectatorPaintX2;                    // current paint x
+	int spectatorOffset;                     // current offset from start
+	int spectatorPaintLen;                   // current offset from start
 
 	qboolean lightstylesInited;
 
@@ -980,8 +969,7 @@ typedef struct
 	int nextIdleTime;
 	int lastIdleTimeEnd;
 	int idleAnim;
-	int lastWeapSelInBank[MAX_WEAP_BANKS_MP];           // remember which weapon was last selected in a bank for 'weaponbank' commands //----(SA)   added
-// JPW FIXME NOTE: max_weap_banks > max_weap_banks_mp so this should be OK, but if that changes, change this too
+	int lastWeapSelInBank[MAX_WEAP_BANKS_MP]; // remember which weapon was last selected in a bank for 'weaponbank' commands
 
 	// status bar head
 	float headYaw;
@@ -997,10 +985,10 @@ typedef struct
 	float v_dmg_pitch;
 	float v_dmg_roll;
 
-	vec3_t kick_angles;         // weapon kicks
+	vec3_t kick_angles; // weapon kicks
 	vec3_t kick_origin;
 
-	// RF, view flames when getting burnt
+	// view flames when getting burnt
 	int v_fireTime, v_noFireTime;
 	vec3_t v_fireRiseDir;
 
@@ -1010,15 +998,14 @@ typedef struct
 	float lastvalidBobfracsin;
 	int lastvalidBobcycle;
 	float xyspeed;
-	int nextOrbitTime;
 
 	// development tool
 	refEntity_t testModelEntity;
 	char testModelName[MAX_QPATH];
 	qboolean testGun;
 
-	// RF, new kick angles
-	vec3_t kickAVel;            // for damage feedback, weapon recoil, etc
+	// kick angles
+	vec3_t kickAVel; // for damage feedback, weapon recoil, etc
 	// This is the angular velocity, to give a smooth
 	// rotational feedback, rather than sudden jerks
 	vec3_t kickAngles;          // for damage feedback, weapon recoil, etc
@@ -1027,9 +1014,9 @@ typedef struct
 	// is rare enough that we can transmit that as an event
 	float recoilPitch, recoilPitchAngle;
 
-	qboolean cameraMode;        // if rendering from a camera
+	qboolean cameraMode; // if rendering from a camera
 
-	// NERVE - SMF - Objective info display
+	// Objective info display
 	qboolean limboMenu;
 
 	int oidTeam;
@@ -1056,7 +1043,7 @@ typedef struct
 	qboolean latchVictorySound;
 
 	// spawn variables
-	qboolean spawning;                  // the CG_Spawn*() functions are valid
+	qboolean spawning;                          // the CG_Spawn*() functions are valid
 	int numSpawnVars;
 	char *spawnVars[MAX_SPAWN_VARS][2];         // key / value pairs
 	int numSpawnVarChars;
@@ -1092,7 +1079,7 @@ typedef struct
 	int mvClientList;                           // Cached client listing of who is merged
 	cg_window_t *mvCurrentActive;               // Client ID of current active window (-1 = none)
 	cg_window_t *mvCurrentMainview;             // Client ID used in the main display (should always be set if mv_cnt > 0)
-	cg_mvinfo_t mvOverlay[MAX_MVCLIENTS];        // Cached info for MV overlay
+	cg_mvinfo_t mvOverlay[MAX_MVCLIENTS];       // Cached info for MV overlay
 	int mvTeamList[TEAM_NUM_TEAMS][MAX_MVCLIENTS];
 	int mvTotalClients;                         // Total # of clients available for MV processing
 	int mvTotalTeam[TEAM_NUM_TEAMS];
@@ -1108,7 +1095,7 @@ typedef struct
 	vec4_t xhairColor;
 	vec4_t xhairColorAlt;
 
-	// Arnout: allow overriding of countdown sounds
+	// allow overriding of countdown sounds
 	char fiveMinuteSound_g[MAX_QPATH];
 	char fiveMinuteSound_a[MAX_QPATH];
 	char twoMinuteSound_g[MAX_QPATH];
@@ -1133,9 +1120,9 @@ typedef struct
 	int proneMovingTime;
 	fireteamData_t fireTeams[32];
 
-	//      For the bot hud, we keep a bit mask for which bot_action icons to show
+	// For the bot hud, we keep a bit mask for which bot_action icons to show
 	int botMenuIcons;
-	//      And we need to know which one is the selected one
+	// And we need to know which one is the selected one
 	int botSelectedCommand;
 
 	int orderFade;
@@ -1206,8 +1193,6 @@ typedef struct
 	qhandle_t hudSprintBar;
 	qhandle_t hudAxisHelmet;
 	qhandle_t hudAlliedHelmet;
-	qhandle_t redColorBar;
-	qhandle_t blueColorBar;
 
 	qhandle_t teamStatusBar;
 
@@ -1256,7 +1241,6 @@ typedef struct
 	qhandle_t balloonShader;
 	qhandle_t objectiveShader;
 
-	qhandle_t vehicleShader;
 	qhandle_t destroyShader;
 
 	qhandle_t viewBloodShader;
@@ -1273,7 +1257,7 @@ typedef struct
 	qhandle_t binocShader;
 	qhandle_t binocShaderSimple;
 
-	qhandle_t fleshSmokePuffShader;   // JPW NERVE for bullet hit flesh smoke puffs
+	qhandle_t fleshSmokePuffShader;   // for bullet hit flesh smoke puffs
 	qhandle_t nerveTestShader;
 	qhandle_t idTestShader;
 	qhandle_t hud1Shader;
@@ -1288,7 +1272,7 @@ typedef struct
 	qhandle_t waterBubbleShader;
 	qhandle_t bloodTrailShader;
 
-	//----(SA)  cursor hints
+	// cursor hints
 	// would be nice to specify these in the menu scripts instead of permanent handles...
 	qhandle_t usableHintShader;
 	qhandle_t notUsableHintShader;
@@ -1319,7 +1303,7 @@ typedef struct
 	qhandle_t holdableHintShader;
 	qhandle_t inventoryHintShader;
 
-	// DHM - Nerve :: Multiplayer hints
+	// Multiplayer hints
 	qhandle_t buildHintShader;
 	qhandle_t disarmHintShader;
 	qhandle_t reviveHintShader;
@@ -1340,14 +1324,10 @@ typedef struct
 	qhandle_t commandCentreAlliedMineShader;
 	qhandle_t commandCentreSpawnShader[2];
 
-	qhandle_t ingameAutomapBackground;
-
 	qhandle_t landmineHintShader;
 	qhandle_t compassConstructShader;
 	qhandle_t compassDestroyShader;
 	qhandle_t buddyShader;
-	qhandle_t hudBorderVert;
-	qhandle_t hudBorderVert2;
 
 	qhandle_t slashShader;
 	qhandle_t compassShader;
@@ -1357,7 +1337,7 @@ typedef struct
 	qhandle_t oilParticle;
 	qhandle_t oilSlick;
 
-	// Rafael - cannon
+	// cannon
 	qhandle_t smokePuffShaderdirty;
 	qhandle_t smokePuffShaderb1;
 	qhandle_t smokePuffShaderb2;
@@ -1365,23 +1345,23 @@ typedef struct
 	qhandle_t smokePuffShaderb4;
 	qhandle_t smokePuffShaderb5;
 
-	// Rafael - blood pool
+	// blood pool
 	qhandle_t bloodPool;
 
-	// Ridah, viewscreen blood animation
+	// viewscreen blood animation
 	qhandle_t viewBloodAni[5];
 	qhandle_t viewFlashBlood;
 	qhandle_t viewFlashFire[16];
 
-	// Rafael shards
+	// shards
 	qhandle_t shardGlass1;
 	qhandle_t shardGlass2;
 	qhandle_t shardWood1;
 	qhandle_t shardWood2;
 	qhandle_t shardMetal1;
 	qhandle_t shardMetal2;
-//  qhandle_t   shardCeramic1;
-//  qhandle_t   shardCeramic2;
+	//qhandle_t   shardCeramic1; // implement this ?
+	//qhandle_t   shardCeramic2;
 
 	qhandle_t shardRubble1;
 	qhandle_t shardRubble2;
@@ -1426,12 +1406,11 @@ typedef struct
 	qhandle_t teleportEffectModel;
 	qhandle_t teleportEffectShader;
 
-	// Ridah
 	qhandle_t bloodCloudShader;
 	qhandle_t sparkParticleShader;
 	qhandle_t smokeTrailShader;
 	qhandle_t fireTrailShader;
-	//qhandle_t lightningBoltShader;
+
 	qhandle_t flamethrowerFireStream;
 	qhandle_t flamethrowerBlueStream;
 	qhandle_t flamethrowerFuelStream;
@@ -1445,14 +1424,13 @@ typedef struct
 	qhandle_t bulletParticleTrailShader;
 	qhandle_t smokeParticleShader;
 
-	// DHM - Nerve :: bullet hitting dirt
+	// bullet hitting dirt
 	qhandle_t dirtParticle1Shader;
 	qhandle_t dirtParticle2Shader;
 	qhandle_t dirtParticle3Shader;
 
 	qhandle_t genericConstructionShader;
-	//qhandle_t genericConstructionShaderBrush;
-	//qhandle_t genericConstructionShaderModel;
+
 	qhandle_t alliedUniformShader;
 	qhandle_t axisUniformShader;
 
@@ -1510,7 +1488,6 @@ typedef struct
 	sfxHandle_t fireSound;
 	sfxHandle_t waterSound;
 
-	// osp
 	sfxHandle_t countFight;
 	sfxHandle_t countPrepare;
 	sfxHandle_t goatAxis;
@@ -1524,9 +1501,7 @@ typedef struct
 	sfxHandle_t grenadePulseSound3;
 	sfxHandle_t grenadePulseSound2;
 	sfxHandle_t grenadePulseSound1;
-	//  sfxHandle_t sparkSounds;
 
-	// Ridah
 	sfxHandle_t flameSound;
 	sfxHandle_t flameBlowSound;
 	sfxHandle_t flameStartSound;
@@ -1567,7 +1542,7 @@ typedef struct
 	sfxHandle_t sndMedicCall[2];
 
 	qhandle_t ccStamps[2];
-	qhandle_t ccFilterPics[10];
+	qhandle_t ccFilterPics[10]; // FIXME: we just init 0-7
 	qhandle_t ccFilterBackOn;
 	qhandle_t ccFilterBackOff;
 	qhandle_t ccPaper;
@@ -1575,7 +1550,7 @@ typedef struct
 	qhandle_t ccBars[3];
 	qhandle_t ccFlags[3];
 	qhandle_t ccLeather;
-	//qhandle_t ccArrow;
+
 	qhandle_t ccPlayerHighlight;
 	qhandle_t ccConstructIcon[2];
 	qhandle_t ccCmdPost[2];
@@ -1601,7 +1576,7 @@ typedef struct
 	qhandle_t hWeaponEchoSnd_2;
 	qhandle_t hWeaponHeatSnd_2;
 
-	//  qhandle_t   hflakWeaponSnd;
+	//qhandle_t   hflakWeaponSnd;
 
 	qhandle_t hMountedMG42Base;     //  trap_R_RegisterModel( "models/mapobjects/tanks_sd/mg42nestbase.md3" );
 	qhandle_t hMountedMG42Nest;     //  trap_R_RegisterModel( "models/mapobjects/tanks_sd/mg42nest.md3" );
@@ -1634,19 +1609,12 @@ typedef struct
 	qhandle_t limboLight_off;
 
 	qhandle_t limboClassButtons[NUM_PLAYER_CLASSES];
-	//qhandle_t     limboClassButtonBack;
 
 	qhandle_t limboClassButton2Back_on;
 	qhandle_t limboClassButton2Back_off;
 	qhandle_t limboClassButton2Wedge_on;
 	qhandle_t limboClassButton2Wedge_off;
 	qhandle_t limboClassButtons2[NUM_PLAYER_CLASSES];
-
-//  skill_back_on
-//  skill_back_off
-//  skill_4pieces
-//  skill_glass_top_layer
-//  skill_testicon
 
 	qhandle_t limboTeamButtonBack_on;
 	qhandle_t limboTeamButtonBack_off;
@@ -1657,8 +1625,7 @@ typedef struct
 	qhandle_t limboWeaponBlendThingy;
 	qhandle_t limboSkillsLW;
 	qhandle_t limboSkillsBS;
-	//qhandle_t     limboCursor_on;
-	//qhandle_t     limboCursor_off;
+
 	qhandle_t limboCounterBorder;
 	qhandle_t limboWeaponCard1;
 	qhandle_t limboWeaponCard2;
@@ -1777,7 +1744,7 @@ typedef struct oidInfo_s
 
 // locations
 #define MAX_C_LOCATIONS 1024
-// jaquboss - locations draw bits and cvar
+// locations draw bits and cvar
 #define LOC_FTEAM                   1
 #define LOC_VCHAT                   2
 #define LOC_TCHAT                   2
@@ -1825,7 +1792,7 @@ typedef struct cgs_s
 	gametype_t gametype;
 	int antilag;
 
-	float timelimit;                        // NERVE - SMF - made this a float
+	float timelimit;
 	int maxclients;
 	char mapname[MAX_QPATH];
 	char rawmapname[MAX_QPATH];
@@ -1878,10 +1845,6 @@ typedef struct cgs_s
 	int cursorX;
 	int cursorY;
 	int eventHandling;
-	qboolean mouseCaptured;
-	qboolean sizingHud;
-	void *capturedItem;
-	qhandle_t activeCursor;
 
 	// screen fading
 	float fadeAlpha, fadeAlphaCurrent;
@@ -1904,7 +1867,7 @@ typedef struct cgs_s
 
 	int complaintClient;
 	int complaintEndTime;
-	float smokeWindDir; // JPW NERVE for smoke puffs & wind (arty, airstrikes, bullet impacts)
+	float smokeWindDir; // for smoke puffs & wind (arty, airstrikes, bullet impacts)
 
 	playerStats_t playerStats;
 	int numOIDtriggers;
@@ -1985,8 +1948,6 @@ typedef struct cgs_s
 	int ccCurrentCamObjective;
 	int ccRequestedObjective;
 	int ccLastObjectiveRequestTime;
-
-	int loadingLatch;                 // ( 0 = nothing yet, 1 = latched )
 
 	int dbSortedClients[MAX_CLIENTS];
 	int dbSelectedClient;
@@ -2125,7 +2086,7 @@ extern vmCvar_t cg_bigFont;
 
 extern vmCvar_t cg_voiceSpriteTime;
 
-// Rafael - particle switch
+// particle switch
 extern vmCvar_t cg_wolfparticles;
 
 extern vmCvar_t cg_gameType;
@@ -2194,10 +2155,10 @@ extern vmCvar_t cg_debugSkills;
 extern vmCvar_t cg_drawFireteamOverlay;
 extern vmCvar_t cg_drawSmallPopupIcons;
 
-// Gordon: some optimization cvars
+// some optimization cvars
 extern vmCvar_t cg_instanttapout;
 
-// bani - demo recording cvars
+// demo recording cvars
 extern vmCvar_t cl_demorecording;
 extern vmCvar_t cl_demofilename;
 extern vmCvar_t cl_demooffset;
@@ -2311,7 +2272,7 @@ void CG_DrawTopBottom(float x, float y, float w, float h, float size);
 void CG_DrawTopBottom_NoScale(float x, float y, float w, float h, float size);
 void CG_DrawBottom_NoScale(float x, float y, float w, float h, float size);
 
-// NERVE - SMF - localization functions
+// localization functions
 void CG_InitTranslation(void);
 char *CG_TranslateString(const char *string);
 void CG_SaveTransTable(void);
@@ -2326,8 +2287,8 @@ void CG_StatsDebugAddText(const char *text);
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
 void CG_CenterPrint(const char *str, int y, int charWidth);
-void CG_PriorityCenterPrint(const char *str, int y, int charWidth, int priority);       // NERVE - SMF
-void CG_ObjectivePrint(const char *str, int charWidth);                         // NERVE - SMF
+void CG_PriorityCenterPrint(const char *str, int y, int charWidth, int priority);
+void CG_ObjectivePrint(const char *str, int charWidth);
 void CG_DrawActive(stereoFrame_t stereoView);
 void CG_CheckForCursorHints(void);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
@@ -2376,7 +2337,6 @@ int CG_PointContents(const vec3_t point, int passEntityNum);
 void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);
 void CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);
 void CG_PredictPlayerState(void);
-//void CG_LoadDeferredPlayers( void );
 
 // cg_events.c
 void CG_CheckEvents(centity_t *cent);
@@ -2476,9 +2436,8 @@ void CG_OilSlickRemove(centity_t *cent);
 void CG_ParticleBloodCloudZombie(centity_t *cent, vec3_t origin, vec3_t dir);
 void CG_ParticleBloodCloud(centity_t *cent, vec3_t origin, vec3_t dir);
 
-// Ridah, trails
 // cg_trails.c
-// rain - usedby for zinx's trail fixes
+// usedby for zinx's trail fixes
 int CG_AddTrailJunc(int headJuncIndex, void *usedby, qhandle_t shader, int spawnTime, int sType, vec3_t pos, int trailLife, float alphaStart, float alphaEnd, float startWidth, float endWidth, int flags, vec3_t colorStart, vec3_t colorEnd, float sRatio, float animSpeed);
 int CG_AddSparkJunc(int headJuncIndex, void *usedby, qhandle_t shader, vec3_t pos, int trailLife, float alphaStart, float alphaEnd, float startWidth, float endWidth);
 int CG_AddSmokeJunc(int headJuncIndex, void *usedby, qhandle_t shader, vec3_t pos, int trailLife, float alpha, float startWidth, float endWidth);
@@ -2486,11 +2445,11 @@ void CG_AddTrails(void);
 void CG_ClearTrails(void);
 
 // cg_sound.c
-// Ridah, sound scripting
+// sound scripting
 int CG_SoundScriptPrecache(const char *name);
 int CG_SoundPlaySoundScript(const char *name, vec3_t org, int entnum, qboolean buffer);
 void CG_UpdateBufferedSoundScripts(void);
-// TTimo: prototype must match animScriptData_t::playSound
+// prototype must match animScriptData_t::playSound
 void CG_SoundPlayIndexedScript(int index, vec3_t org, int entnum);
 void CG_SoundInit(void);
 
@@ -2508,7 +2467,7 @@ void CG_UnsetActiveOnScriptSpeaker(int index);
 void CG_SetActiveOnScriptSpeaker(int index);
 void CG_AddScriptSpeakers(void);
 
-// Ridah, flamethrower
+// flamethrower
 void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float speedScale, qboolean firing);
 void CG_InitFlameChunks(void);
 void CG_AddFlameChunks(void);
@@ -2803,7 +2762,7 @@ void trap_S_AddLoopingSound(const vec3_t origin, const vec3_t velocity, sfxHandl
 void trap_S_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx, int range, int volume, int soundTime);
 void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin);
 
-// Ridah, talking animations
+// talking animations
 int trap_S_GetVoiceAmplitude(int entityNum);
 
 // repatialize recalculates the volumes of sound as they should be heard by the
@@ -2924,13 +2883,13 @@ void trap_SendMoveSpeedsToGame(int entnum, char *movespeeds);
 
 void trap_UI_Popup(int arg0);
 
-qhandle_t getTestShader(void);   // JPW NERVE shhh
+qhandle_t getTestShader(void);
 void trap_UI_ClosePopup(const char *arg0);
 void trap_Key_GetBindingBuf(int keynum, char *buf, int buflen);
 void trap_Key_SetBinding(int keynum, const char *binding);
 void trap_Key_KeynumToStringBuf(int keynum, char *buf, int buflen);
 
-void trap_TranslateString(const char *string, char *buf);       // NERVE - SMF - localization
+void trap_TranslateString(const char *string, char *buf);       //  localization
 
 int trap_CIN_PlayCinematic(const char *arg0, int xpos, int ypos, int width, int height, int bits);
 e_status trap_CIN_StopCinematic(int handle);
@@ -2944,16 +2903,16 @@ qboolean trap_GetEntityToken(char *buffer, int bufferSize);
 qboolean trap_R_inPVS(const vec3_t p1, const vec3_t p2);
 void trap_GetHunkData(int *hunkused, int *hunkexpected);
 
-//zinx - binary message channel
+// binary message channel
 void trap_SendMessage(char *buf, int buflen);
 messageStatus_t trap_MessageStatus(void);
 
-//bani - dynamic shaders
+// dynamic shaders
 qboolean trap_R_LoadDynamicShader(const char *shadername, const char *shadertext);
-//fretn - render to texture
+// render to texture
 void trap_R_RenderToTexture(int textureid, int x, int y, int w, int h);
 int trap_R_GetTextureId(const char *name);
-//bani - flush rendering buffer
+// flush rendering buffer
 void trap_R_Finish(void);
 
 // Duffy, camera stuff
@@ -2983,7 +2942,7 @@ void CG_LocateArena(void);
 const char *CG_DescriptionForCampaign(void);
 const char *CG_NameForCampaign(void);
 void CG_CloseMenus(void);
-// void CG_CampaignBriefing_f( void );
+
 void CG_LimboMenu_f(void);
 
 void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, int time, clientInfo_t *ci, qboolean animatedHead);
@@ -3049,8 +3008,7 @@ void CG_CampaignBriefingSetup(void);
 int CG_GetFirstSelectedBot(void);
 void CG_AddToJournal(char *text);
 
-// Gordon: Fireteam stuff
-//fireteamData_t* CG_IsOnFireteam(      int clientNum );
+// Fireteam stuff
 #define /*fireteamData_t**/ CG_IsOnFireteam(/*int*/ clientNum) /*{ return*/ cgs.clientinfo[clientNum].fireteamData   /*}*/
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2);
 fireteamData_t *CG_IsFireTeamLeader(int clientNum);

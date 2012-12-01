@@ -1748,10 +1748,6 @@ void CG_AddLocalEntities(void)
 		case LE_BLOOD:
 			CG_AddBloodElements(le);
 			break;
-		/*      case LE_ZOMBIE_SPIRIT:
-		        case LE_ZOMBIE_BAT:
-		            CG_AddClientCritter( le );
-		            break;*/
 
 		case LE_MARK:
 			break;
