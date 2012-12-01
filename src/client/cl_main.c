@@ -1027,7 +1027,7 @@ static void CL_GenerateETKey(void)
 	}
 	else
 	{
-		Com_RandomBytes(buff, sizeof(buff));
+		Com_RandomBytes((byte *)buff, sizeof(buff));
 		f = FS_SV_FOpenFileWrite(BASEGAME "/" ETKEY_FILE);
 		if (!f)
 		{

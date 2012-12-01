@@ -1056,7 +1056,7 @@ static int CG_CalcFov(void)
 				f = (cg.time - cg.zoomTime) / (float)ZOOM_TIME;
 				if (f > 1.0)
 				{
-					fov_x = fov_x;
+					// fov_x = fov_x;
 				}
 				else
 				{
@@ -1709,7 +1709,7 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 			f = (cg.time - cg.zoomTime) / (float)ZOOM_TIME;
 			if (f > 1.0)
 			{
-				fov_x = fov_x;
+				// fov_x = fov_x;
 			}
 			else
 			{
