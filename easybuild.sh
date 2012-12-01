@@ -107,7 +107,7 @@ FEATURE_OMNIBOT=1
 
 mkdir -p ${BUILDDIR}
 CLEANLIBS=0
-if [ -e "${_SRC}/libs/CMakeLists.txt" && ${CLEANLIBS} ]; then
+if [[ -e "${_SRC}/libs/CMakeLists.txt" && ${CLEANLIBS} ]]; then
 	einfo "Cleaning SDL..."
 	cd ${_SRC}/libs/sdl;  make clean
 	einfo "Cleaning libjpeg..."
