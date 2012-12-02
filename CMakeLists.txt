@@ -63,6 +63,7 @@ option(FEATURE_FREETYPE		"Enable Freetype font library support (client)"				OFF)
 option(FEATURE_TRACKBASE	"Enable extended server statistics (server)"				ON)
 option(FEATURE_LUA			"Enable Lua support in game code"							OFF)
 option(FEATURE_MULTIVIEW	"Compile the mod files with multiview support (broken?!)"	OFF)
+option(FEATURE_ANTICHEAT	"Enable server side anti-wallhack code (experimental)"		ON)
 
 if((WIN32 OR UNIX) AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 	option(FEATURE_OMNIBOT	"Enable omnibot build in mod code (Win & Linux server only!)"	OFF)
@@ -389,6 +390,10 @@ endif(BUILD_MOD)
 if(FEATURE_TRACKBASE)
 	add_definitions(-DFEATURE_TRACKBASE)
 endif(FEATURE_TRACKBASE)
+
+if(FEATURE_ANTICHEAT)
+	add_definitions(-DFEATURE_ANTICHEAT)
+endif(FEATURE_ANTICHEAT)
 
 #-----------------------------------------------------------------
 # Build
