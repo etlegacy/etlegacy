@@ -40,7 +40,6 @@
 /*
 ===============
 SV_SetConfigstring
-
 ===============
 */
 void SV_SetConfigstringNoUpdate(int index, const char *val)
@@ -165,7 +164,6 @@ void SV_UpdateConfigStrings(void)
 /*
 ===============
 SV_GetConfigstring
-
 ===============
 */
 void SV_GetConfigstring(int index, char *buffer, int bufferSize)
@@ -190,7 +188,6 @@ void SV_GetConfigstring(int index, char *buffer, int bufferSize)
 /*
 ===============
 SV_SetUserinfo
-
 ===============
 */
 void SV_SetUserinfo(int index, const char *val)
@@ -212,7 +209,6 @@ void SV_SetUserinfo(int index, const char *val)
 /*
 ===============
 SV_GetUserinfo
-
 ===============
 */
 void SV_GetUserinfo(int index, char *buffer, int bufferSize)
@@ -259,7 +255,6 @@ void SV_CreateBaseline(void)
 /*
 ===============
 SV_BoundMaxClients
-
 ===============
 */
 void SV_BoundMaxClients(int minimum)
@@ -796,8 +791,8 @@ void SV_Init(void)
 	sv_maxPing        = Cvar_Get("sv_maxPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_floodProtect   = Cvar_Get("sv_floodProtect", "1", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_allowAnonymous = Cvar_Get("sv_allowAnonymous", "0", CVAR_SERVERINFO);
-	sv_friendlyFire   = Cvar_Get("g_friendlyFire", "1", CVAR_SERVERINFO | CVAR_ARCHIVE);           // NERVE - SMF
-	sv_maxlives       = Cvar_Get("g_maxlives", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO);  // NERVE - SMF
+	sv_friendlyFire   = Cvar_Get("g_friendlyFire", "1", CVAR_SERVERINFO | CVAR_ARCHIVE);
+	sv_maxlives       = Cvar_Get("g_maxlives", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO);
 	sv_needpass       = Cvar_Get("g_needpass", "0", CVAR_SERVERINFO | CVAR_ROM);
 
 	// systeminfo
@@ -811,6 +806,12 @@ void SV_Init(void)
 	Cvar_Get("sv_referencedPakNames", "", CVAR_SYSTEMINFO | CVAR_ROM);
 
 #ifdef FEATURE_ANTICHEAT
+
+	// note:
+	// we might add CVAR_LATCH flag to wh_active saving SV_InitWallhack() call when not needed
+	// but it may be helpfully (see sound issue) when wh_active isn't active all the time - we should give that a try
+	// just enable wh_active by random intervals ... (would also save CPU usage too)
+
 	wh_active = Cvar_Get("wh_active", "0", CVAR_ARCHIVE);
 	// FIXME: adjust bounding box ?
 	wh_bbox_horz = Cvar_Get("wh_bbox_horz", "30", CVAR_ARCHIVE);

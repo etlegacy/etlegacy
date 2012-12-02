@@ -210,8 +210,8 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 	MSG_WriteData(msg, frame->areabits, frame->areabytes);
 
 	{
-		//      int sz = msg->cursize;
-		//      int usz = msg->uncompsize;
+		//int sz = msg->cursize;
+		//int usz = msg->uncompsize;
 
 		// delta encode the playerstate
 		if (oldframe)
@@ -223,7 +223,7 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 			MSG_WriteDeltaPlayerstate(msg, NULL, &frame->ps);
 		}
 
-		//      Com_Printf( "Playerstate delta size: %f\n", ((msg->cursize - sz) * sv_fps->integer) / 8.f );
+		//Com_Printf( "Playerstate delta size: %f\n", ((msg->cursize - sz) * sv_fps->integer) / 8.f );
 	}
 
 	// delta encode the entities
@@ -270,7 +270,7 @@ Build a client snapshot structure
 =============================================================================
 */
 
-//#define   MAX_SNAPSHOT_ENTITIES   1024
+//#define   MAX_SNAPSHOT_ENTITIES   1024 // q3 uses this
 #define MAX_SNAPSHOT_ENTITIES   2048
 
 typedef struct
@@ -349,13 +349,16 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 #endif
 {
 	int            e, i;
-	sharedEntity_t *ent, *playerEnt;
-	svEntity_t     *svEnt;
-	int            l;
-	int            clientarea, clientcluster;
-	int            leafnum;
-	byte           *clientpvs;
-	byte           *bitvector;
+	sharedEntity_t *ent, *playerEnt, *ment;
+#ifdef FEATURE_ANTICHEAT
+	sharedEntity_t *client;
+#endif
+	svEntity_t *svEnt;
+	int        l;
+	int        clientarea, clientcluster;
+	int        leafnum;
+	byte       *clientpvs;
+	byte       *bitvector;
 
 	// during an error shutdown message we may need to transmit
 	// the shutdown message after the server has shutdown, so
@@ -440,7 +443,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 
 		bitvector = clientpvs;
 
-		// Gordon: just check origin for being in pvs, ignore bmodel extents
+		// just check origin for being in pvs, ignore bmodel extents
 		if (ent->r.svFlags & SVF_IGNOREBMODELEXTENTS)
 		{
 			if (bitvector[svEnt->originCluster >> 3] & (1 << (svEnt->originCluster & 7)))
@@ -504,8 +507,6 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		//----(SA) added "visibility dummies"
 		if (ent->r.svFlags & SVF_VISDUMMY)
 		{
-			sharedEntity_t *ment = 0;
-
 			//find master;
 			ment = SV_GentityNum(ent->s.otherEntityNum);
 
@@ -579,9 +580,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		}
 
 #ifdef FEATURE_ANTICHEAT
-		sharedEntity_t *client;
-
-		if (e < sv_maxclients->integer)     // client
+		if (e < sv_maxclients->integer && wh_active->integer > 0)     // client
 		{
 			if (e == frame->ps.clientNum)
 			{
@@ -590,7 +589,8 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 
 			client = SV_GentityNum(frame->ps.clientNum);
 
-			if (wh_active->integer && !portal && !(client->r.svFlags & SVF_BOT)) // playerEnt->r.svFlags & SVF_SELF_PORTAL
+			// FIXME: check for active/ingame/free fly spec client?
+			if (!portal && !(client->r.svFlags & SVF_BOT))
 			{
 				if (!SV_CanSee(frame->ps.clientNum, e))
 				{
@@ -690,7 +690,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 	}
 	org[2] += ps->viewheight;
 
-	//----(SA)  added for 'lean'
+	// added for 'lean'
 	// need to account for lean, so areaportal doors draw properly
 	if (frame->ps.leanf != 0)
 	{
@@ -822,7 +822,6 @@ void SV_SendMessageToClient(msg_t *msg, client_t *client)
 	// set nextSnapshotTime based on rate and requested number of updates
 
 	// local clients get snapshots every frame
-	// TTimo - show_bug.cgi?id=491
 	// added sv_lanForceRate check
 	if (client->netchan.remoteAddress.type == NA_LOOPBACK || (sv_lanForceRate->integer && Sys_IsLANAddress(client->netchan.remoteAddress)))
 	{
@@ -833,7 +832,7 @@ void SV_SendMessageToClient(msg_t *msg, client_t *client)
 	// normal rate / snapshotMsec calculation
 	rateMsec = SV_RateMsec(client, msg->cursize);
 
-	// TTimo - during a download, ignore the snapshotMsec
+	// during a download, ignore the snapshotMsec
 	// the update server on steroids, with this disabled and sv_fps 60, the download can reach 30 kb/s
 	// on a regular server, we will still top at 20 kb/s because of sv_fps 20
 	if (!*client->downloadName && rateMsec < client->snapshotMsec)
@@ -905,8 +904,8 @@ void SV_SendClientIdle(client_t *client)
 
 	SV_SendMessageToClient(&msg, client);
 
-	sv.bpsTotalBytes  += msg.cursize;           // NERVE - SMF - net debugging
-	sv.ubpsTotalBytes += msg.uncompsize / 8;    // NERVE - SMF - net debugging
+	sv.bpsTotalBytes  += msg.cursize;           // net debugging
+	sv.ubpsTotalBytes += msg.uncompsize / 8;    // net debugging
 }
 
 /*
@@ -924,7 +923,7 @@ void SV_SendClientSnapshot(client_t *client)
 
 	if (client->state < CS_ACTIVE)
 	{
-		// bani - #760 - zombie clients need full snaps so they can still process reliable commands
+		// zombie clients need full snaps so they can still process reliable commands
 		// (eg so they can pick up the disconnect reason)
 		if (client->state != CS_ZOMBIE)
 		{
@@ -972,8 +971,8 @@ void SV_SendClientSnapshot(client_t *client)
 
 	SV_SendMessageToClient(&msg, client);
 
-	sv.bpsTotalBytes  += msg.cursize;           // NERVE - SMF - net debugging
-	sv.ubpsTotalBytes += msg.uncompsize / 8;    // NERVE - SMF - net debugging
+	sv.bpsTotalBytes  += msg.cursize;           // net debugging
+	sv.ubpsTotalBytes += msg.uncompsize / 8;    // net debugging
 }
 
 /*
@@ -985,10 +984,10 @@ void SV_SendClientMessages(void)
 {
 	int      i;
 	client_t *c;
-	int      numclients = 0;    // NERVE - SMF - net debugging
+	int      numclients = 0;    // net debugging
 
-	sv.bpsTotalBytes  = 0;      // NERVE - SMF - net debugging
-	sv.ubpsTotalBytes = 0;      // NERVE - SMF - net debugging
+	sv.bpsTotalBytes  = 0;      // net debugging
+	sv.ubpsTotalBytes = 0;      // net debugging
 
 	// Gordon: update any changed configstrings from this frame
 	SV_UpdateConfigStrings();
@@ -998,7 +997,7 @@ void SV_SendClientMessages(void)
 	{
 		c = &svs.clients[i];
 
-		// rain - changed <= CS_ZOMBIE to < CS_ZOMBIE so that the
+		// changed <= CS_ZOMBIE to < CS_ZOMBIE so that the
 		// disconnect reason is properly sent in the network stream
 		if (c->state < CS_ZOMBIE)
 		{
@@ -1017,7 +1016,7 @@ void SV_SendClientMessages(void)
 			continue;       // not time yet
 		}
 
-		numclients++;       // NERVE - SMF - net debugging
+		numclients++;       // net debugging
 
 		// send additional message fragments if the last message
 		// was too large to send at once
@@ -1033,7 +1032,7 @@ void SV_SendClientMessages(void)
 		SV_SendClientSnapshot(c);
 	}
 
-	// NERVE - SMF - net debugging
+	// net debugging
 	if (sv_showAverageBPS->integer && numclients > 0)
 	{
 		float ave = 0, uave = 0;
@@ -1098,8 +1097,7 @@ void SV_CheckClientUserinfoTimer(void)
 		}
 		if ((sv_floodProtect->integer) && (svs.time >= cl->nextReliableUserTime) && (cl->state >= CS_ACTIVE) && (cl->userinfobuffer[0] != 0))
 		{
-			//We have something in the buffer
-			//and it's time to process it
+			// We have something in the buffer and it's time to process it
 			sprintf(bigbuffer, "userinfo \"%s\"", cl->userinfobuffer);
 
 			Cmd_TokenizeString(bigbuffer);
