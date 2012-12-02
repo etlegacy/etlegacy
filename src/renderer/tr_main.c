@@ -78,7 +78,7 @@ void R_Fog(glfog_t *curfog)
 		return;
 	}
 
-	//----(SA) assme values of '0' for these parameters means 'use default'
+	// assme values of '0' for these parameters means 'use default'
 	if (!curfog->density)
 	{
 		curfog->density = 1;
@@ -104,7 +104,7 @@ void R_Fog(glfog_t *curfog)
 
 	qglFogf(GL_FOG_START, curfog->start);
 
-	if (r_zfar->value)                 // (SA) allow override for helping level designers test fog distances
+	if (r_zfar->value)                 // allow override for helping level designers test fog distances
 	{
 		qglFogf(GL_FOG_END, r_zfar->value);
 
@@ -119,7 +119,7 @@ void R_Fog(glfog_t *curfog)
 	qglClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
 }
 
-// Ridah, allow disabling fog temporarily
+// allow disabling fog temporarily
 void R_FogOff(void)
 {
 	if (!fogIsOn)
@@ -192,7 +192,7 @@ void R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float d
 		glfogsettings[fogvar].color[3] = 1;
 		glfogsettings[fogvar].start    = var1;
 		glfogsettings[fogvar].end      = var2;
-		if (density > 1)
+		if (density >= 1)
 		{
 			glfogsettings[fogvar].mode        = GL_LINEAR;
 			glfogsettings[fogvar].drawsky     = qfalse;
@@ -368,7 +368,6 @@ int R_CullPointAndRadius(vec3_t pt, float radius)
 /*
 =================
 R_LocalNormalToWorld
-
 =================
 */
 void R_LocalNormalToWorld(vec3_t local, vec3_t world)
@@ -757,8 +756,8 @@ static void SetFarClip(void)
 		return;
 	}
 
-	//----(SA)  this lets you use r_zfar from the command line to experiment with different
-	//          distances, but setting it back to 0 uses the map (or procedurally generated) default
+	// this lets you use r_zfar from the command line to experiment with different
+	// distances, but setting it back to 0 uses the map (or procedurally generated) default
 	if (r_zfar->value)
 	{
 
@@ -890,13 +889,13 @@ void R_SetupProjection(void)
 	// dynamically compute far clip plane distance
 	SetFarClip();
 
-	// ydnar: set frustum planes (this happens here because of zfar manipulation)
+	// set frustum planes (this happens here because of zfar manipulation)
 	R_SetupFrustum();
 
 	// set up projection matrix
 	zNear = r_znear->value;
 
-	// ydnar: high fov values let players see through walls
+	// high fov values let players see through walls
 	// solution is to move z near plane inward, which decreases zbuffer precision
 	// but if a player wants to play with fov 160, then they can deal with z-fighting
 	// assume fov 90 = scale 1, fov 180 = scale 1/16th
@@ -907,7 +906,7 @@ void R_SetupProjection(void)
 
 	if (r_zfar->value)
 	{
-		zFar = r_zfar->value;   // (SA) allow override for helping level designers test fog distances
+		zFar = r_zfar->value;   // allow override for helping level designers test fog distances
 	}
 	else
 	{
@@ -1318,6 +1317,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 			numTriangles--;
 		}
 	}
+
 	if (!numTriangles)
 	{
 		return qtrue;
@@ -1442,9 +1442,7 @@ int R_SpriteFogNum(trRefEntity_t *ent)
 
 /*
 ==========================================================================================
-
 DRAWSURF SORTING
-
 ==========================================================================================
 */
 
