@@ -37,9 +37,9 @@
 #include "sv_trackbase.h"
 #endif
 
-serverStatic_t svs;                 // persistant server info
-server_t       sv;                  // local server
-vm_t           *gvm = NULL;         // game virtual machine
+serverStatic_t svs;             // persistant server info
+server_t       sv;              // local server
+vm_t           *gvm = NULL;     // game virtual machine
 
 cvar_t *sv_fps = NULL;          // time rate for running non-clients
 cvar_t *sv_timeout;             // seconds without any message
@@ -66,21 +66,21 @@ cvar_t *sv_maxPing;
 cvar_t *sv_pure;
 cvar_t *sv_floodProtect;
 cvar_t *sv_allowAnonymous;
-cvar_t *sv_lanForceRate;  // TTimo - dedicated 1 (LAN) server forces local client rates to 99999 (bug #491)
+cvar_t *sv_lanForceRate;        // dedicated 1 (LAN) server forces local client rates to 99999 (bug #491)
 cvar_t *sv_onlyVisibleClients;
 cvar_t *sv_friendlyFire;
 cvar_t *sv_maxlives;
 cvar_t *sv_needpass;
 
 cvar_t *sv_dl_maxRate;
-cvar_t *sv_dl_timeout;          // IRATA - seconds without any message when cl->state != CS_ACTIVE
+cvar_t *sv_dl_timeout;          // seconds without any message when cl->state != CS_ACTIVE
 
 cvar_t *g_gameType;
 
-cvar_t *sv_showAverageBPS;      // NERVE - SMF - net debugging
+cvar_t *sv_showAverageBPS;      // net debugging
 
-cvar_t *sv_wwwDownload;  // server does a www dl redirect
-cvar_t *sv_wwwBaseURL;  // base URL for redirect
+cvar_t *sv_wwwDownload;         // server does a www dl redirect
+cvar_t *sv_wwwBaseURL;          // base URL for redirect
 // tell clients to perform their downloads while disconnected from the server
 // this gets you a better throughput, but you loose the ability to control the download usage
 cvar_t *sv_wwwDlDisconnected;
@@ -104,10 +104,10 @@ cvar_t *sv_protect;     // 0 - unprotected
 cvar_t *sv_protectLog;  // name of log file
 
 #ifdef FEATURE_ANTICHEAT
-cvar_t *wh_active;
-cvar_t *wh_bbox_horz;
-cvar_t *wh_bbox_vert;
-cvar_t *wh_add_xy;
+cvar_t *sv_wh_active;
+cvar_t *sv_wh_bbox_horz;
+cvar_t *sv_wh_bbox_vert;
+cvar_t *sv_wh_add_xy;
 #endif
 
 static void SVC_Status(netadr_t from, qboolean force);
@@ -232,7 +232,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 		{
 			continue;
 		}
-		// done.
+
 		SV_AddServerCommand(client, (char *)message);
 	}
 }

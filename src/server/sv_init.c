@@ -806,17 +806,16 @@ void SV_Init(void)
 	Cvar_Get("sv_referencedPakNames", "", CVAR_SYSTEMINFO | CVAR_ROM);
 
 #ifdef FEATURE_ANTICHEAT
-
 	// note:
 	// we might add CVAR_LATCH flag to wh_active saving SV_InitWallhack() call when not needed
 	// but it may be helpfully (see sound issue) when wh_active isn't active all the time - we should give that a try
-	// just enable wh_active by random intervals ... (would also save CPU usage too)
+	// just enable sv_wh_active by random intervals ... (would also save CPU usage too)
 
-	wh_active = Cvar_Get("wh_active", "0", CVAR_ARCHIVE);
+	sv_wh_active = Cvar_Get("sv_wh_active", "0", CVAR_ARCHIVE);
 	// FIXME: adjust bounding box ?
-	wh_bbox_horz = Cvar_Get("wh_bbox_horz", "30", CVAR_ARCHIVE);
-	wh_bbox_vert = Cvar_Get("wh_bbox_vert", "60", CVAR_ARCHIVE);
-	wh_add_xy    = Cvar_Get("wh_add_xy", "0", CVAR_ARCHIVE);
+	sv_wh_bbox_horz = Cvar_Get("sv_wh_bbox_horz", "30", CVAR_ARCHIVE);
+	sv_wh_bbox_vert = Cvar_Get("sv_wh_bbox_vert", "60", CVAR_ARCHIVE);
+	sv_wh_add_xy    = Cvar_Get("sv_wh_add_xy", "0", CVAR_ARCHIVE);
 	SV_InitWallhack();
 #endif
 

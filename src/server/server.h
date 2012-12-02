@@ -53,7 +53,7 @@
 
 #define MAX_ENT_CLUSTERS    16
 
-#define MAX_BPS_WINDOW      20          // NERVE - SMF - net debugging
+#define MAX_BPS_WINDOW      20          // net debugging
 
 typedef struct svEntity_s
 {
@@ -66,7 +66,7 @@ typedef struct svEntity_s
 	int lastCluster;                // if all the clusters don't fit in clusternums
 	int areanum, areanum2;
 	int snapshotCounter;            // used to prevent double adding from portal views
-	int originCluster;              // Gordon: calced upon linking, for origin only bmodel vis checks
+	int originCluster;              // calced upon linking, for origin only bmodel vis checks
 } svEntity_t;
 
 typedef enum
@@ -129,7 +129,7 @@ typedef struct
 typedef struct
 {
 	int areabytes;
-	byte areabits[MAX_MAP_AREA_BYTES];                  // portalarea visibility bits
+	byte areabits[MAX_MAP_AREA_BYTES];  // portalarea visibility bits
 	playerState_t ps;
 	int num_entities;
 	int first_entity;                   // into the circular sv_packet_entities[]
@@ -181,15 +181,15 @@ typedef struct client_s
 	int lastClientCommand;              // reliable client message sequence
 	char lastClientCommandString[MAX_STRING_CHARS];
 	sharedEntity_t *gentity;            // SV_GentityNum(clientnum)
-	char name[MAX_NAME_LENGTH];                     // extracted from userinfo, high bits masked
+	char name[MAX_NAME_LENGTH];         // extracted from userinfo, high bits masked
 
 	// downloading
-	char downloadName[MAX_QPATH];            // if not empty string, we are downloading
+	char downloadName[MAX_QPATH];       // if not empty string, we are downloading
 	fileHandle_t download;              // file being downloaded
 	int downloadSize;                   // total bytes (can't use EOF because of paks)
 	int downloadCount;                  // bytes sent
-	int downloadClientBlock;                // last block we sent to the client, awaiting ack
-	int downloadCurrentBlock;               // current block number
+	int downloadClientBlock;            // last block we sent to the client, awaiting ack
+	int downloadCurrentBlock;           // current block number
 	int downloadXmitBlock;              // last block we xmited
 	unsigned char *downloadBlocks[MAX_DOWNLOAD_WINDOW];     // the buffers for the download blocks
 	int downloadBlockSize[MAX_DOWNLOAD_WINDOW];
@@ -227,7 +227,6 @@ typedef struct client_s
 	//%	netchan_buffer_t **netchan_end_queue;
 	netchan_buffer_t *netchan_end_queue;
 
-	//bani
 	int downloadnotify;
 
 	int protocol; //We can access clients protocol any time
@@ -347,7 +346,7 @@ extern cvar_t *sv_allowAnonymous;
 extern cvar_t *sv_lanForceRate;
 extern cvar_t *sv_onlyVisibleClients;
 
-extern cvar_t *sv_showAverageBPS;           // NERVE - SMF - net debugging
+extern cvar_t *sv_showAverageBPS;           // net debugging
 
 extern cvar_t *g_gameType;
 
@@ -374,17 +373,17 @@ extern cvar_t *sv_protect;
 extern cvar_t *sv_protectLog;
 
 #ifdef FEATURE_ANTICHEAT
-extern cvar_t *wh_active;
-extern cvar_t *wh_bbox_horz;
-extern cvar_t *wh_bbox_vert;
-extern cvar_t *wh_add_xy;
+extern cvar_t *sv_wh_active;
+extern cvar_t *sv_wh_bbox_horz;
+extern cvar_t *sv_wh_bbox_vert;
+extern cvar_t *sv_wh_add_xy;
 #endif
 
 //===========================================================
 
 // sv_main.c
 
-void SV_FinalCommand(char *cmd, qboolean disconnect);   // ydnar: added disconnect flag so map changes can use this function as well
+void SV_FinalCommand(char *cmd, qboolean disconnect);   // added disconnect flag so map changes can use this function as well
 void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
 
 void SV_AddOperatorCommands(void);
@@ -535,7 +534,7 @@ void SV_Netchan_Transmit(client_t *client, msg_t *msg);
 void SV_Netchan_TransmitNextFragment(client_t *client);
 qboolean SV_Netchan_Process(client_t *client, msg_t *msg);
 
-//bani - cl->downloadnotify
+// cl->downloadnotify
 #define DLNOTIFY_REDIRECT   0x00000001  // "Redirecting client ..."
 #define DLNOTIFY_BEGIN      0x00000002  // "clientDownload: 4 : beginning ..."
 #define DLNOTIFY_ALL        (DLNOTIFY_REDIRECT | DLNOTIFY_BEGIN)

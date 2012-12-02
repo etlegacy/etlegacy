@@ -264,9 +264,7 @@ void SV_UpdateServerCommandsToClient(client_t *client, msg_t *msg)
 
 /*
 =============================================================================
-
 Build a client snapshot structure
-
 =============================================================================
 */
 
@@ -580,7 +578,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		}
 
 #ifdef FEATURE_ANTICHEAT
-		if (e < sv_maxclients->integer && wh_active->integer > 0)     // client
+		if (e < sv_maxclients->integer && sv_wh_active->integer > 0)     // client
 		{
 			if (e == frame->ps.clientNum)
 			{
@@ -733,7 +731,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 		*state = ent->s;
 
 #ifdef FEATURE_ANTICHEAT
-		if (wh_active->integer && entityNumbers.snapshotEntities[i] < sv_maxclients->integer)
+		if (sv_wh_active->integer && entityNumbers.snapshotEntities[i] < sv_maxclients->integer)
 		{
 			if (SV_PositionChanged(entityNumbers.snapshotEntities[i]))
 			{
@@ -867,7 +865,6 @@ SV_SendClientIdle
 
 bani - There is no need to send full snapshots to clients who are loading a map.
 So we send them "idle" packets with the bare minimum required to keep them on the server.
-
 =======================
 */
 void SV_SendClientIdle(client_t *client)
@@ -913,7 +910,6 @@ void SV_SendClientIdle(client_t *client)
 SV_SendClientSnapshot
 
 Also called by SV_FinalCommand
-
 =======================
 */
 void SV_SendClientSnapshot(client_t *client)

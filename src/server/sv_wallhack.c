@@ -424,9 +424,9 @@ void SV_InitWallhack(void)
 
 	for (i = 0; i < 8; i++)
 	{
-		delta[i][0] = ((float) wh_bbox_horz->integer * delta_sign[i][0]) / 2.0;
-		delta[i][1] = ((float) wh_bbox_horz->integer * delta_sign[i][1]) / 2.0;
-		delta[i][2] = ((float) wh_bbox_vert->integer * delta_sign[i][2]) / 2.0;
+		delta[i][0] = ((float) sv_wh_bbox_horz->integer * delta_sign[i][0]) / 2.0;
+		delta[i][1] = ((float) sv_wh_bbox_horz->integer * delta_sign[i][1]) / 2.0;
+		delta[i][2] = ((float) sv_wh_bbox_vert->integer * delta_sign[i][2]) / 2.0;
 	}
 
 	rand_seed = (int) time(NULL);
@@ -554,7 +554,7 @@ void SV_RandomizePos(int player, int other)
 
 	// add a bit of X/Y offset for sound direction
 	// it is only for testing, will be removed
-	if (wh_add_xy->integer)
+	if (sv_wh_add_xy->integer)
 	{
 		los[2] = 0.0;
 		VectorNormalize(los);
