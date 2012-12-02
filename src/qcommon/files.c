@@ -4574,7 +4574,7 @@ unsigned int FS_ChecksumOSPath(char *OSPath)
  */
 qboolean FS_Unzip(char *filename)
 {
-	char            zipPath[PATH_MAX];
+	char            zipPath[MAX_OSPATH];
 	unzFile         zipFile;
 	unz_global_info zipInfo;
 	int             err, i;
@@ -4602,8 +4602,8 @@ qboolean FS_Unzip(char *filename)
 	for (i = 0; i < zipInfo.number_entry; i++)
 	{
 		unz_file_info file_info;
-		char          newFileName[256];
-		char          newFilePath[PATH_MAX];
+		char          newFileName[MAX_OSPATH];
+		char          newFilePath[MAX_OSPATH];
 		FILE          *newFile;
 
 		err = unzGetCurrentFileInfo(zipFile, &file_info, newFileName, sizeof(newFileName), NULL, 0, NULL, 0);
