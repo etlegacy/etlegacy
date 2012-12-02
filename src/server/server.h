@@ -373,6 +373,13 @@ extern cvar_t *sv_advert;
 extern cvar_t *sv_protect;
 extern cvar_t *sv_protectLog;
 
+#ifdef FEATURE_ANTICHEAT
+extern cvar_t *wh_active;
+extern cvar_t *wh_bbox_horz;
+extern cvar_t *wh_bbox_vert;
+extern cvar_t *wh_add_xy;
+#endif
+
 //===========================================================
 
 // sv_main.c
@@ -465,6 +472,15 @@ int SV_BotGetConsoleMessage(int client, char *buf, int size);
 
 int BotImport_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
 void BotImport_DebugPolygonDelete(int id);
+
+// sv_wallhack.c
+#ifdef FEATURE_ANTICHEAT
+void SV_RandomizePos(int player, int other);
+void SV_InitWallhack(void);
+void SV_RestorePos(int cli);
+int SV_CanSee(int player, int other);
+int SV_PositionChanged(int cli);
+#endif
 
 //============================================================
 

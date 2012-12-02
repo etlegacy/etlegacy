@@ -103,15 +103,20 @@ cvar_t *sv_protect;     // 0 - unprotected
                         // 2 - OPenWolf method
 cvar_t *sv_protectLog;  // name of log file
 
+#ifdef FEATURE_ANTICHEAT
+cvar_t *wh_active;
+cvar_t *wh_bbox_horz;
+cvar_t *wh_bbox_vert;
+cvar_t *wh_add_xy;
+#endif
+
 static void SVC_Status(netadr_t from, qboolean force);
 
 #define LL(x) x = LittleLong(x)
 
 /*
 =============================================================================
-
 EVENT MESSAGES
-
 =============================================================================
 */
 
@@ -234,9 +239,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 
 /*
 ==============================================================================
-
 MASTER SERVER FUNCTIONS
-
 ==============================================================================
 */
 
@@ -436,7 +439,7 @@ void SV_MasterShutdown(void)
 {
 	// send a hearbeat right now
 	svs.nextHeartbeatTime = -9999;
-	SV_MasterHeartbeat(HEARTBEAT_DEAD);                 // NERVE - SMF - changed to flatline
+	SV_MasterHeartbeat(HEARTBEAT_DEAD);                 // changed to flatline
 
 	// when the master tries to poll the server, it won't respond, so
 	// it will be removed from the list
@@ -444,9 +447,7 @@ void SV_MasterShutdown(void)
 
 /*
 ==============================================================================
-
 CONNECTIONLESS COMMANDS
-
 ==============================================================================
 */
 
@@ -1312,9 +1313,7 @@ int SV_FrameMsec()
 {
 	if (sv_fps)
 	{
-		int frameMsec;
-
-		frameMsec = 1000.0f / sv_fps->value;
+		int frameMsec = 1000.0f / sv_fps->value;
 
 		if (frameMsec < sv.timeResidual)
 		{

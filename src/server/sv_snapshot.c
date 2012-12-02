@@ -342,7 +342,11 @@ static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sh
 SV_AddEntitiesVisibleFromPoint
 ===============
 */
+#ifdef FEATURE_ANTICHEAT
+static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *frame, snapshotEntityNumbers_t *eNums, qboolean portal)
+#else
 static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *frame, snapshotEntityNumbers_t *eNums)
+#endif
 {
 	int            e, i;
 	sharedEntity_t *ent, *playerEnt;
@@ -373,7 +377,11 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 	playerEnt = SV_GentityNum(frame->ps.clientNum);
 	if (playerEnt->r.svFlags & SVF_SELF_PORTAL)
 	{
+#ifdef FEATURE_ANTICHEAT
+		SV_AddEntitiesVisibleFromPoint(playerEnt->s.origin2, frame, eNums, qtrue); //  portal qtrue?!
+#else
 		SV_AddEntitiesVisibleFromPoint(playerEnt->s.origin2, frame, eNums);
+#endif
 	}
 
 	for (e = 0 ; e < sv.num_entities ; e++)
@@ -484,7 +492,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 				}
 				if (l == svEnt->lastCluster)
 				{
-					continue;
+					continue; // not visible
 				}
 			}
 			else
@@ -570,13 +578,41 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 			}
 		}
 
+#ifdef FEATURE_ANTICHEAT
+		sharedEntity_t *client;
+
+		if (e < sv_maxclients->integer)     // client
+		{
+			if (e == frame->ps.clientNum)
+			{
+				continue;
+			}
+
+			client = SV_GentityNum(frame->ps.clientNum);
+
+			if (wh_active->integer && !portal && !(client->r.svFlags & SVF_BOT)) // playerEnt->r.svFlags & SVF_SELF_PORTAL
+			{
+				if (!SV_CanSee(frame->ps.clientNum, e))
+				{
+					SV_RandomizePos(frame->ps.clientNum, e);
+					SV_AddEntToSnapshot(client, svEnt, ent, eNums);
+					continue;
+				}
+			}
+		}
+#endif
+
 		// add it
 		SV_AddEntToSnapshot(playerEnt, svEnt, ent, eNums);
 
 		// if its a portal entity, add everything visible from its camera position
 		if (ent->r.svFlags & SVF_PORTAL)
 		{
+#ifdef FEATURE_ANTICHEAT
+			SV_AddEntitiesVisibleFromPoint(ent->s.origin2, frame, eNums, qtrue /*localClient*/);
+#else
 			SV_AddEntitiesVisibleFromPoint(ent->s.origin2, frame, eNums /*, qtrue, localClient*/);
+#endif
 		}
 
 		continue;
@@ -667,7 +703,11 @@ static void SV_BuildClientSnapshot(client_t *client)
 
 	// add all the entities directly visible to the eye, which
 	// may include portal entities that merge other viewpoints
+#ifdef FEATURE_ANTICHEAT
+	SV_AddEntitiesVisibleFromPoint(org, frame, &entityNumbers, qfalse /*client->netchan.remoteAddress.type == NA_LOOPBACK*/);
+#else
 	SV_AddEntitiesVisibleFromPoint(org, frame, &entityNumbers /*, qfalse, client->netchan.remoteAddress.type == NA_LOOPBACK*/);
+#endif
 
 	// if there were portals visible, there may be out of order entities
 	// in the list which will need to be resorted for the delta compression
@@ -691,6 +731,17 @@ static void SV_BuildClientSnapshot(client_t *client)
 		ent    = SV_GentityNum(entityNumbers.snapshotEntities[i]);
 		state  = &svs.snapshotEntities[svs.nextSnapshotEntities % svs.numSnapshotEntities];
 		*state = ent->s;
+
+#ifdef FEATURE_ANTICHEAT
+		if (wh_active->integer && entityNumbers.snapshotEntities[i] < sv_maxclients->integer)
+		{
+			if (SV_PositionChanged(entityNumbers.snapshotEntities[i]))
+			{
+				SV_RestorePos(entityNumbers.snapshotEntities[i]);
+			}
+		}
+#endif
+
 		svs.nextSnapshotEntities++;
 		// this should never hit, map should always be restarted first in SV_Frame
 		if (svs.nextSnapshotEntities >= 0x7FFFFFFE)

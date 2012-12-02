@@ -810,6 +810,15 @@ void SV_Init(void)
 	Cvar_Get("sv_referencedPaks", "", CVAR_SYSTEMINFO | CVAR_ROM);
 	Cvar_Get("sv_referencedPakNames", "", CVAR_SYSTEMINFO | CVAR_ROM);
 
+#ifdef FEATURE_ANTICHEAT
+	wh_active = Cvar_Get("wh_active", "0", CVAR_ARCHIVE);
+	// FIXME: adjust bounding box ?
+	wh_bbox_horz = Cvar_Get("wh_bbox_horz", "30", CVAR_ARCHIVE);
+	wh_bbox_vert = Cvar_Get("wh_bbox_vert", "60", CVAR_ARCHIVE);
+	wh_add_xy    = Cvar_Get("wh_add_xy", "0", CVAR_ARCHIVE);
+	SV_InitWallhack();
+#endif
+
 	// server vars
 	sv_rconPassword    = Cvar_Get("rconPassword", "", CVAR_TEMP);
 	sv_privatePassword = Cvar_Get("sv_privatePassword", "", CVAR_TEMP);
