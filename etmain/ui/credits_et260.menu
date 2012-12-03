@@ -130,6 +130,5 @@ menuDef {
 	LABELWHITE( 6, CREDITS_Y+300, (WINDOW_WIDTH-24)+12, 10, "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and other countries.", .2, ITEM_ALIGN_CENTER, .5*((WINDOW_WIDTH-24)+12), 8 )
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BACK", .3, 14, close credits_et260 ; open MAIN_MENU )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "ADDITIONAL", .3, 14, close credits_et260 ; open credits_additional )
+	BUTTON( 260, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-350), 18, "BACK", .2, 14, close credits_et260 ; open credits_etlegacy )
 }

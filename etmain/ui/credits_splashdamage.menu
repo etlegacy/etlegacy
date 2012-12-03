@@ -182,7 +182,5 @@ menuDef {
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+280, .5*(WINDOW_WIDTH-24), 10, "Additional Level Design", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BACK", .3, 14, close credits_splashdamage ; open main )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "ET LEGACY", .3, 14, close credits_splashdamage ; open credits_etlegacy )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "ID SOFTWARE", .3, 14, close credits_splashdamage ; open credits_idsoftware )
+	BUTTON( 260, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-350), 18, "BACK", .2, 14, close credits_splashdamage ; open credits_etlegacy )
 }
