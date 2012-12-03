@@ -204,7 +204,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 	// see http://aluigi.altervista.org/adv/q3msgboom-adv.txt
 	if (strlen((char *)message) > 1022)
 	{
-		Com_Printf("Warning: q3infoboom/q3msgboom exploit attack.\n");
+		SV_WriteAttackLog("Warning: q3infoboom/q3msgboom exploit attack.\n"); // FIXME: add client slot
 		return;
 	}
 
@@ -661,8 +661,8 @@ static void SVC_Status(netadr_t from, qboolean force)
 		// Prevent using getstatus as an amplifier
 		if (SVC_RateLimitAddress(from, 10, 1000))
 		{
-			Com_Printf("SVC_Status: rate limit from %s exceeded, dropping request\n",
-			           NET_AdrToString(from));
+			SV_WriteAttackLog(va("SVC_Status: rate limit from %s exceeded, dropping request\n",
+			                     NET_AdrToString(from)));
 			return;
 		}
 
@@ -670,7 +670,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 		// excess outbound bandwidth usage when being flooded inbound
 		if (SVC_RateLimit(&outboundLeakyBucket, 10, 100))
 		{
-			Com_Printf("SVC_Status: rate limit exceeded, dropping request\n");
+			SV_WriteAttackLog("SVC_Status: rate limit exceeded, dropping request\n");
 			return;
 		}
 	}
@@ -724,8 +724,8 @@ void SVC_Info(netadr_t from)
 		// Prevent using getinfo as an amplifier
 		if (SVC_RateLimitAddress(from, 10, 1000))
 		{
-			Com_Printf("SVC_Info: rate limit from %s exceeded, dropping request\n",
-			           NET_AdrToString(from));
+			SV_WriteAttackLog(va("SVC_Info: rate limit from %s exceeded, dropping request\n",
+			                     NET_AdrToString(from)));
 			return;
 		}
 
@@ -733,7 +733,7 @@ void SVC_Info(netadr_t from)
 		// excess outbound bandwidth usage when being flooded inbound
 		if (SVC_RateLimit(&outboundLeakyBucket, 10, 100))
 		{
-			Com_Printf("SVC_Info: rate limit exceeded, dropping request\n");
+			SV_WriteAttackLog("SVC_Info: rate limit exceeded, dropping request\n");
 			return;
 		}
 	}
@@ -900,7 +900,7 @@ qboolean SV_CheckDRDoS(netadr_t from)
 	{
 		if (lastGlobalLogTime + 1000 <= svs.time)  // Limit one log every second.
 		{
-			Com_Printf("Detected flood of getinfo/getstatus connectionless packets\n");
+			SV_WriteAttackLog("Detected flood of getinfo/getstatus connectionless packets\n");
 			lastGlobalLogTime = svs.time;
 		}
 		return qtrue;
@@ -909,8 +909,8 @@ qboolean SV_CheckDRDoS(netadr_t from)
 	{
 		if (lastSpecificLogTime + 1000 <= svs.time)   // Limit one log every second.
 		{
-			Com_Printf("Possible DRDoS attack to address %i.%i.%i.%i, ignoring getinfo/getstatus connectionless packet\n",
-			           exactFrom.ip[0], exactFrom.ip[1], exactFrom.ip[2], exactFrom.ip[3]);
+			SV_WriteAttackLog(va("Possible DRDoS attack to address %i.%i.%i.%i, ignoring getinfo/getstatus connectionless packet\n",
+			                     exactFrom.ip[0], exactFrom.ip[1], exactFrom.ip[2], exactFrom.ip[3]));
 			lastSpecificLogTime = svs.time;
 		}
 		return qtrue;
@@ -942,8 +942,8 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 	// Prevent using rcon as an amplifier and make dictionary attacks impractical
 	if ((sv_protect->integer & SVP_IOQ3) && SVC_RateLimitAddress(from, 10, 1000))
 	{
-		Com_Printf("Bad rcon - rate limit from %s exceeded, dropping request\n",
-		           NET_AdrToString(from));
+		SV_WriteAttackLog(va("Bad rcon - rate limit from %s exceeded, dropping request\n",
+		                     NET_AdrToString(from)));
 		return;
 	}
 
@@ -955,17 +955,17 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 		// Make DoS via rcon impractical
 		if ((sv_protect->integer & SVP_IOQ3) && SVC_RateLimit(&bucket, 10, 1000))
 		{
-			Com_Printf("Bad rcon - rate limit exceeded, dropping request\n");
+			SV_WriteAttackLog("Bad rcon - rate limit exceeded, dropping request\n");
 			return;
 		}
 
 		valid = qfalse;
-		Com_Printf("Bad rcon from %s: %s\n", NET_AdrToString(from), Cmd_Argv(2));
+		SV_WriteAttackLog(va("Bad rcon from %s: %s\n", NET_AdrToString(from), Cmd_Argv(2)));
 	}
 	else
 	{
 		valid = qtrue;
-		Com_Printf("Rcon from %s: %s\n", NET_AdrToString(from), Cmd_Argv(2));
+		Com_Printf("Rcon from %s: %s\n", NET_AdrToString(from), Cmd_Argv(2)); // don't print in attack log / vanilla behaviour
 	}
 
 	// start redirecting all print outputs to the packet
@@ -984,7 +984,9 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 	}
 	else if (!valid)
 	{
+		// here we print both (vanilla behaviour + attack log)
 		Com_Printf("Bad rconpassword.\n");
+		SV_WriteAttackLog("Bad rconpassword.\n"); // FIXME: add IP INFO
 	}
 	else
 	{
@@ -1071,9 +1073,9 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	}
 	else
 	{
-		Com_DPrintf("bad connectionless packet from %s:\n%s\n"
-		            , NET_AdrToString(from), s);
-	}
+		SV_WriteAttackLog(va("bad connectionless packet from %s:\n%s\n" // changed from Com_DPrintf to print in attack log
+		                     , NET_AdrToString(from), s));              // this was never reported to admins before so they might be confused
+	}                                                                   // note: if protect log isn't set we do Com_Printf
 }
 
 void SV_PacketEvent(netadr_t from, msg_t *msg)
@@ -1223,7 +1225,7 @@ static void SV_CheckTimeouts(void)
 {
 	client_t *cl;
 	int      i;
-	int      droppoint    = svs.time - 1000 * sv_timeout->integer;   // default 40 - used in game and while vid_restart
+	int      droppoint    = svs.time - 1000 * sv_timeout->integer;    // default 40 - used in game and while vid_restart
 	int      zombiepoint  = svs.time - 1000 * sv_zombietime->integer; // default 2
 	int      droppoint_dl = svs.time - 1000 * sv_dl_timeout->integer; // default 240
 

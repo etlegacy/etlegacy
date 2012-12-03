@@ -37,6 +37,10 @@
 #include "sv_trackbase.h"
 #endif
 
+// Attack log file is started when server is init (!= sv_running 1!)
+// we even log attacks when the server is waiting for rcon and doesn't run a map
+int attHandle = 0; // server attack log file handle
+
 /*
 ===============
 SV_SetConfigstring
@@ -732,7 +736,6 @@ void SV_SpawnServer(char *server)
 	SV_SetConfigstring(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
 	cvar_modifiedFlags &= ~CVAR_SERVERINFO;
 
-	// NERVE - SMF
 	SV_SetConfigstring(CS_WOLFINFO, Cvar_InfoString(CVAR_WOLFINFO));
 	cvar_modifiedFlags &= ~CVAR_WOLFINFO;
 
@@ -758,6 +761,43 @@ void SV_SpawnServer(char *server)
 	Cvar_Set("sv_serverRestarting", "0");
 
 	Com_Printf("-----------------------------------\n");
+}
+
+void SV_WriteAttackLog(const void *log)
+{
+	if (attHandle > 0)
+	{
+		FS_Write(log, strlen(log), attHandle);
+	}
+	else
+	{
+		Com_Printf(log);
+	}
+}
+
+void SV_InitAttackLog()
+{
+	if (sv_protectLog->string[0])
+	{
+		// in sync, so admins can check this at runtime
+		FS_FOpenFileByMode(sv_protectLog->string, &attHandle, FS_APPEND_SYNC);
+
+		if (attHandle < 0)
+		{
+			Com_Printf("WARNING: Couldn't open server attack logfile %s\n", sv_protectLog->string);
+		}
+		else
+		{
+			Com_Printf("Logging server attacks in file %s\n", sv_protectLog->string);
+			SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
+			SV_WriteAttackLog("Start server attack log\n"); // FIXME: add date & additional info
+			SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
+		}
+	}
+	else
+	{
+		Com_Printf("Not logging server attacks to disk.\n");
+	}
 }
 
 /*
@@ -848,9 +888,9 @@ void SV_Init(void)
 
 	sv_onlyVisibleClients = Cvar_Get("sv_onlyVisibleClients", "0", 0);
 
-	sv_showAverageBPS = Cvar_Get("sv_showAverageBPS", "0", 0); // NERVE - SMF - net debugging
+	sv_showAverageBPS = Cvar_Get("sv_showAverageBPS", "0", 0); // net debugging
 
-	// NERVE - SMF - create user set cvars
+	// create user set cvars
 	Cvar_Get("g_userTimeLimit", "0", 0);
 	Cvar_Get("g_userAlliedRespawnTime", "0", 0);
 	Cvar_Get("g_userAxisRespawnTime", "0", 0);
@@ -886,7 +926,7 @@ void SV_Init(void)
 	sv_packetloss  = Cvar_Get("sv_packetloss", "0", CVAR_CHEAT);
 	sv_packetdelay = Cvar_Get("sv_packetdelay", "0", CVAR_CHEAT);
 
-	// fretn - note: redirecting of clients to other servers relies on this,
+	// note: redirecting of clients to other servers relies on this,
 	// ET://someserver.com
 	sv_fullmsg = Cvar_Get("sv_fullmsg", "Server is full.", CVAR_ARCHIVE);
 
@@ -894,6 +934,7 @@ void SV_Init(void)
 
 	sv_protect    = Cvar_Get("sv_protect", "1", CVAR_ARCHIVE);
 	sv_protectLog = Cvar_Get("sv_protectLog", "sv_attack.log", CVAR_ARCHIVE);
+	SV_InitAttackLog();
 
 	// init the botlib here because we need the pre-compiler in the UI
 	SV_BotInitBotLib();
@@ -933,7 +974,7 @@ void SV_FinalCommand(char *cmd, qboolean disconnect)
 					//%	SV_SendServerCommand( cl, "print \"%s\"", message );
 					SV_SendServerCommand(cl, "%s", cmd);
 
-					// ydnar: added this so map changes can use this functionality
+					// added this so map changes can use this functionality
 					if (disconnect)
 					{
 						SV_SendServerCommand(cl, "disconnect");
@@ -947,6 +988,21 @@ void SV_FinalCommand(char *cmd, qboolean disconnect)
 	}
 }
 
+void SV_CloseAttackLog()
+{
+	if (attHandle > 0)
+	{
+		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
+		SV_WriteAttackLog("End server attack log\n"); // FIXME: add date & additional info
+		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
+		Com_Printf("Server Attack log closed.\n");
+	}
+
+	FS_FCloseFile(attHandle);
+
+	attHandle = 0;	// local handle
+}
+
 /*
 ================
 SV_Shutdown
@@ -957,6 +1013,9 @@ before Sys_Quit or Sys_Error
 */
 void SV_Shutdown(char *finalmsg)
 {
+	// close attack log
+	SV_CloseAttackLog();
+
 	if (!com_sv_running || !com_sv_running->integer)
 	{
 		return;
@@ -980,7 +1039,7 @@ void SV_Shutdown(char *finalmsg)
 	if (svs.clients)
 	{
 		//Z_Free( svs.clients );
-		free(svs.clients);      // RF, avoid trying to allocate large chunk on a fragmented zone
+		free(svs.clients);      // avoid trying to allocate large chunk on a fragmented zone
 	}
 	memset(&svs, 0, sizeof(svs));
 	svs.serverLoad = -1;
