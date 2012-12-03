@@ -904,7 +904,12 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 
 	Com_DPrintf("URL script: %s\n", fn);
 
+#ifdef __APPLE__
+	Com_sprintf(cmdline, MAX_CMD, "open '%s' &", url);
+#else
 	Com_sprintf(cmdline, MAX_CMD, "xdg-open '%s' &", url);
+#endif
+
 	Sys_StartProcess(cmdline, doexit);
 
 	SDL_WM_IconifyWindow();
