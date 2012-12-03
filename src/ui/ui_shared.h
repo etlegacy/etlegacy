@@ -639,4 +639,9 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo
 void AdjustFrom640(float *x, float *y, float *w, float *h);
 void SetupRotatedThing(polyVert_t *verts, vec2_t org, float w, float h, vec_t angle);
 
+void Cui_WideRect(Rectangle *rect);
+float Cui_WideX(float x);
+float Cui_WideXoffset(void);
+void C_PanelButtonsSetup(panel_button_t **buttons, float xoffset);      // called from UI & CGAME
+
 #endif

@@ -35,38 +35,8 @@
 #include "cg_local.h"
 
 /*
-===================
-CG_DrawLoadingIcons
-===================
-*/
-/*static void CG_DrawLoadingIcons( void ) {
-    int     n;
-    int     x, y;
-
-    // JOSEPH 5-2-00 Per MAXX
-    return;
-
-    for( n = 0; n < loadingPlayerIconCount; n++ ) {
-        x = 16 + n * 78;
-        y = 324;
-        CG_DrawPic( x, y, 64, 64, loadingPlayerIcons[n] );
-    }
-
-    for( n = 0; n < loadingItemIconCount; n++ ) {
-        y = 400;
-        if( n >= 13 ) {
-            y += 40;
-        }
-        x = 16 + n % 13 * 48;
-        CG_DrawPic( x, y, 32, 32, loadingItemIcons[n] );
-    }
-}*/
-
-
-/*
 ======================
 CG_LoadingString
-
 ======================
 */
 void CG_LoadingString(const char *s)
@@ -75,11 +45,9 @@ void CG_LoadingString(const char *s)
 
 	if (s && *s)
 	{
-		CG_Printf("LOADING... %s\n", s);      //----(SA)    added so you can see from the console what's going on
+		CG_Printf("LOADING... %s\n", s);      // added so you can see from the console what's going on
 
 	}
-	// Arnout: no need for this
-	//trap_UpdateScreen();
 }
 
 /*
@@ -104,9 +72,26 @@ void CG_DrawInformation(qboolean forcerefresh)
 		return;     // we are in the world, no need to draw information
 	}
 
+	// loadpanel: erase the screen now, because otherwise the "awaiting challenge"-UI-screen is still visible behind the client-version of it (the one with the progressbar),..
+	// ..and we do not want a flickering screen (on widescreens).
+	// debriefing screen: no need to erase the screen..
+	if (!cgs.dbShowing)
+	{
+		if (!cgs.media.backTileShader)
+		{
+			cgs.media.backTileShader = trap_R_RegisterShaderNoMip("gfx/2d/backtile");
+		}
+		if (cgs.aspectratio != RATIO43)
+		{
+			float xoffset = Ccg_WideXoffset() * cgs.screenXScale;
+			trap_R_DrawStretchPic(0, 0, xoffset, cgs.glconfig.vidHeight, 0, 0, 1, 1, cgs.media.backTileShader);                                     // left side
+			trap_R_DrawStretchPic(cgs.glconfig.vidWidth - xoffset, 0, xoffset, cgs.glconfig.vidHeight, 0, 0, 1, 1, cgs.media.backTileShader);       // right side
+		}
+	}
+
 	CG_DrawConnectScreen(qfalse, forcerefresh);
 
-	// OSP - Server MOTD window
+	// OSP - Server MOTD window // implement this?
 	/*  if(cg.motdWindow == NULL) {
 	        CG_createMOTDWindow();
 	    }
@@ -528,7 +513,7 @@ void CG_GameStatsDraw(void)
 		fontInfo_t *hFont2  = FONT_SUBHEADER;
 
 		vec4_t hdrColor = COLOR_HDR;        // text
-//      vec4_t hdrColor2    = COLOR_HDR2;   // text
+		//vec4_t hdrColor2    = COLOR_HDR2;   // text
 
 		// Text settings
 		int        tStyle   = ITEM_TEXTSTYLE_SHADOWED;
@@ -847,7 +832,6 @@ void CG_DemoHelpDraw(void)
 	if (cg.demohelpWindow == SHOW_OFF)
 	{
 		return;
-
 	}
 	else
 	{

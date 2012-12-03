@@ -39,7 +39,6 @@
 void CG_CalcVrect(void);
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor);
 
-
 // Explicit server command to add a view to the client's snapshot
 void CG_mvNew_f(void)
 {
@@ -96,7 +95,6 @@ void CG_mvDelete_f(void)
 	}
 }
 
-
 // Swap highlighted window with main view
 void CG_mvSwapViews_f(void)
 {
@@ -105,7 +103,6 @@ void CG_mvSwapViews_f(void)
 		CG_mvMainviewSwap(cg.mvCurrentActive);
 	}
 }
-
 
 // Shut down a window view for a particular MV client
 void CG_mvHideView_f(void)
@@ -117,7 +114,6 @@ void CG_mvHideView_f(void)
 
 	CG_mvFree(cg.mvCurrentActive->mvInfo & MV_PID);
 }
-
 
 // Activate a window view for a particular MV client
 void CG_mvShowView_f(void)
@@ -170,12 +166,9 @@ void CG_mvToggleAll_f(void)
 	}
 }
 
-
-
 ////////////////////////////////////////////////
 //
 // Multiview Primitives
-//
 //
 
 ///////////////////////////////
@@ -264,7 +257,6 @@ void CG_mvMainviewSwap(cg_window_t *av)
 	CG_mvOverlayUpdate();
 }
 
-
 /////////////////////////////////////////////
 // Track our list of merged clients
 //
@@ -299,7 +291,6 @@ void CG_mvProcessClientList(void)
 	cg.mvClientList = newList;
 	CG_mvOverlayUpdate();
 }
-
 
 // Give handle to the current selected MV window
 cg_window_t *CG_mvCurrent(void)
@@ -354,15 +345,11 @@ cg_window_t *CG_mvFindNonMainview(void)
 	return(cg.mvCurrentMainview);
 }
 
-
-
-
 //////////////////////////////////////////////
 //
 //    Rendering/Display Management
 //
 //////////////////////////////////////////////
-
 
 ///////////////////////////////////////////////////
 // Update all info for a merged client
@@ -422,7 +409,6 @@ void CG_mvUpdateClientInfo(int pID)
 	}
 }
 
-
 ////////////////////////////////
 // Updates for main view
 //
@@ -468,7 +454,7 @@ void CG_mvTransitionPlayerState(playerState_t *ps)
 	ps->classWeaponTime = (ci->chargeTime < 0) ? -1 : cg.time - (int)((float)(mult * ci->chargeTime) / 100.0f);
 
 	// FIXME: moved to pmext
-//  ps->sprintTime = (ci->sprintTime < 0) ? 20000 : (int)((float)ci->sprintTime / 100.0f * 20000.0f);
+	//ps->sprintTime = (ci->sprintTime < 0) ? 20000 : (int)((float)ci->sprintTime / 100.0f * 20000.0f);
 
 	ps->serverCursorHintVal = (ci->hintTime < 0) ? 0 : ci->hintTime * 255 / 100;
 	ps->serverCursorHint    = BG_simpleHintsExpand(ci->cursorHint, ((x == 2) ? ci->hintTime : -1));
@@ -504,7 +490,6 @@ void CG_mvDraw(cg_window_t *sw)
 	float     b_x, b_y, b_w, b_h;
 	float     s     = 1.0f;
 	centity_t *cent = &cg_entities[pID];
-
 
 	memset(&refdef, 0, sizeof(refdef_t));
 	memcpy(refdef.areamask, cg.snap->areamask, sizeof(refdef.areamask));
@@ -631,7 +616,7 @@ void CG_mvDraw(cg_window_t *sw)
 	if (sw == cg.mvCurrentMainview && cg.renderingThirdPerson)
 	{
 		cg.renderingThirdPerson = qtrue;
-//      VectorCopy(cent->lerpOrigin, refdef.vieworg);
+		//VectorCopy(cent->lerpOrigin, refdef.vieworg);
 		CG_OffsetThirdPersonView();
 		AnglesToAxis(cg.refdefViewAngles, refdef.viewaxis);
 	}
@@ -833,9 +818,6 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	}
 }
 
-
-
-
 ////////////////////////////////////////////////////
 //
 //            MV Text Overlay Handling
@@ -850,7 +832,6 @@ char *strClassHighlights[] =
 	S_COLOR_GREEN,  S_COLOR_MDGREEN,    // Lt.
 	S_COLOR_YELLOW, S_COLOR_MDYELLOW    // CovertOps
 };
-
 
 // Update a particular client's info
 void CG_mvOverlayClientUpdate(int pID, int index)
@@ -983,8 +964,6 @@ void CG_mvOverlayDisplay(void)
 	}
 }
 
-
-
 //////////////////////////////////////
 //
 // Wolf-specific utilities
@@ -1011,7 +990,6 @@ void CG_mvZoomSniper(float x, float y, float w, float h)
 	CG_FillRect(x + 319.0f * ws, y + 300.0f * hs, 2.0f, 178.0f * hs, colorBlack);             // center bot
 	CG_FillRect(x + 380.0f * ws, y + 239.0f * hs, 177.0f * ws, 2.0f, colorBlack);     // right
 }
-
 
 void CG_mvZoomBinoc(float x, float y, float w, float h)
 {

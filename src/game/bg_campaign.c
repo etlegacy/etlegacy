@@ -104,7 +104,6 @@ qboolean BG_LoadCampaignSave(const char *filename, cpsFile_t *file, const char *
 		}
 	}
 
-	// done
 	trap_FS_FCloseFile(f);
 
 	return(qtrue);
@@ -154,7 +153,6 @@ qboolean BG_StoreCampaignSave(const char *filename, cpsFile_t *file, const char 
 		}
 	}
 
-	// done
 	trap_FS_FCloseFile(f);
 
 	return(qtrue);

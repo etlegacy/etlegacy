@@ -36,7 +36,6 @@
 #include "ui_shared.h"
 #include "ui_local.h"    // For CS settings/retrieval
 
-
 #define SCROLL_TIME_START           500
 #define SCROLL_TIME_ADJUST          150
 #define SCROLL_TIME_ADJUSTOFFSET    40
@@ -71,7 +70,7 @@ itemDef_t *g_editItem = NULL;
 menuDef_t Menus[MAX_MENUS];      // defined menus
 int       menuCount = 0;         // how many
 
-// TTimo:  a stack for modal menus only, stores the menus to come back to
+// a stack for modal menus only, stores the menus to come back to
 // (an item can be NULL, goes back to main menu / no action required)
 menuDef_t *modalMenuStack[MAX_MODAL_MENUS];
 int       modalMenuCount = 0;
@@ -96,12 +95,45 @@ static qboolean Menu_OverActiveItem(menuDef_t *menu, float x, float y);
 #ifdef CGAME
 #define MEM_POOL_SIZE  128 * 1024
 #else
-#define MEM_POOL_SIZE  1536 * 1024  // Arnout: was 1024
+#define MEM_POOL_SIZE  1536 * 1024  // was 1024
 #endif
 
 static char memoryPool[MEM_POOL_SIZE];
 static int  allocPoint, outOfMemory;
 
+// convert rectangle-coordinates for use with the current aspectratio.
+void Cui_WideRect(Rectangle *rect)
+{
+	float aspectratio = (float)(DC->glconfig.vidWidth) / DC->glconfig.vidHeight;
+
+	rect->x *= DC->xscale;
+	rect->y *= DC->yscale;
+	rect->w *= DC->xscale;
+	rect->h *= DC->yscale;
+
+	if (aspectratio != RATIO43)
+	{
+		rect->x *= RATIO43 / aspectratio;
+		rect->w *= RATIO43 / aspectratio;
+	}
+}
+
+// convert an x-coordinate for use with the current aspectratio.
+// (if the current aspectratio is 4:3, then leave the x-coordinate unchanged)
+float Cui_WideX(float x)
+{
+	float aspectratio = (float)(DC->glconfig.vidWidth) / DC->glconfig.vidHeight;
+
+	return (aspectratio == RATIO43) ? x : x * (aspectratio * RPRATIO43); // aspectratio / (4/3)
+}
+
+// the horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
+float Cui_WideXoffset(void)
+{
+	float aspectratio = (float)(DC->glconfig.vidWidth) / DC->glconfig.vidHeight;
+
+	return (aspectratio == RATIO43) ? 0.0f : ((640.0f * (aspectratio * RPRATIO43)) - 640.0f) * 0.5f;
+}
 
 void Tooltip_Initialize(itemDef_t *item)
 {
@@ -188,6 +220,7 @@ qboolean UI_OutOfMemory()
 }
 
 #define HASH_TABLE_SIZE 2048
+
 /*
 ================
 return a hash value for the string
@@ -398,6 +431,7 @@ Int_Parse
 qboolean Int_Parse(char **p, int *i)
 {
 	char *token;
+
 	token = COM_ParseExt(p, qfalse);
 
 	if (token && token[0] != 0)
@@ -548,7 +582,6 @@ void GradientBar_Paint(rectDef_t *rect, vec4_t color)
 Window_Init
 
 Initializes a window structure ( windowDef_t ) with defaults
-
 ==================
 */
 void Window_Init(Window *w)
@@ -788,8 +821,14 @@ void Item_UpdatePosition(itemDef_t *item)
 // menus
 void Menu_UpdatePosition(menuDef_t *menu)
 {
-	int   i;
-	float x, y;
+	int        i;
+	float      x, y;
+	float      xoffset = Cui_WideXoffset();
+	Rectangle  *r;
+	qboolean   fullscreenItem = qfalse;
+	qboolean   fullscreenMenu = qfalse;
+	const char *menuName      = NULL;
+	const char *itemName      = NULL;
 
 	if (menu == NULL)
 	{
@@ -799,14 +838,50 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	x = menu->window.rect.x;
 	y = menu->window.rect.y;
 
-	/*if (menu->window.border != 0) {
-	    x += menu->window.borderSize;
-	    y += menu->window.borderSize;
-	}*/
-
-	for (i = 0; i < menu->itemCount; i++)
+	r              = &menu->window.rect;
+	fullscreenMenu = (r->x == 0 && r->y == 0 && r->w == 640 && r->h == 480);
+	menuName       = menu->window.name;
+	for (i = 0; i < menu->itemCount; ++i)
 	{
-		Item_SetScreenCoords(menu->items[i], x, y);
+		itemName = menu->items[i]->window.name;
+		// fullscreen menu/item..
+		r              = &menu->items[i]->window.rectClient;
+		fullscreenItem = (r->x == 0 && r->y == 0 && r->w == 640 && r->h == 480);
+		if (fullscreenItem)
+		{
+			Cui_WideRect(r);
+		}
+		// alignment..
+		if ((fullscreenMenu && !fullscreenItem) || !Q_stricmp(menuName, "main"))
+		{
+			// align to right of screen..
+			if (!Q_stricmp(itemName, "atvi_logo") ||
+			    !Q_stricmp(itemName, "id_logo"))
+			{
+				Item_SetScreenCoords(menu->items[i], x + 2 * xoffset, y);
+			}
+			// horizontally centered..
+			else if (!Q_stricmp(itemName, "et_logo") ||
+			         !Q_stricmp(itemName, "credits_etlegacy"))
+			{
+				Item_SetScreenCoords(menu->items[i], x + xoffset, y);
+			}
+			// normal (left aligned)..
+			else if (!Q_stricmp(menuName, "main"))
+			{
+				Item_SetScreenCoords(menu->items[i], x, y);
+				// horizontally centered..
+			}
+			else
+			{
+				Item_SetScreenCoords(menu->items[i], x + xoffset, y);
+			}
+		}
+		// normal (left aligned)..
+		else
+		{
+			Item_SetScreenCoords(menu->items[i], x, y);
+		}
 	}
 }
 
@@ -868,6 +943,9 @@ qboolean Rect_ContainsPoint(rectDef_t *rect, float x, float y)
 {
 	if (rect)
 	{
+		// correction for widescreen cursor coordinates..
+		x = Cui_WideX(x);
+
 		if (x > rect->x && x < rect->x + rect->w && y > rect->y && y < rect->y + rect->h)
 		{
 			return qtrue;
@@ -882,7 +960,6 @@ int Menu_ItemsMatchingGroup(menuDef_t *menu, const char *name)
 	int  count = 0;
 	char *pdest;
 	int  wildcard = -1; // if wildcard is set, it's value is the number of characters to compare
-
 
 	pdest = strstr(name, "*");   // allow wildcard strings (ex.  "hide nb_*" would translate to "hide nb_pg1; hide nb_extra" etc)
 	if (pdest)
@@ -1798,6 +1875,7 @@ void Menu_TransitionItemByName(menuDef_t *menu, const char *p, rectDef_t rectFro
 	itemDef_t *item;
 	int       i;
 	int       count = Menu_ItemsMatchingGroup(menu, p);
+
 	for (i = 0; i < count; i++)
 	{
 		item = Menu_GetMatchingItemByNumber(menu, i, p);
@@ -2341,7 +2419,7 @@ qboolean Item_EnableShowViaCvar(itemDef_t *item, int flag)
 	return qtrue;
 }
 
-// OSP - display if we poll on a server toggle setting
+// display if we poll on a server toggle setting
 // We want *current* settings, so this is a bit of a perf hit,
 // but this is only during UI display
 
@@ -2879,7 +2957,6 @@ void Item_SetMouseOver(itemDef_t *item, qboolean focus)
 	}
 }
 
-
 qboolean Item_OwnerDraw_HandleKey(itemDef_t *item, int key)
 {
 	if (item && DC->ownerDrawHandleKey)
@@ -3246,6 +3323,7 @@ qboolean Item_YesNo_HandleKey(itemDef_t *item, int key)
 int Item_Multi_CountSettings(itemDef_t *item)
 {
 	multiDef_t *multiPtr = (multiDef_t *)item->typeData;
+
 	if (multiPtr == NULL)
 	{
 		return 0;
@@ -3259,6 +3337,7 @@ int Item_Multi_FindCvarByValue(itemDef_t *item)
 	float      value = 0;
 	int        i;
 	multiDef_t *multiPtr = (multiDef_t *)item->typeData;
+
 	if (multiPtr)
 	{
 		if (multiPtr->strDef)
@@ -3296,6 +3375,7 @@ const char *Item_Multi_Setting(itemDef_t *item)
 	float      value = 0;
 	int        i;
 	multiDef_t *multiPtr = (multiDef_t *)item->typeData;
+
 	if (multiPtr)
 	{
 		if (multiPtr->strDef)
@@ -3337,6 +3417,7 @@ const char *Item_Multi_Setting(itemDef_t *item)
 qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
 {
 	multiDef_t *multiPtr = (multiDef_t *)item->typeData;
+
 	if (multiPtr)
 	{
 		if (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && item->window.flags & WINDOW_HASFOCUS && item->cvar)
@@ -3395,18 +3476,16 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 
 	if (item->cvar)
 	{
-
 		memset(buff, 0, sizeof(buff));
 		DC->getCVarString(item->cvar, buff, sizeof(buff));
 		len = strlen(buff);
-
 
 		if (editPtr->maxChars && len > editPtr->maxChars)
 		{
 			len = editPtr->maxChars;
 		}
 
-		// Gordon: make sure our cursorpos doesn't go oob, windows doesn't like negative memory copy operations :)
+		// make sure our cursorpos doesn't go oob, windows doesn't like negative memory copy operations :)
 		if (item->cursorPos < 0 || item->cursorPos > len)
 		{
 			item->cursorPos = 0;
@@ -3618,7 +3697,7 @@ static void Scroll_ListBox_ThumbFunc(void *p)
 		r.h = SCROLLBAR_SIZE;
 		r.w = si->item->window.rect.w - (SCROLLBAR_SIZE * 2) - 2;
 		max = Item_ListBox_MaxScroll(si->item);
-		//
+
 		pos = (DC->cursorx - r.x - SCROLLBAR_SIZE / 2) * max / (r.w - SCROLLBAR_SIZE);
 		if (pos < 0)
 		{
@@ -3802,7 +3881,7 @@ qboolean Item_Slider_HandleKey(itemDef_t *item, int key, qboolean down)
 			}
 		}
 	}
-//  DC->Print("slider handle key exit\n");
+	//DC->Print("slider handle key exit\n");
 	return qfalse;
 }
 
@@ -3893,7 +3972,6 @@ qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 		return qfalse;
 		break;
 	}
-
 	//return qfalse;
 }
 
@@ -3945,7 +4023,6 @@ itemDef_t *Menu_SetPrevCursorItem(menuDef_t *menu)
 
 itemDef_t *Menu_SetNextCursorItem(menuDef_t *menu)
 {
-
 	qboolean wrapped = qfalse;
 	int      oldCursor;
 
@@ -4005,6 +4082,7 @@ static void Menu_CloseCinematics(menuDef_t *menu)
 	if (menu)
 	{
 		int i;
+
 		Window_CloseCinematic(&menu->window);
 		for (i = 0; i < menu->itemCount; i++)
 		{
@@ -4029,6 +4107,7 @@ static void Display_CloseCinematics(void)
 void  Menus_Activate(menuDef_t *menu)
 {
 	int i;
+
 	for (i = 0; i < menuCount; i++)
 	{
 		Menus[i].window.flags &= ~(WINDOW_HASFOCUS | WINDOW_MOUSEOVER);
@@ -4070,8 +4149,8 @@ qboolean Menus_CaptureFuncActive(void)
 
 int Display_VisibleMenuCount(void)
 {
-	int i, count;
-	count = 0;
+	int i, count = 0;
+
 	for (i = 0; i < menuCount; i++)
 	{
 		if (Menus[i].window.flags & (WINDOW_FORCED | WINDOW_VISIBLE))
@@ -4100,13 +4179,13 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down)
 		{
 			if (Menu_OverActiveItem(&Menus[i], DC->cursorx, DC->cursory))
 			{
-//              Menu_RunCloseScript(menu);          // NERVE - SMF - why do we close the calling menu instead of just removing the focus?
-//              menu->window.flags &= ~(WINDOW_HASFOCUS | WINDOW_VISIBLE | WINDOW_MOUSEOVER);
+				//Menu_RunCloseScript(menu);          // NERVE - SMF - why do we close the calling menu instead of just removing the focus?
+				//menu->window.flags &= ~(WINDOW_HASFOCUS | WINDOW_VISIBLE | WINDOW_MOUSEOVER);
 
 				menu->window.flags    &= ~(WINDOW_HASFOCUS | WINDOW_MOUSEOVER);
 				Menus[i].window.flags |= (WINDOW_HASFOCUS | WINDOW_VISIBLE);
 
-//              Menus_Activate(&Menus[i]);
+				//Menus_Activate(&Menus[i]);
 				Menu_HandleMouseMove(&Menus[i], DC->cursorx, DC->cursory);
 				Menu_HandleKey(&Menus[i], key, down);
 			}
@@ -4126,6 +4205,7 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down)
 static rectDef_t *Item_CorrectedTextRect(itemDef_t *item)
 {
 	static rectDef_t rect;
+
 	memset(&rect, 0, sizeof(rectDef_t));
 	if (item)
 	{
@@ -4155,6 +4235,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	if (down && ((key == K_ENTER || key == K_KP_ENTER) && menu->onEnter))
 	{
 		itemDef_t it;
+
 		it.parent = menu;
 		Item_RunScript(&it, NULL, menu->onEnter);
 		return;
@@ -4350,7 +4431,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 
 					// ydnar: fixme, make it set the insertion point correctly
 
-					// NERVE - SMF - reset scroll offset so we can see what we're editing
+					// reset scroll offset so we can see what we're editing
 					if (editPtr)
 					{
 						editPtr->paintOffset = 0;
@@ -4361,7 +4442,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 					g_editItem      = item;
 
 					// see elsewhere for venomous comment about this particular piece of "functionality"
-					//% DC->setOverstrikeMode(qtrue);
+					//DC->setOverstrikeMode(qtrue);
 				}
 			}
 			else
@@ -4426,8 +4507,8 @@ void Item_SetTextExtents(itemDef_t *item, int *width, int *height, const char *t
 	if (*width == 0 ||
 	    (item->type == ITEM_TYPE_OWNERDRAW && item->textalignment == ITEM_ALIGN_CENTER) ||
 	    item->textalignment == ITEM_ALIGN_CENTER2 ||
-	    item->type == ITEM_TYPE_TIMEOUT_COUNTER)        // ydnar
-	{   //% int originalWidth = DC->textWidth(item->text, item->textscale, 0);
+	    item->type == ITEM_TYPE_TIMEOUT_COUNTER)
+	{   //int originalWidth = DC->textWidth(item->text, item->textscale, 0);
 		int originalWidth = DC->textWidth(textPtr, item->textscale, 0);
 
 		if (item->type == ITEM_TYPE_OWNERDRAW && (item->textalignment == ITEM_ALIGN_CENTER || item->textalignment == ITEM_ALIGN_RIGHT))
@@ -4437,12 +4518,13 @@ void Item_SetTextExtents(itemDef_t *item, int *width, int *height, const char *t
 		else if (item->type == ITEM_TYPE_EDITFIELD && item->textalignment == ITEM_ALIGN_CENTER && item->cvar)
 		{
 			char buff[256];
+
 			DC->getCVarString(item->cvar, buff, 256);
 			originalWidth += DC->textWidth(buff, item->textscale, 0);
 		}
 		else if (item->textalignment == ITEM_ALIGN_CENTER2)
 		{
-			// NERVE - SMF - default centering case
+			// default centering case
 			originalWidth += DC->textWidth(text, item->textscale, 0);
 		}
 
@@ -4755,7 +4837,6 @@ void Item_Text_Paint(itemDef_t *item)
 	    }
 	*/
 
-
 //  if (item->textStyle == ITEM_TEXTSTYLE_OUTLINED || item->textStyle == ITEM_TEXTSTYLE_OUTLINESHADOWED) {
 //      Fade(&item->window.flags, &item->window.outlineColor[3], DC->Assets.fadeClamp, &item->window.nextTime, DC->Assets.fadeCycle, qfalse);
 //      /*
@@ -4812,7 +4893,7 @@ void Item_TextField_Paint(itemDef_t *item)
 	// NOTE: offset from the editfield prefix (like "Say: " in limbo menu)
 	offset = (item->text && *item->text) ? 8 : 0;
 
-	// TTimo: text length control
+	// text length control
 	// if the edit field goes beyond the available width, drop some characters at the beginning of the string and apply some offseting
 	// FIXME: we could cache the text length and offseting, but given the low count of edit fields, I abstained for now
 	// FIXME: this won't handle going back into the line of the editfield to the hidden area
@@ -5479,7 +5560,6 @@ qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down)
 
 	if (key != -1)
 	{
-
 		for (i = 0; i < g_bindCount; i++)
 		{
 
@@ -5539,10 +5619,20 @@ qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down)
 
 void AdjustFrom640(float *x, float *y, float *w, float *h)
 {
-	*x *= DC->xscale;
+	float aspectratio = (float)(DC->glconfig.vidWidth) / DC->glconfig.vidHeight;
+
 	*y *= DC->yscale;
-	*w *= DC->xscale;
 	*h *= DC->yscale;
+
+	if ( aspectratio == RATIO43 ) {
+		*x *= DC->xscale;
+		*w *= DC->xscale;
+	}
+	else
+	{
+		*x *= RATIO43 / aspectratio;
+		*w *= RATIO43 / aspectratio;
+	}
 }
 
 void Item_Model_Paint(itemDef_t *item)
@@ -9370,4 +9460,21 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo
 	}
 
 	*c = '\0';
+}
+
+// adjusting panel coordinates so it is horizontally centered..
+void C_PanelButtonsSetup(panel_button_t **buttons, float xoffset)
+{
+	panel_button_t *button;
+
+	if (xoffset == 0.0f)
+	{
+		return;
+	}
+
+	for ( ; *buttons; buttons++)
+	{
+		button          = (*buttons);
+		button->rect.x += xoffset;
+	}
 }

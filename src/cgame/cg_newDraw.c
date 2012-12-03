@@ -409,7 +409,7 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 			h = rect->h + scale;
 		}
 
-		trap_R_SetColor(hcolor);   // JPW NERVE
+		trap_R_SetColor(hcolor);
 		CG_DrawPic(x, y, w, h, icon);
 	}
 }
@@ -882,7 +882,7 @@ void CG_EventHandling(int type, qboolean fForced)
 
 	switch (type)
 	{
-	// OSP - Demo support
+	// Demo support
 	case CGAME_EVENT_DEMO:
 		cgs.fResize         = qfalse;
 		cgs.fSelect         = qfalse;
@@ -1028,6 +1028,7 @@ void CG_KeyEvent(int key, qboolean down)
 int CG_ClientNumFromName(const char *p)
 {
 	int i;
+
 	for (i = 0; i < cgs.maxclients; i++)
 	{
 		if (cgs.clientinfo[i].infoValid && Q_stricmp(cgs.clientinfo[i].name, p) == 0)

@@ -79,7 +79,7 @@ extern vmCvar_t ui_netGameType;
 extern vmCvar_t ui_joinGameType;
 extern vmCvar_t ui_dedicated;
 
-// NERVE - SMF - multiplayer cvars
+// multiplayer cvars
 extern vmCvar_t ui_serverFilterType;
 extern vmCvar_t ui_currentNetMap;
 extern vmCvar_t ui_currentMap;
@@ -955,7 +955,7 @@ void            trap_GetClipboardData(char *buf, int bufsize);
 void            trap_GetClientState(uiClientState_t *state);
 void            trap_GetGlconfig(glconfig_t *glconfig);
 int             trap_GetConfigString(int index, char *buff, int buffsize);
-int             trap_LAN_GetServerCount(int source);            // NERVE - SMF
+int             trap_LAN_GetServerCount(int source);
 int             trap_LAN_GetLocalServerCount(void);
 void            trap_LAN_GetLocalServerAddressString(int n, char *buf, int buflen);
 int             trap_LAN_GetGlobalServerCount(void);
@@ -966,7 +966,7 @@ void            trap_LAN_GetPing(int n, char *buf, int buflen, int *pingtime);
 void            trap_LAN_GetPingInfo(int n, char *buf, int buflen);
 int             trap_MemoryRemaining(void);
 
-// NERVE - SMF - multiplayer traps
+// multiplayer traps
 qboolean        trap_LAN_UpdateVisiblePings(int source);
 void            trap_LAN_MarkServerVisible(int source, int n, qboolean visible);
 void            trap_LAN_ResetPings(int n);
@@ -982,10 +982,6 @@ int             trap_LAN_ServerStatus(const char *serverAddress, char *serverSta
 void            trap_LAN_SaveCachedServers(void);
 void            trap_LAN_LoadCachedServers(void);
 qboolean        trap_LAN_ServerIsInFavoriteList(int source, int n);
-
-void            trap_SetPbClStatus(int status);
-void            trap_SetPbSvStatus(int status);
-
 
 void            trap_R_RegisterFont(const char *pFontname, int pointSize, fontInfo_t *font);
 void            trap_S_StopBackgroundTrack(void);
@@ -1006,7 +1002,7 @@ void            trap_openURL(const char *url);
 void            trap_GetHunkData(int *hunkused, int *hunkexpected);
 
 
-char *trap_TranslateString(const char *string);                         // NERVE - SMF - localization
+char *trap_TranslateString(const char *string); // localization
 
 // ui_teamorders.c
 extern void UI_TeamOrdersMenu(void);
@@ -1068,5 +1064,9 @@ void UI_InitGameinfo(void);
 
 const char *UI_DescriptionForCampaign(void);
 const char *UI_NameForCampaign(void);
+
+// 4:3 aspectratio is the default for this game engine..
+#define RATIO43     (4.0f / 3.0f)
+#define RPRATIO43   (1 / RATIO43)
 
 #endif

@@ -143,6 +143,8 @@ panel_button_t *loadpanelButtons[] =
 /*
 ================
 CG_DrawConnectScreen
+
+@brief forcerefresh is obsolete
 ================
 */
 static qboolean connect_ownerdraw;
@@ -169,16 +171,12 @@ void UI_DrawLoadPanel(qboolean forcerefresh, qboolean ownerdraw, qboolean uihack
 		trap_R_RegisterFont("courbd", 30, &bg_loadscreenfont2);
 
 		BG_PanelButtonsSetup(loadpanelButtons);
+		C_PanelButtonsSetup(loadpanelButtons, Cui_WideXoffset());   // convert to possible widescreen coordinates..
 
 		bg_loadscreeninited = qtrue;
 	}
 
 	BG_PanelButtonsRender(loadpanelButtons);
-
-	if (forcerefresh)
-	{
-		//trap_UpdateScreen();
-	}
 
 	if (!uihack && trap_Cvar_VariableValue("ui_connecting"))
 	{

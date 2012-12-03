@@ -56,8 +56,10 @@ int CG_CurLayerForZ(int z)
 	int curlayer = 0;
 
 	while (z > cgs.ccLayerCeils[curlayer] && curlayer < cgs.ccLayers)
+	{
 		curlayer++;
-
+	}
+	
 	if (curlayer == cgs.ccLayers)
 	{
 		CG_Printf("^3Warning: no valid command map layer for z\n");
@@ -237,12 +239,10 @@ CG_ParseMapEntityInfo
 */
 void CG_ParseMapEntityInfo(int axis_number, int allied_number)
 {
-	int i, offset;
+	int i, offset = 3;
 
 	mapEntityCount = 0;
 	mapEntityTime  = cg.time;
-
-	offset = 3;
 
 	for (i = 0; i < axis_number; i++)
 	{
@@ -280,9 +280,13 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 
 		// ensure minimal grid density
 		while ((cg.mapcoordsMaxs[0] - cg.mapcoordsMins[0]) / gridStep[0] < 7)
+		{
 			gridStep[0] -= 50.f;
+		}
 		while ((cg.mapcoordsMins[1] - cg.mapcoordsMaxs[1]) / gridStep[1] < 7)
+		{
 			gridStep[1] -= 50.f;
+		}
 
 		gridStartCoord[0] = .5f * ((((cg.mapcoordsMaxs[0] - cg.mapcoordsMins[0]) / gridStep[0]) - ((int)((cg.mapcoordsMaxs[0] - cg.mapcoordsMins[0]) / gridStep[0]))) * gridStep[0]);
 		gridStartCoord[1] = .5f * ((((cg.mapcoordsMins[1] - cg.mapcoordsMaxs[1]) / gridStep[1]) - ((int)((cg.mapcoordsMins[1] - cg.mapcoordsMaxs[1]) / gridStep[1]))) * gridStep[1]);
@@ -462,7 +466,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 #define COMMANDMAP_PLAYER_ICON_SIZE 6
 #define AUTOMAP_PLAYER_ICON_SIZE 5
 
-// xkan: extracted from CG_DrawCommandMap.
+// extracted from CG_DrawCommandMap.
 // drawingCommandMap - qfalse: command map; qtrue: auto map (upper left in main game view)
 
 void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, snapshot_t *snap, int icon_size)
@@ -1027,9 +1031,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 	snapshot_t      *snap;
 	mapEntityData_t *mEnt = &mapEntities[0];
 	int             icon_size;
-	int             exspawn;
-
-	expanded = qfalse;
+	int             exspawn = qfalse;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -1042,18 +1044,12 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 	if (scissor)
 	{
-		float s0, s1, t0, t1;
-
 		icon_size = AUTOMAP_PLAYER_ICON_SIZE;
 
 		if (scissor->br[0] >= scissor->tl[0])
 		{
-			float sc_x, sc_y, sc_w, sc_h;
-
-			sc_x = x;
-			sc_y = y;
-			sc_w = w;
-			sc_h = h;
+			float s0, s1, t0, t1;
+			float sc_x = x, sc_y = y, sc_w = w, sc_h = h;
 
 			CG_DrawPic(sc_x, sc_y, sc_w, sc_h, cgs.media.commandCentreAutomapMaskShader);
 
@@ -1085,6 +1081,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 		{
 			vec4_t color;
+			
 			Vector4Set(color, 1.f, 1.f, 1.f, alpha);
 			trap_R_SetColor(color);
 			if (cgs.ccLayers)
@@ -1105,6 +1102,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 	if (borderblend)
 	{
 		vec4_t clr = { 0.f, 0.f, 0.f, 0.75f };
+		
 		trap_R_SetColor(clr);
 		CG_DrawPic(x, y, w, h, cgs.media.limboBlendThingy);
 		trap_R_SetColor(NULL);
@@ -1295,7 +1293,7 @@ void CG_DrawAutoMap(void)
 		cgs.ccSelectedLayer = CG_CurLayerForZ((int)cg.predictedPlayerEntity.lerpOrigin[2]);
 	}
 
-	x = 520;
+	x = Ccg_WideX(640) - 100 - 20;
 	y = 20;
 	w = 100;
 	h = 100;
@@ -1331,7 +1329,6 @@ void CG_DrawAutoMap(void)
 
 	mapScissor.circular = qtrue;
 
-
 	mapScissor.zoomFactor = automapZoom;
 
 	mapScissor.tl[0] = mapScissor.tl[1] = 0;
@@ -1342,7 +1339,7 @@ void CG_DrawAutoMap(void)
 
 	// update clip region (for next drawing). clip region has a size kAutomap_width x kAutomap_height
 	// and it is after zooming is accounted for.
-	//
+
 	// first try to center the clip region around the player. then make sure the region
 	// stays within the world map.
 	mapScissor.tl[0] = automapTransformed[0] - w / 2;
@@ -1372,6 +1369,12 @@ void CG_DrawAutoMap(void)
 	CG_DrawMap(x, y, w, h, cgs.ccFilter, &mapScissor, qfalse, 1.f, qfalse);
 }
 
+#define FLAGSIZE_EXPANDED 48.f
+#define FLAGSIZE_NORMAL 32.f
+#define FLAG_LEFTFRAC (25 / 128.f)
+#define FLAG_TOPFRAC (95 / 128.f)
+#define SPAWN_SIZEUPTIME 1000.f
+
 int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScissor_t *scissor, int expand)
 {
 	int    i;
@@ -1387,14 +1390,10 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 		return -1;
 	}
 
-#define FLAGSIZE_EXPANDED 48.f
-#define FLAGSIZE_NORMAL 32.f
-#define FLAG_LEFTFRAC (25 / 128.f)
-#define FLAG_TOPFRAC (95 / 128.f)
-#define SPAWN_SIZEUPTIME 1000.f
 	for (i = 1; i < cg.spawnCount; i++)
 	{
 		float changetime = 0;
+
 		if (cg.spawnTeams_changeTime[i])
 		{
 			changetime = (cg.time - cg.spawnTeams_changeTime[i]);
@@ -1404,7 +1403,7 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 			}
 		}
 
-		// rain - added parens around ambiguity
+		// added parens around ambiguity
 		if (((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) &&
 		     (cg.spawnTeams[i] != team)) ||
 		    ((cg.spawnTeams[i] & 256) && !changetime))
@@ -1568,8 +1567,7 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 				point[1] = py + (((cg.mortarImpactPos[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
 			}
 
-			// rain - don't return if the marker is culled, just don't
-			// draw it.
+			// don't return if the marker is culled, just don't draw it.
 			if (!(scissor && CG_ScissorPointIsCulled(point, scissor)))
 			{
 				if (scissor)
@@ -1639,7 +1637,7 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 					point[1] = py + (((cg.artilleryRequestPos[i][1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
 				}
 
-				// rain - don't return if the marker is culled, just skip
+				// don't return if the marker is culled, just skip
 				// it (so we draw the rest, if any)
 				if (scissor && CG_ScissorPointIsCulled(point, scissor))
 				{

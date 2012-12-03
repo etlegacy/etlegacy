@@ -80,7 +80,7 @@ void CG_BuildSolidList(void)
 		cent = &cg_entities[snap->entities[i].number];
 		ent  = &cent->currentState;
 
-		// rain - don't clip against temporarily non-solid SOLID_BMODELS
+		// don't clip against temporarily non-solid SOLID_BMODELS
 		// (e.g. constructibles); use current state so prediction isn't fubar
 		if (cent->currentState.solid == SOLID_BMODEL &&
 		    (cent->currentState.eFlags & EF_NONSOLID_BMODEL))
@@ -127,7 +127,6 @@ void CG_BuildSolidList(void)
 /*
 ====================
 CG_ClipMoveToEntities
-
 ====================
 */
 static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
@@ -155,8 +154,8 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 		{
 			// special value for bmodel
 			cmodel = trap_CM_InlineModel(ent->modelindex);
-//          VectorCopy( cent->lerpAngles, angles );
-//          VectorCopy( cent->lerpOrigin, origin );
+			//VectorCopy( cent->lerpAngles, angles );
+			//VectorCopy( cent->lerpOrigin, origin );
 			BG_EvaluateTrajectory(&cent->currentState.apos, cg.physicsTime, angles, qtrue, cent->currentState.effect2Time);
 			BG_EvaluateTrajectory(&cent->currentState.pos, cg.physicsTime, origin, qfalse, cent->currentState.effect2Time);
 		}
@@ -178,7 +177,7 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 			VectorCopy(vec3_origin, angles);
 			VectorCopy(cent->lerpOrigin, origin);
 		}
-		// MrE: use bbox of capsule
+		// use bbox of capsule
 		if (capsule)
 		{
 			trap_CM_TransformedCapsuleTrace(&trace, start, end,
@@ -230,8 +229,8 @@ static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, cons
 		{
 			// special value for bmodel
 			cmodel = trap_CM_InlineModel(ent->modelindex);
-//          VectorCopy( cent->lerpAngles, angles );
-//          VectorCopy( cent->lerpOrigin, origin );
+			//VectorCopy( cent->lerpAngles, angles );
+			//VectorCopy( cent->lerpOrigin, origin );
 			BG_EvaluateTrajectory(&cent->currentState.apos, cg.physicsTime, angles, qtrue, cent->currentState.effect2Time);
 			BG_EvaluateTrajectory(&cent->currentState.pos, cg.physicsTime, origin, qfalse, cent->currentState.effect2Time);
 		}
@@ -387,7 +386,7 @@ int CG_PointContents(const vec3_t point, int passEntityNum)
 
 		contents |= trap_CM_TransformedPointContents(point, cmodel, cent->lerpOrigin, cent->lerpAngles);
 		// Gordon: again, need to use the projected water position to allow for moving entity based water.
-//      contents |= trap_CM_TransformedPointContents( point, cmodel, ent->origin, ent->angles );
+		//contents |= trap_CM_TransformedPointContents( point, cmodel, ent->origin, ent->angles );
 	}
 
 	return contents;
@@ -487,7 +486,7 @@ static void CG_TouchTriggerPrediction(void)
 		return;
 	}
 
-	spectator = ((cg.predictedPlayerState.pm_type == PM_SPECTATOR) || (cg.predictedPlayerState.pm_flags & PMF_LIMBO));       // JPW NERVE
+	spectator = ((cg.predictedPlayerState.pm_type == PM_SPECTATOR) || (cg.predictedPlayerState.pm_flags & PMF_LIMBO));
 
 	if (cg.predictedPlayerState.pm_type != PM_NORMAL && !spectator)
 	{
@@ -834,7 +833,7 @@ void CG_PredictPlayerState(void)
 
 		cg.pmext.airleft = (cg.waterundertime - cg.time);
 
-		// Arnout: are we using an mg42?
+		// are we using an mg42?
 		if ((cg_pmove.ps->eFlags & EF_MG42_ACTIVE) || (cg_pmove.ps->eFlags & EF_AAGUN_ACTIVE))
 		{
 			cg.pmext.harc = cg_entities[cg_pmove.ps->viewlocked_entNum].currentState.origin2[0];
@@ -865,7 +864,7 @@ void CG_PredictPlayerState(void)
 	cg_pmove.character = CG_CharacterForClientinfo(&cgs.clientinfo[cg.snap->ps.clientNum], &cg_entities[cg.snap->ps.clientNum]);
 	cg.pmext.airleft   = (cg.waterundertime - cg.time);
 
-	// Arnout: are we using an mg42?
+	// are we using an mg42?
 	if ((cg_pmove.ps->eFlags & EF_MG42_ACTIVE) || (cg_pmove.ps->eFlags & EF_AAGUN_ACTIVE))
 	{
 		cg.pmext.harc = cg_entities[cg_pmove.ps->viewlocked_entNum].currentState.origin2[0];
@@ -892,7 +891,7 @@ void CG_PredictPlayerState(void)
 	if (cg_pmove.ps->pm_type == PM_DEAD)
 	{
 		cg_pmove.tracemask   = MASK_PLAYERSOLID & ~CONTENTS_BODY;
-		cg_pmove.ps->eFlags |= EF_DEAD; // DHM-Nerve added:: EF_DEAD is checked for in Pmove functions, but wasn't being set until after Pmove
+		cg_pmove.ps->eFlags |= EF_DEAD; // added:: EF_DEAD is checked for in Pmove functions, but wasn't being set until after Pmove
 	}
 	else if (cg_pmove.ps->pm_type == PM_SPECTATOR)
 	{
@@ -906,7 +905,7 @@ void CG_PredictPlayerState(void)
 		cg_pmove.tracemask = MASK_PLAYERSOLID;
 	}
 
-	if ((cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) || (cg.snap->ps.pm_flags & PMF_LIMBO))         // JPW NERVE limbo
+	if ((cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) || (cg.snap->ps.pm_flags & PMF_LIMBO)) // limbo
 	{
 		cg_pmove.tracemask &= ~CONTENTS_BODY;   // spectators can fly through bodies
 	}
@@ -919,7 +918,7 @@ void CG_PredictPlayerState(void)
 
 	current = trap_GetCurrentCmdNumber();
 
-	// rain - fill in the current cmd with the latest prediction from
+	// fill in the current cmd with the latest prediction from
 	// cg.pmext (#166)
 	memcpy(&oldpmext[current & CMD_MASK], &cg.pmext, sizeof(pmoveExt_t));
 
@@ -958,7 +957,6 @@ void CG_PredictPlayerState(void)
 #endif
 	cg.predictedPlayerState = cg.snap->ps;
 	cg.physicsTime          = cg.snap->serverTime;
-//  }
 
 	if (pmove_msec.integer < 8)
 	{
@@ -983,7 +981,7 @@ void CG_PredictPlayerState(void)
 
 		if (cg_pmove.pmove_fixed)
 		{
-			// rain - added tracemask
+			// added tracemask
 			PM_UpdateViewAngles(cg_pmove.ps, cg_pmove.pmext, &cg_pmove.cmd, CG_Trace, cg_pmove.tracemask);
 		}
 
@@ -1028,8 +1026,8 @@ void CG_PredictPlayerState(void)
 			{
 				vec3_t adjusted;
 				CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.oldTime, adjusted, deltaAngles);
-				// RF, add the deltaAngles (fixes jittery view while riding trains)
-				// ydnar: only do this if player is prone or using set mortar
+				// add the deltaAngles (fixes jittery view while riding trains)
+				// only do this if player is prone or using set mortar
 				if ((cg.predictedPlayerState.eFlags & EF_PRONE) || cg.weaponSelect == WP_MORTAR_SET)
 				{
 					cg.predictedPlayerState.delta_angles[YAW] += ANGLE2SHORT(deltaAngles[YAW]);
@@ -1086,7 +1084,7 @@ void CG_PredictPlayerState(void)
 			cg_pmove.cmd.serverTime = ((cg_pmove.cmd.serverTime + pmove_msec.integer - 1) / pmove_msec.integer) * pmove_msec.integer;
 		}
 
-		// ydnar: if server respawning, freeze the player
+		// if server respawning, freeze the player
 		if (cg.serverRespawning)
 		{
 			cg_pmove.ps->pm_type = PM_FREEZE;
@@ -1094,7 +1092,7 @@ void CG_PredictPlayerState(void)
 
 		cg_pmove.gametype = cgs.gametype;
 
-		// rain - only fill in the charge times if we're on a playing team
+		// only fill in the charge times if we're on a playing team
 		if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS || cg.snap->ps.persistant[PERS_TEAM] == TEAM_ALLIES)
 		{
 			cg_pmove.ltChargeTime        = cg.ltChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
@@ -1104,7 +1102,7 @@ void CG_PredictPlayerState(void)
 			cg_pmove.covertopsChargeTime = cg.covertopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 		}
 
-//      memcpy( &pmext, &cg.pmext, sizeof(pmoveExt_t) );    // grab data, we only want the final result
+		//memcpy( &pmext, &cg.pmext, sizeof(pmoveExt_t) );    // grab data, we only want the final result
 		// rain - copy the pmext as it was just before we
 		// previously ran this cmd (or, this will be the
 		// current predicted data if this is the current cmd)  (#166)
@@ -1146,7 +1144,7 @@ void CG_PredictPlayerState(void)
 	// fire events and other transition triggered things
 	CG_TransitionPlayerState(&cg.predictedPlayerState, &oldPlayerState);
 
-	// ydnar: shake player view here, rather than fiddle with view angles
+	// shake player view here, rather than fiddle with view angles
 	if (cg.time > cg.cameraShakeTime)
 	{
 		cg.cameraShakeScale = 0;

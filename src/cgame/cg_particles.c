@@ -87,8 +87,8 @@ typedef enum
 	P_SMOKE,
 	P_ROTATE,
 	P_WEATHER_TURBULENT,
-	P_ANIM, // Ridah
-	P_DLIGHT_ANIM,  // ydnar
+	P_ANIM,
+	P_DLIGHT_ANIM,
 	P_BLEED,
 	P_FLAT_SCALEUP,
 	P_FLAT_SCALEUP_FADE,
@@ -118,7 +118,7 @@ static qhandle_t shaderAnims[MAX_SHADER_ANIMS][MAX_SHADER_ANIM_FRAMES];
 static int shaderAnimCounts[MAX_SHADER_ANIMS] =
 {
 	23,
-	23, // (SA) removing warning messages from startup
+	23, // removing warning messages from startup
 	45,
 	23,
 	25,
@@ -128,7 +128,7 @@ static int shaderAnimCounts[MAX_SHADER_ANIMS] =
 
 static float shaderAnimSTRatio[MAX_SHADER_ANIMS] =
 {
-	1, // NERVE - SMF - changed from 1.405 to 1
+	1, // changed from 1.405 to 1
 	1,
 	1,
 	1,
@@ -159,6 +159,7 @@ CL_ClearParticles
 void CG_ClearParticles(void)
 {
 	int i;
+	int j;
 
 	memset(particles, 0, sizeof(particles));
 
@@ -174,11 +175,9 @@ void CG_ClearParticles(void)
 
 	oldtime = cg.time;
 
-	// Ridah, init the shaderAnims
+	// init the shaderAnims
 	for (i = 0; shaderAnimNames[i]; i++)
 	{
-		int j;
-
 		for (j = 0; j < shaderAnimCounts[i]; j++)
 		{
 			shaderAnims[i][j] = trap_R_RegisterShader(va("%s%i", shaderAnimNames[i], j + 1));
@@ -220,7 +219,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 				if (org[2] > p->end)
 				{
 					p->time = cg.time;
-					VectorCopy(org, p->org);   // Ridah, fixes rare snow flakes that flicker on the ground
+					VectorCopy(org, p->org);   // fixes rare snow flakes that flicker on the ground
 
 					p->org[2] = (p->start + crandom() * 4);
 
@@ -237,7 +236,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 				if (org[2] < p->end)
 				{
 					p->time = cg.time;
-					VectorCopy(org, p->org);   // Ridah, fixes rare snow flakes that flicker on the ground
+					VectorCopy(org, p->org);   // fixes rare snow flakes that flicker on the ground
 
 					while (p->org[2] < p->end)
 					{
@@ -252,7 +251,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 				}
 			}
 
-			// Rafael snow pvs check
+			// snow pvs check
 			if (!p->link)
 			{
 				return;
@@ -731,7 +730,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	}
 	else if (p->type == P_FLAT)
 	{
-
 		VectorCopy(org, verts[0].xyz);
 		verts[0].xyz[0]     -= p->height;
 		verts[0].xyz[1]     -= p->width;
@@ -773,8 +771,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[3].modulate[3] = 255;
 
 	}
-	// Ridah
-	else if (p->type == P_ANIM || p->type == P_DLIGHT_ANIM)      // ydnar
+	else if (p->type == P_ANIM || p->type == P_DLIGHT_ANIM)
 	{
 		vec3_t rr, ru;
 		vec3_t rotate_ang;
@@ -797,7 +794,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		width  = p->width + (ratio * (p->endwidth - p->width));
 		height = p->height + (ratio * (p->endheight - p->height));
 
-		// ydnar: add dlight if necessary
+		// add dlight if necessary
 		if (p->type == P_DLIGHT_ANIM)
 		{
 			// fixme: support arbitrary color
@@ -920,7 +917,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 
 }
 
-// Ridah, made this static so it doesn't interfere with other files
+// made this static so it doesn't interfere with other files
 static float roll = 0.0;
 
 /*
@@ -975,6 +972,7 @@ void CG_AddParticles(void)
 			continue;
 		}
 
+		// FIXME: change to switch (p->type) ... muuuch faster
 		if (p->type == P_SMOKE || p->type == P_ANIM || p->type == P_DLIGHT_ANIM || p->type == P_BLEED || p->type == P_SMOKE_IMPACT)
 		{
 			if (cg.time > p->endtime)
@@ -1003,7 +1001,6 @@ void CG_AddParticles(void)
 				continue;
 			}
 		}
-
 
 		if (p->type == P_FLAT_SCALEUP_FADE)
 		{
@@ -1196,7 +1193,7 @@ void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb,
 		p->vel[1] = crandom() * 16;
 	}
 
-	// Rafael snow pvs check
+	// snow pvs check
 	p->snum = snum;
 	p->link = qtrue;
 
@@ -1261,7 +1258,7 @@ void CG_ParticleBubble(qhandle_t pshader, vec3_t origin, vec3_t origin2, int tur
 		p->vel[1] = crandom() * 4;
 	}
 
-	// Rafael snow pvs check
+	// snow pvs check
 	p->snum = snum;
 	p->link = qtrue;
 }
@@ -1466,7 +1463,7 @@ void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration)
 	p->vel[2]  += -20;
 }
 
-// DHM - Nerve :: bullets hitting dirt
+// bullets hitting dirt
 
 void CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration)
 {
@@ -1521,7 +1518,7 @@ void CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration)
 	p->vel[2]  += -20;
 }
 
-// NERVE - SMF :: the core of the dirt explosion
+// the core of the dirt explosion
 void CG_ParticleDirtBulletDebris_Core(vec3_t org, vec3_t vel, int duration, float width, float height, float alpha, qhandle_t shader)
 {
 	cparticle_t *p;
@@ -1647,7 +1644,6 @@ void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration
 
 int CG_NewParticleArea(int num)
 {
-	// const char *str;
 	char   *str;
 	char   *token;
 	int    type;
@@ -1761,7 +1757,7 @@ void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int li
 
 	// (SA) roll either direction
 	p->roll = rand() % (2 * maxroll);
-//	p->roll = crandom()*(float)(maxroll*2);
+	//p->roll = crandom()*(float)(maxroll*2);
 	p->roll -= maxroll;
 
 	p->pshader = pshader;
@@ -1769,7 +1765,7 @@ void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int li
 	p->endtime   = cg.time + lifetime;
 	p->startfade = cg.time + 100;
 
-	// xkan, 1/10/2003 - changed calculation to prevent division by 0 for small size
+	// changed calculation to prevent division by 0 for small size
 	p->width  = size * (1.0 + random() * 0.5);  // rand()%(int)(size * .5f) + size;
 	p->height = size * (1.0 + random() * 0.5);   // rand()%(int)(size * .5f) + size;
 
@@ -1789,7 +1785,6 @@ void CG_ParticleImpactSmokePuff(qhandle_t pshader, vec3_t origin)
 {
 	CG_ParticleImpactSmokePuffExtended(pshader, origin, 500, 20, 20, 30, 0.25f, 8.f);
 }
-
 
 void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEntityNum, int duration)
 {
@@ -1865,7 +1860,6 @@ void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int p
 	int   time2;
 	float ratio;
 
-//	float	duration = 1500;
 	float duration = 2000;
 
 	time  = cg.time;
@@ -1909,7 +1903,7 @@ void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int p
 	p->vel[0] = (dir[0] * (16 * ratio));
 	p->vel[1] = (dir[1] * (16 * ratio));
 	p->vel[2] = (dir[2] * (16 * ratio));
-//	p->vel[2] = (dir[2]);
+	//p->vel[2] = (dir[2]);
 
 	p->snum = snum;
 
@@ -1999,7 +1993,6 @@ void CG_Particle_OilSlick(qhandle_t pshader, centity_t *cent)
 	p->roll = rand() % 179;
 
 	p->alpha = 0.75;
-
 }
 
 void CG_OilSlickRemove(centity_t *cent)
@@ -2183,21 +2176,17 @@ void CG_ParticleBloodCloud(centity_t *cent, vec3_t origin, vec3_t dir)
 		p->alpha = 0.75;
 
 	}
-
-
 }
 
 void CG_ParticleBloodCloudZombie(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	float       length;
-	float       dist;
+	float       dist = 0;
 	float       crittersize;
 	vec3_t      angles, forward;
 	vec3_t      point;
 	cparticle_t *p;
 	int         i;
-
-	dist = 0;
 
 	length = VectorLength(dir);
 	vectoangles(dir, angles);
@@ -2262,7 +2251,7 @@ void CG_ParticleBloodCloudZombie(centity_t *cent, vec3_t origin, vec3_t dir)
 			p->width  = NORMALSIZE;
 			p->height = NORMALSIZE;
 
-			// RF, expand while falling
+			// expand while falling
 			p->endheight = NORMALSIZE * 4.0;
 			p->endwidth  = NORMALSIZE * 4.0;
 		}
@@ -2271,7 +2260,7 @@ void CG_ParticleBloodCloudZombie(centity_t *cent, vec3_t origin, vec3_t dir)
 			p->width  = LARGESIZE;
 			p->height = LARGESIZE;
 
-			// RF, expand while falling
+			// expand while falling
 			p->endheight = LARGESIZE * 3.0;
 			p->endwidth  = LARGESIZE * 3.0;
 		}
@@ -2305,10 +2294,7 @@ void CG_ParticleBloodCloudZombie(centity_t *cent, vec3_t origin, vec3_t dir)
 		p->roll = rand() % 179;
 
 		p->color = ZOMBIE;
-
 	}
-
-
 }
 
 void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, float speed)
@@ -2446,7 +2432,7 @@ void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir)
 			p->width  = LARGESIZE;
 			p->height = LARGESIZE;
 
-			// RF, expand while falling
+			// expand while falling
 			p->endheight = LARGESIZE * 3.0;
 			p->endwidth  = LARGESIZE * 3.0;
 		}
@@ -2489,10 +2475,7 @@ void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir)
 		}
 
 		p->alpha = 0.75;
-
 	}
-
-
 }
 
 void CG_ParticleMisc(qhandle_t pshader, vec3_t origin, int size, int duration, float alpha)

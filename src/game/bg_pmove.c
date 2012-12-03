@@ -43,7 +43,7 @@
 
 #include "bg_local.h"
 
-// JPW NERVE -- stuck this here so it can be seen client & server side
+// stuck this here so it can be seen client & server side
 float Com_GetFlamethrowerRange(void)
 {
 	return 2500; // multiplayer range is longer for balance
@@ -55,7 +55,6 @@ pml_t   pml;
 // movement parameters
 float pm_stopspeed = 100;
 
-//----(SA)  modified
 float pm_waterSwimScale = 0.5;
 float pm_waterWadeScale = 0.70;
 float pm_slagSwimScale  = 0.30;
@@ -89,7 +88,6 @@ void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags);
 /*
 ===============
 PM_AddEvent
-
 ===============
 */
 void PM_AddEvent(int newEvent)
@@ -339,7 +337,6 @@ PM_TraceAll
 finds worst trace of body/legs, for collision.
 ==================
 */
-
 void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	trace_t steptrace;
@@ -481,7 +478,7 @@ static void PM_Friction(void)
 	// apply water friction even if just wading
 	if (pm->waterlevel)
 	{
-		if (pm->watertype == CONTENTS_SLIME)     //----(SA) slag
+		if (pm->watertype == CONTENTS_SLIME)     // slag
 		{
 			drop += speed * pm_slagfriction * pm->waterlevel * pml.frametime;
 		}
@@ -510,7 +507,7 @@ static void PM_Friction(void)
 	}
 	newspeed /= speed;
 
-	// rain - if we're barely moving and barely slowing down, we want to
+	// if we're barely moving and barely slowing down, we want to
 	// help things along--we don't want to end up getting snapped back to
 	// our previous speed
 	if (pm->ps->pm_type == PM_SPECTATOR || pm->ps->pm_type == PM_NOCLIP)
@@ -551,7 +548,7 @@ static void PM_Accelerate(vec3_t wishdir, float wishspeed, float accel)
 		accelspeed = addspeed;
 	}
 
-	// Ridah, variable friction for AI's
+	// variable friction for AI's
 	if (pm->ps->groundEntityNum != ENTITYNUM_NONE)
 	{
 		accelspeed *= (1.0 / pm->ps->friction);
@@ -633,12 +630,12 @@ static float PM_CmdScale(usercmd_t *cmd)
 		scale *= 3;
 	}
 
-// JPW NERVE -- half move speed if heavy weapon is carried
-// this is the counterstrike way of doing it -- ie you can switch to a non-heavy weapon and move at
-// full speed.  not completely realistic (well, sure, you can run faster with the weapon strapped to your
-// back than in carry position) but more fun to play.  If it doesn't play well this way we'll bog down the
-// player if the own the weapon at all.
-//
+	// half move speed if heavy weapon is carried
+	// this is the counterstrike way of doing it -- ie you can switch to a non-heavy weapon and move at
+	// full speed.  not completely realistic (well, sure, you can run faster with the weapon strapped to your
+	// back than in carry position) but more fun to play.  If it doesn't play well this way we'll bog down the
+	// player if the own the weapon at all.
+
 	if ((pm->ps->weapon == WP_PANZERFAUST) ||
 	    (pm->ps->weapon == WP_MOBILE_MG42) ||
 	    (pm->ps->weapon == WP_MOBILE_MG42_SET) ||
@@ -784,20 +781,19 @@ static qboolean PM_CheckJump(void)
 		return qfalse;
 	}
 
-	// JPW NERVE -- jumping in multiplayer uses and requires sprint juice (to prevent turbo skating, sprint + jumps)
+	// jumping in multiplayer uses and requires sprint juice (to prevent turbo skating, sprint + jumps)
 	// don't allow jump accel
 
-	// rain - revert to using pmext for this since pmext is fixed now.
-	// fix for #166
+	// revert to using pmext for this since pmext is fixed now.
 	if (pm->cmd.serverTime - pm->pmext->jumpTime < 850)
 	{
 		return qfalse;
 	}
 
 	// don't allow if player tired
-//  if (pm->pmext->sprintTime < 2500) // JPW pulled this per id request; made airborne jumpers wildly inaccurate with gunfire to compensate
-//      return qfalse;
-	// jpw
+	//if (pm->pmext->sprintTime < 2500) // JPW pulled this per id request; made airborne jumpers wildly inaccurate with gunfire to compensate
+	//    return qfalse;
+
 
 	if (pm->ps->pm_flags & PMF_RESPAWNED)
 	{
@@ -1055,7 +1051,7 @@ static qboolean PM_CheckProne(void)
 
 		pm->mins[2] = pm->ps->mins[2];
 
-		// tjw: it appears that 12 is the magic number
+		// it appears that 12 is the magic number
 		//      for the minimum maxs[2] that prevents
 		//      player from getting stuck into the world.
 		pm->maxs[2]        = 12;
@@ -1297,7 +1293,6 @@ static void PM_AirMove(void)
 /*
 ===================
 PM_WalkMove
-
 ===================
 */
 static void PM_WalkMove(void)
@@ -1343,7 +1338,7 @@ static void PM_WalkMove(void)
 			pm->pmext->jumpTime = pm->cmd.serverTime;
 		}
 
-		pm->ps->jumpTime = pm->cmd.serverTime;  // Arnout: NOTE : TEMP DEBUG
+		pm->ps->jumpTime = pm->cmd.serverTime;  // NOTE : TEMP DEBUG
 
 		return;
 	}
@@ -1372,7 +1367,7 @@ static void PM_WalkMove(void)
 		wishvel[i] = pml.forward[i] * fmove + pml.right[i] * smove;
 	}
 	// when going up or down slopes the wish velocity should Not be zero
-//  wishvel[2] = 0;
+	//wishvel[2] = 0;
 
 	VectorCopy(wishvel, wishdir);
 	wishspeed  = VectorNormalize(wishdir);
@@ -1400,7 +1395,7 @@ static void PM_WalkMove(void)
 		float waterScale;
 
 		waterScale = pm->waterlevel / 3.0;
-		if (pm->watertype == CONTENTS_SLIME)     //----(SA) slag
+		if (pm->watertype == CONTENTS_SLIME)     // slag
 		{
 			waterScale = 1.0 - (1.0 - pm_slagSwimScale) * waterScale;
 		}
@@ -1467,7 +1462,7 @@ static void PM_WalkMove(void)
 
 	PM_StepSlideMove(qfalse);
 
-	// Ridah, moved this down, so we use the actual movement direction
+	// moved this down, so we use the actual movement direction
 	// set the movementDir so clients can rotate the legs for strafing
 	PM_SetMovementDir();
 }
@@ -2013,7 +2008,7 @@ static void PM_CheckDuck(void)
 		return;
 	}
 
-	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER)) || pm->ps->weapon == WP_MORTAR_SET)           // duck
+	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER)) || pm->ps->weapon == WP_MORTAR_SET) // duck
 	{
 		pm->ps->pm_flags |= PMF_DUCKED;
 	}
@@ -2072,7 +2067,7 @@ static void PM_Footsteps(void)
 				pm->ps->pm_flags &= ~PMF_FLAILING;  // the eagle has landed
 			}
 		}
-		else if (!pm->ps->pm_time && !(pm->ps->pm_flags & PMF_LIMBO))         // DHM - Nerve :: before going to limbo, play a wounded/fallen animation
+		else if (!pm->ps->pm_time && !(pm->ps->pm_flags & PMF_LIMBO))         // before going to limbo, play a wounded/fallen animation
 		{
 			if (pm->ps->groundEntityNum == ENTITYNUM_NONE)
 			{
@@ -2437,7 +2432,7 @@ static void PM_BeginWeaponReload(int weapon)
 		return;
 	}
 
-	// (SA) easier check now that the animation system handles the specifics
+	// easier check now that the animation system handles the specifics
 	switch (weapon)
 	{
 	case WP_DYNAMITE:
@@ -3405,7 +3400,7 @@ void PM_AdjustAimSpreadScale(void)
 	if (wpnScale)
 	{
 
-		// JPW NERVE crouched players recover faster (mostly useful for snipers)
+		// crouched players recover faster (mostly useful for snipers)
 		if (pm->ps->eFlags & EF_CROUCHING || pm->ps->eFlags & EF_PRONE)
 		{
 			wpnScale *= 0.5;
@@ -3484,9 +3479,9 @@ Generates weapon events and modifes the weapon counter
 
 static void PM_Weapon(void)
 {
-	int      addTime = 0;    // TTimo: init
+	int      addTime = 0;    // init
 	int      ammoNeeded;
-	qboolean delayedFire;       //----(SA)  true if the delay time has just expired and this is the frame to send the fire event
+	qboolean delayedFire;       // true if the delay time has just expired and this is the frame to send the fire event
 	int      aimSpreadScaleAdd;
 	int      weapattackanim;
 	qboolean akimboFire;
@@ -3671,8 +3666,6 @@ static void PM_Weapon(void)
 		akimboFire = qfalse;
 	}
 
-	// TTimo
-	// show_bug.cgi?id=416
 #ifdef DO_WEAPON_DBG
 	if (pm->ps->weaponstate != weaponstate_last)
 	{
@@ -3784,7 +3777,7 @@ static void PM_Weapon(void)
 			{
 				pm->ps->grenadeTimeLeft += pml.msec;
 
-				// JPW NERVE -- in multiplayer, dynamite becomes strategic, so start timer @ 30 seconds
+				// in multiplayer, dynamite becomes strategic, so start timer @ 30 seconds
 				if (pm->ps->grenadeTimeLeft < 5000)
 				{
 					pm->ps->grenadeTimeLeft = 5000;
@@ -3878,13 +3871,13 @@ static void PM_Weapon(void)
 			pm->ps->weaponTime = 0;
 		}
 
-		// Gordon: aha, THIS is the kewl quick fire mode :)
-		// JPW NERVE -- added back for multiplayer pistol balancing
+		// aha, THIS is the kewl quick fire mode :)
+		// added back for multiplayer pistol balancing
 		if (pm->ps->weapon == WP_LUGER || pm->ps->weapon == WP_COLT || pm->ps->weapon == WP_SILENCER || pm->ps->weapon == WP_SILENCED_COLT ||
 		    pm->ps->weapon == WP_KAR98 || pm->ps->weapon == WP_K43 || pm->ps->weapon == WP_CARBINE || pm->ps->weapon == WP_GARAND ||
 		    pm->ps->weapon == WP_GARAND_SCOPE || pm->ps->weapon == WP_K43_SCOPE || BG_IsAkimboWeapon(pm->ps->weapon))
 		{
-// rain - moved releasedFire into pmext instead of ps
+			// moved releasedFire into pmext instead of ps
 			if (pm->pmext->releasedFire)
 			{
 				if (pm->cmd.buttons & BUTTON_ATTACK)
@@ -3909,7 +3902,7 @@ static void PM_Weapon(void)
 			}
 			else if (!(pm->cmd.buttons & BUTTON_ATTACK))
 			{
-// rain - moved releasedFire into pmext instead of ps
+				// moved releasedFire into pmext instead of ps
 				pm->pmext->releasedFire = qtrue;
 			}
 		}
@@ -3923,7 +3916,7 @@ static void PM_Weapon(void)
 	{
 		if (pm->ps->weapon != pm->cmd.weapon)
 		{
-			PM_BeginWeaponChange(pm->ps->weapon, pm->cmd.weapon, qfalse);   //----(SA)  modified
+			PM_BeginWeaponChange(pm->ps->weapon, pm->cmd.weapon, qfalse);
 		}
 	}
 
@@ -3956,8 +3949,8 @@ static void PM_Weapon(void)
 	{
 		pm->ps->weaponstate = WEAPON_READY;
 
-//      if( pm->ps->eFlags & EF_PRONE && pm->ps->weapon == WP_MOBILE_MG42 )
-//          pm->pmext->proneMG42Zoomed = qtrue;
+		//if( pm->ps->eFlags & EF_PRONE && pm->ps->weapon == WP_MOBILE_MG42 )
+		//    pm->pmext->proneMG42Zoomed = qtrue;
 
 		PM_StartWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
 		return;
@@ -3977,7 +3970,7 @@ static void PM_Weapon(void)
 		return;
 	}
 
-	// JPW NERVE -- in multiplayer, don't allow panzerfaust or dynamite to fire if charge bar isn't full
+	// in multiplayer, don't allow panzerfaust or dynamite to fire if charge bar isn't full
 	if (pm->ps->weapon == WP_PANZERFAUST)
 	{
 		if (pm->ps->eFlags & EF_PRONE)
@@ -4166,7 +4159,7 @@ static void PM_Weapon(void)
 	}
 
 	// player is zooming - no fire
-	// JPW NERVE in MP, LT needs to zoom to call artillery
+	// PC_FIELDOPS needs to zoom to call artillery
 	if (pm->ps->eFlags & EF_ZOOMING)
 	{
 #ifdef GAMEDLL
@@ -4224,9 +4217,9 @@ static void PM_Weapon(void)
 	case WP_MP40:
 	case WP_THOMPSON:
 	case WP_STEN:
-	case WP_MEDKIT:                     // NERVE - SMF
-	case WP_PLIERS:                     // NERVE - SMF
-	case WP_SMOKE_MARKER:               // NERVE - SMF
+	case WP_MEDKIT:
+	case WP_PLIERS:
+	case WP_SMOKE_MARKER:
 	case WP_FG42:
 	case WP_FG42SCOPE:
 	case WP_MOBILE_MG42:
@@ -4268,7 +4261,7 @@ static void PM_Weapon(void)
 	case WP_AKIMBO_SILENCEDLUGER:
 		if (!weaponstateFiring)
 		{
-			// JPW NERVE -- pfaust has spinup time in MP
+			// pfaust has spinup time in MP
 			if (pm->ps->weapon == WP_PANZERFAUST)
 			{
 				PM_AddEvent(EV_SPINUP);
@@ -4547,7 +4540,6 @@ static void PM_Weapon(void)
 		}
 	}
 
-
 	// fire weapon
 
 	// add weapon heat
@@ -4615,13 +4607,13 @@ static void PM_Weapon(void)
 		break;          // no animation
 
 	default:
-		// RF, testing
+		// testing
 		//PM_ContinueWeaponAnim(weapattackanim);
 		PM_StartWeaponAnim(weapattackanim);
 		break;
 	}
 
-	// JPW NERVE -- in multiplayer, pfaust fires once then switches to pistol since it's useless for a while
+	// Jin multiplayer, pfaust fires once then switches to pistol since it's useless for a while
 	if ((pm->ps->weapon == WP_PANZERFAUST) || (pm->ps->weapon == WP_SMOKE_MARKER) || (pm->ps->weapon == WP_DYNAMITE) || (pm->ps->weapon == WP_SMOKE_BOMB) || (pm->ps->weapon == WP_LANDMINE) || (pm->ps->weapon == WP_SATCHEL))
 	{
 		PM_AddEvent(EV_NOAMMO);
@@ -4669,7 +4661,7 @@ static void PM_Weapon(void)
 		}
 	}
 
-	// rain - moved releasedFire into pmext instead of ps
+	// moved releasedFire into pmext instead of ps
 	pm->pmext->releasedFire = qfalse;
 	pm->ps->lastFireTime    = pm->cmd.serverTime;
 
@@ -4694,8 +4686,7 @@ static void PM_Weapon(void)
 	case WP_LUGER:
 	case WP_SILENCER:
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
-		// rain - colt and luger are supposed to be balanced
-		//      aimSpreadScaleAdd = 35;
+		// colt and luger are supposed to be balanced
 		aimSpreadScaleAdd = 20;
 		break;
 
@@ -4805,7 +4796,7 @@ static void PM_Weapon(void)
 	case WP_MEDIC_SYRINGE:
 	case WP_MEDIC_ADRENALINE:
 	case WP_AMMO:
-	// TAT 1/30/2003 - lockpick will use value in table too
+	// lockpick will use value in table too
 	case WP_LOCKPICK:
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		break;
@@ -5135,7 +5126,7 @@ are being updated isntead of a full move
     !! NOTE !! Any changes to mounted/prone view should be duplicated in BotEntityWithinView()
 ================
 */
-// rain - take a tracemask as well - we can't use anything out of pm
+// take a tracemask as well - we can't use anything out of pm
 void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)        //----(SA)    modified
 {
 	short   temp;
@@ -5143,7 +5134,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 	pmove_t tpm;
 	vec3_t  oldViewAngles;
 
-	// DHM - Nerve :: Added support for PMF_TIME_LOCKPLAYER
+	// Added support for PMF_TIME_LOCKPLAYER
 	if (ps->pm_type == PM_INTERMISSION || ps->pm_flags & PMF_TIME_LOCKPLAYER)
 	{
 		return;     // no view changes at all
@@ -5152,7 +5143,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 	if (ps->pm_type != PM_SPECTATOR && ps->stats[STAT_HEALTH] <= 0)
 	{
 
-		// DHM - Nerve :: Allow players to look around while 'wounded' or lock to a medic if nearby
+		// Allow players to look around while 'wounded' or lock to a medic if nearby
 		temp = cmd->angles[1] + ps->delta_angles[1];
 		// rain - always allow this.  viewlocking will take precedence
 		// if a medic is found
@@ -5535,7 +5526,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 	}
 
 	tpm.trace = trace;
-//  tpm.trace (&trace, start, tmins, tmaxs, end, ps->clientNum, MASK_PLAYERSOLID);
+	//tpm.trace (&trace, start, tmins, tmaxs, end, ps->clientNum, MASK_PLAYERSOLID);
 
 	PM_UpdateLean(ps, cmd, &tpm);
 }
@@ -5801,7 +5792,7 @@ void PM_Sprint(void)
 			// take time from powerup before taking it from sprintTime
 			pm->ps->powerups[PW_NOFATIGUE] -= 50;
 
-			// (SA) go ahead and continue to recharge stamina at double
+			// go ahead and continue to recharge stamina at double
 			// rate with stamina powerup even when exerting
 			pm->pmext->sprintTime += 10;
 			if (pm->pmext->sprintTime > SPRINTTIME)
@@ -5814,10 +5805,10 @@ void PM_Sprint(void)
 				pm->ps->powerups[PW_NOFATIGUE] = 0;
 			}
 		}
-		// JPW NERVE -- sprint time tuned for multiplayer
+		// sprint time tuned for multiplayer
 		else
 		{
-			// JPW NERVE adjusted for framerate independence
+			// adjusted for framerate independence
 			pm->pmext->sprintTime -= 5000 * pml.frametime;
 		}
 
@@ -5833,14 +5824,14 @@ void PM_Sprint(void)
 	}
 	else
 	{
-		// JPW NERVE -- in multiplayer, recharge faster for top 75% of sprint bar
+		// in multiplayer, recharge faster for top 75% of sprint bar
 		// (for people that *just* use it for jumping, not sprint) this code was
 		// mucked about with to eliminate client-side framerate-dependancy in wolf single player
 		if (pm->ps->powerups[PW_ADRENALINE])
 		{
 			pm->pmext->sprintTime = SPRINTTIME;
 		}
-		else if (pm->ps->powerups[PW_NOFATIGUE])       // (SA) recharge at 2x with stamina powerup
+		else if (pm->ps->powerups[PW_NOFATIGUE])       // recharge at 2x with stamina powerup
 		{
 			pm->pmext->sprintTime += 10;
 		}
@@ -5862,10 +5853,10 @@ void PM_Sprint(void)
 				}
 			}
 
-			pm->pmext->sprintTime += rechargebase * pml.frametime;        // JPW NERVE adjusted for framerate independence
+			pm->pmext->sprintTime += rechargebase * pml.frametime;        // adjusted for framerate independence
 			if (pm->pmext->sprintTime > 5000)
 			{
-				pm->pmext->sprintTime += rechargebase * pml.frametime;    // JPW NERVE adjusted for framerate independence
+				pm->pmext->sprintTime += rechargebase * pml.frametime;    // adjusted for framerate independence
 			}
 		}
 		if (pm->pmext->sprintTime > SPRINTTIME)
@@ -5887,7 +5878,7 @@ void trap_SnapVector(float *v);
 
 void PmoveSingle(pmove_t *pmove)
 {
-	// RF, update conditional values for anim system
+	// update conditional values for anim system
 	BG_AnimUpdatePlayerStateConditions(pmove);
 
 	pm = pmove;
@@ -5930,7 +5921,7 @@ void PmoveSingle(pmove_t *pmove)
 
 	if (pm->cmd.wbuttons & WBUTTON_ZOOM && pm->ps->stats[STAT_HEALTH] >= 0 && !(pm->ps->weaponDelay))
 	{
-		if (pm->ps->stats[STAT_KEYS] & (1 << INV_BINOCS))          // (SA) binoculars are an inventory item (inventory==keys)
+		if (pm->ps->stats[STAT_KEYS] & (1 << INV_BINOCS))          // binoculars are an inventory item (inventory==keys)
 		{
 			if (!BG_IsScopedWeapon(pm->ps->weapon) &&          // don't allow binocs if using the sniper scope
 			    !BG_PlayerMounted(pm->ps->eFlags) &&           // or if mounted on a weapon
@@ -5957,7 +5948,7 @@ void PmoveSingle(pmove_t *pmove)
 		if (PM_WeaponAmmoAvailable(pm->ps->weapon))
 		{
 			// check if zooming
-			// DHM - Nerve :: Let's use the same flag we just checked above, Ok?
+			// Let's use the same flag we just checked above, Ok?
 			if (!(pm->ps->eFlags & EF_ZOOMING))
 			{
 				if (!pm->ps->leanf)
@@ -6066,7 +6057,7 @@ void PmoveSingle(pmove_t *pmove)
 		pm->ps->pm_flags &= ~PMF_BACKWARDS_RUN;
 	}
 
-	if (pm->ps->pm_type >= PM_DEAD || pm->ps->pm_flags & (PMF_LIMBO | PMF_TIME_LOCKPLAYER))                 // DHM - Nerve
+	if (pm->ps->pm_type >= PM_DEAD || pm->ps->pm_flags & (PMF_LIMBO | PMF_TIME_LOCKPLAYER))
 	{
 		pm->cmd.forwardmove = 0;
 		pm->cmd.rightmove   = 0;
@@ -6337,7 +6328,7 @@ int Pmove(pmove_t *pmove)
 		}
 	}
 
-	// rain - sanity check weapon heat
+	// sanity check weapon heat
 	if (pmove->ps->curWeapHeat > 255)
 	{
 		pmove->ps->curWeapHeat = 255;

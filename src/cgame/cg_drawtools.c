@@ -43,29 +43,35 @@ Adjusted for resolution and screen aspect ratio
 */
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 {
-#if 0
-	// adjust for wide screens
-	if (cgs.glconfig.vidWidth * 480 > cgs.glconfig.vidHeight * 640)
-	{
-		*x += 0.5 * (cgs.glconfig.vidWidth - (cgs.glconfig.vidHeight * 640 / 480));
-	}
-#endif
-
-	/*  if ( (cg.showGameView) && cg.refdef_current->width ) {
-	        float xscale = ( ( cg.refdef_current->width / cgs.screenXScale ) / 640.f );
-	        float yscale = ( ( cg.refdef_current->height / cgs.screenYScale ) / 480.f );
-
-	        (*x) = (*x) * xscale + ( cg.refdef_current->x / cgs.screenXScale );
-	        (*y) = (*y) * yscale + ( cg.refdef_current->y / cgs.screenYScale );
-	        (*w) *= xscale;
-	        (*h) *= yscale;
-	    }*/
-
 	// scale for screen sizes
-	*x *= cgs.screenXScale;
 	*y *= cgs.screenYScale;
-	*w *= cgs.screenXScale;
 	*h *= cgs.screenYScale;
+
+	if (cgs.aspectratio == RATIO43)
+	{
+		*x *= cgs.screenXScale;
+		*w *= cgs.screenXScale;
+	}
+	else
+	{
+		*x *= cgs.r43da;    // * ((4/3) / aspectratio);
+		*w *= cgs.r43da;    // * ((4/3) / aspectratio);
+	}
+}
+
+qboolean Ccg_Is43Screen(void)
+{
+	return (cgs.aspectratio == RATIO43);
+}
+
+float Ccg_WideX(float x)
+{
+	return (cgs.aspectratio == RATIO43) ? x : x *cgs.adr43; // * (aspectratio / (4/3))
+}
+
+float Ccg_WideXoffset(void)
+{
+	return (cgs.aspectratio == RATIO43) ? 0.0f : ((640.0f * cgs.adr43) - 640.0f) * 0.5f;
 }
 
 /*
@@ -88,6 +94,8 @@ void CG_FillRect(float x, float y, float width, float height, const float *color
 /*
 ==============
 CG_FillRectGradient
+
+@brief unused
 ==============
 */
 void CG_FillRectGradient(float x, float y, float width, float height, const float *color, const float *gradcolor, int gradientType)
@@ -203,7 +211,6 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		}
 		else
 		{
-//          CG_FillRectGradient ( x, y, w, h * frac, startColor, endColor, 0 );
 			CG_FillRect(x, y, w, h * frac, startColor);
 		}
 	}
@@ -225,7 +232,6 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		}
 		else
 		{
-//          CG_FillRectGradient ( x, y, w * frac, h, startColor, endColor, 0 );
 			CG_FillRect(x, y, w * frac, h, startColor);
 		}
 	}
@@ -379,9 +385,7 @@ Coordinates are 640*480 virtual values
 */
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle)
 {
-
 	CG_AdjustFrom640(&x, &y, &width, &height);
-
 	trap_R_DrawRotatedPic(x, y, width, height, 0, 0, 1, 1, hShader, angle);
 }
 
@@ -634,7 +638,8 @@ void CG_DrawStringExt2(int x, int y, const char *string, const float *setColor,
 	CG_DrawStringExt_Shadow(x, y, string, setColor, forceColor, shadow ? 2 : 0, charWidth, charHeight, maxChars);
 }
 
-/*==================
+/*
+==================
 CG_DrawStringExt3
 
 Draws a multi-colored string with a drop shadow, optionally forcing
@@ -795,13 +800,12 @@ void CG_DrawBigString(int x, int y, const char *s, float alpha)
 
 	color[0] = color[1] = color[2] = 1.0;
 	color[3] = alpha;
-	//CG_DrawStringExt( x, y, s, color, qfalse, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
+
 	CG_DrawStringExt2(x, y, s, color, qfalse, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0);
 }
 
 void CG_DrawBigStringColor(int x, int y, const char *s, vec4_t color)
 {
-	//CG_DrawStringExt( x, y, s, color, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
 	CG_DrawStringExt2(x, y, s, color, qfalse, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0);
 }
 

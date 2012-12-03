@@ -530,12 +530,12 @@ void CG_DrawPMItemsBig(void)
 	}
 
 	trap_R_SetColor(colourText);
-	CG_DrawPic(640 - 56, y, 48, 48, cg_pmWaitingListBig->shader);
+	CG_DrawPic(Ccg_WideX(640) - 56, y, 48, 48, cg_pmWaitingListBig->shader);
 	trap_R_SetColor(NULL);
 
 
 	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, 0.22f, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(640 - 4 - w, y + 56, 0.22f, 0.24f, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(Ccg_WideX(640) - 4 - w, y + 56, 0.22f, 0.24f, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
 }
 
 #define TXTCOLOR_OBJ "^O"
@@ -585,6 +585,7 @@ const char *CG_GetPMItemText(centity_t *cent)
 		if (cg_locations.integer & LOC_LANDMINES)
 		{
 			char *locStr = CG_BuildLocationString(-1, cent->currentState.origin, LOC_LANDMINES);
+			
 			if (!locStr || !*locStr)
 			{
 				return va("%sSpotted by ^7%s", TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name);

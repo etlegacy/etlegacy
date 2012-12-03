@@ -78,7 +78,6 @@ extern pml_t   pml;
 // movement parameters
 extern float pm_stopspeed;
 
-//----(SA)  modified
 extern float pm_waterSwimScale;
 extern float pm_waterWadeScale;
 extern float pm_slagSwimScale;

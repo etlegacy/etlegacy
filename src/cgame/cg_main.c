@@ -76,6 +76,15 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case CG_MOUSE_EVENT:
 		cgDC.cursorx = cgs.cursorX;
 		cgDC.cursory = cgs.cursorY;
+		// when the limbopanel is open, we want the cursor to be able to move all the way to the right edge of the screen..
+		// ... same for the debriefing screen
+		if (cg.showGameView || cgs.dbShowing)
+		{
+			if (!Ccg_Is43Screen())
+			{
+				cgDC.cursorx *= cgs.adr43;
+			}
+		}
 		CG_MouseEvent(arg0, arg1);
 		return 0;
 	case CG_EVENT_HANDLING:
@@ -2699,6 +2708,12 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	trap_GetGlconfig(&cgs.glconfig);
 	cgs.screenXScale = cgs.glconfig.vidWidth / 640.0;
 	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0;
+	// widescreen support..
+	cgs.aspectratio  = (float)(cgs.glconfig.vidWidth) / cgs.glconfig.vidHeight;
+	cgs.aspectratio1 = 1.0f / cgs.aspectratio;
+	cgs.adr43        = cgs.aspectratio * RPRATIO43; // aspectratio / (4/3)
+	cgs.r43da        = RATIO43 * cgs.aspectratio1; // (4/3) / aspectratio
+	cgs.wideXoffset  = (cgs.aspectratio != RATIO43) ? (640.0f * cgs.adr43 - 640.0f) * 0.5f : 0.0f;
 
 	// init the anim scripting
 	cgs.animScriptData.soundIndex = CG_SoundScriptPrecache;

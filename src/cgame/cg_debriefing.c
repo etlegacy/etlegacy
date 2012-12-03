@@ -1309,6 +1309,14 @@ void CG_ChatPanel_Setup(void)
 	BG_PanelButtonsSetup(chatPanelButtons);
 	BG_PanelButtonsSetup(teamDebriefPanelButtons);
 	BG_PanelButtonsSetup(debriefPanelButtons);
+
+	// core: convert to possible ws coordinates..
+	C_PanelButtonsSetup(chatPanelButtons, cgs.wideXoffset);
+	C_PanelButtonsSetup(teamDebriefPanelButtons, cgs.wideXoffset);
+	C_PanelButtonsSetup(debriefPanelButtons, cgs.wideXoffset);
+	// there is an exception: the same debriefTitleWindow is used in multiple panel_button_t
+	// By now the debriefTitleWindow has been adjusted too much, so we correct for the difference..
+	debriefTitleWindow.rect.x -= 2 * cgs.wideXoffset;
 }
 
 void CG_Debriefing_Startup(void)

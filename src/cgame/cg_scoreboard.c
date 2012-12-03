@@ -67,32 +67,6 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	{
 		const char *s, *buf, *shader = NULL, *flagshader = NULL, *nameshader = NULL;
 
-		// Moved to CG_DrawIntermission
-		/*      static int doScreenshot = 0, doDemostop = 0;
-
-		        // OSP - End-of-level autoactions
-		        if(!cg.demoPlayback) {
-		            if(!cg.latchVictorySound) {
-		                if(cg_autoAction.integer & AA_SCREENSHOT) {
-		                    doScreenshot = cg.time + 1000;
-		                }
-		                if(cg_autoAction.integer & AA_STATSDUMP) {
-		                    CG_dumpStats_f();
-		                }
-		                if((cg_autoAction.integer & AA_DEMORECORD) && (cgs.gametype == GT_WOLF_STOPWATCH && cgs.currentRound != 1)) {
-		                    doDemostop = cg.time + 5000;    // stats should show up within 5 seconds
-		                }
-		            }
-		            if(doScreenshot > 0 && doScreenshot < cg.time) {
-		                CG_autoScreenShot_f();
-		                doScreenshot = 0;
-		            }
-		            if(doDemostop > 0 && doDemostop < cg.time) {
-		                trap_SendConsoleCommand("stoprecord\n");
-		                doDemostop = 0;
-		            }
-		        }
-		*/
 		rows = 8;
 		y   += SMALLCHAR_HEIGHT * (rows - 1);
 
@@ -561,7 +535,6 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	}
 
 	w = 360;
-//  CG_DrawPic( 320 - w/2, y, w, INFO_LINE_HEIGHT, trap_R_RegisterShaderNoMip( "ui/assets/mp_line_strip.tga" ) );
 
 	s        = CG_ConfigString(CS_MULTI_INFO);
 	defender = atoi(Info_ValueForKey(s, "defender"));
@@ -701,7 +674,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 
 	y += SMALLCHAR_HEIGHT + 2;
 
-	cg.teamPlayers[team] = 0; // JPW NERVE
+	cg.teamPlayers[team] = 0;
 	for (i = 0; i < cg.numScores; i++)
 	{
 		if (team != cgs.clientinfo[cg.scores[i].client].team)
@@ -830,12 +803,9 @@ Draw the normal in-game scoreboard
 */
 qboolean CG_DrawScoreboard(void)
 {
-	int   x = 0, y = 0, x_right;
+	int   x = 20, y = 10, x_right;
 	float fade;
 	float *fadeColor;
-
-	x = 20;
-	y = 10;
 
 	x_right = 640 - x - (INFO_TOTAL_WIDTH - 5);
 
@@ -846,7 +816,7 @@ qboolean CG_DrawScoreboard(void)
 	}
 
 	// don't draw scoreboard during death while warmup up
-	// OSP - also for pesky scoreboards in demos
+	// also for pesky scoreboards in demos
 	if ((cg.warmup || (cg.demoPlayback && cg.snap->ps.pm_type != PM_INTERMISSION)) && !cg.showScores)
 	{
 		return qfalse;

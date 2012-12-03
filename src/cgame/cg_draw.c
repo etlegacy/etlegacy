@@ -61,9 +61,8 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font
 	int         count, len;
 	glyphInfo_t *glyph;
 	const char  *s = text;
-	float       out, useScale = scale * font->glyphScale;
+	float       out = 0, useScale = scale * font->glyphScale;
 
-	out = 0;
 	if (text)
 	{
 		len = strlen(text);
@@ -102,13 +101,13 @@ int CG_Text_Width(const char *text, float scale, int limit)
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
 	int         len, count;
-	float       max;
+	float       max = 0;
 	glyphInfo_t *glyph;
 	float       useScale;
 	const char  *s = text;
 
 	useScale = scale * font->glyphScale;
-	max      = 0;
+
 	if (text)
 	{
 		len = strlen(text);
@@ -242,7 +241,6 @@ void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
 	CG_Text_Paint_Ext(x, y, scale, scale, color, text, adjust, limit, style, font);
 }
 
-// NERVE - SMF - added back in
 int CG_DrawFieldWidth(int x, int y, int width, int value, int charWidth, int charHeight)
 {
 	char num[16], *ptr;
@@ -387,7 +385,6 @@ int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeig
 /*
 ================
 CG_Draw3DModel
-
 ================
 */
 void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, qhandle_t skin, vec3_t origin, vec3_t angles)
@@ -428,7 +425,6 @@ void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, qhandle
 /*
 ================
 CG_DrawTeamBackground
-
 ================
 */
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
@@ -472,16 +468,16 @@ CG_DrawSnapshot
 */
 static float CG_DrawSnapshot(float y)
 {
-	char *s;
-	int  w;
+	char *s = va("t:%i sn:%i cmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence);
+	int  x;
+	int  w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	int  w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
 
-	s = va("time:%i snap:%i cmd:%i", cg.snap->serverTime,
-	       cg.latestSnapshotNum, cgs.serverCommandSequence);
-	w = CG_DrawStrlen(s) * BIGCHAR_WIDTH;
-
-	CG_DrawBigString(UPPERRIGHT_X - w, y + 2, s, 1.0F);
-
-	return y + BIGCHAR_HEIGHT + 4;
+	x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
+	return y + 12 + 4;
 }
 
 /*
@@ -547,9 +543,9 @@ static float CG_DrawFPS(float y)
 	}
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
-	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w; // @widescreen
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
 
-	x = UPPERRIGHT_X - w2 - 2;
+	x = (int)(Ccg_WideX(UPPERRIGHT_X)) - w2 - 2;
 	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
 	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
 	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
@@ -565,29 +561,23 @@ CG_DrawTimer
 static float CG_DrawTimer(float y)
 {
 	char   *s;
-	int    w;
-	int    mins, seconds, tens;
-	int    msec;
-	char   *rt;
-	vec4_t color           = { 0.625f, 0.625f, 0.6f, 1.0f };
-	vec4_t timerBackground = { 0.16f, 0.2f, 0.17f, 0.8f };
-	vec4_t timerBorder     = { 0.5f, 0.5f, 0.5f, 0.5f };
+	int    w, w2;
+	vec4_t color = { 0.625f, 0.625f, 0.6f, 1.0f };
+	int    tens;
+	char   *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || cg.snap->ps.pm_flags & PMF_FOLLOW) && cg_drawReinforcementTime.integer > 0) ?
+	             va("^F%d%s", CG_CalculateReinfTime(qfalse), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
+	int x;
+	int msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+	int seconds = msec / 1000;
+	int mins    = seconds / 60;
 
-	// Respawn timer shouldn't be shown in spectator mode
-	rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || cg.snap->ps.pm_flags & PMF_FOLLOW) && cg_drawReinforcementTime.integer > 0) ?
-	     va("^F%d%s", CG_CalculateReinfTime(qfalse), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
-
-	msec = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
-
-	seconds  = msec / 1000;
-	mins     = seconds / 60;
 	seconds -= mins * 60;
 	tens     = seconds / 10;
 	seconds -= tens * 10;
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = "^*WARMUP"; // ydnar: don't draw reinforcement time in warmup mode
+		s        = "^7WARMUP"; // ydnar: don't draw reinforcement time in warmup mode // ^*
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
@@ -603,18 +593,20 @@ static float CG_DrawTimer(float y)
 		}
 		else
 		{
-			s = va("%s^*%i:%i%i", rt, mins, tens, seconds);
+			s = va("%s^7%i:%i%i", rt, mins, tens, seconds);  // ^*
 		}
 
 		color[3] = 1.f;
 	}
 
-	w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
 
-	CG_FillRect(UPPERRIGHT_X - w - 2, y, w + 5, 12 + 2, timerBackground);
-	CG_DrawRect_FixedBorder(UPPERRIGHT_X - w - 2, y, w + 5, 12 + 2, 1, timerBorder);
+	x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
 
-	CG_Text_Paint_Ext(UPPERRIGHT_X - w, y + 11, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	return y + 12 + 4;
 }
@@ -629,9 +621,7 @@ CG_DrawUpperRight
 */
 static void CG_DrawUpperRight(void)
 {
-	float y;
-
-	y = 20 + 100 + 32;
+	float y = 20 + 100 + 32;
 
 	if (cg_drawFireteamOverlay.integer && CG_IsOnFireteam(cg.clientNum))
 	{
@@ -972,7 +962,8 @@ Should we draw something differnet for long lag vs no packets?
 */
 static void CG_DrawDisconnect(void)
 {
-	float      x, y;
+	float      x = Ccg_WideX(640) - 48; // disconnect icon
+	float      y = 480 - 200; // disconnect icon
 	int        cmdNum;
 	usercmd_t  cmd;
 	const char *s;
@@ -1010,9 +1001,6 @@ static void CG_DrawDisconnect(void)
 		return;
 	}
 
-	x = 640 - 48;
-	y = 480 - 200;
-
 	CG_DrawPic(x, y, 48, 48, cgs.media.disconnectIcon);
 }
 
@@ -1039,7 +1027,7 @@ static void CG_DrawLagometer(void)
 	}
 
 	// draw the graph
-	x = 640 - 48;
+	x = Ccg_WideX(640) - 48;
 	y = 480 - 200;
 
 	trap_R_SetColor(NULL);
@@ -1183,7 +1171,7 @@ Called for important messages that should stay in the center of the screen
 for a few moments
 ==============
 */
-#define CP_LINEWIDTH 56
+#define CP_LINEWIDTH (int)(Ccg_WideX(56))
 
 void CG_CenterPrint(const char *str, int y, int charWidth)
 {
@@ -1192,7 +1180,7 @@ void CG_CenterPrint(const char *str, int y, int charWidth)
 	qboolean neednewline = qfalse;
 	int      priority    = 0;
 
-	// NERVE - SMF - don't draw if this print message is less important
+	// don't draw if this print message is less important
 	if (cg.centerPrintTime && priority < cg.centerPrintPriority)
 	{
 		return;
@@ -1201,11 +1189,10 @@ void CG_CenterPrint(const char *str, int y, int charWidth)
 	Q_strncpyz(cg.centerPrint, str, sizeof(cg.centerPrint));
 	cg.centerPrintPriority = priority;
 
-	// NERVE - SMF - turn spaces into newlines, if we've run over the linewidth
+	// turn spaces into newlines, if we've run over the linewidth
 	len = strlen(cg.centerPrint);
 	for (i = 0; i < len; i++)
 	{
-
 		// NOTE: subtract a few chars here so long words still get displayed properly
 		if (i % (CP_LINEWIDTH - 20) == 0 && i > 0)
 		{
@@ -1249,7 +1236,7 @@ void CG_PriorityCenterPrint(const char *str, int y, int charWidth, int priority)
 	int      i, len;
 	qboolean neednewline = qfalse;
 
-	// NERVE - SMF - don't draw if this print message is less important
+	// don't draw if this print message is less important
 	if (cg.centerPrintTime && priority < cg.centerPrintPriority)
 	{
 		return;
@@ -1258,7 +1245,7 @@ void CG_PriorityCenterPrint(const char *str, int y, int charWidth, int priority)
 	Q_strncpyz(cg.centerPrint, str, sizeof(cg.centerPrint));
 	cg.centerPrintPriority = priority;
 
-	// NERVE - SMF - turn spaces into newlines, if we've run over the linewidth
+	// turn spaces into newlines, if we've run over the linewidth
 	len = strlen(cg.centerPrint);
 	for (i = 0; i < len; i++)
 	{
@@ -1327,7 +1314,7 @@ static void CG_DrawCenterString(void)
 	{
 		char linebuffer[1024];
 
-		for (l = 0; l < CP_LINEWIDTH; l++) // NERVE - SMF - added CP_LINEWIDTH
+		for (l = 0; l < CP_LINEWIDTH; l++) // added CP_LINEWIDTH
 		{
 			if (!start[l] || start[l] == '\n')
 			{
@@ -1339,7 +1326,7 @@ static void CG_DrawCenterString(void)
 
 		w = cg.centerPrintCharWidth * CG_DrawStrlen(linebuffer);
 
-		x = (SCREEN_WIDTH - w) / 2;
+		x = (Ccg_WideX(SCREEN_WIDTH) - w) / 2;
 
 		CG_DrawStringExt(x, y, linebuffer, color, qfalse, qtrue, cg.centerPrintCharWidth, (int)(cg.centerPrintCharWidth * 1.5), 0);
 
@@ -1361,9 +1348,7 @@ static void CG_DrawCenterString(void)
 
 /*
 ================================================================================
-
 CROSSHAIRS
-
 ================================================================================
 */
 
@@ -1377,7 +1362,7 @@ static void CG_DrawWeapReticle(void)
 	vec4_t   color = { 0, 0, 0, 1 };
 	qboolean fg, garand, k43;
 
-	// DHM - Nerve :: So that we will draw reticle
+	// So that we will draw reticle
 	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback)
 	{
 		garand = (qboolean)(cg.snap->ps.weapon == WP_GARAND_SCOPE);
@@ -1571,7 +1556,6 @@ static void CG_DrawMortarReticle(void)
 			lastfireAngle = AngleNormalize360(360 - (cg.mortarFireAngles[YAW] - 90.f));
 
 			localOffset = ((AngleSubtract(angle, lastfireAngle)) / 5.f) * 10.f;
-			//CG_FillRect( 320 + localOffset, 252, 2, 18, color_lastfire);
 			CG_FillRect(320 - localOffset, 252, 2, 18, color_lastfire);
 		}
 	}
@@ -1681,7 +1665,7 @@ static void CG_DrawMortarReticle(void)
 		{
 			printval = min - val * 10;
 
-			// rain - old tertiary abuse was nasty and had undefined result
+			// old tertiary abuse was nasty and had undefined result
 			if (printval <= -180)
 			{
 				printval += 360;
@@ -1791,7 +1775,7 @@ static void CG_DrawBinocReticle(void)
 
 	if (cgs.media.binocShaderSimple)
 	{
-		CG_DrawPic(0, 0, 640, 480, cgs.media.binocShaderSimple);
+		CG_DrawPic(0, 0, Ccg_WideX(640), 480, cgs.media.binocShaderSimple);
 	}
 
 	CG_FillRect(146, 239, 348, 1, color);
@@ -1832,7 +1816,7 @@ static void CG_DrawCrosshair(void)
 		return;
 	}
 
-	// DHM - Nerve :: show reticle in limbo and spectator
+	// show reticle in limbo and spectator
 	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback)
 	{
 		weapnum = cg.snap->ps.weapon;
@@ -1906,7 +1890,7 @@ static void CG_DrawCrosshair(void)
 		return;
 	}
 
-	if (cg_drawCrosshair.integer < 0)     //----(SA)    moved down so it doesn't keep the scoped weaps from drawing reticles
+	if (cg_drawCrosshair.integer < 0)     // moved down so it doesn't keep the scoped weaps from drawing reticles
 	{
 		return;
 	}
@@ -1917,7 +1901,7 @@ static void CG_DrawCrosshair(void)
 		return;
 	}
 
-	// TAT 1/10/2003 - Don't draw crosshair if have exit hintcursor
+	// Don't draw crosshair if have exit hintcursor
 	if (cg.snap->ps.serverCursorHint >= HINT_EXIT && cg.snap->ps.serverCursorHint <= HINT_NOEXIT)
 	{
 		return;
@@ -1938,7 +1922,7 @@ static void CG_DrawCrosshair(void)
 
 	w = h = cg_crosshairSize.value;
 
-	// RF, crosshair size represents aim spread
+	// crosshair size represents aim spread
 	f  = (float)((cg_crosshairPulse.integer == 0) ? 0 : cg.snap->ps.aimSpreadScale / 255.0);
 	w *= (1 + f * 2.0);
 	h *= (1 + f * 2.0);
@@ -2213,7 +2197,6 @@ static void CG_DrawCrosshairNames(void)
 	qboolean   isTank    = qfalse;
 	int        maxHealth = 1;
 	int        i;
-
 	// Distance to the entity under the crosshair
 	float dist;
 	float zChange;
@@ -3273,15 +3256,15 @@ static void CG_DrawFlashFade(void)
 	{
 		VectorClear(col);
 		col[3] = (fBlackout) ? 1.0f : cgs.fadeAlphaCurrent;
-		CG_FillRect(0, 0, 640, 480, col);
+		CG_FillRect(0, 0, Ccg_WideX(640), 480, col);
 
-		//bani - #127 - bail out if we're a speclocked spectator with cg_draw2d = 0
+		// bail out if we're a speclocked spectator with cg_draw2d = 0
 		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && !cg_draw2D.integer)
 		{
 			return;
 		}
 
-		// OSP - Show who is speclocked
+		// Show who is speclocked
 		if (fBlackout)
 		{
 			int   i, nOffset = 90;
@@ -3342,7 +3325,7 @@ static void CG_DrawFlashZoomTransition(void)
 	{
 		frac = frac / (float)fadeTime;
 		Vector4Set(color, 0, 0, 0, 1.0f - frac);
-		CG_FillRect(-10, -10, 640, 480, color);
+		CG_FillRect(-10, -10, Ccg_WideX(640), 480, color);
 	}
 }
 
@@ -3376,7 +3359,7 @@ static void CG_DrawFlashDamage(void)
 		                                   (cg_bloodFlash.value < 0.0) ? 0.0 :
 		                                   cg_bloodFlash.value);
 
-		CG_FillRect(-10, -10, 640, 480, col);
+		CG_FillRect(-10, -10, Ccg_WideX(640), 480, col);
 	}
 }
 
@@ -3431,7 +3414,7 @@ static void CG_DrawFlashFire(void)
 		col[2] = alpha;
 		col[3] = alpha;
 		trap_R_SetColor(col);
-		CG_DrawPic(-10, -10, 640, 480, cgs.media.viewFlashFire[(cg.time / 50) % 16]);
+		CG_DrawPic(-10, -10, Ccg_WideX(640), 480, cgs.media.viewFlashFire[(cg.time / 50) % 16]);
 		trap_R_SetColor(NULL);
 
 		trap_S_AddLoopingSound(cg.snap->ps.origin, vec3_origin, cgs.media.flameSound, (int)(255.0 * alpha), 0);
@@ -3495,7 +3478,7 @@ void CG_ObjectivePrint(const char *str, int charWidth)
 
 	Q_strncpyz(cg.oidPrint, s, sizeof(cg.oidPrint));
 
-	// NERVE - SMF - turn spaces into newlines, if we've run over the linewidth
+	// turn spaces into newlines, if we've run over the linewidth
 	len = strlen(cg.oidPrint);
 	for (i = 0; i < len; i++)
 	{
@@ -3765,8 +3748,6 @@ static void CG_ScreenFade(void)
 /*
 =================
 CG_DrawCompassIcon
-
-NERVE - SMF
 =================
 */
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader)
@@ -3886,8 +3867,7 @@ CG_DrawNewCompass
 */
 static void CG_DrawNewCompass(void)
 {
-	float basex, basey;
-	float basew, baseh;
+	float basex = (Ccg_WideX(640) - 100 - 20 - 16), basey = 20 - 16, basew = 100 + 32, baseh = 100 + 32;
 	snapshot_t *snap;
 	float angle;
 	int i;
@@ -3962,7 +3942,7 @@ static void CG_DrawNewCompass(void)
 	lastangle += anglespeed;
 	CG_DrawRotatedPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compass2Shader, lastangle);
 
-//  if( !(cgs.ccFilter & CC_FILTER_REQUESTS) ) {
+	//if( !(cgs.ccFilter & CC_FILTER_REQUESTS) ) {
 	// draw voice chats
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
@@ -3988,7 +3968,7 @@ static void CG_DrawNewCompass(void)
 
 		CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cent->voiceChatSprite);
 	}
-//  }
+	//}
 
 	/*if( !(cgs.ccFilter & CC_FILTER_DESTRUCTIONS) ) {
 	    // draw explosives if an engineer
@@ -4010,7 +3990,7 @@ static void CG_DrawNewCompass(void)
 	    }
 	}*/
 
-//  if( !(cgs.ccFilter & CC_FILTER_REQUESTS) ) {
+	//if( !(cgs.ccFilter & CC_FILTER_REQUESTS) ) {
 	// draw revive medic icons
 	if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC)
 	{
@@ -4034,10 +4014,10 @@ static void CG_DrawNewCompass(void)
 			}
 		}
 	}
-//  }
+	//}
 
 
-//  if( !(cgs.ccFilter & CC_FILTER_BUDDIES) ) {
+	//if( !(cgs.ccFilter & CC_FILTER_BUDDIES) ) {
 	for (i = 0; i < snap->numEntities; i++)
 	{
 		entityState_t *ent = &snap->entities[i];
@@ -4064,7 +4044,7 @@ static void CG_DrawNewCompass(void)
 
 		CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.buddyShader);
 	}
-//  }
+	//}
 }
 
 static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
@@ -4382,15 +4362,11 @@ static void CG_DrawPlayerStatus(void)
 	char buffer[32];
 	int weap;
 	playerState_t *ps;
-	rectDef_t rect;
+	rectDef_t rect = { (Ccg_WideX(640) - 82), (480 - 56), 60, 32 };
 
 	ps = &cg.snap->ps;
 
 	// Draw weapon icon and overheat bar
-	rect.x = 640 - 82;
-	rect.y = 480 - 56;
-	rect.w = 60;
-	rect.h = 32;
 	CG_DrawWeapHeat(&rect, HUD_HORIZONTAL);
 	if (cg.mvTotalClients < 1 && cg_drawWeaponIconFlash.integer == 0)
 	{
@@ -4407,17 +4383,17 @@ static void CG_DrawPlayerStatus(void)
 	if (value3 >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i|%i/%i", value3, value, value2);
-		CG_Text_Paint_Ext(640 - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(Ccg_WideX(640) - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 	else if (value2 >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i/%i", value, value2);
-		CG_Text_Paint_Ext(640 - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(Ccg_WideX(640) - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 	else if (value >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i", value);
-		CG_Text_Paint_Ext(640 - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(Ccg_WideX(640) - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 
 	rect.x = 24;
@@ -4562,11 +4538,11 @@ static void CG_DrawPlayerStats(void)
 	if (ps->powerups[PW_REDFLAG] || ps->powerups[PW_BLUEFLAG])
 	{
 		trap_R_SetColor(NULL);
-		CG_DrawPic(640 - 40, 480 - 140 - value, 36, 36, cgs.media.objectiveShader);
+		CG_DrawPic(Ccg_WideX(640) - 40, 480 - 140 - value, 36, 36, cgs.media.objectiveShader);
 	}
 	else if (ps->powerups[PW_OPS_DISGUISED])       // Disguised?
 	{
-		CG_DrawPic(640 - 40, 480 - 140 - value, 36, 36, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
+		CG_DrawPic(Ccg_WideX(640) - 40, 480 - 140 - value, 36, 36, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 	}
 }
 
@@ -4767,7 +4743,7 @@ static void CG_Draw2D(void)
 			CG_DrawCrosshair();
 			CG_DrawCrosshairNames();
 
-			// NERVE - SMF - we need to do this for spectators as well
+			// we need to do this for spectators as well
 			CG_DrawTeamInfo();
 		}
 		else
@@ -4870,10 +4846,10 @@ static void CG_Draw2D(void)
 	// Info overlays
 	CG_DrawOverlays();
 
-	// OSP - window updates
+	// window updates
 	CG_windowDraw();
 
-	// Ridah, draw flash blends now
+	// draw flash blends now
 	CG_DrawFlashBlend();
 
 	CG_DrawDemoRecording();
@@ -4898,7 +4874,7 @@ void CG_ShakeCamera(void)
 		return;
 	}
 
-	// JPW NERVE starts at 1, approaches 0 over time
+	// starts at 1, approaches 0 over time
 	x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
 
 	// ydnar: move the camera
@@ -4934,7 +4910,7 @@ void CG_DrawMiscGamemodels(void)
 	ent.reType            = RT_MODEL;
 	ent.nonNormalizedAxes = qtrue;
 
-	// ydnar: static gamemodels don't project shadows
+	// static gamemodels don't project shadows
 	ent.renderfx = RF_NOSHADOW;
 
 	for (i = 0; i < cg.numMiscGameModels; i++)

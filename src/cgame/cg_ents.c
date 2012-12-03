@@ -81,7 +81,6 @@ void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *paren
 	orientation_t lerped;
 	vec3_t        tempAxis[3];
 
-//AxisClear( entity->axis );
 	// lerp the tag
 	trap_R_LerpTag(&lerped, parent, tagName, 0);
 
@@ -99,9 +98,7 @@ void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *paren
 
 /*
 ==========================================================================
-
 FUNCTIONS CALLED EACH FRAME
-
 ==========================================================================
 */
 
@@ -245,7 +242,7 @@ static void CG_EntityEffects(centity_t *cent)
 	// add loop sound
 	if (cent->currentState.loopSound)
 	{
-		// ydnar: allow looped sounds to start at trigger time
+		// allow looped sounds to start at trigger time
 		if (cent->soundTime == 0)
 		{
 			cent->soundTime = trap_S_GetCurrentSoundTime();
@@ -309,7 +306,7 @@ static void CG_EntityEffects(centity_t *cent)
 		}
 	}
 
-	// Ridah, flaming sounds
+	// flaming sounds
 	if (CG_EntOnFire(cent))
 	{
 		// play a flame blow sound when moving
@@ -344,7 +341,7 @@ static void CG_EntityEffects(centity_t *cent)
 			                                   1000, 8, 20, 30, alpha, 8.f);
 		}
 	}
-	// DHM - Nerve :: If EF_SMOKING is set, emit smoke
+	// If EF_SMOKING is set, emit smoke
 	else if (cent->currentState.eFlags & EF_SMOKING)
 	{
 		float rnd = random();
@@ -353,7 +350,7 @@ static void CG_EntityEffects(centity_t *cent)
 		{
 			cent->lastTrailTime = cg.time + 100;
 
-			// JPW NERVE -- use wind vector for smoke
+			// use wind vector for smoke
 			CG_GetWindVector(dir);
 			VectorScale(dir, 20, dir); // was 75, before that 55
 			if (dir[2] < 10)
@@ -368,7 +365,7 @@ static void CG_EntityEffects(centity_t *cent)
 			             cg.time, cg.time + 500, 0, cgs.media.smokePuffShader);
 		}
 	}
-	// JPW NERVE same thing but for smoking barrels instead of nasty server-side effect from single player
+	// same thing but for smoking barrels instead of nasty server-side effect from single player
 	else if (cent->currentState.eFlags & EF_SMOKINGBLACK)
 	{
 		float rnd = random();
@@ -506,7 +503,7 @@ static void CG_General(centity_t *cent)
 				cent->lerpFrame.oldFrame     = cent->lerpFrame.frame;
 
 				while (cg.time >= cent->lerpFrame.frameTime &&
-				       // Mad Doc xkan, 11/18/2002 - if teamNum == 1, then we are supposed to stop
+				       // if teamNum == 1, then we are supposed to stop
 				       // the animation when we reach the end of this loop
 				       // Gordon: 27/11/02: clientNum already does this.
 				       // xkan, 1/8/2003 - No, it does something a little different.
@@ -554,7 +551,7 @@ static void CG_General(centity_t *cent)
 
 			ent.backlerp = cent->lerpFrame.backlerp;
 
-//          CG_Printf( "Gamemodel: oldframe: %i frame: %i lerp: %f\n", ent.oldframe, ent.frame, ent.backlerp );
+			//CG_Printf( "Gamemodel: oldframe: %i frame: %i lerp: %f\n", ent.oldframe, ent.frame, ent.backlerp );
 		}
 
 		// xkan, 11/27/2002 - only advance/change frame if the game model has not
@@ -647,7 +644,7 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 		return qfalse;                      // only run the remaining stuff on items that are close enough
 
 	}
-	// (SA) FIXME: do this without AngleVectors.
+	// FIXME: do this without AngleVectors.
 	//      It'd be nice if the angle vectors for the player
 	//      have already been figured at this point and I can
 	//      just pick them up.  (if anybody is storing this somewhere,
@@ -838,8 +835,8 @@ static void CG_Item(centity_t *cent)
 		}
 	}
 
-	//----(SA)  find midpoint for highlight corona.
-	//          Can't do it when item is registered since it wouldn't know about replacement model
+	// find midpoint for highlight corona.
+	// Can't do it when item is registered since it wouldn't know about replacement model
 	if (!(cent->usehighlightOrigin))
 	{
 		vec3_t mins, maxs, offset;
@@ -865,9 +862,9 @@ static void CG_Item(centity_t *cent)
 	}
 
 	// items without glow textures need to keep a minimum light value so they are always visible
-//  if ( ( item->giType == IT_WEAPON ) || ( item->giType == IT_ARMOR ) ) {
+	//if ( ( item->giType == IT_WEAPON ) || ( item->giType == IT_ARMOR ) ) {
 	ent.renderfx |= RF_MINLIGHT;
-//  }
+	//}
 
 	// highlighting items the player looks at
 	if (cg_drawCrosshairPickups.integer)
@@ -894,8 +891,7 @@ static void CG_Item(centity_t *cent)
 			}
 		}
 
-		//----(SA)  added fixed item highlight fading
-
+		// fixed item highlight fading
 		if (highlight)
 		{
 			if (!cent->highlighted)
@@ -1057,8 +1053,7 @@ static void CG_Missile(centity_t *cent)
 	}
 	else if (s1->weapon == WP_SATCHEL && s1->clientNum == cg.snap->ps.clientNum)
 	{
-		// rain - use snap client number so that the detonator works
-		// right when spectating (#218)
+		// use snap client number so that the detonator works right when spectating (#218)
 
 		cg.satchelCharge = cent;
 	}
@@ -1507,7 +1502,7 @@ static void CG_SpotlightEfx(centity_t *cent)
 	CG_Spotlight(cent, color, cent->currentState.origin, normalized_direction, 999, 2048, 10, fov, 0);
 }
 
-//----(SA) adding func_explosive
+// func_explosive
 
 /*
 ===============
@@ -1527,8 +1522,8 @@ static void CG_Explosive(centity_t *cent)
 	// create the render entity
 	memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
-//  VectorCopy( cent->lerpOrigin, ent.oldorigin);
-//  VectorCopy( ent.origin, cent->lerpOrigin);
+	//VectorCopy( cent->lerpOrigin, ent.oldorigin);
+	//VectorCopy( ent.origin, cent->lerpOrigin);
 	AnglesToAxis(cent->lerpAngles, ent.axis);
 
 	ent.renderfx = RF_NOSHADOW;
@@ -1583,7 +1578,7 @@ static void CG_Constructible(centity_t *cent)
 
 	ent.renderfx = RF_NOSHADOW;
 
-	//  CG_Printf( "Adding constructible: %s\n", CG_ConfigString( CS_OID_NAMES + cent->currentState.otherEntityNum2 ) );
+	//CG_Printf( "Adding constructible: %s\n", CG_ConfigString( CS_OID_NAMES + cent->currentState.otherEntityNum2 ) );
 
 	if (s1->modelindex)
 	{
@@ -1595,10 +1590,10 @@ static void CG_Constructible(centity_t *cent)
 		//}
 
 		// add to refresh list
-		// trap_R_AddRefEntityToScene(&ent);
+		//trap_R_AddRefEntityToScene(&ent);
 
-		//  ent.shaderRGBA[0] = ent.shaderRGBA[1] = ent.shaderRGBA[2] = 0xff;
-		//  ent.shaderRGBA[3] = s1->density;
+		//ent.shaderRGBA[0] = ent.shaderRGBA[1] = ent.shaderRGBA[2] = 0xff;
+		//ent.shaderRGBA[3] = s1->density;
 
 		//if( s1->angles2[0] < 255 )
 

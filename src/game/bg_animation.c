@@ -99,7 +99,7 @@ static animStringItem_t animMoveTypesStr[] =
 	{ "TURNLEFT",     -1 },
 	{ "CLIMBUP",      -1 },
 	{ "CLIMBDOWN",    -1 },
-	{ "FALLEN",       -1 }, // DHM - Nerve :: dead, before limbo
+	{ "FALLEN",       -1 }, // dead, before limbo
 	{ "PRONE",        -1 },
 	{ "PRONEBK",      -1 },
 	{ "IDLEPRONE",    -1 },
@@ -752,7 +752,7 @@ qboolean BG_ParseConditions(char **text_pp, animScriptItem_t *scriptItem)
 				conditionValue[0] = 1;      // not used, just check for a positive condition
 			}
 			break;
-		default:     // TTimo gcc: NUM_ANIM_CONDTYPES not handled in switch
+		default:     // gcc: NUM_ANIM_CONDTYPES not handled in switch
 			break;
 		}
 
@@ -886,7 +886,7 @@ static void BG_ParseCommands(char **input, animScriptItem_t *scriptItem, animMod
 				// NOTE: only sound script are supported at this stage
 				if (strstr(token, ".wav"))
 				{
-					BG_AnimParseError("BG_ParseCommands: wav files not supported, only sound scripts");      // RF mod
+					BG_AnimParseError("BG_ParseCommands: wav files not supported, only sound scripts");
 				}
 				// ydnar: this was crashing because soundIndex wasn't initialized
 				// FIXME: find the reason
@@ -990,7 +990,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 		{
 			if (indentLevel)
 			{
-				BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);     // RF mod
+				BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);
 			}
 
 			parseMode     = newParseMode;
@@ -1008,7 +1008,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				token = COM_ParseExt(&text_p, qfalse);
 				if (!token || !*token)
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: expected condition type string");     // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: expected condition type string");
 				}
 				defineType = BG_IndexForString(token, animConditionsStr, qfalse);
 
@@ -1016,7 +1016,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				token = COM_ParseExt(&text_p, qfalse);
 				if (!token || !*token)
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: expected condition define string");   // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: expected condition define string");
 				}
 
 				// copy the define to the strings list
@@ -1026,11 +1026,11 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				token = COM_ParseExt(&text_p, qfalse);
 				if (!token)
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: expected '=', found end of line");    // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: expected '=', found end of line");
 				}
 				if (Q_stricmp(token, "="))
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: expected '=', found '%s'", token);    // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: expected '=', found '%s'", token);
 				}
 
 				// parse the bits
@@ -1053,11 +1053,11 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				// about to increment indent level, check that we have enough information to do this
 				if (indentLevel >= MAX_INDENT_LEVELS)     // too many indentations
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);     // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);
 				}
 				if (indexes[indentLevel] < 0)         // we havent found out what this new group is yet
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);     // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);
 				}
 
 				indentLevel++;
@@ -1068,7 +1068,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				indentLevel--;
 				if (indentLevel < 0)
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);     // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);
 				}
 				if (indentLevel == 1)
 				{
@@ -1082,14 +1082,14 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 			{
 				if (Q_stricmp(token, "state"))
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: expected 'state'");   // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: expected 'state'");
 				}
 
 				// read in the state type
 				token = COM_ParseExt(&text_p, qfalse);
 				if (!token)
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: expected state type");    // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: expected state type");
 				}
 				indexes[indentLevel] = BG_IndexForString(token, animStateStr, qfalse);
 
@@ -1183,9 +1183,9 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				}
 				if (indexes[indentLevel] < 0)         // we havent found out what this new group is yet
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);     // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);
 				}
-				//
+
 				indentLevel++;
 			}
 			else if (!Q_stricmp(token, "}"))
@@ -1194,7 +1194,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				indentLevel--;
 				if (indentLevel < 0)
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);     // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);
 				}
 				if (indentLevel == 0)
 				{
@@ -1265,12 +1265,12 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				// do we have enough room in this script for another item?
 				if (currentScript->numItems >= MAX_ANIMSCRIPT_ITEMS)
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: exceeded maximum items per script (%i)", MAX_ANIMSCRIPT_ITEMS);   // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: exceeded maximum items per script (%i)", MAX_ANIMSCRIPT_ITEMS);
 				}
 				// are there enough items left in the global list?
 				if (animModelInfo->numScriptItems >= MAX_ANIMSCRIPT_ITEMS_PER_MODEL)
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: exceeded maximum global items (%i)", MAX_ANIMSCRIPT_ITEMS_PER_MODEL);     // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: exceeded maximum global items (%i)", MAX_ANIMSCRIPT_ITEMS_PER_MODEL);
 				}
 				// it was parsed ok, so grab an item from the global list to use
 				currentScript->items[currentScript->numItems] = &animModelInfo->scriptItems[animModelInfo->numScriptItems++];
@@ -1296,7 +1296,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 			else
 			{
 				// huh ??
-				BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);     // RF mod
+				BG_AnimParseError("BG_AnimParseAnimScript: unexpected '%s'", token);
 			}
 
 		default:
@@ -1341,7 +1341,7 @@ qboolean BG_EvaluateConditions(int client, animScriptItem_t *scriptItem)
 				return qfalse;
 			}
 			break;
-		default:     // TTimo NUM_ANIM_CONDTYPES not handled
+		default:     // NUM_ANIM_CONDTYPES not handled
 			break;
 		}
 	}
@@ -1465,7 +1465,7 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 		}
 
 		break;
-	default:     // TTimo default ANIM_BP_UNUSED NUM_ANIM_BODYPARTS not handled
+	default:     // default ANIM_BP_UNUSED NUM_ANIM_BODYPARTS not handled
 		break;
 	}
 
@@ -1567,7 +1567,6 @@ int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *animModelInfo, sc
 	Com_Printf("script anim: cl %i, mt %s, ", ps->clientNum, animMoveTypesStr[movetype]);
 #endif
 
-	// xkan, 1/10/2003 - adapted from original SP source
 	// try finding a match in all states ABOVE the given state
 	while (!scriptItem && state < MAX_AISTATES)
 	{
@@ -1843,7 +1842,7 @@ int BG_GetAnimScriptAnimation(int client, animModelInfo_t *animModelInfo, aistat
 	animScriptCommand_t *scriptCommand;
 	int                 state = aistate;
 
-	// xkan, 1/10/2003 - adapted from the original SP source code
+	// adapted from the original SP source code
 	// try finding a match in all states ABOVE the given state
 	while (!scriptItem && state < MAX_AISTATES)
 	{

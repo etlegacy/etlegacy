@@ -156,8 +156,8 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 
 extern qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammoclip, qboolean setcurrent);
 
-// TAT 11/6/2002
-//		Local func to actual do skill upgrade, used by both MP skill system, and SP scripted skill system
+
+// Local func to actual do skill upgrade, used by both MP skill system, and SP scripted skill system
 static void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 {
 	int i, cnt = 0;
@@ -194,7 +194,7 @@ static void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 
 	if (ent->client->sess.rank >= 4)
 	{
-		// Gordon: count the number of maxed out skills
+		// count the number of maxed out skills
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
 			if (ent->client->sess.skill[i] >= 4)
@@ -249,7 +249,7 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
-		return; // Gordon: no xp in LMS
+		return; // no xp in LMS
 	}
 
 	oldskillpoints                        = ent->client->sess.skillpoints[skill];
@@ -292,7 +292,7 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
-		return; // Gordon: no xp in LMS
+		return; // no xp in LMS
 	}
 
 	level.teamXP[skill][ent->client->sess.sessionTeam - TEAM_AXIS] += points;
@@ -301,14 +301,14 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]] += points;
 
-	//	G_Printf( "%s just got %.0f skill points for skill %s\n", ent->client->pers.netname, points, skillNames[skill] );
+	//G_Printf( "%s just got %.0f skill points for skill %s\n", ent->client->pers.netname, points, skillNames[skill] );
 
 	// see if player increased in skill
 	oldskill = ent->client->sess.skill[skill];
 	G_SetPlayerSkill(ent->client, skill);
 	if (oldskill != ent->client->sess.skill[skill])
 	{
-		// TAT - call the new func that encapsulates the skill giving behavior
+		// call the new func that encapsulates the skill giving behavior
 		G_UpgradeSkill(ent, skill);
 	}
 }
@@ -334,22 +334,22 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_GARAND:
 	case MOD_SILENCER:
 	case MOD_FG42:
-//		case MOD_FG42SCOPE:
+	//case MOD_FG42SCOPE:
 	case MOD_CARBINE:
 	case MOD_KAR98:
 	case MOD_SILENCED_COLT:
 	case MOD_K43:
-//bani - akimbo weapons lose score now as well
+	// akimbo weapons lose score now as well
 	case MOD_AKIMBO_COLT:
 	case MOD_AKIMBO_LUGER:
 	case MOD_AKIMBO_SILENCEDCOLT:
 	case MOD_AKIMBO_SILENCEDLUGER:
 	case MOD_GRENADE_LAUNCHER:
 	case MOD_GRENADE_PINEAPPLE:
-//bani - airstrike marker kills
+	// airstrike marker kills
 	case MOD_SMOKEGRENADE:
 		G_LoseSkillPoints(tker, SK_LIGHT_WEAPONS, 3.f);
-//			G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "kill" );
+		//G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "kill" );
 		break;
 
 	// scoped weapons
@@ -358,7 +358,7 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_FG42SCOPE:
 	case MOD_SATCHEL:
 		G_LoseSkillPoints(tker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f);
-//			G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "legshot kill" );
+		//G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "legshot kill" );
 		break;
 
 	case MOD_MOBILE_MG42:
@@ -369,7 +369,7 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_FLAMETHROWER:
 	case MOD_MORTAR:
 		G_LoseSkillPoints(tker, SK_HEAVY_WEAPONS, 3.f);
-//			G_DebugAddSkillPoints( attacker, SK_HEAVY_WEAPONS, 3.f, "emplaced mg42 kill" );
+		//G_DebugAddSkillPoints( attacker, SK_HEAVY_WEAPONS, 3.f, "emplaced mg42 kill" );
 		break;
 
 	case MOD_DYNAMITE:
@@ -377,13 +377,13 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_GPG40:
 	case MOD_M7:
 		G_LoseSkillPoints(tker, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f);
-//			G_DebugAddSkillPoints( attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f, "dynamite or landmine kill" );
+		//G_DebugAddSkillPoints( attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f, "dynamite or landmine kill" );
 		break;
 
 	case MOD_ARTY:
 	case MOD_AIRSTRIKE:
 		G_LoseSkillPoints(tker, SK_SIGNALS, 3.f);
-//			G_DebugAddSkillPoints( attacker, SK_SIGNALS, 4.f, "artillery kill" );
+		//G_DebugAddSkillPoints( attacker, SK_SIGNALS, 4.f, "artillery kill" );
 		break;
 
 	// no skills for anything else
@@ -394,7 +394,6 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 
 void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash)
 {
-
 	if (!attacker->client)
 	{
 		return;
@@ -415,7 +414,7 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 	case MOD_GARAND:
 	case MOD_SILENCER:
 	case MOD_FG42:
-//		case MOD_FG42SCOPE:
+	//case MOD_FG42SCOPE:
 	case MOD_CARBINE:
 	case MOD_KAR98:
 	case MOD_SILENCED_COLT:
@@ -497,7 +496,7 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 		break;
 	case MOD_GRENADE_LAUNCHER:
 	case MOD_GRENADE_PINEAPPLE:
-//bani - airstrike marker kills
+	// airstrike marker kills
 	case MOD_SMOKEGRENADE:
 		G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f);
 		G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f, "hand grenade kill");
@@ -563,6 +562,7 @@ void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod,
 }
 
 /////// SKILL DEBUGGING ///////
+
 static fileHandle_t skillDebugLog = -1;
 
 void G_DebugOpenSkillLog(void)

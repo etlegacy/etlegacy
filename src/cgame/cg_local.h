@@ -1989,6 +1989,13 @@ typedef struct cgs_s
 	qboolean locationsLoaded;
 	clientLocation_t clientLocation[MAX_CLIENTS];
 
+	// screen adjustments
+	float aspectratio;                  // game window rect width/height ratio
+	float aspectratio1;                 // 1 / aspectratio
+	float adr43;                        // aspectratio / RATIO43
+	float r43da;                        // RATIO43 / aspectratio
+	float wideXoffset;                  // the x-offset for displaying horizontally centered loading/limbo screens
+
 } cgs_t;
 
 //==============================================================================
@@ -2223,6 +2230,13 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView);
 void CG_Letterbox(float xsize, float ysize, qboolean center);
 
 // cg_drawtools.c
+
+// widescreen monitor support
+#define RATIO43     (4.0f / 3.0f) // 4:3 aspectratio is the default for this game engine ...
+#define RPRATIO43   (1 / RATIO43) //
+qboolean Ccg_Is43Screen(void);  // does this game-window have a 4:3 aspectratio. note: this is also true for a 800x600 windowed game on a widescreen monitor
+float Ccg_WideX(float x);       // convert an x-coordinate to a widescreen x-coordinate. (only if the game-window is non 4:3 aspectratio)
+float Ccg_WideXoffset(void);    // the horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
 void CG_FillRect(float x, float y, float width, float height, const float *color);
 void CG_HorizontalPercentBar(float x, float y, float width, float height, float percent);
@@ -2497,7 +2511,7 @@ localEntity_t *CG_SmokePuff(const vec3_t p,
                             qhandle_t hShader);
 
 void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing);
-void CG_SpawnEffect(vec3_t org);
+
 void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir);
 void CG_LoseHat(centity_t *cent, vec3_t dir);
 

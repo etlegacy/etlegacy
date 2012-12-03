@@ -118,7 +118,7 @@ pathCorner_t pathCorners[MAX_PATH_CORNERS];
 #define DELAY_SHOULDER  50  // rl
 #define DELAY_THROW     250 // grenades, dynamite
 
-// Arnout: the new loadout for WolfXP
+// the new loadout for WolfXP
 int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 {
 	{ 0,                   0,                    0,               0,               0,                      0,                       0,        0,          0,       0,      0,              0         }, // empty bank '0'
@@ -226,7 +226,7 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 	{ 450, 1, 150, 0,  150, 3000, DELAY_LOW,    66,   1500, 300, MOD_MOBILE_MG42          },                                        // WP_MOBILE_MG42_SET       // 49
 };
 
-//----(SA)  moved in here so both games can get to it
+// moved in here so both games can get to it
 int weapAlts[] =
 {
 	WP_NONE,            // 0 WP_NONE
@@ -245,8 +245,8 @@ int weapAlts[] =
 	WP_NONE,            // 12 WP_AMMO
 	WP_NONE,            // 13 WP_ARTY
 
-	WP_LUGER,           // 14 WP_SILENCER   //----(SA)  was sp5
-	WP_NONE,            // 15 WP_DYNAMITE   //----(SA)  modified (not in rotation yet)
+	WP_LUGER,           // 14 WP_SILENCER   // was sp5
+	WP_NONE,            // 15 WP_DYNAMITE   // modified (not in rotation yet)
 	WP_NONE,            // 16 WP_SMOKETRAIL
 	WP_NONE,            // 17 WP_MAPMORTAR
 	WP_NONE,            // 18 VERYBIGEXPLOSION
@@ -462,7 +462,7 @@ An item fires all of its targets when it is picked up.  If the toucher can't car
 "stand" if the item has a stand (ex: mp40_stand.md3) this specifies which stand tag to attach the weapon to ("stand":"4" would mean "tag_stand4" for example)  only weapons support stands currently
 */
 
-//----(SA) the addition of the 'ammotype' field was added by me, not removed by id (SA)
+// the addition of the 'ammotype' field was added by me, not removed by id (SA)
 gitem_t bg_itemlist[] =
 {
 	{
@@ -4184,7 +4184,7 @@ void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s,
 		ps->entityEventSequence++;
 	}
 
-	// Ridah, now using a circular list of events for all entities
+	// now using a circular list of events for all entities
 	// add any new events that have been added to the playerState_t
 	// (possibly overwriting entityState_t events)
 	for (i = ps->oldEventSequence; i != ps->eventSequence; i++)
@@ -4514,7 +4514,7 @@ void BG_BuildSplinePaths()
 				if (!pnt)
 				{
 					Com_Printf("^1Cant find control point (%s) for spline (%s)\n", spline->controls[j].name, spline->point.name);
-					// Gordon: Just changing to a warning for now, easier for region compiles...
+					// Just changing to a warning for now, easier for region compiles...
 					continue;
 
 				}
@@ -4528,7 +4528,7 @@ void BG_BuildSplinePaths()
 			if (!st)
 			{
 				Com_Printf("^1Cant find target point (%s) for spline (%s)\n", spline->strTarget, spline->point.name);
-				// Gordon: Just changing to a warning for now, easier for region compiles...
+				// Just changing to a warning for now, easier for region compiles...
 				continue;
 			}
 
@@ -5354,9 +5354,13 @@ void BG_InitLocations(vec2_t world_mins, vec2_t world_maxs)
 
 	// ensure minimal grid density
 	while ((world_maxs[0] - world_mins[0]) / locInfo.gridStep[0] < 7)
+	{
 		locInfo.gridStep[0] -= 50.f;
+	}
 	while ((world_mins[1] - world_maxs[1]) / locInfo.gridStep[1] < 7)
+	{
 		locInfo.gridStep[1] -= 50.f;
+	}
 
 	locInfo.gridStartCoord[0] = world_mins[0] + .5f * ((((world_maxs[0] - world_mins[0]) / locInfo.gridStep[0]) - ((int)((world_maxs[0] - world_mins[0]) / locInfo.gridStep[0]))) * locInfo.gridStep[0]);
 	locInfo.gridStartCoord[1] = world_mins[1] - .5f * ((((world_mins[1] - world_maxs[1]) / locInfo.gridStep[1]) - ((int)((world_mins[1] - world_maxs[1]) / locInfo.gridStep[1]))) * locInfo.gridStep[1]);

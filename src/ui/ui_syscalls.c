@@ -396,7 +396,6 @@ void trap_LAN_GetPingInfo(int n, char *buf, int buflen)
 	syscall(UI_LAN_GETPINGINFO, n, buf, buflen);
 }
 
-// NERVE - SMF
 qboolean trap_LAN_UpdateVisiblePings(int source)
 {
 	return syscall(UI_LAN_UPDATEVISIBLEPINGS, source);
@@ -465,19 +464,6 @@ void trap_LAN_LoadCachedServers(void)
 void trap_LAN_MarkServerVisible(int source, int n, qboolean visible)
 {
 	syscall(UI_LAN_MARKSERVERVISIBLE, source, n, visible);
-}
-
-// DHM - Nerve :: PunkBuster
-void trap_SetPbClStatus(int status)
-{
-	//syscall(UI_SET_PBCLSTATUS, status);
-}
-// DHM - Nerve
-
-// TTimo: also for Sv
-void trap_SetPbSvStatus(int status)
-{
-	//syscall(UI_SET_PBSVSTATUS, status);
 }
 
 void trap_LAN_ResetPings(int n)

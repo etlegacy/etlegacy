@@ -90,7 +90,6 @@ void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing)
 		VectorCopy(move, le->pos.trBase);
 		le->pos.trDelta[0] = crandom() * 3;
 		le->pos.trDelta[1] = crandom() * 3;
-		//		le->pos.trDelta[2] = crandom()*5 + 6;
 		le->pos.trDelta[2] = crandom() * 5 + 20;
 
 		VectorAdd(move, vec, move);
@@ -109,8 +108,6 @@ Adds a smoke puff or blood trail localEntity.
         would slow down once it's created)
 =====================
 */
-
-//----(SA)	modified
 localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel,
                             float radius,
                             float r, float g, float b, float a,
@@ -174,42 +171,6 @@ localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel,
 	re->radius = le->radius;
 
 	return le;
-}
-
-/*
-==================
-CG_SpawnEffect
-
-Player teleporting in or out
-==================
-*/
-void CG_SpawnEffect(vec3_t org)
-{
-	localEntity_t *le;
-	refEntity_t   *re;
-
-	return;         // (SA) don't play spawn in effect right now
-
-	le            = CG_AllocLocalEntity();
-	le->leFlags   = 0;
-	le->leType    = LE_FADE_RGB;
-	le->startTime = cg.time;
-	le->endTime   = cg.time + 500;
-	le->lifeRate  = 1.0 / (le->endTime - le->startTime);
-
-	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
-
-	re = &le->refEntity;
-
-	re->reType     = RT_MODEL;
-	re->shaderTime = cg.time / 1000.0f;
-
-	re->customShader = cgs.media.teleportEffectShader;
-	re->hModel       = cgs.media.teleportEffectModel;
-	AxisClear(re->axis);
-
-	VectorCopy(org, re->origin);
-	re->origin[2] -= 24;
 }
 
 qhandle_t getTestShader(void)
@@ -289,7 +250,7 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 	VectorCopy(newOrigin, ex->refEntity.origin);
 	VectorCopy(newOrigin, ex->refEntity.oldorigin);
 
-	// Ridah, move away from the wall as the sprite expands
+	// move away from the wall as the sprite expands
 	ex->pos.trType = TR_LINEAR;
 	ex->pos.trTime = cg.time;
 	VectorCopy(newOrigin, ex->pos.trBase);
@@ -322,7 +283,7 @@ void CG_AddBloodTrails(vec3_t origin, vec3_t dir, int speed, int duration, int c
 
 		le->leType        = LE_BLOOD;
 		le->startTime     = cg.time;
-		le->endTime       = le->startTime + duration; // DHM - Nerve :: (removed) - (int)(0.5 * random() * duration);
+		le->endTime       = le->startTime + duration; // (removed) - (int)(0.5 * random() * duration);
 		le->lastTrailTime = cg.time;
 
 		VectorCopy(origin, re->origin);
@@ -358,7 +319,7 @@ void CG_Bleed(vec3_t origin, int entityNum)
 
 	cent = &cg_entities[entityNum];
 
-	// Ridah, blood spurts
+	// blood spurts
 	if (entityNum != cg.snap->ps.clientNum)
 	{
 		vec3_t vhead, vbody, bOrigin, dir, vec, pvec, ndir;
@@ -401,12 +362,13 @@ void CG_Bleed(vec3_t origin, int entityNum)
 			}
 		}
 
-		// DHM - Nerve :: Made minor adjustments
 		for (i = 0; i < BLOOD_SPURT_COUNT; i++)
 		{
 			VectorCopy(dir, ndir);
 			for (j = 0; j < 3; j++)
+			{
 				ndir[j] += crandom() * 0.3;
+			}
 			VectorNormalize(ndir);
 			CG_AddBloodTrails(bOrigin, ndir,
 			                  100,  // speed
@@ -448,11 +410,12 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 	if (sizeScale != 1.0)
 	{
 		for (i = 0; i < 3; i++)
+		{
 			VectorScale(re->axis[i], sizeScale, re->axis[i]);
+		}
 	}
 	re->hModel = hModel;
 
-	// re->fadeStartTime		= le->endTime - 3000;
 	re->fadeStartTime = le->endTime - 1000;
 	re->fadeEndTime   = le->endTime;
 
@@ -461,10 +424,10 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 	le->pos.trType        = TR_GRAVITY;
 
 	le->angles.trDelta[0] = (10 + (rand() & 50)) - 30;
-//	le->angles.trDelta[0] = (100 + (rand()&500)) - 300;	// pitch
-	le->angles.trDelta[1] = (100 + (rand() & 500)) - 300;     // (SA) this is the safe one right now (yaw)  turn the others up when I have tumbling things landing properly
+	//le->angles.trDelta[0] = (100 + (rand()&500)) - 300;	// pitch
+	le->angles.trDelta[1] = (100 + (rand() & 500)) - 300;     // this is the safe one right now (yaw)  turn the others up when I have tumbling things landing properly
 	le->angles.trDelta[2] = (10 + (rand() & 50)) - 30;
-//	le->angles.trDelta[2] = (100 + (rand()&500)) - 300;	// roll
+	//le->angles.trDelta[2] = (100 + (rand()&500)) - 300;	// roll
 
 	le->bounceFactor = 0.3;
 
@@ -479,7 +442,7 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 
 	le->ownerNum = cent->currentState.number;
 
-	// Ridah, if the player is on fire, then spawn some flaming gibs
+	// if the player is on fire, then spawn some flaming gibs
 	if (cent && CG_EntOnFire(cent))
 	{
 		le->onFireStart = cent->currentState.onFireStart;
@@ -497,9 +460,8 @@ CG_LoseHat
 */
 void CG_LoseHat(centity_t *cent, vec3_t dir)
 {
-	clientInfo_t *ci;
-	int          clientNum;
-//	int				i, count, tagIndex, gibIndex;
+	clientInfo_t   *ci;
+	int            clientNum;
 	int            tagIndex;
 	vec3_t         origin = { 0 }, velocity = { 0 };
 	bg_character_t *character;
@@ -543,7 +505,7 @@ void CG_LoseHat(centity_t *cent, vec3_t dir)
 		re->fadeStartTime = le->endTime - 1000;
 		re->fadeEndTime   = le->endTime;
 
-		// (SA) FIXME: origin of hat md3 is offset from center.  need to center the origin when you toss it
+		// FIXME: origin of hat md3 is offset from center.  need to center the origin when you toss it
 		le->pos.trType = TR_GRAVITY;
 		VectorCopy(origin, le->pos.trBase);
 		VectorCopy(velocity, le->pos.trDelta);
@@ -554,7 +516,6 @@ void CG_LoseHat(centity_t *cent, vec3_t dir)
 		VectorCopy(tv(0, 0, 0), le->angles.trBase);
 		le->angles.trDelta[0] = 0;
 		le->angles.trDelta[1] = (100 + (rand() & 500)) - 300;
-//		le->angles.trDelta[2]	= 0;
 		le->angles.trDelta[2] = 400;    // (SA) this is set with a very particular value to try to get it
 		                                // to flip exactly once before landing (based on player alive
 		                                // (standing) and on level ground) and will be unnecessary when
@@ -564,7 +525,7 @@ void CG_LoseHat(centity_t *cent, vec3_t dir)
 
 		le->bounceFactor = 0.2;
 
-		// Ridah, if the player is on fire, then make the hat on fire
+		// if the player is on fire, then make the hat on fire
 		if (cent && CG_EntOnFire(cent))
 		{
 			le->onFireStart = cent->currentState.onFireStart;
@@ -691,9 +652,10 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 
 	if (cg_blood.integer)
 	{
-		// Rafael
 		for (i = 0; i < MAXJUNCTIONS; i++)
+		{
 			newjunction[i] = qfalse;
+		}
 
 		clientNum = cent->currentState.clientNum;
 		if (clientNum < 0 || clientNum >= MAX_CLIENTS)
@@ -707,7 +669,6 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		// and spawn the gibs from the correct places (especially the head)
 		for (gibIndex = 0, count = 0, foundtag = qtrue; foundtag && gibIndex < MAX_GIB_MODELS && gibTags[gibIndex]; gibIndex++)
 		{
-
 			refEntity_t *re = 0;
 
 			foundtag = qfalse;
@@ -721,7 +682,6 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 
 			for (tagIndex = 0; (tagIndex = CG_GetOriginForTag(cent, re, gibTags[gibIndex], tagIndex, origin, axis)) >= 0; count++, tagIndex++)
 			{
-
 				foundtag = qtrue;
 
 				VectorSubtract(origin, re->origin, dir);
@@ -767,7 +727,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 			}
 		}
 
-		// Ridah, spawn a bunch of blood dots around the place
+		// spawn a bunch of blood dots around the place
 		for (i = 0, count = 0; i < GIB_BLOOD_DOTS * 2; i++)
 		{
 			if (i > 0)
@@ -812,7 +772,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		}
 	}
 
-	if (!(cent->currentState.eFlags & EF_HEADSHOT))       // (SA) already lost hat while living
+	if (!(cent->currentState.eFlags & EF_HEADSHOT))       // already lost hat while living
 	{
 		CG_LoseHat(cent, tv(0, 0, 1));
 	}
@@ -825,10 +785,10 @@ CG_SparklerSparks
 */
 void CG_SparklerSparks(vec3_t origin, int count)
 {
-// these effect the look of the, umm, effect
+	// these effect the look of the, umm, effect
 	int FUSE_SPARK_LIFE   = 100;
 	int FUSE_SPARK_LENGTH = 30;
-// these are calculated from the above
+	// these are calculated from the above
 	int FUSE_SPARK_SPEED = (FUSE_SPARK_LENGTH * 1000 / FUSE_SPARK_LIFE);
 
 	int           i;
@@ -920,20 +880,19 @@ void CG_ProjectedSpotLight(vec3_t start, vec3_t dir)
 	float   alpha, radius;
 	vec4_t  projection;
 
-
 	VectorMA(start, 1000, dir, end);
 	CG_Trace(&tr, start, NULL, NULL, end, -1, CONTENTS_SOLID);
 	if (tr.fraction == 1.0)
 	{
 		return;
 	}
-	//
+
 	alpha = (1.0 - tr.fraction);
 	if (alpha > 1.0)
 	{
 		alpha = 1.0;
 	}
-	//
+
 	radius = 32 + 64 * tr.fraction;
 	//%	VectorNegate( dir, projection );
 	//%	CG_ImpactMark( cgs.media.spotLightShader, tr.endpos, projection, 0, alpha, alpha, alpha, 1.0, qfalse, radius, qtrue, -2 );
@@ -942,7 +901,6 @@ void CG_ProjectedSpotLight(vec3_t start, vec3_t dir)
 	projection[3] = radius * 2.0f;
 	CG_ImpactMark(cgs.media.spotLightShader, tr.endpos, projection, radius, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1);
 }
-
 
 #define MAX_SPOT_SEGS 20
 #define MAX_SPOT_RANGE 2000
@@ -967,7 +925,6 @@ CG_Spotlight
 
   I know, this is a bit kooky right now.  It evolved big, but now that I know what it should do, it'll get
   crunched down to a bunch of table driven stuff.  once it works, I'll make it work well...
-
 ==============
 */
 void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightDir, int segs, float range, int startWidth, float coneAngle, int flags)
@@ -1054,7 +1011,7 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 		{
 			CG_Trace(&tr, start, NULL, NULL, traceEnd, -1, MASK_SHOT);
 		}
-//		CG_Trace( &tr, start, NULL, NULL, traceEnd, -1, MASK_ALL &~(CONTENTS_MONSTERCLIP|CONTENTS_AREAPORTAL|CONTENTS_CLUSTERPORTAL));
+		//CG_Trace( &tr, start, NULL, NULL, traceEnd, -1, MASK_ALL &~(CONTENTS_MONSTERCLIP|CONTENTS_AREAPORTAL|CONTENTS_CLUSTERPORTAL));
 	}
 
 
@@ -1088,8 +1045,7 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 	// TODO: adjust segs based on r_lodbias
 	// TODO: move much of this to renderer
 
-
-// model at base
+	// model at base
 	if (cent->currentState.modelindex)
 	{
 		memset(&ent, 0, sizeof(ent));
@@ -1109,7 +1065,7 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 		VectorMA(start, 14, lightDir, start);
 	}
 
-//// BEAM
+	//// BEAM
 
 	PerpendicularVector(up, lightDir);
 	CrossProduct(lightDir, up, right);
@@ -1223,7 +1179,6 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 
 	trap_R_AddPolysToScene(cgs.media.spotLightBeamShader, 4, &verts[0], segs);
 
-
 	// plug up the start circle
 	if (capStart)
 	{
@@ -1311,7 +1266,6 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 	}
 }
 
-
 /*
 ==============
 CG_RumbleEfx
@@ -1342,7 +1296,7 @@ void CG_RumbleEfx(float pitch, float yaw)
 
 	// calc the recoil
 
-	// xkan, 11/04/2002 - the following used to be "recoil[YAW] = crandom()*yawRandom()"
+	// the following used to be "recoil[YAW] = crandom()*yawRandom()"
 	// but that seems to skew the effect either to the left or to the right for long streches
 	// of time. The idea here is to keep it skewed for short period of time and then switches
 	// to the other direction - switch the sign of recoil[YAW] when random() < 0.05 and keep the
@@ -1617,12 +1571,12 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 		// Number of sprites for radius calculation:
 		// lifetime of a sprite : (.5f * radius) / velocity
 		// number of sprites in a row: radius / SMOKEBOMB_DISTANCEBETWEENSPRITES
-//		numSpritesForRadius = cent->currentState.effect1Time / SMOKEBOMB_DISTANCEBETWEENSPRITES;
+		//numSpritesForRadius = cent->currentState.effect1Time / SMOKEBOMB_DISTANCEBETWEENSPRITES;
 
-//		numSpritesForRadius = cent->currentState.effect1Time / ((((640.f - 16.f)/16)/1000.f) * cg.frametime);
-//		numNewSpritesNeeded = numSpritesForRadius - cent->miscTime;
+		//numSpritesForRadius = cent->currentState.effect1Time / ((((640.f - 16.f)/16)/1000.f) * cg.frametime);
+		//numNewSpritesNeeded = numSpritesForRadius - cent->miscTime;
 
-//		CG_Printf( "numSpritesForRadius: %i / numNewSpritesNeeded: %i / cent->miscTime: %i\n", numSpritesForRadius, numNewSpritesNeeded, cent->miscTime );
+		//CG_Printf( "numSpritesForRadius: %i / numNewSpritesNeeded: %i / cent->miscTime: %i\n", numSpritesForRadius, numNewSpritesNeeded, cent->miscTime );
 
 		if (cg.oldTime && cent->lastFuseSparkTime != cg.time)
 		{
@@ -1632,8 +1586,8 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 			cent->lastFuseSparkTime = cg.time;
 		}
 
-//		if( spritesNeeded + cent->miscTime < 40 )
-//			spritesNeeded = 40 - cent->miscTime;
+		//if( spritesNeeded + cent->miscTime < 40 )
+		//	spritesNeeded = 40 - cent->miscTime;
 
 		if (!spritesNeeded)
 		{
@@ -1653,7 +1607,7 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 		}
 		else
 		{
-//			float lerpfrac = 1.0f / (float)spritesNeeded;
+			//float lerpfrac = 1.0f / (float)spritesNeeded;
 			float lerp = 1.0f;
 			float dtime;
 

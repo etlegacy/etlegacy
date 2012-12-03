@@ -43,7 +43,6 @@ qboolean G_SpawnStringExt(const char *key, const char *defaultString, char **out
 	if (!level.spawning)
 	{
 		*out = (char *)defaultString;
-		// Gordon: 26/11/02: re-enabling
 		// see InitMover
 		G_Error("G_SpawnString() called while not spawning, file %s, line %i\n", file, line);
 	}
@@ -113,8 +112,8 @@ field_t fields[] =
 	{ "target",       FOFS(target),         F_LSTRING   },
 	{ "targetname",   FOFS(targetname),     F_LSTRING   },
 	{ "message",      FOFS(message),        F_LSTRING   },
-	{ "popup",        FOFS(message),        F_LSTRING   }, // (SA) mutually exclusive from 'message', but makes the ent more logical for the level designer
-	{ "book",         FOFS(message),        F_LSTRING   }, // (SA) mutually exclusive from 'message', but makes the ent more logical for the level designer
+	{ "popup",        FOFS(message),        F_LSTRING   }, // mutually exclusive from 'message', but makes the ent more logical for the level designer
+	{ "book",         FOFS(message),        F_LSTRING   }, // mutually exclusive from 'message', but makes the ent more logical for the level designer
 	{ "team",         FOFS(team),           F_LSTRING   },
 	{ "wait",         FOFS(wait),           F_FLOAT     },
 	{ "random",       FOFS(random),         F_FLOAT     },
@@ -131,29 +130,29 @@ field_t fields[] =
 	{ "degrees",      FOFS(angle),          F_FLOAT     },
 	{ "time",         FOFS(speed),          F_FLOAT     },
 
-	//----(SA) additional ai field
+	// additional ai field
 	{ "skin",         FOFS(aiSkin),         F_LSTRING   },
 
 
-	// (SA) dlight lightstyles (made all these unique variables for testing)
+	// dlight lightstyles (made all these unique variables for testing)
 	{ "_color",       FOFS(dl_color),       F_VECTOR    }, // color of the light	(the underscore is inserted by the color picker in QER)
 	{ "color",        FOFS(dl_color),       F_VECTOR    }, // color of the light
 	{ "stylestring",  FOFS(dl_stylestring), F_LSTRING   }, // user defined stylestring "fffndlsfaaaaaa" for example
 
 	{ "shader",       FOFS(dl_shader),      F_LSTRING   }, // shader to use for a target_effect or dlight
 
-	// (SA) for target_unlock
+	// for target_unlock
 	{ "key",          FOFS(key),            F_INT       },
 
-	// Rafael - mg42
+	// mg42
 	{ "harc",         FOFS(harc),           F_FLOAT     },
 	{ "varc",         FOFS(varc),           F_FLOAT     },
 
-	// Rafael - sniper
+	// sniper
 	{ "delay",        FOFS(delay),          F_FLOAT     },
 	{ "radius",       FOFS(radius),         F_INT       },
 
-	// Ridah, for reloading savegames at correct mission spot
+	// for reloading savegames at correct mission spot
 	{ "missionlevel", FOFS(missionLevel),   F_INT       },
 
 	{ "start_size",   FOFS(start_size),     F_INT       },
@@ -223,11 +222,10 @@ void SP_trigger_hurt(gentity_t *ent);
 void SP_trigger_heal(gentity_t *ent);
 void SP_trigger_ammo(gentity_t *ent);
 
-// Gordon
 void SP_misc_cabinet_health(gentity_t *self);
 void SP_misc_cabinet_supply(gentity_t *self);
 
-//---- (SA) Wolf triggers
+// Wolf triggers
 void SP_trigger_concussive_dust(gentity_t *ent);
 void SP_trigger_once(gentity_t *ent);
 
@@ -248,7 +246,7 @@ void SP_target_push(gentity_t *ent);
 void SP_target_script_trigger(gentity_t *ent);
 void SP_misc_beam(gentity_t *self);
 
-//---- (SA) Wolf targets
+// Wolf targets
 void SP_target_alarm(gentity_t *ent);
 void SP_target_counter(gentity_t *ent);
 void SP_target_lock(gentity_t *ent);
@@ -289,7 +287,7 @@ void SP_team_CTF_blueplayer(gentity_t *ent);
 void SP_team_CTF_redspawn(gentity_t *ent);
 void SP_team_CTF_bluespawn(gentity_t *ent);
 
-// JPW NERVE for multiplayer spawnpoint selection
+// for multiplayer spawnpoint selection
 void SP_team_WOLF_objective(gentity_t *ent);
 
 void SP_team_WOLF_checkpoint(gentity_t *ent);
@@ -298,10 +296,10 @@ void SP_props_box_32(gentity_t *self);
 void SP_props_box_48(gentity_t *self);
 void SP_props_box_64(gentity_t *self);
 
-// Rafael particles
+// particles
 void SP_target_smoke(gentity_t *ent);
 
-// (SA) dlights
+// dlights
 void SP_dlight(gentity_t *ent);
 
 void SP_corona(gentity_t *ent);
@@ -360,7 +358,7 @@ void SP_props_statue(gentity_t *ent);
 void SP_props_statueBRUSH(gentity_t *ent);
 void SP_skyportal(gentity_t *ent);
 
-// RF, scripting
+// scripting
 void SP_script_model_med(gentity_t *ent);
 void SP_script_mover(gentity_t *ent);
 void SP_script_multiplayer(gentity_t *ent);
@@ -372,7 +370,7 @@ void SP_misc_spawner(gentity_t *ent);
 void SP_props_decor_Scale(gentity_t *ent);
 
 
-// Gordon: debris test
+// debris test
 void SP_func_debris(gentity_t *ent);
 // ===================
 
@@ -392,7 +390,7 @@ spawn_t spawns[] =
 	{ "info_notnull_big",          SP_info_notnull              }, // use target_position instead
 	{ "info_camp",                 SP_info_camp                 },
 
-	// Gordon: debris test
+	// debris test
 	{ "func_debris",               SP_func_debris               },
 	// ===================
 
@@ -428,14 +426,14 @@ spawn_t spawns[] =
 	{ "trigger_teleport",          SP_trigger_teleport          },
 	{ "trigger_hurt",              SP_trigger_hurt              },
 
-	//---- (SA) Wolf triggers
+	// Wolf triggers
 	{ "trigger_concussive_dust",   SP_trigger_concussive_dust   },
 	{ "trigger_once",              SP_trigger_once              },
 
 	{ "trigger_heal",              SP_trigger_heal              },
 	{ "trigger_ammo",              SP_trigger_ammo              },
 
-	// Gordon: 16/12/02: adding the model things to go with the triggers
+	// adding the model things to go with the triggers
 	{ "misc_cabinet_health",       SP_misc_cabinet_health       },
 	{ "misc_cabinet_supply",       SP_misc_cabinet_supply       },
 
@@ -456,7 +454,7 @@ spawn_t spawns[] =
 	{ "target_push",               SP_target_push               },
 	{ "target_script_trigger",     SP_target_script_trigger     },
 
-	//---- (SA) Wolf targets
+	// Wolf targets
 	{ "target_alarm",              SP_target_alarm              },
 	{ "target_counter",            SP_target_counter            },
 	{ "target_lock",               SP_target_lock               },
@@ -565,7 +563,7 @@ spawn_t spawns[] =
 
 	{ "trigger_objective_info",    SP_trigger_objective_info    },
 
-	// RF, scripting
+	// scripting
 	{ "script_model_med",          SP_script_model_med          },
 	{ "script_mover",              SP_script_mover              },
 	{ "script_multiplayer",        SP_script_multiplayer        },
@@ -607,7 +605,7 @@ qboolean G_CallSpawn(gentity_t *ent)
 		if (!strcmp(item->classname, ent->classname))
 		{
 			// found it
-			if (g_gametype.integer != GT_WOLF_LMS)     // Gordon: lets not have items in last man standing for the moment
+			if (g_gametype.integer != GT_WOLF_LMS)     // lets not have items in last man standing for the moment
 			{
 				G_SpawnItem(ent, item);
 
@@ -630,7 +628,7 @@ qboolean G_CallSpawn(gentity_t *ent)
 			// found it
 			s->spawn(ent);
 
-			// RF, entity scripting
+			// entity scripting
 			if (/*ent->s.number >= MAX_CLIENTS &&*/ ent->scriptName)
 			{
 				G_Script_ScriptParse(ent);
@@ -938,7 +936,7 @@ void SP_worldspawn(void)
 	}
 
 	level.mapcoordsValid = qfalse;
-	if (G_SpawnVector2D("mapcoordsmins", "-128 128", level.mapcoordsMins) &&       // top left
+	if (G_SpawnVector2D("mapcoordsmins", "-128 128", level.mapcoordsMins) &&     // top left
 	    G_SpawnVector2D("mapcoordsmaxs", "128 -128", level.mapcoordsMaxs))       // bottom right
 	{
 		level.mapcoordsValid = qtrue;
@@ -1030,6 +1028,7 @@ void G_SpawnEntitiesFromString(void)
 int GetFieldIndex(char *fieldname)
 {
 	int i;
+
 	for (i = 0; fields[i].name; i++)
 		if (!Q_stricmp(fields[i].name, fieldname))
 		{
@@ -1043,6 +1042,7 @@ int GetFieldIndex(char *fieldname)
 fieldtype_t GetFieldType(char *fieldname)
 {
 	int index = GetFieldIndex(fieldname);
+
 	if (index == -1)
 	{
 		return F_IGNORE;

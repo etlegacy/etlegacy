@@ -495,7 +495,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 {
 	pmove_t   pm;
 	gclient_t *client;
-	gentity_t *crosshairEnt = NULL; // rain - #480
+	gentity_t *crosshairEnt = NULL;
 
 	client = ent->client;
 
@@ -508,7 +508,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	     crosshairEnt->client->ps.powerups[PW_OPS_DISGUISED]))
 	{
 
-		// rain - identifyClientHealth sent as unsigned char, so we
+		// identifyClientHealth sent as unsigned char, so we
 		// can't transmit negative numbers
 		if (crosshairEnt->health >= 0)
 		{
@@ -530,7 +530,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 
 
 		}
-		// OSP - dead players are frozen too, in a timeout
+		// dead players are frozen too, in a timeout
 		if ((client->ps.pm_flags & PMF_LIMBO) && level.match_pause != PAUSE_NONE)
 		{
 			client->ps.pm_type = PM_FREEZE;
@@ -773,7 +773,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 		case EV_FALL_DMG_25:
 		case EV_FALL_DMG_50:
 
-			// rain - VectorClear() used to be done here whenever falling
+			// VectorClear() used to be done here whenever falling
 			// damage occured, but I moved it to bg_pmove where it belongs.
 
 			if (ent->s.eType != ET_PLAYER)
@@ -939,9 +939,8 @@ void WolfFindMedic(gentity_t *self)
 			continue;
 		}
 
-		// zinx - limbo'd players are not PM_DEAD or STAT_HEALTH <= 0.
+		// limbo'd players are not PM_DEAD or STAT_HEALTH <= 0.
 		// and we certainly don't want to lock to them
-		// fix for bug #345
 		if (cl->ps.pm_flags & PMF_LIMBO)
 		{
 			continue;
@@ -1103,7 +1102,7 @@ void ClientThink_real(gentity_t *ent)
 	}
 
 	// check for inactivity timer, but never drop the local client of a non-dedicated server
-	// OSP - moved here to allow for spec inactivity checks as well
+	// moved here to allow for spec inactivity checks as well
 	if (!ClientInactivityTimer(client))
 	{
 		return;
@@ -1121,7 +1120,7 @@ void ClientThink_real(gentity_t *ent)
 	}
 
 	// spectators don't do much
-	// DHM - Nerve :: In limbo use SpectatorThink
+	// In limbo use SpectatorThink
 	if (client->sess.sessionTeam == TEAM_SPECTATOR || (client->ps.pm_flags & PMF_LIMBO))
 	{
 		/*if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD ) {
@@ -1192,10 +1191,8 @@ void ClientThink_real(gentity_t *ent)
 	if (pm.ps->pm_type == PM_DEAD)
 	{
 		pm.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;
-		// DHM-Nerve added:: EF_DEAD is checked for in Pmove functions, but wasn't being set
-		// until after Pmove
+		// added:: EF_DEAD is checked for in Pmove functions, but wasn't being set until after Pmove
 		pm.ps->eFlags |= EF_DEAD;
-		// dhm-Nerve end
 	}
 	else if (pm.ps->pm_type == PM_SPECTATOR)
 	{
@@ -1205,7 +1202,7 @@ void ClientThink_real(gentity_t *ent)
 	{
 		pm.tracemask = MASK_PLAYERSOLID;
 	}
-	//DHM - Nerve :: We've gone back to using normal bbox traces
+	// We've gone back to using normal bbox traces
 	//pm.trace = trap_Trace;
 	pm.pointcontents = trap_PointContents;
 	pm.debugLevel    = g_debugMove.integer;
@@ -1310,13 +1307,12 @@ void ClientThink_real(gentity_t *ent)
 
 	monsterslick = Pmove(&pm);
 
-	// Gordon: thx to bani for this
-	// ikkyo - fix leaning players bug
+	// fix leaning players bug
 	VectorCopy(client->ps.velocity, ent->s.pos.trDelta);
 	SnapVector(ent->s.pos.trDelta);
 
 	// server cursor hints
-	// TAT 1/10/2003 - bots don't need to check for cursor hints
+	// bots don't need to check for cursor hints
 	if (!(ent->r.svFlags & SVF_BOT) && ent->lastHintCheckTime < level.time)
 	{
 		G_CheckForCursorHints(ent);
@@ -1324,7 +1320,7 @@ void ClientThink_real(gentity_t *ent)
 		ent->lastHintCheckTime = level.time + FRAMETIME;
 	}
 
-	// DHM - Nerve :: Set animMovetype to 1 if ducking
+	// Set animMovetype to 1 if ducking
 	if (ent->client->ps.pm_flags & PMF_DUCKED)
 	{
 		ent->s.animMovetype = 1;
@@ -1341,7 +1337,7 @@ void ClientThink_real(gentity_t *ent)
 		ent->r.eventTime = level.time;
 	}
 
-	// Ridah, fixes jittery zombie movement
+	// fixes jittery zombie movement
 	if (g_smoothClients.integer)
 	{
 		BG_PlayerStateToEntityStateExtraPolate(&ent->client->ps, &ent->s, level.time, qfalse);
@@ -1580,7 +1576,7 @@ void SpectatorClientEndFrame(gentity_t *ent)
 	{
 		int       clientNum, testtime;
 		gclient_t *cl;
-		qboolean  do_respawn = qfalse; // JPW NERVE
+		qboolean  do_respawn = qfalse;
 
 		// Players can respawn quickly in warmup
 		if (g_gamestate.integer != GS_PLAYING && ent->client->respawnTime <= level.timeCurrent &&
@@ -1690,7 +1686,7 @@ void SpectatorClientEndFrame(gentity_t *ent)
 					ent->client->ps.persistant[PERS_RESPAWNS_PENALTY] = savedRespawnPenalty;
 					ent->client->ps.persistant[PERS_SCORE]            = savedScore; // put score back
 					ent->client->ps.powerups[PW_MVCLIENTLIST]         = savedMVList;
-					ent->client->ps.stats[STAT_PLAYER_CLASS]          = savedClass; // NERVE - SMF - put player class back
+					ent->client->ps.stats[STAT_PLAYER_CLASS]          = savedClass; //  put player class back
 				}
 				else
 				{
@@ -1698,7 +1694,7 @@ void SpectatorClientEndFrame(gentity_t *ent)
 					ent->client->ps.pm_flags |= PMF_FOLLOW;
 				}
 
-				// DHM - Nerve :: carry flags over
+				// carry flags over
 				ent->client->ps.eFlags = flags;
 				ent->client->ps.ping   = ping;
 
@@ -1733,8 +1729,8 @@ void SpectatorClientEndFrame(gentity_t *ent)
 }
 
 
-// DHM - Nerve :: After reviving a player, their contents stay CONTENTS_CORPSE until it is determined
-//					to be safe to return them to PLAYERSOLID
+// After reviving a player, their contents stay CONTENTS_CORPSE until it is determine
+// to be safe to return them to PLAYERSOLID
 
 /**
  * @param[in,out] self Current Player Entity
@@ -1826,7 +1822,7 @@ void WolfReviveBbox(gentity_t *self)
 {
 	int       touch[MAX_GENTITIES];
 	int       num, i, touchnum = 0;
-	gentity_t *hit = NULL;   // TTimo: init
+	gentity_t *hit = NULL;
 	vec3_t    mins, maxs;
 
 	hit = G_TestEntityPosition(self);
@@ -1904,7 +1900,7 @@ void ClientEndFrame(gentity_t *ent)
 	// Zero out here and set only for certain specs
 	ent->client->ps.powerups[PW_BLACKOUT] = 0;
 
-	if ((ent->client->sess.sessionTeam == TEAM_SPECTATOR) || (ent->client->ps.pm_flags & PMF_LIMBO))         // JPW NERVE
+	if ((ent->client->sess.sessionTeam == TEAM_SPECTATOR) || (ent->client->ps.pm_flags & PMF_LIMBO))
 	{
 		SpectatorClientEndFrame(ent);
 		return;
@@ -1919,7 +1915,7 @@ void ClientEndFrame(gentity_t *ent)
 		    i == PW_ELECTRIC ||
 		    i == PW_BREATHER ||
 		    i == PW_NOFATIGUE ||
-		    ent->client->ps.powerups[i] == 0            // OSP
+		    ent->client->ps.powerups[i] == 0
 		    || i == PW_OPS_CLASS_1
 		    || i == PW_OPS_CLASS_2
 		    || i == PW_OPS_CLASS_3
@@ -1966,7 +1962,6 @@ void ClientEndFrame(gentity_t *ent)
 		ent->client->pers.teamState.lastfraggedcarrier += time_delta;
 		ent->client->ps.classWeaponTime                += time_delta;
 //			ent->client->respawnTime += time_delta;
-//			ent->client->sniperRifleFiredTime += time_delta;
 		ent->lastHintCheckTime  += time_delta;
 		ent->pain_debounce_time += time_delta;
 		ent->s.onFireEnd        += time_delta;
@@ -2023,8 +2018,8 @@ void ClientEndFrame(gentity_t *ent)
 
 	//SendPendingPredictableEvents( &ent->client->ps );
 
-	// DHM - Nerve :: If it's been a couple frames since being revived, and props_frame_state
-	//					wasn't reset, go ahead and reset it
+	// If it's been a couple frames since being revived, and props_frame_state
+	// wasn't reset, go ahead and reset it
 	if (ent->props_frame_state >= 0 && ((level.time - ent->s.effect3Time) > 100))
 	{
 		ent->props_frame_state = -1;
@@ -2041,7 +2036,7 @@ void ClientEndFrame(gentity_t *ent)
 		WolfReviveBbox(ent);
 	}
 
-	// DHM - Nerve :: Reset 'count2' for flamethrower
+	// Reset 'count2' for flamethrower
 	if (!(ent->client->buttons & BUTTON_ATTACK))
 	{
 		ent->count2 = 0;

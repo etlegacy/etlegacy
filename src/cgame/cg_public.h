@@ -75,9 +75,7 @@ typedef enum cgameEvent_e
 
 /*
 ==================================================================
-
 functions imported from the main executable
-
 ==================================================================
 */
 
@@ -115,14 +113,14 @@ typedef enum
 	CG_CM_TRANSFORMEDPOINTCONTENTS,
 	CG_CM_BOXTRACE,
 	CG_CM_TRANSFORMEDBOXTRACE,
-// MrE:
+
 	CG_CM_CAPSULETRACE,
 	CG_CM_TRANSFORMEDCAPSULETRACE,
 	CG_CM_TEMPCAPSULEMODEL,
-// done.
+
 	CG_CM_MARKFRAGMENTS,
-	CG_R_PROJECTDECAL,          // ydnar: projects a decal onto brush models
-	CG_R_CLEARDECALS,           // ydnar: clears world/entity decals
+	CG_R_PROJECTDECAL,          // projects a decal onto brush models
+	CG_R_CLEARDECALS,           // clears world/entity decals
 	CG_S_STARTSOUND,
 	CG_S_STARTSOUNDEX,
 	CG_S_STARTLOCALSOUND,
@@ -131,15 +129,15 @@ typedef enum
 	CG_S_ADDLOOPINGSOUND,
 	CG_S_UPDATEENTITYPOSITION,
 
-	CG_S_GETVOICEAMPLITUDE,     // Ridah, talking animations
+	CG_S_GETVOICEAMPLITUDE,     // talking animations
 
 	CG_S_RESPATIALIZE,
 	CG_S_REGISTERSOUND,
 	CG_S_STARTBACKGROUNDTRACK,
 	CG_S_FADESTREAMINGSOUND,
-	CG_S_FADEALLSOUNDS,         //----(SA)  added for fading out everything
+	CG_S_FADEALLSOUNDS,         // added for fading out everything
 	CG_S_STARTSTREAMINGSOUND,
-	CG_S_GETSOUNDLENGTH,        // xkan - get the length (in milliseconds) of the sound
+	CG_S_GETSOUNDLENGTH,        // get the length (in milliseconds) of the sound
 	CG_S_GETCURRENTSOUNDTIME,
 	CG_R_LOADWORLDMAP,
 	CG_R_REGISTERMODEL,
@@ -264,12 +262,9 @@ typedef enum
 
 } cgameImport_t;
 
-
 /*
 ==================================================================
-
 functions exported to the main executable
-
 ==================================================================
 */
 

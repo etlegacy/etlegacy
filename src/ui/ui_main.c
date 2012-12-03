@@ -495,7 +495,7 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 		{
 			index = (unsigned char)*s;
 
-			// NERVE - SMF - don't draw tabs and newlines
+			// don't draw tabs and newlines
 			if (index < 20)
 			{
 				s++;
@@ -590,7 +590,7 @@ char *Text_AutoWrap_Paint_Chunk(float x, float y, int width, float scale, vec4_t
 				wrap_point = s;
 			}
 
-			// NERVE - SMF - don't draw tabs and newlines
+			// don't draw tabs and newlines
 			if (index < 20)
 			{
 				s++;
@@ -951,7 +951,7 @@ void _UI_Refresh(int realtime)
 		return;
 	}
 
-	// OSP - blackout if speclocked
+	// blackout if speclocked
 	if (ui_blackout.integer > 0)
 	{
 		UI_FillRect(-10, -10, 650, 490, colorBlack);
@@ -1282,7 +1282,7 @@ qboolean Load_Menu(int handle)
 
 		if (cl_language)
 		{
-			const char *s = NULL; // TTimo: init
+			const char *s = NULL;
 			const char *filename;
 			char       out[256];
 
@@ -1568,7 +1568,6 @@ static void UI_DrawPreviewCinematic(rectDef_t *rect, float scale, vec4_t color)
 			uiInfo.previewMovie = -2;
 		}
 	}
-
 }
 
 static void UI_DrawTeamName(rectDef_t *rect, float scale, vec4_t color, qboolean blue, int textStyle)
@@ -2523,10 +2522,10 @@ static void UI_DrawPlayerModel(rectDef_t *rect)
 		viewangles[YAW]   = 180 - 10;
 		viewangles[PITCH] = 0;
 		viewangles[ROLL]  = 0;
-//      VectorClear( moveangles );
+		//VectorClear( moveangles );
 		UI_PlayerInfo_SetModel(&info, model);
 		UI_PlayerInfo_SetInfo(&info, LEGS_IDLE, TORSO_STAND, viewangles, moveangles, -1, qfalse);
-//      UI_RegisterClientModelname( &info, model, head, team);
+		//UI_RegisterClientModelname( &info, model, head, team);
 		updateModel = qfalse;
 	}
 	else
@@ -2863,8 +2862,8 @@ static void UI_BuildPlayerList(void)
 		if (info[0])
 		{
 			Q_strncpyz(namebuf, Info_ValueForKey(info, "n"), sizeof(namebuf));
-// fretn - dont expand colors twice, so: foo^^xbar -> foo^bar -> fooar
-//          Q_CleanStr( namebuf );
+			// fretn - dont expand colors twice, so: foo^^xbar -> foo^bar -> fooar
+			//Q_CleanStr( namebuf );
 			Q_strncpyz(uiInfo.playerNames[uiInfo.playerCount], namebuf, sizeof(uiInfo.playerNames[0]));
 			muted = atoi(Info_ValueForKey(info, "mu"));
 			if (muted)
@@ -2881,8 +2880,8 @@ static void UI_BuildPlayerList(void)
 			if (team2 == team)
 			{
 				Q_strncpyz(namebuf, Info_ValueForKey(info, "n"), sizeof(namebuf));
-// fretn - dont expand colors twice, so: foo^^xbar -> foo^bar -> fooar
-//              Q_CleanStr( namebuf );
+				// fretn - dont expand colors twice, so: foo^^xbar -> foo^bar -> fooar
+				//Q_CleanStr( namebuf );
 				Q_strncpyz(uiInfo.teamNames[uiInfo.myTeamCount], namebuf, sizeof(uiInfo.teamNames[0]));
 				uiInfo.teamClientNums[uiInfo.myTeamCount] = n;
 				if (uiInfo.playerNumber == n)
@@ -2922,7 +2921,7 @@ static void UI_DrawSelectedPlayer(rectDef_t *rect, float scale, vec4_t color, in
 
 static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
-	int serverCount;            // NERVE - SMF
+	int serverCount;
 	if (uiInfo.serverStatus.refreshActive)
 	{
 		vec4_t lowLight, newColor;
@@ -2931,7 +2930,7 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
 		lowLight[2] = 0.8 * color[2];
 		lowLight[3] = 0.8 * color[3];
 		LerpColor(color, lowLight, newColor, 0.5 + 0.5 * sin(uiInfo.uiDC.realTime / PULSE_DIVISOR));
-		// NERVE - SMF
+
 		serverCount = trap_LAN_GetServerCount(ui_netSource.integer);
 		if (serverCount >= 0)
 		{
@@ -2945,6 +2944,7 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
 	else
 	{
 		char buff[64];
+
 		Q_strncpyz(buff, UI_Cvar_VariableString(va("ui_lastServerRefresh_%i", ui_netSource.integer)), 64);
 		Text_Paint(rect->x, rect->y, scale, color, va(trap_TranslateString("Refresh Time: %s"), buff), 0, 0, textStyle);
 	}
@@ -3031,7 +3031,6 @@ static void UI_DrawServerMOTD(rectDef_t *rect, float scale, vec4_t color)
 
 static void UI_DrawKeyBindStatus(rectDef_t *rect, float scale, vec4_t color, int textStyle, float text_x, float text_y)
 {
-	//int ofs = 0; // TTimo: unused
 	if (Display_KeyBindPending())
 	{
 		Text_Paint(rect->x + text_x, rect->y + text_y, scale, color, trap_TranslateString("Waiting for new key... Press ESCAPE to cancel"), 0, 0, textStyle);
@@ -3101,7 +3100,7 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 		UI_DrawClanName(&rect, scale, color, textStyle);
 		break;
 
-	case UI_SAVEGAME_SHOT:      // (SA)
+	case UI_SAVEGAME_SHOT:
 		UI_DrawSaveGameShot(&rect, scale, color);
 		break;
 
@@ -4427,7 +4426,8 @@ void UI_RunMenuScript(char **args)
 				trap_Cmd_ExecuteText(EXEC_APPEND, va("wait ; wait ; map %s\n", uiInfo.mapList[ui_currentNetMap.integer].mapLoadName));
 			}
 
-			// NERVE - SMF - set user cvars here
+			// set user cvars here
+
 			// set timelimit
 			val = trap_Cvar_VariableValue("ui_userTimelimit");
 
@@ -5035,6 +5035,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "orders") == 0)
 		{
 			const char *orders;
+
 			if (String_Parse(args, &orders))
 			{
 				int selectedPlayer = trap_Cvar_VariableValue("cg_selectedPlayer");
@@ -5047,6 +5048,7 @@ void UI_RunMenuScript(char **args)
 				else
 				{
 					int i;
+
 					for (i = 0; i < uiInfo.myTeamCount; i++)
 					{
 						if (Q_stricmp(UI_Cvar_VariableString("name"), uiInfo.teamNames[i]) == 0)
@@ -5120,16 +5122,6 @@ void UI_RunMenuScript(char **args)
 			{
 				trap_Cmd_ExecuteText(EXEC_APPEND, "+scores\n");
 			}
-		}
-		else if (Q_stricmp(name, "setPbClStatus") == 0)
-		{
-			int stat;
-
-			if (Int_Parse(args, &stat))
-			{
-				trap_SetPbClStatus(stat);
-			}
-			// DHM - Nerve
 		}
 		else if (Q_stricmp(name, "rconGame") == 0)
 		{
@@ -5478,22 +5470,10 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_profile", ui_renameprofileto);
 			trap_Cvar_Set("ui_profile_renameto", "");
 		}
-		else if (Q_stricmp(name, "togglePbSvStatus") == 0)
-		{
-			// TTimo
-			int sv_pb = trap_Cvar_VariableValue("sv_punkbuster");
-			if (sv_pb)
-			{
-				trap_SetPbSvStatus(0);
-			}
-			else
-			{
-				trap_SetPbSvStatus(1);
-			}
-		}
 		else if (Q_stricmp(name, "initHostGameFeatures") == 0)
 		{
 			int cvar = trap_Cvar_VariableValue("g_maxlives");
+
 			if (cvar)
 			{
 				trap_Cvar_Set("ui_maxlives", "1");
@@ -5516,6 +5496,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "toggleMaxLives") == 0)
 		{
 			int ui_ml = trap_Cvar_VariableValue("ui_maxlives");
+
 			if (ui_ml)
 			{
 				trap_Cvar_Set("g_maxlives", "5");
@@ -5569,7 +5550,7 @@ void UI_RunMenuScript(char **args)
 			// TODO: if dumped because of cl_allowdownload problem, toggle on first (we don't have appropriate support for this yet)
 			trap_Cmd_ExecuteText(EXEC_APPEND, "reconnect\n");
 		}
-		else if (Q_stricmp(name, "redirect") == 0)         // fretn
+		else if (Q_stricmp(name, "redirect") == 0)
 		{
 			char buf[MAX_STRING_CHARS];
 			trap_Cvar_VariableStringBuffer("com_errorMessage", buf, sizeof(buf));
@@ -5586,7 +5567,6 @@ void UI_RunMenuScript(char **args)
 				Menu_SetFeederSelection(NULL, FEEDER_ALLMAPS, 0, NULL);
 			}
 		}
-		// ydnar
 		else if (Q_stricmp(name, "vidSave") == 0)
 		{
 			int mode;
@@ -5925,8 +5905,7 @@ UI_CampaignCount
 */
 static int UI_CampaignCount(qboolean singlePlayer)
 {
-	int i, c /*, game*/;
-	c = 0;
+	int i, c = 0;
 
 	for (i = 0; i < uiInfo.campaignCount; i++)
 	{
@@ -5956,7 +5935,7 @@ static void UI_InsertServerIntoDisplayList(int num, int position)
 	{
 		return;
 	}
-	//
+
 	uiInfo.serverStatus.numDisplayServers++;
 	for (i = uiInfo.serverStatus.numDisplayServers; i > position; i--)
 	{
@@ -6040,12 +6019,11 @@ UI_BuildServerDisplayList
 */
 static void UI_BuildServerDisplayList(qboolean force)
 {
-	int  i, count, clients, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
-	char info[MAX_STRING_CHARS];
-	//qboolean startRefresh = qtrue; // TTimo: unused
+	int        i, count, clients, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
+	char       info[MAX_STRING_CHARS];
 	static int numinvisible;
 
-	game = 0;       // NERVE - SMF - shut up compiler warning
+	game = 0;       // shut up compiler warning
 
 	if (!(force || uiInfo.uiDC.realTime > uiInfo.serverStatus.nextDisplayRefresh))
 	{
@@ -6311,7 +6289,7 @@ static void UI_SortServerStatusInfo(serverStatusInfo_t *info)
 
 	// FIXME: if "gamename" == "baseq3" or "missionpack" then
 	// replace the gametype number by FFA, CTF etc.
-	//
+
 	index = 0;
 	for (i = 0; serverStatusCvars[i].name; i++)
 	{
@@ -6360,7 +6338,6 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
 	memset(info, 0, sizeof(*info));
 	if (trap_LAN_ServerStatus(serverAddress, info->text, sizeof(info->text)))
 	{
-
 		menu  = Menus_FindByName("serverinfo_popmenu");
 		menu2 = Menus_FindByName("popupError");
 
@@ -6494,7 +6471,7 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
 					break;
 				}
 				*p++ = '\0';
-				//
+
 				i++;
 			}
 		}
@@ -6880,6 +6857,7 @@ static const char *UI_SelectedMap(qboolean singlePlayer, int index, int *actual)
 static const char *UI_SelectedCampaign(int index, int *actual)
 {
 	int i;
+
 	*actual = 0;
 	for (i = 0; i < uiInfo.campaignCount; i++)
 	{
@@ -6894,8 +6872,8 @@ static const char *UI_SelectedCampaign(int index, int *actual)
 
 static int UI_GetIndexFromSelection(int actual)
 {
-	int i, c;
-	c = 0;
+	int i, c = 0;
+
 	for (i = 0; i < uiInfo.mapCount; i++)
 	{
 		if (uiInfo.mapList[i].active)
@@ -6948,6 +6926,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 	static char pingstr[10];
 	static int  lastColumn = -1;
 	static int  lastTime   = 0;
+
 	*numhandles = 0;
 	if (feederID == FEEDER_HEADS)
 	{
@@ -7279,7 +7258,6 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 	return "";
 }
 
-
 static qhandle_t UI_FeederItemImage(float feederID, int index)
 {
 	if (feederID == FEEDER_HEADS)
@@ -7391,7 +7369,7 @@ void UI_FeederSelection(float feederID, int index)
 		trap_Cvar_Set("ui_mapIndex", va("%d", index));
 		ui_mapIndex.integer = index;
 
-		// NERVE - SMF - setup advanced server vars
+		// setup advanced server vars
 		if (feederID == FEEDER_ALLMAPS && game != GT_WOLF_CAMPAIGN)
 		{
 			ui_currentMap.integer = actual;
@@ -7407,12 +7385,13 @@ void UI_FeederSelection(float feederID, int index)
 		{
 			ui_currentNetMap.integer = actual;
 			trap_Cvar_Set("ui_currentNetMap", va("%d", actual));
-//          uiInfo.mapList[ui_currentNetMap.integer].cinematic = trap_CIN_PlayCinematic(va("%s.roq", uiInfo.mapList[ui_currentNetMap.integer].mapLoadName), 0, 0, 0, 0, (CIN_loop | CIN_silent) );
+			//uiInfo.mapList[ui_currentNetMap.integer].cinematic = trap_CIN_PlayCinematic(va("%s.roq", uiInfo.mapList[ui_currentNetMap.integer].mapLoadName), 0, 0, 0, 0, (CIN_loop | CIN_silent) );
 		}
 	}
 	else if (feederID == FEEDER_CAMPAIGNS || feederID == FEEDER_ALLCAMPAIGNS)
 	{
 		int actual, campaign, campaignCount;
+
 		campaign      = (feederID == FEEDER_ALLCAMPAIGNS) ? ui_currentNetCampaign.integer : ui_currentCampaign.integer;
 		campaignCount = UI_CampaignCount(feederID == FEEDER_CAMPAIGNS);
 		if (uiInfo.campaignList[campaign].campaignCinematic >= 0)
@@ -7783,6 +7762,7 @@ static void UI_StopCinematic(int handle)
 		else if (handle == UI_CLANCINEMATIC)
 		{
 			int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
+
 			if (i >= 0 && i < uiInfo.teamCount)
 			{
 				if (uiInfo.teamList[i].cinematic >= 0)
@@ -7819,7 +7799,7 @@ void _UI_Init(qboolean inGameLoad)
 	UI_InitMemory();
 	trap_PC_RemoveAllGlobalDefines();
 
-	trap_Cvar_Set("ui_menuFiles", "ui/menus.txt");   // NERVE - SMF - we need to hardwire for wolfMP
+	trap_Cvar_Set("ui_menuFiles", "ui/menus.txt");   // we need to hardwire for wolfMP
 
 	// cache redundant calulations
 	trap_GetGlconfig(&uiInfo.uiDC.glconfig);
@@ -8002,7 +7982,7 @@ void _UI_KeyEvent(int key, qboolean down)
 		{
 			trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
 
-			// NERVE - SMF - we don't want to clear key states if bypassing input
+			// we don't want to clear key states if bypassing input
 			if (!bypassKeyClear)
 			{
 				trap_Key_ClearStates();
@@ -8266,11 +8246,11 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 			return;
 
 		case UIMENU_WM_AUTOUPDATE:
-			// TTimo - changing the auto-update strategy to a modal prompt
+			// changing the auto-update strategy to a modal prompt
 			Menus_OpenByName("wm_autoupdate_modal");
 			return;
 
-		// ydnar: say, team say, etc
+		// say, team say, etc
 		case UIMENU_INGAME_MESSAGEMODE:
 			//trap_Cvar_Set( "cl_paused", "1" );
 			trap_Key_SetCatcher(KEYCATCH_UI);
@@ -8278,7 +8258,7 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 			return;
 
 		default:
-			return; // TTimo: a lot of not handled
+			return; // a lot of not handled
 		}
 	}
 }
@@ -8345,14 +8325,19 @@ This will also be overlaid on the cgame info screen during loading
 to prevent it from blinking away too rapidly on local or lan games.
 ========================
 */
-#define CP_LINEWIDTH 50
 
 void UI_DrawConnectScreen(qboolean overlay)
 {
-//  static qboolean playingMusic = qfalse;
-
 	if (!overlay)
 	{
+		// to avoid a flickering screen on widescreens, we erase it before drawing onto it..
+		if (((float)(DC->glconfig.vidWidth) / DC->glconfig.vidHeight) != RATIO43)
+		{
+			float xoffset = Cui_WideXoffset() * DC->xscale;
+
+			trap_R_DrawStretchPic(0, 0, xoffset, DC->glconfig.vidHeight, 0, 0, 1, 1, DC->registerShaderNoMip("gfx/2d/backtile"));
+			trap_R_DrawStretchPic(DC->glconfig.vidWidth - xoffset, 0, xoffset, DC->glconfig.vidHeight, 0, 0, 1, 1, DC->registerShaderNoMip("gfx/2d/backtile"));
+		}
 		UI_DrawLoadPanel(qfalse, qfalse, qfalse);
 	}
 }
@@ -8407,7 +8392,7 @@ vmCvar_t ui_netGameType;
 vmCvar_t ui_joinGameType;
 vmCvar_t ui_dedicated;
 
-// NERVE - SMF - cvars for multiplayer
+// cvars for multiplayer
 vmCvar_t ui_serverFilterType;
 vmCvar_t ui_currentNetMap;
 vmCvar_t ui_currentMap;
@@ -8522,7 +8507,7 @@ cvarTable_t cvarTable[] =
 	{ &ui_menuFiles,                    "ui_menuFiles",                        "ui/menus.txt",               CVAR_ARCHIVE                   },
 	{ &ui_gameType,                     "ui_gametype",                         "3",                          CVAR_ARCHIVE                   },
 	{ &ui_joinGameType,                 "ui_joinGametype",                     "-1",                         CVAR_ARCHIVE                   },
-	{ &ui_netGameType,                  "ui_netGametype",                      "4",                          CVAR_ARCHIVE                   }, // NERVE - SMF - hardwired for now
+	{ &ui_netGameType,                  "ui_netGametype",                      "4",                          CVAR_ARCHIVE                   }, // hardwired for now
 
 	// multiplayer cvars
 	{ &ui_mapIndex,                     "ui_mapIndex",                         "0",                          CVAR_ARCHIVE                   },
@@ -8702,7 +8687,7 @@ void UI_RegisterCvars(void)
 		}
 	}
 
-	// OSP - Always force this to 0 on init
+	// Always force this to 0 on init
 	trap_Cvar_Set("ui_blackout", "0");
 	BG_setCrosshair(cg_crosshairColor.string, uiInfo.xhairColor, cg_crosshairAlpha.value, "cg_crosshairColor");
 	BG_setCrosshair(cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
@@ -8762,7 +8747,7 @@ static void UI_StopServerRefresh(void)
 	count = trap_LAN_GetServerCount(ui_netSource.integer);
 	if (count - uiInfo.serverStatus.numDisplayServers > 0)
 	{
-		// TTimo - used to be about cl_maxping filtering, that was Q3 legacy, RTCW browser has much more filtering options
+		// used to be about cl_maxping filtering, that was Q3 legacy, RTCW browser has much more filtering options
 		Com_Printf("%d servers not listed (filtered out by game browser settings)\n",
 		           count - uiInfo.serverStatus.numDisplayServers);
 	}
@@ -8855,7 +8840,7 @@ static void UI_StartServerRefresh(qboolean full)
 	trap_LAN_MarkServerVisible(ui_netSource.integer, -1, qtrue);
 	// reset all the pings
 	trap_LAN_ResetPings(ui_netSource.integer);
-	//
+
 	if (ui_netSource.integer == AS_LOCAL)
 	{
 		trap_Cmd_ExecuteText(EXEC_APPEND, "localservers\n");

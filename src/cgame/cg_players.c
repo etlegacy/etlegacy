@@ -194,7 +194,7 @@ void CG_NewClientInfo(int clientNum)
 	// the old value
 	memset(&newInfo, 0, sizeof(newInfo));
 
-	// Gordon: grabbing some older stuff, if it's a new client, tinfo will update within one second anyway, otherwise you get the health thing flashing red
+	// grabbing some older stuff, if it's a new client, tinfo will update within one second anyway, otherwise you get the health thing flashing red
 	// NOTE: why are we bothering to do all this setting up of a new clientInfo_t anyway? it was all for deffered clients iirc, which we dont have
 	newInfo.location[0]  = ci->location[0];
 	newInfo.location[1]  = ci->location[1];
@@ -397,7 +397,7 @@ void CG_NewClientInfo(int clientNum)
 		}
 	}
 
-	// rain - passing the clientNum since that's all we need, and we
+	// passing the clientNum since that's all we need, and we
 	// can't calculate it properly from the clientinfo
 	CG_LoadClientInfo(clientNum);
 
@@ -411,7 +411,7 @@ void CG_NewClientInfo(int clientNum)
 		ci->character = BG_GetCharacter(ci->team, ci->cls);
 	}
 
-	// Gordon: need to resort the fireteam list, incase ranks etc have changed
+	// need to resort the fireteam list, in case ranks etc have changed
 	CG_SortClientFireteam();
 }
 
@@ -691,7 +691,7 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 		lf->frameModel    = anim->mdxFile;
 	}
 
-	if (cg_debugAnim.integer == 1)               // DHM - Nerve :: extra debug info
+	if (cg_debugAnim.integer == 1) // extra debug info
 	{
 		CG_Printf("Anim: %i, %s\n", newAnimation, character->animModelInfo->animations[newAnimation]->name);
 	}
@@ -735,7 +735,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		CG_SetLerpFrameAnimationRate(cent, ci, lf, newAnimation);
 	}
 
-	// Ridah, make sure the animation speed is updated when possible
+	// make sure the animation speed is updated when possible
 	anim = lf->animation;
 
 	// check for forcing last frame
@@ -818,7 +818,6 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		}
 		else if (lf->animSpeedScale > ANIM_SCALEMAX_LOW)
 		{
-
 			if (!(anim->flags & ANIMFL_LADDERANIM))
 			{
 				// allow slower anims to speed up more than faster anims
@@ -966,7 +965,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		if (cg.time > lf->frameTime)
 		{
 
-			// Ridah, run the frame again until we move ahead of the current time, fixes walking speeds for zombie
+			// run the frame again until we move ahead of the current time, fixes walking speeds for zombie
 			if (/*!anim->moveSpeed ||*/ recursion > 4)
 			{
 				lf->frameTime = cg.time;
@@ -984,7 +983,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		lf->oldAnimationNumber = lf->animationNumber;
 	}
 
-	// Gordon: BIG hack, occaisionaly (VERY occaisionally), the frametime gets totally wacked
+	// BIG hack, occaisionaly (VERY occaisionally), the frametime gets totally wacked
 	if (lf->frameTime > cg.time + 5000)
 	{
 		lf->frameTime = cg.time;
@@ -1083,9 +1082,7 @@ static void CG_PlayerAnimation(centity_t *cent, refEntity_t *body)
 
 /*
 =============================================================================
-
 PLAYER ANGLES
-
 =============================================================================
 */
 
@@ -1284,7 +1281,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 
 		// always point all in the same direction
 		cent->pe.torso.yawing   = qtrue; // always center
-		cent->pe.torso.pitching = qtrue;    // always center
+		cent->pe.torso.pitching = qtrue; // always center
 		cent->pe.legs.yawing    = qtrue; // always center
 
 		// if firing, make sure torso and head are always aligned
@@ -1292,7 +1289,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	else if (BG_GetConditionValue(cent->currentState.clientNum, ANIM_COND_FIRING, qtrue))
 	{
 		cent->pe.torso.yawing   = qtrue; // always center
-		cent->pe.torso.pitching = qtrue;    // always center
+		cent->pe.torso.pitching = qtrue; // always center
 	}
 
 	// adjust legs for movement dir
@@ -1377,9 +1374,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		torsoAngles[PITCH] = cent->pe.torso.pitchAngle;
 	}
 
-
 	// --------- roll -------------
-
 
 	// lean towards the direction of travel
 	VectorCopy(cent->currentState.pos.trDelta, velocity);
@@ -1495,7 +1490,7 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height)
 
 	memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
-	ent.origin[2] += height;            // DHM - Nerve :: was '48'
+	ent.origin[2] += height;
 
 	// Account for ducking
 	if (cent->currentState.clientNum == cg.snap->ps.clientNum)
@@ -1556,8 +1551,8 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	team = cgs.clientinfo[cent->currentState.clientNum].team;
 
-	// DHM - Nerve :: If this client is a medic, draw a 'revive' icon over
-	//                  dead players that are not in limbo yet.
+	// If this client is a medic, draw a 'revive' icon over
+	// dead players that are not in limbo yet.
 	if ((cent->currentState.eFlags & EF_DEAD)
 	    && cent->currentState.number == cent->currentState.clientNum
 	    && cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC
@@ -1569,14 +1564,14 @@ static void CG_PlayerSprites(centity_t *cent)
 		return;
 	}
 
-	// DHM - Nerve :: show voice chat signal so players know who's talking
+	// show voice chat signal so players know who's talking
 	if (cent->voiceChatSpriteTime > cg.time && cg.snap->ps.persistant[PERS_TEAM] == team)
 	{
 		CG_PlayerFloatSprite(cent, cent->voiceChatSprite, 56);
 		return;
 	}
 
-	// DHM - Nerve :: only show talk icon to team-mates
+	// only show talk icon to team-mates
 	if ((cent->currentState.eFlags & EF_TALK) && cg.snap->ps.persistant[PERS_TEAM] == team)
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.balloonShader, 48);
@@ -1585,6 +1580,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	{
 		fireteamData_t *ft;
+
 		if ((ft = CG_IsOnFireteam(cent->currentState.number)))
 		{
 			if (ft == CG_IsOnFireteam(cg.clientNum) && cgs.clientinfo[cent->currentState.number].selected)
@@ -1634,7 +1630,7 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 		{ NULL,            0 }
 	};
 
-	shadowParts[0].shader = cgs.media.shadowFootShader;     //DAJ pulled out of initliization
+	shadowParts[0].shader = cgs.media.shadowFootShader;     // pulled out of initliization
 	shadowParts[1].shader = cgs.media.shadowFootShader;
 	shadowParts[2].shader = cgs.media.shadowTorsoShader;
 
@@ -1670,7 +1666,7 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 	}
 
 	// fade the shadow out with height
-	//% alpha = 1.0 - trace.fraction;
+	//alpha = 1.0 - trace.fraction;
 
 	// add the mark as a temporary, so it goes directly to the renderer
 	// without taking a spot in the cg_marks array
@@ -1708,10 +1704,10 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 			origin[2] = *shadowPlane;
 		}
 
-		// ydnar: add a bit of height so foot shadows don't clip into sloped geometry as much
+		// add a bit of height so foot shadows don't clip into sloped geometry as much
 		origin[2] += 18.0f;
 
-		//% alpha *= distFade;
+		//alpha *= distFade;
 
 		// ydnar: decal remix
 		//% CG_ImpactMark( cgs.media.shadowTorsoShader, trace.endpos, trace.plane.normal,
@@ -1734,7 +1730,7 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 					origin[2] = *shadowPlane;
 				}
 
-				// ydnar: add a bit of height so foot shadows don't clip into sloped geometry as much
+				// add a bit of height so foot shadows don't clip into sloped geometry as much
 				origin[2] += 5.0f;
 
 #if 0
@@ -2248,8 +2244,8 @@ void CG_Player(centity_t *cent)
 
 	CG_AddRefEntityWithPowerups(&body, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
 
-	// ydnar debug
 #if 0
+	// debug
 	{
 		int    y;
 		vec3_t oldOrigin;
@@ -2270,7 +2266,7 @@ void CG_Player(centity_t *cent)
 	}
 #endif
 
-// DEBUG
+	// DEBUG
 	/*{
 	    int         x, zd, zu;
 	    vec3_t      bmins, bmaxs;
@@ -2358,7 +2354,7 @@ void CG_Player(centity_t *cent)
 	        CG_RailTrail( NULL, mins, maxs, 1 );
 	    }
 	}*/
-// DEBUG
+	// END DEBUG
 
 	// add the head
 	if (!(head.hModel = character->hudhead))
@@ -2430,7 +2426,7 @@ void CG_Player(centity_t *cent)
 	CG_BreathPuffs(cent, &head);
 
 	// add the gun / barrel / flash
-	if (!(cent->currentState.eFlags & EF_DEAD) /*&& !usingBinocs*/)                // NERVE - SMF
+	if (!(cent->currentState.eFlags & EF_DEAD) /*&& !usingBinocs*/)
 	{
 		CG_AddPlayerWeapon(&body, NULL, cent);
 	}
@@ -2472,7 +2468,7 @@ void CG_Player(centity_t *cent)
 				CG_PositionEntityOnTag(&acc, &body, "tag_back", 0, NULL);
 				break;
 
-			case ACC_HAT:               //hat
+			case ACC_HAT:               // hat
 			case ACC_RANK:
 				if (cent->currentState.eFlags & EF_HEADSHOT)
 				{
@@ -2915,13 +2911,11 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 
 	// calculate distance so the player nearly fills the box
 
-	// START Mad Doc - TDF
 	// for "talking heads", we calc the origin differently
 	// FIXME - this is stupid - should all be character driven - NO CODE HACKS FOR SPECIFIC THINGS THAT CAN BE DONE CLEANLY
 	if (animatedHead == qfalse)
 	{
-		// END Mad Doc - TDF
-		len       = 0.9 * (maxs[2] - mins[2]);                      // NERVE - SMF - changed from 0.7
+		len       = 0.9 * (maxs[2] - mins[2]); // changed from 0.7
 		origin[0] = pi->y - 70 + (len / tan(DEG2RAD(refdef.fov_x) * 0.5));
 		origin[1] = 0.5 * (mins[1] + maxs[1]);
 		origin[2] = pi->z - 23 + (-0.5 * (mins[2] + maxs[2]));
@@ -2932,7 +2926,6 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 		// we precalculated this elsewhere
 		VectorCopy(pi->headOrigin, origin);
 	}
-	// END Mad Doc - TDF
 
 	refdef.time = dp_realtime;
 
@@ -3383,8 +3376,6 @@ void CG_RunHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int newAnimatio
 
 void CG_HudHeadAnimation(bg_character_t *ch, lerpFrame_t *lf, int *oldframe, int *frame, float *backlerp, hudHeadAnimNumber_t animation)
 {
-//  centity_t *cent = &cg.predictedPlayerEntity;
-
 	CG_RunHudHeadLerpFrame(ch, lf, (int)animation, 1.f);
 
 	*oldframe = lf->oldFrame;

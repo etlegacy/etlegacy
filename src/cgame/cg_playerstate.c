@@ -285,11 +285,11 @@ void CG_Respawn(qboolean revived)
 	cg.cursorHintIcon = 0;
 	cg.cursorHintTime = 0;
 
-	cg.cameraMode = qfalse; //----(SA)  get out of camera for sure
+	cg.cameraMode = qfalse; // get out of camera for sure
 
 	// select the weapon the server says we are using
 	cg.weaponSelect = cg.snap->ps.weapon;
-	// DHM - Nerve :: Clear even more things on respawn
+	// Clear even more things on respawn
 	cg.zoomedBinoc = qfalse;
 	cg.zoomedScope = qfalse;
 	cg.zoomTime    = 0;
@@ -573,7 +573,6 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops)
 /*
 ===============
 CG_TransitionPlayerState
-
 ===============
 */
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
