@@ -16,7 +16,7 @@ ET: Legacy is based on the [raedwulf-et project](https://bitbucket.org/tcmreastw
 which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory. 
 
 Its main goal is to fix bugs and clean up the codebase while remaining 
-(somewhat) compatible with the ET 2.60b version. 
+compatible with the ET 2.60b version.
 
 GENERAL NOTES
 =============
@@ -49,8 +49,9 @@ Dependencies
 -----------------------------------------------------------------------------
 
 * **CMake** (compile-time only)
-* **libSDL 1.2**
-* **libjpeg 8**
+* **libSDL**, version 1.2
+* **libjpeg**, version 8 is required, version 6 won't compile!
+* **lua**, either version 5.2 or 5.1 (optional)
 * **libcurl** (optional, enabled by default)
 * **OGG Vorbis File** (optional)
 * **OpenAL** (optional)
@@ -67,9 +68,8 @@ If the required dependencies are not installed on your system run:
     $ git submodule update
 
 This downloads the essential dependencies (libjpeg, libSDL and libcurl) into the `libs/` 
-directory. If one of those libraries is not installed on your system CMake will use the
-ones located in the `libs/` directory automatically. Otherwise, you can control this 
-by changing the `BUNDLED_LIBS` variable in the CMake script.
+directory. You can choose whether to use bundled library instead of the system one by
+changing the `BUNDLED_XXX` variable in the CMake configuration.
 
 Compile and install
 -----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ If you do not wish to install ET:L system-wide simply run:
 
 To install the binaries system-wide, you need to compile ET:L with hardcoded fs_basepath.
 
-* first adjust the following variables in CMake:
+First adjust the following variables in CMake:
   * **INSTALL_DEFAULT_BASEDIR**: sets default *fs_basepath*, i.e. where etl and etlded
     executables look for data files. In most cases it is CMAKE_INSTALL_PREFIX+INSTALL_DEFAULT_MODDIR.
     Defaults to empty value, because we want *fs_basepath* to be the current working directory
@@ -95,10 +95,11 @@ To install the binaries system-wide, you need to compile ET:L with hardcoded fs_
     Defaults to "bin".
   * (optional) **INSTALL_DEFAULT_MODDIR**: Location for libraries and paks. Appended to
     CMAKE_INSTALL_PREFIX. Defaults to "share/etlegacy" and then "etmain" is appended to it.
-* then compile ET:L:
 
-    $ make
-    # make install
+Then compile ET:L:
+
+	$ make
+	# make install
 
 ### Crosscompiling on linux with mingw32
 
