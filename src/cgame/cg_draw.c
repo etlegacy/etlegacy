@@ -3768,9 +3768,6 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		return;
 	}
 
-	//  if( cg_drawCompass.integer == 2 )
-	//      angles[YAW] = AngleSubtract( 90, angles[YAW] );
-	//  else
 	angles[YAW] = AngleSubtract(cg.predictedPlayerState.viewangles[YAW], angles[YAW]);
 
 	angle = ((angles[YAW] + 180.f) / 360.f - (0.50 / 2.f)) * pi2;
@@ -3790,75 +3787,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 
 	len = 1 - MIN(1.f, len / 2000.f);
 
-
 	CG_DrawPic(x - (14 * len + 4) / 2, y - (14 * len + 4) / 2, 14 * len + 8, 14 * len + 8, shader);
-#ifdef SQUARE_COMPASS
-}
-else
-{
-	int iconWidth, iconHeight;
-	// talk about fitting a square peg into a round hole...
-	// we're now putting the compass icons around the square automap instead of the round compass
-
-	while (angle < 0)
-		angle += pi2;
-
-	while (angle >= pi2)
-		angle -= pi2;
-
-
-	x  = x + w / 2;
-	y  = y + h / 2;
-	w /= 2;    // = sqrt( ( w * w ) + ( h * h ) ) / 3.f * 2.f * 0.9f;
-
-	if ((angle >= 0) && (angle < M_PI / 4.0))
-	{
-		x += w;
-		y += w * tan(angle);
-
-	}
-	else if ((angle >= M_PI / 4.0) && (angle < 3.0 * M_PI / 4.0))
-	{
-		x += w / tan(angle);
-		y += w;
-	}
-	else if ((angle >= 3.0 * M_PI / 4.0) && (angle < 5.0 * M_PI / 4.0))
-	{
-		x -= w;
-		y -= w * tan(angle);
-	}
-	else if ((angle >= 5.0 * M_PI / 4.0) && (angle < 7.0 * M_PI / 4.0))
-	{
-		x -= w / tan(angle);
-		y -= w;
-	}
-	else
-	{
-		x += w;
-		y += w * tan(angle);
-
-	}
-
-	len        = 1 - MIN(1.f, len / 2000.f);
-	iconWidth  = 14 * len + 4;    // where did this calc. come from?
-	iconHeight = 14 * len + 4;
-
-	// adjust so that icon is always outside of the map
-	if ((angle > 5.0 * M_PI / 4.0) && (angle < 2 * M_PI))
-	{
-
-		y -= iconHeight;
-	}
-
-	if ((angle >= 3.0 * M_PI / 4.0) && (angle <= 5.0 * M_PI / 4.0))
-	{
-		x -= iconWidth;
-	}
-
-
-	CG_DrawPic(x, y, iconWidth, iconHeight, shader);
-}
-#endif
 }
 
 /*
@@ -3868,13 +3797,13 @@ CG_DrawNewCompass
 */
 static void CG_DrawNewCompass(void)
 {
-	float basex = (Ccg_WideX(640) - 100 - 20 - 16), basey = 20 - 16, basew = 100 + 32, baseh = 100 + 32;
-	snapshot_t *snap;
-	float angle;
-	int i;
+	float        basex = (Ccg_WideX(640) - 100 - 20 - 16), basey = 20 - 16, basew = 100 + 32, baseh = 100 + 32;
+	snapshot_t   *snap;
+	float        angle;
+	int          i;
 	static float lastangle  = 0;
 	static float anglespeed = 0;
-	float diff;
+	float        diff;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -3885,16 +3814,10 @@ static void CG_DrawNewCompass(void)
 		snap = cg.snap;
 	}
 
-	if (snap->ps.pm_flags & PMF_LIMBO || snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.mvTotalClients > 0)
+	if (snap->ps.pm_flags & PMF_LIMBO || snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.mvTotalClients > 0) // @multiview
 	{
 		return;
 	}
-
-	// Arnout: bit larger
-	basex = 520 - 16;
-	basey = 20 - 16;
-	basew = 100 + 32;
-	baseh = 100 + 32;
 
 	CG_DrawAutoMap();
 
@@ -3926,7 +3849,7 @@ static void CG_DrawNewCompass(void)
 		{
 			rectDef_t compassHintRect = { 640 - 22, 128, 20, 20 };
 
-			CG_DrawKeyHint(&compassHintRect, "+mapexpand");
+			CG_DrawKeyHint(&compassHintRect, "+mapexpand"); // empty function call
 		}
 	}
 
@@ -4019,7 +3942,6 @@ static void CG_DrawNewCompass(void)
 	}
 	//}
 
-
 	//if( !(cgs.ccFilter & CC_FILTER_BUDDIES) ) {
 	for (i = 0; i < snap->numEntities; i++)
 	{
@@ -4052,10 +3974,10 @@ static void CG_DrawNewCompass(void)
 
 static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 {
-	centity_t *cent;
+	centity_t     *cent;
 	playerState_t *ps;
-	int weap;
-	qboolean skipammo = qfalse;
+	int           weap;
+	qboolean      skipammo = qfalse;
 
 	*ammo = *clips = *akimboammo = -1;
 
@@ -4163,9 +4085,9 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 static void CG_DrawPlayerStatusHead(void)
 {
 	hudHeadAnimNumber_t anim;
-	rectDef_t headRect            = { 44, 480 - 92, 62, 80 };
-	bg_character_t *character     = CG_CharacterForPlayerstate(&cg.snap->ps);
-	bg_character_t *headcharacter = BG_GetCharacter(cgs.clientinfo[cg.snap->ps.clientNum].team, cgs.clientinfo[cg.snap->ps.clientNum].cls);
+	rectDef_t           headRect       = { 44, 480 - 92, 62, 80 };
+	bg_character_t      *character     = CG_CharacterForPlayerstate(&cg.snap->ps);
+	bg_character_t      *headcharacter = BG_GetCharacter(cgs.clientinfo[cg.snap->ps.clientNum].team, cgs.clientinfo[cg.snap->ps.clientNum].cls);
 
 	qhandle_t painshader = 0;
 
@@ -4235,7 +4157,7 @@ static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 	vec4_t bgcolour = { 1.f, 1.f, 1.f, 0.3f };
 	vec4_t colour;
 
-	int flags = 1 | 4 | 16 | 64;
+	int   flags = 1 | 4 | 16 | 64;
 	float frac;
 
 	CG_ColorForHealth(colour);
@@ -4262,9 +4184,9 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 	vec4_t bgcolour  = { 1.f, 1.f, 1.f, 0.3f };
 	vec4_t colour    = { 0.1f, 1.0f, 0.1f, 0.5f };
 	vec4_t colourlow = { 1.0f, 0.1f, 0.1f, 0.5f };
-	vec_t *color     = colour;
-	int flags        = 1 | 4 | 16 | 64;
-	float frac       = cg.pmext.sprintTime / (float)SPRINTTIME;
+	vec_t  *color    = colour;
+	int    flags     = 1 | 4 | 16 | 64;
+	float  frac      = cg.pmext.sprintTime / (float)SPRINTTIME;
 
 	if (cg.snap->ps.powerups[PW_ADRENALINE])
 	{
@@ -4303,8 +4225,8 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 
 static void CG_DrawWeapRecharge(rectDef_t *rect)
 {
-	float barFrac, chargeTime;
-	int weap, flags;
+	float    barFrac, chargeTime;
+	int      weap, flags;
 	qboolean fade = qfalse;
 
 	vec4_t bgcolor = { 1.0f, 1.0f, 1.0f, 0.25f };
@@ -4361,11 +4283,11 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 
 static void CG_DrawPlayerStatus(void)
 {
-	int value, value2, value3;
-	char buffer[32];
-	int weap;
+	int           value, value2, value3;
+	char          buffer[32];
+	int           weap;
 	playerState_t *ps;
-	rectDef_t rect = { (Ccg_WideX(640) - 82), (480 - 56), 60, 32 };
+	rectDef_t     rect = { (Ccg_WideX(640) - 82), (480 - 56), 60, 32 };
 
 	ps = &cg.snap->ps;
 
@@ -4420,11 +4342,11 @@ static void CG_DrawPlayerStatus(void)
 
 static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
 {
-	int i;
-	float blockheight = (h - 4) / (float)(NUM_SKILL_LEVELS - 1);
-	float draw_y;
+	int    i;
+	float  blockheight = (h - 4) / (float)(NUM_SKILL_LEVELS - 1);
+	float  draw_y;
 	vec4_t colour;
-	float x1, y1, w1, h1;
+	float  x1, y1, w1, h1;
 
 	draw_y = y + h - blockheight;
 	for (i = 0; i < NUM_SKILL_LEVELS - 1; i++)
@@ -4491,14 +4413,14 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 
 static void CG_DrawPlayerStats(void)
 {
-	int value = 0;
+	int           value = 0;
 	playerState_t *ps;
-	clientInfo_t *ci;
-	skillType_t skill;
-	int i;
-	const char *str;
-	float w;
-	vec_t *clr;
+	clientInfo_t  *ci;
+	skillType_t   skill;
+	int           i;
+	const char    *str;
+	float         w;
+	vec_t         *clr;
 
 	str = va("%i", cg.snap->ps.stats[STAT_HEALTH]);
 	w   = CG_Text_Width_Ext(str, 0.25f, 0, &cgs.media.limboFont1);
@@ -4550,9 +4472,9 @@ static void CG_DrawPlayerStats(void)
 }
 
 static char statsDebugStrings[6][512];
-static int statsDebugTime[6];
-static int statsDebugTextWidth[6];
-static int statsDebugPos;
+static int  statsDebugTime[6];
+static int  statsDebugTextWidth[6];
+static int  statsDebugPos;
 
 void CG_InitStatsDebug(void)
 {
@@ -4904,9 +4826,9 @@ void CG_ShakeCamera(void)
 
 void CG_DrawMiscGamemodels(void)
 {
-	int i, j;
+	int         i, j;
 	refEntity_t ent;
-	int drawn = 0;
+	int         drawn = 0;
 
 	memset(&ent, 0, sizeof(ent));
 
@@ -4987,7 +4909,7 @@ Perform all drawing needed to completely fill the screen
 */
 void CG_DrawActive(stereoFrame_t stereoView)
 {
-	float separation;
+	float  separation;
 	vec3_t baseOrg;
 
 	// optionally draw the info screen instead
