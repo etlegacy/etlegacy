@@ -264,7 +264,7 @@ SV_BoundMaxClients
 void SV_BoundMaxClients(int minimum)
 {
 	// get the current maxclients value
-	Cvar_Get("sv_maxclients", "20", 0); // NERVE - SMF - changed to 20 from 8
+	Cvar_Get("sv_maxclients", "20", 0);
 
 	sv_maxclients->modified = qfalse;
 
@@ -543,7 +543,7 @@ void SV_SpawnServer(char *server)
 	// wipe the entire per-level structure
 	SV_ClearServer();
 
-	// MrE: main zone should be pretty much emtpy at this point
+	// main zone should be pretty much emtpy at this point
 	// except for file system data and cached renderer data
 	Z_LogHeap();
 
@@ -767,7 +767,12 @@ void SV_WriteAttackLog(const void *log)
 {
 	if (attHandle > 0)
 	{
-		FS_Write(log, strlen(log), attHandle);
+		char    string[512]; // 512 chars seem enough here
+		qtime_t time;
+
+		Com_RealTime(&time);
+		Com_sprintf(string, sizeof(string), "%i/%i/%i %i:%i:%i %s", time.tm_mon + 1, time.tm_mday, time.tm_mon + 1, time.tm_hour, time.tm_min, time.tm_sec, log);
+		FS_Write(string, strlen(string), attHandle);
 	}
 	else
 	{
@@ -777,26 +782,26 @@ void SV_WriteAttackLog(const void *log)
 
 void SV_InitAttackLog()
 {
-	if (sv_protectLog->string[0])
+	if (sv_protectLog->string[0] == '\0')
 	{
-		// in sync, so admins can check this at runtime
+		Com_Printf("Not logging server attacks to disk.\n");
+	}
+	else
+	{
+		// in sync so admins can check this at runtime
 		FS_FOpenFileByMode(sv_protectLog->string, &attHandle, FS_APPEND_SYNC);
 
-		if (attHandle < 0)
+		if (attHandle <= 0)
 		{
 			Com_Printf("WARNING: Couldn't open server attack logfile %s\n", sv_protectLog->string);
 		}
 		else
 		{
-			Com_Printf("Logging server attacks in file %s\n", sv_protectLog->string);
+			Com_Printf("Logging server attacks to %s\n", sv_protectLog->string);
 			SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
-			SV_WriteAttackLog("Start server attack log\n"); // FIXME: add date & additional info
+			SV_WriteAttackLog("Start server attack log\n");
 			SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
 		}
-	}
-	else
-	{
-		Com_Printf("Not logging server attacks to disk.\n");
 	}
 }
 
@@ -836,7 +841,7 @@ void SV_Init(void)
 	sv_needpass       = Cvar_Get("g_needpass", "0", CVAR_SERVERINFO | CVAR_ROM);
 
 	// systeminfo
-	//bani - added cvar_t for sv_cheats so server engine can reference it
+	// added cvar_t for sv_cheats so server engine can reference it
 	sv_cheats   = Cvar_Get("sv_cheats", "1", CVAR_SYSTEMINFO | CVAR_ROM);
 	sv_serverid = Cvar_Get("sv_serverid", "0", CVAR_SYSTEMINFO | CVAR_ROM);
 	sv_pure     = Cvar_Get("sv_pure", "1", CVAR_SYSTEMINFO);
@@ -905,10 +910,8 @@ void SV_Init(void)
 	Cvar_Get("g_fastres", "0", CVAR_ARCHIVE);
 	Cvar_Get("g_fastResMsec", "1000", CVAR_ARCHIVE);
 
-	// ATVI Tracker Wolfenstein Misc #273
 	Cvar_Get("g_voteFlags", "0", CVAR_ROM | CVAR_SERVERINFO);
 
-	// ATVI Tracker Wolfenstein Misc #263
 	Cvar_Get("g_antilag", "1", CVAR_ARCHIVE | CVAR_SERVERINFO);
 
 	Cvar_Get("g_needpass", "0", CVAR_SERVERINFO);
@@ -933,7 +936,7 @@ void SV_Init(void)
 	sv_advert = Cvar_Get("sv_advert", "1", CVAR_ARCHIVE);
 
 	sv_protect    = Cvar_Get("sv_protect", "1", CVAR_ARCHIVE);
-	sv_protectLog = Cvar_Get("sv_protectLog", "sv_attack.log", CVAR_ARCHIVE);
+	sv_protectLog = Cvar_Get("sv_protectLog", "", CVAR_ARCHIVE);
 	SV_InitAttackLog();
 
 	// init the botlib here because we need the pre-compiler in the UI
@@ -971,7 +974,7 @@ void SV_FinalCommand(char *cmd, qboolean disconnect)
 				// don't send a disconnect to a local client
 				if (cl->netchan.remoteAddress.type != NA_LOOPBACK)
 				{
-					//%	SV_SendServerCommand( cl, "print \"%s\"", message );
+					//SV_SendServerCommand( cl, "print \"%s\"", message );
 					SV_SendServerCommand(cl, "%s", cmd);
 
 					// added this so map changes can use this functionality
@@ -1000,7 +1003,7 @@ void SV_CloseAttackLog()
 
 	FS_FCloseFile(attHandle);
 
-	attHandle = 0;	// local handle
+	attHandle = 0;  // local handle
 }
 
 /*
