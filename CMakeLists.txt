@@ -64,6 +64,7 @@ option(FEATURE_TRACKBASE	"Enable extended server statistics (server)"				ON)
 option(FEATURE_LUA			"Enable Lua support in game code"							OFF)
 option(FEATURE_MULTIVIEW	"Compile the mod files with multiview support (broken?!)"	OFF)
 option(FEATURE_ANTICHEAT	"Enable server side anti-wallhack code (experimental)"		ON)
+option(FEATURE_CURSES		"Enable PDCurses console"									OFF)
 
 if((WIN32 OR UNIX) AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 	option(FEATURE_OMNIBOT	"Enable omnibot build in mod code (Win & Linux server only!)"	OFF)
@@ -395,6 +396,10 @@ endif(FEATURE_TRACKBASE)
 if(FEATURE_ANTICHEAT)
 	add_definitions(-DFEATURE_ANTICHEAT)
 endif(FEATURE_ANTICHEAT)
+
+if(FEATURE_CURSES)
+	add_definitions(-DFEATURE_CURSES)
+endif(FEATURE_CURSES)
 
 #-----------------------------------------------------------------
 # Build
