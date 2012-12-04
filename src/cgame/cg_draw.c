@@ -3995,7 +3995,7 @@ static void CG_DrawNewCompass(void)
 	// draw revive medic icons
 	if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC)
 	{
-		entityState_t *ent
+		entityState_t *ent;
 
 		for (i = 0; i < snap->numEntities; i++)
 		{
