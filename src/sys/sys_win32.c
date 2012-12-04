@@ -898,7 +898,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 WinMain
 ==================
 */
-#if defined (_WIN32)
+#ifdef _WIN32
 WinVars_t   g_wv;
 static char sys_cmdline[MAX_STRING_CHARS];
 int         totalMsec, countMsec;
