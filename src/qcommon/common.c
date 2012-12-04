@@ -35,6 +35,9 @@
 #include "q_shared.h"
 #include "qcommon.h"
 #include <setjmp.h>
+#if defined (_WIN32)
+#include "../sys/sys_win32.h"
+#endif
 
 #ifndef _WIN32
 #include <netinet/in.h>
@@ -2217,6 +2220,9 @@ Com_GetSystemEvent
 */
 sysEvent_t Com_GetSystemEvent(void)
 {
+#if defined(_WIN32)
+	MSG msg;
+#endif
 	sysEvent_t ev;
 	char       *s;
 	msg_t      netmsg;
@@ -2228,6 +2234,22 @@ sysEvent_t Com_GetSystemEvent(void)
 		eventTail++;
 		return eventQueue[(eventTail - 1) & MASK_QUEUED_EVENTS];
 	}
+
+	// pump the message loop
+#if defined(_WIN32)
+	while ( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) ) {
+		if ( !GetMessage( &msg, NULL, 0, 0 ) ) {
+			Com_Quit_f();
+		}
+
+		// save the msg time, because wndprocs don't have access to the timestamp
+		g_wv.sysMsgTime = msg.time;
+
+		TranslateMessage( &msg );
+		DispatchMessage( &msg );
+	}
+#endif
+
 
 	// check for console commands
 	s = Sys_ConsoleInput();
@@ -3074,6 +3096,9 @@ void Com_Init(char *commandLine)
 	if (!com_dedicated->integer)
 	{
 		CL_Init();
+#if defined (_WIN32) && !defined (_DEBUG)
+		Sys_ShowConsole( com_viewlog->integer, qfalse );
+#endif
 	}
 
 	// set com_frameTime so that if a map is started on the
@@ -3091,6 +3116,13 @@ void Com_Init(char *commandLine)
 	Cvar_Set("r_uiFullScreen", "1");
 
 	CL_StartHunkUsers();
+
+	// delay this so potential dll can find a wolf window
+	if ( !com_dedicated->integer ) {
+#if defined (_WIN32)
+		Sys_ShowConsole( com_viewlog->integer, qfalse );
+#endif
+	}
 
 	// force recommendedSet and don't do vid_restart if in safe mode
 	if (!com_recommendedSet->integer && !safeMode)
@@ -3285,8 +3317,12 @@ void Com_Frame(void)
 	Com_WriteConfiguration();
 
 	// if "viewlog" has been modified, show or hide the log console
-	if (com_viewlog->modified)
-	{
+	if(com_viewlog->modified) {
+#if defined (_WIN32)
+		if ( !com_dedicated->value ) {
+			Sys_ShowConsole( com_viewlog->integer, qfalse );
+		}
+#endif
 		com_viewlog->modified = qfalse;
 	}
 
@@ -3343,10 +3379,16 @@ void Com_Frame(void)
 		if (!com_dedicated->integer)
 		{
 			CL_Init();
+#if defined (_WIN32)
+			Sys_ShowConsole( com_viewlog->integer, qfalse );
+#endif
 		}
 		else
 		{
 			CL_Shutdown();
+#if defined (_WIN32) && !defined (_DEBUG)
+			Sys_ShowConsole( 1, qtrue );
+#endif
 		}
 	}
 

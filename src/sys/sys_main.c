@@ -41,6 +41,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #ifndef DEDICATED
 #    ifdef BUNDLED_SDL
@@ -137,10 +140,15 @@ Sys_ConsoleInput
 Handle new console input
 =================
 */
-char *Sys_ConsoleInput(void)
-{
-	return CON_Input();
+#if !defined (_WIN32)
+char *Sys_ConsoleInput(void) {
+	return CON_Input( );
 }
+#elif defined (__linux__)
+char *Sys_ConsoleInput(void) {
+	return CON_Input( );
+}
+#endif
 
 #ifdef DEDICATED
 #   define PID_FILENAME PRODUCT_NAME "_server.pid"
@@ -197,6 +205,9 @@ Sys_Quit
 void Sys_Quit(void)
 {
 	Sys_Exit(0);
+#if defined (_WIN32)
+	Sys_DestroyConsole();
+#endif	
 }
 
 /*
@@ -251,9 +262,17 @@ cpuFeatures_t Sys_GetProcessorFeatures(void)
 Sys_Init
 =================
 */
+#if defined (_WIN32)
+extern void Sys_ClearViewlog_f( void );
+#endif
+
 void Sys_Init(void)
 {
 	Cmd_AddCommand("in_restart", Sys_In_Restart_f);
+#if defined (_WIN32)
+	Cmd_AddCommand( "clearviewlog", Sys_ClearViewlog_f);
+#endif	
+	
 	Cvar_Set("arch", OS_STRING " " ARCH_STRING);
 	Cvar_Set("username", Sys_GetCurrentUser());
 }
@@ -409,8 +428,12 @@ Sys_Print
 */
 void Sys_Print(const char *msg)
 {
+#if defined (_WIN32)
+	Conbuf_AppendText( msg );
+#else
 	CON_LogWrite(msg);
 	CON_Print(msg);
+#endif
 }
 
 /*
@@ -422,11 +445,37 @@ void Sys_Error(const char *error, ...)
 {
 	va_list argptr;
 	char    string[1024];
+#if defined (_WIN32)
+	MSG		msg;
+#endif	
 
 	va_start(argptr, error);
 	Q_vsnprintf(string, sizeof(string), error, argptr);
 	va_end(argptr);
 
+#if defined (_WIN32)
+	Conbuf_AppendText( string );
+	Conbuf_AppendText( "\n" );
+
+	Sys_SetErrorText( string );
+	Sys_ShowConsole( 1, qtrue );
+
+	timeEndPeriod( 1 );
+
+	IN_Shutdown();
+
+	// wait for the user to quit
+	while ( 1 ) {
+		if ( !GetMessage( &msg, NULL, 0, 0 ) ) {
+			Com_Quit_f();
+		}
+		TranslateMessage( &msg );
+		DispatchMessage( &msg );
+	}
+
+	Sys_DestroyConsole();
+#endif
+	
 	Sys_ErrorDialog(string);
 
 	Sys_Exit(3);
@@ -565,8 +614,8 @@ void *Sys_LoadDll(const char *name, char *fqpath,
 		return NULL;
 	}
 
-	dllEntry    = Sys_LoadFunction(libHandle, "dllEntry");
-	*entryPoint = Sys_LoadFunction(libHandle, "vmMain");
+	dllEntry    = ( void ( QDECL * )( intptr_t ( QDECL * )( intptr_t, ... ) ) )Sys_LoadFunction( libHandle, "dllEntry" );
+	*entryPoint = ( intptr_t ( QDECL * )( int,... ) )Sys_LoadFunction( libHandle, "vmMain" );
 
 	if (!*entryPoint || !dllEntry)
 	{
@@ -695,7 +744,7 @@ int main(int argc, char **argv)
 	// Concatenate the command line for passing to Com_Init
 	for (i = 1; i < argc; i++)
 	{
-		const qboolean containsSpaces = strchr(argv[i], ' ') != NULL;
+		const qboolean containsSpaces = (qboolean)(strchr(argv[i], ' ') != NULL);
 		if (containsSpaces)
 		{
 			Q_strcat(commandLine, sizeof(commandLine), "\"");

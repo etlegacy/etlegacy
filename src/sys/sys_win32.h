@@ -4,6 +4,7 @@
  *
  * ET: Legacy
  * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
+ * Copyright (C) 2012 Dusan Jocic <dusanjocic@msn.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -28,53 +29,37 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file sys_local.h
+ * @file sys_platform.c
+ * @brief Contains windows-specific code for console.
  */
 
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qcommon.h"
-
-// Require a minimum version of SDL
-#define MINSDL_MAJOR 1
-#define MINSDL_MINOR 2
-#define MINSDL_PATCH 10
-
-// Input subsystem
-void IN_Init(void);
-void IN_Frame(void);
-void IN_Shutdown(void);
-void IN_Restart(void);
-
-// Console
-void CON_Shutdown(void);
-void CON_Init(void);
-char *CON_Input(void);
-void CON_Print(const char *message);
-
-unsigned int CON_LogSize(void);
-unsigned int CON_LogWrite(const char *in);
-unsigned int CON_LogRead(char *out, unsigned int outSize);
-
-#ifdef __APPLE__
-char *Sys_StripAppBundle(char *pwd);
+#if defined ( _MSC_VER ) && ( _MSC_VER >= 1200 )
+#pragma warning(disable : 4201)
+#pragma warning( push )
+#endif
+#include <windows.h>
+#if defined ( _MSC_VER ) && ( _MSC_VER >= 1200 )
+#pragma warning( pop )
 #endif
 
-void Sys_GLimpSafeInit(void);
-void Sys_GLimpInit(void);
-void Sys_PlatformInit(void);
-void Sys_SigHandler(int signal) __attribute__ ((noreturn));
-void Sys_ErrorDialog(const char *error);
-void Sys_AnsiColorPrint(const char *msg);
+typedef struct {
+	HINSTANCE reflib_library;           // Handle to refresh DLL
+	qboolean reflib_active;
+	HWND hWnd;
+	HINSTANCE hInstance;
+	qboolean activeApp;
+	qboolean isMinimized;
+	OSVERSIONINFO osversion;
+										// when we get a windows message, we store the time off so keyboard processing
+										// can know the exact time of an event
+	unsigned sysMsgTime;
+} WinVars_t;
 
-int Sys_PID(void);
-qboolean Sys_PIDIsRunning(int pid);
 
-void *Sys_LoadDll(const char *name, char *fqpath,
-                  intptr_t(**entryPoint) (int, ...),
-                  intptr_t (*systemcalls)(intptr_t, ...));
-void Sys_UnloadDll(void *dllHandle);
+extern WinVars_t g_wv;
 
-#if defined(_WIN32)
-void Conbuf_AppendText( const char *msg );
-void Sys_DestroyConsole( void );
-#endif
+void    Sys_CreateConsole( void );
+void    Sys_ShowConsole( int level, qboolean quitOnClose );
+int     Game_Main( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow );
+void    Com_FrameExt( void );
+void    WinSetExceptionWnd( HWND wnd );
