@@ -39,7 +39,7 @@
 #define QCONSOLE_HISTORY 32
 
 /* fallbacks for con_curses.c */
-#ifdef (FEATURE_CURSES)
+#ifdef FEATURE_CURSES
 #define CON_Init CON_Init_tty
 #define CON_Shutdown CON_Shutdown_tty
 #define CON_Print CON_Print_tty
