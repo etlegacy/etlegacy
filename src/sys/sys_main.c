@@ -64,9 +64,9 @@
 static char binaryPath[MAX_OSPATH] = { 0 };
 static char installPath[MAX_OSPATH] = { 0 };
 
-#if defined (FEATURE_CURSES)
+#ifdef (FEATURE_CURSES)
 static qboolean nocurses = qfalse;
-void CON_Init_tty( void );
+void CON_Init_tty(void);
 #endif
 
 /*
@@ -647,7 +647,7 @@ Sys_ParseArgs
 */
 void Sys_ParseArgs(int argc, char **argv)
 {
-#if defined (FEATURE_CURSES)
+#ifdef (FEATURE_CURSES)
 	int i;
 #endif
 
@@ -665,14 +665,16 @@ void Sys_ParseArgs(int argc, char **argv)
 			Sys_Exit(0);
 		}
 	}
-#if defined (FEATURE_CURSES)
-	for (i = 1; i < argc; i++) {
-		if( !strcmp( argv[i], "+nocurses" ) ) {
+#ifdef (FEATURE_CURSES)
+	for (i = 1; i < argc; i++)
+	{
+		if (!strcmp(argv[i], "+nocurses"))
+		{
 			nocurses = qtrue;
 			break;
 		}
 	}
-#endif	
+#endif
 }
 
 #ifndef DEFAULT_BASEDIR
@@ -784,17 +786,17 @@ int main(int argc, char **argv)
 	Com_Init(commandLine);
 	NET_Init();
 
-#if defined (FEATURE_CURSES)
-	if( nocurses )
+#ifdef (FEATURE_CURSES)
+	if (nocurses)
 	{
-		CON_Init_tty( );
+		CON_Init_tty();
 	}
 	else
 	{
-		CON_Init( );
+		CON_Init();
 	}
 #else
-	CON_Init( );
+	CON_Init();
 #endif
 
 	signal(SIGILL, Sys_SigHandler);
