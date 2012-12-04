@@ -33,16 +33,17 @@
  * @brief Contains windows-specific code for console.
  */
 
-#if defined ( _MSC_VER ) && ( _MSC_VER >= 1200 )
+#if defined (_MSC_VER) && (_MSC_VER >= 1200)
 #pragma warning(disable : 4201)
 #pragma warning( push )
 #endif
 #include <windows.h>
-#if defined ( _MSC_VER ) && ( _MSC_VER >= 1200 )
+#if defined (_MSC_VER) && (_MSC_VER >= 1200)
 #pragma warning( pop )
 #endif
 
-typedef struct {
+typedef struct
+{
 	HINSTANCE reflib_library;           // Handle to refresh DLL
 	qboolean reflib_active;
 	HWND hWnd;
@@ -50,16 +51,16 @@ typedef struct {
 	qboolean activeApp;
 	qboolean isMinimized;
 	OSVERSIONINFO osversion;
-										// when we get a windows message, we store the time off so keyboard processing
-										// can know the exact time of an event
+	// when we get a windows message, we store the time off so keyboard processing
+	// can know the exact time of an event
 	unsigned sysMsgTime;
 } WinVars_t;
 
 
 extern WinVars_t g_wv;
 
-void    Sys_CreateConsole( void );
-void    Sys_ShowConsole( int level, qboolean quitOnClose );
-int     Game_Main( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow );
-void    Com_FrameExt( void );
-void    WinSetExceptionWnd( HWND wnd );
+void    Sys_CreateConsole(void);
+void    Sys_ShowConsole(int level, qboolean quitOnClose);
+int     Game_Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
+void    Com_FrameExt(void);
+void    WinSetExceptionWnd(HWND wnd);

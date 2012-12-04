@@ -141,12 +141,14 @@ Handle new console input
 =================
 */
 #if !defined (_WIN32)
-char *Sys_ConsoleInput(void) {
-	return CON_Input( );
+char *Sys_ConsoleInput(void)
+{
+	return CON_Input();
 }
 #elif defined (__linux__)
-char *Sys_ConsoleInput(void) {
-	return CON_Input( );
+char *Sys_ConsoleInput(void)
+{
+	return CON_Input();
 }
 #endif
 
@@ -207,7 +209,7 @@ void Sys_Quit(void)
 	Sys_Exit(0);
 #if defined (_WIN32)
 	Sys_DestroyConsole();
-#endif	
+#endif
 }
 
 /*
@@ -263,16 +265,16 @@ Sys_Init
 =================
 */
 #if defined (_WIN32)
-extern void Sys_ClearViewlog_f( void );
+extern void Sys_ClearViewlog_f(void);
 #endif
 
 void Sys_Init(void)
 {
 	Cmd_AddCommand("in_restart", Sys_In_Restart_f);
 #if defined (_WIN32)
-	Cmd_AddCommand( "clearviewlog", Sys_ClearViewlog_f);
-#endif	
-	
+	Cmd_AddCommand("clearviewlog", Sys_ClearViewlog_f);
+#endif
+
 	Cvar_Set("arch", OS_STRING " " ARCH_STRING);
 	Cvar_Set("username", Sys_GetCurrentUser());
 }
@@ -429,7 +431,7 @@ Sys_Print
 void Sys_Print(const char *msg)
 {
 #if defined (_WIN32)
-	Conbuf_AppendText( msg );
+	Conbuf_AppendText(msg);
 #else
 	CON_LogWrite(msg);
 	CON_Print(msg);
@@ -446,36 +448,38 @@ void Sys_Error(const char *error, ...)
 	va_list argptr;
 	char    string[1024];
 #if defined (_WIN32)
-	MSG		msg;
-#endif	
+	MSG msg;
+#endif
 
 	va_start(argptr, error);
 	Q_vsnprintf(string, sizeof(string), error, argptr);
 	va_end(argptr);
 
 #if defined (_WIN32)
-	Conbuf_AppendText( string );
-	Conbuf_AppendText( "\n" );
+	Conbuf_AppendText(string);
+	Conbuf_AppendText("\n");
 
-	Sys_SetErrorText( string );
-	Sys_ShowConsole( 1, qtrue );
+	Sys_SetErrorText(string);
+	Sys_ShowConsole(1, qtrue);
 
-	timeEndPeriod( 1 );
+	timeEndPeriod(1);
 
 	IN_Shutdown();
 
 	// wait for the user to quit
-	while ( 1 ) {
-		if ( !GetMessage( &msg, NULL, 0, 0 ) ) {
+	while (1)
+	{
+		if (!GetMessage(&msg, NULL, 0, 0))
+		{
 			Com_Quit_f();
 		}
-		TranslateMessage( &msg );
-		DispatchMessage( &msg );
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
 	}
 
 	Sys_DestroyConsole();
 #endif
-	
+
 	Sys_ErrorDialog(string);
 
 	Sys_Exit(3);
@@ -614,8 +618,8 @@ void *Sys_LoadDll(const char *name, char *fqpath,
 		return NULL;
 	}
 
-	dllEntry    = ( void ( QDECL * )( intptr_t ( QDECL * )( intptr_t, ... ) ) )Sys_LoadFunction( libHandle, "dllEntry" );
-	*entryPoint = ( intptr_t ( QDECL * )( int,... ) )Sys_LoadFunction( libHandle, "vmMain" );
+	dllEntry    = (void (QDECL *)(intptr_t (QDECL *)(intptr_t, ...)))Sys_LoadFunction(libHandle, "dllEntry");
+	*entryPoint = (intptr_t (QDECL *)(int, ...))Sys_LoadFunction(libHandle, "vmMain");
 
 	if (!*entryPoint || !dllEntry)
 	{

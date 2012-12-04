@@ -75,6 +75,6 @@ void *Sys_LoadDll(const char *name, char *fqpath,
 void Sys_UnloadDll(void *dllHandle);
 
 #if defined(_WIN32)
-void Conbuf_AppendText( const char *msg );
-void Sys_DestroyConsole( void );
+void Conbuf_AppendText(const char *msg);
+void Sys_DestroyConsole(void);
 #endif
