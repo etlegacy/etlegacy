@@ -56,31 +56,19 @@ menuDef {
 	}
 	LABEL( 8+24+2, 142, .5*((SUBWINDOW_WIDTH)-6)-24-2-4, 10, "Friendly Fire", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	CHECKBOXNOTEXT( "labelFriendly Fire", 8+12+2, 142, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "g_friendlyFire", "Specifies if teammates can hurt each other" )
-	
-	itemDef {
-		name		"filtericonPunkBuster"
-		rect		$evalfloat(8+2) 154 10 10
-		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/filter_pb"
-		forecolor	1 1 1 1
-		visible		1
-		decoration
-	}
-	LABEL( 8+24+2, 154, .5*((SUBWINDOW_WIDTH)-6)-24-2-4, 10, "PunkBuster", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	CHECKBOXNOTEXTACTION( "labelPunkBuster", 8+12+2, 154, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "sv_punkbuster" noToggle, uiScript togglePbSVStatus, "Enable Punkbuster anti-cheating technology" )
-	
+
 	itemDef {
 		name		"filtericonAntilag"
-		rect		$evalfloat(8+2) 166 10 10
+		rect		$evalfloat(8+2) 154 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_antilag"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	LABEL( 8+24+2, 166, .5*((SUBWINDOW_WIDTH)-6)-24-2-4, 10, "Anti-Lag", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	CHECKBOXNOTEXT( "labelAnti-Lag", 8+12+2, 166, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "g_antilag", "Enables modem-friendly server support" )
-	
+	LABEL( 8+24+2, 154, .5*((SUBWINDOW_WIDTH)-6)-24-2-4, 10, "Anti-Lag", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	CHECKBOXNOTEXT( "labelAnti-Lag", 8+12+2, 154, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "g_antilag", "Enables modem-friendly server support" )
+
 	// lots of macro abuse in this one :)
 	itemDef {
 		name		"filtericonMaxLives"
