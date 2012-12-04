@@ -763,7 +763,7 @@ void SV_SpawnServer(char *server)
 	Com_Printf("-----------------------------------\n");
 }
 
-void SV_WriteAttackLog(const void *log)
+void SV_WriteAttackLog(const char *log)
 {
 	if (attHandle > 0)
 	{

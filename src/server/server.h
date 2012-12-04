@@ -407,7 +407,7 @@ void SV_GetUserinfo(int index, char *buffer, int bufferSize);
 void SV_ChangeMaxClients(void);
 void SV_SpawnServer(char *server);
 
-void SV_WriteAttackLog(const void *log);
+void SV_WriteAttackLog(const char *log);
 
 // sv_client.c
 
