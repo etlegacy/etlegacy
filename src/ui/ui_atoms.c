@@ -237,22 +237,17 @@ Adjusted for resolution and screen aspect ratio
 */
 void UI_AdjustFrom640(float *x, float *y, float *w, float *h)
 {
-	// adjusting
-	float aspectratio = (float)(uiInfo.uiDC.glconfig.vidWidth) / uiInfo.uiDC.glconfig.vidHeight;
 	// expect valid pointers
-
+	*x *= uiInfo.uiDC.xscale;
 	*y *= uiInfo.uiDC.yscale;
+	*w *= uiInfo.uiDC.xscale;
 	*h *= uiInfo.uiDC.yscale;
 
-	if (aspectratio == RATIO43)
+	// adjusting
+	if (uiInfo.uiDC.glconfig.windowAspect != RATIO43)
 	{
-		*x *= uiInfo.uiDC.xscale;
-		*w *= uiInfo.uiDC.xscale;
-	}
-	else
-	{
-		*x *= RATIO43 / aspectratio;
-		*w *= RATIO43 / aspectratio;
+		*x *= RATIO43 / uiInfo.uiDC.glconfig.windowAspect;
+		*w *= RATIO43 / uiInfo.uiDC.glconfig.windowAspect;
 	}
 }
 

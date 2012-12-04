@@ -5619,19 +5619,16 @@ qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down)
 
 void AdjustFrom640(float *x, float *y, float *w, float *h)
 {
-	float aspectratio = (float)(DC->glconfig.vidWidth) / DC->glconfig.vidHeight;
-
+	*x *= DC->xscale;
 	*y *= DC->yscale;
+	*w *= DC->xscale;
 	*h *= DC->yscale;
 
-	if ( aspectratio == RATIO43 ) {
-		*x *= DC->xscale;
-		*w *= DC->xscale;
-	}
-	else
+	// adjust screen
+	if (DC->glconfig.windowAspect != RATIO43)
 	{
-		*x *= RATIO43 / aspectratio;
-		*w *= RATIO43 / aspectratio;
+		*x *= RATIO43 / DC->glconfig.windowAspect;
+		*w *= RATIO43 / DC->glconfig.windowAspect;
 	}
 }
 

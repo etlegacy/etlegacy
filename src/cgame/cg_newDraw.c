@@ -436,6 +436,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	float     scale, halfscale;
 	//qboolean  redbar = qfalse;
 	qboolean yellowbar = qfalse;
+	float    middle    = rect->x + cgs.wideXoffset;
 
 	if (!cg_cursorHints.integer)
 	{
@@ -634,11 +635,11 @@ void CG_DrawCursorhint(rectDef_t *rect)
 
 	// set color and draw the hint
 	trap_R_SetColor(color);
-	CG_DrawPic(rect->x - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon);
+	CG_DrawPic(middle - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon);
 
 	if (icon2)
 	{
-		CG_DrawPic(rect->x - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon2);
+		CG_DrawPic(middle - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon2);
 	}
 
 	trap_R_SetColor(NULL);
@@ -654,7 +655,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		{
 			Vector4Set(color, 0, 0, 1, 0.5f);
 		}
-		CG_FilledBar(rect->x, rect->y + rect->h + 4, rect->w, 8, color, NULL, NULL, (float)cg.cursorHintValue / 255.0f, 0);
+		CG_FilledBar(middle, rect->y + rect->h + 4, rect->w, 8, color, NULL, NULL, (float)cg.cursorHintValue / 255.0f, 0);
 	}
 }
 

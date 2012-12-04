@@ -934,7 +934,7 @@ void CG_EffectParse(const char *effectstr)
 
 	// Load graphics
 
-	if (atmFXType == ATM_RAIN)	// Rain
+	if (atmFXType == ATM_RAIN)      // Rain
 	{
 		cg_atmFx.numEffectShaders = 1;
 		cg_atmFx.effectshaders[0] = trap_R_RegisterShader("gfx/misc/raindrop");

@@ -2341,7 +2341,7 @@ void CG_NewClientInfo(int clientNum);
 sfxHandle_t CG_CustomSound(int clientNum, const char *soundName);
 void CG_ParseTeamXPs(int n);
 
-// Rafael particles
+// particles
 extern qboolean initparticles;
 int CG_NewParticleArea(int num);
 
@@ -2408,13 +2408,13 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 
 void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type);     //----(SA) added 'type'
 void CG_RailTrail2(clientInfo_t *ci, vec3_t start, vec3_t end);
-void CG_GrappleTrail(centity_t *ent, const weaponInfo_t *wi);
+
 void CG_AddViewWeapon(playerState_t *ps);
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent);
 
 void CG_OutOfAmmoChange(qboolean allowforceswitch);
 
-//----(SA) added to header to access from outside cg_weapons.c
+// added to header to access from outside cg_weapons.c
 void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count);
 
 // cg_marks.c
@@ -2424,7 +2424,6 @@ void CG_ImpactMark(qhandle_t markShader,
                    vec3_t origin, vec4_t projection, float radius, float orientation,
                    float r, float g, float b, float a, int lifeTime);
 
-// Rafael particles
 // cg_particles.c
 void CG_ClearParticles(void);
 void CG_AddParticles(void);
@@ -2754,7 +2753,7 @@ int trap_CM_MarkFragments(int numPoints, const vec3_t *points,
                           int maxPoints, vec3_t pointBuffer,
                           int maxFragments, markFragment_t *fragmentBuffer);
 
-// ydnar: projects a decal onto brush model surfaces
+// projects a decal onto brush model surfaces
 void trap_R_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime);
 void trap_R_ClearDecals(void);
 
@@ -2929,7 +2928,7 @@ int trap_R_GetTextureId(const char *name);
 // flush rendering buffer
 void trap_R_Finish(void);
 
-// Duffy, camera stuff
+// camera stuff
 #define CAM_PRIMARY 0   // the main camera for cutscenes, etc.
 qboolean trap_loadCamera(int camNum, const char *name);
 void trap_startCamera(int camNum, int time);

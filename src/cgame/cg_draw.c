@@ -60,7 +60,7 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font
 {
 	int         count, len;
 	glyphInfo_t *glyph;
-	const char  *s = text;
+	const char  *s  = text;
 	float       out = 0, useScale = scale * font->glyphScale;
 
 	if (text)
@@ -1379,13 +1379,13 @@ static void CG_DrawWeapReticle(void)
 	if (fg)
 	{
 		// sides
-		CG_FillRect(0, 0, 80, 480, color);
-		CG_FillRect(560, 0, 80, 480, color);
+		CG_FillRect(0, 0, 80 + cgs.wideXoffset, 480, color);
+		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, 480, color);
 
 		// center
 		if (cgs.media.reticleShaderSimple)
 		{
-			CG_DrawPic(80, 0, 480, 480, cgs.media.reticleShaderSimple);
+			CG_DrawPic(80 + cgs.wideXoffset, 0, 480, 480, cgs.media.reticleShaderSimple);
 		}
 
 		/*      if(cgs.media.reticleShaderSimpleQ) {
@@ -1396,52 +1396,52 @@ static void CG_DrawWeapReticle(void)
 		        }*/
 
 		// hairs
-		CG_FillRect(84, 239, 150, 3, color);     // left
-		CG_FillRect(234, 240, 173, 1, color);    // horiz center
-		CG_FillRect(407, 239, 150, 3, color);    // right
+		CG_FillRect(84 + cgs.wideXoffset, 239, 150, 3, color);     // left
+		CG_FillRect(234 + cgs.wideXoffset, 240, 173, 1, color);    // horiz center
+		CG_FillRect(407 + cgs.wideXoffset, 239, 150, 3, color);    // right
 
 
-		CG_FillRect(319, 2, 3, 151, color);      // top center top
-		CG_FillRect(320, 153, 1, 114, color);    // top center bot
+		CG_FillRect(319 + cgs.wideXoffset, 2, 3, 151, color);      // top center top
+		CG_FillRect(320 + cgs.wideXoffset, 153, 1, 114, color);    // top center bot
 
-		CG_FillRect(320, 241, 1, 87, color);     // bot center top
-		CG_FillRect(319, 327, 3, 151, color);    // bot center bot
+		CG_FillRect(320 + cgs.wideXoffset, 241, 1, 87, color);     // bot center top
+		CG_FillRect(319 + cgs.wideXoffset, 327, 3, 151, color);    // bot center bot
 	}
 	else if (garand)
 	{
 		// sides
-		CG_FillRect(0, 0, 80, 480, color);
-		CG_FillRect(560, 0, 80, 480, color);
+		CG_FillRect(0, 0, 80 + cgs.wideXoffset, 480, color);
+		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, 480, color);
 
 		// center
 		if (cgs.media.reticleShaderSimple)
 		{
-			CG_DrawPic(80, 0, 480, 480, cgs.media.reticleShaderSimple);
+			CG_DrawPic(80 + cgs.wideXoffset, 0, 480, 480, cgs.media.reticleShaderSimple);
 		}
 
 		// hairs
-		CG_FillRect(84, 239, 177, 2, color);     // left
-		CG_FillRect(320, 242, 1, 58, color);     // center top
-		CG_FillRect(319, 300, 2, 178, color);    // center bot
-		CG_FillRect(380, 239, 177, 2, color);    // right
+		CG_FillRect(84 + cgs.wideXoffset, 239, 177, 2, color);     // left
+		CG_FillRect(320 + cgs.wideXoffset, 242, 1, 58, color);     // center top
+		CG_FillRect(319 + cgs.wideXoffset, 300, 2, 178, color);    // center bot
+		CG_FillRect(380 + cgs.wideXoffset, 239, 177, 2, color);    // right
 	}
 	else if (k43)
 	{
 		// sides
-		CG_FillRect(0, 0, 80, 480, color);
-		CG_FillRect(560, 0, 80, 480, color);
+		CG_FillRect(0, 0, 80 + cgs.wideXoffset, 480, color);
+		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, 480, color);
 
 		// center
 		if (cgs.media.reticleShaderSimple)
 		{
-			CG_DrawPic(80, 0, 480, 480, cgs.media.reticleShaderSimple);
+			CG_DrawPic(80 + cgs.wideXoffset, 0, 480, 480, cgs.media.reticleShaderSimple);
 		}
 
 		// hairs
-		CG_FillRect(84, 239, 177, 2, color);     // left
-		CG_FillRect(320, 242, 1, 58, color);     // center top
-		CG_FillRect(319, 300, 2, 178, color);    // center bot
-		CG_FillRect(380, 239, 177, 2, color);    // right
+		CG_FillRect(84 + cgs.wideXoffset, 239, 177, 2, color);     // left
+		CG_FillRect(320 + cgs.wideXoffset, 242, 1, 58, color);     // center top
+		CG_FillRect(319 + cgs.wideXoffset, 300, 2, 178, color);    // center bot
+		CG_FillRect(380 + cgs.wideXoffset, 239, 177, 2, color);    // right
 	}
 }
 
@@ -1464,15 +1464,15 @@ static void CG_DrawMortarReticle(void)
 	qboolean hasRightTarget, hasLeftTarget;
 
 	// Background
-	CG_FillRect(136, 236, 154, 38, color_back);
-	CG_FillRect(290, 160, 60, 208, color_back);
-	CG_FillRect(350, 236, 154, 38, color_back);
+	CG_FillRect(136 + cgs.wideXoffset, 236, 154, 38, color_back);
+	CG_FillRect(290 + cgs.wideXoffset, 160, 60, 208, color_back);
+	CG_FillRect(350 + cgs.wideXoffset, 236, 154, 38, color_back);
 
 	// Horizontal bar
 
 	// bottom
-	CG_FillRect(140, 264, 150, 1, color);    // left
-	CG_FillRect(350, 264, 150, 1, color);    // right
+	CG_FillRect(140 + cgs.wideXoffset, 264, 150, 1, color);    // left
+	CG_FillRect(350 + cgs.wideXoffset, 264, 150, 1, color);    // right
 
 	// 10 units - 5 degrees
 	// total of 360 units
@@ -1513,13 +1513,13 @@ static void CG_DrawMortarReticle(void)
 			}
 
 			s = va("%i", printval);
-			CG_Text_Paint_Ext(500 - localOffset - .5f * CG_Text_Width_Ext(s, .15f, 0, &cgs.media.limboFont1), 244, .15f, .15f, color, s, 0, 0, 0, &cgs.media.limboFont1);
-			CG_FillRect(500 - localOffset, 248, 1, 16, color);
+			CG_Text_Paint_Ext(500 - localOffset  + cgs.wideXoffset - .5f * CG_Text_Width_Ext(s, .15f, 0, &cgs.media.limboFont1), 244, .15f, .15f, color, s, 0, 0, 0, &cgs.media.limboFont1);
+			CG_FillRect(500 - localOffset + cgs.wideXoffset, 248, 1, 16, color);
 			val++;
 		}
 		else
 		{
-			CG_FillRect(500 - localOffset, 256, 1, 8, color);
+			CG_FillRect(500 - localOffset + cgs.wideXoffset, 256, 1, 8, color);
 		}
 	}
 
@@ -1531,12 +1531,12 @@ static void CG_DrawMortarReticle(void)
 	// right
 	localOffset = (AngleNormalize360(angle - angleMin) / 5.f) * 10.f;
 	//CG_FillRect( 320 + localOffset, 252, 2, 18, color_extends);
-	CG_FillRect(320 - localOffset, 252, 2, 18, color_extends);
+	CG_FillRect(320 - localOffset + cgs.wideXoffset, 252, 2, 18, color_extends);
 
 	// left
 	localOffset = (AngleNormalize360(angleMax - angle) / 5.f) * 10.f;
 	//CG_FillRect( 320 - localOffset, 252, 2, 18, color_extends);
-	CG_FillRect(320 + localOffset, 252, 2, 18, color_extends);
+	CG_FillRect(320 + localOffset + cgs.wideXoffset, 252, 2, 18, color_extends);
 
 	// last fire pos
 	fadeTime = 0;
@@ -1556,7 +1556,7 @@ static void CG_DrawMortarReticle(void)
 			lastfireAngle = AngleNormalize360(360 - (cg.mortarFireAngles[YAW] - 90.f));
 
 			localOffset = ((AngleSubtract(angle, lastfireAngle)) / 5.f) * 10.f;
-			CG_FillRect(320 - localOffset, 252, 2, 18, color_lastfire);
+			CG_FillRect(320 - localOffset + cgs.wideXoffset, 252, 2, 18, color_lastfire);
 		}
 	}
 
@@ -1613,7 +1613,7 @@ static void CG_DrawMortarReticle(void)
 				if (!hasLeftTarget)
 				{
 					trap_R_SetColor(color_firerequest);
-					CG_DrawPic(136 + 2, 236 + 38 - 10 + 1, 8, 8, cgs.media.ccMortarTargetArrow);
+					CG_DrawPic(136 + 2 + cgs.wideXoffset, 236 + 38 - 10 + 1, 8, 8, cgs.media.ccMortarTargetArrow);
 					trap_R_SetColor(NULL);
 
 					hasLeftTarget = qtrue;
@@ -1624,7 +1624,7 @@ static void CG_DrawMortarReticle(void)
 				if (!hasRightTarget)
 				{
 					trap_R_SetColor(color_firerequest);
-					CG_DrawPic(350 + 154 - 10, 236 + 38 - 10 + 1, -8, 8, cgs.media.ccMortarTargetArrow);
+					CG_DrawPic(350 + 154 - 10 + cgs.wideXoffset, 236 + 38 - 10 + 1, -8, 8, cgs.media.ccMortarTargetArrow);
 					trap_R_SetColor(NULL);
 
 					hasRightTarget = qtrue;
@@ -1635,7 +1635,7 @@ static void CG_DrawMortarReticle(void)
 				localOffset = ((AngleSubtract(angle, attackRequestAngle)) / 5.f) * 10.f;
 
 				trap_R_SetColor(color_firerequest);
-				CG_DrawPic(320 - localOffset - 8, 264 - 8, 16, 16, cgs.media.ccMortarTarget);
+				CG_DrawPic(320 - localOffset - 8 + cgs.wideXoffset, 264 - 8, 16, 16, cgs.media.ccMortarTarget);
 				trap_R_SetColor(NULL);
 			}
 		}
@@ -1644,8 +1644,8 @@ static void CG_DrawMortarReticle(void)
 	// Vertical bar
 
 	// sides
-	CG_FillRect(295, 164, 1, 200, color);    // left
-	CG_FillRect(345, 164, 1, 200, color);    // right
+	CG_FillRect(295 + cgs.wideXoffset, 164, 1, 200, color);    // left
+	CG_FillRect(345 + cgs.wideXoffset, 164, 1, 200, color);    // right
 
 	// 10 units - 2.5 degrees
 	// total of 200 units
@@ -1676,15 +1676,15 @@ static void CG_DrawMortarReticle(void)
 			}
 
 			s = va("%i", printval);
-			CG_Text_Paint_Ext(320 - .5f * CG_Text_Width_Ext(s, .15f, 0, &cgs.media.limboFont1), 164 + localOffset + .5f * CG_Text_Height_Ext(s, .15f, 0, &cgs.media.limboFont1), .15f, .15f, color, s, 0, 0, 0, &cgs.media.limboFont1);
-			CG_FillRect(295 + 1, 164 + localOffset, 12, 1, color);
-			CG_FillRect(345 - 12, 164 + localOffset, 12, 1, color);
+			CG_Text_Paint_Ext(320  + cgs.wideXoffset - .5f * CG_Text_Width_Ext(s, .15f, 0, &cgs.media.limboFont1), 164 + localOffset + .5f * CG_Text_Height_Ext(s, .15f, 0, &cgs.media.limboFont1), .15f, .15f, color, s, 0, 0, 0, &cgs.media.limboFont1);
+			CG_FillRect(295 + 1 + cgs.wideXoffset, 164 + localOffset, 12, 1, color);
+			CG_FillRect(345 - 12 + cgs.wideXoffset, 164 + localOffset, 12, 1, color);
 			val++;
 		}
 		else
 		{
-			CG_FillRect(295 + 1, 164 + localOffset, 8, 1, color);
-			CG_FillRect(345 - 8, 164 + localOffset, 8, 1, color);
+			CG_FillRect(295 + 1 + cgs.wideXoffset, 164 + localOffset, 8, 1, color);
+			CG_FillRect(345 - 8 + cgs.wideXoffset, 164 + localOffset, 8, 1, color);
 		}
 	}
 
@@ -1703,8 +1703,8 @@ static void CG_DrawMortarReticle(void)
 	localOffset = (AngleNormalize360(localOffset) / 2.5f) * 10.f;
 	if (localOffset < 100)
 	{
-		CG_FillRect(295 - 2, 264 - localOffset, 6, 2, color_extends);
-		CG_FillRect(345 - 4 + 1, 264 - localOffset, 6, 2, color_extends);
+		CG_FillRect(295 - 2 + cgs.wideXoffset, 264 - localOffset, 6, 2, color_extends);
+		CG_FillRect(345 - 4 + 1 + cgs.wideXoffset, 264 - localOffset, 6, 2, color_extends);
 	}
 
 	// bottom
@@ -1716,8 +1716,8 @@ static void CG_DrawMortarReticle(void)
 	localOffset = (AngleNormalize360(localOffset) / 2.5f) * 10.f;
 	if (localOffset < 100)
 	{
-		CG_FillRect(295 - 2, 264 + localOffset, 6, 2, color_extends);
-		CG_FillRect(345 - 4 + 1, 264 + localOffset, 6, 2, color_extends);
+		CG_FillRect(295 - 2 + cgs.wideXoffset, 264 + localOffset, 6, 2, color_extends);
+		CG_FillRect(345 - 4 + 1 + cgs.wideXoffset, 264 + localOffset, 6, 2, color_extends);
 	}
 
 	// last fire pos
@@ -1739,8 +1739,8 @@ static void CG_DrawMortarReticle(void)
 				localOffset = (AngleNormalize360(localOffset) / 2.5f) * 10.f;
 				if (localOffset < 100)
 				{
-					CG_FillRect(295 - 2, 264 - localOffset, 6, 2, color_lastfire);
-					CG_FillRect(345 - 4 + 1, 264 - localOffset, 6, 2, color_lastfire);
+					CG_FillRect(295 - 2 + cgs.wideXoffset, 264 - localOffset, 6, 2, color_lastfire);
+					CG_FillRect(345 - 4 + 1 + cgs.wideXoffset, 264 - localOffset, 6, 2, color_lastfire);
 				}
 			}
 			else
@@ -1753,8 +1753,8 @@ static void CG_DrawMortarReticle(void)
 				localOffset = (AngleNormalize360(localOffset) / 2.5f) * 10.f;
 				if (localOffset < 100)
 				{
-					CG_FillRect(295 - 2, 264 + localOffset, 6, 2, color_lastfire);
-					CG_FillRect(345 - 4 + 1, 264 + localOffset, 6, 2, color_lastfire);
+					CG_FillRect(295 - 2 + cgs.wideXoffset, 264 + localOffset, 6, 2, color_lastfire);
+					CG_FillRect(345 - 4 + 1 + cgs.wideXoffset, 264 + localOffset, 6, 2, color_lastfire);
 				}
 			}
 		}
@@ -1780,13 +1780,13 @@ static void CG_DrawBinocReticle(void)
 
 	CG_FillRect(146, 239, 348, 1, color);
 
-	CG_FillRect(188, 234, 1, 13, color);     // ll
-	CG_FillRect(234, 226, 1, 29, color);     // l
-	CG_FillRect(274, 234, 1, 13, color);     // lr
-	CG_FillRect(320, 213, 1, 55, color);     // center
-	CG_FillRect(360, 234, 1, 13, color);     // rl
-	CG_FillRect(406, 226, 1, 29, color);     // r
-	CG_FillRect(452, 234, 1, 13, color);     // rr
+	CG_FillRect(188 + cgs.wideXoffset, 234, 1, 13, color);     // ll
+	CG_FillRect(234 + cgs.wideXoffset, 226, 1, 29, color);     // l
+	CG_FillRect(274 + cgs.wideXoffset, 234, 1, 13, color);     // lr
+	CG_FillRect(320 + cgs.wideXoffset, 213, 1, 55, color);     // center
+	CG_FillRect(360 + cgs.wideXoffset, 234, 1, 13, color);     // rl
+	CG_FillRect(406 + cgs.wideXoffset, 226, 1, 29, color);     // r
+	CG_FillRect(452 + cgs.wideXoffset, 234, 1, 13, color);     // rr
 }
 
 void CG_FinishWeaponChange(int lastweap, int newweap);
@@ -3414,7 +3414,7 @@ static void CG_DrawFlashFire(void)
 		col[2] = alpha;
 		col[3] = alpha;
 		trap_R_SetColor(col);
-		CG_DrawPic(-10, -10, Ccg_WideX(640), 480, cgs.media.viewFlashFire[(cg.time / 50) % 16]);
+		CG_DrawPic(-10, -10, Ccg_WideX(640), 480, cgs.media.viewFlashFire[(cg.time / 50) % 16]); // -10 ? that's outer screeny
 		trap_R_SetColor(NULL);
 
 		trap_S_AddLoopingSound(cg.snap->ps.origin, vec3_origin, cgs.media.flameSound, (int)(255.0 * alpha), 0);
@@ -3588,10 +3588,10 @@ static void CG_DrawObjectiveInfo(void)
 	backColor[3] = 0.5 * color[3];
 	trap_R_SetColor(backColor);
 
-	CG_DrawPic(x1, y1, x2 - x1, y2 - y1, cgs.media.teamStatusBar);
+	CG_DrawPic(x1 + cgs.wideXoffset, y1, x2 - x1, y2 - y1, cgs.media.teamStatusBar);
 
 	VectorSet(backColor, 0, 0, 0);
-	CG_DrawRect(x1, y1, x2 - x1, y2 - y1, 1, backColor);
+	CG_DrawRect(x1 + cgs.wideXoffset, y1, x2 - x1, y2 - y1, 1, backColor);
 
 	trap_R_SetColor(color);
 
@@ -3622,7 +3622,7 @@ static void CG_DrawObjectiveInfo(void)
 
 		x = 320 - w / 2;
 
-		CG_DrawStringExt(x, y, linebuffer, color, qfalse, qtrue,
+		CG_DrawStringExt(x + cgs.wideXoffset, y, linebuffer, color, qfalse, qtrue,
 		                 cg.oidPrintCharWidth, (int)(cg.oidPrintCharWidth * 1.5), 0);
 
 		y += cg.oidPrintCharWidth * 1.5;
@@ -3648,6 +3648,7 @@ void CG_DrawTimedMenus(void)
 	if (cg.voiceTime)
 	{
 		int t = cg.time - cg.voiceTime;
+
 		if (t > 2500)
 		{
 			Menus_CloseByName("voiceMenu");
@@ -3994,9 +3995,11 @@ static void CG_DrawNewCompass(void)
 	// draw revive medic icons
 	if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC)
 	{
+		entityState_t *ent
+
 		for (i = 0; i < snap->numEntities; i++)
 		{
-			entityState_t *ent = &snap->entities[i];
+			ent = &snap->entities[i];
 
 			if (ent->eType != ET_PLAYER)
 			{

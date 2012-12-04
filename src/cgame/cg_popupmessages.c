@@ -585,7 +585,7 @@ const char *CG_GetPMItemText(centity_t *cent)
 		if (cg_locations.integer & LOC_LANDMINES)
 		{
 			char *locStr = CG_BuildLocationString(-1, cent->currentState.origin, LOC_LANDMINES);
-			
+
 			if (!locStr || !*locStr)
 			{
 				return va("%sSpotted by ^7%s", TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name);

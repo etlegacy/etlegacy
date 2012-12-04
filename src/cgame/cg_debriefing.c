@@ -1656,26 +1656,26 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 		if (cgs.dbSelectedClient == cgs.dbSortedClients[i + cgs.dbPlayerListOffset])
 		{
 			vec4_t clr = { 1.f, 1.f, 1.f, 0.3f };
-			CG_FillRect(button->rect.x, y - 10, 640 - 10 - 8 - 16 - button->rect.x, 12, clr);
+			CG_FillRect(button->rect.x, y - 10, 640 - 10 - 8 - 16 - button->rect.x + cgs.wideXoffset, 12, clr);
 		}
 
-		CG_Text_Paint_Ext(DB_RANK_X, y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_RankNameForClientInfo(ci), 0, 0, 0, button->font->font);
+		CG_Text_Paint_Ext(DB_RANK_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_RankNameForClientInfo(ci), 0, 0, 0, button->font->font);
 
-		CG_Text_Paint_Ext(DB_NAME_X, y, button->font->scalex, button->font->scaley, button->font->colour, ci->name, 0, 28, 0, button->font->font);
+		CG_Text_Paint_Ext(DB_NAME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, ci->name, 0, 28, 0, button->font->font);
 
-		CG_Text_Paint_Ext(DB_TIME_X, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", score->time), 0, 0, 0, button->font->font);
+		CG_Text_Paint_Ext(DB_TIME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", score->time), 0, 0, 0, button->font->font);
 
-		CG_Text_Paint_Ext(DB_XP_X, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->score), 0, 0, 0, button->font->font);
+		CG_Text_Paint_Ext(DB_XP_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->score), 0, 0, 0, button->font->font);
 
 		if (cgs.dbPlayerKillsDeathsRecieved)
 		{
-			CG_Text_Paint_Ext(DB_KILLS_X, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->kills), 0, 0, 0, button->font->font);
-			CG_Text_Paint_Ext(DB_DEATHS_X, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->deaths), 0, 0, 0, button->font->font);
+			CG_Text_Paint_Ext(DB_KILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->kills), 0, 0, 0, button->font->font);
+			CG_Text_Paint_Ext(DB_DEATHS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->deaths), 0, 0, 0, button->font->font);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(DB_KILLS_X, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
-			CG_Text_Paint_Ext(DB_DEATHS_X, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
+			CG_Text_Paint_Ext(DB_KILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
+			CG_Text_Paint_Ext(DB_DEATHS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, "-", 0, 0, 0, button->font->font);
 		}
 
 		y += 12;

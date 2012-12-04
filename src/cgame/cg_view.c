@@ -239,11 +239,10 @@ static void CG_CalcVrect(void)
 {
 	if (cg.showGameView)
 	{
-		float x, y, w, h;
-		x = LIMBO_3D_X;
-		y = LIMBO_3D_Y;
-		w = LIMBO_3D_W;
-		h = LIMBO_3D_H;
+		float x = LIMBO_3D_X, y = LIMBO_3D_Y, w = LIMBO_3D_W, h = LIMBO_3D_H;
+
+		// the limbopanel is horizontally centered
+		x += cgs.wideXoffset;
 
 		CG_AdjustFrom640(&x, &y, &w, &h);
 

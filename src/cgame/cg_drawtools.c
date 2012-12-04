@@ -44,15 +44,12 @@ Adjusted for resolution and screen aspect ratio
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 {
 	// scale for screen sizes
+	*x *= cgs.screenXScale;
 	*y *= cgs.screenYScale;
+	*w *= cgs.screenXScale;
 	*h *= cgs.screenYScale;
-
-	if (cgs.aspectratio == RATIO43)
-	{
-		*x *= cgs.screenXScale;
-		*w *= cgs.screenXScale;
-	}
-	else
+	// adjust x-coordinate and width
+	if (cgs.aspectratio != RATIO43)
 	{
 		*x *= cgs.r43da;    // * ((4/3) / aspectratio);
 		*w *= cgs.r43da;    // * ((4/3) / aspectratio);

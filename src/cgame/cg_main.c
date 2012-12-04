@@ -2708,12 +2708,16 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	trap_GetGlconfig(&cgs.glconfig);
 	cgs.screenXScale = cgs.glconfig.vidWidth / 640.0;
 	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0;
+
 	// widescreen support..
-	cgs.aspectratio  = (float)(cgs.glconfig.vidWidth) / cgs.glconfig.vidHeight;
+	cgs.aspectratio  = cgs.glconfig.windowAspect;
 	cgs.aspectratio1 = 1.0f / cgs.aspectratio;
 	cgs.adr43        = cgs.aspectratio * RPRATIO43; // aspectratio / (4/3)
 	cgs.r43da        = RATIO43 * cgs.aspectratio1; // (4/3) / aspectratio
 	cgs.wideXoffset  = (cgs.aspectratio != RATIO43) ? (640.0f * cgs.adr43 - 640.0f) * 0.5f : 0.0f;
+
+	// DEBUG
+	CG_Printf("Screen[%f][%f]: as: %f  as1: %f  adr43: %f  r43da: %f off: %f\n", cgs.screenXScale, cgs.screenYScale, cgs.aspectratio, cgs.aspectratio1, cgs.adr43, cgs.r43da, cgs.wideXoffset);
 
 	// init the anim scripting
 	cgs.animScriptData.soundIndex = CG_SoundScriptPrecache;

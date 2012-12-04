@@ -94,18 +94,18 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		if (flagshader)
 		{
-			CG_DrawPic(100, 10, 210, 136, trap_R_RegisterShaderNoMip(flagshader));
-			CG_DrawPic(325, 10, 210, 136, trap_R_RegisterShaderNoMip(flagshader));
+			CG_DrawPic(100 + cgs.wideXoffset, 10, 210, 136, trap_R_RegisterShaderNoMip(flagshader));
+			CG_DrawPic(325 + cgs.wideXoffset, 10, 210, 136, trap_R_RegisterShaderNoMip(flagshader));
 		}
 
 		if (shader)
 		{
-			CG_DrawPic(229, 10, 182, 136, trap_R_RegisterShaderNoMip(shader));
+			CG_DrawPic(229 + cgs.wideXoffset, 10, 182, 136, trap_R_RegisterShaderNoMip(shader));
 		}
 		if (nameshader)
 		{
-			CG_DrawPic(140, 50, 127, 64, trap_R_RegisterShaderNoMip(nameshader));
-			CG_DrawPic(365, 50, 127, 64, trap_R_RegisterShaderNoMip("ui/assets/portraits/text_win.tga"));
+			CG_DrawPic(140 + cgs.wideXoffset, 50, 127, 64, trap_R_RegisterShaderNoMip(nameshader));
+			CG_DrawPic(365 + cgs.wideXoffset, 50, 127, 64, trap_R_RegisterShaderNoMip("ui/assets/portraits/text_win.tga"));
 		}
 		return y;
 	}

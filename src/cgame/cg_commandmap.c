@@ -59,7 +59,7 @@ int CG_CurLayerForZ(int z)
 	{
 		curlayer++;
 	}
-	
+
 	if (curlayer == cgs.ccLayers)
 	{
 		CG_Printf("^3Warning: no valid command map layer for z\n");
@@ -1081,7 +1081,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 		{
 			vec4_t color;
-			
+
 			Vector4Set(color, 1.f, 1.f, 1.f, alpha);
 			trap_R_SetColor(color);
 			if (cgs.ccLayers)
@@ -1102,7 +1102,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 	if (borderblend)
 	{
 		vec4_t clr = { 0.f, 0.f, 0.f, 0.75f };
-		
+
 		trap_R_SetColor(clr);
 		CG_DrawPic(x, y, w, h, cgs.media.limboBlendThingy);
 		trap_R_SetColor(NULL);
