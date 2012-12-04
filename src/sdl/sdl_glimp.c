@@ -114,6 +114,13 @@ void GLimp_Shutdown(void)
  */
 void GLimp_Minimize(void)
 {
+#ifdef __APPLE__
+	// SDL_WM_IconifyWindow doesn't work on fullscreen windows on Mac
+	if (r_fullscreen->integer)
+	{
+		ri.Cvar_Set("r_fullscreen", "0");
+	}
+#endif
 	SDL_WM_IconifyWindow();
 }
 
