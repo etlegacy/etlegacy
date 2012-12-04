@@ -549,7 +549,8 @@ void CG_DrawStringExt(int x, int y, const char *string, float *setColor,
 	trap_R_SetColor(NULL);
 }
 
-/*==================
+/*
+==================
 CG_DrawStringExt2
 
 Draws a multi-colored string with a drop shadow, optionally forcing
@@ -873,6 +874,7 @@ refresh window.
 static void CG_TileClearBox(int x, int y, int w, int h, qhandle_t hShader)
 {
 	float s1, t1, s2, t2;
+
 	s1 = x / 64.0;
 	t1 = y / 64.0;
 	s2 = (x + w) / 64.0;

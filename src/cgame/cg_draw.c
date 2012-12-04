@@ -35,7 +35,7 @@
 
 #include "cg_local.h"
 
-// FIXME: use these in all functions below
+// FIXME: use these in all functions below to have unique colors
 vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
 vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
 vec4_t HUD_Text = { 0.625f, 0.625f, 0.6f, 1.0f };
@@ -653,9 +653,7 @@ static void CG_DrawUpperRight(void)
 
 /*
 ===========================================================================================
-
   LOWER RIGHT CORNER
-
 ===========================================================================================
 */
 
@@ -806,7 +804,6 @@ CG_DrawNotify
 #define NOTIFYLOC_X 0
 #define NOTIFYLOC_Y_SP 128
 
-// FIXME: remove? early return ...
 static void CG_DrawNotify(void)
 {
 	int    w, h;
@@ -818,7 +815,7 @@ static void CG_DrawNotify(void)
 	float  notifytime = 1.0f;
 	int    yLoc;
 
-	return;
+	return; // FIXME: remove? early return ...
 
 	yLoc = NOTIFYLOC_Y;
 
@@ -890,9 +887,7 @@ static void CG_DrawNotify(void)
 
 /*
 ===============================================================================
-
 LAGOMETER
-
 ===============================================================================
 */
 
@@ -969,7 +964,7 @@ static void CG_DrawDisconnect(void)
 	const char *s;
 	int        w;   // bk010215 - FIXME char message[1024];
 
-	// OSP - dont draw if a demo and we're running at a different timescale
+	// dont draw if a demo and we're running at a different timescale
 	if (cg.demoPlayback && cg_timescale.value != 1.0f)
 	{
 		return;
@@ -1157,9 +1152,7 @@ void CG_DrawLivesLeft(void)
 
 /*
 ===============================================================================
-
 CENTER PRINTING
-
 ===============================================================================
 */
 
@@ -1530,12 +1523,10 @@ static void CG_DrawMortarReticle(void)
 
 	// right
 	localOffset = (AngleNormalize360(angle - angleMin) / 5.f) * 10.f;
-	//CG_FillRect( 320 + localOffset, 252, 2, 18, color_extends);
 	CG_FillRect(320 - localOffset + cgs.wideXoffset, 252, 2, 18, color_extends);
 
 	// left
 	localOffset = (AngleNormalize360(angleMax - angle) / 5.f) * 10.f;
-	//CG_FillRect( 320 - localOffset, 252, 2, 18, color_extends);
 	CG_FillRect(320 + localOffset + cgs.wideXoffset, 252, 2, 18, color_extends);
 
 	// last fire pos
@@ -1849,7 +1840,7 @@ static void CG_DrawCrosshair(void)
 	case WP_K43_SCOPE:
 		if (!BG_PlayerMounted(cg.snap->ps.eFlags))
 		{
-			// JPW NERVE -- don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run
+			// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run
 			if (VectorLengthSquared(cg.snap->ps.velocity) > SQR(127))
 			{
 				if (cg.snap->ps.weapon == WP_FG42SCOPE)
@@ -1961,7 +1952,7 @@ static void CG_DrawNoShootIcon(void)
 		trap_R_SetColor(colorRed);
 	}
 	else if (cg.crosshairClientNoShoot
-	         // xkan, 1/6/2003 - don't shoot friend or civilian
+	         // don't shoot friend or civilian
 	         || cg.snap->ps.serverCursorHint == HINT_PLYR_NEUTRAL
 	         || cg.snap->ps.serverCursorHint == HINT_PLYR_FRIEND)
 	{
@@ -1994,15 +1985,13 @@ static void CG_DrawNoShootIcon(void)
 /*
 =================
 CG_ScanForCrosshairEntity
+
+  Returns the distance to the entity
 =================
-
-Returns the distance to the entity
-
 */
 static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 {
-	trace_t trace;
-//  gentity_t   *traceEnt;
+	trace_t   trace;
 	vec3_t    start, end;
 	float     dist;
 	centity_t *cent;
@@ -2011,7 +2000,7 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 	*hitClient = qfalse;
 
 	VectorCopy(cg.refdef.vieworg, start);
-	VectorMA(start, 8192, cg.refdef.viewaxis[0], end);      //----(SA)  changed from 8192
+	VectorMA(start, 8192, cg.refdef.viewaxis[0], end);
 
 	cg.crosshairClientNoShoot = qfalse;
 
@@ -2046,8 +2035,6 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 
 		return dist;
 	}
-
-	//  traceEnt = &g_entities[trace.entityNum];
 
 	// Reset the draw time for the SP crosshair
 	cg.crosshairSPClientTime = cg.time;
@@ -2907,7 +2894,6 @@ static void CG_DrawLimboMessage(void)
 	playerState_t *ps;
 	int           y = 118;
 
-
 	ps = &cg.snap->ps;
 
 	if (ps->stats[STAT_HEALTH] > 0)
@@ -3050,6 +3036,7 @@ static void CG_DrawWarmup(void)
 			    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) || (cg.snap->ps.pm_flags & PMF_LIMBO)))
 			{
 				char str1[32];
+
 				Q_strncpyz(str1, BindingFromName("ready"), 32);
 				if (!Q_stricmp(str1, "(?" "?" "?)"))
 				{
@@ -3445,7 +3432,7 @@ CG_DrawFlashBlend
 */
 static void CG_DrawFlashBlend(void)
 {
-	// Gordon: no flash blends if in limbo or spectator, and in the limbo menu
+	// no flash blends if in limbo or spectator, and in the limbo menu
 	if ((cg.snap->ps.pm_flags & PMF_LIMBO || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
 	{
 		return;
@@ -3598,7 +3585,6 @@ static void CG_DrawObjectiveInfo(void)
 	// do the actual drawing
 	start = cg.oidPrint;
 	y     = 400 - cg.oidPrintLines * BIGCHAR_HEIGHT / 2;
-
 
 	while (1)
 	{
@@ -4333,7 +4319,7 @@ static void CG_DrawPlayerStatus(void)
 	rect.h = 72;
 	CG_DrawStaminaBar(&rect);
 
-	rect.x = 640 - 16;
+	rect.x = Ccg_WideX(640) - 16;
 	rect.y = 480 - 92;
 	rect.w = 12;
 	rect.h = 72;
@@ -4646,7 +4632,7 @@ static void CG_Draw2D(void)
 		return;
 	}
 
-	//bani - #127 - no longer cheat protected, we draw crosshair/reticle in non demoplayback
+	// no longer cheat protected, we draw crosshair/reticle in non demoplayback
 	if (cg_draw2D.integer == 0)
 	{
 		if (cg.demoPlayback)
@@ -4795,31 +4781,20 @@ void CG_ShakeCamera(void)
 
 	if (cg.time > cg.cameraShakeTime)
 	{
-		cg.cameraShakeScale = 0; // JPW NERVE all pending explosions resolved, so reset shakescale
+		cg.cameraShakeScale = 0; // all pending explosions resolved, so reset shakescale
 		return;
 	}
 
 	// starts at 1, approaches 0 over time
 	x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
 
-	// ydnar: move the camera
-#if 0
-	// up/down
-	val                     = sin(M_PI * 8 * x + cg.cameraShakePhase) * x * 18.0f * cg.cameraShakeScale;
-	cg.refdefViewAngles[0] += val;
-
-	// left/right
-	val                     = sin(M_PI * 15 * x + cg.cameraShakePhase) * x * 16.0f * cg.cameraShakeScale;
-	cg.refdefViewAngles[1] += val;
-#else
-	// move
+	// move the camera
 	val                   = sin(M_PI * 7 * x + cg.cameraShakePhase) * x * 4.0f * cg.cameraShakeScale;
 	cg.refdef.vieworg[2] += val;
 	val                   = sin(M_PI * 13 * x + cg.cameraShakePhase) * x * 4.0f * cg.cameraShakeScale;
 	cg.refdef.vieworg[1] += val;
 	val                   = cos(M_PI * 17 * x + cg.cameraShakePhase) * x * 4.0f * cg.cameraShakeScale;
 	cg.refdef.vieworg[0] += val;
-#endif
 
 	AnglesToAxis(cg.refdefViewAngles, cg.refdef.viewaxis);
 }
@@ -4935,7 +4910,6 @@ void CG_DrawActive(stereoFrame_t stereoView)
 		CG_Error("CG_DrawActive: Undefined stereoView\n");
 	}
 
-
 	// clear around the rendered view if sized down
 	CG_TileClear();
 
@@ -4950,12 +4924,7 @@ void CG_DrawActive(stereoFrame_t stereoView)
 
 	if (cg.showGameView)
 	{
-		float x, y, w, h;
-
-		x = LIMBO_3D_X;
-		y = LIMBO_3D_Y;
-		w = LIMBO_3D_W;
-		h = LIMBO_3D_H;
+		float x = LIMBO_3D_X, y = LIMBO_3D_Y, w = LIMBO_3D_W, h = LIMBO_3D_H;
 
 		CG_AdjustFrom640(&x, &y, &w, &h);
 

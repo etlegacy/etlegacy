@@ -408,7 +408,6 @@ void CG_CheckChangedPredictableEvents(playerState_t *ps)
 	cent = &cg.predictedPlayerEntity;
 	for (i = ps->eventSequence - MAX_EVENTS ; i < ps->eventSequence ; i++)
 	{
-		//
 		if (i >= cg.eventSequence)
 		{
 			continue;
@@ -577,7 +576,7 @@ CG_TransitionPlayerState
 */
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 {
-	// OSP - MV client handling
+	// MV client handling @multiview
 	if (cg.mvTotalClients > 0)
 	{
 		if (ps->clientNum != ops->clientNum)
@@ -606,7 +605,7 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		// make sure we don't get any unwanted transition effects
 		*ops = *ps;
 
-		// DHM - Nerve :: After Limbo, make sure and do a CG_Respawn
+		// After Limbo, make sure and do a CG_Respawn
 		if (ps->clientNum == cg.clientNum)
 		{
 			ops->persistant[PERS_SPAWN_COUNT]--;

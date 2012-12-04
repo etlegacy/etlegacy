@@ -204,7 +204,7 @@ void SP_misc_gamemodel(void)
 
 	if (CG_SpawnString("targetname", "", &model) || CG_SpawnString("scriptname", "", &model) || CG_SpawnString("spawnflags", "", &model))
 	{
-		// Gordon: this model may not be static, so let the server handle it
+		// this model may not be static, so let the server handle it
 		return;
 	}
 
@@ -430,7 +430,7 @@ void SP_worldspawn(void)
 	cgs.ccLayers = 0;
 
 	if (CG_SpawnVector2D("mapcoordsmins", "-128 128", cg.mapcoordsMins) &&     // top left
-	    CG_SpawnVector2D("mapcoordsmaxs", "128 -128", cg.mapcoordsMaxs))          // bottom right
+	    CG_SpawnVector2D("mapcoordsmaxs", "128 -128", cg.mapcoordsMaxs))       // bottom right
 	{
 		cg.mapcoordsValid = qtrue;
 	}
@@ -471,7 +471,7 @@ void SP_worldspawn(void)
 	    cg.fiveMinuteSound_a[0]                   = \
 	        cg.twoMinuteSound_g[0]                = \
 	            cg.twoMinuteSound_a[0]            = \
-	                cg.thirtySecondSound_g[0]     =   \
+	                cg.thirtySecondSound_g[0]     = \
 	                    cg.thirtySecondSound_a[0] = '\0';
 
 	CG_SpawnString("fiveMinuteSound_axis", "axis_hq_5minutes", &s);

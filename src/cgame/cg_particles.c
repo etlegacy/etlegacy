@@ -71,7 +71,6 @@ typedef struct particle_s
 
 	qboolean link;
 
-	// Ridah
 	int shaderAnim;
 	int roll;
 
@@ -188,7 +187,6 @@ void CG_ClearParticles(void)
 	initparticles = qtrue;
 }
 
-
 /*
 =====================
 CG_AddParticleToScene
@@ -222,7 +220,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 					VectorCopy(org, p->org);   // fixes rare snow flakes that flicker on the ground
 
 					p->org[2] = (p->start + crandom() * 4);
-
 
 					if (p->type == P_BUBBLE_TURBULENT)
 					{
@@ -451,6 +448,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 			float len;
 			float greyit;
 			float val;
+
 			len = Distance(cg.snap->ps.origin, org);
 			if (!len)
 			{
@@ -901,7 +899,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 
 	if (!p->pshader)
 	{
-		// (SA) temp commented out for DM again.  FIXME: TODO: this needs to be addressed
+		// FIXME: temp commented out for DM again.  FIXME: TODO: this needs to be addressed
 		//		CG_Printf ("CG_AddParticleToScene type %d p->pshader == ZERO\n", p->type);
 		return;
 	}
@@ -1378,7 +1376,6 @@ void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 
 	p->type = P_SMOKE;
 
-	//VectorCopy(cent->currentState.origin, p->org);
 	VectorCopy(cent->lerpOrigin, p->org);
 
 	p->vel[0]   = p->vel[1] = 0;
@@ -1627,7 +1624,6 @@ void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration
 
 	p->endtime = cg.time + duration;
 
-	// ydnar
 	if (dlight)
 	{
 		p->type = P_DLIGHT_ANIM;
@@ -1755,9 +1751,8 @@ void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int li
 	p->alpha         = alpha;
 	p->alphavel      = 0;
 
-	// (SA) roll either direction
-	p->roll = rand() % (2 * maxroll);
-	//p->roll = crandom()*(float)(maxroll*2);
+	// roll either direction
+	p->roll  = rand() % (2 * maxroll);
 	p->roll -= maxroll;
 
 	p->pshader = pshader;
@@ -1848,19 +1843,16 @@ void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEnt
 		p->color = BLOODRED;
 	}
 	p->alpha = 0.75;
-
 }
 
 //void CG_Particle_OilParticle (qhandle_t pshader, centity_t *cent)
 void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int ptime, int snum)      // snum is parent ent number?
 {
 	cparticle_t *p;
-
-	int   time;
-	int   time2;
-	float ratio;
-
-	float duration = 2000;
+	int         time;
+	int         time2;
+	float       ratio;
+	float       duration = 2000;
 
 	time  = cg.time;
 	time2 = cg.time + ptime;
@@ -1903,7 +1895,6 @@ void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int p
 	p->vel[0] = (dir[0] * (16 * ratio));
 	p->vel[1] = (dir[1] * (16 * ratio));
 	p->vel[2] = (dir[2] * (16 * ratio));
-	//p->vel[2] = (dir[2]);
 
 	p->snum = snum;
 
@@ -2234,7 +2225,7 @@ void CG_ParticleBloodCloudZombie(centity_t *cent, vec3_t origin, vec3_t dir)
 
 		p->pshader = cgs.media.bloodCloudShader;
 
-		// RF, stay around for long enough to expand and dissipate naturally
+		// stay around for long enough to expand and dissipate naturally
 		if (length)
 		{
 			p->endtime = cg.time + 3500 + (crandom() * 2000);
@@ -2350,14 +2341,12 @@ void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, f
 void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	float       length;
-	float       dist;
+	float       dist = 0;
 	float       crittersize;
 	vec3_t      angles, forward;
 	vec3_t      point;
 	cparticle_t *p;
 	int         i;
-
-	dist = 0;
 
 	VectorNegate(dir, dir);
 	length = VectorLength(dir);
@@ -2423,7 +2412,7 @@ void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir)
 			p->width  = NORMALSIZE;
 			p->height = NORMALSIZE;
 
-			// RF, expand while falling
+			// expand while falling
 			p->endheight = NORMALSIZE * 4.0;
 			p->endwidth  = NORMALSIZE * 4.0;
 		}
@@ -2454,7 +2443,7 @@ void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir)
 		p->vel[1] = crandom() * 6;
 		p->vel[2] = random() * 20;
 
-		// RF, add some gravity/randomness
+		// add some gravity/randomness
 		p->accel[0] = crandom() * 3;
 		p->accel[1] = crandom() * 3;
 		p->accel[2] = -PARTICLE_GRAVITY * 0.4;

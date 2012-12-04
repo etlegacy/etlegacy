@@ -47,8 +47,7 @@ qboolean CG_FindCampaignInFile(char *filename, char *campaignShortName, cg_campa
 {
 	int        handle;
 	pc_token_t token;
-//	char* dummy;
-	qboolean campaignFound = qfalse;
+	qboolean   campaignFound = qfalse;
 
 	info->mapCount = 0;
 
@@ -115,7 +114,6 @@ qboolean CG_FindCampaignInFile(char *filename, char *campaignShortName, cg_campa
 		else if (!Q_stricmp(token.string, "next") ||
 		         !Q_stricmp(token.string, "image"))
 		{
-			//if( !PC_String_Parse( handle, &dummy ) ) {
 			if (!trap_PC_ReadToken(handle, &token))          // don't do a stringparse due to memory constraints
 			{
 				trap_Print(va(S_COLOR_RED "unexpected end of file inside: %s\n", filename));
@@ -281,14 +279,7 @@ qboolean CG_FindArenaInfo(char *filename, char *mapname, arenaInfo_t *info)
 			}
 			else
 			{
-				//char* p = info->longname;
-
 				Q_strncpyz(info->longname, dummy, 128);
-				// Gordon: removing cuz, er, no-one knows why it's here!...
-/*				while(*p) {
-                    *p = toupper(*p);
-                    p++;
-                }*/
 			}
 		}
 		else if (!Q_stricmp(token.string, "map"))

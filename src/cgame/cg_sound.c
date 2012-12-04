@@ -115,7 +115,8 @@ int CG_SoundScriptPrecache(const char *name)
 					for (i = 0; i < scriptSound->numsounds; i++)
 					{
 						scriptSound->sounds[i].sfxHandle = 0;
-//                      scriptSound->sounds[i].sfxHandle = trap_S_RegisterSound( scriptSound->sounds[i].filename, qfalse ); // FIXME: make compressed settable through the soundscript
+						// FIXME: make compressed settable through the soundscript
+						//scriptSound->sounds[i].sfxHandle = trap_S_RegisterSound( scriptSound->sounds[i].filename, qfalse );
 					}
 				}
 			}
@@ -463,14 +464,12 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 		}
 		if (!Q_stricmp(token, "sound"))
 		{
-
 			if (scriptSound->numsounds >= MAX_SOUNDSCRIPT_SOUNDS)
 			{
 				CG_Error(S_COLOR_RED "Too many sounds for soundscript\n");
 			}
 
 			token = COM_ParseExt(text, qtrue);
-
 
 			Q_strncpyz(scriptSound->sounds[scriptSound->numsounds].filename, token, sizeof(scriptSound->sounds[0].filename));
 			scriptSound->numsounds++;
@@ -796,6 +795,7 @@ static void CG_RenderScriptSpeakers(void)
 		if (editSpeakerActive && editSpeaker == speaker)
 		{
 			vec4_t colour;
+
 			for (j = 0; j < 3; j++)
 			{
 				VectorClear(colour);
