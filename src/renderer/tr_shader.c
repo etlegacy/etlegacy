@@ -2580,6 +2580,7 @@ static shader_t *GeneratePermanentShader(void)
  * which is the correct one to best aproximate what it is supposed to look like.
  * @note Unused in ET:L, but can be enabled with patches from the ioquake3 project.
  */
+#if 0 // To shut up compiler warnings until we use this function.
 static void VertexLightingCollapse(void)
 {
 	int           stage;
@@ -2678,6 +2679,7 @@ static void VertexLightingCollapse(void)
 		memset(pStage, 0, sizeof(*pStage));
 	}
 }
+#endif // 0
 
 /*
 SetImplicitShaderStages() - ydnar

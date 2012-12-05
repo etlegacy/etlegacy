@@ -1831,7 +1831,7 @@ void CL_DownloadsComplete(void)
 	if (autoupdateStarted)
 	{
 
-		if (autoupdateFilename && (strlen(autoupdateFilename) > 4))
+		if (strlen(autoupdateFilename) > 4)
 		{
 #ifdef _WIN32
 			// win32's Sys_StartProcess prepends the current dir

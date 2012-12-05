@@ -776,7 +776,7 @@ void SV_WriteAttackLog(const char *log)
 	}
 	else
 	{
-		Com_Printf(log);
+		Com_Printf("%s", log);
 	}
 }
 

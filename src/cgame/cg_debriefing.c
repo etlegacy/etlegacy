@@ -3188,7 +3188,6 @@ int skillPositions[SK_NUM_SKILLS + 1] =
 
 void CG_Debriefing2TeamSkillHeaders_Draw(panel_button_t *button)
 {
-	int    i, j;
 	vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	if (cg_gameType.integer == GT_WOLF_LMS)
