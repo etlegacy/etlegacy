@@ -411,7 +411,7 @@ endif(FEATURE_CURSES)
 # Build
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
-	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC})
+	add_executable(etl WIN32 ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC})
 	include_directories(${CLIENT_INCLUDE_DIRS} ${PROJECT_BINARY_DIR})
 	if(BUNDLED_SDL)
 		add_dependencies(etl bundled_sdl)
