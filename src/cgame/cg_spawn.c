@@ -496,7 +496,7 @@ void SP_worldspawn(void)
 	}
 	else if (strstr(cg.fiveMinuteSound_g, ".wav"))
 	{
-		cgs.media.fiveMinuteSound_g = trap_S_RegisterSound(cg.fiveMinuteSound_g, qtrue);
+		cgs.media.fiveMinuteSound_g = trap_S_RegisterSound(cg.fiveMinuteSound_g, qfalse);
 	}
 	else
 	{
@@ -510,7 +510,7 @@ void SP_worldspawn(void)
 	}
 	else if (strstr(cg.fiveMinuteSound_a, ".wav"))
 	{
-		cgs.media.fiveMinuteSound_a = trap_S_RegisterSound(cg.fiveMinuteSound_a, qtrue);
+		cgs.media.fiveMinuteSound_a = trap_S_RegisterSound(cg.fiveMinuteSound_a, qfalse);
 	}
 	else
 	{
@@ -524,7 +524,7 @@ void SP_worldspawn(void)
 	}
 	else if (strstr(cg.twoMinuteSound_g, ".wav"))
 	{
-		cgs.media.twoMinuteSound_g = trap_S_RegisterSound(cg.twoMinuteSound_g, qtrue);
+		cgs.media.twoMinuteSound_g = trap_S_RegisterSound(cg.twoMinuteSound_g, qfalse);
 	}
 	else
 	{
@@ -552,7 +552,7 @@ void SP_worldspawn(void)
 	}
 	else if (strstr(cg.thirtySecondSound_g, ".wav"))
 	{
-		cgs.media.thirtySecondSound_g = trap_S_RegisterSound(cg.thirtySecondSound_g, qtrue);
+		cgs.media.thirtySecondSound_g = trap_S_RegisterSound(cg.thirtySecondSound_g, qfalse);
 	}
 	else
 	{
@@ -566,7 +566,7 @@ void SP_worldspawn(void)
 	}
 	else if (strstr(cg.thirtySecondSound_a, ".wav"))
 	{
-		cgs.media.thirtySecondSound_a = trap_S_RegisterSound(cg.thirtySecondSound_a, qtrue);
+		cgs.media.thirtySecondSound_a = trap_S_RegisterSound(cg.thirtySecondSound_a, qfalse);
 	}
 	else
 	{

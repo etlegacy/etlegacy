@@ -1214,7 +1214,7 @@ static void CG_RegisterSounds(void)
 		}
 		else
 		{
-			cgs.gameSounds[i] = trap_S_RegisterSound(soundName, qfalse);    // FIXME: allow option to compress?
+			cgs.gameSounds[i] = trap_S_RegisterSound(soundName, qfalse);
 		}
 	}
 
@@ -2126,7 +2126,7 @@ qboolean CG_Asset_Parse(int handle)
 			{
 				return qfalse;
 			}
-			cgDC.Assets.menuEnterSound = trap_S_RegisterSound(tempStr, qtrue);
+			cgDC.Assets.menuEnterSound = trap_S_RegisterSound(tempStr, qfalse);
 			continue;
 		}
 
@@ -2137,7 +2137,7 @@ qboolean CG_Asset_Parse(int handle)
 			{
 				return qfalse;
 			}
-			cgDC.Assets.menuExitSound = trap_S_RegisterSound(tempStr, qtrue);
+			cgDC.Assets.menuExitSound = trap_S_RegisterSound(tempStr, qfalse);
 			continue;
 		}
 
@@ -2148,7 +2148,7 @@ qboolean CG_Asset_Parse(int handle)
 			{
 				return qfalse;
 			}
-			cgDC.Assets.itemFocusSound = trap_S_RegisterSound(tempStr, qtrue);
+			cgDC.Assets.itemFocusSound = trap_S_RegisterSound(tempStr, qfalse);
 			continue;
 		}
 
@@ -2159,7 +2159,7 @@ qboolean CG_Asset_Parse(int handle)
 			{
 				return qfalse;
 			}
-			cgDC.Assets.menuBuzzSound = trap_S_RegisterSound(tempStr, qtrue);
+			cgDC.Assets.menuBuzzSound = trap_S_RegisterSound(tempStr, qfalse);
 			continue;
 		}
 

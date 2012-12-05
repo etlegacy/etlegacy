@@ -1343,11 +1343,11 @@ void CG_Debriefing_Startup(void)
 	}
 	else if (atoi(buf))
 	{
-		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/allies_win.wav", qtrue), CHAN_LOCAL_SOUND);
+		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/allies_win.wav", qfalse), CHAN_LOCAL_SOUND);
 	}
 	else
 	{
-		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/axis_win.wav", qtrue), CHAN_LOCAL_SOUND);
+		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/axis_win.wav", qfalse), CHAN_LOCAL_SOUND);
 	}
 
 	cgs.dbMode = 0;
