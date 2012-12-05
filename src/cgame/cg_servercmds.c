@@ -37,8 +37,6 @@
 
 #include "cg_local.h"
 
-#define SCOREPARSE_COUNT    9
-
 /*
 =================
 CG_ParseScores
@@ -157,7 +155,7 @@ void CG_ParseServerinfo(void)
 	cgs.weaponRestrictions   = atoi(Info_ValueForKey(info, "g_heavyWeaponRestriction")) * 0.01f;
 
 
-	cgs.minclients = atoi(Info_ValueForKey(info, "g_minGameClients"));           // NERVE - SMF -- OSP: overloaded for ready counts
+	cgs.minclients = atoi(Info_ValueForKey(info, "g_minGameClients")); //  overloaded for ready counts
 
 	// TTimo - make this available for ingame_callvote
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
@@ -302,8 +300,6 @@ void CG_ParseOIDInfos(void)
 /*
 ==================
 CG_ParseWolfinfo
-
-NERVE - SMF
 ==================
 */
 void CG_ParseWolfinfo(void)
@@ -1484,13 +1480,6 @@ CG_PlayVoiceChat
 */
 void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
 {
-	// if we are going into the intermission, don't start any voices
-	/*  // NERVE - SMF - don't do this in wolfMP
-	    if ( cg.intermissionStarted ) {
-	        return;
-	    }
-	*/
-
 	if (!cg_noVoiceChats.integer)
 	{
 		trap_S_StartLocalSound(vchat->snd, CHAN_VOICE);
