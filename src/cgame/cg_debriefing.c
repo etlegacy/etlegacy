@@ -1310,13 +1310,13 @@ void CG_ChatPanel_Setup(void)
 	BG_PanelButtonsSetup(teamDebriefPanelButtons);
 	BG_PanelButtonsSetup(debriefPanelButtons);
 
-	// core: convert to possible ws coordinates..
+	// convert to possible ws coordinates..
 	C_PanelButtonsSetup(chatPanelButtons, cgs.wideXoffset);
 	C_PanelButtonsSetup(teamDebriefPanelButtons, cgs.wideXoffset);
 	C_PanelButtonsSetup(debriefPanelButtons, cgs.wideXoffset);
 	// there is an exception: the same debriefTitleWindow is used in multiple panel_button_t
 	// By now the debriefTitleWindow has been adjusted too much, so we correct for the difference..
-	debriefTitleWindow.rect.x -= 2 * cgs.wideXoffset;
+	debriefTitleWindow.rect.x -= cgs.wideXoffset;
 }
 
 void CG_Debriefing_Startup(void)
@@ -1509,11 +1509,8 @@ void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button)
 	for (i = 0; i < 7 && pos != -1; i++, pos = CG_Debriefing_GetNextWeaponStat(pos))
 	{
 		CG_Text_Paint_Ext(18, y, button->font->scalex, button->font->scaley, button->font->colour, aWeaponInfo[pos].pszName, 0, 0, 0, button->font->font);
-
 		CG_Text_Paint_Ext(78, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numShots), 0, 0, 0, button->font->font);
-
 		CG_Text_Paint_Ext(118, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numHits), 0, 0, 0, button->font->font);
-
 		CG_Text_Paint_Ext(148, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numKills), 0, 0, 0, button->font->font);
 
 		y += 12;
@@ -2155,9 +2152,8 @@ void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button)
 void CG_Debriefing_PlayerRank_Draw(panel_button_t *button)
 {
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w;
+	float        w   = CG_Text_Width_Ext("Rank: ", button->font->scalex, 0, button->font->font);
 
-	w = CG_Text_Width_Ext("Rank: ", button->font->scalex, 0, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Rank:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_FullRankNameForClientInfo(ci), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
@@ -2508,8 +2504,7 @@ int CG_TeamDebriefing_CalcXP(team_t team, int mapindex, int skillindex)
 void CG_TeamDebriefingTeamXP_Draw(panel_button_t *button)
 {
 	team_t team = button->data[0] == 0 ? TEAM_AXIS : TEAM_ALLIES;
-
-	int xp = CG_TeamDebriefing_CalcXP(team, cgs.tdbSelectedMap - 1, -1);
+	int    xp   = CG_TeamDebriefing_CalcXP(team, cgs.tdbSelectedMap - 1, -1);
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%s XP: %i", team == TEAM_AXIS ? "Axis" : "Allies", xp), 0, 0, 0, button->font->font);
 }
@@ -2565,6 +2560,7 @@ void CG_PanelButtonsRender_Button_Ext(rectDef_t *r, const char *text)
 	if (text)
 	{
 		float w = CG_Text_Width_Ext(text, 0.2f, 0, &cgs.media.limboFont2);
+
 		CG_Text_Paint_Ext(r->x + ((r->w + 2) - w) * 0.5f, r->y + 11, 0.19f, 0.19f, hilight ? clrTxt_hi : clrTxt, text, 0, 0, 0, &cgs.media.limboFont2);
 	}
 }
@@ -3200,41 +3196,21 @@ void CG_Debriefing2TeamSkillHeaders_Draw(panel_button_t *button)
 		return;
 	}
 
-	for (j = 0; j < 2; j++)
 	{
+		int i;
+
 		for (i = 0; i <= SK_NUM_SKILLS; i++)
 		{
-			float      w;
-			const char *str;
-
-			if (j == 0)
+			if (i == SK_NUM_SKILLS)
 			{
-				if (i == SK_NUM_SKILLS)
-				{
-					str = "Total";
-				}
-				else
-				{
-					str = skillNamesLine1[i];
-				}
+				const char *str = "Total";
+				float      w    = CG_Text_Width_Ext(str, 0.175f, 0, &cgs.media.limboFont2);
+
+				CG_Text_Paint_Ext(button->rect.x + 55 + skillPositions[i] - (w * 0.5f), button->rect.y + 5, 0.2f, 0.2f, clrTxtBck, str, 0, 0, 0, &cgs.media.limboFont2);
 			}
 			else
 			{
-				if (i == SK_NUM_SKILLS)
-				{
-					str = "";
-				}
-				else
-				{
-					str = skillNamesLine2[i];
-				}
-			}
-
-			if (*str)
-			{
-				w = CG_Text_Width_Ext(str, 0.175f, 0, &cgs.media.limboFont2);
-
-				CG_Text_Paint_Ext(button->rect.x + 60 + skillPositions[i] - (w * 0.5f), button->rect.y + (j * 11), 0.2f, 0.2f, clrTxtBck, str, 0, 0, 0, &cgs.media.limboFont2);
+				CG_DrawPic(button->rect.x + 50 + skillPositions[i], button->rect.y - 8, 20, 20, cgs.media.skillPics[i]);
 			}
 		}
 	}

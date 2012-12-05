@@ -45,7 +45,7 @@ int                  numSoundScripts = 0;
 
 #define MAX_SOUND_SCRIPT_SOUNDS 4096 // decreased from 8096 - engine hashes 4096 total sounds - see MAX_SFX
 static soundScriptSound_t soundScriptSounds[MAX_SOUND_SCRIPT_SOUNDS];
-int                  numSoundScriptSounds = 0;
+int                       numSoundScriptSounds = 0;
 
 /*
 ================
@@ -54,7 +54,7 @@ return a hash value for the filename
 */
 static long generateHashValue(const char *fname)
 {
-	int  i = 0;
+	int  i    = 0;
 	long hash = 0;
 	char letter;
 
@@ -314,7 +314,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 	long               hash;
 	soundScript_t      sound;           // the current sound being read
 	soundScriptSound_t *scriptSound = NULL;
-	qboolean           inSound = qfalse, wantSoundName = qtrue;
+	qboolean           inSound      = qfalse, wantSoundName = qtrue;
 
 	while (1)
 	{

@@ -2717,7 +2717,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.wideXoffset  = (cgs.aspectratio != RATIO43) ? (640.0f * cgs.adr43 - 640.0f) * 0.5f : 0.0f;
 
 	// DEBUG
-	CG_Printf("Screen[%f][%f]: as: %f  as1: %f  adr43: %f  r43da: %f off: %f\n", cgs.screenXScale, cgs.screenYScale, cgs.aspectratio, cgs.aspectratio1, cgs.adr43, cgs.r43da, cgs.wideXoffset);
+	//CG_Printf("Screen[%f][%f]: as: %f  as1: %f  adr43: %f  r43da: %f off: %f\n", cgs.screenXScale, cgs.screenYScale, cgs.aspectratio, cgs.aspectratio1, cgs.adr43, cgs.r43da, cgs.wideXoffset);
 
 	// init the anim scripting
 	cgs.animScriptData.soundIndex = CG_SoundScriptPrecache;

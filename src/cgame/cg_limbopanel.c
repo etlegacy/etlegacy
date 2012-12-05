@@ -1098,6 +1098,7 @@ void CG_LimboPanel_BriefingButton_Draw(panel_button_t *button)
 void CG_LimboPanel_NameEditFinish(panel_button_t *button)
 {
 	char buffer[256];
+
 	trap_Cvar_VariableStringBuffer(button->text, buffer, 256);
 	trap_Cvar_Set("name", buffer);
 }
@@ -1200,11 +1201,11 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 		str = "b";
 		break;
 	default:
-		str = NULL;     // rain - don't go spec
+		str = NULL;     // don't go spec
 		break;
 	}
 
-	// rain - if this happens, we're dazed and confused, abort
+	// if this happens, we're dazed and confused, abort
 	if (!str)
 	{
 		return;
@@ -1226,7 +1227,7 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 	case TEAM_ALLIES:
 		str = "Allied";
 		break;
-	default:     // rain - added default
+	default:     // default
 		str = "unknown";
 		break;
 	}
