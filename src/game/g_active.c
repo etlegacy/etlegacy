@@ -1347,11 +1347,6 @@ void ClientThink_real(gentity_t *ent)
 		BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, qfalse);
 	}
 
-	if (!(ent->client->ps.eFlags & EF_FIRING))
-	{
-		client->fireHeld = qfalse;      // for grapple
-	}
-
 	// use the precise origin for linking
 	//VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
 

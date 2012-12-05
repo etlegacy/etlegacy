@@ -769,11 +769,6 @@ void G_RunMissile(gentity_t *ent)
 		}
 		else if (tr.surfaceFlags & SURF_NOIMPACT) // never explode or bounce on sky
 		{
-			// If grapple, reset owner
-			if (ent->parent && ent->parent->client && ent->parent->client->hook == ent)
-			{
-				ent->parent->client->hook = NULL;
-			}
 			G_FreeEntity(ent);
 			return;
 		}

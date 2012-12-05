@@ -763,9 +763,6 @@ struct gclient_s
 
 	int lastKillTime;               // for multiple kill rewards
 
-	qboolean fireHeld;              // used for hook
-	gentity_t *hook;                // grapple hook if out
-
 	int switchTeamTime;             // time the player switched teams
 
 	// timeResidual is used to handle events that happen every second
@@ -885,9 +882,9 @@ typedef struct
 
 	struct gentity_s *gentities;
 	int gentitySize;
-	int num_entities;               // current number, <= MAX_GENTITIES
+	int num_entities;                   // current number, <= MAX_GENTITIES
 
-	int warmupTime;                 // restart match at this time
+	int warmupTime;                     // restart match at this time
 
 	fileHandle_t logFile;
 
@@ -904,10 +901,10 @@ typedef struct
 	int startTime;                      // level.time the map was started
 
 	int teamScores[TEAM_NUM_TEAMS];
-	int lastTeamLocationTime;               // last time of client team location update
+	int lastTeamLocationTime;           // last time of client team location update
 
 	qboolean newSession;                // don't use any old session data, because
-	// we changed gametype
+	                                    // we changed gametype
 
 	qboolean restarted;                 // waiting for a map_restart to fire
 
@@ -959,7 +956,7 @@ typedef struct
 	vec3_t spawntargets[MAX_MULTI_SPAWNTARGETS];      // coordinates of spawn targets
 	int numspawntargets;         // # spawntargets in this map
 
-	// RF, entity scripting
+	// entity scripting
 	char *scriptEntity;
 
 	// player/AI model scripting (server repository)
@@ -969,7 +966,7 @@ typedef struct
 	int missedHeadshots;
 	qboolean lastRestartTime;
 
-	int numFinalDead[2];                // DHM - Nerve :: unable to respawn and in limbo (per team)
+	int numFinalDead[2];                // unable to respawn and in limbo (per team)
 	int numOidTriggers;
 
 	qboolean latchGametype;
@@ -1018,7 +1015,7 @@ typedef struct
 
 	qboolean doorAllowTeams;    // used by bots to decide whether or not to use team travel flags
 
-	// Gordon: for multiplayer fireteams
+	// for multiplayer fireteams
 	fireteamData_t fireTeams[MAX_FIRETEAMS];
 
 	qboolean ccLayers;
@@ -1259,7 +1256,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator);
 void G_Activate(gentity_t *ent, gentity_t *activator);
 
-void G_TryDoor(gentity_t *ent, gentity_t *other, gentity_t *activator);   //----(SA)    added
+void G_TryDoor(gentity_t *ent, gentity_t *other, gentity_t *activator);
 
 void InitMoverRotate(gentity_t *ent);
 
