@@ -384,46 +384,6 @@ int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeig
 
 /*
 ================
-CG_Draw3DModel
-================
-*/
-void CG_Draw3DModel(float x, float y, float w, float h, qhandle_t model, qhandle_t skin, vec3_t origin, vec3_t angles)
-{
-	refdef_t    refdef;
-	refEntity_t ent;
-
-	CG_AdjustFrom640(&x, &y, &w, &h);
-
-	memset(&refdef, 0, sizeof(refdef));
-
-	memset(&ent, 0, sizeof(ent));
-	AnglesToAxis(angles, ent.axis);
-	VectorCopy(origin, ent.origin);
-	ent.hModel     = model;
-	ent.customSkin = skin;
-	ent.renderfx   = RF_NOSHADOW;   // no stencil shadows
-
-	refdef.rdflags = RDF_NOWORLDMODEL;
-
-	AxisClear(refdef.viewaxis);
-
-	refdef.fov_x = 30;
-	refdef.fov_y = 30;
-
-	refdef.x      = x;
-	refdef.y      = y;
-	refdef.width  = w;
-	refdef.height = h;
-
-	refdef.time = cg.time;
-
-	trap_R_ClearScene();
-	trap_R_AddRefEntityToScene(&ent);
-	trap_R_RenderScene(&refdef);
-}
-
-/*
-================
 CG_DrawTeamBackground
 ================
 */
@@ -4921,20 +4881,6 @@ void CG_DrawActive(stereoFrame_t stereoView)
 	}
 
 	cg.refdef_current->glfog.registered = 0;    // make sure it doesn't use fog from another scene
-
-	if (cg.showGameView)
-	{
-		float x = LIMBO_3D_X, y = LIMBO_3D_Y, w = LIMBO_3D_W, h = LIMBO_3D_H;
-
-		CG_AdjustFrom640(&x, &y, &w, &h);
-
-		cg.refdef_current->x      = x;
-		cg.refdef_current->y      = y;
-		cg.refdef_current->width  = w;
-		cg.refdef_current->height = h;
-
-		CG_Letterbox((LIMBO_3D_W / 640.f) * 100, (LIMBO_3D_H / 480.f) * 100, qfalse);
-	}
 
 	CG_ShakeCamera();
 

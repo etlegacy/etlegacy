@@ -1207,7 +1207,7 @@ static void CG_RegisterSounds(void)
 			continue;   // custom sound
 		}
 
-		// Ridah, register sound scripts seperately
+		// register sound scripts seperately
 		if (!strstr(soundName, ".wav"))
 		{
 			CG_SoundScriptPrecache(soundName);
