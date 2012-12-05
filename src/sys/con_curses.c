@@ -556,7 +556,8 @@ char *CON_Input(void)
 			continue;
 		case '\t':
 		case KEY_STAB:
-			Field_AutoComplete(&input_field, PROMPT);
+			//Field_AutoComplete(&input_field, PROMPT);
+			Field_AutoComplete(&input_field);
 			input_field.cursor = strlen(input_field.buffer);
 			continue;
 		case '\f':

@@ -398,6 +398,12 @@ if(FEATURE_ANTICHEAT)
 endif(FEATURE_ANTICHEAT)
 
 if(FEATURE_CURSES)
+	find_package(Curses REQUIRED)
+	set(CURSES_NEED_NCURSES 1) # Tells FindCurses that ncurses is required
+	list(APPEND CLIENT_LIBRARIES ${CURSES_LIBRARIES})
+	list(APPEND SERVER_LIBRARIES ${CURSES_LIBRARIES})
+	list(APPEND CLIENT_INCLUDE_DIRS ${CURSES_INCLUDE_DIR})
+	list(APPEND COMMON_SRC "src/sys/con_curses.c")
 	add_definitions(-DFEATURE_CURSES)
 endif(FEATURE_CURSES)
 
@@ -428,7 +434,7 @@ endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
 	add_executable(etlded ${COMMON_SRC} ${SERVER_SRC} ${PLATFORM_SRC})
-	target_link_libraries(etlded ${OS_LIBRARIES})
+	target_link_libraries(etlded ${OS_LIBRARIES} ${SERVER_LIBRARIES})
 	set_target_properties(etlded PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
 	install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
 endif(BUILD_SERVER)
