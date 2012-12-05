@@ -1047,7 +1047,7 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string);
 	ri.Printf(PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string);
 
-	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: %s");
+	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: ");
 	R_PrintLongString(glConfig.extensions_string);
 
 	ri.Printf(PRINT_ALL, "\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
