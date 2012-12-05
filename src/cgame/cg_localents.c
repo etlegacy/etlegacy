@@ -189,11 +189,12 @@ Team_GetLocation
 Report a location for the player. Uses placed nearby target_location entities
 ============
 */
+#define MAX_BUFFER 32768
 void CG_LoadLocations(void)
 {
 	fileHandle_t f;                     // handle of file on disk
 	int          fLen = trap_FS_FOpenFile(va("maps/%s_loc_override.dat", cgs.rawmapname), &f, FS_READ);     // length of the file
-	char         fBuffer[32768];        // buffer to read the file into
+	char         fBuffer[MAX_BUFFER];        // buffer to read the file into
 	char         message[64] = "\0";    // location description
 	char         temp[64]    = "\0";    // temporary buffer
 	int          x           = 0;       // x-coord of the location
@@ -214,9 +215,9 @@ void CG_LoadLocations(void)
 		}
 	}
 
-	if (fLen > sizeof(fBuffer))
+	if (fLen > MAX_BUFFER)
 	{
-		CG_Error("Location file is too big, make it smaller (max = %li bytes)\n", sizeof(fBuffer));
+		CG_Error("Location file is too big, make it smaller (max = %i bytes)\n", MAX_BUFFER);
 		trap_FS_FCloseFile(f);
 	}
 
@@ -786,7 +787,7 @@ void CG_AddFragment(localEntity_t *le)
 	{
 		int t;
 
-		// Ridah, add the flame
+		// add the flame
 		if (hasFlame)
 		{
 			refEntity_t backupEnt;
@@ -882,7 +883,7 @@ void CG_AddFragment(localEntity_t *le)
 			}
 		}
 
-		// Ridah, add the flame
+		// add the flame
 		if (hasFlame)
 		{
 			refEntity_t backupEnt;
@@ -1020,7 +1021,7 @@ void CG_AddFragment(localEntity_t *le)
 		}
 	}
 
-	// Ridah, add the flame
+	// add the flame
 	if (hasFlame)
 	{
 		refEntity_t backupEnt;
@@ -1475,7 +1476,6 @@ static void CG_AddMoveScaleFade(localEntity_t *le)
 	re = &le->refEntity;
 
 	// fade / grow time
-//  c = ( le->endTime - cg.time ) * le->lifeRate;
 	if (le->fadeInTime > le->startTime && cg.time < le->fadeInTime)
 	{
 		// fade / grow time
@@ -1487,10 +1487,9 @@ static void CG_AddMoveScaleFade(localEntity_t *le)
 		c = (le->endTime - cg.time) * le->lifeRate;
 	}
 
-	// Ridah, spark
+	// spark
 	if (!(le->leFlags & LEF_NOFADEALPHA))
 	{
-		// done.
 		re->shaderRGBA[3] = 0xff * c * le->color[3];
 	}
 
@@ -1608,7 +1607,7 @@ static void CG_AddExplosion(localEntity_t *ex)
 	ent = &ex->refEntity;
 
 	// add the entity
-	// RF, don't add if shader is invalid
+	// don't add if shader is invalid
 	if (ent->customShader >= 0)
 	{
 		trap_R_AddRefEntityToScene(ent);
@@ -1629,7 +1628,7 @@ static void CG_AddExplosion(localEntity_t *ex)
 			light = 1.0 - (light - 0.5) * 2;
 		}
 		light = ex->light * light;
-		//% trap_R_AddLightToScene(ent->origin, light, ex->lightColor[0], ex->lightColor[1], ex->lightColor[2], 0 );
+
 		trap_R_AddLightToScene(ent->origin, 512, light, ex->lightColor[0], ex->lightColor[1], ex->lightColor[2], 0, 0);
 	}
 }
@@ -1760,7 +1759,7 @@ void CG_AddLocalEntities(void)
 			CG_AddExplosion(le);
 			break;
 
-		case LE_FRAGMENT:           // gibs and brass
+		case LE_FRAGMENT:               // gibs and brass
 			CG_AddFragment(le);
 			break;
 
@@ -1772,11 +1771,11 @@ void CG_AddLocalEntities(void)
 			CG_AddFadeRGB(le);
 			break;
 
-		case LE_FALL_SCALE_FADE: // gib blood trails
+		case LE_FALL_SCALE_FADE:        // gib blood trails
 			CG_AddFallScaleFade(le);
 			break;
 
-		case LE_SCALE_FADE:     // rocket trails
+		case LE_SCALE_FADE:             // rocket trails
 			CG_AddScaleFade(le);
 			break;
 
