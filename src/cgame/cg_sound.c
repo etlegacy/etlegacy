@@ -39,13 +39,13 @@
 #define FILE_HASH_SIZE          1024
 static soundScript_t *hashTable[FILE_HASH_SIZE];
 
-#define MAX_SOUND_SCRIPTS       4096
+#define MAX_SOUND_SCRIPTS       1024 // decreased from 4096  - we never reach more than 500 sounds
 static soundScript_t soundScripts[MAX_SOUND_SCRIPTS];
 int                  numSoundScripts = 0;
 
-#define MAX_SOUND_SCRIPT_SOUNDS 8192
+#define MAX_SOUND_SCRIPT_SOUNDS 4096 // decreased from 8096 - engine hashes 4096 total sounds - see MAX_SFX
 static soundScriptSound_t soundScriptSounds[MAX_SOUND_SCRIPT_SOUNDS];
-int                       numSoundScriptSounds = 0;
+int                  numSoundScriptSounds = 0;
 
 /*
 ================
@@ -54,12 +54,10 @@ return a hash value for the filename
 */
 static long generateHashValue(const char *fname)
 {
-	int  i;
-	long hash;
+	int  i = 0;
+	long hash = 0;
 	char letter;
 
-	hash = 0;
-	i    = 0;
 	while (fname[i] != '\0')
 	{
 		letter = tolower(fname[i]);
@@ -148,7 +146,7 @@ CG_SoundPickOldestRandomSound
 */
 int CG_SoundPickOldestRandomSound(soundScript_t *sound, vec3_t org, int entnum)
 {
-	int                oldestTime = 0; // TTimo: init
+	int                oldestTime = 0;
 	soundScriptSound_t *oldestSound;
 	soundScriptSound_t *scriptSound;
 
@@ -312,15 +310,11 @@ CG_SoundParseSounds
 */
 static void CG_SoundParseSounds(char *filename, char *buffer)
 {
-	char               *token, **text;
+	char               *token, **text = &buffer;
 	long               hash;
 	soundScript_t      sound;           // the current sound being read
 	soundScriptSound_t *scriptSound = NULL;
-	qboolean           inSound, wantSoundName;
-
-	inSound       = qfalse;
-	wantSoundName = qtrue;
-	text          = &buffer;
+	qboolean           inSound = qfalse, wantSoundName = qtrue;
 
 	while (1)
 	{
@@ -486,7 +480,7 @@ CG_SoundLoadSoundFiles
 */
 extern char bigTextBuffer[100000];  // we got it anyway, might as well use it
 
-#define MAX_SOUND_FILES     128
+#define MAX_SOUND_FILES     16 // decreased from 128 - ET uses 3! (2 x team voice & map)
 static void CG_SoundLoadSoundFiles(void)
 {
 	char         soundFiles[MAX_SOUND_FILES][MAX_QPATH];
@@ -585,8 +579,7 @@ void CG_SoundInit(void)
 	}
 	else
 	{
-		CG_Printf("\n.........................\n"
-		          "Initializing Sound Scripts\n");
+		CG_Printf("\n.........................\nInitializing Sound Scripts\n");
 		CG_SoundLoadSoundFiles();
 		CG_Printf("done.\n");
 	}
