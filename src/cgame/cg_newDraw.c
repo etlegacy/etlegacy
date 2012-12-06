@@ -33,54 +33,7 @@
 
 #include "cg_local.h"
 
-int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeight, qboolean dodrawpic, qboolean leftAlign);        // NERVE - SMF
-
-/*void CG_FitTextToWidth( char* instr, int w, int size) {
-    char buffer[1024];
-    char    *s, *p, *c, *ls;
-    int     l;
-
-    strcpy(buffer, instr);
-    memset(instr, 0, size);
-
-    c = s = instr;
-    p = buffer;
-    ls = NULL;
-    l = 0;
-    while(*p) {
-        *c = *p++;
-        l++;
-
-        if(*c == ' ') {
-            ls = c;
-        } // store last space, to try not to break mid word
-
-        c++;
-
-        if(*p == '\n') {
-            s = c+1;
-            l = 0;
-        } else if(l > w) {
-            if(ls) {
-                *ls = '\n';
-                l = strlen(ls+1);
-            } else {
-                *c = *(c-1);
-                *(c-1) = '\n';
-                s = c++;
-                l = 0;
-            }
-
-            ls = NULL;
-        }
-    }
-
-    if(c != buffer && (*(c-1) != '\n')) {
-        *c++ = '\n';
-    }
-
-    *c = '\0';
-}*/
+int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeight, qboolean dodrawpic, qboolean leftAlign);
 
 int CG_TrimLeftPixels(char *instr, float scale, float w, int size)
 {
@@ -434,7 +387,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	float     *color;
 	qhandle_t icon, icon2 = 0;
 	float     scale, halfscale;
-	//qboolean  redbar = qfalse;
 	qboolean yellowbar = qfalse;
 	float    middle    = rect->x + cgs.wideXoffset;
 
@@ -490,22 +442,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		break;
 	case HINT_CHAIR:
 		icon = cgs.media.notUsableHintShader;
-
-		// only show 'pickupable' if you're not armed, or are armed with a single handed weapon
-
-		// rain - WEAPS_ONE_HANDED isn't valid anymore, because
-		// WP_SILENCED_COLT uses a bit >31 (and, therefore, is too large
-		// to be shifted in the way WEAPS_ONE_HANDED does on a 32-bit
-		// system.) If you want to use HINT_CHAIR, you'll need to fix
-		// this.
-#if 0
-		if (!(cg.predictedPlayerState.weapon) ||
-		    WEAPS_ONE_HANDED & (1 << (cg.predictedPlayerState.weapon))
-		    )
-		{
-			icon = cgs.media.chairHintShader;
-		}
-#endif
 		break;
 	case HINT_ALARM:
 		icon = cgs.media.alarmHintShader;
@@ -570,7 +506,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	case HINT_PLYR_UNKNOWN:
 		return;
 
-	// DHM - Nerve :: multiplayer hints
+	// multiplayer hints
 	case HINT_BUILD:
 		icon = cgs.media.buildHintShader;
 		break;
@@ -585,7 +521,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		break;
 
 	case HINT_LOCKPICK:
-		icon      = cgs.media.doorLockHintShader;       // TAT 1/30/2003 - use the locked door hint cursor
+		icon      = cgs.media.doorLockHintShader;       // use the locked door hint cursor
 		yellowbar = qtrue;      // draw the status bar in yellow so it shows up better
 		break;
 
@@ -659,24 +595,9 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	}
 }
 
-float CG_GetValue(int ownerDraw, int type)
+float CG_GetValue(int ownerDraw, int type) // FIXME: what's this ??
 {
-	switch (ownerDraw)
-	{
-	default:
-		break;
-	}
 	return -1;
-}
-
-qboolean CG_OtherTeamHasFlag()
-{
-	return qfalse;
-}
-
-qboolean CG_YourTeamHasFlag()
-{
-	return qfalse;
 }
 
 // THINKABOUTME: should these be exclusive or inclusive..
