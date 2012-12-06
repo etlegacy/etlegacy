@@ -773,7 +773,7 @@ qboolean FS_IsPure(void);
 
 unsigned int FS_ChecksumOSPath(char *OSPath);
 
-qboolean FS_Unzip(char *filename);
+qboolean FS_Unzip(char *filename, qboolean quiet);
 
 /*
 ==============================================================

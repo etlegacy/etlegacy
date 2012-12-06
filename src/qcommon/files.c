@@ -4569,10 +4569,11 @@ unsigned int FS_ChecksumOSPath(char *OSPath)
 /**
  * @brief Extracts zipped file into the current gamedir
  * @param[in] filename to extract
+ * @param[in] qboolean whether to inform if file is not a zip
  * @retval qtrue    if successfully extracted
  * @retval qfalse   if extraction failed
  */
-qboolean FS_Unzip(char *filename)
+qboolean FS_Unzip(char *filename, qboolean quiet)
 {
 	char            zipPath[MAX_OSPATH];
 	unzFile         zipFile;
@@ -4585,7 +4586,10 @@ qboolean FS_Unzip(char *filename)
 
 	if (!zipFile)
 	{
-		Com_Printf(S_COLOR_RED "ERROR: not a zip file (%s).\n", zipPath);
+		if (!quiet || fs_debug->integer)
+		{
+			Com_Printf(S_COLOR_RED "ERROR: not a zip file (%s).\n", zipPath);
+		}
 		return qfalse;
 	}
 
@@ -4593,7 +4597,10 @@ qboolean FS_Unzip(char *filename)
 
 	if (err != UNZ_OK)
 	{
-		Com_Printf(S_COLOR_RED "ERROR: unable to unzip file (%s).\n", zipPath);
+		if (fs_debug->integer)
+		{
+			Com_Printf(S_COLOR_RED "FS_Unzip: unable to unzip file (%s).\n", zipPath);
+		}
 		return qfalse;
 	}
 
@@ -4612,7 +4619,11 @@ qboolean FS_Unzip(char *filename)
 
 		if (newFilePath[strlen(newFilePath) - 1] == PATH_SEP)
 		{
-			Com_DPrintf("FS_Unzip: Creating directory %s...\n", newFilePath);
+			if (fs_debug->integer)
+			{
+				Com_Printf("FS_Unzip: Creating directory %s...\n", newFilePath);
+			}
+
 			if (FS_CreatePath(newFilePath))
 			{
 				Com_Printf(S_COLOR_RED "ERROR: Unable to create directory (%s).\n", newFilePath);
@@ -4621,7 +4632,10 @@ qboolean FS_Unzip(char *filename)
 		}
 		else
 		{
-			Com_DPrintf("FS_Unzip: Extracting %s...\n", newFilePath);
+			if (fs_debug->integer)
+			{
+				Com_Printf("FS_Unzip: Extracting %s...\n", newFilePath);
+			}
 
 			newFile = fopen(newFilePath, "wb");
 			if (!newFile)
