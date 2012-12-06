@@ -1990,7 +1990,6 @@ typedef struct cgs_s
 	clientLocation_t clientLocation[MAX_CLIENTS];
 
 	// screen adjustments
-	float aspectratio;                  // game window rect width/height ratio
 	float aspectratio1;                 // 1 / aspectratio
 	float adr43;                        // aspectratio / RATIO43
 	float r43da;                        // RATIO43 / aspectratio

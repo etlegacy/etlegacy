@@ -49,7 +49,7 @@ void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 	*w *= cgs.screenXScale;
 	*h *= cgs.screenYScale;
 	// adjust x-coordinate and width
-	if (cgs.aspectratio != RATIO43)
+	if (cgs.glconfig.windowAspect != RATIO43)
 	{
 		*x *= cgs.r43da;    // * ((4/3) / aspectratio);
 		*w *= cgs.r43da;    // * ((4/3) / aspectratio);
@@ -58,17 +58,17 @@ void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 
 qboolean Ccg_Is43Screen(void)
 {
-	return (cgs.aspectratio == RATIO43);
+	return (cgs.glconfig.windowAspect == RATIO43);
 }
 
 float Ccg_WideX(float x)
 {
-	return (cgs.aspectratio == RATIO43) ? x : x *cgs.adr43; // * (aspectratio / (4/3))
+	return (cgs.glconfig.windowAspect == RATIO43) ? x : x *cgs.adr43; // * (aspectratio / (4/3))
 }
 
 float Ccg_WideXoffset(void)
 {
-	return (cgs.aspectratio == RATIO43) ? 0.0f : ((640.0f * cgs.adr43) - 640.0f) * 0.5f;
+	return (cgs.glconfig.windowAspect == RATIO43) ? 0.0f : ((640.0f * cgs.adr43) - 640.0f) * 0.5f;
 }
 
 /*
