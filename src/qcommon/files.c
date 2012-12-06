@@ -4529,47 +4529,10 @@ qboolean FS_VerifyPak(const char *pak)
 	return qfalse;
 }
 
-qboolean FS_IsPure(void)
-{
-	return fs_numServerPaks != 0;
-}
-
-unsigned int FS_ChecksumOSPath(char *OSPath)
-{
-	FILE         *f;
-	int          len;
-	byte         *buf;
-	unsigned int checksum;
-
-	f = fopen(OSPath, "rb");
-	if (!f)
-	{
-		return (unsigned int)-1;
-	}
-	fseek(f, 0, SEEK_END);
-	len = ftell(f);
-	fseek(f, 0, SEEK_SET);
-
-	buf = malloc(len);
-	if (fread(buf, 1, len, f) != len)
-	{
-		Com_Error(ERR_FATAL, "FS_ChecksumOSPath: short read\n");
-	}
-	fclose(f);
-
-	// Com_BlockChecksum returns an indian-dependent value
-	// (better fix would have to be doing the LittleLong inside that function..)
-	checksum = LittleLong(Com_BlockChecksum(buf, len));
-
-	free(buf);
-
-	return checksum;
-}
-
 /**
  * @brief Extracts zipped file into the current gamedir
  * @param[in] filename to extract
- * @param[in] qboolean whether to inform if file is not a zip
+ * @param[in] qboolean whether to inform if unzipping fails
  * @retval qtrue    if successfully extracted
  * @retval qfalse   if extraction failed
  */
@@ -4597,7 +4560,7 @@ qboolean FS_Unzip(char *filename, qboolean quiet)
 
 	if (err != UNZ_OK)
 	{
-		if (fs_debug->integer)
+		if (!quiet || fs_debug->integer)
 		{
 			Com_Printf(S_COLOR_RED "FS_Unzip: unable to unzip file (%s).\n", zipPath);
 		}
