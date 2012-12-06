@@ -104,17 +104,15 @@ static int  allocPoint, outOfMemory;
 // convert rectangle-coordinates for use with the current aspectratio.
 void Cui_WideRect(Rectangle *rect)
 {
-	float aspectratio = (float)(DC->glconfig.vidWidth) / DC->glconfig.vidHeight;
-
 	rect->x *= DC->xscale;
 	rect->y *= DC->yscale;
 	rect->w *= DC->xscale;
 	rect->h *= DC->yscale;
 
-	if (aspectratio != RATIO43)
+	if (DC->glconfig.windowAspect != RATIO43)
 	{
-		rect->x *= RATIO43 / aspectratio;
-		rect->w *= RATIO43 / aspectratio;
+		rect->x *= RATIO43 / DC->glconfig.windowAspect;
+		rect->w *= RATIO43 / DC->glconfig.windowAspect;
 	}
 }
 
@@ -122,17 +120,13 @@ void Cui_WideRect(Rectangle *rect)
 // (if the current aspectratio is 4:3, then leave the x-coordinate unchanged)
 float Cui_WideX(float x)
 {
-	float aspectratio = (float)(DC->glconfig.vidWidth) / DC->glconfig.vidHeight;
-
-	return (aspectratio == RATIO43) ? x : x * (aspectratio * RPRATIO43); // aspectratio / (4/3)
+	return (DC->glconfig.windowAspect == RATIO43) ? x : x * (DC->glconfig.windowAspect * RPRATIO43); // aspectratio / (4/3)
 }
 
 // the horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
 float Cui_WideXoffset(void)
 {
-	float aspectratio = (float)(DC->glconfig.vidWidth) / DC->glconfig.vidHeight;
-
-	return (aspectratio == RATIO43) ? 0.0f : ((640.0f * (aspectratio * RPRATIO43)) - 640.0f) * 0.5f;
+	return (DC->glconfig.windowAspect == RATIO43) ? 0.0f : ((640.0f * (DC->glconfig.windowAspect * RPRATIO43)) - 640.0f) * 0.5f;
 }
 
 void Tooltip_Initialize(itemDef_t *item)
@@ -228,12 +222,10 @@ return a hash value for the string
 */
 static long hashForString(const char *str)
 {
-	int  i;
-	long hash;
+	int  i    = 0;
+	long hash = 0;
 	char letter;
 
-	hash = 0;
-	i    = 0;
 	while (str[i] != '\0')
 	{
 		letter = tolower(str[i]);
@@ -625,7 +617,6 @@ void Fade(int *flags, float *f, float clamp, int *nextTime, int offsetTime, qboo
 
 void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 {
-	//float bordersize = 0;
 	vec4_t    color;
 	rectDef_t fillRect = w->rect;
 
@@ -946,7 +937,7 @@ qboolean Rect_ContainsPoint(rectDef_t *rect, float x, float y)
 		// correction for widescreen cursor coordinates..
 		x = Cui_WideX(x);
 
-		if (x > rect->x && x < rect->x + rect->w && y > rect->y && y < rect->y + rect->h)
+		if (x > Cui_WideX(rect->x) && x < Cui_WideX(rect->x + rect->w) && y > rect->y && y < rect->y + rect->h)
 		{
 			return qtrue;
 		}
@@ -1035,6 +1026,7 @@ void Script_SetColor(itemDef_t *item, qboolean *bAbort, char **args)
 	int        i;
 	float      f = 0.0f;
 	vec4_t     *out;
+
 	// expecting type of color to set and 4 args for the color
 	if (String_Parse(args, &name))
 	{
@@ -1071,6 +1063,7 @@ void Script_SetColor(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_SetAsset(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name;
+
 	// expecting name to set asset to
 	if (String_Parse(args, &name))
 	{
@@ -1084,6 +1077,7 @@ void Script_SetAsset(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_SetBackground(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
+
 	// expecting name to set asset to
 	if (String_Parse(args, &name))
 	{
@@ -1117,6 +1111,7 @@ void Script_SetTeamColor(itemDef_t *item, qboolean *bAbort, char **args)
 	{
 		int    i;
 		vec4_t color;
+
 		DC->getTeamColor(&color);
 		for (i = 0; i < 4; i++)
 		{
@@ -1148,6 +1143,7 @@ void Script_SetItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 		for (j = 0; j < count; j++)
 		{
 			item2 = Menu_GetMatchingItemByNumber(item->parent, j, itemname);
+
 			if (item2 != NULL)
 			{
 				out = NULL;
@@ -1381,6 +1377,7 @@ void Menus_CloseByName(const char *p)
 void Menus_CloseAll()
 {
 	int i;
+
 	for (i = 0; i < menuCount; i++)
 	{
 		Menu_RunCloseScript(&Menus[i]);
@@ -1400,6 +1397,7 @@ void Script_Show(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_Hide(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
+
 	if (String_Parse(args, &name))
 	{
 		Menu_ShowItemByName(item->parent, name, qfalse);
@@ -1409,6 +1407,7 @@ void Script_Hide(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_FadeIn(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
+
 	if (String_Parse(args, &name))
 	{
 		Menu_FadeItemByName(item->parent, name, qfalse);
@@ -1418,6 +1417,7 @@ void Script_FadeIn(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_FadeOut(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
+
 	if (String_Parse(args, &name))
 	{
 		Menu_FadeItemByName(item->parent, name, qtrue);
@@ -1427,6 +1427,7 @@ void Script_FadeOut(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_Open(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
+
 	if (String_Parse(args, &name))
 	{
 		Menus_OpenByName(name);
@@ -1461,6 +1462,7 @@ void Menu_FadeMenuByName(const char *p, qboolean *bAbort, qboolean fadeOut)
 void Script_FadeInMenu(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
+
 	if (String_Parse(args, &name))
 	{
 		Menu_FadeMenuByName(name, bAbort, qfalse);
@@ -1470,6 +1472,7 @@ void Script_FadeInMenu(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_FadeOutMenu(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
+
 	if (String_Parse(args, &name))
 	{
 		Menu_FadeMenuByName(name, bAbort, qtrue);
@@ -1822,6 +1825,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_Close(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
+
 	if (String_Parse(args, &name))
 	{
 		Menus_CloseByName(name);
@@ -1836,6 +1840,7 @@ void Script_CloseAll(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_CloseAllOtherMenus(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	int i;
+
 	for (i = 0; i < menuCount; i++)
 	{
 		if (&Menus[i] == item->parent)
@@ -1915,6 +1920,7 @@ void Menu_OrbitItemByName(menuDef_t *menu, const char *p, float x, float y, floa
 	itemDef_t *item;
 	int       i;
 	int       count = Menu_ItemsMatchingGroup(menu, p);
+
 	for (i = 0; i < count; i++)
 	{
 		item = Menu_GetMatchingItemByNumber(menu, i, p);
@@ -2033,6 +2039,7 @@ void Script_CopyCvar(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_Exec(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *val = NULL;
+
 	if (String_Parse(args, &val))
 	{
 		DC->executeText(EXEC_APPEND, va("%s ; ", val));
@@ -2042,6 +2049,7 @@ void Script_Exec(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_ExecNOW(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *val = NULL;
+
 	if (String_Parse(args, &val))
 	{
 		DC->executeText(EXEC_NOW, va("%s ; ", val));
@@ -2051,6 +2059,7 @@ void Script_ExecNOW(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_Play(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *val = NULL;
+
 	if (String_Parse(args, &val))
 	{
 		DC->startLocalSound(DC->registerSound(val, qfalse), CHAN_LOCAL_SOUND);          // all sounds are not 3d
@@ -2060,6 +2069,7 @@ void Script_Play(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_playLooped(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *val = NULL;
+
 	if (String_Parse(args, &val))
 	{
 		DC->stopBackgroundTrack();
@@ -2134,7 +2144,7 @@ qboolean Script_CheckProfile(char *profile_path)
 
 	if (trap_FS_FOpenFile(profile_path, &f, FS_READ) < 0)
 	{
-		//no profile found, we're ok
+		// no profile found, we're ok
 		return qtrue;
 	}
 
@@ -2151,7 +2161,7 @@ qboolean Script_CheckProfile(char *profile_path)
 		return qfalse;
 	}
 
-	//we're all ok
+	// we're all ok
 	trap_FS_FCloseFile(f);
 	return qtrue;
 }
@@ -2246,7 +2256,7 @@ void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 				DC->startLocalSound(DC->Assets.itemFocusSound, CHAN_LOCAL_SOUND);
 			}
 
-			// NERVE - SMF - reset scroll offset so we can see what we're editing
+			// reset scroll offset so we can see what we're editing
 			if (editPtr)
 			{
 				editPtr->paintOffset = 0;
@@ -2258,7 +2268,7 @@ void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 
 			// the stupidest idea ever, let's just override the console, every ui element, user choice, etc
 			// nuking this
-			//% DC->setOverstrikeMode(qtrue);
+			//DC->setOverstrikeMode(qtrue);
 		}
 	}
 }
@@ -2279,7 +2289,7 @@ commandDef_t commandList[] =
 	{ "fadeinmenu",         &Script_FadeInMenu         }, // menu
 	{ "fadeoutmenu",        &Script_FadeOutMenu        }, // menu
 
-	{ "conditionalopen",    &Script_ConditionalOpen    }, // DHM - Nerve:: cvar menu menu
+	{ "conditionalopen",    &Script_ConditionalOpen    }, // cvar menu menu
 	// opens first menu if cvar is true[non-zero], second if false
 	{ "conditionalscript",  &Script_ConditionalScript  }, // as conditonalopen, but then executes scripts
 
@@ -2307,9 +2317,9 @@ commandDef_t commandList[] =
 	{ "play",               &Script_Play               }, // group/name
 	{ "playlooped",         &Script_playLooped         }, // group/name
 	{ "orbit",              &Script_Orbit              }, // group/name
-	{ "addlistitem",        &Script_AddListItem        }, // NERVE - SMF - special command to add text items to list box
-	{ "checkautoupdate",    &Script_CheckAutoUpdate    }, // DHM - Nerve
-	{ "getautoupdate",      &Script_GetAutoUpdate      }, // DHM - Nerve
+	{ "addlistitem",        &Script_AddListItem        }, // special command to add text items to list box
+	{ "checkautoupdate",    &Script_CheckAutoUpdate    }, //
+	{ "getautoupdate",      &Script_GetAutoUpdate      }, //
 	{ "setmenufocus",       &Script_SetMenuFocus       }, // focus menu
 	{ "execwolfconfig",     &Script_ExecWolfConfig     }, // executes etconfig.cfg
 	{ "setEditFocus",       &Script_SetEditFocus       },
@@ -4044,7 +4054,7 @@ itemDef_t *Menu_SetNextCursorItem(menuDef_t *menu)
 	{
 
 		menu->cursorItem++;
-		if (menu->cursorItem >= menu->itemCount)      // (SA) had a problem 'tabbing' in dialogs with only one possible button
+		if (menu->cursorItem >= menu->itemCount)      // had a problem 'tabbing' in dialogs with only one possible button
 		{
 			if (!wrapped)
 			{
@@ -4098,6 +4108,7 @@ static void Menu_CloseCinematics(menuDef_t *menu)
 static void Display_CloseCinematics(void)
 {
 	int i;
+
 	for (i = 0; i < menuCount; i++)
 	{
 		Menu_CloseCinematics(&Menus[i]);
@@ -8096,6 +8107,7 @@ Menu Keyword Parse functions
 qboolean MenuParse_name(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
+
 	if (!PC_String_Parse(handle, &menu->window.name))
 	{
 		return qfalse;
@@ -8111,6 +8123,7 @@ qboolean MenuParse_name(itemDef_t *item, int handle)
 qboolean MenuParse_fullscreen(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
+
 	union
 	{
 		qboolean b;
@@ -8128,12 +8141,14 @@ qboolean MenuParse_fullscreen(itemDef_t *item, int handle)
 qboolean MenuParse_rect(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
+
 	return(PC_Rect_Parse(handle, &menu->window.rect));
 }
 
 qboolean MenuParse_style(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
+
 	if (!PC_Int_Parse(handle, &menu->window.style))
 	{
 		return qfalse;
@@ -8170,6 +8185,7 @@ qboolean MenuParse_onOpen(itemDef_t *item, int handle)
 qboolean MenuParse_onClose(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
+
 	if (!PC_Script_Parse(handle, &menu->onClose))
 	{
 		return qfalse;
@@ -8180,6 +8196,7 @@ qboolean MenuParse_onClose(itemDef_t *item, int handle)
 qboolean MenuParse_onESC(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
+
 	if (!PC_Script_Parse(handle, &menu->onESC))
 	{
 		return qfalse;
@@ -8190,6 +8207,7 @@ qboolean MenuParse_onESC(itemDef_t *item, int handle)
 qboolean MenuParse_onEnter(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
+
 	if (!PC_Script_Parse(handle, &menu->onEnter))
 	{
 		return qfalse;
@@ -8216,6 +8234,7 @@ qboolean MenuParse_onTimeout(itemDef_t *item, int handle)
 qboolean MenuParse_border(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
+
 	if (!PC_Int_Parse(handle, &menu->window.border))
 	{
 		return qfalse;
@@ -8226,6 +8245,7 @@ qboolean MenuParse_border(itemDef_t *item, int handle)
 qboolean MenuParse_borderSize(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
+
 	if (!PC_Float_Parse(handle, &menu->window.borderSize))
 	{
 		return qfalse;
@@ -8308,6 +8328,7 @@ qboolean MenuParse_disablecolor(itemDef_t *item, int handle)
 	int       i;
 	float     f     = 0.0f;
 	menuDef_t *menu = (menuDef_t *)item;
+
 	for (i = 0; i < 4; i++)
 	{
 		if (!PC_Float_Parse(handle, &f))
@@ -8322,6 +8343,7 @@ qboolean MenuParse_disablecolor(itemDef_t *item, int handle)
 qboolean MenuParse_outlinecolor(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
+
 	if (!PC_Color_Parse(handle, &menu->window.outlineColor))
 	{
 		return qfalse;
@@ -8677,6 +8699,7 @@ menuDef_t *Menu_Get(int handle)
 void Menu_PaintAll()
 {
 	int i;
+
 	if (captureFunc)
 	{
 		captureFunc(captureData);
@@ -8741,8 +8764,6 @@ qboolean Display_MouseMove(void *p, int x, int y)
 	int       i;
 	menuDef_t *menu = p;
 
-//  menu = Menu_GetFocused();
-
 	if (menu == NULL)
 	{
 		menu = Menu_GetFocused();
@@ -8771,6 +8792,7 @@ qboolean Display_MouseMove(void *p, int x, int y)
 int Display_CursorType(int x, int y)
 {
 	int i;
+
 	for (i = 0; i < menuCount; i++)
 	{
 		rectDef_t r2;
@@ -8788,6 +8810,7 @@ int Display_CursorType(int x, int y)
 void Display_HandleKey(int key, qboolean down, int x, int y)
 {
 	menuDef_t *menu = Display_CaptureItem(x, y);
+
 	if (menu == NULL)
 	{
 		menu = Menu_GetFocused();
@@ -8823,7 +8846,9 @@ static void Menu_CacheContents(menuDef_t *menu)
 	if (menu)
 	{
 		int i;
+
 		Window_CacheContents(&menu->window);
+
 		for (i = 0; i < menu->itemCount; i++)
 		{
 			Item_CacheContents(menu->items[i]);
@@ -8898,7 +8923,7 @@ static qboolean Menu_OverActiveItem(menuDef_t *menu, float x, float y)
 =================
 PC_String_Parse_Trans
 
-NERVE - SMF - translates string
+  translates string
 =================
 */
 qboolean PC_String_Parse_Trans(int handle, const char **out)

@@ -45,6 +45,7 @@ Q_EXPORT void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
 int PASSFLOAT(float x)
 {
 	floatint_t fi;
+
 	fi.f = x;
 	return fi.i;
 }
@@ -84,6 +85,7 @@ void trap_Cvar_Set(const char *var_name, const char *value)
 float trap_Cvar_VariableValue(const char *var_name)
 {
 	floatint_t fi;
+
 	fi.i = syscall(UI_CVAR_VARIABLEVALUE, var_name);
 	return fi.f;
 }
@@ -255,17 +257,18 @@ void trap_UpdateScreen(void)
 
 int trap_CM_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex)
 {
-	return syscall(UI_CM_LERPTAG, tag, refent, tagName, 0);             // NEFVE - SMF - fixed
+	return syscall(UI_CM_LERPTAG, tag, refent, tagName, 0);
 }
 
 void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum)
 {
-	syscall(UI_S_STARTLOCALSOUND, sfx, channelNum, 127 /* Gordon: default volume always for the moment*/);
+	syscall(UI_S_STARTLOCALSOUND, sfx, channelNum, 127 /* default volume always for the moment*/);
 }
 
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 {
 	int i = syscall(UI_S_REGISTERSOUND, sample, qfalse /* compressed */);
+
 #ifdef DEBUG
 	if (i == 0)
 	{

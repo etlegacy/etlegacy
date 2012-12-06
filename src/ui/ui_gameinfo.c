@@ -44,11 +44,9 @@ UI_ParseInfos
 int UI_ParseInfos(char *buf, int max, char *infos[], int totalmax)
 {
 	char *token;
-	int  count;
+	int  count = 0;
 	char key[MAX_TOKEN_CHARS];
 	char info[MAX_INFO_STRING];
-
-	count = 0;
 
 	while (1)
 	{

@@ -264,7 +264,7 @@ typedef struct modelDef_s
 #define CVAR_HIDE       0x00000008
 #define CVAR_NOTOGGLE   0x00000010
 
-// OSP - "setting" flags for items
+// "setting" flags for items
 #define SVS_DISABLED_SHOW   0x01
 #define SVS_ENABLED_SHOW    0x02
 
@@ -280,7 +280,7 @@ typedef struct itemDef_s
 	float textalignx;               // ( optional ) text alignment x coord
 	float textaligny;               // ( optional ) text alignment x coord
 	float textscale;                // scale percentage from 72pts
-	int font;                       // (SA)
+	int font;                       //
 	int textStyle;                  // ( optional ) style, normal and shadowed are it for now
 	const char *text;   // display text
 	void *parent;                   // menu owner
@@ -290,7 +290,7 @@ typedef struct itemDef_s
 	const char *mouseEnter;         // mouse enter script
 	const char *mouseExit;          // mouse exit script
 	const char *action;             // select script
-	const char *onAccept;           // NERVE - SMF - run when the users presses the enter key
+	const char *onAccept;           // run when the users presses the enter key
 	const char *onFocus;            // select script
 	const char *leaveFocus;         // select script
 	const char *cvar;               // associated cvar
@@ -312,7 +312,7 @@ typedef struct itemDef_s
 	int hotkey;
 	const char *onKey;
 
-	// OSP - on-the-fly enable/disable of items
+	// on-the-fly enable/disable of items
 	int settingTest;
 	int settingFlags;
 	int voteFlag;
@@ -320,7 +320,7 @@ typedef struct itemDef_s
 	const char *onEsc;
 	const char *onEnter;
 
-	struct itemDef_s *toolTipData;  // OSP - Tag an item to this item for auto-help popups
+	struct itemDef_s *toolTipData;  // Tag an item to this item for auto-help popups
 
 } itemDef_t;
 
@@ -340,11 +340,11 @@ typedef struct
 	const char *onESC;              // run when the escape key is hit
 	const char *onEnter;            // run when the enter key is hit
 
-	int timeout;                    // ydnar: milliseconds until menu times out
-	int openTime;                   // ydnar: time menu opened
-	const char *onTimeout;          // ydnar: run when menu times out
+	int timeout;                    // milliseconds until menu times out
+	int openTime;                   // time menu opened
+	const char *onTimeout;          // run when menu times out
 
-	const char *onKey[255];         // NERVE - SMF - execs commands when a key is pressed
+	const char *onKey[255];         // execs commands when a key is pressed
 	const char *soundName;          // background loop sound for menu
 
 	vec4_t focusColor;              // focus color for items
@@ -474,7 +474,7 @@ typedef struct
 	void (*drawCinematic)(int handle, float x, float y, float w, float h);
 	void (*runCinematicFrame)(int handle);
 
-	// Gordon: campaign stuffs
+	// campaign stuffs
 	const char * (*descriptionForCampaign)(void);
 	const char * (*nameForCampaign)(void);
 	void (*add2dPolys)(polyVert_t *verts, int numverts, qhandle_t hShader);
@@ -539,37 +539,37 @@ qboolean Menus_CaptureFuncActive(void);
 
 displayContextDef_t *Display_GetContext(void);
 void *Display_CaptureItem(int x, int y);
-qboolean    Display_MouseMove(void *p, int x, int y);
-int         Display_CursorType(int x, int y);
-qboolean    Display_KeyBindPending(void);
-void        Menus_OpenByName(const char *p);
+qboolean Display_MouseMove(void *p, int x, int y);
+int Display_CursorType(int x, int y);
+qboolean Display_KeyBindPending(void);
+void Menus_OpenByName(const char *p);
 menuDef_t *Menus_FindByName(const char *p);
-void        Menus_ShowByName(const char *p);
-void        Menus_CloseByName(const char *p);
-void        Display_HandleKey(int key, qboolean down, int x, int y);
-void        LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
-void        Menus_CloseAll(void);
-void        Menu_Paint(menuDef_t *menu, qboolean forcePaint);
-void        Menu_SetFeederSelection(menuDef_t *menu, int feeder, int index, const char *name);
-void        Display_CacheAll(void);
+void Menus_ShowByName(const char *p);
+void Menus_CloseByName(const char *p);
+void Display_HandleKey(int key, qboolean down, int x, int y);
+void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
+void Menus_CloseAll(void);
+void Menu_Paint(menuDef_t *menu, qboolean forcePaint);
+void Menu_SetFeederSelection(menuDef_t *menu, int feeder, int index, const char *name);
+void Display_CacheAll(void);
 
 void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
 void *UI_Alloc(int size);
-void        UI_InitMemory(void);
-qboolean    UI_OutOfMemory(void);
+void UI_InitMemory(void);
+qboolean UI_OutOfMemory(void);
 
-void        Controls_GetConfig(void);
-void        Controls_SetConfig(qboolean restart);
-void        Controls_SetDefaults(qboolean lefthanded);
+void Controls_GetConfig(void);
+void Controls_SetConfig(qboolean restart);
+void Controls_SetDefaults(qboolean lefthanded);
 
-int         trap_PC_AddGlobalDefine(char *define);
-int         trap_PC_RemoveAllGlobalDefines(void);
-int         trap_PC_LoadSource(const char *filename);
-int         trap_PC_FreeSource(int handle);
-int         trap_PC_ReadToken(int handle, pc_token_t *pc_token);
-int         trap_PC_SourceFileAndLine(int handle, char *filename, int *line);
-int         trap_PC_UnReadToken(int handle);
+int trap_PC_AddGlobalDefine(char *define);
+int trap_PC_RemoveAllGlobalDefines(void);
+int trap_PC_LoadSource(const char *filename);
+int trap_PC_FreeSource(int handle);
+int trap_PC_ReadToken(int handle, pc_token_t *pc_token);
+int trap_PC_SourceFileAndLine(int handle, char *filename, int *line);
+int trap_PC_UnReadToken(int handle);
 
 // panelhandling
 

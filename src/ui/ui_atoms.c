@@ -35,7 +35,6 @@
 #include "ui_local.h"
 
 uiStatic_t uis;
-qboolean   m_entersound;            // after a frame, so caching won't disrupt the sound
 
 // these are here so the functions in q_shared.c can link
 #ifndef UI_HARD_LINKED
@@ -181,22 +180,6 @@ qboolean UI_ConsoleCommand(int realTime)
 	if (Q_stricmp(cmd, "ui_teamOrders") == 0)
 	{
 		//UI_TeamOrdersMenu_f();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "iamacheater") == 0)
-	{
-		int i;
-
-		// unlock all available levels and campaigns for SP
-		for (i = 0; i < uiInfo.campaignCount; i++)
-		{
-			if (uiInfo.campaignList[i].typeBits & (1 << GT_SINGLE_PLAYER))
-			{
-				uiInfo.campaignList[i].unlocked = qtrue;
-				uiInfo.campaignList[i].progress = uiInfo.campaignList[i].mapCount;
-			}
-		}
 		return qtrue;
 	}
 

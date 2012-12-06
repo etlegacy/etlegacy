@@ -730,11 +730,11 @@ static qboolean UI_RegisterClientSkin(playerInfo_t *pi, const char *modelName, c
 	char filename[MAX_QPATH];
 
 	//Com_sprintf( filename, sizeof( filename ), "models/players/%s/lower_%s.skin", modelName, skinName );
-	Com_sprintf(filename, sizeof(filename), "models/players/%s/body_%s.skin", modelName, skinName);          // NERVE - SMF - make this work with wolf
+	Com_sprintf(filename, sizeof(filename), "models/players/%s/body_%s.skin", modelName, skinName);          // make this work with wolf
 	pi->legsSkin = trap_R_RegisterSkin(filename);
 
 	//Com_sprintf( filename, sizeof( filename ), "models/players/%s/upper_%s.skin", modelName, skinName );
-	Com_sprintf(filename, sizeof(filename), "models/players/%s/body_%s.skin", modelName, skinName);      // NERVE - SMF - make this work with wolf
+	Com_sprintf(filename, sizeof(filename), "models/players/%s/body_%s.skin", modelName, skinName);      // make this work with wolf
 	pi->torsoSkin = trap_R_RegisterSkin(filename);
 
 	Com_sprintf(filename, sizeof(filename), "models/players/%s/head_%s.skin", modelName, skinName);
@@ -1201,7 +1201,7 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName)
 	// load cmodels before models so filecache works
 
 	//Com_sprintf( filename, sizeof( filename ), "models/players/%s/lower.md3", modelName );
-	Com_sprintf(filename, sizeof(filename), "models/players/%s/body.mds", modelName);     // NERVE - SMF - make this work with wolf
+	Com_sprintf(filename, sizeof(filename), "models/players/%s/body.mds", modelName);     //  make this work with wolf
 	pi->legsModel = trap_R_RegisterModel(filename);
 	if (!pi->legsModel)
 	{
@@ -1210,7 +1210,7 @@ qboolean UI_RegisterClientModelname(playerInfo_t *pi, const char *modelSkinName)
 	}
 
 	//Com_sprintf( filename, sizeof( filename ), "models/players/%s/upper.md3", modelName );
-	Com_sprintf(filename, sizeof(filename), "models/players/%s/body.mds", modelName);     // NERVE - SMF - make this work with wolf
+	Com_sprintf(filename, sizeof(filename), "models/players/%s/body.mds", modelName);     // make this work with wolf
 	pi->torsoModel = trap_R_RegisterModel(filename);
 	if (!pi->torsoModel)
 	{
