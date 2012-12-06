@@ -18,7 +18,11 @@ menuDef {
 	
 	onESC {
 		close credits_splashdamage ;
+#ifdef FUI
 		open main
+#else
+		open ingame_main
+#endif
 	}
 
 // Window //

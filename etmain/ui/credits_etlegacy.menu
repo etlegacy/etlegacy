@@ -18,7 +18,11 @@ menuDef {
 	
 	onESC {
 		close credits_etlegacy ;
+#ifdef FUI
 		open main
+#else
+		open ingame_main
+#endif
 	}
 
 // Window //
@@ -164,7 +168,13 @@ menuDef {
 
 
 // Buttons //
+#ifdef FUI
 	BUTTON( 25, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-350), 18, "BACK", .2, 14, close credits_etlegacy ; open main )
+#else
+	BUTTON( 25, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-350), 18, "BACK", .2, 14, close credits_etlegacy ; open ingame_main )
+		
+#endif
+	
 	BUTTON( 25+.33*(WINDOW_WIDTH-350)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-350), 18, "SPLASH DAMAGE", .2, 14, close credits_etlegacy ; open credits_splashdamage )
 	BUTTON( 25+.33*(WINDOW_WIDTH-350)+6+.34*(WINDOW_WIDTH-350)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-350), 18, "ID SOFTWARE", .2, 14, close credits_etlegacy ; open credits_idsoftware )
 	BUTTON( 25+.33*(WINDOW_WIDTH-350)+6+.703*(WINDOW_WIDTH-350)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-350), 18, "ACTIVISION", .2, 14, close credits_etlegacy ; open credits_activision )

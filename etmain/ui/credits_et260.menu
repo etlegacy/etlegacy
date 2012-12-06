@@ -24,7 +24,11 @@ menuDef {
 	
 	onESC {
 		close credits_et260 ;
-		open MAIN_MENU
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif
 	}
 
 // Window //
