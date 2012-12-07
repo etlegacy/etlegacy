@@ -231,7 +231,6 @@ qboolean G_ScriptAction_ShaderRemap(gentity_t *ent, char *params)
 	Q_strncpyz(newShader, token, 256);
 
 	AddRemap(oldShader, newShader, f);
-//  trap_SetConfigstring(CS_SHADERSTATE, BuildShaderStateConfig());
 
 	return qtrue;
 }
@@ -3788,6 +3787,7 @@ qboolean G_ScriptAction_SetRoundTimelimit(gentity_t *ent, char *params)
 		if (g_userTimeLimit.integer)
 		{
 			int timelimit = g_userTimeLimit.integer < 3 ? 3 : g_userTimeLimit.integer;
+
 			trap_Cvar_Set("timelimit", va("%i", timelimit));
 		}
 		else

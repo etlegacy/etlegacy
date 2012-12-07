@@ -247,20 +247,19 @@ static void CG_CalcVrect(void)
 
 		CG_AdjustFrom640(&x, &y, &w, &h);
 
-		cg.refdef.x = x;
-		cg.refdef.y = y;
+		cg.refdef.x      = x;
+		cg.refdef.y      = y;
+		cg.refdef.width  = w;
+		cg.refdef.height = h;
+
+		CG_Letterbox((LIMBO_3D_W / 640.f) * 100, (LIMBO_3D_H / 480.f) * 100, qfalse);
+
 		// the limbopanel objective camera is always rendered at a 4:3 aspectratio ...
 		if (!Ccg_Is43Screen())
 		{
 			cg.refdef.width *= cgs.r43da;
 		}
-		else
-		{
-			cg.refdef.width = w;
-		}
-		cg.refdef.height = h;
 
-		CG_Letterbox((LIMBO_3D_W / 640.f) * 100, (LIMBO_3D_H / 480.f) * 100, qfalse);
 		return;
 	}
 

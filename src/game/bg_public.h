@@ -29,7 +29,7 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
  * @file bg_public.h
- * @brief definitions shared by both the server game and client game modules
+ * @brief definitions shared by both the server game and client game modules. (server.h includes this)
  */
 
 /*
@@ -64,7 +64,7 @@
 #define ITEM_RADIUS         10      // item sizes are needed for client side pickup detection
                                     // Rafael changed the radius so that the items would fit in the 3 new containers
 
-#define FLAMETHROWER_RANGE  2500    // DHM - Nerve :: multiplayer range, was 850 in SP
+#define FLAMETHROWER_RANGE  2500    // multiplayer range, was 850 in SP
 
 #define VOTE_TIME           30000   // 30 seconds before vote times out
 
@@ -79,7 +79,7 @@ extern vec3_t playerlegsProneMaxs;
 
 #define MAX_COMMANDMAP_LAYERS   16
 
-// RF, on fire effects
+// on fire effects
 #define FIRE_FLASH_TIME         2000
 #define FIRE_FLASH_FADEIN_TIME  1000
 
@@ -106,7 +106,7 @@ extern vec3_t playerlegsProneMaxs;
 #define SAY_BUDDY   2
 #define SAY_TEAMNL  3
 
-// RF, client damage identifiers
+// client damage identifiers
 
 // Arnout: different entity states
 typedef enum
@@ -132,7 +132,7 @@ typedef enum
 
 #define MAX_TAGCONNECTS     64
 
-// (SA) zoom sway values
+// zoom sway values
 #define ZOOM_PITCH_AMPLITUDE        0.13f
 #define ZOOM_PITCH_FREQUENCY        0.24f
 #define ZOOM_PITCH_MIN_AMPLITUDE    0.1f        // minimum amount of sway even if completely settled on target
@@ -410,8 +410,8 @@ typedef struct
 
 	int jumpTime;                   // used in MP to prevent jump accel
 
-	int weapAnimTimer;              // don't change low priority animations until this runs out		//----(SA)	added
-	int silencedSideArm;            // Gordon: Keep track of whether the luger/colt is silenced "in holster", prolly want to do this for the kar98 etc too
+	int weapAnimTimer;              // don't change low priority animations until this runs out
+	int silencedSideArm;            // Keep track of whether the luger/colt is silenced "in holster", prolly want to do this for the kar98 etc too
 	int sprintTime;
 
 	int airleft;
@@ -425,9 +425,9 @@ typedef struct
 	int proneGroundTime;            // time a prone player last had ground under him
 	float proneLegsOffset;          // offset legs bounding box
 
-	vec3_t mountedWeaponAngles;         // mortar, mg42 (prone), etc
+	vec3_t mountedWeaponAngles;     // mortar, mg42 (prone), etc
 
-	int weapRecoilTime;             // Arnout: time at which a weapon that has a recoil kickback has been fired last
+	int weapRecoilTime;             // time at which a weapon that has a recoil kickback has been fired last
 	int weapRecoilDuration;
 	float weapRecoilYaw;
 	float weapRecoilPitch;
@@ -451,7 +451,7 @@ typedef struct
 	int tracemask;                  // collide against these types of surfaces
 	int debugLevel;                 // if set, diagnostic output will be printed
 	qboolean noFootsteps;           // if the game is setup for no footsteps by the server
-	qboolean noWeapClips;               // if the game is setup for no weapon clips by the server
+	qboolean noWeapClips;           // if the game is setup for no weapon clips by the server
 	qboolean gauntletHit;           // true if a gauntlet attack would actually hit something
 
 	int gametype;
@@ -514,10 +514,11 @@ typedef enum
 	STAT_DEAD_YAW,                  // look this direction when dead (FIXME: get rid of?)
 	STAT_CLIENTS_READY,             // bit mask of clients wishing to exit the intermission (FIXME: configstring?)
 	STAT_MAX_HEALTH,                // health / armor limit, changable by handicap
-	STAT_PLAYER_CLASS,              // DHM - Nerve :: player class in multiplayer
-	STAT_CAPTUREHOLD_RED,           // JPW NERVE - red team score
-	STAT_CAPTUREHOLD_BLUE,          // JPW NERVE - blue team score
-	STAT_XP,                        // Gordon: "realtime" version of xp that doesnt need to go thru the scoreboard
+	STAT_PLAYER_CLASS,              // player class in multiplayer
+	STAT_CAPTUREHOLD_RED,           // red team score
+	STAT_CAPTUREHOLD_BLUE,          // blue team score
+	STAT_XP,                        // "realtime" version of xp that doesnt need to go thru the scoreboard
+	STAT_XP_OVERFLOW,               // count XP overflow(every 2^15)
 } statIndex_t;
 
 // player_state->persistant[] indexes
@@ -533,16 +534,16 @@ typedef enum
 	PERS_ATTACKER,                  // clientnum of last damage inflicter
 	PERS_KILLED,                    // count of the number of times you died
 	// these were added for single player awards tracking
-	PERS_RESPAWNS_LEFT,             // DHM - Nerve :: number of remaining respawns
+	PERS_RESPAWNS_LEFT,             // number of remaining respawns
 	PERS_RESPAWNS_PENALTY,          // how many respawns you have to sit through before respawning again
 
 	PERS_REVIVE_COUNT,
 	PERS_HEADSHOTS,
 	PERS_BLEH_3,
 
-	// Rafael - mg42                // (SA) I don't understand these here.  can someone explain?
+	// mg42                // I don't understand these here.  can someone explain?
 	PERS_HWEAPON_USE,
-	// Rafael wolfkick
+	// wolfkick
 	PERS_WOLFKICK
 } persEnum_t;
 
@@ -559,11 +560,11 @@ typedef enum
 #define EF_FIRING           0x00000080      // for lightning gun
 #define EF_INHERITSHADER    EF_FIRING       // some ents will never use EF_FIRING, hijack it for "USESHADER"
 
-#define EF_SPINNING         0x00000100      // (SA) added for level editor control of spinning pickup items
+#define EF_SPINNING         0x00000100      // added for level editor control of spinning pickup items
 #define EF_BREATH           EF_SPINNING     // Characters will not have EF_SPINNING set, hijack for drawing character breath
 #define EF_TALK             0x00000200      // draw a talk balloon
 #define EF_CONNECTION       0x00000400      // draw a connection trouble sprite
-#define EF_SMOKINGBLACK     0x00000800      // JPW NERVE -- like EF_SMOKING only darker & bigger
+#define EF_SMOKINGBLACK     0x00000800      // like EF_SMOKING only darker & bigger
 
 #define EF_HEADSHOT         0x00001000      // last hit to player was head shot (Gordon: NOTE: not last hit, but has BEEN shot in the head since respawn)
 #define EF_SMOKING          0x00002000      // DHM - Nerve :: ET_GENERAL ents will emit smoke if set // JPW switched to this after my code change
@@ -573,21 +574,21 @@ typedef enum
 #define EF_MOUNTEDTANK      EF_TAGCONNECT   // Gordon: duplicated for clarity
 
 #define EF_FAKEBMODEL       0x00010000      // from etpro
-#define EF_PATH_LINK        0x00020000      // Gordon: linking trains together
+#define EF_PATH_LINK        0x00020000      // linking trains together
 #define EF_ZOOMING          0x00040000      // client is zooming
 #define EF_PRONE            0x00080000      // player is prone
 
 #define EF_PRONE_MOVING     0x00100000      // player is prone and moving
 #define EF_VIEWING_CAMERA   0x00200000      // player is viewing a camera
-#define EF_AAGUN_ACTIVE     0x00400000      // Gordon: player is manning an AA gun
-#define EF_SPARE0           0x00800000      // Gordon: freed
+#define EF_AAGUN_ACTIVE     0x00400000      // player is manning an AA gun
+#define EF_SPARE0           0x00800000      // freed
 
 // !! NOTE: only place flags that don't need to go to the client beyond 0x00800000
-#define EF_SPARE1           0x01000000      // Gordon: freed
-#define EF_SPARE2           0x02000000      // Gordon: freed
+#define EF_SPARE1           0x01000000      // freed
+#define EF_SPARE2           0x02000000      // freed
 #define EF_BOUNCE           0x04000000      // for missiles
 #define EF_BOUNCE_HALF      0x08000000      // for missiles
-#define EF_MOVER_STOP       0x10000000      // will push otherwise	// (SA) moved down to make space for one more client flag
+#define EF_MOVER_STOP       0x10000000      // will push otherwise	// moved down to make space for one more client flag
 #define EF_MOVER_BLOCKED    0x20000000      // mover was blocked dont lerp on the client // xkan, moved down to make space for client flag
 
 #define BG_PlayerMounted(eFlags) ((eFlags & EF_MG42_ACTIVE) || (eFlags & EF_MOUNTEDTANK) || (eFlags & EF_AAGUN_ACTIVE))
@@ -614,15 +615,15 @@ typedef enum
 
 	PW_ADRENALINE,
 
-	PW_BLACKOUT     = 14,   // OSP - spec blackouts. FIXME: we don't need 32bits here...relocate
-	PW_MVCLIENTLIST = 15,   // OSP - MV client info.. need a full 32 bits
+	PW_BLACKOUT     = 14,   // spec blackouts. FIXME: we don't need 32bits here...relocate
+	PW_MVCLIENTLIST = 15,   // MV client info.. need a full 32 bits
 
 	PW_NUM_POWERUPS
 } powerup_t;
 
 typedef enum
 {
-	//----(SA)	These will probably all change to INV_n to get the word 'key' out of the game.
+	//			These will probably all change to INV_n to get the word 'key' out of the game.
 	//			id and DM don't want references to 'keys' in the game.
 	//			I'll change to 'INV' as the item becomes 'permanent' and not a test item.
 
@@ -643,12 +644,12 @@ typedef enum
 	KEY_14,
 	KEY_15,
 	KEY_16,
-	KEY_LOCKED_PICKABLE, // Mad Doc - TDF: ent can be unlocked with the WP_LOCKPICK.
+	KEY_LOCKED_PICKABLE, // ent can be unlocked with the WP_LOCKPICK.
 	KEY_NUM_KEYS
 } wkey_t;           // conflicts with types.h
 
 // NOTE: we can only use up to 15 in the client-server stream
-// SA NOTE: should be 31 now (I added 1 bit in msg.c)
+// NOTE: should be 31 now (I added 1 bit in msg.c)
 typedef enum
 {
 	WP_NONE,                // 0
@@ -663,8 +664,8 @@ typedef enum
 	WP_THOMPSON,            // 8	// equivalent american weapon to german mp40
 	WP_GRENADE_PINEAPPLE,   // 9
 	WP_STEN,                // 10	// silenced sten sub-machinegun
-	WP_MEDIC_SYRINGE,       // 11	// JPW NERVE -- broken out from CLASS_SPECIAL per Id request
-	WP_AMMO,                // 12	// JPW NERVE likewise
+	WP_MEDIC_SYRINGE,       // 11	// broken out from CLASS_SPECIAL per Id request
+	WP_AMMO,                // 12	// likewise
 	WP_ARTY,                // 13
 
 	WP_SILENCER,            // 14	// used to be sp5
@@ -676,7 +677,7 @@ typedef enum
 	WP_BINOCULARS,          // 20
 
 	WP_PLIERS,              // 21
-	WP_SMOKE_MARKER,        // 22	// Arnout: changed name to cause less confusion
+	WP_SMOKE_MARKER,        // 22	// changed name to cause less confusion
 	WP_KAR98,               // 23	// WolfXP weapons
 	WP_CARBINE,             // 24
 	WP_GARAND,              // 25
@@ -689,9 +690,9 @@ typedef enum
 	WP_MOBILE_MG42,         // 31
 	WP_K43,                 // 32
 	WP_FG42,                // 33
-	WP_DUMMY_MG42,          // 34 // Gordon: for storing heat on mounted mg42s...
+	WP_DUMMY_MG42,          // 34   // for storing heat on mounted mg42s...
 	WP_MORTAR,              // 35
-	WP_LOCKPICK,            // 36	// Mad Doc - TDF lockpick
+	WP_LOCKPICK,            // 36	// lockpick FIXME: remove
 	WP_AKIMBO_COLT,         // 37
 	WP_AKIMBO_LUGER,        // 38
 
@@ -867,7 +868,7 @@ typedef enum
 	EV_GENERAL_SOUND,
 	EV_GENERAL_SOUND_VOLUME,
 	EV_GLOBAL_SOUND,        // no attenuation
-	EV_GLOBAL_CLIENT_SOUND, // DHM - Nerve :: no attenuation, only plays for specified client
+	EV_GLOBAL_CLIENT_SOUND, // no attenuation, only plays for specified client
 	EV_GLOBAL_TEAM_SOUND,   // no attenuation, team only
 	EV_FX_SOUND,
 	EV_BULLET_HIT_FLESH,
@@ -882,7 +883,7 @@ typedef enum
 	EV_DEATH2,
 	EV_DEATH3,
 	EV_OBITUARY,
-	EV_STOPSTREAMINGSOUND, // JPW NERVE swiped from sherman
+	EV_STOPSTREAMINGSOUND, // swiped from sherman
 	EV_POWERUP_QUAD,
 	EV_POWERUP_BATTLESUIT,
 	EV_POWERUP_REGEN,
@@ -895,7 +896,7 @@ typedef enum
 	EV_RUBBLE,
 	EV_EFFECT,      // target_effect
 	EV_MORTAREFX,   // mortar firing
-	EV_SPINUP,  // JPW NERVE panzerfaust preamble
+	EV_SPINUP,      // panzerfaust preamble
 	EV_MISSILE_MISS_SMALL,
 	EV_MISSILE_MISS_LARGE,
 	EV_MORTAR_IMPACT,
@@ -904,7 +905,7 @@ typedef enum
 	EV_SPIT_MISS,
 	EV_SHARD,
 	EV_JUNK,
-	EV_EMITTER, //----(SA)	added - generic particle emitter that uses client-side particle scripts
+	EV_EMITTER, // generic particle emitter that uses client-side particle scripts
 	EV_OILPARTICLES,
 	EV_OILSLICK,
 	EV_OILSLICKREMOVE,
@@ -1192,7 +1193,7 @@ typedef struct headAnimation_s
 // changes so a restart of the same anim can be detected
 #define ANIM_TOGGLEBIT      (1 << (ANIM_BITS - 1))
 
-// Gordon: renamed these to team_axis/allies, it really was awful....
+// renamed these to team_axis/allies, it really was awful....
 typedef enum
 {
 	TEAM_FREE,
@@ -1206,7 +1207,7 @@ typedef enum
 // Time between location updates
 #define TEAM_LOCATION_UPDATE_TIME       1000
 
-// OSP - weapon stat info: mapping between MOD_ and WP_ types (FIXME for new ET weapons)
+// weapon stat info: mapping between MOD_ and WP_ types (FIXME for new ET weapons)
 typedef enum extWeaponStats_s
 {
 	WS_KNIFE,               // 0
@@ -1230,8 +1231,8 @@ typedef enum extWeaponStats_s
 	WS_GRENADELAUNCHER,     // 17
 	WS_LANDMINE,            // 18
 	WS_MG42,                // 19
-	WS_GARAND,              // 20 // Gordon: (carbine and garand)
-	WS_K43,                 // 21 // Gordon: (kar98 and k43)
+	WS_GARAND,              // 20 // (carbine and garand)
+	WS_K43,                 // 21 // (kar98 and k43)
 
 	WS_MAX
 } extWeaponStats_t;
@@ -1255,7 +1256,7 @@ typedef enum
 	MOD_GRENADE,
 	MOD_ROCKET,
 
-	// (SA) modified wolf weap mods
+	// modified wolf weap mods
 	MOD_KNIFE,
 	MOD_LUGER,
 	MOD_COLT,
@@ -1326,7 +1327,7 @@ typedef enum
 
 	MOD_SWAP_PLACES,
 
-	// OSP -- keep these 2 entries last
+	// keep these 2 entries last
 	MOD_SWITCHTEAM,
 
 	MOD_NUM_MODS
@@ -1408,7 +1409,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 #define MASK_DEADSOLID          (CONTENTS_SOLID | CONTENTS_PLAYERCLIP)
 #define MASK_WATER              (CONTENTS_WATER | CONTENTS_LAVA | CONTENTS_SLIME)
 //#define	MASK_OPAQUE				(CONTENTS_SOLID|CONTENTS_SLIME|CONTENTS_LAVA)
-#define MASK_OPAQUE             (CONTENTS_SOLID | CONTENTS_LAVA)        //----(SA)	modified since slime is no longer deadly
+#define MASK_OPAQUE             (CONTENTS_SOLID | CONTENTS_LAVA)        // modified since slime is no longer deadly
 #define MASK_SHOT               (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE)
 #define MASK_MISSILESHOT        (MASK_SHOT | CONTENTS_MISSILECLIP)
 
@@ -1491,7 +1492,6 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 
 #define OVERCLIP        1.001
 
-//----(SA)	removed PM_ammoNeeded 11/27/00
 void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce);
 
 //#define ARENAS_PER_TIER		4
@@ -1563,14 +1563,14 @@ typedef enum
 	ANIM_MT_TURNLEFT,
 	ANIM_MT_CLIMBUP,
 	ANIM_MT_CLIMBDOWN,
-	ANIM_MT_FALLEN,                 // DHM - Nerve :: dead, before limbo
+	ANIM_MT_FALLEN,                 // dead, before limbo
 	ANIM_MT_PRONE,
 	ANIM_MT_PRONEBK,
 	ANIM_MT_IDLEPRONE,
 	ANIM_MT_FLAILING,
 //	ANIM_MT_TALK,
 	ANIM_MT_SNEAK,
-	ANIM_MT_AFTERBATTLE,            // xkan, 1/8/2003, just finished battle
+	ANIM_MT_AFTERBATTLE,            // just finished battle
 
 	NUM_ANIM_MOVETYPES
 } scriptAnimMoveTypes_t;
@@ -1648,8 +1648,8 @@ typedef enum
 	ANIM_COND_SECONDLIFE,
 	ANIM_COND_HEALTH_LEVEL,
 	ANIM_COND_FLAILING_TYPE,
-	ANIM_COND_GEN_BITFLAG,      // xkan 1/15/2003 - general bit flags (to save some space)
-	ANIM_COND_AISTATE,          // xkan 1/17/2003 - our current ai state (sometimes more convenient than creating a separate section)
+	ANIM_COND_GEN_BITFLAG,      // general bit flags (to save some space)
+	ANIM_COND_AISTATE,          // our current ai state (sometimes more convenient than creating a separate section)
 
 	NUM_ANIM_CONDITIONS
 } scriptAnimConditions_t;
@@ -1665,7 +1665,7 @@ typedef struct
 typedef struct
 {
 	int index;      // reference into the table of possible conditionals
-	int value[2];       // can store anything from weapon bits, to position enums, etc
+	int value[2];   // can store anything from weapon bits, to position enums, etc
 } animScriptCondition_t;
 
 typedef struct
@@ -1726,7 +1726,7 @@ typedef struct
 	int clientConditions[MAX_CLIENTS][NUM_ANIM_CONDITIONS][2];
 
 	// pointers to functions from the owning module
-	// TTimo: constify the arg
+	// constify the arg
 	int (*soundIndex)(const char *name);
 	void (*playSound)(int soundIndex, vec3_t org, int clientNum);
 } animScriptData_t;
@@ -2056,7 +2056,7 @@ typedef enum
 
 	UIMENU_WM_AUTOUPDATE,
 
-	// ydnar: say, team say, etc
+	// say, team say, etc
 	UIMENU_INGAME_MESSAGEMODE,
 } uiMenuCommand_t;
 

@@ -40,9 +40,9 @@ typedef struct trailJunc_s
 	struct trailJunc_s *nextJunc;                   // next junction in the trail
 	struct trailJunc_s *nextHead, *prevHead;        // next head junc in the world
 
-	void *usedby;        // rain - zinx's trail fix
+	void *usedby;        // zinx's trail fix
 	qboolean inuse, freed;
-	int ownerIndex;
+
 	qhandle_t shader;
 
 	int sType;
@@ -868,6 +868,7 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 		else
 		{
 			int k;
+
 			for (k = 0; k < i / 4; k++)
 			{
 				trap_R_AddPolyToScene(trail->shader, 4, &verts[k * 4]);

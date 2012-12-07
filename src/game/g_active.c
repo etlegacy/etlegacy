@@ -1559,12 +1559,31 @@ void G_RunClient(gentity_t *ent)
  */
 void SpectatorClientEndFrame(gentity_t *ent)
 {
+	// @multiview
 	// OSP - specs periodically get score updates for useful demo playback info
 	if (/*ent->client->pers.mvCount > 0 &&*/ ent->client->pers.mvScoreUpdate < level.time)
 	{
 		ent->client->pers.mvScoreUpdate = level.time + MV_SCOREUPDATE_INTERVAL;
 		ent->client->wantsscore         = qtrue;
 	}
+
+	// do this to keep current xp of spectators up to date especially on first connect to get xpsave state in limbo
+	if (ent->client->sess.spectatorState == SPECTATOR_FREE)
+	{
+		int i;
+		ent->client->ps.stats[STAT_XP] = 0;
+
+		for (i = 0; i < SK_NUM_SKILLS; ++i)
+		{
+			ent->client->ps.stats[STAT_XP] += ent->client->sess.skillpoints[i];
+		}
+
+		// to avoid overflows for big XP values(>= 32768), count each overflow and add it
+		// again in cg_draw.c at display time
+		ent->client->ps.stats[STAT_XP_OVERFLOW] = ent->client->ps.stats[STAT_XP] >> 15;     // >>15 == /32768
+		ent->client->ps.stats[STAT_XP]          = ent->client->ps.stats[STAT_XP] & 0x7FFF;
+	}
+
 
 	// if we are doing a chase cam or a remote view, grab the latest info
 	if ((ent->client->sess.spectatorState == SPECTATOR_FOLLOW) || (ent->client->ps.pm_flags & PMF_LIMBO))
@@ -1902,7 +1921,7 @@ void ClientEndFrame(gentity_t *ent)
 	}
 
 	// turn off any expired powerups
-	// OSP -- range changed for MV
+	// range changed for MV
 	for (i = 0 ; i < PW_NUM_POWERUPS ; i++)
 	{
 
@@ -1920,7 +1939,7 @@ void ClientEndFrame(gentity_t *ent)
 
 			continue;
 		}
-		// OSP -- If we're paused, update powerup timers accordingly.
+		// If we're paused, update powerup timers accordingly.
 		// Make sure we dont let stuff like CTF flags expire.
 		if (level.match_pause != PAUSE_NONE &&
 		    ent->client->ps.powerups[i] != INT_MAX)
@@ -1941,7 +1960,12 @@ void ClientEndFrame(gentity_t *ent)
 		ent->client->ps.stats[STAT_XP] += ent->client->sess.skillpoints[i];
 	}
 
-	// OSP - If we're paused, make sure other timers stay in sync
+	// to avoid overflows for big XP values(>= 32768), count each overflow and add it
+	// again in cg_draw.c at display time
+	ent->client->ps.stats[STAT_XP_OVERFLOW] = ent->client->ps.stats[STAT_XP] >> 15;     // >>15 == /32768
+	ent->client->ps.stats[STAT_XP]          = ent->client->ps.stats[STAT_XP] & 0x7FFF;  // & 0x7FFF == %32768
+
+	// If we're paused, make sure other timers stay in sync
 	//		--> Any new things in ET we should worry about?
 	if (level.match_pause != PAUSE_NONE)
 	{

@@ -237,6 +237,18 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 			CG_ShowHelp_On(&cg.demohelpWindow);
 		}
 	}
+
+	// update client XP for spectator frames
+	if (cg.snap->ps.clientNum == cg.clientNum)    // sanity check
+	{
+		int cXP = (32768 * cg.snap->ps.stats[STAT_XP_OVERFLOW]) + cg.snap->ps.stats[STAT_XP];
+
+		if (cg.xp < cXP)
+		{
+			cg.xpChangeTime = cg.time;
+		}
+		cg.xp = cXP;
+	}
 }
 
 /*
@@ -296,11 +308,13 @@ static void CG_TransitionSnapshot(void)
 
 	if (cg.snap->ps.clientNum == cg.clientNum)
 	{
-		if (cg.xp < cg.snap->ps.stats[STAT_XP])
+		int cXP = (32768 * cg.snap->ps.stats[STAT_XP_OVERFLOW]) + cg.snap->ps.stats[STAT_XP];
+
+		if (cg.xp < cXP)
 		{
 			cg.xpChangeTime = cg.time;
 		}
-		cg.xp = cg.snap->ps.stats[STAT_XP];
+		cg.xp = cXP;
 	}
 
 	BG_PlayerStateToEntityState(&cg.snap->ps, &cg_entities[cg.snap->ps.clientNum].currentState, qfalse);

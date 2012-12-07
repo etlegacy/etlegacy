@@ -43,7 +43,7 @@
 #include "g_lua.h"
 #endif
 
-// Ridah, new bounding box
+// new bounding box
 vec3_t playerMins = { -18, -18, -24 };
 vec3_t playerMaxs = { 18, 18, 48 };
 
@@ -106,9 +106,7 @@ void SP_info_player_intermission(gentity_t *ent)
 
 /*
 =======================================================================
-
   SelectSpawnPoint
-
 =======================================================================
 */
 
@@ -135,7 +133,6 @@ qboolean SpotWouldTelefrag(gentity_t *spot)
 		{
 			return qtrue;
 		}
-
 	}
 
 	return qfalse;
@@ -162,7 +159,6 @@ gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from)
 
 	while ((spot = G_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL)
 	{
-
 		VectorSubtract(spot->r.currentOrigin, from, delta);
 		dist = VectorLength(delta);
 		if (dist < nearestDist)
@@ -254,7 +250,6 @@ gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 /*
 ===========
 SelectSpectatorSpawnPoint
-
 ============
 */
 gentity_t *SelectSpectatorSpawnPoint(vec3_t origin, vec3_t angles)
@@ -269,9 +264,7 @@ gentity_t *SelectSpectatorSpawnPoint(vec3_t origin, vec3_t angles)
 
 /*
 =======================================================================
-
 BODYQUE
-
 =======================================================================
 */
 
@@ -482,7 +475,6 @@ void CopyToBodyQue(gentity_t *ent)
 /*
 ==================
 SetClientViewAngle
-
 ==================
 */
 void SetClientViewAngle(gentity_t *ent, vec3_t angle)
@@ -531,7 +523,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			}
 		}
 
-		// DHM - Nerve :: First save off persistant info we'll need for respawn
+		// First save off persistant info we'll need for respawn
 		for (i = 0; i < MAX_PERSISTANT; i++)
 		{
 			ent->client->saved_persistant[i] = ent->client->ps.persistant[i];
@@ -553,7 +545,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			trap_UnlinkEntity(ent);
 		}
 
-		// DHM - Nerve :: reset these values
+		// reset these values
 		ent->client->ps.viewlocked        = 0;
 		ent->client->ps.viewlocked_entNum = 0;
 
@@ -579,7 +571,6 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
 		}
 
-//		ClientUserinfoChanged( ent->client - level.clients );		// NERVE - SMF - don't do this
 		if (ent->client->sess.sessionTeam == TEAM_AXIS)
 		{
 			ent->client->deployQueueNumber = level.redNumWaiting;
@@ -645,7 +636,7 @@ void reinforce(gentity_t *ent)
 		assert(0);
 	}
 
-	// DHM - Nerve :: restore persistant data now that we're out of Limbo
+	// restore persistant data now that we're out of Limbo
 	rclient = ent->client;
 	for (p = 0; p < MAX_PERSISTANT; p++)
 	{
@@ -664,7 +655,7 @@ void respawn(gentity_t *ent)
 {
 	ent->client->ps.pm_flags &= ~PMF_LIMBO; // JPW NERVE turns off limbo
 
-	// DHM - Nerve :: Decrease the number of respawns left
+	// Decrease the number of respawns left
 	if (g_gametype.integer != GT_WOLF_LMS)
 	{
 		if (ent->client->ps.persistant[PERS_RESPAWNS_LEFT] > 0 && g_gamestate.integer == GS_PLAYING)
@@ -697,7 +688,6 @@ void respawn(gentity_t *ent)
 TeamCount
 
     Returns number of players on a team
-    NERVE - SMF - merge from team arena
 ================
 */
 team_t TeamCount(int ignoreClientNum, int team)
@@ -872,7 +862,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	// Abuse teamNum to store player class as well (can't see stats for all clients in cgame)
 	client->ps.teamNum = pc;
 
-	// JPW NERVE -- zero out all ammo counts
+	// zero out all ammo counts
 	memset(client->ps.ammo, 0, MAX_WEAPONS * sizeof(int));
 
 	// All players start with a knife (not OR-ing so that it clears previous weapons)
@@ -1444,7 +1434,7 @@ char *CheckUserinfo(int clientNum, char *userinfo)
 		return "Userinfo too short";
 	}
 
-	// Dens: 44 is a bit random now: MAX_INFO_STRING - 44 = 980. The LUA script
+	// 44 is a bit random now: MAX_INFO_STRING - 44 = 980. The LUA script
 	// uses 980, but I don't know if there is a specific reason for that
 	// number. Userinfo should never get this big anyway, unless someone is
 	// trying to force the engine to truncate it, so that the real IP is lost
@@ -1453,7 +1443,7 @@ char *CheckUserinfo(int clientNum, char *userinfo)
 		return "Userinfo too long.";
 	}
 
-	// Dens: userinfo always has to have a leading slash
+	// userinfo always has to have a leading slash
 	if (userinfo[0] != '\\')
 	{
 		return "Missing leading slash in userinfo.";
@@ -1477,7 +1467,7 @@ char *CheckUserinfo(int clientNum, char *userinfo)
 		return "Bad number of slashes in userinfo.";
 	}
 
-	// Dens: make sure there is only one ip, cl_guid, name and cl_punkbuster field
+	// make sure there is only one ip, cl_guid, name and cl_punkbuster field
 	if (length > 4)
 	{
 		for (i = 0; userinfo[i + 3]; ++i)
@@ -1655,7 +1645,7 @@ void ClientUserinfoChanged(int clientNum)
 	// added for zinx etpro antiwarp
 	client->pers.pmoveMsec = pmove_msec.integer;
 
-	// OSP - extra client info settings
+	// extra client info settings
 	//		 FIXME: move other userinfo flag settings in here
 	if (ent->r.svFlags & SVF_BOT)
 	{
@@ -2017,6 +2007,7 @@ void ClientBegin(int clientNum)
 	gclient_t *client = level.clients + clientNum;
 	int       flags;
 	int       spawn_count, lives_left;
+	int       stat_xp, stat_xp_overflow; // restore xp
 
 #ifdef FEATURE_LUA
 	// call LUA clientBegin only once when player connects
@@ -2045,9 +2036,9 @@ void ClientBegin(int clientNum)
 	// want to make sure the teleport bit is set right
 	// so the viewpoint doesn't interpolate through the
 	// world to the new position
-	// DHM - Nerve :: Also save PERS_SPAWN_COUNT, so that CG_Respawn happens
+	// Also save PERS_SPAWN_COUNT, so that CG_Respawn happens
 	spawn_count = client->ps.persistant[PERS_SPAWN_COUNT];
-	//bani - proper fix for #328
+
 	if (client->ps.persistant[PERS_RESPAWNS_LEFT] > 0)
 	{
 		lives_left = client->ps.persistant[PERS_RESPAWNS_LEFT] - 1;
@@ -2058,18 +2049,27 @@ void ClientBegin(int clientNum)
 	}
 	flags = client->ps.eFlags;
 
+	// restore xp
+	stat_xp          = ent->client->ps.stats[STAT_XP];
+	stat_xp_overflow = ent->client->ps.stats[STAT_XP_OVERFLOW] ;
+
 	memset(&client->ps, 0, sizeof(client->ps));
+
+	if (ent->client->sess.spectatorState == SPECTATOR_FREE) // restore xp
+	{
+		ent->client->ps.stats[STAT_XP]          = stat_xp;
+		ent->client->ps.stats[STAT_XP_OVERFLOW] = stat_xp_overflow;
+	}
 
 	client->ps.eFlags                         = flags;
 	client->ps.persistant[PERS_SPAWN_COUNT]   = spawn_count;
 	client->ps.persistant[PERS_RESPAWNS_LEFT] = lives_left;
 
-
 	client->pers.complaintClient  = -1;
 	client->pers.complaintEndTime = -1;
 
 #ifdef FEATURE_OMNIBOT
-	//Omni-bot
+	// Omni-bot
 	client->sess.botSuicide = qfalse; // make sure this is not set
 	client->sess.botPush    = (ent->r.svFlags & SVF_BOT) ? qtrue : qfalse;
 #endif
@@ -2077,7 +2077,7 @@ void ClientBegin(int clientNum)
 
 	ClientSpawn(ent, qfalse, qtrue, qtrue);
 
-	// Xian -- Changed below for team independant maxlives
+	// Changed below for team independant maxlives
 	if (g_gametype.integer != GT_WOLF_LMS)
 	{
 		if ((client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES))
@@ -2134,7 +2134,7 @@ void ClientBegin(int clientNum)
 		}
 	}
 
-	// DHM - Nerve :: Start players in limbo mode if they change teams during the match
+	// Start players in limbo mode if they change teams during the match
 	if (client->sess.sessionTeam != TEAM_SPECTATOR && (level.time - level.startTime > FRAMETIME * GAME_INIT_FRAMES))
 	{
 /*	  if( (client->sess.sessionTeam != TEAM_SPECTATOR && (level.time - client->pers.connectTime) > 60000) ||
@@ -2164,7 +2164,7 @@ void ClientBegin(int clientNum)
 
 	G_LogPrintf("ClientBegin: %i\n", clientNum);
 
-	// Xian - Check for maxlives enforcement
+	// Check for maxlives enforcement
 	if (g_gametype.integer != GT_WOLF_LMS)
 	{
 		if (g_enforcemaxlives.integer == 1 && (g_maxlives.integer > 0 || g_axismaxlives.integer > 0 || g_alliedmaxlives.integer > 0))
@@ -2191,7 +2191,7 @@ void ClientBegin(int clientNum)
 	G_smvUpdateClientCSList(ent);
 
 #ifdef FEATURE_LUA
-	//IlDuca - call LUA clientBegin only once
+	// call LUA clientBegin only once
 	if (firsttime == qtrue)
 	{
 		// LUA API callbacks
@@ -2247,7 +2247,7 @@ gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spaw
 	return spawnPoint;
 }
 
-#if 0 // rain - not used
+#if 0 // not used
 static char *G_CheckVersion(gentity_t *ent)
 {
 	// Prevent nasty version mismatches (or people sticking in Q3Aimbot cgames)
@@ -2410,7 +2410,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	ent->r.contents        = CONTENTS_BODY;
 	ent->clipmask          = MASK_PLAYERSOLID;
 
-	// DHM - Nerve :: Init to -1 on first spawn;
+	// Init to -1 on first spawn;
 	if (!revived)
 	{
 		ent->props_frame_state = -1;
@@ -2424,7 +2424,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	VectorCopy(playerMins, ent->r.mins);
 	VectorCopy(playerMaxs, ent->r.maxs);
 
-	// Ridah, setup the bounding boxes and viewheights for prediction
+	// setup the bounding boxes and viewheights for prediction
 	VectorCopy(ent->r.mins, client->ps.mins);
 	VectorCopy(ent->r.maxs, client->ps.maxs);
 
@@ -2451,7 +2451,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	trap_GetUsercmd(client - level.clients, &ent->client->pers.cmd);    // NERVE - SMF - moved this up here
 
-	// DHM - Nerve :: Add appropriate weapons
+	// Add appropriate weapons
 	if (!revived)
 	{
 		qboolean update = qfalse;
@@ -2491,10 +2491,10 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		}
 	}
 
-	// TTimo keep it isolated from spectator to be safe still
+	// keep it isolated from spectator to be safe still
 	if (client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		// Xian - Moved the invul. stuff out of SetWolfSpawnWeapons and put it here for clarity
+		// Moved the invul. stuff out of SetWolfSpawnWeapons and put it here for clarity
 		if (g_fastres.integer == 1 && revived)
 		{
 			client->ps.powerups[PW_INVULNERABLE] = level.time + 1000;
@@ -2509,7 +2509,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	SetWolfSpawnWeapons(client);
 
-	// JPW NERVE -- increases stats[STAT_MAX_HEALTH] based on # of medics in game
+	// increases stats[STAT_MAX_HEALTH] based on # of medics in game
 	AddMedicTeamBonus(client);
 
 	if (!revived)
@@ -2517,7 +2517,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		client->pers.cmd.weapon = ent->client->ps.weapon;
 	}
 
-	// JPW NERVE ***NOTE*** the following line is order-dependent and must *FOLLOW* SetWolfSpawnWeapons() in multiplayer
+	// ***NOTE*** the following line is order-dependent and must *FOLLOW* SetWolfSpawnWeapons() in multiplayer
 	// AddMedicTeamBonus() now adds medic team bonus and stores in ps.stats[STAT_MAX_HEALTH].
 
 	if (client->sess.skill[SK_BATTLE_SENSE] >= 3)
@@ -2542,7 +2542,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	}
 	else
 	{
-		//bani - #245 - we try to orient them in the freelook direction when revived
+		// we try to orient them in the freelook direction when revived
 		vec3_t newangle;
 
 		newangle[YAW]   = SHORT2ANGLE(ent->client->pers.cmd.angles[YAW] + ent->client->ps.delta_angles[YAW]);
@@ -2563,7 +2563,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->latched_buttons  = 0;
 	client->latched_wbuttons = 0;
 
-	// xkan, 1/13/2003 - reset death time
+	// reset death time
 	client->deathTime = 0;
 
 	if (level.intermissiontime)
@@ -2611,10 +2611,10 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// show_bug.cgi?id=569
 	G_ResetMarkers(ent);
 
-	// RF, start the scripting system
+	// start the scripting system
 	if (!revived && client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		// RF, call entity scripting event
+		// call entity scripting event
 		G_Script_ScriptEvent(ent, "playerstart", "");
 	}
 }
@@ -2679,7 +2679,7 @@ void ClientDisconnect(int clientNum)
 		}
 	}
 
-	// NERVE - SMF - remove complaint client
+	// remove complaint client
 	for (i = 0 ; i < level.numConnectedClients ; i++)
 	{
 		if (flag->client->pers.complaintEndTime > level.time && flag->client->pers.complaintClient == clientNum)
@@ -2778,7 +2778,7 @@ void ClientDisconnect(int clientNum)
 			ent->message           = NULL;
 		}
 
-		// OSP - Log stats too
+		// Log stats too
 		G_LogPrintf("WeaponStats: %s\n", G_createStats(ent));
 	}
 

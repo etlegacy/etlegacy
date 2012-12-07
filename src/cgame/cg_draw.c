@@ -4399,7 +4399,7 @@ static void CG_DrawPlayerStats(void)
 		clr = colorWhite;
 	}
 
-	str = va("%i", cg.snap->ps.stats[STAT_XP]);
+	str = va("%i", (32768 * cg.snap->ps.stats[STAT_XP_OVERFLOW]) + cg.snap->ps.stats[STAT_XP]);
 	w   = CG_Text_Width_Ext(str, 0.25f, 0, &cgs.media.limboFont1);
 	CG_Text_Paint_Ext(SKILLS_X + 28 - w, 480 - 4, 0.25f, 0.25f, clr, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	CG_Text_Paint_Ext(SKILLS_X + 28 + 2, 480 - 4, 0.2f, 0.2f, clr, "XP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
