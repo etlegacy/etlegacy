@@ -46,8 +46,6 @@ int    cvar_numIndexes;
 #define FILE_HASH_SIZE      512
 static cvar_t *hashTable[FILE_HASH_SIZE];
 
-cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force);
-
 /*
 ================
 return a hash value for the filename
@@ -237,12 +235,12 @@ void Cvar_CommandCompletion(void (*callback)(const char *s))
 	}
 }
 
-/*
-============
-Cvar_ClearForeignCharacters
-some cvar values need to be safe from foreign characters
-============
-*/
+/**
+ * @brief Some cvar values need to be safe from foreign characters
+ *
+ * @note ioquake3 seems to have a more sophisticated function for this
+ * called Cvar_Validate
+ */
 char *Cvar_ClearForeignCharacters(const char *value)
 {
 	static char clean[MAX_CVAR_VALUE_STRING];
@@ -251,7 +249,6 @@ char *Cvar_ClearForeignCharacters(const char *value)
 	j = 0;
 	for (i = 0; value[i] != '\0'; i++)
 	{
-		//if( !(value[i] & 128) )
 		if (((byte *)value)[i] != 0xFF && (((byte *)value)[i] <= 127 || ((byte *)value)[i] >= 161))
 		{
 			clean[j] = value[i];
@@ -336,7 +333,6 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 			Z_Free(s);
 		}
 
-		// TTimo
 		// if CVAR_USERINFO was toggled on for an existing cvar, check wether the value needs to be cleaned from foreigh characters
 		// (for instance, seta name "name-with-foreign-chars" in the config file, and toggle to CVAR_USERINFO happens later in CL_Init)
 		if (flags & CVAR_USERINFO)
@@ -1258,7 +1254,4 @@ void Cvar_Init(void)
 	Cmd_SetCommandCompletionFunc("reset", Cvar_CompleteCvarName);
 	Cmd_AddCommand("cvarlist", Cvar_List_f);
 	Cmd_AddCommand("cvar_restart", Cvar_Restart_f);
-
-	// NERVE - SMF - can't rely on autoexec to do this
-	Cvar_Get("devdll", "1", CVAR_ROM);
 }
