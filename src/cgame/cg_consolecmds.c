@@ -1106,6 +1106,9 @@ void CG_ForceTapOut_f(void)
 	trap_SendClientCommand("forcetapout");
 }
 
+/**
+ * @brief Shows a popup message.
+ */
 static void CG_CPM_f(void)
 {
 	CG_AddPMItem(PM_MESSAGE, CG_Argv(1), cgs.media.voiceChatShader);
@@ -1156,7 +1159,7 @@ static consoleCommand_t commands[] =
 	{ "VoiceChat",           CG_VoiceChat_f          },
 	{ "VoiceTeamChat",       CG_TeamVoiceChat_f      },
 
-	// ydnar: say, teamsay, etc
+	// say, teamsay, etc
 	{ "messageMode",         CG_MessageMode_f        },
 	{ "messageMode2",        CG_MessageMode_f        },
 	{ "messageMode3",        CG_MessageMode_f        },
@@ -1201,7 +1204,7 @@ static consoleCommand_t commands[] =
 
 	{ "generateTracemap",    CG_GenerateTracemap     },
 
-	{ "ToggleAutoMap",       CG_ToggleAutomap_f      }, // xkan, 11/27/2002, toggle automap on/off
+	{ "ToggleAutoMap",       CG_ToggleAutomap_f      }, // toggle automap on/off
 
 	{ "editSpeakers",        CG_EditSpeakers_f       },
 	{ "dumpSpeaker",         CG_DumpSpeaker_f        },
