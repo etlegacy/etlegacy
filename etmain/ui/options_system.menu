@@ -10,7 +10,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	400
-#define WINDOW_HEIGHT	256 // 272 with SMP
+#define WINDOW_HEIGHT	272 // 288 with SMP
 #define GROUP_NAME		"grpOptionsSystem"
 #define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
 
@@ -38,27 +38,29 @@ menuDef {
 	WINDOW( "SYSTEM", 90 )
 	
 // Audio //
-	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 64, "AUDIO" )
+	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 102, "AUDIO" )
 	SLIDER( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Effects Volume:", .2, 8, "s_volume" .7 0 1, "" )
 	SLIDER( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Music Volume:", .2, 8, "s_musicvolume" .25 0 1, "" )
 	MULTI( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Sound Quality:", .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (high)" 22 "44 khz (ultra high)" 44 }, "" )
 	YESNO( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Doppler FX:", .2, 8, "s_doppler", "" )
+	YESNO( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Mute When Minimized:", .2, 8, "s_muteWhenMinimized", "" )
+	YESNO( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Mute When Unfocused:", .2, 8, "s_muteWhenUnfocused", "" )
+	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Hitsounds:", .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Team Hit Sound" 2 "No Head Hit Sound" 4 "No Body Hit Sound" 8 }, "" )
 
 // Networking //
-	SUBWINDOW( 6, 102, (SUBWINDOW_WIDTH), 64, "NETWORKING" )
-	MULTIACTION( 8, 118, (SUBWINDOW_WIDTH)-4, 10, "Connection:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "LAN/CABLE/xDSL" 25000 } cvarListUndefined "Unselected", uiScript update "ui_setRate", "Choose your connection type" )
-	MULTIACTION( 8, 130, (SUBWINDOW_WIDTH)-4, 10, "Max Packets:", .2, 8, "ui_cl_maxpackets", cvarFloatList { "Low" 30 "Medium" 60 "High" 100 } , uiScript update "ui_cl_maxpackets", "cap for upstream data packet transmissions" )
-	YESNO( 8, 142, (SUBWINDOW_WIDTH)-4, 10, "Draw Lagometer:", .2, 8, "cg_lagometer", "toggles a connection-related display on the HUD" )
-	MULTIACTION( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Packet Duplication:", .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", "number of duplicates for every data packet sent upstream, minimized packetloss" )
+	SUBWINDOW( 6, 138, (SUBWINDOW_WIDTH), 54, "NETWORKING" )
+	MULTIACTION( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Connection:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "LAN/CABLE/xDSL" 25000 } cvarListUndefined "Unselected", uiScript update "ui_setRate", "Choose your connection type" )
+	MULTIACTION( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Max Packets:", .2, 8, "ui_cl_maxpackets", cvarFloatList { "Low" 30 "Medium" 60 "High" 100 } , uiScript update "ui_cl_maxpackets", "cap for upstream data packet transmissions" )
+	MULTIACTION( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Packet Duplication:", .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", "number of duplicates for every data packet sent upstream, minimized packetloss" )
 
 // Memory
 // NOTE: absolutely useless to set memory via UI ... only valid if done via start params
-	SUBWINDOW( 6, 172, (SUBWINDOW_WIDTH), 52, "MEMORY" )
-	MULTIACTION( 8, 188, (SUBWINDOW_WIDTH)-4, 10, "Hunk Megs:", .2, 8, "ui_com_hunkmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_hunkmegs", "amount of memory (MB) assign to the hunk" )
-	MULTIACTION( 8, 200, (SUBWINDOW_WIDTH)-4, 10, "Sound Megs:", .2, 8, "ui_com_soundmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_soundmegs", "sets the amount of memory (MB) to allocate for loaded sound files" )
-	//MULTIACTION( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Zone Megs:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_zonemegs", "amount of RAM to allocate to map and texture loading" )
+	SUBWINDOW( 6, 196, (SUBWINDOW_WIDTH), 42, "MEMORY" )
+	MULTIACTION( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Hunk Megs:", .2, 8, "ui_com_hunkmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_hunkmegs", "amount of memory (MB) assign to the hunk" )
+	MULTIACTION( 8, 224, (SUBWINDOW_WIDTH)-4, 10, "Sound Megs:", .2, 8, "ui_com_soundmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_soundmegs", "sets the amount of memory (MB) to allocate for loaded sound files" )
+	//MULTIACTION( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Zone Megs:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_zonemegs", "amount of RAM to allocate to map and texture loading" )
 
-//	SUBWINDOW( 6, 242, (SUBWINDOW_WIDTH), 52, "MULTI-CORE" )
+//	SUBWINDOW( 6, 242, (SUBWINDOW_WIDTH), 12, "MULTI-CORE" )
 //	YESNO( 8, 258, (SUBWINDOW_WIDTH)-4, 10, "Multi-Core Supp:", .2, 8, "r_smp", "toogles symmetric multiprocessing (SMP)" )  
 	
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, uiScript vidReset ; close options_system ; open options )
