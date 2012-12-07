@@ -387,8 +387,8 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	float     *color;
 	qhandle_t icon, icon2 = 0;
 	float     scale, halfscale;
-	qboolean yellowbar = qfalse;
-	float    middle    = rect->x + cgs.wideXoffset;
+	qboolean  yellowbar = qfalse;
+	float     middle    = rect->x + cgs.wideXoffset;
 
 	if (!cg_cursorHints.integer)
 	{

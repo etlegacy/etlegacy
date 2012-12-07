@@ -769,11 +769,7 @@ void FS_CopyFile(char *fromOSPath, char *toOSPath);
 
 qboolean FS_VerifyPak(const char *pak);
 
-qboolean FS_IsPure(void);
-
-unsigned int FS_ChecksumOSPath(char *OSPath);
-
-qboolean FS_Unzip(char *filename);
+qboolean FS_Unzip(char *filename, qboolean quiet);
 
 /*
 ==============================================================
