@@ -996,7 +996,7 @@ void SV_CloseAttackLog()
 		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
 		SV_WriteAttackLog("End server attack log\n"); // FIXME: add date & additional info
 		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
-		Com_Printf("Server Attack log closed.\n");
+		Com_Printf("Server attack log closed.\n");
 	}
 
 	FS_FCloseFile(attHandle);
