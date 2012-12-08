@@ -304,14 +304,14 @@ cvarTable_t cvarTable[] =
 	{ &cg_drawGun,               "cg_drawGun",               "1",     CVAR_ARCHIVE                 },
 	{ &cg_gun_frame,             "cg_gun_frame",             "0",     CVAR_TEMP                    },
 	{ &cg_cursorHints,           "cg_cursorHints",           "1",     CVAR_ARCHIVE                 },
-	{ &cg_zoomDefaultSniper,     "cg_zoomDefaultSniper",     "20",    CVAR_ARCHIVE                 }, // JPW NERVE changed per atvi req
+	{ &cg_zoomDefaultSniper,     "cg_zoomDefaultSniper",     "20",    CVAR_ARCHIVE                 }, // changed per atvi req
 	{ &cg_zoomStepSniper,        "cg_zoomStepSniper",        "2",     CVAR_ARCHIVE                 },
 	{ &cg_fov,                   "cg_fov",                   "90",    CVAR_ARCHIVE                 },
 	{ &cg_letterbox,             "cg_letterbox",             "0",     CVAR_TEMP                    },
 	{ &cg_stereoSeparation,      "cg_stereoSeparation",      "0.4",   CVAR_ARCHIVE                 },
 	{ &cg_shadows,               "cg_shadows",               "1",     CVAR_ARCHIVE                 },
 	{ &cg_gibs,                  "cg_gibs",                  "1",     CVAR_ARCHIVE                 },
-	//bani - #127 - we now draw reticles always in non demoplayback
+	// we now draw reticles always in non demoplayback
 	//  { &cg_draw2D, "cg_draw2D", "1", CVAR_CHEAT }, // JPW NERVE changed per atvi req to prevent sniper rifle zoom cheats
 	{ &cg_draw2D,                "cg_draw2D",                "1",     CVAR_ARCHIVE                 },
 	{ &cg_drawSpreadScale,       "cg_drawSpreadScale",       "1",     CVAR_ARCHIVE                 },
@@ -335,7 +335,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_gun_x,                 "cg_gunX",                  "0",     CVAR_CHEAT                   },
 	{ &cg_gun_y,                 "cg_gunY",                  "0",     CVAR_CHEAT                   },
 	{ &cg_gun_z,                 "cg_gunZ",                  "0",     CVAR_CHEAT                   },
-	{ &cg_centertime,            "cg_centertime",            "5",     CVAR_CHEAT                   }, // DHM - Nerve :: changed from 3 to 5
+	{ &cg_centertime,            "cg_centertime",            "5",     CVAR_CHEAT                   }, // changed from 3 to 5
 	{ &cg_runpitch,              "cg_runpitch",              "0.002", CVAR_ARCHIVE                 },
 	{ &cg_runroll,               "cg_runroll",               "0.005", CVAR_ARCHIVE                 },
 	{ &cg_bobup,                 "cg_bobup",                 "0.005", CVAR_ARCHIVE                 },
@@ -345,13 +345,13 @@ cvarTable_t cvarTable[] =
 
 	{ &cg_autoactivate,          "cg_autoactivate",          "1",     CVAR_ARCHIVE                 },
 
-	// Ridah, more fluid rotations
+	// more fluid rotations
 	{ &cg_swingSpeed,            "cg_swingSpeed",            "0.1",   CVAR_CHEAT                   }, // was 0.3 for Q3
 	{ &cg_bloodTime,             "cg_bloodTime",             "120",   CVAR_ARCHIVE                 },
 
 	{ &cg_skybox,                "cg_skybox",                "1",     CVAR_CHEAT                   },
 
-	// ydnar: say, team say, etc.
+	// say, team say, etc.
 	{ &cg_message,               "cg_message",               "1",     CVAR_TEMP                    },
 	{ &cg_messageType,           "cg_messageType",           "1",     CVAR_TEMP                    },
 	{ &cg_messagePlayer,         "cg_messagePlayer",         "",      CVAR_TEMP                    },
@@ -370,9 +370,9 @@ cvarTable_t cvarTable[] =
 	{ &cg_tracerWidth,           "cg_tracerwidth",           "0.8",   CVAR_CHEAT                   },
 	{ &cg_tracerSpeed,           "cg_tracerSpeed",           "4500",  CVAR_CHEAT                   },
 	{ &cg_tracerLength,          "cg_tracerlength",          "160",   CVAR_CHEAT                   },
-	{ &cg_thirdPersonRange,      "cg_thirdPersonRange",      "80",    CVAR_CHEAT                   }, // JPW NERVE per atvi req
+	{ &cg_thirdPersonRange,      "cg_thirdPersonRange",      "80",    CVAR_CHEAT                   }, // per atvi req
 	{ &cg_thirdPersonAngle,      "cg_thirdPersonAngle",      "0",     CVAR_CHEAT                   },
-	{ &cg_thirdPerson,           "cg_thirdPerson",           "0",     CVAR_CHEAT                   }, // JPW NERVE per atvi req
+	{ &cg_thirdPerson,           "cg_thirdPerson",           "0",     CVAR_CHEAT                   }, // per atvi req
 	{ &cg_teamChatTime,          "cg_teamChatTime",          "8000",  CVAR_ARCHIVE                 },
 	{ &cg_teamChatHeight,        "cg_teamChatHeight",        "8",     CVAR_ARCHIVE                 },
 	{ &cg_coronafardist,         "cg_coronafardist",         "1536",  CVAR_ARCHIVE                 },
@@ -511,7 +511,7 @@ void CG_RegisterCvars(void)
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
 		if (cv->vmCvar != NULL)
 		{
-			// rain - force the update to range check this cvar on first run
+			// force the update to range check this cvar on first run
 			if (cv->vmCvar == &cg_errorDecay)
 			{
 				cv->modificationCount = !cv->vmCvar->modificationCount;
@@ -527,7 +527,7 @@ void CG_RegisterCvars(void)
 	trap_Cvar_VariableStringBuffer("sv_running", var, sizeof(var));
 	cgs.localServer = atoi(var);
 
-	// Gordon: um, here, why?
+	// um, here, why?
 	CG_setClientFlags();
 	BG_setCrosshair(cg_crosshairColor.string, cg.xhairColor, cg_crosshairAlpha.value, "cg_crosshairColor");
 	BG_setCrosshair(cg_crosshairColorAlt.string, cg.xhairColorAlt, cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
@@ -596,7 +596,7 @@ void CG_UpdateCvars(void)
 				}
 				else if (cv->vmCvar == &cg_errorDecay)
 				{
-					// rain - cap errordecay because
+					// cap errordecay because
 					// prediction is EXTREMELY broken
 					// right now.
 					if (cg_errorDecay.value < 0.0)
@@ -655,7 +655,7 @@ int CG_CrosshairPlayer(void)
 
 int CG_LastAttacker(void)
 {
-	// OSP - used for messaging clients in the currect active window
+	// used for messaging clients in the currect active window
 	if (cg.mvTotalClients > 0)
 	{
 		return(cg.mvCurrentActive->mvInfo & MV_PID);
@@ -1103,10 +1103,10 @@ static void CG_RegisterSounds(void)
 	const char   *soundName;
 	bg_speaker_t *speaker;
 
-	// NERVE - SMF - voice commands
+	// voice commands
 	CG_LoadVoiceChats();
 
-	// Ridah, init sound scripts
+	// init sound scripts
 	CG_SoundInit();
 
 	BG_ClearScriptSpeakerPool();
@@ -1269,7 +1269,7 @@ static void CG_RegisterSounds(void)
 
 	for (i = 0; i < 3; i++)
 	{
-		// Gordon: bouncy shell sounds \o/
+		// bouncy shell sounds \o/
 		cgs.media.sfx_brassSound[BRASSSOUND_METAL][i] = trap_S_RegisterSound(va("sound/weapons/misc/shell_metal%i.wav", i + 1), qfalse);
 		cgs.media.sfx_brassSound[BRASSSOUND_SOFT][i]  = trap_S_RegisterSound(va("sound/weapons/misc/shell_soft%i.wav", i + 1), qfalse);
 		cgs.media.sfx_brassSound[BRASSSOUND_STONE][i] = trap_S_RegisterSound(va("sound/weapons/misc/shell_stone%i.wav", i + 1), qfalse);
@@ -1371,8 +1371,8 @@ static void CG_RegisterGraphics(void)
 
 	CG_LoadingString(" - textures");
 
-	//bani - dynamic shader api example
-	//replaces a fueldump texture with a dynamically generated one.
+	// dynamic shader api example
+	// replaces a fueldump texture with a dynamically generated one.
 #ifdef TEST_API_DYNAMICSHADER
 	trap_R_LoadDynamicShader("my_terrain1_2",
 	                         "my_terrain1_2\n"
@@ -1409,13 +1409,13 @@ static void CG_RegisterGraphics(void)
 	cgs.media.hud5Shader           = trap_R_RegisterShader("jpwhud5");
 	cgs.media.smokePuffShader      = trap_R_RegisterShader("smokePuff");
 
-	// RF, blood cloud
+	// blood cloud
 	cgs.media.bloodCloudShader = trap_R_RegisterShader("bloodCloud");
 
-	// OSP - MV cursor @multiview
-	//  cgs.media.cursor = trap_R_RegisterShaderNoMip( "ui/assets/mvcursor.tga" );
+	// MV cursor @multiview
+	//cgs.media.cursor = trap_R_RegisterShaderNoMip( "ui/assets/mvcursor.tga" );
 
-	// Rafael - cannon
+	// cannon
 	cgs.media.smokePuffShaderdirty = trap_R_RegisterShader("smokePuffdirty");
 	cgs.media.smokePuffShaderb1    = trap_R_RegisterShader("smokePuffblack1");
 	cgs.media.smokePuffShaderb2    = trap_R_RegisterShader("smokePuffblack2");
@@ -1423,7 +1423,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.smokePuffShaderb4    = trap_R_RegisterShader("smokePuffblack4");
 	cgs.media.smokePuffShaderb5    = trap_R_RegisterShader("smokePuffblack5");
 
-	// Rafael - bleedanim
+	// bleedanim
 	for (i = 0; i < 5; i++)
 	{
 		cgs.media.viewBloodAni[i] = trap_R_RegisterShader(va("viewBloodBlend%i", i + 1));
@@ -1451,7 +1451,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.doorHintShader         = trap_R_RegisterShader("gfx/2d/doorHint");
 	cgs.media.doorRotateHintShader   = trap_R_RegisterShader("gfx/2d/doorRotateHint");
 
-	// Arnout: these were never used in default wolf
+	// these were never used in default wolf
 	cgs.media.doorLockHintShader       = trap_R_RegisterShader("gfx/2d/lockedhint");
 	cgs.media.doorRotateLockHintShader = trap_R_RegisterShader("gfx/2d/lockedhint");
 	cgs.media.mg42HintShader           = trap_R_RegisterShader("gfx/2d/mg42Hint");
@@ -1548,7 +1548,7 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.smallgunBrassModel = trap_R_RegisterModel("models/weapons2/shells/sm_shell.md3");
 
-	//----(SA) wolf debris
+	//-wolf debris
 	cgs.media.debBlock[0] = trap_R_RegisterModel("models/mapobjects/debris/brick1.md3");
 	cgs.media.debBlock[1] = trap_R_RegisterModel("models/mapobjects/debris/brick2.md3");
 	cgs.media.debBlock[2] = trap_R_RegisterModel("models/mapobjects/debris/brick3.md3");
@@ -1585,11 +1585,11 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.bloodExplosionShader = trap_R_RegisterShader("bloodExplosion");
 
-	//----(SA)  water splash
+	// water splash
 	cgs.media.waterSplashModel  = trap_R_RegisterModel("models/weaphits/bullet.md3");
 	cgs.media.waterSplashShader = trap_R_RegisterShader("waterSplash");
 
-	// Ridah, spark particles
+	// spark particles
 	cgs.media.sparkParticleShader = trap_R_RegisterShader("sparkParticle");
 	cgs.media.smokeTrailShader    = trap_R_RegisterShader("smokeTrail");
 
@@ -1604,7 +1604,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.bulletParticleTrailShader = trap_R_RegisterShader("bulletParticleTrail");
 	cgs.media.smokeParticleShader       = trap_R_RegisterShader("smokeParticle");
 
-	// DHM - Nerve :: bullet hitting dirt
+	// bullet hitting dirt
 	cgs.media.dirtParticle1Shader = trap_R_RegisterShader("dirt_splash");
 	cgs.media.dirtParticle2Shader = trap_R_RegisterShader("water_splash");
 	//cgs.media.dirtParticle3Shader = trap_R_RegisterShader( "dirtParticle3" );
@@ -1666,7 +1666,7 @@ static void CG_RegisterGraphics(void)
 
 	CG_LoadRankIcons();
 
-	// Gordon: limbo menu setup
+	// limbo menu setup
 	CG_LimboPanel_Init();
 
 	CG_ChatPanel_Setup();
@@ -1680,7 +1680,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.flamebarrel           = trap_R_RegisterModel("models/furniture/barrel/barrel_a.md3");
 	cgs.media.mg42muzzleflash       = trap_R_RegisterModel("models/weapons2/machinegun/mg42_flash.md3");
 
-	// Rafael shards
+	// shards
 	cgs.media.shardGlass1 = trap_R_RegisterModel("models/shards/glass1.md3");
 	cgs.media.shardGlass2 = trap_R_RegisterModel("models/shards/glass2.md3");
 	cgs.media.shardWood1  = trap_R_RegisterModel("models/shards/wood1.md3");
@@ -1705,14 +1705,14 @@ static void CG_RegisterGraphics(void)
 
 // TODO: FIXME:  REMOVE REGISTRATION OF EACH MODEL FOR EVERY LEVEL LOAD
 
-	//----(SA)  okay, new stuff to intialize rather than doing it at level load time (or "give all" time)
+	//          okay, new stuff to intialize rather than doing it at level load time (or "give all" time)
 	//          (I'm certainly not against being efficient here, but I'm tired of the rocket launcher effect only registering
 	//          sometimes and want it to work for sure for this demo)
 
 	CG_LoadingString(" - weapons");
 	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 	{
-		// DHM - Nerve :: Only register weapons we use in WolfMP
+		// Only register weapons we use in WolfMP
 		if (BG_WeaponInWolfMP(i))
 		{
 			CG_RegisterWeapon(i, qfalse);
@@ -1766,7 +1766,7 @@ static void CG_RegisterGraphics(void)
 
 	// register the inline models
 	cgs.numInlineModels = trap_CM_NumInlineModels();
-	// TAT 12/23/2002 - as a safety check, let's not let the number of models exceed MAX_MODELS
+	// as a safety check, let's not let the number of models exceed MAX_MODELS
 	if (cgs.numInlineModels > MAX_MODELS)
 	{
 		CG_Error("CG_RegisterGraphics: Too many inline models: %i\n", cgs.numInlineModels);
@@ -2710,13 +2710,12 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0;
 
 	// screen support ...
-	cgs.aspectratio1 = 1.0f / cgs.glconfig.windowAspect;
-	cgs.adr43        = cgs.glconfig.windowAspect * RPRATIO43; // aspectratio / (4/3)
-	cgs.r43da        = RATIO43 * cgs.aspectratio1; // (4/3) / aspectratio
-	cgs.wideXoffset  = (cgs.glconfig.windowAspect != RATIO43) ? (640.0f * cgs.adr43 - 640.0f) * 0.5f : 0.0f;
+	cgs.adr43       = cgs.glconfig.windowAspect * RPRATIO43;       // aspectratio / (4/3)
+	cgs.r43da       = RATIO43 * 1.0f / cgs.glconfig.windowAspect;  // (4/3) / aspectratio
+	cgs.wideXoffset = (cgs.glconfig.windowAspect > RATIO43) ? (640.0f * cgs.adr43 - 640.0f) * 0.5f : 0.0f;
 
 	// DEBUG
-	//CG_Printf("Screen[%f][%f]: as: %f  as1: %f  adr43: %f  r43da: %f off: %f\n", cgs.screenXScale, cgs.screenYScale, cgs.glconfig.windowAspect, cgs.aspectratio1, cgs.adr43, cgs.r43da, cgs.wideXoffset);
+	//CG_Printf("Screen[%f][%f]: as: %f   adr43: %f  r43da: %f off: %f\n", cgs.screenXScale, cgs.screenYScale, cgs.glconfig.windowAspect, cgs.adr43, cgs.r43da, cgs.wideXoffset);
 
 	// init the anim scripting
 	cgs.animScriptData.soundIndex = CG_SoundScriptPrecache;

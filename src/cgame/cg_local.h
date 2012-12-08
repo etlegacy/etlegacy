@@ -272,7 +272,7 @@ typedef struct
 	int painAnimLegs;
 	int lightningFiring;
 
-	// Ridah, so we can do fast tag grabbing
+	// so we can do fast tag grabbing
 	refEntity_t bodyRefEnt, headRefEnt, gunRefEnt;
 	int gunRefEntFrame;
 
@@ -299,7 +299,7 @@ typedef struct centity_s
 	qboolean interpolate;           // true if next is valid to interpolate to
 	qboolean currentValid;          // true if cg.frame holds this entity
 
-	int muzzleFlashTime;                // move to playerEntity?
+	int muzzleFlashTime;            // move to playerEntity?
 	int overheatTime;
 	int previousEvent;
 	int previousEventSequence;
@@ -323,8 +323,8 @@ typedef struct centity_s
 	vec3_t lerpOrigin;
 	vec3_t lerpAngles;
 
-	vec3_t lastLerpAngles;          // (SA) for remembering the last position when a state changes
-	vec3_t lastLerpOrigin;          // Gordon: Added for linked trains player adjust prediction
+	vec3_t lastLerpAngles;          // for remembering the last position when a state changes
+	vec3_t lastLerpOrigin;          // Added for linked trains player adjust prediction
 
 	// trail effects
 	int headJuncIndex, headJuncIndex2;
@@ -373,7 +373,7 @@ typedef struct centity_s
 
 	qboolean akimboFire;
 
-	// Gordon: tagconnect cleanup..
+	// tagconnect cleanup..
 	int tagParent;
 	char tagName[MAX_QPATH];
 } centity_t;
@@ -393,10 +393,10 @@ typedef struct markPoly_s
 	poly_t poly;
 	polyVert_t verts[MAX_VERTS_ON_POLY];
 
-	int duration;           // Ridah
+	int duration;
 } markPoly_t;
 
-//----(SA)  moved in from cg_view.c
+// moved in from cg_view.c
 typedef enum
 {
 	ZOOM_NONE,
@@ -411,7 +411,7 @@ typedef enum
 typedef enum
 {
 	ZOOM_OUT,   // widest angle
-	ZOOM_IN // tightest angle (approaching 0)
+	ZOOM_IN     // tightest angle (approaching 0)
 } EZoomInOut_t;
 
 extern float zoomTable[ZOOM_MAX_ZOOMS][2];
@@ -438,8 +438,8 @@ typedef enum
 {
 	LEF_PUFF_DONT_SCALE = 0x0001            // do not scale size over time
 	, LEF_TUMBLE        = 0x0002            // tumble over time, used for ejecting shells
-	, LEF_NOFADEALPHA   = 0x0004            // Ridah, sparks
-	, LEF_SMOKING       = 0x0008            // (SA) smoking
+	, LEF_NOFADEALPHA   = 0x0004            // sparks
+	, LEF_SMOKING       = 0x0008            // smoking
 	, LEF_TUMBLE_SLOW   = 0x0010            // slow down tumble on hitting ground
 } leFlag_t;
 
@@ -489,7 +489,6 @@ typedef struct localEntity_s
 
 	refEntity_t refEntity;
 
-	// Ridah
 	int lightOverdraw;
 	int lastTrailTime;
 	int headJuncIndex, headJuncIndex2;
@@ -566,10 +565,10 @@ typedef struct clientInfo_s
 
 	bg_character_t *character;
 
-	// Gordon: caching fireteam pointer here, better than trying to work it out all the time
+	// caching fireteam pointer here, better than trying to work it out all the time
 	fireteamData_t *fireteamData;
 
-	// Gordon: for fireteams, has been selected
+	// for fireteams, has been selected
 	qboolean selected;
 
 	// Intermission stats
@@ -784,7 +783,7 @@ typedef struct
 
 	qboolean demoPlayback;
 	qboolean loading;               // don't defer players at initial startup
-	qboolean intermissionStarted;       // don't play voice rewards, because game will end shortly
+	qboolean intermissionStarted;   // don't play voice rewards, because game will end shortly
 
 	// there are only one or two snapshot_t that are relevent at a time
 	int latestSnapshotNum;          // the number of snapshots the client system has received
@@ -799,17 +798,17 @@ typedef struct
 	qboolean thisFrameTeleport;
 	qboolean nextFrameTeleport;
 
-	int frametime;              // cg.time - cg.oldTime
+	int frametime;                      // cg.time - cg.oldTime
 
-	int time;                   // this is the time value that the client
+	int time;                           // this is the time value that the client
 	// is rendering at.
-	int oldTime;                // time at last frame, used for missile trails and prediction checking
+	int oldTime;                        // time at last frame, used for missile trails and prediction checking
 
-	int physicsTime;            // either cg.snap->time or cg.nextSnap->time
+	int physicsTime;                    // either cg.snap->time or cg.nextSnap->time
 
-	int timelimitWarnings;          // 5 min, 1 min, overtime
+	int timelimitWarnings;              // 5 min, 1 min, overtime
 
-	qboolean mapRestart;            // set on a map restart to set back the weapon
+	qboolean mapRestart;                // set on a map restart to set back the weapon
 
 	qboolean renderingThirdPerson;      // during deaths, chasecams, etc
 
@@ -864,7 +863,7 @@ typedef struct
 	int numScores;
 	int selectedScore;
 	int teamScores[2];
-	int teamPlayers[TEAM_NUM_TEAMS];         // JPW NERVE for scoreboard
+	int teamPlayers[TEAM_NUM_TEAMS];         // for scoreboard
 	score_t scores[MAX_CLIENTS];
 	qboolean showScores;
 	qboolean scoreBoardShowing;
@@ -1565,7 +1564,7 @@ typedef struct
 	qhandle_t SPTeamOverlayUnitBackground;
 	qhandle_t SPTeamOverlayUnitSelected;
 
-	// Gordon: for commandmap
+	// for commandmap
 	qhandle_t medicIcon;
 
 	qhandle_t hWeaponSnd;
@@ -1576,8 +1575,6 @@ typedef struct
 	qhandle_t hWeaponEchoSnd_2;
 	qhandle_t hWeaponHeatSnd_2;
 
-	//qhandle_t   hflakWeaponSnd;
-
 	qhandle_t hMountedMG42Base;     //  trap_R_RegisterModel( "models/mapobjects/tanks_sd/mg42nestbase.md3" );
 	qhandle_t hMountedMG42Nest;     //  trap_R_RegisterModel( "models/mapobjects/tanks_sd/mg42nest.md3" );
 	qhandle_t hMountedMG42;         //  trap_R_RegisterModel( "models/mapobjects/tanks_sd/mg42.md3" );
@@ -1585,11 +1582,11 @@ typedef struct
 	qhandle_t hMountedFPMG42;
 	qhandle_t hMountedFPBrowning;
 
-	// Gordon: medals
+	// medals
 	qhandle_t medals[SK_NUM_SKILLS];
 	qhandle_t medal_back;
 
-	// Gordon: new limbo stuff
+	// new limbo stuff
 	fontInfo_t limboFont1;
 	fontInfo_t limboFont1_lo;
 	fontInfo_t limboFont2;
@@ -1990,7 +1987,6 @@ typedef struct cgs_s
 	clientLocation_t clientLocation[MAX_CLIENTS];
 
 	// screen adjustments
-	float aspectratio1;                 // 1 / aspectratio
 	float adr43;                        // aspectratio / RATIO43
 	float r43da;                        // RATIO43 / aspectratio
 	float wideXoffset;                  // the x-offset for displaying horizontally centered loading/limbo screens

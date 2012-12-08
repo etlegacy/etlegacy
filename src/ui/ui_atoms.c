@@ -39,7 +39,6 @@ uiStatic_t uis;
 // these are here so the functions in q_shared.c can link
 #ifndef UI_HARD_LINKED
 
-// JPW NERVE added Com_DPrintf
 #define MAXPRINTMSG 4096
 void QDECL Com_DPrintf(const char *fmt, ...)
 {
@@ -227,7 +226,7 @@ void UI_AdjustFrom640(float *x, float *y, float *w, float *h)
 	*h *= uiInfo.uiDC.yscale;
 
 	// adjusting
-	if (uiInfo.uiDC.glconfig.windowAspect != RATIO43)
+	if (uiInfo.uiDC.glconfig.windowAspect > RATIO43)
 	{
 		*x *= RATIO43 / uiInfo.uiDC.glconfig.windowAspect;
 		*w *= RATIO43 / uiInfo.uiDC.glconfig.windowAspect;

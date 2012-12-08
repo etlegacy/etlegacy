@@ -109,7 +109,7 @@ void Cui_WideRect(Rectangle *rect)
 	rect->w *= DC->xscale;
 	rect->h *= DC->yscale;
 
-	if (DC->glconfig.windowAspect != RATIO43)
+	if (DC->glconfig.windowAspect > RATIO43)
 	{
 		rect->x *= RATIO43 / DC->glconfig.windowAspect;
 		rect->w *= RATIO43 / DC->glconfig.windowAspect;
@@ -120,13 +120,13 @@ void Cui_WideRect(Rectangle *rect)
 // (if the current aspectratio is 4:3, then leave the x-coordinate unchanged)
 float Cui_WideX(float x)
 {
-	return (DC->glconfig.windowAspect == RATIO43) ? x : x * (DC->glconfig.windowAspect * RPRATIO43); // aspectratio / (4/3)
+	return (DC->glconfig.windowAspect <= RATIO43) ? x : x * (DC->glconfig.windowAspect * RPRATIO43); // aspectratio / (4/3)
 }
 
 // the horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
 float Cui_WideXoffset(void)
 {
-	return (DC->glconfig.windowAspect == RATIO43) ? 0.0f : ((640.0f * (DC->glconfig.windowAspect * RPRATIO43)) - 640.0f) * 0.5f;
+	return (DC->glconfig.windowAspect <= RATIO43) ? 0.0f : ((640.0f * (DC->glconfig.windowAspect * RPRATIO43)) - 640.0f) * 0.5f;
 }
 
 void Tooltip_Initialize(itemDef_t *item)
@@ -542,7 +542,7 @@ qboolean PC_Script_Parse(int handle, const char **out)
 		}
 		Q_strcat(script, 4096, " ");
 	}
-	return qfalse;  // bk001105 - LCC   missing return value
+	return qfalse;
 }
 
 // display, window, menu, item code
@@ -2000,7 +2000,6 @@ void Script_SetPlayerHead(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
-// ATVI Wolfenstein Misc #304
 // the parser misreads setCvar "bleh" ""
 // you have to use clearCvar "bleh"
 void Script_ClearCvar(itemDef_t *item, qboolean *bAbort, char **args)
@@ -2877,7 +2876,7 @@ void Item_MouseEnter(itemDef_t *item, float x, float y)
 			return;
 		}
 
-		// OSP - server settings too .. (mostly for callvote)
+		// server settings too .. (mostly for callvote)
 		if ((item->settingFlags & (SVS_ENABLED_SHOW | SVS_DISABLED_SHOW)) && !Item_SettingShow(item, qfalse))
 		{
 			return;
@@ -3288,7 +3287,6 @@ qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 	{
 		if (key == K_MOUSE1 || key == K_ENTER || key == K_MOUSE2 || key == K_MOUSE3)
 		{
-			// ATVI Wolfenstein Misc #462
 			// added the flag to toggle via action script only
 			if (!(item->cvarFlags & CVAR_NOTOGGLE))
 			{
@@ -3318,7 +3316,6 @@ qboolean Item_YesNo_HandleKey(itemDef_t *item, int key)
 	{
 		if (key == K_MOUSE1 || key == K_ENTER || key == K_MOUSE2 || key == K_MOUSE3)
 		{
-			// ATVI Wolfenstein Misc #462
 			// added the flag to toggle via action script only
 			if (!(item->cvarFlags & CVAR_NOTOGGLE))
 			{
@@ -3746,7 +3743,7 @@ static void Scroll_ListBox_ThumbFunc(void *p)
 		// need to scroll which is done by simulating a click to the item
 		// this is done a bit sideways as the autoscroll "knows" that the item is a listbox
 		// so it calls it directly
-		// Arnout: clear doubleclicktime though!
+		// clear doubleclicktime though!
 		lastListBoxClickTime = 0;
 		Item_ListBox_HandleKey(si->item, si->scrollKey, qtrue, qfalse);
 		si->nextScrollTime = DC->realTime + si->adjustValue;
@@ -4133,12 +4130,12 @@ void  Menus_Activate(menuDef_t *menu)
 		Item_RunScript(&item, NULL, menu->onOpen);
 	}
 
-	// ydnar: set open time (note dc time may be 0, in which case refresh code sets this)
+	// set open time (note dc time may be 0, in which case refresh code sets this)
 	menu->openTime = DC->realTime;
 
 	if (menu->soundName && *menu->soundName)
 	{
-//      DC->stopBackgroundTrack();                  // you don't want to do this since it will reset s_rawend
+		//DC->stopBackgroundTrack();                  // you don't want to do this since it will reset s_rawend
 		DC->startBackgroundTrack(menu->soundName, menu->soundName, 0);
 	}
 
@@ -4190,7 +4187,7 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down)
 		{
 			if (Menu_OverActiveItem(&Menus[i], DC->cursorx, DC->cursory))
 			{
-				//Menu_RunCloseScript(menu);          // NERVE - SMF - why do we close the calling menu instead of just removing the focus?
+				//Menu_RunCloseScript(menu);          // why do we close the calling menu instead of just removing the focus?
 				//menu->window.flags &= ~(WINDOW_HASFOCUS | WINDOW_VISIBLE | WINDOW_MOUSEOVER);
 
 				menu->window.flags    &= ~(WINDOW_HASFOCUS | WINDOW_MOUSEOVER);
@@ -4235,14 +4232,14 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	itemDef_t *item     = NULL;
 	qboolean  inHandler = qfalse;
 
-	Menu_HandleMouseMove(menu, DC->cursorx, DC->cursory);       // NERVE - SMF - fix for focus not resetting on unhidden buttons
+	Menu_HandleMouseMove(menu, DC->cursorx, DC->cursory);       // fix for focus not resetting on unhidden buttons
 
 	if (inHandler)
 	{
 		return;
 	}
 
-	// ydnar: enter key handling for the window supercedes item enter handling
+	// enter key handling for the window supercedes item enter handling
 	if (down && ((key == K_ENTER || key == K_KP_ENTER) && menu->onEnter))
 	{
 		itemDef_t it;
@@ -4551,7 +4548,7 @@ void Item_SetTextExtents(itemDef_t *item, int *width, int *height, const char *t
 		}
 		else if (item->textalignment == ITEM_ALIGN_CENTER || item->textalignment == ITEM_ALIGN_CENTER2)
 		{
-			// NERVE - SMF - default centering case
+			// default centering case
 			item->textRect.x = item->textalignx - originalWidth / 2;
 		}
 
@@ -4802,7 +4799,7 @@ void Item_Text_Paint(itemDef_t *item)
 		textPtr = item->text;
 	}
 
-	// ydnar: handle counters
+	//  handle counters
 	if (item->type == ITEM_TYPE_TIMEOUT_COUNTER && menu != NULL && menu->openTime > 0)
 	{
 		// calc seconds remaining
@@ -5106,7 +5103,7 @@ typedef struct
 	float value;
 } configcvar_t;
 
-// Gordon: These MUST be all lowercase now
+// These MUST be all lowercase now
 static bind_t g_bindings[] =
 {
 
@@ -5170,137 +5167,6 @@ static bind_t g_bindings[] =
 	{ "selectbuddy 4",    K_KP_5,          -1,  K_KP_5,          -1,  -1, -1 },
 	{ "selectbuddy 5",    K_KP_RIGHTARROW, -1,  K_KP_RIGHTARROW, -1,  -1, -1 },
 	{ "selectbuddy -2",   K_KP_INS,        -1,  K_KP_MINUS,      -1,  -1, -1 },
-
-	/*  {"+scores",         -1,             -1, -1, -1},
-	    {"+speed",          K_SHIFT,        -1, -1, -1},
-	    {"+forward",        K_UPARROW,      -1, -1, -1},
-	    {"+back",           K_DOWNARROW,    -1, -1, -1},
-	    {"+moveleft",       ',',            -1, -1, -1},
-	    {"+moveright",      '.',            -1, -1, -1},
-	    {"+moveup",         K_SPACE,        -1, -1, -1},
-	    {"+movedown",       'c',            -1, -1, -1},
-	    {"+left",           K_LEFTARROW,    -1, -1, -1},
-	    {"+right",          K_RIGHTARROW,   -1, -1, -1},
-	    {"+strafe",         K_ALT,          -1, -1, -1},
-	    {"+lookup",         K_PGDN,         -1, -1, -1},
-	    {"+lookdown",       K_DEL,          -1, -1, -1},
-	    {"+mlook",          '/',            -1, -1, -1},
-	//  {"centerview",      K_END,          -1, -1, -1},    // this is an exploit nowadays
-	    {"+zoom",           'z',            -1, -1, -1},
-	    {"weaponbank 1",    '1',            -1, -1, -1},
-	    {"weaponbank 2",    '2',            -1, -1, -1},
-	    {"weaponbank 3",    '3',            -1, -1, -1},
-	    {"weaponbank 4",    '4',            -1, -1, -1},
-	    {"weaponbank 5",    '5',            -1, -1, -1},
-	    {"weaponbank 6",    '6',            -1, -1, -1},
-	    {"weaponbank 7",    '7',            -1, -1, -1},
-	    {"weaponbank 8",    '8',            -1, -1, -1},
-	    {"weaponbank 9",    '9',            -1, -1, -1},
-	    {"weaponbank 10",   '0',            -1, -1, -1},
-	    {"+attack",         K_CTRL,         -1, -1, -1},
-	    {"weapprev",        K_MWHEELDOWN,   -1, -1, -1},
-	    {"weapnext",        K_MWHEELUP,     -1, -1, -1},
-	    {"weapalt",         -1,             -1, -1, -1},
-	    {"weaplastused",    -1,             -1, -1, -1},//----(SA)  added
-	    {"weapnextinbank",  -1,             -1, -1, -1},//----(SA)  added
-	    {"weapprevinbank",  -1,             -1, -1, -1},//----(SA)  added
-	    {"+useitem",        K_ENTER,        -1, -1, -1},
-	    {"+button3",        K_MOUSE3,       -1, -1, -1},
-
-	    {"scoresUp",        -1,             -1, -1, -1},
-	    {"scoresDown",      -1,             -1, -1, -1},
-	    {"messagemode",     -1,             -1, -1, -1},
-	    {"messagemode2",    -1,             -1, -1, -1},
-	    {"messagemode3",    -1,             -1, -1, -1},
-
-	    {"+activate",       -1,             -1, -1, -1},
-	    {"zoomin",          -1,             -1, -1, -1},
-	    {"zoomout",         -1,             -1, -1, -1},
-	    {"+kick",           -1,             -1, -1, -1},
-	    {"+reload",         -1,             -1, -1, -1},
-	    {"+sprint",         -1,             -1, -1, -1},
-	    {"notebook",        K_TAB,          -1, -1, -1},
-	    {"help",            K_F1,           -1, -1, -1},
-	    {"+leanleft",       -1,             -1, -1, -1},
-	    {"+leanright",      -1,             -1, -1, -1},
-
-	    {"vote yes",        -1,             -1, -1, -1},
-	    {"vote no",         -1,             -1, -1, -1},
-	    {"openlimbomenu",   -1,             -1, -1, -1},
-	    {"mp_quickmessage", -1,             -1, -1, -1},
-	    {"mp_fireteammsg",  -1,             -1, -1, -1},
-	    {"mp_fireteamadmin",-1,             -1, -1, -1},
-
-	    // OSP
-	    {"+stats",          -1,             -1, -1, -1},
-	    {"+topshots",       -1,             -1, -1, -1},
-	    {"+wstats",         -1,             -1, -1, -1},
-	    {"autoScreenshot",  -1,             -1, -1, -1},
-	    {"autoRecord",      -1,             -1, -1, -1},
-	    {"currenttime",     -1,             -1, -1, -1},
-	    {"statsdump",       -1,             -1, -1, -1},
-	    {"mvallies",        -1,             -1, -1, -1},
-	    {"mvaxis",          -1,             -1, -1, -1},
-	    {"mvdel",           -1,             -1, -1, -1},
-	    {"mvhide",          -1,             -1, -1, -1},
-	    {"mvnone",          -1,             -1, -1, -1},
-	    {"mvshow",          -1,             -1, -1, -1},
-	    {"mvswap",          -1,             -1, -1, -1},
-	    {"mvtoggle",        -1,             -1, -1, -1},
-	    {"mvactivate",      -1,             -1, -1, -1},
-	    // -OSP
-
-	    {"weapon 1",        -1,             -1, -1, -1},
-	    {"weapon 2",        -1,             -1, -1, -1},
-	    {"weapon 3",        -1,             -1, -1, -1},
-	    {"weapon 4",        -1,             -1, -1, -1},
-	    {"weapon 5",        -1,             -1, -1, -1},
-	    {"weapon 6",        -1,             -1, -1, -1},
-	    {"weapon 7",        -1,             -1, -1, -1},
-	    {"weapon 8",        -1,             -1, -1, -1},
-	    {"weapon 9",        -1,             -1, -1, -1},
-	    {"weapon 10",       -1,             -1, -1, -1},
-	    {"weapon 11",       -1,             -1, -1, -1},
-	    {"weapon 12",       -1,             -1, -1, -1},
-	    {"weapon 13",       -1,             -1, -1, -1},
-	    {"weapon 14",       -1,             -1, -1, -1},
-	    {"weapon 15",       -1,             -1, -1, -1},
-	    {"weapon 16",       -1,             -1, -1, -1},
-	    {"weapon 17",       -1,             -1, -1, -1},
-	    {"weapon 18",       -1,             -1, -1, -1},
-	    {"weapon 19",       -1,             -1, -1, -1},
-	    {"weapon 20",       -1,             -1, -1, -1},
-	    {"weapon 21",       -1,             -1, -1, -1},
-	    {"weapon 22",       -1,             -1, -1, -1},
-	    {"weapon 23",       -1,             -1, -1, -1},
-	    {"weapon 24",       -1,             -1, -1, -1},
-	    {"weapon 25",       -1,             -1, -1, -1},
-	    {"weapon 26",       -1,             -1, -1, -1},
-	    {"weapon 27",       -1,             -1, -1, -1},
-	    {"weapon 28",       -1,             -1, -1, -1},
-	    {"weapon 29",       -1,             -1, -1, -1},
-	    {"weapon 30",       -1,             -1, -1, -1},
-	    {"weapon 31",       -1,             -1, -1, -1},
-	    {"weapon 32",       -1,             -1, -1, -1},
-
-	    {"commandmap",      -1,             -1, -1, -1},
-	    {"buddy",           -1,             -1, -1, -1},
-	    {"stats",           -1,             -1, -1, -1},
-
-	    {"selectbuddy -1",  -1,             -1, -1, -1},
-	    {"selectbuddy -2",  -1,             -1, -1, -1},
-	    {"selectbuddy 0",   -1,             -1, -1, -1},
-	    {"selectbuddy 1",   -1,             -1, -1, -1},
-	    {"selectbuddy 2",   -1,             -1, -1, -1},
-	    {"selectbuddy 3",   -1,             -1, -1, -1},
-	    {"selectbuddy 4",   -1,             -1, -1, -1},
-	    {"selectbuddy 5",   -1,             -1, -1, -1},
-	    {"gotowaypoint",    -1,             -1, -1, -1},
-	    {"mapzoomin",       -1,             -1, -1, -1},
-	    {"mapzoomout",      -1,             -1, -1, -1},
-	    {"+mapexpand",      -1,             -1, -1, -1},
-
-	    {"+prone",          -1,             -1, -1, -1},*/
 };
 
 static const int g_bindCount = sizeof(g_bindings) / sizeof(bind_t);
@@ -5636,7 +5502,7 @@ void AdjustFrom640(float *x, float *y, float *w, float *h)
 	*h *= DC->yscale;
 
 	// adjust screen
-	if (DC->glconfig.windowAspect != RATIO43)
+	if (DC->glconfig.windowAspect > RATIO43)
 	{
 		*x *= RATIO43 / DC->glconfig.windowAspect;
 		*w *= RATIO43 / DC->glconfig.windowAspect;
@@ -6324,10 +6190,8 @@ void Menu_Init(menuDef_t *menu)
 	menu->fadeAmount = DC->Assets.fadeAmount;
 	menu->fadeClamp  = DC->Assets.fadeClamp;
 	menu->fadeCycle  = DC->Assets.fadeCycle;
-	// START - TAT 9/16/2002
 	// by default, do NOT use item hotkey mode
 	menu->itemHotkeyMode = qfalse;
-	// END - TAT 9/16/2002
 	Window_Init(&menu->window);
 }
 
@@ -6448,7 +6312,7 @@ menuDef_t *Menus_ActivateByName(const char *p, qboolean modalStack)
 				}
 				modalMenuStack[modalMenuCount++] = focus;
 			}
-			break;  // Arnout: found it, don't continue searching as we might unfocus the menu we just activated again.
+			break;  // found it, don't continue searching as we might unfocus the menu we just activated again.
 		}
 		else
 		{
@@ -6492,7 +6356,7 @@ void Menu_HandleMouseMove(menuDef_t *menu, float x, float y)
 	{
 		if (itemCapture->type == ITEM_TYPE_LISTBOX)
 		{
-			// NERVE - SMF - lose capture if out of client rect
+			// lose capture if out of client rect
 			if (!Rect_ContainsPoint(&itemCapture->window.rect, x, y))
 			{
 				itemCapture = NULL;
@@ -6535,7 +6399,7 @@ void Menu_HandleMouseMove(menuDef_t *menu, float x, float y)
 				continue;
 			}
 
-			// OSP - server settings too
+			// server settings too
 			if ((menu->items[i]->settingFlags & (SVS_ENABLED_SHOW | SVS_DISABLED_SHOW)) && !Item_SettingShow(menu->items[i], qfalse))
 			{
 				continue;
@@ -6633,7 +6497,7 @@ void Menu_Paint(menuDef_t *menu, qboolean forcePaint)
 		}
 	}
 
-	// OSP draw tooltip data if we have it
+	// draw tooltip data if we have it
 	if (DC->getCVarValue("ui_showtooltips") &&
 	    item != NULL &&
 	    item->toolTipData != NULL &&
@@ -6643,7 +6507,7 @@ void Menu_Paint(menuDef_t *menu, qboolean forcePaint)
 		Item_Paint(item->toolTipData);
 	}
 
-	// ydnar: handle timeout here
+	// handle timeout here
 	if (menu->openTime == 0)
 	{
 		menu->openTime = DC->realTime;
@@ -7737,7 +7601,7 @@ qboolean ItemParse_cvarFloatList(itemDef_t *item, int handle)
 		}
 
 	}
-	return qfalse;  // bk001205 - LCC missing return value
+	return qfalse;
 }
 
 qboolean ItemParse_cvarListUndefined(itemDef_t *item, int handle)
@@ -7879,7 +7743,7 @@ qboolean ItemParse_execKey(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// OSP - server setting tags
+// server setting tags
 qboolean ItemParse_settingDisabled(itemDef_t *item, int handle)
 {
 	qboolean fResult = PC_Int_Parse(handle, &item->settingTest);
@@ -7976,7 +7840,7 @@ keywordHash_t itemParseKeywords[] =
 	{ "mouseExit",         ItemParse_mouseExit,         NULL },
 	{ "mouseExitText",     ItemParse_mouseExitText,     NULL },
 	{ "name",              ItemParse_name,              NULL },
-	{ "noToggle",          ItemParse_noToggle,          NULL }, // TTimo: use with ITEM_TYPE_YESNO and an action script (see sv_punkbuster)
+	{ "noToggle",          ItemParse_noToggle,          NULL }, // use with ITEM_TYPE_YESNO and an action script (see sv_punkbuster)
 	{ "notselectable",     ItemParse_notselectable,     NULL },
 	{ "onFocus",           ItemParse_onFocus,           NULL },
 	{ "origin",            ItemParse_origin,            NULL },
@@ -8002,7 +7866,7 @@ keywordHash_t itemParseKeywords[] =
 	{ "tooltipaligny",     ItemParse_tooltipaligny,     NULL },
 	{ "type",              ItemParse_type,              NULL },
 	{ "visible",           ItemParse_visible,           NULL },
-	{ "voteFlag",          ItemParse_voteFlag,          NULL }, // OSP - vote check
+	{ "voteFlag",          ItemParse_voteFlag,          NULL }, // vote check
 	{ "wrapped",           ItemParse_wrapped,           NULL },
 
 	{ NULL,                NULL,                        NULL }
@@ -8069,7 +7933,7 @@ qboolean Item_Parse(int handle, itemDef_t *item)
 			return qfalse;
 		}
 	}
-	return qfalse;  // bk001205 - LCC missing return value
+	return qfalse;
 }
 
 // Item_InitControls
@@ -8215,7 +8079,7 @@ qboolean MenuParse_onEnter(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// ydnar: menu timeout function
+// menu timeout function
 qboolean MenuParse_onTimeout(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *) item;
@@ -8560,7 +8424,7 @@ keywordHash_t menuParseKeywords[] =
 	{ "visible",          MenuParse_visible,         NULL },
 	{ "onOpen",           MenuParse_onOpen,          NULL },
 	{ "onClose",          MenuParse_onClose,         NULL },
-	{ "onTimeout",        MenuParse_onTimeout,       NULL }, // ydnar: menu timeout function
+	{ "onTimeout",        MenuParse_onTimeout,       NULL }, // menu timeout function
 	{ "onESC",            MenuParse_onESC,           NULL },
 	{ "onEnter",          MenuParse_onEnter,         NULL },
 	{ "border",           MenuParse_border,          NULL },
@@ -8656,7 +8520,7 @@ qboolean Menu_Parse(int handle, menuDef_t *menu)
 			return qfalse;
 		}
 	}
-	return qfalse;  // bk001205 - LCC missing return value
+	return qfalse;
 }
 
 /*
@@ -8756,7 +8620,6 @@ void *Display_CaptureItem(int x, int y)
 	}
 	return NULL;
 }
-
 
 // FIXME:
 qboolean Display_MouseMove(void *p, int x, int y)
