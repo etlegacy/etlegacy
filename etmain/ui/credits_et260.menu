@@ -9,11 +9,6 @@
 #define GROUP_NAME		"grpCreditsetpro"
 		
 // System Menu //
-#ifdef FUI
-#define MAIN_MENU main
-#else
-#define MAIN_MENU etpro_menu_main
-#endif
 	
 menuDef {
 	name		"credits_et260"

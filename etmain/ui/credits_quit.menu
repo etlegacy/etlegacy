@@ -20,6 +20,7 @@ menuDef {
 		uiScript Quit;
 	}
 
+
 // Window //
 	itemDef {
 		name		"window"
