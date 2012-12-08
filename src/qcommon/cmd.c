@@ -355,6 +355,8 @@ void Cmd_Vstr_f(void)
  */
 void Cmd_Echo_f(void)
 {
+	int i;
+
 #ifndef DEDICATED
 	// "cpm" is a cgame command, so just print the text if disconnected
 	if (cls.state != CA_CONNECTED && cls.state != CA_ACTIVE)
@@ -363,8 +365,6 @@ void Cmd_Echo_f(void)
 		return;
 	}
 #endif
-
-	int i;
 
 	Cbuf_AddText("cpm \"");
 	for (i = 1; i < Cmd_Argc(); i++)
