@@ -196,7 +196,6 @@ vmCvar_t cg_wolfparticles;
 
 vmCvar_t cg_gameType;
 vmCvar_t cg_bloodTime;
-vmCvar_t cg_norender;
 vmCvar_t cg_skybox;
 
 // say, team say, etc.
@@ -409,7 +408,6 @@ cvarTable_t cvarTable[] =
 	// Rafael - particle switch
 	{ &cg_wolfparticles,         "cg_wolfparticles",         "1",     CVAR_ARCHIVE                 },
 	{ &cg_gameType,              "g_gametype",               "0",     0                            }, // communicated by systeminfo
-	{ &cg_norender,              "cg_norender",              "0",     0                            }, // only used during single player, to suppress rendering until the server is ready
 	{ &cg_bluelimbotime,         "",                         "30000", 0                            }, // communicated by systeminfo
 	{ &cg_redlimbotime,          "",                         "30000", 0                            }, // communicated by systeminfo
 	{ &cg_movespeed,             "g_movespeed",              "76",    0                            }, // actual movespeed of player

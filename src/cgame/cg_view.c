@@ -1931,12 +1931,6 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 	DEBUGTIME
 
-	// if we have been told not to render, don't
-	if (cg_norender.integer)
-	{
-		return;
-	}
-
 	// this counter will be bumped for every valid scene we generate
 	cg.clientFrame++;
 

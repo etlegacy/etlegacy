@@ -2093,7 +2093,6 @@ extern vmCvar_t cg_wolfparticles;
 
 extern vmCvar_t cg_gameType;
 extern vmCvar_t cg_bloodTime;
-extern vmCvar_t cg_norender;
 extern vmCvar_t cg_skybox;
 
 extern vmCvar_t cg_redlimbotime;
