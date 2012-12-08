@@ -127,7 +127,7 @@ extern vmCvar_t ui_autoredirect;
 #define MAX_EDIT_LINE           256
 
 #define MAX_MENUDEPTH           8
-#define MAX_MENUITEMS           128 // JPW NERVE put this back for MP
+#define MAX_MENUITEMS           128
 
 #define MTYPE_NULL              0
 #define MTYPE_SLIDER            1
@@ -423,10 +423,6 @@ extern void PlayerSettings_Cache(void);
 extern void UI_PreferencesMenu(void);
 extern void Preferences_Cache(void);
 
-// ui_specifyserver.c
-extern void UI_SpecifyServerMenu(void);
-extern void SpecifyServer_Cache(void);
-
 // ui_servers2.c
 #define MAX_FAVORITESERVERS 16
 
@@ -519,7 +515,7 @@ typedef struct
 
 	int realWeapon;
 
-	// NERVE - SMF - added fields so it will work with wolf's skeletal animation system
+	// added fields so it will work with wolf's skeletal animation system
 	// parsed from the start of the cfg file
 	gender_t gender;
 	footstep_t footsteps;
@@ -580,7 +576,7 @@ typedef struct
 #define MAX_ALIASES 64
 #define MAX_HEADNAME  32
 #define MAX_TEAMS 64
-//#define MAX_GAMETYPES 16 // moved up
+
 #define MAX_MAPS 128
 #define MAX_SPMAPS 16
 #define PLAYERS_PER_TEAM 5
@@ -884,19 +880,6 @@ extern void UI_KeyEvent(int key);
 
 extern uiStatic_t uis;
 
-// ui_spLevel.c
-void UI_SPLevelMenu_Cache(void);
-void UI_SPLevelMenu(void);
-void UI_SPLevelMenu_f(void);
-void UI_SPLevelMenu_ReInit(void);
-
-// ui_spArena.c
-void UI_SPArena_Start(const char *arenaInfo);
-
-// ui_spPostgame.c
-void UI_SPPostgameMenu_Cache(void);
-void UI_SPPostgameMenu_f(void);
-
 // ui_syscalls.c
 void trap_Print(const char *string);
 void trap_Error(const char *string) __attribute__((noreturn));
@@ -999,66 +982,7 @@ void trap_GetAutoUpdate(void);
 void trap_openURL(const char *url);
 void trap_GetHunkData(int *hunkused, int *hunkexpected);
 
-
 char *trap_TranslateString(const char *string); // localization
-
-// ui_teamorders.c
-extern void UI_TeamOrdersMenu(void);
-extern void UI_TeamOrdersMenu_f(void);
-extern void UI_TeamOrdersMenu_Cache(void);
-
-// ui_loadconfig.c
-void UI_LoadConfig_Cache(void);
-void UI_LoadConfigMenu(void);
-
-// ui_saveconfig.c
-void UI_SaveConfigMenu_Cache(void);
-void UI_SaveConfigMenu(void);
-
-// ui_display.c
-void UI_DisplayOptionsMenu_Cache(void);
-void UI_DisplayOptionsMenu(void);
-
-// ui_sound.c
-void UI_SoundOptionsMenu_Cache(void);
-void UI_SoundOptionsMenu(void);
-
-// ui_network.c
-void UI_NetworkOptionsMenu_Cache(void);
-void UI_NetworkOptionsMenu(void);
-
-// ui_gameinfo.c
-typedef enum
-{
-	AWARD_ACCURACY,
-	AWARD_IMPRESSIVE,
-	AWARD_EXCELLENT,
-	AWARD_GAUNTLET,
-	AWARD_FRAGS,
-	AWARD_PERFECT
-} awardType_t;
-
-const char *UI_GetArenaInfoByNumber(int num);
-const char *UI_GetArenaInfoByMap(const char *map);
-const char *UI_GetSpecialArenaInfo(const char *tag);
-int UI_GetNumArenas(void);
-int UI_GetNumSPArenas(void);
-int UI_GetNumSPTiers(void);
-
-void UI_GetBestScore(int level, int *score, int *skill);
-void UI_SetBestScore(int level, int score);
-int UI_TierCompleted(int levelWon);
-qboolean UI_ShowTierVideo(int tier);
-qboolean UI_CanShowTierVideo(int tier);
-int  UI_GetCurrentGame(void);
-void UI_NewGame(void);
-void UI_LogAwardData(int award, int data);
-int UI_GetAwardLevel(int award);
-
-void UI_SPUnlock_f(void);
-void UI_SPUnlockMedals_f(void);
-
-void UI_InitGameinfo(void);
 
 const char *UI_DescriptionForCampaign(void);
 const char *UI_NameForCampaign(void);

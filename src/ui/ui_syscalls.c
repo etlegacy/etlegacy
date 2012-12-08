@@ -209,7 +209,7 @@ void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *ve
 //% void    trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b, int overdraw ) {
 //%     syscall( UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), overdraw );
 //% }
-void    trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
+void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
 	syscall(UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity),
 	        PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), hShader, flags);
@@ -560,7 +560,7 @@ void trap_CIN_SetExtents(int handle, int x, int y, int w, int h)
 	syscall(UI_CIN_SETEXTENTS, handle, x, y, w, h);
 }
 
-void    trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset)
+void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset)
 {
 	syscall(UI_R_REMAP_SHADER, oldShader, newShader, timeOffset);
 }

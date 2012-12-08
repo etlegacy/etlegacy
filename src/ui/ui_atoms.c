@@ -164,21 +164,9 @@ qboolean UI_ConsoleCommand(int realTime)
 		return qtrue;
 	}
 
-	if (Q_stricmp(cmd, "postgame") == 0)
-	{
-		// UI_CalcPostGameStats();
-		return qtrue;
-	}
-
 	if (Q_stricmp(cmd, "ui_cache") == 0)
 	{
 		UI_Cache_f();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "ui_teamOrders") == 0)
-	{
-		//UI_TeamOrdersMenu_f();
 		return qtrue;
 	}
 

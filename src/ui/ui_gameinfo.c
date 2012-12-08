@@ -89,7 +89,7 @@ int UI_ParseInfos(char *buf, int max, char *infos[], int totalmax)
 			}
 			Info_SetValueForKey(info, key, token);
 		}
-		//NOTE: extra space for arena number
+		// NOTE: extra space for arena number
 		infos[count] = UI_Alloc(strlen(info) + strlen("\\num\\") + strlen(va("%d", totalmax)) + 1);
 		if (infos[count])
 		{

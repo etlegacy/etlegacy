@@ -818,6 +818,7 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	Rectangle  *r;
 	qboolean   fullscreenItem = qfalse;
 	qboolean   fullscreenMenu = qfalse;
+	qboolean   centered       = qfalse;
 	const char *menuName      = NULL;
 	const char *itemName      = NULL;
 
@@ -831,19 +832,22 @@ void Menu_UpdatePosition(menuDef_t *menu)
 
 	r              = &menu->window.rect;
 	fullscreenMenu = (r->x == 0 && r->y == 0 && r->w == 640 && r->h == 480);
+	centered       = (r->x == 16 && r->w == 608);
 	menuName       = menu->window.name;
+
 	for (i = 0; i < menu->itemCount; ++i)
 	{
 		itemName = menu->items[i]->window.name;
 		// fullscreen menu/item..
 		r              = &menu->items[i]->window.rectClient;
 		fullscreenItem = (r->x == 0 && r->y == 0 && r->w == 640 && r->h == 480);
+
 		if (fullscreenItem)
 		{
 			Cui_WideRect(r);
 		}
 		// alignment..
-		if ((fullscreenMenu && !fullscreenItem) || !Q_stricmp(menuName, "main"))
+		if ((fullscreenMenu && !fullscreenItem) || !Q_stricmp(menuName, "main") || !Q_stricmp(menuName, "ingame_main") || centered)
 		{
 			// align to right of screen..
 			if (!Q_stricmp(itemName, "atvi_logo") ||
@@ -858,13 +862,14 @@ void Menu_UpdatePosition(menuDef_t *menu)
 				Item_SetScreenCoords(menu->items[i], x + xoffset, y);
 			}
 			// normal (left aligned)..
-			else if (!Q_stricmp(menuName, "main"))
+			else if (!Q_stricmp(menuName, "main") || !Q_stricmp(menuName, "ingame_main"))
 			{
 				Item_SetScreenCoords(menu->items[i], x, y);
-				// horizontally centered..
+
 			}
 			else
 			{
+				// horizontally centered..
 				Item_SetScreenCoords(menu->items[i], x + xoffset, y);
 			}
 		}
@@ -2695,7 +2700,6 @@ int Item_Slider_OverSlider(itemDef_t *item, float x, float y)
 	rectDef_t r;
 
 	r.x = Item_Slider_ThumbPosition(item) - (SLIDER_THUMB_WIDTH / 2);
-	//r.y = item->window.rect.y - 2;
 	r.y = item->window.rect.y;
 	r.w = SLIDER_THUMB_WIDTH;
 	r.h = SLIDER_THUMB_HEIGHT;
@@ -2858,9 +2862,9 @@ void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click)
 
 void Item_MouseEnter(itemDef_t *item, float x, float y)
 {
-	rectDef_t r;
 	if (item)
 	{
+		rectDef_t r;
 		r    = item->textRect;
 		r.y -= r.h;
 		// in the text rect?
@@ -3910,7 +3914,6 @@ qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 	}
 	else
 	{
-		// bk001206 - parentheses
 		if (down && (realKey == K_MOUSE1 || realKey == K_MOUSE2 || realKey == K_MOUSE3))
 		{
 			Item_StartCapture(item, key);
@@ -4437,7 +4440,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 				{
 					editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
 
-					// ydnar: fixme, make it set the insertion point correctly
+					// FIXME make it set the insertion point correctly
 
 					// reset scroll offset so we can see what we're editing
 					if (editPtr)
@@ -4597,15 +4600,12 @@ void Item_TextColor(itemDef_t *item, vec4_t *newColor)
 void Item_Text_AutoWrapped_Paint(itemDef_t *item)
 {
 	char       text[1024];
-	const char *p, *textPtr, *newLinePtr;
+	const char *p, *textPtr, *newLinePtr = NULL;
 	char       buff[1024];
-	int        width, height, len, textWidth, newLine, newLineWidth;
+	int        width, height, len, textWidth = 0, newLine, newLineWidth;
 	qboolean   hasWhitespace;
 	float      y;
 	vec4_t     color;
-
-	textWidth  = 0;
-	newLinePtr = NULL;
 
 	if (item->text == NULL)
 	{
@@ -5323,6 +5323,7 @@ void Item_Bind_Paint(itemDef_t *item)
 	int            maxChars = 0;
 	menuDef_t      *parent  = (menuDef_t *)item->parent;
 	editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
+
 	if (editPtr)
 	{
 		maxChars = editPtr->maxPaintChars;
@@ -6260,6 +6261,7 @@ void Menu_SetFeederSelection(menuDef_t *menu, int feeder, int index, const char 
 	if (menu)
 	{
 		int i;
+
 		for (i = 0; i < menu->itemCount; i++)
 		{
 			if (menu->items[i]->special == feeder)
@@ -6409,7 +6411,6 @@ void Menu_HandleMouseMove(menuDef_t *menu, float x, float y)
 				continue;
 			}
 
-
 			if (Rect_ContainsPoint(&menu->items[i]->window.rect, x, y))
 			{
 				if (pass == 1)
@@ -6450,7 +6451,6 @@ void Menu_Paint(menuDef_t *menu, qboolean forcePaint)
 {
 	int       i;
 	itemDef_t *item = NULL;
-
 
 	if (menu == NULL)
 	{
@@ -6614,9 +6614,8 @@ typedef struct keywordHash_s
 
 int KeywordHash_Key(char *keyword)
 {
-	int register hash, i;
+	int register hash = 0, i;
 
-	hash = 0;
 	for (i = 0; keyword[i] != '\0'; i++)
 	{
 		if (keyword[i] >= 'A' && keyword[i] <= 'Z')
@@ -8654,11 +8653,12 @@ qboolean Display_MouseMove(void *p, int x, int y)
 
 int Display_CursorType(int x, int y)
 {
-	int i;
+	rectDef_t r2;
+	int       i;
 
 	for (i = 0; i < menuCount; i++)
 	{
-		rectDef_t r2;
+
 		r2.x = Menus[i].window.rect.x - 3;
 		r2.y = Menus[i].window.rect.y - 3;
 		r2.w = r2.h = 7;
