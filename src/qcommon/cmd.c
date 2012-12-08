@@ -35,6 +35,10 @@
 #include "q_shared.h"
 #include "qcommon.h"
 
+#ifndef DEDICATED
+#include "../client/client.h"
+#endif
+
 #define MAX_CMD_BUFFER  131072
 #define MAX_CMD_LINE    1024
 
@@ -346,15 +350,20 @@ void Cmd_Vstr_f(void)
 	Cbuf_InsertText(va("%s\n", v));
 }
 
-/*
-===============
-Cmd_Echo_f
-
-Just prints the rest of the line to the console
-===============
-*/
+/**
+ * @brief Just prints the rest of the line to the console
+ */
 void Cmd_Echo_f(void)
 {
+#ifndef DEDICATED
+	// "cpm" is a cgame command, so just print the text if disconnected
+	if (cls.state != CA_CONNECTED && cls.state != CA_ACTIVE)
+	{
+		Com_Printf("%s\n", Cmd_Args());
+		return;
+	}
+#endif
+
 	int i;
 
 	Cbuf_AddText("cpm \"");

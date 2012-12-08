@@ -534,6 +534,9 @@ void    Cvar_Update(vmCvar_t *vmCvar);
 void    Cvar_Set(const char *var_name, const char *value);
 // will create the variable with no flags if it doesn't exist
 
+cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force);
+// same as Cvar_Set, but allows more control over setting of cvar
+
 void Cvar_SetLatched(const char *var_name, const char *value);
 // don't set the cvar immediately
 
@@ -1216,6 +1219,20 @@ void Sys_OpenURL(const char *url, qboolean doexit);
 
 #ifndef _WIN32
 void Sys_Chmod(char *file, int mode);
+#endif
+
+// Console
+void Hist_Add(field_t *field);
+field_t *Hist_Prev(void);
+field_t *Hist_Next(void);
+
+#ifdef FEATURE_CURSES
+// Functions from the tty console for fallback
+void CON_Shutdown_tty(void);
+void CON_Init_tty(void);
+char *CON_Input_tty(void);
+void CON_Print_tty(const char *message);
+void CON_Clear_tty(void);
 #endif
 
 /* This is based on the Adaptive Huffman algorithm described in Sayood's Data

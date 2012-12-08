@@ -821,8 +821,6 @@ void SV_Init(void)
 	SV_AddOperatorCommands();
 
 	// serverinfo vars
-	Cvar_Get("dmflags", "0", /*CVAR_SERVERINFO*/ 0);
-	Cvar_Get("fraglimit", "0", /*CVAR_SERVERINFO*/ 0);
 	Cvar_Get("timelimit", "0", CVAR_SERVERINFO);
 
 	Cvar_Get("sv_keywords", "", CVAR_SERVERINFO); // unused. Kept for GameTracker.com compatibility

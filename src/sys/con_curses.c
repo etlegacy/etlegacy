@@ -57,13 +57,6 @@
 #define MAX_LOG_LINES 1024
 #define LOG_BUF_SIZE 65536
 
-// Functions from the tty console for fallback
-void CON_Shutdown_tty(void);
-void CON_Init_tty(void);
-char *CON_Input_tty(void);
-void CON_Print_tty(const char *message);
-void CON_Clear_tty(void);
-
 static qboolean curses_on = qfalse;
 static field_t  input_field;
 static WINDOW   *borderwin;

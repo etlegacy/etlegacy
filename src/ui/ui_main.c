@@ -6273,7 +6273,6 @@ serverStatusCvar_t serverStatusCvars[] =
 	{ "version",     ""          },
 	{ "protocol",    ""          },
 	{ "timelimit",   ""          },
-	{ "fraglimit",   ""          },
 	{ NULL,          NULL        }
 };
 
