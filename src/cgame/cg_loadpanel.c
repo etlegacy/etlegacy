@@ -230,7 +230,6 @@ panel_button_t *loadpanelButtons[] =
 {
 	&loadScreenMap,               &loadScreenBack,
 
-
 	&missiondescriptionPanelText, &missiondescriptionPanelHeaderText,
 
 	&campaignheaderPanelText,     &campaignPanelText,
@@ -428,6 +427,8 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 
 	if (*cgs.rawmapname)
 	{
+		float x = 16 + cgs.wideXoffset + 1;;
+
 		if (!bg_mappic)
 		{
 			bg_mappic = DC->registerShaderNoMip(va("levelshots/%s", cgs.rawmapname));
@@ -439,12 +440,14 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		}
 
 		trap_R_SetColor(colorBlack);
-		CG_DrawPic(16 + 1 + cgs.wideXoffset, 2 + 1, 192, 144, bg_mappic);
+		CG_DrawPic(x, 2 + 1, 192, 144, bg_mappic);
 
 		trap_R_SetColor(NULL);
-		CG_DrawPic(16 + cgs.wideXoffset, 2, 192, 144, bg_mappic);
+		x = 16 + cgs.wideXoffset;
+		CG_DrawPic(x, 2, 192, 144, bg_mappic);
 
-		CG_DrawPic(16 + 80 + cgs.wideXoffset, 2 + 6, 20, 20, bg_pin);
+		x = 16 + cgs.wideXoffset + 80;
+		CG_DrawPic(x, 2 + 6, 20, 20, bg_pin);
 	}
 
 	if (forcerefresh)
@@ -600,18 +603,17 @@ qboolean CG_LoadPanel_ContinueButtonKeyDown(panel_button_t *button, int key)
 
 void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float sy, qhandle_t shader, float pinsize, float backheight)
 {
-	float  w;
-	vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
+	static vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
+	float         w                = DC->textWidthExt(text, sx, 0, &bg_loadscreenfont2);
+	qboolean      fit              = (px + 20 + w > 440) ? qtrue : qfalse;
 
 	px += cgs.wideXoffset;
-
-	w = DC->textWidthExt(text, sx, 0, &bg_loadscreenfont2);
 
 	// Pin half width is 16
 	// Pin left margin is 4
 	// Pin right margin is 0
 	// Text margin is 4
-	if (px + 20 + w > 440)
+	if (fit)
 	{
 		// x - pinhwidth (16) - pin left margin (4) - w - text margin (4) => x - w - 24
 		DC->fillRect(px - w - 24 + 2, py - (backheight / 2.f) + 2, 24 + w, backheight, colourFadedBlack);
@@ -624,7 +626,9 @@ void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float 
 		DC->fillRect(px, py - (backheight / 2.f), 20 + w, backheight, colorBlack);
 	}
 
-	if (px + 20 + w > 440)
+	DC->drawHandlePic(px - pinsize, py - pinsize, pinsize * 2.f, pinsize * 2.f, shader);
+
+	if (fit)
 	{
 		// x - pinhwidth (16) - pin left margin (4) - w => x - w - 20
 		DC->drawTextExt(px - w - 20, py + 4, sx, sy, colorWhite, text, 0, 0, 0, &bg_loadscreenfont2);
@@ -638,9 +642,6 @@ void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float 
 
 void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 {
-	int       i;
-	qhandle_t shader;
-
 	if (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF)
 	{
 		float px, py;
@@ -657,6 +658,9 @@ void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 	}
 	else
 	{
+		int       i;
+		qhandle_t shader;
+
 		if (!cgs.campaignInfoLoaded)
 		{
 			return;
