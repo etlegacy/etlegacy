@@ -80,8 +80,6 @@ static void CG_StatsDown_f(void)
 {
 	if (!cg.demoPlayback)
 	{
-		int i = (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) : cg.snap->ps.clientNum;
-
 		if (cg.mvTotalClients < 1 && cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 		{
 			Pri("You must be a player or following a player to use +stats\n");
@@ -101,6 +99,8 @@ static void CG_StatsDown_f(void)
 
 		if (cgs.gamestats.requestTime < cg.time)
 		{
+			int i = (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) : cg.snap->ps.clientNum;
+
 			cgs.gamestats.requestTime = cg.time + 2000;
 			trap_SendClientCommand(va("sgstats %d", i));
 		}
@@ -915,8 +915,6 @@ void CG_dumpStats_f(void)
 
 void CG_wStatsDown_f(void)
 {
-	int i = (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) : cg.snap->ps.clientNum;
-
 	if (cg.mvTotalClients < 1 && cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		Pri("You must be a player or following a player to use +wstats\n");
@@ -925,6 +923,8 @@ void CG_wStatsDown_f(void)
 
 	if (cg.statsRequestTime < cg.time)
 	{
+		int i = (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) : cg.snap->ps.clientNum;
+
 		cg.statsRequestTime = cg.time + 500;
 		trap_SendClientCommand(va("wstats %d", i));
 	}

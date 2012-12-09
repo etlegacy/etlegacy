@@ -472,9 +472,6 @@ void CG_BloodTrail(localEntity_t *le)
 	static vec3_t col = { 1, 1, 1 };
 #endif
 
-	centity_t *cent;
-	cent = &cg_entities[le->ownerNum];
-
 	if (!cg_blood.integer)
 	{
 		return;
@@ -536,8 +533,7 @@ CG_FragmentBounceMark
 */
 void CG_FragmentBounceMark(localEntity_t *le, trace_t *trace)
 {
-	int    radius;
-	vec4_t projection, color;
+	vec4_t projection;
 
 	if (le->leMarkType == LEMT_BLOOD)
 	{
@@ -546,7 +542,8 @@ void CG_FragmentBounceMark(localEntity_t *le, trace_t *trace)
 		// don't drop too many blood marks
 		if (!(lastBloodMark > cg.time || lastBloodMark > cg.time - 100))
 		{
-			radius = 16 + (rand() & 31);
+			vec4_t color;
+			int    radius = 16 + (rand() & 31);
 			//% CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace->endpos, trace->plane.normal, random()*360,
 			//%     1,1,1,1, qtrue, radius, qfalse, cg_bloodTime.integer * 1000 );
 #if 0
@@ -698,13 +695,11 @@ void CG_AddFragment(localEntity_t *le)
 {
 	vec3_t      newOrigin;
 	trace_t     trace;
-	refEntity_t *re;
+	refEntity_t *re        = &le->refEntity;
 	float       flameAlpha = 0.0;
 	vec3_t      flameDir;
 	qboolean    hasFlame = qfalse;
-	int         i;
 
-	re = &le->refEntity;
 	if (!re->fadeStartTime || re->fadeEndTime < le->endTime)
 	{
 		if (le->endTime - cg.time > 5000)
@@ -736,7 +731,6 @@ void CG_AddFragment(localEntity_t *le)
 
 	if (le->leFlags & LEF_SMOKING)
 	{
-		float       alpha;
 		refEntity_t flash;
 
 		// create a little less smoke
@@ -745,7 +739,7 @@ void CG_AddFragment(localEntity_t *le)
 		//      the slower the fps, the /more/ smoke there'll be, probably driving the fps lower.
 		if (!(rand() % 5))
 		{
-			alpha  = 1.0 - ((float)(cg.time - le->startTime) / (float)(le->endTime - le->startTime));
+			float alpha = 1.0 - ((float)(cg.time - le->startTime) / (float)(le->endTime - le->startTime));
 			alpha *= 0.25f;
 			memset(&flash, 0, sizeof(flash));
 			CG_PositionEntityOnTag(&flash, &le->refEntity, "tag_flash", 0, NULL);
@@ -755,8 +749,6 @@ void CG_AddFragment(localEntity_t *le)
 
 	if (le->pos.trType == TR_STATIONARY)
 	{
-		int t;
-
 		// Ridah, add the flame
 		if (hasFlame)
 		{
@@ -777,16 +769,12 @@ void CG_AddFragment(localEntity_t *le)
 			le->refEntity = backupEnt;
 		}
 
-		t = le->endTime - cg.time;
 		trap_R_AddRefEntityToScene(&le->refEntity);
 
 		return;
-
 	}
 	else if (le->pos.trType == TR_GRAVITY_PAUSED)
 	{
-		int t;
-
 		// add the flame
 		if (hasFlame)
 		{
@@ -807,7 +795,6 @@ void CG_AddFragment(localEntity_t *le)
 			le->refEntity = backupEnt;
 		}
 
-		t = le->endTime - cg.time;
 		trap_R_AddRefEntityToScene(&le->refEntity);
 		// trace a line from previous position down, to see if I should start falling again
 
@@ -852,6 +839,8 @@ void CG_AddFragment(localEntity_t *le)
 	CG_Trace(&trace, le->refEntity.origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
 	if (trace.fraction == 1.0)
 	{
+		int i;
+
 		// still in free fall
 		VectorCopy(newOrigin, le->refEntity.origin);
 
@@ -1353,81 +1342,80 @@ void CG_AddDebrisElements(localEntity_t *le)
 ===============
 CG_AddShrapnel
 ===============
-*/
+// unused - use this somehow?
 void CG_AddShrapnel(localEntity_t *le)
 {
-	vec3_t  newOrigin;
-	trace_t trace;
+    vec3_t  newOrigin;
+    trace_t trace;
 
-	if (le->pos.trType == TR_STATIONARY)
-	{
-		// sink into the ground if near the removal time
-		int   t;
-		float oldZ;
+    if (le->pos.trType == TR_STATIONARY)
+    {
+        // sink into the ground if near the removal time
+        float oldZ;
 
-		t = le->endTime - cg.time;
-		if (t < SINK_TIME)
-		{
-			// we must use an explicit lighting origin, otherwise the
-			// lighting would be lost as soon as the origin went
-			// into the ground
-			VectorCopy(le->refEntity.origin, le->refEntity.lightingOrigin);
-			le->refEntity.renderfx  |= RF_LIGHTING_ORIGIN;
-			oldZ                     = le->refEntity.origin[2];
-			le->refEntity.origin[2] -= 16 * (1.0 - (float)t / SINK_TIME);
-			trap_R_AddRefEntityToScene(&le->refEntity);
-			le->refEntity.origin[2] = oldZ;
-		}
-		else
-		{
-			trap_R_AddRefEntityToScene(&le->refEntity);
-		}
+        if (t < SINK_TIME)
+        {
+            // we must use an explicit lighting origin, otherwise the
+            // lighting would be lost as soon as the origin went
+            // into the ground
+            VectorCopy(le->refEntity.origin, le->refEntity.lightingOrigin);
+            le->refEntity.renderfx  |= RF_LIGHTING_ORIGIN;
+            oldZ                     = le->refEntity.origin[2];
+            le->refEntity.origin[2] -= 16 * (1.0 - (float)t / SINK_TIME);
+            trap_R_AddRefEntityToScene(&le->refEntity);
+            le->refEntity.origin[2] = oldZ;
+        }
+        else
+        {
+            trap_R_AddRefEntityToScene(&le->refEntity);
+        }
 
-		return;
-	}
+        return;
+    }
 
-	// calculate new position
-	BG_EvaluateTrajectory(&le->pos, cg.time, newOrigin, qfalse, -1);
+    // calculate new position
+    BG_EvaluateTrajectory(&le->pos, cg.time, newOrigin, qfalse, -1);
 
-	// trace a line from previous position to new position
-	CG_Trace(&trace, le->refEntity.origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
-	if (trace.fraction == 1.0)
-	{
-		// still in free fall
-		VectorCopy(newOrigin, le->refEntity.origin);
+    // trace a line from previous position to new position
+    CG_Trace(&trace, le->refEntity.origin, NULL, NULL, newOrigin, -1, CONTENTS_SOLID);
+    if (trace.fraction == 1.0)
+    {
+        // still in free fall
+        VectorCopy(newOrigin, le->refEntity.origin);
 
-		if (le->leFlags & LEF_TUMBLE)
-		{
-			vec3_t angles;
+        if (le->leFlags & LEF_TUMBLE)
+        {
+            vec3_t angles;
 
-			BG_EvaluateTrajectory(&le->angles, cg.time, angles, qtrue, -1);
-			AnglesToAxis(angles, le->refEntity.axis);
-		}
+            BG_EvaluateTrajectory(&le->angles, cg.time, angles, qtrue, -1);
+            AnglesToAxis(angles, le->refEntity.axis);
+        }
 
-		trap_R_AddRefEntityToScene(&le->refEntity);
-		return;
-	}
+        trap_R_AddRefEntityToScene(&le->refEntity);
+        return;
+    }
 
-	// if it is in a nodrop zone, remove it
-	// this keeps gibs from waiting at the bottom of pits of death
-	// and floating levels
-	if (CG_PointContents(trace.endpos, 0) & CONTENTS_NODROP)
-	{
-		CG_FreeLocalEntity(le);
-		return;
-	}
+    // if it is in a nodrop zone, remove it
+    // this keeps gibs from waiting at the bottom of pits of death
+    // and floating levels
+    if (CG_PointContents(trace.endpos, 0) & CONTENTS_NODROP)
+    {
+        CG_FreeLocalEntity(le);
+        return;
+    }
 
-	// leave a mark
-	CG_FragmentBounceMark(le, &trace);
+    // leave a mark
+    CG_FragmentBounceMark(le, &trace);
 
-	// do a bouncy sound
-	CG_FragmentBounceSound(le, &trace);
+    // do a bouncy sound
+    CG_FragmentBounceSound(le, &trace);
 
-	// reflect the velocity on the trace plane
-	CG_ReflectVelocity(le, &trace);
+    // reflect the velocity on the trace plane
+    CG_ReflectVelocity(le, &trace);
 
-	trap_R_AddRefEntityToScene(&le->refEntity);
+    trap_R_AddRefEntityToScene(&le->refEntity);
 }
+*/
 
 /*
 =====================================================================

@@ -207,8 +207,6 @@ void CG_AddBufferedSoundScript(soundScript_t *sound)
 
 void CG_UpdateBufferedSoundScripts(void)
 {
-	int i;
-
 	if (!cg.numbufferedSoundScripts)
 	{
 		return;
@@ -216,6 +214,8 @@ void CG_UpdateBufferedSoundScripts(void)
 
 	if (cg.time > cg.bufferedSoundScriptEndTime)
 	{
+		int i;
+
 		for (i = 1; i < MAX_BUFFERED_SOUNDSCRIPTS; i++)
 		{
 			cg.bufferSoundScripts[i - 1] = cg.bufferSoundScripts[i];
@@ -1157,7 +1157,6 @@ void CG_SpeakerEditor_RenderDropdown(panel_button_t *button)
 	vec4_t    colour;
 	float     textboxW;
 	rectDef_t rect;
-	int       i;
 	char      *s;
 
 	memcpy(&rect, &button->rect, sizeof(rect));
@@ -1227,6 +1226,8 @@ void CG_SpeakerEditor_RenderDropdown(panel_button_t *button)
 
 	if (button == BG_PanelButtons_GetFocusButton())
 	{
+		int i;
+
 		memcpy(&rect, &button->rect, sizeof(rect));
 
 		for (i = 0; i < button->data[0]; i++)

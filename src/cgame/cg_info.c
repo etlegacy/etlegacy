@@ -704,7 +704,7 @@ void CG_TopShotsDraw(void)
 	}
 	else
 	{
-		int            i, x = 640 + TS_X - TS_W, y = 480, h;
+		int            x   = 640 + TS_X - TS_W, y = 480, h;
 		topshotStats_t *ts = &cgs.topshots;
 
 		vec4_t bgColor     = COLOR_BG;          // window
@@ -815,6 +815,8 @@ void CG_TopShotsDraw(void)
 		}
 		else
 		{
+			int i;
+
 			for (i = 0; i < ts->cWeapons; i++)
 			{
 				y += tSpacing;

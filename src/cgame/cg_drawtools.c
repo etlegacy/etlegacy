@@ -144,7 +144,6 @@ flags:
 void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags)
 {
 	vec4_t backgroundcolor = { 1, 1, 1, 0.25f }, colorAtPos;  // colorAtPos is the lerped color if necessary
-	int    indent          = BAR_BORDERSIZE;
 
 	if (frac > 1)
 	{
@@ -168,6 +167,8 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 	// background
 	if ((flags & BAR_BG))
 	{
+		int indent = BAR_BORDERSIZE;
+
 		// draw background at full size and shrink the remaining box to fit inside with a border.  (alternate border may be specified by a BAR_BGSPACING_xx)
 		CG_FillRect(x,
 		            y,

@@ -493,7 +493,6 @@ cg.time should be between oldFrameTime and frameTime after exit
 */
 void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, float speedScale)
 {
-	int         f;
 	animation_t *anim;
 
 	// debugging tool to get no animations
@@ -513,6 +512,8 @@ void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int new
 	// oldFrame and calculate a new frame
 	if (cg.time >= lf->frameTime)
 	{
+		int f;
+
 		lf->oldFrame      = lf->frame;
 		lf->oldFrameTime  = lf->frameTime;
 		lf->oldFrameModel = lf->frameModel;
@@ -608,8 +609,8 @@ may include ANIM_TOGGLEBIT
 void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation)
 {
 	animation_t *anim, *oldanim;
-	int         transitionMin = -1, oldAnimTime, oldAnimNum;
-	qboolean    firstAnim     = qfalse;
+	int         oldAnimNum; // oldAnimTime
+	qboolean    firstAnim = qfalse;
 
 	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
 
@@ -618,9 +619,9 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 		return;
 	}
 
-	oldAnimTime = lf->animationTime;
-	oldanim     = lf->animation;
-	oldAnimNum  = lf->animationNumber;
+	// oldAnimTime = lf->animationTime;
+	oldanim    = lf->animation;
+	oldAnimNum = lf->animationNumber;
 
 	if (!lf->animation)
 	{
@@ -642,6 +643,8 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 
 	if (!(anim->flags & ANIMFL_FIRINGANIM) || (lf != &cent->pe.torso))
 	{
+		int transitionMin = -1;
+
 		if ((lf == &cent->pe.legs) && (CG_IsCrouchingAnim(character->animModelInfo, newAnimation) != CG_IsCrouchingAnim(character->animModelInfo, oldAnimNum)))
 		{
 			if (anim->moveSpeed || (anim->movetype & ((1 << ANIM_MT_TURNLEFT) | (1 << ANIM_MT_TURNRIGHT))))             // if unknown movetype, go there faster
@@ -707,7 +710,6 @@ cg.time should be between oldFrameTime and frameTime after exit
 */
 void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, centity_t *cent, int recursion)
 {
-	int         f;
 	animation_t *anim, *oldAnim;
 	animation_t *otherAnim = NULL;
 	qboolean    isLadderAnim;
@@ -753,11 +755,11 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 
 	if (anim->moveSpeed && lf->oldFrameSnapshotTime)
 	{
-		float moveSpeed;
-
 		// calculate the speed at which we moved over the last frame
 		if (cg.latestSnapshotTime != lf->oldFrameSnapshotTime && cg.nextSnap)
 		{
+			float moveSpeed;
+
 			if (cent->currentState.number == cg.snap->ps.clientNum)
 			{
 				if (isLadderAnim)     // only use Z axis for speed
@@ -799,6 +801,8 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 	// oldFrame and calculate a new frame
 	if (cg.time >= lf->frameTime)
 	{
+		int f;
+
 		lf->oldFrame      = lf->frame;
 		lf->oldFrameTime  = lf->frameTime;
 		lf->oldFrameModel = lf->frameModel;
@@ -1029,7 +1033,7 @@ static void CG_PlayerAnimation(centity_t *cent, refEntity_t *body)
 {
 	clientInfo_t   *ci;
 	int            clientNum;
-	int            animIndex, tempIndex;
+	int            animIndex;
 	bg_character_t *character;
 
 	clientNum = cent->currentState.clientNum;
@@ -1056,7 +1060,8 @@ static void CG_PlayerAnimation(centity_t *cent, refEntity_t *body)
 	if (!(cent->currentState.eFlags & EF_DEAD) && cent->pe.legs.yawing)
 	{
 		//CG_Printf("turn: %i\n", cg.time );
-		tempIndex = BG_GetAnimScriptAnimation(clientNum, character->animModelInfo, cent->currentState.aiState, (cent->pe.legs.yawing == SWING_RIGHT ? ANIM_MT_TURNRIGHT : ANIM_MT_TURNLEFT));
+		int tempIndex = BG_GetAnimScriptAnimation(clientNum, character->animModelInfo, cent->currentState.aiState, (cent->pe.legs.yawing == SWING_RIGHT ? ANIM_MT_TURNRIGHT : ANIM_MT_TURNLEFT));
+
 		if (tempIndex > -1)
 		{
 			animIndex = tempIndex;
@@ -1245,12 +1250,12 @@ Handles seperate torso motion
 */
 static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], vec3_t head[3])
 {
-	vec3_t         legsAngles, torsoAngles, headAngles;
-	float          dest;
-	vec3_t         velocity;
-	float          speed;
-	float          clampTolerance;
-	int            legsSet, torsoSet;
+	vec3_t legsAngles, torsoAngles, headAngles;
+	float  dest;
+	vec3_t velocity;
+	float  speed;
+	int    legsSet;
+	//int            torsoSet;
 	clientInfo_t   *ci;
 	bg_character_t *character;
 
@@ -1263,8 +1268,8 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		return;
 	}
 
-	legsSet  = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
-	torsoSet = cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT;
+	legsSet = cent->currentState.legsAnim & ~ANIM_TOGGLEBIT;
+	//torsoSet = cent->currentState.torsoAnim & ~ANIM_TOGGLEBIT;
 
 	VectorCopy(cent->lerpAngles, headAngles);
 	headAngles[YAW] = AngleMod(headAngles[YAW]);
@@ -1301,6 +1306,8 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	}
 	else
 	{
+		float clampTolerance;
+
 		legsAngles[YAW] = headAngles[YAW] + cent->currentState.angles2[YAW];
 
 		if (!(cent->currentState.eFlags & EF_FIRING))
@@ -1619,8 +1626,7 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 	vec3_t       end;
 	trace_t      trace;
 	float        dist, distFade;
-	int          tagIndex, subIndex;
-	vec3_t       origin, angles, axis[3];
+	vec3_t       origin, axis[3];
 	vec4_t       projection    = { 0, 0, -1, 64 };
 	shadowPart_t shadowParts[] =
 	{
@@ -1718,7 +1724,12 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 	}
 
 	if (dist < SHADOW_MAX_DIST)       // show more detail
-	{   // now add shadows for the various body parts
+	{
+		vec4_t angles;
+		int    tagIndex, subIndex;
+
+		// now add shadows for the various body parts
+
 		for (tagIndex = 0; shadowParts[tagIndex].tagname; tagIndex++)
 		{
 			// grab each tag with this name
@@ -1868,13 +1879,9 @@ Also called by CG_Missile for quad rockets, but nobody can tell...
 */
 void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entityState_t *es, const vec3_t fireRiseDir)
 {
-	centity_t   *cent;
 	refEntity_t backupRefEnt; //, parentEnt;
 	qboolean    onFire = qfalse;
 	float       alpha  = 0.0;
-	float       fireStart, fireEnd;
-
-	cent = &cg_entities[es->number];
 
 	ent->entityNum = es->number;
 
@@ -1893,6 +1900,8 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entit
 
 	if (!onFire && CG_EntOnFire(&cg_entities[es->number]))
 	{
+		float fireStart, fireEnd;
+
 		onFire = qtrue;
 		// set the alpha
 		if (ent->entityNum == cg.snap->ps.clientNum)
@@ -3245,8 +3254,6 @@ void CG_MenuPendingAnimation(playerInfo_t *pi, const char *legsAnim, const char 
 
 void CG_MenuCheckPendingAnimation(playerInfo_t *pi)
 {
-	int i;
-
 	if (pi->numPendingAnimations <= 0)
 	{
 		return;
@@ -3254,6 +3261,8 @@ void CG_MenuCheckPendingAnimation(playerInfo_t *pi)
 
 	if (pi->pendingAnimations[0].pendingAnimationTime && pi->pendingAnimations[0].pendingAnimationTime < cg.time)
 	{
+		int i;
+
 		CG_MenuSetAnimation(pi, pi->pendingAnimations[0].pendingLegsAnim, pi->pendingAnimations[0].pendingTorsoAnim, qfalse, qfalse);
 
 		for (i = 0; i < 3; i++)
@@ -3293,7 +3302,6 @@ void CG_ClearHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int animation
 
 void CG_RunHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int newAnimation, float speedScale)
 {
-	int         f;
 	animation_t *anim;
 
 	// see if the animation sequence is switching
@@ -3310,6 +3318,8 @@ void CG_RunHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int newAnimatio
 	// oldFrame and calculate a new frame
 	if (cg.time >= lf->frameTime)
 	{
+		int f;
+
 		lf->oldFrame      = lf->frame;
 		lf->oldFrameTime  = lf->frameTime;
 		lf->oldFrameModel = lf->frameModel;

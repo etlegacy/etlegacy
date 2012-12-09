@@ -58,19 +58,20 @@ void CG_Text_SetActiveFont(int font)
 
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	int         count, len;
 	glyphInfo_t *glyph;
 	const char  *s  = text;
 	float       out = 0, useScale = scale * font->glyphScale;
 
 	if (text)
 	{
-		len = strlen(text);
+		int count = 0;
+		int len   = strlen(text);
+
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
 		}
-		count = 0;
+
 		while (s && *s && count < len)
 		{
 			if (Q_IsColorString(s))
@@ -100,7 +101,6 @@ int CG_Text_Width(const char *text, float scale, int limit)
 
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	int         len, count;
 	float       max = 0;
 	glyphInfo_t *glyph;
 	float       useScale;
@@ -110,12 +110,14 @@ int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *fon
 
 	if (text)
 	{
-		len = strlen(text);
+		int count = 0;
+		int len   = strlen(text);
+
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
 		}
-		count = 0;
+
 		while (s && *s && count < len)
 		{
 			if (Q_IsColorString(s))
@@ -172,7 +174,6 @@ void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec
 
 void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font)
 {
-	int         len, count;
 	vec4_t      newColor;
 	glyphInfo_t *glyph;
 
@@ -183,7 +184,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 	{
 		const char *s = text;
 		float      yadj;
-		int        ofs;
+		int        len, count = 0, ofs;
 
 		trap_R_SetColor(color);
 		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
@@ -192,7 +193,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 		{
 			len = limit;
 		}
-		count = 0;
+
 		while (s && *s && count < len)
 		{
 			glyph = &font->glyphs[(unsigned char)*s];
@@ -245,7 +246,6 @@ int CG_DrawFieldWidth(int x, int y, int width, int value, int charWidth, int cha
 {
 	char num[16], *ptr;
 	int  l;
-	int  frame;
 	int  totalwidth = 0;
 
 	if (width < 1)
@@ -289,15 +289,6 @@ int CG_DrawFieldWidth(int x, int y, int width, int value, int charWidth, int cha
 	ptr = num;
 	while (*ptr && l)
 	{
-		if (*ptr == '-')
-		{
-			frame = STAT_MINUS;
-		}
-		else
-		{
-			frame = *ptr - '0';
-		}
-
 		totalwidth += charWidth;
 		ptr++;
 		l--;
@@ -628,13 +619,7 @@ CG_DrawTeamInfo
 */
 static void CG_DrawTeamInfo(void)
 {
-	int   chatHeight  = TEAMCHAT_HEIGHT;
-	float lineHeight  = 9.f;
-	float scale       = 0.2f;
-	float icon_width  = 12.f;
-	float icon_height = 10.f;
-	int   x_offset    = 0;
-
+	int chatHeight = TEAMCHAT_HEIGHT;
 	/*
 	if ( cg_smallFont.integer & SMALLFONT_CHATS )
 	{
@@ -659,11 +644,16 @@ static void CG_DrawTeamInfo(void)
 
 	if (cgs.teamLastChatPos != cgs.teamChatPos)
 	{
-		int    i;
 		vec4_t hcolor;
+		int    i;
+		float  lineHeight = 9.f;
+		int    x_offset   = 0;
 		float  alphapercent;
-		int    chatWidth = 640 - CHATLOC_X - 80 /*(cg_drawHUDHead.integer ? 80 : 0)*/;
-		int    chatPosX  = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) ? 20 : CHATLOC_TEXT_X - x_offset;
+		float  scale       = 0.2f;
+		float  icon_width  = 12.f;
+		float  icon_height = 10.f;
+		int    chatWidth   = 640 - CHATLOC_X - 80 /*(cg_drawHUDHead.integer ? 80 : 0)*/;
+		int    chatPosX    = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) ? 20 : CHATLOC_TEXT_X - x_offset;
 
 		if (cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
 		{
@@ -766,83 +756,85 @@ CG_DrawNotify
 
 static void CG_DrawNotify(void)
 {
-	int    w, h;
-	int    i, len;
-	vec4_t hcolor;
-	int    chatHeight;
-	float  alphapercent;
-	char   var[MAX_TOKEN_CHARS];
-	float  notifytime = 1.0f;
-	int    yLoc;
+	return; // FIXME: remove? early return ... commented the code
 
-	return; // FIXME: remove? early return ...
+/*
+    int    w, h;
+    int    i, len;
+    vec4_t hcolor;
+    int    chatHeight;
+    float  alphapercent;
+    char   var[MAX_TOKEN_CHARS];
+    float  notifytime = 1.0f;
+    int    yLoc;
 
-	yLoc = NOTIFYLOC_Y;
+    yLoc = NOTIFYLOC_Y;
 
-	trap_Cvar_VariableStringBuffer("con_notifytime", var, sizeof(var));
-	notifytime = atof(var) * 1000;
+    trap_Cvar_VariableStringBuffer("con_notifytime", var, sizeof(var));
+    notifytime = atof(var) * 1000;
 
-	if (notifytime <= 100.f)
-	{
-		notifytime = 100.0f;
-	}
+    if (notifytime <= 100.f)
+    {
+        notifytime = 100.0f;
+    }
 
-	chatHeight = NOTIFY_HEIGHT;
+    chatHeight = NOTIFY_HEIGHT;
 
-	if (cgs.notifyLastPos != cgs.notifyPos)
-	{
-		if (cg.time - cgs.notifyMsgTimes[cgs.notifyLastPos % chatHeight] > notifytime)
-		{
-			cgs.notifyLastPos++;
-		}
+    if (cgs.notifyLastPos != cgs.notifyPos)
+    {
+        if (cg.time - cgs.notifyMsgTimes[cgs.notifyLastPos % chatHeight] > notifytime)
+        {
+            cgs.notifyLastPos++;
+        }
 
-		h = (cgs.notifyPos - cgs.notifyLastPos) * TINYCHAR_HEIGHT;
+        h = (cgs.notifyPos - cgs.notifyLastPos) * TINYCHAR_HEIGHT;
 
-		w = 0;
+        w = 0;
 
-		for (i = cgs.notifyLastPos; i < cgs.notifyPos; i++)
-		{
-			len = CG_DrawStrlen(cgs.notifyMsgs[i % chatHeight]);
-			if (len > w)
-			{
-				w = len;
-			}
-		}
-		w *= TINYCHAR_WIDTH;
-		w += TINYCHAR_WIDTH * 2;
+        for (i = cgs.notifyLastPos; i < cgs.notifyPos; i++)
+        {
+            len = CG_DrawStrlen(cgs.notifyMsgs[i % chatHeight]);
+            if (len > w)
+            {
+                w = len;
+            }
+        }
+        w *= TINYCHAR_WIDTH;
+        w += TINYCHAR_WIDTH * 2;
 
-		if (maxCharsBeforeOverlay <= 0)
-		{
-			maxCharsBeforeOverlay = 80;
-		}
+        if (maxCharsBeforeOverlay <= 0)
+        {
+            maxCharsBeforeOverlay = 80;
+        }
 
-		for (i = cgs.notifyPos - 1; i >= cgs.notifyLastPos; i--)
-		{
-			alphapercent = 1.0f - ((cg.time - cgs.notifyMsgTimes[i % chatHeight]) / notifytime);
-			if (alphapercent > 0.5f)
-			{
-				alphapercent = 1.0f;
-			}
-			else
-			{
-				alphapercent *= 2;
-			}
+        for (i = cgs.notifyPos - 1; i >= cgs.notifyLastPos; i--)
+        {
+            alphapercent = 1.0f - ((cg.time - cgs.notifyMsgTimes[i % chatHeight]) / notifytime);
+            if (alphapercent > 0.5f)
+            {
+                alphapercent = 1.0f;
+            }
+            else
+            {
+                alphapercent *= 2;
+            }
 
-			if (alphapercent < 0.f)
-			{
-				alphapercent = 0.f;
-			}
+            if (alphapercent < 0.f)
+            {
+                alphapercent = 0.f;
+            }
 
-			hcolor[0] = hcolor[1] = hcolor[2] = 1.0;
-			hcolor[3] = alphapercent;
-			trap_R_SetColor(hcolor);
+            hcolor[0] = hcolor[1] = hcolor[2] = 1.0;
+            hcolor[3] = alphapercent;
+            trap_R_SetColor(hcolor);
 
-			CG_DrawStringExt(NOTIFYLOC_X + TINYCHAR_WIDTH,
-			                 yLoc - (cgs.notifyPos - i) * TINYCHAR_HEIGHT,
-			                 cgs.notifyMsgs[i % chatHeight], hcolor, qfalse, qfalse,
-			                 TINYCHAR_WIDTH, TINYCHAR_HEIGHT, maxCharsBeforeOverlay);
-		}
-	}
+            CG_DrawStringExt(NOTIFYLOC_X + TINYCHAR_WIDTH,
+                             yLoc - (cgs.notifyPos - i) * TINYCHAR_HEIGHT,
+                             cgs.notifyMsgs[i % chatHeight], hcolor, qfalse, qfalse,
+                             TINYCHAR_WIDTH, TINYCHAR_HEIGHT, maxCharsBeforeOverlay);
+        }
+    }
+*/
 }
 
 /*
@@ -2045,7 +2037,6 @@ void CG_CheckForCursorHints(void)
 	trace_t   trace;
 	vec3_t    start, end;
 	centity_t *tracent;
-	vec3_t    pforward, eforward;
 	float     dist;
 
 	if (cg.renderingThirdPerson)
@@ -2109,6 +2100,7 @@ void CG_CheckForCursorHints(void)
 		{
 			if (dist <= CH_KNIFE_DIST)
 			{
+				vec3_t pforward, eforward;
 
 				AngleVectors(cg.snap->ps.viewangles, pforward, NULL, NULL);
 				AngleVectors(tracent->lerpAngles, eforward, NULL, NULL);
@@ -2138,12 +2130,10 @@ static void CG_DrawCrosshairNames(void)
 	const char *s, *playerClass;
 	int        playerHealth = 0;
 	vec4_t     c;
-	float      barFrac;
 	qboolean   drawStuff = qfalse;
 	const char *playerRank;
 	qboolean   isTank    = qfalse;
 	int        maxHealth = 1;
-	int        i;
 	// Distance to the entity under the crosshair
 	float dist;
 	float zChange;
@@ -2287,6 +2277,8 @@ static void CG_DrawCrosshairNames(void)
 	// we only want to see players on our team
 	if (!isTank && !(cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR && cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team))
 	{
+		int i;
+
 		drawStuff = qtrue;
 
 		// determine player class
@@ -2353,8 +2345,7 @@ static void CG_DrawCrosshairNames(void)
 	//  if ( isTank || (cg.crosshairClientNum == cg.snap->ps.identifyClient && drawStuff && cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR ) )
 	{
 		vec4_t bgcolor;
-
-		barFrac = (float)playerHealth / maxHealth;
+		float  barFrac = (float)playerHealth / maxHealth;
 
 		if (barFrac > 1.0)
 		{
@@ -2407,7 +2398,6 @@ static void CG_DrawVote(void)
 	char  *s;
 	char  str1[32], str2[32];
 	float color[4] = { 1, 1, 0, 1 };
-	int   sec;
 
 	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && cg_complaintPopUp.integer > 0 && cgs.complaintClient >= 0)
 	{
@@ -2502,6 +2492,8 @@ static void CG_DrawVote(void)
 
 	if (cgs.voteTime)
 	{
+		int sec;
+
 		Q_strncpyz(str1, BindingFromName("vote yes"), 32);
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
@@ -2764,7 +2756,6 @@ CG_DrawSpectatorMessage
 static void CG_DrawSpectatorMessage(void)
 {
 	const char *str, *str2;
-	float      x, y;
 	static int lastconfigGet = 0;
 
 	if (!cg_descriptiveText.integer)
@@ -2783,11 +2774,6 @@ static void CG_DrawSpectatorMessage(void)
 
 		lastconfigGet = cg.time;
 	}
-
-	x = (cg.snap->ps.pm_flags & PMF_LIMBO) ? 170 : 80;
-	y = 408;
-
-	y -= 2 * TINYCHAR_HEIGHT;
 
 	str2 = BindingFromName("openlimbomenu");
 	if (!Q_stricmp(str2, "(openlimbomenu)"))
@@ -3152,7 +3138,7 @@ CG_DrawFlashFade
 static void CG_DrawFlashFade(void)
 {
 	static int lastTime;
-	int        elapsed, time;
+	int        time;
 	vec4_t     col;
 	qboolean   fBlackout = (int_ui_blackout.integer > 0);
 
@@ -3162,7 +3148,7 @@ static void CG_DrawFlashFade(void)
 	}
 	else if (cgs.fadeAlphaCurrent != cgs.fadeAlpha)
 	{
-		elapsed  = (time = trap_Milliseconds()) - lastTime;   // we need to use trap_Milliseconds() here since the cg.time gets modified upon reloading
+		int elapsed = (time = trap_Milliseconds()) - lastTime;    // we need to use trap_Milliseconds() here since the cg.time gets modified upon reloading
 		lastTime = time;
 		if (elapsed < 500 && elapsed > 0)
 		{
@@ -3284,7 +3270,6 @@ CG_DrawFlashDamage
 static void CG_DrawFlashDamage(void)
 {
 	vec4_t col;
-	float  redFlash;
 
 	if (!cg.snap)
 	{
@@ -3293,7 +3278,7 @@ static void CG_DrawFlashDamage(void)
 
 	if (cg.v_dmg_time > cg.time)
 	{
-		redFlash = fabs(cg.v_dmg_pitch * ((cg.v_dmg_time - cg.time) / DAMAGE_TIME));
+		float redFlash = fabs(cg.v_dmg_pitch * ((cg.v_dmg_time - cg.time) / DAMAGE_TIME));
 
 		// blend the entire screen red
 		if (redFlash > 5)
@@ -3318,7 +3303,7 @@ CG_DrawFlashFire
 static void CG_DrawFlashFire(void)
 {
 	vec4_t col = { 1, 1, 1, 1 };
-	float  alpha, max, f;
+	float  alpha;
 
 	if (!cg.snap)
 	{
@@ -3339,6 +3324,8 @@ static void CG_DrawFlashFire(void)
 	alpha = (float)((FIRE_FLASH_TIME - 1000) - (cg.time - cg.snap->ps.onFireStart)) / (FIRE_FLASH_TIME - 1000);
 	if (alpha > 0)
 	{
+		float max, f;
+
 		if (alpha >= 1.0)
 		{
 			alpha = 1.0;
@@ -3648,10 +3635,8 @@ CG_ScreenFade
 */
 static void CG_ScreenFade(void)
 {
-	int    msec;
-	int    i;
-	float  t, invt;
-	vec4_t color;
+	int msec;
+
 
 	if (!cg.fadeRate)
 	{
@@ -3677,8 +3662,10 @@ static void CG_ScreenFade(void)
 	}
 	else
 	{
-		t    = ( float )msec * cg.fadeRate;
-		invt = 1.0f - t;
+		vec4_t color;
+		float  t    = ( float )msec * cg.fadeRate;
+		float  invt = 1.0f - t;
+		int    i;
 
 		for (i = 0; i < 4; i++)
 		{
@@ -4172,15 +4159,13 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 static void CG_DrawWeapRecharge(rectDef_t *rect)
 {
 	float    barFrac, chargeTime;
-	int      weap, flags;
+	int      flags;
 	qboolean fade = qfalse;
 
 	vec4_t bgcolor = { 1.0f, 1.0f, 1.0f, 0.25f };
 	vec4_t color;
 
 	flags = 1 | 4 | 16;
-
-	weap = cg.snap->ps.weapon;
 
 	// Draw power bar
 	if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
@@ -4229,13 +4214,9 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 
 static void CG_DrawPlayerStatus(void)
 {
-	int           value, value2, value3;
-	char          buffer[32];
-	int           weap;
-	playerState_t *ps;
-	rectDef_t     rect = { (Ccg_WideX(640) - 82), (480 - 56), 60, 32 };
-
-	ps = &cg.snap->ps;
+	int       value, value2, value3;
+	char      buffer[32];
+	rectDef_t rect = { (Ccg_WideX(640) - 82), (480 - 56), 60, 32 };
 
 	// Draw weapon icon and overheat bar
 	CG_DrawWeapHeat(&rect, HUD_HORIZONTAL);
@@ -4250,7 +4231,7 @@ static void CG_DrawPlayerStatus(void)
 	}
 
 	// Draw ammo
-	weap = CG_PlayerAmmoValue(&value, &value2, &value3);
+	CG_PlayerAmmoValue(&value, &value2, &value3);
 	if (value3 >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i|%i/%i", value3, value, value2);

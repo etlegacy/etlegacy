@@ -693,9 +693,7 @@ static void CG_EffectGust(void)
 static qboolean CG_EffectGustCurrent(vec3_t curr, float *weight, int *num)
 {
 	// Calculate direction for new drops.
-
 	vec3_t temp;
-	float  frac;
 
 	if (cg.time < cg_atmFx.baseEndTime)
 	{
@@ -705,6 +703,8 @@ static qboolean CG_EffectGustCurrent(vec3_t curr, float *weight, int *num)
 	}
 	else
 	{
+		float frac;
+
 		VectorSubtract(cg_atmFx.gustVec, cg_atmFx.baseVec, temp);
 		if (cg.time < cg_atmFx.gustStartTime)
 		{

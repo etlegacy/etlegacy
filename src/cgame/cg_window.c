@@ -652,7 +652,7 @@ void CG_removeStrings(cg_window_t *w)
 // Mouse overlay for controlling multiview windows
 void CG_cursorUpdate(void)
 {
-	int                i, j, x;
+	int                i, x;
 	float              nx, ny;
 	int                nSelectedWindow = -1;
 	cg_window_t        *w;
@@ -885,6 +885,7 @@ void CG_cursorUpdate(void)
 	// drawn last (on top of all other windows)
 	if (nSelectedWindow >= 0)
 	{
+		int j;
 		fUpdateOverlay = qtrue;
 		x              = wh->activeWindows[nSelectedWindow];
 

@@ -258,9 +258,10 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 			offset[2] = 24;
 			break;
 		}
-		velocity[0]           = -50 + 25 * crandom();
-		velocity[1]           = -100 + 40 * crandom();
-		velocity[2]           = 200 + 50 * random();
+		velocity[0] = -50 + 25 * crandom();
+		velocity[1] = -100 + 40 * crandom();
+		velocity[2] = 200 + 50 * random();
+
 		le->angles.trBase[0]  = (rand() & 15) + 82;  // bullets should come out horizontal not vertical JPW NERVE
 		le->angles.trBase[1]  = rand() & 255; // random spin from extractor
 		le->angles.trBase[2]  = rand() & 31;
@@ -457,10 +458,10 @@ CG_PyroSmokeTrail
 */
 void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 {
-	int           step;
-	vec3_t        origin, lastPos, dir;
-	int           contents;
-	int           lastContents, startTime;
+	int    step;
+	vec3_t origin, lastPos, dir;
+	//int           contents;
+	int           startTime;
 	entityState_t *es;
 	int           t;
 	float         rnd;
@@ -511,10 +512,10 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 	t         = step * ((startTime + step) / step);
 
 	BG_EvaluateTrajectory(&es->pos, cg.time, origin, qfalse, es->effect2Time);
-	contents = CG_PointContents(origin, -1);
+	CG_PointContents(origin, -1);
 
 	BG_EvaluateTrajectory(&es->pos, ent->trailTime, lastPos, qfalse, es->effect2Time);
-	lastContents = CG_PointContents(lastPos, -1);
+	CG_PointContents(lastPos, -1);
 
 	ent->trailTime = cg.time;
 
@@ -606,10 +607,9 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 	int           step;
 	vec3_t        origin, lastPos;
 	int           contents;
-	int           lastContents, startTime;
-	entityState_t *es;
+	int           lastContents, startTime = ent->trailTime;
+	entityState_t *es = &ent->currentState;
 	int           t;
-//  localEntity_t   *le;
 
 	if (ent->currentState.eType == ET_FLAMEBARREL)
 	{
@@ -628,9 +628,7 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 		step = 10;
 	}
 
-	es        = &ent->currentState;
-	startTime = ent->trailTime;
-	t         = step * ((startTime + step) / step);
+	t = step * ((startTime + step) / step);
 
 	BG_EvaluateTrajectory(&es->pos, cg.time, origin, qfalse, es->effect2Time);
 	contents = CG_PointContents(origin, -1);

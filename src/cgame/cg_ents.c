@@ -287,20 +287,19 @@ static void CG_EntityEffects(centity_t *cent)
 	// constant light glow
 	if (cent->currentState.constantLight)
 	{
-		int cl;
-		int i, r, g, b;
-
 		if (cent->dl_stylestring[0] != 0)      // it's probably a dlight
 		{
 			CG_AddLightstyle(cent);
 		}
 		else
 		{
-			cl = cent->currentState.constantLight;
-			r  = cl & 255;
-			g  = (cl >> 8) & 255;
-			b  = (cl >> 16) & 255;
-			i  = ((cl >> 24) & 255) * 4;
+			int cl = cent->currentState.constantLight;
+			int i, r, g, b;
+
+			r = cl & 255;
+			g = (cl >> 8) & 255;
+			b = (cl >> 16) & 255;
+			i = ((cl >> 24) & 255) * 4;
 
 			trap_R_AddLightToScene(cent->lerpOrigin, i, 1.0, (float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, 0, 0);
 		}
@@ -686,15 +685,9 @@ CG_Item
 static void CG_Item(centity_t *cent)
 {
 	refEntity_t   ent;
-	entityState_t *es;
+	entityState_t *es = &cent->currentState;
 	gitem_t       *item;
-	qboolean      hasStand, highlight;
-	float         highlightFadeScale = 1.0f;
-
-	es = &cent->currentState;
-
-	hasStand  = qfalse;
-	highlight = qfalse;
+	qboolean      hasStand = qfalse, highlight = qfalse;
 
 	// (item index is stored in es->modelindex for item)
 
@@ -869,6 +862,7 @@ static void CG_Item(centity_t *cent)
 	// highlighting items the player looks at
 	if (cg_drawCrosshairPickups.integer)
 	{
+
 		if (cg_drawCrosshairPickups.integer == 2)      // '2' is 'force highlights'
 		{
 			highlight = qtrue;
@@ -899,7 +893,7 @@ static void CG_Item(centity_t *cent)
 				cent->highlighted   = qtrue;
 				cent->highlightTime = cg.time;
 			}
-			ent.hilightIntensity = ((cg.time - cent->highlightTime) / 250.0f) * highlightFadeScale;      // .25 sec to brighten up
+			ent.hilightIntensity = ((cg.time - cent->highlightTime) / 250.0f) * 1.0f;      // highlightFadeScale = 1.0f; / .25 sec to brighten up
 		}
 		else
 		{
@@ -908,7 +902,7 @@ static void CG_Item(centity_t *cent)
 				cent->highlighted   = qfalse;
 				cent->highlightTime = cg.time;
 			}
-			ent.hilightIntensity = 1.0f - ((cg.time - cent->highlightTime) / 1000.0f) * highlightFadeScale;     // 1 sec to dim down (diff in time causes problems if you quickly flip to/away from looking at the item)
+			ent.hilightIntensity = 1.0f - ((cg.time - cent->highlightTime) / 1000.0f) * 1.0f;     // highlightFadeScale = 1.0f; / 1 sec to dim down (diff in time causes problems if you quickly flip to/away from looking at the item)
 		}
 
 		if (ent.hilightIntensity < 0.25f)       // leave a minlight
@@ -1961,11 +1955,8 @@ CG_Prop
 static void CG_Prop(centity_t *cent)
 {
 	refEntity_t   ent;
-	entityState_t *s1;
+	entityState_t *s1 = &cent->currentState;;
 	vec3_t        angles;
-	float         scale;
-
-	s1 = &cent->currentState;
 
 	// create the render entity
 	memset(&ent, 0, sizeof(ent));
@@ -1981,6 +1972,8 @@ static void CG_Prop(centity_t *cent)
 	}
 	else
 	{
+		float scale;
+
 		VectorCopy(cg.refdef_current->vieworg, ent.origin);
 		VectorCopy(cg.refdefViewAngles, angles);
 
@@ -2199,6 +2192,7 @@ void CG_Cabinet(centity_t *cent, cabinetType_t type)
 void CG_SetupCabinets(void)
 {
 	int i, j;
+
 	for (i = 0; i < CT_MAX; i++)
 	{
 		cabinetInfo[i].model = trap_R_RegisterModel(cabinetInfo[i].modelName);
@@ -2220,7 +2214,7 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 {
 	centity_t *cent;
 	vec3_t    oldOrigin, origin, deltaOrigin;
-	vec3_t    oldAngles, angles, deltaAngles;
+	vec3_t    oldAngles, deltaAngles;
 	vec3_t    transpose[3];
 	vec3_t    matrix[3];
 	vec3_t    move, org, org2;
@@ -2246,6 +2240,8 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 
 	if (!(cent->currentState.eFlags & EF_PATH_LINK))
 	{
+		vec3_t angles;
+
 		BG_EvaluateTrajectory(&cent->currentState.pos, fromTime, oldOrigin, qfalse, cent->currentState.effect2Time);
 		BG_EvaluateTrajectory(&cent->currentState.apos, fromTime, oldAngles, qtrue, cent->currentState.effect2Time);
 
@@ -2902,7 +2898,6 @@ void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg
 {
 	refEntity_t ent;
 	vec3_t      angles;
-	int         i;
 
 	memset(mg42base, 0, sizeof(refEntity_t));
 	memset(mg42gun, 0, sizeof(refEntity_t));
@@ -2928,6 +2923,8 @@ void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg
 
 	if (tank->tankframe != cg.clientFrame)
 	{
+		int i;
+
 		tank->tankframe = cg.clientFrame;
 
 		memset(&ent, 0, sizeof(refEntity_t));

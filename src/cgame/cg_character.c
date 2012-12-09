@@ -421,7 +421,6 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 	char              *filename;
 	char              buf[MAX_QPATH];
 	char              accessoryname[MAX_QPATH];
-	int               i;
 
 	memset(&characterDef, 0, sizeof(characterDef));
 
@@ -445,6 +444,8 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 	}
 	else
 	{
+		int i;
+
 		for (i = 0; i < cg_numAccessories; i++)
 		{
 			if (trap_R_GetSkinModel(character->skin, cg_accessories[i].type, accessoryname))

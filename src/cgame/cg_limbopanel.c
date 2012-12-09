@@ -1535,13 +1535,11 @@ int CG_LimboPanel_GetMaxObjectives(void)
 
 qboolean CG_LimboPanel_ObjectiveText_KeyDown(panel_button_t *button, int key)
 {
-	int max;
-
 	if (key == K_MOUSE1)
 	{
-		SOUND_SELECT;
+		int max = CG_LimboPanel_GetMaxObjectives();
 
-		max = CG_LimboPanel_GetMaxObjectives();
+		SOUND_SELECT;
 
 		if (button->data[7] == 0)
 		{
@@ -2031,7 +2029,6 @@ qboolean CG_LimboPanel_WeaponPanel_KeyDown(panel_button_t *button, int key)
 
 qboolean CG_LimboPanel_WeaponPanel_KeyUp(panel_button_t *button, int key)
 {
-	int       cnt, i;
 	rectDef_t rect;
 
 	if (CG_LimboPanel_GetTeam() == TEAM_SPECTATOR)
@@ -2043,10 +2040,12 @@ qboolean CG_LimboPanel_WeaponPanel_KeyUp(panel_button_t *button, int key)
 	{
 		if (BG_PanelButtons_GetFocusButton() == button)
 		{
+			int i;
+			int cnt = CG_LimboPanel_WeaponCount();
+
 			memcpy(&rect, &button->rect, sizeof(rect));
 			rect.y -= rect.h;
 
-			cnt = CG_LimboPanel_WeaponCount();
 			for (i = 1; i < cnt; i++, rect.y -= rect.h)
 			{
 
@@ -2697,12 +2696,11 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 
 void CG_LimboPanel_Setup(void)
 {
-	panel_button_t   *button;
-	panel_button_t   **buttons = limboPanelButtons;
-	clientInfo_t     *ci       = &cgs.clientinfo[cg.clientNum];
-	bg_playerclass_t *classinfo;
-	int              i;
-	char             buffer[256];
+	panel_button_t *button;
+	panel_button_t **buttons = limboPanelButtons;
+	clientInfo_t   *ci       = &cgs.clientinfo[cg.clientNum];
+	int            i;
+	char           buffer[256];
 
 	cgs.limboLoadoutModified = qfalse;
 
@@ -2778,7 +2776,6 @@ void CG_LimboPanel_Setup(void)
 	cgs.ccSelectedObjective    = CG_LimboPanel_GetMaxObjectives();
 	cgs.ccSelectedWeaponNumber = 1;
 
-	classinfo = CG_LimboPanel_GetPlayerClass();
 	if (CG_LimboPanel_WeaponIsDisabled(cgs.ccSelectedWeapon))
 	{
 		// set weapon to default if disabled

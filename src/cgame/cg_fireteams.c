@@ -1054,10 +1054,10 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 			}
 			else
 			{
-				int i;
-
 				if (key >= 'a' || key <= 'z')
 				{
+					int i;
+
 					for (i = 0; ftMenuRootStrings[i]; i++)
 					{
 						if (key == tolower(*ftMenuRootStringsAlphachars[i]))
@@ -1125,11 +1125,12 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 			}
 			else
 			{
-				int        i;
 				const char **strings = ftMenuStrings[cgs.ftMenuPos];
 
 				if (key >= 'a' || key <= 'z')
 				{
+					int i;
+
 					for (i = 0; strings[i]; i++)
 					{
 						if (key == tolower(*ftMenuStringsAlphachars[cgs.ftMenuPos][i]))
@@ -1150,7 +1151,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 		break;
 	case 1:
 	{
-		int i = -1, x;
+		int i = -1;
 
 		if (cg_quickMessageAlt.integer)
 		{
@@ -1181,6 +1182,8 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 
 			if (key >= 'a' || key <= 'z')
 			{
+				int x;
+
 				for (x = 0; strings[x]; x++)
 				{
 					if (key == tolower(*strings[x]))

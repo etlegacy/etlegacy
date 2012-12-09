@@ -542,7 +542,6 @@ static void CG_OffsetFirstPersonView(void)
 	float    *origin;
 	float    *angles;
 	float    bob;
-	float    ratio;
 	float    delta;
 	float    speed;
 	float    f;
@@ -639,7 +638,7 @@ static void CG_OffsetFirstPersonView(void)
 	// add angles based on damage kick
 	if (cg.damageTime)
 	{
-		ratio = cg.time - cg.damageTime;
+		float ratio = cg.time - cg.damageTime;
 		if (ratio < DAMAGE_DEFLECT_TIME)
 		{
 			ratio         /= DAMAGE_DEFLECT_TIME;
@@ -983,11 +982,8 @@ static int CG_CalcFov(void)
 	static float lastfov = 90;      // for transitions back from zoomed in modes
 	float        x;
 	float        phase;
-	float        v;
 	int          contents;
 	float        fov_x, fov_y;
-	float        zoomFov;
-	float        f;
 	int          inwater;
 
 	CG_Zoom();
@@ -1016,6 +1012,9 @@ static int CG_CalcFov(void)
 
 		if (!cg.renderingThirdPerson || developer.integer)
 		{
+			float zoomFov;
+			int   f;
+
 			// account for zooms
 			if (cg.zoomval)
 			{
@@ -1108,6 +1107,8 @@ static int CG_CalcFov(void)
 	contents = CG_PointContents(cg.refdef.vieworg, -1);
 	if (contents & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
 	{
+		float v;
+
 		phase                       = cg.time / 1000.0 * WAVE_FREQUENCY * M_PI * 2;
 		v                           = WAVE_AMPLITUDE * sin(phase);
 		fov_x                      += v;

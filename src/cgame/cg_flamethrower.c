@@ -213,10 +213,7 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 	vec3_t          lastFwd, thisFwd, fwd;
 	vec3_t          lastUp, thisUp, up;
 	vec3_t          lastRight, thisRight, right;
-	vec3_t          thisOrg, lastOrg, org;
-	double          timeInc, backLerp, fracInc;
-	int             t, numFrameChunks;
-	double          ft;
+	vec3_t          thisOrg, org;
 	trace_t         trace;
 	vec3_t          parentFwd;
 	//float frametime, dot;
@@ -241,6 +238,12 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 	if ((centInfo->lastClientFrame == cent->currentState.frame) &&
 	    (centInfo->lastFlameChunk && centInfo->lastFiring == firing))
 	{
+		vec3_t lastOrg;
+		double fracInc, ft;
+		float  timeInc, backLerp;
+		int    t;
+		int    numFrameChunks = 0; // CHANGE: id
+
 		AngleVectors(centInfo->lastAngles, lastFwd, lastRight, lastUp);
 		VectorCopy(centInfo->lastOrigin, lastOrg);
 		centInfo->lastFiring = firing;
@@ -251,8 +254,6 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 		t        = (int)ft;
 		fracInc  = timeInc / (double)(cg.time - of->timeStart);
 		backLerp = 1.0 - fracInc;
-
-		numFrameChunks = 0;         // CHANGE: id
 
 		while (t <= cg.time)
 		{
@@ -441,7 +442,7 @@ void CG_ClearFlameChunks(void)
 
 	for (i = 0 ; i < MAX_FLAME_CHUNKS ; i++)
 	{
-		flameChunks[i].nextGlobal = &flameChunks[i + 1];
+		flameChunks[i].nextGlobal = &flameChunks[i + 1]; // FIXME: Array 'flameChunks[1024]' index 1024 out of bounds
 
 		if (i > 0)
 		{
@@ -769,7 +770,7 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 	vec3_t        point, p2, sProj;
 	float         radius, sdist;
 	int           frameNum;
-	vec3_t        vec, rotate_ang;
+	vec3_t        vec;
 	unsigned char alphaChar;
 	vec2_t        rST;
 	static vec3_t lastPos;
@@ -831,6 +832,8 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 
 	if ((rotatingFlames) && (!(cg_fxflags & 1)))           // JPW NERVE no rotate for alt flame shaders
 	{
+		vec3_t rotate_ang;
+
 		vectoangles(cg.refdef_current->viewaxis[0], rotate_ang);
 		rotate_ang[ROLL] += f->rollAngle;
 		AngleVectors(rotate_ang, NULL, rright, rup);

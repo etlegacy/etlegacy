@@ -196,7 +196,6 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
                                 qhandle_t hModel, qhandle_t shader,
                                 int msec, qboolean isSprite)
 {
-	float         ang;
 	localEntity_t *ex;
 	int           offset;
 	vec3_t        tmpVec, newOrigin;
@@ -231,9 +230,8 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 		}
 		else
 		{
-			ang = rand() % 360;
 			VectorCopy(dir, ex->refEntity.axis[0]);
-			RotateAroundDirection(ex->refEntity.axis, ang);
+			RotateAroundDirection(ex->refEntity.axis, (rand() % 360));
 		}
 	}
 
@@ -299,6 +297,8 @@ void CG_AddBloodTrails(vec3_t origin, vec3_t dir, int speed, int duration, int c
 	}
 }
 
+
+#define BLOOD_SPURT_COUNT   4
 /*
 =================
 CG_Bleed
@@ -308,21 +308,16 @@ This is the spurt of blood when a character gets hit
 */
 void CG_Bleed(vec3_t origin, int entityNum)
 {
-#define BLOOD_SPURT_COUNT   4
-	int       i, j;
-	centity_t *cent;
-
 	if (!cg_blood.integer)
 	{
 		return;
 	}
 
-	cent = &cg_entities[entityNum];
-
 	// blood spurts
 	if (entityNum != cg.snap->ps.clientNum)
 	{
 		vec3_t vhead, vbody, bOrigin, dir, vec, pvec, ndir;
+		int    i, j;
 
 		CG_GetBleedOrigin(vhead, vbody, entityNum);
 
@@ -388,7 +383,6 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 {
 	localEntity_t *le;
 	refEntity_t   *re;
-	int           i;
 
 	if (!cg_blood.integer)
 	{
@@ -409,6 +403,8 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 	AnglesToAxis(angles, re->axis);
 	if (sizeScale != 1.0)
 	{
+		int i;
+
 		for (i = 0; i < 3; i++)
 		{
 			VectorScale(re->axis[i], sizeScale, re->axis[i]);
@@ -462,7 +458,6 @@ void CG_LoseHat(centity_t *cent, vec3_t dir)
 {
 	clientInfo_t   *ci;
 	int            clientNum;
-	int            tagIndex;
 	vec3_t         origin = { 0 }, velocity = { 0 };
 	bg_character_t *character;
 
@@ -480,7 +475,7 @@ void CG_LoseHat(centity_t *cent, vec3_t dir)
 		return;
 	}
 
-	tagIndex = CG_GetOriginForTag(cent, &cent->pe.headRefEnt, "tag_mouth", 0, origin, NULL);
+	CG_GetOriginForTag(cent, &cent->pe.headRefEnt, "tag_mouth", 0, origin, NULL);
 
 	velocity[0] = dir[0] * (0.75 + random()) * GIB_VELOCITY;
 	velocity[1] = dir[1] * (0.75 + random()) * GIB_VELOCITY;
@@ -585,21 +580,17 @@ Generated a bunch of gibs launching out from the bodies location
 
 void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 {
-	int            i, count = 0, tagIndex, gibIndex;
-	vec3_t         origin, velocity, dir;
+
+	vec3_t         origin;
 	trace_t        trace;
 	qboolean       foundtag;
 	clientInfo_t   *ci;
-	int            clientNum;
 	bg_character_t *character;
-	vec4_t         projection, color;
-
+	vec4_t         projection;
 	// BloodCloud
 	qboolean newjunction[MAXJUNCTIONS];
 	vec3_t   junctionOrigin[MAXJUNCTIONS];
-	int      junction;
-	int      j;
-	vec3_t   axis[3], angles;
+	vec3_t   axis[3];
 
 	char *JunctiongibTags[] =
 	{
@@ -652,6 +643,11 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 
 	if (cg_blood.integer)
 	{
+		vec4_t color;
+		vec3_t velocity, dir, angles;
+		int    i, j, count = 0;
+		int    tagIndex, gibIndex, clientNum, junction;
+
 		for (i = 0; i < MAXJUNCTIONS; i++)
 		{
 			newjunction[i] = qfalse;
@@ -942,7 +938,6 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 	vec3_t      endCenter;
 	polyVert_t  coreverts[4];
 	trace_t     tr;
-	float       alpha;
 	float       radius = 0.0; // TTimo might be used uninitialized
 	float       coreEndRadius;
 	qboolean    capStart = qtrue;
@@ -1193,11 +1188,10 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 		{
 			VectorMA(startvec, hitDist, conevec, endvec);
 
-			alpha  = 0.3f;
 			radius = coreEndRadius * (hitDist / beamLen);
 
-			//%	VectorNegate( lightDir, proj );
-			//%	CG_ImpactMark( cgs.media.spotLightShader, tr.endpos, proj, 0, colorNorm[0], colorNorm[1], colorNorm[2], alpha, qfalse, radius, qtrue, -1 );
+			//VectorNegate( lightDir, proj );
+			//CG_ImpactMark( cgs.media.spotLightShader, tr.endpos, proj, 0, colorNorm[0], colorNorm[1], colorNorm[2], alpha, qfalse, radius, qtrue, -1 );
 
 			VectorCopy(lightDir, projection);
 			projection[3] = radius * 2.0f;
@@ -1522,9 +1516,7 @@ qboolean CG_SpawnSmokeSprite(centity_t *cent, float dist)
 void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 {
 	//int numSpritesForRadius, numNewSpritesNeeded = 0;
-	int           spritesNeeded = 0;
-	smokesprite_t *smokesprite;
-	float         spawnrate = (1.f / SMOKEBOMB_SPAWNRATE) * 1000.f;
+	float spawnrate = (1.f / SMOKEBOMB_SPAWNRATE) * 1000.f;
 
 	if (cent->currentState.effect1Time == 16)
 	{
@@ -1537,7 +1529,8 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 
 	if (cent->currentState.effect1Time > 16)
 	{
-		int volume = 16 + ((cent->currentState.effect1Time / 640.f) * (100 - 16));
+		int volume        = 16 + ((cent->currentState.effect1Time / 640.f) * (100 - 16));
+		int spritesNeeded = 0;
 
 		if (!cent->dl_atten ||
 		    cent->currentState.pos.trType != TR_STATIONARY ||
@@ -1630,7 +1623,7 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 		// unlink smokesprites from smokebomb
 		if (cent->miscTime > 0)
 		{
-			smokesprite = lastusedsmokesprite;
+			smokesprite_t *smokesprite = lastusedsmokesprite;
 			while (smokesprite)
 			{
 				if (smokesprite->smokebomb == cent)

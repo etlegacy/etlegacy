@@ -98,7 +98,7 @@ static void CG_Obituary(entityState_t *ent)
 		message = "died by toxic materials";
 		break;
 	case MOD_TRIGGER_HURT:
-	case MOD_TELEFRAG:     // rain - added TELEFRAG and TARGET_LASER, just in case
+	case MOD_TELEFRAG:     // added TELEFRAG and TARGET_LASER, just in case
 	case MOD_TARGET_LASER:
 		message = "was killed";
 		break;
@@ -139,16 +139,14 @@ static void CG_Obituary(entityState_t *ent)
 		case MOD_EXPLOSIVE:
 			message = "died in his own explosion";
 			break;
-		// rain - everything from this point on is sorted by MOD, didn't
+		// everything from this point on is sorted by MOD, didn't
 		// resort existing messages to avoid differences between pre
 		// and post-patch code (for source patching)
 		case MOD_GPG40:
 		case MOD_M7:
-			//bani - more amusing, less wordy
 			message = "ate his own rifle grenade";
 			break;
 		case MOD_LANDMINE:
-			//bani - slightly more amusing
 			message = "failed to spot his own landmine";
 			break;
 		case MOD_SATCHEL:
@@ -164,7 +162,6 @@ static void CG_Obituary(entityState_t *ent)
 			message = "never saw his own mortar round coming";
 			break;
 		case MOD_SMOKEGRENADE:
-			// bani - more amusing
 			message = "danced on his airstrike marker";
 			break;
 		// no obituary message if changing teams
@@ -422,7 +419,7 @@ static void CG_Obituary(entityState_t *ent)
 			{
 				message2 = CG_TranslateString(message2);
 				CG_AddPMItem(PM_DEATH, va("%s %s %s%s", targetName, message, attackerName, message2), deathShader);
-//              CG_Printf( "[cgnotify]%s %s %s%s\n", targetName, message, attackerName, message2 );
+				//CG_Printf( "[cgnotify]%s %s %s%s\n", targetName, message, attackerName, message2 );
 			}
 			return;
 		}
@@ -458,9 +455,9 @@ static void CG_ItemPickup(int itemNum)
 
 	CG_AddPMItem(PM_MESSAGE, va("Picked up %s", CG_PickupItemText(itemNum)), cgs.media.pmImages[PM_MESSAGE]);
 
-//  cg.itemPickup           = itemNum;
-//  cg.itemPickupTime       = cg.time;
-//  cg.itemPickupBlendTime  = cg.time;
+	//cg.itemPickup           = itemNum;
+	//cg.itemPickupTime       = cg.time;
+	//cg.itemPickupBlendTime  = cg.time;
 
 	// see if it should be the grabbed weapon
 	if (bg_itemlist[itemNum].giType == IT_WEAPON)
@@ -539,12 +536,6 @@ CG_PainEvent
 Also called by playerstate transition
 ================
 */
-typedef struct
-{
-	char *tag;
-	int refEntOfs;
-	int anim;
-} painAnimForTag_t;
 
 #define PEFOFS(x) ((int)&(((playerEntity_t *)0)->x))
 
@@ -639,17 +630,15 @@ CG_Explode
 */
 void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 {
-
-	qhandle_t inheritmodel = 0;
-
 	// inherit shader
-	// (SA) FIXME: do this at spawn time rather than explode time so any new necessary shaders are created earlier
+	// FIXME: do this at spawn time rather than explode time so any new necessary shaders are created earlier
 	if (cent->currentState.eFlags & EF_INHERITSHADER)
 	{
 		if (!shader)
 		{
-//          inheritmodel = cent->currentState.modelindex;
-			inheritmodel = cgs.inlineDrawModel[cent->currentState.modelindex];  // okay, this should be better.
+			//inheritmodel = cent->currentState.modelindex;
+			qhandle_t inheritmodel = cgs.inlineDrawModel[cent->currentState.modelindex];  // okay, this should be better.
+
 			if (inheritmodel)
 			{
 				shader = trap_R_GetShaderFromModel(inheritmodel, 0, 0);
@@ -711,17 +700,15 @@ CG_Explode
 */
 void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 {
-
-	qhandle_t inheritmodel = 0;
-
 	// inherit shader
-	// (SA) FIXME: do this at spawn time rather than explode time so any new necessary shaders are created earlier
+	// FIXME: do this at spawn time rather than explode time so any new necessary shaders are created earlier
 	if (cent->currentState.eFlags & EF_INHERITSHADER)
 	{
 		if (!shader)
 		{
-//          inheritmodel = cent->currentState.modelindex;
-			inheritmodel = cgs.inlineDrawModel[cent->currentState.modelindex];  // okay, this should be better.
+			//inheritmodel = cent->currentState.modelindex;
+			qhandle_t inheritmodel = cgs.inlineDrawModel[cent->currentState.modelindex];  // okay, this should be better.
+
 			if (inheritmodel)
 			{
 				shader = trap_R_GetShaderFromModel(inheritmodel, 0, 0);
@@ -1554,19 +1541,14 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le;
 	refEntity_t   *re;
-//  int             howmany;
-	int mass;
-//  int             large, small;
-	vec4_t projection, color;
-
+	//int             large, small;
+	vec4_t projection;
 
 	VectorSet(dir, 0, 0, 1);      // straight up.
 
-	mass = cent->currentState.density;
-
-//      1 large per 100, 1 small per 24
-//  large   = (int)(mass / 100);
-//  small   = (int)(mass / 24) + 1;
+	//1 large per 100, 1 small per 24
+	// large   = (int)(mass / 100);
+	// small   = (int)(mass / 24) + 1;
 
 	if (cent->currentState.eventParm & 1)      // fire
 	{
@@ -1575,7 +1557,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 	}
 
 	// (SA) right now force smoke on any explosions
-//  if(cent->currentState.eventParm & 4)    // smoke
+	//if(cent->currentState.eventParm & 4)    // smoke
 	if (cent->currentState.eventParm & 7)
 	{
 		int    i, j;
@@ -1594,7 +1576,9 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 
 	if (cent->currentState.eventParm & 2)      // explode
 	{
+		vec4_t color;
 		vec3_t sprVel, sprOrg;
+
 		trap_S_StartSound(origin, -1, CHAN_AUTO, cgs.media.sfx_rockexp);
 
 		// new explode  (from rl)
@@ -1607,13 +1591,13 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		//      (see "cent->currentState.eventParm & 64" below)
 
 		// RF, throw some debris
-//      CG_AddDebris( origin, dir,
-//                      280,    // speed
-//                      1400,   // duration
-//                      // 15 + rand()%5 ); // count
-//                      7 + rand()%2 ); // count
+		//CG_AddDebris( origin, dir,
+		//                      280,    // speed
+		//                      1400,   // duration
+		//                      // 15 + rand()%5 ); // count
+		//                      7 + rand()%2 ); // count
 
-		//% CG_ImpactMark( cgs.media.burnMarkShader, origin, dir, random()*360, 1,1,1,1, qfalse, 64, qfalse, 0xffffffff );
+		//CG_ImpactMark( cgs.media.burnMarkShader, origin, dir, random()*360, 1,1,1,1, qfalse, 64, qfalse, 0xffffffff );
 		VectorSet(projection, 0, 0, -1);
 		projection[3] = 64.0f;
 		Vector4Set(color, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -1651,18 +1635,18 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		le->leType    = LE_FRAGMENT;
 		le->startTime = cg.time;
 		le->endTime   = le->startTime + 5000 + random() * 3000;
-		//----(SA)  fading out
+		// fading out
 		re->fadeStartTime = le->endTime - 4000;
 		re->fadeEndTime   = le->endTime;
 
 		VectorCopy(origin, re->origin);
 		AxisCopy(axisDefault, re->axis);
-		//  re->hModel = hModel;
+		//re->hModel = hModel;
 		re->hModel     = cgs.media.gibIntestine;
 		le->pos.trType = TR_GRAVITY;
 		VectorCopy(origin, le->pos.trBase);
 
-		//  VectorCopy( velocity, le->pos.trDelta );
+		//VectorCopy( velocity, le->pos.trDelta );
 		VectorNormalize(dir);
 		VectorMA(dir, 200, dir, le->pos.trDelta);
 

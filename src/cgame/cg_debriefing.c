@@ -1226,19 +1226,13 @@ void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 
 void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 {
-	int    w, h;
-	int    i, len;
-	vec4_t hcolor;
-	float  lineHeight = 9.f;
-
-	int chatWidth  = button->rect.w;
-	int chatHeight = button->rect.h;
-
 	if (cgs.teamLastChatPos != cgs.teamChatPos)
 	{
-		h = (cgs.teamChatPos - cgs.teamLastChatPos) * TINYCHAR_HEIGHT;
-
-		w = 0;
+		vec4_t hcolor;
+		float  lineHeight = 9.f;
+		int    i, len, w = 0;
+		int    chatWidth  = button->rect.w;
+		int    chatHeight = button->rect.h;
 
 		for (i = cgs.teamLastChatPos; i < cgs.teamChatPos; i++)
 		{
@@ -2463,10 +2457,12 @@ void CG_TeamDebriefingMapList_Draw(panel_button_t *button)
 
 int CG_TeamDebriefing_CalcXP(team_t team, int mapindex, int skillindex)
 {
-	int i, j, cnt = 0;
+	int j, cnt = 0;
 
 	if (cg_gameType.integer == GT_WOLF_CAMPAIGN)
 	{
+		int i;
+
 		for (i = 0; i < cgs.campaignData.mapCount; i++)
 		{
 			if (mapindex != -1 && i != mapindex)

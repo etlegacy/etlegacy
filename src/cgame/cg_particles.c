@@ -202,10 +202,9 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	float      height;
 	float      time, time2;
 	float      ratio;
-	float      invratio;
 	vec3_t     color;
 	polyVert_t TRIverts[3];
-	vec3_t     rright2, rup2;
+	vec3_t     rright2;
 
 	if (p->type == P_WEATHER || p->type == P_WEATHER_TURBULENT || p->type == P_WEATHER_FLURRY
 	    || p->type == P_BUBBLE || p->type == P_BUBBLE_TURBULENT)     // create a front facing polygon
@@ -426,6 +425,9 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	}
 	else if (p->type == P_SMOKE || p->type == P_SMOKE_IMPACT)           // create a front rotating facing polygon
 	{
+		vec3_t rup2;
+		float  invratio;
+
 		if (p->type == P_SMOKE_IMPACT && VectorDistanceSquared(cg.snap->ps.origin, org) > SQR(1024))
 		{
 			return;
@@ -929,9 +931,7 @@ void CG_AddParticles(void)
 	float       alpha;
 	float       time, time2;
 	vec3_t      org;
-	int         color;
-	cparticle_t *active, *tail;
-	int         type;
+	cparticle_t *active = NULL, *tail = NULL;
 	vec3_t      rotate_ang;
 
 	if (!initparticles)
@@ -949,9 +949,6 @@ void CG_AddParticles(void)
 	AngleVectors(rotate_ang, rforward, rright, rup);
 
 	oldtime = cg.time;
-
-	active = NULL;
-	tail   = NULL;
 
 	for (p = active_particles ; p ; p = next)
 	{
@@ -1042,15 +1039,11 @@ void CG_AddParticles(void)
 			alpha = 1;
 		}
 
-		color = p->color;
-
 		time2 = time * time;
 
 		org[0] = p->org[0] + p->vel[0] * time + p->accel[0] * time2;
 		org[1] = p->org[1] + p->vel[1] * time + p->accel[1] * time2;
 		org[2] = p->org[2] + p->vel[2] * time + p->accel[2] * time2;
-
-		type = p->type;
 
 		CG_AddParticleToScene(p, org, alpha);
 	}
@@ -1989,9 +1982,7 @@ void CG_Particle_OilSlick(qhandle_t pshader, centity_t *cent)
 void CG_OilSlickRemove(centity_t *cent)
 {
 	cparticle_t *p, *next;
-	int         id;
-
-	id = cent->currentState.density;
+	int         id = cent->currentState.density;
 
 	if (!id)
 	{
@@ -2009,7 +2000,6 @@ void CG_OilSlickRemove(centity_t *cent)
 				p->endtime   = cg.time + 100;
 				p->startfade = p->endtime;
 				p->type      = P_FLAT_SCALEUP_FADE;
-
 			}
 		}
 

@@ -58,9 +58,8 @@ WM_DrawObjectives
 
 int WM_DrawObjectives(int x, int y, int width, float fade)
 {
-	const char *s, *str;
+	const char *s;
 	int        rows;
-	int        msec, mins, seconds, tens;
 	vec4_t     tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
@@ -75,17 +74,17 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		if (atoi(buf) == -1)
 		{
-			str = "ITS A TIE!";
+			// "ITS A TIE!";
 		}
 		else if (atoi(buf))
 		{
-			str        = "ALLIES";
+			// "ALLIES";
 			flagshader = "ui/assets/portraits/allies_win_flag.tga";
 			nameshader = "ui/assets/portraits/text_allies.tga";
 		}
 		else
 		{
-			str        = "AXIS";
+			// "AXIS";
 			flagshader = "ui/assets/portraits/axis_win_flag.tga";
 			nameshader = "ui/assets/portraits/text_axis.tga";
 		}
@@ -112,6 +111,8 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	// mission time & reinforce time
 	else
 	{
+		int msec, mins, seconds, tens;
+
 		rows = 1;
 
 		CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBack);

@@ -1005,7 +1005,6 @@ void CG_PredictPlayerState(void)
 		if (cg.predictedPlayerState.commandTime == oldPlayerState.commandTime)
 		{
 			vec3_t delta;
-			float  len;
 
 			if (BG_PlayerMounted(cg_pmove.ps->eFlags))
 			{
@@ -1025,6 +1024,7 @@ void CG_PredictPlayerState(void)
 			else if (!cg.showGameView)
 			{
 				vec3_t adjusted;
+				float  len;
 				CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.oldTime, adjusted, deltaAngles);
 				// add the deltaAngles (fixes jittery view while riding trains)
 				// only do this if player is prone or using set mortar

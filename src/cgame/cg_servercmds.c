@@ -488,7 +488,6 @@ static void CG_ParseGlobalFog(void)
 	const char *info;
 	char       *token;
 	qboolean   restore;
-	float      r, g, b, depthForOpaque;
 	int        duration;
 
 	info = CG_ConfigString(CS_GLOBALFOGVARS);
@@ -504,6 +503,8 @@ static void CG_ParseGlobalFog(void)
 	}
 	else
 	{
+		float r, g, b, depthForOpaque;
+
 		token          = COM_Parse((char **)&info);
 		r              = atof(token);
 		token          = COM_Parse((char **)&info);
@@ -548,7 +549,9 @@ void CG_ParseReinforcementTimes(const char *pszReinfSeedString)
 				cgs.aReinfOffset[i] *= 1000;
 				break;
 			}
-			GETVAL(dwDummy, 1);
+			GETVAL(dwDummy, 1); // FIXME: inspect this, from cppcheck:
+			                    // Variable 'dwDummy' is assigned a value that is never used
+			                    // (++tmp?)
 		}
 	}
 }
@@ -1185,14 +1188,7 @@ typedef struct voiceChatList_s
 	voiceChat_t voiceChats[MAX_VOICECHATS];
 } voiceChatList_t;
 
-typedef struct headModelVoiceChat_s
-{
-	char headmodel[64];
-	int voiceChatNum;
-} headModelVoiceChat_t;
-
-voiceChatList_t      voiceChatLists[MAX_VOICEFILES];
-headModelVoiceChat_t headModelVoiceChat[MAX_HEADMODELS];
+voiceChatList_t voiceChatLists[MAX_VOICEFILES];
 
 /*
 =================
@@ -1774,20 +1770,22 @@ void CG_topshotsParse_cmd(qboolean doBest)
 {
 	int            iArg  = 1;
 	int            iWeap = atoi(CG_Argv(iArg++));
-	topshotStats_t *ts   = &cgs.topshots;
+	int            cnum, hits, atts, kills;
+	topshotStats_t *ts = &cgs.topshots;
+	char           name[32];
+	float          acc;
 
 	ts->cWeapons = 0;
 
 	while (iWeap)
 	{
-		int cnum  = atoi(CG_Argv(iArg++));
-		int hits  = atoi(CG_Argv(iArg++));
-		int atts  = atoi(CG_Argv(iArg++));
-		int kills = atoi(CG_Argv(iArg++));
+		cnum  = atoi(CG_Argv(iArg++));
+		hits  = atoi(CG_Argv(iArg++));
+		atts  = atoi(CG_Argv(iArg++));
+		kills = atoi(CG_Argv(iArg++));
 		// unused
 		//int deaths = atoi(CG_Argv(iArg++));
-		float acc = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0f;
-		char  name[32];
+		acc = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0f;
 
 		// bump up iArg since we didn't push it into deaths, above
 		iArg++;
