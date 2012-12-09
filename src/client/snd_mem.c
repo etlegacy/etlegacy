@@ -88,7 +88,7 @@ void SND_setup(void)
 
 	cv = Cvar_Get("com_soundMegs", DEF_COMSOUNDMEGS, CVAR_LATCH | CVAR_ARCHIVE);
 
-	scs = (cv->integer * 1536);
+	scs = (cv->integer * 512); // q3 uses a value of 1536 - reverted to genuine ET value
 
 	buffer = malloc(scs * sizeof(sndBuffer));
 	// allocate the stack based hunk allocator
