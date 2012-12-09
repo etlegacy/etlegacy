@@ -864,7 +864,6 @@ void GLimp_EndFrame(void)
 
 	if (r_fullscreen->modified)
 	{
-		qboolean    fullscreen;
 		qboolean    needToToggle = qtrue;
 		qboolean    sdlToggled   = qfalse;
 		SDL_Surface *s           = SDL_GetVideoSurface();
@@ -872,7 +871,7 @@ void GLimp_EndFrame(void)
 		if (s)
 		{
 			// Find out the current state
-			fullscreen = !!(s->flags & SDL_FULLSCREEN);
+			qboolean fullscreen = !!(s->flags & SDL_FULLSCREEN);
 
 			if (r_fullscreen->integer && Cvar_VariableIntegerValue("in_nograb"))
 			{
