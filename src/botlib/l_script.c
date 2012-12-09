@@ -628,13 +628,13 @@ int PS_ReadName(script_t *script, token_t *token)
 void NumberValue(char *string, int subtype, unsigned long int *intvalue,
                  long double *floatvalue)
 {
-	unsigned long int dotfound = 0;
-
 	*intvalue   = 0;
 	*floatvalue = 0;
 	//floating point number
 	if (subtype & TT_FLOAT)
 	{
+		unsigned long int dotfound = 0;
+
 		while (*string)
 		{
 			if (*string == '.')
