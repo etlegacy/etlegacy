@@ -479,7 +479,6 @@ void RotateAroundDirection(vec3_t axis[3], float yaw)
 
 void vectoangles(const vec3_t value1, vec3_t angles)
 {
-	float forward;
 	float yaw, pitch;
 
 	if (value1[1] == 0 && value1[0] == 0)
@@ -496,6 +495,8 @@ void vectoangles(const vec3_t value1, vec3_t angles)
 	}
 	else
 	{
+		float forward;
+
 		if (value1[0])
 		{
 			yaw = (atan2(value1[1], value1[0]) * 180 / M_PI);
@@ -1260,17 +1261,17 @@ int VectorCompare(const vec3_t v1, const vec3_t v2)
 
 vec_t VectorNormalize(vec3_t v)
 {
-	float length, ilength;
+	float length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 
-	length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 	length = sqrt(length);
 
 	if (length)
 	{
-		ilength = 1 / length;
-		v[0]   *= ilength;
-		v[1]   *= ilength;
-		v[2]   *= ilength;
+		float ilength = 1 / length;
+
+		v[0] *= ilength;
+		v[1] *= ilength;
+		v[2] *= ilength;
 	}
 
 	return length;
@@ -1293,17 +1294,17 @@ void VectorNormalizeFast(vec3_t v)
 
 vec_t VectorNormalize2(const vec3_t v, vec3_t out)
 {
-	float length, ilength;
+	float length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 
-	length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 	length = sqrt(length);
 
 	if (length)
 	{
-		ilength = 1 / length;
-		out[0]  = v[0] * ilength;
-		out[1]  = v[1] * ilength;
-		out[2]  = v[2] * ilength;
+		float ilength = 1 / length;
+
+		out[0] = v[0] * ilength;
+		out[1] = v[1] * ilength;
+		out[2] = v[2] * ilength;
 	}
 	else
 	{

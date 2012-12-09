@@ -2760,17 +2760,20 @@ int inflate_blocks(inflate_blocks_statef *s, z_streamp z, int r)
       Tracev(("inflate:       bits tree ok\n"));
       s->mode = DTREE;
     case DTREE:
+      {
+      uInt i, j, c;
       while (t = s->sub.trees.table,
              s->sub.trees.index < 258 + (t & 0x1f) + ((t >> 5) & 0x1f))
       {
         inflate_huft *h;
-        uInt i, j, c;
+
 
         t = s->sub.trees.bb;
         NEEDBITS(t)
         h = s->sub.trees.tb + ((uInt)b & inflate_mask[t]);
         t = h->bits;
         c = h->base;
+
         if (c < 16)
         {
           DUMPBITS(t)
@@ -2802,6 +2805,7 @@ int inflate_blocks(inflate_blocks_statef *s, z_streamp z, int r)
           s->sub.trees.index = i;
         }
       }
+  	  }
       s->sub.trees.tb = Z_NULL;
       {
         uInt bl, bd;

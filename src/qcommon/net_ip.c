@@ -1438,7 +1438,6 @@ NET_AddLocalAddress
 */
 static void NET_AddLocalAddress(char *ifname, struct sockaddr *addr, struct sockaddr *netmask)
 {
-	int         addrlen;
 	sa_family_t family;
 
 	// only add addresses that have all required info.
@@ -1451,6 +1450,8 @@ static void NET_AddLocalAddress(char *ifname, struct sockaddr *addr, struct sock
 
 	if (numIP < MAX_IPS)
 	{
+		int addrlen;
+
 		if (family == AF_INET)
 		{
 			addrlen             = sizeof(struct sockaddr_in);

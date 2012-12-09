@@ -223,7 +223,6 @@ void CM_TestBoxInBrush(traceWork_t *tw, cbrush_t *brush)
 	float        dist;
 	float        d1;
 	cbrushside_t *side;
-	float        t;
 	vec3_t       startp;
 
 	if (!brush->numsides)
@@ -246,6 +245,8 @@ void CM_TestBoxInBrush(traceWork_t *tw, cbrush_t *brush)
 
 	if (tw->sphere.use)
 	{
+		float t;
+
 		// the first six planes are the axial planes, so we only
 		// need to test the remainder
 		for (i = 6 ; i < brush->numsides ; i++)
@@ -699,7 +700,6 @@ static void CM_TraceThroughBrush(traceWork_t *tw, cbrush_t *brush)
 	qboolean     getout, startout;
 	float        f;
 	cbrushside_t *side, *leadside;
-	float        t;
 	vec3_t       startp;
 	vec3_t       endp;
 
@@ -721,6 +721,8 @@ static void CM_TraceThroughBrush(traceWork_t *tw, cbrush_t *brush)
 
 	if (tw->sphere.use)
 	{
+		float t;
+
 		// compare the trace against all planes of the brush
 		// find the latest time the trace crosses a plane towards the interior
 		// and the earliest time the trace crosses a plane towards the exterior
@@ -1015,9 +1017,9 @@ get the first intersection of the ray with the sphere
 */
 static void CM_TraceThroughSphere(traceWork_t *tw, vec3_t origin, float radius, vec3_t start, vec3_t end)
 {
-	float         l1, l2, length, scale, fraction;
-	float /*a, */ b, c, d, sqrtd;
-	vec3_t        v1, dir, intersection;
+	float         l1, l2, length;
+	float /*a, */ b, c, d;
+	vec3_t        v1, dir;
 
 	// if inside the sphere
 	VectorSubtract(start, origin, dir);
@@ -1035,10 +1037,10 @@ static void CM_TraceThroughSphere(traceWork_t *tw, vec3_t origin, float radius, 
 		}
 		return;
 	}
-	//
+
 	VectorSubtract(end, start, dir);
 	length = VectorNormalize(dir);
-	//
+
 	l1 = CM_DistanceFromLineSquared(origin, start, end, dir);
 	VectorSubtract(end, origin, v1);
 	l2 = VectorLengthSquared(v1);
@@ -1055,17 +1057,18 @@ static void CM_TraceThroughSphere(traceWork_t *tw, vec3_t origin, float radius, 
 	//
 	VectorSubtract(start, origin, v1);
 	// dir is normalized so a = 1
-//	a = 1.0f; //dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2];
+	//a = 1.0f; //dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2];
 	b = 2.0f * (dir[0] * v1[0] + dir[1] * v1[1] + dir[2] * v1[2]);
 	c = v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2] - (radius + RADIUS_EPSILON) * (radius + RADIUS_EPSILON);
 
 	d = b * b - 4.0f * c; // * a;
 	if (d > 0)
 	{
-		sqrtd = SquareRootFloat(d);
+		vec3_t intersection;
+		float  sqrtd = SquareRootFloat(d);
 		// = (- b + sqrtd) * 0.5f; // / (2.0f * a);
-		fraction = (-b - sqrtd) * 0.5f;   // / (2.0f * a);
-		//
+		float fraction = (-b - sqrtd) * 0.5f;   // / (2.0f * a);
+
 		if (fraction < 0)
 		{
 			fraction = 0;
@@ -1076,6 +1079,8 @@ static void CM_TraceThroughSphere(traceWork_t *tw, vec3_t origin, float radius, 
 		}
 		if (fraction < tw->trace.fraction)
 		{
+			float scale;
+
 			tw->trace.fraction = fraction;
 			VectorSubtract(end, start, dir);
 			VectorMA(start, fraction, dir, intersection);
@@ -1113,9 +1118,9 @@ the cylinder extends halfheight above and below the origin
 */
 static void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, float radius, float halfheight, vec3_t start, vec3_t end)
 {
-	float         length, scale, fraction, l1, l2;
-	float /*a, */ b, c, d, sqrtd;
-	vec3_t        v1, dir, start2d, end2d, org2d, intersection;
+	float         length, l1, l2;
+	float /*a, */ b, c, d;
+	vec3_t        v1, dir, start2d, end2d, org2d;
 
 	// 2d coordinates
 	VectorSet(start2d, start[0], start[1], 0);
@@ -1171,10 +1176,10 @@ static void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, floa
 	d = b * b - 4.0f * c; // * a;
 	if (d > 0)
 	{
-		sqrtd = SquareRootFloat(d);
+		float sqrtd = SquareRootFloat(d);
 		// = (- b + sqrtd) * 0.5f;// / (2.0f * a);
-		fraction = (-b - sqrtd) * 0.5f;   // / (2.0f * a);
-		//
+		int fraction = (-b - sqrtd) * 0.5f;   // / (2.0f * a);
+
 		if (fraction < 0)
 		{
 			fraction = 0;
@@ -1185,13 +1190,16 @@ static void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, floa
 		}
 		if (fraction < tw->trace.fraction)
 		{
+			vec3_t intersection;
+
 			VectorSubtract(end, start, dir);
 			VectorMA(start, fraction, dir, intersection);
 			// if the intersection is between the cylinder lower and upper bound
 			if (intersection[2] <= origin[2] + halfheight &&
 			    intersection[2] >= origin[2] - halfheight)
 			{
-				//
+				float scale;
+
 				tw->trace.fraction = fraction;
 				VectorSubtract(intersection, origin, dir);
 				dir[2] = 0;
@@ -1232,7 +1240,7 @@ static void CM_TraceCapsuleThroughCapsule(traceWork_t *tw, clipHandle_t model)
 	vec3_t mins, maxs;
 	vec3_t top, bottom, starttop, startbottom, endtop, endbottom;
 	vec3_t offset, symetricSize[2];
-	float  radius, halfwidth, halfheight, offs, h;
+	float  radius, halfwidth, halfheight, offs;
 
 	CM_ModelBounds(model, mins, maxs);
 	// test trace bounds vs. capsule bounds
@@ -1273,7 +1281,8 @@ static void CM_TraceCapsuleThroughCapsule(traceWork_t *tw, clipHandle_t model)
 	if (tw->start[0] != tw->end[0] || tw->start[1] != tw->end[1])
 	{
 		// height of the expanded cylinder is the height of both cylinders minus the radius of both spheres
-		h = halfheight + tw->sphere.halfheight - radius;
+		float h = halfheight + tw->sphere.halfheight - radius;
+
 		// if the cylinder has a height
 		if (h > 0)
 		{
@@ -1496,7 +1505,6 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 
 #ifdef MRE_OPTIMIZE
 	vec3_t dir;
-	float  dist;
 #endif
 
 	cmod = CM_ClipHandleToModel(model);
@@ -1627,6 +1635,8 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 		}
 		else
 		{
+			float dist;
+
 			tw.traceDist1 = tw.traceDist2 = 0.0f;
 			for (i = 0; i < 8; i++)
 			{

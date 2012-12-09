@@ -410,9 +410,10 @@ static void send(node_t *node, node_t *child, byte *fout)
 /* Send a symbol */
 void Huff_transmit(huff_t *huff, int ch, byte *fout)
 {
-	int i;
 	if (huff->loc[ch] == NULL)
 	{
+		int i;
+
 		/* node_t hasn't been transmitted, send a NYT, then the symbol */
 		Huff_transmit(huff, NYT, fout);
 		for (i = 7; i >= 0; i--)

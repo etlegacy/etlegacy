@@ -143,7 +143,6 @@ bit functions
 // negative bit values include signs
 void MSG_WriteBits(msg_t *msg, int value, int bits)
 {
-	int i;
 //  FILE*   fp;
 
 	oldsize += bits;
@@ -218,12 +217,13 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 	}
 	else
 	{
-//      fp = fopen("c:\\netchan.bin", "a");
+		int i;
+		//fp = fopen("c:\\netchan.bin", "a");
 		value &= (0xffffffff >> (32 - bits));
 		if (bits & 7)
 		{
-			int nbits;
-			nbits = bits & 7;
+			int nbits = bits & 7;
+
 			for (i = 0; i < nbits; i++)
 			{
 				Huff_putBit((value & 1), msg->data, &msg->bit);
@@ -235,13 +235,13 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 		{
 			for (i = 0; i < bits; i += 8)
 			{
-//              fwrite(bp, 1, 1, fp);
+				//fwrite(bp, 1, 1, fp);
 				Huff_offsetTransmit(&msgHuff.compressor, (value & 0xff), msg->data, &msg->bit);
 				value = (value >> 8);
 			}
 		}
 		msg->cursize = (msg->bit >> 3) + 1;
-//      fclose(fp);
+		//fclose(fp);
 	}
 }
 
@@ -250,7 +250,6 @@ int MSG_ReadBits(msg_t *msg, int bits)
 	int      value;
 	int      get;
 	qboolean sgn;
-	int      i, nbits;
 //  FILE*   fp;
 
 	value = 0;
@@ -294,7 +293,8 @@ int MSG_ReadBits(msg_t *msg, int bits)
 	}
 	else
 	{
-		nbits = 0;
+		int i, nbits = 0;
+
 		if (bits & 7)
 		{
 			nbits = bits & 7;

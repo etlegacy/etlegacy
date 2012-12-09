@@ -328,7 +328,7 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 {
 	vec3_t p_l;
 	vec3_t temp;
-	vec3_t forward, right, up;
+
 
 	// subtract origin offset
 	VectorSubtract(p, origin, p_l);
@@ -337,6 +337,8 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 	if (model != BOX_MODEL_HANDLE &&
 	    (angles[0] || angles[1] || angles[2]))
 	{
+		vec3_t forward, right, up;
+
 		AngleVectors(angles, forward, right, up);
 
 		VectorCopy(p_l, temp);
@@ -513,11 +515,8 @@ This is used to cull non-visible entities from snapshots
 */
 int CM_WriteAreaBits(byte *buffer, int area)
 {
-	int i;
-	int floodnum;
-	int bytes;
 
-	bytes = (cm.numAreas + 7) >> 3;
+	int bytes = (cm.numAreas + 7) >> 3;
 
 	if (cm_noAreas->integer || area == -1) // for debugging, send everything
 	{
@@ -525,7 +524,9 @@ int CM_WriteAreaBits(byte *buffer, int area)
 	}
 	else
 	{
-		floodnum = cm.areas[area].floodnum;
+		int i;
+		int floodnum = cm.areas[area].floodnum;
+
 		for (i = 0 ; i < cm.numAreas ; i++)
 		{
 			if (cm.areas[i].floodnum == floodnum || area == -1)

@@ -1539,14 +1539,12 @@ void Com_TouchMemory(void)
 {
 	int        start, end;
 	int        i, j;
-	int        sum;
+	int        sum = 0;
 	memblock_t *block;
 
 	Z_CheckHeap();
 
 	start = Sys_Milliseconds();
-
-	sum = 0;
 
 	j = hunk_low.permanent >> 2;
 	for (i = 0 ; i < j ; i += 64)             // only need to touch each page
@@ -1579,7 +1577,7 @@ void Com_TouchMemory(void)
 
 	end = Sys_Milliseconds();
 
-	Com_Printf("Com_TouchMemory: %i msec\n", end - start);
+	Com_Printf("Com_TouchMemory: %i msec %i \n", end - start, sum);
 }
 
 void Com_InitSmallZoneMemory(void)
@@ -2414,7 +2412,7 @@ Com_RunAndTimeServerPacket
 */
 void Com_RunAndTimeServerPacket(netadr_t *evFrom, msg_t *buf)
 {
-	int t1 = 0, t2, msec;
+	int t1 = 0;
 
 	if (com_speeds->integer)
 	{
@@ -2425,8 +2423,8 @@ void Com_RunAndTimeServerPacket(netadr_t *evFrom, msg_t *buf)
 
 	if (com_speeds->integer)
 	{
-		t2   = Sys_Milliseconds();
-		msec = t2 - t1;
+		int msec = Sys_Milliseconds() - t1;
+
 		if (com_speeds->integer == 3)
 		{
 			Com_Printf("SV_PacketEvent time: %i\n", msec);

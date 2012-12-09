@@ -292,10 +292,10 @@ qboolean FS_Initialized(void)
 
 qboolean FS_PakIsPure(pack_t *pack)
 {
-	int i;
-
 	if (fs_numServerPaks)
 	{
+		int i;
+
 		for (i = 0 ; i < fs_numServerPaks ; i++)
 		{
 			// FIXME: also use hashed file names
@@ -1344,7 +1344,6 @@ NOTE TTimo:
 qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const char *filename)
 {
 	int           srcLength;
-	int           destLength;
 	unsigned char *srcData;
 	unsigned char *destData;
 	qboolean      needToCopy;
@@ -1369,6 +1368,8 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 	// if we have a local file, we need to compare the two
 	if (destHandle)
 	{
+		int destLength;
+
 		fseek(destHandle, 0, SEEK_END);
 		destLength = ftell(destHandle);
 		fseek(destHandle, 0, SEEK_SET);
@@ -1642,10 +1643,7 @@ int FS_Read2(void *buffer, int len, fileHandle_t f)
 
 int FS_Read(void *buffer, int len, fileHandle_t f)
 {
-	int  block, remaining;
-	int  read;
 	byte *buf;
-	int  tries;
 
 	if (!fs_searchpaths)
 	{
@@ -1662,8 +1660,10 @@ int FS_Read(void *buffer, int len, fileHandle_t f)
 
 	if (fsh[f].zipFile == qfalse)
 	{
-		remaining = len;
-		tries     = 0;
+		int read, block;
+		int remaining = len;
+		int tries     = 0;
+
 		while (remaining)
 		{
 			block = remaining;
@@ -1778,13 +1778,10 @@ void QDECL FS_Printf(fileHandle_t h, const char *fmt, ...)
 /*
 =================
 FS_Seek
-
 =================
 */
 int FS_Seek(fileHandle_t f, long offset, int origin)
 {
-	int _origin;
-
 	if (!fs_searchpaths)
 	{
 		Com_Error(ERR_FATAL, "FS_Seek: Filesystem call made without initialization\n");
@@ -1836,8 +1833,10 @@ int FS_Seek(fileHandle_t f, long offset, int origin)
 	}
 	else
 	{
+		int  _origin;
 		FILE *file;
 		file = FS_FileForHandle(f);
+
 		switch (origin)
 		{
 		case FS_SEEK_CUR:
@@ -2343,6 +2342,8 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 	pack_t       *pak;
 	fileInPack_t *buildBuffer;
 	char         zpath[MAX_ZPATH];
+	char         *name;
+	int          zpathLen, depth;
 
 	if (!fs_searchpaths)
 	{
@@ -2368,16 +2369,13 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 	nfiles          = 0;
 	FS_ReturnPath(path, zpath, &pathDepth);
 
-	//
 	// search through the path, one element at a time, adding to list
-	//
 	for (search = fs_searchpaths ; search ; search = search->next)
 	{
 		// is the element a pak file?
 		if (search->pack)
 		{
-
-			//ZOID:  If we are pure, don't search for files on paks that
+			// If we are pure, don't search for files on paks that
 			// aren't on the pure list
 			if (!FS_PakIsPure(search->pack))
 			{
@@ -2389,12 +2387,9 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 			buildBuffer = pak->buildBuffer;
 			for (i = 0; i < pak->numfiles; i++)
 			{
-				char *name;
-				int  zpathLen, depth;
-
 				// check for directory match
 				name = buildBuffer[i].name;
-				//
+
 				if (filter)
 				{
 					// case insensitive

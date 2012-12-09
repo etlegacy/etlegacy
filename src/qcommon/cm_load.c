@@ -77,8 +77,8 @@ CMod_LoadShaders
 */
 void CMod_LoadShaders(lump_t *l)
 {
-	dshader_t *in, *out;
-	int       i, count;
+	dshader_t *in;
+	int       count;
 
 	in = ( void * )(cmod_base + l->fileofs);
 	if (l->filelen % sizeof(*in))
@@ -98,7 +98,9 @@ void CMod_LoadShaders(lump_t *l)
 
 	if (LittleLong(1) != 1)
 	{
-		out = cm.shaders;
+		int i;
+
+		dshader_t *out = cm.shaders;
 		for (i = 0 ; i < count ; i++, in++, out++)
 		{
 			out->contentFlags = LittleLong(out->contentFlags);
