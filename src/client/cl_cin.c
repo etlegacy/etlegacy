@@ -600,7 +600,7 @@ static void decodeCodeBook(byte *input, unsigned short roq_flags)
 {
 	long           i, j, two, four;
 	unsigned short *aptr, *bptr, *cptr, *dptr;
-	long           y0, y1, y2, y3, cr, cb;
+	long           y0, y2, cr, cb;
 	byte           *bbptr, *baptr, *bcptr, *bdptr;
 	union
 	{
@@ -628,6 +628,8 @@ static void decodeCodeBook(byte *input, unsigned short roq_flags)
 
 	if (!cinTable[currentHandle].half)
 	{
+		long y1, y3;
+
 		if (!cinTable[currentHandle].smootheddouble)
 		{
 			// normal height
@@ -915,7 +917,7 @@ static void decodeCodeBook(byte *input, unsigned short roq_flags)
 static void recurseQuad(long startX, long startY, long quadSize, long xOff, long yOff)
 {
 	byte *scroff;
-	long bigx, bigy, lowx, lowy, useY;
+	long bigx, bigy, lowx, lowy;
 	long offset;
 
 	offset = cinTable[currentHandle].screenDelta;
@@ -935,7 +937,7 @@ static void recurseQuad(long startX, long startY, long quadSize, long xOff, long
 
 	if ((startX >= lowx) && (startX + quadSize) <= (bigx) && (startY + quadSize) <= (bigy) && (startY >= lowy) && quadSize <= MAXSIZE)
 	{
-		useY   = startY;
+		long useY = startY;
 		scroff = cin.linbuf + (useY + ((cinTable[currentHandle].CIN_HEIGHT - bigy) >> 1) + yOff) * (cinTable[currentHandle].samplesPerLine) + (((startX + xOff)) * cinTable[currentHandle].samplesPerPixel);
 
 		cin.qStatus[0][cinTable[currentHandle].onQuad]   = scroff;
@@ -1440,7 +1442,6 @@ int CIN_PlayCinematic(const char *arg, int x, int y, int w, int h, int systemBit
 {
 	unsigned short RoQID;
 	char           name[MAX_OSPATH];
-	int            i;
 
 	if (strstr(arg, "/") == NULL && strstr(arg, "\\") == NULL)
 	{
@@ -1453,6 +1454,8 @@ int CIN_PlayCinematic(const char *arg, int x, int y, int w, int h, int systemBit
 
 	if (!(systemBits & CIN_system))
 	{
+		int i;
+
 		for (i = 0 ; i < MAX_VIDEO_HANDLES ; i++)
 		{
 			if (!strcmp(cinTable[i].fileName, name))
@@ -1658,9 +1661,8 @@ void CIN_DrawCinematic(int handle)
  */
 void CL_PlayCinematic_f(void)
 {
-	char     *arg, *s;
-	qboolean holdatend;
-	int      bits = CIN_system;
+	char *arg, *s;
+	int  bits = CIN_system;
 
 	// don't allow this while on server
 	if (cls.state > CA_DISCONNECTED && cls.state <= CA_ACTIVE)
@@ -1677,7 +1679,6 @@ void CL_PlayCinematic_f(void)
 	arg = Cmd_Argv(1);
 	s   = Cmd_Argv(2);
 
-	holdatend = qfalse;
 	if ((s && s[0] == '1') || Q_stricmp(arg, "demoend.roq") == 0 || Q_stricmp(arg, "end.roq") == 0)
 	{
 		bits |= CIN_hold;

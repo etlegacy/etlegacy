@@ -580,7 +580,7 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 {
 	channel_t *ch;
 	sfx_t     *sfx;
-	int       i, oldest, chosen, time;
+	int       i, time;
 	int       inplay, allowed;
 
 	if (!s_soundStarted || s_soundMuted)
@@ -644,10 +644,11 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 	ch = S_ChannelMalloc();
 	if (!ch)
 	{
+		int oldest = sfx->lastTimeUsed;
+		int chosen = -1;
+
 		ch = s_channels;
 
-		oldest = sfx->lastTimeUsed;
-		chosen = -1;
 		for (i = 0 ; i < MAX_CHANNELS ; i++, ch++)
 		{
 			if (ch->entnum != listener_number && ch->entnum == entnum && ch->allocTime < oldest && ch->entchannel != CHAN_ANNOUNCER)
@@ -751,10 +752,8 @@ S_ClearSounds
 */
 void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 {
-	int              i;
 	streamingSound_t *ss;
 	channel_t        *ch;
-	int              clear;
 
 	if (!s_soundStarted)
 	{
@@ -771,6 +770,8 @@ void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 	// and leave us with a snippet off streaming sounds after we reload
 	if (clearStreaming)
 	{
+		int i;
+
 		for (i = 0, ss = streamingSounds; i < MAX_STREAMING_SOUNDS; i++, ss++)
 		{
 			if (i > 0 || clearMusic)
@@ -798,6 +799,8 @@ void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 
 	if (clearStreaming && clearMusic)
 	{
+		int clear;
+
 		if (dma.samplebits == 8)
 		{
 			clear = 0x80;
@@ -1435,10 +1438,6 @@ Called once each time through the main loop
 */
 void S_Base_Update(void)
 {
-	int       i;
-	int       total;
-	channel_t *ch;
-
 	if (!s_soundStarted || s_soundMuted)
 	{
 //		Com_DPrintf ("not started or muted\n");
@@ -1448,8 +1447,9 @@ void S_Base_Update(void)
 	// debugging output
 	if (s_show->integer == 2)
 	{
-		total = 0;
-		ch    = s_channels;
+		channel_t *ch = s_channels;
+		int       i, total = 0;
+
 		for (i = 0 ; i < MAX_CHANNELS; i++, ch++)
 		{
 			if (ch->thesfx && (ch->leftvol || ch->rightvol))
@@ -1627,7 +1627,6 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 {
 	streamingSound_t *ss       = 0;
 	int              freeTrack = 0;
-	int              i;
 
 	if (music)
 	{
@@ -1669,6 +1668,8 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 	}
 	else
 	{
+		int i;
+
 		for (i = 1; i < MAX_STREAMING_SOUNDS; i++)
 		{
 			if (!streamingSounds[i].stream && !freeTrack)

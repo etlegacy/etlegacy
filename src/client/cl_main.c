@@ -62,7 +62,7 @@ cvar_t *cl_timeNudge;
 cvar_t *cl_showTimeDelta;
 cvar_t *cl_freezeDemo;
 
-cvar_t *cl_shownet = NULL;      // NERVE - SMF - This is referenced in msg.c and we need to make sure it is NULL
+cvar_t *cl_shownet = NULL;      // This is referenced in msg.c and we need to make sure it is NULL
 cvar_t *cl_shownuments;
 cvar_t *cl_showSend;
 cvar_t *cl_showServerCommands;
@@ -149,10 +149,10 @@ typedef struct serverStatus_s
 serverStatus_t cl_serverStatusList[MAX_SERVERSTATUSREQUESTS];
 int            serverStatusCount;
 
-// DHM - Nerve :: Have we heard from the auto-update server this session?
+// Have we heard from the auto-update server this session?
 qboolean autoupdateChecked;
 qboolean autoupdateStarted;
-// TTimo : moved from char* to array (was getting the char* from va(), broke on big downloads)
+// moved from char* to array (was getting the char* from va(), broke on big downloads)
 char autoupdateFilename[MAX_QPATH];
 // "updates" shifted from -7
 #define AUTOUPDATE_DIR "ni]Zm^l"
@@ -165,7 +165,6 @@ void CL_ServerStatusResponse(netadr_t from, msg_t *msg);
 void CL_SaveTranslations_f(void);
 void CL_LoadTranslations_f(void);
 
-// fretn
 void CL_WriteWaveClose(void);
 void CL_WavStopRecord_f(void);
 
@@ -217,9 +216,7 @@ void CL_DoPurgeCache(void)
 
 /*
 =======================================================================
-
 CLIENT RELIABLE COMMAND COMMUNICATION
-
 =======================================================================
 */
 
@@ -248,9 +245,7 @@ void CL_AddReliableCommand(const char *cmd)
 
 /*
 =======================================================================
-
 CLIENT SIDE DEMO RECORDING
-
 =======================================================================
 */
 
@@ -338,7 +333,6 @@ static char demoName[MAX_QPATH];        // compiler bug workaround
 void CL_Record_f(void)
 {
 	char name[MAX_OSPATH];
-	int  len;
 	char *s;
 
 	if (Cmd_Argc() > 2)
@@ -367,7 +361,7 @@ void CL_Record_f(void)
 	}
 	else
 	{
-		int number;
+		int number, len;
 
 		// scan for a free demo name
 		for (number = 0 ; number <= 9999 ; number++)
@@ -418,7 +412,7 @@ void CL_Record(const char *name)
 	MSG_Init(&buf, bufData, sizeof(bufData));
 	MSG_Bitstream(&buf);
 
-	// NOTE, MRE: all server->client messages now acknowledge
+	// NOTE: all server->client messages now acknowledge
 	MSG_WriteLong(&buf, clc.reliableSequence);
 
 	MSG_WriteByte(&buf, svc_gamestate);
@@ -475,9 +469,7 @@ void CL_Record(const char *name)
 
 /*
 =======================================================================
-
 CLIENT SIDE DEMO PLAYBACK
-
 =======================================================================
 */
 
@@ -626,10 +618,10 @@ static void CL_WriteWaveHeader(void)
 	memset(&hdr, 0, sizeof(hdr));
 
 	hdr.ChunkID   = 0x46464952;     // "RIFF"
-	hdr.ChunkSize = 0;          // total filesize - 8 bytes
+	hdr.ChunkSize = 0;              // total filesize - 8 bytes
 	hdr.Format    = 0x45564157;     // "WAVE"
 
-	hdr.Subchunk1ID   = 0x20746d66;     // "fmt "
+	hdr.Subchunk1ID   = 0x20746d66; // "fmt "
 	hdr.Subchunk1Size = 16;         // 16 = pcm
 	hdr.AudioFormat   = 1;          // 1 = linear quantization
 	hdr.NumChannels   = 2;          // 2 = stereo
@@ -658,7 +650,6 @@ void CL_WriteWaveOpen(void)
 	// we will just save it as a 16bit stereo 22050kz pcm file
 
 	char name[MAX_OSPATH];
-	int  len;
 	char *s;
 
 	if (Cmd_Argc() > 2)
@@ -685,7 +676,7 @@ void CL_WriteWaveOpen(void)
 	}
 	else
 	{
-		int number;
+		int number, len;
 
 		// I STOLE THIS
 		for (number = 0 ; number <= 9999 ; number++)
@@ -858,7 +849,6 @@ CL_ShutdownAll
 */
 void CL_ShutdownAll(void)
 {
-
 	// clear sounds
 	S_DisableSounds();
 	// download subsystem
@@ -907,7 +897,6 @@ Also called by Com_Error
 */
 void CL_FlushMemory(void)
 {
-
 	// shutdown all the client stuff
 	CL_ShutdownAll();
 
@@ -1239,9 +1228,7 @@ void CL_RequestMotd(void)
 
 /*
 ======================================================================
-
 CONSOLE COMMANDS
-
 ======================================================================
 */
 
@@ -1250,7 +1237,6 @@ CONSOLE COMMANDS
 CL_ForwardToServer_f
 ==================
 */
-
 void CL_ForwardToServer_f(void)
 {
 	if (cls.state != CA_ACTIVE || clc.demoplaying)
@@ -1434,7 +1420,6 @@ void CL_Connect_f(void)
 		cls.state = CA_CONNECTING;
 	}
 
-
 	Cvar_Set("cl_avidemo", "0");
 
 	// show_bug.cgi?id=507
@@ -1453,12 +1438,13 @@ void CL_Connect_f(void)
 	Cvar_Set("cl_currentServerIP", ip_port);
 
 	// Gordon: um, couldnt this be handled
-	// NERVE - SMF - reset some cvars
+	// reset some cvars
 	Cvar_Set("mp_playerType", "0");
 	Cvar_Set("mp_currentPlayerType", "0");
 	Cvar_Set("mp_weapon", "0");
+
 	Cvar_Set("mp_team", "0");
-	Cvar_Set("mp_currentTeam", "0");
+	// Cvar_Set("mp_currentTeam", "0"); // unused see UI player models
 
 	Cvar_Set("ui_limboOptions", "0");
 	Cvar_Set("ui_limboPrevOptions", "0");
@@ -1594,7 +1580,7 @@ extern void Sys_In_Restart_f(void);
 
 void CL_Vid_Restart_f(void)
 {
-	// RF, don't show percent bar, since the memory usage will just sit at the same level anyway
+	// don't show percent bar, since the memory usage will just sit at the same level anyway
 	com_expectedhunkusage = -1;
 
 	// don't let them loop during the restart
@@ -1851,7 +1837,7 @@ void CL_DownloadsComplete(void)
 			Sys_StartProcess(fn, qtrue);
 		}
 
-		// NOTE - TTimo: that code is never supposed to be reached?
+		// NOTE - that code is never supposed to be reached?
 
 		autoupdateStarted = qfalse;
 
@@ -1887,7 +1873,7 @@ void CL_DownloadsComplete(void)
 		return;
 	}
 
-	// TTimo: I wonder if that happens - it should not but I suspect it could happen if a download fails in the middle or is aborted
+	// I wonder if that happens - it should not but I suspect it could happen if a download fails in the middle or is aborted
 	assert(!cls.bWWWDlDisconnected);
 
 	// let the client game init and load data
@@ -2112,7 +2098,6 @@ void CL_CheckForResend(void)
 	switch (cls.state)
 	{
 	case CA_CONNECTING:
-		// EVEN BALANCE - T.RAY
 		strcpy(pkt, "getchallenge") ;
 		pktlen = strlen(pkt) ;
 		NET_OutOfBandPrint(NS_CLIENT, clc.serverAddress, pkt);
@@ -2129,16 +2114,15 @@ void CL_CheckForResend(void)
 
 		strcpy(data, "connect ");
 
-		data[8] = '\"';           // NERVE - SMF - spaces in name bugfix
+		data[8] = '\"';           // spaces in name bugfix
 
 		for (i = 0; i < strlen(info); i++)
 		{
 			data[9 + i] = info[i];    // + (clc.challenge)&0x3;
 		}
-		data[9 + i]  = '\"';    // NERVE - SMF - spaces in name bugfix
+		data[9 + i]  = '\"';    // spaces in name bugfix
 		data[10 + i] = 0;
 
-		// EVEN BALANCE - T.RAY
 		pktlen = i + 10 ;
 		memcpy(pkt, &data[0], pktlen) ;
 
@@ -2209,7 +2193,6 @@ void CL_DisconnectPacket(netadr_t from)
 /*
 ===================
 CL_MotdPacket
-
 ===================
 */
 void CL_MotdPacket(netadr_t from)
@@ -2271,7 +2254,7 @@ void CL_PrintPacket(netadr_t from, msg_t *msg)
 		Q_strncpyz(clc.serverMessage, s + 12, sizeof(clc.serverMessage));
 		Com_Error(ERR_AUTOUPDATE, "%s\n", clc.serverMessage);
 	}
-	else if (!Q_stricmpn(s, "ET://", 5)) // fretn
+	else if (!Q_stricmpn(s, "ET://", 5))
 	{
 		Q_strncpyz(clc.serverMessage, s, sizeof(clc.serverMessage));
 		Cvar_Set("com_errorMessage", clc.serverMessage);
@@ -2507,7 +2490,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 			return;
 		}
 
-		// DHM - Nerve :: If we have completed a connection to the Auto-Update server...
+		// If we have completed a connection to the Auto-Update server...
 		if (autoupdateChecked && NET_CompareAdr(cls.autoupdateServer, clc.serverAddress))
 		{
 			// Mark the client as being in the process of getting an update
@@ -2573,7 +2556,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		return;
 	}
 
-	// DHM - Nerve :: Auto-update server response message
+	// Auto-update server response message
 	if (!Q_stricmp(c, "updateResponse"))
 	{
 		CL_UpdateInfoPacket(from);
@@ -2664,7 +2647,6 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 /*
 ==================
 CL_CheckTimeout
-
 ==================
 */
 void CL_CheckTimeout(void)
@@ -2846,7 +2828,6 @@ qboolean CL_WWWBadChecksum(const char *pakname)
 /*
 ==================
 CL_Frame
-
 ==================
 */
 void CL_Frame(int msec)
@@ -3165,8 +3146,8 @@ void CL_InitRenderer(void)
 	cls.charSetShader = re.RegisterShader("gfx/2d/consolechars");
 	cls.whiteShader   = re.RegisterShader("white");
 
-	cls.consoleShader  = re.RegisterShader("console-16bit");   // JPW NERVE shader works with 16bit
-	cls.consoleShader2 = re.RegisterShader("console2-16bit");    // JPW NERVE same
+	cls.consoleShader  = re.RegisterShader("console-16bit");   // shader works with 16bit
+	cls.consoleShader2 = re.RegisterShader("console2-16bit");    // shader works with 16bit
 
 	g_console_field_width       = cls.glconfig.vidWidth / SMALLCHAR_WIDTH - 2;
 	g_consoleField.widthInChars = g_console_field_width;
@@ -3330,7 +3311,7 @@ void CL_GetAutoUpdate(void)
 
 	Com_DPrintf("Connecting to auto-update server...\n");
 
-	S_StopAllSounds();      // NERVE - SMF
+	S_StopAllSounds();
 
 	// starting to load a map so we get out of full screen ui mode
 	Cvar_Set("r_uiFullScreen", "0");
@@ -3530,7 +3511,7 @@ void CL_InitRef(void)
 	Cvar_Set("cl_paused", "0");
 }
 
-// RF, trap manual client damage commands so users can't issue them manually
+// trap manual client damage commands so users can't issue them manually
 void CL_ClientDamageCommand(void)
 {
 	// do nothing
@@ -3631,10 +3612,10 @@ void CL_Init(void)
 
 	// init autoswitch so the ui will have it correctly even
 	// if the cgame hasn't been started
-	// -NERVE - SMF - disabled autoswitch by default
+	// disabled autoswitch by default
 	Cvar_Get("cg_autoswitch", "0", CVAR_ARCHIVE);
 
-	// Rafael - particle switch
+	// particle switch
 	Cvar_Get("cg_wolfparticles", "1", CVAR_ARCHIVE);
 
 	cl_conXOffset  = Cvar_Get("cl_conXOffset", "0", 0);
@@ -3646,7 +3627,7 @@ void CL_Init(void)
 
 	cl_bypassMouseInput = Cvar_Get("cl_bypassMouseInput", "0", 0);    //CVAR_ROM );
 
-	cl_doubletapdelay = Cvar_Get("cl_doubletapdelay", "350", CVAR_ARCHIVE);    // Arnout: double tap
+	cl_doubletapdelay = Cvar_Get("cl_doubletapdelay", "350", CVAR_ARCHIVE);    // double tap
 
 	m_pitch   = Cvar_Get("m_pitch", "0.022", CVAR_ARCHIVE);
 	m_yaw     = Cvar_Get("m_yaw", "0.022", CVAR_ARCHIVE);
@@ -3656,7 +3637,7 @@ void CL_Init(void)
 
 	cl_motdString = Cvar_Get("cl_motdString", "", CVAR_ROM);
 
-	//bani - make these cvars visible to cgame
+	// make these cvars visible to cgame
 	cl_demorecording = Cvar_Get("cl_demorecording", "0", CVAR_ROM);
 	cl_demofilename  = Cvar_Get("cl_demofilename", "", CVAR_ROM);
 	cl_demooffset    = Cvar_Get("cl_demooffset", "0", CVAR_ROM);
@@ -3688,7 +3669,7 @@ void CL_Init(void)
 
 	// userinfo
 	Cvar_Get("name", "ETLegacyPlayer", CVAR_USERINFO | CVAR_ARCHIVE);
-	Cvar_Get("rate", "5000", CVAR_USERINFO | CVAR_ARCHIVE);       // NERVE - SMF - changed from 3000
+	Cvar_Get("rate", "5000", CVAR_USERINFO | CVAR_ARCHIVE);       // changed from 3000
 	Cvar_Get("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE);
 
 	Cvar_Get("cl_anonymous", "0", CVAR_USERINFO | CVAR_ARCHIVE);
@@ -3746,7 +3727,7 @@ void CL_Init(void)
 	Cmd_AddCommand("fs_openedList", CL_OpenedPK3List_f);
 	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f);
 
-	// Ridah, startup-caching system
+	// startup-caching system
 	Cmd_AddCommand("cache_startgather", CL_Cache_StartGather_f);
 	Cmd_AddCommand("cache_usedfile", CL_Cache_UsedFile_f);
 	Cmd_AddCommand("cache_setindex", CL_Cache_SetIndex_f);
@@ -3762,7 +3743,7 @@ void CL_Init(void)
 
 	Cmd_AddCommand("setRecommended", CL_SetRecommended_f);
 
-	// bani - we eat these commands to prevent exploits
+	// we eat these commands to prevent exploits
 	Cmd_AddCommand("userinfo", CL_EatMe_f);
 
 	Cmd_AddCommand("wav_record", CL_WavRecord_f);
@@ -3807,7 +3788,7 @@ void CL_Shutdown(void)
 	}
 	recursive = qtrue;
 
-	if (clc.waverecording)     // fretn - write wav header when we quit
+	if (clc.waverecording)     // write wav header when we quit
 	{
 		CL_WavStopRecord_f();
 	}
@@ -3841,7 +3822,7 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("showip");
 	Cmd_RemoveCommand("model");
 
-	// Ridah, startup-caching system
+	// startup-caching system
 	Cmd_RemoveCommand("cache_startgather");
 	Cmd_RemoveCommand("cache_usedfile");
 	Cmd_RemoveCommand("cache_setindex");
@@ -3952,7 +3933,7 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 		return;
 	}
 
-	// Arnout: if this isn't the correct game, ignore it
+	// if this isn't the correct game, ignore it
 	gameName = Info_ValueForKey(infoString, "gamename");
 	if (!gameName[0] || Q_stricmp(gameName, GAMENAME_STRING))
 	{
@@ -4143,13 +4124,14 @@ CL_ServerStatus
 */
 int CL_ServerStatus(char *serverAddress, char *serverStatusString, int maxLen)
 {
-	int            i;
 	netadr_t       to;
 	serverStatus_t *serverStatus;
 
 	// if no server address then reset all server status requests
 	if (!serverAddress)
 	{
+		int i;
+
 		for (i = 0; i < MAX_SERVERSTATUSREQUESTS; i++)
 		{
 			cl_serverStatusList[i].address.port = 0;
@@ -4445,7 +4427,6 @@ void CL_GetPing(int n, char *buf, int buflen, int *pingtime)
 {
 	const char *str;
 	int        time;
-	int        maxPing;
 
 	if (n < 0 || n >= MAX_PINGREQUESTS || !cl_pinglist[n].adr.port)
 	{
@@ -4461,9 +4442,11 @@ void CL_GetPing(int n, char *buf, int buflen, int *pingtime)
 	time = cl_pinglist[n].time;
 	if (!time)
 	{
+		int maxPing = Cvar_VariableIntegerValue("cl_maxPing");
+
 		// check for timeout
-		time    = cls.realtime - cl_pinglist[n].start;
-		maxPing = Cvar_VariableIntegerValue("cl_maxPing");
+		time = cls.realtime - cl_pinglist[n].start;
+
 		if (maxPing < 100)
 		{
 			maxPing = 100;
@@ -4712,6 +4695,7 @@ qboolean CL_UpdateVisiblePings_f(int source)
 			max    = cls.numfavoriteservers;
 			break;
 		}
+
 		for (i = 0; i < max; i++)
 		{
 			if (server[i].visible)
@@ -4724,6 +4708,7 @@ qboolean CL_UpdateVisiblePings_f(int source)
 					{
 						break;
 					}
+
 					for (j = 0; j < MAX_PINGREQUESTS; j++)
 					{
 						if (!cl_pinglist[j].adr.port)
@@ -4736,6 +4721,7 @@ qboolean CL_UpdateVisiblePings_f(int source)
 							break;
 						}
 					}
+
 					if (j >= MAX_PINGREQUESTS)
 					{
 						status = qtrue;
@@ -4806,7 +4792,6 @@ void CL_ServerStatus_f(void)
 	char           *server;
 	serverStatus_t *serverStatus;
 	int            argc;
-	netadrtype_t   family = NA_UNSPEC;
 
 	argc = Cmd_Argc();
 
@@ -4824,6 +4809,8 @@ void CL_ServerStatus_f(void)
 
 	if (!toptr)
 	{
+		netadrtype_t family = NA_UNSPEC;
+
 		Com_Memset(&to, 0, sizeof(netadr_t));
 
 		if (argc == 2)
@@ -4876,20 +4863,16 @@ void CL_ShowIP_f(void)
 /*
 =======================
 CL_AddToLimboChat
-
 =======================
 */
 void CL_AddToLimboChat(const char *str)
 {
-	int  len;
+	int  len = 0;
 	char *p, *ls;
-	int  lastcolor;
-	int  chatHeight;
-	int  i;
 
-	chatHeight      = LIMBOCHAT_HEIGHT;
+	int i;
+
 	cl.limboChatPos = LIMBOCHAT_HEIGHT - 1;
-	len             = 0;
 
 	// copy old strings
 	for (i = cl.limboChatPos; i > 0; i--)
@@ -4901,8 +4884,6 @@ void CL_AddToLimboChat(const char *str)
 	p  = cl.limboChatMsgs[0];
 	*p = 0;
 
-	lastcolor = '7';
-
 	ls = NULL;
 	while (*str)
 	{
@@ -4913,9 +4894,8 @@ void CL_AddToLimboChat(const char *str)
 
 		if (Q_IsColorString(str))
 		{
-			*p++      = *str++;
-			lastcolor = *str;
-			*p++      = *str++;
+			*p++ = *str++;
+			*p++ = *str++;
 			continue;
 		}
 		if (*str == ' ')
@@ -4969,7 +4949,6 @@ AllocTrans
 static trans_t *AllocTrans(char *original, char *translated[MAX_LANGUAGES])
 {
 	trans_t *t;
-	int     i;
 
 	t = malloc(sizeof(trans_t));
 	memset(t, 0, sizeof(trans_t));
@@ -4981,6 +4960,8 @@ static trans_t *AllocTrans(char *original, char *translated[MAX_LANGUAGES])
 
 	if (translated)
 	{
+		int i;
+
 		for (i = 0; i < MAX_LANGUAGES; i++)
 		{
 			strncpy(t->translated[i], translated[i], MAX_TRANS_STRING);
@@ -5019,9 +5000,7 @@ LookupTrans
 static trans_t *LookupTrans(char *original, char *translated[MAX_LANGUAGES], qboolean isLoading)
 {
 	trans_t *t, *newt, *prev = NULL;
-	long    hash;
-
-	hash = generateHashValue(original);
+	long    hash = generateHashValue(original);
 
 	for (t = transTable[hash]; t; prev = t, t = t->next)
 	{
@@ -5192,7 +5171,7 @@ void CL_SaveTransTable(const char *fileName, qboolean newOnly)
 =======================
 CL_CheckTranslationString
 
-NERVE - SMF - compare formatting characters
+  compare formatting characters
 =======================
 */
 qboolean CL_CheckTranslationString(char *original, char *translated)

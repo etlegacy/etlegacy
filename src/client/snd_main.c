@@ -641,8 +641,7 @@ void S_StopMusic_f(void)
  */
 void S_Init(void)
 {
-	cvar_t   *cv;
-	qboolean started = qfalse;
+	cvar_t *cv;
 
 	Com_Printf("------ Initializing Sound ------\n");
 
@@ -661,6 +660,8 @@ void S_Init(void)
 	}
 	else
 	{
+		qboolean started = qfalse;
+
 		S_CodecInit();
 
 		Cmd_AddCommand("play", S_Play_f);

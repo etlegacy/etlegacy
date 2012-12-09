@@ -399,7 +399,7 @@ void IN_Wbutton0Up(void)
 }
 void IN_ZoomDown(void)
 {
-	IN_KeyDown(&kb[KB_WBUTTONS1]);         //----(SA)   zoom key
+	IN_KeyDown(&kb[KB_WBUTTONS1]);         // zoom key
 }
 void IN_ZoomUp(void)
 {
@@ -407,7 +407,7 @@ void IN_ZoomUp(void)
 }
 void IN_ReloadDown(void)
 {
-	IN_KeyDown(&kb[KB_WBUTTONS3]);         //----(SA)   manual weapon re-load
+	IN_KeyDown(&kb[KB_WBUTTONS3]);         // manual weapon re-load
 }
 void IN_ReloadUp(void)
 {
@@ -415,7 +415,7 @@ void IN_ReloadUp(void)
 }
 void IN_LeanLeftDown(void)
 {
-	IN_KeyDown(&kb[KB_WBUTTONS4]);         //----(SA)   lean left
+	IN_KeyDown(&kb[KB_WBUTTONS4]);         // lean left
 }
 void IN_LeanLeftUp(void)
 {
@@ -423,14 +423,14 @@ void IN_LeanLeftUp(void)
 }
 void IN_LeanRightDown(void)
 {
-	IN_KeyDown(&kb[KB_WBUTTONS5]);         //----(SA)   lean right
+	IN_KeyDown(&kb[KB_WBUTTONS5]);         // lean right
 }
 void IN_LeanRightUp(void)
 {
 	IN_KeyUp(&kb[KB_WBUTTONS5]);
 }
 
-// Rafael Kick
+// Kick
 // Arnout: now wbutton prone
 void IN_ProneDown(void)
 {
@@ -607,7 +607,7 @@ void CL_MouseEvent(int dx, int dy, int time)
 {
 	if (cls.keyCatchers & KEYCATCH_UI)
 	{
-		// NERVE - SMF - if we just want to pass it along to game
+		// if we just want to pass it along to game
 		if (cl_bypassMouseInput->integer == 1)
 		{
 			cl.mouseDx[cl.mouseIndex] += dx;
@@ -734,9 +734,7 @@ void CL_MouseMove(usercmd_t *cmd)
 		Com_Printf("%f : %f\n", rate, accelSensitivity);
 	}
 
-	// Ridah, experimenting with a slow tracking gun
-
-	// Rafael - mg42
+	// mg42
 	if (cl.snap.ps.persistant[PERS_HWEAPON_USE])
 	{
 		mx *= 2.5; //(accelSensitivity * 0.1);

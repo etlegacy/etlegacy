@@ -40,9 +40,7 @@
 #endif
 
 /*
-
 key up events are sent even if in console mode
-
 */
 
 field_t historyEditLines[COMMAND_HISTORY];
@@ -68,7 +66,7 @@ typedef struct
 	int keynum;
 } keyname_t;
 
-qboolean UI_checkKeyExec(int key);          // NERVE - SMF
+qboolean UI_checkKeyExec(int key);
 qboolean CL_CGameCheckKeyExec(int key);
 
 // names not in this list can either be lowercase ascii, or '0xnn' hex sequences
@@ -311,15 +309,11 @@ keyname_t keynames[] =
 	{ NULL,            0               }
 };
 
-
 /*
 =============================================================================
-
 EDIT FIELDS
-
 =============================================================================
 */
-
 
 /*
 ===================
@@ -426,7 +420,6 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
 		str[0] = cursorChar;
 		str[1] = 0;
 		SCR_DrawBigString(x + (edit->cursor - prestep - i) * size, y, str, 1.0);
-
 	}
 }
 
@@ -603,9 +596,8 @@ void Field_CharEvent(field_t *edit, int ch)
 		return;
 	}
 
-	//
 	// ignore any other non printable chars
-	//
+
 	if (ch < 32)
 	{
 		return;
@@ -646,12 +638,9 @@ void Field_CharEvent(field_t *edit, int ch)
 
 /*
 =============================================================================
-
 CONSOLE LINE EDITING
-
 ==============================================================================
 */
-
 
 /*
 ====================
@@ -743,7 +732,7 @@ void Console_Key(int key)
 
 	// command history (ctrl-p ctrl-n for unix style)
 
-	//----(SA)	added some mousewheel functionality to the console
+	// added some mousewheel functionality to the console
 	if ((key == K_MWHEELUP && keys[K_SHIFT].down) || (key == K_UPARROW) || (key == K_KP_UPARROW) ||
 	    ((tolower(key) == 'p') && keys[K_CTRL].down))
 	{
@@ -757,7 +746,7 @@ void Console_Key(int key)
 		return;
 	}
 
-	//----(SA)	added some mousewheel functionality to the console
+	// added some mousewheel functionality to the console
 	if ((key == K_MWHEELDOWN && keys[K_SHIFT].down) || (key == K_DOWNARROW) || (key == K_KP_DOWNARROW) ||
 	    ((tolower(key) == 'n') && keys[K_CTRL].down))
 	{
@@ -784,7 +773,7 @@ void Console_Key(int key)
 		return;
 	}
 
-	if (key == K_MWHEELUP)       //----(SA)	added some mousewheel functionality to the console
+	if (key == K_MWHEELUP)       // added some mousewheel functionality to the console
 	{
 		Con_PageUp();
 		if (keys[K_CTRL].down)     // hold <ctrl> to accelerate scrolling
@@ -795,7 +784,7 @@ void Console_Key(int key)
 		return;
 	}
 
-	if (key == K_MWHEELDOWN)     //----(SA)	added some mousewheel functionality to the console
+	if (key == K_MWHEELDOWN)     // added some mousewheel functionality to the console
 	{
 		Con_PageDown();
 		if (keys[K_CTRL].down)     // hold <ctrl> to accelerate scrolling
@@ -826,7 +815,6 @@ void Console_Key(int key)
 
 //============================================================================
 
-
 /*
 ================
 Message_Key
@@ -836,9 +824,7 @@ In game talk message
 */
 void Message_Key(int key)
 {
-
 	char buffer[MAX_STRING_CHARS];
-
 
 	if (key == K_ESCAPE)
 	{
@@ -876,18 +862,15 @@ void Message_Key(int key)
 
 //============================================================================
 
-
 qboolean Key_GetOverstrikeMode(void)
 {
 	return key_overstrikeMode;
 }
 
-
 void Key_SetOverstrikeMode(qboolean state)
 {
 	key_overstrikeMode = state;
 }
-
 
 /*
 ===================
@@ -903,7 +886,6 @@ qboolean Key_IsDown(int keynum)
 
 	return keys[keynum].down;
 }
-
 
 /*
 ===================
@@ -1066,7 +1048,6 @@ void Key_SetBinding(int keynum, const char *binding)
 	cvar_modifiedFlags |= CVAR_ARCHIVE;
 }
 
-
 /*
 ===================
 Key_GetBinding
@@ -1113,13 +1094,12 @@ void Key_GetBindingByString(const char *binding, int *key1, int *key2)
 Key_GetKey
 ===================
 */
-
 int Key_GetKey(const char *binding)
 {
-	int i;
-
 	if (binding)
 	{
+		int i;
+
 		for (i = 0 ; i < 256 ; i++)
 		{
 			if (keys[i].binding && Q_stricmp(binding, keys[i].binding) == 0)
@@ -1172,7 +1152,6 @@ void Key_Unbindall_f(void)
 		}
 }
 
-
 /*
 ===================
 Key_Bind_f
@@ -1210,7 +1189,7 @@ void Key_Bind_f(void)
 		return;
 	}
 
-// copy the rest of the command line
+	// copy the rest of the command line
 	cmd[0] = 0;     // start out with a null string
 	for (i = 2 ; i < c ; i++)
 	{
@@ -1244,15 +1223,12 @@ void Key_WriteBindings(fileHandle_t f)
 			FS_Printf(f, "bind %s \"%s\"\n", Key_KeynumToString(i), keys[i].binding);
 
 		}
-
 	}
 }
-
 
 /*
 ============
 Key_Bindlist_f
-
 ============
 */
 void Key_Bindlist_f(void)
@@ -1278,7 +1254,9 @@ void Key_KeynameCompletion(void (*callback)(const char *s))
 	int i;
 
 	for (i = 0; keynames[i].name != NULL; i++)
+	{
 		callback(keynames[i].name);
+	}
 }
 
 /*
@@ -1356,7 +1334,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 {
 	char     *kb;
 	char     cmd[1024];
-	qboolean bypassMenu = qfalse;       // NERVE - SMF
+	qboolean bypassMenu = qfalse;
 	qboolean onlybinds  = qfalse;
 
 	if (!key)
@@ -1468,7 +1446,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		consoleButtonWasPressed = qfalse;
 	}
 
-//----(SA)	added
 	if (cl.cameraMode)
 	{
 		if (!(cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CONSOLE)))            // let menu/console handle keys if necessary
@@ -1494,7 +1471,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			return;
 		}
 	}
-	//----(SA)	end
 
 	// most keys during demo playback will bring up the menu, but non-ascii
 
@@ -1552,12 +1528,11 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		return;
 	}
 
-	//
 	// key up events only perform actions if the game key binding is
 	// a button command (leading + sign).  These will be processed even in
 	// console mode and menu mode, to keep the character from continuing
 	// an action started before a mode switch.
-	//
+
 	if (!down)
 	{
 		kb = keys[key].binding;
@@ -1587,7 +1562,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		return;
 	}
 
-	// NERVE - SMF - if we just want to pass it along to game
+	// if we just want to pass it along to game
 	if (cl_bypassMouseInput && cl_bypassMouseInput->integer)
 	{
 		if ((key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3 || key == K_MOUSE4 || key == K_MOUSE5))
@@ -1672,7 +1647,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	}
 }
 
-
 /*
 ===================
 CL_CharEvent
@@ -1716,7 +1690,6 @@ void CL_CharEvent(int key)
 		Field_CharEvent(&g_consoleField, key);
 	}
 }
-
 
 /*
 ===================

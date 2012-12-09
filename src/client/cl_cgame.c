@@ -355,7 +355,7 @@ rescan:
 
 	if (!strcmp(cmd, "disconnect"))
 	{
-		// NERVE - SMF - allow server to indicate why they were disconnected
+		// allow server to indicate why they were disconnected
 		if (argc >= 2)
 		{
 			Com_Error(ERR_SERVERDISCONNECT, "%s\n", va("Server Disconnected - %s", Cmd_Argv(1)));
@@ -447,7 +447,7 @@ rescan:
 	return qtrue;
 }
 
-// DHM - Nerve :: Copied from server to here
+// Copied from server to here
 /*
 ====================
 CL_SetExpectedHunkUsage
@@ -556,14 +556,13 @@ void CL_CM_LoadMap(const char *mapname)
 {
 	int checksum;
 
-	// DHM - Nerve :: If we are not running the server, then set expected usage here
+	// If we are not running the server, then set expected usage here
 	if (!com_sv_running->integer)
 	{
 		CL_SetExpectedHunkUsage(mapname);
 	}
 	else
 	{
-		// TTimo
 		// catch here when a local server is started to avoid outdated com_errorDiagnoseIP
 		Cvar_Set("com_errorDiagnoseIP", "");
 	}
@@ -574,7 +573,6 @@ void CL_CM_LoadMap(const char *mapname)
 /*
 ====================
 CL_ShutdonwCGame
-
 ====================
 */
 void CL_ShutdownCGame(void)
@@ -593,6 +591,7 @@ void CL_ShutdownCGame(void)
 static int FloatAsInt(float f)
 {
 	floatint_t fi;
+
 	fi.f = f;
 	return fi.i;
 }
@@ -729,7 +728,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		}
 		return 0;
 	case CG_S_ADDLOOPINGSOUND:
-		// FIXME MrE: handling of looping sounds changed
+		// FIXME handling of looping sounds changed
 		S_AddLoopingSound(VMA(1), VMA(2), args[3], args[4], args[5], args[6]);
 		return 0;
 	case CG_S_ADDREALLOOPINGSOUND:
@@ -741,14 +740,14 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_S_UPDATEENTITYPOSITION:
 		S_UpdateEntityPosition(args[1], VMA(2));
 		return 0;
-	// Ridah, talking animations
+	// talking animations
 	case CG_S_GETVOICEAMPLITUDE:
 		return S_GetVoiceAmplitude(args[1]);
 
 	case CG_S_GETSOUNDLENGTH:
 		return S_GetSoundLength(args[1]);
 
-	// ydnar: for looped sound starts
+	// for looped sound starts
 	case CG_S_GETCURRENTSOUNDTIME:
 		return S_GetCurrentSoundTime();
 
@@ -758,10 +757,10 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_S_REGISTERSOUND:
 		return S_RegisterSound(VMA(1), args[2]);
 	case CG_S_STARTBACKGROUNDTRACK:
-		S_StartBackgroundTrack(VMA(1), VMA(2), args[3]);        //----(SA)	added fadeup time
+		S_StartBackgroundTrack(VMA(1), VMA(2), args[3]);    // added fadeup time
 		return 0;
 	case CG_S_FADESTREAMINGSOUND:
-		S_FadeStreamingSound(VMF(1), args[2], args[3]);     //----(SA)	added music/all-streaming options
+		S_FadeStreamingSound(VMF(1), args[2], args[3]);     // added music/all-streaming options
 		return 0;
 	case CG_S_STARTSTREAMINGSOUND:
 		return S_StartStreamingSound(VMA(1), VMA(2), args[3], args[4], args[5]);
@@ -960,7 +959,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_INGAME_POPUP:
 		if (cls.state == CA_ACTIVE && !clc.demoplaying)
 		{
-			if (uivm)     // Gordon: can be called as the system is shutting down
+			if (uivm)     // can be called as the system is shutting down
 			{
 				VM_Call(uivm, UI_SET_ACTIVE_MENU, args[1]);
 			}
@@ -998,7 +997,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		Com_GetHunkInfo(VMA(1), VMA(2));
 		return 0;
 
-	//zinx - binary channel
+	// binary channel
 	case CG_SENDMESSAGE:
 		CL_SendBinaryMessage(VMA(1), args[2]);
 		return 0;
@@ -1430,9 +1429,8 @@ void CL_SetCGameTime(void)
 		// cl_timeNudge is a user adjustable cvar that allows more
 		// or less latency to be added in the interest of better
 		// smoothness or better responsiveness.
-		int tn;
+		int tn = cl_timeNudge->integer;
 
-		tn = cl_timeNudge->integer;
 		if (tn < -30)
 		{
 			tn = -30;

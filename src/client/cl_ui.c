@@ -252,6 +252,7 @@ static void LAN_RemoveServer(int source, const char *addr)
 			if (NET_CompareAdr(comp, servers[i].adr))
 			{
 				int j = i;
+
 				while (j < *count - 1)
 				{
 					Com_Memcpy(&servers[j], &servers[j + 1], sizeof(servers[j]));

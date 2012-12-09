@@ -178,25 +178,19 @@ S_TransferPaintBuffer
 */
 void S_TransferPaintBuffer(int endtime)
 {
-	int           out_idx;
-	int           count;
 	int           out_mask;
 	int           *p;
-	int           step;
-	int           val;
-	unsigned long *pbuf;
-
-	pbuf = (unsigned long *)dma.buffer;
+	unsigned long *pbuf = (unsigned long *)dma.buffer;
 
 	if (s_testsound->integer)
 	{
 		int i;
-		int count;
 
 		// write a fixed sine wave
-		count = (endtime - s_paintedtime);
-		for (i = 0 ; i < count ; i++)
+		for (i = 0 ; i < (endtime - s_paintedtime) ; i++)
+		{
 			paintbuffer[i].left = paintbuffer[i].right = sin((s_paintedtime + i) * 0.1) * 20000 * 256;
+		}
 	}
 
 	if (dma.samplebits == 16 && dma.channels == 2)     // optimized case
@@ -205,15 +199,19 @@ void S_TransferPaintBuffer(int endtime)
 	}
 	else // general case
 	{
-		p        = (int *) paintbuffer;
-		count    = (endtime - s_paintedtime) * dma.channels;
+		int count   = (endtime - s_paintedtime) * dma.channels;
+		int out_idx = s_paintedtime * dma.channels & out_mask;
+		int step    = 3 - dma.channels;
+		int val;
+
+		p = (int *) paintbuffer;
+
 		out_mask = dma.samples - 1;
-		out_idx  = s_paintedtime * dma.channels & out_mask;
-		step     = 3 - dma.channels;
 
 		if (dma.samplebits == 16)
 		{
 			short *out = (short *) pbuf;
+
 			while (count--)
 			{
 				val = *p >> 8;

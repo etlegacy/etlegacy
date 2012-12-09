@@ -44,7 +44,7 @@ cvar_t *con_conspeed;
 cvar_t *con_notifytime;
 cvar_t *con_autoclear;
 
-// DHM - Nerve :: Must hold CTRL + SHIFT + ~ to get console
+// Must hold CTRL + SHIFT + ~ to get console
 cvar_t *con_restricted;
 
 #define DEFAULT_CONSOLE_WIDTH   78
@@ -66,8 +66,7 @@ void Con_ToggleConsole_f(void)
 		return;
 	}
 
-	// ydnar: persistent console input is more useful
-	// Arnout: added cvar
+	// persistent console input is more useful (added cvar)
 	if (con_autoclear->integer)
 	{
 		Field_Clear(&g_consoleField);
@@ -77,7 +76,7 @@ void Con_ToggleConsole_f(void)
 
 	Con_ClearNotify();
 
-	// ydnar: multiple console size support
+	// multiple console size support
 	if (cls.keyCatchers & KEYCATCH_CONSOLE)
 	{
 		cls.keyCatchers &= ~KEYCATCH_CONSOLE;
@@ -256,10 +255,10 @@ If the line width has changed, reformat the buffer.
 */
 void Con_CheckResize(void)
 {
-	int              i, j, width, oldwidth, oldtotallines, numlines, numchars;
+	int              i, width;
 	MAC_STATIC short tbuf[CON_TEXTSIZE];
 
-	// ydnar: wasn't allowing for larger consoles
+	// wasn't allowing for larger consoles
 	// width = (SCREEN_WIDTH / SMALLCHAR_WIDTH) - 2;
 	width = (cls.glconfig.vidWidth / SMALLCHAR_WIDTH) - 2;
 
@@ -274,11 +273,16 @@ void Con_CheckResize(void)
 		con.linewidth  = width;
 		con.totallines = CON_TEXTSIZE / con.linewidth;
 		for (i = 0; i < CON_TEXTSIZE; i++)
+		{
 			con.text[i] = (ColorIndex(COLNSOLE_COLOR) << 8) | ' ';
+		}
 	}
 	else
 	{
-		oldwidth       = con.linewidth;
+		int j;
+		int oldtotallines, numlines, numchars;
+		int oldwidth = con.linewidth;
+
 		con.linewidth  = width;
 		oldtotallines  = con.totallines;
 		con.totallines = CON_TEXTSIZE / con.linewidth;
@@ -298,8 +302,9 @@ void Con_CheckResize(void)
 
 		memcpy(tbuf, con.text, CON_TEXTSIZE * sizeof(short));
 		for (i = 0; i < CON_TEXTSIZE; i++)
+		{
 			con.text[i] = (ColorIndex(COLNSOLE_COLOR) << 8) | ' ';
-
+		}
 
 		for (i = 0 ; i < numlines ; i++)
 		{
@@ -340,7 +345,7 @@ void Con_Init(void)
 {
 	int i;
 
-	con_notifytime = Cvar_Get("con_notifytime", "7", 0);   // JPW NERVE increased per id req for obits
+	con_notifytime = Cvar_Get("con_notifytime", "7", 0);   // increased per id req for obits
 	con_conspeed   = Cvar_Get("scr_conspeed", "3", 0);
 	con_autoclear  = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE);
 	con_restricted = Cvar_Get("con_restricted", "0", CVAR_INIT);
@@ -416,7 +421,7 @@ void CL_ConsolePrint(char *txt)
 	qboolean skipnotify = qfalse;
 	int      prev;
 
-	// NERVE - SMF - work around for text that shows up in console but not in notify
+	// work around for text that shows up in console but not in notify
 	if (!Q_strncmp(txt, "[skipnotify]", 12))
 	{
 		skipnotify = qtrue;
@@ -582,17 +587,14 @@ Draws the last few lines of output transparently over the game top
 */
 void Con_DrawNotify(void)
 {
-	int   x, v;
+	int   x, v = 0;
 	short *text;
 	int   i;
 	int   time;
-	int   skip;
-	int   currentColor;
+	int   currentColor = 7;
 
-	currentColor = 7;
 	re.SetColor(g_color_table[currentColor]);
 
-	v = 0;
 	for (i = con.current - NUM_CON_TIMES + 1 ; i <= con.current ; i++)
 	{
 		if (i < 0)
@@ -643,6 +645,8 @@ void Con_DrawNotify(void)
 	// draw the chat line
 	if (cls.keyCatchers & KEYCATCH_MESSAGE)
 	{
+		int skip;
+
 		if (chat_team)
 		{
 			char buf[128];
@@ -715,7 +719,7 @@ void Con_DrawSolidConsole(float frac)
 	{
 		SCR_DrawPic(0, 0, SCREEN_WIDTH, y, cls.consoleShader);
 
-		// NERVE - SMF - merged from WolfSP
+		// merged from WolfSP
 		if (frac >= 0.5f)
 		{
 			color[0] = color[1] = color[2] = frac * 2.0f;
@@ -889,7 +893,6 @@ void Con_RunConsole(void)
 			con.displayFrac = con.finalFrac;
 		}
 	}
-
 }
 
 void Con_PageUp(void)
