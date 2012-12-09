@@ -1955,7 +1955,7 @@ CG_Prop
 static void CG_Prop(centity_t *cent)
 {
 	refEntity_t   ent;
-	entityState_t *s1 = &cent->currentState;;
+	entityState_t *s1 = &cent->currentState;
 	vec3_t        angles;
 
 	// create the render entity
