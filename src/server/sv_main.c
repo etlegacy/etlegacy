@@ -159,7 +159,7 @@ static char *SV_ExpandNewlines(char *in)
  */
 void SV_AddServerCommand(client_t *client, const char *cmd)
 {
-	int index, i;
+	int index;
 
 	client->reliableSequence++;
 	// if we would be losing an old command that hasn't been acknowledged,
@@ -168,6 +168,8 @@ void SV_AddServerCommand(client_t *client, const char *cmd)
 	// doesn't cause a recursive drop client
 	if (client->reliableSequence - client->reliableAcknowledge == MAX_RELIABLE_COMMANDS + 1)
 	{
+		int i;
+
 		Com_Printf("===== pending server commands =====\n");
 		for (i = client->reliableAcknowledge + 1 ; i <= client->reliableSequence ; i++)
 		{
@@ -1341,7 +1343,7 @@ void SV_Frame(int msec)
 	int  frameMsec;
 	int  startTime;
 	char mapname[MAX_QPATH];
-	int  frameStartTime = 0, frameEndTime;
+	int  frameStartTime = 0;
 
 	// the menu kills the server with this cvar
 	if (sv_killserver->integer)
@@ -1480,9 +1482,12 @@ void SV_Frame(int msec)
 
 	if (com_dedicated->integer)
 	{
-		frameEndTime = Sys_Milliseconds();
+		int frameEndTime = Sys_Milliseconds();
 
 		svs.totalFrameTime += (frameEndTime - frameStartTime);
+
+		Com_Printf("FRAMETIME frame: %i total\n", frameEndTime - frameStartTime, svs.totalFrameTime);
+
 		svs.currentFrameIndex++;
 
 		//if( svs.currentFrameIndex % 50 == 0 )
@@ -1490,18 +1495,15 @@ void SV_Frame(int msec)
 
 		if (svs.currentFrameIndex == SERVER_PERFORMANCECOUNTER_FRAMES)
 		{
-			int averageFrameTime;
-
-			averageFrameTime = svs.totalFrameTime / SERVER_PERFORMANCECOUNTER_FRAMES;
+			int averageFrameTime = svs.totalFrameTime / SERVER_PERFORMANCECOUNTER_FRAMES;
 
 			svs.sampleTimes[svs.currentSampleIndex % SERVER_PERFORMANCECOUNTER_SAMPLES] = averageFrameTime;
 			svs.currentSampleIndex++;
 
 			if (svs.currentSampleIndex > SERVER_PERFORMANCECOUNTER_SAMPLES)
 			{
-				int totalTime, i;
+				int totalTime = 0, i;
 
-				totalTime = 0;
 				for (i = 0; i < SERVER_PERFORMANCECOUNTER_SAMPLES; i++)
 				{
 					totalTime += svs.sampleTimes[i];

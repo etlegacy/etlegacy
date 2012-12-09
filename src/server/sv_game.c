@@ -766,10 +766,10 @@ extern qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientati
 
 qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *orientation)
 {
-	int i;
-
 	if (tagFileNumber > 0 && tagFileNumber <= sv.num_tagheaders)
 	{
+		int i;
+
 		for (i = sv.tagHeadersExt[tagFileNumber - 1].start; i < sv.tagHeadersExt[tagFileNumber - 1].start + sv.tagHeadersExt[tagFileNumber - 1].count; i++)
 		{
 			if (!Q_stricmp(sv.tags[i].name, tagname))
@@ -783,8 +783,8 @@ qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_
 		}
 	}
 
-	// Gordon: lets try and remove the inconsitancy between ded/non-ded servers...
-	// Gordon: bleh, some code in clientthink_real really relies on this working on player models...
+	// lets try and remove the inconsitancy between ded/non-ded servers...
+	// - bleh, some code in clientthink_real really relies on this working on player models...
 #ifndef DEDICATED // TTimo: dedicated only binary defines DEDICATED
 	if (com_dedicated->integer)
 	{

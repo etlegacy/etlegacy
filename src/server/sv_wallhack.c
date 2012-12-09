@@ -428,8 +428,7 @@ static void init_horz_delta(void)
 
 //======================================================================
 
-static void
-init_vert_delta(void)
+static void init_vert_delta(void)
 {
 	int i;
 
@@ -443,8 +442,7 @@ init_vert_delta(void)
 // public functions
 //======================================================================
 
-void
-SV_InitWallhack(void)
+void SV_InitWallhack(void)
 {
 	init_horz_delta();
 	init_vert_delta();

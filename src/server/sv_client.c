@@ -140,8 +140,8 @@ void SV_DirectConnect(netadr_t from)
 
 	Q_strncpyz(userinfo, Cmd_Argv(1), sizeof(userinfo));
 
-	// DHM - Nerve :: Update Server allows any protocol to connect
-	// NOTE TTimo: but we might need to store the protocol around for potential non http/ftp clients
+	// Update Server allows any protocol to connect
+	// NOTE: but we might need to store the protocol around for potential non http/ftp clients
 	version = atoi(Info_ValueForKey(userinfo, "protocol"));
 	if (version != PROTOCOL_VERSION)
 	{
@@ -162,7 +162,7 @@ void SV_DirectConnect(netadr_t from)
 	// quick reject
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
-		// DHM - Nerve :: This check was allowing clients to reconnect after zombietime(2 secs)
+		// This check was allowing clients to reconnect after zombietime(2 secs)
 		//if ( cl->state == CS_FREE ) {
 		//continue;
 		//}
@@ -370,7 +370,7 @@ gotnewcl:
 
 	SV_UserinfoChanged(newcl);
 
-	// DHM - Nerve :: Clear out firstPing now that client is connected
+	// Clear out firstPing now that client is connected
 	svs.challenges[i].firstPing = 0;
 
 	// send the connect packet to the client
@@ -463,10 +463,8 @@ void SV_DropClient(client_t *drop, const char *reason)
 	if (!isBot)
 	{
 		// tell everyone why they got dropped
-
-		// Gordon: we want this displayed elsewhere now
+		// we want this displayed elsewhere now
 		SV_SendServerCommand(NULL, "cpm \"%s" S_COLOR_WHITE " %s\"\n", rc(drop->name), reason);
-//      SV_SendServerCommand( NULL, "print \"[lof]%s" S_COLOR_WHITE " [lon]%s\n\"", drop->name, reason );
 	}
 
 	Com_DPrintf("Going to CS_ZOMBIE for %s\n", drop->name);
@@ -532,7 +530,6 @@ void SV_SendClientGameState(client_t *client)
 	msg_t         msg;
 	byte          msgBuffer[MAX_MSGLEN];
 
-
 	Com_DPrintf("SV_SendClientGameState() for %s\n", client->name);
 	Com_DPrintf("Going from CS_CONNECTED to CS_PRIMED for %s\n", client->name);
 	client->state         = CS_PRIMED;
@@ -546,7 +543,7 @@ void SV_SendClientGameState(client_t *client)
 
 	MSG_Init(&msg, msgBuffer, sizeof(msgBuffer));
 
-	// NOTE, MRE: all server->client messages now acknowledge
+	// NOTE: all server->client messages now acknowledge
 	// let the client know which reliable clientCommands we have received
 	MSG_WriteLong(&msg, client->lastClientCommand);
 
@@ -598,7 +595,6 @@ void SV_SendClientGameState(client_t *client)
 	SV_SendMessageToClient(&msg, client);
 }
 
-
 /*
 ==================
 SV_ClientEnterWorld
@@ -628,9 +624,7 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 
 /*
 ============================================================
-
 CLIENT COMMAND EXECUTION
-
 ============================================================
 */
 
@@ -733,7 +727,7 @@ void SV_BeginDownload_f(client_t *cl)
 	// Kill any existing download
 	SV_CloseDownload(cl);
 
-	//bani - stop us from printing dupe messages
+	// stop us from printing dupe messages
 	if (strcmp(cl->downloadName, Cmd_Argv(1)))
 	{
 		cl->downloadnotify = DLNOTIFY_ALL;
@@ -957,7 +951,7 @@ void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 
 						Q_strncpyz(cl->downloadURL, va("%s/%s", sv_wwwBaseURL->string, cl->downloadName), sizeof(cl->downloadURL));
 
-						//bani - prevent multiple download notifications
+						// prevent multiple download notifications
 						if (cl->downloadnotify & DLNOTIFY_REDIRECT)
 						{
 							cl->downloadnotify &= ~DLNOTIFY_REDIRECT;
@@ -1071,7 +1065,6 @@ void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 	// normal rate / snapshotMsec calculation
 	rate = cl->rate;
 
-	// show_bug.cgi?id=509
 	// for autodownload, we use a seperate max rate value
 	// we do this everytime because the client might change it's rate during the download
 	if (sv_dl_maxRate->integer < rate)
@@ -1105,7 +1098,6 @@ void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 
 	while (blockspersnap--)
 	{
-
 		// Write out the next section of the file, if we have already reached our window,
 		// automatically start retransmitting
 
@@ -1188,7 +1180,7 @@ This routine would be a bit simpler with a goto but i abstained
 */
 static void SV_VerifyPaks_f(client_t *cl)
 {
-	int        nChkSum1, nChkSum2, nClientPaks, nServerPaks, i, j, nCurArg;
+	int        nChkSum1, nChkSum2;
 	int        nClientChkSum[1024];
 	int        nServerChkSum[1024];
 	const char *pPaks, *pArg;
@@ -1199,6 +1191,8 @@ static void SV_VerifyPaks_f(client_t *cl)
 	// ui and cgame that we think should be loaded based on the pure setting
 	if (sv_pure->integer != 0)
 	{
+		int nClientPaks, nServerPaks, i, j, nCurArg;
+
 		nChkSum1 = nChkSum2 = 0;
 
 		bGood = (FS_FileIsInPAK(Sys_GetDLLName("cgame"), &nChkSum1) == 1);
@@ -1220,7 +1214,6 @@ static void SV_VerifyPaks_f(client_t *cl)
 		}
 		else
 		{
-			// show_bug.cgi?id=475
 			// we may get incoming cp sequences from a previous checksumFeed, which we need to ignore
 			// since serverId is a frame count, it always goes up
 			if (atoi(pArg) < sv.checksumFeedServerId)
@@ -1233,7 +1226,6 @@ static void SV_VerifyPaks_f(client_t *cl)
 		// we basically use this while loop to avoid using 'goto' :)
 		while (bGood)
 		{
-
 			// must be at least 6: "cl_paks cgame ui @ firstref ... numChecksums"
 			// numChecksums is encoded
 			if (nClientPaks < 6)
@@ -1464,11 +1456,10 @@ void SV_UserinfoChanged(client_t *cl)
 		cl->snapshotMsec = 50;
 	}
 
-	// TTimo
 	// maintain the IP information
 	// this is set in SV_DirectConnect (directly on the server, not transmitted), may be lost when client updates it's userinfo
 	// the banning code relies on this being consistently present
-	// zinx - modified to always keep this consistent, instead of only
+	// - modified to always keep this consistent, instead of only
 	// when "ip" is 0-length, so users can't supply their own IP
 	//Com_DPrintf("Maintain IP in userinfo for '%s'\n", cl->name);
 	if (!NET_IsLocalAddress(cl->netchan.remoteAddress))
@@ -1613,11 +1604,11 @@ static qboolean SV_ClientCommand(client_t *cl, msg_t *msg, qboolean premaprestar
 	}
 
 
-	// Gordon: AHA! Need to steal this for some other stuff BOOKMARK
-	// NERVE - SMF - some server game-only commands we cannot have flood protect
+	// AHA! Need to steal this for some other stuff BOOKMARK
+	// - some server game-only commands we cannot have flood protect
 	if (!Q_strncmp("team", s, 4) || !Q_strncmp("setspawnpt", s, 10) || !Q_strncmp("score", s, 5) || !Q_stricmp("forcetapout", s))
 	{
-//      Com_DPrintf( "Skipping flood protection for: %s\n", s );
+		//Com_DPrintf( "Skipping flood protection for: %s\n", s );
 		floodprotect = qfalse;
 	}
 
@@ -1635,7 +1626,7 @@ static qboolean SV_ClientCommand(client_t *cl, msg_t *msg, qboolean premaprestar
 	    floodprotect)
 	{
 		// ignore any other text messages from this client but let them keep playing
-		// TTimo - moved the ignored verbose to the actual processing in SV_ExecuteClientCommand, only printing if the core doesn't intercept
+		// moved the ignored verbose to the actual processing in SV_ExecuteClientCommand, only printing if the core doesn't intercept
 		clientOk = qfalse;
 	}
 
@@ -1733,14 +1724,13 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	{
 		cmd = &cmds[i];
 		MSG_ReadDeltaUsercmdKey(msg, key, oldcmd, cmd);
-//      MSG_ReadDeltaUsercmd( msg, oldcmd, cmd );
+		//MSG_ReadDeltaUsercmd( msg, oldcmd, cmd );
 		oldcmd = cmd;
 	}
 
 	// save time for ping calculation
 	cl->frames[cl->messageAcknowledge & PACKET_MASK].messageAcked = svs.time;
 
-	// TTimo
 	// catch the no-cp-yet situation before SV_ClientEnterWorld
 	// if CS_ACTIVE, then it's time to trigger a new gamestate emission
 	// if not, then we are getting remaining parasite usermove commands, which we should ignore
@@ -1801,7 +1791,6 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 		SV_ClientThink(cl, &cmds[i]);
 	}
 }
-
 
 /*
 =====================
@@ -1968,7 +1957,7 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 
 	SV_ParseBinaryMessage(cl, msg);
 
-	//  if ( msg->readcount != msg->cursize ) {
-	//      Com_Printf( "WARNING: Junk at end of packet for client %i\n", cl - svs.clients );
-	//  }
+	//if ( msg->readcount != msg->cursize ) {
+	//    Com_Printf( "WARNING: Junk at end of packet for client %i\n", cl - svs.clients );
+	//}
 }
