@@ -72,7 +72,6 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 	token_t  token;
 	int      negative = qfalse;
 	long int intval, intmin = 0, intmax = 0;
-	double   floatval;
 
 	if (!PC_ExpectAnyToken(source, &token))
 	{
@@ -109,6 +108,8 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 	  //check for a float value
 	if (token.subtype & TT_FLOAT)
 	{
+		double   floatval;
+
 		if ((fd->type & FT_TYPE) != FT_FLOAT)
 		{
 			SourceError(source, "unexpected float");

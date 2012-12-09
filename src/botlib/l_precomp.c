@@ -2894,7 +2894,6 @@ directive_t directives[20] =
 int PC_ReadDirective(source_t *source)
 {
 	token_t token;
-	int     i;
 
 	//read the directive name
 	if (!PC_ReadSourceToken(source, &token))
@@ -2912,6 +2911,8 @@ int PC_ReadDirective(source_t *source)
 	  //if if is a name
 	if (token.type == TT_NAME)
 	{
+		int i;
+
 		//find the precompiler directive
 		for (i = 0; directives[i].name; i++)
 		{
@@ -3007,7 +3008,6 @@ directive_t dollardirectives[20] =
 int PC_ReadDollarDirective(source_t *source)
 {
 	token_t token;
-	int     i;
 
 	//read the directive name
 	if (!PC_ReadSourceToken(source, &token))
@@ -3025,6 +3025,7 @@ int PC_ReadDollarDirective(source_t *source)
 	  //if if is a name
 	if (token.type == TT_NAME)
 	{
+		int i;
 		//find the precompiler directive
 		for (i = 0; dollardirectives[i].name; i++)
 		{
