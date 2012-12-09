@@ -981,7 +981,6 @@ static int CG_CalcFov(void)
 {
 	static float lastfov = 90;      // for transitions back from zoomed in modes
 	float        x;
-	float        phase;
 	int          contents;
 	float        fov_x, fov_y;
 	int          inwater;
@@ -1108,8 +1107,8 @@ static int CG_CalcFov(void)
 	if (contents & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
 	{
 		float v;
+		float phase = cg.time / 1000.0 * WAVE_FREQUENCY * M_PI * 2;
 
-		phase                       = cg.time / 1000.0 * WAVE_FREQUENCY * M_PI * 2;
 		v                           = WAVE_AMPLITUDE * sin(phase);
 		fov_x                      += v;
 		fov_y                      -= v;
@@ -1181,15 +1180,12 @@ static void CG_DamageBlendBlob(void)
 	refEntity_t  ent;
 	qboolean     pointDamage;
 	viewDamage_t *vd;
-	float        redFlash;
 
 	// Gordon: no damage blend blobs if in limbo or spectator, and in the limbo menu
 	if (((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
 	{
 		return;
 	}
-
-	redFlash = 0;
 
 	for (i = 0; i < MAX_VIEWDAMAGE; i++)
 	{
@@ -1213,7 +1209,6 @@ static void CG_DamageBlendBlob(void)
 		// if not point Damage, only do flash blend
 		if (!pointDamage)
 		{
-			redFlash += 10.0 * (1.0 - (float)t / maxTime);
 			continue;
 		}
 
@@ -1235,8 +1230,6 @@ static void CG_DamageBlendBlob(void)
 		                           (cg_bloodDamageBlend.value < 0.0f) ? 0.0f : cg_bloodDamageBlend.value);
 
 		trap_R_AddRefEntityToScene(&ent);
-
-		redFlash += ent.radius;
 	}
 }
 
@@ -1266,10 +1259,11 @@ int CG_CalcViewValues(void)
 	{
 		vec3_t origin, angles;
 		float  fov = 90;
-		float  x;
 
 		if (trap_getCameraInfo(CAM_PRIMARY, cg.time, &origin, &angles, &fov))
 		{
+			float x;
+
 			VectorCopy(origin, cg.refdef_current->vieworg);
 			angles[ROLL]  = 0;
 			angles[PITCH] = -angles[PITCH];     // compensate for reversed pitch (this makes the game match the editor, however I'm guessing the real fix is to be done there)
@@ -1480,7 +1474,6 @@ char *CG_MustParse(char **pString, const char *pErrorMsg)
 
 void CG_ParseSkyBox(void)
 {
-	int    fogStart, fogEnd;
 	char   *cstr, *token;
 	vec4_t fogColor;
 
@@ -1513,6 +1506,8 @@ void CG_ParseSkyBox(void)
 	token = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring.  No fog state\n");
 	if (atoi(token))         // this camera has fog
 	{
+		int fogStart, fogEnd;
+
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring.  No fog[0]\n");
 		fogColor[0] = atof(token);
 
@@ -1609,8 +1604,6 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 		float fov_x;
 		float fov_y;
 		float x;
-		float zoomFov;
-		float f;
 
 		if (cg.predictedPlayerState.pm_type == PM_INTERMISSION)
 		{
@@ -1619,6 +1612,9 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 		}
 		else
 		{
+			float zoomFov;
+			float f;
+
 			// user selectable
 			fov_x = cg_fov.value;
 			if (fov_x < 1)
@@ -1844,8 +1840,6 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
 
 void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback)
 {
-	int inwater;
-
 #ifdef DEBUGTIME_ENABLED
 	int dbgTime = trap_Milliseconds(), elapsed;
 	int dbgCnt  = 0;
@@ -1949,6 +1943,8 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 	}
 	else
 	{
+		int inwater;
+
 		// clear all the render lists
 		trap_R_ClearScene();
 

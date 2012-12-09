@@ -88,7 +88,7 @@ void CG_ClearTrails(void)
 
 	for (i = 0 ; i < MAX_TRAILJUNCS ; i++)
 	{
-		trailJuncs[i].nextGlobal = &trailJuncs[i + 1];
+		trailJuncs[i].nextGlobal = &trailJuncs[i + 1]; // FIXME: Array 'trailJuncs[4096]' index 4096 out of bounds
 
 		if (i > 0)
 		{

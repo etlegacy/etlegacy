@@ -108,7 +108,7 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 	  //check for a float value
 	if (token.subtype & TT_FLOAT)
 	{
-		double   floatval;
+		double floatval;
 
 		if ((fd->type & FT_TYPE) != FT_FLOAT)
 		{

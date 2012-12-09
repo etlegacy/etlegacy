@@ -125,7 +125,7 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 
 	VectorCopy(re->origin, le->pos.trBase);
 
-	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME))         //----(SA)    modified since slime is no longer deadly
+	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME))         // modified since slime is no longer deadly
 	{ //  if ( CG_PointContents( re->origin, -1 ) & CONTENTS_WATER ) {
 		waterScale = 0.10;
 	}
@@ -208,7 +208,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 	AnglesToAxis(cent->lerpAngles, v);
 
-	// JPW NERVE new brass handling behavior because the SP stuff just doesn't cut it for MP
+	// new brass handling behavior because the SP stuff just doesn't cut it for MP
 	if (cent->currentState.eFlags & EF_MG42_ACTIVE || cent->currentState.eFlags & EF_AAGUN_ACTIVE)
 	{
 		offset[0]             = 25;
@@ -333,9 +333,9 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 	le = CG_AllocLocalEntity();
 	re = &le->refEntity;
 
-//  velocity[0] = 16;
-//  velocity[1] = -50 + 40 * crandom();
-//  velocity[2] = 100 + 50 * crandom();
+	//velocity[0] = 16;
+	//velocity[1] = -50 + 40 * crandom();
+	//velocity[2] = 100 + 50 * crandom();
 
 	velocity[0] = 16;
 	velocity[1] = -200;
@@ -343,18 +343,18 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
-//  le->startTime = cg.time + 2000;
+	//le->startTime = cg.time + 2000;
 	le->endTime = le->startTime + (cg_brassTime.integer * 8) + (cg_brassTime.integer * random());
 
 	le->pos.trType = TR_GRAVITY;
 	le->pos.trTime = cg.time - (rand() & 15);
-//  le->pos.trTime = cg.time - 2000;
+	//le->pos.trTime = cg.time - 2000;
 
 	AnglesToAxis(cent->lerpAngles, v);
 
-//  offset[0] = 12;
-//  offset[1] = -4;
-//  offset[2] = 24;
+	//offset[0] = 12;
+	//offset[1] = -4;
+	//offset[2] = 24;
 
 	offset[0] = -24;    // forward
 	offset[1] = -4; // left
@@ -379,7 +379,7 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 
 	AxisCopy(axisDefault, re->axis);
 
-	// (SA) make it bigger
+	// make it bigger
 	le->sizeScale = 3.0f;
 
 	re->hModel = cgs.media.panzerfaustBrassModel;
@@ -388,15 +388,15 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 
 	le->angles.trType = TR_LINEAR;
 	le->angles.trTime = cg.time;
-//  le->angles.trBase[0] = rand()&31;
-//  le->angles.trBase[1] = rand()&31;
-//  le->angles.trBase[2] = rand()&31;
+	//le->angles.trBase[0] = rand()&31;
+	//le->angles.trBase[1] = rand()&31;
+	//le->angles.trBase[2] = rand()&31;
 	le->angles.trBase[0] = 0;
 	le->angles.trBase[1] = cent->currentState.apos.trBase[1];   // rotate to match the player
 	le->angles.trBase[2] = 0;
-//  le->angles.trDelta[0] = 2;
-//  le->angles.trDelta[1] = 1;
-//  le->angles.trDelta[2] = 0;
+	//le->angles.trDelta[0] = 2;
+	//le->angles.trDelta[1] = 1;
+	//le->angles.trDelta[2] = 0;
 	le->angles.trDelta[0] = 0;
 	le->angles.trDelta[1] = 0;
 	le->angles.trDelta[2] = 0;
@@ -450,7 +450,7 @@ void CG_GetWindVector(vec3_t dir)
 	VectorNormalize(dir);
 }
 
-// JPW NERVE -- LT pyro for marking air strikes
+// LT/FOPS pyro for marking air strikes
 /*
 ==========================
 CG_PyroSmokeTrail
@@ -465,7 +465,6 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 	entityState_t *es;
 	int           t;
 	float         rnd;
-	localEntity_t *le;
 	team_t        team;
 
 	if (ent->currentState.weapon == WP_LANDMINE)
@@ -561,25 +560,25 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 
 		if (team == TEAM_ALLIES)     // allied team, generate blue smoke
 		{
-			le = CG_SmokePuff(origin, dir,
-			                  25 + rnd * 110,  // width
-			                  rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 1, 0.5,
-			                  4800 + (rand() % 2800),    // duration was 2800+
-			                  t,
-			                  0,
-			                  0,
-			                  cgs.media.smokePuffShader);
+			CG_SmokePuff(origin, dir,
+			             25 + rnd * 110,       // width
+			             rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 1, 0.5,
+			             4800 + (rand() % 2800),         // duration was 2800+
+			             t,
+			             0,
+			             0,
+			             cgs.media.smokePuffShader);
 		}
 		else
 		{
-			le = CG_SmokePuff(origin, dir,
-			                  25 + rnd * 110,  // width
-			                  1.0, rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 0.5,
-			                  4800 + (rand() % 2800),    // duration was 2800+
-			                  t,
-			                  0,
-			                  0,
-			                  cgs.media.smokePuffShader);
+			CG_SmokePuff(origin, dir,
+			             25 + rnd * 110,       // width
+			             1.0, rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 0.5,
+			             4800 + (rand() % 2800),         // duration was 2800+
+			             t,
+			             0,
+			             0,
+			             cgs.media.smokePuffShader);
 		}
 //          CG_ParticleExplosion( "expblue", lastPos, vec3_origin, 100 + (int)(rnd*400), 4, 4 );    // fire "flare"
 
@@ -595,7 +594,7 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 	}
 }
 
-// Ridah, new trail effects
+// new trail effects
 
 /*
 ==========================
@@ -2158,7 +2157,6 @@ cg.time should be between oldFrameTime and frameTime after exit
 */
 static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t *lf, int newAnimation, float speedScale)
 {
-	int         f;
 	animation_t *anim;
 
 	// debugging tool to get no animations
@@ -2189,6 +2187,8 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 	// oldFrame and calculate a new frame
 	if (cg.time >= lf->frameTime)
 	{
+		int f;
+
 		lf->oldFrame      = lf->frame;
 		lf->oldFrameTime  = lf->frameTime;
 		lf->oldFrameModel = lf->frameModel;
@@ -2301,7 +2301,6 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 {
 	float scale;
 	int   delta;
-	float fracsin;
 
 	VectorCopy(cg.refdef_current->vieworg, origin);
 	VectorCopy(cg.refdefViewAngles, angles);
@@ -2419,6 +2418,8 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	// idle drift
 	if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK)) && (cg.predictedPlayerState.weapon != WP_MORTAR_SET) && (cg.predictedPlayerState.weapon != WP_MOBILE_MG42_SET))
 	{
+		float fracsin;
+
 		//----(SA) adjustment for MAX KAUFMAN
 		//  scale = cg.xyspeed + 40;
 		scale = 80;
@@ -2475,30 +2476,18 @@ static qboolean debuggingweapon = qfalse;
 
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 {
-
 	refEntity_t  gun;
 	refEntity_t  barrel;
 	refEntity_t  flash;
 	vec3_t       angles;
-	weapon_t     weaponNum;
+	weapon_t     weaponNum = cent->currentState.weapon;
 	weaponInfo_t *weapon;
 	centity_t    *nonPredictedCent;
 	qboolean     firing; // Ridah
 	qboolean     akimboFire = qfalse;
-
-//  qboolean    playerScaled;
+	//qboolean    playerScaled;
 	qboolean drawpart;
-	int      i;
-	qboolean isPlayer;
-
-	bg_playerclass_t *classInfo;
-
-	classInfo = BG_GetPlayerClassInfo(cgs.clientinfo[cent->currentState.clientNum].team, cgs.clientinfo[cent->currentState.clientNum].cls);
-
-	// (SA) might as well have this check consistant throughout the routine
-	isPlayer = (qboolean)(cent->currentState.clientNum == cg.snap->ps.clientNum);
-
-	weaponNum = cent->currentState.weapon;
+	qboolean isPlayer = (qboolean)(cent->currentState.clientNum == cg.snap->ps.clientNum); // might as well have this check consistant throughout the routine
 
 	if (ps && cg.cameraMode)
 	{
@@ -2756,8 +2745,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 
 	// ydnar: test hack
-	//% if( weaponNum == WP_KNIFE )
-	//%     trap_R_AddLightToScene( gun.origin, 512, 1.5, 1.0, 1.0, 1.0, 0, 0 );
+	//if( weaponNum == WP_KNIFE )
+	//  trap_R_AddLightToScene( gun.origin, 512, 1.5, 1.0, 1.0, 1.0, 0, 0 );
 
 	if (isPlayer)
 	{
@@ -2786,6 +2775,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	if (ps)
 	{
+		int      i;
 		qboolean spunpart;
 
 		for (i = W_PART_1; i < W_MAX_PARTS; i++)
@@ -3755,8 +3745,6 @@ getPrevBankWeap
 */
 static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
 {
-	int i;
-
 	bank--;
 
 	if (bank < 0)          // don't go below 0, cycle up to top
@@ -3772,6 +3760,8 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
 	}
 	else    // find highest weap in bank
 	{
+		int i;
+
 		for (i = MAX_WEAPS_IN_BANK_MP - 1; i >= 0; i--)
 		{
 			if (weapBanksMultiPlayer[bank][i])
@@ -4260,7 +4250,7 @@ void CG_NextWeap(qboolean switchBanks)
 	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num, curweap;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
-	int      i, j;
+	int      i;
 
 	num = curweap = cg.weaponSelect;
 
@@ -4362,6 +4352,8 @@ void CG_NextWeap(qboolean switchBanks)
 
 	if (nextbank)
 	{
+		int j;
+
 		for (i = 0; i < MAX_WEAP_BANKS_MP; i++)
 		{
 			if (cg_cycleAllWeaps.integer)
@@ -4484,7 +4476,7 @@ void CG_PrevWeap(qboolean switchBanks)
 	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num, curweap;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
-	int      i, j;
+	int      i;
 
 	num = curweap = cg.weaponSelect;
 
@@ -4596,6 +4588,8 @@ void CG_PrevWeap(qboolean switchBanks)
 
 	if (prevbank)
 	{
+		int j;
+
 		for (i = 0; i < MAX_WEAP_BANKS_MP; i++)
 		{
 			if (cg_cycleAllWeaps.integer)
@@ -6506,7 +6500,7 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 {
 	localEntity_t *le;
 	float dist;
-	vec3_t dir, ofs;
+	vec3_t dir;
 	orientation_t or;
 	vec3_t start, end;
 
@@ -6535,6 +6529,8 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 		{
 			if (CG_GetWeaponTag(sourceEnt, "tag_flash", &or))
 			{
+				vec3_t ofs;
+
 				VectorSubtract(or.origin, start, ofs);
 				if (VectorLength(ofs) < 64)
 				{
@@ -6690,7 +6686,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 			}
 			else
 			{
-				//bani - fix firstperson tank muzzle origin if drawgun is off
+				// fix firstperson tank muzzle origin if drawgun is off
 				if (!cg_drawGun.integer)
 				{
 					VectorCopy(cg.snap->ps.origin, muzzle);
@@ -6723,11 +6719,6 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 	}
 
 	cent = &cg_entities[entityNum];
-//----(SA)  removed check.  is this still necessary?  (this way works for ai's firing mg42)  should I check for mg42?
-//  if ( !cent->currentValid ) {
-//      return qfalse;
-//  }
-//----(SA)  end
 
 	if (cent->currentState.eFlags & EF_MG42_ACTIVE)
 	{
@@ -6735,7 +6726,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 //      int         num;
 		vec3_t forward;
 
-		// ydnar: this is silly--the entity is a mg42 barrel, so just use itself
+		// this is silly--the entity is a mg42 barrel, so just use itself
 #if 0
 
 		// find the mg42 we're attached to
@@ -6793,7 +6784,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 				vec3_t forward, right, up;
 
 				AngleVectors(cg.snap->ps.viewangles, forward, right, up);
-				VectorCopy(aagun->lerpOrigin, muzzle);                      // Gordon: modelindex2 will already have been incremented on the server, so work out what it WAS then
+				VectorCopy(aagun->lerpOrigin, muzzle);                      // modelindex2 will already have been incremented on the server, so work out what it WAS then
 				BG_AdjustAAGunMuzzleForBarrel(muzzle, forward, right, up, (aagun->currentState.modelindex2 + 3) % 4);
 			}
 		}
@@ -6833,12 +6824,10 @@ void SnapVectorTowards(vec3_t v, vec3_t to)
 	{
 		if (to[i] <= v[i])
 		{
-//          v[i] = (int)v[i];
 			v[i] = floor(v[i]);
 		}
 		else
 		{
-//          v[i] = (int)v[i] + 1;
 			v[i] = ceil(v[i]);
 		}
 	}
@@ -6854,16 +6843,13 @@ Renders bullet effects.
 void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed)
 {
 	trace_t trace, trace2;
-	int sourceContentType, destContentType;
 	vec3_t dir;
-	vec3_t start, trend;
+	vec3_t start;
 	vec4_t projection;
 	static int lastBloodSpat;
-	centity_t *cent;
+	centity_t *cent = &cg_entities[fleshEntityNum];
 
-	cent = &cg_entities[fleshEntityNum];
-
-	// JPW NERVE -- don't ever shoot if we're binoced in
+	// don't ever shoot if we're binoced in
 	if (cg_entities[sourceEntityNum].currentState.eFlags & EF_ZOOMING)
 	{
 		return;
@@ -6902,8 +6888,8 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 	{
 		if (CG_CalcMuzzlePoint(sourceEntityNum, start))
 		{
-			sourceContentType = CG_PointContents(start, 0);
-			destContentType   = CG_PointContents(end, 0);
+			int sourceContentType = CG_PointContents(start, 0);
+			int destContentType   = CG_PointContents(end, 0);
 
 			// do a complete bubble trail if necessary
 			if ((sourceContentType == destContentType) && (sourceContentType & CONTENTS_WATER))
@@ -6951,7 +6937,6 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 	if (flesh)
 	{
 		vec3_t origin;
-		localEntity_t *le;
 		float rnd, tmpf;
 		vec3_t smokedir, tmpv, tmpv2;
 		int i, headshot;
@@ -6961,7 +6946,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 			CG_Bleed(end, fleshEntityNum);
 		}
 
-		// JPW NERVE smoke puffs (sometimes with some blood)
+		// smoke puffs (sometimes with some blood)
 		VectorSubtract(end, start, smokedir); // get a nice "through the body" vector
 		VectorNormalize(smokedir);
 		// all this to come up with a decent center-body displacement of bullet impact point
@@ -6989,7 +6974,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 				VectorScale(tmpv2, 35, tmpv2); // was 75, before that 55
 				tmpv2[2] = 0;
 				VectorAdd(tmpv, tmpv2, tmpv);
-				le = CG_SmokePuff(origin, tmpv, 5 + rnd * 10, 1, rnd * 0.8, rnd * 0.8, 0.5, 500 + (rand() % 800), cg.time, 0, 0, cgs.media.fleshSmokePuffShader);
+				CG_SmokePuff(origin, tmpv, 5 + rnd * 10, 1, rnd * 0.8, rnd * 0.8, 0.5, 500 + (rand() % 800), cg.time, 0, 0, cgs.media.fleshSmokePuffShader);
 			}
 		}
 		else
@@ -7006,7 +6991,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 				VectorScale(tmpv2, 35, tmpv2); // was 75, before that 55
 				tmpv2[2] = 0;
 				VectorAdd(tmpv, tmpv2, tmpv);
-				le = CG_SmokePuff(origin, tmpv, 5 + rnd * 10, rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, 0.125f, 500 + (rand() % 300), cg.time, 0, 0, cgs.media.smokePuffShader);
+				CG_SmokePuff(origin, tmpv, 5 + rnd * 10, rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, rnd * 0.3f + 0.5f, 0.125f, 500 + (rand() % 300), cg.time, 0, 0, cgs.media.smokePuffShader);
 			}
 		}
 
@@ -7027,7 +7012,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 		if (cg_blood.integer && (lastBloodSpat > cg.time || lastBloodSpat < cg.time - 500))
 		{
 			vec4_t color;
-
+			vec3_t trend;
 
 			if (CG_CalcMuzzlePoint(sourceEntityNum, start))
 			{
@@ -7038,8 +7023,8 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 
 				if (trace.fraction < 1)
 				{
-					//% CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace.endpos, trace.plane.normal, random()*360,
-					//%     1,1,1,1, qtrue, 15+random()*20, qfalse, cg_bloodTime.integer * 1000 );
+					//CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace.endpos, trace.plane.normal, random()*360,
+					//  1,1,1,1, qtrue, 15+random()*20, qfalse, cg_bloodTime.integer * 1000 );
 #if 0
 					VectorSubtract(vec3_origin, dir, projection);
 					projection[3] = 64;
@@ -7064,8 +7049,8 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 
 					if (trace.fraction < 1)
 					{
-						//% CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace.endpos, trace.plane.normal, random()*360,
-						//%     1,1,1,1, qtrue, 15+random()*10, qfalse, cg_bloodTime.integer * 1000 );
+						//CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace.endpos, trace.plane.normal, random()*360,
+						//  1,1,1,1, qtrue, 15+random()*10, qfalse, cg_bloodTime.integer * 1000 );
 #if 0
 						VectorSubtract(vec3_origin, dir, projection);
 						projection[3] = 64;
@@ -7087,7 +7072,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 
 	}
 	else        // (not flesh)
-	{   // Gordon: all bullet weapons have the same fx, and this stops pvs issues causing grenade explosions
+	{   // all bullet weapons have the same fx, and this stops pvs issues causing grenade explosions
 		int fromweap = WP_MP40; // cg_entities[sourceEntityNum].currentState.weapon;
 
 		if (!fromweap ||
@@ -7116,15 +7101,6 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 			}
 			else
 			{
-
-				// Gordon: um.... WTF? this doenst even make sense...
-				/*          vec3_t  start2;
-				        VectorSubtract( end, start, dir );
-				            VectorNormalize( dir );*/
-				/*          VectorMA( end, -4, dir, start2 );   // back off a little so it doesn't start in solid
-				            VectorMA( end, 64, dir, dir );*/
-
-				// Arnout: but this does!
 				VectorSubtract(end, start, dir);
 				VectorNormalizeFast(dir);
 				VectorMA(end, 4, dir, end);
@@ -7132,7 +7108,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 				//CG_RailTrail2( NULL, start, end );
 
 				CG_Trace(&trace, start, NULL, NULL, end, 0, MASK_SHOT);
-				// JPW NERVE -- water check
+				// water check
 				CG_Trace(&trace2, start, NULL, NULL, end, 0, MASK_WATER | MASK_SHOT);
 				if (trace.fraction != trace2.fraction)
 				{
@@ -7145,12 +7121,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 					return;
 				}
 
-				//CG_MissileHitWall( fromweap, 1, end, normal, trace.surfaceFlags); // smoke puff   //  (SA) modified to send missilehitwall surface parameters
-
-
-				//% CG_MissileHitWall( fromweap, 1, trace.endpos, trace.plane.normal, trace.surfaceFlags);  // smoke puff   //  (SA) modified to send missilehitwall surface parameters
-
-				// ydnar: better bullet marks
+				// better bullet marks
 				VectorSubtract(vec3_origin, dir, dir);
 				CG_MissileHitWall(fromweap, 1, trace.endpos, dir, trace.surfaceFlags);
 
