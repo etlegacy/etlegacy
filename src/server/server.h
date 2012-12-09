@@ -376,7 +376,7 @@ extern cvar_t *sv_protectLog;
 extern cvar_t *sv_wh_active;
 extern cvar_t *sv_wh_bbox_horz;
 extern cvar_t *sv_wh_bbox_vert;
-extern cvar_t *sv_wh_add_xy;
+extern cvar_t *sv_wh_check_fov;;
 #endif
 
 //===========================================================

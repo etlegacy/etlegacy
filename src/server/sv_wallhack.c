@@ -5,28 +5,19 @@
 
   This is free software distributed under the terms of the GNU
   General Public License version 2. NO WARRANTY, see 'LICENSE.TXT'.
-
 */
 
 #ifdef FEATURE_ANTICHEAT
 
-// FIXME:
-// sync with mod code/check prediction
-// fix redundancy
-// Optionally drop detected clients ?!
-
-#include <time.h>       // for random seed generation
 #include "server.h"
 
 //======================================================================
 
 static vec3_t       pred_ppos, pred_opos;
 static trajectory_t traject;
-static int          rand_seed;
 static vec3_t       old_origin[MAX_CLIENTS];
 static int          origin_changed[MAX_CLIENTS];
-
-static float delta_sign[8][3] =
+static float        delta_sign[8][3] =
 {
 	{ 1,  1,  1  },
 	{ 1,  1,  1  },
@@ -39,6 +30,9 @@ static float delta_sign[8][3] =
 };
 
 static vec3_t delta[8];
+
+static int bbox_horz;
+static int bbox_vert;
 
 //======================================================================
 // local functions
@@ -354,15 +348,18 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 {
 	float  yaw, pitch, cos_angle;
 	vec3_t dir, los;
+	int    vofs;
+
+	VectorSubtract(opos, ppos, los);
 
 	/*
-	   FIXME:
-	   For some reason my FOV calculation does not work correctly for large
-	   pitch values. It does not matter, the test's purpose is to eliminate
-	   info that would reveal the position of opponents behind the player
-	   on the same floor.
-	 */
-	if (viewangle[PITCH] > MAX_PITCH || viewangle[PITCH] < -1 * MAX_PITCH)
+	   Check if the two players are roughly on the same X/Y plane
+	   and skip the test if not. We only want to eliminate info that
+	   would reveal the position of opponents behind the player on
+	   the same X/Y plane (e.g. on the same floor in a room).
+	*/
+	vofs = (int) (opos[2] - ppos[2]);
+	if (VectorLength(los) < 5 * abs(vofs))
 	{
 		return 1;
 	}
@@ -375,7 +372,6 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 	dir[2] = cos(yaw) * sin(pitch);
 
 	// calculate unit vector corresponding to line of sight to opponent
-	VectorSubtract(opos, ppos, los);
 	VectorNormalize(los);
 
 	// calculate and test the angle between the two vectors
@@ -401,7 +397,7 @@ static void copy_trajectory(trajectory_t *src, trajectory_t *dst)
 
 //======================================================================
 
-int is_visible(vec3_t start, vec3_t end)
+static int is_visible(vec3_t start, vec3_t end)
 {
 	trace_t trace;
 
@@ -414,22 +410,44 @@ int is_visible(vec3_t start, vec3_t end)
 
 	return 1;
 }
+
+//======================================================================
+
+static void init_horz_delta(void)
+{
+	int i;
+
+	bbox_horz = sv_wh_bbox_horz->integer;
+
+	for (i = 0; i < 8; i++)
+	{
+		delta[i][0] = ((float) bbox_horz * delta_sign[i][0]) / 2.0;
+		delta[i][1] = ((float) bbox_horz * delta_sign[i][1]) / 2.0;
+	}
+}
+
+//======================================================================
+
+static void
+init_vert_delta(void)
+{
+	int i;
+
+	bbox_vert = sv_wh_bbox_vert->integer;
+
+	for (i = 0; i < 8; i++)
+		delta[i][2] = ((float) bbox_vert * delta_sign[i][2]) / 2.0;
+}
+
 //======================================================================
 // public functions
 //======================================================================
 
-void SV_InitWallhack(void)
+void
+SV_InitWallhack(void)
 {
-	int i;
-
-	for (i = 0; i < 8; i++)
-	{
-		delta[i][0] = ((float) sv_wh_bbox_horz->integer * delta_sign[i][0]) / 2.0;
-		delta[i][1] = ((float) sv_wh_bbox_horz->integer * delta_sign[i][1]) / 2.0;
-		delta[i][2] = ((float) sv_wh_bbox_vert->integer * delta_sign[i][2]) / 2.0;
-	}
-
-	rand_seed = (int) time(NULL);
+	init_horz_delta();
+	init_vert_delta();
 }
 
 //======================================================================
@@ -450,6 +468,7 @@ void SV_InitWallhack(void)
 */
 
 #define PREDICT_TIME      0.1
+#define VOFS              6
 
 int SV_CanSee(int player, int other)
 {
@@ -458,14 +477,28 @@ int SV_CanSee(int player, int other)
 	vec3_t         viewpoint, tmp;
 	int            i;
 
+	// check if bounding box has been changed
+	if (sv_wh_bbox_horz->integer != bbox_horz)
+	{
+		init_horz_delta();
+	}
+
+	if (sv_wh_bbox_vert->integer != bbox_vert)
+	{
+		init_vert_delta();
+	}
+
 	ps   = SV_GameClientNum(player);
 	pent = SV_GentityNum(player);
 	oent = SV_GentityNum(other);
 
 	/* check if 'other' is in the maximum fov allowed */
-	if (!player_in_fov(pent->s.apos.trBase, pent->s.pos.trBase, oent->s.pos.trBase))
+	if (sv_wh_check_fov->integer > 0)
 	{
-		return 0;
+		if (!player_in_fov(pent->s.apos.trBase, pent->s.pos.trBase, oent->s.pos.trBase))
+		{
+			return 0;
+		}
 	}
 
 	/* check if visible in this frame */
@@ -476,7 +509,7 @@ int SV_CanSee(int player, int other)
 		VectorCopy(oent->s.pos.trBase, tmp);
 		tmp[0] += delta[i][0];
 		tmp[1] += delta[i][1];
-		tmp[2] += delta[i][2];
+		tmp[2] += delta[i][2] + VOFS;
 
 		if (is_visible(viewpoint, tmp))
 		{
@@ -497,9 +530,12 @@ int SV_CanSee(int player, int other)
 	   changed during the move. This could introduce some
 	   errors.
 	 */
-	if (!player_in_fov(pent->s.apos.trBase, pred_ppos, pred_opos))
+	if (sv_wh_check_fov->integer > 0)
 	{
-		return 0;
+		if (!player_in_fov(pent->s.apos.trBase, pred_ppos, pred_opos))
+		{
+			return 0;
+		}
 	}
 
 	/* check if expected to be visible in the next frame */
@@ -510,7 +546,7 @@ int SV_CanSee(int player, int other)
 		VectorCopy(pred_opos, tmp);
 		tmp[0] += delta[i][0];
 		tmp[1] += delta[i][1];
-		tmp[2] += delta[i][2];
+		tmp[2] += delta[i][2] + VOFS;
 
 		if (is_visible(viewpoint, tmp))
 		{
@@ -523,16 +559,13 @@ int SV_CanSee(int player, int other)
 
 //======================================================================
 /*
-  Changes the position of client 'other' so that it is almost
-  directly below 'player'. The distance is maintained so that
-  sound scaling will work correctly. We also add a bit of X/Y
-  offset (in the original direction of line-of-sight) to help
-  'player' to estimate the direction of 'other' by its sound.
+  Changes the position of client 'other' so that it is directly
+  below 'player'. The distance is maintained so that sound scaling
+  will work correctly.
 */
 
-#define MIN_XY_OFFSET    100
-
-void SV_RandomizePos(int player, int other)
+void
+SV_RandomizePos(int player, int other)
 {
 	sharedEntity_t *pent, *oent;
 	vec3_t         los;
@@ -551,16 +584,6 @@ void SV_RandomizePos(int player, int other)
 	// set the opponent's position directly below the player
 	VectorCopy(pent->s.pos.trBase, oent->s.pos.trBase);
 	oent->s.pos.trBase[2] -= dist;
-
-	// add a bit of X/Y offset for sound direction
-	// it is only for testing, will be removed
-	if (sv_wh_add_xy->integer)
-	{
-		los[2] = 0.0;
-		VectorNormalize(los);
-		VectorScale(los, MIN_XY_OFFSET + Q_rand(&rand_seed) % 100, los);
-		VectorAdd(oent->s.pos.trBase, los, oent->s.pos.trBase);
-	}
 }
 
 //======================================================================

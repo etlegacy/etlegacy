@@ -856,9 +856,30 @@ void SV_Init(void)
 
 	sv_wh_active = Cvar_Get("sv_wh_active", "0", CVAR_ARCHIVE);
 	// FIXME: adjust bounding box ?
-	sv_wh_bbox_horz = Cvar_Get("sv_wh_bbox_horz", "30", CVAR_ARCHIVE);
+	sv_wh_bbox_horz = Cvar_Get("sv_wh_bbox_horz", "50", CVAR_ARCHIVE);
+
+	if (sv_wh_bbox_horz->integer < 10)
+	{
+		Cvar_Set("sv_wh_bbox_horz", "10");
+	}
+	if (sv_wh_bbox_horz->integer > 50)
+	{
+		Cvar_Set("sv_wh_bbox_horz", "50");
+	}
+
 	sv_wh_bbox_vert = Cvar_Get("sv_wh_bbox_vert", "60", CVAR_ARCHIVE);
-	sv_wh_add_xy    = Cvar_Get("sv_wh_add_xy", "0", CVAR_ARCHIVE);
+
+	if (sv_wh_bbox_vert->integer < 10)
+	{
+		Cvar_Set("sv_wh_bbox_vert", "30");
+	}
+	if (sv_wh_bbox_vert->integer > 50)
+	{
+		Cvar_Set("sv_wh_bbox_vert", "80");
+	}
+
+
+	sv_wh_check_fov = Cvar_Get("wh_check_fov", "0", CVAR_ARCHIVE);
 	SV_InitWallhack();
 #endif
 

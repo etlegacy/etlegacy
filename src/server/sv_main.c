@@ -107,7 +107,7 @@ cvar_t *sv_protectLog;  // name of log file
 cvar_t *sv_wh_active;
 cvar_t *sv_wh_bbox_horz;
 cvar_t *sv_wh_bbox_vert;
-cvar_t *sv_wh_add_xy;
+cvar_t *sv_wh_check_fov;
 #endif
 
 static void SVC_Status(netadr_t from, qboolean force);
