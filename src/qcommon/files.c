@@ -544,6 +544,7 @@ void FS_CopyFile(char *fromOSPath, char *toOSPath)
 
 	if (FS_CreatePath(toOSPath))
 	{
+		free(buf);
 		return;
 	}
 
