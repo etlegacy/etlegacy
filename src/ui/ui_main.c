@@ -3925,12 +3925,13 @@ static void UI_LoadMovies(void)
 {
 	char movielist[4096];
 	char *moviename;
-	int  i, len;
 
 	uiInfo.movieCount = trap_FS_GetFileList("video", "roq", movielist, 4096);
 
 	if (uiInfo.movieCount)
 	{
+		int i, len;
+
 		if (uiInfo.movieCount > MAX_MOVIES)
 		{
 			uiInfo.movieCount = MAX_MOVIES;
@@ -3960,7 +3961,6 @@ static void UI_LoadDemos(void)
 	char demolist[30000];
 	char demoExt[32];
 	char *demoname;
-	int  i, len;
 
 	Com_sprintf(demoExt, sizeof(demoExt), "dm_%d", (int)trap_Cvar_VariableValue("protocol"));
 
@@ -3970,6 +3970,8 @@ static void UI_LoadDemos(void)
 
 	if (uiInfo.demoCount)
 	{
+		int i, len;
+
 		if (uiInfo.demoCount > MAX_DEMOS)
 		{
 			uiInfo.demoCount = MAX_DEMOS;
@@ -4142,7 +4144,6 @@ void UI_RunMenuScript(char **args)
 	const char *name, *name2;
 	char       *s;
 	char       buff[1024];
-	int        val;
 	menuDef_t  *menu;
 
 	if (String_Parse(args, &name))
@@ -4150,10 +4151,12 @@ void UI_RunMenuScript(char **args)
 
 		if (Q_stricmp(name, "StartServer") == 0)
 		{
-			int pb_sv, pb_cl;
+			int val;
 
 			if (!ui_dedicated.integer)
 			{
+				int pb_sv, pb_cl;
+
 				pb_sv = (int)trap_Cvar_VariableValue("sv_punkbuster");
 				pb_cl = (int)trap_Cvar_VariableValue("cl_punkbuster");
 
@@ -4672,7 +4675,6 @@ void UI_RunMenuScript(char **args)
 			{
 				char name[MAX_NAME_LENGTH];
 				char addr[MAX_NAME_LENGTH];
-				int  res;
 
 				trap_LAN_GetServerInfo(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer], buff, MAX_STRING_CHARS);
 				name[0] = addr[0] = '\0';
@@ -4680,6 +4682,8 @@ void UI_RunMenuScript(char **args)
 				Q_strncpyz(addr, Info_ValueForKey(buff, "addr"), MAX_NAME_LENGTH);
 				if (strlen(name) > 0 && strlen(addr) > 0)
 				{
+					int res;
+
 					res = trap_LAN_AddServer(AS_FAVORITES, name, addr);
 					if (res == 0)
 					{
@@ -4719,14 +4723,16 @@ void UI_RunMenuScript(char **args)
 			{
 				char name[MAX_NAME_LENGTH];
 				char addr[MAX_NAME_LENGTH];
-				int  res;
 
 				name[0] = addr[0] = '\0';
 				Q_strncpyz(name, UI_Cvar_VariableString("ui_favoriteName"), MAX_NAME_LENGTH);
 				Q_strncpyz(addr, UI_Cvar_VariableString("ui_favoriteAddress"), MAX_NAME_LENGTH);
 				if (strlen(name) > 0 && strlen(addr) > 0)
 				{
+					int res;
+
 					res = trap_LAN_AddServer(AS_FAVORITES, name, addr);
+
 					if (res == 0)
 					{
 						// server already in the list
@@ -4750,7 +4756,6 @@ void UI_RunMenuScript(char **args)
 			uiClientState_t cstate;
 			char            name[MAX_NAME_LENGTH];
 			char            addr[MAX_NAME_LENGTH];
-			int             res;
 
 			trap_GetClientState(&cstate);
 
@@ -4760,6 +4765,8 @@ void UI_RunMenuScript(char **args)
 			Q_strncpyz(name, cstate.servername, MAX_NAME_LENGTH);
 			if (*name && *addr && Q_stricmp(addr, "localhost"))
 			{
+				int res;
+
 				res = trap_LAN_AddServer(AS_FAVORITES, name, addr);
 				if (res == 0)
 				{
@@ -5134,7 +5141,6 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "renameProfile") == 0)
 		{
 			fileHandle_t f, f2;
-			int          len;
 			char         buff[MAX_CVAR_VALUE_STRING];
 			char         ui_renameprofileto[MAX_CVAR_VALUE_STRING];
 			char         uiprofile[MAX_CVAR_VALUE_STRING];
@@ -5157,6 +5163,8 @@ void UI_RunMenuScript(char **args)
 			// FIXME: make this copying handle all files in the profiles directory
 			if (Q_stricmp(uiprofile, buff))
 			{
+				int len;
+
 				if (trap_FS_FOpenFile(va("profiles/%s/%s", buff, CONFIG_NAME), &f, FS_WRITE) >= 0)
 				{
 					if ((len = trap_FS_FOpenFile(va("profiles/%s/%s", uiprofile, CONFIG_NAME), &f2, FS_READ)) >= 0)
