@@ -50,7 +50,7 @@ G_BounceMissile
 */
 void G_BounceMissile(gentity_t *ent, trace_t *trace)
 {
-	vec3_t    velocity, relativeDelta;
+	vec3_t    velocity;
 	float     dot;
 	int       hitTime;
 	gentity_t *ground;
@@ -73,13 +73,13 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
 
-	// RF, record this for mover pushing
+	// record this for mover pushing
 	if (trace->plane.normal[2] > 0.2 /*&& VectorLengthSquared( ent->s.pos.trDelta ) < SQR(40)*/)
 	{
 		ent->s.groundEntityNum = trace->entityNum;
 	}
 
-	// ydnar: set ground entity
+	// set ground entity
 	if (ent->s.groundEntityNum != -1)
 	{
 		ground = &g_entities[ent->s.groundEntityNum];
@@ -89,7 +89,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 		ground = NULL;
 	}
 
-	// ydnar: allow ground entity to push missle
+	// allow ground entity to push missle
 	if (ent->s.groundEntityNum != ENTITYNUM_WORLD && ground)
 	{
 		VectorMA(ent->s.pos.trDelta, 0.85f, ground->instantVelocity, ent->s.pos.trDelta);
@@ -97,6 +97,8 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 
 	if (ent->s.eFlags & EF_BOUNCE_HALF)
 	{
+		vec3_t relativeDelta;
+
 		if (ent->s.eFlags & EF_BOUNCE)         // both flags marked, do a third type of bounce
 		{
 			VectorScale(ent->s.pos.trDelta, 0.35, ent->s.pos.trDelta);
@@ -106,13 +108,13 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 			VectorScale(ent->s.pos.trDelta, 0.65, ent->s.pos.trDelta);
 		}
 
-		// ydnar: grenades on movers get scaled back much earlier
+		// grenades on movers get scaled back much earlier
 		if (ent->s.groundEntityNum != ENTITYNUM_WORLD)
 		{
 			VectorScale(ent->s.pos.trDelta, 0.5, ent->s.pos.trDelta);
 		}
 
-		// ydnar: calculate relative delta for stop calcs
+		// calculate relative delta for stop calcs
 		if (ent->s.groundEntityNum == ENTITYNUM_WORLD || 1)
 		{
 			VectorCopy(ent->s.pos.trDelta, relativeDelta);
@@ -123,10 +125,10 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 		}
 
 		// check for stop
-		//% if ( trace->plane.normal[2] > 0.2 && VectorLengthSquared( ent->s.pos.trDelta ) < SQR(40) )
+		//if ( trace->plane.normal[2] > 0.2 && VectorLengthSquared( ent->s.pos.trDelta ) < SQR(40) )
 		if (trace->plane.normal[2] > 0.2 && VectorLengthSquared(relativeDelta) < SQR(40))
 		{
-			//----(SA)  make the world the owner of the dynamite, so the player can shoot it after it stops moving
+			// make the world the owner of the dynamite, so the player can shoot it after it stops moving
 			if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB)
 			{
 				ent->r.ownerNum = ENTITYNUM_WORLD;
@@ -197,7 +199,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	if ((!other->takedamage || !ent->damage) && (ent->s.eFlags & (EF_BOUNCE | EF_BOUNCE_HALF)))
 	{
 		G_BounceMissile(ent, trace);
-		// JPW NERVE -- spotter White Phosphorous rounds shouldn't bounce noise
+		// spotter White Phosphorous rounds shouldn't bounce noise
 		if (!Q_stricmp(ent->classname, "WP"))
 		{
 			return;
@@ -239,8 +241,8 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		event       = EV_MISSILE_HIT;
 		param       = DirToByte(trace->plane.normal);
 		otherentnum = other->s.number;
-//      G_AddEvent( ent, EV_MISSILE_HIT, DirToByte( trace->plane.normal ) );
-//      ent->s.otherEntityNum = other->s.number;
+		//G_AddEvent( ent, EV_MISSILE_HIT, DirToByte( trace->plane.normal ) );
+		//ent->s.otherEntityNum = other->s.number;
 	}
 	else
 	{
@@ -251,16 +253,16 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 
 		event = EV_MISSILE_MISS;
 		param = DirToByte(dir);
-//      G_AddEvent( ent, EV_MISSILE_MISS, DirToByte( dir ) );
+		//G_AddEvent( ent, EV_MISSILE_MISS, DirToByte( dir ) );
 	}
 
-//  ent->freeAfterEvent = qtrue;
+	//ent->freeAfterEvent = qtrue;
 
 	// change over to a normal entity right at the point of impact
-//  etype = ent->s.eType;
-//  ent->s.eType = ET_GENERAL;
+	//etype = ent->s.eType;
+	//ent->s.eType = ET_GENERAL;
 
-//  SnapVectorTowards( trace->endpos, ent->s.pos.trBase );  // save net bandwidth
+	//SnapVectorTowards( trace->endpos, ent->s.pos.trBase );  // save net bandwidth
 	/*  {
 	        gentity_t* tent;
 
@@ -269,11 +271,11 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	        tent->s.dmgFlags = 0;
 	    }*/
 
-//  G_SetOrigin( ent, trace->endpos );
+	//G_SetOrigin( ent, trace->endpos );
 
 	temp                   = G_TempEntity(trace->endpos, event);
 	temp->s.otherEntityNum = otherentnum;
-//  temp->r.svFlags |= SVF_BROADCAST;
+	//temp->r.svFlags |= SVF_BROADCAST;
 	temp->s.eventParm = param;
 	temp->s.weapon    = ent->s.weapon;
 	temp->s.clientNum = ent->r.ownerNum;
@@ -290,7 +292,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		G_RadiusDamage(trace->endpos, ent, ent->parent, ent->splashDamage, ent->splashRadius, other, ent->splashMethodOfDeath);
 	}
 
-//  trap_LinkEntity( ent );
+	//trap_LinkEntity( ent );
 
 	G_FreeEntity(ent);
 }
@@ -534,25 +536,8 @@ void G_ExplodeMissile(gentity_t *ent)
 }
 
 /*
-================
-G_MissileDie
-================
-*/
-void G_MissileDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
-{
-	if (inflictor == self)
-	{
-		return;
-	}
-	self->takedamage = qfalse;
-	self->think      = G_ExplodeMissile;
-	self->nextthink  = level.time + 10;
-}
-
-/*
 =================
 Landmine_Check_Ground
-
 =================
 */
 void Landmine_Check_Ground(gentity_t *self)
@@ -963,7 +948,6 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 
 void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 {
-	int     i;
 	float   radius, dist;
 	vec3_t  point, v;
 	trace_t tr;
@@ -1011,6 +995,8 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 	}
 	else
 	{
+		int i;
+
 		for (i = 0 ; i < 3 ; i++)
 		{
 			if (self->s.origin[i] < body->r.absmin[i])
@@ -1110,7 +1096,7 @@ void G_RunFlamechunk(gentity_t *ent)
 	vec3_t    vel, add;
 	vec3_t    neworg;
 	trace_t   tr;
-	float     speed, dot;
+	float     speed;
 	gentity_t *ignoreent = NULL;
 
 	//      vel was only being set if (level.time - ent->timestamp > 50
@@ -1149,6 +1135,8 @@ void G_RunFlamechunk(gentity_t *ent)
 	}
 	else if (tr.fraction != 1.0f && !(tr.surfaceFlags & SURF_NOIMPACT))
 	{
+		float dot;
+
 		VectorCopy(tr.endpos, ent->r.currentOrigin);
 
 		dot = DotProduct(vel, tr.plane.normal);
@@ -2036,7 +2024,7 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->parent              = self;
 	bolt->damage              = G_GetWeaponDamage(WP_PANZERFAUST);
 	bolt->splashDamage        = G_GetWeaponDamage(WP_PANZERFAUST);
-	bolt->splashRadius        = 300; //G_GetWeaponDamage(WP_PANZERFAUST);  // Arnout : hardcoded bleh hack
+	bolt->splashRadius        = 300; //G_GetWeaponDamage(WP_PANZERFAUST);  // hardcoded bleh hack
 	bolt->methodOfDeath       = MOD_PANZERFAUST;
 	bolt->splashMethodOfDeath = MOD_PANZERFAUST;
 	bolt->clipmask            = MASK_MISSILESHOT;
@@ -2102,7 +2090,7 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	return bolt;
 }
 
-// Rafael sniper
+// sniper
 
 /*
 =================
@@ -2169,7 +2157,7 @@ void fire_lead(gentity_t *self, vec3_t start, vec3_t dir, int damage)
 	}
 }
 
-// Rafael sniper
+// sniper
 
 /*
 ==============
@@ -2219,7 +2207,7 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->nextthink = level.time + 20000;   // push it out a little
 	bolt->think     = G_ExplodeMissile;
 
-	// Gordon: for explosion type
+	// for explosion type
 	bolt->accuracy = 4;
 
 	bolt->s.eType = ET_MISSILE;

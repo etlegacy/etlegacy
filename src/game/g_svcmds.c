@@ -1114,7 +1114,6 @@ Kick a user off of the server
 static void Svcmd_Kick_f(void)
 {
 	gclient_t *cl;
-	int       i;
 	int       timeout = -1;
 	char      sTimeout[MAX_TOKEN_CHARS];
 	char      name[MAX_TOKEN_CHARS];
@@ -1149,6 +1148,8 @@ static void Svcmd_Kick_f(void)
 	{
 		if (!Q_stricmp(name, "all"))
 		{
+			int i;
+
 			for (i = 0, cl = level.clients; i < level.numConnectedClients; i++, cl++)
 			{
 				// dont kick localclients ...

@@ -228,10 +228,10 @@ void G_smvAddView(gentity_t *ent, int pID)
 // Find, and optionally delete an entity in a player's MV list
 qboolean G_smvLocateEntityInMVList(gentity_t *ent, int pID, qboolean fRemove)
 {
-	int i;
-
 	if (ent->client->pers.mvCount > 0)
 	{
+		int i;
+
 		for (i = 0; i < MULTIVIEW_MAXVIEWS; i++)
 		{
 			if (ent->client->pers.mv[i].fActive && ent->client->pers.mv[i].entID == pID)

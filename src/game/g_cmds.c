@@ -550,7 +550,6 @@ void Cmd_Give_f(gentity_t *ent)
 //  gentity_t       *it_ent;
 //  trace_t     trace;
 	int      amount;
-	int      skill;
 	qboolean hasAmount = qfalse;
 
 	if (!CheatsOk(ent))
@@ -581,7 +580,8 @@ void Cmd_Give_f(gentity_t *ent)
 	{
 		if (hasAmount)
 		{
-			skill = amount; // Change amount to skill, so that we can use amount properly
+			int skill = amount; // Change amount to skill, so that we can use amount properly
+
 			if (skill >= 0 && skill < SK_NUM_SKILLS)
 			{
 				// Detecting the correct amount to move to the next skill level
@@ -2426,9 +2426,8 @@ Cmd_Vote_f
 void Cmd_Vote_f(gentity_t *ent)
 {
 	char msg[64];
-	int  num;
 
-	// DHM - Nerve :: Complaints supercede voting (and share command)
+	// Complaints supercede voting (and share command)
 	if (ent->client->pers.complaintEndTime > level.time && g_gamestate.integer == GS_PLAYING && g_complaintlimit.integer)
 	{
 
@@ -2452,6 +2451,8 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		if (msg[0] == 'y' || msg[1] == 'Y' || msg[1] == '1')
 		{
+			int num;
+
 			// Increase their complaint counter
 			cl->pers.complaints++;
 
@@ -2496,7 +2497,6 @@ void Cmd_Vote_f(gentity_t *ent)
 
 		return;
 	}
-	// dhm
 
 	if (ent->client->pers.applicationEndTime > level.time)
 	{
@@ -2537,7 +2537,6 @@ void Cmd_Vote_f(gentity_t *ent)
 
 	if (ent->client->pers.invitationEndTime > level.time)
 	{
-
 		gclient_t *cl = g_entities[ent->client->pers.invitationClient].client;
 		if (!cl)
 		{
@@ -2736,12 +2735,6 @@ void Cmd_Vote_f(gentity_t *ent)
 
 	// a majority will be determined in G_CheckVote, which will also account
 	// for players entering or leaving
-}
-
-qboolean G_canPickupMelee(gentity_t *ent)
-{
-	// JPW NERVE -- no "melee" weapons in net play
-	return qfalse;
 }
 
 /*
@@ -3220,7 +3213,6 @@ void Cmd_Activate_f(gentity_t *ent)
 //  int         activatetime = level.time;
 	qboolean found = qfalse;
 	qboolean pass2 = qfalse;
-	int      i;
 
 	if (ent->health <= 0)
 	{
@@ -3236,16 +3228,18 @@ void Cmd_Activate_f(gentity_t *ent)
 	{
 		if (ent->client->ps.persistant[PERS_HWEAPON_USE])
 		{
-			// DHM - Nerve :: Restore original position if current position is bad
+			int i;
+
+			// Restore original position if current position is bad
 			trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, ent->r.currentOrigin, ent->s.number, MASK_PLAYERSOLID);
 			if (tr.startsolid)
 			{
 				VectorCopy(ent->TargetAngles, ent->client->ps.origin);
 				VectorCopy(ent->TargetAngles, ent->r.currentOrigin);
-				ent->r.contents = CONTENTS_CORPSE;      // DHM - this will correct itself in ClientEndFrame
+				ent->r.contents = CONTENTS_CORPSE;      // this will correct itself in ClientEndFrame
 			}
 
-			ent->client->ps.eFlags &= ~EF_MG42_ACTIVE;          // DHM - Nerve :: unset flag
+			ent->client->ps.eFlags &= ~EF_MG42_ACTIVE;          // unset flag
 			ent->client->ps.eFlags &= ~EF_AAGUN_ACTIVE;
 
 			ent->client->ps.persistant[PERS_HWEAPON_USE] = 0;

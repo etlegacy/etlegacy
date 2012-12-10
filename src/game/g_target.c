@@ -1276,7 +1276,7 @@ void target_rumble_think(gentity_t *ent)
 {
 	gentity_t *tent;
 	float     ratio;
-	float     time, time2;
+	float     time;
 	float     dapitch, dayaw;
 	qboolean  validrumble = qtrue;
 
@@ -1302,6 +1302,8 @@ void target_rumble_think(gentity_t *ent)
 
 	if (ent->start_size)
 	{
+		int time2;
+
 		if (level.time < (ent->timestamp + ent->start_size))
 		{
 			time  = level.time - ent->timestamp;

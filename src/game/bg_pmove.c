@@ -43,12 +43,6 @@
 
 #include "bg_local.h"
 
-// stuck this here so it can be seen client & server side
-float Com_GetFlamethrowerRange(void)
-{
-	return 2500; // multiplayer range is longer for balance
-}
-
 pmove_t *pm;
 pml_t   pml;
 
@@ -437,11 +431,9 @@ Handles both ground friction and water friction
 static void PM_Friction(void)
 {
 	vec3_t vec;
-	float  *vel;
-	float  speed, newspeed, control;
+	float  speed, newspeed;
 	float  drop;
-
-	vel = pm->ps->velocity;
+	float  *vel = pm->ps->velocity;
 
 	VectorCopy(vel, vec);
 	if (pml.walking)
@@ -469,8 +461,9 @@ static void PM_Friction(void)
 			// if getting knocked back, no friction
 			if (!(pm->ps->pm_flags & PMF_TIME_KNOCKBACK))
 			{
-				control = speed < pm_stopspeed ? pm_stopspeed : speed;
-				drop   += control * pm_friction * pml.frametime;
+				float control = speed < pm_stopspeed ? pm_stopspeed : speed;
+
+				drop += control * pm_friction * pml.frametime;
 			}
 		}
 	}
@@ -676,7 +669,6 @@ static void PM_SetMovementDir(void)
 #if 1
 	float  speed;
 	vec3_t moved;
-	int    moveyaw;
 
 	VectorSubtract(pm->ps->origin, pml.previous_origin, moved);
 
@@ -686,6 +678,7 @@ static void PM_SetMovementDir(void)
 	    &&  (speed > pml.frametime * 5))          // if moving slower than 20 units per second, just face head angles
 	{
 		vec3_t dir;
+		int    moveyaw;
 
 		VectorNormalize2(moved, dir);
 		vectoangles(dir, dir);
@@ -902,9 +895,9 @@ static qboolean PM_CheckProne(void)
 	if (!(pm->ps->eFlags & EF_PRONE))
 	{
 		// needs to be on the ground
-//      if( !pml.walking ) {
-//          return qfalse;
-//      }
+		//if( !pml.walking ) {
+		//  return qfalse;
+		//}
 
 		// can't go prone on ladders
 		if (pm->ps->pm_flags & PMF_LADDER)
@@ -1090,17 +1083,14 @@ static void PM_WaterJumpMove(void)
 /*
 ===================
 PM_WaterMove
-
 ===================
 */
 static void PM_WaterMove(void)
 {
-	int    i;
 	vec3_t wishvel;
 	float  wishspeed;
 	vec3_t wishdir;
 	float  scale;
-	float  vel;
 
 	if (PM_CheckWaterJump())
 	{
@@ -1131,21 +1121,24 @@ static void PM_WaterMove(void)
 	PM_Friction();
 
 	scale = PM_CmdScale(&pm->cmd);
-	//
+
 	// user intentions
-	//
+
 	if (!scale)
 	{
 		wishvel[0] = 0;
 		wishvel[1] = 0;
-		wishvel[2] = -60;       // sink towards bottom
-//      wishvel[2] = -10;   //----(SA)  mod for DM
+		wishvel[2] = -60;     // sink towards bottom
+		//wishvel[2] = -10;   //----(SA)  mod for DM
 	}
 	else
 	{
-		for (i = 0 ; i < 3 ; i++)
-			wishvel[i] = scale * pml.forward[i] * pm->cmd.forwardmove + scale * pml.right[i] * pm->cmd.rightmove;
+		int i;
 
+		for (i = 0 ; i < 3 ; i++)
+		{
+			wishvel[i] = scale * pml.forward[i] * pm->cmd.forwardmove + scale * pml.right[i] * pm->cmd.rightmove;
+		}
 		wishvel[2] += scale * pm->cmd.upmove;
 	}
 
@@ -1175,7 +1168,7 @@ static void PM_WaterMove(void)
 	// make sure we can go up slopes easily under water
 	if (pml.groundPlane && DotProduct(pm->ps->velocity, pml.groundTrace.plane.normal) < 0)
 	{
-		vel = VectorLength(pm->ps->velocity);
+		float vel = VectorLength(pm->ps->velocity);
 		// slide along the ground plane
 		PM_ClipVelocity(pm->ps->velocity, pml.groundTrace.plane.normal,
 		                pm->ps->velocity, OVERCLIP);
@@ -1196,7 +1189,6 @@ Only with the flight powerup
 */
 static void PM_FlyMove(void)
 {
-	int    i;
 	vec3_t wishvel;
 	float  wishspeed;
 	vec3_t wishdir;
@@ -1216,6 +1208,8 @@ static void PM_FlyMove(void)
 	}
 	else
 	{
+		int i;
+
 		for (i = 0 ; i < 3 ; i++)
 		{
 			wishvel[i] = scale * pml.forward[i] * pm->cmd.forwardmove + scale * pml.right[i] * pm->cmd.rightmove;
@@ -3175,15 +3169,13 @@ PM_WeaponUseAmmo
 */
 void PM_WeaponUseAmmo(int wp, int amount)
 {
-	int takeweapon;
-
 	if (pm->noWeapClips)
 	{
 		pm->ps->ammo[BG_FindAmmoForWeapon(wp)] -= amount;
 	}
 	else
 	{
-		takeweapon = BG_FindClipForWeapon(wp);
+		int takeweapon = BG_FindClipForWeapon(wp);
 
 		if (BG_IsAkimboWeapon(wp))
 		{
@@ -3205,15 +3197,13 @@ PM_WeaponAmmoAvailable
 */
 int PM_WeaponAmmoAvailable(int wp)
 {
-	int takeweapon;
-
 	if (pm->noWeapClips)
 	{
 		return pm->ps->ammo[BG_FindAmmoForWeapon(wp)];
 	}
 	else
 	{
-		takeweapon = BG_FindClipForWeapon(wp);
+		int takeweapon = BG_FindClipForWeapon(wp);
 
 		if (BG_IsAkimboWeapon(wp))
 		{
@@ -4079,7 +4069,6 @@ static void PM_Weapon(void)
 		}
 		else if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->ltChargeTime * 0.25f))
 		{
-			// rain - #202 - ^^ properly check ltChargeTime here, not medicChargeTime
 			if (pm->cmd.buttons & BUTTON_ATTACK)
 			{
 				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_NOPOWER, qtrue, qfalse);
@@ -4408,9 +4397,9 @@ static void PM_Weapon(void)
 	pm->ps->weaponstate = WEAPON_FIRING;
 
 	// Gordon: reset player disguise on firing
-//  if( pm->ps->weapon != WP_SMOKE_BOMB && pm->ps->weapon != WP_SATCHEL && pm->ps->weapon != WP_SATCHEL_DET ) { // Arnout: not for these weapons
-//      pm->ps->powerups[PW_OPS_DISGUISED] = 0;
-//  }
+	//if( pm->ps->weapon != WP_SMOKE_BOMB && pm->ps->weapon != WP_SATCHEL && pm->ps->weapon != WP_SATCHEL_DET ) { // Arnout: not for these weapons
+	//  pm->ps->powerups[PW_OPS_DISGUISED] = 0;
+	//}
 
 	// check for out of ammo
 
@@ -4436,7 +4425,7 @@ static void PM_Weapon(void)
 
 			switch (pm->ps->weapon)
 			{
-			// Ridah, only play if using a triggered weapon
+			// only play if using a triggered weapon
 			case WP_DYNAMITE:
 			case WP_GRENADE_LAUNCHER:
 			case WP_GRENADE_PINEAPPLE:
@@ -4486,21 +4475,21 @@ static void PM_Weapon(void)
 	if (!(pm->ps->eFlags & EF_PRONE) && (pml.groundTrace.surfaceFlags & SURF_SLICK))
 	{
 		float fwdmove_knockback = 0.f;
-		float bckmove_knockback = 0.f;
+		//float bckmove_knockback = 0.f; // FIXME: backward move
 
 		switch (pm->ps->weapon)
 		{
 		case WP_MOBILE_MG42:
 			fwdmove_knockback = 4000.f;
-			bckmove_knockback = 400.f;
+			//bckmove_knockback = 400.f;
 			break;
 		case WP_PANZERFAUST:
 			fwdmove_knockback = 32000.f;
-			bckmove_knockback = 1200.f;
+			//bckmove_knockback = 1200.f;
 			break;
 		case WP_FLAMETHROWER:
 			fwdmove_knockback = 2000.f;
-			bckmove_knockback = 40.f;
+			//bckmove_knockback = 40.f;
 			break;
 		}
 
@@ -4533,7 +4522,7 @@ static void PM_Weapon(void)
 	// take an ammo away if not infinite
 	if (PM_WeaponAmmoAvailable(pm->ps->weapon) != -1)
 	{
-		// Rafael - check for being mounted on mg42
+		// check for being mounted on mg42
 		if (!(pm->ps->persistant[PERS_HWEAPON_USE]) && !(pm->ps->eFlags & EF_MOUNTEDTANK))
 		{
 			PM_WeaponUseAmmo(pm->ps->weapon, ammoNeeded);
@@ -4991,7 +4980,7 @@ PM_CalcLean
 */
 void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 {
-	vec3_t  start, end, tmins, tmaxs, right;
+	vec3_t  start;
 	int     leaning = 0;        // -1 left, 1 right
 	float   leanofs = 0;
 	vec3_t  viewangles;
@@ -5086,6 +5075,8 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 
 	if (leaning)
 	{
+		vec3_t tmins, tmaxs, right, end;
+
 		VectorCopy(ps->origin, start);
 		start[2] += ps->viewheight;
 
@@ -5178,12 +5169,10 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 	if (BG_PlayerMounted(ps->eFlags))
 	{
-		float yaw, oldYaw;
 		float degsSec = MG42_YAWSPEED;
 		float arcMin, arcMax, arcDiff;
-
-		yaw    = ps->viewangles[YAW];
-		oldYaw = oldViewAngles[YAW];
+		float yaw    = ps->viewangles[YAW];
+		float oldYaw = oldViewAngles[YAW];
 
 		if (yaw - oldYaw > 180)
 		{
@@ -5282,13 +5271,11 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 	else if (ps->weapon == WP_MORTAR_SET)
 	{
 		float degsSec = 60.f;
-		float yaw, oldYaw;
 		float pitch, oldPitch;
 		float pitchMax = 30.f;
 		float yawDiff, pitchDiff;
-
-		yaw    = ps->viewangles[YAW];
-		oldYaw = oldViewAngles[YAW];
+		float yaw    = ps->viewangles[YAW];
+		float oldYaw = oldViewAngles[YAW];
 
 		if (yaw - oldYaw > 180)
 		{
@@ -5410,14 +5397,14 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 	else if (ps->eFlags & EF_PRONE)
 	{
 		//float degsSec = 60.f;
-		float /*yaw, */ oldYaw;
-		trace_t         traceres; // rain - renamed
-		int             newDeltaAngle = ps->delta_angles[YAW];
-		float           pitchMax      = 40.f;
-		float           yawDiff, pitchDiff;
-
+		//float oldYaw;
+		trace_t traceres;         // rain - renamed
+		int     newDeltaAngle = ps->delta_angles[YAW];
+		float   pitchMax      = 40.f;
+		float   pitchDiff;
+		float   oldYaw = oldViewAngles[YAW];
 		//yaw = ps->viewangles[YAW];
-		oldYaw = oldViewAngles[YAW];
+
 
 		/*if ( yaw - oldYaw > 180 ) {
 		    yaw -= 360;
@@ -5445,6 +5432,8 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 		// Check if we are allowed to rotate to there
 		if (ps->weapon == WP_MOBILE_MG42_SET)
 		{
+			float yawDiff;
+
 			pitchMax = 20.f;
 
 			// yaw

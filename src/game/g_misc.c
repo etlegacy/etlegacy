@@ -1324,14 +1324,15 @@ void clamp_playerbehindgun(gentity_t *self, gentity_t *other, vec3_t dang)
 
 void clamp_hweapontofirearc(gentity_t *self, vec3_t dang)
 {
-	float    diff, yawspeed;
+	float diff;
+	//float yawspeed;
 	qboolean clamped;
 
 	clamped = qfalse;
 
 	// go back to start position
 	VectorCopy(self->s.angles, dang);
-	yawspeed = MG42_IDLEYAWSPEED;
+	// yawspeed = MG42_IDLEYAWSPEED;
 
 	if (dang[0] < 0 && dang[0] < -(self->varc))
 	{
@@ -1441,12 +1442,13 @@ void aagun_think(gentity_t *self)
 	if (owner->client)
 	{
 		vec3_t dang;
-		int    i;
 
 		VectorSubtract(self->r.currentOrigin, owner->r.currentOrigin, vec);
 
 		if (VectorLengthSquared(vec) < SQR(96) && owner->active && owner->health > 0)
 		{
+			int i;
+
 			self->active                                   = qtrue;
 			owner->client->ps.persistant[PERS_HWEAPON_USE] = 2;
 			aagun_track(self, owner);
@@ -1610,7 +1612,6 @@ void SP_aagun(gentity_t *self)
 void mg42_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	vec3_t dang;
-	int    i;
 
 	if (!self->active)
 	{
@@ -1619,9 +1620,12 @@ void mg42_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	if (other->active)
 	{
-		for (i = 0; i < 3; i++)
-			dang[i] = SHORT2ANGLE(other->client->pers.cmd.angles[i]);
+		int i;
 
+		for (i = 0; i < 3; i++)
+		{
+			dang[i] = SHORT2ANGLE(other->client->pers.cmd.angles[i]);
+		}
 		// now tell the client to lock the view in the direction of the gun
 		other->client->ps.viewlocked        = 3;
 		other->client->ps.viewlocked_entNum = self->s.number;
@@ -1664,8 +1668,6 @@ void mg42_fire(gentity_t *other)
 
 void mg42_track(gentity_t *self, gentity_t *other)
 {
-	int i;
-
 	if (!self->active)
 	{
 		return;
@@ -1673,6 +1675,8 @@ void mg42_track(gentity_t *self, gentity_t *other)
 
 	if (other->active)
 	{
+		int i;
+
 		// move to the position over the next frame
 		VectorSubtract(other->client->ps.viewangles, self->s.apos.trBase, self->s.apos.trDelta);
 		for (i = 0; i < 3; i++)
@@ -1687,13 +1691,12 @@ void mg42_track(gentity_t *self, gentity_t *other)
 	}
 }
 
+#define USEDIST 128.f
+
 void mg42_think(gentity_t *self)
 {
 	vec3_t    vec;
 	gentity_t *owner;
-	int       i;
-	float     len;
-	float     usedist;
 
 	if (g_gamestate.integer == GS_INTERMISSION)
 	{
@@ -1741,12 +1744,12 @@ void mg42_think(gentity_t *self)
 
 	if (owner->client)
 	{
+		float len;
+
 		VectorSubtract(self->r.currentOrigin, owner->r.currentOrigin, vec);
 		len = VectorLength(vec);
 
-		usedist = 128;
-
-		if (len < usedist && owner->active && owner->health > 0)
+		if (len < USEDIST && owner->active && owner->health > 0)
 		{
 			// ATVI Wolfenstein Misc #433
 			owner->client->ps.pm_flags &= ~PMF_DUCKED;
@@ -1802,6 +1805,8 @@ void mg42_think(gentity_t *self)
 
 	if (self->timestamp > level.time)
 	{
+		int i;
+
 		// slowly rotate back to position
 		clamp_hweapontofirearc(self, vec);
 		// move to the position over the next frame
@@ -2142,6 +2147,7 @@ void SP_mg42(gentity_t *self)
 #define GUN3_LASTFIRE   11
 #define GUN4_LASTFIRE   15
 
+// @note Unused
 void Flak_Animate(gentity_t *ent)
 {
 	//G_Printf ("frame %i\n", ent->s.frame);

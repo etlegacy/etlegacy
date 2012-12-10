@@ -39,19 +39,6 @@
 #include "g_etbot_interface.h"
 #endif
 
-typedef struct teamgame_s
-{
-	float last_flag_capture;
-	int last_capture_team;
-} teamgame_t;
-
-teamgame_t teamgame;
-
-void Team_InitGame(void)
-{
-	memset(&teamgame, 0, sizeof teamgame);
-}
-
 int OtherTeam(int team)
 {
 	if (team == TEAM_AXIS)
@@ -343,23 +330,6 @@ void Team_ResetFlag(gentity_t *ent)
 	}
 }
 
-void Team_ResetFlags(void)
-{
-	gentity_t *ent;
-
-	ent = NULL;
-	while ((ent = G_Find(ent, FOFS(classname), "team_CTF_redflag")) != NULL)
-	{
-		Team_ResetFlag(ent);
-	}
-
-	ent = NULL;
-	while ((ent = G_Find(ent, FOFS(classname), "team_CTF_blueflag")) != NULL)
-	{
-		Team_ResetFlag(ent);
-	}
-}
-
 void Team_ReturnFlagSound(gentity_t *ent, int team)
 {
 	// play powerup spawn sound to all clients
@@ -426,18 +396,6 @@ void Team_DroppedFlagThink(gentity_t *ent)
 int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 {
 	gclient_t *cl = other->client;
-	int       our_flag, enemy_flag;
-
-	if (cl->sess.sessionTeam == TEAM_AXIS)
-	{
-		our_flag   = PW_REDFLAG;
-		enemy_flag = PW_BLUEFLAG;
-	}
-	else
-	{
-		our_flag   = PW_BLUEFLAG;
-		enemy_flag = PW_REDFLAG;
-	}
 
 	if (ent->flags & FL_DROPPED_ITEM)
 	{
@@ -614,7 +572,7 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 	gentity_t *spot;
 	gentity_t *spots[MAX_TEAM_SPAWN_POINTS];
 
-	int count, closest, defendingTeam;
+	int count, closest;
 	int i = 0;
 
 	char  *classname;
@@ -622,8 +580,6 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 
 	vec3_t target;
 	vec3_t farthest;
-
-	defendingTeam = -1;
 
 	if (team == TEAM_AXIS)
 	{
@@ -845,11 +801,12 @@ void TeamplayInfoMessage(team_t team)
 
 void CheckTeamStatus(void)
 {
-	int       i;
 	gentity_t *ent;
 
 	if (level.time - level.lastTeamLocationTime > TEAM_LOCATION_UPDATE_TIME)
 	{
+		int i;
+
 		level.lastTeamLocationTime = level.time;
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
@@ -1695,7 +1652,6 @@ int QDECL G_SortPlayersByXP(const void *a, const void *b)
 void G_shuffleTeams(void)
 {
 	int i, cTeam; //, cMedian = level.numNonSpectatorClients / 2;
-	int aTeamCount[TEAM_NUM_TEAMS];
 	int cnt = 0;
 	int sortClients[MAX_CLIENTS];
 
@@ -1703,11 +1659,6 @@ void G_shuffleTeams(void)
 
 	G_teamReset(TEAM_AXIS, qtrue);
 	G_teamReset(TEAM_ALLIES, qtrue);
-
-	for (i = 0; i < TEAM_NUM_TEAMS; i++)
-	{
-		aTeamCount[i] = 0;
-	}
 
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
@@ -1763,7 +1714,7 @@ int G_teamID(gentity_t *ent)
 // Determine if the "ready" player threshold has been reached.
 qboolean G_checkReady(void)
 {
-	int       i, ready = 0, notReady = match_minplayers.integer;
+	int       ready = 0, notReady = match_minplayers.integer;
 	gclient_t *cl;
 
 	if (0 == g_doWarmup.integer)
@@ -1774,6 +1725,7 @@ qboolean G_checkReady(void)
 	// Ensure we have enough real players
 	if (level.numNonSpectatorClients >= match_minplayers.integer && level.voteInfo.numVotingClients > 0)
 	{
+		int i;
 		// Step through all active clients
 		notReady = 0;
 		for (i = 0; i < level.numConnectedClients; i++)

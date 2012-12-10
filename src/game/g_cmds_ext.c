@@ -577,7 +577,7 @@ void G_scores_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 // Sends an invitation to a player to spectate a team.
 void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 {
-	int       tteam, pid;
+	int       tteam;
 	gentity_t *player;
 	char      arg[MAX_TOKEN_CHARS];
 
@@ -594,6 +594,8 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 	tteam = G_teamID(ent);
 	if (tteam == TEAM_AXIS || tteam == TEAM_ALLIES)
 	{
+		int pid;
+
 		if (!teamInfo[tteam].spec_lock)
 		{
 			CP("cpm \"Your team isn't locked from spectators!\n\"");

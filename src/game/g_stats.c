@@ -160,7 +160,7 @@ extern qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, 
 // Local func to actual do skill upgrade, used by both MP skill system, and SP scripted skill system
 static void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 {
-	int i, cnt = 0;
+	int i;
 
 #ifdef FEATURE_LUA
 	// *LUA* API callbacks
@@ -194,6 +194,8 @@ static void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 
 	if (ent->client->sess.rank >= 4)
 	{
+		int cnt = 0;
+
 		// count the number of maxed out skills
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{

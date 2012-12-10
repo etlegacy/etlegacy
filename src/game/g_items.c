@@ -193,26 +193,6 @@ int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip)
 }
 
 /*
-==============
-Pickup_Ammo
-==============
-*/
-int Pickup_Ammo(gentity_t *ent, gentity_t *other)
-{
-	// added some ammo pickups, so I'll use ent->item->quantity if no ent->count
-	if (ent->count)
-	{
-		Add_Ammo(other, ent->item->giTag, ent->count, qfalse);
-	}
-	else
-	{
-		Add_Ammo(other, ent->item->giTag, ent->item->quantity, qfalse);
-	}
-
-	return RESPAWN_AMMO;
-}
-
-/*
 =================================================================
 AddMagicAmmo (extracted AddMagicAmmo from Pickup_Weapon())
 
@@ -849,7 +829,6 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	gentity_t *dropped;
 	trace_t   tr;
 	vec3_t    vec, temp;
-	int       i;
 
 	dropped = G_Spawn();
 
@@ -870,6 +849,8 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	trap_Trace(&tr, origin, dropped->r.mins, dropped->r.maxs, origin, ownerNum, MASK_SOLID);
 	if (tr.startsolid)
 	{
+		int i;
+
 		VectorSubtract(g_entities[ownerNum].s.origin, origin, temp);
 		VectorNormalize(temp);
 

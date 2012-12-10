@@ -1766,12 +1766,12 @@ BG_GetConditionValue
 */
 int BG_GetConditionValue(int client, int condition, qboolean checkConversion)
 {
-	int i;
-
 	if (animConditionsTable[condition].type == ANIM_CONDTYPE_BITFLAGS)
 	{
 		if (checkConversion)
 		{
+			int i;
+
 			// we may need to convert to a value
 			//if (!value)
 			//  return 0;

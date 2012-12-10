@@ -993,16 +993,16 @@ void Just_Got_Thrown(gentity_t *self)
 		len = VectorLength(vec);
 
 		{
-			trace_t   trace;
-			vec3_t    end;
-			gentity_t *traceEnt;
+			trace_t trace;
+			vec3_t  end;
+			//gentity_t *traceEnt;
 
 			VectorCopy(self->r.currentOrigin, end);
 			end[2] += 1;
 
 			trap_Trace(&trace, self->r.currentOrigin, self->r.mins, self->r.maxs, end, self->s.number, MASK_SHOT);
 
-			traceEnt = &g_entities[trace.entityNum];
+			//traceEnt = &g_entities[trace.entityNum];
 
 			if (trace.startsolid)
 			{
@@ -1974,7 +1974,6 @@ void Props_Barrel_Touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 void Props_Barrel_Animate(gentity_t *ent)
 {
-	float  ratio;
 	vec3_t v;
 
 	if (ent->s.frame == 14)
@@ -2005,9 +2004,9 @@ void Props_Barrel_Animate(gentity_t *ent)
 
 	if (!(ent->spawnflags & 1))
 	{
-		ratio = 2.5;
+		//float ratio = 2.5;
 		VectorSubtract(ent->r.currentOrigin, ent->enemy->r.currentOrigin, v);
-		moveit(ent, vectoyaw(v), (ent->delay * ratio * FRAMETIME) * .001);
+		moveit(ent, vectoyaw(v), (ent->delay * 2.5 * FRAMETIME) * .001);
 	}
 }
 
@@ -2095,6 +2094,7 @@ void OilParticles_think(gentity_t *ent)
 	}
 }
 
+// @note Unused
 void Delayed_Leak_Think(gentity_t *ent)
 {
 	vec3_t    point;
@@ -2919,6 +2919,7 @@ void props_castlebed_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attack
 	Prop_Break_Sound(ent);
 }
 
+// @note unused
 void SP_props_castlebed(gentity_t *ent)
 {
 	trap_SetBrushModel(ent, ent->model);
@@ -3195,8 +3196,6 @@ void SP_props_decoration(gentity_t *ent)
 	char     *high;
 	char     *wide;
 	char     *frames;
-	float    height;
-	float    width;
 	float    num_frames;
 
 	char *loop;
@@ -3255,6 +3254,9 @@ void SP_props_decoration(gentity_t *ent)
 
 	if (ent->health)
 	{
+		float height;
+		float width;
+
 		ent->isProp     = qtrue;
 		ent->takedamage = qtrue;
 		ent->die        = props_decoration_death;
@@ -3479,7 +3481,6 @@ void props_statue_blocked(gentity_t *ent)
 	vec3_t    forward;
 	float     dist;
 	gentity_t *traceEnt;
-	float     grav = 128;
 	vec3_t    kvel;
 
 	if (!Q_stricmp(ent->classname, "props_statueBRUSH"))
@@ -3512,6 +3513,8 @@ void props_statue_blocked(gentity_t *ent)
 
 	if (traceEnt->takedamage && traceEnt->client)
 	{
+		float grav = 128;
+
 		G_Damage(traceEnt, ent, ent, NULL, trace.endpos, ent->damage, 0, MOD_CRUSH);
 
 		// TBD: push client back a bit
@@ -4088,7 +4091,7 @@ NOSOUND - silent (duh)
 */
 void props_flamethrower_think(gentity_t *ent)
 {
-	vec3_t    vec, angles;
+	vec3_t    vec;
 	gentity_t *target = NULL;
 	// TAT - actually create flamechunks that do damage in this direction
 	vec3_t flameDir;
@@ -4109,6 +4112,8 @@ void props_flamethrower_think(gentity_t *ent)
 		}
 		else
 		{
+			vec3_t angles;
+
 			VectorSubtract(target->s.origin, ent->s.origin, vec);
 			VectorNormalize(vec);
 			vectoangles(vec, angles);
@@ -4150,13 +4155,13 @@ void props_flamethrower_think(gentity_t *ent)
 		fire_flamechunk(ent, ent->r.currentOrigin, flameDir);
 
 		{
-			int rval;
 			int rnd;
 
 			if (ent->random)
 			{
-				rval = ent->random * 1000;
-				rnd  = rand() % rval;
+				int rval = ent->random * 1000;
+
+				rnd = rand() % rval;
 			}
 			else
 			{
@@ -4171,7 +4176,6 @@ void props_flamethrower_think(gentity_t *ent)
 
 void props_flamethrower_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	int rval;
 	int rnd;
 
 	if (ent->spawnflags & 2)
@@ -4188,8 +4192,8 @@ void props_flamethrower_use(gentity_t *ent, gentity_t *other, gentity_t *activat
 
 	if (ent->random)
 	{
-		rval = ent->random * 1000;
-		rnd  = rand() % rval;
+		int rval = ent->random * 1000;
+		rnd = rand() % rval;
 	}
 	else
 	{

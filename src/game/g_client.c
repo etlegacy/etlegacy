@@ -603,8 +603,8 @@ reinforce
 */
 void reinforce(gentity_t *ent)
 {
-	int       p, team;
-	char      *classname;
+	int p, team;
+	//char      *classname;
 	gclient_t *rclient;
 
 	if (!(ent->client->ps.pm_flags & PMF_LIMBO))
@@ -625,11 +625,11 @@ void reinforce(gentity_t *ent)
 	// find number active team spawnpoints
 	if (team == TEAM_AXIS)
 	{
-		classname = "team_CTF_redspawn";
+		//classname = "team_CTF_redspawn";
 	}
 	else if (team == TEAM_ALLIES)
 	{
-		classname = "team_CTF_bluespawn";
+		//classname = "team_CTF_bluespawn";
 	}
 	else
 	{
@@ -1587,7 +1587,7 @@ void ClientUserinfoChanged(int clientNum)
 	gentity_t *ent    = g_entities + clientNum;
 	gclient_t *client = ent->client;
 	int       i;
-	int       characterIndex;
+	int       characterIndex; // unused
 	char      *reason;
 	char      *s;
 	char      oldname[MAX_STRING_CHARS];
@@ -1702,7 +1702,7 @@ void ClientUserinfoChanged(int clientNum)
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 
 	// check for custom character
-	s = Info_ValueForKey(userinfo, "ch");
+	s = Info_ValueForKey(userinfo, "ch"); // remove me/FIXME ?
 	if (*s)
 	{
 		characterIndex = atoi(s);

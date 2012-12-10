@@ -997,7 +997,7 @@ void WolfFindMedic(gentity_t *self)
  */
 void ClientThink_real(gentity_t *ent)
 {
-	int       msec, oldEventSequence, monsterslick = 0;
+	int       msec, oldEventSequence;
 	pmove_t   pm;
 	usercmd_t *ucmd;
 	gclient_t *client = ent->client;
@@ -1305,7 +1305,7 @@ void ClientThink_real(gentity_t *ent)
 		pm.cmd.weapon = client->ps.weapon;
 	}
 
-	monsterslick = Pmove(&pm);
+	Pmove(&pm); // monsterslick
 
 	// fix leaning players bug
 	VectorCopy(client->ps.velocity, ent->s.pos.trDelta);

@@ -121,25 +121,17 @@ void Weapon_Knife(gentity_t *ent)
 {
 	trace_t   tr;
 	gentity_t *traceEnt, *tent;
-	int       damage, mod;
-	vec3_t    pforward, eforward;
+	int       damage, mod = MOD_KNIFE;
+	vec3_t    pforward, end;
 
-	vec3_t end;
-
-	mod = MOD_KNIFE;
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePoint(ent, ent->s.weapon, forward, right, up, muzzleTrace);
 	VectorMA(muzzleTrace, KNIFE_DIST, forward, end);
 	G_HistoricalTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
-	if (tr.surfaceFlags & SURF_NOIMPACT)
-	{
-		return;
-	}
-
-	// no contact
-	if (tr.fraction == 1.0f)
+	// ignore hits on NOIMPACT surfaces or no contact
+	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.fraction == 1.0f)
 	{
 		return;
 	}
@@ -172,15 +164,17 @@ void Weapon_Knife(gentity_t *ent)
 
 	damage = G_GetWeaponDamage(ent->s.weapon);   // JPW     // default knife damage for frontal attacks
 
-	/* CHECK WITH PAUL */
+	// Covert ops deal double damage with a knife
 	if (ent->client->sess.playerType == PC_COVERTOPS)
 	{
-		damage *= 2;    // Watch it - you could hurt someone with that thing!
+		damage <<= 1; // damage *= 2;    // Watch it - you could hurt someone with that thing!
 
 	}
 	// Only do backstabs if the body is standing up (i.e. alive)
 	if (traceEnt->client && traceEnt->health > 0)
 	{
+		vec3_t eforward;
+
 		AngleVectors(ent->client->ps.viewangles, pforward, NULL, NULL);
 		AngleVectors(traceEnt->client->ps.viewangles, eforward, NULL, NULL);
 
@@ -844,18 +838,6 @@ static void HandleEntsThatBlockConstructible(gentity_t *constructor, gentity_t *
 				check->client->lastConstructibleBlockingWarnEnt  = constructible - g_entities;
 				check->client->lastConstructibleBlockingWarnTime = level.time;
 			}
-
-			// unlink our entities again
-			/*trap_UnlinkEntity( constructible );
-
-			if( constructible->track && constructible->track[0] ) {
-			    for( e = 0; e < constructibleEntities; e++ ) {
-			        check = &g_entities[constructibleList[e]];
-
-			        trap_UnlinkEntity( check );
-			    }
-			}
-			return;*/
 		}
 
 		blockingList[blockingEntities++] = entityList[e];
@@ -946,7 +928,6 @@ static qboolean TryConstructing(gentity_t *ent)
 {
 	gentity_t *check;
 	gentity_t *constructible = ent->client->touchingTOI->target_ent;
-	int       i;
 
 	// no construction during prematch
 	if (level.warmupTime)
@@ -1300,6 +1281,8 @@ static qboolean TryConstructing(gentity_t *ent)
 			}
 			else
 			{
+				int i;
+
 				// find our marker and update it's coordinates
 				for (i = 0, check = g_entities; i < level.num_entities; i++, check++)
 				{
@@ -1600,14 +1583,11 @@ void trap_EngineerTrace(trace_t *results, const vec3_t start, const vec3_t mins,
 void Weapon_Engineer(gentity_t *ent)
 {
 	trace_t   tr;
-	gentity_t *traceEnt, *hit;
-	vec3_t    mins, maxs;
-	int       i, num, touch[MAX_GENTITIES], scored = 0;
-	int       dynamiteDropTeam;
-	vec3_t    end;
-	vec3_t    origin;
+	gentity_t *traceEnt;
+	vec3_t    mins, end, origin;
+	int       touch[MAX_GENTITIES], scored = 0;
 
-	// DHM - Nerve :: Can't heal an MG42 if you're using one!
+	// Can't heal an MG42 if you're using one!
 	if (ent->client->ps.persistant[PERS_HWEAPON_USE])
 	{
 		return;
@@ -1730,8 +1710,6 @@ void Weapon_Engineer(gentity_t *ent)
 
 			trap_EngineerTrace(&tr2, traceEnt->s.pos.trBase, NULL, NULL, base, traceEnt->s.number, MASK_SHOT);
 
-			// ydnar: added "surfaceparm landmine" (SURF_LANDMINE) support
-			//% if(!(tr2.surfaceFlags & (SURF_GRASS | SURF_SNOW | SURF_GRAVEL)) ||
 			if (!(tr2.surfaceFlags & SURF_LANDMINE) || (tr2.entityNum != ENTITYNUM_WORLD && (!g_entities[tr2.entityNum].inuse || g_entities[tr2.entityNum].s.eType != ET_CONSTRUCTIBLE)))
 			{
 				trap_SendServerCommand(ent - g_entities, "cp \"Landmine cannot be armed here...\" 1");
@@ -1760,9 +1738,9 @@ void Weapon_Engineer(gentity_t *ent)
 
 				if (G_LandmineUnarmed(traceEnt))
 				{
-					// rain - should be impossible now
-					//                  if ( G_LandmineTeam( traceEnt ) != ent->client->sess.sessionTeam )
-					//                      return;
+					// should be impossible now
+					//if ( G_LandmineTeam( traceEnt ) != ent->client->sess.sessionTeam )
+					//return;
 
 					trap_SendServerCommand(ent - g_entities, "cp \"Your team has too many landmines placed...\" 1");
 
@@ -1812,7 +1790,7 @@ void Weapon_Engineer(gentity_t *ent)
 
 					if (traceEnt->health >= 250)
 					{
-						//traceEnt->health = 255;
+						// traceEnt->health = 255;
 						trap_SendServerCommand(ent - g_entities, "cp \"Landmine armed...\" 1");
 					}
 					else
@@ -1916,7 +1894,7 @@ evilbanigoto:
 				traceEnt->think     = G_FreeEntity;
 				traceEnt->nextthink = level.time + FRAMETIME;
 
-				//bani - consistency with dynamite defusing
+				// consistency with dynamite defusing
 				G_PrintClientSpammyCenterPrint(ent - g_entities, "Satchel charge disarmed...");
 
 				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
@@ -1927,9 +1905,12 @@ evilbanigoto:
 				return;
 			}
 		}
-		else
-		if (traceEnt->methodOfDeath == MOD_DYNAMITE)
+		else if (traceEnt->methodOfDeath == MOD_DYNAMITE)
 		{
+			gentity_t *hit;
+			vec3_t    maxs;
+			int       i, num;
+
 			// Not armed
 			if (traceEnt->s.teamNum >= 4)
 			{
@@ -1990,7 +1971,6 @@ evilbanigoto:
 						// is it a friendly constructible
 						if (hit->s.teamNum == traceEnt->s.teamNum - 4)
 						{
-							//bani
 							// G_FreeEntity( traceEnt );
 							// trap_SendServerCommand( ent-g_entities, "cp \"You cannot arm dynamite near a friendly construction!\" 1");
 							// return;
@@ -2023,7 +2003,7 @@ evilbanigoto:
 							continue;
 						}
 
-						// Arnout - only if it targets a func_explosive
+						// only if it targets a func_explosive
 						if (hit->target_ent && Q_stricmp(hit->target_ent->classname, "func_explosive"))
 						{
 							continue;
@@ -2032,9 +2012,9 @@ evilbanigoto:
 						if (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS)) ||
 						    ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_ALLIES)))
 						{
-							// G_FreeEntity( traceEnt );
-							// trap_SendServerCommand( ent-g_entities, "cp \"You cannot arm dynamite near a friendly objective!\" 1");
-							// return;
+							//G_FreeEntity( traceEnt );
+							//trap_SendServerCommand( ent-g_entities, "cp \"You cannot arm dynamite near a friendly objective!\" 1");
+							//return;
 							friendlyObj = qtrue;
 						}
 
@@ -2075,12 +2055,11 @@ evilbanigoto:
 				traceEnt->nextthink = level.time + 30000;
 				traceEnt->think     = G_ExplodeMissile;
 
-				// Gordon: moved down here to prevent two prints when dynamite IS near objective
-
+				// moved down here to prevent two prints when dynamite IS near objective
 				trap_SendServerCommand(ent - g_entities, "cp \"Dynamite is now armed with a 30 second timer!\" 1");
 
 				// check if player is in trigger objective field
-				// NERVE - SMF - made this the actual bounding box of dynamite instead of range, also must snap origin to line up properly
+				// made this the actual bounding box of dynamite instead of range, also must snap origin to line up properly
 				VectorCopy(traceEnt->r.currentOrigin, origin);
 				SnapVector(origin);
 				VectorAdd(origin, traceEnt->r.mins, mins);
@@ -2118,13 +2097,13 @@ evilbanigoto:
 						}
 						else if (hit->spawnflags & ALLIED_OBJECTIVE)
 						{
-							if (ent->client->sess.sessionTeam == TEAM_AXIS)         // ditto other team
+							if (ent->client->sess.sessionTeam == TEAM_AXIS)         // dito other team
 							{
 								traceEnt->accuracy = hit->accuracy;
 							}
 						}
 
-						// rain - spawnflags 128 = disabled (#309)
+						// spawnflags 128 = disabled (#309)
 						if (!(hit->spawnflags & 128) && (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_ALLIES)) ||
 						                                 ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->client->sess.sessionTeam == TEAM_AXIS))))
 						{
@@ -2153,16 +2132,15 @@ evilbanigoto:
 								}
 								traceEnt->parent = ent;     // give explode score to guy who armed it
 							}
-							//bani - fix #238
 							traceEnt->etpro_misc_1 |= 1;
 						}
 						// i = num;
-						return;     //bani - bail out here because primary obj's take precendence over constructibles
+						return;     // bail out here because primary obj's take precendence over constructibles
 					}
 				}
 
-				//bani - reordered this check so its AFTER the primary obj check
-				// Arnout - first see if the dynamite is planted near a constructable object that can be destroyed
+				// reordered this check so its AFTER the primary obj check
+				// - first see if the dynamite is planted near a constructable object that can be destroyed
 				{
 					int    entityList[MAX_GENTITIES];
 					int    numListedEntities;
@@ -2199,10 +2177,10 @@ evilbanigoto:
 						// is it a friendly constructible
 						if (hit->s.teamNum == traceEnt->s.teamNum)
 						{
-							//bani - er, didnt we just pass this check earlier?
-							// G_FreeEntity( traceEnt );
-							// trap_SendServerCommand( ent-g_entities, "cp \"You cannot arm dynamite near a friendly construction!\" 1");
-							// return;
+							// bani - er, didnt we just pass this check earlier?
+							//G_FreeEntity( traceEnt );
+							//trap_SendServerCommand( ent-g_entities, "cp \"You cannot arm dynamite near a friendly construction!\" 1");
+							//return;
 							continue;
 						}
 
@@ -2249,6 +2227,8 @@ evilbanigoto:
 			}
 			else
 			{
+				int dynamiteDropTeam;
+
 				if (traceEnt->timestamp > level.time)
 				{
 					return;
@@ -2257,6 +2237,7 @@ evilbanigoto:
 				{
 					return;
 				}
+
 				dynamiteDropTeam = traceEnt->s.teamNum;     // set this here since we wack traceent later but want teamnum for scoring
 
 				if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2)
@@ -2272,7 +2253,6 @@ evilbanigoto:
 
 				if (traceEnt->health >= 248)
 				{
-
 					qboolean defusedObj = qfalse;
 
 					traceEnt->health = 255;
@@ -2376,14 +2356,14 @@ evilbanigoto:
 							}
 						}
 					}
-					//bani - prevent multiple messages here
+					// prevent multiple messages here
 					if (defusedObj)
 					{
 						return;
 					}
 
-					//bani - reordered this check so its AFTER the primary obj check
-					// Gordon - first see if the dynamite was planted near a constructable object that would have been destroyed
+					// reordered this check so its AFTER the primary obj check
+					// - first see if the dynamite was planted near a constructable object that would have been destroyed
 					{
 						int    entityList[MAX_GENTITIES];
 						int    numListedEntities;
@@ -2406,7 +2386,7 @@ evilbanigoto:
 
 							// not completely build yet - NOTE: don't do this, in case someone places dynamite before construction is complete
 							//if( hit->s.angles2[0] < 255 )
-							//  continue;
+							//continue;
 
 							// invulnerable
 							if (hit->spawnflags & CONSTRUCTIBLE_INVULNERABLE)
@@ -2475,7 +2455,7 @@ evilbanigoto:
 	}
 }
 
-// JPW NERVE -- launch airstrike as line of bombs mostly-perpendicular to line of grenade travel
+// launch airstrike as line of bombs mostly-perpendicular to line of grenade travel
 // (close air support should *always* drop parallel to friendly lines, tho accidents do happen)
 extern void G_ExplodeMissile(gentity_t *ent);
 
@@ -4172,39 +4152,37 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon)
 
 	VectorCopy(ent->client->ps.viewangles, viewang);
 
-	{   // non ai's take into account scoped weapon 'sway' (just another way aimspread is visualized/utilized)
-		float spreadfrac, phase;
+	// non ai's take into account scoped weapon 'sway' (just another way aimspread is visualized/utilized)
 
-		if (BG_IsScopedWeapon(weapon))
+	if (BG_IsScopedWeapon(weapon))
+	{
+		//float pitchAmp, yawAmp;
+		float pitchMinAmp, yawMinAmp, phase;
+		//float spreadfrac = ent->client->currentAimSpreadScale;
+
+		if (weapon == WP_FG42SCOPE)
 		{
-			float pitchAmp, yawAmp;
-			float pitchMinAmp, yawMinAmp;
-
-			spreadfrac = ent->client->currentAimSpreadScale;
-
-			if (weapon == WP_FG42SCOPE)
-			{
-				pitchAmp    = 4 * ZOOM_PITCH_AMPLITUDE;
-				yawAmp      = 4 * ZOOM_YAW_AMPLITUDE;
-				pitchMinAmp = 4 * ZOOM_PITCH_MIN_AMPLITUDE;
-				yawMinAmp   = 4 * ZOOM_YAW_MIN_AMPLITUDE;
-			}
-			else
-			{
-				pitchAmp    = ZOOM_PITCH_AMPLITUDE;
-				yawAmp      = ZOOM_YAW_AMPLITUDE;
-				pitchMinAmp = ZOOM_PITCH_MIN_AMPLITUDE;
-				yawMinAmp   = ZOOM_YAW_MIN_AMPLITUDE;
-			}
-
-			// rotate 'forward' vector by the sway
-			phase           = level.time / 1000.0 * ZOOM_PITCH_FREQUENCY * M_PI * 2;
-			viewang[PITCH] += ZOOM_PITCH_AMPLITUDE * sin(phase) * (spreadfrac + pitchMinAmp);
-
-			phase         = level.time / 1000.0 * ZOOM_YAW_FREQUENCY * M_PI * 2;
-			viewang[YAW] += ZOOM_YAW_AMPLITUDE * sin(phase) * (spreadfrac + yawMinAmp);
+			//pitchAmp    = 4 * ZOOM_PITCH_AMPLITUDE;
+			//yawAmp      = 4 * ZOOM_YAW_AMPLITUDE;
+			pitchMinAmp = 4 * ZOOM_PITCH_MIN_AMPLITUDE;
+			yawMinAmp   = 4 * ZOOM_YAW_MIN_AMPLITUDE;
 		}
+		else
+		{
+			//pitchAmp    = ZOOM_PITCH_AMPLITUDE;
+			//yawAmp      = ZOOM_YAW_AMPLITUDE;
+			pitchMinAmp = ZOOM_PITCH_MIN_AMPLITUDE;
+			yawMinAmp   = ZOOM_YAW_MIN_AMPLITUDE;
+		}
+
+		// rotate 'forward' vector by the sway
+		phase           = level.time / 1000.0 * ZOOM_PITCH_FREQUENCY * M_PI * 2;
+		viewang[PITCH] += ZOOM_PITCH_AMPLITUDE * sin(phase) * (ent->client->currentAimSpreadScale + pitchMinAmp);
+
+		phase         = level.time / 1000.0 * ZOOM_YAW_FREQUENCY * M_PI * 2;
+		viewang[YAW] += ZOOM_YAW_AMPLITUDE * sin(phase) * (ent->client->currentAimSpreadScale + yawMinAmp);
 	}
+
 
 	// set aiming directions
 	AngleVectors(viewang, forward, right, up);

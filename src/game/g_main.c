@@ -3720,7 +3720,7 @@ qboolean G_PositionEntityOnTag(gentity_t *entity, gentity_t *parent, char *tagNa
 void G_TagLinkEntity(gentity_t *ent, int msec)
 {
 	gentity_t *parent = &g_entities[ent->s.torsoAnim];
-	vec3_t    move, amove;
+	vec3_t    move;
 	gentity_t *obstacle;
 	vec3_t    origin, angles;
 	vec3_t    v;
@@ -3853,6 +3853,8 @@ void G_TagLinkEntity(gentity_t *ent, int msec)
 
 	if (ent->moving)
 	{
+		vec3_t amove;
+
 		VectorSubtract(origin, ent->r.currentOrigin, move);
 		VectorSubtract(angles, ent->r.currentAngles, amove);
 

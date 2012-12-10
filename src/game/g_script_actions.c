@@ -244,12 +244,7 @@ qboolean G_ScriptAction_ShaderRemapFlush(gentity_t *ent, char *params)
 qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 {
 	char     *pString, *token;
-	float    speed;
 	qboolean wait = qfalse;
-	int      backward;
-	float    length = 0;
-	float    dist;
-	int      i;
 
 	if (params && (ent->scriptStatus.scriptFlags & SCFL_GOING_TO_MARKER))
 	{
@@ -289,6 +284,11 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 	else        // we have just started this command
 	{
 		splinePath_t *pSpline;
+		float        speed;
+		float        length = 0;
+		float        dist;
+		int          backward;
+		int          i;
 
 		pString = params;
 
@@ -633,10 +633,7 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 {
 	char     *pString, *token;
 	vec3_t   vec;
-	float    speed;
-	qboolean wait = qfalse;
-	int      backward;
-	float    length  = 0;
+	qboolean wait    = qfalse;
 	float    roll[2] = { 0, 0 };
 
 	if (params && (ent->scriptStatus.scriptFlags & SCFL_GOING_TO_MARKER))
@@ -677,6 +674,9 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 	else        // we have just started this command
 	{
 		splinePath_t *pSpline;
+		float        speed;
+		float        length = 0;
+		int          backward;
 
 		pString = params;
 
@@ -1263,10 +1263,8 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 	char      *pString, *token;
 	gentity_t *target = NULL;
 	vec3_t    vec;
-	float     speed, dist;
 	qboolean  wait = qfalse, turntotarget = qfalse;
 	int       trType;
-	int       duration, i;
 	vec3_t    diff;
 	vec3_t    angles;
 
@@ -1308,6 +1306,8 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 	else        // we have just started this command
 	{
 		pathCorner_t *pPathCorner;
+		float        speed, dist;
+		int          i, duration;
 
 		pString = params;
 		token   = COM_ParseExt(&pString, qfalse);
@@ -1393,7 +1393,6 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 		// start the movement
 		if (ent->s.eType == ET_MOVER)
 		{
-
 			VectorCopy(vec, ent->movedir);
 			VectorCopy(ent->r.currentOrigin, ent->pos1);
 			VectorAdd(ent->r.currentOrigin, vec, ent->pos2);
@@ -1503,9 +1502,8 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 			// round the duration to the next 50ms
 			if (ent->s.pos.trDuration % 50)
 			{
-				float frac;
+				float frac = (float)(((ent->s.pos.trDuration / 50) * 50 + 50) - ent->s.pos.trDuration) / (float)(ent->s.pos.trDuration);
 
-				frac = (float)(((ent->s.pos.trDuration / 50) * 50 + 50) - ent->s.pos.trDuration) / (float)(ent->s.pos.trDuration);
 				if (frac < 1)
 				{
 					VectorScale(ent->s.pos.trDelta, 1.0 / (1.0 + frac), ent->s.pos.trDelta);
@@ -2861,7 +2859,6 @@ G_ScriptAction_FaceAngles
 qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 {
 	char   *pString, *token;
-	int    duration, i;
 	vec3_t diff;
 	vec3_t angles;
 	int    trType = TR_LINEAR_STOP;
@@ -2873,6 +2870,8 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 
 	if (ent->scriptStatus.scriptStackChangeTime == level.time)
 	{
+		int duration, i;
+
 		pString = params;
 		for (i = 0; i < 3; i++)
 		{
@@ -3342,7 +3341,6 @@ qboolean G_ScriptAction_ObjectiveStatus(gentity_t *ent, char *params)
 qboolean G_ScriptAction_SetDebugLevel(gentity_t *ent, char *params)
 {
 	char *pString, *token;
-	int  debugLevel = 0;
 
 	if (!params || !params[0])
 	{
@@ -3357,6 +3355,8 @@ qboolean G_ScriptAction_SetDebugLevel(gentity_t *ent, char *params)
 	if ((token = COM_ParseExt(&pString, qfalse)) && token[0])
 	{
 		// Get the integer version of the debug level
+		int debugLevel = 0;
+
 		debugLevel = atoi(token);
 
 		// Set the debug level

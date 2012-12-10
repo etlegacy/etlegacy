@@ -573,13 +573,11 @@ void CG_GenerateTracemap(void)
 
 qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 {
-	int          i, j;
 	fileHandle_t f;
 	byte         data, datablock[TRACEMAP_SIZE][4];
 	int          sky_min, sky_max;
 	int          ground_min, ground_max;
 	int          skyground_min, skyground_max;
-	float        scalefactor;
 	//int startTime = trap_Milliseconds();
 
 	ground_min    = ground_max = MIN_WORLD_HEIGHT;
@@ -588,6 +586,9 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 
 	if (trap_FS_FOpenFile(va("maps/%s_tracemap.tga", Q_strlwr(rawmapname)), &f, FS_READ) >= 0)
 	{
+		float scalefactor;
+		int   i, j;
+
 		// skip over header
 		for (i = 0; i < 18; i++)
 		{

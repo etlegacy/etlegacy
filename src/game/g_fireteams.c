@@ -133,7 +133,6 @@ int G_CountTeamFireteams(team_t team)
 void G_UpdateFireteamConfigString(fireteamData_t *ft)
 {
 	char buffer[128];
-	int  i;
 	int  clnts[2] = { 0, 0 };
 
 	if (!ft->inuse)
@@ -142,6 +141,8 @@ void G_UpdateFireteamConfigString(fireteamData_t *ft)
 	}
 	else
 	{
+		int i;
+
 		for (i = 0; i < MAX_CLIENTS; i++)
 		{
 			if (ft->joinOrder[i] != -1)

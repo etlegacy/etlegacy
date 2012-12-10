@@ -1044,8 +1044,6 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 
 qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 {
-	float     height;
-	float     theight;
 	gentity_t *leg;
 
 	if (!(targ->client))
@@ -1115,8 +1113,8 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod)
 	}
 	else
 	{
-		height  = point[2] - targ->r.absmin[2];
-		theight = targ->r.absmax[2] - targ->r.absmin[2];
+		float height  = point[2] - targ->r.absmin[2];
+		float theight = targ->r.absmax[2] - targ->r.absmin[2];
 
 		if (height < (theight * 0.4f))
 		{
@@ -2029,14 +2027,14 @@ qboolean CanDamage(gentity_t *targ, vec3_t origin)
 
 void G_AdjustedDamageVec(gentity_t *ent, vec3_t origin, vec3_t v)
 {
-	int i;
-
 	if (!ent->r.bmodel)
 	{
-		VectorSubtract(ent->r.currentOrigin, origin, v); // JPW NERVE simpler centroid check that doesn't have box alignment weirdness
+		VectorSubtract(ent->r.currentOrigin, origin, v); // simpler centroid check that doesn't have box alignment weirdness
 	}
 	else
 	{
+		int i;
+
 		for (i = 0 ; i < 3 ; i++)
 		{
 			if (origin[i] < ent->r.absmin[i])

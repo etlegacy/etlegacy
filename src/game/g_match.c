@@ -844,7 +844,6 @@ int G_checkServerToggle(vmCvar_t *cv)
 // Sends a player's stats to the requesting client.
 void G_statsPrint(gentity_t *ent, int nType)
 {
-	int  pid;
 	char *cmd = (nType == 0) ? "ws" : ((nType == 1) ? "wws" : "gstats");         // Yes, not the cleanest
 	char arg[MAX_TOKEN_CHARS];
 
@@ -873,6 +872,8 @@ void G_statsPrint(gentity_t *ent, int nType)
 	}
 	else
 	{
+		int pid;
+
 		// Find the player to poll stats.
 		trap_Argv(1, arg, sizeof(arg));
 		if ((pid = ClientNumberFromString(ent, arg)) == -1)

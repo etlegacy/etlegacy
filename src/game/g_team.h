@@ -109,7 +109,7 @@ const char *TeamColorString(int team);
 void Team_RemoveFlag(int team);
 void Team_DroppedFlagThink(gentity_t *ent);
 void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker);
-void Team_InitGame(void);
+
 void Team_ReturnFlag(gentity_t *ent);
 void Team_FreeEntity(gentity_t *ent);
 gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles, int spawnObjective);
