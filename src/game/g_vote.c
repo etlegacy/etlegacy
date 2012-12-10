@@ -55,20 +55,17 @@ static const char *DISABLED    = "DISABLED";
 
 static const char *gameNames[] =
 {
-	"Single Player",
-	"Cooperative",
+	"Single Player", // Obsolete
+	"Cooperative", // Obsolete
 	"Objective",
 	"Stopwatch",
 	"Campaign",
 	"Last Man Standing"
 };
 
-
-//
 // Update info:
 //  1. Add line to aVoteInfo w/appropriate info
 //  2. Add implementation for attempt and success (see an existing command for an example)
-//
 typedef struct
 {
 	unsigned int dwGameTypes;
@@ -316,19 +313,11 @@ void G_voteSetVoteString(const char *desc)
 	trap_SendConsoleCommand(EXEC_APPEND, va("%s\n", level.voteInfo.voteString));
 }
 
-
-
-
-
-
 ////////////////////////////////////////////////////////
 //
 // Actual vote command implementation
 //
 ////////////////////////////////////////////////////////
-
-
-
 
 // *** Load competition settings for current mode ***
 int G_Comp_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)

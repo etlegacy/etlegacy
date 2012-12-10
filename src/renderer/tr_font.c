@@ -40,9 +40,7 @@
  *
  * How to generate new font data files
  * ===================================
- * 1. Compile ET: Legacy with Freetype support:
- *  premake4 --with-freetype gmake
- *  make
+ * 1. Compile ET: Legacy with Freetype support by enabling FEATURE_FREETYPE in CMake
  * 2. Delete the fontname_x_xx.tga files and fontname_xx.dat files from the fonts
  *    path.
  * 3. In a ui script, specify a font, smallFont, and bigFont keyword with font
@@ -164,9 +162,9 @@ void WriteTGA(char *filename, byte *data, int width, int height)
 	for (i = 18 ; i < c ; i += 4)
 	{
 		buffer[i]     = data[i - 18 + 2]; // blue
-		buffer[i + 1] = data[i - 18 + 1];     // green
-		buffer[i + 2] = data[i - 18 + 0];     // red
-		buffer[i + 3] = data[i - 18 + 3];     // alpha
+		buffer[i + 1] = data[i - 18 + 1]; // green
+		buffer[i + 2] = data[i - 18 + 0]; // red
+		buffer[i + 3] = data[i - 18 + 3]; // alpha
 	}
 
 	// flip upside down
@@ -183,10 +181,6 @@ void WriteTGA(char *filename, byte *data, int width, int height)
 	ri.Free(flip);
 
 	ri.FS_WriteFile(filename, buffer, c);
-
-	//f = fopen (filename, "wb");
-	//fwrite (buffer, 1, c, f);
-	//fclose (f);
 
 	ri.Free(buffer);
 }
