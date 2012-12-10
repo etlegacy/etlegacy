@@ -3269,8 +3269,6 @@ CG_DrawFlashDamage
 */
 static void CG_DrawFlashDamage(void)
 {
-	vec4_t col;
-
 	if (!cg.snap)
 	{
 		return;
@@ -3278,6 +3276,7 @@ static void CG_DrawFlashDamage(void)
 
 	if (cg.v_dmg_time > cg.time)
 	{
+		vec4_t col;
 		float redFlash = fabs(cg.v_dmg_pitch * ((cg.v_dmg_time - cg.time) / DAMAGE_TIME));
 
 		// blend the entire screen red
@@ -3291,7 +3290,7 @@ static void CG_DrawFlashDamage(void)
 		                                   (cg_bloodFlash.value < 0.0) ? 0.0 :
 		                                   cg_bloodFlash.value);
 
-		CG_FillRect(-10, -10, Ccg_WideX(640), 480, col);
+		CG_FillRect(0, 0, Ccg_WideX(640), 480, col);
 	}
 }
 
@@ -3657,7 +3656,7 @@ static void CG_ScreenFade(void)
 			return;
 		}
 
-		CG_FillRect(0, 0, 640, 480, cg.fadeColor1);
+		CG_FillRect(0, 0, Ccg_WideX(640), 480, cg.fadeColor1);
 
 	}
 	else
@@ -3674,7 +3673,7 @@ static void CG_ScreenFade(void)
 
 		if (color[3])
 		{
-			CG_FillRect(0, 0, 640, 480, color);
+			CG_FillRect(0, 0, Ccg_WideX(640), 480, color);
 		}
 	}
 }
