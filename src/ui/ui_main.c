@@ -678,25 +678,6 @@ char *Text_AutoWrap_Paint_Chunk(float x, float y, int width, float scale, vec4_t
 	return text + strlen(text);
 }
 
-// count the lines that we will need to have to print with the given wrap parameters
-int Count_Text_AutoWrap_Paint(float x, float y, int width, float scale, vec4_t color, const char *text, float adjust, int style)
-{
-	const char *ret, *end;
-	int        i = 0;
-
-	ret = text;
-	end = text + strlen(text);
-
-	do
-	{
-		ret = Text_AutoWrap_Paint_Chunk(x, y, width, scale, color, (char *)ret, adjust, 0, style, qtrue, NULL);
-		i++;
-	}
-	while (ret < end);
-
-	return i;
-}
-
 void Text_AutoWrap_Paint(float x, float y, int width, int height, float scale, vec4_t color, const char *l_text, float adjust, int style)
 {
 	char   text[1024];
