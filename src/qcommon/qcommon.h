@@ -811,11 +811,6 @@ MISC
 
 typedef struct gameInfo_s
 {
-	qboolean spEnabled;
-	int spGameTypes;
-	int defaultSPGameType;
-	int coopGameTypes;
-	int defaultCoopGameType;
 	int defaultGameType;
 	qboolean usesProfiles;
 } gameInfo_t;

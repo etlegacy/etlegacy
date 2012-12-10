@@ -4324,31 +4324,31 @@ void FS_Restart(int checksumFeed)
 
 			return;
 		}
-		// TTimo - added some verbosity, 'couldn't load default.cfg' confuses the hell out of users
+		// added some verbosity, 'couldn't load default.cfg' confuses the hell out of users
 		Com_Error(ERR_FATAL, "FS_Restart: Couldn't load default.cfg - I am missing essential files - verify your installation?\n");
 	}
 
-	// bk010116 - new check before safeMode
+	// new check before safeMode
 	if (Q_stricmp(fs_gamedirvar->string, lastValidGame))
 	{
-		// skip the wolfconfig.cfg if "safe" is on the command line
+		// skip the etconfig.cfg if "safe" is on the command line
 		if (!Com_SafeMode())
 		{
 			char *cl_profileStr = Cvar_VariableString("cl_profile");
 
 			if (com_gameInfo.usesProfiles && cl_profileStr[0])
 			{
-				// bani - check existing pid file and make sure it's ok
+				// check existing pid file and make sure it's ok
 				if (!Com_CheckProfile(va("profiles/%s/profile.pid", cl_profileStr)))
 				{
-#ifndef _DEBUG
+#ifdef NDEBUG
 					Com_Printf("^3WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
-					// ydnar: set crashed state
+					// set crashed state
 					Cbuf_AddText("set com_crashed 1\n");
 #endif
 				}
 
-				// bani - write a new one
+				// write a new one
 				if (!Com_WriteProfile(va("profiles/%s/profile.pid", cl_profileStr)))
 				{
 					Com_Printf("^3WARNING: couldn't write profiles/%s/profile.pid\n", cl_profileStr);
