@@ -156,6 +156,7 @@ void COM_DefaultExtension(char *path, int maxSize, const char *extension)
 }
 
 //============================================================================
+
 /*
 ==================
 COM_BitCheck
@@ -222,9 +223,7 @@ void COM_BitClear(int array[], int bitNum)
 
 /*
 ============================================================================
-
                     BYTE ORDER FUNCTIONS
-
 ============================================================================
 */
 /*
@@ -250,7 +249,7 @@ qint64  BigLong64( qint64 l ) {return _BigLong64( l );}
 float   BigFloat( float l ) {return _BigFloat( l );}
 */
 
-short   ShortSwap(short l)
+short ShortSwap(short l)
 {
 	byte b1, b2;
 
@@ -260,12 +259,12 @@ short   ShortSwap(short l)
 	return (b1 << 8) + b2;
 }
 
-short   ShortNoSwap(short l)
+short ShortNoSwap(short l)
 {
 	return l;
 }
 
-int    LongSwap(int l)
+int LongSwap(int l)
 {
 	byte b1, b2, b3, b4;
 
@@ -348,16 +347,12 @@ void Swap_Init( void ) {
         _BigFloat = FloatNoSwap;
         _LittleFloat = FloatSwap;
     }
-
 }
 */
 
-
 /*
 ============================================================================
-
 PARSING
-
 ============================================================================
 */
 
@@ -463,13 +458,14 @@ static char *SkipWhitespace(char *data, qboolean *hasNewLines)
 
 int COM_Compress(char *data_p)
 {
-	char     *in, *out;
-	int      c;
-	qboolean newline = qfalse, whitespace = qfalse;
+	char *in, *out;
 
 	in = out = data_p;
 	if (in)
 	{
+		int      c;
+		qboolean newline = qfalse, whitespace = qfalse;
+
 		while ((c = *in) != 0)
 		{
 			// skip double slash comments
@@ -722,7 +718,6 @@ void COM_MatchToken(char **buf_p, char *match)
 /*
 =================
 SkipBracedSection_Depth
-
 =================
 */
 void SkipBracedSection_Depth(char **program, int depth)
@@ -848,7 +843,6 @@ void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m)
 	COM_MatchToken(buf_p, ")");
 }
 
-
 /*
 ===============
 Com_ParseInfos
@@ -958,9 +952,7 @@ int Com_HexStrToInt(const char *str)
 
 /*
 ============================================================================
-
                     LIBRARY REPLACEMENT FUNCTIONS
-
 ============================================================================
 */
 
@@ -1188,7 +1180,6 @@ char *Q_strupr(char *s1)
 	return s1;
 }
 
-
 // never goes past bounds or leaves without a terminating 0
 void Q_strcat(char *dest, int size, const char *src)
 {
@@ -1207,11 +1198,13 @@ void Q_strcat(char *dest, int size, const char *src)
 */
 const char *Q_stristr(const char *s, const char *find)
 {
-	char   c, sc;
-	size_t len;
+	char c;
 
 	if ((c = *find++) != 0)
 	{
+		char   sc;
+		size_t len;
+
 		if (c >= 'a' && c <= 'z')
 		{
 			c -= ('a' - 'A');
@@ -1237,7 +1230,6 @@ const char *Q_stristr(const char *s, const char *find)
 	}
 	return s;
 }
-
 
 int Q_PrintStrlen(const char *string)
 {
@@ -1367,7 +1359,6 @@ int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...)
 	return len;
 }
 
-
 /*
  * @brief Does a varargs printf into a temp buffer, so I don't need to have
  * varargs versions of all text functions.
@@ -1434,7 +1425,6 @@ char *QDECL va(const char *format, ...)
 	return buf;
 }
 
-
 /*
  * @brief Assumes buffer is atleast TRUNCATE_LENGTH big
  */
@@ -1484,9 +1474,7 @@ float *tv(float x, float y, float z)
 
 /*
 =====================================================================
-
   INFO STRINGS
-
 =====================================================================
 */
 
@@ -1559,7 +1547,6 @@ char *Info_ValueForKey(const char *s, const char *key)
 	return "";
 }
 
-
 /*
 ===================
 Info_NextPair
@@ -1604,7 +1591,6 @@ void Info_NextPair(const char **head, char *key, char *value)
 
 	*head = s;
 }
-
 
 /*
 ===================
@@ -1671,7 +1657,6 @@ void Info_RemoveKey(char *s, const char *key)
 			return;
 		}
 	}
-
 }
 
 /*
@@ -1737,11 +1722,7 @@ void Info_RemoveKey_Big(char *s, const char *key)
 			return;
 		}
 	}
-
 }
-
-
-
 
 /*
 ==================
@@ -1865,9 +1846,6 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 
 	strcat(s, newi);
 }
-
-
-
 
 //====================================================================
 
