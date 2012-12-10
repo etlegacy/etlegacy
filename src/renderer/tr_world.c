@@ -46,8 +46,6 @@ This will also allow mirrors on both sides of a model without recursion.
 static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *frontFace)
 {
 	srfGeneric_t *gen;
-	int          cull;
-	float        d;
 
 	// force to non-front facing
 	*frontFace = 0;
@@ -58,7 +56,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		return qfalse;
 	}
 
-	// ydnar: made surface culling generic, inline with q3map2 surface classification
+	// made surface culling generic, inline with q3map2 surface classification
 	switch (*surface)
 	{
 	case SF_FACE:
@@ -87,7 +85,8 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	// plane cull
 	if (gen->plane.type != PLANE_NON_PLANAR && r_facePlaneCull->integer)
 	{
-		d = DotProduct(tr.orientation.viewOrigin, gen->plane.normal) - gen->plane.dist;
+		float d = DotProduct(tr.orientation.viewOrigin, gen->plane.normal) - gen->plane.dist;
+
 		if (d > 0.0f)
 		{
 			*frontFace = 1;
@@ -117,6 +116,8 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	}
 
 	{
+		int cull;
+
 		// try sphere cull
 		if (tr.currentEntityNum != ENTITYNUM_WORLD)
 		{
@@ -126,6 +127,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		{
 			cull = R_CullPointAndRadius(gen->origin, gen->radius);
 		}
+
 		if (cull == CULL_OUT)
 		{
 			tr.pc.c_sphere_cull_out++;
@@ -239,7 +241,7 @@ R_AddWorldSurface
 */
 static void R_AddWorldSurface(msurface_t *surf, shader_t *shader, int dlightMap, int decalBits)
 {
-	int i, frontFace;
+	int frontFace;
 
 
 	if (surf->viewCount == tr.viewCount)
@@ -266,7 +268,9 @@ static void R_AddWorldSurface(msurface_t *surf, shader_t *shader, int dlightMap,
 	// add decals
 	if (decalBits)
 	{
-		// ydnar: project any decals
+		int i;
+
+		// project any decals
 		for (i = 0; i < tr.refdef.numDecalProjectors; i++)
 		{
 			if (decalBits & (1 << i))
@@ -281,9 +285,7 @@ static void R_AddWorldSurface(msurface_t *surf, shader_t *shader, int dlightMap,
 
 /*
 =============================================================
-
     BRUSH MODELS
-
 =============================================================
 */
 
@@ -294,7 +296,7 @@ R_BmodelFogNum
 See if a sprite is inside a fog volume
 Return positive with /any part/ of the brush falling within a fog volume
 
-ydnar: the original implementation of this function is a bit flaky...
+the original implementation of this function is a bit flaky...
 =================
 */
 int R_BmodelFogNum(trRefEntity_t *re, bmodel_t *bmodel)
@@ -350,10 +352,10 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 		return;
 	}
 
-	// ydnar: set current brush model to world
+	// set current brush model to world
 	tr.currentBModel = bmodel;
 
-	// ydnar: set model state for decals and dynamic fog
+	// set model state for decals and dynamic fog
 	VectorCopy(ent->e.origin, bmodel->orientation[tr.smpFrame].origin);
 	VectorCopy(ent->e.axis[0], bmodel->orientation[tr.smpFrame].axis[0]);
 	VectorCopy(ent->e.axis[1], bmodel->orientation[tr.smpFrame].axis[1]);
@@ -366,7 +368,7 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 	// determine if in fog
 	fognum = R_BmodelFogNum(ent, bmodel);
 
-	// ydnar: project any decals
+	// project any decals
 	decalBits          = 0;
 	numLocalProjectors = 0;
 	for (i = 0; i < tr.refdef.numDecalProjectors; i++)
@@ -391,7 +393,7 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 		}
 	}
 
-	// ydnar: save old decal projectors
+	// save old decal projectors
 	savedNumDecalProjectors = tr.refdef.numDecalProjectors;
 	savedDecalProjectors    = tr.refdef.decalProjectors;
 
@@ -403,7 +405,7 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 	for (i = 0; i < bmodel->numSurfaces; i++)
 	{
 		(bmodel->firstSurface + i)->fogIndex = fognum;
-		// Arnout: custom shader support for brushmodels
+		// custom shader support for brushmodels
 		if (ent->e.customShader)
 		{
 			R_AddWorldSurface(bmodel->firstSurface + i, R_GetShaderByHandle(ent->e.customShader), tr.currentEntity->needDlights, decalBits);
@@ -414,22 +416,20 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 		}
 	}
 
-	// ydnar: restore old decal projectors
+	// restore old decal projectors
 	tr.refdef.numDecalProjectors = savedNumDecalProjectors;
 	tr.refdef.decalProjectors    = savedDecalProjectors;
 
-	// ydnar: add decal surfaces
+	// add decal surfaces
 	R_AddDecalSurfaces(bmodel);
 
-	// ydnar: clear current brush model
+	// clear current brush model
 	tr.currentBModel = NULL;
 }
 
 /*
 =============================================================
-
     WORLD MODEL
-
 =============================================================
 */
 
@@ -576,7 +576,7 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 
 		}
 
-		// ydnar: cull dlights
+		// cull dlights
 		if (dlightBits)      //%    && node->contents != -1 )
 		{
 			for (i = 0; i < tr.refdef.num_dlights; i++)
@@ -601,7 +601,7 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 			}
 		}
 
-		// ydnar: cull decals
+		// cull decals
 		if (decalBits)
 		{
 			for (i = 0; i < tr.refdef.numDecalProjectors; i++)
@@ -638,7 +638,7 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 		return;
 	}
 
-	// ydnar: moved off to separate function
+	// moved off to separate function
 	R_AddLeafSurfaces(node, dlightBits, decalBits);
 }
 
@@ -798,7 +798,7 @@ static void R_MarkLeaves(void)
 			continue;       // not visible
 		}
 
-		// ydnar: don't want to walk the entire bsp to add skybox surfaces
+		// don't want to walk the entire bsp to add skybox surfaces
 		if (tr.refdef.rdflags & RDF_SKYBOXPORTAL)
 		{
 			// this only happens once, as game/cgame know the origin of the skybox
@@ -845,7 +845,7 @@ void R_AddWorldSurfaces(void)
 	tr.currentEntityNum = ENTITYNUM_WORLD;
 	tr.shiftedEntityNum = tr.currentEntityNum << QSORT_ENTITYNUM_SHIFT;
 
-	// ydnar: set current brush model to world
+	// set current brush model to world
 	tr.currentBModel = &tr.world->bmodels[0];
 
 	// clear out the visible min/max

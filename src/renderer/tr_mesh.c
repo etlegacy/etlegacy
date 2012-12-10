@@ -195,7 +195,7 @@ int R_ComputeLOD(trRefEntity_t *ent)
 	else
 	{
 		float      radius;
-		float      flod, lodscale;
+		float      flod;
 		float      projectedRadius;
 		md3Frame_t *frame;
 
@@ -225,7 +225,8 @@ int R_ComputeLOD(trRefEntity_t *ent)
 
 		if ((projectedRadius = ProjectRadius(radius, ent->e.origin)) != 0)
 		{
-			lodscale = r_lodscale->value;
+			float lodscale = r_lodscale->value;
+
 			if (lodscale > 20)
 			{
 				lodscale = 20;

@@ -1704,14 +1704,12 @@ R_LoadMDX
 */
 static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 {
-	int           i, j;
 	mdxHeader_t   *pinmodel, *mdx;
 	mdxFrame_t    *frame;
 	short         *bframe;
 	mdxBoneInfo_t *bi;
 	int           version;
 	int           size;
-	int           frameSize;
 
 	pinmodel = (mdxHeader_t *)buffer;
 
@@ -1741,8 +1739,10 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 
 	if (LittleLong(1) != 1)
 	{
+		int i, j;
 		// swap all the frames
-		frameSize = (int) (sizeof(mdxBoneFrameCompressed_t)) * mdx->numBones;
+		int frameSize = (int) (sizeof(mdxBoneFrameCompressed_t)) * mdx->numBones;
+
 		for (i = 0 ; i < mdx->numFrames ; i++)
 		{
 			frame         = ( mdxFrame_t * )((byte *)mdx + mdx->ofsFrames + i * frameSize + i * sizeof(mdxFrame_t));
@@ -2332,14 +2332,14 @@ R_PurgeModels
 */
 void R_PurgeModels(int count)
 {
-	static int lastPurged = 0;
+	//static int lastPurged = 0;
 
 	if (!numBackupModels)
 	{
 		return;
 	}
 
-	lastPurged      = 0;
+	//lastPurged      = 0;
 	numBackupModels = 0;
 
 	// note: we can only do this since we only use the virtual memory for the model caching!

@@ -145,9 +145,9 @@ float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte 
 
 	if (r_lightmap->integer > 1)     // color code by intensity as development tool (FIXME: check range)
 	{
-		double sumIntensity = 0;
-		float  r, g, b, intensity;
-		float  out[3] = { 0, 0, 0 };
+		//double sumIntensity = 0;
+		float r, g, b, intensity;
+		float out[3] = { 0, 0, 0 };
 
 		for (j = 0; j < width * height; j++)
 		{
@@ -188,7 +188,7 @@ float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte 
 			}
 			(*pic_out)[j * 4 + 3] = 255;
 
-			sumIntensity += intensity;
+			//sumIntensity += intensity;
 		}
 	}
 	else
@@ -345,7 +345,7 @@ static shader_t *ShaderForShaderNum(int shaderNum, int lightmapNum)
 	return shader;
 }
 
-// Ridah, optimizations here
+// optimizations here
 // memory block for use by surfaces
 static byte *surfHunkPtr;
 static int  surfHunkSize;

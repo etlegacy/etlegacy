@@ -119,13 +119,15 @@ RE_ClearScene
 */
 void RE_ClearScene(void)
 {
-	int i;
-
-	// ydnar: clear model stuff for dynamic fog
+	// clear model stuff for dynamic fog
 	if (tr.world != NULL)
 	{
+		int i;
+
 		for (i = 0; i < tr.world->numBModels; i++)
+		{
 			tr.world->bmodels[i].visible[tr.smpFrame] = qfalse;
+		}
 	}
 
 	// everything else
@@ -173,7 +175,6 @@ RE_AddPolyToScene
 void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 {
 	srfPoly_t *poly;
-	int       i;
 	int       fogIndex;
 	fog_t     *fog;
 	vec3_t    bounds[2];
@@ -212,6 +213,8 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 	}
 	else
 	{
+		int i;
+
 		// find which fog volume the poly is in
 		VectorCopy(poly->verts[0].xyz, bounds[0]);
 		VectorCopy(poly->verts[0].xyz, bounds[1]);

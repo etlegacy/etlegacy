@@ -575,7 +575,6 @@ byte mipBlendColors[16][4] =
 /*
 ===============
 Upload32
-
 ===============
 */
 static void Upload32(unsigned *data,
@@ -591,10 +590,9 @@ static void Upload32(unsigned *data,
 	unsigned *scaledBuffer    = NULL;
 	unsigned *resampledBuffer = NULL;
 	int      scaled_width, scaled_height;
-	int      i, c;
+	int      c;
 	byte     *scan;
 	GLenum   internalFormat = GL_RGB;
-	float    rMax           = 0, gMax = 0, bMax = 0;
 
 	// convert to exact power of 2 sizes
 	for (scaled_width = 1 ; scaled_width < width ; scaled_width <<= 1)
@@ -668,6 +666,9 @@ static void Upload32(unsigned *data,
 	}
 	else
 	{
+		float rMax = 0, gMax = 0, bMax = 0;
+		int   i;
+
 		for (i = 0; i < c; i++)
 		{
 			if (scan[i * 4 + 0] > rMax)
@@ -2052,7 +2053,7 @@ qboolean R_TouchImage(image_t *inImage)
 {
 	image_t *bImage, *bImagePrev;
 	int     hash;
-	char    *name;
+	//char    *name;
 
 	if (inImage == tr.dlightImage ||
 	    inImage == tr.whiteImage ||
@@ -2063,7 +2064,7 @@ qboolean R_TouchImage(image_t *inImage)
 	}
 
 	hash = inImage->hash;
-	name = inImage->imgName;
+	//name = inImage->imgName;
 
 	bImage     = backupHashTable[hash];
 	bImagePrev = NULL;
@@ -2225,7 +2226,7 @@ R_FindCachedImage
 */
 image_t *R_FindCachedImage(const char *name, int hash)
 {
-	image_t *bImage, *bImagePrev;
+	image_t *bImage;
 
 	if (!r_cacheShaders->integer)
 	{
@@ -2237,8 +2238,8 @@ image_t *R_FindCachedImage(const char *name, int hash)
 		return NULL;
 	}
 
-	bImage     = backupHashTable[hash];
-	bImagePrev = NULL;
+	bImage = backupHashTable[hash];
+
 	while (bImage)
 	{
 
@@ -2254,8 +2255,7 @@ image_t *R_FindCachedImage(const char *name, int hash)
 			return bImage;
 		}
 
-		bImagePrev = bImage;
-		bImage     = bImage->next;
+		bImage = bImage->next;
 	}
 
 	return NULL;

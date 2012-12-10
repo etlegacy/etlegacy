@@ -864,8 +864,8 @@ static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 {
 	short    *oldXyz, *newXyz, *oldNormals, *newNormals;
 	float    *outXyz, *outNormal;
-	float    oldXyzScale, newXyzScale;
-	float    oldNormalScale, newNormalScale;
+	float    newXyzScale;
+	float    newNormalScale;
 	int      vertNum;
 	unsigned lat, lng;
 	int      numVerts;
@@ -910,6 +910,8 @@ static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 	}
 	else
 	{
+		float oldNormalScale, oldXyzScale;
+
 		// interpolate and copy the vertex and normal
 		oldXyz = ( short * )((byte *)surf + surf->ofsXyzNormals)
 		         + (backEnd.currentEntity->e.oldframe * surf->numVerts * 4);
@@ -929,8 +931,7 @@ static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 			outXyz[1] = oldXyz[1] * oldXyzScale + newXyz[1] * newXyzScale;
 			outXyz[2] = oldXyz[2] * oldXyzScale + newXyz[2] * newXyzScale;
 
-			// FIXME: interpolate lat/long instead?
-			// ydnar: ok :)
+			// interpolate lat/long instead
 #if 0
 			lat                      = (newNormals[0] >> 8) & 0xff;
 			lng                      = (newNormals[0] & 0xff);
@@ -963,11 +964,11 @@ static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 			outNormal[2] = tr.sinTable[(lng + (FUNCTABLE_SIZE / 4)) & FUNCTABLE_MASK];
 #endif
 
-//          VectorNormalize (outNormal);
+			//VectorNormalize (outNormal);
 		}
 
-		// ydnar: unecessary because of lat/lng lerping
-		//% VectorArrayNormalize((vec4_t *)tess.normal[tess.numVertexes].v, numVerts);
+		// unecessary because of lat/lng lerping
+		//VectorArrayNormalize((vec4_t *)tess.normal[tess.numVertexes].v, numVerts);
 	}
 }
 
@@ -986,7 +987,7 @@ void RB_SurfaceMesh(md3Surface_t *surface)
 	int   Bob, Doug;
 	int   numVerts;
 
-	// RF, check for REFLAG_HANDONLY
+	// check for REFLAG_HANDONLY
 	if (backEnd.currentEntity->e.reFlags & REFLAG_ONLYHAND)
 	{
 		if (!strstr(surface->name, "hand"))
@@ -1057,14 +1058,13 @@ LerpCMeshVertexes
 */
 static void LerpCMeshVertexes(mdcSurface_t *surf, float backlerp)
 {
-	short    *oldXyz, *newXyz, *oldNormals, *newNormals;
-	float    *outXyz, *outNormal;
-	float    oldXyzScale, newXyzScale;
-	float    oldNormalScale, newNormalScale;
-	int      vertNum;
-	unsigned lat, lng;
-	int      numVerts;
-
+	short              *oldXyz, *newXyz, *oldNormals, *newNormals;
+	float              *outXyz, *outNormal;
+	float              newXyzScale;
+	float              newNormalScale;
+	int                vertNum;
+	unsigned           lat, lng;
+	int                numVerts;
 	int                oldBase, newBase;
 	short              *oldComp    = NULL, *newComp = NULL; // TTimo: init
 	mdcXyzCompressed_t *oldXyzComp = NULL, *newXyzComp = NULL; // TTimo: init
@@ -1133,10 +1133,12 @@ static void LerpCMeshVertexes(mdcSurface_t *surf, float backlerp)
 	}
 	else
 	{
+		float oldXyzScale, oldNormalScale;
 		// interpolate and copy the vertex and normal
-		oldBase = (int)*(( short * )((byte *)surf + surf->ofsFrameBaseFrames) + backEnd.currentEntity->e.oldframe);
-		oldXyz  = ( short * )((byte *)surf + surf->ofsXyzNormals)
-		          + (oldBase * surf->numVerts * 4);
+		int oldBase = (int)*(( short * )((byte *)surf + surf->ofsFrameBaseFrames) + backEnd.currentEntity->e.oldframe);
+
+		oldXyz = ( short * )((byte *)surf + surf->ofsXyzNormals)
+		         + (oldBase * surf->numVerts * 4);
 		oldNormals = oldXyz + 3;
 
 		if (hasComp)
@@ -1226,7 +1228,7 @@ void RB_SurfaceCMesh(mdcSurface_t *surface)
 	int   Bob, Doug;
 	int   numVerts;
 
-	// RF, check for REFLAG_HANDONLY
+	// check for REFLAG_HANDONLY
 	if (backEnd.currentEntity->e.reFlags & REFLAG_ONLYHAND)
 	{
 		if (!strstr(surface->name, "hand"))

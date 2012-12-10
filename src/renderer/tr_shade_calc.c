@@ -997,9 +997,6 @@ void RB_CalcFogTexCoords(float *st)
 {
 	int      i;
 	float    *v;
-	float    s, t;
-	float    eyeT;
-	qboolean eyeInside;
 	fog_t    *fog;
 	vec3_t   local, viewOrigin;
 	vec4_t   fogSurface, fogDistanceVector, fogDepthVector;
@@ -1044,6 +1041,10 @@ void RB_CalcFogTexCoords(float *st)
 	// ydnar: general fog case
 	if (fog->originalBrushNumber >= 0)
 	{
+		float    s, t;
+		float    eyeT;
+		qboolean eyeInside;
+
 		// rotate the gradient vector for this orientation
 		if (fog->hasSurface)
 		{

@@ -110,6 +110,8 @@ void GL_SelectTexture(int unit)
 
 /*
 GL_BindMultitexture
+
+@note Unused
 */
 void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint env1)
 {
@@ -469,7 +471,7 @@ void RB_BeginDrawingView(void)
 	{
 		clearBits |= GL_STENCIL_BUFFER_BIT;
 	}
-	// ydnar: global q3 fog volume
+	// global q3 fog volume
 	else if (tr.world && tr.world->globalFog >= 0)
 	{
 		clearBits |= GL_DEPTH_BUFFER_BIT;
@@ -547,7 +549,7 @@ void RB_BeginDrawingView(void)
 	{
 		clearBits |= GL_DEPTH_BUFFER_BIT;
 
-		// NERVE - SMF - we don't want to clear the buffer when no world model is specified
+		// we don't want to clear the buffer when no world model is specified
 		if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 		{
 			clearBits &= ~GL_COLOR_BUFFER_BIT;
@@ -580,7 +582,7 @@ void RB_BeginDrawingView(void)
 		}
 	}
 
-	// ydnar: don't clear the color buffer when no world model is specified
+	// don't clear the color buffer when no world model is specified
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		clearBits &= ~GL_COLOR_BUFFER_BIT;
@@ -778,7 +780,7 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 		qglDepthRange(0, 1);
 	}
 
-	// (SA) draw sun
+	// draw sun
 	RB_DrawSun();
 
 	// darken down any stencil shadows
@@ -790,16 +792,13 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 
 /*
 ============================================================================
-
 RENDER BACK END THREAD FUNCTIONS
-
 ============================================================================
 */
 
 /*
 ================
 RB_SetGL2D
-
 ================
 */
 void RB_SetGL2D(void)
@@ -839,7 +838,7 @@ Used for cinematics.
 void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty)
 {
 	int i, j;
-	int start, end;
+	int start;
 
 	if (!tr.registered)
 	{
@@ -893,7 +892,8 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 
 	if (r_speeds->integer)
 	{
-		end = ri.Milliseconds();
+		int end = ri.Milliseconds();
+
 		ri.Printf(PRINT_ALL, "qglTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
 	}
 
@@ -1475,7 +1475,6 @@ const void *RB_SwapBuffers(const void *data)
 /*
 =============
 RB_RenderToTexture
-
 =============
 */
 const void *RB_RenderToTexture(const void *data)
@@ -1499,7 +1498,6 @@ const void *RB_RenderToTexture(const void *data)
 /*
 =============
 RB_Finish
-
 =============
 */
 const void *RB_Finish(const void *data)

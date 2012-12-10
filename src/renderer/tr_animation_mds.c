@@ -234,12 +234,11 @@ static int R_CullModel(mdsHeader_t *header, trRefEntity_t *ent)
 /*
 =================
 R_CalcMDSLod
-
 =================
 */
 float R_CalcMDSLod(refEntity_t *refent, vec3_t origin, float radius, float modelBias, float modelScale)
 {
-	float flod, lodScale;
+	float flod;
 	float projectedRadius;
 
 	// compute projected bounding sphere and use that as a criteria for selecting LOD
@@ -247,11 +246,10 @@ float R_CalcMDSLod(refEntity_t *refent, vec3_t origin, float radius, float model
 	projectedRadius = ProjectRadius(radius, origin);
 	if (projectedRadius != 0)
 	{
+		float lodScale = r_lodscale->value;   // fudge factor since MDS uses a much smoother method of LOD
 
 		// ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
-
-		lodScale = r_lodscale->value;   // fudge factor since MDS uses a much smoother method of LOD
-		flod     = projectedRadius * lodScale * modelScale;
+		flod = projectedRadius * lodScale * modelScale;
 	}
 	else
 	{
@@ -263,7 +261,7 @@ float R_CalcMDSLod(refEntity_t *refent, vec3_t origin, float radius, float model
 	{
 		flod *= 0.5;
 	}
-	//----(SA)	like reflag_force_lod, but separate for the moment
+	// like reflag_force_lod, but separate for the moment
 	if (refent->reFlags & REFLAG_DEAD_LOD)
 	{
 		flod *= 0.8;
@@ -286,7 +284,6 @@ float R_CalcMDSLod(refEntity_t *refent, vec3_t origin, float radius, float model
 /*
 =================
 R_ComputeFogNum
-
 =================
 */
 static int R_ComputeFogNum(mdsHeader_t *header, trRefEntity_t *ent)
@@ -536,9 +533,7 @@ static __inline void SLerp_Normal(vec3_t from, vec3_t to, float tt, vec3_t out)
 
 /*
 ===============================================================================
-
 4x4 Matrices
-
 ===============================================================================
 */
 
@@ -565,7 +560,7 @@ static __inline void Matrix4Multiply(const vec4_t a[4], const vec4_t b[4], vec4_
 	dst[3][3] = a[3][0] * b[0][3] + a[3][1] * b[1][3] + a[3][2] * b[2][3] + a[3][3] * b[3][3];
 }
 
-// TTimo: const usage would require an explicit cast, non ANSI C
+// const usage would require an explicit cast, non ANSI C
 // see unix/const-arg.c
 static __inline void Matrix4MultiplyInto3x3AndTranslation(/*const*/ vec4_t a[4], /*const*/ vec4_t b[4], vec3_t dst[3], vec3_t t)
 {
@@ -656,7 +651,7 @@ static __inline void Matrix4FromTranslation(const vec3_t t, vec4_t dst[4])
 }
 
 // can put an axis rotation followed by a translation directly into one matrix
-// TTimo: const usage would require an explicit cast, non ANSI C
+// const usage would require an explicit cast, non ANSI C
 // see unix/const-arg.c
 static __inline void Matrix4FromAxisPlusTranslation(/*const*/ vec3_t axis[3], const vec3_t t, vec4_t dst[4])
 {
@@ -674,7 +669,7 @@ static __inline void Matrix4FromAxisPlusTranslation(/*const*/ vec3_t axis[3], co
 }
 
 // can put a scaled axis rotation followed by a translation directly into one matrix
-// TTimo: const usage would require an explicit cast, non ANSI C
+// const usage would require an explicit cast, non ANSI C
 // see unix/const-arg.c
 static __inline void Matrix4FromScaledAxisPlusTranslation(/*const*/ vec3_t axis[3], const float scale, const vec3_t t, vec4_t dst[4])
 {
@@ -726,15 +721,14 @@ static __inline void Matrix4TransformVector(const vec4_t m[4], const vec3_t src,
 
 /*
 ===============================================================================
-
 3x3 Matrices
-
 ===============================================================================
 */
 
 static __inline void Matrix3Transpose(const vec3_t matrix[3], vec3_t transpose[3])
 {
 	int i, j;
+
 	for (i = 0; i < 3; i++)
 	{
 		for (j = 0; j < 3; j++)
@@ -744,7 +738,6 @@ static __inline void Matrix3Transpose(const vec3_t matrix[3], vec3_t transpose[3
 	}
 }
 
-
 /*
 ==============
 R_CalcBone
@@ -752,8 +745,6 @@ R_CalcBone
 */
 void R_CalcBone(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 {
-	int j;
-
 	thisBoneInfo = &boneInfo[boneNum];
 	if (thisBoneInfo->torsoWeight)
 	{
@@ -824,6 +815,8 @@ void R_CalcBone(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 		ANGLES_SHORT_TO_FLOAT(pf, sh);
 		if (isTorso)
 		{
+			int j;
+
 			sh = (short *)cTBonePtr->angles;
 			pf = tangles;
 			ANGLES_SHORT_TO_FLOAT(pf, sh);
@@ -940,13 +933,10 @@ R_CalcBoneLerp
 */
 void R_CalcBoneLerp(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 {
-	int j;
-
 	if (!refent || !header || boneNum < 0 || boneNum >= MDS_MAX_BONES)
 	{
 		return;
 	}
-
 
 	thisBoneInfo = &boneInfo[boneNum];
 
@@ -1018,6 +1008,8 @@ void R_CalcBoneLerp(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 
 		if (isTorso)
 		{
+			int j;
+
 			sh  = (short *)cTBonePtr->angles;
 			sh2 = (short *)cOldTBonePtr->angles;
 			pf  = tangles;
@@ -1320,7 +1312,7 @@ RB_SurfaceAnim
 */
 void RB_SurfaceAnim(mdsSurface_t *surface)
 {
-	int         i, j, k;
+	int         j, k;
 	refEntity_t *refent;
 	int         *boneList;
 	mdsHeader_t *header;
@@ -1349,7 +1341,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 //DBG_SHOWTIME
 
-	//----(SA)	modification to allow dead skeletal bodies to go below minlod (experiment)
+	// modification to allow dead skeletal bodies to go below minlod (experiment)
 	if (refent->reFlags & REFLAG_DEAD_LOD)
 	{
 		if (lodScale < 0.35)       // allow dead to lod down to 35% (even if below surf->minLod) (%35 is arbitrary and probably not good generally.  worked for the blackguard/infantry as a test though)
@@ -1453,9 +1445,8 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 //DBG_SHOWTIME
 
-	//
 	// deform the vertexes by the lerped bones
-	//
+
 	numVerts   = surface->numVerts;
 	v          = ( mdsVertex_t * )((byte *)surface + surface->ofsVerts);
 	tempVert   = ( float * )(tess.xyz + baseVertex);
@@ -1487,6 +1478,8 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 	{
 		if (r_bonesDebug->integer < 3)
 		{
+			int i;
+
 			// DEBUG: show the bones as a stick figure with axis at each bone
 			boneRefs = ( int * )((byte *)surface + surface->ofsBoneReferences);
 			for (i = 0; i < surface->numBoneReferences; i++, boneRefs++)
@@ -1550,7 +1543,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 			qglEnd();
 
-			//----(SA)	track debug stats
+			// track debug stats
 			if (r_bonesDebug->integer == 4)
 			{
 				totalrv += render_count;

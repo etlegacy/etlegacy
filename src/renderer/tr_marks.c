@@ -38,7 +38,7 @@
 
 #define MARKER_OFFSET           0   // 1
 
-// Ridah, just make these global to prevent having to add more paramaters, which add overhead
+// just make these global to prevent having to add more paramaters, which add overhead
 static vec3_t bestnormal;
 static float  bestdist;
 
@@ -159,7 +159,6 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 /*
 =================
 R_BoxSurfaces_r
-
 =================
 */
 void R_BoxSurfaces_r(mnode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **list, int listsize, int *listlength, vec3_t dir)
@@ -167,7 +166,7 @@ void R_BoxSurfaces_r(mnode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **li
 	int        s, c;
 	msurface_t *surf, **mark;
 
-	// RF, if this node hasn't been rendered recently, ignore it
+	// if this node hasn't been rendered recently, ignore it
 	if (node->visframe < tr.visCount - 2)     // allow us to be a few frames behind
 	{
 		return;
@@ -192,7 +191,7 @@ void R_BoxSurfaces_r(mnode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **li
 		}
 	}
 
-	// Ridah, don't mark alpha surfaces
+	// don't mark alpha surfaces
 	if (node->contents & CONTENTS_TRANSLUCENT)
 	{
 		return;
@@ -573,7 +572,7 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 	float            radius;
 	vec3_t           center; // center of original mark
 	//vec3_t            bestCenter; // center point projected onto the closest surface
-	float texCoordScale;
+	//float texCoordScale;
 	//float         dot;
 	int      numPoints  = 4;        // Ridah, we were only ever passing in 4, so I made this local and used the parameter for the orientation
 	qboolean oldMapping = qfalse;
@@ -581,7 +580,7 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 	//increment view count for double check prevention
 	tr.viewCount++;
 
-	// RF, negative maxFragments means we want original mapping
+	// negative maxFragments means we want original mapping
 	if (maxFragments < 0)
 	{
 		maxFragments = -maxFragments;
@@ -638,7 +637,7 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 	numsurfaces = 0;
 	R_BoxSurfaces_r(tr.world->nodes, mins, maxs, surfaces, 4096, &numsurfaces, projectionDir);
 
-	texCoordScale = 0.5 * 1.0 / radius;
+	//texCoordScale = 0.5 * 1.0 / radius;
 
 	returnedPoints    = 0;
 	returnedFragments = 0;
@@ -741,15 +740,12 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 		{
 			extern float VectorDistance(vec3_t v1, vec3_t v2);
 			vec3_t axis[3];
-			float  texCoordScale, dot;
 			vec3_t originalPoints[4];
-			vec3_t newCenter, delta;
-			int    oldNumPoints;
-			float  epsilon = 0.5;
+			vec3_t newCenter;
 			// duplicated so we don't mess with the original clips for the curved surfaces
 			vec3_t lnormals[MAX_VERTS_ON_POLY + 2];
 			float  ldists[MAX_VERTS_ON_POLY + 2];
-			vec3_t lmins, lmaxs;
+			vec3_t lmins;
 			vec3_t surfnormal;
 
 			surf = ( srfSurfaceFace_t * ) surfaces[i];
@@ -765,7 +761,13 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 
 			if (!oldMapping)
 			{
-				// Ridah, create a new clip box such that this decal surface is mapped onto
+				vec3_t lmaxs;
+				float  dot;
+				float  texCoordScale;
+				float  epsilon = 0.5;
+				int    oldNumPoints;
+
+				// create a new clip box such that this decal surface is mapped onto
 				// the current surface without distortion. To find the center of the new clip box,
 				// we project the center of the original impact center out along the projection vector,
 				// onto the current surface
@@ -832,7 +834,6 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 				}
 				numPlanes = numPoints;
 
-				// done.
 
 				indexes = ( int * )((byte *)surf + surf->ofsIndices);
 				for (k = 0 ; k < surf->numIndices ; k += 3)
@@ -854,6 +855,8 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 
 					if (oldNumPoints != returnedPoints)
 					{
+						vec3_t delta;
+
 						// flag this surface as already having computed ST's
 						fragmentBuffer[returnedFragments - 1].numPoints *= -1;
 

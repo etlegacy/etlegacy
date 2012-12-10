@@ -62,7 +62,6 @@ static void APIENTRY R_ArrayElementDiscrete(GLint index)
 /*
 ===================
 R_DrawStripElements
-
 ===================
 */
 static int c_vertexes;          // for seeing how long our average strips are
@@ -215,9 +214,7 @@ static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 
 /*
 =============================================================
-
 SURFACE SHADERS
-
 =============================================================
 */
 
@@ -227,7 +224,6 @@ static qboolean  setArraysOnce;
 /*
 =================
 R_BindAnimatedImage
-
 =================
 */
 static void R_BindAnimatedImage(textureBundle_t *bundle)
@@ -336,7 +332,6 @@ static void DrawTris(shaderCommands_t *input)
 
 	qglColor4fv(trisColor);
 
-	// ydnar r_showtris 2
 	if (r_showtris->integer == 2)
 	{
 		stateBits |= (GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
@@ -392,7 +387,6 @@ Draws vertex normals for debugging
 */
 static void DrawNormals(shaderCommands_t *input)
 {
-	int    i;
 	vec3_t temp;
 
 	GL_Bind(tr.whiteImage);
@@ -400,7 +394,7 @@ static void DrawNormals(shaderCommands_t *input)
 	qglDepthRange(0, 0);    // never occluded
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
 
-	// ydnar: light direction
+	// light direction
 	if (r_shownormals->integer == 2)
 	{
 		trRefEntity_t *ent = backEnd.currentEntity;
@@ -441,9 +435,11 @@ static void DrawNormals(shaderCommands_t *input)
 		qglEnd();
 		qglLineWidth(1);
 	}
-	// ydnar: normals drawing
+	// normals drawing
 	else
 	{
+		int i;
+
 		qglBegin(GL_LINES);
 		for (i = 0 ; i < input->numVertexes ; i++)
 		{
@@ -695,8 +691,8 @@ static void DynamicLightSinglePass(void)
 	}
 
 	// debug code
-	//% for( i = 0; i < numIndexes; i++ )
-	//%     intColors[ hitIndexes[ i ] ] = 0x000000FF;
+	//for( i = 0; i < numIndexes; i++ )
+	//    intColors[ hitIndexes[ i ] ] = 0x000000FF;
 
 	qglEnableClientState(GL_COLOR_ARRAY);
 	qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
@@ -849,8 +845,8 @@ static void DynamicLightPass(void)
 		}
 
 		// debug code (fixme, there's a bug in this function!)
-		//% for( i = 0; i < numIndexes; i++ )
-		//%     intColors[ hitIndexes[ i ] ] = 0x000000FF;
+		//for( i = 0; i < numIndexes; i++ )
+		//    intColors[ hitIndexes[ i ] ] = 0x000000FF;
 
 		qglEnableClientState(GL_COLOR_ARRAY);
 		qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
@@ -883,7 +879,7 @@ static void RB_FogPass(void)
 		return;
 	}
 
-	// ydnar: no world, no fogging
+	// no world, no fogging
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		return;
@@ -1377,7 +1373,6 @@ void SetIteratorFog(void)
 /*
 ===================
 RB_IterateStagesGeneric
-
 ===================
 */
 static void RB_IterateStagesGeneric(shaderCommands_t *input)
@@ -1409,7 +1404,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 		}
 		else
 		{
-			int fadeStart, fadeEnd;
+			int fadeStart;
 
 			if (!setArraysOnce)
 			{
@@ -1419,7 +1414,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 			// set state
 			R_BindAnimatedImage(&pStage->bundle[0]);
 
-			// Ridah, per stage fogging (detail textures)
+			// per stage fogging (detail textures)
 			if (tess.shader->noFog && pStage->isFogged)
 			{
 				R_FogOn();
@@ -1432,14 +1427,14 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 			{
 				R_FogOn();
 			}
-			// done.
 
-			//----(SA)  fading model stuff
+			// fading model stuff
 			fadeStart = backEnd.currentEntity->e.fadeStartTime;
 
 			if (fadeStart)
 			{
-				fadeEnd = backEnd.currentEntity->e.fadeEndTime;
+				int fadeEnd = backEnd.currentEntity->e.fadeEndTime;
+
 				if (fadeStart > tr.refdef.time)           // has not started to fade yet
 				{
 					GL_State(pStage->stateBits);
@@ -1474,7 +1469,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 					}
 				}
 			}
-			// ydnar: lightmap stages should be GL_ONE GL_ZERO so they can be seen
+			// lightmap stages should be GL_ONE GL_ZERO so they can be seen
 			else if (r_lightmap->integer && (pStage->bundle[0].isLightmap || pStage->bundle[1].isLightmap))
 			{
 				unsigned int stateBits;
@@ -1504,7 +1499,6 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 /*
 ===================
 RB_StageIteratorGeneric
-
 ===================
 */
 void RB_StageIteratorGeneric(void)
@@ -1578,8 +1572,8 @@ void RB_StageIteratorGeneric(void)
 	RB_IterateStagesGeneric(input);
 
 	// now do any dynamic lighting needed
-	//% tess.dlightBits = 255;  // HACK!
-	//% if( tess.dlightBits && tess.shader->sort <= SS_OPAQUE &&
+	//tess.dlightBits = 255;  // HACK!
+	//if( tess.dlightBits && tess.shader->sort <= SS_OPAQUE &&
 	if (tess.dlightBits && tess.shader->fogPass &&
 	    !(tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY)))
 	{
@@ -1616,7 +1610,6 @@ void RB_StageIteratorGeneric(void)
 /*
 ===================
 RB_StageIteratorVertexLitTexture
-
 ===================
 */
 void RB_StageIteratorVertexLitTexture(void)
@@ -1664,7 +1657,7 @@ void RB_StageIteratorVertexLitTexture(void)
 	R_DrawElements(input->numIndexes, input->indexes);
 
 	// now do any dynamic lighting needed
-	//% if ( tess.dlightBits && tess.shader->sort <= SS_OPAQUE )
+	//if ( tess.dlightBits && tess.shader->sort <= SS_OPAQUE )
 	if (tess.dlightBits && tess.shader->fogPass &&
 	    !(tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY)))
 	{
@@ -1697,7 +1690,6 @@ void RB_StageIteratorVertexLitTexture(void)
 /*
 ===================
 RB_StageIteratorLightmappedMultitexture
-
 ===================
 */
 void RB_StageIteratorLightmappedMultitexture(void)
@@ -1754,7 +1746,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 		GL_TexEnv(GL_MODULATE);
 	}
 
-//----(SA)  modified for snooper
+	// modified for snooper
 	if (tess.xstages[0]->bundle[1].isLightmap && (backEnd.refdef.rdflags & RDF_SNOOPERVIEW))
 	{
 		GL_Bind(tr.whiteImage);
@@ -1787,7 +1779,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 #endif
 
 	// now do any dynamic lighting needed
-	//% if ( tess.dlightBits && tess.shader->sort <= SS_OPAQUE )
+	//if ( tess.dlightBits && tess.shader->sort <= SS_OPAQUE )
 	if (tess.dlightBits && tess.shader->fogPass &&
 	    !(tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY)))
 	{
@@ -1818,7 +1810,6 @@ void RB_StageIteratorLightmappedMultitexture(void)
 /*
 ===================
 RB_EndSurface
-
 ===================
 */
 void RB_EndSurface(void)

@@ -867,8 +867,8 @@ AddDecalSurface()
 */
 void R_AddDecalSurface(decal_t *decal)
 {
-	int          i, dlightMap;
-	float        fade;
+	int dlightMap;
+
 	srfDecal_t   *srf;
 	srfGeneric_t *gen;
 
@@ -890,8 +890,10 @@ void R_AddDecalSurface(decal_t *decal)
 	/* fade colors */
 	if (decal->fadeStartTime < tr.refdef.time && decal->fadeStartTime < decal->fadeEndTime)
 	{
-		fade = (float) (decal->fadeEndTime - tr.refdef.time) /
-		       (float) (decal->fadeEndTime - decal->fadeStartTime);
+		int   i;
+		float fade = (float) (decal->fadeEndTime - tr.refdef.time) /
+		             (float) (decal->fadeEndTime - decal->fadeStartTime);
+
 		for (i = 0; i < decal->numVerts; i++)
 		{
 			decal->verts[i].modulate[0] *= fade;

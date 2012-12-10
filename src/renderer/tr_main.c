@@ -661,9 +661,6 @@ void R_SetFrameFog(void)
 	// still fading
 	if (glfogsettings[FOG_TARGET].finishTime && glfogsettings[FOG_TARGET].finishTime >= tr.refdef.time)
 	{
-		float lerpPos;
-		int   fadeTime;
-
 		// transitioning from density to distance
 		if (glfogsettings[FOG_LAST].mode == GL_EXP && glfogsettings[FOG_TARGET].mode == GL_LINEAR)
 		{
@@ -680,7 +677,9 @@ void R_SetFrameFog(void)
 		// transitioning like fog modes
 		else
 		{
-			fadeTime = glfogsettings[FOG_TARGET].finishTime - glfogsettings[FOG_TARGET].startTime;
+			float lerpPos;
+			int   fadeTime = glfogsettings[FOG_TARGET].finishTime - glfogsettings[FOG_TARGET].startTime;
+
 			if (fadeTime <= 0)
 			{
 				fadeTime = 1;   // avoid divide by zero
@@ -1238,16 +1237,16 @@ SurfIsOffscreen
 */
 static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128])
 {
-	float        shortest = 100000000;
-	int          entityNum;
-	int          numTriangles;
-	shader_t     *shader;
-	int          fogNum;
-	int          frontFace;
-	int          dlighted;
-	vec4_t       clip, eye;
-	int          i;
-	unsigned int pointOr  = 0;
+	float    shortest = 100000000;
+	int      entityNum;
+	int      numTriangles;
+	shader_t *shader;
+	int      fogNum;
+	int      frontFace;
+	int      dlighted;
+	vec4_t   clip, eye;
+	int      i;
+	//unsigned int pointOr  = 0;
 	unsigned int pointAnd = (unsigned int)~0;
 	int          j;
 	unsigned int pointFlags;
@@ -1283,7 +1282,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 			}
 		}
 		pointAnd &= pointFlags;
-		pointOr  |= pointFlags;
+		//pointOr  |= pointFlags;
 	}
 
 	// trivially reject

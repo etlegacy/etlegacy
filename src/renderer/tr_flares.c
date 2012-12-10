@@ -124,7 +124,6 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 	int     i;
 	flare_t *f;
 	vec3_t  local;
-	float   d;
 	vec4_t  eye, clip, normalized, window;
 
 	backEnd.pc.c_flareAdds++;
@@ -205,6 +204,8 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 	// light surface turns away from the viewer
 	if (normal)
 	{
+		float d;
+
 		VectorSubtract(backEnd.viewParms.orientation.origin, point, local);
 		VectorNormalizeFast(local);
 		d = DotProduct(local, normal);
