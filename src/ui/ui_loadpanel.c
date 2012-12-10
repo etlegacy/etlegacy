@@ -297,7 +297,6 @@ const char *UI_DownloadInfo(const char *downloadName)
 
 	char       dlSizeBuf[64], totalSizeBuf[64], xferRateBuf[64], dlTimeBuf[64];
 	int        downloadSize, downloadCount, downloadTime;
-	int        xferRate;
 	const char *s, *ds;
 
 	downloadSize  = trap_Cvar_VariableValue("cl_downloadSize");
@@ -326,6 +325,8 @@ const char *UI_DownloadInfo(const char *downloadName)
 	}
 	else
 	{
+		int xferRate;
+
 		if ((uiInfo.uiDC.realTime - downloadTime) / 1000)
 		{
 			xferRate = downloadCount / ((uiInfo.uiDC.realTime - downloadTime) / 1000);

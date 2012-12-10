@@ -243,19 +243,20 @@ void Text_SetActiveFont(int font)
 
 int Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	int         count, len;
 	float       out = 0;
 	glyphInfo_t *glyph;
 	const char  *s = text;
 
 	if (text)
 	{
-		len = strlen(text);
+		int count = 0;
+		int len   = strlen(text);
+
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
 		}
-		count = 0;
+
 		while (s && *s && count < len)
 		{
 			if (Q_IsColorString(s))
@@ -283,7 +284,6 @@ int Text_Width(const char *text, float scale, int limit)
 
 int Multiline_Text_Width(const char *text, float scale, int limit)
 {
-	int         count, len;
 	float       out = 0;
 	float       width, widest = 0;
 	glyphInfo_t *glyph;
@@ -292,12 +292,14 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 
 	if (text)
 	{
-		len = strlen(text);
+		int len   = strlen(text);
+		int count = 0;
+
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
 		}
-		count = 0;
+
 		while (s && *s && count < len)
 		{
 			if (Q_IsColorString(s))
@@ -345,7 +347,6 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 
 int Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	int         len, count;
 	float       max;
 	glyphInfo_t *glyph;
 	const char  *s = text;
@@ -353,12 +354,14 @@ int Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 	max = 0;
 	if (text)
 	{
-		len = strlen(text);
+		int count = 0;
+		int len   = strlen(text);
+
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
 		}
-		count = 0;
+
 		while (s && *s && count < len)
 		{
 			if (Q_IsColorString(s))
@@ -391,22 +394,22 @@ int Text_Height(const char *text, float scale, int limit)
 
 int Multiline_Text_Height(const char *text, float scale, int limit)
 {
-	int         len, count;
-	float       max;
+	float       max         = 0;
 	float       totalheight = 0;
 	glyphInfo_t *glyph;
 	const char  *s    = text;
 	fontInfo_t  *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 
-	max = 0;
 	if (text)
 	{
-		len = strlen(text);
+		int count = 0;
+		int len   = strlen(text);
+
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
 		}
-		count = 0;
+
 		while (s && *s && count < len)
 		{
 			if (Q_IsColorString(s))
@@ -472,25 +475,27 @@ void Text_PaintChar(float x, float y, float w, float h, float scale, float s, fl
 
 void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font)
 {
-	int         len, count;
 	vec4_t      newColor;
 	glyphInfo_t *glyph;
-	int         index;
 
 	scalex *= font->glyphScale;
 	scaley *= font->glyphScale;
 
 	if (text)
 	{
-		const char *s = text;
+		const char *s  = text;
+		int        len = strlen(text);
+		int        index;
+		int        count = 0;
+
 		trap_R_SetColor(color);
 		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
-		len = strlen(text);
+
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
 		}
-		count = 0;
+
 		while (s && *s && count < len)
 		{
 			index = (unsigned char)*s;
@@ -551,183 +556,28 @@ void Text_Paint(float x, float y, float scale, vec4_t color, const char *text, f
 	Text_Paint_Ext(x, y, scale, scale, color, text, adjust, limit, style, font);
 }
 
-// copied over from Text_Paint
-// we use the bulk of Text_Paint to determine were we will hit the max width
-// can be used for actual text printing, or dummy run to get the number of lines
-// returns the next char to be printed after wrap, or the ending \0 of the string
-// NOTE: this is clearly non-optimal implementation, see Item_Text_AutoWrap_Paint for one
-// if color_save != NULL, use to keep track of the current color between wraps
-char *Text_AutoWrap_Paint_Chunk(float x, float y, int width, float scale, vec4_t color, char *text, float adjust, int limit, int style, qboolean dummy, vec4_t color_save)
-{
-	int         len, count;
-	vec4_t      newColor;
-	glyphInfo_t *glyph;
-	float       useScale;
-	fontInfo_t  *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
-	int         index;
-	char        *wrap_point = NULL;
-
-	float wrap_x = x + width;
-
-	useScale = scale * font->glyphScale;
-
-	if (text)
-	{
-		char *s = text;
-		trap_R_SetColor(color);
-		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
-		len = strlen(text);
-		if (limit > 0 && len > limit)
-		{
-			len = limit;
-		}
-		count = 0;
-		while (s && *s && count < len)
-		{
-			index = (unsigned char)*s;
-			if (*s == ' ' || *s == '\t' || *s == '\n')
-			{
-				wrap_point = s;
-			}
-
-			// don't draw tabs and newlines
-			if (index < 20)
-			{
-				s++;
-				count++;
-				continue;
-			}
-
-			glyph = &font->glyphs[index]; // this needs to be an unsigned cast for localization
-			if (Q_IsColorString(s))
-			{
-				if (*(s + 1) == COLOR_NULL)
-				{
-					memcpy(&newColor[0], &color[0], sizeof(vec4_t));
-				}
-				else
-				{
-					memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
-					newColor[3] = color[3];
-				}
-				if (!dummy)
-				{
-					trap_R_SetColor(newColor);
-				}
-				if (color_save)
-				{
-					memcpy(&color_save[0], &newColor[0], sizeof(vec4_t));
-				}
-				s += 2;
-				continue;
-			}
-			else
-			{
-				float yadj = useScale * glyph->top;
-
-				if (x + (glyph->xSkip * useScale) + adjust > wrap_x)
-				{
-					if (wrap_point)
-					{
-						return wrap_point + 1; // the next char to be printed after line wrap
-					}
-					// we haven't found the wrap point .. cut
-					return s;
-				}
-
-				if (!dummy)
-				{
-					if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
-					{
-						int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
-						colorBlack[3] = newColor[3];
-						trap_R_SetColor(colorBlack);
-						Text_PaintChar(x + ofs, y - yadj + ofs,
-						               glyph->imageWidth,
-						               glyph->imageHeight,
-						               useScale,
-						               glyph->s,
-						               glyph->t,
-						               glyph->s2,
-						               glyph->t2,
-						               glyph->glyph);
-						trap_R_SetColor(newColor);
-						colorBlack[3] = 1.0;
-					}
-					Text_PaintChar(x, y - yadj,
-					               glyph->imageWidth,
-					               glyph->imageHeight,
-					               useScale,
-					               glyph->s,
-					               glyph->t,
-					               glyph->s2,
-					               glyph->t2,
-					               glyph->glyph);
-				}
-
-				x += (glyph->xSkip * useScale) + adjust;
-				s++;
-				count++;
-			}
-		}
-		if (!dummy)
-		{
-			trap_R_SetColor(NULL);
-		}
-	}
-	return text + strlen(text);
-}
-
-void Text_AutoWrap_Paint(float x, float y, int width, int height, float scale, vec4_t color, const char *l_text, float adjust, int style)
-{
-	char   text[1024];
-	char   *ret, *end, *next;
-	char   s;
-	vec4_t aux_color, next_color;
-
-	Q_strncpyz(text, l_text, sizeof(text) - 1);
-	ret = text;
-	end = text + strlen(text);
-	memcpy(&aux_color[0], &color[0], sizeof(vec4_t));
-
-	do
-	{
-		// one run to get the word wrap
-		next = Text_AutoWrap_Paint_Chunk(x, y, width, scale, aux_color, ret, adjust, 0, style, qtrue, next_color);
-		// now print - hack around a bit to avoid the word wrapped chars
-		s     = *next;
-		*next = '\0';
-		Text_Paint(x, y, scale, aux_color, ret, adjust, 0, style);
-		*next = s;
-		ret   = next;
-		memcpy(&aux_color[0], &next_color[0], sizeof(vec4_t));
-		y += height;
-	}
-	while (ret < end);
-}
-
 void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, char cursor, int limit, int style)
 {
-	int         len, count;
 	vec4_t      newColor;
 	glyphInfo_t *glyph, *glyph2;
-	float       yadj;
-	float       useScale;
-	fontInfo_t  *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
-
-	useScale = scale * font->glyphScale;
+	fontInfo_t  *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+	float       useScale = scale * font->glyphScale;
 
 	if (text)
 	{
-		const char *s = text;
+		float      yadj;
+		int        len   = strlen(text);
+		int        count = 0;
+		const char *s    = text;
+
 		trap_R_SetColor(color);
 		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
-		len = strlen(text);
+
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
 		}
-		count  = 0;
+
 		glyph2 = &font->glyphs[(unsigned char)cursor];
 		while (s && *s && count < len)
 		{
@@ -804,25 +654,25 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 
 static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit)
 {
-	int         len, count;
+
 	vec4_t      newColor;
 	glyphInfo_t *glyph;
 	if (text)
 	{
-		const char *s  = text;
-		float      max = *maxX;
-		float      useScale;
-		fontInfo_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
-
-		useScale = scale * font->glyphScale;
+		const char *s       = text;
+		float      max      = *maxX;
+		fontInfo_t *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+		float      useScale = scale * font->glyphScale;
+		int        len      = strlen(text);
+		int        count    = 0;
 
 		trap_R_SetColor(color);
-		len = strlen(text);
+
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
 		}
-		count = 0;
+
 		while (s && *s && count < len)
 		{
 			glyph = &font->glyphs[(unsigned char)*s]; // this needs to be an unsigned cast for localization
@@ -882,14 +732,6 @@ _UI_Refresh
 =================
 */
 
-void UI_DrawCenteredPic(qhandle_t image, int w, int h)
-{
-	int x, y;
-	x = (SCREEN_WIDTH - w) / 2;
-	y = (SCREEN_HEIGHT - h) / 2;
-	UI_DrawHandlePic(x, y, w, h, image);
-}
-
 int frameCount = 0;
 int startTime;
 
@@ -906,9 +748,9 @@ void _UI_Refresh(int realtime)
 	index++;
 	if (index > UI_FPS_FRAMES)
 	{
-		int i, total;
+		int i, total = 0;
+
 		// average multiple frames together to smooth changes out a bit
-		total = 0;
 		for (i = 0 ; i < UI_FPS_FRAMES ; i++)
 		{
 			total += previousTimes[i];
@@ -1441,10 +1283,10 @@ static void UI_DrawGameType(rectDef_t *rect, float scale, vec4_t color, int text
 
 static int UI_TeamIndexFromName(const char *name)
 {
-	int i;
-
 	if (name && *name)
 	{
+		int i;
+
 		for (i = 0; i < uiInfo.teamCount; i++)
 		{
 			if (Q_stricmp(name, uiInfo.teamList[i].teamName) == 0)
@@ -1476,8 +1318,8 @@ UI_DrawClanLogo
 */
 static void UI_DrawClanLogo(rectDef_t *rect, float scale, vec4_t color)
 {
-	int i;
-	i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
+	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
+
 	if (i >= 0 && i < uiInfo.teamCount)
 	{
 		trap_R_SetColor(color);
@@ -1501,8 +1343,8 @@ UI_DrawClanCinematic
 */
 static void UI_DrawClanCinematic(rectDef_t *rect, float scale, vec4_t color)
 {
-	int i;
-	i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
+	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
+
 	if (i >= 0 && i < uiInfo.teamCount)
 	{
 
@@ -1530,7 +1372,6 @@ static void UI_DrawClanCinematic(rectDef_t *rect, float scale, vec4_t color)
 			trap_R_SetColor(NULL);
 		}
 	}
-
 }
 
 static void UI_DrawPreviewCinematic(rectDef_t *rect, float scale, vec4_t color)
@@ -1553,14 +1394,13 @@ static void UI_DrawPreviewCinematic(rectDef_t *rect, float scale, vec4_t color)
 
 static void UI_DrawTeamName(rectDef_t *rect, float scale, vec4_t color, qboolean blue, int textStyle)
 {
-	int i;
-	i = UI_TeamIndexFromName(UI_Cvar_VariableString((blue) ? "ui_blueTeam" : "ui_redTeam"));
+	int i = UI_TeamIndexFromName(UI_Cvar_VariableString((blue) ? "ui_blueTeam" : "ui_redTeam"));
+
 	if (i >= 0 && i < uiInfo.teamCount)
 	{
 		Text_Paint(rect->x, rect->y, scale, color, va("%s: %s", (blue) ? "Blue" : "Red", uiInfo.teamList[i].teamName), 0, 0, textStyle);
 	}
 }
-
 
 static void UI_DrawEffects(rectDef_t *rect, float scale, vec4_t color)
 {
@@ -2902,10 +2742,11 @@ static void UI_DrawSelectedPlayer(rectDef_t *rect, float scale, vec4_t color, in
 
 static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
-	int serverCount;
 	if (uiInfo.serverStatus.refreshActive)
 	{
 		vec4_t lowLight, newColor;
+		int    serverCount;
+
 		lowLight[0] = 0.8 * color[0];
 		lowLight[1] = 0.8 * color[1];
 		lowLight[2] = 0.8 * color[2];
@@ -3006,7 +2847,6 @@ static void UI_DrawServerMOTD(rectDef_t *rect, float scale, vec4_t color)
 		{
 			uiInfo.serverStatus.motdPaintX2 = -1;
 		}
-
 	}
 }
 
@@ -3229,7 +3069,6 @@ qboolean UI_OwnerDrawVisible(int flags)
 
 	while (flags)
 	{
-
 		if (flags & UI_SHOW_FFA)
 		{
 			flags &= ~UI_SHOW_FFA;
@@ -3487,7 +3326,6 @@ static qboolean UI_Effects_HandleKey(int flags, float *special, int key)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
 	{
-
 		if (key == K_MOUSE2)
 		{
 			uiInfo.effectsColor--;
@@ -3516,8 +3354,8 @@ static qboolean UI_ClanName_HandleKey(int flags, float *special, int key)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
 	{
-		int i;
-		i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
+		int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
+
 		if (uiInfo.teamList[i].cinematic >= 0)
 		{
 			trap_CIN_StopCinematic(uiInfo.teamList[i].cinematic);
@@ -3596,8 +3434,7 @@ static qboolean UI_TeamName_HandleKey(int flags, float *special, int key, qboole
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
 	{
-		int i;
-		i = UI_TeamIndexFromName(UI_Cvar_VariableString((blue) ? "ui_blueTeam" : "ui_redTeam"));
+		int i = UI_TeamIndexFromName(UI_Cvar_VariableString((blue) ? "ui_blueTeam" : "ui_redTeam"));
 
 		if (key == K_MOUSE2)
 		{
@@ -4043,12 +3880,13 @@ static void UI_LoadSavegames(void)
 {
 	char sglist[4096];
 	char *sgname;
-	int  i, len;
 
 	uiInfo.savegameCount = trap_FS_GetFileList("save", "svg", sglist, 4096);
 
 	if (uiInfo.savegameCount)
 	{
+		int i, len;
+
 		if (uiInfo.savegameCount > MAX_SAVEGAMES)
 		{
 			uiInfo.savegameCount = MAX_SAVEGAMES;
@@ -4056,7 +3894,6 @@ static void UI_LoadSavegames(void)
 		sgname = sglist;
 		for (i = 0; i < uiInfo.savegameCount; i++)
 		{
-
 			len = strlen(sgname);
 
 			if (!Q_strncmp(sgname, "current", 7))         // ignore current.svg since it has special uses and shouldn't be loaded directly
@@ -4151,46 +3988,6 @@ static void UI_LoadDemos(void)
 	}
 }
 
-/*
-==============
-UI_StartSkirmish
-==============
-*/
-static void UI_StartSkirmish(qboolean next)
-{
-}
-
-void WM_setItemPic(char *name, const char *shader)
-{
-	menuDef_t *menu = Menu_GetFocused();
-	itemDef_t *item;
-
-	item = Menu_FindItemByName(menu, name);
-	if (item)
-	{
-		item->window.background = DC->registerShaderNoMip(shader);
-	}
-}
-
-void WM_setVisibility(char *name, qboolean show)
-{
-	menuDef_t *menu = Menu_GetFocused();
-	itemDef_t *item;
-
-	item = Menu_FindItemByName(menu, name);
-	if (item)
-	{
-		if (show)
-		{
-			item->window.flags |= WINDOW_VISIBLE;
-		}
-		else
-		{
-			item->window.flags &= ~(WINDOW_VISIBLE | WINDOW_MOUSEOVER);
-		}
-	}
-}
-
 qboolean UI_CheckExecKey(int key)
 {
 	menuDef_t *menu = Menu_GetFocused();
@@ -4223,30 +4020,6 @@ qboolean UI_CheckExecKey(int key)
 	}
 
 	return qfalse;
-}
-
-void WM_ActivateLimboChat(void)
-{
-	menuDef_t *menu;
-	itemDef_t *itemdef;
-
-	menu = Menu_GetFocused();
-	menu = Menus_ActivateByName("wm_limboChat", qtrue);
-
-	if (!menu || g_editItem)
-	{
-		return;
-	}
-
-	itemdef = Menu_FindItemByName(menu, "window_limbo_chat");
-
-	if (itemdef)
-	{
-		itemdef->cursorPos = 0;
-		g_editingField     = qtrue;
-		g_editItem         = itemdef;
-		DC->setOverstrikeMode(qtrue);
-	}
 }
 
 /*
@@ -4778,14 +4551,6 @@ void UI_RunMenuScript(char **args)
 				// make sure we sort again
 				UI_ServersSort(sortColumn, qtrue);
 			}
-		}
-		else if (Q_stricmp(name, "nextSkirmish") == 0)
-		{
-			UI_StartSkirmish(qtrue);
-		}
-		else if (Q_stricmp(name, "SkirmishStart") == 0)
-		{
-			UI_StartSkirmish(qfalse);
 		}
 		else if (Q_stricmp(name, "closeingame") == 0)
 		{
@@ -6309,7 +6074,7 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
 {
 	char      *p, *score, *ping, *name, *p_val = NULL, *p_name = NULL;
 	menuDef_t *menu, *menu2; // we use the URL buttons in several menus
-	int       i, len;
+
 
 	if (!info)
 	{
@@ -6319,6 +6084,8 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
 	memset(info, 0, sizeof(*info));
 	if (trap_LAN_ServerStatus(serverAddress, info->text, sizeof(info->text)))
 	{
+		int i, len;
+
 		menu  = Menus_FindByName("serverinfo_popmenu");
 		menu2 = Menus_FindByName("popupError");
 
@@ -8018,18 +7785,6 @@ void _UI_MouseEvent(int dx, int dy)
 	}
 }
 
-void UI_LoadNonIngame(void)
-{
-	const char *menuSet = UI_Cvar_VariableString("ui_menuFiles");
-
-	if (menuSet == NULL || menuSet[0] == '\0')
-	{
-		menuSet = "ui/menus.txt";
-	}
-	UI_LoadMenus(menuSet, qfalse);
-	uiInfo.inGameLoad = qfalse;
-}
-
 static uiMenuCommand_t menutype = UIMENU_NONE;
 
 uiMenuCommand_t _UI_GetActiveMenu(void)
@@ -8292,12 +8047,6 @@ void UI_PrintTime(char *buf, int bufsize, int time)
 	}
 }
 
-void Text_PaintCenter(float x, float y, float scale, vec4_t color, const char *text, float adjust)
-{
-	int len = Text_Width(text, scale, 0);
-	Text_Paint(x - len / 2, y, scale, color, text, 0, 0, ITEM_TEXTSTYLE_SHADOWEDMORE);
-}
-
 /*
 ========================
 UI_DrawConnectScreen
@@ -8306,7 +8055,6 @@ This will also be overlaid on the cgame info screen during loading
 to prevent it from blinking away too rapidly on local or lan games.
 ========================
 */
-
 void UI_DrawConnectScreen(qboolean overlay)
 {
 	if (!overlay)
@@ -8896,13 +8644,11 @@ void UI_Campaign_f(void)
 
 void UI_ListCampaigns_f(void)
 {
-	int i, mpCampaigns;
+	int i, mpCampaigns = 0;
 
 	UI_LoadArenas();
 	UI_MapCountByGameType(qfalse);
 	UI_LoadCampaigns();
-
-	mpCampaigns = 0;
 
 	for (i = 0; i < uiInfo.campaignCount; i++)
 	{

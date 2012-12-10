@@ -382,7 +382,6 @@ static void UI_PlayerAngles(playerInfo_t *pi, vec3_t legs[3], vec3_t torso[3], v
 	legsAngles[YAW]  = headAngles[YAW] + adjust;
 	torsoAngles[YAW] = headAngles[YAW] + 0.25 * adjust;
 
-
 	// torso
 	UI_SwingAngles(torsoAngles[YAW], 25, 90, SWINGSPEED, &pi->torso.yawAngle, &pi->torso.yawing);
 	UI_SwingAngles(legsAngles[YAW], 40, 90, SWINGSPEED, &pi->legs.yawAngle, &pi->legs.yawing);
@@ -432,49 +431,6 @@ static void UI_PlayerFloatSprite(playerInfo_t *pi, vec3_t origin, qhandle_t shad
 	ent.radius       = 10;
 	ent.renderfx     = 0;
 	trap_R_AddRefEntityToScene(&ent);
-}
-
-/*
-======================
-UI_MachinegunSpinAngle
-======================
-*/
-float UI_MachinegunSpinAngle(playerInfo_t *pi)
-{
-	int   delta;
-	float angle;
-	float speed;
-	int   torsoAnim;
-
-	delta = dp_realtime - pi->barrelTime;
-	if (pi->barrelSpinning)
-	{
-		angle = pi->barrelAngle + delta * SPIN_SPEED;
-	}
-	else
-	{
-		if (delta > COAST_TIME)
-		{
-			delta = COAST_TIME;
-		}
-
-		speed = 0.5 * (SPIN_SPEED + (float)(COAST_TIME - delta) / COAST_TIME);
-		angle = pi->barrelAngle + delta * speed;
-	}
-
-	torsoAnim = pi->torsoAnim  & ~ANIM_TOGGLEBIT;
-	if (torsoAnim == TORSO_ATTACK2)
-	{
-		torsoAnim = TORSO_ATTACK;
-	}
-	if (pi->barrelSpinning == !(torsoAnim == TORSO_ATTACK))
-	{
-		pi->barrelTime     = dp_realtime;
-		pi->barrelAngle    = AngleMod(angle);
-		pi->barrelSpinning = !!(torsoAnim == TORSO_ATTACK);
-	}
-
-	return angle;
 }
 
 /*

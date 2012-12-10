@@ -3975,9 +3975,6 @@ qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 	case ITEM_TYPE_SLIDER:
 		return Item_Slider_HandleKey(item, key, down);
 		break;
-	//case ITEM_TYPE_IMAGE:
-	//  Item_Image_Paint(item);
-	//  break;
 	default:
 		return qfalse;
 		break;
@@ -5642,15 +5639,6 @@ void Item_Model_Paint(itemDef_t *item)
 	DC->renderScene(&refdef);
 }
 
-void Item_Image_Paint(itemDef_t *item)
-{
-	if (item == NULL)
-	{
-		return;
-	}
-	DC->drawHandlePic(item->window.rect.x + 1, item->window.rect.y + 1, item->window.rect.w - 2, item->window.rect.h - 2, item->asset);
-}
-
 void Item_ListBox_Paint(itemDef_t *item)
 {
 	float        x, y, size, count, i, thumb;
@@ -6158,9 +6146,6 @@ void Item_Paint(itemDef_t *item)
 	case ITEM_TYPE_LISTBOX:
 		Item_ListBox_Paint(item);
 		break;
-//      case ITEM_TYPE_IMAGE:
-//          Item_Image_Paint(item);
-//          break;
 	case ITEM_TYPE_MENUMODEL:
 		Item_Model_Paint(item);
 		break;
@@ -6196,6 +6181,7 @@ void Menu_Init(menuDef_t *menu)
 	Window_Init(&menu->window);
 }
 
+// @note Unused
 itemDef_t *Menu_GetFocusedItem(menuDef_t *menu)
 {
 	int i;
