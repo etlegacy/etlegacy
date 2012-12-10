@@ -2672,7 +2672,7 @@ void Com_SetRecommended()
 	}
 }
 
-// Arnout: gameinfo, to let the engine know which gametypes are SP and if we should use profiles.
+// gameinfo, to let the engine know what is the default gametype and if we should use profiles.
 // This can't be dependant on gamecode as we sometimes need to know about it when no game-modules
 // are loaded
 gameInfo_t com_gameInfo;
@@ -2686,55 +2686,11 @@ void Com_GetGameInfo(void)
 
 	if (FS_ReadFile("gameinfo.dat", (void **)&f) > 0)
 	{
-
 		buf = f;
 
 		while ((token = COM_Parse(&buf)) != NULL && token[0])
 		{
-			if (!Q_stricmp(token, "spEnabled"))
-			{
-				com_gameInfo.spEnabled = qtrue;
-			}
-			else if (!Q_stricmp(token, "spGameTypes"))
-			{
-				while ((token = COM_ParseExt(&buf, qfalse)) != NULL && token[0])
-				{
-					com_gameInfo.spGameTypes |= (1 << atoi(token));
-				}
-			}
-			else if (!Q_stricmp(token, "defaultSPGameType"))
-			{
-				if ((token = COM_ParseExt(&buf, qfalse)) != NULL && token[0])
-				{
-					com_gameInfo.defaultSPGameType = atoi(token);
-				}
-				else
-				{
-					FS_FreeFile(f);
-					Com_Error(ERR_FATAL, "Com_GetGameInfo: bad syntax.\n");
-				}
-			}
-			else if (!Q_stricmp(token, "coopGameTypes"))
-			{
-
-				while ((token = COM_ParseExt(&buf, qfalse)) != NULL && token[0])
-				{
-					com_gameInfo.coopGameTypes |= (1 << atoi(token));
-				}
-			}
-			else if (!Q_stricmp(token, "defaultCoopGameType"))
-			{
-				if ((token = COM_ParseExt(&buf, qfalse)) != NULL && token[0])
-				{
-					com_gameInfo.defaultCoopGameType = atoi(token);
-				}
-				else
-				{
-					FS_FreeFile(f);
-					Com_Error(ERR_FATAL, "Com_GetGameInfo: bad syntax.\n");
-				}
-			}
-			else if (!Q_stricmp(token, "defaultGameType"))
+			if (!Q_stricmp(token, "defaultGameType"))
 			{
 				if ((token = COM_ParseExt(&buf, qfalse)) != NULL && token[0])
 				{
@@ -2770,16 +2726,18 @@ void Com_GetGameInfo(void)
 	}
 }
 
-// bani - checks if profile.pid is valid
-// return qtrue if it is
-// return qfalse if it isn't(!)
+/**
+ * @brief Checks if profile.pid is valid
+ * @retval qtrue if valid
+ * @retval qfalse if invalid(!)
+ */
 qboolean Com_CheckProfile(char *profile_path)
 {
 	fileHandle_t f;
 	char         f_data[32];
 	int          f_pid;
 
-	//let user override this
+	// let user override this
 	if (com_ignorecrash->integer)
 	{
 		return qtrue;
@@ -2787,7 +2745,7 @@ qboolean Com_CheckProfile(char *profile_path)
 
 	if (FS_FOpenFileRead(profile_path, &f, qtrue) < 0)
 	{
-		//no profile found, we're ok
+		// no profile found, we're ok
 		return qtrue;
 	}
 

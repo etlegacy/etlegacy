@@ -39,10 +39,8 @@
 #include "../game/g_public.h"
 #include "../game/bg_public.h"
 
-//=============================================================================
+#define PERS_SCORE              0   // !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
 
-#define PERS_SCORE              0       // !!! MUST NOT CHANGE, SERVER AND
-                                        // GAME BOTH REFERENCE !!!
 // advert control
 #define SVA_MASTER      0x0001  // 1  - master server
 #define SVA_TRACKBASE   0x0002  // 2  - trackbase
@@ -83,7 +81,6 @@ typedef struct
 	int serverId;                       // changes each server start
 	int restartedServerId;              // serverId before a map_restart
 	int checksumFeed;                   // the feed key that we use to compute the pure checksum strings
-	// show_bug.cgi?id=475
 	// the serverId associated with the current checksumFeed (always <= serverId)
 	int checksumFeedServerId;
 	int snapshotCounter;                // incremented for each snapshot built
@@ -106,7 +103,7 @@ typedef struct
 
 	int restartTime;
 
-	// NERVE - SMF - net debugging
+	// net debugging
 	int bpsWindow[MAX_BPS_WINDOW];
 	int bpsWindowSteps;
 	int bpsTotalBytes;
@@ -197,12 +194,12 @@ typedef struct client_s
 	int downloadSendTime;               // time we last got an ack from the client
 
 	// www downloading
-	qboolean bDlOK;    // passed from cl_wwwDownload CVAR_USERINFO, wether this client supports www dl
-	char downloadURL[MAX_OSPATH];            // the URL we redirected the client to
-	qboolean bWWWDl;    // we have a www download going
-	qboolean bWWWing;    // the client is doing an ftp/http download
-	qboolean bFallback;    // last www download attempt failed, fallback to regular download
-	// note: this is one-shot, multiple downloads would cause a www download to be attempted again
+	qboolean bDlOK;                     // passed from cl_wwwDownload CVAR_USERINFO, wether this client supports www dl
+	char downloadURL[MAX_OSPATH];       // the URL we redirected the client to
+	qboolean bWWWDl;                    // we have a www download going
+	qboolean bWWWing;                   // the client is doing an ftp/http download
+	qboolean bFallback;                 // last www download attempt failed, fallback to regular download
+	// NOTE: this is one-shot, multiple downloads would cause a www download to be attempted again
 
 	int deltaMessage;                   // frame last client usercmd message
 	int nextReliableTime;               // svs.time when another reliable command will be allowed
@@ -217,9 +214,8 @@ typedef struct client_s
 	int rate;                           // bytes / second
 	int snapshotMsec;                   // requests a snapshot every snapshotMsec unless rate choked
 	int pureAuthentic;
-	qboolean gotCP;  // TTimo - additional flag to distinguish between a bad pure checksum, and no cp command at all
+	qboolean gotCP;                     // additional flag to distinguish between a bad pure checksum, and no cp command at all
 	netchan_t netchan;
-	// TTimo
 	// queuing outgoing fragmented messages to send them properly, without udp packet bursts
 	// in case large fragmented messages are stacking up
 	// buffer them into this queue, and hand them out to netchan as needed
@@ -229,18 +225,24 @@ typedef struct client_s
 
 	int downloadnotify;
 
-	int protocol; //We can access clients protocol any time
+	int protocol; // We can access clients protocol any time
 } client_t;
 
 //=============================================================================
 
-// MAX_CHALLENGES is made large to prevent a denial
-// of service attack that could cycle all of them
-// out before legitimate users connected
+/**
+ * @def MAX_CHALLENGES
+ * @brief Made large to prevent a DoS attack that could
+ * cycle all of them out before legitimate users connected
+ */
 #define MAX_CHALLENGES  2048
-// Allow a certain amount of challenges to have the same IP address
-// to make it a bit harder to DOS one single IP address from connecting
-// while not allowing a single ip to grab all challenge resources
+
+/**
+ * @def MAX_CHALLENGES_MULTI
+ * @brief Allow a certain amount of challenges to have the same IP address
+ * to make it a bit harder to DOS one single IP address from connecting
+ * while not allowing a single ip to grab all challenge resources
+ */
 #define MAX_CHALLENGES_MULTI (MAX_CHALLENGES / 2)
 
 typedef struct
@@ -262,7 +264,7 @@ typedef struct
 	int time;
 } receipt_t;
 
-/*
+/**
  * @def MAX_INFO_RECEIPTS
  * @brief the maximum number of getstatus+getinfo responses that we send in
  * a two second time period.
@@ -350,7 +352,7 @@ extern cvar_t *sv_showAverageBPS;           // net debugging
 
 extern cvar_t *g_gameType;
 
-// TTimo - autodl
+// autodl
 extern cvar_t *sv_dl_maxRate;
 extern cvar_t *sv_dl_timeout;
 
@@ -362,7 +364,6 @@ extern cvar_t *sv_wwwDlDisconnected;
 extern cvar_t *sv_wwwFallbackURL;
 
 extern cvar_t *sv_cheats;
-extern cvar_t *sv_packetloss;
 extern cvar_t *sv_packetdelay;
 
 extern cvar_t *sv_fullmsg;
@@ -508,8 +509,7 @@ void SV_SectorList_f(void);
 int SV_AreaEntities(const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount);
 // fills in a table of entity numbers with entities that have bounding boxes
 // that intersect the given area.  It is possible for a non-axial bmodel
-// to be returned that doesn't actually intersect the area on an exact
-// test.
+// to be returned that doesn't actually intersect the area on an exact test.
 // returns the number of pointers filled in
 // The world entity is never returned in this list.
 

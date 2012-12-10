@@ -5274,6 +5274,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "playCampaign") == 0)
 		{
+			// TODO: Remove UI single player code
 			int map = trap_Cvar_VariableValue("ui_campaignmap");
 
 			if (map <= uiInfo.campaignList[ui_currentCampaign.integer].progress)

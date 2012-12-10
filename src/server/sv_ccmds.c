@@ -91,13 +91,9 @@ static client_t *SV_GetPlayerByName(void)
 
 //=========================================================
 
-/*
-==================
-SV_Map_f
-
-Restart the server on a different map
-==================
-*/
+/**
+ * @brief Restart the server on a different map
+ */
 static void SV_Map_f(void)
 {
 	char     *cmd;
@@ -112,15 +108,6 @@ static void SV_Map_f(void)
 		return;
 	}
 
-	if (!com_gameInfo.spEnabled)
-	{
-		if (!Q_stricmp(Cmd_Argv(0), "spdevmap") || !Q_stricmp(Cmd_Argv(0), "spmap"))
-		{
-			Com_Printf("Single Player is not enabled.\n");
-			return;
-		}
-	}
-
 	// make sure the level exists before trying to change, so that
 	// a typo at the server console won't end the game
 	Com_sprintf(expanded, sizeof(expanded), "maps/%s.bsp", map);
@@ -130,19 +117,9 @@ static void SV_Map_f(void)
 		return;
 	}
 
-	Cvar_Set("gamestate", va("%i", GS_INITIALIZE)); // NERVE - SMF - reset gamestate on map/devmap
-
-	Cvar_Set("g_currentRound", "0");              // NERVE - SMF - reset the current round
-	Cvar_Set("g_nextTimeLimit", "0");             // NERVE - SMF - reset the next time limit
-
-	// START    Mad Doctor I changes, 8/14/2002.  Need a way to force load a single player map as single player
-	if (!Q_stricmp(Cmd_Argv(0), "spdevmap") || !Q_stricmp(Cmd_Argv(0), "spmap"))
-	{
-		// This is explicitly asking for a single player load of this map
-		Cvar_Set("g_gametype", va("%i", com_gameInfo.defaultSPGameType));
-		// force latched values to get set
-		Cvar_Get("g_gametype", va("%i", com_gameInfo.defaultSPGameType), CVAR_SERVERINFO | CVAR_USERINFO | CVAR_LATCH);
-	}
+	Cvar_Set("gamestate", va("%i", GS_INITIALIZE)); // reset gamestate on map/devmap
+	Cvar_Set("g_currentRound", "0");                // reset the current round
+	Cvar_Set("g_nextTimeLimit", "0");               // reset the next time limit
 
 	cmd = Cmd_Argv(0);
 
@@ -151,16 +128,11 @@ static void SV_Map_f(void)
 		cheat = qtrue;
 	}
 	else
-	if (!Q_stricmp(cmd, "spdevmap"))
-	{
-		cheat = qtrue;
-	}
-	else
 	{
 		cheat = qfalse;
 	}
 
-	// save the map name here cause on a map restart we reload the q3config.cfg
+	// save the map name here cause on a map restart we reload the etconfig.cfg
 	// and thus nuke the arguments of the map command
 	Q_strncpyz(mapname, map, sizeof(mapname));
 
@@ -169,7 +141,8 @@ static void SV_Map_f(void)
 
 	// set the cheat value
 	// if the level was started with "map <levelname>", then
-	// cheats will not be allowed.  If started with "devmap <levelname>"
+	// cheats will not be allowed.
+	// If started with "devmap <levelname>"
 	// then cheats will be allowed
 	if (cheat)
 	{
@@ -705,16 +678,12 @@ void SV_AddOperatorCommands(void)
 	Cmd_AddCommand("map_restart", SV_MapRestart_f);
 	Cmd_AddCommand("fieldinfo", SV_FieldInfo_f);
 	Cmd_AddCommand("sectorlist", SV_SectorList_f);
-	Cmd_AddCommand("map", SV_Map_f);
-	Cmd_SetCommandCompletionFunc("map", SV_CompleteMapName);
 	Cmd_AddCommand("gameCompleteStatus", SV_GameCompleteStatus_f);
 
+	Cmd_AddCommand("map", SV_Map_f);
+	Cmd_SetCommandCompletionFunc("map", SV_CompleteMapName);
 	Cmd_AddCommand("devmap", SV_Map_f);
 	Cmd_SetCommandCompletionFunc("devmap", SV_CompleteMapName);
-	Cmd_AddCommand("spmap", SV_Map_f);
-	Cmd_SetCommandCompletionFunc("spmap", SV_CompleteMapName);
-	Cmd_AddCommand("spdevmap", SV_Map_f);
-	Cmd_SetCommandCompletionFunc("spdevmap", SV_CompleteMapName);
 
 	Cmd_AddCommand("killserver", SV_KillServer_f);
 	if (com_dedicated->integer)
