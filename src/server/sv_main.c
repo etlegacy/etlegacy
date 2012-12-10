@@ -1483,7 +1483,8 @@ void SV_Frame(int msec)
 
 		svs.totalFrameTime += (frameEndTime - frameStartTime);
 
-		Com_Printf("FRAMETIME frame: %i total\n", svs.totalFrameTime);
+		// we may send warnings (similar to watchdog) to the game in case the frametime is unacceptable
+		//Com_Printf("FRAMETIME frame: %i total %i\n", frameEndTime - frameStartTime, svs.totalFrameTime);
 
 		svs.currentFrameIndex++;
 
