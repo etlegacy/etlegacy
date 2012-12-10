@@ -3511,12 +3511,6 @@ void CL_InitRef(void)
 	Cvar_Set("cl_paused", "0");
 }
 
-// trap manual client damage commands so users can't issue them manually
-void CL_ClientDamageCommand(void)
-{
-	// do nothing
-}
-
 void CL_SaveTranslations_f(void)
 {
 	CL_SaveTransTable("scripts/translation.cfg", qfalse);
@@ -5743,6 +5737,8 @@ void CL_OpenURL(const char *url)
 /*
 ==================
 BotImport_DrawPolygon
+
+@note Unused
 ==================
 */
 void BotImport_DrawPolygon(int color, int numpoints, float *points)

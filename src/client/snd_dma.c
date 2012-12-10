@@ -343,6 +343,8 @@ static sfx_t *S_FindName(const char *name)
 /*
 =================
 S_DefaultSound
+
+@note Unused
 =================
 */
 void S_DefaultSound(sfx_t *sfx)

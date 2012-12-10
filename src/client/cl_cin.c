@@ -183,6 +183,8 @@ static void RllSetupTable(void)
  * @param signedOutput  0 for unsigned output, non-zero for signed output
  * @param flag          Flags from asset header
  * @return Number of samples placed in output buffer
+ *
+ * @note Unused
  */
 long RllDecodeMonoToMono(unsigned char *from, short *to, unsigned int size, char signedOutput, unsigned short flag)
 {
@@ -296,6 +298,7 @@ long RllDecodeStereoToStereo(unsigned char *from, short *to, unsigned int size, 
 //
 // Returns:     Number of samples placed in output buffer
 //-----------------------------------------------------------------------------
+// @note Unused
 long RllDecodeStereoToMono(unsigned char *from, short *to, unsigned int size, char signedOutput, unsigned short flag)
 {
 	unsigned int z;

@@ -150,6 +150,8 @@ static qboolean madeTable = qfalse;
 
 static int NXStreamCount;
 
+
+// @brief Unused
 void NXPutc(NXStream *stream, char out)
 {
 	stream[NXStreamCount++] = out;
@@ -308,6 +310,7 @@ void encodeMuLaw(sfx_t *sfx, short *packets)
 	}
 }
 
+// @brief Unused
 void decodeMuLaw(sndBuffer *chunk, short *to)
 {
 	int  i;

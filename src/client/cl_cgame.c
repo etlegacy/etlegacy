@@ -98,6 +98,8 @@ int CL_GetCurrentCmdNumber(void)
 /*
 ====================
 CL_GetParseEntityState
+
+@note Unused
 ====================
 */
 qboolean CL_GetParseEntityState(int parseEntityNumber, entityState_t *state)
