@@ -237,9 +237,6 @@ void Cvar_CommandCompletion(void (*callback)(const char *s))
 
 /**
  * @brief Some cvar values need to be safe from foreign characters
- *
- * @note ioquake3 seems to have a more sophisticated function for this
- * called Cvar_Validate
  */
 char *Cvar_ClearForeignCharacters(const char *value)
 {

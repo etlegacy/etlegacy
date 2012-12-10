@@ -87,7 +87,6 @@ cvar_t *sv_wwwDlDisconnected;
 cvar_t *sv_wwwFallbackURL; // URL to send to if an http/ftp fails or is refused client side
 
 cvar_t *sv_cheats;
-cvar_t *sv_packetloss;
 cvar_t *sv_packetdelay;
 
 cvar_t *sv_fullmsg;
@@ -229,7 +228,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 		{
 			continue;
 		}
-		// Ridah, don't need to send messages to AI
+		// don't need to send messages to AI
 		if (client->gentity && (client->gentity->r.svFlags & SVF_BOT))
 		{
 			continue;
@@ -972,12 +971,10 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 
 	// start redirecting all print outputs to the packet
 	svs.redirectAddress = from;
-	// FIXME TTimo our rcon redirection could be improved
-	//   big rcon commands such as status lead to sending
-	//   out of band packets on every single call to Com_Printf
-	//   which leads to client overflows
-	//   see show_bug.cgi?id=51
-	//     (also a Q3 issue)
+	/* FIXME: our rcon redirection could be improved. Big rcon commands such as status
+	          lead to sending out of band packets on every single call to Com_Printf
+	          which leads to client overflows (also a Q3 issue)
+	*/
 	Com_BeginRedirect(sv_outputbuf, SV_OUTPUTBUF_LENGTH, SV_FlushRedirect);
 
 	if (!strlen(sv_rconPassword->string))
@@ -1486,7 +1483,7 @@ void SV_Frame(int msec)
 
 		svs.totalFrameTime += (frameEndTime - frameStartTime);
 
-		Com_Printf("FRAMETIME frame: %i total\n", frameEndTime - frameStartTime, svs.totalFrameTime);
+		Com_Printf("FRAMETIME frame: %i total\n", svs.totalFrameTime);
 
 		svs.currentFrameIndex++;
 

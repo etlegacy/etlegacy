@@ -204,7 +204,6 @@ FILE(GLOB CGAME_SRC
 
 FILE(GLOB QAGAME_SRC
 	"src/game/*.c"
-	"src/game/sha-1/sha.c"
 	"src/game/sha-1/sha1.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"

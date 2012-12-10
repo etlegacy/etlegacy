@@ -1065,7 +1065,7 @@ static void LerpCMeshVertexes(mdcSurface_t *surf, float backlerp)
 	int                vertNum;
 	unsigned           lat, lng;
 	int                numVerts;
-	int                oldBase, newBase;
+	int                newBase;
 	short              *oldComp    = NULL, *newComp = NULL; // TTimo: init
 	mdcXyzCompressed_t *oldXyzComp = NULL, *newXyzComp = NULL; // TTimo: init
 	vec3_t             oldOfsVec, newOfsVec;
@@ -1126,8 +1126,8 @@ static void LerpCMeshVertexes(mdcSurface_t *surf, float backlerp)
 				outNormal[1] = tr.sinTable[lat] * tr.sinTable[lng];
 				outNormal[2] = tr.sinTable[(lng + (FUNCTABLE_SIZE / 4)) & FUNCTABLE_MASK];
 
-				// ydnar: testing anorms table
-				//% VectorCopy( r_anormals[ (lng & (0xF << 4)) | ((lat >> 4) & 0xF) ], outNormal );
+				// testing anorms table
+				// VectorCopy( r_anormals[ (lng & (0xF << 4)) | ((lat >> 4) & 0xF) ], outNormal );
 			}
 		}
 	}
