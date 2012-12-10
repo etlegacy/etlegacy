@@ -2672,60 +2672,6 @@ void Com_SetRecommended()
 	}
 }
 
-// gameinfo, to let the engine know what is the default gametype and if we should use profiles.
-// This can't be dependant on gamecode as we sometimes need to know about it when no game-modules
-// are loaded
-gameInfo_t com_gameInfo;
-
-void Com_GetGameInfo(void)
-{
-	char *f, *buf;
-	char *token;
-
-	Com_Memset(&com_gameInfo, 0, sizeof(com_gameInfo));
-
-	if (FS_ReadFile("gameinfo.dat", (void **)&f) > 0)
-	{
-		buf = f;
-
-		while ((token = COM_Parse(&buf)) != NULL && token[0])
-		{
-			if (!Q_stricmp(token, "defaultGameType"))
-			{
-				if ((token = COM_ParseExt(&buf, qfalse)) != NULL && token[0])
-				{
-					com_gameInfo.defaultGameType = atoi(token);
-				}
-				else
-				{
-					FS_FreeFile(f);
-					Com_Error(ERR_FATAL, "Com_GetGameInfo: bad syntax.\n");
-				}
-			}
-			else if (!Q_stricmp(token, "usesProfiles"))
-			{
-				if ((token = COM_ParseExt(&buf, qfalse)) != NULL && token[0])
-				{
-					com_gameInfo.usesProfiles = atoi(token);
-				}
-				else
-				{
-					FS_FreeFile(f);
-					Com_Error(ERR_FATAL, "Com_GetGameInfo: bad syntax.\n");
-				}
-			}
-			else
-			{
-				FS_FreeFile(f);
-				Com_Error(ERR_FATAL, "Com_GetGameInfo: bad syntax.\n");
-			}
-		}
-
-		// all is good
-		FS_FreeFile(f);
-	}
-}
-
 /**
  * @brief Checks if profile.pid is valid
  * @retval qtrue if valid
@@ -2806,9 +2752,11 @@ void Com_TrackProfile(char *profile_path)
 	}
 }
 
-// bani - writes pid to profile
-// returns qtrue if successful
-// returns qfalse if not(!!)
+/**
+ * @brief Writes pid to profile
+ * @retval qtrue if successful
+ * @retval qfalse if not(!!)
+ */
 qboolean Com_WriteProfile(char *profile_path)
 {
 	fileHandle_t f;
@@ -2829,7 +2777,7 @@ qboolean Com_WriteProfile(char *profile_path)
 
 	FS_FCloseFile(f);
 
-	//track profile changes
+	// track profile changes
 	Com_TrackProfile(profile_path);
 
 	return qtrue;
@@ -2898,72 +2846,63 @@ void Com_Init(char *commandLine)
 
 	Com_InitJournaling();
 
-	Com_GetGameInfo();
-
 	Cbuf_AddText("exec default.cfg\n");
 
-	// skip the q3config.cfg if "safe" is on the command line
+	// skip the etconfig.cfg if "safe" is on the command line
 	if (!Com_SafeMode())
 	{
 		char *cl_profileStr = Cvar_VariableString("cl_profile");
 
 		safeMode = qfalse;
-		if (com_gameInfo.usesProfiles)
+		if (!cl_profileStr[0])
 		{
-			if (!cl_profileStr[0])
+			char *defaultProfile = NULL;
+
+			FS_ReadFile("profiles/defaultprofile.dat", (void **)&defaultProfile);
+
+			if (defaultProfile)
 			{
-				char *defaultProfile = NULL;
+				char *text_p = defaultProfile;
+				char *token  = COM_Parse(&text_p);
 
-				FS_ReadFile("profiles/defaultprofile.dat", (void **)&defaultProfile);
-
-				if (defaultProfile)
+				if (token && *token)
 				{
-					char *text_p = defaultProfile;
-					char *token  = COM_Parse(&text_p);
-
-					if (token && *token)
-					{
-						Cvar_Set("cl_defaultProfile", token);
-						Cvar_Set("cl_profile", token);
-					}
-
-					FS_FreeFile(defaultProfile);
-
-					cl_profileStr = Cvar_VariableString("cl_defaultProfile");
-				}
-			}
-
-			if (cl_profileStr[0])
-			{
-				// bani - check existing pid file and make sure it's ok
-				if (!Com_CheckProfile(va("profiles/%s/profile.pid", cl_profileStr)))
-				{
-#ifndef _DEBUG
-					Com_Printf("^3WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
-					// ydnar: set crashed state
-					Cbuf_AddText("set com_crashed 1\n");
-#endif
+					Cvar_Set("cl_defaultProfile", token);
+					Cvar_Set("cl_profile", token);
 				}
 
-				// bani - write a new one
-				if (!Com_WriteProfile(va("profiles/%s/profile.pid", cl_profileStr)))
-				{
-					Com_Printf("^3WARNING: couldn't write profiles/%s/profile.pid\n", cl_profileStr);
-				}
+				FS_FreeFile(defaultProfile);
 
-				// exec the config
-				Cbuf_AddText(va("exec profiles/%s/%s\n", cl_profileStr, CONFIG_NAME));
+				cl_profileStr = Cvar_VariableString("cl_defaultProfile");
 			}
 		}
-		else
+
+		if (cl_profileStr[0])
 		{
-			Cbuf_AddText(va("exec %s\n", CONFIG_NAME));
+			// check existing pid file and make sure it's ok
+			if (!Com_CheckProfile(va("profiles/%s/profile.pid", cl_profileStr)))
+			{
+#ifdef NDEBUG
+				Com_Printf("^3WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
+				// set crashed state
+				Cbuf_AddText("set com_crashed 1\n");
+#endif
+			}
+
+			// write a new one
+			if (!Com_WriteProfile(va("profiles/%s/profile.pid", cl_profileStr)))
+			{
+				Com_Printf("^3WARNING: couldn't write profiles/%s/profile.pid\n", cl_profileStr);
+			}
+
+			// exec the config
+			Cbuf_AddText(va("exec profiles/%s/%s\n", cl_profileStr, CONFIG_NAME));
 		}
 	}
 
 	Cbuf_AddText("exec autoexec.cfg\n");
 
-	// ydnar: reset crashed state
+	// reset crashed state
 	Cbuf_AddText("set com_crashed 0\n");
 
 	// execute the queued commands
@@ -3153,7 +3092,7 @@ void Com_WriteConfiguration(void)
 	}
 	cvar_modifiedFlags &= ~CVAR_ARCHIVE;
 
-	if (com_gameInfo.usesProfiles && cl_profileStr[0])
+	if (cl_profileStr[0])
 	{
 		Com_WriteConfigToFile(va("profiles/%s/%s", cl_profileStr, CONFIG_NAME));
 	}
@@ -3464,7 +3403,7 @@ void Com_Shutdown(qboolean badProfile)
 	char *cl_profileStr = Cvar_VariableString("cl_profile");
 
 	// delete pid file
-	if (com_gameInfo.usesProfiles && cl_profileStr[0] && !badProfile)
+	if (cl_profileStr[0] && !badProfile)
 	{
 		if (FS_FileExists(va("profiles/%s/profile.pid", cl_profileStr)))
 		{

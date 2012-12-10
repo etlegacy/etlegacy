@@ -809,14 +809,6 @@ void Field_CompleteCommand(char *cmd,
 MISC
 ==============================================================*/
 
-typedef struct gameInfo_s
-{
-	int defaultGameType;
-	qboolean usesProfiles;
-} gameInfo_t;
-
-extern gameInfo_t com_gameInfo;
-
 // returned by Sys_GetProcessorFeatures
 typedef enum
 {
@@ -830,7 +822,7 @@ typedef enum
 	    CF_ALTIVEC   = 1 << 7
 } cpuFeatures_t;
 
-// TTimo - centralized and cleaned, that's the max string you can send to a Com_Printf / Com_DPrintf (above gets truncated)
+// max string you can send to a Com_Printf / Com_DPrintf (above gets truncated)
 #define MAXPRINTMSG 4096
 
 char *CopyString(const char *in);

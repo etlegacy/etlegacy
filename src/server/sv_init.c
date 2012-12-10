@@ -935,7 +935,7 @@ void SV_Init(void)
 
 	Cvar_Get("g_needpass", "0", CVAR_SERVERINFO);
 
-	g_gameType = Cvar_Get("g_gametype", va("%i", com_gameInfo.defaultGameType), CVAR_SERVERINFO | CVAR_LATCH);
+	g_gameType = Cvar_Get("g_gametype", "4", CVAR_SERVERINFO | CVAR_LATCH);
 
 	// the download netcode tops at 18/20 kb/s, no need to make you think you can go above
 	sv_dl_maxRate = Cvar_Get("sv_dl_maxRate", "42000", CVAR_ARCHIVE);

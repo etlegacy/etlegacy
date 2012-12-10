@@ -71,7 +71,7 @@ void LAN_LoadCachedServers(void)
 	cls.numglobalservers         = cls.numfavoriteservers = 0;
 	cls.numGlobalServerAddresses = 0;
 
-	if (com_gameInfo.usesProfiles && cl_profile->string[0])
+	if (cl_profile->string[0])
 	{
 		Com_sprintf(filename, sizeof(filename), "profiles/%s/servercache.dat", cl_profile->string);
 	}
@@ -80,7 +80,7 @@ void LAN_LoadCachedServers(void)
 		Q_strncpyz(filename, "servercache.dat", sizeof(filename));
 	}
 
-	// Arnout: moved to mod/profiles dir
+	// moved to mod/profiles dir
 	if (FS_FOpenFileRead(filename, &fileIn, qtrue))
 	{
 		FS_Read(&cls.numglobalservers, sizeof(int), fileIn);
@@ -111,7 +111,7 @@ void LAN_SaveServersToCache(void)
 	fileHandle_t fileOut;
 	char         filename[MAX_QPATH];
 
-	if (com_gameInfo.usesProfiles && cl_profile->string[0])
+	if (cl_profile->string[0])
 	{
 		Com_sprintf(filename, sizeof(filename), "profiles/%s/servercache.dat", cl_profile->string);
 	}
@@ -120,7 +120,7 @@ void LAN_SaveServersToCache(void)
 		Q_strncpyz(filename, "servercache.dat", sizeof(filename));
 	}
 
-	// Arnout: moved to mod/profiles dir
+	// moved to mod/profiles dir
 	fileOut = FS_FOpenFileWrite(filename);
 	FS_Write(&cls.numglobalservers, sizeof(int), fileOut);
 	FS_Write(&cls.numfavoriteservers, sizeof(int), fileOut);

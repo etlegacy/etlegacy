@@ -569,7 +569,7 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 		return com_token;
 	}
 
-	// RF, backup the session data so we can unget easily
+	// backup the session data so we can unget easily
 	COM_BackupParseSession(data_p);
 
 	while (1)
@@ -626,7 +626,7 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 			c = *data++;
 			if (c == '\\' && *(data) == '\"')
 			{
-				// Arnout: string-in-string
+				// string-in-string
 				if (len < MAX_TOKEN_CHARS)
 				{
 					com_token[len] = '\"';
