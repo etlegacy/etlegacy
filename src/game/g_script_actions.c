@@ -51,16 +51,16 @@ void script_linkentity(gentity_t *ent);
 
 qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params)
 {
-	char     *pString, *token;
+	char     *pString = params, *token;
 	char     modelname[MAX_QPATH];
 	int      i;
 	qboolean solid = qtrue;
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
+
 	if (!token[0])
 	{
-		G_Error("G_Scripting: setmodelfrombrushmodel must have an targetname\n");
+		G_Error("G_ScriptAction_SetModelFromBrushmodel: setmodelfrombrushmodel must have an targetname\n");
 	}
 	Q_strncpyz(modelname, token, MAX_QPATH);
 
@@ -99,7 +99,7 @@ qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params)
 		}
 	}
 
-	G_Error("G_Scripting: setmodelfrombrushmodel target not found %s\n", modelname);
+	G_Error("G_ScriptAction_SetModelFromBrushmodel: setmodelfrombrushmodel target not found %s\n", modelname);
 
 	return qtrue;
 }
@@ -107,14 +107,13 @@ qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params)
 qboolean G_ScriptAction_SetPosition(gentity_t *ent, char *params)
 {
 	pathCorner_t *pPathCorner;
-	char         *pString, *token;
+	char         *pString = params, *token;
 	gentity_t    *target;
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: setposition must have an targetname\n");
+		G_Error("G_ScriptAction_SetPosition: setposition must have an targetname\n");
 	}
 
 	if ((pPathCorner = BG_Find_PathCorner(token)))
@@ -127,7 +126,7 @@ qboolean G_ScriptAction_SetPosition(gentity_t *ent, char *params)
 		target = G_FindByTargetname(NULL, token);
 		if (!target)
 		{
-			G_Error("G_Scripting: can't find entity with \"targetname\" = \"%s\"\n", token);
+			G_Error("G_ScriptAction_SetPosition: can't find entity with \"targetname\" = \"%s\"\n", token);
 		}
 
 		G_SetOrigin(ent, target->r.currentOrigin);
@@ -142,25 +141,23 @@ qboolean G_ScriptAction_SetPosition(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_SetAutoSpawn(gentity_t *ent, char *params)
 {
-	char      *pString, *token;
+	char      *pString = params, *token;
 	char      spawnname[MAX_QPATH];
 	team_t    team;
 	int       *pTeamAutoSpawn;
 	gentity_t *tent;
 
-	pString = params;
-
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: setautospawn must have a target spawn\n");
+		G_Error("G_ScriptAction_SetAutoSpawn: setautospawn must have a target spawn\n");
 	}
 	Q_strncpyz(spawnname, token, MAX_QPATH);
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: setautospawn must have a target team\n");
+		G_Error("G_ScriptAction_SetAutoSpawn: setautospawn must have a target team\n");
 	}
 	team           = atoi(token);
 	pTeamAutoSpawn = team == 0 ? &(level.axisAutoSpawn) : &(level.alliesAutoSpawn);
@@ -168,7 +165,7 @@ qboolean G_ScriptAction_SetAutoSpawn(gentity_t *ent, char *params)
 	tent = G_Find(NULL, FOFS(message), spawnname);
 	if (!tent)
 	{
-		G_Error("G_Scripting: setautospawn, couldn't find target (%s)\n", token);
+		G_Error("G_ScriptAction_SetAutoSpawn: setautospawn, couldn't find target (%s)\n", token);
 	}
 
 	if (!tent->count)
@@ -187,15 +184,13 @@ qboolean G_ScriptAction_SetAutoSpawn(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_ChangeModel(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	char tagname[MAX_QPATH];
-
-	pString = params;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: changemodel must have a target model name\n");
+		G_Error("G_ScriptAction_ChangeModel: changemodel must have a target model name\n");
 	}
 
 	COM_StripExtension(token, tagname, sizeof(tagname));
@@ -209,24 +204,22 @@ qboolean G_ScriptAction_ChangeModel(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_ShaderRemap(gentity_t *ent, char *params)
 {
-	char  *pString, *token;
-	float f = level.time * 0.001;
+	char  *pString = params, *token;
+	float f        = level.time * 0.001;
 	char  oldShader[256];
 	char  newShader[256];
-
-	pString = params;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: remapshader must have a target shader name\n");
+		G_Error("G_ScriptAction_ShaderRemap: remapshader must have a target shader name\n");
 	}
 	Q_strncpyz(oldShader, token, 256);
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: remapshader must have a new shader name\n");
+		G_Error("G_ScriptAction_ShaderRemap: remapshader must have a new shader name\n");
 	}
 	Q_strncpyz(newShader, token, 256);
 
@@ -252,7 +245,7 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 		return qfalse;
 	}
 
-	if (!params || ent->scriptStatus.scriptStackChangeTime < level.time)              // we are waiting for it to reach destination
+	if (!params || ent->scriptStatus.scriptStackChangeTime < level.time)  // we are waiting for it to reach destination
 	{
 		if (ent->s.pos.trTime + ent->s.pos.trDuration <= level.time)      // we made it
 		{
@@ -295,7 +288,7 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 		token = COM_ParseExt(&pString, qfalse);
 		if (!token[0])
 		{
-			G_Error("G_Scripting: followpath must have a direction\n");
+			G_Error("G_ScriptAction_FollowPath: followpath must have a direction\n");
 		}
 
 		backward = atoi(token);
@@ -303,18 +296,18 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 		token = COM_ParseExt(&pString, qfalse);
 		if (!token[0])
 		{
-			G_Error("G_Scripting: followpath must have an targetname\n");
+			G_Error("G_ScriptAction_FollowPath: followpath must have an targetname\n");
 		}
 
 		if (!(pSpline = BG_Find_Spline(token)))
 		{
-			G_Error("G_Scripting: can't find spline with \"targetname\" = \"%s\"\n", token);
+			G_Error("G_ScriptAction_FollowPath: can't find spline with \"targetname\" = \"%s\"\n", token);
 		}
 
 		token = COM_ParseExt(&pString, qfalse);
 		if (!token[0])
 		{
-			G_Error("G_Scripting: followpath must have a speed\n");
+			G_Error("G_ScriptAction_FollowPath: followpath must have a speed\n");
 		}
 
 		speed = atof(token);
@@ -334,7 +327,7 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 					token = COM_ParseExt(&pString, qfalse);
 					if (!token[0])
 					{
-						G_Error("G_Scripting: length must have a value\n");
+						G_Error("G_ScriptAction_FollowPath: length must have a value\n");
 					}
 
 					length = atoi(token);
@@ -378,7 +371,6 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 			ent->scriptStatus.scriptFlags |= SCFL_GOING_TO_MARKER;
 			return qtrue;   // continue to next command
 		}
-
 	}
 
 	BG_EvaluateTrajectory(&ent->s.pos, level.time, ent->r.currentOrigin, qfalse, ent->s.effect2Time);
@@ -390,22 +382,20 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_AttatchToTrain(gentity_t *ent, char *params)
 {
-	char      *pString;
+	char      *pString = params;
 	char      *token;
 	gentity_t *target;
-
-	pString = params;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: attatchtotrain must have a target\n");
+		G_Error("G_ScriptAction_AttatchToTrain: attatchtotrain must have a target\n");
 	}
 
 	target = G_FindByTargetname(NULL, token);
 	if (!target)
 	{
-		G_Error("G_Scripting: can't find entity with \"targetname\" = \"%s\"\n", token);
+		G_Error("G_ScriptAction_AttatchToTrain: can't find entity with \"targetname\" = \"%s\"\n", token);
 	}
 
 	ent->s.torsoAnim = target->s.number;
@@ -413,7 +403,7 @@ qboolean G_ScriptAction_AttatchToTrain(gentity_t *ent, char *params)
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: attatchtotrain must have a length\n");
+		G_Error("G_ScriptAction_AttatchToTrain: attatchtotrain must have a length\n");
 	}
 
 	ent->s.angles2[0] = atoi(token);
@@ -439,18 +429,16 @@ qboolean G_ScriptAction_UnFreezeAnimation(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_StartAnimation(gentity_t *ent, char *params)
 {
-	char     *pString;
+	char     *pString = params;
 	char     *token;
 	qboolean norandom = qfalse;
 	qboolean nolerp   = qfalse;
 	qboolean noloop   = qfalse;
 
-	pString = params;
-
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: startanimation must have a start frame\n");
+		G_Error("G_ScriptAction_StartAnimation: startanimation must have a start frame\n");
 	}
 
 	ent->s.legsAnim = atoi(token);
@@ -458,7 +446,7 @@ qboolean G_ScriptAction_StartAnimation(gentity_t *ent, char *params)
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: startanimation must have a frame count\n");
+		G_Error("G_ScriptAction_StartAnimation: startanimation must have a frame count\n");
 	}
 
 	ent->s.torsoAnim = atoi(token);
@@ -466,7 +454,7 @@ qboolean G_ScriptAction_StartAnimation(gentity_t *ent, char *params)
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: startanimation must have an fps count\n");
+		G_Error("G_ScriptAction_StartAnimation: startanimation must have an fps count\n");
 	}
 
 	ent->s.weapon = 1000.f / atoi(token);
@@ -522,7 +510,7 @@ qboolean G_ScriptAction_StartAnimation(gentity_t *ent, char *params)
 qboolean G_ScriptAction_SetSpeed(gentity_t *ent, char *params)
 {
 	vec3_t   speed;
-	char     *pString;
+	char     *pString = params;
 	int      i;
 	char     *token;
 	qboolean gravity    = qfalse;
@@ -531,13 +519,12 @@ qboolean G_ScriptAction_SetSpeed(gentity_t *ent, char *params)
 	BG_EvaluateTrajectory(&ent->s.pos, level.time, ent->r.currentOrigin, qtrue, ent->s.effect2Time);
 	VectorCopy(ent->r.currentOrigin, ent->s.pos.trBase);
 
-	pString = params;
 	for (i = 0; i < 3; i++)
 	{
 		token = COM_Parse(&pString);
 		if (!token || !*token)
 		{
-			G_Error("G_Scripting: syntax: setspeed <x> <y> <z> [gravity|lowgravity]\n");
+			G_Error("G_ScriptAction_SetSpeed: syntax: setspeed <x> <y> <z> [gravity|lowgravity]\n");
 		}
 		speed[i] = atoi(token);
 	}
@@ -575,11 +562,10 @@ qboolean G_ScriptAction_SetSpeed(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-
 qboolean G_ScriptAction_SetRotation(gentity_t *ent, char *params)
 {
 	vec3_t angles;
-	char   *pString;
+	char   *pString = params;
 	int    i;
 	char   *token;
 
@@ -589,13 +575,12 @@ qboolean G_ScriptAction_SetRotation(gentity_t *ent, char *params)
 	ent->s.apos.trType = TR_LINEAR;
 	ent->s.apos.trTime = level.time;
 
-	pString = params;
 	for (i = 0; i < 3; i++)
 	{
 		token = COM_Parse(&pString);
 		if (!token || !token[0])
 		{
-			G_Error("G_Scripting: syntax: setrotation <pitchspeed> <yawspeed> <rollspeed>\n");
+			G_Error("G_ScriptAction_SetRotation: syntax: setrotation <pitchspeed> <yawspeed> <rollspeed>\n");
 		}
 		angles[i] = atoi(token);
 	}
@@ -683,7 +668,7 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 		token = COM_ParseExt(&pString, qfalse);
 		if (!token[0])
 		{
-			G_Error("G_Scripting: followspline must have a direction\n");
+			G_Error("G_ScriptAction_FollowSpline: followspline must have a direction\n");
 		}
 
 		if (!Q_stricmp(token, "accum"))
@@ -693,13 +678,13 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 			token = COM_ParseExt(&pString, qfalse);
 			if (!token[0])
 			{
-				G_Error("G_Scripting: accum without a buffer index\n");
+				G_Error("G_ScriptAction_FollowSpline: accum without a buffer index\n");
 			}
 
 			bufferIndex = atoi(token);
 			if (bufferIndex < 0 || bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS)
 			{
-				G_Error("G_Scripting: accum buffer is outside range (0 - %i)\n", MAX_SCRIPT_ACCUM_BUFFERS - 1);
+				G_Error("G_ScriptAction_FollowSpline: accum buffer is outside range (0 - %i)\n", MAX_SCRIPT_ACCUM_BUFFERS - 1);
 			}
 
 			backward = ent->scriptAccumBuffer[bufferIndex] != 0 ? qtrue : qfalse;
@@ -711,13 +696,13 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 			token = COM_ParseExt(&pString, qfalse);
 			if (!token[0])
 			{
-				G_Error("G_Scripting: globalaccum without a buffer index\n");
+				G_Error("G_ScriptAction_FollowSpline: globalaccum without a buffer index\n");
 			}
 
 			bufferIndex = atoi(token);
 			if (bufferIndex < 0 || bufferIndex >= G_MAX_SCRIPT_ACCUM_BUFFERS)
 			{
-				G_Error("G_Scripting: globalaccum buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
+				G_Error("G_ScriptAction_FollowSpline: globalaccum buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
 			}
 
 			backward = level.globalAccumBuffer[bufferIndex] != 0 ? qtrue : qfalse;
@@ -730,19 +715,19 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 		token = COM_ParseExt(&pString, qfalse);
 		if (!token[0])
 		{
-			G_Error("G_Scripting: followspline must have an targetname\n");
+			G_Error("G_ScriptAction_FollowSpline: followspline must have an targetname\n");
 		}
 
 		if (!(pSpline = BG_Find_Spline(token)))
 		{
-			G_Error("G_Scripting: can't find spline with \"targetname\" = \"%s\"\n", token);
+			G_Error("G_ScriptAction_FollowSpline: can't find spline with \"targetname\" = \"%s\"\n", token);
 		}
 		VectorSubtract(pSpline->point.origin, ent->r.currentOrigin, vec);
 
 		token = COM_ParseExt(&pString, qfalse);
 		if (!token[0])
 		{
-			G_Error("G_Scripting: followspline must have a speed\n");
+			G_Error("G_ScriptAction_FollowSpline: followspline must have a speed\n");
 		}
 
 		speed = atof(token);
@@ -762,7 +747,7 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 					token = COM_ParseExt(&pString, qfalse);
 					if (!token[0])
 					{
-						G_Error("G_Scripting: length must have a value\n");
+						G_Error("G_ScriptAction_FollowSpline: length must have a value\n");
 					}
 
 					length = atoi(token);
@@ -773,7 +758,7 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 					token = COM_ParseExt(&pString, qfalse);
 					if (!token[0])
 					{
-						G_Error("G_Scripting: roll must have a start angle\n");
+						G_Error("G_ScriptAction_FollowSpline: roll must have a start angle\n");
 					}
 
 					roll[0] = atoi(token);
@@ -781,7 +766,7 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 					token = COM_ParseExt(&pString, qfalse);
 					if (!token[0])
 					{
-						G_Error("G_Scripting: roll must have an end angle\n");
+						G_Error("G_ScriptAction_FollowSpline: roll must have an end angle\n");
 					}
 
 					roll[1] = atoi(token);
@@ -900,17 +885,15 @@ G_ScriptAction_SetChargeTimeFactor
 */
 qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 {
-	char   *pString, *token;
+	char   *pString = params, *token;
 	float  factor;
 	team_t team;
 	char   playerclass[64];
 
-	pString = params;
-
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: setchargetimefactor must have a team\n");
+		G_Error("G_ScriptAction_SetChargeTimeFactor: setchargetimefactor must have a team\n");
 	}
 
 	team = atoi(token);
@@ -918,7 +901,7 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: setchargetimefactor must have a class name\n");
+		G_Error("G_ScriptAction_SetChargeTimeFactor: setchargetimefactor must have a class name\n");
 	}
 
 	Q_strncpyz(playerclass, token, sizeof(playerclass));
@@ -927,19 +910,19 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 
 	if (!token[0])
 	{
-		G_Error("G_Scripting: setchargetimefactor must have a factor\n");
+		G_Error("G_ScriptAction_SetChargeTimeFactor: setchargetimefactor must have a factor\n");
 	}
 
 	factor = atof(token);
 
 	if (factor < 0.f)
 	{
-		G_Printf("^3WARNING: setchargetimefactor with factor < 0, clamped to 0\n");
+		G_Printf("^3WARNING G_ScriptAction_SetChargeTimeFactor: setchargetimefactor with factor < 0, clamped to 0\n");
 		factor = 0;
 	}
 	else if (factor > 1.f)
 	{
-		G_Printf("^3WARNING: setchargetimefactor with factor > 1, clamped to 1\n");
+		G_Printf("^3WARNING G_ScriptAction_SetChargeTimeFactor: setchargetimefactor with factor > 1, clamped to 1\n");
 		factor = 1.f;
 	}
 
@@ -993,7 +976,8 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-// Gordon: debris test
+// debris test
+
 /*
 =================
 G_ScriptAction_SpawnRubble
@@ -1027,13 +1011,12 @@ G_ScriptAction_AllowTankExit
 */
 qboolean G_ScriptAction_AllowTankExit(gentity_t *ent, char *params)
 {
-	char *pString, *token;
-	pString = params;
+	char *pString = params, *token;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!*token)
 	{
-		G_Error("G_Scripting: allowtankexit must have a enable value\n");
+		G_Error("G_ScriptAction_AllowTankExit: allowtankexit must have a enable value\n");
 	}
 
 	if (!Q_stricmp(token, "yes") || !Q_stricmp(token, "on") || atoi(token))
@@ -1050,13 +1033,12 @@ qboolean G_ScriptAction_AllowTankExit(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_AllowTankEnter(gentity_t *ent, char *params)
 {
-	char *pString, *token;
-	pString = params;
+	char *pString = params, *token;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!*token)
 	{
-		G_Error("G_Scripting: allowtankenter must have a enable value\n");
+		G_Error("G_ScriptAction_AllowTankEnter: allowtankenter must have a enable value\n");
 	}
 
 	if (!Q_stricmp(token, "yes") || !Q_stricmp(token, "on") || atoi(token))
@@ -1073,32 +1055,30 @@ qboolean G_ScriptAction_AllowTankEnter(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_SetTankAmmo(gentity_t *ent, char *params)
 {
-	char      *pString, *token;
+	char      *pString = params, *token;
 	gentity_t *tank;
-
-	pString = params;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!*token)
 	{
-		G_Error("G_Scripting: settankammo must have a target\n");
+		G_Error("G_ScriptAction_SetTankAmmo: settankammo must have a target\n");
 	}
 
 	tank = G_FindByTargetname(NULL, token);
 	if (!tank)
 	{
-		G_Error("G_Scripting: settankammo, failed to find target (%s)\n", token);
+		G_Error("G_ScriptAction_SetTankAmmo: settankammo, failed to find target (%s)\n", token);
 	}
 
 	if (tank->s.eType != ET_MOVER)
 	{
-		G_Error("G_Scripting: settankammo, must target a mover\n");
+		G_Error("G_ScriptAction_SetTankAmmo: settankammo, must target a mover\n");
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!*token)
 	{
-		G_Error("G_Scripting: settankammo must have an amount\n");
+		G_Error("G_ScriptAction_SetTankAmmo: settankammo must have an amount\n");
 	}
 
 	tank->s.effect1Time = atoi(token);
@@ -1108,32 +1088,30 @@ qboolean G_ScriptAction_SetTankAmmo(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_AddTankAmmo(gentity_t *ent, char *params)
 {
-	char      *pString, *token;
+	char      *pString = params, *token;
 	gentity_t *tank;
-
-	pString = params;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!*token)
 	{
-		G_Error("G_Scripting: addtankammo must have a target\n");
+		G_Error("G_ScriptAction_AddTankAmmo: addtankammo must have a target\n");
 	}
 
 	tank = G_FindByTargetname(NULL, token);
 	if (!tank)
 	{
-		G_Error("G_Scripting: addtankammo, failed to find target (%s)\n", token);
+		G_Error("G_ScriptAction_AddTankAmmo: addtankammo, failed to find target (%s)\n", token);
 	}
 
 	if (tank->s.eType != ET_MOVER)
 	{
-		G_Error("G_Scripting: addtankammo, must target a mover\n");
+		G_Error("G_ScriptAction_AddTankAmmo: addtankammo, must target a mover\n");
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!*token)
 	{
-		G_Error("G_Scripting: addtankammo must have an amount\n");
+		G_Error("G_ScriptAction_AddTankAmmo: addtankammo must have an amount\n");
 	}
 
 	tank->s.effect1Time += atoi(token);
@@ -1152,14 +1130,13 @@ qboolean G_ScriptAction_AddTankAmmo(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_DisableMessage(gentity_t *ent, char *params)
 {
-	char      *pString, *token;
-	gentity_t *target = NULL;
+	char      *pString = params, *token;
+	gentity_t *target  = NULL;
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: disablemessage must have an targetname\n");
+		G_Error("G_ScriptAction_DisableMessage: disablemessage must have an targetname\n");
 	}
 
 	// find the entity with the given "targetname"
@@ -1178,13 +1155,12 @@ G_ScriptAction_Kill
 */
 qboolean G_ScriptAction_Kill(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	if (!*token)
 	{
-		G_Error("G_Scripting: kill must have a target\n");
+		G_Error("G_ScriptAction_Kill: kill must have a target\n");
 	}
 
 	G_KillEnts(token, NULL, ent->enemy, ent->deathType);
@@ -1201,18 +1177,16 @@ G_ScriptAction_SetGlobalFog
 */
 qboolean G_ScriptAction_SetGlobalFog(gentity_t *ent, char *params)
 {
-	char     *pString, *token;
+	char     *pString = params, *token;
 	qboolean restore;
 	int      duration;
 	vec3_t   color;
 	float    depthForOpaque;
 
-	pString = params;
-
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: setglobalfog must have a restore value\n");
+		G_Error("G_ScriptAction_SetGlobalFog: setglobalfog must have a restore value\n");
 	}
 
 	restore = atoi(token);
@@ -1220,7 +1194,7 @@ qboolean G_ScriptAction_SetGlobalFog(gentity_t *ent, char *params)
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: setglobalfog must have a duration value\n");
+		G_Error("G_ScriptAction_SetGlobalFog: setglobalfog must have a duration value\n");
 	}
 
 	duration = atoi(token);
@@ -1236,7 +1210,7 @@ qboolean G_ScriptAction_SetGlobalFog(gentity_t *ent, char *params)
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: setglobalfog without restore flag must have a depth for opaque value\n");
+		G_Error("G_ScriptAction_SetGlobalFog: setglobalfog without restore flag must have a depth for opaque value\n");
 	}
 
 	depthForOpaque = atof(token);
@@ -1313,7 +1287,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 		token   = COM_ParseExt(&pString, qfalse);
 		if (!token[0])
 		{
-			G_Error("G_Scripting: gotomarker must have an targetname\n");
+			G_Error("G_ScriptAction_GotoMarker: gotomarker must have an targetname\n");
 		}
 
 		if ((pPathCorner = BG_Find_PathCorner(token)))
@@ -1327,7 +1301,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 
 			if (!target)
 			{
-				G_Error("G_Scripting: can't find entity with \"targetname\" = \"%s\"\n", token);
+				G_Error("G_ScriptAction_GotoMarker: can't find entity with \"targetname\" = \"%s\"\n", token);
 			}
 
 			VectorSubtract(target->r.currentOrigin, ent->r.currentOrigin, vec);
@@ -1336,7 +1310,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 		token = COM_ParseExt(&pString, qfalse);
 		if (!token[0])
 		{
-			G_Error("G_Scripting: gotomarker must have a speed\n");
+			G_Error("G_ScriptAction_GotoMarker: gotomarker must have a speed\n");
 		}
 
 		speed  = atof(token);
@@ -1381,7 +1355,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 					}
 					else
 					{
-						G_Error("Target for relative gotomarker not found: %s\n", token);
+						G_Error("G_ScriptAction_GotoMarker: Target for relative gotomarker not found: %s\n", token);
 					}
 
 					VectorAdd(vec, ent->r.currentOrigin, vec);
@@ -1535,18 +1509,17 @@ G_ScriptAction_Wait
 */
 qboolean G_ScriptAction_Wait(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	int  duration;
 
 	// get the duration
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	if (!*token)
 	{
-		G_Error("G_Scripting: wait must have a duration\n");
+		G_Error("G_ScriptAction_Wait: wait must have a duration\n");
 	}
 
-	// Gordon: adding random wait ability
+	// adding random wait ability
 	if (!Q_stricmp(token, "random"))
 	{
 		int min, max;
@@ -1554,14 +1527,14 @@ qboolean G_ScriptAction_Wait(gentity_t *ent, char *params)
 		token = COM_ParseExt(&pString, qfalse);
 		if (!*token)
 		{
-			G_Error("G_Scripting: wait random must have a min duration\n");
+			G_Error("G_ScriptAction_Wait: wait random must have a min duration\n");
 		}
 		min = atoi(token);
 
 		token = COM_ParseExt(&pString, qfalse);
 		if (!*token)
 		{
-			G_Error("G_Scripting: wait random must have a max duration\n");
+			G_Error("G_ScriptAction_Wait: wait random must have a max duration\n");
 		}
 		max = atoi(token);
 
@@ -1594,24 +1567,23 @@ G_ScriptAction_Trigger
 qboolean G_ScriptAction_Trigger(gentity_t *ent, char *params)
 {
 	gentity_t *trent;
-	char      *pString, name[MAX_QPATH], trigger[MAX_QPATH], *token;
+	char      *pString = params, name[MAX_QPATH], trigger[MAX_QPATH], *token;
 	int       oldId, i;
 	qboolean  terminate, found;
 
 	// get the cast name
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	Q_strncpyz(name, token, sizeof(name));
 	if (!*name)
 	{
-		G_Error("G_Scripting: trigger must have a name and an identifier: %s\n", params);
+		G_Error("G_ScriptAction_Trigger: trigger must have a name and an identifier: %s\n", params);
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
 	Q_strncpyz(trigger, token, sizeof(trigger));
 	if (!*trigger)
 	{
-		G_Error("G_Scripting: trigger must have a name and an identifier: %s\n", params);
+		G_Error("G_ScriptAction_Trigger: trigger must have a name and an identifier: %s\n", params);
 	}
 
 	if (!Q_stricmp(name, "self"))
@@ -1711,8 +1683,7 @@ qboolean G_ScriptAction_Trigger(gentity_t *ent, char *params)
 		}
 	}
 
-//  G_Error( "G_Scripting: trigger has unknown name: %s\n", name );
-	G_Printf("G_Scripting: trigger has unknown name: %s\n", name);
+	G_Printf("G_ScriptAction_Trigger: trigger has unknown name: %s\n", name);
 	return qtrue;   // shutup the compiler
 }
 
@@ -1736,7 +1707,7 @@ qboolean G_ScriptAction_PlaySound(gentity_t *ent, char *params)
 
 	if (!params)
 	{
-		G_Error("G_Scripting: syntax error\n\nplaysound <soundname OR scriptname>\n");
+		G_Error("G_ScriptAction_PlaySound: syntax error\n\nplaysound <soundname OR scriptname>\n");
 	}
 
 	pString = params;
@@ -1784,8 +1755,6 @@ qboolean G_ScriptAction_PlaySound(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-
-// START Mad Doc - TDF
 /*
 ================
 G_ScriptAction_FadeAllSounds
@@ -1804,7 +1773,7 @@ qboolean G_ScriptAction_FadeAllSounds(gentity_t *ent, char *params)
 
 	if (!params)
 	{
-		G_Error("G_Scripting: usage: FadeAllSounds [up|down] time\n");
+		G_Error("G_ScriptAction_FadeAllSounds: usage: FadeAllSounds [up|down] time\n");
 	}
 
 	pString = params;
@@ -1820,7 +1789,7 @@ qboolean G_ScriptAction_FadeAllSounds(gentity_t *ent, char *params)
 	}
 	else
 	{
-		G_Error("G_Scripting: FadeAllSounds found '%s' when expecting [up|down]\n", token);
+		G_Error("G_ScriptAction_FadeAllSounds: FadeAllSounds found '%s' when expecting [up|down]\n", token);
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
@@ -1828,7 +1797,7 @@ qboolean G_ScriptAction_FadeAllSounds(gentity_t *ent, char *params)
 	time = atoi(token);
 	if (!time)
 	{
-		G_Error("G_Scripting: FadeAllSounds found '%s' when expecting 'time'\n", token);
+		G_Error("G_ScriptAction_FadeAllSounds: FadeAllSounds found '%s' when expecting 'time'\n", token);
 	}
 
 	trap_SendServerCommand(-1, va("snd_fade %f %d %i", (up) ? 1.0 : 0.0, time, (up) ? 0 : 1));
@@ -1840,20 +1809,18 @@ qboolean G_ScriptAction_FadeAllSounds(gentity_t *ent, char *params)
 /*
 ==================
 AICast_ScriptAction_MusicStart
-
 ==================
 */
 qboolean G_ScriptAction_MusicStart(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	char cvarName[MAX_QPATH];
 	int  fadeupTime = 0;
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: syntax: mu_start <musicfile> <fadeuptime>\n");
+		G_Error("G_ScriptAction_MusicStart: syntax: mu_start <musicfile> <fadeuptime>\n");
 	}
 	Q_strncpyz(cvarName, token, sizeof(cvarName));
 
@@ -1871,20 +1838,18 @@ qboolean G_ScriptAction_MusicStart(gentity_t *ent, char *params)
 /*
 ==================
 AICast_ScriptAction_MusicPlay
-
 ==================
 */
 qboolean G_ScriptAction_MusicPlay(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	char cvarName[MAX_QPATH];
 	int  fadeupTime = 0;
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: syntax: mu_play <musicfile> [fadeup time]\n");
+		G_Error("G_ScriptAction_MusicPlay: syntax: mu_play <musicfile> [fadeup time]\n");
 	}
 	Q_strncpyz(cvarName, token, sizeof(cvarName));
 
@@ -1900,11 +1865,10 @@ AICast_ScriptAction_MusicStop
 */
 qboolean G_ScriptAction_MusicStop(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString    = params, *token;
 	int  fadeoutTime = 0;
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	if (token[0])
 	{
 		fadeoutTime = atoi(token);
@@ -1922,14 +1886,13 @@ G_ScriptAction_MusicQueue
 */
 qboolean G_ScriptAction_MusicQueue(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	char cvarName[MAX_QPATH];
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: syntax: mu_queue <musicfile>\n");
+		G_Error("G_ScriptAction_MusicQueue: syntax: mu_queue <musicfile>\n");
 	}
 	Q_strncpyz(cvarName, token, sizeof(cvarName));
 
@@ -1945,26 +1908,25 @@ G_ScriptAction_MusicFade
 */
 qboolean G_ScriptAction_MusicFade(gentity_t *ent, char *params)
 {
-	char  *pString, *token;
+	char  *pString    = params, *token;
 	int   fadeoutTime = 0;
 	float targetVol   = 0.0;
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
+		G_Error("G_ScriptAction_MusicFade: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
 	}
 	targetVol = atof(token);
 	if (targetVol < 0 || targetVol >= 1)
 	{
-		G_Error("G_Scripting: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
+		G_Error("G_ScriptAction_MusicFade: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0] || token[0] < '0' || token[0] > '9')
 	{
-		G_Error("G_Scripting: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
+		G_Error("G_ScriptAction_MusicFade: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
 	}
 	fadeoutTime = atoi(token);
 
@@ -1984,9 +1946,9 @@ G_ScriptAction_PlayAnim
 */
 qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 {
-	char *pString, *token, tokens[2][MAX_QPATH];
+	char *pString = params, *token, tokens[2][MAX_QPATH];
 	int  i;
-	// TTimo might be used uninitialized
+	// might be used uninitialized
 	int      endtime = 0;
 	qboolean looping = qfalse, forever = qfalse;
 	int      startframe, endframe, idealframe;
@@ -1998,14 +1960,12 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 		ent->scriptStatus.scriptFlags &= ~SCFL_ANIMATING;
 	}
 
-	pString = params;
-
 	for (i = 0; i < 2; i++)
 	{
 		token = COM_ParseExt(&pString, qfalse);
 		if (!token || !token[0])
 		{
-			G_Printf("G_Scripting: syntax error\n\nplayanim <startframe> <endframe> [LOOPING <duration>]\n");
+			G_Printf("G_ScriptAction_PlayAnim: syntax error\n\nplayanim <startframe> <endframe> [LOOPING <duration>]\n");
 			return qtrue;
 		}
 		else
@@ -2028,7 +1988,7 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 			token = COM_ParseExt(&pString, qfalse);
 			if (!token || !token[0])
 			{
-				G_Printf("G_Scripting: syntax error\n\nplayanim <startframe> <endframe> [LOOPING <duration>]\n");
+				G_Printf("G_ScriptAction_PlayAnim: syntax error\n\nplayanim <startframe> <endframe> [LOOPING <duration>]\n");
 				return qtrue;
 			}
 			if (!Q_stricmp(token, "untilreachmarker"))
@@ -2062,7 +2022,7 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 			token = COM_ParseExt(&pString, qfalse);
 			if (!token[0])
 			{
-				G_Error("G_Scripting: playanim has RATE parameter without an actual rate specified\n");
+				G_Error("G_ScriptAction_PlayAnim: playanim has RATE parameter without an actual rate specified\n");
 			}
 			rate = atoi(token);
 		}
@@ -2115,7 +2075,7 @@ qboolean G_ScriptAction_AlertEntity(gentity_t *ent, char *params)
 
 	if (!params || !*params)
 	{
-		G_Error("G_Scripting: alertentity without targetname\n");
+		G_Error("G_ScriptAction_AlertEntity: alertentity without targetname\n");
 	}
 	hash = BG_StringHashValue(params);
 
@@ -2127,7 +2087,7 @@ qboolean G_ScriptAction_AlertEntity(gentity_t *ent, char *params)
 		{
 			if (!foundalertent)
 			{
-				G_Error("G_Scripting: alertentity cannot find targetname \"%s\"\n", params);
+				G_Error("G_ScriptAction_AlertEntity: alertentity cannot find targetname \"%s\"\n", params);
 			}
 			else
 			{
@@ -2142,7 +2102,7 @@ qboolean G_ScriptAction_AlertEntity(gentity_t *ent, char *params)
 			// call this entity's AlertEntity function
 			if (!alertent->AIScript_AlertEntity)
 			{
-				G_Error("G_Scripting: alertentity \"%s\" (classname = %s) doesn't have an \"AIScript_AlertEntity\" function\n", params, alertent->classname);
+				G_Error("G_ScriptAction_AlertEntity: alertentity \"%s\" (classname = %s) doesn't have an \"AIScript_AlertEntity\" function\n", params, alertent->classname);
 			}
 			alertent->AIScript_AlertEntity(alertent);
 		}
@@ -2150,7 +2110,7 @@ qboolean G_ScriptAction_AlertEntity(gentity_t *ent, char *params)
 		{
 			if (!alertent->use)
 			{
-				G_Error("G_Scripting: alertentity \"%s\" (classname = %s) doesn't have a \"use\" function\n", params, alertent->classname);
+				G_Error("G_ScriptAction_AlertEntity: alertentity \"%s\" (classname = %s) doesn't have a \"use\" function\n", params, alertent->classname);
 			}
 			G_UseEntity(alertent, NULL, NULL);
 		}
@@ -2175,7 +2135,7 @@ qboolean G_ScriptAction_ToggleSpeaker(gentity_t *ent, char *params)
 
 	if (!params || !*params)
 	{
-		G_Error("G_Scripting: togglespeaker without targetname\n");
+		G_Error("G_ScriptAction_ToggleSpeaker: togglespeaker without targetname\n");
 	}
 
 	hash = BG_StringHashValue(params);
@@ -2215,7 +2175,7 @@ qboolean G_ScriptAction_DisableSpeaker(gentity_t *ent, char *params)
 
 	if (!params || !*params)
 	{
-		G_Error("G_Scripting: disablespeaker without targetname\n");
+		G_Error("G_ScriptAction_DisableSpeaker: disablespeaker without targetname\n");
 	}
 
 	hash = BG_StringHashValue(params);
@@ -2255,7 +2215,7 @@ qboolean G_ScriptAction_EnableSpeaker(gentity_t *ent, char *params)
 
 	if (!params || !*params)
 	{
-		G_Error("G_Scripting: enablespeaker without targetname\n");
+		G_Error("G_ScriptAction_EnableSpeaker: enablespeaker without targetname\n");
 	}
 
 	hash = BG_StringHashValue(params);
@@ -2298,39 +2258,33 @@ G_ScriptAction_Accum
     accum <n> bitreset <m>
     accum <n> abort_if_bitset <m>
     accum <n> abort_if_not_bitset <m>
-
-// Gordon: added (12/06/02)
     accum <n> trigger_if_equal <m> <s> <t>
-
-// Gordon: added (12/06/02)
     accum <n> wait_while_equal <m>
 =================
 */
 
 qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 {
-	char     *pString, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
+	char     *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
 	int      bufferIndex;
 	qboolean terminate, found;
-
-	pString = params;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: accum without a buffer index\n");
+		G_Error("G_ScriptAction_Accum: accum without a buffer index\n");
 	}
 
 	bufferIndex = atoi(token);
 	if (bufferIndex >= G_MAX_SCRIPT_ACCUM_BUFFERS)
 	{
-		G_Error("G_Scripting: accum buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
+		G_Error("G_ScriptAction_Accum: accum buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: accum without a command\n");
+		G_Error("G_ScriptAction_Accum: accum without a command\n");
 	}
 
 	Q_strncpyz(lastToken, token, sizeof(lastToken));
@@ -2340,7 +2294,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		ent->scriptAccumBuffer[bufferIndex] += atoi(token);
 	}
@@ -2348,7 +2302,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		if (ent->scriptAccumBuffer[bufferIndex] < atoi(token))
 		{
@@ -2360,7 +2314,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		if (ent->scriptAccumBuffer[bufferIndex] > atoi(token))
 		{
@@ -2372,7 +2326,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		if (ent->scriptAccumBuffer[bufferIndex] != atoi(token))
 		{
@@ -2384,7 +2338,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		if (ent->scriptAccumBuffer[bufferIndex] == atoi(token))
 		{
@@ -2396,7 +2350,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		ent->scriptAccumBuffer[bufferIndex] |= (1 << atoi(token));
 	}
@@ -2404,7 +2358,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		ent->scriptAccumBuffer[bufferIndex] &= ~(1 << atoi(token));
 	}
@@ -2412,7 +2366,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		if (ent->scriptAccumBuffer[bufferIndex] & (1 << atoi(token)))
 		{
@@ -2424,7 +2378,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		if (!(ent->scriptAccumBuffer[bufferIndex] & (1 << atoi(token))))
 		{
@@ -2436,7 +2390,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		ent->scriptAccumBuffer[bufferIndex] = atoi(token);
 	}
@@ -2444,7 +2398,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		ent->scriptAccumBuffer[bufferIndex] = rand() % atoi(token);
 	}
@@ -2452,26 +2406,25 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s requires a parameter\n", lastToken);
 		}
 		if (ent->scriptAccumBuffer[bufferIndex] == atoi(token))
 		{
 			gentity_t *trent;
-			int       oldId;
-//          qboolean loop = qfalse;
+			int       oldId;;
 
 			token = COM_ParseExt(&pString, qfalse);
 			Q_strncpyz(lastToken, token, sizeof(lastToken));
 			if (!*lastToken)
 			{
-				G_Error("G_Scripting: trigger must have a name and an identifier: %s\n", params);
+				G_Error("G_ScriptAction_Accum: trigger must have a name and an identifier: %s\n", params);
 			}
 
 			token = COM_ParseExt(&pString, qfalse);
 			Q_strncpyz(name, token, sizeof(name));
 			if (!*name)
 			{
-				G_Error("G_Scripting: trigger must have a name and an identifier: %s\n", params);
+				G_Error("G_ScriptAction_Accum: trigger must have a name and an identifier: %s\n", params);
 			}
 			//
 			terminate = qfalse;
@@ -2489,7 +2442,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 					terminate = qtrue;
 				}
 			}
-			//
+
 			if (terminate)
 			{
 				return qfalse;
@@ -2498,9 +2451,8 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 			{
 				return qtrue;
 			}
-			//
-//          G_Error( "G_Scripting: trigger has unknown name: %s\n", name );
-			G_Printf("G_Scripting: trigger has unknown name: %s\n", name);
+
+			G_Printf("G_ScriptAction_Accum: trigger has unknown name: %s\n", name);
 			return qtrue;
 		}
 	}
@@ -2508,7 +2460,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (ent->scriptAccumBuffer[bufferIndex] == atoi(token))
 		{
@@ -2520,13 +2472,13 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 		gentity_t *target;
 		if (!*token)
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Accum: globalaccum %s requires a parameter\n", lastToken);
 		}
 
 		target = G_FindByTargetname(NULL, token);
 		if (!target)
 		{
-			G_Error("Scripting: accum %s could not find target\n", lastToken);
+			G_Error("G_ScriptAction_Accum: accum %s could not find target\n", lastToken);
 		}
 
 		{
@@ -2551,7 +2503,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	}
 	else
 	{
-		G_Error("Scripting: accum %s: unknown command\n", params);
+		G_Error("G_ScriptAction_Accum: accum %s: unknown command\n", params);
 	}
 
 	return qtrue;
@@ -2576,38 +2528,32 @@ G_ScriptAction_GlobalAccum
     globalAccum <n> bitreset <m>
     globalAccum <n> abort_if_bitset <m>
     globalAccum <n> abort_if_not_bitset <m>
-
-// Gordon: added (12/06/02)
     globalAccum <n> trigger_if_equal <m> <s> <t>
-
-// Gordon: added (12/06/02)
     globalAccum <n> wait_while_equal <m>
 =================
 */
 qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 {
-	char     *pString, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
+	char     *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
 	int      bufferIndex;
 	qboolean terminate, found;
-
-	pString = params;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: globalaccum without a buffer index\n");
+		G_Error("G_ScriptAction_GlobalAccum: globalaccum without a buffer index\n");
 	}
 
 	bufferIndex = atoi(token);
 	if (bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS)
 	{
-		G_Error("G_Scripting: globalaccum buffer is outside range (0 - %i)\n", MAX_SCRIPT_ACCUM_BUFFERS - 1);
+		G_Error("G_ScriptAction_GlobalAccum: globalaccum buffer is outside range (0 - %i)\n", MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: globalaccum without a command\n");
+		G_Error("G_ScriptAction_GlobalAccum: globalaccum without a command\n");
 	}
 
 	Q_strncpyz(lastToken, token, sizeof(lastToken));
@@ -2617,7 +2563,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		level.globalAccumBuffer[bufferIndex] += atoi(token);
 	}
@@ -2625,7 +2571,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] < atoi(token))
 		{
@@ -2637,7 +2583,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] > atoi(token))
 		{
@@ -2649,7 +2595,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] != atoi(token))
 		{
@@ -2661,7 +2607,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] == atoi(token))
 		{
@@ -2673,7 +2619,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		level.globalAccumBuffer[bufferIndex] |= (1 << atoi(token));
 	}
@@ -2681,7 +2627,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		level.globalAccumBuffer[bufferIndex] &= ~(1 << atoi(token));
 	}
@@ -2689,7 +2635,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] & (1 << atoi(token)))
 		{
@@ -2701,7 +2647,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (!(level.globalAccumBuffer[bufferIndex] & (1 << atoi(token))))
 		{
@@ -2713,7 +2659,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		level.globalAccumBuffer[bufferIndex] = atoi(token);
 	}
@@ -2721,7 +2667,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		level.globalAccumBuffer[bufferIndex] = rand() % atoi(token);
 	}
@@ -2729,26 +2675,25 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: globalaccum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: globalaccum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] == atoi(token))
 		{
 			gentity_t *trent;
 			int       oldId;
-//          qboolean loop = qfalse;
 
 			token = COM_ParseExt(&pString, qfalse);
 			Q_strncpyz(lastToken, token, sizeof(lastToken));
 			if (!*lastToken)
 			{
-				G_Error("G_Scripting: trigger must have a name and an identifier: %s\n", params);
+				G_Error("G_ScriptAction_GlobalAccum: trigger must have a name and an identifier: %s\n", params);
 			}
 
 			token = COM_ParseExt(&pString, qfalse);
 			Q_strncpyz(name, token, sizeof(name));
 			if (!*name)
 			{
-				G_Error("G_Scripting: trigger must have a name and an identifier: %s\n", params);
+				G_Error("G_ScriptAction_GlobalAccum: trigger must have a name and an identifier: %s\n", params);
 			}
 
 			terminate = qfalse;
@@ -2766,7 +2711,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 					terminate = qtrue;
 				}
 			}
-			//
+
 			if (terminate)
 			{
 				return qfalse;
@@ -2776,7 +2721,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 				return qtrue;
 			}
 
-			G_Printf("G_Scripting: trigger has unknown name: %s\n", name);
+			G_Printf("G_ScriptAction_GlobalAccum: trigger has unknown name: %s\n", name);
 			return qtrue;
 		}
 	}
@@ -2784,7 +2729,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("Scripting: accum %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_GlobalAccum: accum %s requires a parameter\n", lastToken);
 		}
 		if (level.globalAccumBuffer[bufferIndex] == atoi(token))
 		{
@@ -2793,7 +2738,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	}
 	else
 	{
-		G_Error("Scripting: accum %s: unknown command\n", params);
+		G_Error("G_ScriptAction_GlobalAccum: accum %s: unknown command\n", params);
 	}
 
 	return qtrue;
@@ -2810,20 +2755,18 @@ G_ScriptAction_Print
 */
 qboolean G_ScriptAction_Print(gentity_t *ent, char *params)
 {
-
 	// Default to printing whole string
 	char *printThis = params;
 
-	char *pString, *token;
+	char *pString   = params, *token;
 	int  printLevel = 0;
 
 	if (!params || !params[0])
 	{
-		G_Error("G_Scripting: print requires some text\n");
+		G_Error("G_ScriptAction_Print: print requires some text\n");
 	}
 
 	// Start parsing at the beginning of the string
-	pString = params;
 
 	// See if the first parameter is a /N, where N is a number
 	if ((token = COM_ParseExt(&pString, qfalse)) && token[0] == '/')
@@ -2839,7 +2782,7 @@ qboolean G_ScriptAction_Print(gentity_t *ent, char *params)
 	// Only print if our debug level is as high as the print level
 	if (g_scriptDebugLevel.integer >= printLevel)
 	{
-		G_Printf("(G_Script) %s-> %s\n", ent->scriptName, printThis);
+		G_Printf("G_ScriptAction_Print: %s-> %s\n", ent->scriptName, printThis);
 	}
 
 	return qtrue;
@@ -2865,7 +2808,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 
 	if (!params || !params[0])
 	{
-		G_Error("G_Scripting: syntax: faceangles <pitch> <yaw> <roll> <duration/GOTOTIME>\n");
+		G_Error("G_ScriptAction_FaceAngles: syntax: faceangles <pitch> <yaw> <roll> <duration/GOTOTIME>\n");
 	}
 
 	if (ent->scriptStatus.scriptStackChangeTime == level.time)
@@ -2878,7 +2821,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 			token = COM_Parse(&pString);
 			if (!token || !token[0])
 			{
-				G_Error("G_Scripting: syntax: faceangles <pitch> <yaw> <roll> <duration/GOTOTIME>\n");
+				G_Error("G_ScriptAction_FaceAngles: syntax: faceangles <pitch> <yaw> <roll> <duration/GOTOTIME>\n");
 			}
 			angles[i] = atoi(token);
 		}
@@ -2886,7 +2829,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 		token = COM_Parse(&pString);
 		if (!token || !token[0])
 		{
-			G_Error("G_Scripting: faceangles requires a <pitch> <yaw> <roll> <duration/GOTOTIME>\n");
+			G_Error("G_ScriptAction_FaceAngles: faceangles requires a <pitch> <yaw> <roll> <duration/GOTOTIME>\n");
 		}
 		if (!Q_stricmp(token, "gototime"))
 		{
@@ -3006,11 +2949,10 @@ G_ScriptAction_TagConnect
 */
 qboolean G_ScriptAction_TagConnect(gentity_t *ent, char *params)
 {
-	char      *pString, *token;
+	char      *pString = params, *token;
 	gentity_t *parent;
 
-	pString = params;
-	token   = COM_Parse(&pString);
+	token = COM_Parse(&pString);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_TagConnect: syntax: attachtotag <targetname> <tagname>\n");
@@ -3139,10 +3081,9 @@ G_ScriptAction_AxisRespawntime
 */
 qboolean G_ScriptAction_AxisRespawntime(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 
-	pString = params;
-	token   = COM_Parse(&pString);
+	token = COM_Parse(&pString);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_AxisRespawntime: time parameter required\n");
@@ -3169,10 +3110,9 @@ G_ScriptAction_AlliedRespawntime
 */
 qboolean G_ScriptAction_AlliedRespawntime(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 
-	pString = params;
-	token   = COM_Parse(&pString);
+	token = COM_Parse(&pString);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_AlliedRespawntime: time parameter required\n");
@@ -3199,13 +3139,11 @@ G_ScriptAction_NumberofObjectives
 */
 qboolean G_ScriptAction_NumberofObjectives(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	char cs[MAX_STRING_CHARS];
+	int  num;
 
-	int num;
-
-	pString = params;
-	token   = COM_Parse(&pString);
+	token = COM_Parse(&pString);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_NumberofObjectives: number parameter required\n");
@@ -3276,41 +3214,39 @@ G_ScriptAction_ObjectiveStatus
 */
 qboolean G_ScriptAction_ObjectiveStatus(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	char cs[MAX_STRING_CHARS];
 	char *parm;
+	int  num;
 
-	int num;
-
-	pString = params;
-	token   = COM_Parse(&pString);
+	token = COM_Parse(&pString);
 	if (!token[0])
 	{
-		G_Error("G_ScriptAction_ObjectiveImage: number parameter required\n");
+		G_Error("G_ScriptAction_ObjectiveStatus: number parameter required\n");
 	}
 
 	num = atoi(token);
 	if (num < 1 || num > MAX_OBJECTIVES)
 	{
-		G_Error("G_ScriptAction_ObjectiveImage: Invalid objective number\n");
+		G_Error("G_ScriptAction_ObjectiveStatus: Invalid objective number\n");
 	}
 
 	token = COM_Parse(&pString);
 	if (!token[0])
 	{
-		G_Error("G_ScriptAction_ObjectiveImage: team parameter required\n");
+		G_Error("G_ScriptAction_ObjectiveStatus: team parameter required\n");
 	}
 	parm = atoi(token) == 0 ? "x" : "a";
 
 	token = COM_Parse(&pString);
 	if (!token[0])
 	{
-		G_Error("G_ScriptAction_ObjectiveImage: status parameter required\n");
+		G_Error("G_ScriptAction_ObjectiveStatus: status parameter required\n");
 	}
 
 	if (atoi(token) != 0 && atoi(token) != 1 && atoi(token) != 2)
 	{
-		G_Error("G_ScriptAction_ObjectiveImage: status parameter must be 0 (default), 1 (complete) or 2 (failed)\n");
+		G_Error("G_ScriptAction_ObjectiveStatus: status parameter must be 0 (default), 1 (complete) or 2 (failed)\n");
 	}
 
 	trap_GetConfigstring(CS_MULTI_OBJECTIVE, cs, sizeof(cs));
@@ -3340,7 +3276,7 @@ qboolean G_ScriptAction_ObjectiveStatus(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_SetDebugLevel(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 
 	if (!params || !params[0])
 	{
@@ -3348,8 +3284,6 @@ qboolean G_ScriptAction_SetDebugLevel(gentity_t *ent, char *params)
 	}
 
 	// Start parsing at the beginning of the string
-	pString = params;
-
 
 	// See if the first parameter is a /N, where N is a number
 	if ((token = COM_ParseExt(&pString, qfalse)) && token[0])
@@ -3364,13 +3298,11 @@ qboolean G_ScriptAction_SetDebugLevel(gentity_t *ent, char *params)
 	}
 
 	return qtrue;
-
 }
-
 
 qboolean G_ScriptAction_VoiceAnnounce(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	int  num, sysmsg;
 
 	if (g_gamestate.integer == GS_INTERMISSION)
@@ -3378,8 +3310,7 @@ qboolean G_ScriptAction_VoiceAnnounce(gentity_t *ent, char *params)
 		return qtrue;
 	}
 
-	pString = params;
-	token   = COM_Parse(&pString);
+	token = COM_Parse(&pString);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_VoiceAnnounce: team parameter required\n");
@@ -3419,7 +3350,7 @@ G_ScriptAction_SetWinner
 */
 qboolean G_ScriptAction_SetWinner(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	char cs[MAX_STRING_CHARS];
 	int  num;
 
@@ -3428,8 +3359,7 @@ qboolean G_ScriptAction_SetWinner(gentity_t *ent, char *params)
 		return qtrue;
 	}
 
-	pString = params;
-	token   = COM_Parse(&pString);
+	token = COM_Parse(&pString);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_SetWinner: number parameter required\n");
@@ -3463,12 +3393,12 @@ G_ScriptAction_SetDefendingTeam
 
   status: 0==axis, 1==allies
 
-  NERVE - SMF - sets defending team for stopwatch mode
+  sets defending team for stopwatch mode
 ===================
 */
 qboolean G_ScriptAction_SetDefendingTeam(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	char cs[MAX_STRING_CHARS];
 	int  num;
 
@@ -3477,8 +3407,7 @@ qboolean G_ScriptAction_SetDefendingTeam(gentity_t *ent, char *params)
 		return qtrue;
 	}
 
-	pString = params;
-	token   = COM_Parse(&pString);
+	token = COM_Parse(&pString);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_SetDefendingTeam: number parameter required\n");
@@ -3508,15 +3437,13 @@ G_ScriptAction_AddTeamVoiceAnnounce
 */
 qboolean G_ScriptAction_AddTeamVoiceAnnounce(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	int  team, i, index;
 
 	if (g_gamestate.integer != GS_PLAYING)
 	{
 		return qtrue;
 	}
-
-	pString = params;
 
 	token = COM_Parse(&pString);
 	if (!*token)
@@ -3563,11 +3490,9 @@ qboolean G_ScriptAction_AddTeamVoiceAnnounce(gentity_t *ent, char *params)
 
 qboolean G_ScriptAction_RemoveTeamVoiceAnnounce(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	int  team;
 	int  index, i;
-
-	pString = params;
 
 	token = COM_Parse(&pString);
 	if (!*token)
@@ -3612,7 +3537,7 @@ G_ScriptAction_TeamVoiceAnnounce
 */
 qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 {
-	char      *pString, *token;
+	char      *pString = params, *token;
 	team_t    team;
 	gentity_t *tent;
 
@@ -3620,8 +3545,6 @@ qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 	{
 		return qtrue;
 	}
-
-	pString = params;
 
 	token = COM_Parse(&pString);
 	if (!*token)
@@ -3665,15 +3588,13 @@ G_ScriptAction_Announce
 */
 qboolean G_ScriptAction_Announce_Icon(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	int  iconnumber;
 
 	if (g_gamestate.integer == GS_INTERMISSION)
 	{
 		return qtrue;
 	}
-
-	pString = params;
 
 	token = COM_Parse(&pString);
 	if (!*token)
@@ -3710,22 +3631,20 @@ G_ScriptAction_Announce
 */
 qboolean G_ScriptAction_Announce(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 
 	if (g_gamestate.integer == GS_INTERMISSION)
 	{
 		return qtrue;
 	}
 
-	pString = params;
-	token   = COM_Parse(&pString);
+	token = COM_Parse(&pString);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_Announce: statement parameter required\n");
 	}
 
 	trap_SendServerCommand(-1, va("cpm \"%s\"", token));
-//  trap_SendServerCommand( -1, va("cp \"%s\" 2", token ));
 
 #ifdef FEATURE_OMNIBOT
 	Bot_Util_SendTrigger(ent, NULL, token, "announce");
@@ -3765,17 +3684,15 @@ G_ScriptAction_SetRoundTimelimit
 */
 qboolean G_ScriptAction_SetRoundTimelimit(gentity_t *ent, char *params)
 {
-	char  *pString, *token;
+	char  *pString = params, *token;
 	float nextTimeLimit;
 
-	pString = params;
-	token   = COM_Parse(&pString);
+	token = COM_Parse(&pString);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_SetRoundTimelimit: number parameter required\n");
 	}
 
-	// NERVE - SMF
 	nextTimeLimit = g_nextTimeLimit.value;
 
 	if (g_gametype.integer == GT_WOLF_STOPWATCH && nextTimeLimit)
@@ -3833,22 +3750,21 @@ G_ScriptAction_SetDamagable
 qboolean G_ScriptAction_SetDamagable(gentity_t *ent, char *params)
 {
 	gentity_t *target;
-	char      *pString, name[MAX_QPATH], state[MAX_QPATH], *token;
+	char      *pString = params, name[MAX_QPATH], state[MAX_QPATH], *token;
 	qboolean  canDamage;
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	Q_strncpyz(name, token, sizeof(name));
 	if (!name[0])
 	{
-		G_Error("G_Scripting: setdamagable must have a name and an state\n");
+		G_Error("G_ScriptAction_SetDamagable: setdamagable must have a name and an state\n");
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
 	Q_strncpyz(state, token, sizeof(state));
 	if (!state[0])
 	{
-		G_Error("G_Scripting: setdamagable must have a name and an state\n");
+		G_Error("G_ScriptAction_SetDamagable: setdamagable must have a name and an state\n");
 	}
 
 	canDamage = atoi(state) == 1 ? qtrue : qfalse;
@@ -3873,25 +3789,25 @@ G_ScriptAction_SetState
 qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 {
 	gentity_t  *target;
-	char       *pString, name[MAX_QPATH], state[MAX_QPATH], *token;
+	char       *pString = params, name[MAX_QPATH], state[MAX_QPATH], *token;
 	entState_t entState = STATE_DEFAULT;
 	int        hash;
 	qboolean   found = qfalse;
 
 	// get the cast name
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+
+	token = COM_ParseExt(&pString, qfalse);
 	Q_strncpyz(name, token, sizeof(name));
 	if (!*name)
 	{
-		G_Error("G_Scripting: setstate must have a name and an state\n");
+		G_Error("G_ScriptAction_SetState: setstate must have a name and an state\n");
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
 	Q_strncpyz(state, token, sizeof(state));
 	if (!state[0])
 	{
-		G_Error("G_Scripting: setstate (%s) must have a name and an state\n",
+		G_Error("G_ScriptAction_SetState: setstate (%s) must have a name and an state\n",
 		        name);
 	}
 
@@ -3909,7 +3825,7 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 	}
 	else
 	{
-		G_Error("G_Scripting: setstate (%s) with invalid state '%s'\n",
+		G_Error("G_ScriptAction_SetState: setstate (%s) with invalid state '%s'\n",
 		        name, state);
 	}
 
@@ -3949,16 +3865,15 @@ G_ScriptAction_StartCam
 */
 qboolean G_ScriptAction_StartCam(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	char camfile[256];
 
 	if (!ent->client)
 	{
 		return qfalse;
 	}
-
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	;
+	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_StartCam: filename parameter required\n");
@@ -3988,7 +3903,7 @@ G_ScriptAction_SetInitialCamera
 */
 qboolean G_ScriptAction_SetInitialCamera(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	char camfile[256];
 
 	if (!ent->client)
@@ -3996,8 +3911,7 @@ qboolean G_ScriptAction_SetInitialCamera(gentity_t *ent, char *params)
 		return qfalse;
 	}
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_SetInitialCamera: filename parameter required\n");
@@ -4045,14 +3959,13 @@ G_ScriptAction_RepairMG42
 qboolean G_ScriptAction_RepairMG42(gentity_t *ent, char *params)
 {
 	gentity_t *target;
-	char      *pString, name[MAX_QPATH], *token;
+	char      *pString = params, name[MAX_QPATH], *token;
 
-	pString = params;
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 	Q_strncpyz(name, token, sizeof(name));
 	if (!name[0])
 	{
-		G_Error("G_Scripting: repairmg42 must have a target\n");
+		G_Error("G_ScriptAction_RepairMG42: repairmg42 must have a target\n");
 	}
 
 	// look for entities
@@ -4103,16 +4016,14 @@ G_ScriptAction_SetHQStatus
 */
 qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params)
 {
-	char     *pString, *token;
+	char     *pString = params, *token;
 	team_t   team;
 	qboolean exists = qfalse;
-
-	pString = params;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: sethqstatus must have a team\n");
+		G_Error("G_ScriptAction_SetHQStatus: sethqstatus must have a team\n");
 	}
 
 	team = atoi(token);
@@ -4120,7 +4031,7 @@ qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params)
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: sethqstatus must have a status\n");
+		G_Error("G_ScriptAction_SetHQStatus: sethqstatus must have a status\n");
 	}
 
 	exists = atoi(token);
@@ -4141,13 +4052,12 @@ qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params)
 	}
 	else
 	{
-		G_Error("G_Scripting: sethqstatus with bad team set\n");
+		G_Error("G_ScriptAction_SetHQStatus: sethqstatus with bad team set\n");
 	}
 
 	return qtrue;
 }
 
-// Mad Doc - TDF
 /*
 ===================
 G_ScriptAction_PrintAccum
@@ -4159,15 +4069,13 @@ G_ScriptAction_PrintAccum
 */
 qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params)
 {
-	char *token, *pString;
+	char *token, *pString = params;
 	int  bufferIndex;
 
 	if (!params || !params[0])
 	{
 		G_Error("G_ScriptAction_PrintAccum: syntax: PrintAccum <accumNumber>\n");
 	}
-
-	pString = params;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
@@ -4182,13 +4090,11 @@ qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_PrintAccum: buffer is outside range (0 - %i)\n", G_MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
-	G_Printf("(G_Script) %s: Accum[%i] = %d\n", ent->scriptName, bufferIndex, ent->scriptAccumBuffer[bufferIndex]);
+	G_Printf("G_ScriptAction_PrintAccum: %s: Accum[%i] = %d\n", ent->scriptName, bufferIndex, ent->scriptAccumBuffer[bufferIndex]);
 
 	return qtrue;
 }
 
-
-// Mad Doc - TDF
 /*
 ===================
 G_ScriptAction_PrintGlobalAccum
@@ -4200,7 +4106,7 @@ G_ScriptAction_PrintGlobalAccum
 */
 qboolean G_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params)
 {
-	char *token, *pString;
+	char *token, *pString = params;
 	int  bufferIndex;
 
 	if (!params || !params[0])
@@ -4208,14 +4114,11 @@ qboolean G_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_PrintGlobalAccum: syntax: PrintGlobalAccum <globalAccumNumber>\n");
 	}
 
-	pString = params;
-
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_PrintGlobalAccum: syntax: PrintGlobalAccum <globalAccumNumber>\n");
 	}
-
 
 	bufferIndex = atoi(token);
 	if ((bufferIndex < 0) || (bufferIndex >= MAX_SCRIPT_ACCUM_BUFFERS))
@@ -4223,7 +4126,7 @@ qboolean G_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params)
 		G_Error("PrintGlobalAccum: buffer is outside range (0 - %i)\n", MAX_SCRIPT_ACCUM_BUFFERS - 1);
 	}
 
-	G_Printf("(G_Script) GlobalAccum[%i] = %d\n", bufferIndex, level.globalAccumBuffer[bufferIndex]);
+	G_Printf("G_ScriptAction_PrintGlobalAccum: GlobalAccum[%i] = %d\n", bufferIndex, level.globalAccumBuffer[bufferIndex]);
 
 	return qtrue;
 }
@@ -4232,19 +4135,18 @@ void AutoBuildConstruction(gentity_t *constructible);
 
 qboolean G_ScriptAction_Construct(gentity_t *ent, char *params)
 {
-	char      *pString, *token;
+	char      *pString = params, *token;
 	gentity_t *constructible;
 
-	pString = params;
 	if (!(token = COM_ParseExt(&pString, qfalse)))
 	{
-		G_Error("G_Scripting: \"construct\" must have a targetname\n");
+		G_Error("G_ScriptAction_Construct: \"construct\" must have a targetname\n");
 	}
 
 	constructible = G_FindByTargetname(NULL, token);
 	if (!constructible || !constructible->inuse || constructible->s.eType != ET_CONSTRUCTIBLE)
 	{
-		G_Error("G_Scripting: \"construct\" could not find entity with targetname: %s\n", token);
+		G_Error("G_ScriptAction_Construct: \"construct\" could not find entity with targetname: %s\n", token);
 	}
 
 	AutoBuildConstruction(constructible);
@@ -4261,20 +4163,19 @@ G_ScriptAction_ConstructibleClass
 */
 qboolean G_ScriptAction_ConstructibleClass(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	int  value;
 
-	pString = params;
 	if (!(token = COM_ParseExt(&pString, qfalse)))
 	{
-		G_Error("G_Scripting: \"constructible_class\" must have a class value\n");
+		G_Error("G_ScriptAction_ConstructibleClass: \"constructible_class\" must have a class value\n");
 	}
 
 	value = atoi(token);
 
 	if (value <= 0 || value > NUM_CONSTRUCTIBLE_CLASSES)
 	{
-		G_Error("G_Scripting: \"constructible_class\" has a bad value %i\n", value);
+		G_Error("G_ScriptAction_ConstructibleClass: \"constructible_class\" has a bad value %i\n", value);
 	}
 
 	value--;
@@ -4295,20 +4196,19 @@ G_ScriptAction_ConstructibleChargeBarReq
 */
 qboolean G_ScriptAction_ConstructibleChargeBarReq(gentity_t *ent, char *params)
 {
-	char  *pString, *token;
+	char  *pString = params, *token;
 	float value;
 
-	pString = params;
 	if (!(token = COM_ParseExt(&pString, qfalse)))
 	{
-		G_Error("G_Scripting: \"constructible_chargebarreq\" must have a fraction value\n");
+		G_Error("G_ScriptAction_ConstructibleChargeBarReq: \"constructible_chargebarreq\" must have a fraction value\n");
 	}
 
 	value = atof(token);
 
 	if (value < 0)
 	{
-		G_Error("G_Scripting: \"constructible_chargebarreq\" has a bad value %f\n", value);
+		G_Error("G_ScriptAction_ConstructibleChargeBarReq: \"constructible_chargebarreq\" has a bad value %f\n", value);
 	}
 
 	ent->constructibleStats.chargebarreq = value;
@@ -4325,20 +4225,19 @@ G_ScriptAction_ConstructibleConstructXPBonus
 */
 qboolean G_ScriptAction_ConstructibleConstructXPBonus(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	int  value;
 
-	pString = params;
 	if (!(token = COM_ParseExt(&pString, qfalse)))
 	{
-		G_Error("G_Scripting: \"constructible_constructxpbonus\" must have a xppoints value\n");
+		G_Error("G_ScriptAction_ConstructibleConstructXPBonus: \"constructible_constructxpbonus\" must have a xppoints value\n");
 	}
 
 	value = atoi(token);
 
 	if (value < 0)
 	{
-		G_Error("G_Scripting: \"constructible_constructxpbonus\" has a bad value %i\n", value);
+		G_Error("G_ScriptAction_ConstructibleConstructXPBonus: \"constructible_constructxpbonus\" has a bad value %i\n", value);
 	}
 
 	ent->constructibleStats.constructxpbonus = value;
@@ -4355,20 +4254,19 @@ G_ScriptAction_ConstructibleDestructXPBonus
 */
 qboolean G_ScriptAction_ConstructibleDestructXPBonus(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	int  value;
 
-	pString = params;
 	if (!(token = COM_ParseExt(&pString, qfalse)))
 	{
-		G_Error("G_Scripting: \"constructible_destructxpbonus\" must have a xppoints value\n");
+		G_Error("G_ScriptAction_ConstructibleDestructXPBonus: \"constructible_destructxpbonus\" must have a xppoints value\n");
 	}
 
 	value = atoi(token);
 
 	if (value < 0)
 	{
-		G_Error("G_Scripting: \"constructible_destructxpbonus\" has a bad value %i\n", value);
+		G_Error("G_ScriptAction_ConstructibleDestructXPBonus: \"constructible_destructxpbonus\" has a bad value %i\n", value);
 	}
 
 	ent->constructibleStats.destructxpbonus = value;
@@ -4385,20 +4283,19 @@ G_ScriptAction_ConstructibleHealth
 */
 qboolean G_ScriptAction_ConstructibleHealth(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	int  value;
 
-	pString = params;
 	if (!(token = COM_ParseExt(&pString, qfalse)))
 	{
-		G_Error("G_Scripting: \"constructible_health\" must have a health value\n");
+		G_Error("G_ScriptAction_ConstructibleHealth: \"constructible_health\" must have a health value\n");
 	}
 
 	value = atoi(token);
 
 	if (value <= 0)
 	{
-		G_Error("G_Scripting: \"constructible_health\" has a bad value %i\n", value);
+		G_Error("G_ScriptAction_ConstructibleHealth: \"constructible_health\" has a bad value %i\n", value);
 	}
 
 	ent->constructibleStats.health = value;
@@ -4416,20 +4313,19 @@ G_ScriptAction_ConstructibleWeaponclass
 */
 qboolean G_ScriptAction_ConstructibleWeaponclass(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	int  value;
 
-	pString = params;
 	if (!(token = COM_ParseExt(&pString, qfalse)))
 	{
-		G_Error("G_Scripting: \"constructible_weaponclass\" must have a weapon class value\n");
+		G_Error("G_ScriptAction_ConstructibleWeaponclass: \"constructible_weaponclass\" must have a weapon class value\n");
 	}
 
 	value = atoi(token);
 
 	if (value < 1 || value > 3)
 	{
-		G_Error("G_Scripting: \"constructible_weaponclass\" has a bad value %i\n", value);
+		G_Error("G_ScriptAction_ConstructibleWeaponclass: \"constructible_weaponclass\" has a bad value %i\n", value);
 	}
 
 	ent->constructibleStats.weaponclass = value;
@@ -4447,27 +4343,25 @@ G_ScriptAction_ConstructibleDuration
 */
 qboolean G_ScriptAction_ConstructibleDuration(gentity_t *ent, char *params)
 {
-	char *pString, *token;
+	char *pString = params, *token;
 	int  value;
 
-	pString = params;
 	if (!(token = COM_ParseExt(&pString, qfalse)))
 	{
-		G_Error("G_Scripting: \"constructible_duration\" must have a duration value\n");
+		G_Error("G_ScriptAction_ConstructibleDuration: \"constructible_duration\" must have a duration value\n");
 	}
 
 	value = atoi(token);
 
 	if (value < 0)
 	{
-		G_Error("G_Scripting: \"constructible_duration\" has a bad value %i\n", value);
+		G_Error("G_ScriptAction_ConstructibleDuration: \"constructible_duration\" has a bad value %i\n", value);
 	}
 
 	ent->constructibleStats.duration = value;
 
 	return qtrue;
 }
-
 
 /*
 ===================
@@ -4478,16 +4372,14 @@ G_ScriptAction_Cvar
 */
 qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 {
-	char     *pString, *token, lastToken[MAX_QPATH], name[MAX_QPATH], cvarName[MAX_QPATH];
+	char     *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH], cvarName[MAX_QPATH];
 	int      cvarValue;
 	qboolean terminate, found;
-
-	pString = params;
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: cvar without a cvar name\n");
+		G_Error("G_ScriptAction_Cvar: cvar without a cvar name\n");
 	}
 	Q_strncpyz(cvarName, token, sizeof(cvarName));
 
@@ -4496,7 +4388,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
-		G_Error("G_Scripting: cvar without a command\n");
+		G_Error("G_ScriptAction_Cvar: cvar without a command\n");
 	}
 
 	Q_strncpyz(lastToken, token, sizeof(lastToken));
@@ -4506,7 +4398,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		trap_Cvar_Set(cvarName, va("%i", cvarValue + 1));
 	}
@@ -4514,7 +4406,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		if (cvarValue < atoi(token))
 		{
@@ -4526,7 +4418,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		if (cvarValue > atoi(token))
 		{
@@ -4538,7 +4430,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		if (cvarValue != atoi(token))
 		{
@@ -4550,7 +4442,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		if (cvarValue == atoi(token))
 		{
@@ -4562,7 +4454,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		cvarValue |= (1 << atoi(token));
 	}
@@ -4578,7 +4470,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		if (cvarValue & (1 << atoi(token)))
 		{
@@ -4590,7 +4482,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		if (!(cvarValue & (1 << atoi(token))))
 		{
@@ -4602,7 +4494,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		cvarValue = atoi(token);
 	}
@@ -4610,7 +4502,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		cvarValue = rand() % atoi(token);
 	}
@@ -4618,26 +4510,25 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		if (cvarValue == atoi(token))
 		{
 			gentity_t *trent;
 			int       oldId;
-//          qboolean loop = qfalse;
 
 			token = COM_ParseExt(&pString, qfalse);
 			Q_strncpyz(lastToken, token, sizeof(lastToken));
 			if (!*lastToken)
 			{
-				G_Error("G_Scripting: trigger must have a name and an identifier: %s\n", params);
+				G_Error("G_ScriptAction_Cvar: trigger must have a name and an identifier: %s\n", params);
 			}
 
 			token = COM_ParseExt(&pString, qfalse);
 			Q_strncpyz(name, token, sizeof(name));
 			if (!*name)
 			{
-				G_Error("G_Scripting: trigger must have a name and an identifier: %s\n", params);
+				G_Error("G_ScriptAction_Cvar: trigger must have a name and an identifier: %s\n", params);
 			}
 
 			terminate = qfalse;
@@ -4664,9 +4555,8 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 			{
 				return qtrue;
 			}
-			//
-//          G_Error( "G_Scripting: trigger has unknown name: %s\n", name );
-			G_Printf("G_Scripting: trigger has unknown name: %s\n", name);
+
+			G_Printf("G_ScriptAction_Cvar: trigger has unknown name: %s\n", name);
 			return qtrue;
 		}
 	}
@@ -4674,7 +4564,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	{
 		if (!token[0])
 		{
-			G_Error("G_Scripting: cvar %s requires a parameter\n", lastToken);
+			G_Error("G_ScriptAction_Cvar: cvar %s requires a parameter\n", lastToken);
 		}
 		if (cvarValue == atoi(token))
 		{
@@ -4683,7 +4573,7 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	}
 	else
 	{
-		G_Error("G_Scripting: cvar %s: unknown command\n", params);
+		G_Error("G_ScriptAction_Cvar: cvar %s: unknown command\n", params);
 	}
 
 	return qtrue;
@@ -4718,6 +4608,98 @@ qboolean G_ScriptAction_AbortIfNotSinglePlayer(gentity_t *ent, char *params)
 
 /*
 ===================
+G_ModifyTOI
+===================
+*/
+// FIXME should we just do set stuff BEFORE actual spawning code? or add update code to entities? ( there are certainly more entities requiring update after set{} )
+void G_ModifyTOI(gentity_t *ent)
+{
+	char *scorestring;
+	char *customimage;
+	int  cix, cia;
+
+	if (G_SpawnString("customimage", "", &customimage))
+	{
+		cix = cia = G_ShaderIndex(customimage);
+	}
+	else
+	{
+		if (G_SpawnString("customaxisimage", "", &customimage))
+		{
+			cix = G_ShaderIndex(customimage);
+		}
+		else
+		{
+			cix = 0;
+		}
+
+		if (G_SpawnString("customalliesimage", "", &customimage))
+		{
+			cia = G_ShaderIndex(customimage);
+		}
+		else if (G_SpawnString("customalliedimage", "", &customimage))
+		{
+			cia = G_ShaderIndex(customimage);
+		}
+		else
+		{
+			cia = 0;
+		}
+	}
+
+	G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "e", va("%i", ent - g_entities));
+
+	if (cix)
+	{
+		G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "cix", va("%i", cix));
+	}
+	if (cia)
+	{
+		G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "cia", va("%i", cia));
+	}
+
+	G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "s", va("%i", ent->spawnflags));
+	G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "n", ent->message ? ent->message : "");
+
+	if (G_SpawnString("score", "0", &scorestring))
+	{
+		ent->accuracy = atof(scorestring);
+	}
+
+	trap_SetConfigstring(CS_OID_TRIGGERS + ent->s.teamNum, ent->track);
+
+	if (ent->s.origin[0] || ent->s.origin[1] || ent->s.origin[2])
+	{
+		G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "x", va("%i", (int)ent->s.origin[0]));
+		G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "y", va("%i", (int)ent->s.origin[1]));
+		G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "z", va("%i", (int)ent->s.origin[2]));
+	}
+	else
+	{
+		vec3_t mid;
+		VectorAdd(ent->r.absmin, ent->r.absmax, mid);
+		VectorScale(mid, 0.5f, mid);
+
+		G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "x", va("%i", (int)mid[0]));
+		G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "y", va("%i", (int)mid[1]));
+		G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "z", va("%i", (int)mid[2]));
+	}
+
+	if (!ent->target)
+	{
+		// no target - just link and go
+		trap_LinkEntity(ent);
+	}
+	else
+	{
+		// finalize spawing on fourth frame to allow for proper linking with targets
+		ent->nextthink = level.time + (3 * FRAMETIME);
+		ent->think     = Think_SetupObjectiveInfo;
+	}
+}
+
+/*
+===================
 etpro_ScriptAction_SetValues
 
 Ikkyo - change key/value pairs of any entity
@@ -4734,17 +4716,16 @@ available fields can be found in field_t of g_spawn.c, it is quite simple to add
 */
 qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 {
-	char *token;
-	char *p;
-	char key[MAX_TOKEN_CHARS], value[MAX_TOKEN_CHARS];
-	int  classchanged = 0;
+	char     *token;
+	char     *p = params;
+	char     key[MAX_TOKEN_CHARS], value[MAX_TOKEN_CHARS];
+	int      classchanged = 0;
+	qboolean nospawn      = qfalse;
 
-	// rain - reset and fill in the spawnVars info so that spawn
+	// reset and fill in the spawnVars info so that spawn
 	// functions can use them
 	level.numSpawnVars     = 0;
 	level.numSpawnVarChars = 0;
-
-	p = params;
 
 	// Get each key/value pair
 	while (1)
@@ -4760,7 +4741,7 @@ qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 		token = COM_ParseExt(&p, qfalse);
 		if (!token[0])
 		{
-			G_Error("key \"%s\" has no value\n", key);
+			G_Error("etpro_ScriptAction_SetValues: key \"%s\" has no value\n", key);
 			break;
 		}
 
@@ -4768,9 +4749,14 @@ qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 
 		if (g_scriptDebug.integer)
 		{
-			G_Printf("%d : (%s) %s: set [%s] [%s] [%s]\n", level.time, ent->scriptName, GAMEVERSION, ent->scriptName, key, value);
+			G_Printf("etpro_ScriptAction_SetValues: %d : (%s) %s: set [%s] [%s] [%s]\n", level.time, ent->scriptName, GAMEVERSION, ent->scriptName, key, value);
 		}
 
+		if (!Q_stricmp(key, "classname_nospawn"))
+		{
+			Q_strncpyz(key, "classname", sizeof(key));
+			nospawn = qtrue;
+		}
 		if (!Q_stricmp(key, "classname"))
 		{
 			if (Q_stricmp(value, ent->classname))
@@ -4779,10 +4765,10 @@ qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 			}
 		}
 
-		// rain - add spawn var so that spawn functions can use them
+		// add spawn var so that spawn functions can use them
 		if (level.numSpawnVars == MAX_SPAWN_VARS)
 		{
-			G_Error("G_ParseSpawnVars: MAX_SPAWN_VARS\n");
+			G_Error("etpro_ScriptAction_SetValues: MAX_SPAWN_VARS\n");
 		}
 		level.spawnVars[level.numSpawnVars][0] = G_AddSpawnVarToken(key);
 		level.spawnVars[level.numSpawnVars][1] = G_AddSpawnVarToken(value);
@@ -4790,10 +4776,10 @@ qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 
 		G_ParseField(key, value, ent);
 
-		if (!Q_stricmp(key, "targetname"))
+		// modify TOI, that will also update some relevant client info, note it also handles dynamites and fixes some crashes
+		if (!Q_stricmp(ent->classname, "trigger_objective_info") && !classchanged)
 		{
-			//need to hash this ent targetname for setstate script targets...
-			ent->targetnamehash = BG_StringHashValue(ent->targetname);
+			G_ModifyTOI(ent);
 		}
 	}
 
@@ -4801,10 +4787,14 @@ qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 	VectorCopy(ent->s.origin, ent->s.pos.trBase);
 	VectorCopy(ent->s.origin, ent->r.currentOrigin);
 
-	// rain - if the classname was changed, call the spawn func again
+	// if the classname was changed, call the spawn func again
 	if (classchanged)
 	{
-		G_CallSpawn(ent);
+		if (!nospawn)
+		{
+			G_CallSpawn(ent);
+		}
+
 		trap_LinkEntity(ent);
 	}
 
