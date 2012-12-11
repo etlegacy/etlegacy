@@ -3277,7 +3277,7 @@ static void CG_DrawFlashDamage(void)
 	if (cg.v_dmg_time > cg.time)
 	{
 		vec4_t col;
-		float redFlash = fabs(cg.v_dmg_pitch * ((cg.v_dmg_time - cg.time) / DAMAGE_TIME));
+		float  redFlash = fabs(cg.v_dmg_pitch * ((cg.v_dmg_time - cg.time) / DAMAGE_TIME));
 
 		// blend the entire screen red
 		if (redFlash > 5)

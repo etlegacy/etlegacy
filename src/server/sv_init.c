@@ -407,13 +407,9 @@ void SV_ChangeMaxClients(void)
 	}
 }
 
-/*
-====================
-SV_SetExpectedHunkUsage
-
-  Sets com_expectedhunkusage, so the client knows how to draw the percentage bar
-====================
-*/
+/**
+ * @brief Sets com_expectedhunkusage, so the client knows how to draw the percentage bar
+ */
 void SV_SetExpectedHunkUsage(char *mapname)
 {
 	int  handle;
@@ -462,7 +458,7 @@ void SV_SetExpectedHunkUsage(char *mapname)
 SV_ClearServer
 ================
 */
-void SV_ClearServer(void)
+static void SV_ClearServer(void)
 {
 	int i;
 
@@ -499,15 +495,11 @@ void SV_TouchCGameDLL(void)
 	}
 }
 
-/*
-================
-SV_SpawnServer
-
-Change the server to a new map, taking all connected
-clients along with it.
-This is NOT called for map_restart
-================
-*/
+/**
+ * @brief Change the server to a new map, taking all connected
+ * clients along with it.
+ * This is NOT called for map_restart
+ */
 void SV_SpawnServer(char *server)
 {
 	int        i;
@@ -515,7 +507,7 @@ void SV_SpawnServer(char *server)
 	qboolean   isBot;
 	const char *p;
 
-	// ydnar: broadcast a level change to all connected clients
+	// broadcast a level change to all connected clients
 	if (svs.clients && !com_errorEntered)
 	{
 		SV_FinalCommand("spawnserver", qfalse);
@@ -537,7 +529,7 @@ void SV_SpawnServer(char *server)
 	// clear the whole hunk because we're (re)loading the server
 	Hunk_Clear();
 
-	// clear collision map data		// (SA) NOTE: TODO: used in missionpack
+	// clear collision map data
 	CM_ClearMap();
 
 	// wipe the entire per-level structure
@@ -595,7 +587,7 @@ void SV_SpawnServer(char *server)
 
 	// DO_LIGHT_DEDICATED
 	// only comment out when you need a new pure checksum string and it's associated random feed
-	//Com_DPrintf("SV_SpawnServer checksum feed: %p\n", sv.checksumFeed);
+	// Com_DPrintf("SV_SpawnServer checksum feed: %p\n", sv.checksumFeed);
 
 #else // DO_LIGHT_DEDICATED implementation below
 	  // we are not able to randomize the checksum feed since the feed is used as key for pure_checksum computations
@@ -626,8 +618,6 @@ void SV_SpawnServer(char *server)
 	// the loading stage, so connected clients don't have
 	// to load during actual gameplay
 	sv.state = SS_LOADING;
-
-	Cvar_Set("sv_serverRestarting", "1");
 
 	// load and spawn all other entities
 	SV_InitGameProgs();
@@ -758,8 +748,6 @@ void SV_SpawnServer(char *server)
 
 	SV_UpdateConfigStrings();
 
-	Cvar_Set("sv_serverRestarting", "0");
-
 	Com_Printf("-----------------------------------\n");
 }
 
@@ -771,7 +759,7 @@ void SV_WriteAttackLog(const char *log)
 		qtime_t time;
 
 		Com_RealTime(&time);
-		Com_sprintf(string, sizeof(string), "%i/%i/%i %i:%i:%i %s", time.tm_mon + 1, time.tm_mday, time.tm_mon + 1, time.tm_hour, time.tm_min, time.tm_sec, log);
+		Com_sprintf(string, sizeof(string), "%i/%i/%i %i:%i:%i %s", 1900 + time.tm_year, time.tm_mday, time.tm_mon + 1, time.tm_hour, time.tm_min, time.tm_sec, log);
 		FS_Write(string, strlen(string), attHandle);
 	}
 	else
@@ -805,13 +793,24 @@ void SV_InitAttackLog()
 	}
 }
 
-/*
-===============
-SV_Init
+void SV_CloseAttackLog()
+{
+	if (attHandle > 0)
+	{
+		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
+		SV_WriteAttackLog("End server attack log\n"); // FIXME: add date & additional info
+		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
+		Com_Printf("Server attack log closed.\n");
+	}
 
-Only called at main exe startup, not for each game
-===============
-*/
+	FS_FCloseFile(attHandle);
+
+	attHandle = 0;  // local handle
+}
+
+/**
+ * @brief Only called at main exe startup, not for each game
+ */
 void SV_BotInitBotLib(void);
 
 void SV_Init(void)
@@ -1009,29 +1008,9 @@ void SV_FinalCommand(char *cmd, qboolean disconnect)
 	}
 }
 
-void SV_CloseAttackLog()
-{
-	if (attHandle > 0)
-	{
-		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
-		SV_WriteAttackLog("End server attack log\n"); // FIXME: add date & additional info
-		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
-		Com_Printf("Server attack log closed.\n");
-	}
-
-	FS_FCloseFile(attHandle);
-
-	attHandle = 0;  // local handle
-}
-
-/*
-================
-SV_Shutdown
-
-Called when each game quits,
-before Sys_Quit or Sys_Error
-================
-*/
+/**
+ * @brief Called when each game quits, before Sys_Quit or Sys_Error
+ */
 void SV_Shutdown(char *finalmsg)
 {
 	// close attack log

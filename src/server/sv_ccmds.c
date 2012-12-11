@@ -300,7 +300,7 @@ static void SV_MapRestart_f(void)
 	svs.snapFlagServerBit ^= SNAPFLAG_SERVERCOUNT;
 
 	// generate a new serverid
-	// TTimo - don't update restartedserverId there, otherwise we won't deal correctly with multiple map_restart
+	// don't update restartedserverId there, otherwise we won't deal correctly with multiple map_restart
 	sv.serverId = com_frameTime;
 	Cvar_Set("sv_serverid", va("%i", sv.serverId));
 
@@ -309,8 +309,6 @@ static void SV_MapRestart_f(void)
 	// had been changed from their default values will generate broadcast updates
 	sv.state      = SS_LOADING;
 	sv.restarting = qtrue;
-
-	Cvar_Set("sv_serverRestarting", "1");
 
 	SV_RestartGameProgs();
 
@@ -369,8 +367,6 @@ static void SV_MapRestart_f(void)
 	// run another frame to allow things to look at all the players
 	VM_Call(gvm, GAME_RUN_FRAME, svs.time);
 	svs.time += FRAMETIME;
-
-	Cvar_Set("sv_serverRestarting", "0");
 }
 
 //===============================================================
