@@ -266,7 +266,6 @@ qboolean trap_EntityContactCapsule(const vec3_t mins, const vec3_t maxs, const g
 	return syscall(G_ENTITY_CONTACTCAPSULE, mins, maxs, ent);
 }
 
-
 // #ifdef FEATURE_OMNIBOT FIXME: precompiler macros for engine ?
 int trap_BotAllocateClient(int clientNum)
 {
@@ -396,32 +395,6 @@ qboolean trap_GetTag(int clientNum, int tagFileNumber, char *tagName, orientatio
 qboolean trap_LoadTag(const char *filename)
 {
 	return syscall(G_REGISTERTAG, filename);
-}
-
-// BotLib traps start here
-int trap_BotLibSetup(void)
-{
-	return 0;
-}
-
-int trap_BotLibShutdown(void)
-{
-	return 0;
-}
-
-int trap_BotLibVarSet(char *var_name, char *value)
-{
-	return 0;
-}
-
-int trap_BotLibVarGet(char *var_name, char *value, int size)
-{
-	return 0;
-}
-
-int trap_BotLibDefine(char *string)
-{
-	return 0;
 }
 
 int trap_PC_AddGlobalDefine(char *define)
