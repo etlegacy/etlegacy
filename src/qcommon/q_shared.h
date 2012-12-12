@@ -359,6 +359,9 @@ typedef int clipHandle_t;
 #define MAX_OSPATH          256     // max length of a filesystem pathname
 #define MAX_CMD             1024    // max length of a command line
 
+#define MAX_IP4_LENGTH      16      // 15 + 1 (string terminator)
+#define MAX_GUID_LENGTH     32
+
 // increased to 36 to match MAX_NETNAME
 // UI stuff breaks with very long names
 #define MAX_NAME_LENGTH     36      // max length of a client name

@@ -1911,13 +1911,13 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	gentity_t  *ent;
 	const char *userinfo_ptr = NULL;
 	char       userinfo[MAX_INFO_STRING];
-	char       cs_key[MAX_STRING_CHARS]        = "";
-	char       cs_value[MAX_STRING_CHARS]      = "";
-	char       cs_ip[MAX_STRING_CHARS]         = "";
-	char       cs_password[MAX_STRING_CHARS]   = "";
-	char       cs_name[MAX_NETNAME]            = "";
-	char       cs_guid[MAX_GUID_LENGTH + 1]    = "";
-	char       cs_rate[MAX_STRING_CHARS]       = "";
+	char       cs_key[MAX_STRING_CHARS]      = "";
+	char       cs_value[MAX_STRING_CHARS]    = "";
+	char       cs_ip[MAX_STRING_CHARS]       = "";
+	char       cs_password[MAX_STRING_CHARS] = "";
+	char       cs_name[MAX_NETNAME]          = "";
+	char       cs_guid[MAX_GUID_LENGTH + 1]  = "";
+	char       cs_rate[MAX_STRING_CHARS]     = "";
 	char       *value;
 #ifdef FEATURE_LUA
 	char reason[MAX_STRING_CHARS] = "";
