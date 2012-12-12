@@ -155,8 +155,6 @@ void Tooltip_ComputePosition(itemDef_t *item)
 	// Set positioning based on item location
 	tipRect->x = itemRect->x + (itemRect->w / 3);
 	tipRect->y = itemRect->y + itemRect->h + 8;
-	//tipRect->h = 14.0f;
-	//tipRect->w = DC->textWidth( item->toolTipData->text, item->toolTipData->textscale, 0 ) + 6.0f;
 	tipRect->h = DC->multiLineTextHeight(item->toolTipData->text, item->toolTipData->textscale, 0) + 9.f;
 	tipRect->w = DC->multiLineTextWidth(item->toolTipData->text, item->toolTipData->textscale, 0) + 6.f;
 	if ((tipRect->w + tipRect->x) > 635.0f)

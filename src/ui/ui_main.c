@@ -2810,7 +2810,7 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 	switch (ownerDraw)
 	{
 	// kept as reminder
-    //case UI_TEAMFLAG:
+	//case UI_TEAMFLAG:
 	//case UI_PLAYERMODEL:
 	//case UI_SKILL:
 	//case UI_BLUETEAM1:
@@ -2825,7 +2825,7 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 	//case UI_REDTEAM5:
 	//case UI_ALLMAPS_SELECTION:
 	//case UI_MAPS_SELECTION:
-			
+
 	case UI_HANDICAP:
 		UI_DrawHandicap(&rect, scale, color, textStyle);
 		break;
