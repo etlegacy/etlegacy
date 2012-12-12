@@ -34,6 +34,7 @@
 
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
+#include "g_strparse.h"
 
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
@@ -42,6 +43,8 @@
 #ifdef FEATURE_LUA
 #include "g_lua.h"
 #endif
+
+qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 
 // new bounding box
 vec3_t playerMins = { -18, -18, -24 };
@@ -1755,6 +1758,134 @@ void ClientUserinfoChanged(int clientNum)
 }
 
 /*
+IsFakepConnection
+
+    Ported from the etpro lua module
+
+    FIXME: nice to have in engine too - implement this server side !!!
+*/
+
+// This defines the default value and also the minimum value we will allow the client to set...
+#define DEF_IP_MAX_CLIENTS  3
+
+// Return the length of the IP address if it has a port, or INT_MAX otherwise
+int GetIPLength(char const *ip)
+{
+	char *start = strchr(ip, ':');
+	return (start == NULL ? INT_MAX : start - ip);
+}
+
+qboolean CompareIPNoPort(char const *ip1, char const *ip2)
+{
+	int ip1_len     = GetIPLength(ip1);
+	int ip2_len     = GetIPLength(ip2);
+	int checkLength = MIN(ip1_len, ip2_len);
+	// Don't compare the port - just the IP
+	if (checkLength < INT_MAX && !Q_strncmp(ip1, ip2, checkLength))
+	{
+		return qtrue;
+	}
+	else if (checkLength == INT_MAX && !strcmp(ip1, ip2))
+	{
+		return qtrue;
+	}
+	else
+	{
+		return qfalse;
+	}
+}
+
+char *IsFakepConnection(int clientNum, char const *ip, char const *rate)
+{
+	int count      = 1; // we count as the first one
+	int max        = trap_Cvar_VariableIntegerValue("g_ip_max_clients");
+	int maxClients = trap_Cvar_VariableIntegerValue("sv_maxclients");
+	int myIPLength = GetIPLength(ip);
+	int i;
+
+	// Default it to DEF_IP_MAX_CLIENTS as the minimum
+	if (!max || max <= 0)
+	{
+		max = DEF_IP_MAX_CLIENTS;
+	}
+
+	// validate userinfo to filter out the people blindly using hack code
+	if (rate[0] == 0)
+	{
+		return "Invalid connection!";
+	}
+
+	// let localhost ( mostly bots and host player ) be
+	// FIXME: move to loop and check for bots ... default of 3 connections should be enough
+	// for localhost
+	if (!strcmp(ip, "localhost"))
+	{
+		return NULL;
+	}
+
+	// Iterate over each connected client and check the IP, keeping a count of connections
+	// from the same IP as this connecting client
+	// FIXME: use connected clients
+	for (i = 0; i < maxClients; ++i)
+	{
+		char      *theirIP;
+		int       theirIPLength;
+		int       checkLength;
+		gentity_t *ent;
+
+		// Skip our own slot
+		if (i == clientNum)
+		{
+			continue;
+		}
+
+		ent = &g_entities[i];
+		if (ent->client == NULL)
+		{
+			continue;
+		}
+
+		theirIP       = ent->client->pers.client_ip;
+		theirIPLength = GetIPLength(theirIP);
+		checkLength   = MIN(theirIPLength, myIPLength);
+
+		// pers.connected is set correctly for fake players can't rely on userinfo being empty
+		if (ent->client->pers.connected != CON_DISCONNECTED)
+		{
+			qboolean ipMatch = qfalse;
+
+			// Don't compare the port - just the IP
+			if (checkLength < INT_MAX && !Q_strncmp(ip, theirIP, checkLength))
+			{
+				ipMatch = qtrue;
+			}
+			else if (checkLength == INT_MAX && !strcmp(ip, theirIP))
+			{
+				ipMatch = qtrue;
+			}
+
+			if (ipMatch == qtrue)
+			{
+				++count;
+				if (count > max)
+				{
+					G_Printf("IsFakepConnection: too many connections from %s\n", ip);
+					G_LogPrintf(va("IsFakepConnection: too many connections from %s\n", ip));
+					// TODO should we drop / ban all connections from this IP?
+					return va("Only %d connection%s per IP %s allowed on this server!",
+					          max,
+					          max == 1 ? "" : "s",
+					          max == 1 ? "is" : "are");
+				}
+			}
+		}
+	}
+
+	// Ok let them connect
+	return NULL;
+}
+
+/*
 ===========
 ClientConnect
 
@@ -1776,14 +1907,22 @@ restarts.
 */
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 {
-	char      *value;
-	gclient_t *client;
-	char      userinfo[MAX_INFO_STRING];
-	char      cs_name[MAX_NETNAME];
+	gclient_t  *client;
+	gentity_t  *ent;
+	const char *userinfo_ptr = NULL;
+	char       userinfo[MAX_INFO_STRING];
+	char       cs_key[MAX_STRING_CHARS]        = "";
+	char       cs_value[MAX_STRING_CHARS]      = "";
+	char       cs_ip[MAX_STRING_CHARS]         = "";
+	char       cs_password[MAX_STRING_CHARS]   = "";
+	char       cs_name[MAX_NETNAME]            = "";
+	char       cs_guid[MAX_GUID_LENGTH + 1]    = "";
+	char       cs_rate[MAX_STRING_CHARS]       = "";
+	char       *value;
 #ifdef FEATURE_LUA
 	char reason[MAX_STRING_CHARS] = "";
 #endif
-	gentity_t *ent;
+
 #ifdef USEXPSTORAGE
 	ipXPStorage_t *xpBackup;
 	int           i;
@@ -1793,19 +1932,50 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
+	// grab the values we need in just one pass
+	// Use our minimal perfect hash generated code to give us the
+	// result token in optimal time
+	userinfo_ptr = userinfo;
+	while (1)
+	{
+		g_StringToken_t token;
+		// Get next key/value pair
+		Info_NextPair(&userinfo_ptr, cs_key, cs_value);
+		// Empty string for key and we exit...
+		if (cs_key[0] == 0)
+		{
+			break;
+		}
+		token = G_GetTokenForString(cs_key);
+		switch (token)
+		{
+		case TOK_ip:
+			Q_strncpyz(cs_ip, cs_value, MAX_STRING_CHARS);
+			break;
+		case TOK_name:
+			Q_strncpyz(cs_name, cs_value, MAX_NETNAME);
+			break;
+		case TOK_cl_guid:
+			Q_strncpyz(cs_guid, cs_value, MAX_GUID_LENGTH + 1);
+			break;
+		case TOK_password:
+			Q_strncpyz(cs_password, cs_value, MAX_STRING_CHARS);
+			break;
+		case TOK_rate:
+			Q_strncpyz(cs_rate, cs_value, MAX_STRING_CHARS);
+			break;
+		default:
+			continue;
+		}
+	}
+
 	// IP filtering
-	// show_bug.cgi?id=500
 	// recommanding PB based IP / GUID banning, the builtin system is pretty limited
 	// check to see if they are on the banned IP list
-	value = Info_ValueForKey(userinfo, "ip");
-	if (G_FilterIPBanPacket(value))
+	if (G_FilterIPBanPacket(cs_ip))
 	{
 		return "You are banned from this server.";
 	}
-
-
-	value = Info_ValueForKey(userinfo, "name");
-	Q_strncpyz(cs_name, value, sizeof(cs_name));
 
 	// don't permit long names ... - see also MAX_NETNAME
 	if (strlen(cs_name) >= MAX_NAME_LENGTH)
@@ -1826,23 +1996,22 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		}
 	}
 
-	// Xian - check for max lives enforcement ban
+	// check for max lives enforcement ban
 	if (g_gametype.integer != GT_WOLF_LMS)
 	{
 		if (g_enforcemaxlives.integer && (g_maxlives.integer > 0 || g_axismaxlives.integer > 0 || g_alliedmaxlives.integer > 0))
 		{
-			if (trap_Cvar_VariableIntegerValue("sv_punkbuster"))
+			if (trap_Cvar_VariableIntegerValue("sv_punkbuster")) // <- FIXME: -> g_protect cvar
 			{
-				value = Info_ValueForKey(userinfo, "cl_guid");
-				if (G_FilterMaxLivesPacket(value))
+				if (G_FilterMaxLivesPacket(cs_guid))
 				{
 					return "Max Lives Enforcement Temp Ban. You will be able to reconnect when the next round starts. This ban is enforced to ensure you don't reconnect to get additional lives.";
 				}
 			}
 			else
 			{
-				value = Info_ValueForKey(userinfo, "ip");   // this isn't really needed, oh well.
-				if (G_FilterMaxLivesIPPacket(value))
+				// this isn't really needed, oh well.
+				if (G_FilterMaxLivesIPPacket(cs_ip))
 				{
 					return "Max Lives Enforcement Temp Ban. You will be able to reconnect when the next round starts. This ban is enforced to ensure you don't reconnect to get additional lives.";
 				}
@@ -1850,24 +2019,35 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		}
 	}
 
-	// we don't check password for bots and local client
-	// NOTE: local client <-> "ip" "localhost"
-	//   this means this client is not running in our current process
-	if (!isBot && !(ent->r.svFlags & SVF_BOT) && (strcmp(Info_ValueForKey(userinfo, "ip"), "localhost") != 0))
+	if (!isBot)
 	{
-		// check for a password
-		value = Info_ValueForKey(userinfo, "password");
-		if (g_password.string[0] && Q_stricmp(g_password.string, "none") && strcmp(g_password.string, value) != 0)
+		// Check for fakep connections
+		value = IsFakepConnection(clientNum, cs_ip, cs_rate);
+		if (value != NULL)
 		{
-			if (!sv_privatepassword.string[0] || strcmp(sv_privatepassword.string, value))
+			// Too many connections from the same IP - don't permit the connection
+			return value;
+		}
+
+		// we don't check password for bots and local client
+		// NOTE: local client <-> "ip" "localhost"
+		//   this means this client is not running in our current process
+		if ((strcmp(cs_ip, "localhost") != 0))
+		{
+			// check for a password
+			if (g_password.string[0] && Q_stricmp(g_password.string, "none") && strcmp(g_password.string, cs_password) != 0)
 			{
-				return "Invalid password";
+				if (!sv_privatepassword.string[0] || strcmp(sv_privatepassword.string, cs_password))
+				{
+					return "Invalid password";
+				}
 			}
 		}
 	}
 
-	// Gordon: porting q3f flag bug fix
-	//			If a player reconnects quickly after a disconnect, the client disconnect may never be called, thus flag can get lost in the ether
+	// porting q3f flag bug fix
+	// If a player reconnects quickly after a disconnect, the client disconnect may never be called, thus flag can get lost in the ether
+	// see ZOMBIE state
 	if (ent->inuse)
 	{
 		G_LogPrintf("Forcing disconnect on active client: %i\n", (int)(ent - g_entities));
@@ -1961,9 +2141,8 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	G_UpdateCharacter(client);
 	ClientUserinfoChanged(clientNum);
 
-
 	// don't do the "xxx connected" messages if they were caried over from previous level
-	//		TAT 12/10/2002 - Don't display connected messages in single player
+	// Don't display connected messages in single player
 	// disabled for bots - see join message
 	if (firstTime && !(ent->r.svFlags & SVF_BOT))
 	{

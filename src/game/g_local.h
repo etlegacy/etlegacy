@@ -618,6 +618,7 @@ typedef struct
 	int pmoveMsec;                  // antiwarp
 
 	char netname[MAX_NETNAME];
+	char client_ip[MAX_IP4_LENGTH]; // ip 'caching' - it won't change
 
 	int autoActivate;               // based on cg_autoactivate userinfo        (uses the PICKUP_ values above)
 
@@ -1693,7 +1694,6 @@ int trap_RealTime(qtime_t *qtime);
 int trap_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
 void trap_DebugPolygonDelete(int id);
 
-int trap_BotGetSnapshotEntity(int clientNum, int sequence);
 int trap_BotGetServerCommand(int clientNum, char *message, int size);
 
 void trap_BotUserCommand(int client, usercmd_t *ucmd);
@@ -1833,7 +1833,7 @@ void G_PrintClientSpammyCenterPrint(int entityNum, char *text);
 
 void aagun_fire(gentity_t *other);
 
-//      Server only entities
+// Server only entities
 struct g_serverEntity_s
 {
 	qboolean inuse;

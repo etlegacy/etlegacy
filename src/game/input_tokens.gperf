@@ -1,0 +1,55 @@
+%{
+#include <string.h>
+#include "g_strparse.h"
+%}
+struct g_strtoken_t { char* name; g_StringToken_t index; }
+%%
+g_currentRound,					0
+g_nextTimeLimit,				1
+gamestate,						2
+g_currentCampaign,				3
+g_currentCampaignMap,			4
+ip,								5
+name,							6
+cl_guid,						7
+password,						8
+scriptName,						9
+respawn,						10
+cg_uinfo,						11
+pmove_fixed,					12
+pmove_msec,						13
+ch,								14
+skill,							15
+rate,							16
+n,								17
+t,								18
+c,								19
+r,								20
+f,								21
+m,								22
+s,								23
+xp,								24
+dn,								25
+dc,								26
+dr,								27
+w,								28
+lw,								29
+lc,								30
+sw,								31
+ref,							32
+rn,								33
+bd,								34
+hd,								35
+l,								36
+bc,								37
+bcs,							38
+bl,								39
+bls,							40
+br,								41
+brs,							42
+he,								43
+hs,								44
+g,								45
+gs,								46
+mu,								47
+%%
