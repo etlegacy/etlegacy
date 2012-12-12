@@ -74,7 +74,6 @@ void SP_target_give(gentity_t *ent)
 	ent->use = Use_Target_Give;
 }
 
-
 //==========================================================
 
 /*QUAKED target_remove_powerups (1 0 0) (-8 -8 -8) (8 8 8)
@@ -200,7 +199,6 @@ void SP_target_print(gentity_t *ent)
 
 //==========================================================
 
-
 /*QUAKED target_speaker (1 0 0) (-8 -8 -8) (8 8 8) LOOPED_ON LOOPED_OFF GLOBAL ACTIVATOR VIS_MULTIPLE NO_PVS
 "noise"		wav file to play
 
@@ -264,7 +262,6 @@ void target_speaker_multiple(gentity_t *ent)
 	{
 		G_Error("target_speaker cant find vis_dummy_multiple %s\n", vtos(ent->s.origin));
 	}
-
 }
 
 void SP_target_speaker(gentity_t *ent)
@@ -302,7 +299,6 @@ void SP_target_speaker(gentity_t *ent)
 	ent->s.eventParm = ent->noise_index;
 	ent->s.frame     = ent->wait * 10;
 	ent->s.clientNum = ent->random * 10;
-
 
 	// check for prestarted looping sound
 	if (ent->spawnflags & 1)
@@ -357,8 +353,6 @@ void SP_target_speaker(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-
-
 /*QUAKED misc_beam (0 .5 .8) (-8 -8 -8) (8 8 8)
 When on, displays a electric beam from target to target2.
 "target"	start of beam
@@ -368,10 +362,9 @@ When on, displays a electric beam from target to target2.
 "scale"		width of beam		*NOT WORKIN YET*
 */
 
-
 void misc_beam_think(gentity_t *self)
 {
-//	trace_t	trace;
+	//trace_t	trace;
 
 	if (self->enemy)
 	{
@@ -660,7 +653,6 @@ void SP_target_teleporter(gentity_t *self)
 
 //==========================================================
 
-
 /*QUAKED target_relay (1 1 0) (-8 -8 -8) (8 8 8) RED_ONLY BLUE_ONLY RANDOM NOKEY_ONLY TAKE_KEY NO_LOCKED_NOISE
 This doesn't perform any actions except fire its targets.
 The activator can be forced to be from a certain team.
@@ -709,7 +701,7 @@ void target_relay_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 			{
 				if (self->soundPos1)
 				{
-					G_Sound(self, self->soundPos1);      //----(SA)	added
+					G_Sound(self, self->soundPos1);
 				}
 				return;
 			}
@@ -785,7 +777,6 @@ void G_KillEnts(const char *target, gentity_t *ignore, gentity_t *killer, meansO
 
 	while ((targ = G_FindByTargetname(targ, target)))
 	{
-
 		// make sure it isn't going to respawn or show any events
 		targ->nextthink = 0;
 
@@ -794,11 +785,10 @@ void G_KillEnts(const char *target, gentity_t *ignore, gentity_t *killer, meansO
 			continue;
 		}
 
-		// RF, script_movers should die!
+		// script_movers should die!
 		if (targ->s.eType == ET_MOVER && !Q_stricmp(targ->classname, "script_mover") && targ->die)
 		{
 			G_Damage(targ, killer, killer, NULL, NULL, 100000, DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
-//			targ->die(targ, killer, killer, targ->health, 0);
 			continue;
 		}
 
@@ -859,7 +849,7 @@ void SP_target_location(gentity_t *self)
 	G_FreeEntity(self);
 }
 
-//---- (SA) Wolf targets
+// Wolf targets
 
 /*
 ==============
@@ -894,9 +884,8 @@ void Use_Target_Lock(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	while ((t = G_Find(t, FOFS(targetname), ent->target)) != NULL)
 	{
-		//		G_Printf("target_lock locking entity with key: %d\n", ent->count);
+		G_Printf("target_lock locking entity with key: %d\n", ent->count);
 		t->key = ent->key;
-
 	}
 }
 
@@ -996,8 +985,6 @@ void SP_target_alarm(gentity_t *ent)
 {
 	ent->use = Use_Target_Alarm;
 }
-
-//---- end
 
 /*QUAKED target_smoke (1 0 0) (-32 -32 -16) (32 32 16) Black White SmokeON Gravity
 1 second	= 1000
@@ -1127,7 +1114,7 @@ void SP_target_smoke(gentity_t *ent)
 		ent->s.modelindex2 = 0;
 	}
 
-	// Arnout - modified this a lot to be sent to the client as one entity and then is shown at the client
+	// modified this a lot to be sent to the client as one entity and then is shown at the client
 	if (!ent->delay)
 	{
 		ent->delay = 100;
@@ -1210,10 +1197,7 @@ when used it will fire its targets
 */
 void target_script_trigger_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-// START	Mad Doctor I changes, 8/16/2002
-
 	qboolean found = qfalse;
-
 	// for all entities/bots with this ainame
 	gentity_t *trent = NULL;
 
