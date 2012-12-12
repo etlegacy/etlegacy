@@ -580,11 +580,10 @@ char *trap_TranslateString(const char *string)
 
 	buf = staticbuf[bufcount++ % 2];
 
-#ifdef LOCALIZATION_SUPPORT
 	syscall(UI_CL_TRANSLATE_STRING, string, buf);
-#else
-	Q_strncpyz(buf, string, MAX_VA_STRING);
-#endif // LOCALIZATION_SUPPORT
+	// no LOCALIZATION_SUPPORT (translations)
+	// Q_strncpyz(buf, string, MAX_VA_STRING);
+
 	return buf;
 }
 

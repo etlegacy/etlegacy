@@ -1070,9 +1070,7 @@ qboolean UI_ParseMenu(const char *menuFile)
 qboolean Load_Menu(int handle)
 {
 	pc_token_t token;
-#ifdef LOCALIZATION_SUPPORT
-	int cl_language;
-#endif // LOCALIZATION_SUPPORT
+	int        cl_language;
 
 	if (!trap_PC_ReadToken(handle, &token))
 	{
@@ -1100,7 +1098,6 @@ qboolean Load_Menu(int handle)
 			return qtrue;
 		}
 
-#ifdef LOCALIZATION_SUPPORT
 		cl_language = atoi(UI_Cvar_VariableString("cl_language"));
 
 		if (cl_language)
@@ -1159,7 +1156,6 @@ qboolean Load_Menu(int handle)
 				continue;
 			}
 		}
-#endif // LOCALIZATION_SUPPORT
 
 		UI_ParseMenu(token.string);
 	}
