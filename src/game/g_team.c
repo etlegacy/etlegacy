@@ -145,7 +145,6 @@ qboolean OnSameTeam(gentity_t *ent1, gentity_t *ent2)
 	return qfalse;
 }
 
-// JPW NERVE moved these up
 #define WCP_ANIM_NOFLAG             0
 #define WCP_ANIM_RAISE_AXIS         1
 #define WCP_ANIM_RAISE_AMERICAN     2
@@ -189,7 +188,7 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		return; // whoever died isn't on a team
 
 	}
-	// JPW NERVE -- no bonuses for fragging friendlies, penalties scored elsewhere
+	// no bonuses for fragging friendlies, penalties scored elsewhere
 	if (team == attacker->client->sess.sessionTeam)
 	{
 		return;
@@ -252,7 +251,7 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		}
 	}
 
-	if (flag)     // JPW NERVE -- added some more stuff after this fn
+	if (flag)     // added some more stuff after this fn
 	{ //      return; // can't find attacker's flag
 
 		// find attacker's team's flag carrier
@@ -278,14 +277,14 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		    attacker->client->sess.sessionTeam != targ->client->sess.sessionTeam)
 		{
 			// we defended the base flag
-			// JPW NERVE FIXME -- don't report flag defense messages, change to gooder message
+			// FIXME -- don't report flag defense messages, change to gooder message
 			AddScore(attacker, WOLF_FLAG_DEFENSE_BONUS);
 			attacker->client->pers.teamState.basedefense++;
 			return;
 		}
 	}
 
-	// JPW NERVE -- look for nearby checkpoints and spawnpoints
+	// look for nearby checkpoints and spawnpoints
 	flag = NULL;
 	while ((flag = G_Find(flag, FOFS(classname), "team_WOLF_checkpoint")) != NULL)
 	{
@@ -439,7 +438,7 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 		return 0;
 	}
 
-	// DHM - Nerve :: GT_WOLF doesn't support capturing the flag
+	// GT_WOLF doesn't support capturing the flag
 	return 0;
 }
 
@@ -548,7 +547,7 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 		return 0;
 	}
 
-	// JPW NERVE -- set flag model in carrying entity if multiplayer and flagmodel is set
+	// set flag model in carrying entity if multiplayer and flagmodel is set
 	other->message           = ent->message;
 	other->s.otherEntityNum2 = ent->s.modelindex2;
 
@@ -779,7 +778,7 @@ void TeamplayInfoMessage(team_t team)
 	bufferedData = team == TEAM_AXIS ? level.tinfoAxis : level.tinfoAllies;
 
 	tinfo = va("tinfo %i%s", cnt, string);
-	if (!Q_stricmp(bufferedData, tinfo))       // Gordon: no change so just return
+	if (!Q_stricmp(bufferedData, tinfo))       // no change so just return
 	{
 		return;
 	}
@@ -905,7 +904,7 @@ void SP_team_CTF_redspawn(gentity_t *ent)
 	ent->think = DropToFloor;
 }
 
-// JPW NERVE edited quaked def
+// edited quaked def
 /*QUAKED team_CTF_bluespawn (0 0 1) (-16 -16 -24) (16 16 32) ? INVULNERABLE STARTACTIVE
 potential spawning position for allied team in wolfdm games.
 
@@ -1040,7 +1039,7 @@ void SP_team_WOLF_objective(gentity_t *ent)
 	}
 }
 
-// DHM - Nerve :: Capture and Hold Checkpoint flag
+// Capture and Hold Checkpoint flag
 #define SPAWNPOINT  1
 #define CP_HOLD     2
 #define AXIS_ONLY   4
@@ -1133,7 +1132,7 @@ void checkpoint_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	ent->think     = checkpoint_use_think;
 	ent->nextthink = level.time + 2000;
 
-	// Gordon: reset player disguise on touching flag
+	// reset player disguise on touching flag
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 }
 
@@ -1279,7 +1278,7 @@ void checkpoint_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	self->nextthink = level.time + 1000;
 }
 
-// JPW NERVE -- if spawn flag is set, use this touch fn instead to turn on/off targeted spawnpoints
+// if spawn flag is set, use this touch fn instead to turn on/off targeted spawnpoints
 void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	gentity_t *ent      = NULL;
@@ -1394,7 +1393,7 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	self->parent = other;
 
-	// Gordon: reset player disguise on touching flag
+	// reset player disguise on touching flag
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 	// Run script trigger
 	if (self->count == TEAM_AXIS)
@@ -1454,7 +1453,6 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 			}
 		}
 	}
-
 }
 
 /*QUAKED team_WOLF_checkpoint (.9 .3 .9) (-16 -16 0) (16 16 128) SPAWNPOINT CP_HOLD AXIS_ONLY ALLIED_ONLY
@@ -1464,8 +1462,8 @@ It will call specific trigger funtions in the map script for this object.
 When allies capture, it will call "allied_capture".
 When axis capture, it will call "axis_capture".
 
-// JPW NERVE if spawnpoint flag is set, think will turn on spawnpoints (specified as targets)
-// for capture team and turn *off* targeted spawnpoints for opposing team
+if spawnpoint flag is set, think will turn on spawnpoints (specified as targets)
+for capture team and turn *off* targeted spawnpoints for opposing team
 */
 void SP_team_WOLF_checkpoint(gentity_t *ent)
 {
@@ -1629,7 +1627,6 @@ void G_swapTeams(void)
 
 	AP("cp \"^1Teams have been swapped!\n\"");
 }
-
 
 int QDECL G_SortPlayersByXP(const void *a, const void *b)
 {
