@@ -1445,10 +1445,6 @@ void CL_Connect_f(void)
 
 	Cvar_Set("mp_team", "0");
 	// Cvar_Set("mp_currentTeam", "0"); // unused see UI player models
-
-	Cvar_Set("ui_limboOptions", "0");
-	Cvar_Set("ui_limboPrevOptions", "0");
-	Cvar_Set("ui_limboObjective", "0");
 }
 
 #define MAX_RCON_MESSAGE 1024

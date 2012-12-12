@@ -95,7 +95,7 @@ extern vmCvar_t ui_browserShowAntilag;
 extern vmCvar_t ui_browserShowWeaponsRestricted;
 extern vmCvar_t ui_browserShowTeamBalanced;
 extern vmCvar_t ui_serverStatusTimeOut;
-extern vmCvar_t ui_limboOptions;
+
 extern vmCvar_t ui_isSpectator;
 
 extern vmCvar_t g_gameType;
@@ -388,20 +388,8 @@ extern void UI_ConfirmMenu(const char *question, void (*draw)(void), void (*acti
 extern void UI_SetupMenu_Cache(void);
 extern void UI_SetupMenu(void);
 
-// ui_team.c
-extern void UI_TeamMainMenu(void);
-extern void TeamMain_Cache(void);
-
 // ui_connect.c
 extern void UI_DrawConnectScreen(qboolean overlay);
-
-// ui_controls2.c
-extern void UI_ControlsMenu(void);
-extern void Controls_Cache(void);
-
-// ui_demo2.c
-extern void UI_DemosMenu(void);
-extern void Demos_Cache(void);
 
 // ui_cinematics.c
 extern void UI_CinematicsMenu(void);
@@ -410,14 +398,6 @@ extern void UI_CinematicsMenu_Cache(void);
 
 // ui_loadpanel.c
 extern void UI_DrawLoadPanel(qboolean forcerefresh, qboolean ownerdraw, qboolean uihack);
-
-// ui_playermodel.c
-extern void UI_PlayerModelMenu(void);
-extern void PlayerModel_Cache(void);
-
-// ui_playersettings.c
-extern void UI_PlayerSettingsMenu(void);
-extern void PlayerSettings_Cache(void);
 
 // ui_preferences.c
 extern void UI_PreferencesMenu(void);

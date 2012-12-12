@@ -8150,25 +8150,12 @@ vmCvar_t ui_browserShowTeamBalanced;
 vmCvar_t ui_serverStatusTimeOut;
 
 vmCvar_t ui_Q3Model;
-vmCvar_t ui_headModel;
-vmCvar_t ui_model;
-
-vmCvar_t ui_limboOptions;
-vmCvar_t ui_limboPrevOptions;
-vmCvar_t ui_limboObjective;
 
 vmCvar_t ui_cmd;
 
 vmCvar_t ui_prevTeam;
 vmCvar_t ui_prevClass;
 vmCvar_t ui_prevWeapon;
-
-vmCvar_t ui_limboMode;
-vmCvar_t ui_objective;
-
-vmCvar_t ui_team;
-vmCvar_t ui_class;
-vmCvar_t ui_weapon;
 
 vmCvar_t ui_isSpectator;
 
@@ -8217,7 +8204,7 @@ cvarTable_t cvarTable[] =
 	{ &ui_drawCrosshair,                "cg_drawCrosshair",                    "4",                          CVAR_ARCHIVE                   },
 	{ &ui_drawCrosshairNames,           "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE                   },
 	{ &ui_drawCrosshairPickups,         "cg_drawCrosshairPickups",             "1",                          CVAR_ARCHIVE                   },
-	{ &ui_marks,                        "cg_marktime",                         "20000",                      CVAR_ARCHIVE                   },
+	{ &ui_marks,                        "cg_markTime",                         "20000",                      CVAR_ARCHIVE                   },
 	{ &ui_autoactivate,                 "cg_autoactivate",                     "1",                          CVAR_ARCHIVE                   },
 
 	{ &ui_server1,                      "server1",                             "",                           CVAR_ARCHIVE                   },
@@ -8265,23 +8252,12 @@ cvarTable_t cvarTable[] =
 	{ &ui_serverStatusTimeOut,          "ui_serverStatusTimeOut",              "7000",                       CVAR_ARCHIVE                   },
 
 	{ &ui_Q3Model,                      "ui_Q3Model",                          "1",                          0                              },
-	{ &ui_headModel,                    "headModel",                           "",                           0                              },
 
-	{ &ui_limboOptions,                 "ui_limboOptions",                     "0",                          0                              },
-	{ &ui_limboPrevOptions,             "ui_limboPrevOptions",                 "0",                          0                              },
-	{ &ui_limboObjective,               "ui_limboObjective",                   "0",                          0                              },
 	{ &ui_cmd,                          "ui_cmd",                              "",                           0                              },
 
 	{ &ui_prevTeam,                     "ui_prevTeam",                         "-1",                         0                              },
 	{ &ui_prevClass,                    "ui_prevClass",                        "-1",                         0                              },
 	{ &ui_prevWeapon,                   "ui_prevWeapon",                       "-1",                         0                              },
-
-	{ &ui_limboMode,                    "ui_limboMode",                        "0",                          0                              },
-	{ &ui_objective,                    "ui_objective",                        "",                           0                              },
-
-	{ &ui_team,                         "ui_team",                             "Axis",                       0                              },
-	{ &ui_class,                        "ui_class",                            "Soldier",                    0                              },
-	{ &ui_weapon,                       "ui_weapon",                           "MP 40",                      0                              },
 
 	{ &ui_isSpectator,                  "ui_isSpectator",                      "1",                          0                              },
 
