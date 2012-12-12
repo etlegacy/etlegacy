@@ -2263,98 +2263,6 @@ static void UI_DrawMissionBriefingObjectives(rectDef_t *rect, float scale, vec4_
 static qboolean updateModel = qtrue;
 static qboolean q3Model     = qfalse;
 
-static void UI_DrawPlayerModel(rectDef_t *rect)
-{
-	static playerInfo_t info;
-	char                model[MAX_QPATH];
-	char                team[256];
-	char                head[256];
-	vec3_t              viewangles;
-	static vec3_t       moveangles = { 0, 0, 0 };
-
-	if (trap_Cvar_VariableValue("ui_Q3Model"))
-	{
-		int teamval;
-		teamval = trap_Cvar_VariableValue("mp_team");
-
-		if (teamval == ALLIES_TEAM)
-		{
-			strcpy(model, "multi");
-		}
-		else
-		{
-			strcpy(model, "multi_axis");
-		}
-
-		strcpy(head, UI_Cvar_VariableString("headmodel"));
-		if (!q3Model)
-		{
-			q3Model     = qtrue;
-			updateModel = qtrue;
-		}
-		team[0] = '\0';
-	}
-	else
-	{
-		strcpy(model, UI_Cvar_VariableString("team_model"));
-		strcpy(head, UI_Cvar_VariableString("team_headmodel"));
-		strcpy(team, UI_Cvar_VariableString("ui_teamName"));
-		if (q3Model)
-		{
-			q3Model     = qfalse;
-			updateModel = qtrue;
-		}
-	}
-
-	moveangles[YAW] += 1;       // NERVE - SMF - TEMPORARY
-
-	// compare new cvars to old cvars and see if we need to update
-	{
-		int v1, v2;
-
-		v1 = trap_Cvar_VariableValue("mp_team");
-		v2 = trap_Cvar_VariableValue("ui_prevTeam");
-		if (v1 != v2)
-		{
-			trap_Cvar_Set("ui_prevTeam", va("%i", v1));
-			updateModel = qtrue;
-		}
-
-		v1 = trap_Cvar_VariableValue("mp_playerType");
-		v2 = trap_Cvar_VariableValue("ui_prevClass");
-		if (v1 != v2)
-		{
-			trap_Cvar_Set("ui_prevClass", va("%i", v1));
-			updateModel = qtrue;
-		}
-
-		v1 = trap_Cvar_VariableValue("mp_weapon");
-		v2 = trap_Cvar_VariableValue("ui_prevWeapon");
-		if (v1 != v2)
-		{
-			trap_Cvar_Set("ui_prevWeapon", va("%i", v1));
-			updateModel = qtrue;
-		}
-	}
-
-	if (updateModel)        // NERVE - SMF - TEMPORARY
-	{
-		memset(&info, 0, sizeof(playerInfo_t));
-		viewangles[YAW]   = 180 - 10;
-		viewangles[PITCH] = 0;
-		viewangles[ROLL]  = 0;
-		//VectorClear( moveangles );
-		UI_PlayerInfo_SetModel(&info, model);
-		UI_PlayerInfo_SetInfo(&info, LEGS_IDLE, TORSO_STAND, viewangles, moveangles, -1, qfalse);
-		//UI_RegisterClientModelname( &info, model, head, team);
-		updateModel = qfalse;
-	}
-	else
-	{
-		VectorCopy(moveangles, info.moveAngles);
-	}
-	UI_DrawPlayer(rect->x, rect->y, rect->w, rect->h, &info, uiInfo.uiDC.realTime / 2);
-}
 
 static void UI_DrawNetFilter(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
@@ -2905,26 +2813,35 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 
 	switch (ownerDraw)
 	{
-	/*      case UI_TEAMFLAG:
-	            UI_DrawFlag( &rect );
-	            break;*/
+	// kept as reminder
+    //case UI_TEAMFLAG:
+	//case UI_PLAYERMODEL:
+	//case UI_SKILL:
+	//case UI_BLUETEAM1:
+	//case UI_BLUETEAM2:
+	//case UI_BLUETEAM3:
+	//case UI_BLUETEAM4:
+	//case UI_BLUETEAM5:
+	//case UI_REDTEAM1:
+	//case UI_REDTEAM2:
+	//case UI_REDTEAM3:
+	//case UI_REDTEAM4:
+	//case UI_REDTEAM5:
+	//case UI_ALLMAPS_SELECTION:
+	//case UI_MAPS_SELECTION:
+			
 	case UI_HANDICAP:
 		UI_DrawHandicap(&rect, scale, color, textStyle);
 		break;
 	case UI_EFFECTS:
 		UI_DrawEffects(&rect, scale, color);
 		break;
-	case UI_PLAYERMODEL:
-		UI_DrawPlayerModel(&rect);
-		break;
 	case UI_CLANNAME:
 		UI_DrawClanName(&rect, scale, color, textStyle);
 		break;
-
 	case UI_SAVEGAME_SHOT:
 		UI_DrawSaveGameShot(&rect, scale, color);
 		break;
-
 	case UI_CLANLOGO:
 		UI_DrawClanLogo(&rect, scale, color);
 		break;
@@ -2986,26 +2903,11 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 	case UI_MB_OBJECTIVES:
 		UI_DrawMissionBriefingObjectives(&rect, scale, color, text_x, text_y, textStyle, align);
 		break;
-	/*      case UI_SKILL:
-	            UI_DrawSkill(&rect, scale, color, textStyle);
-	            break;*/
 	case UI_BLUETEAMNAME:
 		UI_DrawTeamName(&rect, scale, color, qtrue, textStyle);
 		break;
 	case UI_REDTEAMNAME:
 		UI_DrawTeamName(&rect, scale, color, qfalse, textStyle);
-		break;
-	case UI_BLUETEAM1:
-	case UI_BLUETEAM2:
-	case UI_BLUETEAM3:
-	case UI_BLUETEAM4:
-	case UI_BLUETEAM5:
-	case UI_REDTEAM1:
-	case UI_REDTEAM2:
-	case UI_REDTEAM3:
-	case UI_REDTEAM4:
-	case UI_REDTEAM5:
-		// UI_DrawTeamMember(&rect, scale, color, qfalse, ownerDraw - UI_REDTEAM1 + 1, textStyle);
 		break;
 	case UI_NETFILTER:
 		UI_DrawNetFilter(&rect, scale, color, textStyle);
@@ -3027,12 +2929,6 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 		break;
 	case UI_OPPONENTLOGO_NAME:
 		UI_DrawOpponentLogoName(&rect, color);
-		break;
-	case UI_ALLMAPS_SELECTION:
-		// UI_DrawAllMapsSelection(&rect, scale, color, textStyle, qtrue);
-		break;
-	case UI_MAPS_SELECTION:
-		// UI_DrawAllMapsSelection(&rect, scale, color, textStyle, qfalse);
 		break;
 	case UI_OPPONENT_NAME:
 		UI_DrawOpponentName(&rect, scale, color, textStyle);
@@ -4148,7 +4044,6 @@ void UI_RunMenuScript(char **args)
 
 	if (String_Parse(args, &name))
 	{
-
 		if (Q_stricmp(name, "StartServer") == 0)
 		{
 			int val;
