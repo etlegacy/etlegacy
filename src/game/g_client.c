@@ -184,13 +184,10 @@ go to a random point that doesn't telefrag
 #define MAX_SPAWN_POINTS    128
 gentity_t *SelectRandomDeathmatchSpawnPoint(void)
 {
-	gentity_t *spot;
-	int       count;
+	gentity_t *spot = NULL;
+	int       count = 0;
 	int       selection;
 	gentity_t *spots[MAX_SPAWN_POINTS];
-
-	count = 0;
-	spot  = NULL;
 
 	while ((spot = G_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL)
 	{
@@ -220,12 +217,9 @@ Chooses a player start, deathmatch start, etc
 */
 gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 {
-	gentity_t *spot;
-	gentity_t *nearestSpot;
+	gentity_t *nearestSpot = SelectNearestDeathmatchSpawnPoint(avoidPoint);
+	gentity_t *spot        = SelectRandomDeathmatchSpawnPoint();
 
-	nearestSpot = SelectNearestDeathmatchSpawnPoint(avoidPoint);
-
-	spot = SelectRandomDeathmatchSpawnPoint();
 	if (spot == nearestSpot)
 	{
 		// roll again if it would be real close to point of death
@@ -237,7 +231,7 @@ gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 		}
 	}
 
-	// find a single player start spot
+	// find a player start spot
 	if (!spot)
 	{
 		G_Error("Couldn't find a spawn point\n");
@@ -588,6 +582,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
 			gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 			if (((cl->ps.pm_flags & PMF_LIMBO) ||
 			     (cl->sess.sessionTeam == TEAM_SPECTATOR && cl->sess.spectatorState == SPECTATOR_FOLLOW)) &&
 			    cl->sess.spectatorClient == ent - g_entities)     //ent->s.number ) {
@@ -606,9 +601,7 @@ reinforce
 */
 void reinforce(gentity_t *ent)
 {
-	int p, team;
-	//char      *classname;
-	gclient_t *rclient;
+	int p;
 
 	if (!(ent->client->ps.pm_flags & PMF_LIMBO))
 	{
@@ -616,34 +609,17 @@ void reinforce(gentity_t *ent)
 		return;
 	}
 
+	// @multiview
 	if (ent->client->pers.mvCount > 0)
 	{
 		G_smvRemoveInvalidClients(ent, TEAM_AXIS);
 		G_smvRemoveInvalidClients(ent, TEAM_ALLIES);
 	}
 
-	// get team to deploy from passed entity
-	team = ent->client->sess.sessionTeam;
-
-	// find number active team spawnpoints
-	if (team == TEAM_AXIS)
-	{
-		//classname = "team_CTF_redspawn";
-	}
-	else if (team == TEAM_ALLIES)
-	{
-		//classname = "team_CTF_bluespawn";
-	}
-	else
-	{
-		assert(0);
-	}
-
 	// restore persistant data now that we're out of Limbo
-	rclient = ent->client;
 	for (p = 0; p < MAX_PERSISTANT; p++)
 	{
-		rclient->ps.persistant[p] = rclient->saved_persistant[p];
+		ent->client->ps.persistant[p] = ent->client->saved_persistant[p];
 	}
 
 	respawn(ent);
@@ -656,7 +632,7 @@ respawn
 */
 void respawn(gentity_t *ent)
 {
-	ent->client->ps.pm_flags &= ~PMF_LIMBO; // JPW NERVE turns off limbo
+	ent->client->ps.pm_flags &= ~PMF_LIMBO; // turns off limbo
 
 	// Decrease the number of respawns left
 	if (g_gametype.integer != GT_WOLF_LMS)
@@ -1305,19 +1281,15 @@ ClientCheckName
 */
 static void ClientCleanName(const char *in, char *out, int outSize)
 {
-	int  len, colorlessLen;
+	int  len = 0, colorlessLen = 0;
 	char ch;
 	char *p;
-	int  spaces;
+	int  spaces = 0;
 
 	//save room for trailing null byte
 	outSize--;
-
-	len          = 0;
-	colorlessLen = 0;
-	p            = out;
-	*p           = 0;
-	spaces       = 0;
+	p  = out;
+	*p = 0;
 
 	while (1)
 	{
@@ -1424,7 +1396,7 @@ const char *GetParsedIP(const char *ipadd)
 	return ipge;
 }
 
-// Dens: based on reyalp's userinfocheck.lua and combinedfixes.lua
+// based on userinfocheck.lua and combinedfixes.lua
 // FIXME: @IP6
 char *CheckUserinfo(int clientNum, char *userinfo)
 {
@@ -1587,24 +1559,24 @@ if desired.
 */
 void ClientUserinfoChanged(int clientNum)
 {
-	gentity_t *ent    = g_entities + clientNum;
-	gclient_t *client = ent->client;
-	int       i;
-	int       characterIndex; // unused
-	char      *reason;
-	char      *s;
-	char      oldname[MAX_STRING_CHARS];
-	char      userinfo[MAX_INFO_STRING];
-	char      skillStr[16] = "";
-	char      medalStr[16] = "";
+	gentity_t  *ent    = g_entities + clientNum;
+	gclient_t  *client = ent->client;
+	int        i;
+	int        characterIndex; // unused
+	const char *userinfo_ptr                 = NULL;
+	char       cs_key[MAX_STRING_CHARS]      = "";
+	char       cs_value[MAX_STRING_CHARS]    = "";
+	char       cs_cg_uinfo[MAX_STRING_CHARS] = "";
+	char       cs_skill[MAX_STRING_CHARS]    = "";
+	char       *reason;
+	char       *s;
+	char       cs_name[MAX_NETNAME] = "";
+	char       oldname[MAX_STRING_CHARS];
+	char       userinfo[MAX_INFO_STRING];
+	char       skillStr[16] = "";
+	char       medalStr[16] = "";
 
 	client->ps.clientNum = clientNum;
-
-	client->medals = 0;
-	for (i = 0; i < SK_NUM_SKILLS; i++)
-	{
-		client->medals += client->sess.medals[i];
-	}
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
@@ -1616,6 +1588,118 @@ void ClientUserinfoChanged(int clientNum)
 			G_Printf("ClientUserinfoChanged: CheckUserinfo: client %d: %s\n", clientNum, reason);
 			trap_DropClient(clientNum, va("^1%s", "Bad userinfo."), 99999);
 		}
+	}
+
+	// Cache config string values used in ClientUserinfoChanged
+	// Every time we call Info_ValueForKey we search through the string from the start....
+	// let's grab the values we need in just one pass... key matching is fast because
+	// we will use our minimal perfect hashing function.
+	userinfo_ptr = userinfo;
+
+	while (1)
+	{
+		g_StringToken_t token;
+		// Get next key/value pair
+		if (qfalse == Info_NextPair(&userinfo_ptr, cs_key, cs_value))
+		{
+			// This would only happen if the end user is trying to manually modify the user info string
+			G_Printf("ClientUserinfoChanged: client %d hacking clientinfo, empty key found!\n", clientNum);
+
+			if (!(ent->r.svFlags & SVF_BOT))
+			{
+				trap_DropClient(clientNum, "Bad userinfo.", 0);
+			}
+			break;
+		}
+		// Empty string for key and we exit...
+		if (cs_key[0] == 0)
+		{
+			break;
+		}
+
+		token = G_GetTokenForString(cs_key);
+		switch (token)
+		{
+		case TOK_ip:
+		{
+			if (!(ent->r.svFlags & SVF_BOT) && CompareIPNoPort(client->pers.client_ip, cs_value) == qfalse)
+			{
+				// They're trying to hack their ip address....
+				G_Printf("ClientUserinfoChanged: client %d hacking ip, old=%s, new=%s\n", clientNum, client->pers.client_ip, cs_value);
+				trap_DropClient(clientNum, "Bad userinfo.", 0);
+				break;
+			}
+			Q_strncpyz(client->pers.client_ip, cs_value, MAX_IP4_LENGTH);
+			break;
+		}
+		case TOK_cg_uinfo:
+			Q_strncpyz(cs_cg_uinfo, cs_value, MAX_STRING_CHARS);
+			break;
+        /*
+                    case TOK_pmove_fixed:
+                        if ( cs_value[0] )
+                            client->pers.pmoveFixed = atoi(cs_value);
+                        else
+                            client->pers.pmoveFixed = 0;
+                        break;
+                    case TOK_pmove_msec:
+                        if ( cs_value[0] )
+                            client->pers.pmoveMsec = atoi(cs_value);
+                        else
+                            client->pers.pmoveMsec = 8;
+                        // paranoia
+                        if (  client->pers.pmoveMsec > 33 )
+                            client->pers.pmoveMsec = 33;
+                        if ( client->pers.pmoveMsec < 3 )
+                            client->pers.pmoveMsec = 3;
+                        break;
+        */
+		case TOK_name:
+			// see also MAX_NAME_LENGTH
+			if (strlen(cs_value) >= MAX_NETNAME)
+			{
+				// They're trying long names
+				G_Printf("ClientUserinfoChanged: client %d kicked for long name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
+				trap_DropClient(clientNum, "Name too long. Plase change your name.", 0);
+			}
+			Q_strncpyz(cs_name, cs_value, MAX_NETNAME);
+			break;
+		case TOK_cl_guid:
+			if (!(ent->r.svFlags & SVF_BOT) &&
+			    strcmp(client->pers.cl_guid, "unknown") &&
+			    strcmp(client->pers.cl_guid, cs_value))
+			{
+				// They're trying to hack their guid...
+				G_Printf("ClientUserinfoChanged: client %d hacking cl_guid, old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
+				trap_DropClient(clientNum, "Bad userinfo.", 0);
+				break;
+			}
+			Q_strncpyz(client->pers.cl_guid, cs_value, MAX_GUID_LENGTH + 1);
+			break;
+		case TOK_skill:
+			Q_strncpyz(cs_skill, cs_value, MAX_STRING_CHARS);
+			break;
+		default:
+			continue;
+		}
+	}
+
+	// overwrite empty names with a default name,
+	// but do not kick those players..
+	if (strlen(cs_name) == 0)
+	{
+		Q_strncpyz(cs_name, va("Target #%i", clientNum), 15);
+		Info_SetValueForKey(userinfo, "name", cs_name);
+		trap_SetUserinfo(clientNum, userinfo);
+		CP("cp \"You cannot assign an empty playername! (Your name is reset)\"");
+		G_LogPrintf("ClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
+		G_DPrintf("ClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
+	}
+
+	client->medals = 0;
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		client->medals += client->sess.medals[i];
 	}
 
 	// check for malformed or illegal info strings
@@ -1636,8 +1720,7 @@ void ClientUserinfoChanged(int clientNum)
 	if (!(g_protect.integer & G_PROTECT_LOCALHOST_REF))
 	{
 		// check for local client and set ref
-		s = Info_ValueForKey(userinfo, "ip");
-		if (s && !strcmp(s, "localhost"))
+		if (!strcmp(client->pers.client_ip, "localhost"))
 		{
 			client->pers.localClient = qtrue;
 			level.fLocalHost         = qtrue;
@@ -1660,11 +1743,32 @@ void ClientUserinfoChanged(int clientNum)
 	}
 	else
 	{
-		s = Info_ValueForKey(userinfo, "cg_uinfo");
-		sscanf(s, "%i %i %i",
-		       &client->pers.clientFlags,
-		       &client->pers.clientTimeNudge,
-		       &client->pers.clientMaxPackets);
+		if (cs_cg_uinfo[0])
+		{
+			sscanf(cs_cg_uinfo, "%i %i %i",
+			       &client->pers.clientFlags,
+			       &client->pers.clientTimeNudge,
+			       &client->pers.clientMaxPackets);
+		}
+		else
+		{
+			// cg_uinfo was empty and useless.
+			// Let us fill these values in with something useful,
+			// if there not present to prevent auto reload
+			// from failing. - forty
+			if (!client->pers.clientFlags)
+			{
+				client->pers.clientFlags = 13;
+			}
+			if (!client->pers.clientTimeNudge)
+			{
+				client->pers.clientTimeNudge = 0;
+			}
+			if (!client->pers.clientMaxPackets)
+			{
+				client->pers.clientMaxPackets = 30;
+			}
+		}
 
 		client->pers.autoActivate      = (client->pers.clientFlags & CGF_AUTOACTIVATE) ? PICKUP_TOUCH : PICKUP_ACTIVATE;
 		client->pers.predictItemPickup = ((client->pers.clientFlags & CGF_PREDICTITEMS) != 0);
@@ -1683,8 +1787,7 @@ void ClientUserinfoChanged(int clientNum)
 
 	// set name
 	Q_strncpyz(oldname, client->pers.netname, sizeof(oldname));
-	s = Info_ValueForKey(userinfo, "name");
-	ClientCleanName(s, client->pers.netname, sizeof(client->pers.netname));
+	ClientCleanName(cs_name, client->pers.netname, sizeof(client->pers.netname));
 
 	if (client->pers.connected == CON_CONNECTED)
 	{
@@ -1699,7 +1802,9 @@ void ClientUserinfoChanged(int clientNum)
 	{
 		Q_strcat(skillStr, sizeof(skillStr), va("%i", client->sess.skill[i]));
 		Q_strcat(medalStr, sizeof(medalStr), va("%i", client->sess.medals[i]));
-		// FIXME: Gordon: wont this break if medals > 9 arnout? JK: Medal count is tied to skill count :() Gordon: er, it's based on >> skill per map, so for a huuuuuuge campaign it could break...
+		// FIXME: Gordon: wont this break if medals > 9 arnout?
+		//JK: Medal count is tied to skill count :()
+		// Gordon: er, it's based on >> skill per map, so for a huuuuuuge campaign it could break...
 	}
 
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
@@ -1737,9 +1842,7 @@ void ClientUserinfoChanged(int clientNum)
 	       client->sess.referee
 	       );
 
-
 	trap_GetConfigstring(CS_PLAYERS + clientNum, oldname, sizeof(oldname));
-
 	trap_SetConfigstring(CS_PLAYERS + clientNum, s);
 
 	if (!Q_stricmp(oldname, s))
@@ -1772,6 +1875,7 @@ IsFakepConnection
 int GetIPLength(char const *ip)
 {
 	char *start = strchr(ip, ':');
+
 	return (start == NULL ? INT_MAX : start - ip);
 }
 
@@ -1780,6 +1884,7 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2)
 	int ip1_len     = GetIPLength(ip1);
 	int ip2_len     = GetIPLength(ip2);
 	int checkLength = MIN(ip1_len, ip2_len);
+
 	// Don't compare the port - just the IP
 	if (checkLength < INT_MAX && !Q_strncmp(ip1, ip2, checkLength))
 	{
@@ -1908,16 +2013,16 @@ restarts.
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 {
 	gclient_t  *client;
-	gentity_t  *ent;
+	gentity_t  *ent          = &g_entities[clientNum];
 	const char *userinfo_ptr = NULL;
 	char       userinfo[MAX_INFO_STRING];
-	char       cs_key[MAX_STRING_CHARS]        = "";
-	char       cs_value[MAX_STRING_CHARS]      = "";
-	char       cs_ip[MAX_STRING_CHARS]         = "";
-	char       cs_password[MAX_STRING_CHARS]   = "";
-	char       cs_name[MAX_NETNAME]            = "";
-	char       cs_guid[MAX_GUID_LENGTH + 1]    = "";
-	char       cs_rate[MAX_STRING_CHARS]       = "";
+	char       cs_key[MAX_STRING_CHARS]      = "";
+	char       cs_value[MAX_STRING_CHARS]    = "";
+	char       cs_ip[MAX_STRING_CHARS]       = "";
+	char       cs_password[MAX_STRING_CHARS] = "";
+	char       cs_name[MAX_NETNAME]          = "";
+	char       cs_guid[MAX_GUID_LENGTH + 1]  = "";
+	char       cs_rate[MAX_STRING_CHARS]     = "";
 	char       *value;
 #ifdef FEATURE_LUA
 	char reason[MAX_STRING_CHARS] = "";
@@ -1927,8 +2032,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	ipXPStorage_t *xpBackup;
 	int           i;
 #endif // USEXPSTORAGE
-
-	ent = &g_entities[clientNum];
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
@@ -2063,6 +2166,10 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	client->pers.connected   = CON_CONNECTING;
 	client->pers.connectTime = level.time;
+
+	// Set the client ip and guid
+	Q_strncpyz(client->pers.client_ip, cs_ip, MAX_IP4_LENGTH);
+	Q_strncpyz(client->pers.cl_guid, cs_guid, MAX_GUID_LENGTH + 1);
 
 	if (firstTime)
 	{
@@ -2350,6 +2457,7 @@ void ClientBegin(int clientNum)
 		{
 			char *value;
 			char userinfo[MAX_INFO_STRING];
+
 			trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 			value = Info_ValueForKey(userinfo, "cl_guid");
 			G_LogPrintf("EnforceMaxLives-GUID: %s\n", value);
@@ -2381,16 +2489,14 @@ void ClientBegin(int clientNum)
 
 gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spawn_angles)
 {
-	char      *pStr, *token;
+	char      *pStr       = list, *token;
 	gentity_t *spawnPoint = NULL, *trav;
 	#define MAX_SPAWNPOINTFROMLIST_POINTS   16
 	int valid[MAX_SPAWNPOINTFROMLIST_POINTS];
-	int numValid;
+	int numValid = 0;
 
 	memset(valid, 0, sizeof(valid));
-	numValid = 0;
 
-	pStr = list;
 	while ((token = COM_Parse(&pStr)) != NULL && token[0])
 	{
 		trav = g_entities + level.maxclients;
@@ -2455,9 +2561,9 @@ Initializes all non-persistant parts of playerState
 */
 void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth)
 {
-	int                index;
+	int                index = ent - g_entities;
 	vec3_t             spawn_origin, spawn_angles;
-	gclient_t          *client;
+	gclient_t          *client = ent->client;
 	int                i;
 	clientPersistant_t saved;
 	clientSession_t    savedSess;
@@ -2467,8 +2573,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	int                savedPing;
 	int                savedTeam;
 	int                savedSlotNumber;
-	index  = ent - g_entities;
-	client = ent->client;
 
 	G_UpdateSpawnCounts();
 
@@ -2812,13 +2916,12 @@ server system housekeeping.
 */
 void ClientDisconnect(int clientNum)
 {
-	gentity_t *ent;
+	gentity_t *ent  = g_entities + clientNum;
 	gentity_t *flag = NULL;
 	gitem_t   *item = NULL;
 	vec3_t    launchvel;
 	int       i;
 
-	ent = g_entities + clientNum;
 	if (!ent->client)
 	{
 		return;
@@ -2938,7 +3041,7 @@ void ClientDisconnect(int clientNum)
 
 		if (item)
 		{
-			// OSP - fix for suicide drop exploit through walls/gates
+			// fix for suicide drop exploit through walls/gates
 			launchvel[0] = 0;    //crandom()*20;
 			launchvel[1] = 0;    //crandom()*20;
 			launchvel[2] = 0;    //10+random()*10;

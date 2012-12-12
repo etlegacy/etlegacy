@@ -166,7 +166,7 @@ typedef struct
 	int scriptId;                   // incremented each time the script changes
 	int scriptFlags;
 	int actionEndTime;              // time to end the current action
-	char *animatingParams;          // Gordon: read 8 lines up for why i love this code ;)
+	char *animatingParams;          // read 8 lines up for why i love this code ;)
 } g_script_status_t;
 
 #define G_MAX_SCRIPT_ACCUM_BUFFERS 10
@@ -217,7 +217,7 @@ struct gentity_s
 
 	qboolean inuse;
 
-	vec3_t instantVelocity;         // ydnar: per entity instantaneous velocity, set per frame
+	vec3_t instantVelocity;         // per entity instantaneous velocity, set per frame
 
 	char *classname;                // set in QuakeEd
 	int spawnflags;                 // set in QuakeEd
@@ -242,7 +242,7 @@ struct gentity_s
 	// when moving.  items and corpses do not collide against
 	// players, for instance
 
-	int realClipmask;               // Arnout: use these to backup the contents value when we go to state under construction
+	int realClipmask;               // use these to backup the contents value when we go to state under construction
 	int realContents;
 	qboolean realNonSolidBModel;    // For script_movers with spawnflags 2 set
 
@@ -275,7 +275,7 @@ struct gentity_s
 	char *target;
 
 	char *targetname;
-	int targetnamehash;         // Gordon: adding a hash for this for faster lookups
+	int targetnamehash;         // adding a hash for this for faster lookups
 
 	char *team;
 	gentity_t *target_ent;
@@ -331,7 +331,7 @@ struct gentity_s
 	float wait;
 	float random;
 
-	// Rafael - sniper variable
+	// sniper variable
 	// sniper uses delay, random, radius
 	int radius;
 	float delay;
@@ -404,7 +404,7 @@ struct gentity_s
 	int lastHintCheckTime;
 	int voiceChatSquelch;
 	int voiceChatPreviousTime;
-	int lastBurnedFrameNumber; // JPW - Nerve   : to fix FT instant-kill exploit
+	int lastBurnedFrameNumber; // to fix FT instant-kill exploit
 
 	entState_t entstate;
 	char *constages;
@@ -421,7 +421,7 @@ struct gentity_s
 	gentity_t *dmgparent;
 	qboolean dmginloop;
 
-	int tagNumber;              // Gordon: "handle" to a tag header
+	int tagNumber;              // "handle" to a tag header
 
 	int linkTagTime;
 
@@ -527,21 +527,21 @@ typedef struct
 	int spectatorTime;              // for determining next-in-line to play
 	spectatorState_t spectatorState;
 	int spectatorClient;            // for chasecam and follow mode
-	int playerType;                 // DHM - Nerve :: for GT_WOLF
-	int playerWeapon;               // DHM - Nerve :: for GT_WOLF
-	int playerWeapon2;              // Gordon: secondary weapon
-	int spawnObjectiveIndex;         // JPW NERVE index of objective to spawn nearest to (returned from UI)
-	int latchPlayerType;            // DHM - Nerve :: for GT_WOLF not archived
-	int latchPlayerWeapon;          // DHM - Nerve :: for GT_WOLF not archived
-	int latchPlayerWeapon2;         // Gordon: secondary weapon
+	int playerType;                 // for GT_WOLF
+	int playerWeapon;               // for GT_WOLF
+	int playerWeapon2;              // secondary weapon
+	int spawnObjectiveIndex;        // index of objective to spawn nearest to (returned from UI)
+	int latchPlayerType;            // for GT_WOLF not archived
+	int latchPlayerWeapon;          // for GT_WOLF not archived
+	int latchPlayerWeapon2;         // secondary weapon
 	int ignoreClients[MAX_CLIENTS / (sizeof(int) * 8)];
 	qboolean muted;
-	float skillpoints[SK_NUM_SKILLS];           // Arnout: skillpoints
-	float startskillpoints[SK_NUM_SKILLS];      // Gordon: initial skillpoints at map beginning
+	float skillpoints[SK_NUM_SKILLS];           // skillpoints
+	float startskillpoints[SK_NUM_SKILLS];      // initial skillpoints at map beginning
 	float startxptotal;
-	int skill[SK_NUM_SKILLS];                   // Arnout: skill
-	int rank;                                   // Arnout: rank
-	int medals[SK_NUM_SKILLS];                  // Arnout: medals
+	int skill[SK_NUM_SKILLS];                   // skill
+	int rank;                                   // rank
+	int medals[SK_NUM_SKILLS];                  // medals
 
 	int coach_team;
 	int damage_given;
@@ -619,35 +619,36 @@ typedef struct
 
 	char netname[MAX_NETNAME];
 	char client_ip[MAX_IP4_LENGTH]; // ip 'caching' - it won't change
+	char cl_guid[MAX_GUID_LENGTH + 1];
 
 	int autoActivate;               // based on cg_autoactivate userinfo        (uses the PICKUP_ values above)
 
 	int maxHealth;                  // for handicapping
 	int enterTime;                  // level.time the client entered the game
-	int connectTime;                // DHM - Nerve :: level.time the client first connected to the server
+	int connectTime;                // level.time the client first connected to the server
 	playerTeamState_t teamState;    // status in teamplay games
 	int voteCount;                  // to prevent people from constantly calling votes
 	int teamVoteCount;              // FIXME: unused - to prevent people from constantly calling votes
 
-	int complaints;                     // DHM - Nerve :: number of complaints lodged against this client
-	int complaintClient;                // DHM - Nerve :: able to lodge complaint against this client
-	int complaintEndTime;               // DHM - Nerve :: until this time has expired
+	int complaints;                     // number of complaints lodged against this client
+	int complaintClient;                // able to lodge complaint against this client
+	int complaintEndTime;               // until this time has expired
 
-	int lastReinforceTime;              // DHM - Nerve :: last reinforcement
+	int lastReinforceTime;              // last reinforcement
 
-	qboolean teamInfo;              // send team overlay updates?
+	qboolean teamInfo;                  // send team overlay updates?
 
-	qboolean bAutoReloadAux;            // TTimo - auxiliary storage for pmoveExt_t::bAutoReload, to achieve persistance
+	qboolean bAutoReloadAux;            // auxiliary storage for pmoveExt_t::bAutoReload, to achieve persistance
 
-	int applicationClient;              // Gordon: this client has requested to join your fireteam
-	int applicationEndTime;             // Gordon: you have X seconds to reply or this message will self destruct!
+	int applicationClient;              // this client has requested to join your fireteam
+	int applicationEndTime;             // you have X seconds to reply or this message will self destruct!
 
-	int invitationClient;               // Gordon: you have been invited to join this client's fireteam
-	int invitationEndTime;              // Gordon: quickly now, chop chop!.....
+	int invitationClient;               // you have been invited to join this client's fireteam
+	int invitationEndTime;              // quickly now, chop chop!.....
 
-	int propositionClient;              // Gordon: propositionClient2 has requested you invite this client to join the fireteam
-	int propositionClient2;             // Gordon:
-	int propositionEndTime;             // Gordon: tick, tick, tick....
+	int propositionClient;              // propositionClient2 has requested you invite this client to join the fireteam
+	int propositionClient2;             //
+	int propositionEndTime;             // tick, tick, tick....
 
 	int autofireteamEndTime;
 	int autofireteamCreateEndTime;
@@ -669,7 +670,7 @@ typedef struct
 	unsigned int clientTimeNudge;       // Client cl_timenudge settings
 	int cmd_debounce;                   // Dampening of command spam
 	unsigned int invite;                // Invitation to a team to join
-	mview_t mv[MULTIVIEW_MAXVIEWS];         // Multiview portals
+	mview_t mv[MULTIVIEW_MAXVIEWS];     // @multiview portals
 	int mvCount;                        // Number of active portals
 	int mvReferenceList;                // Reference list used to generate views after a map_restart
 	int mvScoreUpdate;                  // Period to send score info to MV clients
@@ -744,10 +745,8 @@ struct gclient_s
 	vec3_t damage_from;             // origin for vector calculation
 	qboolean damage_fromWorld;      // if true, don't use the damage_from vector
 
-//  int         accurateCount;      // for "impressive" reward sound
-
-//  int         accuracy_shots;     // total number of shots
-//  int         accuracy_hits;      // total number of hits
+	//int         accuracy_shots;     // total number of shots
+	//int         accuracy_hits;      // total number of hits
 
 	//
 	int lastkilled_client;          // last client that this client killed
@@ -777,17 +776,17 @@ struct gclient_s
 	int ammoTimes[WP_NUM_WEAPONS];
 	int invulnerabilityTime;
 
-	gentity_t *cameraPortal;                // grapple hook if out
+	gentity_t *cameraPortal;    // grapple hook if out
 	vec3_t cameraOrigin;
 
-	int dropWeaponTime;         // JPW NERVE last time a weapon was dropped
-	int limboDropWeapon;         // JPW NERVE weapon to drop in limbo
-	int deployQueueNumber;         // JPW NERVE player order in reinforcement FIFO queue
-	int lastBurnTime;         // JPW NERVE last time index for flamethrower burn
-	int PCSpecialPickedUpCount;         // JPW NERVE used to count # of times somebody's picked up this LTs ammo (or medic health) (for scoring)
-	int saved_persistant[MAX_PERSISTANT];           // DHM - Nerve :: Save ps->persistant here during Limbo
+	int dropWeaponTime;          // last time a weapon was dropped
+	int limboDropWeapon;         // weapon to drop in limbo
+	int deployQueueNumber;       // player order in reinforcement FIFO queue
+	int lastBurnTime;            // last time index for flamethrower burn
+	int PCSpecialPickedUpCount;          // used to count # of times somebody's picked up this LTs ammo (or medic health) (for scoring)
+	int saved_persistant[MAX_PERSISTANT]; // Save ps->persistant here during Limbo
 
-	gentity_t *touchingTOI;     // Arnout: the trigger_objective_info a player is touching this frame
+	gentity_t *touchingTOI;              // the trigger_objective_info a player is touching this frame
 
 	int lastConstructibleBlockingWarnTime;
 	int lastConstructibleBlockingWarnEnt;
@@ -814,8 +813,8 @@ struct gclient_s
 	float cmddelta;         // antiwarp command queue # valid commands
 	usercmd_t cmds[LAG_MAX_COMMANDS]; // antiwarp command queue
 
-	gentity_t *tempHead;        // Gordon: storing a temporary head for bullet head shot detection
-	gentity_t *tempLeg;         // Arnout: storing a temporary leg for bullet head shot detection
+	gentity_t *tempHead;        // storing a temporary head for bullet head shot detection
+	gentity_t *tempLeg;         // storing a temporary leg for bullet head shot detection
 
 	int botSlotNumber;              // the slot the bot falls into (set up in the initial UI screen)
 

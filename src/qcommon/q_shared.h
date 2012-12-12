@@ -341,6 +341,9 @@ typedef int clipHandle_t;
 #define YAW                 1       // left / right
 #define ROLL                2       // fall over
 
+#define MAX_GUID_LENGTH     32
+#define MAX_IP4_LENGTH      16      // @IP6
+
 // the game guarantees that no string from the network will ever
 // exceed MAX_STRING_CHARS
 #define MAX_STRING_CHARS    1024    // max length of a string passed to Cmd_TokenizeString
@@ -469,9 +472,7 @@ void *Hunk_Alloc(int size, ha_pref preference);
 
 /*
 ==============================================================
-
 MATHLIB
-
 ==============================================================
 */
 
@@ -1011,7 +1012,7 @@ void Info_RemoveKey_big(char *s, const char *key);
 void Info_SetValueForKey(char *s, const char *key, const char *value);
 void Info_SetValueForKey_Big(char *s, const char *key, const char *value);
 qboolean Info_Validate(const char *s);
-void Info_NextPair(const char **s, char *key, char *value);
+qboolean Info_NextPair(const char **s, char *key, char *value);
 
 // this is only here so the functions in q_shared.c and bg_*.c can link
 void QDECL Com_Error(int level, const char *error, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
@@ -1019,9 +1020,7 @@ void QDECL Com_Printf(const char *msg, ...) __attribute__ ((format(printf, 1, 2)
 
 /*
 ==========================================================
-
   RELOAD STATES
-
 ==========================================================
 */
 
@@ -1095,9 +1094,7 @@ typedef struct
 
 /*
 ==============================================================
-
 COLLISION DETECTION
-
 ==============================================================
 */
 
@@ -1187,9 +1184,7 @@ typedef enum
 
 /*
 ========================================================================
-
   ELEMENTS COMMUNICATED ACROSS THE NET
-
 ========================================================================
 */
 #define ANIM_BITS       10
