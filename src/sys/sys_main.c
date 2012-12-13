@@ -604,7 +604,7 @@ void *Sys_LoadDll(const char *name, char *fqpath,
 	}
 
 	// HACK: sometimes a library is loaded from the mod dir when it shouldn't. Why?
-	if (!libHandle)
+	if (!libHandle && strcmp(gamedir, DEFAULT_MODGAME))
 	{
 		Com_Printf("Sys_LoadDll: failed to load the mod library. Trying to revert to the default one.\n");
 		libHandle = Sys_TryLibraryLoad(basepath, DEFAULT_MODGAME, fname, fqpath);
@@ -661,7 +661,8 @@ void Sys_ParseArgs(int argc, char **argv)
 #ifdef FEATURE_CURSES
 	for (i = 1; i < argc; i++)
 	{
-		if (!strcmp(argv[i], "+nocurses"))
+		if (!strcmp(argv[i], "+nocurses") ||
+		    !strcmp(argv[i], "--nocurses"))
 		{
 			nocurses = qtrue;
 			break;
