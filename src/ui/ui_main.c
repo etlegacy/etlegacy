@@ -2257,8 +2257,6 @@ static void UI_DrawMissionBriefingObjectives(rectDef_t *rect, float scale, vec4_
 }
 
 static qboolean updateModel = qtrue;
-static qboolean q3Model     = qfalse;
-
 
 static void UI_DrawNetFilter(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
@@ -2587,7 +2585,7 @@ static void UI_BuildPlayerList(void)
 		if (info[0])
 		{
 			Q_strncpyz(namebuf, Info_ValueForKey(info, "n"), sizeof(namebuf));
-			// fretn - dont expand colors twice, so: foo^^xbar -> foo^bar -> fooar
+			// dont expand colors twice, so: foo^^xbar -> foo^bar -> fooar
 			//Q_CleanStr( namebuf );
 			Q_strncpyz(uiInfo.playerNames[uiInfo.playerCount], namebuf, sizeof(uiInfo.playerNames[0]));
 			muted = atoi(Info_ValueForKey(info, "mu"));
@@ -2605,7 +2603,7 @@ static void UI_BuildPlayerList(void)
 			if (team2 == team)
 			{
 				Q_strncpyz(namebuf, Info_ValueForKey(info, "n"), sizeof(namebuf));
-				// fretn - dont expand colors twice, so: foo^^xbar -> foo^bar -> fooar
+				// dont expand colors twice, so: foo^^xbar -> foo^bar -> fooar
 				//Q_CleanStr( namebuf );
 				Q_strncpyz(uiInfo.teamNames[uiInfo.myTeamCount], namebuf, sizeof(uiInfo.teamNames[0]));
 				uiInfo.teamClientNums[uiInfo.myTeamCount] = n;
@@ -2787,7 +2785,7 @@ static void UI_ParseGLConfig(void)
 
 		if (uiInfo.numGlInfoLines == GLINFO_LINES)
 		{
-			break;  // Arnout: failsafe
+			break;  // failsafe
 		}
 
 		while (*eptr && *eptr != ' ')
@@ -5932,8 +5930,8 @@ static void UI_SortServerStatusInfo(serverStatusInfo_t *info)
 	int  i, j, index;
 	char *tmp1, *tmp2;
 
-	// FIXME: if "gamename" == "baseq3" or "missionpack" then
-	// replace the gametype number by FFA, CTF etc.
+	// FIXME: replace the gametype number by game type
+	//        e.g. Objective, Stopwatch, Map Voting, Custom, etc.
 
 	index = 0;
 	for (i = 0; serverStatusCvars[i].name; i++)
@@ -5953,7 +5951,7 @@ static void UI_SortServerStatusInfo(serverStatusInfo_t *info)
 				info->lines[index][3] = info->lines[j][3];
 				info->lines[j][0]     = tmp1;
 				info->lines[j][3]     = tmp2;
-				//
+
 				if (strlen(serverStatusCvars[i].altName))
 				{
 					info->lines[index][0] = serverStatusCvars[i].altName;
@@ -6197,7 +6195,7 @@ static void UI_BuildFindPlayerList(qboolean force)
 		trap_Cvar_Set("cl_serverStatusResendTime", va("%d", resend));
 		// reset all server status requests
 		trap_LAN_ServerStatus(NULL, NULL, 0);
-		//
+
 		uiInfo.numFoundPlayerServers = 1;
 		Com_sprintf(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1],
 		            sizeof(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1]),
@@ -6213,7 +6211,6 @@ static void UI_BuildFindPlayerList(qboolean force)
 			// try to get the server status for this server
 			if (UI_GetServerStatusInfo(uiInfo.pendingServerStatus.server[i].adrstr, &info))
 			{
-				//
 				numFound++;
 				// parse through the server status lines
 				for (j = 0; j < info.numLines; j++)
@@ -6232,7 +6229,6 @@ static void UI_BuildFindPlayerList(qboolean force)
 						// add to found server list if we have space (always leave space for a line with the number found)
 						if (uiInfo.numFoundPlayerServers < MAX_FOUNDPLAYER_SERVERS - 1)
 						{
-							//
 							Q_strncpyz(uiInfo.foundPlayerServerAddresses[uiInfo.numFoundPlayerServers - 1],
 							           uiInfo.pendingServerStatus.server[i].adrstr,
 							           sizeof(uiInfo.foundPlayerServerAddresses[0]));
@@ -6340,7 +6336,7 @@ static void UI_BuildServerStatus(qboolean force)
 	{
 		Menu_SetFeederSelection(NULL, FEEDER_SERVERSTATUS, 0, NULL);
 		uiInfo.serverStatusInfo.numLines = 0;
-		// TTimo - reset the server URL / mod URL till we get the new ones
+		// reset the server URL / mod URL till we get the new ones
 		// the URL buttons are used in the two menus, serverinfo_popmenu and error_popmenu_diagnose
 		menu = Menus_FindByName("serverinfo_popmenu");
 		if (menu)

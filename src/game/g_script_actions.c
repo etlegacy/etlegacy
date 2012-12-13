@@ -4647,7 +4647,7 @@ void G_ModifyTOI(gentity_t *ent)
 		}
 	}
 
-	G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "e", va("%i", ent - g_entities));
+	G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "e", va("%i", (int)(ent - g_entities)));
 
 	if (cix)
 	{
