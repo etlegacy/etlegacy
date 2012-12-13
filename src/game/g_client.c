@@ -1635,25 +1635,25 @@ void ClientUserinfoChanged(int clientNum)
 		case TOK_cg_uinfo:
 			Q_strncpyz(cs_cg_uinfo, cs_value, MAX_STRING_CHARS);
 			break;
-        /*
-                    case TOK_pmove_fixed:
-                        if ( cs_value[0] )
-                            client->pers.pmoveFixed = atoi(cs_value);
-                        else
-                            client->pers.pmoveFixed = 0;
-                        break;
-                    case TOK_pmove_msec:
-                        if ( cs_value[0] )
-                            client->pers.pmoveMsec = atoi(cs_value);
-                        else
-                            client->pers.pmoveMsec = 8;
-                        // paranoia
-                        if (  client->pers.pmoveMsec > 33 )
-                            client->pers.pmoveMsec = 33;
-                        if ( client->pers.pmoveMsec < 3 )
-                            client->pers.pmoveMsec = 3;
-                        break;
-        */
+		/*
+		            case TOK_pmove_fixed:
+		                if ( cs_value[0] )
+		                    client->pers.pmoveFixed = atoi(cs_value);
+		                else
+		                    client->pers.pmoveFixed = 0;
+		                break;
+		            case TOK_pmove_msec:
+		                if ( cs_value[0] )
+		                    client->pers.pmoveMsec = atoi(cs_value);
+		                else
+		                    client->pers.pmoveMsec = 8;
+		                // paranoia
+		                if (  client->pers.pmoveMsec > 33 )
+		                    client->pers.pmoveMsec = 33;
+		                if ( client->pers.pmoveMsec < 3 )
+		                    client->pers.pmoveMsec = 3;
+		                break;
+		*/
 		case TOK_name:
 			// see also MAX_NAME_LENGTH
 			if (strlen(cs_value) >= MAX_NETNAME)
