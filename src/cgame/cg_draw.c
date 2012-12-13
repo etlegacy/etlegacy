@@ -2787,9 +2787,8 @@ static void CG_DrawSpectatorMessage(void)
 
 #ifdef FEATURE_MULTIVIEW
 	str2 = BindingFromName("mvactivate");
-	str  = va(CG_TranslateString("- Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? "disable" : "activate"));
-	CG_DrawStringExt(x, y, str, colorWhite, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0);
-	y += TINYCHAR_HEIGHT;
+	str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? "disable" : "activate"));
+	CG_DrawStringExt(8, 190, str, colorWhite, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0);
 #endif
 }
 
