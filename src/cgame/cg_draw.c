@@ -101,12 +101,10 @@ int CG_Text_Width(const char *text, float scale, int limit)
 
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	float       max = 0;
 	glyphInfo_t *glyph;
-	float       useScale;
-	const char  *s = text;
-
-	useScale = scale * font->glyphScale;
+	float       max      = 0;
+	float       useScale = scale * font->glyphScale;
+	const char  *s       = text;
 
 	if (text)
 	{
@@ -533,7 +531,7 @@ static float CG_DrawTimer(float y)
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
 	{
-		s        = va("^N0:00");
+		s        = "^N0:00";
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else
@@ -2185,7 +2183,7 @@ static void CG_DrawCrosshairNames(void)
 				}
 
 				w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-				CG_DrawSmallStringColor(320 - w / 2, 170, s, color);
+				CG_DrawSmallStringColor((320 - w / 2) + cgs.wideXoffset, 170, s, color);
 			}
 			else if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_CONSTRUCTIBLE_MARKER)
 			{
@@ -2193,7 +2191,7 @@ static void CG_DrawCrosshairNames(void)
 				if (*s)
 				{
 					w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-					CG_DrawSmallStringColor(320 - w / 2, 170, s, color);
+					CG_DrawSmallStringColor((320 - w / 2) + cgs.wideXoffset, 170, s, color);
 				}
 				return;
 			}
@@ -2213,7 +2211,7 @@ static void CG_DrawCrosshairNames(void)
 			{
 				s = CG_TranslateString("Disguised Enemy!");
 				w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
-				CG_DrawSmallStringColor(320 - w / 2, 170, s, color);
+				CG_DrawSmallStringColor((320 - w / 2) + cgs.wideXoffset, 170, s, color);
 				return;
 			}
 			else if (dist > 512)
@@ -2235,7 +2233,7 @@ static void CG_DrawCrosshairNames(void)
 				w          = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
 
 				// draw the name and class
-				CG_DrawSmallStringColor(320 - w / 2, 170, s, color);
+				CG_DrawSmallStringColor((320 - w / 2) + cgs.wideXoffset, 170, s, color);
 
 				// set the health
 				// rain - #480 - make sure it's the health for the right entity;
@@ -2291,7 +2289,7 @@ static void CG_DrawCrosshairNames(void)
 		w          = CG_DrawStrlen(s) * SMALLCHAR_WIDTH;
 
 		// draw the name and class
-		CG_DrawSmallStringColor(320 - w / 2, 170, s, color);
+		CG_DrawSmallStringColor((320 - w / 2) + cgs.wideXoffset, 170, s, color);
 
 		// set the health
 		if (cg.crosshairClientNum == cg.snap->ps.identifyClient)
@@ -2362,7 +2360,7 @@ static void CG_DrawCrosshairNames(void)
 
 		Vector4Set(bgcolor, 1.f, 1.f, 1.f, .25f * color[3]);
 
-		CG_FilledBar(320 - 110 /*w*/ / 2, 190, 110, 10, c, NULL, bgcolor, barFrac, 16);
+		CG_FilledBar((320 - 110 / 2) + cgs.wideXoffset, 190, 110, 10, c, NULL, bgcolor, barFrac, 16);
 	}
 
 	if (isTank)
