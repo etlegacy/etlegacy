@@ -1870,8 +1870,8 @@ char *IsFakepConnection(int clientNum, char const *ip, char const *rate)
 				if (count > max)
 				{
 					G_Printf("IsFakepConnection: too many connections from %s\n", ip);
-					G_LogPrintf(va("IsFakepConnection: too many connections from %s\n", ip));
-					// TODO should we drop / ban all connections from this IP?
+					G_LogPrintf("IsFakepConnection: too many connections from %s\n", ip);
+					// TODO: should we drop / ban all connections from this IP?
 					return va("Only %d connection%s per IP %s allowed on this server!",
 					          max,
 					          max == 1 ? "" : "s",
