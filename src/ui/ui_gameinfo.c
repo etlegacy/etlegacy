@@ -33,73 +33,6 @@
 
 #include "ui_local.h"
 
-// arena info
-static int ui_numArenas;
-
-/*
-===============
-UI_ParseInfos
-===============
-*/
-int UI_ParseInfos(char *buf, int max, char *infos[], int totalmax)
-{
-	char *token;
-	int  count = 0;
-	char key[MAX_TOKEN_CHARS];
-	char info[MAX_INFO_STRING];
-
-	while (1)
-	{
-		token = COM_Parse(&buf);
-		if (!token[0])
-		{
-			break;
-		}
-		if (strcmp(token, "{"))
-		{
-			Com_Printf("Missing { in info file\n");
-			break;
-		}
-
-		if (count == max)
-		{
-			Com_Printf("Max infos exceeded\n");
-			break;
-		}
-
-		info[0] = '\0';
-		while (1)
-		{
-			token = COM_ParseExt(&buf, qtrue);
-			if (!token[0])
-			{
-				Com_Printf("Unexpected end of info file\n");
-				break;
-			}
-			if (!strcmp(token, "}"))
-			{
-				break;
-			}
-			Q_strncpyz(key, token, sizeof(key));
-
-			token = COM_ParseExt(&buf, qfalse);
-			if (!token[0])
-			{
-				strcpy(token, "<NULL>");
-			}
-			Info_SetValueForKey(info, key, token);
-		}
-		// NOTE: extra space for arena number
-		infos[count] = UI_Alloc(strlen(info) + strlen("\\num\\") + strlen(va("%d", totalmax)) + 1);
-		if (infos[count])
-		{
-			strcpy(infos[count], info);
-			count++;
-		}
-	}
-	return count;
-}
-
 /*
 ===============
 UI_LoadArenasFromFile
@@ -317,7 +250,6 @@ void UI_LoadArenas(void)
 	int  i;
 	int  dirlen;
 
-	ui_numArenas    = 0;
 	uiInfo.mapCount = 0;
 
 	// get all arenas from .arena files

@@ -33,10 +33,6 @@
 
 #include "ui_local.h"
 
-#define AXIS_TEAM       0
-#define ALLIES_TEAM     1
-#define SPECT_TEAM      2
-
 extern qboolean  g_waitingForKey;
 extern qboolean  g_editingField;
 extern itemDef_t *g_editItem;
@@ -6542,7 +6538,7 @@ static void UI_FeederAddItem(float feederID, const char *name, int index)
 {
 }
 
-//----(SA)  added (whoops, this got nuked in a check-in...)
+// added (whoops, this got nuked in a check-in...)
 static const char *UI_FileText(char *fileName)
 {
 	int          len;

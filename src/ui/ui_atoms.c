@@ -144,9 +144,6 @@ qboolean UI_ConsoleCommand(int realTime)
 
 	cmd = UI_Argv(0);
 
-	// ensure minimum menu data is available
-	//Menu_Cache();
-
 	if (Q_stricmp(cmd, "ui_test") == 0)
 	{
 		UI_ShowPostGame(qtrue);

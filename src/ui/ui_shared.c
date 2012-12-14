@@ -5217,7 +5217,6 @@ void Controls_SetConfig(qboolean restart)
 	{
 		DC->executeText(EXEC_APPEND, "in_restart\n");
 	}
-	//trap_Cmd_ExecuteText( EXEC_APPEND, "in_restart\n" );
 }
 
 /*
@@ -5313,11 +5312,9 @@ void Item_Slider_Paint(itemDef_t *item)
 		x = item->window.rect.x;
 	}
 	DC->setColor(newColor);
-	//DC->drawHandlePic( x, y, SLIDER_WIDTH, SLIDER_HEIGHT, DC->Assets.sliderBar );
 	DC->drawHandlePic(x, y + 1, SLIDER_WIDTH, SLIDER_HEIGHT, DC->Assets.sliderBar);
 
 	x = Item_Slider_ThumbPosition(item);
-	//DC->drawHandlePic( x - (SLIDER_THUMB_WIDTH / 2), y - 2, SLIDER_THUMB_WIDTH, SLIDER_THUMB_HEIGHT, DC->Assets.sliderThumb );
 	DC->drawHandlePic(x - (SLIDER_THUMB_WIDTH / 2), y, SLIDER_THUMB_WIDTH, SLIDER_THUMB_HEIGHT, DC->Assets.sliderThumb);
 }
 
@@ -5688,14 +5685,14 @@ void Item_ListBox_Paint(itemDef_t *item)
 			thumb = x - SCROLLBAR_SIZE - 1;
 		}
 		DC->drawHandlePic(thumb, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarThumb);
-		//
+
 		listPtr->endPos = listPtr->startPos;
 		size            = fillRect.w - 2;
+
 		// items
 		// size contains max available space
 		if (listPtr->elementStyle == LISTBOX_IMAGE)
 		{
-			// fit = 0;
 			x = fillRect.x + 1;
 			y = fillRect.y + 1;
 			for (i = listPtr->startPos; i < count; i++)
@@ -5721,7 +5718,6 @@ void Item_ListBox_Paint(itemDef_t *item)
 				}
 				x += listPtr->elementWidth;
 				listPtr->endPos++;
-				// fit++;
 			}
 		}
 	}
@@ -5739,7 +5735,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 		y += size - 1;
 		DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowDown);
 		// thumb
-		thumb = Item_ListBox_ThumbDrawPosition(item);   //Item_ListBox_ThumbPosition(item);
+		thumb = Item_ListBox_ThumbDrawPosition(item);
 		if (thumb > y - SCROLLBAR_SIZE - 1)
 		{
 			thumb = y - SCROLLBAR_SIZE - 1;
@@ -5781,7 +5777,6 @@ void Item_ListBox_Paint(itemDef_t *item)
 					break;
 				}
 				y += listPtr->elementHeight;
-				// fit++;
 			}
 		}
 		else
@@ -5845,7 +5840,6 @@ void Item_ListBox_Paint(itemDef_t *item)
 				}
 				listPtr->endPos++;
 				y += listPtr->elementHeight;
-				// fit++;
 			}
 		}
 	}
@@ -5869,6 +5863,7 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 			// if the value is within one of the ranges then set color to that, otherwise leave at default
 			int   i;
 			float f = DC->getValue(item->window.ownerDraw, item->colorRangeType);
+
 			for (i = 0; i < item->numColors; i++)
 			{
 				if (f >= item->colorRanges[i].low && f <= item->colorRanges[i].high)
@@ -5965,6 +5960,7 @@ void Item_Paint(itemDef_t *item)
 		if (DC->realTime > item->window.nextTime)
 		{
 			int done = 0;
+
 			item->window.nextTime = DC->realTime + item->window.offsetTime;
 			// transition the x,y
 			if (item->window.rectClient.x == item->window.rectEffects.x)
@@ -6473,11 +6469,6 @@ void Menu_Paint(menuDef_t *menu, qboolean forcePaint)
 		// FIXME: make sure we have a default shader if fullscreen is set with no background
 		DC->drawHandlePic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, menu->window.background);
 	}
-	else if (menu->window.background)
-	{
-		// this allows a background shader without being full screen
-		//UI_DrawHandlePic(menu->window.rect.x, menu->window.rect.y, menu->window.rect.w, menu->window.rect.h, menu->backgroundShader);
-	}
 
 	// paint the background and or border
 	Window_Paint(&menu->window, menu->fadeAmount, menu->fadeClamp, menu->fadeCycle);
@@ -6683,7 +6674,6 @@ qboolean ItemParse_focusSound(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-
 // text <string>
 qboolean ItemParse_text(itemDef_t *item, int handle)
 {
@@ -6721,7 +6711,6 @@ qboolean ItemParse_group(itemDef_t *item, int handle)
 	}
 	return qtrue;
 }
-
 
 // asset_model <string>
 qboolean ItemParse_asset_model(itemDef_t *item, int handle)
@@ -7164,7 +7153,7 @@ qboolean ItemParse_textstyle(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-//----(SA)  added for forcing a font for a given item
+// added for forcing a font for a given item
 qboolean ItemParse_textfont(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->font))
@@ -7539,7 +7528,7 @@ qboolean ItemParse_cvarStrList(itemDef_t *item, int handle)
 		}
 
 	}
-	return qfalse;  // bk001205 - LCC missing return value
+	return qfalse;
 }
 
 qboolean ItemParse_cvarFloatList(itemDef_t *item, int handle)
@@ -8490,7 +8479,6 @@ qboolean Menu_Parse(int handle, menuDef_t *menu)
 
 	while (1)
 	{
-
 		memset(&token, 0, sizeof(pc_token_t));
 		if (!trap_PC_ReadToken(handle, &token))
 		{
@@ -8617,6 +8605,7 @@ void *Display_CaptureItem(int x, int y)
 }
 
 // FIXME:
+// what to fix here?
 qboolean Display_MouseMove(void *p, int x, int y)
 {
 	menuDef_t *menu = p;
@@ -8724,6 +8713,7 @@ static void Menu_CacheContents(menuDef_t *menu)
 void Display_CacheAll()
 {
 	int i;
+
 	for (i = 0; i < menuCount; i++)
 	{
 		Menu_CacheContents(&Menus[i]);

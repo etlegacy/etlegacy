@@ -129,45 +129,6 @@ extern vmCvar_t ui_autoredirect;
 #define MAX_MENUDEPTH           8
 #define MAX_MENUITEMS           128
 
-#define MTYPE_NULL              0
-#define MTYPE_SLIDER            1
-#define MTYPE_ACTION            2
-#define MTYPE_SPINCONTROL       3
-#define MTYPE_FIELD             4
-#define MTYPE_RADIOBUTTON       5
-#define MTYPE_BITMAP            6
-#define MTYPE_TEXT              7
-#define MTYPE_SCROLLLIST        8
-#define MTYPE_PTEXT             9
-#define MTYPE_BTEXT             10
-
-#define QMF_BLINK               0x00000001
-#define QMF_SMALLFONT           0x00000002
-#define QMF_LEFT_JUSTIFY        0x00000004
-#define QMF_CENTER_JUSTIFY      0x00000008
-#define QMF_RIGHT_JUSTIFY       0x00000010
-#define QMF_NUMBERSONLY         0x00000020  // edit field is only numbers
-#define QMF_HIGHLIGHT           0x00000040
-#define QMF_HIGHLIGHT_IF_FOCUS  0x00000080  // steady focus
-#define QMF_PULSEIFFOCUS        0x00000100  // pulse if focus
-#define QMF_HASMOUSEFOCUS       0x00000200
-#define QMF_NOONOFFTEXT         0x00000400
-#define QMF_MOUSEONLY           0x00000800  // only mouse input allowed
-#define QMF_HIDDEN              0x00001000  // skips drawing
-#define QMF_GRAYED              0x00002000  // grays and disables
-#define QMF_INACTIVE            0x00004000  // disables any input
-#define QMF_NODEFAULTINIT       0x00008000  // skip default initialization
-#define QMF_OWNERDRAW           0x00010000
-#define QMF_PULSE               0x00020000
-#define QMF_LOWERCASE           0x00040000  // edit field is all lower case
-#define QMF_UPPERCASE           0x00080000  // edit field is all upper case
-#define QMF_SILENT              0x00100000
-
-// callback notifications
-#define QM_GOTFOCUS             1
-#define QM_LOSTFOCUS            2
-#define QM_ACTIVATED            3
-
 typedef struct _tag_menuframework
 {
 	int cursor;
@@ -281,38 +242,15 @@ typedef struct
 } menutext_s;
 
 extern void         Menu_Cache(void);
-extern void         Menu_Focus(menucommon_s *m);
-extern void         Menu_AddItem(menuframework_s *menu, void *item);
-extern void         Menu_AdjustCursor(menuframework_s *menu, int dir);
-extern void         Menu_Draw(menuframework_s *menu);
 
-extern void         Menu_Draw_Inactive(menuframework_s *menu);
-
-extern void *Menu_ItemAtCursor(menuframework_s *m);
-extern sfxHandle_t  Menu_ActivateItem(menuframework_s *s, menucommon_s *item);
-extern void         Menu_SetCursor(menuframework_s *s, int cursor);
-extern void         Menu_SetCursorToItem(menuframework_s *m, void *ptr);
-extern sfxHandle_t  Menu_DefaultKey(menuframework_s *s, int key);
-extern void         Bitmap_Init(menubitmap_s *b);
-extern void         Bitmap_Draw(menubitmap_s *b);
-extern void         ScrollList_Draw(menulist_s *l);
-
-extern void         ScrollList_Draw2(menulist_s *l);
-
-extern sfxHandle_t  ScrollList_Key(menulist_s *l, int key);
-extern sfxHandle_t menu_in_sound;
-extern sfxHandle_t menu_move_sound;
-extern sfxHandle_t menu_out_sound;
-extern sfxHandle_t menu_buzz_sound;
-extern sfxHandle_t menu_null_sound;
-extern vec4_t      menu_text_color;
-extern vec4_t      menu_grayed_color;
-extern vec4_t      menu_dark_color;
-extern vec4_t      menu_highlight_color;
-extern vec4_t      menu_red_color;
-extern vec4_t      menu_black_color;
-extern vec4_t      menu_dim_color;
-extern vec4_t      color_black;
+extern vec4_t menu_text_color;
+extern vec4_t menu_grayed_color;
+extern vec4_t menu_dark_color;
+extern vec4_t menu_highlight_color;
+extern vec4_t menu_red_color;
+extern vec4_t menu_black_color;
+extern vec4_t menu_dim_color;
+extern vec4_t color_black;
 
 extern vec4_t color_halfblack;
 
@@ -331,21 +269,6 @@ extern vec4_t text_color_disabled;
 extern vec4_t text_color_normal;
 extern vec4_t text_color_highlight;
 
-extern char *ui_medalNames[];
-extern char *ui_medalPicNames[];
-extern char *ui_medalSounds[];
-
-// ui_mfield.c
-extern void         MField_Clear(mfield_t *edit);
-extern void         MField_KeyDownEvent(mfield_t *edit, int key);
-extern void         MField_CharEvent(mfield_t *edit, int ch);
-extern void         MField_Draw(mfield_t *edit, int x, int y, int style, vec4_t color);
-
-extern void         MenuField_Draw2(menufield_s *f, int specialtype);
-
-extern void         MenuField_Init(menufield_s *m);
-extern void         MenuField_Draw(menufield_s *f);
-extern sfxHandle_t  MenuField_Key(menufield_s *m, int *key);
 
 // ui_main.c
 void            UI_Report(void);
@@ -373,28 +296,8 @@ extern void UI_MainMenu(void);
 extern void UI_RegisterCvars(void);
 extern void UI_UpdateCvars(void);
 
-// ui_credits.c
-extern void UI_CreditMenu(void);
-
-// ui_ingame.c
-extern void InGame_Cache(void);
-extern void UI_InGameMenu(void);
-
-// ui_confirm.c
-extern void ConfirmMenu_Cache(void);
-extern void UI_ConfirmMenu(const char *question, void (*draw)(void), void (*action)(qboolean result));
-
-// ui_setup.c
-extern void UI_SetupMenu_Cache(void);
-extern void UI_SetupMenu(void);
-
 // ui_connect.c
 extern void UI_DrawConnectScreen(qboolean overlay);
-
-// ui_cinematics.c
-extern void UI_CinematicsMenu(void);
-extern void UI_CinematicsMenu_f(void);
-extern void UI_CinematicsMenu_Cache(void);
 
 // ui_loadpanel.c
 extern void UI_DrawLoadPanel(qboolean forcerefresh, qboolean ownerdraw, qboolean uihack);
@@ -418,10 +321,6 @@ extern void ServerOptions_Cache(void);
 extern void UI_ServerInfoMenu(void);
 extern void ServerInfo_Cache(void);
 
-// ui_video.c
-extern void UI_GraphicsOptionsMenu(void);
-extern void GraphicsOptions_Cache(void);
-extern void DriverInfo_Cache(void);
 
 // ui_players.c
 
