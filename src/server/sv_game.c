@@ -41,11 +41,6 @@
 
 botlib_export_t *botlib_export;
 
-void SV_GamePrint(const char *string)
-{
-	Com_Printf("%s", string);
-}
-
 // these functions must be used instead of pointer arithmetic, because
 // the game allocates gentities with private information after the server shared part
 int SV_NumForGentity(sharedEntity_t *ent)

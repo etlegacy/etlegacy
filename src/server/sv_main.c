@@ -1309,6 +1309,7 @@ static qboolean SV_CheckPaused(void)
 
 /*
  * @brief Return time in millseconds until processing of the next server frame.
+ * @note Unused
  */
 int SV_FrameMsec()
 {
