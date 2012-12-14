@@ -348,7 +348,7 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 		CL_Disconnect(qtrue);
 		CL_FlushMemory();
 		com_errorEntered = qfalse;
-		if (!Q_stricmpn(com_errorMessage, "Server is full", 14) && CL_NextUpdateServer())
+		if (!Q_stricmpn(com_errorMessage, "Server is full", 14))
 		{
 			CL_GetAutoUpdate();
 		}

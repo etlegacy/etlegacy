@@ -357,19 +357,15 @@ typedef struct
 
 	netadr_t authorizeServer;
 
-	// DHM - Nerve :: Auto-update Info
-	char autoupdateServerNames[MAX_AUTOUPDATE_SERVERS][MAX_QPATH];
+	char autoupdateServerName[MAX_QPATH];
 	netadr_t autoupdateServer;
-	qboolean autoUpdateServerChecked[MAX_AUTOUPDATE_SERVERS];
-	int autoupdatServerFirstIndex;          // to know when we went through all of them
-	int autoupdatServerIndex;               // to cycle through them
 
 	// rendering info
 	glconfig_t glconfig;
 	qhandle_t charSetShader;
 	qhandle_t whiteShader;
 	qhandle_t consoleShader;
-	qhandle_t consoleShader2;       // NERVE - SMF - merged from WolfSP
+	qhandle_t consoleShader2;
 
 	// www downloading
 	// in the static stuff since this may have to survive server disconnects
@@ -461,7 +457,6 @@ void CL_AddReliableCommand(const char *cmd);
 void CL_StartHunkUsers(void);
 
 void CL_CheckAutoUpdate(void);
-qboolean CL_NextUpdateServer(void);
 void CL_GetAutoUpdate(void);
 
 void CL_Disconnect_f(void);

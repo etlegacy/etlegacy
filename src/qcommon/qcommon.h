@@ -296,37 +296,13 @@ You or the server may be running older versions of the game. Press the auto-upda
  * @def MASTER_SERVER_NAME
  * @brief location of the master server
  */
-#ifndef MASTER_SERVER_NAME
-#define MASTER_SERVER_NAME      "etmaster.idsoftware.com"
-#endif // MASTER_SERVER_NAME
-
-#define MOTD_SERVER_NAME            "etmaster.idsoftware.com"
-
-// TTimo: override autoupdate server for testing
-#ifndef AUTOUPDATE_SERVER_NAME
-#define AUTOUPDATE_SERVER_NAME "aupdates.etlegacy.com"
-#endif
-
-// TTimo: allow override for easy dev/testing..
-// FIXME: not planning to support more than 1 auto update server
-// see cons -- update_server=myhost
-#define MAX_AUTOUPDATE_SERVERS  5
-#if !defined(AUTOUPDATE_SERVER_NAME)
-#define AUTOUPDATE_SERVER1_NAME   "au2rtcw1.activision.com"            // DHM - Nerve
-#define AUTOUPDATE_SERVER2_NAME   "au2rtcw2.activision.com"            // DHM - Nerve
-#define AUTOUPDATE_SERVER3_NAME   "au2rtcw3.activision.com"            // DHM - Nerve
-#define AUTOUPDATE_SERVER4_NAME   "au2rtcw4.activision.com"            // DHM - Nerve
-#define AUTOUPDATE_SERVER5_NAME   "au2rtcw5.activision.com"            // DHM - Nerve
-#else
-#define AUTOUPDATE_SERVER1_NAME   AUTOUPDATE_SERVER_NAME
-#define AUTOUPDATE_SERVER2_NAME   AUTOUPDATE_SERVER_NAME
-#define AUTOUPDATE_SERVER3_NAME   AUTOUPDATE_SERVER_NAME
-#define AUTOUPDATE_SERVER4_NAME   AUTOUPDATE_SERVER_NAME
-#define AUTOUPDATE_SERVER5_NAME   AUTOUPDATE_SERVER_NAME
-#endif
+#define MASTER_SERVER_NAME  "etmaster.idsoftware.com"
+#define MOTD_SERVER_NAME    "etmaster.idsoftware.com"
+#define UPDATE_SERVER_NAME  "update.etlegacy.com"
 
 #define PORT_MASTER         27950
 #define PORT_MOTD           27951
+#define PORT_UPDATE         27952
 #define PORT_SERVER         27960
 
 /*
@@ -1030,7 +1006,6 @@ void CL_StartHunkUsers(void);
 // start all the client stuff using the hunk
 
 void CL_CheckAutoUpdate(void);
-qboolean CL_NextUpdateServer(void);
 void CL_GetAutoUpdate(void);
 
 void Key_KeynameCompletion(void (*callback)(const char *s));

@@ -3198,7 +3198,7 @@ void CL_CheckAutoUpdate(void)
 {
 	if (!cl_autoupdate->integer)
 	{
-		Com_Printf("Auto-update is disabled by cl_autoupdate 0.\n");
+		Com_Printf("Updater is disabled by cl_autoupdate 0.\n");
 		return;
 	}
 
@@ -3208,87 +3208,23 @@ void CL_CheckAutoUpdate(void)
 		return;
 	}
 
-	srand(Com_Milliseconds());
-
 	// Resolve update server
-	if (!NET_StringToAdr(cls.autoupdateServerNames[0], &cls.autoupdateServer, NA_UNSPEC))
+	if (!NET_StringToAdr(cls.autoupdateServerName, &cls.autoupdateServer, NA_UNSPEC))
 	{
-		Com_DPrintf("Failed to resolve any auto-update servers.\n");
-
-		cls.autoUpdateServerChecked[0] = qtrue;
+		Com_DPrintf("Failed to resolve the update server.\n");
 
 		autoupdateChecked = qtrue;
 		return;
 	}
 
-	cls.autoupdatServerIndex = 0;
-
-	cls.autoupdatServerFirstIndex = cls.autoupdatServerIndex;
-
-	cls.autoUpdateServerChecked[cls.autoupdatServerIndex] = qtrue;
-
-	cls.autoupdateServer.port = BigShort(PORT_SERVER);
-	Com_DPrintf("Auto-update server at: %i.%i.%i.%i:%i (%s)\n", cls.autoupdateServer.ip[0], cls.autoupdateServer.ip[1],
-	            cls.autoupdateServer.ip[2], cls.autoupdateServer.ip[3],
-	            BigShort(cls.autoupdateServer.port), cls.autoupdateServerNames[0]);
+	cls.autoupdateServer.port = BigShort(PORT_UPDATE);
+	Com_DPrintf("Update server at: %s (%s)\n", NET_AdrToString(cls.autoupdateServer), cls.autoupdateServerName);
 
 	NET_OutOfBandPrint(NS_CLIENT, cls.autoupdateServer, "getUpdateInfo \"%s\" \"%s\"\n", Q3_VERSION, CPUSTRING);
 
 	CL_RequestMotd();
 
 	autoupdateChecked = qtrue;
-}
-
-qboolean CL_NextUpdateServer(void)
-{
-	char *servername;
-
-	if (!cl_autoupdate->integer)
-	{
-		return qfalse;
-	}
-
-#ifdef _DEBUG
-	Com_Printf(S_COLOR_MAGENTA "Autoupdate hardcoded OFF in debug build\n");
-	return qfalse;
-#endif
-
-	while (cls.autoUpdateServerChecked[cls.autoupdatServerFirstIndex])
-	{
-		cls.autoupdatServerIndex++;
-
-		if (cls.autoupdatServerIndex > MAX_AUTOUPDATE_SERVERS)
-		{
-			cls.autoupdatServerIndex = 0;
-		}
-
-		if (cls.autoupdatServerIndex == cls.autoupdatServerFirstIndex)
-		{
-			// went through all of them already
-			return qfalse;
-		}
-	}
-
-	servername = cls.autoupdateServerNames[cls.autoupdatServerIndex];
-
-	Com_DPrintf("Resolving AutoUpdate Server... ");
-	if (!NET_StringToAdr(servername, &cls.autoupdateServer, NA_UNSPEC))
-	{
-		Com_DPrintf("Couldn't resolve address, trying next one...");
-
-		cls.autoUpdateServerChecked[cls.autoupdatServerIndex] = qtrue;
-
-		return CL_NextUpdateServer();
-	}
-
-	cls.autoUpdateServerChecked[cls.autoupdatServerIndex] = qtrue;
-
-	cls.autoupdateServer.port = BigShort(PORT_SERVER);
-	Com_DPrintf("%i.%i.%i.%i:%i\n", cls.autoupdateServer.ip[0], cls.autoupdateServer.ip[1],
-	            cls.autoupdateServer.ip[2], cls.autoupdateServer.ip[3],
-	            BigShort(cls.autoupdateServer.port));
-
-	return qtrue;
 }
 
 void CL_GetAutoUpdate(void)
@@ -3556,7 +3492,7 @@ void CL_Init(void)
 	// register our variables
 	cl_noprint    = Cvar_Get("cl_noprint", "0", 0);
 	cl_motd       = Cvar_Get("cl_motd", "1", 0);
-	cl_autoupdate = Cvar_Get("cl_autoupdate", "1", CVAR_ARCHIVE);
+	cl_autoupdate = Cvar_Get("cl_autoupdate", "0", CVAR_ARCHIVE);
 
 	cl_timeout = Cvar_Get("cl_timeout", "60", 0);
 
@@ -3684,11 +3620,7 @@ void CL_Init(void)
 	cl_updateavailable = Cvar_Get("cl_updateavailable", "0", CVAR_ROM);
 	cl_updatefiles     = Cvar_Get("cl_updatefiles", "", CVAR_ROM);
 
-	Q_strncpyz(cls.autoupdateServerNames[0], AUTOUPDATE_SERVER1_NAME, MAX_QPATH);
-	Q_strncpyz(cls.autoupdateServerNames[1], AUTOUPDATE_SERVER2_NAME, MAX_QPATH);
-	Q_strncpyz(cls.autoupdateServerNames[2], AUTOUPDATE_SERVER3_NAME, MAX_QPATH);
-	Q_strncpyz(cls.autoupdateServerNames[3], AUTOUPDATE_SERVER4_NAME, MAX_QPATH);
-	Q_strncpyz(cls.autoupdateServerNames[4], AUTOUPDATE_SERVER5_NAME, MAX_QPATH);
+	Q_strncpyz(cls.autoupdateServerName, UPDATE_SERVER_NAME, MAX_QPATH);
 
 	// register our commands
 	Cmd_AddCommand("cmd", CL_ForwardToServer_f);
