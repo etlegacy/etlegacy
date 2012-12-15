@@ -71,6 +71,7 @@ FIXME relevant?
 static void CON_FlushIn(void)
 {
 	char key;
+
 	while (read(STDIN_FILENO, &key, 1) != -1)
 		;
 }
@@ -112,6 +113,7 @@ static void CON_Hide(void)
 	if (ttycon_on)
 	{
 		int i;
+
 		if (ttycon_hide)
 		{
 			ttycon_hide++;
@@ -145,16 +147,17 @@ static void CON_Show(void)
 {
 	if (ttycon_on)
 	{
-		int i;
-
 		assert(ttycon_hide > 0);
 		ttycon_hide--;
 		if (ttycon_hide == 0)
 		{
 			size_t UNUSED_VAR size;
+
 			size = write(STDOUT_FILENO, TTY_CONSOLE_PROMPT, strlen(TTY_CONSOLE_PROMPT));
 			if (TTY_con.cursor)
 			{
+				int i;
+
 				for (i = 0; i < TTY_con.cursor; i++)
 				{
 					size = write(STDOUT_FILENO, TTY_con.buffer + i, 1);
@@ -198,7 +201,6 @@ void Hist_Add(field_t *field)
 		return;
 	}
 
-
 	assert(hist_count <= CON_HISTORY);
 	assert(hist_count >= 0);
 	assert(hist_current >= -1);
@@ -224,6 +226,7 @@ Hist_Prev
 field_t *Hist_Prev(void)
 {
 	int hist_prev;
+
 	assert(hist_count <= CON_HISTORY);
 	assert(hist_count >= 0);
 	assert(hist_current >= -1);
@@ -339,15 +342,15 @@ CON_Input
 char *CON_Input(void)
 {
 	// we use this when sending back commands
-	static char       text[MAX_EDIT_LINE];
-	int               avail;
-	char              key;
-	field_t           *history;
-	size_t UNUSED_VAR size;
+	static char text[MAX_EDIT_LINE];
+	char        key;
+	field_t     *history;
 
 	if (ttycon_on)
 	{
-		avail = read(STDIN_FILENO, &key, 1);
+		size_t UNUSED_VAR size;
+		int               avail = read(STDIN_FILENO, &key, 1);
+
 		if (avail != -1)
 		{
 			// we have something

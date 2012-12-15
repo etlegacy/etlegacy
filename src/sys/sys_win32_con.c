@@ -69,7 +69,7 @@ typedef struct
 	HWND hwndButtonQuit;
 
 	HWND hwndErrorBox;
-	HWND hwndErrorText;
+	HWND hwndErrorText; // unused
 
 	HBITMAP hbmLogo;
 	HBITMAP hbmClearBitmap;
@@ -78,13 +78,13 @@ typedef struct
 	HBRUSH hbrErrorBackground;
 
 	HFONT hfBufferFont;
-	HFONT hfButtonFont;
+	HFONT hfButtonFont; // unused
 
 	HWND hwndInputLine;
 
 	char errorString[128];
 
-	char consoleText[512], returnedText[512];
+	char consoleText[512], returnedText[512]; // returnedText is unused
 	int visLevel;
 	qboolean quitOnClose;
 	int windowWidth, windowHeight;
@@ -110,7 +110,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	switch (uMsg)
 	{
 	case WM_SIZE:
-		// NERVE - SMF
+
 		cx = LOWORD(lParam);
 		cy = HIWORD(lParam);
 
@@ -149,7 +149,6 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 		s_wcd.windowWidth  = cx;
 		s_wcd.windowHeight = cy;
-		// -NERVE - SMF
 		break;
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) != WA_INACTIVE)
@@ -323,8 +322,6 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
-
-
 
 /*
 win32 console commandline completion
@@ -625,7 +622,7 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_CHAR:
-		//%	GetWindowText( s_wcd.hwndInputLine, inputBuffer, sizeof( inputBuffer ) );
+		//GetWindowText( s_wcd.hwndInputLine, inputBuffer, sizeof( inputBuffer ) );
 		GetWindowText(s_wcd.hwndInputLine, win_consoleField.buffer, sizeof(win_consoleField.buffer));
 		SendMessage(s_wcd.hwndInputLine, EM_GETSEL, (WPARAM) NULL, (LPARAM) &win_consoleField.cursor);
 		win_consoleField.widthInChars = strlen(win_consoleField.buffer);
@@ -653,7 +650,7 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			return 0;
 		}
-		// ydnar: handle tab key (commandline completion)
+		// handle tab key (commandline completion)
 		else if (wParam == 9)
 		{
 			// enable this code for tab double-tap show matching
@@ -762,9 +759,8 @@ void Sys_CreateConsole(void)
 		return;
 	}
 
-	//
+
 	// create fonts
-	//
 	hDC     = GetDC(s_wcd.hWnd);
 	nHeight = -MulDiv(8, GetDeviceCaps(hDC, LOGPIXELSY), 72);
 
@@ -785,9 +781,7 @@ void Sys_CreateConsole(void)
 
 	ReleaseDC(s_wcd.hWnd, hDC);
 
-	//
 	// create the input line
-	//
 	s_wcd.hwndInputLine = CreateWindowEx(WS_EX_CLIENTEDGE,
 	                                     "edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL,
 	                                     6, 400, 528, 20,
@@ -795,9 +789,7 @@ void Sys_CreateConsole(void)
 	                                     ( HMENU ) INPUT_ID,    // child window ID
 	                                     g_wv.hInstance, NULL);
 
-	//
 	// create the buttons
-	//
 	s_wcd.hwndButtonCopy = CreateWindow("button", NULL, BS_PUSHBUTTON | WS_VISIBLE | WS_CHILD,
 	                                    5, 425, 72, 24,
 	                                    s_wcd.hWnd,
@@ -819,10 +811,7 @@ void Sys_CreateConsole(void)
 	                                    g_wv.hInstance, NULL);
 	SendMessage(s_wcd.hwndButtonQuit, WM_SETTEXT, 0, ( LPARAM ) "Quit");
 
-
-	//
 	// create the scrollbuffer
-	//
 	s_wcd.hwndBuffer = CreateWindowEx(WS_EX_CLIENTEDGE,
 	                                  "edit", NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_BORDER |
 	                                  ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY,
@@ -935,9 +924,7 @@ void Conbuf_AppendText(const char *pMsg)
 	int                  bufLen, i = 0;
 	static unsigned long s_totalChars;
 
-	//
 	// if the message is REALLY long, use just the last portion of it
-	//
 	if (strlen(pMsg) > CONSOLE_BUFFER_SIZE - 1)
 	{
 		msg = pMsg + strlen(pMsg) - CONSOLE_BUFFER_SIZE + 1;
@@ -947,9 +934,7 @@ void Conbuf_AppendText(const char *pMsg)
 		msg = pMsg;
 	}
 
-	//
 	// copy into an intermediate buffer
-	//
 	while (msg[i] && ((b - buffer) < sizeof(buffer) - 1))
 	{
 		if (msg[i] == '\n' && msg[i + 1] == '\r')
@@ -987,9 +972,7 @@ void Conbuf_AppendText(const char *pMsg)
 
 	s_totalChars += bufLen;
 
-	//
 	// replace selection instead of appending if we're overflowing
-	//
 	if (s_totalChars > CONSOLE_BUFFER_SIZE)
 	{
 		SendMessage(s_wcd.hwndBuffer, EM_SETSEL, 0, -1);
@@ -997,13 +980,11 @@ void Conbuf_AppendText(const char *pMsg)
 	}
 	else
 	{
-		// NERVE - SMF - always append at the bottom of the textbox
+		// always append at the bottom of the textbox
 		SendMessage(s_wcd.hwndBuffer, EM_SETSEL, 0xFFFF, 0xFFFF);
 	}
 
-	//
 	// put this text into the windows console
-	//
 	SendMessage(s_wcd.hwndBuffer, EM_LINESCROLL, 0, 0xffff);
 	SendMessage(s_wcd.hwndBuffer, EM_SCROLLCARET, 0, 0);
 	SendMessage(s_wcd.hwndBuffer, EM_REPLACESEL, 0, (LPARAM) buffer);
