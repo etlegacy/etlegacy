@@ -34,7 +34,7 @@
 #include "../client/client.h"
 
 cvar_t *cl_shownet;
-// TTimo: win32 dedicated
+// win32 dedicated
 cvar_t *cl_language;
 
 void CL_Shutdown(void)
@@ -44,7 +44,7 @@ void CL_Shutdown(void)
 void CL_Init(void)
 {
 	cl_shownet = Cvar_Get("cl_shownet", "0", CVAR_TEMP);
-	// TTimo: localisation, prolly not any use in dedicated / null client
+	// localisation, prolly not any use in dedicated / null client
 	cl_language = Cvar_Get("cl_language", "0", CVAR_ARCHIVE);
 }
 
@@ -78,7 +78,7 @@ void CL_MapLoading(void)
 
 qboolean CL_GameCommand(void)
 {
-	return qfalse; // bk001204 - non-void
+	return qfalse;
 }
 
 void CL_KeyEvent(int key, qboolean down, unsigned time)
@@ -106,10 +106,6 @@ void CL_InitKeyCommands(void)
 {
 }
 
-void CL_CDDialog(void)
-{
-}
-
 void CL_FlushMemory(void)
 {
 }
@@ -118,12 +114,11 @@ void CL_StartHunkUsers(void)
 {
 }
 
-// bk001119 - added new dummy for sv_init.c
 void CL_ShutdownAll(void)
 {
 }
 
-// TTimo added for win32 dedicated
+// for win32 dedicated
 void Key_ClearStates(void)
 {
 }

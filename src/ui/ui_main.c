@@ -7801,16 +7801,6 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 			Menus_ActivateByName("team", qtrue);
 			return;
 
-		case UIMENU_NEED_CD:
-			trap_Key_SetCatcher(KEYCATCH_UI);
-			Menus_ActivateByName("needcd", qtrue);
-			return;
-
-		case UIMENU_BAD_CD_KEY:
-			trap_Key_SetCatcher(KEYCATCH_UI);
-			Menus_ActivateByName("badcd", qtrue);
-			return;
-
 		case UIMENU_INGAME:
 			if (g_gameType.integer == GT_SINGLE_PLAYER)
 			{

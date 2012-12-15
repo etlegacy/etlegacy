@@ -170,18 +170,6 @@ void CL_WavStopRecord_f(void);
 
 void CL_GetAndRegGUID(void);
 
-/*
-===============
-CL_CDDialog
-
-Called by Com_Error when a cd is needed
-===============
-*/
-void CL_CDDialog(void)
-{
-	cls.cddialog = qtrue;   // start it next frame
-}
-
 void CL_PurgeCache(void)
 {
 	cls.doCachePurge = qtrue;
@@ -2833,14 +2821,8 @@ void CL_Frame(int msec)
 		return;
 	}
 
-	if (cls.cddialog)
-	{
-		// bring up the cd error dialog if needed
-		cls.cddialog = qfalse;
-		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_NEED_CD);
-	}
-	else if (cls.state == CA_DISCONNECTED && !(cls.keyCatchers & KEYCATCH_UI)
-	         && !com_sv_running->integer)
+	if (cls.state == CA_DISCONNECTED && !(cls.keyCatchers & KEYCATCH_UI)
+	    && !com_sv_running->integer)
 	{
 		// if disconnected, bring up the menu
 		S_StopAllSounds();

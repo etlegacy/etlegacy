@@ -108,7 +108,7 @@ extern vec3_t playerlegsProneMaxs;
 
 // client damage identifiers
 
-// Arnout: different entity states
+// different entity states
 typedef enum
 {
 	STATE_DEFAULT,          // ent is linked, can be used and is solid
@@ -155,7 +155,7 @@ typedef struct
 	int typeBits;
 	int cinematic;
 
-	// Gordon: FIXME: remove
+	// FIXME: remove
 	const char *opponentName;
 	int teamMembers;
 	int timeToBeat[MAX_GAMETYPES];
@@ -175,7 +175,6 @@ typedef struct
 } mapInfo;
 
 // Campaign saves
-// rain - 128 -> 512, campaigns are commonplace
 #define MAX_CAMPAIGNS           512
 
 // changed this from 6 to 10
@@ -281,8 +280,8 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_MULTI_MAPWINNER              14
 #define CS_MULTI_OBJECTIVE              15
 //
-#define CS_SCREENFADE                   17      // Ridah, used to tell clients to fade their screen to black/normal
-#define CS_FOGVARS                      18      //----(SA) used for saving the current state/settings of the fog
+#define CS_SCREENFADE                   17      // used to tell clients to fade their screen to black/normal
+#define CS_FOGVARS                      18      // used for saving the current state/settings of the fog
 #define CS_SKYBOXORG                    19      // this is where we should view the skybox from
 
 #define CS_TARGETEFFECT                 20
@@ -310,7 +309,7 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_MODELS                       64
 #define CS_SOUNDS                       (CS_MODELS +               MAX_MODELS)
 #define CS_SHADERS                      (CS_SOUNDS +               MAX_SOUNDS)
-#define CS_SHADERSTATE                  (CS_SHADERS +              MAX_CS_SHADERS)                // Gordon: this MUST be after CS_SHADERS
+#define CS_SHADERSTATE                  (CS_SHADERS +              MAX_CS_SHADERS)                // this MUST be after CS_SHADERS
 #define CS_SKINS                        (CS_SHADERSTATE +          1)
 #define CS_CHARACTERS                   (CS_SKINS +                MAX_CS_SKINS)
 #define CS_PLAYERS                      (CS_CHARACTERS +           MAX_CHARACTERS)
@@ -416,7 +415,7 @@ typedef struct
 
 	int airleft;
 
-	// Arnout: MG42 aiming
+	// MG42 aiming
 	float varc, harc;
 	vec3_t centerangles;
 
@@ -566,12 +565,12 @@ typedef enum
 #define EF_CONNECTION       0x00000400      // draw a connection trouble sprite
 #define EF_SMOKINGBLACK     0x00000800      // like EF_SMOKING only darker & bigger
 
-#define EF_HEADSHOT         0x00001000      // last hit to player was head shot (Gordon: NOTE: not last hit, but has BEEN shot in the head since respawn)
-#define EF_SMOKING          0x00002000      // DHM - Nerve :: ET_GENERAL ents will emit smoke if set // JPW switched to this after my code change
+#define EF_HEADSHOT         0x00001000      // last hit to player was head shot (NOTE: not last hit, but has BEEN shot in the head since respawn)
+#define EF_SMOKING          0x00002000      // ET_GENERAL ents will emit smoke if set // JPW switched to this after my code change
 #define EF_OVERHEATING      (EF_SMOKING | EF_SMOKINGBLACK)    // ydnar: light smoke/steam effect
 #define EF_VOTED            0x00004000      // already cast a vote
 #define EF_TAGCONNECT       0x00008000      // connected to another entity via tag
-#define EF_MOUNTEDTANK      EF_TAGCONNECT   // Gordon: duplicated for clarity
+#define EF_MOUNTEDTANK      EF_TAGCONNECT   // duplicated for clarity
 
 #define EF_FAKEBMODEL       0x00010000      // from etpro
 #define EF_PATH_LINK        0x00020000      // linking trains together
@@ -598,7 +597,6 @@ typedef enum
 {
 	PW_NONE,
 
-	// (SA) for Wolf
 	PW_INVULNERABLE,
 	PW_FIRE,
 	PW_ELECTRIC,
@@ -696,7 +694,7 @@ typedef enum
 	WP_AKIMBO_COLT,         // 37
 	WP_AKIMBO_LUGER,        // 38
 
-// Gordon: ONLY secondaries below this mark, as they are checked >= WP_GPG40 && < WP_NUM_WEAPONS
+// ONLY secondaries below this mark, as they are checked >= WP_GPG40 && < WP_NUM_WEAPONS
 
 	WP_GPG40,               // 39
 
@@ -715,7 +713,7 @@ typedef enum
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
-// JPW NERVE moved from cg_weapons (now used in g_active) for drop command, actual array in bg_misc.c
+// moved from cg_weapons (now used in g_active) for drop command, actual array in bg_misc.c
 extern int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP];
 
 //		Using one unified list for which weapons can received ammo
@@ -798,8 +796,8 @@ extern int weapAlts[];  // defined in bg_misc.c
 #define WP_LASTSECONDARY    WP_SILENCED_COLT
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
-// TTimo NOTE: what about WP_VENOM and other XP weapons?
-// rain - #81 - added added akimbo weapons and deployed MG42
+// NOTE: what about WP_VENOM and other XP weapons?
+// added akimbo weapons and deployed MG42
 #define IS_AUTORELOAD_WEAPON(weapon) \
 	(   \
 	    weapon == WP_LUGER    || weapon == WP_COLT          || weapon == WP_MP40          || \
@@ -848,7 +846,7 @@ typedef enum
 	EV_WATER_UNDER, // head touches
 	EV_WATER_CLEAR, // head leaves
 	EV_ITEM_PICKUP,         // normal item pickups are predictable
-	EV_ITEM_PICKUP_QUIET,   // (SA) same, but don't play the default pickup sound as it was specified in the ent
+	EV_ITEM_PICKUP_QUIET,   // same, but don't play the default pickup sound as it was specified in the ent
 	EV_GLOBAL_ITEM_PICKUP,  // powerup / team sounds are broadcast to everyone
 	EV_NOAMMO,
 	EV_WEAPONSWITCHED,
@@ -918,7 +916,7 @@ typedef enum
 	EV_RUMBLE_EFX,
 	EV_GUNSPARKS,
 	EV_FLAMETHROWER_EFFECT,
-	EV_MG42BULLET_HIT_FLESH,    // Arnout: these two send the seed as well
+	EV_MG42BULLET_HIT_FLESH,    // these two send the seed as well
 	EV_MG42BULLET_HIT_WALL,
 	EV_SHAKE,
 	EV_DISGUISE_SOUND,
@@ -2039,8 +2037,8 @@ typedef enum
 	UIMENU_NONE,
 	UIMENU_MAIN,
 	UIMENU_INGAME,
-	UIMENU_NEED_CD,
-	UIMENU_BAD_CD_KEY,
+	UIMENU_NEED_CD,     // Obsolete
+	UIMENU_BAD_CD_KEY,  // Obsolete
 	UIMENU_TEAM,
 	UIMENU_POSTGAME,
 	UIMENU_HELP,

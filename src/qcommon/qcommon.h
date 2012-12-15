@@ -993,9 +993,6 @@ void    CL_ForwardCommandToServer(const char *string);
 // things like godmode, noclip, etc, are commands directed to the server,
 // so when they are typed in at the console, they will need to be forwarded.
 
-void CL_CDDialog(void);
-// bring up the "need a cd to play" dialog
-
 void CL_ShutdownAll(void);
 // shutdown all the client stuff
 

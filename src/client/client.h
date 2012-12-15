@@ -315,9 +315,7 @@ typedef struct
 	connstate_t state;              // connection status
 	int keyCatchers;                // bit flags
 
-	qboolean cddialog;              // bring up the cd needed dialog next frame
-
-	qboolean doCachePurge;          // Arnout: empty the renderer cache as soon as possible
+	qboolean doCachePurge;          // empty the renderer cache as soon as possible
 
 	char servername[MAX_OSPATH];    // name of server from original connect (used by reconnect)
 
