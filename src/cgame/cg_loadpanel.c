@@ -82,7 +82,7 @@ panel_button_text_t campaignpheaderTxt =
 
 panel_button_text_t campaignpTxt =
 {
-	0.30f,               0.30f,
+	0.22f,               0.22f,
 	{ 1.0f,              1.0f, 1.0f,  0.6f },
 	0,                   0,
 	&bg_loadscreenfont2,
@@ -229,15 +229,10 @@ panel_button_t loadScreenMeterBackText =
 panel_button_t *loadpanelButtons[] =
 {
 	&loadScreenMap,               &loadScreenBack,
-
 	&missiondescriptionPanelText, &missiondescriptionPanelHeaderText,
-
 	&campaignheaderPanelText,     &campaignPanelText,
-
 	&loadScreenMeterBack,         &loadScreenMeterBack2,             &loadScreenMeterBackText,
-
 	&loadScreenPins,
-
 	NULL,
 };
 
