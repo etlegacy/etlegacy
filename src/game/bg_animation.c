@@ -39,7 +39,7 @@
 #include "../qcommon/q_shared.h"
 #include "bg_public.h"
 
-// JPW NERVE -- added because I need to check single/multiplayer instances and branch accordingly
+// added because I need to check single/multiplayer instances and branch accordingly
 #ifdef CGAMEDLL
 extern vmCvar_t cg_gameType;
 #endif
@@ -246,7 +246,7 @@ static animStringItem_t animGenBitFlagStr[] =
 	{ "ZOOMING", -1 },   // zooming with binoculars
 };
 
-// xkan, 1/17/2003 - sorts of duplicate aistateEnum_t.
+// sorts of duplicate aistateEnum_t.
 static animStringItem_t animAIStateStr[] =
 {
 	{ "RELAXED", -1 },
@@ -778,8 +778,7 @@ BG_ParseCommands
 */
 static void BG_ParseCommands(char **input, animScriptItem_t *scriptItem, animModelInfo_t *animModelInfo, animScriptData_t *scriptData)
 {
-	char *token;
-	// TTimo gcc: might be used uninitialized
+	char                *token;
 	animScriptCommand_t *command  = NULL;
 	int                 partIndex = 0;
 
@@ -888,9 +887,9 @@ static void BG_ParseCommands(char **input, animScriptItem_t *scriptItem, animMod
 				{
 					BG_AnimParseError("BG_ParseCommands: wav files not supported, only sound scripts");
 				}
-				// ydnar: this was crashing because soundIndex wasn't initialized
+				// this was crashing because soundIndex wasn't initialized
 				// FIXME: find the reason
-				// Gordon: hmmm, soundindex is setup on both client and server :/
+				//  hmmm, soundindex is setup on both client and server :/
 				//  cgs.animScriptData.soundIndex = CG_SoundScriptPrecache;
 				//  level.animScriptData.soundIndex = G_SoundIndex;
 				command->soundIndex = globalScriptData->soundIndex != NULL ? globalScriptData->soundIndex(token) : 0;
@@ -943,10 +942,9 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 	animScriptParseMode_t parseMode;
 	animScript_t          *currentScript;
 	animScriptItem_t      tempScriptItem;
-	// TTimo gcc: might be used unitialized
-	animScriptItem_t *currentScriptItem = NULL;
-	int              indexes[MAX_INDENT_LEVELS], indentLevel, /*oldState,*/ newParseMode;
-	int              i, defineType;
+	animScriptItem_t      *currentScriptItem = NULL;
+	int                   indexes[MAX_INDENT_LEVELS], indentLevel, /*oldState,*/ newParseMode;
+	int                   i, defineType;
 
 	// the scriptData passed into here must be the one this binary is using
 	globalScriptData = scriptData;
@@ -1134,12 +1132,12 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				// do we have enough room in this script for another item?
 				if (currentScript->numItems >= MAX_ANIMSCRIPT_ITEMS)
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: exceeded maximum items per script (%i)", MAX_ANIMSCRIPT_ITEMS);   // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: exceeded maximum items per script (%i)", MAX_ANIMSCRIPT_ITEMS);
 				}
 				// are there enough items left in the global list?
 				if (animModelInfo->numScriptItems >= MAX_ANIMSCRIPT_ITEMS_PER_MODEL)
 				{
-					BG_AnimParseError("BG_AnimParseAnimScript: exceeded maximum global items (%i)", MAX_ANIMSCRIPT_ITEMS_PER_MODEL);     // RF mod
+					BG_AnimParseError("BG_AnimParseAnimScript: exceeded maximum global items (%i)", MAX_ANIMSCRIPT_ITEMS_PER_MODEL);
 				}
 				// it was parsed ok, so grab an item from the global list to use
 				currentScript->items[currentScript->numItems] = &animModelInfo->scriptItems[animModelInfo->numScriptItems++];
@@ -1160,7 +1158,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 					// this should never happen, just here to check that this operation is correct before code goes live
 					BG_AnimParseError("BG_AnimParseAnimScript: internal error");
 				}
-				//
+
 				BG_ParseCommands(&text_p, currentScriptItem, animModelInfo, scriptData);
 
 			}
@@ -1172,7 +1170,6 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 
 			break;
 
-//      case PARSEMODE_STATECHANGES:
 		case PARSEMODE_EVENTS:
 			if (!Q_stricmp(token, "{"))
 			{
@@ -1205,48 +1202,13 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 			}
 			else if (indentLevel == 0 && (indexes[indentLevel] < 0))
 			{
-				/*              if ( parseMode == PARSEMODE_STATECHANGES ) {
-
-				                    if ( Q_stricmp( token, "statechange" ) ) {
-				                        BG_AnimParseError( "BG_AnimParseAnimScript: expected 'statechange', got '%s'", token ); // RF mod
-				                    }
-
-				                    // read in the old state type
-				                    token = COM_ParseExt( &text_p, qfalse );
-				                    if ( !token ) {
-				                        BG_AnimParseError( "BG_AnimParseAnimScript: expected <state type>" );   // RF mod
-				                    }
-				                    oldState = BG_IndexForString( token, animStateStr, qfalse );
-
-				                    // read in the new state type
-				                    token = COM_ParseExt( &text_p, qfalse );
-				                    if ( !token ) {
-				                        BG_AnimParseError( "BG_AnimParseAnimScript: expected <state type>" );   // RF mod
-				                    }
-				                    indexes[indentLevel] = BG_IndexForString( token, animStateStr, qfalse );
-
-				                    currentScript = &animModelInfo->scriptStateChange[oldState][indexes[indentLevel]];
-
-				//----(SA)      // RF mod
-				                    // check for the open bracket
-				                    token = COM_ParseExt( &text_p, qtrue );
-				                    if ( !token || Q_stricmp( token, "{" ) ) {
-				                        BG_AnimParseError( "BG_AnimParseAnimScript: expected '{'" );
-				                    }
-				                    indentLevel++;
-				//----(SA)      // RF mod
-				                } else {*/
-
 				// read in the event type
 				indexes[indentLevel] = BG_IndexForString(token, animEventTypesStr, qfalse);
 				currentScript        = &animModelInfo->scriptEvents[indexes[0]];
 
 				parseEvent = indexes[indentLevel];
 
-//              }
-
 				memset(currentScript, 0, sizeof(*currentScript));
-
 			}
 			else if ((indentLevel == 1) && (indexes[indentLevel] < 0))
 			{
@@ -1290,7 +1252,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 					// this should never happen, just here to check that this operation is correct before code goes live
 					BG_AnimParseError("BG_AnimParseAnimScript: internal error");
 				}
-				//
+
 				BG_ParseCommands(&text_p, currentScriptItem, animModelInfo, scriptData);
 			}
 			else
@@ -1745,7 +1707,7 @@ void BG_UpdateConditionValue(int client, int condition, int value, qboolean chec
 		{
 
 			// we may need to convert to bitflags
-			// DHM - Nerve :: We want to set the ScriptData to the explicit value passed in.
+			// We want to set the ScriptData to the explicit value passed in.
 			//              COM_BitSet will OR values on top of each other, so clear it first.
 			globalScriptData->clientConditions[client][condition][0] = 0;
 			globalScriptData->clientConditions[client][condition][1] = 0;
@@ -1753,7 +1715,7 @@ void BG_UpdateConditionValue(int client, int condition, int value, qboolean chec
 			COM_BitSet(globalScriptData->clientConditions[client][condition], value);
 			return;
 		}
-		// rain - we must fall through here because a bunch of non-bitflag
+		// we must fall through here because a bunch of non-bitflag
 		// conditions are set with checkConversion == qtrue
 	}
 	globalScriptData->clientConditions[client][condition][0] = value;
@@ -1787,7 +1749,7 @@ int BG_GetConditionValue(int client, int condition, qboolean checkConversion)
 		}
 		else
 		{
-			// xkan, 1/14/2003 - must use COM_BitCheck on the result.
+			// must use COM_BitCheck on the result.
 			return globalScriptData->clientConditions[client][condition] != 0;
 		}
 		//BG_AnimParseError( "BG_GetConditionValue: internal error" );
