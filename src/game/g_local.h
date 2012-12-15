@@ -1630,6 +1630,7 @@ extern vmCvar_t lua_allowedModules;
 #endif
 
 extern vmCvar_t g_protect;
+extern vmCvar_t g_ip_max_clients;
 
 void trap_Printf(const char *fmt);
 void trap_Error(const char *fmt) __attribute__((noreturn));

@@ -1909,11 +1909,14 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2)
 
 char *IsFakepConnection(int clientNum, char const *ip, char const *rate)
 {
-	int count      = 1; // we count as the first one
-	int max        = trap_Cvar_VariableIntegerValue("g_ip_max_clients");
-	int maxClients = trap_Cvar_VariableIntegerValue("sv_maxclients");
-	int myIPLength = GetIPLength(ip);
-	int i;
+	gentity_t *ent;
+	int       theirIPLength;
+	int       checkLength;
+	int       count      = 1; // we count as the first one
+	int       max        = trap_Cvar_VariableIntegerValue("g_ip_max_clients");
+	int       myIPLength = GetIPLength(ip);
+	int       i;
+	char      *theirIP;
 
 	// Default it to DEF_IP_MAX_CLIENTS as the minimum
 	if (!max || max <= 0)
@@ -1938,13 +1941,8 @@ char *IsFakepConnection(int clientNum, char const *ip, char const *rate)
 	// Iterate over each connected client and check the IP, keeping a count of connections
 	// from the same IP as this connecting client
 	// FIXME: use connected clients
-	for (i = 0; i < maxClients; ++i)
+	for (i = 0; i < level.maxclients; ++i)
 	{
-		char      *theirIP;
-		int       theirIPLength;
-		int       checkLength;
-		gentity_t *ent;
-
 		// Skip our own slot
 		if (i == clientNum)
 		{

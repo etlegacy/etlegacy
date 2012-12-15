@@ -247,6 +247,8 @@ vmCvar_t g_protect; // similar to sv_protect game cvar
                     // 0 - no protection - default to have ref for localhost clients on listen servers
                     // 1 - disabled auto ref for localhost clients
 
+vmCvar_t g_ip_max_clients; // limit connection
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -460,8 +462,8 @@ cvarTable_t gameCvarTable[] =
 	{ &lua_allowedModules,        "lua_allowedModules",        "",                           0 },
 #endif
 
-	{ &g_protect,                 "g_protect",                 "0",                          CVAR_ARCHIVE },                                  // reset on startup?
-
+	{ &g_protect,                 "g_protect",                 "0",                          CVAR_ARCHIVE },
+	{ &g_ip_max_clients,          "g_ip_max_clients",          "0",                          CVAR_ARCHIVE },
 };
 
 // bk001129 - made static to avoid aliasing
