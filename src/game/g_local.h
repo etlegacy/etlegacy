@@ -783,10 +783,10 @@ struct gclient_s
 	int limboDropWeapon;         // weapon to drop in limbo
 	int deployQueueNumber;       // player order in reinforcement FIFO queue
 	int lastBurnTime;            // last time index for flamethrower burn
-	int PCSpecialPickedUpCount;          // used to count # of times somebody's picked up this LTs ammo (or medic health) (for scoring)
+	int PCSpecialPickedUpCount;           // used to count # of times somebody's picked up this LTs ammo (or medic health) (for scoring)
 	int saved_persistant[MAX_PERSISTANT]; // Save ps->persistant here during Limbo
 
-	gentity_t *touchingTOI;              // the trigger_objective_info a player is touching this frame
+	gentity_t *touchingTOI;               // the trigger_objective_info a player is touching this frame
 
 	int lastConstructibleBlockingWarnTime;
 	int lastConstructibleBlockingWarnEnt;
@@ -813,8 +813,8 @@ struct gclient_s
 	float cmddelta;         // antiwarp command queue # valid commands
 	usercmd_t cmds[LAG_MAX_COMMANDS]; // antiwarp command queue
 
-	gentity_t *tempHead;        // storing a temporary head for bullet head shot detection
-	gentity_t *tempLeg;         // storing a temporary leg for bullet head shot detection
+	gentity_t *tempHead;            // storing a temporary head for bullet head shot detection
+	gentity_t *tempLeg;             // storing a temporary leg for bullet head shot detection
 
 	int botSlotNumber;              // the slot the bot falls into (set up in the initial UI screen)
 
@@ -827,7 +827,7 @@ struct gclient_s
 	int lastSpammyCentrePrintTime;
 	pmoveExt_t pmext;
 	qboolean isCivilian;            // whether this is a civilian
-	int deathTime;                  // if we are dead, when did we die (not used for real)
+	int deathAnimTime;              // time when anim ends
 
 	char disguiseNetname[MAX_NETNAME];
 	int disguiseRank;

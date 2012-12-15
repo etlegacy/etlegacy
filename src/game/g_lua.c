@@ -11,7 +11,6 @@
 
 #include "g_lua.h"
 
-// IlDuca - needs to define the fields array
 extern field_t fields[];
 
 // Goal: aiming for compatibility with ETPro lua mods
@@ -34,7 +33,6 @@ void QDECL G_Lua_Printf(const char *fmt, ...)
 
 void QDECL G_Lua_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
-// core:
 // gentity number = C_gentity_ptr_to_entNum( pointer-value )
 // input:  pointer to a gentity (gentity*)
 // output: the entity number.
@@ -250,7 +248,7 @@ static int _et_trap_Cvar_Set(lua_State *L)
 	return 0;
 }
 
-// IlDuca - Added the "reason" field to give more freedom about the output
+// Added the "reason" field to give more freedom about the output
 // The old way to call the function still works, because "reason" is an optional arg
 // et.MutePlayer( clientnum, duration, reason )
 // duration is in seconds.
@@ -300,7 +298,7 @@ static int _et_MutePlayer(lua_State *L)
 }
 
 // et.UnmutePlayer( clientnum )
-// IlDuca - added the output messages.
+// added the output messages.
 static int _et_UnmutePlayer(lua_State *L)
 {
 	int       clientnum = luaL_checkint(L, 1);
@@ -396,7 +394,7 @@ static int _et_ClientUserinfoChanged(lua_State *L)
 }
 
 // clientnum = et.ClientNumberFromString( string )
-// redeye - searches for one partial match with 'string', if one is found the clientnum
+// searches for one partial match with 'string', if one is found the clientnum
 // is returned, if there is none or more than one match nil is returned
 static int _et_ClientNumberFromString(lua_State *L)
 {
@@ -416,7 +414,7 @@ static int _et_ClientNumberFromString(lua_State *L)
 }
 
 // et.isBitSet(bit,value)
-// phishi: little helper for accessing bitmask values
+// little helper for accessing bitmask values
 // if bit 'bit' is set in 'value', true is returned, else false
 static int _et_isBitSet(lua_State *L)
 {
@@ -676,7 +674,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(ps.eFlags,                      FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.pm_flags,                    FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.pm_time,                     FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(deathTime,                      FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(deathAnimTime,                  FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.lastBattleSenseBonusTime,  FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.lastHQMineReportTime,      FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.maxHealth,                 FIELD_INT,         FIELD_FLAG_READONLY),
@@ -1056,19 +1054,18 @@ static int _et_G_FreeEntity(lua_State *L)
 {
 	int entnum = luaL_checkint(L, 1);
 	G_FreeEntity(g_entities + entnum);
-	// IlDuca - a succesful LUA function has to return 1
+	// a succesful LUA function has to return 1
 	return 1;
 }
 
 // et.G_EntitiesFree()
 static int _et_G_EntitiesFree(lua_State *L)
 {
-	// IlDuca - recoded - Ticket #336
 	lua_pushinteger(L, G_EntitiesFree());
 	return 1;
 }
 
-// IlDuca - add G_GetSpawnVar
+// add G_GetSpawnVar
 // spawnval = et.G_GetSpawnVar( entnum, key )
 // This function works with fields ( g_spawn.c @ 72 )
 //
@@ -1161,7 +1158,7 @@ int _et_G_GetSpawnVar(lua_State *L)
 	return 0;
 }
 
-// IlDuca - add G_SetSpawnVar
+// add G_SetSpawnVar
 // et.G_SetSpawnVar( entnum, key, value )
 // This function works with fields ( g_spawn.c @ 72 )
 static int _et_G_SetSpawnVar(lua_State *L)
@@ -1225,7 +1222,7 @@ static int _et_G_SetSpawnVar(lua_State *L)
 		_et_gentity_setvec3(L, (vec3_t *)((byte *)ent + ofs));
 		return 1;
 	case F_ENTITY:
-		// core: pointer-fields are read-only..
+		// pointer-fields are read-only..
 		//*(gentity_t **)((byte *)ent + ofs) = g_entities + luaL_checkint(L, 3);
 		return 0;
 	case F_ITEM:
@@ -1406,7 +1403,7 @@ static int _et_gentity_set(lua_State *L)
 		*(float *)addr = (float)luaL_checknumber(L, 3);
 		break;
 	case FIELD_ENTITY:
-		// core: pointer-fields are read-only..
+		// pointer-fields are read-only..
 		break;
 	case FIELD_VEC3:
 		_et_gentity_setvec3(L, (vec3_t *)addr);
@@ -1435,7 +1432,7 @@ static int _et_G_AddEvent(lua_State *L)
 }
 
 /*
-// IlDuca - new function to easily set XP
+// new function to easily set XP
 // et.G_XP_Set ( clientNum , xp, skill, add )
 static int _et_G_XP_Set( lua_State *L)
 {
@@ -1503,7 +1500,7 @@ static int _et_G_XP_Set( lua_State *L)
     return 1;
 }
 
-// IRATA - new function to easily reset XP
+// new function to easily reset XP
 // et.ResetXP ( clientNum )
 static int _et_G_ResetXP(lua_State *L)
 {
@@ -1582,9 +1579,9 @@ static const luaL_Reg etlib[] =
 	{ "G_Spawn",                 _et_G_Spawn                 },
 	{ "G_TempEntity",            _et_G_TempEntity            },
 	{ "G_FreeEntity",            _et_G_FreeEntity            },
-	// IlDuca - add G_GetSpawnVar
+
 	{ "G_GetSpawnVar",           _et_G_GetSpawnVar           },
-	// IlDuca - add G_SetSpawnVar
+
 	{ "G_SetSpawnVar",           _et_G_SetSpawnVar           },
 	{ "G_EntitiesFree",          _et_G_EntitiesFree          },
 	{ "trap_LinkEntity",         _et_trap_LinkEntity         },
@@ -1594,7 +1591,7 @@ static const luaL_Reg etlib[] =
 	{ "G_AddEvent",              _et_G_AddEvent              },
 
 	/*
-	// IlDuca - new function to easly set XP
+	// new function to easly set XP
 	{"G_XP_Set",                    _et_G_XP_Set},
 	{"G_ResetXP",					_et_G_ResetXP},
 	*/
@@ -1642,7 +1639,7 @@ qboolean G_LuaInit()
 			}
 			else if (flen > LUA_MAX_FSIZE)
 			{
-				// quad: Let's not load arbitrarily big files to memory.
+				// Let's not load arbitrarily big files to memory.
 				// If your lua file exceeds the limit, let me know.
 				G_Lua_Printf("Lua API: ignoring file %s (too big)\n", crt);
 				trap_FS_FCloseFile(f);
@@ -1716,7 +1713,7 @@ qboolean G_LuaCall(lua_vm_t *vm, char *func, int nargs, int nresults)
 	switch (lua_pcall(vm->L, nargs, nresults, 0))
 	{
 	case LUA_ERRRUN:
-		// pheno: made output more ETPro compatible
+		// made output more ETPro compatible
 		G_Lua_Printf("Lua API: %s error running lua script: %s\n", func, lua_tostring(vm->L, -1));
 		lua_pop(vm->L, 1);
 		vm->err++;
@@ -1759,7 +1756,7 @@ qboolean G_LuaGetNamedFunction(lua_vm_t *vm, char *name)
 }
 
 #ifdef LUA_5_2
-// IRATA: Lua 5.1 -> 5.2 compatible hack :)
+// Lua 5.1 -> 5.2 compatible hack :)
 // https://github.com/icgood/luafilesystem/commit/f634765b26c52d03aceed88c2130130ab43f6fa9
 static void luaL_register(lua_State *L, const char *libname, const luaL_Reg *l)
 {
@@ -2504,8 +2501,7 @@ void G_LuaHook_Print(char *text)
  * G_LuaHook_Obituary
  * (customObit) = et_Obituary( victim, killer, meansOfDeath ) callback
  *
- * IRATA:
- * Different to ETPub which supports custom obitarries
+ * Different to ETPub which supports custom obituaries
  * this is 'ETPro like' implementation
  */
 // qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath, char *customObit)

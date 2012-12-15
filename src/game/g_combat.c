@@ -359,7 +359,7 @@ char *modNames[] =
 
 	"MOD_SWAP_PLACES",
 
-	// OSP -- keep these 2 entries last
+	// keep these 2 entries last
 	"MOD_SWITCHTEAM"
 };
 
@@ -370,16 +370,16 @@ player_die
 */
 void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath)
 {
-	int       contents    = 0, i, killer = ENTITYNUM_WORLD;
-	char      *killerName = "<world>";
-	qboolean  nogib       = qtrue;
-	gitem_t   *item       = NULL;
+	weapon_t  weap = BG_WeaponForMOD(meansOfDeath);
+	gclient_t *client;
+	gitem_t   *item = NULL;
 	gentity_t *ent;
+	int       contents     = 0, i, killer = ENTITYNUM_WORLD;
+	char      *killerName  = "<world>";
+	qboolean  nogib        = qtrue;
 	qboolean  killedintank = qfalse;
 
-	weapon_t weap = BG_WeaponForMOD(meansOfDeath);
-
-//  G_Printf( "player_die\n" );
+	//G_Printf( "player_die\n" );
 
 	if (attacker == self)
 	{
@@ -485,7 +485,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		return;
 	}
 
-	// OSP - death stats handled out-of-band of G_Damage for external calls
+	// death stats handled out-of-band of G_Damage for external calls
 	G_addStats(self, attacker, damage, meansOfDeath);
 
 	self->client->ps.pm_type = PM_DEAD;
@@ -547,12 +547,12 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	self->enemy = attacker;
 
-	// CHRUKER: b010 - Make sure covert ops lose their disguises
+	// Make sure covert ops lose their disguises
 	self->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 	self->client->ps.persistant[PERS_KILLED]++;
 
-	// JPW NERVE -- if player is holding ticking grenade, drop it
+	// if player is holding ticking grenade, drop it
 	if ((self->client->ps.grenadeTimeLeft) && (self->s.weapon != WP_DYNAMITE) && (self->s.weapon != WP_LANDMINE) && (self->s.weapon != WP_SATCHEL))
 	{
 		vec3_t launchvel, launchspot;
@@ -565,7 +565,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		launchspot[2] += 40;
 
 		{
-			// Gordon: fixes premature grenade explosion, ta bani ;)
+			// fixes premature grenade explosion, ta bani ;)
 			gentity_t *m = fire_grenade(self, launchspot, launchvel, self->s.weapon);
 			m->damage = 0;
 		}
@@ -575,7 +575,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	{
 		if (attacker == self || OnSameTeam(self, attacker))
 		{
-			// DHM - Nerve :: Complaint lodging
+			// Complaint lodging
 			if (attacker != self && level.warmupTime <= 0 && g_gamestate.integer == GS_PLAYING)
 			{
 				if (attacker->client->pers.localClient)
@@ -617,7 +617,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		}
 		else
 		{
-			// JPW NERVE -- mostly added as conveneience so we can tweak from the #defines all in one place
+			// mostly added as conveneience so we can tweak from the #defines all in one place
 			AddScore(attacker, WOLF_FRAG_BONUS);
 
 			if (g_gametype.integer == GT_WOLF_LMS)
@@ -703,7 +703,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	// or they would get stale scoreboards
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
-		gclient_t *client = &level.clients[level.sortedClients[i]];
+		client = &level.clients[level.sortedClients[i]];
 
 		if (client->pers.connected != CON_CONNECTED)
 		{
@@ -743,7 +743,15 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	// remove powerups
 	// FIXME: but not FLAKJACKET and HELMETSHIELD
-	memset(self->client->ps.powerups, 0, sizeof(self->client->ps.powerups));
+	{
+		//int flakJacket=self->client->ps.powerups[PW_FLAKJACKET];
+		//int helmetArmor=self->client->ps.powerups[PW_HELMETSHIELD];
+
+		memset(self->client->ps.powerups, 0, sizeof(self->client->ps.powerups));
+
+		//self->client->ps.powerups[PW_FLAKJACKET]=flakJacket;
+		//self->client->ps.powerups[PW_HELMETSHIELD]=helmetArmor;
+	}
 
 	// never gib in a nodrop
 	// FIXME: contents is always 0 here
@@ -763,7 +771,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			self->health = GIB_HEALTH + 1;
 		}
 
-		// Arnout: re-enable this for flailing
+		// FIXME: re-enable this for flailing
 		/*      if( self->client->ps.groundEntityNum == ENTITYNUM_NONE ) {
 		            self->client->ps.pm_flags |= PMF_FLAILING;
 		            self->client->ps.pm_time = 750;
@@ -784,6 +792,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		// record the death animation to be used later on by the corpse
 		self->client->torsoDeathAnim = self->client->ps.torsoAnim;
 		self->client->legsDeathAnim  = self->client->ps.legsAnim;
+		self->client->deathAnimTime  = level.time + self->client->ps.pm_time;
 
 		G_AddEvent(self, EV_DEATH1 + 1, killer);
 
@@ -810,7 +819,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	CalculateRanks();
 
-	// Gordon: automatically go to limbo from tank
+	// automatically go to limbo from tank
 	if (killedintank)
 	{
 		limbo(self, qfalse);   // but no corpse
@@ -891,7 +900,7 @@ gentity_t *G_BuildHead(gentity_t *ent)
 			height = ent->client->ps.viewheight;
 		}
 
-		// NERVE - SMF - this matches more closely with WolfMP models
+		// this matches more closely with WolfMP models
 		VectorCopy(ent->client->ps.viewangles, angles);
 		if (angles[PITCH] > 180)
 		{
@@ -922,8 +931,8 @@ gentity_t *G_BuildHead(gentity_t *ent)
 	VectorCopy(ent->r.currentAngles, head->s.angles);
 	VectorCopy(head->s.angles, head->s.apos.trBase);
 	VectorCopy(head->s.angles, head->s.apos.trDelta);
-	VectorSet(head->r.mins, -6, -6, -2);   // JPW NERVE changed this z from -12 to -6 for crouching, also removed standing offset
-	VectorSet(head->r.maxs, 6, 6, 10);   // changed this z from 0 to 6
+	VectorSet(head->r.mins, -6, -6, -2);   // changed this z from -12 to -6 for crouching, also removed standing offset
+	VectorSet(head->r.maxs, 6, 6, 10);     // changed this z from 0 to 6
 	head->clipmask   = CONTENTS_SOLID;
 	head->r.contents = CONTENTS_SOLID;
 	head->parent     = ent;
@@ -1226,10 +1235,10 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		return;
 	}
 
-	// xkan, 12/23/2002 - was the bot alive before applying any damage?
+	// was the bot alive before applying any damage?
 	wasAlive = (targ->health > 0);
 
-	// Arnout: combatstate
+	// combatstate
 	if (targ->client && attacker && attacker->client && attacker != targ)
 	{
 		/*vec_t dist = -1.f;
@@ -1410,7 +1419,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		{
 			return;
 		}
-		//bani - fix #238
+		// bani - fix #238
 		if (mod == MOD_DYNAMITE)
 		{
 			if (!(inflictor->etpro_misc_1 & 1))
@@ -1463,7 +1472,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		knockback *= 0.5f;
 	}
 
-	// ydnar: set weapons means less knockback
+	// set weapons means less knockback
 	if (client && (client->ps.weapon == WP_MORTAR_SET || client->ps.weapon == WP_MOBILE_MG42_SET))
 	{
 		knockback *= 0.5;
@@ -1641,7 +1650,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 
 		targ->client->ps.eFlags |= EF_HEADSHOT;
 
-		// OSP - Record the headshot
+		// Record the headshot
 		if (client && attacker && attacker->client
 #ifndef DEBUG_STATS
 		    && attacker->client->sess.sessionTeam != targ->client->sess.sessionTeam
@@ -1764,7 +1773,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			if (client && !wasAlive)
 			{
 				targ->flags |= FL_NO_KNOCKBACK;
-				// OSP - special hack to not count attempts for body gibbage
+				// special hack to not count attempts for body gibbage
 				if (targ->client->ps.pm_type == PM_DEAD)
 				{
 					G_addStats(targ, attacker, take, mod);
@@ -1773,12 +1782,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				if ((targ->health < FORCE_LIMBO_HEALTH) && (targ->health > GIB_HEALTH))
 				{
 					limbo(targ, qtrue);
-				}
-
-				// xkan, 1/13/2003 - record the time we died.
-				if (!client->deathTime)
-				{
-					client->deathTime = level.time;
 				}
 			}
 			else
@@ -1803,13 +1806,13 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				targ->enemy     = attacker;
 				targ->deathType = mod;
 
-				// Ridah, mg42 doesn't have die func (FIXME)
+				// mg42 doesn't have die func (FIXME)
 				if (targ->die)
 				{
 					// Kill the entity.  Note that this funtion can set ->die to another
 					// function pointer, so that next time die is applied to the dead body.
 					targ->die(targ, inflictor, attacker, take, mod);
-					// OSP - kill stats in player_die function
+					// kill stats in player_die function
 				}
 
 				if (targ->s.eType == ET_MOVER && !Q_stricmp(targ->classname, "script_mover") && (targ->spawnflags & 8))
@@ -1823,7 +1826,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 					return;
 				}
 
-				// RF, entity scripting
+				// entity scripting
 				if (targ->health <= 0)       // might have revived itself in death function
 				{
 					if ((!(targ->r.svFlags & SVF_BOT) && targ->s.eType != ET_CONSTRUCTIBLE && targ->s.eType != ET_EXPLOSIVE) ||
@@ -1836,7 +1839,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 		else if (targ->pain)
 		{
-			if (dir)      // Ridah, had to add this to fix NULL dir crash
+			if (dir)      // had to add this to fix NULL dir crash
 			{
 				VectorCopy(dir, targ->rotate);
 				VectorCopy(point, targ->pos3);   // this will pass loc of hit
@@ -1851,15 +1854,15 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 		else
 		{
-			// OSP - update weapon/dmg stats
+			// update weapon/dmg stats
 			G_addStats(targ, attacker, take, mod);
 		}
 
-		// RF, entity scripting
+		// entity scripting
 		G_Script_ScriptEvent(targ, "pain", va("%d %d", targ->health, targ->health + take));
 
 #ifdef FEATURE_OMNIBOT
-		// RF, record bot pain
+		// record bot pain
 		if (targ->s.number < level.maxclients)
 		{
 			// notify omni-bot framework
@@ -1867,7 +1870,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 #endif
 
-		// Ridah, this needs to be done last, incase the health is altered in one of the event calls
+		// this needs to be done last, incase the health is altered in one of the event calls
 		if (targ->client)
 		{
 			targ->client->ps.stats[STAT_HEALTH] = targ->health;
@@ -1919,7 +1922,7 @@ qboolean CanDamage(gentity_t *targ, vec3_t origin)
 		VectorScale(midpoint, 0.5, midpoint);
 	}
 
-//  G_RailTrail( origin, dest );
+	//G_RailTrail( origin, dest );
 
 	trap_Trace(&tr, origin, vec3_origin, vec3_origin, midpoint, ENTITYNUM_NONE, MASK_CAN_DAMAGE);
 	if (tr.fraction == 1.0)

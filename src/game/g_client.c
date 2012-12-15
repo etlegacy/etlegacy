@@ -368,9 +368,6 @@ void CopyToBodyQue(gentity_t *ent)
 	body               = level.bodyQue[level.bodyQueIndex];
 	level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
 
-	// Gordon: um, what on earth was this here for?
-	//	trap_UnlinkEntity (body);
-
 	body->s        = ent->s;
 	body->s.eFlags = EF_DEAD;       // clear EF_TALK, etc
 
@@ -399,9 +396,11 @@ void CopyToBodyQue(gentity_t *ent)
 	}
 	body->s.event = 0;
 
-	// DHM - Clear out event system
+	// Clear out event system
 	for (i = 0; i < MAX_EVENTS; i++)
+	{
 		body->s.events[i] = 0;
+	}
 	body->s.eventSequence = 0;
 
 	// change the animation to the last-frame only, so the sequence
@@ -429,12 +428,20 @@ void CopyToBodyQue(gentity_t *ent)
 	VectorCopy(ent->r.absmin, body->r.absmin);
 	VectorCopy(ent->r.absmax, body->r.absmax);
 
-	// ydnar: bodies have lower bounding box
+	//  bodies have lower bounding box
 	body->r.maxs[2] = 0;
 
+	body->s.effect1Time = ent->client->deathAnimTime;
+
+	// this'll look better
+	if (body->s.onFireEnd > level.time)
+	{
+		body->s.onFireEnd = ent->client->deathAnimTime + 1500;
+	}
+
 	body->clipmask = CONTENTS_SOLID | CONTENTS_PLAYERCLIP;
-	// DHM - Nerve :: allow bullets to pass through bbox
-	// Gordon: need something to allow the hint for covert ops
+	// allow bullets to pass through bbox
+	// need something to allow the hint for covert ops
 	body->r.contents = CONTENTS_CORPSE;
 	body->r.ownerNum = ent->r.ownerNum;
 
@@ -1286,7 +1293,7 @@ static void ClientCleanName(const char *in, char *out, int outSize)
 	char *p;
 	int  spaces = 0;
 
-	//save room for trailing null byte
+	// save room for trailing null byte
 	outSize--;
 	p  = out;
 	*p = 0;
@@ -1423,7 +1430,7 @@ char *CheckUserinfo(int clientNum, char *userinfo)
 	{
 		return "Missing leading slash in userinfo.";
 	}
-	// Dens: the engine always adds ip\ip:port at the end, so there will never
+	// the engine always adds ip\ip:port at the end, so there will never
 	// be a trailing slash
 	if (userinfo[length - 1] == '\\')
 	{
@@ -1803,8 +1810,8 @@ void ClientUserinfoChanged(int clientNum)
 		Q_strcat(skillStr, sizeof(skillStr), va("%i", client->sess.skill[i]));
 		Q_strcat(medalStr, sizeof(medalStr), va("%i", client->sess.medals[i]));
 		// FIXME: Gordon: wont this break if medals > 9 arnout?
-		//JK: Medal count is tied to skill count :()
-		// Gordon: er, it's based on >> skill per map, so for a huuuuuuge campaign it could break...
+		// Medal count is tied to skill count :()
+		// er, it's based on >> skill per map, so for a huuuuuuge campaign it could break...
 	}
 
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
@@ -2612,7 +2619,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		}
 		else
 		{
-			// RF, if we have requested a specific spawn point, use it (fixme: what if this will place us inside another character?)
+			// if we have requested a specific spawn point, use it (fixme: what if this will place us inside another character?)
 /*			spawnPoint = NULL;
             trap_GetUserinfo( ent->s.number, userinfo, sizeof(userinfo) );
             if( (str = Info_ValueForKey( userinfo, "spawnPoint" )) != NULL && str[0] ) {
@@ -2732,7 +2739,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	client->ps.clientNum = index;
 
-	trap_GetUsercmd(client - level.clients, &ent->client->pers.cmd);    // NERVE - SMF - moved this up here
+	trap_GetUsercmd(client - level.clients, &ent->client->pers.cmd);
 
 	// Add appropriate weapons
 	if (!revived)
@@ -2845,9 +2852,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->inactivityTime   = level.time + g_inactivity.integer * 1000;
 	client->latched_buttons  = 0;
 	client->latched_wbuttons = 0;
-
-	// reset death time
-	client->deathTime = 0;
 
 	if (level.intermissiontime)
 	{
@@ -3047,8 +3051,8 @@ void ClientDisconnect(int clientNum)
 			launchvel[2] = 0;    //10+random()*10;
 
 			flag                = LaunchItem(item, ent->r.currentOrigin, launchvel, ent - g_entities);
-			flag->s.modelindex2 = ent->s.otherEntityNum2;    // JPW NERVE FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
-			flag->message       = ent->message; // DHM - Nerve :: also restore item name
+			flag->s.modelindex2 = ent->s.otherEntityNum2;    // FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
+			flag->message       = ent->message; // also restore item name
 
 #ifdef FEATURE_OMNIBOT
 			// FIXME: see ETPub G_DropItems()
