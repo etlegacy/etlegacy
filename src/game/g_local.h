@@ -373,8 +373,6 @@ struct gentity_s
 
 	int mg42BaseEnt;
 
-	gentity_t *melee;
-
 	char *spawnitem;
 
 	int flameQuota, flameQuotaTime, flameBurnEnt;

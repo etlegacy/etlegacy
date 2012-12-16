@@ -1064,9 +1064,6 @@ void Props_Activated(gentity_t *self)
 
 	if (owner->active == qfalse)
 	{
-
-		owner->melee = NULL;
-
 		self->physicsObject = qtrue;
 		self->physicsBounce = 0.2;
 
