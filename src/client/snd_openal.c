@@ -595,9 +595,9 @@ typedef struct src_s
 	sfxHandle_t sfx;            // Sound effect in use
 
 	int lastUsedTime;           // Last time used
-	alSrcPriority_t priority;       // Priority
-	int entity;             // Owning entity (-1 if none)
-	int channel;            // Associated channel (-1 if none)
+	alSrcPriority_t priority;   // Priority
+	int entity;                 // Owning entity (-1 if none)
+	int channel;                // Associated channel (-1 if none)
 
 	qboolean isActive;          // Is this source currently in use?
 	qboolean isPlaying;         // Is this source currently playing, or stopped?
@@ -608,9 +608,9 @@ typedef struct src_s
 	float curGain;              // gain employed if source is within maxdistance.
 	float scaleGain;            // Last gain value for this source. 0 if muted.
 
-	float lastTimePos;              // On stopped loops, the last position in the buffer
+	float lastTimePos;          // On stopped loops, the last position in the buffer
 	int lastSampleTime;         // Time when this was stopped
-	vec3_t loopSpeakerPos;          // Origin of the loop speaker
+	vec3_t loopSpeakerPos;      // Origin of the loop speaker
 
 	qboolean local;             // Is this local (relative to the cam)
 } src_t;
@@ -936,11 +936,7 @@ Remove given source as loop master if it is the master and hand off master statu
 */
 static void S_AL_NewLoopMaster(src_t *rmSource, qboolean iskilled)
 {
-	int     index;
-	src_t   *curSource = NULL;
-	alSfx_t *curSfx;
-
-	curSfx = &knownSfx[rmSource->sfx];
+	alSfx_t *curSfx = &knownSfx[rmSource->sfx];
 
 	if (rmSource->isPlaying)
 	{
@@ -964,6 +960,7 @@ static void S_AL_NewLoopMaster(src_t *rmSource, qboolean iskilled)
 		}
 		else if (rmSource == &srcList[curSfx->masterLoopSrc])
 		{
+			src_t   *curSource = NULL;
 			int firstInactive = -1;
 
 			// Only if rmSource was the master and if there are still playing loops for
@@ -971,6 +968,8 @@ static void S_AL_NewLoopMaster(src_t *rmSource, qboolean iskilled)
 
 			if (iskilled || curSfx->loopActiveCnt)
 			{
+				int     index;
+
 				for (index = 0; index < srcCount; index++)
 				{
 					curSource = &srcList[index];
@@ -1772,7 +1771,7 @@ S_AL_AllocateStreamChannel
 */
 static void S_AL_AllocateStreamChannel(int stream)
 {
-	if ((stream < 0) || (stream >= MAX_RAW_STREAMS))
+	if (stream < 0 || stream >= MAX_RAW_STREAMS)
 	{
 		return;
 	}
@@ -1809,7 +1808,7 @@ S_AL_FreeStreamChannel
 */
 static void S_AL_FreeStreamChannel(int stream)
 {
-	if ((stream < 0) || (stream >= MAX_RAW_STREAMS))
+	if (stream < 0 || stream >= MAX_RAW_STREAMS)
 	{
 		return;
 	}
@@ -1832,7 +1831,7 @@ static void S_AL_RawSamples(int stream, int samples, int rate, int width, int ch
 	// TODO: Ugh Gain on either channel???
 	float volume = (lvol + rvol) / 2;
 
-	if ((stream < 0) || (stream >= MAX_RAW_STREAMS))
+	if (stream < 0 || stream >= MAX_RAW_STREAMS)
 	{
 		return;
 	}
@@ -1873,7 +1872,7 @@ static void S_AL_StreamUpdate(int stream)
 	int   numBuffers;
 	ALint state;
 
-	if ((stream < 0) || (stream >= MAX_RAW_STREAMS))
+	if (stream < 0 || stream >= MAX_RAW_STREAMS)
 	{
 		return;
 	}
@@ -1923,7 +1922,7 @@ static void S_AL_StreamDie(int stream)
 {
 	int numBuffers;
 
-	if ((stream < 0) || (stream >= MAX_RAW_STREAMS))
+	if (stream < 0 || stream >= MAX_RAW_STREAMS)
 	{
 		return;
 	}
@@ -2544,8 +2543,7 @@ static cvar_t    *s_alCapture;
 S_AL_StopAllSounds
 =================
 */
-static
-void S_AL_StopAllSounds(void)
+static void S_AL_StopAllSounds(void)
 {
 	int i;
 
