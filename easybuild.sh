@@ -122,6 +122,7 @@ fi
 cd ${BUILDDIR}
 einfo "Configuring ET Legacy..."
 _CFGSTRING="
+	-DCMAKE_BUILD_TYPE=Release
 	-DBUILD_CLIENT=${BUILD_CLIENT}
 	-DBUILD_SERVER=1
 	-DBUILD_MOD=1
