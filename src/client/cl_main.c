@@ -1206,10 +1206,10 @@ void CL_RequestMotd(void)
 	Com_sprintf(cls.updateChallenge, sizeof(cls.updateChallenge), "%i", rand());
 
 	Info_SetValueForKey(info, "challenge", cls.updateChallenge);
-	Info_SetValueForKey(info, "renderer", cls.glconfig.renderer_string);
 	Info_SetValueForKey(info, "version", com_version->string);
 
-	NET_OutOfBandPrint(NS_CLIENT, cls.updateServer, "getmotd \"%s\"\n", info);
+	// FIXME: handle getmotd with trailing space (server-side)
+	NET_OutOfBandPrint(NS_CLIENT, cls.updateServer, "getmotd%s", info);
 }
 
 /*
@@ -2538,7 +2538,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		return;
 	}
 
-	// Auto-update server response message
+	// Update server response message
 	if (!Q_stricmp(c, "updateResponse"))
 	{
 		CL_UpdateInfoPacket(from);
@@ -3196,6 +3196,9 @@ void CL_CheckAutoUpdate(void)
 		autoupdateChecked = qtrue;
 		return;
 	}
+
+	// Initialize random number to be used in pairing of messages with replies
+	srand(Com_Milliseconds());
 
 	cls.autoupdateServer.port = BigShort(PORT_UPDATE);
 	Com_DPrintf("Update server at: %s (%s)\n", NET_AdrToString(cls.autoupdateServer), cls.autoupdateServerName);
@@ -3959,8 +3962,9 @@ void CL_UpdateInfoPacket(netadr_t from)
 
 	if (!NET_CompareAdr(from, cls.autoupdateServer))
 	{
-		Com_DPrintf("CL_UpdateInfoPacket: Received packet from %s\n",
-		            NET_AdrToString(from));
+		// TODO: when the updater is server-side as well, write this message to the Attack log
+		Com_DPrintf("CL_UpdateInfoPacket: Ignoring packet from %s, because the update server is located at %s\n",
+		            NET_AdrToString(from), NET_AdrToString(cls.autoupdateServer));
 		return;
 	}
 

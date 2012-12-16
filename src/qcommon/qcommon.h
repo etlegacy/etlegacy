@@ -297,7 +297,7 @@ You or the server may be running older versions of the game. Press the auto-upda
  * @brief location of the master server
  */
 #define MASTER_SERVER_NAME  "etmaster.idsoftware.com"
-#define MOTD_SERVER_NAME    "etmaster.idsoftware.com"
+#define MOTD_SERVER_NAME    "motd.etlegacy.com"
 #define UPDATE_SERVER_NAME  "update.etlegacy.com"
 
 #define PORT_MASTER         27950
