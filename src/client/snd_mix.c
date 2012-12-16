@@ -178,7 +178,6 @@ S_TransferPaintBuffer
 */
 void S_TransferPaintBuffer(int endtime)
 {
-	int           out_mask;
 	int           *p;
 	unsigned long *pbuf = (unsigned long *)dma.buffer;
 
@@ -199,14 +198,13 @@ void S_TransferPaintBuffer(int endtime)
 	}
 	else // general case
 	{
-		int count   = (endtime - s_paintedtime) * dma.channels;
-		int out_idx = s_paintedtime * dma.channels & out_mask;
-		int step    = 3 - dma.channels;
+		int out_mask = dma.samples - 1;
+		int count    = (endtime - s_paintedtime) * dma.channels;
+		int out_idx  = s_paintedtime * dma.channels & out_mask;
+		int step     = 3 - dma.channels;
 		int val;
 
 		p = (int *) paintbuffer;
-
-		out_mask = dma.samples - 1;
 
 		if (dma.samplebits == 16)
 		{
