@@ -96,6 +96,7 @@ echo
 # everything looks ok, try to compile!
 
 # cmake varialbes
+RELEASE_TYPE="Debug"
 BUILD_CLIENT=1
 BUNDLED_SDL=1
 BUNDLED_JPEG=1
@@ -122,7 +123,7 @@ fi
 cd ${BUILDDIR}
 einfo "Configuring ET Legacy..."
 _CFGSTRING="
-	-DCMAKE_BUILD_TYPE=Release
+	-DCMAKE_BUILD_TYPE=${RELEASE_TYPE}
 	-DBUILD_CLIENT=${BUILD_CLIENT}
 	-DBUILD_SERVER=1
 	-DBUILD_MOD=1
