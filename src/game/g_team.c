@@ -166,8 +166,6 @@ order.
 */
 void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker)
 {
-	int       i;
-	gentity_t *ent;
 	int       flag_pw, enemy_flag_pw;
 	int       otherteam;
 	gentity_t *flag, *carrier = NULL;
@@ -209,20 +207,8 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 	// did the attacker frag the flag carrier?
 	if (targ->client->ps.powerups[enemy_flag_pw])
 	{
-		attacker->client->pers.teamState.lastfraggedcarrier = level.time;
 		AddScore(attacker, WOLF_FRAG_CARRIER_BONUS);
-		attacker->client->pers.teamState.fragcarrier++;
 
-		// the target had the flag, clear the hurt carrier
-		// field on the other team
-		for (i = 0; i < g_maxclients.integer; i++)
-		{
-			ent = g_entities + i;
-			if (ent->inuse && ent->client->sess.sessionTeam == otherteam)
-			{
-				ent->client->pers.teamState.lasthurtcarrier = 0;
-			}
-		}
 		return;
 	}
 	// flag and flag carrier area defense bonuses
@@ -253,6 +239,7 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 
 	if (flag)     // added some more stuff after this fn
 	{ //      return; // can't find attacker's flag
+		int i;
 
 		// find attacker's team's flag carrier
 		for (i = 0; i < g_maxclients.integer; i++)
@@ -279,7 +266,6 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 			// we defended the base flag
 			// FIXME -- don't report flag defense messages, change to gooder message
 			AddScore(attacker, WOLF_FLAG_DEFENSE_BONUS);
-			attacker->client->pers.teamState.basedefense++;
 			return;
 		}
 	}
@@ -430,8 +416,6 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 #endif
 		}
 
-		other->client->pers.teamState.flagrecovery++;
-		other->client->pers.teamState.lastreturnedflag = level.time;
 		//ResetFlag will remove this entity!  We must return zero
 		Team_ReturnFlagSound(ent, team);
 		Team_ResetFlag(ent);
@@ -512,8 +496,6 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 	{
 		cl->flagParent = ent->s.number;
 	}
-
-	cl->pers.teamState.flagsince = level.time;
 
 	other->client->speedScale = ent->splashDamage; // Alter player speed
 

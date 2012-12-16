@@ -491,20 +491,8 @@ typedef enum
 typedef struct
 {
 	playerTeamStateState_t state;
-
 	int location[2];
 
-	int captures;
-	int basedefense;
-	int carrierdefense;
-	int flagrecovery;
-	int fragcarrier;
-	int assists;
-
-	float lasthurtcarrier;
-	float lastreturnedflag;
-	float flagsince;
-	float lastfraggedcarrier;
 } playerTeamState_t;
 
 // weapon stat counters

@@ -1971,15 +1971,12 @@ void ClientEndFrame(gentity_t *ent)
 	{
 		int time_delta = level.time - level.previousTime;
 
-		ent->client->airOutTime                        += time_delta;
-		ent->client->inactivityTime                    += time_delta;
-		ent->client->lastBurnTime                      += time_delta;
-		ent->client->pers.connectTime                  += time_delta;
-		ent->client->pers.enterTime                    += time_delta;
-		ent->client->pers.teamState.lastreturnedflag   += time_delta;
-		ent->client->pers.teamState.lasthurtcarrier    += time_delta;
-		ent->client->pers.teamState.lastfraggedcarrier += time_delta;
-		ent->client->ps.classWeaponTime                += time_delta;
+		ent->client->airOutTime         += time_delta;
+		ent->client->inactivityTime     += time_delta;
+		ent->client->lastBurnTime       += time_delta;
+		ent->client->pers.connectTime   += time_delta;
+		ent->client->pers.enterTime     += time_delta;
+		ent->client->ps.classWeaponTime += time_delta;
 //			ent->client->respawnTime += time_delta;
 		ent->lastHintCheckTime  += time_delta;
 		ent->pain_debounce_time += time_delta;
