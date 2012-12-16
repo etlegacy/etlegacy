@@ -40,9 +40,6 @@ extern botlib_export_t *botlib_export;
 void Key_GetBindingBuf(int keynum, char *buf, int buflen);
 void Key_KeynumToStringBuf(int keynum, char *buf, int buflen);
 
-// ydnar: can we put this in a header, pls?
-void Key_GetBindingByString(const char *binding, int *key1, int *key2);
-
 /*
 ====================
 CL_GetGameState
@@ -1064,7 +1061,7 @@ void CL_UpdateLevelHunkUsage(void)
 	char outstr[256];
 	int  len, memusage;
 
-	memusage = Cvar_VariableIntegerValue("com_hunkused") + Cvar_VariableIntegerValue("hunk_soundadjust");
+	memusage = Cvar_VariableIntegerValue("com_hunkused") + Cvar_VariableIntegerValue("hunk_soundadjust"); // FIXME: wtf is hunk_soundadjust ?
 
 	len = FS_FOpenFileByMode(memlistfile, &handle, FS_READ);
 	if (len >= 0)     // the file exists, so read it in, strip out the current entry for this map, and save it out, so we can append the new value
@@ -1406,7 +1403,7 @@ void CL_SetCGameTime(void)
 
 	if (cl.snap.serverTime < cl.oldFrameServerTime)
 	{
-		// Ridah, if this is a localhost, then we are probably loading a savegame
+		// if this is a localhost, then we are probably loading a savegame
 		if (!Q_stricmp(cls.servername, "localhost"))
 		{
 			// do nothing?
@@ -1493,8 +1490,7 @@ void CL_SetCGameTime(void)
 
 	while (cl.serverTime >= cl.snap.serverTime)
 	{
-		// feed another messag, which should change
-		// the contents of cl.snap
+		// feed another message, which should change the contents of cl.snap
 		CL_ReadDemoMessage();
 		if (cls.state != CA_ACTIVE)
 		{

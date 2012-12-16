@@ -39,9 +39,6 @@ extern botlib_export_t *botlib_export;
 
 vm_t *uivm;
 
-// ydnar: can we put this in a header, pls?
-void Key_GetBindingByString(const char *binding, int *key1, int *key2);
-
 /*
 ====================
 GetClientState
@@ -138,9 +135,8 @@ LAN_ResetPings
 */
 static void LAN_ResetPings(int source)
 {
-	int          count, i;
+	int          count = 0, i;
 	serverInfo_t *servers = NULL;
-	count = 0;
 
 	switch (source)
 	{
@@ -173,11 +169,9 @@ LAN_AddServer
 */
 static int LAN_AddServer(int source, const char *name, const char *address)
 {
-	int          max, *count, i;
+	int          max   = MAX_OTHER_SERVERS, *count = 0;
 	netadr_t     adr;
 	serverInfo_t *servers = NULL;
-	max   = MAX_OTHER_SERVERS;
-	count = 0;
 
 	switch (source)
 	{
@@ -197,6 +191,8 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 	}
 	if (servers && *count < max)
 	{
+		int i;
+
 		NET_StringToAdr(address, &adr, NA_IP);
 		for (i = 0; i < *count; i++)
 		{
@@ -225,9 +221,9 @@ LAN_RemoveServer
 */
 static void LAN_RemoveServer(int source, const char *addr)
 {
-	int          *count, i;
+	int          *count = 0;
 	serverInfo_t *servers = NULL;
-	count = 0;
+
 	switch (source)
 	{
 	case AS_LOCAL:
@@ -246,12 +242,14 @@ static void LAN_RemoveServer(int source, const char *addr)
 	if (servers)
 	{
 		netadr_t comp;
+		int      i, j;
+
 		NET_StringToAdr(addr, &comp, NA_IP);
 		for (i = 0; i < *count; i++)
 		{
 			if (NET_CompareAdr(comp, servers[i].adr))
 			{
-				int j = i;
+				j = i;
 
 				while (j < *count - 1)
 				{
@@ -597,6 +595,7 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible)
 	{
 		int          count   = MAX_OTHER_SERVERS;
 		serverInfo_t *server = NULL;
+
 		switch (source)
 		{
 		case AS_LOCAL:
@@ -822,7 +821,7 @@ Ket_SetCatcher
 */
 void Key_SetCatcher(int catcher)
 {
-	// NERVE - SMF - console overrides everything
+	// console overrides everything
 	if (cls.keyCatchers & KEYCATCH_CONSOLE)
 	{
 		cls.keyCatchers = catcher | KEYCATCH_CONSOLE;
@@ -997,7 +996,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_R_ADDLIGHTTOSCENE:
-		// ydnar: new dlight code
+		// new dlight code
 		re.AddLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), args[7], args[8]);
 		return 0;
 
@@ -1225,7 +1224,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		S_StopBackgroundTrack();
 		return 0;
 	case UI_S_STARTBACKGROUNDTRACK:
-		S_StartBackgroundTrack(VMA(1), VMA(2), args[3]);         //----(SA) added fadeup time
+		S_StartBackgroundTrack(VMA(1), VMA(2), args[3]); // added fadeup time
 		return 0;
 
 	case UI_REAL_TIME:
@@ -1276,7 +1275,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		Com_GetHunkInfo(VMA(1), VMA(2));
 		return 0;
 
-	// obolete
+	// obsolete
 	case UI_SET_PBCLSTATUS:
 	case UI_SET_PBSVSTATUS:
 		return 0;
