@@ -594,6 +594,7 @@ issues.
 #define MAX_FILE_HANDLES    64
 
 #ifdef _WIN32
+#include <direct.h>
 #define Q_rmdir _rmdir
 #else
 #include <unistd.h>
