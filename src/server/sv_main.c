@@ -417,9 +417,8 @@ void SV_MasterGameCompleteStatus()
 			{
 				adr[i].port = BigShort(PORT_MASTER);
 			}
-			Com_Printf("%s resolved to %i.%i.%i.%i:%i\n", sv_master[i]->string,
-			           adr[i].ip[0], adr[i].ip[1], adr[i].ip[2], adr[i].ip[3],
-			           BigShort(adr[i].port));
+			Com_Printf("%s resolved to %s\n", sv_master[i]->string,
+			           NET_AdrToString(adr[i]));
 		}
 
 		Com_Printf("Sending gameCompleteStatus to %s\n", sv_master[i]->string);
@@ -910,8 +909,8 @@ qboolean SV_CheckDRDoS(netadr_t from)
 	{
 		if (lastSpecificLogTime + 1000 <= svs.time)   // Limit one log every second.
 		{
-			SV_WriteAttackLog(va("Possible DRDoS attack to address %i.%i.%i.%i, ignoring getinfo/getstatus connectionless packet\n",
-			                     exactFrom.ip[0], exactFrom.ip[1], exactFrom.ip[2], exactFrom.ip[3]));
+			SV_WriteAttackLog(va("Possible DRDoS attack to address %s, ignoring getinfo/getstatus connectionless packet\n",
+			                     NET_AdrToString(exactFrom)));
 			lastSpecificLogTime = svs.time;
 		}
 		return qtrue;

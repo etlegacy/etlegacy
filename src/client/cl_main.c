@@ -1199,10 +1199,8 @@ void CL_RequestMotd(void)
 		return;
 	}
 	cls.updateServer.port = BigShort(PORT_MOTD);
-	Com_Printf("MOTD: %s resolved to %i.%i.%i.%i:%i\n", MOTD_SERVER_NAME,
-	           cls.updateServer.ip[0], cls.updateServer.ip[1],
-	           cls.updateServer.ip[2], cls.updateServer.ip[3],
-	           BigShort(cls.updateServer.port));
+	Com_Printf("MOTD: %s resolved to %s\n", MOTD_SERVER_NAME,
+	           NET_AdrToString(cls.updateServer));
 
 	info[0] = 0;
 	Com_sprintf(cls.updateChallenge, sizeof(cls.updateChallenge), "%i", rand());
@@ -3263,10 +3261,8 @@ void CL_GetAutoUpdate(void)
 	// Copy auto-update server address to Server connect address
 	memcpy(&clc.serverAddress, &cls.autoupdateServer, sizeof(netadr_t));
 
-	Com_DPrintf("%s resolved to %i.%i.%i.%i:%i\n", cls.servername,
-	            clc.serverAddress.ip[0], clc.serverAddress.ip[1],
-	            clc.serverAddress.ip[2], clc.serverAddress.ip[3],
-	            BigShort(clc.serverAddress.port));
+	Com_DPrintf("%s resolved to %s\n", cls.servername,
+	            NET_AdrToString(clc.serverAddress));
 
 	cls.state = CA_CONNECTING;
 
@@ -3954,20 +3950,17 @@ void CL_UpdateInfoPacket(netadr_t from)
 
 	if (cls.autoupdateServer.type == NA_BAD)
 	{
-		Com_DPrintf("CL_UpdateInfoPacket:  Auto-Updater has bad address\n");
+		Com_DPrintf("CL_UpdateInfoPacket: Update server has bad address\n");
 		return;
 	}
 
-	Com_DPrintf("Auto-Updater resolved to %i.%i.%i.%i:%i\n",
-	            cls.autoupdateServer.ip[0], cls.autoupdateServer.ip[1],
-	            cls.autoupdateServer.ip[2], cls.autoupdateServer.ip[3],
-	            BigShort(cls.autoupdateServer.port));
+	Com_DPrintf("Update server resolved to %s\n",
+	            NET_AdrToString(cls.autoupdateServer));
 
 	if (!NET_CompareAdr(from, cls.autoupdateServer))
 	{
-		Com_DPrintf("CL_UpdateInfoPacket:  Received packet from %i.%i.%i.%i:%i\n",
-		            from.ip[0], from.ip[1], from.ip[2], from.ip[3],
-		            BigShort(from.port));
+		Com_DPrintf("CL_UpdateInfoPacket: Received packet from %s\n",
+		            NET_AdrToString(from));
 		return;
 	}
 
