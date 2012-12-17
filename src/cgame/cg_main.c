@@ -287,6 +287,9 @@ vmCvar_t cg_recording_statusline;
 vmCvar_t cg_hitSounds;
 vmCvar_t cg_locations;
 
+vmCvar_t cg_spawnTimer_set;         // spawntimer
+vmCvar_t cg_spawnTimer_period;      // spawntimer
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -483,6 +486,10 @@ cvarTable_t cvarTable[] =
 
 	{ &cg_hitSounds,             "cg_hitSounds",             "0",     CVAR_ARCHIVE                 },
 	{ &cg_locations,             "cg_locations",             "3",     CVAR_ARCHIVE                 },
+
+	{ &cg_spawnTimer_set,        "cg_spawnTimer_set",        "-1",    CVAR_TEMP                    },
+	{ &cg_spawnTimer_period,     "cg_spawnTimer_period",     "0",     CVAR_TEMP                    },
+
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

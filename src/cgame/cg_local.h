@@ -2158,6 +2158,9 @@ extern vmCvar_t cg_recording_statusline;
 extern vmCvar_t cg_hitSounds;
 extern vmCvar_t cg_locations;
 
+extern vmCvar_t cg_spawnTimer_period;
+extern vmCvar_t cg_spawnTimer_set;
+
 // cg_main.c
 const char *CG_ConfigString(int index);
 int CG_ConfigStringCopy(int index, char *buff, int buffsize);

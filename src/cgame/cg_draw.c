@@ -509,6 +509,7 @@ CG_DrawTimer
 */
 static float CG_DrawTimer(float y)
 {
+
 	char   *s;
 	int    w, w2;
 	vec4_t color = { 0.625f, 0.625f, 0.6f, 1.0f };
@@ -526,7 +527,7 @@ static float CG_DrawTimer(float y)
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = "^7WARMUP"; // ydnar: don't draw reinforcement time in warmup mode // ^*
+		s        = "^7WARMUP"; // don't draw reinforcement time in warmup mode // ^*
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
@@ -547,6 +548,14 @@ static float CG_DrawTimer(float y)
 
 		color[3] = 1.f;
 	}
+
+	// spawntimer
+	seconds = msec / 1000;
+	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0)
+	{
+		s = va("^1%d %s", cg_spawnTimer_period.integer + (seconds - cg_spawnTimer_set.integer) % cg_spawnTimer_period.integer, s);
+	}
+	// end spawntimer
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
 	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;

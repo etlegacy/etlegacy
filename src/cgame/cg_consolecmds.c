@@ -953,11 +953,6 @@ void CG_toggleSpecHelp_f(void)
 	}
 }
 
-void CG_Obj_f(void)
-{
-	// Gordon: short circuit this
-}
-
 static void CG_EditSpeakers_f(void)
 {
 	if (cg.editingSpeakers)
@@ -1113,6 +1108,60 @@ static void CG_CPM_f(void)
 	CG_AddPMItem(PM_MESSAGE, CG_Argv(1), cgs.media.voiceChatShader);
 }
 
+// etpro style enemy spawntimer
+void CG_TimerSet_f(void)
+{
+
+	if (cgs.gamestate != GS_PLAYING)
+	{
+		CG_Printf("You may only use this command during the match.\n");
+		return;
+	}
+
+	if (trap_Argc() == 1)
+	{
+		trap_Cvar_Set("cg_spawnTimer_set", "-1");
+	}
+	else if (trap_Argc() == 2)
+	{
+		char buff[32] = { "" };
+		int  spawnPeriod;
+
+		trap_Argv(1, buff, sizeof(buff));
+		spawnPeriod = atoi(buff);
+		if (spawnPeriod < 1 || spawnPeriod > 60)
+		{
+			CG_Printf("Argument must be a number between 1 and 60.\n");
+		}
+		else
+		{
+			int msec = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+
+			trap_Cvar_Set("cg_spawnTimer_period", buff);
+			trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
+		}
+	}
+	else
+	{
+		CG_Printf("Usage: timerSet [seconds]\n");
+	}
+}
+
+// etpro style timer resetting
+void CG_ResetTimer_f(void)
+{
+	int msec;
+
+	if (cgs.gamestate != GS_PLAYING)
+	{
+		CG_Printf("You may only use this command during the match.\n");
+		return;
+	}
+
+	msec = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+	trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
+}
+
 typedef struct
 {
 	char *cmd;
@@ -1121,8 +1170,6 @@ typedef struct
 
 static consoleCommand_t commands[] =
 {
-//  { "obj", CG_Obj_f },
-//  { "setspawnpt", CG_Obj_f },
 	{ "testgun",             CG_TestGun_f            },
 	{ "testmodel",           CG_TestModel_f          },
 	{ "nextframe",           CG_TestModelNextFrame_f },
@@ -1211,6 +1258,8 @@ static consoleCommand_t commands[] =
 	{ "undoSpeaker",         CG_UndoSpeaker_f        },
 	{ "cpm",                 CG_CPM_f                },
 	{ "forcetapout",         CG_ForceTapOut_f        },
+	{ "timerSet",            CG_TimerSet_f           },
+	{ "resetTimer",          CG_ResetTimer_f         },
 };
 
 /*
