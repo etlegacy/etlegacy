@@ -1,4 +1,4 @@
-/* ANSI-C code produced by gperf version 3.0.1 */
+/* ANSI-C code produced by gperf version 3.0.3 (dirty) */
 /* Command-line: gperf -t7C --language=ANSI-C input_tokens.gperf  */
 /* Computed positions: -k'1-2' */
 
@@ -68,7 +68,7 @@ hash(register const char *str, register unsigned int len)
 		30, 93, 10, 93, 35, 25, 40, 93, 93, 45,
 		15, 93, 93, 93, 93, 93, 93, 93
 	};
-	register int hval = len;
+	register int hval = (int)len;
 
 	switch (hval)
 	{
@@ -82,9 +82,12 @@ hash(register const char *str, register unsigned int len)
 	return hval;
 }
 
-	#ifdef __GNUC__
+#ifdef __GNUC__
 __inline
-	#endif
+#ifdef __GNUC_STDC_INLINE__
+__attribute__ ((__gnu_inline__))
+#endif
+#endif
 const struct g_strtoken_t *
 in_word_set(register const char *str, register unsigned int len)
 {
