@@ -210,7 +210,7 @@ static void CG_LoadWeapons_f(void)
 
 	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 	{
-		// DHM - Nerve :: Only register weapons we use in WolfMP
+		// Only register weapons we use in WolfMP
 		if (BG_WeaponInWolfMP(i))
 		{
 			CG_RegisterWeapon(i, qtrue);
@@ -260,6 +260,7 @@ qboolean cameraInuse[MAX_CAMERAS];
 int CG_LoadCamera(const char *name)
 {
 	int i;
+
 	for (i = 1; i < MAX_CAMERAS; i++) // start at '1' since '0' is always taken by the cutscene camera
 	{
 		if (!cameraInuse[i])
@@ -309,22 +310,22 @@ void CG_StartCamera(const char *name, qboolean startBlack)
 
 	if (trap_loadCamera(CAM_PRIMARY, va("cameras/%s", lname)))
 	{
-		cg.cameraMode = qtrue;                  // camera on in cgame
+		cg.cameraMode = qtrue;                    // camera on in cgame
 		if (startBlack)
 		{
 			CG_Fade(0, 0, 0, 255, cg.time, 0);    // go black
 		}
-		trap_Cvar_Set("cg_letterbox", "1");   // go letterbox
-		//trap_SendClientCommand("startCamera");    // camera on in game
+		trap_Cvar_Set("cg_letterbox", "1");       // go letterbox
+		//trap_SendClientCommand("startCamera");  // camera on in game
 		trap_startCamera(CAM_PRIMARY, cg.time);   // camera on in client
 	}
 	else
 	{
-		//----(SA)  removed check for cams in main dir
+		// removed check for cams in main dir
 		cg.cameraMode = qfalse;                 // camera off in cgame
-		trap_SendClientCommand("stopCamera");      // camera off in game
-		trap_stopCamera(CAM_PRIMARY);             // camera off in client
-		CG_Fade(0, 0, 0, 0, cg.time, 0);          // ensure fadeup
+		trap_SendClientCommand("stopCamera");   // camera off in game
+		trap_stopCamera(CAM_PRIMARY);           // camera off in client
+		CG_Fade(0, 0, 0, 0, cg.time, 0);        // ensure fadeup
 		trap_Cvar_Set("cg_letterbox", "0");
 		CG_Printf("Unable to load camera %s\n", lname);
 	}
@@ -556,7 +557,7 @@ static void CG_VoiceChat_f(void)
 		return;
 	}
 
-	// NERVE - SMF - don't let spectators voice chat
+	// don't let spectators voice chat
 	// NOTE - This cg.snap will be the person you are following, but its just for intermission test
 	if (cg.snap && (cg.snap->ps.pm_type != PM_INTERMISSION))
 	{
@@ -581,7 +582,7 @@ static void CG_TeamVoiceChat_f(void)
 		return;
 	}
 
-	// NERVE - SMF - don't let spectators voice chat
+	// don't let spectators voice chat
 	// NOTE - This cg.snap will be the person you are following, but its just for intermission test
 	if (cg.snap && (cg.snap->ps.pm_type != PM_INTERMISSION))
 	{
@@ -606,7 +607,7 @@ static void CG_BuddyVoiceChat_f(void)
 		return;
 	}
 
-	// NERVE - SMF - don't let spectators voice chat
+	// don't let spectators voice chat
 	// NOTE - This cg.snap will be the person you are following, but its just for intermission test
 	if (cg.snap && (cg.snap->ps.pm_type != PM_INTERMISSION))
 	{
@@ -622,7 +623,7 @@ static void CG_BuddyVoiceChat_f(void)
 	trap_SendConsoleCommand(va("cmd vsay_buddy -1 %s %s\n", CG_BuildSelectedFirteamString(), chatCmd));
 }
 
-// ydnar: say, team say, etc
+// say, team say, etc
 static void CG_MessageMode_f(void)
 {
 	char cmd[64];
@@ -707,11 +708,9 @@ static void CG_SelectBuddy_f(void)
 	int          i;
 	clientInfo_t *ci;
 
-	// Gordon:
 	// 0 - 5 = select that person
 	// -1 = none
 	// -2 = all
-
 	switch (pos)
 	{
 	case 0:
@@ -722,7 +721,7 @@ static void CG_SelectBuddy_f(void)
 	case 5:
 		if (!CG_IsOnFireteam(cg.clientNum))
 		{
-			break;     // Gordon: we aren't a leader, so dont allow selection
+			break;     // we aren't a leader, so dont allow selection
 		}
 
 		ci = CG_SortedFireTeamPlayerForPosition(pos);
@@ -737,7 +736,7 @@ static void CG_SelectBuddy_f(void)
 	case -1:
 		if (!CG_IsOnFireteam(cg.clientNum))
 		{
-			break;     // Gordon: we aren't a leader, so dont allow selection
+			break;     // we aren't a leader, so dont allow selection
 		}
 
 		for (i = 0; i < 6; i++)
@@ -755,7 +754,7 @@ static void CG_SelectBuddy_f(void)
 	case -2:
 		if (!CG_IsOnFireteam(cg.clientNum))
 		{
-			break;     // Gordon: we aren't a leader, so dont allow selection
+			break;     // we aren't a leader, so dont allow selection
 		}
 
 		for (i = 0; i < 6; i++)
@@ -1227,7 +1226,7 @@ qboolean CG_ConsoleCommand(void)
 	const char *cmd;
 	int        i;
 
-	// Arnout - don't allow console commands until a snapshot is present
+	// don't allow console commands until a snapshot is present
 	if (!cg.snap)
 	{
 		return qfalse;

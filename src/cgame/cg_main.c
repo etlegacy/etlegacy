@@ -328,7 +328,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_crosshairX,            "cg_crosshairX",            "0",     CVAR_ARCHIVE                 },
 	{ &cg_crosshairY,            "cg_crosshairY",            "0",     CVAR_ARCHIVE                 },
 	{ &cg_brassTime,             "cg_brassTime",             "2500",  CVAR_ARCHIVE                 },
-	{ &cg_markTime,              "cg_marktime",              "20000", CVAR_ARCHIVE                 },
+	{ &cg_markTime,              "cg_markTime",              "20000", CVAR_ARCHIVE                 },
 	{ &cg_lagometer,             "cg_lagometer",             "0",     CVAR_ARCHIVE                 },
 	{ &cg_railTrailTime,         "cg_railTrailTime",         "400",   CVAR_ARCHIVE                 },
 	{ &cg_gun_x,                 "cg_gunX",                  "0",     CVAR_CHEAT                   },
@@ -1398,13 +1398,6 @@ static void CG_RegisterGraphics(void)
 	}
 
 	cgs.media.fleshSmokePuffShader = trap_R_RegisterShader("fleshimpactsmokepuff");
-	cgs.media.nerveTestShader      = trap_R_RegisterShader("jpwtest1");
-	cgs.media.idTestShader         = trap_R_RegisterShader("jpwtest2");
-	cgs.media.hud1Shader           = trap_R_RegisterShader("jpwhud1");
-	cgs.media.hud2Shader           = trap_R_RegisterShader("jpwhud2");
-	cgs.media.hud3Shader           = trap_R_RegisterShader("jpwhud3");
-	cgs.media.hud4Shader           = trap_R_RegisterShader("jpwhud4");
-	cgs.media.hud5Shader           = trap_R_RegisterShader("jpwhud5");
 	cgs.media.smokePuffShader      = trap_R_RegisterShader("smokePuff");
 
 	// blood cloud
@@ -1427,7 +1420,6 @@ static void CG_RegisterGraphics(void)
 		cgs.media.viewBloodAni[i] = trap_R_RegisterShader(va("viewBloodBlend%i", i + 1));
 	}
 
-	cgs.media.viewFlashBlood = trap_R_RegisterShader("viewFlashBlood");
 	for (i = 0; i < 16; i++)
 	{
 		cgs.media.viewFlashFire[i] = trap_R_RegisterShader(va("viewFlashFire%i", i + 1));
@@ -1605,7 +1597,6 @@ static void CG_RegisterGraphics(void)
 	// bullet hitting dirt
 	cgs.media.dirtParticle1Shader = trap_R_RegisterShader("dirt_splash");
 	cgs.media.dirtParticle2Shader = trap_R_RegisterShader("water_splash");
-	//cgs.media.dirtParticle3Shader = trap_R_RegisterShader( "dirtParticle3" );
 
 	cgs.media.genericConstructionShader = trap_R_RegisterShader("textures/sfx/construction");
 
@@ -1671,10 +1662,10 @@ static void CG_RegisterGraphics(void)
 
 	CG_Fireteams_Setup();
 
-	cgs.media.railCoreShader = trap_R_RegisterShaderNoMip("railCore");       // (SA) for debugging server traces
+	cgs.media.railCoreShader = trap_R_RegisterShaderNoMip("railCore");       // for debugging server traces
 	cgs.media.ropeShader     = trap_R_RegisterShader("textures/props/cable_m01");
 
-	cgs.media.thirdPersonBinocModel = trap_R_RegisterModel("models/multiplayer/binocs/binocs.md3");                  // NERVE - SMF
+	cgs.media.thirdPersonBinocModel = trap_R_RegisterModel("models/multiplayer/binocs/binocs.md3");
 	cgs.media.flamebarrel           = trap_R_RegisterModel("models/furniture/barrel/barrel_a.md3");
 	cgs.media.mg42muzzleflash       = trap_R_RegisterModel("models/weapons2/machinegun/mg42_flash.md3");
 
@@ -2744,7 +2735,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_InitConsoleCommands();
 
-	// Gordon: moved this up so it's initialized for the loading screen
+	// moved this up so it's initialized for the loading screen
 	CG_LoadHudMenu();      // load new hud stuff
 	CG_AssetCache();
 

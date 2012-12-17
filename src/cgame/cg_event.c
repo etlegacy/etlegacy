@@ -468,7 +468,7 @@ static void CG_ItemPickup(int itemNum)
 			//  4 - "New or Better"
 
 			// don't ever autoswitch to secondary fire weapons
-			// Gordon: Leave autoswitch to secondary kar/carbine as they use alt ammo and arent zoomed: Note, not that it would do this anyway as it isnt in a bank....
+			// Leave autoswitch to secondary kar/carbine as they use alt ammo and arent zoomed: Note, not that it would do this anyway as it isnt in a bank....
 			if (itemid != WP_FG42SCOPE && itemid != WP_GARAND_SCOPE && itemid != WP_K43_SCOPE && itemid != WP_AMMO)
 			{   // no weap currently selected, always just select the new one
 				if (!cg.weaponSelect)
@@ -2521,7 +2521,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_GRENADE_BOUNCE:
 		DEBUGNAME("EV_GRENADE_BOUNCE");
 
-		// DYNAMITE // Gordon: or LANDMINE FIXME: change this? (mebe a metallic sound)
+		// DYNAMITE or LANDMINE FIXME: change this? (mebe a metallic sound)
 		if (es->weapon == WP_SATCHEL)
 		{
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.satchelbounce1);
@@ -3025,7 +3025,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		trap_S_StartSound(cent->lerpOrigin, cent->currentState.number, CHAN_AUTO, cgs.media.buildDecayedSound);
 		break;
 
-	// Gordon: debris test
+	// debris test
 	case EV_DEBRIS:
 		DEBUGNAME("EV_DEBRIS");
 		CG_Debris(cent, position, cent->currentState.origin2);

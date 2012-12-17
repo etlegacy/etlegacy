@@ -291,7 +291,7 @@ void CG_windowDraw(void)
 	int         h, x, y, i, j, milli, t_offset, tmp;
 	cg_window_t *w;
 	qboolean    fCleanup = qfalse;
-	// Gordon: FIXME, the limbomenu var no longer exists
+	// FIXME, the limbomenu var no longer exists
 	qboolean fAllowMV = (cg.snap != NULL && cg.snap->ps.pm_type != PM_INTERMISSION /*&& !cg.limboMenu*/);
 	vec4_t   *bg;
 	vec4_t   textColor, borderColor, bgColor;

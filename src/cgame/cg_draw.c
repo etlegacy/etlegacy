@@ -4543,9 +4543,9 @@ static void CG_Draw2D(void)
 {
 	CG_ScreenFade();
 
-	// Arnout: no 2d when in esc menu
+	// no 2d when in esc menu
 	// FIXME: do allow for quickchat (bleh)
-	// Gordon: Removing for now
+	// - Removing for now
 	/*  if( trap_Key_GetCatcher() & KEYCATCH_UI ) {
 	        return;
 	    }*/

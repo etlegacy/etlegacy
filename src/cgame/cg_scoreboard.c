@@ -335,7 +335,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		CG_DrawSmallString(tempx + totalwidth - w, y, s, fade);
 		return;
 	}
-	// OSP - allow MV clients see the class of its merged client's on the scoreboard
+	// allow MV clients see the class of its merged client's on the scoreboard
 	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR
 	         || CG_mvMergedClientLocate(score->client))
 	{
@@ -389,7 +389,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	float        tempx;
 	vec4_t       hcolor;
 	clientInfo_t *ci;
-	int          i, j; // To draw medals
+	int          i, j;    // To draw medals
 	char         buf[64]; // To draw medals
 
 	if (y + MINICHAR_HEIGHT >= 470)
@@ -402,7 +402,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	if (score->client == cg.snap->ps.clientNum)
 	{
 		hcolor[3] = fade * 0.3;
-		VectorSet(hcolor, .5f, .5f, .2f);           // DARK-RED
+		VectorSet(hcolor, .5f, .5f, .2f); // DARK-RED
 
 		CG_FillRect(x - 5, y,
 		            (INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH + 5),

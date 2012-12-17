@@ -54,7 +54,7 @@ void CG_CheckAmmo(void)
 	// see about how many seconds of ammo we have remaining
 	memcpy(weapons, cg.snap->ps.weapons, sizeof(weapons));
 
-	if (!weapons[0] && !weapons[1])     // (SA) we start out with no weapons, so don't make a click on startup
+	if (!weapons[0] && !weapons[1])     // we start out with no weapons, so don't make a click on startup
 	{
 		return;
 	}
@@ -133,7 +133,7 @@ CG_DamageFeedback
 void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 {
 	float        kick;
-	int          health;
+	int          health = cg.snap->ps.stats[STAT_HEALTH];
 	float        scale;
 	vec3_t       dir;
 	vec3_t       angles;
@@ -144,7 +144,6 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 	cg.attackerTime = cg.time;
 
 	// the lower on health you are, the greater the view kick will be
-	health = cg.snap->ps.stats[STAT_HEALTH];
 	if (health < 40)
 	{
 		scale = 1;
@@ -268,7 +267,7 @@ A respawn happened this snapshot
 */
 void CG_Respawn(qboolean revived)
 {
-	cg.serverRespawning = qfalse;   // Arnout: just in case
+	cg.serverRespawning = qfalse;   // just in case
 
 	// no error decay on player movement
 	cg.thisFrameTeleport = qtrue;

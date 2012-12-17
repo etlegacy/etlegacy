@@ -1131,8 +1131,6 @@ static void CG_MapRestart(void)
 
 	cg.latchAutoActions  = qfalse;
 	cg.latchVictorySound = qfalse;
-	// reset render flags
-	cg_fxflags = 0;
 
 	// we really should clear more parts of cg here and stop sounds
 	cg.v_dmg_time   = 0;

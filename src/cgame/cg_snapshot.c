@@ -35,8 +35,7 @@
 
 #include "cg_local.h"
 
-// rain - minor optimization - we only want to reset ents that were valid
-// in the last frame
+// minor optimization - we only want to reset ents that were valid in the last frame
 static qboolean oldValid[MAX_GENTITIES];
 
 /*
@@ -48,8 +47,7 @@ static void CG_ResetEntity(centity_t *cent)
 {
 	// if an event is set, assume it is new enough to use
 	// if the event had timed out, it would have been cleared
-	// RF, not needed for wolf
-	// DHM - Nerve :: Wolf is now using this.
+	// Wolf is now using this.
 	cent->previousEvent         = 0;
 	cent->previousEventSequence = cent->currentState.eventSequence;
 
@@ -65,7 +63,7 @@ static void CG_ResetEntity(centity_t *cent)
 		CG_ResetPlayerEntity(cent);
 	}
 
-	// rain - reset a bunch of extra stuff
+	// reset a bunch of extra stuff
 	cent->muzzleFlashTime = 0;
 	cent->overheatTime    = 0;
 
@@ -92,7 +90,7 @@ cent->nextState is moved to cent->currentState and events are fired
 */
 static void CG_TransitionEntity(centity_t *cent)
 {
-	// Ridah, update the fireDir if it's on fire
+	// update the fireDir if it's on fire
 	if (CG_EntOnFire(cent))
 	{
 		vec3_t newDir, newPos, oldPos;
@@ -183,13 +181,10 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 		CG_CheckEvents(cent);
 	}
 
-	cg_fxflags = 0;
-
-
 	trap_Cvar_VariableStringBuffer("r_oldMode", buff, sizeof(buff));
 	if (atoi(buff))
 	{
-		// Arnout: confirmation screen
+		// confirmation screen
 		trap_UI_Popup(UIMENU_INGAME);
 	}
 	else if (cg.demoPlayback)
@@ -221,7 +216,7 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 		}
 	}
 
-	// OSP - remove motd window
+	// remove motd window
 	if (cg.motdWindow != NULL)
 	{
 		CG_windowFree(cg.motdWindow);
@@ -283,7 +278,7 @@ static void CG_TransitionSnapshot(void)
 		return;
 	}
 
-	// rain - I hate doing things like this for enums.  Oh well.
+	// I hate doing things like this for enums.  Oh well.
 	memset(&oldValid, 0, sizeof(oldValid));
 
 	// clear the currentValid flag for all entities in the existing snapshot
@@ -294,7 +289,7 @@ static void CG_TransitionSnapshot(void)
 		oldValid[cg.snap->entities[i].number] = qtrue;
 	}
 
-	// OSP -- check for MV updates from new snapshot info
+	// check for MV updates from new snapshot info
 #ifdef FEATURE_MULTIVIEW
 	if (cg.snap->ps.powerups[PW_MVCLIENTLIST] != cg.mvClientList)
 	{

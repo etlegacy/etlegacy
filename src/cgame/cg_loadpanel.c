@@ -100,7 +100,7 @@ panel_button_t loadScreenMap =
 {
 	"gfx/loading/camp_map",
 	NULL,
-	{ 0,                      0,  440, 480 }, // shouldn't this be square?? // Gordon: no, the map is actually WIDER that tall, which makes it even worse...
+	{ 0,                      0,  440, 480 }, // shouldn't this be square?? // no, the map is actually WIDER that tall, which makes it even worse...
 	{ 0,                      0,  0,   0, 0, 0, 0, 0},
 	NULL,                     /* font     */
 	NULL,                     /* keyDown  */

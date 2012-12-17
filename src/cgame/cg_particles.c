@@ -812,14 +812,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		j          = (int)floor(ratio * shaderAnimCounts[p->shaderAnim]);
 		p->pshader = shaderAnims[i][j];
 
-		// JPW NERVE more particle testing
-		if (cg_fxflags & 1)
-		{
-			p->roll          = 0;
-			p->pshader       = getTestShader();
-			rotate_ang[ROLL] = 90;
-		}
-
 		if (p->roll)
 		{
 			vectoangles(cg.refdef_current->viewaxis[0], rotate_ang);
@@ -1491,8 +1483,8 @@ void CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration)
 		p->pshader = cgs.media.dirtParticle2Shader;
 	}
 	else
-	{
-		p->pshader = cgs.media.dirtParticle3Shader;
+	{  // r = 2 - no shader ...
+		p->pshader = 0;
 	}
 
 	p->type = P_SMOKE;
@@ -1540,13 +1532,6 @@ void CG_ParticleDirtBulletDebris_Core(vec3_t org, vec3_t vel, int duration, floa
 	p->type = P_SMOKE;
 
 	p->pshader = shader;
-	if (cg_fxflags & 1)
-	{
-		p->pshader = getTestShader();
-		p->rotate  = 0;
-		p->roll    = 0;
-		p->type    = P_SPRITE;
-	}
 
 	VectorCopy(org, p->org);
 	VectorCopy(vel, p->vel);
@@ -1838,19 +1823,13 @@ void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEnt
 	p->alpha = 0.75;
 }
 
-//void CG_Particle_OilParticle (qhandle_t pshader, centity_t *cent)
 void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int ptime, int snum)      // snum is parent ent number?
 {
 	cparticle_t *p;
-	int         time;
-	int         time2;
-	float       ratio;
+	int         time     = cg.time;;
+	int         time2    = cg.time + ptime;
 	float       duration = 2000;
-
-	time  = cg.time;
-	time2 = cg.time + ptime;
-
-	ratio = (float)1 - ((float)time / (float)time2);
+	float       ratio    = (float)1 - ((float)time / (float)time2);
 
 	if (!pshader)
 	{
@@ -1902,9 +1881,7 @@ void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int p
 	p->alpha = 0.5;
 
 	p->color = BLOODRED;
-
 }
-
 
 void CG_Particle_OilSlick(qhandle_t pshader, centity_t *cent)
 {
@@ -2039,7 +2016,6 @@ qboolean ValidBloodPool(vec3_t start)
 
 			CG_Trace(&trace, this_pos, NULL, NULL, end_pos, -1, CONTENTS_SOLID);
 
-
 			if (trace.entityNum < (MAX_ENTITIES - 1))       // may only land on world
 			{
 				return qfalse;
@@ -2049,7 +2025,6 @@ qboolean ValidBloodPool(vec3_t start)
 			{
 				return qfalse;
 			}
-
 		}
 	}
 
@@ -2149,13 +2124,9 @@ void CG_ParticleBloodCloud(centity_t *cent, vec3_t origin, vec3_t dir)
 		VectorClear(p->accel);
 
 		p->rotate = qfalse;
-
-		p->roll = rand() % 179;
-
-		p->color = BLOODRED;
-
-		p->alpha = 0.75;
-
+		p->roll   = rand() % 179;
+		p->color  = BLOODRED;
+		p->alpha  = 0.75;
 	}
 }
 
@@ -2271,10 +2242,8 @@ void CG_ParticleBloodCloudZombie(centity_t *cent, vec3_t origin, vec3_t dir)
 		VectorClear(p->accel);
 
 		p->rotate = qfalse;
-
-		p->roll = rand() % 179;
-
-		p->color = ZOMBIE;
+		p->roll   = rand() % 179;
+		p->color  = ZOMBIE;
 	}
 }
 
@@ -2325,7 +2294,6 @@ void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, f
 
 	p->accel[0] = crandom() * 4;
 	p->accel[1] = crandom() * 4;
-
 }
 
 void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir)

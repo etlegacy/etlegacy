@@ -36,7 +36,7 @@
 #define NUM_PM_STACK_ITEMS  32
 #define MAX_VISIBLE_ITEMS   5
 
-#define NUM_PM_STACK_ITEMS_BIG 8 // Gordon: we shouldn't need many of these
+#define NUM_PM_STACK_ITEMS_BIG 8 // we shouldn't need many of these
 
 typedef struct pmStackItem_s pmListItem_t;
 typedef struct pmStackItemBig_s pmListItemBig_t;

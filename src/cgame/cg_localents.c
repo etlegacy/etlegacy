@@ -576,10 +576,10 @@ void CG_FragmentBounceSound(localEntity_t *le, trace_t *trace)
 {
 	int rnd;
 
-	// Gordon: bleh, has no-one heard of switch statements...
+	// bleh, has no-one heard of switch statements...
 	switch (le->leBounceSoundType)
 	{
-	// Gordon: adding machinegun brass bouncy sound for tk
+	// adding machinegun brass bouncy sound for tk
 	case LEBS_BRASS:
 		rnd = rand() % 3;
 
@@ -651,8 +651,8 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace)
 	}
 	else if (trace->allsolid || (trace->plane.normal[2] > 0 && (le->pos.trDelta[2] < 40 || le->pos.trDelta[2] < -cg.frametime * le->pos.trDelta[2])))
 	{
-//----(SA)  if it's a fragment and it's not resting on the world...
-//          if(le->leType == LE_DEBRIS && trace->entityNum < (MAX_ENTITIES - 1))
+		// if it's a fragment and it's not resting on the world...
+		//if(le->leType == LE_DEBRIS && trace->entityNum < (MAX_ENTITIES - 1))
 		if (le->leType == LE_FRAGMENT && trace->entityNum < (MAX_ENTITIES - 1))
 		{
 			le->pos.trType = TR_GRAVITY_PAUSED;
@@ -923,7 +923,7 @@ void CG_AddFragment(localEntity_t *le)
 	// break on contact?
 	if (le->breakCount)
 	{
-		if (le->leFlags & LEF_TUMBLE_SLOW)     // Gordon: HACK HACK x_X
+		if (le->leFlags & LEF_TUMBLE_SLOW)     // HACK HACK x_X
 		{
 			vec3_t org, dir;
 			float  sizeScale;

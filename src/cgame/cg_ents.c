@@ -114,9 +114,8 @@ void CG_SetEntitySoundPosition(centity_t *cent)
 	if (cent->currentState.solid == SOLID_BMODEL)
 	{
 		vec3_t origin;
-		float  *v;
+		float  *v = cgs.inlineModelMidpoints[cent->currentState.modelindex];
 
-		v = cgs.inlineModelMidpoints[cent->currentState.modelindex];
 		VectorAdd(cent->lerpOrigin, v, origin);
 		trap_S_UpdateEntityPosition(cent->currentState.number, origin);
 	}
@@ -131,7 +130,6 @@ void CG_SetEntitySoundPosition(centity_t *cent)
 /*
 ==============
 CG_SetDlightIntensity
-
 ==============
 */
 void CG_AddLightstyle(centity_t *cent)
@@ -294,12 +292,10 @@ static void CG_EntityEffects(centity_t *cent)
 		else
 		{
 			int cl = cent->currentState.constantLight;
-			int i, r, g, b;
-
-			r = cl & 255;
-			g = (cl >> 8) & 255;
-			b = (cl >> 16) & 255;
-			i = ((cl >> 24) & 255) * 4;
+			int r  = cl & 255;
+			int g  = (cl >> 8) & 255;
+			int b  = (cl >> 16) & 255;
+			int i  = ((cl >> 24) & 255) * 4;
 
 			trap_R_AddLightToScene(cent->lerpOrigin, i, 1.0, (float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, 0, 0);
 		}
@@ -314,7 +310,7 @@ static void CG_EntityEffects(centity_t *cent)
 		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameSound, (int)(0.3 * 255.0 * (pow(cent->fireRiseDir[2], 2))), 0);
 	}
 
-	// ydnar: overheating is a special effect
+	// overheating is a special effect
 	if ((cent->currentState.eFlags & EF_OVERHEATING) == EF_OVERHEATING)
 	{
 		if (cent->overheatTime < (cg.time - 3000))
@@ -504,8 +500,8 @@ static void CG_General(centity_t *cent)
 				while (cg.time >= cent->lerpFrame.frameTime &&
 				       // if teamNum == 1, then we are supposed to stop
 				       // the animation when we reach the end of this loop
-				       // Gordon: 27/11/02: clientNum already does this.
-				       // xkan, 1/8/2003 - No, it does something a little different.
+				       // clientNum already does this.
+				       // - No, it does something a little different.
 				       !(s1->teamNum == 1 &&
 				         cent->lerpFrame.frame + s1->frame == s1->legsAnim + s1->torsoAnim))
 				{
@@ -553,7 +549,7 @@ static void CG_General(centity_t *cent)
 			//CG_Printf( "Gamemodel: oldframe: %i frame: %i lerp: %f\n", ent.oldframe, ent.frame, ent.backlerp );
 		}
 
-		// xkan, 11/27/2002 - only advance/change frame if the game model has not
+		// only advance/change frame if the game model has not
 		// been stopped (teamNum != 1)
 		if (cent->trailTime && s1->teamNum != 1)
 		{
@@ -633,7 +629,6 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 	vorigin[2] += ps->viewheight;           // get the view loc up to the viewheight
 	//eorigin[2] += 8;                        // and subtract the item's offset (that is used to place it on the ground)
 
-
 	VectorSubtract(vorigin, eorigin, dir);
 
 	dist = VectorNormalize(dir);              // dir is now the direction from the item to the player
@@ -663,7 +658,7 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 		return qfalse;
 	}
 
-	// (SA) okay, everything else is okay, so do a bloody trace. (so coronas on treasure doesn't show through walls) <sigh>
+	// okay, everything else is okay, so do a bloody trace. (so coronas on treasure doesn't show through walls) <sigh>
 	if (itemType == IT_TREASURE)
 	{
 		CG_Trace(&tr, vorigin, NULL, NULL, eorigin, -1, MASK_SOLID);
@@ -726,7 +721,7 @@ static void CG_Item(centity_t *cent)
 
 			if (es->eFlags & EF_SPINNING)
 			{
-				if (es->groundEntityNum == -1 || !es->groundEntityNum)     // (SA) spinning with a stand will spin the stand and the attached weap (only when in the air)
+				if (es->groundEntityNum == -1 || !es->groundEntityNum)     // spinning with a stand will spin the stand and the attached weap (only when in the air)
 				{
 					VectorCopy(cg.autoAnglesSlow, cent->lerpAngles);
 					VectorCopy(cg.autoAnglesSlow, cent->lastLerpAngles);
@@ -777,7 +772,7 @@ static void CG_Item(centity_t *cent)
 
 			if (es->eFlags & EF_SPINNING)      // spinning will override the angles set by a stand
 			{
-				if (es->groundEntityNum == -1 || !es->groundEntityNum)     // (SA) spinning with a stand will spin the stand and the attached weap (only when in the air)
+				if (es->groundEntityNum == -1 || !es->groundEntityNum)     // spinning with a stand will spin the stand and the attached weap (only when in the air)
 				{
 					VectorCopy(cg.autoAnglesSlow, cent->lerpAngles);
 					VectorCopy(cg.autoAnglesSlow, cent->lastLerpAngles);
@@ -874,14 +869,14 @@ static void CG_Item(centity_t *cent)
 
 			if (item->giType == IT_TREASURE)
 			{
-				trap_R_AddCoronaToScene(cent->highlightOrigin, 1, 0.85, 0.5, 2, cent->currentState.number, qtrue);   //----(SA) add corona to treasure
+				trap_R_AddCoronaToScene(cent->highlightOrigin, 1, 0.85, 0.5, 2, cent->currentState.number, qtrue);   // add corona to treasure
 			}
 		}
 		else
 		{
 			if (item->giType == IT_TREASURE)
 			{
-				trap_R_AddCoronaToScene(cent->highlightOrigin, 1, 0.85, 0.5, 2, cent->currentState.number, qfalse);      //----(SA) "empty corona" for proper fades
+				trap_R_AddCoronaToScene(cent->highlightOrigin, 1, 0.85, 0.5, 2, cent->currentState.number, qfalse);      // "empty corona" for proper fades
 			}
 		}
 
@@ -1027,10 +1022,9 @@ extern void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi);
 static void CG_Missile(centity_t *cent)
 {
 	refEntity_t        ent;
-	entityState_t      *s1;
+	entityState_t      *s1 = &cent->currentState;;
 	const weaponInfo_t *weapon;
 
-	s1 = &cent->currentState;
 	if (s1->weapon > WP_NUM_WEAPONS)
 	{
 		s1->weapon = 0;
@@ -1042,7 +1036,7 @@ static void CG_Missile(centity_t *cent)
 
 	if (s1->weapon == WP_SMOKE_BOMB)
 	{
-		// Arnout: the smoke effect
+		// the smoke effect
 		CG_RenderSmokeGrenadeSmoke(cent, weapon);
 	}
 	else if (s1->weapon == WP_SATCHEL && s1->clientNum == cg.snap->ps.clientNum)
@@ -1073,13 +1067,13 @@ static void CG_Missile(centity_t *cent)
 	// add dynamic light
 	if (weapon->missileDlight)
 	{
-		//% trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight,
-		//%     weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2], 0 );
+		//trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight,
+		//weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2], 0 );
 		trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight, 1.0,
 		                       weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2], 0, 0);
 	}
 
-	//----(SA)  whoops, didn't mean to check it in with the missile flare
+	// whoops, didn't mean to check it in with the missile flare
 
 	// add missile sound
 	if (weapon->missileSound)
@@ -1110,7 +1104,7 @@ static void CG_Missile(centity_t *cent)
 		}
 	}
 
-	// DHM - Nerve :: Don't tick until armed
+	// Don't tick until armed
 	if (cent->currentState.weapon == WP_DYNAMITE)
 	{
 		if (cent->currentState.teamNum < 4)
@@ -1281,7 +1275,7 @@ static void CG_Missile(centity_t *cent)
 	}
 }
 
-// DHM - Nerve :: capture and hold flag
+// capture and hold flag
 static animation_t multi_flagpoleAnims[] =
 {
 	{ 0, "", 0,   1,   0,   1000 / 15, 1000 / 15 },                  // (no flags, idle)
@@ -1307,7 +1301,7 @@ static void CG_TrapSetAnim(centity_t *cent, lerpFrame_t *lf, int newAnim)
 	// transition animation
 	lf->animationNumber = cent->currentState.frame;
 
-	// DHM - Nerve :: teamNum specifies which set of animations to use (only 1 exists right now)
+	// teamNum specifies which set of animations to use (only 1 exists right now)
 	switch (cent->currentState.teamNum)
 	{
 	case 1:
@@ -1412,7 +1406,7 @@ static void CG_Corona(centity_t *cent)
 	}
 
 	dot = DotProduct(dir, cg.refdef_current->viewaxis[0]);
-	if (dot >= -0.6)         // assumes ~90 deg fov (SA) changed value to 0.6 (screen corner at 90 fov)
+	if (dot >= -0.6)         // assumes ~90 deg fov - changed value to 0.6 (screen corner at 90 fov)
 	{
 		behind = qtrue;     // use the dot to at least do trivial removal of those behind you.
 	}
@@ -1776,7 +1770,7 @@ void CG_Mover_PostProcess(centity_t *cent)
 	{
 		for (i = 0; i < MAX_CLIENTS; i++)
 		{
-			// Gordon: is this entity mounted on a tank, and attached to _OUR_ turret entity (which could be us)
+			// is this entity mounted on a tank, and attached to _OUR_ turret entity (which could be us)
 			if (cg_entities[i].currentValid && (cg_entities[i].currentState.eFlags & EF_MOUNTEDTANK))
 			{
 				if (cg_entities[i].tagParent == cent->currentState.effect3Time)
@@ -1806,7 +1800,7 @@ void CG_Mover_PostProcess(centity_t *cent)
 	cg_entities[cent->currentState.effect3Time].tankparent = cent - cg_entities;
 	CG_AttachBitsToTank(&cg_entities[cent->currentState.effect3Time], &mg42base, &mg42upper, &mg42gun, &player, &flash, angles, "tag_player", cent->currentState.density & 8 ? qtrue : qfalse);
 
-	// Gordon: if we (or someone we're spectating) is on this tank, recalc our view values
+	// if we (or someone we're spectating) is on this tank, recalc our view values
 	if (cg.snap->ps.eFlags & EF_MOUNTEDTANK)
 	{
 		centity_t *tank = &cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent];
@@ -1838,7 +1832,7 @@ void CG_Mover_PostProcess(centity_t *cent)
 ===============
 CG_Beam_2
 
-Gordon: new beam entity, for rope like stuff...
+new beam entity, for rope like stuff...
 ===============
 */
 void CG_Beam_2(centity_t *cent)
@@ -2282,8 +2276,7 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 		VectorCopy(deltaAngles, outDeltaAngles);
 	}
 
-	// F I X M E: origin change when on a rotating object
-	// Gordon: Added
+	// note: origin changes when on a rotating object
 }
 
 /*
@@ -2300,8 +2293,8 @@ static void CG_InterpolateEntityPosition(centity_t *cent)
 	// a snapshot ahead of the current one
 	if (cg.nextSnap == NULL)
 	{
-		// DHM - Nerve :: FIXME? There are some cases when in Limbo mode during a map restart
-		//                  that were tripping this error.
+		// FIXME? There are some cases when in Limbo mode during a map restart
+		// that were tripping this error.
 		//CG_Error( "CG_InterpolateEntityPosition: cg.nextSnap == NULL" );
 		//CG_Printf("CG_InterpolateEntityPosition: cg.nextSnap == NULL");
 		return;
@@ -2340,7 +2333,7 @@ void CG_CalcEntityLerpPositions(centity_t *cent)
 		return;
 	}
 
-	// NERVE - SMF - fix for jittery clients in multiplayer
+	// fix for jittery clients in multiplayer
 	// first see if we can interpolate between two snaps for
 	// linear extrapolated clients
 	if (cent->interpolate && cent->currentState.pos.trType == TR_LINEAR_STOP && cent->currentState.number < MAX_CLIENTS)
@@ -2551,7 +2544,7 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
 		cent->processedFrame = cg.clientFrame;
 	}
 
-	// Arnout: removed from here
+	// removed from here:
 	//VectorCopy( cent->lerpAngles, cent->lastLerpAngles );
 	//VectorCopy( cent->lerpOrigin, cent->lastLerpOrigin );
 
@@ -2750,7 +2743,7 @@ qboolean CG_AddEntityToTag(centity_t *cent)
 	if (cent->currentState.eType != ET_PLAYER)
 	{
 		if (!cent->currentState.density)      // this entity should rotate with it's parent, but can turn around using it's own angles
-		{   // Gordon: fixed to rotate about the object's axis, not the world
+		{   // fixed to rotate about the object's axis, not the world
 			vec3_t mat[3], mat2[3];
 			memcpy(mat2, ent.axis, sizeof(mat2));
 			BG_CreateRotationMatrix(cent->lerpAngles, mat);
@@ -2853,13 +2846,13 @@ void CG_AddPacketEntities(void)
 
 	cg.satchelCharge = NULL;
 
-	// Gordon: changing to a single loop, child will request that their parents are added first anyway
+	// changing to a single loop, child will request that their parents are added first anyway
 	for (num = 0; num < cg.snap->numEntities ; num++)
 	{
 		CG_AddCEntity_Filter(&cg_entities[cg.snap->entities[num].number]);
 	}
 
-	// Gordon: Add tank bits as a second loop, to stop recursion problems with tank bits not on base entity
+	// Add tank bits as a second loop, to stop recursion problems with tank bits not on base entity
 	for (num = 0; num < cg.snap->numEntities ; num++)
 	{
 		if (cg_entities[cg.snap->entities[num].number].currentState.eType == ET_MOVER)
@@ -2868,7 +2861,7 @@ void CG_AddPacketEntities(void)
 		}
 	}
 
-	// Ridah, add the flamethrower sounds
+	// add the flamethrower sounds
 	CG_UpdateFlamethrowerSounds();
 }
 
@@ -2953,7 +2946,7 @@ void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg
 
 		for (i = 0; i < MAX_CLIENTS; i++)
 		{
-			// Gordon: is this entity mounted on a tank, and attached to _OUR_ turret entity (which could be us)
+			// is this entity mounted on a tank, and attached to _OUR_ turret entity (which could be us)
 			if (cg_entities[i].currentValid && (cg_entities[i].currentState.eFlags & EF_MOUNTEDTANK) && cg_entities[i].tagParent == tank - cg_entities)
 			{
 				angles[YAW]   -= tank->lerpAngles[YAW];

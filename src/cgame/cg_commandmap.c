@@ -548,7 +548,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		}
 		else
 		{
-			// Gordon: only see revivables for own team, duh :)
+			// only see revivables for own team, duh :)
 			if (mEnt->type == ME_PLAYER_REVIVE)
 			{
 				return;

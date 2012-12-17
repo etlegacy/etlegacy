@@ -2564,7 +2564,7 @@ void CG_LimboPanelRenderText_SkillsText(panel_button_t *button)
 
 #define MAX_ROLLERS 8
 #define COUNTER_ROLLTOTAL (cg.time - button->data[4])
-// Gordon: this function is mental, i love it :)
+// this function is mental, i love it :)
 void CG_LimboPanel_RenderCounter(panel_button_t *button)
 {
 	float     x, w;

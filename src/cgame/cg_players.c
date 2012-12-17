@@ -57,7 +57,7 @@ qboolean CG_EntOnFire(centity_t *cent)
 {
 	if (cent->currentState.number == cg.snap->ps.clientNum)
 	{
-		// TAT 11/15/2002 - the player is always starting out on fire, which is easily seen in cinematics
+		// the player is always starting out on fire, which is easily seen in cinematics
 		//      so make sure onFireStart is not 0
 		return  (cg.snap->ps.onFireStart
 		         && (cg.snap->ps.onFireStart < cg.time)
@@ -109,9 +109,7 @@ sfxHandle_t CG_CustomSound(int clientNum, const char *soundName)
 
 /*
 =============================================================================
-
 CLIENT INFO
-
 =============================================================================
 */
 
@@ -276,7 +274,7 @@ void CG_NewClientInfo(int clientNum)
 	v                    = Info_ValueForKey(configstring, "dr");
 	newInfo.disguiseRank = atoi(v);
 
-	// Gordon: weapon and latchedweapon ( FIXME: make these more secure )
+	// weapon and latchedweapon ( FIXME: make these more secure )
 	v              = Info_ValueForKey(configstring, "w");
 	newInfo.weapon = atoi(v);
 
@@ -324,7 +322,7 @@ void CG_NewClientInfo(int clientNum)
 		{
 			if (newInfo.skill[i] > cgs.clientinfo[cg.clientNum].skill[i])
 			{
-				// Gordon: slick hack so that funcs we call use teh new value now
+				// slick hack so that funcs we call use teh new value now
 				cgs.clientinfo[cg.clientNum].skill[i] = newInfo.skill[i];
 
 				if (newInfo.skill[i] == 4 && i == SK_HEAVY_WEAPONS)
@@ -417,9 +415,7 @@ void CG_NewClientInfo(int clientNum)
 
 /*
 =============================================================================
-
 PLAYER ANIMATION
-
 =============================================================================
 */
 
@@ -867,7 +863,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		else if (lf->oldAnimationNumber != lf->animationNumber &&
 		         (!anim->moveSpeed || lf->oldFrame < anim->firstFrame || lf->oldFrame >= anim->firstFrame + anim->numFrames))         // Ridah, added this so walking frames don't always get reset to 0, which can happen in the middle of a walking anim, which looks wierd
 		{
-			lf->frameTime = lf->animationTime;      // initial lerp
+			lf->frameTime = lf->animationTime;    // initial lerp
 			if (oldAnim && anim->moveSpeed)       // keep locomotions going continuously
 			{
 				f = (lf->frame - oldAnim->firstFrame) + 1;
@@ -1477,8 +1473,7 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 ===============
 CG_PlayerFloatSprite
 
-Float a sprite over the player's head
-DHM - Nerve :: added height parameter
+Float a sprite over the player's head added height parameter
 ===============
 */
 static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height)
@@ -2242,13 +2237,13 @@ void CG_Player(centity_t *cent)
 	cent->pe.bodyRefEnt = body;
 
 	// if the model failed, allow the default nullmodel to be displayed
-	// Gordon: whoever wrote that comment sucks
+	// whoever wrote that comment sucks
 	if (!body.hModel)
 	{
 		return;
 	}
 
-	// (SA) only need to set this once...
+	// only need to set this once...
 	VectorCopy(lightorigin, acc.lightingOrigin);
 
 	CG_AddRefEntityWithPowerups(&body, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
@@ -2458,7 +2453,7 @@ void CG_Player(centity_t *cent)
 		acc.hModel     = character->accModels[i];
 		acc.customSkin = character->accSkins[i];
 
-		// Gordon: looted corpses dont have any accsserories, evil looters :E
+		// looted corpses dont have any accsserories, evil looters :E
 		if (!(cent->currentState.eType == ET_CORPSE && cent->currentState.time2 == 1))
 		{
 			switch (i)

@@ -76,7 +76,7 @@ typedef struct flameChunk_s
 	vec3_t parentFwd;
 } flameChunk_t;
 
-// DHM - Nerve :: lowered this from 2048.  Still allows 6-9 people flaming.
+// lowered this from 2048.  Still allows 6-9 people flaming.
 #define MAX_FLAME_CHUNKS    1024
 static flameChunk_t flameChunks[MAX_FLAME_CHUNKS];
 static flameChunk_t *freeFlameChunks, *activeFlameChunks, *headFlameChunks;
@@ -133,8 +133,8 @@ static vec3_t flameChunkMaxs = { 0, 0, 0 };
 #define FLAME_START_MAX_SIZE_RAND   60.0
 #define FLAME_MAX_SIZE          200.0   // flame sprites cannot be larger than this
 #define FLAME_MIN_MAXSIZE       40.0    // don't ever let the sizeMax go less than this
-#define FLAME_START_SPEED       1200.0 //1200.0 // speed of flame as it leaves the nozzle
-#define FLAME_MIN_SPEED         60.0 //200.0
+#define FLAME_START_SPEED       1200.0  //1200.0 // speed of flame as it leaves the nozzle
+#define FLAME_MIN_SPEED         60.0    //200.0
 #define FLAME_CHUNK_DIST        8.0     // space in between chunks when fired
 
 #define FLAME_BLUE_LENGTH       130.0
@@ -806,7 +806,7 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 		frameNum = NUM_FLAME_SPRITES - 1;
 	}
 
-	pPolyBuffer = CG_PB_FindFreePolyBuffer(cg_fxflags & 1 ? getTestShader() : flameShaders[frameNum], 4, 6);
+	pPolyBuffer = CG_PB_FindFreePolyBuffer(flameShaders[frameNum], 4, 6);
 
 	pPolyBuffer->color[pPolyBuffer->numVerts + 0][0] = alphaChar;
 	pPolyBuffer->color[pPolyBuffer->numVerts + 0][1] = alphaChar;
@@ -830,7 +830,7 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 		return;
 	}
 
-	if ((rotatingFlames) && (!(cg_fxflags & 1)))           // JPW NERVE no rotate for alt flame shaders
+	if (rotatingFlames)           // no rotate for alt flame shaders
 	{
 		vec3_t rotate_ang;
 
@@ -1167,8 +1167,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 	}
 	lightSize *= 1.0 + 0.2 * (sin(1.0 * cg.time / 50.0) * cos(1.0 * cg.time / 43.0));
 	// set the alpha
-	//% alpha = lightSize / 500.0;
-	alpha = lightSize * 0.005;  // ydnar
+	alpha = lightSize * 0.005;
 	if (alpha > 2.0)
 	{
 		alpha = 2.0;

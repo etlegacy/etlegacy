@@ -1253,13 +1253,6 @@ typedef struct
 	qhandle_t binocShaderSimple;
 
 	qhandle_t fleshSmokePuffShader;   // for bullet hit flesh smoke puffs
-	qhandle_t nerveTestShader;
-	qhandle_t idTestShader;
-	qhandle_t hud1Shader;
-	qhandle_t hud2Shader;
-	qhandle_t hud3Shader;
-	qhandle_t hud4Shader;
-	qhandle_t hud5Shader;
 
 	qhandle_t smokePuffShader;
 	qhandle_t smokePuffRageProShader;
@@ -1345,7 +1338,6 @@ typedef struct
 
 	// viewscreen blood animation
 	qhandle_t viewBloodAni[5];
-	qhandle_t viewFlashBlood;
 	qhandle_t viewFlashFire[16];
 
 	// shards
@@ -1422,7 +1414,6 @@ typedef struct
 	// bullet hitting dirt
 	qhandle_t dirtParticle1Shader;
 	qhandle_t dirtParticle2Shader;
-	qhandle_t dirtParticle3Shader;
 
 	qhandle_t genericConstructionShader;
 
@@ -2282,9 +2273,6 @@ char *CG_TranslateString(const char *string);
 void CG_SaveTransTable(void);
 void CG_ReloadTranslation(void);
 
-// cg_draw.c, cg_newDraw.c
-extern char cg_fxflags;
-
 void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
 
@@ -2885,7 +2873,6 @@ void trap_SendMoveSpeedsToGame(int entnum, char *movespeeds);
 
 void trap_UI_Popup(int arg0);
 
-qhandle_t getTestShader(void);
 void trap_UI_ClosePopup(const char *arg0);
 void trap_Key_GetBindingBuf(int keynum, char *buf, int buflen);
 void trap_Key_SetBinding(int keynum, const char *binding);

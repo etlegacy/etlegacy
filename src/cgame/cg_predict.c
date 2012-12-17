@@ -385,7 +385,7 @@ int CG_PointContents(const vec3_t point, int passEntityNum)
 		}
 
 		contents |= trap_CM_TransformedPointContents(point, cmodel, cent->lerpOrigin, cent->lerpAngles);
-		// Gordon: again, need to use the projected water position to allow for moving entity based water.
+		// again, need to use the projected water position to allow for moving entity based water.
 		//contents |= trap_CM_TransformedPointContents( point, cmodel, ent->origin, ent->angles );
 	}
 
@@ -776,7 +776,7 @@ each frame.
 OPTIMIZE: don't re-simulate unless the newly arrived snapshot playerState_t
 differs from the predicted one.  Would require saving all intermediate
 playerState_t during prediction. (this is "dead reckoning" and would definately
-be nice to have in there (SA))
+be nice to have in there
 
 We detect prediction errors and allow them to be decayed off over several frames
 to ease the jerk.

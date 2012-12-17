@@ -41,7 +41,6 @@ static int getAltWeapon(int weapnum);
 int getEquivWeapon(int weapnum);
 int CG_WeaponIndex(int weapnum, int *bank, int *cycle);
 static qboolean CG_WeaponHasAmmo(int i);
-char       cg_fxflags;
 extern int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP]; // JPW NERVE moved to bg_misc.c so I can get a droplist
 
 /*
@@ -277,7 +276,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 	VectorCopy(re->origin, le->pos.trBase);
 
-	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME)) //----(SA)    modified since slime is no longer deadly
+	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME)) // modified since slime is no longer deadly
 	{ //  if ( CG_PointContents( re->origin, -1 ) & CONTENTS_WATER ) {
 		waterScale = 0.10;
 	}
@@ -401,7 +400,7 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 	le->angles.trDelta[1] = 0;
 	le->angles.trDelta[2] = 0;
 
-	le->leFlags = LEF_TUMBLE | LEF_SMOKING;   // (SA) probably doesn't need to be 'tumble' since it doesn't really rotate much when flying
+	le->leFlags = LEF_TUMBLE | LEF_SMOKING;   // probably doesn't need to be 'tumble' since it doesn't really rotate much when flying
 
 	le->leBounceSoundType = LEBS_NONE;
 
@@ -819,8 +818,6 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 		return;
 	}
 
-//----(SA)  trying this back on for DM
-
 	// spawn smoke junctions
 	for ( ; t <= ent->trailTime ; t += step)
 	{
@@ -829,7 +826,6 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 		                                     ent,    // rain - zinx's trail fix
 		                                     cgs.media.smokeTrailShader,
 		                                     origin,
-//                                              1500, 0.3, 10, 50 );
 		                                     1000, 0.3, 2, 20);
 		ent->lastTrailTime = cg.time;
 	}
@@ -883,7 +879,7 @@ CG_RailTrail
     modified so we could draw boxes for debugging as well
 ==============
 */
-void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type)      //----(SA) added 'type'
+void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type)      // added 'type'
 {
 	vec3_t diff, v1, v2, v3, v4, v5, v6;
 
@@ -2039,13 +2035,13 @@ void CG_RegisterItemVisuals(int itemNum)
 		itemInfo->icons[0] = trap_R_RegisterShader(item->icon);
 		if (item->giType == IT_HOLDABLE)
 		{
-			// (SA) register alternate icons (since holdables can have multiple uses, they might have different icons to represent how many uses are left)
+			// register alternate icons (since holdables can have multiple uses, they might have different icons to represent how many uses are left)
 			for (i = 1; i < MAX_ITEM_ICONS; i++)
 				itemInfo->icons[i] = trap_R_RegisterShader(va("%s%i", item->icon, i + 1));
 		}
 	}
 
-	itemInfo->registered = qtrue;   //----(SA)  moved this down after the registerweapon()
+	itemInfo->registered = qtrue;   // moved this down after the registerweapon()
 }
 
 /*
@@ -2262,8 +2258,7 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 CG_WeaponAnimation
 ==============
 */
-
-//----(SA)  modified.  this is now client-side only (server does not dictate weapon animation info)
+// modified.  this is now client-side only (server does not dictate weapon animation info)
 static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *weapOld, int *weap, float *weapBackLerp)
 {
 
@@ -2289,8 +2284,6 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 }
 
 ////////////////////////////////////////////////////////////////////////
-
-// (SA) it wasn't used anyway
 
 /*
 ==============
@@ -2420,10 +2413,10 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	{
 		float fracsin;
 
-		//----(SA) adjustment for MAX KAUFMAN
-		//  scale = cg.xyspeed + 40;
+		// adjustment for MAX KAUFMAN
+		//scale = cg.xyspeed + 40;
 		scale = 80;
-		//----(SA)  end
+
 		fracsin        = sin(cg.time * 0.001);
 		angles[ROLL]  += scale * fracsin * 0.01;
 		angles[YAW]   += scale * fracsin * 0.01;
@@ -2459,7 +2452,7 @@ CG_AddWeaponWithPowerups
 static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, playerState_t *ps, centity_t *cent)
 {
 	// add powerup effects
-	// DHM - Nerve :: no powerup effects on weapons
+	// no powerup effects on weapons
 	trap_R_AddRefEntityToScene(gun);
 }
 
@@ -2569,7 +2562,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		{
 			akimboFire = BG_AkimboFireSequence(weaponNum, ps->ammoclip[BG_FindClipForWeapon(weaponNum)], ps->ammoclip[BG_FindClipForWeapon(BG_AkimboSidearm(weaponNum))]);
 		}
-		// Gordon: FIXME: alternate for other clients, store flip-flop on cent or smuffin
+		// Gordon: alternate for other clients, store flip-flop on cent or smuffin
 	}
 
 	// add the weapon
@@ -2638,7 +2631,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		return;
 	}
 
-	if (!ps && cg.snap->ps.pm_flags & PMF_LADDER && isPlayer)          //----(SA) player on ladder
+	if (!ps && cg.snap->ps.pm_flags & PMF_LADDER && isPlayer)          // player on ladder
 	{
 		if (debuggingweapon)
 		{
@@ -2951,7 +2944,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 
 	// add the scope model to the rifle if you've got it
-	if (isPlayer && !cg.renderingThirdPerson)            // (SA) for now just do it on the first person weapons
+	if (isPlayer && !cg.renderingThirdPerson)  // for now just do it on the first person weapons
 	{
 		if (weaponNum == WP_CARBINE || weaponNum == WP_KAR98 || weaponNum == WP_GPG40 || weaponNum == WP_M7)
 		{
@@ -3360,7 +3353,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 		fovOffset = 0;
 	}
 
-	// Gordon: mounted gun drawing
+	// mounted gun drawing
 	if (ps->eFlags & EF_MOUNTEDTANK)
 	{
 		// FIXME: Arnout: HACK dummy model to just draw _something_
@@ -3782,7 +3775,7 @@ getAltWeapon
 */
 static int getAltWeapon(int weapnum)
 {
-	/*  if(weapnum > MAX_WEAP_ALTS) Gordon: seems unneeded
+	/*  if(weapnum > MAX_WEAP_ALTS) seems unneeded
 	        return weapnum;*/
 
 	if (weapAlts[weapnum])
@@ -4080,7 +4073,7 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 		return;
 	}
 
-	CG_PlaySwitchSound(lastweap, newweap);    // Gordon: grabbed from SP
+	CG_PlaySwitchSound(lastweap, newweap);    // grabbed from SP
 
 	CG_SetSniperZoom(lastweap, newweap);
 
@@ -5395,8 +5388,8 @@ void CG_WeaponFireRecoil(int weapon)
 	case WP_K43:
 		//pitchAdd = 4+rand()%3;
 		//yawRandom = 4;
-		pitchAdd  = 2;  //----(SA)  for DM
-		yawRandom = 1;  //----(SA)  for DM
+		pitchAdd  = 2;
+		yawRandom = 1;
 		break;
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
@@ -5853,7 +5846,7 @@ Caused by an EV_MISSILE_MISS event, or directly by local bullet tracing
 ClientNum is a dummy field used to define what sort of effect to spawn
 =================
 */
-void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfFlags)     //  (SA) modified to send missilehitwall surface parameters
+void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
 	qhandle_t     mod, mark, shader;
 	sfxHandle_t   sfx, sfx2;
@@ -5958,10 +5951,10 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			VectorScale(dir, 7, d);
 			d[2] += 16;
 
-			// DHM - Nerve :: use dirt images
+			//  use dirt images
 			if ((surfFlags & SURF_GRASS || surfFlags & SURF_GRAVEL || surfFlags & SURF_SNOW))       // JPW NERVE added SURF_SNOW
 			{   // some debris particles
-				// JPW NERVE added surf_snow
+				// added surf_snow
 				if (surfFlags & SURF_SNOW)
 				{
 					CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.25, 80, 32, 0.5, cgs.media.dirtParticle2Shader);
@@ -5990,7 +5983,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			sfx  = 0;
 			mark = 0;
 
-			// (SA) needed to do the CG_WaterRipple using a localent since I needed the timer reset on the shader for each shot
+			// needed to do the CG_WaterRipple using a localent since I needed the timer reset on the shader for each shot
 			CG_WaterRipple(cgs.media.wakeMarkShaderAnim, origin, tv(0, 0, 1), 32, 1000);
 			CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.5, 80, 16, 0.125, cgs.media.dirtParticle2Shader);
 			break;
@@ -6004,7 +5997,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		// Ridah, optimization, only spawn the bullet hole if we are close
 		// enough to see it, this way we can leave other marks around a lot
 		// longer, since most of the time we can't actually see the bullet holes
-// (SA) small modification.  only do this for non-rifles (so you can see your shots hitting when you're zooming with a rifle scope)
+		// - small modification.  only do this for non-rifles (so you can see your shots hitting when you're zooming with a rifle scope)
 		if (weapon == WP_FG42SCOPE || weapon == WP_GARAND_SCOPE || weapon == WP_K43_SCOPE || (Distance(cg.refdef_current->vieworg, origin) < 384))
 		{
 			if (clientNum)
@@ -6671,7 +6664,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 			vec3_t forward, right, up;
 
 			AngleVectors(cg.snap->ps.viewangles, forward, right, up);
-			VectorCopy(aagun->lerpOrigin, muzzle);                      // Gordon: modelindex2 will already have been incremented on the server, so work out what it WAS then
+			VectorCopy(aagun->lerpOrigin, muzzle);                      // modelindex2 will already have been incremented on the server, so work out what it WAS then
 			BG_AdjustAAGunMuzzleForBarrel(muzzle, forward, right, up, (aagun->currentState.modelindex2 + 3) % 4);
 		}
 		else if (cg.snap->ps.eFlags & EF_MOUNTEDTANK)

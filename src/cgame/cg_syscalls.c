@@ -236,7 +236,7 @@ void trap_R_ClearDecals(void)
 
 void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx)
 {
-	syscall(CG_S_STARTSOUND, origin, entityNum, entchannel, sfx, 127 /* Gordon: default volume always for the moment*/);
+	syscall(CG_S_STARTSOUND, origin, entityNum, entchannel, sfx, 127 /* default volume always for the moment*/);
 }
 
 void trap_S_StartSoundVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int volume)
@@ -246,7 +246,7 @@ void trap_S_StartSoundVControl(vec3_t origin, int entityNum, int entchannel, sfx
 
 void trap_S_StartSoundEx(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags)
 {
-	syscall(CG_S_STARTSOUNDEX, origin, entityNum, entchannel, sfx, flags, 127 /* Gordon: default volume always for the moment*/);
+	syscall(CG_S_STARTSOUNDEX, origin, entityNum, entchannel, sfx, flags, 127 /* default volume always for the moment*/);
 }
 
 void trap_S_StartSoundExVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags, int volume)
@@ -256,7 +256,7 @@ void trap_S_StartSoundExVControl(vec3_t origin, int entityNum, int entchannel, s
 
 void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum)
 {
-	syscall(CG_S_STARTLOCALSOUND, sfx, channelNum, 127 /* Gordon: default volume always for the moment*/);
+	syscall(CG_S_STARTLOCALSOUND, sfx, channelNum, 127 /* default volume always for the moment*/);
 }
 
 void trap_S_ClearLoopingSounds(void)

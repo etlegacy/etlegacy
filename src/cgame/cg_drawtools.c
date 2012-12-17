@@ -565,7 +565,7 @@ Coordinates are at 640 by 480 virtual resolution
 ==================
 */
 
-//Gordon: Modified to have configurable drop shadow offset
+// Modified to have configurable drop shadow offset
 void CG_DrawStringExt_Shadow(int x, int y, const char *string, const float *setColor,
                              qboolean forceColor, int shadow, int charWidth, int charHeight, int maxChars)
 {

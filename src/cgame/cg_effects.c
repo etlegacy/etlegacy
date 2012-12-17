@@ -102,7 +102,7 @@ CG_SmokePuff
 
 Adds a smoke puff or blood trail localEntity.
 
-(SA) boy, it would be nice to have an acceleration vector for this as well.
+        it would be nice to have an acceleration vector for this as well.
         big velocity vector with a negative acceleration for deceleration, etc.
         (breath could then come out of a guys mouth at the rate he's walking/running and it
         would slow down once it's created)
@@ -161,30 +161,10 @@ localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel,
 	re->shaderRGBA[2] = le->color[2] * 0xff;
 	re->shaderRGBA[3] = 0xff;
 
-	if (cg_fxflags & 1)
-	{
-		re->customShader = getTestShader();
-		re->rotation     = 180;
-	}
-
 	re->reType = RT_SPRITE;
 	re->radius = le->radius;
 
 	return le;
-}
-
-qhandle_t getTestShader(void)
-{
-	switch (rand() % 2)
-	{
-	case 0:
-		return cgs.media.nerveTestShader;
-		break;
-	case 1:
-	default:
-		return cgs.media.idTestShader;
-		break;
-	}
 }
 
 /*
@@ -421,7 +401,7 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 
 	le->angles.trDelta[0] = (10 + (rand() & 50)) - 30;
 	//le->angles.trDelta[0] = (100 + (rand()&500)) - 300;	// pitch
-	le->angles.trDelta[1] = (100 + (rand() & 500)) - 300;     // this is the safe one right now (yaw)  turn the others up when I have tumbling things landing properly
+	le->angles.trDelta[1] = (100 + (rand() & 500)) - 300;   // this is the safe one right now (yaw)  turn the others up when I have tumbling things landing properly
 	le->angles.trDelta[2] = (10 + (rand() & 50)) - 30;
 	//le->angles.trDelta[2] = (100 + (rand()&500)) - 300;	// roll
 
@@ -511,7 +491,7 @@ void CG_LoseHat(centity_t *cent, vec3_t dir)
 		VectorCopy(tv(0, 0, 0), le->angles.trBase);
 		le->angles.trDelta[0] = 0;
 		le->angles.trDelta[1] = (100 + (rand() & 500)) - 300;
-		le->angles.trDelta[2] = 400;    // (SA) this is set with a very particular value to try to get it
+		le->angles.trDelta[2] = 400;    // this is set with a very particular value to try to get it
 		                                // to flip exactly once before landing (based on player alive
 		                                // (standing) and on level ground) and will be unnecessary when
 		                                // I have things landing properly on their own
@@ -661,7 +641,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		ci        = &cgs.clientinfo[clientNum];
 		character = CG_CharacterForClientinfo(ci, cent);
 
-		// Ridah, fetch the various positions of the tag_gib*'s
+		// fetch the various positions of the tag_gib*'s
 		// and spawn the gibs from the correct places (especially the head)
 		for (gibIndex = 0, count = 0, foundtag = qtrue; foundtag && gibIndex < MAX_GIB_MODELS && gibTags[gibIndex]; gibIndex++)
 		{
@@ -743,9 +723,9 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 			CG_Trace(&trace, playerOrigin, NULL, NULL, origin, -1, CONTENTS_SOLID);
 			if (trace.fraction < 1.0)
 			{
-				//%	BG_GetMarkDir( velocity, trace.plane.normal, velocity );
-				//%	CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace.endpos, velocity, random()*360,
-				//%		1,1,1,1, qtrue, 30, qfalse, cg_bloodTime.integer * 1000 );
+				//BG_GetMarkDir( velocity, trace.plane.normal, velocity );
+				//CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace.endpos, velocity, random()*360,
+				//	1,1,1,1, qtrue, 30, qfalse, cg_bloodTime.integer * 1000 );
 				#if 0
 				BG_GetMarkDir(velocity, trace.plane.normal, projection);
 				VectorSubtract(vec3_origin, projection, projection);
@@ -890,8 +870,8 @@ void CG_ProjectedSpotLight(vec3_t start, vec3_t dir)
 	}
 
 	radius = 32 + 64 * tr.fraction;
-	//%	VectorNegate( dir, projection );
-	//%	CG_ImpactMark( cgs.media.spotLightShader, tr.endpos, projection, 0, alpha, alpha, alpha, 1.0, qfalse, radius, qtrue, -2 );
+	//VectorNegate( dir, projection );
+	//CG_ImpactMark( cgs.media.spotLightShader, tr.endpos, projection, 0, alpha, alpha, alpha, 1.0, qfalse, radius, qtrue, -2 );
 
 	VectorCopy(dir, projection);
 	projection[3] = radius * 2.0f;
