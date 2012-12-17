@@ -778,7 +778,7 @@ static void CG_ConfigStringModified(void)
 	else if (num >= CS_SOUNDS && num < CS_SOUNDS + MAX_SOUNDS)
 	{
 		if (str[0] != '*')       // player specific sounds don't register here
-		{   // Ridah, register sound scripts seperately
+		{   // register sound scripts seperately
 			if (!strstr(str, ".wav"))
 			{
 				CG_SoundScriptPrecache(str);
@@ -1050,7 +1050,7 @@ static void CG_MapRestart(void)
 		CG_Printf("CG_MapRestart\n");
 	}
 
-	memset(&cg.lastWeapSelInBank[0], 0, MAX_WEAP_BANKS_MP * sizeof(int));       // clear weapon bank selections
+	memset(&cg.lastWeapSelInBank[0], 0, MAX_WEAP_BANKS_MP * sizeof(int)); // clear weapon bank selections
 
 	cg.numbufferedSoundScripts = 0;
 
@@ -1092,6 +1092,8 @@ static void CG_MapRestart(void)
 	cgs.fadeAlpha     = 0;
 	trap_Cvar_Set("cg_letterbox", "0");
 
+	cgs.gamestate = GS_INITIALIZE;
+
 	CG_ParseWolfinfo();
 
 	CG_ParseEntitiesFromString();
@@ -1107,11 +1109,8 @@ static void CG_MapRestart(void)
 
 	InitSmokeSprites();
 
-	//Rafael particles
+	// particles
 	CG_ClearParticles();
-
-	// Ridah, trails
-	//CG_ClearTrails ();
 
 	CG_ClearFlameChunks();
 	CG_SoundInit();
@@ -1134,7 +1133,6 @@ static void CG_MapRestart(void)
 	cg.latchVictorySound = qfalse;
 	// reset render flags
 	cg_fxflags = 0;
-
 
 	// we really should clear more parts of cg here and stop sounds
 	cg.v_dmg_time   = 0;
@@ -1649,9 +1647,8 @@ CG_RemoveChatEscapeChar
 */
 static void CG_RemoveChatEscapeChar(char *text)
 {
-	int i, l;
+	int i, l = 0;
 
-	l = 0;
 	for (i = 0; text[i]; i++)
 	{
 		if (text[i] == '\x19')
