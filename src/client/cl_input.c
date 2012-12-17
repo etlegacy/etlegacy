@@ -59,7 +59,7 @@ at the same time.
 
 static kbutton_t kb[NUM_BUTTONS];
 
-// Arnout: doubleTap button mapping
+// doubleTap button mapping
 static kbuttons_t dtmapping[] =
 {
 	-1,                 // DT_NONE
@@ -391,7 +391,7 @@ void IN_SprintUp(void)
 // wbuttons (wolf buttons)
 void IN_Wbutton0Down(void)
 {
-	IN_KeyDown(&kb[KB_WBUTTONS0]);         //----(SA) secondary fire button
+	IN_KeyDown(&kb[KB_WBUTTONS0]);         // secondary fire button
 }
 void IN_Wbutton0Up(void)
 {
@@ -431,7 +431,7 @@ void IN_LeanRightUp(void)
 }
 
 // Kick
-// Arnout: now wbutton prone
+// now wbutton prone
 void IN_ProneDown(void)
 {
 	IN_KeyDown(&kb[KB_WBUTTONS7]);
@@ -560,7 +560,7 @@ void CL_KeyMove(usercmd_t *cmd)
 	cmd->rightmove   = ClampChar(side);
 	cmd->upmove      = ClampChar(up);
 
-	// Arnout: double tap
+	// double tap
 	cmd->doubleTap = DT_NONE; // reset
 	if (com_frameTime - cl.doubleTap.lastdoubleTap > cl_doubletapdelay->integer + 150 + cls.frametime)       // double tap only once every 500 msecs (add
 	{   // frametime for low(-ish) fps situations)
@@ -793,7 +793,7 @@ void CL_CmdButtons(usercmd_t *cmd)
 		kb[KB_BUTTONS0 + i].wasPressed = qfalse;
 	}
 
-	for (i = 0 ; i < 8 ; i++)         // Arnout: this was i < 7, but there are 8 wbuttons
+	for (i = 0 ; i < 8 ; i++)         // this was i < 7, but there are 8 wbuttons
 	{
 		if (kb[KB_WBUTTONS0 + i].active || kb[KB_WBUTTONS0 + i].wasPressed)
 		{
@@ -814,7 +814,7 @@ void CL_CmdButtons(usercmd_t *cmd)
 		cmd->buttons |= BUTTON_ANY;
 	}
 
-	// Arnout: clear 'waspressed' from double tap buttons
+	// clear 'waspressed' from double tap buttons
 	for (i = 1; i < DT_NUM; i++)
 	{
 		kb[dtmapping[i]].wasPressed = qfalse;
@@ -886,7 +886,7 @@ usercmd_t CL_CreateCmd(void)
 		cl.viewangles[PITCH] = oldAngles[PITCH] - 90;
 	}
 
-	// RF, set the kickAngles so aiming is effected
+	// set the kickAngles so aiming is effected
 	recoilAdd = cl_recoilPitch->value;
 	if (Q_fabs(cl.viewangles[PITCH] + recoilAdd) < 40)
 	{
@@ -940,7 +940,6 @@ void CL_CreateNewCommands(void)
 		frame_msec = 200;
 	}
 	old_com_frameTime = com_frameTime;
-
 
 	// generate a command for this frame
 	cl.cmdNumber++;
@@ -1076,7 +1075,7 @@ void CL_WritePacket(void)
 	MSG_WriteLong(&buf, clc.serverCommandSequence);
 
 	// write any unacknowledged clientCommands
-	// NOTE TTimo: if you verbose this, you will see that there are quite a few duplicates
+	// NOTE: if you verbose this, you will see that there are quite a few duplicates
 	// typically several unacknowledged cp or userinfo commands stacked up
 	for (i = clc.reliableAcknowledge + 1 ; i <= clc.reliableSequence ; i++)
 	{
@@ -1157,7 +1156,7 @@ void CL_WritePacket(void)
 	// clients never really should have messages large enough
 	// to fragment, but in case they do, fire them all off
 	// at once
-	// TTimo: this causes a packet burst, which is bad karma for winsock
+	// - this causes a packet burst, which is bad karma for winsock
 	// added a WARNING message, we'll see if there are legit situations where this happens
 	while (clc.netchan.unsentFragments)
 	{
@@ -1260,7 +1259,7 @@ void CL_InitInput(void)
 	Cmd_AddCommand("-sprint", IN_SprintUp);
 
 	// wolf buttons
-	Cmd_AddCommand("+attack2", IN_Wbutton0Down);          //----(SA) secondary firing
+	Cmd_AddCommand("+attack2", IN_Wbutton0Down);          // secondary firing
 	Cmd_AddCommand("-attack2", IN_Wbutton0Up);
 	Cmd_AddCommand("+zoom", IN_ZoomDown);
 	Cmd_AddCommand("-zoom", IN_ZoomUp);

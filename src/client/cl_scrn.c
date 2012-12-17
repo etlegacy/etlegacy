@@ -494,12 +494,12 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 			VM_Call(uivm, UI_REFRESH, cls.realtime);
 			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qfalse);
 			break;
-//          // Ridah, if the cgame is valid, fall through to there
-//          if (!cls.cgameStarted || !com_sv_running->integer) {
-//              // connecting clients will only show the connection dialog
-//              VM_Call( uivm, UI_DRAW_CONNECT_SCREEN, qfalse );
-//              break;
-//          }
+		// if the cgame is valid, fall through to there
+		//if (!cls.cgameStarted || !com_sv_running->integer) {
+		// connecting clients will only show the connection dialog
+		//VM_Call( uivm, UI_DRAW_CONNECT_SCREEN, qfalse );
+		//break;
+		//}
 		case CA_LOADING:
 		case CA_PRIMED:
 			// draw the game information screen and loading progress
@@ -507,7 +507,7 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 
 			// also draw the connection information, so it doesn't
 			// flash away too briefly on local or lan games
-			//if (!com_sv_running->value || Cvar_VariableIntegerValue("sv_cheats")) // Ridah, don't draw useless text if not in dev mode
+			//if (!com_sv_running->value || Cvar_VariableIntegerValue("sv_cheats")) // don't draw useless text if not in dev mode
 			VM_Call(uivm, UI_REFRESH, cls.realtime);
 			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qtrue);
 			break;

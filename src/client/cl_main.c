@@ -1095,7 +1095,7 @@ void CL_Disconnect(qboolean showMainMenu)
 	}
 
 	SCR_StopCinematic();
-	S_ClearSoundBuffer(qtrue);    //----(SA)    modified
+	S_ClearSoundBuffer(qtrue);    // modified
 #if 1
 	// send a disconnect message to the server
 	// send it a few times in case one is dropped
@@ -2147,8 +2147,7 @@ void CL_DisconnectPacket(netadr_t from)
 	}
 
 	// if we have received packets within three seconds, ignore (it might be a malicious spoof)
-	// NOTE TTimo:
-	// there used to be a  clc.lastPacketTime = cls.realtime; line in CL_PacketEvent before calling CL_ConnectionLessPacket
+	// NOTE: there used to be a  clc.lastPacketTime = cls.realtime; line in CL_PacketEvent before calling CL_ConnectionLessPacket
 	// therefore .. packets never got through this check, clients never disconnected
 	// switched the clc.lastPacketTime = cls.realtime to happen after the connectionless packets have been processed
 	// you still can't spoof disconnects, cause legal netchan packets will maintain realtime - lastPacketTime below the threshold
@@ -2903,7 +2902,7 @@ void CL_Frame(int msec)
 
 //============================================================================
 
-// Ridah, startup-caching system
+// startup-caching system
 typedef struct
 {
 	char name[MAX_QPATH];
@@ -5603,7 +5602,7 @@ void CL_TranslateString(const char *string, char *dest_buffer)
 =======================
 CL_TranslateStringBuf
 
-TTimo - handy, stores in a static buf, converts \n to chr(13)
+handy, stores in a static buf, converts \n to chr(13)
 =======================
 */
 const char *CL_TranslateStringBuf(const char *string)

@@ -43,7 +43,6 @@ CL_Netchan_Encode
     long serverId;
     long messageAcknowledge;
     long reliableAcknowledge;
-
 ==============
 */
 static void CL_Netchan_Encode(msg_t *msg)
@@ -104,7 +103,6 @@ CL_Netchan_Decode
 
     // first four bytes of the data are always:
     long reliableAcknowledge;
-
 ==============
 */
 static void CL_Netchan_Decode(msg_t *msg)

@@ -133,33 +133,28 @@ void S_Base_SoundInfo(void)
 }
 
 #ifdef USE_VOIP
-static
-void S_Base_StartCapture(void)
+static void S_Base_StartCapture(void)
 {
 	// !!! FIXME: write me.
 }
 
-static
-int S_Base_AvailableCaptureSamples(void)
+static int S_Base_AvailableCaptureSamples(void)
 {
 	// !!! FIXME: write me.
 	return 0;
 }
 
-static
-void S_Base_Capture(int samples, byte *data)
+static void S_Base_Capture(int samples, byte *data)
 {
 	// !!! FIXME: write me.
 }
 
-static
-void S_Base_StopCapture(void)
+static void S_Base_StopCapture(void)
 {
 	// !!! FIXME: write me.
 }
 
-static
-void S_Base_MasterGain(float val)
+static void S_Base_MasterGain(float val)
 {
 	// !!! FIXME: write me.
 }
@@ -482,7 +477,7 @@ void S_memoryLoad(sfx_t *sfx)
 	// load the sound file
 	if (!S_LoadSound(sfx))
 	{
-//		Com_Printf( S_COLOR_YELLOW "WARNING: couldn't load sound: %s\n", sfx->soundName );
+		//Com_Printf( S_COLOR_YELLOW "WARNING: couldn't load sound: %s\n", sfx->soundName );
 		sfx->defaultSound = qtrue;
 	}
 	sfx->inMemory = qtrue;
@@ -768,7 +763,7 @@ void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 	numLoopChannels = 0;
 	numLoopSounds   = 0;
 
-	// RF, moved this up so streaming sounds dont get updated with the music, below,
+	// moved this up so streaming sounds dont get updated with the music, below,
 	// and leave us with a snippet off streaming sounds after we reload
 	if (clearStreaming)
 	{
@@ -782,7 +777,7 @@ void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 			}
 		}
 
-		// RF, we should also kill all channels, since we are killing streaming sounds anyway
+		// we should also kill all channels, since we are killing streaming sounds anyway
 		// (fixes siren in forest playing after a map_restart/loadgame
 		ch = s_channels;
 		for (i = 0; i < MAX_CHANNELS; i++, ch++)
@@ -819,7 +814,7 @@ void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 		}
 		SNDDMA_Submit();
 
-		// NERVE - SMF - clear out channels so they don't finish playing when audio restarts
+		// clear out channels so they don't finish playing when audio restarts
 		S_ChannelSetup();
 	}
 }
@@ -1442,7 +1437,7 @@ void S_Base_Update(void)
 {
 	if (!s_soundStarted || s_soundMuted)
 	{
-//		Com_DPrintf ("not started or muted\n");
+		//Com_DPrintf ("not started or muted\n");
 		return;
 	}
 
@@ -1618,9 +1613,7 @@ void S_Update_(void)
 
 /*
 ===============================================================================
-
 streamed sound functions
-
 ===============================================================================
 */
 
@@ -1860,9 +1853,8 @@ S_FadeAllSounds
 */
 void S_Base_FadeAllSounds(float targetVol, int time, qboolean stopsounds)
 {
-	// TAT 11/15/2002
-	//		Because of strange timing issues, sometimes we try to fade up before the fade down completed
-	//		If that's the case, just force an immediate stop to all sounds
+	// Because of strange timing issues, sometimes we try to fade up before the fade down completed
+	// If that's the case, just force an immediate stop to all sounds
 	if (s_soundtime < s_volTime2 && s_stopSounds)
 	{
 		S_StopAllSounds();

@@ -1505,7 +1505,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		{
 			if (cls.state == CA_ACTIVE && !clc.demoplaying)
 			{
-				// Arnout: on request
+				// on request
 				if (cls.keyCatchers & KEYCATCH_CONSOLE)      // get rid of the console
 				{
 					Con_ToggleConsole_f();

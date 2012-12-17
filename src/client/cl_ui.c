@@ -135,7 +135,7 @@ LAN_ResetPings
 */
 static void LAN_ResetPings(int source)
 {
-	int          count = 0, i;
+	int          count    = 0, i;
 	serverInfo_t *servers = NULL;
 
 	switch (source)
@@ -169,7 +169,7 @@ LAN_AddServer
 */
 static int LAN_AddServer(int source, const char *name, const char *address)
 {
-	int          max   = MAX_OTHER_SERVERS, *count = 0;
+	int          max = MAX_OTHER_SERVERS, *count = 0;
 	netadr_t     adr;
 	serverInfo_t *servers = NULL;
 
@@ -221,7 +221,7 @@ LAN_RemoveServer
 */
 static void LAN_RemoveServer(int source, const char *addr)
 {
-	int          *count = 0;
+	int          *count   = 0;
 	serverInfo_t *servers = NULL;
 
 	switch (source)
@@ -329,6 +329,7 @@ static void LAN_GetServerInfo(int source, int n, char *buf, int buflen)
 	char         info[MAX_STRING_CHARS];
 	serverInfo_t *server = NULL;
 	info[0] = '\0';
+
 	switch (source)
 	{
 	case AS_LOCAL:
@@ -393,6 +394,7 @@ LAN_GetServerPing
 static int LAN_GetServerPing(int source, int n)
 {
 	serverInfo_t *server = NULL;
+
 	switch (source)
 	{
 	case AS_LOCAL:
@@ -869,6 +871,7 @@ FloatAsInt
 static int FloatAsInt(float f)
 {
 	floatint_t fi;
+
 	fi.f = f;
 	return fi.i;
 }

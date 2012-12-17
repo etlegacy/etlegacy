@@ -960,15 +960,15 @@ static void S_AL_NewLoopMaster(src_t *rmSource, qboolean iskilled)
 		}
 		else if (rmSource == &srcList[curSfx->masterLoopSrc])
 		{
-			src_t   *curSource = NULL;
-			int firstInactive = -1;
+			src_t *curSource    = NULL;
+			int   firstInactive = -1;
 
 			// Only if rmSource was the master and if there are still playing loops for
 			// this sound will we need to find a new master.
 
 			if (iskilled || curSfx->loopActiveCnt)
 			{
-				int     index;
+				int index;
 
 				for (index = 0; index < srcCount; index++)
 				{

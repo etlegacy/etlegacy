@@ -221,7 +221,7 @@ void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *
 	}
 
 #if 1
-	// DHM - Nerve :: Only draw clients if visible
+	// Only draw clients if visible
 	if (clc.onlyVisibleClients)
 	{
 		if (state->number < MAX_CLIENTS)
@@ -249,7 +249,6 @@ void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *
 /*
 ==================
 CL_ParsePacketEntities
-
 ==================
 */
 void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe)
@@ -583,7 +582,6 @@ void CL_ParseSnapshot(msg_t *msg)
 	cl.newSnapshots = qtrue;
 }
 
-
 //=====================================================================
 
 int cl_connectedToPureServer;
@@ -606,8 +604,7 @@ void CL_SystemInfoChanged(void)
 	char       value[BIG_INFO_VALUE];
 
 	systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
-	// NOTE TTimo:
-	// when the serverId changes, any further messages we send to the server will use this new serverId
+	// NOTE: when the serverId changes, any further messages we send to the server will use this new serverId
 	// show_bug.cgi?id=475
 	// in some cases, outdated cp commands might get sent with this news serverId
 	cl.serverId = atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
@@ -649,7 +646,7 @@ void CL_SystemInfoChanged(void)
 		Cvar_Set(key, value);
 	}
 
-	// Arnout: big hack to clear the image cache on a pure change
+	// big hack to clear the image cache on a pure change
 	//cl_connectedToPureServer = Cvar_VariableValue( "sv_pure" );
 	if (Cvar_VariableValue("sv_pure"))
 	{
@@ -795,7 +792,7 @@ void CL_ParseDownload(msg_t *msg)
 	// read the data
 	block = MSG_ReadShort(msg);
 
-	// TTimo - www dl
+	// www dl
 	// if we haven't acked the download redirect yet
 	if (block == -1)
 	{

@@ -1179,7 +1179,7 @@ void CL_InitCGame(void)
 	// init for this gamestate
 	// use the lastExecutedServerCommand instead of the serverCommandSequence
 	// otherwise server commands sent just before a gamestate are dropped
-	//bani - added clc.demoplaying, since some mods need this at init time, and drawactiveframe is too late for them
+	// bani - added clc.demoplaying, since some mods need this at init time, and drawactiveframe is too late for them
 	VM_Call(cgvm, CG_INIT, clc.serverMessageSequence, clc.lastExecutedServerCommand, clc.clientNum, clc.demoplaying);
 
 	// we will send a usercmd this frame, which
@@ -1203,7 +1203,7 @@ void CL_InitCGame(void)
 	// clear anything that got printed
 	Con_ClearNotify();
 
-	// Ridah, update the memory usage file
+	// update the memory usage file
 	CL_UpdateLevelHunkUsage();
 }
 

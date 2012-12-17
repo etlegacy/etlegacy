@@ -43,7 +43,7 @@
 
 #define RETRANSMIT_TIMEOUT  3000    // time between connection packet retransmits
 
-#define LIMBOCHAT_WIDTH     140     // NERVE - SMF - NOTE TTimo buffer size indicator, not related to screen bbox
+#define LIMBOCHAT_WIDTH     140     // NOTE: buffer size indicator, not related to screen bbox
 #define LIMBOCHAT_HEIGHT    7
 
 #define ETKEY_FILE "etkey"
@@ -72,7 +72,7 @@ typedef struct
 	// making the snapshot current
 } clSnapshot_t;
 
-// Arnout: for double tapping
+// for double tapping
 typedef struct
 {
 	int pressedTime[DT_NUM];
@@ -142,7 +142,7 @@ typedef struct
 	int cmdNumber;                  // incremented each frame, because multiple
 	// frames may need to be packed into a single packet
 
-	// Arnout: double tapping
+	// double tapping
 	doubleTap_t doubleTap;
 
 	outPacket_t outPackets[PACKET_BACKUP];  // information about each packet we have sent out
@@ -163,7 +163,7 @@ typedef struct
 
 	entityState_t parseEntities[MAX_PARSE_ENTITIES];
 
-	// NOTE TTimo - UI uses LIMBOCHAT_WIDTH strings (140),
+	// NOTE - UI uses LIMBOCHAT_WIDTH strings (140),
 	// but for the processing in CL_AddToLimboChat we need some safe room
 	char limboChatMsgs[LIMBOCHAT_HEIGHT][LIMBOCHAT_WIDTH * 3 + 1];
 	int limboChatPos;
@@ -209,7 +209,7 @@ typedef struct
 	// these are our reliable messages that go to the server
 	int reliableSequence;
 	int reliableAcknowledge;                // the last one the server has executed
-	// TTimo - NOTE: incidentally, reliableCommands[0] is never used (always start at reliableAcknowledge+1)
+	// NOTE: incidentally, reliableCommands[0] is never used (always start at reliableAcknowledge+1)
 	char reliableCommands[MAX_RELIABLE_COMMANDS][MAX_TOKEN_CHARS];
 
 	// unreliable binary data to send to server
@@ -433,7 +433,7 @@ extern cvar_t *cl_inGameVideo;
 
 extern cvar_t *cl_missionStats;
 
-// NERVE - SMF - localization
+// localization
 extern cvar_t *cl_language;
 
 extern cvar_t *cl_profile;
@@ -479,7 +479,7 @@ int CL_ServerStatus(char *serverAddress, char *serverStatusString, int maxLen);
 void CL_AddToLimboChat(const char *str);
 qboolean CL_GetLimboString(int index, char *buf);
 
-// NERVE - SMF - localization
+// localization
 void CL_InitTranslation(void);
 void CL_SaveTransTable(const char *fileName, qboolean newOnly);
 void CL_ReloadTranslation(void);
@@ -571,7 +571,7 @@ qboolean CL_UpdateVisiblePings_f(int source);
 
 #define NUM_CON_TIMES 4
 
-#define     CON_TEXTSIZE    65536   // (SA) DM want's more console...
+#define CON_TEXTSIZE    65536
 
 typedef struct
 {
@@ -597,7 +597,7 @@ typedef struct
 	// for transparent notify lines
 	vec4_t color;
 
-	int acLength;           // Arnout: autocomplete buffer length
+	int acLength;           // utocomplete buffer length
 } console_t;
 
 extern console_t con;
