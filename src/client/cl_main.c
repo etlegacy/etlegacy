@@ -1192,12 +1192,14 @@ void CL_RequestMotd(void)
 	{
 		return;
 	}
+
 	Com_Printf("MOTD: resolving %s\n", MOTD_SERVER_NAME);
 	if (!NET_StringToAdr(MOTD_SERVER_NAME, &cls.updateServer, NA_IP))
 	{
 		Com_Printf("MOTD: couldn't resolve address\n");
 		return;
 	}
+
 	cls.updateServer.port = BigShort(PORT_MOTD);
 	Com_Printf("MOTD: %s resolved to %s\n", MOTD_SERVER_NAME,
 	           NET_AdrToString(cls.updateServer));
@@ -1206,10 +1208,10 @@ void CL_RequestMotd(void)
 	Com_sprintf(cls.updateChallenge, sizeof(cls.updateChallenge), "%i", rand());
 
 	Info_SetValueForKey(info, "challenge", cls.updateChallenge);
-	Info_SetValueForKey(info, "version", com_version->string);
+	Info_SetValueForKey(info, "version", ETLEGACY_VERSION);
+	Info_SetValueForKey(info, "platform", CPUSTRING);
 
-	// FIXME: handle getmotd with trailing space (server-side)
-	NET_OutOfBandPrint(NS_CLIENT, cls.updateServer, "getmotd%s", info);
+	NET_OutOfBandPrint(NS_CLIENT, cls.updateServer, "getmotd \"%s\"", info);
 }
 
 /*
