@@ -456,7 +456,6 @@ static void CG_ItemPickup(int itemNum)
 	CG_AddPMItem(PM_MESSAGE, va("Picked up %s", CG_PickupItemText(itemNum)), cgs.media.pmImages[PM_MESSAGE]);
 
 	//cg.itemPickup           = itemNum;
-	//cg.itemPickupTime       = cg.time;
 	//cg.itemPickupBlendTime  = cg.time;
 
 	// see if it should be the grabbed weapon
@@ -473,7 +472,7 @@ static void CG_ItemPickup(int itemNum)
 
 			// don't ever autoswitch to secondary fire weapons
 			// Gordon: Leave autoswitch to secondary kar/carbine as they use alt ammo and arent zoomed: Note, not that it would do this anyway as it isnt in a bank....
-			if (itemid != WP_FG42SCOPE && itemid != WP_GARAND_SCOPE && itemid != WP_K43_SCOPE && itemid != WP_AMMO)       //----(SA)    modified
+			if (itemid != WP_FG42SCOPE && itemid != WP_GARAND_SCOPE && itemid != WP_K43_SCOPE && itemid != WP_AMMO)
 			{   // no weap currently selected, always just select the new one
 				if (!cg.weaponSelect)
 				{
@@ -1106,17 +1105,15 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 			le->angles.trDelta[1] = ((100 + (rand() & 500)) - 300) * materialmul;
 			le->angles.trDelta[2] = ((100 + (rand() & 500)) - 300) * materialmul;
 
-
-			//          if(type == 6)   // fabric
-			//              materialmul = 1;        // translation speed
-
+			//if(type == 6)   // fabric
+			// materialmul = 1;        // translation speed
 
 			VectorCopy(origin, le->pos.trBase);
 			VectorNormalize(dir);
 			le->pos.trTime = cg.time;
 
-			// (SA) hoping that was just intended to represent randomness
-			//          if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
+			// hoping that was just intended to represent randomness
+			// if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
 			if (le->angles.trBase[0] == 1 || le->angles.trBase[1] == 1 || le->angles.trBase[2] == 1)
 			{
 				le->pos.trType = TR_GRAVITY;
@@ -1489,17 +1486,15 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			le->angles.trDelta[1] = ((100 + (rand() & 500)) - 300) * materialmul;
 			le->angles.trDelta[2] = ((100 + (rand() & 500)) - 300) * materialmul;
 
-
-			//          if(type == 6)   // fabric
-			//              materialmul = 1;        // translation speed
-
+			//if(type == 6)   // fabric
+			//  materialmul = 1;        // translation speed
 
 			VectorCopy(origin, le->pos.trBase);
 			VectorNormalize(dir);
 			le->pos.trTime = cg.time;
 
-			// (SA) hoping that was just intended to represent randomness
-			//          if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
+			// hoping that was just intended to represent randomness
+			// if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
 			if (le->angles.trBase[0] == 1 || le->angles.trBase[1] == 1 || le->angles.trBase[2] == 1)
 			{
 				le->pos.trType = TR_GRAVITY;
@@ -1546,7 +1541,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 
 	VectorSet(dir, 0, 0, 1);      // straight up.
 
-	//1 large per 100, 1 small per 24
+	// 1 large per 100, 1 small per 24
 	// large   = (int)(mass / 100);
 	// small   = (int)(mass / 24) + 1;
 
@@ -1556,8 +1551,8 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		return;
 	}
 
-	// (SA) right now force smoke on any explosions
-	//if(cent->currentState.eventParm & 4)    // smoke
+	// right now force smoke on any explosions
+	// if(cent->currentState.eventParm & 4)    // smoke
 	if (cent->currentState.eventParm & 7)
 	{
 		int    i, j;
@@ -1587,10 +1582,10 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		CG_ParticleExplosion("explode1", sprOrg, sprVel, 500, 20, 160, qtrue);
 		//CG_ParticleExplosion( "blueexp", sprOrg, sprVel, 1200, 9, 300 );
 
-		// (SA) this is done only if the level designer has it marked in the entity.
-		//      (see "cent->currentState.eventParm & 64" below)
+		// this is done only if the level designer has it marked in the entity.
+		// (see "cent->currentState.eventParm & 64" below)
 
-		// RF, throw some debris
+		// throw some debris
 		//CG_AddDebris( origin, dir,
 		//                      280,    // speed
 		//                      1400,   // duration
@@ -1701,7 +1696,7 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 		le->startTime = cg.time;
 		le->endTime   = le->startTime + 5000 + random() * 5000;
 
-		//----(SA)  fading out
+		// fading out
 		re->fadeStartTime = le->endTime - 1000;
 		re->fadeEndTime   = le->endTime;
 
@@ -2257,16 +2252,15 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			cg.waterundertime = cg.time + HOLDBREATHTIME;
 		}
 
-//----(SA)  this fog stuff for underwater is really just a test for feasibility of creating the under-water effect that way.
-//----(SA)  the related issues of load/savegames, death underwater, etc. are not handled at all.
-//----(SA)  the actual problem, of course, is doing underwater stuff when the water is very turbulant and you can't simply
-//----(SA)  do things based on the players head being above/below the water brushes top surface. (since the waves can potentially be /way/ above/below that)
+		// this fog stuff for underwater is really just a test for feasibility of creating the under-water effect that way.
+		// the related issues of load/savegames, death underwater, etc. are not handled at all.
+		// the actual problem, of course, is doing underwater stuff when the water is very turbulant and you can't simply
+		// do things based on the players head being above/below the water brushes top surface. (since the waves can potentially be /way/ above/below that)
 
-		// DHM - Nerve :: causes problems in multiplayer...
+		// causes problems in multiplayer...
 		break;
 	case EV_WATER_CLEAR:
 		DEBUGNAME("EV_WATER_CLEAR");
-		//trap_S_StartSound (NULL, es->number, CHAN_AUTO, CG_CustomSound( es->number, "*gasp.wav" ) );
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.watrOutSound);
 		if (es->eventParm)
 		{
@@ -2562,7 +2556,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_RAILTRAIL:
 		DEBUGNAME("EV_RAILTRAIL");
-		CG_RailTrail(&cgs.clientinfo[es->otherEntityNum2], es->origin2, es->pos.trBase, es->dmgFlags);       //----(SA) added 'type' field
+		CG_RailTrail(&cgs.clientinfo[es->otherEntityNum2], es->origin2, es->pos.trBase, es->dmgFlags); // added 'type' field
 		break;
 
 	// missile impacts
@@ -2593,7 +2587,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_MISSILE_MISS:
 		DEBUGNAME("EV_MISSILE_MISS");
 		ByteToDir(es->eventParm, dir);
-		CG_MissileHitWall(es->weapon, 0, position, dir, 0);     // (SA) modified to send missilehitwall surface parameters
+		CG_MissileHitWall(es->weapon, 0, position, dir, 0); // modified to send missilehitwall surface parameters
 		if (es->weapon == WP_MORTAR_SET)
 		{
 			if (!es->legsAnim)
@@ -2612,11 +2606,11 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		ByteToDir(es->eventParm, dir);
 		if (es->weapon == WP_ARTY || es->weapon == WP_SMOKE_MARKER)
 		{
-			CG_MissileHitWall(es->weapon, 0, position, dir, 0);      // (SA) modified to send missilehitwall surface parameters
+			CG_MissileHitWall(es->weapon, 0, position, dir, 0);      // modified to send missilehitwall surface parameters
 		}
 		else
 		{
-			CG_MissileHitWall(VERYBIGEXPLOSION, 0, position, dir, 0);    // (SA) modified to send missilehitwall surface parameters
+			CG_MissileHitWall(VERYBIGEXPLOSION, 0, position, dir, 0);    // modified to send missilehitwall surface parameters
 		}
 		break;
 
@@ -3266,17 +3260,17 @@ void CG_CheckEvents(centity_t *cent)
 			return; // already fired
 		}
 		// if this is a player event set the entity number of the client entity number
-//(SA) note: EF_PLAYER_EVENT never set
-//      if ( cent->currentState.eFlags & EF_PLAYER_EVENT ) {
-//          cent->currentState.number = cent->currentState.otherEntityNum;
-//      }
+		// note: EF_PLAYER_EVENT never set
+		//if ( cent->currentState.eFlags & EF_PLAYER_EVENT ) {
+		//	cent->currentState.number = cent->currentState.otherEntityNum;
+		//}
 
 		cent->previousEvent      = 1;
 		cent->currentState.event = cent->currentState.eType - ET_EVENTS;
 	}
 	else
 	{
-		// DHM - Nerve :: Entities that make it here are Not TempEntities.
+		// Entities that make it here are Not TempEntities.
 		//      As far as we could tell, for all non-TempEntities, the
 		//      circular 'events' list contains the valid events.  So we
 		//      skip processing the single 'event' field and go straight
@@ -3286,7 +3280,7 @@ void CG_CheckEvents(centity_t *cent)
 	}
 
 	CG_EntityEvent(cent, cent->lerpOrigin);
-	// DHM - Nerve :: Temp ents return after processing
+	// Temp ents return after processing
 	return;
 
 skipEvent:

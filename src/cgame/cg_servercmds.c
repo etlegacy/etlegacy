@@ -1055,7 +1055,6 @@ static void CG_MapRestart(void)
 	cg.numbufferedSoundScripts = 0;
 
 	cg.centerPrintTime = 0; // reset centerprint counter so previous messages don't re-appear
-	cg.itemPickupTime  = 0; // reset item pickup counter so previous messages don't re-appear
 	cg.cursorHintFade  = 0; // reset cursor hint timer
 
 	// Reset complaint system

@@ -945,7 +945,6 @@ typedef struct
 	//==========================
 
 	int itemPickup;
-	int itemPickupTime;
 	int itemPickupBlendTime;            // the pulse around the crosshair is timed seperately
 
 	int weaponSelectTime;
@@ -2380,7 +2379,7 @@ void CG_RegisterItemVisuals(int itemNum);
 
 void CG_FireWeapon(centity_t *cent);
 
-void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfaceFlags);     //  (SA) modified to send missilehitwall surface parameters
+void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfaceFlags);     // modified to send missilehitwall surface parameters
 
 void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir);
 void CG_DrawTracer(vec3_t start, vec3_t finish);
@@ -2399,7 +2398,7 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
 void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed);
 
-void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type);     //----(SA) added 'type'
+void CG_RailTrail(clientInfo_t *ci, vec3_t start, vec3_t end, int type);     // added 'type'
 void CG_RailTrail2(clientInfo_t *ci, vec3_t start, vec3_t end);
 
 void CG_AddViewWeapon(playerState_t *ps);
@@ -2424,7 +2423,7 @@ void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb,
 void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent);
 void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent);
 void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration);
-void CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration);       // DHM - Nerve
+void CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration);
 void CG_ParticleDirtBulletDebris_Core(vec3_t org, vec3_t vel, int duration, float width, float height, float alpha, qhandle_t shader);
 void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, float speed);
 void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir);
@@ -2433,7 +2432,7 @@ void CG_ParticleMisc(qhandle_t pshader, vec3_t origin, int size, int duration, f
 void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration, int sizeStart, int sizeEnd, qboolean dlight);
 
 void CG_ParticleImpactSmokePuff(qhandle_t pshader, vec3_t origin);
-void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int lifetime, int vel, int acc, int maxroll, float alpha, float size);        // (SA) so I can add more parameters without screwing up the one that's there
+void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int lifetime, int vel, int acc, int maxroll, float alpha, float size);        // so I can add more parameters without screwing up the one that's there
 void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEntityNum, int duration);
 void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNum);
 void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t origin2, int ptime, int snum);
