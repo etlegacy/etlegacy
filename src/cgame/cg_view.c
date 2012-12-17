@@ -761,6 +761,10 @@ static void CG_OffsetFirstPersonView(void)
 	{
 		bob = 6;
 	}
+	if( bob < 0 )
+	{
+		bob = 0;
+	}
 
 	origin[2] += bob;
 
@@ -1629,7 +1633,7 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 			// account for zooms
 			if (cg.zoomval)
 			{
-				zoomFov = cg.zoomval;   // (SA) use user scrolled amount
+				zoomFov = cg.zoomval;   // use user scrolled amount
 				if (zoomFov < 1)
 				{
 					zoomFov = 1;
