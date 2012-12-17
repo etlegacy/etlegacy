@@ -761,7 +761,7 @@ static void CG_OffsetFirstPersonView(void)
 	{
 		bob = 6;
 	}
-	if( bob < 0 )
+	if (bob < 0)
 	{
 		bob = 0;
 	}
@@ -851,8 +851,8 @@ void CG_AdjustZoomVal(float val, int type)
 
 void CG_ZoomIn_f(void)
 {
-	// Gordon: fixed being able to "latch" your zoom by weaponcheck + quick zoomin
-	// OSP - change for zoom view in demos
+	// fixed being able to "latch" your zoom by weaponcheck + quick zoomin
+	// - change for zoom view in demos
 	if (cg_entities[cg.snap->ps.clientNum].currentState.weapon == WP_GARAND_SCOPE)
 	{
 		CG_AdjustZoomVal(-(cg_zoomStepSniper.value), ZOOM_SNIPER);
@@ -897,10 +897,10 @@ void CG_Zoom(void)
 		cg.predictedPlayerState.weapon = cg.snap->ps.weapon;
 
 		// check for scope wepon in use, and switch to if necessary
-		// OSP - spec/demo scaling allowances
+		// - spec/demo scaling allowances
 		if (cg.predictedPlayerState.weapon == WP_FG42SCOPE)
 		{
-			cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;   // JPW NERVE was DefaultFG, changed per atvi req
+			cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;   // was DefaultFG, changed per atvi req
 		}
 		else if (cg.predictedPlayerState.weapon == WP_GARAND_SCOPE)
 		{
@@ -1098,7 +1098,7 @@ static int CG_CalcFov(void)
 		fov_x = fov_y = 60.f;
 	}
 
-	// Arnout: this is weird... (but ensures square pixel ratio!)
+	// this is weird... (but ensures square pixel ratio!)
 	x     = cg.refdef_current->width / tan(fov_x / 360 * M_PI);
 	fov_y = atan2(cg.refdef_current->height, x);
 	fov_y = fov_y * 360 / M_PI;
@@ -1185,7 +1185,7 @@ static void CG_DamageBlendBlob(void)
 	qboolean     pointDamage;
 	viewDamage_t *vd;
 
-	// Gordon: no damage blend blobs if in limbo or spectator, and in the limbo menu
+	// no damage blend blobs if in limbo or spectator, and in the limbo menu
 	if (((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
 	{
 		return;
@@ -1359,11 +1359,16 @@ int CG_CalcViewValues(void)
 		// add error decay
 		if (cg_errorDecay.value > 0)
 		{
-			int   t;
-			float f;
+			int   t = cg.time - cg.predictedErrorTime;
+			float f, errorDecay = cg_errorDecay.value;
 
-			t = cg.time - cg.predictedErrorTime;
-			f = (cg_errorDecay.value - t) / cg_errorDecay.value;
+			if (errorDecay > 500)
+			{
+				errorDecay = 500;
+			}
+
+			f = (errorDecay - t) / errorDecay;
+
 			if (f > 0 && f < 1)
 			{
 				VectorMA(cg.refdef_current->vieworg, f, cg.predictedError, cg.refdef_current->vieworg);
@@ -1555,7 +1560,7 @@ void CG_ParseTagConnects(void)
 
 void CG_ParseTagConnect(int tagNum)
 {
-	char *token, *pString = (char *)CG_ConfigString(tagNum);  // Gordon: bleh, i hate that cast away of the const
+	char *token, *pString = (char *)CG_ConfigString(tagNum);  //  bleh, i hate that cast away of the const
 	int  entNum;
 
 	if (!*pString)
@@ -2002,7 +2007,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 			DEBUGTIME
 
-			// Rafael particles
+			// particles
 			CG_AddParticles();
 
 			DEBUGTIME
