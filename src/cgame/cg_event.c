@@ -455,9 +455,6 @@ static void CG_ItemPickup(int itemNum)
 
 	CG_AddPMItem(PM_MESSAGE, va("Picked up %s", CG_PickupItemText(itemNum)), cgs.media.pmImages[PM_MESSAGE]);
 
-	//cg.itemPickup           = itemNum;
-	//cg.itemPickupBlendTime  = cg.time;
-
 	// see if it should be the grabbed weapon
 	if (bg_itemlist[itemNum].giType == IT_WEAPON)
 	{
