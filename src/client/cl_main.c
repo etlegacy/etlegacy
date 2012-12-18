@@ -1208,7 +1208,7 @@ void CL_RequestMotd(void)
 	Com_sprintf(cls.updateChallenge, sizeof(cls.updateChallenge), "%i", rand());
 
 	Info_SetValueForKey(info, "challenge", cls.updateChallenge);
-	Info_SetValueForKey(info, "version", ETLEGACY_VERSION);
+	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
 	Info_SetValueForKey(info, "platform", CPUSTRING);
 
 	NET_OutOfBandPrint(NS_CLIENT, cls.updateServer, "getmotd \"%s\"", info);
@@ -3177,6 +3177,8 @@ void CL_StartHunkUsers(void)
 
 void CL_CheckAutoUpdate(void)
 {
+	char info[MAX_INFO_STRING];
+
 	if (!cl_autoupdate->integer)
 	{
 		Com_Printf("Updater is disabled by cl_autoupdate 0.\n");
@@ -3204,7 +3206,11 @@ void CL_CheckAutoUpdate(void)
 	cls.autoupdateServer.port = BigShort(PORT_UPDATE);
 	Com_DPrintf("Update server at: %s (%s)\n", NET_AdrToString(cls.autoupdateServer), cls.autoupdateServerName);
 
-	NET_OutOfBandPrint(NS_CLIENT, cls.autoupdateServer, "getUpdateInfo \"%s\" \"%s\"\n", Q3_VERSION, CPUSTRING);
+	info[0] = 0;
+	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
+	Info_SetValueForKey(info, "platform", CPUSTRING);
+
+	NET_OutOfBandPrint(NS_CLIENT, cls.autoupdateServer, "getUpdateInfo \"%s\"", info);
 
 	CL_RequestMotd();
 
@@ -3951,7 +3957,6 @@ CL_UpdateInfoPacket
 */
 void CL_UpdateInfoPacket(netadr_t from)
 {
-
 	if (cls.autoupdateServer.type == NA_BAD)
 	{
 		Com_DPrintf("CL_UpdateInfoPacket: Update server has bad address\n");
