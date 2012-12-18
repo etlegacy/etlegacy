@@ -138,7 +138,7 @@ R_ProcessLightmap
     returns maxIntensity
 ===============
 */
-float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte **pic_out)
+float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *pic_out)
 {
 	int   j;
 	float maxIntensity = 0;
@@ -151,9 +151,9 @@ float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte 
 
 		for (j = 0; j < width * height; j++)
 		{
-			r = (*pic)[j * in_padding + 0];
-			g = (*pic)[j * in_padding + 1];
-			b = (*pic)[j * in_padding + 2];
+			r = pic[j * in_padding + 0];
+			g = pic[j * in_padding + 1];
+			b = pic[j * in_padding + 2];
 
 			intensity = 0.33f * r + 0.685f * g + 0.063f * b;
 
@@ -176,17 +176,17 @@ float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte 
 			if (r_lightmap->integer == 3)
 			{
 				// Arnout: artists wanted the colours to be inversed
-				(*pic_out)[j * 4 + 0] = out[2] * 255;
-				(*pic_out)[j * 4 + 1] = out[1] * 255;
-				(*pic_out)[j * 4 + 2] = out[0] * 255;
+				pic_out[j * 4 + 0] = out[2] * 255;
+				pic_out[j * 4 + 1] = out[1] * 255;
+				pic_out[j * 4 + 2] = out[0] * 255;
 			}
 			else
 			{
-				(*pic_out)[j * 4 + 0] = out[0] * 255;
-				(*pic_out)[j * 4 + 1] = out[1] * 255;
-				(*pic_out)[j * 4 + 2] = out[2] * 255;
+				pic_out[j * 4 + 0] = out[0] * 255;
+				pic_out[j * 4 + 1] = out[1] * 255;
+				pic_out[j * 4 + 2] = out[2] * 255;
 			}
-			(*pic_out)[j * 4 + 3] = 255;
+			pic_out[j * 4 + 3] = 255;
 
 			//sumIntensity += intensity;
 		}
@@ -195,8 +195,8 @@ float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte 
 	{
 		for (j = 0 ; j < width * height; j++)
 		{
-			R_ColorShiftLightingBytes(&(*pic)[j * in_padding], &(*pic_out)[j * 4]);
-			(*pic_out)[j * 4 + 3] = 255;
+			R_ColorShiftLightingBytes(&pic[j * in_padding], &pic_out[j * 4]);
+			pic_out[j * 4 + 3] = 255;
 		}
 	}
 
@@ -211,7 +211,7 @@ R_LoadLightmaps
 #define LIGHTMAP_SIZE   128
 static void R_LoadLightmaps(lump_t *l)
 {
-	byte            *buf, *buf_p, *image_p;
+	byte            *buf;
 	int             len;
 	MAC_STATIC byte image[LIGHTMAP_SIZE * LIGHTMAP_SIZE * 4];
 	int             i /*, j*/;
@@ -243,10 +243,7 @@ static void R_LoadLightmaps(lump_t *l)
 	for (i = 0 ; i < tr.numLightmaps ; i++)
 	{
 		// expand the 24 bit on-disk to 32 bit
-		buf_p   = buf + i * LIGHTMAP_SIZE * LIGHTMAP_SIZE * 3;
-		image_p = image;
-
-		intensity = R_ProcessLightmap(&buf_p, 3, LIGHTMAP_SIZE, LIGHTMAP_SIZE, &image_p);
+		intensity = R_ProcessLightmap(buf + i * LIGHTMAP_SIZE * LIGHTMAP_SIZE * 3, 3, LIGHTMAP_SIZE, LIGHTMAP_SIZE, image);
 		if (intensity > maxIntensity)
 		{
 			maxIntensity = intensity;
