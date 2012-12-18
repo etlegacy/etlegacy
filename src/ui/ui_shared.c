@@ -8848,11 +8848,11 @@ qboolean BG_CursorInRect(rectDef_t *rect)
 void BG_PanelButton_RenderEdit(panel_button_t *button)
 {
 	qboolean useCvar = button->data[0] ? qfalse : qtrue;
+	int      offset = -1;
 
 	if (useCvar)
 	{
 		char buffer[256 + 1];
-		int  offset = -1;
 
 		trap_Cvar_VariableStringBuffer(button->text, buffer, sizeof(buffer));
 
