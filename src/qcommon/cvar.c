@@ -932,6 +932,12 @@ void Cvar_List_f(void)
 	if (Cmd_Argc() > 1)
 	{
 		match = Cmd_Argv(1);
+
+		if (!Q_stricmp(match, "-raw"))
+		{
+			raw   = qtrue;
+			match = (Cmd_Argc() > 2) ? Cmd_Argv(2) : NULL;
+		}
 	}
 	else
 	{
@@ -949,6 +955,14 @@ void Cvar_List_f(void)
 		if (var->flags & CVAR_SERVERINFO)
 		{
 			Com_Printf("S");
+		}
+		else
+		{
+			Com_Printf(" ");
+		}
+		if (var->flags & CVAR_SYSTEMINFO)
+		{
+			Com_Printf("s");
 		}
 		else
 		{
@@ -1002,8 +1016,40 @@ void Cvar_List_f(void)
 		{
 			Com_Printf(" ");
 		}
+		if (var->flags & CVAR_USER_CREATED)
+		{
+			Com_Printf("?");
+		}
+		else
+		{
+			Com_Printf(" ");
+		}
 
-		Com_Printf(" %s \"%s\"\n", var->name, var->string);
+		if (raw)
+		{
+			char *index;
+
+			Com_Printf(" %s \"", var->name);
+
+			for (index = var->string; ; )
+			{
+				char *hat = strchr(index, '^');
+
+				if (!hat)
+				{
+					break;
+				}
+
+				Com_Printf("%.*s", (int)(hat + 1 - index), index);
+				index = hat + 1;
+			}
+
+			Com_Printf("%s\"\n", index);
+		}
+		else
+		{
+			Com_Printf(" %s \"%s\"\n", var->name, var->string);
+		}
 	}
 
 	Com_Printf("\n%i total cvars\n", i);
