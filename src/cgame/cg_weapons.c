@@ -4274,7 +4274,7 @@ void CG_NextWeap(qboolean switchBanks)
 	CG_WeaponIndex(curweap, &bank, &cycle);       // get bank/cycle of current weapon
 
 	// if you're using an alt mode weapon, try switching back to the parent first
-	if (curweap >= WP_BEGINSECONDARY && curweap <= WP_LASTSECONDARY)
+	if (IS_RIFLENADE_WEAPON(curweap))
 	{
 		num = getAltWeapon(curweap);      // base any further changes on the parent
 		if (CG_WeaponSelectable(num))        // the parent was selectable, drop back to that
@@ -4500,7 +4500,7 @@ void CG_PrevWeap(qboolean switchBanks)
 	CG_WeaponIndex(curweap, &bank, &cycle);       // get bank/cycle of current weapon
 
 	// if you're using an alt mode weapon, try switching back to the parent first
-	if (curweap >= WP_BEGINSECONDARY && curweap <= WP_LASTSECONDARY)
+	if (IS_RIFLENADE_WEAPON(curweap))
 	{
 		num = getAltWeapon(curweap);      // base any further changes on the parent
 		if (CG_WeaponSelectable(num))        // the parent was selectable, drop back to that
@@ -5211,7 +5211,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 
 		// if you're using an alt mode weapon, try switching back to the parent
 		// otherwise, switch to the equivalent if you've got it
-		if (cg.weaponSelect >= WP_BEGINSECONDARY && cg.weaponSelect <= WP_LASTSECONDARY)
+		if (IS_RIFLENADE_WEAPON(cg.weaponSelect))
 		{
 			cg.weaponSelect = equiv = getAltWeapon(cg.weaponSelect);      // base any further changes on the parent
 			if (CG_WeaponSelectable(equiv))          // the parent was selectable, drop back to that

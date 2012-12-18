@@ -690,8 +690,7 @@ typedef enum
 	WP_MORTAR,              // 34
 	WP_AKIMBO_COLT,         // 35
 	WP_AKIMBO_LUGER,        // 36
-	// ONLY secondaries below this mark, as they are checked >= WP_GPG40 && < WP_NUM_WEAPONS
-	// FIXME!!!: inspect this ... WP_M7 is secondary and AKIMBO colt/luger not?
+
 	WP_GPG40,               // 37
 	WP_M7,                  // 38
 	WP_SILENCED_COLT,       // 39
@@ -787,9 +786,9 @@ extern ammotable_t *GetAmmoTableData(int ammoIndex);
 
 extern int weapAlts[];  // defined in bg_misc.c
 
-// for routines that need to check if a WP_ is </=/> a given set of weapons
-#define WP_BEGINSECONDARY   WP_GPG40
-#define WP_LASTSECONDARY    WP_SILENCED_COLT
+#define IS_RIFLENADE_WEAPON(w) \
+	(w == WP_GPG40           || w == WP_M7)
+
 #define WEAPS_ONE_HANDED    ((1 << WP_KNIFE) | (1 << WP_LUGER) | (1 << WP_COLT) | (1 << WP_SILENCER) | (1 << WP_SILENCED_COLT) | (1 << WP_GRENADE_LAUNCHER) | (1 << WP_GRENADE_PINEAPPLE))
 
 // NOTE: what about WP_VENOM and other XP weapons?
