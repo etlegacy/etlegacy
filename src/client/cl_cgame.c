@@ -1027,11 +1027,10 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		Com_Printf("Obsolete cgame system trap: %ld\n", (long int) args[0]);
 #else
 		Com_DPrintf("Obsolete cgame system trap: %ld\n", (long int) args[0]);
-#endif // !NDEBUG
+#endif // NDEBUG
 		return 0;
 
 	default:
-		assert(0);
 		Com_Error(ERR_DROP, "Bad cgame system trap: %ld\n", (long int) args[0]);
 		break;
 	}

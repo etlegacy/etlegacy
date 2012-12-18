@@ -47,7 +47,11 @@
 
 #define Q3_VERSION              PRODUCT_LABEL " " ETLEGACY_VERSION
 #define ET_VERSION              Q3_VERSION " " CPUSTRING " " __DATE__
+#ifdef __APPLE__
+#define FAKE_VERSION            "ET 2.60d " CPUSTRING " May  8 2006"
+#else
 #define FAKE_VERSION            "ET 2.60b " CPUSTRING " May  8 2006"
+#endif
 #define CONFIG_NAME             "etconfig.cfg"
 #define DEMOEXT "dm_"           // standard demo extension
 
