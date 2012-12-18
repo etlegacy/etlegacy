@@ -59,7 +59,7 @@ static long generateHashValue(const char *fname)
 
 	if (!fname)
 	{
-		Com_Error(ERR_DROP, "generateHashValue: null name\n");         //gjd
+		Com_Error(ERR_DROP, "generateHashValue: null name\n");
 	}
 	hash = 0;
 	i    = 0;
@@ -241,9 +241,8 @@ void Cvar_CommandCompletion(void (*callback)(const char *s))
 char *Cvar_ClearForeignCharacters(const char *value)
 {
 	static char clean[MAX_CVAR_VALUE_STRING];
-	int         i, j;
+	int         i, j = 0;
 
-	j = 0;
 	for (i = 0; value[i] != '\0'; i++)
 	{
 		if (((byte *)value)[i] != 0xFF && (((byte *)value)[i] <= 127 || ((byte *)value)[i] >= 161))
@@ -459,7 +458,7 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 
 	if (!force)
 	{
-		// ydnar: don't set unsafe variables when com_crashed is set
+		// don't set unsafe variables when com_crashed is set
 		if ((var->flags & CVAR_UNSAFE) && com_crashed != NULL && com_crashed->integer)
 		{
 			Com_Printf("%s is unsafe. Check com_crashed.\n", var_name);
@@ -686,7 +685,6 @@ Cycles a cvar for easy single key binding
 void Cvar_Cycle_f(void)
 {
 	int start, end, step, oldvalue, value;
-
 
 	if (Cmd_Argc() < 4 || Cmd_Argc() > 5)
 	{
@@ -925,9 +923,10 @@ Cvar_List_f
 */
 void Cvar_List_f(void)
 {
-	cvar_t *var;
-	int    i;
-	char   *match;
+	cvar_t   *var;
+	int      i = 0;
+	char     *match;
+	qboolean raw = qfalse;
 
 	if (Cmd_Argc() > 1)
 	{
@@ -944,7 +943,6 @@ void Cvar_List_f(void)
 		match = NULL;
 	}
 
-	i = 0;
 	for (var = cvar_vars ; var ; var = var->next, i++)
 	{
 		if (match && !Com_Filter(match, var->name, qfalse))
@@ -1028,12 +1026,13 @@ void Cvar_List_f(void)
 		if (raw)
 		{
 			char *index;
+			char *hat;
 
 			Com_Printf(" %s \"", var->name);
 
 			for (index = var->string; ; )
 			{
-				char *hat = strchr(index, '^');
+				hat = strchr(index, '^');
 
 				if (!hat)
 				{
