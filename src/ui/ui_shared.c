@@ -278,6 +278,7 @@ const char *String_Alloc(const char *p)
 	if (len + strPoolIndex + 1 < STRING_POOL_SIZE)
 	{
 		int ph = strPoolIndex;
+
 		strcpy(&strPool[strPoolIndex], p);
 		strPoolIndex += len + 1;
 
@@ -308,6 +309,7 @@ const char *String_Alloc(const char *p)
 void String_Report()
 {
 	float f;
+
 	Com_Printf("Memory/String Pool Info\n");
 	Com_Printf("----------------\n");
 	f  = strPoolIndex;
@@ -768,6 +770,7 @@ void Item_SetScreenCoords(itemDef_t *item, float x, float y)
 		Item_SetScreenCoords(item->toolTipData, x, y);
 		{
 			float val = (item->toolTipData->window.rect.x + item->toolTipData->window.rect.w) - 635.0f;
+
 			if (val > 0.0f)
 			{
 				item->toolTipData->window.rectClient.x -= val;
@@ -1063,6 +1066,7 @@ void Script_SetColor(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+// FIXME/REMOVE
 void Script_SetAsset(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name;
@@ -1127,13 +1131,13 @@ void Script_SetItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *itemname = NULL;
 	const char *name     = NULL;
-	vec4_t     color;
-	vec4_t     *out;
 
 	// expecting type of color to set and 4 args for the color
 	if (String_Parse(args, &itemname) && String_Parse(args, &name))
 	{
 		itemDef_t *item2;
+		vec4_t    color;
+		vec4_t    *out;
 		int       j, i;
 		int       count = Menu_ItemsMatchingGroup(item->parent, itemname);
 
@@ -1180,14 +1184,14 @@ void Script_SetMenuItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 	const char *menuname = NULL;
 	const char *itemname = NULL;
 	const char *name     = NULL;
-	vec4_t     color;
-	vec4_t     *out;
 
 	// expecting type of color to set and 4 args for the color
 	if (String_Parse(args, &menuname) && String_Parse(args, &itemname) && String_Parse(args, &name))
 	{
 		menuDef_t *menu = Menus_FindByName(menuname);
 		itemDef_t *item2;
+		vec4_t    color;
+		vec4_t    *out;
 		int       j, i;
 		int       count;
 
@@ -1313,6 +1317,7 @@ menuDef_t *Menus_FindByName(const char *p)
 void Menus_ShowByName(const char *p)
 {
 	menuDef_t *menu = Menus_FindByName(p);
+
 	if (menu)
 	{
 		Menus_Activate(menu);
@@ -1329,6 +1334,7 @@ static void Menu_RunCloseScript(menuDef_t *menu)
 	if (menu && menu->window.flags & WINDOW_VISIBLE && menu->onClose)
 	{
 		itemDef_t item;
+
 		item.parent = menu;
 		Item_RunScript(&item, NULL, menu->onClose);
 	}
@@ -1337,6 +1343,7 @@ static void Menu_RunCloseScript(menuDef_t *menu)
 void Menus_CloseByName(const char *p)
 {
 	menuDef_t *menu = Menus_FindByName(p);
+
 	if (menu != NULL)
 	{
 		int i;
@@ -1350,7 +1357,6 @@ void Menus_CloseByName(const char *p)
 				g_editItem     = NULL;
 			}
 		}
-
 
 		menu->cursorItem = -1;
 		Menu_ClearFocus(menu);
@@ -1389,6 +1395,7 @@ void Menus_CloseAll()
 void Script_Show(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
+
 	if (String_Parse(args, &name))
 	{
 		Menu_ShowItemByName(item->parent, name, qtrue);
@@ -1437,13 +1444,12 @@ void Script_Open(itemDef_t *item, qboolean *bAbort, char **args)
 
 void Menu_FadeMenuByName(const char *p, qboolean *bAbort, qboolean fadeOut)
 {
-	itemDef_t *item;
-
 	menuDef_t *menu = Menus_FindByName(p);
 
 	if (menu)
 	{
-		int i;
+		int       i;
+		itemDef_t *item;
 
 		for (i = 0; i < menu->itemCount; i++)
 		{
@@ -1858,6 +1864,8 @@ void Script_CloseAllOtherMenus(itemDef_t *item, qboolean *bAbort, char **args)
 /*
 ==============
 Script_Clipboard
+
+FIXME/REMOVE
 ==============
 */
 void Script_Clipboard(itemDef_t *item, qboolean *bAbort, char **args)
@@ -1905,12 +1913,13 @@ void Menu_TransitionItemByName(menuDef_t *menu, const char *p, rectDef_t rectFro
 void Script_Transition(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
-	rectDef_t  rectFrom, rectTo;
-	int        time = 0;
-	float      amt  = 0.0f;
 
 	if (String_Parse(args, &name))
 	{
+		rectDef_t rectFrom, rectTo;
+		float     amt  = 0.0f;
+		int       time = 0;
+
 		if (Rect_Parse(args, &rectFrom) && Rect_Parse(args, &rectTo) && Int_Parse(args, &time) && Float_Parse(args, &amt))
 		{
 			Menu_TransitionItemByName(item->parent, name, rectFrom, rectTo, time, amt);
@@ -1943,11 +1952,12 @@ void Menu_OrbitItemByName(menuDef_t *menu, const char *p, float x, float y, floa
 void Script_Orbit(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
-	float      cx    = 0.0f, cy = 0.0f, x = 0.0f, y = 0.0f;
-	int        time  = 0;
 
 	if (String_Parse(args, &name))
 	{
+		float cx   = 0.0f, cy = 0.0f, x = 0.0f, y = 0.0f;
+		int   time = 0;
+
 		if (Float_Parse(args, &x) && Float_Parse(args, &y) && Float_Parse(args, &cx) && Float_Parse(args, &cy) && Int_Parse(args, &time))
 		{
 			Menu_OrbitItemByName(item->parent, name, x, y, cx, cy, time);
@@ -1958,11 +1968,11 @@ void Script_Orbit(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_SetFocus(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
-	itemDef_t  *focusItem;
 
 	if (String_Parse(args, &name))
 	{
-		focusItem = Menu_FindItemByName(item->parent, name);
+		itemDef_t *focusItem = Menu_FindItemByName(item->parent, name);
+
 		if (focusItem && !(focusItem->window.flags & WINDOW_DECORATION) && !(focusItem->window.flags & WINDOW_HASFOCUS))
 		{
 			Menu_ClearFocus(item->parent);
@@ -1997,6 +2007,7 @@ void Script_SetPlayerModel(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_SetPlayerHead(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
+
 	if (String_Parse(args, &name))
 	{
 		DC->setCVar("team_headmodel", name);
@@ -2082,11 +2093,10 @@ void Script_playLooped(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_AddListItem(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *itemname = NULL, *val = NULL, *name = NULL;
-	itemDef_t  *t;
 
 	if (String_Parse(args, &itemname) && String_Parse(args, &val) && String_Parse(args, &name))
 	{
-		t = Menu_FindItemByName(item->parent, itemname);
+		itemDef_t *t = Menu_FindItemByName(item->parent, itemname);
 		if (t && t->special)
 		{
 			DC->feederAddItem(t->special, name, atoi(val));
@@ -2200,11 +2210,11 @@ qboolean Script_WriteProfile(char *profile_path)
 
 void Script_ExecWolfConfig(itemDef_t *item, qboolean *bAbort, char **args)
 {
-	char cl_profileStr[256];
-	int  useprofile = 1;
+	int useprofile = 1;
 
 	if (Int_Parse(args, &useprofile))
 	{
+		char cl_profileStr[256];
 
 		DC->getCVarString("cl_profile", cl_profileStr, sizeof(cl_profileStr));
 
@@ -2238,11 +2248,11 @@ void Script_ExecWolfConfig(itemDef_t *item, qboolean *bAbort, char **args)
 void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
-	itemDef_t  *editItem;
 
 	if (String_Parse(args, &name))
 	{
-		editItem = Menu_FindItemByName(item->parent, name);
+		itemDef_t *editItem = Menu_FindItemByName(item->parent, name);
+
 		if (editItem && (editItem->type == ITEM_TYPE_EDITFIELD || editItem->type == ITEM_TYPE_NUMERICFIELD))
 		{
 			editFieldDef_t *editPtr = (editFieldDef_t *)editItem->typeData;
@@ -2299,9 +2309,9 @@ commandDef_t commandList[] =
 	{ "closeall",           &Script_CloseAll           },
 	{ "closeallothermenus", &Script_CloseAllOtherMenus },
 
-	{ "clipboard",          &Script_Clipboard          }, // show the current clipboard group by name
-	{ "showpage",           &Script_NotebookShowpage   }, //
-	{ "setasset",           &Script_SetAsset           }, // works on this
+	{ "clipboard",          &Script_Clipboard          }, // Note: not implemented - show the current clipboard group by name
+	{ "showpage",           &Script_NotebookShowpage   }, // Note: not implemented
+	{ "setasset",           &Script_SetAsset           }, // Note: not implemented - works on this
 	{ "setbackground",      &Script_SetBackground      }, // works on this
 	{ "setitemcolor",       &Script_SetItemColor       }, // group/name
 	{ "setmenuitemcolor",   &Script_SetMenuItemColor   }, // group/name
@@ -2341,11 +2351,13 @@ void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s)
 	if (item && s && s[0])
 	{
 		int i;
+
 		Q_strcat(script, 4096, s);
 		p = script;
 		while (1)
 		{
 			const char *command = NULL;
+
 			// expect command then arguments, ; ends command, NULL ends script
 			if (!String_Parse(&p, &command))
 			{
@@ -2388,17 +2400,20 @@ void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s)
 qboolean Item_EnableShowViaCvar(itemDef_t *item, int flag)
 {
 	char script[1024], *p;
+
 	memset(script, 0, sizeof(script));
 	if (item && item->enableCvar && *item->enableCvar && item->cvarTest && *item->cvarTest)
 	{
-		char buff[1024];
+		char       buff[1024];
+		const char *val;
+
 		DC->getCVarString(item->cvarTest, buff, sizeof(buff));
 
 		Q_strcat(script, 1024, item->enableCvar);
 		p = script;
 		while (1)
 		{
-			const char *val = NULL;
+			val = NULL;
 			// expect value then ; or NULL, NULL ends list
 			if (!String_Parse(&p, &val))
 			{
@@ -2469,6 +2484,7 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 	sfxHandle_t *sfx      = &DC->Assets.itemFocusSound;
 	qboolean    playSound = qfalse;
 	menuDef_t   *parent; // bk001206: = (menuDef_t*)item->parent;
+
 	// sanity check, non-null, not a decoration and does not already have the focus
 	if (item == NULL || item->window.flags & WINDOW_DECORATION || item->window.flags & WINDOW_HASFOCUS || !(item->window.flags & WINDOW_VISIBLE))
 	{
@@ -2503,6 +2519,7 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 	if (item->type == ITEM_TYPE_TEXT)
 	{
 		rectDef_t r;
+
 		r    = item->textRect;
 		r.y -= r.h;
 		if (Rect_ContainsPoint(&r, x, y))
@@ -2865,6 +2882,7 @@ void Item_MouseEnter(itemDef_t *item, float x, float y)
 	if (item)
 	{
 		rectDef_t r;
+
 		r    = item->textRect;
 		r.y -= r.h;
 		// in the text rect?
@@ -3386,11 +3404,11 @@ int Item_Multi_FindCvarByValue(itemDef_t *item)
 
 const char *Item_Multi_Setting(itemDef_t *item)
 {
-	char       buff[1024];
 	multiDef_t *multiPtr = (multiDef_t *)item->typeData;
 
 	if (multiPtr)
 	{
+		char  buff[1024];
 		float value = 0;
 		int   i;
 
@@ -3678,6 +3696,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 static void Scroll_ListBox_AutoFunc(void *p)
 {
 	scrollInfo_t *si = (scrollInfo_t *)p;
+
 	if (DC->realTime > si->nextScrollTime)
 	{
 		// need to scroll which is done by simulating a click to the item
@@ -3702,8 +3721,8 @@ static void Scroll_ListBox_ThumbFunc(void *p)
 	scrollInfo_t *si = (scrollInfo_t *)p;
 	rectDef_t    r;
 	int          pos, max;
-
 	listBoxDef_t *listPtr = (listBoxDef_t *)si->item->typeData;
+
 	if (si->item->window.flags & WINDOW_HORIZONTAL)
 	{
 		if (DC->cursorx == si->xStart)
@@ -4056,7 +4075,6 @@ itemDef_t *Menu_SetNextCursorItem(menuDef_t *menu)
 
 	while (menu->cursorItem < menu->itemCount)
 	{
-
 		menu->cursorItem++;
 		if (menu->cursorItem >= menu->itemCount)      // had a problem 'tabbing' in dialogs with only one possible button
 		{
@@ -4365,7 +4383,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	// default handling
 	switch (key)
 	{
-
 	case K_F11:
 		if (DC->getCVarValue("developer"))
 		{
@@ -4392,7 +4409,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			Item_RunScript(&it, NULL, menu->onESC);
 		}
 		break;
-
 
 	case K_ENTER:
 	case K_KP_ENTER:
@@ -5028,10 +5044,8 @@ void Item_CheckBox_Paint(itemDef_t *item)
 void Item_YesNo_Paint(itemDef_t *item)
 {
 	vec4_t    newColor;
-	float     value;
 	menuDef_t *parent = (menuDef_t *)item->parent;
-
-	value = (item->cvar) ? DC->getCVarValue(item->cvar) : 0;
+	float     value   = (item->cvar) ? DC->getCVarValue(item->cvar) : 0;
 
 	if (item->window.flags & WINDOW_HASFOCUS && item->window.flags & WINDOW_FOCUSPULSE)
 	{
@@ -5792,6 +5806,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 				if (listPtr->numColumns > 0)
 				{
 					int j, k;
+
 					for (j = 0; j < listPtr->numColumns; j++)
 					{
 						text = DC->feederItemText(item->special, i, j, optionalImages, &numOptionalImages);
@@ -5856,6 +5871,7 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 	{
 		vec4_t    color, lowLight;
 		menuDef_t *parent = (menuDef_t *)item->parent;
+
 		Fade(&item->window.flags, &item->window.foreColor[3], parent->fadeClamp, &item->window.nextTime, parent->fadeCycle, qtrue, parent->fadeAmount);
 		memcpy(&color, &item->window.foreColor, sizeof(color));
 		if (item->numColors > 0 && DC->getValue)
@@ -6329,9 +6345,8 @@ void Item_Init(itemDef_t *item)
 
 void Menu_HandleMouseMove(menuDef_t *menu, float x, float y)
 {
-	int      i, pass;
-	qboolean focusSet = qfalse;
-
+	int       i, pass;
+	qboolean  focusSet = qfalse;
 	itemDef_t *overItem;
 
 	if (menu == NULL)
@@ -6618,9 +6633,7 @@ int KeywordHash_Key(char *keyword)
 
 void KeywordHash_Add(keywordHash_t *table[], keywordHash_t *key)
 {
-	int hash;
-
-	hash = KeywordHash_Key(key->keyword);
+	int hash = KeywordHash_Key(key->keyword);
 	/*
 	    if (table[hash]) {
 	        int collision = qtrue;
@@ -6633,9 +6646,8 @@ void KeywordHash_Add(keywordHash_t *table[], keywordHash_t *key)
 keywordHash_t *KeywordHash_Find(keywordHash_t *table[], char *keyword)
 {
 	keywordHash_t *key;
-	int           hash;
+	int           hash = KeywordHash_Key(keyword);
 
-	hash = KeywordHash_Key(keyword);
 	for (key = table[hash]; key; key = key->next)
 	{
 		if (!Q_stricmp(key->keyword, keyword))
@@ -6666,6 +6678,7 @@ qboolean ItemParse_name(itemDef_t *item, int handle)
 qboolean ItemParse_focusSound(itemDef_t *item, int handle)
 {
 	const char *temp = NULL;
+
 	if (!PC_String_Parse(handle, &temp))
 	{
 		return qfalse;
@@ -7731,6 +7744,7 @@ qboolean ItemParse_execKey(itemDef_t *item, int handle)
 qboolean ItemParse_settingDisabled(itemDef_t *item, int handle)
 {
 	qboolean fResult = PC_Int_Parse(handle, &item->settingTest);
+
 	if (fResult)
 	{
 		item->settingFlags = SVS_DISABLED_SHOW;
@@ -7741,6 +7755,7 @@ qboolean ItemParse_settingDisabled(itemDef_t *item, int handle)
 qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
 {
 	qboolean fResult = PC_Int_Parse(handle, &item->settingTest);
+
 	if (fResult)
 	{
 		item->settingFlags = SVS_ENABLED_SHOW;
@@ -8833,11 +8848,12 @@ qboolean BG_CursorInRect(rectDef_t *rect)
 void BG_PanelButton_RenderEdit(panel_button_t *button)
 {
 	qboolean useCvar = button->data[0] ? qfalse : qtrue;
-	int      offset  = -1;
 
 	if (useCvar)
 	{
 		char buffer[256 + 1];
+		int  offset = -1;
+
 		trap_Cvar_VariableStringBuffer(button->text, buffer, sizeof(buffer));
 
 		if (BG_PanelButtons_GetFocusButton() == button && ((DC->realTime / 1000) % 2))
