@@ -426,12 +426,7 @@ static void CG_Obituary(entityState_t *ent)
 	}
 
 	// we don't know what it was
-	switch (mod)
-	{
-	default:
-		CG_AddPMItem(PM_DEATH, va("%s died.", targetName), deathShader);
-		break;
-	}
+	CG_AddPMItem(PM_DEATH, va("%s died.", targetName), deathShader);
 }
 
 //==========================================================================
@@ -1022,8 +1017,8 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 			le->sizeScale = scale * sizescale;
 
 			if (type == 1)     // glass
-			{   // Rafael added this because glass looks funky when it fades out
-				// TBD: need to look into this so that they fade out correctly
+			{   // added this because glass looks funky when it fades out
+				// FIXME: need to look into this so that they fade out correctly
 				re->fadeStartTime = le->endTime;
 				re->fadeEndTime   = le->endTime;
 			}
@@ -1330,7 +1325,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				snd = LEBS_ROCK;
 				if (i == 5)
 				{
-					hmodel = cgs.media.debRock[2];                  // temporarily use the next smallest rock piece
+					hmodel = cgs.media.debRock[2];             // temporarily use the next smallest rock piece
 				}
 				else if (i == 4)
 				{
@@ -1346,7 +1341,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 				else if (i == 1)
 				{
-					hmodel = cgs.media.debBlock[1];                 // temporarily use the small block pieces
+					hmodel = cgs.media.debBlock[1];            // temporarily use the small block pieces
 				}
 				else
 				{
@@ -1451,7 +1446,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			}
 			else
 			{
-				if (!forceLowGrav && (rand() & 1))        // if low gravity is not forced and die roll goes our way use regular grav
+				if (!forceLowGrav && (rand() & 1))  // if low gravity is not forced and die roll goes our way use regular grav
 				{
 					le->pos.trType = TR_GRAVITY;
 				}
@@ -1996,7 +1991,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	char             tempStr[MAX_QPATH];
 	bg_playerclass_t *classInfo;
 	bg_character_t   *character;
-	// JPW NERVE copied here for mg42 SFX event
+	// copied here for mg42 SFX event
 	vec3_t porg, gorg, norm;                // player/gun origin
 	float  gdist;
 
@@ -2305,9 +2300,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_GLOBAL_ITEM_PICKUP");
 		{
 			gitem_t *item;
-			int     index;
-
-			index = es->eventParm;      // player predicted
+			int     index = es->eventParm;      // player predicted
 
 			if (index < 1 || index >= bg_numItems)
 			{
@@ -2333,7 +2326,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_WEAP_OVERHEAT:
 		DEBUGNAME("EV_WEAP_OVERHEAT");
-
 		// start weapon idle animation
 		if (es->number == cg.snap->ps.clientNum)
 		{
@@ -2667,7 +2659,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		else
 		{
 			s = CG_ConfigString(CS_SOUNDS + es->eventParm);
-			// xkan, 10/31/2002 - crank up the volume
+			// crank up the volume
 			trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, s), 255);
 		}
 		break;
@@ -2695,7 +2687,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		int volume = es->onFireStart;
 
 		DEBUGNAME("EV_GENERAL_SOUND_VOLUME");
-		// Ridah, check for a sound script
+		// check for a sound script
 		s = CG_ConfigString(CS_SOUNDS + sound);
 		if (!strstr(s, ".wav"))
 		{
@@ -2729,7 +2721,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 	case EV_GLOBAL_SOUND:   // play from the player's head so it never diminishes
 		DEBUGNAME("EV_GLOBAL_SOUND");
-		// Ridah, check for a sound script
+		// check for a sound script
 		s = CG_ConfigString(CS_SOUNDS + es->eventParm);
 		if (!strstr(s, ".wav"))
 		{
@@ -2809,7 +2801,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		CG_Obituary(es);
 		break;
 
-	// JPW NERVE -- swiped from SP/Sherman
 	case EV_STOPSTREAMINGSOUND:
 		DEBUGNAME("EV_STOPLOOPINGSOUND");
 //      trap_S_StopStreamingSound( es->number );
@@ -2834,7 +2825,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		es->loopSound = 0;
 		break;
 
-	// Rafael particles
+	// particles
 	case EV_SMOKE:
 		DEBUGNAME("EV_SMOKE");
 		if (cent->currentState.density == 3)
@@ -2928,7 +2919,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 		for (i = 0; i < numsparks; i++)
 		{
-
 			if (event == EV_SPARKS_ELECTRIC)
 			{
 				VectorCopy(cent->currentState.origin, source);
@@ -2944,7 +2934,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			{
 				CG_ParticleSparks(cent->currentState.origin, cent->currentState.angles, duration, x, y, speed);
 			}
-
 		}
 
 	}
@@ -2960,7 +2949,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		speed     = cent->currentState.angles2[2];
 
 		CG_AddBulletParticles(cent->currentState.origin, cent->currentState.angles, speed, 800, numsparks, 1.0f);
-
 	}
 	break;
 

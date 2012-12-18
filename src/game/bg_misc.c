@@ -201,29 +201,27 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 	{ 1,   0, 1,   0,  1,   100,  DELAY_LOW,    100,  0,    0,   MOD_LANDMINE             },                                        // WP_LANDMINE              // 26
 	{ 1,   0, 1,   0,  0,   3000, DELAY_LOW,    2000, 0,    0,   MOD_SATCHEL              },                                        // WP_SATCHEL               // 27
 	{ 1,   0, 1,   0,  0,   3000, 722,          2000, 0,    0,   0,                       },                                        // WP_SATCHEL_DET           // 28
-	{ 6,   1, 1,   0,  0,   2000, DELAY_HIGH,   2000, 0,    0,   MOD_TRIPMINE             },                                        // WP_TRIPMINE              // 29
+	{ 1,   0, 10,  0,  1,   1000, DELAY_THROW,  1600, 0,    0,   MOD_SMOKEBOMB            },                                        // WP_SMOKE_BOMB            // 29
 
-	{ 1,   0, 10,  0,  1,   1000, DELAY_THROW,  1600, 0,    0,   MOD_SMOKEBOMB            },                                        // WP_SMOKE_BOMB            // 30
-	{ 450, 1, 150, 0,  150, 3000, DELAY_LOW,    66,   1500, 300, MOD_MOBILE_MG42          },                                        // WP_MOBILE_MG42           // 31
-	{ 30,  1, 10,  20, 10,  2500, DELAY_LOW,    400,  0,    0,   MOD_K43                  },                                        // WP_K43                   // 32       K43
-	{ 60,  1, 20,  40, 20,  2000, DELAY_LOW,    100,  0,    0,   MOD_FG42                 },                                        // WP_FG42                  // 33
-	{ 0,   0, 0,   0,  0,   0,    0,            0,    1500, 300, 0                        },                                        // WP_DUMMY_MG42            // 34
-	{ 15,  1, 1,   0,  0,   0,    750,          1600, 0,    0,   MOD_MORTAR               },                                        // WP_MORTAR                // 35
-	{ 999, 0, 1,   0,  0,   1000, 750,          1600, 0,    0,   0                        },                                        // WP_LOCKPICK              // 36
-	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_COLT          },                                        // WP_AKIMBO_COLT           // 37
-	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_LUGER         },                                        // WP_AKIMBO_LUGER          // 38
-	{ 4,   1, 1,   4,  1,   3000, DELAY_LOW,    400,  0,    0,   MOD_GPG40                },                                        // WP_GPG40                 // 39
+	{ 450, 1, 150, 0,  150, 3000, DELAY_LOW,    66,   1500, 300, MOD_MOBILE_MG42          },                                        // WP_MOBILE_MG42           // 30
+	{ 30,  1, 10,  20, 10,  2500, DELAY_LOW,    400,  0,    0,   MOD_K43                  },                                        // WP_K43                   // 31       K43
+	{ 60,  1, 20,  40, 20,  2000, DELAY_LOW,    100,  0,    0,   MOD_FG42                 },                                        // WP_FG42                  // 32
+	{ 0,   0, 0,   0,  0,   0,    0,            0,    1500, 300, 0                        },                                        // WP_DUMMY_MG42            // 33
+	{ 15,  1, 1,   0,  0,   0,    750,          1600, 0,    0,   MOD_MORTAR               },                                        // WP_MORTAR                // 34
+	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_COLT          },                                        // WP_AKIMBO_COLT           // 35
+	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_LUGER         },                                        // WP_AKIMBO_LUGER          // 36
+	{ 4,   1, 1,   4,  1,   3000, DELAY_LOW,    400,  0,    0,   MOD_GPG40                },                                        // WP_GPG40                 // 37
+	{ 4,   1, 1,   4,  1,   3000, DELAY_LOW,    400,  0,    0,   MOD_M7                   },                                        // WP_M7                    // 38
 
-	{ 4,   1, 1,   4,  1,   3000, DELAY_LOW,    400,  0,    0,   MOD_M7                   },                                        // WP_M7                    // 40
-	{ 24,  1, 8,   24, 8,   1500, DELAY_PISTOL, 400,  0,    0,   MOD_SILENCED_COLT        },                                        // WP_SILENCED_COLT         // 41
-	{ 24,  1, 8,   16, 8,   1500, 0,            400,  0,    0,   MOD_GARAND_SCOPE         },                                        // WP_GARAND_SCOPE          // 42       GARAND
-	{ 30,  1, 10,  20, 10,  2500, 0,            400,  0,    0,   MOD_K43_SCOPE            },                                        // WP_K43_SCOPE             // 43       K43
-	{ 60,  1, 20,  40, 20,  2000, DELAY_LOW,    400,  0,    0,   MOD_FG42SCOPE            },                                        // WP_FG42SCOPE             // 44
-	{ 16,  1, 1,   12, 0,   0,    750,          1400, 0,    0,   MOD_MORTAR               },                                        // WP_MORTAR_SET            // 45
-	{ 10,  1, 1,   0,  10,  1500, 50,           1000, 0,    0,   MOD_SYRINGE              },                                        // WP_MEDIC_ADRENALINE      // 46
-	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_SILENCEDCOLT  },                                        // WP_AKIMBO_SILENCEDCOLT   // 47
-	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_SILENCEDLUGER },                                        // WP_AKIMBO_SILENCEDLUGER  // 48
-	{ 450, 1, 150, 0,  150, 3000, DELAY_LOW,    66,   1500, 300, MOD_MOBILE_MG42          },                                        // WP_MOBILE_MG42_SET       // 49
+	{ 24,  1, 8,   24, 8,   1500, DELAY_PISTOL, 400,  0,    0,   MOD_SILENCED_COLT        },                                        // WP_SILENCED_COLT         // 39
+	{ 24,  1, 8,   16, 8,   1500, 0,            400,  0,    0,   MOD_GARAND_SCOPE         },                                        // WP_GARAND_SCOPE          // 40       GARAND
+	{ 30,  1, 10,  20, 10,  2500, 0,            400,  0,    0,   MOD_K43_SCOPE            },                                        // WP_K43_SCOPE             // 41       K43
+	{ 60,  1, 20,  40, 20,  2000, DELAY_LOW,    400,  0,    0,   MOD_FG42SCOPE            },                                        // WP_FG42SCOPE             // 42
+	{ 16,  1, 1,   12, 0,   0,    750,          1400, 0,    0,   MOD_MORTAR               },                                        // WP_MORTAR_SET            // 43
+	{ 10,  1, 1,   0,  10,  1500, 50,           1000, 0,    0,   MOD_SYRINGE              },                                        // WP_MEDIC_ADRENALINE      // 44
+	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_SILENCEDCOLT  },                                        // WP_AKIMBO_SILENCEDCOLT   // 45
+	{ 48,  1, 8,   48, 8,   2700, DELAY_PISTOL, 200,  0,    0,   MOD_AKIMBO_SILENCEDLUGER },                                        // WP_AKIMBO_SILENCEDLUGER  // 46
+	{ 450, 1, 150, 0,  150, 3000, DELAY_LOW,    66,   1500, 300, MOD_MOBILE_MG42          },                                        // WP_MOBILE_MG42_SET       // 47
 };
 
 // moved in here so both games can get to it
@@ -261,29 +259,28 @@ int weapAlts[] =
 	WP_NONE,            // 26 WP_LANDMINE
 	WP_NONE,            // 27 WP_SATCHEL
 	WP_NONE,            // 28 WP_SATCHEL_DET
-	WP_NONE,            // 29 WP_TRIPMINE
 
-	WP_NONE,            // 30 WP_SMOKE_BOMB
-	WP_MOBILE_MG42_SET, // 31 WP_MOBILE_MG42
-	WP_K43_SCOPE,       // 32 WP_K43
-	WP_FG42SCOPE,       // 33 WP_FG42
-	WP_NONE,            // 34 WP_DUMMY_MG42
-	WP_MORTAR_SET,      // 35 WP_MORTAR
-	WP_NONE,            // 36 WP_LOCKPICK
-	WP_NONE,            // 37 WP_AKIMBO_COLT
-	WP_NONE,            // 38 WP_AKIMBO_LUGER
+	WP_NONE,            // 29 WP_SMOKE_BOMB
+	WP_MOBILE_MG42_SET, // 30 WP_MOBILE_MG42
+	WP_K43_SCOPE,       // 31 WP_K43
+	WP_FG42SCOPE,       // 32 WP_FG42
+	WP_NONE,            // 33 WP_DUMMY_MG42
+	WP_MORTAR_SET,      // 34 WP_MORTAR
+	WP_NONE,            // 35 WP_AKIMBO_COLT
+	WP_NONE,            // 36 WP_AKIMBO_LUGER
 
-	WP_KAR98,           // 39 WP_GPG40
-	WP_CARBINE,         // 40 WP_M7
-	WP_COLT,            // 41 WP_SILENCED_COLT
-	WP_GARAND,          // 42 WP_GARAND_SCOPE
-	WP_K43,             // 43 WP_K43_SCOPE
-	WP_FG42,            // 44 WP_FG42SCOPE
-	WP_MORTAR,          // 45 WP_MORTAR_SET
-	WP_NONE,            // 46 WP_MEDIC_ADRENALINE
-	WP_NONE,            // 47 WP_AKIMBO_SILENCEDCOLT
-	WP_NONE,            // 48 WP_AKIMBO_SILENCEDLUGER
-	WP_MOBILE_MG42,     // 49 WP_MOBILE_MG42_SET
+	WP_KAR98,           // 37 WP_GPG40
+	WP_CARBINE,         // 38 WP_M7
+
+	WP_COLT,            // 39 WP_SILENCED_COLT
+	WP_GARAND,          // 40 WP_GARAND_SCOPE
+	WP_K43,             // 41 WP_K43_SCOPE
+	WP_FG42,            // 42 WP_FG42SCOPE
+	WP_MORTAR,          // 43 WP_MORTAR_SET
+	WP_NONE,            // 44 WP_MEDIC_ADRENALINE
+	WP_NONE,            // 45 WP_AKIMBO_SILENCEDCOLT
+	WP_NONE,            // 46 WP_AKIMBO_SILENCEDLUGER
+	WP_MOBILE_MG42,     // 47 WP_MOBILE_MG42_SET
 };
 
 char *animStrings[] =
@@ -1760,28 +1757,6 @@ gitem_t bg_itemlist[] =
 //      {0,0,0,0,0}
 	},
 
-	{
-		"weapon_tripmine",
-		"", // was "sound/misc/w_pkup.wav",
-		{
-			0, // was"models/multiplayer/dynamite/dynamite_3rd.md3",
-			0, // was "models/weapons2/dynamite/v_dynamite.md3",
-			0
-		},
-
-		"icons/iconw_dynamite_1",    // icon
-		"icons/ammo9",           // ammo icon
-		"Tripmine",      // pickup
-		7,
-		IT_WEAPON,
-		WP_TRIPMINE,
-		WP_TRIPMINE,
-		WP_TRIPMINE,
-		"", // was "models/multiplayer/dynamite/dynamite.md3 models/multiplayer/dynamite/dynamite_3rd.md3", // precache
-		"",                      // sounds
-//      {0,0,0,0,0}
-	},
-
 	/*QUAKED weapon_mobile_mg42 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended spin - respawn
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/multiplayer/mg42/v_mg42.md3"
@@ -2529,30 +2504,6 @@ BG_AkimboForSideArm
     }
 }*/
 
-//----(SA) Added keys
-/*
-==============
-BG_FindItemForKey
-==============
-*/
-/*gitem_t *BG_FindItemForKey(wkey_t k, int *indexreturn)
-{
-    int     i;
-
-    for ( i = 0 ; i < bg_numItems ; i++ ) {
-        if ( bg_itemlist[i].giType == IT_KEY && bg_itemlist[i].giTag == k ) {
-            {
-                if(indexreturn)
-                    *indexreturn = i;
-                return &bg_itemlist[i];
-            }
-        }
-    }
-
-    Com_Error( ERR_DROP, "Key %d not found\n", k );
-    return NULL;
-}*/
-
 /*
 ==============
 BG_FindItemForAmmo
@@ -2645,7 +2596,6 @@ qboolean BG_WeaponInWolfMP(int weapon)
 	case WP_LANDMINE:
 	case WP_SATCHEL:
 	case WP_SATCHEL_DET:
-//  case WP_TRIPMINE:    // bye bye tripmines ;(
 	case WP_SMOKE_BOMB:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
@@ -2655,7 +2605,6 @@ qboolean BG_WeaponInWolfMP(int weapon)
 	case WP_K43_SCOPE:
 	case WP_MORTAR:
 	case WP_MORTAR_SET:
-	//case WP_LOCKPICK:
 	case WP_AKIMBO_LUGER:
 	case WP_AKIMBO_SILENCEDLUGER:
 	case WP_AKIMBO_COLT:

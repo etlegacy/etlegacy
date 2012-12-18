@@ -71,7 +71,7 @@ void AddScore(gentity_t *ent, int score)
 	//ent->client->ps.persistant[PERS_SCORE] += score;
 	ent->client->sess.game_points += score;
 
-//  level.teamScores[ ent->client->ps.persistant[PERS_TEAM] ] += score;
+	//level.teamScores[ ent->client->ps.persistant[PERS_TEAM] ] += score;
 	CalculateRanks();
 }
 
@@ -288,7 +288,7 @@ char *modNames[] =
 	"MOD_GRENADE",
 	"MOD_ROCKET",
 
-	// (SA) modified wolf weap mods
+	// modified wolf weap mods
 	"MOD_KNIFE",
 	"MOD_LUGER",
 	"MOD_COLT",
@@ -335,7 +335,7 @@ char *modNames[] =
 	"MOD_M7",
 	"MOD_LANDMINE",
 	"MOD_SATCHEL",
-	"MOD_TRIPMINE",                          // unused
+
 	"MOD_SMOKEBOMB",
 	"MOD_MOBILE_MG42",
 	"MOD_SILENCED_COLT",
@@ -406,7 +406,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		}
 	}
 
-	// RF, record this death in AAS system so that bots avoid areas which have high death rates
 	if (!OnSameTeam(self, attacker))
 	{
 		self->isProp = qfalse;  // were we teamkilled or not?
@@ -420,23 +419,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	if (self->client && meansOfDeath == MOD_LANDMINE)
 	{
 		// if it's an enemy mine, update both teamlists
-		/*int teamNum;
-		mapEntityData_t *mEnt;
-		mapEntityData_Team_t *teamList;
-
-		teamNum = inflictor->s.teamNum % 4;
-
-		teamList = self->client->sess.sessionTeam == TEAM_AXIS ? &mapEntityData[0] : &mapEntityData[1];
-		if((mEnt = G_FindMapEntityData(teamList, inflictor-g_entities)) != NULL) {
-		    G_FreeMapEntityData( teamList, mEnt );
-		}
-
-		if( teamNum != self->client->sess.sessionTeam ) {
-		    teamList = self->client->sess.sessionTeam == TEAM_AXIS ? &mapEntityData[1] : &mapEntityData[0];
-		    if((mEnt = G_FindMapEntityData(teamList, inflictor-g_entities)) != NULL) {
-		        G_FreeMapEntityData( teamList, mEnt );
-		    }
-		}*/
 		mapEntityData_t *mEnt;
 
 		if ((mEnt = G_FindMapEntityData(&mapEntityData[0], inflictor - g_entities)) != NULL)
@@ -451,10 +433,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 
 	{
-		mapEntityData_t      *mEnt;
 		mapEntityData_Team_t *teamList = self->client->sess.sessionTeam == TEAM_AXIS ? &mapEntityData[1] : &mapEntityData[0];   // swapped, cause enemy team
-
-		mEnt = G_FindMapEntityDataSingleClient(teamList, NULL, self->s.number, -1);
+		mapEntityData_t      *mEnt     = G_FindMapEntityDataSingleClient(teamList, NULL, self->s.number, -1);
 
 		while (mEnt)
 		{
@@ -733,8 +713,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	self->client->ps.viewangles[0] = 0;
 	self->client->ps.viewangles[2] = 0;
 
-	self->r.maxs[2]          = self->client->ps.crouchMaxZ; //% 0;          // ydnar: so bodies don't clip into world
-	self->client->ps.maxs[2] = self->client->ps.crouchMaxZ; //% 0;  // ydnar: so bodies don't clip into world
+	self->r.maxs[2]          = self->client->ps.crouchMaxZ; //% 0;  // so bodies don't clip into world
+	self->client->ps.maxs[2] = self->client->ps.crouchMaxZ; //% 0;  // so bodies don't clip into world
 	trap_LinkEntity(self);
 
 	// don't allow respawn until the death anim is done
@@ -1743,8 +1723,8 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	{
 		targ->health -= take;
 
-		// Ridah, can't gib with bullet weapons (except VENOM)
-		// Arnout: attacker == inflictor can happen in other cases as well! (movers trying to gib things)
+		// can't gib with bullet weapons (except VENOM)
+		// - attacker == inflictor can happen in other cases as well! (movers trying to gib things)
 		//if ( attacker == inflictor && targ->health <= GIB_HEALTH) {
 		if (targ->health <= GIB_HEALTH)
 		{
@@ -1754,7 +1734,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			}
 		}
 
-		// JPW NERVE overcome previous chunk of code for making grenades work again
+		// overcome previous chunk of code for making grenades work again
 		// if ((take > 190)) // 190 is greater than 2x mauser headshot, so headshots don't gib
 		// Arnout: only player entities! messes up ents like func_constructibles and func_explosives otherwise
 		if (targ->s.number < MAX_CLIENTS && take > 190)
@@ -1906,7 +1886,7 @@ qboolean CanDamage(gentity_t *targ, vec3_t origin)
 
 	// use the midpoint of the bounds instead of the origin, because
 	// bmodels may have their origin is 0,0,0
-	// Gordon: well, um, just check then...
+	// - well, um, just check then ...
 	if (targ->r.currentOrigin[0] || targ->r.currentOrigin[1] || targ->r.currentOrigin[2])
 	{
 		VectorCopy(targ->r.currentOrigin, midpoint);

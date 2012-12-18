@@ -4213,8 +4213,6 @@ static void PM_Weapon(void)
 	case WP_FG42SCOPE:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
-	case WP_LOCKPICK:
-
 		if (!weaponstateFiring)
 		{
 			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
@@ -4588,7 +4586,6 @@ static void PM_Weapon(void)
 	case WP_SATCHEL_DET:
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_MG42_SET:
-	case WP_LOCKPICK:
 		PM_ContinueWeaponAnim(weapattackanim);
 		break;
 
@@ -4785,8 +4782,6 @@ static void PM_Weapon(void)
 	case WP_MEDIC_SYRINGE:
 	case WP_MEDIC_ADRENALINE:
 	case WP_AMMO:
-	// lockpick will use value in table too
-	case WP_LOCKPICK:
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		break;
 

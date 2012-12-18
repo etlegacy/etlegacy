@@ -409,7 +409,7 @@ static const weap_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 	{ MOD_M7,                      WS_GRENADELAUNCHER },
 	{ MOD_LANDMINE,                WS_LANDMINE        },
 	{ MOD_SATCHEL,                 WS_SATCHEL         },
-	{ MOD_TRIPMINE,                WS_LANDMINE        }, // obsolete
+
 	{ MOD_SMOKEBOMB,               WS_SMOKE           }, // ??
 	{ MOD_SMOKEGRENADE,            WS_AIRSTRIKE       }, // rain - airstrike tag
 	{ MOD_MOBILE_MG42,             WS_MG42            },
@@ -698,7 +698,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 				{
 					if (cl->pers.autoaction & AA_STATSTEAM)
 					{
-						G_statsall_cmd(ent, cl->sess.sessionTeam, qfalse);                                      // Currently broken.. need to support the overloading of dwCommandID
+						G_statsall_cmd(ent, cl->sess.sessionTeam, qfalse);                // Currently broken.. need to support the overloading of dwCommandID
 					}
 					else
 					{
@@ -712,7 +712,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 
 					if ((cl->pers.autoaction & AA_STATSTEAM))
 					{
-						G_statsall_cmd(ent, level.clients[pid].sess.sessionTeam, qfalse);                                       // Currently broken.. need to support the overloading of dwCommandID
+						G_statsall_cmd(ent, level.clients[pid].sess.sessionTeam, qfalse); // Currently broken.. need to support the overloading of dwCommandID
 					}
 					else
 					{
@@ -745,6 +745,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 				else
 				{
 					float val = (float)((level.timeCurrent - (level.startTime + level.time - level.intermissiontime)) / 60000.0);
+
 					if (val < g_timelimit.value)
 					{
 						CP(va("print \">>> ^3Objective reached at %d:%02d (original: %d:%02d)\n\n\n\"",

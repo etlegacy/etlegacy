@@ -88,7 +88,7 @@ char *hintStrings[HINT_NUM_HINTS] =
 	"HINT_TANK",
 	"HINT_SATCHELCHARGE",
 
-	"HINT_LOCKPICK"
+	"HINT_LOCKPICK" // FIXME: remove
 
 	"",                         // HINT_BAD_USER
 };

@@ -627,11 +627,11 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 
 	VectorCopy(ps->origin, vorigin);
 	vorigin[2] += ps->viewheight;           // get the view loc up to the viewheight
-	//eorigin[2] += 8;                        // and subtract the item's offset (that is used to place it on the ground)
+	//eorigin[2] += 8;                      // and subtract the item's offset (that is used to place it on the ground)
 
 	VectorSubtract(vorigin, eorigin, dir);
 
-	dist = VectorNormalize(dir);              // dir is now the direction from the item to the player
+	dist = VectorNormalize(dir);            // dir is now the direction from the item to the player
 
 	if (dist > 255)
 	{
@@ -2437,8 +2437,6 @@ static void CG_ProcessEntity(centity_t *cent)
 	case ET_CONSTRUCTIBLE:
 		CG_Constructible(cent);
 		break;
-	/*  case ET_CONSTRUCTIBLE_MARKER:
-	        break;*/
 	case ET_TRAP:
 		CG_Trap(cent);
 		break;

@@ -642,7 +642,7 @@ typedef enum
 	KEY_14,
 	KEY_15,
 	KEY_16,
-	KEY_LOCKED_PICKABLE, // ent can be unlocked with the WP_LOCKPICK.
+	KEY_LOCKED_PICKABLE, // ent can be unlocked with the WP_LOCKPICK. FIXME: remove
 	KEY_NUM_KEYS
 } wkey_t;           // conflicts with types.h
 
@@ -657,23 +657,22 @@ typedef enum
 	WP_GRENADE_LAUNCHER,    // 4
 	WP_PANZERFAUST,         // 5
 	WP_FLAMETHROWER,        // 6
-
 	WP_COLT,                // 7	// equivalent american weapon to german luger
 	WP_THOMPSON,            // 8	// equivalent american weapon to german mp40
 	WP_GRENADE_PINEAPPLE,   // 9
+
 	WP_STEN,                // 10	// silenced sten sub-machinegun
 	WP_MEDIC_SYRINGE,       // 11	// broken out from CLASS_SPECIAL per Id request
 	WP_AMMO,                // 12	// likewise
 	WP_ARTY,                // 13
-
 	WP_SILENCER,            // 14	// used to be sp5
 	WP_DYNAMITE,            // 15
 	WP_SMOKETRAIL,          // 16
 	WP_MAPMORTAR,           // 17
 	VERYBIGEXPLOSION,       // 18	// explosion effect for airplanes
 	WP_MEDKIT,              // 19
-	WP_BINOCULARS,          // 20
 
+	WP_BINOCULARS,          // 20
 	WP_PLIERS,              // 21
 	WP_SMOKE_MARKER,        // 22	// changed name to cause less confusion
 	WP_KAR98,               // 23	// WolfXP weapons
@@ -682,34 +681,31 @@ typedef enum
 	WP_LANDMINE,            // 26
 	WP_SATCHEL,             // 27
 	WP_SATCHEL_DET,         // 28
-	WP_TRIPMINE,            // 29	// unused
-	WP_SMOKE_BOMB,          // 30
+	WP_SMOKE_BOMB,          // 29
 
-	WP_MOBILE_MG42,         // 31
-	WP_K43,                 // 32
-	WP_FG42,                // 33
-	WP_DUMMY_MG42,          // 34   // for storing heat on mounted mg42s...
-	WP_MORTAR,              // 35
-	WP_LOCKPICK,            // 36	// lockpick FIXME: remove
-	WP_AKIMBO_COLT,         // 37
-	WP_AKIMBO_LUGER,        // 38
+	WP_MOBILE_MG42,         // 30
+	WP_K43,                 // 31
+	WP_FG42,                // 32
+	WP_DUMMY_MG42,          // 33   // for storing heat on mounted mg42s...
+	WP_MORTAR,              // 34
+	WP_AKIMBO_COLT,         // 35
+	WP_AKIMBO_LUGER,        // 36
+	// ONLY secondaries below this mark, as they are checked >= WP_GPG40 && < WP_NUM_WEAPONS
+	// FIXME!!!: inspect this ... WP_M7 is secondary and AKIMBO colt/luger not?
+	WP_GPG40,               // 37
+	WP_M7,                  // 38
+	WP_SILENCED_COLT,       // 39
 
-// ONLY secondaries below this mark, as they are checked >= WP_GPG40 && < WP_NUM_WEAPONS
+	WP_GARAND_SCOPE,        // 40
+	WP_K43_SCOPE,           // 41
+	WP_FG42SCOPE,           // 42
+	WP_MORTAR_SET,          // 43
+	WP_MEDIC_ADRENALINE,    // 44
+	WP_AKIMBO_SILENCEDCOLT, // 45
+	WP_AKIMBO_SILENCEDLUGER, // 46
+	WP_MOBILE_MG42_SET,     // 47
 
-	WP_GPG40,               // 39
-
-	WP_M7,                  // 40
-	WP_SILENCED_COLT,       // 41
-	WP_GARAND_SCOPE,        // 42
-	WP_K43_SCOPE,           // 43
-	WP_FG42SCOPE,           // 44
-	WP_MORTAR_SET,          // 45
-	WP_MEDIC_ADRENALINE,    // 46
-	WP_AKIMBO_SILENCEDCOLT, // 47
-	WP_AKIMBO_SILENCEDLUGER, // 48
-	WP_MOBILE_MG42_SET,     // 49
-
-	WP_NUM_WEAPONS          // WolfMP: 32 WolfXP: 50
+	WP_NUM_WEAPONS          // WolfMP: 32 WolfXP: 48
 	                        // NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
@@ -1301,7 +1297,7 @@ typedef enum
 	MOD_M7,
 	MOD_LANDMINE,
 	MOD_SATCHEL,
-	MOD_TRIPMINE, // unused
+
 	MOD_SMOKEBOMB,
 	MOD_MOBILE_MG42,
 	MOD_SILENCED_COLT,
@@ -1385,7 +1381,6 @@ gitem_t *BG_FindItemForWeapon(weapon_t weapon);
 gitem_t *BG_FindItemForPowerup(powerup_t pw);
 
 gitem_t *BG_FindItemForAmmo(int weapon);
-//gitem_t *BG_FindItemForKey		( wkey_t k, int *index );
 weapon_t BG_FindAmmoForWeapon(weapon_t weapon);
 weapon_t BG_FindClipForWeapon(weapon_t weapon);
 
@@ -1393,8 +1388,6 @@ qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip);
 qboolean BG_IsAkimboWeapon(int weaponNum);
 qboolean BG_IsAkimboSideArm(int weaponNum, playerState_t *ps);
 int BG_AkimboSidearm(int weaponNum);
-
-#define ITEM_INDEX(x) ((x) - bg_itemlist)
 
 qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon);
 
@@ -1464,7 +1457,7 @@ typedef enum
 	HINT_LANDMINE,
 	HINT_TANK,
 	HINT_SATCHELCHARGE,
-	HINT_LOCKPICK,
+	HINT_LOCKPICK, // FIXME: remove
 
 	HINT_BAD_USER,  // invisible user with no target
 
