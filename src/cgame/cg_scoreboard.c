@@ -183,8 +183,8 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		if (cgs.gametype == GT_WOLF_STOPWATCH)
 		{
 			int w;
-			s = va("%s %i", CG_TranslateString("STOPWATCH ROUND"), cgs.currentRound + 1);
 
+			s = va("%s %i", CG_TranslateString("STOPWATCH ROUND"), cgs.currentRound + 1);
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
 			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
@@ -192,6 +192,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		else if (cgs.gametype == GT_WOLF_LMS)
 		{
 			int w;
+
 			s = va("%s %i  %s %i-%i", CG_TranslateString("ROUND"), cgs.currentRound + 1, CG_TranslateString("SCORE"), cg.teamWonRounds[1], cg.teamWonRounds[0]);
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
@@ -200,6 +201,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		else if (cgs.gametype == GT_WOLF_CAMPAIGN)
 		{
 			int w;
+
 			s = va("MAP %i of %i", cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
@@ -253,9 +255,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		hcolor[3] = fade * 0.3;
 		VectorSet(hcolor, .5f, .5f, .2f);           // DARK-RED
 
-		CG_FillRect(x - 5, y,
-		            (INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH + 5),
-		            SMALLCHAR_HEIGHT - 1, hcolor);
+		CG_FillRect(x - 5, y, (INFO_TOTAL_WIDTH + 5), SMALLCHAR_HEIGHT - 1, hcolor);
 	}
 
 	tempx = x;
@@ -404,9 +404,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		hcolor[3] = fade * 0.3;
 		VectorSet(hcolor, .5f, .5f, .2f); // DARK-RED
 
-		CG_FillRect(x - 5, y,
-		            (INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH + 5),
-		            MINICHAR_HEIGHT - 1, hcolor);
+		CG_FillRect(x - 5, y, (INFO_TOTAL_WIDTH + 5), MINICHAR_HEIGHT - 1, hcolor);
 	}
 
 	tempx = x;
@@ -590,15 +588,13 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
                              int absmaxrows)
 {
+	vec4_t   tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
 	vec4_t   hcolor;
 	float    tempx, tempy;
-	int      width;
 	int      i;
 	int      count          = 0;
+	int      width          = INFO_TOTAL_WIDTH;
 	qboolean use_mini_chars = qfalse;
-	vec4_t   tclr           = { 0.6f, 0.6f, 0.6f, 1.0f };
-
-	width = INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
 
 	CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBack);
 	CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBar);
@@ -610,6 +606,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
 		char *s;
+
 		if (team == TEAM_AXIS)
 		{
 			s = va("%s [%d] (%d %s)", CG_TranslateString("AXIS"), cg.teamScores[0], cg.teamPlayers[team], CG_TranslateString("PLAYERS"));
@@ -806,7 +803,6 @@ qboolean CG_DrawScoreboard(void)
 {
 	int   x = 20, y = 6, x_right = 640 - x - (INFO_TOTAL_WIDTH - 5);
 	float fade;
-	float *fadeColor;
 	int   width = 640 - 2 * x + 5;
 
 	x       += cgs.wideXoffset;
@@ -833,12 +829,11 @@ qboolean CG_DrawScoreboard(void)
 
 	if (cg.showScores || cg.predictedPlayerState.pm_type == PM_INTERMISSION)
 	{
-		fade      = 1.0;
-		fadeColor = colorWhite;
+		fade = 1.0;
 	}
 	else
 	{
-		fadeColor = CG_FadeColor(cg.scoreFadeTime, FADE_TIME);
+		float *fadeColor = CG_FadeColor(cg.scoreFadeTime, FADE_TIME);
 
 		if (!fadeColor)
 		{

@@ -422,7 +422,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 
 	if (*cgs.rawmapname)
 	{
-		float x = 16 + cgs.wideXoffset + 1;;
+		float x = 16 + cgs.wideXoffset + 1;
 
 		if (!bg_mappic)
 		{

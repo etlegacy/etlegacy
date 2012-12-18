@@ -2392,7 +2392,7 @@ CG_DrawSpectator
 */
 static void CG_DrawSpectator(void)
 {
-	CG_DrawBigString(320 - 9 * 8, 440, CG_TranslateString("SPECTATOR"), 1.f);
+	CG_DrawBigString((320 - 9 * 8) + cgs.wideXoffset, 440, CG_TranslateString("SPECTATOR"), 1.f);
 }
 
 /*

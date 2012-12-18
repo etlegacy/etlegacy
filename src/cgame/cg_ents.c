@@ -1022,7 +1022,7 @@ extern void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi);
 static void CG_Missile(centity_t *cent)
 {
 	refEntity_t        ent;
-	entityState_t      *s1 = &cent->currentState;;
+	entityState_t      *s1 = &cent->currentState;
 	const weaponInfo_t *weapon;
 
 	if (s1->weapon > WP_NUM_WEAPONS)

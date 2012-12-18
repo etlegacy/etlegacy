@@ -62,7 +62,7 @@ qboolean Ccg_Is43Screen(void)
 	{
 		return qtrue;
 	}
-	return qfalse;;
+	return qfalse;
 }
 
 float Ccg_WideX(float x)

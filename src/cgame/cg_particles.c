@@ -1826,7 +1826,7 @@ void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEnt
 void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int ptime, int snum)      // snum is parent ent number?
 {
 	cparticle_t *p;
-	int         time     = cg.time;;
+	int         time     = cg.time;
 	int         time2    = cg.time + ptime;
 	float       duration = 2000;
 	float       ratio    = (float)1 - ((float)time / (float)time2);
