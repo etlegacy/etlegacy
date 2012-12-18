@@ -1109,6 +1109,8 @@ void RB_StageIteratorSky(void)
 		qglDepthRange(1.0, 1.0);
 	}
 
+	GL_Cull(CT_TWO_SIDED);
+
 	// draw the outer skybox
 	if (tess.shader->sky.outerbox[0] && tess.shader->sky.outerbox[0] != tr.defaultImage)
 	{
