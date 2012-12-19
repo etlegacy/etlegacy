@@ -4054,7 +4054,7 @@ void ClientCommand(int clientNum)
 	}
 	else if (Q_stricmp(cmd, "where") == 0)
 	{
-		Cmd_Where_f(ent);;
+		Cmd_Where_f(ent);
 	}
 	else if (Q_stricmp(cmd, "stopCamera") == 0)
 	{

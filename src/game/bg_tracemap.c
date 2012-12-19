@@ -581,7 +581,7 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 	int          ground_max    = MIN_WORLD_HEIGHT;
 	int          skyground_min = MAX_WORLD_HEIGHT;
 	int          skyground_max = MAX_WORLD_HEIGHT;
-	//int startTime = trap_Milliseconds();;
+	//int startTime = trap_Milliseconds();
 
 	if (trap_FS_FOpenFile(va("maps/%s_tracemap.tga", Q_strlwr(rawmapname)), &f, FS_READ) >= 0)
 	{

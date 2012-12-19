@@ -2411,7 +2411,7 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 		if (ent->scriptAccumBuffer[bufferIndex] == atoi(token))
 		{
 			gentity_t *trent;
-			int       oldId;;
+			int       oldId;
 
 			token = COM_ParseExt(&pString, qfalse);
 			Q_strncpyz(lastToken, token, sizeof(lastToken));

@@ -509,7 +509,7 @@ void RB_TakeDepthshot(int x, int y, int width, int height, char *fileName)
 	size_t offset = 18, memcount;
 
 	allbuf = RB_ReadZBuffer(x, y, width, height, &padlen);
-	buffer = ri.Hunk_AllocateTempMemory(width * height * 3 + offset);;
+	buffer = ri.Hunk_AllocateTempMemory(width * height * 3 + offset);
 
 	Com_Memset(buffer, 0, 18);
 	buffer[2]  = 2;         // uncompressed type

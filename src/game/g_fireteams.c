@@ -660,7 +660,7 @@ void G_WarnFireTeamPlayer(int entityNum, int otherEntityNum)
 
 void G_KickFireTeamPlayer(int entityNum, int otherEntityNum)
 {
-	fireteamData_t *ft, *ft2;;
+	fireteamData_t *ft, *ft2;
 
 	if (entityNum == otherEntityNum)
 	{

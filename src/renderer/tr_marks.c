@@ -487,7 +487,7 @@ int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t project
 			{
 				for (j = 0 ; j < 3 ; j++)
 				{
-					v = surf->points[0] + VERTEXSIZE * indexes[k + j];;
+					v = surf->points[0] + VERTEXSIZE * indexes[k + j];
 					VectorMA(v, MARKER_OFFSET, surf->plane.normal, clipPoints[0][j]);
 				}
 				// add the fragments of this face
@@ -883,7 +883,7 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 				{
 					for (j = 0 ; j < 3 ; j++)
 					{
-						v = surf->points[0] + VERTEXSIZE * indexes[k + j];;
+						v = surf->points[0] + VERTEXSIZE * indexes[k + j];
 						VectorMA(v, MARKER_OFFSET, surf->plane.normal, clipPoints[0][j]);
 					}
 					// add the fragments of this face
