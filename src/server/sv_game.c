@@ -45,27 +45,21 @@ botlib_export_t *botlib_export;
 // the game allocates gentities with private information after the server shared part
 int SV_NumForGentity(sharedEntity_t *ent)
 {
-	int num;
-
-	num = ((byte *)ent - (byte *)sv.gentities) / sv.gentitySize;
+	int num = ((byte *)ent - (byte *)sv.gentities) / sv.gentitySize;
 
 	return num;
 }
 
 sharedEntity_t *SV_GentityNum(int num)
 {
-	sharedEntity_t *ent;
-
-	ent = ( sharedEntity_t * )((byte *)sv.gentities + sv.gentitySize * (num));
+	sharedEntity_t *ent = ( sharedEntity_t * )((byte *)sv.gentities + sv.gentitySize * (num));
 
 	return ent;
 }
 
 playerState_t *SV_GameClientNum(int num)
 {
-	playerState_t *ps;
-
-	ps = ( playerState_t * )((byte *)sv.gameClients + sv.gameClientSize * (num));
+	playerState_t *ps = ( playerState_t * )((byte *)sv.gameClients + sv.gameClientSize * (num));
 
 	return ps;
 }
@@ -81,9 +75,8 @@ svEntity_t *SV_SvEntityForGentity(sharedEntity_t *gEnt)
 
 sharedEntity_t *SV_GEntityForSvEntity(svEntity_t *svEnt)
 {
-	int num;
+	int num = svEnt - sv.svEntities;
 
-	num = svEnt - sv.svEntities;
 	return SV_GentityNum(num);
 }
 
@@ -151,7 +144,6 @@ void SV_SetBrushModel(sharedEntity_t *ent, const char *name)
 	{
 		Com_Error(ERR_DROP, "SV_SetBrushModel: %s isn't a brush model\n", name);
 	}
-
 
 	ent->s.modelindex = atoi(name + 1);
 
@@ -234,9 +226,8 @@ SV_AdjustAreaPortalState
 */
 void SV_AdjustAreaPortalState(sharedEntity_t *ent, qboolean open)
 {
-	svEntity_t *svEnt;
+	svEntity_t *svEnt = SV_SvEntityForGentity(ent);
 
-	svEnt = SV_SvEntityForGentity(ent);
 	if (svEnt->areanum2 == -1)
 	{
 		return;
@@ -246,19 +237,17 @@ void SV_AdjustAreaPortalState(sharedEntity_t *ent, qboolean open)
 
 /*
 ==================
-SV_GameAreaEntities
+SV_EntityContact
 ==================
 */
 qboolean SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedEntity_t *gEnt, const int capsule)
 {
-	const float  *origin, *angles;
+	const float  *origin = gEnt->r.currentOrigin;
+	const float  *angles = gEnt->r.currentAngles;
 	clipHandle_t ch;
 	trace_t      trace;
 
 	// check for exact collision
-	origin = gEnt->r.currentOrigin;
-	angles = gEnt->r.currentAngles;
-
 	ch = SV_ClipHandleForEntity(gEnt);
 	CM_TransformedBoxTrace(&trace, vec3_origin, vec3_origin, mins, maxs,
 	                       ch, -1, origin, angles, capsule);
@@ -269,7 +258,6 @@ qboolean SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedEnti
 /*
 ===============
 SV_GetServerinfo
-
 ===============
 */
 void SV_GetServerinfo(char *buffer, int bufferSize)
@@ -284,7 +272,6 @@ void SV_GetServerinfo(char *buffer, int bufferSize)
 /*
 ===============
 SV_LocateGameData
-
 ===============
 */
 void SV_LocateGameData(sharedEntity_t *gEnts, int numGEntities, int sizeofGEntity_t,
@@ -377,6 +364,7 @@ void SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int comm
 static int FloatAsInt(float f)
 {
 	floatint_t fi;
+
 	fi.f = f;
 	return fi.i;
 }
@@ -389,7 +377,6 @@ The module is making a system call
 ====================
 */
 
-// show_bug.cgi?id=574
 extern int S_RegisterSound(const char *name, qboolean compressed);
 extern int S_GetSoundLength(sfxHandle_t sfxHandle);
 
