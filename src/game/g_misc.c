@@ -53,7 +53,7 @@ Used as a positional target for calculations in the utilities (spotlights, etc),
 */
 void SP_info_null(gentity_t *self)
 {
-	// Gordon: if it has a targetname, let it stick around for a few frames
+	// if it has a targetname, let it stick around for a few frames
 	if (!self->targetname || !*self->targetname)
 	{
 		G_FreeEntity(self);
@@ -118,18 +118,13 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
 	    VectorScale( player->client->ps.velocity, 400, player->client->ps.velocity );
 	    player->client->ps.pm_time = 160;       // hold time
 	    player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;*/
-	// Gordon: disabling, dont want the bots flying everywhere :)
+	// disabling, dont want the bots flying everywhere :)
 
 	// toggle the teleport bit so the client knows to not lerp
 	player->client->ps.eFlags ^= EF_TELEPORT_BIT;
 
 	// set angles
 	SetClientViewAngle(player, angles);
-
-	// kill anything at the destination
-	/*  if ( player->client->sess.sessionTeam != TEAM_SPECTATOR ) {
-	        G_KillBox (player);
-	    }*/
 
 	// save results of pmove
 	BG_PlayerStateToEntityState(&player->client->ps, &player->s, qtrue);
@@ -544,7 +539,7 @@ void SP_misc_gamemodel(gentity_t *ent)
 	int      num_frames, start_frame, fps;
 	qboolean reverse = qfalse;
 
-	// Gordon: static gamemodels client side only now :D so server can just wave bye-bye
+	// static gamemodels client side only now :D so server can just wave bye-bye
 	if (!ent->scriptName && !ent->targetname && !ent->spawnflags)
 	{
 		G_FreeEntity(ent);
@@ -575,10 +570,10 @@ void SP_misc_gamemodel(gentity_t *ent)
 		ent->s.frame     = rand() % ent->s.torsoAnim;
 		ent->s.loopSound = 0; // non-frozen
 
-		// Gordon: added start offset, fps, and direction
+		// added start offset, fps, and direction
 		ent->s.legsAnim = start_frame + 1;
 		ent->s.weapon   = 1000.f / fps;
-		// xkan, 11/08/2002 - continue loop animation as long as s.teamNum == 0
+		// continue loop animation as long as s.teamNum == 0
 		ent->s.teamNum = 0;
 	}
 
@@ -628,7 +623,7 @@ void SP_misc_gamemodel(gentity_t *ent)
 	G_SetOrigin(ent, ent->s.origin);
 	VectorCopy(ent->s.angles, ent->s.apos.trBase);
 
-	// Gordon: hmmmmm, think this flag is prolly b0rked
+	// hmmmmm, think this flag is prolly b0rked
 	if (ent->spawnflags & 1)
 	{
 		ent->s.apos.trType = 1; // misc_gamemodels (since they have no movement) will use type = 0 for static models, type = 1 for auto-aligning models
@@ -658,7 +653,7 @@ For safety, you should have each dummy only point at one entity (however, it's o
 */
 void SP_misc_vis_dummy(gentity_t *ent)
 {
-	if (!ent->target)     //----(SA)    added safety check
+	if (!ent->target)     // safety check
 	{
 		G_Printf("No target specified for misc_vis_dummy at %s\n", vtos(ent->r.currentOrigin));
 		G_FreeEntity(ent);
@@ -838,7 +833,7 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	switch (ent->s.weapon)
 	{
 	case WP_GRENADE_LAUNCHER:
-		VectorScale(dir, 700, dir);                   //----(SA)    had to add this as fire_grenade now expects a non-normalized direction vector
+		VectorScale(dir, 700, dir);                   // had to add this as fire_grenade now expects a non-normalized direction vector
 		fire_grenade(ent, ent->s.origin, dir, WP_GRENADE_LAUNCHER);
 		break;
 	case WP_PANZERFAUST:
@@ -896,7 +891,7 @@ if FLASH_FX is checked a muzzle flash effect will play at the origin of this ent
 */
 void SP_shooter_mortar(gentity_t *ent)
 {
-	// (SA) TODO: must have a self->target.  Do a check/print if this is not the case.
+	// FIXME/TODO: must have a self->target.  Do a check/print if this is not the case.
 	InitShooter(ent, WP_MAPMORTAR);
 
 	if (ent->spawnflags & 1)       // smoke at source
@@ -984,9 +979,9 @@ void SP_corona(gentity_t *ent)
 	}
 }
 
-// (SA) dlights and dlightstyles
-// TTimo gcc: lots of braces around scalar initializer
-// char* predef_lightstyles[] = {
+// dlights and dlightstyles
+// gcc: lots of braces around scalar initializer
+//char* predef_lightstyles[] = {
 //  {"mmnmmommommnonmmonqnmmo"},
 
 char *predef_lightstyles[] =
@@ -1224,7 +1219,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	VectorMA(end, r, right, end);
 	VectorMA(end, u, up, end);
 
-	// rain - use activator for historicaltrace, not ent which may be
+	// use activator for historicaltrace, not ent which may be
 	// the weapon itself (e.g. for mg42s)
 	G_HistoricalTrace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
@@ -1258,7 +1253,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 		tent                    = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_FLESH);
 		tent->s.eventParm       = traceEnt->s.number;
 		tent->s.otherEntityNum  = ent->s.number;
-		tent->s.otherEntityNum2 = activator->s.number;  // (SA) store the user id, so the client can position the tracer
+		tent->s.otherEntityNum2 = activator->s.number;  // store the user id, so the client can position the tracer
 		tent->s.effect1Time     = seed;
 	}
 	else
@@ -1275,7 +1270,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 
 		tent->s.eventParm       = DirToByte(reflect);
 		tent->s.otherEntityNum  = ent->s.number;
-		tent->s.otherEntityNum2 = activator->s.number;  // (SA) store the user id, so the client can position the tracer
+		tent->s.otherEntityNum2 = activator->s.number;  // store the user id, so the client can position the tracer
 		tent->s.effect1Time     = seed;
 	}
 
@@ -1315,7 +1310,7 @@ void clamp_playerbehindgun(gentity_t *self, gentity_t *other, vec3_t dang)
 	// use the precise origin for linking
 	VectorCopy(other->client->ps.origin, other->r.currentOrigin);
 
-	// DHM - Nerve :: Zero out velocity
+	// Zero out velocity
 	other->client->ps.velocity[0] = other->client->ps.velocity[1] = 0.f;
 	other->s.pos.trDelta[0]       = other->s.pos.trDelta[1] = 0.f;
 
@@ -1363,7 +1358,7 @@ void clamp_hweapontofirearc(gentity_t *self, vec3_t dang)
 	}
 }
 
-// Gordon: quad 20mm specs from marauder
+// quad 20mm specs from marauder
 // Fire each barrel every 1s, so 250ms per shot total
 // Hitscan
 // Use some part of entitystate to store firing barrel? or just encode it with event more likely
@@ -1567,7 +1562,7 @@ void aagun_spawn(gentity_t *gun)
 	gun->s.eType       = ET_AAGUN;
 	gun->s.dmgFlags    = HINT_MG42;
 	gun->s.modelindex  = G_ModelIndex("models/mapobjects/weapons/flak_a.md3");
-	gun->s.modelindex2 = 0;    // Gordon: which barrel should fire next
+	gun->s.modelindex2 = 0;    // which barrel should fire next
 
 	gun->s.origin[2] += 24;
 	G_SetOrigin(gun, gun->s.origin);
@@ -1647,9 +1642,9 @@ void mg42_fire(gentity_t *other)
 	AngleVectors(other->client->ps.viewangles, forward, right, up);
 	VectorCopy(self->s.pos.trBase, muzzle);
 
-	// VectorMA (muzzle, 16, forward, muzzle); // JPW NERVE unnecessary and makes it so close-range enemies get missed
+	// VectorMA (muzzle, 16, forward, muzzle); // unnecessary and makes it so close-range enemies get missed
 
-	// Arnout: disabled this as it was causing troubles with murderholes. Why was it there? Maybe
+	// disabled this as it was causing troubles with murderholes. Why was it there? Maybe
 	// for beach to let the mg42 point down and still shoot over teh concrete?
 	// FIX: make the HIGH spawnflag actually work
 	if (self->spawnflags & 1)
@@ -1824,7 +1819,7 @@ void mg42_think(gentity_t *self)
 	SnapVector(self->s.apos.trDelta);
 }
 
-// Arnout: this is to be called for the gun ent, not the tripod
+// this is to be called for the gun ent, not the tripod
 void mg42_stopusing(gentity_t *self)
 {
 	gentity_t *owner;
@@ -1833,7 +1828,7 @@ void mg42_stopusing(gentity_t *self)
 
 	if (owner && owner->client)
 	{
-		owner->client->ps.eFlags                      &= ~EF_MG42_ACTIVE; // DHM - Nerve :: unset flag
+		owner->client->ps.eFlags                      &= ~EF_MG42_ACTIVE; // unset flag
 		owner->client->ps.persistant[PERS_HWEAPON_USE] = 0;
 		self->r.ownerNum                               = self->s.number;
 		owner->client->ps.viewlocked                   = 0; // let them look around
@@ -1857,7 +1852,7 @@ void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 	gentity_t *owner;
 	trace_t   tr;
 
-	// DHM - Nerve :: self->chain not set if no tripod
+	// self->chain not set if no tripod
 	if (self->chain)
 	{
 		gun = self->chain;
@@ -1876,7 +1871,7 @@ void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 		gun->s.frame    = 2;
 		gun->takedamage = qfalse;
 
-		// DHM - Nerve :: health is used in repairing later
+		// health is used in repairing later
 		gun->health   = 0;
 		gun->s.eFlags = EF_SMOKING;         // Make it smoke on client side
 		self->health  = 0;
@@ -1894,7 +1889,7 @@ void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 			VectorCopy(owner->TargetAngles, owner->r.currentOrigin);
 			owner->r.contents = CONTENTS_CORPSE;            // this will correct itself in ClientEndFrame
 		}
-		owner->client->ps.eFlags &= ~EF_MG42_ACTIVE;            // DHM - Nerve :: unset flag
+		owner->client->ps.eFlags &= ~EF_MG42_ACTIVE;            // unset flag
 
 		owner->client->ps.persistant[PERS_HWEAPON_USE] = 0;
 		owner->active                                  = qfalse;
@@ -1954,7 +1949,7 @@ void mg42_spawn(gentity_t *ent)
 	{
 		// Need to spawn the base even when no tripod cause the gun itself isn't solid
 		base            = G_Spawn();
-		base->classname = "misc_mg42base";   // Arnout - ease tracking
+		base->classname = "misc_mg42base";   // ease tracking
 
 		if (!(ent->spawnflags & 2))       // no tripod
 		{
@@ -1965,7 +1960,7 @@ void mg42_spawn(gentity_t *ent)
 			base->takedamage = qtrue;
 			base->die        = mg42_die;
 
-			// Arnout: move track and targetname over to these entities for construction system
+			// move track and targetname over to these entities for construction system
 			base->track = ent->track;
 			G_SetTargetName(base, ent->targetname);
 
@@ -1989,11 +1984,11 @@ void mg42_spawn(gentity_t *ent)
 		VectorCopy(base->s.angles, base->s.apos.trBase);
 		VectorCopy(base->s.angles, base->s.apos.trDelta);
 		base->health    = ent->health;
-		base->target    = ent->target; //----(SA)  added so mounting mg42 can trigger targets
+		base->target    = ent->target; // added so mounting mg42 can trigger targets
 		base->sound3to2 = -1;
 		trap_LinkEntity(base);
 
-		// Arnout: copy state over from original entity
+		// copy state over from original entity
 		G_SetEntState(base, ent->entstate);
 
 		// Spawn the barrel
@@ -2003,7 +1998,7 @@ void mg42_spawn(gentity_t *ent)
 		gun->r.contents   = CONTENTS_TRIGGER;
 		gun->r.svFlags    = 0;
 		gun->s.eType      = ET_MG42_BARREL;
-		gun->health       = base->health;     // JPW NERVE
+		gun->health       = base->health;
 		gun->s.modelindex = G_ModelIndex("models/multiplayer/mg42/mg42.md3");
 		gun->sound3to2    = -1;
 
@@ -2042,14 +2037,14 @@ void mg42_spawn(gentity_t *ent)
 		gun->target     = ent->target;
 		gun->spawnflags = ent->spawnflags;
 
-		// Gordon: storing heat now
+		// storing heat now
 		gun->mg42weapHeat = 0;
 		//      gun->mg42firetime    =      0;
 
-		// Arnout: move track and targetname over to these entities for construction system
+		// move track and targetname over to these entities for construction system
 		gun->track = ent->track;
 
-		// Arnout: copy state over from original entity
+		// copy state over from original entity
 		G_SetEntState(gun, ent->entstate);
 
 		if (!(ent->spawnflags & 2))       // no tripod
@@ -2577,7 +2572,7 @@ void SP_misc_commandmap_marker(gentity_t *ent)
 	G_SetOrigin(ent, ent->s.origin);
 }
 
-// Gordon: system to temporarily ignore certain ents during traces
+// system to temporarily ignore certain ents during traces
 
 void G_InitTempTraceIgnoreEnts(void)
 {

@@ -37,11 +37,9 @@
 #include "bg_local.h"
 
 /*
-
 input: origin, velocity, bounds, groundPlane, trace function
 
 output: origin, velocity, impacts, stairup boolean
-
 */
 
 /*
@@ -54,7 +52,7 @@ Returns qtrue if the velocity was clipped in some way
 #define MAX_CLIP_PLANES 5
 qboolean    PM_SlideMove(qboolean gravity)
 {
-	int     bumpcount, numbumps, extrabumps;
+	int     bumpcount, numbumps = 4, extrabumps = 0;
 	vec3_t  dir;
 	float   d;
 	int     numplanes;
@@ -68,9 +66,6 @@ qboolean    PM_SlideMove(qboolean gravity)
 	float   into;
 	vec3_t  endVelocity;
 	vec3_t  endClipVelocity;
-
-	numbumps   = 4;
-	extrabumps = 0;
 
 	VectorCopy(pm->ps->velocity, primal_velocity);
 
@@ -111,7 +106,6 @@ qboolean    PM_SlideMove(qboolean gravity)
 
 	for (bumpcount = 0 ; bumpcount < numbumps ; bumpcount++)
 	{
-
 		// calculate position we are trying to move to
 		VectorMA(pm->ps->origin, time_left, pm->ps->velocity, end);
 
@@ -157,11 +151,10 @@ qboolean    PM_SlideMove(qboolean gravity)
 			return qtrue;
 		}
 
-		//
 		// if this is the same plane we hit before, nudge velocity
 		// out along it, which fixes some epsilon issues with
 		// non-axial planes
-		//
+
 		for (i = 0 ; i < numplanes ; i++)
 		{
 			if (DotProduct(trace.plane.normal, planes[i]) > 0.99)
@@ -201,9 +194,7 @@ qboolean    PM_SlideMove(qboolean gravity)
 		VectorCopy(trace.plane.normal, planes[numplanes]);
 		numplanes++;
 
-		//
 		// modify velocity so it parallels all of the clip planes
-		//
 
 		// find a plane that it enters
 		for (i = 0 ; i < numplanes ; i++)
@@ -301,7 +292,6 @@ qboolean    PM_SlideMove(qboolean gravity)
 /*
 ==================
 PM_StepSlideMove
-
 ==================
 */
 void PM_StepSlideMove(qboolean gravity)
@@ -309,9 +299,7 @@ void PM_StepSlideMove(qboolean gravity)
 	vec3_t  start_o, start_v;
 	vec3_t  down_o, down_v;
 	trace_t trace;
-//  float       down_dist, up_dist;
-//  vec3_t      delta, delta2;
-	vec3_t up, down;
+	vec3_t  up, down;
 
 	VectorCopy(pm->ps->origin, start_o);
 	VectorCopy(pm->ps->velocity, start_v);
@@ -438,9 +426,8 @@ void PM_StepSlideMove(qboolean gravity)
 #endif
 	{
 		// use the step move
-		float delta;
+		float delta = pm->ps->origin[2] - start_o[2];
 
-		delta = pm->ps->origin[2] - start_o[2];
 		if (delta > 2)
 		{
 			if (delta < 7)

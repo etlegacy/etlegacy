@@ -37,7 +37,6 @@
 #include "g_etbot_interface.h"
 #endif
 
-// Gordon
 // What we need....
 // invite <clientname|number>
 // apply <fireteamname|number>
@@ -261,7 +260,7 @@ int G_FindFreeFireteamIdent(team_t team)
 		}
 	}
 
-	// Gordon: this should never happen
+	// this should never happen
 	return -1;
 }
 
@@ -577,7 +576,7 @@ void G_InviteToFireTeam(int entityNum, int otherEntityNum)
 
 	if (g_entities[otherEntityNum].r.svFlags & SVF_BOT)
 	{
-		// Gordon: bots auto join
+		// bots auto join
 		G_AddClientToFireteam(otherEntityNum, entityNum);
 	}
 	else

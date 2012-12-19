@@ -702,7 +702,7 @@ void SP_trigger_heal(gentity_t *self)
 	// healtotal specifies the maximum amount of health this trigger area restores
 	G_SpawnString("healtotal", "0", &spawnstr);
 	healvalue = atoi(spawnstr);
-	// Gordon: -9999 means infinite now
+	// -9999 means infinite now
 	self->health = healvalue;
 	if (self->health <= 0)
 	{
@@ -800,7 +800,7 @@ void ammo_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-	// Gordon: if low, just give out what's left
+	// if low, just give out what's left
 	if (self->health == -9999)
 	{
 		count = clientcount;
@@ -895,7 +895,7 @@ void SP_trigger_ammo(gentity_t *self)
 	// ammototal specifies the maximum amount of ammo this trigger contains
 	G_SpawnString("ammototal", "0", &spawnstr);
 	ammovalue = atoi(spawnstr);
-	// Gordon: -9999 means infinite now
+	// -9999 means infinite now
 	self->health = ammovalue;
 	if (self->health <= 0)
 	{
@@ -972,7 +972,7 @@ void SP_func_timer(gentity_t *self)
 
 	if (self->random >= self->wait)
 	{
-		self->random = self->wait - (FRAMETIME / 1000.f);   //Gordon div 1000 for milisecs...*cough*
+		self->random = self->wait - (FRAMETIME / 1000.f);   //  div 1000 for milisecs...*cough*
 		G_Printf("func_timer at %s has random >= wait\n", vtos(self->s.origin));
 	}
 
@@ -985,7 +985,7 @@ void SP_func_timer(gentity_t *self)
 	self->r.svFlags = SVF_NOCLIENT;
 }
 
-//---- (SA) Wolf triggers
+// Wolf triggers
 
 /*QUAKED trigger_once (.5 .5 .5) ? AI_Touch
 Must be targeted at one or more entities.
@@ -1002,7 +1002,7 @@ void SP_trigger_once(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-// DHM - Nerve :: Multiplayer triggers
+// Multiplayer triggers
 
 #define RED_FLAG 1
 #define BLUE_FLAG 2
@@ -1028,7 +1028,7 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 			other->client->speedScale              = 0;
 		}
 
-		AddScore(other, ent->accuracy);   // JPW NERVE set from map, defaults to 20
+		AddScore(other, ent->accuracy);   // set from map, defaults to 20
 
 		tmp         = ent->parent;
 		ent->parent = other;
@@ -1056,7 +1056,7 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 			other->client->speedScale               = 0;
 		}
 
-		AddScore(other, ent->accuracy);   // JPW NERVE set from map, defaults to 20
+		AddScore(other, ent->accuracy);   // set from map, defaults to 20
 
 		tmp         = ent->parent;
 		ent->parent = other;
@@ -1092,7 +1092,7 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 		other->client->ps.powerups[PW_REDFLAG] = 0;
 		other->client->speedScale              = 0;
 
-		AddScore(other, ent->accuracy);   // JPW NERVE set from map, defaults to 20
+		AddScore(other, ent->accuracy);   // set from map, defaults to 20
 
 		tmp         = ent->parent;
 		ent->parent = other;
@@ -1112,7 +1112,7 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 		other->client->ps.powerups[PW_BLUEFLAG] = 0;
 		other->client->speedScale               = 0;
 
-		AddScore(other, ent->accuracy);   // JPW NERVE set from map, defaults to 20
+		AddScore(other, ent->accuracy);   // set from map, defaults to 20
 
 		tmp         = ent->parent;
 		ent->parent = other;
@@ -1140,14 +1140,14 @@ BLUE_FLAG -- only trigger if player is carrying blue flag
 */
 void SP_trigger_flagonly(gentity_t *ent)
 {
-	char *scorestring; // JPW NERVE
+	char *scorestring;
 	ent->touch = Touch_flagonly;
 
 	InitTrigger(ent);
 
-	// JPW NERVE -- if this trigger has a "score" field set, then completing an objective
-	//  inside of this field will add "score" to the right player team.  storing this
-	//  in ent->accuracy since that's unused.
+	// if this trigger has a "score" field set, then completing an objective
+	// inside of this field will add "score" to the right player team.  storing this
+	// in ent->accuracy since that's unused.
 	G_SpawnString("score", "20", &scorestring);
 	ent->accuracy = atof(scorestring);
 	ent->s.eType  = ET_TRIGGER_FLAGONLY;
@@ -1169,12 +1169,12 @@ BLUE_FLAG -- only trigger if player is carrying blue flag
 */
 void SP_trigger_flagonly_multiple(gentity_t *ent)
 {
-	char *scorestring; // JPW NERVE
+	char *scorestring;
 	ent->touch = Touch_flagonly_multiple;
 
 	InitTrigger(ent);
 
-	// JPW NERVE -- if this trigger has a "score" field set, then completing an objective
+	// if this trigger has a "score" field set, then completing an objective
 	//  inside of this field will add "score" to the right player team.  storing this
 	//  in ent->accuracy since that's unused.
 	G_SpawnString("score", "20", &scorestring);
@@ -1187,7 +1187,7 @@ void SP_trigger_flagonly_multiple(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-// NERVE - SMF - spawn an explosive indicator
+// spawn an explosive indicator
 void explosive_indicator_think(gentity_t *ent)
 {
 	gentity_t *parent;
@@ -1229,7 +1229,7 @@ void explosive_indicator_think(gentity_t *ent)
 	}
 }
 
-// Arnout: spawn a constructible indicator
+// spawn a constructible indicator
 void constructible_indicator_think(gentity_t *ent)
 {
 	gentity_t *parent;
@@ -1247,7 +1247,6 @@ void constructible_indicator_think(gentity_t *ent)
 		}
 	}
 
-	// Arnout: why are we checking for the classname?
 	if (!parent->inuse || !parent->r.linked || (constructible && constructible->s.angles2[1] != 0))
 	{
 		// update our map
@@ -1308,7 +1307,7 @@ void Touch_ObjectiveInfo(gentity_t *ent, gentity_t *other, trace_t *trace)
 	other->client->touchingTOI = ent;
 }
 
-// Arnout: links the trigger to it's objective, determining if it's a func_explosive
+// links the trigger to it's objective, determining if it's a func_explosive
 // of func_constructible and spawning the right indicator
 void Think_SetupObjectiveInfo(gentity_t *ent)
 {
@@ -1321,7 +1320,7 @@ void Think_SetupObjectiveInfo(gentity_t *ent)
 
 	if (ent->target_ent->s.eType == ET_EXPLOSIVE)
 	{
-		// Arnout: this is for compass usage
+		// this is for compass usage
 		if ((ent->spawnflags & AXIS_OBJECTIVE) || (ent->spawnflags & ALLIED_OBJECTIVE))
 		{
 			gentity_t *e;
@@ -1421,7 +1420,7 @@ void Think_SetupObjectiveInfo(gentity_t *ent)
 		// if already constructed (in case of START_BUILT)
 		if (constructibles[0]->s.angles2[1] == 0)
 		{
-			// Arnout: spawn a constructible icon - this is for compass usage
+			// spawn a constructible icon - this is for compass usage
 			gentity_t *e;
 			e = G_Spawn();
 
@@ -1523,7 +1522,7 @@ void SP_trigger_objective_info(gentity_t *ent)
 		}
 	}
 
-	// Gordon: for specifying which commandmap objectives this entity "belongs" to
+	// for specifying which commandmap objectives this entity "belongs" to
 	G_SpawnInt("objflags", "0", &objflags);
 
 	if (G_SpawnString("customimage", "", &customimage))
@@ -1573,9 +1572,9 @@ void SP_trigger_objective_info(gentity_t *ent)
 		G_Error("Exceeded maximum number of 'trigger_objective_info' entities\n");
 	}
 
-	// JPW NERVE -- if this trigger has a "score" field set, then blowing up an objective
-	//  inside of this field will add "score" to the right player team.  storing this
-	//  in ent->accuracy since that's unused.
+	// if this trigger has a "score" field set, then blowing up an objective
+	// inside of this field will add "score" to the right player team.  storing this
+	// in ent->accuracy since that's unused.
 	G_SpawnString("score", "0", &scorestring);
 	ent->accuracy = atof(scorestring);
 

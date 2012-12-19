@@ -891,7 +891,7 @@ void Svcmd_ForceTeam_f(void)
 ============
 Svcmd_StartMatch_f
 
-NERVE - SMF - starts match if in tournament mode
+starts match if in tournament mode
 ============
 */
 void Svcmd_StartMatch_f(void)
@@ -953,7 +953,7 @@ void Svcmd_ResetMatch_f(qboolean fDoReset, qboolean fDoRestart)
 ============
 Svcmd_SwapTeams_f
 
-NERVE - SMF - swaps all clients to opposite team
+swaps all clients to opposite team
 ============
 */
 void Svcmd_SwapTeams_f(void)
@@ -1392,7 +1392,6 @@ qboolean ConsoleCommand(void)
 		return qtrue;
 	}
 
-	// NERVE - SMF
 	if (Q_stricmp(cmd, "start_match") == 0)
 	{
 		Svcmd_StartMatch_f();
@@ -1416,8 +1415,6 @@ qboolean ConsoleCommand(void)
 		Svcmd_ShuffleTeams_f();
 		return qtrue;
 	}
-
-	// -NERVE - SMF
 
 	if (Q_stricmp(cmd, "makeReferee") == 0)
 	{

@@ -284,9 +284,9 @@ void Weapon_Medic(gentity_t *ent)
 	ent2            = LaunchItem(item, tosspos, velocity, ent->s.number);
 	ent2->think     = MagicSink;
 	ent2->nextthink = level.time + 30000;
-	//  ent2->timestamp = level.time + 31200;
+	//ent2->timestamp = level.time + 31200;
 
-	ent2->parent    = ent; // JPW NERVE so we can score properly later
+	ent2->parent    = ent; // so we can score properly later
 	ent2->s.teamNum = ent->client->sess.sessionTeam;
 
 #ifdef FEATURE_OMNIBOT
@@ -352,7 +352,7 @@ void Weapon_MagicAmmo(gentity_t *ent)
 	trap_EngineerTrace(&tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
 	if (tr.startsolid)
 	{
-		// Arnout: this code is a bit more solid than the previous code
+		// this code is a bit more solid than the previous code
 		VectorCopy(forward, viewpos);
 		VectorNormalizeFast(viewpos);
 		VectorMA(ent->r.currentOrigin, -24.f, viewpos, viewpos);
@@ -400,7 +400,7 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	qboolean  usedSyringe = qfalse;
 	int       ammo[MAX_WEAPONS];        // total amount of ammo
 	int       ammoclip[MAX_WEAPONS];    // ammo in clip
-	int       weapons[MAX_WEAPONS / (sizeof(int) * 8)]; // JPW NERVE 64 bits for weapons held
+	int       weapons[MAX_WEAPONS / (sizeof(int) * 8)]; // 64 bits for weapons held
 	gentity_t *te;
 
 	// heal the dude
@@ -1130,7 +1130,7 @@ static qboolean TryConstructing(gentity_t *ent)
 			constructible->s.angles2[1] = 1;
 		}
 
-		// Gordon: removing messages for now
+		// removing messages for now
 		/*      if( ent->client->touchingTOI->spawnflags & 4 ) { // MESSAGE_OVERRIDE
 		            gentity_t* pm = G_PopupMessage( PM_CONSTRUCTION );
 		            pm->s.effect3Time = G_StringIndex( ent->client->touchingTOI->spawnitem );
@@ -1149,7 +1149,7 @@ static qboolean TryConstructing(gentity_t *ent)
 		G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, constructible->constructibleStats.constructxpbonus, "finishing a construction");
 
 		// unlink the objective info to get rid of the indicator for now
-		// Arnout: don't unlink, we still want the location popup. Instead, constructible_indicator_think got changed to free
+		// don't unlink, we still want the location popup. Instead, constructible_indicator_think got changed to free
 		// the indicator when the constructible is constructed
 		//if( constructible->parent )
 		//  trap_UnlinkEntity( constructible->parent );
@@ -1368,7 +1368,7 @@ void AutoBuildConstruction(gentity_t *constructible)
 	}
 
 	// unlink the objective info to get rid of the indicator for now
-	// Arnout: don't unlink, we still want the location popup. Instead, constructible_indicator_think got changed to free
+	// don't unlink, we still want the location popup. Instead, constructible_indicator_think got changed to free
 	// the indicator when the constructible is constructed
 	//          if( constructible->parent )
 	//              trap_UnlinkEntity( constructible->parent );
@@ -1664,7 +1664,7 @@ void Weapon_Engineer(gentity_t *ent)
 
 			if (traceEnt->sound3to2 != ent->client->sess.sessionTeam)
 			{
-				AddScore(ent, WOLF_REPAIR_BONUS);   // JPW NERVE props to the E for the fixin'
+				AddScore(ent, WOLF_REPAIR_BONUS);   // props to the E for the fixin'
 				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f);
 				G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f, "repairing a MG42");
 			}
@@ -1727,7 +1727,7 @@ void Weapon_Engineer(gentity_t *ent)
 				ent->client->sess.aWeaponStats[WS_LANDMINE].atts--;
 				return;
 
-				// rain - #384 - check landmine team so that enemy mines can be disarmed
+				// check landmine team so that enemy mines can be disarmed
 				// even if you're using all of yours :x
 			}
 			else if (G_CountTeamLandmines(ent->client->sess.sessionTeam) >= MAX_TEAM_LANDMINES && G_LandmineTeam(traceEnt) == ent->client->sess.sessionTeam)
@@ -2077,7 +2077,7 @@ evilbanigoto:
 							continue;
 						}
 
-						// Arnout - only if it targets a func_explosive
+						// only if it targets a func_explosive
 						if (hit->target_ent && Q_stricmp(hit->target_ent->classname, "func_explosive"))
 						{
 							continue;
@@ -2969,7 +2969,7 @@ void Weapon_Artillery(gentity_t *ent)
 		{
 			bomb->nextthink = level.time + 8950 + 2000 * i + crandom() * 800;
 
-			// Gordon: for explosion type
+			// for explosion type
 			bomb->accuracy     = 2;
 			bomb->classname    = "air strike";
 			bomb->damage       = 0;
@@ -3722,7 +3722,6 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 		upangle = .1;
 	}
 
-	// pineapples are not thrown as far as mashers // Gordon: um, no?
 	if (grenType == WP_GRENADE_LAUNCHER)
 	{
 		upangle *= 900;
@@ -3739,7 +3738,7 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 	{
 		upangle *= 900;
 	}
-	else     // WP_DYNAMITE // Gordon: or WP_LANDMINE / WP_SATCHEL
+	else     // WP_DYNAMITE / WP_LANDMINE / WP_SATCHEL
 	{
 		upangle *= 400;
 	}
@@ -4197,7 +4196,7 @@ void FireWeapon(gentity_t *ent)
 	{
 		aimSpreadScale = ent->client->currentAimSpreadScale;
 		// add accuracy factor for AI
-		aimSpreadScale += 0.15f; // (SA) just adding a temp /maximum/ accuracy for player (this will be re-visited in greater detail :)
+		aimSpreadScale += 0.15f; // just adding a temp /maximum/ accuracy for player (this will be re-visited in greater detail :)
 		if (aimSpreadScale > 1)
 		{
 			aimSpreadScale = 1.0f;  // still cap at 1.0
@@ -4461,7 +4460,7 @@ void FireWeapon(gentity_t *ent)
 
 			if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
 			{
-				// rain - bug #202 - use 33%, not 66%, when upgraded.
+				// use 33%, not 66%, when upgraded.
 				// do not penalize the happy fun engineer.
 				ent->client->ps.classWeaponTime += .33f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
 			}

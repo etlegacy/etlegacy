@@ -251,7 +251,7 @@ typedef enum
 
 	G_GETTAG,
 
-	G_REGISTERTAG,      // Gordon: load a serverside tag
+	G_REGISTERTAG,      // load a serverside tag
 
 	G_REGISTERSOUND,    // register the sound
 	G_GET_SOUND_LENGTH, // get the length of the sound

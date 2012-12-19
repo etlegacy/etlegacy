@@ -47,11 +47,10 @@
  */
 void P_DamageFeedback(gentity_t *player)
 {
-	gclient_t *client;
+	gclient_t *client = player->client;
 	float     count;
 	vec3_t    angles;
 
-	client = player->client;
 	if (client->ps.pm_type == PM_DEAD)
 	{
 		return;
@@ -88,7 +87,7 @@ void P_DamageFeedback(gentity_t *player)
 	}
 
 	// play an apropriate pain sound
-	if ((level.time > player->pain_debounce_time) && !(player->flags & FL_GODMODE) && !(player->s.powerups & PW_INVULNERABLE))            //----(SA)
+	if ((level.time > player->pain_debounce_time) && !(player->flags & FL_GODMODE) && !(player->s.powerups & PW_INVULNERABLE))
 	{
 		player->pain_debounce_time = level.time + 700;
 		G_AddEvent(player, EV_PAIN, player->health);
@@ -103,7 +102,7 @@ void P_DamageFeedback(gentity_t *player)
 	client->damage_knockback = 0;
 }
 
-#define MIN_BURN_INTERVAL 399 // JPW NERVE set burn timeinterval so we can do more precise damage (was 199 old model)
+#define MIN_BURN_INTERVAL 399 // set burn timeinterval so we can do more precise damage (was 199 old model)
 
 /**
  * @brief Check for lava/slime contents and drowning
@@ -135,8 +134,6 @@ void P_WorldEffects(gentity_t *ent)
 			}
 			else
 			{
-
-
 				// drown!
 				ent->client->airOutTime += 1000;
 				if (ent->health > 0)
@@ -191,13 +188,13 @@ void P_WorldEffects(gentity_t *ent)
 		}
 	}
 
-	// check for burning from flamethrower - JPW NERVE MP way
+	// check for burning from flamethrower - MP way
 	if (ent->s.onFireEnd && ent->client)
 	{
 		if (level.time - ent->client->lastBurnTime >= MIN_BURN_INTERVAL)
 		{
 
-			// JPW NERVE server-side incremental damage routine / player damage/health is int (not float)
+			// server-side incremental damage routine / player damage/health is int (not float)
 			// so I can't allocate 1.5 points per server tick, and 1 is too weak and 2 is too strong.
 			// solution: allocate damage far less often (MIN_BURN_INTERVAL often) and do more damage.
 			// That way minimum resolution (1 point) damage changes become less critical.
@@ -207,7 +204,7 @@ void P_WorldEffects(gentity_t *ent)
 			{
 				gentity_t *attacker;
 				attacker = g_entities + ent->flameBurnEnt;
-				G_Damage(ent, attacker, attacker, NULL, NULL, 5, DAMAGE_NO_KNOCKBACK, MOD_FLAMETHROWER);   // JPW NERVE was 7
+				G_Damage(ent, attacker, attacker, NULL, NULL, 5, DAMAGE_NO_KNOCKBACK, MOD_FLAMETHROWER);   //  was 7
 			}
 		}
 	}
@@ -415,7 +412,7 @@ void G_TouchTriggers(gentity_t *ent)
 		return;
 	}
 
-	// Arnout: reset the pointer that keeps track of trigger_objective_info tracking
+	// reset the pointer that keeps track of trigger_objective_info tracking
 	ent->client->touchingTOI = NULL;
 
 	// dead clients don't activate triggers!
@@ -446,8 +443,7 @@ void G_TouchTriggers(gentity_t *ent)
 			continue;
 		}
 
-		// Arnout: invisible entities can't be touched
-		// Gordon: radiant tabs arnout! ;)
+		// invisible entities can't be touched
 		if (hit->entstate == STATE_INVISIBLE ||
 		    hit->entstate == STATE_UNDERCONSTRUCTION)
 		{
@@ -474,7 +470,7 @@ void G_TouchTriggers(gentity_t *ent)
 		}
 		else
 		{
-			// MrE: always use capsule for player
+			// always use capsule for player
 			if (!trap_EntityContactCapsule(mins, maxs, hit))
 			{
 				//if ( !trap_EntityContact( mins, maxs, hit ) ) {
@@ -499,8 +495,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 
 	client = ent->client;
 
-	// rain - #480 - sanity check - check .active in case the client sends us
-	// something completely bogus
+	// sanity check - check .active in case the client sends us something completely bogus
 	crosshairEnt = &g_entities[ent->client->ps.identifyClient];
 
 	if (crosshairEnt->inuse && crosshairEnt->client &&
@@ -526,7 +521,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		client->ps.speed   = 800; // was: 400 // faster than normal
 		if (client->ps.sprintExertTime)
 		{
-			client->ps.speed *= 3;  // (SA) allow sprint in free-cam mode
+			client->ps.speed *= 3;  // allow sprint in free-cam mode
 
 
 		}
@@ -553,8 +548,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 
 		Pmove(&pm);
 
-		// Rafael - Activate
-		// Ridah, made it a latched event (occurs on keydown only)
+		// Activate - made it a latched event (occurs on keydown only)
 		if (client->latched_buttons & BUTTON_ACTIVATE)
 		{
 			Cmd_Activate_f(ent);
@@ -578,7 +572,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	client->oldwbuttons = client->wbuttons;
 	client->wbuttons    = ucmd->wbuttons;
 
-	// MV clients use these buttons locally for other things
+	// MV clients use these buttons locally for other things @multiview
 	if (client->pers.mvCount < 1)
 	{
 		// attack button cycles through spectators
@@ -682,7 +676,6 @@ qboolean ClientInactivityTimer(gclient_t *client)
 void ClientTimerActions(gentity_t *ent, int msec)
 {
 	gclient_t *client;
-
 	client                = ent->client;
 	client->timeResidual += msec;
 
@@ -750,11 +743,9 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 {
 	int       i;
 	int       event;
-	gclient_t *client;
+	gclient_t *client = ent->client;
 	int       damage;
 	vec3_t    dir;
-
-	client = ent->client;
 
 	if (oldEventSequence < client->ps.eventSequence - MAX_EVENTS)
 	{
@@ -819,7 +810,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 
 		case EV_FIRE_WEAPON_MG42:
 
-			// Gordon: reset player disguise on stealing docs
+			// reset player disguise on stealing docs
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 			mg42_fire(ent);
@@ -832,7 +823,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 
 			break;
 		case EV_FIRE_WEAPON_MOUNTEDMG42:
-			// Gordon: reset player disguise on stealing docs
+			// reset player disguise on stealing docs
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 			mountedmg42_fire(ent);
@@ -846,7 +837,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 
 		case EV_FIRE_WEAPON_AAGUN:
 
-			// Gordon: reset player disguise on stealing docs
+			// reset player disguise on stealing docs
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 			aagun_fire(ent);
@@ -862,44 +853,6 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			break;
 		}
 	}
-
-}
-
-/**
- * @param[in,out] ps Player State
- */
-void SendPendingPredictableEvents(playerState_t *ps)
-{
-	/*
-	gentity_t *t;
-	int event, seq;
-	int extEvent, number;
-
-	// if there are still events pending
-	if (ps->entityEventSequence < ps->eventSequence)
-	{
-	    // create a temporary entity for this event which is sent to everyone
-	    // except the client generated the event
-	    seq = ps->entityEventSequence & (MAX_EVENTS-1);
-	    event = ps->events[seq] | ((ps->entityEventSequence & 3) << 8);
-	    // set external event to zero before calling BG_PlayerStateToEntityState
-	    extEvent = ps->externalEvent;
-	    ps->externalEvent = 0;
-	    // create temporary entity for event
-	    t = G_TempEntity( ps->origin, event );
-	    number = t->s.number;
-	    BG_PlayerStateToEntityState( ps, &t->s, qtrue );
-	    t->s.number = number;
-	    t->s.eType = ET_EVENTS + event;
-	    t->s.eFlags |= EF_PLAYER_EVENT;
-	    t->s.otherEntityNum = ps->clientNum;
-	    // send to everyone except the client who generated the event
-	    t->r.svFlags |= SVF_NOTSINGLECLIENT;
-	    t->r.singleClient = ps->clientNum;
-	    // set back external event
-	    ps->externalEvent = extEvent;
-	}
-	*/
 }
 
 /**
@@ -971,7 +924,7 @@ void WolfFindMedic(gentity_t *self)
 		if (dist < bestdist)
 		{
 			medic = cl->ps.clientNum;
-#if 0 // rain - not sure what the point of this is
+#if 0 // FIXME: not sure what the point of this is
 			vectoangles(end, temp);
 			self->client->ps.stats[STAT_DEAD_YAW] = temp[YAW];
 #endif
@@ -1186,12 +1139,12 @@ void ClientThink_real(gentity_t *ent)
 	pm.character = client->pers.character;
 	pm.cmd       = *ucmd;
 	pm.oldcmd    = client->pers.oldcmd;
-	// MrE: always use capsule for AI and player
+	// always use capsule for AI and player
 	pm.trace = trap_TraceCapsule;
 	if (pm.ps->pm_type == PM_DEAD)
 	{
 		pm.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;
-		// added:: EF_DEAD is checked for in Pmove functions, but wasn't being set until after Pmove
+		// added: EF_DEAD is checked for in Pmove functions, but wasn't being set until after Pmove
 		pm.ps->eFlags |= EF_DEAD;
 	}
 	else if (pm.ps->pm_type == PM_SPECTATOR)
@@ -1297,7 +1250,7 @@ void ClientThink_real(gentity_t *ent)
 	    break;
 	}*/
 
-	// Gordon: bit hacky, stop the slight lag from client -> server even on locahost, switching back to the weapon you were holding
+	// bit hacky, stop the slight lag from client -> server even on locahost, switching back to the weapon you were holding
 	// and then back to what weapon you should have, became VERY noticible for the kar98/carbine + gpg40, esp now i've added the
 	// animation locking
 	if (level.time - client->pers.lastSpawnTime < 1000)
@@ -1388,15 +1341,15 @@ void ClientThink_real(gentity_t *ent)
 	client->oldbuttons      = client->buttons;
 	client->buttons         = ucmd->buttons;
 	client->latched_buttons = client->buttons & ~client->oldbuttons;
-	//	client->latched_buttons |= client->buttons & ~client->oldbuttons;	// FIXME:? (SA) MP method (causes problems for us.  activate 'sticks')
+	//client->latched_buttons |= client->buttons & ~client->oldbuttons;	// FIXME:? MP method (causes problems for us.  activate 'sticks')
 
 	client->oldwbuttons      = client->wbuttons;
 	client->wbuttons         = ucmd->wbuttons;
 	client->latched_wbuttons = client->wbuttons & ~client->oldwbuttons;
-	//	client->latched_wbuttons |= client->wbuttons & ~client->oldwbuttons;	// FIXME:? (SA) MP method
+	//client->latched_wbuttons |= client->wbuttons & ~client->oldwbuttons;	// FIXME:? MP method
 
-	// Rafael - Activate
-	// Ridah, made it a latched event (occurs on keydown only)
+	// Activate
+	// made it a latched event (occurs on keydown only)
 	if (client->latched_buttons & BUTTON_ACTIVATE)
 	{
 		Cmd_Activate_f(ent);
@@ -1497,9 +1450,8 @@ void ClientThink_cmd(gentity_t *ent, usercmd_t *cmd)
  */
 void ClientThink(int clientNum)
 {
-	gentity_t *ent;
+	gentity_t *ent = g_entities + clientNum;
 
-	ent                      = g_entities + clientNum;
 	ent->client->pers.oldcmd = ent->client->pers.cmd;
 	trap_GetUsercmd(clientNum, &ent->client->pers.cmd);
 
@@ -1529,7 +1481,7 @@ void ClientThink(int clientNum)
  */
 void G_RunClient(gentity_t *ent)
 {
-	// Gordon: special case for uniform grabbing
+	// special case for uniform grabbing
 	if (ent->client->pers.cmd.buttons & BUTTON_ACTIVATE)
 	{
 		Cmd_Activate2_f(ent);
@@ -1560,7 +1512,7 @@ void G_RunClient(gentity_t *ent)
 void SpectatorClientEndFrame(gentity_t *ent)
 {
 	// @multiview
-	// OSP - specs periodically get score updates for useful demo playback info
+	// specs periodically get score updates for useful demo playback info
 	if (/*ent->client->pers.mvCount > 0 &&*/ ent->client->pers.mvScoreUpdate < level.time)
 	{
 		ent->client->pers.mvScoreUpdate = level.time + MV_SCOREUPDATE_INTERVAL;
@@ -1836,10 +1788,8 @@ void WolfReviveBbox(gentity_t *self)
 {
 	int       touch[MAX_GENTITIES];
 	int       num, i, touchnum = 0;
-	gentity_t *hit = NULL;
+	gentity_t *hit = G_TestEntityPosition(self);
 	vec3_t    mins, maxs;
-
-	hit = G_TestEntityPosition(self);
 
 	if (hit && (hit->s.number == ENTITYNUM_WORLD || (hit->client && (hit->client->ps.persistant[PERS_HWEAPON_USE] || (hit->client->ps.eFlags & EF_MOUNTEDTANK)))))
 	{
@@ -1936,7 +1886,6 @@ void ClientEndFrame(gentity_t *ent)
 		    || i == PW_OPS_DISGUISED
 		    )
 		{
-
 			continue;
 		}
 		// If we're paused, update powerup timers accordingly.
@@ -2005,24 +1954,16 @@ void ClientEndFrame(gentity_t *ent)
 	// apply all the damage taken this frame
 	P_DamageFeedback(ent);
 
-	// add the EF_CONNECTION flag if we haven't gotten commands recently
-	if (level.time - ent->client->lastCmdTime > 1000)
-	{
-		ent->s.eFlags |= EF_CONNECTION;
-	}
-	else
-	{
-		ent->s.eFlags &= ~EF_CONNECTION;
-	}
+	// mark as not missing updates initially
+	ent->client->ps.eFlags &= ~EF_CONNECTION;
 
-	ent->client->ps.stats[STAT_HEALTH] = ent->health;   // FIXME: get rid of ent->health...
-	                                                    // Gordon: WHY? other ents use it.
+	ent->client->ps.stats[STAT_HEALTH] = ent->health;
 
 	G_SetClientSound(ent);
 
 	// set the latest infor
 
-	// Ridah, fixes jittery zombie movement
+	// fixes jittery zombie movement
 	if (g_smoothClients.integer)
 	{
 		BG_PlayerStateToEntityStateExtraPolate(&ent->client->ps, &ent->s, level.time, qfalse);
@@ -2031,8 +1972,6 @@ void ClientEndFrame(gentity_t *ent)
 	{
 		BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, qfalse);
 	}
-
-	//SendPendingPredictableEvents( &ent->client->ps );
 
 	// If it's been a couple frames since being revived, and props_frame_state
 	// wasn't reset, go ahead and reset it
@@ -2058,7 +1997,7 @@ void ClientEndFrame(gentity_t *ent)
 		ent->count2 = 0;
 	}
 
-	// zinx - #280 - run touch functions here too, so movers don't have to wait
+	// run touch functions here too, so movers don't have to wait
 	// until the next ClientThink, which will be too late for some map
 	// scripts (railgun)
 	G_TouchTriggers(ent);

@@ -405,7 +405,7 @@ void G_ExplodeMissile(gentity_t *ent)
 		}
 		else
 		{
-			G_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath);      //----(SA)
+			G_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath);
 		}
 	}
 
@@ -459,7 +459,6 @@ void G_ExplodeMissile(gentity_t *ent)
 			{
 				G_FreeMapEntityData(&mapEntityData[1], mEnt);
 			}
-//bani - #238
 		}
 		else if (ent->s.weapon == WP_DYNAMITE && (ent->etpro_misc_1 & 1))         // do some scoring
 		{   // check if dynamite is in trigger_objective_info field
@@ -467,9 +466,9 @@ void G_ExplodeMissile(gentity_t *ent)
 			int       i, num, touch[MAX_GENTITIES];
 			gentity_t *hit;
 
-			ent->free = NULL; // Gordon: no defused tidy up if we exploded
+			ent->free = NULL; // no defused tidy up if we exploded
 
-			// NERVE - SMF - made this the actual bounding box of dynamite instead of range
+			// made this the actual bounding box of dynamite instead of range
 			VectorAdd(ent->r.currentOrigin, ent->r.mins, mins);
 			VectorAdd(ent->r.currentOrigin, ent->r.maxs, maxs);
 			num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
@@ -494,7 +493,7 @@ void G_ExplodeMissile(gentity_t *ent)
 
 				if (hit->target_ent)
 				{
-					// Arnout - only if it targets a func_explosive
+					// only if it targets a func_explosive
 					if (hit->target_ent->s.eType != ET_EXPLOSIVE)
 					{
 						continue;
@@ -928,7 +927,7 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 }
 
 //=============================================================================
-// DHM - Nerve :: Server side Flamethrower
+// Server side Flamethrower
 //=============================================================================
 
 // copied from cg_flamethrower.c
@@ -957,7 +956,7 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 		return;
 	}
 
-	// JPW NERVE don't catch fire if invulnerable or same team in no FF
+	// don't catch fire if invulnerable or same team in no FF
 	if (body->client)
 	{
 		if (body->client->ps.powerups[PW_INVULNERABLE] >= level.time)
@@ -967,8 +966,8 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 			return;
 		}
 
-		//      if( !self->count2 && body == self->parent )
-		//          return;
+		//if( !self->count2 && body == self->parent )
+		//  return;
 
 		if (!(g_friendlyFire.integer) && OnSameTeam(body, self->parent))
 		{
@@ -976,7 +975,7 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 		}
 	}
 
-	// JPW NERVE don't catch fire if under water or invulnerable
+	// don't catch fire if under water or invulnerable
 	if (body->waterlevel >= 3)
 	{
 		body->flameQuota  = 0;
@@ -1038,7 +1037,7 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 		return;
 	}
 
-	// JPW NERVE -- do a trace to see if there's a wall btwn. body & flame centroid -- prevents damage through walls
+	// do a trace to see if there's a wall btwn. body & flame centroid -- prevents damage through walls
 	trap_Trace(&tr, self->r.currentOrigin, NULL, NULL, point, body->s.number, MASK_SHOT);
 	if (tr.fraction < 1.0)
 	{
@@ -1126,7 +1125,7 @@ void G_RunFlamechunk(gentity_t *ent)
 	VectorScale(ent->s.pos.trDelta, 50.f / 1000.f, add);
 	VectorAdd(ent->r.currentOrigin, add, neworg);
 
-	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, neworg, ent->r.ownerNum, MASK_SHOT | MASK_WATER);   // JPW NERVE
+	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, neworg, ent->r.ownerNum, MASK_SHOT | MASK_WATER);
 
 	if (tr.startsolid)
 	{
@@ -1195,7 +1194,7 @@ void G_RunFlamechunk(gentity_t *ent)
 	}
 
 	// Remove after 2 seconds
-	if (level.time - ent->timestamp > (FLAME_LIFETIME - 150))       // JPW NERVE increased to 350 from 250 to match visuals better
+	if (level.time - ent->timestamp > (FLAME_LIFETIME - 150))       // increased to 350 from 250 to match visuals better
 	{
 		G_FreeEntity(ent);
 		return;
@@ -1276,7 +1275,7 @@ void DynaSink(gentity_t *self)
 
 void DynaFree(gentity_t *self)
 {
-	// Gordon - see if the dynamite was planted near a constructable object that would have been destroyed
+	// see if the dynamite was planted near a constructable object that would have been destroyed
 	int       entityList[MAX_GENTITIES];
 	int       numListedEntities;
 	int       e;
@@ -1325,7 +1324,7 @@ void DynaFree(gentity_t *self)
 G_FadeItems
 
 remove any items that the player should no longer have, on disconnect/class change etc
-Gordon: changed to just set the parent to NULL
+changed to just set the parent to NULL
 ==========
 */
 void G_FadeItems(gentity_t *ent, int modType)
@@ -1576,7 +1575,7 @@ void LandMineTrigger(gentity_t *self)
 	self->nextthink  = level.time + FRAMETIME;
 	self->think      = LandminePostThink;
 	self->s.teamNum += 8;
-	// rain - communicate trigger time to client
+	// communicate trigger time to client
 	self->s.time = level.time;
 }
 
@@ -1614,7 +1613,7 @@ qboolean sEntWillTriggerMine(gentity_t *ent, gentity_t *mine)
 	return qfalse;
 }
 
-// Gordon: Landmine waits for 2 seconds then primes, which sets think to checking for "enemies"
+// Landmine waits for 2 seconds then primes, which sets think to checking for "enemies"
 void G_LandmineThink(gentity_t *self)
 {
 	int       entityList[MAX_GENTITIES];
@@ -1628,7 +1627,7 @@ void G_LandmineThink(gentity_t *self)
 
 	if (level.time - self->missionLevel > 200)
 	{
-		self->s.density = 0; // Gordon: time out the covert ops visibile thing, or we could get other clients being able to see mine later, etc
+		self->s.density = 0; // time out the covert ops visibile thing, or we could get other clients being able to see mine later, etc
 	}
 
 	VectorSubtract(self->r.currentOrigin, range, mins);
@@ -1663,7 +1662,7 @@ void G_LandmineThink(gentity_t *self)
 		}
 #endif
 
-		// TAT 11/20/2002 use the unified trigger check to see if we are close enough to prime the mine
+		// use the unified trigger check to see if we are close enough to prime the mine
 		if (sEntWillTriggerMine(ent, self))
 		{
 			trigger = qtrue;
@@ -1693,7 +1692,7 @@ void LandminePostThink(gentity_t *self)
 
 	if (level.time - self->missionLevel > 5000)
 	{
-		self->s.density = 0; // Gordon: time out the covert ops visibile thing, or we could get other clients being able to see mine later, etc
+		self->s.density = 0; // time out the covert ops visibile thing, or we could get other clients being able to see mine later, etc
 	}
 
 	VectorSubtract(self->r.currentOrigin, range, mins);
@@ -1705,7 +1704,7 @@ void LandminePostThink(gentity_t *self)
 	{
 		ent = &g_entities[entityList[i]];
 
-		// TAT 11/20/2002 use the unifed trigger check to see if we're still standing on the mine, so we don't set it off
+		// use the unifed trigger check to see if we're still standing on the mine, so we don't set it off
 		if (sEntWillTriggerMine(ent, self))
 		{
 			trigger = qtrue;
@@ -1845,7 +1844,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	bolt->parent     = self;
 	bolt->s.teamNum  = self->client->sess.sessionTeam;
 
-	// JPW NERVE -- commented out bolt->damage and bolt->splashdamage, override with G_GetWeaponDamage()
+	// commented out bolt->damage and bolt->splashdamage, override with G_GetWeaponDamage()
 	// so it works with different netgame balance.  didn't uncomment bolt->damage on dynamite 'cause its so *special*
 	bolt->damage       = G_GetWeaponDamage(grenadeWPID); // overridden for dynamite
 	bolt->splashDamage = G_GetWeaponDamage(grenadeWPID);
@@ -1871,7 +1870,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	case WP_SMOKE_BOMB:
 		bolt->classname = "smoke_bomb";
 		bolt->s.eFlags  = EF_BOUNCE_HALF | EF_BOUNCE;
-		// rain - this is supposed to be MOD_SMOKEBOMB, not SMOKEGRENADE
+		// this is supposed to be MOD_SMOKEBOMB, not SMOKEGRENADE
 		bolt->methodOfDeath = MOD_SMOKEBOMB;
 		break;
 	case WP_GRENADE_LAUNCHER:
@@ -1891,7 +1890,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	case WP_SMOKE_MARKER:
 		bolt->classname = "grenade";
 		bolt->s.eFlags  = EF_BOUNCE_HALF | EF_BOUNCE;
-		// rain - properly set MOD
+		// properly set MOD
 		bolt->methodOfDeath       = MOD_SMOKEGRENADE;
 		bolt->splashMethodOfDeath = MOD_SMOKEGRENADE;
 		break;
@@ -1941,7 +1940,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		break;
 	case WP_DYNAMITE:
 
-		bolt->accuracy = 0;     // JPW NERVE sets to score below if dynamite is in trigger_objective_info & it's an objective
+		bolt->accuracy = 0;     // sets to score below if dynamite is in trigger_objective_info & it's an objective
 		trap_SendServerCommand(self - g_entities, "cp \"Dynamite is set, but NOT armed!\"");
 		// differentiate non-armed dynamite with non-pulsing dlight
 		bolt->s.teamNum           = self->client->sess.sessionTeam + 4;
@@ -1960,7 +1959,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 
 		// nope - this causes the dynamite to impact on the players bb when he throws it.
 		// will try setting it when it settles
-//          bolt->r.ownerNum            = ENTITYNUM_WORLD;  // (SA) make the world the owner of the dynamite, so the player can shoot it without modifying the bullet code to ignore players id for hits
+		//bolt->r.ownerNum            = ENTITYNUM_WORLD;  // make the world the owner of the dynamite, so the player can shoot it without modifying the bullet code to ignore players id for hits
 
 		// small target cube
 		VectorSet(bolt->r.mins, -12, -12, 0);
@@ -1970,7 +1969,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		break;
 	}
 
-	// JPW NERVE -- blast radius proportional to damage
+	// blast radius proportional to damage
 	bolt->splashRadius = G_GetWeaponDamage(grenadeWPID);
 
 	bolt->clipmask = MASK_MISSILESHOT;
@@ -2017,7 +2016,7 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.eType   = ET_MISSILE;
 	bolt->r.svFlags = SVF_BROADCAST;
 
-	//DHM - Nerve :: Use the correct weapon in multiplayer
+	// Use the correct weapon in multiplayer
 	bolt->s.weapon = self->s.weapon;
 
 	bolt->r.ownerNum          = self->s.number;
@@ -2059,7 +2058,7 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 
 	bolt = G_Spawn();
 
-	// Gordon: for explosion type
+	// for explosion type
 	bolt->accuracy = 3;
 
 	bolt->classname    = "flamebarrel";

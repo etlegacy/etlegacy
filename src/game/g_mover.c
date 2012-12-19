@@ -132,7 +132,7 @@ gentity_t *G_TestEntityPosition(gentity_t *ent)
 
 	if (ent->clipmask)
 	{
-//      if ( ent->r.contents == CONTENTS_CORPSE && ent->health <= 0 ) { // Arnout: players waiting to be revived are important
+//      if ( ent->r.contents == CONTENTS_CORPSE && ent->health <= 0 ) { // players waiting to be revived are important
 //      if ( ent->r.contents == CONTENTS_CORPSE ) {
 		// corpse aren't important
 		//G_Damage( ent, NULL, NULL, NULL, NULL, 99999, 0, MOD_CRUSH );
@@ -645,7 +645,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 		check = &g_entities[moveList[e]];
 
 		// the entity needs to be pushed
-		pushedStackDepth = 0;   // Arnout: new push, reset stack depth
+		pushedStackDepth = 0;   // new push, reset stack depth
 		if (G_TryPushingEntity(check, pusher, move, amove))
 		{
 
@@ -670,7 +670,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 		// move back any entities we already moved
 		// go backwards, so if the same entity was pushed
 		// twice, it goes back to the original position
-		// rain - changed the loop slightly to avoid checking an invalid
+		// changed the loop slightly to avoid checking an invalid
 		// pointer (do the -1 inside the loop, > instead of >=)
 		for (p = pushed_p ; p > pushed ; p--)
 		{
@@ -1255,7 +1255,7 @@ void Reached_BinaryMover(gentity_t *ent)
 		}
 
 		// clear the 'soft' flag
-		ent->flags &= ~FL_SOFTACTIVATE; //----(SA)  added
+		ent->flags &= ~FL_SOFTACTIVATE; // added
 
 		// close areaportals
 		if (ent->teammaster == ent || !ent->teammaster)
@@ -1268,8 +1268,8 @@ void Reached_BinaryMover(gentity_t *ent)
 		G_Error("Reached_BinaryMover: bad moverState\n");
 	}
 
-	//ent->flags &= ~(FL_KICKACTIVATE|FL_SOFTACTIVATE);   // (SA) it was not opened normally.  Clear this so it thinks it's closed normally
-	ent->flags &= ~FL_KICKACTIVATE; // (SA) it was not opened normally.  Clear this so it thinks it's closed normally
+	//ent->flags &= ~(FL_KICKACTIVATE|FL_SOFTACTIVATE);   // it was not opened normally.  Clear this so it thinks it's closed normally
+	ent->flags &= ~FL_KICKACTIVATE; // it was not opened normally.  Clear this so it thinks it's closed normally
 }
 
 /*
@@ -4615,7 +4615,7 @@ the default sounds are:
   "gibs"    - "sound/player/gibsplit1.wav"
   "brick"   - "sound/world/debris1.wav"
   "stone"   - "sound/world/stonefall.wav"
-  "fabric"  - "sound/world/metalbreak.wav"  // (SA) temp
+  "fabric"  - "sound/world/metalbreak.wav"  // temp
 "fxdensity" size of explosion 1 - 100 (default is 10)
 */
 void SP_func_explosive(gentity_t *ent)

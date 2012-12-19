@@ -151,14 +151,10 @@ Find the spot that we DON'T want to use
 #define MAX_SPAWN_POINTS    128
 gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from)
 {
-	gentity_t *spot;
+	gentity_t *spot = NULL;
 	vec3_t    delta;
-	float     dist, nearestDist;
-	gentity_t *nearestSpot;
-
-	nearestDist = 999999;
-	nearestSpot = NULL;
-	spot        = NULL;
+	float     dist, nearestDist = 999999;
+	gentity_t *nearestSpot = NULL;
 
 	while ((spot = G_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL)
 	{
@@ -512,8 +508,9 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 {
 	if (!(ent->client->ps.pm_flags & PMF_LIMBO))
 	{
-		int i, contents;
-		int startclient = ent->client->ps.clientNum;
+		gclient_t *cl;
+		int       i, contents;
+		int       startclient = ent->client->ps.clientNum;
 
 		if (ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0)
 		{
@@ -588,7 +585,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
-			gclient_t *cl = &level.clients[level.sortedClients[i]];
+			cl = &level.clients[level.sortedClients[i]];
 
 			if (((cl->ps.pm_flags & PMF_LIMBO) ||
 			     (cl->sess.sessionTeam == TEAM_SPECTATOR && cl->sess.spectatorState == SPECTATOR_FOLLOW)) &&
@@ -1888,9 +1885,7 @@ int GetIPLength(char const *ip)
 
 qboolean CompareIPNoPort(char const *ip1, char const *ip2)
 {
-	int ip1_len     = GetIPLength(ip1);
-	int ip2_len     = GetIPLength(ip2);
-	int checkLength = MIN(ip1_len, ip2_len);
+	int checkLength = MIN(GetIPLength(ip1), GetIPLength(ip2));
 
 	// Don't compare the port - just the IP
 	if (checkLength < INT_MAX && !Q_strncmp(ip1, ip2, checkLength))
@@ -2365,7 +2360,6 @@ void ClientBegin(int clientNum)
 	client->sess.botPush    = (ent->r.svFlags & SVF_BOT) ? qtrue : qfalse;
 #endif
 
-
 	ClientSpawn(ent, qfalse, qtrue, qtrue);
 
 	// Changed below for team independant maxlives
@@ -2492,13 +2486,14 @@ void ClientBegin(int clientNum)
 #endif
 }
 
+#define MAX_SPAWNPOINTFROMLIST_POINTS   16
+
 gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spawn_angles)
 {
 	char      *pStr       = list, *token;
 	gentity_t *spawnPoint = NULL, *trav;
-	#define MAX_SPAWNPOINTFROMLIST_POINTS   16
-	int valid[MAX_SPAWNPOINTFROMLIST_POINTS];
-	int numValid = 0;
+	int       valid[MAX_SPAWNPOINTFROMLIST_POINTS];
+	int       numValid = 0;
 
 	memset(valid, 0, sizeof(valid));
 
@@ -2609,7 +2604,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	}
 	else
 	{
-		// Arnout: let's just be sure it does the right thing at all times. (well maybe not the right thing, but at least not the bad thing!)
+		// let's just be sure it does the right thing at all times. (well maybe not the right thing, but at least not the bad thing!)
 		//if( client->sess.sessionTeam == TEAM_SPECTATOR || client->sess.sessionTeam == TEAM_FREE ) {
 		if (client->sess.sessionTeam != TEAM_AXIS && client->sess.sessionTeam != TEAM_ALLIES)
 		{
@@ -2842,7 +2837,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		//G_KillBox( ent );
 		trap_LinkEntity(ent);
 	}
 

@@ -271,7 +271,7 @@ void G_SetupFrustum(gentity_t *ent)
 
 void G_SetupFrustum_ForBinoculars(gentity_t *ent)
 {
-// TAT 12/26/2002 - Give bots a larger view angle through binoculars than players get - this should help the
+// Give bots a larger view angle through binoculars than players get - this should help the
 //		landmine detection...
 #define BINOCULAR_ANGLE 10.0f
 #define BOT_BINOCULAR_ANGLE 60.0f
@@ -1234,7 +1234,7 @@ void G_UpdateTeamMapData(void)
 							{
 								if ((ent2->s.teamNum < 4 || ent2->s.teamNum >= 8) && (ent2->s.teamNum % 4 != ent->client->sess.sessionTeam))
 								{
-									// TAT - as before, we can only detect a mine if we can see it from our binoculars
+									// as before, we can only detect a mine if we can see it from our binoculars
 									if (G_VisibleFromBinoculars(ent, ent2, ent2->r.currentOrigin))
 									{
 										G_UpdateTeamMapData_LandMine(ent2, f1, f2);
@@ -1333,8 +1333,8 @@ void G_UpdateTeamMapData(void)
 									} // end (G_VisibleFromBinoculars( ent, ent2, ent2->r.currentOrigin ))
 									else
 									{
-										// TAT - if we can't see the mine from our binoculars, make sure we clear out the landmineSpotted ptr,
-										//		because bots looking for mines are getting confused
+										// if we can't see the mine from our binoculars, make sure we clear out the landmineSpotted ptr,
+										// because bots looking for mines are getting confused
 										ent->client->landmineSpotted = NULL;
 									}
 								}

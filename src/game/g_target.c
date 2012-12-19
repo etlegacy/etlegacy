@@ -341,7 +341,7 @@ void SP_target_speaker(gentity_t *ent)
 		ent->s.dmgFlags = 0;
 	}
 
-	// Gordon: Volume control!, i want some cookies for this Tim! :o
+	// Volume control!, i want some cookies for this Tim! :o
 	G_SpawnInt("volume", "255", &ent->s.onFireStart);
 	if (!ent->s.onFireStart)
 	{
@@ -694,8 +694,8 @@ void target_relay_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 	{
 		if (self->key)
 		{
-			// Gordon: removed keys
-//			gitem_t *item;
+			// removed keys
+			//gitem_t *item;
 
 			if (self->key == -1)     // relay permanently locked
 			{
@@ -707,9 +707,9 @@ void target_relay_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 			}
 
 			/*
-			if(self->spawnflags & 16) {	// (SA) take key
+			if(self->spawnflags & 16) {	// take key
 			    activator->client->ps.stats[STAT_KEYS] &= ~(1<<item->giTag);
-			    // (SA) TODO: "took inventory item" sound
+			    // TODO: "took inventory item" sound
 			}*/
 		}
 	}

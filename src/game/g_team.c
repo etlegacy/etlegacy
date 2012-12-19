@@ -474,7 +474,7 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 
 	ent->parent = tmp;
 
-	// Gordon: reset player disguise on stealing docs
+	// reset player disguise on stealing docs
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 
@@ -586,13 +586,13 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 			continue;
 		}
 
-		// Arnout - modified to allow initial spawnpoints to be disabled at gamestart
+		// modified to allow initial spawnpoints to be disabled at gamestart
 		if (!(spot->spawnflags & 2))
 		{
 			continue;
 		}
 
-		// Arnout: invisible entities can't be used for spawning
+		// invisible entities can't be used for spawning
 		if (spot->entstate == STATE_INVISIBLE || spot->entstate == STATE_UNDERCONSTRUCTION)
 		{
 			continue;
@@ -610,13 +610,13 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 		spot = NULL;
 		while ((spot = G_Find(spot, FOFS(classname), classname)) != NULL)
 		{
-			// Arnout - modified to allow initial spawnpoints to be disabled at gamestart
+			// modified to allow initial spawnpoints to be disabled at gamestart
 			if (!(spot->spawnflags & 2))
 			{
 				continue;
 			}
 
-			// Arnout: invisible entities can't be used for spawning
+			// invisible entities can't be used for spawning
 			if (spot->entstate == STATE_INVISIBLE || spot->entstate == STATE_UNDERCONSTRUCTION)
 			{
 				continue;
@@ -635,7 +635,7 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 	}
 	else
 	{
-		// Gordon: adding ability to set autospawn
+		// adding ability to set autospawn
 		if (!spawnObjective)
 		{
 			switch (team)
@@ -730,7 +730,7 @@ void TeamplayInfoMessage(team_t team)
 		if (player->inuse && player->client->sess.sessionTeam == team)
 		{
 
-			// DHM - Nerve :: If in LIMBO, don't show followee's health
+			// If in LIMBO, don't show followee's health
 			if (player->client->ps.pm_flags & PMF_LIMBO)
 			{
 				h = -1;
@@ -835,7 +835,7 @@ Axis players spawn here at game start.
 */
 void SP_team_CTF_redplayer(gentity_t *ent)
 {
-	// Gordon: these are obsolete
+	// these are obsolete
 	G_Printf("^1team_ctf_*player entities are now obsolete, please remove them!\n");
 	G_FreeEntity(ent);
 	return;
@@ -846,13 +846,13 @@ Allied players spawn here at game start.
 */
 void SP_team_CTF_blueplayer(gentity_t *ent)
 {
-	// Gordon: these are obsolete
+	// these are obsolete
 	G_Printf("^1team_ctf_*player entities are now obsolete, please remove them!\n");
 	G_FreeEntity(ent);
 	return;
 }
 
-// JPW NERVE edited quaked def
+// edited quaked def
 /*QUAKED team_CTF_redspawn (1 0 0) (-16 -16 -24) (16 16 32) ? INVULNERABLE STARTACTIVE
 potential spawning position for axis team in wolfdm games.
 
@@ -940,7 +940,7 @@ void team_wolf_objective_use(gentity_t *self, gentity_t *other, gentity_t *activ
 {
 	char cs[MAX_STRING_CHARS];
 
-	// Gordon 256 is a disabled flag
+	// 256 is a disabled flag
 	if ((self->count2 & ~256) == TEAM_AXIS)
 	{
 		self->count2 = (self->count2 & 256) + TEAM_ALLIES;
@@ -1003,7 +1003,7 @@ void SP_team_WOLF_objective(gentity_t *ent)
 
 	G_SpawnString("description", "WARNING: No objective description set", &desc);
 
-	// Gordon: wtf is this g_alloced? just use a static buffer fgs...
+	// wtf is this g_alloced? just use a static buffer fgs...
 	ent->message = G_Alloc(strlen(desc) + 1);
 	Q_strncpyz(ent->message, desc, strlen(desc) + 1);
 
@@ -1118,7 +1118,7 @@ void checkpoint_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 }
 
-void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace);   // JPW NERVE
+void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace);
 
 void checkpoint_hold_think(gentity_t *self)
 {
@@ -1236,7 +1236,7 @@ void checkpoint_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	self->parent = other;
 
-	// Gordon: reset player disguise on touching flag
+	// reset player disguise on touching flag
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 	// Run script trigger
 	if (self->count == TEAM_AXIS)
@@ -1400,7 +1400,7 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 	self->nextthink = level.time + 1000;
 
 	// activate all targets
-	// Arnout - updated this to allow toggling of initial spawnpoints as well, plus now it only
+	// updated this to allow toggling of initial spawnpoints as well, plus now it only
 	// toggles spawnflags 2 for spawnpoint entities
 	if (self->target)
 	{

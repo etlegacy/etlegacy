@@ -227,7 +227,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
         playerClass = cl->sess.playerType;
     }*/
 
-	// NERVE - SMF - number of respawns left
+	// SMF - number of respawns left
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
 		if (g_entities[level.sortedClients[i]].health <= 0)
@@ -245,7 +245,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 		//unlagged - true ping
 		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
 		//ping = cl->pers.realPing < 999 ? cl->pers.realPing : 999;
-		//unlagged - true ping
+		// en unlagged - true ping
 	}
 
 	if (g_gametype.integer == GT_WOLF_LMS)
@@ -557,7 +557,7 @@ void Cmd_Give_f(gentity_t *ent)
 		return;
 	}
 
-	//----(SA)  check for an amount (like "give health 30")
+	// check for an amount (like "give health 30")
 	amt = ConcatArgs(2);
 	if (*amt)
 	{
@@ -629,7 +629,7 @@ void Cmd_Give_f(gentity_t *ent)
 
 	if (give_all || Q_stricmpn(name, "health", 6) == 0)
 	{
-		//----(SA)  modified
+		// modified
 		if (amount)
 		{
 			ent->health += amount;
@@ -719,7 +719,7 @@ void Cmd_Give_f(gentity_t *ent)
 		}
 	}
 
-	//---- (SA) Wolf keys
+	// Wolf keys
 	if (give_all || Q_stricmp(name, "keys") == 0)
 	{
 		ent->client->ps.stats[STAT_KEYS] = (1 << KEY_NUM_KEYS) - 2;
@@ -728,7 +728,6 @@ void Cmd_Give_f(gentity_t *ent)
 			return;
 		}
 	}
-	//---- (SA) end
 
 	// spawn a specific item right on the player
 	/*if ( !give_all ) {
@@ -1121,7 +1120,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 		return qfalse;
 	}
 
-	// NERVE - SMF - prevent players from switching to regain deployments
+	// prevent players from switching to regain deployments
 	if (g_gametype.integer != GT_WOLF_LMS)
 	{
 		if ((g_maxlives.integer > 0 ||
@@ -1313,7 +1312,6 @@ to free floating spectator mode
 */
 void StopFollowing(gentity_t *ent)
 {
-	// ATVI Wolfenstein Misc #474
 	// divert behaviour if TEAM_SPECTATOR, moved the code from SpectatorThink to put back into free fly correctly
 	// (I am not sure this can be called in non-TEAM_SPECTATOR situation, better be safe)
 	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
@@ -1322,7 +1320,7 @@ void StopFollowing(gentity_t *ent)
 		vec3_t    pos, angle;
 		gclient_t *client = ent->client;
 		VectorCopy(client->ps.origin, pos);
-//      pos[2] += 16; // Gordon: removing for now
+//      pos[2] += 16; // removing for now
 		VectorCopy(client->ps.viewangles, angle);
 		// Need this as it gets spec mode reset properly
 		SetTeam(ent, "s", qtrue, -1, -1, qfalse);
@@ -1332,7 +1330,7 @@ void StopFollowing(gentity_t *ent)
 	else
 	{
 		// legacy code, FIXME: useless?
-		// Gordon: no this is for limbo i'd guess
+		// no this is for limbo i'd guess
 		ent->client->sess.spectatorState = SPECTATOR_FREE;
 		ent->client->ps.clientNum        = ent - g_entities;
 	}
@@ -1717,7 +1715,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir)
 	int original;
 
 	// first set them to spectator
-	if ((ent->client->sess.spectatorState == SPECTATOR_NOT) && (!(ent->client->ps.pm_flags & PMF_LIMBO)))           // JPW NERVE for limbo state
+	if ((ent->client->sess.spectatorState == SPECTATOR_NOT) && (!(ent->client->ps.pm_flags & PMF_LIMBO))) // for limbo state
 	{
 		SetTeam(ent, "spectator", qfalse, -1, -1, qfalse);
 	}
@@ -1753,7 +1751,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir)
 			continue;
 		}
 
-		// JPW NERVE -- couple extra checks for limbo mode
+		// couple extra checks for limbo mode
 		if (ent->client->ps.pm_flags & PMF_LIMBO)
 		{
 			if (level.clients[clientnum].ps.pm_flags & PMF_LIMBO)
@@ -1836,8 +1834,8 @@ void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *
 		return;
 	}
 
-	// NERVE - SMF - if spectator, no chatting to players in WolfMP
-	if (match_mutespecs.integer > 0 && ent->client->sess.referee == 0 &&    // OSP
+	// if spectator, no chatting to players in WolfMP
+	if (match_mutespecs.integer > 0 && ent->client->sess.referee == 0 &&
 	    ((ent->client->sess.sessionTeam == TEAM_FREE && other->client->sess.sessionTeam != TEAM_FREE) ||
 	     (ent->client->sess.sessionTeam == TEAM_SPECTATOR && other->client->sess.sessionTeam != TEAM_SPECTATOR)))
 	{
@@ -1955,7 +1953,6 @@ void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0)
 	G_Say(ent, NULL, mode, ConcatArgs(((arg0) ? 0 : 1)));
 }
 
-// NERVE - SMF
 void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly)
 {
 	int  color;
@@ -2051,7 +2048,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 {
 	int j;
 
-	// DHM - Nerve :: Don't allow excessive spamming of voice chats
+	// Don't allow excessive spamming of voice chats
 	ent->voiceChatSquelch     -= (level.time - ent->voiceChatPreviousTime);
 	ent->voiceChatPreviousTime = level.time;
 
@@ -2075,9 +2072,8 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 	{
 		return;
 	}
-	// dhm
 
-	// OSP - Charge for the lame spam!
+	// Charge for the lame spam!
 	/*if(mode == SAY_ALL && (!Q_stricmp(id, "DynamiteDefused") || !Q_stricmp(id, "DynamitePlanted"))) {
 	    return;
 	}*/
@@ -2346,7 +2342,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	// If a referee, vote automatically passes. // OSP
 	if (fRefCommand)
 	{
-//      level.voteInfo.voteYes = level.voteInfo.numVotingClients + 10;  // JIC :)
+		//level.voteInfo.voteYes = level.voteInfo.numVotingClients + 10;  // JIC :)
 		// Don't announce some votes, as in comp mode, it is generally a ref
 		// who is policing people who shouldn't be joining and players don't want
 		// this sort of spam in the console
@@ -2355,7 +2351,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 			AP("cp \"^1** Referee Server Setting Change **\n\"");
 		}
 
-		// Gordon: just call the stupid thing.... don't bother with the voting faff
+		// just call the stupid thing.... don't bother with the voting faff
 		level.voteInfo.vote_fn(NULL, 0, NULL, NULL, qfalse);
 
 		G_globalSound("sound/misc/referee.wav");
@@ -2805,9 +2801,9 @@ void Cmd_StartCamera_f(gentity_t *ent)
 
 	VectorCopy(ent->r.currentOrigin, ent->client->cameraOrigin);    // backup our origin
 
-// (SA) trying this in client to avoid 1 frame of player drawing
-//  ent->client->ps.eFlags |= EF_NODRAW;
-//  ent->s.eFlags |= EF_NODRAW;
+	// trying this in client to avoid 1 frame of player drawing
+	//ent->client->ps.eFlags |= EF_NODRAW;
+	//ent->s.eFlags |= EF_NODRAW;
 }
 
 /*
@@ -2973,8 +2969,8 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 	return found;
 }
 
-// TAT 1/14/2003 - extracted out the functionality of Cmd_Activate_f from finding the object to use
-//      so we can force bots to use items, without worrying that they are looking EXACTLY at the target
+// extracted out the functionality of Cmd_Activate_f from finding the object to use
+// so we can force bots to use items, without worrying that they are looking EXACTLY at the target
 qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 {
 	qboolean found   = qfalse;
@@ -2982,7 +2978,7 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 	vec3_t   forward;       //, offset, end;
 	//trace_t       tr;
 
-	// Arnout: invisible entities can't be used
+	// invisible entities can't be used
 
 	if (traceEnt->entstate == STATE_INVISIBLE || traceEnt->entstate == STATE_UNDERCONSTRUCTION)
 	{
@@ -3030,7 +3026,7 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 			{
 				if (ent->client->pers.autoActivate == PICKUP_ACTIVATE)
 				{
-					ent->client->pers.autoActivate = PICKUP_FORCE;      //----(SA) force pickup
+					ent->client->pers.autoActivate = PICKUP_FORCE;      // force pickup
 				}
 				traceEnt->active = qtrue;
 				traceEnt->touch(traceEnt, ent, &trace);
@@ -3086,7 +3082,7 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 			ent->client->ps.weaponTime              = traceEnt->backupWeaponTime;
 			ent->client->ps.weapHeat[WP_DUMMY_MG42] = traceEnt->mg42weapHeat;
 
-			G_UseTargets(traceEnt, ent);     //----(SA) added for Mike so mounting an MG42 can be a trigger event (let me know if there's any issues with this)
+			G_UseTargets(traceEnt, ent);     // added for Mike so mounting an MG42 can be a trigger event (let me know if there's any issues with this)
 			found = qtrue;
 		}
 		else if (((Q_stricmp(traceEnt->classname, "func_door") == 0) || (Q_stricmp(traceEnt->classname, "func_door_rotating") == 0)))
@@ -3181,7 +3177,7 @@ void G_LeaveTank(gentity_t *ent, qboolean position)
 			}
 		}
 
-		VectorClear(ent->client->ps.velocity);   // Gordon: dont want them to fly away ;D
+		VectorClear(ent->client->ps.velocity);   // dont want them to fly away ;D
 		TeleportPlayer(ent, pos, ent->client->ps.viewangles);
 	}
 
@@ -3544,7 +3540,6 @@ void G_MakeReady(gentity_t *ent)
 {
 	ent->client->ps.eFlags |= EF_READY;
 	ent->s.eFlags          |= EF_READY;
-	// rain - #105 - moved this set here
 	ent->client->pers.ready = qtrue;
 }
 
@@ -3552,7 +3547,6 @@ void G_MakeUnready(gentity_t *ent)
 {
 	ent->client->ps.eFlags &= ~EF_READY;
 	ent->s.eFlags          &= ~EF_READY;
-	// rain - #105 - moved this set here
 	ent->client->pers.ready = qfalse;
 }
 
@@ -3787,7 +3781,7 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 	// make sure they go into limbo mode right away, and dont show a corpse
 	limbo(botent, qfalse);
 	// respawn the player
-	ent->client->ps.pm_flags &= ~PMF_LIMBO; // JPW NERVE turns off limbo
+	ent->client->ps.pm_flags &= ~PMF_LIMBO; // turns off limbo
 	// copy the location
 	VectorCopy(cl.ps.origin, ent->s.origin);
 	VectorCopy(cl.ps.viewangles, ent->s.angles);

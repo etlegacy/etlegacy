@@ -76,7 +76,7 @@ static float G_CmdScale(gentity_t *ent, usercmd_t *cmd)
 
 	scale /= 127.f;
 
-// JPW NERVE -- half move speed if heavy weapon is carried
+// half move speed if heavy weapon is carried
 // this is the counterstrike way of doing it -- ie you can switch to a non-heavy weapon and move at
 // full speed.  not completely realistic (well, sure, you can run faster with the weapon strapped to your
 // back than in carry position) but more fun to play.  If it doesn't play well this way we'll bog down the

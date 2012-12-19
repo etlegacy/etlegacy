@@ -214,7 +214,7 @@ void G_refAllReady_cmd(gentity_t *ent)
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
-		// rain - #105 - allow allready in intermission
+		// allow allready in intermission
 		G_refPrintf(ent, "Match already in progress!");
 		return;
 	}

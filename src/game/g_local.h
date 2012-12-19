@@ -429,8 +429,7 @@ struct gentity_s
 	qboolean back;
 	qboolean moving;
 
-	// TAT 10/13/2002 - for seek cover sequence - we need a pointer to a server entity
-	//      @ARNOUT - does this screw up the save game?
+	// for seek cover sequence - we need a pointer to a server entity
 	g_serverEntity_t *serverEntity;
 
 	// What sort of surface are we standing on?
@@ -882,7 +881,7 @@ typedef struct
 	int framenum;
 	int time;                           // in msec
 	int previousTime;                   // so movers can back up when blocked
-	int frameTime;                      // Gordon: time the frame started, for antilag stuff
+	int frameTime;                      // time the frame started, for antilag stuff
 
 	int startTime;                      // level.time the map was started
 
@@ -1155,7 +1154,7 @@ qboolean G_AllowTeamsAllowed(gentity_t *ent, gentity_t *activator);
 void G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator);
 qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon);
 void G_TeamCommand(team_t team, char *cmd);
-void G_KillBox(gentity_t *ent);
+
 gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match);
 gentity_t *G_FindByTargetname(gentity_t *from, const char *match);
 gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash);
@@ -1341,7 +1340,7 @@ void G_SendScore(gentity_t *client);
 
 // g_cmds.c
 void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText);
-void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, qboolean localize);   // JPW NERVE removed static declaration so it would link
+void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, qboolean localize);   // removed static declaration so it would link
 qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0);

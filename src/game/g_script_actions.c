@@ -2064,7 +2064,7 @@ G_ScriptAction_AlertEntity
 
   syntax: alertentity <targetname>
 
- Arnout: modified to target multiple entities with the same targetname
+modified to target multiple entities with the same targetname
 =================
 */
 qboolean G_ScriptAction_AlertEntity(gentity_t *ent, char *params)

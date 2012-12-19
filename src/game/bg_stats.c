@@ -40,8 +40,8 @@
 //
 // FIXME: Remove everything that maps to WS_MAX to save space
 //
-// Gordon: why not er, just map directly to the stat?
-// JK: er, several reasons: its less than half the size of a brute-force approach,
+// - why not er, just map directly to the stat?
+// - er, several reasons: its less than half the size of a brute-force approach,
 //							gives us a simple map to what we actually care about, and the
 //							fact that we dont want to go above (if at all possible) 32 bits
 static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =

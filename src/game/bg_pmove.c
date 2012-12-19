@@ -442,7 +442,7 @@ static void PM_Friction(void)
 	}
 
 	speed = VectorLength(vec);
-	// rain - #179 don't do this for PM_SPECTATOR/PM_NOCLIP, we always want them to stop
+	// don't do this for PM_SPECTATOR/PM_NOCLIP, we always want them to stop
 	if (speed < 1 && pm->ps->pm_type != PM_SPECTATOR && pm->ps->pm_type != PM_NOCLIP)
 	{
 		vel[0] = 0;
@@ -511,7 +511,7 @@ static void PM_Friction(void)
 		}
 	}
 
-	// rain - used VectorScale instead of multiplying by hand
+	// used VectorScale instead of multiplying by hand
 	VectorScale(vel, newspeed, vel);
 }
 
@@ -1129,7 +1129,7 @@ static void PM_WaterMove(void)
 		wishvel[0] = 0;
 		wishvel[1] = 0;
 		wishvel[2] = -60;     // sink towards bottom
-		//wishvel[2] = -10;   //----(SA)  mod for DM
+		//wishvel[2] = -10;   // mod for DM
 	}
 	else
 	{
@@ -1145,7 +1145,7 @@ static void PM_WaterMove(void)
 	VectorCopy(wishvel, wishdir);
 	wishspeed = VectorNormalize(wishdir);
 
-	if (pm->watertype == CONTENTS_SLIME)        //----(SA)  slag
+	if (pm->watertype == CONTENTS_SLIME)        // slag
 	{
 		if (wishspeed > pm->ps->speed * pm_slagSwimScale)
 		{
@@ -1697,7 +1697,7 @@ static void PM_CrashLand(void)
 		}
 	}
 
-	// rain - when falling damage happens, velocity is cleared, but
+	// when falling damage happens, velocity is cleared, but
 	// this needs to happen in pmove, not g_active!  (prediction will be
 	// wrong, otherwise.)
 	if (delta > 38.75)
@@ -2410,7 +2410,7 @@ static void PM_BeginWeaponReload(int weapon)
 	{
 		return;
 	}
-	// Gordon: fixing reloading with a full clip
+	// fixing reloading with a full clip
 	if (pm->ps->ammoclip[item->giAmmoIndex] >= GetAmmoTableData(weapon)->maxclip)
 	{
 		return;
@@ -2437,7 +2437,7 @@ static void PM_BeginWeaponReload(int weapon)
 		break;
 
 	default:
-		// DHM - Nerve :: override current animation (so reloading after firing will work)
+		// override current animation (so reloading after firing will work)
 		if (pm->ps->eFlags & EF_PRONE)
 		{
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RELOADPRONE, qfalse, qtrue);
@@ -2481,7 +2481,7 @@ static void PM_ReloadClip(int weapon);
 PM_BeginWeaponChange
 ===============
 */
-void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        //----(SA)  modified to play 1st person alt-mode transition animations.
+void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        // modified to play 1st person alt-mode transition animations.
 {
 	int      switchtime;
 	qboolean altSwitchAnim = qfalse;
@@ -2506,7 +2506,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		return;
 	}
 
-	// Gordon: don't allow change during spinup
+	// don't allow change during spinup
 	if (pm->ps->weaponDelay)
 	{
 		return;
@@ -2550,7 +2550,7 @@ void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        
 		PM_AddEvent(EV_CHANGE_WEAPON);
 		break;
 	default:
-		//----(SA)  only play the weapon switch sound for the player
+		// only play the weapon switch sound for the player
 		PM_AddEvent(reload ? EV_CHANGE_WEAPON_2 : EV_CHANGE_WEAPON);
 		break;
 	}
@@ -3283,15 +3283,15 @@ void PM_CoolWeapons(void)
 	{
 		if (pm->ps->persistant[PERS_HWEAPON_USE] || pm->ps->eFlags & EF_MOUNTEDTANK)
 		{
-			// rain - floor to prevent 8-bit wrap
+			// floor to prevent 8-bit wrap
 			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
 		}
 		else
 		{
-			// rain - #172 - don't divide by 0
+			// don't divide by 0
 			maxHeat = GetAmmoTableData(pm->ps->weapon)->maxHeat;
 
-			// rain - floor to prevent 8-bit wrap
+			// floor to prevent 8-bit wrap
 			if (maxHeat != 0)
 			{
 				pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[pm->ps->weapon] / (float)maxHeat)) * 255.0f);
@@ -3312,7 +3312,7 @@ void PM_CoolWeapons(void)
 PM_AdjustAimSpreadScale
 ==============
 */
-#define AIMSPREAD_DECREASE_RATE     200.0f      // (SA) when I made the increase/decrease floats (so slower weapon recover could happen for scoped weaps) the average rate increased significantly
+#define AIMSPREAD_DECREASE_RATE     200.0f      // when I made the increase/decrease floats (so slower weapon recover could happen for scoped weaps) the average rate increased significantly
 #define AIMSPREAD_INCREASE_RATE     800.0f
 #define AIMSPREAD_VIEWRATE_MIN      30.0f       // degrees per second
 #define AIMSPREAD_VIEWRATE_RANGE    120.0f      // degrees per second
@@ -3321,7 +3321,7 @@ void PM_AdjustAimSpreadScale(void)
 {
 //  int     increase, decrease, i;
 	int   i;
-	float increase, decrease;       // (SA) was losing lots of precision on slower weapons (scoped)
+	float increase, decrease;       // was losing lots of precision on slower weapons (scoped)
 	float viewchange, cmdTime, wpnScale;
 
 	// all weapons are very inaccurate in zoomed mode
@@ -3502,14 +3502,13 @@ static void PM_Weapon(void)
 		return;
 	}
 
-	//% if( pm->ps->eFlags & EF_PRONE_MOVING )
-	//%     return;
+	//if( pm->ps->eFlags & EF_PRONE_MOVING )
+	//  return;
 
 	// special mounted mg42 handling
 	switch (pm->ps->persistant[PERS_HWEAPON_USE])
 	{
 	case 1:
-//          PM_CoolWeapons(); // Gordon: Arnout says this is how it's wanted ( bleugh ) no cooldown on weaps while using mg42, but need to update heat on mg42 itself
 		if (pm->ps->weapHeat[WP_DUMMY_MG42])
 		{
 			pm->ps->weapHeat[WP_DUMMY_MG42] -= (300.f * pml.frametime);
@@ -3519,7 +3518,7 @@ static void PM_Weapon(void)
 				pm->ps->weapHeat[WP_DUMMY_MG42] = 0;
 			}
 
-			// rain - floor() to prevent 8-bit wrap
+			// floor() to prevent 8-bit wrap
 			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
 		}
 
@@ -3592,7 +3591,6 @@ static void PM_Weapon(void)
 
 	if (pm->ps->eFlags & EF_MOUNTEDTANK)
 	{
-//      PM_CoolWeapons(); // Gordon: Arnout says this is how it's wanted ( bleugh ) no cooldown on weaps while using mg42, but need to update heat on mg42 itself
 		if (pm->ps->weapHeat[WP_DUMMY_MG42])
 		{
 			pm->ps->weapHeat[WP_DUMMY_MG42] -= (300.f * pml.frametime);
@@ -3602,7 +3600,7 @@ static void PM_Weapon(void)
 				pm->ps->weapHeat[WP_DUMMY_MG42] = 0;
 			}
 
-			// rain - floor() to prevent 8-bit wrap
+			// floor() to prevent 8-bit wrap
 			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
 		}
 
@@ -3872,7 +3870,7 @@ static void PM_Weapon(void)
 			{
 				if (pm->cmd.buttons & BUTTON_ATTACK)
 				{
-					// rain - akimbo weapons only have a 200ms delay, so
+					// akimbo weapons only have a 200ms delay, so
 					// use a shorter time for quickfire (#255)
 					if (BG_IsAkimboWeapon(pm->ps->weapon))
 					{
@@ -4394,8 +4392,8 @@ static void PM_Weapon(void)
 
 	pm->ps->weaponstate = WEAPON_FIRING;
 
-	// Gordon: reset player disguise on firing
-	//if( pm->ps->weapon != WP_SMOKE_BOMB && pm->ps->weapon != WP_SATCHEL && pm->ps->weapon != WP_SATCHEL_DET ) { // Arnout: not for these weapons
+	// reset player disguise on firing
+	//if( pm->ps->weapon != WP_SMOKE_BOMB && pm->ps->weapon != WP_SATCHEL && pm->ps->weapon != WP_SATCHEL_DET ) { //  not for these weapons
 	//  pm->ps->powerups[PW_OPS_DISGUISED] = 0;
 	//}
 
@@ -4713,7 +4711,7 @@ static void PM_Weapon(void)
 		// nextshot needs to take 2x time
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 
-		// rain - fixed the swapped usage of akimboFire vs. the colt
+		// fixed the swapped usage of akimboFire vs. the colt
 		// so that the last shot isn't delayed
 		if (!pm->ps->ammoclip[BG_FindClipForWeapon(pm->ps->weapon)])
 		{
@@ -4730,8 +4728,8 @@ static void PM_Weapon(void)
 			}
 		}
 
-		// rain - colt and luger are supposed to be balanced
-		//      aimSpreadScaleAdd = 35;
+		// colt and luger are supposed to be balanced
+		//aimSpreadScaleAdd = 35;
 		aimSpreadScaleAdd = 20;
 		break;
 
@@ -4758,12 +4756,12 @@ static void PM_Weapon(void)
 	case WP_MP40:
 	case WP_THOMPSON:
 		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
-		aimSpreadScaleAdd = 15 + rand() % 10;   // (SA) new values for DM
+		aimSpreadScaleAdd = 15 + rand() % 10;   // new values for DM
 		break;
 
 	case WP_STEN:
 		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
-		aimSpreadScaleAdd = 15 + rand() % 10;   // (SA) new values for DM
+		aimSpreadScaleAdd = 15 + rand() % 10;   // new values for DM
 		break;
 
 	case WP_MOBILE_MG42:
@@ -5113,7 +5111,7 @@ are being updated isntead of a full move
 ================
 */
 // take a tracemask as well - we can't use anything out of pm
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)        //----(SA)    modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)        //   modified
 {
 	short   temp;
 	int     i;
@@ -5131,9 +5129,9 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 		// Allow players to look around while 'wounded' or lock to a medic if nearby
 		temp = cmd->angles[1] + ps->delta_angles[1];
-		// rain - always allow this.  viewlocking will take precedence
+		// always allow this.  viewlocking will take precedence
 		// if a medic is found
-		// rain - using a full short and converting on the client so that
+		// using a full short and converting on the client so that
 		// we get >1 degree resolution
 		ps->stats[STAT_DEAD_YAW] = temp;
 		return;     // no view changes at all
@@ -5393,7 +5391,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 	{
 		//float degsSec = 60.f;
 		//float oldYaw;
-		trace_t traceres;         // rain - renamed
+		trace_t traceres;         // renamed
 		int     newDeltaAngle = ps->delta_angles[YAW];
 		float   pitchMax      = 40.f;
 		float   pitchDiff;
@@ -5492,7 +5490,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			// see if we have the space to go prone
 			// we know our main body isn't in a solid, check for our legs
 
-			// rain - bugfix - use supplied trace - pm may not be set
+			// bugfix - use supplied trace - pm may not be set
 			PM_TraceLegs(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, NULL, ps->viewangles, pm->trace, ps->clientNum, tracemask);
 
 			if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
@@ -5823,7 +5821,7 @@ void PM_Sprint(void)
 		{
 			int rechargebase = 500;
 
-#ifdef GAMEDLL // Gordon: FIXME: predict leadership clientside
+#ifdef GAMEDLL // FIXME: predict leadership clientside ... leadership is never set to qtrue
 			if (pm->leadership)
 			{
 				rechargebase = 1000;
@@ -5909,7 +5907,7 @@ void PmoveSingle(pmove_t *pmove)
 		{
 			if (!BG_IsScopedWeapon(pm->ps->weapon) &&          // don't allow binocs if using the sniper scope
 			    !BG_PlayerMounted(pm->ps->eFlags) &&           // or if mounted on a weapon
-			    // rain - #215 - don't allow binocs w/ mounted mob. MG42 or mortar either.
+			    // don't allow binocs w/ mounted mob. MG42 or mortar either.
 			    pm->ps->weapon != WP_MOBILE_MG42_SET &&
 			    pm->ps->weapon != WP_MORTAR_SET)
 			{
@@ -6015,12 +6013,12 @@ void PmoveSingle(pmove_t *pmove)
 	pml.frametime = pml.msec * 0.001;
 
 	// update the viewangles
-	if (pm->ps->pm_type != PM_FREEZE)     // Arnout: added PM_FREEZE
+	if (pm->ps->pm_type != PM_FREEZE)     // added PM_FREEZE
 	{
 		if (!(pm->ps->pm_flags & PMF_LIMBO))
 		{
-			// rain - added tracemask
-			PM_UpdateViewAngles(pm->ps, pm->pmext, &pm->cmd, pm->trace, pm->tracemask);     //----(SA)  modified
+			// added tracemask
+			PM_UpdateViewAngles(pm->ps, pm->pmext, &pm->cmd, pm->trace, pm->tracemask);     // modified
 		}
 	}
 	AngleVectors(pm->ps->viewangles, pml.forward, pml.right, pml.up);
@@ -6293,7 +6291,7 @@ int Pmove(pmove_t *pmove)
 		}
 		else
 		{
-			// rain - this was 66 (15fps), but I've changed it to
+			// this was 66 (15fps), but I've changed it to
 			// 50 (20fps, max rate of mg42) to alleviate some of the
 			// framerate dependency with the mg42.
 			// in reality, this should be split according to sv_fps,

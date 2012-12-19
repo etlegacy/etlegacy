@@ -145,7 +145,7 @@ vmCvar_t g_developer;
 
 vmCvar_t g_userAim;
 
-// JPW NERVE multiplayer reinforcement times
+// multiplayer reinforcement times
 vmCvar_t g_redlimbotime;
 vmCvar_t g_bluelimbotime;
 // charge times for character class special weapons
@@ -202,7 +202,6 @@ vmCvar_t g_landminetimeout;
 
 // Variable for setting the current level of debug printing/logging
 // enabled in bot scripts and regular scripts.
-// Added by Mad Doctor I, 8/23/2002
 vmCvar_t g_scriptDebugLevel;
 vmCvar_t g_movespeed;
 
@@ -212,7 +211,7 @@ vmCvar_t g_alliedmapxp;
 vmCvar_t g_currentCampaign;
 vmCvar_t g_currentCampaignMap;
 
-// Arnout: for LMS
+// for LMS
 vmCvar_t g_axiswins;
 vmCvar_t g_alliedwins;
 vmCvar_t g_lms_teamForceBalance;
@@ -261,9 +260,9 @@ cvarTable_t gameCvarTable[] =
 	{ NULL,                       "sv_mapname",                "",                           CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse},
 
 	// latched vars
-	{ &g_gametype,                "g_gametype",                "4",                          CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse},                             // Arnout: default to GT_WOLF_CAMPAIGN
+	{ &g_gametype,                "g_gametype",                "4",                          CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse},           // default to GT_WOLF_CAMPAIGN
 
-	// JPW NERVE multiplayer stuffs
+	// multiplayer stuffs
 	{ &g_redlimbotime,            "g_redlimbotime",            "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse},
 	{ &g_bluelimbotime,           "g_bluelimbotime",           "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse},
 	{ &g_medicChargeTime,         "g_medicChargeTime",         "45000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue},
@@ -287,7 +286,7 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_friendlyFire,            "g_friendlyFire",            "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE,                  0, qtrue, qtrue},
 
-	{ &g_teamForceBalance,        "g_teamForceBalance",        "0",                          CVAR_ARCHIVE },                                  // NERVE - SMF - merge from team arena
+	{ &g_teamForceBalance,        "g_teamForceBalance",        "0",                          CVAR_ARCHIVE },                                  // merge from team arena
 
 	{ &g_warmup,                  "g_warmup",                  "60",                         CVAR_ARCHIVE,                                    0, qtrue},
 	{ &g_doWarmup,                "g_doWarmup",                "0",                          CVAR_ARCHIVE,                                    0, qtrue},
@@ -313,7 +312,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_password,                "g_password",                "none",                       CVAR_USERINFO,                                   0, qfalse},
 	{ &sv_privatepassword,        "sv_privatepassword",        "",                           CVAR_TEMP,                                       0, qfalse},
 	{ &g_banIPs,                  "g_banIPs",                  "",                           CVAR_ARCHIVE,                                    0, qfalse},
-	// show_bug.cgi?id=500
+
 	{ &g_filterBan,               "g_filterBan",               "1",                          CVAR_ARCHIVE,                                    0, qfalse},
 
 	{ &g_dedicated,               "dedicated",                 "0",                          0,                                               0, qfalse},
@@ -343,9 +342,9 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_alliedmaxlives,          "g_alliedmaxlives",          "0",                          CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue},
 	{ &g_axismaxlives,            "g_axismaxlives",            "0",                          CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue},
-	{ &g_fastres,                 "g_fastres",                 "0",                          CVAR_ARCHIVE,                                    0, qtrue, qtrue},                             // Xian - Fast Medic Resing
-	{ &g_knifeonly,               "g_knifeonly",               "0",                          0,                                               0, qtrue},                             // Xian - Fast Medic Resing
-	{ &g_enforcemaxlives,         "g_enforcemaxlives",         "1",                          CVAR_ARCHIVE,                                    0, qtrue},                             // Xian - Gestapo enforce maxlives stuff by temp banning
+	{ &g_fastres,                 "g_fastres",                 "0",                          CVAR_ARCHIVE,                                    0, qtrue, qtrue},     // Fast Medic Resing
+	{ &g_knifeonly,               "g_knifeonly",               "0",                          0,                                               0, qtrue},            // Fast Medic Resing
+	{ &g_enforcemaxlives,         "g_enforcemaxlives",         "1",                          CVAR_ARCHIVE,                                    0, qtrue},            // Gestapo enforce maxlives stuff by temp banning
 
 	{ &g_developer,               "developer",                 "0",                          CVAR_TEMP,                                       0, qfalse},
 	{ &g_userAim,                 "g_userAim",                 "1",                          CVAR_CHEAT,                                      0, qfalse},
@@ -358,7 +357,6 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_antilag,                 "g_antilag",                 "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE,                  0, qfalse},
 
-	//bani - #184
 	{ NULL,                       "P",                         "",                           CVAR_SERVERINFO_NOUPDATE,                        0, qfalse, qfalse},
 
 	{ &refereePassword,           "refereePassword",           "none",                       0,                                               0, qfalse},
@@ -424,7 +422,7 @@ cvarTable_t gameCvarTable[] =
 #endif
 #endif
 
-	// Arnout: LMS
+	// LMS
 	{ &g_lms_teamForceBalance,    "g_lms_teamForceBalance",    "1",                          CVAR_ARCHIVE },
 	{ &g_lms_roundlimit,          "g_lms_roundlimit",          "3",                          CVAR_ARCHIVE },
 	{ &g_lms_matchlimit,          "g_lms_matchlimit",          "2",                          CVAR_ARCHIVE },
@@ -466,7 +464,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_ip_max_clients,          "g_ip_max_clients",          "0",                          CVAR_ARCHIVE },
 };
 
-// bk001129 - made static to avoid aliasing
+// made static to avoid aliasing
 static int gameCvarTableSize = sizeof(gameCvarTable) / sizeof(gameCvarTable[0]);
 
 void G_InitGame(int levelTime, int randomSeed, int restart);
@@ -749,7 +747,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 	float         chMaxDist = CH_MAX_DIST;
 	gentity_t     *checkEnt, *traceEnt = 0;
 	playerState_t *ps;
-	static int    hintValMax = 255; // Breakable damage indicator can wrap when the entity has a lot of health
+	static int    hintValMax = 255;     // Breakable damage indicator can wrap when the entity has a lot of health
 	int           hintType, hintDist, hintVal;
 	qboolean      zooming, indirectHit; // indirectHit means the checkent was not the ent hit by the trace (checkEnt!=traceEnt)
 	int           trace_contents;
@@ -806,7 +804,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 		hintDist = chMaxDist;
 	}
 
-	// Arnout: building something - add this here because we don't have anything solid to trace to - quite ugly-ish
+	// building something - add this here because we don't have anything solid to trace to - quite ugly-ish
 	if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 	{
 		gentity_t *constructible;
@@ -836,16 +834,16 @@ void G_CheckForCursorHints(gentity_t *ent)
 	traceEnt = &g_entities[tr->entityNum];
 	while (G_CursorHintIgnoreEnt(traceEnt, ent) && numOfIgnoredEnts < 10)
 	{
-		// xkan, 1/9/2003 - we may hit multiple invalid ents at the same point
+		// we may hit multiple invalid ents at the same point
 		// count them to prevent too many loops
 		numOfIgnoredEnts++;
 
-		// xkan, 1/8/2003 - advance offset (start point) past the entity to ignore
+		// advance offset (start point) past the entity to ignore
 		VectorMA(tr->endpos, 0.1, forward, offset);
 
 		trap_Trace(tr, offset, NULL, NULL, end, traceEnt->s.number, trace_contents);
 
-		// xkan, 1/8/2003 - (hintDist - dist) is the actual distance in the above
+		// (hintDist - dist) is the actual distance in the above
 		// trap_Trace call. update dist accordingly.
 		dist += VectorDistanceSquared(offset, tr->endpos);
 		if (tr->fraction == 1)
@@ -875,13 +873,13 @@ void G_CheckForCursorHints(gentity_t *ent)
 		{
 			if (ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC && traceEnt->client->ps.pm_type == PM_DEAD && !(traceEnt->client->ps.pm_flags & PMF_LIMBO))
 			{
-				hintDist = 48;        // JPW NERVE matches weapon_syringe in g_weapon.c
+				hintDist = 48;        // matches weapon_syringe in g_weapon.c
 				hintType = HINT_REVIVE;
 			}
 		}
 		else if (traceEnt->client && traceEnt->client->isCivilian)
 		{
-			// xkan, 1/6/2003 - check for civilian, show neutral cursor (no matter which team)
+			// check for civilian, show neutral cursor (no matter which team)
 			hintType = HINT_PLYR_NEUTRAL;
 			hintDist = CH_FRIENDLY_DIST;    // far, since this will be used to determine whether to shoot bullet weaps or not
 		}
@@ -890,7 +888,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 	{
 		checkEnt = traceEnt;
 
-		// Arnout: invisible entities don't show hints
+		// invisible entities don't show hints
 		if (traceEnt->entstate == STATE_INVISIBLE || traceEnt->entstate == STATE_UNDERCONSTRUCTION)
 		{
 			return;
@@ -914,7 +912,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 			{
 				indirectHit = qtrue;
 
-				// DHM - Nerve :: Put this back in only in multiplayer
+				// Put this back in only in multiplayer
 				if (traceEnt->s.dmgFlags)      // hint icon specified in entity
 				{
 					hintType = traceEnt->s.dmgFlags;
@@ -935,7 +933,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 		if (checkEnt)
 		{
-			// TDF This entire function could be the poster boy for converting to OO programming!!!
+			// This entire function could be the poster boy for converting to OO programming!!!
 			// I'm making this into a switch in a vain attempt to make this readable so I can find which
 			// brackets don't match!!!
 			switch (checkEnt->s.eType)
@@ -1004,7 +1002,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 					case 0:
 						hintDist = CH_BREAKABLE_DIST;
 						hintType = HINT_BREAKABLE;
-						hintVal  = checkEnt->health;            // also send health to client for visualization
+						hintVal  = checkEnt->health;                // also send health to client for visualization
 
 						// Breakable damage indicator can wrap when the entity has a lot of health
 						if (hintVal > hintValMax)
@@ -1202,7 +1200,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 				}
 				else if (!Q_stricmp(checkEnt->classname, "func_door"))
 				{
-					if (checkEnt->moverState == MOVER_POS1)      // stationary/closed
+					if (checkEnt->moverState == MOVER_POS1)              // stationary/closed
 					{
 						hintDist = CH_DOOR_DIST;
 						hintType = HINT_DOOR;
@@ -1321,10 +1319,8 @@ void G_FindTeams(void)
 {
 	gentity_t *e, *e2;
 	int       i, j;
-	int       c, c2;
+	int       c = 0, c2 = 0;
 
-	c  = 0;
-	c2 = 0;
 	for (i = 1, e = g_entities + i ; i < level.num_entities ; i++, e++)
 	{
 		if (!e->inuse)
@@ -1376,7 +1372,7 @@ void G_FindTeams(void)
 				e2->teamchain  = e->teamchain;
 				e->teamchain   = e2;
 				e2->teammaster = e;
-//				e2->key = e->key;	// (SA) I can't set the key here since the master door hasn't finished spawning yet and therefore has a key of -1
+				//e2->key = e->key;	// I can't set the key here since the master door hasn't finished spawning yet and therefore has a key of -1
 				e2->flags |= FL_TEAMSLAVE;
 
 				if (!Q_stricmp(e2->classname, "func_tramcar"))
@@ -1389,7 +1385,7 @@ void G_FindTeams(void)
 				{
 					G_SetTargetName(e, e2->targetname);
 
-					// Rafael note to self: added this because of problems
+					// note: added this because of problems
 					// pertaining to keys and double doors
 					if (Q_stricmp(e2->classname, "func_door_rotating"))
 					{
@@ -1446,7 +1442,7 @@ void G_RegisterCvars(void)
 	}
 
 	// check some things
-	// DHM - Gametype is currently restricted to supported types only
+	// Gametype is currently restricted to supported types only
 	if ((g_gametype.integer < GT_WOLF || g_gametype.integer >= GT_MAX_GAME_TYPE))
 	{
 		G_Printf("g_gametype %i is out of range, defaulting to GT_WOLF(%i)\n", g_gametype.integer, GT_WOLF);
@@ -1631,7 +1627,7 @@ void G_UpdateCvars(void)
 				}
 #endif
 
-				// OSP - Update vote info for clients, if necessary
+				// Update vote info for clients, if necessary
 				if (cv->vmCvar == &vote_allow_comp          || cv->vmCvar == &vote_allow_gametype       ||
 				    cv->vmCvar == &vote_allow_kick          || cv->vmCvar == &vote_allow_map            ||
 				    cv->vmCvar == &vote_allow_matchreset    ||
@@ -1649,7 +1645,6 @@ void G_UpdateCvars(void)
 				{
 					fToggles = (G_checkServerToggle(cv->vmCvar) || fToggles);
 				}
-
 			}
 		}
 	}
@@ -1706,10 +1701,9 @@ void G_wipeCvars(void)
 	G_UpdateCvars();
 }
 
-//bani - #113
 #define SNIPSIZE 250
 
-//copies max num chars from beginning of dest into src and returns pointer to new src
+// copies max num chars from beginning of dest into src and returns pointer to new src
 char *strcut(char *dest, char *src, int num)
 {
 	int i;
@@ -1737,7 +1731,7 @@ char *strcut(char *dest, char *src, int num)
 	return src;
 }
 
-//g_{axies,allies}mapxp overflows and crashes the server
+// g_{axies,allies}mapxp overflows and crashes the server
 void bani_clearmapxp(void)
 {
 	trap_SetConfigstring(CS_AXIS_MAPS_XP, "");
@@ -1754,7 +1748,7 @@ void bani_storemapxp(void)
 	char *k;
 	int  i, j;
 
-	//axis
+	// axis
 	trap_GetConfigstring(CS_AXIS_MAPS_XP, cs, sizeof(cs));
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
@@ -1776,7 +1770,7 @@ void bani_storemapxp(void)
 		k = strcut(u, k, SNIPSIZE);
 	}
 
-	//allies
+	// allies
 	trap_GetConfigstring(CS_ALLIED_MAPS_XP, cs, sizeof(cs));
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
@@ -1788,7 +1782,7 @@ void bani_storemapxp(void)
 	k = strcut(u, cs, SNIPSIZE);
 	while (strlen(u))
 	{
-		//"to be continued..."
+		// "to be continued..."
 		if (strlen(u) == SNIPSIZE)
 		{
 			strcat(u, "+");
@@ -1806,7 +1800,7 @@ void bani_getmapxp(void)
 	char t[MAX_STRING_CHARS];
 
 	trap_Cvar_VariableStringBuffer(va("%s_axismapxp%i", GAMEVERSION, j), s, sizeof(s));
-	//reassemble string...
+	// reassemble string...
 	while (strrchr(s, '+'))
 	{
 		j++;
@@ -1818,7 +1812,7 @@ void bani_getmapxp(void)
 
 	j = 0;
 	trap_Cvar_VariableStringBuffer(va("%s_alliedmapxp%i", GAMEVERSION, j), s, sizeof(s));
-	//reassemble string...
+	// reassemble string...
 	while (strrchr(s, '+'))
 	{
 		j++;
@@ -1846,13 +1840,13 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	srand(randomSeed);
 
-	//bani - make sure pak2.pk3 gets referenced on server so pure checks pass
+	// make sure pak2.pk3 gets referenced on server so pure checks pass
 	trap_FS_FOpenFile("pak2.dat", &i, FS_READ);
 	trap_FS_FCloseFile(i);
 
 	G_RegisterCvars();
 
-	// Xian enforcemaxlives stuff
+	// enforcemaxlives stuff
 	/*
 	we need to clear the list even if enforce maxlives is not active
 	in case the g_maxlives was changed, and a map_restart happened
@@ -1873,7 +1867,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	G_InitMemory();
 
-	// NERVE - SMF - intialize gamestate
+	// intialize gamestate
 	if (g_gamestate.integer == GS_INITIALIZE)
 	{
 		trap_Cvar_Set("gamestate", va("%i", GS_WARMUP));
@@ -1902,7 +1896,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 		level.clients[level.sortedClients[i]].sess.spawnObjectiveIndex = 0;
 	}
 
-	// RF, init the anim scripting
+	// init the anim scripting
 	level.animScriptData.soundIndex = G_SoundIndex;
 	level.animScriptData.playSound  = G_AnimScriptSound;
 
@@ -1963,7 +1957,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	if (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_STOPWATCH)
 	{
-		//bani - #113
 		bani_clearmapxp();
 	}
 
@@ -1978,7 +1971,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 			trap_Cvar_Set("g_axiswins", "0");
 			trap_Cvar_Set("g_alliedwins", "0");
 
-			//bani - #113
 			bani_clearmapxp();
 
 			trap_Cvar_Update(&g_axiswins);
@@ -1986,7 +1978,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 		}
 		else
 		{
-			//bani - #113
 			bani_getmapxp();
 		}
 	}
@@ -2022,7 +2013,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	G_InitWorldSession();
 
-	// DHM - Nerve :: Clear out spawn target config strings
+	// Clear out spawn target config strings
 	trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
 	Info_SetValueForKey(cs, "numspawntargets", "0");
 	trap_SetConfigstring(CS_MULTI_INFO, cs);
@@ -2078,10 +2069,10 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString();
 
-	// Gordon: debris test
+	// debris test
 	G_LinkDebris();
 
-	// Gordon: link up damage parents
+	// link up damage parents
 	G_LinkDamageParents();
 
 	BG_ClearScriptSpeakerPool();
@@ -2145,7 +2136,7 @@ void G_ShutdownGame(int restart)
 	G_LuaHook_ShutdownGame(restart);
 	G_LuaShutdown();
 #endif
-	// Arnout: gametype latching
+	// gametype latching
 	if  (
 	    ((g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_CAMPAIGN) && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_GT_WOLF)) ||
 	    (g_gametype.integer == GT_WOLF_STOPWATCH && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_STOPWATCH)) ||
@@ -2229,16 +2220,13 @@ void QDECL Com_Printf(const char *msg, ...) _attribute((format(printf, 1, 2)));
 
 /*
 ========================================================================
-
 PLAYER COUNTING / SCORE SORTING
-
 ========================================================================
 */
 
 /*
 =============
 SortRanks
-
 =============
 */
 int QDECL SortRanks(const void *a, const void *b)
@@ -2327,21 +2315,18 @@ int QDECL SortRanks(const void *a, const void *b)
 	return 0;
 }
 
-//bani - #184
-//(relatively) sane replacement for OSP's Players_Axis/Players_Allies
+// (relatively) sane replacement for OSP's Players_Axis/Players_Allies
 void etpro_PlayerInfo(void)
 {
 	//128 bits
 	char      playerinfo[MAX_CLIENTS + 1];
-	gentity_t *e;
+	gentity_t *e = &g_entities[0];
 	team_t    playerteam;
 	int       i;
-	int       lastclient;
+	int       lastclient = -1;
 
 	memset(playerinfo, 0, sizeof(playerinfo));
 
-	lastclient = -1;
-	e          = &g_entities[0];
 	for (i = 0; i < MAX_CLIENTS; i++, e++)
 	{
 		if (e->client == NULL || e->client->pers.connected == CON_DISCONNECTED)
@@ -2350,7 +2335,7 @@ void etpro_PlayerInfo(void)
 			continue;
 		}
 
-		//keep track of highest connected/connecting client
+		// keep track of highest connected/connecting client
 		lastclient = i;
 
 		if (e->inuse == qfalse)
@@ -2363,7 +2348,7 @@ void etpro_PlayerInfo(void)
 		}
 		playerinfo[i] = (char)'0' + playerteam;
 	}
-	//terminate the string, if we have any non-0 clients
+	// terminate the string, if we have any non-0 clients
 	if (lastclient != -1)
 	{
 		playerinfo[lastclient + 1] = (char)0;
@@ -2510,7 +2495,6 @@ void CalculateRanks(void)
 	trap_SetConfigstring(CS_ROUNDSCORES1, va("%i", g_axiswins.integer));
 	trap_SetConfigstring(CS_ROUNDSCORES2, va("%i", g_alliedwins.integer));
 
-	//bani - #184
 	etpro_PlayerInfo();
 
 	// if we are at the intermission, send the new info to everyone
@@ -2527,9 +2511,7 @@ void CalculateRanks(void)
 
 /*
 ========================================================================
-
 MAP CHANGING
-
 ========================================================================
 */
 
@@ -2612,7 +2594,7 @@ void FindIntermissionPoint(void)
 	char      *buf;
 	int       winner;
 
-	// NERVE - SMF - if the match hasn't ended yet, and we're just a spectator
+	// if the match hasn't ended yet, and we're just a spectator
 	if (!level.intermissiontime)
 	{
 		// try to find the intermission spawnpoint with no team flags set
@@ -2877,7 +2859,7 @@ void LogExit(const char *string)
 	gclient_t *cl;
 	char      cs[MAX_STRING_CHARS];
 
-	// NERVE - SMF - do not allow LogExit to be called in non-playing gamestate
+	// do not allow LogExit to be called in non-playing gamestate
 	if (g_gamestate.integer != GS_PLAYING)
 	{
 		return;
@@ -2897,7 +2879,6 @@ void LogExit(const char *string)
 
 		cl = &level.clients[level.sortedClients[i]];
 
-		// rain - #105 - use G_MakeUnready instead
 		G_MakeUnready(&g_entities[level.sortedClients[i]]);
 
 		if (cl->sess.sessionTeam == TEAM_SPECTATOR)
@@ -2954,7 +2935,6 @@ void LogExit(const char *string)
 
 		trap_Cvar_Set("g_currentRound", va("%i", !g_currentRound.integer));
 
-		//bani - #113
 		bani_storemapxp();
 	}
 	else if (g_gametype.integer == GT_WOLF_CAMPAIGN)
@@ -2983,7 +2963,6 @@ void LogExit(const char *string)
 		trap_SetConfigstring(CS_ROUNDSCORES1, va("%i", g_axiswins.integer));
 		trap_SetConfigstring(CS_ROUNDSCORES2, va("%i", g_alliedwins.integer));
 
-		//bani - #113
 		bani_storemapxp();
 
 		// award medals
@@ -3129,7 +3108,6 @@ void LogExit(const char *string)
 	}
 	else if (g_gametype.integer == GT_WOLF)
 	{
-		//bani - #113
 		bani_storemapxp();
 	}
 
@@ -3178,7 +3156,7 @@ void CheckIntermissionExit(void)
 
 			cl = level.clients + level.sortedClients[i];
 
-			// crapshoot: changed from counting bots to just ignoring them
+			// changed from counting bots to just ignoring them
 			if (cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam == TEAM_SPECTATOR
 			    || g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT)
 			{
@@ -3231,7 +3209,7 @@ qboolean ScoreIsTied(void)
 	char cs[MAX_STRING_CHARS];
 	char *buf;
 
-	// DHM - Nerve :: GT_WOLF checks the current value of
+	// GT_WOLF checks the current value of
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 
 	buf = Info_ValueForKey(cs, "winner");
@@ -3280,7 +3258,7 @@ void CheckExitRules(void)
 				axisSurvivors   = level.numTeamClients[0] - level.numFinalDead[0];
 				alliedSurvivors = level.numTeamClients[1] - level.numFinalDead[1];
 
-				//bani - if team was eliminated < 3 sec before round end, we _properly_ end it here
+				// if team was eliminated < 3 sec before round end, we _properly_ end it here
 				if (level.teamEliminateTime)
 				{
 					LogExit(va("%s team eliminated.", level.lmsWinningTeam == TEAM_ALLIES ? "Axis" : "Allied"));
@@ -3345,7 +3323,7 @@ void CheckExitRules(void)
 				G_Script_ScriptEvent(level.gameManager, "trigger", "timelimit_hit");
 			}
 
-			// NERVE - SMF - do not allow LogExit to be called in non-playing gamestate
+			// do not allow LogExit to be called in non-playing gamestate
 			// - This already happens in LogExit, but we need it for the print command
 			if (g_gamestate.integer != GS_PLAYING)
 			{
@@ -3359,8 +3337,7 @@ void CheckExitRules(void)
 		}
 	}
 
-	//bani - #444
-	//i dont really get the point of the delay anyway, why not end it immediately like maxlives games?
+	// i dont really get the point of the delay anyway, why not end it immediately like maxlives games?
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
 		if (!level.teamEliminateTime)
@@ -3418,9 +3395,7 @@ void CheckExitRules(void)
 
 /*
 ========================================================================
-
 FUNCTIONS CALLED EVERY FRAME
-
 ========================================================================
 */
 
@@ -3633,14 +3608,14 @@ void G_RunThink(gentity_t *ent)
 {
 	float thinktime;
 
-	// OSP - If paused, push nextthink
+	// If paused, push nextthink
 	if (level.match_pause != PAUSE_NONE && (ent - g_entities) >= g_maxclients.integer &&
 	    ent->nextthink > level.time && strstr(ent->classname, "DPRINTF_") == NULL)
 	{
 		ent->nextthink += level.time - level.previousTime;
 	}
 
-	// RF, run scripting
+	// run scripting
 	if (ent->s.number >= MAX_CLIENTS)
 	{
 		G_Script_ScriptRun(ent);
@@ -3676,6 +3651,7 @@ qboolean G_PositionEntityOnTag(gentity_t *entity, gentity_t *parent, char *tagNa
 	int           i;
 	orientation_t tag;
 	vec3_t        axis[3];
+
 	AnglesToAxis(parent->r.currentAngles, axis);
 
 	VectorCopy(parent->r.currentOrigin, entity->r.currentOrigin);
@@ -3692,9 +3668,9 @@ qboolean G_PositionEntityOnTag(gentity_t *entity, gentity_t *parent, char *tagNa
 
 	if (entity->client && (entity->s.eFlags & EF_MOUNTEDTANK))
 	{
-		// zinx - moved tank hack to here
-		// bani - fix tank bb
-		// zinx - figured out real values, only tag_player is applied,
+		// moved tank hack to here
+		// - fix tank bb
+		// - figured out real values, only tag_player is applied,
 		// so there are two left:
 		// mg42upper attaches to tag_mg42nest[mg42base] at:
 		// 0.03125, -1.171875, 27.984375
@@ -3924,7 +3900,7 @@ void G_RunEntity(gentity_t *ent, int msec)
 		G_TagLinkEntity(ent, msec);
 	}
 
-	// ydnar: hack for instantaneous velocity
+	// hack for instantaneous velocity
 	VectorCopy(ent->r.currentOrigin, ent->oldOrigin);
 
 	// check EF_NODRAW status for non-clients
@@ -3967,11 +3943,11 @@ void G_RunEntity(gentity_t *ent, int msec)
 		return;
 	}
 
-	// Arnout: invisible entities don't think
+	// invisible entities don't think
 	// NOTE: hack - constructible one does
 	if (ent->s.eType != ET_CONSTRUCTIBLE && (ent->entstate == STATE_INVISIBLE || ent->entstate == STATE_UNDERCONSTRUCTION))
 	{
-		// Gordon: we want them still to run scripts tho :p
+		// we want them still to run scripts tho :p
 		if (ent->s.number >= MAX_CLIENTS)
 		{
 			G_Script_ScriptRun(ent);
@@ -3984,6 +3960,7 @@ void G_RunEntity(gentity_t *ent, int msec)
 		return;
 	}
 
+
 	if (ent->s.eType == ET_MISSILE
 	    || ent->s.eType == ET_FLAMEBARREL
 	    || ent->s.eType == ET_FP_PARTS
@@ -3993,7 +3970,7 @@ void G_RunEntity(gentity_t *ent, int msec)
 	    || ent->s.eType == ET_RAMJET)
 	{
 
-		// OSP - pausing
+		// pausing
 		if (level.match_pause == PAUSE_NONE)
 		{
 			G_RunMissile(ent);
@@ -4013,12 +3990,12 @@ void G_RunEntity(gentity_t *ent, int msec)
 		return;
 	}
 
-	// DHM - Nerve :: Server-side collision for flamethrower
+	// Server-side collision for flamethrower
 	if (ent->s.eType == ET_FLAMETHROWER_CHUNK)
 	{
 		G_RunFlamechunk(ent);
 
-		// ydnar: hack for instantaneous velocity
+		// hack for instantaneous velocity
 		VectorSubtract(ent->r.currentOrigin, ent->oldOrigin, ent->instantVelocity);
 		VectorScale(ent->instantVelocity, 1000.0f / msec, ent->instantVelocity);
 
@@ -4029,7 +4006,7 @@ void G_RunEntity(gentity_t *ent, int msec)
 	{
 		G_RunItem(ent);
 
-		// ydnar: hack for instantaneous velocity
+		// hack for instantaneous velocity
 		VectorSubtract(ent->r.currentOrigin, ent->oldOrigin, ent->instantVelocity);
 		VectorScale(ent->instantVelocity, 1000.0f / msec, ent->instantVelocity);
 
@@ -4040,7 +4017,7 @@ void G_RunEntity(gentity_t *ent, int msec)
 	{
 		G_RunMover(ent);
 
-		// ydnar: hack for instantaneous velocity
+		// hack for instantaneous velocity
 		VectorSubtract(ent->r.currentOrigin, ent->oldOrigin, ent->instantVelocity);
 		VectorScale(ent->instantVelocity, 1000.0f / msec, ent->instantVelocity);
 
@@ -4051,14 +4028,14 @@ void G_RunEntity(gentity_t *ent, int msec)
 	{
 		G_RunClient(ent);
 
-		// ydnar: hack for instantaneous velocity
+		// hack for instantaneous velocity
 		VectorSubtract(ent->r.currentOrigin, ent->oldOrigin, ent->instantVelocity);
 		VectorScale(ent->instantVelocity, 1000.0f / msec, ent->instantVelocity);
 
 		return;
 	}
 
-	// OSP - multiview
+	// multiview
 	if (ent->s.eType == ET_PORTAL && G_smvRunCamera(ent))
 	{
 		return;
@@ -4072,7 +4049,7 @@ void G_RunEntity(gentity_t *ent, int msec)
 
 	G_RunThink(ent);
 
-	// ydnar: hack for instantaneous velocity
+	// hack for instantaneous velocity
 	VectorSubtract(ent->r.currentOrigin, ent->oldOrigin, ent->instantVelocity);
 	VectorScale(ent->instantVelocity, 1000.0f / msec, ent->instantVelocity);
 }

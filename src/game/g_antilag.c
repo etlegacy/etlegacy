@@ -149,7 +149,7 @@ void G_AdjustClientPositions(gentity_t *ent, int time, qboolean forward)
 	for (i = 0; i < level.numConnectedClients; i++, list++)
 	{
 		list = g_entities + level.sortedClients[i];
-		// Gordon: ok lets test everything under the sun
+		// ok lets test everything under the sun
 		if (list->client &&
 		    list->inuse &&
 		    (list->client->sess.sessionTeam == TEAM_AXIS || list->client->sess.sessionTeam == TEAM_ALLIES) &&
@@ -208,7 +208,7 @@ void G_AttachBodyParts(gentity_t *ent)
 	for (i = 0; i < level.numConnectedClients; i++, list++)
 	{
 		list = g_entities + level.sortedClients[i];
-		// Gordon: ok lets test everything under the sun
+		// ok lets test everything under the sun
 		if (list->inuse &&
 		    (list->client->sess.sessionTeam == TEAM_AXIS || list->client->sess.sessionTeam == TEAM_ALLIES) &&
 		    (list != ent) &&

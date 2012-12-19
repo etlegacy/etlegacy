@@ -68,7 +68,7 @@ typedef struct
 	vec3_t previous_velocity;
 	int previous_waterlevel;
 
-	// Ridah, ladders
+	// ladders
 	qboolean ladder;
 } pml_t;
 

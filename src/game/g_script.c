@@ -222,7 +222,7 @@ g_script_stack_action_t gScriptActions[] =
 	{ "setposition",                    G_ScriptAction_SetPosition                   },
 	{ "setautospawn",                   G_ScriptAction_SetAutoSpawn                  },
 
-	// Gordon: going for longest silly script command ever here :) (sets a model for a brush to one stolen from a func_brushmodel
+	// going for longest silly script command ever here :) (sets a model for a brush to one stolen from a func_brushmodel
 	{ "setmodelfrombrushmodel",         G_ScriptAction_SetModelFromBrushmodel        },
 
 	// fade all sounds up or down
@@ -239,7 +239,6 @@ g_script_stack_action_t gScriptActions[] =
 	{ "kill",                           G_ScriptAction_Kill                          },
 	{ "disablemessage",                 G_ScriptAction_DisableMessage                },
 
-//bani
 	{ "set",                            etpro_ScriptAction_SetValues                 },
 
 	{ "constructible_class",            G_ScriptAction_ConstructibleClass            },
@@ -416,20 +415,20 @@ void G_Script_ScriptLoad(void)
 		return;
 	}
 
-	// END Mad Doc - TDF
-	// Arnout: make sure we terminate the script with a '\0' to prevent parser from choking
+
+	// make sure we terminate the script with a '\0' to prevent parser from choking
 	//level.scriptEntity = G_Alloc( len );
 	//trap_FS_Read( level.scriptEntity, len, f );
 	level.scriptEntity = G_Alloc(len + 1);
 	trap_FS_Read(level.scriptEntity, len, f);
 	*(level.scriptEntity + len) = '\0';
 
-	// Gordon: and make sure ppl haven't put stuff with uppercase in the string table..
+	// and make sure ppl haven't put stuff with uppercase in the string table..
 	G_Script_EventStringInit();
 
-	// Gordon: discard all the comments NOW, so we dont deal with them inside scripts
-	// Gordon: disabling for a sec, wanna check if i can get proper line numbers from error output
-//  COM_Compress( level.scriptEntity );
+	// discard all the comments NOW, so we dont deal with them inside scripts
+	// - disabling for a sec, wanna check if i can get proper line numbers from error output
+	//COM_Compress( level.scriptEntity );
 
 	trap_FS_FCloseFile(f);
 }
@@ -519,10 +518,9 @@ void G_Script_ScriptParse(gentity_t *ent)
 	g_script_event_t events[G_MAX_SCRIPT_STACK_ITEMS];
 	int              numEventItems;
 	g_script_event_t *curEvent;
-	// DHM - Nerve :: Some of our multiplayer script commands have longer parameters
+	// Some of our multiplayer script commands have longer parameters
 	//char      params[MAX_QPATH];
-	char params[MAX_INFO_STRING];
-	// dhm - end
+	char                    params[MAX_INFO_STRING];
 	g_script_stack_action_t *action;
 	int                     i;
 	int                     bracketLevel;
@@ -834,7 +832,7 @@ void G_Script_ScriptChange(gentity_t *ent, int newScriptNum)
 	}
 }
 
-// Gordon: lower the strings and hash them
+// lower the strings and hash them
 void G_Script_EventStringInit(void)
 {
 	int i;
@@ -1218,7 +1216,6 @@ void script_mover_blocked(gentity_t *ent, gentity_t *other)
 	// remove it, we must not stop for anything or it will screw up script timing
 	if (!other->client && other->s.eType != ET_CORPSE)
 	{
-		// /me slaps nerve
 		// except CTF flags!!!!
 		if (other->s.eType == ET_ITEM && other->item->giType == IT_TEAM)
 		{
@@ -1496,7 +1493,7 @@ void SP_script_camera(gentity_t *ent)
 
   This is used to script multiplayer maps.  Entity not displayed in game.
 
-// Gordon: also storing some stuff that will change often but needs to be broadcast, so we dont want to use a configstring
+// also storing some stuff that will change often but needs to be broadcast, so we dont want to use a configstring
 
 "scriptname" name used for scripting purposes (REQUIRED)
 */
@@ -1504,13 +1501,13 @@ void SP_script_multiplayer(gentity_t *ent)
 {
 	ent->scriptName = "game_manager";
 
-	// Gordon: broadcasting this to clients now, should be cheaper in bandwidth for sending landmine info
+	// broadcasting this to clients now, should be cheaper in bandwidth for sending landmine info
 	ent->s.eType   = ET_GAMEMANAGER;
 	ent->r.svFlags = SVF_BROADCAST;
 
 	if (level.gameManager)
 	{
-		// Gordon: ok, making this an error now
+		// ok, making this an error now
 		G_Error("^1ERROR: multiple script_multiplayers found^7\n");
 	}
 	level.gameManager                    = ent;

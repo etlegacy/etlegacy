@@ -502,7 +502,7 @@ spawn_t spawns[] =
 	{ "shooter_mortar",            SP_shooter_mortar            },
 	{ "alarm_box",                 SP_alarm_box                 },
 
-	// Gordon: FIXME remove
+	// FIXME remove
 	{ "team_CTF_redplayer",        SP_team_CTF_redplayer        },
 	{ "team_CTF_blueplayer",       SP_team_CTF_blueplayer       },
 

@@ -1698,7 +1698,7 @@ BG_UpdateConditionValue
 */
 void BG_UpdateConditionValue(int client, int condition, int value, qboolean checkConversion)
 {
-	// rain - fixed checkConversion brained-damagedness, which would try
+	// fixed checkConversion brained-damagedness, which would try
 	// to BitSet an insane value if checkConversion was false but this
 	// anim was ANIM_CONDTYPE_BITFLAGS
 	if (checkConversion == qtrue)

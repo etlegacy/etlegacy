@@ -303,7 +303,7 @@ void Psparks_think(gentity_t *ent)
 {
 	gentity_t *tent;
 
-//(SA) MOVE TO CLIENT!
+// FIXME MOVE TO CLIENT!
 	return;
 
 
@@ -362,7 +362,7 @@ void sparks_angles_think(gentity_t *ent)
 
 void SP_props_sparks(gentity_t *ent)
 {
-	// (SA) don't use in multiplayer right now since it makes decyphering net messages almost impossible
+	// don't use in multiplayer right now since it makes decyphering net messages almost impossible
 	ent->think = G_FreeEntity;
 	return;
 
@@ -552,7 +552,7 @@ void propExplosionLarge(gentity_t *ent)
 
 	bolt = G_Spawn();
 
-	// Gordon: for explosion type
+	// for explosion type
 	bolt->accuracy = 2;
 
 	bolt->classname = "props_explosion_large";
@@ -590,7 +590,7 @@ void propExplosion(gentity_t *ent)
 	bolt->s.eType   = ET_MISSILE;
 	bolt->r.svFlags = 0;
 
-	// Gordon: storing explosion type
+	// storing explosion type
 	bolt->accuracy = 1;
 
 	bolt->s.weapon = WP_NONE;
@@ -3929,7 +3929,7 @@ void props_locker_mass(gentity_t *ent)
 
 	tent->s.dl_intensity = 0;
 
-	trap_SetConfigstring(CS_TARGETEFFECT, ent->dl_shader);      //----(SA)  allow shader to be set from entity
+	trap_SetConfigstring(CS_TARGETEFFECT, ent->dl_shader);      // allow shader to be set from entity
 
 	tent->s.frame = ent->key;
 
@@ -3946,7 +3946,7 @@ the default sounds are:
   "gibs"    - "sound/player/gibsplit1.wav"
   "brick"   - "sound/world/debris1.wav"
   "stone"   - "sound/world/stonefall.wav"
-  "fabric"  - "sound/world/metalbreak.wav"  // (SA) temp
+  "fabric"  - "sound/world/metalbreak.wav"  // temp
 
 "locknoise" the locked sound to play
 "wait"   denotes how long the wait is going to be before the locked sound is played again default is 1 sec
@@ -3959,7 +3959,7 @@ the default sounds are:
 
 "dl_shader" needs to be set the same way as a target_effect
 
-TBD: the spawning of junk still pending and animation when used
+FIXME/TBD: the spawning of junk still pending and animation when used
 
 -------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 model="models/mapobjects/furniture/footlocker.md3"
@@ -3978,7 +3978,7 @@ void props_locker_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacke
 	ent->nextthink  = 0;
 
 	trap_UnlinkEntity(ent);
-	ent->r.maxs[2] = 11;    // (SA) make the dead bb half height so the item can look like it's sitting inside
+	ent->r.maxs[2] = 11;    // make the dead bb half height so the item can look like it's sitting inside
 	props_locker_spawn_item(ent);
 	trap_LinkEntity(ent);
 }
@@ -3990,9 +3990,9 @@ void SP_props_footlocker(gentity_t *self)
 	char *locked;
 	int  mass;
 
-//  trap_SetBrushModel (self, self->model);
+	//trap_SetBrushModel (self, self->model);
 
-	// (SA) if angle is xx or yy, rotate the bounding box 90 deg to match
+	// if angle is xx or yy, rotate the bounding box 90 deg to match
 	// NOTE:    Non axis-aligned orientation not allowed.  It will work, but
 	//          the bounding box will not exactly match the model.
 	if (self->s.angles[1] == 90 || self->s.angles[1] == 270)
@@ -4090,7 +4090,7 @@ void props_flamethrower_think(gentity_t *ent)
 {
 	vec3_t    vec;
 	gentity_t *target = NULL;
-	// TAT - actually create flamechunks that do damage in this direction
+	// actually create flamechunks that do damage in this direction
 	vec3_t flameDir;
 
 	if (ent->spawnflags & 1)     // tracking
@@ -4102,9 +4102,9 @@ void props_flamethrower_think(gentity_t *ent)
 
 		if (!target)
 		{
-//          VectorSet (ent->r.currentAngles, 0, 0, 1);  // (SA) wasn't working
+			//VectorSet (ent->r.currentAngles, 0, 0, 1);  // wasn't working
 			VectorSet(ent->s.apos.trBase, 0, 0, 1);
-			// TAT - try that for the flame too
+			// try that for the flame too
 			VectorSet(flameDir, 0, 0, 1);
 		}
 		else
@@ -4114,10 +4114,10 @@ void props_flamethrower_think(gentity_t *ent)
 			VectorSubtract(target->s.origin, ent->s.origin, vec);
 			VectorNormalize(vec);
 			vectoangles(vec, angles);
-//          VectorCopy (angles, ent->r.currentAngles);  // (SA) wasn't working
+			//VectorCopy (angles, ent->r.currentAngles);  // wasn't working
 			VectorCopy(angles, ent->s.apos.trBase);
 
-			// TAT - we want the vector going the other way for the flame
+			// we want the vector going the other way for the flame
 			VectorSubtract(ent->s.origin, target->s.origin, flameDir);
 		}
 	}
@@ -4130,12 +4130,12 @@ void props_flamethrower_think(gentity_t *ent)
 
 		if (!target)
 		{
-			// TAT - try that for the flame too
+			// try that for the flame too
 			VectorSet(flameDir, 0, 0, 1);
 		}
 		else
 		{
-			// TAT - we want the vector going the other way for the flame
+			// we want the vector going the other way for the flame
 			VectorSubtract(ent->s.origin, target->s.origin, flameDir);
 		}
 	}
@@ -4146,7 +4146,6 @@ void props_flamethrower_think(gentity_t *ent)
 
 		ent->nextthink = level.time + 50;
 
-		// TAT 11/12/2002
 		//      The flamethrower effect above is purely visual
 		//      we actual need to create an entity that is the fire and will do damage
 		fire_flamechunk(ent, ent->r.currentOrigin, flameDir);
@@ -4178,7 +4177,7 @@ void props_flamethrower_use(gentity_t *ent, gentity_t *other, gentity_t *activat
 	if (ent->spawnflags & 2)
 	{
 		ent->spawnflags &= ~2;
-		ent->think       = NULL; // (SA) wasn't working
+		ent->think       = NULL; // wasn't working
 		ent->nextthink   = 0;
 		return;
 	}
@@ -4216,7 +4215,7 @@ void props_flamethrower_init(gentity_t *ent)
 
 	if (!target)
 	{
-//      VectorSet (ent->r.currentAngles, 0, 0, 1);  //----(SA)
+//      VectorSet (ent->r.currentAngles, 0, 0, 1);
 		VectorSet(ent->s.apos.trBase, 0, 0, 1);
 	}
 	else
@@ -4224,9 +4223,9 @@ void props_flamethrower_init(gentity_t *ent)
 		VectorSubtract(target->s.origin, ent->s.origin, vec);
 		VectorNormalize(vec);
 		vectoangles(vec, angles);
-//      VectorCopy (angles, ent->r.currentAngles);  //----(SA)
+//      VectorCopy (angles, ent->r.currentAngles);
 		VectorCopy(angles, ent->s.apos.trBase);
-		VectorCopy(angles, ent->s.angles);   // RF, added to fix weird release build issues
+		VectorCopy(angles, ent->s.angles);   // added to fix weird release build issues
 	}
 
 	trap_LinkEntity(ent);

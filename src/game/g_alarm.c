@@ -224,7 +224,7 @@ void SP_alarm_box(gentity_t *ent)
 	G_SetOrigin(ent, ent->s.origin);
 	G_SetAngle(ent, ent->s.angles);
 
-	// Gordon: FIXME: temp
+	// FIXME: temp
 	G_Printf("Alarm: %f %f %f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
 
 	if (!ent->health)

@@ -353,7 +353,7 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 		ent2->delay = 0;
 	}
 
-	//  ent2->item->quantity = client->ps.ammoclip[BG_FindClipForWeapon(weapon)]; // Gordon: um, modifying an item is not a good idea
+	//  ent2->item->quantity = client->ps.ammoclip[BG_FindClipForWeapon(weapon)]; // um, modifying an item is not a good idea
 	client->ps.ammoclip[BG_FindClipForWeapon(weapon)] = 0;
 
 #ifdef FEATURE_OMNIBOT
@@ -407,7 +407,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	int      quantity;
 	qboolean alreadyHave = qfalse;
 
-	// JPW NERVE -- magic ammo for any two-handed weapon
+	// magic ammo for any two-handed weapon
 	if (ent->item->giTag == WP_AMMO)
 	{
 		AddMagicAmmo(other, ent->count);
@@ -449,12 +449,12 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	// check if player already had the weapon
 	alreadyHave = COM_BitCheck(other->client->ps.weapons, ent->item->giTag);
 
-	// JPW NERVE  prevents drop/pickup weapon "quick reload" exploit
+	// prevents drop/pickup weapon "quick reload" exploit
 	if (alreadyHave)
 	{
 		Add_Ammo(other, ent->item->giTag, quantity, qfalse);
 
-		// Gordon: secondary weapon ammo
+		// secondary weapon ammo
 		if (ent->delay)
 		{
 			Add_Ammo(other, weapAlts[ent->item->giTag], ent->delay, qfalse);
@@ -477,7 +477,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		{
 			weapon_t primaryWeapon = G_GetPrimaryWeaponForClient(other->client);
 
-			// rain - added parens around ambiguous &&
+			// added parens around ambiguous &&
 			if (primaryWeapon ||
 			    (other->client->sess.playerType == PC_SOLDIER && other->client->sess.skill[SK_HEAVY_WEAPONS] >= 4))
 			{
@@ -493,7 +493,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				// add the weapon
 				COM_BitSet(other->client->ps.weapons, ent->item->giTag);
 
-				// DHM - Fixup mauser/sniper issues
+				// Fixup mauser/sniper issues
 				if (ent->item->giTag == WP_FG42)
 				{
 					COM_BitSet(other->client->ps.weapons, WP_FG42SCOPE);
@@ -530,7 +530,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				{
 					other->client->ps.ammo[BG_FindClipForWeapon(ent->item->giTag)] = quantity;
 
-					// Gordon: secondary weapon ammo
+					// secondary weapon ammo
 					if (ent->delay)
 					{
 						Add_Ammo(other, weapAlts[ent->item->giTag], ent->delay, qfalse);
@@ -540,7 +540,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				{
 					other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giTag)] = quantity;
 
-					// Gordon: secondary weapon ammo
+					// secondary weapon ammo
 					if (ent->delay)
 					{
 						other->client->ps.ammo[weapAlts[ent->item->giTag]] = ent->delay;
@@ -764,7 +764,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	// play sounds
 	if (ent->noise_index)
 	{
-		// (SA) a sound was specified in the entity, so play that sound
+		// a sound was specified in the entity, so play that sound
 		// (this G_AddEvent) and send the pickup as "EV_ITEM_PICKUP_QUIET"
 		// so it doesn't make the default pickup sound when the pickup event is recieved
 		makenoise = EV_ITEM_PICKUP_QUIET;
@@ -834,15 +834,15 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 
 	dropped->s.eType           = ET_ITEM;
 	dropped->s.modelindex      = item - bg_itemlist; // store item number in modelindex
-	dropped->s.otherEntityNum2 = 1; // DHM - Nerve :: this is taking modelindex2's place for a dropped item
+	dropped->s.otherEntityNum2 = 1; // this is taking modelindex2's place for a dropped item
 
 	dropped->classname = item->classname;
 	dropped->item      = item;
-	VectorSet(dropped->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, 0);              //----(SA)  so items sit on the ground
-	VectorSet(dropped->r.maxs, ITEM_RADIUS, ITEM_RADIUS, 2 * ITEM_RADIUS);    //----(SA)    so items sit on the ground
+	VectorSet(dropped->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, 0);              // so items sit on the ground
+	VectorSet(dropped->r.maxs, ITEM_RADIUS, ITEM_RADIUS, 2 * ITEM_RADIUS);    // so items sit on the ground
 	dropped->r.contents = CONTENTS_TRIGGER | CONTENTS_ITEM;
 
-	dropped->clipmask = CONTENTS_SOLID | CONTENTS_MISSILECLIP;      // NERVE - SMF - fix for items falling through grates
+	dropped->clipmask = CONTENTS_SOLID | CONTENTS_MISSILECLIP;      // fix for items falling through grates
 
 	dropped->touch = Touch_Item_Auto;
 
@@ -975,7 +975,7 @@ void FinishSpawningItem(gentity_t *ent)
 	}
 	else
 	{
-		// Rafael: had to modify this so that items would spawn in shelves
+		// had to modify this so that items would spawn in shelves
 		VectorSet(ent->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, 0);
 		VectorSet(ent->r.maxs, ITEM_RADIUS, ITEM_RADIUS, ITEM_RADIUS);
 		VectorCopy(ent->r.maxs, maxs);
@@ -987,9 +987,9 @@ void FinishSpawningItem(gentity_t *ent)
 	ent->s.eType      = ET_ITEM;
 	ent->s.modelindex = ent->item - bg_itemlist;        // store item number in modelindex
 
-	ent->s.otherEntityNum2 = 0;     // DHM - Nerve :: takes modelindex2's place in signaling a dropped item
-	//----(SA)  we don't use this (yet, anyway) so I'm taking it so you can specify a model for treasure items and clipboards
-	//  ent->s.modelindex2 = 0; // zero indicates this isn't a dropped item
+	ent->s.otherEntityNum2 = 0;     // takes modelindex2's place in signaling a dropped item
+	// we don't use this (yet, anyway) so I'm taking it so you can specify a model for treasure items and clipboards
+	//ent->s.modelindex2 = 0; // zero indicates this isn't a dropped item
 	if (ent->model)
 	{
 		ent->s.modelindex2 = G_ModelIndex(ent->model);
@@ -998,7 +998,7 @@ void FinishSpawningItem(gentity_t *ent)
 	// using an item causes it to respawn
 	ent->use = Use_Item;
 
-	//----(SA) moved this up so it happens for suspended items too (and made it a function)
+	// moved this up so it happens for suspended items too (and made it a function)
 	G_SetAngle(ent, ent->s.angles);
 
 	if (ent->spawnflags & 1)        // suspended

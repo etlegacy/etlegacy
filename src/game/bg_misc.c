@@ -165,7 +165,7 @@ int reloadableWeapons[] =
 
 // Separate table for SP and MP allow us to make the ammo and med packs function differently and may allow use to balance
 // weapons separately for each game.
-// Gordon: changed to actually use the maxammo values
+// - changed to actually use the maxammo values
 ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 {
 	//  MAX             USES    MAX     START   START  RELOAD   FIRE            NEXT    HEAT,   COOL,   MOD,    ...
@@ -175,7 +175,7 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 	{ 24,  1, 8,   24, 8,   1500, DELAY_PISTOL, 400,  0,    0,   MOD_LUGER                },                                        // WP_LUGER                 // 2    // NOTE: also 32 round 'snail' magazine
 	{ 90,  1, 30,  30, 30,  2400, DELAY_LOW,    150,  0,    0,   MOD_MP40                 },                                        // WP_MP40                  // 3
 	{ 45,  1, 15,  0,  4,   1000, DELAY_THROW,  1600, 0,    0,   MOD_GRENADE_LAUNCHER     },                                        // WP_GRENADE_LAUNCHER      // 4
-	{ 4,   1, 1,   0,  4,   1000, 750,          2000, 0,    0,   MOD_PANZERFAUST          },                                        // WP_PANZERFAUST           // 5    // DHM - Nerve :: updated delay so prediction is correct
+	{ 4,   1, 1,   0,  4,   1000, 750,          2000, 0,    0,   MOD_PANZERFAUST          },                                        // WP_PANZERFAUST           // 5    // updated delay so prediction is correct
 	{ 200, 1, 200, 0,  200, 1000, DELAY_LOW,    50,   0,    0,   MOD_FLAMETHROWER         },                                        // WP_FLAMETHROWER          // 6
 	{ 24,  1, 8,   24, 8,   1500, DELAY_PISTOL, 400,  0,    0,   MOD_COLT                 },                                        // WP_COLT                  // 7
 	{ 90,  1, 30,  30, 30,  2400, DELAY_LOW,    150,  0,    0,   MOD_THOMPSON             },                                        // WP_THOMPSON              // 8
@@ -459,7 +459,6 @@ An item fires all of its targets when it is picked up.  If the toucher can't car
 "stand" if the item has a stand (ex: mp40_stand.md3) this specifies which stand tag to attach the weapon to ("stand":"4" would mean "tag_stand4" for example)  only weapons support stands currently
 */
 
-// the addition of the 'ammotype' field was added by me, not removed by id (SA)
 gitem_t bg_itemlist[] =
 {
 	{
@@ -501,9 +500,9 @@ gitem_t bg_itemlist[] =
 			0,
 			0
 		},
-		NULL,   // (SA) placeholder
+		NULL,   // placeholder
 		NULL,                   // ammo icon
-		"Treasure Item",     // (SA) placeholder
+		"Treasure Item",     // placeholder
 		5,
 		IT_TREASURE,
 		0,
@@ -551,7 +550,7 @@ gitem_t bg_itemlist[] =
 		"sound/misc/health_pickup.wav",
 //      "sound/multiplayer/health_pickup.wav",
 		{
-			"models/multiplayer/medpack/medpack_pickup.md3", // JPW NERVE was   "models/powerups/health/health_m.md3",
+			"models/multiplayer/medpack/medpack_pickup.md3", // was   "models/powerups/health/health_m.md3",
 			0,
 			0
 		},
@@ -576,14 +575,14 @@ gitem_t bg_itemlist[] =
 		"sound/misc/health_pickup.wav",
 //      "sound/multiplayer/health_pickup.wav",
 		{
-			"models/multiplayer/medpack/medpack_pickup.md3", // JPW NERVE was   "models/powerups/health/health_m.md3",
+			"models/multiplayer/medpack/medpack_pickup.md3", //  was "models/powerups/health/health_m.md3",
 			0,
 			0
 		},
 		NULL,
 		NULL,   // ammo icon
 		"Med Health",
-		50,             // xkan, 12/20/2002 - increased to 50 from 30 and used it for SP.
+		50,             // increased to 50 from 30 and used it for SP.
 		IT_HEALTH,
 		0,
 		0,
@@ -689,14 +688,11 @@ gitem_t bg_itemlist[] =
 //      {25,25,25,25,25}
 	},
 
-	//
 	// STAMINA
-	//
 
-	//
 	// WEAPONS
-	//
-	// wolf weapons (SA)
+
+	// wolf weapons
 
 	/*QUAKED weapon_knife (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -996,7 +992,7 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
-//----(SA)  removed the quaked for this.  we don't actually have a grenade launcher as such.  It's given implicitly
+// removed the quaked for this.  we don't actually have a grenade launcher as such.  It's given implicitly
 //          by virtue of getting grenade ammo.  So we don't need to have them in maps
 	/*
 	weapon_grenadelauncher
@@ -1046,9 +1042,8 @@ gitem_t bg_itemlist[] =
 		"",              // sounds
 //      {0,0,0,0,0}
 	},
-	/* JPW NERVE
-	weapon_grenadesmoke
-	*/
+
+	// weapon_grenadesmoke
 	{
 		"weapon_grenadesmoke",
 		"sound/misc/w_pkup.wav",
@@ -1070,9 +1065,8 @@ gitem_t bg_itemlist[] =
 		"",              // sounds
 //      {0,0,0,0,0}
 	},
-	/* JPW NERVE
-	weapon_smoketrail -- only used as a special effects emitter for smoke trails (artillery spotter etc)
-	*/
+
+	// weapon_smoketrail -- only used as a special effects emitter for smoke trails (artillery spotter etc)
 	{
 		"weapon_smoketrail",
 		"sound/misc/w_pkup.wav",
@@ -1125,8 +1119,8 @@ gitem_t bg_itemlist[] =
 		"weapon_dynamite",
 		"sound/misc/w_pkup.wav",
 		{
-			"models/multiplayer/dynamite/dynamite_3rd.md3", // JPW NERVE
-			"models/weapons2/dynamite/v_dynamite.md3",  // JPW NERVE
+			"models/multiplayer/dynamite/dynamite_3rd.md3",
+			"models/weapons2/dynamite/v_dynamite.md3",
 			0
 		},
 
@@ -1138,7 +1132,7 @@ gitem_t bg_itemlist[] =
 		WP_DYNAMITE,
 		WP_DYNAMITE,
 		WP_DYNAMITE,
-		"models/multiplayer/dynamite/dynamite.md3 models/multiplayer/dynamite/dynamite_3rd.md3", // precache // JPW NERVE
+		"models/multiplayer/dynamite/dynamite.md3 models/multiplayer/dynamite/dynamite_3rd.md3", // precache
 		"",                      // sounds
 //      {0,0,0,0,0}
 	},
@@ -1190,7 +1184,7 @@ gitem_t bg_itemlist[] =
 		"",                      // sounds - was sound/weapons/mortar/mortarf1.wav
 //      {0,0,0,0,0}
 	},
-// JPW NERVE -- class-specific multiplayer weapon, can't be picked up, dropped, or placed in map
+
 	/*
 	weapon_class_special (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	*/
@@ -1603,7 +1597,7 @@ gitem_t bg_itemlist[] =
 	model="models/weapons2/fg42/fg42.md3"
 	*/
 	{
-		"weapon_fg42scope",  //----(SA) modified
+		"weapon_fg42scope",
 		"sound/misc/w_pkup.wav",
 		{ "models/weapons2/fg42/fg42.md3",
 		  "models/weapons2/fg42/v_fg42.md3",
@@ -1611,7 +1605,7 @@ gitem_t bg_itemlist[] =
 
 		"icons/iconw_fg42_1",    // icon
 		"icons/ammo5",               // ammo icon
-		"FG42 Scope",                // pickup      //----(SA)  modified
+		"FG42 Scope",                // pickup
 		0,
 		IT_WEAPON,
 		WP_FG42SCOPE,   // this weap
@@ -1635,7 +1629,7 @@ gitem_t bg_itemlist[] =
 
 		"icons/iconw_mortar_1",  // icon
 		"icons/ammo5",           // ammo icon
-		"Mortar",                // pickup      //----(SA)  modified
+		"Mortar",                // pickup
 		0,
 		IT_WEAPON,
 		WP_MORTAR,  // this weap
@@ -1654,7 +1648,7 @@ gitem_t bg_itemlist[] =
 
 		"icons/iconw_mortar_1",  // icon
 		"icons/ammo5",           // ammo icon
-		"Mounted Mortar",                // pickup      //----(SA)  modified
+		"Mounted Mortar",                // pickup
 		0,
 		IT_WEAPON,
 		WP_MORTAR_SET,  // this weap
@@ -1808,7 +1802,7 @@ gitem_t bg_itemlist[] =
 	{
 		"weapon_silencer",
 		"sound/misc/w_pkup.wav",
-		{ "models/weapons2/silencer/silencer.md3",   //----(SA) changed 10/25
+		{ "models/weapons2/silencer/silencer.md3",
 		  "models/weapons2/silencer/v_silencer.md3",
 		  "models/weapons2/silencer/pu_silencer.md3" },
 
@@ -1886,7 +1880,7 @@ gitem_t bg_itemlist[] =
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
-		"syringe",           // pickup          //----(SA)  changed
+		"syringe",           // pickup
 		1,
 		IT_AMMO,
 		WP_MEDIC_SYRINGE,
@@ -1907,7 +1901,7 @@ gitem_t bg_itemlist[] =
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
-		"smoke grenade", // pickup          //----(SA)  changed
+		"smoke grenade", // pickup
 		1,
 		IT_AMMO,
 		WP_SMOKE_BOMB,
@@ -1928,7 +1922,7 @@ gitem_t bg_itemlist[] =
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
-		"dynamite",  // pickup          //----(SA)  changed
+		"dynamite",  // pickup
 		1,
 		IT_AMMO,
 		WP_DYNAMITE,
@@ -1949,7 +1943,7 @@ gitem_t bg_itemlist[] =
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
-		"disguise",  // pickup          //----(SA)  changed
+		"disguise",  // pickup
 		1,
 		IT_AMMO,
 		-1, // ignored
@@ -1970,7 +1964,7 @@ gitem_t bg_itemlist[] =
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
-		"airstrike canister",    // pickup          //----(SA)  changed
+		"airstrike canister",    // pickup
 		1,
 		IT_AMMO,
 		WP_SMOKE_MARKER,
@@ -1991,7 +1985,7 @@ gitem_t bg_itemlist[] =
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
-		"landmine",  // pickup          //----(SA)  changed
+		"landmine",  // pickup
 		1,
 		IT_AMMO,
 		WP_LANDMINE,
@@ -2012,7 +2006,7 @@ gitem_t bg_itemlist[] =
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
-		"satchel charge",    // pickup          //----(SA)  changed
+		"satchel charge",    // pickup
 		1,
 		IT_AMMO,
 		WP_SATCHEL,
@@ -2060,7 +2054,7 @@ gitem_t bg_itemlist[] =
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
-		"9mm",           // pickup          //----(SA)  changed
+		"9mm",           // pickup
 		16,
 		IT_AMMO,
 		WP_LUGER,
@@ -2126,7 +2120,7 @@ gitem_t bg_itemlist[] =
 		  0, 0 },
 		"", // icon
 		NULL,               // ammo icon
-		".45cal",        // pickup          //----(SA)  changed
+		".45cal",        // pickup
 		16,
 		IT_AMMO,
 		WP_COLT,
@@ -2193,7 +2187,7 @@ gitem_t bg_itemlist[] =
 		  0, 0 },
 		"",  // icon
 		NULL,                       // ammo icon
-		".30cal",                // pickup          //----(SA)  changed
+		".30cal",                // pickup
 		16,
 		IT_AMMO,
 		WP_GARAND,
@@ -2281,7 +2275,7 @@ gitem_t bg_itemlist[] =
 //      {0,0,0,0,0}
 	},
 
-	//---- (SA) Wolf keys
+	// Wolf keys
 
 	/* QUAKED key_1 (1 1 0) (-8 -8 -8) (8 8 8) SUSPENDED SPIN - RESPAWN
 	key 1
@@ -2559,8 +2553,8 @@ gitem_t *BG_FindItemForClassName(const char *className)
 	return NULL;
 }
 
-// DHM - Nerve :: returns qtrue if a weapon is indeed used in multiplayer
-// Gordon: FIXME: er, we shouldnt really need this, just remove all the weapons we dont actually want :)
+// returns qtrue if a weapon is indeed used in multiplayer
+// FIXME: er, we shouldnt really need this, just remove all the weapons we dont actually want :)
 qboolean BG_WeaponInWolfMP(int weapon)
 {
 	switch (weapon)
@@ -2692,7 +2686,7 @@ weapon_t BG_GrenadeTypeForTeam(team_t team)
 	}
 }
 
-// Gordon: setting numOfClips = 0 allows you to check if the client needs ammo, but doesnt give any
+// setting numOfClips = 0 allows you to check if the client needs ammo, but doesnt give any
 qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfClips)
 {
 	int i, weapon;
@@ -2701,7 +2695,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 	int clip;
 	int weapNumOfClips;
 
-	// Gordon: handle grenades first
+	// handle grenades first
 	i      = BG_GrenadesForClass(ps->stats[STAT_PLAYER_CLASS], skill);
 	weapon = BG_GrenadeTypeForTeam(teamNum);
 
@@ -2709,7 +2703,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 	if (ps->ammoclip[clip] < i)
 	{
 
-		// Gordon: early out
+		// early out
 		if (!numOfClips)
 		{
 			return qtrue;
@@ -2751,7 +2745,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 		}
 	}
 
-	// Gordon: now other weapons
+	// now other weapons
 	for (i = 0; reloadableWeapons[i] >= 0; i++)
 	{
 		weapon = reloadableWeapons[i];
@@ -2871,7 +2865,7 @@ qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon)
 		if (weapon == WP_STEN
 		    || weapon == WP_PANZERFAUST
 		    || weapon == WP_FLAMETHROWER
-		    // Gordon: shouldn't this only be for cvt ops?
+		    // FIXME: shouldn't this only be for cvt ops?
 		    || weapon == WP_FG42
 		    || weapon == WP_MOBILE_MG42
 		    || weapon == WP_MOBILE_MG42_SET
@@ -2909,7 +2903,6 @@ qboolean BG_CanUseWeapon(int classNum, int teamNum, weapon_t weapon)
 		    || weapon == WP_SMOKE_BOMB
 		    || weapon == WP_SATCHEL
 		    || weapon == WP_AMMO
-		    // Gordon: this is a cvt ops weapon in single player too, right?
 		    || weapon == WP_FG42)
 		{
 			return qtrue;
@@ -2967,7 +2960,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 			// xkan, 11/21/2002 - only pick up if ammo is not full, numClips is 0, so ps will
 			// NOT be changed (I know, it places the burden on the programmer, rather than the
 			// compiler, to ensure that).
-			return BG_AddMagicAmmo((playerState_t *)ps, skill, teamNum, 0);      // Arnout: had to cast const away
+			return BG_AddMagicAmmo((playerState_t *)ps, skill, teamNum, 0);      // had to cast const away
 		}
 
 		return qtrue;
@@ -2979,10 +2972,10 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 		return qfalse;
 
 	case IT_HEALTH:
-		// Gordon: ps->teamNum is really class.... thx whoever decided on that...
+		// ps->teamNum is really class.... thx whoever decided on that...
 		if (ps->teamNum == PC_MEDIC)
 		{
-			// Gordon: medics can go up to 12% extra on max health as they have perm. regen
+			// medics can go up to 12% extra on max health as they have perm. regen
 			if (ps->stats[STAT_HEALTH] >= (int)(ps->stats[STAT_MAX_HEALTH] * 1.12))
 			{
 				return qfalse;
@@ -3004,7 +2997,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 			return qfalse;
 		}
 
-		// DHM - Nerve :: otherEntity2 is now used instead of modelindex2
+		// otherEntity2 is now used instead of modelindex2
 		// ent->modelindex2 is non-zero on items if they are dropped
 		// we need to know this because we can pick up our dropped flag (and return it)
 		// but we can't pick up our flag at base
@@ -3895,7 +3888,7 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 	ps->eventSequence++;
 }
 
-// Gordon: would like to just inline this but would likely break qvm support
+// would like to just inline this but would likely break qvm support
 #define SETUP_MOUNTEDGUN_STATUS(ps)                           \
 	switch (ps->persistant[PERS_HWEAPON_USE]) {                \
 	case 1:                                                 \
@@ -3926,7 +3919,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 {
 	int i;
 
-	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR)     // || ps->pm_flags & PMF_LIMBO ) { // JPW NERVE limbo
+	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR)     // || ps->pm_flags & PMF_LIMBO ) { // limbo
 	{
 		s->eType = ET_INVISIBLE;
 	}
@@ -3968,7 +3961,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 	s->torsoAnim = ps->torsoAnim;
 	s->clientNum = ps->clientNum;       // ET_PLAYER looks here instead of at number
 	// so corpses can also reference the proper config
-	// Ridah, let clients know if this person is using a mounted weapon
+	// - let clients know if this person is using a mounted weapon
 	// so they don't show any client muzzle flashes
 
 	if (ps->eFlags & EF_MOUNTEDTANK)
@@ -4012,7 +4005,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 		ps->entityEventSequence++;
 	}
 
-	// Ridah, now using a circular list of events for all entities
+	// now using a circular list of events for all entities
 	// add any new events that have been added to the playerState_t
 	// (possibly overwriting entityState_t events)
 	for (i = ps->oldEventSequence; i != ps->eventSequence; i++)
@@ -4053,7 +4046,7 @@ void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s,
 {
 	int i;
 
-	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR)     // || ps->pm_flags & PMF_LIMBO ) { // JPW NERVE limbo
+	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR)     // || ps->pm_flags & PMF_LIMBO ) { //  limbo
 	{
 		s->eType = ET_INVISIBLE;
 	}
@@ -4161,7 +4154,7 @@ void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s,
 	s->aiState    = ps->aiState;
 }
 
-// Gordon: some weapons are duplicated for code puposes.... just want to treat them as a single
+// some weapons are duplicated for code puposes.... just want to treat them as a single
 weapon_t BG_DuplicateWeapon(weapon_t weap)
 {
 	switch (weap)

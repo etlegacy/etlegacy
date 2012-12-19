@@ -95,7 +95,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 
 	trap_Cvar_Set(va("session%i", (int)(client - level.clients)), s);
 
-	// Arnout: store the clients stats (7) and medals (7)
+	// store the clients stats (7) and medals (7)
 	// addition: but only if it isn't a forced map_restart (done by someone on the console)
 	if (!(restart && !level.warmupTime))
 	{
@@ -192,7 +192,7 @@ void G_CalcRank(gclient_t *client)
 	{
 		int cnt = 0;
 
-		// Gordon: count the number of maxed out skills
+		// count the number of maxed out skills
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
 			if (client->sess.skill[i] >= 4)
@@ -270,7 +270,7 @@ void G_ReadSessionData(gclient_t *client)
 		}
 	}
 
-	// Arnout: likely there are more cases in which we don't want this
+	// likely there are more cases in which we don't want this
 	if (g_gametype.integer != GT_SINGLE_PLAYER &&
 	    g_gametype.integer != GT_COOP &&
 	    g_gametype.integer != GT_WOLF &&
@@ -281,7 +281,7 @@ void G_ReadSessionData(gclient_t *client)
 
 		trap_Cvar_VariableStringBuffer(va("sessionstats%i", (int)(client - level.clients)), s, sizeof(s));
 
-		// Arnout: read the clients stats (7) and medals (7)
+		// read the clients stats (7) and medals (7)
 		sscanf(s, "%f %f %f %f %f %f %f %i %i %i %i %i %i %i",
 		       &client->sess.skillpoints[0],
 		       &client->sess.skillpoints[1],

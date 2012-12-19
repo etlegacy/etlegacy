@@ -131,7 +131,7 @@ void TossClientItems(gentity_t *self)
 	// can pick up a weapon, be killed, and not drop the weapon because
 	// their weapon change hasn't completed yet and they are still holding the MG.
 
-	// (SA) always drop what you were switching to
+	// always drop what you were switching to
 	if( self->client->ps.weaponstate == WEAPON_DROPPING ) {
 	    weapon = self->client->pers.cmd.weapon;
 	}
@@ -144,7 +144,7 @@ void TossClientItems(gentity_t *self)
 	    return;
 	}
 
-	// JPW NERVE don't drop these weapon types
+	// don't drop these weapon types
 	switch( weapon ) {
 	    case WP_NONE:
 	    case WP_KNIFE:
@@ -653,8 +653,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		vec3_t    launchvel = { 0, 0, 0 };
 		gentity_t *flag     = LaunchItem(item, self->r.currentOrigin, launchvel, self->s.number);
 
-		flag->s.modelindex2 = self->s.otherEntityNum2; // JPW NERVE FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
-		flag->message       = self->message; // DHM - Nerve :: also restore item name
+		flag->s.modelindex2 = self->s.otherEntityNum2; // FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
+		flag->message       = self->message; // also restore item name
 		// Clear out player's temp copies
 		self->s.otherEntityNum2 = 0;
 		self->message           = NULL;
@@ -1208,7 +1208,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		attacker = &g_entities[ENTITYNUM_WORLD];
 	}
 
-	// Arnout: invisible entities can't be damaged
+	// invisible entities can't be damaged
 	if (targ->entstate == STATE_INVISIBLE ||
 	    targ->entstate == STATE_UNDERCONSTRUCTION)
 	{
@@ -1736,7 +1736,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 
 		// overcome previous chunk of code for making grenades work again
 		// if ((take > 190)) // 190 is greater than 2x mauser headshot, so headshots don't gib
-		// Arnout: only player entities! messes up ents like func_constructibles and func_explosives otherwise
+		// - only player entities! messes up ents like func_constructibles and func_explosives otherwise
 		if (targ->s.number < MAX_CLIENTS && take > 190)
 		{
 			targ->health = GIB_HEALTH - 1;

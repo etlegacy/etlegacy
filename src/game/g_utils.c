@@ -486,12 +486,12 @@ void G_UseTargets(gentity_t *ent, gentity_t *activator)
 			{
 				//G_Printf ("ent->classname %s ent->targetname %s t->targetname %s t->s.number %d\n", ent->classname, ent->targetname, t->targetname, t->s.number);
 
-				t->flags |= (ent->flags & FL_KICKACTIVATE);   // (SA) If 'ent' was kicked to activate, pass this along to it's targets.
+				t->flags |= (ent->flags & FL_KICKACTIVATE);   // If 'ent' was kicked to activate, pass this along to it's targets.
 				                                              //		It may become handy to put a "KICKABLE" flag in ents so that it knows whether to pass this along or not
 				                                              //		Right now, the only situation where it would be weird would be an invisible_user that is a 'button' near
 				                                              //		a rotating door that it triggers.  Kick the switch and the door next to it flies open.
 
-				t->flags |= (ent->flags & FL_SOFTACTIVATE);   // (SA) likewise for soft activation
+				t->flags |= (ent->flags & FL_SOFTACTIVATE);   // likewise for soft activation
 
 				if (activator &&
 				    ((Q_stricmp(t->classname, "func_door") == 0) ||
@@ -809,51 +809,6 @@ gentity_t *G_PopupMessage(popupMessageType_t type)
 	return e;
 }
 
-/*
-==============================================================================
-
-Kill box
-
-==============================================================================
-*/
-
-/*
-=================
-G_KillBox
-
-Kills all entities that would touch the proposed new positioning
-of ent.  Ent should be unlinked before calling this!
-=================
-*/
-void G_KillBox(gentity_t *ent)
-{
-	int       i, num;
-	int       touch[MAX_GENTITIES];
-	gentity_t *hit;
-	vec3_t    mins, maxs;
-
-	VectorAdd(ent->client->ps.origin, ent->r.mins, mins);
-	VectorAdd(ent->client->ps.origin, ent->r.maxs, maxs);
-	num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
-
-	for (i = 0 ; i < num ; i++)
-	{
-		hit = &g_entities[touch[i]];
-		if (!hit->client)
-		{
-			continue;
-		}
-		if (!hit->r.linked)     // RF, inactive AI shouldn't be gibbed
-		{
-			continue;
-		}
-
-		// nail it
-		G_Damage(hit, ent, ent, NULL, NULL,
-		         100000, DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
-	}
-}
-
 //==============================================================================
 
 /*
@@ -891,16 +846,16 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 		return;
 	}
 
-	// Ridah, use the sequential event list
+	// use the sequential event list
 	if (ent->client)
 	{
-		// NERVE - SMF - commented in - externalEvents not being handled properly in Wolf right now
+		// commented in - externalEvents not being handled properly in Wolf right now
 		ent->client->ps.events[ent->client->ps.eventSequence & (MAX_EVENTS - 1)]     = event;
 		ent->client->ps.eventParms[ent->client->ps.eventSequence & (MAX_EVENTS - 1)] = eventParm;
 		ent->client->ps.eventSequence++;
-		// -NERVE - SMF
 
-		// NERVE - SMF - commented out
+
+		// commented out
 //		bits = ent->client->ps.externalEvent & EV_EVENT_BITS;
 //		bits = ( bits + EV_EVENT_BIT1 ) & EV_EVENT_BITS;
 //		ent->client->ps.externalEvent = event | bits;
@@ -909,13 +864,12 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 	}
 	else
 	{
-		// NERVE - SMF - commented in - externalEvents not being handled properly in Wolf right now
+		// commented in - externalEvents not being handled properly in Wolf right now
 		ent->s.events[ent->s.eventSequence & (MAX_EVENTS - 1)]     = event;
 		ent->s.eventParms[ent->s.eventSequence & (MAX_EVENTS - 1)] = eventParm;
 		ent->s.eventSequence++;
-		// -NERVE - SMF
 
-		// NERVE - SMF - commented out
+		// commented out
 //		bits = ent->s.event & EV_EVENT_BITS;
 //		bits = ( bits + EV_EVENT_BIT1 ) & EV_EVENT_BITS;
 //		ent->s.event = event | bits;
@@ -1493,7 +1447,7 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 						level.currentCampaign = level.campaignCount;
 					}
 				}
-				// rain - don't stomp out of bounds
+				// don't stomp out of bounds
 				if (g_campaigns[level.campaignCount].mapCount < MAX_MAPS_PER_CAMPAIGN)
 				{
 					Q_strncpyz(g_campaigns[level.campaignCount].mapnames[g_campaigns[level.campaignCount].mapCount], mapname, MAX_QPATH);
@@ -1501,13 +1455,13 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 				}
 				else
 				{
-					// rain - yell if there are too many maps in this campaign,
+					// yell if there are too many maps in this campaign,
 					// and then skip it
 
 					G_Printf("^1Error: Campaign %s (%s) has too many maps\n", g_campaigns[level.campaignCount].shortname, filename);
-					// rain - hack - end of campaign will increment this
+					// hack - end of campaign will increment this
 					// again, so this one will be overwritten
-					// rain - clear out this campaign so that everything's
+					// clear out this campaign so that everything's
 					// okay when when we add the next
 					memset(&g_campaigns[level.campaignCount], 0, sizeof(g_campaigns[0]));
 					level.campaignCount--;

@@ -361,7 +361,7 @@ void CG_GenerateTracemap(void)
 
 	// min is 0
 	// max is 255
-	// rain - etmain REALLY expects 1 to 255, so I'm changing this to
+	// etmain REALLY expects 1 to 255, so I'm changing this to
 	// generate that instead, so that etpro tracemaps can be used with
 	// etmain
 	scalefactor = 254.f / (topdownmax - topdownmin);
@@ -378,7 +378,7 @@ void CG_GenerateTracemap(void)
 				tracemap.ground[i][j] = 1.0 + (tracemap.ground[i][j] - topdownmin) * scalefactor;
 			}
 
-			// rain - hard clamp because *min and *max are rounded :(
+			// hard clamp because *min and *max are rounded :(
 			if (tracemap.ground[i][j] < 1.0)
 			{
 				tracemap.ground[i][j] = 1.0;
@@ -392,7 +392,7 @@ void CG_GenerateTracemap(void)
 
 	// min is 0
 	// max is 255
-	// rain - this is d&l, min=1 max=255
+	// this is d&l, min=1 max=255
 	scalefactor = 254.f / (skygroundmax - skygroundmin);
 	if (scalefactor == 0.f)
 	{
@@ -407,7 +407,7 @@ void CG_GenerateTracemap(void)
 				tracemap.skyground[i][j] = 1.0 + (tracemap.skyground[i][j] - skygroundmin) * scalefactor;
 			}
 
-			// rain - hard clamp because *min and *max are rounded :(
+			// hard clamp because *min and *max are rounded :(
 			if (tracemap.skyground[i][j] < 1.0)
 			{
 				tracemap.skyground[i][j] = 1.0;
@@ -443,7 +443,7 @@ void CG_GenerateTracemap(void)
 				tracemap.sky[i][j] = 1.f + (tracemap.sky[i][j] - min) * scalefactor;
 			}
 
-			// rain - hard clamp because *min and *max are rounded :(
+			// hard clamp because *min and *max are rounded :(
 			if (tracemap.sky[i][j] < 0.0)
 			{
 				tracemap.sky[i][j] = 0.0;
@@ -575,14 +575,13 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 {
 	fileHandle_t f;
 	byte         data, datablock[TRACEMAP_SIZE][4];
-	int          sky_min, sky_max;
-	int          ground_min, ground_max;
-	int          skyground_min, skyground_max;
-	//int startTime = trap_Milliseconds();
-
-	ground_min    = ground_max = MIN_WORLD_HEIGHT;
-	skyground_min = skyground_max = MAX_WORLD_HEIGHT;
-	sky_min       = sky_max = MAX_WORLD_HEIGHT;
+	int          sky_min       = MAX_WORLD_HEIGHT;
+	int          sky_max       = MAX_WORLD_HEIGHT;
+	int          ground_min    = MIN_WORLD_HEIGHT;
+	int          ground_max    = MIN_WORLD_HEIGHT;
+	int          skyground_min = MAX_WORLD_HEIGHT;
+	int          skyground_max = MAX_WORLD_HEIGHT;
+	//int startTime = trap_Milliseconds();;
 
 	if (trap_FS_FOpenFile(va("maps/%s_tracemap.tga", Q_strlwr(rawmapname)), &f, FS_READ) >= 0)
 	{
@@ -708,7 +707,7 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 		}
 		else
 		{
-			// rain - scalefactor 254 to compensate for broken etmain behavior
+			// scalefactor 254 to compensate for broken etmain behavior
 			scalefactor = 254.f / (ground_max - ground_min);
 		}
 
@@ -732,7 +731,7 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 		}
 		else
 		{
-			// rain - scalefactor 254 to compensate for broken etmain behavior
+			// scalefactor 254 to compensate for broken etmain behavior
 			scalefactor = 254.f / (skyground_max - skyground_min);
 		}
 
@@ -756,7 +755,7 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 		}
 		else
 		{
-			// rain - scalefactor 254 to compensate for broken etmain behavior
+			// scalefactor 254 to compensate for broken etmain behavior
 			scalefactor = 254.f / (sky_max - sky_min);
 		}
 
@@ -795,7 +794,6 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 
 static void BG_ClampPointToTracemapExtends(vec3_t point, vec2_t out)
 {
-
 	if (point[0] < tracemap.world_mins[0])
 	{
 		out[0] = tracemap.world_mins[0];
@@ -827,13 +825,13 @@ float BG_GetSkyHeightAtPoint(vec3_t pos)
 {
 	int    i, j;
 	vec2_t point;
-//  int msec = trap_Milliseconds();
+	//int msec = trap_Milliseconds();
 
-//  n_getskytime++;
+	//n_getskytime++;
 
 	if (!tracemap.loaded)
 	{
-//      getskytime += trap_Milliseconds() - msec;
+		//getskytime += trap_Milliseconds() - msec;
 		return MAX_WORLD_HEIGHT;
 	}
 
@@ -842,11 +840,11 @@ float BG_GetSkyHeightAtPoint(vec3_t pos)
 	i = (int)((point[0] - tracemap.world_mins[0]) * one_over_mapgrid_factor[0]);
 	j = (int)((point[1] - tracemap.world_mins[1]) * one_over_mapgrid_factor[1]);
 
-	// rain - re-clamp the points, because a rounding error can cause
+	// re-clamp the points, because a rounding error can cause
 	// them to go outside the array
 	etpro_FinalizeTracemapClamp(&i, &j);
 
-//  getskytime += trap_Milliseconds() - msec;
+	//getskytime += trap_Milliseconds() - msec;
 	return(tracemap.sky[j][i]);
 }
 
@@ -854,13 +852,13 @@ float BG_GetSkyGroundHeightAtPoint(vec3_t pos)
 {
 	int    i, j;
 	vec2_t point;
-//  int msec = trap_Milliseconds();
+	//int msec = trap_Milliseconds();
 
-//  n_getgroundtime++;
+	//n_getgroundtime++;
 
 	if (!tracemap.loaded)
 	{
-//      getgroundtime += trap_Milliseconds() - msec;
+		//getgroundtime += trap_Milliseconds() - msec;
 		return MAX_WORLD_HEIGHT;
 	}
 
@@ -869,11 +867,11 @@ float BG_GetSkyGroundHeightAtPoint(vec3_t pos)
 	i = (int)((point[0] - tracemap.world_mins[0]) * one_over_mapgrid_factor[0]);
 	j = (int)((point[1] - tracemap.world_mins[1]) * one_over_mapgrid_factor[1]);
 
-	// rain - re-clamp the points, because a rounding error can cause
+	// re-clamp the points, because a rounding error can cause
 	// them to go outside the array
 	etpro_FinalizeTracemapClamp(&i, &j);
 
-//  getgroundtime += trap_Milliseconds() - msec;
+	//getgroundtime += trap_Milliseconds() - msec;
 	return(tracemap.skyground[j][i]);
 }
 
@@ -881,13 +879,13 @@ float BG_GetGroundHeightAtPoint(vec3_t pos)
 {
 	int    i, j;
 	vec2_t point;
-//  int msec = trap_Milliseconds();
+	//int msec = trap_Milliseconds();
 
-//  n_getgroundtime++;
+	//n_getgroundtime++;
 
 	if (!tracemap.loaded)
 	{
-//      getgroundtime += trap_Milliseconds() - msec;
+		//getgroundtime += trap_Milliseconds() - msec;
 		return MIN_WORLD_HEIGHT;
 	}
 
@@ -896,11 +894,11 @@ float BG_GetGroundHeightAtPoint(vec3_t pos)
 	i = (int)((point[0] - tracemap.world_mins[0]) * one_over_mapgrid_factor[0]);
 	j = (int)((point[1] - tracemap.world_mins[1]) * one_over_mapgrid_factor[1]);
 
-	// rain - re-clamp the points, because a rounding error can cause
+	// re-clamp the points, because a rounding error can cause
 	// them to go outside the array
 	etpro_FinalizeTracemapClamp(&i, &j);
 
-//  getgroundtime += trap_Milliseconds() - msec;
+	//getgroundtime += trap_Milliseconds() - msec;
 	return(tracemap.ground[j][i]);
 }
 
@@ -922,7 +920,7 @@ int BG_GetTracemapGroundCeil(void)
 	return tracemap.groundceil;
 }
 
-// rain - re-clamp the points, because a rounding error can cause
+// re-clamp the points, because a rounding error can cause
 // them to go outside the array
 void etpro_FinalizeTracemapClamp(int *x, int *y)
 {
