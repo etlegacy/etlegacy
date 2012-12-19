@@ -46,9 +46,10 @@ SV_Netchan_Encode
 */
 static void SV_Netchan_Encode(client_t *client, msg_t *msg, char *commandString)
 {
-	long i, index;
-	byte key, *string;
-	int  srdc, sbit, soob;
+	long     i, index;
+	byte     key, *string;
+	int      srdc, sbit;
+	qboolean soob;
 
 	if (msg->cursize < SV_ENCODE_START)
 	{
@@ -62,7 +63,7 @@ static void SV_Netchan_Encode(client_t *client, msg_t *msg, char *commandString)
 
 	msg->bit       = 0;
 	msg->readcount = 0;
-	msg->oob       = 0;
+	msg->oob       = qfalse;
 
 	msg->oob       = soob;
 	msg->bit       = sbit;
@@ -106,15 +107,16 @@ SV_Netchan_Decode
 */
 static void SV_Netchan_Decode(client_t *client, msg_t *msg)
 {
-	int  serverId, messageAcknowledge, reliableAcknowledge;
-	int  i, index, srdc, sbit, soob;
-	byte key, *string;
+	int      serverId, messageAcknowledge, reliableAcknowledge;
+	int      i, index, srdc, sbit;
+	qboolean soob;
+	byte     key, *string;
 
 	srdc = msg->readcount;
 	sbit = msg->bit;
 	soob = msg->oob;
 
-	msg->oob = 0;
+	msg->oob = qfalse;
 
 	serverId            = MSG_ReadLong(msg);
 	messageAcknowledge  = MSG_ReadLong(msg);
