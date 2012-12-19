@@ -48,7 +48,7 @@
 #define Q3_VERSION              PRODUCT_LABEL " " ETLEGACY_VERSION
 #define ET_VERSION              Q3_VERSION " " CPUSTRING " " __DATE__
 #ifdef __APPLE__
-#define FAKE_VERSION            "ET 2.60d " CPUSTRING " May  8 2006"
+#define FAKE_VERSION            "ET 2.60d OSX-universal JAN 20 2007" // ET 2.60c OSX-universal JAN 16 2007
 #else
 #define FAKE_VERSION            "ET 2.60b " CPUSTRING " May  8 2006"
 #endif
@@ -197,6 +197,7 @@ typedef unsigned __int8 uint8_t;
 #define MAC_STATIC
 
 #define CPUSTRING   "MacOS_X" // TODO: check if some mods depend on the old Mac CPUSTRING
+// #define CPUSTRING   "OSX-universal" // old
 
 #define PATH_SEP    '/'
 
