@@ -960,12 +960,13 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 		}
 
 		valid = qfalse;
-		SV_WriteAttackLog(va("Bad rcon from %s: %s\n", NET_AdrToString(from), Cmd_Argv(2)));
 	}
 	else
 	{
 		valid = qtrue;
-		Com_Printf("Rcon from %s: %s\n", NET_AdrToString(from), Cmd_Argv(2)); // don't print in attack log / vanilla behaviour
+
+		Com_Printf("Rcon from %s: %s\n", NET_AdrToString(from), Cmd_Argv(2));
+		SV_WriteAttackLog(va("Rcon from %s: %s\n", NET_AdrToString(from), Cmd_Argv(2)));
 	}
 
 	// start redirecting all print outputs to the packet
@@ -982,9 +983,8 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 	}
 	else if (!valid)
 	{
-		// here we print both (vanilla behaviour + attack log)
 		Com_Printf("Bad rconpassword.\n");
-		SV_WriteAttackLog("Bad rconpassword.\n"); // FIXME: add IP INFO
+		SV_WriteAttackLog(va("Bad rconpassword from %s\n", NET_AdrToString(from)));
 	}
 	else
 	{
