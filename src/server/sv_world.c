@@ -433,7 +433,6 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 
 /*
 ============================================================================
-
 AREA QUERY
 
 Fills in a list of all entities who's absmin / absmax intersects the given
@@ -807,15 +806,15 @@ int SV_PointContents(const vec3_t p, int passEntityNum)
 		// might intersect, so do an exact clip
 		clipHandle = SV_ClipHandleForEntity(hit);
 
-		// ydnar: non-worldspawn entities must not use world as clip model!
+		// non-worldspawn entities must not use world as clip model!
 		if (clipHandle == 0)
 		{
 			continue;
 		}
 
 		c2 = CM_TransformedPointContents(p, clipHandle, hit->r.currentOrigin, hit->r.currentAngles);
-		// Gordon: s.origin/angles is base origin/angles, need to use the current origin/angles for moving entity based water, or water locks in movement start position.
-//		c2 = CM_TransformedPointContents (p, clipHandle, hit->s.origin, hit->s.angles);
+		// s.origin/angles is base origin/angles, need to use the current origin/angles for moving entity based water, or water locks in movement start position.
+		//c2 = CM_TransformedPointContents (p, clipHandle, hit->s.origin, hit->s.angles);
 
 		contents |= c2;
 	}

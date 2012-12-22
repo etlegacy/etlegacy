@@ -126,7 +126,6 @@ void SV_DirectConnect(netadr_t from)
 	int                 i;
 	client_t            *cl, *newcl;
 	MAC_STATIC client_t temp;
-	sharedEntity_t      *ent;
 	int                 clientNum;
 	int                 version;
 	int                 qport;
@@ -184,7 +183,6 @@ void SV_DirectConnect(netadr_t from)
 	if (!NET_IsLocalAddress(from))
 	{
 		int ping;
-
 
 		for (i = 0 ; i < MAX_CHALLENGES ; i++)
 		{
@@ -340,14 +338,13 @@ void SV_DirectConnect(netadr_t from)
 gotnewcl:
 	// build a new connection
 	// accept the new client
-	// this is the only place a client_t is ever initialized
+	// this is the only place a client_t is EVER initialized
 	*newcl         = temp;
 	clientNum      = newcl - svs.clients;
-	ent            = SV_GentityNum(clientNum);
-	newcl->gentity = ent;
+	newcl->gentity = SV_GentityNum(clientNum);
 
-	// save the challenge
-	newcl->challenge = challenge;
+	newcl->gentity->r.svFlags = 0; // clear client flags on new connection.
+	newcl->challenge          = challenge; // save the challenge
 
 	// save the address
 	Netchan_Setup(NS_SERVER, &newcl->netchan, from, qport);
@@ -357,7 +354,7 @@ gotnewcl:
 	Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
 
 	// get the game a chance to reject this connection or modify the userinfo
-	denied = (char *)VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse);   // firstTime = qtrue
+	denied = (char *)VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse); // firstTime = qtrue
 	if (denied)
 	{
 		// we can't just use VM_ArgPtr, because that is only valid inside a VM_Call
@@ -588,7 +585,7 @@ void SV_SendClientGameState(client_t *client)
 	// write the checksum feed
 	MSG_WriteLong(&msg, sv.checksumFeed);
 
-	// NERVE - SMF - debug info
+	// debug info
 	Com_DPrintf("Sending %i bytes in gamestate to client: %i\n", msg.cursize, (int) (client - svs.clients));
 
 	// deliver this to the client
@@ -602,14 +599,13 @@ SV_ClientEnterWorld
 */
 void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 {
-	int            clientNum;
+	int            clientNum = client - svs.clients;
 	sharedEntity_t *ent;
 
 	Com_DPrintf("Going from CS_PRIMED to CS_ACTIVE for %s\n", client->name);
 	client->state = CS_ACTIVE;
 
 	// set up the entity for the client
-	clientNum       = client - svs.clients;
 	ent             = SV_GentityNum(clientNum);
 	ent->s.number   = clientNum;
 	client->gentity = ent;
@@ -1620,7 +1616,7 @@ static qboolean SV_ClientCommand(client_t *cl, msg_t *msg, qboolean premaprestar
 	// We don't do this when the client hasn't been active yet since its
 	// normal to spam a lot of commands when downloading
 	if (!com_cl_running->integer &&
-	    cl->state >= CS_ACTIVE &&          // (SA) this was commented out in Wolf.  Did we do that?
+	    cl->state >= CS_ACTIVE &&          // this was commented out in Wolf.  Did we do that?
 	    sv_floodProtect->integer &&
 	    svs.time < cl->nextReliableTime &&
 	    floodprotect)
@@ -1784,7 +1780,7 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 		// don't execute if this is an old cmd which is already executed
 		// these old cmds are included when cl_packetdup > 0
 		if (cmds[i].serverTime <= cl->lastUsercmd.serverTime)       // Q3_MISSIONPACK
-		{ //          if ( cmds[i].serverTime > cmds[cmdCount-1].serverTime ) {
+		{ //if ( cmds[i].serverTime > cmds[cmdCount-1].serverTime ) {
 			continue;   // from just before a map_restart
 		}
 

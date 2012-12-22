@@ -264,7 +264,7 @@ static void SV_MapRestart_f(void)
 		return;
 	}
 
-	// NERVE - SMF - read in gamestate or just default to GS_PLAYING
+	// read in gamestate or just default to GS_PLAYING
 	old_gs = atoi(Cvar_VariableString("gamestate"));
 
 	if (Cmd_Argc() > 2)

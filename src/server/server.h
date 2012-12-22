@@ -220,7 +220,6 @@ typedef struct client_s
 	// in case large fragmented messages are stacking up
 	// buffer them into this queue, and hand them out to netchan as needed
 	netchan_buffer_t *netchan_start_queue;
-	//%	netchan_buffer_t **netchan_end_queue;
 	netchan_buffer_t *netchan_end_queue;
 
 	int downloadnotify;
@@ -357,7 +356,7 @@ extern cvar_t *sv_dl_maxRate;
 extern cvar_t *sv_dl_timeout;
 
 extern cvar_t *sv_wwwDownload; // general flag to enable/disable www download redirects
-extern cvar_t *sv_wwwBaseURL; // the base URL of all the files
+extern cvar_t *sv_wwwBaseURL;  // the base URL of all the files
 // tell clients to perform their downloads while disconnected from the server
 // this gets you a better throughput, but you loose the ability to control the download usage
 extern cvar_t *sv_wwwDlDisconnected;
@@ -386,58 +385,42 @@ extern cvar_t *sv_wh_check_fov;
 
 void SV_FinalCommand(char *cmd, qboolean disconnect);   // added disconnect flag so map changes can use this function as well
 void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
-
 void SV_AddOperatorCommands(void);
 void SV_RemoveOperatorCommands(void);
-
 void SV_MasterHeartbeat(const char *hbname);
 void SV_MasterShutdown(void);
-
 void SV_MasterGameCompleteStatus(void);
 
 // sv_init.c
-
 void SV_SetConfigstringNoUpdate(int index, const char *val);
 void SV_SetConfigstring(int index, const char *val);
 void SV_UpdateConfigStrings(void);
 void SV_GetConfigstring(int index, char *buffer, int bufferSize);
-
 void SV_SetUserinfo(int index, const char *val);
 void SV_GetUserinfo(int index, char *buffer, int bufferSize);
-
 void SV_ChangeMaxClients(void);
 void SV_SpawnServer(char *server);
-
 void SV_WriteAttackLog(const char *log);
 
 // sv_client.c
-
 void SV_GetChallenge(netadr_t from);
-
 void SV_DirectConnect(netadr_t from);
-
 void SV_ExecuteClientMessage(client_t *cl, msg_t *msg);
 void SV_UserinfoChanged(client_t *cl);
 void SV_UpdateUserinfo_f(client_t *cl);
-
 void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd);
 void SV_FreeClientNetChan(client_t *client);
 void SV_DropClient(client_t *drop, const char *reason);
-
 void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qboolean premaprestart);
 void SV_ClientThink(client_t *cl, usercmd_t *cmd);
-
 void SV_WriteDownloadToClient(client_t *cl, msg_t *msg);
 
 // sv_ccmds.c
-
 void SV_Heartbeat_f(void);
-
 qboolean SV_TempBanIsBanned(netadr_t address);
 void SV_TempBanNetAddress(netadr_t address, int length);
 
 // sv_snapshot.c
-
 void SV_AddServerCommand(client_t *client, const char *cmd);
 void SV_UpdateServerCommandsToClient(client_t *client, msg_t *msg);
 void SV_WriteFrameToClient(client_t *client, msg_t *msg);
@@ -448,12 +431,9 @@ void SV_CheckClientUserinfoTimer(void);
 void SV_SendClientIdle(client_t *client);
 
 // sv_game.c
-
 int SV_NumForGentity(sharedEntity_t *ent);
-
 sharedEntity_t *SV_GentityNum(int num);
 playerState_t *SV_GameClientNum(int num);
-
 svEntity_t *SV_SvEntityForGentity(sharedEntity_t *gEnt);
 sharedEntity_t *SV_GEntityForSvEntity(svEntity_t *svEnt);
 void SV_InitGameProgs(void);
@@ -466,12 +446,9 @@ int SV_LoadTag(const char *mod_name);
 void SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int commandTime);
 
 // sv_bot.c
-
 int SV_BotAllocateClient(int clientNum);
 void SV_BotFreeClient(int clientNum);
-
 int SV_BotGetConsoleMessage(int client, char *buf, int size);
-
 int BotImport_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
 void BotImport_DebugPolygonDelete(int id);
 
@@ -531,7 +508,6 @@ void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, cons
 // clip to a specific entity
 
 // sv_net_chan.c
-
 void SV_Netchan_Transmit(client_t *client, msg_t *msg);
 void SV_Netchan_TransmitNextFragment(client_t *client);
 qboolean SV_Netchan_Process(client_t *client, msg_t *msg);

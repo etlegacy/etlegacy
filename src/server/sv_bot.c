@@ -52,7 +52,7 @@ int SV_BotAllocateClient(int clientNum)
 	int      i;
 	client_t *cl;
 
-	// Arnout: added possibility to request a clientnum
+	// added possibility to request a clientnum
 	if (clientNum > 0)
 	{
 		if (clientNum >= sv_maxclients->integer)
@@ -80,16 +80,17 @@ int SV_BotAllocateClient(int clientNum)
 			{
 				continue;
 			}
-			// done.
+
 			if (cl->state == CS_FREE)
 			{
-				break;
+				break; // done.
 			}
 		}
 	}
 
 	if (i == sv_maxclients->integer)
 	{
+		Com_DPrintf("SV_BotAllocateClient: can't allocate a bot client.\n");
 		return -1;
 	}
 
@@ -195,7 +196,7 @@ void BotImport_Trace(bsp_trace_t *bsptrace, vec3_t start, vec3_t mins, vec3_t ma
 
 	// always use bounding box for bot stuff ?
 	SV_Trace(&trace, start, mins, maxs, end, passent, contentmask, qfalse);
-	//copy the trace information
+	// copy the trace information
 	bsptrace->allsolid   = trace.allsolid;
 	bsptrace->startsolid = trace.startsolid;
 	bsptrace->fraction   = trace.fraction;
@@ -222,7 +223,7 @@ void BotImport_EntityTrace(bsp_trace_t *bsptrace, vec3_t start, vec3_t mins, vec
 
 	// always use bounding box for bot stuff ?
 	SV_ClipToEntity(&trace, start, mins, maxs, end, entnum, contentmask, qfalse);
-	//copy the trace information
+	// copy the trace information
 	bsptrace->allsolid   = trace.allsolid;
 	bsptrace->startsolid = trace.startsolid;
 	bsptrace->fraction   = trace.fraction;
@@ -279,7 +280,7 @@ void BotImport_BSPModelMinsMaxsOrigin(int modelnum, vec3_t angles, vec3_t outmin
 	vec3_t       mins, maxs;
 
 	CM_ModelBounds(h, mins, maxs);
-	//if the model is rotated
+	// if the model is rotated
 	if ((angles[0] || angles[1] || angles[2]))
 	{
 		// expand for rotation
@@ -409,9 +410,8 @@ BotImport_DebugPolygonShow
 */
 void BotImport_DebugPolygonShow(int id, int color, int numPoints, vec3_t *points)
 {
-	bot_debugpoly_t *poly;
+	bot_debugpoly_t *poly = &debugpolygons[id];
 
-	poly            = &debugpolygons[id];
 	poly->inuse     = qtrue;
 	poly->color     = color;
 	poly->numPoints = numPoints;
@@ -475,7 +475,6 @@ void BotImport_DebugLineShow(int line, vec3_t start, vec3_t end, int color)
 	VectorCopy(end, points[2]);
 	//points[2][2] -= 2;
 	VectorCopy(end, points[3]);
-
 
 	VectorSubtract(end, start, dir);
 	VectorNormalize(dir);
@@ -554,12 +553,12 @@ void SV_BotInitBotLib(void)
 	botlib_import.FS_FCloseFile = FS_FCloseFile;
 	botlib_import.FS_Seek       = FS_Seek;
 
-	//debug lines
+	// debug lines
 	botlib_import.DebugLineCreate = BotImport_DebugLineCreate;
 	botlib_import.DebugLineDelete = BotImport_DebugLineDelete;
 	botlib_import.DebugLineShow   = BotImport_DebugLineShow;
 
-	//debug polygons
+	// debug polygons
 	botlib_import.DebugPolygonCreate        = BotImport_DebugPolygonCreate;
 	botlib_import.DebugPolygonGetFree       = BotImport_GetFreeDebugPolygon;
 	botlib_import.DebugPolygonDelete        = BotImport_DebugPolygonDelete;
@@ -579,10 +578,9 @@ SV_BotGetConsoleMessage
 */
 int SV_BotGetConsoleMessage(int client, char *buf, int size)
 {
-	client_t *cl;
+	client_t *cl = &svs.clients[client];
 	int      index;
 
-	cl                 = &svs.clients[client];
 	cl->lastPacketTime = svs.time;
 
 	if (cl->reliableAcknowledge == cl->reliableSequence)

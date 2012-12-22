@@ -502,7 +502,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 			}
 		}
 
-		//----(SA) added "visibility dummies"
+		// added "visibility dummies"
 		if (ent->r.svFlags & SVF_VISDUMMY)
 		{
 			//find master;
@@ -1000,7 +1000,7 @@ void SV_SendClientMessages(void)
 			continue;       // not connected
 		}
 
-		// RF, needed to insert this otherwise bots would cause error drops in sv_net_chan.c:
+		// needed to insert this otherwise bots would cause error drops in sv_net_chan.c:
 		// --> "netchan queue is not properly initialized in SV_Netchan_TransmitNextFragment\n"
 		if (c->gentity && (c->gentity->r.svFlags & SVF_BOT))
 		{
