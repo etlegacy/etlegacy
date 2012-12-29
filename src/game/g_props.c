@@ -121,8 +121,6 @@ void moveit(gentity_t *ent, float yaw, float dist)
 	VectorCopy(ent->r.currentOrigin, ent->s.pos.trBase);
 
 	trap_LinkEntity(ent);
-
-	//DropToFloor( ent );
 }
 
 void touch_props_box_32(gentity_t *self, gentity_t *other, trace_t *trace)
@@ -140,8 +138,8 @@ void touch_props_box_32(gentity_t *self, gentity_t *other, trace_t *trace)
 	moveit(self, vectoyaw(v), (20 * ratio * FRAMETIME) * .001);
 }
 
-/*QUAKED props_box_32 (1 0 0) (-16 -16 -16) (16 16 16)
-
+/*
+QUAKED props_box_32 (1 0 0) (-16 -16 -16) (16 16 16)
 */
 void SP_props_box_32(gentity_t *self)
 {
@@ -177,8 +175,8 @@ void touch_props_box_48(gentity_t *self, gentity_t *other, trace_t *trace)
 	moveit(self, vectoyaw(v), (20 * ratio * FRAMETIME) * .001);
 }
 
-/*QUAKED props_box_48 (1 0 0) (-24 -24 -24) (24 24 24)
-
+/*
+QUAKED props_box_48 (1 0 0) (-24 -24 -24) (24 24 24)
 */
 void SP_props_box_48(gentity_t *self)
 {
@@ -214,8 +212,8 @@ void touch_props_box_64(gentity_t *self, gentity_t *other, trace_t *trace)
 	moveit(self, vectoyaw(v), (20 * ratio * FRAMETIME) * .001);
 }
 
-/*QUAKED props_box_64 (1 0 0) (-32 -32 -32) (32 32 32)
-
+/*
+QUAKED props_box_64 (1 0 0) (-32 -32 -32) (32 32 32)
 */
 void SP_props_box_64(gentity_t *self)
 {
@@ -235,9 +233,6 @@ void SP_props_box_64(gentity_t *self)
 	self->think     = DropToFloor;
 	self->nextthink = level.time + FRAMETIME;
 }
-// END JOSEPH
-
-// Rafael
 
 void Psmoke_think(gentity_t *ent)
 {
@@ -264,15 +259,15 @@ void Psmoke_think(gentity_t *ent)
 
 void prop_smoke(gentity_t *ent)
 {
-	gentity_t *Psmoke;
+	gentity_t *Psmoke = G_Spawn();
 
-	Psmoke = G_Spawn();
 	VectorCopy(ent->r.currentOrigin, Psmoke->s.origin);
 	Psmoke->think     = Psmoke_think;
 	Psmoke->nextthink = level.time + FRAMETIME;
 }
 
-/*QUAKED props_sparks (.8 .46 .16) (-8 -8 -8) (8 8 8) ELECTRIC
+/*
+QUAKED props_sparks (.8 .46 .16) (-8 -8 -8) (8 8 8) ELECTRIC
 the default direction is strait up use info_no_null for alt direction
 
 delay = how long till next spark effect
@@ -405,7 +400,8 @@ void SP_props_sparks(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_gunsparks (.8 .46 .16) (-8 -8 -8) (8 8 8)
+/*
+QUAKED props_gunsparks (.8 .46 .16) (-8 -8 -8) (8 8 8)
 the default direction is strait up use info_no_null for alt direction
 
 this entity must be used to see the effect
@@ -436,7 +432,8 @@ void SP_props_gunsparks(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_smokedust (.8 .46 .16) (-8 -8 -8) (8 8 8)
+/*
+QUAKED props_smokedust (.8 .46 .16) (-8 -8 -8) (8 8 8)
 health = how many pieces 16 is default
 */
 
@@ -474,7 +471,8 @@ void SP_SmokeDust(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_dust (.7 .3 .16) (-8 -8 -8) (8 8 8) WHITE
+/*
+QUAKED props_dust (.7 .3 .16) (-8 -8 -8) (8 8 8) WHITE
 you should give this ent a target use a not null
 or you could set its angles in the editor
 */
@@ -548,9 +546,7 @@ extern void G_ExplodeMissile(gentity_t *ent);
 
 void propExplosionLarge(gentity_t *ent)
 {
-	gentity_t *bolt;
-
-	bolt = G_Spawn();
+	gentity_t *bolt = G_Spawn();
 
 	// for explosion type
 	bolt->accuracy = 2;
@@ -581,9 +577,8 @@ void G_ExplodeMissile(gentity_t *ent);
 
 void propExplosion(gentity_t *ent)
 {
-	gentity_t *bolt;
+	gentity_t *bolt = G_Spawn();
 
-	bolt            = G_Spawn();
 	bolt->classname = "props_explosion";
 	bolt->nextthink = level.time + FRAMETIME;
 	bolt->think     = G_ExplodeMissile;
@@ -719,13 +714,13 @@ void props_bench_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, 
 	ent->nextthink = level.time + FRAMETIME;
 }
 
-/*QUAKED props_bench (.8 .6 .2) ?
+/*
+QUAKED props_bench (.8 .6 .2) ?
 requires an origin brush
 health = 10 by default
 */
 void SP_Props_Bench(gentity_t *ent)
 {
-
 	trap_SetBrushModel(ent, ent->model);
 
 	InitProp(ent);
@@ -755,13 +750,13 @@ void props_radio_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, 
 	G_FreeEntity(ent);
 }
 
-/*QUAKED props_radio (.8 .6 .2) ?
+/*
+QUAKED props_radio (.8 .6 .2) ?
 requires an origin brush
 health = defaults to 100
 */
 void SP_Props_Radio(gentity_t *ent)
 {
-	// Ridah, had to add this so I could load castle18dk7
 	if (!ent->model)
 	{
 		G_Printf(S_COLOR_RED "props_radio with NULL model\n");
@@ -791,7 +786,9 @@ void props_radio_dieSEVEN(gentity_t *ent, gentity_t *inflictor, gentity_t *attac
 	propExplosion(ent);
 
 	for (i = 0; i < 20; i++)
+	{
 		Spawn_Shard(ent, inflictor, 1, ent->count);
+	}
 
 	Prop_Break_Sound(ent);
 
@@ -805,10 +802,10 @@ void props_radio_dieSEVEN(gentity_t *ent, gentity_t *inflictor, gentity_t *attac
 	G_FreeEntity(ent);
 }
 
-/*QUAKED props_radioSEVEN (.8 .6 .2) ?
+/*
+QUAKED props_radioSEVEN (.8 .6 .2) ?
 requires an origin brush
 health = defaults to 100
-
 
   the models dims are
   x 32
@@ -869,13 +866,12 @@ void props_locker_tall_die(gentity_t *ent, gentity_t *inflictor, gentity_t *atta
 	G_UseTargets(ent, NULL);
 }
 
-/*QUAKED props_locker_tall (.8 .6 .2) ?
+/*
+QUAKED props_locker_tall (.8 .6 .2) ?
 requires an origin brush
 */
 void SP_Props_Locker_Tall(gentity_t *ent)
 {
-
-	// Ridah, had to add this so I could load castle18dk7
 	if (!ent->model)
 	{
 		G_Printf(S_COLOR_RED "props_locker_tall with NULL model\n");
@@ -898,7 +894,8 @@ void SP_Props_Locker_Tall(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_chair_chat(.8 .6 .2) (-16 -16 0) (16 16 32)
+/*
+QUAKED props_chair_chat(.8 .6 .2) (-16 -16 0) (16 16 32)
 point entity
 health = default = 10
 wait = defaults to 5 how many shards to spawn ( try not to exceed 20 )
@@ -910,7 +907,8 @@ shard =
 
 */
 
-/*QUAKED props_chair_chatarm(.8 .6 .2) (-16 -16 0) (16 16 32)
+/*
+QUAKED props_chair_chatarm(.8 .6 .2) (-16 -16 0) (16 16 32)
 point entity
 health = default = 10
 wait = defaults to 5 how many shards to spawn ( try not to exceed 20 )
@@ -922,7 +920,8 @@ shard =
 
 */
 
-/*QUAKED props_chair_side (.8 .6 .2) (-16 -16 0) (16 16 32)
+/*
+QUAKED props_chair_side (.8 .6 .2) (-16 -16 0) (16 16 32)
 point entity
 health = default = 10
 wait = defaults to 5 how many shards to spawn ( try not to exceed 20 )
@@ -935,7 +934,8 @@ shard =
 */
 
 
-/*QUAKED props_chair_hiback (.8 .6 .2) (-16 -16 0) (16 16 32)
+/*
+QUAKED props_chair_hiback (.8 .6 .2) (-16 -16 0) (16 16 32)
 point entity
 health = default = 10
 wait = defaults to 5 how many shards to spawn ( try not to exceed 20 )
@@ -947,7 +947,8 @@ shard =
 
 */
 
-/*QUAKED props_chair (.8 .6 .2) (-16 -16 0) (16 16 32)
+/*
+QUAKED props_chair (.8 .6 .2) (-16 -16 0) (16 16 32)
 point entity
 health = default = 10
 wait = defaults to 5 how many shards to spawn ( try not to exceed 20 )
@@ -1245,13 +1246,12 @@ void Props_Chair_Think(gentity_t *self)
 		}
 	}
 
-	//bani - we assume groundentity will never change from under
-	//a stationary object.
-	//  Prop_Check_Ground (self);
+	// we assume groundentity will never change from under a stationary object.
+	//Prop_Check_Ground (self);
 
 	self->nextthink = level.time + 50;
 
-	//bani - prevent unneeded links
+	// prevent unneeded links
 	if (!VectorCompare(self->r.currentOrigin, self->gDelta))
 	{
 		Prop_Check_Ground(self);
@@ -1452,15 +1452,6 @@ void Props_Chair_Animate(gentity_t *ent)
 	}
 }
 
-/*typedef enum
-{
-    SHARD_GLASS = 0,
-    SHARD_WOOD,
-    SHARD_METAL,
-    SHARD_CERAMIC,
-    SHARD_RUBBLE
-} shards_t;*/
-
 void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, int quantity, int type)
 {
 	gentity_t *sfx;
@@ -1537,7 +1528,7 @@ void Props_Chair_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, 
 	ent->health     = ent->duration;
 	ent->delay      = damage;
 	ent->takedamage = qfalse;
-//  ent->enemy = inflictor;
+	//ent->enemy = inflictor;
 
 	quantity = ent->wait;
 	type     = ent->count;
@@ -1618,7 +1609,6 @@ void SP_Props_ChairHiback(gentity_t *ent)
 {
 	int mass;
 
-	// ent->s.modelindex = G_ModelIndex( "models/furniture/chair/hiback.md3" );
 	ent->s.modelindex = G_ModelIndex("models/furniture/chair/hiback5.md3");
 
 	ent->delay = 0; // inherits damage value
@@ -1823,7 +1813,8 @@ void Use_DamageInflictor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	G_FreeEntity(ent);
 }
 
-/*QUAKED props_damageinflictor (.8 .6 .6) (-8 -8 -8) (8 8 8)
+/*
+QUAKED props_damageinflictor (.8 .6 .6) (-8 -8 -8) (8 8 8)
 this entity when used will cause 9999 damage to all entities it is targeting
 then it will be removed
 */
@@ -1837,7 +1828,8 @@ void SP_Props_DamageInflictor(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_shard_generator (.8 .5 .1) (-4 -4 -4) (4 4 4)
+/*
+QUAKED props_shard_generator (.8 .5 .1) (-4 -4 -4) (4 4 4)
 
 wait = defaults to 5 how many shards to spawn ( try not to exceed 20 )
 
@@ -1887,7 +1879,8 @@ void SP_props_shard_generator(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_desklamp (.8 .6 .2) (-16 -16 0) (16 16 32)
+/*
+QUAKED props_desklamp (.8 .6 .2) (-16 -16 0) (16 16 32)
 point entity
 health = default = 10
 wait = defaults to 5 how many shards to spawn ( try not to exceed 20 )
@@ -1951,7 +1944,8 @@ void SP_Props_Desklamp(gentity_t *ent)
 	snd_chaircreak = G_SoundIndex("sound/world/chaircreak.wav");
 }
 
-/*QUAKED props_flamebarrel (.8 .6 .2) (-13 -13 0) (13 13 40) SMOKING NOLID OIL -
+/*
+QUAKED props_flamebarrel (.8 .6 .2) (-13 -13 0) (13 13 40) SMOKING NOLID OIL -
 angle will determine which way the lid will fly off when it explodes
 
 when selecting the OIL spawnflag you have the option of giving it a target
@@ -1984,7 +1978,7 @@ void Props_Barrel_Animate(gentity_t *ent)
 		}
 		else
 		{
-			//  G_UseTargets (ent, NULL);
+			//G_UseTargets (ent, NULL);
 			ent->think     = G_FreeEntity;
 			ent->nextthink = level.time + 25000;
 			//ent->s.time = level.time;
@@ -2195,17 +2189,15 @@ void Props_Barrel_Pain(gentity_t *ent, gentity_t *attacker, int damage, vec3_t p
 
 void OilSlick_remove_think(gentity_t *ent)
 {
-	gentity_t *tent;
+	gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_OILSLICKREMOVE);
 
-	tent            = G_TempEntity(ent->r.currentOrigin, EV_OILSLICKREMOVE);
 	tent->s.density = ent->s.density;
 }
 
 void OilSlick_remove(gentity_t *ent)
 {
-	gentity_t *remove;
+	gentity_t *remove = G_Spawn();
 
-	remove            = G_Spawn();
 	remove->s.density = ent->s.number;
 	remove->think     = OilSlick_remove_think;
 	remove->nextthink = level.time + 1000;
@@ -2345,7 +2337,8 @@ void SP_Props_Flamebarrel(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_crate_64 (.8 .6 .2) (-32 -32 0) (32 32 64)
+/*
+QUAKED props_crate_64 (.8 .6 .2) (-32 -32 0) (32 32 64)
 breakable pushable
 
   health = default = 20
@@ -2358,7 +2351,8 @@ shard =
 
 */
 
-/*QUAKED props_crate_32 (.8 .6 .2) (-16 -16 0) (16 16 32)
+/*
+QUAKED props_crate_32 (.8 .6 .2) (-16 -16 0) (16 16 32)
 breakable pushable
 
   health = default = 20
@@ -2370,7 +2364,8 @@ shard =
     FXTYPE_METAL = 2
 */
 
-/*QUAKED props_crate_32x64 (.8 .6 .2) ?
+/*
+QUAKED props_crate_32x64 (.8 .6 .2) ?
 requires an origin brush
 
 breakable NOT pushable
@@ -2384,7 +2379,6 @@ shard =
     FXTYPE_GLASS = 0,
     FXTYPE_WOOD = 1,
     FXTYPE_METAL = 2
-
 */
 
 void touch_crate_64(gentity_t *self, gentity_t *other, trace_t *trace)
@@ -2420,11 +2414,8 @@ void crate_animate(gentity_t *ent)
 
 void crate_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
 {
-	int quantity;
-	int type;
-
-	quantity = ent->wait;
-	type     = ent->count;
+	int quantity = ent->wait;
+	int type     = ent->count;
 
 	Spawn_Shard(ent, inflictor, quantity, type);
 
@@ -2579,7 +2570,8 @@ void SP_Props_Crate32x64(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_flippy_table (.8 .6 .2) ? - - X_AXIS Y_AXIS LEADER
+/*
+QUAKED props_flippy_table (.8 .6 .2) ? - - X_AXIS Y_AXIS LEADER
 this entity will need a leader and an origin brush
 !!!!!!!!!!!!!!
 just a reminder to put the origin brush in the proper location for the leader and the
@@ -2784,7 +2776,8 @@ void SP_Props_Flipping_Table(gentity_t *ent)
 }
 
 
-/*QUAKED props_58x112tablew (.8 .6 .2) ?
+/*
+QUAKED props_58x112tablew (.8 .6 .2) ?
 dimensions are 58 x 112 x 32 (x,y,z)
 
 requires an origin brush
@@ -2800,7 +2793,6 @@ shard =
     FXTYPE_GLASS = 0,
     FXTYPE_WOOD = 1,
     FXTYPE_METAL = 2
-
 */
 
 void props_58x112tablew_think(gentity_t *ent)
@@ -2847,7 +2839,8 @@ void SP_Props_58x112tablew(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_castlebed (.8 .6 .2) ?
+/*
+QUAKED props_castlebed (.8 .6 .2) ?
 dimensions are 112 x 128 x 80 (x,y,z)
 
 requires an origin brush
@@ -2863,7 +2856,6 @@ shard =
     FXTYPE_GLASS = 0,
     FXTYPE_WOOD = 1,
     FXTYPE_METAL = 2
-
 */
 
 void props_castlebed_touch(gentity_t *ent, gentity_t *other, trace_t *trace)
@@ -2938,7 +2930,8 @@ void SP_props_castlebed(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_snowGenerator (3 2 7) ? TOGGLE_ON ALWAYS_ON
+/*
+QUAKED props_snowGenerator (3 2 7) ? TOGGLE_ON ALWAYS_ON
 entity brush need to be targeted to an info notnull this
 will determine the direction the snow particles will travel.
 
@@ -3082,7 +3075,8 @@ void SP_props_snowGenerator(gentity_t *ent)
 // FIRES AND EXPLOSION PROPS
 /////////////////////////////
 
-/*QUAKED props_decoration (.6 .7 .7) (-8 -8 0) (8 8 16) STARTINVIS DEBRIS ANIMATE KEEPBLOCK TOUCHACTIVATE LOOPING STARTON
+/*
+QUAKED props_decoration (.6 .7 .7) (-8 -8 0) (8 8 16) STARTINVIS DEBRIS ANIMATE KEEPBLOCK TOUCHACTIVATE LOOPING STARTON
 "model2" will specify the model to load
 
 "noise"  the looping sound entity is to make
@@ -3347,7 +3341,8 @@ void SP_props_decoration(gentity_t *ent)
 	}
 }
 
-/*QUAKED props_decorBRUSH (.6 .7 .7) ? STARTINVIS DEBRIS ANIMATE KEEPBLOCK - LOOPING STARTON
+/*
+QUAKED props_decorBRUSH (.6 .7 .7) ? STARTINVIS DEBRIS ANIMATE KEEPBLOCK - LOOPING STARTON
 ANIMATE animate on death
 STARTON playanimation on death
 must have an origin brush
@@ -3376,7 +3371,8 @@ void SP_props_decorBRUSH(gentity_t *self)
 	}
 }
 
-/*QUAKED props_decoration_scale (.6 .7 .7) (-8 -8 0) (8 8 16) STARTINVIS DEBRIS ANIMATE KEEPBLOCK TOUCHACTIVATE LOOPING STARTON
+/*
+QUAKED props_decoration_scale (.6 .7 .7) (-8 -8 0) (8 8 16) STARTINVIS DEBRIS ANIMATE KEEPBLOCK TOUCHACTIVATE LOOPING STARTON
 
 "modelscale" - Scale multiplier (defaults to 1.0 and scales uniformly)
 "modelscale_vec" - Set scale per-axis.  Overrides "modelscale", so if you have both the "modelscale" is ignored
@@ -3425,7 +3421,8 @@ void SP_props_decor_Scale(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_skyportal (.6 .7 .7) (-8 -8 0) (8 8 16)
+/*
+QUAKED props_skyportal (.6 .7 .7) (-8 -8 0) (8 8 16)
 "fov" for the skybox default is 90
 To have the portal sky fogged, enter any of the following values:
 "fogcolor" (r g b) (values 0.0-1.0)
@@ -3453,7 +3450,8 @@ void SP_skyportal(gentity_t *ent)
 	trap_SetConfigstring(CS_SKYBOXORG, va("%.2f %.2f %.2f %.1f %i %.2f %.2f %.2f %i %i", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2], fov_x, (int)isfog, fogv[0], fogv[1], fogv[2], fogn, fogf));
 }
 
-/*QUAKED props_statue (.6 .3 .2) (-8 -8 0) (8 8 128) HURT DEBRIS ANIMATE KEEPBLOCK
+/*
+QUAKED props_statue (.6 .3 .2) (-8 -8 0) (8 8 128) HURT DEBRIS ANIMATE KEEPBLOCK
 "model2" will specify the model to load
 
 "noise"  the sound entity is to make
@@ -3520,9 +3518,8 @@ void props_statue_blocked(gentity_t *ent)
 
 		if (!traceEnt->client->ps.pm_time)
 		{
-			int t;
+			int t = grav * 2;
 
-			t = grav * 2;
 			if (t < 50)
 			{
 				t = 50;
@@ -3581,7 +3578,6 @@ void props_statue_animate(gentity_t *ent)
 
 void props_statue_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
 {
-
 	ent->timestamp = level.time;
 
 	G_AddEvent(ent, EV_GENERAL_SOUND, ent->noise_index);
@@ -3741,7 +3737,8 @@ void SP_props_statue(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED props_statueBRUSH (.6 .3 .2) ? HURT DEBRIS ANIMATE KEEPBLOCK
+/*
+QUAKED props_statueBRUSH (.6 .3 .2) ? HURT DEBRIS ANIMATE KEEPBLOCK
 needs an origin brush
 
 "model2" will specify the model to load
@@ -3895,7 +3892,7 @@ void props_locker_spawn_item(gentity_t *ent)
 		return;
 	}
 
-//  drop = Drop_Item (ent, item, 0, qtrue);
+	//drop = Drop_Item (ent, item, 0, qtrue);
 	drop = LaunchItem(item, ent->r.currentOrigin, tv(0, 0, 20), ent->s.number);
 
 
@@ -3937,7 +3934,8 @@ void props_locker_mass(gentity_t *ent)
 	tent->s.density   = 100;
 }
 
-/*QUAKED props_footlocker (.6 .7 .3) (-12 -21 -12) (12 21 12) ? NO_JUNK
+/*
+QUAKED props_footlocker (.6 .7 .3) (-12 -21 -12) (12 21 12) ? NO_JUNK
 "noise"  the sound entity is to make upon death
 the default sounds are:
   "wood"    - "sound/world/boardbreak.wav"
@@ -4077,7 +4075,8 @@ void SP_props_footlocker(gentity_t *self)
 	init_locker(self);
 }
 
-/*QUAKED props_flamethrower (.6 .7 .3) (-8 -8 -8) (8 8 8) TRACKING NOSOUND
+/*
+QUAKED props_flamethrower (.6 .7 .3) (-8 -8 -8) (8 8 8) TRACKING NOSOUND
 the effect occurs when this entity is used
 needs to aim at a info_notnull
 "duration" how long the effect is going to last for example 1.2 sec 2.7 sec
@@ -4215,7 +4214,7 @@ void props_flamethrower_init(gentity_t *ent)
 
 	if (!target)
 	{
-//      VectorSet (ent->r.currentAngles, 0, 0, 1);
+		//VectorSet (ent->r.currentAngles, 0, 0, 1);
 		VectorSet(ent->s.apos.trBase, 0, 0, 1);
 	}
 	else
@@ -4223,7 +4222,7 @@ void props_flamethrower_init(gentity_t *ent)
 		VectorSubtract(target->s.origin, ent->s.origin, vec);
 		VectorNormalize(vec);
 		vectoangles(vec, angles);
-//      VectorCopy (angles, ent->r.currentAngles);
+		//VectorCopy (angles, ent->r.currentAngles);
 		VectorCopy(angles, ent->s.apos.trBase);
 		VectorCopy(angles, ent->s.angles);   // added to fix weird release build issues
 	}
