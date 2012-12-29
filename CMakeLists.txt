@@ -229,8 +229,8 @@ else() # Not using source from git repo
 	set(ETL_CMAKE_VERSION ${ETLEGACY_VERSION})
 	set(ETL_CMAKE_VERSION_SHORT ${ETLEGACY_VERSION})
 endif()
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/git_version.h" @ONLY)
-list(APPEND COMMON_SRC "${CMAKE_CURRENT_BINARY_DIR}/git_version.h")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/git_version.h" @ONLY)
+list(APPEND COMMON_SRC "${CMAKE_CURRENT_BINARY_DIR}/include/git_version.h")
 
 # If we change architecture we need to force rescan of libraries
 if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
@@ -410,9 +410,11 @@ endif(FEATURE_CURSES)
 #-----------------------------------------------------------------
 # Build
 #-----------------------------------------------------------------
+include_directories(${PROJECT_BINARY_DIR}/include) # git_version.h
+
 if(BUILD_CLIENT)
 	add_executable(etl WIN32 ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC})
-	include_directories(${CLIENT_INCLUDE_DIRS} ${PROJECT_BINARY_DIR})
+	include_directories(${CLIENT_INCLUDE_DIRS})
 	if(BUNDLED_SDL)
 		add_dependencies(etl bundled_sdl)
 	endif(BUNDLED_SDL)
@@ -434,7 +436,6 @@ endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
 	add_executable(etlded ${COMMON_SRC} ${SERVER_SRC} ${PLATFORM_SRC})
-	include_directories(${PROJECT_BINARY_DIR})
 	target_link_libraries(etlded ${OS_LIBRARIES} ${SERVER_LIBRARIES})
 	set_target_properties(etlded PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
 	install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
@@ -460,7 +461,7 @@ if(BUILD_MOD)
 			add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_lua)
 		endif(BUNDLED_LUA)
 		target_link_libraries(qagame${LIB_SUFFIX}${ARCH} ${MOD_LIBRARIES})
-		include_directories(${MOD_INCLUDE_DIRS} ${PROJECT_BINARY_DIR})
+		include_directories(${MOD_INCLUDE_DIRS})
 	endif(FEATURE_LUA)
 
 	set_target_properties(qagame${LIB_SUFFIX}${ARCH}
