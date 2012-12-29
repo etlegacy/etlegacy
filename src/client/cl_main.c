@@ -951,13 +951,9 @@ void CL_MapLoading(void)
 	}
 }
 
-/*
-=====================
-CL_UpdateGUID
-
-@brief Update cl_guid using ETKEY_FILE
-=====================
-*/
+/**
+ * @brief Update cl_guid using #ETKEY_FILE
+ */
 static void CL_UpdateGUID(void)
 {
 	fileHandle_t f;
@@ -981,14 +977,10 @@ static void CL_UpdateGUID(void)
 	}
 }
 
-/*
-=====================
-CL_GenerateETKey
-
-@brief test for the existence of a valid ETKEY_FILE and generate new one
-if it doesn't exist
-=====================
-*/
+/**
+ * @brief Test for the existence of a valid #ETKEY_FILE and generate a new one
+ * if it doesn't exist
+ */
 static void CL_GenerateETKey(void)
 {
 	int          len = 0;
@@ -1123,7 +1115,6 @@ void CL_Disconnect(qboolean showMainMenu)
 	// not connected to a pure server anymore
 	cl_connectedToPureServer = qfalse;
 
-	// show_bug.cgi?id=589
 	// don't try a restart if uivm is NULL, as we might be in the middle of a restart already
 	if (uivm && cls.state > CA_DISCONNECTED)
 	{
@@ -1179,11 +1170,9 @@ void CL_ForwardCommandToServer(const char *string)
 	}
 }
 
-/*
-===================
-CL_RequestMotd
-===================
-*/
+/**
+ * @brief Send motd request to the #MOTD_SERVER_NAME
+ */
 void CL_RequestMotd(void)
 {
 	char info[MAX_INFO_STRING];
@@ -1300,7 +1289,6 @@ void CL_Disconnect_f(void)
 /*
 ================
 CL_Reconnect_f
-
 ================
 */
 void CL_Reconnect_f(void)
@@ -1316,7 +1304,6 @@ void CL_Reconnect_f(void)
 /*
 ================
 CL_Connect_f
-
 ================
 */
 void CL_Connect_f(void)
@@ -1410,10 +1397,9 @@ void CL_Connect_f(void)
 
 	Cvar_Set("cl_avidemo", "0");
 
-	// show_bug.cgi?id=507
 	// prepare to catch a connection process that would turn bad
 	Cvar_Set("com_errorDiagnoseIP", NET_AdrToString(clc.serverAddress));
-	// ATVI Wolfenstein Misc #439
+
 	// we need to setup a correct default for this, otherwise the first val we set might reappear
 	Cvar_Set("com_errorMessage", "");
 
@@ -1424,15 +1410,6 @@ void CL_Connect_f(void)
 	// server connection string
 	Cvar_Set("cl_currentServerAddress", server);
 	Cvar_Set("cl_currentServerIP", ip_port);
-
-	// Gordon: um, couldnt this be handled
-	// reset some cvars
-	Cvar_Set("mp_playerType", "0");
-	Cvar_Set("mp_currentPlayerType", "0");
-	Cvar_Set("mp_weapon", "0");
-
-	Cvar_Set("mp_team", "0");
-	// Cvar_Set("mp_currentTeam", "0"); // unused see UI player models
 }
 
 #define MAX_RCON_MESSAGE 1024
@@ -1456,13 +1433,9 @@ static void CL_CompleteRcon(char *args, int argNum)
 	}
 }
 
-/*
-==================
-CL_Rcon_f
-
-@brief Send the rest of the command line over as an unconnected command.
-==================
-*/
+/**
+ * @brief Send the rest of the command line over as an unconnected command.
+ */
 void CL_Rcon_f(void)
 {
 	char     message[MAX_RCON_MESSAGE];
@@ -1612,7 +1585,7 @@ void CL_Vid_Restart_f(void)
 	CL_StartHunkUsers();
 
 #ifdef _WIN32
-	Sys_In_Restart_f(); // fretn
+	Sys_In_Restart_f();
 #endif
 	// start the cgame if connected
 	if (cls.state > CA_CONNECTED && cls.state != CA_CINEMATIC)
@@ -1732,16 +1705,12 @@ void CL_Clientinfo_f(void)
 	Com_Printf("--------------------------------------\n");
 }
 
-/*
-==============
-CL_EatMe_f
-
-Eat misc console commands to prevent exploits
-==============
-*/
+/**
+ * @brief Eat misc console commands to prevent exploits
+ */
 void CL_EatMe_f(void)
 {
-	//do nothing kthxbye
+	// do nothing kthxbye
 }
 
 /*
@@ -2098,13 +2067,13 @@ void CL_CheckForResend(void)
 
 		strcpy(data, "connect ");
 
-		data[8] = '\"';           // spaces in name bugfix
+		data[8] = '\"'; // quote the string because it may contain spaces
 
 		for (i = 0; i < strlen(info); i++)
 		{
 			data[9 + i] = info[i];    // + (clc.challenge)&0x3;
 		}
-		data[9 + i]  = '\"';    // spaces in name bugfix
+		data[9 + i]  = '\"'; // ending quote
 		data[10 + i] = 0;
 
 		pktlen = i + 10 ;
@@ -2525,7 +2494,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		return;
 	}
 
-	// global MOTD from id
+	// global MOTD
 	if (!Q_stricmp(c, "motd"))
 	{
 		CL_MotdPacket(from);
@@ -2657,7 +2626,6 @@ void CL_CheckTimeout(void)
 /*
 ==================
 CL_CheckUserinfo
-
 ==================
 */
 void CL_CheckUserinfo(void)
@@ -3258,7 +3226,7 @@ void CL_GetAutoUpdate(void)
 	CL_Disconnect(qtrue);
 	Con_Close();
 
-	Q_strncpyz(cls.servername, "Auto-Updater", sizeof(cls.servername));
+	Q_strncpyz(cls.servername, "ET:L Update Server", sizeof(cls.servername));
 
 	if (cls.autoupdateServer.type == NA_BAD)
 	{
@@ -3281,7 +3249,7 @@ void CL_GetAutoUpdate(void)
 	clc.connectPacketCount = 0;
 
 	// server connection string
-	Cvar_Set("cl_currentServerAddress", "Auto-Updater");
+	Cvar_Set("cl_currentServerAddress", "ET:L Update Server");
 }
 
 /*
@@ -3400,7 +3368,6 @@ void CL_InitRef(void)
 //     ri.Cvar_VariableIntegerValue = Cvar_VariableIntegerValue;
 
 	// cinematic stuff
-
 	ri.CIN_UploadCinematic = CIN_UploadCinematic;
 	ri.CIN_PlayCinematic   = CIN_PlayCinematic;
 	ri.CIN_RunCinematic    = CIN_RunCinematic;
@@ -3682,7 +3649,6 @@ void CL_Init(void)
 /*
 ===============
 CL_Shutdown
-
 ===============
 */
 void CL_Shutdown(void)
@@ -5634,7 +5600,7 @@ const char *CL_TranslateStringBuf(const char *string)
 
 /*
 =======================
-CL_OpenURLForCvar
+CL_OpenURL
 =======================
 */
 void CL_OpenURL(const char *url)
@@ -5647,13 +5613,6 @@ void CL_OpenURL(const char *url)
 	Sys_OpenURL(url, qfalse);
 }
 
-/*
-==================
-BotImport_DrawPolygon
-
-@note Unused
-==================
-*/
 void BotImport_DrawPolygon(int color, int numpoints, float *points)
 {
 	re.DrawDebugPolygon(color, numpoints, points);
