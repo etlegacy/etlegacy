@@ -3180,8 +3180,6 @@ void CL_CheckAutoUpdate(void)
 
 	NET_OutOfBandPrint(NS_CLIENT, cls.autoupdateServer, "getUpdateInfo \"%s\"", info);
 
-	CL_RequestMotd();
-
 	autoupdateChecked = qtrue;
 }
 
@@ -3637,6 +3635,8 @@ void CL_Init(void)
 	CL_GenerateETKey();
 	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM);
 	CL_UpdateGUID();
+
+	CL_RequestMotd();
 
 	autoupdateChecked = qfalse;
 	autoupdateStarted = qfalse;
