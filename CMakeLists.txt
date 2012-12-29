@@ -434,6 +434,7 @@ endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
 	add_executable(etlded ${COMMON_SRC} ${SERVER_SRC} ${PLATFORM_SRC})
+	include_directories(${PROJECT_BINARY_DIR})
 	target_link_libraries(etlded ${OS_LIBRARIES} ${SERVER_LIBRARIES})
 	set_target_properties(etlded PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
 	install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
