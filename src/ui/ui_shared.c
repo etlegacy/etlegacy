@@ -1066,21 +1066,6 @@ void Script_SetColor(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
-// FIXME/REMOVE
-void Script_SetAsset(itemDef_t *item, qboolean *bAbort, char **args)
-{
-	const char *name;
-
-	// expecting name to set asset to
-	if (String_Parse(args, &name))
-	{
-		// check for a model
-		if (item->type == ITEM_TYPE_MODEL)
-		{
-		}
-	}
-}
-
 void Script_SetBackground(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -1861,31 +1846,6 @@ void Script_CloseAllOtherMenus(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
-/*
-==============
-Script_Clipboard
-
-FIXME/REMOVE
-==============
-*/
-void Script_Clipboard(itemDef_t *item, qboolean *bAbort, char **args)
-{
-}
-
-/*
-==============
-Script_NotebookShowpage
-    hide all notebook pages and show just the active one
-
-    inc == 0    - show current page
-    inc == val  - turn inc pages in the notebook (negative numbers are backwards)
-    inc == 999  - key number.  +999 is jump to last page, -999 is jump to cover page
-==============
-*/
-void Script_NotebookShowpage(itemDef_t *item, qboolean *bAbort, char **args)
-{
-}
-
 void Menu_TransitionItemByName(menuDef_t *menu, const char *p, rectDef_t rectFrom, rectDef_t rectTo, int time, float amt)
 {
 	itemDef_t *item;
@@ -2309,9 +2269,6 @@ commandDef_t commandList[] =
 	{ "closeall",           &Script_CloseAll           },
 	{ "closeallothermenus", &Script_CloseAllOtherMenus },
 
-	{ "clipboard",          &Script_Clipboard          }, // Note: not implemented - show the current clipboard group by name
-	{ "showpage",           &Script_NotebookShowpage   }, // Note: not implemented
-	{ "setasset",           &Script_SetAsset           }, // Note: not implemented - works on this
 	{ "setbackground",      &Script_SetBackground      }, // works on this
 	{ "setitemcolor",       &Script_SetItemColor       }, // group/name
 	{ "setmenuitemcolor",   &Script_SetMenuItemColor   }, // group/name
@@ -2491,7 +2448,7 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 		return qfalse;
 	}
 
-	// bk001206 - this can be NULL.
+	// this can be NULL.
 	parent = (menuDef_t *)item->parent;
 
 	// items can be enabled and disabled based on cvars
@@ -2920,7 +2877,6 @@ void Item_MouseEnter(itemDef_t *item, float x, float y)
 				Item_RunScript(item, NULL, item->mouseEnter);
 				item->window.flags |= WINDOW_MOUSEOVER;
 			}
-
 		}
 		else
 		{
@@ -8778,7 +8734,6 @@ static qboolean Menu_OverActiveItem(menuDef_t *menu, float x, float y)
 					}
 				}
 			}
-
 		}
 	}
 	return qfalse;
@@ -8848,7 +8803,7 @@ qboolean BG_CursorInRect(rectDef_t *rect)
 void BG_PanelButton_RenderEdit(panel_button_t *button)
 {
 	qboolean useCvar = button->data[0] ? qfalse : qtrue;
-	int      offset = -1;
+	int      offset  = -1;
 
 	if (useCvar)
 	{
@@ -9022,58 +8977,6 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 		}
 		else
 		{
-			// Gordon: FIXME: have this work with all our stuff (use data[x] to store cursorpos etc)
-			/*          if ( key == K_DEL || key == K_KP_DEL ) {
-			                if ( item->cursorPos < len ) {
-			                    memmove( buff + item->cursorPos, buff + item->cursorPos + 1, len - item->cursorPos);
-			                    DC->setCVar(item->cvar, buff);
-			                }
-			                return qtrue;
-			            }*/
-
-			/*          if ( key == K_RIGHTARROW || key == K_KP_RIGHTARROW )
-			            {
-			                if (editPtr->maxPaintChars && item->cursorPos >= editPtr->paintOffset + editPtr->maxPaintChars && item->cursorPos < len) {
-			                    item->cursorPos++;
-			                    editPtr->paintOffset++;
-			                    return qtrue;
-			                }
-			                if (item->cursorPos < len) {
-			                    item->cursorPos++;
-			                }
-			                return qtrue;
-			            }
-
-			            if ( key == K_LEFTARROW || key == K_KP_LEFTARROW )
-			            {
-			                if ( item->cursorPos > 0 ) {
-			                    item->cursorPos--;
-			                }
-			                if (item->cursorPos < editPtr->paintOffset) {
-			                    editPtr->paintOffset--;
-			                }
-			                return qtrue;
-			            }
-
-			            if ( key == K_HOME || key == K_KP_HOME) {// || ( tolower(key) == 'a' && trap_Key_IsDown( K_CTRL ) ) ) {
-			                item->cursorPos = 0;
-			                editPtr->paintOffset = 0;
-			                return qtrue;
-			            }
-
-			            if ( key == K_END || key == K_KP_END)  {// ( tolower(key) == 'e' && trap_Key_IsDown( K_CTRL ) ) ) {
-			                item->cursorPos = len;
-			                if(item->cursorPos > editPtr->maxPaintChars) {
-			                    editPtr->paintOffset = len - editPtr->maxPaintChars;
-			                }
-			                return qtrue;
-			            }
-
-			            if ( key == K_INS || key == K_KP_INS ) {
-			                DC->setOverstrikeMode(!DC->getOverstrikeMode());
-			                return qtrue;
-			            }*/
-
 			if (key == K_ENTER || key == K_KP_ENTER)
 			{
 				if (button->onFinish)
