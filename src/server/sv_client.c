@@ -50,7 +50,6 @@ in a subsequent connectResponse command.
 We do this to prevent denial of service attacks that
 flood the server with invalid connection IPs.  With a
 challenge, they must give a valid IP address.
-
 =================
 */
 void SV_GetChallenge(netadr_t from)
@@ -652,7 +651,6 @@ static void SV_CloseDownload(client_t *cl)
 			cl->downloadBlocks[i] = NULL;
 		}
 	}
-
 }
 
 /*
@@ -673,6 +671,11 @@ static void SV_StopDownload_f(client_t *cl)
  */
 static void SV_DoneDownload_f(client_t *cl)
 {
+	if (cl->state == CS_ACTIVE)
+	{
+		return;
+	}
+
 	Com_DPrintf("clientDownload: %s Done\n", rc(cl->name));
 	// resend the game state to update any clients that entered during the download
 	SV_SendClientGameState(cl);
@@ -719,7 +722,6 @@ SV_BeginDownload_f
 */
 void SV_BeginDownload_f(client_t *cl)
 {
-
 	// Kill any existing download
 	SV_CloseDownload(cl);
 
@@ -741,7 +743,6 @@ SV_WWWDownload_f
 */
 void SV_WWWDownload_f(client_t *cl)
 {
-
 	char *subcmd = Cmd_Argv(1);
 
 	// only accept wwwdl commands for clients which we first flagged as wwwdl ourselves
@@ -856,24 +857,21 @@ Fill up msg with data
 */
 void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 {
-	int  curindex;
-	int  rate;
-	int  blockspersnap;
-	int  idPack;
-	char errorMessage[1024];
-	int  download_flag;
-
+	int      curindex;
+	int      rate;
+	int      blockspersnap;
+	int      idPack;
+	char     errorMessage[1024];
+	int      download_flag;
 	qboolean bTellRate = qfalse; // verbosity
 
 	if (!*cl->downloadName)
 	{
 		return; // Nothing being downloaded
-
 	}
 	if (cl->bWWWing)
 	{
 		return; // The client acked and is downloading with ftp/http
-
 	}
 	// CVE-2006-2082
 	// validate the download against the list of pak files
@@ -888,7 +886,7 @@ void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 	{
 		// We open the file here
 
-		//bani - prevent duplicate download notifications
+		// prevent duplicate download notifications
 		if (cl->downloadnotify & DLNOTIFY_BEGIN)
 		{
 			cl->downloadnotify &= ~DLNOTIFY_BEGIN;
@@ -941,6 +939,7 @@ void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 				{
 					fileHandle_t handle;
 					int          downloadSize = FS_SV_FOpenFileRead(cl->downloadName, &handle);
+
 					if (downloadSize)
 					{
 						FS_FCloseFile(handle);   // don't keep open, we only care about the size
@@ -1019,7 +1018,6 @@ void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 	while (cl->downloadCurrentBlock - cl->downloadClientBlock < MAX_DOWNLOAD_WINDOW &&
 	       cl->downloadSize != cl->downloadCount)
 	{
-
 		curindex = (cl->downloadCurrentBlock % MAX_DOWNLOAD_WINDOW);
 
 		if (!cl->downloadBlocks[curindex])
@@ -1106,8 +1104,8 @@ void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 		{
 			// We have transmitted the complete window, should we start resending?
 
-			//FIXME:  This uses a hardcoded one second timeout for lost blocks
-			//the timeout should be based on client rate somehow
+			// FIXME:  This uses a hardcoded one second timeout for lost blocks
+			// the timeout should be based on client rate somehow
 			if (svs.time - cl->downloadSendTime > 1000)
 			{
 				cl->downloadXmitBlock = cl->downloadClientBlock;
@@ -1171,7 +1169,6 @@ If we are pure, disconnect the client if they do no meet the following condition
 2. there are no any additional checksums that we do not have
 
 This routine would be a bit simpler with a goto but i abstained
-
 =================
 */
 static void SV_VerifyPaks_f(client_t *cl)
@@ -1468,7 +1465,6 @@ void SV_UserinfoChanged(client_t *cl)
 		Info_SetValueForKey(cl->userinfo, "ip", "localhost");
 	}
 
-	// TTimo
 	// download prefs of the client
 	val       = Info_ValueForKey(cl->userinfo, "cl_wwwDownload");
 	cl->bDlOK = qfalse;
@@ -1480,9 +1476,7 @@ void SV_UserinfoChanged(client_t *cl)
 			cl->bDlOK = qtrue;
 		}
 	}
-
 }
-
 
 void SV_UpdateUserinfo_f(client_t *cl)
 {
@@ -1599,7 +1593,6 @@ static qboolean SV_ClientCommand(client_t *cl, msg_t *msg, qboolean premaprestar
 		return qfalse;
 	}
 
-
 	// AHA! Need to steal this for some other stuff BOOKMARK
 	// - some server game-only commands we cannot have flood protect
 	if (!Q_strncmp("team", s, 4) || !Q_strncmp("setspawnpt", s, 10) || !Q_strncmp("score", s, 5) || !Q_stricmp("forcetapout", s))
@@ -1641,9 +1634,7 @@ static qboolean SV_ClientCommand(client_t *cl, msg_t *msg, qboolean premaprestar
 	return qtrue;       // continue procesing
 }
 
-
 //==================================================================================
-
 
 /*
 ==================
@@ -1810,9 +1801,7 @@ static void SV_ParseBinaryMessage(client_t *cl, msg_t *msg)
 
 /*
 ===========================================================================
-
 USER CMD EXECUTION
-
 ===========================================================================
 */
 
@@ -1865,8 +1854,7 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 	// gamestate it was at.  This allows it to keep downloading even when
 	// the gamestate changes.  After the download is finished, we'll
 	// notice and send it a new game state
-	//
-	// show_bug.cgi?id=536
+
 	// don't drop as long as previous command was a nextdl, after a dl is done, downloadName is set back to ""
 	// but we still need to read the next message to move to next download or send gamestate
 	// I don't like this hack though, it must have been working fine at some point, suspecting the fix is somewhere else
