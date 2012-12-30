@@ -66,8 +66,8 @@ cvar_t *r_stereoSeparation;
 
 #ifdef FEATURE_SMP
 cvar_t *r_smp;
-#endif
 cvar_t *r_showSmp;
+#endif
 cvar_t *r_skipBackEnd;
 
 cvar_t *r_stereoEnabled;
@@ -419,8 +419,7 @@ static void R_ModeList_f(void)
  *
  *                                                SCREEN SHOTS
  *
- * NOTE TTimo
- * some thoughts about the screenshots system:
+ * NOTE: some thoughts about the screenshots system:
  * screenshots get written in fs_homepath + fs_gamedir
  * vanilla q3 .. baseq3/screenshots/ *.tga
  * team arena .. missionpack/screenshots/ *.tga
@@ -501,10 +500,9 @@ byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
  */
 void RB_TakeDepthshot(int x, int y, int width, int height, char *fileName)
 {
-	byte *allbuf, *buffer;
-	byte *srcptr, *destptr;
-	byte *endline, *endmem;
-
+	byte   *allbuf, *buffer;
+	byte   *srcptr, *destptr;
+	byte   *endline, *endmem;
 	int    linelen, padlen;
 	size_t offset = 18, memcount;
 
@@ -556,11 +554,10 @@ RB_TakeScreenshot
 */
 void RB_TakeScreenshot(int x, int y, int width, int height, char *fileName)
 {
-	byte *allbuf, *buffer;
-	byte *srcptr, *destptr;
-	byte *endline, *endmem;
-	byte temp;
-
+	byte   *allbuf, *buffer;
+	byte   *srcptr, *destptr;
+	byte   *endline, *endmem;
+	byte   temp;
 	int    linelen, padlen;
 	size_t offset = 18, memcount;
 
@@ -1117,10 +1114,13 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
 	ri.Printf(PRINT_ALL, "compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
 
+#ifdef FEATURE_SMP
 	if (glConfig.smpActive)
 	{
-		ri.Printf(PRINT_ALL, "Using dual processor acceleration\n");
+		ri.Printf(PRINT_ALL, "Using dual processor acceleration (SMP)\n");
 	}
+#endif
+
 	if (r_finish->integer)
 	{
 		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
@@ -1134,9 +1134,9 @@ R_Register
 */
 void R_Register(void)
 {
-	#ifdef USE_RENDERER_DLOPEN
+#ifdef USE_RENDERER_DLOPEN
 	com_altivec = ri.Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
-	#endif
+#endif
 
 	// latched and archived variables
 	r_allowExtensions           = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
@@ -1186,7 +1186,8 @@ void R_Register(void)
 
 	r_subdivisions = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
 #ifdef FEATURE_SMP
-	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_smp     = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_showSmp = ri.Cvar_Get("r_showSmp", "0", CVAR_CHEAT);
 #endif
 	r_stereoEnabled  = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_ignoreFastPath = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH);    // ydnar: use fast path by default
@@ -1255,7 +1256,6 @@ void R_Register(void)
 	ri.Cvar_Set("r_flareFade", "5");    // to force this when people already have "7" in their config
 	r_flareFade = ri.Cvar_Get("r_flareFade", "5", CVAR_CHEAT);
 
-	r_showSmp     = ri.Cvar_Get("r_showSmp", "0", CVAR_CHEAT);
 	r_skipBackEnd = ri.Cvar_Get("r_skipBackEnd", "0", CVAR_CHEAT);
 
 	r_measureOverdraw = ri.Cvar_Get("r_measureOverdraw", "0", CVAR_CHEAT);
@@ -1364,7 +1364,7 @@ void R_Init(void)
 		}
 	}
 
-	// Ridah, init the virtual memory
+	// init the virtual memory
 	R_Hunk_Begin();
 
 	R_InitFogTable();
@@ -1393,14 +1393,13 @@ void R_Init(void)
 		backEndData[1] = ri.Hunk_Alloc(sizeof(*backEndData[1]) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
 	}
 	else
+#else
 	{
 		backEndData[1] = NULL;
 	}
-#else
-	backEndData[1] = NULL;
 #endif
 
-	R_ToggleSmpFrame();
+	{ R_ToggleSmpFrame(); }
 
 	InitOpenGL();
 

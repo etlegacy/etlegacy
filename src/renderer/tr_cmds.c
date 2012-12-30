@@ -129,12 +129,14 @@ R_ShutdownCommandBuffers
 */
 void R_ShutdownCommandBuffers(void)
 {
+#ifdef FEATURE_SMP
 	// kill the rendering thread
 	if (glConfig.smpActive)
 	{
 		GLimp_WakeRenderer(NULL);
 		glConfig.smpActive = qfalse;
 	}
+#endif
 }
 
 /*
@@ -150,13 +152,14 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	renderCommandList_t *cmdList;
 
 	cmdList = &backEndData[tr.smpFrame]->commands;
-	assert(cmdList);   // bk001205
+	assert(cmdList);
 	// add an end-of-list command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
 
 	// clear it out, in case this is a sync and not a buffer flip
 	cmdList->used = 0;
 
+#ifdef FEATURE_SMP
 	if (glConfig.smpActive)
 	{
 		// if the render thread is not idle, wait for it
@@ -180,6 +183,7 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 		// sleep until the renderer has completed
 		GLimp_FrontEndSleep();
 	}
+#endif
 
 	// at this point, the back end thread is idle, so it is ok
 	// to look at it's performance counters
@@ -196,10 +200,12 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 		{
 			RB_ExecuteRenderCommands(cmdList->cmds);
 		}
+#ifdef FEATURE_SMP
 		else
 		{
 			GLimp_WakeRenderer(cmdList);
 		}
+#endif
 	}
 }
 
@@ -225,7 +231,9 @@ void R_SyncRenderThread(void)
 	{
 		return;
 	}
+#ifdef FEATURE_SMP
 	GLimp_FrontEndSleep();
+#endif
 }
 
 /*

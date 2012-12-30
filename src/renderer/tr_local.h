@@ -1382,8 +1382,10 @@ extern cvar_t *r_portalOnly;
 
 extern cvar_t *r_subdivisions;
 extern cvar_t *r_lodCurveError;
+#ifdef FEATURE_SMP
 extern cvar_t *r_smp;
 extern cvar_t *r_showSmp;
+#endif
 extern cvar_t *r_skipBackEnd;
 
 extern cvar_t *r_stereoEnabled;
@@ -2048,8 +2050,8 @@ extern volatile qboolean renderThreadActive;
 void *R_GetCommandBuffer(int bytes);
 void RB_ExecuteRenderCommands(const void *data);
 
-void R_InitCommandBuffers(void);
-void R_ShutdownCommandBuffers(void);
+void R_InitCommandBuffers(void); // SMP
+void R_ShutdownCommandBuffers(void); // SMP
 
 void R_SyncRenderThread(void);
 
