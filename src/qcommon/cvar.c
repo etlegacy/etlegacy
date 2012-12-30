@@ -32,7 +32,7 @@
  * @brief dynamic variable tracking
  */
 
-#include "../qcommon/q_shared.h"
+#include "q_shared.h"
 #include "qcommon.h"
 
 cvar_t *cvar_vars;

@@ -37,7 +37,7 @@
 
 #include <curl/curl.h>
 
-#include "../qcommon/q_shared.h"
+#include "q_shared.h"
 #include "qcommon.h"
 #include "dl_public.h"
 
@@ -95,7 +95,6 @@ void DL_InitDownload(void)
 /*
 ================
 DL_Shutdown
-
 ================
 */
 void DL_Shutdown(void)

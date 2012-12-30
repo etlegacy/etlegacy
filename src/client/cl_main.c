@@ -3551,8 +3551,6 @@ void CL_Init(void)
 	Cvar_Get("rate", "5000", CVAR_USERINFO | CVAR_ARCHIVE);       // changed from 3000
 	Cvar_Get("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE);
 
-	Cvar_Get("cl_anonymous", "0", CVAR_USERINFO | CVAR_ARCHIVE);
-
 	Cvar_Get("password", "", CVAR_USERINFO);
 	Cvar_Get("cg_predictItems", "1", CVAR_ARCHIVE);
 
@@ -4256,7 +4254,6 @@ void CL_GlobalServers_f(void)
 
 	// reset the list, waiting for response
 	// -1 is used to distinguish a "no response"
-
 	if (cls.masterNum == 0)
 	{
 		NET_StringToAdr(MASTER_SERVER_NAME, &to, NA_UNSPEC);

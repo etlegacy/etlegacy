@@ -138,7 +138,6 @@ void SV_DirectConnect(netadr_t from)
 
 	Q_strncpyz(userinfo, Cmd_Argv(1), sizeof(userinfo));
 
-	// Update Server allows any protocol to connect
 	// NOTE: but we might need to store the protocol around for potential non http/ftp clients
 	version = atoi(Info_ValueForKey(userinfo, "protocol"));
 	if (version != PROTOCOL_VERSION)
@@ -164,6 +163,7 @@ void SV_DirectConnect(netadr_t from)
 		//if ( cl->state == CS_FREE ) {
 		//continue;
 		//}
+
 		if (NET_CompareBaseAdr(from, cl->netchan.remoteAddress)
 		    && (cl->netchan.qport == qport
 		        || from.port == cl->netchan.remoteAddress.port))

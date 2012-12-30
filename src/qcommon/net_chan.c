@@ -31,11 +31,10 @@
  * @file net_chan.c
  */
 
-#include "../qcommon/q_shared.h"
+#include "q_shared.h"
 #include "qcommon.h"
 
 /*
-
 packet header
 -------------
 4   outgoing sequence.  high bit will be set if this is a fragmented message
@@ -54,9 +53,7 @@ sometimes remap the client's source port on a packet during gameplay.
 If the base part of the net address matches and the qport matches, then the
 channel matches even if the IP port differs.  The IP port should be updated
 to the new value before sending out any replies.
-
 */
-
 
 #define MAX_PACKETLEN           1400        // max size of a network packet
 
@@ -78,7 +75,6 @@ static char *netsrcString[2] =
 /*
 ===============
 Netchan_Init
-
 ===============
 */
 void Netchan_Init(int port)
@@ -297,9 +293,7 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		}
 	}
 
-	//
 	// discard out of order or duplicated packets
-	//
 	if (sequence <= chan->incomingSequence)
 	{
 		if (showdrop->integer || showpackets->integer)
@@ -312,9 +306,7 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		return qfalse;
 	}
 
-	//
 	// dropped packets don't keep the message from being used
-	//
 	chan->dropped = sequence - (chan->incomingSequence + 1);
 	if (chan->dropped > 0)
 	{
@@ -327,14 +319,10 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		}
 	}
 
-
-	//
 	// if this is the final framgent of a reliable message,
 	// bump incoming_reliable_sequence
-	//
 	if (fragmented)
 	{
-		// TTimo
 		// make sure we add the fragments in correct order
 		// either a packet was dropped, or we received this one too soon
 		// we don't reconstruct the fragments. we will wait till this fragment gets to us again
@@ -390,7 +378,6 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		}
 
 		// copy the full message over the partial fragment
-
 		// make sure the sequence number is still there
 		*(int *)msg->data = LittleLong(sequence);
 
@@ -400,24 +387,19 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		msg->readcount       = 4; // past the sequence number
 		msg->bit             = 32; // past the sequence number
 
-		// TTimo
 		// clients were not acking fragmented messages
 		chan->incomingSequence = sequence;
 
 		return qtrue;
 	}
 
-	//
 	// the message can now be read from the current message pointer
-	//
 	chan->incomingSequence = sequence;
 
 	return qtrue;
 }
 
-
 //==============================================================================
-
 
 /*
 =============================================================================
@@ -473,7 +455,6 @@ qboolean    NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_mess
 	return qtrue;
 
 }
-
 
 void NET_SendLoopPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 {

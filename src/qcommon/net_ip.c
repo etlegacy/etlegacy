@@ -31,8 +31,8 @@
  * @file net_ip.c
  */
 
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qcommon.h"
+#include "q_shared.h"
+#include "qcommon.h"
 
 #ifdef _WIN32
 #   ifdef __MINGW32__
@@ -41,7 +41,6 @@
 #   endif
 #   include <winsock2.h>
 #   include <ws2tcpip.h>
-
 
 typedef int socklen_t;
 #   ifdef ADDRESS_FAMILY
@@ -147,7 +146,6 @@ static int             numIP;
 
 
 //=============================================================================
-
 
 /*
 ====================

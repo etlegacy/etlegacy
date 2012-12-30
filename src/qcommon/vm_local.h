@@ -31,7 +31,7 @@
  * @file vm_local.h
  */
 
-#include "../qcommon/q_shared.h"
+#include "q_shared.h"
 #include "qcommon.h"
 
 typedef enum

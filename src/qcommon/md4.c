@@ -33,7 +33,7 @@
 
 /* GLOBAL.H - RSAREF types and constants */
 
-#include "../qcommon/q_shared.h"
+#include "q_shared.h"
 
 #ifdef _WIN32
 #ifndef __GNUC__

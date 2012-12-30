@@ -31,15 +31,12 @@
  * @file cm_local.h
  */
 
-#include "../qcommon/q_shared.h"
+#include "q_shared.h"
 #include "qcommon.h"
 #include "cm_polylib.h"
 
-
-//  (SA) DM needs more than 256 since this includes func_static and func_explosives
-//#define   MAX_SUBMODELS       256
-//#define   BOX_MODEL_HANDLE    255
-
+// originally was 256 and 255 but needs more than that
+// since this includes func_static and func_explosives
 #define MAX_SUBMODELS           512
 #define BOX_MODEL_HANDLE        511
 #define CAPSULE_MODEL_HANDLE    510
@@ -223,7 +220,6 @@ void CM_BoxLeafnums_r(leafList_t *ll, int nodenum);
 cmodel_t *CM_ClipHandleToModel(clipHandle_t handle);
 
 // cm_patch.c
-
 struct patchCollide_s *CM_GeneratePatchCollide(int width, int height, vec3_t *points, qboolean addBevels);
 void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *pc);
 qboolean CM_PositionTestInPatchCollide(traceWork_t *tw, const struct patchCollide_s *pc);
