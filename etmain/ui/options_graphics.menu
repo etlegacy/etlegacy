@@ -36,7 +36,7 @@ menuDef {
 	MULTIACTION( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Overall Quality:", .2, 8, "ui_glCustom", cvarFloatList { "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glcustom", "" )
 	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Resolution:", .2, 8, "ui_r_mode", cvarFloatList { "desktop resolution" -2 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 Wide Screen" 11 "1360x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1600 (16:10)" 18 }, uiScript glCustom, "" )
 	YESNOACTION( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Fullscreen:", .2, 8, "ui_r_fullscreen", uiScript glCustom, "" )
-	SLIDER( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Brightness:", .2, 8, "ui_r_gamma" 1.3 1 3, "" )
+	SLIDER( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Brightness:", .2, 8, "r_gamma" 1.3 1 3, "" )
 
 
 // Advanced settings //
