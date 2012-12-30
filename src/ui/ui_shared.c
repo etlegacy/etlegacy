@@ -3144,7 +3144,7 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 			else
 			{
 				// select an item
-				// Arnout: can't select something that doesn't exist
+				// can't select something that doesn't exist
 				if (listPtr->cursorPos >= count)
 				{
 					listPtr->cursorPos = count - 1;

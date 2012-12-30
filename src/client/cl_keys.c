@@ -1473,7 +1473,6 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	}
 
 	// most keys during demo playback will bring up the menu, but non-ascii
-
 	// keys can still be used for bound actions
 	if (down && (key < 128 || key == K_MOUSE1)
 	    && (clc.demoplaying || cls.state == CA_CINEMATIC) && !cls.keyCatchers)
@@ -1612,12 +1611,10 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	}
 	else if (cls.state == CA_DISCONNECTED)
 	{
-
 		if (!onlybinds)
 		{
 			Console_Key(key);
 		}
-
 	}
 	else
 	{

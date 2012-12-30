@@ -793,7 +793,7 @@ void SVC_Info(netadr_t from)
 	Info_SetValueForKey(infostring, "friendlyFire", va("%i", sv_friendlyFire->integer));
 	Info_SetValueForKey(infostring, "maxlives", va("%i", sv_maxlives->integer ? 1 : 0));
 	Info_SetValueForKey(infostring, "needpass", va("%i", sv_needpass->integer ? 1 : 0));
-	Info_SetValueForKey(infostring, "gamename", GAMENAME_STRING); // Arnout: to be able to filter out Quake servers
+	Info_SetValueForKey(infostring, "gamename", GAMENAME_STRING);
 
 	antilag = Cvar_VariableString("g_antilag");
 	if (antilag)

@@ -844,7 +844,7 @@ void MSG_ReadDeltaUsercmd(msg_t *msg, usercmd_t *from, usercmd_t *to)
 	to->angles[1] = MSG_ReadDelta(msg, from->angles[1], 16);
 	to->angles[2] = MSG_ReadDelta(msg, from->angles[2], 16);
 
-	// disallow moves of -128 - see https://bugzilla.icculus.org/show_bug.cgi?id=5273 patch by /dev/humancontroller
+	// disallow moves of -128 (speedhack)
 	to->forwardmove = MSG_ReadDelta(msg, from->forwardmove, 8);
 	if (to->forwardmove == -128)
 	{
@@ -941,7 +941,7 @@ void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to
 		to->angles[1] = MSG_ReadDeltaKey(msg, key, from->angles[1], 16);
 		to->angles[2] = MSG_ReadDeltaKey(msg, key, from->angles[2], 16);
 
-		// disallow moves of -128 - see https://bugzilla.icculus.org/show_bug.cgi?id=5273 patch by /dev/humancontroller
+		// disallow moves of -128 (speedhack)
 		to->forwardmove = MSG_ReadDeltaKey(msg, key, from->forwardmove, 8);
 		if (to->forwardmove == -128)
 		{

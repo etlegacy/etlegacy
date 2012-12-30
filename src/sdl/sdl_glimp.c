@@ -450,7 +450,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-#if 0 // See http://bugzilla.icculus.org/show_bug.cgi?id=3526
+#if 0
+		// TODO: SDL_GL_ACCELERATED_VISUAL is broken on ATI cards
+		//       This code can be enabled once we move to SDL >= 1.3
 		// If not allowing software GL, demand accelerated
 		if (!r_allowSoftwareGL->integer)
 		{

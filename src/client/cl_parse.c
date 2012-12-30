@@ -64,7 +64,6 @@ MESSAGE PARSING
 
 =========================================================================
 */
-#if 1
 
 int entLastVisible[MAX_CLIENTS];
 
@@ -187,8 +186,6 @@ qboolean isEntVisible(entityState_t *ent)
 	return qfalse;
 }
 
-#endif
-
 /*
 ==================
 CL_DeltaEntity
@@ -220,7 +217,6 @@ void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *
 		return;     // entity was delta removed
 	}
 
-#if 1
 	// Only draw clients if visible
 	if (clc.onlyVisibleClients)
 	{
@@ -240,7 +236,6 @@ void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *
 			}
 		}
 	}
-#endif
 
 	cl.parseEntitiesNum++;
 	frame->numEntities++;
@@ -604,8 +599,8 @@ void CL_SystemInfoChanged(void)
 	char       value[BIG_INFO_VALUE];
 
 	systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
+
 	// NOTE: when the serverId changes, any further messages we send to the server will use this new serverId
-	// show_bug.cgi?id=475
 	// in some cases, outdated cp commands might get sent with this news serverId
 	cl.serverId = atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
 

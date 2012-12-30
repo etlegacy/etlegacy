@@ -2887,7 +2887,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// clear entity state values
 	BG_PlayerStateToEntityState(&client->ps, &ent->s, qtrue);
 
-	// show_bug.cgi?id=569
 	G_ResetMarkers(ent);
 
 	// start the scripting system

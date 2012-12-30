@@ -7727,9 +7727,8 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 
 			trap_Cvar_VariableStringBuffer("com_errorMessage", buf, sizeof(buf));
 
-			// JPW NERVE stricmp() is silly but works, take a look at error.menu to see why.  I think this is bustified in q3ta
-			// NOTE TTimo - I'm not sure Q_stricmp is useful to anything anymore
-			// show_bug.cgi?id=507
+			// stricmp() is silly but works, take a look at error.menu to see why.
+			// NOTE: I'm not sure Q_stricmp is useful to anything anymore
 			// TTimo - improved and tweaked that area a whole bunch
 			if ((*buf) && (Q_stricmp(buf, ";")))
 			{

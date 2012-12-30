@@ -351,7 +351,8 @@ void Cmd_Vstr_f(void)
 }
 
 /**
- * @brief Just prints the rest of the line to the console
+ * @brief Prints the rest of the line to the console
+ * and shows a notification if connected to a server.
  */
 void Cmd_Echo_f(void)
 {
@@ -518,9 +519,7 @@ char *Cmd_Cmd(void)
 /*
  * @brief Replaces command separators with space to prevent interpretation
  *
- * This is a hack to protect buggy qvms
- * https://bugzilla.icculus.org/show_bug.cgi?id=3593
- * https://bugzilla.icculus.org/show_bug.cgi?id=4769
+ * This prevents the infamous callvote hack.
  */
 void Cmd_Args_Sanitize(void)
 {

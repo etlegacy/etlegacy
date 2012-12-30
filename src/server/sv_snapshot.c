@@ -653,7 +653,6 @@ static void SV_BuildClientSnapshot(client_t *client)
 	entityNumbers.numSnapshotEntities = 0;
 	memset(frame->areabits, 0, sizeof(frame->areabits));
 
-	// show_bug.cgi?id=62
 	frame->num_entities = 0;
 
 	clent = client->gentity;

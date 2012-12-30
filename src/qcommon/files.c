@@ -3393,8 +3393,8 @@ void FS_Shutdown(qboolean closemfp)
 /*
 ================
 FS_ReorderPurePaks
-NOTE TTimo: the reordering that happens here is not reflected in the cvars (\cvarlist *pak*)
-  this can lead to misleading situations, see show_bug.cgi?id=540
+NOTE: the reordering that happens here is not reflected in the cvars (\cvarlist *pak*)
+  this can lead to misleading situations
 ================
 */
 static void FS_ReorderPurePaks(void)

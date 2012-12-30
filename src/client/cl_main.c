@@ -49,8 +49,13 @@ cvar_t *cl_nodelta;
 cvar_t *cl_debugMove;
 
 cvar_t *cl_noprint;
-cvar_t *cl_motd;
+
+// Auto-Update
 cvar_t *cl_autoupdate;
+cvar_t *cl_updateavailable;
+cvar_t *cl_updatefiles;
+
+cvar_t *cl_motd;
 
 cvar_t *rcon_client_password;
 cvar_t *rconAddress;
@@ -100,11 +105,6 @@ cvar_t *cl_missionStats;
 // Localization
 cvar_t *cl_language;
 cvar_t *cl_debugTranslation;
-
-// Auto-Update
-cvar_t *cl_updateavailable;
-cvar_t *cl_updatefiles;
-
 
 cvar_t *cl_profile;
 cvar_t *cl_defaultProfile;
@@ -167,8 +167,6 @@ void CL_LoadTranslations_f(void);
 
 void CL_WriteWaveClose(void);
 void CL_WavStopRecord_f(void);
-
-void CL_GetAndRegGUID(void);
 
 void CL_PurgeCache(void)
 {
@@ -585,7 +583,7 @@ typedef struct wav_hdr_s
 	unsigned int Format;        // big endian
 
 	unsigned int Subchunk1ID;   // big endian
-	unsigned int Subchunk1Size;   // little endian
+	unsigned int Subchunk1Size; // little endian
 	unsigned short AudioFormat; // little endian
 	unsigned short NumChannels; // little endian
 	unsigned int SampleRate;    // little endian
@@ -594,7 +592,7 @@ typedef struct wav_hdr_s
 	unsigned short BitsPerSample;   // little endian
 
 	unsigned int Subchunk2ID;   // big endian
-	unsigned int Subchunk2Size;     // little indian ;)
+	unsigned int Subchunk2Size; // little indian ;)
 
 	unsigned int NumSamples;
 } wav_hdr_t;
@@ -1088,7 +1086,7 @@ void CL_Disconnect(qboolean showMainMenu)
 
 	SCR_StopCinematic();
 	S_ClearSoundBuffer(qtrue);    // modified
-#if 1
+
 	// send a disconnect message to the server
 	// send it a few times in case one is dropped
 	if (cls.state >= CA_CONNECTED)
@@ -1098,7 +1096,7 @@ void CL_Disconnect(qboolean showMainMenu)
 		CL_WritePacket();
 		CL_WritePacket();
 	}
-#endif
+
 	CL_ClearState();
 
 	// wipe the client connection
