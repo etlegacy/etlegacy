@@ -509,9 +509,9 @@ if(BUILD_MOD)
 endif(BUILD_MOD)
 
 if(BUILD_PAK3_PK3)
-	add_custom_target(pak3_pk3 ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3.pk3)
-	add_custom_command(
-		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3.pk3
+	add_custom_target(
+		pak3_pk3 ALL
+		DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3.pk3
 		COMMAND zip -r ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3.pk3 *
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/etmain/
 	)
