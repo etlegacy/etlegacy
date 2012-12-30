@@ -74,7 +74,7 @@ typedef struct
 	qboolean lightingCalculated;
 	vec3_t lightDir;            // normalized direction towards light
 	vec3_t ambientLight;        // color normalized to 0-255
-	int ambientLightInt;            // 32 bit rgba packed
+	int ambientLightInt;        // 32 bit rgba packed
 	vec3_t directedLight;
 	int entityLightInt[ENTITY_LIGHT_STEPS];
 	float brightness;
@@ -90,10 +90,10 @@ typedef struct
 
 typedef struct image_s
 {
-	char imgName[MAX_QPATH];            // game path, including extension
-	int width, height;                      // source image
-	int uploadWidth, uploadHeight;          // after power of two and picmip but not including clamp to MAX_TEXTURE_SIZE
-	GLuint texnum;                      // gl texture binding
+	char imgName[MAX_QPATH];        // game path, including extension
+	int width, height;              // source image
+	int uploadWidth, uploadHeight;  // after power of two and picmip but not including clamp to MAX_TEXTURE_SIZE
+	GLuint texnum;                  // gl texture binding
 
 	int frameUsed;                  // for texture usage in frame statistics
 
@@ -560,7 +560,7 @@ typedef struct skin_s
 
 typedef struct
 {
-	int modelNum;                   // ydnar: bsp model the fog belongs to
+	int modelNum;                   // bsp model the fog belongs to
 	int originalBrushNumber;
 	vec3_t bounds[2];
 
@@ -595,9 +595,7 @@ typedef struct
 
 /*
 ==============================================================================
-
 SURFACES
-
 ==============================================================================
 */
 
@@ -857,9 +855,7 @@ extern void(*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *);
 
 /*
 ==============================================================================
-
 BRUSH MODELS
-
 ==============================================================================
 */
 
@@ -929,7 +925,7 @@ typedef struct bmodel_s
 	int entityNum[SMP_FRAMES];
 } bmodel_t;
 
-// ydnar: optimization
+// optimization
 #define WORLD_MAX_SKY_NODES 32
 
 typedef struct
@@ -953,7 +949,7 @@ typedef struct
 	mnode_t *nodes;
 
 	int numSkyNodes;
-	mnode_t **skyNodes;         // ydnar: don't walk the entire bsp when rendering sky
+	mnode_t **skyNodes;         // don't walk the entire bsp when rendering sky
 
 	int numsurfaces;
 	msurface_t *surfaces;
@@ -963,10 +959,10 @@ typedef struct
 
 	int numfogs;
 	fog_t *fogs;
-	int globalFog;                      // Arnout: index of global fog
-	vec4_t globalOriginalFog;           // Arnout: to be able to restore original global fog
-	vec4_t globalTransStartFog;         // Arnout: start fog for switch fog transition
-	vec4_t globalTransEndFog;           // Arnout: end fog for switch fog transition
+	int globalFog;                      // index of global fog
+	vec4_t globalOriginalFog;           // to be able to restore original global fog
+	vec4_t globalTransStartFog;         // start fog for switch fog transition
+	vec4_t globalTransEndFog;           // end fog for switch fog transition
 	int globalFogTransStartTime;
 	int globalFogTransEndTime;
 
@@ -1367,7 +1363,7 @@ extern cvar_t *r_trisColor;                     // enables modifying of the wire
 extern cvar_t *r_showsky;                       // forces sky in front of all surfaces
 extern cvar_t *r_shownormals;                   // draws wireframe normals
 extern cvar_t *r_normallength;                  // length of the normals
-extern cvar_t *r_showmodelbounds;
+//extern cvar_t *r_showmodelbounds;			    // see RB_MDM_SurfaceAnim()
 extern cvar_t *r_clear;                         // force screen clear every frame
 
 extern cvar_t *r_shadows;                       // controls shadows: 0 = none, 1 = blur, 2 = stencil, 3 = black planar projection
@@ -1573,9 +1569,7 @@ int R_GetTextureId(const char *name);
 
 /*
 ====================================================================
-
 IMPLEMENTATION SPECIFIC FUNCTIONS
-
 ====================================================================
 */
 
@@ -1601,9 +1595,7 @@ void GLimp_SetGamma(unsigned char red[256],
 
 /*
 ====================================================================
-
 TESSELATOR/SHADER DECLARATIONS
-
 ====================================================================
 */
 typedef struct stageVars
@@ -1672,9 +1664,7 @@ void RB_DrawBounds(vec3_t mins, vec3_t maxs);
 
 /*
 ============================================================
-
 WORLD MAP
-
 ============================================================
 */
 
@@ -1683,9 +1673,7 @@ void R_AddWorldSurfaces(void);
 
 /*
 ============================================================
-
 FLARES
-
 ============================================================
 */
 
@@ -1697,9 +1685,7 @@ void RB_RenderFlares(void);
 
 /*
 ============================================================
-
 LIGHTS
-
 ============================================================
 */
 
@@ -1711,9 +1697,7 @@ int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec
 
 /*
 ============================================================
-
 SHADOWS
-
 ============================================================
 */
 
@@ -1723,9 +1707,7 @@ void RB_ProjectionShadowDeform(void);
 
 /*
 ============================================================
-
 SKIES
-
 ============================================================
 */
 
@@ -1737,9 +1719,7 @@ void RB_ClipSkyPolygons(shaderCommands_t *shader);
 
 /*
 ============================================================
-
 CURVE TESSELATION
-
 ============================================================
 */
 
@@ -1753,9 +1733,7 @@ void R_FreeSurfaceGridMesh(srfGridMesh_t *grid);
 
 /*
 ============================================================
-
 MARKERS, POLYGON PROJECTION ON WORLD POLYGONS
-
 ============================================================
 */
 
@@ -1764,9 +1742,7 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 
 /*
 ============================================================
-
-DECALS - ydnar
-
+DECALS
 ============================================================
 */
 
@@ -1787,9 +1763,7 @@ void R_CullDecalProjectors(void);
 
 /*
 ============================================================
-
 SCENE GENERATION
-
 ============================================================
 */
 
@@ -1802,7 +1776,7 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys);
 
 void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
-// ydnar: modified dlight system to support seperate radius & intensity
+// modified dlight system to support seperate radius & intensity
 // void RE_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b, int overdraw );
 void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags);
 
@@ -1814,9 +1788,7 @@ void RE_RestoreViewParms(void);
 
 /*
 =============================================================
-
 ANIMATED MODELS
-
 =============================================================
 */
 
@@ -1832,9 +1804,7 @@ int R_MDM_GetBoneTag(orientation_t *outTag, mdmHeader_t *mdm, int startTagIndex,
 
 /*
 =============================================================
-
 IMAGE LOADERS
-
 =============================================================
 */
 
@@ -1878,9 +1848,7 @@ void RB_CalcDiffuseColor(unsigned char *colors);
 
 /*
 =============================================================
-
 RENDERER BACK END FUNCTIONS
-
 =============================================================
 */
 
@@ -1889,9 +1857,7 @@ void RB_ExecuteRenderCommands(const void *data);
 
 /*
 =============================================================
-
 RENDERER BACK END COMMAND QUEUE
-
 =============================================================
 */
 
@@ -2028,7 +1994,7 @@ typedef struct
 {
 	drawSurf_t drawSurfs[MAX_DRAWSURFS];
 	dlight_t dlights[MAX_DLIGHTS];
-	corona_t coronas[MAX_CORONAS];          //----(SA)
+	corona_t coronas[MAX_CORONAS];
 	trRefEntity_t entities[MAX_ENTITIES];
 	srfPoly_t polys[MAX_POLYS];
 	srfPolyBuffer_t polybuffers[MAX_POLYS];
@@ -2091,7 +2057,7 @@ typedef enum
 void *R_GetImageBuffer(int size, bufferMemType_t bufferType);
 void R_FreeImageBuffer(void);
 
-// Ridah, caching system
+// caching system
 // NOTE: to disable this for development, set "r_cache 0" in autoexec.cfg
 void R_InitTexnumImages(qboolean force);
 
@@ -2124,7 +2090,7 @@ void R_PurgeLightmapShaders(void);
 void R_LoadCacheShaders(void);
 
 //------------------------------------------------------------------------------
-// Ridah, mesh compression
+// mesh compression
 #define NUMMDCVERTEXNORMALS  256
 
 extern float r_anormals[NUMMDCVERTEXNORMALS][3];

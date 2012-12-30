@@ -135,7 +135,7 @@ cvar_t *r_trisColor;
 cvar_t *r_showsky;
 cvar_t *r_shownormals;
 cvar_t *r_normallength;
-cvar_t *r_showmodelbounds;
+//cvar_t *r_showmodelbounds; // see RB_MDM_SurfaceAnim()
 cvar_t *r_finish;
 cvar_t *r_clear;
 cvar_t *r_swapInterval;
@@ -1268,22 +1268,22 @@ void R_Register(void)
 	r_showcluster     = ri.Cvar_Get("r_showcluster", "0", CVAR_CHEAT);
 	r_speeds          = ri.Cvar_Get("r_speeds", "0", CVAR_CHEAT);
 
-	r_logFile         = ri.Cvar_Get("r_logFile", "0", CVAR_CHEAT);
-	r_debugSurface    = ri.Cvar_Get("r_debugSurface", "0", CVAR_CHEAT);
-	r_nobind          = ri.Cvar_Get("r_nobind", "0", CVAR_CHEAT);
-	r_showtris        = ri.Cvar_Get("r_showtris", "0", CVAR_CHEAT);
-	r_trisColor       = ri.Cvar_Get("r_trisColor", "1.0 1.0 1.0 1.0", CVAR_ARCHIVE);
-	r_showsky         = ri.Cvar_Get("r_showsky", "0", CVAR_CHEAT);
-	r_shownormals     = ri.Cvar_Get("r_shownormals", "0", CVAR_CHEAT);
-	r_normallength    = ri.Cvar_Get("r_normallength", "0.5", CVAR_ARCHIVE);
-	r_showmodelbounds = ri.Cvar_Get("r_showmodelbounds", "0", CVAR_CHEAT);
-	r_clear           = ri.Cvar_Get("r_clear", "0", CVAR_CHEAT);
-	r_offsetFactor    = ri.Cvar_Get("r_offsetfactor", "-1", CVAR_CHEAT);
-	r_offsetUnits     = ri.Cvar_Get("r_offsetunits", "-2", CVAR_CHEAT);
-	r_drawBuffer      = ri.Cvar_Get("r_drawBuffer", "GL_BACK", CVAR_CHEAT);
-	r_lockpvs         = ri.Cvar_Get("r_lockpvs", "0", CVAR_CHEAT);
-	r_noportals       = ri.Cvar_Get("r_noportals", "0", CVAR_CHEAT);
-	r_shadows         = ri.Cvar_Get("cg_shadows", "1", 0);
+	r_logFile      = ri.Cvar_Get("r_logFile", "0", CVAR_CHEAT);
+	r_debugSurface = ri.Cvar_Get("r_debugSurface", "0", CVAR_CHEAT);
+	r_nobind       = ri.Cvar_Get("r_nobind", "0", CVAR_CHEAT);
+	r_showtris     = ri.Cvar_Get("r_showtris", "0", CVAR_CHEAT);
+	r_trisColor    = ri.Cvar_Get("r_trisColor", "1.0 1.0 1.0 1.0", CVAR_ARCHIVE);
+	r_showsky      = ri.Cvar_Get("r_showsky", "0", CVAR_CHEAT);
+	r_shownormals  = ri.Cvar_Get("r_shownormals", "0", CVAR_CHEAT);
+	r_normallength = ri.Cvar_Get("r_normallength", "0.5", CVAR_ARCHIVE);
+	//r_showmodelbounds = ri.Cvar_Get("r_showmodelbounds", "0", CVAR_CHEAT); // see RB_MDM_SurfaceAnim()
+	r_clear        = ri.Cvar_Get("r_clear", "0", CVAR_CHEAT);
+	r_offsetFactor = ri.Cvar_Get("r_offsetfactor", "-1", CVAR_CHEAT);
+	r_offsetUnits  = ri.Cvar_Get("r_offsetunits", "-2", CVAR_CHEAT);
+	r_drawBuffer   = ri.Cvar_Get("r_drawBuffer", "GL_BACK", CVAR_CHEAT);
+	r_lockpvs      = ri.Cvar_Get("r_lockpvs", "0", CVAR_CHEAT);
+	r_noportals    = ri.Cvar_Get("r_noportals", "0", CVAR_CHEAT);
+	r_shadows      = ri.Cvar_Get("cg_shadows", "1", 0);
 
 	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE);
 
