@@ -279,18 +279,18 @@ static sfx_t *S_FindName(const char *name)
 
 	if (!name)
 	{
-		Com_DPrintf(S_COLOR_RED "ERROR: S_FindName: NULL\n");
+		Com_DPrintf(S_COLOR_RED "ERROR S_FindName: NULL\n");
 		return NULL;
 	}
 	if (!name[0])
 	{
-		Com_DPrintf(S_COLOR_RED "ERROR: S_FindName: empty name\n");
+		Com_DPrintf(S_COLOR_RED "ERROR S_FindName: empty name\n");
 		return NULL;
 	}
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_DPrintf(S_COLOR_RED "ERROR: Sound name too long: %s", name);
+		Com_DPrintf(S_COLOR_RED "ERROR S_FindName: Sound name too long: %s", name);
 		return NULL;
 	}
 
@@ -416,7 +416,7 @@ sfxHandle_t S_Base_RegisterSound(const char *name, qboolean compressed)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_Printf("Sound name exceeds MAX_QPATH\n");
+		Com_Printf("S_Base_RegisterSound: Sound name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -430,7 +430,7 @@ sfxHandle_t S_Base_RegisterSound(const char *name, qboolean compressed)
 	{
 		if (sfx->defaultSound)
 		{
-			Com_DPrintf(S_COLOR_YELLOW "WARNING: could not find %s - using default\n", sfx->soundName);
+			Com_DPrintf(S_COLOR_YELLOW "WARNING S_Base_RegisterSound: could not find %s - using default\n", sfx->soundName);
 			return 0;
 		}
 		return sfx - knownSfx;
@@ -443,7 +443,7 @@ sfxHandle_t S_Base_RegisterSound(const char *name, qboolean compressed)
 
 	if (sfx->defaultSound)
 	{
-		Com_DPrintf(S_COLOR_YELLOW "WARNING: could not find %s - using default\n", sfx->soundName);
+		Com_DPrintf(S_COLOR_YELLOW "WARNING S_Base_RegisterSound: could not find %s - using default\n", sfx->soundName);
 		return 0;
 	}
 
@@ -582,17 +582,25 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 
 	if (!s_soundStarted || s_soundMuted)
 	{
+		//Com_Printf(S_COLOR_YELLOW "S_Base_StartSoundEx: sound not started or muted\n");
+		return;
+	}
+
+	// don't process "sound/player/default/blank.wav" dummy sound
+	if (sfxHandle == 0)
+	{
+		//Com_Printf(S_COLOR_YELLOW "S_Base_StartSoundEx: skipping blank sound - sfxHandle 0\n");
 		return;
 	}
 
 	if (!origin && (entnum < 0 || entnum >= MAX_GENTITIES))
 	{
-		Com_Error(ERR_DROP, "S_StartSound: bad entitynum %i\n", entnum);
+		Com_Error(ERR_DROP, "S_Base_StartSoundEx: bad entitynum %i\n", entnum);
 	}
 
 	if (sfxHandle < 0 || sfxHandle >= numSfx)
 	{
-		Com_Printf(S_COLOR_YELLOW "S_StartSound: handle %i out of range\n", sfxHandle);
+		Com_Printf(S_COLOR_YELLOW "S_Base_StartSoundEx: handle %i out of range\n", sfxHandle);
 		return;
 	}
 
@@ -605,7 +613,7 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 
 	if (s_show->integer == 1)
 	{
-		Com_Printf("%i : %s\n", s_paintedtime, sfx->soundName);
+		Com_Printf("S_Base_StartSoundEx: %i : %s\n", s_paintedtime, sfx->soundName);
 	}
 
 	time = Com_Milliseconds();
@@ -1004,7 +1012,7 @@ void S_Base_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, int 
 
 	if (sfxHandle < 0 || sfxHandle >= numSfx)
 	{
-		Com_Printf(S_COLOR_YELLOW "S_AddRealLoopingSound: handle %i out of range\n", sfxHandle);
+		Com_Printf(S_COLOR_YELLOW "S_Base_AddRealLoopingSound: handle %i out of range\n", sfxHandle);
 		return;
 	}
 
@@ -1437,7 +1445,7 @@ void S_Base_Update(void)
 {
 	if (!s_soundStarted || s_soundMuted)
 	{
-		//Com_DPrintf ("not started or muted\n");
+		//Com_DPrintf ("S_Base_Update: not started or muted\n");
 		return;
 	}
 
@@ -1451,12 +1459,12 @@ void S_Base_Update(void)
 		{
 			if (ch->thesfx && (ch->leftvol || ch->rightvol))
 			{
-				Com_Printf("%d %d %s\n", ch->leftvol, ch->rightvol, ch->thesfx->soundName);
+				Com_Printf("S_Base_Update: %d %d %s\n", ch->leftvol, ch->rightvol, ch->thesfx->soundName);
 				total++;
 			}
 		}
 
-		Com_Printf("----(%i)---- painted: %i\n", total, s_paintedtime);
+		Com_Printf("S_Base_Update: ----(%i)---- painted: %i\n", total, s_paintedtime);
 	}
 
 	// add raw data from streamed samples
@@ -1641,11 +1649,11 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 				{
 					if (param == -1)
 					{
-						Com_Printf("MUSIC: queueing '%s' for play once\n", intro);
+						Com_Printf("S_StartStreamingSoundEx: queueing '%s' for play once\n", intro);
 					}
 					else if (param == -2)
 					{
-						Com_Printf("MUSIC: queueing '%s' as new loop\n", intro);
+						Com_Printf("S_StartStreamingSoundEx: queueing '%s' as new loop\n", intro);
 					}
 				}
 			}
@@ -1656,7 +1664,7 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 				ss->queueStreamType = 0;
 				if (s_debugStreams->integer)
 				{
-					Com_Printf("MUSIC: queue cleared\n");
+					Com_Printf("S_StartStreamingSoundEx: queue cleared\n");
 				}
 			}
 		}
@@ -1688,7 +1696,7 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 		ss = &streamingSounds[freeTrack];
 		if (s_debugStreams->integer)
 		{
-			Com_Printf("STREAM: Free slot found, %d\n", freeTrack);
+			Com_Printf("S_StartStreamingSoundEx: Free slot found, %d\n", freeTrack);
 		}
 	}
 
@@ -1697,7 +1705,7 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 	{
 		if (!s_muted->integer)
 		{
-			Com_Printf("STREAM: No free streaming tracks\n");
+			Com_Printf("S_StartStreamingSoundEx: No free streaming tracks\n");
 		}
 		return 0.0f;
 	}
@@ -1755,13 +1763,13 @@ float S_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, i
 	ss->stream = S_CodecOpenStream(intro);
 	if (!ss->stream)
 	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: couldn't open stream file %s\n", intro);
+		Com_Printf(S_COLOR_YELLOW "WARNING S_StartStreamingSoundEx: couldn't open stream file %s\n", intro);
 		return 0.0f;
 	}
 
 	if (ss->stream->info.channels != 2 || ss->stream->info.rate != 22050)
 	{
-		Com_DPrintf(S_COLOR_YELLOW "WARNING: stream file %s is not 22k stereo\n", intro);
+		Com_DPrintf(S_COLOR_YELLOW "WARNING S_StartStreamingSoundEx: stream file %s is not 22k stereo\n", intro);
 	}
 
 	// return the length of sound
@@ -1830,6 +1838,7 @@ S_StopEntStreamingSound
 void S_Base_StopEntStreamingSound(int entnum)
 {
 	int i;
+
 	for (i = 1; i < MAX_STREAMING_SOUNDS; i++)
 	{
 		// is the stream active
@@ -1903,7 +1912,7 @@ void S_Base_FadeStreamingSound(float targetVol, int time, int stream)
 	{
 		if (s_debugStreams->integer)
 		{
-			Com_Printf("MUSIC: Fade: %0.2f %d\n", targetVol, time);
+			Com_Printf("S_Base_FadeStreamingSound: Fade: %0.2f %d\n", targetVol, time);
 		}
 	}
 
@@ -2107,6 +2116,7 @@ void S_UpdateStreamingSounds(void)
 				{
 					// TODO: Implement a rewind?
 					char loopStream[MAX_QPATH];
+
 					Q_strncpyz(loopStream, ss->loopStream, MAX_QPATH);
 					S_StopStreamingSound(i);
 					S_StartStreamingSoundEx(loopStream, loopStream,
@@ -2142,7 +2152,7 @@ int S_Base_GetSoundLength(sfxHandle_t sfxHandle)
 {
 	if (sfxHandle < 0 || sfxHandle >= numSfx)
 	{
-		Com_DPrintf(S_COLOR_YELLOW "S_StartSound: handle %i out of range\n", sfxHandle);
+		Com_DPrintf(S_COLOR_YELLOW "S_Base_GetSoundLength: handle %i out of range\n", sfxHandle);
 		return -1;
 	}
 	return (int)((float)knownSfx[sfxHandle].soundLength / dma.speed * 1000.0);
