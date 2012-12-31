@@ -619,11 +619,12 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 	time = Com_Milliseconds();
 
 	// pick a channel to play on
-	allowed = 4;
-	if (entnum == listener_number)
-	{
-		allowed = 8;
-	}
+	// this limits same sounds played at same time
+	allowed = 8; // was 4 before
+	//if (entnum == listener_number)
+	//{
+	//	allowed = 8;
+	//}
 
 	ch     = s_channels;
 	inplay = 0;
@@ -631,7 +632,7 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 	{
 		if (ch->entnum == entnum && ch->thesfx == sfx)
 		{
-			if (time - ch->allocTime < 50)
+			if (time - ch->allocTime < 50) // double played in one frame
 			{
 				return;
 			}
