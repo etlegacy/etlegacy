@@ -524,7 +524,6 @@ Handles user intended acceleration
 */
 static void PM_Accelerate(vec3_t wishdir, float wishspeed, float accel)
 {
-#if 1
 	// q2 style
 	int   i;
 	float addspeed, accelspeed, currentspeed;
@@ -555,25 +554,6 @@ static void PM_Accelerate(vec3_t wishdir, float wishspeed, float accel)
 	{
 		pm->ps->velocity[i] += accelspeed * wishdir[i];
 	}
-#else
-	// proper way (avoids strafe jump maxspeed bug), but feels bad
-	vec3_t wishVelocity;
-	vec3_t pushDir;
-	float  pushLen;
-	float  canPush;
-
-	VectorScale(wishdir, wishspeed, wishVelocity);
-	VectorSubtract(wishVelocity, pm->ps->velocity, pushDir);
-	pushLen = VectorNormalize(pushDir);
-
-	canPush = accel * pml.frametime * wishspeed;
-	if (canPush > pushLen)
-	{
-		canPush = pushLen;
-	}
-
-	VectorMA(pm->ps->velocity, canPush, pushDir, pm->ps->velocity);
-#endif
 }
 
 /*
@@ -665,8 +645,7 @@ to the facing dir
 */
 static void PM_SetMovementDir(void)
 {
-// Ridah, changed this for more realistic angles (at the cost of more network traffic?)
-#if 1
+	// changed - for more realistic angles (at the cost of more network traffic?)
 	float  speed;
 	vec3_t moved;
 
@@ -708,57 +687,6 @@ static void PM_SetMovementDir(void)
 	{
 		pm->ps->movementDir = 0;
 	}
-#else
-	if (pm->cmd.forwardmove || pm->cmd.rightmove)
-	{
-		if (pm->cmd.rightmove == 0 && pm->cmd.forwardmove > 0)
-		{
-			pm->ps->movementDir = 0;
-		}
-		else if (pm->cmd.rightmove < 0 && pm->cmd.forwardmove > 0)
-		{
-			pm->ps->movementDir = 1;
-		}
-		else if (pm->cmd.rightmove < 0 && pm->cmd.forwardmove == 0)
-		{
-			pm->ps->movementDir = 2;
-		}
-		else if (pm->cmd.rightmove < 0 && pm->cmd.forwardmove < 0)
-		{
-			pm->ps->movementDir = 3;
-		}
-		else if (pm->cmd.rightmove == 0 && pm->cmd.forwardmove < 0)
-		{
-			pm->ps->movementDir = 4;
-		}
-		else if (pm->cmd.rightmove > 0 && pm->cmd.forwardmove < 0)
-		{
-			pm->ps->movementDir = 5;
-		}
-		else if (pm->cmd.rightmove > 0 && pm->cmd.forwardmove == 0)
-		{
-			pm->ps->movementDir = 6;
-		}
-		else if (pm->cmd.rightmove > 0 && pm->cmd.forwardmove > 0)
-		{
-			pm->ps->movementDir = 7;
-		}
-	}
-	else
-	{
-		// if they aren't actively going directly sideways,
-		// change the animation to the diagonal so they
-		// don't stop too crooked
-		if (pm->ps->movementDir == 2)
-		{
-			pm->ps->movementDir = 1;
-		}
-		else if (pm->ps->movementDir == 6)
-		{
-			pm->ps->movementDir = 7;
-		}
-	}
-#endif
 }
 
 /*
@@ -1229,7 +1157,6 @@ static void PM_FlyMove(void)
 /*
 ===================
 PM_AirMove
-
 ===================
 */
 static void PM_AirMove(void)
@@ -1279,7 +1206,7 @@ static void PM_AirMove(void)
 
 	PM_StepSlideMove(qtrue);
 
-	// Ridah, moved this down, so we use the actual movement direction
+	// moved this down, so we use the actual movement direction
 	// set the movementDir so clients can rotate the legs for strafing
 	PM_SetMovementDir();
 }
@@ -3030,7 +2957,6 @@ void PM_CheckForReload(int weapon)
 		break;
 	}
 
-
 	// user is forcing a reload (manual reload)
 	reloadRequested = (qboolean)(pm->cmd.wbuttons & WBUTTON_RELOAD);
 
@@ -3541,7 +3467,6 @@ static void PM_Weapon(void)
 
 		if (pm->cmd.buttons & BUTTON_ATTACK)
 		{
-
 			pm->ps->weapHeat[WP_DUMMY_MG42] += MG42_RATE_OF_FIRE_MP;
 
 			PM_AddEvent(EV_FIRE_WEAPON_MG42);
@@ -3584,7 +3509,7 @@ static void PM_Weapon(void)
 			pm->ps->weaponTime += AAGUN_RATE_OF_FIRE;
 
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-//              pm->ps->viewlocked = 2;     // this enable screen jitter when firing
+			//pm->ps->viewlocked = 2;     // this enable screen jitter when firing
 		}
 		return;
 	}
@@ -3770,7 +3695,6 @@ static void PM_Weapon(void)
 				{
 					pm->ps->grenadeTimeLeft = 5000;
 				}
-
 			}
 			else
 			{
@@ -3952,7 +3876,6 @@ static void PM_Weapon(void)
 		return;
 	}
 
-
 	if (pm->ps->weapon == WP_NONE)     // this is possible since the player starts with nothing
 	{
 		return;
@@ -4124,7 +4047,7 @@ static void PM_Weapon(void)
 	// check for fire
 	// if not on fire button and there's not a delayed shot this frame...
 	// consider also leaning, with delayed attack reset
-	if ((!(pm->cmd.buttons & (BUTTON_ATTACK | WBUTTON_ATTACK2)) && !delayedFire) ||
+	if ((!(pm->cmd.buttons & BUTTON_ATTACK) && !(pm->cmd.wbuttons & WBUTTON_ATTACK2) && !delayedFire) ||
 	    (pm->ps->leanf != 0 && pm->ps->weapon != WP_GRENADE_LAUNCHER && pm->ps->weapon != WP_GRENADE_PINEAPPLE && pm->ps->weapon != WP_SMOKE_BOMB))
 	{
 		pm->ps->weaponTime  = 0;
@@ -4968,7 +4891,6 @@ static void PM_DropTimers(void)
 /*
 ==============
 PM_CalcLean
-
 ==============
 */
 void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
@@ -5853,7 +5775,6 @@ void PM_Sprint(void)
 /*
 ================
 PmoveSingle
-
 ================
 */
 void trap_SnapVector(float *v);
@@ -6071,7 +5992,7 @@ void PmoveSingle(pmove_t *pmove)
 		return;     // no movement at all
 	}
 
-	// ydnar: need gravity etc to affect a player with a set mortar
+	// need gravity etc to affect a player with a set mortar
 	if (pm->ps->weapon == WP_MORTAR_SET && pm->ps->pm_type == PM_NORMAL)
 	{
 		pm->cmd.forwardmove = 0;
@@ -6168,7 +6089,7 @@ void PmoveSingle(pmove_t *pmove)
 		}
 	}
 
-	// Ridah, ladders
+	// ladders
 	PM_CheckLadderMove();
 
 	PM_DropTimers();
