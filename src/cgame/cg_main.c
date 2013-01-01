@@ -1310,6 +1310,8 @@ static void CG_RegisterSounds(void)
 	cgs.media.sndMedicCall[0] = trap_S_RegisterSound("sound/chat/axis/medic.wav", qfalse);
 	cgs.media.sndMedicCall[1] = trap_S_RegisterSound("sound/chat/allies/medic.wav", qfalse);
 
+	cgs.media.shoveSound = trap_S_RegisterSound("sound/weapons/impact/flesh1.wav", qfalse);
+
 	// FIXME: send as a special event
 	trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_1.wav", qfalse);
 	trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_2.wav", qfalse);

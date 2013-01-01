@@ -426,8 +426,9 @@ static const weap_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 
 	{ MOD_SWAP_PLACES,             WS_MAX             },
 
-	{ MOD_SWITCHTEAM,              WS_MAX             }
+	{ MOD_SWITCHTEAM,              WS_MAX             },
 
+	{ MOD_SHOVE,                   WS_MAX             },
 };
 
 // Get right stats index based on weapon mod

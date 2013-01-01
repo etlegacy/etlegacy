@@ -360,7 +360,11 @@ char *modNames[] =
 	"MOD_SWAP_PLACES",
 
 	// keep these 2 entries last
-	"MOD_SWITCHTEAM"
+	"MOD_SWITCHTEAM",
+
+	"MOD_SHOVE",
+
+	// MOD_NUM_MODS
 };
 
 /*
@@ -380,6 +384,19 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	qboolean  killedintank = qfalse;
 
 	//G_Printf( "player_die\n" );
+
+	switch (meansOfDeath)
+	{
+	case MOD_FALLING:
+		weap = WP_NONE;
+		if (self->client->pmext.shoved)
+		{
+			attacker     = &g_entities[self->client->pmext.pusher];
+			meansOfDeath = MOD_SHOVE;
+		}
+
+		break;
+	}
 
 	// this is used for G_DropLimboHealth()/G_DropLimboAmmo()
 	if (!self->client->deathTime)
@@ -1478,6 +1495,13 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		VectorScale(dir, g_knockback.value * (float)knockback / mass, kvel);
 		VectorAdd(targ->client->ps.velocity, kvel, targ->client->ps.velocity);
 
+		// are we pushed? Do not count when already flying ...
+		if (attacker && attacker->client && (targ->client->ps.groundEntityNum != ENTITYNUM_NONE || G_WeaponIsExplosive(mod)))
+		{
+			targ->client->pmext.shoved = qtrue;
+			targ->client->pmext.pusher = attacker - g_entities;
+		}
+
 		if (targ == attacker && !(mod != MOD_ROCKET &&
 		                          mod != MOD_GRENADE &&
 		                          mod != MOD_GRENADE_LAUNCHER &&
@@ -1495,9 +1519,8 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		// out the movement immediately
 		if (!targ->client->ps.pm_time)
 		{
-			int t;
+			int t = knockback * 2;
 
-			t = knockback * 2;
 			if (t < 50)
 			{
 				t = 50;

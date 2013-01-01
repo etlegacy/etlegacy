@@ -1545,6 +1545,9 @@ static void PM_CrashLand(void)
 	// never take falling damage if completely underwater
 	if (pm->waterlevel == 3)
 	{
+#ifdef GAMEDLL // nothing to predict
+		pm->pmext->shoved = qfalse;
+#endif
 		return;
 	}
 

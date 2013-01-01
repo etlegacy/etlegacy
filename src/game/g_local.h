@@ -1623,6 +1623,8 @@ extern vmCvar_t g_ip_max_clients;
 extern vmCvar_t g_dropHealth;
 extern vmCvar_t g_dropAmmo;
 
+extern vmCvar_t g_shove;
+
 void trap_Printf(const char *fmt);
 void trap_Error(const char *fmt) __attribute__((noreturn));
 int trap_Milliseconds(void);

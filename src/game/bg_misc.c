@@ -3853,6 +3853,8 @@ char *eventnames[] =
 	"EV_ARTYMESSAGE",
 	"EV_AIRSTRIKEMESSAGE",
 	"EV_MEDIC_CALL",
+	"EV_SHOVE_SOUND",
+
 	"EV_MAX_EVENTS",
 };
 

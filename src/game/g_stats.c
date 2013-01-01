@@ -388,6 +388,10 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 		//G_DebugAddSkillPoints( attacker, SK_SIGNALS, 4.f, "artillery kill" );
 		break;
 
+	case MOD_SHOVE:
+		G_LoseSkillPoints(tker, SK_BATTLE_SENSE, 5.f);
+		break;
+
 	// no skills for anything else
 	default:
 		break;
@@ -520,6 +524,11 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 	case MOD_M7:
 		G_AddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f);
 		G_DebugAddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f, "rifle grenade kill");
+		break;
+
+	case MOD_SHOVE:
+		G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 5.f);
+		G_DebugAddSkillPoints(attacker, SK_BATTLE_SENSE, 5.f, "shove kill");
 		break;
 
 	// no skills for anything else

@@ -307,8 +307,8 @@ void Weapon_MagicAmmo(gentity_t *ent)
 {
 	vec3_t velocity, offset, tosspos, viewpos, angles;
 
-	VectorCopy( ent->client->ps.viewangles, angles );
-	
+	VectorCopy(ent->client->ps.viewangles, angles);
+
 	// clamp pitch
 	if (angles[PITCH] < -30)
 	{

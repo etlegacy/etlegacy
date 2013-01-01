@@ -86,7 +86,7 @@ static void CG_Obituary(entityState_t *ent)
 		message = "committed suicide";
 		break;
 	case MOD_FALLING:
-		message = "fell to his death";
+		message = "rediscovered gravity.";
 		break;
 	case MOD_CRUSH:
 		message = "was crushed";
@@ -399,6 +399,11 @@ static void CG_Obituary(entityState_t *ent)
 		case MOD_SMOKEGRENADE:
 			message  = "stood on";
 			message2 = "'s airstrike marker";
+			break;
+
+		case MOD_SHOVE:
+			message  = "was thrown to his doom by";
+			message2 = "";
 			break;
 
 		default:
@@ -2610,6 +2615,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_MORTAR_MISS:
 		DEBUGNAME("EV_MORTAR_MISS");
 		CG_MortarMiss(cent, position);
+		break;
+
+	case EV_SHOVE_SOUND:
+		DEBUGNAME("EV_SHOVE_SOUND");
+		//if ( cg_shoveSounds.integer ) {
+		// origin is NULL!
+		trap_S_StartSoundVControl(NULL, es->number, CHAN_AUTO, cgs.media.shoveSound, 255);
+		//}
 		break;
 
 	case EV_MG42BULLET_HIT_WALL:

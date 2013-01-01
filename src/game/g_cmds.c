@@ -99,7 +99,7 @@ int ClientNumbersFromString(char *s, int *plist)
 	*plist = -1;
 
 	// if a number is provided, it might be a slot #
-	// redeye - check the whole string is a number and only if so assume it is a slot number
+	// check the whole string is a number and only if so assume it is a slot number
 	//          still fails for players with a name like "23" and there are 24 slots used
 	i = (int) strtol(s, &end, 10); // end will be "" when s contains only digits
 
@@ -213,9 +213,9 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 
 	entry[0] = '\0';
 
-	//	playerClass = 0;
-	// tjw: spectators should be able to see the player's class,
-	//      but apperantly the client won't draw them even if we
+	//playerClass = 0;
+	//  spectators should be able to see the player's class,
+	//  but apperantly the client won't draw them even if we
 	//      send it.  *clientmod*
 /*	if(
 #ifdef FEATURE_MULTIVIEW
@@ -227,7 +227,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
         playerClass = cl->sess.playerType;
     }*/
 
-	// SMF - number of respawns left
+	// number of respawns left
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
 		if (g_entities[level.sortedClients[i]].health <= 0)
@@ -306,9 +306,9 @@ void G_SendScore(gentity_t *ent)
 	int i         = 0;
 	int numSorted = level.numConnectedClients; // send the latest information on all clients
 	int count     = 0;
-	// tjw: commands over 1022 will crash the client so they're
-	//      pruned in trap_SendServerCommand()
-	//      1022 -32 for the startbuffer -3 for the clientNum
+	// commands over 1022 will crash the client so they're
+	// pruned in trap_SendServerCommand()
+	// 1022 -32 for the startbuffer -3 for the clientNum
 	char buffer[987];
 	char startbuffer[32];
 
@@ -321,14 +321,14 @@ void G_SendScore(gentity_t *ent)
 	               level.teamScores[TEAM_ALLIES]),
 	           sizeof(startbuffer));
 
-	// tjw: keep adding scores to the sc0 command until we fill
-	//      up the buffer.  Any scores that are left will be
-	//      added on to the sc1 command.
+	// keep adding scores to the sc0 command until we fill
+	// up the buffer.  Any scores that are left will be
+	// added on to the sc1 command.
 	for (; i < numSorted; ++i)
 	{
-		// tjw: the old version of SendScore() did this.  I removed it
-		//      originally because it seemed like an unneccessary hack.
-		//      perhaps it is necessary for compat with CG_Argv()?
+		// the old version of SendScore() did this.  I removed it
+		// originally because it seemed like an unneccessary hack.
+		// perhaps it is necessary for compat with CG_Argv()?
 		if (count == 33)
 		{
 			break;
@@ -971,7 +971,6 @@ Cmd_Kill_f
 */
 void Cmd_Kill_f(gentity_t *ent)
 {
-
 	if (ent->health <= 0)
 	{
 #ifdef FEATURE_OMNIBOT
@@ -1065,7 +1064,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 	clientNum  = client - level.clients;
 	specClient = 0;
 
-	// ydnar: preserve respawn count
+	// preserve respawn count
 	respawnsLeft = client->ps.persistant[PERS_RESPAWNS_LEFT];
 
 	G_TeamDataForString(s, client - level.clients, &team, &specState, &specClient);
@@ -1234,7 +1233,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 
 	ClientBegin(clientNum);
 
-	// ydnar: restore old respawn count (players cannot jump from team to team to regain lives)
+	// restore old respawn count (players cannot jump from team to team to regain lives)
 	if (respawnsLeft >= 0 && oldTeam != TEAM_SPECTATOR)
 	{
 		client->ps.persistant[PERS_RESPAWNS_LEFT] = respawnsLeft;
@@ -1320,7 +1319,7 @@ void StopFollowing(gentity_t *ent)
 		vec3_t    pos, angle;
 		gclient_t *client = ent->client;
 		VectorCopy(client->ps.origin, pos);
-//      pos[2] += 16; // removing for now
+		//pos[2] += 16; // removing for now
 		VectorCopy(client->ps.viewangles, angle);
 		// Need this as it gets spec mode reset properly
 		SetTeam(ent, "s", qtrue, -1, -1, qfalse);
@@ -1444,7 +1443,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 {
 	int count, wcount;
 
-	// redeye - allow selecting weapons as spectator for bots (to avoid endless loops in pfnChangeTeam())
+	// allow selecting weapons as spectator for bots (to avoid endless loops in pfnChangeTeam())
 	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR && !(ent->r.svFlags & SVF_BOT))
 	{
 		return qtrue;
@@ -1687,7 +1686,7 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		return;
 	}
 
-	// OSP - can't follow a player on a speclocked team, unless allowed
+	// can't follow a player on a speclocked team, unless allowed
 	if (!G_allowFollow(ent, level.clients[i].sess.sessionTeam))
 	{
 		CP(va("print \"Sorry, the %s team is locked from spectators.\n\"", aTeams[level.clients[i].sess.sessionTeam]));
@@ -1769,7 +1768,6 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir)
 			continue;
 		}
 
-		// OSP
 		if (!G_desiredFollow(ent, level.clients[clientnum].sess.sessionTeam))
 		{
 			continue;
@@ -1975,7 +1973,7 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 		return;
 	}
 
-	// OSP - spec vchat rules follow the same as normal chatting rules
+	// spec vchat rules follow the same as normal chatting rules
 	if (match_mutespecs.integer > 0 && ent->client->sess.referee == 0 &&
 	    ent->client->sess.sessionTeam == TEAM_SPECTATOR && other->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
@@ -2019,7 +2017,7 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 		cmd   = "vchat";
 	}
 
-	//if bots we don't send voices (no matter if omnibot or not)
+	// if bots we don't send voices (no matter if omnibot or not)
 	if (other->r.svFlags & SVF_BOT)
 	{
 #ifdef FEATURE_OMNIBOT
@@ -2072,11 +2070,6 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 	{
 		return;
 	}
-
-	// Charge for the lame spam!
-	/*if(mode == SAY_ALL && (!Q_stricmp(id, "DynamiteDefused") || !Q_stricmp(id, "DynamitePlanted"))) {
-	    return;
-	}*/
 
 	if (target)
 	{
@@ -2150,7 +2143,6 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 	}
 	else
 	{
-
 		// send it to all the apropriate clients
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
@@ -2312,7 +2304,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		}
 	}
 
-	if (trap_Argc() > 1 && (i = G_voteCmdCheck(ent, arg1, arg2, fRefCommand)) != G_NOTFOUND)           //  --OSP
+	if (trap_Argc() > 1 && (i = G_voteCmdCheck(ent, arg1, arg2, fRefCommand)) != G_NOTFOUND)
 	{
 		if (i != G_OK)
 		{
@@ -2339,7 +2331,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	Com_sprintf(level.voteInfo.voteString, sizeof(level.voteInfo.voteString), "%s %s", arg1, arg2);
 
 	// start the voting, the caller automatically votes yes
-	// If a referee, vote automatically passes. // OSP
+	// If a referee, vote automatically passes.
 	if (fRefCommand)
 	{
 		//level.voteInfo.voteYes = level.voteInfo.numVotingClients + 10;  // JIC :)
@@ -2700,6 +2692,7 @@ void Cmd_Vote_f(gentity_t *ent)
 	if (level.voteInfo.vote_fn == G_Kick_v)
 	{
 		int pid = atoi(level.voteInfo.vote_value);
+
 		if (!g_entities[pid].client)
 		{
 			return;
@@ -2775,7 +2768,6 @@ Cmd_StartCamera_f
 */
 void Cmd_StartCamera_f(gentity_t *ent)
 {
-
 	if (ent->client->cameraPortal)
 	{
 		G_FreeEntity(ent->client->cameraPortal);
@@ -2929,12 +2921,11 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 
 					if (BODY_VALUE(traceEnt) >= 250)
 					{
-
 						traceEnt->nextthink = traceEnt->timestamp + BODY_TIME(BODY_TEAM(traceEnt));
 
-//                      BG_AnimScriptEvent( &ent->client->ps, ent->client->pers.character->animModelInfo, ANIM_ET_PICKUPGRENADE, qfalse, qtrue );
-//                      ent->client->ps.pm_flags |= PMF_TIME_LOCKPLAYER;
-//                      ent->client->ps.pm_time = 2100;
+						//BG_AnimScriptEvent( &ent->client->ps, ent->client->pers.character->animModelInfo, ANIM_ET_PICKUPGRENADE, qfalse, qtrue );
+						//ent->client->ps.pm_flags |= PMF_TIME_LOCKPLAYER;
+						//ent->client->ps.pm_time = 2100;
 
 						ent->client->ps.powerups[PW_OPS_DISGUISED] = 1;
 						ent->client->ps.powerups[PW_OPS_CLASS_1]   = BODY_CLASS(traceEnt) & 1;
@@ -3144,7 +3135,6 @@ void G_LeaveTank(gentity_t *ent, qboolean position)
 
 	if (position)
 	{
-
 		AnglesToAxis(tank->s.angles, axis);
 
 		VectorMA(ent->client->ps.origin, 128, axis[1], pos);
@@ -3206,9 +3196,8 @@ void Cmd_Activate_f(gentity_t *ent)
 	vec3_t    end;
 	gentity_t *traceEnt;
 	vec3_t    forward, right, up, offset;
-//  int         activatetime = level.time;
-	qboolean found = qfalse;
-	qboolean pass2 = qfalse;
+	qboolean  found = qfalse;
+	qboolean  pass2 = qfalse;
 
 	if (ent->health <= 0)
 	{
@@ -3305,17 +3294,95 @@ tryagain:
 	}
 }
 
+qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
+{
+	vec3_t dir, push;
+
+	if (!g_shove.integer)
+	{
+		return qfalse;
+	}
+
+	if (ent->health <= 0)
+	{
+		return qfalse;
+	}
+
+	if ((level.time - ent->client->pmext.shoveTime) < 500)
+	{
+		return qfalse;
+	}
+
+	// Prevent possible cheating, as well as annoying push after CPR revive
+	// check also if player has just been revived, so pushing after a normal spawn works..
+	if (ent->client->ps.powerups[PW_INVULNERABLE] && ent->props_frame_state != -1)
+	{
+		return qfalse;
+	}
+
+	// core: if a player cannot move at this moment, don't allow him to get pushed..
+	if (victim->client->ps.pm_flags & PMF_TIME_LOCKPLAYER)
+	{
+		return qfalse;
+	}
+
+	ent->client->pmext.shoveTime = level.time;
+
+	// push is our forward vector
+	AngleVectors(ent->client->ps.viewangles, dir, NULL, NULL);
+	VectorNormalizeFast(dir);
+
+	// etpro velocity
+	VectorScale(dir, g_shove.integer * 5, push);
+
+	// no longer try to shove into ground
+	if ((push[2] > fabs(push[0])) &&
+	    (push[2] > fabs(push[1])))
+	{
+
+		// player is being boosted
+		//if(g_shoveNoZ.integer)
+		//	push[2] = 64;
+		//else
+		push[2] = dir[2] * g_shove.integer * 4;     // like in etpro, shoving up gives only 350 speed ( jump gives 270 )
+	}
+	else
+	{
+		// give them a little hop
+		push[2] = 64;
+	}
+
+	VectorAdd(victim->s.pos.trDelta, push, victim->s.pos.trDelta);
+	VectorAdd(victim->client->ps.velocity, push,
+	          victim->client->ps.velocity);
+
+	// are we pushed?
+	victim->client->pmext.shoved = qtrue;
+	victim->client->pmext.pusher = ent - g_entities;
+
+	G_AddEvent(victim, EV_SHOVE_SOUND, 0);
+
+	victim->client->ps.pm_time   = 100;
+	victim->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+
+	return qtrue;
+}
+
 void Cmd_Activate2_f(gentity_t *ent)
 {
 	trace_t   tr;
 	vec3_t    end;
 	gentity_t *traceEnt;
 	vec3_t    forward, right, up, offset;
-//  int         activatetime = level.time;
-	qboolean found = qfalse;
-	qboolean pass2 = qfalse;
+	qboolean  found = qfalse;
+	qboolean  pass2 = qfalse;
 
-	if (ent->client->sess.playerType != PC_COVERTOPS)
+	if (ent->health <= 0)  // uch
+	{
+		return;
+	}
+
+	if (ent->s.weapon == WP_MORTAR_SET || ent->s.weapon == WP_MOBILE_MG42_SET)
 	{
 		return;
 	}
@@ -3332,28 +3399,25 @@ void Cmd_Activate2_f(gentity_t *ent)
 		pass2 = qtrue;
 	}
 
-	/* FIXME OMNIBOT
 	// look for a guy to push
-	#ifdef FEATURE_OMNIBOT
-	if ( g_OmniBotFlags.integer & OBF_SHOVING || !(ent->r.svFlags & SVF_BOT) )
+#ifdef FEATURE_OMNIBOT
+	if (g_OmniBotFlags.integer & OBF_SHOVING || !(ent->r.svFlags & SVF_BOT))
 	{
-	#endif
-	    trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, CONTENTS_BODY);
-	    if(tr.entityNum >= 0)
-	    {
-	        traceEnt = &g_entities[tr.entityNum];
-	        if(traceEnt->client) {
-	            if(traceEnt->client->ps.eFlags & EF_PLAYDEAD)
-	                G_DragCorpse(ent, traceEnt);
-	            else
-	                G_PushPlayer(ent, traceEnt);
-	            return;
-	        }
-	    }
-	#ifdef FEATURE_OMNIBOT
+#endif
+	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, CONTENTS_BODY);
+	if (tr.entityNum >= 0)
+	{
+		traceEnt = &g_entities[tr.entityNum];
+		if (traceEnt->client)
+		{
+			G_PushPlayer(ent, traceEnt);
+			return;
+		}
 	}
-	#endif
-	*/
+#ifdef FEATURE_OMNIBOT
+}
+#endif
+
 tryagain:
 
 	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
@@ -3470,13 +3534,10 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent)
 		SetPlayerSpawn(ent, val, qtrue);
 	}
 
-//  if( ent->client->sess.sessionTeam != TEAM_SPECTATOR && !(ent->client->ps.pm_flags & PMF_LIMBO) ) {
-//      return;
-//  }
-
 	for (i = 0; i < level.numLimboCams; i++)
 	{
 		int x = (g_entities[level.limboCams[i].targetEnt].count - CS_MULTI_SPAWNTARGETS) + 1;
+		
 		if (level.limboCams[i].spawn && x == val)
 		{
 			VectorCopy(level.limboCams[i].origin, ent->s.origin2);
@@ -3647,10 +3708,6 @@ void Cmd_SelectedObjective_f(gentity_t *ent)
 		return;
 	}
 
-//  if( ent->client->sess.sessionTeam != TEAM_SPECTATOR && !(ent->client->ps.pm_flags & PMF_LIMBO) ) {
-//      return;
-//  }
-
 	if (trap_Argc() != 2)
 	{
 		return;
@@ -3744,15 +3801,12 @@ Cmd_SwapPlacesWithBot_f
 */
 void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 {
-	gentity_t          *botent;
-	gclient_t          cl, *client;
+	gentity_t          *botent = &g_entities[botNum];
+	gclient_t          cl, *client = ent->client;
 	clientPersistant_t saved;
 	clientSession_t    sess;
 	int                persistant[MAX_PERSISTANT];
-	//
-	client = ent->client;
-	//
-	botent = &g_entities[botNum];
+
 	if (!botent->client)
 	{
 		return;
@@ -3763,16 +3817,16 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 		trap_SendServerCommand(ent - g_entities, "print \"Bot is in limbo mode, cannot swap places.\n\"");
 		return;
 	}
-	//
+
 	if (client->sess.sessionTeam != botent->client->sess.sessionTeam)
 	{
 		trap_SendServerCommand(ent - g_entities, "print \"Bot is on different team, cannot swap places.\n\"");
 		return;
 	}
-	//
+
 	// copy the client information
 	cl = *botent->client;
-	//
+
 	G_DPrintf("Swapping places: %s in for %s\n", ent->client->pers.netname, botent->client->pers.netname);
 	// kill the bot
 	botent->flags                        &= ~FL_GODMODE;
@@ -3985,7 +4039,6 @@ void ClientCommand(int clientNum)
 		return;
 	}
 
-	// OSP
 	// Do these outside as we don't want to advertise it in the help screen
 	if (!Q_stricmp(cmd, "wstats"))
 	{
@@ -4075,7 +4128,6 @@ void ClientCommand(int clientNum)
 	else if (G_commandCheck(ent, cmd, qfalse))
 	{
 		return;
-
 	}
 	else
 	{

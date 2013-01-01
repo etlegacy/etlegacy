@@ -1527,6 +1527,8 @@ typedef struct
 
 	sfxHandle_t sndMedicCall[2];
 
+	sfxHandle_t shoveSound;
+
 	qhandle_t ccStamps[2];
 	qhandle_t ccFilterPics[10]; // FIXME: we just init 0-7
 	qhandle_t ccFilterBackOn;

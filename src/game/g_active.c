@@ -806,6 +806,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			VectorSet(dir, 0, 0, 1);
 			ent->pain_debounce_time = level.time + 200; // no normal pain sound
 			G_Damage(ent, NULL, NULL, NULL, NULL, damage, 0, MOD_FALLING);
+			ent->client->pmext.shoved = qfalse;
 			break;
 
 		case EV_FIRE_WEAPON_MG42:
@@ -1316,6 +1317,13 @@ void ClientThink_real(gentity_t *ent)
 	if (level.match_pause == PAUSE_NONE)
 	{
 		ClientEvents(ent, oldEventSequence);
+		if (ent->client->ps.groundEntityNum != ENTITYNUM_NONE)
+		{
+			if (!(ent->client->ps.pm_flags & PMF_TIME_LAND))
+			{
+				ent->client->pmext.shoved = qfalse;
+			}
+		}
 	}
 
 	// link entity now, after any personal teleporters have been used

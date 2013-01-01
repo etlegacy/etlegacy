@@ -403,7 +403,7 @@ typedef enum
 
 #define PMF_ALL_TIMES   (PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_KNOCKBACK | PMF_TIME_LOCKPLAYER /*|PMF_TIME_LOAD*/)
 
-typedef struct
+typedef struct pmoveExt_s
 {
 	qboolean bAutoReload;           // do we predict autoreload of weapons
 
@@ -431,6 +431,13 @@ typedef struct
 	float weapRecoilYaw;
 	float weapRecoilPitch;
 	int lastRecoilDeltaTime;
+
+	int shoveTime;
+
+#ifdef GAMEDLL
+	qboolean shoved;
+	int pusher;
+#endif
 
 	qboolean releasedFire;
 
@@ -923,6 +930,8 @@ typedef enum
 	EV_ARTYMESSAGE,
 	EV_AIRSTRIKEMESSAGE,
 	EV_MEDIC_CALL,
+	EV_SHOVE_SOUND,
+
 	EV_MAX_EVENTS   // just added as an 'endcap'
 } entity_event_t;
 
@@ -1322,6 +1331,8 @@ typedef enum
 
 	// keep these 2 entries last
 	MOD_SWITCHTEAM,
+
+	MOD_SHOVE,
 
 	MOD_NUM_MODS
 
