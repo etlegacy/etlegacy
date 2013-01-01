@@ -216,11 +216,38 @@ void MagicSink(gentity_t *self)
 */
 void Weapon_Medic(gentity_t *ent)
 {
+	vec3_t velocity, offset, angles, tosspos, viewpos;
+
+	VectorCopy(ent->client->ps.viewangles, angles);
+
+	// clamp pitch
+	if (angles[PITCH] < -30)
+	{
+		angles[PITCH] = -30;
+	}
+	else if (angles[PITCH] > 30)
+	{
+		angles[PITCH] = 30;
+	}
+
+	AngleVectors(angles, velocity, NULL, NULL);
+	VectorScale(velocity, 64, offset);
+	offset[2] += ent->client->ps.viewheight / 2;
+	VectorScale(velocity, 75, velocity);
+	velocity[2] += 50 + crandom() * 25;
+
+	VectorCopy(muzzleEffect, tosspos);
+	VectorMA(tosspos, 48, forward, tosspos);
+	VectorCopy(ent->client->ps.origin, viewpos);
+
+	Weapon_Medic_Ext(ent, viewpos, tosspos, velocity);
+}
+
+void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t velocity)
+{
 	gitem_t   *item;
 	gentity_t *ent2;
-	vec3_t    velocity, offset;
-	vec3_t    angles, mins, maxs;
-	vec3_t    tosspos, viewpos;
+	vec3_t    mins, maxs;
 	trace_t   tr;
 
 	if (level.time - ent->client->ps.classWeaponTime > level.medicChargeTime[ent->client->sess.sessionTeam - 1])
@@ -238,7 +265,47 @@ void Weapon_Medic(gentity_t *ent)
 	}
 
 	item = BG_FindItemForClassName("item_health");
-	VectorCopy(ent->client->ps.viewangles, angles);
+
+	VectorSet(mins, -(ITEM_RADIUS + 8), -(ITEM_RADIUS + 8), 0);
+	VectorSet(maxs, (ITEM_RADIUS + 8), (ITEM_RADIUS + 8), 2 * (ITEM_RADIUS + 8));
+
+	trap_EngineerTrace(&tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
+	if (tr.startsolid)
+	{
+		VectorCopy(forward, viewpos);
+		VectorNormalizeFast(viewpos);
+		VectorMA(ent->r.currentOrigin, -24.f, viewpos, viewpos);
+
+		trap_EngineerTrace(&tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
+
+		VectorCopy(tr.endpos, tosspos);
+	}
+	else if (tr.fraction < 1)       // oops, bad launch spot
+	{
+		VectorCopy(tr.endpos, tosspos);
+		SnapVectorTowards(tosspos, viewpos);
+	}
+
+	ent2            = LaunchItem(item, tosspos, velocity, ent->s.number);
+	ent2->think     = MagicSink;
+	ent2->nextthink = level.time + 30000;
+
+	ent2->parent = ent; // so we can score properly later
+
+#ifdef FEATURE_OMNIBOT
+	// Omni-bot - Send a fire event.
+	Bot_Event_FireWeapon(ent - g_entities, Bot_WeaponGameToBot(ent->s.weapon), ent2);
+#endif
+}
+
+/*
+==================
+Weapon_MagicAmmo
+==================
+*/
+void Weapon_MagicAmmo(gentity_t *ent)
+{
+	vec3_t velocity, offset, tosspos, viewpos, angles;
 
 	// clamp pitch
 	if (angles[PITCH] < -30)
@@ -260,54 +327,15 @@ void Weapon_Medic(gentity_t *ent)
 	VectorMA(tosspos, 48, forward, tosspos);
 	VectorCopy(ent->client->ps.origin, viewpos);
 
-	VectorSet(mins, -(ITEM_RADIUS + 8), -(ITEM_RADIUS + 8), 0);
-	VectorSet(maxs, (ITEM_RADIUS + 8), (ITEM_RADIUS + 8), 2 * (ITEM_RADIUS + 8));
-
-	trap_EngineerTrace(&tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
-	if (tr.startsolid)
-	{
-		// this code is a bit more solid than the previous code
-		VectorCopy(forward, viewpos);
-		VectorNormalizeFast(viewpos);
-		VectorMA(ent->r.currentOrigin, -24.f, viewpos, viewpos);
-
-		trap_EngineerTrace(&tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
-
-		VectorCopy(tr.endpos, tosspos);
-	}
-	else if (tr.fraction < 1)        // oops, bad launch spot
-	{
-		VectorCopy(tr.endpos, tosspos);
-		SnapVectorTowards(tosspos, viewpos);
-	}
-
-	ent2            = LaunchItem(item, tosspos, velocity, ent->s.number);
-	ent2->think     = MagicSink;
-	ent2->nextthink = level.time + 30000;
-	//ent2->timestamp = level.time + 31200;
-
-	ent2->parent    = ent; // so we can score properly later
-	ent2->s.teamNum = ent->client->sess.sessionTeam;
-
-#ifdef FEATURE_OMNIBOT
-	// Omni-bot - Send a fire event.
-	Bot_Event_FireWeapon(ent - g_entities, Bot_WeaponGameToBot(ent->s.weapon), ent2);
-#endif
+	Weapon_MagicAmmo_Ext(ent, viewpos, tosspos, velocity);
 }
 
-/*
-==================
-Weapon_MagicAmmo
-==================
-*/
-void Weapon_MagicAmmo(gentity_t *ent)
+void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t velocity)
 {
+	vec3_t    mins, maxs;
+	trace_t   tr;
 	gitem_t   *item;
 	gentity_t *ent2;
-	vec3_t    velocity, offset;
-	vec3_t    tosspos, viewpos;
-	vec3_t    angles, mins, maxs;
-	trace_t   tr;
 
 	if (level.time - ent->client->ps.classWeaponTime > level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1])
 	{
@@ -323,28 +351,8 @@ void Weapon_MagicAmmo(gentity_t *ent)
 		ent->client->ps.classWeaponTime += level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1] * 0.25;
 	}
 
-	item = BG_FindItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? "Mega Ammo Pack" : "Ammo Pack");
-	VectorCopy(ent->client->ps.viewangles, angles);
-
-	// clamp pitch
-	if (angles[PITCH] < -30)
-	{
-		angles[PITCH] = -30;
-	}
-	else if (angles[PITCH] > 30)
-	{
-		angles[PITCH] = 30;
-	}
-
-	AngleVectors(angles, velocity, NULL, NULL);
-	VectorScale(velocity, 64, offset);
-	offset[2] += ent->client->ps.viewheight / 2;
-	VectorScale(velocity, 75, velocity);
-	velocity[2] += 50 + crandom() * 25;
-
-	VectorCopy(muzzleEffect, tosspos);
-	VectorMA(tosspos, 48, forward, tosspos);
-	VectorCopy(ent->client->ps.origin, viewpos);
+	//item = BG_FindItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? "Mega Ammo Pack" : "Ammo Pack");
+	item = BG_FindItem("Ammo Pack");
 
 	VectorSet(mins, -(ITEM_RADIUS + 8), -(ITEM_RADIUS + 8), 0);
 	VectorSet(maxs, (ITEM_RADIUS + 8), (ITEM_RADIUS + 8), 2 * (ITEM_RADIUS + 8));
@@ -352,7 +360,6 @@ void Weapon_MagicAmmo(gentity_t *ent)
 	trap_EngineerTrace(&tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
 	if (tr.startsolid)
 	{
-		// this code is a bit more solid than the previous code
 		VectorCopy(forward, viewpos);
 		VectorNormalizeFast(viewpos);
 		VectorMA(ent->r.currentOrigin, -24.f, viewpos, viewpos);
@@ -361,7 +368,7 @@ void Weapon_MagicAmmo(gentity_t *ent)
 
 		VectorCopy(tr.endpos, tosspos);
 	}
-	else if (tr.fraction < 1)        // oops, bad launch spot
+	else if (tr.fraction < 1)       // oops, bad launch spot
 	{
 		VectorCopy(tr.endpos, tosspos);
 		SnapVectorTowards(tosspos, viewpos);
@@ -370,7 +377,6 @@ void Weapon_MagicAmmo(gentity_t *ent)
 	ent2            = LaunchItem(item, tosspos, velocity, ent->s.number);
 	ent2->think     = MagicSink;
 	ent2->nextthink = level.time + 30000;
-	//  ent2->timestamp = level.time + 31200;
 
 	ent2->parent = ent;
 

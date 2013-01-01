@@ -801,8 +801,6 @@ struct gclient_s
 	gentity_t *tempHead;            // storing a temporary head for bullet head shot detection
 	gentity_t *tempLeg;             // storing a temporary leg for bullet head shot detection
 
-	int botSlotNumber;              // the slot the bot falls into (set up in the initial UI screen)
-
 	int flagParent;
 
 	// the next 2 are used to play the proper animation on the body
@@ -813,6 +811,8 @@ struct gclient_s
 	pmoveExt_t pmext;
 	qboolean isCivilian;            // whether this is a civilian
 	int deathAnimTime;              // time when anim ends
+
+	int deathTime;                  // if we are dead, when did we die
 
 	char disguiseNetname[MAX_NETNAME];
 	int disguiseRank;
@@ -1278,6 +1278,9 @@ int G_GetWeaponDamage(int weapon);
 void CalcMuzzlePoints(gentity_t *ent, int weapon);
 void CalcMuzzlePointForActivate(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
 
+void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t velocity);
+void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t velocity);
+
 // g_client.c
 team_t TeamCount(int ignoreClientNum, int team);
 team_t PickTeam(int ignoreClientNum);
@@ -1616,6 +1619,9 @@ extern vmCvar_t lua_allowedModules;
 
 extern vmCvar_t g_protect;
 extern vmCvar_t g_ip_max_clients;
+
+extern vmCvar_t g_dropHealth;
+extern vmCvar_t g_dropAmmo;
 
 void trap_Printf(const char *fmt);
 void trap_Error(const char *fmt) __attribute__((noreturn));

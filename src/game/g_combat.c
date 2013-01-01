@@ -381,6 +381,12 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	//G_Printf( "player_die\n" );
 
+	// this is used for G_DropLimboHealth()/G_DropLimboAmmo()
+	if (!self->client->deathTime)
+	{
+		self->client->deathTime = level.time;
+	}
+
 	if (attacker == self)
 	{
 		if (self->client)

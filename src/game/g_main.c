@@ -248,6 +248,9 @@ vmCvar_t g_protect; // similar to sv_protect game cvar
 
 vmCvar_t g_ip_max_clients; // limit connection
 
+vmCvar_t g_dropHealth;
+vmCvar_t g_dropAmmo;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -462,6 +465,8 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_protect,                 "g_protect",                 "0",                          CVAR_ARCHIVE },
 	{ &g_ip_max_clients,          "g_ip_max_clients",          "0",                          CVAR_ARCHIVE },
+	{ &g_dropHealth,              "g_dropHealth",              "0",                          0 },
+	{ &g_dropAmmo,                "g_dropAmmo",                "0",                          0 },
 };
 
 // made static to avoid aliasing

@@ -492,11 +492,85 @@ void SetClientViewAngle(gentity_t *ent, vec3_t angle)
 	VectorCopy(ent->s.angles, ent->client->ps.viewangles);
 }
 
-void SetClientViewAnglePitch(gentity_t *ent, vec_t angle)
+void G_DropLimboHealth(gentity_t *ent)
 {
-	ent->client->ps.delta_angles[PITCH] = ANGLE2SHORT(angle) - ent->client->pers.cmd.angles[PITCH];
-	ent->s.angles[PITCH]                = 0;
-	VectorCopy(ent->s.angles, ent->client->ps.viewangles);
+
+	if (g_dropHealth.integer == 0 || !ent->client || ent->client->sess.playerType != PC_MEDIC || g_gamestate.integer != GS_PLAYING)
+	{
+		return;
+	}
+
+	{
+		vec3_t launchvel, launchspot;
+		int    i, packs = g_dropHealth.integer;
+		int    cwt = ent->client->ps.classWeaponTime;
+
+		if (g_dropHealth.integer == -1 || g_dropHealth.integer > 5)
+		{
+			packs                            = 5; // max packs
+			ent->client->ps.classWeaponTime += (level.time - ent->client->deathTime + 10000);
+		}
+
+		for (i = 0; i < packs; ++i)
+		{
+			if (g_dropHealth.integer == -1 && ent->client->ps.classWeaponTime >= level.time)
+			{
+				break;
+			}
+			launchvel[0] = crandom();
+			launchvel[1] = crandom();
+			launchvel[2] = 0;
+			VectorScale(launchvel, 100, launchvel);
+			launchvel[2] = 100;
+			VectorCopy(ent->r.currentOrigin, launchspot);
+
+			Weapon_Medic_Ext(ent, launchspot, launchspot, launchvel);
+		}
+		ent->client->ps.classWeaponTime = cwt;
+	}
+}
+
+void G_DropLimboAmmo(gentity_t *ent)
+{
+	if (g_dropAmmo.integer == 0 || !ent->client || ent->client->sess.playerType != PC_FIELDOPS)
+	{
+		return;
+	}
+
+	{
+		vec3_t launchvel, launchspot;
+		int    i, packs = g_dropAmmo.integer;
+		int    cwt = ent->client->ps.classWeaponTime;
+
+		if (g_dropAmmo.integer == -1 || g_dropAmmo.integer > 5)
+		{
+			packs = 5; // max packs
+			// adjust the charge timer so that the fops only drops as much ammo as he could have before he died.
+			// don't ask me where the 10000 comes from, it just makes this more accurate.
+			ent->client->ps.classWeaponTime += (level.time - ent->client->deathTime + 10000);
+		}
+
+		for (i = 0; i < packs; ++i)
+		{
+			if (g_dropAmmo.integer == -1 && ent->client->ps.classWeaponTime >= level.time)
+			{
+				break;
+			}
+
+			launchvel[0] = crandom();
+			launchvel[1] = crandom();
+			launchvel[2] = 0;
+
+			VectorScale(launchvel, 100, launchvel);
+
+			launchvel[2] = 100;
+			VectorCopy(ent->r.currentOrigin, launchspot);
+
+			Weapon_MagicAmmo_Ext(ent, launchspot, launchspot, launchvel);
+		}
+
+		ent->client->ps.classWeaponTime = cwt;
+	}
 }
 
 /*
@@ -539,6 +613,8 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 
 		if (makeCorpse)
 		{
+			G_DropLimboHealth(ent);
+			G_DropLimboAmmo(ent);
 			CopyToBodyQue(ent);   // make a nice looking corpse
 		}
 		else
@@ -2572,7 +2648,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	int                flags;
 	int                savedPing;
 	int                savedTeam;
-	int                savedSlotNumber;
 
 	G_UpdateSpawnCounts();
 
@@ -2643,8 +2718,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	savedPing = client->ps.ping;
 	savedTeam = client->ps.teamNum;
 
-	savedSlotNumber = client->botSlotNumber;
-
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
 		persistant[i] = client->ps.persistant[i];
@@ -2662,8 +2735,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->sess       = savedSess;
 	client->ps.ping    = savedPing;
 	client->ps.teamNum = savedTeam;
-
-	client->botSlotNumber = savedSlotNumber;
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
@@ -2840,10 +2911,13 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		trap_LinkEntity(ent);
 	}
 
-	client->respawnTime      = level.timeCurrent;
-	client->inactivityTime   = level.time + g_inactivity.integer * 1000;
+	client->respawnTime       = level.timeCurrent;
+	client->inactivityTime    = level.time + g_inactivity.integer * 1000;
+	client->inactivityWarning = qfalse;
+	//client->inactivitySecondsLeft = (g_inactivity.integer)? g_inactivity.integer : 60;
 	client->latched_buttons  = 0;
 	client->latched_wbuttons = 0;
+	client->deathTime        = 0;
 
 	if (level.intermissiontime)
 	{
