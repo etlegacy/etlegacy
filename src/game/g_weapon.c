@@ -307,6 +307,8 @@ void Weapon_MagicAmmo(gentity_t *ent)
 {
 	vec3_t velocity, offset, tosspos, viewpos, angles;
 
+	VectorCopy( ent->client->ps.viewangles, angles );
+	
 	// clamp pitch
 	if (angles[PITCH] < -30)
 	{
@@ -351,8 +353,7 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 		ent->client->ps.classWeaponTime += level.lieutenantChargeTime[ent->client->sess.sessionTeam - 1] * 0.25;
 	}
 
-	//item = BG_FindItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? "Mega Ammo Pack" : "Ammo Pack");
-	item = BG_FindItem("Ammo Pack");
+	item = BG_FindItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? "Mega Ammo Pack" : "Ammo Pack");
 
 	VectorSet(mins, -(ITEM_RADIUS + 8), -(ITEM_RADIUS + 8), 0);
 	VectorSet(maxs, (ITEM_RADIUS + 8), (ITEM_RADIUS + 8), 2 * (ITEM_RADIUS + 8));
