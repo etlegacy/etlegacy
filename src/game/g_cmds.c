@@ -3537,7 +3537,7 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent)
 	for (i = 0; i < level.numLimboCams; i++)
 	{
 		int x = (g_entities[level.limboCams[i].targetEnt].count - CS_MULTI_SPAWNTARGETS) + 1;
-		
+
 		if (level.limboCams[i].spawn && x == val)
 		{
 			VectorCopy(level.limboCams[i].origin, ent->s.origin2);

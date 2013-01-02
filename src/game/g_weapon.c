@@ -124,7 +124,6 @@ void Weapon_Knife(gentity_t *ent)
 	int       damage, mod = MOD_KNIFE;
 	vec3_t    pforward, end;
 
-
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePoint(ent, ent->s.weapon, forward, right, up, muzzleTrace);
 	VectorMA(muzzleTrace, KNIFE_DIST, forward, end);
@@ -528,7 +527,6 @@ void Weapon_Syringe(gentity_t *ent)
 		traceEnt = &g_entities[tr.entityNum];
 		if (traceEnt->client != NULL)
 		{
-
 			if ((traceEnt->client->ps.pm_type == PM_DEAD) && (traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam))
 			{
 				// moved all the revive stuff into its own function
@@ -1439,8 +1437,7 @@ void AutoBuildConstruction(gentity_t *constructible)
 		if (!constructible->count2 || constructible->grenadeFired == 1)
 		{
 			gentity_t *tent = NULL;
-			gentity_t *e;
-			e = G_Spawn();
+			gentity_t *e    = G_Spawn();
 
 			e->r.svFlags    = SVF_BROADCAST;
 			e->classname    = "explosive_indicator";
@@ -1461,6 +1458,7 @@ void AutoBuildConstruction(gentity_t *constructible)
 			// Find the trigger_objective_info that targets us (if not set before)
 			{
 				gentity_t *tent = NULL;
+
 				while ((tent = G_Find(tent, FOFS(target), constructible->targetname)) != NULL)
 				{
 					if (tent->s.eType == ET_OID_TRIGGER)
@@ -2198,6 +2196,7 @@ evilbanigoto:
 							const char *Goalname = _GetEntityName(hit->parent);
 #endif
 							gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+
 							pm->s.effect2Time = 0;     // 0 = planted
 							pm->s.effect3Time = hit->parent->s.teamNum;
 							pm->s.teamNum     = ent->client->sess.sessionTeam;
@@ -2535,9 +2534,8 @@ void weapon_checkAirStrikeThink2(gentity_t *ent)
 
 void weapon_callSecondPlane(gentity_t *ent)
 {
-	gentity_t *te;
+	gentity_t *te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_SOUND);
 
-	te              = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_SOUND);
 	te->s.eventParm = G_SoundIndex("sound/weapons/airstrike/airstrike_plane.wav");
 	te->r.svFlags  |= SVF_BROADCAST;
 
@@ -2798,6 +2796,7 @@ void artillerySpotterThink(gentity_t *ent)
 	gentity_t *bomb;
 	vec3_t    tmpdir;
 	int       i;
+
 	ent->think     = G_ExplodeMissile;
 	ent->nextthink = level.time + 1;
 	SnapVector(ent->s.pos.trBase);
@@ -2839,6 +2838,7 @@ void artillerySpotterThink(gentity_t *ent)
 void G_GlobalClientEvent(int event, int param, int client)
 {
 	gentity_t *tent = G_TempEntity(vec3_origin, event);
+
 	tent->s.density      = param;
 	tent->r.singleClient = client;
 	tent->r.svFlags      = SVF_SINGLECLIENT | SVF_BROADCAST;

@@ -1142,7 +1142,6 @@ Reached_BinaryMover
 */
 void Reached_BinaryMover(gentity_t *ent)
 {
-
 	// stop the looping sound
 	ent->s.loopSound = 0;
 	//ent->s.loopSound = ent->soundLoop;
@@ -1594,8 +1593,6 @@ Use_BinaryMover
 */
 void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	//int     total;
-	//int     partial;
 	qboolean isblocked = qfalse;
 	qboolean nosound   = qfalse;
 
@@ -1607,7 +1604,6 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	// only the master should be used
 	if (ent->flags & FL_TEAMSLAVE)
 	{
-
 		// pass along flags for how door was activated
 		if (ent->flags & FL_KICKACTIVATE)
 		{
@@ -1921,8 +1917,7 @@ so the movement delta can be calculated
 */
 void InitMoverRotate(gentity_t *ent)
 {
-	vec3_t move;
-	//float    distance;
+	vec3_t   move;
 	float    light;
 	vec3_t   color;
 	qboolean lightSet, colorSet;
@@ -1983,7 +1978,7 @@ void InitMoverRotate(gentity_t *ent)
 
 	// calculate time to reach second position from speed
 	VectorSubtract(ent->pos2, ent->pos1, move);
-	//distance = VectorLength(move);
+
 	if (!ent->speed)
 	{
 		ent->speed = 100;
@@ -2049,10 +2044,10 @@ void Blocked_Door(gentity_t *ent, gentity_t *other)
 	}
 
 	// reverse direction
-//  Use_BinaryMover( ent, ent, other );
+	//Use_BinaryMover( ent, ent, other );
 	for (slave = ent ; slave ; slave = slave->teamchain)
 	{
-//      time = level.time - slave->s.pos.trTime;
+		//time = level.time - slave->s.pos.trTime;
 		time = level.time - (slave->s.pos.trDuration - (level.time - slave->s.pos.trTime));
 
 		if (slave->moverState == MOVER_1TO2)
@@ -2143,7 +2138,7 @@ void Blocked_DoorRotate(gentity_t *ent, gentity_t *other)
 
 	for (slave = ent ; slave ; slave = slave->teamchain)
 	{
-		// RF, trying to fix "stuck in door" bug
+		// trying to fix "stuck in door" bug
 		time = level.time - (slave->s.apos.trDuration - (level.time - slave->s.apos.trTime));
 		//time = level.time - slave->s.apos.trTime;
 
@@ -2375,11 +2370,11 @@ void DoorSetSounds(gentity_t *ent, int doortype, qboolean isRotating)
 	ent->soundPos1 = G_SoundIndex(va("sound/movers/doors/door%i_endc.wav", doortype));           // closed
 	ent->sound2to3 = G_SoundIndex(va("sound/movers/doors/door%i_loopo.wav", doortype));          // loopopen
 	ent->sound3to2 = G_SoundIndex(va("sound/movers/doors/door%i_loopc.wav", doortype));          // loopclosed
-	ent->soundPos3 = G_SoundIndex(va("sound/movers/doors/door%i_locked.wav", doortype));     // locked
+	ent->soundPos3 = G_SoundIndex(va("sound/movers/doors/door%i_locked.wav", doortype));         // locked
 
 	ent->soundSoftopen  = G_SoundIndex(va("sound/movers/doors/door%i_openq.wav", doortype));     // opening quietly
 	ent->soundSoftendo  = G_SoundIndex(va("sound/movers/doors/door%i_endoq.wav", doortype));     // open quietly
-	ent->soundSoftclose = G_SoundIndex(va("sound/movers/doors/door%i_closeq.wav", doortype));        // closing quietly
+	ent->soundSoftclose = G_SoundIndex(va("sound/movers/doors/door%i_closeq.wav", doortype));    // closing quietly
 	ent->soundSoftendc  = G_SoundIndex(va("sound/movers/doors/door%i_endcq.wav", doortype));     // closed quietly
 }
 
@@ -2593,7 +2588,8 @@ void SP_func_door(gentity_t *ent)
 	ent->think     = finishSpawningKeyedMover;
 }
 
-/*QUAKED func_secret (0 .5 .8) ? REVERSE x CRUSHER TOUCH
+/*
+QUAKED func_secret (0 .5 .8) ? REVERSE x CRUSHER TOUCH
 TOGGLE      wait in both the start and end states for a trigger event.
 START_OPEN  the door to moves to its destination when spawned, and operate in reverse.  It is used to temporarily or permanently close off an area when triggered (not useful for touch or takedamage doors).
 NOMONSTER   monsters will not trigger this door
@@ -2894,7 +2890,8 @@ void Touch_Button(gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 }
 
-/*QUAKED func_button (0 .5 .8) ? x x x TOUCH x x STAYOPEN
+/*
+QUAKED func_button (0 .5 .8) ? x x x TOUCH x x STAYOPEN
 When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again.
 
 "model2"    .md3 model to also draw
@@ -3122,7 +3119,8 @@ void Think_SetupTrainTargets(gentity_t *ent)
 	}
 }
 
-/*QUAKED path_corner (.5 .3 0) (-8 -8 -8) (8 8 8) STOP END REVERSE
+/*
+QUAKED path_corner (.5 .3 0) (-8 -8 -8) (8 8 8) STOP END REVERSE
 Train path corners.
 Target: next path corner and other targets to fire
 "speed" speed to move to the next corner
@@ -3146,7 +3144,8 @@ void SP_path_corner(gentity_t *self)
 	}
 }
 
-/*QUAKED path_corner_2 (.5 .3 0) (-8 -8 -8) (8 8 8) STOP END REVERSE
+/*
+QUAKED path_corner_2 (.5 .3 0) (-8 -8 -8) (8 8 8) STOP END REVERSE
 Train path corners. THIS VERSION WILL NOT CONTRIBUTE TOWARDS INGAME ENTITY COUNT
 "targetname" The script uses this name to identify the corner
 */
@@ -3171,7 +3170,8 @@ void SP_path_corner_2(gentity_t *self)
 	G_FreeEntity(self);
 }
 
-/*QUAKED info_train_spline_main (0 1 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED info_train_spline_main (0 1 0) (-8 -8 -8) (8 8 8)
 Train spline.
 */
 void SP_info_train_spline_main(gentity_t *self)
@@ -3217,7 +3217,8 @@ void SP_info_train_spline_main(gentity_t *self)
 	G_FreeEntity(self);
 }
 
-/*QUAKED info_limbo_camera (.5 .0 .0) ? (-8 -8 -8) (8 8 8)
+/*
+QUAKED info_limbo_camera (.5 .0 .0) ? (-8 -8 -8) (8 8 8)
 Camera for limbo menu, target at an appropriate entity (spawn flag, script mover, position marker...)
 */
 void info_limbo_camera_setup(gentity_t *self)
@@ -3309,7 +3310,8 @@ void SP_info_limbo_camera(gentity_t *self)
 	G_SpawnInt("objective", "-1", &self->count);
 }
 
-/*QUAKED func_train (0 .5 .8) ? START_ON TOGGLE BLOCK_STOPS
+/*
+QUAKED func_train (0 .5 .8) ? START_ON TOGGLE BLOCK_STOPS
 A train is a mover that moves between path_corner target points.
 Trains MUST HAVE AN ORIGIN BRUSH.
 The train spawns at the first target it is pointing at.
@@ -3573,7 +3575,8 @@ void Think_SetupTrainTargets_rotating(gentity_t *ent)
 	Reached_Train_rotating(ent);
 }
 
-/*QUAKED func_train_rotating (0 .5 .8) ? START_ON TOGGLE BLOCK_STOPS
+/*
+QUAKED func_train_rotating (0 .5 .8) ? START_ON TOGGLE BLOCK_STOPS
 A train is a mover that moves between path_corner target points.
 This train can also rotate along the X Y Z
 Trains MUST HAVE AN ORIGIN BRUSH.
@@ -3697,7 +3700,8 @@ void G_BlockThink(gentity_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
-/*QUAKED func_leaky (0 .5 .8) ?
+/*
+QUAKED func_leaky (0 .5 .8) ?
 "type" - leaks particles of this type
 
 1:oil
@@ -3718,7 +3722,8 @@ void SP_func_leaky(gentity_t *ent)
 	VectorCopy(ent->s.origin, ent->r.currentOrigin);
 }
 
-/*QUAKED func_static (0 .5 .8) ? start_invis pain painEFX
+/*
+QUAKED func_static (0 .5 .8) ? start_invis pain painEFX
 A bmodel that just sits there, doing nothing.  Can be used for conditional walls and models.
 "model2"    .md3 model to also draw
 "color"     constantLight color
@@ -3808,7 +3813,8 @@ ROTATING
 ===============================================================================
 */
 
-/*QUAKED func_rotating (0 .5 .8) ? START_ON STARTINVIS X_AXIS Y_AXIS
+/*
+QUAKED func_rotating (0 .5 .8) ? START_ON STARTINVIS X_AXIS Y_AXIS
 You need to have an origin brush as part of this entity.  The center of that brush will be
 the point around which it is rotated. It will rotate around the Z axis by default.  You can
 check either the X_AXIS or Y_AXIS box to change that.
@@ -3898,7 +3904,8 @@ BOBBING
 ===============================================================================
 */
 
-/*QUAKED func_bobbing (0 .5 .8) ? X_AXIS Y_AXIS
+/*
+QUAKED func_bobbing (0 .5 .8) ? X_AXIS Y_AXIS
 Normally bobs on the Z axis
 "model2"    .md3 model to also draw
 "height"    amplitude of bob (32 default)
@@ -3949,7 +3956,8 @@ PENDULUM
 ===============================================================================
 */
 
-/*QUAKED func_pendulum (0 .5 .8) ?
+/*
+QUAKED func_pendulum (0 .5 .8) ?
 You need to have an origin brush as part of this entity.
 Pendulums always swing north / south on unrotated models.  Add an angles field to the model to allow rotation in other directions.
 Pendulum frequency is a physical constant based on the length of the beam and gravity.
@@ -3997,7 +4005,8 @@ void SP_func_pendulum(gentity_t *ent)
 	ent->s.apos.trDelta[2] = speed;
 }
 
-/*QUAKED func_door_rotating (0 .5 .8) ? - TOGGLE X_AXIS Y_AXIS REVERSE FORCE STAYOPEN TAKE_KEY
+/*
+QUAKED func_door_rotating (0 .5 .8) ? - TOGGLE X_AXIS Y_AXIS REVERSE FORCE STAYOPEN TAKE_KEY
 You need to have an origin brush as part of this entity.  The center of that brush will be
 the point around which it is rotated. It will rotate around the Z axis by default.  You can
 check either the X_AXIS or Y_AXIS box to change that (only one axis allowed. If both X and Y
@@ -4189,7 +4198,8 @@ void target_effect(gentity_t *self, gentity_t *other, gentity_t *activator)
 	G_UseTargets(self, other);
 }
 
-/*QUAKED target_effect (0 .5 .8) (-6 -6 -6) (6 6 6) fire explode smoke rubble gore lowgrav debris
+/*
+QUAKED target_effect (0 .5 .8) (-6 -6 -6) (6 6 6) fire explode smoke rubble gore lowgrav debris
 "mass" defaults to 15.  This determines how much debris is emitted when it explodes.  (number of pieces)
 "dmg" defaults to 0.  damage radius blast when triggered
 "type" - if 'rubble' is specified, this is the model type ("glass", "wood", "metal", "gibs", "brick", "rock", "fabric") default is "wood"
@@ -4321,7 +4331,6 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 
 	if (self->damage)
 	{
-//      G_RadiusDamage(self->s.origin, self, self->damage, self->damage+40, self, MOD_EXPLOSIVE);
 		G_RadiusDamage(self->s.pos.trBase, NULL, self, self->damage, self->damage + 40, self, MOD_EXPLOSIVE);
 	}
 
@@ -4465,7 +4474,8 @@ void InitExplosive(gentity_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
-/*QUAKED target_explosion (0 .5 .8) (-32 -32 -32) (32 32 32) LOWGRAV
+/*
+QUAKED target_explosion (0 .5 .8) (-32 -32 -32) (32 32 32) LOWGRAV
 "type" - type of debris ("glass", "wood", "metal", "gibs", "brick", "rock", "fabric") default is "wood"
 */
 
@@ -4596,7 +4606,8 @@ void SP_target_explosion(gentity_t *ent)
 	ent->use = target_explosion_use;
 }
 
-/*QUAKED func_explosive (0 .5 .8) ? START_INVIS TOUCHABLE USESHADER LOWGRAV NOBLOCKAAS TANK
+/*
+QUAKED func_explosive (0 .5 .8) ? START_INVIS TOUCHABLE USESHADER LOWGRAV NOBLOCKAAS TANK
 Any brush that you want to explode or break apart.  If you want an explosion, set dmg and it will do a radius explosion of that amount at the center of the bursh.
 TOUCHABLE means automatic use on player contact.
 USESHADER will apply the shader used on the brush model to the debris.
@@ -4778,7 +4789,8 @@ void SP_func_explosive(gentity_t *ent)
 
 // TODO: stick this somewhere ;) "sonic from australia is the bestest ninja in the world"
 
-/*QUAKED func_invisible_user (.3 .5 .8) ? STARTOFF HAS_USER NO_OFF_NOISE NOT_KICKABLE
+/*
+QUAKED func_invisible_user (.3 .5 .8) ? STARTOFF HAS_USER NO_OFF_NOISE NOT_KICKABLE
 when activated will use its target
 "delay" - time (in seconds) before it can be used again
 "offnoise" - specifies an alternate sound
@@ -5318,7 +5330,6 @@ void func_constructible_explode(gentity_t *self, gentity_t *inflictor, gentity_t
 func_constructible_underconstructionthink
 ==============
 */
-//#define CONSTRUCT_PREDECAY_TIME   3000    // if not under construction for this duration, start decaying
 #define CONSTRUCT_PREDECAY_TIME 30000   // if not under construction for this duration, start decaying
 void func_constructible_underconstructionthink(gentity_t *ent)
 {
@@ -5660,7 +5671,8 @@ void func_constructiblespawn(gentity_t *ent)
 	ent->die = func_constructible_explode;
 }
 
-/*QUAKED func_constructible (.9 .75 .15) ? START_BUILT INVULNERABLE AXIS_CONSTRUCTIBLE ALLIED_CONSTRUCTIBLE BLOCK_PATHS_WHEN_BUILT NO_AAS_BLOCKING AAS_SCRIPTED
+/*
+QUAKED func_constructible (.9 .75 .15) ? START_BUILT INVULNERABLE AXIS_CONSTRUCTIBLE ALLIED_CONSTRUCTIBLE BLOCK_PATHS_WHEN_BUILT NO_AAS_BLOCKING AAS_SCRIPTED
 A constructible object that functions as target for engineers.
 "track"     functions as a group name. All entities with the
             same 'track' as the func_constructible will be
@@ -5744,7 +5756,8 @@ void SP_func_constructible(gentity_t *ent)
 	ent->nextthink = level.time + (2 * FRAMETIME);
 }
 
-/*QUAKED func_brushmodel (.9 .50 .50) ?
+/*
+QUAKED func_brushmodel (.9 .50 .50) ?
 A brushmodel that gets deleted on the fourth frame. We use this to hijack it's brushmodel in func_constructible
 entities that are based around staged construction.
 */
@@ -5843,13 +5856,14 @@ void G_LinkDamageParents(void)
 
 void G_LinkDebris(void)
 {
-	float     speed;
-	int       i;
-	gentity_t *target;
+	float         speed;
+	int           i;
+	gentity_t     *target;
+	debrisChunk_t *debris;
 
 	for (i = 0; i < level.numDebrisChunks; i++)
 	{
-		debrisChunk_t *debris = &level.debrisChunks[i];
+		debris = &level.debrisChunks[i];
 
 		target = G_FindByTargetname(NULL, debris->target);
 		if (!target)

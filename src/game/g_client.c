@@ -50,7 +50,8 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 vec3_t playerMins = { -18, -18, -24 };
 vec3_t playerMaxs = { 18, 18, 48 };
 
-/*QUAKED info_player_deathmatch (1 0 1) (-18 -18 -24) (18 18 48)
+/*
+QUAKED info_player_deathmatch (1 0 1) (-18 -18 -24) (18 18 48)
 potential spawning position for deathmatch games.
 Targets will be fired when someone spawns in on them.
 "nobots" will prevent bots from using this spot.
@@ -81,7 +82,8 @@ void SP_info_player_deathmatch(gentity_t *ent)
 	}
 }
 
-/*QUAKED info_player_checkpoint (1 0 0) (-16 -16 -24) (16 16 32) a b c d
+/*
+QUAKED info_player_checkpoint (1 0 0) (-16 -16 -24) (16 16 32) a b c d
 these are start points /after/ the level start
 the letter (a b c d) designates the checkpoint that needs to be complete in order to use this start position
 */
@@ -91,7 +93,8 @@ void SP_info_player_checkpoint(gentity_t *ent)
 	SP_info_player_deathmatch(ent);
 }
 
-/*QUAKED info_player_start (1 0 0) (-18 -18 -24) (18 18 48)
+/*
+QUAKED info_player_start (1 0 0) (-18 -18 -24) (18 18 48)
 equivelant to info_player_deathmatch
 */
 void SP_info_player_start(gentity_t *ent)
@@ -100,7 +103,8 @@ void SP_info_player_start(gentity_t *ent)
 	SP_info_player_deathmatch(ent);
 }
 
-/*QUAKED info_player_intermission (1 0 1) (-16 -16 -24) (16 16 32) AXIS ALLIED
+/*
+QUAKED info_player_intermission (1 0 1) (-16 -16 -24) (16 16 32) AXIS ALLIED
 The intermission will be viewed from this point.  Target an info_notnull for the view direction.
 */
 void SP_info_player_intermission(gentity_t *ent)
@@ -494,7 +498,6 @@ void SetClientViewAngle(gentity_t *ent, vec3_t angle)
 
 void G_DropLimboHealth(gentity_t *ent)
 {
-
 	if (g_dropHealth.integer == 0 || !ent->client || ent->client->sess.playerType != PC_MEDIC || g_gamestate.integer != GS_PLAYING)
 	{
 		return;

@@ -3549,12 +3549,6 @@ qboolean CG_WeaponSelectable(int i)
 //  if(i == WP_NONE)
 //      return qtrue;
 
-	// if holding a melee weapon (chair/shield/etc.) only allow single-handed weapons
-	/*  if(cg.snap->ps.eFlags & EF_MELEE_ACTIVE) {
-	        if(!(WEAPS_ONE_HANDED & (1<<i)))
-	            return qfalse;
-	    }*/
-
 	if (BG_PlayerMounted(cg.predictedPlayerState.eFlags))
 	{
 		return qfalse;

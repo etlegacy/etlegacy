@@ -500,8 +500,7 @@ int BG_IndexForString(char *token, animStringItem_t *strings, qboolean allowFail
 BG_CopyStringIntoBuffer
 ===============
 */
-char *BG_CopyStringIntoBuffer(char *string, char *buffer,
-                              unsigned int bufSize, unsigned int *offset)
+char *BG_CopyStringIntoBuffer(char *string, char *buffer, unsigned int bufSize, unsigned int *offset)
 {
 	char *pch;
 
@@ -934,9 +933,10 @@ static animStringItem_t animParseModesStr[] =
 	{ NULL,                -1 },
 };
 
+#define MAX_INDENT_LEVELS   3
+
 void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *scriptData, const char *filename, char *input)
 {
-#define MAX_INDENT_LEVELS   3
 	// FIXME: change this to use the botlib parser
 	char                  *text_p, *token;
 	animScriptParseMode_t parseMode;

@@ -421,7 +421,6 @@ typedef struct pmoveExt_s
 
 	int proneTime;                  // time a go-prone or stop-prone move starts, to sync the animation to
 
-	int proneGroundTime;            // time a prone player last had ground under him
 	float proneLegsOffset;          // offset legs bounding box
 
 	vec3_t mountedWeaponAngles;     // mortar, mg42 (prone), etc

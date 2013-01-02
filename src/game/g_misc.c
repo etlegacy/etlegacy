@@ -36,11 +36,13 @@
 extern void AimAtTarget(gentity_t *self);
 extern float AngleDifference(float ang1, float ang2);
 
-/*QUAKED func_group (0 0 0) ?
+/*
+QUAKED func_group (0 0 0) ?
 Used to group brushes together just for editor convenience.  They are turned into normal brushes by the utilities.
 */
 
-/*QUAKED info_camp (0 0.5 0) (-4 -4 -4) (4 4 4)
+/*
+QUAKED info_camp (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for calculations in the utilities (spotlights, etc), but removed during gameplay.
 */
 void SP_info_camp(gentity_t *self)
@@ -63,7 +65,8 @@ void SP_info_null(gentity_t *self)
 	self->nextthink = level.time + (FRAMETIME * 2);
 }
 
-/*QUAKED info_notnull (0 0.5 0) (-4 -4 -4) (4 4 4)
+/*
+QUAKED info_notnull (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for in-game calculation, like jumppad targets.
 target_position does the same thing
 */
@@ -72,7 +75,8 @@ void SP_info_notnull(gentity_t *self)
 	G_SetOrigin(self, self->s.origin);
 }
 
-/*QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) nonlinear angle negative_spot negative_point q3map_non-dynamic
+/*
+QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) nonlinear angle negative_spot negative_point q3map_non-dynamic
 Non-displayed light.
 "light" overrides the default 300 intensity.
 Nonlinear checkbox gives inverse square falloff instead of linear
@@ -87,7 +91,8 @@ void SP_light(gentity_t *self)
 	G_FreeEntity(self);
 }
 
-/*QUAKED lightJunior (0 0.7 0.3) (-8 -8 -8) (8 8 8) nonlinear angle negative_spot negative_point
+/*
+QUAKED lightJunior (0 0.7 0.3) (-8 -8 -8) (8 8 8) nonlinear angle negative_spot negative_point
 Non-displayed light that only affects dynamic game models, but does not contribute to lightmaps
 "light" overrides the default 300 intensity.
 Nonlinear checkbox gives inverse square falloff instead of linear
@@ -103,9 +108,7 @@ void SP_lightJunior(gentity_t *self)
 
 /*
 =================================================================================
-
 TELEPORTERS
-
 =================================================================================
 */
 void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
@@ -138,7 +141,8 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
 	}
 }
 
-/*QUAKED misc_teleporter_dest (1 0 0) (-32 -32 -24) (32 32 -16)
+/*
+QUAKED misc_teleporter_dest (1 0 0) (-32 -32 -24) (32 32 -16)
 Point teleporters at these.
 Now that we don't have teleport destination pads, this is just
 an info_notnull
@@ -149,9 +153,8 @@ void SP_misc_teleporter_dest(gentity_t *ent)
 
 /*
 =================================================================================
-
     misc_grabber_trap
-
+=================================================================================
 */
 
 static int attackDurations[] = { (11 * 1000) / 15,
@@ -339,7 +342,8 @@ void grabber_wake_touch(gentity_t *ent, gentity_t *other, trace_t *trace)
 	grabber_wake(ent);
 }
 
-/*QUAKED misc_grabber_trap (1 0 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED misc_grabber_trap (1 0 0) (-8 -8 -8) (8 8 8)
 fields:
 "adist"  - radius of 'wakeup' box.  player passing closer than distance activates grabber (def: 64)
 "bdist"  - radius of 'attack' box.  player passing into this gets a swipe.  (def: 32)
@@ -468,7 +472,8 @@ void spotlight_finish_spawning(gentity_t *ent)
 	ent->nextthink = 0;
 }
 
-/*QUAKED misc_spotlight (1 0 0) (-16 -16 -16) (16 16 16) START_ON BACK_AND_FORTH
+/*
+QUAKED misc_spotlight (1 0 0) (-16 -16 -16) (16 16 16) START_ON BACK_AND_FORTH
 "model" - 'base' model that moves with the light.  Default: "models/mapobjects/light/searchlight_pivot.md3"
 "target" - .camera (spline) file for light to track.  do not specify file extension.
 
@@ -499,7 +504,8 @@ void SP_misc_spotlight(gentity_t *ent)
 
 //===========================================================
 
-/*QUAKED misc_model (1 0 0) (-16 -16 -16) (16 16 16)
+/*
+QUAKED misc_model (1 0 0) (-16 -16 -16) (16 16 16)
 "model"     arbitrary .md3 file to display
 "modelscale"    scale multiplier (defaults to 1x)
 "modelscale_vec"    scale multiplier (defaults to 1 1 1, scales each axis as requested)
@@ -511,7 +517,8 @@ void SP_misc_model(gentity_t *ent)
 	G_FreeEntity(ent);
 }
 
-/*QUAKED misc_gamemodel (1 0 0) (-16 -16 -16) (16 16 16) ORIENT_LOD START_ANIMATE
+/*
+QUAKED misc_gamemodel (1 0 0) (-16 -16 -16) (16 16 16) ORIENT_LOD START_ANIMATE
 md3 placed in the game at runtime (rather than in the bsp)
 "model"         arbitrary .md3 file to display
 "modelscale"    scale multiplier (defaults to 1x, and scales uniformly)
@@ -646,7 +653,8 @@ void locateMaster(gentity_t *ent)
 	}
 }
 
-/*QUAKED misc_vis_dummy (1 .5 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED misc_vis_dummy (1 .5 0) (-8 -8 -8) (8 8 8)
 If this entity is "visible" (in player's PVS) then it's target is forced to be active whether it is in the player's PVS or not.
 This entity itself is never visible or transmitted to clients.
 For safety, you should have each dummy only point at one entity (however, it's okay to have many dummies pointing at one entity)
@@ -669,7 +677,8 @@ void SP_misc_vis_dummy(gentity_t *ent)
 
 }
 
-/*QUAKED misc_vis_dummy_multiple (1 .5 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED misc_vis_dummy_multiple (1 .5 0) (-8 -8 -8) (8 8 8)
 If this entity is "visible" (in player's PVS) then it's target is forced to be active whether it is in the player's PVS or not.
 This entity itself is never visible or transmitted to clients.
 This entity was created to have multiple speakers targeting it
@@ -690,7 +699,8 @@ void SP_misc_vis_dummy_multiple(gentity_t *ent)
 
 //===========================================================
 
-/*QUAKED misc_light_surface (1 .5 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED misc_light_surface (1 .5 0) (-8 -8 -8) (8 8 8)
 The surfaces nearest these entities will be the only surfaces lit by the targeting light
 This must be within 64 world units of the surface to be lit!
 */
@@ -789,9 +799,7 @@ void SP_misc_portal_camera(gentity_t *ent)
 
 /*
 ======================================================================
-
   SHOOTERS
-
 ======================================================================
 */
 
@@ -834,6 +842,7 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	{
 	case WP_GRENADE_LAUNCHER:
 		VectorScale(dir, 700, dir);                   // had to add this as fire_grenade now expects a non-normalized direction vector
+		                                              // FIXME: why we do normalize the vector before this switch?
 		fire_grenade(ent, ent->s.origin, dir, WP_GRENADE_LAUNCHER);
 		break;
 	case WP_PANZERFAUST:
@@ -883,7 +892,8 @@ void InitShooter(gentity_t *ent, int weapon)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED shooter_mortar (1 0 0) (-16 -16 -16) (16 16 16) SMOKE_FX FLASH_FX
+/*
+QUAKED shooter_mortar (1 0 0) (-16 -16 -16) (16 16 16) SMOKE_FX FLASH_FX
 Lobs a mortar so that it will pass through the info_notnull targeted by this entity
 "random" the number of degrees of deviance from the taget. (1.0 default)
 if LAUNCH_FX is checked a smoke effect will play at the origin of this entity.
@@ -902,7 +912,8 @@ void SP_shooter_mortar(gentity_t *ent)
 	}
 }
 
-/*QUAKED shooter_rocket (1 0 0) (-16 -16 -16) (16 16 16)
+/*
+QUAKED shooter_rocket (1 0 0) (-16 -16 -16) (16 16 16)
 Fires at either the target or the current direction.
 "random" the number of degrees of deviance from the taget. (1.0 default)
 */
@@ -911,7 +922,8 @@ void SP_shooter_rocket(gentity_t *ent)
 	InitShooter(ent, WP_PANZERFAUST);
 }
 
-/*QUAKED shooter_grenade (1 0 0) (-16 -16 -16) (16 16 16)
+/*
+QUAKED shooter_grenade (1 0 0) (-16 -16 -16) (16 16 16)
 Fires at either the target or the current direction.
 "random" is the number of degrees of deviance from the taget. (1.0 default)
 */
@@ -920,7 +932,8 @@ void SP_shooter_grenade(gentity_t *ent)
 	InitShooter(ent, WP_GRENADE_LAUNCHER);
 }
 
-/*QUAKED corona (0 1 0) (-4 -4 -4) (4 4 4) START_OFF
+/*
+QUAKED corona (0 1 0) (-4 -4 -4) (4 4 4) START_OFF
 Use color picker to set color or key "color".  values are 0.0-1.0 for each color (rgb).
 "scale" will designate a multiplier to the default size.  (so 2.0 is 2xdefault size, 0.5 is half)
 */

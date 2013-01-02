@@ -33,8 +33,6 @@
 
 #include "g_local.h"
 
-// Ridah, increased this (fixes Dan's crash)
-
 #define POOLSIZE    (4 * 1024 * 1024)
 
 static char memoryPool[POOLSIZE];

@@ -125,8 +125,6 @@ int PM_AltSwitchToForWeapon(int weapon)
 	case WP_MORTAR:
 	case WP_MOBILE_MG42:
 		return WEAP_ALTSWITCHFROM;
-//      case WP_MEDIC_SYRINGE:
-//          return WEAP_RAISE;
 
 	default:
 		return WEAP_ALTSWITCHTO;
@@ -818,15 +816,10 @@ Sets mins, maxs, and pm->ps->viewheight
 */
 static qboolean PM_CheckProne(void)
 {
-	//Com_Printf( "%i: PM_CheckProne (%i)\n", pm->cmd.serverTime, pm->pmext->proneGroundTime );
+	//Com_Printf( "%i: PM_CheckProne\n", pm->cmd.serverTime);
 
 	if (!(pm->ps->eFlags & EF_PRONE))
 	{
-		// needs to be on the ground
-		//if( !pml.walking ) {
-		//  return qfalse;
-		//}
-
 		// can't go prone on ladders
 		if (pm->ps->pm_flags & PMF_LADDER)
 		{
@@ -855,11 +848,6 @@ static qboolean PM_CheckProne(void)
 			return qfalse;
 		}
 
-		// can't go prone when fiddling with mg42
-		//if( pm->ps->weaponstate == WEAPON_FROMPRONE ) {
-		//  return qfalse;
-		//}
-
 		if (((pm->ps->pm_flags & PMF_DUCKED && pm->cmd.doubleTap == DT_FORWARD) ||
 		     (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - -pm->pmext->proneTime > 750)
 		{
@@ -881,10 +869,9 @@ static qboolean PM_CheckProne(void)
 			if (!trace.startsolid && !trace.allsolid)
 			{
 				// go prone
-				pm->ps->pm_flags          |= PMF_DUCKED; // crouched as well
-				pm->ps->eFlags            |= EF_PRONE;
-				pm->pmext->proneTime       = pm->cmd.serverTime; // timestamp 'go prone'
-				pm->pmext->proneGroundTime = pm->cmd.serverTime;
+				pm->ps->pm_flags    |= PMF_DUCKED;       // crouched as well
+				pm->ps->eFlags      |= EF_PRONE;
+				pm->pmext->proneTime = pm->cmd.serverTime;       // timestamp 'go prone'
 			}
 		}
 	}
@@ -897,8 +884,6 @@ static qboolean PM_CheckProne(void)
 		if (pm->waterlevel > 1 ||
 		    pm->ps->pm_type == PM_DEAD ||
 		    pm->ps->eFlags & EF_MOUNTEDTANK ||
-		    // zinx - what was the reason for this, anyway? removing fixes bug 424
-		    //pm->cmd.serverTime - pm->pmext->proneGroundTime > 450 ||
 		    ((pm->cmd.doubleTap == DT_BACK || pm->cmd.upmove > 10 || pm->cmd.wbuttons & WBUTTON_PRONE) && pm->cmd.serverTime - pm->pmext->proneTime > 750))
 		{
 			trace_t trace;
@@ -946,6 +931,7 @@ static qboolean PM_CheckProne(void)
 		{
 			pm->ps->eFlags |= EF_PRONE_MOVING;
 
+			// Lose the scope view if moving too fast while prone
 			switch (pm->ps->weapon)
 			{
 			case WP_FG42SCOPE:
@@ -973,8 +959,8 @@ static qboolean PM_CheckProne(void)
 		pm->mins[2] = pm->ps->mins[2];
 
 		// it appears that 12 is the magic number
-		//      for the minimum maxs[2] that prevents
-		//      player from getting stuck into the world.
+		// for the minimum maxs[2] that prevents
+		// player from getting stuck into the world.
 		pm->maxs[2]        = 12;
 		pm->ps->viewheight = PRONE_VIEWHEIGHT;
 
@@ -1025,27 +1011,7 @@ static void PM_WaterMove(void)
 		PM_WaterJumpMove();
 		return;
 	}
-#if 0
-	// jump = head for surface
-	if (pm->cmd.upmove >= 10)
-	{
-		if (pm->ps->velocity[2] > -300)
-		{
-			if (pm->watertype == CONTENTS_WATER)
-			{
-				pm->ps->velocity[2] = 100;
-			}
-			else if (pm->watertype == CONTENTS_SLIME)
-			{
-				pm->ps->velocity[2] = 80;
-			}
-			else
-			{
-				pm->ps->velocity[2] = 50;
-			}
-		}
-	}
-#endif
+
 	PM_Friction();
 
 	scale = PM_CmdScale(&pm->cmd);
@@ -1057,7 +1023,6 @@ static void PM_WaterMove(void)
 		wishvel[0] = 0;
 		wishvel[1] = 0;
 		wishvel[2] = -60;     // sink towards bottom
-		//wishvel[2] = -10;   // mod for DM
 	}
 	else
 	{
@@ -1091,7 +1056,6 @@ static void PM_WaterMove(void)
 
 		PM_Accelerate(wishdir, wishspeed, pm_wateraccelerate);
 	}
-
 
 	// make sure we can go up slopes easily under water
 	if (pml.groundPlane && DotProduct(pm->ps->velocity, pml.groundTrace.plane.normal) < 0)
@@ -1161,7 +1125,6 @@ PM_AirMove
 */
 static void PM_AirMove(void)
 {
-	int       i;
 	vec3_t    wishvel;
 	float     fmove, smove;
 	vec3_t    wishdir;
@@ -1183,10 +1146,9 @@ static void PM_AirMove(void)
 	VectorNormalize(pml.forward);
 	VectorNormalize(pml.right);
 
-	for (i = 0 ; i < 2 ; i++)
-	{
-		wishvel[i] = pml.forward[i] * fmove + pml.right[i] * smove;
-	}
+	wishvel[0] = pml.forward[0] * fmove + pml.right[0] * smove;
+	wishvel[1] = pml.forward[1] * fmove + pml.right[1] * smove;
+
 	wishvel[2] = 0;
 
 	VectorCopy(wishvel, wishdir);
@@ -1259,7 +1221,7 @@ static void PM_WalkMove(void)
 			pm->pmext->jumpTime = pm->cmd.serverTime;
 		}
 
-		pm->ps->jumpTime = pm->cmd.serverTime;  // NOTE : TEMP DEBUG
+		pm->ps->jumpTime = pm->cmd.serverTime;
 
 		return;
 	}
@@ -1370,10 +1332,6 @@ static void PM_WalkMove(void)
 	// don't do anything if standing still
 	if (!pm->ps->velocity[0] && !pm->ps->velocity[1])
 	{
-		if (pm->ps->eFlags & EF_PRONE)
-		{
-			pm->pmext->proneGroundTime = pm->cmd.serverTime;
-		}
 		return;
 	}
 
@@ -1423,7 +1381,7 @@ PM_NoclipMove
 */
 static void PM_NoclipMove(void)
 {
-	float  speed, drop, friction, control, newspeed;
+	float  speed;
 	int    i;
 	vec3_t wishvel;
 	float  fmove, smove;
@@ -1441,11 +1399,11 @@ static void PM_NoclipMove(void)
 	}
 	else
 	{
-		drop = 0;
+		float drop     = 0, newspeed;
+		float friction = pm_friction * 1.5; // extra friction
+		float control  = speed < pm_stopspeed ? pm_stopspeed : speed;
 
-		friction = pm_friction * 1.5; // extra friction
-		control  = speed < pm_stopspeed ? pm_stopspeed : speed;
-		drop    += control * friction * pml.frametime;
+		drop += control * friction * pml.frametime;
 
 		// scale the velocity
 		newspeed = speed - drop;
@@ -1465,7 +1423,9 @@ static void PM_NoclipMove(void)
 	smove = pm->cmd.rightmove;
 
 	for (i = 0 ; i < 3 ; i++)
+	{
 		wishvel[i] = pml.forward[i] * fmove + pml.right[i] * smove;
+	}
 	wishvel[2] += pm->cmd.upmove;
 
 	VectorCopy(wishvel, wishdir);
@@ -1661,6 +1621,11 @@ static int PM_CorrectAllSolid(trace_t *trace)
 		{
 			for (k = -1; k <= 1; k++)
 			{
+				if (!i && !j && !k)   // same as checking input origin again..
+				{
+					continue;
+				}
+
 				VectorCopy(pm->ps->origin, point);
 				point[0] += (float) i;
 				point[1] += (float) j;
@@ -1697,10 +1662,11 @@ The ground trace didn't hit a surface, so we are in freefall
 static void PM_GroundTraceMissed(void)
 {
 	trace_t trace;
-	vec3_t  point;
 
 	if (pm->ps->groundEntityNum != ENTITYNUM_NONE)
 	{
+		vec3_t point;
+
 		// we just transitioned into freefall
 		if (pm->debugLevel)
 		{
@@ -1815,8 +1781,7 @@ static void PM_GroundTrace(void)
 		{
 			Com_Printf("%i:steep\n", c_pmove);
 		}
-		// FIXME: if they can't slide down the slope, let them
-		// walk (sharp crevices)
+		// FIXME: if they can't slide down the slope, let them walk (sharp crevices)
 		pm->ps->groundEntityNum = ENTITYNUM_NONE;
 		pml.groundPlane         = qtrue;
 		pml.walking             = qfalse;
@@ -1855,7 +1820,7 @@ static void PM_GroundTrace(void)
 	pm->ps->groundEntityNum = trace.entityNum;
 
 	// don't reset the z velocity for slopes
-	//  pm->ps->velocity[2] = 0;
+	//pm->ps->velocity[2] = 0;
 
 	PM_AddTouchEnt(trace.entityNum);
 }
@@ -1881,11 +1846,8 @@ static void PM_SetWaterLevel(void)
 
 	if (cont & MASK_WATER)
 	{
-		int sample1;
-		int sample2;
-
-		sample2 = pm->ps->viewheight - pm->ps->mins[2];
-		sample1 = sample2 / 2;
+		int sample2 = pm->ps->viewheight - pm->ps->mins[2];
+		int sample1 = sample2 / 2;
 
 		pm->watertype  = cont;
 		pm->waterlevel = 1;
@@ -1916,7 +1878,7 @@ Sets mins, maxs, and pm->ps->viewheight
 */
 static void PM_CheckDuck(void)
 {
-	// Ridah, modified this for configurable bounding boxes
+	// modified this for configurable bounding boxes
 	pm->mins[0] = pm->ps->mins[0];
 	pm->mins[1] = pm->ps->mins[1];
 
@@ -2346,10 +2308,6 @@ static void PM_BeginWeaponReload(int weapon)
 		return;
 	}
 
-	// no reload when you've got a chair in your hands
-	/*  if(pm->ps->eFlags & EF_MELEE_ACTIVE)
-	        return;*/
-
 	// no reload when leaning (this includes manual and auto reloads)
 	if (pm->ps->leanf)
 	{
@@ -2639,17 +2597,17 @@ PM_FinishWeaponChange
 */
 static void PM_FinishWeaponChange(void)
 {
-	int      oldweapon, newweapon, switchtime;
+	int      oldweapon, newweapon = pm->ps->nextWeapon, switchtime;
 	qboolean altSwitchAnim = qfalse;
 	qboolean doSwitchAnim  = qtrue;
 
-	newweapon = pm->ps->nextWeapon;
-
+	// Cannot switch to an invalid weapon
 	if (newweapon < WP_NONE || newweapon >= WP_NUM_WEAPONS)
 	{
 		newweapon = WP_NONE;
 	}
 
+	// Cannot switch to a weapon you don't have
 	if (!(COM_BitCheck(pm->ps->weapons, newweapon)))
 	{
 		newweapon = WP_NONE;
@@ -2720,19 +2678,6 @@ static void PM_FinishWeaponChange(void)
 	switch (newweapon)
 	{
 	case WP_LUGER:
-		if (newweapon == weapAlts[oldweapon])
-		{
-			switchtime    = 0;
-			altSwitchAnim = qtrue ;
-		}
-		break;
-	case WP_SILENCER:
-		if (newweapon == weapAlts[oldweapon])
-		{
-			switchtime    = 1190;
-			altSwitchAnim = qtrue ;
-		}
-		break;
 	case WP_COLT:
 		if (newweapon == weapAlts[oldweapon])
 		{
@@ -2740,6 +2685,7 @@ static void PM_FinishWeaponChange(void)
 			altSwitchAnim = qtrue ;
 		}
 		break;
+	case WP_SILENCER:
 	case WP_SILENCED_COLT:
 		if (newweapon == weapAlts[oldweapon])
 		{
@@ -2875,12 +2821,9 @@ PM_ReloadClip
 */
 static void PM_ReloadClip(int weapon)
 {
-	int ammoreserve, ammoclip, ammomove;
-
-	ammoreserve = pm->ps->ammo[BG_FindAmmoForWeapon(weapon)];
-	ammoclip    = pm->ps->ammoclip[BG_FindClipForWeapon(weapon)];
-
-	ammomove = GetAmmoTableData(weapon)->maxclip - ammoclip;
+	int ammoreserve = pm->ps->ammo[BG_FindAmmoForWeapon(weapon)];
+	int ammoclip    = pm->ps->ammoclip[BG_FindClipForWeapon(weapon)];
+	int ammomove    = GetAmmoTableData(weapon)->maxclip - ammoclip;
 
 	if (ammoreserve < ammomove)
 	{
@@ -2960,9 +2903,6 @@ void PM_CheckForReload(int weapon)
 		break;
 	}
 
-	// user is forcing a reload (manual reload)
-	reloadRequested = (qboolean)(pm->cmd.wbuttons & WBUTTON_RELOAD);
-
 	switch (pm->ps->weaponstate)
 	{
 	case WEAPON_RAISING:
@@ -2976,6 +2916,9 @@ void PM_CheckForReload(int weapon)
 	default:
 		break;
 	}
+
+	// user is forcing a reload (manual reload)
+	reloadRequested = (qboolean)(pm->cmd.wbuttons & WBUTTON_RELOAD);
 
 	autoreload = pm->pmext->bAutoReload || !IS_AUTORELOAD_WEAPON(weapon);
 	clipWeap   = BG_FindClipForWeapon(weapon);
@@ -3028,10 +2971,7 @@ void PM_CheckForReload(int weapon)
 					{
 						doReload = qtrue;
 					}
-				} /*else if( BG_IsAkimboSideArm(weapon, pm->ps) ) {
-				    if( !pm->ps->ammoclip[BG_FindClipForWeapon(BG_AkimboForSideArm(weapon))] )
-				        doReload = qtrue;
-				}*/
+				}
 				else
 				{
 					doReload = qtrue;
@@ -3231,8 +3171,8 @@ void PM_CoolWeapons(void)
 			}
 		}
 
-//      if(pm->ps->weapHeat[pm->ps->weapon])
-//          Com_Printf("pm heat: %d, %d\n", pm->ps->weapHeat[pm->ps->weapon], pm->ps->curWeapHeat);
+		//if(pm->ps->weapHeat[pm->ps->weapon])
+		//  Com_Printf("pm heat: %d, %d\n", pm->ps->weapHeat[pm->ps->weapon], pm->ps->curWeapHeat);
 	}
 }
 
@@ -3248,7 +3188,6 @@ PM_AdjustAimSpreadScale
 
 void PM_AdjustAimSpreadScale(void)
 {
-//  int     increase, decrease, i;
 	int   i;
 	float increase, decrease;       // was losing lots of precision on slower weapons (scoped)
 	float viewchange, cmdTime, wpnScale;
@@ -3318,7 +3257,6 @@ void PM_AdjustAimSpreadScale(void)
 
 	if (wpnScale)
 	{
-
 		// crouched players recover faster (mostly useful for snipers)
 		if (pm->ps->eFlags & EF_CROUCHING || pm->ps->eFlags & EF_PRONE)
 		{
@@ -3394,6 +3332,254 @@ Generates weapon events and modifes the weapon counter
 ==============
 */
 
+// special mounted mg42 handling
+static qboolean PM_MountedFire(void)
+{
+	switch (pm->ps->persistant[PERS_HWEAPON_USE])
+	{
+	case 1:
+		if (pm->ps->weapHeat[WP_DUMMY_MG42])
+		{
+			pm->ps->weapHeat[WP_DUMMY_MG42] -= (300.f * pml.frametime);
+
+			if (pm->ps->weapHeat[WP_DUMMY_MG42] < 0)
+			{
+				pm->ps->weapHeat[WP_DUMMY_MG42] = 0;
+			}
+
+			// floor() to prevent 8-bit wrap
+			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
+		}
+
+		if (pm->ps->weaponTime > 0)
+		{
+			pm->ps->weaponTime -= pml.msec;
+			if (pm->ps->weaponTime <= 0)
+			{
+				if (!(pm->cmd.buttons & BUTTON_ATTACK))
+				{
+					pm->ps->weaponTime = 0;
+					return qtrue;
+				}
+			}
+			else
+			{
+				return qtrue;
+			}
+		}
+
+		if (pm->cmd.buttons & BUTTON_ATTACK)
+		{
+			pm->ps->weapHeat[WP_DUMMY_MG42] += MG42_RATE_OF_FIRE_MP;
+			PM_AddEvent(EV_FIRE_WEAPON_MG42);
+			pm->ps->weaponTime += MG42_RATE_OF_FIRE_MP;
+
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
+			pm->ps->viewlocked = 2;         // this enable screen jitter when firing
+
+			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= MAX_MG42_HEAT)
+			{
+				pm->ps->weapHeat[WP_DUMMY_MG42] = MAX_MG42_HEAT;    // cap heat to max
+				PM_AddEvent(EV_WEAP_OVERHEAT);
+				pm->ps->weaponTime = 2000;          // force "heat recovery minimum" to 2 sec right now
+			}
+		}
+		return qtrue;
+	case 2:
+		if (pm->ps->weaponTime > 0)
+		{
+			pm->ps->weaponTime -= pml.msec;
+			if (pm->ps->weaponTime <= 0)
+			{
+				if (!(pm->cmd.buttons & BUTTON_ATTACK))
+				{
+					pm->ps->weaponTime = 0;
+					return qtrue;
+				}
+			}
+			else
+			{
+				return qtrue;
+			}
+		}
+
+		if (pm->cmd.buttons & BUTTON_ATTACK)
+		{
+			PM_AddEvent(EV_FIRE_WEAPON_AAGUN);
+			pm->ps->weaponTime += AAGUN_RATE_OF_FIRE;
+
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
+			//pm->ps->viewlocked = 2;     // this enable screen jitter when firing
+		}
+		return qtrue;
+	}
+
+	if (pm->ps->eFlags & EF_MOUNTEDTANK)
+	{
+		if (pm->ps->weapHeat[WP_DUMMY_MG42])
+		{
+			pm->ps->weapHeat[WP_DUMMY_MG42] -= (300.f * pml.frametime);
+
+			if (pm->ps->weapHeat[WP_DUMMY_MG42] < 0)
+			{
+				pm->ps->weapHeat[WP_DUMMY_MG42] = 0;
+			}
+
+			// floor() to prevent 8-bit wrap
+			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
+		}
+
+		if (pm->ps->weaponTime > 0)
+		{
+			pm->ps->weaponTime -= pml.msec;
+			if (pm->ps->weaponTime <= 0)
+			{
+				if (!(pm->cmd.buttons & BUTTON_ATTACK))
+				{
+					pm->ps->weaponTime = 0;
+					return qtrue;
+				}
+			}
+			else
+			{
+				return qtrue;
+			}
+		}
+
+		if (pm->cmd.buttons & BUTTON_ATTACK)
+		{
+			pm->ps->weapHeat[WP_DUMMY_MG42] += MG42_RATE_OF_FIRE_MP;
+			PM_AddEvent(EV_FIRE_WEAPON_MOUNTEDMG42);
+			pm->ps->weaponTime += MG42_RATE_OF_FIRE_MP;
+
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
+			//pm->ps->viewlocked = 2;       // this enable screen jitter when firing
+
+			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= MAX_MG42_HEAT)
+			{
+				pm->ps->weaponTime = MAX_MG42_HEAT; // cap heat to max
+				PM_AddEvent(EV_WEAP_OVERHEAT);
+				pm->ps->weaponTime = 2000;      // force "heat recovery minimum" to 2 sec right now
+			}
+
+		}
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+static qboolean PM_CheckGrenade()
+{
+	if (pm->ps->weapon != WP_GRENADE_LAUNCHER &&
+	    pm->ps->weapon != WP_GRENADE_PINEAPPLE &&
+	    pm->ps->weapon != WP_DYNAMITE &&
+	    pm->ps->weapon != WP_SMOKE_BOMB)
+	{
+		return qfalse;
+	}
+
+	if (pm->ps->grenadeTimeLeft > 0)
+	{
+		qboolean forcethrow = qfalse;
+
+		if (pm->ps->weapon == WP_DYNAMITE)
+		{
+			pm->ps->grenadeTimeLeft += pml.msec;
+
+			// in multiplayer, dynamite becomes strategic, so start timer @ 30 seconds
+			if (pm->ps->grenadeTimeLeft < 5000)
+			{
+				pm->ps->grenadeTimeLeft = 5000;
+			}
+		}
+		else
+		{
+			pm->ps->grenadeTimeLeft -= pml.msec;
+
+			if (pm->ps->grenadeTimeLeft <= 100)         // give two frames advance notice so there's time to launch and detonate
+			{
+				forcethrow = qtrue;
+
+				pm->ps->grenadeTimeLeft = 100;
+			}
+		}
+
+		if (!(pm->cmd.buttons & BUTTON_ATTACK) || forcethrow || pm->ps->eFlags & EF_PRONE_MOVING)
+		{
+			if (pm->ps->weaponDelay == GetAmmoTableData(pm->ps->weapon)->fireDelayTime || forcethrow)
+			{
+				// released fire button.  Fire!!!
+				if (pm->ps->eFlags & EF_PRONE)
+				{
+					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qtrue);
+				}
+				else
+				{
+					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
+				}
+			}
+		}
+		else
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+static void PM_HandleRecoil(void)
+{
+	if (pm->pmext->weapRecoilTime)
+	{
+		vec3_t muzzlebounce;
+		int    i;
+		int    cmdAngle;
+		int    deltaTime = pm->cmd.serverTime - pm->pmext->weapRecoilTime;
+
+		VectorCopy(pm->ps->viewangles, muzzlebounce);
+
+		if (deltaTime > pm->pmext->weapRecoilDuration)
+		{
+			deltaTime = pm->pmext->weapRecoilDuration;
+		}
+
+		for (i = pm->pmext->lastRecoilDeltaTime; i < deltaTime; i += 15)
+		{
+			if (pm->pmext->weapRecoilPitch > 0.f)
+			{
+				muzzlebounce[PITCH] -= 2 *pm->pmext->weapRecoilPitch *cos(2.5 *(i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[PITCH] -= 0.25 * random() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
+			}
+
+			if (pm->pmext->weapRecoilYaw > 0.f)
+			{
+				muzzlebounce[YAW] += 0.5 *pm->pmext->weapRecoilYaw *cos(1.0 - (i) *3 / pm->pmext->weapRecoilDuration);
+				muzzlebounce[YAW] += 0.5 * crandom() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
+			}
+		}
+
+		// set the delta angle
+		for (i = 0; i < 3; i++)
+		{
+			cmdAngle                = ANGLE2SHORT(muzzlebounce[i]);
+			pm->ps->delta_angles[i] = cmdAngle - pm->cmd.angles[i];
+		}
+		VectorCopy(muzzlebounce, pm->ps->viewangles);
+
+		if (deltaTime == pm->pmext->weapRecoilDuration)
+		{
+			pm->pmext->weapRecoilTime      = 0;
+			pm->pmext->lastRecoilDeltaTime = 0;
+		}
+		else
+		{
+			pm->pmext->lastRecoilDeltaTime = deltaTime;
+		}
+	}
+}
+
 //#define DO_WEAPON_DBG 1
 
 static void PM_Weapon(void)
@@ -3425,149 +3611,19 @@ static void PM_Weapon(void)
 	{
 		if (!(pm->ps->pm_flags & PMF_LIMBO))
 		{
+			// weapon cool down
 			PM_CoolWeapons();
 		}
 
 		return;
 	}
 
-	//if( pm->ps->eFlags & EF_PRONE_MOVING )
-	//  return;
+	// weapon cool down
+	PM_CoolWeapons();
 
-	// special mounted mg42 handling
-	switch (pm->ps->persistant[PERS_HWEAPON_USE])
+	// mounted mg42 handling
+	if (PM_MountedFire())
 	{
-	case 1:
-		if (pm->ps->weapHeat[WP_DUMMY_MG42])
-		{
-			pm->ps->weapHeat[WP_DUMMY_MG42] -= (300.f * pml.frametime);
-
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] < 0)
-			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = 0;
-			}
-
-			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
-		}
-
-		if (pm->ps->weaponTime > 0)
-		{
-			pm->ps->weaponTime -= pml.msec;
-			if (pm->ps->weaponTime <= 0)
-			{
-				if (!(pm->cmd.buttons & BUTTON_ATTACK))
-				{
-					pm->ps->weaponTime = 0;
-					return;
-				}
-			}
-			else
-			{
-				return;
-			}
-		}
-
-		if (pm->cmd.buttons & BUTTON_ATTACK)
-		{
-			pm->ps->weapHeat[WP_DUMMY_MG42] += MG42_RATE_OF_FIRE_MP;
-
-			PM_AddEvent(EV_FIRE_WEAPON_MG42);
-
-			pm->ps->weaponTime += MG42_RATE_OF_FIRE_MP;
-
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-			pm->ps->viewlocked = 2;         // this enable screen jitter when firing
-
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= MAX_MG42_HEAT)
-			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = MAX_MG42_HEAT;    // cap heat to max
-				PM_AddEvent(EV_WEAP_OVERHEAT);
-				pm->ps->weaponTime = 2000;          // force "heat recovery minimum" to 2 sec right now
-			}
-		}
-		return;
-	case 2:
-		if (pm->ps->weaponTime > 0)
-		{
-			pm->ps->weaponTime -= pml.msec;
-			if (pm->ps->weaponTime <= 0)
-			{
-				if (!(pm->cmd.buttons & BUTTON_ATTACK))
-				{
-					pm->ps->weaponTime = 0;
-					return;
-				}
-			}
-			else
-			{
-				return;
-			}
-		}
-
-		if (pm->cmd.buttons & BUTTON_ATTACK)
-		{
-			PM_AddEvent(EV_FIRE_WEAPON_AAGUN);
-
-			pm->ps->weaponTime += AAGUN_RATE_OF_FIRE;
-
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-			//pm->ps->viewlocked = 2;     // this enable screen jitter when firing
-		}
-		return;
-	}
-
-	if (pm->ps->eFlags & EF_MOUNTEDTANK)
-	{
-		if (pm->ps->weapHeat[WP_DUMMY_MG42])
-		{
-			pm->ps->weapHeat[WP_DUMMY_MG42] -= (300.f * pml.frametime);
-
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] < 0)
-			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = 0;
-			}
-
-			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
-		}
-
-		if (pm->ps->weaponTime > 0)
-		{
-			pm->ps->weaponTime -= pml.msec;
-			if (pm->ps->weaponTime <= 0)
-			{
-				if (!(pm->cmd.buttons & BUTTON_ATTACK))
-				{
-					pm->ps->weaponTime = 0;
-					return;
-				}
-			}
-			else
-			{
-				return;
-			}
-		}
-
-		if (pm->cmd.buttons & BUTTON_ATTACK)
-		{
-			pm->ps->weapHeat[WP_DUMMY_MG42] += MG42_RATE_OF_FIRE_MP;
-
-			PM_AddEvent(EV_FIRE_WEAPON_MOUNTEDMG42);
-
-			pm->ps->weaponTime += MG42_RATE_OF_FIRE_MP;
-
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-			//pm->ps->viewlocked = 2;       // this enable screen jitter when firing
-
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= MAX_MG42_HEAT)
-			{
-				pm->ps->weaponTime = MAX_MG42_HEAT; // cap heat to max
-				PM_AddEvent(EV_WEAP_OVERHEAT);
-				pm->ps->weaponTime = 2000;      // force "heat recovery minimum" to 2 sec right now
-			}
-
-		}
 		return;
 	}
 
@@ -3627,124 +3683,15 @@ static void PM_Weapon(void)
 	}
 #endif
 
-	// weapon cool down
-	PM_CoolWeapons();
-
 	// check for weapon recoil
 	// do the recoil before setting the values, that way it will be shown next frame and not this
-	if (pm->pmext->weapRecoilTime)
-	{
-		vec3_t muzzlebounce;
-		int    i, deltaTime;
-
-		deltaTime = pm->cmd.serverTime - pm->pmext->weapRecoilTime;
-		VectorCopy(pm->ps->viewangles, muzzlebounce);
-
-		if (deltaTime > pm->pmext->weapRecoilDuration)
-		{
-			deltaTime = pm->pmext->weapRecoilDuration;
-		}
-
-		for (i = pm->pmext->lastRecoilDeltaTime; i < deltaTime; i += 15)
-		{
-			if (pm->pmext->weapRecoilPitch > 0.f)
-			{
-				muzzlebounce[PITCH] -= 2 *pm->pmext->weapRecoilPitch *cos(2.5 *(i) / pm->pmext->weapRecoilDuration);
-				muzzlebounce[PITCH] -= 0.25 * random() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
-			}
-
-			if (pm->pmext->weapRecoilYaw > 0.f)
-			{
-				muzzlebounce[YAW] += 0.5 *pm->pmext->weapRecoilYaw *cos(1.0 - (i) *3 / pm->pmext->weapRecoilDuration);
-				muzzlebounce[YAW] += 0.5 * crandom() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
-			}
-		}
-
-		// set the delta angle
-		for (i = 0; i < 3; i++)
-		{
-			int cmdAngle;
-
-			cmdAngle                = ANGLE2SHORT(muzzlebounce[i]);
-			pm->ps->delta_angles[i] = cmdAngle - pm->cmd.angles[i];
-		}
-		VectorCopy(muzzlebounce, pm->ps->viewangles);
-
-		if (deltaTime == pm->pmext->weapRecoilDuration)
-		{
-			pm->pmext->weapRecoilTime      = 0;
-			pm->pmext->lastRecoilDeltaTime = 0;
-		}
-		else
-		{
-			pm->pmext->lastRecoilDeltaTime = deltaTime;
-		}
-	}
+	PM_HandleRecoil();
 
 	delayedFire = qfalse;
 
-	if (pm->ps->weapon == WP_GRENADE_LAUNCHER || pm->ps->weapon == WP_GRENADE_PINEAPPLE || pm->ps->weapon == WP_DYNAMITE || pm->ps->weapon == WP_SMOKE_BOMB)
+	if (PM_CheckGrenade())
 	{
-		if (pm->ps->grenadeTimeLeft > 0)
-		{
-			qboolean forcethrow = qfalse;
-
-			if (pm->ps->weapon == WP_DYNAMITE)
-			{
-				pm->ps->grenadeTimeLeft += pml.msec;
-
-				// in multiplayer, dynamite becomes strategic, so start timer @ 30 seconds
-				if (pm->ps->grenadeTimeLeft < 5000)
-				{
-					pm->ps->grenadeTimeLeft = 5000;
-				}
-			}
-			else
-			{
-				pm->ps->grenadeTimeLeft -= pml.msec;
-
-				if (pm->ps->grenadeTimeLeft <= 100)     // give two frames advance notice so there's time to launch and detonate
-				{
-					forcethrow = qtrue;
-
-					pm->ps->grenadeTimeLeft = 100;
-				}
-			}
-
-			if (!(pm->cmd.buttons & BUTTON_ATTACK) || forcethrow || pm->ps->eFlags & EF_PRONE_MOVING)
-			{
-				if (pm->ps->weaponDelay == GetAmmoTableData(pm->ps->weapon)->fireDelayTime || forcethrow)
-				{
-					// released fire button.  Fire!!!
-					if (pm->ps->eFlags & EF_PRONE)
-					{
-						if (akimboFire)
-						{
-							BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON2PRONE, qfalse, qtrue);
-						}
-						else
-						{
-							BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qtrue);
-						}
-					}
-					else
-					{
-						if (akimboFire)
-						{
-							BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON2, qfalse, qtrue);
-						}
-						else
-						{
-							BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-						}
-					}
-				}
-			}
-			else
-			{
-				return;
-			}
-		}
+		return;
 	}
 
 	if (pm->ps->weaponDelay > 0)
@@ -3755,14 +3702,6 @@ static void PM_Weapon(void)
 		{
 			pm->ps->weaponDelay = 0;
 			delayedFire         = qtrue; // weapon delay has expired.  Fire this frame
-
-			// double check the player is still holding the fire button down for these weapons
-			// so you don't get a delayed "non-fire" (fire hit and released, then shot fires)
-			switch (pm->ps->weapon)
-			{
-			default:
-				break;
-			}
 		}
 	}
 
@@ -4655,7 +4594,6 @@ static void PM_Weapon(void)
 		}
 
 		// colt and luger are supposed to be balanced
-		//aimSpreadScaleAdd = 35;
 		aimSpreadScaleAdd = 20;
 		break;
 
@@ -4709,7 +4647,7 @@ static void PM_Weapon(void)
 		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 		break;
 
-	// JPW: engineers disarm bomb "on the fly" (high sample rate) but medics & LTs throw out health pack/smoke grenades slow
+	// engineers disarm bomb "on the fly" (high sample rate) but medics & LTs throw out health pack/smoke grenades slow
 	case WP_PLIERS:
 		addTime = 50;
 		break;
@@ -4802,14 +4740,14 @@ static void PM_Weapon(void)
 		{
 			pm->ps->weapHeat[pm->ps->weapon] = GetAmmoTableData(pm->ps->weapon)->maxHeat;     // cap heat to max
 			PM_AddEvent(EV_WEAP_OVERHEAT);
-//          PM_StartWeaponAnim(WEAP_IDLE1); // removed.  client handles anim in overheat event
+			//PM_StartWeaponAnim(WEAP_IDLE1); // removed.  client handles anim in overheat event
 			addTime = 2000;     // force "heat recovery minimum" to 2 sec right now
 		}
 	}
 
 	// add the recoil amount to the aimSpreadScale
-//  pm->ps->aimSpreadScale += 3.0*aimSpreadScaleAdd;
-//  if (pm->ps->aimSpreadScale > 255) pm->ps->aimSpreadScale = 255;
+	//pm->ps->aimSpreadScale += 3.0*aimSpreadScaleAdd;
+	//if (pm->ps->aimSpreadScale > 255) pm->ps->aimSpreadScale = 255;
 	pm->ps->aimSpreadScaleFloat += 3.0 * aimSpreadScaleAdd;
 	if (pm->ps->aimSpreadScaleFloat > 255)
 	{
@@ -5448,13 +5386,15 @@ PM_CheckLadderMove
 qboolean ladderforward;
 vec3_t   laddervec;
 
+#define TRACE_LADDER_DIST   48.0
+
 void PM_CheckLadderMove(void)
 {
 	vec3_t  spot;
 	vec3_t  flatforward;
 	trace_t trace;
 	float   tracedist;
-#define TRACE_LADDER_DIST   48.0
+
 	qboolean wasOnLadder;
 
 	if (pm->ps->pm_time)
@@ -6001,38 +5941,6 @@ void PmoveSingle(pmove_t *pmove)
 		pm->cmd.forwardmove = 0;
 		pm->cmd.rightmove   = 0;
 		pm->cmd.upmove      = 0;
-
-#if 0
-		VectorClear(pm->ps->velocity);
-
-		// set watertype, and waterlevel
-		PM_SetWaterLevel();
-		pml.previous_waterlevel = pmove->waterlevel;
-
-		// set mins, maxs, and viewheight
-		PM_CheckDuck();
-
-		// set groundentity
-		PM_GroundTrace();
-
-		// handle movement (gravity)
-		{
-			vec3_t endVelocity;
-			VectorCopy(pm->ps->velocity, endVelocity);
-			endVelocity[2]     -= pm->ps->gravity * pml.frametime;
-			pm->ps->velocity[2] = (pm->ps->velocity[2] + endVelocity[2]) * 0.5;
-			if (pml.groundPlane)
-			{
-				PM_ClipVelocity(pm->ps->velocity, pml.groundTrace.plane.normal, pm->ps->velocity, OVERCLIP);
-			}
-		}
-
-		PM_Weapon();
-
-		BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLE, qtrue);
-
-		return;
-#endif
 	}
 
 	// set watertype, and waterlevel
@@ -6158,7 +6066,6 @@ void PmoveSingle(pmove_t *pmove)
 
 	// snap some parts of playerstate to save network bandwidth
 	trap_SnapVector(pm->ps->velocity);
-//  SnapVector( pm->ps->velocity );
 }
 
 /*

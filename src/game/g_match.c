@@ -437,10 +437,12 @@ unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD)
 	unsigned int i;
 
 	for (i = 0; i < MOD_NUM_MODS; i++)
+	{
 		if (iWeaponMOD == aWeapMOD[i].iWeapon)
 		{
 			return(aWeapMOD[i].iWS);
 		}
+	}
 	return(WS_MAX);
 }
 

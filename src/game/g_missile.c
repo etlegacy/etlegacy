@@ -45,7 +45,6 @@ void G_ExplodeMissile(gentity_t *ent);
 /*
 ================
 G_BounceMissile
-
 ================
 */
 void G_BounceMissile(gentity_t *ent, trace_t *trace)
@@ -327,7 +326,7 @@ void M_think(gentity_t *ent)
 	}
 	else
 	{
-		// tent->s.origin[2]+=32;
+		//tent->s.origin[2]+=32;
 		// Note to self Maxx said to lower the spawn loc for the smoke 16 units
 		tent->s.origin[2] += 16;
 	}
@@ -387,7 +386,6 @@ void G_ExplodeMissile(gentity_t *ent)
 
 		VectorCopy(ent->r.currentOrigin, origin);
 
-		//bani - #560
 		if (ent->s.weapon == WP_DYNAMITE)
 		{
 			origin[2] += 4;
@@ -395,7 +393,6 @@ void G_ExplodeMissile(gentity_t *ent)
 
 		trap_Trace(&tr, origin, vec3_origin, vec3_origin, origin, ENTITYNUM_NONE, MASK_SHOT);
 
-		//bani - #512
 		if ((ent->s.weapon == WP_DYNAMITE && (ent->etpro_misc_1 & 1)) || ent->s.weapon == WP_SATCHEL)
 		{
 			etpro_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath, qtrue);
@@ -643,15 +640,15 @@ void G_RunMissile(gentity_t *ent)
 				// are we in worldspace again - or did we hit a ceiling from the outside of the world
 				if (skyHeight == 65536)
 				{
-					//          if( BG_GetSkyGroundHeightAtPoint( origin ) >= origin[2] ) {
-					//              G_FreeEntity( ent );
-					//              return;
-					//          } else {
+					//if( BG_GetSkyGroundHeightAtPoint( origin ) >= origin[2] ) {
+					//  G_FreeEntity( ent );
+					//  return;
+					//} else {
 					G_RunThink(ent);
 					VectorCopy(origin, ent->r.currentOrigin);
-					//              trap_LinkEntity( ent );
+					//trap_LinkEntity( ent );
 					return;     // keep flying
-					//          }
+					//}
 				}
 
 				if (skyHeight <= origin[2])
@@ -915,7 +912,7 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 	VectorCopy(org, endPos);
 	// set the entity data back
 	*ent = backupEnt;
-	//
+
 	if (allowBounce && (ent->s.eFlags & (EF_BOUNCE | EF_BOUNCE_HALF)))
 	{
 		return ent->nextthink;
@@ -1098,9 +1095,8 @@ void G_RunFlamechunk(gentity_t *ent)
 	float     speed;
 	gentity_t *ignoreent = NULL;
 
-	//      vel was only being set if (level.time - ent->timestamp > 50
-	//      However, below, it was being used when we hit something and it was
-	//      uninitialized
+	// vel was only being set if (level.time - ent->timestamp > 50
+	// However, below, it was being used when we hit something and it was uninitialized
 	VectorCopy(ent->s.pos.trDelta, vel);
 	speed = VectorNormalize(vel);
 
@@ -1171,6 +1167,7 @@ void G_RunFlamechunk(gentity_t *ent)
 		float     size = ent->speed / 2;
 		vec3_t    b1, b2;
 		vec3_t    temp;
+
 		VectorSet(temp, -size, -size, -size);
 		VectorCopy(ent->r.currentOrigin, b1);
 		VectorCopy(ent->r.currentOrigin, b2);
@@ -1329,10 +1326,9 @@ changed to just set the parent to NULL
 */
 void G_FadeItems(gentity_t *ent, int modType)
 {
-	gentity_t *e;
+	gentity_t *e = &g_entities[MAX_CLIENTS];
 	int       i;
 
-	e = &g_entities[MAX_CLIENTS];
 	for (i = MAX_CLIENTS ; i < level.num_entities ; i++, e++)
 	{
 		if (!e->inuse)
@@ -1364,11 +1360,10 @@ void G_FadeItems(gentity_t *ent, int modType)
 
 int G_CountTeamLandmines(team_t team)
 {
-	gentity_t *e;
+	gentity_t *e = &g_entities[MAX_CLIENTS];
 	int       i;
 	int       cnt = 0;
 
-	e = &g_entities[MAX_CLIENTS];
 	for (i = MAX_CLIENTS ; i < level.num_entities ; i++, e++)
 	{
 		if (!e->inuse)
@@ -1397,13 +1392,12 @@ int G_CountTeamLandmines(team_t team)
 
 qboolean G_SweepForLandmines(vec3_t origin, float radius, int team)
 {
-	gentity_t *e;
+	gentity_t *e = &g_entities[MAX_CLIENTS];
 	int       i;
 	vec3_t    dist;
 
 	radius *= radius;
 
-	e = &g_entities[MAX_CLIENTS];
 	for (i = MAX_CLIENTS; i < level.num_entities; i++, e++)
 	{
 		if (!e->inuse)
@@ -1438,10 +1432,9 @@ qboolean G_SweepForLandmines(vec3_t origin, float radius, int team)
 
 gentity_t *G_FindSatchel(gentity_t *ent)
 {
-	gentity_t *e;
+	gentity_t *e = &g_entities[MAX_CLIENTS];
 	int       i;
 
-	e = &g_entities[MAX_CLIENTS];
 	for (i = MAX_CLIENTS ; i < level.num_entities ; i++, e++)
 	{
 		if (!e->inuse)
@@ -1488,12 +1481,11 @@ G_ExplodeSatchels
 */
 qboolean G_ExplodeSatchels(gentity_t *ent)
 {
-	gentity_t *e;
+	gentity_t *e = &g_entities[MAX_CLIENTS];
 	vec3_t    dist;
 	int       i;
 	qboolean  blown = qfalse;
 
-	e = &g_entities[MAX_CLIENTS];
 	for (i = MAX_CLIENTS ; i < level.num_entities; i++, e++)
 	{
 		if (!e->inuse)
@@ -1592,7 +1584,7 @@ G_LandmineThink
 ==========
 */
 
-//      Function to check if an entity will set off a landmine
+// Function to check if an entity will set off a landmine
 #define LANDMINE_TRIGGER_DIST 64.0f
 
 qboolean sEntWillTriggerMine(gentity_t *ent, gentity_t *mine)
@@ -1644,9 +1636,9 @@ void G_LandmineThink(gentity_t *self)
 			continue;
 		}
 
-		//% if( !g_friendlyFire.integer && G_LandmineTeam( self ) == ent->client->sess.sessionTeam ) {
-		//%     continue;
-		//% }
+		//if( !g_friendlyFire.integer && G_LandmineTeam( self ) == ent->client->sess.sessionTeam ) {
+		//   continue;
+		//}
 
 #ifdef FEATURE_OMNIBOT
 		if (!(g_OmniBotFlags.integer & OBF_TRIGGER_MINES) && ent->r.svFlags & SVF_BOT)
@@ -1759,7 +1751,7 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 		return qtrue;
 	}
 
-	//bani - fix for covops spotting
+	// fix for covops spotting
 	if (clEnt->client->sess.playerType == PC_COVERTOPS && (clEnt->client->ps.eFlags & EF_ZOOMING) && (clEnt->client->ps.stats[STAT_KEYS] & (1 << INV_BINOCS)))
 	{
 		return qtrue;
@@ -1780,10 +1772,8 @@ fire_grenade
 */
 gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWPID)
 {
-	gentity_t *bolt;
+	gentity_t *bolt     = G_Spawn();
 	qboolean  noExplode = qfalse;
-
-	bolt = G_Spawn();
 
 	// no self->client for shooter_grenade's
 	if (self->client && self->client->ps.grenadeTimeLeft)
@@ -1979,10 +1969,10 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	VectorCopy(start, bolt->s.pos.trBase);
 	VectorCopy(dir, bolt->s.pos.trDelta);
 
-	// ydnar: add velocity of player (:sigh: guess people don't like it)
-	//% VectorAdd( bolt->s.pos.trDelta, self->s.pos.trDelta, bolt->s.pos.trDelta );
+	// add velocity of player (:sigh: guess people don't like it)
+	//VectorAdd( bolt->s.pos.trDelta, self->s.pos.trDelta, bolt->s.pos.trDelta );
 
-	// ydnar: add velocity of ground entity
+	// add velocity of ground entity
 	if (self->s.groundEntityNum != ENTITYNUM_NONE && self->s.groundEntityNum != ENTITYNUM_WORLD)
 	{
 		VectorAdd(bolt->s.pos.trDelta, g_entities[self->s.groundEntityNum].instantVelocity, bolt->s.pos.trDelta);
@@ -2225,7 +2215,7 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.pos.trType = TR_GRAVITY;
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
 	VectorCopy(start, bolt->s.pos.trBase);
-	//  VectorScale( dir, 900, bolt->s.pos.trDelta );
+	//VectorScale( dir, 900, bolt->s.pos.trDelta );
 	VectorCopy(dir, bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
 	VectorCopy(start, bolt->r.currentOrigin);
