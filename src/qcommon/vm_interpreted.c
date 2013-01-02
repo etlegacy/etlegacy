@@ -34,7 +34,7 @@
 
 #include "vm_local.h"
 
-#ifdef DEBUG_VM // bk001204
+#ifdef DEBUG_VM
 static char *opnames[256] =
 {
 	"OP_UNDEF",
@@ -163,9 +163,7 @@ void VM_StackTrace(vm_t *vm, int programCounter, int programStack)
 		programCounter = *(int *)&vm->dataBase[programStack];
 	}
 	while (programCounter != -1 && ++count < 32);
-
 }
-
 
 /*
 ====================
@@ -181,7 +179,7 @@ void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 	int  *codeBase;
 
 	vm->codeBase = Hunk_Alloc(vm->codeLength * 4, h_high);            // we're now int aligned
-//	memcpy( vm->codeBase, (byte *)header + header->codeOffset, vm->codeLength );
+	//memcpy( vm->codeBase, (byte *)header + header->codeOffset, vm->codeLength );
 
 	// we don't need to translate the instructions, but we still need
 	// to find each instructions starting point for jumps
@@ -303,7 +301,6 @@ void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 		default:
 			break;
 		}
-
 	}
 }
 
@@ -393,7 +390,7 @@ int VM_CallInterpreted(vm_t *vm, int *args)
 
 	VM_Debug(0);
 
-//	vm_debugLevel=2;
+	//vm_debugLevel=2;
 	// main interpreter loop, will exit when a LEAVE instruction
 	// grabs the -1 program counter
 
@@ -402,7 +399,7 @@ int VM_CallInterpreted(vm_t *vm, int *args)
 	while (1)
 	{
 		int opcode, r0, r1;
-//		unsigned int	r2;
+		//unsigned int	r2;
 
 nextInstruction:
 		r0 = ((int *)opStack)[0];
@@ -507,7 +504,7 @@ nextInstruction2:
 			int i, count, srci, desti;
 
 			count = r2;
-			// MrE: copy range check
+			// copy range check
 			srci  = r0 & dataMask;
 			desti = r1 & dataMask;
 			count = ((srci + count) & dataMask) - srci;
@@ -611,8 +608,8 @@ nextInstruction2:
 				{
 					// this is to allow setting breakpoints here in the debugger
 					vm->breakCount++;
-//					vm_debugLevel = 2;
-//					VM_StackTrace( vm, programCounter, programStack );
+					//vm_debugLevel = 2;
+					//VM_StackTrace( vm, programCounter, programStack );
 				}
 				vm->callLevel++;
 			}

@@ -122,8 +122,6 @@ typedef enum
 	OP_CVFI
 } opcode_t;
 
-
-
 typedef intptr_t vmptr_t;
 
 typedef struct vmSymbol_s
@@ -148,7 +146,6 @@ struct vm_s
 
 	char name[MAX_QPATH];
 
-// fqpath member added 2/15/02 by T.Ray
 	char fqpath[MAX_QPATH + 1] ;
 
 	// for dynamic linked modules
@@ -177,7 +174,6 @@ struct vm_s
 	int breakFunction;              // increment breakCount on function entry to this
 	int breakCount;
 };
-
 
 extern vm_t *currentVM;
 extern int  vm_debugLevel;

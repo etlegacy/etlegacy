@@ -45,9 +45,7 @@
 
 /*
 ========================================================================
-
 QVM files
-
 ========================================================================
 */
 
@@ -67,12 +65,9 @@ typedef struct
 	int bssLength;              // zero filled memory appended to datalength
 } vmHeader_t;
 
-
 /*
 ========================================================================
-
 .MD3 triangle model file format
-
 ========================================================================
 */
 
@@ -107,18 +102,18 @@ typedef struct md3Tag_s
 } md3Tag_t;
 
 /*
-** md3Surface_t
-**
-** CHUNK            SIZE
-** header           sizeof( md3Surface_t )
-** shaders          sizeof( md3Shader_t ) * numShaders
-** triangles[0]     sizeof( md3Triangle_t ) * numTriangles
-** st               sizeof( md3St_t ) * numVerts
-** XyzNormals       sizeof( md3XyzNormal_t ) * numVerts * numFrames
+ md3Surface_t
+
+ CHUNK            SIZE
+ header           sizeof( md3Surface_t )
+ shaders          sizeof( md3Shader_t ) * numShaders
+ triangles[0]     sizeof( md3Triangle_t ) * numTriangles
+ st               sizeof( md3St_t ) * numVerts
+ XyzNormals       sizeof( md3XyzNormal_t ) * numVerts * numFrames
 */
 typedef struct
 {
-	int ident;                  //
+	int ident;
 
 	char name[MAX_QPATH];       // polyset name
 
@@ -141,7 +136,7 @@ typedef struct
 typedef struct
 {
 	char name[MAX_QPATH];
-	int shaderIndex;                // for in-game use
+	int shaderIndex;            // for in-game use
 } md3Shader_t;
 
 typedef struct
@@ -165,7 +160,7 @@ typedef struct
 	int ident;
 	int version;
 
-	char name[MAX_QPATH];           // model name
+	char name[MAX_QPATH];       // model name
 
 	int flags;
 
@@ -175,18 +170,16 @@ typedef struct
 
 	int numSkins;
 
-	int ofsFrames;                  // offset for first frame
-	int ofsTags;                    // numFrames * numTags
-	int ofsSurfaces;                // first surface, others follow
+	int ofsFrames;              // offset for first frame
+	int ofsTags;                // numFrames * numTags
+	int ofsSurfaces;            // first surface, others follow
 
-	int ofsEnd;                     // end of file
+	int ofsEnd;                 // end of file
 } md3Header_t;
 
 /*
 ========================================================================
-
 .tag tag file format
-
 ========================================================================
 */
 
@@ -210,12 +203,10 @@ typedef struct
 	int count;
 } tagHeaderExt_t;
 
-// Ridah, mesh compression
+// mesh compression
 /*
 ==============================================================================
-
 MDC file format
-
 ==============================================================================
 */
 
@@ -246,21 +237,21 @@ typedef struct
 } mdcTag_t;
 
 /*
-** mdcSurface_t
-**
-** CHUNK            SIZE
-** header           sizeof( md3Surface_t )
-** shaders          sizeof( md3Shader_t ) * numShaders
-** triangles[0]     sizeof( md3Triangle_t ) * numTriangles
-** st               sizeof( md3St_t ) * numVerts
-** XyzNormals       sizeof( md3XyzNormal_t ) * numVerts * numBaseFrames
-** XyzCompressed    sizeof( mdcXyzCompressed ) * numVerts * numCompFrames
-** frameBaseFrames  sizeof( short ) * numFrames
-** frameCompFrames  sizeof( short ) * numFrames (-1 if frame is a baseFrame)
+ mdcSurface_t
+
+ CHUNK            SIZE
+ header           sizeof( md3Surface_t )
+ shaders          sizeof( md3Shader_t ) * numShaders
+ triangles[0]     sizeof( md3Triangle_t ) * numTriangles
+ st               sizeof( md3St_t ) * numVerts
+ XyzNormals       sizeof( md3XyzNormal_t ) * numVerts * numBaseFrames
+ XyzCompressed    sizeof( mdcXyzCompressed ) * numVerts * numCompFrames
+ frameBaseFrames  sizeof( short ) * numFrames
+ frameCompFrames  sizeof( short ) * numFrames (-1 if frame is a baseFrame)
 */
 typedef struct
 {
-	int ident;                  //
+	int ident;
 
 	char name[MAX_QPATH];       // polyset name
 
@@ -290,7 +281,7 @@ typedef struct
 	int ident;
 	int version;
 
-	char name[MAX_QPATH];           // model name
+	char name[MAX_QPATH];       // model name
 
 	int flags;
 
@@ -300,20 +291,17 @@ typedef struct
 
 	int numSkins;
 
-	int ofsFrames;                  // offset for first frame, stores the bounds and localOrigin
-	int ofsTagNames;                // numTags
-	int ofsTags;                    // numFrames * numTags
-	int ofsSurfaces;                // first surface, others follow
+	int ofsFrames;              // offset for first frame, stores the bounds and localOrigin
+	int ofsTagNames;            // numTags
+	int ofsTags;                // numFrames * numTags
+	int ofsSurfaces;            // first surface, others follow
 
-	int ofsEnd;                     // end of file
+	int ofsEnd;                 // end of file
 } mdcHeader_t;
-// done.
 
 /*
 ==============================================================================
-
 MD4 file format
-
 ==============================================================================
 */
 
@@ -345,11 +333,11 @@ typedef struct
 {
 	int ident;
 
-	char name[MAX_QPATH];           // polyset name
+	char name[MAX_QPATH];       // polyset name
 	char shader[MAX_QPATH];
-	int shaderIndex;                // for in-game use
+	int shaderIndex;            // for in-game use
 
-	int ofsHeader;                  // this will be a negative number
+	int ofsHeader;              // this will be a negative number
 
 	int numVerts;
 	int ofsVerts;
@@ -365,7 +353,7 @@ typedef struct
 	int numBoneReferences;
 	int ofsBoneReferences;
 
-	int ofsEnd;                     // next surface follows
+	int ofsEnd;                 // next surface follows
 } md4Surface_t;
 
 typedef struct
@@ -408,12 +396,9 @@ typedef struct
 	int ofsEnd;                     // end of file
 } md4Header_t;
 
-
 /*
 ==============================================================================
-
 MDS file format (Wolfenstein Skeletal Format)
-
 ==============================================================================
 */
 
@@ -467,7 +452,7 @@ typedef struct
 	int numTriangles;
 	int ofsTriangles;
 
-	int ofsCollapseMap;           // numVerts * int
+	int ofsCollapseMap;             // numVerts * int
 
 	// Bone references are a set of ints representing all the bones
 	// present in any vertex weights for this surface.  This is
@@ -558,13 +543,11 @@ typedef struct
 
 /*
 ==============================================================================
-
 MDM file format (Wolfenstein Skeletal Mesh)
 
 version history:
     2 - initial version
     3 - removed all frame data, this format is pure mesh and bone references now
-
 ==============================================================================
 */
 
@@ -702,13 +685,11 @@ typedef struct
 
 /*
 ==============================================================================
-
 MDX file format (Wolfenstein Skeletal Data)
 
 version history:
     1 - initial version
     2 - moved parentOffset from the mesh to the skeletal data file
-
 ==============================================================================
 */
 
@@ -768,9 +749,7 @@ typedef struct
 
 /*
 ==============================================================================
-
   .BSP file format
-
 ==============================================================================
 */
 
@@ -824,7 +803,6 @@ typedef struct
 #define WORLD_SIZE          (MAX_WORLD_COORD - MIN_WORLD_COORD)
 
 //=============================================================================
-
 
 typedef struct
 {
@@ -949,7 +927,7 @@ typedef struct
 	int surfaceType;
 
 	int firstVert;
-	int numVerts;                   // ydnar: num verts + foliage origins (for cleaner lighting code in q3map)
+	int numVerts;                   // num verts + foliage origins (for cleaner lighting code in q3map)
 
 	int firstIndex;
 	int numIndexes;
@@ -961,15 +939,14 @@ typedef struct
 	vec3_t lightmapOrigin;
 	vec3_t lightmapVecs[3];         // for patches, [0] and [1] are lodbounds
 
-	int patchWidth;                 // ydnar: num foliage instances
-	int patchHeight;                // ydnar: num foliage mesh verts
+	int patchWidth;                 // num foliage instances
+	int patchHeight;                // num foliage mesh verts
 } dsurface_t;
 
-//----(SA) added so I didn't change the dsurface_t struct (and thereby the bsp format) for something that doesn't need to be stored in the bsp
+// added so the dsurface_t struct (and thereby the bsp format) isn't changed for something that doesn't need to be stored in the bsp
 typedef struct
 {
 	char *lighttarg;
 } drsurfaceInternal_t;
-//----(SA) end
 
 #endif

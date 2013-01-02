@@ -788,7 +788,7 @@ vec_t Distance(const vec3_t p1, const vec3_t p2);
 vec_t DistanceSquared(const vec3_t p1, const vec3_t p2);
 void CrossProduct(const vec3_t v1, const vec3_t v2, vec3_t cross);
 vec_t VectorNormalize(vec3_t v);         // returns vector length
-void VectorNormalizeFast(vec3_t v);       // does NOT return vector length, uses rsqrt approximation
+void VectorNormalizeFast(vec3_t v);      // does NOT return vector length, uses rsqrt approximation
 vec_t VectorNormalize2(const vec3_t v, vec3_t out);
 void VectorInverse(vec3_t v);
 void Vector4Scale(const vec4_t in, vec_t scale, vec4_t out); // Unused.
@@ -797,9 +797,9 @@ int Q_log2(int val); // Unused.
 
 float Q_acos(float c);
 
-int     Q_rand(int *seed);
-float   Q_random(int *seed);
-float   Q_crandom(int *seed);
+int Q_rand(int *seed);
+float Q_random(int *seed);
+float Q_crandom(int *seed);
 
 #define random()    ((rand() & 0x7fff) / ((float)0x7fff))
 #define crandom()   (2.0 * (random() - 0.5))
@@ -818,11 +818,11 @@ void AxisCopy(vec3_t in[3], vec3_t out[3]);
 void SetPlaneSignbits(struct cplane_s *out);
 int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *plane);
 
-float   AngleMod(float a);
-float   LerpAngle(float from, float to, float frac);
-void    LerpPosition(vec3_t start, vec3_t end, float frac, vec3_t out);
-float   AngleSubtract(float a1, float a2);
-void    AnglesSubtract(vec3_t v1, vec3_t v2, vec3_t v3);
+float AngleMod(float a);
+float LerpAngle(float from, float to, float frac);
+void LerpPosition(vec3_t start, vec3_t end, float frac, vec3_t out);
+float AngleSubtract(float a1, float a2);
+void AnglesSubtract(vec3_t v1, vec3_t v2, vec3_t v3);
 
 float AngleNormalize2Pi(float angle); // Unused.
 float AngleNormalize360(float angle);
@@ -864,22 +864,22 @@ int Q_isnan(float x);
 float Com_Clamp(float min, float max, float value);
 
 char *COM_SkipPath(char *pathname);
-void    COM_FixPath(char *pathname);
+void COM_FixPath(char *pathname);
 const char *COM_GetExtension(const char *name);
-void    COM_StripExtension(const char *in, char *out, int destsize);
-void    COM_StripFilename(char *in, char *out);
+void COM_StripExtension(const char *in, char *out, int destsize);
+void COM_StripFilename(char *in, char *out);
 
-void    COM_DefaultExtension(char *path, int maxSize, const char *extension);
+void COM_DefaultExtension(char *path, int maxSize, const char *extension);
 
-void    COM_BeginParseSession(const char *name);
-void    COM_RestoreParseSession(char **data_p);
-void    COM_SetCurrentParseLine(int line);
-int     COM_GetCurrentParseLine(void);
+void COM_BeginParseSession(const char *name);
+void COM_RestoreParseSession(char **data_p);
+void COM_SetCurrentParseLine(int line);
+int COM_GetCurrentParseLine(void);
 char *COM_Parse(char **data_p);
 char *COM_ParseExt(char **data_p, qboolean allowLineBreak);
-int     COM_Compress(char *data_p);
-void    COM_ParseError(char *format, ...) __attribute__ ((format(printf, 1, 2)));
-void    COM_ParseWarning(char *format, ...) __attribute__ ((format(printf, 1, 2))); // Unused
+int COM_Compress(char *data_p);
+void COM_ParseError(char *format, ...) __attribute__ ((format(printf, 1, 2)));
+void COM_ParseWarning(char *format, ...) __attribute__ ((format(printf, 1, 2))); // Unused
 
 qboolean COM_BitCheck(const int array[], int bitNum);
 void COM_BitSet(int array[], int bitNum);
@@ -909,7 +909,7 @@ typedef struct pc_token_s
 
 // data is an in/out parm, returns a parsed out token
 
-void    COM_MatchToken(char **buf_p, char *match);
+void COM_MatchToken(char **buf_p, char *match);
 
 void SkipBracedSection(char **program);
 void SkipBracedSection_Depth(char **program, int depth);    // start at given depth if already
@@ -953,9 +953,9 @@ int Q_isalphanumeric(int c);
 int Q_isforfilename(int c);
 
 // portable case insensitive compare
-int     Q_stricmp(const char *s1, const char *s2);
-int     Q_strncmp(const char *s1, const char *s2, int n);
-int     Q_stricmpn(const char *s1, const char *s2, int n);
+int Q_stricmp(const char *s1, const char *s2);
+int Q_strncmp(const char *s1, const char *s2, int n);
+int Q_stricmpn(const char *s1, const char *s2, int n);
 char *Q_strlwr(char *s1);
 char *Q_strupr(char *s1);
 char *Q_strrchr(const char *string, int c);
@@ -968,8 +968,8 @@ const char *Q_stristr(const char *s, const char *find);
 #endif
 
 // buffer size safe library replacements
-void    Q_strncpyz(char *dest, const char *src, int destsize);
-void    Q_strcat(char *dest, int size, const char *src);
+void Q_strncpyz(char *dest, const char *src, int destsize);
+void Q_strcat(char *dest, int size, const char *src);
 
 // strlen that discounts Quake color sequences
 int Q_PrintStrlen(const char *string);
@@ -1035,7 +1035,6 @@ void QDECL Com_Printf(const char *msg, ...) __attribute__ ((format(printf, 1, 2)
 
 /*
 ==========================================================
-
 CVARS (console variables)
 
 Many variables can be used for cheating purposes, so when
@@ -1139,7 +1138,7 @@ typedef struct
 	float fraction;         // time completed, 1.0 = didn't hit anything
 	vec3_t endpos;          // final position
 	cplane_t plane;         // surface normal at impact, transformed to world space
-	int surfaceFlags;           // surface hit
+	int surfaceFlags;       // surface hit
 	int contents;           // contents on other side of surface hit
 	int entityNum;          // entity the contacted sirface is a part of
 } trace_t;
@@ -1212,7 +1211,7 @@ typedef enum
 #define ENTITYNUM_WORLD     (MAX_GENTITIES - 2)
 #define ENTITYNUM_MAX_NORMAL    (MAX_GENTITIES - 2)
 
-#define MAX_MODELS          256     // these are sent over the net as 8 bits (Gordon: upped to 9 bits, erm actually it was already at 9 bits, wtf? NEVAR TRUST GAMECODE COMMENTS, comments are evil :E, lets hope it doesnt horribly break anything....)
+#define MAX_MODELS          256     // these are sent over the net as 8 bits (upped to 9 bits, erm actually it was already at 9 bits, wtf? NEVAR TRUST GAMECODE COMMENTS, comments are evil :E, lets hope it doesn't horribly break anything....)
 #define MAX_SOUNDS          256     // so they cannot be blindly increased
 #define MAX_CS_SKINS        64
 #define MAX_CSSTRINGS       32
@@ -1263,9 +1262,9 @@ typedef enum
 	MAX_AISTATES
 } aistateEnum_t;
 
-#define REF_FORCE_DLIGHT    (1 << 31)   // RF, passed in through overdraw parameter, force this dlight under all conditions
-#define REF_JUNIOR_DLIGHT   (1 << 30)   // (SA) this dlight does not light surfaces.  it only affects dynamic light grid
-#define REF_DIRECTED_DLIGHT (1 << 29)   // ydnar: global directional light, origin should be interpreted as a normal vector
+#define REF_FORCE_DLIGHT    (1 << 31)   // passed in through overdraw parameter, force this dlight under all conditions
+#define REF_JUNIOR_DLIGHT   (1 << 30)   // this dlight does not light surfaces.  it only affects dynamic light grid
+#define REF_DIRECTED_DLIGHT (1 << 29)   // global directional light, origin should be interpreted as a normal vector
 
 // bit field limits
 #define MAX_STATS               16
@@ -1567,7 +1566,7 @@ typedef enum
 	ET_FIRE_COLUMN_SMOKE,
 	ET_RAMJET,
 
-	ET_FLAMETHROWER_CHUNK,      // used in server side collision detection for flamethrower
+	ET_FLAMETHROWER_CHUNK,  // used in server side collision detection for flamethrower
 
 	ET_EXPLO_PART,
 
@@ -1581,8 +1580,8 @@ typedef enum
 	ET_CONSTRUCTIBLE_INDICATOR,
 	ET_CONSTRUCTIBLE,
 	ET_CONSTRUCTIBLE_MARKER,
-	ET_BOMB,                    // obsolete/unused (tripmines)
-	ET_WAYPOINT,                // obsolete/unused
+	ET_BOMB,                // obsolete/unused (tripmines)
+	ET_WAYPOINT,            // obsolete/unused
 	ET_BEAM_2,
 	ET_TANK_INDICATOR,
 	ET_TANK_INDICATOR_DEAD,
@@ -1620,8 +1619,8 @@ typedef enum
 
 typedef struct entityState_s
 {
-	int number;                     // entity index
-	entityType_t eType;             // entityType_t
+	int number;             // entity index
+	entityType_t eType;     // entityType_t
 	int eFlags;
 
 	trajectory_t pos;       // for calculating position
@@ -1639,7 +1638,7 @@ typedef struct entityState_s
 	int otherEntityNum;     // shotgun sources, etc
 	int otherEntityNum2;
 
-	int groundEntityNum;        // -1 = in air
+	int groundEntityNum;    // -1 = in air
 
 	int constantLight;      // r + (g<<8) + (b<<16) + (intensity<<24)
 	int dl_intensity;       // used for coronas
