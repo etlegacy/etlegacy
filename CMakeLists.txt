@@ -33,6 +33,8 @@ option(BUILD_MOD		"Build the mod libraries"							ON)
 option(BUILD_MOD_PK3	"Pack the mod libraries into etl_bin.pk3"			OFF)
 option(BUILD_PAK3_PK3	"Pack updated game scripts into pak3.pk3"			OFF)
 
+option(BUILD_WITH_CSTDIO_INCLUDED "Build will include cstdio - it's required on some non 64bit systems see issue #123 "	OFF)
+
 option(BUNDLED_SDL		"Use bundled SDL library instead of the system one."	OFF)
 option(BUNDLED_CURL		"Use bundled CURL library instead of the system one."	OFF)
 option(BUNDLED_JPEG		"Use bundled JPEG library instead of the system one."	OFF)
@@ -376,8 +378,9 @@ if(BUILD_MOD)
 			LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
 			add_definitions(-DFEATURE_OMNIBOT)
 
-			if(NOT ("${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "i686" OR "${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "i386" OR "${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "x86"))
-				message(STATUS "omni-bot BotLoadLibrary includes cstdio")
+			# FIXME: Darwin/WIN64 ?
+			if("${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "x86_64" OR BUILD_WITH_CSTDIO_INCLUDED)
+				message(STATUS "Omni-Bot BotLoadLibrary includes cstdio")
 				add_definitions(-DIS_64_BIT_BUILD_SYSTEM)
 			endif()
 		else()
