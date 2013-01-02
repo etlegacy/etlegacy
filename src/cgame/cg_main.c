@@ -382,7 +382,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_predictItems,          "cg_predictItems",          "1",     CVAR_ARCHIVE                 },
 	{ &cg_stats,                 "cg_stats",                 "0",     0                            },
 
-	{ &cg_enableBreath,          "cg_enableBreath",          "1",     CVAR_SERVERINFO              },
+	{ &cg_enableBreath,          "cg_enableBreath",          "1",     CVAR_ARCHIVE                 },
 	{ &cg_timescale,             "timescale",                "1",     0                            },
 
 	{ &pmove_fixed,              "pmove_fixed",              "0",     0                            },
