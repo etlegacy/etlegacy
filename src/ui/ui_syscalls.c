@@ -570,8 +570,6 @@ qboolean trap_GetLimboString(int index, char *buf)
 	return syscall(UI_CL_GETLIMBOSTRING, index, buf);
 }
 
-#define MAX_VA_STRING       32000
-
 char *trap_TranslateString(const char *string)
 {
 	static char staticbuf[2][MAX_VA_STRING];

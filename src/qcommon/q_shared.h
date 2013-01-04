@@ -375,6 +375,8 @@ typedef int clipHandle_t;
 
 #define MAX_BINARY_MESSAGE  32768   // max length of binary message
 
+#define MAX_VA_STRING       32000
+
 typedef enum
 {
 	MESSAGE_EMPTY = 0,

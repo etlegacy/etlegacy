@@ -4794,7 +4794,6 @@ qboolean CL_GetLimboString(int index, char *buf)
 
 // Localization code
 #define FILE_HASH_SIZE      1024
-#define MAX_VA_STRING       32000
 #define MAX_TRANS_STRING    4096
 
 typedef struct trans_s

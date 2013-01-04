@@ -1381,7 +1381,6 @@ char *QDECL va(char *format, ...)
 }
  */
 
-#define MAX_VA_STRING   32000
 /*
 ============
 va

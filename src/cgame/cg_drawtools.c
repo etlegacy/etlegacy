@@ -1494,8 +1494,6 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 	UI_DrawProportionalString2(x, y, str, color, sizeScale, cgs.media.charsetProp);
 }
 
-#define MAX_VA_STRING       32000
-
 char *CG_TranslateString(const char *string)
 {
 	static char staticbuf[2][MAX_VA_STRING];

@@ -104,7 +104,6 @@ model / sound configstring indexes
 /*
 ================
 G_FindConfigstringIndex
-
 ================
 */
 int G_FindConfigstringIndex(const char *name, int start, int max, qboolean create)
@@ -145,8 +144,9 @@ int G_FindConfigstringIndex(const char *name, int start, int max, qboolean creat
 	return i;
 }
 
-/*
- * Bugfix project: http://games.chruker.dk/enemy_territory/modding_project_bugfix.php?bug_id=087
+/**
+ * @brief Prevent player always mounting the last gun used, on multiple tank maps.
+ * Ported from the Bugfix project (#087)
  */
 void G_RemoveConfigstringIndex(const char *name, int start, int max)
 {
@@ -217,7 +217,6 @@ int G_StringIndex(const char *string)
 /*
 ================
 G_TeamCommand
-
 Broadcasts a command to only a specific team
 ================
 */
@@ -246,7 +245,6 @@ the matching string at fieldofs (use the FOFS() macro) in the structure.
 
 Searches beginning at the entity after from, or the beginning if NULL
 NULL will be returned if the end of the list is reached.
-
 =============
 */
 gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match)
@@ -435,7 +433,6 @@ Added to allow more checking on what uses what
 */
 void G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-
 	// check for allowteams
 	if (!G_AllowTeamsAllowed(ent, activator))
 	{
