@@ -4055,7 +4055,6 @@ void UI_RunMenuScript(char **args)
 
 			trap_Cvar_Set("ui_connecting", "1");
 			trap_Cvar_Set("cg_thirdPerson", "0");
-			trap_Cvar_Set("ui_singlePlayerActive", "0");
 			trap_Cvar_SetValue("dedicated", Com_Clamp(0, 2, ui_dedicated.integer));
 			trap_Cvar_SetValue("g_gametype", Com_Clamp(0, 8, ui_netGameType.integer));
 
@@ -4365,7 +4364,6 @@ void UI_RunMenuScript(char **args)
 				Menus_CloseAll();
 				trap_Cvar_Set("ui_connecting", "1");
 				trap_Cvar_Set("cg_thirdPerson", "0 ");
-				trap_Cvar_Set("ui_singlePlayerActive", "0");
 				trap_LAN_GetServerAddressString(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer], buff, 1024);
 				trap_Cmd_ExecuteText(EXEC_APPEND, va("connect %s\n", buff));
 			}
@@ -4375,12 +4373,10 @@ void UI_RunMenuScript(char **args)
 			Menus_CloseAll();
 			trap_Cvar_Set("ui_connecting", "1");
 			trap_Cvar_Set("cg_thirdPerson", "0");
-			trap_Cvar_Set("ui_singlePlayerActive", "0");
 			trap_Cmd_ExecuteText(EXEC_APPEND, va("connect %s\n", UI_Cvar_VariableString("ui_connectToIPAddress")));
 		}
 		else if (Q_stricmp(name, "FoundPlayerJoinServer") == 0)
 		{
-			trap_Cvar_Set("ui_singlePlayerActive", "0");
 			if (uiInfo.currentFoundPlayerServer >= 0 && uiInfo.currentFoundPlayerServer < uiInfo.numFoundPlayerServers)
 			{
 				trap_Cmd_ExecuteText(EXEC_APPEND, va("connect %s\n", uiInfo.foundPlayerServerAddresses[uiInfo.currentFoundPlayerServer]));
@@ -4388,7 +4384,6 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "Quit") == 0)
 		{
-			trap_Cvar_Set("ui_singlePlayerActive", "0");
 			trap_Cmd_ExecuteText(EXEC_NOW, "quit");
 		}
 		else if (Q_stricmp(name, "Controls") == 0)
@@ -4749,10 +4744,6 @@ void UI_RunMenuScript(char **args)
 			{
 				UI_Update(name2);
 			}
-		}
-		else if (Q_stricmp(name, "startSingleplayer") == 0)
-		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, "startSingleplayer\n");
 		}
 		else if (Q_stricmp(name, "showSpecScores") == 0)
 		{
