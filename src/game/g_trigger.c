@@ -194,7 +194,8 @@ void Touch_Multi(gentity_t *self, gentity_t *other, trace_t *trace)
 	multi_trigger(self, other);
 }
 
-/*QUAKED trigger_multiple (.5 .5 .5) ? AXIS_ONLY ALLIED_ONLY NOBOT BOTONLY SOLDIERONLY LTONLY MEDICONLY ENGINEERONLY COVERTOPSONLY
+/*
+QUAKED trigger_multiple (.5 .5 .5) ? AXIS_ONLY ALLIED_ONLY NOBOT BOTONLY SOLDIERONLY LTONLY MEDICONLY ENGINEERONLY COVERTOPSONLY
 "wait" : Seconds between triggerings, 0.5 default, -1 = one time only.
 "random"	wait variance, default is 0
 Variable sized repeatable trigger.  Must be targeted at one or more entities.
@@ -238,7 +239,8 @@ void trigger_always_think(gentity_t *ent)
 	G_FreeEntity(ent);
 }
 
-/*QUAKED trigger_always (.5 .5 .5) (-8 -8 -8) (8 8 8)
+/*
+QUAKED trigger_always (.5 .5 .5) (-8 -8 -8) (8 8 8)
 This trigger will always fire.  It is activated by the world.
 */
 void SP_trigger_always(gentity_t *ent)
@@ -302,7 +304,8 @@ void AimAtTarget(gentity_t *self)
 	self->s.origin2[2] = time * gravity;
 }
 
-/*QUAKED trigger_push (.5 .5 .5) ? TOGGLE REMOVEAFTERTOUCH PUSHPLAYERONLY
+/*
+QUAKED trigger_push (.5 .5 .5) ? TOGGLE REMOVEAFTERTOUCH PUSHPLAYERONLY
 Must point at a target_position, which will be the apex of the leap.
 This will be client side predicted, unlike target_push
 */
@@ -333,7 +336,8 @@ void Use_target_push(gentity_t *self, gentity_t *other, gentity_t *activator)
 	}
 }
 
-/*QUAKED target_push (.5 .5 .5) (-8 -8 -8) (8 8 8) bouncepad
+/*
+QUAKED target_push (.5 .5 .5) (-8 -8 -8) (8 8 8) bouncepad
 Pushes the activator in the direction.of angle, or towards a target apex.
 "speed"		defaults to 1000
 if "bouncepad", play bounce noise instead of windfly
@@ -353,7 +357,7 @@ void SP_target_push(gentity_t *self)
 	}
 	else
 	{
-		self->noise_index = G_SoundIndex("sound/misc/windfly.wav");
+		self->noise_index = G_SoundIndex("sound/weapons/impact/flesh1.wav"); // was sound/misc/windfly.wav and not in path
 	}
 	if (self->target)
 	{
@@ -394,7 +398,8 @@ void trigger_teleporter_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	TeleportPlayer(other, dest->s.origin, dest->s.angles);
 }
 
-/*QUAKED trigger_teleport (.5 .5 .5) ?
+/*
+QUAKED trigger_teleport (.5 .5 .5) ?
 Allows client side prediction of teleportation events.
 Must point at a target_position, which will be the teleport destination.
 */
@@ -420,7 +425,8 @@ trigger_hurt
 ==============================================================================
 */
 
-/*QUAKED trigger_hurt (.5 .5 .5) ? START_OFF - SILENT NO_PROTECTION SLOW ONCE
+/*
+QUAKED trigger_hurt (.5 .5 .5) ? START_OFF - SILENT NO_PROTECTION SLOW ONCE
 Any entity that touches this will be hurt.
 It does dmg points of damage each server frame
 Targeting the trigger will toggle its on / off state.
@@ -550,7 +556,8 @@ trigger_heal
 ==============================================================================
 */
 
-/*QUAKED trigger_heal (.5 .5 .5) ?
+/*
+QUAKED trigger_heal (.5 .5 .5) ?
 Any entity that touches this will be healed at a specified rate up to a specified
 maximum.
 
@@ -667,7 +674,8 @@ SP_misc_cabinet_health
 ==============
 */
 
-/*QUAKED misc_cabinet_health (.5 .5 .5) (-20 -20 0) (20 20 60)
+/*
+QUAKED misc_cabinet_health (.5 .5 .5) (-20 -20 0) (20 20 60)
 */
 void SP_misc_cabinet_health(gentity_t *self)
 {
@@ -735,7 +743,8 @@ trigger_ammo
 ==============================================================================
 */
 
-/*QUAKED trigger_ammo (.5 .5 .5) ?
+/*
+QUAKED trigger_ammo (.5 .5 .5) ?
 Any entity that touches this will get additional ammo a specified rate up to a
 specified maximum.
 
@@ -860,7 +869,8 @@ void trigger_ammo_setup(gentity_t *self)
 SP_misc_cabinet_supply
 ==============
 */
-/*QUAKED misc_cabinet_supply (.5 .5 .5) (-20 -20 0) (20 20 60)
+/*
+QUAKED misc_cabinet_supply (.5 .5 .5) (-20 -20 0) (20 20 60)
 */
 void SP_misc_cabinet_supply(gentity_t *self)
 {
@@ -929,7 +939,8 @@ timer
 ==============================================================================
 */
 
-/*QUAKED func_timer (0.3 0.1 0.6) (-8 -8 -8) (8 8 8) START_ON
+/*
+QUAKED func_timer (0.3 0.1 0.6) (-8 -8 -8) (8 8 8) START_ON
 This should be renamed trigger_timer...
 Repeatedly fires its targets.
 Can be turned on or off by using.
@@ -987,7 +998,8 @@ void SP_func_timer(gentity_t *self)
 
 // Wolf triggers
 
-/*QUAKED trigger_once (.5 .5 .5) ? AI_Touch
+/*
+QUAKED trigger_once (.5 .5 .5) ? AI_Touch
 Must be targeted at one or more entities.
 Once triggered, this entity is destroyed
 (you can actually do the same thing with trigger_multiple with a wait of -1)
@@ -1129,7 +1141,8 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 }
 
-/*QUAKED trigger_flagonly (.5 .5 .5) ? RED_FLAG BLUE_FLAG KILL_FLAG
+/*
+QUAKED trigger_flagonly (.5 .5 .5) ? RED_FLAG BLUE_FLAG KILL_FLAG
 Player must be carrying the proper flag for it to trigger.
 It will call the "death" function in the object's script.
 
@@ -1158,7 +1171,8 @@ void SP_trigger_flagonly(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED trigger_flagonly_multiple (.5 .5 .5) ? RED_FLAG BLUE_FLAG
+/*
+QUAKED trigger_flagonly_multiple (.5 .5 .5) ? RED_FLAG BLUE_FLAG
 Player must be carrying the proper flag for it to trigger.
 It will call the "death" function in the object's script.
 
@@ -1190,9 +1204,7 @@ void SP_trigger_flagonly_multiple(gentity_t *ent)
 // spawn an explosive indicator
 void explosive_indicator_think(gentity_t *ent)
 {
-	gentity_t *parent;
-
-	parent = &g_entities[ent->r.ownerNum];
+	gentity_t *parent = &g_entities[ent->r.ownerNum];
 
 	if (!parent->inuse || (parent->s.eType == ET_CONSTRUCTIBLE && !parent->r.linked))
 	{
@@ -1232,11 +1244,8 @@ void explosive_indicator_think(gentity_t *ent)
 // spawn a constructible indicator
 void constructible_indicator_think(gentity_t *ent)
 {
-	gentity_t *parent;
-	gentity_t *constructible;
-
-	parent        = &g_entities[ent->r.ownerNum];
-	constructible = parent->target_ent;
+	gentity_t *parent        = &g_entities[ent->r.ownerNum];
+	gentity_t *constructible = parent->target_ent;
 
 	if (parent->chain)
 	{
@@ -1323,8 +1332,7 @@ void Think_SetupObjectiveInfo(gentity_t *ent)
 		// this is for compass usage
 		if ((ent->spawnflags & AXIS_OBJECTIVE) || (ent->spawnflags & ALLIED_OBJECTIVE))
 		{
-			gentity_t *e;
-			e = G_Spawn();
+			gentity_t *e = G_Spawn();
 
 			e->r.svFlags = SVF_BROADCAST;
 			e->classname = "explosive_indicator";
@@ -1421,8 +1429,7 @@ void Think_SetupObjectiveInfo(gentity_t *ent)
 		if (constructibles[0]->s.angles2[1] == 0)
 		{
 			// spawn a constructible icon - this is for compass usage
-			gentity_t *e;
-			e = G_Spawn();
+			gentity_t *e = G_Spawn();
 
 			e->r.svFlags = SVF_BROADCAST;
 			e->classname = "constructible_indicator";
@@ -1492,7 +1499,8 @@ void Think_SetupObjectiveInfo(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*QUAKED trigger_objective_info (.5 .5 .5) ? AXIS_OBJECTIVE ALLIED_OBJECTIVE MESSAGE_OVERRIDE TANK IS_OBJECTIVE IS_HEALTHAMMOCABINET IS_COMMANDPOST
+/*
+QUAKED trigger_objective_info (.5 .5 .5) ? AXIS_OBJECTIVE ALLIED_OBJECTIVE MESSAGE_OVERRIDE TANK IS_OBJECTIVE IS_HEALTHAMMOCABINET IS_COMMANDPOST
 Players in this field will see a message saying that they are near an objective.
 
   "track"		Mandatory, this is the text that is appended to "You are near "
@@ -1591,6 +1599,7 @@ void SP_trigger_objective_info(gentity_t *ent)
 	else
 	{
 		vec3_t mid;
+
 		VectorAdd(ent->r.absmin, ent->r.absmax, mid);
 		VectorScale(mid, 0.5f, mid);
 
@@ -1612,13 +1621,14 @@ void SP_trigger_objective_info(gentity_t *ent)
 	}
 	else
 	{
-		// Arnout: finalize spawing on fourth frame to allow for proper linking with targets
+		// finalize spawing on fourth frame to allow for proper linking with targets
 		ent->nextthink = level.time + (3 * FRAMETIME);
 		ent->think     = Think_SetupObjectiveInfo;
 	}
 }
 
-/*QUAKED trigger_concussive_dust (.5 .5 .5) ?
+/*
+QUAKED trigger_concussive_dust (.5 .5 .5) ?
 Allows client side prediction of teleportation events.
 Must point at a target_position, which will be the teleport destination.
 */
