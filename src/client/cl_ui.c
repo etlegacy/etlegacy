@@ -1263,6 +1263,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_CHECKAUTOUPDATE:
+		CL_RequestMotd();
 		CL_CheckAutoUpdate();
 		return 0;
 

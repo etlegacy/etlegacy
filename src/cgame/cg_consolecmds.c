@@ -50,13 +50,9 @@ void CG_TargetCommand_f(void)
 	trap_SendConsoleCommand(va("gc %i %i", targetNum, atoi(test)));
 }
 
-/*
-=============
-CG_Viewpos_f
-
-Debugging command to print the current position
-=============
-*/
+/**
+ * @brief Debugging command to print the current position
+ */
 static void CG_Viewpos_f(void)
 {
 	CG_Printf("(%i %i %i) : %i\n", (int)cg.refdef.vieworg[0],

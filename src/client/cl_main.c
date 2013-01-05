@@ -3632,8 +3632,6 @@ void CL_Init(void)
 	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM);
 	CL_UpdateGUID();
 
-	CL_RequestMotd();
-
 	autoupdateChecked = qfalse;
 	autoupdateStarted = qfalse;
 
