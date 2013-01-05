@@ -1058,13 +1058,11 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 void G_FlameDamage(gentity_t *self, gentity_t *ignoreent)
 {
 	gentity_t *body;
+	vec3_t    mins, maxs;
+	float     radius    = self->speed;
+	float     boxradius = M_SQRT2 * radius; // radius * sqrt(2) for bounding box enlargement
 	int       entityList[MAX_GENTITIES];
 	int       i, e, numListedEntities;
-	float     radius, boxradius;
-	vec3_t    mins, maxs;
-
-	radius    = self->speed;
-	boxradius = 1.41421356 * radius; // radius * sqrt(2) for bounding box enlargement
 
 	for (i = 0 ; i < 3 ; i++)
 	{

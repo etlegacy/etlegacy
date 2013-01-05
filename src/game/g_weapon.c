@@ -600,7 +600,7 @@ int EntsThatRadiusCanDamage(vec3_t origin, float radius, int *damagedList)
 		radius = 1;
 	}
 
-	boxradius = 1.41421356 * radius; // radius * sqrt(2) for bounding box enlargement --
+	boxradius = M_SQRT2 * radius; // radius * sqrt(2) for bounding box enlargement --
 	// bounding box was checking against radius / sqrt(2) if collision is along box plane
 	for (i = 0 ; i < 3 ; i++)
 	{

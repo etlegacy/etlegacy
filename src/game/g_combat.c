@@ -2097,7 +2097,7 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 		radius = 1;
 	}
 
-	boxradius = 1.41421356 * radius; // radius * sqrt(2) for bounding box enlargement --
+	boxradius = M_SQRT2 * radius; // radius * sqrt(2) for bounding box enlargement --
 	// bounding box was checking against radius / sqrt(2) if collision is along box plane
 	for (i = 0 ; i < 3 ; i++)
 	{
@@ -2229,7 +2229,7 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 		radius = 1;
 	}
 
-	boxradius = 1.41421356 * radius; // radius * sqrt(2) for bounding box enlargement --
+	boxradius = M_SQRT2 * radius; // radius * sqrt(2) for bounding box enlargement --
 	// bounding box was checking against radius / sqrt(2) if collision is along box plane
 	for (i = 0 ; i < 3 ; i++)
 	{

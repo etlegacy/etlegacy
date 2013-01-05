@@ -192,8 +192,6 @@ void CG_ClearParticles(void)
 CG_AddParticleToScene
 =====================
 */
-#define ROOT_2 1.414213562373f
-
 void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 {
 	vec3_t     point;
@@ -685,8 +683,8 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 			height = p->endheight;
 		}
 
-		sinR = height * sin(DEG2RAD(p->roll)) * ROOT_2;
-		cosR = width * cos(DEG2RAD(p->roll)) * ROOT_2;
+		sinR = height * sin(DEG2RAD(p->roll)) * M_SQRT2;
+		cosR = width * cos(DEG2RAD(p->roll)) * M_SQRT2;
 
 		VectorCopy(org, verts[0].xyz);
 		verts[0].xyz[0]     -= sinR;
