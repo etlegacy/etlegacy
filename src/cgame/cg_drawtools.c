@@ -218,7 +218,6 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 	}
 	else
 	{
-
 		if (flags & BAR_LEFT)        // TODO: remember to swap colors on the ends here
 		{
 			x += (w * (1 - frac));
@@ -734,69 +733,6 @@ void CG_DrawStringExt3(int x, int y, const char *string, const float *setColor,
 	trap_R_SetColor(NULL);
 }
 
-/*
-==================
-CG_DrawStringExt2
-
-Draws a multi-colored string with a drop shadow, optionally forcing
-to a fixed color.
-
-Coordinates are at 640 by 480 virtual resolution
-==================
-*/
-/*void CG_DrawStringExt2( int x, int y, const char *string, const float *setColor,
-        qboolean forceColor, qboolean shadow, int charWidth, int charHeight, int maxChars ) {
-    vec4_t      color;
-    const char  *s;
-    int         xx;
-    int         cnt;
-
-    if (maxChars <= 0)
-        maxChars = 32767; // do them all!
-
-    // draw the drop shadow
-    if (shadow) {
-        color[0] = color[1] = color[2] = 0;
-        color[3] = setColor[3];
-        trap_R_SetColor( color );
-        s = string;
-        xx = x;
-        cnt = 0;
-        while ( *s && cnt < maxChars) {
-            if ( Q_IsColorString( s ) ) {
-                s += 2;
-                continue;
-            }
-            CG_DrawChar2( xx + 2, y + 2, charWidth, charHeight, *s );
-            cnt++;
-            xx += charWidth;
-            s++;
-        }
-    }
-
-    // draw the colored text
-    s = string;
-    xx = x;
-    cnt = 0;
-    trap_R_SetColor( setColor );
-    while ( *s && cnt < maxChars) {
-        if ( Q_IsColorString( s ) ) {
-            if ( !forceColor ) {
-                memcpy( color, g_color_table[ColorIndex(*(s+1))], sizeof( color ) );
-                color[3] = setColor[3];
-                trap_R_SetColor( color );
-            }
-            s += 2;
-            continue;
-        }
-        CG_DrawChar2( xx, y, charWidth, charHeight, *s );
-        xx += charWidth;
-        cnt++;
-        s++;
-    }
-    trap_R_SetColor( NULL );
-}*/
-
 void CG_DrawBigString(int x, int y, const char *s, float alpha)
 {
 	float color[4];
@@ -878,12 +814,11 @@ refresh window.
 */
 static void CG_TileClearBox(int x, int y, int w, int h, qhandle_t hShader)
 {
-	float s1, t1, s2, t2;
+	float s1 = x / 64.0;
+	float t1 = y / 64.0;
+	float s2 = (x + w) / 64.0;
+	float t2 = (y + h) / 64.0;
 
-	s1 = x / 64.0;
-	t1 = y / 64.0;
-	s2 = (x + w) / 64.0;
-	t2 = (y + h) / 64.0;
 	trap_R_DrawStretchPic(x, y, w, h, s1, t1, s2, t2, hShader);
 }
 
@@ -897,10 +832,8 @@ Clear around a sized down screen
 void CG_TileClear(void)
 {
 	int top, bottom, left, right;
-	int w, h;
-
-	w = cgs.glconfig.vidWidth;
-	h = cgs.glconfig.vidHeight;
+	int w = cgs.glconfig.vidWidth;
+	int h = cgs.glconfig.vidHeight;
 
 	if (cg.refdef.x == 0 && cg.refdef.y == 0 &&
 	    cg.refdef.width == w && cg.refdef.height == h)
@@ -962,6 +895,12 @@ float *CG_FadeColor(int startMsec, int totalMsec)
 	return color;
 }
 
+
+static vec4_t red = { 1, 0.2, 0.2, 1 };
+static vec4_t blue = { 0.2, 0.2, 1, 1 };
+static vec4_t other = { 1, 1, 1, 1 };
+static vec4_t spectator = { 0.7, 0.7, 0.7, 1 };
+
 /*
 ================
 CG_TeamColor
@@ -969,11 +908,6 @@ CG_TeamColor
 */
 float *CG_TeamColor(int team)
 {
-	static vec4_t red       = { 1, 0.2, 0.2, 1 };
-	static vec4_t blue      = { 0.2, 0.2, 1, 1 };
-	static vec4_t other     = { 1, 1, 1, 1 };
-	static vec4_t spectator = { 0.7, 0.7, 0.7, 1 };
-
 	switch (team)
 	{
 	case TEAM_AXIS:
@@ -1242,10 +1176,10 @@ UI_DrawBannerString
 */
 static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color)
 {
-	const char    *s;
+	const char    *s = str;
 	unsigned char ch;
-	float         ax;
-	float         ay;
+	float         ax = x * cgs.screenXScale + cgs.screenXBias;
+	float         ay = y * cgs.screenYScale;
 	float         aw;
 	float         ah;
 	float         frow;
@@ -1256,10 +1190,6 @@ static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color)
 	// draw the colored text
 	trap_R_SetColor(color);
 
-	ax = x * cgs.screenXScale + cgs.screenXBias;
-	ay = y * cgs.screenYScale;
-
-	s = str;
 	while (*s)
 	{
 		ch = *s & 127;
@@ -1287,14 +1217,13 @@ static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color)
 
 void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 {
-	const char *s;
+	const char *s = str;
 	int        ch;
-	int        width;
+	int        width = 0;
 	vec4_t     drawcolor;
 
 	// find the width of the drawn text
-	s     = str;
-	width = 0;
+
 	while (*s)
 	{
 		ch = *s;
@@ -1337,13 +1266,11 @@ void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 
 int UI_ProportionalStringWidth(const char *str)
 {
-	const char *s;
+	const char *s = str;
 	int        ch;
 	int        charWidth;
-	int        width;
+	int        width = 0;
 
-	s     = str;
-	width = 0;
 	while (*s)
 	{
 		ch        = *s & 127;
@@ -1362,10 +1289,10 @@ int UI_ProportionalStringWidth(const char *str)
 
 static void UI_DrawProportionalString2(int x, int y, const char *str, vec4_t color, float sizeScale, qhandle_t charset)
 {
-	const char    *s;
+	const char    *s = str;
 	unsigned char ch;
-	float         ax;
-	float         ay;
+	float         ax = x * cgs.screenXScale + cgs.screenXBias;
+	float         ay = y * cgs.screenYScale;
 	float         aw;
 	float         ah;
 	float         frow;
@@ -1376,10 +1303,6 @@ static void UI_DrawProportionalString2(int x, int y, const char *str, vec4_t col
 	// draw the colored text
 	trap_R_SetColor(color);
 
-	ax = x * cgs.screenXScale + cgs.screenXBias;
-	ay = y * cgs.screenYScale;
-
-	s = str;
 	while (*s)
 	{
 		ch = *s & 127;
@@ -1425,7 +1348,7 @@ float UI_ProportionalSizeScale(int style)
 		return 0.4;
 	}
 
-	return 1.00;
+	return 1.0f;
 }
 
 /*
@@ -1437,9 +1360,7 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 {
 	vec4_t drawcolor;
 	int    width;
-	float  sizeScale;
-
-	sizeScale = UI_ProportionalSizeScale(style);
+	float  sizeScale = UI_ProportionalSizeScale(style);
 
 	switch (style & UI_FORMATMASK)
 	{

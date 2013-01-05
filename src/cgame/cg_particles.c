@@ -256,7 +256,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 			p->alpha = 1;
 		}
 
-		// Ridah, had to do this or MAX_POLYS is being exceeded in village1.bsp
+		// had to do this or MAX_POLYS is being exceeded in village1.bsp
 		if (VectorDistanceSquared(cg.snap->ps.origin, org) > SQR(1024))
 		{
 			return;

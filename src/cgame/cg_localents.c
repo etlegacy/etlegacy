@@ -35,7 +35,7 @@
 
 #include "cg_local.h"
 
-// Ridah, increased this
+// increased this
 //#define   MAX_LOCAL_ENTITIES  512
 #define MAX_LOCAL_ENTITIES  768     // renderer can only handle 1024 entities max, so we should avoid
 // overwriting game entities
@@ -45,7 +45,7 @@ localEntity_t cg_localEntities[MAX_LOCAL_ENTITIES];
 localEntity_t cg_activeLocalEntities;       // double linked list
 localEntity_t *cg_freeLocalEntities;        // single linked list
 
-// Ridah, debugging
+// debugging
 int localEntCount = 0;
 
 location_t *CG_GetLocation(int client, vec3_t origin)
@@ -376,7 +376,7 @@ void CG_InitLocalEntities(void)
 		cg_localEntities[i].next = &cg_localEntities[i + 1];
 	}
 
-	// Ridah, debugging
+	// debugging
 	localEntCount = 0;
 }
 
@@ -392,9 +392,9 @@ void CG_FreeLocalEntity(localEntity_t *le)
 		CG_Error("CG_FreeLocalEntity: not active\n");
 	}
 
-	// Ridah, debugging
+	// debugging
 	localEntCount--;
-//  trap_Print( va("FreeLocalEntity: locelEntCount = %d\n", localEntCount) );
+	//trap_Print( va("FreeLocalEntity: locelEntCount = %d\n", localEntCount) );
 
 	// remove from the doubly linked active list
 	le->prev->next = le->next;
@@ -423,9 +423,9 @@ localEntity_t *CG_AllocLocalEntity(void)
 		CG_FreeLocalEntity(cg_activeLocalEntities.prev);
 	}
 
-	// Ridah, debugging
+	// debugging
 	localEntCount++;
-	//  trap_Print( va("AllocLocalEntity: locelEntCount = %d\n", localEntCount) );
+	//trap_Print( va("AllocLocalEntity: locelEntCount = %d\n", localEntCount) );
 
 	le                   = cg_freeLocalEntities;
 	cg_freeLocalEntities = cg_freeLocalEntities->next;
@@ -442,12 +442,10 @@ localEntity_t *CG_AllocLocalEntity(void)
 
 /*
 ====================================================================================
-
 FRAGMENT PROCESSING
 
 A fragment localentity interacts with the environment in some way (hitting walls),
 or generates more localentities along a trail.
-
 ====================================================================================
 */
 
@@ -489,8 +487,8 @@ void CG_BloodTrail(localEntity_t *le)
 		return;
 	}
 	step = (1000 * 3) / vl;
-//bani - avoid another div by 0
-//zinx - check against <= 0 instead of == 0, because it can still wrap; (3000 / (FLT_EPSILON*11.7f)) < 0
+	// avoid another div by 0
+	// check against <= 0 instead of == 0, because it can still wrap; (3000 / (FLT_EPSILON*11.7f)) < 0
 	if (step <= 0)
 	{
 		return;
@@ -507,7 +505,7 @@ void CG_BloodTrail(localEntity_t *le)
 #ifdef BLOOD_PARTICLE_TRAIL
 		CG_Particle_Bleed(cgs.media.smokePuffShader, newOrigin, vec3_origin, 0, 500 + rand() % 200);
 #else
-		// Ridah, blood trail using trail code (should be faster since we don't have to spawn as many)
+		// blood trail using trail code (should be faster since we don't have to spawn as many)
 		le->headJuncIndex = CG_AddTrailJunc(le->headJuncIndex,
 		                                    le,  // rain - zinx's trail fix
 		                                    cgs.media.bloodTrailShader,
@@ -544,8 +542,8 @@ void CG_FragmentBounceMark(localEntity_t *le, trace_t *trace)
 		{
 			vec4_t color;
 			int    radius = 16 + (rand() & 31);
-			//% CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace->endpos, trace->plane.normal, random()*360,
-			//%     1,1,1,1, qtrue, radius, qfalse, cg_bloodTime.integer * 1000 );
+			//CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace->endpos, trace->plane.normal, random()*360,
+			//  1,1,1,1, qtrue, radius, qfalse, cg_bloodTime.integer * 1000 );
 #if 0
 			VectorSubtract(vec3_origin, trace->plane.normal, projection);
 			projection[3] = radius * 2.0f;
@@ -713,7 +711,7 @@ void CG_AddFragment(localEntity_t *le)
 		re->fadeEndTime = le->endTime;
 	}
 
-	// Ridah, flaming gibs
+	// flaming gibs
 	if (le->onFireStart && (le->onFireStart < cg.time && le->onFireEnd > cg.time))
 	{
 		hasFlame = qtrue;
@@ -875,9 +873,7 @@ void CG_AddFragment(localEntity_t *le)
 		// add the flame
 		if (hasFlame)
 		{
-			refEntity_t backupEnt;
-
-			backupEnt = le->refEntity;
+			refEntity_t backupEnt = le->refEntity;
 
 			le->refEntity.shaderRGBA[3] = ( unsigned char )(255.0 * flameAlpha);
 			VectorCopy(flameDir, le->refEntity.fireRiseDir);
@@ -1013,9 +1009,7 @@ void CG_AddFragment(localEntity_t *le)
 	// add the flame
 	if (hasFlame)
 	{
-		refEntity_t backupEnt;
-
-		backupEnt = le->refEntity;
+		refEntity_t backupEnt = le->refEntity;
 
 		le->refEntity.shaderRGBA[3] = ( unsigned char )(255.0 * flameAlpha);
 		VectorCopy(flameDir, le->refEntity.fireRiseDir);
@@ -1055,10 +1049,8 @@ void CG_AddSparkElements(localEntity_t *le)
 {
 	vec3_t  newOrigin;
 	trace_t trace;
-	float   time;
 	float   lifeFrac;
-
-	time = (float)(cg.time - cg.frametime);
+	float   time = (float)(cg.time - cg.frametime);
 
 	while (1)
 	{
@@ -1140,14 +1132,11 @@ CG_AddFuseSparkElements
 */
 void CG_AddFuseSparkElements(localEntity_t *le)
 {
-	float FUSE_SPARK_WIDTH = 1.0;
-
-	int           step = 10;
-	float         time;
+	float         FUSE_SPARK_WIDTH = 1.0;
+	int           step             = 10;
 	float         lifeFrac;
 	static vec3_t whiteColor = { 1, 1, 1 };
-
-	time = (float)(le->lastTrailTime);
+	float         time       = (float)(le->lastTrailTime);
 
 	while (time < cg.time)
 	{
@@ -1179,11 +1168,9 @@ void CG_AddBloodElements(localEntity_t *le)
 {
 	vec3_t  newOrigin;
 	trace_t trace;
-	float   time;
 	float   lifeFrac;
+	float   time = (float)(cg.time - cg.frametime);
 	int     numbounces;
-
-	time = (float)(cg.time - cg.frametime);
 
 	for (numbounces = 0; numbounces < 5; numbounces++)
 	{
@@ -1419,7 +1406,6 @@ void CG_AddShrapnel(localEntity_t *le)
 
 /*
 =====================================================================
-
 TRIVIAL LOCAL ENTITIES
 
 These only do simple scaling or modulation before passing to the renderer
@@ -1433,12 +1419,8 @@ CG_AddFadeRGB
 */
 void CG_AddFadeRGB(localEntity_t *le)
 {
-	refEntity_t *re;
-	float       c;
-
-	re = &le->refEntity;
-
-	c  = (le->endTime - cg.time) * le->lifeRate;
+	refEntity_t *re = &le->refEntity;
+	float       c   = (le->endTime - cg.time) * le->lifeRate;
 	c *= 0xff;
 
 	re->shaderRGBA[0] = le->color[0] * c;
@@ -1456,12 +1438,10 @@ CG_AddMoveScaleFade
 */
 static void CG_AddMoveScaleFade(localEntity_t *le)
 {
-	refEntity_t *re;
+	refEntity_t *re = &le->refEntity;
 	float       c;
 	vec3_t      delta;
 	float       len;
-
-	re = &le->refEntity;
 
 	// fade / grow time
 	if (le->fadeInTime > le->startTime && cg.time < le->fadeInTime)
@@ -1513,15 +1493,10 @@ There are often many of these, so it needs to be simple.
 */
 static void CG_AddScaleFade(localEntity_t *le)
 {
-	refEntity_t *re;
-	float       c;
+	refEntity_t *re = &le->refEntity;
+	float       c   = (le->endTime - cg.time) * le->lifeRate; // fade / grow time
 	vec3_t      delta;
 	float       len;
-
-	re = &le->refEntity;
-
-	// fade / grow time
-	c = (le->endTime - cg.time) * le->lifeRate;
 
 	re->shaderRGBA[3] = 0xff * c * le->color[3];
 	if (!(le->leFlags & LEF_PUFF_DONT_SCALE))
@@ -1554,15 +1529,10 @@ There are often 100+ of these, so it needs to be simple.
 */
 static void CG_AddFallScaleFade(localEntity_t *le)
 {
-	refEntity_t *re;
-	float       c;
+	refEntity_t *re = &le->refEntity;
+	float       c   = (le->endTime - cg.time) * le->lifeRate; // fade time
 	vec3_t      delta;
 	float       len;
-
-	re = &le->refEntity;
-
-	// fade time
-	c = (le->endTime - cg.time) * le->lifeRate;
 
 	re->shaderRGBA[3] = 0xff * c * le->color[3];
 
@@ -1590,9 +1560,7 @@ CG_AddExplosion
 */
 static void CG_AddExplosion(localEntity_t *ex)
 {
-	refEntity_t *ent;
-
-	ent = &ex->refEntity;
+	refEntity_t *ent = &ex->refEntity;
 
 	// add the entity
 	// don't add if shader is invalid
@@ -1604,9 +1572,8 @@ static void CG_AddExplosion(localEntity_t *ex)
 	// add the dlight
 	if (ex->light || 1)
 	{
-		float light;
+		float light = (float)(cg.time - ex->startTime) / (ex->endTime - ex->startTime);
 
-		light = (float)(cg.time - ex->startTime) / (ex->endTime - ex->startTime);
 		if (light < 0.5)
 		{
 			light = 1.0;
@@ -1628,12 +1595,9 @@ CG_AddSpriteExplosion
 */
 static void CG_AddSpriteExplosion(localEntity_t *le)
 {
-	refEntity_t re;
-	float       c;
+	refEntity_t re = le->refEntity;
+	float       c  = (le->endTime - cg.time) / ( float ) (le->endTime - le->startTime);
 
-	re = le->refEntity;
-
-	c = (le->endTime - cg.time) / ( float ) (le->endTime - le->startTime);
 	if (c > 1)
 	{
 		c = 1.0;    // can happen during connection problems
@@ -1660,20 +1624,8 @@ static void CG_AddSpriteExplosion(localEntity_t *le)
 	// add the dlight
 	if (le->light || 1)
 	{
-		float light;
+		float light = (float)(cg.time - le->startTime) / (le->endTime - le->startTime);
 
-		// Ridah, modified this so the light fades out rather than shrinking
-		/*
-		light = (float)( cg.time - le->startTime ) / ( le->endTime - le->startTime );
-		if ( light < 0.5 ) {
-		    light = 1.0;
-		} else {
-		    light = 1.0 - ( light - 0.5 ) * 2;
-		}
-		light = le->light * light;
-		trap_R_AddLightToScene(re.origin, light, le->lightColor[0], le->lightColor[1], le->lightColor[2], 0 );
-		*/
-		light = (float)(cg.time - le->startTime) / (le->endTime - le->startTime);
 		if (light < 0.5)
 		{
 			light = 1.0;
@@ -1682,7 +1634,6 @@ static void CG_AddSpriteExplosion(localEntity_t *le)
 		{
 			light = 1.0 - (light - 0.5) * 2;
 		}
-		//% trap_R_AddLightToScene(re.origin, le->light, light*le->lightColor[0], light*le->lightColor[1], light*le->lightColor[2], 0 );
 		trap_R_AddLightToScene(re.origin, 320, light, le->lightColor[0], le->lightColor[1], le->lightColor[2], 0, 0);
 	}
 }

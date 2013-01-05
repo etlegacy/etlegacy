@@ -209,7 +209,6 @@ void CG_AddLightstyle(centity_t *cent)
 	{
 		vec3_t normal;
 
-
 		AngleVectors(cent->currentState.angles, normal, NULL, NULL);
 		trap_R_AddLightToScene(normal, 256, lightval,
 		                       (float) r / 255.0f, (float) r / 255.0f, (float) r / 255.0f, 0, REF_DIRECTED_DLIGHT);
@@ -612,8 +611,8 @@ static void CG_Speaker(centity_t *cent)
 
 	trap_S_StartSound(NULL, cent->currentState.number, CHAN_ITEM, cgs.gameSounds[cent->currentState.eventParm]);
 
-	//  ent->s.frame = ent->wait * 10;
-	//  ent->s.clientNum = ent->random * 10;
+	//ent->s.frame = ent->wait * 10;
+	//ent->s.clientNum = ent->random * 10;
 	cent->miscTime = cg.time + cent->currentState.frame * 100 + cent->currentState.clientNum * 100 * crandom();
 }
 
@@ -857,7 +856,6 @@ static void CG_Item(centity_t *cent)
 	// highlighting items the player looks at
 	if (cg_drawCrosshairPickups.integer)
 	{
-
 		if (cg_drawCrosshairPickups.integer == 2)      // '2' is 'force highlights'
 		{
 			highlight = qtrue;
@@ -966,9 +964,7 @@ CG_Missile
 */
 static void CG_DrawMineMarkerFlag(centity_t *cent, refEntity_t *ent, const weaponInfo_t *weapon)
 {
-	entityState_t *s1;
-
-	s1 = &cent->currentState;
+	entityState_t *s1 = &cent->currentState;
 
 	ent->hModel = cent->currentState.otherEntityNum2 ? weapon->modModels[1] : weapon->modModels[0];
 

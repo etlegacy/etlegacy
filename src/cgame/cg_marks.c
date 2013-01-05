@@ -51,7 +51,7 @@ CG_InitMarkPolys
 This is called at startup and for tournement restarts
 ===================
 */
-void    CG_InitMarkPolys(void)
+void CG_InitMarkPolys(void)
 {
 	int        i;
 	markPoly_t *trav, *lasttrav;
@@ -115,7 +115,7 @@ markPoly_t *CG_AllocMark(int endTime)
 
 	memset(le, 0, sizeof(*le));
 
-	// Ridah, TODO: sort this, so the list is always sorted by longest duration -> shortest duration,
+	// TODO: sort this, so the list is always sorted by longest duration -> shortest duration,
 	// this way the shortest duration mark will always get overwritten first
 	//for (trav = cg_activeMarkPolys.nextMark; (trav->duration + trav->time > endTime) && (trav != cg_activeMarkPolys.prevMark) ; lastTrav = trav, trav++ ) {
 	// Respect the FOR loop
@@ -136,11 +136,9 @@ it MUST be normalized!
 if lifeTime < 0, then generate a temporary mark
 */
 
-// Ridah, increased this since we leave them around for longer
-#define MAX_MARK_FRAGMENTS  384
-#define MAX_MARK_POINTS     1024
-//#define	MAX_MARK_FRAGMENTS	128
-//#define	MAX_MARK_POINTS		384
+// increased this since we leave them around for longer
+#define MAX_MARK_FRAGMENTS  384  // 128
+#define MAX_MARK_POINTS     1024 // 384
 
 // comment out to use old-style mark code
 #define YDNAR_DECAL_MARKS
@@ -236,7 +234,7 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 		}
 	}
 
-	// Ridah, if no duration, use the default
+	// if no duration, use the default
 	if (duration < 0)
 	{
 		if (duration == -2)
@@ -244,7 +242,7 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 			multMaxFragments = -1;  // use original mapping
 		}
 
-//		duration = MARK_TOTAL_TIME;
+		//duration = MARK_TOTAL_TIME;
 		duration = cg_markTime.integer;
 	}
 

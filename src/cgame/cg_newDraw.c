@@ -671,7 +671,7 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align)
 
 	flags |= 1;       // BAR_LEFT           - this is hardcoded now, but will be decided by the menu script
 	flags |= 16;      // BAR_BG         - draw the filled contrast box
-//  flags|=32;      // BAR_BGSPACING_X0Y5   - different style
+	//flags|=32;      // BAR_BGSPACING_X0Y5   - different style
 
 	flags |= 256;     // BAR_COLOR_LERP
 

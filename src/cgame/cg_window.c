@@ -291,10 +291,9 @@ void CG_windowDraw(void)
 	int         h, x, y, i, j, milli, t_offset, tmp;
 	cg_window_t *w;
 	qboolean    fCleanup = qfalse;
-	// FIXME, the limbomenu var no longer exists
-	qboolean fAllowMV = (cg.snap != NULL && cg.snap->ps.pm_type != PM_INTERMISSION /*&& !cg.limboMenu*/);
-	vec4_t   *bg;
-	vec4_t   textColor, borderColor, bgColor;
+	qboolean    fAllowMV = (cg.snap != NULL && cg.snap->ps.pm_type != PM_INTERMISSION);
+	vec4_t      *bg;
+	vec4_t      textColor, borderColor, bgColor;
 
 	if (cg.winHandler.numActiveWindows == 0)
 	{
@@ -660,11 +659,9 @@ void CG_cursorUpdate(void)
 	qboolean           fFound = qfalse, fUpdateOverlay = qfalse;
 	qboolean           fSelect, fResize;
 
-
 	// Get cursor current position (when connected to a server)
 	if (!cg.demoPlayback)
 	{
-
 		// Allow for limbo'd updates as well
 		trap_GetUserCmd(trap_GetCurrentCmdNumber(), &cg_pmove.cmd);
 

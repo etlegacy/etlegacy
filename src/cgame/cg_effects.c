@@ -560,7 +560,6 @@ Generated a bunch of gibs launching out from the bodies location
 
 void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 {
-
 	vec3_t         origin;
 	trace_t        trace;
 	qboolean       foundtag;
@@ -765,8 +764,7 @@ void CG_SparklerSparks(vec3_t origin, int count)
 	int FUSE_SPARK_LIFE   = 100;
 	int FUSE_SPARK_LENGTH = 30;
 	// these are calculated from the above
-	int FUSE_SPARK_SPEED = (FUSE_SPARK_LENGTH * 1000 / FUSE_SPARK_LIFE);
-
+	int           FUSE_SPARK_SPEED = (FUSE_SPARK_LENGTH * 1000 / FUSE_SPARK_LIFE);
 	int           i;
 	localEntity_t *le;
 	refEntity_t   *re;
@@ -1247,13 +1245,9 @@ CG_RumbleEfx
 */
 void CG_RumbleEfx(float pitch, float yaw)
 {
-	float  pitchRecoilAdd, pitchAdd;
-	float  yawRandom;
+	float  pitchRecoilAdd = 0, pitchAdd = 0;
+	float  yawRandom      = 0;
 	vec3_t recoil;
-
-	pitchRecoilAdd = 0;
-	pitchAdd       = 0;
-	yawRandom      = 0;
 
 	if (pitch < 1)
 	{

@@ -265,17 +265,6 @@ TEAM_COUNTER(2);
 		CG_LimboPanel_RenderClassButton,        \
 		NULL,                                   \
 	}
-/*panel_button_t classCounterLight##number = { \
-    NULL, \
-    NULL, \
-    { CLASS_COUNTER_X + CLASS_COUNTER_GAP + (number*(CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)) + (CLASS_COUNTER_LIGHT_DIFF/2.f), 266, CLASS_COUNTER_WIDTH - CLASS_COUNTER_LIGHT_DIFF, 16 }, \
-    { 0, number, 0, 0, 0, 0, 0, 0 }, \
-    NULL, \
-    CG_LimboPanel_ClassButton_KeyDown, \
-    NULL, \
-    CG_LimboPanel_RenderLight, \
-    NULL, \
-};                                          \*/
 
 panel_button_t classBar =
 {

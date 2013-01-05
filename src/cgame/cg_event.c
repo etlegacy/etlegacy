@@ -45,18 +45,15 @@ CG_Obituary
 */
 static void CG_Obituary(entityState_t *ent)
 {
-	int          mod;
-	int          target, attacker;
+	qhandle_t    deathShader = cgs.media.pmImages[PM_DEATH];
+	int          mod         = ent->eventParm;
+	int          target      = ent->otherEntityNum;
+	int          attacker    = ent->otherEntityNum2;
 	char         *message;
 	char         *message2;
 	char         targetName[32];
 	char         attackerName[32];
 	clientInfo_t *ci, *ca;    // ca = attacker
-	qhandle_t    deathShader = cgs.media.pmImages[PM_DEATH];
-
-	target   = ent->otherEntityNum;
-	attacker = ent->otherEntityNum2;
-	mod      = ent->eventParm;
 
 	if (target < 0 || target >= MAX_CLIENTS)
 	{
@@ -834,6 +831,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 		int                 hmodel = 0;
 		float               scale;
 		int                 endtime;
+
 		for (howmany = 0; howmany < pieces[i]; howmany++)
 		{
 
@@ -1091,7 +1089,6 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				break;
 			}
 
-
 			// rotation
 			le->angles.trType     = TR_LINEAR;
 			le->angles.trTime     = cg.time;
@@ -1215,9 +1212,9 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 		int                 hmodel = 0;
 		float               scale;
 		int                 endtime;
+
 		for (howmany = 0; howmany < pieces[i]; howmany++)
 		{
-
 			scale   = 1.0f;
 			endtime = 0;    // set endtime offset for faster/slower fadeouts
 
@@ -1403,8 +1400,8 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			le->sizeScale = scale;
 
 			if (type == 1)     // glass
-			{   // Rafael added this because glass looks funky when it fades out
-				// TBD: need to look into this so that they fade out correctly
+			{   // added this because glass looks funky when it fades out
+				// - need to look into this so that they fade out correctly
 				re->fadeStartTime = le->endTime;
 				re->fadeEndTime   = le->endTime;
 			}
@@ -1471,7 +1468,6 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				le->bounceFactor = 0.4;
 				break;
 			}
-
 
 			// rotation
 			le->angles.trType     = TR_LINEAR;
@@ -1559,12 +1555,13 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		for (i = 0; i < 5; i++)
 		{
 			for (j = 0; j < 3; j++)
+			{
 				sprOrg[j] = origin[j] + 64 * dir[j] + 24 * crandom();
+			}
 			sprVel[2] += rand() % 50;
 			CG_ParticleExplosion("blacksmokeanim", sprOrg, sprVel, 3500 + rand() % 250, 10, 250 + rand() % 60, qfalse);   // JPW NERVE was smokeanimb
 		}
 	}
-
 
 	if (cent->currentState.eventParm & 2)      // explode
 	{
@@ -1674,15 +1671,11 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le;
 	refEntity_t   *re;
-	int           type;
-	int           howmany;
+	int           type    = cent->currentState.density;
+	int           howmany = cent->currentState.frame;
 	int           i;
 	int           rval;
-
-	qboolean isflyingdebris = qfalse;
-
-	type    = cent->currentState.density;
-	howmany = cent->currentState.frame;
+	qboolean      isflyingdebris = qfalse;
 
 	for (i = 0; i < howmany; i++)
 	{
@@ -1827,11 +1820,8 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 
 void CG_ShardJunk(centity_t *cent, vec3_t origin, vec3_t dir)
 {
-	localEntity_t *le;
-	refEntity_t   *re;
-
-	le = CG_AllocLocalEntity();
-	re = &le->refEntity;
+	localEntity_t *le = CG_AllocLocalEntity();
+	refEntity_t   *re = &le->refEntity;
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
@@ -1876,11 +1866,8 @@ void CG_ShardJunk(centity_t *cent, vec3_t origin, vec3_t dir)
 // debris test
 void CG_Debris(centity_t *cent, vec3_t origin, vec3_t dir)
 {
-	localEntity_t *le;
-	refEntity_t   *re;
-
-	le = CG_AllocLocalEntity();
-	re = &le->refEntity;
+	localEntity_t *le = CG_AllocLocalEntity();
+	refEntity_t   *re = &le->refEntity;
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
@@ -1987,8 +1974,8 @@ extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int dura
 
 void CG_EntityEvent(centity_t *cent, vec3_t position)
 {
-	entityState_t    *es;
-	int              event;
+	entityState_t    *es   = &cent->currentState;
+	int              event = es->event & ~EV_EVENT_BITS;
 	vec3_t           dir;
 	const char       *s;
 	int              clientNum;
@@ -2000,12 +1987,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	vec3_t porg, gorg, norm;                // player/gun origin
 	float  gdist;
 
-
 	static int footstepcnt       = 0;
 	static int splashfootstepcnt = 0;
 
-	es    = &cent->currentState;
-	event = es->event & ~EV_EVENT_BITS;
 
 	if (cg_debugEvents.integer)
 	{
@@ -2270,9 +2254,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_ITEM_PICKUP");
 		{
 			gitem_t *item;
-			int     index;
-
-			index = es->eventParm;      // player predicted
+			int     index = es->eventParm;      // player predicted
 
 			if (index < 1 || index >= bg_numItems)
 			{
@@ -2379,7 +2361,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_MG42_FIXED:
 		DEBUGNAME("EV_MG42_FIXED");
-		// FIXME? JPW NERVE play a sound when engineer fixes MG42
+		// FIXME? play a sound when engineer fixes MG42
 		//trap_S_StartSound(NULL,es->number,CHAN_WEAPON,cg_weapons[WP_MAUSER].reloadSound); // Arnout: needs updating
 		break;
 
@@ -2650,7 +2632,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_GENERAL_SOUND:
 		DEBUGNAME("EV_GENERAL_SOUND");
-		// Ridah, check for a sound script
+		// check for a sound script
 		s = CG_ConfigString(CS_SOUNDS + es->eventParm);
 		if (!strstr(s, ".wav"))
 		{
@@ -2666,7 +2648,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		if (cgs.gameSounds[es->eventParm])
 		{
-			// xkan, 10/31/2002 - crank up the volume
+			// crank up the volume
 			trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, cgs.gameSounds[es->eventParm], 255);
 		}
 		else
@@ -2679,10 +2661,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_FX_SOUND:
 	{
-		sfxHandle_t sound;
+		sfxHandle_t sound = random() * fxSounds[es->eventParm].max;
 
 		DEBUGNAME("EV_FX_SOUND");
-		sound = random() * fxSounds[es->eventParm].max;
 
 		if (fxSounds[es->eventParm].sound[sound] == -1)
 		{
@@ -2816,7 +2797,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_STOPSTREAMINGSOUND:
 		DEBUGNAME("EV_STOPLOOPINGSOUND");
-//      trap_S_StopStreamingSound( es->number );
+		//trap_S_StopStreamingSound( es->number );
 		trap_S_StartSoundEx(NULL, es->number, CHAN_WEAPON, 0, SND_CUTOFF_ALL);      // kill weapon sound (could be reloading)
 		break;
 
@@ -2878,10 +2859,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_EMITTER:
 	{
-		localEntity_t *le;
+		localEntity_t *le = CG_AllocLocalEntity();
 
 		DEBUGNAME("EV_EMITTER");
-		le             = CG_AllocLocalEntity();
+
 		le->leType     = LE_EMITTER;
 		le->startTime  = cg.time;
 		le->endTime    = le->startTime + 20000;
@@ -2954,12 +2935,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_GUNSPARKS:
 	{
-		int numsparks;
-		int speed;
+		int numsparks = cent->currentState.density;
+		int speed     = cent->currentState.angles2[2];
 
 		DEBUGNAME("EV_GUNSPARKS");
-		numsparks = cent->currentState.density;
-		speed     = cent->currentState.angles2[2];
 
 		CG_AddBulletParticles(cent->currentState.origin, cent->currentState.angles, speed, 800, numsparks, 1.0f);
 	}
@@ -3006,9 +2985,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		ByteToDir(es->eventParm, dir);
 		{
 			int i;
-			int rval;
-
-			rval = rand() % 3 + 3;
+			int rval = rand() % 3 + 3;
 
 			for (i = 0; i < rval; i++)
 			{
@@ -3201,9 +3178,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	}
 
 	{
-		int rval;
-
-		rval = rand() & 3;
+		int rval = rand() & 3;
 
 		if (splashfootstepcnt != rval)
 		{

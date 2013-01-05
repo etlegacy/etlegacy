@@ -133,8 +133,8 @@ void CG_ParseFireteams()
 		            cg.fireTeams[i].inuse = qtrue;
 		        }*/
 
-//      Q_strncpyz(cg.fireTeams[i].name, s, 32);
-//      CG_Printf("Fireteam: %s\n", cg.fireTeams[i].name);
+		//Q_strncpyz(cg.fireTeams[i].name, s, 32);
+		//CG_Printf("Fireteam: %s\n", cg.fireTeams[i].name);
 
 		j = atoi(Info_ValueForKey(p, "id"));
 		if (j == -1)
@@ -163,7 +163,7 @@ void CG_ParseFireteams()
 			{
 				cg.fireTeams[i].joinOrder[j]   = qtrue;
 				cgs.clientinfo[j].fireteamData = &cg.fireTeams[i];
-//              CG_Printf("%s\n", cgs.clientinfo[j].name);
+				//CG_Printf("%s\n", cgs.clientinfo[j].name);
 			}
 			else
 			{
@@ -465,7 +465,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 		x += 4;
 
-		// jet Pilot - draw class icon in fireteam overlay
+		// draw class icon in fireteam overlay
 		CG_DrawPic(x, y, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 		x += 14;
 
