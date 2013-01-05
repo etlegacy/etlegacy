@@ -55,10 +55,6 @@ unsigned int CON_LogSize(void);
 unsigned int CON_LogWrite(const char *in);
 unsigned int CON_LogRead(char *out, unsigned int outSize);
 
-#ifdef __APPLE__
-char *Sys_StripAppBundle(char *pwd);
-#endif
-
 void Sys_GLimpSafeInit(void);
 void Sys_GLimpInit(void);
 void Sys_PlatformInit(void);

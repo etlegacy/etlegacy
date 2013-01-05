@@ -143,7 +143,6 @@ qboolean G_ScriptAction_ConstructibleHealth(gentity_t *ent, char *params) ;
 qboolean G_ScriptAction_ConstructibleWeaponclass(gentity_t *ent, char *params) ;
 qboolean G_ScriptAction_ConstructibleDuration(gentity_t *ent, char *params) ;
 
-//bani
 qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params);
 
 // these are the actions that each event can call
@@ -1507,7 +1506,6 @@ void SP_script_multiplayer(gentity_t *ent)
 
 	if (level.gameManager)
 	{
-		// ok, making this an error now
 		G_Error("^1ERROR: multiple script_multiplayers found^7\n");
 	}
 	level.gameManager                    = ent;
