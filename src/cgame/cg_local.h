@@ -2634,7 +2634,7 @@ void CG_PlayBufferedVoiceChats(void);
 void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
-void CG_wtopshotsParse_cmd(qboolean doBest);
+
 void CG_parseWeaponStats_cmd(void (txt_dump) (char *));
 void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
 void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
@@ -3127,28 +3127,28 @@ void CG_LimboPanel_NameEditFinish(panel_button_t *button);
 void CG_LimboPanel_Setup(void);
 void CG_LimboPanel_Init(void);
 
-void                CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float *w, float *h, float *s0, float *t0, float *s1, float *t1);
-void                CG_LimboPanel_RequestObjective(void);
-void                CG_LimboPanel_RequestWeaponStats(void);
-qboolean            CG_LimboPanel_Draw(void);
-team_t              CG_LimboPanel_GetTeam(void);
-team_t              CG_LimboPanel_GetRealTeam(void);
+void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float *w, float *h, float *s0, float *t0, float *s1, float *t1);
+void CG_LimboPanel_RequestObjective(void);
+void CG_LimboPanel_RequestWeaponStats(void);
+qboolean CG_LimboPanel_Draw(void);
+team_t CG_LimboPanel_GetTeam(void);
+team_t CG_LimboPanel_GetRealTeam(void);
 bg_character_t *CG_LimboPanel_GetCharacter(void);
-int                 CG_LimboPanel_GetClass(void);
-int                 CG_LimboPanel_WeaponCount(void);
-int                 CG_LimboPanel_WeaponCount_ForSlot(int number);
-int                 CG_LimboPanel_GetSelectedWeaponNum(void);
-void                CG_LimboPanel_SetSelectedWeaponNum(int number);
+int CG_LimboPanel_GetClass(void);
+int CG_LimboPanel_WeaponCount(void);
+int CG_LimboPanel_WeaponCount_ForSlot(int number);
+int CG_LimboPanel_GetSelectedWeaponNum(void);
+void CG_LimboPanel_SetSelectedWeaponNum(int number);
 bg_playerclass_t *CG_LimboPanel_GetPlayerClass(void);
-weapon_t            CG_LimboPanel_GetSelectedWeapon(void);
-weapon_t            CG_LimboPanel_GetWeaponForNumber(int number, int slot, qboolean ignoreDisabled);
-extWeaponStats_t    CG_LimboPanel_GetSelectedWeaponStat(void);
-qboolean            CG_LimboPanel_WeaponIsDisabled(int weap);
-qboolean            CG_LimboPanel_RealWeaponIsDisabled(weapon_t weap);
-int                 CG_LimboPanel_GetWeaponNumberForPos(int pos);
+weapon_t CG_LimboPanel_GetSelectedWeapon(void);
+weapon_t CG_LimboPanel_GetWeaponForNumber(int number, int slot, qboolean ignoreDisabled);
+extWeaponStats_t CG_LimboPanel_GetSelectedWeaponStat(void);
+qboolean CG_LimboPanel_WeaponIsDisabled(int weap);
+qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weap);
+int CG_LimboPanel_GetWeaponNumberForPos(int pos);
 
-void                CG_LimboPanel_SetSelectedWeaponNumForSlot(int index, int number);
-weapon_t            CG_LimboPanel_GetSelectedWeaponForSlot(int index);
+void CG_LimboPanel_SetSelectedWeaponNumForSlot(int index, int number);
+weapon_t CG_LimboPanel_GetSelectedWeaponForSlot(int index);
 
 // cg_commandmap.c
 // A scissored map always has the player in the center

@@ -390,9 +390,7 @@ CG_General
 static void CG_General(centity_t *cent)
 {
 	refEntity_t   ent;
-	entityState_t *s1;
-
-	s1 = &cent->currentState;
+	entityState_t *s1 = &cent->currentState;
 
 	// if set to invisible, skip
 	if (!s1->modelindex)
@@ -1377,7 +1375,6 @@ static void CG_Corona(centity_t *cent)
 	qboolean visible = qfalse,
 	         behind  = qfalse,
 	         toofar  = qfalse;
-
 	float  dot, dist;
 	vec3_t dir;
 
@@ -1499,9 +1496,7 @@ CG_Explosive
 static void CG_Explosive(centity_t *cent)
 {
 	refEntity_t   ent;
-	entityState_t *s1;
-
-	s1 = &cent->currentState;
+	entityState_t *s1 = &cent->currentState;
 
 	// create the render entity
 	memset(&ent, 0, sizeof(ent));
@@ -1549,9 +1544,7 @@ CG_Constructible
 static void CG_Constructible(centity_t *cent)
 {
 	refEntity_t   ent;
-	entityState_t *s1;
-
-	s1 = &cent->currentState;
+	entityState_t *s1 = &cent->currentState;
 
 	// create the render entity
 	memset(&ent, 0, sizeof(ent));
@@ -1618,9 +1611,7 @@ CG_Mover
 static void CG_Mover(centity_t *cent)
 {
 	refEntity_t   ent;
-	entityState_t *s1;
-
-	s1 = &cent->currentState;
+	entityState_t *s1 = &cent->currentState;
 
 	// create the render entity
 	memset(&ent, 0, sizeof(ent));
@@ -1834,10 +1825,8 @@ new beam entity, for rope like stuff...
 void CG_Beam_2(centity_t *cent)
 {
 	refEntity_t   ent;
-	entityState_t *s1;
+	entityState_t *s1 = &cent->currentState;
 	vec3_t        origin, origin2;
-
-	s1 = &cent->currentState;
 
 	BG_EvaluateTrajectory(&s1->pos, cg.time, origin, qfalse, s1->effect1Time);
 	BG_EvaluateTrajectory(&s1->apos, cg.time, origin2, qfalse, s1->effect2Time);
@@ -1872,9 +1861,7 @@ Also called as an event
 void CG_Beam(centity_t *cent)
 {
 	refEntity_t   ent;
-	entityState_t *s1;
-
-	s1 = &cent->currentState;
+	entityState_t *s1 = &cent->currentState;
 
 	// create the render entity
 	memset(&ent, 0, sizeof(ent));
@@ -1913,9 +1900,7 @@ CG_Portal
 static void CG_Portal(centity_t *cent)
 {
 	refEntity_t   ent;
-	entityState_t *s1;
-
-	s1 = &cent->currentState;
+	entityState_t *s1 = &cent->currentState;
 
 	// create the render entity
 	memset(&ent, 0, sizeof(ent));
@@ -2453,8 +2438,6 @@ static void CG_ProcessEntity(centity_t *cent)
 	case ET_CORONA:
 		CG_Corona(cent);
 		break;
-	/*case ET_BOMB: // was TRIPMINE
-	    break;*/
 	case ET_BEAM_2:
 		CG_Beam_2(cent);
 		break;
@@ -2762,7 +2745,6 @@ qboolean CG_AddEntityToTag(centity_t *cent)
 /*
 ===============
 CG_AddPacketEntities
-
 ===============
 */
 

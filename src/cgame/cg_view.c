@@ -1598,7 +1598,6 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 	refdef_t     rd;
 	static float lastfov = 90;      // for transitions back from zoomed in modes
 
-
 	if (!cg_skybox.integer || !cg.skyboxEnabled)
 	{
 		return;
@@ -2042,8 +2041,8 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 					if (!(rand() % 3))
 					{
-						float alpha;
-						alpha  = 1.0f - ((float)(cg.time - cg.predictedPlayerEntity.overheatTime) / 3000.0f);
+						float alpha = 1.0f - ((float)(cg.time - cg.predictedPlayerEntity.overheatTime) / 3000.0f);
+
 						alpha *= 0.25f;     // .25 max alpha
 						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, muzzle, 1000, 8, 20, 30, alpha, 8.f);
 					}

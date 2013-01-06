@@ -180,7 +180,7 @@ void Weapon_Knife(gentity_t *ent)
 		if (DotProduct(eforward, pforward) > 0.6f)           // from behind(-ish)
 		{
 			damage = 100;   // enough to drop a 'normal' (100 health) human with one jab
-			mod    = MOD_KNIFE;
+			mod    = MOD_KNIFE; // MOD_BACKSTAB
 
 			if (ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 4)
 			{
@@ -468,7 +468,6 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	traceEnt->r.contents = CONTENTS_CORPSE;
 	trap_LinkEntity(ent);
 
-
 	// Let the person being revived know about it
 	trap_SendServerCommand(traceEnt - g_entities, va("cp \"You have been revived by [lof]%s[lon] [lof]%s!\n\"", ent->client->sess.sessionTeam == TEAM_ALLIES ? rankNames_Allies[ent->client->sess.rank] : rankNames_Axis[ent->client->sess.rank], ent->client->pers.netname));
 	traceEnt->props_frame_state = ent->s.number;
@@ -721,7 +720,6 @@ static void HandleEntsThatBlockConstructible(gentity_t *constructor, gentity_t *
 	int       listedEntities, e;
 	int       blockingEntities = 0;
 	gentity_t *check, *block;
-
 	// backup...
 	int constructibleModelindex     = constructible->s.modelindex;
 	int constructibleClipmask       = constructible->clipmask;
@@ -928,7 +926,6 @@ static void HandleEntsThatBlockConstructible(gentity_t *constructor, gentity_t *
 // returns qfalse when it couldn't build
 static qboolean TryConstructing(gentity_t *ent)
 {
-	gentity_t *check;
 	gentity_t *constructible = ent->client->touchingTOI->target_ent;
 
 	// no construction during prematch
@@ -1283,7 +1280,8 @@ static qboolean TryConstructing(gentity_t *ent)
 			}
 			else
 			{
-				int i;
+				gentity_t *check;
+				int       i;
 
 				// find our marker and update it's coordinates
 				for (i = 0, check = g_entities; i < level.num_entities; i++, check++)
@@ -1325,8 +1323,6 @@ static qboolean TryConstructing(gentity_t *ent)
 
 void AutoBuildConstruction(gentity_t *constructible)
 {
-	gentity_t *check;
-
 	HandleEntsThatBlockConstructible(NULL, constructible, qtrue, qfalse);
 	if (constructible->count2)
 	{
@@ -1502,7 +1498,8 @@ void AutoBuildConstruction(gentity_t *constructible)
 		}
 		else
 		{
-			int i;
+			gentity_t *check;
+			int       i;
 
 			// find our marker and update it's coordinates
 			for (i = 0, check = g_entities; i < level.num_entities; i++, check++)
@@ -2111,6 +2108,7 @@ evilbanigoto:
 							const char *Goalname = _GetEntityName(hit);
 #endif
 							gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+
 							pm->s.effect2Time = 0;
 							pm->s.effect3Time = hit->s.teamNum;
 							pm->s.teamNum     = ent->client->sess.sessionTeam;
@@ -2323,6 +2321,7 @@ evilbanigoto:
 
 								{
 									gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
@@ -2347,6 +2346,7 @@ evilbanigoto:
 
 								{
 									gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
@@ -3316,8 +3316,7 @@ EmitterCheck
 */
 void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
 {
-	gentity_t *tent;
-	vec3_t    origin;
+	vec3_t origin;
 
 	VectorCopy(tr->endpos, origin);
 	SnapVectorTowards(tr->endpos, attacker->s.origin);
@@ -3327,7 +3326,8 @@ void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
 	}
 	else if (Q_stricmp(ent->classname, "func_leaky") == 0)
 	{
-		tent = G_TempEntity(origin, EV_EMITTER);
+		gentity_t *tent = G_TempEntity(origin, EV_EMITTER);
+
 		VectorCopy(origin, tent->s.origin);
 		tent->s.time    = 1234;
 		tent->s.density = 9876;
@@ -3524,6 +3524,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		{
 			gentity_t *bboxEnt;
 			vec3_t    b1, b2;
+
 			VectorCopy(traceEnt->r.currentOrigin, b1);
 			VectorCopy(traceEnt->r.currentOrigin, b2);
 			VectorAdd(b1, traceEnt->r.mins, b1);
@@ -3958,6 +3959,7 @@ void AddLean(gentity_t *ent, vec3_t point)
 		if (ent->client->ps.leanf)
 		{
 			vec3_t right;
+
 			AngleVectors(ent->client->ps.viewangles, NULL, right, NULL);
 			VectorMA(point, ent->client->ps.leanf, right, point);
 		}

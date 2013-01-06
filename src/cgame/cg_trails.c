@@ -653,7 +653,6 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 	i     = 0;
 	while (jNext)
 	{
-
 		// first get the directional vectors to the next junc
 		VectorSubtract(jNext->pos, j->pos, fwd);
 		GetPerpendicularViewVector(cg.refdef_current->vieworg, j->pos, jNext->pos, up);
@@ -712,7 +711,9 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 		verts[i].st[0] = s;
 		verts[i].st[1] = 1.0;
 		for (k = 0; k < 3; k++)
+		{
 			verts[i].modulate[k] = ( unsigned char )(j->color[k] * 255.0);
+		}
 		verts[i].modulate[3] = ( unsigned char )(j->alpha * 255.0);
 
 		// blend this with the previous junc
@@ -735,7 +736,9 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 		verts[i].st[0] = s;
 		verts[i].st[1] = 0.0;
 		for (k = 0; k < 3; k++)
+		{
 			verts[i].modulate[k] = ( unsigned char )(j->color[k] * 255.0);
+		}
 		verts[i].modulate[3] = ( unsigned char )(j->alpha * 255.0);
 
 		// blend this with the previous junc
@@ -772,7 +775,9 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 		verts[i].st[0] = s;
 		verts[i].st[1] = 0.0;
 		for (k = 0; k < 3; k++)
+		{
 			verts[i].modulate[k] = ( unsigned char )(jNext->color[k] * 255.0);
+		}
 		verts[i].modulate[3] = ( unsigned char )(jNext->alpha * 255.0);
 		i++;
 
@@ -782,7 +787,9 @@ void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 		verts[i].st[0] = s;
 		verts[i].st[1] = 1.0;
 		for (k = 0; k < 3; k++)
+		{
 			verts[i].modulate[k] = ( unsigned char )(jNext->color[k] * 255.0);
+		}
 		verts[i].modulate[3] = ( unsigned char )(jNext->alpha * 255.0);
 		i++;
 

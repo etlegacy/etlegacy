@@ -97,9 +97,6 @@ void CG_CheckAmmo(void)
 		default:
 			total += cg.snap->ps.ammo[BG_FindAmmoForWeapon(i)] * 1000;
 			break;
-//          default:
-//              total += cg.snap->ps.ammo[BG_FindAmmoForWeapon(i)] * 200;
-//              break;
 		}
 
 		if (total >= 5000)
@@ -320,40 +317,6 @@ void CG_Respawn(qboolean revived)
 
 extern char *eventnames[];
 
-/*
-==============
-CG_CheckPlayerstateEvents
-==============
-*/
-void CG_CheckPlayerstateEvents_wolf(playerState_t *ps, playerState_t *ops)
-{
-	int       i;
-	int       event;
-	centity_t *cent;
-	/*
-	    if ( ps->externalEvent && ps->externalEvent != ops->externalEvent ) {
-	        cent = &cg_entities[ ps->clientNum ];
-	        cent->currentState.event = ps->externalEvent;
-	        cent->currentState.eventParm = ps->externalEventParm;
-	        CG_EntityEvent( cent, cent->lerpOrigin );
-	    }
-	*/
-	cent = &cg.predictedPlayerEntity; // cg_entities[ ps->clientNum ];
-	// go through the predictable events buffer
-	for (i = ps->eventSequence - MAX_EVENTS ; i < ps->eventSequence ; i++)
-	{
-		if (ps->events[i & (MAX_EVENTS - 1)] != ops->events[i & (MAX_EVENTS - 1)]
-		    || i >= ops->eventSequence)
-		{
-			event = ps->events[i & (MAX_EVENTS - 1)];
-
-			cent->currentState.event     = event;
-			cent->currentState.eventParm = ps->eventParms[i & (MAX_EVENTS - 1)];
-			CG_EntityEvent(cent, cent->lerpOrigin);
-		}
-	}
-}
-
 void CG_CheckPlayerstateEvents(playerState_t *ps, playerState_t *ops)
 {
 	int       i;
@@ -378,7 +341,6 @@ void CG_CheckPlayerstateEvents(playerState_t *ps, playerState_t *ops)
 		    // or something the server told us changed our prediction causing a different event
 		    || (i > ops->eventSequence - MAX_EVENTS && ps->events[i & (MAX_EVENTS - 1)] != ops->events[i & (MAX_EVENTS - 1)]))
 		{
-
 			event                        = ps->events[i & (MAX_EVENTS - 1)];
 			cent->currentState.event     = event;
 			cent->currentState.eventParm = ps->eventParms[i & (MAX_EVENTS - 1)];
@@ -400,9 +362,8 @@ void CG_CheckChangedPredictableEvents(playerState_t *ps)
 {
 	int       i;
 	int       event;
-	centity_t *cent;
+	centity_t *cent = &cg.predictedPlayerEntity;
 
-	cent = &cg.predictedPlayerEntity;
 	for (i = ps->eventSequence - MAX_EVENTS ; i < ps->eventSequence ; i++)
 	{
 		if (i >= cg.eventSequence)

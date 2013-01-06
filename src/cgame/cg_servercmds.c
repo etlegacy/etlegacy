@@ -1199,9 +1199,8 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 	char         **p, *ptr;
 	char         *token;
 	voiceChat_t  *voiceChats;
-	qboolean     compress;
+	qboolean     compress = qtrue;
 
-	compress = qtrue;
 	if (cg_buildScript.integer)
 	{
 		compress = qfalse;
@@ -1339,9 +1338,8 @@ CG_LoadVoiceChats
 */
 void CG_LoadVoiceChats(void)
 {
-	int size;
+	int size = trap_MemoryRemaining();
 
-	size                            = trap_MemoryRemaining();
 	voiceChatLists[0].numVoiceChats = 0;
 	voiceChatLists[1].numVoiceChats = 0;
 
@@ -2588,10 +2586,6 @@ static void CG_ServerCommand(void)
 		CG_parseBestShotsStats_cmd(qfalse, CG_printConsoleString);
 		return;
 	}
-	//if(!strcmp(cmd, "wastats")) {
-	//    CG_wtopshotsParse_cmd(qfalse);
-	//    return;
-	//}
 	if (!Q_stricmp(cmd, "wbstats"))
 	{
 		CG_topshotsParse_cmd(qtrue);

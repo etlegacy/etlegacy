@@ -1780,7 +1780,7 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 	head.customSkin = headcharacter->hudheadskin;
 	head.renderfx   = RF_NOSHADOW | RF_FORCENOLOD;      // no stencil shadows
 
-	// ydnar: light the model with the current lightgrid
+	// light the model with the current lightgrid
 	//VectorCopy( cg.refdef.vieworg, head.lightingOrigin );
 	if (!cg.showGameView)
 	{
@@ -1796,7 +1796,7 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 		hat.customSkin = character->accSkins[ACC_HAT];
 		hat.renderfx   = RF_NOSHADOW | RF_FORCENOLOD;   // no stencil shadows
 
-		// ydnar: light the model with the current lightgrid
+		// light the model with the current lightgrid
 		//VectorCopy( cg.refdef.vieworg, hat.lightingOrigin );
 		if (!cg.showGameView)
 		{
@@ -1860,8 +1860,8 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 	}
 	trap_R_RenderScene(&refdef);
 
-//bani - render to texture api example
-//draws the player head on one of the fueldump textures.
+// render to texture api example
+// draws the player head on one of the fueldump textures.
 #ifdef TEST_API_RENDERTOTEXTURE
 	{
 		static int texid = 0;
@@ -2630,7 +2630,7 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 				}
 				else
 				{
-//                  button->data[3] =
+					//button->data[3] =
 					button->data[5] = value;
 				}
 			}
@@ -2642,7 +2642,7 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 				}
 				else
 				{
-//                  button->data[3] =
+					//button->data[3] =
 					button->data[5] = value;
 				}
 			}

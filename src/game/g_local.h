@@ -742,8 +742,6 @@ struct gclient_s
 
 	int lastKillTime;               // for multiple kill rewards
 
-	int switchTeamTime;             // time the player switched teams
-
 	// timeResidual is used to handle events that happen every second
 	// like health / armor countdowns and regeneration
 	int timeResidual;

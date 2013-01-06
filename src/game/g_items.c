@@ -437,7 +437,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				}
 #endif
 
-				// extracted code originally here into AddMagicAmmo -xkan, 9/18/2002
+				// extracted code originally here into AddMagicAmmo
 				// add 1 clip of magic ammo for any two-handed weapon
 			}
 			return RESPAWN_SP;

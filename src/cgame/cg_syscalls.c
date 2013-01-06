@@ -223,7 +223,6 @@ int trap_CM_MarkFragments(int numPoints, const vec3_t *points,
 	return syscall(CG_CM_MARKFRAGMENTS, numPoints, points, projection, maxPoints, pointBuffer, maxFragments, fragmentBuffer);
 }
 
-// ydnar
 void trap_R_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime)
 {
 	syscall(CG_R_PROJECTDECAL, hShader, numPoints, points, projection, color, lifeTime, fadeTime);
@@ -289,7 +288,7 @@ void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin)
 	syscall(CG_S_UPDATEENTITYPOSITION, entityNum, origin);
 }
 
-// Ridah, talking animations
+// talking animations
 int trap_S_GetVoiceAmplitude(int entityNum)
 {
 	return syscall(CG_S_GETVOICEAMPLITUDE, entityNum);
@@ -366,10 +365,7 @@ void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *v
 	syscall(CG_R_ADDPOLYSTOSCENE, hShader, numVerts, verts, numPolys);
 }
 
-// ydnar: new dlight system
-//% void    trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b, int overdraw ) {
-//%     syscall( CG_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), overdraw );
-//% }
+// new dlight system
 void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
 	syscall(CG_R_ADDLIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity),
@@ -922,7 +918,7 @@ void trap_GetHunkData(int *hunkused, int *hunkexpected)
 	syscall(CG_GETHUNKDATA, hunkused, hunkexpected);
 }
 
-//zinx - binary message channel
+// binary message channel
 void trap_SendMessage(char *buf, int buflen)
 {
 	syscall(CG_SENDMESSAGE, buf, buflen);
@@ -933,13 +929,13 @@ messageStatus_t trap_MessageStatus(void)
 	return syscall(CG_MESSAGESTATUS);
 }
 
-//bani - dynamic shaders
+// dynamic shaders
 qboolean trap_R_LoadDynamicShader(const char *shadername, const char *shadertext)
 {
 	return syscall(CG_R_LOADDYNAMICSHADER, shadername, shadertext);
 }
 
-// fretn - render to texture
+//  render to texture
 void trap_R_RenderToTexture(int textureid, int x, int y, int w, int h)
 {
 	syscall(CG_R_RENDERTOTEXTURE, textureid, x, y, w, h);
@@ -950,7 +946,7 @@ int trap_R_GetTextureId(const char *name)
 	return syscall(CG_R_GETTEXTUREID, name);
 }
 
-// bani - sync rendering
+// sync rendering
 void trap_R_Finish(void)
 {
 	syscall(CG_R_FINISH);

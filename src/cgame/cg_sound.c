@@ -146,12 +146,10 @@ CG_SoundPickOldestRandomSound
 */
 int CG_SoundPickOldestRandomSound(soundScript_t *sound, vec3_t org, int entnum)
 {
-	int                oldestTime = 0;
-	soundScriptSound_t *oldestSound;
-	soundScriptSound_t *scriptSound;
+	int                oldestTime   = 0;
+	soundScriptSound_t *oldestSound = NULL;
+	soundScriptSound_t *scriptSound = sound->soundList;
 
-	oldestSound = NULL;
-	scriptSound = sound->soundList;
 	while (scriptSound)
 	{
 		if (!oldestSound || (scriptSound->lastPlayed < oldestTime))
@@ -586,11 +584,8 @@ void CG_SoundInit(void)
 
 }
 
-//
-// Script Speakers
-//
 
-// Editing
+// Script Speakers Editing
 
 typedef struct editHandle_s
 {

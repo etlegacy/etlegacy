@@ -189,18 +189,14 @@ void SP_info_train_spline_main(void)
 
 void SP_misc_gamemodel(void)
 {
-	char   *model;
-	vec_t  angle;
-	vec3_t angles;
-
-	vec_t  scale;
-	vec3_t vScale;
-
-	vec3_t org;
-
+	char           *model;
+	vec_t          angle;
+	vec3_t         angles;
+	vec_t          scale;
+	vec3_t         vScale;
+	vec3_t         org;
 	cg_gamemodel_t *gamemodel;
-
-	int i;
+	int            i;
 
 	if (CG_SpawnString("targetname", "", &model) || CG_SpawnString("scriptname", "", &model) || CG_SpawnString("spawnflags", "", &model))
 	{

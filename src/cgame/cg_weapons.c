@@ -323,15 +323,12 @@ CG_PanzerFaustEjectBrass
 */
 static void CG_PanzerFaustEjectBrass(centity_t *cent)
 {
-	localEntity_t *le;
-	refEntity_t   *re;
+	localEntity_t *le = CG_AllocLocalEntity();
+	refEntity_t   *re = &le->refEntity;
 	vec3_t        velocity, xvelocity;
 	vec3_t        offset, xoffset;
 	float         waterScale = 1.0f;
 	vec3_t        v[3];
-
-	le = CG_AllocLocalEntity();
-	re = &le->refEntity;
 
 	//velocity[0] = 16;
 	//velocity[1] = -50 + 40 * crandom();

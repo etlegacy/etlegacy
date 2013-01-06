@@ -320,7 +320,7 @@ static void CG_TransitionSnapshot(void)
 		id = cg.snap->entities[i].number;
 		CG_TransitionEntity(&cg_entities[id]);
 
-		// rain - #374 - ent doesn't exist in this frame, reset it.
+		// ent doesn't exist in this frame, reset it.
 		// this is to fix the silent landmines bug, which is caused
 		// by a stale miscTime in the cent
 		if (cg_entities[id].currentValid == qfalse && oldValid[id] == qtrue)

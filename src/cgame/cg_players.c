@@ -174,12 +174,10 @@ CG_NewClientInfo
 */
 void CG_NewClientInfo(int clientNum)
 {
-	clientInfo_t *ci;
+	clientInfo_t *ci = &cgs.clientinfo[clientNum];
 	clientInfo_t newInfo;
 	const char   *configstring;
 	const char   *v;
-
-	ci = &cgs.clientinfo[clientNum];
 
 	configstring = CG_ConfigString(clientNum + CS_PLAYERS);
 	if (!*configstring)
@@ -208,7 +206,6 @@ void CG_NewClientInfo(int clientNum)
 	Q_strncpyz(newInfo.name, v, sizeof(newInfo.name));
 	Q_strncpyz(newInfo.cleanname, v, sizeof(newInfo.cleanname));
 	Q_CleanStr(newInfo.cleanname);
-
 
 	// bot skill
 	v                = Info_ValueForKey(configstring, "skill");
@@ -604,10 +601,9 @@ may include ANIM_TOGGLEBIT
 */
 void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation)
 {
-	animation_t *anim, *oldanim;
-	int         oldAnimNum; // oldAnimTime
-	qboolean    firstAnim = qfalse;
-
+	animation_t    *anim, *oldanim;
+	int            oldAnimNum; // oldAnimTime
+	qboolean       firstAnim  = qfalse;
 	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
 
 	if (!character)
@@ -696,6 +692,12 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 	}
 }
 
+#define ANIM_SCALEMAX_LOW   1.1
+#define ANIM_SCALEMAX_HIGH  1.6
+
+#define ANIM_SPEEDMAX_LOW   100
+#define ANIM_SPEEDMAX_HIGH  20
+
 /*
 ===============
 CG_RunLerpFrameRate
@@ -709,12 +711,6 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 	animation_t *anim, *oldAnim;
 	animation_t *otherAnim = NULL;
 	qboolean    isLadderAnim;
-
-#define ANIM_SCALEMAX_LOW   1.1
-#define ANIM_SCALEMAX_HIGH  1.6
-
-#define ANIM_SPEEDMAX_LOW   100
-#define ANIM_SPEEDMAX_HIGH  20
 
 	// debugging tool to get no animations
 	if (cg_animSpeed.integer == 0)
@@ -738,7 +734,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 
 	// check for forcing last frame
 	if (cent->currentState.eFlags & EF_FORCE_END_FRAME
-	    // xkan, 12/27/2002 - In SP, corpse also stays at the last frame (of the death animation)
+	    // In SP, corpse also stays at the last frame (of the death animation)
 	    // so that the death animation can end up in different positions
 	    // and the body will stay in that position
 	    || (cent->currentState.eType == ET_CORPSE))
@@ -1027,15 +1023,10 @@ CG_PlayerAnimation
 */
 static void CG_PlayerAnimation(centity_t *cent, refEntity_t *body)
 {
-	clientInfo_t   *ci;
-	int            clientNum;
+	int            clientNum = cent->currentState.clientNum;
+	clientInfo_t   *ci       = &cgs.clientinfo[clientNum];
 	int            animIndex;
-	bg_character_t *character;
-
-	clientNum = cent->currentState.clientNum;
-
-	ci        = &cgs.clientinfo[clientNum];
-	character = CG_CharacterForClientinfo(ci, cent);
+	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
 
 	if (!character)
 	{
@@ -1252,12 +1243,8 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	float  speed;
 	int    legsSet;
 	//int            torsoSet;
-	clientInfo_t   *ci;
-	bg_character_t *character;
-
-	ci = &cgs.clientinfo[cent->currentState.clientNum];
-
-	character = CG_CharacterForClientinfo(ci, cent);
+	clientInfo_t   *ci        = &cgs.clientinfo[cent->currentState.clientNum];
+	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
 
 	if (!character)
 	{
@@ -1415,12 +1402,10 @@ CG_BreathPuffs
 */
 static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 {
-	clientInfo_t *ci;
+	clientInfo_t *ci = &cgs.clientinfo[cent->currentState.number];
 	vec3_t       up, forward;
 	int          contents;
 	vec3_t       mang, morg, maxis[3];
-
-	ci = &cgs.clientinfo[cent->currentState.number];
 
 	if (!cg_enableBreath.integer)
 	{
@@ -1710,9 +1695,9 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 
 		//alpha *= distFade;
 
-		// ydnar: decal remix
-		//% CG_ImpactMark( cgs.media.shadowTorsoShader, trace.endpos, trace.plane.normal,
-		//%     0, alpha,alpha,alpha,1, qfalse, 16, qtrue, -1 );
+		// decal remix
+		//CG_ImpactMark( cgs.media.shadowTorsoShader, trace.endpos, trace.plane.normal,
+		//  0, alpha,alpha,alpha,1, qfalse, 16, qtrue, -1 );
 		CG_ImpactMark(cgs.media.shadowTorsoShader, origin, projection, 18.0f,
 		              cent->lerpAngles[YAW], distFade, distFade, distFade, distFade, -1);
 		return qtrue;
@@ -1755,12 +1740,12 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 
 				AxisToAngles(axis, angles);
 
-				// ydnar: decal remix
-				//% CG_ImpactMark( shadowParts[tagIndex].shader, origin, trace.plane.normal,
-				//%     angles[YAW]/*cent->pe.legs.yawAngle*/, alpha,alpha,alpha,1, qfalse, shadowParts[tagIndex].size, qtrue, -1 );
+				// decal remix
+				//CG_ImpactMark( shadowParts[tagIndex].shader, origin, trace.plane.normal,
+				//  angles[YAW]/*cent->pe.legs.yawAngle*/, alpha,alpha,alpha,1, qfalse, shadowParts[tagIndex].size, qtrue, -1 );
 
-				//% CG_ImpactMark( shadowParts[ tagIndex ].shader, origin, up,
-				//%         cent->lerpAngles[ YAW ], 1.0f, 1.0f, 1.0f, 1.0f, qfalse, shadowParts[ tagIndex ].size, qtrue, -1 );
+				//CG_ImpactMark( shadowParts[ tagIndex ].shader, origin, up,
+				//  cent->lerpAngles[ YAW ], 1.0f, 1.0f, 1.0f, 1.0f, qfalse, shadowParts[ tagIndex ].size, qtrue, -1 );
 				CG_ImpactMark(shadowParts[tagIndex].shader, origin, projection, shadowParts[tagIndex].size,
 				              angles[YAW], distFade, distFade, distFade, distFade, -1);
 			}
@@ -2041,25 +2026,20 @@ CG_Player
 */
 void CG_Player(centity_t *cent)
 {
-	clientInfo_t *ci;
-	refEntity_t  body;
-	refEntity_t  head;
-	refEntity_t  acc;
-	vec3_t       playerOrigin = { 0 }, lightorigin = { 0 };
-	int          clientNum, i;
-	int          renderfx;
-	qboolean     shadow;
-	float        shadowPlane;
-//  float           gumsflappin = 0;    // talking amplitude
+	clientInfo_t   *ci;
+	refEntity_t    body;
+	refEntity_t    head;
+	refEntity_t    acc;
+	vec3_t         playerOrigin = { 0 }, lightorigin = { 0 };
+	int            clientNum, i;
+	int            renderfx;
+	qboolean       shadow      = qfalse; // gjd added to make sure it was initialized;
+	float          shadowPlane = 0;
 	qboolean       usingBinocs = qfalse;
-	centity_t      *cgsnap;
+	centity_t      *cgsnap     = &cg_entities[cg.snap->ps.clientNum];
 	bg_character_t *character;
 	float          hilightIntensity = 0.f;
 
-	cgsnap = &cg_entities[cg.snap->ps.clientNum];
-
-	shadow      = qfalse;   // gjd added to make sure it was initialized
-	shadowPlane = 0.0;      // ditto
 
 	// if set to invisible, skip
 	if (cent->currentState.eFlags & EF_NODRAW)
@@ -2090,7 +2070,7 @@ void CG_Player(centity_t *cent)
 	{
 		VectorCopy(cg_entities[cg_entities[cent->currentState.clientNum].tagParent].mountedMG42Player.origin, playerOrigin);
 	}
-	else if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))          // Arnout: see if we're attached to a gun
+	else if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE)) // see if we're attached to a gun
 	{
 		centity_t *mg42;
 		int       num;
@@ -2559,13 +2539,11 @@ void CG_ResetPlayerEntity(centity_t *cent)
 
 void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNum)
 {
-	clientInfo_t   *ci;
+	clientInfo_t   *ci = &cgs.clientinfo[fleshEntityNum];
 	refEntity_t    body;
 	refEntity_t    head;
 	centity_t      *cent, backupCent;
 	bg_character_t *character;
-
-	ci = &cgs.clientinfo[fleshEntityNum];
 
 	if (!ci->infoValid)
 	{
@@ -2614,14 +2592,12 @@ CG_GetTag
 */
 qboolean CG_GetTag(int clientNum, char *tagname, orientation_t *or)
 {
-	clientInfo_t *ci;
+	clientInfo_t *ci = &cgs.clientinfo[clientNum];
 	centity_t    *cent;
 	refEntity_t  *refent;
 	vec3_t       tempAxis[3];
 	vec3_t       org;
 	int          i;
-
-	ci = &cgs.clientinfo[clientNum];
 
 	if (cg.snap && clientNum == cg.snap->ps.clientNum && cg.renderingThirdPerson)
 	{
@@ -2666,14 +2642,12 @@ CG_GetWeaponTag
 */
 qboolean CG_GetWeaponTag(int clientNum, char *tagname, orientation_t *or)
 {
-	clientInfo_t *ci;
+	clientInfo_t *ci = &cgs.clientinfo[clientNum];
 	centity_t    *cent;
 	refEntity_t  *refent;
 	vec3_t       tempAxis[3];
 	vec3_t       org;
 	int          i;
-
-	ci = &cgs.clientinfo[clientNum];
 
 	if (cg.snap && clientNum == cg.snap->ps.clientNum && cg.renderingThirdPerson)
 	{
@@ -2870,18 +2844,17 @@ int CG_GetSelectedWeapon(void)
 
 void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, int time, clientInfo_t *ci, qboolean animatedHead)
 {
-	refdef_t    refdef;
-	refEntity_t body;
-	refEntity_t head;
-	refEntity_t gun;
-	refEntity_t barrel;
-	refEntity_t acc;
-	vec3_t      origin;
-	int         renderfx;
-	vec3_t      mins = { -16, -16, -24 };
-	vec3_t      maxs = { 16, 16, 32 };
-	float       len;
-//  float           xx;
+	refdef_t       refdef;
+	refEntity_t    body;
+	refEntity_t    head;
+	refEntity_t    gun;
+	refEntity_t    barrel;
+	refEntity_t    acc;
+	vec3_t         origin;
+	int            renderfx;
+	vec3_t         mins = { -16, -16, -24 };
+	vec3_t         maxs = { 16, 16, 32 };
+	float          len;
 	vec4_t         hcolor     = { 1, 0, 0, 0.5 };
 	bg_character_t *character = BG_GetCharacter(pi->teamNum, pi->classNum);
 	int            i;
@@ -2904,14 +2877,8 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 	refdef.y      = y;
 	refdef.width  = w;
 	refdef.height = h;
-
-	/*  refdef.fov_x = (int)((float)refdef.width / 640.0f * 90.0f);
-	    xx = refdef.width / tan( refdef.fov_x / 360 * M_PI );
-	    refdef.fov_y = atan2( refdef.height, xx );
-	    refdef.fov_y *= ( 360 / M_PI );*/
-
-	refdef.fov_x = 35;
-	refdef.fov_y = 35;
+	refdef.fov_x  = 35;
+	refdef.fov_y  = 35;
 
 	// calculate distance so the player nearly fills the box
 
@@ -3045,7 +3012,6 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 	AxisCopy(body.torsoAxis, acc.axis);
 	VectorCopy(origin, acc.lightingOrigin);
 
-
 	for (i = ACC_BELT_LEFT; i < ACC_MAX; i++)
 	{
 		if (!(character->accModels[i]))
@@ -3115,13 +3081,11 @@ void CG_DrawPlayer_Limbo(float x, float y, float w, float h, playerInfo_t *pi, i
 	origin[0] -= 100;   // + = behind, - = in front
 	origin[1] += 100;   // + = left, - = right
 	origin[2] += 100;   // + = above, - = below
-	//% trap_R_AddLightToScene( origin, 1000, 1.0, 1.0, 1.0, 0 );
 	trap_R_AddLightToScene(origin, 1000, 1.0, 1.0, 1.0, 1.0, 0, 0);
 
 	origin[0] -= 100;
 	origin[1] -= 100;
 	origin[2] -= 100;
-	//% trap_R_AddLightToScene( origin, 1000, 1.0, 1.0, 1.0, 0 );
 	trap_R_AddLightToScene(origin, 1000, 1.0, 1.0, 1.0, 1.0, 0, 0);
 
 	trap_R_RenderScene(&refdef);
@@ -3182,7 +3146,7 @@ void WM_RegisterWeaponTypeShaders(void)
 
 	while (w->weapindex)
 	{
-//      w->shaderHandle = trap_R_RegisterShaderNoMip( w->shader );
+		//w->shaderHandle = trap_R_RegisterShaderNoMip( w->shader );
 		w++;
 	}
 }

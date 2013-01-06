@@ -95,9 +95,7 @@ const char *BuildShaderStateConfig()
 
 /*
 =========================================================================
-
 model / sound configstring indexes
-
 =========================================================================
 */
 
@@ -618,7 +616,7 @@ void G_InitGentity(gentity_t *e)
 	e->nextthink  = 0;
 	e->free       = NULL;
 
-	// RF, init scripting
+	// init scripting
 	e->scriptStatus.scriptEventIndex = -1;
 
 	// mark the time
@@ -647,11 +645,9 @@ angles and bad trails.
 */
 gentity_t *G_Spawn(void)
 {
-	int       i, force;
-	gentity_t *e;
+	int       i  = 0, force;
+	gentity_t *e = NULL;
 
-	e = NULL;   // shut up warning
-	i = 0;      // shut up warning
 	for (force = 0 ; force < 2 ; force++)
 	{
 		// if we go through all entities and can't find one to free,
@@ -708,9 +704,9 @@ G_EntitiesFree
 qboolean G_EntitiesFree(void)
 {
 	int       i;
-	gentity_t *e;
+	gentity_t *e = &g_entities[MAX_CLIENTS];
 
-	e = &g_entities[MAX_CLIENTS];
+
 	for (i = MAX_CLIENTS; i < level.num_entities; i++, e++)
 	{
 		if (e->inuse)
@@ -732,7 +728,6 @@ Marks the entity as free
 */
 void G_FreeEntity(gentity_t *ed)
 {
-
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_EntityDeleted(ed);
 #endif
@@ -766,10 +761,9 @@ must be taken if the origin is right on a surface (snap towards start vector fir
 */
 gentity_t *G_TempEntity(vec3_t origin, int event)
 {
-	gentity_t *e;
+	gentity_t *e = G_Spawn();
 	vec3_t    snapped;
 
-	e          = G_Spawn();
 	e->s.eType = ET_EVENTS + event;
 
 	e->classname      = "tempEntity";
@@ -789,9 +783,8 @@ gentity_t *G_TempEntity(vec3_t origin, int event)
 
 gentity_t *G_PopupMessage(popupMessageType_t type)
 {
-	gentity_t *e;
+	gentity_t *e = G_Spawn();
 
-	e                 = G_Spawn();
 	e->s.eType        = ET_EVENTS + EV_POPUPMESSAGE;
 	e->classname      = "messageent";
 	e->eventTime      = level.time;
@@ -835,7 +828,7 @@ Adds an event+parm and twiddles the event counter
 */
 void G_AddEvent(gentity_t *ent, int event, int eventParm)
 {
-//	int		bits;
+	//int bits;
 
 	if (!event)
 	{
@@ -851,13 +844,12 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 		ent->client->ps.eventParms[ent->client->ps.eventSequence & (MAX_EVENTS - 1)] = eventParm;
 		ent->client->ps.eventSequence++;
 
-
 		// commented out
-//		bits = ent->client->ps.externalEvent & EV_EVENT_BITS;
-//		bits = ( bits + EV_EVENT_BIT1 ) & EV_EVENT_BITS;
-//		ent->client->ps.externalEvent = event | bits;
-//		ent->client->ps.externalEventParm = eventParm;
-//		ent->client->ps.externalEventTime = level.time;
+		//bits = ent->client->ps.externalEvent & EV_EVENT_BITS;
+		//bits = ( bits + EV_EVENT_BIT1 ) & EV_EVENT_BITS;
+		//ent->client->ps.externalEvent = event | bits;
+		//ent->client->ps.externalEventParm = eventParm;
+		//ent->client->ps.externalEventTime = level.time;
 	}
 	else
 	{
@@ -867,10 +859,10 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 		ent->s.eventSequence++;
 
 		// commented out
-//		bits = ent->s.event & EV_EVENT_BITS;
-//		bits = ( bits + EV_EVENT_BIT1 ) & EV_EVENT_BITS;
-//		ent->s.event = event | bits;
-//		ent->s.eventParm = eventParm;
+		//bits = ent->s.event & EV_EVENT_BITS;
+		//bits = ( bits + EV_EVENT_BIT1 ) & EV_EVENT_BITS;
+		//ent->s.event = event | bits;
+		//ent->s.eventParm = eventParm;
 	}
 	ent->eventTime   = level.time;
 	ent->r.eventTime = level.time;
@@ -880,14 +872,13 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 =============
 G_Sound
 
-  Ridah, removed channel parm, since it wasn't used, and could cause confusion
+  removed channel parm, since it wasn't used, and could cause confusion
 =============
 */
 void G_Sound(gentity_t *ent, int soundIndex)
 {
-	gentity_t *te;
+	gentity_t *te = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
 
-	te              = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
 	te->s.eventParm = soundIndex;
 }
 
@@ -914,8 +905,8 @@ G_AnimScriptSound
 */
 void G_AnimScriptSound(int soundIndex, vec3_t org, int client)
 {
-	gentity_t *e;
-	e = &g_entities[client];
+	gentity_t *e = &g_entities[client];
+
 	G_AddEvent(e, EV_GENERAL_SOUND, soundIndex);
 }
 
@@ -954,7 +945,6 @@ G_SetAngle
 */
 void G_SetAngle(gentity_t *ent, vec3_t angle)
 {
-
 	VectorCopy(angle, ent->s.apos.trBase);
 	ent->s.apos.trType     = TR_STATIONARY;
 	ent->s.apos.trTime     = 0;
@@ -962,9 +952,7 @@ void G_SetAngle(gentity_t *ent, vec3_t angle)
 	VectorClear(ent->s.apos.trDelta);
 
 	VectorCopy(angle, ent->r.currentAngles);
-
-//	VectorCopy (ent->s.angles, ent->s.apos.trDelta );
-
+	//VectorCopy (ent->s.angles, ent->s.apos.trDelta );
 }
 
 /*
@@ -991,7 +979,7 @@ qboolean infront(gentity_t *self, gentity_t *other)
 	return qfalse;
 }
 
-//RF, tag connections
+// tag connections
 /*
 ==================
 G_ProcessTagConnect
@@ -1543,7 +1531,7 @@ void G_ParseCampaigns(void)
 
 		if (i == level.campaignCount)
 		{
-			char buf[MAX_STRING_CHARS]; // fretn
+			char buf[MAX_STRING_CHARS];
 
 			if (trap_Argc() < 1)     // command not found, throw error
 			{

@@ -312,7 +312,6 @@ void CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const ve
 {
 	trace_t t;
 
-
 	trap_CM_BoxTrace(&t, start, end, mins, maxs, 0, mask);
 	t.entityNum = t.fraction != 1.0 ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
 	// check all other solid models
@@ -404,12 +403,9 @@ static void CG_InterpolatePlayerState(qboolean grabAngles)
 {
 	float         f;
 	int           i;
-	playerState_t *out;
-	snapshot_t    *prev, *next;
-
-	out  = &cg.predictedPlayerState;
-	prev = cg.snap;
-	next = cg.nextSnap;
+	playerState_t *out  = &cg.predictedPlayerState;
+	snapshot_t    *prev = cg.snap;
+	snapshot_t    *next = cg.nextSnap;
 
 	*out = cg.snap->ps;
 
@@ -783,7 +779,7 @@ to ease the jerk.
 =================
 */
 
-// rain - we need to keep pmext around for old frames, because Pmove()
+//  we need to keep pmext around for old frames, because Pmove()
 // fills in some values when it does prediction.  This in itself is fine,
 // but the prediction loop starts in the past and predicts from the
 // snapshot time up to the current time, and having things like jumpTime
@@ -801,7 +797,6 @@ void CG_PredictPlayerState(void)
 	usercmd_t     latestCmd;
 	vec3_t        deltaAngles;
 	pmoveExt_t    pmext;
-//  int useCommand = 0;
 
 	cg.hyperspace = qfalse; // will be set if touching a trigger_teleport
 
@@ -895,7 +890,7 @@ void CG_PredictPlayerState(void)
 	}
 	else if (cg_pmove.ps->pm_type == PM_SPECTATOR)
 	{
-		// rain - fix the spectator can-move-partway-through-world weirdness
+		// fix the spectator can-move-partway-through-world weirdness
 		// bug by actually setting tracemask when spectating :x
 		cg_pmove.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;
 		cg_pmove.trace     = CG_TraceCapsule_World;
@@ -943,7 +938,7 @@ void CG_PredictPlayerState(void)
 	// the server time is beyond our current cg.time,
 	// because predicted player positions are going to
 	// be ahead of everything else anyway
-	// rain - NEIN - this'll cause us to execute events from the next frame
+	// - NEIN - this'll cause us to execute events from the next frame
 	// early, resulting in doubled events and the like.  it seems to be
 	// worse as far as prediction, too, so BLAH at id. (#405)
 #if 0

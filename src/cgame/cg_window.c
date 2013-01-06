@@ -56,10 +56,8 @@ void CG_createStatsWindow(void)
 	sw->id         = WID_STATS;
 	sw->fontScaleX = cf_wstats.value * 0.2f;
 	sw->fontScaleY = cf_wstats.value * 0.2f;
-//  sw->x = (cg.snap->ps.pm_type == PM_INTERMISSION) ?  10 : 160;
-//  sw->y = (cg.snap->ps.pm_type == PM_INTERMISSION) ? -20 : -7;    // Align from bottom minus offset and height
-	sw->x = (cg.snap->ps.pm_type == PM_INTERMISSION) ?  10 : 4;
-	sw->y = (cg.snap->ps.pm_type == PM_INTERMISSION) ? -20 : -100;    // Align from bottom minus offset and height
+	sw->x          = (cg.snap->ps.pm_type == PM_INTERMISSION) ?  10 : 4;
+	sw->y          = (cg.snap->ps.pm_type == PM_INTERMISSION) ? -20 : -100; // Align from bottom minus offset and height
 }
 
 void CG_createTopShotsWindow(void)

@@ -367,11 +367,9 @@ return a hash value for the given string (make sure the strings and lowered firs
 */
 long BG_StringHashValue_Lwr(const char *fname)
 {
-	int  i;
-	long hash;
+	int  i = 0;
+	long hash = 0;
 
-	hash = 0;
-	i    = 0;
 	while (fname[i] != '\0')
 	{
 		hash += (long)(fname[i]) * (i + 119);
@@ -415,10 +413,8 @@ BG_AnimationIndexForString
 */
 static int BG_AnimationIndexForString(char *string, animModelInfo_t *animModelInfo)
 {
-	int         i, hash;
+	int         i, hash = BG_StringHashValue(string);
 	animation_t *anim;
-
-	hash = BG_StringHashValue(string);
 
 	for (i = 0; i < animModelInfo->numAnimations; i++)
 	{
@@ -441,10 +437,8 @@ BG_AnimationForString
 */
 animation_t *BG_AnimationForString(char *string, animModelInfo_t *animModelInfo)
 {
-	int         i, hash;
+	int         i, hash = BG_StringHashValue(string);
 	animation_t *anim;
-
-	hash = BG_StringHashValue(string);
 
 	for (i = 0; i < animModelInfo->numAnimations; i++)
 	{
@@ -469,10 +463,8 @@ BG_IndexForString
 */
 int BG_IndexForString(char *token, animStringItem_t *strings, qboolean allowFail)
 {
-	int              i, hash;
+	int              i, hash = BG_StringHashValue(token);
 	animStringItem_t *strav;
-
-	hash = BG_StringHashValue(token);
 
 	for (i = 0, strav = strings; strav->string; strav++, i++)
 	{
