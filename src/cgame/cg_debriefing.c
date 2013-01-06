@@ -719,17 +719,13 @@ PLAYERHEADER_SKILLS(6);
 panel_button_t *debriefPanelButtons[] =
 {
 	&debriefTitleWindow,
-
 	&debriefPlayerListWindow,       &debriefPlayerList,                   &debriefPlayerListScroll,
-
 	&debriefHeadingRank,            &debriefHeadingName,
 #if 0
 	&debriefHeadingMedals,
 #endif // 0
 	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,
-
 	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,            &debriefPlayerInfoTime,                &debriefPlayerInfoXP, &debriefPlayerInfoACC,
-
 	&debriefPlayerInfoSkills0,
 	&debriefPlayerInfoSkills1,
 	&debriefPlayerInfoSkills2,
@@ -737,7 +733,6 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefPlayerInfoSkills4,
 	&debriefPlayerInfoSkills5,
 	&debriefPlayerInfoSkills6,
-
 	&debriefPlayerWeaponStatsHeader,&debriefPlayerWeaponStatsNameHeader,  &debriefPlayerWeaponStatsShotsHeader,&debriefPlayerWeaponStatsHitsHeader, &debriefPlayerWeaponStatsKillsHeader,
 	&debriefPlayerWeaponStatsList,  &debriefPlayerWeaponStatsListScroll,
 
@@ -1032,9 +1027,7 @@ TDB_SKILL_ALLIES_XP(7);
 panel_button_t *teamDebriefPanelButtons[] =
 {
 	&debriefTitleWindow,        &debriefMissionTitleWindow, &debriefMissionAwardsWindow, &debriefMissionImage,        &debriefMissionMaps, &debriefMissionAwardsList,
-
 	&debriefMissionStatsWindow, &debriefMissionStatsWinner, &debriefMissionStatsLoser,   &debriefMissionStatsHeaders,
-
 	NULL
 };
 
@@ -1290,11 +1283,8 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 panel_button_t *chatPanelButtons[] =
 {
 	&chatPanelWindow,       &chatPanelText,
-
 	&chatPanelNextButton,   &chatPanelQCButton,&chatTypeButton,  &chatPanelReadyButton,
-
 	&charPanelEditSurround, &charPanelEdit,
-
 	NULL
 };
 
@@ -1502,10 +1492,10 @@ void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button)
 
 	for (i = 0; i < 7 && pos != -1; i++, pos = CG_Debriefing_GetNextWeaponStat(pos))
 	{
-		CG_Text_Paint_Ext(18, y, button->font->scalex, button->font->scaley, button->font->colour, aWeaponInfo[pos].pszName, 0, 0, 0, button->font->font);
-		CG_Text_Paint_Ext(78, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numShots), 0, 0, 0, button->font->font);
-		CG_Text_Paint_Ext(118, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numHits), 0, 0, 0, button->font->font);
-		CG_Text_Paint_Ext(148, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numKills), 0, 0, 0, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x, y, button->font->scalex, button->font->scaley, button->font->colour, aWeaponInfo[pos].pszName, 0, 0, 0, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x + 62, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numShots), 0, 0, 0, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x + 102, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numHits), 0, 0, 0, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x + 132, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numKills), 0, 0, 0, button->font->font);
 
 		y += 12;
 	}
@@ -1722,6 +1712,7 @@ const char *CG_Debriefing_RankNameForClientInfo(clientInfo_t *ci)
 void CG_Debriefing_ParseWeaponAccuracies(void)
 {
 	int i;
+
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
 		cgs.clientinfo[i].totalWeapAcc = atoi(CG_Argv(i + 1));
@@ -1732,6 +1723,7 @@ void CG_Debriefing_ParseWeaponAccuracies(void)
 void CG_Debriefing_ParsePlayerKillsDeaths(void)
 {
 	int i;
+
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
 		cgs.clientinfo[i].kills  = atoi(CG_Argv(i * 2 + 1));
@@ -1743,6 +1735,7 @@ void CG_Debriefing_ParsePlayerKillsDeaths(void)
 void CG_Debriefing_ParseWeaponStats(void)
 {
 	int i;
+
 	for (i = 0; i < WS_MAX; i++)
 	{
 		cgs.dbWeaponStats[i].numShots = atoi(CG_Argv((i * 3) + 1));
@@ -1868,6 +1861,7 @@ void CG_Debriefing_ScrollGetBarRect(panel_button_t *button, rectDef_t *r)
 	if (cnt > max)
 	{
 		float h = button->rect.h;
+
 		r->h = h * (max / (float)cnt);
 		r->y = button->rect.y + (offset / (float)(cnt - max)) * (h - r->h);
 	}
@@ -1886,7 +1880,6 @@ void CG_Debriefing_ScrollCheckOffset(panel_button_t *button)
 	int max    = CG_Debriefing_ScrollGetMax(button);
 	int cnt    = CG_Debriefing_ScrollGetCount(button);
 	int offset = CG_Debriefing_ScrollGetOffset(button);
-
 	int maxofs = MAX(0, cnt - max);
 
 	if (offset > maxofs)
@@ -1962,12 +1955,13 @@ void CG_Debriefing_MouseEvent(int x, int y)
 	}
 }
 
+
+vec4_t    clr1 = { 41 / 255.f, 51 / 255.f, 43 / 255.f, 204 / 255.f };
+vec4_t    clr2 = { 0.f, 0.f, 0.f, 153 / 255.f };
+
 void CG_Debriefing_Scrollbar_Draw(panel_button_t *button)
 {
 	rectDef_t r;
-	vec4_t    clr1 = { 41 / 255.f, 51 / 255.f, 43 / 255.f, 204 / 255.f };
-	vec4_t    clr2 = { 0.f, 0.f, 0.f, 153 / 255.f };
-
 
 	CG_Debriefing_ScrollCheckOffset(button);
 
@@ -2078,9 +2072,8 @@ void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 {
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w;
+	float        w = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
 
-	w = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "ACC:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i%%", ci->totalWeapAcc), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
@@ -2089,9 +2082,8 @@ void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
 {
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w;
+	float        w = CG_Text_Width_Ext("XP: ", button->font->scalex, 0, button->font->font);
 
-	w = CG_Text_Width_Ext("XP: ", button->font->scalex, 0, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "XP:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
@@ -2362,6 +2354,7 @@ qboolean CG_TeamDebriefingMapList_KeyDown(panel_button_t *button, int key)
 	if (key == K_MOUSE1)
 	{
 		int pos = ((cgs.cursorY - button->rect.y) / 12) + cgs.tdbMapListOffset;
+
 		if (pos < 0 || pos > cgs.campaignData.mapCount)
 		{
 			return qfalse;
@@ -2508,7 +2501,6 @@ void CG_TeamDebriefingTeamXP_Draw(panel_button_t *button)
 void CG_TeamDebriefingTeamSkillXP_Draw(panel_button_t *button)
 {
 	team_t team = button->data[0] == 0 ? TEAM_AXIS : TEAM_ALLIES;
-
 	int xp;
 
 	if (button->data[1] == SK_NUM_SKILLS)
@@ -2783,6 +2775,7 @@ void CG_Debreifing2_Maps_Draw(panel_button_t *button)
 	{
 		float y, w;
 		int   i;
+		const char *str;
 
 		if (!cgs.campaignInfoLoaded)
 		{
@@ -2798,8 +2791,6 @@ void CG_Debreifing2_Maps_Draw(panel_button_t *button)
 		y = button->rect.y + 14;
 		for (i = 0; i < cgs.campaignData.mapCount; i++)
 		{
-			const char *str;
-
 			if (cgs.tdbSelectedMap == i + 1)
 			{
 				CG_FillRect(button->rect.x + 2, y + 2, button->rect.w - 4, 12, clrBck);
@@ -2831,16 +2822,14 @@ void CG_Debreifing2_Mission_Draw(panel_button_t *button)
 
 		if (cgs.campaignData.mapTC[0][0] && cgs.campaignData.mapTC[1][0])
 		{
+			float x, y, w;
+			vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
 			int i;
 
 			CG_DrawPicST(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.campaignData.mapTC[0][0] / 1024.f, cgs.campaignData.mapTC[0][1] / 1024.f, cgs.campaignData.mapTC[1][0] / 1024.f, cgs.campaignData.mapTC[1][1] / 1024.f, trap_R_RegisterShaderNoMip("gfx/loading/camp_map"));
 
 			for (i = cgs.campaignData.mapCount - 1; i >= 0; i--)
 			{
-				float x, y, w;
-
-				vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
-
 				x = button->rect.x + ((cgs.campaignData.arenas[i].mappos[0] - cgs.campaignData.mapTC[0][0]) / 650.f * button->rect.w);
 				y = button->rect.y + ((cgs.campaignData.arenas[i].mappos[1] - cgs.campaignData.mapTC[0][1]) / 650.f * button->rect.h);
 
@@ -2888,10 +2877,8 @@ void CG_Debreifing2_Mission_Draw(panel_button_t *button)
 
 			if (cgs.tdbSelectedMap)
 			{
-				float x, y;
-
-				x = button->rect.x + ((cgs.campaignData.arenas[cgs.tdbSelectedMap - 1].mappos[0] - cgs.campaignData.mapTC[0][0]) / 650.f * button->rect.w);
-				y = button->rect.y + ((cgs.campaignData.arenas[cgs.tdbSelectedMap - 1].mappos[1] - cgs.campaignData.mapTC[0][1]) / 650.f * button->rect.h);
+				float x = button->rect.x + ((cgs.campaignData.arenas[cgs.tdbSelectedMap - 1].mappos[0] - cgs.campaignData.mapTC[0][0]) / 650.f * button->rect.w);
+				float y = button->rect.y + ((cgs.campaignData.arenas[cgs.tdbSelectedMap - 1].mappos[1] - cgs.campaignData.mapTC[0][1]) / 650.f * button->rect.h);
 
 				switch (CG_Debriefing_FindWinningTeamForPos(cgs.tdbSelectedMap))
 				{
@@ -3156,6 +3143,7 @@ qboolean CG_Debriefing2_Maps_KeyDown(panel_button_t *button, int key)
 		if (cg_gameType.integer == GT_WOLF_CAMPAIGN)
 		{
 			int pos = ((cgs.cursorY - button->rect.y) / 14) + cgs.tdbMapListOffset;
+
 			if (pos < 0 || pos > cgs.currentCampaignMap + 1)
 			{
 				return qfalse;
