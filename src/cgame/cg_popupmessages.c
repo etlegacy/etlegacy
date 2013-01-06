@@ -732,8 +732,6 @@ qhandle_t CG_GetPMItemIcon(centity_t *cent)
 	default:
 		return cgs.media.pmImages[cent->currentState.effect1Time];
 	}
-
-	return 0;
 }
 
 // FIXME: remove me
