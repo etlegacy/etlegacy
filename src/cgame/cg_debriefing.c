@@ -1956,8 +1956,8 @@ void CG_Debriefing_MouseEvent(int x, int y)
 }
 
 
-vec4_t    clr1 = { 41 / 255.f, 51 / 255.f, 43 / 255.f, 204 / 255.f };
-vec4_t    clr2 = { 0.f, 0.f, 0.f, 153 / 255.f };
+vec4_t clr1 = { 41 / 255.f, 51 / 255.f, 43 / 255.f, 204 / 255.f };
+vec4_t clr2 = { 0.f, 0.f, 0.f, 153 / 255.f };
 
 void CG_Debriefing_Scrollbar_Draw(panel_button_t *button)
 {
@@ -2072,7 +2072,7 @@ void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 {
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
+	float        w   = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "ACC:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
@@ -2082,7 +2082,7 @@ void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
 {
 	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w = CG_Text_Width_Ext("XP: ", button->font->scalex, 0, button->font->font);
+	float        w   = CG_Text_Width_Ext("XP: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "XP:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
@@ -2501,7 +2501,7 @@ void CG_TeamDebriefingTeamXP_Draw(panel_button_t *button)
 void CG_TeamDebriefingTeamSkillXP_Draw(panel_button_t *button)
 {
 	team_t team = button->data[0] == 0 ? TEAM_AXIS : TEAM_ALLIES;
-	int xp;
+	int    xp;
 
 	if (button->data[1] == SK_NUM_SKILLS)
 	{
@@ -2773,8 +2773,8 @@ void CG_Debreifing2_Maps_Draw(panel_button_t *button)
 
 	if (cg_gameType.integer == GT_WOLF_CAMPAIGN)
 	{
-		float y, w;
-		int   i;
+		float      y, w;
+		int        i;
 		const char *str;
 
 		if (!cgs.campaignInfoLoaded)
@@ -2822,9 +2822,9 @@ void CG_Debreifing2_Mission_Draw(panel_button_t *button)
 
 		if (cgs.campaignData.mapTC[0][0] && cgs.campaignData.mapTC[1][0])
 		{
-			float x, y, w;
+			float  x, y, w;
 			vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
-			int i;
+			int    i;
 
 			CG_DrawPicST(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.campaignData.mapTC[0][0] / 1024.f, cgs.campaignData.mapTC[0][1] / 1024.f, cgs.campaignData.mapTC[1][0] / 1024.f, cgs.campaignData.mapTC[1][1] / 1024.f, trap_R_RegisterShaderNoMip("gfx/loading/camp_map"));
 
