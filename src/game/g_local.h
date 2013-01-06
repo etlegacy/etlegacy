@@ -110,7 +110,6 @@ typedef enum
 
 typedef struct gentity_s gentity_t;
 typedef struct gclient_s gclient_t;
-typedef struct g_serverEntity_s g_serverEntity_t;
 
 //====================================================================
 
@@ -357,7 +356,7 @@ struct gentity_s
 
 	qboolean active;
 
-	// Rafael - mg42
+	// mg42
 	float harc;
 	float varc;
 
@@ -368,8 +367,7 @@ struct gentity_s
 	int start_size;
 	int end_size;
 
-	// Rafael props
-	qboolean isProp;
+	qboolean isProp;                // teamkilled or not
 
 	int mg42BaseEnt;
 
@@ -429,9 +427,6 @@ struct gentity_s
 	qboolean back;
 	qboolean moving;
 
-	// for seek cover sequence - we need a pointer to a server entity
-	g_serverEntity_t *serverEntity;
-
 	// What sort of surface are we standing on?
 	int surfaceFlags;
 
@@ -467,8 +462,7 @@ typedef enum
 {
 	SPECTATOR_NOT,
 	SPECTATOR_FREE,
-	SPECTATOR_FOLLOW /*,
-	SPECTATOR_SCOREBOARD*/
+	SPECTATOR_FOLLOW
 } spectatorState_t;
 
 typedef enum
@@ -1311,7 +1305,6 @@ char *G_SHA1(char *string);
 // g_character.c
 qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *character);
 void G_RegisterPlayerClasses(void);
-//void G_SetCharacter( gclient_t *client, bg_character_t *character, qboolean custom );
 void G_UpdateCharacter(gclient_t *client);
 
 // g_svcmds.c
@@ -1825,39 +1818,6 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 void G_PrintClientSpammyCenterPrint(int entityNum, char *text);
 
 void aagun_fire(gentity_t *other);
-
-// Server only entities
-struct g_serverEntity_s
-{
-	qboolean inuse;
-
-	char *classname;                // set in QuakeEd
-	int spawnflags;                 // set in QuakeEd
-
-	// our parent entity
-	g_serverEntity_t *parent;
-
-	// pointer to the next server entity
-	g_serverEntity_t *nextServerEntity;
-	g_serverEntity_t *target_ent;
-	g_serverEntity_t *chain;
-
-	char *name;
-	char *target;
-
-	vec3_t origin;                  // Let's try keeping this simple, and just having an origin
-	vec3_t angles;                  // facing angle (for a seek cover spot)
-	int number;                     // identifier for this entity
-	int team;                       // which team?  seek cover spots need this
-	int areaNum;                    // This thing doesn't move, so we should only need to calc the areanum once
-	// FIXME: remove ?
-	int botIgnoreTime;              // So that multiple bots don't use the same seek cover spot
-
-	void (*setup)(g_serverEntity_t *self);              // Setup function called once after all server objects are created
-};
-
-// get the server entity with the passed in number
-g_serverEntity_t *GetServerEntity(int num);
 
 // Match settings
 #define PAUSE_NONE      0x00    // Match is NOT paused.
