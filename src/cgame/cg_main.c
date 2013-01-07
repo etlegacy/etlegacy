@@ -290,6 +290,8 @@ vmCvar_t cg_locations;
 vmCvar_t cg_spawnTimer_set;         // spawntimer
 vmCvar_t cg_spawnTimer_period;      // spawntimer
 
+vmCvar_t cg_logFile;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -488,7 +490,10 @@ cvarTable_t cvarTable[] =
 	{ &cg_locations,             "cg_locations",             "3",     CVAR_ARCHIVE                 },
 
 	{ &cg_spawnTimer_set,        "cg_spawnTimer_set",        "-1",    CVAR_TEMP                    },
+
 	{ &cg_spawnTimer_period,     "cg_spawnTimer_period",     "0",     CVAR_TEMP                    },
+
+	{ &cg_logFile,               "cg_logFile",               "",      CVAR_ARCHIVE                 }, // we don't log the chats per default
 
 };
 
@@ -1032,7 +1037,6 @@ void CG_SetupDlightstyles(void)
 		cent->dl_backlerp = 0.0;
 		cent->dl_time     = cg.time;
 	}
-
 }
 
 //========================================================================
@@ -1046,12 +1050,10 @@ The server says this item is used on this level
 */
 static void CG_RegisterItemSounds(int itemNum)
 {
-	gitem_t *item;
+	gitem_t *item = &bg_itemlist[itemNum];
 	char    data[MAX_QPATH];
 	char    *s, *start;
 	int     len;
-
-	item = &bg_itemlist[itemNum];
 
 	if (item->pickup_sound && *item->pickup_sound)
 	{
@@ -2382,8 +2384,8 @@ static qboolean CG_OwnerDrawHandleKey(int ownerDraw, int flags, float *special, 
 
 static int CG_FeederCount(float feederID)
 {
-	int i, count;
-	count = 0;
+	int i, count = 0;
+
 	if (feederID == FEEDER_REDTEAM_LIST)
 	{
 		for (i = 0; i < cg.numScores; i++)
@@ -2417,9 +2419,8 @@ static int CG_FeederCount(float feederID)
 
 static clientInfo_t *CG_InfoFromScoreIndex(int index, int team, int *scoreIndex)
 {
-	int i, count;
+	int i, count = 0;
 
-	count = 0;
 	for (i = 0; i < cg.numScores; i++)
 	{
 		if (cg.scores[i].team == team)
@@ -2527,11 +2528,6 @@ void CG_Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const 
 
 static int CG_OwnerDrawWidth(int ownerDraw, float scale)
 {
-	switch (ownerDraw)
-	{
-	default:
-		break;
-	}
 	return 0;
 }
 
@@ -2742,6 +2738,20 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_RegisterCvars();
 
+	if (cg_logFile.string[0])
+	{
+		trap_FS_FOpenFile(cg_logFile.string, &cg.logFile, FS_APPEND);
+
+		if (!cg.logFile)
+		{
+			CG_Printf("^3WARNING: Couldn't open client log: %s\n", cg_logFile.string);
+		}
+	}
+	else
+	{
+		CG_Printf("Not logging client output to disk.\n");
+	}
+
 	CG_InitConsoleCommands();
 
 	// moved this up so it's initialized for the loading screen
@@ -2821,7 +2831,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_LoadingString("flamechunks");
 
-	CG_InitFlameChunks();       // RF, register and clear all flamethrower resources
+	CG_InitFlameChunks();       // register and clear all flamethrower resources
 
 #ifdef _DEBUG
 	DEBUG_INITPROFILE_EXEC("graphics")
@@ -2913,6 +2923,12 @@ void CG_Shutdown(void)
 	{
 		trap_Cvar_Set("timescale", "1");
 	}
+
+	if (cg.logFile)
+	{
+		trap_FS_FCloseFile(cg.logFile);
+		cg.logFile = 0;
+	}
 }
 
 qboolean CG_CheckExecKey(int key)
@@ -2924,3 +2940,43 @@ qboolean CG_CheckExecKey(int key)
 
 	return CG_FireteamCheckExecKey(key, qfalse);
 }
+
+// real time stamp
+char *CG_GetRealTime(void)
+{
+	qtime_t tm;
+
+	trap_RealTime(&tm);
+	return va("%2i:%s%i:%s%i",
+	          tm.tm_hour,
+	          (tm.tm_min > 9 ? "" : "0"),  // minute padding
+	          tm.tm_min,
+	          (tm.tm_sec > 9 ? "" : "0"),  // second padding
+	          tm.tm_sec);
+}
+
+void QDECL CG_WriteToLog(const char *fmt, ...)
+{
+	if (!cg.logFile)
+	{
+		return;
+	}
+	else
+	{
+		va_list argptr;
+		char    string[1024];
+		int     l;
+
+		Com_sprintf(string, sizeof(string), "%s ", CG_GetRealTime());
+
+		l = strlen(string);
+
+		va_start(argptr, fmt);
+		Q_vsnprintf(string + l, sizeof(string) - l, fmt, argptr);
+		va_end(argptr);
+
+		trap_FS_Write(string, strlen(string), cg.logFile);
+	}
+}
+
+void QDECL CG_WriteToLog(const char *fmt, ...) _attribute((format(printf, 1, 2)));

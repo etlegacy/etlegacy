@@ -1162,6 +1162,8 @@ typedef struct
 	char objDescription_Allied[MAX_OBJECTIVES][256];
 
 	int waterundertime;
+
+	fileHandle_t logFile;
 } cg_t;
 
 #define NUM_FUNNEL_SPRITES  21
@@ -2193,6 +2195,8 @@ void CG_EventHandling(int type, qboolean fForced);
 
 qboolean CG_GetTag(int clientNum, char *tagname, orientation_t *orientation);
 qboolean CG_GetWeaponTag(int clientNum, char *tagname, orientation_t *orientation);
+
+void QDECL CG_WriteToLog(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 // cg_view.c
 void CG_TestModel_f(void);
@@ -3289,6 +3293,8 @@ void CG_Fireteams_Setup(void);
 
 void CG_Fireteams_MenuText_Draw(panel_button_t *button);
 void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
+
+//
 
 #define HITSOUNDS_ON                0x01
 #define HITSOUNDS_NOTEAMSHOT        0x02

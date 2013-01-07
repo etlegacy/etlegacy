@@ -1503,6 +1503,7 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
 	{
 		CG_AddToTeamChat(vchat->message, vchat->clientNum);
 		CG_Printf("[skipnotify]: %s\n", vchat->message);
+		CG_WriteToLog("%s\n", vchat->message);
 	}
 	voiceChatBuffer[cg.voiceChatBufferOut].snd = 0;
 }
@@ -2457,6 +2458,7 @@ static void CG_ServerCommand(void)
 		CG_RemoveChatEscapeChar(text);
 		CG_AddToTeamChat(text, atoi(CG_Argv(2)));
 		CG_Printf("%s\n", text);
+		CG_WriteToLog("%s\n", text);
 
 		return;
 	}
@@ -2493,6 +2495,7 @@ static void CG_ServerCommand(void)
 		CG_RemoveChatEscapeChar(text);
 		CG_AddToTeamChat(text, clientNum); // disguise ?
 		CG_Printf("%s\n", text);
+		CG_WriteToLog("%s\n", text);
 
 		return;
 	}
