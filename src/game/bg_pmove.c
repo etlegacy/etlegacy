@@ -300,11 +300,7 @@ Slide off of the impacting surface
 */
 void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 {
-	float backoff;
-	float change;
-	int   i;
-
-	backoff = DotProduct(in, normal);
+	float backoff = DotProduct(in, normal);
 
 	if (backoff < 0)
 	{
@@ -315,11 +311,9 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 		backoff /= overbounce;
 	}
 
-	for (i = 0 ; i < 3 ; i++)
-	{
-		change = normal[i] * backoff;
-		out[i] = in[i] - change;
-	}
+	out[0] = in[0] - (normal[0] * backoff);
+	out[1] = in[1] - (normal[1] * backoff);
+	out[2] = in[2] - (normal[2] * backoff);
 }
 
 /*
@@ -349,7 +343,14 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 	flatforward[1] = sin(angle);
 	flatforward[2] = 0;
 
-	VectorScale(flatforward, -32, ofs);
+	if (pm->ps->eFlags & EF_PRONE)
+	{
+		VectorScale(flatforward, -32, ofs);
+	}
+	else
+	{
+		VectorScale(flatforward, 32, ofs);
+	}
 
 	VectorAdd(start, ofs, org);
 	VectorAdd(end, ofs, point);
@@ -391,32 +392,99 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 	}
 }
 
-/* Traces all player bboxes -- body and legs */
-void PM_TraceAllLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
+void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
+                  void (tracefunc)(trace_t *results,
+                                   const vec3_t start,
+                                   const vec3_t mins,
+                                   const vec3_t maxs,
+                                   const vec3_t end,
+                                   int passEntityNum,
+                                   int contentMask),
+                  int ignoreent,
+                  int tracemask)
+{
+	vec3_t ofs;
+	vec3_t flatforward;
+	vec3_t point;
+	float  angle;
+	// more than just head, try to make a box for all the
+	// player model that extends out (weapons and arms too)
+	vec3_t mins = { -18.f, -18.f, -2.f };
+	vec3_t maxs = { 18.f, 18.f, 10.f };
+
+	// don't let players block head
+	tracemask &= ~(CONTENTS_BODY | CONTENTS_CORPSE);
+
+	angle          = DEG2RAD(viewangles[YAW]);
+	flatforward[0] = cos(angle);
+	flatforward[1] = sin(angle);
+	flatforward[2] = 0;
+
+	if (pm->ps->eFlags & EF_PRONE)
+	{
+		VectorScale(flatforward, 36, ofs);
+	}
+	else
+	{
+		VectorScale(flatforward, -36, ofs);
+	}
+
+	VectorAdd(end, ofs, point);
+	tracefunc(trace, start, mins, maxs, point, ignoreent, tracemask);
+}
+
+/* Traces all player bboxes -- body. legs, and head */
+void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
 {
 	pm->trace(trace, start, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
 
-	/* legs */
-	if (pm->ps->eFlags & EF_PRONE)
+	// legs and head
+	if ((pm->ps->eFlags & EF_PRONE) ||
+	    (pm->ps->eFlags & EF_DEAD))
 	{
-		trace_t legtrace;
 
-		PM_TraceLegs(&legtrace, legsOffset, start, end, trace, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask);
+		trace_t  legtrace;
+		trace_t  headtrace;
+		qboolean adjust = qfalse;
+
+		PM_TraceLegs(&legtrace, legsOffset, start, end, trace,
+		             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
+		             pm->tracemask);
 
 		if (legtrace.fraction < trace->fraction ||
 		    legtrace.startsolid ||
 		    legtrace.allsolid)
 		{
-			VectorSubtract(end, start, legtrace.endpos);
-			VectorMA(start, legtrace.fraction, legtrace.endpos, legtrace.endpos);
+
 			*trace = legtrace;
+			adjust = qtrue;
+		}
+
+		PM_TraceHead(&headtrace, start, end, trace,
+		             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
+		             pm->tracemask);
+
+		if (headtrace.fraction < trace->fraction ||
+		    headtrace.startsolid ||
+		    headtrace.allsolid)
+		{
+
+			*trace = headtrace;
+			adjust = qtrue;
+		}
+
+		if (adjust)
+		{
+			VectorSubtract(end, start, trace->endpos);
+			VectorMA(start, trace->fraction, trace->endpos,
+			         trace->endpos);
 		}
 	}
 }
 
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end)
 {
-	PM_TraceAllLegs(trace, NULL, start, end);
+	PM_TraceAllParts(trace, NULL, start, end);
 }
 
 /*
@@ -866,7 +934,7 @@ static qboolean PM_CheckProne(void)
 			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
 			pm->ps->eFlags &= ~EF_PRONE;
 
-			if (!trace.startsolid && !trace.allsolid)
+			if (trace.fraction == 1.0f)
 			{
 				// go prone
 				pm->ps->pm_flags    |= PMF_DUCKED;       // crouched as well
@@ -878,9 +946,6 @@ static qboolean PM_CheckProne(void)
 
 	if (pm->ps->eFlags & EF_PRONE)
 	{
-		float    spd;
-		qboolean userinput;
-
 		if (pm->waterlevel > 1 ||
 		    pm->ps->pm_type == PM_DEAD ||
 		    pm->ps->eFlags & EF_MOUNTEDTANK ||
@@ -902,7 +967,7 @@ static qboolean PM_CheckProne(void)
 			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
 			pm->ps->eFlags |= EF_PRONE;
 
-			if (!trace.allsolid)
+			if (trace.fraction == 1.0f)
 			{
 				// crouch for a bit
 				pm->ps->pm_flags |= PMF_DUCKED;
@@ -912,9 +977,35 @@ static qboolean PM_CheckProne(void)
 				pm->ps->eFlags      &= ~EF_PRONE_MOVING;
 				pm->pmext->proneTime = -pm->cmd.serverTime; // timestamp 'stop prone'
 
-				if (pm->ps->weapon == WP_MOBILE_MG42_SET)
+				// don't let them keep scope out when
+				// standing from prone or they will
+				// look right through a wall
+				switch (pm->ps->weapon)
 				{
-					PM_BeginWeaponChange(WP_MOBILE_MG42_SET, WP_MOBILE_MG42, qfalse);
+				case WP_FG42SCOPE:
+					PM_BeginWeaponChange(
+					    WP_FG42SCOPE,
+					    WP_FG42,
+					    qfalse);
+					break;
+				case WP_GARAND_SCOPE:
+					PM_BeginWeaponChange(
+					    WP_GARAND_SCOPE,
+					    WP_GARAND,
+					    qfalse);
+					break;
+				case WP_K43_SCOPE:
+					PM_BeginWeaponChange(
+					    WP_K43_SCOPE,
+					    WP_K43,
+					    qfalse);
+					break;
+				case WP_MOBILE_MG42_SET:
+					PM_BeginWeaponChange(
+					    WP_MOBILE_MG42_SET,
+					    WP_MOBILE_MG42,
+					    qfalse);
+					break;
 				}
 
 				// don't jump for a bit
@@ -922,10 +1013,13 @@ static qboolean PM_CheckProne(void)
 				pm->ps->jumpTime    = pm->cmd.serverTime - 650;
 			}
 		}
+	}
 
+	if (pm->ps->eFlags & EF_PRONE)
+	{
 		// See if we are moving
-		spd       = VectorLength(pm->ps->velocity);
-		userinput = abs(pm->cmd.forwardmove) + abs(pm->cmd.rightmove) > 10 ? qtrue : qfalse;
+		float    spd       = VectorLength(pm->ps->velocity);
+		qboolean userinput = abs(pm->cmd.forwardmove) + abs(pm->cmd.rightmove) > 10 ? qtrue : qfalse;
 
 		if (userinput && spd > 40.f && !(pm->ps->eFlags & EF_PRONE_MOVING))
 		{
@@ -1728,7 +1822,7 @@ static void PM_GroundTrace(void)
 		point[2] = pm->ps->origin[2] - 0.25f;
 	}
 
-	PM_TraceAllLegs(&trace, &pm->pmext->proneLegsOffset, pm->ps->origin, point);
+	PM_TraceAllParts(&trace, &pm->pmext->proneLegsOffset, pm->ps->origin, point);
 	pml.groundTrace = trace;
 
 	// do something corrective if the trace starts in a solid...
@@ -2320,7 +2414,6 @@ static void PM_BeginWeaponReload(int weapon)
 	case WP_DYNAMITE:
 	case WP_GRENADE_LAUNCHER:
 	case WP_GRENADE_PINEAPPLE:
-	//case WP_LANDMINE:
 	case WP_SMOKE_BOMB:
 		break;
 
@@ -4984,6 +5077,10 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 	// Added support for PMF_TIME_LOCKPLAYER
 	if (ps->pm_type == PM_INTERMISSION || ps->pm_flags & PMF_TIME_LOCKPLAYER)
 	{
+		// reset all angle changes, so it does not suddenly happens after unlocked
+		ps->delta_angles[0] = ANGLE2SHORT(ps->viewangles[0]) - cmd->angles[0];
+		ps->delta_angles[1] = ANGLE2SHORT(ps->viewangles[1]) - cmd->angles[1];
+		ps->delta_angles[2] = ANGLE2SHORT(ps->viewangles[2]) - cmd->angles[2];
 		return;     // no view changes at all
 	}
 
@@ -5003,6 +5100,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 	VectorCopy(ps->viewangles, oldViewAngles);
 
 	// circularly clamp the angles with deltas
+	// - game-side delta_angles modifications are broken here if you exclude the ROLL calculation
 	for (i = 0 ; i < 3 ; i++)
 	{
 		temp = cmd->angles[i] + ps->delta_angles[i];
@@ -5025,7 +5123,6 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 	if (BG_PlayerMounted(ps->eFlags))
 	{
-		float degsSec = MG42_YAWSPEED;
 		float arcMin, arcMax, arcDiff;
 		float yaw    = ps->viewangles[YAW];
 		float oldYaw = oldViewAngles[YAW];
@@ -5041,9 +5138,9 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 		if (yaw > oldYaw)
 		{
-			if (yaw - oldYaw > degsSec * pml.frametime)
+			if (yaw - oldYaw > MG42_YAWSPEED * pml.frametime)
 			{
-				ps->viewangles[YAW] = oldYaw + degsSec * pml.frametime;
+				ps->viewangles[YAW] = oldYaw + MG42_YAWSPEED * pml.frametime;
 
 				// Set delta_angles properly
 				ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
@@ -5051,9 +5148,9 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 		}
 		else if (oldYaw > yaw)
 		{
-			if (oldYaw - yaw > degsSec * pml.frametime)
+			if (oldYaw - yaw > MG42_YAWSPEED * pml.frametime)
 			{
-				ps->viewangles[YAW] = oldYaw - degsSec * pml.frametime;
+				ps->viewangles[YAW] = oldYaw - MG42_YAWSPEED * pml.frametime;
 
 				// Set delta_angles properly
 				ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
@@ -5955,18 +6052,6 @@ void PmoveSingle(pmove_t *pmove)
 	// set groundentity
 	PM_GroundTrace();
 
-	/*if( pm->ps->eFlags & EF_PRONE && !pml.walking ) {
-	// this is the one we were using
-	    // can't be prone in midair
-	    pm->ps->eFlags &= ~EF_PRONE;
-	    pm->ps->eFlags &= ~EF_PRONE_MOVING;
-	    pm->pmext->proneTime = -pm->cmd.serverTime; // timestamp 'stop prone'
-
-	    if( pm->ps->weapon == WP_MOBILE_MG42_SET ) {
-	        PM_BeginWeaponChange( WP_MOBILE_MG42_SET, WP_MOBILE_MG42, qfalse );
-	    }
-	}*/
-
 	if (pm->ps->pm_type == PM_DEAD)
 	{
 		PM_DeadMove();
@@ -6038,17 +6123,6 @@ void PmoveSingle(pmove_t *pmove)
 		BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLE, qtrue);
 	}
 
-	/*if( pm->ps->eFlags & EF_PRONE && !pml.walking ) {
-	    // can't be prone in midair
-	    pm->ps->eFlags &= ~EF_PRONE;
-	    pm->ps->eFlags &= ~EF_PRONE_MOVING;
-	    pm->pmext->proneTime = -pm->cmd.serverTime; // timestamp 'stop prone'
-
-	    if( pm->ps->weapon == WP_MOBILE_MG42_SET ) {
-	        PM_BeginWeaponChange( WP_MOBILE_MG42_SET, WP_MOBILE_MG42, qfalse );
-	    }
-	}*/
-
 	PM_Sprint();
 
 	// set groundentity, watertype, and waterlevel
@@ -6077,9 +6151,8 @@ Can be called by either the server or the client
 */
 int Pmove(pmove_t *pmove)
 {
-	int finalTime;
-
-	finalTime = pmove->cmd.serverTime;
+	int msec;
+	int finalTime = pmove->cmd.serverTime;
 
 	if (finalTime < pmove->ps->commandTime)
 	{
@@ -6109,8 +6182,6 @@ int Pmove(pmove_t *pmove)
 	// dependent behavior
 	while (pmove->ps->commandTime != finalTime)
 	{
-		int msec;
-
 		msec = finalTime - pmove->ps->commandTime;
 
 		if (pmove->pmove_fixed)

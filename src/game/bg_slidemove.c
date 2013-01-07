@@ -382,11 +382,12 @@ void PM_StepSlideMove(qboolean gravity)
 	VectorCopy(pm->ps->origin, down);
 	down[2] -= STEPSIZE;
 
-	// check legs separately
+	// check legs&head separately
 	if (pm->ps->eFlags & EF_PRONE)
 	{
+		memset(&trace, 0, sizeof(trace));
 		PM_TraceLegs(&trace, NULL, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask);
-		if (trace.allsolid)
+		if (trace.fraction < 1.0f)
 		{
 			// legs don't step, just fuzz.
 			VectorCopy(down_o, pm->ps->origin);
@@ -397,8 +398,21 @@ void PM_StepSlideMove(qboolean gravity)
 			}
 			return;
 		}
+		memset(&trace, 0, sizeof(trace));
+		PM_TraceHead(&trace, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask);
+		if (trace.fraction < 1.0f)
+		{
+			VectorCopy(down_o, pm->ps->origin);
+			VectorCopy(down_v, pm->ps->velocity);
+			if (pm->debugLevel)
+			{
+				Com_Printf("%i:head unsteppable\n", c_pmove);
+			}
+			return;
+		}
 	}
 
+	memset(&trace, 0, sizeof(trace));
 	pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
 	if (!trace.allsolid)
 	{
