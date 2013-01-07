@@ -367,7 +367,7 @@ return a hash value for the given string (make sure the strings and lowered firs
 */
 long BG_StringHashValue_Lwr(const char *fname)
 {
-	int  i = 0;
+	int  i    = 0;
 	long hash = 0;
 
 	while (fname[i] != '\0')
@@ -1340,7 +1340,6 @@ void BG_ClearAnimTimer(playerState_t *ps, animBodyPart_t bodyPart)
 	switch (bodyPart)
 	{
 	case ANIM_BP_LEGS:
-
 		ps->legsTimer = 0;
 		break;
 
@@ -1438,7 +1437,6 @@ BG_PlayAnimName
 */
 int BG_PlayAnimName(playerState_t *ps, animModelInfo_t *animModelInfo, char *animName, animBodyPart_t bodyPart, qboolean setTimer, qboolean isContinue, qboolean force)
 {
-	//return BG_PlayAnim( ps, BG_AnimationIndexForString( animName, BG_GetCharacterForPlayerstate( ps )->animModelInfo ), bodyPart, 0, setTimer, isContinue, force );
 	return BG_PlayAnim(ps, animModelInfo, BG_AnimationIndexForString(animName, animModelInfo), bodyPart, 0, setTimer, isContinue, force);
 }
 
@@ -1697,7 +1695,6 @@ void BG_UpdateConditionValue(int client, int condition, int value, qboolean chec
 	{
 		if (animConditionsTable[condition].type == ANIM_CONDTYPE_BITFLAGS)
 		{
-
 			// we may need to convert to bitflags
 			// We want to set the ScriptData to the explicit value passed in.
 			//              COM_BitSet will OR values on top of each other, so clear it first.

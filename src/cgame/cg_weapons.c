@@ -330,28 +330,19 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 	float         waterScale = 1.0f;
 	vec3_t        v[3];
 
-	//velocity[0] = 16;
-	//velocity[1] = -50 + 40 * crandom();
-	//velocity[2] = 100 + 50 * crandom();
-
 	velocity[0] = 16;
 	velocity[1] = -200;
 	velocity[2] = 0;
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
-	//le->startTime = cg.time + 2000;
-	le->endTime = le->startTime + (cg_brassTime.integer * 8) + (cg_brassTime.integer * random());
+	le->endTime   = le->startTime + (cg_brassTime.integer * 8) + (cg_brassTime.integer * random());
 
 	le->pos.trType = TR_GRAVITY;
 	le->pos.trTime = cg.time - (rand() & 15);
 	//le->pos.trTime = cg.time - 2000;
 
 	AnglesToAxis(cent->lerpAngles, v);
-
-	//offset[0] = 12;
-	//offset[1] = -4;
-	//offset[2] = 24;
 
 	offset[0] = -24; // forward
 	offset[1] = -4; // left
@@ -385,15 +376,11 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 
 	le->angles.trType = TR_LINEAR;
 	le->angles.trTime = cg.time;
-	//le->angles.trBase[0] = rand()&31;
-	//le->angles.trBase[1] = rand()&31;
-	//le->angles.trBase[2] = rand()&31;
+
 	le->angles.trBase[0] = 0;
 	le->angles.trBase[1] = cent->currentState.apos.trBase[1];   // rotate to match the player
 	le->angles.trBase[2] = 0;
-	//le->angles.trDelta[0] = 2;
-	//le->angles.trDelta[1] = 1;
-	//le->angles.trDelta[2] = 0;
+
 	le->angles.trDelta[0] = 0;
 	le->angles.trDelta[1] = 0;
 	le->angles.trDelta[2] = 0;
@@ -2301,6 +2288,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 		if (pronemovingtime > 0)     // div by 0
 		{
 			float factor = pronemovingtime > 200 ? 1.f : 1.f / (200.f / (float)pronemovingtime);
+
 			VectorMA(origin, factor * -20, cg.refdef_current->viewaxis[0], origin);
 			VectorMA(origin, factor * 3, cg.refdef_current->viewaxis[1], origin);
 		}
@@ -2312,6 +2300,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 		if (pronenomovingtime < 200)
 		{
 			float factor = pronenomovingtime == 0 ? 1.f : 1.f - (1.f / (200.f / (float)pronenomovingtime));
+
 			VectorMA(origin, factor * -20, cg.refdef_current->viewaxis[0], origin);
 			VectorMA(origin, factor * 3, cg.refdef_current->viewaxis[1], origin);
 		}
