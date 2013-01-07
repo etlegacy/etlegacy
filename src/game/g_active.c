@@ -93,7 +93,7 @@ void P_DamageFeedback(gentity_t *player)
 		G_AddEvent(player, EV_PAIN, player->health);
 	}
 
-	client->ps.damageEvent++;   // Ridah, always increment this since we do multiple view damage anims
+	client->ps.damageEvent++;   // always increment this since we do multiple view damage anims
 
 	client->ps.damageCount = count;
 
@@ -126,7 +126,6 @@ void P_WorldEffects(gentity_t *ent)
 		// if out of air, start drowning
 		if (ent->client->airOutTime < level.time)
 		{
-
 			if (ent->client->ps.powerups[PW_BREATHER])     // take air from the breather now that we need it
 			{
 				ent->client->ps.powerups[PW_BREATHER] -= (level.time - ent->client->airOutTime);
@@ -178,13 +177,11 @@ void P_WorldEffects(gentity_t *ent)
 	{
 		if (ent->health > 0 && ent->pain_debounce_time <= level.time)
 		{
-
 			if (ent->watertype & CONTENTS_LAVA)
 			{
 				G_Damage(ent, NULL, NULL, NULL, NULL,
 				         30 * waterlevel, 0, MOD_LAVA);
 			}
-
 		}
 	}
 
@@ -193,7 +190,6 @@ void P_WorldEffects(gentity_t *ent)
 	{
 		if (level.time - ent->client->lastBurnTime >= MIN_BURN_INTERVAL)
 		{
-
 			// server-side incremental damage routine / player damage/health is int (not float)
 			// so I can't allocate 1.5 points per server tick, and 1 is too weak and 2 is too strong.
 			// solution: allocate damage far less often (MIN_BURN_INTERVAL often) and do more damage.
@@ -322,10 +318,10 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 	if (weaponTime > level.time)
 	{
 		// if we're supposed to update the state, reset the time to now
-//		if (updateState)
-//		{
-//			ent->client->ps.classWeaponTime = level.time;
-//		}
+		//if (updateState)
+		//{
+		//	ent->client->ps.classWeaponTime = level.time;
+		//}
 
 		return qfalse;
 	}
@@ -489,14 +485,10 @@ void G_TouchTriggers(gentity_t *ent)
 
 void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 {
-	pmove_t   pm;
-	gclient_t *client;
-	gentity_t *crosshairEnt = NULL;
-
-	client = ent->client;
+	gclient_t *client       = ent->client;
+	gentity_t *crosshairEnt = crosshairEnt = &g_entities[ent->client->ps.identifyClient];
 
 	// sanity check - check .active in case the client sends us something completely bogus
-	crosshairEnt = &g_entities[ent->client->ps.identifyClient];
 
 	if (crosshairEnt->inuse && crosshairEnt->client &&
 	    (ent->client->sess.sessionTeam == crosshairEnt->client->sess.sessionTeam ||
@@ -517,13 +509,13 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 
 	if (client->sess.spectatorState != SPECTATOR_FOLLOW)
 	{
+		pmove_t pm;
+
 		client->ps.pm_type = PM_SPECTATOR;
 		client->ps.speed   = 800; // was: 400 // faster than normal
 		if (client->ps.sprintExertTime)
 		{
 			client->ps.speed *= 3;  // allow sprint in free-cam mode
-
-
 		}
 		// dead players are frozen too, in a timeout
 		if ((client->ps.pm_flags & PMF_LIMBO) && level.match_pause != PAUSE_NONE)
@@ -675,8 +667,8 @@ qboolean ClientInactivityTimer(gclient_t *client)
  */
 void ClientTimerActions(gentity_t *ent, int msec)
 {
-	gclient_t *client;
-	client                = ent->client;
+	gclient_t *client = ent->client;
+
 	client->timeResidual += msec;
 
 	while (client->timeResidual >= 1000)
@@ -763,7 +755,6 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 		case EV_FALL_DMG_15:
 		case EV_FALL_DMG_25:
 		case EV_FALL_DMG_50:
-
 			// VectorClear() used to be done here whenever falling
 			// damage occured, but I moved it to bg_pmove where it belongs.
 
@@ -810,7 +801,6 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			break;
 
 		case EV_FIRE_WEAPON_MG42:
-
 			// reset player disguise on stealing docs
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
@@ -837,7 +827,6 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			break;
 
 		case EV_FIRE_WEAPON_AAGUN:
-
 			// reset player disguise on stealing docs
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
@@ -1004,12 +993,12 @@ void ClientThink_real(gentity_t *ent)
 	if (ucmd->serverTime > level.time + 200 && !G_DoAntiwarp(ent))
 	{
 		ucmd->serverTime = level.time + 200;
-		//		G_Printf("serverTime <<<<<\n" );
+		//G_Printf("serverTime <<<<<\n" );
 	}
 	if (ucmd->serverTime < level.time - 1000 && !G_DoAntiwarp(ent))
 	{
 		ucmd->serverTime = level.time - 1000;
-		//		G_Printf("serverTime >>>>>\n" );
+		//G_Printf("serverTime >>>>>\n" );
 	}
 
 	msec = ucmd->serverTime - client->ps.commandTime;
@@ -1077,9 +1066,6 @@ void ClientThink_real(gentity_t *ent)
 	// In limbo use SpectatorThink
 	if (client->sess.sessionTeam == TEAM_SPECTATOR || (client->ps.pm_flags & PMF_LIMBO))
 	{
-		/*if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD ) {
-		    return;
-		}*/
 		SpectatorThink(ent, ucmd);
 		return;
 	}
@@ -1805,7 +1791,7 @@ void WolfReviveBbox(gentity_t *self)
 		// Move corpse directly to the person who revived them
 		if (self->props_frame_state >= 0)
 		{
-//			trap_UnlinkEntity( self );
+			//trap_UnlinkEntity( self );
 			VectorCopy(g_entities[self->props_frame_state].client->ps.origin, self->client->ps.origin);
 			VectorCopy(self->client->ps.origin, self->r.currentOrigin);
 			trap_LinkEntity(self);
@@ -1934,7 +1920,7 @@ void ClientEndFrame(gentity_t *ent)
 		ent->client->pers.connectTime   += time_delta;
 		ent->client->pers.enterTime     += time_delta;
 		ent->client->ps.classWeaponTime += time_delta;
-//			ent->client->respawnTime += time_delta;
+		//ent->client->respawnTime += time_delta;
 		ent->lastHintCheckTime  += time_delta;
 		ent->pain_debounce_time += time_delta;
 		ent->s.onFireEnd        += time_delta;
