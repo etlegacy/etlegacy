@@ -97,7 +97,9 @@ void SND_setup(void)
 	p     = buffer;
 	q     = p + scs;
 	while (--q > p)
+	{
 		*(sndBuffer **)q = q - 1;
+	}
 
 	*(sndBuffer **)q = NULL;
 	freelist         = p + scs - 1;
@@ -120,22 +122,15 @@ resample / decimate to the current source rate
 */
 static void ResampleSfx(sfx_t *sfx, int inrate, int inwidth, byte *data, qboolean compressed)
 {
-	int       outcount;
+	float     stepscale = (float)inrate / dma.speed;  // this is usually 0.5, 1, or 2
+	int       outcount  = sfx->soundLength / stepscale;
 	int       srcsample;
-	float     stepscale;
 	int       i;
-	int       sample, samplefrac, fracstep;
+	int       sample, samplefrac = 0, fracstep = stepscale * 256;
 	int       part;
-	sndBuffer *chunk;
+	sndBuffer *chunk = sfx->soundData;
 
-	stepscale = (float)inrate / dma.speed;  // this is usually 0.5, 1, or 2
-
-	outcount         = sfx->soundLength / stepscale;
 	sfx->soundLength = outcount;
-
-	samplefrac = 0;
-	fracstep   = stepscale * 256;
-	chunk      = sfx->soundData;
 
 	for (i = 0 ; i < outcount ; i++)
 	{
@@ -178,18 +173,12 @@ resample / decimate to the current source rate
 */
 static int ResampleSfxRaw(short *sfx, int inrate, int inwidth, int samples, byte *data)
 {
-	int   outcount;
-	int   srcsample;
-	float stepscale;
+
+	float stepscale = (float)inrate / dma.speed;  // this is usually 0.5, 1, or 2
+	int   outcount  = samples / stepscale;
+	int   srcsample = 0;
 	int   i;
-	int   sample, samplefrac, fracstep;
-
-	stepscale = (float)inrate / dma.speed;  // this is usually 0.5, 1, or 2
-
-	outcount = samples / stepscale;
-
-	samplefrac = 0;
-	fracstep   = stepscale * 256;
+	int   sample, samplefrac, fracstep = stepscale * 256;
 
 	for (i = 0 ; i < outcount ; i++)
 	{

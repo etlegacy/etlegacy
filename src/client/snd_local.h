@@ -32,6 +32,9 @@
  * @brief private sound definitions
  */
 
+#ifndef __SND_LOCAL_H__
+#define __SND_LOCAL_H__
+
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 #include "snd_public.h"
@@ -294,6 +297,8 @@ extern int   sfxScratchIndex;
 
 qboolean S_Base_Init(soundInterface_t *si);
 
+#ifdef FEATURE_OPENAL
+
 // OpenAL stuff
 typedef enum
 {
@@ -304,6 +309,11 @@ typedef enum
 	SRCPRI_STREAM       // Streams (music, cutscenes)
 } alSrcPriority_t;
 
+
 typedef int srcHandle_t;
 
 qboolean S_AL_Init(soundInterface_t *si);
+
+#endif // FEATURE_OPENAL
+
+#endif // __SND_LOCAL_H__

@@ -105,7 +105,6 @@ portable_samplepair_t s_rawsamples[MAX_RAW_STREAMS][MAX_RAW_SAMPLES];
 
 void S_Base_SoundInfo(void)
 {
-	// TODO: do more info here
 	Com_Printf("----- Sound Info -----\n");
 	if (!s_soundStarted)
 	{
@@ -113,6 +112,11 @@ void S_Base_SoundInfo(void)
 	}
 	else
 	{
+		if (s_soundMuted == 1)
+		{
+			Com_Printf("sound system is muted\n");
+		}
+
 		Com_Printf("%5d stereo\n", dma.channels - 1);
 		Com_Printf("%5d samples\n", dma.samples);
 		Com_Printf("%5d samplebits\n", dma.samplebits);
@@ -169,7 +173,7 @@ void S_Base_SoundList(void)
 {
 	int   i;
 	sfx_t *sfx;
-	int   size, total;
+	int   size, total = 0;
 	char  type[4][16];
 	char  mem[2][16];
 
@@ -178,8 +182,8 @@ void S_Base_SoundList(void)
 	strcpy(type[2], "daub4");
 	strcpy(type[3], "mulaw");
 	strcpy(mem[0], "paged out");
-	strcpy(mem[1], "resident ");
-	total = 0;
+	strcpy(mem[1], "resident");
+
 	for (sfx = knownSfx, i = 0 ; i < numSfx ; i++, sfx++)
 	{
 		size   = sfx->soundLength;
@@ -187,6 +191,7 @@ void S_Base_SoundList(void)
 		Com_Printf("%6i[%s] : %s[%s]\n", size, type[sfx->soundCompressionMethod],
 		           sfx->soundName, mem[sfx->inMemory]);
 	}
+	Com_Printf("Total number of sounds: %i\n", i);
 	Com_Printf("Total resident: %i\n", total);
 	S_DisplayFreeMemory();
 }
@@ -272,9 +277,8 @@ Will allocate a new sfx if it isn't found
 */
 static sfx_t *S_FindName(const char *name)
 {
-	int i;
-	int hash;
-
+	int   i;
+	int   hash;
 	sfx_t *sfx;
 
 	if (!name)
@@ -408,7 +412,7 @@ sfxHandle_t S_Base_RegisterSound(const char *name, qboolean compressed)
 {
 	sfx_t *sfx;
 
-	compressed = qfalse;
+	compressed = qfalse; // FIXME: non WAV
 	if (!s_soundStarted)
 	{
 		return 0;
@@ -495,9 +499,7 @@ Used for spatializing s_channels
 void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right_vol, float range, int no_attenuation)
 {
 	vec_t lscale, rscale;
-	float dist_fullvol;
-
-	dist_fullvol = range * 0.064f;
+	float dist_fullvol = range * 0.064f;
 
 	if (dma.channels == 1 || no_attenuation)     // no attenuation = no spatialization
 	{
@@ -1398,12 +1400,9 @@ Returns qtrue if any new sounds were started since the last mix
 */
 static qboolean S_ScanChannelStarts(void)
 {
-	channel_t *ch;
+	channel_t *ch = s_channels;
 	int       i;
-	qboolean  newSamples;
-
-	newSamples = qfalse;
-	ch         = s_channels;
+	qboolean  newSamples = qfalse;
 
 	for (i = 0; i < MAX_CHANNELS ; i++, ch++)
 	{
@@ -1476,9 +1475,7 @@ void S_GetSoundtime(void)
 	int        samplepos;
 	static int buffers;
 	static int oldsamplepos;
-	int        fullsamples;
-
-	fullsamples = dma.samples / dma.channels;
+	int        fullsamples = dma.samples / dma.channels;
 
 /* TODO: Avi recording
     if ( CL_VideoRecording() ) {
@@ -2173,12 +2170,11 @@ S_FreeOldestSound
 */
 void S_FreeOldestSound(void)
 {
-	int       i, oldest, used;
+	int       i, oldest, used = 0;
 	sfx_t     *sfx;
 	sndBuffer *buffer, *nbuffer;
 
 	oldest = Com_Milliseconds();
-	used   = 0;
 
 	for (i = 1 ; i < numSfx ; i++)
 	{
