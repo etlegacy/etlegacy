@@ -3,6 +3,8 @@
 # script checks for needed applications
 # and builds et legacy
 
+HACK_CSTDIO=0
+
 einfo() {
 	echo -e "\n\033[1;32m~~>\033[0m \033[1;37m${1}\033[0m"
 }
@@ -38,6 +40,13 @@ _detectlinuxdistro() {
 		/etc/debian_version /etc/debian_release /etc/ubuntu-release
 		/etc/redhat-release /etc/centos-release /etc/fedora-release
 		/etc/SuSE-release /etc/novell-release /etc/sles-release"
+	_BROKENDISTROS="
+		/etc/slackware-release
+	"
+
+	for distro in ${_BROKENDISTROS}; do
+		[ -e "${distro}" ] && HACK_CSTDIO=1
+	done
 
 	for distro in ${_DISTROFILES}; do
 		[ -e "${distro}" ] && echo $(<${distro}) && exit
@@ -141,6 +150,7 @@ _CFGSTRING="
 	-DFEATURE_TRACKBASE=${FEATURE_TRACKBASE}
 	-DFEATURE_OMNIBOT=${FEATURE_OMNIBOT}
 	-DFEATURE_ANTICHEAT=${FEATURE_ANTICHEAT}
+	-DBUILD_WITH_CSTDIO_INCLUDED=${HACK_CSTDIO}
 "
 
 echo -e "\033[1;33musing: \033[1;37m${_CFGSTRING}\033[0m"
