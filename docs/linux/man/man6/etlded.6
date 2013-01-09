@@ -1,4 +1,4 @@
-.TH etlded  2.71RC1 "9 January 2013" "" "Linux User's Manual"
+.TH etlded 1 "9 January 2013" "" "ET: Legacy server man page"
 
 .SH NAME
 etlded \- ET: Legacy dedicated server 
@@ -9,12 +9,15 @@ etlded \- ET: Legacy dedicated server
 .br
 
 .SH DESCRIPTION
-\fBetlded\fP (ET: Legacy) is a game based on the source code of Wolfenstein: Enemy Territory which was released under the GPLv3 license. The main goal of this project is to fix bugs, remove old dependencies and make it playable on all major operating systems while still remaining compatible with the ET 2.60b version and as many of its mods as possible.
-Let's keep ET alive!
+\fBetlded\fP (ET: Legacy) is an open source game based on the code of Wolfenstein: Enemy Territory which was released under the GPLv3 license. The main goal of this project is to fix bugs, remove old dependencies and make it playable on all major operating systems while still remaining compatible with the ET 2.60b version and as many of its mods as possible. Let's keep ET alive!
 
 .SH OPTIONS
-.IP \fB\-OPTION\fP
-This option...
+
+.IP \fB\-v,--version\fP
+Prints version info
+
+.IP \fB\+\fP
+Passes commands into the game. Syntax is +<command> <param> <value>. F.e. '+set g_warmup 30' or '+exec etl_server.cfg'. Use space between more than one command.
 
 .SH NOTES
 
