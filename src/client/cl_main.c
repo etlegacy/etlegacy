@@ -5004,7 +5004,7 @@ void CL_SaveTransTable(const char *fileName, qboolean newOnly)
 				len = strlen(buf);
 				FS_Write(buf, len, f);
 
-				buf = va("\trussian\t\t\"%s\"\n", t->translated[LANGUAGE_RUSSIAN]);
+				buf = va("\tswedish\t\t\"%s\"\n", t->translated[LANGUAGE_SWEDISH]);
 				len = strlen(buf);
 				FS_Write(buf, len, f);
 
@@ -5285,19 +5285,19 @@ void CL_LoadTransTable(const char *fileName)
 			break;
 		}
 
-		// russian
+		// swedish
 		token = COM_Parse(&text_p);
-		if (Q_stricmp("russian", token))
+		if (Q_stricmp("swedish", token))
 		{
 			aborted = qtrue;
 			break;
 		}
 
 		token = COM_Parse(&text_p);
-		strcpy(translated[LANGUAGE_RUSSIAN], token);
-		if (!CL_CheckTranslationString(original, translated[LANGUAGE_RUSSIAN]))
+		strcpy(translated[LANGUAGE_SWEDISH], token);
+		if (!CL_CheckTranslationString(original, translated[LANGUAGE_SWEDISH]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Russian translation formatting doesn't match up with English version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Swedish translation formatting doesn't match up with English version!\n");
 			aborted = qtrue;
 			break;
 		}

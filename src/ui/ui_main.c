@@ -1136,7 +1136,7 @@ qboolean Load_Menu(int handle)
 			}
 			else if (cl_language == 8)
 			{
-				s = va("%s%s", out, "russian/");
+				s = va("%s%s", out, "swedish/");
 			}
 			else if (cl_language == 9)
 			{
@@ -1230,6 +1230,7 @@ void UI_Load()
 	char      lastName[1024];
 	menuDef_t *menu    = Menu_GetFocused();
 	char      *menuSet = UI_Cvar_VariableString("ui_menuFiles");
+
 	if (menu && menu->window.name)
 	{
 		strcpy(lastName, menu->window.name);
@@ -1254,10 +1255,8 @@ static const char *handicapValues[] = { "None", "95", "90", "85", "80", "75", "7
 
 static void UI_DrawHandicap(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
-	int i, h;
-
-	h = Com_Clamp(5, 100, trap_Cvar_VariableValue("handicap"));
-	i = 20 - h / 5;
+	int h= Com_Clamp(5, 100, trap_Cvar_VariableValue("handicap"));
+	int i = 20 - h / 5;
 
 	Text_Paint(rect->x, rect->y, scale, color, handicapValues[i], 0, 0, textStyle);
 }
@@ -1339,7 +1338,6 @@ static void UI_DrawClanCinematic(rectDef_t *rect, float scale, vec4_t color)
 
 	if (i >= 0 && i < uiInfo.teamCount)
 	{
-
 		if (uiInfo.teamList[i].cinematic >= -2)
 		{
 			if (uiInfo.teamList[i].cinematic == -1)
