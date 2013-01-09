@@ -182,7 +182,7 @@ menuDef {
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+280, .5*(WINDOW_WIDTH-24), 10, "Additional Level Design", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	
 // Copyright Notice //
-	LABEL( 6, CREDITS_Y+300, WINDOW_WIDTH-12, 10, "Â© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id Software name, and the id logo are either registered trademarks or trademarks of Id Software, Inc. in the United States and/or other countries. All other trademarks and trade names are the properties of their respective owners.", .15, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( 6, CREDITS_Y+300, WINDOW_WIDTH-12, 10, "© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id Software name, and the id logo are either registered trademarks or trademarks of Id Software, Inc. in the United States and/or other countries. All other trademarks and trade names are the properties of their respective owners.", .15, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Buttons //
 	itemDef {
