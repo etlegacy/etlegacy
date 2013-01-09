@@ -45,8 +45,8 @@ int  vm_debugLevel;
 #define MAX_VM      3
 vm_t vmTable[MAX_VM];
 
-void            VM_VmInfo_f(void);
-void            VM_VmProfile_f(void);
+void VM_VmInfo_f(void);
+void VM_VmProfile_f(void);
 
 // converts a VM pointer to a C pointer and
 // checks to make sure that the range is acceptable
@@ -62,26 +62,20 @@ void VM_Debug(int level)
 
 void VM_Init(void)
 {
-	Cvar_Get("vm_cgame", "0", CVAR_ARCHIVE);
-	Cvar_Get("vm_game", "0", CVAR_ARCHIVE);
-	Cvar_Get("vm_ui", "0", CVAR_ARCHIVE);
-
-	Cmd_AddCommand("vmprofile", VM_VmProfile_f);
+	Cmd_AddCommand("vmprofile", VM_VmProfile_f); // FIXME: doesn't print anything with +set developer 1
 	Cmd_AddCommand("vminfo", VM_VmInfo_f);
 
 	Com_Memset(vmTable, 0, sizeof(vmTable));
 }
-
 
 /*
  * Assumes a program counter value
  */
 const char *VM_ValueToSymbol(vm_t *vm, int value)
 {
-	vmSymbol_t  *sym;
+	vmSymbol_t  *sym = vm->symbols;
 	static char text[MAX_TOKEN_CHARS];
 
-	sym = vm->symbols;
 	if (!sym)
 	{
 		return "NO SYMBOLS";
@@ -108,10 +102,9 @@ const char *VM_ValueToSymbol(vm_t *vm, int value)
  */
 vmSymbol_t *VM_ValueToFunctionSymbol(vm_t *vm, int value)
 {
-	vmSymbol_t        *sym;
+	vmSymbol_t        *sym = vm->symbols;
 	static vmSymbol_t nullSym;
 
-	sym = vm->symbols;
 	if (!sym)
 	{
 		return &nullSym;
@@ -141,10 +134,9 @@ int VM_SymbolToValue(vm_t *vm, const char *symbol)
 
 int ParseHex(const char *text)
 {
-	int value;
+	int value = 0;
 	int c;
 
-	value = 0;
 	while ((c = *text++) != 0)
 	{
 		if (c >= '0' && c <= '9')
@@ -167,6 +159,9 @@ int ParseHex(const char *text)
 	return value;
 }
 
+/*
+ * @brief unused
+ */
 void VM_LoadSymbols(vm_t *vm)
 {
 	union
@@ -535,7 +530,6 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 
 void VM_Free(vm_t *vm)
 {
-
 	if (vm->dllHandle)
 	{
 		Sys_UnloadDll(vm->dllHandle);
@@ -612,7 +606,6 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
 		return NULL;
 	}
 
-	//
 	if (vm->entryPoint)
 	{
 		return (void *)(vm->dataBase + intValue);
@@ -662,7 +655,7 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
 	// if we have a dll loaded, call it directly
 	if (vm->entryPoint)
 	{
-		//rcg010207 -  see dissertation at top of VM_DllSyscall() in this file.
+		// rcg010207 -  see dissertation at top of VM_DllSyscall() in this file.
 		int     args[16];
 		va_list ap;
 		int     i;
@@ -735,6 +728,7 @@ void VM_VmProfile_f(void)
 
 	if (!vm->numSymbols)
 	{
+		Com_Printf("VM symbols not available\n");
 		return;
 	}
 
