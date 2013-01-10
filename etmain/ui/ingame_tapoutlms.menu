@@ -52,4 +52,3 @@ menuDef
 	NAMEDBUTTON( "tapoutyesbtnlms", SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "YES", .3, 14, exec forcetapout ; close tapoutmsglms )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "NO", .3, 14, close tapoutmsglms )
 }
-	
