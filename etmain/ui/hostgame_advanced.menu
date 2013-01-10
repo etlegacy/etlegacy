@@ -73,7 +73,7 @@ menuDef {
 // Voting //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 102, (SUBWINDOW_WIDTH), 40, "VOTING" )
 	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 118, (SUBWINDOW_WIDTH)-4, 10, "Max Votes per Player:", .2, 8, "vote_limit", 2, "Specifies the maximum number of votes per player per match" )
-	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Successful voting %:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "75%" 75 "100%" 100 }, "Specifies the minimum percentage required for a vote to pass" )
+	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Successful voting:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Specifies the minimum percentage required for a vote to pass" )
 	
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 148, (SUBWINDOW_WIDTH), 112, "ALLOW VOTES" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Comp Settings:", .2, 24, 8, "vote_allow_comp", "Allow players to vote for competition settings" )

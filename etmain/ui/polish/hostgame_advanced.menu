@@ -73,7 +73,7 @@ menuDef {
 // Voting //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 102, (SUBWINDOW_WIDTH), 40, "GLOSOWANIE" )
 	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 118, (SUBWINDOW_WIDTH)-4, 10, "Max Glosowan na Team:", .2, 8, "vote_limit", 2, "Sprecyzuj maxymalna liczbe glosow na gracza na mecz" )
-	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Sukces glosowan %:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "75%" 75 "100%" 100 }, "Sprecyzuj minimalny procent potrzebne aby glow przeszedl" )
+	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Sukces glosowan:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Sprecyzuj minimalny procent potrzebne aby glow przeszedl" )
 	
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 148, (SUBWINDOW_WIDTH), 112, "POZWOLENIA NA GLOSOWANIE" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Ustaw. Konkur.:", .2, 24, 8, "vote_allow_comp", "Pozwol gracza glosowac na ustawienia konkurencji" )
