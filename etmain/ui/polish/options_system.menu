@@ -1,0 +1,71 @@
+// System menu for ET-XreaL - editted System menu from ET
+// Removed 'video' sub-menu (see graphics menu) and added some extra controls
+// Joshua 'ethr' England - the_england@hotmail.com
+
+// Hint text taken from: http://www.antman.info/wolf/cvar/
+
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+#define WINDOW_X		16
+#define WINDOW_Y		16
+#define WINDOW_WIDTH	400
+#define WINDOW_HEIGHT	272 // 288 with SMP
+#define GROUP_NAME		"grpOptionsSystem"
+#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
+
+menuDef {
+	name		"options_system"
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
+	
+	onOpen
+	{
+		uiScript systemCvarsGet ;
+		uiScript vidSave ;
+		uiScript glCustom
+	}
+	
+	onESC {
+		uiScript systemCvarsReset ;
+		uiScript vidReset ;
+		close options_system ;
+		open options
+	}
+
+	WINDOW( "SYSTEM", 90 )
+	
+// Audio //
+	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 102, "AUDIO" )
+	SLIDER( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Glosnosc Efektow:", .2, 8, "s_volume" .7 0 1, "" )
+	SLIDER( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Glosnosc Muzyki:", .2, 8, "s_musicvolume" .25 0 1, "" )
+	MULTI( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Jakosc Dzwieku:", .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (high)" 22 "44 khz (ultra high)" 44 }, "" )
+	YESNO( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Doppler FX:", .2, 8, "s_doppler", "" )
+	YESNO( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Mutuj kiedy zminimalizowane:", .2, 8, "s_muteWhenMinimized", "" )
+	YESNO( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Mutuj kiedy niezfokusowane:", .2, 8, "s_muteWhenUnfocused", "" )
+	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Dzwieki Trafien:", .2, 8, "cg_hitsounds", cvarFloatList { "Brak" 0 "Wszystkie" 1 "Bez Trafien Teamow" 2 "Bez Glosow Glowy" 4 "Bez Glosow Ciala" 8 }, "" )
+
+// Networking //
+	SUBWINDOW( 6, 138, (SUBWINDOW_WIDTH), 54, "SIEC" )
+	MULTIACTION( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Polaczenie:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "LAN/CABLE/xDSL" 25000 } cvarListUndefined "Unselected", uiScript update "ui_setRate", "Choose your connection type" )
+	MULTIACTION( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Max Pakietow:", .2, 8, "ui_cl_maxpackets", cvarFloatList { "Low" 30 "Medium" 60 "High" 100 } , uiScript update "ui_cl_maxpackets", "cap for upstream data packet transmissions" )
+	MULTIACTION( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Duplikacja Pakietow:", .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", "number of duplicates for every data packet sent upstream, minimized packetloss" )
+
+// Memory
+// NOTE: absolutely useless to set memory via UI ... only valid if done via start params
+	SUBWINDOW( 6, 196, (SUBWINDOW_WIDTH), 42, "PAMIEC" )
+	MULTIACTION( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Hunk Megs:", .2, 8, "ui_com_hunkmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_hunkmegs", "amount of memory (MB) assign to the hunk" )
+	MULTIACTION( 8, 224, (SUBWINDOW_WIDTH)-4, 10, "Sound Megs:", .2, 8, "ui_com_soundmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_soundmegs", "sets the amount of memory (MB) to allocate for loaded sound files" )
+	//MULTIACTION( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Zone Megs:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_zonemegs", "amount of RAM to allocate to map and texture loading" )
+
+//	SUBWINDOW( 6, 242, (SUBWINDOW_WIDTH), 12, "MULTI-CORE" )
+//	YESNO( 8, 258, (SUBWINDOW_WIDTH)-4, 10, "Multi-Core Supp:", .2, 8, "r_smp", "toogles symmetric multiprocessing (SMP)" )  
+	
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "COFNIJ", .3, 14, uiScript vidReset ; close options_system ; open options )
+	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "ZATWIERDZ", .3, 14,
+		conditionalScript vidrestartIsRequired 2
+		( "open vid_restart" )
+		( "uiScript systemCvarsApply ; close options_system ; open options" ) )
+}
