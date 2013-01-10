@@ -1536,7 +1536,8 @@ extern void Sys_In_Restart_f(void);
 void CL_Vid_Restart_f(void)
 {
 	// don't show percent bar, since the memory usage will just sit at the same level anyway
-	com_expectedhunkusage = -1;
+	// - so keep the value - feels like a bug for users
+	//com_expectedhunkusage = -1;
 
 	// don't let them loop during the restart
 	S_StopAllSounds();
