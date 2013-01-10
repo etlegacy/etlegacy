@@ -191,7 +191,7 @@ void S_Base_SoundList(void)
 		Com_Printf("%6i[%s] : %s[%s]\n", size, type[sfx->soundCompressionMethod],
 		           sfx->soundName, mem[sfx->inMemory]);
 	}
-	Com_Printf("Total number of sounds: %i\n", i);
+	Com_Printf("Total number of sounds: %i\n", numSfx);
 	Com_Printf("Total resident: %i\n", total);
 	S_DisplayFreeMemory();
 }
