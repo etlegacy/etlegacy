@@ -2776,6 +2776,7 @@ static void S_AL_StartCapture(void)
 static int S_AL_AvailableCaptureSamples(void)
 {
 	int retval = 0;
+
 	if (alCaptureDevice != NULL)
 	{
 		ALint samples = 0;

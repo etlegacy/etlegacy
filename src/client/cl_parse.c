@@ -59,9 +59,7 @@ void SHOWNET(msg_t *msg, char *s)
 
 /*
 =========================================================================
-
 MESSAGE PARSING
-
 =========================================================================
 */
 
@@ -194,8 +192,7 @@ Parses deltas from the given base and adds the resulting entity
 to the current frame
 ==================
 */
-void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *old,
-                    qboolean unchanged)
+void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *old, qboolean unchanged)
 {
 	entityState_t *state;
 
@@ -249,15 +246,14 @@ CL_ParsePacketEntities
 void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe)
 {
 	int           newnum;
-	entityState_t *oldstate;
-	int           oldindex, oldnum;
+	entityState_t *oldstate = NULL;
+	int           oldindex  = 0, oldnum;
 
 	newframe->parseEntitiesNum = cl.parseEntitiesNum;
 	newframe->numEntities      = 0;
 
 	// delta from the entities present in oldframe
-	oldindex = 0;
-	oldstate = NULL;
+
 	if (!oldframe)
 	{
 		oldnum = 99999;
@@ -380,7 +376,6 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 	}
 }
 
-
 /*
 ================
 CL_ParseSnapshot
@@ -437,9 +432,9 @@ void CL_ParseSnapshot(msg_t *msg)
 		if (clc.demorecording)
 		{
 			clc.demowaiting = qfalse;   // we can start recording now
-//          if(cl_autorecord->integer) {
-//              Cvar_Set( "g_synchronousClients", "0" );
-//          }
+			//if(cl_autorecord->integer) {
+			//  Cvar_Set( "g_synchronousClients", "0" );
+			//}
 		}
 		else
 		{
@@ -761,7 +756,6 @@ void CL_ParseGamestate(msg_t *msg)
 	Cvar_Set("cl_paused", "0");
 }
 
-
 //=====================================================================
 
 /*
@@ -988,10 +982,7 @@ CL_ParseServerMessage
 */
 void CL_ParseServerMessage(msg_t *msg)
 {
-	int   cmd;
-	msg_t msgback;
-
-	msgback = *msg;
+	int cmd;
 
 	if (cl_shownet->integer == 1)
 	{
@@ -1012,9 +1003,7 @@ void CL_ParseServerMessage(msg_t *msg)
 		clc.reliableAcknowledge = clc.reliableSequence;
 	}
 
-	//
 	// parse the message
-	//
 	while (1)
 	{
 		if (msg->readcount > msg->cursize)

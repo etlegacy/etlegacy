@@ -114,8 +114,9 @@ void SCR_DrawPic(float x, float y, float width, float height, qhandle_t hShader)
 }
 
 /*
-** SCR_DrawChar
-** chars are drawn at 640*480 virtual screen size
+SCR_DrawChar
+
+Chars are drawn at 640*480 virtual screen size
 */
 static void SCR_DrawChar(int x, int y, float size, int ch)
 {
@@ -155,8 +156,9 @@ static void SCR_DrawChar(int x, int y, float size, int ch)
 }
 
 /*
-** SCR_DrawSmallChar
-** small chars are drawn at native screen resolution
+SCR_DrawSmallChar
+
+Small chars are drawn at native screen resolution
 */
 void SCR_DrawSmallChar(int x, int y, int ch)
 {
@@ -222,7 +224,6 @@ void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setC
 		xx += size;
 		s++;
 	}
-
 
 	// draw the colored text
 	s  = string;
@@ -318,7 +319,7 @@ void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, q
 }
 
 /*
-** SCR_Strlen -- skips color escape codes
+SCR_Strlen -- skips color escape codes
 */
 static int SCR_Strlen(const char *str)
 {
@@ -342,7 +343,7 @@ static int SCR_Strlen(const char *str)
 }
 
 /*
-** SCR_GetBigStringWidth
+SCR_GetBigStringWidth
 */
 int SCR_GetBigStringWidth(const char *str)
 {
@@ -368,9 +369,7 @@ void SCR_DrawDemoRecording(void)
 
 /*
 ===============================================================================
-
 DEBUG GRAPH
-
 ===============================================================================
 */
 

@@ -112,6 +112,7 @@ Con_MessageMode_f
 void Con_MessageMode_f(void)
 {
 	chat_team = qfalse;
+
 	Field_Clear(&chatField);
 	chatField.widthInChars = 30;
 
@@ -126,6 +127,7 @@ Con_MessageMode2_f
 void Con_MessageMode2_f(void)
 {
 	chat_team = qtrue;
+
 	Field_Clear(&chatField);
 	chatField.widthInChars = 25;
 	cls.keyCatchers       ^= KEYCATCH_MESSAGE;
@@ -140,6 +142,7 @@ void Con_MessageMode3_f(void)
 {
 	chat_team  = qfalse;
 	chat_buddy = qtrue;
+
 	Field_Clear(&chatField);
 	chatField.widthInChars = 26;
 	cls.keyCatchers       ^= KEYCATCH_MESSAGE;
@@ -531,9 +534,7 @@ void CL_ConsolePrint(char *txt)
 
 /*
 ==============================================================================
-
 DRAWING
-
 ==============================================================================
 */
 
@@ -683,7 +684,6 @@ Con_DrawSolidConsole
 Draws the console with the solid background
 ================
 */
-
 void Con_DrawSolidConsole(float frac)
 {
 	int    i, x, y;
@@ -732,7 +732,7 @@ void Con_DrawSolidConsole(float frac)
 		}
 	}
 
-	// ydnar: matching light text
+	// matching light text
 	color[0] = 0.75f;
 	color[1] = 0.75f;
 	color[2] = 0.75f;

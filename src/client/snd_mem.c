@@ -84,8 +84,7 @@ void SND_setup(void)
 	cvar_t    *cv;
 	int       scs;
 
-	cv = Cvar_Get("com_soundMegs", DEF_COMSOUNDMEGS, CVAR_LATCH | CVAR_ARCHIVE);
-
+	cv  = Cvar_Get("com_soundMegs", DEF_COMSOUNDMEGS, CVAR_LATCH | CVAR_ARCHIVE);
 	scs = (cv->integer * 512); // q3 uses a value of 1536 - reverted to genuine ET value
 
 	buffer = malloc(scs * sizeof(sndBuffer));
@@ -173,7 +172,6 @@ resample / decimate to the current source rate
 */
 static int ResampleSfxRaw(short *sfx, int inrate, int inwidth, int samples, byte *data)
 {
-
 	float stepscale = (float)inrate / dma.speed;  // this is usually 0.5, 1, or 2
 	int   outcount  = samples / stepscale;
 	int   srcsample = 0;

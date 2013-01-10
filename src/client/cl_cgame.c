@@ -458,15 +458,15 @@ void CL_SetExpectedHunkUsage(const char *mapname)
 {
 	int  handle;
 	char *memlistfile = "hunkusage.dat";
-	char *buf;
-	char *buftrav;
-	char *token;
 	int  len;
 
 	len = FS_FOpenFileByMode(memlistfile, &handle, FS_READ);
 	if (len >= 0)     // the file exists, so read it in, strip out the current entry for this map, and save it out, so we can append the new value
 	{
-		buf = (char *)Z_Malloc(len + 1);
+		char *token;
+		char *buftrav;
+		char *buf = (char *)Z_Malloc(len + 1);
+
 		memset(buf, 0, len + 1);
 
 		FS_Read((void *)buf, len, handle);
@@ -1054,9 +1054,6 @@ void CL_UpdateLevelHunkUsage(void)
 {
 	int  handle;
 	char *memlistfile = "hunkusage.dat";
-	char *buf, *outbuf;
-	char *buftrav, *outbuftrav;
-	char *token;
 	char outstr[256];
 	int  len, memusage;
 
@@ -1065,7 +1062,11 @@ void CL_UpdateLevelHunkUsage(void)
 	len = FS_FOpenFileByMode(memlistfile, &handle, FS_READ);
 	if (len >= 0)     // the file exists, so read it in, strip out the current entry for this map, and save it out, so we can append the new value
 	{
-		buf = (char *)Z_Malloc(len + 1);
+		char *buftrav, *outbuftrav;
+		char *outbuf;
+		char *token;
+		char *buf = (char *)Z_Malloc(len + 1);
+
 		memset(buf, 0, len + 1);
 		outbuf = (char *)Z_Malloc(len + 1);
 		memset(outbuf, 0, len + 1);
