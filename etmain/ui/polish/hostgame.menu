@@ -35,12 +35,12 @@ menuDef {
 
 // Settings //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 88, "USTAWIENIA" )
-	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Nazwa Serwera:", .2, 8, "sv_hostname", 32, 18, "Specifies the name of your game server" )
-	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Typ Gry:", .2, 8, "ui_netGameType", cvarFloatList { "Campaign" 4 "Last Man Standing" 5 "Single-Map Objective" 2 "Stopwatch" 3 }, show labelDetailsGametype ; hide labelDetailsCampaign ; uiScript updateGameType, "Click to specify the type of game to load" )
-	NUMERICFIELD( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Maximum Graczy:", .2, 8, "sv_maxclients", 3, "Maximum # of players that can connect to the server" )
-	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Auto-Konfiguracja Serwera:", .2, 8, "server_autoconfig", cvarFloatList { "No" 0 "Competition Settings" 1 "Public Settings" 2 }, "Server automatically configures it self to specified default settings" )
-	MULTI( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Dedykowany Serwer:", .2, 8, "ui_dedicated", cvarFloatList { "No" 0 "Yes - LAN" 1 "Yes - Internet" 2 }, "Specifies if the server should be \"dedicated\" for LAN or Internet play (no client)" )
-	EDITFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Haslo:", .2, 8, "g_password", 25, 18, "Password clients must set to join the server" )
+	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Nazwa Serwera:", .2, 8, "sv_hostname", 32, 18, "Sprecyzuj nazwe twojego serwera" )
+	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Typ Gry:", .2, 8, "ui_netGameType", cvarFloatList { "Kampania" 4 "Ostatni Czlowiek" 5 "Pojed-Mapa Zadanie" 2 "Na Czas" 3 }, show labelDetailsGametype ; hide labelDetailsCampaign ; uiScript updateGameType, "Kliknij aby sprecyzowac typ gry do wczytania" )
+	NUMERICFIELD( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Maximum Graczy:", .2, 8, "sv_maxclients", 3, "Maximum # graczy ktora moze polaczyc sie na serwer" )
+	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Auto-Konfig. Serwera:", .2, 8, "server_autoconfig", cvarFloatList { "Nie" 0 "Ustawnienia Komkurencji" 1 "Ustawienia Publiczne" 2 }, "Serwer automatycznie konfiguruje siebie do sprecyzowanych domyslnych ustawien" )
+	MULTI( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Dedykowany Serwer:", .2, 8, "ui_dedicated", cvarFloatList { "Nie" 0 "Tak - LAN" 1 "Tak - Internet" 2 }, "Sprecyzuj jesli serwer powinien byc \"dedykowany\" dla LAN lub Internet" )
+	EDITFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Haslo:", .2, 8, "g_password", 25, 18, "Password clients must set to join the server Haslo jakie Clienci musza wpisac aby wejsc na serwer" )
 
 // Settings //
 	SUBWINDOW( 6, 126, (SUBWINDOW_WIDTH), 52, "FUNKCJE" )
@@ -54,8 +54,8 @@ menuDef {
 		visible		1
 		decoration
 	}
-	LABEL( 8+24+2, 142, .5*((SUBWINDOW_WIDTH)-6)-24-2-4, 10, "Ogien Przyjacielski", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	CHECKBOXNOTEXT( "labelFriendly Fire", 8+12+2, 142, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "g_friendlyFire", "Specifies if teammates can hurt each other" )
+	LABEL( 8+24+2, 142, .5*((SUBWINDOW_WIDTH)-6)-24-2-4, 10, "Ogien Przyjaciela", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	CHECKBOXNOTEXT( "labelFriendly Fire", 8+12+2, 142, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "g_friendlyFire", "Sprecyzuj jesli gracze teamu moga ranic siebie" )
 
 	itemDef {
 		name		"filtericonAntilag"
@@ -67,7 +67,7 @@ menuDef {
 		decoration
 	}
 	LABEL( 8+24+2, 154, .5*((SUBWINDOW_WIDTH)-6)-24-2-4, 10, "Anty-Lag", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	CHECKBOXNOTEXT( "labelAnti-Lag", 8+12+2, 154, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "g_antilag", "Enables modem-friendly server support" )
+	CHECKBOXNOTEXT( "labelAnti-Lag", 8+12+2, 154, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "g_antilag", "Wlancza pomoc dla graczy z modemem" )
 
 	// lots of macro abuse in this one :)
 	itemDef {
@@ -81,8 +81,8 @@ menuDef {
 		cvarTest	"ui_netGameType"
 		hideCVar	{ 5 }
 	}
-	LABEL( 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+24-4, 142, .5*((SUBWINDOW_WIDTH)-6)-26+4, 10, "Max Zyc", .2, ITEM_ALIGN_LEFT cvarTest "ui_netGameType" hideCVar { 5 }, 0, 8 )
-	CHECKBOXNOTEXTACTION( "labelMax Lives", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 142, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "ui_maxlives" cvarTest "ui_netGameType" hideCVar { 5 }, uiScript toggleMaxLives, "Limits the number of player lives per round" )
+	LABEL( 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+24-4, 142, .5*((SUBWINDOW_WIDTH)-6)-26+4, 10, "Zycia", .2, ITEM_ALIGN_LEFT cvarTest "ui_netGameType" hideCVar { 5 }, 0, 8 )
+	CHECKBOXNOTEXTACTION( "labelMax Lives", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 142, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "ui_maxlives" cvarTest "ui_netGameType" hideCVar { 5 }, uiScript toggleMaxLives, "Limituje liczbe zyc graczy na runde" )
 	
 	itemDef {
 		name		"filtericonWeapRestrict"
@@ -94,7 +94,7 @@ menuDef {
 		decoration
 	}
 	LABEL( 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+24-4, 154, .5*((SUBWINDOW_WIDTH)-6)-26+4, 10, "Restrykcja Broni", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	CHECKBOXNOTEXTACTION( "labelWeapon Restrictions", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 154, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "ui_heavyWeaponRestriction", uiScript toggleWeaponRestriction, "Restricts the number of weapons available to players to a percentage of the team size to reduce spam" )
+	CHECKBOXNOTEXTACTION( "labelWeapon Restrictions", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 154, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "ui_heavyWeaponRestriction", uiScript toggleWeaponRestriction, "Restricts the number of weapons available to players to a percentage of the team size to reduce spam Restrykcja liczby broni dostepnych dla graczy do wielkosci procentowego teamu aby zredukowac spam" )
 	
 	itemDef {
 		name		"filtericonTeamBalance"
@@ -105,8 +105,8 @@ menuDef {
 		visible		1
 		decoration
 	}
-	LABEL( 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+24-4, 166, .5*((SUBWINDOW_WIDTH)-6)-26+4, 10, "Zbalansowane Teamy", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	CHECKBOXNOTEXTACTION( "labelBalanced Teams", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 166, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "g_teamforcebalance", copycvar g_teamforcebalance g_lms_teamforcebalance, "Enforces balanced teams by forcing players to join the team with the lowest player count"  )
+	LABEL( 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+24-4, 166, .5*((SUBWINDOW_WIDTH)-6)-26+4, 10, "Balansowane Teamow", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	CHECKBOXNOTEXTACTION( "labelBalanced Teams", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 166, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "g_teamforcebalance", copycvar g_teamforcebalance g_lms_teamforcebalance, "Egzekfowanie balansowanie teampw przez wymuszanie graczy do wejscia do teamu z najnizsza liczba graczy"  )
 	
 // Map Selection //
 	SUBWINDOW( 6, 184, (SUBWINDOW_WIDTH), 132, "NAZWA" )
@@ -138,7 +138,7 @@ menuDef {
 	}
 	
 // Map Preview //
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 284, "PREVIEW" )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 284, "PODGLAD" )
 
 	itemDef {
 		name		"campaignPreview"

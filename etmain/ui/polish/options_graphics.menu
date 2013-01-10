@@ -29,7 +29,7 @@ menuDef {
 		open options
 	}
 
-	WINDOW( "GRAPHICS", 90 )
+	WINDOW( "GRAFIKA", 90 )
 	
 // Simple settings //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 66, "PROSTE" )
@@ -42,29 +42,29 @@ menuDef {
 // Advanced settings //
 	SUBWINDOW( 6, 104, (SUBWINDOW_WIDTH), 256, "ZAAWANSOWANE" )
 	YESNO( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Niebo Slabej Jakosci:", .2, 8, "r_fastsky", "" )
-	MULTIACTION( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Detale Cieni:", .2, 8, "ui_cg_shadows", cvarFloatList { "None (fastest)" 0 "Blob (old style)" 1 "Stencil shadows" 2 "Projection shadows" 3 "Polygon shadows" 4 }, uiScript glCustom, "" )
-	MULTIACTION( 8, 144, (SUBWINDOW_WIDTH)-4, 10, "Detale Textur:", .2, 8, "ui_r_picmip", cvarFloatList { "Low" 2 "Medium" 1 "High" 0 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Detale Cieni:", .2, 8, "ui_cg_shadows", cvarFloatList { "Brak (najsz.)" 0 "Blob (stary styl)" 1 "Wzorowe Cienie" 2 "Projektowe Cienie" 3 "Polygonowe Cienie" 4 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 144, (SUBWINDOW_WIDTH)-4, 10, "Detale Textur:", .2, 8, "ui_r_picmip", cvarFloatList { "Niskie" 2 "Srednie" 1 "Wysokie" 0 }, uiScript glCustom, "" )
 	// add options 0 - disabled, 1 - single path, 2 - path
 	YESNOACTION( 8, 156, (SUBWINDOW_WIDTH)-4, 10, "Dynamiczne Swiatla:", .2, 8, "ui_r_dynamiclight", uiScript glCustom; uiScript update "r_dynamicLight", "" )
 	// check this if ET supports same way
-	MULTIACTION( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Detale Geometryczne:", .2, 8, "ui_r_lodbias", cvarFloatList { "Low" 2 "Medium" 1 "High" 0 }, uiScript glCustom ; uiScript update "r_lodbias", "" )
-	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Jakosc Textur:", .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Detale Geometryczne:", .2, 8, "ui_r_lodbias", cvarFloatList { "Niskie" 2 "Srednie" 1 "Wysokie" 0 }, uiScript glCustom ; uiScript update "r_lodbias", "" )
+	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Jakosc Textur:", .2, 8, "ui_r_texturebits", cvarFloatList { "Domyslne" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
 	MULTIACTION( 8, 192, (SUBWINDOW_WIDTH)-4, 10, "Filtrowanie Textur:", .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glCustom, "" )
-	MULTIACTION( 8, 204, (SUBWINDOW_WIDTH)-4, 10, "Filtrowanie Anisotropoficzne:", .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Disabled" 0 "Medium" 4 "High" 8 }, uiScript glCustom, "" )
-	MULTIACTION( 8, 216, (SUBWINDOW_WIDTH)-4, 10, "Glebia Koloru:", .2, 8, "ui_r_colorbits", cvarFloatList { "Desktop Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 204, (SUBWINDOW_WIDTH)-4, 10, "Filtrowanie Anisotropoficzne:", .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Wylaczone" 0 "Srednie" 4 "Wysokie" 8 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 216, (SUBWINDOW_WIDTH)-4, 10, "Glebia Koloru:", .2, 8, "ui_r_colorbits", cvarFloatList { "Domys. Monitora" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
 	YESNOACTION( 8, 228, (SUBWINDOW_WIDTH)-4, 10, "Detalowe Textury:", .2, 8, "ui_r_detailtextures", uiScript glCustom, "" )
-	MULTIACTION( 8, 240, (SUBWINDOW_WIDTH)-4, 10, "Glebokosc Bufferowania:", .2, 8, "ui_r_depthbits", cvarFloatList { "Default" 0 "16-bit" 16 "24-bit" 24 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 240, (SUBWINDOW_WIDTH)-4, 10, "Glebokosc Bufferowania:", .2, 8, "ui_r_depthbits", cvarFloatList { "Domyslne" 0 "16-bit" 16 "24-bit" 24 }, uiScript glCustom, "" )
 	YESNOACTION( 8, 252, (SUBWINDOW_WIDTH)-4, 10, "Kompresowanie Textur:", .2, 8, "ui_r_ext_compressed_textures", uiScript glCustom, "" )
 	YESNOACTION( 8, 264, (SUBWINDOW_WIDTH)-4, 10, "Synchronizacja Klatek:", .2, 8, "ui_r_finish", uiScript glCustom, "" )	
-	MULTIACTION( 8, 276, (SUBWINDOW_WIDTH)-4, 10, "GL Extensions:", .2, 8, "ui_r_allowExtensions", cvarFloatList { "Enabled" 1 "Disabled" 0 }, uiScript glCustom , "")
+	MULTIACTION( 8, 276, (SUBWINDOW_WIDTH)-4, 10, "GL Extensions:", .2, 8, "ui_r_allowExtensions", cvarFloatList { "Wlaczone" 1 "Wylaczone" 0 }, uiScript glCustom , "")
 																					
 	BUTTON( 8+.5*((SUBWINDOW_WIDTH)-196), 342, 196, 14, "USTAW REKOMENDOWANE", .24, 11, uiScript vidReset ;
 																					uiScript systemCvarsReset ;
 																					open rec_restart )
 		
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "COFNIJ", .3, 14, uiScript vidReset ; close options_graphics ; open options )
-	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "APPLY", .3, 14,
+	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "ZATWIERDZ", .3, 14,
 		conditionalScript vidrestartIsRequired 2
 		( "open vid_restart" )
 		( "uiScript vidReset ; uiScript systemCvarsApply ; close options_graphics ; open options" ) )

@@ -29,45 +29,45 @@ menuDef {
 	
 // Player //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 40, "GRACZ" )
-	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Nazwa Gracza:", .2, 8, "name", 36, 18, "Enter the name that you wish to be known by to others on servers" )
-	MULTI( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Jezyk:", .2, 8, "cl_language", cvarFloatList { "Angielski (default)" 0 "Francuski" 1 "Niemiecki" 2 "Wloski" 3 "Hiszpanski" 4 "Polski" 5 "Holenderski" 6 "Czeski" 7 "Rosyjski" 8 "Finski" 9 "Dunski" 10}, "Set your desired language" )
+	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Nazwa Gracza:", .2, 8, "name", 36, 18, "Wpisz nazwe jaka chcialbys byc znany przez innych na serwie" )
+	MULTI( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Jezyk:", .2, 8, "cl_language", cvarFloatList { "Angielski (default)" 0 "Francuski" 1 "Niemiecki" 2 "Wloski" 3 "Hiszpanski" 4 "Polski" 5 "Holenderski" 6 "Czeski" 7 "Szwedzki" 8 "Finski" 9 "Dunski" 10}, "Ustaw swoj jezyk" )
 	
 // Physics //
 	SUBWINDOW( 6, 74, (SUBWINDOW_WIDTH), 40, "FIZYKA" )
 	YESNO( 8, 90, (SUBWINDOW_WIDTH)-4, 10, "Zawsze Biegnij:", .2, 8, "cl_run", "" )
-	MULTI( 8, 102, (SUBWINDOW_WIDTH)-4, 10, "Podwojne-Klikniecie Padania:", .2, 8, "cl_doubletapdelay", cvarFloatList { "Yes" 350 "No" 0 }, "" )
+	MULTI( 8, 102, (SUBWINDOW_WIDTH)-4, 10, "Podwojne-Klikniecie Padania:", .2, 8, "cl_doubletapdelay", cvarFloatList { "Tak" 350 "Nie" 0 }, "" )
 	
 // Weapons //
 	SUBWINDOW( 6, 116, (SUBWINDOW_WIDTH), 52, "BRONIE" )
-	YESNO( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Automatyczne Przeladownie:", .2, 8, "cg_autoReload", "Automatically reload when ammunition clip runs out" )
-	YESNO( 8, 144, (SUBWINDOW_WIDTH)-4, 10, "Autozmiana:", .2, 8, "cg_noAmmoAutoSwitch", "Automatically switch to a new weapon when out of ammunition" )
-	YESNO( 8, 156, (SUBWINDOW_WIDTH)-4, 10, "Ikona Broni Flash:", .2, 8, "cg_drawWeaponIconFlash", "Flash weapon icon when firing, reloading, or switching" )
+	YESNO( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Automatyczne Przeladownie:", .2, 8, "cg_autoReload", "Automatycznie przeladowywuj kiedy amunicja skonczy sie w magazynku" )
+	YESNO( 8, 144, (SUBWINDOW_WIDTH)-4, 10, "Autozmiana:", .2, 8, "cg_noAmmoAutoSwitch", "Automatycznie zmnieniaj bronie kiedy skonczy sie amunicja" )
+	YESNO( 8, 156, (SUBWINDOW_WIDTH)-4, 10, "Ikona Broni Flash:", .2, 8, "cg_drawWeaponIconFlash", "Podwietlaj ikone bronii kiedy jest uzywana" )
 	
 // Binoculars //	FIXME - isn't this really a 'scopes' section?
 	SUBWINDOW( 6, 170, (SUBWINDOW_WIDTH), 52, "LUNETA" )
-	MULTI( 8, 186, (SUBWINDOW_WIDTH)-4, 10, "Uzyj zmiane broni do przyblizania:", .2, 8, "cg_useWeapsForZoom", cvarFloatList { "Off" 0 "On (normal)" 1 "On (reverse)" 2 }, "Weapon switch will zoom in and out while scoped, rather than switch weapons" )
-	MULTI( 8, 198, (SUBWINDOW_WIDTH)-4, 10, "Domyslny Poziom Przyblizenia:", .2, 8, "cg_zoomdefaultsniper", cvarFloatList { "All the way Out" 20 "Near" 16 "Far" 8 "All the Way In" 4 }, "Set the default zoom level for scopes" )
-	MULTI( 8, 210, (SUBWINDOW_WIDTH)-4, 10, "Poziomy Przyblizenia:", .2, 8, "cg_zoomstepsniper", cvarFloatList { "4 Levels of Zoom" 4 "8 Levels of Zoom" 2 }, "Specifies the increments you zoom by" )
+	MULTI( 8, 186, (SUBWINDOW_WIDTH)-4, 10, "Uzyj zmiane broni do przyb.:", .2, 8, "cg_useWeapsForZoom", cvarFloatList { "Wyl." 0 "Wlacz. (normalny)" 1 "Wlacz (odwrocony)" 2 }, "Zmiana bronii umozliwi przyblizanie kiedy uzyjesz lornetki" )
+	MULTI( 8, 198, (SUBWINDOW_WIDTH)-4, 10, "Domyslny Poziom Przyblizenia:", .2, 8, "cg_zoomdefaultsniper", cvarFloatList { "Do konca" 20 "Bliski" 16 "Daleki" 8 "Bar. Blisko" 4 }, "Ustaw domyslne przyblizenie" )
+	MULTI( 8, 210, (SUBWINDOW_WIDTH)-4, 10, "Poziomy Przyblizenia:", .2, 8, "cg_zoomstepsniper", cvarFloatList { "4 Poziomy Przybl." 4 "8 Poziomy Przybl." 2 }, "Ustaw przyrost przyblizenie przez" )
 	
 // Chat //
 	SUBWINDOW( 6, 224, (SUBWINDOW_WIDTH), 40, "CHAT" )
-	MULTI( 8, 240, (SUBWINDOW_WIDTH)-4, 10, "Mod Szybkiego Czatu:", .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeric" 1 }, "Use alpha or numeric keys to send radio messages" )
-	MULTI( 8, 252, (SUBWINDOW_WIDTH)-4, 10, "Ikona Czasu Czatu:", .2, 8, "cg_voicespritetime", cvarFloatList { "Short" 3000 "Normal" 6000 "Long" 12000 "Really Long" 24000 }, "Specify how long the chat icon appears above other players' heads" )
+	MULTI( 8, 240, (SUBWINDOW_WIDTH)-4, 10, "Mod Szybkiego Czatu:", .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeryczny" 1 }, "Uzycie alpha lub numerycznych klawiszy do wysylania wiadomosci radiowych" )
+	MULTI( 8, 252, (SUBWINDOW_WIDTH)-4, 10, "Ikona Czasu Czatu:", .2, 8, "cg_voicespritetime", cvarFloatList { "Krotka" 3000 "Normalna" 6000 "Dluga" 12000 "Bardzo Dluga" 24000 }, "Ustawia jak dlugo ikona czasu pojawia sie nad glowa gracza" )
 
 // Downloads //
 	SUBWINDOW( 6, 266, (SUBWINDOW_WIDTH), 52, "SCIAGANIE" )
-	YESNO( 8, 282, (SUBWINDOW_WIDTH)-4, 10, "Sprawdzaj Aktualizacje przy Starcie:", .2, 8, "cl_autoupdate", "" )
-	YESNO( 8, 294, (SUBWINDOW_WIDTH)-4, 10, "Sciagnij Brakujace pliki z serwera:", .2, 8, "cl_allowDownload", "" )
+	YESNO( 8, 282, (SUBWINDOW_WIDTH)-4, 10, "Spraw. Aktua. przy Starcie:", .2, 8, "cl_autoupdate", "" )
+	YESNO( 8, 294, (SUBWINDOW_WIDTH)-4, 10, "Scia. Brak. pliki z serwera:", .2, 8, "cl_allowDownload", "" )
 	YESNO( 8, 306, (SUBWINDOW_WIDTH)-4, 10, "Uzyj HTTP/FTP Sciaganie:", .2, 8, "cl_wwwDownload", "" )
 	
 // Miscellaneous //
 	SUBWINDOW( 6, 320, (SUBWINDOW_WIDTH), 88, "ROZNE" )
-	MULTI( 8, 336, (SUBWINDOW_WIDTH)-4, 10, "Skarki PopUp:", .2, 8, "cg_complaintPopUp", cvarFloatList { "Off" 0 "On" 1 }, "Display the option to file complaints about teammates who kill you" )
-	YESNO( 8, 348, (SUBWINDOW_WIDTH)-4, 10, "Zapisuj Wazne Wiadomosci:", .2, 8, "cg_printObjectiveInfo", "Prints important game messages to the console" )
-	MULTI( 8, 360, (SUBWINDOW_WIDTH)-4, 10, "Auto-Akcje:", .2, 8, "cg_autoAction", cvarFloatList { "None" 0 "Demo" 1 "Screenshot" 2 "Stats Dump" 4 "Demo + SS" 3 "Demo + Stats" 5 "SS + Stats" 6 "Demo + SS + Stats" 7 }, "Automatically performs actions at the start or end of a round" )
-	YESNO( 8, 372, (SUBWINDOW_WIDTH)-4, 10, "Uzyj JPEG dla AutoScreenow:", .2, 8, "cg_useScreenshotJPEG", "Switches between .tga and .jpg picture types for the \"autoscreenshot\" command" )
-	YESNO( 8, 384, (SUBWINDOW_WIDTH)-4, 10, "Pokaz Opis :", .2, 8, "ui_showtooltips", "Display Tool Tips in the UI" )
-	YESNO( 8, 396, (SUBWINDOW_WIDTH)-4, 10, "Informacje:", .2, 8, "cg_announcer", "Enables or disables the in-game Commander" )
+	MULTI( 8, 336, (SUBWINDOW_WIDTH)-4, 10, "Skargi PopUp:", .2, 8, "cg_complaintPopUp", cvarFloatList { "Wylacz." 0 "Wlacz" 1 }, "Wyswietl opcje do skarg" )
+	YESNO( 8, 348, (SUBWINDOW_WIDTH)-4, 10, "Zapisuj Wazne Wiadomosci:", .2, 8, "cg_printObjectiveInfo", "Zapisuje wazne informacje do konsoli" )
+	MULTI( 8, 360, (SUBWINDOW_WIDTH)-4, 10, "Auto-Akcje:", .2, 8, "cg_autoAction", cvarFloatList { "Brak" 0 "Demo" 1 "Zdjecie" 2 "Zapis Statow" 4 "Demo + Zdjecie" 3 "Demo + Statystyki" 5 "Zdjecie + Statystyki" 6 "Demo + Zdjecie + Statystyki" 7 }, "Automatycznie wykokonuje akcje po starcie lub koncu rundy" )
+	YESNO( 8, 372, (SUBWINDOW_WIDTH)-4, 10, "Uzyj JPEG dla AutoScreenow:", .2, 8, "cg_useScreenshotJPEG", "Zmiana pomiedzy .tga a .jpg" )
+	YESNO( 8, 384, (SUBWINDOW_WIDTH)-4, 10, "Pokaz Opis :", .2, 8, "ui_showtooltips", "Wyswietl opis w UI" )
+	YESNO( 8, 396, (SUBWINDOW_WIDTH)-4, 10, "Informacje:", .2, 8, "cg_announcer", "Wlacza lub Wylacza w grze Commandera" )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "COFNIJ", .3, 14, close options_customise_game ; open options )

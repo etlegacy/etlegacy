@@ -64,7 +64,7 @@ menuDef {
 																			( "open profile_delete_error" )
 																			( "open profile_delete" ) )
 	BUTTON( 252, 68, WINDOW_WIDTH-252-6, 14, "ZMIEN NAZWE", .24, 11, clearFocus ; open profile_rename )
-	BUTTON( 252, 86, WINDOW_WIDTH-252-6, 14, "USTAW JAKO DOMYSLNY", .24, 11, conditionalscript ui_profile 1
+	BUTTON( 252, 86, WINDOW_WIDTH-252-6, 14, "USTAW DOMYSLNY", .24, 11, conditionalscript ui_profile 1
 																			( "uiscript setDefaultProfile" )
 																			( "open profile" ) )
 

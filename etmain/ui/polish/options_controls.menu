@@ -44,9 +44,9 @@ menuDef {
 	
 // Input //
 	SUBWINDOW( 6, 198, (SUBWINDOW_WIDTH), 40, "WEJSCIE" )
-	CHECKBOXALIGNXACTION( 8, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Obroc Mysz:", .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, "Inverts mouse pitch" )
-	CHECKBOXALIGNX( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Wygladz Mysz:", .2, 24, 8, "m_filter", "Smooths out the mouse using interpolation" )
-	SLIDER( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Czulosc Myszy:", .2, 8, "sensitivity" 5 1 30, "Use the slider to increase or decrease mouse sensitivity" )
+	CHECKBOXALIGNXACTION( 8, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Obroc Mysz:", .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, "Odwrocenie kierunku myszy" )
+	CHECKBOXALIGNX( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Wygladz Mysz:", .2, 24, 8, "m_filter", "Wygladza Poruszanie Myszy" )
+	SLIDER( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Czulosc Myszy:", .2, 8, "sensitivity" 5 1 30, "Uzyj do zwiekszania czulosci myszy" )
 	CVARFLOATLABEL( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
 
 // Chat //
