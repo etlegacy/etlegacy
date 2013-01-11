@@ -68,9 +68,9 @@ menuDef {
 
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "ZMIEN", .3, 14, conditionalscript ui_profile_renameto 1
 																																		( "clearFocus" )
-																																		( "setcvar ui_profile_create_error \\\"Can't rename profile. Please enter a profile name.\\\" ; open profile_create_error ; abort" )
+																																		( "setcvar ui_profile_create_error \\\"Nie mozna zmienic nazwy profilu. Prosze wpisz nazwe profilu.\\\" ; open profile_create_error ; abort" )
 																																	 conditionalscript UIProfileAlreadyExists_Rename 2
-																																		( "setcvar ui_profile_create_error \\\"Can't rename profile. A profile with the same name already exists.\\\" ; open profile_create_error ; abort" )
+																																		( "setcvar ui_profile_create_error \\\"Nie mozna zmienic nazwy profilu. Profil z taka sama nazwa juz istnieje.\\\" ; open profile_create_error ; abort" )
 																																		( "clearFocus" )
 																																		
 																																	close profile_rename ;
