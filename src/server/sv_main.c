@@ -359,11 +359,11 @@ void SV_MasterHeartbeat(const char *message)
 
 		if (adr[i][0].type != NA_BAD)
 		{
-			NET_OutOfBandPrint(NS_SERVER, adr[i][0], "heartbeat %s\n", HEARTBEAT_GAME);
+			NET_OutOfBandPrint(NS_SERVER, adr[i][0], "heartbeat %s\n", message);
 		}
 		if (adr[i][1].type != NA_BAD)
 		{
-			NET_OutOfBandPrint(NS_SERVER, adr[i][1], "heartbeat %s\n", HEARTBEAT_GAME);
+			NET_OutOfBandPrint(NS_SERVER, adr[i][1], "heartbeat %s\n", message);
 		}
 	}
 }
