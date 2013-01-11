@@ -96,21 +96,22 @@ menuDef {
 		decoration
 	}
 	EDITFIELDLEFT( SUBWINDOW_X+4+32, SUBWINDOW_Y+88, (SUBWINDOW_WIDTH)-8-64, 10, "Player Alias:", .2, 8, "ui_profile", 36, 23, "Enter the alias here that you would like displayed to others on servers" )
-
-	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+112, (SUBWINDOW_WIDTH)-8, 10, "Video Quality:", .2, 8, "ui_glCustom", cvarFloatList { "Fastest" 3 "Fast" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glCustom", "Select your initial video settings, these can be changed later via the options menu" )
-	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+124, (SUBWINDOW_WIDTH)-8, 10, "Resolution:", .2, 8, "ui_r_mode", cvarFloatList { "desktop resolution" -2 "320*240" 0 "400*300" 1 "512*384" 2 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 Wide Screen" 11 "1366x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1600 (16:10)" 18 }, uiScript glCustom, "Choose your preferred video resolution - if you're unsure what this means, leave it as the default" )
-	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, "Brightness:", .2, 8, "ui_r_gamma" 1 0.5 2, "Set the brightness of the game" )
-	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, "ui_r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
-
-	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+160, (SUBWINDOW_WIDTH)-8, 10, "Connection:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "LAN/CABLE/xDSL" 25000 } cvarListUndefined "Unselected", uiScript update "ui_setRate", "Select your connection type, if unsure select Modem" )
-
-	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+184, (SUBWINDOW_WIDTH)-8, 10, "Mouse Sensitivity:", .2, 8, "ui_sensitivity" 5 1 30, "Use this slider to set your mouse sensitivity" )
-	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+184, (SUBWINDOW_WIDTH)-8, 10, "ui_sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
-	YESNO( SUBWINDOW_X+4, SUBWINDOW_Y+196, (SUBWINDOW_WIDTH)-8, 10, "Invert Mouse:", .2, 8, "ui_profile_mousePitch", "Choose invert mouse if you prefer flight-simulator style mouse pitch controls" )
-
-	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+220, (SUBWINDOW_WIDTH)-8, 10, "Handedness:", .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, "Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu" )
 	
-	BUTTON( (SUBWINDOW_X+4)+.5*((SUBWINDOW_WIDTH)-164), SUBWINDOW_Y+234, 164, 14, "DEFAULT SETTINGS", .24, 11, DEFAULT_SETTINGS ;
+	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+112, (SUBWINDOW_WIDTH)-8, 10, "Language:", .2, 8, "cl_language", cvarFloatList { "English (default)" 0 "French" 1 "German" 2 "Italian" 3 "Spanish" 4 "Polish" 5 "Dutch" 6 "Czech" 7 "Swedish" 8 "Finnish" 9 "Danish" 10}, uiScript update "cl_language", "Set your desired language" )
+	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, "Video Quality:", .2, 8, "ui_glCustom", cvarFloatList { "Fastest" 3 "Fast" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glCustom", "Select your initial video settings, these can be changed later via the options menu" )
+	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+150, (SUBWINDOW_WIDTH)-8, 10, "Resolution:", .2, 8, "ui_r_mode", cvarFloatList { "desktop resolution" -2 "320*240" 0 "400*300" 1 "512*384" 2 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 Wide Screen" 11 "1366x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1600 (16:10)" 18 }, uiScript glCustom, "Choose your preferred video resolution - if you're unsure what this means, leave it as the default" )
+	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+174, (SUBWINDOW_WIDTH)-8, 10, "Brightness:", .2, 8, "ui_r_gamma" 1 0.5 2, "Set the brightness of the game" )
+	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+174, (SUBWINDOW_WIDTH)-8, 10, "ui_r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
+
+	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+198, (SUBWINDOW_WIDTH)-8, 10, "Connection:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "LAN/CABLE/xDSL" 25000 } cvarListUndefined "Unselected", uiScript update "ui_setRate", "Select your connection type, if unsure select Modem" )
+
+	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+222, (SUBWINDOW_WIDTH)-8, 10, "Mouse Sensitivity:", .2, 8, "ui_sensitivity" 5 1 30, "Use this slider to set your mouse sensitivity" )
+	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+222, (SUBWINDOW_WIDTH)-8, 10, "ui_sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
+	YESNO( SUBWINDOW_X+4, SUBWINDOW_Y+246, (SUBWINDOW_WIDTH)-8, 10, "Invert Mouse:", .2, 8, "ui_profile_mousePitch", "Choose invert mouse if you prefer flight-simulator style mouse pitch controls" )
+
+	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+270, (SUBWINDOW_WIDTH)-8, 10, "Handedness:", .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, "Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu" )
+	
+	BUTTON( (SUBWINDOW_X+4)+.5*((SUBWINDOW_WIDTH)-164), SUBWINDOW_Y+284, 164, 14, "DEFAULT SETTINGS", .24, 11, DEFAULT_SETTINGS ;
 		conditionalscript com_recommendedSet 0
 		( "clearfocus" )
 		( "abort" )
@@ -119,7 +120,7 @@ menuDef {
 		( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
 		( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1" )
 	
-	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+264, (SUBWINDOW_WIDTH)-8-4, 10, "^3Thank you for installing ET:Legacy.\n\n^3Visit ^1www.etlegacy.com^3 for more information.\n\n^3Let's keep ET alive!", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+314, (SUBWINDOW_WIDTH)-8-4, 10, "^3Thank you for installing ET:Legacy.\n\n^3Visit ^1www.etlegacy.com^3 for more information.\n\n^3Let's keep ET alive!", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "QUIT", .3, 14, close profile_create_initial ; close main ; open credits_quit )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "CREATE", .3, 14, conditionalscript UIProfileValidName 2
