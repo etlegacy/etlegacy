@@ -1255,7 +1255,7 @@ static const char *handicapValues[] = { "None", "95", "90", "85", "80", "75", "7
 
 static void UI_DrawHandicap(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
-	int h= Com_Clamp(5, 100, trap_Cvar_VariableValue("handicap"));
+	int h = Com_Clamp(5, 100, trap_Cvar_VariableValue("handicap"));
 	int i = 20 - h / 5;
 
 	Text_Paint(rect->x, rect->y, scale, color, handicapValues[i], 0, 0, textStyle);

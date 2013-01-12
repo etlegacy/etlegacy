@@ -1382,8 +1382,7 @@ void CL_Connect_f(void)
 
 	Com_Printf("%s resolved to %s\n", cls.servername, ip_port);
 
-	// if we aren't playing on a lan, we need to authenticate
-	// with the cd key
+	// if we aren't playing on a lan, we need to request a challenge
 	if (NET_IsLocalAddress(clc.serverAddress))
 	{
 		cls.state = CA_CHALLENGING;
@@ -1492,19 +1491,12 @@ void CL_SendPureChecksums(void)
 {
 	const char *pChecksums;
 	char       cMsg[MAX_INFO_VALUE];
-	int        i;
 
 	// if we are pure we need to send back a command with our referenced pk3 checksums
 	pChecksums = FS_ReferencedPakPureChecksums();
 
-	// "cp"
-	Com_sprintf(cMsg, sizeof(cMsg), "Va ");
-	Q_strcat(cMsg, sizeof(cMsg), va("%d ", cl.serverId));
-	Q_strcat(cMsg, sizeof(cMsg), pChecksums);
-	for (i = 0; i < 2; i++)
-	{
-		cMsg[i] += 13 + (i * 2);
-	}
+	Com_sprintf(cMsg, sizeof(cMsg), "cp %d %s", cl.serverId, pChecksums);
+
 	CL_AddReliableCommand(cMsg);
 }
 
@@ -2056,7 +2048,7 @@ void CL_CheckForResend(void)
 		break;
 
 	case CA_CHALLENGING:
-		// sending back the challenge
+		// received and confirmed the challenge, now responding with a connect packet
 		port = Cvar_VariableValue("net_qport");
 
 		Q_strncpyz(info, Cvar_InfoString(CVAR_USERINFO), sizeof(info));
@@ -2070,8 +2062,9 @@ void CL_CheckForResend(void)
 
 		for (i = 0; i < strlen(info); i++)
 		{
-			data[9 + i] = info[i];    // + (clc.challenge)&0x3;
+			data[9 + i] = info[i];
 		}
+
 		data[9 + i]  = '\"'; // ending quote
 		data[10 + i] = 0;
 
@@ -3167,9 +3160,6 @@ void CL_CheckAutoUpdate(void)
 		return;
 	}
 
-	// Initialize random number to be used in pairing of messages with replies
-	srand(Com_Milliseconds());
-
 	cls.autoupdateServer.port = BigShort(PORT_UPDATE);
 	Com_DPrintf("Update server at: %s (%s)\n", NET_AdrToString(cls.autoupdateServer), cls.autoupdateServerName);
 
@@ -3637,6 +3627,9 @@ void CL_Init(void)
 	autoupdateStarted = qfalse;
 
 	CL_InitTranslation();
+
+	// Initialize random number to be used in pairing of messages with replies
+	srand(Com_Milliseconds());
 
 	Com_Printf("----- Client Initialization Complete -----\n");
 }
