@@ -504,7 +504,6 @@ const char *String_Alloc(const char *p);
 void String_Init(void);
 void String_Report(void);
 void Init_Display(displayContextDef_t *dc);
-void Display_ExpandMacros(char *buff);
 void Menu_Init(menuDef_t *menu);
 void Item_Init(itemDef_t *item);
 void Menu_PostParse(menuDef_t *menu);

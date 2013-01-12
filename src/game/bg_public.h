@@ -1494,7 +1494,6 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 
 void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce);
 
-//#define ARENAS_PER_TIER		4
 #define MAX_ARENAS          64
 #define MAX_ARENAS_TEXT     8192
 

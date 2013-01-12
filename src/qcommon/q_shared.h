@@ -988,20 +988,6 @@ char *Q_CleanDirName(char *dirname);
 
 //=============================================
 
-// 64-bit integers for global rankings interface
-// implemented as a struct for qvm compatibility
-typedef struct
-{
-	byte b0;
-	byte b1;
-	byte b2;
-	byte b3;
-	byte b4;
-	byte b5;
-	byte b6;
-	byte b7;
-} qint64;
-
 float *tv(float x, float y, float z);
 
 #define rc(x) va("%s^7", x) // shortcut for color reset after printing variable
@@ -1765,15 +1751,6 @@ typedef enum
 	FMV_LOOPED,
 	FMV_ID_WAIT
 } e_status;
-
-typedef enum _flag_status
-{
-	FLAG_ATBASE = 0,
-	FLAG_TAKEN,         // CTF
-	FLAG_TAKEN_RED,     // One Flag CTF
-	FLAG_TAKEN_BLUE,    // One Flag CTF
-	FLAG_DROPPED
-} flagStatus_t;
 
 #define MAX_GLOBAL_SERVERS          4096
 #define MAX_OTHER_SERVERS           128

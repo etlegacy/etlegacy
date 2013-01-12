@@ -529,11 +529,10 @@ void Sys_UnloadDll(void *dllHandle)
  * @brief Used by Sys_LoadDll to get handle on a mod library
  * @return Handle to a mod library
  */
-static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const char *fname, char *fqpath)
+static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const char *fname)
 {
 	void *libHandle;
 	char *fn;
-	*fqpath = 0;
 
 	fn = FS_BuildOSPath(base, gamedir, fname);
 
@@ -556,7 +555,6 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		return NULL;
 	}
 	Com_Printf("succeeded\n");
-	Q_strncpyz(fqpath, fn, MAX_QPATH) ;
 
 	return libHandle;
 }
@@ -567,7 +565,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
  * #2 look in fs_basepath
  * #3 try to revert to the default mod library
  */
-void *Sys_LoadDll(const char *name, char *fqpath,
+void *Sys_LoadDll(const char *name,
                   intptr_t(**entryPoint) (int, ...),
                   intptr_t (*systemcalls)(intptr_t, ...))
 {
@@ -596,18 +594,18 @@ void *Sys_LoadDll(const char *name, char *fqpath,
 	}
 #endif
 
-	libHandle = Sys_TryLibraryLoad(homepath, gamedir, fname, fqpath);
+	libHandle = Sys_TryLibraryLoad(homepath, gamedir, fname);
 
 	if (!libHandle && basepath)
 	{
-		libHandle = Sys_TryLibraryLoad(basepath, gamedir, fname, fqpath);
+		libHandle = Sys_TryLibraryLoad(basepath, gamedir, fname);
 	}
 
 	// HACK: sometimes a library is loaded from the mod dir when it shouldn't. Why?
 	if (!libHandle && strcmp(gamedir, DEFAULT_MODGAME))
 	{
 		Com_Printf("Sys_LoadDll: failed to load the mod library. Trying to revert to the default one.\n");
-		libHandle = Sys_TryLibraryLoad(basepath, DEFAULT_MODGAME, fname, fqpath);
+		libHandle = Sys_TryLibraryLoad(basepath, DEFAULT_MODGAME, fname);
 	}
 
 	if (!libHandle)

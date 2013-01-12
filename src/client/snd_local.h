@@ -208,11 +208,8 @@ extern channel_t s_channels[MAX_CHANNELS];
 extern channel_t loop_channels[MAX_CHANNELS];
 extern int       numLoopChannels;
 
-extern int    s_paintedtime;
-extern vec3_t listener_forward;
-extern vec3_t listener_right;
-extern vec3_t listener_up;
-extern dma_t  dma;
+extern int   s_paintedtime;
+extern dma_t dma;
 
 typedef struct
 {
@@ -267,9 +264,6 @@ void SND_shutdown(void);
 void S_PaintChannels(int endtime);
 
 void S_memoryLoad(sfx_t *sfx);
-
-// spatializes a channel
-void S_Spatialize(channel_t *ch);
 
 // adpcm functions
 int S_AdpcmMemoryNeeded(const wavinfo_t *info);

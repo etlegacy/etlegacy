@@ -436,8 +436,9 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 	if (interpret == VMI_NATIVE)
 	{
 		// try to load as a system dll
-		vm->dllHandle = Sys_LoadDll(module, vm->fqpath, &vm->entryPoint, VM_DllSyscall);
-		// TTimo - never try qvm
+		vm->dllHandle = Sys_LoadDll(module, &vm->entryPoint, VM_DllSyscall);
+
+		// never try qvm
 		if (vm->dllHandle)
 		{
 			return vm;

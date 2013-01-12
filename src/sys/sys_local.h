@@ -65,7 +65,7 @@ void Sys_AnsiColorPrint(const char *msg);
 int Sys_PID(void);
 qboolean Sys_PIDIsRunning(int pid);
 
-void *Sys_LoadDll(const char *name, char *fqpath,
+void *Sys_LoadDll(const char *name,
                   intptr_t(**entryPoint) (int, ...),
                   intptr_t (*systemcalls)(intptr_t, ...));
 void Sys_UnloadDll(void *dllHandle);
