@@ -5891,8 +5891,8 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 
 void Item_Paint(itemDef_t *item)
 {
-	vec4_t    red;
-	menuDef_t *parent = (menuDef_t *)item->parent;
+	vec4_t red;
+
 	red[0] = red[3] = 1;
 	red[1] = red[2] = 0;
 
@@ -5900,6 +5900,8 @@ void Item_Paint(itemDef_t *item)
 	{
 		return;
 	}
+
+	menuDef_t *parent = (menuDef_t *)item->parent;
 
 	if (DC->textFont)
 	{
