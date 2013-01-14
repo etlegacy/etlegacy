@@ -738,6 +738,7 @@ void CG_AddFragment(localEntity_t *le)
 		if (!(rand() % 5))
 		{
 			float alpha = 1.0 - ((float)(cg.time - le->startTime) / (float)(le->endTime - le->startTime));
+
 			alpha *= 0.25f;
 			memset(&flash, 0, sizeof(flash));
 			CG_PositionEntityOnTag(&flash, &le->refEntity, "tag_flash", 0, NULL);
@@ -945,16 +946,14 @@ void CG_AddFragment(localEntity_t *le)
 		}
 		else
 		{
-#if 0
-			// FIXME: re-add gibmodel support?
+			// re-added gibmodel support
+			// FIXME: limit local ent usage and cap this at N gib model ents in total for client? cvar? 0 = off, N = value
 			clientInfo_t   *ci;
-			int            clientNum;
+			int            i, clientNum = le->ownerNum;
 			localEntity_t  *nle;
 			vec3_t         dir;
 			bg_character_t *character;
 
-
-			clientNum = le->ownerNum;
 			if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 			{
 				CG_Error("Bad clientNum on player entity\n");
@@ -976,7 +975,7 @@ void CG_AddFragment(localEntity_t *le)
 					nle->refEntity.hModel = character->gibModels[rand() % 4];
 				}
 				// make it smaller
-				nle->endTime    = cg.time + 5000 + rand() % 2000;
+				nle->endTime    = cg.time + 4000 + rand() % 2000;
 				nle->sizeScale *= 0.8;
 				if (nle->sizeScale < 0.7)
 				{
@@ -991,7 +990,8 @@ void CG_AddFragment(localEntity_t *le)
 			}
 			// we're done
 			CG_FreeLocalEntity(le);
-#endif // 0
+			// end gib model support
+
 			return;
 		}
 	}
