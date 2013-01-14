@@ -3780,6 +3780,7 @@ static void Scroll_Slider_ThumbFunc(void *p)
 void Item_StartCapture(itemDef_t *item, int key)
 {
 	int flags;
+
 	switch (item->type)
 	{
 	case ITEM_TYPE_EDITFIELD:
@@ -4919,12 +4920,10 @@ void Item_TextField_Paint(itemDef_t *item)
 void Item_CheckBox_Paint(itemDef_t *item)
 {
 	vec4_t     newColor;
-	float      value;
+	float      value        = (item->cvar) ? DC->getCVarValue(item->cvar) : 0;
 	menuDef_t  *parent      = (menuDef_t *)item->parent;
 	qboolean   hasMultiText = qfalse;
 	multiDef_t *multiPtr    = (multiDef_t *)item->typeData;
-
-	value = (item->cvar) ? DC->getCVarValue(item->cvar) : 0;
 
 	if (item->window.flags & WINDOW_HASFOCUS && item->window.flags & WINDOW_FOCUSPULSE)
 	{
@@ -5574,7 +5573,6 @@ void Item_Model_Paint(itemDef_t *item)
 
 	ent.hModel = hModel;
 
-
 	if (modelPtr->frameTime)     // don't advance on the first frame
 	{
 		modelPtr->backlerp += (((DC->realTime - modelPtr->frameTime) / 1000.0f) * (float)modelPtr->fps);
@@ -5891,259 +5889,255 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 
 void Item_Paint(itemDef_t *item)
 {
-	vec4_t red;
-
-	red[0] = red[3] = 1;
-	red[1] = red[2] = 0;
-
 	if (item == NULL)
 	{
 		return;
 	}
 
-	menuDef_t *parent = (menuDef_t *)item->parent;
-
-	if (DC->textFont)
+	//if (item != NULL)
 	{
-		DC->textFont(item->font);
-	}
+		menuDef_t *parent = (menuDef_t *)item->parent;
 
-	if (item->window.flags & WINDOW_ORBITING)
-	{
-		if (DC->realTime > item->window.nextTime)
+		if (DC->textFont)
 		{
-			float rx, ry, a, c, s, w, h;
-
-			item->window.nextTime = DC->realTime + item->window.offsetTime;
-			// translate
-			w                         = item->window.rectClient.w / 2;
-			h                         = item->window.rectClient.h / 2;
-			rx                        = item->window.rectClient.x + w - item->window.rectEffects.x;
-			ry                        = item->window.rectClient.y + h - item->window.rectEffects.y;
-			a                         = 3 * M_PI / 180;
-			c                         = cos(a);
-			s                         = sin(a);
-			item->window.rectClient.x = (rx * c - ry * s) + item->window.rectEffects.x - w;
-			item->window.rectClient.y = (rx * s + ry * c) + item->window.rectEffects.y - h;
-			Item_UpdatePosition(item);
+			DC->textFont(item->font);
 		}
-	}
 
-	if (item->window.flags & WINDOW_INTRANSITION)
-	{
-		if (DC->realTime > item->window.nextTime)
+		if (item->window.flags & WINDOW_ORBITING)
 		{
-			int done = 0;
+			if (DC->realTime > item->window.nextTime)
+			{
+				float rx, ry, a, c, s, w, h;
 
-			item->window.nextTime = DC->realTime + item->window.offsetTime;
-			// transition the x,y
-			if (item->window.rectClient.x == item->window.rectEffects.x)
-			{
-				done++;
+				item->window.nextTime = DC->realTime + item->window.offsetTime;
+				// translate
+				w                         = item->window.rectClient.w / 2;
+				h                         = item->window.rectClient.h / 2;
+				rx                        = item->window.rectClient.x + w - item->window.rectEffects.x;
+				ry                        = item->window.rectClient.y + h - item->window.rectEffects.y;
+				a                         = 3 * M_PI / 180;
+				c                         = cos(a);
+				s                         = sin(a);
+				item->window.rectClient.x = (rx * c - ry * s) + item->window.rectEffects.x - w;
+				item->window.rectClient.y = (rx * s + ry * c) + item->window.rectEffects.y - h;
+				Item_UpdatePosition(item);
 			}
-			else
+		}
+
+		if (item->window.flags & WINDOW_INTRANSITION)
+		{
+			if (DC->realTime > item->window.nextTime)
 			{
-				if (item->window.rectClient.x < item->window.rectEffects.x)
+				int done = 0;
+
+				item->window.nextTime = DC->realTime + item->window.offsetTime;
+				// transition the x,y
+				if (item->window.rectClient.x == item->window.rectEffects.x)
 				{
-					item->window.rectClient.x += item->window.rectEffects2.x;
-					if (item->window.rectClient.x > item->window.rectEffects.x)
-					{
-						item->window.rectClient.x = item->window.rectEffects.x;
-						done++;
-					}
+					done++;
 				}
 				else
 				{
-					item->window.rectClient.x -= item->window.rectEffects2.x;
 					if (item->window.rectClient.x < item->window.rectEffects.x)
 					{
-						item->window.rectClient.x = item->window.rectEffects.x;
-						done++;
+						item->window.rectClient.x += item->window.rectEffects2.x;
+						if (item->window.rectClient.x > item->window.rectEffects.x)
+						{
+							item->window.rectClient.x = item->window.rectEffects.x;
+							done++;
+						}
+					}
+					else
+					{
+						item->window.rectClient.x -= item->window.rectEffects2.x;
+						if (item->window.rectClient.x < item->window.rectEffects.x)
+						{
+							item->window.rectClient.x = item->window.rectEffects.x;
+							done++;
+						}
 					}
 				}
-			}
-			if (item->window.rectClient.y == item->window.rectEffects.y)
-			{
-				done++;
-			}
-			else
-			{
-				if (item->window.rectClient.y < item->window.rectEffects.y)
+				if (item->window.rectClient.y == item->window.rectEffects.y)
 				{
-					item->window.rectClient.y += item->window.rectEffects2.y;
-					if (item->window.rectClient.y > item->window.rectEffects.y)
-					{
-						item->window.rectClient.y = item->window.rectEffects.y;
-						done++;
-					}
+					done++;
 				}
 				else
 				{
-					item->window.rectClient.y -= item->window.rectEffects2.y;
 					if (item->window.rectClient.y < item->window.rectEffects.y)
 					{
-						item->window.rectClient.y = item->window.rectEffects.y;
-						done++;
+						item->window.rectClient.y += item->window.rectEffects2.y;
+						if (item->window.rectClient.y > item->window.rectEffects.y)
+						{
+							item->window.rectClient.y = item->window.rectEffects.y;
+							done++;
+						}
+					}
+					else
+					{
+						item->window.rectClient.y -= item->window.rectEffects2.y;
+						if (item->window.rectClient.y < item->window.rectEffects.y)
+						{
+							item->window.rectClient.y = item->window.rectEffects.y;
+							done++;
+						}
 					}
 				}
-			}
-			if (item->window.rectClient.w == item->window.rectEffects.w)
-			{
-				done++;
-			}
-			else
-			{
-				if (item->window.rectClient.w < item->window.rectEffects.w)
+				if (item->window.rectClient.w == item->window.rectEffects.w)
 				{
-					item->window.rectClient.w += item->window.rectEffects2.w;
-					if (item->window.rectClient.w > item->window.rectEffects.w)
-					{
-						item->window.rectClient.w = item->window.rectEffects.w;
-						done++;
-					}
+					done++;
 				}
 				else
 				{
-					item->window.rectClient.w -= item->window.rectEffects2.w;
 					if (item->window.rectClient.w < item->window.rectEffects.w)
 					{
-						item->window.rectClient.w = item->window.rectEffects.w;
-						done++;
+						item->window.rectClient.w += item->window.rectEffects2.w;
+						if (item->window.rectClient.w > item->window.rectEffects.w)
+						{
+							item->window.rectClient.w = item->window.rectEffects.w;
+							done++;
+						}
+					}
+					else
+					{
+						item->window.rectClient.w -= item->window.rectEffects2.w;
+						if (item->window.rectClient.w < item->window.rectEffects.w)
+						{
+							item->window.rectClient.w = item->window.rectEffects.w;
+							done++;
+						}
 					}
 				}
-			}
-			if (item->window.rectClient.h == item->window.rectEffects.h)
-			{
-				done++;
-			}
-			else
-			{
-				if (item->window.rectClient.h < item->window.rectEffects.h)
+				if (item->window.rectClient.h == item->window.rectEffects.h)
 				{
-					item->window.rectClient.h += item->window.rectEffects2.h;
-					if (item->window.rectClient.h > item->window.rectEffects.h)
-					{
-						item->window.rectClient.h = item->window.rectEffects.h;
-						done++;
-					}
+					done++;
 				}
 				else
 				{
-					item->window.rectClient.h -= item->window.rectEffects2.h;
 					if (item->window.rectClient.h < item->window.rectEffects.h)
 					{
-						item->window.rectClient.h = item->window.rectEffects.h;
-						done++;
+						item->window.rectClient.h += item->window.rectEffects2.h;
+						if (item->window.rectClient.h > item->window.rectEffects.h)
+						{
+							item->window.rectClient.h = item->window.rectEffects.h;
+							done++;
+						}
+					}
+					else
+					{
+						item->window.rectClient.h -= item->window.rectEffects2.h;
+						if (item->window.rectClient.h < item->window.rectEffects.h)
+						{
+							item->window.rectClient.h = item->window.rectEffects.h;
+							done++;
+						}
 					}
 				}
+
+				Item_UpdatePosition(item);
+
+				if (done == 4)
+				{
+					item->window.flags &= ~WINDOW_INTRANSITION;
+				}
 			}
+		}
 
-			Item_UpdatePosition(item);
-
-			if (done == 4)
+		if (item->window.ownerDrawFlags && DC->ownerDrawVisible)
+		{
+			if (!DC->ownerDrawVisible(item->window.ownerDrawFlags))
 			{
-				item->window.flags &= ~WINDOW_INTRANSITION;
+				item->window.flags &= ~(WINDOW_VISIBLE | WINDOW_MOUSEOVER);
+			}
+			else
+			{
+				item->window.flags |= WINDOW_VISIBLE;
 			}
 		}
-	}
 
-	if (item->window.ownerDrawFlags && DC->ownerDrawVisible)
-	{
-		if (!DC->ownerDrawVisible(item->window.ownerDrawFlags))
+		if (item->cvarFlags & (CVAR_SHOW | CVAR_HIDE))
 		{
-			item->window.flags &= ~(WINDOW_VISIBLE | WINDOW_MOUSEOVER);
+			if (!Item_EnableShowViaCvar(item, CVAR_SHOW))
+			{
+				return;
+			}
 		}
-		else
-		{
-			item->window.flags |= WINDOW_VISIBLE;
-		}
-	}
 
-	if (item->cvarFlags & (CVAR_SHOW | CVAR_HIDE))
-	{
-		if (!Item_EnableShowViaCvar(item, CVAR_SHOW))
+		if ((item->settingFlags & (SVS_ENABLED_SHOW | SVS_DISABLED_SHOW)) && !Item_SettingShow(item, qfalse))
 		{
 			return;
 		}
-	}
+		if (item->voteFlag != 0 && !Item_SettingShow(item, qtrue))
+		{
+			return;
+		}
 
-	if ((item->settingFlags & (SVS_ENABLED_SHOW | SVS_DISABLED_SHOW)) && !Item_SettingShow(item, qfalse))
-	{
-		return;
-	}
-	if (item->voteFlag != 0 && !Item_SettingShow(item, qtrue))
-	{
-		return;
-	}
+		if (item->window.flags & WINDOW_TIMEDVISIBLE)
+		{
+		}
 
-	if (item->window.flags & WINDOW_TIMEDVISIBLE)
-	{
-	}
+		if (!(item->window.flags & WINDOW_VISIBLE))
+		{
+			return;
+		}
 
-	if (!(item->window.flags & WINDOW_VISIBLE))
-	{
-		return;
-	}
+		// paint the rect first..
+		Window_Paint(&item->window, parent->fadeAmount, parent->fadeClamp, parent->fadeCycle);
 
-	// paint the rect first..
-	Window_Paint(&item->window, parent->fadeAmount, parent->fadeClamp, parent->fadeCycle);
+		if (debugMode)
+		{
+			vec4_t    color;
+			rectDef_t *r = Item_CorrectedTextRect(item);
+			color[1] = color[3] = 1;
+			color[0] = color[2] = 0;
+			DC->drawRect(r->x, r->y, r->w, r->h, 1, color);
+		}
 
-	if (debugMode)
-	{
-		vec4_t    color;
-		rectDef_t *r = Item_CorrectedTextRect(item);
-		color[1] = color[3] = 1;
-		color[0] = color[2] = 0;
-		DC->drawRect(r->x, r->y, r->w, r->h, 1, color);
-	}
-
-	//DC->drawRect(item->window.rect.x, item->window.rect.y, item->window.rect.w, item->window.rect.h, 1, red);
-
-	switch (item->type)
-	{
-	case ITEM_TYPE_OWNERDRAW:
-		Item_OwnerDraw_Paint(item);
-		break;
-	case ITEM_TYPE_TEXT:
-	case ITEM_TYPE_BUTTON:
-	case ITEM_TYPE_TIMEOUT_COUNTER:
-		Item_Text_Paint(item);
-		break;
-	case ITEM_TYPE_RADIOBUTTON:
-		break;
-	case ITEM_TYPE_CHECKBOX:
-	case ITEM_TYPE_TRICHECKBOX:
-		Item_CheckBox_Paint(item);
-		break;
-	case ITEM_TYPE_EDITFIELD:
-	case ITEM_TYPE_NUMERICFIELD:
-		Item_TextField_Paint(item);
-		break;
-	case ITEM_TYPE_COMBO:
-		break;
-	case ITEM_TYPE_LISTBOX:
-		Item_ListBox_Paint(item);
-		break;
-	case ITEM_TYPE_MENUMODEL:
-		Item_Model_Paint(item);
-		break;
-	case ITEM_TYPE_MODEL:
-		Item_Model_Paint(item);
-		break;
-	case ITEM_TYPE_YESNO:
-		Item_YesNo_Paint(item);
-		break;
-	case ITEM_TYPE_MULTI:
-		Item_Multi_Paint(item);
-		break;
-	case ITEM_TYPE_BIND:
-		Item_Bind_Paint(item);
-		break;
-	case ITEM_TYPE_SLIDER:
-		Item_Slider_Paint(item);
-		break;
-	default:
-		break;
+		switch (item->type)
+		{
+		case ITEM_TYPE_OWNERDRAW:
+			Item_OwnerDraw_Paint(item);
+			break;
+		case ITEM_TYPE_TEXT:
+		case ITEM_TYPE_BUTTON:
+		case ITEM_TYPE_TIMEOUT_COUNTER:
+			Item_Text_Paint(item);
+			break;
+		case ITEM_TYPE_RADIOBUTTON:
+			break;
+		case ITEM_TYPE_CHECKBOX:
+		case ITEM_TYPE_TRICHECKBOX:
+			Item_CheckBox_Paint(item);
+			break;
+		case ITEM_TYPE_EDITFIELD:
+		case ITEM_TYPE_NUMERICFIELD:
+			Item_TextField_Paint(item);
+			break;
+		case ITEM_TYPE_COMBO:
+			break;
+		case ITEM_TYPE_LISTBOX:
+			Item_ListBox_Paint(item);
+			break;
+		case ITEM_TYPE_MENUMODEL:
+			Item_Model_Paint(item);
+			break;
+		case ITEM_TYPE_MODEL:
+			Item_Model_Paint(item);
+			break;
+		case ITEM_TYPE_YESNO:
+			Item_YesNo_Paint(item);
+			break;
+		case ITEM_TYPE_MULTI:
+			Item_Multi_Paint(item);
+			break;
+		case ITEM_TYPE_BIND:
+			Item_Bind_Paint(item);
+			break;
+		case ITEM_TYPE_SLIDER:
+			Item_Slider_Paint(item);
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -9201,16 +9195,15 @@ void BG_PanelButtons_SetFocusButton(panel_button_t *button)
 void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo_t *font)
 {
 	char buffer[1024];
-	char *s, *p, *c, *ls;
-	int  l;
+	char *s, *p, *c, *ls = NULL;
+	int  l = 0;
 
 	Q_strncpyz(buffer, instr, 1024);
 	memset(instr, 0, size);
 
-	c  = s = instr;
-	p  = buffer;
-	ls = NULL;
-	l  = 0;
+	c = s = instr;
+	p = buffer;
+
 	while (*p)
 	{
 		*c = *p++;
