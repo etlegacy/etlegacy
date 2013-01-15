@@ -2,4 +2,4 @@ Put the separate files in gzip format with same name
 into the man path structure of you *nix system. 
 This is usually /usr/share/man
 
-Example: usr/share/maqn/man6/etl.6.gz
+Example: usr/share/man/man6/etl.6.gz
