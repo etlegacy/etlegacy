@@ -61,6 +61,8 @@ static const char *gameNames[] =
 	"Stopwatch",
 	"Campaign",
 	"Last Man Standing"
+	"Map Voting"        // GT_WOLF_MAPVOTE
+	// GT_MAX_GAME_TYPE
 };
 
 // Update info:
@@ -816,6 +818,28 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 			trap_SendConsoleCommand(EXEC_APPEND, "vstr nextcampaign\n");
 			AP("cp \"^3*** Loading nextcampaign! ***\n\"");
 		}
+		else if (g_gametype.integer == GT_WOLF_MAPVOTE)
+		{
+			if (g_gamestate.integer == GS_PLAYING     // don't do in intermission (check warmup/warmup-countdown
+			    && g_mapVoteFlags.integer & MAPVOTE_NEXTMAP_VOTEMAP)
+			{
+				// Don't do this. This is awkward, since it is not done at
+				// !nextmap nor nextcampaignvotes. Besides we don't want to store
+				// mapstats of an unfinished map or spend resources at generating
+				// playerstats
+				// LogExit( "Nextmap vote passed" );
+				// - There is a flag for so let the users decide
+				//   Some log parsers require LogExit
+				AP("chat \"^3*** Nextmap vote passed - vote a new map! ***\"");
+				LogExit("Nextmap vote passed");
+			}
+			else
+			{
+				AP("cp \"^3*** Loading nextmap! ***\n\"");
+				// Load in the nextmap
+				trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+			}
+		}
 		else
 		{
 			// Load in the nextmap
@@ -1268,3 +1292,152 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 
 	return(G_OK);
 }
+
+// MAPVOTE
+void G_IntermissionMapVote(gentity_t *ent)
+{
+	char arg[MAX_TOKEN_CHARS];
+	char arg2[MAX_TOKEN_CHARS];
+
+	if (g_gametype.integer != GT_WOLF_MAPVOTE)
+	{
+		CP(va("print \"^3Map voting not enabled!\n\""));
+		return;
+	}
+
+	if (g_gamestate.integer != GS_INTERMISSION)
+	{
+		CP(va("print \"^3Can't vote until intermission\n\""));
+		return;
+	}
+
+	if (!level.intermissiontime)
+	{
+		CP(va("print \"^3You can only vote during intermission\n\""));
+		return;
+	}
+
+	trap_Argv(1, arg, sizeof(arg));
+	// normal one-map vote
+	if (trap_Argc() == 2)
+	{
+		if (ent->client->ps.eFlags & EF_VOTED)
+		{
+			level.mapvoteinfo[ent->client->sess.mapVotedFor[0]].numVotes--;
+			level.mapvoteinfo[ent->client->sess.mapVotedFor[0]].totalVotes--;
+		}
+		ent->client->ps.eFlags |= EF_VOTED;
+		level.mapvoteinfo[atoi(arg)].numVotes++;
+		level.mapvoteinfo[atoi(arg)].totalVotes++;
+		ent->client->sess.mapVotedFor[0] = atoi(arg);
+	}
+	else if (trap_Argc() == 3)
+	{
+		int voteRank = 0, i;
+
+		trap_Argv(2, arg2, sizeof(arg2));
+		voteRank = atoi(arg2);
+		if (voteRank < 1 || voteRank > 3)
+		{
+			return;
+		}
+
+		for (i = 0; i < 3; i++)
+		{
+			if (voteRank - 1 == i)
+			{
+				continue;
+			}
+			if (ent->client->sess.mapVotedFor[i] == atoi(arg))
+			{
+				CP(va("print \"^3Can't vote for the same map twice\n\""));
+				return;
+			}
+		}
+		if (ent->client->sess.mapVotedFor[voteRank - 1] != -1)
+		{
+			level.mapvoteinfo[ent->client->sess.mapVotedFor[voteRank - 1]].numVotes   -= voteRank;
+			level.mapvoteinfo[ent->client->sess.mapVotedFor[voteRank - 1]].totalVotes -= voteRank;
+		}
+		level.mapvoteinfo[atoi(arg)].numVotes      += voteRank;
+		level.mapvoteinfo[atoi(arg)].totalVotes    += voteRank;
+		ent->client->sess.mapVotedFor[voteRank - 1] = atoi(arg);
+		ent->client->ps.eFlags                     |= EF_VOTED;
+	}
+
+	// Someone has voted. Send the votetally to all ...
+	// Doing it now, so there is no need for players to keep polling for this.
+	G_IntermissionVoteTally(NULL);
+}
+
+void G_IntermissionMapList(gentity_t *ent)
+{
+	int  i;
+	char mapList[MAX_STRING_CHARS];
+	int  maxMaps;
+
+	if (g_gametype.integer != GT_WOLF_MAPVOTE || !level.intermissiontime)
+	{
+		return;
+	}
+
+	maxMaps = g_maxMapsVotedFor.integer;
+	if (maxMaps > level.mapVoteNumMaps)
+	{
+		maxMaps = level.mapVoteNumMaps;
+	}
+
+	Q_strncpyz(mapList, va("immaplist %d ", (g_mapVoteFlags.integer & MAPVOTE_MULTI_VOTE)), MAX_STRING_CHARS);
+
+	for (i = 0; i < maxMaps; i++)
+	{
+		Q_strcat(mapList, MAX_STRING_CHARS,
+		         va("%s %d %d %d ",
+		            level.mapvoteinfo[level.sortedMaps[i]].bspName,
+		            level.sortedMaps[i],
+		            level.mapvoteinfo[level.sortedMaps[i]].lastPlayed,
+		            level.mapvoteinfo[level.sortedMaps[i]].totalVotes));
+	}
+
+	trap_SendServerCommand(ent - g_entities, mapList);
+	return;
+}
+
+void G_IntermissionVoteTally(gentity_t *ent)
+{
+	int  i;
+	char voteTally[MAX_STRING_CHARS];
+	int  maxMaps;
+
+	if (g_gametype.integer != GT_WOLF_MAPVOTE || !level.intermissiontime)
+	{
+		return;
+	}
+
+	maxMaps = g_maxMapsVotedFor.integer;
+	if (maxMaps > level.mapVoteNumMaps)
+	{
+		maxMaps = level.mapVoteNumMaps;
+	}
+
+	Q_strncpyz(voteTally, "imvotetally ", MAX_STRING_CHARS);
+	for (i = 0; i < maxMaps; i++)
+	{
+		Q_strcat(voteTally, MAX_STRING_CHARS, va("%d ", level.mapvoteinfo[level.sortedMaps[i]].numVotes));
+	}
+
+	// when argument "ent" == NULL, the votetally should be send to all players..
+	if (ent)
+	{
+		trap_SendServerCommand(ent - g_entities, voteTally);
+	}
+	else
+	{
+		for (i = 0; i < level.numConnectedClients; ++i)
+		{
+			trap_SendServerCommand(level.sortedClients[i], voteTally);
+		}
+	}
+	return;
+}
+// MAPVOTE END

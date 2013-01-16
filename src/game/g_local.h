@@ -203,6 +203,18 @@ typedef struct commanderTeamChat_s
 	int index;
 } commanderTeamChat_t;
 
+// MAPVOTE
+typedef struct
+{
+	char bspName[128];
+	int numVotes;
+	int timesPlayed;
+	int lastPlayed;
+	int totalVotes;
+	int voteEligible;
+	int zOrder;
+} mapVoteInfo_t;
+
 struct gentity_s
 {
 	entityState_t s;                // communicated by server to clients
@@ -535,6 +547,9 @@ typedef struct
 	int suicides;
 	int team_damage;
 	int team_kills;
+
+	// MAPVOTE
+	int mapVotedFor[3];
 
 	weapon_stat_t aWeaponStats[WS_MAX + 1];   // Weapon stats.  +1 to avoid invalid weapon check
 
@@ -1046,6 +1061,12 @@ typedef struct
 	qboolean thirtySecond;
 #endif
 
+	// MAPVOTE information
+	int sortedMaps[MAX_VOTE_MAPS];
+	mapVoteInfo_t mapvoteinfo[MAX_VOTE_MAPS];
+	int mapVoteNumMaps;
+	int mapsSinceLastXPReset;
+
 } level_locals_t;
 
 typedef struct
@@ -1101,6 +1122,11 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 #ifdef FEATURE_OMNIBOT
 void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 #endif
+
+// MAPVOTE
+void G_IntermissionMapVote(gentity_t *ent);
+void G_IntermissionMapList(gentity_t *ent);
+void G_IntermissionVoteTally(gentity_t *ent);
 
 void G_EntitySound(gentity_t *ent, const char *soundId, int volume); // Unused.
 void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume); // Unused.
@@ -1616,6 +1642,15 @@ extern vmCvar_t g_dropAmmo;
 
 extern vmCvar_t g_shove;
 
+// MAPVOTE
+extern vmCvar_t g_mapVoteFlags;
+extern vmCvar_t g_maxMapsVotedFor;
+extern vmCvar_t g_minMapAge;
+extern vmCvar_t g_excludedMaps;
+extern vmCvar_t g_resetXPMapCount;
+
+extern vmCvar_t g_campaignFile;
+
 void trap_Printf(const char *fmt);
 void trap_Error(const char *fmt) __attribute__((noreturn));
 int trap_Milliseconds(void);
@@ -2085,6 +2120,14 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 
 // Spawnflags end
 
+// MAPVOTE - used when mapvoting is enabled
+#define MAPVOTE_TIE_LEASTPLAYED 1
+#define MAPVOTE_ALT_INTERMISSION 2
+#define MAPVOTE_MULTI_VOTE 4
+#define MAPVOTE_NO_RANDOMIZE 8
+#define MAPVOTE_NEXTMAP_VOTEMAP 16
+
+
 typedef enum
 {
 	F_INT,
@@ -2113,5 +2156,9 @@ fieldtype_t GetFieldType(char *fieldname);
 #endif
 
 #define G_PROTECT_LOCALHOST_REF  1
+
+// MAPVOTE
+void G_mapvoteinfo_write(void);
+void G_mapvoteinfo_read(void);
 
 #endif

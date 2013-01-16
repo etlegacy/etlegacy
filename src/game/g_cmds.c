@@ -4038,6 +4038,22 @@ void ClientCommand(int clientNum)
 
 		return;
 	}
+	else if (!Q_stricmp(cmd, "mapvote")) // MAPVOTE
+	{
+		G_IntermissionMapVote(ent);
+		return;
+	}
+	else if (!Q_stricmp(cmd, "immaplist")) // MAPVOTE
+	{
+		G_IntermissionMapList(ent);
+		return;
+	}
+	else if (!Q_stricmp(cmd, "imvotetally")) // MAPVOTE
+	{
+		G_IntermissionVoteTally(ent);
+		return;
+	}
+
 
 	// Do these outside as we don't want to advertise it in the help screen
 	if (!Q_stricmp(cmd, "wstats"))

@@ -159,6 +159,17 @@ void CG_ParseServerinfo(void)
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
 }
 
+void CG_ParseLegacyinfo(void)
+{
+	const char *info;
+
+	info = CG_ConfigString(CS_LEGACYINFO);
+
+	cgs.mapVoteMapX = atoi(Info_ValueForKey(info, "X"));
+	cgs.mapVoteMapY = atoi(Info_ValueForKey(info, "Y"));
+}
+
+
 /*
 ==================
 CG_ParseWarmup
@@ -852,6 +863,10 @@ static void CG_ConfigStringModified(void)
 	else if (num >= CS_OID_DATA && num < CS_OID_DATA + MAX_OID_TRIGGERS)
 	{
 		CG_ParseOIDInfo(num);
+	}
+	else if (num == CS_LEGACYINFO)
+	{
+		CG_ParseLegacyinfo();
 	}
 }
 
@@ -2587,6 +2602,16 @@ static void CG_ServerCommand(void)
 	if (!Q_stricmp(cmd, "bstatsb"))
 	{
 		CG_parseBestShotsStats_cmd(qfalse, CG_printConsoleString);
+		return;
+	}
+	if (!Q_stricmp(cmd, "immaplist")) //MAPVOTE
+	{
+		CG_parseMapVoteListInfo();
+		return;
+	}
+	if (!Q_stricmp(cmd, "imvotetally")) //MAPVOTE
+	{
+		CG_parseMapVoteTally();
 		return;
 	}
 	if (!Q_stricmp(cmd, "wbstats"))

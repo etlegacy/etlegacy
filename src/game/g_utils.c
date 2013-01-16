@@ -259,7 +259,6 @@ gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match)
 		from++;
 	}
 
-
 	for ( ; from < max ; from++)
 	{
 		if (!from->inuse)
@@ -513,33 +512,6 @@ void G_UseTargets(gentity_t *ent, gentity_t *activator)
 
 /*
 =============
-TempVector
-
-This is just a convenience function
-for making temporary vectors for function calls
-=============
-*/
-/*
-float	*tv( float x, float y, float z ) {
-    static	int		index;
-    static	vec3_t	vecs[8];
-    float	*v;
-
-    // use an array so that multiple tempvectors won't collide
-    // for a while
-    v = vecs[index];
-    index = (index + 1)&7;
-
-    v[0] = x;
-    v[1] = y;
-    v[2] = z;
-
-    return v;
-}
-*/
-
-/*
-=============
 VectorToString
 
 This is just a convenience function
@@ -705,7 +677,6 @@ qboolean G_EntitiesFree(void)
 {
 	int       i;
 	gentity_t *e = &g_entities[MAX_CLIENTS];
-
 
 	for (i = MAX_CLIENTS; i < level.num_entities; i++, e++)
 	{
@@ -1005,7 +976,6 @@ void G_ProcessTagConnect(gentity_t *ent, qboolean clearAngles)
 		ent->client->ps.eFlags &= ~EF_PRONE;
 		ent->s.eFlags          &= ~EF_PRONE_MOVING;
 		ent->s.eFlags          &= ~EF_PRONE;
-
 	}
 
 	if (clearAngles)
@@ -1097,6 +1067,7 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 		if (ent->s.eType == ET_WOLF_OBJECTIVE)
 		{
 			char cs[MAX_STRING_CHARS];
+
 			trap_GetConfigstring(ent->count, cs, sizeof(cs));
 			ent->count2 &= ~256;
 			Info_SetValueForKey(cs, "t", va("%i", ent->count2));
@@ -1294,7 +1265,7 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 		{
 			level.campaignCount++;
 
-			// zinx - can't handle any more.
+			// can't handle any more.
 			if (level.campaignCount >= MAX_CAMPAIGNS)
 			{
 				break;
@@ -1475,41 +1446,62 @@ qboolean G_MapIsValidCampaignStartMap(void)
 	return qfalse;
 }
 
+char bigTextBuffer[100000];
+
 void G_ParseCampaigns(void)
 {
-	int      numdirs;
-	char     filename[128];
-	char     dirlist[1024];
-	char     *dirptr;
 	int      i;
-	int      dirlen;
 	qboolean mapFound = qfalse;
 
 	level.campaignCount   = 0;
 	level.currentCampaign = -1;
 	memset(&g_campaigns, 0, sizeof(g_campaignInfo_t) * MAX_CAMPAIGNS);
 
-	// get all campaigns from .campaign files
-	numdirs = trap_FS_GetFileList("scripts", ".campaign", dirlist, 1024);
-	dirptr  = dirlist;
-	for (i = 0; i < numdirs && level.campaignCount < MAX_CAMPAIGNS; i++, dirptr += dirlen + 1)
+	if (g_gametype.integer != GT_WOLF_CAMPAIGN)
 	{
-		dirlen = strlen(dirptr);
-		strcpy(filename, "scripts/");
-		strcat(filename, dirptr);
+		trap_Cvar_Set("g_oldCampaign", "");
+		trap_Cvar_Set("g_currentCampaign", "");
+		trap_Cvar_Set("g_currentCampaignMap", "0");
+		return;
+	}
 
-		if (G_LoadCampaignsFromFile(filename))
+	if (g_campaignFile.string[0])
+	{
+		if (G_LoadCampaignsFromFile(g_campaignFile.string))
 		{
 			mapFound = qtrue;
 		}
 	}
 
-	if (g_gametype.integer != GT_WOLF_CAMPAIGN)
+	if (!mapFound)
 	{
-		trap_Cvar_Set("g_currentCampaign", "");
-		trap_Cvar_Set("g_currentCampaignMap", "0");
+		// get all campaigns from .campaign files
+		int  dirlen;
+		int  numdirs = trap_FS_GetFileList("scripts", ".campaign", bigTextBuffer, sizeof(bigTextBuffer));
+		char filename[MAX_QPATH]; // was 128
+		char *dirptr = bigTextBuffer;
+
+		for (i = 0; i < numdirs; i++, dirptr += dirlen + 1)
+		{
+			// log a warning if server has more than MAX_CAMPAIGNS
+			if (level.campaignCount >= MAX_CAMPAIGNS)
+			{
+				G_LogPrintf("Warning: number of campaigns larger then MAX_CAMPAIGNS\n");
+				break;
+			}
+
+			dirlen = strlen(dirptr);
+			strcpy(filename, "scripts/");
+			strcat(filename, dirptr);
+
+			if (G_LoadCampaignsFromFile(filename))
+			{
+				mapFound = qtrue;
+			}
+		}
 	}
-	else if (!mapFound)
+
+	if (!mapFound)
 	{
 		// map isn't found in the current campaign, see if it's the first map in another campaign
 		for (i = 0; i < level.campaignCount; i++)
@@ -1533,14 +1525,14 @@ void G_ParseCampaigns(void)
 		{
 			char buf[MAX_STRING_CHARS];
 
-			if (trap_Argc() < 1)     // command not found, throw error
+			if (trap_Argc() < 1) // command not found, throw error
 			{
 				G_Error("Usage 'map <mapname>\n'");
 			}
 
 			trap_Argv(0, buf, sizeof(buf));
 
-			if (!(*buf))     // command not found, throw error
+			if (!(*buf)) // command not found, throw error
 			{
 				G_Error("Usage 'map <mapname>\n'");
 			}
@@ -1608,7 +1600,7 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 		break;
 	case ET_CONSTRUCTIBLE:  return ent->s.teamNum;
 		break;
-	case ET_MG42_BARREL:     // zinx - fix for #470
+	case ET_MG42_BARREL:
 		return G_GetTeamFromEntity(&g_entities[ent->r.ownerNum]);
 
 	default:

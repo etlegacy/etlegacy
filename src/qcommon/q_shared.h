@@ -986,6 +986,9 @@ int Q_CountChar(const char *string, char tocount);
 // removes whitespaces and other bad directory characters
 char *Q_CleanDirName(char *dirname);
 
+// replace all occuraces in haystack if needle with new
+char *Q_StrReplace(char *haystack, char *needle, char *newVal);
+
 //=============================================
 
 float *tv(float x, float y, float z);

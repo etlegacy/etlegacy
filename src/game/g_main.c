@@ -253,6 +253,15 @@ vmCvar_t g_dropAmmo;
 
 vmCvar_t g_shove;
 
+// MAPVOTE
+vmCvar_t g_mapVoteFlags;
+vmCvar_t g_maxMapsVotedFor;
+vmCvar_t g_minMapAge;
+vmCvar_t g_excludedMaps;
+vmCvar_t g_resetXPMapCount;
+
+vmCvar_t g_campaignFile;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -471,6 +480,14 @@ cvarTable_t gameCvarTable[] =
 	{ &g_dropAmmo,                "g_dropAmmo",                "0",                          0 },
 	{ &g_shove,                   "g_shove",                   "80",                         0 },
 
+	// MAPVOTE
+	{ &g_mapVoteFlags,            "g_mapVoteFlags",            "0",                          0 },
+	{ &g_maxMapsVotedFor,         "g_maxMapsVotedFor",         "6",                          0 },
+	{ &g_minMapAge,               "g_minMapAge",               "3",                          0 },
+	{ &g_excludedMaps,            "g_excludedMaps",            "",                           0 },
+	{ &g_resetXPMapCount,         "g_resetXPMapCount",         "0",                          0 },
+
+	{ &g_campaignFile,            "g_campaignFile",            "",                           0 },
 };
 
 // made static to avoid aliasing
@@ -1598,7 +1615,7 @@ void G_UpdateCvars(void)
 					}
 
 					if (!level.latchGametype && g_gamestate.integer == GS_PLAYING &&
-					    (((g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_CAMPAIGN) && (worldspawnflags & NO_GT_WOLF)) ||
+					    (((g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_MAPVOTE) && (worldspawnflags & NO_GT_WOLF)) ||
 					     (g_gametype.integer == GT_WOLF_STOPWATCH && (worldspawnflags & NO_STOPWATCH)) ||
 					     (g_gametype.integer == GT_WOLF_LMS && (worldspawnflags & NO_LMS)))
 					    )
@@ -1635,6 +1652,20 @@ void G_UpdateCvars(void)
 					G_LuaShutdown();
 				}
 #endif
+
+				// MAPVOTE
+				// FIXME: mapvote & xp
+				if (g_gametype.integer == GT_WOLF_MAPVOTE)
+				{
+					char cs[MAX_INFO_STRING];
+
+					cs[0] = '\0';
+
+					Info_SetValueForKey(cs, "X", va("%i", (level.mapsSinceLastXPReset >= g_resetXPMapCount.integer) ? 0 : level.mapsSinceLastXPReset));
+					// Info_SetValueForKey(cs, "Y", ((g_XPSave.integer & XPSF_NR_EVER) ? "0" :va("%i", g_resetXPMapCount.integer)));
+					Info_SetValueForKey(cs, "Y", (va("%i", g_resetXPMapCount.integer)));
+					trap_SetConfigstring(CS_LEGACYINFO, cs);
+				}
 
 				// Update vote info for clients, if necessary
 				if (cv->vmCvar == &vote_allow_comp          || cv->vmCvar == &vote_allow_gametype       ||
@@ -1964,7 +1995,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 		trap_SetConfigstring(CS_ROUNDSCORES2, va("%i", g_alliedwins.integer));
 	}
 
-	if (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_STOPWATCH)
+	if (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_STOPWATCH || GT_WOLF_MAPVOTE)
 	{
 		bani_clearmapxp();
 	}
@@ -2022,6 +2053,36 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	G_InitWorldSession();
 
+	// MAPVOTE
+	/*
+	if ( g_gametype.integer == GT_WOLF_MAPVOTE ) {
+	    char mapConfig[MAX_STRING_CHARS];
+	    trap_Cvar_Set("C", va("%d,%d",
+	            ((level.mapsSinceLastXPReset >= g_resetXPMapCount.integer) ?
+	                    0 : level.mapsSinceLastXPReset)+1,
+	            g_resetXPMapCount.integer));
+
+	    if ( g_mapConfigs.string[0] && g_resetXPMapCount.integer )
+	    {
+	        Q_strncpyz(mapConfig, "exec ", sizeof(mapConfig));
+	        //Q_strcat(mapConfig, sizeof(mapConfig), g_mapConfigs.string);
+	        i = level.mapsSinceLastXPReset;
+	        if ( i == 0 || i == g_resetXPMapCount.integer ) {
+	            i = 2;
+	        }
+	        else if ( i+2 <= g_resetXPMapCount.integer ) {
+	            i += 2;
+	        }
+	        else {
+	            i = 1;
+	        }
+	        Q_strcat(mapConfig, sizeof(mapConfig), va("/vote_%d.cfg",i));
+
+	        trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
+	    }
+	}
+	*/
+
 	// Clear out spawn target config strings
 	trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
 	Info_SetValueForKey(cs, "numspawntargets", "0");
@@ -2074,6 +2135,21 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 		G_ReadXPBackup();
 	}
 #endif // USEXPSTORAGE
+
+	// MAPVOTE
+	// FIXME merge with XP code
+	level.mapsSinceLastXPReset = 0;
+	/*
+	if (!(g_XPSave.integer & XPSF_NR_EVER) && g_gametype.integer == GT_WOLF_MAPVOTE ) {
+	    if ( g_resetXPMapCount.integer &&
+	        (level.mapsSinceLastXPReset >= g_resetXPMapCount.integer || level.mapsSinceLastXPReset == 0) ) {
+	            if( g_gamestate.integer == GS_PLAYING ) {
+	                level.mapsSinceLastXPReset = 0;
+	            }
+	            G_xpsave_resetxp();
+	        }
+	}
+	*/
 
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString();
@@ -2129,9 +2205,12 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	G_LuaInit();
 	G_LuaHook_InitGame(levelTime, randomSeed, restart);
 #endif
+
+#ifdef FEATURE_MULTIVIEW
 	// Reinstate any MV views for clients -- need to do this after all init is complete
 	// --- maybe not the best place to do this... seems to be some race conditions on map_restart
 	G_spawnPrintf(DP_MVSPAWN, level.time + 2000, NULL);
+#endif
 }
 
 /*
@@ -2147,7 +2226,7 @@ void G_ShutdownGame(int restart)
 #endif
 	// gametype latching
 	if  (
-	    ((g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_CAMPAIGN) && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_GT_WOLF)) ||
+	    ((g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_CAMPAIGN  || g_gametype.integer == GT_WOLF_MAPVOTE) && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_GT_WOLF)) ||
 	    (g_gametype.integer == GT_WOLF_STOPWATCH && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_STOPWATCH)) ||
 	    (g_gametype.integer == GT_WOLF_LMS && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_LMS))
 	    )
@@ -2165,7 +2244,7 @@ void G_ShutdownGame(int restart)
 		trap_Cvar_Update(&g_gametype);
 	}
 
-	G_Printf("==== ShutdownGame ====\n");
+	G_Printf("==== ShutdownGame (%i)====\n", restart);
 
 #ifdef FEATURE_OMNIBOT
 	if (!Bot_Interface_Shutdown())
@@ -2578,6 +2657,11 @@ void MoveClientToIntermission(gentity_t *ent)
 		G_LeaveTank(ent, qfalse);
 	}
 
+	// MAPVOTING initialize the vars
+	ent->client->sess.mapVotedFor[0] = -1;
+	ent->client->sess.mapVotedFor[1] = -1;
+	ent->client->sess.mapVotedFor[2] = -1;
+
 	ent->client->ps.eFlags = 0;
 	ent->s.eFlags          = 0;
 	ent->s.eType           = ET_GENERAL;
@@ -2667,6 +2751,49 @@ void FindIntermissionPoint(void)
 	}
 }
 
+// MAPVOTE
+int QDECL G_SortMapsByzOrder(const void *a, const void *b)
+{
+	int z1 = *(int *)a;
+	int z2 = *(int *)b;
+
+	if (z1 == -1 && z2 == -1)
+	{
+		return 0;
+	}
+	else if (z1 == -1)
+	{
+		return 1;
+	}
+	else if (z2 == -1)
+	{
+		return -1;
+	}
+
+	/*
+	// no_randomize ??.. it doesn't sort the list, so NO_SORTING would be a better name for this..
+	// !!!!! what about maps that have been excluded, or have been played too many times..
+	// !!!!! This list always needs to be sorted, to get those maps last in the list.
+	//
+	if ( g_mapVoteFlags.integer & MAPVOTE_NO_RANDOMIZE ) {
+	    return 0;
+	}
+	*/
+
+	if (level.mapvoteinfo[z1].zOrder > level.mapvoteinfo[z2].zOrder)
+	{
+		return -1;
+	}
+	else if (level.mapvoteinfo[z2].zOrder > level.mapvoteinfo[z1].zOrder)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 /*
 ==================
 BeginIntermission
@@ -2680,6 +2807,146 @@ void BeginIntermission(void)
 	if (g_gamestate.integer == GS_INTERMISSION)
 	{
 		return;     // already active
+	}
+
+	// MAPVOTE: initialize and populate the map struct for map voting
+	if (g_gametype.integer == GT_WOLF_MAPVOTE)
+	{
+		char bspNames[8192];    // 32 x 128 chars = 4096 minimum. Up to 64 (full-sized) mapnames fit in 8192 bytes..
+		int  len, maxMaps;
+		char *bspptr;
+		char *bspptrTmp;
+		char *bspptrEnd;
+		char str[128] = "\0";
+
+		level.mapVoteNumMaps = trap_FS_GetFileList("maps", ".bsp", bspNames, sizeof(bspNames));
+		bspptr               = bspNames;
+
+		// A real shuffle ...
+		// This way not always the same maps will be on top of the list.
+		// Servers with more than 32 maps will then be able to vote on more maps (64 is absolute max.).
+		// Note: They will never see more than 32 maps in the list (to vote for).
+		{
+			char     shuffledNames[64][128];
+			qboolean shuffled[64] = { 0 };
+			int      j            = 0;
+
+			// shuffle the complete list:
+			// Backup the list, erase the list, shuffle names, fill the list again..
+			maxMaps   = (level.mapVoteNumMaps < 64) ? level.mapVoteNumMaps : 64;
+			bspptrTmp = bspptr;
+			for (i = 0; i < maxMaps; ++i)
+			{
+				// check for excluded maps..
+				Q_strncpyz(str, bspptrTmp, strlen(bspptrTmp) + 1);
+				Q_strncpyz(str, Q_StrReplace(str, ".bsp", ""), sizeof(str));
+				if (strstr(g_excludedMaps.string, va(":%s:", str)))
+				{
+					bspptrTmp += strlen(bspptrTmp) + 1;
+					continue;
+				}
+				Q_strncpyz(shuffledNames[j], str, sizeof(shuffledNames[j]));
+				shuffled[j] = qfalse;
+				++j;
+				bspptrTmp += strlen(bspptrTmp) + 1;
+			}
+			maxMaps              = j;
+			level.mapVoteNumMaps = maxMaps;
+
+			// rebuild the bspNames[] array..
+			// I know, perhaps this is a silly way of shuffling the list,
+			// but at least the rest of code stays the same.
+			memset(bspNames, 0, sizeof(bspNames));
+			bspptrTmp = bspptr;
+			for (i = 0; i < maxMaps; ++i)
+			{
+				int r = rand() % maxMaps;
+
+				while (shuffled[r])
+				{
+					--r;
+					if (r < 0)
+					{
+						r = maxMaps - 1;
+					}
+				}
+				shuffled[r] = qtrue;
+				Q_strncpyz(bspptrTmp, shuffledNames[r], strlen(shuffledNames[r]) + 1);
+				bspptrTmp += strlen(shuffledNames[r]) + 1;
+			}
+		}
+
+		if (level.mapVoteNumMaps > MAX_VOTE_MAPS)
+		{
+			level.mapVoteNumMaps = MAX_VOTE_MAPS;
+		}
+
+		// for checking buffer overflow access ...
+		bspptrEnd = bspptr + sizeof(bspNames);
+		bspptrTmp = bspptr;
+
+		for (i = 0; i < level.mapVoteNumMaps; i++, bspptr += len + 1)
+		{
+			len = strlen(bspptr);
+
+			// for checking buffer overflow access..
+			// Function trap_FS_GetFileList() can return a greater number of BSP-files found on the server
+			// than will fit in the bspNames[] array.
+			// So never read beyond its boundries, even if the function reported there are more files..
+			bspptrTmp += len + 1;
+			if (bspptrTmp >= bspptrEnd)
+			{
+				level.mapVoteNumMaps = i;
+				break;
+			}
+
+			// replace via some temporary string
+			Q_strncpyz(str, bspptr, strlen(bspptr) + 1);
+			Q_strncpyz(str, Q_StrReplace(str, ".bsp", ""), sizeof(str));
+			Q_strncpyz(level.mapvoteinfo[i].bspName, str, sizeof(level.mapvoteinfo[0].bspName));
+
+			level.mapvoteinfo[i].zOrder     = rand();
+			level.mapvoteinfo[i].lastPlayed = -1;
+			level.sortedMaps[i]             = i;
+		}
+		for (i = level.mapVoteNumMaps; i < MAX_VOTE_MAPS; i++)
+		{
+			level.sortedMaps[i] = -1;
+		}
+
+		G_mapvoteinfo_read();
+
+		len = level.mapVoteNumMaps;
+		// zero out maps not available for voting this round
+		for (i = 0; i < len; i++)
+		{
+			if (!Q_stricmp(level.mapvoteinfo[i].bspName, level.rawmapname))
+			{
+				level.mapvoteinfo[i].lastPlayed = 0;
+				level.mapvoteinfo[i].timesPlayed++;
+			}
+			// played too recently?
+			if (level.mapvoteinfo[i].lastPlayed != -1 && level.mapvoteinfo[i].lastPlayed <= g_minMapAge.integer)
+			{
+				level.sortedMaps[i]         = -1;
+				level.mapvoteinfo[i].zOrder = 0;
+				level.mapVoteNumMaps--;
+				level.mapvoteinfo[i].lastPlayed++;
+			}
+		}
+
+		qsort(level.sortedMaps, len, sizeof(level.sortedMaps[0]), G_SortMapsByzOrder);
+
+		maxMaps = g_maxMapsVotedFor.integer;
+		if (maxMaps > level.mapVoteNumMaps)
+		{
+			maxMaps = level.mapVoteNumMaps;
+		}
+
+		for (i = 0; i < maxMaps; ++i)
+		{
+			level.mapvoteinfo[level.sortedMaps[i]].voteEligible++;
+		}
 	}
 
 	level.intermissiontime = level.time;
@@ -2771,6 +3038,53 @@ void ExitLevel(void)
 			trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
 		}
 	}
+	// MAPVOTE
+	else if (g_gametype.integer == GT_WOLF_MAPVOTE)
+	{
+		int nextMap    = 0, highMapVote = 0, curMapVotes = 0, maxMaps;
+		int highMapAge = 0, curMapAge = 0;
+
+		if (g_resetXPMapCount.integer)
+		{
+			level.mapsSinceLastXPReset++;
+		}
+		maxMaps = g_maxMapsVotedFor.integer;
+		if (maxMaps > level.mapVoteNumMaps)
+		{
+			maxMaps = level.mapVoteNumMaps;
+		}
+		for (i = 0; i < maxMaps; i++)
+		{
+			if (level.mapvoteinfo[level.sortedMaps[i]].lastPlayed != -1)
+			{
+				level.mapvoteinfo[level.sortedMaps[i]].lastPlayed++;
+			}
+			curMapVotes = level.mapvoteinfo[level.sortedMaps[i]].numVotes;
+			curMapAge   = level.mapvoteinfo[level.sortedMaps[i]].lastPlayed;
+			if (curMapAge == -1)
+			{
+				curMapAge = 9999;   // -1 means never, so set suitably high
+			}
+
+			if (curMapVotes > highMapVote ||
+			    (curMapVotes == highMapVote && curMapVotes > 0 &&
+			     ((!(g_mapVoteFlags.integer & MAPVOTE_TIE_LEASTPLAYED) && curMapAge < highMapAge) ||
+			      ((g_mapVoteFlags.integer & MAPVOTE_TIE_LEASTPLAYED) && curMapAge > highMapAge))))
+			{
+				nextMap     = level.sortedMaps[i];
+				highMapVote = curMapVotes;
+				highMapAge  = curMapAge;
+			}
+		}
+		if (highMapVote > 0 && level.mapvoteinfo[nextMap].bspName[0])
+		{
+			trap_SendConsoleCommand(EXEC_APPEND, va("map %s;set nextmap %s\n", level.mapvoteinfo[nextMap].bspName, g_nextmap.string));
+		}
+		else
+		{
+			trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+		}
+	}
 	else
 	{
 		trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
@@ -2807,6 +3121,12 @@ void ExitLevel(void)
 			level.clients[i].pers.connected = CON_CONNECTING;
 			trap_UnlinkEntity(&g_entities[i]);
 		}
+	}
+
+	// MAPVOTE
+	if (g_gametype.integer == GT_WOLF_MAPVOTE)
+	{
+		G_mapvoteinfo_write();
 	}
 
 	G_LogPrintf("ExitLevel: executed\n");
@@ -3182,7 +3502,7 @@ void CheckIntermissionExit(void)
 
 		// if((100.0f * (ready / (level.numConnectedClients * 1.0f))) >=
 		// changed to not include spectators since they are excluded above
-		if (readyVoters /*&& g_gametype.integer != GT_WOLF_MAPVOTE*/)
+		if (readyVoters && g_gametype.integer != GT_WOLF_MAPVOTE)
 		{
 			if ((100.0f * (ready / (readyVoters * 1.0f))) >= (match_readypercent.value * 1.0f))
 			{
@@ -4148,7 +4468,6 @@ uebrgpiebrpgibqeripgubeqrpigubqifejbgipegbrtibgurepqgbn%i", level.time)
 		G_RunEntity(&g_entities[i], msec);
 	}
 
-
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		ClientEndFrame(&g_entities[level.sortedClients[i]]);
@@ -4178,4 +4497,194 @@ uebrgpiebrpgibqeripgubeqrpigubqifejbgipegbrtibgurepqgbn%i", level.time)
 #ifdef FEATURE_LUA
 	G_LuaHook_RunFrame(levelTime);
 #endif
+}
+
+// MAPVOTE
+// G_shrubbot_writeconfig_string
+void G_writeconfigfile_string(char *s, fileHandle_t f)
+{
+	char buf[MAX_STRING_CHARS];
+
+	buf[0] = '\0';
+	if (s[0])
+	{
+		//Q_strcat(buf, sizeof(buf), s);
+		Q_strncpyz(buf, s, sizeof(buf));
+		trap_FS_Write(buf, strlen(buf), f);
+	}
+	trap_FS_Write("\n", 1, f);
+}
+
+void G_mapvoteinfo_write()
+{
+	fileHandle_t f;
+	int          i, count = 0;
+
+	trap_FS_FOpenFile("mapvoteinfo.txt", &f, FS_WRITE);
+
+	for (i = 0; i < MAX_VOTE_MAPS; ++i)
+	{
+		if (level.mapvoteinfo[i].bspName[0])
+		{
+			trap_FS_Write("[mapvoteinfo]\n", 14, f);
+
+			trap_FS_Write("name             = ", 19, f);
+			G_writeconfigfile_string(level.mapvoteinfo[i].bspName, f);
+			trap_FS_Write("times_played     = ", 19, f);
+			G_writeconfigfile_string(va("%d", level.mapvoteinfo[i].timesPlayed), f);
+			trap_FS_Write("last_played      = ", 19, f);
+			G_writeconfigfile_string(va("%d", level.mapvoteinfo[i].lastPlayed), f);
+			trap_FS_Write("total_votes      = ", 19, f);
+			G_writeconfigfile_string(va("%d", level.mapvoteinfo[i].totalVotes), f);
+			trap_FS_Write("vote_eligible    = ", 19, f);
+			G_writeconfigfile_string(va("%d", level.mapvoteinfo[i].voteEligible), f);
+
+			trap_FS_Write("\n", 1, f);
+			count++;
+		}
+	}
+	G_Printf("mapvoteinfo: wrote %d of %d map vote stats \n", count, MAX_VOTE_MAPS);
+
+	trap_FS_FCloseFile(f);
+	return;
+}
+
+// G_shrubbot_readconfig_string
+void G_readconfigfile_string(char **cnf, char *s, int size)
+{
+	char *t;
+
+	//COM_MatchToken(cnf, "=");
+	t = COM_ParseExt(cnf, qfalse);
+	if (!strcmp(t, "="))
+	{
+		t = COM_ParseExt(cnf, qfalse);
+	}
+	else
+	{
+		G_Printf("G_readconfigfile_string: warning missing = before "
+		         "\"%s\" on line %d\n",
+		         t,
+		         COM_GetCurrentParseLine());
+	}
+	s[0] = '\0';
+	while (t[0])
+	{
+		if ((s[0] == '\0' && strlen(t) <= size) ||
+		    (strlen(t) + strlen(s) < size))
+		{
+
+			Q_strcat(s, size, t);
+			Q_strcat(s, size, " ");
+		}
+		t = COM_ParseExt(cnf, qfalse);
+	}
+	// trim the trailing space
+	if (strlen(s) > 0 && s[strlen(s) - 1] == ' ')
+	{
+		s[strlen(s) - 1] = '\0';
+	}
+}
+
+void G_readconfigfile_int(char **cnf, int *v)
+{
+	char *t;
+
+	//COM_MatchToken(cnf, "=");
+	t = COM_ParseExt(cnf, qfalse);
+	if (!strcmp(t, "="))
+	{
+		t = COM_ParseExt(cnf, qfalse);
+	}
+	else
+	{
+		G_Printf("G_readconfigfile_int: warning missing = before "
+		         "\"%s\" on line %d\n",
+		         t,
+		         COM_GetCurrentParseLine());
+	}
+	*v = atoi(t);
+}
+
+void G_mapvoteinfo_read()
+{
+	fileHandle_t f;
+	int          i;
+	int          curMap = -1;
+	int          len;
+	char         *cnf, *cnf2;
+	char         *t;
+	char         bspName[128];
+
+	len = trap_FS_FOpenFile("mapvoteinfo.txt", &f, FS_READ) ;
+
+	if (len < 0)
+	{
+		trap_FS_FCloseFile(f);
+		G_Printf("readconfig: could not open mapvoteinfo.txt file\n");
+		return;
+	}
+
+	cnf  = malloc(len + 1);
+	cnf2 = cnf;
+	trap_FS_Read(cnf, len, f);
+	*(cnf + len) = '\0';
+	trap_FS_FCloseFile(f);
+
+	COM_BeginParseSession("MapvoteinfoRead");
+
+	t = COM_Parse(&cnf);
+	while (*t)
+	{
+		if (!Q_stricmp(t, "name"))
+		{
+			//G_shrubbot_readconfig_string(&cnf, bspName, sizeof(bspName));
+			G_readconfigfile_string(&cnf, bspName, sizeof(bspName));
+			curMap = -1;
+			for (i = 0; i < level.mapVoteNumMaps; i++)
+			{
+				if (!Q_stricmp(bspName, level.mapvoteinfo[i].bspName))
+				{
+					curMap = i;
+					break;
+				}
+			}
+		}
+		if (curMap != -1)
+		{
+			if (!Q_stricmp(t, "times_played"))
+			{
+				G_readconfigfile_int(&cnf, &level.mapvoteinfo[curMap].timesPlayed);
+			}
+			else if (!Q_stricmp(t, "last_played"))
+			{
+				G_readconfigfile_int(&cnf, &level.mapvoteinfo[curMap].lastPlayed);
+			}
+			else if (!Q_stricmp(t, "total_votes"))
+			{
+				G_readconfigfile_int(&cnf, &level.mapvoteinfo[curMap].totalVotes);
+			}
+			else if (!Q_stricmp(t, "vote_eligible"))
+			{
+				G_readconfigfile_int(&cnf, &level.mapvoteinfo[curMap].voteEligible);
+			}
+			else if (!Q_stricmp(t, "[mapvoteinfo]"))
+			{
+				// do nothing for the moment
+			}
+			else if (!t[0])
+			{
+				// do nothing for another moment (empty token)
+			}
+			else
+			{
+				G_Printf("mapvoteinfo: [mapvoteinfo] parse error near '%s' on line %i\n", t, COM_GetCurrentParseLine());
+			}
+		}
+		t = COM_Parse(&cnf);
+	}
+
+	free(cnf2);
+
+	return;
 }

@@ -207,6 +207,16 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 		}
+		// MAPVOTE
+		else if (cgs.gametype == GT_WOLF_MAPVOTE)
+		{
+			int w;
+
+			s = (cgs.mapVoteMapY ? va("MAP %i of %i", cgs.mapVoteMapX + 1, cgs.mapVoteMapY) : "");
+			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
+
+			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+		}
 
 		y += SMALLCHAR_HEIGHT * 2;
 	}

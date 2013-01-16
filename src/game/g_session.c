@@ -245,8 +245,8 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.spec_team,
 	       &client->sess.suicides,
 	       &client->sess.team_kills,
-	       &mvc_l,
-	       &mvc_h,
+	       &mvc_l, // FIXME: exclude for non FEATURE_MULTIVIEW
+	       &mvc_h, // FIXME: exclude for non FEATURE_MULTIVIEW
 	       // Damage and round count rolled in with weapon stats (below)
 	       (int *)&client->sess.muted,
 	       &client->sess.ignoreClients[0],
@@ -254,9 +254,10 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->pers.enterTime,
 	       &client->sess.spawnObjectiveIndex
 	       );
-
+#ifdef FEATURE_MULTIVIEW
 	// OSP -- reinstate MV clients
 	client->pers.mvReferenceList = (mvc_h << 16) | mvc_l;
+#endif
 
 	// OSP -- pull and parse weapon stats
 	*s = 0;

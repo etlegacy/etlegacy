@@ -1164,6 +1164,404 @@ panel_button_t charPanelEdit =
 	CG_Debriefing_ChatEditFinish,
 };
 
+// MAPVOTE
+#define DB_MAPNAME_X    15
+#define DB_MAPVOTE_X    (DB_MAPNAME_X + 200)
+#define DB_MAPVOTE_Y    (56 + 10)
+#define DB_MAPVOTE_X2   (620 - 192 - 96 - 20)
+#define DB_MAPVOTE_Y2   (326 + 30 - 192 - 16)
+
+qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		int pos = ((cgs.cursorY - DB_MAPVOTE_Y - 2) / 12) + cgs.dbMapVoteListOffset;
+		if (pos < 0 || pos >= cgs.dbNumMaps)
+		{
+			return qfalse;
+		}
+		if (pos != cgs.dbSelectedMap)
+		{
+			cgs.dbSelectedMap     = pos;
+			cgs.dbSelectedMapTime = cg.time;
+		}
+		return qtrue;
+	}
+	return qfalse;
+}
+
+qboolean CG_MapVote_VoteButton_KeyDown(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		if (!cg.snap)
+		{
+			return qfalse;
+		}
+
+		if (cgs.dbMapMultiVote)
+		{
+			return qfalse;
+		}
+
+		if (cgs.dbSelectedMap != -1)
+		{
+			trap_SendClientCommand(va("mapvote %d", cgs.dbMapID[cgs.dbSelectedMap]));
+			cgs.dbMapVotedFor[0] = cgs.dbSelectedMap;
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
+
+void CG_MapVote_MultiVoteButton_Draw(panel_button_t *button)
+{
+	const char *str;
+
+	if (!cg.snap)
+	{
+		return;
+	}
+
+	if (!cgs.dbMapMultiVote)
+	{
+		return;
+	}
+
+	if (cgs.dbMapVotedFor[button->data[7] - 1] != -1)
+	{
+		str = va("^3%d: ^7RE-VOTE", 4 - button->data[7]);
+	}
+	else
+	{
+		str = va("^3%d: ^ZVOTE", 4 - button->data[7]);
+	}
+
+	if (cgs.dbMapVotedFor[button->data[7] - 1] != -1)
+	{
+		CG_Text_Paint_Ext(button->rect.x + button->rect.w + 10,
+		                  button->rect.y + (3 * (button->rect.h / 4)),
+		                  .20f, .20f, clrTxtBck,
+		                  cgs.dbMapDispName[cgs.dbMapVotedFor[button->data[7] - 1]],
+		                  0, 0, 0, DB_MASTER_FONT);
+	}
+
+	CG_PanelButtonsRender_Button_Ext(&button->rect, str);
+	return;
+}
+
+void CG_MapVoteList_Draw(panel_button_t *button)
+{
+	int           i;
+	float         y  = button->rect.y + 12;
+	float         y2 = DB_MAPVOTE_Y;
+	qhandle_t     pic;
+	static vec4_t acolor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	int           diff;
+
+	CG_Text_Paint_Ext(290, y2, button->font->scalex,
+	                  button->font->scaley, button->font->colour,
+	                  (cgs.mapVoteMapY <= 0 ? "" :
+	                   va("Map %d of %d", cgs.mapVoteMapX + 1, cgs.mapVoteMapY)),
+	                  0, 0, 0, button->font->font);
+	y2 += 15;
+
+	for (i = 0; i + cgs.dbMapVoteListOffset < cgs.dbNumMaps && i < 17; i++)
+	{
+		if (strlen(cgs.dbMaps[i + cgs.dbMapVoteListOffset]) < 1)
+		{
+			break;
+		}
+		if (cgs.dbSelectedMap == i + cgs.dbMapVoteListOffset)
+		{
+			vec4_t clr = { 1.f, 1.f, 1.f, 0.3f };
+			CG_FillRect(button->rect.x, y - 10, 250, 12, clr);
+
+			// display the photograph image only..
+			// ..and make it fade in nicely.
+			diff      = cg.time - cgs.dbSelectedMapTime;
+			acolor[3] = (diff > 1000) ? 1.0f : (float)diff / 1000.f;
+			trap_R_SetColor(acolor);
+			pic = trap_R_RegisterShaderNoMip(va("levelshots/%s.tga", cgs.dbMaps[i + cgs.dbMapVoteListOffset]));
+			if (pic)
+			{
+				CG_DrawPic(DB_MAPVOTE_X2 + 24 + cgs.wideXoffset, DB_MAPVOTE_Y2 + 2, 250, 177.0f / 233.0f * 250, pic);
+			}
+			trap_R_SetColor(NULL);
+			// display the photograph image + the layout image..
+
+			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
+			                  button->font->scaley, button->font->colour,
+			                  va("Last Played             : %s",
+			                     (cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset] == -1 ? "Never" : va("%d maps ago",
+			                                                                                            cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset]))),
+			                  0, 0, 0, button->font->font);
+			y2 += 15;
+			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
+			                  button->font->scaley, button->font->colour,
+			                  va("Total Accumulated Votes : %d", cgs.dbMapTotalVotes[i + cgs.dbMapVoteListOffset]),
+			                  0, 0, 0, button->font->font);
+		}
+		CG_Text_Paint_Ext(DB_MAPNAME_X + 12 + cgs.wideXoffset, y, button->font->scalex,
+		                  button->font->scaley, button->font->colour,
+		                  cgs.dbMapDispName[i + cgs.dbMapVoteListOffset],
+		                  0, 30, 0, button->font->font);
+		CG_Text_Paint_Ext(DB_MAPVOTE_X + 10 + 10 + cgs.wideXoffset, y, button->font->scalex,
+		                  button->font->scaley, button->font->colour,
+		                  va("%d", cgs.dbMapVotes[i + cgs.dbMapVoteListOffset]),
+		                  0, 0, 0, button->font->font);
+		y += 12;
+	}
+	return;
+}
+
+void CG_MapVote_VoteButton_Draw(panel_button_t *button)
+{
+	const char *str;
+
+	if (!cg.snap)
+	{
+		return;
+	}
+
+	if (cgs.dbMapMultiVote)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.eFlags & EF_VOTED)
+	{
+		str = "^7RE-VOTE";
+	}
+	else
+	{
+		str = "^ZVOTE";
+	}
+
+	if (cg.snap->ps.eFlags & EF_VOTED)
+	{
+		CG_Text_Paint_Ext(button->rect.x + button->rect.w + 10,
+		                  button->rect.y + (3 * (button->rect.h / 4)),
+		                  .20f, .20f, clrTxtBck,
+		                  cgs.dbMapDispName[cgs.dbMapVotedFor[0]],
+		                  0, 0, 0, DB_MASTER_FONT);
+	}
+	CG_PanelButtonsRender_Button_Ext(&button->rect, str);
+	return;
+}
+
+qboolean CG_MapVote_MultiVoteButton_KeyDown(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		if (!cg.snap)
+		{
+			return qfalse;
+		}
+
+		if (!cgs.dbMapMultiVote)
+		{
+			return qfalse;
+		}
+
+		if (cgs.dbSelectedMap != -1)
+		{
+			int i;
+			int arrIdx = button->data[7] - 1;
+
+			for (i = 0; i < 3; i++)
+			{
+				if (arrIdx == i)
+				{
+					continue;
+				}
+				if (cgs.dbMapVotedFor[i] == cgs.dbSelectedMap)
+				{
+					CG_Printf("^3Can't vote for the same map twice\n");
+					return qfalse;
+				}
+			}
+
+			trap_SendClientCommand(va("mapvote %d %d",
+			                          cgs.dbMapID[cgs.dbSelectedMap],
+			                          arrIdx + 1));
+			cgs.dbMapVotedFor[arrIdx] = cgs.dbSelectedMap;
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+panel_button_t mapVoteWindow =
+{
+	NULL,
+	"MAP VOTE",
+	{ 10,                        30, 620, 326 },
+	{ 0,                         0,  0,   0, 0, 0, 0, 0},
+	NULL,                        /* font		*/
+	NULL,                        /* keyDown	*/
+	NULL,                        /* keyUp	*/
+	CG_PanelButtonsRender_Window,
+	NULL,
+};
+
+panel_button_text_t mapVoteFont =
+{
+	0.2f,           0.2f,
+	{ 0.6f,         0.6f,0.6f,    1.f },
+	0,              0,
+	DB_MASTER_FONT,
+};
+
+panel_button_t mapVoteHeadingName =
+{
+	NULL,
+	"Name",
+	{ DB_MAPNAME_X + 10,       DB_MAPVOTE_Y,               0, 0 },
+	{ 0,                       0,                          0, 0, 0, 0, 0, 0},
+	&mapVoteFont,              /* font		*/
+	NULL,                      /* keyDown	*/
+	NULL,                      /* keyUp	*/
+	BG_PanelButtonsRender_Text,
+	NULL,
+};
+
+panel_button_t mapVoteHeadingVotes =
+{
+	NULL,
+	"Votes",
+	{ DB_MAPVOTE_X + 10,       DB_MAPVOTE_Y,              0, 0 },
+	{ 0,                       0,                         0, 0, 0, 0, 0, 0},
+	&mapVoteFont,              /* font		*/
+	NULL,                      /* keyDown	*/
+	NULL,                      /* keyUp	*/
+	BG_PanelButtonsRender_Text,
+	NULL,
+};
+
+panel_button_t mapVoteNamesList =
+{
+	NULL,
+	NULL,
+	{ DB_MAPNAME_X + 10,DB_MAPVOTE_Y,                 250, 17 * 12 },
+	{ 0,                0,                            0,   0, 0, 0, 0, 0},
+	&mapVoteFont,       /* font		*/
+	CG_MapVoteList_KeyDown, /* keyDown	*/
+	NULL,               /* keyUp	*/
+	CG_MapVoteList_Draw,
+	NULL,
+};
+
+panel_button_t mapVoteNamesListScroll =
+{
+	NULL,
+	NULL,
+	{ DB_MAPVOTE_X + 10 + 52,    DB_MAPVOTE_Y + 2,                      12, 17 * 12 },
+	{ 4,                         0,                                     0,  0, 0, 0, 0, 0},
+	NULL,                        /* font		*/
+	CG_Debriefing_Scrollbar_KeyDown, /* keyDown	*/
+	CG_Debriefing_Scrollbar_KeyUp, /* keyUp	*/
+	CG_Debriefing_Scrollbar_Draw,
+	NULL,
+};
+
+panel_button_t mapVoteButton =
+{
+	NULL,
+	"^3VOTE",
+	{ DB_MAPNAME_X + 10,       296 - 10 + 2,             64, 16 },
+	{ 0,                       0,                        0,  0, 0, 0, 0, 0},
+	NULL,                      /* font		*/
+	CG_MapVote_VoteButton_KeyDown, /* keyDown	*/
+	NULL,                      /* keyUp	*/
+	CG_MapVote_VoteButton_Draw,
+	NULL,
+};
+
+panel_button_t mapVoteButton1 =
+{
+	NULL,
+	"^3VOTE #1",
+	{ DB_MAPNAME_X + 10,            296 - 10 + 2,          64, 16 },
+	{ 0,                            0,                     0,  0, 0, 0, 0, 3},
+	NULL,                           /* font		*/
+	CG_MapVote_MultiVoteButton_KeyDown, /* keyDown	*/
+	NULL,                           /* keyUp	*/
+	CG_MapVote_MultiVoteButton_Draw,
+	NULL,
+};
+
+panel_button_t mapVoteButton2 =
+{
+	NULL,
+	"^3VOTE #2",
+	{ DB_MAPNAME_X + 10,            296 + 10 + 2,          64, 16 },
+	{ 0,                            0,                     0,  0, 0, 0, 0, 2},
+	NULL,                           /* font		*/
+	CG_MapVote_MultiVoteButton_KeyDown, /* keyDown	*/
+	NULL,                           /* keyUp	*/
+	CG_MapVote_MultiVoteButton_Draw,
+	NULL,
+};
+
+panel_button_t mapVoteButton3 =
+{
+	NULL,
+	"^3VOTE #3",
+	{ DB_MAPNAME_X + 10,            296 + 30 + 2,          64, 16 },
+	{ 0,                            0,                     0,  0, 0, 0, 0, 1},
+	NULL,                           /* font		*/
+	CG_MapVote_MultiVoteButton_KeyDown, /* keyDown	*/
+	NULL,                           /* keyUp	*/
+	CG_MapVote_MultiVoteButton_Draw,
+	NULL,
+};
+
+panel_button_t mapVoteBorder1 =
+{
+	NULL,
+	NULL,
+	{ DB_MAPVOTE_X2 - 10,     DB_MAPVOTE_Y - 12,                  620 - DB_MAPVOTE_X2 + 10, DB_MAPVOTE_Y2 - DB_MAPVOTE_Y - 4 },
+	{ 1,                      255,                                255,                      255, 40, 1, 0, 0                 },
+	NULL,                     /* font		*/
+	NULL,                     /* keyDown	*/
+	NULL,                     /* keyUp	*/
+	BG_PanelButtonsRender_Img,
+	NULL,
+};
+
+panel_button_t mapVoteBorder2 =
+{
+	NULL,
+	NULL,
+	{ DB_MAPVOTE_X2 - 10,     DB_MAPVOTE_Y2 - 10 + 2,                  620 - DB_MAPVOTE_X2 + 10, 370 - DB_MAPVOTE_Y2 - 2 - 10 },
+	{ 1,                      255,                                     255,                      255, 40, 1, 0, 0             },
+	NULL,                     /* font		*/
+	NULL,                     /* keyDown	*/
+	NULL,                     /* keyUp	*/
+	BG_PanelButtonsRender_Img,
+	NULL,
+};
+
+panel_button_t mapVoteBorder3 =
+{
+	NULL,
+	NULL,
+	{ 20,                     DB_MAPVOTE_Y - 12,  DB_MAPVOTE_X2 - 40 + 2, 370 - DB_MAPVOTE_Y - 10 + 2 },
+	{ 1,                      255,                255,                    255, 40, 1, 0, 0            },
+	NULL,                     /* font		*/
+	NULL,                     /* keyDown	*/
+	NULL,                     /* keyUp	*/
+	BG_PanelButtonsRender_Img,
+	NULL,
+};
+// MAPVOTE END
+
+
 void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 {
 	int        offset = -1;
@@ -1288,19 +1686,32 @@ panel_button_t *chatPanelButtons[] =
 	NULL
 };
 
+// MAPVOTE
+panel_button_t *mapVoteButtons[] =
+{
+	&debriefTitleWindow,     &mapVoteWindow,    &mapVoteHeadingName, &mapVoteHeadingVotes,
+	&mapVoteBorder1,         &mapVoteBorder2,   &mapVoteBorder3,
+	&mapVoteNamesListScroll, &mapVoteNamesList, &mapVoteButton,
+	&mapVoteButton1,         &mapVoteButton2,   &mapVoteButton3,
+	NULL
+};
+
 void CG_ChatPanel_Setup(void)
 {
 	BG_PanelButtonsSetup(chatPanelButtons);
 	BG_PanelButtonsSetup(teamDebriefPanelButtons);
 	BG_PanelButtonsSetup(debriefPanelButtons);
+	// MAPVOTE TODO: only active for gametype 6 ?
+	BG_PanelButtonsSetup(mapVoteButtons);
 
 	// convert to possible ws coordinates..
 	C_PanelButtonsSetup(chatPanelButtons, cgs.wideXoffset);
 	C_PanelButtonsSetup(teamDebriefPanelButtons, cgs.wideXoffset);
 	C_PanelButtonsSetup(debriefPanelButtons, cgs.wideXoffset);
+	C_PanelButtonsSetup(mapVoteButtons, cgs.wideXoffset);
 	// there is an exception: the same debriefTitleWindow is used in multiple panel_button_t
 	// By now the debriefTitleWindow has been adjusted too much, so we correct for the difference..
-	debriefTitleWindow.rect.x -= cgs.wideXoffset;
+	debriefTitleWindow.rect.x -= 2 * cgs.wideXoffset;
 }
 
 void CG_Debriefing_Startup(void)
@@ -1314,6 +1725,13 @@ void CG_Debriefing_Startup(void)
 
 	cgs.dbLastRequestTime = 0;
 	cgs.dbSelectedClient  = cg.clientNum;
+
+	// MAPVOTE
+	cgs.dbSelectedMap     = -1;
+	cgs.dbMapListReceived = qfalse;
+	cgs.dbMapVotedFor[0]  = -1;
+	cgs.dbMapVotedFor[1]  = -1;
+	cgs.dbMapVotedFor[2]  = -1;
 
 	cgs.dbAwardsParsed = qfalse;
 
@@ -1334,7 +1752,15 @@ void CG_Debriefing_Startup(void)
 		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/axis_win.wav", qfalse), CHAN_LOCAL_SOUND);
 	}
 
-	cgs.dbMode = 0;
+	switch (cgs.gametype)
+	{
+	case GT_WOLF_MAPVOTE:
+		cgs.dbMode = 3;     // display first
+		break;
+	// LMS . display screen with our puppets first?
+	default:
+		cgs.dbMode = 0;
+	}
 }
 
 void CG_Debriefing_Shutdown(void)
@@ -1349,6 +1775,13 @@ void CG_Debriefing_InfoRequests(void)
 		return;
 	}
 	cgs.dbLastRequestTime = cg.time;
+
+	// MAPVOTE
+	if (!cgs.dbMapListReceived && cgs.gametype == GT_WOLF_MAPVOTE)
+	{
+		trap_SendClientCommand("immaplist");
+		return;
+	}
 
 	if (!cgs.dbPlayerKillsDeathsRecieved)
 	{
@@ -1399,22 +1832,19 @@ qboolean CG_Debriefing_Draw(void)
 
 	switch (cgs.dbMode)
 	{
-	case 1:
+	case 0: // player list
+		CG_DrawScoreboard();
+		BG_PanelButtonsRender(chatPanelButtons);
+		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+		break;
+	case 1: // awards
 		BG_PanelButtonsRender(teamDebriefPanelButtons);
 		BG_PanelButtonsRender(chatPanelButtons);
-
 		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 
 		break;
-	case 0:
-		CG_DrawScoreboard();
-
-		BG_PanelButtonsRender(chatPanelButtons);
-
-		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
-		break;
-	case 2:
-		for (i = 0 ; i < MAX_CLIENTS; i++)
+	case 2: // campaign
+		for (i = 0 ; i < cgs.maxclients; i++)
 		{
 			cgs.dbSortedClients[i] = i;
 		}
@@ -1422,9 +1852,12 @@ qboolean CG_Debriefing_Draw(void)
 		qsort(cgs.dbSortedClients, MAX_CLIENTS, sizeof(int), CG_SortPlayersByXP);
 
 		BG_PanelButtonsRender(debriefPanelButtons);
-
 		BG_PanelButtonsRender(chatPanelButtons);
-
+		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+		break;
+	case 3: // vote
+		BG_PanelButtonsRender(mapVoteButtons);
+		BG_PanelButtonsRender(chatPanelButtons);
 		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 		break;
 	}
@@ -1766,6 +2199,18 @@ qboolean CG_Debriefing_ServerCommand(const char *cmd)
 		return qtrue;
 	}
 
+	// MAPVOTE
+	if (!Q_stricmp(cmd, "immaplist"))
+	{
+		CG_parseMapVoteListInfo();
+		return qtrue;
+	}
+	if (!Q_stricmp(cmd, "imvotetally"))
+	{
+		CG_parseMapVoteTally();
+		return qtrue;
+	}
+
 	return qfalse;
 }
 
@@ -1779,6 +2224,8 @@ int CG_Debriefing_ScrollGetMax(panel_button_t *button)
 		return 7;
 	case 2:
 		return 7;
+	case 3: // MAPVOTES
+		return 17;
 	}
 	return 0;
 }
@@ -1817,7 +2264,8 @@ int CG_Debriefing_ScrollGetCount(panel_button_t *button)
 			return cgs.campaignData.mapCount;
 		}
 		return 0;
-
+	case 3: // MAPVOTES
+		return cgs.dbNumMaps;
 	}
 	return 0;
 }
@@ -1832,6 +2280,8 @@ int CG_Debriefing_ScrollGetOffset(panel_button_t *button)
 		return cgs.dbWeaponListOffset;
 	case 2:
 		return cgs.tdbMapListOffset;
+	case 3: // MAPVOTES
+		return cgs.dbMapVoteListOffset;
 	}
 	return 0;
 }
@@ -1848,6 +2298,12 @@ void CG_Debriefing_ScrollSetOffset(panel_button_t *button, int ofs)
 		return;
 	case 2:
 		cgs.tdbMapListOffset = ofs;
+		return;
+		//case 3:	// awards
+		//	cgs.dbAwardsListOffset = ofs;
+		return;
+	case 3:
+		cgs.dbMapVoteListOffset = ofs;
 		return;
 	}
 }
@@ -1899,6 +2355,7 @@ void CG_Debriefing_MouseEvent(int x, int y)
 	switch (cgs.dbMode)
 	{
 	case 2:
+	case 3: // MAPVOTE
 		button = BG_PanelButtons_GetFocusButton();
 		if (button && button->onDraw == CG_Debriefing_Scrollbar_Draw)
 		{
@@ -1914,6 +2371,7 @@ void CG_Debriefing_MouseEvent(int x, int y)
 			if (count)
 			{
 				int ofs = CG_Debriefing_ScrollGetOffset(button);
+
 				CG_Debriefing_ScrollSetOffset(button, ofs + count);
 				CG_Debriefing_ScrollCheckOffset(button);
 				ofs = CG_Debriefing_ScrollGetOffset(button) - ofs;
@@ -2007,16 +2465,22 @@ void CG_Debriefing_KeyEvent(int key, qboolean down)
 {
 	switch (cgs.dbMode)
 	{
+	case 0:
+		break;
 	case 1:
 		if (BG_PanelButtonsKeyEvent(key, down, teamDebriefPanelButtons))
 		{
 			return;
 		}
 		break;
-	case 0:
-		break;
 	case 2:
 		if (BG_PanelButtonsKeyEvent(key, down, debriefPanelButtons))
+		{
+			return;
+		}
+		break;
+	case 3: // mapvote
+		if (BG_PanelButtonsKeyEvent(key, down, mapVoteButtons))
 		{
 			return;
 		}
@@ -2058,6 +2522,7 @@ void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 
 	{
 		vec4_t clr = { 1.f, 1.f, 1.f, 0.2f };
+
 		trap_R_SetColor(clr);
 		for (i = ci->skill[button->data[0]]; i < 4; i++)
 		{
@@ -2235,6 +2700,13 @@ void CG_Debriefing_ReadyButton_Draw(panel_button_t *button)
 		return;
 	}
 
+	// disable the ready button so players don't interrupt intermission
+	// (just easier and we don't touch the vote vars for other gametypes)
+	if (cgs.gametype == GT_WOLF_MAPVOTE)
+	{
+		return;
+	}
+
 	CG_PanelButtonsRender_Button(button);
 }
 
@@ -2296,7 +2768,13 @@ qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
-		cgs.dbMode = (cgs.dbMode + 1) % 3;
+		cgs.dbMode = (cgs.dbMode + 1) % 4;
+
+		if (cgs.gametype != GT_WOLF_MAPVOTE && cgs.dbMode == 3)
+		{
+			cgs.dbMode = 0;
+		}
+
 		return qtrue;
 	}
 
@@ -2474,7 +2952,7 @@ int CG_TeamDebriefing_CalcXP(team_t team, int mapindex, int skillindex)
 			}
 		}
 	}
-	else if (cg_gameType.integer == GT_WOLF || cg_gameType.integer == GT_WOLF_STOPWATCH)
+	else if (cg_gameType.integer == GT_WOLF || cg_gameType.integer == GT_WOLF_STOPWATCH || cg_gameType.integer == GT_WOLF_MAPVOTE)
 	{
 		for (j = 0; j < SK_NUM_SKILLS; j++)
 		{
@@ -3062,7 +3540,7 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos)
 			}
 		}
 	}
-	else if (cg_gameType.integer == GT_WOLF || cg_gameType.integer == GT_WOLF_LMS)
+	else if (cg_gameType.integer == GT_WOLF || cg_gameType.integer == GT_WOLF_LMS || cg_gameType.integer == GT_WOLF_MAPVOTE)
 	{
 		const char *s   = CG_ConfigString(CS_MULTI_MAPWINNER);
 		const char *buf = Info_ValueForKey(s, "winner");
@@ -3260,4 +3738,16 @@ void CG_Debriefing2TeamSkillXP_Draw(panel_button_t *button)
 
 		CG_Text_Paint_Ext(button->rect.x + 60 + skillPositions[i] - (w * 0.5f), button->rect.y + 11, scale, scale, clrTxtBck, str, 0, 0, 0, &cgs.media.limboFont2);
 	}
+}
+
+void CG_parseMapVoteTally()
+{
+	int i, numMaps;
+
+	numMaps = (trap_Argc() - 1);
+	for (i = 0; i < numMaps; i++)
+	{
+		cgs.dbMapVotes[i] = atoi(CG_Argv(i + 1));
+	}
+	return;
 }

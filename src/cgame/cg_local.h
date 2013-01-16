@@ -860,6 +860,7 @@ typedef struct
 
 	// scoreboard
 	int scoresRequestTime;
+	int mapVoteListTime;                     // MAPVOTE - gametype 6
 	int numScores;
 	int selectedScore;
 	int teamScores[2];
@@ -1982,6 +1983,23 @@ typedef struct cgs_s
 	float r43da;                        // RATIO43 / aspectratio
 	float wideXoffset;                  // the x-offset for displaying horizontally centered loading/limbo screens
 
+	// MAPVOTE
+	int dbMapVoteListOffset;
+	int dbNumMaps;
+	char dbMaps[MAX_VOTE_MAPS][MAX_QPATH];
+	char dbMapDispName[MAX_VOTE_MAPS][128];
+	int dbMapVotes[MAX_VOTE_MAPS];
+	int dbMapID[MAX_VOTE_MAPS];
+	int dbMapLastPlayed[MAX_VOTE_MAPS];
+	int dbMapTotalVotes[MAX_VOTE_MAPS];
+	int dbSelectedMap;
+	int dbSelectedMapTime;
+	qboolean dbMapListReceived;
+	qboolean dbMapMultiVote;
+	int dbMapVotedFor[3];
+	int mapVoteMapX;
+	int mapVoteMapY;
+
 } cgs_t;
 
 //==============================================================================
@@ -2569,6 +2587,9 @@ int CG_GetLimboSelectedWeapon(void);
 qboolean CG_DrawMissionBriefing(void);
 void CG_MissionBriefingClick(int key);
 
+// MAPVOTE
+qboolean CG_FindArenaInfo(char *filename, char *mapname, arenaInfo_t *info);
+
 void CG_LoadRankIcons(void);
 qboolean CG_DrawStatsRanksMedals(void);
 void CG_StatsRanksMedalsClick(int key);
@@ -2622,6 +2643,9 @@ void CG_autoScreenShot_f(void);
 void CG_keyOn_f(void);
 void CG_keyOff_f(void);
 void CG_dumpStats_f(void);
+// MAPVOTE
+void CG_parseMapVoteListInfo(void);
+void CG_parseMapVoteTally(void);
 
 // cg_servercmds.c
 void CG_ExecuteNewServerCommands(int latestSequence);

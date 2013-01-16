@@ -2771,7 +2771,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	{
 		CG_LocateCampaign();
 	}
-	else if (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF)
+	else if (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF || cgs.gametype == GT_WOLF_MAPVOTE)
 	{
 		CG_LocateArena();
 	}

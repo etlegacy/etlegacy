@@ -258,6 +258,8 @@ const char *CG_LoadPanel_GameTypeName(gametype_t gt)
 		return "Campaign";
 	case GT_WOLF_LMS:
 		return "Last Man Standing";
+	case GT_WOLF_MAPVOTE:
+		return "Map Voting";
 	default:
 		break;
 	}
@@ -637,7 +639,7 @@ void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float 
 
 void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 {
-	if (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF)
+	if (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF || cgs.gametype == GT_WOLF_MAPVOTE)
 	{
 		float px, py;
 

@@ -305,6 +305,7 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_ENDGAME_STATS                37
 #define CS_CHARGETIMES                  38
 #define CS_FILTERCAMS                   39
+#define CS_LEGACYINFO                   40
 
 #define CS_MODELS                       64
 #define CS_SOUNDS                       (CS_MODELS +               MAX_MODELS)
@@ -336,6 +337,7 @@ typedef enum
 	GT_WOLF_STOPWATCH,
 	GT_WOLF_CAMPAIGN,   // Exactly the same as GT_WOLF, but uses campaign roulation (multiple maps form one virtual map)
 	GT_WOLF_LMS,
+	GT_WOLF_MAPVOTE,    // ETPub gametype map voting - Credits go to their team. TU!
 	GT_MAX_GAME_TYPE
 } gametype_t;
 
@@ -734,6 +736,9 @@ typedef enum
 	HR_LEGS,
 	HR_NUM_HITREGIONS,
 } hitRegion_t;
+
+// MAPVOTE
+#define MAX_VOTE_MAPS 32
 
 typedef enum
 {
