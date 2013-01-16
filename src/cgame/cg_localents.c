@@ -82,7 +82,6 @@ location_t *CG_GetLocation(int client, vec3_t origin)
 
 		if (len > bestdist || !trap_R_inPVS(origin, curLoc->origin))
 		{
-
 			//CG_Printf("^6PVS %i \n", trap_R_inPVS(origin, curLoc->origin));
 			//CG_Printf("^6OR %i  %i   --  %i   %i\n", origin[0], origin[1], curLoc->origin[0], curLoc->origin[1]);
 			continue;
@@ -194,7 +193,7 @@ void CG_LoadLocations(void)
 {
 	fileHandle_t f;                     // handle of file on disk
 	int          fLen = trap_FS_FOpenFile(va("maps/%s_loc_override.dat", cgs.rawmapname), &f, FS_READ);     // length of the file
-	char         fBuffer[MAX_BUFFER];        // buffer to read the file into
+	char         fBuffer[MAX_BUFFER];   // buffer to read the file into
 	char         message[64] = "\0";    // location description
 	char         temp[64]    = "\0";    // temporary buffer
 	int          x           = 0;       // x-coord of the location
@@ -637,7 +636,6 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace)
 	VectorCopy(trace->endpos, le->pos.trBase);
 	le->pos.trTime = cg.time;
 
-
 	// check for stop, making sure that even on low FPS systems it doesn't bobble
 
 	if (le->leMarkType == LEMT_BLOOD && trace->startsolid)
@@ -729,15 +727,14 @@ void CG_AddFragment(localEntity_t *le)
 
 	if (le->leFlags & LEF_SMOKING)
 	{
-		refEntity_t flash;
-
 		// create a little less smoke
 
 		//  TODO: FIXME: this is not quite right, because it'll become fps dependant - in a bad way.
 		//      the slower the fps, the /more/ smoke there'll be, probably driving the fps lower.
 		if (!(rand() % 5))
 		{
-			float alpha = 1.0 - ((float)(cg.time - le->startTime) / (float)(le->endTime - le->startTime));
+			refEntity_t flash;
+			float       alpha = 1.0 - ((float)(cg.time - le->startTime) / (float)(le->endTime - le->startTime));
 
 			alpha *= 0.25f;
 			memset(&flash, 0, sizeof(flash));
@@ -748,12 +745,10 @@ void CG_AddFragment(localEntity_t *le)
 
 	if (le->pos.trType == TR_STATIONARY)
 	{
-		// Ridah, add the flame
+		// add the flame
 		if (hasFlame)
 		{
-			refEntity_t backupEnt;
-
-			backupEnt = le->refEntity;
+			refEntity_t backupEnt = le->refEntity;
 
 			VectorClear(flameDir);
 			flameDir[2] = 1;
@@ -777,9 +772,7 @@ void CG_AddFragment(localEntity_t *le)
 		// add the flame
 		if (hasFlame)
 		{
-			refEntity_t backupEnt;
-
-			backupEnt = le->refEntity;
+			refEntity_t backupEnt = le->refEntity;
 
 			VectorClear(flameDir);
 			flameDir[2] = 1;
@@ -923,10 +916,9 @@ void CG_AddFragment(localEntity_t *le)
 		if (le->leFlags & LEF_TUMBLE_SLOW)     // HACK HACK x_X
 		{
 			vec3_t org, dir;
-			float  sizeScale;
+			float  sizeScale = le->sizeScale * 0.8;
 
 			// make it smaller
-			sizeScale = le->sizeScale * 0.8;
 			if (sizeScale < 0.7)
 			{
 				sizeScale = 0.7;
@@ -1057,7 +1049,7 @@ void CG_AddSparkElements(localEntity_t *le)
 		// calculate new position
 		BG_EvaluateTrajectory(&le->pos, cg.time, newOrigin, qfalse, -1);
 
-//      if ((le->endTime - le->startTime) > 500) {
+		//if ((le->endTime - le->startTime) > 500) {
 
 		// trace a line from previous position to new position
 		CG_Trace(&trace, le->refEntity.origin, NULL, NULL, newOrigin, -1, MASK_SHOT);
@@ -1073,13 +1065,13 @@ void CG_AddSparkElements(localEntity_t *le)
 		// moved some distance
 		VectorCopy(trace.endpos, le->refEntity.origin);
 		/*
-		        } else
-		        {   // just move it there
+		} else
+		{   // just move it there
 
-		            VectorCopy( newOrigin, le->refEntity.origin );
-		            trace.fraction = 1.0;
+		    VectorCopy( newOrigin, le->refEntity.origin );
+		    trace.fraction = 1.0;
 
-		        }
+		}
 		*/
 		time += cg.frametime * trace.fraction;
 
@@ -1140,7 +1132,6 @@ void CG_AddFuseSparkElements(localEntity_t *le)
 
 	while (time < cg.time)
 	{
-
 		// calculate new position
 		BG_EvaluateTrajectory(&le->pos, time, le->refEntity.origin, qfalse, -1);
 
@@ -1421,6 +1412,7 @@ void CG_AddFadeRGB(localEntity_t *le)
 {
 	refEntity_t *re = &le->refEntity;
 	float       c   = (le->endTime - cg.time) * le->lifeRate;
+
 	c *= 0xff;
 
 	re->shaderRGBA[0] = le->color[0] * c;
@@ -1611,11 +1603,11 @@ static void CG_AddSpriteExplosion(localEntity_t *le)
 	re.reType = RT_SPRITE;
 	re.radius = 42 * (1.0 - c) + 30;
 
-	// Ridah, move away from surface
+	// move away from surface
 	VectorMA(le->pos.trBase, (1.0 - c), le->pos.trDelta, re.origin);
 	// done.
 
-	// RF, don't add if shader is invalid
+	// don't add if shader is invalid
 	if (re.customShader >= 0)
 	{
 		trap_R_AddRefEntityToScene(&re);
@@ -1670,7 +1662,6 @@ void CG_AddLocalEntities(void)
 			CG_Error("Bad leType: %i\n", le->leType);
 			break;
 
-		// Ridah
 		case LE_MOVING_TRACER:
 			CG_AddMovingTracer(le);
 			break;
