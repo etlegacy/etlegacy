@@ -267,7 +267,7 @@ void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum)
 
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 {
-	int i = syscall(UI_S_REGISTERSOUND, sample, qfalse /* compressed */);
+	int i = syscall(UI_S_REGISTERSOUND, sample, compressed);
 
 #ifdef DEBUG
 	if (i == 0)

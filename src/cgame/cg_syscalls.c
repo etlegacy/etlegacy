@@ -782,7 +782,7 @@ sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 	sfxHandle_t snd;
 	DEBUG_REGISTERPROFILE_INIT
 	CG_DrawInformation(qtrue);
-	snd = syscall(CG_S_REGISTERSOUND, sample, qfalse /* compressed */);
+	snd = syscall(CG_S_REGISTERSOUND, sample, compressed);
 	if (!*sample)
 	{
 		Com_Printf("^1Warning: Null Sample filename\n");
@@ -862,7 +862,7 @@ void trap_R_LoadWorldMap(const char *mapname)
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 {
 	CG_DrawInformation(qtrue);
-	return syscall(CG_S_REGISTERSOUND, sample, qfalse /* compressed */);
+	return syscall(CG_S_REGISTERSOUND, sample, compressed);
 }
 
 qhandle_t trap_R_RegisterModel(const char *name)

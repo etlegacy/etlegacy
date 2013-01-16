@@ -2767,7 +2767,7 @@ int trap_S_GetVoiceAmplitude(int entityNum);
 // repatialize recalculates the volumes of sound as they should be heard by the
 // given entityNum and position
 void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater);
-sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed);          // returns buzz if not found
+sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed);          // returns blank if not found
 void trap_S_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTime);   // empty name stops music
 void trap_S_FadeBackgroundTrack(float targetvol, int time, int num);
 void trap_S_StopBackgroundTrack(void);
