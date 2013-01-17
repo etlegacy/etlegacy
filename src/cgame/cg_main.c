@@ -241,7 +241,9 @@ vmCvar_t cg_drawReinforcementTime;
 vmCvar_t cg_drawWeaponIconFlash;
 vmCvar_t cg_noAmmoAutoSwitch;
 vmCvar_t cg_printObjectiveInfo;
+#if FEATURE_MULTIVIEW
 vmCvar_t cg_specHelp;
+#endif
 vmCvar_t cg_uinfo;
 vmCvar_t cg_useScreenshotJPEG;
 
@@ -253,7 +255,9 @@ vmCvar_t demo_avifpsF5;
 vmCvar_t demo_drawTimeScale;
 vmCvar_t demo_infoWindow;
 
+#if FEATURE_MULTIVIEW
 vmCvar_t mv_sensitivity;
+#endif
 
 vmCvar_t int_cl_maxpackets;
 vmCvar_t int_cl_timenudge;
@@ -439,7 +443,9 @@ cvarTable_t cvarTable[] =
 	{ &cg_drawWeaponIconFlash,   "cg_drawWeaponIconFlash",   "0",     CVAR_ARCHIVE                 },
 	{ &cg_noAmmoAutoSwitch,      "cg_noAmmoAutoSwitch",      "1",     CVAR_ARCHIVE                 },
 	{ &cg_printObjectiveInfo,    "cg_printObjectiveInfo",    "1",     CVAR_ARCHIVE                 },
+#if FEATURE_MULTIVIEW
 	{ &cg_specHelp,              "cg_specHelp",              "1",     CVAR_ARCHIVE                 },
+#endif
 	{ &cg_uinfo,                 "cg_uinfo",                 "0",     CVAR_ROM | CVAR_USERINFO     },
 	{ &cg_useScreenshotJPEG,     "cg_useScreenshotJPEG",     "1",     CVAR_ARCHIVE                 },
 
@@ -665,11 +671,13 @@ int CG_CrosshairPlayer(void)
 
 int CG_LastAttacker(void)
 {
+#if FEATURE_MULTIVIEW
 	// used for messaging clients in the currect active window
 	if (cg.mvTotalClients > 0)
 	{
 		return(cg.mvCurrentActive->mvInfo & MV_PID);
 	}
+#endif
 
 	return((!cg.attackerTime) ? -1 : cg.snap->ps.persistant[PERS_ATTACKER]);
 }
@@ -813,7 +821,14 @@ char *CG_generateFilename(void)
 	          1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday,
 	          ct.tm_hour, ct.tm_min, ct.tm_sec,
 	          Info_ValueForKey(pszServerInfo, "mapname"),
-	          (cg.mvTotalClients < 1) ? "" : "-MVD"));
+#ifdef FEATURE_MULTIVIEW
+	          (cg.mvTotalClients < 1) ?
+#endif
+	          ""
+#ifdef FEATURE_MULTIVIEW
+			  : "-MVD"
+#endif
+	          ));
 }
 
 int CG_findClientNum(char *s)
@@ -1414,8 +1429,10 @@ static void CG_RegisterGraphics(void)
 	// blood cloud
 	cgs.media.bloodCloudShader = trap_R_RegisterShader("bloodCloud");
 
+#ifdef FEATURE_MULTIVIEW // commented, kept as reminder
 	// MV cursor @multiview
 	//cgs.media.cursor = trap_R_RegisterShaderNoMip( "ui/assets/mvcursor.tga" );
+#endif
 
 	// cannon
 	cgs.media.smokePuffShaderdirty = trap_R_RegisterShader("smokePuffdirty");

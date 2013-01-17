@@ -1640,8 +1640,9 @@ void SpectatorClientEndFrame(gentity_t *ent)
 					int savedRespawns       = ent->client->ps.persistant[PERS_RESPAWNS_LEFT];
 					int savedRespawnPenalty = ent->client->ps.persistant[PERS_RESPAWNS_PENALTY];
 					int savedClass          = ent->client->ps.stats[STAT_PLAYER_CLASS];
-					int savedMVList         = ent->client->ps.powerups[PW_MVCLIENTLIST];
-
+#ifdef FEATURE_MULTIVIEW
+					int savedMVList = ent->client->ps.powerups[PW_MVCLIENTLIST];
+#endif
 					do_respawn = ent->client->ps.pm_time;
 
 					ent->client->ps           = cl->ps;
@@ -1652,8 +1653,10 @@ void SpectatorClientEndFrame(gentity_t *ent)
 					ent->client->ps.persistant[PERS_RESPAWNS_LEFT]    = savedRespawns;
 					ent->client->ps.persistant[PERS_RESPAWNS_PENALTY] = savedRespawnPenalty;
 					ent->client->ps.persistant[PERS_SCORE]            = savedScore; // put score back
-					ent->client->ps.powerups[PW_MVCLIENTLIST]         = savedMVList;
-					ent->client->ps.stats[STAT_PLAYER_CLASS]          = savedClass; //  put player class back
+#ifdef FEATURE_MULTIVIEW
+					ent->client->ps.powerups[PW_MVCLIENTLIST] = savedMVList;
+#endif
+					ent->client->ps.stats[STAT_PLAYER_CLASS] = savedClass;          //  put player class back
 				}
 				else
 				{

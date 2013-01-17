@@ -5014,6 +5014,7 @@ int BG_simpleWeaponState(int ws)
 	return(WSTATE_IDLE);
 }
 
+#ifdef FEATURE_MULTIVIEW
 // Multiview: Reduce hint info to 2 bits.  However, we can really
 // have up to 8 values, as some hints will have a 0 value for
 // cursorHintVal
@@ -5072,6 +5073,7 @@ int BG_simpleHintsExpand(int hint, int val)
 
 	return(0);
 }
+#endif
 
 // Real printable charater count
 int BG_drawStrlen(const char *str)

@@ -534,7 +534,8 @@ CG_TransitionPlayerState
 */
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 {
-	// MV client handling @multiview
+#if FEATURE_MULTIVIEW
+	// MV client handling
 	if (cg.mvTotalClients > 0)
 	{
 		if (ps->clientNum != ops->clientNum)
@@ -550,6 +551,7 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		CG_CheckLocalSounds(ps, ops);
 		return;
 	}
+#endif
 
 	// check for changing follow mode
 	if (ps->clientNum != ops->clientNum)

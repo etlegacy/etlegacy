@@ -76,7 +76,11 @@ static void CG_StatsDown_f(void)
 {
 	if (!cg.demoPlayback)
 	{
-		if (cg.mvTotalClients < 1 && cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+		if (
+#ifdef FEATURE_MULTIVIEW
+		    cg.mvTotalClients < 1 &&
+#endif
+		    cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 		{
 			Pri("You must be a player or following a player to use +stats\n");
 			return;
@@ -95,7 +99,11 @@ static void CG_StatsDown_f(void)
 
 		if (cgs.gamestats.requestTime < cg.time)
 		{
-			int i = (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) : cg.snap->ps.clientNum;
+			int i =
+#ifdef FEATURE_MULTIVIEW
+			    (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) :
+#endif
+			    cg.snap->ps.clientNum;
 
 			cgs.gamestats.requestTime = cg.time + 2000;
 			trap_SendClientCommand(va("sgstats %d", i));
@@ -167,7 +175,11 @@ void CG_ScoresDown_f(void)
 		cg.scoresRequestTime = cg.time;
 
 		// OSP - we get periodic score updates if we are merging clients
-		if (!cg.demoPlayback && cg.mvTotalClients < 1)
+		if (!cg.demoPlayback
+#ifdef FEATURE_MULTIVIEW
+		    && cg.mvTotalClients < 1
+#endif
+		    )
 		{
 			trap_SendClientCommand("score");
 		}
@@ -177,7 +189,11 @@ void CG_ScoresDown_f(void)
 		if (!cg.showScores)
 		{
 			cg.showScores = qtrue;
-			if (!cg.demoPlayback && cg.mvTotalClients < 1)
+			if (!cg.demoPlayback
+#ifdef FEATURE_MULTIVIEW
+			    && cg.mvTotalClients < 1
+#endif
+			    )
 			{
 				cg.numScores = 0;
 			}
@@ -904,13 +920,25 @@ void CG_dumpStats_f(void)
 	if (cgs.dumpStatsTime < cg.time)
 	{
 		cgs.dumpStatsTime = cg.time + 2000;
-		trap_SendClientCommand((cg.mvTotalClients < 1) ? "weaponstats" : "statsall");
+		trap_SendClientCommand(
+#ifdef FEATURE_MULTIVIEW
+		    (cg.mvTotalClients < 1) ?
+#endif
+		    "weaponstats"
+#ifdef FEATURE_MULTIVIEW
+			: "statsall"
+#endif
+		    );
 	}
 }
 
 void CG_wStatsDown_f(void)
 {
-	if (cg.mvTotalClients < 1 && cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	if (
+#ifdef FEATURE_MULTIVIEW
+	    cg.mvTotalClients < 1 &&
+#endif
+	    cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		Pri("You must be a player or following a player to use +wstats\n");
 		return;
@@ -918,7 +946,11 @@ void CG_wStatsDown_f(void)
 
 	if (cg.statsRequestTime < cg.time)
 	{
-		int i = (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) : cg.snap->ps.clientNum;
+		int i =
+#ifdef FEATURE_MULTIVIEW
+		    (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) :
+#endif
+		    cg.snap->ps.clientNum;
 
 		cg.statsRequestTime = cg.time + 500;
 		trap_SendClientCommand(va("wstats %d", i));
@@ -936,6 +968,7 @@ void CG_wStatsUp_f(void)
 
 void CG_toggleSpecHelp_f(void)
 {
+#ifdef FEATURE_MULTIVIEW
 	if (cg.mvTotalClients > 0 && !cg.demoPlayback)
 	{
 		if (cg.spechelpWindow != SHOW_ON && cg_specHelp.integer > 0)
@@ -947,6 +980,7 @@ void CG_toggleSpecHelp_f(void)
 			CG_ShowHelp_Off(&cg.spechelpWindow);
 		}
 	}
+#endif
 }
 
 static void CG_EditSpeakers_f(void)

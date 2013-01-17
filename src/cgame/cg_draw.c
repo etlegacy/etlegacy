@@ -1816,7 +1816,11 @@ static void CG_DrawCrosshair(void)
 				}
 			}
 
-			if (cg.mvTotalClients < 1 || cg.snap->ps.stats[STAT_HEALTH] > 0)
+			if (
+#if FEATURE_MULTIVIEW
+			    cg.mvTotalClients < 1 ||
+#endif
+			    cg.snap->ps.stats[STAT_HEALTH] > 0)
 			{
 				CG_DrawWeapReticle();
 			}
@@ -2897,15 +2901,17 @@ static qboolean CG_DrawFollow(void)
 {
 	char deploytime[128];
 
+#ifdef FEATURE_MULTIVIEW
 	// MV following info for mainview
 	if (CG_ViewingDraw())
 	{
-		return(qtrue);
+		return qtrue;
 	}
+#endif
 
 	if (!(cg.snap->ps.pm_flags & PMF_FOLLOW))
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// if in limbo, show different follow message
@@ -2957,7 +2963,7 @@ static qboolean CG_DrawFollow(void)
 		                 colorWhite, qtrue, qtrue, BIGCHAR_WIDTH / 2, BIGCHAR_HEIGHT, 0);
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 /*
@@ -3180,12 +3186,20 @@ static void CG_DrawFlashFade(void)
 	// OSP - ugh, have to inform the ui that we need to remain blacked out (or not)
 	if (int_ui_blackout.integer == 0)
 	{
-		if (cg.mvTotalClients < 1 && cg.snap->ps.powerups[PW_BLACKOUT] > 0)
+		if (
+#if FEATURE_MULTIVIEW
+		    cg.mvTotalClients < 1 &&
+#endif
+		    cg.snap->ps.powerups[PW_BLACKOUT] > 0)
 		{
 			trap_Cvar_Set("ui_blackout", va("%d", cg.snap->ps.powerups[PW_BLACKOUT]));
 		}
 	}
-	else if (cg.snap->ps.powerups[PW_BLACKOUT] == 0 || cg.mvTotalClients > 0)
+	else if (cg.snap->ps.powerups[PW_BLACKOUT] == 0
+#if FEATURE_MULTIVIEW
+	         || cg.mvTotalClients > 0
+#endif
+	         )
 	{
 		trap_Cvar_Set("ui_blackout", "0");
 	}
@@ -3752,7 +3766,11 @@ static void CG_DrawNewCompass(void)
 		snap = cg.snap;
 	}
 
-	if (snap->ps.pm_flags & PMF_LIMBO || snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.mvTotalClients > 0) // @multiview
+	if (snap->ps.pm_flags & PMF_LIMBO || snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR
+#if FEATURE_MULTIVIEW
+	    || cg.mvTotalClients > 0
+#endif
+	    )
 	{
 		return;
 	}
@@ -4225,19 +4243,31 @@ static void CG_DrawPlayerStatus(void)
 
 	// Draw weapon icon and overheat bar
 	CG_DrawWeapHeat(&rect, HUD_HORIZONTAL);
-	if (cg.mvTotalClients < 1 && cg_drawWeaponIconFlash.integer == 0)
+	if (
+#if FEATURE_MULTIVIEW
+	    cg.mvTotalClients < 1 &&
+#endif
+	    cg_drawWeaponIconFlash.integer == 0)
 	{
 		CG_DrawPlayerWeaponIcon(&rect, qtrue, ITEM_ALIGN_RIGHT, &colorWhite);
 	}
 	else if (cg_drawWeaponIconFlash.integer == 2)  // ETPro style
 	{
-		int ws = (cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState : BG_simpleWeaponState(cg.snap->ps.weaponstate);
+		int ws =
+#if FEATURE_MULTIVIEW
+		    (cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
+#endif
+		    BG_simpleWeaponState(cg.snap->ps.weaponstate);
 
 		CG_DrawPlayerWeaponIcon(&rect, (ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &colorWhite));
 	}
 	else
 	{
-		int ws = (cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState : BG_simpleWeaponState(cg.snap->ps.weaponstate);
+		int ws =
+#if FEATURE_MULTIVIEW
+		    (cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
+#endif
+		    BG_simpleWeaponState(cg.snap->ps.weaponstate);
 		CG_DrawPlayerWeaponIcon(&rect, (ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH) ? &colorWhite : (ws == WSTATE_FIRE) ? &colorRed : &colorYellow));
 	}
 

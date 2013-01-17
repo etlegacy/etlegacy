@@ -328,16 +328,20 @@ static void CG_TransitionSnapshot(void)
 			CG_ResetEntity(&cg_entities[id]);
 		}
 
+#if FEATURE_MULTIVIEW
 		if (cg.mvTotalClients > 0 && CG_mvMergedClientLocate(id))
 		{
 			CG_mvUpdateClientInfo(id);
 		}
+#endif
 	}
 
+#if FEATURE_MULTIVIEW
 	if (cg.mvTotalClients > 0)
 	{
 		CG_mvTransitionPlayerState(&cg.snap->ps);
 	}
+#endif
 
 	cg.nextSnap = NULL;
 

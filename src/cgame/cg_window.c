@@ -289,9 +289,11 @@ void CG_windowDraw(void)
 	int         h, x, y, i, j, milli, t_offset, tmp;
 	cg_window_t *w;
 	qboolean    fCleanup = qfalse;
-	qboolean    fAllowMV = (cg.snap != NULL && cg.snap->ps.pm_type != PM_INTERMISSION);
-	vec4_t      *bg;
-	vec4_t      textColor, borderColor, bgColor;
+#if FEATURE_MULTIVIEW
+	qboolean fAllowMV = (cg.snap != NULL && cg.snap->ps.pm_type != PM_INTERMISSION);
+#endif
+	vec4_t *bg;
+	vec4_t textColor, borderColor, bgColor;
 
 	if (cg.winHandler.numActiveWindows == 0)
 	{
@@ -304,12 +306,14 @@ void CG_windowDraw(void)
 	milli = trap_Milliseconds();
 	memcpy(textColor, colorWhite, sizeof(vec4_t));
 
+#if FEATURE_MULTIVIEW
 	// Mouse cursor position for MV highlighting (offset for cursor pointer position)
 	// Also allow for swingcam toggling
 	if (cg.mvTotalClients > 0 && fAllowMV)
 	{
 		CG_cursorUpdate();
 	}
+#endif
 
 	for (i = 0; i < cg.winHandler.numActiveWindows; i++)
 	{
@@ -321,8 +325,8 @@ void CG_windowDraw(void)
 			continue;
 		}
 
+#if FEATURE_MULTIVIEW
 		// Multiview rendering has its own handling
-
 		if (w->effects & WFX_MULTIVIEW)
 		{
 			if (w != cg.mvCurrentMainview && fAllowMV)
@@ -331,6 +335,7 @@ void CG_windowDraw(void)
 			}
 			continue;
 		}
+#endif
 
 		if (w->effects & WFX_TEXTSIZING)
 		{
@@ -434,21 +439,25 @@ void CG_windowDraw(void)
 		}
 	}
 
+#if FEATURE_MULTIVIEW
 	// Wedge in MV info overlay
 	if (cg.mvTotalClients > 0 && fAllowMV)
 	{
 		CG_mvOverlayDisplay();
 	}
+#endif
 
 	// Extra rate info
 	CG_demoAviFPSDraw();
 	CG_demoTimescaleDraw();
 
+#if FEATURE_MULTIVIEW
 	// Mouse cursor lays on top of everything
 	if (cg.mvTotalClients > 0 && cg.time < cgs.cursorUpdate && fAllowMV)
 	{
 		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 	}
+#endif
 
 	if (fCleanup)
 	{
@@ -646,6 +655,7 @@ void CG_removeStrings(cg_window_t *w)
 
 // cgame cursor handling
 
+#if FEATURE_MULTIVIEW
 // Mouse overlay for controlling multiview windows
 void CG_cursorUpdate(void)
 {
@@ -898,3 +908,4 @@ void CG_cursorUpdate(void)
 		CG_mvOverlayUpdate();
 	}
 }
+#endif

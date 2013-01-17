@@ -347,7 +347,10 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	}
 	// allow MV clients see the class of its merged client's on the scoreboard
 	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR
-	         || CG_mvMergedClientLocate(score->client))
+#if FEATURE_MULTIVIEW
+	         || CG_mvMergedClientLocate(score->client)
+#endif
+	         )
 	{
 		CG_DrawPic(tempx - 3, y + 1, 14, 14, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 	}

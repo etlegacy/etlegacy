@@ -1942,7 +1942,8 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 	DEBUGTIME
 
-	// MV handling @multiview
+#if FEATURE_MULTIVIEW
+	// MV handling
 	if (cg.mvCurrentMainview != NULL && cg.snap->ps.pm_type != PM_INTERMISSION)
 	{
 		CG_mvDraw(cg.mvCurrentMainview);
@@ -1950,6 +1951,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 		cg.zoomSensitivity = mv_sensitivity.value / int_sensitivity.value;
 	}
 	else
+#endif
 	{
 		int inwater;
 

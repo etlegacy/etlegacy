@@ -207,6 +207,7 @@ void CG_DemoClick(int key, qboolean down)
 	case K_MOUSE1:
 		cgs.fSelect = down;
 		return;
+#ifdef FEATURE_MULTIVIEW
 	case K_MOUSE2:
 		if (!down)
 		{
@@ -233,7 +234,7 @@ void CG_DemoClick(int key, qboolean down)
 			CG_mvToggleView_f();            // Toggle a window for the client
 		}
 		return;
-
+#endif
 	// Third-person controls
 	case K_ENTER:
 		if (!down)
@@ -432,6 +433,7 @@ vec4_t color_border = COLOR_BORDER_VIEW;
 vec4_t color_hdr    = COLOR_HDR2;
 vec4_t color_name   = COLOR_TEXT;
 
+#ifdef FEATURE_MULTIVIEW
 #define VD_X    4
 #define VD_Y    78
 #define VD_SCALE_X_HDR  0.25f
@@ -478,6 +480,7 @@ qboolean CG_ViewingDraw()
 		return(qtrue);
 	}
 }
+#endif
 
 #define GS_X    166
 #define GS_Y    10
@@ -855,6 +858,7 @@ void CG_DemoHelpDraw(void)
 			"^nUP/DOWN   ^mMove in/out"
 		};
 
+#ifdef FEATURE_MULTIVIEW
 		const char *mvhelp[] =
 		{
 			NULL,
@@ -865,6 +869,7 @@ void CG_DemoHelpDraw(void)
 			"^nKP_PGUP   ^mEnable a view",
 			"^nKP_PGDN   ^mClose a view"
 		};
+#endif
 
 		int i, x, y = 480, w, h;
 
@@ -892,12 +897,19 @@ void CG_DemoHelpDraw(void)
 
 
 		// FIXME: Should compute this beforehand
-		w = DH_W + ((cg.mvTotalClients > 1) ? 12 : 0);
+		w = DH_W + (
+#ifdef FEATURE_MULTIVIEW
+		    (cg.mvTotalClients > 1) ? 12 :
+#endif
+		    0);
 		x = 640 + DH_X - w;
 		h = 2 + tSpacing + 2 +                                  // Header
 		    2 + 1 +
-		    tSpacing * (2 + (sizeof(help) + ((cg.mvTotalClients > 1) ? sizeof(mvhelp) : 0)) / sizeof(char *)) +
-		    2;
+		    tSpacing * (2 + (sizeof(help) +
+#ifdef FEATURE_MULTIVIEW
+		                     (cg.mvTotalClients > 1) ? sizeof(mvhelp) :
+#endif
+		                     0) / sizeof(char *)) + 2;
 
 		// Fade-in effects
 		if (diff > 0.0f)
@@ -952,6 +964,7 @@ void CG_DemoHelpDraw(void)
 			}
 		}
 
+#if FEATURE_MULTIVIEW
 		if (cg.mvTotalClients > 1)
 		{
 			for (i = 0; i < sizeof(mvhelp) / sizeof(char *); i++)
@@ -963,6 +976,7 @@ void CG_DemoHelpDraw(void)
 				}
 			}
 		}
+#endif
 
 		y += tSpacing * 2;
 		CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "^nBACKSPACE ^mhelp on/off", 0.0f, 0, tStyle, tFont);

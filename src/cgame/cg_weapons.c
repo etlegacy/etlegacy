@@ -4064,7 +4064,11 @@ void CG_AltWeapon_f(void)
 	}
 
 	// Overload for spec mode when following
-	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.mvTotalClients > 0)
+	if ((cg.snap->ps.pm_flags & PMF_FOLLOW)
+#if FEATURE_MULTIVIEW
+	    || cg.mvTotalClients > 0
+#endif
+	    )
 	{
 		return;
 	}
@@ -4753,12 +4757,14 @@ void CG_NextWeapon_f(void)
 		return;
 	}
 
+#ifdef FEATURE_MULTIVIEW
 	// Overload for MV clients
 	if (cg.mvTotalClients > 0)
 	{
 		CG_mvToggleView_f();
 		return;
 	}
+#endif
 
 	// pause bug
 	if (cg.snap->ps.pm_type == PM_FREEZE)
@@ -4822,12 +4828,14 @@ void CG_PrevWeapon_f(void)
 		return;
 	}
 
+#if FEATURE_MULTIVIEW
 	// Overload for MV clients
 	if (cg.mvTotalClients > 0)
 	{
 		CG_mvSwapViews_f();
 		return;
 	}
+#endif
 
 	// pause bug
 	if (cg.snap->ps.pm_type == PM_FREEZE)

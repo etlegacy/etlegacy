@@ -32,6 +32,8 @@
  * @brief Multiview handling
  */
 
+#ifdef FEATURE_MULTIVIEW
+
 #include "cg_local.h"
 #include "../ui/ui_shared.h"
 #include "../game/bg_local.h"
@@ -1012,3 +1014,5 @@ void CG_mvZoomBinoc(float x, float y, float w, float h)
 	CG_FillRect(x + 406.0f * ws, y + 226.0f * hs, 1, 29.0f * hs, colorBlack);     // r
 	CG_FillRect(x + 452.0f * ws, y + 234.0f * hs, 1, 13.0f * hs, colorBlack);     // rr
 }
+
+#endif

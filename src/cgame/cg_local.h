@@ -116,10 +116,12 @@
 #define DEMO_RANGEDELTA         6
 #define DEMO_ANGLEDELTA         4
 
+#ifdef FEATURE_MULTIVIEW
 // MV overlay
 #define MVINFO_TEXTSIZE     10
 #define MVINFO_RIGHT        640 - 3
 #define MVINFO_TOP          100
+#endif
 
 #define MAX_WINDOW_COUNT        10
 #define MAX_WINDOW_LINES        64
@@ -153,9 +155,10 @@
 #define WSTATE_SHUTDOWN     0x02    // Window is shutting down with effects
 #define WSTATE_OFF          0x04    // Window is completely shutdown
 
-//@multiview
+#ifdef FEATURE_MULTIVIEW
 #define MV_PID              0x00FF  // Bits available for player IDs for MultiView windows
 #define MV_SELECTED         0x0100  // MultiView selected window flag is the 9th bit
+#endif
 
 #define ISVALIDCLIENTNUM(clientNum) (clientNum >= 0 && clientNum < MAX_CLIENTS)
 
@@ -205,6 +208,7 @@ typedef struct
 	cg_window_t window[MAX_WINDOW_COUNT];           // Static allocation of all windows
 } cg_windowHandler_t;
 
+#ifdef FEATURE_MULTIVIEW
 typedef struct
 {
 	int pID;                    // Player ID
@@ -214,6 +218,7 @@ typedef struct
 	qboolean fActive;           // Overlay element is active
 	cg_window_t *w;         // Window handle (may be NULL)
 } cg_mvinfo_t;
+#endif
 
 #define NUM_OVERLAY_FACES 1
 
@@ -576,6 +581,7 @@ typedef struct clientInfo_s
 	int kills;
 	int deaths;
 
+#ifdef MV_SUPPORT
 	// per client MV ps info
 	int ammo;
 	int ammoclip;
@@ -589,6 +595,8 @@ typedef struct clientInfo_s
 	int weapHeat;
 	int weaponState;
 	int weaponState_last;
+#endif
+
 } clientInfo_t;
 
 typedef enum
@@ -1071,6 +1079,7 @@ typedef struct
 	cg_window_t *motdWindow;
 	cg_window_t *msgWstatsWindow;
 	cg_window_t *msgWtopshotsWindow;
+#ifdef FEATURE_MULTIVIEW
 	int mv_cnt;                                 // Number of active MV windows
 	int mvClientList;                           // Cached client listing of who is merged
 	cg_window_t *mvCurrentActive;               // Client ID of current active window (-1 = none)
@@ -1079,7 +1088,9 @@ typedef struct
 	int mvTeamList[TEAM_NUM_TEAMS][MAX_MVCLIENTS];
 	int mvTotalClients;                         // Total # of clients available for MV processing
 	int mvTotalTeam[TEAM_NUM_TEAMS];
-	refdef_t *refdef_current;                   // Handling of some drawing elements for MV
+#endif
+	refdef_t *refdef_current;                   // Handling of some drawing elements for MV (not only MV!)
+
 	qboolean showStats;
 	int spechelpWindow;
 	int statsRequestTime;
@@ -2136,7 +2147,9 @@ extern vmCvar_t cg_drawReinforcementTime;
 extern vmCvar_t cg_drawWeaponIconFlash;
 extern vmCvar_t cg_noAmmoAutoSwitch;
 extern vmCvar_t cg_printObjectiveInfo;
+#if FEATURE_MULTIVIEW
 extern vmCvar_t cg_specHelp;
+#endif
 extern vmCvar_t cg_uinfo;
 extern vmCvar_t cg_useScreenshotJPEG;
 
@@ -2147,7 +2160,9 @@ extern vmCvar_t demo_avifpsF4;
 extern vmCvar_t demo_avifpsF5;
 extern vmCvar_t demo_drawTimeScale;
 extern vmCvar_t demo_infoWindow;
+#if FEATURE_MULTIVIEW
 extern vmCvar_t mv_sensitivity;
+#endif
 // engine mappings
 extern vmCvar_t int_cl_maxpackets;
 extern vmCvar_t int_cl_timenudge;
@@ -2561,7 +2576,9 @@ void CG_DrawInformation(qboolean forcerefresh);
 void CG_DemoClick(int key, qboolean down);
 void CG_ShowHelp_Off(int *status);
 void CG_ShowHelp_On(int *status);
+#ifdef FEATURE_MULTIVIEW
 qboolean CG_ViewingDraw(void);
+#endif
 
 // cg_scoreboard.c
 qboolean CG_DrawScoreboard(void);
@@ -3049,6 +3066,7 @@ const char *CG_BuildSelectedFirteamString(void);
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
 #define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.2), SMALLCHAR_WIDTH);
 
+#if FEATURE_MULTIVIEW
 // cg_multiview.c
 void CG_mvDelete_f(void);
 void CG_mvHideView_f(void);
@@ -3075,6 +3093,8 @@ void CG_mvUpdateClientInfo(int pID);
 void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, float s, int wState, qboolean fSelected);
 void CG_mvZoomBinoc(float x, float y, float w, float h);
 void CG_mvZoomSniper(float x, float y, float w, float h);
+#endif
+
 
 // cg_window.c
 qboolean CG_addString(cg_window_t *w, char *buf);
@@ -3083,7 +3103,9 @@ void CG_createTopShotsWindow(void);
 void CG_createWstatsMsgWindow(void);
 void CG_createWtopshotsMsgWindow(void);
 void CG_createMOTDWindow(void);
+#if FEATURE_MULTIVIEW
 void CG_cursorUpdate(void);
+#endif
 void CG_initStrings(void);
 void CG_printWindow(char *str);
 void CG_removeStrings(cg_window_t *w);

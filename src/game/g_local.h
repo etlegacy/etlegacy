@@ -574,6 +574,7 @@ typedef struct
 #define LAG_MIN_DROP_THRESHOLD (LAG_MAX_DROP_THRESHOLD - 200)
 #define LAG_DECAY 1.02f
 
+#ifdef FEATURE_MULTIVIEW
 // multiview handling
 #define MULTIVIEW_MAXVIEWS  16
 typedef struct
@@ -582,6 +583,7 @@ typedef struct
 	int entID;
 	gentity_t *camera;
 } mview_t;
+#endif
 
 typedef struct ipFilter_s
 {

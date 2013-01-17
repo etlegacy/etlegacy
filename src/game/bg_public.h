@@ -254,11 +254,11 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 
 #define MAX_MOTDLINES   6
 
-//#ifdef FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 // Multiview settings
 #define MAX_MVCLIENTS               32
 #define MV_SCOREUPDATE_INTERVAL     5000    // in msec
-//#endif
+#endif
 
 #define MAX_CHARACTERS  16
 
@@ -588,7 +588,9 @@ typedef enum
 #define EF_PRONE            0x00080000      // player is prone
 
 #define EF_PRONE_MOVING     0x00100000      // player is prone and moving
+//#ifdef FEATURE_MULTIVIEW
 #define EF_VIEWING_CAMERA   0x00200000      // player is viewing a camera
+//#endif
 #define EF_AAGUN_ACTIVE     0x00400000      // player is manning an AA gun
 #define EF_SPARE0           0x00800000      // freed
 
@@ -623,8 +625,11 @@ typedef enum
 
 	PW_ADRENALINE,
 
-	PW_BLACKOUT     = 14,   // spec blackouts. FIXME: we don't need 32bits here...relocate
+	PW_BLACKOUT = 14,       // spec blackouts. FIXME: we don't need 32bits here...relocate
+
+#ifdef FEATURE_MULTIVIEW
 	PW_MVCLIENTLIST = 15,   // MV client info.. need a full 32 bits
+#endif
 
 	PW_NUM_POWERUPS
 } powerup_t;
@@ -2078,9 +2083,11 @@ int BG_FootstepForSurface(int surfaceFlags);
 
 #define MATCH_MINPLAYERS "4" //"1"	// Minimum # of players needed to start a match
 
+#ifdef FEATURE_MULTIVIEW
 // Multiview support
 int BG_simpleHintsCollapse(int hint, int val);
 int BG_simpleHintsExpand(int hint, int val);
+#endif
 int BG_simpleWeaponState(int ws);
 
 // Color escape handling
