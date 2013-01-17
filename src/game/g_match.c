@@ -697,7 +697,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 			{
 				if ((cl->pers.autoaction & AA_STATSALL)
 #ifdef FEATURE_MULTIVIEW
-				    || cl->pers.mvCount > 0)
+				    || cl->pers.mvCount > 0
 #endif
 				    )
 				{

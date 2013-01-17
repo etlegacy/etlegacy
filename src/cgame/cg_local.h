@@ -182,9 +182,11 @@ typedef struct
 	int lineCount;              // Number of lines to display
 	int lineHeight[MAX_WINDOW_LINES];   // Height property for each line
 	char *lineText[MAX_WINDOW_LINES];   // Text info
+#ifdef FEATURE_MULTIVIEW
 	float m_x;                  // Mouse X position
 	float m_y;                  // Mouse Y position
 	int mvInfo;                 // lower 8 = player id, 9 = is_selected
+#endif
 	int targetTime;             // Time to complete any defined effect
 	int state;                  // Current state of the window
 	int time;                   // Current window time
@@ -581,7 +583,7 @@ typedef struct clientInfo_s
 	int kills;
 	int deaths;
 
-#ifdef MV_SUPPORT
+#ifdef FEATURE_MULTIVIEW
 	// per client MV ps info
 	int ammo;
 	int ammoclip;

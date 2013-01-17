@@ -666,7 +666,7 @@ typedef struct
 	unsigned int invite;                // Invitation to a team to join
 
 #ifdef FEATURE_MULTIVIEW
-	//mview_t mv[MULTIVIEW_MAXVIEWS];     // portals - unused
+	mview_t mv[MULTIVIEW_MAXVIEWS];     // portals
 	int mvCount;                        // Number of active portals
 	int mvReferenceList;                // Reference list used to generate views after a map_restart
 	int mvScoreUpdate;                  // Period to send score info to MV clients
