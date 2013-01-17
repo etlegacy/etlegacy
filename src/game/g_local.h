@@ -656,18 +656,20 @@ typedef struct
 
 	int lastSpawnTime;
 
-	char botScriptName[MAX_NETNAME];
-
 	unsigned int autoaction;            // End-of-match auto-requests
 	unsigned int clientFlags;           // Client settings that need server involvement
 	unsigned int clientMaxPackets;      // Client com_maxpacket settings
 	unsigned int clientTimeNudge;       // Client cl_timenudge settings
 	int cmd_debounce;                   // Dampening of command spam
 	unsigned int invite;                // Invitation to a team to join
-	mview_t mv[MULTIVIEW_MAXVIEWS];     // @multiview portals
+
+#ifdef FEATURE_MULTIVIEW
+	//mview_t mv[MULTIVIEW_MAXVIEWS];     // portals - unused
 	int mvCount;                        // Number of active portals
 	int mvReferenceList;                // Reference list used to generate views after a map_restart
 	int mvScoreUpdate;                  // Period to send score info to MV clients
+#endif
+
 	int panzerDropTime;                 // Time which a player dropping panzer still "has it" if limiting panzer counts
 	int panzerSelectTime;               // *when* a client selected a panzer as spawn weapon
 	qboolean ready;                     // Ready state to begin play
@@ -687,7 +689,6 @@ typedef struct
 
 	int time;
 } clientMarker_t;
-
 
 #define MAX_CLIENT_MARKERS 10
 
@@ -1948,6 +1949,7 @@ void G_spawnPrintf(int print_type, int print_time, gentity_t *owner);
 void G_statsPrint(gentity_t *ent, int nType);
 unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD);
 
+#ifdef FEATURE_MULTIVIEW
 // g_multiview.c
 qboolean G_smvCommands(gentity_t *ent, char *cmd);
 void G_smvAdd_cmd(gentity_t *ent);
@@ -1963,6 +1965,7 @@ void G_smvRemoveEntityInMVList(gentity_t *ent, mview_t *ref);
 void G_smvRemoveInvalidClients(gentity_t *ent, int nTeam);
 qboolean G_smvRunCamera(gentity_t *ent);
 void G_smvUpdateClientCSList(gentity_t *ent);
+#endif
 
 // g_referee.c
 void Cmd_AuthRcon_f(gentity_t *ent);

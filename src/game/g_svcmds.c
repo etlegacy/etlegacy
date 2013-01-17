@@ -1507,7 +1507,7 @@ qboolean ConsoleCommand(void)
 			{
 				G_refHelp_cmd(NULL);
 			}
-			return(qtrue);
+			return qtrue;
 		}
 
 		// everything else will also be printed as a say command

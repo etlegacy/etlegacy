@@ -564,37 +564,41 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	client->oldwbuttons = client->wbuttons;
 	client->wbuttons    = ucmd->wbuttons;
 
-	// MV clients use these buttons locally for other things @multiview
+#ifdef FEATURE_MULTIVIEW
+	// MV clients use these buttons locally for other things
 	if (client->pers.mvCount < 1)
 	{
-		// attack button cycles through spectators
-		if ((client->buttons & BUTTON_ATTACK) && !(client->oldbuttons & BUTTON_ATTACK))
-		{
-			Cmd_FollowCycle_f(ent, 1);
-		}
+#endif
+	// attack button cycles through spectators
+	if ((client->buttons & BUTTON_ATTACK) && !(client->oldbuttons & BUTTON_ATTACK))
+	{
+		Cmd_FollowCycle_f(ent, 1);
+	}
 #ifdef DEBUG
 #ifdef FEATURE_OMNIBOT
-		// activate button swaps places with bot
-		else if (client->sess.sessionTeam != TEAM_SPECTATOR && g_allowBotSwap.integer &&
-		         ((client->buttons & BUTTON_ACTIVATE) && !(client->oldbuttons & BUTTON_ACTIVATE)) &&
-		         (g_entities[ent->client->sess.spectatorClient].client) &&
-		         (g_entities[ent->client->sess.spectatorClient].r.svFlags & SVF_BOT))
-		{
-			Cmd_SwapPlacesWithBot_f(ent, ent->client->sess.spectatorClient);
-		}
-#endif
-#endif
-		else if (
-		    (client->sess.sessionTeam == TEAM_SPECTATOR) &&   // don't let dead team players do free fly
-		    (client->sess.spectatorState == SPECTATOR_FOLLOW) &&
-		    (((client->buttons & BUTTON_ACTIVATE) &&
-		      !(client->oldbuttons & BUTTON_ACTIVATE)) || ucmd->upmove > 0) &&
-		    G_allowFollow(ent, TEAM_AXIS) && G_allowFollow(ent, TEAM_ALLIES))
-		{
-			// code moved to StopFollowing
-			StopFollowing(ent);
-		}
+	// activate button swaps places with bot
+	else if (client->sess.sessionTeam != TEAM_SPECTATOR && g_allowBotSwap.integer &&
+	         ((client->buttons & BUTTON_ACTIVATE) && !(client->oldbuttons & BUTTON_ACTIVATE)) &&
+	         (g_entities[ent->client->sess.spectatorClient].client) &&
+	         (g_entities[ent->client->sess.spectatorClient].r.svFlags & SVF_BOT))
+	{
+		Cmd_SwapPlacesWithBot_f(ent, ent->client->sess.spectatorClient);
 	}
+#endif
+#endif
+	else if (
+	    (client->sess.sessionTeam == TEAM_SPECTATOR) &&       // don't let dead team players do free fly
+	    (client->sess.spectatorState == SPECTATOR_FOLLOW) &&
+	    (((client->buttons & BUTTON_ACTIVATE) &&
+	      !(client->oldbuttons & BUTTON_ACTIVATE)) || ucmd->upmove > 0) &&
+	    G_allowFollow(ent, TEAM_AXIS) && G_allowFollow(ent, TEAM_ALLIES))
+	{
+		// code moved to StopFollowing
+		StopFollowing(ent);
+	}
+#ifdef FEATURE_MULTIVIEW
+}
+#endif
 }
 
 /**
@@ -644,7 +648,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 			client->inactivityWarning = qfalse;
 			client->inactivityTime    = level.time + 60 * 1000;
 			trap_DropClient(client - level.clients, "Dropped due to inactivity", 0);
-			return(qfalse);
+			return qfalse;
 		}
 
 		if (!client->inactivityWarning && level.time > client->inactivityTime - 10000)
@@ -1505,13 +1509,14 @@ void G_RunClient(gentity_t *ent)
  */
 void SpectatorClientEndFrame(gentity_t *ent)
 {
-	// @multiview
+#ifdef FEATURE_MULTIVIEW
 	// specs periodically get score updates for useful demo playback info
 	if (/*ent->client->pers.mvCount > 0 &&*/ ent->client->pers.mvScoreUpdate < level.time)
 	{
 		ent->client->pers.mvScoreUpdate = level.time + MV_SCOREUPDATE_INTERVAL;
 		ent->client->wantsscore         = qtrue;
 	}
+#endif
 
 	// do this to keep current xp of spectators up to date especially on first connect to get xpsave state in limbo
 	if (ent->client->sess.spectatorState == SPECTATOR_FREE)
@@ -1601,11 +1606,13 @@ void SpectatorClientEndFrame(gentity_t *ent)
 			return;
 		}
 
+#ifdef FEATURE_MULTIVIEW
 		// Limbos aren't following while in MV
 		if ((ent->client->ps.pm_flags & PMF_LIMBO) && ent->client->pers.mvCount > 0)
 		{
 			return;
 		}
+#endif
 
 		clientNum = ent->client->sess.spectatorClient;
 
@@ -1681,11 +1688,15 @@ void SpectatorClientEndFrame(gentity_t *ent)
 	// we are at a free-floating spec state for a player,
 	// set speclock status, as appropriate
 	//	 --> Can we use something besides a powerup slot?
+#ifdef FEATURE_MULTIVIEW
 	if (ent->client->pers.mvCount < 1)
 	{
-		ent->client->ps.powerups[PW_BLACKOUT] = (G_blockoutTeam(ent, TEAM_AXIS) * TEAM_AXIS) |
-		                                        (G_blockoutTeam(ent, TEAM_ALLIES) * TEAM_ALLIES);
-	}
+#endif
+	ent->client->ps.powerups[PW_BLACKOUT] = (G_blockoutTeam(ent, TEAM_AXIS) * TEAM_AXIS) |
+	                                        (G_blockoutTeam(ent, TEAM_ALLIES) * TEAM_ALLIES);
+#ifdef FEATURE_MULTIVIEW
+}
+#endif
 }
 
 
@@ -1742,10 +1753,10 @@ qboolean StuckInClient(gentity_t *self)
 			continue;
 		}
 
-		return(qtrue);
+		return qtrue;
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 extern vec3_t playerMins, playerMaxs;

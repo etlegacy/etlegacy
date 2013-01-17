@@ -692,13 +692,13 @@ void reinforce(gentity_t *ent)
 		return;
 	}
 
-	// @multiview
+#ifdef FEATURE_MULTIVIEW
 	if (ent->client->pers.mvCount > 0)
 	{
 		G_smvRemoveInvalidClients(ent, TEAM_AXIS);
 		G_smvRemoveInvalidClients(ent, TEAM_ALLIES);
 	}
-
+#endif
 	// restore persistant data now that we're out of Limbo
 	for (p = 0; p < MAX_PERSISTANT; p++)
 	{
@@ -2553,7 +2553,9 @@ void ClientBegin(int clientNum)
 	// No surface determined yet.
 	ent->surfaceFlags = 0;
 
+#ifdef FEATURE_MULTIVIEW
 	G_smvUpdateClientCSList(ent);
+#endif
 
 #ifdef FEATURE_LUA
 	// call LUA clientBegin only once
@@ -3153,7 +3155,9 @@ void ClientDisconnect(int clientNum)
 	CalculateRanks();
 
 	G_verifyMatchState(i);
+#ifdef FEATURE_MULTIVIEW
 	G_smvAllRemoveSingleClient(ent - g_entities);
+#endif
 }
 
 // In just the GAME DLL, we want to store the groundtrace surface stuff,

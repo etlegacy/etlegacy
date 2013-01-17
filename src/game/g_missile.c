@@ -1421,11 +1421,11 @@ qboolean G_SweepForLandmines(vec3_t origin, float radius, int team)
 				continue;
 			}
 
-			return(qtrue);   // found one
+			return qtrue;   // found one
 		}
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 gentity_t *G_FindSatchel(gentity_t *ent)

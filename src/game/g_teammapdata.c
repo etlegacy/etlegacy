@@ -341,11 +341,11 @@ static qboolean G_CullPointAndRadius(vec3_t pt, float radius)
 		dist = DotProduct(pt, frust->normal) - frust->dist;
 		if (dist < -radius || dist <= radius)
 		{
-			return(qfalse);
+			return qfalse;
 		}
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origin)

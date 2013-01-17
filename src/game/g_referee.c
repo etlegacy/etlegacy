@@ -102,10 +102,10 @@ qboolean G_refCommandCheck(gentity_t *ent, char *cmd)
 	}
 	else
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 // Lists ref commands.

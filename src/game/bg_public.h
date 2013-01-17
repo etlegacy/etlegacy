@@ -254,9 +254,11 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 
 #define MAX_MOTDLINES   6
 
+//#ifdef FEATURE_MULTIVIEW
 // Multiview settings
 #define MAX_MVCLIENTS               32
 #define MV_SCOREUPDATE_INTERVAL     5000    // in msec
+//#endif
 
 #define MAX_CHARACTERS  16
 

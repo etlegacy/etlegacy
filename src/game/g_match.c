@@ -167,6 +167,7 @@ void G_delayPrint(gentity_t *dpent)
 		break;
 	}
 
+#ifdef FEATURE_MULTIVIEW
 	case DP_MVSPAWN:
 	{
 		int       i;
@@ -189,6 +190,7 @@ void G_delayPrint(gentity_t *dpent)
 
 		break;
 	}
+#endif
 
 	default:
 		break;
@@ -693,7 +695,11 @@ void G_matchInfoDump(unsigned int dwDumpType)
 			// If client wants to write stats to a file, don't auto send this stuff
 			if (!(cl->pers.clientFlags & CGF_STATSDUMP))
 			{
-				if ((cl->pers.autoaction & AA_STATSALL) || cl->pers.mvCount > 0)
+				if ((cl->pers.autoaction & AA_STATSALL)
+#ifdef FEATURE_MULTIVIEW
+				    || cl->pers.mvCount > 0)
+#endif
+				    )
 				{
 					G_statsall_cmd(ent, 0, qfalse);
 				}
@@ -814,7 +820,7 @@ int G_checkServerToggle(vmCvar_t *cv)
 		{
 			level.server_settings &= ~CV_SVS_NEXTMAP;
 		}
-		return(qtrue);
+		return qtrue;
 	}
 	else if (cv == &g_nextcampaign && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -826,11 +832,11 @@ int G_checkServerToggle(vmCvar_t *cv)
 		{
 			level.server_settings &= ~CV_SVS_NEXTMAP;
 		}
-		return(qtrue);
+		return qtrue;
 	}
 	else
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	if (cv->integer > 0)
@@ -842,7 +848,7 @@ int G_checkServerToggle(vmCvar_t *cv)
 		level.server_settings &= ~nFlag;
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 // Sends a player's stats to the requesting client.

@@ -128,11 +128,15 @@ qboolean G_commandCheck(gentity_t *ent, char *cmd, qboolean fDoAnytime)
 			{
 				pCR->pCommand(ent, i, pCR->fValue);
 			}
-			return(qtrue);
+			return qtrue;
 		}
 	}
 
+#ifdef FEATURE_MULTIVIEW
 	return(G_smvCommands(ent, cmd));
+#else
+	return qfalse;
+#endif
 }
 
 // Prints specific command help info.
@@ -142,16 +146,16 @@ qboolean G_commandHelp(gentity_t *ent, char *pszCommand, unsigned int dwCommand)
 
 	if (!ent)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 	trap_Argv(1, arg, sizeof(arg));
 	if (!Q_stricmp(arg, "?"))
 	{
 		CP(va("print \"\n^3%s%s\n\n\"", pszCommand, aCommandInfo[dwCommand].pszHelpInfo));
-		return(qtrue);
+		return qtrue;
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 // Debounces cmd request as necessary.
@@ -161,11 +165,11 @@ qboolean G_cmdDebounce(gentity_t *ent, const char *pszCommandName)
 	{
 		CP(va("print \"Wait another %.1fs to issue ^3%s\n\"", 1.0 * (float)(ent->client->pers.cmd_debounce - level.time) / 1000.0,
 		      pszCommandName));
-		return(qfalse);
+		return qfalse;
 	}
 
 	ent->client->pers.cmd_debounce = level.time + CMD_DEBOUNCE;
-	return(qtrue);
+	return qtrue ;
 }
 
 void G_noTeamControls(gentity_t *ent)
@@ -343,7 +347,6 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	gentity_t *cl_ent;
 	char      n2[MAX_NETNAME], ready[16], ref[16], rate[256];
 	char      *s, *tc, *coach, userinfo[MAX_INFO_STRING];
-
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{

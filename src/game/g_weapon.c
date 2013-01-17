@@ -931,7 +931,7 @@ static qboolean TryConstructing(gentity_t *ent)
 	// no construction during prematch
 	if (level.warmupTime)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// see if we are in a trigger_objective_info targetting multiple func_constructibles
@@ -953,7 +953,7 @@ static qboolean TryConstructing(gentity_t *ent)
 		    (otherconstructible->count2 && otherconstructible->grenadeFired))
 		{
 
-			return(qfalse);
+			return qfalse;
 		}
 	}
 
@@ -964,12 +964,12 @@ static qboolean TryConstructing(gentity_t *ent)
 
 		if (constructible->s.angles2[0] >= 250)     // have to do this so we don't score multiple times
 		{
-			return(qfalse);
+			return qfalse;
 		}
 
 		if (constructible->s.angles2[1] != 0)
 		{
-			return(qfalse);
+			return qfalse;
 		}
 
 		// Check if we can construct - updates the classWeaponTime as well
@@ -984,7 +984,7 @@ static qboolean TryConstructing(gentity_t *ent)
 			// wait a bit, this prevents network spam
 			if (level.time - constructible->lastHintCheckTime < CONSTRUCT_POSTDECAY_TIME)
 			{
-				return(qtrue);      // likely will come back soon - so override other plier bits anyway
+				return qtrue;      // likely will come back soon - so override other plier bits anyway
 
 			}
 
@@ -1083,7 +1083,7 @@ static qboolean TryConstructing(gentity_t *ent)
 		{
 			constructible->lastHintCheckTime = level.time;
 			HandleEntsThatBlockConstructible(ent, constructible, qfalse, qtrue);
-			return(qtrue);      // properly constructed
+			return qtrue;      // properly constructed
 		}
 
 		// eeeh no point in doing this twice
@@ -1315,10 +1315,10 @@ static qboolean TryConstructing(gentity_t *ent)
 			}
 		}
 
-		return(qtrue);      // building
+		return qtrue;      // building
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 void AutoBuildConstruction(gentity_t *constructible)

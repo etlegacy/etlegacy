@@ -1698,7 +1698,7 @@ qboolean G_checkReady(void)
 
 	if (0 == g_doWarmup.integer)
 	{
-		return(qtrue);
+		return qtrue;
 	}
 
 	// Ensure we have enough real players
@@ -1751,7 +1751,7 @@ qboolean G_readyMatchState(void)
 			teamInfo[TEAM_ALLIES].team_lock = qtrue;
 		}
 
-		return(qtrue);
+		return qtrue;
 
 	}
 	else if (!G_checkReady())
@@ -1764,7 +1764,7 @@ qboolean G_readyMatchState(void)
 		trap_SendConsoleCommand(EXEC_APPEND, va("map_restart 0 %i\n", GS_WARMUP));
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 // Check if we need to reset the game state due to an empty team
@@ -1819,7 +1819,7 @@ qboolean G_teamJoinCheck(int team_num, gentity_t *ent)
 	{
 		if (ent->client->sess.sessionTeam == team_num)
 		{
-			return(qtrue);
+			return qtrue;
 		}
 
 		if (g_gametype.integer != GT_WOLF_LMS)
@@ -1828,14 +1828,14 @@ qboolean G_teamJoinCheck(int team_num, gentity_t *ent)
 			if (team_maxplayers.integer > 0 && team_maxplayers.integer <= cnt)
 			{
 				G_printFull(va("The %s team is full!", aTeams[team_num]), ent);
-				return(qfalse);
+				return qfalse;
 
 				// Check for locked teams
 			}
 			else if (teamInfo[team_num].team_lock && (!(ent->client->pers.invite & team_num)))
 			{
 				G_printFull(va("The %s team is LOCKED!", aTeams[team_num]), ent);
-				return(qfalse);
+				return qfalse;
 			}
 		}
 		else
@@ -1843,17 +1843,17 @@ qboolean G_teamJoinCheck(int team_num, gentity_t *ent)
 			if (team_maxplayers.integer > 0 && team_maxplayers.integer <= cnt)
 			{
 				G_printFull(va("The %s team is full!", aTeams[team_num]), ent);
-				return(qfalse);
+				return qfalse;
 			}
 			else if (g_gamestate.integer == GS_PLAYING && g_lms_lockTeams.integer && (!(ent->client->pers.invite & team_num)))
 			{
 				G_printFull(va("The %s team is LOCKED!", aTeams[team_num]), ent);
-				return(qfalse);
+				return qfalse;
 			}
 		}
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 // Update specs for blackout, as needed
@@ -1888,21 +1888,28 @@ void G_updateSpecLock(int nTeam, qboolean fLock)
 			continue;
 		}
 
+#ifdef FEATURE_MULTIVIEW
 		if (ent->client->pers.mvCount > 0)
 		{
 			G_smvRemoveInvalidClients(ent, nTeam);
 		}
-		else if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
+		else
+#endif
+		if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
 		{
 			StopFollowing(ent);
 			ent->client->sess.spec_team &= ~nTeam;
 		}
 
+#ifdef FEATURE_MULTIVIEW
 		// ClientBegin sets blackout
 		if (ent->client->pers.mvCount < 1)
 		{
-			SetTeam(ent, "s", qtrue, -1, -1, qfalse);
-		}
+#endif
+		SetTeam(ent, "s", qtrue, -1, -1, qfalse);
+#ifdef FEATURE_MULTIVIEW
+	}
+#endif
 	}
 }
 
@@ -1921,7 +1928,7 @@ void G_swapTeamLocks(void)
 // Removes everyone's specinvite for a particular team.
 void G_removeSpecInvite(int team)
 {
-	int       i;
+	int i;
 	gentity_t *cl;
 
 	for (i = 0; i < level.numConnectedClients; i++)
@@ -1979,8 +1986,8 @@ qboolean G_desiredFollow(gentity_t *ent, int nTeam)
 	if (G_allowFollow(ent, nTeam) &&
 	    (ent->client->sess.spec_team == 0 || ent->client->sess.spec_team == nTeam))
 	{
-		return(qtrue);
+		return qtrue;
 	}
 
-	return(qfalse);
+	return qfalse;
 }

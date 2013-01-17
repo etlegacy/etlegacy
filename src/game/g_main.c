@@ -4364,11 +4364,12 @@ void G_RunEntity(gentity_t *ent, int msec)
 		return;
 	}
 
-	// multiview
+#ifdef FEATURE_MULTIVIEW
 	if (ent->s.eType == ET_PORTAL && G_smvRunCamera(ent))
 	{
 		return;
 	}
+#endif
 
 	if ((ent->s.eType == ET_HEALER || ent->s.eType == ET_SUPPLIER) && ent->target_ent)
 	{

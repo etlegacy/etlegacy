@@ -1058,10 +1058,10 @@ static qboolean PM_CheckProne(void)
 		pm->maxs[2]        = 12;
 		pm->ps->viewheight = PRONE_VIEWHEIGHT;
 
-		return(qtrue);
+		return qtrue;
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 //============================================================================

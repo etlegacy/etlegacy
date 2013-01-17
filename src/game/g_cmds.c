@@ -1052,20 +1052,13 @@ SetTeam
 qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t w2, qboolean setweapons)
 {
 	team_t           team, oldTeam;
-	gclient_t        *client;
-	int              clientNum;
+	gclient_t        *client   = ent->client;
+	int              clientNum = client - level.clients;
 	spectatorState_t specState;
-	int              specClient;
-	int              respawnsLeft;
+	int              specClient   = 0;
+	int              respawnsLeft = client->ps.persistant[PERS_RESPAWNS_LEFT]; // preserve respawn count
 
 	// see what change is requested
-	client = ent->client;
-
-	clientNum  = client - level.clients;
-	specClient = 0;
-
-	// preserve respawn count
-	respawnsLeft = client->ps.persistant[PERS_RESPAWNS_LEFT];
 
 	G_TeamDataForString(s, client - level.clients, &team, &specState, &specClient);
 
@@ -1075,7 +1068,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 		if (!G_teamJoinCheck(team, ent))
 		{
 			// Leave them where they were before the command was issued
-			return(qfalse);
+			return qfalse;
 		}
 
 		if (g_noTeamSwitching.integer && (team != ent->client->sess.sessionTeam && ent->client->sess.sessionTeam != TEAM_SPECTATOR) && g_gamestate.integer == GS_PLAYING && !force)
@@ -1137,12 +1130,14 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 	if (team != TEAM_SPECTATOR)
 	{
 		client->pers.initialSpawn = qfalse;
+#ifdef FEATURE_MULTIVIEW
 		// no MV in-game
 		if (client->pers.mvCount > 0)
 		{
 			G_smvRemoveInvalidClients(ent, TEAM_AXIS);
 			G_smvRemoveInvalidClients(ent, TEAM_ALLIES);
 		}
+#endif
 	}
 
 	if (oldTeam != TEAM_SPECTATOR)
@@ -1163,10 +1158,12 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 		{
 			client->pers.invite = 0;
 		}
+#ifdef FEATURE_MULTIVIEW
 		if (team != oldTeam)
 		{
 			G_smvAllRemoveSingleClient(ent - g_entities);
 		}
+#endif
 	}
 
 	G_LeaveTank(ent, qfalse);
@@ -1255,7 +1252,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 		{
 			trap_SendServerCommand(clientNum, "cp \"Will spawn next round, please wait.\n\"");
 			limbo(ent, qfalse);
-			return(qfalse);
+			return qfalse;
 		}
 		else
 		{
@@ -2299,7 +2296,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		case '\r':
 		case ';':
 			trap_SendServerCommand(ent - g_entities, "print \"Invalid vote string.\n\"");
-			return(qfalse);
+			return qfalse;
 			break;
 		}
 	}
@@ -2310,11 +2307,11 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		{
 			if (i == G_NOTFOUND)
 			{
-				return(qfalse);                 // Command error
+				return qfalse;                 // Command error
 			}
 			else
 			{
-				return(qtrue);
+				return qtrue;
 			}
 		}
 	}
@@ -2325,7 +2322,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 			CP(va("print \"\n^3>>> Unknown vote command: ^7%s %s\n\"", arg1, arg2));
 			G_voteHelp(ent, qtrue);
 		}
-		return(qfalse);
+		return qfalse;
 	}
 
 	Com_sprintf(level.voteInfo.voteString, sizeof(level.voteInfo.voteString), "%s %s", arg1, arg2);
@@ -2376,7 +2373,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		trap_SetConfigstring(CS_VOTE_TIME, va("%i", level.voteInfo.voteTime));
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 qboolean StringToFilter(const char *s, ipFilter_t *f);

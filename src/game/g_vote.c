@@ -228,7 +228,7 @@ qboolean G_voteDescription(gentity_t *ent, qboolean fRefereeCmd, int cmd)
 
 	if (!ent)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	trap_Argv(2, arg, sizeof(arg));
@@ -236,10 +236,10 @@ qboolean G_voteDescription(gentity_t *ent, qboolean fRefereeCmd, int cmd)
 	{
 		trap_Argv(1, arg, sizeof(arg));
 		G_refPrintf(ent, "\nUsage: ^3%s %s%s\n", ref_cmd, arg, aVoteInfo[cmd].pszVoteHelp);
-		return(qtrue);
+		return qtrue;
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 
