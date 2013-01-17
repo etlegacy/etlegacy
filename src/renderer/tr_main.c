@@ -818,7 +818,7 @@ static void SetFarClip(void)
 
 	tr.viewParms.zFar = sqrt(farthestCornerDistance);
 
-	// ydnar: add global q3 fog
+	// add global q3 fog
 	if (tr.world != NULL && tr.world->globalFog >= 0 && tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque < tr.viewParms.zFar)
 	{
 		tr.viewParms.zFar = tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque;
@@ -867,7 +867,7 @@ void R_SetupFrustum(void)
 		SetPlaneSignbits(&tr.viewParms.frustum[i]);
 	}
 
-	// ydnar: farplane (testing! use farplane for real)
+	// farplane (testing! use farplane for real)
 	VectorScale(tr.viewParms.orientation.axis[0], -1, tr.viewParms.frustum[4].normal);
 	tr.viewParms.frustum[4].dist = DotProduct(tr.viewParms.orientation.origin, tr.viewParms.frustum[4].normal) - tr.viewParms.zFar;
 	tr.viewParms.frustum[4].type = PLANE_NON_AXIAL;
@@ -1849,7 +1849,7 @@ void R_RenderView(viewParms_t *parms)
 		return;
 	}
 
-	// Ridah, purge media that were left over from the last level
+	// purge media that were left over from the last level
 	if (r_cache->integer)
 	{
 		extern void R_PurgeBackupImages(int purgeCount);

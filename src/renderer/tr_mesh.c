@@ -202,7 +202,7 @@ int R_ComputeLOD(trRefEntity_t *ent)
 		// multiple LODs exist, so compute projected bounding sphere
 		// and use that as a criteria for selecting LOD
 
-		// RF, checked for a forced lowest LOD
+		// checked for a forced lowest LOD
 		if (ent->e.reFlags & REFLAG_FORCE_LOD)
 		{
 			return (tr.currentModel->numLods - 1);
@@ -214,7 +214,7 @@ int R_ComputeLOD(trRefEntity_t *ent)
 
 		radius = RadiusFromBounds(frame->bounds[0], frame->bounds[1]);
 
-		//----(SA)  testing
+		// testing
 		//if (ent->e.reFlags & REFLAG_ORIENT_LOD)
 		//{
 		// right now this is for trees, and pushes the lod distance way in.

@@ -357,7 +357,7 @@ void RB_SurfaceTriangles(srfTriangles_t *srf)
 	int        dlightBits;
 	qboolean   needsNormal;
 
-	// ydnar: moved before overflow so dlights work properly
+	// moved before overflow so dlights work properly
 	RB_CHECKOVERFLOW(srf->numVerts, srf->numIndexes);
 
 	dlightBits       = srf->dlightBits[backEnd.smpFrame];
@@ -423,7 +423,7 @@ void RB_SurfaceTriangles(srfTriangles_t *srf)
 
 /*
 =============
-RB_SurfaceFoliage - ydnar
+RB_SurfaceFoliage
 =============
 */
 void RB_SurfaceFoliage(srfFoliage_t *srf)
@@ -530,7 +530,7 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 
 		RB_CHECKOVERFLOW(numVerts, numIndexes);
 
-		// ydnar: set after overflow check so dlights work properly
+		// set after overflow check so dlights work properly
 		tess.dlightBits |= dlightBits;
 
 		// copy indexes
@@ -634,7 +634,7 @@ static void DoRailCore(const vec3_t start, const vec3_t end, const vec3_t up, fl
 
 	vbase = tess.numVertexes;
 
-	// Gordon: configurable tile
+	// configurable tile
 	if (backEnd.currentEntity->e.radius > 0)
 	{
 		t = len / backEnd.currentEntity->e.radius;
@@ -1066,8 +1066,8 @@ static void LerpCMeshVertexes(mdcSurface_t *surf, float backlerp)
 	unsigned           lat, lng;
 	int                numVerts;
 	int                newBase;
-	short              *oldComp    = NULL, *newComp = NULL; // TTimo: init
-	mdcXyzCompressed_t *oldXyzComp = NULL, *newXyzComp = NULL; // TTimo: init
+	short              *oldComp    = NULL, *newComp = NULL;
+	mdcXyzCompressed_t *oldXyzComp = NULL, *newXyzComp = NULL;
 	vec3_t             oldOfsVec, newOfsVec;
 
 	qboolean hasComp;
@@ -1206,7 +1206,7 @@ static void LerpCMeshVertexes(mdcSurface_t *surf, float backlerp)
 			outNormal[1] = uncompressedOldNormal[1] * oldNormalScale + uncompressedNewNormal[1] * newNormalScale;
 			outNormal[2] = uncompressedOldNormal[2] * oldNormalScale + uncompressedNewNormal[2] * newNormalScale;
 
-			// ydnar: wee bit faster (fixme: use lat/lng lerping)
+			// wee bit faster (fixme: use lat/lng lerping)
 			//% VectorNormalize (outNormal);
 			VectorNormalizeFast(outNormal);
 		}
@@ -1440,7 +1440,7 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 			{
 				RB_EndSurface();
 				RB_BeginSurface(tess.shader, tess.fogNum);
-				tess.dlightBits |= dlightBits;  // ydnar: for proper dlighting
+				tess.dlightBits |= dlightBits;  // for proper dlighting
 			}
 			else
 			{
@@ -1725,7 +1725,7 @@ void RB_SurfacePolyBuffer(srfPolyBuffer_t *surf)
 	tess.vertexColors      = oldColor;
 }
 
-// ydnar: decal surfaces
+// decal surfaces
 void RB_SurfaceDecal(srfDecal_t *srf)
 {
 	int i;

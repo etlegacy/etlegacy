@@ -516,7 +516,6 @@ ID_INLINE void LocalAddScaledMatrixTransformVector(vec3_t in, float s, vec3_t ma
 
 static float LAVangle;
 static float sp, sy, cp, cy, sr, cr;
-//static float    sr, cr;// TTimo: unused
 
 ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
 {
@@ -1537,7 +1536,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 	lodRadius = frame->radius;
 	lodScale  = R_CalcMDMLod(refent, vec, lodRadius, header->lodBias, header->lodScale);
 
-	// ydnar: debug code
+	// debug code
 	//%	lodScale = 0.15;
 
 //DBG_SHOWTIME
@@ -1569,7 +1568,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 		render_count = surface->numVerts;
 	}
 
-	// ydnar: to profile bone transform performance only
+	// to profile bone transform performance only
 	if (r_bonesDebug->integer == 10)
 	{
 		return;
@@ -1582,7 +1581,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 	//
 	// setup triangle list
 	//
-	// ydnar: no need to do this twice
+	// no need to do this twice
 	//%	RB_CheckOverflow( surface->numVerts, surface->numTriangles * 3);
 
 //DBG_SHOWTIME

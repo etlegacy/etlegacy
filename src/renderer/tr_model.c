@@ -156,7 +156,7 @@ qhandle_t RE_RegisterModel(const char *name)
 	model_t   *mod;
 	unsigned  *buf;
 	int       lod;
-	int       ident = 0;   // TTimo: init
+	int       ident = 0;
 	qboolean  loaded;
 	qhandle_t hModel;
 	int       numLoaded;
@@ -164,7 +164,7 @@ qhandle_t RE_RegisterModel(const char *name)
 
 	if (!name || !name[0])
 	{
-		// Ridah, disabled this, we can see models that can't be found because they won't be there
+		// disabled this, we can see models that can't be found because they won't be there
 		//ri.Printf( PRINT_ALL, "RE_RegisterModel: NULL name\n" );
 		return 0;
 	}
@@ -175,7 +175,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		return 0;
 	}
 
-	// Ridah, caching
+	// caching
 	if (r_cacheGathering->integer)
 	{
 		ri.Cmd_ExecuteText(EXEC_NOW, va("cache_usedfile model %s\n", name));
@@ -212,7 +212,7 @@ qhandle_t RE_RegisterModel(const char *name)
 	// make sure the render thread is stopped
 	R_SyncRenderThread();
 
-	// Ridah, look for it cached
+	// look for it cached
 	if (R_FindCachedModel(name, mod))
 	{
 		R_LoadModelShadow(mod);
@@ -289,7 +289,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		loadmodel = mod;
 
 		ident = LittleLong(*(unsigned *)buf);
-		// Ridah, mesh compression
+		// mesh compression
 		if (ident != MD3_IDENT && ident != MDC_IDENT)
 		{
 			ri.Printf(PRINT_WARNING, "RE_RegisterModel: unknown fileid for %s\n", name);
@@ -339,7 +339,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		for (lod-- ; lod >= 0 ; lod--)
 		{
 			mod->numLods++;
-			// Ridah, mesh compression
+			// mesh compression
 			//  this check for mod->md3[0] could leave mod->md3[0] == 0x0000000 if r_lodbias is set to anything except '0'
 			//  which causes trouble in tr_mesh.c in R_AddMD3Surfaces() and other locations since it checks md3[0]
 			//  for various things.
@@ -365,7 +365,7 @@ fail:
 }
 
 //-------------------------------------------------------------------------------
-// Ridah, mesh compression
+// mesh compression
 float r_anormals[NUMMDCVERTEXNORMALS][3] =
 {
 #include "anorms256.h"
@@ -389,7 +389,7 @@ R_MDC_GetAnorm
 unsigned char R_MDC_GetAnorm(const vec3_t dir)
 {
 	int   i, best_start_i[3] = { 0 }, next_start, next_end;
-	int   best = 0; // TTimo: init
+	int   best = 0;
 	float best_diff, group_val, this_val, diff;
 	float *this_norm;
 
@@ -985,7 +985,7 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 			}
 		}
 
-		// Ridah, optimization, only do the swapping if we really need to
+		// optimization, only do the swapping if we really need to
 		if (LittleShort(1) != 1)
 		{
 			// swap all the triangles
@@ -1213,7 +1213,7 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 			}
 		}
 
-		// Ridah, optimization, only do the swapping if we really need to
+		// optimization, only do the swapping if we really need to
 		if (LittleShort(1) != 1)
 		{
 
@@ -1817,7 +1817,7 @@ void R_ModelInit(void)
 	mod       = R_AllocModel();
 	mod->type = MOD_BAD;
 
-	// Ridah, load in the cacheModels
+	// load in the cacheModels
 	R_LoadCacheModels();
 }
 
@@ -2126,7 +2126,7 @@ void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs)
 
 	model = R_GetModelByHandle(handle);
 
-	// Gordon: fixing now that it's a union
+	// fixing now that it's a union
 	switch (model->type)
 	{
 	case MOD_BRUSH:
@@ -2281,7 +2281,7 @@ void R_Hunk_Reset(void)
 }
 
 //=============================================================================
-// Ridah, model caching
+// model caching
 
 // TODO: convert the Hunk_Alloc's in the model loading to malloc's, so we don't have
 // to move so much memory around during transitions
@@ -2315,7 +2315,7 @@ void R_CacheModelFree(void *ptr)
 {
 	if (r_cache->integer && r_cacheModels->integer)
 	{
-		// TTimo: it's in the hunk, leave it there, next R_Hunk_Begin will clear it all
+		// it's in the hunk, leave it there, next R_Hunk_Begin will clear it all
 	}
 	else
 	{
@@ -2507,8 +2507,7 @@ qboolean R_FindCachedModel(const char *name, model_t *newmod)
 	int     i, j, index;
 	model_t *mod;
 
-	// NOTE TTimo
-	// would need an r_cache check here too?
+	// NOTE: would need an r_cache check here too?
 
 	if (!r_cacheModels->integer)
 	{

@@ -103,22 +103,18 @@ R_ColorShiftLightingBytes
 */
 static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 {
-	int shift, r, g, b;
-
 	// shift the color data based on overbright range
-	shift = r_mapOverBrightBits->integer - tr.overbrightBits;
-
+	int shift = r_mapOverBrightBits->integer - tr.overbrightBits;
 	// shift the data based on overbright range
-	r = in[0] << shift;
-	g = in[1] << shift;
-	b = in[2] << shift;
+	int r = in[0] << shift;
+	int g = in[1] << shift;
+	int b = in[2] << shift;
 
 	// normalize by color instead of saturating to white
 	if ((r | g | b) > 255)
 	{
-		int max;
+		int max = r > g ? r : g;
 
-		max = r > g ? r : g;
 		max = max > b ? max : b;
 		r   = r * 255 / max;
 		g   = g * 255 / max;
@@ -217,7 +213,7 @@ static void R_LoadLightmaps(lump_t *l)
 	int             i /*, j*/;
 	float           intensity, maxIntensity = 0;
 
-	// ydnar: clear lightmaps first
+	// clear lightmaps first
 	tr.numLightmaps = 0;
 	memset(tr.lightmaps, 0, sizeof(*tr.lightmaps) * MAX_LIGHTMAPS);
 
@@ -387,7 +383,7 @@ void *R_GetSurfMemory(int size)
 }
 
 /*
-SphereFromBounds() - ydnar
+SphereFromBounds()
 creates a bounding sphere from a bounding box
 */
 static void SphereFromBounds(vec3_t mins, vec3_t maxs, vec3_t origin, float *radius)
@@ -401,7 +397,7 @@ static void SphereFromBounds(vec3_t mins, vec3_t maxs, vec3_t origin, float *rad
 }
 
 /*
-FinishGenericSurface() - ydnar
+FinishGenericSurface()
 handles final surface classification
 */
 static void FinishGenericSurface(dsurface_t *ds, srfGeneric_t *gen, vec3_t pt)
@@ -571,7 +567,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 }
 
 /*
-ParseFoliage() - ydnar
+ParseFoliage()
 
     parses a foliage drawsurface
 */
@@ -1770,7 +1766,6 @@ int R_TryStitchingPatch(int grid1num)
 	grid1       = (srfGridMesh_t *) s_worldData.surfaces[grid1num].data;
 	for (j = 0; j < s_worldData.numsurfaces; j++)
 	{
-		//
 		grid2 = (srfGridMesh_t *) s_worldData.surfaces[j].data;
 		// if this surface is not a grid
 		if (grid2->surfaceType != SF_GRID)
@@ -1917,7 +1912,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	s_worldData.surfaces    = out;
 	s_worldData.numsurfaces = count;
 
-	// Ridah, init the surface memory. This is optimization, so we don't have to
+	// init the surface memory. This is optimization, so we don't have to
 	// look for memory for each surface, we allocate a big block and just chew it up
 	// as we go
 	R_InitSurfMemory();
@@ -1935,7 +1930,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 			numTriSurfs++;
 			break;
 		case MST_PLANAR:
-			// ydnar: faces and triangle surfaces are now homogenous
+			// faces and triangle surfaces are now homogenous
 			ParseTriSurf(in, dv, out, indexes);
 			numFaces++;
 			break;
@@ -1943,7 +1938,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 			ParseFlare(in, dv, out, indexes);
 			numFlares++;
 			break;
-		case MST_FOLIAGE:   // ydnar
+		case MST_FOLIAGE:
 			ParseFoliage(in, dv, out, indexes);
 			numFoliage++;
 			break;
@@ -2010,11 +2005,11 @@ static void R_LoadSubmodels(lump_t *l)
 		out->firstSurface = s_worldData.surfaces + LittleLong(in->firstSurface);
 		out->numSurfaces  = LittleLong(in->numSurfaces);
 
-		// ydnar: for attaching fog brushes to models
+		// for attaching fog brushes to models
 		out->firstBrush = LittleLong(in->firstBrush);
 		out->numBrushes = LittleLong(in->numBrushes);
 
-		// ydnar: allocate decal memory
+		// allocate decal memory
 		j           = (i == 0 ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
 		out->decals = ri.Hunk_Alloc(j * sizeof(*out->decals), h_low);
 		memset(out->decals, 0, j * sizeof(*out->decals));
@@ -2070,7 +2065,7 @@ static void R_SetParent(mnode_t *node, mnode_t *parent)
 	R_SetParent(node->children[0], node);
 	R_SetParent(node->children[1], node);
 
-	// ydnar: surface bounds
+	// surface bounds
 	AddPointToBounds(node->children[0]->surfMins, node->surfMins, node->surfMaxs);
 	AddPointToBounds(node->children[0]->surfMins, node->surfMins, node->surfMaxs);
 	AddPointToBounds(node->children[1]->surfMins, node->surfMins, node->surfMaxs);
@@ -2105,7 +2100,7 @@ static void R_LoadNodesAndLeafs(lump_t *nodeLump, lump_t *leafLump)
 	s_worldData.numnodes         = numNodes + numLeafs;
 	s_worldData.numDecisionNodes = numNodes;
 
-	// ydnar: skybox optimization
+	// skybox optimization
 	s_worldData.numSkyNodes = 0;
 	s_worldData.skyNodes    = ri.Hunk_Alloc(WORLD_MAX_SKY_NODES * sizeof(*s_worldData.skyNodes), h_low);
 
@@ -2118,7 +2113,7 @@ static void R_LoadNodesAndLeafs(lump_t *nodeLump, lump_t *leafLump)
 			out->maxs[j] = LittleLong(in->maxs[j]);
 		}
 
-		// ydnar: surface bounds
+		// surface bounds
 		VectorCopy(out->mins, out->surfMins);
 		VectorCopy(out->maxs, out->surfMaxs);
 
@@ -2151,7 +2146,7 @@ static void R_LoadNodesAndLeafs(lump_t *nodeLump, lump_t *leafLump)
 			out->maxs[j] = LittleLong(inLeaf->maxs[j]);
 		}
 
-		// ydnar: surface bounds
+		// surface bounds
 		ClearBounds(out->surfMins, out->surfMaxs);
 
 		out->cluster = LittleLong(inLeaf->cluster);
@@ -2305,7 +2300,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 	s_worldData.fogs    = ri.Hunk_Alloc(s_worldData.numfogs * sizeof(*out), h_low);
 	out                 = s_worldData.fogs + 1;
 
-	// ydnar: reset global fog
+	// reset global fog
 	s_worldData.globalFog = -1;
 
 	if (!count)
@@ -2331,7 +2326,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 	{
 		out->originalBrushNumber = LittleLong(fogs->brushNum);
 
-		// ydnar: global fog has a brush number of -1, and no visible side
+		// global fog has a brush number of -1, and no visible side
 		if (out->originalBrushNumber == -1)
 		{
 			VectorSet(out->bounds[0], MIN_WORLD_COORD, MIN_WORLD_COORD, MIN_WORLD_COORD);
@@ -2344,7 +2339,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 				ri.Error(ERR_DROP, "fog brushNumber out of range");
 			}
 
-			// ydnar: find which bsp submodel the fog volume belongs to
+			// find which bsp submodel the fog volume belongs to
 			for (j = 0; j < s_worldData.numBModels; j++)
 			{
 				if (out->originalBrushNumber >= s_worldData.bmodels[j].firstBrush &&
@@ -2395,10 +2390,10 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 
 		out->parms = shader->fogParms;
 
-		// Arnout: colorInt is now set in the shader so we can modify it
+		// colorInt is now set in the shader so we can modify it
 		out->shader = shader;
 
-		// ydnar: global fog sets clearcolor/zfar
+		// global fog sets clearcolor/zfar
 		if (out->originalBrushNumber == -1)
 		{
 			s_worldData.globalFog = i + 1;
@@ -2409,7 +2404,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		// set the gradient vector
 		sideNum = LittleLong(fogs->visibleSide);
 
-		// ydnar: made this check a little more strenuous (was sideNum == -1)
+		// made this check a little more strenuous (was sideNum == -1)
 		if (sideNum < 0 || sideNum >= sidesCount)
 		{
 			out->hasSurface = qfalse;
@@ -2747,7 +2742,7 @@ void RE_LoadWorldMap(const char *name)
 		ri.Error(ERR_DROP, "RE_LoadWorldMap: %s not found", name);
 	}
 
-	// ydnar: set map meta dir for lightmaps
+	// set map meta dir for lightmaps
 	// THIS MUST BE IN SYNC WITH Q3MAP2
 	tr.worldDir = CopyString(name);
 	RE_StripExtensionForWorldDir(tr.worldDir, tr.worldDir);

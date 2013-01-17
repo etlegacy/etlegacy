@@ -330,7 +330,7 @@ breakOut:;
 	}
 
 #if 0
-	// TTimo: this is the chunk of code to ensure a behavior that meets TGA specs
+	// this is the chunk of code to ensure a behavior that meets TGA specs
 	// bit 5 set => top-down
 	if (targa_header.attributes & 0x20)
 	{

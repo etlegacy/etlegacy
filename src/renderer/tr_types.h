@@ -148,7 +148,7 @@ typedef struct
 
 	vec3_t fireRiseDir;
 
-	// Ridah, entity fading (gibs, debris, etc)
+	// entity fading (gibs, debris, etc)
 	int fadeStartTime, fadeEndTime;
 
 	float hilightIntensity;
@@ -268,7 +268,7 @@ typedef struct
 	char renderer_string[MAX_STRING_CHARS];
 	char vendor_string[MAX_STRING_CHARS];
 	char version_string[MAX_STRING_CHARS];
-	char extensions_string[MAX_STRING_CHARS * 4];   // TTimo - bumping, some cards have a big extension string
+	char extensions_string[MAX_STRING_CHARS * 4];   // bumping, some cards have a big extension string
 	                                                // no need to increase MAX_STRING_CHARS *4 - console doesn't print more
 
 	int maxTextureSize;                             // queried from GL
@@ -312,7 +312,7 @@ typedef struct
 } glconfig_t;
 
 // =========================================
-// Gordon, these MUST NOT exceed the values for SHADER_MAX_VERTEXES/SHADER_MAX_INDEXES
+// these MUST NOT exceed the values for SHADER_MAX_VERTEXES/SHADER_MAX_INDEXES
 #define MAX_PB_VERTS    1025
 #define MAX_PB_INDICIES (MAX_PB_VERTS * 6)
 

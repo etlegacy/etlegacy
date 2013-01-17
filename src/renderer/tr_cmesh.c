@@ -202,7 +202,7 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 		// multiple LODs exist, so compute projected bounding sphere
 		// and use that as a criteria for selecting LOD
 
-		// RF, checked for a forced lowest LOD
+		// checked for a forced lowest LOD
 		if (ent->e.reFlags & REFLAG_FORCE_LOD)
 		{
 			return (tr.currentModel->numLods - 1);
@@ -402,6 +402,7 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 			if (ent->e.renderfx & RF_BLINK)
 			{
 				char *s = va("%s_b", surface->name);   // append '_b' for 'blink'
+
 				hash = Com_HashKey(s, strlen(s));
 				for (j = 0 ; j < skin->numSurfaces ; j++)
 				{

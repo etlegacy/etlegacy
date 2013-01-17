@@ -42,7 +42,7 @@ int gl_filter_max = GL_LINEAR;
 #define FILE_HASH_SIZE      4096
 static image_t *hashTable[FILE_HASH_SIZE];
 
-// Ridah, in order to prevent zone fragmentation, all images will
+// in order to prevent zone fragmentation, all images will
 // be read into this buffer. In order to keep things as fast as possible,
 // we'll give it a starting value, which will account for the majority of
 // images, but allow it to grow if the buffer isn't big enough
@@ -899,7 +899,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	{
 		noCompress = qtrue;
 	}
-	// RF, if the shader hasn't specifically asked for it, don't allow compression
+	// if the shader hasn't specifically asked for it, don't allow compression
 	if (r_ext_compressed_textures->integer == 2 && (tr.allowCompress != qtrue))
 	{
 		noCompress = qtrue;
@@ -908,7 +908,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	{
 		noCompress = qtrue;
 	}
-	// ydnar: don't compress textures smaller or equal to 128x128 pixels
+	// don't compress textures smaller or equal to 128x128 pixels
 	else if ((width * height) <= (128 * 128))
 	{
 		noCompress = qtrue;
@@ -921,7 +921,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 	image = tr.images[tr.numImages] = R_CacheImageAlloc(sizeof(image_t));
 
-	// ydnar: ok, let's try the recommended way
+	// ok, let's try the recommended way
 	qglGenTextures(1, &image->texnum);
 
 	tr.numImages++;
@@ -1104,7 +1104,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 
 	hash = generateHashValue(name);
 
-	// Ridah, caching
+	// caching
 	if (r_cacheGathering->integer)
 	{
 		ri.Cmd_ExecuteText(EXEC_NOW, va("cache_usedfile image %s %i %i %i\n", name, mipmap, allowPicmip, glWrapClampMode));
@@ -1135,9 +1135,9 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 		}
 	}
 
-	// Ridah, check the cache
-	// TTimo: assignment used as truth value
-	// ydnar: don't do this for lightmaps
+	// check the cache
+	// - assignment used as truth value
+	// - don't do this for lightmaps
 	if (!lightmap)
 	{
 		image = R_FindCachedImage(name, hash);
@@ -1154,12 +1154,12 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 		return NULL;
 	}
 
-	// Arnout: apply lightmap colouring
+	// apply lightmap colouring
 	if (lightmap)
 	{
 		R_ProcessLightmap(pic, 4, width, height, pic);
 
-		// ydnar: no texture compression
+		// no texture compression
 		if (lightmap)
 		{
 			allowCompress = tr.allowCompress;
@@ -1175,7 +1175,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 
 	image = R_CreateImage(( char * ) name, pic, width, height, mipmap, allowPicmip, glWrapClampMode);
 
-	// ydnar: no texture compression
+	// no texture compression
 	if (lightmap)
 	{
 		tr.allowCompress = allowCompress;
@@ -1286,8 +1286,8 @@ R_CreateFogImage
 ================
 */
 #define FOG_S       16
-#define FOG_T       16  // ydnar: used to be 32
-                        // arnout: yd changed it to 256, changing to 16
+#define FOG_T       16  //  used to be 32
+
 static void R_CreateFogImage(void)
 {
 	int   x, y, alpha;
@@ -1297,7 +1297,7 @@ static void R_CreateFogImage(void)
 	// allocate table for image
 	data = ri.Hunk_AllocateTempMemory(FOG_S * FOG_T * 4);
 
-	// ydnar: new, linear fog texture generating algo for GL_CLAMP_TO_EDGE (OpenGL 1.2+)
+	// new, linear fog texture generating algo for GL_CLAMP_TO_EDGE (OpenGL 1.2+)
 
 	// S is distance, T is depth
 	for (x = 0 ; x < FOG_S ; x++)
@@ -1547,7 +1547,7 @@ void R_InitImages(void)
 	// create default texture and white texture
 	R_CreateBuiltinImages();
 
-	// Ridah, load the cache media, if they were loaded previously, they'll be restored from the backupImages
+	// load the cache media, if they were loaded previously, they'll be restored from the backupImages
 	R_LoadCacheImages();
 }
 
@@ -1766,7 +1766,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 			}
 
 			surf = bmodel->firstSurface + surfnum;
-			// RF, check for null shader (can happen on func_explosive's with botclips attached)
+			// check for null shader (can happen on func_explosive's with botclips attached)
 			if (!surf->shader)
 			{
 				return 0;
@@ -2005,7 +2005,7 @@ void R_SkinList_f(void)
 }
 
 //==========================================================================================
-// Ridah, caching system
+// caching system
 
 static int     numBackupImages = 0;
 static image_t *backupHashTable[FILE_HASH_SIZE];
@@ -2021,7 +2021,7 @@ void *R_CacheImageAlloc(int size)
 {
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
-		return malloc(size);    // ri.Z_Malloc causes load times about twice as long?... Gordon
+		return malloc(size);    // ri.Z_Malloc causes load times about twice as long?
 	}
 	else
 	{
@@ -2158,7 +2158,7 @@ void R_PurgeBackupImages(int purgeCount)
 	for (i = lastPurged; i < FILE_HASH_SIZE; )
 	{
 		lastPurged = i;
-		// TTimo: assignment used as truth value
+		// assignment used as truth value
 		if ((image = backupHashTable[i]))
 		{
 			// kill it

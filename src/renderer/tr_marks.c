@@ -574,7 +574,7 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 	//vec3_t            bestCenter; // center point projected onto the closest surface
 	//float texCoordScale;
 	//float         dot;
-	int      numPoints  = 4;        // Ridah, we were only ever passing in 4, so I made this local and used the parameter for the orientation
+	int      numPoints  = 4;        // we were only ever passing in 4, so I made this local and used the parameter for the orientation
 	qboolean oldMapping = qfalse;
 
 	//increment view count for double check prevention
@@ -860,7 +860,7 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 						// flag this surface as already having computed ST's
 						fragmentBuffer[returnedFragments - 1].numPoints *= -1;
 
-						// Ridah, calculate ST's
+						// calculate ST's
 						for (j = 0 ; j < (returnedPoints - oldNumPoints) ; j++)
 						{
 							VectorSubtract((float *)pointBuffer + 5 * (oldNumPoints + j), newCenter, delta);

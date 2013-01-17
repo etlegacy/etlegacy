@@ -120,7 +120,7 @@ void R_DlightBmodel(bmodel_t *bmodel)
 	{
 		dl = &tr.refdef.dlights[i];
 
-		// ydnar: parallel dlights affect all entities
+		// parallel dlights affect all entities
 		if (!(dl->flags & REF_DIRECTED_DLIGHT))
 		{
 			// see if the point is close enough to the bounds to matter
@@ -145,7 +145,7 @@ void R_DlightBmodel(bmodel_t *bmodel)
 		mask |= 1 << i;
 	}
 
-	// (SA) isn't this dangerous to do to an enumerated type? (setting it to an int)
+	// isn't this dangerous to do to an enumerated type? (setting it to an int)
 	//		meaning, shouldn't ->needDlights be changed to an int rather than a qbool?
 
 	tr.currentEntity->needDlights = mask;
@@ -294,7 +294,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 
 		VectorMA(direction, factor, normal, direction);
 
-		// ydnar: test code
+		// test code
 		//%	if( strstr( tr.models[ ent->e.hModel ]->name, ".mdm" ) && i == 0 )
 		//%		ri.Printf( PRINT_ALL, "lat: %3d lng: %3d dir: %2.3f %2.3f %2.3f\n",
 		//%			data[ 7 ], data[ 8 ], normal[ 0 ], normal[ 1 ], normal[ 2 ] );
@@ -322,7 +322,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 
 	VectorNormalize2(direction, ent->lightDir);
 
-	// ydnar: debug hack
+	// debug hack
 	//%	VectorSubtract( vec3_origin, direction, ent->lightDir );
 }
 
@@ -497,8 +497,8 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 		LogLight(ent);
 	}
 
-	// ydnar: test code
-	//%	VectorClear( ent->ambientLight );
+	// test code
+	//VectorClear( ent->ambientLight );
 
 	// save out the byte packet version
 	((byte *)&ent->ambientLightInt)[0] = (int)(ent->ambientLight[0]);
@@ -506,7 +506,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 	((byte *)&ent->ambientLightInt)[2] = (int)(ent->ambientLight[2]);
 	((byte *)&ent->ambientLightInt)[3] = 0xff;
 
-	// ydnar: save out the light table
+	// save out the light table
 	d           = 0.0f;
 	entityLight = (byte *) ent->entityLightInt;
 	modulate    = 1.0f / (ENTITY_LIGHT_STEPS - 1);
@@ -522,8 +522,8 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 		entityLight += 4;
 	}
 
-	// ydnar: test code
-	//%	VectorSet( lightDir, 0, 0, 1 );
+	// test code
+	//VectorSet( lightDir, 0, 0, 1 );
 
 	// transform the direction to local space
 	VectorNormalize(lightDir);
@@ -531,17 +531,17 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 	ent->lightDir[1] = DotProduct(lightDir, ent->e.axis[1]);
 	ent->lightDir[2] = DotProduct(lightDir, ent->e.axis[2]);
 
-	// ydnar: renormalize if necessary
+	// renormalize if necessary
 	if (ent->e.nonNormalizedAxes)
 	{
 		VectorNormalize(ent->lightDir);
 	}
 
-	// ydnar: test code
-	//%	if( strstr( tr.models[ ent->e.hModel ]->name, ".mdm" ) )
-	//%		ri.Printf( PRINT_ALL, "vec: %f %f %f   localvec: %f %f %f\n",
-	//%			lightDir[ 0 ], lightDir[ 1 ], lightDir[ 2 ],
-	//%			ent->lightDir[ 0 ], ent->lightDir[ 1 ], ent->lightDir[ 2 ] );
+	// test code
+	//if( strstr( tr.models[ ent->e.hModel ]->name, ".mdm" ) )
+	//	ri.Printf( PRINT_ALL, "vec: %f %f %f   localvec: %f %f %f\n",
+	//		lightDir[ 0 ], lightDir[ 1 ], lightDir[ 2 ],
+	//		ent->lightDir[ 0 ], ent->lightDir[ 1 ], ent->lightDir[ 2 ] );
 }
 
 /*

@@ -652,7 +652,7 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 	tHeight = maxs[1] - mins[1] + 1;
 	sWidth  = maxs[0] - mins[0] + 1;
 
-	// ydnar: overflow check
+	// overflow check
 	RB_CHECKOVERFLOW((maxs[0] - mins[0]) * (maxs[1] - mins[1]), (sWidth - 1) * (tHeight - 1) * 6);
 
 	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t <= maxs[1] + HALF_SKY_SUBDIVISIONS; t++)

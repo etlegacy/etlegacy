@@ -149,7 +149,7 @@ The given surface is going to be drawn, and it touches a leaf
 that is touched by one or more dlights, so try to throw out
 more dlights if possible.
 
- ydnar: made this use generic surface
+ made this use generic surface
 ====================
 */
 static int R_DlightSurface(msurface_t *surface, int dlightBits)
@@ -163,7 +163,7 @@ static int R_DlightSurface(msurface_t *surface, int dlightBits)
 	// get generic surface
 	gen = (srfGeneric_t *) surface->data;
 
-	// ydnar: made surface dlighting generic, inline with q3map2 surface classification
+	// made surface dlighting generic, inline with q3map2 surface classification
 	switch ((surfaceType_t) *surface->data)
 	{
 	case SF_FACE:
@@ -434,7 +434,7 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 */
 
 /*
-R_AddLeafSurfaces() - ydnar
+R_AddLeafSurfaces()
 adds a leaf's drawsurfaces
 */
 static void R_AddLeafSurfaces(mnode_t *node, int dlightBits, int decalBits)
@@ -560,7 +560,7 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 				}
 			}
 
-			// ydnar: farplane culling
+			// farplane culling
 			if (planeBits & 16)
 			{
 				r = BoxOnPlaneSide(node->mins, node->maxs, &tr.viewParms.frustum[4]);
@@ -868,7 +868,7 @@ void R_AddWorldSurfaces(void)
 		// perform frustum culling and add all the potentially visible surfaces
 		R_RecursiveWorldNode(tr.world->nodes, 255, tr.refdef.dlightBits, tr.refdef.decalBits);
 
-		// ydnar: add decal surfaces
+		// add decal surfaces
 		R_AddDecalSurfaces(tr.world->bmodels);
 	}
 

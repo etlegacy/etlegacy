@@ -827,7 +827,7 @@ void RB_CalcWaveAlpha(const waveForm_t *wf, unsigned char *dstColors)
 	int   v;
 	float glow;
 
-	// ydnar: added alphaGen noise support
+	// added alphaGen noise support
 	if (wf->func == GF_NOISE)
 	{
 		glow = wf->base + R_NoiseGet4f(0, 0, 0, (tess.shaderTime + wf->phase) * wf->frequency) * wf->amplitude;
@@ -853,7 +853,7 @@ void RB_CalcModulateAlphasByFog(unsigned char *colors)
 	int   i;
 	float f, texCoords[SHADER_MAX_VERTEXES][2];
 
-	// ydnar: no world, no fogging
+	// no world, no fogging
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		return;
@@ -894,7 +894,7 @@ void RB_CalcModulateColorsByFog(unsigned char *colors)
 	int   i;
 	float f, texCoords[SHADER_MAX_VERTEXES][2];
 
-	// ydnar: no world, no fogging
+	// no world, no fogging
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		return;
@@ -939,7 +939,7 @@ void RB_CalcModulateRGBAsByFog(unsigned char *colors)
 	int   i;
 	float f, texCoords[SHADER_MAX_VERTEXES][2];
 
-	// ydnar: no world, no fogging
+	// no world, no fogging
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		return;
@@ -1002,7 +1002,7 @@ void RB_CalcFogTexCoords(float *st)
 	vec4_t   fogSurface, fogDistanceVector, fogDepthVector;
 	bmodel_t *bmodel;
 
-	// Gordon: rarrrrr, stop stupid msvc debug thing
+	// rarrrrr, stop stupid msvc debug thing
 	fogDepthVector[0] = 0;
 	fogDepthVector[1] = 0;
 	fogDepthVector[2] = 0;
@@ -1031,14 +1031,14 @@ void RB_CalcFogTexCoords(float *st)
 	fogDistanceVector[3] *= fog->shader->fogParms.tcScale * 1.0;
 
 	// offset view origin by fog brush origin (fixme: really necessary?)
-	//%	VectorSubtract( backEnd.orientation.viewOrigin, bmodel->origin[ backEnd.smpFrame ], viewOrigin );
+	//VectorSubtract( backEnd.orientation.viewOrigin, bmodel->origin[ backEnd.smpFrame ], viewOrigin );
 	VectorCopy(backEnd.orientation.viewOrigin, viewOrigin);
 
 	// offset fog surface
 	VectorCopy(fog->surface, fogSurface);
 	fogSurface[3] = fog->surface[3] + DotProduct(fogSurface, bmodel->orientation[backEnd.smpFrame].origin);
 
-	// ydnar: general fog case
+	// general fog case
 	if (fog->originalBrushNumber >= 0)
 	{
 		float    s, t;
@@ -1083,14 +1083,14 @@ void RB_CalcFogTexCoords(float *st)
 				t += eyeT;
 			}
 
-			//%	t *= fog->shader->fogParms.tcScale;
+			//t *= fog->shader->fogParms.tcScale;
 
 			st[0] = s;
 			st[1] = t;
 			st   += 2;
 		}
 	}
-	// ydnar: optimized for level-wide fogging
+	// optimized for level-wide fogging
 	else
 	{
 		// calculate density for each point
@@ -1118,7 +1118,7 @@ void RB_CalcEnvironmentTexCoords(float *st)
 	normal = tess.normal[0].v;
 	VectorCopy(backEnd.orientation.viewOrigin, viewOrigin);
 
-	// ydnar: origin of entity affects its environment map (every 256 units)
+	// origin of entity affects its environment map (every 256 units)
 	// this is similar to racing game hacks where the env map seems to move
 	// as the car passes through the world
 	sAdjust = VectorLength(backEnd.orientation.origin) * 0.00390625;
@@ -1128,7 +1128,7 @@ void RB_CalcEnvironmentTexCoords(float *st)
 	tAdjust = backEnd.orientation.origin[2] * 0.00390625;
 	tAdjust = 0.5 - (tAdjust - floor(tAdjust));
 
-	// ydnar: the final reflection vector must be converted into world-space again
+	// the final reflection vector must be converted into world-space again
 	// we just assume here that all transformations are rotations, so the inverse
 	// of the transform matrix (the 3x3 part) is just the transpose
 	// additionally, we don't need all 3 rows, so we just calculate 2
@@ -1378,7 +1378,7 @@ RB_CalcDiffuseColor
     The basic vertex lighting calc
 */
 
-// ydnar: faster, table-based version of this function
+// faster, table-based version of this function
 // saves about 1-2ms per frame on my machine with 64 x 1000 triangle models in scene
 void RB_CalcDiffuseColor(unsigned char *colors)
 {
@@ -1400,9 +1400,9 @@ void RB_CalcDiffuseColor(unsigned char *colors)
 	{
 		dp = (int)(ENTITY_LIGHT_STEPS * DotProduct(normal, lightDir));
 
-		// ydnar: enable this for twosided lighting
-		//%	if( tess.shader->cullType == CT_TWO_SIDED )
-		//%		dp = fabs( dp );
+		// enable this for twosided lighting
+		//if( tess.shader->cullType == CT_TWO_SIDED )
+		//	dp = fabs( dp );
 
 		if (dp <= 0)
 		{

@@ -1171,11 +1171,11 @@ void R_Register(void)
 
 	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	AssertCvarRange(r_ext_multisample, 0, 4, qtrue);
-	r_overBrightBits = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);    // Arnout: disable overbrightbits by default
-	AssertCvarRange(r_overBrightBits, 0, 1, qtrue);                                     // ydnar: limit to overbrightbits 1 (sorry 1337 players)
-	r_ignorehwgamma     = ri.Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH);      // ydnar: use hw gamma by default
+	r_overBrightBits = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);    // disable overbrightbits by default
+	AssertCvarRange(r_overBrightBits, 0, 1, qtrue);                                     // limit to overbrightbits 1 (sorry 1337 players)
+	r_ignorehwgamma     = ri.Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH);      // use hw gamma by default
 	r_mode              = ri.Cvar_Get("r_mode", "4", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_oldMode           = ri.Cvar_Get("r_oldMode", "", CVAR_ARCHIVE);                     // ydnar: previous "good" video mode
+	r_oldMode           = ri.Cvar_Get("r_oldMode", "", CVAR_ARCHIVE);                     // previous "good" video mode
 	r_fullscreen        = ri.Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_noborder          = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE);
 	r_customwidth       = ri.Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1190,7 +1190,7 @@ void R_Register(void)
 	r_showSmp = ri.Cvar_Get("r_showSmp", "0", CVAR_CHEAT);
 #endif
 	r_stereoEnabled  = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_ignoreFastPath = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH);    // ydnar: use fast path by default
+	r_ignoreFastPath = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH);    // use fast path by default
 	r_greyscale      = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	// temporary latched variables that can only change over a restart
@@ -1204,7 +1204,7 @@ void R_Register(void)
 	r_lodCurveError = ri.Cvar_Get("r_lodCurveError", "250", CVAR_ARCHIVE);
 	r_lodbias       = ri.Cvar_Get("r_lodbias", "0", CVAR_ARCHIVE);
 	r_flares        = ri.Cvar_Get("r_flares", "1", CVAR_ARCHIVE);
-	r_znear         = ri.Cvar_Get("r_znear", "3", CVAR_CHEAT); // ydnar: changed it to 3 (from 4) because of lean/fov cheats
+	r_znear         = ri.Cvar_Get("r_znear", "3", CVAR_CHEAT); // changed it to 3 (from 4) because of lean/fov cheats
 	AssertCvarRange(r_znear, 0.001f, 200, qtrue);
 	r_zfar = ri.Cvar_Get("r_zfar", "0", CVAR_CHEAT);
 

@@ -61,7 +61,7 @@ typedef unsigned int glIndex_t;
 // a trRefEntity_t has all the information passed in by
 // the client game, as well as some locally derived info
 
-// ydnar: optimizing diffuse lighting calculation with a table lookup
+// optimizing diffuse lighting calculation with a table lookup
 #define ENTITY_LIGHT_STEPS      16
 
 typedef struct
@@ -181,7 +181,7 @@ typedef enum
 	AGEN_SKIP,
 	AGEN_ENTITY,
 	AGEN_ONE_MINUS_ENTITY,
-	AGEN_NORMALZFADE,   // Ridah
+	AGEN_NORMALZFADE,
 	AGEN_VERTEX,
 	AGEN_ONE_MINUS_VERTEX,
 	AGEN_LIGHTING_SPECULAR,
@@ -290,7 +290,7 @@ typedef struct
 
 } texModInfo_t;
 
-// RF increased this for onfire animation
+// increased this for onfire animation
 #define MAX_IMAGE_ANIMATIONS    16
 
 // FIXME: change the is* qbooleans to a type index
@@ -401,7 +401,7 @@ typedef struct shader_s
 
 	float portalRange;                  // distance to fog out at
 
-	vec4_t distanceCull;                // ydnar: opaque alpha range for foliage (inner, outer, alpha threshold, 1/(outer-inner))
+	vec4_t distanceCull;                // opaque alpha range for foliage (inner, outer, alpha threshold, 1/(outer-inner))
 
 	int multitextureEnv;                // 0, GL_MODULATE, GL_ADD (FIXME: put in stage)
 
@@ -458,7 +458,7 @@ typedef struct dlight_s
 	vec3_t origin;
 	vec3_t color;                   // range from 0.0 to 1.0, should be color normalized
 	float radius;
-	float radiusInverseCubed;       // ydnar: attenuation optimization
+	float radiusInverseCubed;       // attenuation optimization
 	float intensity;                // 1.0 = fullbright, > 1.0 = overbright
 	shader_t *shader;
 	int flags;
@@ -585,7 +585,7 @@ typedef struct
 	int viewportX, viewportY, viewportWidth, viewportHeight;
 	float fovX, fovY;
 	float projectionMatrix[16];
-	cplane_t frustum[5];            // ydnar: added farplane
+	cplane_t frustum[5];            // added farplane
 	vec3_t visBounds[2];
 	float zFar;
 
@@ -894,7 +894,7 @@ typedef struct mnode_s
 	int contents;                   // -1 for nodes, to differentiate from leafs
 	int visframe;                   // node needs to be traversed if current
 	vec3_t mins, maxs;              // for bounding box culling
-	vec3_t surfMins, surfMaxs;      // ydnar: bounding box including surfaces
+	vec3_t surfMins, surfMaxs;      // bounding box including surfaces
 	struct mnode_s *parent;
 
 	// node specific
@@ -1317,7 +1317,7 @@ extern cvar_t *r_dynamiclight;          // dynamic lights enabled/disabled
 extern cvar_t *r_norefresh;             // bypasses the ref rendering
 extern cvar_t *r_drawentities;          // disable/enable entity rendering
 extern cvar_t *r_drawworld;             // disable/enable world rendering
-extern cvar_t *r_drawfoliage;           // ydnar: disable/enable foliage rendering
+extern cvar_t *r_drawfoliage;           // disable/enable foliage rendering
 extern cvar_t *r_speeds;                // various levels of information display
 extern cvar_t *r_detailTextures;        // enables/disables detail texturing stages
 extern cvar_t *r_novis;                 // disable/enable usage of PVS

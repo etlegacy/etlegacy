@@ -49,11 +49,11 @@ int r_firstScenePoly;
 
 int r_numpolyverts;
 
-// Gordon: TESTING
+// TESTING
 int r_firstScenePolybuffer;
 int r_numpolybuffers;
 
-// ydnar: decals
+// decals
 int r_firstSceneDecalProjector;
 int r_numDecalProjectors;
 int r_firstSceneDecal;
@@ -101,11 +101,11 @@ void R_ToggleSmpFrame(void)
 
 	r_numpolyverts = 0;
 
-	// Gordon: TESTING
+	// TESTING
 	r_numpolybuffers       = 0;
 	r_firstScenePolybuffer = 0;
 
-	// ydnar: decals
+	// decals
 	r_numDecalProjectors       = 0;
 	r_firstSceneDecalProjector = 0;
 	r_numDecals                = 0;
@@ -432,14 +432,14 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 
 	r_numentities++;
 
-	// ydnar: add projected shadows for this model
-	// Arnout: casting const away
+	// add projected shadows for this model
+	// - casting const away
 	R_AddModelShadow((refEntity_t *) ent);
 }
 
 /*
 RE_AddLightToScene()
-    ydnar: modified dlight system to support seperate radius and intensity
+    modified dlight system to support seperate radius and intensity
 */
 void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
@@ -451,7 +451,7 @@ void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r
 		return;
 	}
 
-	// RF, allow us to force some dlights under all circumstances
+	// allow us to force some dlights under all circumstances
 	if (!(flags & REF_FORCE_DLIGHT))
 	{
 		if (r_dynamiclight->integer == 0)

@@ -149,9 +149,8 @@ int c_blockedOnMain;
 
 void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
-	renderCommandList_t *cmdList;
+	renderCommandList_t *cmdList = &backEndData[tr.smpFrame]->commands;
 
-	cmdList = &backEndData[tr.smpFrame]->commands;
 	assert(cmdList);
 	// add an end-of-list command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
@@ -246,9 +245,7 @@ render thread if needed.
 */
 void *R_GetCommandBuffer(int bytes)
 {
-	renderCommandList_t *cmdList;
-
-	cmdList = &backEndData[tr.smpFrame]->commands;
+	renderCommandList_t *cmdList = &backEndData[tr.smpFrame]->commands;
 
 	// always leave room for the swap buffers and end of list commands
 	if (cmdList->used + bytes + (sizeof(swapBuffersCommand_t) + sizeof(int)) > MAX_RENDER_COMMANDS)

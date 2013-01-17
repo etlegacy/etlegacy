@@ -41,7 +41,7 @@ static shaderStage_t stages[MAX_SHADER_STAGES];
 static shader_t      shader;
 static texModInfo_t  texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
 
-// ydnar: these are here because they are only referenced while parsing a shader
+// these are here because they are only referenced while parsing a shader
 static char       implicitMap[MAX_QPATH];
 static unsigned   implicitStateBits;
 static cullType_t implicitCullType;
@@ -1077,7 +1077,6 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			{
 				stage->alphaGen = AGEN_ONE_MINUS_ENTITY;
 			}
-			// Ridah
 			else if (!Q_stricmp(token, "normalzfade"))
 			{
 				stage->alphaGen = AGEN_NORMALZFADE;
@@ -1226,7 +1225,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		}
 	}
 
-	// ydnar: if shader stage references a lightmap, but no lightmap is present
+	// if shader stage references a lightmap, but no lightmap is present
 	// (vertex-approximated surfaces), then set cgen to vertex
 	if (stage->bundle[0].isLightmap && shader.lightmapIndex < 0 &&
 	    stage->bundle[0].image[0] == tr.whiteImage)
@@ -1990,13 +1989,13 @@ static qboolean ParseShader(char **text)
 
 			continue;
 		}
-		// Ridah, allow disable fog for some shaders
+		// allow disable fog for some shaders
 		else if (!Q_stricmp(token, "nofog"))
 		{
 			shader.noFog = qtrue;
 			continue;
 		}
-		// RF, allow each shader to permit compression if available
+		// allow each shader to permit compression if available
 		else if (!Q_stricmp(token, "allowcompress"))
 		{
 			tr.allowCompress = qtrue;
@@ -2037,7 +2036,7 @@ static qboolean ParseShader(char **text)
 			}
 			continue;
 		}
-		// ydnar: distancecull <opaque distance> <transparent distance> <alpha threshold>
+		// distancecull <opaque distance> <transparent distance> <alpha threshold>
 		else if (!Q_stricmp(token, "distancecull"))
 		{
 			int i;
@@ -2075,7 +2074,7 @@ static qboolean ParseShader(char **text)
 			ParseSort(text);
 			continue;
 		}
-		// ydnar: implicit default mapping to eliminate redundant/incorrect explicit shader stages
+		// implicit default mapping to eliminate redundant/incorrect explicit shader stages
 		else if (!Q_stricmpn(token, "implicit", 8))
 		{
 			// set implicit mapping state
@@ -2118,7 +2117,7 @@ static qboolean ParseShader(char **text)
 	}
 
 	// ignore shaders that don't have any stages, unless it is a sky or fog
-	// ydnar: or have implicit mapping
+	// or have implicit mapping
 	if (s == 0 && !shader.isSky && !(shader.contentFlags & CONTENTS_FOG) && implicitMap[0] == '\0')
 	{
 		return qfalse;
@@ -2159,7 +2158,7 @@ static void ComputeStageIteratorFunc(void)
 		return;
 	}
 
-	// ydnar: stages with tcMods can't be fast-pathed
+	// stages with tcMods can't be fast-pathed
 	if (stages[0].bundle[0].numTexMods != 0 ||
 	    stages[0].bundle[1].numTexMods != 0)
 	{
@@ -2516,12 +2515,12 @@ static shader_t *GeneratePermanentShader(void)
 		return tr.defaultShader;
 	}
 
-	// Ridah, caching system
+	// caching system
 	newShader = R_CacheShaderAlloc(shader.lightmapIndex < 0 ? va("%s lm: %i", shader.name, shader.lightmapIndex) : NULL, sizeof(shader_t));
 
 	*newShader = shader;
 
-	if (shader.sort <= SS_SEE_THROUGH)      // ydnar: was SS_DECAL, this allows grates to be fogged
+	if (shader.sort <= SS_SEE_THROUGH)      // was SS_DECAL, this allows grates to be fogged
 	{
 		newShader->fogPass = FP_EQUAL;
 	}
@@ -2542,10 +2541,10 @@ static shader_t *GeneratePermanentShader(void)
 	{
 		if (!stages[i].active)
 		{
-			newShader->stages[i] = NULL;    // Ridah, make sure it's null
+			newShader->stages[i] = NULL;    // make sure it's null
 			break;
 		}
-		// Ridah, caching system
+		// caching system
 		newShader->stages[i] = R_CacheShaderAlloc(NULL, sizeof(stages[i]));
 
 		*newShader->stages[i] = stages[i];
@@ -2559,7 +2558,7 @@ static shader_t *GeneratePermanentShader(void)
 				continue;
 			}
 			size = newShader->stages[i]->bundle[b].numTexMods * sizeof(texModInfo_t);
-			// Ridah, caching system
+			// caching system
 			newShader->stages[i]->bundle[b].texMods = R_CacheShaderAlloc(NULL, size);
 
 			memcpy(newShader->stages[i]->bundle[b].texMods, stages[i].bundle[b].texMods, size);
@@ -2682,7 +2681,7 @@ static void VertexLightingCollapse(void)
 #endif // 0
 
 /*
-SetImplicitShaderStages() - ydnar
+SetImplicitShaderStages()
 sets a shader's stages to one of several defaults
 */
 static void SetImplicitShaderStages(image_t *image)
@@ -2875,7 +2874,7 @@ static shader_t *FinishShader(void)
 			{
 				pStage->adjustColorsForFog = ACFF_MODULATE_RGBA;
 			}
-			// ydnar: zero + blended alpha, one + blended alpha
+			// zero + blended alpha, one + blended alpha
 			else if (blendSrcBits == GLS_SRCBLEND_SRC_ALPHA || blendDstBits == GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA)
 			{
 				pStage->adjustColorsForFog = ACFF_MODULATE_ALPHA;
@@ -2932,7 +2931,7 @@ static shader_t *FinishShader(void)
 	// determine which stage iterator function is appropriate
 	ComputeStageIteratorFunc();
 
-	// RF default back to no compression for next shader
+	// default back to no compression for next shader
 	if (r_ext_compressed_textures->integer == 2)
 	{
 		tr.allowCompress = qfalse;
@@ -3126,7 +3125,7 @@ static char *FindShaderInShaderText(const char *shadername)
 		}
 	}
 
-	// Ridah, optimized shader loading
+	// optimized shader loading
 	if (r_cacheShaders->integer)
 	{
 		/*if (strstr( shadername, "/" ) && !strstr( shadername, "." ))*/ {
@@ -3233,7 +3232,7 @@ shader_t *R_FindShaderByName(const char *name)
 
 /*
 ===============
-R_FindLightmap - ydnar
+R_FindLightmap
 given a (potentially erroneous) lightmap index, attempts to load
 an external lightmap image and/or sets the index to a valid number
 ===============
@@ -3327,7 +3326,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 		return tr.defaultShader;
 	}
 
-	// ydnar: validate lightmap index
+	// validate lightmap index
 	R_FindLightmap(&lightmapIndex);
 
 	COM_StripExtension(name, strippedName, sizeof(strippedName));
@@ -3341,7 +3340,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	{
 		// index by name
 
-		// ydnar: the original way was correct
+		// the original way was correct
 		if (sh->lightmapIndex == lightmapIndex &&
 		    !Q_stricmp(sh->name, strippedName))
 		{
@@ -3349,7 +3348,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 			return sh;
 		}
 
-		// Ridah, modified this so we don't keep trying to load an invalid lightmap shader
+		// modified this so we don't keep trying to load an invalid lightmap shader
 #if 0
 		if (((sh->lightmapIndex == lightmapIndex) || (sh->lightmapIndex < 0 && lightmapIndex >= 0)) &&
 		    !Q_stricmp(sh->name, strippedName))
@@ -3384,9 +3383,9 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	}
 #endif
 
-	// Ridah, check the cache
+	// check the cache
 	// assignment used as truth value
-	// ydnar: don't cache shaders using lightmaps
+	// - don't cache shaders using lightmaps
 	if (lightmapIndex < 0)
 	{
 		sh = R_FindCachedShader(strippedName, lightmapIndex, hash);
@@ -3412,7 +3411,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	shader.needsST2    = qtrue;
 	shader.needsColor  = qtrue;
 
-	// ydnar: default to no implicit mappings
+	// default to no implicit mappings
 	implicitMap[0]    = '\0';
 	implicitStateBits = GLS_DEFAULT;
 	implicitCullType  = CT_FRONT_SIDED;
@@ -3436,7 +3435,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 			return sh;
 		}
 
-		// ydnar: allow implicit mappings
+		// allow implicit mappings
 		if (implicitMap[0] == '\0')
 		{
 			sh = FinishShader();
@@ -3444,7 +3443,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 		}
 	}
 
-	// ydnar: allow implicit mapping ('-' = use shader name)
+	// allow implicit mapping ('-' = use shader name)
 	if (implicitMap[0] == '\0' || implicitMap[0] == '-')
 	{
 		Q_strncpyz(fileName, name, sizeof(fileName));
@@ -3455,7 +3454,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	}
 	COM_DefaultExtension(fileName, sizeof(fileName), ".tga");
 
-	// ydnar: implicit shaders were breaking nopicmip/nomipmaps
+	// implicit shaders were breaking nopicmip/nomipmaps
 	if (!mipRawImage)
 	{
 		shader.noMipMaps = qtrue;
@@ -3473,7 +3472,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 		return FinishShader();
 	}
 
-	// ydnar: set default stages (removing redundant code)
+	// set default stages (removing redundant code)
 	SetImplicitShaderStages(image);
 
 	return FinishShader();
@@ -3527,7 +3526,7 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 	shader.needsST2    = qtrue;
 	shader.needsColor  = qtrue;
 
-	// ydnar: set default stages (removing redundant code)
+	// set default stages (removing redundant code)
 	SetImplicitShaderStages(image);
 
 	sh = FinishShader();
@@ -3761,7 +3760,7 @@ void R_ShaderList_f(void)
 	ri.Printf(PRINT_ALL, "------------------\n");
 }
 
-// Ridah, optimized shader loading
+// optimized shader loading
 
 #define MAX_SHADER_STRING_POINTERS  100000
 shaderStringPointer_t shaderStringPointerList[MAX_SHADER_STRING_POINTERS];
@@ -3824,7 +3823,7 @@ static void BuildShaderChecksumLookup(void)
 			shaderChecksumLookup[checksum].next = newStrPtr;
 		}
 
-		// Gordon: skip the actual shader section
+		// skip the actual shader section
 		SkipBracedSection(&p);
 	}
 }
@@ -3880,7 +3879,7 @@ static void ScanAndLoadShaderFiles(void)
 	// build single large buffer
 	s_shaderText = ri.Hunk_Alloc(sum + numShaders * 2, h_low);
 
-	// Gordon: optimised to not use strcat/strlen which can be VERY slow for the large strings we're using here
+	// optimised to not use strcat/strlen which can be VERY slow for the large strings we're using here
 	p = s_shaderText;
 	// free in reverse order, so the temp files are all dumped
 	for (i = numShaders - 1; i >= 0 ; i--)
@@ -3892,13 +3891,13 @@ static void ScanAndLoadShaderFiles(void)
 		p         += buffersize[i];
 	}
 
-	// ydnar: unixify all shaders
+	// unixify all shaders
 	COM_FixPath(s_shaderText);
 
 	// free up memory
 	ri.FS_FreeFileList(shaderFiles);
 
-	// Ridah, optimized shader loading (18ms on a P3-500 for sfm1.bsp)
+	// optimized shader loading (18ms on a P3-500 for sfm1.bsp)
 	if (r_cacheShaders->integer)
 	{
 		BuildShaderChecksumLookup();
@@ -3941,7 +3940,7 @@ static void CreateExternalShaders(void)
 }
 
 //=============================================================================
-// Ridah, shader caching
+// shader caching
 static int      numBackupShaders = 0;
 static shader_t *backupShaders[MAX_SHADERS];
 static shader_t *backupHashTable[FILE_HASH_SIZE];
@@ -4118,7 +4117,7 @@ void R_BackupShaders(void)
 
 	numBackupShaders = tr.numShaders;
 
-	// Gordon: ditch all lightmapped shaders
+	// ditch all lightmapped shaders
 	R_PurgeLightmapShaders();
 
 	//Com_Printf( "Backing up %i images\n", numBackupShaders );

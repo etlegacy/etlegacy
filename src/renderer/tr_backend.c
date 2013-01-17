@@ -538,7 +538,7 @@ void RB_BeginDrawingView(void)
 
 				qglClearColor(glfogsettings[FOG_CURRENT].color[0], glfogsettings[FOG_CURRENT].color[1], glfogsettings[FOG_CURRENT].color[2], glfogsettings[FOG_CURRENT].color[3]);
 			}
-			else if (!(r_portalsky->integer)) // ydnar: portal skies have been manually turned off, clear bg color
+			else if (!(r_portalsky->integer)) // portal skies have been manually turned off, clear bg color
 			{
 				clearBits |= GL_COLOR_BUFFER_BIT;
 				qglClearColor(0.5, 0.5, 0.5, 1.0);
