@@ -378,10 +378,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	gclient_t *client;
 	gitem_t   *item = NULL;
 	gentity_t *ent;
-	int       contents     = 0, i, killer = ENTITYNUM_WORLD;
-	char      *killerName  = "<world>";
-	qboolean  nogib        = qtrue;
-	qboolean  killedintank = qfalse;
+	int       contents        = 0, i, killer = ENTITYNUM_WORLD;
+	char      *killerName     = "<world>";
+	qboolean  nogib           = qtrue;
+	qboolean  killedintank    = qfalse;
+	qboolean  dieFromSameTeam = OnSameTeam(self, attacker) || (attacker->client && self->client->sess.sessionTeam == inflictor->s.teamNum);
 
 	//G_Printf( "player_die\n" );
 
@@ -411,7 +412,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			self->client->pers.playerStats.suicides++;
 		}
 	}
-	else if (OnSameTeam(self, attacker))
+	else if (dieFromSameTeam)
 	{
 		G_LogTeamKill(attacker, weap);
 	}
@@ -429,7 +430,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		}
 	}
 
-	if (!OnSameTeam(self, attacker))
+	if (!dieFromSameTeam)
 	{
 		self->isProp = qfalse;  // were we teamkilled or not?
 	}
@@ -576,7 +577,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	if (attacker && attacker->client)
 	{
-		if (attacker == self || OnSameTeam(self, attacker))
+		if (attacker == self || dieFromSameTeam)
 		{
 			// Complaint lodging
 			if (attacker != self && level.warmupTime <= 0 && g_gamestate.integer == GS_PLAYING)
