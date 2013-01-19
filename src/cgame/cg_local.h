@@ -1366,9 +1366,10 @@ typedef struct
 	//qhandle_t   shardCeramic1; // implement this ?
 	//qhandle_t   shardCeramic2;
 
-	qhandle_t shardRubble1;
-	qhandle_t shardRubble2;
-	qhandle_t shardRubble3;
+	// see cgs.media.debBlock
+	//qhandle_t shardRubble1;
+	//qhandle_t shardRubble2;
+	//qhandle_t shardRubble3;
 
 
 	qhandle_t shardJunk[MAX_LOCKER_DEBRIS];

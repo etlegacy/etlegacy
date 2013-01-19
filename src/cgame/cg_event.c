@@ -1764,17 +1764,19 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 
 			if (rval == 1)
 			{
-				re->hModel = cgs.media.shardRubble1;
+				//re->hModel = cgs.media.shardRubble1;
+				re->hModel = cgs.media.debBlock[0];
 			}
 			else if (rval == 2)
 			{
-				re->hModel = cgs.media.shardRubble2;
+				//re->hModel = cgs.media.shardRubble2;
+				re->hModel = cgs.media.debBlock[1];
 			}
 			else
 			{
-				re->hModel = cgs.media.shardRubble3;
+				//re->hModel = cgs.media.shardRubble3;
+				re->hModel = cgs.media.debBlock[2];
 			}
-
 		}
 		else
 		{

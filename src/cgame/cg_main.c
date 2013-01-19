@@ -1707,9 +1707,10 @@ static void CG_RegisterGraphics(void)
 	//  cgs.media.shardCeramic1 = trap_R_RegisterModel( "models/shards/ceramic1.md3" );
 	//  cgs.media.shardCeramic2 = trap_R_RegisterModel( "models/shards/ceramic2.md3" );
 
-	cgs.media.shardRubble1 = trap_R_RegisterModel("models/mapobjects/debris/brick000.md3");
-	cgs.media.shardRubble2 = trap_R_RegisterModel("models/mapobjects/debris/brick001.md3");
-	cgs.media.shardRubble3 = trap_R_RegisterModel("models/mapobjects/debris/brick002.md3");
+	// see see cgs.media.debBlock
+	//cgs.media.shardRubble1 = trap_R_RegisterModel("models/mapobjects/debris/brick000.md3");
+	//cgs.media.shardRubble2 = trap_R_RegisterModel("models/mapobjects/debris/brick001.md3");
+	//cgs.media.shardRubble3 = trap_R_RegisterModel("models/mapobjects/debris/brick002.md3");
 
 	for (i = 0; i < MAX_LOCKER_DEBRIS; i++)
 	{
