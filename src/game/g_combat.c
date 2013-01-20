@@ -605,8 +605,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 							    !(meansOfDeath == MOD_MORTAR && (g_disableComplaints.integer & TKFL_MORTAR)))
 							{
 								trap_SendServerCommand(self - g_entities, va("complaint %i", attacker->s.number));
-								self->client->pers.complaintClient  = attacker->s.clientNum;
-								self->client->pers.complaintEndTime = level.time + 20500;
+								if (meansOfDeath != MOD_DYNAMITE || !(inflictor->etpro_misc_1 & 1))   // do not allow complain when tked by dynamite on objective
+								{
+									self->client->pers.complaintClient  = attacker->s.clientNum;
+									self->client->pers.complaintEndTime = level.time + 20500;
+								}
 							}
 						}
 					}
