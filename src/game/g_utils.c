@@ -78,12 +78,11 @@ const char *BuildShaderStateConfig()
 	static char buff[MAX_STRING_CHARS * 4];
 	char        out[(MAX_QPATH * 2) + 5];
 	int         i;
+	int         i1, i2;
 
 	memset(buff, 0, MAX_STRING_CHARS);
 	for (i = 0; i < remapCount; i++)
 	{
-		int i1, i2;
-
 		i1 = G_ShaderIndex(remappedShaders[i].oldShader);
 		i2 = G_ShaderIndex(remappedShaders[i].newShader);
 
@@ -314,7 +313,7 @@ gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 	return NULL;
 }
 
-// digibob: this version should be used for loops, saves the constant hash building
+// this version should be used for loops, saves the constant hash building
 gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash)
 {
 	gentity_t *max = &g_entities[level.num_entities];
@@ -799,8 +798,6 @@ Adds an event+parm and twiddles the event counter
 */
 void G_AddEvent(gentity_t *ent, int event, int eventParm)
 {
-	//int bits;
-
 	if (!event)
 	{
 		G_Printf("G_AddEvent: zero event added for entity %i\n", ent->s.number);
@@ -814,13 +811,6 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 		ent->client->ps.events[ent->client->ps.eventSequence & (MAX_EVENTS - 1)]     = event;
 		ent->client->ps.eventParms[ent->client->ps.eventSequence & (MAX_EVENTS - 1)] = eventParm;
 		ent->client->ps.eventSequence++;
-
-		// commented out
-		//bits = ent->client->ps.externalEvent & EV_EVENT_BITS;
-		//bits = ( bits + EV_EVENT_BIT1 ) & EV_EVENT_BITS;
-		//ent->client->ps.externalEvent = event | bits;
-		//ent->client->ps.externalEventParm = eventParm;
-		//ent->client->ps.externalEventTime = level.time;
 	}
 	else
 	{
@@ -828,12 +818,6 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 		ent->s.events[ent->s.eventSequence & (MAX_EVENTS - 1)]     = event;
 		ent->s.eventParms[ent->s.eventSequence & (MAX_EVENTS - 1)] = eventParm;
 		ent->s.eventSequence++;
-
-		// commented out
-		//bits = ent->s.event & EV_EVENT_BITS;
-		//bits = ( bits + EV_EVENT_BIT1 ) & EV_EVENT_BITS;
-		//ent->s.event = event | bits;
-		//ent->s.eventParm = eventParm;
 	}
 	ent->eventTime   = level.time;
 	ent->r.eventTime = level.time;
@@ -883,7 +867,6 @@ void G_AnimScriptSound(int soundIndex, vec3_t org, int client)
 
 //==============================================================================
 
-
 /*
 ================
 G_SetOrigin
@@ -923,7 +906,6 @@ void G_SetAngle(gentity_t *ent, vec3_t angle)
 	VectorClear(ent->s.apos.trDelta);
 
 	VectorCopy(angle, ent->r.currentAngles);
-	//VectorCopy (ent->s.angles, ent->s.apos.trDelta );
 }
 
 /*
@@ -1006,9 +988,7 @@ int DebugLine(vec3_t start, vec3_t end, int color)
 
 	VectorCopy(start, points[0]);
 	VectorCopy(start, points[1]);
-	//points[1][2] -= 2;
 	VectorCopy(end, points[2]);
-	//points[2][2] -= 2;
 	VectorCopy(end, points[3]);
 
 
@@ -1051,7 +1031,8 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 
 	switch (state)
 	{
-	case STATE_DEFAULT:             if (ent->entstate == STATE_UNDERCONSTRUCTION)
+	case STATE_DEFAULT:
+		if (ent->entstate == STATE_UNDERCONSTRUCTION)
 		{
 			ent->clipmask   = ent->realClipmask;
 			ent->r.contents = ent->realContents;
@@ -1144,9 +1125,10 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 		}
 
 		break;
-	case STATE_UNDERCONSTRUCTION:   ent->entstate = STATE_UNDERCONSTRUCTION;
-		ent->s.powerups                           = STATE_UNDERCONSTRUCTION;
-		ent->realClipmask                         = ent->clipmask;
+	case STATE_UNDERCONSTRUCTION:
+		ent->entstate     = STATE_UNDERCONSTRUCTION;
+		ent->s.powerups   = STATE_UNDERCONSTRUCTION;
+		ent->realClipmask = ent->clipmask;
 		if (ent->s.eType != ET_CONSTRUCTIBLE)                               // don't make nonsolid as we want to make them partially solid for staged construction
 		{
 			ent->clipmask = 0;
@@ -1160,8 +1142,7 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 		{
 			ent->realNonSolidBModel = qtrue;
 		}
-		else
-		if (ent->s.eType != ET_CONSTRUCTIBLE)
+		else if (ent->s.eType != ET_CONSTRUCTIBLE)
 		{
 			ent->s.eFlags |= EF_NONSOLID_BMODEL;
 		}
@@ -1188,7 +1169,8 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 
 		trap_LinkEntity(ent);
 		break;
-	case STATE_INVISIBLE:           if (ent->entstate == STATE_UNDERCONSTRUCTION)
+	case STATE_INVISIBLE:
+		if (ent->entstate == STATE_UNDERCONSTRUCTION)
 		{
 			ent->clipmask   = ent->realClipmask;
 			ent->r.contents = ent->realContents;
@@ -1565,7 +1547,8 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 {
 	switch (ent->s.eType)
 	{
-	case ET_PLAYER:     if (ent->client)
+	case ET_PLAYER:
+		if (ent->client)
 		{
 			return(ent->client->sess.sessionTeam);
 		}
@@ -1575,7 +1558,8 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 		}
 		break;
 	case ET_MISSILE:
-	case ET_GENERAL:    switch (ent->methodOfDeath)
+	case ET_GENERAL:
+		switch (ent->methodOfDeath)
 		{
 		case MOD_GRENADE_LAUNCHER:
 		case MOD_GRENADE_PINEAPPLE:
@@ -1593,12 +1577,14 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 			return ent->s.teamNum % 4;
 		}
 		break;
-	case ET_MOVER:      if (!Q_stricmp(ent->classname, "script_mover"))
+	case ET_MOVER:
+		if (!Q_stricmp(ent->classname, "script_mover"))
 		{
 			return ent->s.teamNum;
 		}
 		break;
-	case ET_CONSTRUCTIBLE:  return ent->s.teamNum;
+	case ET_CONSTRUCTIBLE:
+		return ent->s.teamNum;
 		break;
 	case ET_MG42_BARREL:
 		return G_GetTeamFromEntity(&g_entities[ent->r.ownerNum]);
