@@ -376,13 +376,12 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 {
 	weapon_t  weap = BG_WeaponForMOD(meansOfDeath);
 	gclient_t *client;
-	gitem_t   *item = NULL;
-	gentity_t *ent;
+	gitem_t   *item           = NULL;
 	int       contents        = 0, i, killer = ENTITYNUM_WORLD;
 	char      *killerName     = "<world>";
 	qboolean  nogib           = qtrue;
 	qboolean  killedintank    = qfalse;
-	qboolean  dieFromSameTeam = OnSameTeam(self, attacker) || (attacker->client && self->client->sess.sessionTeam == inflictor->s.teamNum);
+	qboolean  dieFromSameTeam = OnSameTeam(self, attacker) || (attacker->client && self->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor));
 
 	//G_Printf( "player_die\n" );
 
@@ -542,12 +541,16 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 #endif
 
-	// broadcast the death event to everyone
-	ent                    = G_TempEntity(self->r.currentOrigin, EV_OBITUARY);
-	ent->s.eventParm       = meansOfDeath;
-	ent->s.otherEntityNum  = self->s.number;
-	ent->s.otherEntityNum2 = killer;
-	ent->r.svFlags         = SVF_BROADCAST; // send to everyone
+	{
+		// broadcast the death event to everyone
+		gentity_t *ent = G_TempEntity(self->r.currentOrigin, EV_OBITUARY);
+
+		ent->s.eventParm       = meansOfDeath;
+		ent->s.otherEntityNum  = self->s.number;
+		ent->s.otherEntityNum2 = killer;
+		ent->s.teamNum         = inflictorTeam;
+		ent->r.svFlags         = SVF_BROADCAST; // send to everyone
+	}
 
 	self->enemy = attacker;
 
@@ -703,7 +706,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		}
 	}
 
-	// FIXME: inspect: does this make sense? we have that wantscore thingy
 	Cmd_Score_f(self);          // show scores
 
 	// send updated scores to any clients that are following this one,
@@ -726,7 +728,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			Cmd_Score_f(g_entities + level.sortedClients[i]);
 		}
 	}
-	// END FIXME
 
 	self->takedamage = qtrue;   // can still be gibbed
 	self->r.contents = CONTENTS_CORPSE;
@@ -1278,8 +1279,11 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		{
 			if (!OnSameTeam(attacker, targ))
 			{
-				targ->client->combatState     |= (1 << COMBATSTATE_DAMAGERECEIVED);
-				attacker->client->combatState |= (1 << COMBATSTATE_DAMAGEDEALT);
+				targ->client->combatState |= (1 << COMBATSTATE_DAMAGERECEIVED);
+				if (attacker->client->sess.sessionTeam != TEAM_SPECTATOR)
+				{
+					attacker->client->combatState |= (1 << COMBATSTATE_DAMAGEDEALT);
+				}
 			}
 		}
 	}
@@ -1485,7 +1489,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		knockback *= 0.5;
 	}
 
-	if (targ->client && g_friendlyFire.integer && OnSameTeam(targ, attacker))
+	if (targ->client && g_friendlyFire.integer && (OnSameTeam(targ, attacker) || (attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))))
 	{
 		knockback = 0;
 	}
@@ -1543,7 +1547,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	{
 		// if TF_NO_FRIENDLY_FIRE is set, don't do damage to the target
 		// if the attacker was on the same team
-		if (targ != attacker && OnSameTeam(targ, attacker))
+		if (targ != attacker && (OnSameTeam(targ, attacker) || (targ->client && attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))))
 		{
 			if ((g_gamestate.integer != GS_PLAYING && match_warmupDamage.integer == 1))
 			{
@@ -1559,7 +1563,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// add to the attacker's hit counter
 	if (attacker->client && targ != attacker && targ->health > 0)
 	{
-		if (OnSameTeam(targ, attacker))
+		if (OnSameTeam(targ, attacker) || (targ->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor)))
 		{
 			attacker->client->ps.persistant[PERS_HITS] -= damage;
 		}
