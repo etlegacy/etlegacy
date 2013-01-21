@@ -548,7 +548,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		ent->s.eventParm       = meansOfDeath;
 		ent->s.otherEntityNum  = self->s.number;
 		ent->s.otherEntityNum2 = killer;
-		ent->s.teamNum         = inflictorTeam;
 		ent->r.svFlags         = SVF_BROADCAST; // send to everyone
 	}
 
