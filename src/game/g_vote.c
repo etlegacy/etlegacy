@@ -831,7 +831,7 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 				// - There is a flag for so let the users decide
 				//   Some log parsers require LogExit
 				AP("chat \"^3*** Nextmap vote passed - vote a new map! ***\"");
-				LogExit("Nextmap vote passed");
+				G_LogExit("Nextmap vote passed");
 			}
 			else
 			{

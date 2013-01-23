@@ -3175,14 +3175,10 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
-/*
-================
-LogExit
-
-Append information about this game to the log file
-================
-*/
-void LogExit(const char *string)
+/**
+ * @brief Append information about this game to the log file
+ */
+void G_LogExit(const char *string)
 {
 	int       i;
 	gclient_t *cl;
@@ -3590,7 +3586,7 @@ void CheckExitRules(void)
 				// if team was eliminated < 3 sec before round end, we _properly_ end it here
 				if (level.teamEliminateTime)
 				{
-					LogExit(va("%s team eliminated.", level.lmsWinningTeam == TEAM_ALLIES ? "Axis" : "Allied"));
+					G_LogExit(va("%s team eliminated.", level.lmsWinningTeam == TEAM_ALLIES ? "Axis" : "Allied"));
 				}
 
 				if (axisSurvivors == alliedSurvivors)
@@ -3601,7 +3597,7 @@ void CheckExitRules(void)
 						trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 						Info_SetValueForKey(cs, "winner", "0");
 						trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
-						LogExit("Axis team wins by drawing First Blood.");
+						G_LogExit("Axis team wins by drawing First Blood.");
 						trap_SendServerCommand(-1, "print \"Axis team wins by drawing First Blood.\n\"");
 					}
 					else if (level.firstbloodTeam == TEAM_ALLIES)
@@ -3609,7 +3605,7 @@ void CheckExitRules(void)
 						trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 						Info_SetValueForKey(cs, "winner", "1");
 						trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
-						LogExit("Allied team wins by drawing First Blood.");
+						G_LogExit("Allied team wins by drawing First Blood.");
 						trap_SendServerCommand(-1, "print \"Allied team wins by drawing First Blood.\n\"");
 					}
 					else
@@ -3623,7 +3619,7 @@ void CheckExitRules(void)
 					trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 					Info_SetValueForKey(cs, "winner", "0");
 					trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
-					LogExit("Axis team has the most survivors.");
+					G_LogExit("Axis team has the most survivors.");
 					trap_SendServerCommand(-1, "print \"Axis team has the most survivors.\n\"");
 					return;
 				}
@@ -3632,7 +3628,7 @@ void CheckExitRules(void)
 					trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 					Info_SetValueForKey(cs, "winner", "1");
 					trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
-					LogExit("Allied team has the most survivors.");
+					G_LogExit("Allied team has the most survivors.");
 					trap_SendServerCommand(-1, "print \"Allied team has the most survivors.\n\"");
 					return;
 				}
@@ -3660,7 +3656,7 @@ void CheckExitRules(void)
 			}
 
 			trap_SendServerCommand(-1, "print \"Timelimit hit.\n\"");
-			LogExit("Timelimit hit.");
+			G_LogExit("Timelimit hit.");
 
 			return;
 		}
@@ -3690,7 +3686,7 @@ void CheckExitRules(void)
 		}
 		else if (level.teamEliminateTime + 3000 < level.time)
 		{
-			LogExit(va("%s team eliminated.", level.lmsWinningTeam == TEAM_ALLIES ? "Axis" : "Allied"));
+			G_LogExit(va("%s team eliminated.", level.lmsWinningTeam == TEAM_ALLIES ? "Axis" : "Allied"));
 		}
 		return;
 	}
@@ -3709,14 +3705,14 @@ void CheckExitRules(void)
 				trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 				Info_SetValueForKey(cs, "winner", "1");
 				trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
-				LogExit("Axis team eliminated.");
+				G_LogExit("Axis team eliminated.");
 			}
 			else if (level.numFinalDead[1] >= level.numTeamClients[1] && level.numTeamClients[1] > 0)
 			{
 				trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 				Info_SetValueForKey(cs, "winner", "0");
 				trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
-				LogExit("Allied team eliminated.");
+				G_LogExit("Allied team eliminated.");
 			}
 		}
 	}

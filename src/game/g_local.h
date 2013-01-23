@@ -1378,6 +1378,7 @@ char *ConcatArgs(int start);
 void FindIntermissionPoint(void);
 void G_RunThink(gentity_t *ent);
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
+void G_LogExit(const char *string);
 void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));

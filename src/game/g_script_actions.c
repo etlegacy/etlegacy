@@ -3660,9 +3660,6 @@ G_ScriptAction_EndRound
   syntax: wm_endround <>
 ===================
 */
-
-extern void LogExit(const char *string);
-
 qboolean G_ScriptAction_EndRound(gentity_t *ent, char *params)
 {
 	if (g_gamestate.integer == GS_INTERMISSION)
@@ -3670,7 +3667,7 @@ qboolean G_ScriptAction_EndRound(gentity_t *ent, char *params)
 		return qtrue;
 	}
 
-	LogExit("Wolf EndRound.");
+	G_LogExit("Wolf EndRound.");
 
 	return qtrue;
 }
