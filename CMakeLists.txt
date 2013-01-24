@@ -39,6 +39,7 @@ option(BUNDLED_SDL		"Use bundled SDL library instead of the system one."	OFF)
 option(BUNDLED_CURL		"Use bundled CURL library instead of the system one."	OFF)
 option(BUNDLED_JPEG		"Use bundled JPEG library instead of the system one."	OFF)
 option(BUNDLED_LUA		"Use bundled LUA library instead of the system one."	OFF)
+option(BUNDLED_OGG_VORBIS "Use bundled OGG library instead of the system one."	OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
 if(CMAKE_SYSTEM MATCHES "OpenBSD*")
@@ -245,7 +246,7 @@ if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 
 # Use bundled libraries
-if(BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA AND NOT MINGW)
+if(BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA OR FEATURE_OGG_VORBIS AND NOT MINGW)
 	if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
 		message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
 		add_subdirectory(libs)
@@ -259,7 +260,7 @@ if(BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA A
 		message(STATUS "and enable BUNDLED_* in CMake configuration.")
 		message(FATAL_ERROR "Build stopped because of missing libraries.")
 	endif()
-endif(BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA AND NOT MINGW)
+endif(BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA OR FEATURE_OGG_VORBIS AND NOT MINGW)
 
 #-----------------------------------------------------------------
 # Client features
@@ -332,9 +333,14 @@ if(BUILD_CLIENT)
 	endif(FEATURE_OPENAL)
 
 	if(FEATURE_OGG_VORBIS)
-		find_package(Vorbis REQUIRED)
-		list(APPEND CLIENT_LIBRARIES ${VORBIS_FILE_LIBRARY}) # This links only libvorbisfile
-		list(APPEND CLIENT_INCLUDE_DIRS ${VORBIS_INCLUDE_DIR})
+		if(NOT BUNDLED_OGG_VORBIS)
+			find_package(Vorbis REQUIRED)
+			list(APPEND CLIENT_LIBRARIES ${VORBIS_FILE_LIBRARY}) # This links only libvorbisfile
+			list(APPEND CLIENT_INCLUDE_DIRS ${VORBIS_INCLUDE_DIR})
+		else() # BUNDLED_OGG_VORBIS
+			list(APPEND CLIENT_LIBRARIES ${OGG_VORBIS_BUNDLED_LIBRARIES} ${OGG_BUNDLED_LIBRARIES})
+			list(APPEND CLIENT_INCLUDE_DIRS ${OGG_VORBIS_BUNDLED_INCLUDE_DIR} ${OGG_BUNDLED_INCLUDE_DIR})
+		endif()
 		add_definitions(-DFEATURE_OGG_VORBIS)
 	endif(FEATURE_OGG_VORBIS)
 
@@ -427,6 +433,9 @@ if(BUILD_CLIENT)
 	if(BUNDLED_JPEG)
 		add_dependencies(etl bundled_jpeg)
 	endif(BUNDLED_JPEG)
+	if(BUNDLED_OGG_VORBIS)
+		add_dependencies(etl bundled_ogg bundled_ogg_vorbis)
+	endif(BUNDLED_OGG_VORBIS)
 	target_link_libraries(etl
 		${OS_LIBRARIES} # Has to go after cURL and SDL
 		${CLIENT_LIBRARIES}
