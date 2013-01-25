@@ -707,7 +707,8 @@ int FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp)
 	fsh[f].handleSync         = qfalse;
 	if (!fsh[f].handleFiles.file.o)
 	{
-		// If fs_homepath == fs_basepath, don't bother
+		// If fs_homepath == fs_basepath, don't bother --- ET:L: we shouldn't have this case anymore
+		// FIXME: use FS_PathCmp() (slashes, low/big letters ... trailing slash)
 		if (Q_stricmp(fs_homepath->string, fs_basepath->string))
 		{
 			// search basepath
@@ -1238,7 +1239,6 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFI
 			l = strlen(filename);
 			if (fs_numServerPaks)
 			{
-
 				if (Q_stricmp(filename + l - 4, ".cfg")          // for config files
 				    && Q_stricmp(filename + l - 5, ".menu")      // menu files
 				    && Q_stricmp(filename + l - 5, ".game")      // menu files
@@ -1289,7 +1289,13 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFI
 		}
 	}
 
+	// FIXME: this output generates tons of false positive info
+	// see http://www.etlegacy.com/issues/5
+	// generic model/sound/asset loading causes this
+	// - add a function param qboolean silent
+	// - or delete this line and catch file not found (-1) when function is called
 	Com_DPrintf("Can't find %s\n", filename);
+
 #ifdef FS_MISSING
 	if (missingFiles)
 	{
@@ -1317,12 +1323,12 @@ int FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean un
 ==================
 FS_CL_ExtractFromPakFile
 
-NERVE - SMF - Extracts the latest file from a pak file.
+Extracts the latest file from a pak file.
 
 Compares packed file against extracted file. If no differences, does not copy.
 This is necessary for exe/dlls which may or may not be locked.
 
-NOTE TTimo:
+NOTE:
   fullpath gives the full OS path to the dll that will potentially be loaded
     on win32 it's always in fs_basepath/<fs_game>/
     on linux it can be in fs_homepath/<fs_game>/ or fs_basepath/<fs_game>/
@@ -1332,7 +1338,6 @@ NOTE TTimo:
   (i.e. either the right file was extracted successfully, or it was already present)
 
   cvar_lastVersion is the optional name of a CVAR_ARCHIVE used to store the wolf version for the last extracted .so
-  show_bug.cgi?id=463
 ==================
 */
 qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const char *filename)
@@ -1526,6 +1531,7 @@ returns 0 otherwise
 int FS_OSStatFile(char *ospath)
 {
 	struct _stat stat;
+
 	if (_stat(ospath, &stat) == -1)
 	{
 		return -1;
@@ -1540,6 +1546,7 @@ int FS_OSStatFile(char *ospath)
 int FS_OSStatFile(char *ospath)
 {
 	struct stat stat_buf;
+
 	if (stat(ospath, &stat_buf) == -1)
 	{
 		return -1;
@@ -1555,7 +1562,8 @@ int FS_OSStatFile(char *ospath)
 /*
 ==============
 FS_Delete
-TTimo - this was not in the 1.30 filesystem code
+
+This was not in the 1.30 filesystem code
 using fs_homepath for the file to remove
 ==============
 */
@@ -1623,6 +1631,7 @@ int FS_Read2(void *buffer, int len, fileHandle_t f)
 	if (fsh[f].streamed)
 	{
 		int r;
+
 		fsh[f].streamed = qfalse;
 		r               = FS_Read(buffer, len, f);
 		fsh[f].streamed = qtrue;
@@ -1827,6 +1836,7 @@ int FS_Seek(fileHandle_t f, long offset, int origin)
 	{
 		int  _origin;
 		FILE *file;
+
 		file = FS_FileForHandle(f);
 
 		switch (origin)
@@ -2383,7 +2393,6 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, char *filte
 				}
 				else
 				{
-
 					zpathLen = FS_ReturnPath(name, zpath, &depth);
 
 					if ((depth - pathDepth) > 2 || pathLength > zpathLen || Q_stricmpn(name, path, pathLength))
@@ -2804,6 +2813,9 @@ void FS_ConvertPath(char *s)
 FS_PathCmp
 
 Ignore case and separator char distinctions
+
+FIXME: deal with trailing slashes
+/aa/bb - /aa/bb/ returns not equal
 ===========
 */
 int FS_PathCmp(const char *s1, const char *s2)
@@ -2931,7 +2943,7 @@ void FS_Path_f(void)
 	{
 		if (s->pack)
 		{
-			//          Com_Printf( "%s %X (%i files)\n", s->pack->pakFilename, s->pack->checksum, s->pack->numfiles );
+			//Com_Printf( "%s %X (%i files)\n", s->pack->pakFilename, s->pack->checksum, s->pack->numfiles );
 			Com_Printf("    %s (%i files)\n", s->pack->pakFilename, s->pack->numfiles);
 			if (fs_numServerPaks)
 			{
@@ -3289,6 +3301,7 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring)
 						// remove a potentially malicious download file
 						// (this is also intended to avoid expansion of the pk3 into a file with different checksum .. messes up wwwdl chkfail)
 						char *rmv = FS_BuildOSPath(fs_homepath->string, va("%s.pk3", fs_serverReferencedPakNames[i]), "");
+
 						rmv[strlen(rmv) - 1] = '\0';
 						FS_Remove(rmv);
 					}
@@ -3425,7 +3438,8 @@ static void FS_Startup(const char *gameName)
 	homePath = Sys_DefaultHomePath(); // Returns My Documents path on windows now ex: C:\Users\username\Documents where also other games add their data
 	if (!homePath || !homePath[0])
 	{
-		homePath = fs_basepath->string;
+		//homePath = fs_basepath->string; // we do no longer support home == base
+		Com_Error(ERR_FATAL, "FS_Startup: Default home path is empty.\n");
 	}
 
 	fs_homepath = Cvar_Get("fs_homepath", homePath, CVAR_INIT);
@@ -3439,6 +3453,7 @@ static void FS_Startup(const char *gameName)
 	}
 
 	// fs_homepath is somewhat particular to *nix systems, only add if relevant
+	// - update: now fs_homepath is used for all system
 	// NOTE: same filtering below for mods and basegame
 	if (fs_basepath->string[0] && Q_stricmp(fs_homepath->string, fs_basepath->string))
 	{
@@ -3494,6 +3509,13 @@ static void FS_Startup(const char *gameName)
 	}
 #endif
 	Com_Printf("%d files in pk3 files\n", fs_packFiles);
+
+	// don't start if base == home
+	if (FS_PathCmp(fs_homepath->string, fs_basepath->string) == 0)
+	{
+		Com_Error(ERR_FATAL, "FS_Startup: fs_homepath and fs_basepath are identical - set different pathes!\n");
+		// Note: if both are same - crashlog.txt is written into (fs_homepath)
+	}
 }
 
 #if !defined(DO_LIGHT_DEDICATED)
@@ -4250,7 +4272,7 @@ void FS_InitFilesystem(void)
 	// if we can't find default.cfg, assume that the paths are
 	// busted and error out now, rather than getting an unreadable
 	// graphics screen when the font fails to load
-	// Arnout: we want the nice error message here as well
+	// - we want the nice error message here as well
 	if (FS_ReadFile("default.cfg", NULL) <= 0)
 	{
 		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg - I am missing essential files!\nVerify your installation and make sure genuine ET files\n- mp_bin.pk3\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' of fs_homepath.\n");
