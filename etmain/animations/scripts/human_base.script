@@ -1,4 +1,3 @@
-
 //==========================================================================
 //
 // Character Animation Script     M U L T I P L A Y E R
@@ -20,7 +19,9 @@ set weapons pistols = Luger AND Colt AND sp5 pistol AND Silenced Colt
 set weapons akimbo_pistols = Akimbo Luger AND Silenced Akimbo Luger AND Akimbo Colt AND Silenced Akimbo Colt
 set weapons machineguns = MP40 AND Thompson AND Sten AND Flamethrower AND panzerfaust AND Mobile MG42
 set weapons rifles = K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope
-set weapons throwables = dynamite weapon AND pineapple AND grenade AND Smoke Bomb
+// broke off dynamite, since we never want to throw it overhand
+set weapons throwables = pineapple AND grenade AND Smoke Bomb
+set weapons throwables_underhand = dynamite weapon
 
 set weapons one_handed_weapons = Luger AND Colt AND sp5 pistol AND Silenced Colt
 set weapons two_handed_weapons = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND K43 AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope
@@ -28,6 +29,7 @@ set weapons two_handed_weapons = MP40 AND Thompson AND Sten AND flamethrower AND
 set weapons all = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knife AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator
 set weapons all_one_handed_weapons = Luger AND Colt AND sp5 pistol AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knife AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge
 set weapons all_two_handed_weapons = MP40 AND Thompson AND Sten AND flamethrower AND panzerfaust AND Ammo Pack AND Medicheal AND gpg40 AND gpg40a AND m1 garand AND FG42 Paratroop Rifle AND Garand AND Satchel Charge AND Landmine AND Mobile MG42 AND K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG42 Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator
+
 // movetypes
 set movetype moving = walk AND walkcr AND walkcrbk AND walkbk AND run AND runbk AND straferight AND strafeleft
 set movetype crouching = idlecr AND walkcr AND walkcrbk
@@ -78,12 +80,10 @@ ANIMATIONS
 
 STATE RELAXED
 {
-
 }
 
 STATE ALERT
 {
-
 }
 
 STATE COMBAT
@@ -138,10 +138,6 @@ STATE COMBAT
 		{
 			both stand_medpack
 		}
-		//weapons Landmine
-		//{
-		//	both stand_grenade
-		//}
 		weapons Satchel Charge
 		{
 			both stand_medpack
@@ -154,7 +150,7 @@ STATE COMBAT
 		{
 			both stand_knife
 		}
-		weapons throwables
+		weapons throwables AND throwables_underhand
 		{
 			both stand_grenade
 		}
@@ -180,10 +176,6 @@ STATE COMBAT
 		{
 			legs stand_pistolB torso stand_akimbo
 		}
-//		weapons rifles, firing
-//		{
-//			legs firing_rifle torso stand_rifle
-//		}
 		weapons Garand
 		{
 			both stand_srifle
@@ -217,6 +209,10 @@ STATE COMBAT
 			both stand_rifle
 		}
 		weapons M1 Garand Scope
+		{
+			both stand_rifle
+		}
+		weapons FG42 Scope
 		{
 			both stand_rifle
 		}
@@ -355,7 +351,7 @@ STATE COMBAT
 		{
 			legs alert_crchidle_2h torso stand_machinegun
 		}
-		weapons throwables
+		weapons throwables AND throwables_underhand
 		{
 			legs alert_crchidle_1h torso stand_grenade
 		}
@@ -422,7 +418,7 @@ STATE COMBAT
 		{
 			both relaxed_walk_1h_1
 		}
-		weapons throwables
+		weapons throwables AND throwables_underhand
 		{
 			both relaxed_walk_1h_1
 		}
@@ -545,7 +541,7 @@ STATE COMBAT
 		{
 			both alert_bk_1h
 		}
-		weapons throwables
+		weapons throwables AND throwables_underhand
 		{
 			both alert_bk_1h
 		}
@@ -664,7 +660,7 @@ STATE COMBAT
 		{
 			both alert_crch_1h
 		}
-		weapons throwables
+		weapons throwables AND throwables_underhand
 		{
 			both alert_crch_1h
 		}
@@ -784,7 +780,7 @@ STATE COMBAT
 		{
 			both alert_crbk_1h
 		}
-		weapons throwables
+		weapons throwables AND throwables_underhand
 		{
 			both alert_crbk_1h
 		}
@@ -899,7 +895,7 @@ STATE COMBAT
 		{
 			both alert_run_1h
 		}
-		weapons throwables
+		weapons throwables AND throwables_underhand
 		{
 			both alert_run_no
 		}
@@ -1026,7 +1022,7 @@ STATE COMBAT
 		{
 			both alert_bk_1h
 		}
-		weapons throwables
+		weapons throwables AND throwables_underhand
 		{
 			both alert_bk_1h
 		}
@@ -1117,6 +1113,7 @@ STATE COMBAT
 		{
 			torso stand_binoculars legs alert_run_1h
 		}
+		
 		weapons smokeGrenade and binoculars
 		{
 			both alert_run_no
@@ -1145,7 +1142,7 @@ STATE COMBAT
 		{
 			both alert_run_1h
 		}
-		weapons throwables
+		weapons throwables AND throwables_underhand
 		{
 			both alert_run_no
 		}
@@ -1264,7 +1261,7 @@ STATE COMBAT
 		{
 			both alert_run_1h
 		}
-		weapons throwables
+		weapons throwables AND throwables_underhand
 		{
 			both alert_run_no
 		}
@@ -1447,7 +1444,7 @@ STATE COMBAT
 			{
 				legs prone_legs torso prone_poke_idle
 			}
-			weapons throwables
+			weapons throwables AND throwables_underhand
 			{
 				legs prone_legs torso prone_grenade_idle
 			}
@@ -1526,6 +1523,38 @@ STATE COMBAT
 			both prone_crawl_bk
 		}
 	}
+/* ETPro - FIXME: implement keyword 'NOT'	
+	turnright
+	{
+		// - fixed movetype condition, so reenabled crouch
+		// - nixing 'weapons machineguns' because we don't
+		// want to just slide with any weapon; adding mounted mg42
+		// so that we don't dance around in the tank
+		movetype idlecr, NOT mounted mg42
+		{
+			legs turn_crch_R
+		}
+		movetype idle, NOT mounted mg42
+		{
+			legs turn_machinegun_R
+		}
+
+	}
+	turnleft
+	{
+		// - fixed movetype condition, so reenabled crouch
+		// - nixing 'weapons machineguns' because we don't
+		// want to just slide with any weapon
+		movetype idlecr
+		{
+			legs turn_crch_L
+		}
+		movetype idle
+		{
+			legs turn_machinegun_R
+		}
+	}
+*/
 	turnright
 	{
 //JB 06/12/01
@@ -1552,6 +1581,7 @@ STATE COMBAT
 		}
 	}
 // DHM - 07/30/01  (even clients play #1, odd clients play #2)
+
 	fallen
 	{
 		default
@@ -1606,7 +1636,7 @@ fireweapon
 		torso firing_grenadeB
 	}
 // SATCHEL CHARGE DETONATOR
-	weapons Satchel Charge
+	weapons Satchel Charge Detonator
 	{
 		torso satchel_remote_fire
 	}
@@ -1616,13 +1646,14 @@ fireweapon
 		both firing_mg42
 	}
 // smokeGrenade
-	weapons smokeGrenade, movetype idle
+	// - support overhand throws for airstrike tags
+	weapons smokeGrenade, underhand
 	{
 		torso firing_grenadeB
 	}
-	weapons smokeGrenade, movetype run AND walk AND straferight AND strafeleft AND backstep AND turnleft AND turnright AND idlecr
+	weapons smokeGrenade
 	{
-		torso firing_grenadeB
+		torso firing_grenadeA
 	}
 // SATCHEL CHARGES
 	weapons Satchel Charge
@@ -1633,16 +1664,11 @@ fireweapon
 	{
 		torso satchel_remote_fire
 	}
-// AMMOPACK
+// AMMOPACK, LANDMINE
 	weapons Ammo Pack AND Landmine
 	{
 		torso firing_grenadeB
 	}
-// LANDMINE
-//	weapons Landmine
-//	{
-//		torso firing_grenadeB
-//	}
 // MEDICHEAL
 	weapons medicheal
 	{
@@ -1653,7 +1679,6 @@ fireweapon
 	{
 		torso firing_pliers
 	}
-
 // SYRINGE
 	weapons syringe, movetype walk AND turnleft AND turnright AND idlecr AND idle
 	{
@@ -1675,9 +1700,7 @@ fireweapon
 	{
 		torso firing_syringe
 	}
-
 // PANZERFAUST
-//jb-nerve added 7/24/01
 	weapons panzerfaust, movetype walk AND turnleft AND turnright AND idlecr AND idle
 	{
 		torso firing_panzer
@@ -1699,14 +1722,25 @@ fireweapon
 		torso firing_panzer
 	}
 // GRENADES
-	weapons throwables, movetype idle
+	// support overhand throws for grenades
+	weapons throwables, underhand
 	{
 		torso firing_grenadeB
 	}
-	weapons throwables, movetype run AND walk AND straferight AND strafeleft AND backstep AND turnleft AND turnright AND idlecr
+	weapons throwables
+	{
+		torso firing_grenadeA
+	}
+	// only dynamite is still handled here, always underhand
+	weapons throwables_underhand, movetype idle
 	{
 		torso firing_grenadeB
 	}
+	weapons throwables_underhand, movetype run AND walk AND straferight AND strafeleft AND backstep AND turnleft AND turnright AND idlecr
+	{
+		torso firing_grenadeB
+	}
+
 // KNIFE
 	weapons knife
 	{
@@ -1817,7 +1851,6 @@ fireweapon
 	{
 		torso firing_mobilemg42 duration 50
 	}
-
 // MACHINEGUNS
 	weapons machineguns, movetype straferight
 	{
@@ -2141,7 +2174,7 @@ fireweaponprone
 	{
 		torso prone_panzor_idle
 	}
-	weapons throwables
+	weapons throwables AND throwables_underhand
 	{
 		torso prone_grenade_fire
 	}
@@ -2207,7 +2240,7 @@ fireweaponprone
 	}
 	weapons FG42 Scope
 	{
-		torso prone_rifle_fire
+		torso e_prone_rifle_snipefire
 	}
 }
 
@@ -2269,7 +2302,7 @@ raiseweaponprone
 	{
 		torso prone_panzor_switch
 	}
-	weapons throwables
+	weapons throwables AND throwables_underhand
 	{
 		torso prone_grenade_switch
 	}
@@ -2333,7 +2366,6 @@ raiseweaponprone
 	{
 		torso e_prone_rifle_snipe
 	}
-
 }
 
 reloadprone
@@ -2366,18 +2398,10 @@ reloadprone
 	{
 		torso prone_poke_switch
 	}
-/*	weapons panzerfaust
-	{
-		torso firing_panzer
-	}*/
-	weapons throwables
+	weapons throwables AND throwables_underhand
 	{
 		torso prone_grenade_switch
 	}
-/*	weapons knife
-	{
-		torso firing_knifeA
-	}*/
 	weapons pistols
 	{
 		torso prone_pistol_reload
@@ -2542,7 +2566,7 @@ raiseweapon
 	{
 		torso raise_sniper
 	}
-	weapons throwables
+	weapons throwables AND throwables_underhand
 	{
 		torso raise_grenade
 	}
@@ -2928,25 +2952,6 @@ climbdismount
 		both climb_dis
 	}
 }
-
-/*inform_friendly_of_enemy
-{
-	enemy_team allies
-	{
-		sound infantryInformFriendlyOfEnemyAllies1
-		sound infantryInformFriendlyOfEnemyAllies2
-		sound infantryInformFriendlyOfEnemyGeneral1
-		sound infantryInformFriendlyOfEnemyGeneral2
-		sound infantryInformFriendlyOfEnemyGeneral3
-	}
-
-	default
-	{
-		sound infantryInformFriendlyOfEnemyGeneral1
-		sound infantryInformFriendlyOfEnemyGeneral2
-		sound infantryInformFriendlyOfEnemyGeneral3
-	}
-}*/
 
 DEATH
 {

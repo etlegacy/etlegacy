@@ -1,0 +1,283 @@
+		// <animation name>	<first frame> <length> <looping> <fps> <move speed> <transition> <reversed>
+
+		// deaths -- do not change the order!
+		death_machinegun_1	0	32	0	20	0	0	0
+		dead_machinegun_1	31	1	1	20	0	0	0
+		death_rifle_head_2	33	52	0	20	0	0	0
+		death_machinegun_2	0	32	0	20	0	0	0
+		dead_machinegun_2	31	1	1	20	0	0	0
+		death_gut			130	41	0	20	0	0	0
+		dead_gut			170	1	0	20	0	0	0
+		death_machinegun_3	31	1	1	20	0	0	0
+
+		wounded_idle_1		173	144	144	20	0	0	0
+
+		revive			320	47	0	15	0	0	0
+		stand_binoculars	370	57	57	15	0	0	0
+		stand_radio		430	110	110	15	0	0	0
+
+		pain_head		572	26	0	20	0	0	0
+		pain_chest		599	21	0	20	0	0	0
+		pain_gut		621	20	0	20	0	0	0
+		pain_groin		642	24	0	20	0	0	0
+		pain_shoulderR		667	15	0	20	0	0	0
+		pain_shoulderL		683	15	0	20	0	0	0
+		pain_kneeR		699	21	0	20	0	0	0
+		pain_kneeL		721	19	0	20	0	0	0
+		pain_daze		741	46	0	20	0	0	0
+		pain_fire		788	45	0	20	0	0	0
+		pain_cr_head		834	19	0	20	0	0	0
+		pain_cr_shoulderR	854	21	0	20	0	0	0
+		pain_cr_shoulderL	876	21	0	20	0	0	0
+
+		relaxed_idle_2h_1	898	195	195	15	0	0	0
+		relaxed_idle_1h_1	1093	1	1	15	0	0	0
+		relaxed_idle_no		1094	219	219	15	0	0	0
+		relaxed_walk_2h_1	1314	21	21	22	-1	0	0
+		relaxed_walk_2h_2	1336	101	101	25	-1	0	0
+		relaxed_walk_1h_1	1438	19	19	22	-1	0	0
+		relaxed_walk_1h_2	1458	96	96	22	-1	0	0
+		relaxed_walk_no		1555	77	77	22	-1	0	0
+
+		alert_idle_2h		1633	60	60	15	0	0	0
+		alert_idle_1h		1704	70	70	15	0	0	0
+
+		alert_walk_2h		1775	62	62	22	-1	0	0
+		alert_walk_1h		1838	41	41	22	-1	0	0
+
+		alert_run_2h		1880	13	13	22	-1	0	0
+		alert_run_1h		1894	12	12	22	-1	0	0
+		alert_run_no		1907	10	10	15	-1	0	0
+		alert_crch_2h		1918	13	13	22	-1	0	0
+		alert_crch_1h		1932	14	14	22	-1	0	0
+		alert_crchidle_2h	1947	50	50	7	0	0	0
+		alert_crchidle_1h	1998	15	15	5	0	0	0
+		alert_bk_2h		2014	10	10	22	-1	0	0
+		alert_bk_1h		2025	12	12	22	-1	0	0
+		alert_crbk_1h		2038	13	13	22	-1	0	0
+		alert_crbk_2h		2052	15	15	22	-1	0	0
+		alert_strafe_1h_R	2068	9	9	22	-1	0	0
+		alert_strafe_1h_L	2078	9	9	22	-1	0	0
+
+		firing_crch_2h		2088	3	13	22	-1	0	0
+		firing_crch_1h		2102	14	14	22	-1	0	0
+		firing_run_2h		2117	13	13	22	-1	0	0
+		firing_run_1h		2131	12	12	22	-1	0	0
+		firing_bk_2h		2144	10	10	22	-1	0	0
+		firing_bk_1h		2155	12	12	22	-1	0	0
+		firing_crbk_1h		2168	13	13	22	-1	0	0
+		firing_crbk_2h		2182	15	15	22	-1	0	0
+		firing_strafe_2h_R	2198	11	11	22	-1	0	0
+		firing_strafe_2h_L	2210	9	9	22	-1	0	0
+		firing_strafe_1h_R	2220	9	9	22	-1	0	0
+		firing_strafe_1h_L	2230	9	9	22	-1	0	0
+
+		raise_machinegun	2240	13	0	20	0	0	0
+		stand_machinegun	2253	35	35	20	0	0	0
+		firing_machinegun	2288	18	18	20	0	0	0
+		reload_machinegun	2306	43	0	20	0	0	0
+		reload_machinegun_cr	2350	42	0	20	0	0	0
+
+		raise_pistolA		2393	11	0	20	0	0	0
+		raise_pistolB		2405	11	0	20	0	0	0
+		stand_pistolA		2417	24	24	10	0	0	0
+		firing_pistolA_1	2442	9	0	20	0	0	0
+		firing_pistolA_2	2451	9	0	20	0	0	0
+		reload_pistol		2485	28	0	30	0	0	0
+		reload_pistol_cr	2514	36	0	30	0	0	0
+		stand_pistolB		2577	22	22	7	0	0	0
+		firing_pistolB_1	2551	12	0	30	0	50	0
+		firing_pistolB_2	2563	13	0	30	0	50	0
+								
+		raise_rifle		2600	22	0	20	0	0	0
+		stand_rifle		2623	12	12	5	0	0	0
+		firing_rifle		2636	22	0	20	0	0	0
+		reload_rifle		2659	42	0	30	0	0	0
+
+		firing_rifle2		2288	3	0	20	0	0	0
+
+		raise_grenade		2702	25	0	20	0	0	0
+		stand_grenade		2734	24	24	10	0	0	0
+		firing_grenadeB		2788	15	0	20	0	0	0
+		firing_grenadeA		2838	24	0	20	0	0	0
+
+		stand_mg42		2863	1	1	15	0	0	0
+		firing_mg42		2865	6	0	15	0	0	0
+		turn_L_mg42		2872	16	16	30	0	0	0
+		turn_R_mg42		2889	16	16	15	0	0	0
+
+		raise_knife		2906	25	0	20	0	0	0
+		stand_knife		2932	16	16	10	0	0	0
+		firing_knifeA		2959	10	10	30	0	0	0
+
+		drop			2975	5	0	20	0	0	0
+		
+		climb_up		2981	21	21	20	-1	0	0
+		climb_dis		3003	31	0	20	0	0	0
+		climb_start		3035	46	0	20	0	0	0
+		climb_down		3082	28	28	20	-1	0	0
+
+		jump_1step_2h		3111	11	0	20	0	0	0
+		jump_1step_1h		3131	11	0	20	0	0	0
+		jump_nostep_1h		3152	16	0	16	0	0	0
+
+		swim_2h			3169	30	30	20	0	0	0
+		swim_1h			3200	33	33	20	0	0	0
+
+		turn_1h_R		3234	24	24	30	0	0	0
+		turn_machinegun_R	3259	19	19	40	0	0	0
+		turn_crch_R		3279	13	13	15	0	0	0
+		turn_crch_L		3293	13	13	15	0	0	0
+
+		medic_revive		3315	60	60	15	0	0	0
+		eng_hammer_firing	3380	13	13	15	0	0	0
+		eng_construction	3395	11	11	15	0	0	0
+
+		raise_panzer		3420	13	0	20	0	0	0
+		stand_panzer		3434	31	31	20	0	0	0
+		firing_panzer		3469	17	17	20	0	0	0
+		reload_panzer		3487	33	0	20	0	0	0
+
+		raise_binoculars	3525	10	0	20	0	0	0
+		firing_pliers		3540	20	0	20	0	0	0
+		firing_syringe		3565	20	0	20	0	0	0
+		raise_medpack		3590	10	0	20	0	0	0
+		stand_medpack		3605	30	30	20	0	0	0
+
+		run_medpack		3640	12	12	20	0	0	0
+		raise_sniper		3660	5	0	20	0	0	0
+
+		alert_run_srifle	3670	13	13	22	-1	0	0
+		alert_crch_srifle	3690	13	13	22	-1	0	0
+		alert_crchidle_srifle	3710	50	50	7	0	0	0
+		alert_bk_srifle		3765	10	10	22	-1	0	0
+		alert_crbk_srifle	3780	15	15	22	-1	0	0
+		firing_crch_srifle	3800	13	13	22	-1	0	0
+		firing_run_srifle	3820	13	13	22	-1	0	0
+		firing_bk_srifle	3840	10	10	22	-1	0	0
+		firing_srifle		3855	4	0	20	0	0	0
+		raise_srifle		3865	13	0	20	0	0	0
+		stand_srifle		3885	35	35	20	0	0	0
+		reload_srifle		3925	43	0	20	0	0	0
+
+		// AMBIENT
+		tools			4040	75	75	15	0	0	0
+		tunning_radio_in	4116	16	16	15	0	0	0
+		tunning_radio		4132	108	108	15	0	0	0
+		nazi_salute		4243	29	29	15	0	0	0
+
+		// BASE FRAME						
+		base_frame		4274	1	0	15	0	0	0
+
+		//HEADFRAMES						
+		//head_neutral_mclosed
+		//head_neutral_ma
+		//head_neutral_mu
+		//head_neutral_mo
+		//head_neutral_me
+		//head_happy_mclosed
+		//head_happy_ma
+		//head_happy_mu
+		//head_happy_mo
+		//head_happy_me
+		//head_angry_mclosed
+		//head_angry_ma
+		//head_angry_mu
+		//head_angry_mo
+		//head_angry_me
+
+		// <animation name>	<first frame> <length> <looping> <fps> <move speed> <transition> <reversed>
+
+		//SPLASHDAMAGE
+		// SILENCER
+		attach_silencer		4280	20	0	14	0	0	0
+		detach_silencer		4280	20	0	14	0	0	1
+
+		// GRENADE LAUNCER
+		reload_grenlauncher	4302	20	0	17	0	0	0		// also used for attaching
+		stand_grenlauncher	4323	20	20	12	0	0	0
+		firing_grenlauncher	4344	5	0	20	0	0	0
+		raise_grenlauncher	4349	8	0	15	0	0	0
+		detach_grenlauncher	4302	20	0	17	0	0	1
+
+		// MOBILE MG 42
+		stand_mobilemg42	4361	19	19	10	0	0	0
+		firing_mobilemg42	4382	6	6	20	0	0	0
+		reload_mobilemg42	4390	30	0	18	0	0	0
+		raise_mobilemg42	4425	5	0	15	0	0	0
+
+		// MORTAR
+		mortar_reload		4784	12	0	15	0	0	0
+		mortar_deployed		4795	5	5	2	0	0	0
+		mortar_fire		4800	13	0	15	0	0	0
+		mortar_drop_dep		4813	5	0	15	0	0	0
+		mortar_raise_dep	4818	5	0	15	0	0	0
+		mortar_drop		4822	6	0	15	0	0	0	
+
+		// SATCHEL CHARGE REMOTE
+		satchel_remote_raise	4828	4	0	15	0	0	0
+		satchel_remote_stand	4831	1	1	20	0	0	0
+		satchel_remote_fire	4231	6	0	15	0	0	0
+		//satchel_remote_fire	4831	6	0	15	0	0	0
+		satchel_remote_drop	4836	4	0	15	0	0	0
+
+		// SELF INJECT 4870
+		self_inject		4848	16	0	15	0	0	0	
+
+		//PRONE
+		//
+		//Prone Movement
+		prone_crawl		4431	19	19	15	0	0	0
+		prone_crawl_bk		4431	19	19	15	0	0	1
+
+		//Prone Pistol	
+		prone_pistol_switch	4450	6	0	15	0	0	0
+		prone_pistol_fire 	4462	3	0	12	0	0	0
+		prone_pistol_reload	4467	49	0	25	0	0	0
+		Prone_Pistol_idle	4459	1	0	20	0	0	0
+
+		//Prone Rifle 
+		prone_rifle_switch	4517	12	0	15	0	0	0
+		prone_rifle_fire	4529	4	0	18	0	0	0
+		prone_rifle_reload	4532	40	0	18	0	0	0
+		prone_rifle_idle	4528	1	0	20	0	0	0
+		prone_rifle_sswitch	4704	6	0	18	0	0	0
+		prone_rifle_sidle	4705	1	0	20	0	0	0	
+		prone_rifle_sfire	4710	3	0	18	0	0	0
+
+		//Prone Machine Gun
+		prone_mg_switch		4583	12	0	15	0	0	0
+		prone_mg_fire		4594	3	3	20	0	0	0
+		prone_mg_reload		4599	40	0	18	0	0	0
+		prone_mg_idle		4594	1	0	20	0	0	0
+
+		//Prone Mg42
+		prone_mg42_switch	4720	18	0	18	0	0	0
+		prone_mg42_fire		4740	4	4	25	0	0	0
+		prone_mg42_reload	4745	39	0	18	0	0	0
+		prone_mg42_idle		4783	1	0	20	0	0	0
+
+		//Prone Panz0r FAUST
+		prone_panzor_switch	4713	7	0	18	0	0	0
+		prone_panzor_idle	4719	1	0	20	0	0	0
+
+		//Prone grenade
+		prone_grenade_switch	4639	10	0	18	0	0	0
+		prone_grenade_fire	4649	12	0	20	0	0	0
+		prone_grenade_idle	4649	1	0	20	0	0	0
+
+		//Prone Pokey
+		prone_poke_switch	4662	10	0	18	0	0	0
+		prone_poke_fire		4672	17	0	20	0	0	0
+		prone_poke_idle		4672	1	0	20	0	0	0
+
+		//Prone Knife
+		prone_knife_switch	4662	10	0	18	0	0	0
+		prone_knife_attack	4689	10	0	25	0	0	0
+		prone_knife_idle	4672	1	0	20	0	0	0
+
+		//Prone Death
+		prone_die1		4573    10	0	20	0	0	0
+		
+		//Prone Legs
+		prone_legs		4594	1	0	20	0	0	0
