@@ -62,7 +62,8 @@ cvar_t *r_detailTextures;
 
 cvar_t *r_znear;
 cvar_t *r_zfar;
-cvar_t *r_stereoSeparation;
+// FIXME #176
+//cvar_t *r_stereoSeparation;
 
 cvar_t *r_skipBackEnd;
 
