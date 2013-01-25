@@ -43,11 +43,6 @@
 #define GL_INDEX_TYPE       GL_UNSIGNED_INT
 typedef unsigned int glIndex_t;
 
-// everything that is needed by the backend needs
-// to be double buffered to allow it to run in
-// parallel on a dual cpu machine
-#define SMP_FRAMES      2
-
 // 14 bits
 // can't be increased without changing bit packing for drawsurfs
 // see QSORT_SHADERNUM_SHIFT
@@ -707,7 +702,7 @@ typedef struct srfGeneric_s
 	cplane_t plane;
 
 	// dynamic lighting information
-	int dlightBits[SMP_FRAMES];
+	int dlightBits;
 }
 srfGeneric_t;
 
@@ -722,7 +717,7 @@ typedef struct srfGridMesh_s
 	cplane_t plane;
 
 	// dynamic lighting information
-	int dlightBits[SMP_FRAMES];
+	int dlightBits;
 
 	// lod information, which may be different
 	// than the culling information to allow for
@@ -752,7 +747,7 @@ typedef struct srfSurfaceFace_s
 	cplane_t plane;
 
 	// dynamic lighting information
-	int dlightBits[SMP_FRAMES];
+	int dlightBits;
 
 	// triangle definitions (no normals at points)
 	int numPoints;
@@ -774,7 +769,7 @@ typedef struct srfTriangles_s
 	cplane_t plane;
 
 	// dynamic lighting information
-	int dlightBits[SMP_FRAMES];
+	int dlightBits;
 
 	// triangle definitions
 	int numIndexes;
@@ -796,7 +791,7 @@ typedef struct srfTriangles2_s
 	cplane_t plane;
 
 	// dynamic lighting information
-	int dlightBits[SMP_FRAMES];
+	int dlightBits;
 
 	// triangle definitions
 	int numIndexes;
@@ -833,7 +828,7 @@ typedef struct
 	cplane_t plane;
 
 	// dynamic lighting information
-	int dlightBits[SMP_FRAMES];
+	int dlightBits;
 
 	// triangle definitions
 	int numIndexes;
@@ -920,9 +915,9 @@ typedef struct bmodel_s
 	// for fog volumes
 	int firstBrush;
 	int numBrushes;
-	orientation_t orientation[SMP_FRAMES];
-	qboolean visible[SMP_FRAMES];
-	int entityNum[SMP_FRAMES];
+	orientation_t orientation;
+	qboolean visible;
+	int entityNum;
 } bmodel_t;
 
 // optimization
@@ -1138,7 +1133,6 @@ typedef struct
 // from the front end state
 typedef struct
 {
-	int smpFrame;
 	trRefdef_t refdef;
 	viewParms_t viewParms;
 	orientationr_t orientation;
@@ -1170,8 +1164,6 @@ typedef struct
 	int sceneCount;                         // incremented every scene
 	int viewCount;                          // incremented every view (twice a scene if portaled)
 	// and every R_MarkFragments call
-
-	int smpFrame;                           // toggles from 0 to 1 every endFrame
 
 	int frameSceneNum;                      // zeroed at RE_BeginFrame
 
@@ -1378,10 +1370,7 @@ extern cvar_t *r_portalOnly;
 
 extern cvar_t *r_subdivisions;
 extern cvar_t *r_lodCurveError;
-#ifdef FEATURE_SMP
-extern cvar_t *r_smp;
-extern cvar_t *r_showSmp;
-#endif
+
 extern cvar_t *r_skipBackEnd;
 
 extern cvar_t *r_stereoEnabled;
@@ -1573,16 +1562,10 @@ extern int gl_NormalFontBase;
 void GLimp_Init(void);
 void GLimp_Shutdown(void);
 void GLimp_EndFrame(void);
-
-qboolean GLimp_SpawnRenderThread(void (*function)(void));
-void *GLimp_RendererSleep(void);
-void GLimp_FrontEndSleep(void);
-void GLimp_WakeRenderer(void *data);
-
 void GLimp_LogComment(char *comment);
 void GLimp_Minimize(void);
 
-// NOTE linux works with float gamma value, not the gamma table
+// NOTE: linux works with float gamma value, not the gamma table
 // the params won't be used, getting the r_gamma cvar directly
 void GLimp_SetGamma(unsigned char red[256],
                     unsigned char green[256],
@@ -1761,7 +1744,7 @@ SCENE GENERATION
 ============================================================
 */
 
-void R_ToggleSmpFrame(void);
+void R_InitNextFrame(void);
 
 void RE_ClearScene(void);
 void RE_AddRefEntityToScene(const refEntity_t *ent);
@@ -1845,7 +1828,6 @@ RENDERER BACK END FUNCTIONS
 =============================================================
 */
 
-void RB_RenderThread(void);
 void RB_ExecuteRenderCommands(const void *data);
 
 /*
@@ -1980,9 +1962,7 @@ typedef enum
 #define MAX_DECALS              1024
 
 // all of the information needed by the back end must be
-// contained in a backEndData_t.  This entire structure is
-// duplicated so the front and back end can run in parallel
-// on an SMP machine
+// contained in a backEndData_t.
 typedef struct
 {
 	drawSurf_t drawSurfs[MAX_DRAWSURFS];
@@ -2000,7 +1980,7 @@ typedef struct
 extern int max_polys;
 extern int max_polyverts;
 
-extern backEndData_t *backEndData[SMP_FRAMES];      // the second one may not be allocated
+extern backEndData_t *backEndData;
 
 extern volatile renderCommandList_t *renderCommandList;
 
@@ -2009,10 +1989,7 @@ extern volatile qboolean renderThreadActive;
 void *R_GetCommandBuffer(int bytes);
 void RB_ExecuteRenderCommands(const void *data);
 
-void R_InitCommandBuffers(void); // SMP
-void R_ShutdownCommandBuffers(void); // SMP
-
-void R_SyncRenderThread(void);
+void R_IssuePendingRenderCommands(void);
 
 void R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs);
 

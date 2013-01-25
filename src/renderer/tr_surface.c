@@ -360,7 +360,7 @@ void RB_SurfaceTriangles(srfTriangles_t *srf)
 	// moved before overflow so dlights work properly
 	RB_CHECKOVERFLOW(srf->numVerts, srf->numIndexes);
 
-	dlightBits       = srf->dlightBits[backEnd.smpFrame];
+	dlightBits       = srf->dlightBits;
 	tess.dlightBits |= dlightBits;
 
 	for (i = 0 ; i < srf->numIndexes ; i += 3)
@@ -469,7 +469,7 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 	}
 
 	// set dlight bits
-	dlightBits       = srf->dlightBits[backEnd.smpFrame];
+	dlightBits       = srf->dlightBits;
 	tess.dlightBits |= dlightBits;
 
 	// iterate through origin list
@@ -1291,7 +1291,7 @@ void RB_SurfaceFace(srfSurfaceFace_t *surf)
 
 	RB_CHECKOVERFLOW(surf->numPoints, surf->numIndices);
 
-	dlightBits       = surf->dlightBits[backEnd.smpFrame];
+	dlightBits       = surf->dlightBits;
 	tess.dlightBits |= dlightBits;
 
 	indices = ( unsigned * )((( char * ) surf) + surf->ofsIndices);
@@ -1388,7 +1388,7 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 	int           dlightBits;
 	qboolean      needsNormal;
 
-	dlightBits       = cv->dlightBits[backEnd.smpFrame];
+	dlightBits       = cv->dlightBits;
 	tess.dlightBits |= dlightBits;
 
 	// determine the allowable discrepance

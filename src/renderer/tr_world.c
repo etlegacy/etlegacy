@@ -173,13 +173,13 @@ static int R_DlightSurface(msurface_t *surface, int dlightBits)
 		break;
 
 	default:
-		gen->dlightBits[tr.smpFrame] = 0;
+		gen->dlightBits = 0;
 		return 0;
 	}
 
 	// debug code
-	//% gen->dlightBits[ tr.smpFrame ] = dlightBits;
-	//% return dlightBits;
+	// gen->dlightBits = dlightBits;
+	// return dlightBits;
 
 	// try to cull out dlights
 	for (i = 0; i < tr.refdef.num_dlights; i++)
@@ -230,7 +230,7 @@ static int R_DlightSurface(msurface_t *surface, int dlightBits)
 	}
 
 	// set surface dlight bits and return
-	gen->dlightBits[tr.smpFrame] = dlightBits;
+	gen->dlightBits = dlightBits;
 	return dlightBits;
 }
 
@@ -356,12 +356,12 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 	tr.currentBModel = bmodel;
 
 	// set model state for decals and dynamic fog
-	VectorCopy(ent->e.origin, bmodel->orientation[tr.smpFrame].origin);
-	VectorCopy(ent->e.axis[0], bmodel->orientation[tr.smpFrame].axis[0]);
-	VectorCopy(ent->e.axis[1], bmodel->orientation[tr.smpFrame].axis[1]);
-	VectorCopy(ent->e.axis[2], bmodel->orientation[tr.smpFrame].axis[2]);
-	bmodel->visible[tr.smpFrame]   = qtrue;
-	bmodel->entityNum[tr.smpFrame] = tr.currentEntityNum;
+	VectorCopy(ent->e.origin, bmodel->orientation.origin);
+	VectorCopy(ent->e.axis[0], bmodel->orientation.axis[0]);
+	VectorCopy(ent->e.axis[1], bmodel->orientation.axis[1]);
+	VectorCopy(ent->e.axis[2], bmodel->orientation.axis[2]);
+	bmodel->visible   = qtrue;
+	bmodel->entityNum = tr.currentEntityNum;
 
 	R_DlightBmodel(bmodel);
 

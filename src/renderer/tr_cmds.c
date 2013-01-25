@@ -35,8 +35,6 @@
 
 volatile renderCommandList_t *renderCommandList;
 
-volatile qboolean renderThreadActive;
-
 /*
 =====================
 R_PerformanceCounters
@@ -99,57 +97,12 @@ void R_PerformanceCounters(void)
 
 /*
 ====================
-R_InitCommandBuffers
-====================
-*/
-void R_InitCommandBuffers(void)
-{
-	glConfig.smpActive = qfalse; // do we still have to set this if smp is disabled?
-#ifdef FEATURE_SMP
-	if (r_smp->integer)
-	{
-		ri.Printf(PRINT_ALL, "Trying SMP acceleration...\n");
-		if (GLimp_SpawnRenderThread(RB_RenderThread))
-		{
-			ri.Printf(PRINT_ALL, "...succeeded.\n");
-			glConfig.smpActive = qtrue;
-		}
-		else
-		{
-			ri.Printf(PRINT_ALL, "...failed.\n");
-		}
-	}
-#endif
-}
-
-/*
-====================
-R_ShutdownCommandBuffers
-====================
-*/
-void R_ShutdownCommandBuffers(void)
-{
-#ifdef FEATURE_SMP
-	// kill the rendering thread
-	if (glConfig.smpActive)
-	{
-		GLimp_WakeRenderer(NULL);
-		glConfig.smpActive = qfalse;
-	}
-#endif
-}
-
-/*
-====================
 R_IssueRenderCommands
 ====================
 */
-int c_blockedOnRender;
-int c_blockedOnMain;
-
 void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
-	renderCommandList_t *cmdList = &backEndData[tr.smpFrame]->commands;
+	renderCommandList_t *cmdList = &backEndData->commands;
 
 	assert(cmdList);
 	// add an end-of-list command
@@ -158,34 +111,6 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	// clear it out, in case this is a sync and not a buffer flip
 	cmdList->used = 0;
 
-#ifdef FEATURE_SMP
-	if (glConfig.smpActive)
-	{
-		// if the render thread is not idle, wait for it
-		if (renderThreadActive)
-		{
-			c_blockedOnRender++;
-			if (r_showSmp->integer)
-			{
-				ri.Printf(PRINT_ALL, "R");
-			}
-		}
-		else
-		{
-			c_blockedOnMain++;
-			if (r_showSmp->integer)
-			{
-				ri.Printf(PRINT_ALL, ".");
-			}
-		}
-
-		// sleep until the renderer has completed
-		GLimp_FrontEndSleep();
-	}
-#endif
-
-	// at this point, the back end thread is idle, so it is ok
-	// to look at it's performance counters
 	if (runPerformanceCounters)
 	{
 		R_PerformanceCounters();
@@ -195,22 +120,13 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	if (!r_skipBackEnd->integer)
 	{
 		// let it start on the new batch
-		if (!glConfig.smpActive)
-		{
-			RB_ExecuteRenderCommands(cmdList->cmds);
-		}
-#ifdef FEATURE_SMP
-		else
-		{
-			GLimp_WakeRenderer(cmdList);
-		}
-#endif
+		RB_ExecuteRenderCommands(cmdList->cmds);
 	}
 }
 
 /*
 ====================
-R_SyncRenderThread
+R_IssuePendingRenderCommands
 
 Issue any pending commands and wait for them to complete.
 After exiting, the render thread will have completed its work
@@ -218,21 +134,13 @@ and will remain idle and the main thread is free to issue
 OpenGL calls until R_IssueRenderCommands is called.
 ====================
 */
-void R_SyncRenderThread(void)
+void R_IssuePendingRenderCommands(void)
 {
 	if (!tr.registered)
 	{
 		return;
 	}
 	R_IssueRenderCommands(qfalse);
-
-	if (!glConfig.smpActive)
-	{
-		return;
-	}
-#ifdef FEATURE_SMP
-	GLimp_FrontEndSleep();
-#endif
 }
 
 /*
@@ -245,7 +153,7 @@ render thread if needed.
 */
 void *R_GetCommandBuffer(int bytes)
 {
-	renderCommandList_t *cmdList = &backEndData[tr.smpFrame]->commands;
+	renderCommandList_t *cmdList = &backEndData->commands;
 
 	// always leave room for the swap buffers and end of list commands
 	if (cmdList->used + bytes + (sizeof(swapBuffersCommand_t) + sizeof(int)) > MAX_RENDER_COMMANDS)
@@ -366,7 +274,7 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 	}
 
 	cmd->commandId = RC_2DPOLYS;
-	cmd->verts     = &backEndData[tr.smpFrame]->polyVerts[r_numpolyverts];
+	cmd->verts     = &backEndData->polyVerts[r_numpolyverts];
 	cmd->numverts  = numverts;
 	memcpy(cmd->verts, verts, sizeof(polyVert_t) * numverts);
 	cmd->shader = R_GetShaderByHandle(hShader);
@@ -548,7 +456,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		}
 		else
 		{
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 			qglEnable(GL_STENCIL_TEST);
 			qglStencilMask(~0U);
 			qglClearStencil(0U);
@@ -562,7 +470,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		// this is only reached if it was on and is now off
 		if (r_measureOverdraw->modified)
 		{
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 			qglDisable(GL_STENCIL_TEST);
 		}
 		r_measureOverdraw->modified = qfalse;
@@ -571,7 +479,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	// texturemode stuff
 	if (r_textureMode->modified)
 	{
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 		GL_TextureMode(r_textureMode->string);
 		r_textureMode->modified = qfalse;
 	}
@@ -581,7 +489,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	{
 		r_gamma->modified = qfalse;
 
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 		R_SetColorMappings();
 	}
 
@@ -590,7 +498,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	{
 		int err;
 
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 		if ((err = qglGetError()) != GL_NO_ERROR)
 		{
 			ri.Error(ERR_FATAL, "RE_BeginFrame() - glGetError() failed (0x%x)!\n", err);
@@ -654,7 +562,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	}
 
 	// Needs to use reserved space, so no R_GetCommandBuffer.
-	cmdList = &backEndData[tr.smpFrame]->commands;
+	cmdList = &backEndData->commands;
 	assert(cmdList);
 	// add swap-buffers command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_SWAP_BUFFERS;
@@ -665,7 +573,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 
 	// use the other buffers next frame, because another CPU
 	// may still be rendering into the current ones
-	R_ToggleSmpFrame();
+	R_InitNextFrame();
 
 	if (frontEndMsec)
 	{

@@ -907,7 +907,7 @@ void R_AddDecalSurface(decal_t *decal)
 	if (decal->parent != NULL)
 	{
 		gen       = (srfGeneric_t *) decal->parent->data;
-		dlightMap = (gen->dlightBits[tr.smpFrame] != 0);
+		dlightMap = (gen->dlightBits != 0);
 	}
 	else
 	{

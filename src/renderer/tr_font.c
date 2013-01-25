@@ -379,7 +379,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 	}
 
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	if (registeredFontCount >= MAX_FONTS)
 	{

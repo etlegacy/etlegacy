@@ -1863,7 +1863,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	skin->numSurfaces = 0;
 
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	// If not a .skin file, load as a single shader
 	// HACK: ET evilly has filenames slightly longer than MAX_QPATH
@@ -2152,7 +2152,7 @@ void R_PurgeBackupImages(int purgeCount)
 		return;
 	}
 
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	cnt = 0;
 	for (i = lastPurged; i < FILE_HASH_SIZE; )

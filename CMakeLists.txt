@@ -58,7 +58,6 @@ if(INSTALL_DEFAULT_BASEDIR)
 endif(INSTALL_DEFAULT_BASEDIR)
 
 # Optional features
-option(FEATURE_SMP			"Enable SMP (multicore support). Experimental! (client)"	OFF)
 option(FEATURE_CURL			"Enable auto-download support using cURL (client)"			ON)
 option(FEATURE_OGG_VORBIS	"Enable OGG Vorbis support (client)"						OFF)
 option(FEATURE_OPENAL		"Enable OpenAL sound backend (client)"						OFF)
@@ -344,10 +343,6 @@ if(BUILD_CLIENT)
 		add_definitions(-DFEATURE_OGG_VORBIS)
 	endif(FEATURE_OGG_VORBIS)
 
-	if(FEATURE_SMP)
-		message(WARNING "You have enabled SMP, which will likely cause trouble!")
-		add_definitions(-DFEATURE_SMP)
-	endif(FEATURE_SMP)
 endif(BUILD_CLIENT)
 
 #-----------------------------------------------------------------

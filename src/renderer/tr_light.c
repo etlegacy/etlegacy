@@ -158,19 +158,19 @@ void R_DlightBmodel(bmodel_t *bmodel)
 
 		if (*surf->data == SF_FACE)
 		{
-			((srfSurfaceFace_t *)surf->data)->dlightBits[tr.smpFrame] = mask;
+			((srfSurfaceFace_t *)surf->data)->dlightBits = mask;
 		}
 		else if (*surf->data == SF_GRID)
 		{
-			((srfGridMesh_t *)surf->data)->dlightBits[tr.smpFrame] = mask;
+			((srfGridMesh_t *)surf->data)->dlightBits = mask;
 		}
 		else if (*surf->data == SF_TRIANGLES)
 		{
-			((srfTriangles2_t *)surf->data)->dlightBits[tr.smpFrame] = mask;
+			((srfTriangles2_t *)surf->data)->dlightBits = mask;
 		}
 		else if (*surf->data == SF_FOLIAGE)
 		{
-			((srfFoliage_t *)surf->data)->dlightBits[tr.smpFrame] = mask;
+			((srfFoliage_t *)surf->data)->dlightBits = mask;
 		}
 	}
 }

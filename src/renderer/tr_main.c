@@ -1230,11 +1230,9 @@ static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
 	return qfalse;
 }
 
-/*
-SurfIsOffscreen
-
-    Determines if a surface is completely offscreen.
-*/
+/**
+ * @brief Determines if a surface is completely offscreen.
+ */
 static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128])
 {
 	float    shortest = 100000000;
@@ -1250,11 +1248,6 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	unsigned int pointAnd = (unsigned int)~0;
 	int          j;
 	unsigned int pointFlags;
-
-	if (glConfig.smpActive)         // FIXME!  we can't do RB_BeginSurface/RB_EndSurface stuff with smp!
-	{
-		return qfalse;
-	}
 
 	R_RotateForViewer();
 
@@ -1825,7 +1818,7 @@ void R_DebugGraphics(void)
 	R_FogOff(); // moved this in here to keep from /always/ doing the fog state change
 
 	// the render thread can't make callbacks to the main thread
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	GL_Bind(tr.whiteImage);
 	GL_Cull(CT_FRONT_SIDED);

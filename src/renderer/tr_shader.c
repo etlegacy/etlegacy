@@ -2387,7 +2387,7 @@ sortedIndex.
 */
 static void FixRenderCommandList(int newShader)
 {
-	renderCommandList_t *cmdList = &backEndData[tr.smpFrame]->commands;
+	renderCommandList_t *cmdList = &backEndData->commands;
 
 	if (cmdList)
 	{
@@ -3265,7 +3265,7 @@ void R_FindLightmap(int *lightmapIndex)
 	}
 
 	// sync up render thread, because we're going to have to load an image
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	// attempt to load an external lightmap
 	sprintf(fileName, "%s/" EXTERNAL_LIGHTMAP, tr.worldDir, *lightmapIndex);
@@ -3371,15 +3371,6 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 			// match found
 			return sh;
 		}
-	}
-#endif
-
-#ifdef FEATURE_SMP
-	// make sure the render thread is stopped, because we are probably
-	// going to have to upload an image
-	if (r_smp->integer)
-	{
-		R_SyncRenderThread();
 	}
 #endif
 
@@ -3500,15 +3491,6 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 			return sh->index;
 		}
 	}
-
-#ifdef FEATURE_SMP
-	// make sure the render thread is stopped, because we are probably
-	// going to have to upload an image
-	if (r_smp->integer)
-	{
-		R_SyncRenderThread();
-	}
-#endif
 
 	// clear the global shader
 	Com_Memset(&shader, 0, sizeof(shader));

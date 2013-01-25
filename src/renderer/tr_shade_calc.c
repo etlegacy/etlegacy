@@ -1013,12 +1013,12 @@ void RB_CalcFogTexCoords(float *st)
 	bmodel = tr.world->bmodels + fog->modelNum;
 
 	// if the brush model containing the fog volume wasn't in the scene, then don't bother rendering the fog
-	//	if( bmodel->visible[ backEnd.smpFrame ] == qfalse )
+	//	if( bmodel->visible == qfalse )
 	//		return;
 
 	// all fogging distance is based on world Z units
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
-	//%	VectorSubtract( local, bmodel->origin[ backEnd.smpFrame ], local );
+	//VectorSubtract( local, bmodel->origin, local );
 	fogDistanceVector[0] = -backEnd.orientation.modelMatrix[2];
 	fogDistanceVector[1] = -backEnd.orientation.modelMatrix[6];
 	fogDistanceVector[2] = -backEnd.orientation.modelMatrix[10];
@@ -1031,12 +1031,12 @@ void RB_CalcFogTexCoords(float *st)
 	fogDistanceVector[3] *= fog->shader->fogParms.tcScale * 1.0;
 
 	// offset view origin by fog brush origin (fixme: really necessary?)
-	//VectorSubtract( backEnd.orientation.viewOrigin, bmodel->origin[ backEnd.smpFrame ], viewOrigin );
+	//VectorSubtract( backEnd.orientation.viewOrigin, bmodel->origin, viewOrigin );
 	VectorCopy(backEnd.orientation.viewOrigin, viewOrigin);
 
 	// offset fog surface
 	VectorCopy(fog->surface, fogSurface);
-	fogSurface[3] = fog->surface[3] + DotProduct(fogSurface, bmodel->orientation[backEnd.smpFrame].origin);
+	fogSurface[3] = fog->surface[3] + DotProduct(fogSurface, bmodel->orientation.origin);
 
 	// general fog case
 	if (fog->originalBrushNumber >= 0)

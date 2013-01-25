@@ -64,10 +64,6 @@ cvar_t *r_znear;
 cvar_t *r_zfar;
 cvar_t *r_stereoSeparation;
 
-#ifdef FEATURE_SMP
-cvar_t *r_smp;
-cvar_t *r_showSmp;
-#endif
 cvar_t *r_skipBackEnd;
 
 cvar_t *r_stereoEnabled;
@@ -269,9 +265,6 @@ static void InitOpenGL(void)
 			glConfig.maxTextureSize = 0;
 		}
 	}
-
-	// init command buffers and SMP
-	R_InitCommandBuffers();
 
 	// print info
 	GfxInfo_f();
@@ -1114,13 +1107,6 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
 	ri.Printf(PRINT_ALL, "compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
 
-#ifdef FEATURE_SMP
-	if (glConfig.smpActive)
-	{
-		ri.Printf(PRINT_ALL, "Using dual processor acceleration (SMP)\n");
-	}
-#endif
-
 	if (r_finish->integer)
 	{
 		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
@@ -1185,10 +1171,7 @@ void R_Register(void)
 	r_uiFullScreen      = ri.Cvar_Get("r_uifullscreen", "0", 0);
 
 	r_subdivisions = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
-#ifdef FEATURE_SMP
-	r_smp     = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_showSmp = ri.Cvar_Get("r_showSmp", "0", CVAR_CHEAT);
-#endif
+
 	r_stereoEnabled  = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_ignoreFastPath = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH);    // use fast path by default
 	r_greyscale      = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1385,21 +1368,9 @@ void R_Init(void)
 		max_polyverts = MAX_POLYVERTS;
 	}
 
-	backEndData[0] = ri.Hunk_Alloc(sizeof(*backEndData[0]) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
+	backEndData = ri.Hunk_Alloc(sizeof(*backEndData) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
 
-#ifdef FEATURE_SMP
-	if (r_smp->integer)
-	{
-		backEndData[1] = ri.Hunk_Alloc(sizeof(*backEndData[1]) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
-	}
-	else
-#else
-	{
-		backEndData[1] = NULL;
-	}
-#endif
-
-	{ R_ToggleSmpFrame(); }
+	R_InitNextFrame();
 
 	InitOpenGL();
 
@@ -1450,8 +1421,6 @@ void RE_Shutdown(qboolean destroyWindow)
 	ri.Cmd_RemoveCommand("shaderstate");
 	ri.Cmd_RemoveCommand("taginfo");
 
-	R_ShutdownCommandBuffers();
-
 	// keep a backup of the current images if possible
 	// clean out any remaining unused media from the last backup
 	R_PurgeCache();
@@ -1462,15 +1431,12 @@ void RE_Shutdown(qboolean destroyWindow)
 		{
 			if (destroyWindow)
 			{
-				R_SyncRenderThread();
-				R_ShutdownCommandBuffers();
+				R_IssuePendingRenderCommands();
 				R_DeleteTextures();
 			}
 			else
 			{
 				// backup the current media
-				R_ShutdownCommandBuffers();
-
 				R_BackupModels();
 				R_BackupShaders();
 				R_BackupImages();
@@ -1479,8 +1445,7 @@ void RE_Shutdown(qboolean destroyWindow)
 	}
 	else if (tr.registered)
 	{
-		R_SyncRenderThread();
-		R_ShutdownCommandBuffers();
+		R_IssuePendingRenderCommands();
 		R_DeleteTextures();
 	}
 
@@ -1505,7 +1470,7 @@ void RE_Shutdown(qboolean destroyWindow)
  */
 void RE_EndRegistration(void)
 {
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 	if (!Sys_LowPhysicalMemory())
 	{
 //              RB_ShowImages();

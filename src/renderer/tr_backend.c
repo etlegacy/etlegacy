@@ -33,7 +33,7 @@
 
 #include "tr_local.h"
 
-backEndData_t  *backEndData[SMP_FRAMES];
+backEndData_t  *backEndData;
 backEndState_t backEnd;
 
 static float s_flipMatrix[16] =
@@ -792,7 +792,7 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 
 /*
 ============================================================================
-RENDER BACK END THREAD FUNCTIONS
+RENDER BACK END FUNCTIONS
 ============================================================================
 */
 
@@ -844,7 +844,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	{
 		return;
 	}
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	// we definately want to sync every frame for the cinematics
 	qglFinish();
@@ -1513,31 +1513,11 @@ const void *RB_Finish(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
-/*
-====================
-RB_ExecuteRenderCommands
-
-This function will be called synchronously if running without
-smp extensions, or asynchronously by another thread.
-====================
-*/
 void RB_ExecuteRenderCommands(const void *data)
 {
 	int t1, t2;
 
 	t1 = ri.Milliseconds();
-#ifdef FEATURE_SMP
-	if (!r_smp->integer || data == backEndData[0]->commands.cmds)
-#else
-	if (data == backEndData[0]->commands.cmds)
-#endif
-	{
-		backEnd.smpFrame = 0;
-	}
-	else
-	{
-		backEnd.smpFrame = 1;
-	}
 
 	while (1)
 	{
@@ -1585,33 +1565,5 @@ void RB_ExecuteRenderCommands(const void *data)
 			backEnd.pc.msec = t2 - t1;
 			return;
 		}
-	}
-}
-
-/*
-================
-RB_RenderThread
-================
-*/
-void RB_RenderThread(void)
-{
-	const void *data;
-
-	// wait for either a rendering command or a quit command
-	while (1)
-	{
-		// sleep until we have work to do
-		data = GLimp_RendererSleep();
-
-		if (!data)
-		{
-			return; // all done, renderer is shutting down
-		}
-
-		renderThreadActive = qtrue;
-
-		RB_ExecuteRenderCommands(data);
-
-		renderThreadActive = qfalse;
 	}
 }
