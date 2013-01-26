@@ -437,9 +437,8 @@ void SV_MasterGameCompleteStatus()
  */
 void SV_MasterShutdown(void)
 {
-	// send a hearbeat right now
-	svs.nextHeartbeatTime = -9999;
-	SV_MasterHeartbeat(HEARTBEAT_DEAD);                 // changed to flatline
+	svs.nextHeartbeatTime = -9999; // send a hearbeat right now
+	SV_MasterHeartbeat(HEARTBEAT_DEAD);
 
 	// when the master tries to poll the server, it won't respond, so
 	// it will be removed from the list
@@ -643,7 +642,7 @@ static qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period)
  * @brief Send serverinfo cvars, etc to master servers when game complete or
  * by request of getstatus calls.
  * Useful for tracking global player stats.
- * Param force toogles rate limit checks
+ * @param force toogles rate limit checks
  */
 static void SVC_Status(netadr_t from, qboolean force)
 {

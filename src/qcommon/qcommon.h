@@ -38,7 +38,7 @@
 
 #include "../qcommon/cm_public.h"
 
-//Ignore __attribute__ on non-gcc platforms
+// Ignore __attribute__ on non-gcc platforms
 #ifndef __GNUC__
 #   ifndef __attribute__
 #       define __attribute__(x)
@@ -52,7 +52,7 @@ typedef struct
 	qboolean allowoverflow;     // if false, do a Com_Error
 	qboolean overflowed;        // set to true if the buffer size failed (with allowoverflow set)
 	qboolean oob;               // set to true if the buffer size failed (with allowoverflow set)
-	byte *data;
+	byte *data;                 // message content
 	int maxsize;
 	int cursize;
 	int uncompsize;             // net debugging
@@ -223,8 +223,6 @@ void NET_Sleep(int msec);
 /*
  * @def MAX_MSGLEN
  * @brief max length of a message, which may be fragmented into multiple packets
- *
- * ioquake - increased for larger submodel entity counts
  */
 #define MAX_MSGLEN                  32768
 #define MAX_DOWNLOAD_WINDOW         8       // max of eight download frames
@@ -287,7 +285,7 @@ You or the server may be running older versions of the game. Press the auto-upda
  button if it appears on the Main Menu screen."
 
 #define GAMENAME_STRING     "et"
-#define PROTOCOL_VERSION        84
+#define PROTOCOL_VERSION    84
 
 /*
  * @def MASTER_SERVER_NAME

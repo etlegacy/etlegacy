@@ -929,7 +929,7 @@ void CL_MapLoading(void)
 		memset(cls.updateInfoString, 0, sizeof(cls.updateInfoString));
 		memset(clc.serverMessage, 0, sizeof(clc.serverMessage));
 		memset(&cl.gameState, 0, sizeof(cl.gameState));
-		clc.lastPacketSentTime = -9999;
+		clc.lastPacketSentTime = -9999; // send first packet immediately
 		SCR_UpdateScreen();
 	}
 	else

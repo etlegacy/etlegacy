@@ -171,8 +171,8 @@ void Cbuf_ExecuteText(int exec_when, const char *text)
 		}
 		else
 		{
-			Cbuf_Execute();
 			Com_DPrintf(S_COLOR_YELLOW "EXEC_NOW %s\n", cmd_text.data);
+			Cbuf_Execute();
 		}
 		break;
 	case EXEC_INSERT:
@@ -219,6 +219,8 @@ void Cbuf_Execute(void)
 		quotes = 0;
 		for (i = 0 ; i < cmd_text.cursize ; i++)
 		{
+			// FIXME: ignore quoted text
+
 			if (text[i] == '"')
 			{
 				quotes++;
@@ -592,7 +594,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 			// skip // comments
 			if (text[0] == '/' && text[1] == '/')
 			{
-				//bani - lets us put 'http://' in commandlines
+				// lets us put 'http://' in commandlines
 				if (text == text_in || (text > text_in && text[-1] != ':'))
 				{
 					return;         // all tokens parsed
@@ -652,7 +654,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 
 			if (text[0] == '/' && text[1] == '/')
 			{
-				//bani - lets us put 'http://' in commandlines
+				// lets us put 'http://' in commandlines
 				if (text == text_in || (text > text_in && text[-1] != ':'))
 				{
 					break;
@@ -884,7 +886,6 @@ void Cmd_ExecuteString(const char *text)
 	}
 
 	// send it as a server command if we are connected
-	// this will usually result in a chat message
 	CL_ForwardCommandToServer(text);
 }
 

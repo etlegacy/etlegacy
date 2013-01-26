@@ -223,18 +223,13 @@ void Netchan_Transmit(netchan_t *chan, int length, const byte *data)
 	}
 }
 
-/*
-=================
-Netchan_Process
-
-Returns qfalse if the message should not be processed due to being
-out of order or a fragment.
-
-Msg must be large enough to hold MAX_MSGLEN, because if this is the
-final fragment of a multi-part message, the entire thing will be
-copied out.
-=================
-*/
+/**
+ * @brief Msg must be large enough to hold #MAX_MSGLEN, because if this is the
+ * final fragment of a multi-part message, the entire thing will be copied out.
+ *
+ * @retval qfalse   if the message should not be processed due to being
+ *                  out of order or a fragment.
+ */
 qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 {
 	int      sequence;

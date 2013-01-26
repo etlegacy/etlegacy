@@ -61,8 +61,8 @@ void MSG_Init(msg_t *buf, byte *data, int length)
 		MSG_initHuffman();
 	}
 	memset(buf, 0, sizeof(*buf));
-//bani - optimization
-//  memset (data, 0, length);
+	// optimization
+	//memset (data, 0, length);
 	buf->data    = data;
 	buf->maxsize = length;
 }
@@ -74,8 +74,8 @@ void MSG_InitOOB(msg_t *buf, byte *data, int length)
 		MSG_initHuffman();
 	}
 	memset(buf, 0, sizeof(*buf));
-//bani - optimization
-//  memset (data, 0, length);
+	// optimization
+	//memset (data, 0, length);
 	buf->data    = data;
 	buf->maxsize = length;
 	buf->oob     = qtrue;
@@ -143,11 +143,9 @@ bit functions
 // negative bit values include signs
 void MSG_WriteBits(msg_t *msg, int value, int bits)
 {
-//  FILE*   fp;
-
 	oldsize += bits;
 
-	msg->uncompsize += bits;            // NERVE - SMF - net debugging
+	msg->uncompsize += bits; // net debugging
 
 	// this isn't an exact overflow check, but close enough
 	if (msg->maxsize - msg->cursize < 32)
@@ -161,7 +159,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 		Com_Error(ERR_DROP, "MSG_WriteBits: bad bits %i\n", bits);
 	}
 
-	// TTimo - the overflow count is not used anywhere atm
+	// the overflow count is not used anywhere atm
 #if 0
 	// check for overflows
 	if (bits != 32)
@@ -188,6 +186,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 	{
 		bits = -bits;
 	}
+
 	if (msg->oob)
 	{
 		if (bits == 8)
@@ -218,7 +217,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 	else
 	{
 		int i;
-		//fp = fopen("c:\\netchan.bin", "a");
+
 		value &= (0xffffffff >> (32 - bits));
 		if (bits & 7)
 		{
@@ -235,13 +234,11 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 		{
 			for (i = 0; i < bits; i += 8)
 			{
-				//fwrite(bp, 1, 1, fp);
 				Huff_offsetTransmit(&msgHuff.compressor, (value & 0xff), msg->data, &msg->bit);
 				value = (value >> 8);
 			}
 		}
 		msg->cursize = (msg->bit >> 3) + 1;
-		//fclose(fp);
 	}
 }
 
@@ -250,7 +247,6 @@ int MSG_ReadBits(msg_t *msg, int bits)
 	int      value;
 	int      get;
 	qboolean sgn;
-//  FILE*   fp;
 
 	value = 0;
 
@@ -306,14 +302,11 @@ int MSG_ReadBits(msg_t *msg, int bits)
 		}
 		if (bits)
 		{
-//          fp = fopen("c:\\netchan.bin", "a");
 			for (i = 0; i < bits; i += 8)
 			{
 				Huff_offsetReceive(msgHuff.decompressor.tree, &get, msg->data, &msg->bit);
-//              fwrite(&get, 1, 1, fp);
 				value |= (get << (i + nbits));
 			}
-//          fclose(fp);
 		}
 		msg->readcount = (msg->bit >> 3) + 1;
 	}
@@ -897,9 +890,9 @@ void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *t
 	    from->weapon == to->weapon &&
 	    from->flags == to->flags &&
 	    from->doubleTap == to->doubleTap &&
-	    from->identClient == to->identClient)          // NERVE - SMF
+	    from->identClient == to->identClient)
 	{
-		MSG_WriteBits(msg, 0, 1);                   // no change
+		MSG_WriteBits(msg, 0, 1); // no change
 		oldsize += 7;
 		return;
 	}
@@ -916,7 +909,7 @@ void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *t
 	MSG_WriteDeltaKey(msg, key, from->weapon, to->weapon, 8);
 	MSG_WriteDeltaKey(msg, key, from->flags, to->flags, 8);
 	MSG_WriteDeltaKey(msg, key, from->doubleTap, to->doubleTap, 3);
-	MSG_WriteDeltaKey(msg, key, from->identClient, to->identClient, 8);         // NERVE - SMF
+	MSG_WriteDeltaKey(msg, key, from->identClient, to->identClient, 8);
 }
 
 /*
@@ -963,7 +956,7 @@ void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to
 		to->weapon      = MSG_ReadDeltaKey(msg, key, from->weapon, 8);
 		to->flags       = MSG_ReadDeltaKey(msg, key, from->flags, 8);
 		to->doubleTap   = MSG_ReadDeltaKey(msg, key, from->doubleTap, 3) & 0x7;
-		to->identClient = MSG_ReadDeltaKey(msg, key, from->identClient, 8);              // NERVE - SMF
+		to->identClient = MSG_ReadDeltaKey(msg, key, from->identClient, 8);
 	}
 	else
 	{
@@ -978,7 +971,7 @@ void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to
 		to->weapon      = from->weapon;
 		to->flags       = from->flags;
 		to->doubleTap   = from->doubleTap;
-		to->identClient = from->identClient;            // NERVE - SMF
+		to->identClient = from->identClient;
 	}
 }
 
@@ -1061,7 +1054,7 @@ netField_t entityStateFields[] =
 	{ NETF(groundEntityNum), GENTITYNUM_BITS },
 	{ NETF(loopSound),       8               },
 	{ NETF(constantLight),   32              },
-	{ NETF(dl_intensity),    32              }, //----(SA)    longer now to carry the corona colors
+	{ NETF(dl_intensity),    32              }, // longer now to carry the corona colors
 	{ NETF(modelindex),      9               },
 	{ NETF(modelindex2),     9               },
 	{ NETF(frame),           16              },
@@ -1083,7 +1076,7 @@ netField_t entityStateFields[] =
 	{ NETF(legsAnim),        ANIM_BITS       },
 	{ NETF(torsoAnim),       ANIM_BITS       },
 	{ NETF(density),         10              },
-	{ NETF(dmgFlags),        32              }, //----(SA)  additional info flags for damage
+	{ NETF(dmgFlags),        32              }, // additional info flags for damage
 	{ NETF(onFireStart),     32              },
 	{ NETF(onFireEnd),       32              },
 	{ NETF(nextWeapon),      8               },
@@ -1375,7 +1368,7 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to,
 	numFields = sizeof(entityStateFields) / sizeof(entityStateFields[0]);
 	lc        = MSG_ReadByte(msg);
 
-	if (lc > numFields)     //DAJ FIXME have gotten lc = 76 which is bigger than numFields!
+	if (lc > numFields)     // FIXME: have gotten lc = 76 which is bigger than numFields!
 	{
 		lc = numFields;
 	}
@@ -1531,7 +1524,7 @@ netField_t playerStateFields[] =
 	{ PSF(clientNum),            8               },
 	{ PSF(weapons[0]),           32              },
 	{ PSF(weapons[1]),           32              },
-	{ PSF(weapon),               7               }, // (SA) yup, even more
+	{ PSF(weapon),               7               },
 	{ PSF(weaponstate),          4               },
 	{ PSF(weapAnim),             10              },
 	{ PSF(viewangles[0]),        0               },
@@ -1614,7 +1607,6 @@ void MSG_PrioritisePlayerStateFields(void)
 /*
 =============
 MSG_WriteDeltaPlayerstate
-
 =============
 */
 void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct playerState_s *to)
@@ -1623,19 +1615,17 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 	playerState_t dummy;
 	int           statsbits;
 	int           persistantbits;
-	int           ammobits[4];      //----(SA)  modified
-	int           clipbits;         //----(SA)  added
+	int           ammobits[4];
+	int           clipbits;
 	int           powerupbits;
 	int           holdablebits;
 	int           numFields;
-//bani - appears to have been debugging left in
-//  int             c;
-	netField_t *field;
-	int        *fromF, *toF;
-	float      fullFloat;
-	int        trunc;
-	int        startBit, endBit;
-	int        print;
+	netField_t    *field;
+	int           *fromF, *toF;
+	float         fullFloat;
+	int           trunc;
+	int           startBit, endBit;
+	int           print;
 
 	if (!from)
 	{
@@ -1663,9 +1653,6 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 	{
 		print = 0;
 	}
-
-//bani - appears to have been debugging left in
-//  c = msg->cursize;
 
 	numFields = sizeof(playerStateFields) / sizeof(playerStateFields[0]);
 
@@ -1737,9 +1724,6 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 //          }
 		}
 	}
-//bani - appears to have been debugging left in
-//  c = msg->cursize - c;
-
 
 	//
 	// send the arrays
@@ -1790,9 +1774,7 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 			for (i = 0 ; i < 16 ; i++)
 				if (statsbits & (1 << i))
 				{
-					// RF, changed to long to allow more flexibility
-//                  MSG_WriteLong (msg, to->stats[i]);
-					MSG_WriteShort(msg, to->stats[i]);    //----(SA)    back to short since weapon bits are handled elsewhere now
+					MSG_WriteShort(msg, to->stats[i]);
 				}
 		}
 		else
@@ -1854,18 +1836,18 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 		oldsize += 4;
 	}
 
-	//----(SA)  I split this into two groups using shorts so it wouldn't have
-	//          to use a long every time ammo changed for any weap.
-	//          this seemed like a much friendlier option than making it
-	//          read/write a long for any ammo change.
+	// Split this into two groups using shorts so it wouldn't have
+	// to use a long every time ammo changed for any weap.
+	// this seemed like a much friendlier option than making it
+	// read/write a long for any ammo change.
 
 	// j == 0 : weaps 0-15
 	// j == 1 : weaps 16-31
-	// j == 2 : weaps 32-47 //----(SA)  now up to 64 (but still pretty net-friendly)
+	// j == 2 : weaps 32-47 // now up to 64 (but still pretty net-friendly)
 	// j == 3 : weaps 48-63
 
 	// ammo stored
-	for (j = 0; j < 4; j++)      //----(SA) modified for 64 weaps
+	for (j = 0; j < 4; j++)      // modified for 64 weaps
 	{
 		ammobits[j] = 0;
 		for (i = 0 ; i < 16 ; i++)
@@ -1877,7 +1859,7 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 		}
 	}
 
-//----(SA)  also encapsulated ammo changes into one check.  clip values will change frequently,
+	// also encapsulated ammo changes into one check. Clip values will change frequently,
 	// but ammo will not.  (only when you get ammo/reload rather than each shot)
 	if (ammobits[0] || ammobits[1] || ammobits[2] || ammobits[3])      // if any were set...
 	{
@@ -1906,7 +1888,7 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 	}
 
 	// ammo in clip
-	for (j = 0; j < 4; j++)      //----(SA) modified for 64 weaps
+	for (j = 0; j < 4; j++)      // modified for 64 weaps
 	{
 		clipbits = 0;
 		for (i = 0 ; i < 16 ; i++)
@@ -2064,9 +2046,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 			{
 				if (bits & (1 << i))
 				{
-					// RF, changed to long to allow more flexibility
-//                  to->stats[i] = MSG_ReadLong(msg);
-					to->stats[i] = MSG_ReadShort(msg);    //----(SA)    back to short since weapon bits are handled elsewhere now
+					to->stats[i] = MSG_ReadShort(msg);
 
 				}
 			}
@@ -2116,16 +2096,16 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 	}
 
 
-	//----(SA)  I split this into two groups using shorts so it wouldn't have
-	//          to use a long every time ammo changed for any weap.
-	//          this seemed like a much friendlier option than making it
-	//          read/write a long for any ammo change.
+	// Split this into two groups using shorts so it wouldn't have
+	// to use a long every time ammo changed for any weap.
+	// this seemed like a much friendlier option than making it
+	// read/write a long for any ammo change.
 
 	// parse ammo
 
 	// j == 0 : weaps 0-15
 	// j == 1 : weaps 16-31
-	// j == 2 : weaps 32-47 //----(SA)  now up to 64 (but still pretty net-friendly)
+	// j == 2 : weaps 32-47 // now up to 64 (but still pretty net-friendly)
 	// j == 3 : weaps 48-63
 
 	// ammo stored
@@ -2180,6 +2160,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 	}
 }
 
+// Predefined set of nodes for Huffman compression
 int msg_hData[256] =
 {
 	250315,     // 0
@@ -2455,5 +2436,3 @@ void MSG_initHuffman(void)
 		}
 	}
 }
-
-//===========================================================================
