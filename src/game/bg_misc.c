@@ -5239,6 +5239,7 @@ void BG_setCrosshair(char *colString, float *col, float alpha, char *cvarName)
 	else
 	{
 		int i = 0;
+
 		while (OSP_Colortable[i].colorname != NULL)
 		{
 			if (Q_stricmp(s, OSP_Colortable[i].colorname) == 0)

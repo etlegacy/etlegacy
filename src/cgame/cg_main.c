@@ -118,7 +118,6 @@ vmCvar_t cg_runroll;
 vmCvar_t cg_bobup;
 vmCvar_t cg_bobpitch;
 vmCvar_t cg_bobroll;
-vmCvar_t cg_bobyaw;
 vmCvar_t cg_swingSpeed;
 vmCvar_t cg_shadows;
 vmCvar_t cg_gibs;
@@ -203,7 +202,7 @@ vmCvar_t cg_message;
 vmCvar_t cg_messageType;
 vmCvar_t cg_messagePlayer;
 vmCvar_t cg_messagePlayerName;
-vmCvar_t cg_movespeed;
+
 vmCvar_t cg_timescale;
 vmCvar_t cg_smallFont;
 vmCvar_t cg_bigFont;
@@ -349,7 +348,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_bobup,                 "cg_bobup",                 "0.005", CVAR_ARCHIVE                 },
 	{ &cg_bobpitch,              "cg_bobpitch",              "0.002", CVAR_ARCHIVE                 },
 	{ &cg_bobroll,               "cg_bobroll",               "0.002", CVAR_ARCHIVE                 },
-	{ &cg_bobyaw,                "cg_bobyaw",                "0.002", CVAR_ARCHIVE                 },
 
 	{ &cg_autoactivate,          "cg_autoactivate",          "1",     CVAR_ARCHIVE                 },
 
@@ -419,7 +417,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_gameType,              "g_gametype",               "0",     0                            }, // communicated by systeminfo
 	{ &cg_bluelimbotime,         "",                         "30000", 0                            }, // communicated by systeminfo
 	{ &cg_redlimbotime,          "",                         "30000", 0                            }, // communicated by systeminfo
-	{ &cg_movespeed,             "g_movespeed",              "76",    0                            }, // actual movespeed of player
 	{ &cg_drawCompass,           "cg_drawCompass",           "1",     CVAR_ARCHIVE                 },
 	{ &cg_drawNotifyText,        "cg_drawNotifyText",        "1",     CVAR_ARCHIVE                 },
 	{ &cg_quickMessageAlt,       "cg_quickMessageAlt",       "0",     CVAR_ARCHIVE                 },
@@ -1601,7 +1598,7 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.objectiveShader = trap_R_RegisterShader("sprites/objective");
 
-	cgs.media.bloodExplosionShader = trap_R_RegisterShader("bloodExplosion");
+	//cgs.media.bloodExplosionShader = trap_R_RegisterShader("bloodExplosion"); // unused FIXME: remove from shader def
 
 	// water splash
 	cgs.media.waterSplashModel  = trap_R_RegisterModel("models/weaphits/bullet.md3");
@@ -1611,16 +1608,16 @@ static void CG_RegisterGraphics(void)
 	cgs.media.sparkParticleShader = trap_R_RegisterShader("sparkParticle");
 	cgs.media.smokeTrailShader    = trap_R_RegisterShader("smokeTrail");
 
-	cgs.media.flamethrowerFireStream    = trap_R_RegisterShader("flamethrowerFireStream");
-	cgs.media.flamethrowerBlueStream    = trap_R_RegisterShader("flamethrowerBlueStream");
-	cgs.media.onFireShader2             = trap_R_RegisterShader("entityOnFire1");
-	cgs.media.onFireShader              = trap_R_RegisterShader("entityOnFire2");
-	cgs.media.viewFadeBlack             = trap_R_RegisterShader("viewFadeBlack");
-	cgs.media.sparkFlareShader          = trap_R_RegisterShader("sparkFlareParticle");
-	cgs.media.spotLightShader           = trap_R_RegisterShader("spotLight");
-	cgs.media.spotLightBeamShader       = trap_R_RegisterShader("lightBeam");
-	cgs.media.bulletParticleTrailShader = trap_R_RegisterShader("bulletParticleTrail");
-	cgs.media.smokeParticleShader       = trap_R_RegisterShader("smokeParticle");
+	cgs.media.flamethrowerFireStream = trap_R_RegisterShader("flamethrowerFireStream");
+	//cgs.media.flamethrowerBlueStream    = trap_R_RegisterShader("flamethrowerBlueStream"); // unused FIXME: remove from shader def
+	cgs.media.onFireShader2 = trap_R_RegisterShader("entityOnFire1");
+	cgs.media.onFireShader  = trap_R_RegisterShader("entityOnFire2");
+	//cgs.media.viewFadeBlack             = trap_R_RegisterShader("viewFadeBlack"); // unused FIXME: remove from shader def
+	cgs.media.sparkFlareShader    = trap_R_RegisterShader("sparkFlareParticle");
+	cgs.media.spotLightShader     = trap_R_RegisterShader("spotLight");
+	cgs.media.spotLightBeamShader = trap_R_RegisterShader("lightBeam");
+	//cgs.media.bulletParticleTrailShader = trap_R_RegisterShader("bulletParticleTrail"); // unused FIXME: remove from shader def
+	cgs.media.smokeParticleShader = trap_R_RegisterShader("smokeParticle");
 
 	// bullet hitting dirt
 	cgs.media.dirtParticle1Shader = trap_R_RegisterShader("dirt_splash");
@@ -1743,8 +1740,8 @@ static void CG_RegisterGraphics(void)
 		CG_RegisterItemVisuals(i);
 	}
 
-	cgs.media.grenadeExplosionShader = trap_R_RegisterShader("grenadeExplosion");
-	cgs.media.rocketExplosionShader  = trap_R_RegisterShader("rocketExplosion");
+	// cgs.media.grenadeExplosionShader = trap_R_RegisterShader("grenadeExplosion"); // unused FIXME: remove from shader def
+	cgs.media.rocketExplosionShader = trap_R_RegisterShader("rocketExplosion");
 
 	cgs.media.hWeaponSnd     = trap_S_RegisterSound("sound/weapons/mg42/mg42_fire.wav", qfalse);
 	cgs.media.hWeaponEchoSnd = trap_S_RegisterSound("sound/weapons/mg42/mg42_far.wav", qfalse);

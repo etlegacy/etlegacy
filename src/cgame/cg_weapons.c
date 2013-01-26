@@ -5616,42 +5616,9 @@ CG_AddBulletParticles
 */
 void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale)
 {
-	//localEntity_t   *le;
-	//refEntity_t     *re;
 	vec3_t velocity, pos;
 	int    i;
-	/*
-	    // add the falling streaks
-	    for (i=0; i<count/3; i++) {
-	        le = CG_AllocLocalEntity();
-	        re = &le->refEntity;
 
-	        VectorSet( velocity, dir[0] + crandom()*randScale, dir[1] + crandom()*randScale, dir[2] + crandom()*randScale );
-	        VectorScale( velocity, (float)speed*3, velocity );
-
-	        le->leType = LE_SPARK;
-	        le->startTime = cg.time;
-	        le->endTime = le->startTime + duration - (int)(0.5 * random() * duration);
-	        le->lastTrailTime = cg.time;
-
-	        VectorCopy( origin, re->origin );
-	        AxisCopy( axisDefault, re->axis );
-
-	        le->pos.trType = TR_GRAVITY;
-	        VectorCopy( origin, le->pos.trBase );
-	        VectorMA( le->pos.trBase, 2 + random()*4, dir, le->pos.trBase );
-	        VectorCopy( velocity, le->pos.trDelta );
-	        le->pos.trTime = cg.time;
-
-	        le->refEntity.customShader = cgs.media.bulletParticleTrailShader;
-	//      le->refEntity.customShader = cgs.media.sparkParticleShader;
-
-	        le->bounceFactor = 0.9;
-
-	//      le->leBounceSoundType = LEBS_BLOOD;
-	//      le->leMarkType = LEMT_BLOOD;
-	    }
-	*/
 	// add the falling particles
 	for (i = 0; i < count; i++)
 	{
@@ -6847,12 +6814,10 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 		// HACK, if this is not us getting hit, make it quieter // JPW NERVE pulled hack, we like loud impact sounds for MP
 		if (fleshEntityNum == cg.snap->ps.clientNum)
 		{
-			//CG_SoundPlayIndexedScript( cgs.media.bulletHitFleshScript, NULL, fleshEntityNum );
 			trap_S_StartSound(NULL, fleshEntityNum, CHAN_BODY, cgs.media.sfx_bullet_stonehit[rand() % MAX_IMPACT_SOUNDS]);
 		}
 		else
 		{
-			//CG_SoundPlayIndexedScript( cgs.media.bulletHitFleshScript, cg_entities[fleshEntityNum].currentState.origin, ENTITYNUM_WORLD ); // JPW NERVE changed from ,origin, to this
 			trap_S_StartSound(cg_entities[fleshEntityNum].currentState.origin, ENTITYNUM_WORLD, CHAN_BODY, cgs.media.sfx_bullet_stonehit[rand() % MAX_IMPACT_SOUNDS]);
 		}
 

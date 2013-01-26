@@ -1550,7 +1550,7 @@ static void CG_Constructible(centity_t *cent)
 	memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
 	VectorCopy(cent->lerpOrigin, ent.oldorigin);
-	//  VectorCopy( ent.origin, cent->lerpOrigin);
+	//VectorCopy( ent.origin, cent->lerpOrigin);
 	AnglesToAxis(cent->lerpAngles, ent.axis);
 
 	ent.renderfx = RF_NOSHADOW;
@@ -1559,20 +1559,7 @@ static void CG_Constructible(centity_t *cent)
 
 	if (s1->modelindex)
 	{
-		// get the model, either as a bmodel or a modelindex
-		//if ( s1->solid == SOLID_BMODEL ) {
 		ent.hModel = cgs.inlineDrawModel[s1->modelindex];
-		//} else {
-		//  ent.hModel = cgs.gameModels[s1->modelindex];
-		//}
-
-		// add to refresh list
-		//trap_R_AddRefEntityToScene(&ent);
-
-		//ent.shaderRGBA[0] = ent.shaderRGBA[1] = ent.shaderRGBA[2] = 0xff;
-		//ent.shaderRGBA[3] = s1->density;
-
-		//if( s1->angles2[0] < 255 )
 
 		trap_R_AddRefEntityToScene(&ent);
 	}
@@ -1583,24 +1570,12 @@ static void CG_Constructible(centity_t *cent)
 		if (cent->currentState.powerups == STATE_UNDERCONSTRUCTION)
 		{
 			ent.customShader = cgs.media.genericConstructionShader;
-
-			/*switch( cent->currentState.frame ) {
-			    case 1: trap_S_AddLoopingSound( cent->currentState.origin2, vec3_origin, cgs.media.buildSound[0], 255, 0 ); break;
-			    case 2: trap_S_AddLoopingSound( cent->currentState.origin2, vec3_origin, cgs.media.buildSound[1], 255, 0 ); break;
-			    case 3: trap_S_AddLoopingSound( cent->currentState.origin2, vec3_origin, cgs.media.buildSound[2], 255, 0 ); break;
-			    case 4: trap_S_AddLoopingSound( cent->currentState.origin2, vec3_origin, cgs.media.buildSound[3], 255, 0 ); break;
-			}*/
 		}
 
-		//if ( s1->solid == SOLID_BMODEL ) {
 		ent.hModel = cgs.inlineDrawModel[s1->modelindex2];
-		//} else {
-		//  ent.hModel = cgs.gameModels[s1->modelindex2];
-		//}
+
 		trap_R_AddRefEntityToScene(&ent);
 	}
-	//else
-	//  trap_R_AddRefEntityToScene(&ent);
 }
 
 /*

@@ -712,17 +712,6 @@ static void CG_OffsetFirstPersonView(void)
 	}
 	angles[ROLL] += delta;
 
-	/*if (cg.predictedPlayerState.eFlags & EF_PRONE) {
-	    delta = useLastValidBob ? cg.lastvalidBobfracsin * cg_bobyaw.value * speed * 15 : cg.bobfracsin * cg_bobyaw.value * speed * 15;
-	    if( useLastValidBob ) {
-	        if( cg.lastvalidBobcycle & 1 )
-	            delta = -delta;
-	    } else if (cg.bobcycle & 1)
-	        delta = -delta;
-
-	    angles[YAW] += delta;
-	}*/
-
 //===================================
 
 	// add view height

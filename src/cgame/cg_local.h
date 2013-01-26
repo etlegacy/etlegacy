@@ -267,7 +267,8 @@ typedef struct
 
 typedef struct
 {
-	lerpFrame_t legs, torso;
+	lerpFrame_t legs;
+	lerpFrame_t torso;
 	lerpFrame_t head;
 	lerpFrame_t weap;       // autonomous weapon animations
 	lerpFrame_t hudhead;
@@ -318,11 +319,6 @@ typedef struct centity_s
 
 	playerEntity_t pe;
 
-//  int             errorTime;      // decay the error from this time
-//  vec3_t          errorOrigin;
-//  vec3_t          errorAngles;
-
-//  qboolean        extrapolated;   // false if origin / angles is an interpolation
 	vec3_t rawOrigin;
 	vec3_t rawAngles;
 
@@ -334,7 +330,8 @@ typedef struct centity_s
 	vec3_t lastLerpOrigin;          // Added for linked trains player adjust prediction
 
 	// trail effects
-	int headJuncIndex, headJuncIndex2;
+	int headJuncIndex;
+	int headJuncIndex2;
 	int lastTrailTime;
 
 	vec3_t fireRiseDir;             // if standing still this will be up, otherwise it'll point away from movement dir
@@ -1131,8 +1128,6 @@ typedef struct
 
 	// For the bot hud, we keep a bit mask for which bot_action icons to show
 	int botMenuIcons;
-	// And we need to know which one is the selected one
-	int botSelectedCommand;
 
 	int orderFade;
 	int orderTime;
@@ -1179,8 +1174,6 @@ typedef struct
 
 	fileHandle_t logFile;
 } cg_t;
-
-#define NUM_FUNNEL_SPRITES  21
 
 #define MAX_LOCKER_DEBRIS   5
 
@@ -1399,16 +1392,7 @@ typedef struct
 	qhandle_t thirdPersonBinocModel;
 
 	// weapon effect shaders
-	qhandle_t railExplosionShader;
-	qhandle_t bulletExplosionShader;
 	qhandle_t rocketExplosionShader;
-	qhandle_t grenadeExplosionShader;
-	qhandle_t bfgExplosionShader;
-	qhandle_t bloodExplosionShader;
-
-	// special effects models
-	qhandle_t teleportEffectModel;
-	qhandle_t teleportEffectShader;
 
 	qhandle_t bloodCloudShader;
 	qhandle_t sparkParticleShader;
@@ -1416,16 +1400,14 @@ typedef struct
 	qhandle_t fireTrailShader;
 
 	qhandle_t flamethrowerFireStream;
-	qhandle_t flamethrowerBlueStream;
-	qhandle_t flamethrowerFuelStream;
-	qhandle_t flamethrowerFuelShader;
+
 	qhandle_t onFireShader, onFireShader2;
-	qhandle_t viewFadeBlack;
+
 	qhandle_t sparkFlareShader;
-	qhandle_t funnelFireShader[NUM_FUNNEL_SPRITES];
+
 	qhandle_t spotLightShader;
 	qhandle_t spotLightBeamShader;
-	qhandle_t bulletParticleTrailShader;
+
 	qhandle_t smokeParticleShader;
 
 	// bullet hitting dirt
@@ -1472,7 +1454,7 @@ typedef struct
 
 	sfxHandle_t sfx_dynamiteexp;
 	sfxHandle_t sfx_dynamiteexpDist;
-	sfxHandle_t sfx_spearhit;
+
 	sfxHandle_t sfx_knifehit[5];
 	sfxHandle_t gibSound;
 	sfxHandle_t noAmmoSound;
@@ -1522,17 +1504,13 @@ typedef struct
 
 	sfxHandle_t fkickmiss;
 
-	int bulletHitFleshScript;
-
 	sfxHandle_t satchelbounce1;
 
 	qhandle_t cursor;
-	qhandle_t selectCursor;
-	qhandle_t sizeCursor;
 
 	sfxHandle_t uniformPickup;
 	sfxHandle_t minePrimedSound;
-	sfxHandle_t buildSound[4];
+
 	sfxHandle_t buildDecayedSound;
 
 	sfxHandle_t sndLimboSelect;
@@ -1550,11 +1528,6 @@ typedef struct
 	qhandle_t ccFilterPics[10]; // FIXME: we just init 0-7
 	qhandle_t ccFilterBackOn;
 	qhandle_t ccFilterBackOff;
-	qhandle_t ccPaper;
-	qhandle_t ccPaperConsole;
-	qhandle_t ccBars[3];
-	qhandle_t ccFlags[3];
-	qhandle_t ccLeather;
 
 	qhandle_t ccPlayerHighlight;
 	qhandle_t ccConstructIcon[2];
@@ -1565,10 +1538,6 @@ typedef struct
 	qhandle_t ccMortarHit;
 	qhandle_t ccMortarTarget;
 	qhandle_t ccMortarTargetArrow;
-
-	qhandle_t currentSquadBackground;
-	qhandle_t SPTeamOverlayUnitBackground;
-	qhandle_t SPTeamOverlayUnitSelected;
 
 	// for commandmap
 	qhandle_t medicIcon;
@@ -2031,7 +2000,7 @@ extern vmCvar_t cg_runroll;
 extern vmCvar_t cg_bobup;
 extern vmCvar_t cg_bobpitch;
 extern vmCvar_t cg_bobroll;
-extern vmCvar_t cg_bobyaw;
+
 extern vmCvar_t cg_swingSpeed;
 extern vmCvar_t cg_shadows;
 extern vmCvar_t cg_gibs;

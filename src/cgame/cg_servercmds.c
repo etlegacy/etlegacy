@@ -2803,15 +2803,6 @@ static void CG_ServerCommand(void)
 		trap_S_FadeAllSound(atof(CG_Argv(1)), atoi(CG_Argv(2)), atoi(CG_Argv(3)));
 		return;
 	}
-	if (!Q_stricmp(cmd, "ftCommands"))
-	{
-		char info[MAX_INFO_STRING];
-		trap_Argv(1, info, sizeof(info));
-
-		cg.botMenuIcons = atoi(info);
-
-		return;
-	}
 	// ensure a file gets into a build (mainly for scripted music calls)
 	if (!Q_stricmp(cmd, "addToBuild"))
 	{
