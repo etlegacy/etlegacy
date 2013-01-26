@@ -69,10 +69,13 @@ _detectlinuxdistro() {
 detectos() {
 	PLATFORMSYS=`uname -s`
 	PLATFORMARCH=`uname -m`
-	if [[ ${PLAFORMSYS} -eq "Linux" ]]; then
+	if [[ ${PLATFORMSYS} == "Linux" ]]; then
 		DISTRO=`_detectlinuxdistro`
+	elif [[ ${PLATFORMSYS} == "Darwin" ]]; then
+		PLATFORMSYS=`sw_vers -productName`
+		DISTRO=`sw_vers -productVersion`
 	else
-		DISTRO=""
+		DISTRO="Unknown"
 	fi
 	echo -e "  running on: \033[1;32m${PLATFORMSYS}\033[0m \033[0;32m${PLATFORMARCH}\033[0m - \033[1;36m${DISTRO}\033[0m"
 }
