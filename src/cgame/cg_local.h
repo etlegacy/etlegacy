@@ -1126,9 +1126,6 @@ typedef struct
 	int proneMovingTime;
 	fireteamData_t fireTeams[32];
 
-	// For the bot hud, we keep a bit mask for which bot_action icons to show
-	int botMenuIcons;
-
 	int orderFade;
 	int orderTime;
 
@@ -2512,7 +2509,6 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 
 void CG_SparklerSparks(vec3_t origin, int count);
 void CG_ClearFlameChunks(void);
-void CG_ProjectedSpotLight(vec3_t start, vec3_t dir);
 
 void CG_Spotlight(centity_t *cent, float *color, vec3_t start, vec3_t dir, int segs, float range, int startWidth, float coneAngle, int flags);
 #define SL_NOTRACE          0x001   // don't do a trace check for shortening the beam, always draw at full 'range' length
