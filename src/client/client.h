@@ -60,15 +60,15 @@ typedef struct
 	int messageNum;                 // copied from netchan->incoming_sequence
 	int deltaNum;                   // messageNum the delta is from
 	int ping;                       // time from when cmdNum-1 was sent to time packet was reeceived
-	byte areamask[MAX_MAP_AREA_BYTES];                  // portalarea visibility bits
+	byte areamask[MAX_MAP_AREA_BYTES]; // portalarea visibility bits
 
 	int cmdNum;                     // the next cmdNum the server is expecting
-	playerState_t ps;                       // complete information about the current player at this time
+	playerState_t ps;               // complete information about the current player at this time
 
-	int numEntities;                        // all of the entities that need to be presented
-	int parseEntitiesNum;                   // at the time of this snapshot
+	int numEntities;                // all of the entities that need to be presented
+	int parseEntitiesNum;           // at the time of this snapshot
 
-	int serverCommandNum;                   // execute all commands up to this before
+	int serverCommandNum;           // execute all commands up to this before
 	// making the snapshot current
 } clSnapshot_t;
 
@@ -83,10 +83,8 @@ typedef struct
 
 /*
 =============================================================================
-
 the clientActive_t structure is wiped completely at every
 new gamestate_t, potentially several times during an established connection
-
 =============================================================================
 */
 
@@ -178,13 +176,11 @@ extern clientActive_t cl;
 
 /*
 =============================================================================
-
 the clientConnection_t structure is wiped when disconnecting from a server,
 either to go to a full screen console, play a demo, or connect to a different server
 
 A connection can be to either a server through the network layer or a
 demo through a file.
-
 =============================================================================
 */
 
@@ -269,10 +265,8 @@ extern clientConnection_t clc;
 
 /*
 ==================================================================
-
 the clientStatic_t structure is never wiped, and is used even when
 no client connection is active at all
-
 ==================================================================
 */
 
@@ -523,7 +517,7 @@ typedef enum
 	KB_BUTTONS4,
 	KB_BUTTONS5,
 	KB_BUTTONS6,
-	KB_BUTTONS7,
+	KB_BUTTONS7, // unused
 	KB_WBUTTONS0,
 	KB_WBUTTONS1,
 	KB_WBUTTONS2,
