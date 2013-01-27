@@ -42,17 +42,36 @@
  */
 
 #include <jpeglib.h>
+#include <setjmp.h>
+
+#if JPEG_LIB_VERSION < 80
+#   error Need system libjpeg >= 80
+#endif
+
+/*
+ * Override default libjpeg error manager in order to be able to jump back
+ * out to our routines during JPEG decoding.
+ * setjmp/longjmp buffer is added to make a custom JPEG manager struct.
+ */
+typedef struct
+{
+	struct jpeg_error_mgr pub;
+	jmp_buf jmpbuf;
+} my_jpeg_error_mgr;
 
 static void R_JPGErrorExit(j_common_ptr cinfo)
 {
-	char buffer[JMSG_LENGTH_MAX];
+	char              buffer[JMSG_LENGTH_MAX];
+	my_jpeg_error_mgr *mgr = (my_jpeg_error_mgr *)cinfo->err;
 
 	(*cinfo->err->format_message)(cinfo, buffer);
+	Com_Printf(S_COLOR_YELLOW "WARNING: (libjpeg) %s\n", buffer);
 
 	/* Let the memory manager delete any temp files before we die */
 	jpeg_destroy(cinfo);
 
-	ri.Error(ERR_FATAL, "%s", buffer);
+	/* Return from libjpeg */
+	longjmp(mgr->jmpbuf, 23);
 }
 
 static void R_JPGOutputMessage(j_common_ptr cinfo)
@@ -73,19 +92,13 @@ void R_LoadJPG(const char *filename, unsigned char **pic,
 	 * working space (which is allocated as needed by the JPEG library).
 	 */
 	struct jpeg_decompress_struct cinfo = { NULL };
+
 	/* We use our private extension JPEG error handler.
 	 * Note that this struct must live as long as the main JPEG parameter
 	 * struct, to avoid dangling-pointer problems.
 	 */
-	/* This struct represents a JPEG error handler.  It is declared separately
-	 * because applications often want to supply a specialized error handler
-	 * (see the second half of this file for an example).  But here we just
-	 * take the easy way out and use the standard error handler, which will
-	 * print a message on stderr and call exit() if compression fails.
-	 * Note that this struct must live as long as the main JPEG parameter
-	 * struct, to avoid dangling-pointer problems.
-	 */
-	struct jpeg_error_mgr jerr;
+	my_jpeg_error_mgr jerr;
+
 	/* More stuff */
 	JSAMPARRAY   buffer;        /* Output row buffer */
 	unsigned int row_stride;    /* physical row width in output buffer */
@@ -119,12 +132,19 @@ void R_LoadJPG(const char *filename, unsigned char **pic,
 	 * This routine fills in the contents of struct jerr, and returns jerr's
 	 * address which we place into the link field in cinfo.
 	 */
-	cinfo.err                 = jpeg_std_error(&jerr);
+	cinfo.err                 = jpeg_std_error(&jerr.pub);
 	cinfo.err->error_exit     = R_JPGErrorExit;
 	cinfo.err->output_message = R_JPGOutputMessage;
 
 	/* Now we can initialize the JPEG decompression object. */
 	jpeg_create_decompress(&cinfo);
+
+	/* deep error handling */
+	if (setjmp(jerr.jmpbuf))
+	{
+		// There was an error in jpeg decompression. Abort.
+		return;
+	}
 
 	/* Step 2: specify data source (eg, a file) */
 
@@ -146,7 +166,6 @@ void R_LoadJPG(const char *filename, unsigned char **pic,
 	* automatically convert 8-bit greyscale images to RGB as well.
 	*/
 	cinfo.out_color_space = JCS_RGB;
-
 
 	/* In this example, we don't need to change any of the defaults set by
 	 * jpeg_read_header(), so we do nothing here.
