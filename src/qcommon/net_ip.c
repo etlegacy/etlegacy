@@ -510,7 +510,7 @@ qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
 			netmask = 32;
 		}
 	}
-#ifdef FEATURE_IPV6	
+#ifdef FEATURE_IPV6
 	else if (a.type == NA_IP6)
 	{
 		addra = (byte *) &a.ip6;
@@ -593,7 +593,7 @@ const char *NET_AdrToString(netadr_t a)
 		Com_sprintf(s, sizeof(s), "%i.%i.%i.%i:%hu",
 		            a.ip[0], a.ip[1], a.ip[2], a.ip[3], BigShort(a.port));
 	}
-#ifdef FEATURE_IPV6	
+#ifdef FEATURE_IPV6
 	else if (a.type == NA_IP6)
 	{
 		// FIXME: add port for compatibility
@@ -629,13 +629,13 @@ const char *NET_AdrToStringwPort(netadr_t a)
 	{
 		Com_sprintf(s, sizeof(s), "%s:%hu", NET_AdrToString(a), ntohs(a.port));
 	}
-#ifdef FEATURE_IPV6	
+#ifdef FEATURE_IPV6
 	else if (a.type == NA_IP6)
 	{
 		Com_sprintf(s, sizeof(s), "[%s]:%hu", NET_AdrToString(a), ntohs(a.port));
 	}
 #endif
-	
+
 	return s;
 }
 
@@ -1036,11 +1036,11 @@ int NET_IPSocket(char *net_interface, int port, int *err)
 	SOCKET             newsocket;
 	struct sockaddr_in address;
 #ifdef __AROS__
-	char               _true = 1;
+	char _true = 1;
 #else
-	u_long             _true = 1;
+	u_long _true = 1;
 #endif
-	int                i     = 1;
+	int i = 1;
 
 	*err = 0;
 
@@ -1538,7 +1538,7 @@ static void NET_AddLocalAddress(char *ifname, struct sockaddr *addr, struct sock
 			addrlen             = sizeof(struct sockaddr_in);
 			localIP[numIP].type = NA_IP;
 		}
-#ifdef FEATURE_IPV6			
+#ifdef FEATURE_IPV6
 		else if (family == AF_INET6)
 		{
 			addrlen             = sizeof(struct sockaddr_in6);
@@ -1727,7 +1727,7 @@ void NET_OpenIP(void)
 			Com_Printf("WARNING: Couldn't bind to a v6 ip address.\n");
 		}
 	}
-#endif	
+#endif
 
 	if (net_enabled->integer & NET_ENABLEV4)
 	{
@@ -1930,7 +1930,7 @@ void NET_Config(qboolean enableNetworking)
 		if (net_enabled->integer)
 		{
 			NET_OpenIP();
-#ifdef FEATURE_IPV6			
+#ifdef FEATURE_IPV6
 			NET_SetMulticast6();
 #endif
 		}
@@ -1972,7 +1972,7 @@ void NET_Init(void)
 		SocketBase = NULL;
 		Com_Printf("WARNING: SocketBaseTags failed\n");
 		return;
-	}	
+	}
 #endif
 
 	NET_Config(qtrue);
