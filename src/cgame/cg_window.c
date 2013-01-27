@@ -35,7 +35,9 @@
 #include "cg_local.h"
 #include "../ui/ui_shared.h"
 
+#if FEATURE_MULTIVIEW
 extern pmove_t cg_pmove;        // cg_predict.c
+#endif
 
 vec4_t colorClear = { 0.0f, 0.0f, 0.0f, 0.0f };     // Transparent
 vec4_t colorBrown1 = { 0.3f, 0.2f, 0.1f, 0.9f };    // Brown
