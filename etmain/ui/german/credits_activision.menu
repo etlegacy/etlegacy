@@ -122,5 +122,5 @@ menuDef {
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+300, .5*(WINDOW_WIDTH-24), 10, "Manager, Customer Support", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Buttons //
-	BUTTON( 260, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-350), 18, "ZURÃœCK", .2, 14, close credits_activision ; open credits_etlegacy )
+	BUTTON( 260, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-350), 18, "ZURÜCK", .2, 14, close credits_activision ; open credits_etlegacy )
 }
