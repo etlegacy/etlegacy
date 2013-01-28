@@ -1547,7 +1547,7 @@ static void CG_RegisterGraphics(void)
 	}
 
 	cgs.media.backTileShader = trap_R_RegisterShader("gfx/2d/backtile");
-	cgs.media.noammoShader   = trap_R_RegisterShader("icons/noammo");
+	//cgs.media.noammoShader   = trap_R_RegisterShader("icons/noammo");  // unused FIXME: remove from shader def
 
 	cgs.media.teamStatusBar = trap_R_RegisterShader("gfx/2d/colorbar.tga");
 

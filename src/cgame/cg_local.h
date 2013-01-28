@@ -1181,7 +1181,6 @@ typedef struct
 typedef struct
 {
 	qhandle_t charsetShader;
-
 	qhandle_t menucharsetShader;
 
 	qhandle_t charsetProp;
@@ -1189,27 +1188,19 @@ typedef struct
 	qhandle_t charsetPropB;
 	qhandle_t whiteShader;
 
-	qhandle_t armorModel;
-
 	qhandle_t hudSprintBar;
 	qhandle_t hudAxisHelmet;
 	qhandle_t hudAlliedHelmet;
 
 	qhandle_t teamStatusBar;
 
-	qhandle_t deferShader;
-
 	// gib explosions
-	qhandle_t gibAbdomen;
-	qhandle_t gibArm;
+	// FIXME: the following handles are used but never init see cg_event & fx code
+	// gib models are stored in character->gibModels see CG_ParseGibModels()
 	qhandle_t gibChest;
-	qhandle_t gibFist;
-	qhandle_t gibFoot;
-	qhandle_t gibForearm;
 	qhandle_t gibIntestine;
 	qhandle_t gibLeg;
-	qhandle_t gibSkull;
-	qhandle_t gibBrain;
+	// END FIXME
 
 	// debris
 	qhandle_t debBlock[6];
@@ -1217,20 +1208,12 @@ typedef struct
 	qhandle_t debFabric[3];
 	qhandle_t debWood[6];
 
-	qhandle_t targetEffectExplosionShader;
-
 	qhandle_t machinegunBrassModel;
 	qhandle_t panzerfaustBrassModel;
-
 	qhandle_t smallgunBrassModel;
 
-	qhandle_t shotgunBrassModel;
-
-	qhandle_t railRingsShader;
 	qhandle_t railCoreShader;
 	qhandle_t ropeShader;
-
-	qhandle_t lightningShader;
 
 	qhandle_t friendShader;
 
@@ -1249,11 +1232,9 @@ typedef struct
 	qhandle_t crosshairShader[NUM_CROSSHAIRS];
 	qhandle_t lagometerShader;
 	qhandle_t backTileShader;
-	qhandle_t noammoShader;
 
 	qhandle_t reticleShader;
 	qhandle_t reticleShaderSimple;
-	qhandle_t snooperShader;
 
 	qhandle_t binocShader;
 	qhandle_t binocShaderSimple;
@@ -1360,7 +1341,6 @@ typedef struct
 	//qhandle_t shardRubble1;
 	//qhandle_t shardRubble2;
 	//qhandle_t shardRubble3;
-
 
 	qhandle_t shardJunk[MAX_LOCKER_DEBRIS];
 
@@ -1496,11 +1476,6 @@ typedef struct
 	sfxHandle_t dynamitebounce1;
 	sfxHandle_t landminebounce1;
 
-	sfxHandle_t fkickwall;
-	sfxHandle_t fkickflesh;
-
-	sfxHandle_t fkickmiss;
-
 	sfxHandle_t satchelbounce1;
 
 	qhandle_t cursor;
@@ -1522,7 +1497,7 @@ typedef struct
 	sfxHandle_t shoveSound;
 
 	qhandle_t ccStamps[2];
-	qhandle_t ccFilterPics[10]; // FIXME: we just init 0-7
+	qhandle_t ccFilterPics[8]; // was 10, set to 8 (we init 0-7)
 	qhandle_t ccFilterBackOn;
 	qhandle_t ccFilterBackOff;
 
