@@ -51,14 +51,28 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <unistd.h>
+#ifndef __AROS__
 #include <sys/mman.h>
+#endif
 #include <sys/time.h>
 #include <pwd.h>
 #include <libgen.h>
 #include <fcntl.h>
 #include <sys/wait.h>
 
+#ifdef __AROS__
+#ifndef SIGIOT
+#define SIGIOT SIGTERM
+#endif
+#include <datatypes/textclass.h>
+#include <intuition/intuition.h>
+#include <proto/intuition.h>
+#include <proto/iffparse.h>
+#endif
+
+#ifndef __AROS__
 qboolean stdinIsATTY;
+#endif
 
 // Used to determine where to store user-specific files
 static char homePath[MAX_OSPATH] = { 0 };
@@ -69,6 +83,7 @@ static char homePath[MAX_OSPATH] = { 0 };
  */
 char *Sys_DefaultHomePath(void)
 {
+#ifndef __AROS__
 	char *p;
 
 	if (!*homePath)
@@ -79,6 +94,7 @@ char *Sys_DefaultHomePath(void)
 			Q_strcat(homePath, sizeof(homePath), "/.etlwolf");
 		}
 	}
+#endif
 
 	return homePath;
 }
@@ -168,6 +184,7 @@ void Sys_SnapVector(float *v)
  */
 qboolean Sys_RandomBytes(byte *string, int len)
 {
+#ifndef __AROS__
 	FILE *fp;
 
 	fp = fopen("/dev/urandom", "r");
@@ -184,6 +201,9 @@ qboolean Sys_RandomBytes(byte *string, int len)
 
 	fclose(fp);
 	return qtrue;
+#else
+	return qfalse;
+#endif
 }
 
 /**
@@ -192,18 +212,62 @@ qboolean Sys_RandomBytes(byte *string, int len)
  */
 char *Sys_GetCurrentUser(void)
 {
+#ifndef __AROS__
 	struct passwd *p;
 
-	if ((p = getpwuid(getuid())) == NULL)
+	if ((p = getpwuid(getuid())) != NULL)
 	{
-		return "player";
+		return p->pw_name;
 	}
-	return p->pw_name;
+#endif
+
+	return "player";
 }
 
 char *Sys_GetClipboardData(void)
 {
+#ifdef __AROS__
+	struct IFFHandle   *IFFHandle;
+	struct ContextNode *cn;
+	char               *data = NULL;
+
+	if ((IFFHandle = AllocIFF()))
+	{
+		if ((IFFHandle->iff_Stream = (IPTR) OpenClipboard(0)))
+		{
+			InitIFFasClip(IFFHandle);
+			if (!OpenIFF(IFFHandle, IFFF_READ))
+			{
+				if (!StopChunk(IFFHandle, ID_FTXT, ID_CHRS))
+				{
+					if (!ParseIFF(IFFHandle, IFFPARSE_SCAN))
+					{
+						cn = CurrentChunk(IFFHandle);
+						if (cn && (cn->cn_Type == ID_FTXT) && (cn->cn_ID == ID_CHRS) && (cn->cn_Size > 0))
+						{
+							data = (char *) Z_Malloc(cn->cn_Size + 1);
+							if (ReadChunkBytes(IFFHandle, data, cn->cn_Size))
+							{
+								data[cn->cn_Size] = '\0';
+							}
+							else
+							{
+								data[0] = '\0';
+							}
+						}
+					}
+				}
+				CloseIFF(IFFHandle);
+			}
+			CloseClipboard((struct ClipboardHandle *) IFFHandle->iff_Stream);
+		}
+		FreeIFF(IFFHandle);
+	}
+
+	return data;
+#else
 	return NULL;
+#endif
 }
 
 #define MEM_THRESHOLD 96 * 1024 * 1024
@@ -489,6 +553,7 @@ void Sys_Sleep(int msec)
 		return;
 	}
 
+#ifndef __AROS__
 	if (stdinIsATTY)
 	{
 		fd_set fdset;
@@ -509,6 +574,7 @@ void Sys_Sleep(int msec)
 		}
 	}
 	else
+#endif
 	{
 		// With nothing to select() on, we can't wait indefinitely
 		if (msec < 0)
@@ -570,7 +636,50 @@ void Sys_ErrorDialog(const char *error)
 	close(f);
 }
 
-#ifndef __APPLE__
+#ifdef __AROS__
+/**
+ * @brief Display an AROS dialog box
+ * @param     type    Dialog Type
+ * @param[in] message Message to show
+ * @param[in] title   Message box title
+ */
+dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title)
+{
+	struct EasyStruct es;
+	int               result;
+
+	es.es_StructSize = sizeof(es);
+	es.es_Flags      = 0;
+	es.es_Title      = title;
+	es.es_TextFormat = message;
+
+	switch (type)
+	{
+	case DT_YES_NO:
+		es.es_GadgetFormat = "Yes|No";
+		break;
+	case DT_OK_CANCEL:
+		es.es_GadgetFormat = "OK|Cancel";
+		break;
+	default:
+		es.es_GadgetFormat = "OK";
+		break;
+	}
+
+	result = EasyRequest(0, &es, 0, 0);
+
+	// the rightmost button is always 0, others are numbered left to right
+	switch (type)
+	{
+	case DT_YES_NO:
+		return result ? DR_YES : DR_NO;
+	case DT_OK_CANCEL:
+		return result ? DR_OK : DR_CANCEL;
+	}
+
+	return DR_OK;
+}
+#elif !defined (__APPLE__)
 static char execBuffer[1024];
 static char *execBufferPointer;
 static char *execArgv[16];
@@ -746,7 +855,6 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 		// FIXME see #91
 		// ... XMESSAGE ?!
 		// ... MAC OS ?!
-		// ... AROS ?!
 		// ... OpenBSD
 		// ... others?
 		Com_DPrintf(S_COLOR_YELLOW "WARNING: unsupported desktop session in Sys_Dialog().\n");
@@ -838,6 +946,7 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
  */
 void Sys_DoStartProcess(char *cmdline)
 {
+#ifndef __AROS__
 	switch (fork())
 	{
 	case -1:
@@ -856,6 +965,7 @@ void Sys_DoStartProcess(char *cmdline)
 		_exit(0);
 		break;
 	}
+#endif
 }
 
 /**
@@ -885,10 +995,11 @@ void Sys_StartProcess(char *cmdline, qboolean doexit)
  * @brief Open URL in system browser
  * @param[in] url    URL to open
  * @param     doexit Quit from game after opening URL
+ * @todo add openurl.library support for AROS
  */
 void Sys_OpenURL(const char *url, qboolean doexit)
 {
-#ifndef DEDICATED
+#if !defined (DEDICATED) && !defined (__AROS__)
 	char fn[MAX_OSPATH];
 	char cmdline[MAX_CMD];
 
@@ -945,8 +1056,10 @@ void Sys_PlatformInit(void)
 	signal(SIGIOT, Sys_SigHandler);
 	signal(SIGBUS, Sys_SigHandler);
 
+#ifndef __AROS__
 	stdinIsATTY = isatty(STDIN_FILENO) &&
 	              !(term && (!strcmp(term, "raw") || !strcmp(term, "dumb")));
+#endif
 }
 
 /**

@@ -2937,7 +2937,7 @@ void Com_Init(char *commandLine)
 	con_drawnotify = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
-#ifdef _WIN32
+#if defined (_WIN32) || defined (__AROS__)
 	com_ansiColor = Cvar_Get("com_ansiColor", "0", CVAR_ARCHIVE);
 #else
 	com_ansiColor = Cvar_Get("com_ansiColor", "1", CVAR_ARCHIVE);
