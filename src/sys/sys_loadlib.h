@@ -31,7 +31,7 @@
  * @file sys_loadlib.h
  */
 
-#ifdef DEDICATED
+#if defined (DEDICATED) || defined (__AROS__)
 #   ifdef _WIN32
 #       include <windows.h>
 #       define Sys_LoadLibrary(f)   (void *)LoadLibrary(f)

@@ -44,6 +44,9 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
+#ifdef __AROS__
+#include <proto/dos.h>
+#endif
 
 #ifndef DEDICATED
 #    ifdef BUNDLED_SDL
@@ -76,7 +79,22 @@ Sys_SetBinaryPath
 */
 void Sys_SetBinaryPath(const char *path)
 {
-	Q_strncpyz(binaryPath, path, sizeof(binaryPath));
+#ifdef __AROS__
+	if (!strcmp(path, "."))
+	{
+		BPTR lock = Lock("PROGDIR:", ACCESS_READ);
+
+		if (lock)
+		{
+			NameFromLock(lock, binaryPath, sizeof(binaryPath));
+			UnLock(lock);
+		}
+	}
+	else
+#endif
+	{
+		Q_strncpyz(binaryPath, path, sizeof(binaryPath));
+	}
 }
 
 /*
@@ -211,6 +229,9 @@ Sys_Quit
 */
 void Sys_Quit(void)
 {
+#ifdef __AROS__
+	NET_Shutdown();
+#endif
 	Sys_Exit(0);
 #if defined (_WIN32)
 	Sys_DestroyConsole();
