@@ -5014,7 +5014,7 @@ qboolean G_ScriptAction_Create(gentity_t *ent, char *params)
 		level.numSpawnVars++;
 	}
 	create = G_SpawnGEntityFromSpawnVars();
-	// FIXME: activate -> this crashes the game & map supply
-	//trap_LinkEntity(create);
+
+	trap_LinkEntity(create);
 	return qtrue;
 }

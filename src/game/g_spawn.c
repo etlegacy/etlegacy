@@ -108,6 +108,10 @@ field_t fields[] =
 	{ "model",        FOFS(model),          F_LSTRING   },
 	{ "model2",       FOFS(model2),         F_LSTRING   },
 	{ "spawnflags",   FOFS(spawnflags),     F_INT       },
+	{ "eflags",       FOFS(s.eFlags),       F_INT       },
+	{ "svflags",      FOFS(r.svFlags),      F_INT       },
+	{ "maxs",         FOFS(r.maxs),         F_VECTOR    },
+	{ "mins",         FOFS(r.mins),         F_VECTOR    },
 	{ "speed",        FOFS(speed),          F_FLOAT     },
 	{ "closespeed",   FOFS(closespeed),     F_FLOAT     },
 	{ "target",       FOFS(target),         F_LSTRING   },
@@ -133,7 +137,6 @@ field_t fields[] =
 
 	// additional ai field
 	{ "skin",         FOFS(aiSkin),         F_LSTRING   },
-
 
 	// dlight lightstyles (made all these unique variables for testing)
 	{ "_color",       FOFS(dl_color),       F_VECTOR    }, // color of the light	(the underscore is inserted by the color picker in QER)
@@ -176,6 +179,13 @@ field_t fields[] =
 	{ "damageparent", FOFS(damageparent),   F_LSTRING   },
 
 	{ "numPlayers",   FOFS(numPlayers),     F_INT       }, // number of players needed to trigger this
+
+	{ "contents",     FOFS(r.contents),     F_INT       },
+	{ "clipmask",     FOFS(clipmask),       F_INT       },
+	{ "count2",       FOFS(count2),         F_INT       },
+	// doors need this one
+	{ "baseAngle",    FOFS(s.apos.trBase),  F_VECTOR    },
+	{ "baseOrigin",   FOFS(s.pos.trBase),   F_VECTOR    },
 
 	{ NULL }
 };
@@ -749,7 +759,7 @@ Spawn an entity and fill in all of the level fields from
 level.spawnVars[], then call the class specfic spawn function
 ===================
 */
-void G_SpawnGEntityFromSpawnVars(void)
+gentity_t *G_SpawnGEntityFromSpawnVars(void)
 {
 	int       i;
 	gentity_t *ent = G_Spawn(); // get the next free entity
@@ -765,7 +775,7 @@ void G_SpawnGEntityFromSpawnVars(void)
 	if (i)
 	{
 		G_FreeEntity(ent);
-		return;
+		return NULL;
 	}
 
 	// allowteams handling
@@ -805,6 +815,8 @@ void G_SpawnGEntityFromSpawnVars(void)
 	{
 		G_FreeEntity(ent);
 	}
+
+	return ent;
 }
 
 /*
