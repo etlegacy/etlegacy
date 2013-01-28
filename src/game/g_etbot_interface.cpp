@@ -5711,6 +5711,8 @@ obResult InterfaceSendMessage(const MessageHelper &_data, const GameEntity _ent)
 				pMsg->m_Max = (weapon_restrictions[WP_LANDMINE].maxweap >> 1);         // div 2 to get the total per team..
 #elif defined ETPUB_VERSION
 				pMsg->m_Max = g_maxTeamLandmines.integer;
+#elif defined LEGACY
+				pMsg->m_Max = g_maxTeamLandmines.integer;
 #else
 				pMsg->m_Max = MAX_TEAM_LANDMINES;
 #endif

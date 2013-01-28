@@ -69,8 +69,6 @@
 
 //===============================================================
 
-#define MAX_TEAM_LANDMINES  10
-
 typedef qboolean (*addToSnapshotCallback)(int entityNum, int clientNum);
 
 // don't add or remove fields to keep 2.60 compatibility

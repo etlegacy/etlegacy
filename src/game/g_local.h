@@ -1107,7 +1107,7 @@ qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *o
 void G_SpawnEntitiesFromString(void);
 char *G_NewString(const char *string);
 
-gentity_t *G_SpawnGEntityFromSpawnVars( void );
+gentity_t *G_SpawnGEntityFromSpawnVars(void);
 qboolean G_CallSpawn(gentity_t *ent);
 
 char *G_AddSpawnVarToken(const char *string);
@@ -1658,6 +1658,8 @@ extern vmCvar_t g_excludedMaps;
 extern vmCvar_t g_resetXPMapCount;
 
 extern vmCvar_t g_campaignFile;
+
+extern vmCvar_t g_maxTeamLandmines;
 
 void trap_Printf(const char *fmt);
 void trap_Error(const char *fmt) __attribute__((noreturn));

@@ -16,7 +16,7 @@
 
 // #define OMNIBOT_MODNAME GAMEVERSION
 #define OMNIBOT_MODNAME "etmain" // don't change to 'legacy' !
-#define OMNIBOT_MODVERSION "2.60"
+#define OMNIBOT_MODVERSION ETLEGACY_VERSION_SHORT
 
 //////////////////////////////////////////////////////////////////////////
 // g_OmniBotFlags bits

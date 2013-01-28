@@ -262,6 +262,8 @@ vmCvar_t g_resetXPMapCount;
 
 vmCvar_t g_campaignFile;
 
+vmCvar_t g_maxTeamLandmines;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -488,6 +490,8 @@ cvarTable_t gameCvarTable[] =
 	{ &g_resetXPMapCount,         "g_resetXPMapCount",         "0",                          0 },
 
 	{ &g_campaignFile,            "g_campaignFile",            "",                           0 },
+
+	{ &g_maxTeamLandmines,        "g_maxTeamLandmines",        "10",                         0 },
 };
 
 // made static to avoid aliasing
@@ -4488,8 +4492,8 @@ uebrgpiebrpgibqeripgubeqrpigubqifejbgipegbrtibgurepqgbn%i", level.time)
 
 	if (level.gameManager)
 	{
-		level.gameManager->s.otherEntityNum  = MAX_TEAM_LANDMINES - G_CountTeamLandmines(TEAM_AXIS);
-		level.gameManager->s.otherEntityNum2 = MAX_TEAM_LANDMINES - G_CountTeamLandmines(TEAM_ALLIES);
+		level.gameManager->s.otherEntityNum  = g_maxTeamLandmines.integer - G_CountTeamLandmines(TEAM_AXIS);
+		level.gameManager->s.otherEntityNum2 = g_maxTeamLandmines.integer - G_CountTeamLandmines(TEAM_ALLIES);
 	}
 #ifdef FEATURE_LUA
 	G_LuaHook_RunFrame(levelTime);
