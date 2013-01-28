@@ -289,6 +289,28 @@ static inline float idSqrt(float x)
 
 #endif
 
+//======================= AROS DEFINES =================================
+
+#ifdef __AROS__
+
+#define MAC_STATIC
+
+#ifdef __i386__
+#define CPUSTRING   "aros-i386"
+#elif defined __x86_64__
+#define CPUSTRING   "aros-x86_64"
+#elif defined __powerpc__
+#define CPUSTRING   "aros-ppc"
+#elif defined __arm__
+#define CPUSTRING   "aros-arm"
+#else
+#define CPUSTRING   "aros-other"
+#endif
+
+#define PATH_SEP '/'
+
+#endif
+
 //=============================================================
 
 typedef unsigned char byte;

@@ -1082,6 +1082,8 @@ void Sys_LeaveCriticalSection(void *ptr);
 #define Sys_GetDLLName(x) x ".mp.obsd." ARCH_STRING DLL_EXT
 #elif __APPLE__
 #define Sys_GetDLLName(x) x DLL_EXT
+#elif defined __AROS__
+#define Sys_GetDLLName(x) x "_mp_aros_" ARCH_STRING DLL_EXT
 #else
 #define Sys_GetDLLName(x) x ".mp." ARCH_STRING DLL_EXT
 #endif
