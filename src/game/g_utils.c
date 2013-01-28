@@ -280,6 +280,121 @@ gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match)
 
 /*
 =============
+G_FindInt
+
+Like G_Find, but searches for integer values..
+=============
+*/
+gentity_t *G_FindInt(gentity_t *from, int fieldofs, int match)
+{
+	int       i;
+	gentity_t *max = &g_entities[level.num_entities];
+
+	if (!from)
+	{
+		from = g_entities;
+	}
+	else
+	{
+		from++;
+	}
+
+	for ( ; from < max ; from++)
+	{
+		if (!from->inuse)
+		{
+			continue;
+		}
+		i = *(int *) ((byte *)from + fieldofs);
+		if (i == match)
+		{
+			return from;
+		}
+	}
+
+	return NULL;
+}
+
+/*
+=============
+G_FindFloat
+
+Like G_Find, but searches for float values..
+=============
+*/
+gentity_t *G_FindFloat(gentity_t *from, int fieldofs, float match)
+{
+	float     f;
+	gentity_t *max = &g_entities[level.num_entities];
+
+	if (!from)
+	{
+		from = g_entities;
+	}
+	else
+	{
+		from++;
+	}
+
+	for ( ; from < max ; from++)
+	{
+		if (!from->inuse)
+		{
+			continue;
+		}
+		f = *(float *) ((byte *)from + fieldofs);
+		if (f == match)
+		{
+			return from;
+		}
+	}
+
+	return NULL;
+}
+
+/*
+=============
+G_FindVector
+
+Like G_Find, but searches for vector values..
+=============
+*/
+gentity_t *G_FindVector(gentity_t *from, int fieldofs, const vec3_t match)
+{
+	vec3_t    vec;
+	gentity_t *max = &g_entities[level.num_entities];
+
+	if (!from)
+	{
+		from = g_entities;
+	}
+	else
+	{
+		from++;
+	}
+
+	for ( ; from < max ; from++)
+	{
+		if (!from->inuse)
+		{
+			continue;
+		}
+		vec[0] = *(vec_t *) ((byte *)from + fieldofs + 0);
+		vec[1] = *(vec_t *) ((byte *)from + fieldofs + 4);
+		vec[2] = *(vec_t *) ((byte *)from + fieldofs + 8);
+
+		if (vec[0] == match[0] && vec[1] == match[1] && vec[2] == match[2])
+		{
+			return from;
+		}
+	}
+
+	return NULL;
+}
+
+
+/*
+=============
 G_FindByTargetname
 =============
 */

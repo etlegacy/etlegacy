@@ -144,6 +144,8 @@ qboolean G_ScriptAction_ConstructibleWeaponclass(gentity_t *ent, char *params) ;
 qboolean G_ScriptAction_ConstructibleDuration(gentity_t *ent, char *params) ;
 
 qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params);
+qboolean G_ScriptAction_Create(gentity_t *ent, char *params);
+qboolean G_ScriptAction_Delete(gentity_t *ent, char *params);
 
 // these are the actions that each event can call
 g_script_stack_action_t gScriptActions[] =
@@ -239,6 +241,8 @@ g_script_stack_action_t gScriptActions[] =
 	{ "disablemessage",                 G_ScriptAction_DisableMessage                },
 
 	{ "set",                            etpro_ScriptAction_SetValues                 },
+	{ "create",                         G_ScriptAction_Create,                       },
+	{ "delete",                         G_ScriptAction_Delete,                       },
 
 	{ "constructible_class",            G_ScriptAction_ConstructibleClass            },
 	{ "constructible_chargebarreq",     G_ScriptAction_ConstructibleChargeBarReq     },
@@ -414,7 +418,6 @@ void G_Script_ScriptLoad(void)
 		return;
 	}
 
-
 	// make sure we terminate the script with a '\0' to prevent parser from choking
 	//level.scriptEntity = G_Alloc( len );
 	//trap_FS_Read( level.scriptEntity, len, f );
@@ -434,74 +437,6 @@ void G_Script_ScriptLoad(void)
 
 /*
 ==============
-G_Script_ParseSpawnbot
-
-  Parses "Spawnbot" command, precaching a custom character if specified
-==============
-*/
-void G_Script_ParseSpawnbot(char **ppScript, char params[], int paramsize)
-{
-	qboolean parsingCharacter = qfalse;
-	char     *token;
-
-	token = COM_ParseExt(ppScript, qfalse);
-	while (token[0])
-	{
-		// if we are currently parsing a spawnbot command, check the parms for
-		// a custom character, which we will need to precache on the client
-
-		// did we just see a '/character' parm?
-		if (parsingCharacter)
-		{
-
-			parsingCharacter = qfalse;
-
-			G_CharacterIndex(token);
-
-			if (!BG_FindCharacter(token))
-			{
-				bg_character_t *character = BG_FindFreeCharacter(token);
-
-				Q_strncpyz(character->characterFile, token, sizeof(character->characterFile));
-
-				if (!G_RegisterCharacter(token, character))
-				{
-					G_Error("ERROR: G_Script_ParseSpawnbot: failed to load character file '%s'\n", token);
-				}
-			}
-
-#ifdef DEBUG
-			G_DPrintf("precached character %s\n", token);
-#endif
-		}
-		else if (!Q_stricmp(token, "/character"))
-		{
-			parsingCharacter = qtrue;
-		}
-
-		if (strlen(params))          // add a space between each param
-		{
-			Q_strcat(params, paramsize, " ");
-		}
-
-		if (strrchr(token, ' '))      // need to wrap this param in quotes since it has more than one word
-		{
-			Q_strcat(params, paramsize, "\"");
-		}
-
-		Q_strcat(params, paramsize, token);
-
-		if (strrchr(token, ' '))      // need to wrap this param in quotes since it has more than one word
-		{
-			Q_strcat(params, paramsize, "\"");
-		}
-
-		token = COM_ParseExt(ppScript, qfalse);
-	}
-}
-
-/*
-==============
 G_Script_ScriptParse
 
   Parses the script for the given entity
@@ -509,20 +444,19 @@ G_Script_ScriptParse
 */
 void G_Script_ScriptParse(gentity_t *ent)
 {
-	char             *pScript;
-	char             *token;
-	qboolean         wantName;
-	qboolean         inScript;
-	int              eventNum;
-	g_script_event_t events[G_MAX_SCRIPT_STACK_ITEMS];
-	int              numEventItems;
-	g_script_event_t *curEvent;
-	// Some of our multiplayer script commands have longer parameters
-	//char      params[MAX_QPATH];
-	char                    params[MAX_INFO_STRING];
+	char                    *pScript;
+	char                    *token;
+	qboolean                wantName;
+	qboolean                inScript;
+	int                     eventNum;
+	g_script_event_t        events[G_MAX_SCRIPT_STACK_ITEMS];
+	int                     numEventItems;
+	g_script_event_t        *curEvent;
+	char                    params[MAX_INFO_STRING]; // was MAX_QPATH some of our multiplayer script commands have longer parameters
 	g_script_stack_action_t *action;
 	int                     i;
 	int                     bracketLevel;
+	int                     len;
 	qboolean                buildScript;
 
 	if (!ent->scriptName)
@@ -580,15 +514,6 @@ void G_Script_ScriptParse(gentity_t *ent)
 		}
 		else if (wantName)
 		{
-			if (!Q_stricmp(token, "bot"))
-			{
-				// a bot, skip this whole entry
-				SkipRestOfLine(&pScript);
-				// skip this section
-				SkipBracedSection(&pScript);
-				//
-				continue;
-			}
 			if (!Q_stricmp(token, "entity"))
 			{
 				// this is an entity, so go back to look for a name
@@ -634,10 +559,12 @@ void G_Script_ScriptParse(gentity_t *ent)
 				Q_strcat(params, sizeof(params), token);
 			}
 
-			if (strlen(params))          // copy the params into the event
+			len = strlen(params);
+
+			if (len)          // copy the params into the event
 			{
-				curEvent->params = G_Alloc(strlen(params) + 1);
-				Q_strncpyz(curEvent->params, params, strlen(params) + 1);
+				curEvent->params = G_Alloc(len + 1);
+				Q_strncpyz(curEvent->params, params, len + 1);
 			}
 
 			// parse the actions for this event
@@ -658,8 +585,8 @@ void G_Script_ScriptParse(gentity_t *ent)
 
 				memset(params, 0, sizeof(params));
 
-				// Ikkyo - Parse for {}'s if this is a set command
-				if (!Q_stricmp(action->actionString, "set"))
+				// Parse for {}'s if this is a set command
+				if (!Q_stricmp(action->actionString, "set") || !Q_stricmp(action->actionString, "create") || !Q_stricmp(action->actionString, "delete"))
 				{
 					token = COM_Parse(&pScript);
 					if (token[0] != '{')
@@ -686,13 +613,6 @@ void G_Script_ScriptParse(gentity_t *ent)
 							Q_strcat(params, sizeof(params), "\"");
 						}
 					}
-				}
-				else
-				// hackly precaching of custom characters
-				if (!Q_stricmp(token, "spawnbot"))
-				{
-					// this is fairly indepth, so I'll move it to a separate function for readability
-					G_Script_ParseSpawnbot(&pScript, params, MAX_INFO_STRING);
 				}
 				else
 				{
@@ -770,7 +690,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 			numEventItems++;
 		}
 		else     // skip this character completely
-		{   // TTimo gcc: suggest parentheses around assignment used as truth value
+		{
 			while ((token = COM_Parse(&pScript)) != NULL)
 			{
 				if (!token[0])
@@ -852,7 +772,7 @@ void G_Script_EventStringInit(void)
 G_Script_GetEventIndex
 
   returns the event index within the entity for the specified event string
-  xkan, 10/28/2002 - extracted from G_Script_ScriptEvent.
+  - extracted from G_Script_ScriptEvent.
 ================
 */
 int G_Script_GetEventIndex(gentity_t *ent, char *eventStr, char *params)
@@ -1016,7 +936,7 @@ qboolean G_Script_ScriptRun(gentity_t *ent)
 			G_Printf("%i : (%s) GScript command: %s %s\n", level.time, ent->scriptName, stack->items[ent->scriptStatus.scriptStackHead].action->actionString, (stack->items[ent->scriptStatus.scriptStackHead].params ? stack->items[ent->scriptStatus.scriptStackHead].params : ""));
 		}
 	}
-	//
+
 	while (ent->scriptStatus.scriptStackHead < stack->numItems)
 	{
 		oldScriptId = ent->scriptStatus.scriptId;
@@ -1067,7 +987,7 @@ void mountedmg42_fire(gentity_t *other)
 
 	AngleVectors(other->client->ps.viewangles, forward, right, up);
 	VectorCopy(other->s.pos.trBase, muzzle);
-//  VectorMA( muzzle, 42, up, muzzle );
+	//VectorMA( muzzle, 42, up, muzzle );
 	muzzle[2] += other->client->ps.viewheight;
 	VectorMA(muzzle, 58, forward, muzzle);
 
@@ -1085,13 +1005,8 @@ void mountedmg42_fire(gentity_t *other)
 
 void script_linkentity(gentity_t *ent)
 {
-
 	// this is required since non-solid brushes need to be linked but not solid
 	trap_LinkEntity(ent);
-
-//  if ((ent->s.eType == ET_MOVER) && !(ent->spawnflags & 2)) {
-//      ent->s.solid = 0;
-//  }
 }
 
 void script_mover_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
@@ -1144,7 +1059,6 @@ void script_mover_think(gentity_t *ent)
 
 	ent->nextthink = level.time + 100;
 }
-
 
 void script_mover_spawn(gentity_t *ent)
 {

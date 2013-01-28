@@ -100,6 +100,7 @@ qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *o
 	return present;
 }
 
+// FIXME: ETPro scripting ...
 field_t fields[] =
 {
 	{ "classname",    FOFS(classname),      F_LSTRING   },
@@ -751,11 +752,8 @@ level.spawnVars[], then call the class specfic spawn function
 void G_SpawnGEntityFromSpawnVars(void)
 {
 	int       i;
-	gentity_t *ent;
+	gentity_t *ent = G_Spawn(); // get the next free entity
 	char      *str;
-
-	// get the next free entity
-	ent = G_Spawn();
 
 	for (i = 0 ; i < level.numSpawnVars ; i++)
 	{

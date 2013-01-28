@@ -1177,6 +1177,9 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon);
 void G_TeamCommand(team_t team, char *cmd);
 
 gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match);
+gentity_t *G_FindInt(gentity_t *from, int fieldofs, int match);
+gentity_t *G_FindFloat(gentity_t *from, int fieldofs, float match);
+gentity_t *G_FindVector(gentity_t *from, int fieldofs, const vec3_t match);
 gentity_t *G_FindByTargetname(gentity_t *from, const char *match);
 gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash);
 gentity_t *G_PickTarget(char *targetname);
