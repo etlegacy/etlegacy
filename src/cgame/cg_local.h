@@ -1634,8 +1634,8 @@ typedef struct
 #define MAX_COMMAND_INFO MAX_CLIENTS
 
 // this is a waste, was 1024
-// there is no map with more than 90 models, current fav is venice with 81
-#define MAX_STATIC_GAMEMODELS   256
+// there is no map with more than 256 models, current fav is goldrush-ga with 227
+#define MAX_STATIC_GAMEMODELS   512
 
 typedef struct cg_gamemodel_s
 {
