@@ -3457,8 +3457,7 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	image = R_FindImageFile(fileName, !shader.noMipMaps, !shader.noPicMip, mipRawImage ? GL_REPEAT : GL_CLAMP_TO_EDGE, qfalse);
 	if (!image)
 	{
-		//ri.Printf( PRINT_DEVELOPER, "Couldn't find image for shader %s\n", name );
-		ri.Printf(PRINT_WARNING, "WARNING: Couldn't find image for shader %s\n", name);
+		ri.Printf(PRINT_DEVELOPER, "WARNING: Couldn't find image for shader %s\n", name);
 		shader.defaultShader = qtrue;
 		return FinishShader();
 	}

@@ -986,17 +986,15 @@ char *FS_ShiftStr(const char *string, int shift)
 
 extern qboolean com_fullyInitialized;
 
-/*
-===========
-FS_FOpenFileRead
-
-Finds the file in the search path.
-Returns filesize and an open FILE pointer.
-Used for streaming data out of either a
-separate file or a ZIP file.
-===========
-*/
-// see FS_FOpenFileRead_Filtered
+/**
+ * @brief Finds the file in the search path.
+ * Used for streaming data out of either a separate file or a ZIP file.
+ *
+ * @param[in]   filename to be opened
+ * @param[out]  file set to open FILE pointer
+ * @param[in]   uniqueFILE
+ * @returns filesize or qboolean indicating if file exists when FILE pointer param is NULL
+ */
 static int fs_filter_flag = 0;
 
 int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFILE)
@@ -1160,11 +1158,6 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFI
 					// for OS client/server interoperability, we expect binaries for .so and .dll to be in the same pk3
 					// so that when we reference the DLL files on any platform, this covers everyone else
 
-#if 0 // use that stuff for shifted strings
-					Com_Printf("SYS_DLLNAME_QAGAME + %d: '%s'\n", SYS_DLLNAME_QAGAME_SHIFT, FS_ShiftStr("qagame_mp_x86.dll" /*"qagame.mp.i386.so"*/, SYS_DLLNAME_QAGAME_SHIFT));
-					Com_Printf("SYS_DLLNAME_CGAME + %d: '%s'\n", SYS_DLLNAME_CGAME_SHIFT, FS_ShiftStr("cgame_mp_x86.dll" /*"cgame.mp.i386.so"*/, SYS_DLLNAME_CGAME_SHIFT));
-					Com_Printf("SYS_DLLNAME_UI + %d: '%s'\n", SYS_DLLNAME_UI_SHIFT, FS_ShiftStr("ui_mp_x86.dll" /*"ui.mp.i386.so"*/, SYS_DLLNAME_UI_SHIFT));
-#endif
 					// qagame dll
 					if (!(pak->referenced & FS_QAGAME_REF) && !Q_stricmp(filename, Sys_GetDLLName("qagame")))
 					{
@@ -1246,11 +1239,6 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFI
 				    && Q_stricmp(filename + l - 4, ".dat")       // for journal files
 				    && Q_stricmp(filename + l - 8, "bots.txt")   // FIXME/TODO: remove from ETL?
 				    && Q_stricmp(filename + l - 8, ".botents")   // FIXME/TODO: remove from ETL?
-#ifdef __APPLE__
-				    // FIXME: was #ifdef __MACOS__. Why is this exception only for qagame_mac?
-				    // even when pure is on, let the server game be loaded
-				    && Q_stricmp(filename, "qagame_mac")
-#endif
 				    )
 				{
 					continue;
@@ -1289,11 +1277,6 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFI
 		}
 	}
 
-	// FIXME: this output generates tons of false positive info
-	// see http://www.etlegacy.com/issues/5
-	// generic model/sound/asset loading causes this
-	// - add a function param qboolean silent
-	// - or delete this line and catch file not found (-1) when function is called
 	Com_DPrintf("Can't find %s\n", filename);
 
 #ifdef FS_MISSING

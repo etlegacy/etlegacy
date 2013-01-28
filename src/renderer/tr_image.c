@@ -1002,21 +1002,14 @@ static imageExtToLoaderMap_t imageLoaders[] =
 
 static int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
 
-/*
-=================
-R_LoadImage
-
-Loads any of the supported image types into a cannonical
-32 bit format.
-=================
-*/
+/**
+ * @brief Loads any of the supported image types into a cannonical 32 bit format.
+ */
 void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 {
-	qboolean   orgNameFailed = qfalse;
-	int        i, j;
-	char       localName[MAX_QPATH];
-	const char *ext;
-	char       *altName;
+	int  i;
+	char localName[MAX_QPATH];
+	char *altName;
 
 	*pic    = NULL;
 	*width  = 0;
@@ -1024,60 +1017,31 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 
 	Q_strncpyz(localName, name, MAX_QPATH);
 
-	ext = COM_GetExtension(localName);
+	COM_StripExtension(name, localName, MAX_QPATH);
 
-	if (*ext)
+	// Try and find a suitable match using all the image formats supported
+	// Searching is done in this order: tga, jp(e)g, png, pcx, bmp
+	for (i = 0; i < numImageLoaders; i++)
 	{
-		// Look for the correct loader and use it
-		for (i = 0; i < numImageLoaders; i++)
-		{
-			if (!Q_stricmp(ext, imageLoaders[i].ext))
-			{
-				// Load
-				imageLoaders[i].ImageLoader(localName, pic, width, height);
-				break;
-			}
-		}
+		altName = va("%s.%s", localName, imageLoaders[i].ext);
 
-		// A loader was found
-		if (i < numImageLoaders)
+		// Check if file exists
+		if (FS_FOpenFileRead(altName, NULL, qfalse))
 		{
-			if (*pic == NULL)
-			{
-				// Loader failed, most likely because the file isn't there;
-				// try again without the extension
-				orgNameFailed = qtrue;
-				COM_StripExtension(name, localName, MAX_QPATH);
-			}
-			else
-			{
-				// Something loaded
-				return;
-			}
+			// Load
+			imageLoaders[i].ImageLoader(altName, pic, width, height);
 		}
-	}
-
-	// Try and find a suitable match using all
-	// the image formats supported
-	for (j = 0; j < numImageLoaders; j++)
-	{
-		if (j == i)
-		{
-			continue;
-		}
-
-		altName = va("%s.%s", localName, imageLoaders[j].ext);
-		// Load
-		imageLoaders[j].ImageLoader(altName, pic, width, height);
 
 		if (*pic)
 		{
-			if (orgNameFailed)
-			{
-				ri.Printf(PRINT_DEVELOPER, "WARNING: %s not present, using %s instead\n", name, altName);
-			}
 			break;
 		}
+	}
+
+	if (*pic == NULL)
+	{
+		// Loader failed, most likely because the file isn't there
+		ri.Printf(PRINT_DEVELOPER, "WARNING: %s not present in any supported image format\n", altName);
 	}
 }
 
