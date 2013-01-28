@@ -670,7 +670,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 	clientNum = frame->ps.clientNum;
 	if (clientNum < 0 || clientNum >= MAX_GENTITIES)
 	{
-		Com_Error(ERR_DROP, "SV_SvEntityForGentity: bad gEnt\n");
+		Com_Error(ERR_DROP, "SV_BuildClientSnapshot: bad gEnt\n");
 	}
 	svEnt = &sv.svEntities[clientNum];
 
@@ -743,7 +743,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 		// this should never hit, map should always be restarted first in SV_Frame
 		if (svs.nextSnapshotEntities >= 0x7FFFFFFE)
 		{
-			Com_Error(ERR_FATAL, "svs.nextSnapshotEntities wrapped\n");
+			Com_Error(ERR_FATAL, "SV_BuildClientSnapshot: svs.nextSnapshotEntities wrapped\n");
 		}
 		frame->num_entities++;
 	}
