@@ -54,7 +54,7 @@ menuDef {
 	CVARLABEL( SUBWINDOW_X+6, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-12, 132, "com_errorMessage", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 	// FIXME: Add message we'll never support pb
-	// NAMEDBUTTON( "bttn_pbenable", SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-46, (SUBWINDOW_WIDTH-12), 18, "ENABLE PUNKBUSTER", .3, 14, clearFocus ; open playonline_enablepb )	
+	// NAMEDBUTTON( "bttn_pbenable", SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-46, (SUBWINDOW_WIDTH-12), 18, "WLACZ PUNKBUSTER", .3, 14, clearFocus ; open playonline_enablepb )	
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "COFNIJ", .3, 14, uiScript clearError ; close popupError_pbenable ; open main )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "POLACZ PONOWNIE", .3, 14, uiScript clearError ; close popupError_pbenable ; close backgroundmusic ; close background_1 ; uiScript reconnect )
 }

@@ -58,7 +58,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	EDITFIELDLEFT( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Ostrzezenie:", .2, 8, "ui_warnreason", 128, 32, "Warning message to send to a player" )
+	EDITFIELDLEFT( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Ostrzezenie:", .2, 8, "ui_warnreason", 128, 32, "Ostrzezenie wysylane do gracza" )
 
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "COFNIJ", .3, 14, close ingame_vote_players_warn ; open ingame_vote_players )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "OSTRZEZ", .3, 14, uiScript refWarning ; uiScript closeingame )

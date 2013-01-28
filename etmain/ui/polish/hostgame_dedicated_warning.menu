@@ -54,7 +54,7 @@ menuDef
 	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+28, (SUBWINDOW_WIDTH)-8, 10, "zamknie okno gry i odtworzy", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-8, 10, "konsole serwera. Nie bedzie mozliwe", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+52, (SUBWINDOW_WIDTH)-8, 10, "zagrania w gre na maszynie gospodarza.", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+76, (SUBWINDOW_WIDTH)-8, 10, "Jestes pewien ze chcesz wlaczyc", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+76, (SUBWINDOW_WIDTH)-8, 10, "Jestes pewien, ze chcesz wlaczyc", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+88, (SUBWINDOW_WIDTH)-8, 10, "Dedykowany Serwer?", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "TAK", .3, 14, uiScript startServer )

@@ -45,19 +45,19 @@ menuDef {
 	BUTTONEXT( 6, 104, .5*(WINDOW_WIDTH-18), 14, "ANTY-LAG WLACZ", .24, 11, exec "cmd ref antilag 1"; uiScript closeingame, settingDisabled CV_SVS_ANTILAG voteFlag CV_SVF_ANTILAG )
 	BUTTONEXT( 6, 104, .5*(WINDOW_WIDTH-18), 14, "ANTY-LAG WYLACZ", .24, 11, exec "cmd ref antilag 0"; uiScript closeingame, settingEnabled CV_SVS_ANTILAG voteFlag CV_SVF_ANTILAG )
 
-	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 32, .5*(WINDOW_WIDTH-18), 14, "XP POMIESZANIA", .24, 11, exec "cmd ref shuffleteamsxp"; uiScript closeingame, voteFlag CV_SVF_SHUFFLETEAMS )
-	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 50, .5*(WINDOW_WIDTH-18), 14, "ZAMIANA TEAMOW", .24, 11, exec "cmd ref swapteams"; uiScript closeingame, voteFlag CV_SVF_SWAPTEAMS )
-	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 68, .5*(WINDOW_WIDTH-18), 14, "MUTUJ WIDZOW", .24, 11, exec "cmd ref mutespecs 1"; uiScript closeingame, settingDisabled CV_SVS_MUTESPECS voteFlag CV_SVF_MUTESPECS )
+	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 32, .5*(WINDOW_WIDTH-18), 14, "XP MIESZANIE", .24, 11, exec "cmd ref shuffleteamsxp"; uiScript closeingame, voteFlag CV_SVF_SHUFFLETEAMS )
+	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 50, .5*(WINDOW_WIDTH-18), 14, "ZAMIANA ZESPOLOW", .24, 11, exec "cmd ref swapteams"; uiScript closeingame, voteFlag CV_SVF_SWAPTEAMS )
+	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 68, .5*(WINDOW_WIDTH-18), 14, "UCISZ WIDZOW", .24, 11, exec "cmd ref mutespecs 1"; uiScript closeingame, settingDisabled CV_SVS_MUTESPECS voteFlag CV_SVF_MUTESPECS )
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 68, .5*(WINDOW_WIDTH-18), 14, "UNMUTUJ WIDZOW", .24, 11, exec "cmd ref mutespecs 0"; uiScript closeingame, settingEnabled CV_SVS_MUTESPECS voteFlag CV_SVF_MUTESPECS )
-	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 86, .5*(WINDOW_WIDTH-18), 14, "OGIEN PRZYJACIELA WLACZ", .24, 11, exec "cmd ref friendlyfire 1"; uiScript closeingame, settingDisabled CV_SVS_FRIENDLYFIRE voteFlag CV_SVF_FRIENDLYFIRE )
-	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 86, .5*(WINDOW_WIDTH-18), 14, "OGIEN PRZYJACIELA WYLACZ", .24, 11, exec "cmd ref friendlyfire 0"; uiScript closeingame, settingEnabled CV_SVS_FRIENDLYFIRE voteFlag CV_SVF_FRIENDLYFIRE )
-	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 104, .5*(WINDOW_WIDTH-18), 14, "BALANSOWANIE TEAMOW WLACZ", .24, 11, exec "cmd ref balancedteams 1"; uiScript closeingame, settingDisabled CV_SVS_BALANCEDTEAMS voteFlag CV_SVF_BALANCEDTEAMS )
-	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 104, .5*(WINDOW_WIDTH-18), 14, "BALANSOWANIE TEAMOW WYLACZ", .24, 11, exec "cmd ref balancedteams 0"; uiScript closeingame, settingEnabled CV_SVS_BALANCEDTEAMS voteFlag CV_SVF_BALANCEDTEAMS )
+	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 86, .5*(WINDOW_WIDTH-18), 14, "OBRAZ. DRUZYNOWE WLACZ", .24, 11, exec "cmd ref friendlyfire 1"; uiScript closeingame, settingDisabled CV_SVS_FRIENDLYFIRE voteFlag CV_SVF_FRIENDLYFIRE )
+	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 86, .5*(WINDOW_WIDTH-18), 14, "OBRAZ. DRUZYNOWE WYLACZ", .24, 11, exec "cmd ref friendlyfire 0"; uiScript closeingame, settingEnabled CV_SVS_FRIENDLYFIRE voteFlag CV_SVF_FRIENDLYFIRE )
+	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 104, .5*(WINDOW_WIDTH-18), 14, "BALANSOWANIE ZESPOLOW WLACZ", .24, 11, exec "cmd ref balancedteams 1"; uiScript closeingame, settingDisabled CV_SVS_BALANCEDTEAMS voteFlag CV_SVF_BALANCEDTEAMS )
+	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 104, .5*(WINDOW_WIDTH-18), 14, "BALANSOWANIE ZESPOLOW WYLACZ", .24, 11, exec "cmd ref balancedteams 0"; uiScript closeingame, settingEnabled CV_SVS_BALANCEDTEAMS voteFlag CV_SVF_BALANCEDTEAMS )
 
 	BUTTONEXT( 6, 122, WINDOW_WIDTH-12, 14, "USTAWIENIA KONKURENCJI", .24, 11, exec "cmd ref comp"; uiScript closeingame, voteFlag CV_SVF_COMP )
 	BUTTONEXT( 6, 140, WINDOW_WIDTH-12, 14, "USTAWIENIA PUBLICZNE", .24, 11, exec "cmd ref pub"; uiScript closeingame, voteFlag CV_SVF_PUB )
 	
-	MULTILEFT( 8, 158+2, .66*(WINDOW_WIDTH-18), 10, "Obrazenia Rozgrzewki:", .2, 8, "ui_voteWarmupDamage", cvarFloatList { "None" 0 "Enemies" 1 "Everyone" 2 } voteFlag CV_SVF_WARMUPDAMAGE, "Wlacza lub Wylancza Obrazenia Rozgrzwki" )
+	MULTILEFT( 8, 158+2, .66*(WINDOW_WIDTH-18), 10, "Obrazenia w Rozgrzewce:", .2, 8, "ui_voteWarmupDamage", cvarFloatList { "Nikt" 0 "Wrogowie" 1 "Wszyscy" 2 } voteFlag CV_SVF_WARMUPDAMAGE, "Wlacza lub Wylacza Obrazenia w Rozgrzwce" )
 	NAMEDBUTTONEXT( "bttnextWarmupDamage", 6+.80*(WINDOW_WIDTH-18)+6, 158, .20*(WINDOW_WIDTH-18), 14, "OK", .24, 11, uiScript refWarmupDamage; uiScript closeingame, voteFlag CV_SVF_WARMUPDAMAGE )
 	
 	itemDef {
@@ -74,14 +74,14 @@ menuDef {
 	NUMERICFIELDLEFTEXT( 8, 176+2, .66*(WINDOW_WIDTH-18), 10, "Limit Czasu:", .2, 8, "ui_voteTimelimit", 6, voteFlag CV_SVF_TIMELIMIT, "Ustaw limit czasu" )
 	NAMEDBUTTONEXT( "bttnextTimelimit", 6+.80*(WINDOW_WIDTH-18)+6, 176, .20*(WINDOW_WIDTH-18), 14, "OK", .24, 11, uiScript refTimelimit; uiScript closeingame, voteFlag CV_SVF_TIMELIMIT )
 
-	MULTILEFT( 8, 194+2, .66*(WINDOW_WIDTH-18), 10, "Typ Gry:", .2, 8, "ui_voteGameType", cvarFloatList { "Poj.-Map Objective" 2 "Na Czas" 3 "Ostatni Czlowiek Stojacy" 5 } voteFlag CV_SVF_GAMETYPE, "Ustaw tryb gry" )
+	MULTILEFT( 8, 194+2, .66*(WINDOW_WIDTH-18), 10, "Typ Gry:", .2, 8, "ui_voteGameType", cvarFloatList { "Pojedyncza Mapa" 2 "Na Czas" 3 "Ostatni Przetrwaly" 5 } voteFlag CV_SVF_GAMETYPE, "Ustaw tryb gry" )
 	NAMEDBUTTONEXT( "bttnextGameType", 6+.80*(WINDOW_WIDTH-18)+6, 194, .20*(WINDOW_WIDTH-18), 14, "OK", .24, 11, uiScript refGame; uiScript closeingame, voteFlag CV_SVF_GAMETYPE )
 
 	BUTTONEXT( 6, 212, WINDOW_WIDTH-12, 14, "PAUZA", .24, 11, exec "cmd ref pause"; uiScript closeingame, settingDisabled CV_SVS_PAUSE cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 6, 212, WINDOW_WIDTH-12, 14, "ODPAUZUJ", .24, 11, exec "cmd ref unpause"; uiScript closeingame, settingEnabled CV_SVS_PAUSE cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	
-	BUTTONEXT( 6, 230, .5*(WINDOW_WIDTH-18), 14, "ZABLOKUJ TEAMY", .24, 11, exec "cmd ref lock"; uiScript closeingame, settingDisabled CV_SVS_LOCKTEAMS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
-	BUTTONEXT( 6, 230, .5*(WINDOW_WIDTH-18), 14, "ODBLOKUJ TEAMY", .24, 11, exec "cmd ref unlock"; uiScript closeingame, settingEnabled CV_SVS_LOCKTEAMS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
+	BUTTONEXT( 6, 230, .5*(WINDOW_WIDTH-18), 14, "ZABLOKUJ ZESPOLY", .24, 11, exec "cmd ref lock"; uiScript closeingame, settingDisabled CV_SVS_LOCKTEAMS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
+	BUTTONEXT( 6, 230, .5*(WINDOW_WIDTH-18), 14, "ODBLOKUJ ZESPOLY", .24, 11, exec "cmd ref unlock"; uiScript closeingame, settingEnabled CV_SVS_LOCKTEAMS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 230, .5*(WINDOW_WIDTH-18), 14, "ZABLOKUJ WIDZOW", .24, 11, exec "cmd ref speclock"; uiScript closeingame, settingDisabled CV_SVS_LOCKSPECS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 230, .5*(WINDOW_WIDTH-18), 14, "ODBLOKUJ WIDZOW", .24, 11, exec "cmd ref specunlock"; uiScript closeingame, settingEnabled CV_SVS_LOCKSPECS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )

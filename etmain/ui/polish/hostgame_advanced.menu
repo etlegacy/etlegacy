@@ -30,69 +30,69 @@ menuDef {
 // General //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 76, "OGOLNE" )
 	NUMERICFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Minimalny Ping:", .2, 8, "sv_minping", 4, "Ustawienie pingu minimalnego (0 = Brak Minimum)" )
-	NUMERICFIELD( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Maxymalny Ping:", .2, 8, "sv_maxping", 4, "Ustwawienie pingu maxymalnego (0 = Brak Maximum)" )
-	NUMERICFIELD( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Maxymalny rate gry:", .2, 8, "sv_maxrate", 6, "Maximum danych jakie wyslac do clienta (0 = porownaj ustwaienia z clientem)" )
-	NUMERICFIELD( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Nieaktywnosc Gracza:", .2, 8, "g_inactivity", 3, "Max. czas po ktortym client zostanie wykopany na speca (0 = wylaczony)" )
-	NUMERICFIELD( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Nieaktywnosc Widza:", .2, 8, "g_spectatorInactivity", 3, "Max. czas po ktorym client zostanie wykopany z serwera (0 = wylaczony)" )
+	NUMERICFIELD( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Maxymalny Ping:", .2, 8, "sv_maxping", 4, "Ustwawienie pingu maksymalnego (0 = Brak Maximum)" )
+	NUMERICFIELD( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Maksymalny rate gry:", .2, 8, "sv_maxrate", 6, "Maksimum danych jakie wyslac do clienta (0 = porownaj ustawienia z clientem)" )
+	NUMERICFIELD( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Nieaktywnosc Gracza:", .2, 8, "g_inactivity", 3, "Maks. czas, po ktorym client zostanie przerzucony na spectatora (0 = wylaczony)" )
+	NUMERICFIELD( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Nieaktywnosc Widza:", .2, 8, "g_spectatorInactivity", 3, "Maks. czas, po ktorym client zostanie wyrzucony z serwera (0 = wylaczony)" )
 	
 // Match //
 	SUBWINDOW( 6, 114, (SUBWINDOW_WIDTH), 220, "MECZ" )
-	YESNO( 8, 130, (SUBWINDOW_WIDTH)-4, 10, "Czekaj na gotowosc:", .2, 8, "g_doWarmup", "Wlancza potrzbna ilosc graczy na serwie aby bylo mozna rozpaczac" )
-	NUMERICFIELD( 8, 142, (SUBWINDOW_WIDTH)-4, 10, "Minimum Graczy:", .2, 8, "match_minplayers", 2, "Sprecyzyj minimalna liczbe graczy zanim rozpocznie sie mecz" )
-	NUMERICFIELD( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Gotowosc Procentowa:", .2, 8, "match_readypercent", 3, "Sprecyzuj minimum procentowe graczy ktorzy musza kliknac READY przed meczem" )
-	YESNO( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Pozn. Dolaczenie.:", .2, 8, "match_latejoin", "Czy gracz moze dolaczyc do teamu kiedy mecz wystartowal" )
-	YESNO( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Mutuj Widzow:", .2, 8, "match_mutespecs", "Czy widzowie sa zmutowani" )
-	MULTI( 8, 190, (SUBWINDOW_WIDTH)-4, 10, "Uszko. Rozgrzewki:", .2, 8, "match_warmupDamage", cvarFloatList { "Nikt" 0 "Wrog Tylko" 1 "Wszyscy" 2 }, "Czy mozesz ranic graczy podczas rozgrzewki" )
-	NUMERICFIELD( 8, 202, (SUBWINDOW_WIDTH)-4, 10, "Max Graczy na Team:", .2, 8, "team_maxplayers", 2, "Sprecyzuj maxymalna liczbe graczy na team" )
-	YESNO( 8, 214, (SUBWINDOW_WIDTH)-4, 10, "Wylacz Kontrole Teamu:", .2, 8, "team_nocontrols", "Czy gracze moge uzywac komend (blokowanie teamu/widzow, gotowyteam, itd.)" )
-	NUMERICFIELD( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Czas Rozgrzewki:", .2, 8, "g_warmup", 2, "Dlugosc czasu w jakim odbywa sie rozgrzewka" )
-	NUMERICFIELD( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "Maxymalna ilosc skarg:", .2, 8, "g_complaintlimit", 2, "Maxymalna ilosc skarg dla gracza zanim zostanie wykopany z serwera" )
-	MULTI( 8, 250, (SUBWINDOW_WIDTH)-4, 10, "Maxymalna ilosc skarg:", .2, 8, "g_ipcomplaintlimit", cvarFloatList { "Wylacz" 0 "1" 1 "2" 2 "3" 3 "4" 4 "5" 5 "6" 6 }, "Liczba unikalnych skarg zanim gracz zostanie wykopany z serwera" )
+	YESNO( 8, 130, (SUBWINDOW_WIDTH)-4, 10, "Czekaj na gotowosc:", .2, 8, "g_doWarmup", "Wlacza potrzbna ilosc graczy na serwie, aby mozna bylo rozpaczac" )
+	NUMERICFIELD( 8, 142, (SUBWINDOW_WIDTH)-4, 10, "Minimum Graczy:", .2, 8, "match_minplayers", 2, "Sprecyzuj minimalna liczbe graczy, by rozpoczac mecz" )
+	NUMERICFIELD( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Gotowosc Procentowa:", .2, 8, "match_readypercent", 3, "Sprecyzuj minimalna ilosc graczy ktorzy musza kliknac READY przed meczem by rozpoczac" )
+	YESNO( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Pozn. Dolaczenie.:", .2, 8, "match_latejoin", "Czy gracz moze dolaczyc do teamu podczas gdy mecz wystartowal" )
+	YESNO( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Uciszaj Widzow:", .2, 8, "match_mutespecs", "Czy widzowie sa uciszeni" )
+	MULTI( 8, 190, (SUBWINDOW_WIDTH)-4, 10, "Uszko. podcz. rozgrzewki:", .2, 8, "match_warmupDamage", cvarFloatList { "Nikt" 0 "Tylko wrogowie" 1 "Wszyscy" 2 }, "Czy mozesz ranic graczy podczas rozgrzewki" )
+	NUMERICFIELD( 8, 202, (SUBWINDOW_WIDTH)-4, 10, "Maks. Graczy na Team:", .2, 8, "team_maxplayers", 2, "Sprecyzuj maksymalna liczbe graczy na team" )
+	YESNO( 8, 214, (SUBWINDOW_WIDTH)-4, 10, "Wylacz Kontrole Teamu:", .2, 8, "team_nocontrols", "Czy gracze moga uzywac komend ( blokowanie teamu/widzow, gotowy team, itd.)" )
+	NUMERICFIELD( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Czas Rozgrzewki:", .2, 8, "g_warmup", 2, "Dlugosc czasu trwania rozgrzewki" )
+	NUMERICFIELD( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "Maksymalna ilosc skarg:", .2, 8, "g_complaintlimit", 2, "Maksymalna ilosc skarg dla gracza zanim zostanie wykopany z serwera" )
+	MULTI( 8, 250, (SUBWINDOW_WIDTH)-4, 10, "Maksymalna ilosc skarg:", .2, 8, "g_ipcomplaintlimit", cvarFloatList { "Wylacz" 0 "1" 1 "2" 2 "3" 3 "4" 4 "5" 5 "6" 6 }, "Liczba unikalnych skarg zanim gracz zostanie wykopany z serwera" )
 	NUMERICFIELD( 8, 262, (SUBWINDOW_WIDTH)-4, 10, "Limit Czasu Mapy:", .2, 8, "ui_userTimeLimit", 6, "Nadpisz domyslny czas mapy" )
 	NUMERICFIELD( 8, 274, (SUBWINDOW_WIDTH)-4, 10, "Czas Odro. Aliatow:", .2, 8, "ui_userAlliedRespawnTime", 2, "Nadpisz domyslne odrodzenie Aliantow" )
-	NUMERICFIELD( 8, 286, (SUBWINDOW_WIDTH)-4, 10, "Czas Odro. OSI:", .2, 8, "ui_userAxisRespawnTime", 2, "Nadpisz domyslne odrodzenie Osi" )
-	NUMERICFIELD( 8, 298, (SUBWINDOW_WIDTH)-4, 10, "Zycia Aliantow:", .2, 8, "g_alliedmaxlives", 3, "Sprecyzuj maxymalna liczbe zyc Aliantom w grze" )
-	NUMERICFIELD( 8, 310, (SUBWINDOW_WIDTH)-4, 10, "Zycia OSI:", .2, 8, "g_axismaxlives", 3, "Sprecyzuj maxymalna liczbe zyc Osi w grze" )
-	MULTI( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Na Czas Typ-Rundy:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Okreslan typ rundy Na Czas (ABBA = zamiana stron, ABAB = utrzymanie stron)" )	
+	NUMERICFIELD( 8, 286, (SUBWINDOW_WIDTH)-4, 10, "Czas Odro. Osi:", .2, 8, "ui_userAxisRespawnTime", 2, "Nadpisz domyslne odrodzenie Osi" )
+	NUMERICFIELD( 8, 298, (SUBWINDOW_WIDTH)-4, 10, "Zycia Aliantow:", .2, 8, "g_alliedmaxlives", 3, "Sprecyzuj maksymalna liczbe zyc Aliantom w grze" )
+	NUMERICFIELD( 8, 310, (SUBWINDOW_WIDTH)-4, 10, "Zycia OSI:", .2, 8, "g_axismaxlives", 3, "Sprecyzuj maksymalna liczbe zyc Osi w grze" )
+	MULTI( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Na Czas Typ-Rundy:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Okreslam typ rundy Na Czas (ABBA = zamiana stron, ABAB = utrzymanie stron)" )	
 	
 // LMS // NA POZNIEJ
-	SUBWINDOW( 6, 340, (SUBWINDOW_WIDTH), 64, "OSTATNI CZLOWIEK POZOSTAJACY" )
+	SUBWINDOW( 6, 340, (SUBWINDOW_WIDTH), 64, "OSTATNI PRZETRWALY" )
 	
 	NUMERICFIELD( 8, 356, (SUBWINDOW_WIDTH)-4, 10, "OCP Rund na Mecz:", .2, 8, "g_lms_roundlimit", 2, "Nadpisz domyslne OCP rund na mecz" )	// fixme: range check
-	NUMERICFIELD( 8, 368, (SUBWINDOW_WIDTH)-4, 10, "OCP Meczow na Mape:", .2, 8, "g_lms_matchlimit", 2, "Nadpisz domyslne OCP mecze (skladajacy sie z rund) na mape" )	// fixme: range check
-	YESNO( 8, 380, (SUBWINDOW_WIDTH)-4, 10, "Blokuje Spec. Teamu:", .2, 8, "g_lms_followTeamOnly", "Zatrzymuje graczy podpatrujac wrogi team" )
-	YESNO( 8, 392, (SUBWINDOW_WIDTH)-4, 10, "OCP Zablokowane Teamy:", .2, 8, "g_lms_lockTeams", "Zatrzymuje graczy chcacy zmienic team" )
+	NUMERICFIELD( 8, 368, (SUBWINDOW_WIDTH)-4, 10, "OCP Meczow na Mape:", .2, 8, "g_lms_matchlimit", 2, "Nadpisz domyslne OCP mecze ( skladajacy sie z rund ) na mape" )	// fixme: range check
+	YESNO( 8, 380, (SUBWINDOW_WIDTH)-4, 10, "Blokuje Spec. Teamu:", .2, 8, "g_lms_followTeamOnly", "Zatrzymuje graczy podpatrujacych wrogi team" )
+	YESNO( 8, 392, (SUBWINDOW_WIDTH)-4, 10, "OCP Zablokowane Teamy:", .2, 8, "g_lms_lockTeams", "Zatrzymuje graczy chcacych zmienic team" )
 
 // Admin //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 64, "ADMIN" )
 	YESNO( 6+(SUBWINDOW_WIDTH)+6+2, 48, (SUBWINDOW_WIDTH)-4, 10, "Czysty Serwer:", .2, 8, "sv_pure", "Limituje ilosc paczek pomiedzy klientem a serweram" )
-	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 60, (SUBWINDOW_WIDTH)-4, 10, "Haslo:", .2, 8, "g_password", 25, 18, "Ustawia haslo" )
+	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 60, (SUBWINDOW_WIDTH)-4, 10, "Haslo:", .2, 8, "g_password", 25, 18, "Ustawia hasla" )
 	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 72, (SUBWINDOW_WIDTH)-4, 10, "Haslo Sedziego:", .2, 8, "refereePassword", 25, 18, "Haslo Sedziego" )
-	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 84, (SUBWINDOW_WIDTH)-4, 10, "Haslo RCON:", .2, 8, "rconPassword", 25, 18, "Haslo RCON-a (bardzo silne , wiec trzymaj haslo bezpiecznie)" )
+	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 84, (SUBWINDOW_WIDTH)-4, 10, "Haslo RCON:", .2, 8, "rconPassword", 25, 18, "Haslo RCON-a (bardzo silne , wiec uwazaj komu je podajesz)" )
 
 // Voting //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 102, (SUBWINDOW_WIDTH), 40, "GLOSOWANIE" )
-	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 118, (SUBWINDOW_WIDTH)-4, 10, "Max Glosowan na Team:", .2, 8, "vote_limit", 2, "Sprecyzuj maxymalna liczbe glosow na gracza na mecz" )
-	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Sukces glosowan:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Sprecyzuj minimalny procent potrzebne aby glow przeszedl" )
+	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 118, (SUBWINDOW_WIDTH)-4, 10, "Max Glosowan na Team:", .2, 8, "vote_limit", 2, "Sprecyzuj maksymalna liczbe glosow gracza na mecz" )
+	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Sukces glosowan:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Sprecyzuj minimalny procentowy prog glosow, aby glosowanie sie powiodlo" )
 	
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 148, (SUBWINDOW_WIDTH), 112, "POZWOLENIA NA GLOSOWANIE" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Ustaw. Konkur.:", .2, 24, 8, "vote_allow_comp", "Pozwol gracza glosowac na ustawienia konkurencji" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Typ Gry:", .2, 24, 8, "vote_allow_gametype", "Pozwol gracza glosowac na zmiane trybu gry" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, "Kik. Graczy:", .2, 24, 8, "vote_allow_kick", "Pozwol gracza glosowac na kikowanie graczy" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 200, .5*((SUBWINDOW_WIDTH)-6), 10, "Mapa:", .2, 24, 8, "vote_allow_map", "Pozwol gracza glosowac na inna kampanie lub mape" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 212, .5*((SUBWINDOW_WIDTH)-6), 10, "Reset Meczu:", .2, 24, 8, "vote_allow_matchreset", "Pozwol gracza glosowac na reset meczu" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 224, .5*((SUBWINDOW_WIDTH)-6), 10, "Mut. Widzow:", .2, 24, 8, "vote_allow_mutespecs", "Pozwol gracza glosowac na zmutowanie widzow" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 236, .5*((SUBWINDOW_WIDTH)-6), 10, "Nastepna Mapa:", .2, 24, 8, "vote_allow_nextmap", "Pozwol gracza glosowac na nastepna kampanie lub mape" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Balans. Teamow:", .2, 24, 8, "vote_allow_balancedteams", "Pozwol gracza glosowac na wymuszenie balnsowanie teamow" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Ustaw. Konkur.:", .2, 24, 8, "vote_allow_comp", "Pozwol graczom glosowac na ustawienia konkurencji" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Typ Gry:", .2, 24, 8, "vote_allow_gametype", "Pozwol graczom glosowac na zmiane trybu gry" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, "Kop. Graczy:", .2, 24, 8, "vote_allow_kick", "Pozwol graczom glosowac na wykopywanie graczy" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 200, .5*((SUBWINDOW_WIDTH)-6), 10, "Mapa:", .2, 24, 8, "vote_allow_map", "Pozwol graczom glosowac na inna kampanie lub mape" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 212, .5*((SUBWINDOW_WIDTH)-6), 10, "Reset Meczu:", .2, 24, 8, "vote_allow_matchreset", "Pozwol graczom glosowac na reset meczu" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 224, .5*((SUBWINDOW_WIDTH)-6), 10, "Wyci. Widzow:", .2, 24, 8, "vote_allow_mutespecs", "Pozwol graczom glosowac na wyciszenie widzow" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 236, .5*((SUBWINDOW_WIDTH)-6), 10, "Nastepna Mapa:", .2, 24, 8, "vote_allow_nextmap", "Pozwol graczom glosowac na nastepna kampanie lub mape" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Balans. Zespolow:", .2, 24, 8, "vote_allow_balancedteams", "Pozwol graczom glosowac na wymuszone balnsowanie zespolow" )
 	
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Ustaw. Pub.	:", .2, 24, 8, "vote_allow_pub", "Pozwol gracza glosowac na ustawienie publiczne" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Sedzia:", .2, 24, 8, "vote_allow_referee", "Pozwol gracza glosowac na sedziego" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, "XP Pomieszanie:", .2, 24, 8, "vote_allow_shuffleteamsxp", "Pozwol gracza glosowac na pomieszanie teamow" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 200, .5*((SUBWINDOW_WIDTH)-6), 10, "Zamiana Teamow:", .2, 24, 8, "vote_allow_swapteams", "Pozwol gracza glosowac na zamiate teamow" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 212, .5*((SUBWINDOW_WIDTH)-6), 10, "Ogien Przyjaciela:", .2, 24, 8, "vote_allow_friendlyfire", "Pozwol gracza glosowac na ogien przyjaciela aby byl wlaczony lub wylaczony" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 224, .5*((SUBWINDOW_WIDTH)-6), 10, "Limitczasu:", .2, 24, 8, "vote_allow_timelimit", "Pozwol gracza glosowac na limit czasu" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 236, .5*((SUBWINDOW_WIDTH)-6), 10, "Uszko. Rozgrzewki:", .2, 24, 8, "vote_allow_warmupdamage", "Pozwol gracza glosowac na obrazenia w rozgrzewce" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Anty-Lag:", .2, 24, 8, "vote_allow_antilag", "Pozwol gracza glosowac na Anty-Lag aby byl wlaczony lub wylaczony" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Ustaw. Pub.	:", .2, 24, 8, "vote_allow_pub", "Pozwol graczom glosowac na ustawienia publiczne" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Sedzia:", .2, 24, 8, "vote_allow_referee", "Pozwol graczom glosowac na bycie sedzia" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, "XP Wymieszanie:", .2, 24, 8, "vote_allow_shuffleteamsxp", "Pozwol graczom glosowac na wymieszanie zespolow" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 200, .5*((SUBWINDOW_WIDTH)-6), 10, "Zamiana Zespolow:", .2, 24, 8, "vote_allow_swapteams", "Pozwol graczom glosowac na zamiane zespolow" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 212, .5*((SUBWINDOW_WIDTH)-6), 10, "Obrazenia Druzynowe:", .2, 24, 8, "vote_allow_friendlyfire", "Pozwol graczom glosowac by wlaczyc lub wylaczyc Obrazenia Druzynowe" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 224, .5*((SUBWINDOW_WIDTH)-6), 10, "Limit czasu:", .2, 24, 8, "vote_allow_timelimit", "Pozwol graczom glosowac na okreslony limit czasu" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 236, .5*((SUBWINDOW_WIDTH)-6), 10, "Obraz. w Rozgrzewce:", .2, 24, 8, "vote_allow_warmupdamage", "Pozwol graczom glosowac na obrazenia w rozgrzewce" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Anty-Lag:", .2, 24, 8, "vote_allow_antilag", "Pozwol graczom glosowac na Anty-Lag aby byl wlaczony lub wylaczony" )
 	
 // Message of the Day //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 266, (SUBWINDOW_WIDTH), 76, "MESSAGE OF THE DAY" )
@@ -106,7 +106,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 282, (SUBWINDOW_WIDTH)-8, 10, "Linia 1:", .2, 8, "server_motd0", 26, 35, "Sprecyzuj jaka wiadomosc bedzie widzial client podczas laczenia" )
+	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 282, (SUBWINDOW_WIDTH)-8, 10, "Linia 1:", .2, 8, "server_motd0", 26, 35, "Sprecyzuj jaka tresc bedzie widzial client podczas laczenia" )
 	
 	itemDef {
 		name		"efleftbackLine 2:"
@@ -117,7 +117,7 @@ menuDef {
 		visible		1
 		decoration
 	}	
-	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 294, (SUBWINDOW_WIDTH)-8, 10, "Linia 2:", .2, 8, "server_motd1", 26, 35, "Sprecyzuj jaka wiadomosc bedzie widzial client podczas laczenia" )
+	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 294, (SUBWINDOW_WIDTH)-8, 10, "Linia 2:", .2, 8, "server_motd1", 26, 35, "Sprecyzuj jaka tresc bedzie widzial client podczas laczenia" )
 
 	itemDef {
 		name		"efleftbackLine 3:"
@@ -128,7 +128,7 @@ menuDef {
 		visible		1
 		decoration
 	}	
-	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 306, (SUBWINDOW_WIDTH)-8, 10, "Linia 3:", .2, 8, "server_motd2", 26, 35, "Sprecyzuj jaka wiadomosc bedzie widzial client podczas laczenia" )
+	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 306, (SUBWINDOW_WIDTH)-8, 10, "Linia 3:", .2, 8, "server_motd2", 26, 35, "Sprecyzuj jaka tresc bedzie widzial client podczas laczenia" )
 	
 	itemDef {
 		name		"efleftbackLine 4:"
@@ -139,7 +139,7 @@ menuDef {
 		visible		1
 		decoration
 	}	
-	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 318, (SUBWINDOW_WIDTH)-8, 10, "Linia 4:", .2, 8, "server_motd3", 26, 35, "Sprecyzuj jaka wiadomosc bedzie widzial client podczas laczenia" )
+	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 318, (SUBWINDOW_WIDTH)-8, 10, "Linia 4:", .2, 8, "server_motd3", 26, 35, "Sprecyzuj jaka tresc bedzie widzial client podczas laczenia" )
 
 	itemDef {
 		name		"efleftbackLine 5:"
@@ -150,12 +150,12 @@ menuDef {
 		visible		1
 		decoration
 	}	
-	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 330, (SUBWINDOW_WIDTH)-8, 10, "Linia 5:", .2, 8, "server_motd4", 26, 35, "Sprecyzuj jaka wiadomosc bedzie widzial client podczas laczenia" )
+	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, 330, (SUBWINDOW_WIDTH)-8, 10, "Linia 5:", .2, 8, "server_motd4", 26, 35, "Sprecyzuj jaka tresc bedzie widzial client podczas laczenia" )
 	
 // Download //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 348, (SUBWINDOW_WIDTH), 64/*72*/, "SCIAGANIE" )
-	YESNO( 6+(SUBWINDOW_WIDTH)+6+2, 364, (SUBWINDOW_WIDTH)-4, 10, "Sciag. przez Klienta:", .2, 8, "sv_allowDownload", "Pozwol graczom aby posciagali brakujace pliki z serwera" )
-	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 376, (SUBWINDOW_WIDTH)-4, 10, "Max Kurs Sciagania:", .2, 8, "sv_dl_maxRate", 6, "Sprecyzuj maxymalna szybkosc pobierania przez klienta" )
+	YESNO( 6+(SUBWINDOW_WIDTH)+6+2, 364, (SUBWINDOW_WIDTH)-4, 10, "Sciag. przez Klienta:", .2, 8, "sv_allowDownload", "Pozwol graczom aby sciagali brakujace pliki z serwera" )
+	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 376, (SUBWINDOW_WIDTH)-4, 10, "Maks Kurs Sciagania:", .2, 8, "sv_dl_maxRate", 6, "Sprecyzuj maksymalna szybkosc pobierania przez klienta" )
 	YESNO( 6+(SUBWINDOW_WIDTH)+6+2, 388, (SUBWINDOW_WIDTH)-4, 10, "FTP/HTTP Przekie.:", .2, 8, "sv_wwwDownload", "Przekieruj graczy z brakujacymi plikami na inny serwer" )
 	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 400, (SUBWINDOW_WIDTH)-4, 10, "Bazwowy URL:", .2, 8, "sv_wwwBaseUrl", 64, 18, "Uzyj adresu URL aby client mogl sciagnac pliki" )
 

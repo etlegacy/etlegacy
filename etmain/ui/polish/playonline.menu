@@ -53,7 +53,7 @@ menuDef {
 	}
 
 // Window //
-	WINDOW( "GRAJ ONLINE", 146 )
+	WINDOW( "GRAJ W SIECI", 146 )
 	
 // Subwindows //
 	#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
@@ -80,7 +80,7 @@ menuDef {
 	SUBWINDOW( 6, 64, (FILTERS_WIDTH), 94, "FILTRY" )
 	
 	MULTIACTIONLEFT( 8, 80, .5*((FILTERS_WIDTH)-6), 10, "Zrodlo:", .2, 8, "ui_netSource", cvarFloatList { "Lokalny" 0 "Internet" 1 "Ulibione" 2 }, uiScript UpdateFilter, "Wybierz rodzaj serwerow, z Internetu, lokalne i z listy ulubionych" )
-	MULTIACTIONLEFT( 8+.5*((FILTERS_WIDTH)-6)+2, 80, .5*((FILTERS_WIDTH)-6), 10, "Typ Gry:", .2, 8, "ui_joinGameType", cvarFloatList { "Wszystkie" -1 "Na Zadanie" 2 "Na Czas" 3 "Kampania" 4 "Ostatni Czlowiek Stojacy" 5 "Glosowanie na Mapy" 6 }, uiScript RefreshFilter, "Wyswietl tylko serwery oferujace ten typ gry" )
+	MULTIACTIONLEFT( 8+.5*((FILTERS_WIDTH)-6)+2, 80, .5*((FILTERS_WIDTH)-6), 10, "Typ Gry:", .2, 8, "ui_joinGameType", cvarFloatList { "Wszystkie" -1 "Poj. Mapa" 2 "Na Czas" 3 "Kampania" 4 "Ostatni Przetrwaly" 5 "Glosowanie na Mapy" 6 }, uiScript RefreshFilter, "Wyswietl tylko serwery oferujace ten typ gry" )
 
 	itemDef {
 		name		"filtericonEmptyFull"
@@ -91,7 +91,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 10+12, 92, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowEmptyOrFull", cvarFloatList { "Filter Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter wplywajacy na Puste i Pelne Serwery", "Zawierajac lub Wykluczakac puste i pelne serwery, z listy serwerow"  )
+	TRICHECKBOXACTIONMULTI( 10+12, 92, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowEmptyOrFull", cvarFloatList { "Filter Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtr wplywajacy na Puste i Pelne Serwery", "Zawierajac lub Wykluczakac puste i pelne serwery, z listy serwerow"  )
 
 	itemDef {
 		name		"filtericonPassword"
@@ -102,7 +102,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 10+12, 104, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowPasswordProtected", cvarFloatList { "Filter Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter wplywajacy na serwery z haslem", "Zawierajac lub Wykluczakac serwery z haslem, z listy serwerow" )
+	TRICHECKBOXACTIONMULTI( 10+12, 104, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowPasswordProtected", cvarFloatList { "Filter Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtr wplywajacy na serwery z haslem", "Zawierajac lub Wykluczakac serwery z haslem, z listy serwerow" )
 
 	itemDef {
 		name		"filtericonFriendlyFire"
@@ -113,7 +113,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 10+12, 116, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowFriendlyFire", cvarFloatList { "Filter Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter wplywajacy na serwery z ognien przyjacielskim", "Zawierajac lub Wykluczakac servery gdzie gracze z teamu moga ranic kazdego z nich, z listy serwerow"  )
+	TRICHECKBOXACTIONMULTI( 10+12, 116, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowFriendlyFire", cvarFloatList { "Filtr Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter wplywajacy na serwery z obrazeniami druzynowymi", "Zawierajac lub Wykluczakac servery gdzie gracze z zespolu moga ranic swoich towarzyszy, z listy serwerow"  )
 
 	itemDef {
 		name		"filtericonMaxLives"
@@ -124,7 +124,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 10+12, 128, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowMaxlives", cvarFloatList { "Filter Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter wplywajacy na serwery z Zyciami", "Zawierajac lub Wykluczakac serwery z liczba zyc na mape, z listy serwerow" )
+	TRICHECKBOXACTIONMULTI( 10+12, 128, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowMaxlives", cvarFloatList { "Filtr Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtr wplywajacy na serwery z Zyciami", "Zawierajac lub Wykluczakac serwery z liczba zyc na mape, z listy serwerow" )
 
 	itemDef {
 		name		"filtericonWeapRestrict"
@@ -135,7 +135,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 92, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowWeaponsRestricted", cvarFloatList { "Filter Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter wplywajacy na serwery z restrykcja bronii", "Zawierajac lub Wykluczakac serwery ktore maja limit dostepnych ciezkich bronii, z listy serwerow" )
+	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 92, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowWeaponsRestricted", cvarFloatList { "Filtr Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtr wplywajacy na serwery z restrykcja broni", "Zawierajac lub Wykluczakac serwery ktore maja limit dostepnych ciezkich bronii, z listy serwerow" )
 
 	itemDef {
 		name		"filtericonAntilag"
@@ -146,7 +146,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 104, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { "Filter Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter wplywajacy na serwery z Anty-Lag", "Zawierajac lub Wykluczakac serwery z pomoca dla graczy z modemem, z listy serwerow" )
+	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 104, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { "Filtr Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtr wplywajacy na serwery z Anty-Lag", "Zawierajac lub Wykluczakac serwery z pomoca dla graczy z modemem, z listy serwerow" )
 
 	itemDef {
 		name		"filtericonTeamBalance"
@@ -157,7 +157,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 116, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowTeamBalanced", cvarFloatList { "Filter Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter wyplywajacy na serwery z Balansowaniem Teamow", "Zawierajac lub Wykluczakac serwery ktore egzekfuja balansowanie teamow, z listy serwerow" )
+	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 116, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowTeamBalanced", cvarFloatList { "Filtr Wylaczony" 0 "Tylko pokaz..." 1 "Nie pokazuj..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtr wyplywajacy na serwery z Balansowaniem Zespolow", "Zawierajac lub Wykluczakac serwery ktore egzekwuja balansowanie zespolow, z listy serwerow" )
 
 	itemDef {
 		name			"descriptionFilters"
@@ -385,7 +385,7 @@ menuDef {
 		border		WINDOW_BORDER_FULL
 		bordercolor	.5 .5 .5 .5
 		visible		1
-		tooltip		"Kliknij tutaj aby posortowac na Ilosc Graczu"
+		tooltip		"Kliknij tutaj aby posortowac na Ilosc Graczy"
 
 		action {
 			setitemcolor "grpColumns" backcolor 0 0 0 0;
@@ -595,8 +595,8 @@ menuDef {
 	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "INFO SERWERA", .24, 11, clearFocus ; open playonline_serverinfo )
 	
 	// FIXME: set linky buttons to etlegacy.com?
-	// NAMEDBUTTON( "bttn_pbenable", 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "ENABLE PUNKBUSTER", .24, 11, clearFocus ; open playonline_enablepb )
-	// NAMEDBUTTON( "bttn_pbdisable", 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "DISABLE PUNKBUSTER", .24, 11, clearFocus ; open playonline_disablepb )
+	// NAMEDBUTTON( "bttn_pbenable", 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "WLACZ PUNKBUSTER", .24, 11, clearFocus ; open playonline_enablepb )
+	// NAMEDBUTTON( "bttn_pbdisable", 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, "WYLACZ PUNKBUSTER", .24, 11, clearFocus ; open playonline_disablepb )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "COFNIJ", .3, 14, close playonline ; open main )

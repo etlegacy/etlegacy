@@ -84,7 +84,7 @@ menuDef {
 
 	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "STWORZ PROFIL" )
 
-	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Wybierz Ustawienia poczatkowe ponizej. Mozesz zmienic je w dowolnym momencie, a dostep do bardziej zaawansowanych opcji odwiedzajac Menu opcje. Jezeli wiecej niz jedna osoba zamierza grac Wolfenstein: Enemy Territory, mozna utworzyc dodatkowe profile odwiedzajac Menu profile.", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Wybierz Ustawienia poczatkowe ponizej. Mozesz zmienic je w dowolnym momencie, a dostep do bardziej zaawansowanych opcji odwiedzajac Menu opcje. Jezeli wiecej niz jedna osoba zamierza grac Wolfenstein: Enemy Territory na tym komputerze, mozna utworzyc dodatkowe profile odwiedzajac Menu profile.", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 	itemDef {
 		name		"efleftbackPlayer Alias:"
@@ -95,18 +95,18 @@ menuDef {
 		visible		1
 		decoration
 	}
-	EDITFIELDLEFT( SUBWINDOW_X+4+32, SUBWINDOW_Y+88, (SUBWINDOW_WIDTH)-8-64, 10, "Nazwa Gracza:", .2, 8, "ui_profile", 36, 23, "Wpisz nazwe jaka chcialbys byc znany przez innych na serwie" )
+	EDITFIELDLEFT( SUBWINDOW_X+4+32, SUBWINDOW_Y+88, (SUBWINDOW_WIDTH)-8-64, 10, "Nazwa Gracza:", .2, 8, "ui_profile", 36, 23, "Wpisz nazwe jaka chcialbys by byla wyswietlana jako twoje imie" )
 	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+112, (SUBWINDOW_WIDTH)-8, 10, "Jezyk:", .2, 8, "cl_language", cvarFloatList { "Angielski (domyslny)" 0 "Francuski" 1 "Niemiecki" 2 "Wloski" 3 "Hiszpanski" 4 "Polski" 5 "Holenderski" 6 "Czeski" 7 "Szwedzki" 8 "Finski" 9 "Dunski" 10}, uiScript update "cl_language", "Ustaw swoj jezyk" )
-	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, "Jakosc Video:", .2, 8, "ui_glCustom", cvarFloatList { "Najszybsze" 3 "Szybkie" 2 "Normale" 1 "Wysokie" 0 }, uiScript update "ui_glCustom", "Wybierz twoje poczatkowe ustawienia wideo, moga byc zmienione w menu opcji pozniej" )
+	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, "Jakosc Video:", .2, 8, "ui_glCustom", cvarFloatList { "Najszybsze" 3 "Szybkie" 2 "Normale" 1 "Mocne" 0 }, uiScript update "ui_glCustom", "Wybierz twoje poczatkowe ustawienia wideo, moga byc zmienione pozniej w menu opcji" )
 	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+150, (SUBWINDOW_WIDTH)-8, 10, "Rozdzielczosc:", .2, 8, "ui_r_mode", cvarFloatList { "Rozdzielczosc Monitora" -2 "320*240" 0 "400*300" 1 "512*384" 2 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 Wide Screen" 11 "1366x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1600 (16:10)" 18 }, uiScript glCustom, "Wybierz preferowana rozdzielczosc - jesli nie jestes pewien, zostaw to jako domyslne" )
 	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+174, (SUBWINDOW_WIDTH)-8, 10, "Jasnosc:", .2, 8, "ui_r_gamma" 1 0.5 2, "Ustaw Jasnosc gry" )
 	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+174, (SUBWINDOW_WIDTH)-8, 10, "ui_r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
 
-	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+198, (SUBWINDOW_WIDTH)-8, 10, "Polaczenie:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "LAN/CABLE/xDSL" 25000 } cvarListUndefined "Niewybrane", uiScript update "ui_setRate", "Wybiesz twoje typ polaczenia" )
+	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+198, (SUBWINDOW_WIDTH)-8, 10, "Polaczenie:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "LAN/CABLE/xDSL" 25000 } cvarListUndefined "Niewybrane", uiScript update "ui_setRate", "Wybiesz twoj rodzaj polaczenia" )
 
-	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+222, (SUBWINDOW_WIDTH)-8, 10, "Czulosc Myszy:", .2, 8, "ui_sensitivity" 5 1 30, "Uzyj tego slidera aby ustawic czulosc myszy" )
+	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+222, (SUBWINDOW_WIDTH)-8, 10, "Czulosc Myszy:", .2, 8, "ui_sensitivity" 5 1 30, "Uzyj tego suwaka, by ustawic czulosc myszy" )
 	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+222, (SUBWINDOW_WIDTH)-8, 10, "ui_sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
-	YESNO( SUBWINDOW_X+4, SUBWINDOW_Y+246, (SUBWINDOW_WIDTH)-8, 10, "Odwroc Mysz:", .2, 8, "ui_profile_mousePitch", "Wybierz obroc mysz jesli chcialbys uzywac" )
+	YESNO( SUBWINDOW_X+4, SUBWINDOW_Y+246, (SUBWINDOW_WIDTH)-8, 10, "Odwroc Mysz:", .2, 8, "ui_profile_mousePitch", "Wybierz ta opcje, jesli chcesz uzywac odwroconego obracania" )
 
 	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+270, (SUBWINDOW_WIDTH)-8, 10, "Recznosc:", .2, 8, "ui_handedness", cvarFloatList { "Prawo" 0 "Lewo" 1 }, "Leworeczny czy Praworeczny? To ustawia twoje domyslne ustawienia\nktore mozesz modyfikowac pozniej w menu" )
 	

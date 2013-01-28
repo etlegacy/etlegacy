@@ -50,8 +50,8 @@ menuDef
 #define SUBWINDOW_Y			.5 * (WINDOW_HEIGHT - SUBWINDOW_HEIGHT)
 
 	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "DOMYSLNE USTAWIENIA" )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Zresetowac ustawienia to default?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	MULTI( SUBWINDOW_X+2, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-8, 10, "Recznosc:", .2, 8, "ui_handedness", cvarFloatList { "Prawo" 0 "Lewo" 1 }, "Lewo czy Prawo Reczny" )
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Zresetowac ustawienia do domyslnych?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	MULTI( SUBWINDOW_X+2, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-8, 10, "Dominujaca reka:", .2, 8, "ui_handedness", cvarFloatList { "Prawa" 0 "Lewa" 1 }, "Lewo czy Prawo Reczny" )
 	
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "TAK", .3, 14, close options_controls_default ; open options_controls ; uiScript defaultControls )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "NIE", .3, 14, close options_controls_default ; open options_controls )

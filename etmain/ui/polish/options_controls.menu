@@ -45,7 +45,7 @@ menuDef {
 // Input //
 	SUBWINDOW( 6, 198, (SUBWINDOW_WIDTH), 40, "WEJSCIE" )
 	CHECKBOXALIGNXACTION( 8, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Obroc Mysz:", .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, "Odwrocenie kierunku myszy" )
-	CHECKBOXALIGNX( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Wygladz Mysz:", .2, 24, 8, "m_filter", "Wygladza Poruszanie Myszy" )
+	CHECKBOXALIGNX( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Gladka Mysz:", .2, 24, 8, "m_filter", "Wygladza Poruszanie Myszy" )
 	SLIDER( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Czulosc Myszy:", .2, 8, "sensitivity" 5 1 30, "Uzyj do zwiekszania czulosci myszy" )
 	CVARFLOATLABEL( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
 
@@ -55,7 +55,7 @@ menuDef {
 	BIND( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 260, .5*((SUBWINDOW_WIDTH)-6), 10, "Chat Teamu:", .2, 8, "messagemode2", "" )
 	BIND( 8, 272, (SUBWINDOW_WIDTH)-4, 10, "Chat Fire-Teamu:", .2, 8, "messagemode3", "" )
 	BIND( 8, 284, (SUBWINDOW_WIDTH)-4, 10, "Szybki Czat:", .2, 8, "mp_QuickMessage", "" )
-	BIND( 8, 296, (SUBWINDOW_WIDTH)-4, 10, "Szybki Chat Fire-Teamu:", .2, 8, "mp_fireteammsg", "" )
+	BIND( 8, 296, (SUBWINDOW_WIDTH)-4, 10, "Szybki Czat Fire-Teamu:", .2, 8, "mp_fireteammsg", "" )
 
 // Pop-Ups //
 	SUBWINDOW( 6, 314, (SUBWINDOW_WIDTH), 100, "POP-UPS" )
@@ -69,7 +69,7 @@ menuDef {
 //	BIND( 8, 402, (SUBWINDOW_WIDTH)-4, 10, "Multiwyglad:", .2, 8, "mvactivate", "" )
 	
 // Use Weapons //
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 64, "UZYCIE BRONII" )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 64, "UZYCIE BRONI" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 48, (SUBWINDOW_WIDTH)-4, 10, "Atak:", .2, 8, "+attack", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 60, (SUBWINDOW_WIDTH)-4, 10, "Zmiana na Alternatywna:", .2, 8, "weapalt", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 72, (SUBWINDOW_WIDTH)-4, 10, "Przeladuj Bron:", .2, 8, "+reload", "" )
@@ -80,18 +80,18 @@ menuDef {
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 118, (SUBWINDOW_WIDTH)-4, 10, "Nastepna Bron:", .2, 8, "weapnext", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Poprzednia Bron:", .2, 8, "weapprev", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 142, (SUBWINDOW_WIDTH)-4, 10, "Slot 1 - Melee:", .2, 8, "weaponbank 1", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 154, (SUBWINDOW_WIDTH)-4, 10, "Slot 2 - Jedno Reczna:", .2, 8, "weaponbank 2", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 166, (SUBWINDOW_WIDTH)-4, 10, "Slot 3 - Dwu Reczna:", .2, 8, "weaponbank 3", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 154, (SUBWINDOW_WIDTH)-4, 10, "Slot 2 - Jedno-reczna:", .2, 8, "weaponbank 2", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 166, (SUBWINDOW_WIDTH)-4, 10, "Slot 3 - Obu-reczna:", .2, 8, "weaponbank 3", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 178, (SUBWINDOW_WIDTH)-4, 10, "Slot 4 - Granat:", .2, 8, "weaponbank 4", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 190, (SUBWINDOW_WIDTH)-4, 10, "Slot 5 - Specialna 1:", .2, 8, "weaponbank 5", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 202, (SUBWINDOW_WIDTH)-4, 10, "Slot 6 - Specialna 2:", .2, 8, "weaponbank 6", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 214, (SUBWINDOW_WIDTH)-4, 10, "Slot 7 - Specialna 3:", .2, 8, "weaponbank 7", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 190, (SUBWINDOW_WIDTH)-4, 10, "Slot 5 - Specjalna 1:", .2, 8, "weaponbank 5", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 202, (SUBWINDOW_WIDTH)-4, 10, "Slot 6 - Specjalna 2:", .2, 8, "weaponbank 6", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 214, (SUBWINDOW_WIDTH)-4, 10, "Slot 7 - Specjalna 3:", .2, 8, "weaponbank 7", "" )
 
 // Miscellaneous //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 232, (SUBWINDOW_WIDTH), 52, "ROZNE" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Glosuj Tak:", .2, 8, "vote yes", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Glosuj Nie:", .2, 8, "vote no", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 260, (SUBWINDOW_WIDTH)-4, 10, "Zrob Screena:", .2, 8, "autoScreenshot", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 260, (SUBWINDOW_WIDTH)-4, 10, "Zrob Zdjecie:", .2, 8, "autoScreenshot", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 272, (SUBWINDOW_WIDTH)-4, 10, "Nagraj Powtorke:", .2, 8, "autoRecord", "" )
 
 // Fire-Teams //

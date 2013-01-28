@@ -33,26 +33,25 @@ menuDef {
 	
 // Simple settings //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 78, "PROSTE" )
-	MULTIACTION( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Ogolna Jakosc:", .2, 8, "ui_glCustom", cvarFloatList { "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glcustom", "" )
+	MULTIACTION( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Ogolna Jakosc:", .2, 8, "ui_glCustom", cvarFloatList { "najszybsza" 3 "szybka" 2 "normalna" 1 "mocna" 0 }, uiScript update "ui_glcustom", "" )
 	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Rozdzielczosc:", .2, 8, "ui_r_mode", cvarFloatList { "desktop resolution" -2 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 Wide Screen" 11 "1360x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1600 (16:10)" 18 }, uiScript glCustom, "" )
 	YESNOACTION( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Pelnyobraz:", .2, 8, "ui_r_fullscreen", uiScript glCustom, "" )
 	YESNOACTION( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Brak Okna:", .2, 8, "r_noborder", uiScript glCustom, "Tylko mozliwe w nie pelnym oknie" )
 	SLIDER( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Jasnosc:", .2, 8, "r_gamma" 1.3 1 3, "" )
 
-
 // Advanced settings //
 	SUBWINDOW( 6, 116, (SUBWINDOW_WIDTH), 256, "ZAAWANSOWANE" )
 	YESNO( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Niebo Slabej Jakosci:", .2, 8, "r_fastsky", "" )
 	MULTIACTION( 8, 144, (SUBWINDOW_WIDTH)-4, 10, "Detale Cieni:", .2, 8, "ui_cg_shadows", cvarFloatList { "Brak (najsz.)" 0 "Blob (stary styl)" 1 "Wzorowe Cienie" 2 "Projektowe Cienie" 3 "Polygonowe Cienie" 4 }, uiScript glCustom, "" )
-	MULTIACTION( 8, 156, (SUBWINDOW_WIDTH)-4, 10, "Detale Textur:", .2, 8, "ui_r_picmip", cvarFloatList { "Niskie" 2 "Srednie" 1 "Wysokie" 0 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 156, (SUBWINDOW_WIDTH)-4, 10, "Detale Textur:", .2, 8, "ui_r_picmip", cvarFloatList { "Niskie" 2 "Srednie" 1 "Mocne" 0 }, uiScript glCustom, "" )
 	// add options 0 - disabled, 1 - single path, 2 - path
 	YESNOACTION( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Dynamiczne Swiatla:", .2, 8, "ui_r_dynamiclight", uiScript glCustom; uiScript update "r_dynamicLight", "" )
 	// check this if ET supports same way
-	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Detale Geometryczne:", .2, 8, "ui_r_lodbias", cvarFloatList { "Niskie" 2 "Srednie" 1 "Wysokie" 0 }, uiScript glCustom ; uiScript update "r_lodbias", "" )
+	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Detale Geometryczne:", .2, 8, "ui_r_lodbias", cvarFloatList { "Niskie" 2 "Srednie" 1 "Mocne" 0 }, uiScript glCustom ; uiScript update "r_lodbias", "" )
 	MULTIACTION( 8, 192, (SUBWINDOW_WIDTH)-4, 10, "Jakosc Textur:", .2, 8, "ui_r_texturebits", cvarFloatList { "Domyslne" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
 	MULTIACTION( 8, 204, (SUBWINDOW_WIDTH)-4, 10, "Filtrowanie Textur:", .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glCustom, "" )
-	MULTIACTION( 8, 216, (SUBWINDOW_WIDTH)-4, 10, "Filtrowanie Anisotropoficzne:", .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Wylaczone" 0 "Srednie" 4 "Wysokie" 8 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 216, (SUBWINDOW_WIDTH)-4, 10, "Filtrowanie Anizotropoficzne:", .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Wylaczone" 0 "Srednie" 4 "Mocne" 8 }, uiScript glCustom, "" )
 	MULTIACTION( 8, 228, (SUBWINDOW_WIDTH)-4, 10, "Glebia Koloru:", .2, 8, "ui_r_colorbits", cvarFloatList { "Domys. Monitora" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
 	YESNOACTION( 8, 240, (SUBWINDOW_WIDTH)-4, 10, "Detalowe Textury:", .2, 8, "ui_r_detailtextures", uiScript glCustom, "" )
 	MULTIACTION( 8, 252, (SUBWINDOW_WIDTH)-4, 10, "Glebokosc Bufferowania:", .2, 8, "ui_r_depthbits", cvarFloatList { "Domyslne" 0 "16-bit" 16 "24-bit" 24 }, uiScript glCustom, "" )

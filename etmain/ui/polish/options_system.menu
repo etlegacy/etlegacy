@@ -43,9 +43,9 @@ menuDef {
 	SLIDER( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Glosnosc Muzyki:", .2, 8, "s_musicvolume" .25 0 1, "" )
 	MULTI( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Jakosc Dzwieku:", .2, 8, "ui_s_khz", cvarFloatList { "11 khz (niskie)" 11 "22 khz (wysokie)" 22 "44 khz (ultra wysokie)" 44 }, "" )
 	YESNO( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Doppler FX:", .2, 8, "s_doppler", "" )
-	YESNO( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Mutuj kiedy zminimalizowane:", .2, 8, "s_muteWhenMinimized", "" )
-	YESNO( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Mutuj kiedy niezfokusowane:", .2, 8, "s_muteWhenUnfocused", "" )
-	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Dzwieki Trafien:", .2, 8, "cg_hitsounds", cvarFloatList { "Brak" 0 "Wszystkie" 1 "Bez Trafien Teamow" 2 "Bez Glosow Glowy" 4 "Bez Glosow Ciala" 8 }, "" )
+	YESNO( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Wyciszaj kiedy zminimalizowane:", .2, 8, "s_muteWhenMinimized", "" )
+	YESNO( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Wyciszaj kiedy gra nie jest glownym oknem:", .2, 8, "s_muteWhenUnfocused", "" )
+	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Dzwieki Trafien:", .2, 8, "cg_hitsounds", cvarFloatList { "Brak" 0 "Wszystkie" 1 "Bez trafien zespolowych" 2 "Bez dzwiekow trafien glowy" 4 "Bez dzwiekow trafien ciala" 8 }, "" )
 
 // Networking //
 	SUBWINDOW( 6, 138, (SUBWINDOW_WIDTH), 54, "SIEC" )
@@ -58,9 +58,9 @@ menuDef {
 	SUBWINDOW( 6, 196, (SUBWINDOW_WIDTH), 42, "PAMIEC" )
 	MULTIACTION( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Pamiec Ogolna:", .2, 8, "ui_com_hunkmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Niestandardowe", uiScript update "ui_com_hunkmegs", "liczba pamieci w (MB) przypisana do gry" )
 	MULTIACTION( 8, 224, (SUBWINDOW_WIDTH)-4, 10, "Pamiec Dzwiekow:", .2, 8, "ui_com_soundmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Niestandardowe", uiScript update "ui_com_soundmegs", "ustawia liczbe pamieci w (MB) przypisana do dzwiekow" )
-	//MULTIACTION( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Pamiec Stref:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Niestandardowe", uiScript update "ui_com_zonemegs", "liczba Ramu przypisana texturom mapy" )
-	//MULTIACTION( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Pamiec Stref:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Niestandardowe", uiScript update "ui_com_zonemegs", "liczba Ramu przypisana texturom mapy" )
-	
+	//MULTIACTION( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Pamiec Stref:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Niestandardowe", uiScript update "ui_com_zonemegs", "liczba Ramu przypisana teksturom mapy" )
+	//MULTIACTION( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Pamiec Stref:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Niestandardowe", uiScript update "ui_com_zonemegs", "liczba Ramu przypisana teksturom mapy" )
+
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "COFNIJ", .3, 14, uiScript vidReset ; close options_system ; open options )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "ZATWIERDZ", .3, 14,
 		conditionalScript vidrestartIsRequired 2

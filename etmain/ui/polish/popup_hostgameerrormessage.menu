@@ -53,5 +53,5 @@ menuDef {
 	
 	CVARLABEL( SUBWINDOW_X+6, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-12, 154, "com_errorMessage", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, SUBWINDOW_WIDTH-12, 18, "BACK", .3, 14, uiScript clearError ; close hostGamePopupError ; open hostgame )
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, SUBWINDOW_WIDTH-12, 18, "WROC", .3, 14, uiScript clearError ; close hostGamePopupError ; open hostgame )
 }
