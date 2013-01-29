@@ -737,10 +737,6 @@ extern int cl_connectedToPureServer;
 qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const char *filename);
 #endif
 
-#if defined(DO_LIGHT_DEDICATED)
-int FS_RandChecksumFeed();
-#endif
-
 char *FS_ShiftStr(const char *string, int shift);
 
 void FS_CopyFile(char *fromOSPath, char *toOSPath);
