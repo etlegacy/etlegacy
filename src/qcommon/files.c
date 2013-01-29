@@ -1045,6 +1045,17 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFI
 						// found it!
 						return qtrue;
 					}
+					else if (filename[0] == '/')
+					{
+						// Some hardcoded paths to textures in models start with a slash which fools FS_FilenameCompare
+						memmove((void *)filename, (void *)filename + 1, strlen((void *)filename));
+
+						if (!FS_FilenameCompare(pakFile->name, filename))
+						{
+							// found it!
+							return qtrue;
+						}
+					}
 					pakFile = pakFile->next;
 				}
 				while (pakFile != NULL);

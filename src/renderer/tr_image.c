@@ -1041,7 +1041,7 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 	if (*pic == NULL)
 	{
 		// Loader failed, most likely because the file isn't there
-		ri.Printf(PRINT_DEVELOPER, "WARNING: %s not present in any supported image format\n", altName);
+		ri.Printf(PRINT_DEVELOPER, "WARNING: %s not present in any supported image format\n", localName);
 	}
 }
 
