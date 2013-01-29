@@ -371,8 +371,6 @@ When on, displays a electric beam from target to target2.
 
 void misc_beam_think(gentity_t *self)
 {
-	//trace_t	trace;
-
 	if (self->enemy)
 	{
 		if (self->enemy != self)
@@ -994,43 +992,6 @@ wait		= default is 50 the rate at which it will travel up
 shader		= custom shader to use for particles
 */
 
-/*void smoke_think (gentity_t *ent)
-{
-    gentity_t	*tent;
-
-    ent->nextthink = level.time + ent->delay;
-
-    if (!(ent->spawnflags & 4))
-        return;
-
-    if (ent->health)
-    {
-        ent->health --;
-        if (!ent->health)
-        {
-            ent->think = G_FreeEntity;
-            ent->nextthink = level.time + FRAMETIME;
-        }
-    }
-
-    tent = G_TempEntity (ent->r.currentOrigin, EV_SMOKE);
-    VectorCopy (ent->r.currentOrigin, tent->s.origin);
-    tent->s.time = ent->speed;
-    tent->s.time2 = ent->duration;
-    tent->s.density = ent->s.density;
-
-    // this is used to set the size of the smoke particle
-    tent->s.angles2[0] = ent->start_size;
-    tent->s.angles2[1] = ent->end_size;
-    tent->s.angles2[2] = ent->wait;
-
-    VectorCopy (ent->pos3, tent->s.origin2);
-
-    if (ent->s.frame) // denotes reverse gravity effect
-        tent->s.frame = 1;
-
-}*/
-
 void smoke_think(gentity_t *ent)
 {
 	ent->nextthink = level.time + ent->s.constantLight;
@@ -1256,11 +1217,9 @@ int rumble_snd;
 
 void target_rumble_think(gentity_t *ent)
 {
-	gentity_t *tent;
-	float     ratio;
-	float     time;
-	float     dapitch, dayaw;
-	qboolean  validrumble = qtrue;
+	float    ratio;
+	float    dapitch, dayaw;
+	qboolean validrumble = qtrue;
 
 	if (!(ent->count))
 	{
@@ -1284,7 +1243,7 @@ void target_rumble_think(gentity_t *ent)
 
 	if (ent->start_size)
 	{
-		int time2;
+		int time, time2;
 
 		if (level.time < (ent->timestamp + ent->start_size))
 		{
@@ -1306,7 +1265,7 @@ void target_rumble_think(gentity_t *ent)
 
 	if (validrumble)
 	{
-		tent = G_TempEntity(ent->r.currentOrigin, EV_RUMBLE_EFX);
+		gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_RUMBLE_EFX);
 
 		tent->s.angles[0] = dapitch * ratio;
 		tent->s.angles[1] = dayaw * ratio;
