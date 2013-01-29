@@ -43,9 +43,7 @@
 
 /*
 ===============================================================================
-
 BASIC MATH
-
 ===============================================================================
 */
 
@@ -54,7 +52,7 @@ BASIC MATH
 RotatePoint
 ================
 */
-// TTimo: const vec_t ** would require explicit casts for ANSI C conformance
+// const vec_t ** would require explicit casts for ANSI C conformance
 // see unix/const-arg.c in Wolf MP source
 void RotatePoint(vec3_t point, /*const*/ vec3_t matrix[3])
 {
@@ -71,7 +69,7 @@ void RotatePoint(vec3_t point, /*const*/ vec3_t matrix[3])
 TransposeMatrix
 ================
 */
-// TTimo: const vec_t ** would require explicit casts for ANSI C conformance
+// const vec_t ** would require explicit casts for ANSI C conformance
 // see unix/const-arg.c in Wolf MP source
 void TransposeMatrix(/*const*/ vec3_t matrix[3], vec3_t transpose[3])
 {
@@ -205,9 +203,7 @@ float SquareRootFloat(float number)
 
 /*
 ===============================================================================
-
 POSITION TESTING
-
 ===============================================================================
 */
 
@@ -519,7 +515,6 @@ void CM_PositionTest(traceWork_t *tw)
 
 	CM_BoxLeafnums_r(&ll, 0);
 
-
 	cm.checkcount++;
 
 	// test the contents of the leafs
@@ -535,9 +530,7 @@ void CM_PositionTest(traceWork_t *tw)
 
 /*
 ===============================================================================
-
 TRACING
-
 ===============================================================================
 */
 
@@ -693,19 +686,15 @@ CM_TraceThroughBrush
 static void CM_TraceThroughBrush(traceWork_t *tw, cbrush_t *brush)
 {
 	int          i;
-	cplane_t     *plane, *clipplane;
+	cplane_t     *plane, *clipplane = NULL;
 	float        dist;
-	float        enterFrac, leaveFrac;
+	float        enterFrac = -1.f, leaveFrac = 1.f;
 	float        d1, d2;
 	qboolean     getout, startout;
 	float        f;
 	cbrushside_t *side, *leadside;
 	vec3_t       startp;
 	vec3_t       endp;
-
-	enterFrac = -1.0;
-	leaveFrac = 1.0;
-	clipplane = NULL;
 
 	if (!brush->numsides)
 	{
@@ -1049,12 +1038,12 @@ static void CM_TraceThroughSphere(traceWork_t *tw, vec3_t origin, float radius, 
 	{
 		return;
 	}
-	//
+
 	//  | origin - (start + t * dir) | = radius
 	//  a = dir[0]^2 + dir[1]^2 + dir[2]^2;
 	//  b = 2 * (dir[0] * (start[0] - origin[0]) + dir[1] * (start[1] - origin[1]) + dir[2] * (start[2] - origin[2]));
 	//  c = (start[0] - origin[0])^2 + (start[1] - origin[1])^2 + (start[2] - origin[2])^2 - radius^2;
-	//
+
 	VectorSubtract(start, origin, v1);
 	// dir is normalized so a = 1
 	//a = 1.0f; //dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2];
@@ -1100,11 +1089,13 @@ static void CM_TraceThroughSphere(traceWork_t *tw, vec3_t origin, float radius, 
 			tw->trace.contents   = CONTENTS_BODY;
 		}
 	}
+	/*
 	else if (d == 0)
 	{
-		//t1 = (- b ) / 2;
-		// slide along the sphere
+	    //t1 = (- b ) / 2;
+	    // slide along the sphere
 	}
+	*/
 	// no intersection at all
 }
 
@@ -1158,15 +1149,14 @@ static void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, floa
 	{
 		return;
 	}
-	//
-	//
+
 	// (start[0] - origin[0] - t * dir[0]) ^ 2 + (start[1] - origin[1] - t * dir[1]) ^ 2 = radius ^ 2
 	// (v1[0] + t * dir[0]) ^ 2 + (v1[1] + t * dir[1]) ^ 2 = radius ^ 2;
 	// v1[0] ^ 2 + 2 * v1[0] * t * dir[0] + (t * dir[0]) ^ 2 +
 	//                      v1[1] ^ 2 + 2 * v1[1] * t * dir[1] + (t * dir[1]) ^ 2 = radius ^ 2
 	// t ^ 2 * (dir[0] ^ 2 + dir[1] ^ 2) + t * (2 * v1[0] * dir[0] + 2 * v1[1] * dir[1]) +
 	//                      v1[0] ^ 2 + v1[1] ^ 2 - radius ^ 2 = 0
-	//
+
 	VectorSubtract(start, origin, v1);
 	// dir is normalized so we can use a = 1
 	//a = 1.0f; // * (dir[0] * dir[0] + dir[1] * dir[1]);
@@ -1219,11 +1209,13 @@ static void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, floa
 			}
 		}
 	}
+	/*
 	else if (d == 0)
 	{
-		//t[0] = (- b ) / 2 * a;
-		// slide along the cylinder
+	    //t[0] = (- b ) / 2 * a;
+	    // slide along the cylinder
 	}
+	*/
 	// no intersection at all
 }
 
@@ -1563,7 +1555,6 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 		VectorSet(tw.sphere.offset, 0, 0, tw.size[1][2] - tw.sphere.radius);
 	}
 
-
 	positionTest = (start[0] == end[0] && start[1] == end[1] && start[2] == end[2]);
 
 	tw.maxOffset = tw.size[1][0] + tw.size[1][1] + tw.size[1][2];
@@ -1659,9 +1650,8 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 		CM_CalcTraceBounds(&tw, qtrue);
 	}
 
-#else
-
-	// calculate bounds
+#else // !MRE_OPTIMIZE
+	  // calculate bounds
 	if (tw.sphere.use)
 	{
 		for (i = 0; i < 3; i++)
@@ -1694,7 +1684,6 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 			}
 		}
 	}
-
 #endif
 
 	// check for position test special case
@@ -1739,7 +1728,6 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 	}
 	else
 	{
-
 		// general sweeping through world
 		if (model)
 		{

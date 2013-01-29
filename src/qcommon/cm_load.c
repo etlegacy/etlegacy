@@ -64,9 +64,7 @@ void CM_FloodAreaConnections(void);
 
 /*
 ===============================================================================
-
                     MAP LOADING
-
 ===============================================================================
 */
 
@@ -177,7 +175,6 @@ void CMod_LoadSubmodels(lump_t *l)
 /*
 =================
 CMod_LoadNodes
-
 =================
 */
 void CMod_LoadNodes(lump_t *l)
@@ -217,7 +214,6 @@ void CMod_LoadNodes(lump_t *l)
 /*
 =================
 CM_BoundBrush
-
 =================
 */
 void CM_BoundBrush(cbrush_t *b)
@@ -235,7 +231,6 @@ void CM_BoundBrush(cbrush_t *b)
 /*
 =================
 CMod_LoadBrushes
-
 =================
 */
 void CMod_LoadBrushes(lump_t *l)
@@ -823,7 +818,7 @@ void CM_InitBoxHull(void)
 	box_brush->contents = CONTENTS_BODY;
 
 	box_model.leaf.numLeafBrushes = 1;
-//  box_model.leaf.firstLeafBrush = cm.numBrushes;
+	//box_model.leaf.firstLeafBrush = cm.numBrushes;
 	box_model.leaf.firstLeafBrush     = cm.numLeafBrushes;
 	cm.leafbrushes[cm.numLeafBrushes] = cm.numBrushes;
 

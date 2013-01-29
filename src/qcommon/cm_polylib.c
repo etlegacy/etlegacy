@@ -44,6 +44,7 @@ int c_winding_points;
 void pw(winding_t *w)
 {
 	int i;
+
 	for (i = 0 ; i < w->numpoints ; i++)
 	{
 		printf("(%5.1f, %5.1f, %5.1f)\n", w->p[i][0], w->p[i][1], w->p[i][2]);
@@ -97,10 +98,9 @@ void RemoveColinearPoints(winding_t *w)
 {
 	int    i, j, k;
 	vec3_t v1, v2;
-	int    nump;
+	int    nump = 0;
 	vec3_t p[MAX_POINTS_ON_WINDING];
 
-	nump = 0;
 	for (i = 0 ; i < w->numpoints ; i++)
 	{
 		j = (i + 1) % w->numpoints;
@@ -151,9 +151,8 @@ vec_t WindingArea(winding_t *w)
 {
 	int    i;
 	vec3_t d1, d2, cross;
-	vec_t  total;
+	vec_t  total = 0;
 
-	total = 0;
 	for (i = 2 ; i < w->numpoints ; i++)
 	{
 		VectorSubtract(w->p[i - 1], w->p[0], d1);
@@ -201,7 +200,9 @@ void WindingCenter(winding_t *w, vec3_t center)
 
 	VectorCopy(vec3_origin, center);
 	for (i = 0 ; i < w->numpoints ; i++)
+	{
 		VectorAdd(w->p[i], center, center);
+	}
 
 	scale = 1.0 / w->numpoints;
 	VectorScale(center, scale, center);
@@ -214,15 +215,13 @@ BaseWindingForPlane
 */
 winding_t *BaseWindingForPlane(vec3_t normal, vec_t dist)
 {
-	int       i, x;
-	vec_t     max, v;
+	int       i, x = -1;
+	vec_t     max = -MAX_MAP_BOUNDS, v;
 	vec3_t    org, vright, vup;
 	winding_t *w;
 
 // find the major axis
 
-	max = -MAX_MAP_BOUNDS;
-	x   = -1;
 	for (i = 0 ; i < 3; i++)
 	{
 		v = Q_fabs(normal[i]);
@@ -666,12 +665,10 @@ WindingOnPlaneSide
 */
 int WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist)
 {
-	qboolean front, back;
+	qboolean front = qfalse, back = qfalse;
 	int      i;
 	vec_t    d;
 
-	front = qfalse;
-	back  = qfalse;
 	for (i = 0 ; i < w->numpoints ; i++)
 	{
 		d = DotProduct(w->p[i], normal) - dist;

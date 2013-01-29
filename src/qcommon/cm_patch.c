@@ -143,9 +143,8 @@ CM_SignbitsForNormal
 */
 static int CM_SignbitsForNormal(vec3_t normal)
 {
-	int bits, j;
+	int bits = 0, j;
 
-	bits = 0;
 	for (j = 0 ; j < 3 ; j++)
 	{
 		if (normal[j] < 0)
@@ -182,9 +181,7 @@ static qboolean CM_PlaneFromPoints(vec4_t plane, vec3_t a, vec3_t b, vec3_t c)
 
 /*
 ================================================================================
-
 GRID SUBDIVISION
-
 ================================================================================
 */
 
@@ -430,9 +427,8 @@ CM_ComparePoints
 */
 static qboolean CM_ComparePoints(float *a, float *b)
 {
-	float d;
+	float d = a[0] - b[0];
 
-	d = a[0] - b[0];
 	if (d < -POINT_EPSILON || d > POINT_EPSILON)
 	{
 		return qfalse;
@@ -493,9 +489,7 @@ static void CM_RemoveDegenerateColumns(cGrid_t *grid)
 
 /*
 ================================================================================
-
 PATCH COLLIDE GENERATION
-
 ================================================================================
 */
 
@@ -701,9 +695,8 @@ CM_GridPlane
 */
 static int CM_GridPlane(int gridPlanes[MAX_GRID_SIZE][MAX_GRID_SIZE][2], int i, int j, int tri)
 {
-	int p;
+	int p = gridPlanes[i][j][tri];
 
-	p = gridPlanes[i][j][tri];
 	if (p != -1)
 	{
 		return p;
@@ -791,6 +784,7 @@ static void CM_SetBorderInward(facet_t *facet, cGrid_t *grid, int gridPlanes[MAX
 	int   k, l;
 	float *points[4];
 	int   numPoints;
+	int   front, back;
 
 	switch (which)
 	{
@@ -821,8 +815,6 @@ static void CM_SetBorderInward(facet_t *facet, cGrid_t *grid, int gridPlanes[MAX
 
 	for (k = 0 ; k < facet->numBorders ; k++)
 	{
-		int front, back;
-
 		front = 0;
 		back  = 0;
 
@@ -1141,7 +1133,7 @@ void CM_AddFacetBevels(facet_t *facet)
 					ChopWindingInPlace(&w2, newplane, newplane[3], 0.1f);
 					if (!w2)
 					{
-						// TTimo: any map load spams with this error .. don't print it anymore
+						// any map load spams with this error .. don't print it anymore
 						//Com_DPrintf("WARNING: CM_AddFacetBevels... invalid bevel\n");
 						continue;
 					}
@@ -1214,7 +1206,6 @@ static void CM_PatchCollideFromGrid(cGrid_t *grid, patchCollide_t *pf, qboolean 
 	{
 		for (j = 0 ; j < grid->height - 1 ; j++)
 		{
-
 			borders[EN_TOP] = -1;
 			if (j > 0)
 			{
@@ -1468,9 +1459,7 @@ struct patchCollide_s *CM_GeneratePatchCollide(int width, int height, vec3_t *po
 
 /*
 ================================================================================
-
 TRACE TESTING
-
 ================================================================================
 */
 
@@ -1906,9 +1895,7 @@ void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *p
 
 /*
 =======================================================================
-
 POSITION DETECTION
-
 =======================================================================
 */
 
@@ -2019,9 +2006,7 @@ qboolean CM_PositionTestInPatchCollide(traceWork_t *tw, const struct patchCollid
 
 /*
 =======================================================================
-
 DEBUGGING
-
 =======================================================================
 */
 
@@ -2047,8 +2032,7 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 	int                  curplanenum, planenum, curinward, inward;
 	float                plane[4];
 	vec3_t               mins = { -15, -15, -28 }, maxs = { 15, 15, 28 };
-	//vec3_t mins = {0, 0, 0}, maxs = {0, 0, 0};
-	vec3_t v1, v2;
+	vec3_t               v1, v2;
 
 	if (!cv2)
 	{
@@ -2074,10 +2058,8 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 
 	for (i = 0, facet = pc->facets ; i < pc->numFacets ; i++, facet++)
 	{
-
 		for (k = 0 ; k < facet->numBorders + 1; k++)
 		{
-			//
 			if (k < facet->numBorders)
 			{
 				planenum = facet->borderPlanes[k];
@@ -2119,7 +2101,6 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 			w = BaseWindingForPlane(plane, plane[3]);
 			for (j = 0 ; j < facet->numBorders + 1 && w; j++)
 			{
-				//
 				if (j < facet->numBorders)
 				{
 					curplanenum = facet->borderPlanes[j];
@@ -2131,7 +2112,7 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 					curinward   = qfalse;
 					//continue;
 				}
-				//
+
 				if (curplanenum == planenum)
 				{
 					continue;
@@ -2143,9 +2124,9 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 					VectorSubtract(vec3_origin, plane, plane);
 					plane[3] = -plane[3];
 				}
-				//			if ( !facet->borderNoAdjust[j] ) {
+				//if ( !facet->borderNoAdjust[j] ) {
 				plane[3] -= cv->value;
-				//			}
+				//}
 				for (n = 0; n < 3; n++)
 				{
 					if (plane[n] > 0)

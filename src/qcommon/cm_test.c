@@ -84,9 +84,7 @@ int CM_PointLeafnum(const vec3_t p)
 
 /*
 ======================================================================
-
 LEAF LISTING
-
 ======================================================================
 */
 
@@ -113,14 +111,10 @@ void CM_StoreLeafs(leafList_t *ll, int nodenum)
 void CM_StoreBrushes(leafList_t *ll, int nodenum)
 {
 	int      i, k;
-	int      leafnum;
+	int      leafnum = -1 - nodenum;
 	int      brushnum;
-	cLeaf_t  *leaf;
+	cLeaf_t  *leaf = &cm.leafs[leafnum];
 	cbrush_t *b;
-
-	leafnum = -1 - nodenum;
-
-	leaf = &cm.leafs[leafnum];
 
 	for (k = 0 ; k < leaf->numLeafBrushes ; k++)
 	{
@@ -259,7 +253,6 @@ int CM_BoxBrushes(const vec3_t mins, const vec3_t maxs, cbrush_t **list, int lis
 /*
 ==================
 CM_PointContents
-
 ==================
 */
 int CM_PointContents(const vec3_t p, clipHandle_t model)
@@ -329,7 +322,6 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 	vec3_t p_l;
 	vec3_t temp;
 
-
 	// subtract origin offset
 	VectorSubtract(p, origin, p_l);
 
@@ -352,9 +344,7 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 
 /*
 ===============================================================================
-
 PVS
-
 ===============================================================================
 */
 
@@ -370,19 +360,15 @@ byte *CM_ClusterPVS(int cluster)
 
 /*
 ===============================================================================
-
 AREAPORTALS
-
 ===============================================================================
 */
 
 void CM_FloodArea_r(int areaNum, int floodnum)
 {
 	int     i;
-	cArea_t *area;
+	cArea_t *area = &cm.areas[areaNum];
 	int     *con;
-
-	area = &cm.areas[areaNum];
 
 	if (area->floodvalid == cm.floodvalid)
 	{
@@ -408,18 +394,16 @@ void CM_FloodArea_r(int areaNum, int floodnum)
 /*
 ====================
 CM_FloodAreaConnections
-
 ====================
 */
 void CM_FloodAreaConnections(void)
 {
 	int     i;
 	cArea_t *area;
-	int     floodnum;
+	int     floodnum = 0;
 
 	// all current floods are now invalid
 	cm.floodvalid++;
-	floodnum = 0;
 
 	area = cm.areas;    // Ridah, optimization
 	for (i = 0 ; i < cm.numAreas ; i++, area++)
@@ -436,7 +420,6 @@ void CM_FloodAreaConnections(void)
 /*
 ====================
 CM_AdjustAreaPortalState
-
 ====================
 */
 void CM_AdjustAreaPortalState(int area1, int area2, qboolean open)
@@ -472,7 +455,6 @@ void CM_AdjustAreaPortalState(int area1, int area2, qboolean open)
 /*
 ====================
 CM_AreasConnected
-
 ====================
 */
 qboolean CM_AreasConnected(int area1, int area2)
@@ -515,7 +497,6 @@ This is used to cull non-visible entities from snapshots
 */
 int CM_WriteAreaBits(byte *buffer, int area)
 {
-
 	int bytes = (cm.numAreas + 7) >> 3;
 
 	if (cm_noAreas->integer || area == -1) // for debugging, send everything

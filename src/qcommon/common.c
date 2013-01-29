@@ -204,8 +204,8 @@ void QDECL Com_Printf(const char *fmt, ...)
 	// logfile
 	if (com_logfile && com_logfile->integer)
 	{
-		// TTimo: only open the qconsole.log if the filesystem is in an initialized state
-		//   also, avoid recursing in the qconsole.log opening (i.e. if fs_debug is on)
+		// only open the qconsole.log if the filesystem is in an initialized state
+		// also, avoid recursing in the qconsole.log opening (i.e. if fs_debug is on)
 		if (!logfile && FS_Initialized() && !opening_qconsole)
 		{
 			struct tm *newtime;
@@ -375,7 +375,6 @@ void Com_Quit_f(void)
 
 /*
 ============================================================================
-
 COMMAND LINE FUNCTIONS
 
 + characters seperate the commandLine string into multiple console
@@ -386,7 +385,6 @@ All of these are valid:
 quake3 +set test blah +map test
 quake3 set test blah+map test
 quake3 set test blah + map test
-
 ============================================================================
 */
 
@@ -835,7 +833,6 @@ int Com_RealTime(qtime_t *qtime)
 
 /*
 ==============================================================================
-
                         ZONE MEMORY ALLOCATION
 
 There is never any space between memblocks, and there will never be two
@@ -1001,7 +998,7 @@ Z_FreeTags
 */
 void Z_FreeTags(int tag)
 {
-	int       count;
+	int       count = 0;
 	memzone_t *zone;
 
 	if (tag == TAG_SMALL)
@@ -1012,7 +1009,7 @@ void Z_FreeTags(int tag)
 	{
 		zone = mainzone;
 	}
-	count = 0;
+
 	// use the rover as our pointer, because
 	// Z_Free automatically adjusts it
 	zone->rover = zone->blocklist.next;
@@ -1066,10 +1063,10 @@ void *Z_TagMalloc(int size, int tag)
 #ifdef ZONE_DEBUG
 	allocSize = size;
 #endif
-	//
+
 	// scan through the block list looking for the first free block
 	// of sufficient size
-	//
+
 	size += sizeof(memblock_t);         // account for size of block header
 	size += 4;                          // space for memory trash tester
 	size  = PAD(size, sizeof(intptr_t)); // align to 32/64 bit boundary
@@ -1332,7 +1329,6 @@ char *CopyString(const char *in)
 
 /*
 ==============================================================================
-
 Goals:
     reproducable without history effects -- no out of memory errors on weird map to map changes
     allow restarting of the client without fragmentation
@@ -1564,6 +1560,12 @@ void Com_TouchMemory(void)
 	Com_Printf("Com_TouchMemory: %i msec %i \n", end - start, sum);
 }
 
+/*
+=================
+Com_InitZoneMemory
+=================
+*/
+
 void Com_InitSmallZoneMemory(void)
 {
 	s_smallZoneTotal = 512 * 1024;
@@ -1701,7 +1703,7 @@ void Hunk_SmallLog(void)
 
 /*
 =================
-Com_InitZoneMemory
+Com_InitHunkMemory
 =================
 */
 void Com_InitHunkMemory(void)
