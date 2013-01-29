@@ -1052,7 +1052,7 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFI
 
 						if (!FS_FilenameCompare(pakFile->name, filename))
 						{
-							// found it!
+							Com_DPrintf(S_COLOR_LTGREY "NOTE: file path should not begin with a slash (%s)\n", filename);
 							return qtrue;
 						}
 					}
@@ -1288,7 +1288,7 @@ int FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFI
 		}
 	}
 
-	Com_DPrintf("Can't find %s\n", filename);
+	Com_DPrintf(S_COLOR_RED "ERROR: Can't find %s\n", filename);
 
 #ifdef FS_MISSING
 	if (missingFiles)

@@ -3848,7 +3848,7 @@ static void ScanAndLoadShaderFiles(void)
 		char filename[MAX_QPATH];
 
 		Com_sprintf(filename, sizeof(filename), "scripts/%s", shaderFiles[i]);
-		ri.Printf(PRINT_DEVELOPER, "...loading '%s'\n", filename);   // JPW NERVE was PRINT_ALL
+		ri.Printf(PRINT_DEVELOPER, "...loading '%s'\n", filename);
 		buffersize[i] = ri.FS_ReadFile(filename, (void **)&buffers[i]);
 		sum          += buffersize[i];
 		if (!buffers[i])

@@ -102,7 +102,12 @@ void R_LoadModelShadow(model_t *mod)
 	COM_DefaultExtension(filename, 1024, ".shadow");
 
 	// load file
-	ri.FS_ReadFile(filename, (void **) &buf);
+	buf = NULL;
+	if (FS_FOpenFileRead(filename, NULL, qfalse))
+	{
+		ri.FS_ReadFile(filename, (void **) &buf);
+	}
+
 	if (buf != NULL)
 	{
 		char *shadowBits;
@@ -164,8 +169,6 @@ qhandle_t RE_RegisterModel(const char *name)
 
 	if (!name || !name[0])
 	{
-		// disabled this, we can see models that can't be found because they won't be there
-		//ri.Printf( PRINT_ALL, "RE_RegisterModel: NULL name\n" );
 		return 0;
 	}
 
@@ -259,6 +262,8 @@ qhandle_t RE_RegisterModel(const char *name)
 
 	for (lod = MD3_MAX_LODS - 1 ; lod >= 0 ; lod--)
 	{
+		buf = NULL;
+
 		strcpy(filename, name);
 
 		if (lod != 0)
@@ -274,12 +279,21 @@ qhandle_t RE_RegisterModel(const char *name)
 		}
 
 		filename[strlen(filename) - 1] = 'c';    // try MDC first
-		ri.FS_ReadFile(filename, (void **)&buf);
+
+		if (FS_FOpenFileRead(filename, NULL, qfalse))
+		{
+			ri.FS_ReadFile(filename, (void **)&buf);
+		}
 
 		if (!buf)
 		{
 			filename[strlen(filename) - 1] = '3';    // try MD3 second
-			ri.FS_ReadFile(filename, (void **)&buf);
+
+			if (FS_FOpenFileRead(filename, NULL, qfalse))
+			{
+				ri.FS_ReadFile(filename, (void **)&buf);
+			}
+
 			if (!buf)
 			{
 				continue;
@@ -322,13 +336,6 @@ qhandle_t RE_RegisterModel(const char *name)
 		{
 			mod->numLods++;
 			numLoaded++;
-			// if we have a valid model and are biased
-			// so that we won't see any higher detail ones,
-			// stop loading them
-// Arnout: don't need this anymore,
-//          if ( lod <= r_lodbias->integer ) {
-//              break;
-//          }
 		}
 	}
 
@@ -343,8 +350,8 @@ qhandle_t RE_RegisterModel(const char *name)
 			//  this check for mod->md3[0] could leave mod->md3[0] == 0x0000000 if r_lodbias is set to anything except '0'
 			//  which causes trouble in tr_mesh.c in R_AddMD3Surfaces() and other locations since it checks md3[0]
 			//  for various things.
-			if (ident == MD3_IDENT)     //----(SA)  modified
-			{ //          if (mod->md3[0])        //----(SA)  end
+			if (ident == MD3_IDENT)
+			{
 				mod->model.md3[lod] = mod->model.md3[lod + 1];
 			}
 			else
