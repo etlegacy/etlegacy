@@ -169,6 +169,7 @@ qhandle_t RE_RegisterModel(const char *name)
 
 	if (!name || !name[0])
 	{
+		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: NULL name\n");
 		return 0;
 	}
 
@@ -366,7 +367,21 @@ qhandle_t RE_RegisterModel(const char *name)
 fail:
 	// we still keep the model_t around, so if the model name is asked for
 	// again, we won't bother scanning the filesystem
-	ri.Printf(PRINT_DEVELOPER, "^6RE_RegisterModel: model not loaded %s\n", name);
+
+	// if the name contains no extension it might be a shader ...
+	if (!strstr(name, "."))
+	{
+		// FIXME: catch shader case earlier and avoid i/o (mod code?)
+		// - does this function add anything which is required for the shaders? see cacheGathering etc (on top)
+		// -- an early return for shader case shows it does ...
+		// - check mod->type = MOD_BAD for this case (see below)
+		ri.Printf(PRINT_DEVELOPER, "^6RE_RegisterModel: model not loaded %s - this is probably a shader\n", name);
+	}
+	else
+	{
+		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: model not loaded %s\n", name);
+	}
+
 	mod->type = MOD_BAD;
 	return 0;
 }
