@@ -1345,8 +1345,9 @@ void CL_Connect_f(void)
 	Cvar_Set("r_uiFullScreen", "0");
 	Cvar_Set("ui_connecting", "1");
 
-	// fire a message off to the motd server
+	// fire a message off to the motd server and check for update
 	CL_RequestMotd();
+	CL_CheckAutoUpdate();
 
 	// clear any previous "server full" type messages
 	clc.serverMessage[0] = 0;

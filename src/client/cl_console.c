@@ -36,7 +36,7 @@
 
 int g_console_field_width = 78;
 
-#define COLNSOLE_COLOR  COLOR_WHITE //COLOR_BLACK
+#define CONSOLE_COLOR  COLOR_WHITE
 
 console_t con;
 
@@ -159,7 +159,7 @@ void Con_Clear_f(void)
 
 	for (i = 0 ; i < CON_TEXTSIZE ; i++)
 	{
-		con.text[i] = (ColorIndex(COLNSOLE_COLOR) << 8) | ' ';
+		con.text[i] = (ColorIndex(CONSOLE_COLOR) << 8) | ' ';
 	}
 
 	Con_Bottom();       // go to end
@@ -277,7 +277,7 @@ void Con_CheckResize(void)
 		con.totallines = CON_TEXTSIZE / con.linewidth;
 		for (i = 0; i < CON_TEXTSIZE; i++)
 		{
-			con.text[i] = (ColorIndex(COLNSOLE_COLOR) << 8) | ' ';
+			con.text[i] = (ColorIndex(CONSOLE_COLOR) << 8) | ' ';
 		}
 	}
 	else
@@ -306,7 +306,7 @@ void Con_CheckResize(void)
 		memcpy(tbuf, con.text, CON_TEXTSIZE * sizeof(short));
 		for (i = 0; i < CON_TEXTSIZE; i++)
 		{
-			con.text[i] = (ColorIndex(COLNSOLE_COLOR) << 8) | ' ';
+			con.text[i] = (ColorIndex(CONSOLE_COLOR) << 8) | ' ';
 		}
 
 		for (i = 0 ; i < numlines ; i++)
@@ -400,7 +400,7 @@ void Con_Linefeed(qboolean skipnotify)
 	}
 	con.current++;
 	for (i = 0; i < con.linewidth; i++)
-		con.text[(con.current % con.totallines) * con.linewidth + i] = (ColorIndex(COLNSOLE_COLOR) << 8) | ' ';
+		con.text[(con.current % con.totallines) * con.linewidth + i] = (ColorIndex(CONSOLE_COLOR) << 8) | ' ';
 }
 
 /*
@@ -448,7 +448,7 @@ void CL_ConsolePrint(char *txt)
 		con.initialized = qtrue;
 	}
 
-	color = ColorIndex(COLNSOLE_COLOR);
+	color = ColorIndex(CONSOLE_COLOR);
 
 	while ((c = *txt) != 0)
 	{
@@ -456,7 +456,7 @@ void CL_ConsolePrint(char *txt)
 		{
 			if (*(txt + 1) == COLOR_NULL)
 			{
-				color = ColorIndex(COLNSOLE_COLOR);
+				color = ColorIndex(CONSOLE_COLOR);
 			}
 			else
 			{
@@ -744,14 +744,30 @@ void Con_DrawSolidConsole(float frac)
 
 	// draw the version number
 
-	re.SetColor(g_color_table[ColorIndex(COLNSOLE_COLOR)]);
+	re.SetColor(g_color_table[ColorIndex(CONSOLE_COLOR)]);
 
-	i = strlen(ET_VERSION);
+	char *con_version_msg;
+	char *new_version_msg = " (UPDATE AVAILABLE)";
+
+	con_version_msg = malloc(strlen(ET_VERSION) + strlen(new_version_msg) + 1);
+
+	strcpy(con_version_msg, ET_VERSION);
+
+	if (Cvar_VariableIntegerValue("cl_updateavailable"))
+	{
+		strcat(con_version_msg, new_version_msg);
+	}
+
+	i = strlen(con_version_msg);
 
 	for (x = 0 ; x < i ; x++)
 	{
+		if (x > strlen(ET_VERSION))
+		{
+			re.SetColor(g_color_table[ColorIndex(COLOR_GREEN)]);
+		}
 		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x) * SMALLCHAR_WIDTH,
-		                  (lines - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2)), ET_VERSION[x]);
+		                  (lines - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2)), con_version_msg[x]);
 	}
 
 	// draw the text

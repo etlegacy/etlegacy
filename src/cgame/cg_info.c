@@ -92,14 +92,14 @@ void CG_DrawInformation(qboolean forcerefresh)
 
 	CG_DrawConnectScreen(qfalse, forcerefresh);
 
-	// OSP - Server MOTD window // implement this?
+	// TODO: dynamic game server MOTD window
 	/*  if(cg.motdWindow == NULL) {
 	        CG_createMOTDWindow();
 	    }
 	    if(cg.motdWindow != NULL) {
 	        CG_windowDraw();
-	    }*/
-	// OSP*/
+	    }
+	*/
 }
 
 
