@@ -95,9 +95,7 @@ char *hintStrings[HINT_NUM_HINTS] =
 
 /*
 ===============================================================================
-
 PUSHMOVE
-
 ===============================================================================
 */
 
@@ -1144,7 +1142,6 @@ void Reached_BinaryMover(gentity_t *ent)
 {
 	// stop the looping sound
 	ent->s.loopSound = 0;
-	//ent->s.loopSound = ent->soundLoop;
 
 	if (ent->moverState == MOVER_1TO2)
 	{
@@ -1437,13 +1434,10 @@ Use_TrinaryMover
 */
 void Use_TrinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	int      total;
-	int      partial;
-	qboolean isblocked = qfalse;
+	int total;
+	int partial;
 
-	isblocked = IsBinaryMoverBlocked(ent, other, activator);
-
-	if (isblocked)
+	if (IsBinaryMoverBlocked(ent, other, activator))
 	{
 		MatchTeamReverseAngleOnSlaves(ent, MOVER_1TO2ROTATE, level.time + 50);
 
@@ -1632,7 +1626,6 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		isblocked = IsBinaryMoverBlocked(ent, other, activator);
 	}
 
-
 	if (isblocked)
 	{
 		// start moving 50 msec later, becase if this was player
@@ -1684,7 +1677,6 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	if (ent->moverState == MOVER_POS1)
 	{
-
 		// start moving 50 msec later, becase if this was player
 		// triggered, level.time hasn't been advanced yet
 		MatchTeam(ent, MOVER_1TO2, level.time + 50);
@@ -1713,7 +1705,6 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	if (ent->moverState == MOVER_POS1ROTATE)
 	{
-
 		// start moving 50 msec later, becase if this was player
 		// triggered, level.time hasn't been advanced yet
 		MatchTeam(ent, MOVER_1TO2ROTATE, level.time + 50);
@@ -1997,12 +1988,10 @@ void InitMoverRotate(gentity_t *ent)
 
 /*
 ===============================================================================
-
 DOOR
 
 A use can be triggered either by a touch function, by being shot, or by being
 targeted by another entity.
-
 ===============================================================================
 */
 
@@ -2069,10 +2058,9 @@ Touch_DoorTriggerSpectator
 */
 static void Touch_DoorTriggerSpectator(gentity_t *ent, gentity_t *other, trace_t *trace)
 {
-	int    i, axis;
+	int    i, axis = ent->count;
 	vec3_t origin, dir, angles;
 
-	axis = ent->count;
 	VectorClear(dir);
 	if (fabs(other->s.origin[axis] - ent->r.absmax[axis]) <
 	    fabs(other->s.origin[axis] - ent->r.absmin[axis]))
@@ -2188,7 +2176,7 @@ void Think_SpawnNewDoorTrigger(gentity_t *ent)
 {
 	gentity_t *other;
 	vec3_t    mins, maxs;
-	int       i, best;
+	int       i, best = 0;
 
 	// set all of the slaves as shootable
 	for (other = ent ; other ; other = other->teamchain)
@@ -2207,7 +2195,6 @@ void Think_SpawnNewDoorTrigger(gentity_t *ent)
 	}
 
 	// find the thinnest axis, which will be the one we expand
-	best = 0;
 	for (i = 1 ; i < 3 ; i++)
 	{
 		if (maxs[i] - mins[i] < maxs[best] - mins[best])
@@ -3385,14 +3372,14 @@ Reached_Train_rotating
 */
 void Reached_Train_rotating(gentity_t *ent)
 {
-	gentity_t *next;
+	gentity_t *next = ent->nextTrain;
 	float     speed;
 	vec3_t    move;
 	float     length;
 	float     frames;
 
 	// copy the apropriate values
-	next = ent->nextTrain;
+
 	if (!next || !next->nextTrain)
 	{
 		return;     // just stop
@@ -3523,7 +3510,6 @@ Link all the corners together
 void Think_SetupTrainTargets_rotating(gentity_t *ent)
 {
 	gentity_t *path, *next, *start;
-
 
 	ent->nextTrain = G_FindByTargetname(NULL, ent->target);
 	if (!ent->nextTrain)
@@ -4169,9 +4155,8 @@ target_effect
 */
 void target_effect(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
-	gentity_t *tent;
+	gentity_t *tent = G_TempEntity(self->r.currentOrigin, EV_EFFECT);
 
-	tent = G_TempEntity(self->r.currentOrigin, EV_EFFECT);
 	VectorCopy(self->r.currentOrigin, tent->s.origin);
 	if (self->spawnflags & 32)
 	{
@@ -4337,7 +4322,6 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 	// find target, aim at that
 	if (self->target)
 	{
-
 		// since the explosive might need to fire the target rather than
 		// aim at it, only aim at 'info_notnull' ents
 		while (1)
@@ -4482,9 +4466,7 @@ QUAKED target_explosion (0 .5 .8) (-32 -32 -32) (32 32 32) LOWGRAV
 void target_explosion_use(gentity_t *self, gentity_t *other, gentity_t *attacker)
 {
 	vec3_t    dir   = { 0, 0, 1 };
-	gentity_t *tent = NULL;
-
-	tent = G_TempEntity(self->r.currentOrigin, EV_RUBBLE);
+	gentity_t *tent = G_TempEntity(self->r.currentOrigin, EV_RUBBLE);
 
 	G_UseTargets(self, attacker);
 
