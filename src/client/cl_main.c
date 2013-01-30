@@ -4811,6 +4811,10 @@ static trans_t *AllocTrans(char *original, char *translated[MAX_LANGUAGES])
 	trans_t *t;
 
 	t = malloc(sizeof(trans_t));
+	if (!t)
+	{
+		return NULL;
+	}
 	memset(t, 0, sizeof(trans_t));
 
 	if (original)
@@ -4875,6 +4879,10 @@ static trans_t *LookupTrans(char *original, char *translated[MAX_LANGUAGES], qbo
 	}
 
 	newt = AllocTrans(original, translated);
+	if (!newt)
+	{
+		return NULL;
+	}
 
 	if (prev)
 	{
