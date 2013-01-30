@@ -621,11 +621,11 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 
 	// pick a channel to play on
 	// this limits same sounds played at same time
-	allowed = 8; // was 4 before
-	//if (entnum == listener_number)
-	//{
-	//	allowed = 8;
-	//}
+	allowed = 16; // was 4 before see #159
+	if (entnum == listener_number)
+	{
+		allowed = 8;
+	}
 
 	ch     = s_channels;
 	inplay = 0;
