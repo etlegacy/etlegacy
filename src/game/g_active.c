@@ -1281,7 +1281,7 @@ void ClientThink_real(gentity_t *ent)
 		ent->r.eventTime = level.time;
 	}
 
-	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, qfalse);
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qfalse);
 
 	// use the precise origin for linking
 	//VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
@@ -1963,7 +1963,7 @@ void ClientEndFrame(gentity_t *ent)
 
 	// set the latest infor
 
-	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, qfalse);
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qfalse);
 
 	// If it's been a couple frames since being revived, and props_frame_state
 	// wasn't reset, go ahead and reset it

@@ -3916,7 +3916,7 @@ This is done after each set of usercmd_t on the server,
 and after local prediction on the client
 ========================
 */
-void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean snap)
+void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, qboolean snap)
 {
 	int i;
 
