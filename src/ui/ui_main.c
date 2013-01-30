@@ -5652,8 +5652,6 @@ static void UI_BuildServerDisplayList(qboolean force)
 	char       info[MAX_STRING_CHARS];
 	static int numinvisible;
 
-	game = 0;       // shut up compiler warning
-
 	if (!(force || uiInfo.uiDC.realTime > uiInfo.serverStatus.nextDisplayRefresh))
 	{
 		return;

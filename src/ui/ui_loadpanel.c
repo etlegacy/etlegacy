@@ -406,6 +406,11 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 
 	Com_sprintf(buff, sizeof(buff), "Connecting to:\n %s^*\n\n%s", cstate.servername, Info_ValueForKey(cstate.updateInfoString, "motd"));
 
+	if (trap_Cvar_VariableValue("cl_updateavailable"))
+	{
+		Q_strcat(buff, sizeof(buff), "\n\nYour ET:L client is outdated. New update is available for download at www.etlegacy.com");
+	}
+
 	trap_Cvar_VariableStringBuffer("cl_downloadName", downloadName, sizeof(downloadName));
 
 	if (!connect_ownerdraw)
