@@ -707,7 +707,7 @@ int FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp)
 	fsh[f].handleSync         = qfalse;
 	if (!fsh[f].handleFiles.file.o)
 	{
-		// If fs_homepath == fs_basepath, don't bother --- ET:L: we shouldn't have this case anymore
+		// If fs_homepath == fs_basepath, don't bother (dedicated server)
 		// FIXME: use FS_PathCmp() (slashes, low/big letters ... trailing slash)
 		if (Q_stricmp(fs_homepath->string, fs_basepath->string))
 		{
@@ -3432,8 +3432,11 @@ static void FS_Startup(const char *gameName)
 	homePath = Sys_DefaultHomePath(); // Returns My Documents path on windows now ex: C:\Users\username\Documents where also other games add their data
 	if (!homePath || !homePath[0])
 	{
-		//homePath = fs_basepath->string; // we do no longer support home == base
+#ifdef DEDICATED
+		homePath = fs_basepath->string;
+#else
 		Com_Error(ERR_FATAL, "FS_Startup: Default home path is empty.\n");
+#endif
 	}
 
 	fs_homepath = Cvar_Get("fs_homepath", homePath, CVAR_INIT);
@@ -3504,12 +3507,14 @@ static void FS_Startup(const char *gameName)
 #endif
 	Com_Printf("%d files in pk3 files\n", fs_packFiles);
 
-	// don't start if base == home
+#ifndef DEDICATED
+	// don't start if base == home, so downloads won't overwrite original files
 	if (FS_PathCmp(fs_homepath->string, fs_basepath->string) == 0)
 	{
-		Com_Error(ERR_FATAL, "FS_Startup: fs_homepath and fs_basepath are identical - set different pathes!\n");
-		// Note: if both are same - crashlog.txt is written into (fs_homepath)
+		Com_Error(ERR_FATAL, "FS_Startup: fs_homepath and fs_basepath are identical - set different paths!\n");
+		// NOTE: if both are same - crashlog.txt is written into (fs_homepath)
 	}
+#endif
 }
 
 /*
