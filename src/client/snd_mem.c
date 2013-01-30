@@ -216,6 +216,12 @@ qboolean S_LoadSound(sfx_t *sfx)
 		return qfalse;
 	}
 
+	if (!FS_FOpenFileRead(sfx->soundName, NULL, qfalse))
+	{
+		Com_DPrintf(S_COLOR_RED "ERROR: sound file \"%s\" does not exist\n", sfx->soundName);
+		return qfalse;
+	}
+
 	// load it in
 	data = S_CodecLoad(sfx->soundName, &info);
 	if (!data)
@@ -228,9 +234,9 @@ qboolean S_LoadSound(sfx_t *sfx)
 		Com_DPrintf(S_COLOR_YELLOW "WARNING: %s is a 8 bit wav file\n", sfx->soundName);
 	}
 
-	if (info.rate != 22050)
+	if ((info.rate != 11025) && (info.rate != 22050) && (info.rate != 44100))
 	{
-		Com_DPrintf(S_COLOR_YELLOW "WARNING: %s is not a 22kHz wav file\n", sfx->soundName);
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: %s is not a 11kHz, 22kHz nor 44kHz wav file. It has sample rate %i\n", sfx->soundName, info.rate);
 	}
 
 	samples = Hunk_AllocateTempMemory(info.samples * sizeof(short) * 2);

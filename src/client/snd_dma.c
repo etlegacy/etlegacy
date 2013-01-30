@@ -283,18 +283,18 @@ static sfx_t *S_FindName(const char *name)
 
 	if (!name)
 	{
-		Com_DPrintf(S_COLOR_RED "ERROR S_FindName: NULL\n");
+		Com_DPrintf(S_COLOR_RED "ERROR: [S_FindName] NULL\n");
 		return NULL;
 	}
 	if (!name[0])
 	{
-		Com_DPrintf(S_COLOR_RED "ERROR S_FindName: empty name\n");
+		Com_DPrintf(S_COLOR_RED "ERROR: [S_FindName] empty name\n");
 		return NULL;
 	}
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_DPrintf(S_COLOR_RED "ERROR S_FindName: Sound name too long: %s", name);
+		Com_DPrintf(S_COLOR_RED "ERROR: [S_FindName] Sound name too long: %s", name);
 		return NULL;
 	}
 
@@ -420,7 +420,7 @@ sfxHandle_t S_Base_RegisterSound(const char *name, qboolean compressed)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_Printf("S_Base_RegisterSound: Sound name exceeds MAX_QPATH\n");
+		Com_DPrintf(S_COLOR_RED "ERROR: [S_Base_RegisterSound] Sound name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -434,7 +434,7 @@ sfxHandle_t S_Base_RegisterSound(const char *name, qboolean compressed)
 	{
 		if (sfx->defaultSound)
 		{
-			Com_DPrintf(S_COLOR_YELLOW "WARNING S_Base_RegisterSound: could not find %s - using default\n", sfx->soundName);
+			Com_DPrintf(S_COLOR_YELLOW "WARNING: [S_Base_RegisterSound]: could not find %s - using default\n", sfx->soundName);
 			return 0;
 		}
 		return sfx - knownSfx;
@@ -447,7 +447,7 @@ sfxHandle_t S_Base_RegisterSound(const char *name, qboolean compressed)
 
 	if (sfx->defaultSound)
 	{
-		Com_DPrintf(S_COLOR_YELLOW "WARNING S_Base_RegisterSound: could not find %s - using default\n", sfx->soundName);
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: [S_Base_RegisterSound] could not find %s - using default\n", sfx->soundName);
 		return 0;
 	}
 
@@ -481,7 +481,6 @@ void S_memoryLoad(sfx_t *sfx)
 	// load the sound file
 	if (!S_LoadSound(sfx))
 	{
-		//Com_Printf( S_COLOR_YELLOW "WARNING: couldn't load sound: %s\n", sfx->soundName );
 		sfx->defaultSound = qtrue;
 	}
 	sfx->inMemory = qtrue;
