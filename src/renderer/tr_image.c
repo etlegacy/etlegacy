@@ -69,6 +69,10 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType)
 		imageBufferSize[bufferType] = size;
 		imageBufferPtr[bufferType]  = malloc(imageBufferSize[bufferType]);
 	}
+	if (!imageBufferPtr[bufferType])
+	{
+		ri.Error(ERR_DROP, "R_GetImageBuffer: unable to allocate buffer\n");
+	}
 
 	return imageBufferPtr[bufferType];
 }
@@ -1990,7 +1994,12 @@ void *R_CacheImageAlloc(int size)
 {
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
-		return malloc(size);    // ri.Z_Malloc causes load times about twice as long?
+		void *buf = malloc(size);    // ri.Z_Malloc causes load times about twice as long?
+		if (!buf)
+		{
+			ri.Error(ERR_DROP, "R_CacheImageAlloc: unable to allocate buffer\n ");
+		}
+		return buf;
 	}
 	else
 	{
