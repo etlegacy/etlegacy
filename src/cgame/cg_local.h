@@ -288,6 +288,12 @@ typedef struct
 
 	int lastFiredWeaponTime;
 	int weaponFireTime;
+
+	// visible leaning from NQ/FalkonET
+	int leanTime;
+	float leanDirection;
+	int leanDir;
+
 } playerEntity_t;
 
 //=================================================

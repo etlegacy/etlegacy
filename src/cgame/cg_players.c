@@ -1221,6 +1221,147 @@ static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles)
 	}
 }
 
+#define LEAN_MAX    28.0f
+#define LEAN_TIME_TO    200.0f  // time to get to/from full lean
+#define LEAN_TIME_FR    300.0f  // time to get to/from full lean
+
+void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int viewHeight)
+{
+	int   leaning = 0;          // -1 left, 1 right
+	float leanofs = 0;
+	int   time;
+
+	if (cent->currentState.constantLight & STAT_LEAN_LEFT)
+	{
+		leaning -= 1;
+	}
+	if (cent->currentState.constantLight & STAT_LEAN_RIGHT)
+	{
+		leaning += 1;
+	}
+
+	// note not really needed, just for better prediction
+	if (BG_PlayerMounted(cent->currentState.eFlags))
+	{
+		leaning = 0;    // leaning not allowed on mg42
+	}
+
+	if (cent->currentState.eFlags & EF_FIRING)
+	{
+		leaning = 0;    // not allowed to lean while firing
+	}
+	if (cent->currentState.eFlags & EF_DEAD)
+	{
+		leaning = 0;    // not allowed to lean while dead
+	}
+	if (cent->currentState.eFlags & EF_PRONE || cent->currentState.weapon == WP_MORTAR_SET)
+	{
+		leaning = 0;    // not allowed to lean while prone
+	}
+
+	leanofs = cent->pe.leanDirection;
+
+	if (leaning != cent->pe.leanDir)
+	{
+		cent->pe.leanTime = cg.time;
+		cent->pe.leanDir  = leaning;
+	}
+
+	time = cg.time - cent->pe.leanTime;
+
+	if (time < 1)
+	{
+		time = 1;
+	}
+	else if (time > 200)
+	{
+		time = 200;
+	}
+
+	cent->pe.leanTime = cg.time;
+
+	if (!leaning)    // go back to center position
+	{
+		if (leanofs > 0)            // right
+		{
+			leanofs -= (((float)time / (float)LEAN_TIME_FR) * LEAN_MAX);
+			if (leanofs < 0)
+			{
+				leanofs = 0;
+			}
+		}
+		else if (leanofs < 0)       // left
+		{
+			leanofs += (((float)time / (float)LEAN_TIME_FR) * LEAN_MAX);
+			if (leanofs > 0)
+			{
+				leanofs = 0;
+			}
+		}
+	}
+
+	if (leaning)
+	{
+		if (leaning > 0)   // right
+		{
+			if (leanofs < LEAN_MAX)
+			{
+				leanofs += (((float)time / (float)LEAN_TIME_TO) * LEAN_MAX);
+			}
+
+			if (leanofs > LEAN_MAX)
+			{
+				leanofs = LEAN_MAX;
+			}
+		}
+		else        // left
+		{
+			if (leanofs > -LEAN_MAX)
+			{
+				leanofs -= (((float)time / (float)LEAN_TIME_TO) * LEAN_MAX);
+			}
+
+			if (leanofs < -LEAN_MAX)
+			{
+				leanofs = -LEAN_MAX;
+			}
+		}
+	}
+
+
+	cent->pe.leanDirection = leanofs;
+
+	if (leaning)
+	{
+		vec3_t  start, end, tmins, tmaxs, right, viewangles;
+		trace_t trace;
+
+		VectorCopy(cent->lerpOrigin, start);
+		start[2] += viewHeight;
+
+		VectorCopy(cent->lerpAngles, viewangles);
+		viewangles[ROLL] += leanofs / 2.0f;
+		AngleVectors(viewangles, NULL, right, NULL);
+		VectorMA(start, leanofs, right, end);
+
+		VectorSet(tmins, -8, -8, -7);   // ATVI Wolfenstein Misc #472, bumped from -4 to cover gun clipping issue
+		VectorSet(tmaxs, 8, 8, 4);
+
+		CG_Trace(&trace, start, tmins, tmaxs, end, cent->currentState.clientNum, MASK_PLAYERSOLID);
+
+		cent->pe.leanDirection *= trace.fraction;
+	}
+
+	if (torsoAngles)
+	{
+		torsoAngles[ROLL] += cent->pe.leanDirection * 1.25;
+	}
+	if (headAngles)
+	{
+		headAngles[ROLL] += cent->pe.leanDirection; //* 0.75 ;
+	}
+}
+
 /*
 ===============
 CG_PlayerAngles
@@ -1383,6 +1524,8 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		side               = speed * DotProduct(velocity, axis[0]);
 		legsAngles[PITCH] += side;
 	}
+
+	CG_PredictLean(cent, torsoAngles, headAngles, cg.snap->ps.clientNum == cent->currentState.clientNum ? cg.snap->ps.viewheight :  cent->pe.headRefEnt.origin[2]);
 
 	// pain twitch
 	CG_AddPainTwitch(cent, torsoAngles);
