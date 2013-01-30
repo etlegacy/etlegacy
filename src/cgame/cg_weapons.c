@@ -2004,7 +2004,16 @@ void CG_RegisterItemVisuals(int itemNum)
 
 	for (i = 0; i < MAX_ITEM_MODELS; i++)
 	{
-		itemInfo->models[i] = trap_R_RegisterModel(item->world_model[i]);
+		// some items don't have world models see (bg_itemlist) we don't have to register
+		if (!item->world_model[i] || !item->world_model[i][0])
+		{
+			//CG_Printf("CG_RegisterItemVisuals: NULL or empty world_model[%i] for item classname %s \n", i, item->classname);
+			itemInfo->models[i] = 0;
+		}
+		else
+		{
+			itemInfo->models[i] = trap_R_RegisterModel(item->world_model[i]);
+		}
 	}
 
 	if (item->icon)
@@ -2014,7 +2023,9 @@ void CG_RegisterItemVisuals(int itemNum)
 		{
 			// register alternate icons (since holdables can have multiple uses, they might have different icons to represent how many uses are left)
 			for (i = 1; i < MAX_ITEM_ICONS; i++)
+			{
 				itemInfo->icons[i] = trap_R_RegisterShader(va("%s%i", item->icon, i + 1));
+			}
 		}
 	}
 
