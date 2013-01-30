@@ -693,8 +693,7 @@ void Con_DrawSolidConsole(float frac)
 	int    lines = cls.glconfig.vidHeight * frac;
 	int    currentColor;
 	vec4_t color;
-	char   *con_version_msg;
-	char   *new_version_msg = " (UPDATE AVAILABLE)";
+	char   version[256] = ET_VERSION;
 
 	if (lines <= 0)
 	{
@@ -747,16 +746,12 @@ void Con_DrawSolidConsole(float frac)
 
 	re.SetColor(g_color_table[ColorIndex(CONSOLE_COLOR)]);
 
-	con_version_msg = malloc(strlen(ET_VERSION) + strlen(new_version_msg) + 1);
-
-	strcpy(con_version_msg, ET_VERSION);
-
 	if (Cvar_VariableIntegerValue("cl_updateavailable"))
 	{
-		strcat(con_version_msg, new_version_msg);
+		Q_snprintf(version, sizeof(version), "%s (UPDATE AVAILABLE)", ET_VERSION);
 	}
 
-	i = strlen(con_version_msg);
+	i = strlen(version);
 
 	for (x = 0 ; x < i ; x++)
 	{
@@ -765,7 +760,7 @@ void Con_DrawSolidConsole(float frac)
 			re.SetColor(g_color_table[ColorIndex(COLOR_GREEN)]);
 		}
 		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x) * SMALLCHAR_WIDTH,
-		                  (lines - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2)), con_version_msg[x]);
+		                  (lines - (SMALLCHAR_HEIGHT + SMALLCHAR_HEIGHT / 2)), version[x]);
 	}
 
 	// draw the text
