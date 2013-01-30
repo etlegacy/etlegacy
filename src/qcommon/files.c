@@ -2808,7 +2808,7 @@ FS_PathCmp
 
 Ignore case and separator char distinctions
 
-FIXME: deal with trailing slashes
+FS_PathCmp doesn't deal with trailing slashes! See FS_IsSamePath
 /aa/bb - /aa/bb/ returns not equal
 ===========
 */
@@ -2852,6 +2852,38 @@ int FS_PathCmp(const char *s1, const char *s2)
 
 	return 0;       // strings are equal
 }
+
+#if !defined (_WIN32) // FIXME: realpath isn't available on MS see GetFullPathNameA()
+/*
+ * FS_IsSamePath
+ *
+ * @brief Similar to FS_PathCmp but based on the real path name comparison.
+ *        It deals with trailing slashes and relative pathes.
+ *
+ * Important: Don't use this with quake game pathes - only real filesystem pathes!
+ *
+ * @param[in] path A
+ * @param[in] path B
+ */
+qboolean FS_IsSamePath(const char *s1, const char *s2)
+{
+	char buf1[MAX_OSPATH + 1];
+	char buf2[MAX_OSPATH + 1];
+	char *res1, *res2;
+
+	res1 = realpath(s1, buf1);
+	res2 = realpath(s2, buf2);
+
+	// realpath() returns NULL if there are issues with the file
+	// so the function returns true (only) if there are no errors and pathes are equal
+	if (res1 && res2 && !Q_stricmp(res1, res2))
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+#endif
 
 /*
 ================
@@ -3411,7 +3443,6 @@ static void FS_ReorderPurePaks(void)
 			p_previous = &s->next;
 		}
 	}
-
 }
 
 /*
@@ -3509,7 +3540,11 @@ static void FS_Startup(const char *gameName)
 
 #ifndef DEDICATED
 	// don't start if base == home, so downloads won't overwrite original files
+#if defined (_WIN32)
 	if (FS_PathCmp(fs_homepath->string, fs_basepath->string) == 0)
+#else
+	if (FS_IsSamePath(fs_homepath->string, fs_basepath->string))
+#endif
 	{
 		Com_Error(ERR_FATAL, "FS_Startup: fs_homepath and fs_basepath are identical - set different paths!\n");
 		// NOTE: if both are same - crashlog.txt is written into (fs_homepath)
