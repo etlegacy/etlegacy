@@ -690,11 +690,12 @@ void Con_DrawSolidConsole(float frac)
 	int    rows;
 	short  *text;
 	int    row;
-	int    lines;
+	int    lines = cls.glconfig.vidHeight * frac;
 	int    currentColor;
 	vec4_t color;
+	char   *con_version_msg;
+	char   *new_version_msg = " (UPDATE AVAILABLE)";
 
-	lines = cls.glconfig.vidHeight * frac;
 	if (lines <= 0)
 	{
 		return;
@@ -745,9 +746,6 @@ void Con_DrawSolidConsole(float frac)
 	// draw the version number
 
 	re.SetColor(g_color_table[ColorIndex(CONSOLE_COLOR)]);
-
-	char *con_version_msg;
-	char *new_version_msg = " (UPDATE AVAILABLE)";
 
 	con_version_msg = malloc(strlen(ET_VERSION) + strlen(new_version_msg) + 1);
 
