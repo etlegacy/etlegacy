@@ -4038,6 +4038,12 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 	s->nextWeapon = ps->nextWeapon;
 	s->teamNum    = ps->teamNum;
 	s->aiState    = ps->aiState;
+
+	if (ps->pm_type != PM_SPECTATOR)
+	{
+		// abusing entity state constantLight for STAT_PS_FLAGS flags
+		s->constantLight = ps->stats[STAT_PS_FLAGS];
+	}
 }
 
 // some weapons are duplicated for code puposes.... just want to treat them as a single
