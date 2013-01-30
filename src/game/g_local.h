@@ -1524,7 +1524,6 @@ extern vmCvar_t g_teamForceBalance;
 extern vmCvar_t g_banIPs;
 extern vmCvar_t g_filterBan;
 
-extern vmCvar_t g_smoothClients;
 extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
 

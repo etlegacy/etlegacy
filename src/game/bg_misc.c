@@ -3310,7 +3310,6 @@ void BG_ComputeSegments(splinePath_t *pSpline)
 /*
 ================
 BG_EvaluateTrajectory
-
 ================
 */
 void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath)
@@ -3921,11 +3920,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 {
 	int i;
 
-	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR)     // || ps->pm_flags & PMF_LIMBO ) { // limbo
-	{
-		s->eType = ET_INVISIBLE;
-	}
-	else if (ps->stats[STAT_HEALTH] <= GIB_HEALTH)
+	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR || ps->stats[STAT_HEALTH] <= GIB_HEALTH) // || ps->pm_flags & PMF_LIMBO ) { // limbo
 	{
 		s->eType = ET_INVISIBLE;
 	}
@@ -3934,13 +3929,21 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 		s->eType = ET_PLAYER;
 	}
 
-	s->number = ps->clientNum;
-
+	s->number     = ps->clientNum;
 	s->pos.trType = TR_INTERPOLATE;
+	s->pos.trTime = time;               // help out new synced animations.
+
 	VectorCopy(ps->origin, s->pos.trBase);
 	if (snap)
 	{
 		SnapVector(s->pos.trBase);
+	}
+
+	VectorCopy(ps->velocity, s->pos.trDelta);
+
+	if (snap)
+	{
+		SnapVector(s->pos.trDelta);
 	}
 
 	s->apos.trType = TR_INTERPOLATE;
@@ -3958,6 +3961,8 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 	{
 		s->angles2[YAW] = ps->movementDir;
 	}
+
+	s->angles2[PITCH] = 0;
 
 	s->legsAnim  = ps->legsAnim;
 	s->torsoAnim = ps->torsoAnim;
@@ -3988,127 +3993,6 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 	}
 
 	// from MP
-	if (ps->externalEvent)
-	{
-		s->event     = ps->externalEvent;
-		s->eventParm = ps->externalEventParm;
-	}
-	else if (ps->entityEventSequence < ps->eventSequence)
-	{
-		int seq;
-
-		if (ps->entityEventSequence < ps->eventSequence - MAX_EVENTS)
-		{
-			ps->entityEventSequence = ps->eventSequence - MAX_EVENTS;
-		}
-		seq          = ps->entityEventSequence & (MAX_EVENTS - 1);
-		s->event     = ps->events[seq] | ((ps->entityEventSequence & 3) << 8);
-		s->eventParm = ps->eventParms[seq];
-		ps->entityEventSequence++;
-	}
-
-	// now using a circular list of events for all entities
-	// add any new events that have been added to the playerState_t
-	// (possibly overwriting entityState_t events)
-	for (i = ps->oldEventSequence; i != ps->eventSequence; i++)
-	{
-		s->events[s->eventSequence & (MAX_EVENTS - 1)]     = ps->events[i & (MAX_EVENTS - 1)];
-		s->eventParms[s->eventSequence & (MAX_EVENTS - 1)] = ps->eventParms[i & (MAX_EVENTS - 1)];
-		s->eventSequence++;
-	}
-	ps->oldEventSequence = ps->eventSequence;
-
-	s->weapon          = ps->weapon;
-	s->groundEntityNum = ps->groundEntityNum;
-
-	s->powerups = 0;
-	for (i = 0 ; i < MAX_POWERUPS ; i++)
-	{
-		if (ps->powerups[i])
-		{
-			s->powerups |= 1 << i;
-		}
-	}
-
-	s->nextWeapon = ps->nextWeapon;
-//  s->loopSound = ps->loopSound;
-	s->teamNum = ps->teamNum;
-	s->aiState = ps->aiState;
-}
-
-/*
-========================
-BG_PlayerStateToEntityStateExtraPolate
-
-This is done after each set of usercmd_t on the server,
-and after local prediction on the client
-========================
-*/
-void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s, int time, qboolean snap)
-{
-	int i;
-
-	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR)     // || ps->pm_flags & PMF_LIMBO ) { //  limbo
-	{
-		s->eType = ET_INVISIBLE;
-	}
-	else if (ps->stats[STAT_HEALTH] <= GIB_HEALTH)
-	{
-		s->eType = ET_INVISIBLE;
-	}
-	else
-	{
-		s->eType = ET_PLAYER;
-	}
-
-	s->number = ps->clientNum;
-
-	s->pos.trType = TR_LINEAR_STOP;
-	VectorCopy(ps->origin, s->pos.trBase);
-	if (snap)
-	{
-		SnapVector(s->pos.trBase);
-	}
-	// set the trDelta for flag direction and linear prediction
-	VectorCopy(ps->velocity, s->pos.trDelta);
-	// set the time for linear prediction
-	s->pos.trTime = time;
-	// set maximum extra polation time
-	s->pos.trDuration = 50; // 1000 / sv_fps (default = 20)
-
-	s->apos.trType = TR_INTERPOLATE;
-	VectorCopy(ps->viewangles, s->apos.trBase);
-	if (snap)
-	{
-		SnapVector(s->apos.trBase);
-	}
-
-	s->angles2[YAW] = ps->movementDir;
-	s->legsAnim     = ps->legsAnim;
-	s->torsoAnim    = ps->torsoAnim;
-	s->clientNum    = ps->clientNum;    // ET_PLAYER looks here instead of at number
-	// so corpses can also reference the proper config
-
-	if (ps->eFlags & EF_MOUNTEDTANK)
-	{
-		ps->eFlags &= ~EF_MG42_ACTIVE;
-		ps->eFlags &= ~EF_AAGUN_ACTIVE;
-	}
-	else
-	{
-		SETUP_MOUNTEDGUN_STATUS(ps);
-	}
-
-	s->eFlags = ps->eFlags;
-	if (ps->stats[STAT_HEALTH] <= 0)
-	{
-		s->eFlags |= EF_DEAD;
-	}
-	else
-	{
-		s->eFlags &= ~EF_DEAD;
-	}
-
 	if (ps->externalEvent)
 	{
 		s->event     = ps->externalEvent;

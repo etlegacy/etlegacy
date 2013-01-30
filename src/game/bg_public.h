@@ -518,19 +518,21 @@ int Pmove(pmove_t *pmove);
 #define MAX_WEAPS_IN_BANK_MP    12
 #define MAX_WEAP_BANKS_MP       10
 
+// leaning flags..
+#define STAT_LEAN_LEFT          0x00000001
+#define STAT_LEAN_RIGHT         0x00000002
+
 // player_state->stats[] indexes
 typedef enum
 {
 	STAT_HEALTH,
 	STAT_KEYS,                      // 16 bit fields
 	STAT_DEAD_YAW,                  // look this direction when dead (FIXME: get rid of?)
-	STAT_CLIENTS_READY,             // bit mask of clients wishing to exit the intermission (FIXME: configstring?)
 	STAT_MAX_HEALTH,                // health / armor limit, changable by handicap
 	STAT_PLAYER_CLASS,              // player class in multiplayer
-	STAT_CAPTUREHOLD_RED,           // red team score
-	STAT_CAPTUREHOLD_BLUE,          // blue team score
 	STAT_XP,                        // "realtime" version of xp that doesnt need to go thru the scoreboard
 	STAT_XP_OVERFLOW,               // count XP overflow(every 2^15)
+	STAT_PS_FLAGS,
 } statIndex_t;
 
 // player_state->persistant[] indexes
@@ -1495,7 +1497,6 @@ void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out);
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps);
 
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean snap);
-void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s, int time, qboolean snap);
 weapon_t BG_DuplicateWeapon(weapon_t weap);
 gitem_t *BG_ValidStatWeapon(weapon_t weap);
 weapon_t BG_WeaponForMOD(int MOD);

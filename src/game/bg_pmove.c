@@ -4929,22 +4929,35 @@ PM_CalcLean
 */
 void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 {
-	vec3_t  start;
-	int     leaning = 0;        // -1 left, 1 right
-	float   leanofs = 0;
-	vec3_t  viewangles;
-	trace_t trace;
+	vec3_t start;
+	int    leaning = 0;         // -1 left, 1 right
+	float  leanofs = 0;
 
-	if ((cmd->wbuttons & (WBUTTON_LEANLEFT | WBUTTON_LEANRIGHT))  && !cmd->forwardmove && cmd->upmove <= 0)
+	if (cmd->wbuttons & (WBUTTON_LEANLEFT | WBUTTON_LEANRIGHT))
 	{
-		// if both are pressed, result is no lean
-		if (cmd->wbuttons & WBUTTON_LEANLEFT)
+		// allow spectators to lean while moving
+		if (ps->pm_type == PM_SPECTATOR)
 		{
-			leaning -= 1;
+			if (cmd->wbuttons & WBUTTON_LEANLEFT)
+			{
+				leaning -= 1;
+			}
+			if (cmd->wbuttons & WBUTTON_LEANRIGHT)
+			{
+				leaning += 1;
+			}
 		}
-		if (cmd->wbuttons & WBUTTON_LEANRIGHT)
+		else if ((!cmd->forwardmove && cmd->upmove <= 0))
 		{
-			leaning += 1;
+			// if both are pressed, result is no lean
+			if (cmd->wbuttons & WBUTTON_LEANLEFT)
+			{
+				leaning -= 1;
+			}
+			if (cmd->wbuttons & WBUTTON_LEANRIGHT)
+			{
+				leaning += 1;
+			}
 		}
 	}
 
@@ -4958,12 +4971,20 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 		leaning = 0;    // not allowed to lean while firing
 
 	}
+
+	if (ps->eFlags & EF_DEAD)
+	{
+		leaning = 0;    // not allowed to lean while firing
+
+	}
+
 	// ATVI Wolfenstein Misc #479 - initial fix to #270 would crash in g_synchronousClients 1 situation
 	if (ps->weaponstate == WEAPON_FIRING && ps->weapon == WP_DYNAMITE)
 	{
 		leaning = 0; // not allowed while tossing dynamite
 
 	}
+
 	if (ps->eFlags & EF_PRONE || ps->weapon == WP_MORTAR_SET)
 	{
 		leaning = 0;    // not allowed to lean while prone
@@ -5005,6 +5026,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 			{
 				leanofs = LEAN_MAX;
 			}
+			ps->stats[STAT_PS_FLAGS] |= STAT_LEAN_RIGHT;
 		}
 		else                  // left
 		{
@@ -5017,14 +5039,20 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 			{
 				leanofs = -LEAN_MAX;
 			}
+			ps->stats[STAT_PS_FLAGS] |= STAT_LEAN_LEFT;
 		}
 	}
-
+	else
+	{
+		ps->stats[STAT_PS_FLAGS] &= ~(STAT_LEAN_LEFT | STAT_LEAN_RIGHT);
+	}
 	ps->leanf = leanofs;
 
 	if (leaning)
 	{
-		vec3_t tmins, tmaxs, right, end;
+		vec3_t  tmins, tmaxs, right, end;
+		vec3_t  viewangles;
+		trace_t trace;
 
 		VectorCopy(ps->origin, start);
 		start[2] += ps->viewheight;
@@ -5049,8 +5077,8 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 		ps->leanf *= trace.fraction;
 	}
 
-
-	if (ps->leanf)
+	// Allow Spectators to lean while moving
+	if (ps->leanf && ps->pm_type != PM_SPECTATOR)
 	{
 		cmd->rightmove = 0;     // also disallowed in cl_input ~391
 	}
@@ -5470,7 +5498,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 	tpm.trace = trace;
 	//tpm.trace (&trace, start, tmins, tmaxs, end, ps->clientNum, MASK_PLAYERSOLID);
 
-	PM_UpdateLean(ps, cmd, &tpm);
+	//PM_UpdateLean(ps, cmd, &tpm);
 }
 
 /*
@@ -5980,6 +6008,8 @@ void PmoveSingle(pmove_t *pmove)
 		{
 			// added tracemask
 			PM_UpdateViewAngles(pm->ps, pm->pmext, &pm->cmd, pm->trace, pm->tracemask);     // modified
+			// pmove_fixed - moved update lean out of UpdateViewAngles
+			PM_UpdateLean(pm->ps, &pm->cmd, pm);
 		}
 	}
 	AngleVectors(pm->ps->viewangles, pml.forward, pml.right, pml.up);

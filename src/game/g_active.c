@@ -955,7 +955,7 @@ void ClientThink_real(gentity_t *ent)
 		return;
 	}
 
-	if (ent->s.eFlags & EF_MOUNTEDTANK)
+	if (ent->s.eFlags & EF_MOUNTEDTANK && ent->tagParent)
 	{
 		client->pmext.centerangles[YAW]   = ent->tagParent->r.currentAngles[YAW];
 		client->pmext.centerangles[PITCH] = ent->tagParent->r.currentAngles[PITCH];
@@ -1281,15 +1281,7 @@ void ClientThink_real(gentity_t *ent)
 		ent->r.eventTime = level.time;
 	}
 
-	// fixes jittery zombie movement
-	if (g_smoothClients.integer)
-	{
-		BG_PlayerStateToEntityStateExtraPolate(&ent->client->ps, &ent->s, level.time, qfalse);
-	}
-	else
-	{
-		BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, qfalse);
-	}
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, qfalse);
 
 	// use the precise origin for linking
 	//VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
@@ -1971,15 +1963,7 @@ void ClientEndFrame(gentity_t *ent)
 
 	// set the latest infor
 
-	// fixes jittery zombie movement
-	if (g_smoothClients.integer)
-	{
-		BG_PlayerStateToEntityStateExtraPolate(&ent->client->ps, &ent->s, level.time, qfalse);
-	}
-	else
-	{
-		BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, qfalse);
-	}
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, qfalse);
 
 	// If it's been a couple frames since being revived, and props_frame_state
 	// wasn't reset, go ahead and reset it
