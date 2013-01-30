@@ -537,6 +537,10 @@ void FS_CopyFile(char *fromOSPath, char *toOSPath)
 	fseek(f, 0, SEEK_SET);
 
 	buf = malloc(len);
+	if (!buf)
+	{
+		Com_Error(ERR_FATAL, "FS_CopyFile: unable to allocate buffer\n");
+	}
 	if (fread(buf, 1, len, f) != len)
 	{
 		Com_Error(ERR_FATAL, "FS_CopyFile: Short read \n");

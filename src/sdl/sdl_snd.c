@@ -308,6 +308,12 @@ qboolean SNDDMA_Init(void)
 	dma.speed            = obtained.freq;
 	dmasize              = (dma.samples * (dma.samplebits / 8));
 	dma.buffer           = calloc(1, dmasize);
+	if (!dma.buffer)
+	{
+		Com_Printf("Unable to allocate dma buffer\n");
+		SDL_QuitSubSystem(SDL_INIT_AUDIO);
+		return qfalse;
+	}
 
 	Com_Printf("Starting SDL audio callback...\n");
 	SDL_PauseAudio(0);  // start callback.
