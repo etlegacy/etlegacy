@@ -103,8 +103,9 @@ static void SV_Map_f(void)
 	char     expanded[MAX_QPATH];
 
 	map = Cmd_Argv(1);
-	if (!map)
+	if (!map || !map[0])
 	{
+        Com_Printf("Usage: \n    map <map name>\n    devmap <map name>\n");
 		return;
 	}
 
@@ -140,9 +141,9 @@ static void SV_Map_f(void)
 	SV_SpawnServer(mapname);
 
 	// set the cheat value
-	// if the level was started with "map <levelname>", then
+    // if the level was started with "map <mapname>", then
 	// cheats will not be allowed.
-	// If started with "devmap <levelname>"
+    // If started with "devmap <mapname>"
 	// then cheats will be allowed
 	if (cheat)
 	{
