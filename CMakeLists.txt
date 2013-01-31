@@ -442,7 +442,7 @@ if(BUILD_CLIENT)
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
-	add_executable(etlded ${COMMON_SRC} ${SERVER_SRC} ${PLATFORM_SRC})
+	add_executable(etlded WIN32 ${COMMON_SRC} ${SERVER_SRC} ${PLATFORM_SRC})
 	target_link_libraries(etlded ${OS_LIBRARIES} ${SERVER_LIBRARIES})
 	set_target_properties(etlded PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
 	install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
