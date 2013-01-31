@@ -59,7 +59,7 @@ endif(INSTALL_DEFAULT_BASEDIR)
 
 # Optional features
 option(FEATURE_CURL			"Enable auto-download support using cURL (client)"			ON)
-option(FEATURE_OGG_VORBIS	"Enable OGG Vorbis support (client)"						OFF)
+option(FEATURE_OGG_VORBIS	"Enable OGG Vorbis support (client)"						ON)
 option(FEATURE_OPENAL		"Enable OpenAL sound backend (client)"						OFF)
 option(FEATURE_FREETYPE		"Enable Freetype font library support (client)"				OFF)
 option(FEATURE_TRACKBASE	"Enable extended server statistics (server)"				ON)
