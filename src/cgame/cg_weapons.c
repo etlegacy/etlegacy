@@ -2004,10 +2004,11 @@ void CG_RegisterItemVisuals(int itemNum)
 
 	for (i = 0; i < MAX_ITEM_MODELS; i++)
 	{
-		// some items don't have world models see (bg_itemlist) we don't have to register
+		// some items don't have world models see (bg_itemlist) - we don't have to register
 		if (!item->world_model[i] || !item->world_model[i][0])
 		{
-			//CG_Printf("CG_RegisterItemVisuals: NULL or empty world_model[%i] for item classname %s \n", i, item->classname);
+			// FIXME: add DEBUG macro
+			//CG_Printf("CG_RegisterItemVisuals: NULL or empty world_model[%i] for item classname %s\n", i, item->classname);
 			itemInfo->models[i] = 0;
 		}
 		else
@@ -2016,17 +2017,16 @@ void CG_RegisterItemVisuals(int itemNum)
 		}
 	}
 
-	if (item->icon)
+	// some items have no icon shader - we don't have to register
+	if (item->icon && item->icon[0])
 	{
 		itemInfo->icons[0] = trap_R_RegisterShader(item->icon);
-		if (item->giType == IT_HOLDABLE)
-		{
-			// register alternate icons (since holdables can have multiple uses, they might have different icons to represent how many uses are left)
-			for (i = 1; i < MAX_ITEM_ICONS; i++)
-			{
-				itemInfo->icons[i] = trap_R_RegisterShader(va("%s%i", item->icon, i + 1));
-			}
-		}
+	}
+	else
+	{
+		// FIXME: add DEBUG macro
+		//CG_Printf("CG_RegisterItemVisuals: NULL or empty item icon shader [%s] for classname %s\n", item->icon, item->classname);
+		itemInfo->icons[0] = 0;
 	}
 
 	itemInfo->registered = qtrue;   // moved this down after the registerweapon()
