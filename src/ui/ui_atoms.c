@@ -34,12 +34,6 @@
 
 #include "ui_local.h"
 
-uiStatic_t uis;
-
-// these are here so the functions in q_shared.c can link
-#ifndef UI_HARD_LINKED
-
-#define MAXPRINTMSG 4096
 void QDECL Com_DPrintf(const char *fmt, ...)
 {
 	va_list argptr;
@@ -81,26 +75,6 @@ void QDECL Com_Printf(const char *msg, ...)
 	va_end(argptr);
 
 	trap_Print(va("%s", text));
-}
-
-#endif
-
-/*
-=================
-UI_ClampCvar
-=================
-*/
-float UI_ClampCvar(float min, float max, float value)
-{
-	if (value < min)
-	{
-		return min;
-	}
-	if (value > max)
-	{
-		return max;
-	}
-	return value;
 }
 
 char *UI_Argv(int arg)
@@ -195,13 +169,9 @@ void UI_Shutdown(void)
 {
 }
 
-/*
-================
-UI_AdjustFrom640
-
-Adjusted for resolution and screen aspect ratio
-================
-*/
+/**
+ * @brief Adjusted for resolution and screen aspect ratio
+ */
 void UI_AdjustFrom640(float *x, float *y, float *w, float *h)
 {
 	// expect valid pointers
@@ -218,6 +188,10 @@ void UI_AdjustFrom640(float *x, float *y, float *w, float *h)
 	}
 }
 
+/**
+ * @brief UI_DrawNamedPic
+ * @note Unused.
+ */
 void UI_DrawNamedPic(float x, float y, float width, float height, const char *picname)
 {
 	qhandle_t hShader;
@@ -262,15 +236,11 @@ void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader)
 	trap_R_DrawStretchPic(x, y, w, h, s0, t0, s1, t1, hShader);
 }
 
-/*
-================
-UI_DrawRotatedPic
-
-Coordinates are 640*480 virtual values
-
-@note Unused (cool stuff for ETL logo?!)
-=================
-*/
+/**
+ * @brief UI_DrawRotatedPic
+ * Coordinates are 640*480 virtual values
+ * @note Unused (cool stuff for ETL logo?!)
+ */
 void UI_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle)
 {
 	UI_AdjustFrom640(&x, &y, &width, &height);
@@ -278,13 +248,10 @@ void UI_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hS
 	trap_R_DrawRotatedPic(x, y, width, height, 0, 0, 1, 1, hShader, angle);
 }
 
-/*
-================
-UI_FillRect
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief UI_FillRect
+ * Coordinates are 640*480 virtual values
+ */
 void UI_FillRect(float x, float y, float width, float height, const float *color)
 {
 	trap_R_SetColor(color);
@@ -309,13 +276,10 @@ void UI_DrawTopBottom(float x, float y, float w, float h)
 	trap_R_DrawStretchPic(x, y + h - 1, w, 1, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 }
 
-/*
-================
-UI_DrawRect
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief UI_DrawRect
+ * Coordinates are 640*480 virtual values
+ */
 void UI_DrawRect(float x, float y, float width, float height, const float *color)
 {
 	trap_R_SetColor(color);
@@ -336,12 +300,18 @@ void UI_UpdateScreen(void)
 	trap_UpdateScreen();
 }
 
+/**
+ * @note Unused.
+ */
 void UI_DrawTextBox(int x, int y, int width, int lines)
 {
 	UI_FillRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorBlack);
 	UI_DrawRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorWhite);
 }
 
+/**
+ * @note Unused.
+ */
 qboolean UI_CursorInRect(int x, int y, int width, int height)
 {
 	if (uiInfo.uiDC.cursorx < x ||

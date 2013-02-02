@@ -85,35 +85,26 @@ qboolean UI_CheckExecKey(int key);
 
 static void UI_ParseGameInfo(const char *teamFile);
 
-itemDef_t *Menu_FindItemByName(menuDef_t *menu, const char *p);
 void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
 static char translated_yes[4], translated_no[4];
 
 extern displayContextDef_t *DC;
 
-/*
-================
-vmMain
-
-This is the only way control passes into the module.
-This must be the very first function compiled into the .qvm file
-================
-*/
-vmCvar_t ui_new;
-vmCvar_t ui_debug;
-vmCvar_t ui_initialized;
-vmCvar_t ui_teamArenaFirstRun;
-
 extern itemDef_t *g_bindItem;
 
-void _UI_Init(qboolean);
+void _UI_Init();
 void _UI_Shutdown(void);
 void _UI_KeyEvent(int key, qboolean down);
 void _UI_MouseEvent(int dx, int dy);
 void _UI_Refresh(int realtime);
 qboolean _UI_IsFullscreen(void);
 
+/**
+ * @brief vmMain
+ * This is the only way control passes into the module.
+ * This must be the very first function compiled into the .qvm file
+ */
 Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6, intptr_t arg7, intptr_t arg8, intptr_t arg9, intptr_t arg10, intptr_t arg11)
 {
 	switch (command)
@@ -122,7 +113,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return UI_API_VERSION;
 
 	case UI_INIT:
-		_UI_Init(arg0);
+		_UI_Init();
 		return 0;
 
 	case UI_SHUTDOWN:
@@ -215,13 +206,10 @@ void _UI_DrawTopBottom(float x, float y, float w, float h, float size)
 	trap_R_DrawStretchPic(x, y + h - size, w, size, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 }
 
-/*
-================
-UI_DrawRect
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief UI_DrawRect
+ * Coordinates are 640*480 virtual values
+ */
 void _UI_DrawRect(float x, float y, float width, float height, float size, const float *color)
 {
 	trap_R_SetColor(color);
@@ -643,7 +631,6 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 
 		}
 
-
 		trap_R_SetColor(NULL);
 	}
 }
@@ -722,15 +709,9 @@ void UI_ShowPostGame(qboolean newHigh)
 	_UI_SetActiveMenu(UIMENU_POSTGAME);
 }
 
-/*
-=================
-_UI_Refresh
-=================
-*/
-
-int frameCount = 0;
-int startTime;
-
+/**
+ * @brief _UI_Refresh
+ */
 #define UI_FPS_FRAMES   4
 void _UI_Refresh(int realtime)
 {
@@ -762,7 +743,7 @@ void _UI_Refresh(int realtime)
 
 	if (trap_Cvar_VariableValue("ui_connecting"))
 	{
-		UI_DrawLoadPanel(qtrue, qfalse, qtrue);
+		UI_DrawLoadPanel(qfalse, qtrue);
 		if (!trap_Cvar_VariableValue("ui_connecting"))
 		{
 			trap_Cvar_Set("ui_connecting", "1");
@@ -801,11 +782,6 @@ void _UI_Refresh(int realtime)
 	}
 }
 
-/*
-=================
-_UI_Shutdown
-=================
-*/
 void _UI_Shutdown(void)
 {
 	trap_LAN_SaveCachedServers();
@@ -855,7 +831,6 @@ qboolean Asset_Parse(int handle)
 
 	while (1)
 	{
-
 		memset(&token, 0, sizeof(pc_token_t));
 
 		if (!trap_PC_ReadToken(handle, &token))
@@ -1014,7 +989,6 @@ void UI_Report()
 	String_Report();
 }
 
-void QDECL Com_DPrintf(const char *fmt, ...);
 qboolean UI_ParseMenu(const char *menuFile)
 {
 	int        handle;
@@ -1184,8 +1158,6 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 		}
 	}
 
-	ui_new.integer = 1;
-
 	if (reset)
 	{
 		Menu_Reset();
@@ -1290,11 +1262,7 @@ static int UI_TeamIndexFromName(const char *name)
 	return 0;
 }
 
-/*
-==============
-UI_DrawSaveGameShot
-==============
-*/
+// FIXME: remove?
 static void UI_DrawSaveGameShot(rectDef_t *rect, float scale, vec4_t color)
 {
 	trap_R_SetColor(color);
@@ -1302,11 +1270,6 @@ static void UI_DrawSaveGameShot(rectDef_t *rect, float scale, vec4_t color)
 	trap_R_SetColor(NULL);
 }
 
-/*
-==============
-UI_DrawClanLogo
-==============
-*/
 static void UI_DrawClanLogo(rectDef_t *rect, float scale, vec4_t color)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
@@ -1327,11 +1290,6 @@ static void UI_DrawClanLogo(rectDef_t *rect, float scale, vec4_t color)
 	}
 }
 
-/*
-==============
-UI_DrawClanCinematic
-==============
-*/
 static void UI_DrawClanCinematic(rectDef_t *rect, float scale, vec4_t color)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
@@ -2550,11 +2508,6 @@ static void UI_DrawCrosshair(rectDef_t *rect, float scale, vec4_t color)
 	trap_R_SetColor(NULL);
 }
 
-/*
-===============
-UI_BuildPlayerList
-===============
-*/
 static void UI_BuildPlayerList(void)
 {
 	uiClientState_t cs;
@@ -2940,7 +2893,7 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 		UI_DrawKeyBindStatus(&rect, scale, color, textStyle, text_x, text_y);
 		break;
 	case UI_LOADPANEL:
-		UI_DrawLoadPanel(qfalse, qtrue, qfalse);
+		UI_DrawLoadPanel(qtrue, qfalse);
 		break;
 	default:
 		break;
@@ -3300,8 +3253,6 @@ static qboolean UI_GameType_HandleKey(int flags, float *special, int key, qboole
 			}
 		}
 
-		trap_Cvar_Set("ui_Q3Model", "0");
-
 		trap_Cvar_Set("ui_gameType", va("%d", ui_gameType.integer));
 
 		if (resetMap && oldCount != UI_MapCountByGameType(qtrue))
@@ -3567,21 +3518,11 @@ static float UI_GetValue(int ownerDraw, int type)
 	return 0;
 }
 
-/*
-=================
-UI_ServersQsortCompare
-=================
-*/
 static int QDECL UI_ServersQsortCompare(const void *arg1, const void *arg2)
 {
 	return trap_LAN_CompareServers(ui_netSource.integer, uiInfo.serverStatus.sortKey, uiInfo.serverStatus.sortDir, *(int *)arg1, *(int *)arg2);
 }
 
-/*
-=================
-UI_ServersSort
-=================
-*/
 void UI_ServersSort(int column, qboolean force)
 {
 
@@ -3597,8 +3538,8 @@ void UI_ServersSort(int column, qboolean force)
 	qsort(&uiInfo.serverStatus.displayServers[0], uiInfo.serverStatus.numDisplayServers, sizeof(int), UI_ServersQsortCompare);
 }
 
-/*
- * Sorting the mods list
+/**
+ * @brief Sorting the mods list
  */
 int QDECL UI_SortMods(const void *a, const void *b)
 {
@@ -3608,11 +3549,6 @@ int QDECL UI_SortMods(const void *a, const void *b)
 	return strcmp(ca.modName, cb.modName);
 }
 
-/*
-===============
-UI_LoadMods
-===============
-*/
 static void UI_LoadMods(void)
 {
 	int  numdirs;
@@ -3643,11 +3579,6 @@ static void UI_LoadMods(void)
 	qsort(uiInfo.modList, uiInfo.modCount, sizeof(uiInfo.modList[0]), UI_SortMods);
 }
 
-/*
-===============
-UI_LoadProfiles
-===============
-*/
 static void UI_LoadProfiles(void)
 {
 	int  numdirs;
@@ -3732,14 +3663,8 @@ static void UI_LoadProfiles(void)
 	}
 }
 
-/*
-==============
-UI_DelSavegame
-==============
-*/
 static void UI_DelSavegame(void)
 {
-
 	int ret;
 
 	ret = trap_FS_Delete(va("save/%s.svg", uiInfo.savegameList[uiInfo.savegameIndex].name));
@@ -6732,7 +6657,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 					{
 						handles[2] = -1;
 					}
-					if (punkbuster)
+					if (punkbuster) // FIXME: remove, obsolete
 					{
 						handles[3] = uiInfo.punkBusterFilter;
 					}
@@ -7412,12 +7337,7 @@ static void UI_RunCinematicFrame(int handle)
 	trap_CIN_RunCinematic(handle);
 }
 
-/*
-=================
-UI_Init
-=================
-*/
-void _UI_Init(qboolean inGameLoad)
+void _UI_Init()
 {
 	int x;
 
@@ -7519,7 +7439,6 @@ void _UI_Init(qboolean inGameLoad)
 	uiInfo.uiDC.getHunkData            = &trap_GetHunkData;
 	uiInfo.uiDC.getConfigString        = &trap_GetConfigString;
 
-
 	Init_Display(&uiInfo.uiDC);
 
 	String_Init();
@@ -7531,7 +7450,7 @@ void _UI_Init(qboolean inGameLoad)
 	uiInfo.passwordFilter           = trap_R_RegisterShaderNoMip("ui/assets/filter_pass.tga");
 	uiInfo.friendlyFireFilter       = trap_R_RegisterShaderNoMip("ui/assets/filter_ff.tga");
 	uiInfo.maxLivesFilter           = trap_R_RegisterShaderNoMip("ui/assets/filter_lives.tga");
-	uiInfo.punkBusterFilter         = trap_R_RegisterShaderNoMip("ui/assets/filter_pb.tga");
+	uiInfo.punkBusterFilter         = trap_R_RegisterShaderNoMip("ui/assets/filter_pb.tga"); // FIXME: remove, obsolete
 	uiInfo.weaponRestrictionsFilter = trap_R_RegisterShaderNoMip("ui/assets/filter_weap.tga");
 	uiInfo.antiLagFilter            = trap_R_RegisterShaderNoMip("ui/assets/filter_antilag.tga");
 	uiInfo.teamBalanceFilter        = trap_R_RegisterShaderNoMip("ui/assets/filter_balance.tga");
@@ -7565,13 +7484,6 @@ void _UI_Init(qboolean inGameLoad)
 	uiInfo.serverStatus.currentServerCinematic = -1;
 	uiInfo.previewMovie                        = -1;
 
-	if (trap_Cvar_VariableValue("ui_TeamArenaFirstRun") == 0)
-	{
-		trap_Cvar_Set("s_volume", "0.8");
-		trap_Cvar_Set("s_musicvolume", "0.5");
-		trap_Cvar_Set("ui_TeamArenaFirstRun", "1");
-	}
-
 	trap_Cvar_Register(NULL, "debug_protocol", "", 0);
 
 	// init Yes/No once for cl_language -> server browser (punkbuster)
@@ -7582,11 +7494,6 @@ void _UI_Init(qboolean inGameLoad)
 	trap_AddCommand("listcampaigns");
 }
 
-/*
-=================
-UI_KeyEvent
-=================
-*/
 void _UI_KeyEvent(int key, qboolean down)
 {
 	static qboolean bypassKeyClear = qfalse;
@@ -7629,11 +7536,6 @@ void _UI_KeyEvent(int key, qboolean down)
 	}
 }
 
-/*
-=================
-UI_MouseEvent
-=================
-*/
 void _UI_MouseEvent(int dx, int dy)
 {
 	// update mouse screen position
@@ -7914,14 +7816,10 @@ void UI_PrintTime(char *buf, int bufsize, int time)
 	}
 }
 
-/*
-========================
-UI_DrawConnectScreen
-
-This will also be overlaid on the cgame info screen during loading
-to prevent it from blinking away too rapidly on local or lan games.
-========================
-*/
+/**
+ * @brief This will also be overlaid on the cgame info screen during loading
+ * to prevent it from blinking away too rapidly on local or lan games.
+ */
 void UI_DrawConnectScreen(qboolean overlay)
 {
 	if (!overlay)
@@ -7934,7 +7832,7 @@ void UI_DrawConnectScreen(qboolean overlay)
 			trap_R_DrawStretchPic(0, 0, xoffset, DC->glconfig.vidHeight, 0, 0, 1, 1, DC->registerShaderNoMip("gfx/2d/backtile"));
 			trap_R_DrawStretchPic(DC->glconfig.vidWidth - xoffset, 0, xoffset, DC->glconfig.vidHeight, 0, 0, 1, 1, DC->registerShaderNoMip("gfx/2d/backtile"));
 		}
-		UI_DrawLoadPanel(qfalse, qfalse, qfalse);
+		UI_DrawLoadPanel(qfalse, qfalse);
 	}
 }
 
@@ -8008,8 +7906,6 @@ vmCvar_t ui_browserShowTeamBalanced;
 
 vmCvar_t ui_serverStatusTimeOut;
 
-vmCvar_t ui_Q3Model;
-
 vmCvar_t ui_cmd;
 
 vmCvar_t ui_prevTeam;
@@ -8057,7 +7953,6 @@ cvarTable_t cvarTable[] =
 	{ &ui_userTimeLimit,                "ui_userTimeLimit",                    "0",                          0                              },
 	{ &ui_userAlliedRespawnTime,        "ui_userAlliedRespawnTime",            "0",                          0                              },
 	{ &ui_userAxisRespawnTime,          "ui_userAxisRespawnTime",              "0",                          0                              },
-	{ &ui_teamArenaFirstRun,            "ui_teamArenaFirstRun",                "0",                          CVAR_ARCHIVE                   }, // so sound stuff latches, strange as that seems
 
 	{ &ui_brassTime,                    "cg_brassTime",                        "2500",                       CVAR_ARCHIVE                   },
 	{ &ui_drawCrosshair,                "cg_drawCrosshair",                    "4",                          CVAR_ARCHIVE                   },
@@ -8109,8 +8004,6 @@ cvarTable_t cvarTable[] =
 	{ &ui_browserShowTeamBalanced,      "ui_browserShowTeamBalanced",          "0",                          CVAR_ARCHIVE                   },
 
 	{ &ui_serverStatusTimeOut,          "ui_serverStatusTimeOut",              "7000",                       CVAR_ARCHIVE                   },
-
-	{ &ui_Q3Model,                      "ui_Q3Model",                          "1",                          0                              },
 
 	{ &ui_cmd,                          "ui_cmd",                              "",                           0                              },
 
@@ -8238,11 +8131,6 @@ cvarTable_t cvarTable[] =
 
 int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
 
-/*
-=================
-UI_RegisterCvars
-=================
-*/
 void UI_RegisterCvars(void)
 {
 	int         i;
@@ -8265,11 +8153,6 @@ void UI_RegisterCvars(void)
 	BG_setCrosshair(cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 }
 
-/*
-=================
-UI_UpdateCvars
-=================
-*/
 void UI_UpdateCvars(void)
 {
 	int         i;
@@ -8298,11 +8181,6 @@ void UI_UpdateCvars(void)
 	}
 }
 
-/*
-=================
-ArenaServers_StopRefresh
-=================
-*/
 static void UI_StopServerRefresh(void)
 {
 	int count;
@@ -8326,11 +8204,6 @@ static void UI_StopServerRefresh(void)
 
 }
 
-/*
-=================
-UI_DoServerRefresh
-=================
-*/
 static void UI_DoServerRefresh(void)
 {
 	qboolean wait = qfalse;
@@ -8381,11 +8254,6 @@ static void UI_DoServerRefresh(void)
 	UI_BuildServerDisplayList(qfalse);
 }
 
-/*
-=================
-UI_StartServerRefresh
-=================
-*/
 static void UI_StartServerRefresh(qboolean full)
 {
 	char *ptr;

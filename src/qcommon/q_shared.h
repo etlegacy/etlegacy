@@ -374,6 +374,8 @@ typedef int clipHandle_t;
 #define MAX_STRING_TOKENS   256     // max tokens resulting from Cmd_TokenizeString
 #define MAX_TOKEN_CHARS     1024    // max length of an individual token
 
+#define MAXPRINTMSG 4096 // max string you can send to a Com_Printf / Com_DPrintf (above gets truncated)
+
 #define MAX_INFO_STRING     1024
 #define MAX_INFO_KEY        1024
 #define MAX_INFO_VALUE      1024

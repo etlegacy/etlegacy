@@ -40,7 +40,6 @@ fontInfo_t bg_loadscreenfont2;
 
 void UI_LoadPanel_RenderHeaderText(panel_button_t *button);
 void UI_LoadPanel_RenderLoadingText(panel_button_t *button);
-void UI_LoadPanel_RenderPercentageMeter(panel_button_t *button);
 
 // panel_button_text_t FONTNAME = { SCALEX, SCALEY, COLOUR, STYLE, FONT };
 
@@ -132,7 +131,6 @@ panel_button_t *loadpanelButtons[] =
 {
 	&loadScreenMap,                                   &loadScreenBack,
 
-
 	&loadingPanelText,                                /*&loadingPanelHeaderText,*/
 
 	/*&campaignheaderPanelText,*/ &campaignPanelText,
@@ -140,15 +138,8 @@ panel_button_t *loadpanelButtons[] =
 	NULL,
 };
 
-/*
-================
-CG_DrawConnectScreen
-
-@brief forcerefresh is obsolete
-================
-*/
 static qboolean connect_ownerdraw;
-void UI_DrawLoadPanel(qboolean forcerefresh, qboolean ownerdraw, qboolean uihack)
+void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack)
 {
 	static qboolean inside = qfalse;
 
@@ -186,6 +177,10 @@ void UI_DrawLoadPanel(qboolean forcerefresh, qboolean ownerdraw, qboolean uihack
 	inside = qfalse;
 }
 
+
+/**
+ * @note Unused.
+ */
 #define STARTANGLE 40
 void UI_LoadPanel_RenderPercentageMeter(panel_button_t *button)
 {

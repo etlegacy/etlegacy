@@ -101,7 +101,9 @@ static qboolean Menu_OverActiveItem(menuDef_t *menu, float x, float y);
 static char memoryPool[MEM_POOL_SIZE];
 static int  allocPoint, outOfMemory;
 
-// convert rectangle-coordinates for use with the current aspectratio.
+/**
+ * @brief Convert rectangle-coordinates for use with the current aspectratio.
+ */
 void Cui_WideRect(Rectangle *rect)
 {
 	rect->x *= DC->xscale;
@@ -116,14 +118,18 @@ void Cui_WideRect(Rectangle *rect)
 	}
 }
 
-// convert an x-coordinate for use with the current aspectratio.
-// (if the current aspectratio is 4:3, then leave the x-coordinate unchanged)
+/**
+ * @brief Convert an x-coordinate for use with the current aspectratio.
+ * (if the current aspectratio is 4:3, then leave the x-coordinate unchanged)
+ */
 float Cui_WideX(float x)
 {
 	return (DC->glconfig.windowAspect <= RATIO43) ? x : x * (DC->glconfig.windowAspect * RPRATIO43); // aspectratio / (4/3)
 }
 
-// the horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
+/**
+ * @brief The horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
+ */
 float Cui_WideXoffset(void)
 {
 	return (DC->glconfig.windowAspect <= RATIO43) ? 0.0f : ((640.0f * (DC->glconfig.windowAspect * RPRATIO43)) - 640.0f) * 0.5f;
@@ -168,11 +174,6 @@ void Tooltip_ComputePosition(itemDef_t *item)
 	item->toolTipData->window.flags |= WINDOW_VISIBLE;
 }
 
-/*
-===============
-UI_Alloc
-===============
-*/
 void *UI_Alloc(int size)
 {
 	char *p;
@@ -194,11 +195,6 @@ void *UI_Alloc(int size)
 	return p;
 }
 
-/*
-===============
-UI_InitMemory
-===============
-*/
 void UI_InitMemory(void)
 {
 	allocPoint  = 0;
@@ -212,11 +208,9 @@ qboolean UI_OutOfMemory()
 
 #define HASH_TABLE_SIZE 2048
 
-/*
-================
-return a hash value for the string
-================
-*/
+/**
+ * @brief Return a hash value for the string
+ */
 static long hashForString(const char *str)
 {
 	int  i    = 0;
@@ -322,11 +316,6 @@ void String_Report()
 	Com_Printf("Memory Pool is %.1f%% full, %i bytes out of %i used.\n", f, allocPoint, MEM_POOL_SIZE);
 }
 
-/*
-=================
-String_Init
-=================
-*/
 void String_Init()
 {
 	int i;
@@ -348,12 +337,9 @@ void String_Init()
 	}
 }
 
-/*
-=================
-LerpColor
-    lerp and clamp each component of <a> and <b> into <c> by the fraction <t>
-=================
-*/
+/**
+ * @brief Lerp and clamp each component of <a> and <b> into <c> by the fraction <t>
+ */
 void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t)
 {
 	int i;
@@ -372,11 +358,6 @@ void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t)
 	}
 }
 
-/*
-=================
-Float_Parse
-=================
-*/
 qboolean Float_Parse(char **p, float *f)
 {
 	char *token;
@@ -393,11 +374,6 @@ qboolean Float_Parse(char **p, float *f)
 	}
 }
 
-/*
-=================
-Color_Parse
-=================
-*/
 qboolean Color_Parse(char **p, vec4_t *c)
 {
 	int   i;
@@ -414,11 +390,6 @@ qboolean Color_Parse(char **p, vec4_t *c)
 	return qtrue;
 }
 
-/*
-=================
-Int_Parse
-=================
-*/
 qboolean Int_Parse(char **p, int *i)
 {
 	char *token;
@@ -436,11 +407,6 @@ qboolean Int_Parse(char **p, int *i)
 	}
 }
 
-/*
-=================
-Rect_Parse
-=================
-*/
 qboolean Rect_Parse(char **p, rectDef_t *r)
 {
 	if (Float_Parse(p, &r->x))
@@ -459,11 +425,6 @@ qboolean Rect_Parse(char **p, rectDef_t *r)
 	return qfalse;
 }
 
-/*
-=================
-String_Parse
-=================
-*/
 qboolean String_Parse(char **p, const char **out)
 {
 	char *token;
@@ -477,11 +438,6 @@ qboolean String_Parse(char **p, const char **out)
 	return qfalse;
 }
 
-/*
-=================
-PC_Char_Parse
-=================
-*/
 qboolean PC_Char_Parse(int handle, char *out)
 {
 	pc_token_t token;
@@ -495,11 +451,6 @@ qboolean PC_Char_Parse(int handle, char *out)
 	return qtrue;
 }
 
-/*
-=================
-PC_Script_Parse
-=================
-*/
 qboolean PC_Script_Parse(int handle, const char **out)
 {
 	char       script[4096];
@@ -546,13 +497,9 @@ qboolean PC_Script_Parse(int handle, const char **out)
 
 // display, window, menu, item code
 
-/*
-==================
-Init_Display
-
-Initializes the display with a structure to all the drawing routines
- ==================
-*/
+/**
+ * @brief Initializes the display with a structure to all the drawing routines
+ */
 void Init_Display(displayContextDef_t *dc)
 {
 	DC = dc;
@@ -568,13 +515,9 @@ void GradientBar_Paint(rectDef_t *rect, vec4_t color)
 	DC->setColor(NULL);
 }
 
-/*
-==================
-Window_Init
-
-Initializes a window structure ( windowDef_t ) with defaults
-==================
-*/
+/**
+ * @brief Initializes a window structure ( windowDef_t ) with defaults
+ */
 void Window_Init(Window *w)
 {
 	memset(w, 0, sizeof(windowDef_t));

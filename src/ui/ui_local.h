@@ -300,7 +300,7 @@ extern void UI_UpdateCvars(void);
 extern void UI_DrawConnectScreen(qboolean overlay);
 
 // ui_loadpanel.c
-extern void UI_DrawLoadPanel(qboolean forcerefresh, qboolean ownerdraw, qboolean uihack);
+extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 
 // ui_preferences.c
 extern void UI_PreferencesMenu(void);
@@ -407,42 +407,6 @@ typedef struct
 	qhandle_t helmetModel;
 
 } playerInfo_t;
-
-// ui_atoms.c
-typedef struct
-{
-	int frametime;
-	int realtime;
-	int cursorx;
-	int cursory;
-	int menusp;
-	menuframework_s *activemenu;
-	menuframework_s *stack[MAX_MENUDEPTH];
-	glconfig_t glconfig;
-	qboolean debug;
-	qhandle_t whiteShader;
-	qhandle_t menuBackShader;
-	qhandle_t menuBackNoLogoShader;
-	qhandle_t charset;
-	qhandle_t charsetProp;
-	qhandle_t charsetPropGlow;
-	qhandle_t charsetPropB;
-	qhandle_t cursor;
-	qhandle_t rb_on;
-	qhandle_t rb_off;
-
-	qhandle_t menu;
-	qhandle_t menu1a;
-	qhandle_t menu1b;
-	qhandle_t menu2a;
-	qhandle_t menu2b;
-	qhandle_t menuchars;
-
-	float scale;
-	float bias;
-	qboolean demoversion;
-	qboolean firstdraw;
-} uiStatic_t;
 
 // new ui stuff
 #define UI_NUMFX 7
@@ -723,7 +687,6 @@ extern void UI_KeyEvent(int key);
 extern void UI_MouseEvent(int dx, int dy);
 extern void UI_Refresh(int realtime);
 extern qboolean UI_ConsoleCommand(int realTime);
-extern float UI_ClampCvar(float min, float max, float value);
 extern void UI_DrawNamedPic(float x, float y, float width, float height, const char *picname);
 extern void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader);
 extern void UI_FillRect(float x, float y, float width, float height, const float *color);
@@ -751,8 +714,6 @@ extern char *UI_Argv(int arg);
 extern char *UI_Cvar_VariableString(const char *var_name);
 extern void UI_Refresh(int time);
 extern void UI_KeyEvent(int key);
-
-extern uiStatic_t uis;
 
 // ui_syscalls.c
 void trap_Print(const char *string);

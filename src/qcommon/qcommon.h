@@ -795,9 +795,6 @@ typedef enum
 	    CF_ALTIVEC   = 1 << 7
 } cpuFeatures_t;
 
-// max string you can send to a Com_Printf / Com_DPrintf (above gets truncated)
-#define MAXPRINTMSG 4096
-
 char *CopyString(const char *in);
 void        Info_Print(const char *s);
 
