@@ -265,9 +265,8 @@ static void CG_EntityEffects(centity_t *cent)
 		else if (cent->currentState.solid == SOLID_BMODEL)
 		{
 			vec3_t origin;
-			float  *v;
+			float  *v = cgs.inlineModelMidpoints[cent->currentState.modelindex];
 
-			v = cgs.inlineModelMidpoints[cent->currentState.modelindex];
 			VectorAdd(cent->lerpOrigin, v, origin);
 			trap_S_AddLoopingSound(origin, vec3_origin, cgs.gameSounds[cent->currentState.loopSound], cent->currentState.onFireStart, cent->soundTime);
 		}
@@ -338,10 +337,10 @@ static void CG_EntityEffects(centity_t *cent)
 	// If EF_SMOKING is set, emit smoke
 	else if (cent->currentState.eFlags & EF_SMOKING)
 	{
-		float rnd = random();
-
 		if (cent->lastTrailTime < cg.time)
 		{
+			float rnd = random();
+
 			cent->lastTrailTime = cg.time + 100;
 
 			// use wind vector for smoke
@@ -362,10 +361,10 @@ static void CG_EntityEffects(centity_t *cent)
 	// same thing but for smoking barrels instead of nasty server-side effect from single player
 	else if (cent->currentState.eFlags & EF_SMOKINGBLACK)
 	{
-		float rnd = random();
-
 		if (cent->lastTrailTime < cg.time)
 		{
+			float rnd = random();
+
 			cent->lastTrailTime = cg.time + 75;
 
 			CG_GetWindVector(dir);
@@ -617,7 +616,7 @@ static void CG_Speaker(centity_t *cent)
 qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, int itemType)
 {
 	vec3_t  vorigin, eorigin, viewa, dir;
-	float   dot, dist, foo;
+	float   dot, dist;
 	trace_t tr;
 
 	BG_EvaluateTrajectory(&item->pos, atTime, eorigin, qfalse, item->effect2Time);
@@ -647,23 +646,12 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 	// give more range based on distance (the hit area is wider when closer)
 
 	//foo = -0.94f - (dist/255.0f) * 0.057f;  // (ranging from -0.94 to -0.997) (it happened to be a pretty good range)
-	foo = -0.94f - (dist * (1.0f / 255.0f)) * 0.057f;       // (ranging from -0.94 to -0.997) (it happened to be a pretty good range)
+	//foo = -0.94f - (dist * (1.0f / 255.0f)) * 0.057f;       // (ranging from -0.94 to -0.997) (it happened to be a pretty good range)
 
 	//Com_Printf("test: if(%f > %f) return qfalse (dot > foo)\n", dot, foo);
-	if (dot > foo)
+	if (dot > (-0.94f - (dist * (1.0f / 255.0f)) * 0.057f)) // foo
 	{
 		return qfalse;
-	}
-
-	// okay, everything else is okay, so do a bloody trace. (so coronas on treasure doesn't show through walls) <sigh>
-	if (itemType == IT_TREASURE)
-	{
-		CG_Trace(&tr, vorigin, NULL, NULL, eorigin, -1, MASK_SOLID);
-
-		if (tr.fraction != 1)
-		{
-			return qfalse;
-		}
 	}
 
 	return qtrue;
@@ -863,17 +851,6 @@ static void CG_Item(centity_t *cent)
 		{
 			highlight = qtrue;
 
-			if (item->giType == IT_TREASURE)
-			{
-				trap_R_AddCoronaToScene(cent->highlightOrigin, 1, 0.85, 0.5, 2, cent->currentState.number, qtrue);   // add corona to treasure
-			}
-		}
-		else
-		{
-			if (item->giType == IT_TREASURE)
-			{
-				trap_R_AddCoronaToScene(cent->highlightOrigin, 1, 0.85, 0.5, 2, cent->currentState.number, qfalse);      // "empty corona" for proper fades
-			}
 		}
 
 		// fixed item highlight fading
@@ -1369,14 +1346,11 @@ CG_Corona
 */
 static void CG_Corona(centity_t *cent)
 {
-	trace_t  tr;
 	int      r, g, b;
 	int      dli;
-	qboolean visible = qfalse,
-	         behind  = qfalse,
-	         toofar  = qfalse;
-	float  dot, dist;
-	vec3_t dir;
+	qboolean visible = qfalse, behind = qfalse, toofar = qfalse;
+	float    dot, dist;
+	vec3_t   dir;
 
 	if (cg_coronas.integer == 0)       // if set to '0' no coronas
 	{
@@ -1415,6 +1389,8 @@ static void CG_Corona(centity_t *cent)
 
 	if (!behind && !toofar)
 	{
+		trace_t tr;
+
 		CG_Trace(&tr, cg.refdef_current->vieworg, NULL, NULL, cent->lerpOrigin, -1, MASK_SOLID | CONTENTS_BODY);      // added blockage by players.  not sure how this is going to be since this is their bb, not their model (too much blockage)
 
 		if (tr.fraction == 1)
@@ -1454,9 +1430,10 @@ static void CG_SpotlightEfx(centity_t *cent)
 	}
 	else
 	{
-		vec3_t angles;
 		if (splinetarget != -1)
 		{
+			vec3_t angles;
+
 			if (trap_getCameraInfo(splinetarget, cg.time, &targetpos, &angles, &fov))
 			{
 
@@ -1501,8 +1478,7 @@ static void CG_Explosive(centity_t *cent)
 	// create the render entity
 	memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
-	//VectorCopy( cent->lerpOrigin, ent.oldorigin);
-	//VectorCopy( ent.origin, cent->lerpOrigin);
+
 	AnglesToAxis(cent->lerpAngles, ent.axis);
 
 	ent.renderfx = RF_NOSHADOW;
@@ -1516,9 +1492,6 @@ static void CG_Explosive(centity_t *cent)
 	{
 		ent.hModel = cgs.gameModels[s1->modelindex];
 	}
-
-	// add to refresh list
-	// trap_R_AddRefEntityToScene(&ent);
 
 	// add the secondary model
 	if (s1->modelindex2)
@@ -1766,6 +1739,7 @@ void CG_Mover_PostProcess(centity_t *cent)
 	if (cg.snap->ps.eFlags & EF_MOUNTEDTANK)
 	{
 		centity_t *tank = &cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent];
+
 		if (tank == &cg_entities[cent->currentState.effect3Time])
 		{
 			CG_CalcViewValues();
