@@ -377,7 +377,7 @@ Request current scoreboard information
 void Cmd_Score_f(gentity_t *ent)
 {
 	ent->client->wantsscore = qtrue;
-//  G_SendScore( ent );
+	//G_SendScore( ent );
 }
 
 /*
@@ -409,11 +409,10 @@ char *ConcatArgs(int start)
 {
 	int         i, c, tlen;
 	static char line[MAX_STRING_CHARS];
-	int         len;
+	int         len = 0;
 	char        arg[MAX_STRING_CHARS];
 
-	len = 0;
-	c   = trap_Argc();
+	c = trap_Argc();
 	for (i = start ; i < c ; i++)
 	{
 		trap_Argv(i, arg, sizeof(arg));
@@ -931,8 +930,9 @@ argv(0) noclip
 void Cmd_Noclip_f(gentity_t *ent)
 {
 	char *msg;
+	char *name;
 
-	char *name = ConcatArgs(1);
+	name = ConcatArgs(1);
 
 	if (!CheatsOk(ent))
 	{
@@ -1214,6 +1214,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 	if (team != oldTeam)
 	{
 		gentity_t *tent = G_PopupMessage(PM_TEAM);
+
 		tent->s.effect2Time = team;
 		tent->s.effect3Time = clientNum;
 		tent->s.density     = 0;
@@ -1264,6 +1265,7 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 				if (level.commanderSounds[x][i].index)
 				{
 					gentity_t *tent = G_TempEntity(client->ps.origin, EV_GLOBAL_CLIENT_SOUND);
+
 					tent->s.eventParm = level.commanderSounds[x][i].index - 1;
 					tent->s.teamNum   = clientNum;
 				}
@@ -1284,8 +1286,6 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 			{
 				trap_SendServerCommand(ent - g_entities, "aftj -1");
 				ent->client->pers.autofireteamJoinEndTime = level.time + 20500;
-
-//              G_AddClientToFireteam( ent-g_entities, ft->joinOrder[0] );
 			}
 			else
 			{
@@ -1782,31 +1782,35 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir)
 
 /**
  * @brief Plays a sound (wav file or sound script) on this entity
- * @note Unused.
+ * @param[in] entity to play the sound on
+ * @param[in] sound file name or sound script ID
+ * @param[in] sound volume, only applies to sound file name call
+ *
+ * @note Unused. Keep this see note.
  *
  * Note that calling G_AddEvent(..., EV_GENERAL_SOUND, ...) has the danger of
  * the event never getting through to the client because the entity might not
  * be visible (unless it has the SVF_BROADCAST flag), so if you want to make sure
  * the sound is heard, call this function instead.
  */
-void G_EntitySound(
-    gentity_t *ent,         // entity to play the sound on
-    const char *soundId,    // sound file name or sound script ID
-    int volume)              // sound volume, only applies to sound file name call
-{   //   for sound script, volume is currently always 127.
+void G_EntitySound(gentity_t *ent, const char *soundId, int volume)
+{
+	//   for sound script, volume is currently always 127.
 	trap_SendServerCommand(-1, va("entitySound %d %s %d %i %i %i normal", ent->s.number, soundId, volume,
 	                              (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2]));
 }
 
 /**
  * @brief Similar to G_EntitySound, but do not cut this sound off
- * @note Unused.
+ * @param[in] entity to play the sound on
+ * @param[in] sound file name or sound script ID
+ * @param[in] sound volume, only applies to sound file name call
+ *
+ * @note Unused. See G_EntitySound
  */
-void G_EntitySoundNoCut(
-    gentity_t *ent,         // entity to play the sound on
-    const char *soundId,    // sound file name or sound script ID
-    int volume)              // sound volume, only applies to sound file name call
-{   //   for sound script, volume is currently always 127.
+void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume)
+{
+	//   for sound script, volume is currently always 127.
 	trap_SendServerCommand(-1, va("entitySound %d %s %d %i %i %i noCut", ent->s.number, soundId, volume,
 	                              (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2]));
 }
@@ -2415,9 +2419,9 @@ void Cmd_Vote_f(gentity_t *ent)
 	// Complaints supercede voting (and share command)
 	if (ent->client->pers.complaintEndTime > level.time && g_gamestate.integer == GS_PLAYING && g_complaintlimit.integer)
 	{
-
 		gentity_t *other = &g_entities[ent->client->pers.complaintClient];
 		gclient_t *cl    = other->client;
+
 		if (!cl)
 		{
 			return;
@@ -2445,7 +2449,6 @@ void Cmd_Vote_f(gentity_t *ent)
 
 			if (!cl->pers.localClient)
 			{
-
 				const char *value;
 				char       userinfo[MAX_INFO_STRING];
 				ipFilter_t ip;
@@ -2485,8 +2488,8 @@ void Cmd_Vote_f(gentity_t *ent)
 
 	if (ent->client->pers.applicationEndTime > level.time)
 	{
-
 		gclient_t *cl = g_entities[ent->client->pers.applicationClient].client;
+
 		if (!cl)
 		{
 			return;
@@ -2523,6 +2526,7 @@ void Cmd_Vote_f(gentity_t *ent)
 	if (ent->client->pers.invitationEndTime > level.time)
 	{
 		gclient_t *cl = g_entities[ent->client->pers.invitationClient].client;
+
 		if (!cl)
 		{
 			return;
@@ -2559,6 +2563,7 @@ void Cmd_Vote_f(gentity_t *ent)
 	if (ent->client->pers.propositionEndTime > level.time)
 	{
 		gclient_t *cl = g_entities[ent->client->pers.propositionClient].client;
+
 		if (!cl)
 		{
 			return;
@@ -2644,7 +2649,6 @@ void Cmd_Vote_f(gentity_t *ent)
 			fireteamData_t *ft;
 
 			trap_SendServerCommand(ent - g_entities, "aftj -2");
-
 
 			ft = G_FindFreePublicFireteam(ent->client->sess.sessionTeam);
 			if (ft)
@@ -2802,12 +2806,10 @@ Cmd_StopCamera_f
 */
 void Cmd_StopCamera_f(gentity_t *ent)
 {
-//  gentity_t *sp;
-
 	if (ent->client->cameraPortal && (ent->client->ps.eFlags & EF_VIEWING_CAMERA))
 	{
 		// send a script event
-//      G_Script_ScriptEvent( ent->client->cameraPortal, "stopcam", "" );
+		//G_Script_ScriptEvent( ent->client->cameraPortal, "stopcam", "" );
 
 		// go back into noclient mode
 		G_FreeEntity(ent->client->cameraPortal);
@@ -2964,10 +2966,8 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 	qboolean found   = qfalse;
 	qboolean walking = qfalse;
 	vec3_t   forward;       //, offset, end;
-	//trace_t       tr;
 
 	// invisible entities can't be used
-
 	if (traceEnt->entstate == STATE_INVISIBLE || traceEnt->entstate == STATE_UNDERCONSTRUCTION)
 	{
 		return qfalse;
@@ -3117,14 +3117,9 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 
 void G_LeaveTank(gentity_t *ent, qboolean position)
 {
-	gentity_t *tank;
-
+	gentity_t *tank = ent->tankLink;
 	// found our tank (or whatever)
-	vec3_t  axis[3];
-	vec3_t  pos;
-	trace_t tr;
 
-	tank = ent->tankLink;
 	if (!tank)
 	{
 		return;
@@ -3132,6 +3127,10 @@ void G_LeaveTank(gentity_t *ent, qboolean position)
 
 	if (position)
 	{
+		trace_t tr;
+		vec3_t  axis[3];
+		vec3_t  pos;
+
 		AnglesToAxis(tank->s.angles, axis);
 
 		VectorMA(ent->client->ps.origin, 128, axis[1], pos);
@@ -3167,7 +3166,6 @@ void G_LeaveTank(gentity_t *ent, qboolean position)
 		VectorClear(ent->client->ps.velocity);   // dont want them to fly away ;D
 		TeleportPlayer(ent, pos, ent->client->ps.viewangles);
 	}
-
 
 	tank->mg42weapHeat         = ent->client->ps.weapHeat[WP_DUMMY_MG42];
 	tank->backupWeaponTime     = ent->client->ps.weaponTime;
@@ -3317,7 +3315,7 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 		return qfalse;
 	}
 
-	// core: if a player cannot move at this moment, don't allow him to get pushed..
+	// if a player cannot move at this moment, don't allow him to get pushed..
 	if (victim->client->ps.pm_flags & PMF_TIME_LOCKPLAYER)
 	{
 		return qfalse;
@@ -3336,7 +3334,6 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 	if ((push[2] > fabs(push[0])) &&
 	    (push[2] > fabs(push[1])))
 	{
-
 		// player is being boosted
 		//if(g_shoveNoZ.integer)
 		//	push[2] = 64;
@@ -3698,7 +3695,6 @@ void Cmd_SelectedObjective_f(gentity_t *ent)
 	char  buffer[16];
 	vec_t dist, neardist = 0;
 	int   nearest = -1;
-
 
 	if (!ent || !ent->client)
 	{
