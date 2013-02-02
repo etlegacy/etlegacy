@@ -4468,10 +4468,6 @@ void UI_RunMenuScript(char **args)
 				trap_Cmd_ExecuteText(EXEC_APPEND, va("callteamvote leader %s\n", uiInfo.teamNames[uiInfo.teamIndex]));
 			}
 		}
-		else if (Q_stricmp(name, "addBot") == 0)
-		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("addbot %s %i %s\n", uiInfo.characterList[uiInfo.botIndex].name, uiInfo.skillIndex + 1, (uiInfo.redBlue == 0) ? "Red" : "Blue"));
-		}
 		else if (Q_stricmp(name, "addFavorite") == 0)
 		{
 			if (ui_netSource.integer != AS_FAVORITES)

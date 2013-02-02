@@ -569,7 +569,6 @@ typedef struct
 	qboolean soundHighScore;
 
 	int characterCount;
-	int botIndex;
 	characterInfo characterList[MAX_HEADS];
 
 	int aliasCount;
