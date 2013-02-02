@@ -774,6 +774,10 @@ void trap_TranslateString(const char *string, char *buf)
 }
 
 // Media register functions
+
+// FIXME: unique debug marcos
+//#define _DEBUG
+
 #ifdef _DEBUG
 #define DEBUG_REGISTERPROFILE_INIT int dbgTime = trap_Milliseconds();
 #define DEBUG_REGISTERPROFILE_EXEC(f, n) if (developer.integer) { CG_Printf("%s : loaded %s in %i msec\n", f, n, trap_Milliseconds() - dbgTime); }
@@ -783,13 +787,17 @@ sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 	DEBUG_REGISTERPROFILE_INIT
 	CG_DrawInformation(qtrue);
 	snd = syscall(CG_S_REGISTERSOUND, sample, compressed);
-	if (!*sample)
+	if (!sample || !sample[0])
 	{
-		Com_Printf("^1Warning: Null Sample filename\n");
+		Com_Printf("^1trap_S_RegisterSound: Null sample filename\n");
 	}
 	if (snd == 0)
 	{
-		Com_Printf("^1Warning: Failed to load sound: %s\n", sample);
+		Com_Printf("^1trap_S_RegisterSound: Failed to load sound: %s\n", sample);
+	}
+	else
+	{
+		Com_Printf("^2trap_S_RegisterSound: register sound: %s\n", sample);
 	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_S_RegisterSound", sample)
 	return snd;
@@ -801,6 +809,18 @@ qhandle_t trap_R_RegisterModel(const char *name)
 	DEBUG_REGISTERPROFILE_INIT
 	CG_DrawInformation(qtrue);
 	handle = syscall(CG_R_REGISTERMODEL, name);
+	if (!name || !name[0])
+	{
+		Com_Printf("^1trap_R_RegisterModel: Null or empty name\n");
+	}
+	if (handle == 0)
+	{
+		Com_Printf("^1trap_R_RegisterModel: Failed to load model: %s\n", name);
+	}
+	else
+	{
+		Com_Printf("^2trap_R_RegisterModel: register model: %s\n", name);
+	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterModel", name)
 	return handle;
 }
@@ -811,6 +831,18 @@ qhandle_t trap_R_RegisterSkin(const char *name)
 	DEBUG_REGISTERPROFILE_INIT
 	CG_DrawInformation(qtrue);
 	handle = syscall(CG_R_REGISTERSKIN, name);
+	if (!name || !name[0])
+	{
+		Com_Printf("^1trap_R_RegisterSkin: Null or empty name\n");
+	}
+	if (handle == 0)
+	{
+		Com_Printf("^1trap_R_RegisterSkin: Failed to load skin: %s\n", name);
+	}
+	else
+	{
+		Com_Printf("^2trap_R_RegisterSkin: register skin: %s\n", name);
+	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterSkin", name)
 	return handle;
 }
@@ -821,6 +853,18 @@ qhandle_t trap_R_RegisterShader(const char *name)
 	DEBUG_REGISTERPROFILE_INIT
 	CG_DrawInformation(qtrue);
 	handle = syscall(CG_R_REGISTERSHADER, name);
+	if (!name || !name[0])
+	{
+		Com_Printf("^1trap_R_RegisterShader: Null or empty name\n");
+	}
+	if (handle == 0)
+	{
+		Com_Printf("^1trap_R_RegisterShader: Failed to load shader: %s\n", name);
+	}
+	else
+	{
+		Com_Printf("^2trap_R_RegisterShader: register shader: %s\n", name);
+	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterShader", name)
 	return handle;
 }
@@ -831,6 +875,18 @@ qhandle_t trap_R_RegisterShaderNoMip(const char *name)
 	DEBUG_REGISTERPROFILE_INIT
 	CG_DrawInformation(qtrue);
 	handle = syscall(CG_R_REGISTERSHADERNOMIP, name);
+	if (!name || !name[0])
+	{
+		Com_Printf("^1trap_R_RegisterShaderNoMip: Null or empty name\n");
+	}
+	if (handle == 0)
+	{
+		Com_Printf("^1trap_R_RegisterShaderNoMip: Failed to load shader no mip: %s\n", name);
+	}
+	else
+	{
+		Com_Printf("^2trap_R_RegisterShaderNoMip: register shader no mip: %s\n", name);
+	}
 	DEBUG_REGISTERPROFILE_EXEC("trap_R_RegisterShaderNpMip", name);
 	return handle;
 }
