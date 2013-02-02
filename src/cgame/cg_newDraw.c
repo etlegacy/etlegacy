@@ -66,16 +66,15 @@ int CG_TrimLeftPixels(char *instr, float scale, float w, int size)
 void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo_t *font)
 {
 	char buffer[1024];
-	char *s, *p, *c, *ls;
-	int  l;
+	char *s, *p, *c, *ls = NULL;
+	int  l = 0;
 
 	Q_strncpyz(buffer, instr, 1024);
 	memset(instr, 0, size);
 
-	c  = s = instr;
-	p  = buffer;
-	ls = NULL;
-	l  = 0;
+	c = s = instr;
+	p = buffer;
+
 	while (*p)
 	{
 		*c = *p++;
@@ -123,16 +122,15 @@ void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo
 void CG_FitTextToWidth2(char *instr, float scale, float w, int size)
 {
 	char buffer[1024];
-	char *s, *p, *c, *ls;
-	int  l;
+	char *s, *p, *c, *ls = NULL;
+	int  l = 0;
 
 	Q_strncpyz(buffer, instr, 1024);
 	memset(instr, 0, size);
 
-	c  = s = instr;
-	p  = buffer;
-	ls = NULL;
-	l  = 0;
+	c = s = instr;
+	p = buffer;
+
 	while (*p)
 	{
 		*c = *p++;
@@ -278,8 +276,8 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	{
 		if (drawHighlighted)
 		{
-			//icon = cg_weapons[ realweap ].weaponIcon[1];
-			icon = cg_weapons[realweap].weaponIcon[1];      // we don't have icon[0];
+			// we don't have icon[0];
+			icon = cg_weapons[realweap].weaponIcon[1];
 		}
 		else
 		{
@@ -352,7 +350,6 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 			default:
 				break;
 			}
-
 		}
 		else
 		{
@@ -520,11 +517,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		icon = cgs.media.dynamiteHintShader;
 		break;
 
-	case HINT_LOCKPICK:
-		icon      = cgs.media.doorLockHintShader;       // use the locked door hint cursor
-		yellowbar = qtrue;      // draw the status bar in yellow so it shows up better
-		break;
-
 	case HINT_ACTIVATE:
 	case HINT_PLAYER:
 	default:
@@ -618,7 +610,7 @@ CG_DrawWeapStability
 */
 void CG_DrawWeapStability(rectDef_t *rect)
 {
-	vec4_t goodColor = { 0, 1, 0, 0.5f }, badColor = { 1, 0, 0, 0.5f };
+	static vec4_t goodColor = { 0, 1, 0, 0.5f }, badColor = { 1, 0, 0, 0.5f };
 
 	if (!cg_drawSpreadScale.integer)
 	{
@@ -656,8 +648,8 @@ CG_DrawWeapHeat
 */
 void CG_DrawWeapHeat(rectDef_t *rect, int align)
 {
-	vec4_t color = { 1, 0, 0, 0.2f }, color2 = { 1, 0, 0, 0.5f };
-	int    flags = 0;
+	static vec4_t color = { 1, 0, 0, 0.2f }, color2 = { 1, 0, 0, 0.5f };
+	int           flags = 0;
 
 	if (!(cg.snap->ps.curWeapHeat))
 	{
