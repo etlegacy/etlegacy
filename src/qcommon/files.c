@@ -478,7 +478,6 @@ qboolean FS_CreatePath(char *OSPath)
 	char path[MAX_OSPATH];
 
 	// make absolutely sure that it can't back up the path
-	// FIXME: is c: allowed???
 	if (strstr(OSPath, "..") || strstr(OSPath, "::"))
 	{
 		Com_Printf("WARNING: refusing to create relative path \"%s\"\n", OSPath);
@@ -965,27 +964,6 @@ qboolean FS_FilenameCompare(const char *s1, const char *s2)
 	while (c1);
 
 	return qfalse;       // strings are equal
-}
-
-/*
-==========
-FS_ShiftStr
-
-Perform simple string shifting to avoid scanning from the exe
-==========
-*/
-char *FS_ShiftStr(const char *string, int shift)
-{
-	static char buf[MAX_STRING_CHARS];
-	int         i, l;
-
-	l = strlen(string);
-	for (i = 0; i < l; i++)
-	{
-		buf[i] = string[i] + shift;
-	}
-	buf[i] = '\0';
-	return buf;
 }
 
 extern qboolean com_fullyInitialized;

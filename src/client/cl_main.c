@@ -152,11 +152,7 @@ int            serverStatusCount;
 // Have we heard from the auto-update server this session?
 qboolean autoupdateChecked;
 qboolean autoupdateStarted;
-// moved from char* to array (was getting the char* from va(), broke on big downloads)
-char autoupdateFilename[MAX_QPATH];
-// "updates" shifted from -7
-#define AUTOUPDATE_DIR "ni]Zm^l"
-#define AUTOUPDATE_DIR_SHIFT 7
+#define AUTOUPDATE_DIR "update"
 
 void CL_CheckForResend(void);
 void CL_ShowIP_f(void);
@@ -1069,8 +1065,8 @@ void CL_Disconnect(qboolean showMainMenu)
 		*cls.downloadTempName = *cls.downloadName = 0;
 		Cvar_Set("cl_downloadName", "");
 
-		autoupdateStarted     = qfalse;
-		autoupdateFilename[0] = '\0';
+		autoupdateStarted = qfalse;
+		Cvar_Set("cl_updatefiles", "");
 	}
 
 	if (clc.demofile)
@@ -1743,35 +1739,22 @@ void CL_WavStopRecord_f(void)
 
 //====================================================================
 
-/*
-=================
-CL_DownloadsComplete
-
-Called when all downloading has been completed
-=================
-*/
+/**
+ * @brief Called when all downloading has been completed
+ * Initiates update process after an update has been downloaded.
+ */
 void CL_DownloadsComplete(void)
 {
-
-#ifndef _WIN32
-	char *fs_write_path;
-#endif
 	char *fn;
 
-	// Auto-update (not finished yet)
+	// Auto-update
 	if (autoupdateStarted)
 	{
-
-		if (strlen(autoupdateFilename) > 4)
+		if (strlen(cl_updatefiles->string) > 4)
 		{
-#ifdef _WIN32
-			// win32's Sys_StartProcess prepends the current dir
-			fn = va("%s/%s", FS_ShiftStr(AUTOUPDATE_DIR, AUTOUPDATE_DIR_SHIFT), autoupdateFilename);
-#else
-			fs_write_path = Cvar_VariableString("fs_homepath");
-			fn            = FS_BuildOSPath(fs_write_path, FS_ShiftStr(AUTOUPDATE_DIR, AUTOUPDATE_DIR_SHIFT), autoupdateFilename);
+			fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, cl_updatefiles->string);
 			Sys_Chmod(fn, S_IXUSR);
-#endif
+
 			// will either exit with a successful process spawn, or will Com_Error ERR_DROP
 			// so we need to clear the disconnected download data if needed
 			if (cls.bWWWDlDisconnected)
@@ -1779,10 +1762,9 @@ void CL_DownloadsComplete(void)
 				cls.bWWWDlDisconnected = qfalse;
 				CL_ClearStaticDownload();
 			}
+
 			Sys_StartProcess(fn, qtrue);
 		}
-
-		// NOTE - that code is never supposed to be reached?
 
 		autoupdateStarted = qfalse;
 
@@ -1790,6 +1772,7 @@ void CL_DownloadsComplete(void)
 		{
 			CL_Disconnect(qtrue);
 		}
+
 		// we can reset that now
 		cls.bWWWDlDisconnected = qfalse;
 		CL_ClearStaticDownload();
@@ -1942,18 +1925,13 @@ void CL_NextDownload(void)
 	CL_DownloadsComplete();
 }
 
-/*
-=================
-CL_InitDownloads
-
-After receiving a valid game state, we valid the cgame and local zip files here
-and determine if we need to download them
-=================
-*/
+/**
+ * @brief After receiving a valid game state, we validate the cgame and
+ * local zip files here and determine if we need to download them
+ */
 void CL_InitDownloads(void)
 {
 	char missingfiles[1024];
-	char *dir = FS_ShiftStr(AUTOUPDATE_DIR, AUTOUPDATE_DIR_SHIFT);
 
 	// init some of the www dl data
 	clc.bWWWDl             = qfalse;
@@ -1965,10 +1943,19 @@ void CL_InitDownloads(void)
 	{
 		if (strlen(cl_updatefiles->string) > 4)
 		{
-			Q_strncpyz(autoupdateFilename, cl_updatefiles->string, sizeof(autoupdateFilename));
-			Q_strncpyz(clc.downloadList, va("@%s/%s@%s/%s", dir, cl_updatefiles->string, dir, cl_updatefiles->string), MAX_INFO_STRING);
-			cls.state = CA_CONNECTED;
-			CL_NextDownload();
+			clc.bWWWDl             = qtrue;
+			cls.bWWWDlDisconnected = qtrue;
+			cls.state == CA_CONNECTED;
+
+			// download format: @%s/%s@%s/%s
+			Q_strncpyz(clc.downloadList, cl_updatefiles->string, MAX_INFO_STRING);
+
+			if (!DL_BeginDownload(FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, cl_updatefiles->string),
+			                      va("%s/%s", UPDATE_SERVER_NAME, cl_updatefiles->string)))
+			{
+				Com_Printf(S_COLOR_RED "ERROR: Downloading new update failed.\n");
+			}
+
 			return;
 		}
 	}
@@ -2526,16 +2513,21 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	Com_DPrintf("Unknown connectionless packet command.\n");
 }
 
-/*
-=================
-CL_PacketEvent
-
-A packet has arrived from the main event loop
-=================
-*/
+/**
+ * @brief A packet has arrived from the main event loop
+ */
 void CL_PacketEvent(netadr_t from, msg_t *msg)
 {
-	int headerBytes;
+	int             headerBytes;
+	static qboolean autoupdateRedirected = qfalse;
+
+	// Update server doesn't understand netchan packets
+	if (autoupdateStarted && !autoupdateRedirected)
+	{
+		autoupdateRedirected = qtrue;
+		CL_InitDownloads();
+		return;
+	}
 
 	if (msg->cursize >= 4 && *( int * ) msg->data == -1)
 	{

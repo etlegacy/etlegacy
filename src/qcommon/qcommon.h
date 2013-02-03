@@ -737,8 +737,6 @@ extern int cl_connectedToPureServer;
 qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const char *filename);
 #endif
 
-char *FS_ShiftStr(const char *string, int shift);
-
 void FS_CopyFile(char *fromOSPath, char *toOSPath);
 
 qboolean FS_VerifyPak(const char *pak);

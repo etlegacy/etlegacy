@@ -45,7 +45,7 @@ void DL_Shutdown(void)
 {
 }
 
-int DL_BeginDownload(char *localName, const char *remoteName, int debug)
+int DL_BeginDownload(char *localName, const char *remoteName)
 {
 	return 1;
 }

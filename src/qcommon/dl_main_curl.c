@@ -118,13 +118,13 @@ inspired from http://www.w3.org/Library/Examples/LoadToFile.c
 setup the download, return once we have a connection
 ===============
 */
-int DL_BeginDownload(char *localName, const char *remoteName, int debug)
+int DL_BeginDownload(char *localName, const char *remoteName)
 {
 	char referer[MAX_STRING_CHARS + 5 /*"ET://"*/];
 
 	if (dl_request)
 	{
-		Com_Printf("DL_BeginDownload: ERROR -  called with a download request already active\n");
+		Com_Printf("DL_BeginDownload: ERROR - called with a download request already active\n");
 		return 0;
 	}
 
