@@ -138,6 +138,10 @@ typedef struct
 
 	int (*GetTextureId)(const char *imagename);
 	void (*Finish)(void);
+
+	// avi output stuff
+	void (*TakeVideoFrame) (int h, int w, byte * captureBuffer, byte * encodeBuffer, qboolean motionJpeg);
+
 } refexport_t;
 
 // these are the functions imported by the refresh module
@@ -201,6 +205,10 @@ typedef struct
 	void (*CIN_UploadCinematic)(int handle);
 	int (*CIN_PlayCinematic)(const char *arg0, int xpos, int ypos, int width, int height, int bits);
 	e_status (*CIN_RunCinematic)(int handle);
+
+	// avi output stuff
+	qboolean (*CL_VideoRecording) (void);
+	void (*CL_WriteAVIVideoFrame) (const byte * buffer, int size);
 
 } refimport_t;
 

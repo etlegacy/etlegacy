@@ -161,11 +161,9 @@ void S_TransferStereo16(unsigned long *pbuf, int endtime)
 		snd_p          += snd_linear_count;
 		ls_paintedtime += (snd_linear_count >> 1);
 
-		/* FIXME: Implement this
-		        if ( CL_VideoRecording() ) {
-		            CL_WriteAVIAudioFrame( (byte *)snd_out, snd_linear_count << 1 );
-		        }
-		*/
+		if ( CL_VideoRecording() ) {
+		    CL_WriteAVIAudioFrame( (byte *)snd_out, snd_linear_count << 1 );
+		}
 	}
 }
 

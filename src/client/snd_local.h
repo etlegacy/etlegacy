@@ -130,6 +130,8 @@ typedef struct
 	int flags;
 } channel_t;
 
+#define	WAV_FORMAT_PCM		1
+
 typedef struct
 {
 	int format;

@@ -743,6 +743,8 @@ qboolean FS_VerifyPak(const char *pak);
 
 qboolean FS_Unzip(char *filename, qboolean quiet);
 
+void FS_HomeRemove(const char *homePath);
+
 /*
 ==============================================================
 DOWNLOAD

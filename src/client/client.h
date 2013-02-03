@@ -410,6 +410,9 @@ extern cvar_t *cl_freelook;
 extern cvar_t *cl_mouseAccel;
 extern cvar_t *cl_showMouseRate;
 
+extern cvar_t *cl_avidemo;
+extern cvar_t *cl_aviMotionJpeg;
+
 extern cvar_t *m_pitch;
 extern cvar_t *m_yaw;
 extern cvar_t *m_forward;
@@ -474,6 +477,15 @@ int CL_ServerStatus(char *serverAddress, char *serverStatusString, int maxLen);
 
 void CL_AddToLimboChat(const char *str);
 qboolean CL_GetLimboString(int index, char *buf);
+
+// cl_avi
+
+qboolean CL_OpenAVIForWriting(const char *filename);
+void CL_TakeVideoFrame(void);
+void CL_WriteAVIVideoFrame(const byte * imageBuffer, int size);
+void CL_WriteAVIAudioFrame(const byte * pcmBuffer, int size);
+qboolean CL_CloseAVI(void);
+qboolean CL_VideoRecording(void);
 
 // localization
 void CL_InitTranslation(void);

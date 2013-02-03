@@ -1918,6 +1918,15 @@ typedef struct
 	qboolean jpeg;
 } screenshotCommand_t;
 
+typedef struct {
+	int commandId;
+	int width;
+	int height;
+	byte *captureBuffer;
+	byte *encodeBuffer;
+	qboolean motionJpeg;
+} videoFrameCommand_t;
+
 typedef struct
 {
 	int commandId;
@@ -1945,6 +1954,7 @@ typedef enum
 	RC_DRAW_BUFFER,
 	RC_SWAP_BUFFERS,
 	RC_SCREENSHOT,
+	RC_VIDEOFRAME,
 	RC_RENDERTOTEXTURE,
 	RC_FINISH
 } renderCommand_t;

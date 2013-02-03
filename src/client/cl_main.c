@@ -75,6 +75,7 @@ cvar_t *cl_timedemo;
 cvar_t *cl_avidemo;
 cvar_t *cl_forceavidemo;
 cvar_t *cl_avidemotype;
+cvar_t *cl_aviMotionJpeg;
 
 cvar_t *cl_freelook;
 cvar_t *cl_sensitivity;
@@ -1528,6 +1529,16 @@ void CL_Vid_Restart_f(void)
 	// - so keep the value - feels like a bug for users
 	//com_expectedhunkusage = -1;
 
+	// Settings may have changed so stop recording now
+	if( CL_VideoRecording( ) ) {
+		CL_CloseAVI( );
+	}
+
+	/* Do we want to stop the recording of demos on vid_restart?
+	if(clc.demorecording)
+		CL_StopRecord_f();
+	*/
+
 	// don't let them loop during the restart
 	S_StopAllSounds();
 	// shutdown the UI
@@ -2792,6 +2803,10 @@ void CL_Frame(int msec)
 			case 1:
 				Cbuf_ExecuteText(EXEC_NOW, "screenshotJPEG silent\n");
 				break;
+			case 2:
+				if(CL_VideoRecording())CL_TakeVideoFrame();
+				else Com_Printf("Error while recording avi, the file is not open.\n");
+				break;
 			default:
 				Cbuf_ExecuteText(EXEC_NOW, "screenshot silent\n");
 			}
@@ -3233,6 +3248,78 @@ void CL_GetAutoUpdate(void)
 }
 
 /*
+===============
+CL_Video_f
+
+video
+video [filename]
+===============
+*/
+void CL_Video_f( void )
+{
+	char  filename[ MAX_OSPATH ];
+	int   i, last;
+
+	if( !clc.demoplaying )
+	{
+		Com_Printf( "The video command can only be used when playing back demos\n" );
+		return;
+	}
+
+	cl_avidemotype->integer = 2;
+	if(cl_avidemo->integer == 0) cl_avidemo->integer = 30;
+
+	if( Cmd_Argc( ) == 2 )
+	{
+		// explicit filename
+		Com_sprintf( filename, MAX_OSPATH, "videos/%s.avi", Cmd_Argv( 1 ) );
+	}
+	else
+	{
+		// scan for a free filename
+		for( i = 0; i <= 9999; i++ )
+		{
+			int a, b, c, d;
+
+			last = i;
+
+			a = last / 1000;
+			last -= a * 1000;
+			b = last / 100;
+			last -= b * 100;
+			c = last / 10;
+			last -= c * 10;
+			d = last;
+
+			Com_sprintf( filename, MAX_OSPATH, "videos/video%d%d%d%d.avi",
+				a, b, c, d );
+
+			if( !FS_FileExists( filename ) )
+				break; // file doesn't exist
+		}
+
+		if( i > 9999 )
+		{
+			Com_Printf( S_COLOR_RED "ERROR: no free file names to create video\n" );
+			return;
+		}
+	}
+
+	CL_OpenAVIForWriting( filename );
+}
+
+/*
+===============
+CL_StopVideo_f
+===============
+*/
+void CL_StopVideo_f( void )
+{
+	cl_avidemo->integer = 0;
+	CL_CloseAVI( );
+}
+
+/*
 ============
 CL_RefMalloc
 ============
@@ -3352,6 +3439,9 @@ void CL_InitRef(void)
 	ri.CIN_PlayCinematic   = CIN_PlayCinematic;
 	ri.CIN_RunCinematic    = CIN_RunCinematic;
 
+	ri.CL_VideoRecording = CL_VideoRecording;
+	ri.CL_WriteAVIVideoFrame = CL_WriteAVIVideoFrame;
+
 //     ri.IN_Init = IN_Init;
 //     ri.IN_Shutdown = IN_Shutdown;
 //     ri.IN_Restart = IN_Restart;
@@ -3448,6 +3538,7 @@ void CL_Init(void)
 	cl_avidemo      = Cvar_Get("cl_avidemo", "0", 0);
 	cl_forceavidemo = Cvar_Get("cl_forceavidemo", "0", 0);
 	cl_avidemotype  = Cvar_Get("cl_avidemotype", "0", CVAR_TEMP);
+	cl_aviMotionJpeg= Cvar_Get("cl_avimotionjpeg", "0", CVAR_TEMP);
 
 	rconAddress = Cvar_Get("rconAddress", "", 0);
 
@@ -3603,6 +3694,10 @@ void CL_Init(void)
 
 	Cmd_AddCommand("wav_record", CL_WavRecord_f);
 	Cmd_AddCommand("wav_stoprecord", CL_WavStopRecord_f);
+
+	//Avi recording
+	Cmd_AddCommand ("video", CL_Video_f );
+	Cmd_AddCommand ("stopvideo", CL_StopVideo_f );
 
 	CL_InitRef();
 
