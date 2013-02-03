@@ -437,11 +437,10 @@ CG_LoseHat
 void CG_LoseHat(centity_t *cent, vec3_t dir)
 {
 	clientInfo_t   *ci;
-	int            clientNum;
-	vec3_t         origin = { 0 }, velocity = { 0 };
+	int            clientNum = cent->currentState.clientNum;
+	vec3_t         origin    = { 0 }, velocity = { 0 };
 	bg_character_t *character;
 
-	clientNum = cent->currentState.clientNum;
 	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 	{
 		CG_Error("Bad clientNum on player entity\n");
@@ -571,7 +570,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 	vec3_t   junctionOrigin[MAXJUNCTIONS];
 	vec3_t   axis[3];
 
-	char *JunctiongibTags[] =
+	static char *JunctiongibTags[] =
 	{
 		// leg tag
 		"tag_footright",
@@ -587,7 +586,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		"tag_chest"
 	};
 
-	char *ConnectTags[] =
+	static char *ConnectTags[] =
 	{
 		// legs tags
 		"tag_legright",
@@ -603,7 +602,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		"tag_torso",
 	};
 
-	char *gibTags[] =
+	static char *gibTags[] =
 	{
 		// tags in the legs
 		"tag_footright",
@@ -622,21 +621,23 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 
 	if (cg_blood.integer)
 	{
-		vec4_t color;
-		vec3_t velocity, dir, angles;
-		int    i, j, count = 0;
-		int    tagIndex, gibIndex, clientNum, junction;
+		vec4_t      color;
+		vec3_t      velocity, dir, angles;
+		refEntity_t *re;
+		int         i, j, count = 0;
+		int         tagIndex, gibIndex, junction;
+		int         clientNum = cent->currentState.clientNum;
+
+		if (clientNum < 0 || clientNum >= MAX_CLIENTS)
+		{
+			CG_Error("Bad clientNum on player entity\n");
+		}
 
 		for (i = 0; i < MAXJUNCTIONS; i++)
 		{
 			newjunction[i] = qfalse;
 		}
 
-		clientNum = cent->currentState.clientNum;
-		if (clientNum < 0 || clientNum >= MAX_CLIENTS)
-		{
-			CG_Error("Bad clientNum on player entity\n");
-		}
 		ci        = &cgs.clientinfo[clientNum];
 		character = CG_CharacterForClientinfo(ci, cent);
 
@@ -644,7 +645,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		// and spawn the gibs from the correct places (especially the head)
 		for (gibIndex = 0, count = 0, foundtag = qtrue; foundtag && gibIndex < MAX_GIB_MODELS && gibTags[gibIndex]; gibIndex++)
 		{
-			refEntity_t *re = 0;
+			re = 0;
 
 			foundtag = qfalse;
 
@@ -1526,7 +1527,7 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 
 void CG_AddSmokeSprites(void)
 {
-	smokesprite_t *smokesprite;
+	smokesprite_t *smokesprite = lastusedsmokesprite;
 	qhandle_t     shader;
 	byte          color[4];
 	polyVert_t    verts[4];
@@ -1536,7 +1537,6 @@ void CG_AddSmokeSprites(void)
 	float         halfSmokeSpriteWidth, halfSmokeSpriteHeight;
 	float         dist = SMOKEBOMB_SMOKEVELOCITY * cg.frametime;
 
-	smokesprite = lastusedsmokesprite;
 	while (smokesprite)
 	{
 		if (smokesprite->smokebomb && !smokesprite->smokebomb->currentValid)
