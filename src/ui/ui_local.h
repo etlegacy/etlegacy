@@ -785,7 +785,6 @@ int trap_MemoryRemaining(void);
 qboolean trap_LAN_UpdateVisiblePings(int source);
 void trap_LAN_MarkServerVisible(int source, int n, qboolean visible);
 void trap_LAN_ResetPings(int n);
-void trap_LAN_SaveCachedServers(void);
 int trap_LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int s2);
 void trap_LAN_GetServerAddressString(int source, int n, char *buf, int buflen);
 void trap_LAN_GetServerInfo(int source, int n, char *buf, int buflen);
