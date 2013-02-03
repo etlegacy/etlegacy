@@ -70,31 +70,30 @@ void LAN_LoadCachedServers(void)
 
 	if (cl_profile->string[0])
 	{
-		Com_sprintf(filename, sizeof(filename), "profiles/%s/servercache.dat", cl_profile->string);
+		Com_sprintf(filename, sizeof(filename), "profiles/%s/favcache.dat", cl_profile->string);
 	}
 	else
 	{
-		Q_strncpyz(filename, "servercache.dat", sizeof(filename));
+		Q_strncpyz(filename, "favcache.dat", sizeof(filename));
 	}
 
 	// moved to mod/profiles dir
 	if (FS_FOpenFileRead(filename, &fileIn, qtrue))
 	{
-		FS_Read(&cls.numglobalservers, sizeof(int), fileIn);
 		FS_Read(&cls.numfavoriteservers, sizeof(int), fileIn);
 		FS_Read(&size, sizeof(int), fileIn);
-		if (size == sizeof(cls.globalServers) + sizeof(cls.favoriteServers))
+		if (size == sizeof(cls.favoriteServers))
 		{
-			FS_Read(&cls.globalServers, sizeof(cls.globalServers), fileIn);
 			FS_Read(&cls.favoriteServers, sizeof(cls.favoriteServers), fileIn);
 		}
 		else
 		{
-			cls.numglobalservers         = cls.numfavoriteservers = 0;
-			cls.numGlobalServerAddresses = 0;
+			cls.numfavoriteservers = 0;
 		}
 		FS_FCloseFile(fileIn);
 	}
+
+	Com_Printf("Favourite servers restored: %i\n", cls.numfavoriteservers);
 }
 
 /*
@@ -110,22 +109,24 @@ void LAN_SaveServersToCache(void)
 
 	if (cl_profile->string[0])
 	{
-		Com_sprintf(filename, sizeof(filename), "profiles/%s/servercache.dat", cl_profile->string);
+		Com_sprintf(filename, sizeof(filename), "profiles/%s/favcache.dat", cl_profile->string);
 	}
 	else
 	{
-		Q_strncpyz(filename, "servercache.dat", sizeof(filename));
+		Q_strncpyz(filename, "favcache.dat", sizeof(filename));
 	}
 
 	// moved to mod/profiles dir
-	fileOut = FS_FOpenFileWrite(filename);
-	FS_Write(&cls.numglobalservers, sizeof(int), fileOut);
+	fileOut = FS_FOpenFileWrite(filename); // FIXME: catch error
 	FS_Write(&cls.numfavoriteservers, sizeof(int), fileOut);
-	size = sizeof(cls.globalServers) + sizeof(cls.favoriteServers);
+
+	size = sizeof(cls.favoriteServers);
+
 	FS_Write(&size, sizeof(int), fileOut);
-	FS_Write(&cls.globalServers, sizeof(cls.globalServers), fileOut);
 	FS_Write(&cls.favoriteServers, sizeof(cls.favoriteServers), fileOut);
 	FS_FCloseFile(fileOut);
+
+	Com_Printf("Favourite servers saved: %i\n", cls.numfavoriteservers);
 }
 
 /*
