@@ -549,15 +549,15 @@ if(BUILD_MOD)
 	# etl_bin.pk3
 	#
 	if(BUILD_MOD_PK3)
-		add_custom_target(mod_pk3 ALL DEPENDS legacy/etl_bin.pk3)
+		add_custom_target(mod_pk3 ALL DEPENDS legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3)
 		add_custom_command(
-			OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin.pk3
-			COMMAND zip etl_bin.pk3 cgame${LIB_SUFFIX}${ARCH}* ui${LIB_SUFFIX}${ARCH}*
+			OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3
+			COMMAND zip etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3 cgame${LIB_SUFFIX}${ARCH}* ui${LIB_SUFFIX}${ARCH}*
 			DEPENDS cgame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy/
 		)
 
-		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin.pk3
+		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3
 			DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
 		)
 	endif()
@@ -566,11 +566,11 @@ endif(BUILD_MOD)
 if(BUILD_PAK3_PK3)
 	add_custom_target(
 		pak3_pk3 ALL
-		COMMAND zip -r ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3.pk3 *
+		COMMAND zip -r ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3_${ETL_CMAKE_VERSION_SHORT}.pk3 *
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/etmain/
 	)
 
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3.pk3
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3_${ETL_CMAKE_VERSION_SHORT}.pk3
 		DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
 	)
 endif(BUILD_PAK3_PK3)
@@ -579,16 +579,15 @@ if(INSTALL_OMNIBOT)
 	if(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 		message(STATUS "Installing Omni-Bot")
 
-		# Note: used zip (16MB) doesn't contain windows, incomplete nav- and other unwanted files
-		# FIXME: change to tar or rar ...
-		set(ETLEGACY_OMNIBOT_L_DL_URL "http://mirror.etlegacy.com/omnibot/OmniBot_ETLegacy_Linux_r2497.zip")
+		# Note: used tar (16MB) doesn't contain windows, incomplete nav- and other unwanted files
+		set(ETLEGACY_OMNIBOT_L_DL_URL "http://mirror.etlegacy.com/omnibot/omnibot-linux-latest.tar.gz")
 
-		message(STATUS "Downloading Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/omnibot.zip")
-		file(DOWNLOAD ${ETLEGACY_OMNIBOT_L_DL_URL} "${CMAKE_CURRENT_BINARY_DIR}/omnibot.zip")
+		message(STATUS "Downloading Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/omnibot-linux-latest.tar.gz")
+		file(DOWNLOAD ${ETLEGACY_OMNIBOT_L_DL_URL} "${CMAKE_CURRENT_BINARY_DIR}/omnibot-linux-latest.tar.gz")
 
 		message(STATUS "Unzipping Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/omnibot")
 		execute_process(
-			COMMAND unzip -o -q ${CMAKE_CURRENT_BINARY_DIR}/omnibot.zip -domnibot
+			COMMAND tar -xf ${CMAKE_CURRENT_BINARY_DIR}/omnibot-linux-latest.tar.gz
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		)
 
@@ -666,7 +665,7 @@ if(ET_FS_BASEPATH)
 		PERMISSIONS OWNER_WRITE OWNER_READ
 	)
 	
-	if (ET_KEY)
+	if(ET_KEY)
 		install(FILES "${ET_FS_BASEPATH}/etmain/etkey"
 			DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
 			PERMISSIONS OWNER_WRITE OWNER_READ
