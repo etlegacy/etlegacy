@@ -35,8 +35,6 @@
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h" // For vote options
 
-
-
 #define T_FFA   0x01
 #define T_1V1   0x02
 #define T_SP    0x04
@@ -46,7 +44,6 @@
 #define T_WSW   0x40
 #define T_WCP   0x80
 #define T_WCH   0x100
-
 
 static const char *ACTIVATED   = "ACTIVATED";
 static const char *DEACTIVATED = "DEACTIVATED";
@@ -105,7 +102,6 @@ static const vote_reference_t aVoteInfo[] =
 	{ 0,     0,                NULL,              0 }
 };
 
-
 // Checks for valid custom callvote requests from the client.
 int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -134,13 +130,11 @@ int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd)
 	return(G_NOTFOUND);
 }
 
-
 // Voting help summary.
 void G_voteHelp(gentity_t *ent, qboolean fShowVote)
 {
 	int i, rows = 0, num_cmds = sizeof(aVoteInfo) / sizeof(aVoteInfo[0]) - 1;     // Remove terminator;
 	int vi[100];            // Just make it large static.
-
 
 	if (fShowVote)
 	{
@@ -242,13 +236,11 @@ qboolean G_voteDescription(gentity_t *ent, qboolean fRefereeCmd, int cmd)
 	return qfalse;
 }
 
-
 // Localize disable message info.
 void G_voteDisableMessage(gentity_t *ent, const char *cmd)
 {
 	G_refPrintf(ent, "Sorry, [lof]^3%s^7 [lon]voting has been disabled", cmd);
 }
-
 
 // Player ID message stub.
 void G_playersMessage(gentity_t *ent)
@@ -262,7 +254,6 @@ void G_voteCurrentSetting(gentity_t *ent, const char *cmd, const char *setting)
 {
 	G_refPrintf(ent, "^2%s^7 is currently ^3%s\n", cmd, setting);
 }
-
 
 // Vote toggling
 int G_voteProcessOnOff(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd, int curr_setting, int vote_allow, int vote_type)
@@ -291,10 +282,10 @@ int G_voteProcessOnOff(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeC
 	return(G_OK);
 }
 
-
 //
 // Several commands to help with cvar setting
 //
+
 void G_voteSetOnOff(const char *desc, const char *cvar)
 {
 	AP(va("cpm \"^3%s is: ^5%s\n\"", desc, (atoi(level.voteInfo.vote_value)) ? ENABLED : DISABLED));
@@ -349,7 +340,6 @@ int G_Comp_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 
 	return(G_OK);
 }
-
 
 void G_GametypeList(gentity_t *ent)
 {
@@ -417,7 +407,6 @@ int G_Gametype_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2
 
 	return(G_OK);
 }
-
 
 // *** Player Kick ***
 int G_Kick_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -604,6 +593,7 @@ int G_Map_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qbo
 	if (arg)
 	{
 		char serverinfo[MAX_INFO_STRING];
+
 		trap_GetServerinfo(serverinfo, sizeof(serverinfo));
 
 		if (!vote_allow_map.integer && ent && !ent->client->sess.referee)
@@ -649,6 +639,7 @@ int G_Campaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2
 	if (arg)
 	{
 		char serverinfo[MAX_INFO_STRING];
+
 		trap_GetServerinfo(serverinfo, sizeof(serverinfo));
 
 		if (!vote_allow_map.integer && ent && !ent->client->sess.referee)
@@ -711,7 +702,6 @@ int G_MapRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 	return(G_OK);
 }
 
-
 // *** Match Restart ***
 int G_MatchReset_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -726,11 +716,6 @@ int G_MatchReset_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 		else if (trap_Argc() != 2 && G_voteDescription(ent, fRefereeCmd, dwVoteIndex))
 		{
 			return(G_INVALID);
-//      } else if(trap_Argc() > 2) {
-//          if(!Q_stricmp(arg2, "?")) {
-//              G_refPrintf(ent, "Usage: ^3%s %s%s\n", ((fRefereeCmd) ? "\\ref" : "\\callvote"), arg, aVoteInfo[dwVoteIndex].pszVoteHelp);
-//              return(G_INVALID);
-//          }
 		}
 
 		// Vote action (vote has passed)
@@ -744,7 +729,6 @@ int G_MatchReset_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 
 	return(G_OK);
 }
-
 
 // *** Mute Spectators ***
 int G_Mutespecs_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -768,7 +752,6 @@ int G_Mutespecs_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 	return(G_OK);
 }
 
-
 // *** Nextmap ***
 int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -788,6 +771,7 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 		else
 		{
 			char s[MAX_STRING_CHARS];
+
 			if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 			{
 				trap_Cvar_VariableStringBuffer("nextcampaign", s, sizeof(s));
@@ -851,7 +835,6 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 	return(G_OK);
 }
 
-
 // *** Load public settings for current mode ***
 int G_Pub_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -880,7 +863,6 @@ int G_Pub_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qbo
 
 	return(G_OK);
 }
-
 
 // *** Referee voting ***
 int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -951,7 +933,6 @@ int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 	return(G_OK);
 }
 
-
 // *** Shuffle teams
 int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -979,7 +960,6 @@ int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *
 
 	return(G_OK);
 }
-
 
 // *** Start Match ***
 int G_StartMatch_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -1025,7 +1005,6 @@ int G_StartMatch_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 	return(G_OK);
 }
 
-
 // *** Swap teams
 int G_SwapTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -1053,7 +1032,6 @@ int G_SwapTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 
 	return(G_OK);
 }
-
 
 // *** Team Damage ***
 int G_FriendlyFire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -1166,7 +1144,9 @@ void G_WarmupDamageTypeList(gentity_t *ent)
 
 	G_refPrintf(ent, "\nAvailable Warmup Damage types:\n------------------------------");
 	for (i = 0; i < (sizeof(warmupType) / sizeof(char *)); i++)
+	{
 		G_refPrintf(ent, "  %d ^3(%s)", i, warmupType[i]);
+	}
 	G_refPrintf(ent, "\n");
 }
 
@@ -1210,7 +1190,6 @@ int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 		Com_sprintf(level.voteInfo.vote_value, VOTE_MAXSTRING, "%s", arg2);
 		Com_sprintf(arg2, VOTE_MAXSTRING, "%s", warmupType[i]);
 
-
 		// Vote action (vote has passed)
 	}
 	else
@@ -1222,7 +1201,6 @@ int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 
 	return(G_OK);
 }
-
 
 // *** Un-Referee voting ***
 int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -1297,7 +1275,6 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 void G_IntermissionMapVote(gentity_t *ent)
 {
 	char arg[MAX_TOKEN_CHARS];
-	char arg2[MAX_TOKEN_CHARS];
 
 	if (g_gametype.integer != GT_WOLF_MAPVOTE)
 	{
@@ -1333,7 +1310,8 @@ void G_IntermissionMapVote(gentity_t *ent)
 	}
 	else if (trap_Argc() == 3)
 	{
-		int voteRank = 0, i;
+		char arg2[MAX_TOKEN_CHARS];
+		int  voteRank = 0, i;
 
 		trap_Argv(2, arg2, sizeof(arg2));
 		voteRank = atoi(arg2);
