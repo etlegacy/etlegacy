@@ -150,6 +150,7 @@ endif(NOT CMAKE_SYSTEM MATCHES "Darwin")
 
 FILE(GLOB COMMON_SRC
 	"src/qcommon/*.c"
+	"src/qcommon/*.h"
 )
 
 FILE(GLOB COMMON_SRC_REMOVE
@@ -178,9 +179,13 @@ endif()
 
 FILE(GLOB SERVER_SRC
 	"src/server/*.c"
+	"src/server/*.h"
 	"src/null/*.c"
+	"src/null/*.h"
 	"src/botlib/be*.c"
+	"src/botlib/be*.h"
 	"src/botlib/l_*.c"
+	"src/botlib/l_*.h"
 	"src/sys/sys_main.c"
 	"src/sys/con_log.c"
 	"src/qcommon/dl_main_stubs.c"
@@ -188,17 +193,24 @@ FILE(GLOB SERVER_SRC
 
 FILE(GLOB CLIENT_SRC
 	"src/server/*.c"
+	"src/server/*.h"
 	"src/client/*.c"
+	"src/client/*.h"
 	"src/botlib/be*.c"
+	"src/botlib/be*.h"
 	"src/botlib/l_*.c"
+	"src/botlib/l_*.h"
 	"src/sys/sys_main.c"
 	"src/sys/con_log.c"
 	"src/renderer/*.c"
+	"src/renderer/*.h"
 	"src/sdl/*.c"
+	"src/sdl/*.h"
 )
 
 FILE(GLOB CGAME_SRC
 	"src/cgame/*.c"
+	"src/cgame/*.h"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
 	"src/ui/ui_shared.c"
@@ -207,6 +219,7 @@ FILE(GLOB CGAME_SRC
 
 FILE(GLOB QAGAME_SRC
 	"src/game/*.c"
+	"src/game/*.h"
 	"src/game/sha-1/sha1.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
@@ -214,11 +227,38 @@ FILE(GLOB QAGAME_SRC
 
 FILE(GLOB UI_SRC
 	"src/ui/*.c"
+	"src/ui/*.h"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
 	"src/game/bg_campaign.c"
 	"src/game/bg_classes.c"
 	"src/game/bg_misc.c"
+)
+
+FILE(GLOB RENDERER_FILES
+	"src/renderer/*.c"
+)
+
+FILE(GLOB CLIENT_FILES
+	"src/client/*.c"
+)
+
+FILE(GLOB SERVER_FILES
+	"src/server/*.c"
+)
+
+FILE(GLOB SYSTEM_FILES
+	"src/sys/sys_main.c"
+	"src/sys/con_log.c"
+)
+
+FILE(GLOB SDL_FILES
+	"src/sdl/*.c"
+)
+
+FILE(GLOB BOTLIB_FILES
+	"src/botlib/be*.c"
+	"src/botlib/l_*.c"
 )
 
 # Version generation
@@ -418,6 +458,14 @@ include_directories(${PROJECT_BINARY_DIR}/include) # git_version.h
 
 if(BUILD_CLIENT)
 	add_executable(etl WIN32 ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC})
+	source_group("Source Files\\Renderer" FILES ${RENDERER_FILES})
+	source_group("Source Files\\Client" FILES ${CLIENT_FILES})
+	source_group("Source Files\\Server" FILES ${SERVER_FILES})
+	source_group("Source Files\\System" FILES ${SYSTEM_FILES})
+	source_group("Source Files\\SDL" FILES ${SDL_FILES})
+	source_group("Source Files\\Botlib" FILES ${BOTLIB_FILES})
+	source_group("Source Files\\Common" FILES ${COMMON_SRC})
+	source_group("Source Files\\Platform" FILES ${PLATFORM_SRC})
 	include_directories(${CLIENT_INCLUDE_DIRS})
 	if(BUNDLED_SDL)
 		add_dependencies(etl bundled_sdl)
