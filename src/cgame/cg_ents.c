@@ -617,7 +617,6 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 {
 	vec3_t  vorigin, eorigin, viewa, dir;
 	float   dot, dist;
-	trace_t tr;
 
 	BG_EvaluateTrajectory(&item->pos, atTime, eorigin, qfalse, item->effect2Time);
 
