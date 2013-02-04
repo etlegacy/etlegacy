@@ -949,7 +949,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 #endif
 
-	SetFocus(g_wv.hWnd);
+	//Jacker: We should not set the focus here as the focus gets lost to the console window
+	//SetFocus(g_wv.hWnd);
 
 	// main game loop
 	while (1)
