@@ -290,6 +290,9 @@ void UI_ListCampaigns_f(void);
 
 #define GLINFO_LINES        128
 
+// ui_atoms.c
+void QDECL Com_DPrintf(const char *fmt, ...);
+
 // ui_menu.c
 extern void MainMenu_Cache(void);
 extern void UI_MainMenu(void);

@@ -1269,7 +1269,9 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_GET_AUTOUPDATE:
+#ifdef FEATURE_AUTOUPDATE
 		CL_GetAutoUpdate();
+#endif /* FEATURE_AUTOUPDATE */
 		return 0;
 
 	case UI_OPENURL:

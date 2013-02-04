@@ -993,7 +993,9 @@ void CL_StartHunkUsers(void);
 // start all the client stuff using the hunk
 
 void CL_CheckAutoUpdate(void);
+#ifdef FEATURE_AUTOUPDATE
 void CL_GetAutoUpdate(void);
+#endif
 
 void Key_KeynameCompletion(void (*callback)(const char *s));
 // for keyname autocompletion

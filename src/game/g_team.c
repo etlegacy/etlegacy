@@ -1657,8 +1657,8 @@ void G_shuffleTeams(void)
 	{
 		cl = level.clients + sortClients[i];
 
-	//	cTeam = (i % 2) + TEAM_AXIS;
-	        cTeam = ( ( ( i+1 ) % 4 ) - ( ( i+1 ) % 2 ) ) / 2 + TEAM_AXIS; 
+		//	cTeam = (i % 2) + TEAM_AXIS;
+		cTeam = (((i + 1) % 4) - ((i + 1) % 2)) / 2 + TEAM_AXIS;
 
 		if (cl->sess.sessionTeam != cTeam)
 		{

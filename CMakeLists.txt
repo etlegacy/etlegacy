@@ -11,7 +11,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 project(ETLEGACY C CXX)
-set(ETLEGACY_VERSION "2.70rc1")
+set(ETLEGACY_VERSION "2.70rc1-dirty")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(Build)
@@ -67,6 +67,7 @@ option(FEATURE_LUA			"Enable Lua support in game code"							ON)
 option(FEATURE_MULTIVIEW	"Compile the mod files with multiview support (broken?!)"	OFF)
 option(FEATURE_ANTICHEAT	"Enable server side anti-wallhack code (experimental)"		ON)
 option(FEATURE_CURSES		"Enable PDCurses console"									OFF)
+option(FEATURE_AUTOUPDATE	"Enable updater which downloads latest ET:L files"			ON)
 
 if((WIN32 OR UNIX) AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 	option(FEATURE_OMNIBOT	"Enable omnibot build in mod code (Win & Linux server only!)"	OFF)
@@ -355,6 +356,10 @@ if(BUILD_CLIENT)
 	else(FEATURE_CURL)
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
 	endif(FEATURE_CURL)
+
+	if(FEATURE_AUTOUPDATE)
+		add_definitions(-DFEATURE_AUTOUPDATE)
+	endif(FEATURE_AUTOUPDATE)
 
 	if(FEATURE_FREETYPE)
 		find_package(Freetype REQUIRED)
