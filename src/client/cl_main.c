@@ -1067,7 +1067,7 @@ void CL_Disconnect(qboolean showMainMenu)
 		Cvar_Set("cl_downloadName", "");
 
 		autoupdateStarted = qfalse;
-		Cvar_Set("cl_updatefiles", "");
+		// TODO: clean autoupdate cvars
 	}
 
 	if (clc.demofile)
@@ -1763,27 +1763,30 @@ void CL_DownloadsComplete(void)
 	{
 		if (strlen(cl_updatefiles->string) > 4)
 		{
+			/*
 			char *fn;
 			fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, cl_updatefiles->string);
-#ifndef _WIN32
+			#ifndef _WIN32
 			Sys_Chmod(fn, S_IXUSR);
-#endif
+			#endif
 			// will either exit with a successful process spawn, or will Com_Error ERR_DROP
 			// so we need to clear the disconnected download data if needed
 			if (cls.bWWWDlDisconnected)
 			{
-				cls.bWWWDlDisconnected = qfalse;
-				CL_ClearStaticDownload();
+			    cls.bWWWDlDisconnected = qfalse;
+			    CL_ClearStaticDownload();
 			}
 
 			Sys_StartProcess(fn, qtrue);
+
+			// reinitialize the filesystem if the game directory or checksum has changed
+			// - after Legacy mod update
+			FS_ConditionalRestart(clc.checksumFeed);
+			*/
 		}
 		autoupdateStarted = qfalse;
 
-		if (!cls.bWWWDlDisconnected)
-		{
-			CL_Disconnect(qtrue);
-		}
+		CL_Disconnect(qtrue);
 
 		// we can reset that now
 		cls.bWWWDlDisconnected = qfalse;
@@ -1952,27 +1955,33 @@ void CL_InitDownloads(void)
 	cls.bWWWDlDisconnected = qfalse;
 	CL_ClearStaticDownload();
 
+#ifdef FEATURE_AUTOUPDATE
 	if (autoupdateStarted && NET_CompareAdr(cls.autoupdateServer, clc.serverAddress))
 	{
 		if (strlen(cl_updatefiles->string) > 4)
 		{
 			clc.bWWWDl             = qtrue;
 			cls.bWWWDlDisconnected = qtrue;
-			cls.state == CA_CONNECTED;
 
-			// download format: @%s/%s@%s/%s
-			Q_strncpyz(clc.downloadList, cl_updatefiles->string, MAX_INFO_STRING);
+			// download format: @remotename@localname
+			Q_strncpyz(clc.downloadList, va("@%s@%s", cl_updatefiles->string, cl_updatefiles->string), MAX_INFO_STRING);
+			Q_strncpyz(cls.originalDownloadName, cl_updatefiles->string, sizeof(cls.originalDownloadName));
+			Q_strncpyz(cls.downloadName, va("%s/%s", UPDATE_SERVER_NAME, cl_updatefiles->string), sizeof(cls.downloadName));
+			Q_strncpyz(cls.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", cls.originalDownloadName)), sizeof(cls.downloadTempName));
 
-			if (!DL_BeginDownload(FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, cl_updatefiles->string),
-			                      va("%s/%s", UPDATE_SERVER_NAME, cl_updatefiles->string)))
+			// Cvar_SetValue("cl_downloadSize", clc.downloadSize);
+
+			if (!DL_BeginDownload(cls.downloadTempName, cls.downloadName))
 			{
-				Com_Printf(S_COLOR_RED "ERROR: Downloading new update failed.\n");
+				Com_Printf(S_COLOR_RED "ERROR: Downloading new update file \"%s\" failed.\n", cls.downloadName);
+				clc.bWWWDlAborting = qtrue;
 			}
 
 			return;
 		}
 	}
 	else
+#endif /* FEATURE_AUTOUPDATE */
 	{
 		// whatever autodownlad configuration, store missing files in a cvar, use later in the ui maybe
 		if (FS_ComparePaks(missingfiles, sizeof(missingfiles), qfalse))
@@ -2531,16 +2540,20 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
  */
 void CL_PacketEvent(netadr_t from, msg_t *msg)
 {
-	int             headerBytes;
+	int headerBytes;
+
+#ifdef FEATURE_AUTOUPDATE
 	static qboolean autoupdateRedirected = qfalse;
 
 	// Update server doesn't understand netchan packets
-	if (autoupdateStarted && !autoupdateRedirected)
+	if (NET_CompareAdr(cls.autoupdateServer, clc.serverAddress)
+	    && autoupdateStarted && !autoupdateRedirected)
 	{
 		autoupdateRedirected = qtrue;
 		CL_InitDownloads();
 		return;
 	}
+#endif /* FEATURE_AUTOUPDATE */
 
 	if (msg->cursize >= 4 && *( int * ) msg->data == -1)
 	{

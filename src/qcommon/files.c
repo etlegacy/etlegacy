@@ -518,7 +518,13 @@ void FS_CopyFile(char *fromOSPath, char *toOSPath)
 	int  len;
 	byte *buf;
 
-	Com_Printf("copy %s to %s\n", fromOSPath, toOSPath);
+	if ((!fromOSPath || fromOSPath[0] == '\0') || (!toOSPath || toOSPath[0] == '\0'))
+	{
+		Com_Printf(S_COLOR_YELLOW "WARNING: cannot copy files. Empty path passed to FS_CopyFile\n");
+		return;
+	}
+
+	Com_Printf("Copying %s to %s\n", fromOSPath, toOSPath);
 
 	if (strstr(fromOSPath, "journal.dat") || strstr(fromOSPath, "journaldata.dat"))
 	{
@@ -555,7 +561,7 @@ void FS_CopyFile(char *fromOSPath, char *toOSPath)
 	f = fopen(toOSPath, "wb");
 	if (!f)
 	{
-		free(buf);      //DAJ free as well
+		free(buf);
 		return;
 	}
 	if (fwrite(buf, 1, len, f) != len)
