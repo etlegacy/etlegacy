@@ -1763,27 +1763,31 @@ void CL_DownloadsComplete(void)
 	{
 		if (strlen(cl_updatefiles->string) > 4)
 		{
-			/*
-			char *fn;
-			fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, cl_updatefiles->string);
-			#ifndef _WIN32
-			Sys_Chmod(fn, S_IXUSR);
-			#endif
-			// will either exit with a successful process spawn, or will Com_Error ERR_DROP
-			// so we need to clear the disconnected download data if needed
-			if (cls.bWWWDlDisconnected)
-			{
-			    cls.bWWWDlDisconnected = qfalse;
-			    CL_ClearStaticDownload();
-			}
-
-			Sys_StartProcess(fn, qtrue);
-
-			// reinitialize the filesystem if the game directory or checksum has changed
-			// - after Legacy mod update
-			FS_ConditionalRestart(clc.checksumFeed);
-			*/
+			CL_InitDownloads();
+			return;
 		}
+
+		/*
+		char *fn;
+		fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, cl_updatefiles->string);
+		#ifndef _WIN32
+		Sys_Chmod(fn, S_IXUSR);
+		#endif
+		// will either exit with a successful process spawn, or will Com_Error ERR_DROP
+		// so we need to clear the disconnected download data if needed
+		if (cls.bWWWDlDisconnected)
+		{
+		    cls.bWWWDlDisconnected = qfalse;
+		    CL_ClearStaticDownload();
+		}
+
+		Sys_StartProcess(fn, qtrue);
+
+		// reinitialize the filesystem if the game directory or checksum has changed
+		// - after Legacy mod update
+		FS_ConditionalRestart(clc.checksumFeed);
+		*/
+
 		autoupdateStarted = qfalse;
 
 		CL_Disconnect(qtrue);
@@ -1960,24 +1964,58 @@ void CL_InitDownloads(void)
 	{
 		if (strlen(cl_updatefiles->string) > 4)
 		{
+			char *updateFile;
+			char updateFilesRemaining[MAX_TOKEN_CHARS] = "";
+
 			clc.bWWWDl             = qtrue;
 			cls.bWWWDlDisconnected = qtrue;
 
-			// download format: @remotename@localname
-			Q_strncpyz(clc.downloadList, va("@%s@%s", cl_updatefiles->string, cl_updatefiles->string), MAX_INFO_STRING);
-			Q_strncpyz(cls.originalDownloadName, cl_updatefiles->string, sizeof(cls.originalDownloadName));
-			Q_strncpyz(cls.downloadName, va("%s/%s", UPDATE_SERVER_NAME, cl_updatefiles->string), sizeof(cls.downloadName));
-			Q_strncpyz(cls.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", cls.originalDownloadName)), sizeof(cls.downloadTempName));
+			updateFile = strtok(cl_updatefiles->string, ";");
 
-			// Cvar_SetValue("cl_downloadSize", clc.downloadSize);
-
-			if (!DL_BeginDownload(cls.downloadTempName, cls.downloadName))
+			if (updateFile == NULL)
 			{
-				Com_Printf(S_COLOR_RED "ERROR: Downloading new update file \"%s\" failed.\n", cls.downloadName);
-				clc.bWWWDlAborting = qtrue;
+				Com_Error(ERR_AUTOUPDATE, "Could not parse update string.\n");
 			}
+			else
+			{
+				// download format: @remotename@localname
+				Q_strncpyz(clc.downloadList, va("@%s@%s", updateFile, updateFile), MAX_INFO_STRING);
+				Q_strncpyz(cls.originalDownloadName, updateFile, sizeof(cls.originalDownloadName));
+				Q_strncpyz(cls.downloadName, va("%s/%s", UPDATE_SERVER_NAME, updateFile), sizeof(cls.downloadName));
+				Q_strncpyz(cls.downloadTempName,
+				           FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", cls.originalDownloadName)),
+				           sizeof(cls.downloadTempName));
+				// TODO: add file size, so UI can show progress bar
+				//Cvar_SetValue("cl_downloadSize", clc.downloadSize);
 
-			return;
+				if (!DL_BeginDownload(cls.downloadTempName, cls.downloadName))
+				{
+					Com_Error(ERR_AUTOUPDATE, "Could not download an update file: \"%s\"\n", cls.downloadName);
+					clc.bWWWDlAborting = qtrue;
+				}
+
+				while (1)
+				{
+					updateFile = strtok(NULL, ";");
+
+					if (updateFile == NULL)
+					{
+						break;
+					}
+
+					Q_strcat(updateFilesRemaining, sizeof(updateFilesRemaining), va("%s;", updateFile));
+				}
+
+				if (strlen(updateFilesRemaining) > 4)
+				{
+					Cvar_Set("cl_updatefiles", updateFilesRemaining);
+				}
+				else
+				{
+					Cvar_Set("cl_updatefiles", "");
+				}
+				return;
+			}
 		}
 	}
 	else
