@@ -2789,6 +2789,107 @@ qboolean CL_WWWBadChecksum(const char *pakname)
 
 /*
 ==================
+CL_StartVideoRecording
+
+This function will be called when the AVI recording will start either by video or cl_avidemo commands
+==================
+*/
+void CL_StartVideoRecording(const char *aviname)
+{
+	char filename[MAX_OSPATH];
+	int  i, last;
+
+	if (!aviname || aviname == '\0')
+	{
+		for (i = 0; i <= 9999; i++)
+		{
+			int a, b, c, d;
+
+			last = i;
+
+			a     = last / 1000;
+			last -= a * 1000;
+			b     = last / 100;
+			last -= b * 100;
+			c     = last / 10;
+			last -= c * 10;
+			d     = last;
+			Com_Printf("videos/%s%d%d%d%d.avi", clc.demoName, a, b, c, d);
+			Com_sprintf(filename, MAX_OSPATH, "videos/%s%d%d%d%d.avi", clc.demoName, a, b, c, d);
+
+			if (!FS_FileExists(filename))
+			{
+				break; // file doesn't exist
+			}
+		}
+
+		if (i > 9999)
+		{
+			Com_Printf(S_COLOR_RED "ERROR: no free file names to create video\n");
+			return;
+		}
+		CL_OpenAVIForWriting(filename);
+	}
+	else
+	{
+		CL_OpenAVIForWriting(aviname);
+	}
+}
+
+/*
+===============
+CL_Video_f
+
+video
+video [filename]
+===============
+*/
+void CL_Video_f(void)
+{
+	char filename[MAX_OSPATH];
+	int  i, last;
+
+	if (!clc.demoplaying)
+	{
+		Com_Printf("The video command can only be used when playing back demos\n");
+		return;
+	}
+
+	cl_avidemotype->integer = 2;
+	if (cl_avidemo->integer == 0)
+	{
+		cl_avidemo->integer = 30;
+	}
+
+	if (Cmd_Argc() > 1)
+	{
+		// explicit filename
+		Com_sprintf(filename, MAX_OSPATH, "videos/%s.avi", Cmd_Argv(1));
+		if (Cmd_Argc() == 3)
+		{
+			Cvar_Set("cl_avidemo", Cmd_Argv(2));
+		}
+		CL_StartVideoRecording(filename);
+	}
+	else
+	{
+		CL_StartVideoRecording(NULL);
+	}
+}
+
+/*
+===============
+CL_StopVideo_f
+===============
+*/
+void CL_StopVideo_f(void)
+{
+	cl_avidemo->integer = 0;
+	CL_CloseAVI();
+}
+
+/*
+==================
 CL_Frame
 ==================
 */
@@ -2825,7 +2926,9 @@ void CL_Frame(int msec)
 				}
 				else
 				{
-					Com_Printf("Error while recording avi, the file is not open.\n");
+					CL_StartVideoRecording(NULL);
+					CL_TakeVideoFrame();
+					//Com_Printf("Error while recording avi, the file is not open.\n");
 				}
 				break;
 			default:
@@ -2838,6 +2941,10 @@ void CL_Frame(int msec)
 		{
 			msec = 1;
 		}
+	}
+	else if (cl_avidemo->integer == 0 && CL_VideoRecording())
+	{
+		CL_CloseAVI();
 	}
 
 	// save the msec before checking pause
@@ -3271,83 +3378,6 @@ void CL_GetAutoUpdate(void)
 #endif /* FEATURE_AUTOUPDATE */
 
 /*
-===============
-CL_Video_f
-
-video
-video [filename]
-===============
-*/
-void CL_Video_f(void)
-{
-	char filename[MAX_OSPATH];
-	int  i, last;
-
-	if (!clc.demoplaying)
-	{
-		Com_Printf("The video command can only be used when playing back demos\n");
-		return;
-	}
-
-	cl_avidemotype->integer = 2;
-	if (cl_avidemo->integer == 0)
-	{
-		cl_avidemo->integer = 30;
-	}
-
-	if (Cmd_Argc() == 2)
-	{
-		// explicit filename
-		Com_sprintf(filename, MAX_OSPATH, "videos/%s.avi", Cmd_Argv(1));
-	}
-	else
-	{
-		// scan for a free filename
-		for (i = 0; i <= 9999; i++)
-		{
-			int a, b, c, d;
-
-			last = i;
-
-			a     = last / 1000;
-			last -= a * 1000;
-			b     = last / 100;
-			last -= b * 100;
-			c     = last / 10;
-			last -= c * 10;
-			d     = last;
-
-			Com_sprintf(filename, MAX_OSPATH, "videos/video%d%d%d%d.avi",
-			            a, b, c, d);
-
-			if (!FS_FileExists(filename))
-			{
-				break; // file doesn't exist
-			}
-		}
-
-		if (i > 9999)
-		{
-			Com_Printf(S_COLOR_RED "ERROR: no free file names to create video\n");
-			return;
-		}
-	}
-
-	CL_OpenAVIForWriting(filename);
-}
-
-/*
-===============
-CL_StopVideo_f
-===============
-*/
-void CL_StopVideo_f(void)
-{
-	cl_avidemo->integer = 0;
-	CL_CloseAVI();
-}
-
-/*
 ============
 CL_RefMalloc
 ============
@@ -3565,7 +3595,7 @@ void CL_Init(void)
 	cl_timedemo      = Cvar_Get("timedemo", "0", 0);
 	cl_avidemo       = Cvar_Get("cl_avidemo", "0", 0);
 	cl_forceavidemo  = Cvar_Get("cl_forceavidemo", "0", 0);
-	cl_avidemotype   = Cvar_Get("cl_avidemotype", "0", CVAR_TEMP);
+	cl_avidemotype   = Cvar_Get("cl_avidemotype", "0", CVAR_ARCHIVE);
 	cl_aviMotionJpeg = Cvar_Get("cl_avimotionjpeg", "0", CVAR_TEMP);
 
 	rconAddress = Cvar_Get("rconAddress", "", 0);
