@@ -738,19 +738,21 @@ RB_TakeVideoFrameCmd
 const void *RB_TakeVideoFrameCmd(const void *data)
 {
 	const videoFrameCommand_t *cmd;
-	int             frameSize;
-	int             i;
+	int                       frameSize;
+	int                       i;
 
 	cmd = (const videoFrameCommand_t *)data;
 
 	// check if the recording is still going on, the buffer might have cmds eventho the recording has stopped
-	if(ri.CL_VideoRecording())
+	if (ri.CL_VideoRecording())
 	{
 		glReadPixels(0, 0, cmd->width, cmd->height, GL_RGBA, GL_UNSIGNED_BYTE, cmd->captureBuffer);
 		// gamma correct
-		if((tr.overbrightBits > 0) && glConfig.deviceSupportsGamma)
+		if ((tr.overbrightBits > 0) && glConfig.deviceSupportsGamma)
+		{
 			R_GammaCorrect(cmd->captureBuffer, cmd->width * cmd->height * 4);
-		if(cmd->motionJpeg)
+		}
+		if (cmd->motionJpeg)
 		{
 			/* This should be fixed
 			frameSize = RE_SaveJPGToBuffer(cmd->encodeBuffer, 90, cmd->width, cmd->height, cmd->captureBuffer);
@@ -760,9 +762,9 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 		else
 		{
 			frameSize = cmd->width * cmd->height;
-			for(i = 0; i < frameSize; i++)  // Pack to 24bpp and swap R and B
+			for (i = 0; i < frameSize; i++)  // Pack to 24bpp and swap R and B
 			{
-				cmd->encodeBuffer[i * 3] = cmd->captureBuffer[i * 4 + 2];
+				cmd->encodeBuffer[i * 3]     = cmd->captureBuffer[i * 4 + 2];
 				cmd->encodeBuffer[i * 3 + 1] = cmd->captureBuffer[i * 4 + 1];
 				cmd->encodeBuffer[i * 3 + 2] = cmd->captureBuffer[i * 4];
 			}
@@ -1271,7 +1273,7 @@ void R_Register(void)
 	r_cacheGathering = ri.Cvar_Get("cl_cacheGathering", "0", 0);
 	r_bonesDebug     = ri.Cvar_Get("r_bonesDebug", "0", CVAR_CHEAT);
 
-	r_wolffog = ri.Cvar_Get("r_wolffog", "1", CVAR_CHEAT);
+	r_wolffog = ri.Cvar_Get("r_wolffog", "1", CVAR_ARCHIVE);
 
 	r_nocurves    = ri.Cvar_Get("r_nocurves", "0", CVAR_CHEAT);
 	r_drawworld   = ri.Cvar_Get("r_drawworld", "1", CVAR_CHEAT);
@@ -1611,7 +1613,7 @@ refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
 
 	re.RenderToTexture = RE_RenderToTexture;
 
-	re.Finish = RE_Finish;
+	re.Finish         = RE_Finish;
 	re.TakeVideoFrame = RE_TakeVideoFrame;
 
 	return &re;
