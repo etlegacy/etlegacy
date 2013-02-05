@@ -2097,7 +2097,7 @@ extern vmCvar_t cg_drawReinforcementTime;
 extern vmCvar_t cg_drawWeaponIconFlash;
 extern vmCvar_t cg_noAmmoAutoSwitch;
 extern vmCvar_t cg_printObjectiveInfo;
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 extern vmCvar_t cg_specHelp;
 #endif
 extern vmCvar_t cg_uinfo;
@@ -2110,7 +2110,7 @@ extern vmCvar_t demo_avifpsF4;
 extern vmCvar_t demo_avifpsF5;
 extern vmCvar_t demo_drawTimeScale;
 extern vmCvar_t demo_infoWindow;
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 extern vmCvar_t mv_sensitivity;
 #endif
 // engine mappings
@@ -3004,7 +3004,7 @@ const char *CG_BuildSelectedFirteamString(void);
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
 #define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.2), SMALLCHAR_WIDTH)
 
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 // cg_multiview.c
 void CG_mvDelete_f(void);
 void CG_mvHideView_f(void);
@@ -3040,7 +3040,7 @@ void CG_createTopShotsWindow(void);
 void CG_createWstatsMsgWindow(void);
 void CG_createWtopshotsMsgWindow(void);
 void CG_createMOTDWindow(void);
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 void CG_cursorUpdate(void);
 #endif
 void CG_initStrings(void);

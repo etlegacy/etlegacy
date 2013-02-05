@@ -826,7 +826,7 @@ int BoxOnPlaneSide2 (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 
 ==================
 */
-#if defined __LCC__ || defined C_ONLY || __GNUC__
+#if defined __LCC__ || defined C_ONLY || defined __GNUC__
 
 int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 {
