@@ -555,7 +555,7 @@ ID_INLINE void SLerp_Normal(vec3_t from, vec3_t to, float tt, vec3_t out)
 #define SIN_TABLE(i)      tr.sinTable[(i) >> FUNCTABLE_SHIFT];
 #define COS_TABLE(i)      tr.sinTable[(((i) >> FUNCTABLE_SHIFT) + (FUNCTABLE_SIZE / 4)) & FUNCTABLE_MASK];
 
-static ID_INLINE void LocalIngleVector(int ingles[3], vec3_t forward)
+static inline void LocalIngleVector(int ingles[3], vec3_t forward)
 {
 	sy = SIN_TABLE(ingles[YAW] & 65535);
 	cy = COS_TABLE(ingles[YAW] & 65535);

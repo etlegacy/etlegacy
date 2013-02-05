@@ -707,7 +707,7 @@ extern void (QDECL *Q_SnapVector)(vec3_t vec);
 
 #if idppc
 
-static ID_INLINE float Q_rsqrt(float number)
+static inline float Q_rsqrt(float number)
 {
 	float x = 0.5f * number;
 	float y;
@@ -720,7 +720,7 @@ static ID_INLINE float Q_rsqrt(float number)
 }
 
 #ifdef __GNUC__
-static ID_INLINE float Q_fabs(float x)
+static inline float Q_fabs(float x)
 {
 	float abs_x;
 
