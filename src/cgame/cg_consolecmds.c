@@ -222,11 +222,7 @@ static void CG_LoadWeapons_f(void)
 
 	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 	{
-		// Only register weapons we use in WolfMP
-		if (BG_WeaponInWolfMP(i))
-		{
-			CG_RegisterWeapon(i, qtrue);
-		}
+		CG_RegisterWeapon(i, qtrue);
 	}
 }
 

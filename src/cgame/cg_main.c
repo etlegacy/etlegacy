@@ -1727,11 +1727,7 @@ static void CG_RegisterGraphics(void)
 	CG_LoadingString(" - weapons");
 	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 	{
-		// Only register weapons we use in WolfMP
-		if (BG_WeaponInWolfMP(i))
-		{
-			CG_RegisterWeapon(i, qfalse);
-		}
+		CG_RegisterWeapon(i, qfalse);
 	}
 
 	CG_LoadingString(" - items");
@@ -2595,7 +2591,7 @@ void CG_LoadHudMenu(void)
 	cgDC.addRefEntityToScene = &trap_R_AddRefEntityToScene;
 	cgDC.renderScene         = &trap_R_RenderScene;
 	cgDC.registerFont        = &trap_R_RegisterFont;
-	cgDC.ownerDrawItem	 = NULL;
+	cgDC.ownerDrawItem       = NULL;
 	cgDC.getValue            = &CG_GetValue;
 	cgDC.ownerDrawVisible    = &CG_OwnerDrawVisible;
 	cgDC.runScript           = &CG_RunMenuScript;
