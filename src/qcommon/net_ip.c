@@ -288,7 +288,7 @@ static void SockadrToNetadr(struct sockaddr *s, netadr_t *a)
 #endif
 }
 
-
+#ifdef FEATURE_IPV6
 static struct addrinfo *SearchAddrInfo(struct addrinfo *hints, sa_family_t family)
 {
 	while (hints)
@@ -303,6 +303,7 @@ static struct addrinfo *SearchAddrInfo(struct addrinfo *hints, sa_family_t famil
 
 	return NULL;
 }
+#endif
 
 /*
 =============
