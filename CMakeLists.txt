@@ -77,8 +77,10 @@ endif()
 set(ET_FS_BASEPATH			""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 option(ET_KEY				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
 
-# Settings for every platform
-set(CMAKE_C_FLAGS "-Wall")
+
+if(NOT MSVC)
+    set(CMAKE_C_FLAGS "-Wall")
+endif()
 
 #-----------------------------------------------------------------
 # Platform-specific settings
