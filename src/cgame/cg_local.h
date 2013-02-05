@@ -3014,7 +3014,7 @@ qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly);
 const char *CG_BuildSelectedFirteamString(void);
 
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
-#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.2), SMALLCHAR_WIDTH);
+#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.2), SMALLCHAR_WIDTH)
 
 #if FEATURE_MULTIVIEW
 // cg_multiview.c
