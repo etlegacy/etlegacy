@@ -105,11 +105,11 @@
 #define FEEDER_SERVERSTATUS         0x0d    // server status
 #define FEEDER_FINDPLAYER           0x0e    // find player
 #define FEEDER_CINEMATICS           0x0f    // cinematics
-#define FEEDER_SAVEGAMES            0x10    // savegames
-#define FEEDER_CAMPAIGNS            0x1a    // Arnout: all unlocked campaigns available
-#define FEEDER_ALLCAMPAIGNS         0x1b    // Arnout: all campaigns available
-#define FEEDER_PROFILES             0x1c    // Arnout: profiles
-#define FEEDER_GLINFO               0x1d    // Arnout: glinfo
+#define FEEDER_SAVEGAMES            0x10    // Obsolete. savegames
+#define FEEDER_CAMPAIGNS            0x1a    // all unlocked campaigns available
+#define FEEDER_ALLCAMPAIGNS         0x1b    // all campaigns available
+#define FEEDER_PROFILES             0x1c    // profiles
+#define FEEDER_GLINFO               0x1d    // glinfo
 
 // display flags
 #define CG_SHOW_BLUE_TEAM_HAS_REDFLAG       0x00000001
@@ -326,7 +326,7 @@
 #define UI_LOADPANEL                257
 
 #define UI_MENUMODEL                257
-#define UI_SAVEGAME_SHOT            258
+#define UI_SAVEGAME_SHOT            258 // Obsolete
 
 #define UI_LIMBOCHAT                259
 

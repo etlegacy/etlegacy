@@ -1262,14 +1262,6 @@ static int UI_TeamIndexFromName(const char *name)
 	return 0;
 }
 
-// FIXME: remove?
-static void UI_DrawSaveGameShot(rectDef_t *rect, float scale, vec4_t color)
-{
-	trap_R_SetColor(color);
-	UI_DrawHandlePic(rect->x, rect->y, rect->w, rect->h, uiInfo.savegameList[uiInfo.savegameIndex].sshotImage);
-	trap_R_SetColor(NULL);
-}
-
 static void UI_DrawClanLogo(rectDef_t *rect, float scale, vec4_t color)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
@@ -2780,8 +2772,7 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 	case UI_CLANNAME:
 		UI_DrawClanName(&rect, scale, color, textStyle);
 		break;
-	case UI_SAVEGAME_SHOT:
-		UI_DrawSaveGameShot(&rect, scale, color);
+	case UI_SAVEGAME_SHOT: // Obsolete
 		break;
 	case UI_CLANLOGO:
 		UI_DrawClanLogo(&rect, scale, color);
@@ -3663,68 +3654,6 @@ static void UI_LoadProfiles(void)
 	}
 }
 
-static void UI_DelSavegame(void)
-{
-	int ret;
-
-	ret = trap_FS_Delete(va("save/%s.svg", uiInfo.savegameList[uiInfo.savegameIndex].name));
-	trap_FS_Delete(va("save/images/%s.tga", uiInfo.savegameList[uiInfo.savegameIndex].name));
-
-	if (ret)
-	{
-		Com_Printf("Deleted savegame: %s.svg\n", uiInfo.savegameList[uiInfo.savegameIndex].name);
-	}
-	else
-	{
-		Com_Printf("Unable to delete savegame: %s.svg\n", uiInfo.savegameList[uiInfo.savegameIndex].name);
-	}
-}
-
-/*
-==============
-UI_LoadSavegames
-==============
-*/
-static void UI_LoadSavegames(void)
-{
-	char sglist[4096];
-	char *sgname;
-
-	uiInfo.savegameCount = trap_FS_GetFileList("save", "svg", sglist, 4096);
-
-	if (uiInfo.savegameCount)
-	{
-		int i, len;
-
-		if (uiInfo.savegameCount > MAX_SAVEGAMES)
-		{
-			uiInfo.savegameCount = MAX_SAVEGAMES;
-		}
-		sgname = sglist;
-		for (i = 0; i < uiInfo.savegameCount; i++)
-		{
-			len = strlen(sgname);
-
-			if (!Q_strncmp(sgname, "current", 7))         // ignore current.svg since it has special uses and shouldn't be loaded directly
-			{
-				i--;
-				uiInfo.savegameCount -= 1;
-				sgname               += len + 1;
-				continue;
-			}
-
-			if (!Q_stricmp(sgname +  len - 4, ".svg"))
-			{
-				sgname[len - 4] = '\0';
-			}
-			Q_strupr(sgname);
-			uiInfo.savegameList[i].name       = String_Alloc(sgname);
-			uiInfo.savegameList[i].sshotImage = trap_R_RegisterShaderNoMip(va("save/images/%s.tga", uiInfo.savegameList[i].name));
-			sgname                           += len + 1;
-		}
-	}
-}
-
 /*
 ===============
 UI_LoadMovies
@@ -4028,18 +3957,6 @@ void UI_RunMenuScript(char **args)
 				trap_Cvar_Set("g_userAlliedRespawnTime", "0");
 			}
 		}
-		else if (Q_stricmp(name, "updateSPMenu") == 0)
-		{
-			UI_MapCountByGameType(qtrue);
-			ui_mapIndex.integer = UI_GetIndexFromSelection(ui_currentMap.integer);
-			trap_Cvar_Set("ui_mapIndex", va("%d", ui_mapIndex.integer));
-			Menu_SetFeederSelection(NULL, FEEDER_MAPS, ui_mapIndex.integer, "skirmish");
-			ui_campaignIndex.integer = UI_GetIndexFromSelection(ui_currentCampaign.integer);
-			trap_Cvar_Set("ui_campaignIndex", va("%d", ui_campaignIndex.integer));
-			Menu_SetFeederSelection(NULL, FEEDER_CAMPAIGNS, ui_campaignIndex.integer, "selectcampaign");
-			UI_GameType_HandleKey(0, 0, K_MOUSE1, qfalse);
-			UI_GameType_HandleKey(0, 0, K_MOUSE2, qfalse);
-		}
 		else if (Q_stricmp(name, "resetDefaults") == 0)
 		{
 			trap_Cmd_ExecuteText(EXEC_APPEND, "cvar_restart\n");
@@ -4078,6 +3995,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "loadGameInfo") == 0)
 		{
+			// loadGameInfo is unused
 			UI_ParseGameInfo("gameinfo.txt");
 		}
 		else if (Q_stricmp(name, "resetScores") == 0)
@@ -4108,22 +4026,6 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "LoadMovies") == 0)
 		{
 			UI_LoadMovies();
-		}
-		else if (Q_stricmp(name, "LoadSaveGames") == 0)          // get the list
-		{
-			UI_LoadSavegames();
-		}
-		else if (Q_stricmp(name, "Loadgame") == 0)
-		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("loadgame %s\n", uiInfo.savegameList[uiInfo.savegameIndex].name));
-		}
-		else if (Q_stricmp(name, "Savegame") == 0)
-		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("savegame %s\n", UI_Cvar_VariableString("ui_savegame")));
-		}
-		else if (Q_stricmp(name, "DelSavegame") == 0)
-		{
-			UI_DelSavegame();
 		}
 		else if (Q_stricmp(name, "LoadMods") == 0)
 		{
@@ -4318,7 +4220,6 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "Leave") == 0)
 		{
-			// ATVI Wolfenstein Misc #460
 			// if we are running a local server, make sure we kill it cleanly for other clients
 			if (trap_Cvar_VariableValue("sv_running"))
 			{
@@ -4838,16 +4739,6 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "setupCampaign") == 0)
 		{
 			trap_Cvar_Set("ui_campaignmap", va("%i", uiInfo.campaignList[ui_currentCampaign.integer].progress));
-		}
-		else if (Q_stricmp(name, "playCampaign") == 0)
-		{
-			// TODO: Remove UI single player code
-			int map = trap_Cvar_VariableValue("ui_campaignmap");
-
-			if (map <= uiInfo.campaignList[ui_currentCampaign.integer].progress)
-			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, va("spmap \"%s\"\n", uiInfo.campaignList[ui_currentCampaign.integer].mapInfos[map]->mapLoadName));
-			}
 		}
 		else if (Q_stricmp(name, "loadProfiles") == 0)
 		{
@@ -5424,7 +5315,7 @@ static int UI_MapCountByGameType(qboolean singlePlayer)
 UI_MapCountByCampaign
 ==================
 */
-#if 0 // rain - unused
+#if 0 // unused
 static int UI_MapCountByCampaign(qboolean singlePlayer)
 {
 	int campaign;
@@ -5589,7 +5480,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 	len = strlen(uiInfo.serverStatus.motd);
 	if (len == 0)
 	{
-		strcpy(uiInfo.serverStatus.motd, va("Enemy Territory - Version: %s", Q3_VERSION));
+		strcpy(uiInfo.serverStatus.motd, va("Enemy Territory: Legacy - Version: %s", Q3_VERSION));
 		len = strlen(uiInfo.serverStatus.motd);
 	}
 	if (len != uiInfo.serverStatus.motdLen)
@@ -6294,10 +6185,6 @@ static int UI_FeederCount(float feederID)
 	{
 		return uiInfo.movieCount;
 	}
-	else if (feederID == FEEDER_SAVEGAMES)
-	{
-		return uiInfo.savegameCount;
-	}
 	else if (feederID == FEEDER_MAPS || feederID == FEEDER_ALLMAPS)
 	{
 		return UI_MapCountByGameType(feederID == FEEDER_MAPS ? qtrue : qfalse);
@@ -6756,13 +6643,6 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 			return uiInfo.movieList[index];
 		}
 	}
-	else if (feederID == FEEDER_SAVEGAMES)
-	{
-		if (index >= 0 && index < uiInfo.savegameCount)
-		{
-			return uiInfo.savegameList[index].name;
-		}
-	}
 	else if (feederID == FEEDER_DEMOS)
 	{
 		if (index >= 0 && index < uiInfo.demoCount)
@@ -6867,17 +6747,6 @@ static qhandle_t UI_FeederItemImage(float feederID, int index)
 				uiInfo.campaignList[index].campaignShot = trap_R_RegisterShaderNoMip(uiInfo.campaignList[index].campaignShortName);
 			}
 			return uiInfo.campaignList[index].campaignShot;
-		}
-	}
-	else if (feederID == FEEDER_SAVEGAMES)
-	{
-		if (index >= 0 && index < uiInfo.savegameCount)
-		{
-			if (uiInfo.savegameList[index].sshotImage == -1)
-			{
-				uiInfo.savegameList[index].sshotImage = trap_R_RegisterShaderNoMip(va("save/images/%s.tga", uiInfo.savegameList[index].name));
-			}
-			return uiInfo.savegameList[index].sshotImage;
 		}
 	}
 
@@ -7037,10 +6906,6 @@ void UI_FeederSelection(float feederID, int index)
 			trap_CIN_StopCinematic(uiInfo.previewMovie);
 		}
 		uiInfo.previewMovie = -1;
-	}
-	else if (feederID == FEEDER_SAVEGAMES)
-	{
-		uiInfo.savegameIndex = index;
 	}
 	else if (feederID == FEEDER_DEMOS)
 	{
@@ -7466,8 +7331,7 @@ void _UI_Init()
 	trap_LAN_LoadCachedServers();
 
 	// sets defaults for ui temp cvars
-	// rain - bounds check array index, although I'm pretty sure this
-	// stuff isn't used anymore...
+	// bounds check array index, although I'm pretty sure this stuff isn't used anymore...
 	x = (int)trap_Cvar_VariableValue("color") - 1;
 	if (x < 0 || x >= sizeof(gamecodetoui) / sizeof(gamecodetoui[0]))
 	{
@@ -7596,13 +7460,10 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 		case UIMENU_MAIN:
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_CloseAll();
-			Menus_ActivateByName("backgroundmusic", qtrue);      // Arnout: not nice, but best way to do it - putting the music in it's own menudef
+			Menus_ActivateByName("backgroundmusic", qtrue); // not nice, but best way to do it - putting the music in it's own menudef
 			// makes sure it doesn't get restarted every time you reach the main menu
 			if (!cl_profile.string[0])
 			{
-				//Menus_ActivateByName( "profilelogin", qtrue );
-				// FIXME: initial profile popup
-				// FIXED: handled in opener now
 				Menus_ActivateByName("main_opener", qtrue);
 			}
 			else
@@ -7614,7 +7475,6 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 
 			// stricmp() is silly but works, take a look at error.menu to see why.
 			// NOTE: I'm not sure Q_stricmp is useful to anything anymore
-			// TTimo - improved and tweaked that area a whole bunch
 			if ((*buf) && (Q_stricmp(buf, ";")))
 			{
 				trap_Cvar_Set("ui_connecting", "0");
@@ -7694,7 +7554,6 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 			UI_BuildPlayerList();
 			Menu_SetFeederSelection(NULL, FEEDER_PLAYER_LIST, 0, NULL);
 			Menus_CloseAll();
-			//trap_Cvar_Set( "authLevel", "0" ); // just used for testing...
 			Menus_ActivateByName("ingame_main", qtrue);
 			return;
 
@@ -8193,7 +8052,6 @@ static void UI_StopServerRefresh(void)
 	count = trap_LAN_GetServerCount(ui_netSource.integer);
 	if (count - uiInfo.serverStatus.numDisplayServers > 0)
 	{
-		// used to be about cl_maxping filtering, that was Q3 legacy, RTCW browser has much more filtering options
 		Com_Printf("%d servers not listed (filtered out by game browser settings)\n",
 		           count - uiInfo.serverStatus.numDisplayServers);
 	}

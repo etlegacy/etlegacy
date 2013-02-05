@@ -1545,7 +1545,6 @@ int FS_OSStatFile(char *ospath)
 ==============
 FS_Delete
 
-This was not in the 1.30 filesystem code
 using fs_homepath for the file to remove
 ==============
 */

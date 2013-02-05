@@ -427,10 +427,8 @@ void CG_LocateCampaign(void)
 	for (i = 0; i < cgs.campaignData.mapCount; i++)
 	{
 		Com_sprintf(filename, sizeof(filename), "scripts/%s.arena", cgs.campaignData.mapnames[i]);
-		// horrible hack, but i dont plan to parse EVERY .arena to get a map briefing...
-		if ( /*!CG_FindArenaInfo( "scripts/wolfmp.arena", cgs.campaignData.mapnames[i], &cgs.campaignData.arenas[i] ) &&
-		    !CG_FindArenaInfo( "scripts/wolfxp.arena", cgs.campaignData.mapnames[i], &cgs.campaignData.arenas[i] ) &&*/
-		    !CG_FindArenaInfo(filename, cgs.campaignData.mapnames[i], &cgs.campaignData.arenas[i]))
+
+		if (!CG_FindArenaInfo(filename, cgs.campaignData.mapnames[i], &cgs.campaignData.arenas[i]))
 		{
 			return;
 		}

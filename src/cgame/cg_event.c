@@ -2236,7 +2236,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 
 		// this fog stuff for underwater is really just a test for feasibility of creating the under-water effect that way.
-		// the related issues of load/savegames, death underwater, etc. are not handled at all.
+		// the related issues of death underwater, etc. are not handled at all.
 		// the actual problem, of course, is doing underwater stuff when the water is very turbulant and you can't simply
 		// do things based on the players head being above/below the water brushes top surface. (since the waves can potentially be /way/ above/below that)
 
