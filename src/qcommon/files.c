@@ -514,9 +514,9 @@ qboolean FS_CreatePath(char *OSPath)
  */
 void FS_CopyFile(char *fromOSPath, char *toOSPath)
 {
-	FILE *f;
+	FILE   *f;
 	size_t len;
-	byte *buf;
+	byte   *buf;
 
 	if ((!fromOSPath || fromOSPath[0] == '\0') || (!toOSPath || toOSPath[0] == '\0'))
 	{
