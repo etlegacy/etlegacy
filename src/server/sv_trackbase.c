@@ -84,7 +84,7 @@ void TB_Send(char *format, ...)
 /**
  * @brief Initialize Trackbase support
  */
-void TB_Init()
+void TB_Init(void)
 {
 	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
@@ -105,7 +105,7 @@ void TB_Init()
 /**
  * @brief Send info about server startup
  */
-void TB_ServerStart()
+void TB_ServerStart(void)
 {
 	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
@@ -118,7 +118,7 @@ void TB_ServerStart()
 /**
  * @brief Send info about server shutdown
  */
-void TB_ServerStop()
+void TB_ServerStop(void)
 {
 	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
@@ -195,7 +195,7 @@ void TB_Map(char *mapname)
  *
  * Allows counting time from 0 again on TB
  */
-void TB_MapRestart()
+void TB_MapRestart(void)
 {
 	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
@@ -211,7 +211,7 @@ void TB_MapRestart()
  *
  * Sometimes intermission is very long, so TB can show appropriate info to players
  */
-void TB_MapEnd()
+void TB_MapEnd(void)
 {
 	if (!(sv_advert->integer & SVA_TRACKBASE))
 	{
@@ -250,7 +250,7 @@ char *TB_createClientInfo(int clientNum)
 /**
  * @brief Request weapon stats data from mod
  */
-void TB_requestWeaponStats()
+void TB_requestWeaponStats(void)
 {
 	int      i;
 	qboolean onlybots = qtrue;

@@ -42,22 +42,22 @@
 #include "server.h"
 //#include "../qcommon/q_shared.h"
 
-void TB_Init();
-void TB_ServerStart();
-void TB_ServerStop();
+void TB_Init(void);
+void TB_ServerStart(void);
+void TB_ServerStop(void);
 void TB_ClientConnect(client_t *cl);
 void TB_ClientDisconnect(client_t *cl);
 void TB_ClientName(client_t *cl);
 void TB_Map(char *mapname);
-void TB_MapRestart();
-void TB_MapEnd();
+void TB_MapRestart(void);
+void TB_MapEnd(void);
 // void TB_TeamSwitch(client_t *cl); // unused
 void TB_Frame(int msec);
 
 void TB_catchBotConnect(int clientNum);
 qboolean TB_catchServerCommand(int clientNum, char *msg);
 
-void TB_requestWeaponStats();
+void TB_requestWeaponStats(void);
 
 #endif // _TRACKBASE_H
 

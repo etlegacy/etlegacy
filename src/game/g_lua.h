@@ -95,12 +95,12 @@ typedef struct
 extern lua_vm_t *lVM[LUA_NUM_VM];
 
 // API
-qboolean G_LuaInit();
+qboolean G_LuaInit(void);
 qboolean G_LuaCall(lua_vm_t *vm, char *func, int nargs, int nresults);
 qboolean G_LuaGetNamedFunction(lua_vm_t *vm, char *name);
 qboolean G_LuaStartVM(lua_vm_t *vm);
 void G_LuaStopVM(lua_vm_t *vm);
-void G_LuaShutdown();
+void G_LuaShutdown(void);
 void G_LuaStatus(gentity_t *ent);
 lua_vm_t *G_LuaGetVM(lua_State *L);
 
