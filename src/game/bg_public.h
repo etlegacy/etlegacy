@@ -1504,7 +1504,6 @@ weapon_t BG_DuplicateWeapon(weapon_t weap);
 gitem_t *BG_ValidStatWeapon(weapon_t weap);
 weapon_t BG_WeaponForMOD(int MOD);
 
-qboolean BG_WeaponInWolfMP(int weapon);
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfClips);

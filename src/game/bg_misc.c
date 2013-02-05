@@ -2553,62 +2553,6 @@ gitem_t *BG_FindItemForClassName(const char *className)
 	return NULL;
 }
 
-// returns qtrue if a weapon is indeed used in multiplayer
-// FIXME: er, we shouldnt really need this, just remove all the weapons we dont actually want :)
-qboolean BG_WeaponInWolfMP(int weapon)
-{
-	switch (weapon)
-	{
-	case WP_KNIFE:
-	case WP_LUGER:
-	case WP_COLT:
-	case WP_MP40:
-	case WP_THOMPSON:
-	case WP_STEN:
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_PANZERFAUST:
-	case WP_FLAMETHROWER:
-	case WP_AMMO:
-	case WP_ARTY:
-	case WP_SMOKETRAIL:
-	case WP_MEDKIT:
-	case WP_PLIERS:
-	case WP_SMOKE_MARKER:
-	case WP_DYNAMITE:
-	case WP_MEDIC_SYRINGE:
-	case WP_MEDIC_ADRENALINE:
-	case WP_BINOCULARS:
-	case WP_KAR98:
-	case WP_GPG40:
-	case WP_CARBINE:
-	case WP_M7:
-	case WP_GARAND:
-	case WP_GARAND_SCOPE:
-	case WP_FG42:
-	case WP_FG42SCOPE:
-	case WP_LANDMINE:
-	case WP_SATCHEL:
-	case WP_SATCHEL_DET:
-	case WP_SMOKE_BOMB:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_SILENCER:
-	case WP_SILENCED_COLT:
-	case WP_K43:
-	case WP_K43_SCOPE:
-	case WP_MORTAR:
-	case WP_MORTAR_SET:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-		return qtrue;
-	default:
-		return qfalse;
-	}
-}
-
 /*
 ============
 BG_PlayerTouchesItem
@@ -4071,11 +4015,6 @@ gitem_t *BG_ValidStatWeapon(weapon_t weap)
 		return NULL;
 	default:
 		break;
-	}
-
-	if (!BG_WeaponInWolfMP(weap))
-	{
-		return NULL;
 	}
 
 	weap2 = BG_DuplicateWeapon(weap);

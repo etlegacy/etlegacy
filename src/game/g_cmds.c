@@ -665,10 +665,7 @@ void Cmd_Give_f(gentity_t *ent)
 	{
 		for (i = 0; i < WP_NUM_WEAPONS; i++)
 		{
-			if (BG_WeaponInWolfMP(i))
-			{
-				COM_BitSet(ent->client->ps.weapons, i);
-			}
+			COM_BitSet(ent->client->ps.weapons, i);
 		}
 
 		if (!give_all)
