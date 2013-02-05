@@ -4174,11 +4174,11 @@ FireWeapon
 */
 void FireWeapon(gentity_t *ent)
 {
-	gentity_t *pFiredShot = 0;   // Omni-bot To tell bots about projectiles
-	float     aimSpreadScale;
-	int       shots = 1;
+	float aimSpreadScale;
+	int   shots = 1;
 #ifdef FEATURE_OMNIBOT
-	qboolean callEvent = qtrue;
+	gentity_t *pFiredShot = 0;   // Omni-bot To tell bots about projectiles
+	qboolean  callEvent   = qtrue;
 #endif
 
 	// dead guys don't fire guns
@@ -4284,7 +4284,9 @@ void FireWeapon(gentity_t *ent)
 		{
 			ent->client->ps.classWeaponTime = level.time;
 		}
+#ifdef FEATURE_OMNIBOT
 		pFiredShot = weapon_grenadelauncher_fire(ent, WP_SMOKE_MARKER);
+#endif
 		break;
 	case WP_MEDIC_SYRINGE:
 		Weapon_Syringe(ent);
@@ -4397,8 +4399,9 @@ void FireWeapon(gentity_t *ent)
 		{
 			ent->client->ps.classWeaponTime = level.time;
 		}
-
+#ifdef FEATURE_OMNIBOT
 		pFiredShot = Weapon_Panzerfaust_Fire(ent);
+#endif
 		if (ent->client)
 		{
 			vec3_t forward;
@@ -4414,7 +4417,9 @@ void FireWeapon(gentity_t *ent)
 		}
 
 		ent->client->ps.classWeaponTime += .5f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-		pFiredShot                       = weapon_gpg40_fire(ent, ent->s.weapon);
+#ifdef FEATURE_OMNIBOT
+		pFiredShot = weapon_gpg40_fire(ent, ent->s.weapon);
+#endif
 		break;
 	case WP_MORTAR_SET:
 		if (level.time - ent->client->ps.classWeaponTime > level.soldierChargeTime[ent->client->sess.sessionTeam - 1])
@@ -4430,7 +4435,9 @@ void FireWeapon(gentity_t *ent)
 		{
 			ent->client->ps.classWeaponTime += .5f * level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
 		}
+#ifdef FEATURE_OMNIBOT
 		pFiredShot = weapon_mortar_fire(ent, ent->s.weapon);
+#endif
 		break;
 	case WP_GRENADE_LAUNCHER:
 	case WP_GRENADE_PINEAPPLE:
@@ -4490,12 +4497,16 @@ void FireWeapon(gentity_t *ent)
 				ent->client->ps.classWeaponTime = level.time;
 			}
 		}
+#ifdef FEATURE_OMNIBOT
 		pFiredShot = weapon_grenadelauncher_fire(ent, ent->s.weapon);
+#endif
 		break;
 	case WP_FLAMETHROWER:
 		// this is done client-side only now
 		// - um, no it isnt? FIXME
+#ifdef FEATURE_OMNIBOT
 		pFiredShot = Weapon_FlamethrowerFire(ent);
+#endif
 		break;
 	case WP_MAPMORTAR:
 		break;
