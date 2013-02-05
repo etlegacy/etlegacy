@@ -76,7 +76,6 @@ static void UI_BuildFindPlayerList(qboolean force);
 static int QDECL UI_ServersQsortCompare(const void *arg1, const void *arg2);
 static int UI_MapCountByGameType(qboolean singlePlayer);
 static const char *UI_SelectedMap(qboolean singlePlayer, int index, int *actual);
-static int UI_GetIndexFromSelection(int actual);
 
 static const char *UI_SelectedCampaign(int index, int *actual);
 static int UI_CampaignCount(qboolean singlePlayer);
@@ -6302,24 +6301,6 @@ static const char *UI_SelectedCampaign(int index, int *actual)
 		}
 	}
 	return "";
-}
-
-static int UI_GetIndexFromSelection(int actual)
-{
-	int i, c = 0;
-
-	for (i = 0; i < uiInfo.mapCount; i++)
-	{
-		if (uiInfo.mapList[i].active)
-		{
-			if (i == actual)
-			{
-				return c;
-			}
-			c++;
-		}
-	}
-	return 0;
 }
 
 static void UI_UpdatePendingPings(void)
