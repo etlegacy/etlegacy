@@ -77,6 +77,9 @@ endif()
 set(ET_FS_BASEPATH			""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 option(ET_KEY				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
 
+# Settings for every platform
+set(CMAKE_C_FLAGS "-Wall")
+
 #-----------------------------------------------------------------
 # Platform-specific settings
 #-----------------------------------------------------------------
@@ -87,7 +90,7 @@ if(UNIX AND CROSS_COMPILE32) # 32-bit build
 	set(CMAKE_SYSTEM_PROCESSOR i386)
 	message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
 	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
-	set(CMAKE_C_FLAGS "-m32")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
 	set(CMAKE_C_FLAGS_RELEASE "-s")
 	set(CMAKE_CXX_FLAGS "-m32")
 	set(CMAKE_CXX_FLAGS_RELEASE "-s")
