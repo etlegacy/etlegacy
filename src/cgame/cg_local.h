@@ -222,8 +222,6 @@ typedef struct
 } cg_mvinfo_t;
 #endif
 
-#define NUM_OVERLAY_FACES 1
-
 //=================================================
 
 // player entities need to track more information
@@ -2973,12 +2971,7 @@ typedef struct
 
 extern rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2];
 
-#define TAB_LEFT_WIDTH 178
-#define TAB_LEFT_EDGE (640 - TAB_LEFT_WIDTH)
-
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2);
-
-#define MAX_SQUAD_SIZE 6
 
 // merged the common UI elements
 #define UI_CAMPAIGN_BRIEFING 0
@@ -2991,11 +2984,6 @@ qboolean CG_UICommonClick(void);
 void CG_DrawUISelectedSoldier(void);
 void CG_UICurrentSquadSetup(void);
 void CG_CampaignBriefingSetup(void);
-
-#define ORDER_ICON_FADE_TIME 3500
-
-int CG_GetFirstSelectedBot(void);
-void CG_AddToJournal(char *text);
 
 // Fireteam stuff
 #define /*fireteamData_t**/ CG_IsOnFireteam(/*int*/ clientNum) /*{ return*/ cgs.clientinfo[clientNum].fireteamData   /*}*/
@@ -3044,7 +3032,6 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 void CG_mvZoomBinoc(float x, float y, float w, float h);
 void CG_mvZoomSniper(float x, float y, float w, float h);
 #endif
-
 
 // cg_window.c
 qboolean CG_addString(cg_window_t *w, char *buf);
@@ -3290,8 +3277,7 @@ void CG_Fireteams_Setup(void);
 void CG_Fireteams_MenuText_Draw(panel_button_t *button);
 void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
 
-//
-
+// hitsounds flags
 #define HITSOUNDS_ON                0x01
 #define HITSOUNDS_NOTEAMSHOT        0x02
 #define HITSOUNDS_NOHEADSHOT        0x04
