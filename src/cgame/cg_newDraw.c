@@ -670,32 +670,6 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align)
 	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, flags);
 }
 
-/*
-==============
-CG_OwnerDraw
-==============
-*/
-void CG_OwnerDraw(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, float special, float scale, vec4_t color, qhandle_t shader, int textStyle)
-{
-	rectDef_t rect;
-
-	if (cg_drawStatus.integer == 0)
-	{
-		return;
-	}
-
-	rect.x = x;
-	rect.y = y;
-	rect.w = w;
-	rect.h = h;
-
-	switch (ownerDraw)
-	{
-	default:
-		break;
-	}
-}
-
 void CG_MouseEvent(int x, int y)
 {
 	switch (cgs.eventHandling)

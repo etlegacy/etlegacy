@@ -2278,7 +2278,6 @@ void CG_ObjectivePrint(const char *str, int charWidth);
 void CG_DrawActive(stereoFrame_t stereoView);
 void CG_CheckForCursorHints(void);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
-void CG_OwnerDraw(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, float special, float scale, vec4_t color, qhandle_t shader, int textStyle);
 void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font);
 void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font);
 void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style);
@@ -2631,9 +2630,9 @@ void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void (txt_dump) (char *));
-void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
-void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
+void CG_parseWeaponStats_cmd(void(txt_dump) (char *));
+void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
+void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
 void CG_scores_cmd(void);
 
 // cg_playerstate.c
