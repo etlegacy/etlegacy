@@ -92,7 +92,7 @@ extern displayContextDef_t *DC;
 
 extern itemDef_t *g_bindItem;
 
-void _UI_Init();
+void _UI_Init(void);
 void _UI_Shutdown(void);
 void _UI_KeyEvent(int key, qboolean down);
 void _UI_MouseEvent(int dx, int dy);
@@ -983,7 +983,7 @@ qboolean Asset_Parse(int handle)
 	return qfalse;
 }
 
-void UI_Report()
+void UI_Report(void)
 {
 	String_Report();
 }
@@ -1196,7 +1196,7 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 	trap_PC_FreeSource(handle);
 }
 
-void UI_Load()
+void UI_Load(void)
 {
 	char      lastName[1024];
 	menuDef_t *menu    = Menu_GetFocused();
@@ -7179,7 +7179,7 @@ static void UI_RunCinematicFrame(int handle)
 	trap_CIN_RunCinematic(handle);
 }
 
-void _UI_Init()
+void _UI_Init(void)
 {
 	int x;
 
