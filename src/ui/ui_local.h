@@ -443,7 +443,6 @@ typedef struct
 #define MAX_DEMOS 256
 #define MAX_MOVIES 256
 #define MAX_PLAYERMODELS 256
-#define MAX_SAVEGAMES 256
 #define MAX_SPAWNPOINTS 128
 #define MAX_SPAWNDESC   128
 #define MAX_PBLINES     128
@@ -458,12 +457,6 @@ typedef struct
 	qhandle_t headImage;
 	qboolean female;
 } characterInfo;
-
-typedef struct
-{
-	const char *name;
-	qhandle_t sshotImage;
-} savegameInfo;
 
 typedef struct
 {
@@ -626,10 +619,6 @@ typedef struct
 	int movieCount;
 	int movieIndex;
 	int previewMovie;
-
-	savegameInfo savegameList[MAX_SAVEGAMES];
-	int savegameCount;
-	int savegameIndex;
 
 	serverStatus_t serverStatus;
 

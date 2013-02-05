@@ -163,9 +163,7 @@ NET
  * @def MAX_RELIABLE_COMMANDS
  * @brief max string commands buffered for restransmit
  *
- * increased - seems to keep causing problems when set to 64, especially when loading
- * a savegame, which is hard to fix on that side, since we can't really spread out a loadgame
- * among several frames
+ * increased - seems to keep causing problems when set to 64
  */
 #define MAX_RELIABLE_COMMANDS   256
 
@@ -653,7 +651,7 @@ int FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean un
 int FS_FileIsInPAK(const char *filename, int *pChecksum);
 // returns 1 if a file is in the PAK file, otherwise -1
 
-int FS_Delete(char *filename);      // only works inside the 'save' directory (for deleting savegames/images)
+int FS_Delete(char *filename);
 
 int FS_Write(const void *buffer, int len, fileHandle_t f);
 
@@ -1065,10 +1063,6 @@ sysEvent_t  Com_GetSystemEvent(void);
 void    Sys_Init(void);
 qboolean Sys_IsNumLockDown(void);
 
-void *Sys_InitializeCriticalSection(void);
-void Sys_EnterCriticalSection(void *ptr);
-void Sys_LeaveCriticalSection(void *ptr);
-
 #ifdef _WIN32
 #define Sys_GetDLLName(x) x "_mp_" ARCH_STRING DLL_EXT
 #elif __OpenBSD__ //TODO: detect the *BSD variant
@@ -1080,19 +1074,6 @@ void Sys_LeaveCriticalSection(void *ptr);
 #else
 #define Sys_GetDLLName(x) x ".mp." ARCH_STRING DLL_EXT
 #endif
-
-void Sys_UnloadGame(void);
-void *Sys_GetGameAPI(void *parms);
-
-void Sys_UnloadCGame(void);
-void *Sys_GetCGameAPI(void);
-
-void Sys_UnloadUI(void);
-void *Sys_GetUIAPI(void);
-
-//bot libraries
-void Sys_UnloadBotLib(void);
-void *Sys_GetBotLibAPI(void *parms);
 
 char *Sys_GetCurrentUser(void);
 
