@@ -1532,6 +1532,8 @@ void CL_Vid_Restart_f(void)
 	// Settings may have changed so stop recording now
 	if (CL_VideoRecording())
 	{
+		//Stop recording and close the avi file before vid_restart
+		Cvar_Set("cl_avidemo","0");
 		CL_CloseAVI();
 	}
 
@@ -2922,6 +2924,10 @@ CL_StopVideo_f
 void CL_StopVideo_f(void)
 {
 	cl_avidemo->integer = 0;
+	/*
+	*We need to call something like S_Base_StopAllSounds();
+	*here to stop the stuttering. Something it crashes the game.
+	*/
 	CL_CloseAVI();
 }
 
