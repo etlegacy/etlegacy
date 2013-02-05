@@ -67,7 +67,7 @@
 #pragma warning(disable : 4115)
 #pragma warning(disable : 4125) // decimal digit terminates octal escape sequence
 #pragma warning(disable : 4127) // conditional expression is constant
-#pragma warning(disable : 4136)
+//#pragma warning(disable : 4136) // there is no warning number '4136'
 #pragma warning(disable : 4152) // nonstandard extension, function/data pointer conversion in expression
 #pragma warning(disable : 4201)
 #pragma warning(disable : 4214)
