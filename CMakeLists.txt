@@ -82,22 +82,23 @@ option(ET_KEY				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
 # Platform-specific settings
 #-----------------------------------------------------------------
 
-if(NOT MSVC)
-	set(CMAKE_C_FLAGS "-Wall")
-endif()
-
 if(UNIX AND CROSS_COMPILE32) # 32-bit build
 	message(STATUS "System: ${CMAKE_SYSTEM} (${ETLEGACY_SYSTEM_PROCESSOR})")
 	set(CMAKE_SYSTEM_PROCESSOR i386)
 	message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
 	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
+	
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
-	set(CMAKE_C_FLAGS_RELEASE "-s")
-	set(CMAKE_CXX_FLAGS "-m32")
-	set(CMAKE_CXX_FLAGS_RELEASE "-s")
-	set(CMAKE_EXE_LINKER_FLAGS "-m32")
-	set(CMAKE_SHARED_LINKER_FLAGS "-m32")
-	set(CMAKE_MODULE_LINKER_FLAGS "-m32")
+	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s -ffast-math")
+	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
+	
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s -ffast-math")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
+	
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
+	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -m32")
 endif(UNIX AND CROSS_COMPILE32)
 
 if(UNIX)
