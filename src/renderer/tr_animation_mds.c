@@ -53,9 +53,9 @@ frame.
 
 static float                    frontlerp, backlerp;
 static float                    torsoFrontlerp, torsoBacklerp;
-static int                      *triangles, *boneRefs, *pIndexes;
-static int                      indexes;
-static int                      baseIndex, baseVertex, oldIndexes;
+static int                      *triangles, *boneRefs;
+static glIndex_t                indexes, *pIndexes;
+static glIndex_t                baseIndex, baseVertex, oldIndexes;
 static int                      numVerts;
 static mdsVertex_t              *v;
 static mdsBoneFrame_t           bones[MDS_MAX_BONES], rawBones[MDS_MAX_BONES], oldBones[MDS_MAX_BONES];
@@ -1395,7 +1395,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 		memcpy(pIndexes, triangles, sizeof(triangles[0]) * indexes);
 		if (baseVertex)
 		{
-			int *indexesEnd;
+			glIndex_t *indexesEnd;
 			for (indexesEnd = pIndexes + indexes ; pIndexes < indexesEnd ; pIndexes++)
 			{
 				*pIndexes += baseVertex;

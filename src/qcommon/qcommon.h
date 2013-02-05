@@ -206,7 +206,7 @@ void NET_Config(qboolean enableNetworking);
 
 void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to);
 void QDECL NET_OutOfBandPrint(netsrc_t net_socket, netadr_t adr, const char *format, ...);
-void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, byte *format, int len);
+void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, const char *format, int len);
 
 qboolean NET_CompareAdr(netadr_t a, netadr_t b);
 qboolean NET_CompareBaseAdr(netadr_t a, netadr_t b);
@@ -783,14 +783,14 @@ MISC
 // returned by Sys_GetProcessorFeatures
 typedef enum
 {
-	CF_RDTSC         = 1 << 0,
-	    CF_MMX       = 1 << 1,
-	    CF_MMX_EXT   = 1 << 2,
-	    CF_3DNOW     = 1 << 3,
-	    CF_3DNOW_EXT = 1 << 4,
-	    CF_SSE       = 1 << 5,
-	    CF_SSE2      = 1 << 6,
-	    CF_ALTIVEC   = 1 << 7
+	CF_RDTSC     = 1 << 0,
+	CF_MMX       = 1 << 1,
+	CF_MMX_EXT   = 1 << 2,
+	CF_3DNOW     = 1 << 3,
+	CF_3DNOW_EXT = 1 << 4,
+	CF_SSE       = 1 << 5,
+	CF_SSE2      = 1 << 6,
+	CF_ALTIVEC   = 1 << 7
 } cpuFeatures_t;
 
 char *CopyString(const char *in);

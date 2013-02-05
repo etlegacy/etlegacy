@@ -670,7 +670,7 @@ void CL_SetCGameTime(void);
 void CL_FirstSnapshot(void);
 void CL_ShaderStateChanged(void);
 void CL_UpdateLevelHunkUsage(void);
-void CL_CGameBinaryMessageReceived(const char *buf, int buflen, int serverTime);
+void CL_CGameBinaryMessageReceived(const byte *buf, int buflen, int serverTime);
 
 // cl_ui.c
 

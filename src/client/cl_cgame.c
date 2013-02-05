@@ -539,7 +539,7 @@ static int CL_BinaryMessageStatus(void)
 CL_CGameBinaryMessageReceived
 ====================
 */
-void CL_CGameBinaryMessageReceived(const char *buf, int buflen, int serverTime)
+void CL_CGameBinaryMessageReceived(const byte *buf, int buflen, int serverTime)
 {
 	VM_Call(cgvm, CG_MESSAGERECEIVED, buf, buflen, serverTime);
 }

@@ -4242,7 +4242,7 @@ R_LoadCacheShaders
 void R_LoadCacheShaders(void)
 {
 	int  len;
-	byte *buf;
+	char *buf;
 	char *token, *pString;
 	char name[MAX_QPATH];
 
@@ -4264,7 +4264,7 @@ void R_LoadCacheShaders(void)
 		return;
 	}
 
-	buf = (byte *)ri.Hunk_AllocateTempMemory(len);
+	buf = (char *)ri.Hunk_AllocateTempMemory(len);
 	ri.FS_ReadFile("shader.cache", (void **)&buf);
 	pString = buf;
 

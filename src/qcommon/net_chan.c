@@ -604,7 +604,7 @@ NET_OutOfBandPrint
 Sends a data message in an out-of-band datagram (only used for "connect")
 ================
 */
-void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, byte *format, int len)
+void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, const char *format, int len)
 {
 	byte  string[MAX_MSGLEN * 2];
 	int   i;
