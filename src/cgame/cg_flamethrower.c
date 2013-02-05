@@ -773,7 +773,6 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 	vec3_t        vec;
 	unsigned char alphaChar;
 	vec2_t        rST;
-	static vec3_t lastPos;
 	polyBuffer_t  *pPolyBuffer;
 
 	if (alpha < 0)
@@ -876,7 +875,6 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 	pPolyBuffer->numIndicies += 6;
 	pPolyBuffer->numVerts    += 4;
 
-	VectorCopy(f->org, lastPos);
 }
 
 static int nextFlameLight = 0;

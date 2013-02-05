@@ -777,7 +777,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 	playerState_t *ps;
 	static int    hintValMax = 255;     // Breakable damage indicator can wrap when the entity has a lot of health
 	int           hintType, hintDist, hintVal;
-	qboolean      zooming, indirectHit; // indirectHit means the checkent was not the ent hit by the trace (checkEnt!=traceEnt)
+	qboolean      zooming;
 	int           trace_contents;
 	int           numOfIgnoredEnts = 0;
 
@@ -787,8 +787,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 	}
 
 	ps = &ent->client->ps;
-
-	indirectHit = qfalse;
 
 	zooming = (qboolean)(ps->eFlags & EF_ZOOMING);
 
@@ -938,8 +936,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 			if (!Q_stricmp(traceEnt->classname, "func_invisible_user"))
 			{
-				indirectHit = qtrue;
-
 				// Put this back in only in multiplayer
 				if (traceEnt->s.dmgFlags)      // hint icon specified in entity
 				{

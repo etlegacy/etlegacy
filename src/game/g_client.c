@@ -1645,7 +1645,6 @@ void ClientUserinfoChanged(int clientNum)
 	gentity_t  *ent    = g_entities + clientNum;
 	gclient_t  *client = ent->client;
 	int        i;
-	int        characterIndex; // unused
 	const char *userinfo_ptr                 = NULL;
 	char       cs_key[MAX_STRING_CHARS]      = "";
 	char       cs_value[MAX_STRING_CHARS]    = "";
@@ -1891,17 +1890,6 @@ void ClientUserinfoChanged(int clientNum)
 	}
 
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
-
-	// check for custom character
-	s = Info_ValueForKey(userinfo, "ch"); // remove me/FIXME ?
-	if (*s)
-	{
-		characterIndex = atoi(s);
-	}
-	else
-	{
-		characterIndex = -1;
-	}
 
 	// To communicate it to cgame
 	client->ps.stats[STAT_PLAYER_CLASS] = client->sess.playerType;

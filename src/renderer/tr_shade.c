@@ -1635,7 +1635,7 @@ void RB_StageIteratorVertexLitTexture(void)
 	SetIteratorFog();
 
 	// set face culling appropriately
-	GL_Cull(input->shader->cullType);
+	GL_Cull(shader->cullType);
 
 	// set arrays and lock
 	qglEnableClientState(GL_COLOR_ARRAY);

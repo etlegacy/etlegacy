@@ -5763,7 +5763,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	sfxHandle_t   sfx = 0, sfx2 = 0;
 	localEntity_t *le;
 	qboolean      isSprite = qfalse;
-	int           r, duration = 600, lightOverdraw = 0, i, j, markDuration = -1, volume = 127;
+	int           duration = 600, lightOverdraw = 0, i, j, markDuration = -1, volume = 127;
 	trace_t       trace;
 	vec3_t        lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
 	float         radius     = 32, light = 0, sfx2range = 0;
@@ -5818,18 +5818,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	case WP_K43:
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
-		// actually yeah.  meant that.  very rare.
-		r = (rand() & 3) + 1;   // JPW NERVE increased spark frequency so players can tell where rounds are coming from in MP
-
 		volume = 64;
-
-		/*      if ( r == 3 ) {
-		            sfx = cgs.media.sfx_ric1;
-		        } else if ( r == 2 ) {
-		            sfx = cgs.media.sfx_ric2;
-		        } else if ( r == 1 ) {
-		            sfx = cgs.media.sfx_ric3;
-		        }*/
 
 		// clientNum is a dummy field used to define what sort of effect to spawn
 

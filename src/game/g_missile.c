@@ -163,7 +163,6 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 {
 	gentity_t *other;
 	gentity_t *temp;
-	qboolean  hitClient = qfalse;
 	vec3_t    velocity;
 	int       event = 0, param = 0, otherentnum = 0;
 
@@ -214,10 +213,6 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	{
 		if (ent->damage)
 		{
-			if (AccuracyHit(other, &g_entities[ent->r.ownerNum]))
-			{
-				hitClient = qtrue;
-			}
 			BG_EvaluateTrajectoryDelta(&ent->s.pos, level.time, velocity, qfalse, ent->s.effect2Time);
 			if (!VectorLengthSquared(velocity))
 			{
@@ -358,10 +353,9 @@ Explode a missile without an impact
 */
 void G_ExplodeMissile(gentity_t *ent)
 {
-	vec3_t   dir;
-	vec3_t   origin;
-	qboolean small = qfalse;
-	int      etype;
+	vec3_t dir;
+	vec3_t origin;
+	int    etype;
 
 	if (ent->s.weapon == WP_SMOKE_MARKER && ent->active)
 	{
@@ -417,12 +411,10 @@ void G_ExplodeMissile(gentity_t *ent)
 	if (ent->accuracy == 1)
 	{
 		G_AddEvent(ent, EV_MISSILE_MISS_SMALL, DirToByte(dir));
-		small = qfalse;
 	}
 	else if (ent->accuracy == 2)
 	{
 		G_AddEvent(ent, EV_MISSILE_MISS_LARGE, DirToByte(dir));
-		small = qfalse;
 	}
 	else if (ent->accuracy == 3)
 	{

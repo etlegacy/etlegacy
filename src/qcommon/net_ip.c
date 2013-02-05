@@ -135,12 +135,12 @@ static cvar_t *net_mcast6iface;
 
 static struct sockaddr socksRelayAddr;
 
-static SOCKET ip_socket         = INVALID_SOCKET;
+static SOCKET ip_socket    = INVALID_SOCKET;
+static SOCKET socks_socket = INVALID_SOCKET;
+#ifdef FEATURE_IPV6
 static SOCKET ip6_socket        = INVALID_SOCKET;
-static SOCKET socks_socket      = INVALID_SOCKET;
 static SOCKET multicast6_socket = INVALID_SOCKET;
 
-#ifdef FEATURE_IPV6
 // Keep track of currently joined multicast group.
 static struct ipv6_mreq curgroup;
 // And the currently bound address.
@@ -828,12 +828,18 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
 	}
 
 	if ((ip_socket == INVALID_SOCKET && to.type == NA_IP) ||
-	    (ip_socket == INVALID_SOCKET && to.type == NA_BROADCAST) ||
-	    (ip6_socket == INVALID_SOCKET && to.type == NA_IP6) ||
+	    (ip_socket == INVALID_SOCKET && to.type == NA_BROADCAST))
+	{
+		return;
+	}
+
+#ifdef FEATURE_IPV6
+	if ((ip6_socket == INVALID_SOCKET && to.type == NA_IP6) ||
 	    (ip6_socket == INVALID_SOCKET && to.type == NA_MULTICAST6))
 	{
 		return;
 	}
+#endif
 
 	if (to.type == NA_MULTICAST6 && (net_enabled->integer & NET_DISABLEMCAST))
 	{
@@ -1317,7 +1323,7 @@ void NET_LeaveMulticast6(void)
 		multicast6_socket = INVALID_SOCKET;
 	}
 }
-#endif
+#endif // FEATURE_IPV6
 
 /*
 ====================
@@ -1692,10 +1698,13 @@ void NET_OpenIP(void)
 	int i;
 	int err;
 	int port;
+
+#ifdef FEATURE_IPV6
 	int port6;
 
-	port  = net_port->integer;
 	port6 = net_port6->integer;
+#endif
+	port = net_port->integer;
 
 	NET_GetLocalAddress();
 
@@ -2027,10 +2036,18 @@ void NET_Sleep(int msec)
 		return; // we're not a server, just run full speed
 
 	}
-	if (ip_socket == INVALID_SOCKET && ip6_socket == INVALID_SOCKET)
+	if (ip_socket == INVALID_SOCKET)
 	{
 		return;
 	}
+
+#ifdef FEATURE_IPV6
+	if (ip6_socket == INVALID_SOCKET)
+	{
+		return;
+	}
+#endif
+
 
 	if (msec < 0)
 	{

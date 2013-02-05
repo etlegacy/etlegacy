@@ -615,8 +615,8 @@ static void CG_Speaker(centity_t *cent)
 
 qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, int itemType)
 {
-	vec3_t  vorigin, eorigin, viewa, dir;
-	float   dot, dist;
+	vec3_t vorigin, eorigin, viewa, dir;
+	float  dot, dist;
 
 	BG_EvaluateTrajectory(&item->pos, atTime, eorigin, qfalse, item->effect2Time);
 
@@ -2617,9 +2617,8 @@ CG_AddEntityToTag
 */
 qboolean CG_AddEntityToTag(centity_t *cent)
 {
-	centity_t     *centParent;
-	entityState_t *sParent;
-	refEntity_t   ent;
+	centity_t   *centParent;
+	refEntity_t ent;
 
 	// event-only entities will have been dealt with already
 	if (cent->currentState.eType >= ET_EVENTS)
@@ -2646,7 +2645,6 @@ qboolean CG_AddEntityToTag(centity_t *cent)
 	}
 
 	centParent = &cg_entities[cent->tagParent];
-	sParent    = &centParent->currentState;
 
 	// if parent isn't visible, then don't draw us
 	if (!centParent->currentValid)

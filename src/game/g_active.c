@@ -741,7 +741,6 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 	int       event;
 	gclient_t *client = ent->client;
 	int       damage;
-	vec3_t    dir;
 
 	if (oldEventSequence < client->ps.eventSequence - MAX_EVENTS)
 	{
@@ -798,7 +797,6 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			{
 				damage = 5; // never used
 			}
-			VectorSet(dir, 0, 0, 1);
 			ent->pain_debounce_time = level.time + 200; // no normal pain sound
 			G_Damage(ent, NULL, NULL, NULL, NULL, damage, 0, MOD_FALLING);
 			ent->client->pmext.shoved = qfalse;

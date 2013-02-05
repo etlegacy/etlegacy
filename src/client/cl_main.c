@@ -2885,7 +2885,6 @@ video [filename]
 void CL_Video_f(void)
 {
 	char filename[MAX_OSPATH];
-	int  i, last;
 
 	if (!clc.demoplaying)
 	{
@@ -3958,7 +3957,6 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 {
 	int  i, type;
 	char info[MAX_INFO_STRING];
-	char *str;
 	char *infoString;
 	int  prot;
 	char *gameName;
@@ -4007,7 +4005,6 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 			{
 			case NA_BROADCAST:
 			case NA_IP:
-				str  = "udp";
 				type = 1;
 				break;
 			case NA_IP6:
@@ -4015,7 +4012,6 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 				break;
 
 			default:
-				str  = "???";
 				type = 0;
 				break;
 			}
@@ -4914,7 +4910,7 @@ CL_AddToLimboChat
 void CL_AddToLimboChat(const char *str)
 {
 	int  len = 0;
-	char *p, *ls;
+	char *p;
 
 	int i;
 
@@ -4930,7 +4926,6 @@ void CL_AddToLimboChat(const char *str)
 	p  = cl.limboChatMsgs[0];
 	*p = 0;
 
-	ls = NULL;
 	while (*str)
 	{
 		if (len > LIMBOCHAT_WIDTH - 1)
@@ -4943,10 +4938,6 @@ void CL_AddToLimboChat(const char *str)
 			*p++ = *str++;
 			*p++ = *str++;
 			continue;
-		}
-		if (*str == ' ')
-		{
-			ls = p;
 		}
 		*p++ = *str++;
 		len++;

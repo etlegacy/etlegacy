@@ -431,7 +431,7 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 	int               o, i, a, numVerts, numIndexes;
 	vec4_t            distanceCull, distanceVector;
 	float             alpha, z, dist, fovScale;
-	vec3_t            viewOrigin, local;
+	vec3_t            local;
 	vec_t             *xyz;
 	int               srcColor, *color;
 	int               dlightBits;
@@ -441,7 +441,6 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 	// basic setup
 	numVerts   = srf->numVerts;
 	numIndexes = srf->numIndexes;
-	VectorCopy(backEnd.orientation.viewOrigin, viewOrigin);
 
 	// set fov scale
 	fovScale = backEnd.viewParms.fovX * (1.0 / 90.0);
@@ -458,8 +457,6 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 	distanceCull[3] = tess.shader->distanceCull[3];
 	if (distanceCull[1] > 0)
 	{
-		//VectorSubtract( srf->localOrigin, viewOrigin, delta );
-		//alpha = (distanceCull[ 1 ] - VectorLength( delta ) + srf->radius) * distanceCull[ 3 ];
 		z     = fovScale * (DotProduct(srf->origin, distanceVector) + distanceVector[3] - srf->radius);
 		alpha = (distanceCull[1] - z) * distanceCull[3];
 		if (alpha < distanceCull[2])

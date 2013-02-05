@@ -538,13 +538,11 @@ START_ANIMATE - if flagged, the entity will spawn animating
 */
 void SP_misc_gamemodel(gentity_t *ent)
 {
-	vec_t    scale;
-	vec3_t   vScale;
-	int      trunksize, trunkheight;
-	char     tagname[MAX_QPATH];
-	char     *dummy;
-	int      num_frames, start_frame, fps;
-	qboolean reverse = qfalse;
+	vec_t  scale;
+	vec3_t vScale;
+	int    trunksize, trunkheight;
+	char   tagname[MAX_QPATH];
+	int    num_frames, start_frame, fps;
 
 	// static gamemodels client side only now :D so server can just wave bye-bye
 	if (!ent->scriptName && !ent->targetname && !ent->spawnflags)
@@ -563,10 +561,6 @@ void SP_misc_gamemodel(gentity_t *ent)
 		G_SpawnInt("frames", "0", &num_frames);
 		G_SpawnInt("start", "0", &start_frame);
 		G_SpawnInt("fps", "20", &fps);
-		if (G_SpawnString("reverse", "", &dummy))
-		{
-			reverse = qtrue;
-		}
 
 		if (num_frames == 0)
 		{
@@ -1334,9 +1328,6 @@ void clamp_hweapontofirearc(gentity_t *self, vec3_t dang)
 {
 	float diff;
 	//float yawspeed;
-	qboolean clamped;
-
-	clamped = qfalse;
 
 	// go back to start position
 	VectorCopy(self->s.angles, dang);
@@ -1344,13 +1335,11 @@ void clamp_hweapontofirearc(gentity_t *self, vec3_t dang)
 
 	if (dang[0] < 0 && dang[0] < -(self->varc))
 	{
-		clamped = qtrue;
 		dang[0] = -(self->varc);
 	}
 
 	if (dang[0] > 0 && dang[0] > (self->varc / 2))
 	{
-		clamped = qtrue;
 		dang[0] = self->varc / 2;
 	}
 
@@ -1358,8 +1347,6 @@ void clamp_hweapontofirearc(gentity_t *self, vec3_t dang)
 	diff = AngleDifference(self->s.angles[YAW], dang[YAW]);
 	if (fabs(diff) > self->harc)
 	{
-		clamped = qtrue;
-
 		if (diff > 0)
 		{
 			dang[YAW] = AngleMod(self->s.angles[YAW] - self->harc);

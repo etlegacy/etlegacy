@@ -3420,9 +3420,8 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	trace_t   tr;
 	gentity_t *tent;
 	gentity_t *traceEnt;
-	qboolean  hitClient     = qfalse;
-	qboolean  reducedDamage = qfalse;
-	qboolean  waslinked     = qfalse;
+	qboolean  hitClient = qfalse;
+	qboolean  waslinked = qfalse;
 
 	// prevent shooting ourselves in the head when prone, firing through a breakable
 	if (g_entities[attacker->s.number].client && g_entities[attacker->s.number].r.linked == qtrue)
@@ -3468,8 +3467,6 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		// ~~~___---___
 		if (dist > Square(1500.f))
 		{
-			reducedDamage = qtrue;
-
 			if (dist > Square(2500.f))
 			{
 				damage *= 0.5f;
@@ -3494,11 +3491,9 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		scale = 1.0f - scale;
 
 		// And, finally, cap it.
-		reducedDamage = qtrue;
 		if (scale >= 1.0f)
 		{
-			scale         = 1.0f;
-			reducedDamage = qfalse;
+			scale = 1.0f;
 		}
 		else if (scale < 0.5f)
 		{

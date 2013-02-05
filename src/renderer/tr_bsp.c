@@ -575,7 +575,6 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 {
 	srfFoliage_t *foliage;
 	int          i, j, numVerts, numIndexes, numInstances, size;
-	vec4_t       *xyz, *normal;
 	vec3_t       bounds[2], boundsTranslated[2];
 	float        scale;
 
@@ -636,8 +635,6 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	// copy vertexes
 	ClearBounds(bounds[0], bounds[1]);
 	verts += LittleLong(ds->firstVert);
-	xyz    = foliage->xyz;
-	normal = foliage->normal;
 	for (i = 0; i < numVerts; i++)
 	{
 		// copy xyz and normal
