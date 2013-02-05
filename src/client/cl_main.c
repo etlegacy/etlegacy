@@ -5221,7 +5221,7 @@ CL_CheckTranslationString
 qboolean CL_CheckTranslationString(char *original, char *translated)
 {
 	char format_org[128], format_trans[128];
-	int  len, i;
+	size_t i, len;
 
 	memset(format_org, 0, 128);
 	memset(format_trans, 0, 128);

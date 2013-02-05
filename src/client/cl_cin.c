@@ -110,7 +110,7 @@ typedef struct
 
 	long samplesPerPixel;                               // defaults to 2
 	byte *gray;
-	unsigned int xsize, ysize, maxsize, minsize;
+	long xsize, ysize, maxsize, minsize;
 
 	qboolean half, smootheddouble, inMemory;
 	long normalBuffer0;
@@ -1358,8 +1358,8 @@ e_status CIN_StopCinematic(int handle)
  */
 e_status CIN_RunCinematic(int handle)
 {
-	int start    = 0;
-	int thisTime = 0;
+	unsigned int start    = 0;
+	unsigned int thisTime = 0;
 
 	if (handle < 0 || handle >= MAX_VIDEO_HANDLES || cinTable[handle].status == FMV_EOF)
 	{
