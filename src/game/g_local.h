@@ -113,7 +113,7 @@ typedef struct gclient_s gclient_t;
 
 //====================================================================
 
-// Scripting, these structure are not saved into savegames (parsed each start)
+// Scripting (parsed at each start)
 typedef struct
 {
 	char *actionString;

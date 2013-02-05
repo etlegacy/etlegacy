@@ -1993,7 +1993,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 		trap_SetConfigstring(CS_ROUNDSCORES2, va("%i", g_alliedwins.integer));
 	}
 
-	if (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_STOPWATCH || GT_WOLF_MAPVOTE)
+	if (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_MAPVOTE)
 	{
 		bani_clearmapxp();
 	}
