@@ -2595,6 +2595,7 @@ void CG_LoadHudMenu(void)
 	cgDC.addRefEntityToScene = &trap_R_AddRefEntityToScene;
 	cgDC.renderScene         = &trap_R_RenderScene;
 	cgDC.registerFont        = &trap_R_RegisterFont;
+	cgDC.ownerDrawItem	 = NULL;
 	cgDC.getValue            = &CG_GetValue;
 	cgDC.ownerDrawVisible    = &CG_OwnerDrawVisible;
 	cgDC.runScript           = &CG_RunMenuScript;
