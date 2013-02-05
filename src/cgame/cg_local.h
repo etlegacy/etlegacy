@@ -718,7 +718,6 @@ typedef struct
 #define MAX_SPAWN_VARS          64
 #define MAX_SPAWN_VARS_CHARS    2048
 
-
 #define MAX_SPAWNPOINTS 32
 #define MAX_SPAWNDESC   128
 
@@ -769,9 +768,6 @@ typedef struct
 
 	team_t team;
 } mapEntityData_t;
-
-// the most buddies we can have
-#define MAX_NUM_BUDDY  6 // obsolete
 
 typedef enum
 {
@@ -2628,9 +2624,9 @@ void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void(txt_dump) (char *));
-void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
-void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
+void CG_parseWeaponStats_cmd(void (txt_dump) (char *));
+void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
+void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
 void CG_scores_cmd(void);
 
 // cg_playerstate.c
