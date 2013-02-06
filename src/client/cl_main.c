@@ -1532,6 +1532,8 @@ void CL_Vid_Restart_f(void)
 	// Settings may have changed so stop recording now
 	if (CL_VideoRecording())
 	{
+		//Stop recording and close the avi file before vid_restart
+		Cvar_Set("cl_avidemo","0");
 		CL_CloseAVI();
 	}
 
@@ -2213,21 +2215,18 @@ void CL_MotdPacket(netadr_t from)
 	Cvar_Set("cl_motdString", challenge);
 }
 
-/*
-===================
-CL_PrintPackets
-
-an OOB message from server, with potential markups
-print OOB are the only messages we handle markups in
-[err_dialog]: used to indicate that the connection should be aborted
-  no further information, just do an error diagnostic screen afterwards
-[err_prot]: HACK. This is a protocol error. The client uses a custom
-  protocol error message (client sided) in the diagnostic window.
-  The space for the error message on the connection screen is limited
-  to 256 chars.
-===================
-*/
-void CL_PrintPacket(netadr_t from, msg_t *msg)
+/**
+ * @brief an OOB message from server, with potential markups.
+ * Print OOB are the only messages we handle markups in.
+ *
+ * [err_dialog]: Used to indicate that the connection should be aborted. No
+ *               further information, just do an error diagnostic screen afterwards.
+ * [err_prot]:   This is a protocol error. The client uses a custom protocol error
+ *               message (client sided) in the diagnostic window.
+ * ET://         Redirects client to another server.
+ * The space for the error message on the connection screen is limited to 256 chars.
+ */
+void CL_PrintPacket(msg_t *msg)
 {
 	char *s;
 	s = MSG_ReadBigString(msg);
@@ -2544,7 +2543,11 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	// echo request from server
 	if (!Q_stricmp(c, "print"))
 	{
-		CL_PrintPacket(from, msg);
+		// NOTE: we may have to add exceptions for auth and update servers
+		if (NET_CompareAdr(from, clc.serverAddress))
+		{
+			CL_PrintPacket(msg);
+		}
 		return;
 	}
 
@@ -2922,6 +2925,10 @@ CL_StopVideo_f
 void CL_StopVideo_f(void)
 {
 	cl_avidemo->integer = 0;
+	/*
+	*We need to call something like S_Base_StopAllSounds();
+	*here to stop the stuttering. Something it crashes the game.
+	*/
 	CL_CloseAVI();
 }
 
@@ -5220,7 +5227,7 @@ CL_CheckTranslationString
 */
 qboolean CL_CheckTranslationString(char *original, char *translated)
 {
-	char format_org[128], format_trans[128];
+	char   format_org[128], format_trans[128];
 	size_t i, len;
 
 	memset(format_org, 0, 128);
