@@ -323,7 +323,7 @@ PM_TraceAll
 finds worst trace of body/legs, for collision.
 ==================
 */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	trace_t steptrace;
 	vec3_t  ofs, org, point;
@@ -393,13 +393,13 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 }
 
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void(tracefunc) (trace_t * results,
-                                   const vec3_t start,
-                                   const vec3_t mins,
-                                   const vec3_t maxs,
-                                   const vec3_t end,
-                                   int passEntityNum,
-                                   int contentMask),
+                  void (tracefunc) (trace_t *results,
+                                    const vec3_t start,
+                                    const vec3_t mins,
+                                    const vec3_t maxs,
+                                    const vec3_t end,
+                                    int passEntityNum,
+                                    int contentMask),
                   int ignoreent,
                   int tracemask)
 {
@@ -5095,7 +5095,7 @@ are being updated isntead of a full move
 ================
 */
 // take a tracemask as well - we can't use anything out of pm
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)        //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)        //   modified
 {
 	short  temp;
 	int    i;

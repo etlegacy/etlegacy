@@ -641,25 +641,27 @@ void RE_Finish(void)
 RE_TakeVideoFrame
 =============
 */
-void RE_TakeVideoFrame( int width, int height,
-	byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg )
+void RE_TakeVideoFrame(int width, int height,
+                       byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg)
 {
-	videoFrameCommand_t	*cmd;
+	videoFrameCommand_t *cmd;
 
-	if( !tr.registered ) {
+	if (!tr.registered)
+	{
 		return;
 	}
 
-	cmd = R_GetCommandBuffer( sizeof( *cmd ) );
-	if( !cmd ) {
+	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	if (!cmd)
+	{
 		return;
 	}
 
 	cmd->commandId = RC_VIDEOFRAME;
 
-	cmd->width = width;
-	cmd->height = height;
+	cmd->width         = width;
+	cmd->height        = height;
 	cmd->captureBuffer = captureBuffer;
-	cmd->encodeBuffer = encodeBuffer;
-	cmd->motionJpeg = motionJpeg;
+	cmd->encodeBuffer  = encodeBuffer;
+	cmd->motionJpeg    = motionJpeg;
 }

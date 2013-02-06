@@ -1530,7 +1530,7 @@ skin_t *R_GetSkinByHandle(qhandle_t hSkin);
 
 void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude);
 
-const void *RB_TakeVideoFrameCmd(const void *data );
+const void *RB_TakeVideoFrameCmd(const void *data);
 
 // tr_shader.c
 
@@ -1920,7 +1920,8 @@ typedef struct
 	qboolean jpeg;
 } screenshotCommand_t;
 
-typedef struct {
+typedef struct
+{
 	int commandId;
 	int width;
 	int height;

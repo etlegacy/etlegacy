@@ -1476,10 +1476,11 @@ void S_GetSoundtime(void)
 	static int oldsamplepos;
 	int        fullsamples = dma.samples / dma.channels;
 
-    if ( CL_VideoRecording() ) {
-        s_soundtime += (int)ceil( dma.speed / cl_avidemo->value );
-        return;
-    }
+	if (CL_VideoRecording())
+	{
+		s_soundtime += (int)ceil(dma.speed / cl_avidemo->value);
+		return;
+	}
 
 	// it is possible to miscount buffers if it has wrapped twice between
 	// calls to S_Update.  Oh well.

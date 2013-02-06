@@ -140,7 +140,7 @@ typedef struct
 	void (*Finish)(void);
 
 	// avi output stuff
-	void (*TakeVideoFrame) (int h, int w, byte * captureBuffer, byte * encodeBuffer, qboolean motionJpeg);
+	void (*TakeVideoFrame)(int h, int w, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg);
 
 } refexport_t;
 
@@ -207,8 +207,8 @@ typedef struct
 	e_status (*CIN_RunCinematic)(int handle);
 
 	// avi output stuff
-	qboolean (*CL_VideoRecording) (void);
-	void (*CL_WriteAVIVideoFrame) (const byte * buffer, int size);
+	qboolean (*CL_VideoRecording)(void);
+	void (*CL_WriteAVIVideoFrame)(const byte *buffer, int size);
 
 } refimport_t;
 
