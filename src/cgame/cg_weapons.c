@@ -1963,6 +1963,9 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 		filename = "mapmortar.weap";
 		break;     // do we really need this?
 	case WP_ARTY:
+	case VERYBIGEXPLOSION:
+	case WP_DUMMY_MG42:
+		//CG_Printf(S_COLOR_YELLOW "WARNING: skipping weapon %i to register.\n", weaponNum);
 		return;     // to shut the game up
 	default:
 		CG_Printf(S_COLOR_RED "WARNING: trying to register weapon %i but there is no weapon file entry for it.\n", weaponNum);
@@ -5759,16 +5762,14 @@ ClientNum is a dummy field used to define what sort of effect to spawn
 */
 void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
-	qhandle_t     mod = 0, mark = 0, shader = 0;
-	sfxHandle_t   sfx = 0, sfx2 = 0;
-	localEntity_t *le;
-	qboolean      isSprite = qfalse;
-	int           duration = 600, lightOverdraw = 0, i, j, markDuration = -1, volume = 127;
-	trace_t       trace;
-	vec3_t        lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
-	float         radius     = 32, light = 0, sfx2range = 0;
-	vec4_t        projection, color;
-	vec3_t        markOrigin;
+	qhandle_t   mod      = 0, mark = 0, shader = 0;
+	sfxHandle_t sfx      = 0, sfx2 = 0;
+	qboolean    isSprite = qfalse;
+	int         duration = 600, lightOverdraw = 0, i, j, markDuration = -1, volume = 127;
+	trace_t     trace;
+	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
+	float       radius     = 32, light = 0, sfx2range = 0;
+	vec4_t      projection, color;
 
 	if (surfFlags & SURF_SKY)
 	{
@@ -6215,7 +6216,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 
 	if (mod)
 	{
-		le                = CG_MakeExplosion(origin, dir, mod, shader, duration, isSprite);
+		localEntity_t *le = CG_MakeExplosion(origin, dir, mod, shader, duration, isSprite);
+
 		le->light         = light;
 		le->lightOverdraw = lightOverdraw;
 		VectorCopy(lightColor, le->lightColor);
@@ -6231,6 +6233,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	}
 	else if (mark)
 	{
+		vec3_t markOrigin;
+
 		VectorSubtract(vec3_origin, dir, projection);
 		projection[3] = radius * 32;
 		VectorMA(origin, -16.0f, projection, markOrigin);
@@ -6249,19 +6253,9 @@ CG_MissileHitWallSmall
 */
 void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir)
 {
-	qhandle_t mod     = 0;
-	qhandle_t mark    = cgs.media.burnMarkShader;
-	qhandle_t shader  = cgs.media.rocketExplosionShader; // copied from RL
-	sfxHandle_t sfx   = cgs.media.sfx_rockexp;
-	float radius      = 80;
-	float light       = 300;
-	vec3_t lightColor = { 0.75f, 0.5f, 0.1f };
-	localEntity_t *le;
-	qboolean isSprite = qtrue;
-	int duration      = 1000;
-	int lightOverdraw = 0;
 	vec3_t sprOrg, sprVel;
-	vec4_t projection, color;
+	static vec4_t projection = { 0, 0, -1.0f, 80.0f };     // {x,y,x,radius}
+	vec4_t color             = { 1.0f, 1.0f, 1.0f, 1.0f }; // FIXME: make static
 
 	// explosion sprite animation
 	VectorMA(origin, 16, dir, sprOrg);
@@ -6276,18 +6270,9 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 	             // 15 + rand()%5 );   // count
 	             7 + rand() % 2);       // count
 
-	if (sfx)
+	if (cgs.media.sfx_rockexp)
 	{
-		trap_S_StartSound(origin, -1, CHAN_AUTO, sfx);
-	}
-
-	// create the explosion
-	if (mod)
-	{
-		le                = CG_MakeExplosion(origin, dir, mod, shader, duration, isSprite);
-		le->light         = light;
-		le->lightOverdraw = lightOverdraw;
-		VectorCopy(lightColor, le->lightColor);
+		trap_S_StartSound(origin, -1, CHAN_AUTO, cgs.media.sfx_rockexp);
 	}
 
 	// impact mark
@@ -6299,10 +6284,7 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 
 	CG_ImpactMark(mark, markOrigin, projection, radius, random() * 360.0f, 1.0f, 1.0f, 1.0f, 1.0f, cg_markTime.integer);
 #else
-	VectorSet(projection, 0, 0, -1);
-	projection[3] = radius;
-	Vector4Set(color, 1.0f, 1.0f, 1.0f, 1.0f);
-	trap_R_ProjectDecal(mark, 1, (vec3_t *) origin, projection, color, cg_markTime.integer, (cg_markTime.integer >> 4));
+	trap_R_ProjectDecal(cgs.media.burnMarkShader, 1, (vec3_t *) origin, projection, color, cg_markTime.integer, (cg_markTime.integer >> 4));
 #endif
 }
 
