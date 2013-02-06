@@ -35,6 +35,9 @@
 #include "q_shared.h"
 #include "qcommon.h"
 #include "unzip.h"
+#ifdef _WIN32
+#define realpath(N, R) _fullpath((R), (N), _MAX_PATH)
+#endif // _WIN32
 
 /*
 =============================================================================
@@ -2840,7 +2843,6 @@ int FS_PathCmp(const char *s1, const char *s2)
 	return 0;       // strings are equal
 }
 
-#if !defined (_WIN32) // FIXME: realpath isn't available on MS see GetFullPathNameA()
 /*
  * FS_IsSamePath
  *
@@ -2870,7 +2872,6 @@ qboolean FS_IsSamePath(const char *s1, const char *s2)
 
 	return qfalse;
 }
-#endif
 
 /*
 ================
@@ -3527,11 +3528,8 @@ static void FS_Startup(const char *gameName)
 
 #ifndef DEDICATED
 	// don't start if base == home, so downloads won't overwrite original files
-#if defined (_WIN32)
-	if (FS_PathCmp(fs_homepath->string, fs_basepath->string) == 0)
-#else
+	//if (FS_PathCmp(fs_homepath->string, fs_basepath->string) == 0)
 	if (FS_IsSamePath(fs_homepath->string, fs_basepath->string))
-#endif
 	{
 		Com_Error(ERR_FATAL, "FS_Startup: fs_homepath and fs_basepath are identical - set different paths!\n");
 		// NOTE: if both are same - crashlog.txt is written into (fs_homepath)
