@@ -1533,7 +1533,7 @@ void CL_Vid_Restart_f(void)
 	if (CL_VideoRecording())
 	{
 		//Stop recording and close the avi file before vid_restart
-		Cvar_Set("cl_avidemo","0");
+		Cvar_Set("cl_avidemo", "0");
 		CL_CloseAVI();
 	}
 

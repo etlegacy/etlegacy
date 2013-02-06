@@ -212,7 +212,7 @@ typedef unsigned __int8 uint8_t;
 
 // Note ET:L uses BSD Library functions for this
 
-static inline float idSqrt(float x)
+static ID_NONSTATIC_INLINE float idSqrt(float x)
 {
     const float half = 0.5;
     const float one  = 1.0;
@@ -707,7 +707,7 @@ extern void (QDECL *Q_SnapVector)(vec3_t vec);
 
 #if idppc
 
-static inline float Q_rsqrt(float number)
+static ID_NONSTATIC_INLINE float Q_rsqrt(float number)
 {
 	float x = 0.5f * number;
 	float y;
@@ -720,7 +720,7 @@ static inline float Q_rsqrt(float number)
 }
 
 #ifdef __GNUC__
-static inline float Q_fabs(float x)
+static ID_NONSTATIC_INLINE float Q_fabs(float x)
 {
 	float abs_x;
 

@@ -156,6 +156,7 @@
 
 #ifdef __clang__
 #define ID_INLINE static inline
+#define ID_NONSTATIC_INLINE inline
 #else
 #define ID_INLINE inline
 #endif
@@ -193,6 +194,7 @@
 
 #ifdef __clang__
 #define ID_INLINE static inline
+#define ID_NONSTATIC_INLINE inline
 #else
 #define ID_INLINE inline
 #endif
@@ -383,6 +385,10 @@
 
 #ifndef ID_INLINE
 #error "ID_INLINE not defined"
+#endif
+
+#ifndef ID_NONSTATIC_INLINE
+#define ID_NONSTATIC_INLINE ID_INLINE
 #endif
 
 #ifndef PATH_SEP
