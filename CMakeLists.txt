@@ -76,16 +76,6 @@ endif()
 
 set(ET_FS_BASEPATH			""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 option(ET_KEY				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
-
-#-----------------------------------------------------------------
-# Platform-independant settings
-#-----------------------------------------------------------------
-
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s -ffast-math")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
-
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s -ffast-math")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 	
 #-----------------------------------------------------------------
 # Platform-specific settings
@@ -98,7 +88,6 @@ if(UNIX AND CROSS_COMPILE32) # 32-bit build
 	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
 	
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
-	
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
 	
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
@@ -107,6 +96,16 @@ if(UNIX AND CROSS_COMPILE32) # 32-bit build
 endif(UNIX AND CROSS_COMPILE32)
 
 if(UNIX)
+
+	# optimization/debug flags
+	# Note/FIXME: check this for Darwin, explore Win optimizations options
+	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s -ffast-math")
+	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
+
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s -ffast-math")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
+
+
 	if(CMAKE_SYSTEM MATCHES "OpenBSD*")
 		set(OS_LIBRARIES m pthread)
 		set(LIB_SUFFIX ".mp.obsd.")
@@ -124,14 +123,17 @@ if(UNIX)
 		set(OS_LIBRARIES dl m rt pthread)
 		set(LIB_SUFFIX ".mp.")
 	endif()
+	
 	if(NOT MSYS)
 		include(CheckCCompilerFlag)
 		check_c_compiler_flag("-fvisibility=hidden" SUPPORT_VISIBILITY)
 		if(SUPPORT_VISIBILITY)
+			# note: visibility support starts with  __GNUC__ >= 4
 			message(STATUS "Compiling with -fvisibility=hidden")
 			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 		endif(SUPPORT_VISIBILITY)
 	endif(NOT MSYS)
+	
 elseif(WIN32)
 	add_definitions(-DWINVER=0x501)
 	set(OS_LIBRARIES ws2_32 psapi winmm)
