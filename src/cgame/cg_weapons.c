@@ -125,7 +125,7 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 	VectorCopy(re->origin, le->pos.trBase);
 
 	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME))         // modified since slime is no longer deadly
-	{ //  if ( CG_PointContents( re->origin, -1 ) & CONTENTS_WATER ) {
+	{
 		waterScale = 0.10;
 	}
 
@@ -566,17 +566,6 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 			             0,
 			             cgs.media.smokePuffShader);
 		}
-//          CG_ParticleExplosion( "expblue", lastPos, vec3_origin, 100 + (int)(rnd*400), 4, 4 );    // fire "flare"
-
-
-		// use the optimized local entity add
-//      le->leType = LE_SCALE_FADE;
-		/* this one works
-		        if (rand()%4)
-		            CG_ParticleExplosion( "blacksmokeanim", origin, dir, 2800+(int)(random()*1500), 15, 45+(int)(rnd*90) ); // smoke blacksmokeanim
-		        else
-		            CG_ParticleExplosion( "expblue", lastPos, vec3_origin, 100 + (int)(rnd*400), 4, 4 );    // fire "flare"
-		*/
 	}
 }
 
@@ -924,12 +913,13 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 	len = trap_FS_FOpenFile(filename, &f, FS_READ);
 	if (len <= 0)
 	{
+		CG_Printf("CG_ParseWeaponConfig: File not found: %s\n", filename);
 		return qfalse;
 	}
 
 	if (len >= sizeof(text) - 1)
 	{
-		CG_Printf("File %s too long\n", filename);
+		CG_Printf("CG_ParseWeaponConfig: File %s too long\n", filename);
 		trap_FS_FCloseFile(f);
 		return qfalse;
 	}
@@ -970,7 +960,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 			text_p = prev;  // unget the token
 			break;
 		}
-		Com_Printf("unknown token in weapon cfg '%s' is %s\n", token, filename);
+		Com_Printf("CG_ParseWeaponConfig: Unknown token in weapon cfg '%s' is %s\n", token, filename);
 	}
 
 	for (i = 0 ; i < MAX_WP_ANIMATIONS  ; i++)
@@ -1053,7 +1043,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 
 	if (i != MAX_WP_ANIMATIONS)
 	{
-		CG_Printf("Error parsing weapon animation file: %s", filename);
+		CG_Printf("CG_ParseWeaponConfig: Error parsing weapon animation file: %s", filename);
 		return qfalse;
 	}
 
@@ -5748,7 +5738,7 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
 	re->shaderRGBA[1] = 0xff;
 	re->shaderRGBA[2] = 0xff;
 	re->shaderRGBA[3] = 0xff;
-	le->color[3]      = 1.0;
+	le->color[3]      = 1.0f;
 }
 
 /*
@@ -5769,7 +5759,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
 	float       radius     = 32, light = 0, sfx2range = 0;
-	vec4_t      projection, color;
+	vec4_t      projection;
 
 	if (surfFlags & SURF_SKY)
 	{
@@ -5914,7 +5904,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 					mark = cgs.media.bulletMarkShader;
 				}
 
-				// ydnar: set mark duration
+				// set mark duration
 				markDuration = cg_markTime.integer;
 			}
 		}
@@ -6228,8 +6218,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	{
 		VectorSet(projection, 0, 0, -1);
 		projection[3] = radius;
-		Vector4Set(color, 1.0f, 1.0f, 1.0f, 1.0f);
-		trap_R_ProjectDecal(mark, 1, (vec3_t *) origin, projection, color, markDuration, (markDuration >> 4));
+
+		trap_R_ProjectDecal(mark, 1, (vec3_t *) origin, projection, colorWhite, markDuration, (markDuration >> 4));
 	}
 	else if (mark)
 	{
@@ -6255,7 +6245,6 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 {
 	vec3_t sprOrg, sprVel;
 	static vec4_t projection = { 0, 0, -1.0f, 80.0f };     // {x,y,x,radius}
-	vec4_t color             = { 1.0f, 1.0f, 1.0f, 1.0f }; // FIXME: make static
 
 	// explosion sprite animation
 	VectorMA(origin, 16, dir, sprOrg);
@@ -6284,7 +6273,7 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 
 	CG_ImpactMark(mark, markOrigin, projection, radius, random() * 360.0f, 1.0f, 1.0f, 1.0f, 1.0f, cg_markTime.integer);
 #else
-	trap_R_ProjectDecal(cgs.media.burnMarkShader, 1, (vec3_t *) origin, projection, color, cg_markTime.integer, (cg_markTime.integer >> 4));
+	trap_R_ProjectDecal(cgs.media.burnMarkShader, 1, (vec3_t *) origin, projection, colorWhite, cg_markTime.integer, (cg_markTime.integer >> 4));
 #endif
 }
 
@@ -6642,9 +6631,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 	trace_t trace, trace2;
 	vec3_t dir;
 	vec3_t start;
-	vec4_t projection;
 	static int lastBloodSpat;
-	centity_t *cent = &cg_entities[fleshEntityNum];
 
 	// don't ever shoot if we're binoced in
 	if (cg_entities[sourceEntityNum].currentState.eFlags & EF_ZOOMING)
@@ -6737,6 +6724,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 		float rnd, tmpf;
 		vec3_t smokedir, tmpv, tmpv2;
 		int i, headshot;
+		centity_t *cent = &cg_entities[fleshEntityNum];
 
 		if (fleshEntityNum < MAX_CLIENTS)
 		{
@@ -6806,11 +6794,12 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 		// if we haven't dropped a blood spat in a while, check if this is a good scenario
 		if (cg_blood.integer && (lastBloodSpat > cg.time || lastBloodSpat < cg.time - 500))
 		{
-			vec4_t color;
 			vec3_t trend;
 
 			if (CG_CalcMuzzlePoint(sourceEntityNum, start))
 			{
+				vec4_t projection;
+
 				VectorSubtract(end, start, dir);
 				VectorNormalize(dir);
 				VectorMA(end, 128, dir, trend);
@@ -6829,8 +6818,8 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 #else
 					VectorSet(projection, 0, 0, -1);
 					projection[3] = 15.0f + random() * 20.0f;
-					Vector4Set(color, 1.0f, 1.0f, 1.0f, 1.0f);
-					trap_R_ProjectDecal(cgs.media.bloodDotShaders[rand() % 5], 1, (vec3_t *) origin, projection, color,
+
+					trap_R_ProjectDecal(cgs.media.bloodDotShaders[rand() % 5], 1, (vec3_t *) origin, projection, colorWhite,
 					                    cg_bloodTime.integer * 1000, (cg_bloodTime.integer * 1000) >> 4);
 #endif
 					lastBloodSpat = cg.time;
@@ -6855,8 +6844,8 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 #else
 						VectorSet(projection, 0, 0, -1);
 						projection[3] = 15.0f + random() * 20.0f;
-						Vector4Set(color, 1.0f, 1.0f, 1.0f, 1.0f);
-						trap_R_ProjectDecal(cgs.media.bloodDotShaders[rand() % 5], 1, (vec3_t *) origin, projection, color,
+
+						trap_R_ProjectDecal(cgs.media.bloodDotShaders[rand() % 5], 1, (vec3_t *) origin, projection, colorWhite,
 						                    cg_bloodTime.integer * 1000, (cg_bloodTime.integer * 1000) >> 4);
 #endif
 						lastBloodSpat = cg.time;
