@@ -66,8 +66,12 @@
 #endif
 #include <datatypes/textclass.h>
 #include <intuition/intuition.h>
+#include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/iffparse.h>
+#include <proto/openurl.h>
+
+struct Library *OpenURLBase;
 #endif
 
 #ifndef __AROS__
@@ -995,13 +999,14 @@ void Sys_StartProcess(char *cmdline, qboolean doexit)
  * @brief Open URL in system browser
  * @param[in] url    URL to open
  * @param     doexit Quit from game after opening URL
- * @todo add openurl.library support for AROS
  */
 void Sys_OpenURL(const char *url, qboolean doexit)
 {
-#if !defined (DEDICATED) && !defined (__AROS__)
+#ifndef DEDICATED
+#ifndef __AROS__
 	char fn[MAX_OSPATH];
 	char cmdline[MAX_CMD];
+#endif
 
 	static qboolean doexit_spamguard = qfalse;
 
@@ -1013,6 +1018,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 
 	Com_Printf("Open URL: %s\n", url);
 
+#ifndef __AROS__
 	Com_DPrintf("URL script: %s\n", fn);
 
 #ifdef __APPLE__
@@ -1022,6 +1028,13 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 #endif
 
 	Sys_StartProcess(cmdline, doexit);
+#else
+	if ((OpenURLBase = OpenLibrary("openurl.library", 1)))
+	{
+		URL_Open(url, TAG_DONE);
+		CloseLibrary(OpenURLBase);
+	}
+#endif
 
 	SDL_WM_IconifyWindow();
 #endif
