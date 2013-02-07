@@ -203,14 +203,10 @@ CLIENT RELIABLE COMMAND COMMUNICATION
 =======================================================================
 */
 
-/*
-======================
-CL_AddReliableCommand
-
-The given command will be transmitted to the server, and is gauranteed to
-not have future usercmd_t executed before it is executed
-======================
-*/
+/**
+ * @brief The given command will be transmitted to the server, and is guaranteed to
+ * not have future usercmd_t executed before it is executed.
+ */
 void CL_AddReliableCommand(const char *cmd)
 {
 	int index;
@@ -2406,13 +2402,11 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 	Com_Printf("%d servers parsed (total %d)\n", numservers, total);
 }
 
-/*
-=================
-CL_ConnectionlessPacket
-
-Responses to broadcasts, etc
-=================
-*/
+/**
+ * @brief Responses to broadcasts, etc
+ *
+ * Compare first n chars so it doesn’t bail if token is parsed incorrectly.
+ */
 void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 {
 	char *s;
@@ -2438,7 +2432,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		}
 		else
 		{
-			// start sending challenge repsonse instead of challenge request packets
+			// start sending challenge response instead of challenge request packets
 			clc.challenge = atoi(Cmd_Argv(1));
 			if (Cmd_Argc() > 2)
 			{
@@ -2558,8 +2552,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		return;
 	}
 
-	// make this compare first n chars so it doesnt bail if token is parsed incorrectly
-	// echo request from server
+	// list of servers sent back by a master server
 	if (!Q_strncmp(c, "getserversResponse", 18))
 	{
 		CL_ServersResponsePacket(&from, msg, qfalse);
@@ -3346,6 +3339,10 @@ void CL_CheckAutoUpdate(void)
 	info[0] = 0;
 	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
 	Info_SetValueForKey(info, "platform", CPUSTRING);
+	Info_SetValueForKey(info, va("etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT),
+	                    Com_MD5File(va("legacy/etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
+	Info_SetValueForKey(info, va("pak3_%s.pk3", ETLEGACY_VERSION_SHORT),
+	                    Com_MD5File(va("legacy/pak3_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
 
 	NET_OutOfBandPrint(NS_CLIENT, cls.autoupdateServer, "getUpdateInfo \"%s\"", info);
 
