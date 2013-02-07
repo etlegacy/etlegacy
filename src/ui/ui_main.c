@@ -5661,6 +5661,37 @@ static void UI_BuildServerDisplayList(qboolean force)
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
+
+#ifdef __AROS__
+				{
+					char *whitelist[] =
+					{
+						"etmain",
+						"etpub",
+						"silent",
+						"nq",
+						"legacy",
+						NULL
+					};
+					char **p = whitelist;
+
+					while (*p)
+					{
+						if (!Q_stricmp(gamename, *p))
+						{
+							break;
+						}
+
+						p++;
+					}
+
+					if (!*p)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+				}
+#endif
 			}
 
 			// make sure we never add a favorite server twice
