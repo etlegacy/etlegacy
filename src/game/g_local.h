@@ -723,7 +723,6 @@ struct gclient_s
 
 	qboolean noclip;
 
-	int lastCmdTime;                // level.time of last usercmd_t, for EF_CONNECTION
 	// we can't just use pers.lastCommand.time, because
 	// of the g_sycronousclients case
 	int buttons;

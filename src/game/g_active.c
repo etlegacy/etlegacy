@@ -49,7 +49,6 @@ void P_DamageFeedback(gentity_t *player)
 {
 	gclient_t *client = player->client;
 	float     count;
-	vec3_t    angles;
 
 	if (client->ps.pm_type == PM_DEAD)
 	{
@@ -81,6 +80,8 @@ void P_DamageFeedback(gentity_t *player)
 	}
 	else
 	{
+		vec3_t angles;
+
 		vectoangles(client->damage_from, angles);
 		client->ps.damagePitch = angles[PITCH] / 360.0 * 256;
 		client->ps.damageYaw   = angles[YAW] / 360.0 * 256;
@@ -1439,13 +1440,9 @@ void ClientThink_cmd(gentity_t *ent, usercmd_t *cmd)
 void ClientThink(int clientNum)
 {
 	gentity_t *ent = g_entities + clientNum;
+	usercmd_t newcmd;
 
-	ent->client->pers.oldcmd = ent->client->pers.cmd;
-	trap_GetUsercmd(clientNum, &ent->client->pers.cmd);
-
-	// mark the time we got info, so we can display the
-	// phone jack if they don't get any for a while
-	ent->client->lastCmdTime = level.time;
+	trap_GetUsercmd(clientNum, &newcmd);
 
 #ifdef ALLOW_GSYNC
 	if (!g_synchronousClients.integer)
@@ -1454,12 +1451,12 @@ void ClientThink(int clientNum)
 		if (G_DoAntiwarp(ent))
 		{
 			// zinx etpro antiwarp
-			etpro_AddUsercmd(clientNum, &ent->client->pers.cmd);
+			etpro_AddUsercmd(clientNum, &newcmd);
 			DoClientThinks(ent);
 		}
 		else
 		{
-			ClientThink_cmd(ent, &ent->client->pers.cmd);
+			ClientThink_cmd(ent, &newcmd);
 		}
 	}
 }
@@ -1483,15 +1480,19 @@ void G_RunClient(gentity_t *ent)
 		}
 	}
 
+	// adding zinx antiwarp - if we are using antiwarp, then follow the antiwarp way
+	if (G_DoAntiwarp(ent))
+	{
+		// use zinx antiwarp code
+		DoClientThinks(ent);
+	}
+
 #ifdef ALLOW_GSYNC
 	if (!g_synchronousClients.integer)
 #endif // ALLOW_GSYNC
 	{
 		return;
 	}
-
-	ent->client->pers.cmd.serverTime = level.time;
-	ClientThink_real(ent);
 }
 
 /**
