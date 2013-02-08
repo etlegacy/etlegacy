@@ -258,7 +258,6 @@ typedef struct
 	int fileSize;
 	int zipFilePos;
 	qboolean zipFile;
-	qboolean streamed;
 	char name[MAX_ZPATH];
 } fileHandleData_t;
 
@@ -1612,19 +1611,8 @@ int FS_Read2(void *buffer, int len, fileHandle_t f)
 	{
 		return 0;
 	}
-	if (fsh[f].streamed)
-	{
-		int r;
 
-		fsh[f].streamed = qfalse;
-		r               = FS_Read(buffer, len, f);
-		fsh[f].streamed = qtrue;
-		return r;
-	}
-	else
-	{
-		return FS_Read(buffer, len, f);
-	}
+	return FS_Read(buffer, len, f);
 }
 
 int FS_Read(void *buffer, int len, fileHandle_t f)
@@ -1772,13 +1760,6 @@ int FS_Seek(fileHandle_t f, long offset, int origin)
 	{
 		Com_Error(ERR_FATAL, "FS_Seek: Filesystem call made without initialization\n");
 		return -1;
-	}
-
-	if (fsh[f].streamed)
-	{
-		fsh[f].streamed = qfalse;
-		FS_Seek(f, offset, origin);
-		fsh[f].streamed = qtrue;
 	}
 
 	if (fsh[f].zipFile == qtrue)
@@ -3306,7 +3287,8 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring)
 				// Do we have one with the same name?
 				if (FS_SV_FileExists(va("%s.pk3", fs_serverReferencedPakNames[i])))
 				{
-					Q_strcat(neededpaks, len, " (local file exists with wrong checksum)");
+					Q_strcat(neededpaks, len, va(" (local file exists with wrong checksum: S %i / C %i)",
+					                             fs_serverReferencedPaks[i], sp->pack->checksum));
 #ifndef DEDICATED
 					// let the client subsystem track bad download redirects (dl file with wrong checksums)
 					// this is a bit ugly but the only other solution would have been callback passing..
@@ -4099,12 +4081,6 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode)
 			fsh[*f].baseOffset = ftell(fsh[*f].handleFiles.file.o);
 		}
 		fsh[*f].fileSize = r;
-		fsh[*f].streamed = qfalse;
-
-		if (mode == FS_READ)
-		{
-			fsh[*f].streamed = qtrue;
-		}
 	}
 	fsh[*f].handleSync = sync;
 
