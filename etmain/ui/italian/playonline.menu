@@ -91,7 +91,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 10+12, 92, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowEmptyOrFull", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server Pieni e Vuoti", "Includi/escludi i server pieni o vuoti nella lista"  )
+	TRICHECKBOXACTIONMULTI( 10+12, 92, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowEmptyOrFull", cvarFloatList { "Filtro Disattivato" 0 "Mostra solo..." 1 "Non mostrare..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server Pieni e Vuoti", "Includi/escludi i server pieni o vuoti nella lista"  )
 
 	itemDef {
 		name		"filtericonPassword"
@@ -102,7 +102,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 10+12, 104, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowPasswordProtected", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server Protetti da Password", "Includi/escludi i server protetti da password nella lista" )
+	TRICHECKBOXACTIONMULTI( 10+12, 104, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowPasswordProtected", cvarFloatList { "Filtro Disattivato" 0 "Mostra solo..." 1 "Non mostrare..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server Protetti da Password", "Includi/escludi i server protetti da password nella lista" )
 
 	itemDef {
 		name		"filtericonFriendlyFire"
@@ -113,7 +113,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 10+12, 116, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowFriendlyFire", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server con Fuoco Amico", "Includi/escludi i server dove i compagni di squadra possono danneggiarsi tra loro nella lista"  )
+	TRICHECKBOXACTIONMULTI( 10+12, 116, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowFriendlyFire", cvarFloatList { "Filtro Disattivato" 0 "Mostra solo..." 1 "Non mostrare..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server con Fuoco Amico", "Includi/escludi i server dove i compagni di squadra possono danneggiarsi tra loro nella lista"  )
 
 	itemDef {
 		name		"filtericonMaxLives"
@@ -124,7 +124,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 10+12, 128, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowMaxlives", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server con Vite Limitate", "Includi/escludi i server dove le vite per partita sono limitate nella lista" )
+	TRICHECKBOXACTIONMULTI( 10+12, 128, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowMaxlives", cvarFloatList { "Filtro Disattivato" 0 "Mostra solo..." 1 "Non mostrare..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server con Vite Limitate", "Includi/escludi i server dove le vite per partita sono limitate nella lista" )
 
 	itemDef {
 		name		"filtericonWeapRestrict"
@@ -135,7 +135,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 92, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowWeaponsRestricted", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server con Armi Limitate", "Includi/escludi i server che limitano l'uso di armi pesanti nella lista" )
+	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 92, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowWeaponsRestricted", cvarFloatList { "Filtro Disattivato" 0 "Mostra solo..." 1 "Non mostrare..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server con Armi Limitate", "Includi/escludi i server che limitano l'uso di armi pesanti nella lista" )
 
 	itemDef {
 		name		"filtericonAntilag"
@@ -146,7 +146,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 104, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server con Anti-Lag", "Includi/escludi i server che supportano giocatori con Modem nella lista" )
+	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 104, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { "Filtro Disattivato" 0 "Mostra solo..." 1 "Non mostrare..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server con Anti-Lag", "Includi/escludi i server che supportano giocatori con Modem nella lista" )
 
 	itemDef {
 		name		"filtericonTeamBalance"
@@ -157,7 +157,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 116, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowTeamBalanced", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server con Team Bilanciati", "Includi/escludi i server che forzano team bilanciati nella lista" )
+	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 116, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowTeamBalanced", cvarFloatList { "Filtro Disattivato" 0 "Mostra solo..." 1 "Non mostrare..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filtro per Server con Team Bilanciati", "Includi/escludi i server che forzano team bilanciati nella lista" )
 
 	itemDef {
 		name			"descriptionFilters"

@@ -70,7 +70,7 @@ menuDef {
 																																		( "clearFocus" )
 																																		( "setcvar ui_profile_create_error \\\"Non posso rinominare il profilo. Inerisci un nome per il profilo.\\\" ; open profile_create_error ; abort" )
 																																	 conditionalscript UIProfileAlreadyExists_Rename 2
-																																		( "setcvar ui_profile_create_error \\\"Non posso rinominare il profilo. Esiste già un profilo con questo nome.\\\" ; open profile_create_error ; abort" )
+																																		( "setcvar ui_profile_create_error \\\"Non posso rinominare il profilo. Esiste gia' un profilo con questo nome.\\\" ; open profile_create_error ; abort" )
 																																		( "clearFocus" )
 																																		
 																																	close profile_rename ;
