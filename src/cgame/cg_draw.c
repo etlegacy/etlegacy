@@ -2521,6 +2521,7 @@ static void CG_DrawVote(void)
 			{
 				int  nameindex;
 				char buffer[128];
+
 				Q_strncpyz(buffer, cgs.voteString + 5, sizeof(buffer));
 				Q_CleanStr(buffer);
 
@@ -3271,7 +3272,7 @@ static void CG_DrawFlashZoomTransition(void)
 
 		frac = frac / (float)fadeTime;
 		Vector4Set(color, 0, 0, 0, 1.0f - frac);
-		CG_FillRect(-10, -10, Ccg_WideX(640), 480, color);
+		CG_FillRect(0, 0, Ccg_WideX(640), 480, color);
 	}
 }
 
@@ -3360,7 +3361,7 @@ static void CG_DrawFlashFire(void)
 		col[2] = alpha;
 		col[3] = alpha;
 		trap_R_SetColor(col);
-		CG_DrawPic(-10, -10, Ccg_WideX(640), 480, cgs.media.viewFlashFire[(cg.time / 50) % 16]); // -10 ? that's outer screeny
+		CG_DrawPic(0, 0, Ccg_WideX(640), 480, cgs.media.viewFlashFire[(cg.time / 50) % 16]);
 		trap_R_SetColor(NULL);
 
 		trap_S_AddLoopingSound(cg.snap->ps.origin, vec3_origin, cgs.media.flameSound, (int)(255.0 * alpha), 0);
@@ -4305,11 +4306,10 @@ static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
 {
 	int    i;
 	float  blockheight = (h - 4) / (float)(NUM_SKILL_LEVELS - 1);
-	float  draw_y;
+	float  draw_y      = y + h - blockheight;
 	vec4_t colour;
 	float  x1, y1, w1, h1;
 
-	draw_y = y + h - blockheight;
 	for (i = 0; i < NUM_SKILL_LEVELS - 1; i++)
 	{
 		if (i >= skill)
