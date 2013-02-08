@@ -368,7 +368,7 @@ void SV_MasterHeartbeat(const char *message)
 	}
 }
 
-/*
+/**
  * @brief Sends gameCompleteStatus messages to all master servers
  */
 void SV_MasterGameCompleteStatus()

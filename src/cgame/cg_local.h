@@ -46,10 +46,8 @@
 #include "../ui/ui_shared.h"
 
 #define MAX_LOCATIONS       256
-#define POWERUP_BLINKS      5
 
 #define STATS_FADE_TIME     200.0f
-#define POWERUP_BLINK_TIME  1000
 #define FADE_TIME           200
 #define DAMAGE_DEFLECT_TIME 100
 #define DAMAGE_RETURN_TIME  400
@@ -65,8 +63,6 @@
 
 #define PRONE_TIME          500
 
-#define PULSE_SCALE         1.5         // amount to scale up the icons when activating
-
 #define MAX_STEP_CHANGE     32
 
 #define MAX_VERTS_ON_POLY   10
@@ -77,17 +73,12 @@
 #define ICON_SIZE           48
 #define CHAR_WIDTH          32
 #define CHAR_HEIGHT         48
-#define TEXT_ICON_SPACE     4
 
 #define TEAMCHAT_WIDTH      70
 #define TEAMCHAT_HEIGHT     8
 
 #define NOTIFY_WIDTH        80
 #define NOTIFY_HEIGHT       5
-
-// very large characters
-#define GIANT_WIDTH         32
-#define GIANT_HEIGHT        48
 
 #define NUM_CROSSHAIRS      10
 
@@ -938,10 +929,6 @@ typedef struct
 	int cursorHintFade;
 	int cursorHintValue;
 
-	// powerup active flashing
-	int powerupActive;
-	int powerupTime;
-
 	// attacking player
 	int attackerTime;
 	int voiceTime;
@@ -973,15 +960,6 @@ typedef struct
 	int lastIdleTimeEnd;
 	int idleAnim;
 	int lastWeapSelInBank[MAX_WEAP_BANKS_MP]; // remember which weapon was last selected in a bank for 'weaponbank' commands
-
-	// status bar head
-	float headYaw;
-	float headEndPitch;
-	float headEndYaw;
-	int headEndTime;
-	float headStartPitch;
-	float headStartYaw;
-	int headStartTime;
 
 	// view movement
 	float v_dmg_time;

@@ -4511,21 +4511,6 @@ void CL_GetPing(int n, char *buf, int buflen, int *pingtime)
 
 /*
 ==================
-CL_UpdateServerInfo
-==================
-*/
-void CL_UpdateServerInfo(int n)
-{
-	if (n < 0 || n >= MAX_PINGREQUESTS || !cl_pinglist[n].adr.port)
-	{
-		return;
-	}
-
-	CL_SetServerInfoByAddress(cl_pinglist[n].adr, cl_pinglist[n].info, cl_pinglist[n].time);
-}
-
-/*
-==================
 CL_GetPingInfo
 ==================
 */

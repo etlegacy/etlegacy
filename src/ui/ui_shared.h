@@ -40,9 +40,6 @@
 
 #include "../../etmain/ui/menudef.h"
 
-#define MAX_MENUNAME 32
-#define MAX_ITEMTEXT 64
-#define MAX_ITEMACTION 64
 #define MAX_MENUDEFFILE 4096
 #define MAX_MENUFILE 32768
 #define MAX_MENUS 128
@@ -93,8 +90,6 @@
 #define STRING_POOL_SIZE    384 * 1024
 #endif
 
-#define MAX_STRING_HANDLES  4096
-#define MAX_SCRIPT_ARGS     12
 #define MAX_EDITFIELD       256
 
 #define ART_FX_BASE         "menu/art/fx_base"
@@ -125,13 +120,6 @@
 #define SLIDER_THUMB_WIDTH  12.0
 #define SLIDER_THUMB_HEIGHT 12.0    // 20.0
 #define NUM_CROSSHAIRS      10
-
-typedef struct scriptDef_s
-{
-	const char *command;
-	const char *args[MAX_SCRIPT_ARGS];
-} scriptDef_t;
-
 
 typedef struct rectDef_s
 {
