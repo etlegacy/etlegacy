@@ -41,24 +41,24 @@ menuDef {
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 102, "AUDIO" )
 	SLIDER( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Volume Effetti:", .2, 8, "s_volume" .7 0 1, "Volume degli effetti sonori" )
 	SLIDER( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Volume Musica:", .2, 8, "s_musicvolume" .25 0 1, "Voume della musica" )
-	MULTI( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Qualita Suono:", .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (high)" 22 "44 khz (ultra high)" 44 }, "Frequenza sonora di campionamento" )
+	MULTI( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Qualita' Suono:", .2, 8, "ui_s_khz", cvarFloatList { "11 khz (bassa)" 11 "22 khz (alta)" 22 "44 khz (molto alta)" 44 }, "Frequenza sonora di campionamento" )
 	YESNO( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Effetto Doppler:", .2, 8, "s_doppler", "" )
 	YESNO( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Silenzioso se Minimizzato:", .2, 8, "s_muteWhenMinimized", "Non emettere suoni quando minimizzato" )
 	YESNO( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Silenzioso se in Background:", .2, 8, "s_muteWhenUnfocused", "Non emettere suoni se in background" )
-	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Suoni per Colpi:", .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Team Hit Sound" 2 "No Head Hit Sound" 4 "No Body Hit Sound" 8 }, "Seleziona il tipo di suoni che vuoi sentire quando colpisci qualcuno" )
+	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Suoni per Colpi:", .2, 8, "cg_hitsounds", cvarFloatList { "Nessuno" 0 "Tutti" 1 "Non per squadra" 2 "Non per testa" 4 "Non per corpo" 8 }, "Seleziona il tipo di suoni che vuoi sentire quando colpisci qualcuno" )
 
 // Networking //
 	SUBWINDOW( 6, 138, (SUBWINDOW_WIDTH), 54, "RETE" )
-	MULTIACTION( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Connessione:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "LAN/CABLE/xDSL" 25000 } cvarListUndefined "Unselected", uiScript update "ui_setRate", "Scegli il tipo della tua connessione" )
-	MULTIACTION( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Massimo Packetti:", .2, 8, "ui_cl_maxpackets", cvarFloatList { "Low" 30 "Medium" 60 "High" 100 } , uiScript update "ui_cl_maxpackets", "massimo per il numero di pacchetti da ricevere da fuori" )
-	MULTIACTION( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Packet Duplication:", .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", "numero di duplicati per ogni pacchetto mandato fuori, riduce la perdita di pacchetti" )
+	MULTIACTION( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Connessione:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "RETE/CAVO/xDSL" 25000 } cvarListUndefined "Unselected", uiScript update "ui_setRate", "Scegli il tipo della tua connessione" )
+	MULTIACTION( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Max Pacchetti:", .2, 8, "ui_cl_maxpackets", cvarFloatList { "Basso" 30 "Medio" 60 "Alto" 100 } , uiScript update "ui_cl_maxpackets", "massimo numero di pacchetti ricevibili da fuori" )
+	MULTIACTION( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Duplicazione Pacchetti:", .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", "numero di duplicati per ogni pacchetto mandato fuori, riduce la perdita di pacchetti" )
 
 // Memory
 // NOTE: absolutely useless to set memory via UI ... only valid if done via start params
 	SUBWINDOW( 6, 196, (SUBWINDOW_WIDTH), 42, "MEMORIA" )
-	MULTIACTION( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Mega per Hunk:", .2, 8, "ui_com_hunkmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_hunkmegs", "quantita di memoria (MB) da assegnare all'hunk" )
-	MULTIACTION( 8, 224, (SUBWINDOW_WIDTH)-4, 10, "Mega per Suono:", .2, 8, "ui_com_soundmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_soundmegs", "quantita di memoria (MB) da assegnare ai campioni sonori caricati" )
-	//MULTIACTION( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Mega per Zone:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_zonemegs", "quantita di memoria (MB) da assegnare per la mappa e il caricamento delle texture" )
+	MULTIACTION( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Mega per Hunk:", .2, 8, "ui_com_hunkmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_hunkmegs", "quantita' di memoria (MB) da assegnare all'hunk" )
+	MULTIACTION( 8, 224, (SUBWINDOW_WIDTH)-4, 10, "Mega per Suono:", .2, 8, "ui_com_soundmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_soundmegs", "quantita' di memoria (MB) da assegnare ai campioni sonori caricati" )
+	//MULTIACTION( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Mega per Zone:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_zonemegs", "quantita' di memoria (MB) da assegnare per la mappa e il caricamento delle texture" )
 	
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "INDIETRO", .3, 14, uiScript vidReset ; close options_system ; open options )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "APPLICA", .3, 14,

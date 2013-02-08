@@ -51,7 +51,7 @@ menuDef
 
 	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "CONTROLLI PREDEFINITI" )
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Imposto i controlli predefiniti?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	MULTI( SUBWINDOW_X+2, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-8, 10, "Orientazione:", .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, "Destro o Mancino? Questo imposta i tuoi controlli predefiniti\nche puoi cambiare successivamente tramite il menù opzioni" )
+	MULTI( SUBWINDOW_X+2, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-8, 10, "Orientazione:", .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, "Destro o Mancino? Questo imposta i tuoi controlli predefiniti\nche puoi cambiare successivamente tramite il menu' opzioni" )
 	
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "SI", .3, 14, close options_controls_default ; open options_controls ; uiScript defaultControls )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "NO", .3, 14, close options_controls_default ; open options_controls )
