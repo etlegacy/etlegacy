@@ -33,29 +33,29 @@ menuDef {
 	
 // Simple settings //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 78, "SEMPLICE" )
-	MULTIACTION( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Qualità Generale:", .2, 8, "ui_glCustom", cvarFloatList { "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glcustom", "" )
+	MULTIACTION( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Qualita Generale:", .2, 8, "ui_glCustom", cvarFloatList { "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glcustom", "" )
 	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Risoluzione:", .2, 8, "ui_r_mode", cvarFloatList { "desktop resolution" -2 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 Wide Screen" 11 "1360x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1600 (16:10)" 18 }, uiScript glCustom, "" )
 	YESNOACTION( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Schermo Intero:", .2, 8, "ui_r_fullscreen", uiScript glCustom, "" )
 	YESNOACTION( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Senza Bordo:", .2, 8, "r_noborder", uiScript glCustom, "Utilizzabile solo se non a schermo intero" )
-	SLIDER( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Luminosità:", .2, 8, "r_gamma" 1.3 1 3, "" )
+	SLIDER( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Luminosita:", .2, 8, "r_gamma" 1.3 1 3, "" )
 
 
 // Advanced settings //
 	SUBWINDOW( 6, 116, (SUBWINDOW_WIDTH), 256, "AVANZATO" )
-	YESNO( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Cielo a Bassa Qualità:", .2, 8, "r_fastsky", "" )
+	YESNO( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Cielo a Bassa Qualita:", .2, 8, "r_fastsky", "" )
 	MULTIACTION( 8, 144, (SUBWINDOW_WIDTH)-4, 10, "Dettagli Ombra:", .2, 8, "ui_cg_shadows", cvarFloatList { "None (fastest)" 0 "Blob (old style)" 1 "Stencil shadows" 2 "Projection shadows" 3 "Polygon shadows" 4 }, uiScript glCustom, "" )
 	MULTIACTION( 8, 156, (SUBWINDOW_WIDTH)-4, 10, "Dettagli Texture:", .2, 8, "ui_r_picmip", cvarFloatList { "Low" 2 "Medium" 1 "High" 0 }, uiScript glCustom, "" )
 	// add options 0 - disabled, 1 - single path, 2 - path
 	YESNOACTION( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Luci Dinamiche:", .2, 8, "ui_r_dynamiclight", uiScript glCustom; uiScript update "r_dynamicLight", "" )
 	// check this if ET supports same way
 	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Dettagli Geometrici:", .2, 8, "ui_r_lodbias", cvarFloatList { "Low" 2 "Medium" 1 "High" 0 }, uiScript glCustom ; uiScript update "r_lodbias", "" )
-	MULTIACTION( 8, 192, (SUBWINDOW_WIDTH)-4, 10, "Qualità delle Texture:", .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 192, (SUBWINDOW_WIDTH)-4, 10, "Qualita delle Texture:", .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
 	MULTIACTION( 8, 204, (SUBWINDOW_WIDTH)-4, 10, "Filtro delle Texture:", .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glCustom, "" )
 	MULTIACTION( 8, 216, (SUBWINDOW_WIDTH)-4, 10, "Filtro Anisotropico:", .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Disabled" 0 "Medium" 4 "High" 8 }, uiScript glCustom, "" )
-	MULTIACTION( 8, 228, (SUBWINDOW_WIDTH)-4, 10, "Profondità di Colore:", .2, 8, "ui_r_colorbits", cvarFloatList { "Desktop Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 228, (SUBWINDOW_WIDTH)-4, 10, "Profondita di Colore:", .2, 8, "ui_r_colorbits", cvarFloatList { "Desktop Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
 	YESNOACTION( 8, 240, (SUBWINDOW_WIDTH)-4, 10, "Dettaglia Texture:", .2, 8, "ui_r_detailtextures", uiScript glCustom, "" )
-	MULTIACTION( 8, 252, (SUBWINDOW_WIDTH)-4, 10, "Profondità del Buffer:", .2, 8, "ui_r_depthbits", cvarFloatList { "Default" 0 "16-bit" 16 "24-bit" 24 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 252, (SUBWINDOW_WIDTH)-4, 10, "Profondita del Buffer:", .2, 8, "ui_r_depthbits", cvarFloatList { "Default" 0 "16-bit" 16 "24-bit" 24 }, uiScript glCustom, "" )
 	YESNOACTION( 8, 264, (SUBWINDOW_WIDTH)-4, 10, "Comprimi Texture:", .2, 8, "ui_r_ext_compressed_textures", uiScript glCustom, "" )
 	YESNOACTION( 8, 276, (SUBWINDOW_WIDTH)-4, 10, "Sincronizza Ogni Frame:", .2, 8, "ui_r_finish", uiScript glCustom, "" )	
 	MULTIACTION( 8, 288, (SUBWINDOW_WIDTH)-4, 10, "Estensioni GL:", .2, 8, "ui_r_allowExtensions", cvarFloatList { "Enabled" 1 "Disabled" 0 }, uiScript glCustom , "")

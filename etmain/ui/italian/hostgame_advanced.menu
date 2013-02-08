@@ -155,7 +155,7 @@ menuDef {
 // Download //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 348, (SUBWINDOW_WIDTH), 64/*72*/, "DOWNLOAD" )
 	YESNO( 6+(SUBWINDOW_WIDTH)+6+2, 364, (SUBWINDOW_WIDTH)-4, 10, "Permetti Download ai Client:", .2, 8, "sv_allowDownload", "Permette ai giocatori di scaricare i file mancanti dal server" )
-	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 376, (SUBWINDOW_WIDTH)-4, 10, "Maximum Download Rate:", .2, 8, "sv_dl_maxRate", 6, "Specifica la velocità massima di download dal server verso i giocatori a cui mancano file" )
+	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 376, (SUBWINDOW_WIDTH)-4, 10, "Maximum Download Rate:", .2, 8, "sv_dl_maxRate", 6, "Specifica la velocita massima di download dal server verso i giocatori a cui mancano file" )
 	YESNO( 6+(SUBWINDOW_WIDTH)+6+2, 388, (SUBWINDOW_WIDTH)-4, 10, "Redirezioni FTP/HTTP:", .2, 8, "sv_wwwDownload", "Redirige i giocatori a cui mancano dei file verso un altro server" )
 	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 400, (SUBWINDOW_WIDTH)-4, 10, "URL Base:", .2, 8, "sv_wwwBaseUrl", 64, 18, "Usato per costruire l'url fornito ai client per i download" )
 
