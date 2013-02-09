@@ -46,7 +46,7 @@ menuDef {
 	SUBWINDOW( 6, 198, (SUBWINDOW_WIDTH), 40, "INPUT" )
 	CHECKBOXALIGNXACTION( 8, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Inverti Mouse:", .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, "Inverte il pitch del mouse" )
 	CHECKBOXALIGNX( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Mouse Omogeneo:", .2, 24, 8, "m_filter", "Usa interpolazione per uniformare i movimenti del puntatore" )
-	SLIDER( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Sensitività del Mouse:", .2, 8, "sensitivity" 5 1 30, "Usa il cursore per aumentare o diminuire la sensibilità deel mouse" )
+	SLIDER( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Sensibilita' Mouse:", .2, 8, "sensitivity" 5 1 30, "Usa il cursore per aumentare o diminuire la sensibilita' del mouse" )
 	CVARFLOATLABEL( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
 
 // Chat //
@@ -60,10 +60,10 @@ menuDef {
 // Pop-Ups //
 	SUBWINDOW( 6, 314, (SUBWINDOW_WIDTH), 100, "FINESTRE IN RILIEVO" )
 	BIND( 8, 330, (SUBWINDOW_WIDTH)-4, 10, "Mostra Punteggi:", .2, 8, "+scores", "" )
-	BIND( 8, 342, (SUBWINDOW_WIDTH)-4, 10, "Mostra il Menù Limbo:", .2, 8, "OpenLimboMenu", "" )
+	BIND( 8, 342, (SUBWINDOW_WIDTH)-4, 10, "Mostra il Menu' Limbo:", .2, 8, "OpenLimboMenu", "" )
 	BIND( 8, 354, (SUBWINDOW_WIDTH)-4, 10, "Mostra la Mappa:", .2, 8, "+mapexpand", "" )
-	BIND( 8, 366, (SUBWINDOW_WIDTH)-4, 10, "Aumenta Zoom Mappa con Bussola:", .2, 8, "MapZoomIn", "" )
-	BIND( 8, 378, (SUBWINDOW_WIDTH)-4, 10, "Diminuisce Zoom Mappa con Bussola:", .2, 8, "MapZoomOut", "" )
+	BIND( 8, 366, (SUBWINDOW_WIDTH)-4, 10, "Aumenta Zoom Bussola:", .2, 8, "MapZoomIn", "" )
+	BIND( 8, 378, (SUBWINDOW_WIDTH)-4, 10, "Diminuisce Zoom Bussola:", .2, 8, "MapZoomOut", "" )
 	BIND( 8, 390, (SUBWINDOW_WIDTH)-4, 10, "Statistiche Giocatore:", .2, 8, "+stats", "" )
 	BIND( 8, 402, (SUBWINDOW_WIDTH)-4, 10, "Colpi Migliori:", .2, 8, "+topshots", "" )
 //	BIND( 8, 402, (SUBWINDOW_WIDTH)-4, 10, "Multiview:", .2, 8, "mvactivate", "" )
@@ -71,9 +71,9 @@ menuDef {
 // Use Weapons //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 64, "USO ARMI" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 48, (SUBWINDOW_WIDTH)-4, 10, "Attacca:", .2, 8, "+attack", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 60, (SUBWINDOW_WIDTH)-4, 10, "Passa a quella alternativa:", .2, 8, "weapalt", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 60, (SUBWINDOW_WIDTH)-4, 10, "Arma alternativa:", .2, 8, "weapalt", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 72, (SUBWINDOW_WIDTH)-4, 10, "Ricarica Arma:", .2, 8, "+reload", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 84, (SUBWINDOW_WIDTH)-4, 10, "Zoom con Binocoli:", .2, 8, "+zoom", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 84, (SUBWINDOW_WIDTH)-4, 10, "Zoom con Binocolo:", .2, 8, "+zoom", "" )
 	
 // Select Weapons //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 102, (SUBWINDOW_WIDTH), 124, "SCEGLI ARMI" )
@@ -91,12 +91,12 @@ menuDef {
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 232, (SUBWINDOW_WIDTH), 52, "VARIE" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Vota Si:", .2, 8, "vote yes", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Vota No:", .2, 8, "vote no", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 260, (SUBWINDOW_WIDTH)-4, 10, "Fai una Foto allo Schermo:", .2, 8, "autoScreenshot", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 260, (SUBWINDOW_WIDTH)-4, 10, "Foto allo Schermo:", .2, 8, "autoScreenshot", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 272, (SUBWINDOW_WIDTH)-4, 10, "Registra un Replay:", .2, 8, "autoRecord", "" )
 
 // Fire-Teams //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 290, (SUBWINDOW_WIDTH), 124, "FIRETEAM" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 306, (SUBWINDOW_WIDTH)-4, 10, "Seleziona tutti i Membri:", .2, 8, "selectbuddy -2", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 306, (SUBWINDOW_WIDTH)-4, 10, "Scegli tutti Membri:", .2, 8, "selectbuddy -2", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 318, (SUBWINDOW_WIDTH)-4, 10, "Scegli il Membro #1:", .2, 8, "selectbuddy 0", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 330, (SUBWINDOW_WIDTH)-4, 10, "Scegli il Membro #2:", .2, 8, "selectbuddy 1", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, 342, (SUBWINDOW_WIDTH)-4, 10, "Scegli il Membro #3:", .2, 8, "selectbuddy 2", "" )

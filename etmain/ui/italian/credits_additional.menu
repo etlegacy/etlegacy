@@ -165,7 +165,7 @@ menuDef {
 		name		"headerPunkBuster"
 		group		GROUP_NAME
 		rect		6 $evalfloat(CREDITS_Y+36) $evalfloat(WINDOW_WIDTH-12) 12
-		text		"PUNKBUSTER BY EVEN BALANCE, INC."
+		text		"PUNKBUSTER E' DELLA EVEN BALANCE, INC."
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -211,7 +211,7 @@ menuDef {
 		name		"headerSpecialThanks"
 		group		GROUP_NAME
 		rect		6 $evalfloat(CREDITS_Y+156) $evalfloat(WINDOW_WIDTH-12) 16
-		text		"RINGRAZIAMENTI SPECIALI A"
+		text		"RINGRAZIAMENTI SPECIALI"
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.3

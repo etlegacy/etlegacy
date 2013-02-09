@@ -30,9 +30,9 @@ menuDef {
 // General
 #define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
 
-	LABELWHITE( 6+2, 32, (WINDOW_WIDTH)-64, 10, "Calibrazione Generale della Luminosità (Tutte le Profondità di Colore)", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABEL( 6+2, 44, (WINDOW_WIDTH)-64, 10, "1. Muovi il cursore sotto e/o la luminosità del tuo monitor fino a quando non", .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABEL( 6+2, 56, (WINDOW_WIDTH)-64, 10, "     riesci a vedere 16 barre separate di uguale differenza di luminosità.", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6+2, 32, (WINDOW_WIDTH)-64, 10, "Calibrazione Generale della Luminosita' (Tutte le Profondita' di Colore)", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( 6+2, 44, (WINDOW_WIDTH)-64, 10, "1. Muovi il cursore sotto e/o la luminosita' del tuo monitor fino a quando non", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( 6+2, 56, (WINDOW_WIDTH)-64, 10, "     riesci a vedere 16 barre separate di uguale differenza di luminosita'.", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( 6+2, 68, (WINDOW_WIDTH)-64, 10, "2. Premi il bottone INDIETRO.", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	
 	itemDef {
@@ -47,7 +47,7 @@ menuDef {
 		decoration
 	}
 	
-	LABELWHITE( 6+2, 178, (WINDOW_WIDTH)-64, 10, "Regolazione Fine della Luminosità (Texture e Profondità di Colore a 32 bit)", .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6+2, 178, (WINDOW_WIDTH)-64, 10, "Regolazione Fine della Luminosita' (Texture e Profondita' di Colore a 32 bit)", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( 6+2, 190, (WINDOW_WIDTH)-64, 10, "1. Muovi il cursore sotto fino a quando non riesci a vedere 3 barre separate.", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( 6+2, 202, (WINDOW_WIDTH)-64, 10, "2. Muovi il cursore fino ad annullare la diferenza tra il rettangolo di sinistra e quello di centro.", .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( 6+2, 214, (WINDOW_WIDTH)-64, 10, "3. Premi il bottone INDIETRO.", .2, ITEM_ALIGN_LEFT, 0, 8 )
@@ -64,7 +64,7 @@ menuDef {
 		decoration
 	}
 
-	SLIDER( 2+.5*(WINDOW_WIDTH-192), 404, 192, 10, "Luminosità:", .2, 8, "r_gamma" 1 0.5 2, "" )
+	SLIDER( 2+.5*(WINDOW_WIDTH-192), 404, 192, 10, "Luminosita':", .2, 8, "r_gamma" 1 0.5 2, "" )
 	CVARFLOATLABEL( 2+.5*(WINDOW_WIDTH-288), 404, 192, 10, "r_gamma", .2, ITEM_ALIGN_RIGHT, 288, 8 )
 	
 // Buttons //
