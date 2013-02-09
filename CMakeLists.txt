@@ -552,15 +552,11 @@ if(BUILD_MOD)
 		LIBRARY_OUTPUT_DIRECTORY "legacy"
 	)
                         
-	# install qgame only
-	install(TARGETS qagame${LIB_SUFFIX}${ARCH}
+	# install bins of cgame, ui and qgame 
+	install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
 		LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
 		ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
 	)
-                
-	#install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
-	#        LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
-	#        ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain")
  
 	#
 	# etl_bin.pk3
