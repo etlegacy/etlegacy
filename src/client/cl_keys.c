@@ -1362,6 +1362,32 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
         break;
     }
 */
+	if (!keys[K_KP_NUMLOCK].down && cls.keyCatchers & KEYCATCH_CONSOLE && down)
+	{
+		switch (key)
+		{
+		case K_KP_INS:
+			CL_CharEvent(48); return;
+		case K_KP_END:
+			CL_CharEvent(49); return;
+		case K_KP_DOWNARROW:
+			CL_CharEvent(50); return;
+		case K_KP_PGDN:
+			CL_CharEvent(51); return;
+		case K_KP_LEFTARROW:
+			CL_CharEvent(52); return;
+		case K_KP_5:
+			CL_CharEvent(53); return;
+		case K_KP_RIGHTARROW:
+			CL_CharEvent(54); return;
+		case K_KP_HOME:
+			CL_CharEvent(55); return;
+		case K_KP_UPARROW:
+			CL_CharEvent(56); return;
+		case K_KP_PGUP:
+			CL_CharEvent(57); return;
+		}
+	}
 
 	// update auto-repeat status and BUTTON_ANY status
 	keys[key].down = down;
