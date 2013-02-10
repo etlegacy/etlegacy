@@ -471,6 +471,11 @@ void CL_DemoCompleted(void)
 		}
 	}
 
+	if (CL_VideoRecording())
+	{
+		Cmd_ExecuteString("stopvideo");
+	}
+
 	if (clc.waverecording)
 	{
 		CL_WriteWaveClose();
@@ -1529,8 +1534,9 @@ void CL_Vid_Restart_f(void)
 	if (CL_VideoRecording())
 	{
 		//Stop recording and close the avi file before vid_restart
-		Cvar_Set("cl_avidemo", "0");
-		CL_CloseAVI();
+		//Cvar_Set("cl_avidemo", "0");
+		//CL_CloseAVI();
+		Cmd_ExecuteString("stopvideo");
 	}
 
 	/* Do we want to stop the recording of demos on vid_restart?
@@ -2917,12 +2923,18 @@ CL_StopVideo_f
 */
 void CL_StopVideo_f(void)
 {
-	cl_avidemo->integer = 0;
-	/*
-	*We need to call something like S_Base_StopAllSounds();
-	*here to stop the stuttering. Something it crashes the game.
-	*/
-	CL_CloseAVI();
+	if (CL_VideoRecording())
+	{
+		//cl_avidemo->integer = 0;
+		Cvar_Set("cl_avidemo", "0");
+		/*
+		*We need to call something like S_Base_StopAllSounds();
+		*here to stop the stuttering. Something it crashes the game.
+		*/
+		Cmd_ExecuteString("s_stop");
+		S_StopAllSounds();
+		CL_CloseAVI();
+	}
 }
 
 /*
@@ -2981,7 +2993,7 @@ void CL_Frame(int msec)
 	}
 	else if (cl_avidemo->integer == 0 && CL_VideoRecording())
 	{
-		CL_CloseAVI();
+		CL_StopVideo_f();
 	}
 
 	// save the msec before checking pause
