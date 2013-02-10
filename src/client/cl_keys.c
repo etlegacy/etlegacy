@@ -325,15 +325,12 @@ x, y, amd width are in pixels
 */
 void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qboolean showCursor)
 {
-	int  len;
-	int  drawLen;
+	int  len     = strlen(edit->buffer) + 1;
+	int  drawLen = edit->widthInChars;
 	int  prestep;
 	int  cursorChar;
 	char str[MAX_STRING_CHARS];
 	int  i;
-
-	drawLen = edit->widthInChars;
-	len     = strlen(edit->buffer) + 1;
 
 	// guarantee that cursor will be visible
 	if (len <= drawLen)
@@ -824,8 +821,6 @@ In game talk message
 */
 void Message_Key(int key)
 {
-	char buffer[MAX_STRING_CHARS];
-
 	if (key == K_ESCAPE)
 	{
 		cls.keyCatchers &= ~KEYCATCH_MESSAGE;
@@ -837,6 +832,8 @@ void Message_Key(int key)
 	{
 		if (chatField.buffer[0] && cls.state == CA_ACTIVE)
 		{
+			char buffer[MAX_STRING_CHARS];
+
 			if (chat_team)
 			{
 				Com_sprintf(buffer, sizeof(buffer), "say_team \"%s\"\n", chatField.buffer);
@@ -994,16 +991,14 @@ char *Key_KeynumToString(int keynum)
 
 static long generateHashValue(const char *fname)
 {
-	int  i;
-	long hash;
+	int  i    = 0;
+	long hash = 0;
 
 	if (!fname)
 	{
 		return 0;
 	}
 
-	hash = 0;
-	i    = 0;
 	while (fname[i] != '\0')
 	{
 		hash += (long)(fname[i]) * (i + 119);
@@ -1146,10 +1141,12 @@ void Key_Unbindall_f(void)
 	int i;
 
 	for (i = 0 ; i < 256 ; i++)
+	{
 		if (keys[i].binding)
 		{
 			Key_SetBinding(i, "");
 		}
+	}
 }
 
 /*
@@ -1362,30 +1359,23 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
         break;
     }
 */
-	if (!keys[K_KP_NUMLOCK].down && cls.keyCatchers & KEYCATCH_CONSOLE && down)
+
+	// special handling for numbers of numeric keypad & NUM pressed
+	if (keys[K_KP_NUMLOCK].down && (cls.keyCatchers & (KEYCATCH_CONSOLE | KEYCATCH_UI)) && down)
 	{
 		switch (key)
 		{
-		case K_KP_INS:
-			CL_CharEvent(48); return;
-		case K_KP_END:
-			CL_CharEvent(49); return;
-		case K_KP_DOWNARROW:
-			CL_CharEvent(50); return;
-		case K_KP_PGDN:
-			CL_CharEvent(51); return;
-		case K_KP_LEFTARROW:
-			CL_CharEvent(52); return;
-		case K_KP_5:
-			CL_CharEvent(53); return;
-		case K_KP_RIGHTARROW:
-			CL_CharEvent(54); return;
-		case K_KP_HOME:
-			CL_CharEvent(55); return;
-		case K_KP_UPARROW:
-			CL_CharEvent(56); return;
-		case K_KP_PGUP:
-			CL_CharEvent(57); return;
+		case K_KP_INS:       // 0
+		case K_KP_END:       // 1
+		case K_KP_DOWNARROW: // 2
+		case K_KP_PGDN:      // 3
+		case K_KP_LEFTARROW: // 4
+		case K_KP_5:         // 5
+		case K_KP_RIGHTARROW: // 6
+		case K_KP_HOME:      // 7
+		case K_KP_UPARROW:   // 8
+		case K_KP_PGUP:      // 9
+			return;
 		}
 	}
 
