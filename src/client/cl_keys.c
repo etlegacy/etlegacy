@@ -45,7 +45,7 @@ key up events are sent even if in console mode
 
 field_t historyEditLines[COMMAND_HISTORY];
 
-int nextHistoryLine;                // the last line in the history buffer, not masked
+int nextHistoryLine;        // the last line in the history buffer, not masked
 int historyLine;            // the line being displayed from history buffer
                             // will be <= nextHistoryLine
 
@@ -349,13 +349,13 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
 		}
 		prestep = edit->scroll;
 
-/*
-        if ( edit->cursor < len - drawLen ) {
-            prestep = edit->cursor;	// cursor at start
-        } else {
-            prestep = len - drawLen;
-        }
-*/
+		/*
+		if ( edit->cursor < len - drawLen ) {
+		    prestep = edit->cursor;	// cursor at start
+		} else {
+		    prestep = len - drawLen;
+		}
+		*/
 	}
 
 	if (prestep + drawLen > len)
@@ -1356,16 +1356,16 @@ qboolean CL_NumPadEvent(int key)
 #else
 	switch (key)
 	{
-	case K_KP_INS:       // 0
-	case K_KP_END:       // 1
-	case K_KP_DOWNARROW: // 2
-	case K_KP_PGDN:      // 3
-	case K_KP_LEFTARROW: // 4
-	case K_KP_5:         // 5
+	case K_KP_INS:        // 0
+	case K_KP_END:        // 1
+	case K_KP_DOWNARROW:  // 2
+	case K_KP_PGDN:       // 3
+	case K_KP_LEFTARROW:  // 4
+	case K_KP_5:          // 5
 	case K_KP_RIGHTARROW: // 6
-	case K_KP_HOME:      // 7
-	case K_KP_UPARROW:   // 8
-	case K_KP_PGUP:      // 9
+	case K_KP_HOME:       // 7
+	case K_KP_UPARROW:    // 8
+	case K_KP_PGUP:       // 9
 		return qtrue;
 	}
 #endif
@@ -1385,27 +1385,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		return;
 	}
 
-/*
-    switch ( key ) {
-    case K_KP_PGUP:
-    case K_KP_EQUALS:
-    case K_KP_5:
-    case K_KP_LEFTARROW:
-    case K_KP_UPARROW:
-    case K_KP_RIGHTARROW:
-    case K_KP_DOWNARROW:
-    case K_KP_END:
-    case K_KP_PGDN:
-    case K_KP_INS:
-    case K_KP_DEL:
-    case K_KP_HOME:
-        if ( Sys_IsNumLockDown() ) {
-            onlybinds = qtrue;
-        }
-        break;
-    }
-*/
-	//Jacker: Check if the numlock is set for some reason this is reversed windows<->unix
+	// Check if the numlock is set for some reason keys[K_KP_NUMLOCK].down is reversed windows<->unix
 #ifdef _WIN32
 	qnumlock = Sys_IsNumLockDown();
 #else
@@ -1715,11 +1695,10 @@ Normal keyboard characters, already shifted / capslocked / etc
 void CL_CharEvent(int key)
 {
 	// the console key should never be used as a char
-	// ydnar: added uk equivalent of shift+`
+	// - added uk equivalent of shift+`
 	// the RIGHT way to do this would be to have certain keys disable the equivalent SE_CHAR event
 
-	// fretn - this should be fixed in Com_EventLoop
-	// but I can't be arsed to leave this as is
+	// this should be fixed in Com_EventLoop but I can't be arsed to leave this as is
 
 	if (key == (unsigned char) '`' || key == (unsigned char) '~' || key == (unsigned char) '\xAC')
 	{
