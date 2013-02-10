@@ -1327,12 +1327,58 @@ void CL_InitKeyCommands(void)
  */
 qboolean consoleButtonWasPressed = qfalse;
 
+qboolean CL_NumPadEvent(int key)
+{
+#ifdef _WIN32
+	switch (key)
+	{
+	case K_KP_INS:
+		CL_CharEvent(48); return qtrue;
+	case K_KP_END:
+		CL_CharEvent(49); return qtrue;
+	case K_KP_DOWNARROW:
+		CL_CharEvent(50); return qtrue;
+	case K_KP_PGDN:
+		CL_CharEvent(51); return qtrue;
+	case K_KP_LEFTARROW:
+		CL_CharEvent(52); return qtrue;
+	case K_KP_5:
+		CL_CharEvent(53); return qtrue;
+	case K_KP_RIGHTARROW:
+		CL_CharEvent(54); return qtrue;
+	case K_KP_HOME:
+		CL_CharEvent(55); return qtrue;
+	case K_KP_UPARROW:
+		CL_CharEvent(56); return qtrue;
+	case K_KP_PGUP:
+		CL_CharEvent(57); return qtrue;
+	}
+#else
+	switch (key)
+	{
+	case K_KP_INS:       // 0
+	case K_KP_END:       // 1
+	case K_KP_DOWNARROW: // 2
+	case K_KP_PGDN:      // 3
+	case K_KP_LEFTARROW: // 4
+	case K_KP_5:         // 5
+	case K_KP_RIGHTARROW: // 6
+	case K_KP_HOME:      // 7
+	case K_KP_UPARROW:   // 8
+	case K_KP_PGUP:      // 9
+		return qtrue;
+	}
+#endif
+	return qfalse;
+}
+
 void CL_KeyEvent(int key, qboolean down, unsigned time)
 {
 	char     *kb;
 	char     cmd[1024];
 	qboolean bypassMenu = qfalse;
 	qboolean onlybinds  = qfalse;
+	qboolean qnumlock   = qfalse;
 
 	if (!key)
 	{
@@ -1359,24 +1405,23 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
         break;
     }
 */
+	//Jacker: Check if the numlock is set for some reason this is reversed windows<->unix
+#ifdef _WIN32
+	qnumlock = Sys_IsNumLockDown();
+#else
+	qnumlock = keys[K_KP_NUMLOCK].down;
+#endif // _WIN32
 
 	// special handling for numbers of numeric keypad & NUM pressed
-	if (keys[K_KP_NUMLOCK].down && (cls.keyCatchers & (KEYCATCH_CONSOLE | KEYCATCH_UI)) && down)
+	if (qnumlock && (cls.keyCatchers & (KEYCATCH_CONSOLE | KEYCATCH_UI)) && down)
 	{
-		switch (key)
+		onlybinds = CL_NumPadEvent(key);
+		/*
+		if(CL_NumPadEvent(key))
 		{
-		case K_KP_INS:       // 0
-		case K_KP_END:       // 1
-		case K_KP_DOWNARROW: // 2
-		case K_KP_PGDN:      // 3
-		case K_KP_LEFTARROW: // 4
-		case K_KP_5:         // 5
-		case K_KP_RIGHTARROW: // 6
-		case K_KP_HOME:      // 7
-		case K_KP_UPARROW:   // 8
-		case K_KP_PGUP:      // 9
-			return;
+		    return;
 		}
+		*/
 	}
 
 	// update auto-repeat status and BUTTON_ANY status
