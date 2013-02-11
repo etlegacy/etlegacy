@@ -3287,8 +3287,7 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring)
 				// Do we have one with the same name?
 				if (FS_SV_FileExists(va("%s.pk3", fs_serverReferencedPakNames[i])))
 				{
-					Q_strcat(neededpaks, len, va(" (local file exists with wrong checksum: S %i / C %i)",
-					                             fs_serverReferencedPaks[i], sp->pack->checksum));
+					Q_strcat(neededpaks, len, " (local file exists with wrong checksum)");
 #ifndef DEDICATED
 					// let the client subsystem track bad download redirects (dl file with wrong checksums)
 					// this is a bit ugly but the only other solution would have been callback passing..
