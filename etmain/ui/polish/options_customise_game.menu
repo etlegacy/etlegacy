@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	400
-#define WINDOW_HEIGHT	452
+#define WINDOW_HEIGHT	422
 #define GROUP_NAME		"grpOptionsCustomiseGame"
 		
 // Customise Game Menu //
@@ -50,24 +50,21 @@ menuDef {
 	MULTI( 8, 210, (SUBWINDOW_WIDTH)-4, 10, "Poziomy Przyblizenia:", .2, 8, "cg_zoomstepsniper", cvarFloatList { "4 Poziomy Przybl." 4 "8 Poziomy Przybl." 2 }, "Ustaw przyrost przyblizenie przez" )
 	
 // Chat //
-	SUBWINDOW( 6, 224, (SUBWINDOW_WIDTH), 40, "CHAT" )
+	SUBWINDOW( 6, 224, (SUBWINDOW_WIDTH), 76, "CHAT" )
 	MULTI( 8, 240, (SUBWINDOW_WIDTH)-4, 10, "Mod Szybkiego Czatu:", .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeryczny" 1 }, "Uzycie alpha lub numerycznych klawiszy do wysylania wiadomosci radiowych" )
 	MULTI( 8, 252, (SUBWINDOW_WIDTH)-4, 10, "Ikona Czasu Czatu:", .2, 8, "cg_voicespritetime", cvarFloatList { "Krotka" 3000 "Normalna" 6000 "Dluga" 12000 "Bardzo Dluga" 24000 }, "Ustawia jak dlugo ikona czasu pojawia sie nad glowa gracza" )
-
-// Downloads //
-	SUBWINDOW( 6, 266, (SUBWINDOW_WIDTH), 52, "SCIAGANIE" )
-	YESNO( 8, 282, (SUBWINDOW_WIDTH)-4, 10, "Spraw. Aktua. przy Starcie:", .2, 8, "cl_autoupdate", "" )
-	YESNO( 8, 294, (SUBWINDOW_WIDTH)-4, 10, "Scia. Brak. pliki z serwera:", .2, 8, "cl_allowDownload", "" )
-	YESNO( 8, 306, (SUBWINDOW_WIDTH)-4, 10, "Uzyj HTTP/FTP Sciaganie:", .2, 8, "cl_wwwDownload", "" )
+	YESNO( 8, 264, (SUBWINDOW_WIDTH)-4, 10, "Chat Teamu tylko:", .2, 8, "cg_teamChatsOnly", "Graj tylko chat team w grze" )
+	YESNO( 8, 276, (SUBWINDOW_WIDTH)-4, 10, "Brak dzwieku czatu:", .2, 8, "cg_noVoiceChats", "Nie graj dzwiekow czatu w grze" )
+	YESNO( 8, 288, (SUBWINDOW_WIDTH)-4, 10, "Brak dzwieku textu:", .2, 8, "cg_noVoiceText", "Nie pokazuj dzwieku textu w grze" )
 	
 // Miscellaneous //
-	SUBWINDOW( 6, 320, (SUBWINDOW_WIDTH), 88, "ROZNE" )
-	MULTI( 8, 336, (SUBWINDOW_WIDTH)-4, 10, "Okienko skarg:", .2, 8, "cg_complaintPopUp", cvarFloatList { "Wylacz." 0 "Wlacz" 1 }, "Wyswietl opcje do skarg" )
-	YESNO( 8, 348, (SUBWINDOW_WIDTH)-4, 10, "Zapisuj Wazne Wiadomosci:", .2, 8, "cg_printObjectiveInfo", "Zapisuje wazne informacje do konsoli" )
-	MULTI( 8, 360, (SUBWINDOW_WIDTH)-4, 10, "Auto-Akcje:", .2, 8, "cg_autoAction", cvarFloatList { "Brak" 0 "Demo" 1 "Zdjecie" 2 "Zapis Statow" 4 "Demo + Zdjecie" 3 "Demo + Statystyki" 5 "Zdjecie + Statystyki" 6 "Demo + Zdjecie + Statystyki" 7 }, "Automatycznie wykokonuje akcje po starcie lub koncu rundy" )
-	YESNO( 8, 372, (SUBWINDOW_WIDTH)-4, 10, "Uzyj JPEG dla AutoScreenow:", .2, 8, "cg_useScreenshotJPEG", "Zmiana pomiedzy .tga a .jpg" )
-	YESNO( 8, 384, (SUBWINDOW_WIDTH)-4, 10, "Pokaz Opis :", .2, 8, "ui_showtooltips", "Wyswietl opis w UI" )
-	YESNO( 8, 396, (SUBWINDOW_WIDTH)-4, 10, "Informacje:", .2, 8, "cg_announcer", "Wlacza lub Wylacza w grze Commandera" )
+	SUBWINDOW( 6, 306, (SUBWINDOW_WIDTH), 88, "ROZNE" )
+	MULTI( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Okienko skarg:", .2, 8, "cg_complaintPopUp", cvarFloatList { "Wylacz." 0 "Wlacz" 1 }, "Wyswietl opcje do skarg" )
+	YESNO( 8, 334, (SUBWINDOW_WIDTH)-4, 10, "Zapisuj Wazne Wiadomosci:", .2, 8, "cg_printObjectiveInfo", "Zapisuje wazne informacje do konsoli" )
+	MULTI( 8, 346, (SUBWINDOW_WIDTH)-4, 10, "Auto-Akcje:", .2, 8, "cg_autoAction", cvarFloatList { "Brak" 0 "Demo" 1 "Zdjecie" 2 "Zapis Statow" 4 "Demo + Zdjecie" 3 "Demo + Statystyki" 5 "Zdjecie + Statystyki" 6 "Demo + Zdjecie + Statystyki" 7 }, "Automatycznie wykokonuje akcje po starcie lub koncu rundy" )
+	YESNO( 8, 358, (SUBWINDOW_WIDTH)-4, 10, "Uzyj JPEG dla AutoScreenow:", .2, 8, "cg_useScreenshotJPEG", "Zmiana pomiedzy .tga a .jpg" )
+	YESNO( 8, 370, (SUBWINDOW_WIDTH)-4, 10, "Pokaz Opis :", .2, 8, "ui_showtooltips", "Wyswietl opis w UI" )
+	YESNO( 8, 382, (SUBWINDOW_WIDTH)-4, 10, "Informacje:", .2, 8, "cg_announcer", "Wlacza lub Wylacza w grze Commandera" )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "COFNIJ", .3, 14, close options_customise_game ; open options )

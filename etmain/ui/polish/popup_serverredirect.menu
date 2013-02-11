@@ -76,4 +76,5 @@ menuDef {
 	
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "NIE", .3, 14, uiScript clearError ; close popupServerRedirect ; open main_opener )
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "TAK", .3, 14, close popupServerRedirect ; uiScript redirect )
+	BUTTON( SUBWINDOW_X+198, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .33*(SUBWINDOW_WIDTH-18), 18, "POLACZ PONOWNIE", .3, 14, close popupServerRedirect ; uiScript reconnect )
 }

@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	400
-#define WINDOW_HEIGHT	452
+#define WINDOW_HEIGHT	422
 #define GROUP_NAME		"grpOptionsCustomiseGame"
 		
 // Customise Game Menu //
@@ -50,24 +50,21 @@ menuDef {
 	MULTI( 8, 210, (SUBWINDOW_WIDTH)-4, 10, "Zoom Levels:", .2, 8, "cg_zoomstepsniper", cvarFloatList { "4 Levels of Zoom" 4 "8 Levels of Zoom" 2 }, "Specifies the increments you zoom by" )
 	
 // Chat //
-	SUBWINDOW( 6, 224, (SUBWINDOW_WIDTH), 40, "CHAT" )
+	SUBWINDOW( 6, 224, (SUBWINDOW_WIDTH), 76, "CHAT" )
 	MULTI( 8, 240, (SUBWINDOW_WIDTH)-4, 10, "Quick Chat Mode:", .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeric" 1 }, "Use alpha or numeric keys to send radio messages" )
 	MULTI( 8, 252, (SUBWINDOW_WIDTH)-4, 10, "Chat Icon Time:", .2, 8, "cg_voicespritetime", cvarFloatList { "Short" 3000 "Normal" 6000 "Long" 12000 "Really Long" 24000 }, "Specify how long the chat icon appears above other players' heads" )
-
-// Downloads //
-	SUBWINDOW( 6, 266, (SUBWINDOW_WIDTH), 52, "DOWNLOADS" )
-	YESNO( 8, 282, (SUBWINDOW_WIDTH)-4, 10, "Check for Updates on Start-Up:", .2, 8, "cl_autoupdate", "" )
-	YESNO( 8, 294, (SUBWINDOW_WIDTH)-4, 10, "Get Missing Files from Server:", .2, 8, "cl_allowDownload", "" )
-	YESNO( 8, 306, (SUBWINDOW_WIDTH)-4, 10, "Use HTTP/FTP Downloads:", .2, 8, "cl_wwwDownload", "" )
+	YESNO( 8, 264, (SUBWINDOW_WIDTH)-4, 10, "Team chat only:", .2, 8, "cg_teamChatsOnly", "Play only team chat in-game" )
+	YESNO( 8, 276, (SUBWINDOW_WIDTH)-4, 10, "No voice chat:", .2, 8, "cg_noVoiceChats", "Don´t play voice chat in-game" )
+	YESNO( 8, 288, (SUBWINDOW_WIDTH)-4, 10, "No voice text:", .2, 8, "cg_noVoiceText", "Don´t show voice text in-game" )
 	
 // Miscellaneous //
-	SUBWINDOW( 6, 320, (SUBWINDOW_WIDTH), 88, "MISCELLANEOUS" )
-	MULTI( 8, 336, (SUBWINDOW_WIDTH)-4, 10, "Complaint PopUp:", .2, 8, "cg_complaintPopUp", cvarFloatList { "Off" 0 "On" 1 }, "Display the option to file complaints about teammates who kill you" )
-	YESNO( 8, 348, (SUBWINDOW_WIDTH)-4, 10, "Log Important Messages:", .2, 8, "cg_printObjectiveInfo", "Prints important game messages to the console" )
-	MULTI( 8, 360, (SUBWINDOW_WIDTH)-4, 10, "Auto-Action:", .2, 8, "cg_autoAction", cvarFloatList { "None" 0 "Demo" 1 "Screenshot" 2 "Stats Dump" 4 "Demo + SS" 3 "Demo + Stats" 5 "SS + Stats" 6 "Demo + SS + Stats" 7 }, "Automatically performs actions at the start or end of a round" )
-	YESNO( 8, 372, (SUBWINDOW_WIDTH)-4, 10, "Use JPEG for AutoScreenshots:", .2, 8, "cg_useScreenshotJPEG", "Switches between .tga and .jpg picture types for the \"autoscreenshot\" command" )
-	YESNO( 8, 384, (SUBWINDOW_WIDTH)-4, 10, "Show Tool Tips :", .2, 8, "ui_showtooltips", "Display Tool Tips in the UI" )
-	YESNO( 8, 396, (SUBWINDOW_WIDTH)-4, 10, "Announcer:", .2, 8, "cg_announcer", "Enables or disables the in-game Commander" )
+	SUBWINDOW( 6, 306, (SUBWINDOW_WIDTH), 88, "MISCELLANEOUS" )
+	MULTI( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Complaint PopUp:", .2, 8, "cg_complaintPopUp", cvarFloatList { "Off" 0 "On" 1 }, "Display the option to file complaints about teammates who kill you" )
+	YESNO( 8, 334, (SUBWINDOW_WIDTH)-4, 10, "Log Important Messages:", .2, 8, "cg_printObjectiveInfo", "Prints important game messages to the console" )
+	MULTI( 8, 346, (SUBWINDOW_WIDTH)-4, 10, "Auto-Action:", .2, 8, "cg_autoAction", cvarFloatList { "None" 0 "Demo" 1 "Screenshot" 2 "Stats Dump" 4 "Demo + SS" 3 "Demo + Stats" 5 "SS + Stats" 6 "Demo + SS + Stats" 7 }, "Automatically performs actions at the start or end of a round" )
+	YESNO( 8, 358, (SUBWINDOW_WIDTH)-4, 10, "Use JPEG for AutoScreenshots:", .2, 8, "cg_useScreenshotJPEG", "Switches between .tga and .jpg picture types for the \"autoscreenshot\" command" )
+	YESNO( 8, 370, (SUBWINDOW_WIDTH)-4, 10, "Show Tool Tips :", .2, 8, "ui_showtooltips", "Display Tool Tips in the UI" )
+	YESNO( 8, 382, (SUBWINDOW_WIDTH)-4, 10, "Announcer:", .2, 8, "cg_announcer", "Enables or disables the in-game Commander" )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "BACK", .3, 14, close options_customise_game ; open options )

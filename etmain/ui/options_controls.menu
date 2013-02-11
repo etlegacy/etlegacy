@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	448
+#define WINDOW_HEIGHT	458
 #define GROUP_NAME		"grpOptionsControls"
 		
 // Controls Menu //
@@ -43,30 +43,34 @@ menuDef {
 	BIND( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Use (Activate):", .2, 8, "+activate", "" )
 	
 // Input //
-	SUBWINDOW( 6, 198, (SUBWINDOW_WIDTH), 40, "INPUT" )
+	SUBWINDOW( 6, 198, (SUBWINDOW_WIDTH), 52, "INPUT" )
 	CHECKBOXALIGNXACTION( 8, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Invert Mouse:", .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, "Inverts mouse pitch" )
 	CHECKBOXALIGNX( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 214, .5*((SUBWINDOW_WIDTH)-6), 10, "Smooth Mouse:", .2, 24, 8, "m_filter", "Smooths out the mouse using interpolation" )
 	SLIDER( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Mouse Sensitivity:", .2, 8, "sensitivity" 5 1 30, "Use the slider to increase or decrease mouse sensitivity" )
 	CVARFLOATLABEL( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
-
+	SLIDER( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "UP/DOWN Sensitivity:", .2, 8, "m_pitch" 0.022 0.01501 0.022, "Use the slider to increase or decrease mouse pitch" )
+	CVARFLOATLABEL( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "m_pitch", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
+	SLIDER( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "UP/DOWN Sensitivity:", .2, 8, "m_pitch" 0.022 0.01501 0.022, "Use the slider to increase or decrease mouse pitch" )
+	CVARFLOATLABEL( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "m_pitch", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
+	
 // Chat //
-	SUBWINDOW( 6, 244, (SUBWINDOW_WIDTH), 64, "CHAT" )
-	BIND( 8, 260, .5*((SUBWINDOW_WIDTH)-6), 10, "Chat:", .2, 8, "messagemode", "" )
-	BIND( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 260, .5*((SUBWINDOW_WIDTH)-6), 10, "Team Chat:", .2, 8, "messagemode2", "" )
-	BIND( 8, 272, (SUBWINDOW_WIDTH)-4, 10, "Fire-Team Chat:", .2, 8, "messagemode3", "" )
-	BIND( 8, 284, (SUBWINDOW_WIDTH)-4, 10, "Quick Chat:", .2, 8, "mp_QuickMessage", "" )
-	BIND( 8, 296, (SUBWINDOW_WIDTH)-4, 10, "Fire-Team Quick Chat:", .2, 8, "mp_fireteammsg", "" )
+	SUBWINDOW( 6, 256, (SUBWINDOW_WIDTH), 64, "CHAT" )
+	BIND( 8, 272, .5*((SUBWINDOW_WIDTH)-6), 10, "Chat:", .2, 8, "messagemode", "" )
+	BIND( 8+(.5*((SUBWINDOW_WIDTH)-6))+2, 272, .5*((SUBWINDOW_WIDTH)-6), 10, "Team Chat:", .2, 8, "messagemode2", "" )
+	BIND( 8, 284, (SUBWINDOW_WIDTH)-4, 10, "Fire-Team Chat:", .2, 8, "messagemode3", "" )
+	BIND( 8, 296, (SUBWINDOW_WIDTH)-4, 10, "Quick Chat:", .2, 8, "mp_QuickMessage", "" )
+	BIND( 8, 308, (SUBWINDOW_WIDTH)-4, 10, "Fire-Team Quick Chat:", .2, 8, "mp_fireteammsg", "" )
 
 // Pop-Ups //
-	SUBWINDOW( 6, 314, (SUBWINDOW_WIDTH), 100, "POP-UPS" )
-	BIND( 8, 330, (SUBWINDOW_WIDTH)-4, 10, "Show Scores:", .2, 8, "+scores", "" )
-	BIND( 8, 342, (SUBWINDOW_WIDTH)-4, 10, "Show Limbo Menu:", .2, 8, "OpenLimboMenu", "" )
-	BIND( 8, 354, (SUBWINDOW_WIDTH)-4, 10, "Show Command Map:", .2, 8, "+mapexpand", "" )
-	BIND( 8, 366, (SUBWINDOW_WIDTH)-4, 10, "Compass Map Zoom In:", .2, 8, "MapZoomIn", "" )
-	BIND( 8, 378, (SUBWINDOW_WIDTH)-4, 10, "Compass Map Zoom Out:", .2, 8, "MapZoomOut", "" )
-	BIND( 8, 390, (SUBWINDOW_WIDTH)-4, 10, "Player Stats:", .2, 8, "+stats", "" )
-	BIND( 8, 402, (SUBWINDOW_WIDTH)-4, 10, "Top Shots:", .2, 8, "+topshots", "" )
-//	BIND( 8, 402, (SUBWINDOW_WIDTH)-4, 10, "Multiview:", .2, 8, "mvactivate", "" )
+	SUBWINDOW( 6, 326, (SUBWINDOW_WIDTH), 100, "POP-UPS" )
+	BIND( 8, 342, (SUBWINDOW_WIDTH)-4, 10, "Show Scores:", .2, 8, "+scores", "" )
+	BIND( 8, 354, (SUBWINDOW_WIDTH)-4, 10, "Show Limbo Menu:", .2, 8, "OpenLimboMenu", "" )
+	BIND( 8, 366, (SUBWINDOW_WIDTH)-4, 10, "Show Command Map:", .2, 8, "+mapexpand", "" )
+	BIND( 8, 378, (SUBWINDOW_WIDTH)-4, 10, "Compass Map Zoom In:", .2, 8, "MapZoomIn", "" )
+	BIND( 8, 390, (SUBWINDOW_WIDTH)-4, 10, "Compass Map Zoom Out:", .2, 8, "MapZoomOut", "" )
+	BIND( 8, 402, (SUBWINDOW_WIDTH)-4, 10, "Player Stats:", .2, 8, "+stats", "" )
+	BIND( 8, 414, (SUBWINDOW_WIDTH)-4, 10, "Top Shots:", .2, 8, "+topshots", "" )
+//	BIND( 8, 414, (SUBWINDOW_WIDTH)-4, 10, "Multiview:", .2, 8, "mvactivate", "" )
 	
 // Use Weapons //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 64, "USE WEAPONS" )

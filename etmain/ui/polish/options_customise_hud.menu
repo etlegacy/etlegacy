@@ -75,6 +75,7 @@ menuDef {
 	SUBWINDOW( 6, 308, (SUBWINDOW_WIDTH), 125, "WYGLAD W GRZE" )
 	MULTI( 8, 324, (SUBWINDOW_WIDTH)-4, 10, "Wyswietlanie Lusek:", .2, 8, "cg_brassTime", cvarFloatList { "Wysokie" 15000 "Srednie" 2500 "Wylaczone" 0 }, "" )
 	SLIDER( 8, 336, (SUBWINDOW_WIDTH)-4, 10, "Pole Widzenia:", .2, 8, "cg_fov" 1.3 80 120, "" )
+	CVARFLOATLABEL( 8, 336, (SUBWINDOW_WIDTH)-4, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-40), 8 )
 	MULTI( 8, 348, (SUBWINDOW_WIDTH)-4, 10, "Odleglosc Korony:", .2, 8, "cg_coronafardist", cvarFloatList { "Wylaczony" 0 "Bliski" 800 "Normalny" 1536 "Daleki" 4096 "Extremalny" 16000 }, "" )
 	YESNO( 8, 360, (SUBWINDOW_WIDTH)-4, 10, "Czastki:", .2, 8, "cg_wolfparticles", "" )
 	MULTI( 8, 372, (SUBWINDOW_WIDTH)-4, 10, "Znaki Scian Czas:", .2, 8, "cg_markTime", cvarFloatList { "Dlugi" 30000 "Normaly" 20000 "Krotki" 10000 "Wylaczony" 0 }, "" )
