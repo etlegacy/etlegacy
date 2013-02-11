@@ -1559,10 +1559,10 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 	}
 
-	// add to the attacker's hit counter
-	if (attacker->client && targ != attacker && targ->health > 0)
+	// add to the attacker's hit counter (but only if target is a client)
+	if (targ->client && attacker->client && targ != attacker && targ->health > 0)
 	{
-		if (OnSameTeam(targ, attacker) || (targ->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor)))
+		if (OnSameTeam(targ, attacker) || targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))
 		{
 			attacker->client->ps.persistant[PERS_HITS] -= damage;
 		}
