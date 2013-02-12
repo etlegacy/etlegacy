@@ -2084,6 +2084,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	// Clear out spawn target config strings
 	trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
 	Info_SetValueForKey(cs, "numspawntargets", "0");
+	reset_numobjectives();
 	trap_SetConfigstring(CS_MULTI_INFO, cs);
 
 	for (i = CS_MULTI_SPAWNTARGETS; i < CS_MULTI_SPAWNTARGETS + MAX_MULTI_SPAWNTARGETS; i++)
