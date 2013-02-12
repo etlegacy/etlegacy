@@ -119,7 +119,7 @@ in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on 
     1. download free Visual Studio C++ Express 2010
     2. when you install CMake, make sure it is added into your system PATH
     3. open `Visual Studio Command Prompt (2010)` (search for it in the Start menu)
-    4. run `cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake` in the ET:L directory
+    4. run `cmake -G "NMake Makefiles" -DBUNDLED_SDL=YES -DBUNDLED_JPEG=YES -DBUNDLED_LUA=YES -DBUNDLED_CURL=YES -DBUNDLED_OGG_VORBIS=YES .. && nmake` in the ET:L directory
        ... or `cmake -G "Visual Studio 10" ..` and open the resulting project in VS 2010
 
 * option B: open the CMakeLists.txt file in [QT Creator](http://qt.nokia.com/products/developer-tools).
