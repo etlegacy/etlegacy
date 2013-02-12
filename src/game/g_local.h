@@ -1416,6 +1416,7 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 // g_team.c
 qboolean OnSameTeam(gentity_t *ent1, gentity_t *ent2);
 int Team_ClassForString(char *string);
+void reset_numobjectives(void);
 
 // g_mem.c
 void *G_Alloc(int size);
