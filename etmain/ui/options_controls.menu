@@ -50,8 +50,6 @@ menuDef {
 	CVARFLOATLABEL( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
 	SLIDER( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "UP/DOWN Sensitivity:", .2, 8, "m_pitch" 0.022 0.01501 0.022, "Use the slider to increase or decrease mouse pitch" )
 	CVARFLOATLABEL( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "m_pitch", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
-	SLIDER( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "UP/DOWN Sensitivity:", .2, 8, "m_pitch" 0.022 0.01501 0.022, "Use the slider to increase or decrease mouse pitch" )
-	CVARFLOATLABEL( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "m_pitch", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-4), 8 )
 	
 // Chat //
 	SUBWINDOW( 6, 256, (SUBWINDOW_WIDTH), 64, "CHAT" )
