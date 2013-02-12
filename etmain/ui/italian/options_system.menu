@@ -10,7 +10,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	400
-#define WINDOW_HEIGHT	272
+#define WINDOW_HEIGHT	280
 #define GROUP_NAME		"grpOptionsSystem"
 #define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
 
@@ -53,12 +53,11 @@ menuDef {
 	MULTIACTION( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Max Pacchetti:", .2, 8, "ui_cl_maxpackets", cvarFloatList { "Basso" 30 "Medio" 60 "Alto" 100 } , uiScript update "ui_cl_maxpackets", "massimo numero di pacchetti ricevibili da fuori" )
 	MULTIACTION( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Duplicazione Pacchetti:", .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", "numero di duplicati per ogni pacchetto mandato fuori, riduce la perdita di pacchetti" )
 
-// Memory
-// NOTE: absolutely useless to set memory via UI ... only valid if done via start params
-	SUBWINDOW( 6, 196, (SUBWINDOW_WIDTH), 42, "MEMORIA" )
-	MULTIACTION( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Mega per Hunk:", .2, 8, "ui_com_hunkmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_hunkmegs", "quantita' di memoria (MB) da assegnare all'hunk" )
-	MULTIACTION( 8, 224, (SUBWINDOW_WIDTH)-4, 10, "Mega per Suono:", .2, 8, "ui_com_soundmegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_soundmegs", "quantita' di memoria (MB) da assegnare ai campioni sonori caricati" )
-	//MULTIACTION( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Mega per Zone:", .2, 8, "ui_com_zonemegs", cvarFloatList { "64MB" 64 "128MB" 128 "256MB" 256 "512MB" 512} cvarListUndefined "Custom", uiScript update "ui_com_zonemegs", "quantita' di memoria (MB) da assegnare per la mappa e il caricamento delle texture" )
+// Downloads //
+	SUBWINDOW( 6, 266, (SUBWINDOW_WIDTH), 52, "DOWNLOAD" )
+	YESNO( 8, 282, (SUBWINDOW_WIDTH)-4, 10, "Aggiornamento all'avvio:", .2, 8, "cl_autoupdate", "" )
+	YESNO( 8, 294, (SUBWINDOW_WIDTH)-4, 10, "File Mancanti dal Server:", .2, 8, "cl_allowDownload", "" )
+	YESNO( 8, 306, (SUBWINDOW_WIDTH)-4, 10, "Usa HTTP/FTP per Scaricare:", .2, 8, "cl_wwwDownload", "" )
 	
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "INDIETRO", .3, 14, uiScript vidReset ; close options_system ; open options )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "APPLICA", .3, 14,

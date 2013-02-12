@@ -73,13 +73,14 @@ menuDef {
 	
 // In-Game Display //
 	SUBWINDOW( 6, 308, (SUBWINDOW_WIDTH), 125, "VISUALIZZAZIONE DURANTE IL GIOCO" )
-	MULTI( 8, 324, (SUBWINDOW_WIDTH)-4, 10, "Uscita Bossoli:", .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, "" )
+	MULTI( 8, 324, (SUBWINDOW_WIDTH)-4, 10, "Uscita Bossoli:", .2, 8, "cg_brassTime", cvarFloatList { "Molti" 15000 "Medi" 2500 "No" 0 }, "" )
 	SLIDER( 8, 336, (SUBWINDOW_WIDTH)-4, 10, "Campo Visuale:", .2, 8, "cg_fov" 1.3 80 120, "" )
+	CVARFLOATLABEL( 8, 336, (SUBWINDOW_WIDTH)-4, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-40), 8 )
 	MULTI( 8, 348, (SUBWINDOW_WIDTH)-4, 10, "Distanza Corona:", .2, 8, "cg_coronafardist", cvarFloatList { "No" 0 "Vicino" 800 "Normale" 1536 "Lontano" 4096 "Estrema" 16000 }, "" )
 	YESNO( 8, 360, (SUBWINDOW_WIDTH)-4, 10, "Particelle:", .2, 8, "cg_wolfparticles", "" )
-	MULTI( 8, 372, (SUBWINDOW_WIDTH)-4, 10, "Permanenza Macchie sui Muri:", .2, 8, "cg_markTime", cvarFloatList { "A Lungo" 30000 "Normale" 20000 "Poco" 10000 "No" 0 }, "" )
-	MULTI( 8, 384, (SUBWINDOW_WIDTH)-4, 10, "Lampeggio Sanguinante:", .2, 8, "cg_bloodFlash", cvarFloatList { "Nessuno" 0.0 "Leggero" 0.25 "Medio" 0.5 "Pesante" 0.75 "Totale" 1.0 }, "\"Lampo\" rosso sangue quando ricevi dei danni" )
-	MULTI( 8, 396, (SUBWINDOW_WIDTH)-4, 10, "Macchie Sangue:", .2, 8, "cg_bloodDamageBlend", cvarFloatList { "Nessuna" 0.0 "Leggere" 0.25 "Medie" 0.5 "Pesanti" 0.75 "Full" 1.0 }, "Trasparenza \"macchie\" sangue quando ricevi dei danni" )
+	MULTI( 8, 372, (SUBWINDOW_WIDTH)-4, 10, "Permanenza Macchie Muri:", .2, 8, "cg_markTime", cvarFloatList { "Lunga" 30000 "Normale" 20000 "Poco" 10000 "No" 0 }, "" )
+	MULTI( 8, 384, (SUBWINDOW_WIDTH)-4, 10, "Lampeggio Sanguinante:", .2, 8, "cg_bloodFlash", cvarFloatList { "Nessuno" 0.0 "Leggero" 0.25 "Medio" 0.5 "Pesante" 0.75 "Totale" 1.0 }, "\"Lampo\" rosso sangue quando ti colpiscono" )
+	MULTI( 8, 396, (SUBWINDOW_WIDTH)-4, 10, "Macchie Sangue:", .2, 8, "cg_bloodDamageBlend", cvarFloatList { "Nessuna" 0.0 "Leggere" 0.25 "Medie" 0.5 "Pesanti" 0.75 "Full" 1.0 }, "Trasparenza \"macchie\" sangue quando ti colpiscono" )
 	YESNO( 8, 408, (SUBWINDOW_WIDTH)-4, 10, "Mostra Sangue:", .2, 8, "cg_showblood", "" )
 	YESNO( 8, 420, (SUBWINDOW_WIDTH)-4, 10, "Effetti Atmosferici:", .2, 8, "cg_atmosphericEffects", "" )
 	
