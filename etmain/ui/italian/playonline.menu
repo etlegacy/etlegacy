@@ -79,8 +79,8 @@ menuDef {
 	
 	SUBWINDOW( 6, 64, (FILTERS_WIDTH), 94, "FILTRI" )
 	
-	MULTIACTIONLEFT( 8, 80, .5*((FILTERS_WIDTH)-6), 10, "Origine:", .2, 8, "ui_netSource", cvarFloatList { "Local" 0 "Internet" 1 "Favorites" 2 }, uiScript UpdateFilter, "Scegli i tipi di server da mostrare, da Internet, locali e preferiti" )
-	MULTIACTIONLEFT( 8+.5*((FILTERS_WIDTH)-6)+2, 80, .5*((FILTERS_WIDTH)-6), 10, "Tipo di gioco:", .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "Last Man Standing" 5 "Map Voting" 6 }, uiScript RefreshFilter, "Includi/escludi i server che offrono questo Tipo di Gioco nella lista" )
+	MULTIACTIONLEFT( 8, 80, .5*((FILTERS_WIDTH)-6), 10, "Origine:", .2, 8, "ui_netSource", cvarFloatList { "Locale" 0 "Internet" 1 "Preferiti" 2 }, uiScript UpdateFilter, "Scegli i tipi di server da mostrare, da Internet, locali o preferiti" )
+	MULTIACTIONLEFT( 8+.5*((FILTERS_WIDTH)-6)+2, 80, .5*((FILTERS_WIDTH)-6), 10, "Tipo di gioco:", .2, 8, "ui_joinGameType", cvarFloatList { "Tutti" -1 "Obiettivo" 2 "A Tempo" 3 "Campagna" 4 "Ultimo Rimasto" 5 "Vota la Mappa" 6 }, uiScript RefreshFilter, "Includi/escludi i server che offrono questo Tipo di Gioco nella lista" )
 
 	itemDef {
 		name		"filtericonEmptyFull"

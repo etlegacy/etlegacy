@@ -76,14 +76,14 @@ menuDef {
 	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Voto Valido:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Speifica la minima percentuale richiesta per far passare una votazione" )
 	
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 148, (SUBWINDOW_WIDTH), 112, "PERMETTI VOTAZIONI" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Pref. Compet,:", .2, 24, 8, "vote_allow_comp", "Permetti di votare per le impostazioni da competizione" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Pref. Compet.:", .2, 24, 8, "vote_allow_comp", "Permetti di votare per le impostazioni da competizione" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Tipo di Gioco:", .2, 24, 8, "vote_allow_gametype", "Permetti di votare per cambiare il tipo di gioco" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, "Butta Fuori:", .2, 24, 8, "vote_allow_kick", "Permetti di votare per buttare fuori altri giocatori" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 200, .5*((SUBWINDOW_WIDTH)-6), 10, "Mappa:", .2, 24, 8, "vote_allow_map", "Permetti di votare per una mappa o campagna diversa" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 212, .5*((SUBWINDOW_WIDTH)-6), 10, "Riavvia Partita:", .2, 24, 8, "vote_allow_matchreset", "Permetti di votare per riavviare la partita" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 224, .5*((SUBWINDOW_WIDTH)-6), 10, "Spettatori Muti:", .2, 24, 8, "vote_allow_mutespecs", "Permetti di votare per rendere muti gli spettatori" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 236, .5*((SUBWINDOW_WIDTH)-6), 10, "Prossima Mappa:", .2, 24, 8, "vote_allow_nextmap", "Permetti di votare per la prossima campagna o mappa" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Sq. Equil.:", .2, 24, 8, "vote_allow_balancedteams", "Permetti di votare per forzare squadre equilibrate" )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Squadre Equil.:", .2, 24, 8, "vote_allow_balancedteams", "Permetti di votare per forzare squadre equilibrate" )
 	
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Pref. Pubbl.:", .2, 24, 8, "vote_allow_pub", "Permetti di votare per impostazioni pubbliche" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Arbitro:", .2, 24, 8, "vote_allow_referee", "Permetti di votare per un arbitro" )

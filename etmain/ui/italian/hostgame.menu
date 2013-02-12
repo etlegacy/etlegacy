@@ -36,9 +36,9 @@ menuDef {
 // Settings //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 88, "IMPOSTAZIONI" )
 	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Nome del Server:", .2, 8, "sv_hostname", 32, 18, "Specifica il nome del tuo server" )
-	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Tipo di Gioco:", .2, 8, "ui_netGameType", cvarFloatList { "Campagna" 4 "Ultimo Rimasto" 5 "Obbiettivo Mappa Singola" 2 "A Tempo" 3 }, show labelDetailsGametype ; hide labelDetailsCampaign ; uiScript updateGameType, "Clicca per specificare il tipo di gioco da caricare" )
+	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Tipo di Gioco:", .2, 8, "ui_netGameType", cvarFloatList { "Campagna" 4 "Ultimo Rimasto" 5 "Mappa Singola" 2 "A Tempo" 3 }, show labelDetailsGametype ; hide labelDetailsCampaign ; uiScript updateGameType, "Clicca per specificare il tipo di gioco da caricare" )
 	NUMERICFIELD( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Massimo Giocatori:", .2, 8, "sv_maxclients", 3, "Massimo numero di giocatori che si possono connettere al server" )
-	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Auto-Configura il Server:", .2, 8, "server_autoconfig", cvarFloatList { "No" 0 "Competition Settings" 1 "Public Settings" 2 }, "Il Server si configura automaticamente da solo per i settaggi di default selezionati" )
+	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Auto-Configura Server:", .2, 8, "server_autoconfig", cvarFloatList { "No" 0 "Impost. Compet." 1 "Impost. Pubbliche" 2 }, "Il Server si configura automaticamente da solo per i settaggi predefiniti selezionati" )
 	MULTI( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Server Dedicato:", .2, 8, "ui_dedicated", cvarFloatList { "No" 0 "Si - RETE" 1 "Si - Internet" 2 }, "Specifica se il Server deve essere \"dedicato\" per giocare nella LAN o su Internet (non lancia un client)" )
 	EDITFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Password:", .2, 8, "g_password", 25, 18, "Eventuale Password che i client devono fornire per entrare sul server" )
 
