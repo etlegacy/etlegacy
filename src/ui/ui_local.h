@@ -647,8 +647,6 @@ typedef struct
 
 	int effectsColor;
 
-	qboolean inGameLoad;
-
 	int selectedObjective;
 
 	int activeFont;
