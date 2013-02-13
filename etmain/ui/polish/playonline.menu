@@ -79,7 +79,7 @@ menuDef {
 	
 	SUBWINDOW( 6, 64, (FILTERS_WIDTH), 94, "FILTRY" )
 	
-	MULTIACTIONLEFT( 8, 80, .5*((FILTERS_WIDTH)-6), 10, "Zrodlo:", .2, 8, "ui_netSource", cvarFloatList { "Lokalny" 0 "Internet" 1 "Ulibione" 2 }, uiScript UpdateFilter, "Wybierz rodzaj serwerow, z Internetu, lokalne i z listy ulubionych" )
+	MULTIACTIONLEFT( 8, 80, .5*((FILTERS_WIDTH)-6), 10, "Zrodlo:", .2, 8, "ui_netSource", cvarFloatList { "Lokalny" 0 "Internet" 1 "Ulubione" 2 }, uiScript UpdateFilter, "Wybierz rodzaj serwerow, z Internetu, lokalne i z listy ulubionych" )
 	MULTIACTIONLEFT( 8+.5*((FILTERS_WIDTH)-6)+2, 80, .5*((FILTERS_WIDTH)-6), 10, "Typ Gry:", .2, 8, "ui_joinGameType", cvarFloatList { "Wszystkie" -1 "Poj. Mapa" 2 "Na Czas" 3 "Kampania" 4 "Ostatni Przetrwaly" 5 "Glosowanie na Mapy" 6 }, uiScript RefreshFilter, "Wyswietl tylko serwery oferujace ten typ gry" )
 
 	itemDef {
