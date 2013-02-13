@@ -801,8 +801,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		self->client->legsDeathAnim  = self->client->ps.legsAnim;
 		self->client->deathAnimTime  = level.time + self->client->ps.pm_time;
 
-		G_AddEvent(self, EV_DEATH1 + 1, killer);
-
 		// the body can still be gibbed
 		self->die = body_die;
 	}

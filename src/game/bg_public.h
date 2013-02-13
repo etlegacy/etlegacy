@@ -861,7 +861,6 @@ typedef enum
 	EV_FALL_DMG_15,
 	EV_FALL_DMG_25,
 	EV_FALL_DMG_50,
-	EV_JUMP,
 	EV_WATER_TOUCH, // foot touches
 	EV_WATER_LEAVE, // foot leaves
 	EV_WATER_UNDER, // head touches
@@ -898,9 +897,6 @@ typedef enum
 	EV_BULLET,              // otherEntity is the shooter
 	EV_LOSE_HAT,
 	EV_PAIN,
-	EV_DEATH1,
-	EV_DEATH2,
-	EV_DEATH3,
 	EV_OBITUARY,
 	EV_STOPSTREAMINGSOUND, // swiped from sherman
 	EV_POWERUP_QUAD,

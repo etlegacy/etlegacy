@@ -534,32 +534,13 @@ Also called by playerstate transition
 
 void CG_PainEvent(centity_t *cent, int health, qboolean crouching)
 {
-	char *snd;
-
 	// don't do more than two pain sounds a second
+	// - there are no pain sounds in ET and sound code for this is removed
+	// - painTime isn't related to sounds only
 	if (cg.time - cent->pe.painTime < 500)
 	{
 		return;
 	}
-
-	if (health < 25)
-	{
-		snd = "*pain25_1.wav";
-	}
-	else if (health < 50)
-	{
-		snd = "*pain50_1.wav";
-	}
-	else if (health < 75)
-	{
-		snd = "*pain75_1.wav";
-	}
-	else
-	{
-		snd = "*pain100_1.wav";
-	}
-	trap_S_StartSound(NULL, cent->currentState.number, CHAN_VOICE,
-	                  CG_CustomSound(cent->currentState.number, snd));
 
 	// save pain time for programitic twitch animation
 	cent->pe.painTime       = cg.time;
@@ -641,9 +622,7 @@ void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 
 	if (!cent->currentState.dl_intensity)
 	{
-		sfxHandle_t sound;
-
-		sound = random() * fxSounds[cent->currentState.frame].max;
+		sfxHandle_t sound = random() * fxSounds[cent->currentState.frame].max;
 
 		if (fxSounds[cent->currentState.frame].sound[sound] == -1)
 		{
@@ -711,9 +690,7 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 
 	if (!cent->currentState.dl_intensity)
 	{
-		sfxHandle_t sound;
-
-		sound = random() * fxSounds[cent->currentState.frame].max;
+		sfxHandle_t sound = random() * fxSounds[cent->currentState.frame].max;
 
 		if (fxSounds[cent->currentState.frame].sound[sound] == -1)
 		{
@@ -766,13 +743,17 @@ CG_RubbleFx
 */
 void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t sound, int forceLowGrav, qhandle_t shader, float speedscale, float sizescale)
 {
-	int           i;
-	localEntity_t *le;
-	refEntity_t   *re;
-	int           howmany, total, totalsounds;
-	int           pieces[6];    // how many of each piece
-	qhandle_t     modelshader = 0;
-	float         materialmul = 1;      // multiplier for different types
+	int                 i;
+	localEntity_t       *le;
+	refEntity_t         *re;
+	int                 howmany, total, totalsounds;
+	int                 pieces[6]; // how many of each piece
+	qhandle_t           modelshader = 0;
+	float               materialmul = 1; // multiplier for different types
+	leBounceSoundType_t snd;
+	int                 hmodel;
+	float               scale;
+	int                 endtime;
 
 	memset(&pieces, 0, sizeof(pieces));
 
@@ -827,14 +808,11 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 
 	for (i = 0; i < POSSIBLE_PIECES; i++)
 	{
-		leBounceSoundType_t snd    = LEBS_NONE;
-		int                 hmodel = 0;
-		float               scale;
-		int                 endtime;
+		snd    = LEBS_NONE;
+		hmodel = 0;
 
 		for (howmany = 0; howmany < pieces[i]; howmany++)
 		{
-
 			scale   = 1.0f;
 			endtime = 0;    // set endtime offset for faster/slower fadeouts
 
@@ -1115,7 +1093,6 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				le->pos.trDelta[0] += ((random() * 400) - 200) * speedscale;
 				le->pos.trDelta[1] += ((random() * 400) - 200) * speedscale;
 				le->pos.trDelta[2]  = ((random() * 400) + 400) * speedscale;
-
 			}
 			else
 			{
@@ -1147,13 +1124,17 @@ CG_Explodef
 */
 void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound, int forceLowGrav, qhandle_t shader)
 {
-	int           i;
-	localEntity_t *le;
-	refEntity_t   *re;
-	int           howmany, total, totalsounds;
-	int           pieces[6];    // how many of each piece
-	qhandle_t     modelshader = 0;
-	float         materialmul = 1;      // multiplier for different types
+	int                 i;
+	localEntity_t       *le;
+	refEntity_t         *re;
+	int                 howmany, total, totalsounds;
+	int                 pieces[6]; // how many of each piece
+	qhandle_t           modelshader = 0;
+	float               materialmul = 1; // multiplier for different types
+	leBounceSoundType_t snd;
+	int                 hmodel;
+	float               scale;
+	int                 endtime;
 
 	memset(&pieces, 0, sizeof(pieces));
 
@@ -1208,10 +1189,8 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 
 	for (i = 0; i < POSSIBLE_PIECES; i++)
 	{
-		leBounceSoundType_t snd    = LEBS_NONE;
-		int                 hmodel = 0;
-		float               scale;
-		int                 endtime;
+		snd    = LEBS_NONE;
+		hmodel = 0;
 
 		for (howmany = 0; howmany < pieces[i]; howmany++)
 		{
@@ -1596,9 +1575,8 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 	if (cent->currentState.eventParm & 8)     // rubble
 	{   // share the cg_explode code with func_explosives
 		const char *s;
-		qhandle_t  sh = 0;  // shader handle
-
-		vec3_t newdir = { 0, 0, 0 };
+		qhandle_t  sh     = 0; // shader handle
+		vec3_t     newdir = { 0, 0, 0 };
 
 		if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
 		{
@@ -2214,11 +2192,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			break;
 		}
 
-	case EV_JUMP:
-		DEBUGNAME("EV_JUMP");
-		// FIXME: jump sound ?!?
-		trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*jump1.wav"));
-		break;
 	case EV_WATER_TOUCH:
 		DEBUGNAME("EV_WATER_TOUCH");
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.watrInSound);
@@ -2502,7 +2475,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_GRENADE_BOUNCE:
 		DEBUGNAME("EV_GRENADE_BOUNCE");
 
-		// DYNAMITE or LANDMINE FIXME: change this? (mebe a metallic sound)
 		if (es->weapon == WP_SATCHEL)
 		{
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.satchelbounce1);
@@ -2782,14 +2754,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		{
 			CG_PainEvent(cent, es->eventParm, qfalse);
 		}
-		break;
-
-	case EV_DEATH1:
-	case EV_DEATH2:
-	case EV_DEATH3:
-		DEBUGNAME("EV_DEATHx");
-		trap_S_StartSound(NULL, es->number, CHAN_VOICE,
-		                  CG_CustomSound(es->number, va("*death%i.wav", event - EV_DEATH1 + 1)));
 		break;
 
 	case EV_OBITUARY:
