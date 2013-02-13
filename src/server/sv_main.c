@@ -183,7 +183,7 @@ void SV_AddServerCommand(client_t *client, const char *cmd)
 }
 
 
-/*
+/**
  * @brief Sends a reliable command string to be interpreted by the client game
  * module: "cp", "print", "chat", etc
  *

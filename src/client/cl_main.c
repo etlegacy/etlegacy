@@ -1178,25 +1178,26 @@ void CL_RequestMotd(void)
 		return;
 	}
 
-	Com_Printf("MOTD: resolving %s\n", MOTD_SERVER_NAME);
-	if (!NET_StringToAdr(MOTD_SERVER_NAME, &cls.updateServer, NA_IP))
+	Com_Printf("MOTD: resolving %s... ", MOTD_SERVER_NAME);
+
+	if (!NET_StringToAdr(va("%s:%i", MOTD_SERVER_NAME, PORT_MOTD), &cls.motdServer, NA_UNSPEC))
 	{
-		Com_Printf("MOTD: couldn't resolve address\n");
+		Com_Printf("couldn't resolve address\n");
 		return;
 	}
+	else
+	{
+		Com_Printf("resolved to %s\n", NET_AdrToString(cls.motdServer));
+	}
 
-	cls.updateServer.port = BigShort(PORT_MOTD);
-	Com_Printf("MOTD: %s resolved to %s\n", MOTD_SERVER_NAME,
-	           NET_AdrToString(cls.updateServer));
+	Com_sprintf(cls.motdChallenge, sizeof(cls.motdChallenge), "%i", rand());
 
 	info[0] = 0;
-	Com_sprintf(cls.updateChallenge, sizeof(cls.updateChallenge), "%i", rand());
-
-	Info_SetValueForKey(info, "challenge", cls.updateChallenge);
+	Info_SetValueForKey(info, "challenge", cls.motdChallenge);
 	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
 	Info_SetValueForKey(info, "platform", CPUSTRING);
 
-	NET_OutOfBandPrint(NS_CLIENT, cls.updateServer, "getmotd \"%s\"", info);
+	NET_OutOfBandPrint(NS_CLIENT, cls.motdServer, "getmotd \"%s\"", info);
 }
 
 /*
@@ -2186,18 +2187,16 @@ void CL_DisconnectPacket(netadr_t from)
 	}
 }
 
-/*
-===================
-CL_MotdPacket
-===================
-*/
+/**
+ * @brief Client received 'motd' connectionless packet
+ */
 void CL_MotdPacket(netadr_t from)
 {
 	char *challenge;
 	char *info;
 
 	// if not from our server, ignore it
-	if (!NET_CompareAdr(from, cls.updateServer))
+	if (!NET_CompareAdr(from, cls.motdServer))
 	{
 		return;
 	}
@@ -2206,7 +2205,7 @@ void CL_MotdPacket(netadr_t from)
 
 	// check challenge
 	challenge = Info_ValueForKey(info, "challenge");
-	if (strcmp(challenge, cls.updateChallenge))
+	if (strcmp(challenge, cls.motdChallenge))
 	{
 		return;
 	}
@@ -3326,7 +3325,7 @@ void CL_CheckAutoUpdate(void)
 
 	if (!cl_autoupdate->integer)
 	{
-		Com_Printf("Updater is disabled by cl_autoupdate 0.\n");
+		Com_DPrintf("Updater is disabled by cl_autoupdate 0.\n");
 		return;
 	}
 
@@ -3337,16 +3336,19 @@ void CL_CheckAutoUpdate(void)
 	}
 
 	// Resolve update server
-	if (!NET_StringToAdr(cls.autoupdateServerName, &cls.autoupdateServer, NA_UNSPEC))
+	Com_Printf("Updater: resolving %s... ", UPDATE_SERVER_NAME);
+
+	if (!NET_StringToAdr(va("%s:%i", UPDATE_SERVER_NAME, PORT_UPDATE), &cls.autoupdateServer, NA_UNSPEC))
 	{
-		Com_DPrintf("Failed to resolve the update server.\n");
+		Com_Printf("couldn't resolve address\n");
 
 		autoupdateChecked = qtrue;
 		return;
 	}
-
-	cls.autoupdateServer.port = BigShort(PORT_UPDATE);
-	Com_DPrintf("Update server at: %s (%s)\n", NET_AdrToString(cls.autoupdateServer), cls.autoupdateServerName);
+	else
+	{
+		Com_Printf("resolved to %s\n", NET_AdrToString(cls.autoupdateServer));
+	}
 
 	info[0] = 0;
 	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
@@ -3754,8 +3756,6 @@ void CL_Init(void)
 	// Auto-update
 	cl_updateavailable = Cvar_Get("cl_updateavailable", "0", CVAR_ROM);
 	cl_updatefiles     = Cvar_Get("cl_updatefiles", "", CVAR_ROM);
-
-	Q_strncpyz(cls.autoupdateServerName, UPDATE_SERVER_NAME, MAX_QPATH);
 
 	// register our commands
 	Cmd_AddCommand("cmd", CL_ForwardToServer_f);

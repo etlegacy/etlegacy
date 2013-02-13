@@ -570,13 +570,9 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 	}
 }
 
-/*
-===============
-NET_OutOfBandPrint
-
-Sends a text message in an out-of-band datagram
-================
-*/
+/**
+ * @brief Sends a text message in an out-of-band datagram
+ */
 void QDECL NET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, ...)
 {
 	va_list argptr;
@@ -628,14 +624,10 @@ void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, const char *format, in
 	NET_SendPacket(sock, mbuf.cursize, mbuf.data, adr);
 }
 
-/*
-=============
-NET_StringToAdr
-
-Traps "localhost" for loopback, passes everything else to system
-return 0 on address not found, 1 on address found with port, 2 on address found without port.
-=============
-*/
+/**
+ * @brief Traps "localhost" for loopback, passes everything else to system.
+ * @return 0 on address not found, 1 on address found with port, 2 on address found without port.
+ */
 int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family)
 {
 	char base[MAX_STRING_CHARS], *search;

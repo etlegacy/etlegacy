@@ -185,7 +185,7 @@ typedef enum
 	NS_SERVER
 } netsrc_t;
 
-/*
+/**
  * @def NET_ADDRSTRMAXLEN
  * @brief maximum length of an IPv6 address string including trailing '\0'
  */
