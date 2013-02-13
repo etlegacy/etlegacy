@@ -35,6 +35,8 @@ option(BUILD_PAK3_PK3	"Pack updated game scripts into pak3.pk3"			OFF)
 
 option(BUILD_WITH_CSTDIO_INCLUDED "Build will include cstdio - it's required on some non 64bit systems see issue #123 "	OFF)
 
+option(USE_RENDERER2		"Build and use the new renderer"				OFF)
+
 option(BUNDLED_SDL		"Use bundled SDL library instead of the system one."	OFF)
 option(BUNDLED_CURL		"Use bundled CURL library instead of the system one."	OFF)
 option(BUNDLED_JPEG		"Use bundled JPEG library instead of the system one."	OFF)
@@ -217,8 +219,8 @@ FILE(GLOB CLIENT_SRC
 	"src/botlib/l_*.h"
 	"src/sys/sys_main.c"
 	"src/sys/con_log.c"
-	"src/renderer/*.c"
-	"src/renderer/*.h"
+#	"src/renderer/*.c"
+#	"src/renderer/*.h"
 	"src/sdl/*.c"
 	"src/sdl/*.h"
 )
@@ -250,10 +252,6 @@ FILE(GLOB UI_SRC
 	"src/game/bg_misc.c"
 )
 
-FILE(GLOB RENDERER_FILES
-	"src/renderer/*.c"
-)
-
 FILE(GLOB CLIENT_FILES
 	"src/client/*.c"
 )
@@ -274,6 +272,19 @@ FILE(GLOB SDL_FILES
 FILE(GLOB BOTLIB_FILES
 	"src/botlib/be*.c"
 	"src/botlib/l_*.c"
+)
+
+FILE(GLOB RENDERER_FILES
+)
+
+FILE(GLOB RENDERER1_FILES
+	"src/renderer/*.c"
+	"src/renderer/*.h"
+)
+
+FILE(GLOB RENDERER2_FILES
+	"src/renderer2/*.c"
+	"src/renderer2/*.h"
 )
 
 # Version generation
@@ -401,7 +412,14 @@ if(BUILD_CLIENT)
 		endif()
 		add_definitions(-DFEATURE_OGG_VORBIS)
 	endif(FEATURE_OGG_VORBIS)
-
+	
+	if(USE_RENDERER2) #Builds the client with the other renderer
+		list(APPEND CLIENT_SRC ${RENDERER2_FILES})
+		list(APPEND RENDERER_FILES ${RENDERER2_FILES})
+	else()
+		list(APPEND CLIENT_SRC ${RENDERER1_FILES})
+		list(APPEND RENDERER_FILES ${RENDERER1_FILES})
+	endif()
 endif(BUILD_CLIENT)
 
 #-----------------------------------------------------------------
