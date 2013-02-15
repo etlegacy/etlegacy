@@ -58,14 +58,14 @@ void CG_Text_SetActiveFont(int font)
 
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	glyphInfo_t *glyph;
-	const char  *s  = text;
-	float       out = 0, useScale = scale * font->glyphScale;
+	const char *s  = text;
+	float      out = 0, useScale = scale * font->glyphScale;
 
 	if (text)
 	{
-		int count = 0;
-		int len   = strlen(text);
+		glyphInfo_t *glyph;
+		int         count = 0;
+		int         len   = strlen(text);
 
 		if (limit > 0 && len > limit)
 		{
@@ -101,15 +101,15 @@ int CG_Text_Width(const char *text, float scale, int limit)
 
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	glyphInfo_t *glyph;
-	float       max      = 0;
-	float       useScale = scale * font->glyphScale;
-	const char  *s       = text;
+	float      max      = 0;
+	float      useScale = scale * font->glyphScale;
+	const char *s       = text;
 
 	if (text)
 	{
-		int count = 0;
-		int len   = strlen(text);
+		glyphInfo_t *glyph;
+		int         count = 0;
+		int         len   = strlen(text);
 
 		if (limit > 0 && len > limit)
 		{
@@ -155,10 +155,9 @@ void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, flo
 
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader)
 {
-	float w, h;
+	float w = width * scale;
+	float h = height * scale;
 
-	w = width * scale;
-	h = height * scale;
 	CG_AdjustFrom640(&x, &y, &w, &h);
 	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
 }
@@ -172,17 +171,16 @@ void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec
 
 void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontInfo_t *font)
 {
-	vec4_t      newColor;
-	glyphInfo_t *glyph;
-
-	scalex *= font->glyphScale;
-	scaley *= font->glyphScale;
-
 	if (text)
 	{
-		const char *s = text;
-		float      yadj;
-		int        len, count = 0, ofs;
+		vec4_t      newColor;
+		glyphInfo_t *glyph;
+		const char  *s = text;
+		float       yadj;
+		int         len, count = 0, ofs;
+
+		scalex *= font->glyphScale;
+		scaley *= font->glyphScale;
 
 		trap_R_SetColor(color);
 		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
@@ -418,11 +416,10 @@ CG_DrawSnapshot
 static float CG_DrawSnapshot(float y)
 {
 	char *s = va("t:%i sn:%i cmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence);
-	int  x;
 	int  w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
 	int  w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+	int  x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
 
-	x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
 	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
 	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
 	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
@@ -443,12 +440,10 @@ static float CG_DrawFPS(float y)
 	static int index;
 	static int oldSamples;
 	char       *s;
-	// don't use serverTime, because that will be drifting to
-	// correct for internet lag changes, timescales, timedemos, etc
-	int t         = trap_Milliseconds();
-	int frameTime = t - previous;
-	int x, w, w2;
-	int samples = cg_drawFPS.integer;
+	int        t         = trap_Milliseconds(); // don't use serverTime, because that will be drifting to correct for internet lag changes, timescales, timedemos, etc
+	int        frameTime = t - previous;
+	int        x, w, w2;
+	int        samples = cg_drawFPS.integer;
 
 	previous = t;
 
@@ -509,7 +504,6 @@ CG_DrawTimer
 */
 static float CG_DrawTimer(float y)
 {
-
 	char   *s;
 	int    w, w2;
 	vec4_t color = { 0.625f, 0.625f, 0.6f, 1.0f };
@@ -1674,9 +1668,7 @@ static void CG_DrawMortarReticle(void)
 	{
 		if (fadeTime < 3000)
 		{
-			float lastfireAngle;
-
-			lastfireAngle = AngleNormalize180(360 - (cg.mortarFireAngles[PITCH] - 60));
+			float lastfireAngle = AngleNormalize180(360 - (cg.mortarFireAngles[PITCH] - 60));
 
 			if (lastfireAngle > angle)
 			{
@@ -1772,10 +1764,8 @@ static void CG_DrawCrosshair(void)
 		weapnum = cg.weaponSelect;
 	}
 
-
 	switch (weapnum)
 	{
-
 	// weapons that get no reticle
 	case WP_NONE:       // no weapon, no crosshair
 		if (cg.zoomedBinoc)
@@ -1904,7 +1894,6 @@ static void CG_DrawCrosshair(void)
 static void CG_DrawNoShootIcon(void)
 {
 	float x, y, w, h;
-	float *color;
 
 	if (cg.predictedPlayerState.eFlags & EF_PRONE && cg.snap->ps.weapon == WP_PANZERFAUST)
 	{
@@ -1915,7 +1904,7 @@ static void CG_DrawNoShootIcon(void)
 	         || cg.snap->ps.serverCursorHint == HINT_PLYR_NEUTRAL
 	         || cg.snap->ps.serverCursorHint == HINT_PLYR_FRIEND)
 	{
-		color = CG_FadeColor(cg.crosshairClientTime, 1000);
+		float *color = CG_FadeColor(cg.crosshairClientTime, 1000);
 
 		if (!color)
 		{
@@ -2079,7 +2068,7 @@ void CG_CheckForCursorHints(void)
 
 	tracent = &cg_entities[trace.entityNum];
 
-	// Arnout: invisible entities don't show hints
+	// invisible entities don't show hints
 	if (trace.entityNum >= MAX_CLIENTS &&
 	    (tracent->currentState.powerups == STATE_INVISIBLE ||
 	     tracent->currentState.powerups == STATE_UNDERCONSTRUCTION))
@@ -2141,11 +2130,9 @@ static void CG_DrawCrosshairNames(void)
 	const char *playerRank;
 	qboolean   isTank    = qfalse;
 	int        maxHealth = 1;
-	// Distance to the entity under the crosshair
-	float dist;
-	float zChange;
-
-	qboolean hitClient = qfalse;
+	float      dist; // Distance to the entity under the crosshair
+	float      zChange;
+	qboolean   hitClient = qfalse;
 
 	if (cg_drawCrosshair.integer < 0)
 	{
@@ -2967,12 +2954,11 @@ CG_DrawWarmup
 static void CG_DrawWarmup(void)
 {
 	int             w;
-	int             sec;
+	int             sec = cg.warmup;
 	int             cw;
 	const char      *s, *s1, *s2;
 	static qboolean announced = qfalse;
 
-	sec = cg.warmup;
 	if (!sec)
 	{
 		if ((cgs.gamestate == GS_WARMUP && !cg.warmup) || cgs.gamestate == GS_WAITING_FOR_PLAYERS)
@@ -3154,6 +3140,7 @@ static void CG_DrawFlashFade(void)
 	else if (cgs.fadeAlphaCurrent != cgs.fadeAlpha)
 	{
 		int elapsed = (time = trap_Milliseconds()) - lastTime;    // we need to use trap_Milliseconds() here since the cg.time gets modified upon reloading
+
 		lastTime = time;
 		if (elapsed < 500 && elapsed > 0)
 		{
@@ -3290,7 +3277,7 @@ static void CG_DrawFlashDamage(void)
 
 	if (cg.v_dmg_time > cg.time)
 	{
-		vec4_t col;
+		vec4_t col      = { 0.2, 0, 0, 0 };
 		float  redFlash = fabs(cg.v_dmg_pitch * ((cg.v_dmg_time - cg.time) / DAMAGE_TIME));
 
 		// blend the entire screen red
@@ -3299,7 +3286,6 @@ static void CG_DrawFlashDamage(void)
 			redFlash = 5;
 		}
 
-		VectorSet(col, 0.2, 0, 0);
 		col[3] = 0.7 * (redFlash / 5.0) * ((cg_bloodFlash.value > 1.0) ? 1.0 :
 		                                   (cg_bloodFlash.value < 0.0) ? 0.0 :
 		                                   cg_bloodFlash.value);
@@ -3429,7 +3415,6 @@ void CG_ObjectivePrint(const char *str, int charWidth)
 	len = strlen(cg.oidPrint);
 	for (i = 0; i < len; i++)
 	{
-
 		// NOTE: subtract a few chars here so long words still get displayed properly
 		if (i % (CP_LINEWIDTH - 20) == 0 && i > 0)
 		{
@@ -3649,7 +3634,6 @@ CG_ScreenFade
 static void CG_ScreenFade(void)
 {
 	int msec;
-
 
 	if (!cg.fadeRate)
 	{
@@ -4034,14 +4018,11 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 #define HEAD_PITCHANGLE 2.5
 static void CG_DrawPlayerStatusHead(void)
 {
-	hudHeadAnimNumber_t anim;
+	hudHeadAnimNumber_t anim           = cg.idleAnim;
 	rectDef_t           headRect       = { 44, 480 - 92, 62, 80 };
 	bg_character_t      *character     = CG_CharacterForPlayerstate(&cg.snap->ps);
 	bg_character_t      *headcharacter = BG_GetCharacter(cgs.clientinfo[cg.snap->ps.clientNum].team, cgs.clientinfo[cg.snap->ps.clientNum].cls);
-
-	qhandle_t painshader = 0;
-
-	anim = cg.idleAnim;
+	qhandle_t           painshader     = 0;
 
 	if (cg.weaponFireTime > 500)
 	{
@@ -4106,9 +4087,8 @@ static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 {
 	vec4_t bgcolour = { 1.f, 1.f, 1.f, 0.3f };
 	vec4_t colour;
-
-	int   flags = 1 | 4 | 16 | 64;
-	float frac;
+	int    flags = 1 | 4 | 16 | 64;
+	float  frac;
 
 	CG_ColorForHealth(colour);
 	colour[3] = 0.5f;
@@ -4177,10 +4157,9 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 {
 	float    barFrac, chargeTime;
 	int      flags;
-	qboolean fade = qfalse;
-
-	vec4_t bgcolor = { 1.0f, 1.0f, 1.0f, 0.25f };
-	vec4_t color;
+	qboolean fade    = qfalse;
+	vec4_t   bgcolor = { 1.0f, 1.0f, 1.0f, 0.25f };
+	vec4_t   color;
 
 	flags = 1 | 4 | 16;
 
