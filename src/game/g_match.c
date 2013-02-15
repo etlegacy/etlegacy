@@ -385,7 +385,6 @@ static const weap_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 	{ MOD_MAPMORTAR_SPLASH,        WS_MORTAR          },
 
 	{ MOD_KICKED,                  WS_MAX             },
-	{ MOD_GRABBER,                 WS_MAX             },
 
 	{ MOD_DYNAMITE,                WS_DYNAMITE        },
 	{ MOD_AIRSTRIKE,               WS_AIRSTRIKE       },
