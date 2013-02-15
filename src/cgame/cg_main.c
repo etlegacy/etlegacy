@@ -1069,7 +1069,7 @@ static void CG_RegisterItemSounds(int itemNum)
 
 	if (item->pickup_sound && *item->pickup_sound)
 	{
-		trap_S_RegisterSound(item->pickup_sound, qfalse);
+		cgs.media.itemPickUpSounds[itemNum] = trap_S_RegisterSound(item->pickup_sound, qfalse);
 	}
 
 	// parse the space seperated precache string for other media
@@ -1103,6 +1103,7 @@ static void CG_RegisterItemSounds(int itemNum)
 
 		if (!strcmp(data + len - 3, "wav"))
 		{
+			// FIXME: put into cgs.media
 			trap_S_RegisterSound(data, qfalse);
 		}
 	}

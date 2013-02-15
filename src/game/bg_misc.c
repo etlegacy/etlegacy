@@ -2154,7 +2154,7 @@ gitem_t bg_itemlist[] =
 	*/
 	{
 		"team_CTF_redflag",
-		"",
+		"sound/misc/w_pkup.wav",
 		{
 			0,
 			0,
@@ -2178,7 +2178,7 @@ gitem_t bg_itemlist[] =
 	*/
 	{
 		"team_CTF_blueflag",
-		"",
+		"sound/misc/w_pkup.wav",
 		{
 			0,
 			0,
@@ -2230,7 +2230,7 @@ gitem_t bg_itemlist[] =
 	{ NULL }
 };
 
-int bg_numItems = sizeof(bg_itemlist) / sizeof(bg_itemlist[0]) - 1;
+int bg_numItems = sizeof(bg_itemlist) / sizeof(bg_itemlist[0]) - 1; // keep in sync with BG_NUM_ITEMS!
 
 /*
 ===============
