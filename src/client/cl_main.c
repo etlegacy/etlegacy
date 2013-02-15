@@ -50,13 +50,6 @@ cvar_t *cl_debugMove;
 
 cvar_t *cl_noprint;
 
-// Auto-Update
-cvar_t *cl_autoupdate;
-cvar_t *cl_updateavailable;
-cvar_t *cl_updatefiles;
-
-cvar_t *cl_motd;
-
 cvar_t *rcon_client_password;
 cvar_t *rconAddress;
 
@@ -93,8 +86,6 @@ cvar_t *cl_activeAction;
 
 cvar_t *cl_autorecord;
 
-cvar_t *cl_motdString;
-
 cvar_t *cl_allowDownload;
 cvar_t *cl_wwwDownload;
 cvar_t *cl_conXOffset;
@@ -128,6 +119,7 @@ clientActive_t     cl;
 clientConnection_t clc;
 clientStatic_t     cls;
 vm_t               *cgvm;
+autoupdate_t       autoupdate;
 
 // Structure containing functions exported from refresh DLL
 refexport_t re;
@@ -149,11 +141,6 @@ typedef struct serverStatus_s
 
 serverStatus_t cl_serverStatusList[MAX_SERVERSTATUSREQUESTS];
 int            serverStatusCount;
-
-// Have we heard from the auto-update server this session?
-qboolean autoupdateChecked;
-qboolean autoupdateStarted;
-#define AUTOUPDATE_DIR "update"
 
 void CL_CheckForResend(void);
 void CL_ShowIP_f(void);
@@ -1067,7 +1054,7 @@ void CL_Disconnect(qboolean showMainMenu)
 		*cls.downloadTempName = *cls.downloadName = 0;
 		Cvar_Set("cl_downloadName", "");
 
-		autoupdateStarted = qfalse;
+		autoupdate.updateStarted = qfalse;
 		// TODO: clean autoupdate cvars
 	}
 
@@ -1173,31 +1160,31 @@ void CL_RequestMotd(void)
 {
 	char info[MAX_INFO_STRING];
 
-	if (!cl_motd->integer)
+	if (!com_motd->integer)
 	{
 		return;
 	}
 
 	Com_Printf("MOTD: resolving %s... ", MOTD_SERVER_NAME);
 
-	if (!NET_StringToAdr(va("%s:%i", MOTD_SERVER_NAME, PORT_MOTD), &cls.motdServer, NA_UNSPEC))
+	if (!NET_StringToAdr(va("%s:%i", MOTD_SERVER_NAME, PORT_MOTD), &autoupdate.motdServer, NA_UNSPEC))
 	{
 		Com_Printf("couldn't resolve address\n");
 		return;
 	}
 	else
 	{
-		Com_Printf("resolved to %s\n", NET_AdrToString(cls.motdServer));
+		Com_Printf("resolved to %s\n", NET_AdrToString(autoupdate.motdServer));
 	}
 
-	Com_sprintf(cls.motdChallenge, sizeof(cls.motdChallenge), "%i", rand());
+	Com_sprintf(autoupdate.motdChallenge, sizeof(autoupdate.motdChallenge), "%i", rand());
 
 	info[0] = 0;
-	Info_SetValueForKey(info, "challenge", cls.motdChallenge);
+	Info_SetValueForKey(info, "challenge", autoupdate.motdChallenge);
 	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
 	Info_SetValueForKey(info, "platform", CPUSTRING);
 
-	NET_OutOfBandPrint(NS_CLIENT, cls.motdServer, "getmotd \"%s\"", info);
+	NET_OutOfBandPrint(NS_CLIENT, autoupdate.motdServer, "getmotd \"%s\"", info);
 }
 
 /*
@@ -1562,11 +1549,11 @@ void CL_Vid_Restart_f(void)
 
 	S_BeginRegistration();  // all sound handles are now invalid
 
-	cls.rendererStarted = qfalse;
-	cls.uiStarted       = qfalse;
-	cls.cgameStarted    = qfalse;
-	cls.soundRegistered = qfalse;
-	autoupdateChecked   = qfalse;
+	cls.rendererStarted      = qfalse;
+	cls.uiStarted            = qfalse;
+	cls.cgameStarted         = qfalse;
+	cls.soundRegistered      = qfalse;
+	autoupdate.updateChecked = qfalse;
 
 	// unpause so the cgame definately gets a snapshot and renders a frame
 	Cvar_Set("cl_paused", "0");
@@ -1613,7 +1600,7 @@ void CL_UI_Restart_f(void) // shutdown the UI
 {
 	CL_ShutdownUI();
 
-	autoupdateChecked = qfalse;
+	autoupdate.updateChecked = qfalse;
 
 	// init the UI
 	CL_InitUI();
@@ -1764,9 +1751,9 @@ void CL_DownloadsComplete(void)
 {
 #ifdef FEATURE_AUTOUPDATE
 	// Auto-update
-	if (autoupdateStarted)
+	if (autoupdate.updateStarted)
 	{
-		if (strlen(cl_updatefiles->string) > 4)
+		if (strlen(com_updatefiles->string) > 4)
 		{
 			CL_InitDownloads();
 			return;
@@ -1774,7 +1761,7 @@ void CL_DownloadsComplete(void)
 
 		/*
 		char *fn;
-		fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, cl_updatefiles->string);
+		fn = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, com_updatefiles->string);
 		#ifndef _WIN32
 		Sys_Chmod(fn, S_IXUSR);
 		#endif
@@ -1793,7 +1780,7 @@ void CL_DownloadsComplete(void)
 		FS_ConditionalRestart(clc.checksumFeed);
 		*/
 
-		autoupdateStarted = qfalse;
+		autoupdate.updateStarted = qfalse;
 
 		CL_Disconnect(qtrue);
 
@@ -1965,9 +1952,9 @@ void CL_InitDownloads(void)
 	CL_ClearStaticDownload();
 
 #ifdef FEATURE_AUTOUPDATE
-	if (autoupdateStarted && NET_CompareAdr(cls.autoupdateServer, clc.serverAddress))
+	if (autoupdate.updateStarted && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress))
 	{
-		if (strlen(cl_updatefiles->string) > 4)
+		if (strlen(com_updatefiles->string) > 4)
 		{
 			char *updateFile;
 			char updateFilesRemaining[MAX_TOKEN_CHARS] = "";
@@ -1975,7 +1962,7 @@ void CL_InitDownloads(void)
 			clc.bWWWDl             = qtrue;
 			cls.bWWWDlDisconnected = qtrue;
 
-			updateFile = strtok(cl_updatefiles->string, ";");
+			updateFile = strtok(com_updatefiles->string, ";");
 
 			if (updateFile == NULL)
 			{
@@ -2013,11 +2000,11 @@ void CL_InitDownloads(void)
 
 				if (strlen(updateFilesRemaining) > 4)
 				{
-					Cvar_Set("cl_updatefiles", updateFilesRemaining);
+					Cvar_Set("com_updatefiles", updateFilesRemaining);
 				}
 				else
 				{
-					Cvar_Set("cl_updatefiles", "");
+					Cvar_Set("com_updatefiles", "");
 				}
 				return;
 			}
@@ -2196,7 +2183,7 @@ void CL_MotdPacket(netadr_t from)
 	char *info;
 
 	// if not from our server, ignore it
-	if (!NET_CompareAdr(from, cls.motdServer))
+	if (!NET_CompareAdr(from, autoupdate.motdServer))
 	{
 		return;
 	}
@@ -2205,7 +2192,7 @@ void CL_MotdPacket(netadr_t from)
 
 	// check challenge
 	challenge = Info_ValueForKey(info, "challenge");
-	if (strcmp(challenge, cls.motdChallenge))
+	if (strcmp(challenge, autoupdate.motdChallenge))
 	{
 		return;
 	}
@@ -2213,7 +2200,7 @@ void CL_MotdPacket(netadr_t from)
 	challenge = Info_ValueForKey(info, "motd");
 
 	Q_strncpyz(cls.updateInfoString, info, sizeof(cls.updateInfoString));
-	Cvar_Set("cl_motdString", challenge);
+	Cvar_Set("com_motdString", challenge);
 }
 
 /**
@@ -2481,12 +2468,12 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		}
 
 		// If we have completed a connection to the Auto-Update server...
-		if (autoupdateChecked && NET_CompareAdr(cls.autoupdateServer, clc.serverAddress))
+		if (autoupdate.updateChecked && NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress))
 		{
 			// Mark the client as being in the process of getting an update
-			if (cl_updateavailable->integer)
+			if (com_updateavailable->integer)
 			{
-				autoupdateStarted = qtrue;
+				autoupdate.updateStarted = qtrue;
 			}
 		}
 
@@ -2585,8 +2572,8 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 	static qboolean autoupdateRedirected = qfalse;
 
 	// Update server doesn't understand netchan packets
-	if (NET_CompareAdr(cls.autoupdateServer, clc.serverAddress)
-	    && autoupdateStarted && !autoupdateRedirected)
+	if (NET_CompareAdr(autoupdate.autoupdateServer, clc.serverAddress)
+	    && autoupdate.updateStarted && !autoupdateRedirected)
 	{
 		autoupdateRedirected = qtrue;
 		CL_InitDownloads();
@@ -2748,7 +2735,7 @@ void CL_WWWDownload(void)
 		if (cls.bWWWDlDisconnected)
 		{
 			// for an auto-update in disconnected mode, we'll be spawning the setup in CL_DownloadsComplete
-			if (!autoupdateStarted)
+			if (!autoupdate.updateStarted)
 			{
 				// reconnect to the server, which might send us to a new disconnected download
 				Cbuf_ExecuteText(EXEC_APPEND, "reconnect\n");
@@ -3323,14 +3310,14 @@ void CL_CheckAutoUpdate(void)
 {
 	char info[MAX_INFO_STRING];
 
-	if (!cl_autoupdate->integer)
+	if (!com_autoupdate->integer)
 	{
-		Com_DPrintf("Updater is disabled by cl_autoupdate 0.\n");
+		Com_DPrintf("Updater is disabled by com_autoupdate 0.\n");
 		return;
 	}
 
 	// Only check once per session
-	if (autoupdateChecked)
+	if (autoupdate.updateChecked)
 	{
 		return;
 	}
@@ -3338,16 +3325,16 @@ void CL_CheckAutoUpdate(void)
 	// Resolve update server
 	Com_Printf("Updater: resolving %s... ", UPDATE_SERVER_NAME);
 
-	if (!NET_StringToAdr(va("%s:%i", UPDATE_SERVER_NAME, PORT_UPDATE), &cls.autoupdateServer, NA_UNSPEC))
+	if (!NET_StringToAdr(va("%s:%i", UPDATE_SERVER_NAME, PORT_UPDATE), &autoupdate.autoupdateServer, NA_UNSPEC))
 	{
 		Com_Printf("couldn't resolve address\n");
 
-		autoupdateChecked = qtrue;
+		autoupdate.updateChecked = qtrue;
 		return;
 	}
 	else
 	{
-		Com_Printf("resolved to %s\n", NET_AdrToString(cls.autoupdateServer));
+		Com_Printf("resolved to %s\n", NET_AdrToString(autoupdate.autoupdateServer));
 	}
 
 	info[0] = 0;
@@ -3358,22 +3345,22 @@ void CL_CheckAutoUpdate(void)
 	Info_SetValueForKey(info, va("pak3_%s.pk3", ETLEGACY_VERSION_SHORT),
 	                    Com_MD5File(va("legacy/pak3_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
 
-	NET_OutOfBandPrint(NS_CLIENT, cls.autoupdateServer, "getUpdateInfo \"%s\"", info);
+	NET_OutOfBandPrint(NS_CLIENT, autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
 
-	autoupdateChecked = qtrue;
+	autoupdate.updateChecked = qtrue;
 }
 
 #ifdef FEATURE_AUTOUPDATE
 void CL_GetAutoUpdate(void)
 {
 	// Don't try and get an update if we haven't checked for one
-	if (!autoupdateChecked)
+	if (!autoupdate.updateChecked)
 	{
 		return;
 	}
 
 	// Make sure there's a valid update file to request
-	if (strlen(cl_updatefiles->string) < 5)
+	if (strlen(com_updatefiles->string) < 5)
 	{
 		return;
 	}
@@ -3407,7 +3394,7 @@ void CL_GetAutoUpdate(void)
 
 	Q_strncpyz(cls.servername, "ET:L Update Server", sizeof(cls.servername));
 
-	if (cls.autoupdateServer.type == NA_BAD)
+	if (autoupdate.autoupdateServer.type == NA_BAD)
 	{
 		Com_Printf("Bad server address\n");
 		cls.state = CA_DISCONNECTED;
@@ -3416,7 +3403,7 @@ void CL_GetAutoUpdate(void)
 	}
 
 	// Copy auto-update server address to Server connect address
-	memcpy(&clc.serverAddress, &cls.autoupdateServer, sizeof(netadr_t));
+	memcpy(&clc.serverAddress, &autoupdate.autoupdateServer, sizeof(netadr_t));
 
 	Com_DPrintf("%s resolved to %s\n", cls.servername,
 	            NET_AdrToString(clc.serverAddress));
@@ -3628,9 +3615,7 @@ void CL_Init(void)
 	CL_InitInput();
 
 	// register our variables
-	cl_noprint    = Cvar_Get("cl_noprint", "0", 0);
-	cl_motd       = Cvar_Get("cl_motd", "1", 0);
-	cl_autoupdate = Cvar_Get("cl_autoupdate", "1", CVAR_ARCHIVE);
+	cl_noprint = Cvar_Get("cl_noprint", "0", 0);
 
 	cl_timeout = Cvar_Get("cl_timeout", "60", 0);
 
@@ -3700,8 +3685,6 @@ void CL_Init(void)
 	m_side    = Cvar_Get("m_side", "0.25", CVAR_ARCHIVE);
 	m_filter  = Cvar_Get("m_filter", "0", CVAR_ARCHIVE);
 
-	cl_motdString = Cvar_Get("cl_motdString", "", CVAR_ROM);
-
 	// make these cvars visible to cgame
 	cl_demorecording = Cvar_Get("cl_demorecording", "0", CVAR_ROM);
 	cl_demofilename  = Cvar_Get("cl_demofilename", "", CVAR_ROM);
@@ -3754,8 +3737,8 @@ void CL_Init(void)
 	cl_debugTranslation = Cvar_Get("cl_debugTranslation", "0", 0);
 
 	// Auto-update
-	cl_updateavailable = Cvar_Get("cl_updateavailable", "0", CVAR_ROM);
-	cl_updatefiles     = Cvar_Get("cl_updatefiles", "", CVAR_ROM);
+	com_updateavailable = Cvar_Get("com_updateavailable", "0", CVAR_ROM);
+	com_updatefiles     = Cvar_Get("com_updatefiles", "", CVAR_ROM);
 
 	// register our commands
 	Cmd_AddCommand("cmd", CL_ForwardToServer_f);
@@ -3822,8 +3805,8 @@ void CL_Init(void)
 	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM);
 	CL_UpdateGUID();
 
-	autoupdateChecked = qfalse;
-	autoupdateStarted = qfalse;
+	autoupdate.updateChecked = qfalse;
+	autoupdate.updateStarted = qfalse;
 
 	CL_InitTranslation();
 
@@ -4107,28 +4090,28 @@ CL_UpdateInfoPacket
 */
 void CL_UpdateInfoPacket(netadr_t from)
 {
-	if (cls.autoupdateServer.type == NA_BAD)
+	if (autoupdate.autoupdateServer.type == NA_BAD)
 	{
 		Com_DPrintf("CL_UpdateInfoPacket: Update server has bad address\n");
 		return;
 	}
 
 	Com_DPrintf("Update server resolved to %s\n",
-	            NET_AdrToString(cls.autoupdateServer));
+	            NET_AdrToString(autoupdate.autoupdateServer));
 
-	if (!NET_CompareAdr(from, cls.autoupdateServer))
+	if (!NET_CompareAdr(from, autoupdate.autoupdateServer))
 	{
 		// TODO: when the updater is server-side as well, write this message to the Attack log
 		Com_DPrintf("CL_UpdateInfoPacket: Ignoring packet from %s, because the update server is located at %s\n",
-		            NET_AdrToString(from), NET_AdrToString(cls.autoupdateServer));
+		            NET_AdrToString(from), NET_AdrToString(autoupdate.autoupdateServer));
 		return;
 	}
 
-	Cvar_Set("cl_updateavailable", Cmd_Argv(1));
+	Cvar_Set("com_updateavailable", Cmd_Argv(1));
 
-	if (!Q_stricmp(cl_updateavailable->string, "1"))
+	if (!Q_stricmp(com_updateavailable->string, "1"))
 	{
-		Cvar_Set("cl_updatefiles", Cmd_Argv(2));
+		Cvar_Set("com_updatefiles", Cmd_Argv(2));
 #ifdef FEATURE_AUTOUPDATE
 		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_WM_AUTOUPDATE);
 #endif /* FEATURE_AUTOUPDATE */

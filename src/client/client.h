@@ -342,13 +342,7 @@ typedef struct
 
 	int masterNum;
 
-	// update server info
-	char motdChallenge[MAX_TOKEN_CHARS];
 	char updateInfoString[MAX_INFO_STRING];
-
-	netadr_t autoupdateServer;
-	netadr_t motdServer;
-	netadr_t authorizeServer; // Unused.
 
 	// rendering info
 	glconfig_t glconfig;

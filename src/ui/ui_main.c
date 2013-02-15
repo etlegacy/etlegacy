@@ -5475,7 +5475,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 	}
 
 	// do motd updates here too
-	trap_Cvar_VariableStringBuffer("cl_motdString", uiInfo.serverStatus.motd, sizeof(uiInfo.serverStatus.motd));
+	trap_Cvar_VariableStringBuffer("com_motdString", uiInfo.serverStatus.motd, sizeof(uiInfo.serverStatus.motd));
 	len = strlen(uiInfo.serverStatus.motd);
 	if (len == 0)
 	{

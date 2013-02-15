@@ -131,19 +131,19 @@ NET
 
 #define NET_ENABLEV4            0x01
 #define NET_ENABLEV6            0x02
-/*
+/**
  * @def NET_PRIOV6
  * @brief if this flag is set, always attempt ipv6 connections
  * instead of ipv4 if a v6 address is found.
  */
 #define NET_PRIOV6              0x04
-/*
+/**
  * @def NET_PRIOV6
  * @brief disables ipv6 multicast support if set.
  */
 #define NET_DISABLEMCAST        0x08
 
-/*
+/**
  * @def PACKET_BACKUP
  * @brief number of old messages that must be kept on client and
  * server for delta comrpession and ping estimation
@@ -151,7 +151,7 @@ NET
 #define PACKET_BACKUP   32
 #define PACKET_MASK (PACKET_BACKUP - 1)
 
-/*
+/**
  * @def MAX_PACKET_USERCMDS
  * @brief max number of usercmd_t in a packet
  */
@@ -159,7 +159,7 @@ NET
 
 #define PORT_ANY            -1
 
-/*
+/**
  * @def MAX_RELIABLE_COMMANDS
  * @brief max string commands buffered for restransmit
  *
@@ -218,7 +218,7 @@ int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family);
 qboolean NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_message);
 void NET_Sleep(int msec);
 
-/*
+/**
  * @def MAX_MSGLEN
  * @brief max length of a message, which may be fragmented into multiple packets
  */
@@ -264,6 +264,25 @@ void Netchan_Transmit(netchan_t *chan, int length, const byte *data);
 void Netchan_TransmitNextFragment(netchan_t *chan);
 
 qboolean Netchan_Process(netchan_t *chan, msg_t *msg);
+
+// update and motd server info
+
+#define AUTOUPDATE_DIR "update"
+
+typedef struct
+{
+	netadr_t autoupdateServer;
+	netadr_t authorizeServer;               // Unused.
+	netadr_t motdServer;
+
+	qboolean updateChecked;                 // Have we heard from the auto-update server this session?
+	qboolean updateStarted;
+
+	char motdChallenge[MAX_TOKEN_CHARS];
+
+} autoupdate_t;
+
+extern autoupdate_t autoupdate;
 
 /*
 ==============================================================
@@ -581,9 +600,9 @@ issues.
 #define FS_CGAME_REF    0x04
 #define FS_QAGAME_REF   0x08
 
-/*
+/**
  * @def NUM_ID_PAKS
- * @brief number of id paks that will never be autodownloaded from baseq3
+ * @brief number of id paks that will never be autodownloaded from etmain
  */
 #define NUM_ID_PAKS     9
 
@@ -845,6 +864,13 @@ extern cvar_t *com_journal;
 extern cvar_t *com_ansiColor;
 extern cvar_t *com_unfocused;
 extern cvar_t *com_minimized;
+
+// updater and motd
+extern cvar_t *com_autoupdate;
+extern cvar_t *com_updateavailable;
+extern cvar_t *com_updatefiles;
+extern cvar_t *com_motd;
+extern cvar_t *com_motdString;
 
 // watchdog
 extern cvar_t *com_watchdog;

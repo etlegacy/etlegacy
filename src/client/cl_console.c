@@ -746,7 +746,7 @@ void Con_DrawSolidConsole(float frac)
 
 	re.SetColor(g_color_table[ColorIndex(CONSOLE_COLOR)]);
 
-	if (Cvar_VariableIntegerValue("cl_updateavailable"))
+	if (Cvar_VariableIntegerValue("com_updateavailable"))
 	{
 		Q_snprintf(version, sizeof(version), "%s (UPDATE AVAILABLE)", ET_VERSION);
 	}

@@ -927,7 +927,7 @@ qboolean G_Script_ScriptRun(gentity_t *ent)
 		ent->scriptStatus.scriptEventIndex = -1;
 		return qtrue;
 	}
-	//
+
 	// show debugging info
 	if (g_scriptDebug.integer && ent->scriptStatus.scriptStackChangeTime == level.time)
 	{
@@ -945,7 +945,7 @@ qboolean G_Script_ScriptRun(gentity_t *ent)
 			ent->scriptStatus.scriptFlags &= ~SCFL_FIRST_CALL;
 			return qfalse;
 		}
-		//if the scriptId changed, a new event was triggered in our scripts which did not finish
+		// if the scriptId changed, a new event was triggered in our scripts which did not finish
 		if (oldScriptId != ent->scriptStatus.scriptId)
 		{
 			return qfalse;

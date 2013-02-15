@@ -98,6 +98,12 @@ cvar_t *sv_paused;
 cvar_t *cl_packetdelay;
 cvar_t *sv_packetdelay;
 
+cvar_t *com_motd;
+cvar_t *com_motdString;
+cvar_t *com_autoupdate;
+cvar_t *com_updateavailable;
+cvar_t *com_updatefiles;
+
 #if idx64
 int (*Q_VMftol)(void); // Unused in ET:L. Used in ioquake’s VM code
 #elif id386
@@ -163,7 +169,7 @@ void Com_EndRedirect(void)
 	rd_flush      = NULL;
 }
 
-/*
+/**
  * @brief Both client and server can use this, and it will output to the apropriate place.
  *
  * A raw string should NEVER be passed as fmt, because of "%f" type crashers.
@@ -234,7 +240,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 	}
 }
 
-/*
+/**
  * @brief A Com_Printf that only shows up if the "developer" cvar is set
  */
 void QDECL Com_DPrintf(const char *fmt, ...)
@@ -254,7 +260,7 @@ void QDECL Com_DPrintf(const char *fmt, ...)
 	Com_Printf("%s", msg);
 }
 
-/*
+/**
  * @brief Both client and server can use this, and it will do the appropriate thing.
  */
 void QDECL Com_Error(int code, const char *fmt, ...)
@@ -356,7 +362,7 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 	Sys_Error("%s", com_errorMessage);
 }
 
-/*
+/**
  * @brief Both client and server can use this, and it will do the appropriate thing.
  */
 void Com_Quit_f(void)
@@ -2970,8 +2976,11 @@ void Com_Init(char *commandLine)
 	Cmd_AddCommand("changeVectors", MSG_ReportChangeVectors_f);
 	Cmd_AddCommand("writeconfig", Com_WriteConfig_f);
 
-	s           = FAKE_VERSION;
-	com_version = Cvar_Get("version", s, CVAR_ROM | CVAR_SERVERINFO);
+	com_version = Cvar_Get("version", FAKE_VERSION, CVAR_ROM | CVAR_SERVERINFO);
+
+	com_motd       = Cvar_Get("com_motd", "1", 0);
+	com_motdString = Cvar_Get("com_motdString", "", CVAR_ROM);
+	com_autoupdate = Cvar_Get("com_autoupdate", "1", CVAR_ARCHIVE);
 
 	Sys_Init();
 	Netchan_Init(Com_Milliseconds() & 0xffff);      // pick a port value that should be nice and random
