@@ -1353,15 +1353,11 @@ CG_LoadVoiceChats
 */
 void CG_LoadVoiceChats(void)
 {
-	int size = trap_MemoryRemaining();
-
 	voiceChatLists[0].numVoiceChats = 0;
 	voiceChatLists[1].numVoiceChats = 0;
 
 	CG_ParseVoiceChats("scripts/wm_axis_chat.voice", &voiceChatLists[0], MAX_VOICECHATS);
 	CG_ParseVoiceChats("scripts/wm_allies_chat.voice", &voiceChatLists[1], MAX_VOICECHATS);
-
-	CG_Printf("voice chat memory size = %d\n", size - trap_MemoryRemaining());
 }
 
 /*
