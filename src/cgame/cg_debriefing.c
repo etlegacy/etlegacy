@@ -3236,10 +3236,8 @@ void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 		}
 
 		CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.dbAwardTeams[i] == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
-
 		CG_Text_Paint_Ext(button->rect.x + 28, y + 11, 0.19f, 0.19f, clrTxtBck, awardNames[i], 0, 0, 0, &cgs.media.limboFont2);
-
-		CG_Text_Paint_Ext(button->rect.x + 28 + 180, y + 11, 0.19f, 0.19f, clrTxtBck, cgs.dbAwardNames[i], 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(button->rect.x + 28 + 180, y + 11, 0.19f, 0.19f, clrTxtBck, va("^7%s", cgs.dbAwardNames[i]), 0, 0, 0, &cgs.media.limboFont2);
 		y += 16;
 	}
 }
