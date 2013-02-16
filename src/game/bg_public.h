@@ -161,11 +161,6 @@ typedef struct
 	int typeBits;
 	int cinematic;
 
-	// FIXME: remove
-	const char *opponentName;
-	int teamMembers;
-	int timeToBeat[MAX_GAMETYPES];
-
 	qhandle_t levelShot;
 	qboolean active;
 
