@@ -64,6 +64,8 @@ static void SV_Netchan_Encode(client_t *client, msg_t *msg, char *commandString)
 	msg->readcount = 0;
 	msg->oob       = qfalse;
 
+	MSG_ReadLong( msg );
+
 	msg->oob       = soob;
 	msg->bit       = sbit;
 	msg->readcount = srdc;
