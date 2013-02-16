@@ -133,7 +133,7 @@ int G_FindConfigstringIndex(const char *name, int start, int max, qboolean creat
 
 	if (i == max)
 	{
-		G_Error("G_FindConfigstringIndex: overflow '%s' start: %i max: %i\n", name, start, max);
+		G_Error("G_FindConfigstringIndex: overflow '%s' (%i %i) max: %i\n", name, start, start + i, max);
 	}
 
 	trap_SetConfigstring(start + i, name);
@@ -1027,7 +1027,6 @@ void G_SetAngle(gentity_t *ent, vec3_t angle)
 infront
 ====================
 */
-
 qboolean infront(gentity_t *self, gentity_t *other)
 {
 	vec3_t vec;
