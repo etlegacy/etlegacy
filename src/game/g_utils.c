@@ -879,8 +879,8 @@ gentity_t *G_PopupMessage(popupMessageType_t type)
 	e->s.effect1Time  = type;
 
 	// find cluster for PVS
-	trap_LinkEntity(e);
-
+	//	trap_LinkEntity(e);
+	e->r.linked = qtrue; // don't link for real
 	return e;
 }
 
