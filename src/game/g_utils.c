@@ -1231,7 +1231,6 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 					}
 
 					// just get rid of it
-					G_TempEntity(check->s.origin, EV_ITEM_POP);
 					G_FreeEntity(check);
 				}
 			}

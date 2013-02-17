@@ -133,11 +133,9 @@ Add_Ammo
 */
 int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip)
 {
-	int ammoweap = BG_FindAmmoForWeapon(weapon);
-	int originalCount;
-	int maxammo = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill);
-
-	originalCount = ent->client->ps.ammo[ammoweap];
+	int ammoweap      = BG_FindAmmoForWeapon(weapon);
+	int maxammo       = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill);
+	int originalCount = ent->client->ps.ammo[ammoweap];
 
 	if (ammoweap == WP_GRENADE_LAUNCHER)             // make sure if he picks up a grenade that he get's the "launcher" too
 	{
@@ -826,11 +824,9 @@ Spawns an item and tosses it forward
 */
 gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNum)
 {
-	gentity_t *dropped;
+	gentity_t *dropped = G_Spawn();
 	trace_t   tr;
 	vec3_t    vec, temp;
-
-	dropped = G_Spawn();
 
 	dropped->s.eType           = ET_ITEM;
 	dropped->s.modelindex      = item - bg_itemlist; // store item number in modelindex
@@ -872,7 +868,7 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	dropped->s.pos.trTime = level.time;
 	VectorCopy(velocity, dropped->s.pos.trDelta);
 
-	// ydnar: set yaw to parent angles
+	// set yaw to parent angles
 	temp[PITCH] = 0;
 	temp[YAW]   = g_entities[ownerNum].s.apos.trBase[YAW];
 	temp[ROLL]  = 0;
@@ -1007,7 +1003,6 @@ void FinishSpawningItem(gentity_t *ent)
 	}
 	else
 	{
-
 		VectorSet(dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096);
 		trap_Trace(&tr, ent->s.origin, ent->r.mins, maxs, dest, ent->s.number, MASK_SOLID);
 
@@ -1055,7 +1050,7 @@ void FinishSpawningItem(gentity_t *ent)
 		int i;
 
 		// having alternate models defined in bg_misc.c for a health or ammo item specify it as "multi-stage"
-		// TTimo left-hand operand of comma expression has no effect
+		// - left-hand operand of comma expression has no effect
 		// initial line: for(i=0;i<4,ent->item->world_model[i];i++) {}
 		for (i = 0; i < 4 && ent->item->world_model[i] ; i++)
 		{
@@ -1122,10 +1117,10 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 {
 	vec3_t velocity;
 	float  dot;
-	int    hitTime;
+	int    hitTime = level.previousTime + (level.time - level.previousTime) * trace->fraction;
 
 	// reflect the velocity on the trace plane
-	hitTime = level.previousTime + (level.time - level.previousTime) * trace->fraction;
+
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
@@ -1157,11 +1152,9 @@ void G_RunItemProp(gentity_t *ent, vec3_t origin)
 {
 	gentity_t *traceEnt;
 	trace_t   trace;
-	gentity_t *owner;
+	gentity_t *owner = &g_entities[ent->r.ownerNum];
 	vec3_t    start;
 	vec3_t    end;
-
-	owner = &g_entities[ent->r.ownerNum];
 
 	VectorCopy(ent->r.currentOrigin, start);
 	start[2] += 1;
@@ -1181,7 +1174,6 @@ void G_RunItemProp(gentity_t *ent, vec3_t origin)
 
 	if (owner->client && trace.startsolid && traceEnt != owner && traceEnt != ent /* && !traceEnt->active*/)
 	{
-
 		ent->takedamage = qfalse;
 		ent->die(ent, ent, NULL, 10, 0);
 		Prop_Break_Sound(ent);

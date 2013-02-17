@@ -2016,7 +2016,6 @@ void Blocked_Door(gentity_t *ent, gentity_t *other)
 				Team_DroppedFlagThink(other);
 				return;
 			}
-			G_TempEntity(other->s.origin, EV_ITEM_POP);
 			G_FreeEntity(other);
 			return;
 		}
@@ -2108,7 +2107,6 @@ void Blocked_DoorRotate(gentity_t *ent, gentity_t *other)
 				Team_DroppedFlagThink(other);
 				return;
 			}
-			G_TempEntity(other->s.origin, EV_ITEM_POP);
 			G_FreeEntity(other);
 			return;
 		}
@@ -5213,7 +5211,6 @@ void func_constructible_explode(gentity_t *self, gentity_t *inflictor, gentity_t
 					}
 
 					// just get rid of it
-					G_TempEntity(check->s.origin, EV_ITEM_POP);
 					G_FreeEntity(check);
 				}
 			}

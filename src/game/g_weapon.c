@@ -890,7 +890,6 @@ static void HandleEntsThatBlockConstructible(gentity_t *constructor, gentity_t *
 				}
 
 				// just get rid of it
-				G_TempEntity(block->s.origin, EV_ITEM_POP);
 				G_FreeEntity(block);
 			}
 		}

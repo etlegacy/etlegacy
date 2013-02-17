@@ -2689,7 +2689,6 @@ void props_flippy_blocked(gentity_t *ent, gentity_t *other)
 	else
 	{
 		// just delete it or destroy it
-		G_TempEntity(other->s.origin, EV_ITEM_POP);
 		G_FreeEntity(other);
 		return;
 	}

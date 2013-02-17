@@ -2323,7 +2323,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 		break;
 
-
 	case EV_MG42_FIXED:
 		DEBUGNAME("EV_MG42_FIXED");
 		// FIXME? play a sound when engineer fixes MG42
@@ -2458,10 +2457,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 		break;
 
-	case EV_ITEM_POP:
-		DEBUGNAME("EV_ITEM_POP");
-		break;
-
 	case EV_GRENADE_BOUNCE:
 		DEBUGNAME("EV_GRENADE_BOUNCE");
 
@@ -2581,7 +2576,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_MG42BULLET_HIT_FLESH");
 		CG_Bullet(es->pos.trBase, es->otherEntityNum, dir, qtrue, es->eventParm, es->otherEntityNum2, 0, es->effect1Time);
 		break;
-
 
 	case EV_BULLET_HIT_WALL:
 		DEBUGNAME("EV_BULLET_HIT_WALL");
