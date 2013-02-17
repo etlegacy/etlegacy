@@ -1135,7 +1135,6 @@ void script_mover_blocked(gentity_t *ent, gentity_t *other)
 			Team_DroppedFlagThink(other);
 			return;
 		}
-		G_TempEntity(other->s.origin, EV_ITEM_POP);
 		G_FreeEntity(other);
 		return;
 	}
