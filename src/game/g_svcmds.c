@@ -637,6 +637,89 @@ void ClearMaxLivesBans()
 	Q_strncpyz(ipMaxLivesFilters.cvarIPList, "g_maxlivesbanIPs", sizeof(ipMaxLivesFilters.cvarIPList));
 }
 
+// names of enume entityType_t for Svcmd_EntityList_f
+char *enttypenames[] =
+{
+	"ET_GENERAL",
+	"ET_PLAYER",
+	"ET_ITEM",
+	"ET_MISSILE",
+	"ET_MOVER",
+	"ET_BEAM",
+	"ET_PORTAL",
+	"ET_SPEAKER",
+	"ET_PUSH_TRIGGER",
+	"ET_TELEPORT_TRIGGER",
+	"ET_INVISIBLE",
+	"ET_CONCUSSIVE_TRIGGER",
+	"ET_OID_TRIGGER",
+	"ET_EXPLOSIVE_INDICATOR",
+
+	"ET_EXPLOSIVE",
+	"ET_EF_SPOTLIGHT",
+	"ET_ALARMBOX",
+	"ET_CORONA",
+	"ET_TRAP",
+
+	"ET_GAMEMODEL",
+	"ET_FOOTLOCKER",
+
+	"ET_FLAMEBARREL",
+	"ET_FP_PARTS",
+
+	"ET_FIRE_COLUMN",
+	"ET_FIRE_COLUMN_SMOKE",
+	"ET_RAMJET",
+
+	"ET_FLAMETHROWER_CHUNK",
+
+	"ET_EXPLO_PART",
+
+	"ET_PROP",
+
+	"ET_AI_EFFECT",
+
+	"ET_CAMERA",
+	"ET_MOVERSCALED",
+
+	"ET_CONSTRUCTIBLE_INDICATOR",
+	"ET_CONSTRUCTIBLE",
+	"ET_CONSTRUCTIBLE_MARKER",
+	"ET_BOMB",
+	"ET_WAYPOINT",
+	"ET_BEAM_2",
+	"ET_TANK_INDICATOR",
+	"ET_TANK_INDICATOR_DEAD",
+
+	"ET_BOTGOAL_INDICATOR",
+	"ET_CORPSE",
+	"ET_SMOKER",
+
+	"ET_TEMPHEAD",
+	"ET_MG42_BARREL",
+	"ET_TEMPLEGS",
+	"ET_TRIGGER_MULTIPLE",
+	"ET_TRIGGER_FLAGONLY",
+	"ET_TRIGGER_FLAGONLY_MULTIPLE",
+	"ET_GAMEMANAGER",
+	"ET_AAGUN",
+	"ET_CABINET_H",
+	"ET_CABINET_A",
+	"ET_HEALER",
+	"ET_SUPPLIER",
+
+	"ET_LANDMINE_HINT",
+	"ET_ATTRACTOR_HINT",
+	"ET_SNIPER_HINT",
+	"ET_LANDMINESPOT_HINT",
+
+	"ET_COMMANDMAP_MARKER",
+
+	"ET_WOLF_OBJECTIVE",
+
+	"ET_EVENTS"
+};
+
 /*
 ===================
 Svcmd_EntityList_f
@@ -644,78 +727,47 @@ Svcmd_EntityList_f
 */
 void Svcmd_EntityList_f(void)
 {
-	int       e;
-	gentity_t *check;
+	int       e, entsFree = 0;
+	gentity_t *check = g_entities + 1;
 
-	check = g_entities + 1;
-	for (e = 1; e < level.num_entities ; e++, check++)
+	// FIXME: create line before print
+	for (e = 0; e < MAX_GENTITIES ; e++, check++)
 	{
 		if (!check->inuse)
 		{
+			if (trap_Argc() > 1)
+			{
+				G_Printf("^2%4i: %s\n", e, check->classname);
+			}
+			entsFree++;
 			continue;
 		}
-		G_Printf("%3i:", e);
-		switch (check->s.eType)
+
+		G_Printf("%4i:", e);
+
+		if (check->s.eType >= 0 && check->s.eType <= ET_EVENTS)
 		{
-		case ET_GENERAL:
-			G_Printf("ET_GENERAL          ");
-			break;
-		case ET_PLAYER:
-			G_Printf("ET_PLAYER           ");
-			break;
-		case ET_ITEM:
-			G_Printf("ET_ITEM             ");
-			break;
-		case ET_MISSILE:
-			G_Printf("ET_MISSILE          ");
-			break;
-		case ET_MOVER:
-			G_Printf("ET_MOVER            ");
-			break;
-		case ET_BEAM:
-			G_Printf("ET_BEAM             ");
-			break;
-		case ET_PORTAL:
-			G_Printf("ET_PORTAL           ");
-			break;
-		case ET_SPEAKER:
-			G_Printf("ET_SPEAKER          ");
-			break;
-		case ET_PUSH_TRIGGER:
-			G_Printf("ET_PUSH_TRIGGER     ");
-			break;
-		case ET_CONCUSSIVE_TRIGGER:
-			G_Printf("ET_CONCUSSIVE_TRIGGR");
-			break;
-		case ET_TELEPORT_TRIGGER:
-			G_Printf("ET_TELEPORT_TRIGGER ");
-			break;
-		case ET_INVISIBLE:
-			G_Printf("ET_INVISIBLE        ");
-			break;
-		case ET_EXPLOSIVE:
-			G_Printf("ET_EXPLOSIVE        ");
-			break;
-		case ET_EF_SPOTLIGHT:
-			G_Printf("ET_EF_SPOTLIGHT     ");
-			break;
-		case ET_ALARMBOX:
-			G_Printf("ET_ALARMBOX          ");
-			break;
-		default:
-			G_Printf("%3i                 ", check->s.eType);
-			break;
+			G_Printf("%-27s", enttypenames[check->s.eType]);
+		}
+		else
+		{
+			G_Printf("%-27i", check->s.eType); // tempEntity FIXME: print event
 		}
 
 		if (check->classname)
 		{
-			G_Printf("%s", check->classname);
+			G_Printf(" %s\n", check->classname);
 		}
-		G_Printf("\n");
+		else
+		{
+			G_Printf(" *unknown classname*\n");
+		}
 	}
+	G_Printf("%4i: entities not in use\n", entsFree);
+	G_Printf("%4i: num_entities\n", level.num_entities);
 }
 
-// fretn, note: if a player is called '3' and there are only 2 players
+// note: if a player is called '3' and there are only 2 players
 // on the server (clientnum 0 and 1)
 // this function will say 'client 3 is not connected'
 // solution: first check for usernames, if none is found, check for slotnumbers
