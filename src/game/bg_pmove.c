@@ -1634,18 +1634,10 @@ static void PM_CrashLand(void)
 		{
 			PM_AddEventExt(EV_FALL_NDIE, PM_FootstepForSurface());
 		}
-		//else if (delta > 67)
-		//{
-		//  PM_AddEvent(EV_FALL_DMG_75);
-		//}
 		else if (delta > 67)
 		{
 			PM_AddEventExt(EV_FALL_DMG_50, PM_FootstepForSurface());
 		}
-		//else if (delta > 48)
-		//{
-		//  PM_AddEvent(EV_FALL_DMG_30);
-		//}
 		else if (delta > 58)
 		{
 			// this is a pain grunt, so don't play it if dead
