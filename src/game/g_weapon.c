@@ -2533,7 +2533,7 @@ void weapon_checkAirStrikeThink2(gentity_t *ent)
 
 void weapon_callSecondPlane(gentity_t *ent)
 {
-	gentity_t *te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_SOUND);
+	gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
 
 	te->s.eventParm = G_SoundIndex("sound/weapons/airstrike/airstrike_plane.wav");
 	te->r.svFlags  |= SVF_BROADCAST;
@@ -2637,7 +2637,7 @@ void weapon_callAirStrike(gentity_t *ent)
 	G_AddAirstrikeToCounters(ent->parent);
 
 	{
-		gentity_t *te = G_TempEntity(ent->s.pos.trBase, EV_GLOBAL_SOUND);
+		gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
 		te->s.eventParm = G_SoundIndex("sound/weapons/airstrike/airstrike_plane.wav");
 		te->r.svFlags  |= SVF_BROADCAST;
 	}

@@ -1188,6 +1188,7 @@ void G_SetMovedir(vec3_t angles, vec3_t movedir);
 void G_InitGentity(gentity_t *e);
 gentity_t *G_Spawn(void);
 gentity_t *G_TempEntity(vec3_t origin, int event);
+gentity_t *G_TempEntityNotLinked(int event);
 gentity_t *G_PopupMessage(popupMessageType_t type);
 void G_Sound(gentity_t *ent, int soundIndex);
 void G_AnimScriptSound(int soundIndex, vec3_t org, int client);

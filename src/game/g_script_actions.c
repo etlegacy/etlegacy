@@ -3565,7 +3565,7 @@ qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_TeamVoiceAnnounce: sound parameter required\n");
 	}
 
-	tent              = G_TempEntity(vec3_origin, EV_GLOBAL_TEAM_SOUND);
+	tent              = G_TempEntityNotLinked(EV_GLOBAL_TEAM_SOUND);
 	tent->s.teamNum   = team;
 	tent->s.eventParm = G_SoundIndex(token);
 	tent->r.svFlags   = SVF_BROADCAST;

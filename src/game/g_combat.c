@@ -542,7 +542,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	{
 		// broadcast the death event to everyone
-		gentity_t *ent = G_TempEntity(self->r.currentOrigin, EV_OBITUARY);
+		gentity_t *ent = G_TempEntityNotLinked(EV_OBITUARY);
 
 		ent->s.eventParm       = meansOfDeath;
 		ent->s.otherEntityNum  = self->s.number;
@@ -2159,7 +2159,6 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 			// push the center of mass higher than the origin so players
 			// get knocked into the air more
 			dir[2] += 24;
-
 
 			G_Damage(ent, inflictor, attacker, dir, origin, (int)points, flags, mod);
 		}

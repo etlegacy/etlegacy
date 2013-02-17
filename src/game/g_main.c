@@ -1588,7 +1588,6 @@ void G_UpdateCvars(void)
 					trap_Cvar_LatchedVariableStringBuffer("g_gametype", buffer, sizeof(buffer));
 					gametype = atoi(buffer);
 
-
 					if (gametype == GT_WOLF_CAMPAIGN && gametype != g_gametype.integer)
 					{
 						if (!G_MapIsValidCampaignStartMap())

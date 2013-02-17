@@ -866,6 +866,28 @@ gentity_t *G_TempEntity(vec3_t origin, int event)
 	return e;
 }
 
+/*
+=================
+G_TempEntityNotLinked
+
+Spawns an event entity that will be auto-removed
+Use this for non visible and not origin based events like global sounds etc.
+=================
+*/
+gentity_t *G_TempEntityNotLinked(int event)
+{
+	gentity_t *e = G_Spawn();
+
+	e->s.eType        = ET_EVENTS + event;
+	e->classname      = "tempEntity";
+	e->eventTime      = level.time;
+	e->r.eventTime    = level.time;
+	e->freeAfterEvent = qtrue;
+	e->r.linked       = qtrue; // don't link for real
+
+	return e;
+}
+
 gentity_t *G_PopupMessage(popupMessageType_t type)
 {
 	gentity_t *e = G_Spawn();
@@ -879,7 +901,7 @@ gentity_t *G_PopupMessage(popupMessageType_t type)
 	e->s.effect1Time  = type;
 
 	// find cluster for PVS
-	//	trap_LinkEntity(e);
+	//trap_LinkEntity(e);
 	e->r.linked = qtrue; // don't link for real
 	return e;
 }
@@ -961,6 +983,8 @@ void G_ClientSound(gentity_t *ent, int soundIndex)
 {
 	if (ent && ent->client)
 	{
+		// FIXME: G_TempEntityNotLinked
+		// playsound 0 sound/world/build.wav crashes the server
 		gentity_t *te = G_TempEntity(ent->client->ps.origin, EV_GLOBAL_CLIENT_SOUND);
 
 		te->s.teamNum   = (ent->client - level.clients);

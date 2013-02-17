@@ -106,7 +106,7 @@ void G_printFull(char *str, gentity_t *ent)
 // Plays specified sound globally.
 void G_globalSound(char *sound)
 {
-	gentity_t *te = G_TempEntity(level.intermission_origin, EV_GLOBAL_SOUND);
+	gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
 
 	te->s.eventParm = G_SoundIndex(sound);
 	te->r.svFlags  |= SVF_BROADCAST;
