@@ -7416,9 +7416,9 @@ void _UI_MouseEvent(int dx, int dy)
 	{
 		uiInfo.uiDC.cursorx = 0;
 	}
-	else if (uiInfo.uiDC.cursorx > SCREEN_WIDTH)
+	else if (uiInfo.uiDC.cursorx > Cui_WideX(SCREEN_WIDTH))
 	{
-		uiInfo.uiDC.cursorx = SCREEN_WIDTH;
+		uiInfo.uiDC.cursorx = Cui_WideX(SCREEN_WIDTH);
 	}
 
 	uiInfo.uiDC.cursory += dy;
