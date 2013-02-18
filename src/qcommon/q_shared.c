@@ -323,7 +323,7 @@ void COM_ParseError(char *format, ...)
 	Q_vsnprintf(string, sizeof(string), format, argptr);
 	va_end(argptr);
 
-	Com_Printf("ERROR: %s, line %d: %s\n", com_parsename, com_lines, string);
+	Com_Printf("ERROR COM_ParseError: %s, line %d: %s\n", com_parsename, com_lines, string);
 }
 
 /**
@@ -338,7 +338,7 @@ void COM_ParseWarning(char *format, ...)
 	Q_vsnprintf(string, sizeof(string), format, argptr);
 	va_end(argptr);
 
-	Com_Printf("WARNING: %s, line %d: %s\n", com_parsename, com_lines, string);
+	Com_Printf("WARNING COM_ParseWarning: %s, line %d: %s\n", com_parsename, com_lines, string);
 }
 
 /*
@@ -472,12 +472,10 @@ int COM_Compress(char *data_p)
 
 char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 {
-	int      c           = 0, len;
+	int      c           = 0, len = 0;
 	qboolean hasNewLines = qfalse;
-	char     *data;
+	char     *data       = *data_p;
 
-	data         = *data_p;
-	len          = 0;
 	com_token[0] = 0;
 
 	// make sure incoming data is valid
@@ -716,7 +714,6 @@ void SkipRestOfLine(char **data)
 	*data = p;
 }
 
-
 void Parse1DMatrix(char **buf_p, int x, float *m)
 {
 	char *token;
@@ -783,13 +780,13 @@ int Com_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING])
 		}
 		if (strcmp(token, "{"))
 		{
-			Com_Printf("Missing { in info file\n");
+			Com_Printf("Com_ParseInfos: Missing { in info file\n");
 			break;
 		}
 
 		if (count == max)
 		{
-			Com_Printf("Max infos exceeded\n");
+			Com_Printf("Com_ParseInfos: Max infos exceeded\n");
 			break;
 		}
 
@@ -799,7 +796,7 @@ int Com_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING])
 			token = COM_Parse(&buf);
 			if (!token[0])
 			{
-				Com_Printf("Unexpected end of info file\n");
+				Com_Printf("Com_ParseInfos: Unexpected end of info file\n");
 				break;
 			}
 			if (!strcmp(token, "}"))
@@ -1174,7 +1171,6 @@ int Q_PrintStrlen(const char *string)
 
 	return len;
 }
-
 
 char *Q_CleanStr(char *string)
 {
@@ -1688,19 +1684,19 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 
 	if (strchr(key, '\\') || strchr(value, '\\'))
 	{
-		Com_Printf("Can't use keys or values with a \\\n");
+		Com_Printf("Info_SetValueForKey: Can't use keys or values with a \\\n");
 		return;
 	}
 
 	if (strchr(key, ';') || strchr(value, ';'))
 	{
-		Com_Printf("Can't use keys or values with a semicolon\n");
+		Com_Printf("Info_SetValueForKey: Can't use keys or values with a semicolon\n");
 		return;
 	}
 
 	if (strchr(key, '\"') || strchr(value, '\"'))
 	{
-		Com_Printf("Can't use keys or values with a \"\n");
+		Com_Printf("Info_SetValueForKey: Can't use keys or values with a \"\n");
 		return;
 	}
 
@@ -1714,7 +1710,7 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 
 	if (strlen(newi) + strlen(s) > MAX_INFO_STRING)
 	{
-		Com_Printf("Info string length exceeded\n");
+		Com_Printf("Info_SetValueForKey: Info string length exceeded\n");
 		return;
 	}
 
@@ -1739,19 +1735,19 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 
 	if (strchr(key, '\\') || strchr(value, '\\'))
 	{
-		Com_Printf("Can't use keys or values with a \\\n");
+		Com_Printf("Info_SetValueForKey_Big: Can't use keys or values with a \\\n");
 		return;
 	}
 
 	if (strchr(key, ';') || strchr(value, ';'))
 	{
-		Com_Printf("Can't use keys or values with a semicolon\n");
+		Com_Printf("Info_SetValueForKey_Big: Can't use keys or values with a semicolon\n");
 		return;
 	}
 
 	if (strchr(key, '\"') || strchr(value, '\"'))
 	{
-		Com_Printf("Can't use keys or values with a \"\n");
+		Com_Printf("Info_SetValueForKey_Big: Can't use keys or values with a \"\n");
 		return;
 	}
 
@@ -1765,7 +1761,7 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 
 	if (strlen(newi) + strlen(s) > BIG_INFO_STRING)
 	{
-		Com_Printf("BIG Info string length exceeded\n");
+		Com_Printf("Info_SetValueForKey_Big: BIG Info string length exceeded\n");
 		return;
 	}
 
