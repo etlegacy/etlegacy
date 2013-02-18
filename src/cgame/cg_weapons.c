@@ -5400,7 +5400,16 @@ void CG_FireWeapon(centity_t *cent)
 		{
 			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.hWeaponSnd);
 		}
-		cent->muzzleFlashTime = cg.time;
+
+		if (cg_muzzleFlash.integer)
+		{
+			cent->muzzleFlashTime = cg.time;
+		}
+		else
+		{
+			cent->muzzleFlashTime = 0;
+		}
+
 		return;
 	}
 
@@ -5421,7 +5430,14 @@ void CG_FireWeapon(centity_t *cent)
 			CG_MachineGunEjectBrass(cent);
 		}
 
-		cent->muzzleFlashTime = cg.time;
+		if (cg_muzzleFlash.integer)
+		{
+			cent->muzzleFlashTime = cg.time;
+		}
+		else
+		{
+			cent->muzzleFlashTime = 0;
+		}
 
 		return;
 	}
@@ -5444,7 +5460,20 @@ void CG_FireWeapon(centity_t *cent)
 
 	// mark the entity as muzzle flashing, so when it is added it will
 	// append the flash to the weapon model
-	cent->muzzleFlashTime = cg.time;
+	/*
+	if(cg_muzzleFlash.integer)
+	{
+	    cent->muzzleFlashTime = cg.time;
+	}
+	*/
+	if (cg_muzzleFlash.integer)
+	{
+		cent->muzzleFlashTime = cg.time;
+	}
+	else
+	{
+		cent->muzzleFlashTime = 0;
+	}
 
 	// kick angles
 	if (ent->number == cg.snap->ps.clientNum)
