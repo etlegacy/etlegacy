@@ -1660,6 +1660,22 @@ extern vmCvar_t g_campaignFile;
 
 extern vmCvar_t g_maxTeamLandmines;
 
+extern vmCvar_t g_countryflags;
+
+typedef struct GeoIPTag
+{
+	fileHandle_t GeoIPDatabase;
+	unsigned char *cache;
+	unsigned int memsize;
+} GeoIP;
+
+unsigned long GeoIP_addr_to_num(const char *addr);
+unsigned int GeoIP_seek_record(GeoIP *gi, unsigned long ipnum);
+void GeoIP_open(void);
+void GeoIP_close(void);
+
+extern GeoIP *gidb;
+
 void trap_Printf(const char *fmt);
 void trap_Error(const char *fmt) __attribute__((noreturn));
 int trap_Milliseconds(void);

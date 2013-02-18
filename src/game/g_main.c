@@ -263,6 +263,8 @@ vmCvar_t g_campaignFile;
 
 vmCvar_t g_maxTeamLandmines;
 
+vmCvar_t g_countryflags; // GeoIP
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -490,6 +492,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_campaignFile,            "g_campaignFile",            "",                           0 },
 
 	{ &g_maxTeamLandmines,        "g_maxTeamLandmines",        "10",                         0 },
+	{ &g_countryflags,            "g_countryflags",            "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse},
 };
 
 // made static to avoid aliasing
