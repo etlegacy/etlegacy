@@ -1029,7 +1029,7 @@ gitem_t bg_itemlist[] =
 	// weapon_smoketrail -- only used as a special effects emitter for smoke trails (artillery spotter etc)
 	{
 		"weapon_smoketrail",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/multiplayer/smokegrenade/smokegrenade.md3",
 			"models/multiplayer/smokegrenade/v_smokegrenade.md3",
@@ -1073,7 +1073,7 @@ gitem_t bg_itemlist[] =
 	*/
 	{
 		"weapon_dynamite",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/multiplayer/dynamite/dynamite_3rd.md3",
 			"models/weapons2/dynamite/v_dynamite.md3",
@@ -1162,10 +1162,10 @@ gitem_t bg_itemlist[] =
 	*/
 	{
 		"weapon_arty",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
-			"models/multiplayer/syringe/syringe.md3",
-			"models/multiplayer/syringe/v_syringe.md3",
+			0,
+			0,
 			0
 		},
 		"icons/iconw_syringe_1", // icon
@@ -1184,7 +1184,7 @@ gitem_t bg_itemlist[] =
 	*/
 	{
 		"weapon_medic_syringe",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/multiplayer/syringe/syringe.md3",
 			"models/multiplayer/syringe/v_syringe.md3",
@@ -1206,7 +1206,7 @@ gitem_t bg_itemlist[] =
 	*/
 	{
 		"weapon_medic_adrenaline",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/multiplayer/syringe/syringe.md3",
 			"models/multiplayer/syringe/v_syringe.md3",
@@ -1591,7 +1591,7 @@ gitem_t bg_itemlist[] =
 	*/
 	{
 		"weapon_satchel",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/multiplayer/satchel/satchel.md3",
 			"models/multiplayer/satchel/v_satchel.md3",
