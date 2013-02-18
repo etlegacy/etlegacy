@@ -311,22 +311,22 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_LEGACYINFO                   40
 
 #define CS_MODELS                       64
-#define CS_SOUNDS                       (CS_MODELS +               MAX_MODELS)
-#define CS_SHADERS                      (CS_SOUNDS +               MAX_SOUNDS)
-#define CS_SHADERSTATE                  (CS_SHADERS +              MAX_CS_SHADERS)                // this MUST be after CS_SHADERS
-#define CS_SKINS                        (CS_SHADERSTATE +          1)
-#define CS_CHARACTERS                   (CS_SKINS +                MAX_CS_SKINS)
-#define CS_PLAYERS                      (CS_CHARACTERS +           MAX_CHARACTERS)
-#define CS_MULTI_SPAWNTARGETS           (CS_PLAYERS +              MAX_CLIENTS)
-#define CS_OID_TRIGGERS                 (CS_MULTI_SPAWNTARGETS +   MAX_MULTI_SPAWNTARGETS)
-#define CS_OID_DATA                     (CS_OID_TRIGGERS +         MAX_OID_TRIGGERS)
-#define CS_DLIGHTS                      (CS_OID_DATA +             MAX_OID_TRIGGERS)
-#define CS_SPLINES                      (CS_DLIGHTS +              MAX_DLIGHT_CONFIGSTRINGS)
-#define CS_TAGCONNECTS                  (CS_SPLINES +              MAX_SPLINE_CONFIGSTRINGS)
-#define CS_FIRETEAMS                    (CS_TAGCONNECTS +          MAX_TAGCONNECTS)
-#define CS_CUSTMOTD                     (CS_FIRETEAMS +            MAX_FIRETEAMS)
-#define CS_STRINGS                      (CS_CUSTMOTD +             MAX_MOTDLINES)
-#define CS_MAX                          (CS_STRINGS +              MAX_CSSTRINGS)
+#define CS_SOUNDS                       (CS_MODELS +               MAX_MODELS)               // 320 (256)
+#define CS_SHADERS                      (CS_SOUNDS +               MAX_SOUNDS)               // 576 (256)
+#define CS_SHADERSTATE                  (CS_SHADERS +              MAX_CS_SHADERS)           // 608 (32) this MUST be after CS_SHADERS
+#define CS_SKINS                        (CS_SHADERSTATE +          1)                        // 609 (1)
+#define CS_CHARACTERS                   (CS_SKINS +                MAX_CS_SKINS)             // 673 (64)
+#define CS_PLAYERS                      (CS_CHARACTERS +           MAX_CHARACTERS)           // 689 (16)
+#define CS_MULTI_SPAWNTARGETS           (CS_PLAYERS +              MAX_CLIENTS)              // 753 (64)
+#define CS_OID_TRIGGERS                 (CS_MULTI_SPAWNTARGETS +   MAX_MULTI_SPAWNTARGETS)   // 769 (16)
+#define CS_OID_DATA                     (CS_OID_TRIGGERS +         MAX_OID_TRIGGERS)         // 787 (18)
+#define CS_DLIGHTS                      (CS_OID_DATA +             MAX_OID_TRIGGERS)         // 805 (18)
+#define CS_SPLINES                      (CS_DLIGHTS +              MAX_DLIGHT_CONFIGSTRINGS) // 821 (16)
+#define CS_TAGCONNECTS                  (CS_SPLINES +              MAX_SPLINE_CONFIGSTRINGS) // 829 (8)
+#define CS_FIRETEAMS                    (CS_TAGCONNECTS +          MAX_TAGCONNECTS)          // 893 (64)
+#define CS_CUSTMOTD                     (CS_FIRETEAMS +            MAX_FIRETEAMS)            // 905 (12)
+#define CS_STRINGS                      (CS_CUSTMOTD +             MAX_MOTDLINES)            // 911 (6)
+#define CS_MAX                          (CS_STRINGS +              MAX_CSSTRINGS)            // 943 (32)
 
 #if (CS_MAX) > MAX_CONFIGSTRINGS
 #error overflow: (CS_MAX) > MAX_CONFIGSTRINGS
