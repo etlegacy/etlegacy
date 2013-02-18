@@ -1092,8 +1092,7 @@ static void CG_RegisterItemSounds(int itemNum)
 		len = s - start;
 		if (len >= MAX_QPATH || len < 5)
 		{
-			CG_Error("PrecacheItem: %s has bad precache string\n",
-			         item->classname);
+			CG_Error("CG_RegisterItemSounds: %s has bad precache string\n", item->classname);
 			return;
 		}
 		memcpy(data, start, len);
@@ -1107,6 +1106,10 @@ static void CG_RegisterItemSounds(int itemNum)
 		{
 			// FIXME: put into cgs.media
 			trap_S_RegisterSound(data, qfalse);
+		}
+		else
+		{
+			CG_Printf(S_COLOR_YELLOW "WARNING CG_RegisterItemSounds: Invalid format for item sound\n");
 		}
 	}
 }
@@ -1720,12 +1723,6 @@ static void CG_RegisterGraphics(void)
 
 	memset(cg_items, 0, sizeof(cg_items));
 	memset(cg_weapons, 0, sizeof(cg_weapons));
-
-// TODO: FIXME:  REMOVE REGISTRATION OF EACH MODEL FOR EVERY LEVEL LOAD
-
-	//          okay, new stuff to intialize rather than doing it at level load time (or "give all" time)
-	//          (I'm certainly not against being efficient here, but I'm tired of the rocket launcher effect only registering
-	//          sometimes and want it to work for sure for this demo)
 
 	CG_LoadingString(" - weapons");
 	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
