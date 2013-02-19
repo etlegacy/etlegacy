@@ -555,6 +555,8 @@ typedef struct
 
 	qboolean versionOK;
 
+	unsigned int uci;               // GeoIP
+
 #ifdef FEATURE_OMNIBOT
 	//Omni-bot
 	qboolean botSuicide;            // /kill before next spawn

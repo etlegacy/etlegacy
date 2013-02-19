@@ -2202,6 +2202,9 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	// Match init work
 	G_loadMatchGame();
+
+	GeoIP_open(); // GeoIP open/update
+
 #ifdef FEATURE_LUA
 	G_LuaInit();
 	G_LuaHook_InitGame(levelTime, randomSeed, restart);
@@ -2267,6 +2270,8 @@ void G_ShutdownGame(int restart)
 		trap_FS_FCloseFile(level.logFile);
 		level.logFile = 0;
 	}
+
+	GeoIP_close();
 
 	// write all the client session data so we can get it back
 	G_WriteSessionData(restart);

@@ -1589,6 +1589,9 @@ typedef struct
 	qhandle_t disconnectIcon;
 
 	qhandle_t fireteamicons[6];
+
+	qhandle_t countryFlags; // GeoIP
+
 } cgMedia_t;
 
 typedef struct
@@ -2126,6 +2129,8 @@ extern vmCvar_t cg_locations;
 
 extern vmCvar_t cg_spawnTimer_period;
 extern vmCvar_t cg_spawnTimer_set;
+
+extern vmCvar_t cg_countryflags; // GeoIP
 
 // cg_main.c
 const char *CG_ConfigString(int index);

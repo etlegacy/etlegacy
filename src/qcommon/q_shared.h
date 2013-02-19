@@ -348,7 +348,6 @@ typedef int clipHandle_t;
 #define     SND_NOCUT           0x010   // Don't cut off.  Always let finish (overridden by SND_CUTOFF_ALL)
 #define     SND_NO_ATTENUATION  0x020   // don't attenuate (even though the sound is in voice channel, for example)
 
-
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
@@ -367,6 +366,8 @@ typedef int clipHandle_t;
 #define PITCH               0       // up / down
 #define YAW                 1       // left / right
 #define ROLL                2       // fall over
+
+#define MAX_IP4_LENGTH      16
 
 // the game guarantees that no string from the network will ever
 // exceed MAX_STRING_CHARS

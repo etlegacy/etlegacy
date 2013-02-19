@@ -56,6 +56,31 @@ WM_DrawObjectives
 #define INFO_LINE_HEIGHT        30
 #define INFO_TOTAL_WIDTH        (INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH)
 
+// GeoIP
+#define FLAG_STEP       32.0f
+qboolean cf_draw(float x, float y, float fade, int clientNum)
+{
+	unsigned int flag_sd     = 512;
+	unsigned int client_flag = atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));    // uci
+
+	if (client_flag < 255)
+	{
+		float alpha[4];
+		float x1 = (float)((client_flag * (unsigned int)FLAG_STEP) % flag_sd);
+		float y1 = (float)(floor((client_flag * FLAG_STEP) / flag_sd) * FLAG_STEP);
+		float x2 = x1 + FLAG_STEP;
+		float y2 = y1 + FLAG_STEP;
+
+		alpha[0] = alpha[1] = alpha[2] = 1.0; alpha[3] = fade;
+
+		trap_R_SetColor(alpha);
+		CG_DrawPicST(x, y, FLAG_STEP, FLAG_STEP, x1 / flag_sd, y1 / flag_sd, x2 / flag_sd, y2 / flag_sd, cgs.media.countryFlags);
+		trap_R_SetColor(NULL);
+		return qtrue;
+	}
+	return qfalse;
+}
+
 int WM_DrawObjectives(int x, int y, int width, float fade)
 {
 	const char *s;
@@ -303,6 +328,17 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		}
 	}
 
+	// GeoIP - draw flag before name
+	if ((score->ping != -1) && (score->ping != 999) && (cg_countryflags.integer))
+	{
+		if (cf_draw(tempx - 11, y - 8, fade, ci->clientNum))
+		{
+			offset   += 14;
+			tempx    += 14;
+			maxchars -= 2;
+		}
+	}
+
 	// draw name
 	CG_DrawStringExt(tempx, y, ci->name, hcolor, qfalse, qfalse, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, maxchars);
 	maxchars -= CG_DrawStrlen(ci->name);
@@ -449,6 +485,17 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == 0)
 		{
 			CG_DrawPic(tempx + 1, y + 1, 10, 10, cgs.media.medicIcon);
+			offset   += 14;
+			tempx    += 14;
+			maxchars -= 2;
+		}
+	}
+
+	// GeoIP - draw flag before name
+	if ((score->ping != -1) && (score->ping != 999) && (cg_countryflags.integer))
+	{
+		if (cf_draw(tempx - 11, y - 10, fade, ci->clientNum))
+		{
 			offset   += 14;
 			tempx    += 14;
 			maxchars -= 2;

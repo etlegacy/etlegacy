@@ -2252,6 +2252,85 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		G_ReadSessionData(client);
 	}
 
+	// GeoIP
+	// comment out the following check to hide the country flag for bots
+	if (gidb != NULL /*&& !isBot*/)
+	{
+		//value = Info_ValueForKey (userinfo, "ip");
+		if (!strcmp(cs_ip, "localhost"))
+		{
+			// give bots country flag of the server location g_countryflags 2
+			if (isBot && g_countryflags.integer > 1)
+			{
+
+				// hidden feature - draws kind of world flag ...
+				if (g_countryflags.integer >= 777)
+				{
+					client->sess.uci = 244;
+				}
+				else
+				{
+					char          server_ip[MAX_IP4_LENGTH];
+					unsigned int  ret;
+					unsigned long ip;
+
+					// get the server flag
+					trap_Cvar_VariableStringBuffer("net_ip", server_ip, sizeof(server_ip));
+					ip  = GeoIP_addr_to_num(server_ip);
+					ret = GeoIP_seek_record(gidb, ip);
+
+					if (ret > 0)
+					{
+						client->sess.uci = ret;
+					}
+					else
+					{
+						// default
+						client->sess.uci = 0;
+					}
+				}
+			}
+			else
+			{
+				client->sess.uci = 0;
+			}
+		}
+		else
+		{
+			unsigned long ip = GeoIP_addr_to_num(cs_ip);
+
+			//10.0.0.0/8			[RFC1918]
+			//172.16.0.0/12			[RFC1918]
+			//192.168.0.0/16		[RFC1918]
+			//169.254.0.0/16		[RFC3330] we need this ?
+			if (((ip & 0xFF000000) == 0x0A000000) ||
+			    ((ip & 0xFFF00000) == 0xAC100000) ||
+			    ((ip & 0xFFFF0000) == 0xC0A80000) ||
+			    (ip  == 0x7F000001))                    // recognise also 127.0.0.1
+			{
+				client->sess.uci = 0;
+			}
+			else
+			{
+				unsigned int ret = GeoIP_seek_record(gidb, ip);
+
+				if (ret > 0)
+				{
+					client->sess.uci = ret;
+				}
+				else
+				{
+					client->sess.uci = 246;
+					G_LogPrintf("GeoIP: This IP:%s cannot be located\n", cs_ip);
+				}
+			}
+		}
+	}
+	else
+	{
+		client->sess.uci = 255; //Don't draw anything if DB error
+	} // end GeoIP
+
 #ifdef USEXPSTORAGE
 	value = Info_ValueForKey(userinfo, "ip");
 	if (xpBackup = G_FindXPBackup(value))

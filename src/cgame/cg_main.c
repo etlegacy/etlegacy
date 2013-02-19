@@ -296,6 +296,8 @@ vmCvar_t cg_spawnTimer_period;      // spawntimer
 
 vmCvar_t cg_logFile;
 
+vmCvar_t cg_countryflags; // GeoIP
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -500,6 +502,7 @@ cvarTable_t cvarTable[] =
 
 	{ &cg_logFile,               "cg_logFile",               "",      CVAR_ARCHIVE                 }, // we don't log the chats per default
 
+	{ &cg_countryflags,          "cg_countryflags",          "1",     CVAR_ARCHIVE                 }, // GeoIP
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -1534,6 +1537,8 @@ static void CG_RegisterGraphics(void)
 	cgs.media.commandCentreSpawnShader[0]       = trap_R_RegisterShaderNoMip("gfx/limbo/cm_flagaxis");
 	cgs.media.commandCentreSpawnShader[1]       = trap_R_RegisterShaderNoMip("gfx/limbo/cm_flagallied");
 	cgs.media.compassConstructShader            = trap_R_RegisterShaderNoMip("sprites/construct.tga");
+
+	cgs.media.countryFlags = trap_R_RegisterShaderNoMip("gfx/flags/world_flags");   // GeoIP
 
 	cgs.media.compassDestroyShader = trap_R_RegisterShaderNoMip("sprites/destroy.tga");
 	cgs.media.slashShader          = trap_R_RegisterShaderNoMip("gfx/2d/numbers/slash");

@@ -760,7 +760,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.suicides,                  FIELD_INT,         0),
 	_et_gclient_addfield(sess.team_damage,               FIELD_INT,         0),
 	_et_gclient_addfield(sess.team_kills,                FIELD_INT,         0),
-
+	_et_gclient_addfield(sess.uci,                       FIELD_INT,         0),
 
 	_et_gclient_addfield(sess.aWeaponStats,              FIELD_WEAPONSTAT,  0),
 	// TODO

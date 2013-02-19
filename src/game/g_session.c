@@ -64,9 +64,9 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	}
 
 #ifdef FEATURE_MULTIVIEW
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 	       client->sess.sessionTeam,
 	       client->sess.spectatorTime,
@@ -98,7 +98,8 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.ignoreClients[0],
 	       client->sess.ignoreClients[1],
 	       client->pers.enterTime,
-	       restart ? client->sess.spawnObjectiveIndex : 0
+	       restart ? client->sess.spawnObjectiveIndex : 0,
+	       client->sess.uci
 	       );
 
 	trap_Cvar_Set(va("session%i", (int)(client - level.clients)), s);
@@ -235,9 +236,9 @@ void G_ReadSessionData(gclient_t *client)
 	trap_Cvar_VariableStringBuffer(va("session%i", (int)(client - level.clients)), s, sizeof(s));
 
 #ifdef FEATURE_MULTIVIEW
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 	       (int *)&client->sess.sessionTeam,
 	       &client->sess.spectatorTime,
@@ -268,7 +269,8 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.ignoreClients[0],
 	       &client->sess.ignoreClients[1],
 	       &client->pers.enterTime,
-	       &client->sess.spawnObjectiveIndex
+	       &client->sess.spawnObjectiveIndex,
+	       &client->sess.uci
 	       );
 
 #ifdef FEATURE_MULTIVIEW
@@ -383,6 +385,8 @@ void G_InitSessionData(gclient_t *client, char *userinfo)
     sess->spec_invite = 0;
     sess->spec_team   = 0;
     G_deleteStats(client - level.clients);
+
+    sess->uci = 0; // GeoIP
 
     G_WriteClientSessionData(client, qfalse);
 }
