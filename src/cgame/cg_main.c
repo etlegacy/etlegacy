@@ -199,7 +199,6 @@ vmCvar_t cg_bloodTime;
 vmCvar_t cg_skybox;
 
 // say, team say, etc.
-vmCvar_t cg_message;
 vmCvar_t cg_messageType;
 vmCvar_t cg_messagePlayer;
 vmCvar_t cg_messagePlayerName;
@@ -362,7 +361,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_skybox,                "cg_skybox",                "1",     CVAR_CHEAT                   },
 
 	// say, team say, etc.
-	{ &cg_message,               "cg_message",               "1",     CVAR_TEMP                    },
 	{ &cg_messageType,           "cg_messageType",           "1",     CVAR_TEMP                    },
 	{ &cg_messagePlayer,         "cg_messagePlayer",         "",      CVAR_TEMP                    },
 	{ &cg_messagePlayerName,     "cg_messagePlayerName",     "",      CVAR_TEMP                    },
