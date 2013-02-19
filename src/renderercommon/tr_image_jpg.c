@@ -31,7 +31,7 @@
  * @file tr_image_jpg.c
  */
 
-#include "tr_local.h"
+#include "tr_common.h"
 
 /*
  * Include file for users of JPEG library.

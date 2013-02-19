@@ -40,7 +40,7 @@
 #define _CG_LOCAL_H
 
 #include "../qcommon/q_shared.h"
-#include "../renderer/tr_types.h"
+#include "../renderercommon/tr_types.h"
 #include "../game/bg_public.h"
 #include "cg_public.h"
 #include "../ui/ui_shared.h"

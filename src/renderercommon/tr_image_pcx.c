@@ -32,7 +32,7 @@
  * @brief PCX files are used for 8 bit images
  */
 
-#include "tr_local.h"
+#include "tr_common.h"
 
 typedef struct
 {

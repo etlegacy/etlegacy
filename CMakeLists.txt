@@ -277,6 +277,11 @@ FILE(GLOB BOTLIB_FILES
 FILE(GLOB RENDERER_FILES
 )
 
+FILE(GLOB RENDERER_COMMON
+	"src/renderercommon/*.c"
+	"src/renderercommon/*.h"
+)
+	
 FILE(GLOB RENDERER1_FILES
 	"src/renderer/*.c"
 	"src/renderer/*.h"
@@ -413,6 +418,8 @@ if(BUILD_CLIENT)
 		add_definitions(-DFEATURE_OGG_VORBIS)
 	endif(FEATURE_OGG_VORBIS)
 	
+	list(APPEND CLIENT_SRC ${RENDERER_COMMON})
+	list(APPEND RENDERER_FILES ${RENDERER_COMMON})
 	if(USE_RENDERER2) #Builds the client with the other renderer
 		list(APPEND CLIENT_SRC ${RENDERER2_FILES})
 		list(APPEND RENDERER_FILES ${RENDERER2_FILES})

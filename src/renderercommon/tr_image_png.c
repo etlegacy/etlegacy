@@ -31,7 +31,7 @@
  * @file tr_image_png.c
  */
 
-#include "tr_local.h"
+#include "tr_common.h"
 
 #include "../qcommon/puff.h"
 
