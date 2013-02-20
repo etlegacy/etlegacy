@@ -970,7 +970,6 @@ void CG_AddParticles(void)
 
 				continue;
 			}
-
 		}
 
 		if (p->type == P_WEATHER_FLURRY)
@@ -998,7 +997,6 @@ void CG_AddParticles(void)
 				p->alpha       = 0;
 				continue;
 			}
-
 		}
 
 		if (p->type == P_SPRITE && p->endtime < 0)
@@ -1060,6 +1058,7 @@ void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent)
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -1132,6 +1131,7 @@ void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb,
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -1177,7 +1177,6 @@ void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb,
 	// snow pvs check
 	p->snum = snum;
 	p->link = qtrue;
-
 }
 
 void CG_ParticleBubble(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb, float range, int snum)
@@ -1194,6 +1193,7 @@ void CG_ParticleBubble(qhandle_t pshader, vec3_t origin, vec3_t origin2, int tur
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -1260,6 +1260,7 @@ void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -1410,6 +1411,7 @@ void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration)
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -1454,6 +1456,7 @@ void CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration)
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -1507,6 +1510,7 @@ void CG_ParticleDirtBulletDebris_Core(vec3_t org, vec3_t vel, int duration, floa
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -1572,6 +1576,7 @@ void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -1636,6 +1641,7 @@ int CG_NewParticleArea(int num)
 	token = COM_Parse(&str);
 	type  = atoi(token);
 
+	// FIXME: do a switch!
 	if (type == 1)
 	{
 		range = 128;
@@ -1719,6 +1725,7 @@ void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int li
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -1770,6 +1777,7 @@ void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEnt
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -1838,6 +1846,7 @@ void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int p
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -1894,6 +1903,7 @@ void CG_Particle_OilSlick(qhandle_t pshader, centity_t *cent)
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;
@@ -2035,14 +2045,12 @@ qboolean ValidBloodPool(vec3_t start)
 void CG_ParticleBloodCloud(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	float       length;
-	float       dist;
+	float       dist = 0;
 	float       crittersize;
 	vec3_t      angles, forward;
 	vec3_t      point;
 	cparticle_t *p;
 	int         i;
-
-	dist = 0;
 
 	length = VectorLength(dir);
 	vectoangles(dir, angles);
@@ -2253,6 +2261,7 @@ void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, f
 	{
 		return;
 	}
+
 	p                = free_particles;
 	free_particles   = p->next;
 	p->next          = active_particles;

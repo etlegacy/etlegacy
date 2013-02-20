@@ -1582,7 +1582,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.debRock[1] = trap_R_RegisterModel("models/mapobjects/debris/rubble2.md3");
 	cgs.media.debRock[2] = trap_R_RegisterModel("models/mapobjects/debris/rubble3.md3");
 
-
 	cgs.media.debWood[0] = trap_R_RegisterModel("models/gibs/wood/wood1.md3");
 	cgs.media.debWood[1] = trap_R_RegisterModel("models/gibs/wood/wood2.md3");
 	cgs.media.debWood[2] = trap_R_RegisterModel("models/gibs/wood/wood3.md3");
@@ -1708,8 +1707,8 @@ static void CG_RegisterGraphics(void)
 	cgs.media.shardWood2  = trap_R_RegisterModel("models/shards/wood2.md3");
 	cgs.media.shardMetal1 = trap_R_RegisterModel("models/shards/metal1.md3");
 	cgs.media.shardMetal2 = trap_R_RegisterModel("models/shards/metal2.md3");
-	//  cgs.media.shardCeramic1 = trap_R_RegisterModel( "models/shards/ceramic1.md3" );
-	//  cgs.media.shardCeramic2 = trap_R_RegisterModel( "models/shards/ceramic2.md3" );
+	//cgs.media.shardCeramic1 = trap_R_RegisterModel( "models/shards/ceramic1.md3" );
+	//cgs.media.shardCeramic2 = trap_R_RegisterModel( "models/shards/ceramic2.md3" );
 
 	// see see cgs.media.debBlock
 	//cgs.media.shardRubble1 = trap_R_RegisterModel("models/mapobjects/debris/brick000.md3");
@@ -1782,7 +1781,6 @@ static void CG_RegisterGraphics(void)
 	if (cgs.numInlineModels > MAX_MODELS)
 	{
 		CG_Error("CG_RegisterGraphics: Too many inline models: %i\n", cgs.numInlineModels);
-		//CG_Printf( S_COLOR_RED "WARNING: CG_RegisterGraphics: Too many inline models: %i\n", cgs.numInlineModels );
 		//cgs.numInlineModels = MAX_MODELS;
 	}
 
