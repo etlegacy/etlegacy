@@ -1970,7 +1970,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	static int footstepcnt       = 0;
 	static int splashfootstepcnt = 0;
 
-
 	if (cg_debugEvents.integer)
 	{
 		CG_Printf("time:%i ent:%3i  event:%3i ", cg.time, es->number, event);
@@ -1993,7 +1992,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	switch (event)
 	{
-
 	// movement generated events
 
 	case EV_FOOTSTEP:
@@ -2603,6 +2601,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			Q_strcat(tempStr, sizeof(tempStr), ".wav");
 			s = tempStr;
 		}
+		else
+		{
+			CG_Printf(S_COLOR_YELLOW "WARNING CG_EntityEvent: Invalid sound format for EV_GENERAL_SOUND\n");
+		}
 
 		if (cgs.gameSounds[es->eventParm])
 		{
@@ -2652,6 +2654,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			Q_strcat(tempStr, sizeof(tempStr), ".wav");
 			s = tempStr;
 		}
+		else
+		{
+			CG_Printf(S_COLOR_YELLOW "WARNING CG_EntityEvent: Invalid sound format for EV_GENERAL_SOUND_VOLUME\n");
+		}
 
 		if (cgs.gameSounds[sound])
 		{
@@ -2687,6 +2693,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			Q_strcat(tempStr, sizeof(tempStr), ".wav");
 			s = tempStr;
 		}
+		else
+		{
+			CG_Printf(S_COLOR_YELLOW "WARNING CG_EntityEvent: Invalid sound format for EV_GLOBAL_SOUND\n");
+		}
 
 		if (cgs.gameSounds[es->eventParm])
 		{
@@ -2716,6 +2726,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 				Q_strcat(tempStr, sizeof(tempStr), ".wav");
 				s = tempStr;
 			}
+			else
+			{
+				CG_Printf(S_COLOR_YELLOW "WARNING CG_EntityEvent: Invalid sound format for EV_GLOBAL_CLIENT_SOUND\n");
+			}
 
 			if (cgs.gameSounds[es->eventParm])
 			{
@@ -2727,7 +2741,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, CG_CustomSound(es->number, s));
 			}
 		}
-
 		break;
 
 	case EV_PAIN:
@@ -2879,7 +2892,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 				CG_ParticleSparks(cent->currentState.origin, cent->currentState.angles, duration, x, y, speed);
 			}
 		}
-
 	}
 	break;
 
@@ -2979,7 +2991,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		CG_StartShakeCamera(len);
 	}
-
 	break;
 
 	case EV_ALERT_SPEAKER:
@@ -3123,8 +3134,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	default:
 		DEBUGNAME("UNKNOWN");
-		//CG_Error("Unknown event: %i\n", event);
-		Com_Printf("^1Unknown event: %i\n", event);
+		CG_Error("Unknown event: %i\n", event);
 		break;
 	}
 
