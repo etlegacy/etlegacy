@@ -2602,9 +2602,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			s = tempStr;
 		}
 		else
-		{
-			CG_Printf(S_COLOR_YELLOW "WARNING CG_EntityEvent: Invalid sound format for EV_GENERAL_SOUND\n");
-		}
+		//{
+		//	CG_Printf(S_COLOR_YELLOW "WARNING CG_EntityEvent: Invalid sound format for EV_GENERAL_SOUND\n");
+		//}
 
 		if (cgs.gameSounds[es->eventParm])
 		{
