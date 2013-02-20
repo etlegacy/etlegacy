@@ -40,6 +40,11 @@
 #include "../renderercommon/tr_public.h"
 #include "../renderercommon/tr_common.h"
 #include "../renderercommon/qgl.h"
+#include "tr_fbo.h"
+#include "tr_postprocess.h"
+#include "tr_extramath.h"
+#include "qgl2.h"
+#include "tr_extratypes.h"
 
 #define GL_INDEX_TYPE       GL_UNSIGNED_INT
 typedef unsigned int glIndex_t;
@@ -923,9 +928,318 @@ typedef struct bmodel_s
 
 // optimization
 #define WORLD_MAX_SKY_NODES 32
+/*
+typedef struct
+{
+    char name[MAX_QPATH];               // ie: maps/tim_dm2.bsp
+    char baseName[MAX_QPATH];           // ie: tim_dm2
+
+    int dataSize;
+
+    int numShaders;
+    dshader_t *shaders;
+
+    int numBModels;
+    bmodel_t *bmodels;
+
+    int numplanes;
+    cplane_t *planes;
+
+    int numnodes;               // includes leafs
+    int numDecisionNodes;
+    mnode_t *nodes;
+
+    int numSkyNodes;
+    mnode_t **skyNodes;         // don't walk the entire bsp when rendering sky
+
+    int numsurfaces;
+    msurface_t *surfaces;
+
+    int nummarksurfaces;
+    msurface_t **marksurfaces;
+
+    int numfogs;
+    fog_t *fogs;
+    int globalFog;                      // index of global fog
+    vec4_t globalOriginalFog;           // to be able to restore original global fog
+    vec4_t globalTransStartFog;         // start fog for switch fog transition
+    vec4_t globalTransEndFog;           // end fog for switch fog transition
+    int globalFogTransStartTime;
+    int globalFogTransEndTime;
+
+    vec3_t lightGridOrigin;
+    vec3_t lightGridSize;
+    vec3_t lightGridInverseSize;
+    int lightGridBounds[3];
+    byte *lightGridData;
+
+    int numClusters;
+    int clusterBytes;
+    const byte *vis;            // may be passed in by CM_LoadMap to save space
+
+    byte *novis;                // clusterBytes of 0xff
+
+    char *entityString;
+    char *entityParsePoint;
+} world_t;
+*/
+
+//======================================================================
+
+typedef enum
+{
+	MOD_BAD,
+	MOD_BRUSH,
+	MOD_MESH,
+	MOD_MDS,
+	MOD_MDC,
+	MOD_MDM,
+	MOD_MDX
+} modtype_t;
+
+typedef union
+{
+	bmodel_t *bmodel;               // only if type == MOD_BRUSH
+	md3Header_t *md3[MD3_MAX_LODS]; // only if type == MOD_MESH
+	mdsHeader_t *mds;               // only if type == MOD_MDS
+	mdcHeader_t *mdc[MD3_MAX_LODS]; // only if type == MOD_MDC
+	mdmHeader_t *mdm;               // only if type == MOD_MDM
+	mdxHeader_t *mdx;               // only if type == MOD_MDX
+} model_u;
+
+typedef struct model_s
+{
+	char name[MAX_QPATH];
+	modtype_t type;
+	int index;                      // model = tr.models[model->index]
+
+	int dataSize;                   // just for listing purposes
+
+	model_u model;
+
+	int numLods;
+
+	qhandle_t shadowShader;
+	float shadowParms[6];           // x, y, width, height, depth, z offset
+} model_t;
+
+#define MAX_MOD_KNOWN   2048
+
+void R_ModelInit(void);
+model_t *R_GetModelByHandle(qhandle_t hModel);
+int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex);
+void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs);
+
+void R_Modellist_f(void);
+
+//New stuff -Jacker
+
+#define MAX_FBOS      64
+#define MAX_VISCOUNTS 5
+#define MAX_VBOS      4096
+#define MAX_IBOS      4096
+
+#define MAX_CALC_PSHADOWS    64
+#define MAX_DRAWN_PSHADOWS    16 // do not increase past 32, because bit flags are used on surfaces
+#define PSHADOW_MAP_SIZE      512
+
+#define MAX_DRAWIMAGES          2048
+#define MAX_SKINS               1024
+
+#define FOG_TABLE_SIZE      256
+/*
+#define FUNCTABLE_SIZE		1024
+#define FUNCTABLE_SIZE2		10
+#define FUNCTABLE_MASK		(FUNCTABLE_SIZE-1)
+*/
+typedef enum
+{
+	TCR_NONE = 0x0000,
+	TCR_LATC = 0x0001,
+	TCR_BPTC = 0x0002,
+} textureCompressionRef_t;
+
+typedef enum
+{
+	MI_NONE,
+	MI_NVX,
+	MI_ATI
+} memInfo_t;
+
+enum
+{
+	GLSL_INT,
+	GLSL_FLOAT,
+	GLSL_FLOAT5,
+	GLSL_VEC2,
+	GLSL_VEC3,
+	GLSL_VEC4,
+	GLSL_MAT16
+};
+
+enum
+{
+	GENERICDEF_USE_DEFORM_VERTEXES  = 0x0001,
+	GENERICDEF_USE_TCGEN_AND_TCMOD  = 0x0002,
+	GENERICDEF_USE_VERTEX_ANIMATION = 0x0004,
+	GENERICDEF_USE_FOG              = 0x0008,
+	GENERICDEF_USE_RGBAGEN          = 0x0010,
+	GENERICDEF_USE_LIGHTMAP         = 0x0020,
+	GENERICDEF_ALL                  = 0x003F,
+	GENERICDEF_COUNT                = 0x0040,
+};
+
+enum
+{
+	FOGDEF_USE_DEFORM_VERTEXES  = 0x0001,
+	FOGDEF_USE_VERTEX_ANIMATION = 0x0002,
+	FOGDEF_ALL                  = 0x0003,
+	FOGDEF_COUNT                = 0x0004,
+};
+
+enum
+{
+	DLIGHTDEF_USE_DEFORM_VERTEXES = 0x0001,
+	DLIGHTDEF_ALL                 = 0x0001,
+	DLIGHTDEF_COUNT               = 0x0002,
+};
+
+enum
+{
+	LIGHTDEF_USE_LIGHTMAP        = 0x0001,
+	LIGHTDEF_USE_LIGHT_VECTOR    = 0x0002,
+	LIGHTDEF_USE_LIGHT_VERTEX    = 0x0003,
+	LIGHTDEF_LIGHTTYPE_MASK      = 0x0003,
+	LIGHTDEF_ENTITY              = 0x0004,
+	LIGHTDEF_USE_TCGEN_AND_TCMOD = 0x0008,
+	LIGHTDEF_USE_NORMALMAP       = 0x0010,
+	LIGHTDEF_USE_SPECULARMAP     = 0x0020,
+	LIGHTDEF_USE_DELUXEMAP       = 0x0040,
+	LIGHTDEF_USE_PARALLAXMAP     = 0x0080,
+	LIGHTDEF_USE_SHADOWMAP       = 0x0100,
+	LIGHTDEF_ALL                 = 0x01FF,
+	LIGHTDEF_COUNT               = 0x0200
+};
+
+enum
+{
+	TB_COLORMAP    = 0,
+	TB_DIFFUSEMAP  = 0,
+	TB_LIGHTMAP    = 1,
+	TB_LEVELSMAP   = 1,
+	TB_SHADOWMAP   = 1,
+	TB_NORMALMAP   = 2,
+	TB_DELUXEMAP   = 3,
+	TB_SHADOWMAP2  = 3,
+	TB_SPECULARMAP = 4,
+	TB_SHADOWMAP3  = 5,
+	//NUM_TEXTURE_BUNDLES = 6 //FIXME this should be dealt with
+};
+
+enum
+{
+	TEXTURECOLOR_UNIFORM_MODELVIEWPROJECTIONMATRIX = 0,
+	TEXTURECOLOR_UNIFORM_INVTEXRES,
+	TEXTURECOLOR_UNIFORM_AUTOEXPOSUREMINMAX,
+	TEXTURECOLOR_UNIFORM_TONEMINAVGMAXLINEAR,
+	TEXTURECOLOR_UNIFORM_TEXTUREMAP,
+	TEXTURECOLOR_UNIFORM_LEVELSMAP,
+	TEXTURECOLOR_UNIFORM_COLOR,
+	TEXTURECOLOR_UNIFORM_COUNT
+};
+
+// shaderProgram_t represents a pair of one
+// GLSL vertex and one GLSL fragment shader
+typedef struct shaderProgram_s
+{
+	char name[MAX_QPATH];
+
+	GLhandleARB program;
+	GLhandleARB vertexShader;
+	GLhandleARB fragmentShader;
+	uint32_t attribs;           // vertex array attributes
+
+	// uniform parameters
+	int numUniforms;
+	GLint *uniforms;
+	char *uniformTypes;          // max 127 uniform types
+	short *uniformBufferOffsets; // max 32767/64=511 uniforms
+	char *uniformBuffer;
+} shaderProgram_t;
+
+typedef struct VBO_s
+{
+	char name[MAX_QPATH];
+
+	uint32_t vertexesVBO;
+	int vertexesSize;               // amount of memory data allocated for all vertices in bytes
+	uint32_t ofs_xyz;
+	uint32_t ofs_normal;
+	uint32_t ofs_st;
+	uint32_t ofs_lightmap;
+	uint32_t ofs_vertexcolor;
+	uint32_t ofs_lightdir;
+#ifdef USE_VERT_TANGENT_SPACE
+	uint32_t ofs_tangent;
+	uint32_t ofs_bitangent;
+#endif
+	uint32_t stride_xyz;
+	uint32_t stride_normal;
+	uint32_t stride_st;
+	uint32_t stride_lightmap;
+	uint32_t stride_vertexcolor;
+	uint32_t stride_lightdir;
+#ifdef USE_VERT_TANGENT_SPACE
+	uint32_t stride_tangent;
+	uint32_t stride_bitangent;
+#endif
+	uint32_t size_xyz;
+	uint32_t size_normal;
+
+	int attribs;
+} VBO_t;
+
+typedef struct IBO_s
+{
+	char name[MAX_QPATH];
+
+	uint32_t indexesVBO;
+	int indexesSize;                // amount of memory data allocated for all triangles in bytes
+	//  uint32_t        ofsIndexes;
+} IBO_t;
 
 typedef struct
 {
+	qboolean drawRangeElements;
+	qboolean multiDrawArrays;
+	qboolean occlusionQuery;
+
+	int glslMajorVersion;
+	int glslMinorVersion;
+
+	memInfo_t memInfo;
+
+	qboolean framebufferObject;
+	int maxRenderbufferSize;
+	int maxColorAttachments;
+
+	qboolean textureNonPowerOfTwo;
+	qboolean textureFloat;
+	qboolean halfFloatPixel;
+	qboolean packedDepthStencil;
+	textureCompressionRef_t textureCompression;
+
+	qboolean framebufferMultisample;
+	qboolean framebufferBlit;
+
+	qboolean texture_srgb;
+
+	qboolean depthClamp;
+} glRefConfig_t;
+
+typedef struct
+{
+
 	char name[MAX_QPATH];               // ie: maps/tim_dm2.bsp
 	char baseName[MAX_QPATH];           // ie: tim_dm2
 
@@ -976,55 +1290,27 @@ typedef struct
 
 	char *entityString;
 	char *entityParsePoint;
+
+	//New stuff -jacker
+	VBO_t *vbo;
+	IBO_t *ibo;
+
+	int numWorldSurfaces;
+
+	int *surfacesViewCount;
+	int *surfacesDlightBits;
+	int *surfacesPshadowBits;
+
+	int numMergedSurfaces;
+	msurface_t *mergedSurfaces;
+	int *mergedSurfacesViewCount;
+	int *mergedSurfacesDlightBits;
+	int *mergedSurfacesPshadowBits;
+
+	int *viewSurfaces;
+
+	float *hdrLightGrid;
 } world_t;
-
-//======================================================================
-
-typedef enum
-{
-	MOD_BAD,
-	MOD_BRUSH,
-	MOD_MESH,
-	MOD_MDS,
-	MOD_MDC,
-	MOD_MDM,
-	MOD_MDX
-} modtype_t;
-
-typedef union
-{
-	bmodel_t *bmodel;               // only if type == MOD_BRUSH
-	md3Header_t *md3[MD3_MAX_LODS]; // only if type == MOD_MESH
-	mdsHeader_t *mds;               // only if type == MOD_MDS
-	mdcHeader_t *mdc[MD3_MAX_LODS]; // only if type == MOD_MDC
-	mdmHeader_t *mdm;               // only if type == MOD_MDM
-	mdxHeader_t *mdx;               // only if type == MOD_MDX
-} model_u;
-
-typedef struct model_s
-{
-	char name[MAX_QPATH];
-	modtype_t type;
-	int index;                      // model = tr.models[model->index]
-
-	int dataSize;                   // just for listing purposes
-
-	model_u model;
-
-	int numLods;
-
-	qhandle_t shadowShader;
-	float shadowParms[6];           // x, y, width, height, depth, z offset
-} model_t;
-
-#define MAX_MOD_KNOWN   2048
-
-void R_ModelInit(void);
-model_t *R_GetModelByHandle(qhandle_t hModel);
-int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex);
-void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs);
-
-void R_Modellist_f(void);
 
 //====================================================
 extern refimport_t ri;
@@ -1107,12 +1393,26 @@ typedef struct
 // the renderer front end should never modify glstate_t
 typedef struct
 {
-	int currenttextures[2];
+	int currenttextures[NUM_TEXTURE_BUNDLES];
 	int currenttmu;
 	qboolean finishCalled;
 	int texEnv[2];
 	int faceCulling;
 	unsigned long glStateBits;
+
+	//New stuff
+	uint32_t vertexAttribsState;
+	uint32_t vertexAttribPointersSet;
+	uint32_t vertexAttribsNewFrame;
+	uint32_t vertexAttribsOldFrame;
+	float vertexAttribsInterpolation;
+	shaderProgram_t *currentProgram;
+	FBO_t *currentFBO;
+	VBO_t *currentVBO;
+	IBO_t *currentIBO;
+	matrix_t modelview;
+	matrix_t projection;
+	matrix_t modelviewProjection;
 } glstate_t;
 
 typedef struct
@@ -1147,115 +1447,6 @@ typedef struct
 	qboolean vertexes2D;        // shader needs to be finished
 	trRefEntity_t entity2D;     // currentEntity will point at this when doing 2D rendering
 } backEndState_t;
-
-/*
-trGlobals_t
-
-    Most renderer globals are defined here.
-    backend functions should never modify any of these fields,
-    but may read fields that aren't dynamically modified
-    by the frontend.
-*/
-typedef struct
-{
-	qboolean registered;                    // cleared at shutdown, set at beginRegistration
-
-	int visCount;                           // incremented every time a new vis cluster is entered
-	int frameCount;                         // incremented every frame
-	int sceneCount;                         // incremented every scene
-	int viewCount;                          // incremented every view (twice a scene if portaled)
-	// and every R_MarkFragments call
-
-	int frameSceneNum;                      // zeroed at RE_BeginFrame
-
-	qboolean worldMapLoaded;
-	world_t *world;
-	char *worldDir;                         // for referencing external lightmaps
-
-	const byte *externalVisData;            // from RE_SetWorldVisData, shared with CM_Load
-
-	image_t *defaultImage;
-	image_t *scratchImage[32];
-	image_t *fogImage;
-	image_t *dlightImage;                   // inverse-square highlight for projective adding
-	image_t *flareImage;
-	image_t *whiteImage;                    // full of 0xff
-	image_t *identityLightImage;            // full of tr.identityLightByte
-
-	shader_t *defaultShader;
-	shader_t *shadowShader;
-	shader_t *projectionShadowShader;
-	shader_t *dlightShader;
-
-	shader_t *flareShader;
-	char *sunShaderName;
-	shader_t *sunShader;
-	shader_t *sunflareShader[6];                // for the camera lens flare effect for sun
-
-	int numLightmaps;
-	image_t *lightmaps[MAX_LIGHTMAPS];
-
-	trRefEntity_t *currentEntity;
-	trRefEntity_t worldEntity;                  // point currentEntity at this when rendering world
-	int currentEntityNum;
-	int shiftedEntityNum;                       // currentEntityNum << QSORT_ENTITYNUM_SHIFT
-	model_t *currentModel;
-	bmodel_t *currentBModel;                    // only valid when rendering brush models
-
-	viewParms_t viewParms;
-
-	float identityLight;                        // 1.0 / ( 1 << overbrightBits )
-	int identityLightByte;                      // identityLight * 255
-	int overbrightBits;                         // r_overbrightBits->integer, but set to 0 if no hw gamma
-
-	orientationr_t orientation;                 // for current entity
-
-	trRefdef_t refdef;
-
-	int viewCluster;
-
-	vec3_t sunLight;                            // from the sky shader for this level
-	vec3_t sunDirection;
-
-	float lightGridMulAmbient;                  // lightgrid multipliers specified in sky shader
-	float lightGridMulDirected;
-
-	frontEndCounters_t pc;
-	int frontEndMsec;                           // not in pc due to clearing issue
-
-	// put large tables at the end, so most elements will be
-	// within the +/32K indexed range on risc processors
-	model_t *models[MAX_MOD_KNOWN];
-	int numModels;
-
-	int numImages;
-	image_t *images[MAX_DRAWIMAGES];
-	int numCacheImages; // Unused.
-
-	// shader indexes from other modules will be looked up in tr.shaders[]
-	// shader indexes from drawsurfs will be looked up in sortedShaders[]
-	// lower indexed sortedShaders must be rendered first (opaque surfaces before translucent)
-	int numShaders;
-	shader_t *shaders[MAX_SHADERS];
-	shader_t *sortedShaders[MAX_SHADERS];
-
-	int numSkins;
-	skin_t *skins[MAX_SKINS];
-
-	float sinTable[FUNCTABLE_SIZE];
-	float squareTable[FUNCTABLE_SIZE];
-	float triangleTable[FUNCTABLE_SIZE];
-	float sawToothTable[FUNCTABLE_SIZE];
-	float inverseSawToothTable[FUNCTABLE_SIZE];
-	float fogTable[FOG_TABLE_SIZE];
-
-	int allowCompress; // temp var used while parsing shader only
-} trGlobals_t;
-
-extern backEndState_t backEnd;
-extern trGlobals_t    tr;
-extern glconfig_t     glConfig;     // outside of TR since it shouldn't be cleared during ref re-init
-extern glstate_t      glState;      // outside of TR since it shouldn't be cleared during ref re-init
 
 //====================================================================
 
@@ -1972,5 +2163,330 @@ void R_Hunk_End(void);
 void R_FreeImageBuffer(void);
 
 qboolean R_inPVS(const vec3_t p1, const vec3_t p2);
+
+//New stuff -Jacker
+
+/*
+trGlobals_t
+
+    Most renderer globals are defined here.
+    backend functions should never modify any of these fields,
+    but may read fields that aren't dynamically modified
+    by the frontend.
+*/
+/*
+typedef struct
+{
+    qboolean registered;                    // cleared at shutdown, set at beginRegistration
+
+    int visCount;                           // incremented every time a new vis cluster is entered
+    int frameCount;                         // incremented every frame
+    int sceneCount;                         // incremented every scene
+    int viewCount;                          // incremented every view (twice a scene if portaled)
+    // and every R_MarkFragments call
+
+    int frameSceneNum;                      // zeroed at RE_BeginFrame
+
+    qboolean worldMapLoaded;
+    world_t *world;
+    char *worldDir;                         // for referencing external lightmaps
+
+    const byte *externalVisData;            // from RE_SetWorldVisData, shared with CM_Load
+
+    image_t *defaultImage;
+    image_t *scratchImage[32];
+    image_t *fogImage;
+    image_t *dlightImage;                   // inverse-square highlight for projective adding
+    image_t *flareImage;
+    image_t *whiteImage;                    // full of 0xff
+    image_t *identityLightImage;            // full of tr.identityLightByte
+
+    shader_t *defaultShader;
+    shader_t *shadowShader;
+    shader_t *projectionShadowShader;
+    shader_t *dlightShader;
+
+    shader_t *flareShader;
+    char *sunShaderName;
+    shader_t *sunShader;
+    shader_t *sunflareShader[6];                // for the camera lens flare effect for sun
+
+    int numLightmaps;
+    image_t *lightmaps[MAX_LIGHTMAPS];
+
+    trRefEntity_t *currentEntity;
+    trRefEntity_t worldEntity;                  // point currentEntity at this when rendering world
+    int currentEntityNum;
+    int shiftedEntityNum;                       // currentEntityNum << QSORT_ENTITYNUM_SHIFT
+    model_t *currentModel;
+    bmodel_t *currentBModel;                    // only valid when rendering brush models
+
+    viewParms_t viewParms;
+
+    float identityLight;                        // 1.0 / ( 1 << overbrightBits )
+    int identityLightByte;                      // identityLight * 255
+    int overbrightBits;                         // r_overbrightBits->integer, but set to 0 if no hw gamma
+
+    orientationr_t orientation;                 // for current entity
+
+    trRefdef_t refdef;
+
+    int viewCluster;
+
+    vec3_t sunLight;                            // from the sky shader for this level
+    vec3_t sunDirection;
+
+    float lightGridMulAmbient;                  // lightgrid multipliers specified in sky shader
+    float lightGridMulDirected;
+
+    frontEndCounters_t pc;
+    int frontEndMsec;                           // not in pc due to clearing issue
+
+    // put large tables at the end, so most elements will be
+    // within the +/32K indexed range on risc processors
+    model_t *models[MAX_MOD_KNOWN];
+    int numModels;
+
+    int numImages;
+    image_t *images[MAX_DRAWIMAGES];
+    int numCacheImages; // Unused.
+
+    // shader indexes from other modules will be looked up in tr.shaders[]
+    // shader indexes from drawsurfs will be looked up in sortedShaders[]
+    // lower indexed sortedShaders must be rendered first (opaque surfaces before translucent)
+    int numShaders;
+    shader_t *shaders[MAX_SHADERS];
+    shader_t *sortedShaders[MAX_SHADERS];
+
+    int numSkins;
+    skin_t *skins[MAX_SKINS];
+
+    float sinTable[FUNCTABLE_SIZE];
+    float squareTable[FUNCTABLE_SIZE];
+    float triangleTable[FUNCTABLE_SIZE];
+    float sawToothTable[FUNCTABLE_SIZE];
+    float inverseSawToothTable[FUNCTABLE_SIZE];
+    float fogTable[FOG_TABLE_SIZE];
+
+    int allowCompress; // temp var used while parsing shader only
+} trGlobals_t;
+*/
+
+/*
+** trGlobals_t
+**
+** Most renderer globals are defined here.
+** backend functions should never modify any of these fields,
+** but may read fields that aren't dynamically modified
+** by the frontend.
+*/
+typedef struct
+{
+	qboolean registered;                    // cleared at shutdown, set at beginRegistration
+
+	int visCount;                           // incremented every time a new vis cluster is entered
+	int frameCount;                         // incremented every frame
+	int sceneCount;                         // incremented every scene
+	int viewCount;                          // incremented every view (twice a scene if portaled)
+	// and every R_MarkFragments call
+
+	int frameSceneNum;                      // zeroed at RE_BeginFrame
+
+	qboolean worldMapLoaded;
+	world_t *world;
+	char *worldDir;                         // for referencing external lightmaps
+
+	const byte *externalVisData;            // from RE_SetWorldVisData, shared with CM_Load
+
+	image_t *defaultImage;
+	image_t *scratchImage[32];
+	image_t *fogImage;
+	image_t *dlightImage;                   // inverse-square highlight for projective adding
+	image_t *flareImage;
+	image_t *whiteImage;                    // full of 0xff
+	image_t *identityLightImage;            // full of tr.identityLightByte
+
+	shader_t *defaultShader;
+	shader_t *shadowShader;
+	shader_t *projectionShadowShader;
+	shader_t *dlightShader;
+
+	shader_t *flareShader;
+	char *sunShaderName;
+	shader_t *sunShader;
+	shader_t *sunflareShader[6];                // for the camera lens flare effect for sun
+
+	int numLightmaps;
+	image_t *lightmaps[MAX_LIGHTMAPS];
+
+	trRefEntity_t *currentEntity;
+	trRefEntity_t worldEntity;                  // point currentEntity at this when rendering world
+	int currentEntityNum;
+	int shiftedEntityNum;                       // currentEntityNum << QSORT_ENTITYNUM_SHIFT
+	model_t *currentModel;
+	bmodel_t *currentBModel;                    // only valid when rendering brush models
+
+	viewParms_t viewParms;
+
+	float identityLight;                        // 1.0 / ( 1 << overbrightBits )
+	int identityLightByte;                      // identityLight * 255
+	int overbrightBits;                         // r_overbrightBits->integer, but set to 0 if no hw gamma
+
+	orientationr_t orientation;                 // for current entity
+
+	trRefdef_t refdef;
+
+	int viewCluster;
+
+	vec3_t sunLight;                            // from the sky shader for this level
+	vec3_t sunDirection;
+
+	float lightGridMulAmbient;                  // lightgrid multipliers specified in sky shader
+	float lightGridMulDirected;
+
+	frontEndCounters_t pc;
+	int frontEndMsec;                           // not in pc due to clearing issue
+
+	// put large tables at the end, so most elements will be
+	// within the +/32K indexed range on risc processors
+	model_t *models[MAX_MOD_KNOWN];
+	int numModels;
+
+	int numImages;
+	image_t *images[MAX_DRAWIMAGES];
+	int numCacheImages; // Unused.
+
+	// shader indexes from other modules will be looked up in tr.shaders[]
+	// shader indexes from drawsurfs will be looked up in sortedShaders[]
+	// lower indexed sortedShaders must be rendered first (opaque surfaces before translucent)
+	int numShaders;
+	shader_t *shaders[MAX_SHADERS];
+	shader_t *sortedShaders[MAX_SHADERS];
+
+	int numSkins;
+	skin_t *skins[MAX_SKINS];
+
+	float sinTable[FUNCTABLE_SIZE];
+	float squareTable[FUNCTABLE_SIZE];
+	float triangleTable[FUNCTABLE_SIZE];
+	float sawToothTable[FUNCTABLE_SIZE];
+	float inverseSawToothTable[FUNCTABLE_SIZE];
+	float fogTable[FOG_TABLE_SIZE];
+
+	int allowCompress; // temp var used while parsing shader only
+
+
+	//New stuff -Jacker
+	int visIndex;
+	int visClusters[MAX_VISCOUNTS];
+	int visCounts[MAX_VISCOUNTS];                       // incremented every time a new vis cluster is entered
+
+	qboolean worldDeluxeMapping;
+	vec2_t autoExposureMinMax;
+	vec3_t toneMinAvgMaxLevel;
+
+	image_t *shadowCubemaps[MAX_DLIGHTS];
+
+	image_t *renderImage;
+	image_t *sunRaysImage;
+	image_t *renderDepthImage;
+	image_t *pshadowMaps[MAX_DRAWN_PSHADOWS];
+	image_t *textureScratchImage[2];
+	image_t *screenScratchImage;
+	image_t *quarterImage[2];
+	image_t *calcLevelsImage;
+	image_t *targetLevelsImage;
+	image_t *fixedLevelsImage;
+	image_t *sunShadowDepthImage[3];
+	image_t *screenShadowImage;
+	image_t *screenSsaoImage;
+	image_t *hdrDepthImage;
+
+	image_t *textureDepthImage;
+
+	FBO_t *renderFbo;
+	FBO_t *msaaResolveFbo;
+	FBO_t *sunRaysFbo;
+	FBO_t *depthFbo;
+	FBO_t *pshadowFbos[MAX_DRAWN_PSHADOWS];
+	FBO_t *textureScratchFbo[2];
+	FBO_t *screenScratchFbo;
+	FBO_t *quarterFbo[2];
+	FBO_t *calcLevelsFbo;
+	FBO_t *targetLevelsFbo;
+	FBO_t *sunShadowFbo[3];
+	FBO_t *screenShadowFbo;
+	FBO_t *screenSsaoFbo;
+	FBO_t *hdrDepthFbo;
+
+	int lightmapSize;
+	image_t **deluxemaps;
+
+	int fatLightmapSize;
+	int fatLightmapStep;
+
+	//
+	// GPU shader programs
+	//
+	shaderProgram_t genericShader[GENERICDEF_COUNT];
+	shaderProgram_t textureColorShader;
+	shaderProgram_t fogShader[FOGDEF_COUNT];
+	shaderProgram_t gdlightShader[DLIGHTDEF_COUNT];
+	shaderProgram_t lightallShader[LIGHTDEF_COUNT];
+	shaderProgram_t shadowmapShader;
+	shaderProgram_t pshadowShader;
+	shaderProgram_t down4xShader;
+	shaderProgram_t bokehShader;
+	shaderProgram_t tonemapShader;
+	shaderProgram_t calclevels4xShader[2];
+	shaderProgram_t shadowmaskShader;
+	shaderProgram_t ssaoShader;
+	shaderProgram_t depthBlurShader[2];
+
+
+	// -----------------------------------------
+
+	orientationr_t or;                          // for current entity
+
+	float mapLightScale;
+
+	qboolean sunShadows;
+	vec3_t sunAmbient;
+
+	int numFBOs;
+	FBO_t *fbos[MAX_FBOS];
+
+	int numVBOs;
+	VBO_t *vbos[MAX_VBOS];
+
+	int numIBOs;
+	IBO_t *ibos[MAX_IBOS];
+
+	GLuint sunFlareQuery[2];
+	int sunFlareQueryIndex;
+	qboolean sunFlareQueryActive[2];
+} trGlobals_t;
+
+extern glRefConfig_t glRefConfig;
+
+
+extern cvar_t *r_ext_draw_range_elements;
+extern cvar_t *r_ext_multi_draw_arrays;
+extern cvar_t *r_ext_framebuffer_object;
+extern cvar_t *r_ext_texture_float;
+extern cvar_t *r_arb_half_float_pixel;
+extern cvar_t *r_ext_framebuffer_multisample;
+
+extern cvar_t *r_srgb;
+
+extern cvar_t *r_hdr;
+extern cvar_t *r_drawSunRays;
+extern cvar_t *r_softOverbright;
+extern cvar_t *r_ssao;
+
+extern backEndState_t backEnd;
+extern trGlobals_t    tr;
+extern glconfig_t     glConfig;     // outside of TR since it shouldn't be cleared during ref re-init
+extern glstate_t      glState;      // outside of TR since it shouldn't be cleared during ref re-init
 
 #endif //TR_LOCAL_H
