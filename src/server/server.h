@@ -229,6 +229,19 @@ typedef struct client_s
 
 //=============================================================================
 
+#define STATFRAMES 100 // FIXME: I think this is actually FRAMETIME / @sv_fps
+typedef struct
+{
+	double active;
+	double idle;
+	int count;
+	int packets;
+
+	double latched_active;
+	double latched_idle;
+	int latched_packets;
+} svstats_t;
+
 /**
  * @def MAX_CHALLENGES
  * @brief Made large to prevent a DoS attack that could
@@ -306,6 +319,7 @@ typedef struct
 	int totalFrameTime;
 	int currentFrameIndex;
 	int serverLoad;
+	svstats_t stats;
 } serverStatic_t;
 
 //=============================================================================

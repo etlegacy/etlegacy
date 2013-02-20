@@ -1336,10 +1336,14 @@ int SV_FrameMsec()
  */
 void SV_Frame(int msec)
 {
-	int  frameMsec;
-	int  startTime;
-	char mapname[MAX_QPATH];
-	int  frameStartTime = 0;
+	int        frameMsec;
+	int        startTime;
+	char       mapname[MAX_QPATH];
+	int        frameStartTime = 0, frameEndTime;
+	static int start, end;
+
+	start           = Sys_Milliseconds();
+	svs.stats.idle += ( double )(start - end) / 1000;
 
 	// the menu kills the server with this cvar
 	if (sv_killserver->integer)
@@ -1528,6 +1532,21 @@ void SV_Frame(int msec)
 #ifdef FEATURE_TRACKBASE
 	TB_Frame(msec);
 #endif
+
+	// collect timing statistics
+	end               = Sys_Milliseconds();
+	svs.stats.active += (( double )(end - start)) / 1000;
+
+	if (++svs.stats.count == STATFRAMES)   // @sv_fps
+	{
+		svs.stats.latched_active  = svs.stats.active;
+		svs.stats.latched_idle    = svs.stats.idle;
+		svs.stats.latched_packets = svs.stats.packets;
+		svs.stats.active          = 0;
+		svs.stats.idle            = 0;
+		svs.stats.packets         = 0;
+		svs.stats.count           = 0;
+	}
 }
 
 int SV_LoadTag(const char *mod_name)
