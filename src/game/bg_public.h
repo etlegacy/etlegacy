@@ -95,10 +95,10 @@ extern vec3_t playerlegsProneMaxs;
 #define MG42_IDLEYAWSPEED   80.0    // degrees per second (while returning to base)
 #define MG42_SPREAD_MP      100
 
-#define MG42_DAMAGE_MP      20
+#define MG42_DAMAGE_MP          20
 #define MG42_RATE_OF_FIRE_MP    66
 
-#define MG42_DAMAGE_SP      40
+#define MG42_DAMAGE_SP          40
 #define MG42_RATE_OF_FIRE_SP    100
 
 #define AAGUN_RATE_OF_FIRE  100
@@ -1172,7 +1172,7 @@ typedef struct animation_s
 	int movetype;
 } animation_t;
 
-// Ridah, head animations
+// head animations
 typedef enum
 {
 	HEAD_NEUTRAL_CLOSED,
@@ -1574,7 +1574,7 @@ typedef enum
 	ANIM_MT_PRONEBK,
 	ANIM_MT_IDLEPRONE,
 	ANIM_MT_FLAILING,
-//	ANIM_MT_TALK,
+	//ANIM_MT_TALK,
 	ANIM_MT_SNEAK,
 	ANIM_MT_AFTERBATTLE,            // just finished battle
 
@@ -1727,7 +1727,6 @@ typedef struct
 // this is the main structure that is duplicated on the client and server
 typedef struct
 {
-//	int					clientModels[MAX_CLIENTS];		// so we know which model each client is using
 	animModelInfo_t modelInfo[MAX_ANIMSCRIPT_MODELS];
 	int clientConditions[MAX_CLIENTS][NUM_ANIM_CONDITIONS][2];
 
@@ -1796,8 +1795,8 @@ typedef enum
 
 typedef enum
 {
-/*	ANIM_BITFLAG_SNEAKING,
-    ANIM_BITFLAG_AFTERBATTLE,*/
+	//ANIM_BITFLAG_SNEAKING,
+	//ANIM_BITFLAG_AFTERBATTLE,
 	ANIM_BITFLAG_ZOOMING,
 
 	NUM_ANIM_COND_BITFLAG
@@ -1817,8 +1816,6 @@ typedef enum
 	ACC_RANK,       //
 	ACC_MAX         // this is bound by network limits, must change network stream to increase this
 } accType_t;
-
-#define ACC_NUM_MOUTH 3 // matches the above count
 
 #define MAX_GIB_MODELS      16
 
@@ -2238,6 +2235,7 @@ void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 
 
 // Store all sounds used in server engine and send them to client in events only as Enums
+// FIXME: implement this!
 typedef enum
 {
 	GAMESOUND_PLAYER_GURP1,         // "sound/player/gurp1.wav"                         Player takes damage from drowning
