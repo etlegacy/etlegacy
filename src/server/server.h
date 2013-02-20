@@ -229,17 +229,18 @@ typedef struct client_s
 
 //=============================================================================
 
-#define STATFRAMES 100 // FIXME: I think this is actually FRAMETIME / @sv_fps
+#define STATFRAMES 100 // 5 seconds - assumed we run 20 fps
 typedef struct
 {
 	double active;
 	double idle;
 	int count;
-	int packets;
 
 	double latched_active;
 	double latched_idle;
-	int latched_packets;
+
+	float cpu;
+	float avg;
 } svstats_t;
 
 /**

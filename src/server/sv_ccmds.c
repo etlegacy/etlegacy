@@ -437,7 +437,6 @@ static void SV_Status_f(void)
 	playerState_t *ps;
 	const char    *s;
 	int           ping;
-	float         cpu, avg;
 
 	// make sure server is running
 	if (!com_sv_running->integer)
@@ -446,23 +445,14 @@ static void SV_Status_f(void)
 		return;
 	}
 
-	cpu = svs.stats.latched_active + svs.stats.latched_idle;
-
-	if (cpu)
-	{
-		cpu = 100 * svs.stats.latched_active / cpu;
-	}
-
-	avg = 1000 * svs.stats.latched_active / STATFRAMES;
-
-	Com_Printf("cpu server utilization: %3i%%\n"
-		"avg response time     : %i ms\n"
-		"map: %s\n"
-		"num score ping name            lastmsg address               qport rate\n"
-		"--- ----- ---- --------------- ------- --------------------- ----- -----\n",
-		( int ) cpu,
-		( int ) avg,
-		sv_mapname->string);
+	Com_Printf("cpu server utilization: %i %\n"
+	           "avg response time: %i ms\n"
+	           "map: %s\n"
+	           "num score ping name            lastmsg address               qport rate\n"
+	           "--- ----- ---- --------------- ------- --------------------- ----- -----\n",
+	           ( int ) svs.stats.cpu,
+	           ( int ) svs.stats.avg,
+	           sv_mapname->string);
 
 	// FIXME: extend player name lenght (>16 chars) ? - they are printed!
 	// FIXME: do a Com_Printf per line! ... create the row at first

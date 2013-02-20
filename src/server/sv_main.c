@@ -1478,6 +1478,10 @@ void SV_Frame(int msec)
 	// send a heartbeat to the master if needed
 	SV_MasterHeartbeat(HEARTBEAT_GAME);
 
+#ifdef FEATURE_TRACKBASE
+	TB_Frame(msec);
+#endif
+
 	if (com_dedicated->integer)
 	{
 		int frameEndTime = Sys_Milliseconds();
@@ -1529,23 +1533,40 @@ void SV_Frame(int msec)
 		svs.serverLoad = -1;
 	}
 
-#ifdef FEATURE_TRACKBASE
-	TB_Frame(msec);
-#endif
-
 	// collect timing statistics
+	// - the above 2.60 performance thingy is just inaccurate (30 seconds 'stats')
+	//   to give good warning messages
 	end               = Sys_Milliseconds();
 	svs.stats.active += (( double )(end - start)) / 1000;
 
-	if (++svs.stats.count == STATFRAMES)   // @sv_fps
+	if (++svs.stats.count == STATFRAMES) // 5 seconds
 	{
-		svs.stats.latched_active  = svs.stats.active;
-		svs.stats.latched_idle    = svs.stats.idle;
-		svs.stats.latched_packets = svs.stats.packets;
-		svs.stats.active          = 0;
-		svs.stats.idle            = 0;
-		svs.stats.packets         = 0;
-		svs.stats.count           = 0;
+		svs.stats.latched_active = svs.stats.active;
+		svs.stats.latched_idle   = svs.stats.idle;
+		svs.stats.active         = 0;
+		svs.stats.idle           = 0;
+		svs.stats.count          = 0;
+
+		svs.stats.cpu = svs.stats.latched_active + svs.stats.latched_idle;
+
+		if (svs.stats.cpu)
+		{
+			svs.stats.cpu = 100 * svs.stats.latched_active / svs.stats.cpu;
+		}
+
+		svs.stats.avg = 1000 * svs.stats.latched_active / STATFRAMES;
+
+		// FIXME: add mail, IRC, player info etc for both warnings
+		// TODO: inspect/adjust these values and/or add cvars
+		if (svs.stats.cpu > 70)
+		{
+			Com_Printf("^3WARNING: Server CPU has reached a critical usage of %i %\n", (int) svs.stats.cpu);
+		}
+
+		if (svs.stats.avg > 30)
+		{
+			Com_Printf("^3WARNING: Average frame time has reached a critical value of %i ms\n", (int) svs.stats.avg);
+		}
 	}
 }
 
