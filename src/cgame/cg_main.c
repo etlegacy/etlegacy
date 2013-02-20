@@ -201,7 +201,6 @@ vmCvar_t cg_skybox;
 // say, team say, etc.
 vmCvar_t cg_messageType;
 vmCvar_t cg_messagePlayer;
-vmCvar_t cg_messagePlayerName;
 
 vmCvar_t cg_timescale;
 vmCvar_t cg_smallFont;
@@ -363,7 +362,6 @@ cvarTable_t cvarTable[] =
 	// say, team say, etc.
 	{ &cg_messageType,           "cg_messageType",           "1",     CVAR_TEMP                    },
 	{ &cg_messagePlayer,         "cg_messagePlayer",         "",      CVAR_TEMP                    },
-	{ &cg_messagePlayerName,     "cg_messagePlayerName",     "",      CVAR_TEMP                    },
 
 	{ &cg_animSpeed,             "cg_animspeed",             "1",     CVAR_CHEAT                   },
 	{ &cg_debugAnim,             "cg_debuganim",             "0",     CVAR_CHEAT                   },
