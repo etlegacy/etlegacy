@@ -49,24 +49,30 @@ static float s_flipMatrix[16] =
 /*
 ** GL_Bind2
 */
-void GL_Bind2( image_t *image, GLenum type ) {
+void GL_Bind2(image_t *image, GLenum type)
+{
 	int texnum;
 
-	if ( !image ) {
-		ri.Printf( PRINT_WARNING, "GL_Bind2: NULL image\n" );
+	if (!image)
+	{
+		ri.Printf(PRINT_WARNING, "GL_Bind2: NULL image\n");
 		texnum = tr.defaultImage->texnum;
-	} else {
+	}
+	else
+	{
 		texnum = image->texnum;
 	}
 
-	if ( r_nobind->integer && tr.dlightImage ) {		// performance evaluation option
+	if (r_nobind->integer && tr.dlightImage)            // performance evaluation option
+	{
 		texnum = tr.dlightImage->texnum;
 	}
 
-	if ( glState.currenttextures[glState.currenttmu] != texnum ) {
-		image->frameUsed = tr.frameCount;
+	if (glState.currenttextures[glState.currenttmu] != texnum)
+	{
+		image->frameUsed                            = tr.frameCount;
 		glState.currenttextures[glState.currenttmu] = texnum;
-		qglBindTexture (type, texnum);
+		qglBindTexture(type, texnum);
 	}
 }
 
@@ -75,7 +81,7 @@ GL_Bind
 */
 void GL_Bind(image_t *image)
 {
-	GL_Bind2( image, GL_TEXTURE_2D );
+	GL_Bind2(image, GL_TEXTURE_2D);
 }
 
 /*
@@ -146,31 +152,38 @@ void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint e
 /*
 ** GL_BindCubemap
 */
-void GL_BindCubemap( image_t *image )
+void GL_BindCubemap(image_t *image)
 {
-	GL_Bind2( image, GL_TEXTURE_CUBE_MAP );
+	GL_Bind2(image, GL_TEXTURE_CUBE_MAP);
 }
 
 /*
 ** GL_BindToTMU
 */
-void GL_BindToTMU( image_t *image, int tmu )
+void GL_BindToTMU(image_t *image, int tmu)
 {
-	int		texnum;
-	int     oldtmu = glState.currenttmu;
+	int texnum;
+	int oldtmu = glState.currenttmu;
 
 	if (!image)
+	{
 		texnum = 0;
+	}
 	else
+	{
 		texnum = image->texnum;
+	}
 
-	if ( glState.currenttextures[tmu] != texnum ) {
-		GL_SelectTexture( tmu );
+	if (glState.currenttextures[tmu] != texnum)
+	{
+		GL_SelectTexture(tmu);
 		if (image)
+		{
 			image->frameUsed = tr.frameCount;
+		}
 		glState.currenttextures[tmu] = texnum;
-		qglBindTexture( GL_TEXTURE_2D, texnum );
-		GL_SelectTexture( oldtmu );
+		qglBindTexture(GL_TEXTURE_2D, texnum);
+		GL_SelectTexture(oldtmu);
 	}
 }
 

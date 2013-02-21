@@ -256,10 +256,10 @@ void RB_InstantQuad2(vec4_t quadVerts[4], vec2_t texCoords[4])
 	GLimp_LogComment("--- RB_InstantQuad2 ---\n");
 
 	tess.numVertexes = 0;
-	tess.numIndexes = 0;
-	tess.firstIndex = 0;
+	tess.numIndexes  = 0;
+	tess.firstIndex  = 0;
 	//FIXME this needs to bee looked at!!
-	
+
 	VectorCopy4(quadVerts[0], tess.xyz[tess.numVertexes]);
 	VectorCopy2(texCoords[0], tess.texCoords0[tess.numVertexes][0]);
 	tess.numVertexes++;
@@ -275,15 +275,15 @@ void RB_InstantQuad2(vec4_t quadVerts[4], vec2_t texCoords[4])
 	VectorCopy4(quadVerts[3], tess.xyz[tess.numVertexes]);
 	VectorCopy2(texCoords[3], tess.texCoords0[tess.numVertexes][0]);
 	tess.numVertexes++;
-	
+
 	tess.indexes[tess.numIndexes++] = 0;
 	tess.indexes[tess.numIndexes++] = 1;
 	tess.indexes[tess.numIndexes++] = 2;
 	tess.indexes[tess.numIndexes++] = 0;
 	tess.indexes[tess.numIndexes++] = 2;
 	tess.indexes[tess.numIndexes++] = 3;
-	tess.minIndex = 0;
-	tess.maxIndex = 3;
+	tess.minIndex                   = 0;
+	tess.maxIndex                   = 3;
 
 	RB_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD);
 
@@ -291,11 +291,11 @@ void RB_InstantQuad2(vec4_t quadVerts[4], vec2_t texCoords[4])
 
 	R_DrawElementsVBO(tess.numIndexes, tess.firstIndex, tess.minIndex, tess.maxIndex);
 
-	tess.numIndexes = 0;
+	tess.numIndexes  = 0;
 	tess.numVertexes = 0;
-	tess.firstIndex = 0;
-	tess.minIndex = 0;
-	tess.maxIndex = 0;
+	tess.firstIndex  = 0;
+	tess.minIndex    = 0;
+	tess.maxIndex    = 0;
 }
 
 
