@@ -38,6 +38,34 @@
 #include "tr_local.h"
 
 /*
+
+  THIS ENTIRE FILE IS BACK END
+
+  This file deals with applying shaders to surface data in the tess struct.
+*/
+
+
+/*
+==================
+R_DrawElements
+
+==================
+*/
+
+void R_DrawElementsVBO(int numIndexes, glIndex_t firstIndex, glIndex_t minIndex, glIndex_t maxIndex)
+{
+	if (glRefConfig.drawRangeElements)
+	{
+		qglDrawRangeElementsEXT(GL_TRIANGLES, minIndex, maxIndex, numIndexes, GL_INDEX_TYPE, BUFFER_OFFSET(firstIndex * sizeof(GL_INDEX_TYPE)));
+	}
+	else
+	{
+		qglDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, BUFFER_OFFSET(firstIndex * sizeof(GL_INDEX_TYPE)));
+	}
+
+}
+
+/*
 ================
 R_ArrayElementDiscrete
 

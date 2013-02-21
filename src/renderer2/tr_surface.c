@@ -246,6 +246,95 @@ void RB_AddQuadStamp(vec3_t origin, vec3_t left, vec3_t up, byte *color)
 
 /*
 ==============
+RB_InstantQuad
+
+based on Tess_InstantQuad from xreal
+==============
+*/
+void RB_InstantQuad2(vec4_t quadVerts[4], vec2_t texCoords[4])
+{
+	GLimp_LogComment("--- RB_InstantQuad2 ---\n");
+
+	tess.numVertexes = 0;
+	tess.numIndexes  = 0;
+	tess.firstIndex  = 0;
+	//FIXME this needs to bee looked at!!
+
+	VectorCopy4(quadVerts[0], tess.xyz[tess.numVertexes]);
+	VectorCopy2(texCoords[0], tess.texCoords0[tess.numVertexes][0]);
+	tess.numVertexes++;
+
+	VectorCopy4(quadVerts[1], tess.xyz[tess.numVertexes]);
+	VectorCopy2(texCoords[1], tess.texCoords0[tess.numVertexes][0]);
+	tess.numVertexes++;
+
+	VectorCopy4(quadVerts[2], tess.xyz[tess.numVertexes]);
+	VectorCopy2(texCoords[2], tess.texCoords0[tess.numVertexes][0]);
+	tess.numVertexes++;
+
+	VectorCopy4(quadVerts[3], tess.xyz[tess.numVertexes]);
+	VectorCopy2(texCoords[3], tess.texCoords0[tess.numVertexes][0]);
+	tess.numVertexes++;
+
+	tess.indexes[tess.numIndexes++] = 0;
+	tess.indexes[tess.numIndexes++] = 1;
+	tess.indexes[tess.numIndexes++] = 2;
+	tess.indexes[tess.numIndexes++] = 0;
+	tess.indexes[tess.numIndexes++] = 2;
+	tess.indexes[tess.numIndexes++] = 3;
+	tess.minIndex                   = 0;
+	tess.maxIndex                   = 3;
+
+	RB_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD);
+
+	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD);
+
+	R_DrawElementsVBO(tess.numIndexes, tess.firstIndex, tess.minIndex, tess.maxIndex);
+
+	tess.numIndexes  = 0;
+	tess.numVertexes = 0;
+	tess.firstIndex  = 0;
+	tess.minIndex    = 0;
+	tess.maxIndex    = 0;
+}
+
+
+void RB_InstantQuad(vec4_t quadVerts[4])
+{
+	vec4_t color;
+	vec2_t texCoords[4];
+	vec2_t invTexRes;
+
+	VectorSet4(color, 1, 1, 1, 1);
+
+	texCoords[0][0] = 0;
+	texCoords[0][1] = 0;
+
+	texCoords[1][0] = 1;
+	texCoords[1][1] = 0;
+
+	texCoords[2][0] = 1;
+	texCoords[2][1] = 1;
+
+	texCoords[3][0] = 0;
+	texCoords[3][1] = 1;
+
+	invTexRes[0] = 1.0f / 256.0f;
+	invTexRes[1] = 1.0f / 256.0f;
+
+	GLSL_BindProgram(&tr.textureColorShader);
+
+	GLSL_SetUniformMatrix16(&tr.textureColorShader, TEXTURECOLOR_UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
+	GLSL_SetUniformVec4(&tr.textureColorShader, TEXTURECOLOR_UNIFORM_COLOR, color);
+	GLSL_SetUniformVec2(&tr.textureColorShader, TEXTURECOLOR_UNIFORM_INVTEXRES, invTexRes);
+	GLSL_SetUniformVec2(&tr.textureColorShader, TEXTURECOLOR_UNIFORM_AUTOEXPOSUREMINMAX, tr.refdef.autoExposureMinMax);
+	GLSL_SetUniformVec3(&tr.textureColorShader, TEXTURECOLOR_UNIFORM_TONEMINAVGMAXLINEAR, tr.refdef.toneMinAvgMaxLinear);
+
+	RB_InstantQuad2(quadVerts, texCoords); //, color, &tr.textureColorShader, invTexRes);
+}
+
+/*
+==============
 RB_SurfaceSplash
 ==============
 */

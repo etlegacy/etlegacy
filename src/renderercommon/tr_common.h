@@ -35,6 +35,7 @@
 #define __TR_COMMON_H
 #include "../qcommon/q_shared.h"
 #include "tr_public.h"
+#include "iqm.h"
 #include "qgl.h"
 
 extern refimport_t ri;

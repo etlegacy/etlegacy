@@ -34,10 +34,11 @@
 
 #include "tr_local.h"
 
-glconfig_t glConfig;
-qboolean   textureFilterAnisotropic = qfalse;
-int        maxAnisotropy            = 0;
-float      displayAspect            = 0.0f;
+glconfig_t    glConfig;
+glRefConfig_t glRefConfig;
+qboolean      textureFilterAnisotropic = qfalse;
+int           maxAnisotropy            = 0;
+float         displayAspect            = 0.0f;
 
 glstate_t glState;
 
@@ -188,6 +189,47 @@ cvar_t *r_maxpolys;
 int    max_polys;
 cvar_t *r_maxpolyverts;
 int    max_polyverts;
+
+//New stuff -Jacker
+cvar_t *r_ext_draw_range_elements;
+cvar_t *r_ext_multi_draw_arrays;
+cvar_t *r_ext_framebuffer_object;
+cvar_t *r_ext_texture_float;
+cvar_t *r_arb_half_float_pixel;
+cvar_t *r_ext_framebuffer_multisample;
+
+cvar_t *r_srgb;
+
+cvar_t *r_hdr;
+cvar_t *r_softOverbright;
+cvar_t *r_ssao;
+
+cvar_t *r_normalMapping;
+cvar_t *r_specularMapping;
+cvar_t *r_deluxeMapping;
+cvar_t *r_parallaxMapping;
+cvar_t *r_normalAmbient;
+cvar_t *r_dlightMode;
+cvar_t *r_pshadowDist;
+cvar_t *r_recalcMD3Normals;
+cvar_t *r_mergeLightmaps;
+cvar_t *r_imageUpsample;
+cvar_t *r_imageUpsampleMaxSize;
+cvar_t *r_imageUpsampleType;
+cvar_t *r_genNormalMaps;
+cvar_t *r_forceSun;
+cvar_t *r_forceSunMapLightScale;
+cvar_t *r_forceSunLightScale;
+cvar_t *r_forceSunAmbientScale;
+cvar_t *r_drawSunRays;
+cvar_t *r_sunShadows;
+cvar_t *r_shadowFilter;
+cvar_t *r_shadowMapSize;
+cvar_t *r_shadowCascadeZNear;
+cvar_t *r_shadowCascadeZFar;
+cvar_t *r_shadowCascadeZBias;
+
+cvar_t *r_cameraExposure;
 
 // TODO: check if this crazy stuff is needed
 vec4hack_t     tess_xyz[SHADER_MAX_VERTEXES];
@@ -1321,6 +1363,51 @@ void R_Register(void)
 	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", va("%d", MAX_POLYVERTS), 0);
 
 	r_highQualityVideo = ri.Cvar_Get("r_highQualityVideo", "1", CVAR_ARCHIVE);
+
+
+	//new stuff -jacker
+
+
+	r_ext_draw_range_elements     = ri.Cvar_Get("r_ext_draw_range_elements", "1", 0);
+	r_ext_multi_draw_arrays       = ri.Cvar_Get("r_ext_multi_draw_arrays", "1", 0);
+	r_ext_framebuffer_object      = ri.Cvar_Get("r_ext_framebuffer_object", "1", 0);
+	r_ext_texture_float           = ri.Cvar_Get("r_ext_texture_float", "1", 0);
+	r_arb_half_float_pixel        = ri.Cvar_Get("r_arb_half_float_pixel", "1", 0);
+	r_ext_framebuffer_multisample = ri.Cvar_Get("r_ext_framebuffer_multisample", "1", 0);
+
+	r_srgb = ri.Cvar_Get("r_srgb", "1", 0);
+
+	r_hdr            = ri.Cvar_Get("r_hdr", "1", 0);
+	r_softOverbright = ri.Cvar_Get("r_softOverbright", "1", 0);
+	r_ssao           = ri.Cvar_Get("r_ssao", "1", 0);
+
+	r_normalMapping         = ri.Cvar_Get("r_normalMapping", "1", 0);
+	r_specularMapping       = ri.Cvar_Get("r_specularMapping", "1", 0);
+	r_deluxeMapping         = ri.Cvar_Get("r_deluxeMapping", "1", 0);
+	r_parallaxMapping       = ri.Cvar_Get("r_parallaxMapping", "1", 0);
+	r_normalAmbient         = ri.Cvar_Get("r_normalAmbient", "1", 0);
+	r_dlightMode            = ri.Cvar_Get("r_dlightMode", "1", 0);
+	r_pshadowDist           = ri.Cvar_Get("r_pshadowDist", "1", 0);
+	r_recalcMD3Normals      = ri.Cvar_Get("r_recalcMD3Normals", "1", 0);
+	r_mergeLightmaps        = ri.Cvar_Get("r_mergeLightmaps", "1", 0);
+	r_imageUpsample         = ri.Cvar_Get("r_imageUpsample", "1", 0);
+	r_imageUpsampleMaxSize  = ri.Cvar_Get("r_imageUpsampleMaxSize", "1", 0);
+	r_imageUpsampleType     = ri.Cvar_Get("r_imageUpsampleType", "1", 0);
+	r_genNormalMaps         = ri.Cvar_Get("r_genNormalMaps", "1", 0);
+	r_forceSun              = ri.Cvar_Get("r_forceSun", "1", 0);
+	r_forceSunMapLightScale = ri.Cvar_Get("r_forceSunMapLightScale", "1", 0);
+	r_forceSunLightScale    = ri.Cvar_Get("r_forceSunLightScale", "1", 0);
+	r_forceSunAmbientScale  = ri.Cvar_Get("r_forceSunAmbientScale", "1", 0);
+	r_drawSunRays           = ri.Cvar_Get("r_drawSunRays", "1", 0);
+	r_sunShadows            = ri.Cvar_Get("r_sunShadows", "1", 0);
+	r_shadowFilter          = ri.Cvar_Get("r_shadowFilter", "1", 0);
+	r_shadowMapSize         = ri.Cvar_Get("r_shadowMapSize", "1", 0);
+	r_shadowCascadeZNear    = ri.Cvar_Get("r_shadowCascadeZNear", "1", 0);
+	r_shadowCascadeZFar     = ri.Cvar_Get("r_shadowCascadeZFar", "1", 0);
+	r_shadowCascadeZBias    = ri.Cvar_Get("r_shadowCascadeZBias", "1", 0);
+
+	r_cameraExposure = ri.Cvar_Get("r_cameraExposure", "1", 0);
+
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
 	ri.Cmd_AddCommand("imagelist", R_ImageList_f);

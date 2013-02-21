@@ -47,15 +47,15 @@ static float s_flipMatrix[16] =
 };
 
 /*
-GL_Bind
+** GL_Bind2
 */
-void GL_Bind(image_t *image)
+void GL_Bind2(image_t *image, GLenum type)
 {
 	int texnum;
 
 	if (!image)
 	{
-		ri.Printf(PRINT_WARNING, "GL_Bind: NULL image\n");
+		ri.Printf(PRINT_WARNING, "GL_Bind2: NULL image\n");
 		texnum = tr.defaultImage->texnum;
 	}
 	else
@@ -72,8 +72,16 @@ void GL_Bind(image_t *image)
 	{
 		image->frameUsed                            = tr.frameCount;
 		glState.currenttextures[glState.currenttmu] = texnum;
-		qglBindTexture(GL_TEXTURE_2D, texnum);
+		qglBindTexture(type, texnum);
 	}
+}
+
+/*
+GL_Bind
+*/
+void GL_Bind(image_t *image)
+{
+	GL_Bind2(image, GL_TEXTURE_2D);
 }
 
 /*
@@ -138,6 +146,44 @@ void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint e
 		image0->frameUsed          = tr.frameCount;
 		glState.currenttextures[0] = texnum0;
 		qglBindTexture(GL_TEXTURE_2D, texnum0);
+	}
+}
+
+/*
+** GL_BindCubemap
+*/
+void GL_BindCubemap(image_t *image)
+{
+	GL_Bind2(image, GL_TEXTURE_CUBE_MAP);
+}
+
+/*
+** GL_BindToTMU
+*/
+void GL_BindToTMU(image_t *image, int tmu)
+{
+	int texnum;
+	int oldtmu = glState.currenttmu;
+
+	if (!image)
+	{
+		texnum = 0;
+	}
+	else
+	{
+		texnum = image->texnum;
+	}
+
+	if (glState.currenttextures[tmu] != texnum)
+	{
+		GL_SelectTexture(tmu);
+		if (image)
+		{
+			image->frameUsed = tr.frameCount;
+		}
+		glState.currenttextures[tmu] = texnum;
+		qglBindTexture(GL_TEXTURE_2D, texnum);
+		GL_SelectTexture(oldtmu);
 	}
 }
 
