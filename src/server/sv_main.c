@@ -1339,7 +1339,7 @@ void SV_Frame(int msec)
 	int        frameMsec;
 	int        startTime;
 	char       mapname[MAX_QPATH];
-	int        frameStartTime = 0, frameEndTime;
+	int        frameStartTime = 0;
 	static int start, end;
 
 	start           = Sys_Milliseconds();
@@ -1535,7 +1535,7 @@ void SV_Frame(int msec)
 
 	// collect timing statistics
 	// - the above 2.60 performance thingy is just inaccurate (30 seconds 'stats')
-	//   to give good warning messages
+	//   to give good warning messages and is only done for dedicated
 	end               = Sys_Milliseconds();
 	svs.stats.active += (( double )(end - start)) / 1000;
 
@@ -1558,9 +1558,9 @@ void SV_Frame(int msec)
 
 		// FIXME: add mail, IRC, player info etc for both warnings
 		// TODO: inspect/adjust these values and/or add cvars
-		if (svs.stats.cpu > 70)
+		if (svs.stats.cpu > 5)
 		{
-			Com_Printf("^3WARNING: Server CPU has reached a critical usage of %i %\n", (int) svs.stats.cpu);
+			Com_Printf("^3WARNING: Server CPU has reached a critical usage of %i %%\n", (int) svs.stats.cpu);
 		}
 
 		if (svs.stats.avg > 30)
