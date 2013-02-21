@@ -2846,9 +2846,13 @@ qboolean FS_IsSamePath(const char *s1, const char *s2)
 	// so the function returns true (only) if there are no errors and pathes are equal
 	if (res1 && res2 && !Q_stricmp(res1, res2))
 	{
+		free(res1);
+		free(res2);
 		return qtrue;
 	}
 
+	free(res1);
+	free(res2);
 	return qfalse;
 }
 
