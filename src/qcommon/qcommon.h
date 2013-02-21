@@ -1150,7 +1150,6 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 void Sys_FreeFileList(char **list);
 
 qboolean Sys_LowPhysicalMemory(void);
-unsigned int Sys_ProcessorCount(void);
 
 void Sys_SetEnv(const char *name, const char *value);
 
