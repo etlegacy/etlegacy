@@ -55,6 +55,7 @@ Dependencies
 * **libcurl** (optional, enabled by default)
 * **OGG Vorbis File** (optional)
 * **OpenAL** (optional)
+* **OpenGL**
 * **Freetype** (optional)
 
 To get the latest source code install [git](http://git-scm.com/) and
