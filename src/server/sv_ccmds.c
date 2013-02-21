@@ -445,7 +445,7 @@ static void SV_Status_f(void)
 		return;
 	}
 
-	Com_Printf("cpu server utilization: %i %\n"
+	Com_Printf("cpu server utilization: %i %%\n"
 	           "avg response time: %i ms\n"
 	           "map: %s\n"
 	           "num score ping name            lastmsg address               qport rate\n"
