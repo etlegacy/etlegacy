@@ -2837,12 +2837,10 @@ int FS_PathCmp(const char *s1, const char *s2)
  */
 qboolean FS_IsSamePath(const char *s1, const char *s2)
 {
-	char buf1[MAX_OSPATH + 1];
-	char buf2[MAX_OSPATH + 1];
 	char *res1, *res2;
 
-	res1 = realpath(s1, buf1);
-	res2 = realpath(s2, buf2);
+	res1 = realpath(s1, NULL);
+	res2 = realpath(s2, NULL);
 
 	// realpath() returns NULL if there are issues with the file
 	// so the function returns true (only) if there are no errors and pathes are equal
