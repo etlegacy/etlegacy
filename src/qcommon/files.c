@@ -3613,6 +3613,8 @@ const char *FS_LoadedPakPureChecksums(void)
 		Q_strcat(info, sizeof(info), va("%i ", search->pack->pure_checksum));
 	}
 
+	// FIXME: optimize, remove last space when info isn't empty
+
 	// only comment out when you need a new pure checksums string
 	//Com_DPrintf("FS_LoadPakPureChecksums: %s\n", info);
 
@@ -3646,6 +3648,8 @@ const char *FS_ReferencedPakChecksums(void)
 		}
 	}
 
+	// FIXME: optimize, remove last space when info isn't empty
+
 	return info;
 }
 
@@ -3671,18 +3675,17 @@ const char *FS_ReferencedPakNames(void)
 		// is the element a pak file?
 		if (search->pack)
 		{
-			if (*info)
-			{
-				Q_strcat(info, sizeof(info), " ");
-			}
 			if (search->pack->referenced || Q_stricmpn(search->pack->pakGamename, BASEGAME, strlen(BASEGAME)))
 			{
 				Q_strcat(info, sizeof(info), search->pack->pakGamename);
 				Q_strcat(info, sizeof(info), "/");
 				Q_strcat(info, sizeof(info), search->pack->pakBasename);
+				Q_strcat(info, sizeof(info), " ");
 			}
 		}
 	}
+
+	// FIXME: optimize, remove last space when info isn't empty
 
 	return info;
 }
@@ -3742,6 +3745,8 @@ const char *FS_ReferencedPakPureChecksums(void)
 	// last checksum is the encoded number of referenced pk3s
 	checksum ^= numPaks;
 	Q_strcat(info, sizeof(info), va("%i ", checksum));
+
+	// FIXME: optimize, remove last space when info isn't empty
 
 	return info;
 }
