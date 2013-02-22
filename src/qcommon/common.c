@@ -2991,7 +2991,7 @@ void Com_Init(char *commandLine)
 	if (!com_dedicated->integer)
 	{
 		CL_Init();
-#if defined (_WIN32) && !defined (_DEBUG)
+#if defined (_WIN32) && defined (_DEBUG)
 		Sys_ShowConsole(com_viewlog->integer, qfalse);
 #endif
 	}
@@ -3015,7 +3015,7 @@ void Com_Init(char *commandLine)
 	// delay this so potential dll can find a wolf window
 	if (!com_dedicated->integer)
 	{
-#if defined (_WIN32)
+#if defined (_WIN32) && defined (_DEBUG)
 		Sys_ShowConsole(com_viewlog->integer, qfalse);
 #endif
 	}
