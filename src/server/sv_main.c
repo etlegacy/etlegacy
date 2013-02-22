@@ -1558,7 +1558,7 @@ void SV_Frame(int msec)
 
 		// FIXME: add mail, IRC, player info etc for both warnings
 		// TODO: inspect/adjust these values and/or add cvars
-		if (svs.stats.cpu > 5)
+		if (svs.stats.cpu > 70)
 		{
 			Com_Printf("^3WARNING: Server CPU has reached a critical usage of %i %%\n", (int) svs.stats.cpu);
 		}
