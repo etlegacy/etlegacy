@@ -28,7 +28,7 @@ menuDef {
 
 
 // Hud Display //
-	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 112, "WYGLAD HUD" )
+	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 124, "WYGLAD HUD" )
 	YESNO( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Pokaz Bron:", .2, 8, "cg_drawGun", "Pokazuj model broni" )
 	YESNO( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Pokaz Kompas:", .2, 8, "cg_drawCompass", "Wyswietl Kompas" )
 	MULTI( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Czas Misji:", .2, 8, "cg_drawRoundTimer", cvarFloatList { "Wylacz" 0 "Wlacz" 1 }, "" )
@@ -37,18 +37,19 @@ menuDef {
 	YESNO( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Pokaz Lagometr:", .2, 8, "cg_lagometer", "Wyswietl lagometr" )
 	YESNO( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Pokaz FPS:", .2, 8, "cg_drawFPS", "Wyswietl ilosc klatek na sekunde" )
 	MULTI( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Pokaz Lokacje:", .2, 8, "cg_locations", cvarFloatList { "Kordynaty Tylko" 0 "Nazwy Fire-Teamu Tylko" 1 "Nazwy Team Chatu Tylko" 2 "Team & Fireteam Chat" 3 }, "Wyswietl lokalizacje w Fire-Teamie" )
+	YESNO( 8, 144, (SUBWINDOW_WIDTH)-4, 10, "Wlacz Flagi:", .2, 8, "cg_countryflags", "" )
 	
 // Crosshair //
-	SUBWINDOW( 6, 150, (SUBWINDOW_WIDTH), 152, "CELOWNIK" )
-	MULTI( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Wielkosc Celownika:", .2, 8, "cg_crosshairsize", cvarFloatList { "Malutki" 24 "Maly" 32 "Srednii" 48 "Duzy" 64 "Wielki" 96 }, "Ustawia wielkosc celownika" )
-	YESNO( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Pulsujacy Celownik:", .2, 8, "cg_crosshairPulse", "Zmiana wielkosci celownika podczas ruszania/strzelania" )
-	YESNO( 8, 190, (SUBWINDOW_WIDTH)-4, 10, "Poziom Zycia na Celowniku:", .2, 8, "cg_crosshairHealth", "Koroluj celownik na podstawie poziomu zycia" )
-	YESNO( 8, 202, (SUBWINDOW_WIDTH)-4, 10, "Imiona na Celowniku:", .2, 8, "cg_drawCrosshairNames", "Wyswietl info na temat gracza kiedy celownik najedzie na kolege z zespolu" )
+	SUBWINDOW( 6, 154, (SUBWINDOW_WIDTH), 152, "CELOWNIK" )
+	MULTI( 8, 170, (SUBWINDOW_WIDTH)-4, 10, "Wielkosc Celownika:", .2, 8, "cg_crosshairsize", cvarFloatList { "Malutki" 24 "Maly" 32 "Srednii" 48 "Duzy" 64 "Wielki" 96 }, "Ustawia wielkosc celownika" )
+	YESNO( 8, 182, (SUBWINDOW_WIDTH)-4, 10, "Pulsujacy Celownik:", .2, 8, "cg_crosshairPulse", "Zmiana wielkosci celownika podczas ruszania/strzelania" )
+	YESNO( 8, 194, (SUBWINDOW_WIDTH)-4, 10, "Poziom Zycia na Celowniku:", .2, 8, "cg_crosshairHealth", "Koroluj celownik na podstawie poziomu zycia" )
+	YESNO( 8, 206, (SUBWINDOW_WIDTH)-4, 10, "Imiona na Celowniku:", .2, 8, "cg_drawCrosshairNames", "Wyswietl info na temat gracza kiedy celownik najedzie na kolege z zespolu" )
 
 	itemDef {
 		name		"crosshair_select"
 		group		GROUP_NAME
-		rect		$evalfloat(.5*((SUBWINDOW_WIDTH)-64)) 215 35 35
+		rect		$evalfloat(.5*((SUBWINDOW_WIDTH)-64)) 219 35 35
 		style		WINDOW_STYLE_FILLED
 		ownerdraw	UI_CROSSHAIR
 		backcolor	.4 .4 .4 .9
@@ -66,23 +67,23 @@ menuDef {
 		}
 	}
 
-	MULTI( 8, 254, (SUBWINDOW_WIDTH)-4, 10, "Glowny Kolor:", .2, 8, "cg_crosshairColor", cvarStrList { "Bialy"; "white"; "Zolty"; "yellow"; "Czerwony"; "red"; "Zielony"; "green"; "Niebieski"; "blue"; "Magenta"; "magenta"; "Cytrynowy"; "cyan"; "Pomara."; "orange"; "Jasny Niebieski"; "0xa0c0ff"; "Srednio Niebieski"; "mdblue"; "Jasny Czerwony"; "0xffc0a0"; "Srednio Czerwony"; "mdred"; "Jasno Zielony"; "0xa0ffc0"; "Srednio Zielony"; "mdgreen"; "Ciemno Zielony"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, "Ustawia kolor celownika" )
-	SLIDER( 8, 266, (SUBWINDOW_WIDTH)-4, 10, "Glowna Alpha:", .2, 8, "cg_crosshairAlpha" 1 0 1, "Ustawie przezroczystosc pierwszego celownika" )
-	MULTI( 8, 278, (SUBWINDOW_WIDTH)-4, 10, "Drugi Color:", .2, 8, "cg_crosshairColorAlt", cvarStrList { "Bialy"; "white"; "Zolty"; "yellow"; "Czerwony"; "red"; "Zielony"; "green"; "Niebieski"; "blue"; "Magenta"; "magenta"; "Cytrynowy"; "cyan"; "Pomara."; "orange"; "Jasny Niebieski"; "0xa0c0ff"; "Srednio Niebieski"; "mdblue"; "Jasny Czerwony"; "0xffc0a0"; "Srednio Czerwony"; "mdred"; "Jasno Zielony"; "0xa0ffc0"; "Srednio Zielony"; "mdgreen"; "Ciemno Zielony"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, "Ustawia kolor celownika" )
-	SLIDER( 8, 290, (SUBWINDOW_WIDTH)-4, 10, "Druga Alpha:", .2, 8, "cg_crosshairAlphaAlt" 1 0 1, "Ustawia przezroczystosc drugiego celownika" )
+	MULTI( 8, 258, (SUBWINDOW_WIDTH)-4, 10, "Glowny Kolor:", .2, 8, "cg_crosshairColor", cvarStrList { "Bialy"; "white"; "Zolty"; "yellow"; "Czerwony"; "red"; "Zielony"; "green"; "Niebieski"; "blue"; "Magenta"; "magenta"; "Cytrynowy"; "cyan"; "Pomara."; "orange"; "Jasny Niebieski"; "0xa0c0ff"; "Srednio Niebieski"; "mdblue"; "Jasny Czerwony"; "0xffc0a0"; "Srednio Czerwony"; "mdred"; "Jasno Zielony"; "0xa0ffc0"; "Srednio Zielony"; "mdgreen"; "Ciemno Zielony"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, "Ustawia kolor celownika" )
+	SLIDER( 8, 270, (SUBWINDOW_WIDTH)-4, 10, "Glowna Alpha:", .2, 8, "cg_crosshairAlpha" 1 0 1, "Ustawie przezroczystosc pierwszego celownika" )
+	MULTI( 8, 282, (SUBWINDOW_WIDTH)-4, 10, "Drugi Color:", .2, 8, "cg_crosshairColorAlt", cvarStrList { "Bialy"; "white"; "Zolty"; "yellow"; "Czerwony"; "red"; "Zielony"; "green"; "Niebieski"; "blue"; "Magenta"; "magenta"; "Cytrynowy"; "cyan"; "Pomara."; "orange"; "Jasny Niebieski"; "0xa0c0ff"; "Srednio Niebieski"; "mdblue"; "Jasny Czerwony"; "0xffc0a0"; "Srednio Czerwony"; "mdred"; "Jasno Zielony"; "0xa0ffc0"; "Srednio Zielony"; "mdgreen"; "Ciemno Zielony"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, "Ustawia kolor celownika" )
+	SLIDER( 8, 294, (SUBWINDOW_WIDTH)-4, 10, "Druga Alpha:", .2, 8, "cg_crosshairAlphaAlt" 1 0 1, "Ustawia przezroczystosc drugiego celownika" )
 	
 // In-Game Display //
-	SUBWINDOW( 6, 308, (SUBWINDOW_WIDTH), 125, "WYGLAD W GRZE" )
-	MULTI( 8, 324, (SUBWINDOW_WIDTH)-4, 10, "Wyswietlanie Lusek:", .2, 8, "cg_brassTime", cvarFloatList { "Wysokie" 15000 "Srednie" 2500 "Wylaczone" 0 }, "" )
-	SLIDER( 8, 336, (SUBWINDOW_WIDTH)-4, 10, "Pole Widzenia:", .2, 8, "cg_fov" 1.3 80 120, "" )
-	CVARFLOATLABEL( 8, 336, (SUBWINDOW_WIDTH)-4, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-40), 8 )
-	MULTI( 8, 348, (SUBWINDOW_WIDTH)-4, 10, "Odleglosc Korony:", .2, 8, "cg_coronafardist", cvarFloatList { "Wylaczony" 0 "Bliski" 800 "Normalny" 1536 "Daleki" 4096 "Extremalny" 16000 }, "" )
-	YESNO( 8, 360, (SUBWINDOW_WIDTH)-4, 10, "Czastki:", .2, 8, "cg_wolfparticles", "" )
-	MULTI( 8, 372, (SUBWINDOW_WIDTH)-4, 10, "Znaki Scian Czas:", .2, 8, "cg_markTime", cvarFloatList { "Dlugi" 30000 "Normaly" 20000 "Krotki" 10000 "Wylaczony" 0 }, "" )
-	MULTI( 8, 384, (SUBWINDOW_WIDTH)-4, 10, "Slad Krwi:", .2, 8, "cg_bloodFlash", cvarFloatList { "Brak" 0.0 "Lekki" 0.25 "Sredni" 0.5 "Mocny" 0.75 "Pelny" 1.0 }, "Slad czerwonej krwi kiedy zostaniesz trafiony" )
-	MULTI( 8, 396, (SUBWINDOW_WIDTH)-4, 10, "Rozprysk Krwi:", .2, 8, "cg_bloodDamageBlend", cvarFloatList { "Brak" 0.0 "Lekki" 0.25 "Srednii" 0.5 "Mocny" 0.75 "Pelny" 1.0 }, "Rozprysk krwi kiedy zostaniesz trafiony przez innego gracza" )
-	YESNO( 8, 408, (SUBWINDOW_WIDTH)-4, 10, "Pokaz Krew:", .2, 8, "cg_showblood", "" )
-	YESNO( 8, 420, (SUBWINDOW_WIDTH)-4, 10, "Efekty Atmosferyczne:", .2, 8, "cg_atmosphericEffects", "" )
+	SUBWINDOW( 6, 304, (SUBWINDOW_WIDTH), 125, "WYGLAD W GRZE" )
+	MULTI( 8, 320, (SUBWINDOW_WIDTH)-4, 10, "Wyswietlanie Lusek:", .2, 8, "cg_brassTime", cvarFloatList { "Wysokie" 15000 "Srednie" 2500 "Wylaczone" 0 }, "" )
+	SLIDER( 8, 332, (SUBWINDOW_WIDTH)-4, 10, "Pole Widzenia:", .2, 8, "cg_fov" 1.3 80 120, "" )
+	CVARFLOATLABEL( 8, 332, (SUBWINDOW_WIDTH)-4, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-40), 8 )
+	MULTI( 8, 344, (SUBWINDOW_WIDTH)-4, 10, "Odleglosc Korony:", .2, 8, "cg_coronafardist", cvarFloatList { "Wylaczony" 0 "Bliski" 800 "Normalny" 1536 "Daleki" 4096 "Extremalny" 16000 }, "" )
+	YESNO( 8, 356, (SUBWINDOW_WIDTH)-4, 10, "Czastki:", .2, 8, "cg_wolfparticles", "" )
+	MULTI( 8, 368, (SUBWINDOW_WIDTH)-4, 10, "Znaki Scian Czas:", .2, 8, "cg_markTime", cvarFloatList { "Dlugi" 30000 "Normaly" 20000 "Krotki" 10000 "Wylaczony" 0 }, "" )
+	MULTI( 8, 380, (SUBWINDOW_WIDTH)-4, 10, "Slad Krwi:", .2, 8, "cg_bloodFlash", cvarFloatList { "Brak" 0.0 "Lekki" 0.25 "Sredni" 0.5 "Mocny" 0.75 "Pelny" 1.0 }, "Slad czerwonej krwi kiedy zostaniesz trafiony" )
+	MULTI( 8, 492, (SUBWINDOW_WIDTH)-4, 10, "Rozprysk Krwi:", .2, 8, "cg_bloodDamageBlend", cvarFloatList { "Brak" 0.0 "Lekki" 0.25 "Srednii" 0.5 "Mocny" 0.75 "Pelny" 1.0 }, "Rozprysk krwi kiedy zostaniesz trafiony przez innego gracza" )
+	YESNO( 8, 404, (SUBWINDOW_WIDTH)-4, 10, "Pokaz Krew:", .2, 8, "cg_showblood", "" )
+	YESNO( 8, 416, (SUBWINDOW_WIDTH)-4, 10, "Efekty Atmosferyczne:", .2, 8, "cg_atmosphericEffects", "" )
 	
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "COFNIJ", .3, 14, close options_customise_hud ; open options )
