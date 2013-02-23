@@ -47,9 +47,8 @@ according to each different scenario.
 
 vmCvar_t g_scriptDebug;
 
-//
 //====================================================================
-//
+
 // action functions need to be declared here so they can be accessed in the scriptAction table
 qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params);
 qboolean G_ScriptAction_Wait(gentity_t *ent, char *params);
@@ -167,7 +166,7 @@ g_script_stack_action_t gScriptActions[] =
 	{ "attachtotag",                    G_ScriptAction_TagConnect                    },
 	{ "halt",                           G_ScriptAction_Halt                          },
 	{ "stopsound",                      G_ScriptAction_StopSound                     },
-//  {"startcam",                        G_ScriptAction_StartCam},
+	//{"startcam",                        G_ScriptAction_StartCam},
 	{ "entityscriptname",               G_ScriptAction_EntityScriptName              },
 	{ "aiscriptname",                   G_ScriptAction_AIScriptName                  },
 	{ "wm_axis_respawntime",            G_ScriptAction_AxisRespawntime               },
@@ -229,7 +228,6 @@ g_script_stack_action_t gScriptActions[] =
 	// fade all sounds up or down
 	{ "fadeallsounds",                  G_ScriptAction_FadeAllSounds                 },
 
-
 	{ "construct",                      G_ScriptAction_Construct                     },
 	{ "spawnrubble",                    G_ScriptAction_SpawnRubble                   },
 	{ "setglobalfog",                   G_ScriptAction_SetGlobalFog                  },
@@ -277,6 +275,7 @@ g_script_event_define_t gScriptEvents[] =
 	{ "defused",     NULL                            },
 	{ "mg42",        G_Script_EventMatch_StringEqual },
 	{ "message",     G_Script_EventMatch_StringEqual }, // contains a sequence of VO in a message
+	{ "exploded",    NULL                            }, // added for omni-bot 0.7
 
 	{ NULL,          NULL                            }
 };
@@ -855,8 +854,8 @@ void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 		                     va("Defused at %s.", ent->parent ? ent->parent->track : ent->track),
 		                     eventStr);
 
-		// pheno: log script defused actions (ETPro behavior)
-		G_LogPrintf("etpub popup: %s defused \"%s\"\n",
+		// log script defused actions (ETPro behavior)
+		G_LogPrintf("legacy popup: %s defused \"%s\"\n",
 		            params,
 		            ent->parent ? ent->parent->track : ent->track);
 	}
@@ -866,8 +865,8 @@ void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 		                     va("Planted at %s.", ent->parent ? ent->parent->track : ent->track),
 		                     eventStr);
 
-		// pheno: log script dynamited actions (ETPro behavior)
-		G_LogPrintf("etpub popup: %s planted \"%s\"\n",
+		// log script dynamited actions (ETPro behavior)
+		G_LogPrintf("legacy popup: %s planted \"%s\"\n",
 		            params,
 		            ent->parent ? ent->parent->track : ent->track);
 	}
@@ -1161,7 +1160,6 @@ Scripted brush entity. A simplified means of moving brushes around based on even
 */
 void SP_script_mover(gentity_t *ent)
 {
-
 	float  scale[3] = { 1, 1, 1 };
 	vec3_t scalevec;
 	char   tagname[MAX_QPATH];
@@ -1184,7 +1182,7 @@ void SP_script_mover(gentity_t *ent)
 	// first position at start
 	VectorCopy(ent->s.origin, ent->pos1);
 
-//  VectorCopy( ent->r.currentOrigin, ent->pos1 );
+	//VectorCopy( ent->r.currentOrigin, ent->pos1 );
 	VectorCopy(ent->pos1, ent->pos2);   // don't go anywhere just yet
 
 	trap_SetBrushModel(ent, ent->model);
