@@ -71,6 +71,27 @@ void AddRemap(const char *oldShader, const char *newShader, float timeOffset)
 		remappedShaders[remapCount].timeOffset = timeOffset;
 		remapCount++;
 	}
+	else
+	{
+		// this new but important warning might confuse the community
+		// map makers didn't know about this so it might occure
+		G_Printf("WARNING AddRemap: MAX_SHADER_REMAPS 128 reached - shader not added\n");
+	}
+}
+
+void G_ResetRemappedShaders(void)
+{
+	int i;
+
+	remapCount = 0;
+
+	// we don't actually have to do this but it's clean ...
+	for (i = 0; i < MAX_SHADER_REMAPS; i++)
+	{
+		strcpy(remappedShaders[i].newShader, "");
+		strcpy(remappedShaders[i].oldShader, "");
+		remappedShaders[i].timeOffset = 0;
+	}
 }
 
 const char *BuildShaderStateConfig()
