@@ -2051,6 +2051,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 		G_Printf("Not logging to disk.\n");
 	}
 
+	G_ResetRemappedShaders();
+
 	G_InitWorldSession();
 
 	// MAPVOTE
