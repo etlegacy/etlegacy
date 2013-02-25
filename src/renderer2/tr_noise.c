@@ -28,10 +28,13 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file tr_noice.c
+ * @file tr_noise.c
  */
 
-#include "tr_local.h"
+// tr_noise.c
+#include "../qcommon/q_shared.h"
+#include "../qcommon/qfiles.h"
+#include "../qcommon/qcommon.h"
 
 #define NOISE_SIZE 256
 #define NOISE_MASK (NOISE_SIZE - 1)
@@ -41,8 +44,6 @@
 
 static float s_noise_table[NOISE_SIZE];
 static int   s_noise_perm[NOISE_SIZE];
-
-#define LERP(a, b, w) (a * (1.0f - w) + b * w)
 
 static float GetNoiseValue(int x, int y, int z, int t)
 {
@@ -54,8 +55,6 @@ static float GetNoiseValue(int x, int y, int z, int t)
 void R_NoiseInit(void)
 {
 	int i;
-
-	srand(1001);
 
 	for (i = 0; i < NOISE_SIZE; i++)
 	{

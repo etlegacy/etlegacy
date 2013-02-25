@@ -873,6 +873,10 @@ void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 		return;
 	}
 
+	ShowWindow(s_wcd.hWnd, SW_SHOWNORMAL);
+	SendMessage(s_wcd.hwndBuffer, EM_LINESCROLL, 0, 0xffff);
+	Com_Printf("NUMEROA TULEE: %i\n", visLevel);
+
 	switch (visLevel)
 	{
 	case 0:
@@ -889,6 +893,7 @@ void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 		Sys_Error("Invalid visLevel %d sent to Sys_ShowConsole\n", visLevel);
 		break;
 	}
+
 }
 
 /*

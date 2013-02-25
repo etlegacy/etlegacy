@@ -27,13 +27,12 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_cmesh.c
- * @brief compressed triangle model functions
- *
- * This is ripped from tr_mesh.c, and converted to use the compressed mesh format
  */
 
+// tr_cmesh.c: compressed triangle model functions
+//
+// This is ripped from tr_mesh.c, and converted to use the compressed mesh format
+#if 0
 #include "tr_local.h"
 
 static float ProjectRadius(float r, vec3_t location)
@@ -44,8 +43,8 @@ static float ProjectRadius(float r, vec3_t location)
 	vec3_t p;
 	float  projected[4];
 
-	c    = DotProduct(tr.viewParms.orientation.axis[0], tr.viewParms.orientation.origin);
-	dist = DotProduct(tr.viewParms.orientation.axis[0], location) - c;
+	c    = DotProduct(tr.viewParms.or.axis[0], tr.viewParms.or.origin);
+	dist = DotProduct(tr.viewParms.or.axis[0], location) - c;
 
 	if (dist <= 0)
 	{
@@ -53,7 +52,7 @@ static float ProjectRadius(float r, vec3_t location)
 	}
 
 	p[0] = 0;
-	p[1] = Q_fabs(r);
+	p[1] = fabs(r);
 	p[2] = -dist;
 
 	projected[0] = p[0] * tr.viewParms.projectionMatrix[0] +
@@ -178,15 +177,24 @@ static int R_CullModel(mdcHeader_t *header, trRefEntity_t *ent)
 	}
 }
 
+
 /*
 =================
 R_ComputeLOD
+
 =================
 */
 static int R_ComputeLOD(trRefEntity_t *ent)
 {
+	float      radius;
+	float      flod, lodscale;
+	float      projectedRadius;
 	md3Frame_t *frame;
-	int        lod;
+#ifdef RAVENMD4
+	mdrHeader_t *mdr;
+	mdrFrame_t  *mdrframe;
+#endif
+	int lod;
 
 	if (tr.currentModel->numLods < 2)
 	{
@@ -195,38 +203,49 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 	}
 	else
 	{
-		float projectedRadius;
-		float radius;
-		float flod;
-
 		// multiple LODs exist, so compute projected bounding sphere
 		// and use that as a criteria for selecting LOD
 
-		// checked for a forced lowest LOD
-		if (ent->e.reFlags & REFLAG_FORCE_LOD)
+#ifdef RAVENMD4
+		if (tr.currentModel->type == MOD_MDR)
 		{
-			return (tr.currentModel->numLods - 1);
+			int frameSize;
+			mdr       = (mdrHeader_t *) tr.currentModel->modelData;
+			frameSize = (size_t) (&((mdrFrame_t *)0)->bones[mdr->numBones]);
+
+			mdrframe = (mdrFrame_t *) ((byte *) mdr + mdr->ofsFrames + frameSize * ent->e.frame);
+
+			radius = RadiusFromBounds(mdrframe->bounds[0], mdrframe->bounds[1]);
 		}
+		else
+#endif
+		{
+			// RF, checked for a forced lowest LOD
+			if (ent->e.reFlags & REFLAG_FORCE_LOD)
+			{
+				return (tr.currentModel->numLods - 1);
+			}
 
-		frame = ( md3Frame_t * )((( unsigned char * ) tr.currentModel->model.mdc[0]) + tr.currentModel->model.mdc[0]->ofsFrames);
+			frame = ( md3Frame_t * )((( unsigned char * ) tr.currentModel->mdc[0]) + tr.currentModel->mdc[0]->ofsFrames);
 
-		frame += ent->e.frame;
+			frame += ent->e.frame;
 
-		radius = RadiusFromBounds(frame->bounds[0], frame->bounds[1]);
+			radius = RadiusFromBounds(frame->bounds[0], frame->bounds[1]);
 
-		// testing
-		//if (ent->e.reFlags & REFLAG_ORIENT_LOD)
-		//{
-		// right now this is for trees, and pushes the lod distance way in.
-		// this is not the intended purpose, but is helpful for the new
-		// terrain level that has loads of trees
-		//          radius = radius/2.0f;
-		//}
+			//----(SA)	testing
+			if (ent->e.reFlags & REFLAG_ORIENT_LOD)
+			{
+				// right now this is for trees, and pushes the lod distance way in.
+				// this is not the intended purpose, but is helpful for the new
+				// terrain level that has loads of trees
+//			radius = radius/2.0f;
+			}
+			//----(SA)	end
+		}
 
 		if ((projectedRadius = ProjectRadius(radius, ent->e.origin)) != 0)
 		{
-			float lodscale = r_lodscale->value;
-
+			lodscale = r_lodscale->value;
 			if (lodscale > 20)
 			{
 				lodscale = 20;
@@ -240,7 +259,7 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 		}
 
 		flod *= tr.currentModel->numLods;
-		lod   = (int)(flod);
+		lod   = ri.ftol(flod);
 
 		if (lod < 0)
 		{
@@ -269,6 +288,7 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 /*
 =================
 R_ComputeFogNum
+
 =================
 */
 static int R_ComputeFogNum(mdcHeader_t *header, trRefEntity_t *ent)
@@ -312,36 +332,40 @@ static int R_ComputeFogNum(mdcHeader_t *header, trRefEntity_t *ent)
 /*
 =================
 R_AddMDCSurfaces
+
 =================
 */
 void R_AddMDCSurfaces(trRefEntity_t *ent)
 {
 	int          i;
-	mdcHeader_t  *header    = 0;
-	mdcSurface_t *surface   = 0;
-	md3Shader_t  *md3Shader = 0;
-	shader_t     *shader    = 0;
+	mdcHeader_t  *header    = NULL;
+	mdcSurface_t *surface   = NULL;
+	md3Shader_t  *md3Shader = NULL;
+	shader_t     *shader    = NULL;
 	int          cull;
 	int          lod;
 	int          fogNum;
 	qboolean     personalModel;
 
 	// don't add third_person objects if not in a portal
-	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
+	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !(tr.viewParms.isPortal
+	                                                         || (tr.viewParms.flags & (VPF_SHADOWMAP | VPF_DEPTHSHADOW)));
 
 	if (ent->e.renderfx & RF_WRAP_FRAMES)
 	{
-		ent->e.frame    %= tr.currentModel->model.mdc[0]->numFrames;
-		ent->e.oldframe %= tr.currentModel->model.mdc[0]->numFrames;
+		ent->e.frame    %= tr.currentModel->mdc[0]->numFrames;
+		ent->e.oldframe %= tr.currentModel->mdc[0]->numFrames;
 	}
 
+	//
 	// Validate the frames so there is no chance of a crash.
 	// This will write directly into the entity structure, so
 	// when the surfaces are rendered, they don't need to be
 	// range checked again.
-	if ((ent->e.frame >= tr.currentModel->model.mdc[0]->numFrames)
+	//
+	if ((ent->e.frame >= tr.currentModel->mdc[0]->numFrames)
 	    || (ent->e.frame < 0)
-	    || (ent->e.oldframe >= tr.currentModel->model.mdc[0]->numFrames)
+	    || (ent->e.oldframe >= tr.currentModel->mdc[0]->numFrames)
 	    || (ent->e.oldframe < 0))
 	{
 		ri.Printf(PRINT_DEVELOPER, "R_AddMDCSurfaces: no such frame %d to %d for '%s'\n",
@@ -351,39 +375,43 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 		ent->e.oldframe = 0;
 	}
 
+	//
 	// compute LOD
-	if (ent->e.renderfx & RF_FORCENOLOD)
-	{
-		lod = 0;
-	}
-	else
-	{
-		lod = R_ComputeLOD(ent);
-	}
+	//
+	lod = R_ComputeLOD(ent);
 
-	header = tr.currentModel->model.mdc[lod];
+	header = tr.currentModel->mdc[lod];
 
+	//
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum.
+	//
 	cull = R_CullModel(header, ent);
 	if (cull == CULL_OUT)
 	{
 		return;
 	}
 
+	//
 	// set up lighting now that we know we aren't culled
+	//
 	if (!personalModel || r_shadows->integer > 1)
 	{
 		R_SetupEntityLighting(&tr.refdef, ent);
 	}
 
+	//
 	// see if we are in a fog volume
+	//
 	fogNum = R_ComputeFogNum(header, ent);
 
+	//
 	// draw all surfaces
+	//
 	surface = ( mdcSurface_t * )((byte *)header + header->ofsSurfaces);
 	for (i = 0 ; i < header->numSurfaces ; i++)
 	{
+
 		if (ent->e.customShader)
 		{
 			shader = R_GetShaderByHandle(ent->e.customShader);
@@ -391,25 +419,18 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 		else if (ent->e.customSkin > 0 && ent->e.customSkin < tr.numSkins)
 		{
 			skin_t *skin;
-			int    hash;
 			int    j;
 
 			skin = R_GetSkinByHandle(ent->e.customSkin);
 
 			// match the surface name to something in the skin file
 			shader = tr.defaultShader;
-			// added blink
+//----(SA)	added blink
 			if (ent->e.renderfx & RF_BLINK)
 			{
-				char *s = va("%s_b", surface->name);   // append '_b' for 'blink'
-
-				hash = Com_HashKey(s, strlen(s));
+				const char *s = va("%s_b", surface->name);     // append '_b' for 'blink'
 				for (j = 0 ; j < skin->numSurfaces ; j++)
 				{
-					if (hash != skin->surfaces[j]->hash)
-					{
-						continue;
-					}
 					if (!strcmp(skin->surfaces[j]->name, s))
 					{
 						shader = skin->surfaces[j]->shader;
@@ -420,14 +441,10 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 
 			if (shader == tr.defaultShader)        // blink reference in skin was not found
 			{
-				hash = Com_HashKey(surface->name, sizeof(surface->name));
 				for (j = 0 ; j < skin->numSurfaces ; j++)
 				{
 					// the names have both been lowercased
-					if (hash != skin->surfaces[j]->hash)
-					{
-						continue;
-					}
+
 					if (!strcmp(skin->surfaces[j]->name, surface->name))
 					{
 						shader = skin->surfaces[j]->shader;
@@ -435,6 +452,7 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 					}
 				}
 			}
+//----(SA)	end
 		}
 		else if (surface->numShaders <= 0)
 		{
@@ -447,6 +465,7 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 			shader     = tr.shaders[md3Shader->shaderIndex];
 		}
 
+
 		// we will add shadows even if the main object isn't visible in the view
 
 		// stencil shadows can't do personal models unless I polyhedron clip
@@ -456,7 +475,7 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 		    && !(ent->e.renderfx & (RF_NOSHADOW | RF_DEPTHHACK))
 		    && shader->sort == SS_OPAQUE)
 		{
-			R_AddDrawSurf((void *)surface, tr.shadowShader, 0, 0, 0);
+			R_AddDrawSurf((void *)surface, tr.shadowShader, 0, qfalse, qfalse);
 		}
 
 		// projection shadows work fine with personal models
@@ -465,21 +484,35 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 		    && (ent->e.renderfx & RF_SHADOW_PLANE)
 		    && shader->sort == SS_OPAQUE)
 		{
-			R_AddDrawSurf((void *)surface, tr.projectionShadowShader, 0, 0, 0);
+			R_AddDrawSurf((void *)surface, tr.projectionShadowShader, 0, qfalse, qfalse);
 		}
 
-		// for testing polygon shadows (on /all/ models)
+//----(SA)	for testing polygon shadows (on /all/ models)
 		if (r_shadows->integer == 4)
 		{
-			R_AddDrawSurf((void *)surface, tr.projectionShadowShader, 0, 0, 0);
+			R_AddDrawSurf((void *)surface, tr.projectionShadowShader, 0, qfalse, qfalse);
 		}
+
+//----(SA)	done testing
 
 		// don't add third_person objects if not viewing through a portal
 		if (!personalModel)
 		{
-			R_AddDrawSurf((void *)surface, shader, fogNum, 0, 0);
+			R_AddDrawSurf((void *)surface, shader, fogNum, qfalse, qfalse);
 		}
 
 		surface = ( mdcSurface_t * )((byte *)surface + surface->ofsEnd);
+
+// rend2
+//		if(!personalModel)
+//		{
+//			srfVBOMDVMesh_t *vboSurface = &model->vboSurfaces[i];
+
+//			R_AddDrawSurf((void *)vboSurface, shader, fogNum, qfalse, qfalse );
+//		}
+
+//		surface++;
 	}
+
 }
+#endif

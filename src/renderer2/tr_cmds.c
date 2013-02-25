@@ -27,8 +27,6 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_cmds.c
  */
 
 #include "tr_local.h"
@@ -50,15 +48,14 @@ void R_PerformanceCounters(void)
 		return;
 	}
 
-	if (r_speeds->integer)
+	if (r_speeds->integer == 1)
 	{
-		ri.Printf(PRINT_ALL, "%i/%i shaders/surfs %i leafs %i verts %i/%i tris %.2f mtex %.2f dc\n",
-		          backEnd.pc.c_shaders, backEnd.pc.c_surfaces, tr.pc.c_leafs, backEnd.pc.c_vertexes,
+		ri.Printf(PRINT_ALL, "%i/%i/%i shaders/batches/surfs %i leafs %i verts %i/%i tris %.2f mtex %.2f dc\n",
+		          backEnd.pc.c_shaders, backEnd.pc.c_surfBatches, backEnd.pc.c_surfaces, tr.pc.c_leafs, backEnd.pc.c_vertexes,
 		          backEnd.pc.c_indexes / 3, backEnd.pc.c_totalIndexes / 3,
 		          R_SumOfUsedImages() / (1000000.0f), backEnd.pc.c_overDraw / (float)(glConfig.vidWidth * glConfig.vidHeight));
 	}
-
-	if (r_speeds->integer == 2)
+	else if (r_speeds->integer == 2)
 	{
 		ri.Printf(PRINT_ALL, "(patch) %i sin %i sclip  %i sout %i bin %i bclip %i bout\n",
 		          tr.pc.c_sphere_cull_patch_in, tr.pc.c_sphere_cull_patch_clip, tr.pc.c_sphere_cull_patch_out,
@@ -66,9 +63,6 @@ void R_PerformanceCounters(void)
 		ri.Printf(PRINT_ALL, "(md3) %i sin %i sclip  %i sout %i bin %i bclip %i bout\n",
 		          tr.pc.c_sphere_cull_md3_in, tr.pc.c_sphere_cull_md3_clip, tr.pc.c_sphere_cull_md3_out,
 		          tr.pc.c_box_cull_md3_in, tr.pc.c_box_cull_md3_clip, tr.pc.c_box_cull_md3_out);
-		ri.Printf(PRINT_ALL, "(gen) %i sin %i sout %i pin %i pout\n",
-		          tr.pc.c_sphere_cull_in, tr.pc.c_sphere_cull_out,
-		          tr.pc.c_plane_cull_in, tr.pc.c_plane_cull_out);
 	}
 	else if (r_speeds->integer == 3)
 	{
@@ -76,10 +70,18 @@ void R_PerformanceCounters(void)
 	}
 	else if (r_speeds->integer == 4)
 	{
-		ri.Printf(PRINT_ALL, "dlight srf:%i  culled:%i  verts:%i  tris:%i\n",
-		          tr.pc.c_dlightSurfaces, tr.pc.c_dlightSurfacesCulled,
-		          backEnd.pc.c_dlightVertexes, backEnd.pc.c_dlightIndexes / 3);
+		if (backEnd.pc.c_dlightVertexes)
+		{
+			ri.Printf(PRINT_ALL, "dlight srf:%i  culled:%i  verts:%i  tris:%i\n",
+			          tr.pc.c_dlightSurfaces, tr.pc.c_dlightSurfacesCulled,
+			          backEnd.pc.c_dlightVertexes, backEnd.pc.c_dlightIndexes / 3);
+		}
 	}
+//----(SA)	this is unnecessary since it will always show 2048.  I moved this to where it is accurate for the world
+//	else if (r_speeds->integer == 5 )
+//	{
+//		ri.Printf( PRINT_ALL, "zFar: %.0f\n", tr.viewParms.zFar );
+//	}
 	else if (r_speeds->integer == 6)
 	{
 		ri.Printf(PRINT_ALL, "flare adds:%i tests:%i renders:%i\n",
@@ -87,13 +89,16 @@ void R_PerformanceCounters(void)
 	}
 	else if (r_speeds->integer == 7)
 	{
-		ri.Printf(PRINT_ALL, "decal projectors: %d test surfs: %d clip surfs: %d decal surfs: %d created: %d\n",
-		          tr.pc.c_decalProjectors, tr.pc.c_decalTestSurfaces, tr.pc.c_decalClipSurfaces, tr.pc.c_decalSurfaces, tr.pc.c_decalSurfacesCreated);
+		ri.Printf(PRINT_ALL, "VBO draws: static %i dynamic %i\nMultidraws: %i merged %i\n",
+		          backEnd.pc.c_staticVboDraws, backEnd.pc.c_dynamicVboDraws, backEnd.pc.c_multidraws, backEnd.pc.c_multidrawsMerged);
+		ri.Printf(PRINT_ALL, "GLSL binds: %i  draws: gen %i light %i fog %i dlight %i\n",
+		          backEnd.pc.c_glslShaderBinds, backEnd.pc.c_genericDraws, backEnd.pc.c_lightallDraws, backEnd.pc.c_fogDraws, backEnd.pc.c_dlightDraws);
 	}
 
 	memset(&tr.pc, 0, sizeof(tr.pc));
 	memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
+
 
 /*
 ====================
@@ -102,8 +107,13 @@ R_IssueRenderCommands
 */
 void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
-	renderCommandList_t *cmdList = &backEndData->commands;
+	renderCommandList_t *cmdList;
 
+	if (!tr.registered)      //DAJ BUGFIX
+	{
+		return;
+	}
+	cmdList = &backEndData->commands;
 	assert(cmdList);
 	// add an end-of-list command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
@@ -124,14 +134,12 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	}
 }
 
+
 /*
 ====================
 R_IssuePendingRenderCommands
 
 Issue any pending commands and wait for them to complete.
-After exiting, the render thread will have completed its work
-and will remain idle and the main thread is free to issue
-OpenGL calls until R_IssueRenderCommands is called.
 ====================
 */
 void R_IssuePendingRenderCommands(void)
@@ -147,18 +155,24 @@ void R_IssuePendingRenderCommands(void)
 ============
 R_GetCommandBuffer
 
-make sure there is enough command space, waiting on the
-render thread if needed.
+make sure there is enough command space
 ============
 */
 void *R_GetCommandBuffer(int bytes)
 {
-	renderCommandList_t *cmdList = &backEndData->commands;
+	renderCommandList_t *cmdList;
 
-	// always leave room for the swap buffers and end of list commands
-	if (cmdList->used + bytes + (sizeof(swapBuffersCommand_t) + sizeof(int)) > MAX_RENDER_COMMANDS)
+	if (!tr.registered)      //DAJ BUGFIX
 	{
-		if (bytes > MAX_RENDER_COMMANDS - (sizeof(swapBuffersCommand_t) + sizeof(int)))
+		return NULL;
+	}
+	cmdList = &backEndData->commands;
+	bytes   = PAD(bytes, sizeof(void *));
+
+	// always leave room for the end of list command
+	if (cmdList->used + bytes + 4 > MAX_RENDER_COMMANDS)
+	{
+		if (bytes > MAX_RENDER_COMMANDS - 4)
 		{
 			ri.Error(ERR_FATAL, "R_GetCommandBuffer: bad size %i", bytes);
 		}
@@ -171,12 +185,14 @@ void *R_GetCommandBuffer(int bytes)
 	return cmdList->cmds + cmdList->used - bytes;
 }
 
+
 /*
 =============
 R_AddDrawSurfCmd
+
 =============
 */
-void R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
+void    R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
 {
 	drawSurfsCommand_t *cmd;
 
@@ -196,12 +212,55 @@ void R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
 
 /*
 =============
+R_AddCapShadowmapCmd
+
+=============
+*/
+void    R_AddCapShadowmapCmd(int map, int cubeSide)
+{
+	capShadowmapCommand_t *cmd;
+
+	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	if (!cmd)
+	{
+		return;
+	}
+	cmd->commandId = RC_CAPSHADOWMAP;
+
+	cmd->map      = map;
+	cmd->cubeSide = cubeSide;
+}
+
+
+/*
+=============
+R_PostProcessingCmd
+
+=============
+*/
+void    R_AddPostProcessCmd()
+{
+	postProcessCommand_t *cmd;
+
+	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	if (!cmd)
+	{
+		return;
+	}
+	cmd->commandId = RC_POSTPROCESS;
+
+	cmd->refdef    = tr.refdef;
+	cmd->viewParms = tr.viewParms;
+}
+
+/*
+=============
 RE_SetColor
 
 Passing NULL will set the color to white
 =============
 */
-void RE_SetColor(const float *rgba)
+void    RE_SetColor(const float *rgba)
 {
 	setColorCommand_t *cmd;
 
@@ -223,6 +282,7 @@ void RE_SetColor(const float *rgba)
 	cmd->color[2] = rgba[2];
 	cmd->color[3] = rgba[3];
 }
+
 
 /*
 =============
@@ -251,35 +311,61 @@ void RE_StretchPic(float x, float y, float w, float h,
 	cmd->t2        = t2;
 }
 
-/*
-=============
-RE_2DPolyies
-=============
-*/
-extern int r_numpolyverts;
+#define MODE_RED_CYAN   1
+#define MODE_RED_BLUE   2
+#define MODE_RED_GREEN  3
+#define MODE_GREEN_MAGENTA 4
+#define MODE_MAX    MODE_GREEN_MAGENTA
 
-void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
+void R_SetColorMode(GLboolean *rgba, stereoFrame_t stereoFrame, int colormode)
 {
-	poly2dCommand_t *cmd;
+	rgba[0] = rgba[1] = rgba[2] = rgba[3] = GL_TRUE;
 
-	if (r_numpolyverts + numverts > max_polyverts)
+	if (colormode > MODE_MAX)
 	{
-		return;
+		if (stereoFrame == STEREO_LEFT)
+		{
+			stereoFrame = STEREO_RIGHT;
+		}
+		else if (stereoFrame == STEREO_RIGHT)
+		{
+			stereoFrame = STEREO_LEFT;
+		}
+
+		colormode -= MODE_MAX;
 	}
 
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
-	if (!cmd)
+	if (colormode == MODE_GREEN_MAGENTA)
 	{
-		return;
+		if (stereoFrame == STEREO_LEFT)
+		{
+			rgba[0] = rgba[2] = GL_FALSE;
+		}
+		else if (stereoFrame == STEREO_RIGHT)
+		{
+			rgba[1] = GL_FALSE;
+		}
 	}
+	else
+	{
+		if (stereoFrame == STEREO_LEFT)
+		{
+			rgba[1] = rgba[2] = GL_FALSE;
+		}
+		else if (stereoFrame == STEREO_RIGHT)
+		{
+			rgba[0] = GL_FALSE;
 
-	cmd->commandId = RC_2DPOLYS;
-	cmd->verts     = &backEndData->polyVerts[r_numpolyverts];
-	cmd->numverts  = numverts;
-	memcpy(cmd->verts, verts, sizeof(polyVert_t) * numverts);
-	cmd->shader = R_GetShaderByHandle(hShader);
-
-	r_numpolyverts += numverts;
+			if (colormode == MODE_RED_BLUE)
+			{
+				rgba[1] = GL_FALSE;
+			}
+			else if (colormode == MODE_RED_GREEN)
+			{
+				rgba[2] = GL_FALSE;
+			}
+		}
+	}
 }
 
 /*
@@ -319,6 +405,7 @@ void RE_RotatedPic(float x, float y, float w, float h,
 	cmd->t2    = t2;
 }
 
+//----(SA)	added
 /*
 ==============
 RE_StretchPicGradient
@@ -358,65 +445,8 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
 	cmd->gradientColor[3] = gradientColor[3] * 255;
 	cmd->gradientType     = gradientType;
 }
+//----(SA)	end
 
-/*
-====================
-RE_SetGlobalFog
-    rgb = colour
-    depthForOpaque is depth for opaque
-
-    the restore flag can be used to restore the original level fog
-    duration can be set to fade over a certain period
-====================
-*/
-void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque)
-{
-	if (restore)
-	{
-		if (duration > 0)
-		{
-			VectorCopy(tr.world->fogs[tr.world->globalFog].shader->fogParms.color, tr.world->globalTransStartFog);
-			tr.world->globalTransStartFog[3] = tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque;
-
-			Vector4Copy(tr.world->globalOriginalFog, tr.world->globalTransEndFog);
-
-			tr.world->globalFogTransStartTime = tr.refdef.time;
-			tr.world->globalFogTransEndTime   = tr.refdef.time + duration;
-		}
-		else
-		{
-			VectorCopy(tr.world->globalOriginalFog, tr.world->fogs[tr.world->globalFog].shader->fogParms.color);
-			tr.world->fogs[tr.world->globalFog].shader->fogParms.colorInt = ColorBytes4(tr.world->globalOriginalFog[0] * tr.identityLight,
-			                                                                            tr.world->globalOriginalFog[1] * tr.identityLight,
-			                                                                            tr.world->globalOriginalFog[2] * tr.identityLight, 1.0);
-			tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque = tr.world->globalOriginalFog[3];
-			tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale        = 1.0f / (tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque);
-		}
-	}
-	else
-	{
-		if (duration > 0)
-		{
-			VectorCopy(tr.world->fogs[tr.world->globalFog].shader->fogParms.color, tr.world->globalTransStartFog);
-			tr.world->globalTransStartFog[3] = tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque;
-
-			VectorSet(tr.world->globalTransEndFog, r, g, b);
-			tr.world->globalTransEndFog[3] = depthForOpaque < 1 ? 1 : depthForOpaque;
-
-			tr.world->globalFogTransStartTime = tr.refdef.time;
-			tr.world->globalFogTransEndTime   = tr.refdef.time + duration;
-		}
-		else
-		{
-			VectorSet(tr.world->fogs[tr.world->globalFog].shader->fogParms.color, r, g, b);
-			tr.world->fogs[tr.world->globalFog].shader->fogParms.colorInt = ColorBytes4(r * tr.identityLight,
-			                                                                            g * tr.identityLight,
-			                                                                            b * tr.identityLight, 1.0);
-			tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque = depthForOpaque < 1 ? 1 : depthForOpaque;
-			tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale        = 1.0f / (tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque);
-		}
-	}
-}
 
 /*
 ====================
@@ -428,7 +458,8 @@ for each RE_EndFrame
 */
 void RE_BeginFrame(stereoFrame_t stereoFrame)
 {
-	drawBufferCommand_t *cmd;
+	drawBufferCommand_t *cmd    = NULL;
+	colorMaskCommand_t  *colcmd = NULL;
 
 	if (!tr.registered)
 	{
@@ -439,7 +470,9 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	tr.frameCount++;
 	tr.frameSceneNum = 0;
 
+	//
 	// do overdraw measurement
+	//
 	if (r_measureOverdraw->integer)
 	{
 		if (glConfig.stencilBits < 4)
@@ -476,7 +509,9 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		r_measureOverdraw->modified = qfalse;
 	}
 
+	//
 	// texturemode stuff
+	//
 	if (r_textureMode->modified)
 	{
 		R_IssuePendingRenderCommands();
@@ -484,7 +519,37 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		r_textureMode->modified = qfalse;
 	}
 
+	//
+	// NVidia stuff
+	//
+
+	// fog control
+	if (glConfig.NVFogAvailable && r_nv_fogdist_mode->modified)
+	{
+		r_nv_fogdist_mode->modified = qfalse;
+		if (!Q_stricmp(r_nv_fogdist_mode->string, "GL_EYE_PLANE_ABSOLUTE_NV"))
+		{
+			glConfig.NVFogMode = (int)GL_EYE_PLANE_ABSOLUTE_NV;
+		}
+		else if (!Q_stricmp(r_nv_fogdist_mode->string, "GL_EYE_PLANE"))
+		{
+			glConfig.NVFogMode = (int)GL_EYE_PLANE;
+		}
+		else if (!Q_stricmp(r_nv_fogdist_mode->string, "GL_EYE_RADIAL_NV"))
+		{
+			glConfig.NVFogMode = (int)GL_EYE_RADIAL_NV;
+		}
+		else
+		{
+			// in case this was really 'else', store a valid value for next time
+			glConfig.NVFogMode = (int)GL_EYE_RADIAL_NV;
+			ri.Cvar_Set("r_nv_fogdist_mode", "GL_EYE_RADIAL_NV");
+		}
+	}
+
+	//
 	// gamma stuff
+	//
 	if (r_gamma->modified)
 	{
 		r_gamma->modified = qfalse;
@@ -501,20 +566,19 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		R_IssuePendingRenderCommands();
 		if ((err = qglGetError()) != GL_NO_ERROR)
 		{
-			ri.Error(ERR_FATAL, "RE_BeginFrame() - glGetError() failed (0x%x)!\n", err);
+			ri.Error(ERR_FATAL, "RE_BeginFrame() - glGetError() failed (0x%x)!", err);
 		}
 	}
 
-	// draw buffer stuff
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
-	if (!cmd)
-	{
-		return;
-	}
-	cmd->commandId = RC_DRAW_BUFFER;
-
 	if (glConfig.stereoEnabled)
 	{
+		if (!(cmd = R_GetCommandBuffer(sizeof(*cmd))))
+		{
+			return;
+		}
+
+		cmd->commandId = RC_DRAW_BUFFER;
+
 		if (stereoFrame == STEREO_LEFT)
 		{
 			cmd->buffer = (int)GL_BACK_LEFT;
@@ -530,19 +594,125 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	}
 	else
 	{
-		if (stereoFrame != STEREO_CENTER)
+		if (r_anaglyphMode->integer)
 		{
-			ri.Error(ERR_FATAL, "RE_BeginFrame: Stereo is disabled, but stereoFrame was %i", stereoFrame);
-		}
-		if (!Q_stricmp(r_drawBuffer->string, "GL_FRONT"))
-		{
-			cmd->buffer = (int)GL_FRONT;
+			if (r_anaglyphMode->modified)
+			{
+				// clear both, front and backbuffer.
+				qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+				backEnd.colorMask[0] = GL_FALSE;
+				backEnd.colorMask[1] = GL_FALSE;
+				backEnd.colorMask[2] = GL_FALSE;
+				backEnd.colorMask[3] = GL_FALSE;
+				qglClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+				if (glRefConfig.framebufferObject)
+				{
+					// clear all framebuffers
+					if (tr.msaaResolveFbo)
+					{
+						FBO_Bind(tr.msaaResolveFbo);
+						qglClear(GL_COLOR_BUFFER_BIT);
+					}
+
+					if (tr.renderFbo)
+					{
+						FBO_Bind(tr.renderFbo);
+						qglClear(GL_COLOR_BUFFER_BIT);
+					}
+
+					if (tr.screenScratchFbo)
+					{
+						FBO_Bind(tr.screenScratchFbo);
+						qglClear(GL_COLOR_BUFFER_BIT);
+					}
+
+					FBO_Bind(NULL);
+				}
+
+				qglDrawBuffer(GL_FRONT);
+				qglClear(GL_COLOR_BUFFER_BIT);
+				qglDrawBuffer(GL_BACK);
+				qglClear(GL_COLOR_BUFFER_BIT);
+
+				r_anaglyphMode->modified = qfalse;
+			}
+
+			if (stereoFrame == STEREO_LEFT)
+			{
+				if (!(cmd = R_GetCommandBuffer(sizeof(*cmd))))
+				{
+					return;
+				}
+
+				if (!(colcmd = R_GetCommandBuffer(sizeof(*colcmd))))
+				{
+					return;
+				}
+			}
+			else if (stereoFrame == STEREO_RIGHT)
+			{
+				clearDepthCommand_t *cldcmd;
+
+				if (!(cldcmd = R_GetCommandBuffer(sizeof(*cldcmd))))
+				{
+					return;
+				}
+
+				cldcmd->commandId = RC_CLEARDEPTH;
+
+				if (!(colcmd = R_GetCommandBuffer(sizeof(*colcmd))))
+				{
+					return;
+				}
+			}
+			else
+			{
+				ri.Error(ERR_FATAL, "RE_BeginFrame: Stereo is enabled, but stereoFrame was %i", stereoFrame);
+			}
+
+			R_SetColorMode(colcmd->rgba, stereoFrame, r_anaglyphMode->integer);
+			colcmd->commandId = RC_COLORMASK;
 		}
 		else
 		{
-			cmd->buffer = (int)GL_BACK;
+			if (stereoFrame != STEREO_CENTER)
+			{
+				ri.Error(ERR_FATAL, "RE_BeginFrame: Stereo is disabled, but stereoFrame was %i", stereoFrame);
+			}
+
+			if (!(cmd = R_GetCommandBuffer(sizeof(*cmd))))
+			{
+				return;
+			}
+		}
+
+		if (cmd)
+		{
+			cmd->commandId = RC_DRAW_BUFFER;
+
+			if (r_anaglyphMode->modified)
+			{
+				qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+				backEnd.colorMask[0]     = 0;
+				backEnd.colorMask[1]     = 0;
+				backEnd.colorMask[2]     = 0;
+				backEnd.colorMask[3]     = 0;
+				r_anaglyphMode->modified = qfalse;
+			}
+
+			if (!Q_stricmp(r_drawBuffer->string, "GL_FRONT"))
+			{
+				cmd->buffer = (int)GL_FRONT;
+			}
+			else
+			{
+				cmd->buffer = (int)GL_BACK;
+			}
 		}
 	}
+
+	tr.refdef.stereoFrame = stereoFrame;
 }
 
 /*
@@ -554,25 +724,21 @@ Returns the number of msec spent in the back end
 */
 void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 {
-	renderCommandList_t *cmdList;
+	swapBuffersCommand_t *cmd;
 
 	if (!tr.registered)
 	{
 		return;
 	}
-
-	// Needs to use reserved space, so no R_GetCommandBuffer.
-	cmdList = &backEndData->commands;
-	assert(cmdList);
-	// add swap-buffers command
-	*( int * )(cmdList->cmds + cmdList->used) = RC_SWAP_BUFFERS;
-	cmdList->used                            += sizeof(swapBuffersCommand_t);
-
+	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	if (!cmd)
+	{
+		return;
+	}
+	cmd->commandId = RC_SWAP_BUFFERS;
 
 	R_IssueRenderCommands(qtrue);
 
-	// use the other buffers next frame, because another CPU
-	// may still be rendering into the current ones
 	R_InitNextFrame();
 
 	if (frontEndMsec)
@@ -588,61 +754,11 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 }
 
 /*
-==================
-RE_RenderToTexture
-==================
-*/
-void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
-{
-	renderToTextureCommand_t *cmd;
-
-	//  ri.Printf( PRINT_ALL, "RE_RenderToTexture\n" );
-
-	if (textureid > tr.numImages || textureid < 0)
-	{
-		ri.Printf(PRINT_ALL, "Warning: trap_R_RenderToTexture textureid %d out of range.\n", textureid);
-		return;
-	}
-
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
-	if (!cmd)
-	{
-		return;
-	}
-	cmd->commandId = RC_RENDERTOTEXTURE;
-	cmd->image     = tr.images[textureid];
-	cmd->x         = x;
-	cmd->y         = y;
-	cmd->w         = w;
-	cmd->h         = h;
-}
-
-/*
-==================
-RE_Finish
-==================
-*/
-void RE_Finish(void)
-{
-	renderFinishCommand_t *cmd;
-
-	ri.Printf(PRINT_ALL, "RE_Finish\n");
-
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
-	if (!cmd)
-	{
-		return;
-	}
-	cmd->commandId = RC_FINISH;
-}
-
-/*
 =============
 RE_TakeVideoFrame
 =============
 */
-void RE_TakeVideoFrame(int width, int height,
-                       byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg)
+void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg)
 {
 	videoFrameCommand_t *cmd;
 

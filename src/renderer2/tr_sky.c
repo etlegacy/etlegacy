@@ -31,6 +31,7 @@
  * @file tr_sky.c
  */
 
+// tr_sky.c
 #include "tr_local.h"
 
 #define SKY_SUBDIVISIONS        8
@@ -41,7 +42,9 @@ static float s_cloudTexP[6][SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 
 /*
 ===================================================================================
+
 POLYGON TO BOX SIDE PROJECTION
+
 ===================================================================================
 */
 
@@ -70,7 +73,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 	float  s, t, dv;
 	int    axis;
 	float  *vp;
-
+	// s = [0]/[2], t = [1]/[2]
 	static int vec_to_st[6][3] =
 	{
 		{ -2, 3,  1  },
@@ -81,6 +84,9 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 
 		{ -2, -1, 3  },
 		{ -2, 1,  -3 }
+
+		//	{-1,2,3},
+		//	{1,2,-3}
 	};
 
 	// decide which face it maps to
@@ -89,9 +95,9 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 	{
 		VectorAdd(vp, v, v);
 	}
-	av[0] = Q_fabs(v[0]);
-	av[1] = Q_fabs(v[1]);
-	av[2] = Q_fabs(v[2]);
+	av[0] = fabs(v[0]);
+	av[1] = fabs(v[1]);
+	av[2] = fabs(v[2]);
 	if (av[0] > av[1] && av[0] > av[2])
 	{
 		if (v[0] < 0)
@@ -316,8 +322,8 @@ void RB_ClipSkyPolygons(shaderCommands_t *input)
 	{
 		for (j = 0 ; j < 3 ; j++)
 		{
-			VectorSubtract(input->xyz[input->indexes[i + j]].v,
-			               backEnd.viewParms.orientation.origin,
+			VectorSubtract(input->xyz[input->indexes[i + j]],
+			               backEnd.viewParms.or.origin,
 			               p[j]);
 		}
 		ClipSkyPolygon(3, p[0], 0);
@@ -333,9 +339,9 @@ CLOUD VERTEX GENERATION
 */
 
 /*
-MakeSkyVec
-
-Parms: s, t range from -1 to 1
+** MakeSkyVec
+**
+** Parms: s, t range from -1 to 1
 */
 static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ)
 {
@@ -356,27 +362,26 @@ static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ
 	int    j, k;
 	float  boxSize;
 
-	// JPW NERVE swiped from Sherman SP fix
-	//  if(glfogNum > FOG_NONE && glfogsettings[FOG_CURRENT].mode == GL_EXP) {
+// JPW NERVE swiped from Sherman SP fix
+//	if(glfogNum > FOG_NONE && glfogsettings[FOG_CURRENT].mode == GL_EXP) {
 	if (glfogsettings[FOG_SKY].registered)         // (SA) trying this...
-	{
-		// boxSize = backEnd.viewParms.zFar / 1.75;        // div sqrt(3)
-		// boxSize = glfogsettings[FOG_CURRENT].end / 1.75;
+	{ ///		boxSize = backEnd.viewParms.zFar / 1.75;		// div sqrt(3)
+//		boxSize = glfogsettings[FOG_CURRENT].end / 1.75;
 		boxSize = glfogsettings[FOG_SKY].end;       // (SA) trying this...
-
+// jpw
 	}
 	else
 	{
 		boxSize = backEnd.viewParms.zFar / 1.75;        // div sqrt(3)
 
 	}
-	// JPW NERVE swiped from Sherman
+// JPW NERVE swiped from Sherman
 	// make sure the sky is not near clipped
 	if (boxSize < r_znear->value * 2.0)
 	{
 		boxSize = r_znear->value * 2.0;
 	}
-
+// jpw
 	b[0] = s * boxSize;
 	b[1] = t * boxSize;
 	b[2] = boxSize;
@@ -432,69 +437,255 @@ static float  s_skyTexCoords[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][2];
 static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs[2])
 {
 	int s, t;
+	int firstVertex = tess.numVertexes;
+	//int firstIndex = tess.numIndexes;
+	int    minIndex = tess.minIndex;
+	int    maxIndex = tess.maxIndex;
+	vec4_t color;
+
+	//tess.numVertexes = 0;
+	//tess.numIndexes = 0;
+	tess.firstIndex = tess.numIndexes;
 
 	GL_Bind(image);
+	GL_Cull(CT_TWO_SIDED);
 
-	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t < maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
+	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t <= maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
 	{
-		qglBegin(GL_TRIANGLE_STRIP);
-
 		for (s = mins[0] + HALF_SKY_SUBDIVISIONS; s <= maxs[0] + HALF_SKY_SUBDIVISIONS; s++)
 		{
-			qglTexCoord2fv(s_skyTexCoords[t][s]);
-			qglVertex3fv(s_skyPoints[t][s]);
+			tess.xyz[tess.numVertexes][0] = s_skyPoints[t][s][0];
+			tess.xyz[tess.numVertexes][1] = s_skyPoints[t][s][1];
+			tess.xyz[tess.numVertexes][2] = s_skyPoints[t][s][2];
+			tess.xyz[tess.numVertexes][3] = 1.0;
 
-			qglTexCoord2fv(s_skyTexCoords[t + 1][s]);
-			qglVertex3fv(s_skyPoints[t + 1][s]);
+			tess.texCoords[tess.numVertexes][0][0] = s_skyTexCoords[t][s][0];
+			tess.texCoords[tess.numVertexes][0][1] = s_skyTexCoords[t][s][1];
+
+			tess.numVertexes++;
+
+			if (tess.numVertexes >= SHADER_MAX_VERTEXES)
+			{
+				ri.Error(ERR_DROP, "SHADER_MAX_VERTEXES hit in DrawSkySideVBO()");
+			}
 		}
-
-		qglEnd();
 	}
+
+	for (t = 0; t < maxs[1] - mins[1]; t++)
+	{
+		for (s = 0; s < maxs[0] - mins[0]; s++)
+		{
+			if (tess.numIndexes + 6 >= SHADER_MAX_INDEXES)
+			{
+				ri.Error(ERR_DROP, "SHADER_MAX_INDEXES hit in DrawSkySideVBO()");
+			}
+
+			tess.indexes[tess.numIndexes++] = s +       t      * (maxs[0] - mins[0] + 1) + firstVertex;
+			tess.indexes[tess.numIndexes++] = s +      (t + 1) * (maxs[0] - mins[0] + 1) + firstVertex;
+			tess.indexes[tess.numIndexes++] = (s + 1) +  t      * (maxs[0] - mins[0] + 1) + firstVertex;
+
+			tess.indexes[tess.numIndexes++] = (s + 1) +  t      * (maxs[0] - mins[0] + 1) + firstVertex;
+			tess.indexes[tess.numIndexes++] = s +      (t + 1) * (maxs[0] - mins[0] + 1) + firstVertex;
+			tess.indexes[tess.numIndexes++] = (s + 1) + (t + 1) * (maxs[0] - mins[0] + 1) + firstVertex;
+		}
+	}
+
+	tess.minIndex = firstVertex;
+	tess.maxIndex = tess.numVertexes;
+
+	// FIXME: A lot of this can probably be removed for speed, and refactored into a more convenient function
+	RB_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD);
+/*
+    {
+        shaderProgram_t *sp = &tr.textureColorShader;
+
+        GLSL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD);
+        GLSL_BindProgram(sp);
+
+        GLSL_SetUniformMatrix16(sp, TEXTURECOLOR_UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
+
+        color[0] =
+        color[1] =
+        color[2] = tr.identityLight;
+        color[3] = 1.0f;
+        GLSL_SetUniformVec4(sp, TEXTURECOLOR_UNIFORM_COLOR, color);
+    }
+*/
+	{
+		shaderProgram_t *sp = &tr.lightallShader[0];
+		vec4_t          vector;
+
+		GLSL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD);
+		GLSL_BindProgram(sp);
+
+		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
+
+		color[0]         =
+		    color[1]     =
+		        color[2] = tr.identityLight;
+		color[3]         = 1.0f;
+		GLSL_SetUniformVec4(sp, GENERIC_UNIFORM_BASECOLOR, color);
+
+		color[0]             =
+		    color[1]         =
+		        color[2]     =
+		            color[3] = 0.0f;
+		GLSL_SetUniformVec4(sp, GENERIC_UNIFORM_VERTCOLOR, color);
+
+		VectorSet4(vector, 1.0, 0.0, 0.0, 1.0);
+		GLSL_SetUniformVec4(sp, GENERIC_UNIFORM_DIFFUSETEXMATRIX, vector);
+
+		VectorSet4(vector, 0.0, 0.0, 0.0, 0.0);
+		GLSL_SetUniformVec4(sp, GENERIC_UNIFORM_DIFFUSETEXOFFTURB, vector);
+	}
+
+	R_DrawElementsVBO(tess.numIndexes - tess.firstIndex, tess.firstIndex, tess.minIndex, tess.maxIndex);
+
+	//qglDrawElements(GL_TRIANGLES, tess.numIndexes - tess.firstIndex, GL_INDEX_TYPE, BUFFER_OFFSET(tess.firstIndex * sizeof(GL_INDEX_TYPE)));
+
+	//R_BindNullVBO();
+	//R_BindNullIBO();
+
+	tess.numIndexes  = tess.firstIndex;
+	tess.numVertexes = firstVertex;
+	tess.firstIndex  = 0;
+	tess.minIndex    = minIndex;
+	tess.maxIndex    = maxIndex;
 }
 
 static void DrawSkySideInner(struct image_s *image, const int mins[2], const int maxs[2])
 {
 	int s, t;
+	int firstVertex = tess.numVertexes;
+	//int firstIndex = tess.numIndexes;
+	int    minIndex = tess.minIndex;
+	int    maxIndex = tess.maxIndex;
+	vec4_t color;
+
+	//tess.numVertexes = 0;
+	//tess.numIndexes = 0;
+	tess.firstIndex = tess.numIndexes;
 
 	GL_Bind(image);
+	GL_Cull(CT_TWO_SIDED);
 
-	//qglDisable (GL_BLEND);
-	qglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	qglEnable(GL_BLEND);
-	GL_TexEnv(GL_MODULATE);
-
-	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t < maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
+	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t <= maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
 	{
-		qglBegin(GL_TRIANGLE_STRIP);
-
 		for (s = mins[0] + HALF_SKY_SUBDIVISIONS; s <= maxs[0] + HALF_SKY_SUBDIVISIONS; s++)
 		{
-			qglTexCoord2fv(s_skyTexCoords[t][s]);
-			qglVertex3fv(s_skyPoints[t][s]);
+			tess.xyz[tess.numVertexes][0] = s_skyPoints[t][s][0];
+			tess.xyz[tess.numVertexes][1] = s_skyPoints[t][s][1];
+			tess.xyz[tess.numVertexes][2] = s_skyPoints[t][s][2];
+			tess.xyz[tess.numVertexes][3] = 1.0;
 
-			qglTexCoord2fv(s_skyTexCoords[t + 1][s]);
-			qglVertex3fv(s_skyPoints[t + 1][s]);
+			tess.texCoords[tess.numVertexes][0][0] = s_skyTexCoords[t][s][0];
+			tess.texCoords[tess.numVertexes][0][1] = s_skyTexCoords[t][s][1];
+
+			tess.numVertexes++;
+
+			if (tess.numVertexes >= SHADER_MAX_VERTEXES)
+			{
+				ri.Error(ERR_DROP, "SHADER_MAX_VERTEXES hit in DrawSkySideVBO()\n");
+			}
 		}
-
-		qglEnd();
 	}
 
-	qglDisable(GL_BLEND);
+	for (t = 0; t < maxs[1] - mins[1]; t++)
+	{
+		for (s = 0; s < maxs[0] - mins[0]; s++)
+		{
+			if (tess.numIndexes + 6 >= SHADER_MAX_INDEXES)
+			{
+				ri.Error(ERR_DROP, "SHADER_MAX_INDEXES hit in DrawSkySideVBO()\n");
+			}
+
+			tess.indexes[tess.numIndexes++] = s +       t      * (maxs[0] - mins[0] + 1) + firstVertex;
+			tess.indexes[tess.numIndexes++] = s +      (t + 1) * (maxs[0] - mins[0] + 1) + firstVertex;
+			tess.indexes[tess.numIndexes++] = (s + 1) +  t      * (maxs[0] - mins[0] + 1) + firstVertex;
+
+			tess.indexes[tess.numIndexes++] = (s + 1) +  t      * (maxs[0] - mins[0] + 1) + firstVertex;
+			tess.indexes[tess.numIndexes++] = s +      (t + 1) * (maxs[0] - mins[0] + 1) + firstVertex;
+			tess.indexes[tess.numIndexes++] = (s + 1) + (t + 1) * (maxs[0] - mins[0] + 1) + firstVertex;
+		}
+	}
+
+	tess.minIndex = firstVertex;
+	tess.maxIndex = tess.numVertexes;
+
+	// FIXME: A lot of this can probably be removed for speed, and refactored into a more convenient function
+	RB_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD);
+/*
+    {
+        shaderProgram_t *sp = &tr.textureColorShader;
+
+        GLSL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD);
+        GLSL_BindProgram(sp);
+
+        GLSL_SetUniformMatrix16(sp, TEXTURECOLOR_UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
+
+        color[0] =
+        color[1] =
+        color[2] = tr.identityLight;
+        color[3] = 1.0f;
+        GLSL_SetUniformVec4(sp, TEXTURECOLOR_UNIFORM_COLOR, color);
+    }
+*/
+	{
+		shaderProgram_t *sp = &tr.lightallShader[0];
+		vec4_t          vector;
+
+		GLSL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD);
+		GLSL_BindProgram(sp);
+
+		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
+
+		color[0]         =
+		    color[1]     =
+		        color[2] = tr.identityLight;
+		color[3]         = 1.0f;
+		GLSL_SetUniformVec4(sp, GENERIC_UNIFORM_BASECOLOR, color);
+
+		color[0]             =
+		    color[1]         =
+		        color[2]     =
+		            color[3] = 0.0f;
+		GLSL_SetUniformVec4(sp, GENERIC_UNIFORM_VERTCOLOR, color);
+
+		VectorSet4(vector, 1.0, 0.0, 0.0, 1.0);
+		GLSL_SetUniformVec4(sp, GENERIC_UNIFORM_DIFFUSETEXMATRIX, vector);
+
+		VectorSet4(vector, 0.0, 0.0, 0.0, 0.0);
+		GLSL_SetUniformVec4(sp, GENERIC_UNIFORM_DIFFUSETEXOFFTURB, vector);
+	}
+
+	R_DrawElementsVBO(tess.numIndexes - tess.firstIndex, tess.firstIndex, tess.minIndex, tess.maxIndex);
+
+	//qglDrawElements(GL_TRIANGLES, tess.numIndexes - tess.firstIndex, GL_INDEX_TYPE, BUFFER_OFFSET(tess.firstIndex * sizeof(GL_INDEX_TYPE)));
+
+	//R_BindNullVBO();
+	//R_BindNullIBO();
+
+	tess.numIndexes  = tess.firstIndex;
+	tess.numVertexes = firstVertex;
+	tess.firstIndex  = 0;
+	tess.minIndex    = minIndex;
+	tess.maxIndex    = maxIndex;
 }
 
 static void DrawSkyBox(shader_t *shader)
 {
 	int i;
-	int sky_mins_subd[2], sky_maxs_subd[2];
-	int s, t;
-
-	memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
 	sky_min = 0;
 	sky_max = 1;
 
+	memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
+
 	for (i = 0 ; i < 6 ; i++)
 	{
+		int sky_mins_subd[2], sky_maxs_subd[2];
+		int s, t;
+
 		sky_mins[0][i] = floor(sky_mins[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_mins[1][i] = floor(sky_mins[1][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_maxs[0][i] = ceil(sky_maxs[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
@@ -545,7 +736,9 @@ static void DrawSkyBox(shader_t *shader)
 			sky_maxs_subd[1] = HALF_SKY_SUBDIVISIONS;
 		}
 
+		//
 		// iterate through the subdivisions
+		//
 		for (t = sky_mins_subd[1] + HALF_SKY_SUBDIVISIONS; t <= sky_maxs_subd[1] + HALF_SKY_SUBDIVISIONS; t++)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
@@ -562,18 +755,21 @@ static void DrawSkyBox(shader_t *shader)
 		            sky_mins_subd,
 		            sky_maxs_subd);
 	}
+
 }
+
 
 static void DrawSkyBoxInner(shader_t *shader)
 {
 	int i;
-	int sky_mins_subd[2], sky_maxs_subd[2];
-	int s, t;
 
 	memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
 	for (i = 0 ; i < 6 ; i++)
 	{
+		int sky_mins_subd[2], sky_maxs_subd[2];
+		int s, t;
+
 		sky_mins[0][i] = floor(sky_mins[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_mins[1][i] = floor(sky_mins[1][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_maxs[0][i] = ceil(sky_maxs[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
@@ -624,7 +820,9 @@ static void DrawSkyBoxInner(shader_t *shader)
 			sky_maxs_subd[1] = HALF_SKY_SUBDIVISIONS;
 		}
 
+		//
 		// iterate through the subdivisions
+		//
 		for (t = sky_mins_subd[1] + HALF_SKY_SUBDIVISIONS; t <= sky_maxs_subd[1] + HALF_SKY_SUBDIVISIONS; t++)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
@@ -641,6 +839,7 @@ static void DrawSkyBoxInner(shader_t *shader)
 		                 sky_mins_subd,
 		                 sky_maxs_subd);
 	}
+
 }
 
 static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean addIndexes)
@@ -652,22 +851,19 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 	tHeight = maxs[1] - mins[1] + 1;
 	sWidth  = maxs[0] - mins[0] + 1;
 
-	// overflow check
-	RB_CHECKOVERFLOW((maxs[0] - mins[0]) * (maxs[1] - mins[1]), (sWidth - 1) * (tHeight - 1) * 6);
-
 	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t <= maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
 	{
 		for (s = mins[0] + HALF_SKY_SUBDIVISIONS; s <= maxs[0] + HALF_SKY_SUBDIVISIONS; s++)
 		{
-			VectorAdd(s_skyPoints[t][s], backEnd.viewParms.orientation.origin, tess.xyz[tess.numVertexes].v);
-			tess.texCoords0[tess.numVertexes].v[0] = s_skyTexCoords[t][s][0];
-			tess.texCoords0[tess.numVertexes].v[1] = s_skyTexCoords[t][s][1];
+			VectorAdd(s_skyPoints[t][s], backEnd.viewParms.or.origin, tess.xyz[tess.numVertexes]);
+			tess.texCoords[tess.numVertexes][0][0] = s_skyTexCoords[t][s][0];
+			tess.texCoords[tess.numVertexes][0][1] = s_skyTexCoords[t][s][1];
 
 			tess.numVertexes++;
 
-			if (tess.numVertexes >= tess.maxShaderVerts)
+			if (tess.numVertexes >= SHADER_MAX_VERTEXES)
 			{
-				ri.Error(ERR_DROP, "tess.maxShaderVerts(%i) hit in FillCloudySkySide()\n", tess.maxShaderVerts);
+				ri.Error(ERR_DROP, "SHADER_MAX_VERTEXES hit in FillCloudySkySide()");
 			}
 		}
 	}
@@ -699,13 +895,14 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 
 static void FillCloudBox(const shader_t *shader, int stage)
 {
-	int   i;
-	int   sky_mins_subd[2], sky_maxs_subd[2];
-	int   s, t;
-	float MIN_T;
+	int i;
 
 	for (i = 0; i < 6; i++)
 	{
+		int   sky_mins_subd[2], sky_maxs_subd[2];
+		int   s, t;
+		float MIN_T;
+
 		if (1)     // FIXME? shader->sky.fullClouds )
 		{
 			MIN_T = -HALF_SKY_SUBDIVISIONS;
@@ -786,7 +983,9 @@ static void FillCloudBox(const shader_t *shader, int stage)
 			sky_maxs_subd[1] = HALF_SKY_SUBDIVISIONS;
 		}
 
+		//
 		// iterate through the subdivisions
+		//
 		for (t = sky_mins_subd[1] + HALF_SKY_SUBDIVISIONS; t <= sky_maxs_subd[1] + HALF_SKY_SUBDIVISIONS; t++)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
@@ -808,10 +1007,11 @@ static void FillCloudBox(const shader_t *shader, int stage)
 }
 
 /*
-R_BuildCloudData
+** R_BuildCloudData
 */
 void R_BuildCloudData(shaderCommands_t *input)
 {
+	int      i;
 	shader_t *shader;
 
 	shader = input->shader;
@@ -824,33 +1024,26 @@ void R_BuildCloudData(shaderCommands_t *input)
 	// set up for drawing
 	tess.numIndexes  = 0;
 	tess.numVertexes = 0;
+	tess.firstIndex  = 0;
 
 	if (shader->sky.cloudHeight)
 	{
-		// ok, this is really wierd. it's iterating through shader stages here,
-		// which is unecessary for a multi-stage sky shader, as far as i can tell
-		// nuking this
-#if 0
-		// int          i;
-
 		for (i = 0; i < MAX_SHADER_STAGES; i++)
 		{
 			if (!tess.xstages[i])
 			{
 				break;
 			}
-			FillCloudBox(input->shader, i);
+			FillCloudBox(shader, i);
 		}
-#else
-		FillCloudBox(shader, 0);
-#endif
 	}
 }
 
 /*
-R_InitSkyTexCoords
-    Called when a sky shader is parsed
+** R_InitSkyTexCoords
+** Called when a sky shader is parsed
 */
+#define SQR(a) ((a) * (a))
 void R_InitSkyTexCoords(float heightCloud)
 {
 	int    i, s, t;
@@ -880,13 +1073,13 @@ void R_InitSkyTexCoords(float heightCloud)
 				// compute parametric value 'p' that intersects with cloud layer
 				p = (1.0f / (2 * DotProduct(skyVec, skyVec))) *
 				    (-2 * skyVec[2] * radiusWorld +
-				     2 * sqrt(Square(skyVec[2]) * Square(radiusWorld) +
-				              2 * Square(skyVec[0]) * radiusWorld * heightCloud +
-				              Square(skyVec[0]) * Square(heightCloud) +
-				              2 * Square(skyVec[1]) * radiusWorld * heightCloud +
-				              Square(skyVec[1]) * Square(heightCloud) +
-				              2 * Square(skyVec[2]) * radiusWorld * heightCloud +
-				              Square(skyVec[2]) * Square(heightCloud)));
+				     2 * sqrt(SQR(skyVec[2]) * SQR(radiusWorld) +
+				              2 * SQR(skyVec[0]) * radiusWorld * heightCloud +
+				              SQR(skyVec[0]) * SQR(heightCloud) +
+				              2 * SQR(skyVec[1]) * radiusWorld * heightCloud +
+				              SQR(skyVec[1]) * SQR(heightCloud) +
+				              2 * SQR(skyVec[2]) * radiusWorld * heightCloud +
+				              SQR(skyVec[2]) * SQR(heightCloud)));
 
 				s_cloudTexP[i][t][s] = p;
 
@@ -915,13 +1108,13 @@ RB_DrawSun
     (SA) FIXME: sun should render behind clouds, so passing dark areas cover it up
 ==============
 */
-void RB_DrawSun(void)
+void RB_DrawSun(float scale, shader_t *shader)
 {
 	float  size;
 	float  dist;
 	vec3_t origin, vec1, vec2;
 	vec3_t temp;
-	byte   color[4];
+	vec4_t color;
 
 	if (!tr.sunShader)
 	{
@@ -932,18 +1125,22 @@ void RB_DrawSun(void)
 	{
 		return;
 	}
-	if (!r_drawSun->integer)
+
+	//qglLoadMatrixf( backEnd.viewParms.world.modelMatrix );
+	//qglTranslatef (backEnd.viewParms.or.origin[0], backEnd.viewParms.or.origin[1], backEnd.viewParms.or.origin[2]);
 	{
-		return;
+		// FIXME: this could be a lot cleaner
+		matrix_t translation, modelview;
+
+		Matrix16Translation(backEnd.viewParms.or.origin, translation);
+		Matrix16Multiply(backEnd.viewParms.world.modelMatrix, translation, modelview);
+		GL_SetModelviewMatrix(modelview);
 	}
-	qglPushMatrix();
-	qglLoadMatrixf(backEnd.viewParms.world.modelMatrix);
-	qglTranslatef(backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
 
 	dist = backEnd.viewParms.zFar / 1.75;       // div sqrt(3)
 
 	// (SA) shrunk the size of the sun
-	size = dist * 0.2;
+	size = dist * scale;
 
 	VectorScale(tr.sunDirection, dist, origin);
 	PerpendicularVector(vec1, tr.sunDirection);
@@ -955,70 +1152,18 @@ void RB_DrawSun(void)
 	// farthest depth range
 	qglDepthRange(1.0, 1.0);
 
-	color[0] = color[1] = color[2] = color[3] = 255;
+	RB_BeginSurface(shader, 0);
 
-	// (SA) simpler sun drawing
-	RB_BeginSurface(tr.sunShader, tess.fogNum);
+	color[0] = color[1] = color[2] = color[3] = 1;
 
 	RB_AddQuadStamp(origin, vec1, vec2, color);
-	/*
-	        VectorCopy( origin, temp );
-	        VectorSubtract( temp, vec1, temp );
-	        VectorSubtract( temp, vec2, temp );
-	        VectorCopy( temp, tess.xyz[tess.numVertexes].v );
-	        tess.texCoords0[tess.numVertexes].v[0] = 0;
-	        tess.texCoords0[tess.numVertexes].v[1] = 0;
-	        tess.vertexColors[tess.numVertexes].v[0] = 255;
-	        tess.vertexColors[tess.numVertexes].v[1] = 255;
-	        tess.vertexColors[tess.numVertexes].v[2] = 255;
-	        tess.numVertexes++;
 
-	        VectorCopy( origin, temp );
-	        VectorAdd( temp, vec1, temp );
-	        VectorSubtract( temp, vec2, temp );
-	        VectorCopy( temp, tess.xyz[tess.numVertexes].v );
-	        tess.texCoords0[tess.numVertexes].v[0] = 0;
-	        tess.texCoords0[tess.numVertexes].v[1] = 1;
-	        tess.vertexColors[tess.numVertexes].v[0] = 255;
-	        tess.vertexColors[tess.numVertexes].v[1] = 255;
-	        tess.vertexColors[tess.numVertexes].v[2] = 255;
-	        tess.numVertexes++;
-
-	        VectorCopy( origin, temp );
-	        VectorAdd( temp, vec1, temp );
-	        VectorAdd( temp, vec2, temp );
-	        VectorCopy( temp, tess.xyz[tess.numVertexes].v );
-	        tess.texCoords0[tess.numVertexes].v[0] = 1;
-	        tess.texCoords0[tess.numVertexes].v[1] = 1;
-	        tess.vertexColors[tess.numVertexes].v[0] = 255;
-	        tess.vertexColors[tess.numVertexes].v[1] = 255;
-	        tess.vertexColors[tess.numVertexes].v[2] = 255;
-	        tess.numVertexes++;
-
-	        VectorCopy( origin, temp );
-	        VectorSubtract( temp, vec1, temp );
-	        VectorAdd( temp, vec2, temp );
-	        VectorCopy( temp, tess.xyz[tess.numVertexes].v );
-	        tess.texCoords0[tess.numVertexes].v[0] = 1;
-	        tess.texCoords0[tess.numVertexes].v[1] = 0;
-	        tess.vertexColors[tess.numVertexes].v[0] = 255;
-	        tess.vertexColors[tess.numVertexes].v[1] = 255;
-	        tess.vertexColors[tess.numVertexes].v[2] = 255;
-	        tess.numVertexes++;
-
-	        tess.indexes[tess.numIndexes++] = 0;
-	        tess.indexes[tess.numIndexes++] = 1;
-	        tess.indexes[tess.numIndexes++] = 2;
-	        tess.indexes[tess.numIndexes++] = 0;
-	        tess.indexes[tess.numIndexes++] = 2;
-	        tess.indexes[tess.numIndexes++] = 3;
-	*/
 	RB_EndSurface();
 
 
 	if (r_drawSun->integer > 1)     // draw flare effect
-	{   // (SA) FYI:    This is cheezy and was only a test so far.
-		//              If we decide to use the flare business I will /definatly/ improve all this
+	{   // (SA) FYI:	This is cheezy and was only a test so far.
+		//				If we decide to use the flare business I will /definatly/ improve all this
 
 		// get a point a little closer
 		dist = dist * 0.7;
@@ -1029,7 +1174,7 @@ void RB_DrawSun(void)
 		VectorScale(vec2, 0.5f, vec2);
 
 		// add the vectors to give an 'off angle' result
-		VectorAdd(tr.sunDirection, backEnd.viewParms.orientation.axis[0], temp);
+		VectorAdd(tr.sunDirection, backEnd.viewParms.or.axis[0], temp);
 		VectorNormalize(temp);
 
 		// amplify the result
@@ -1040,14 +1185,13 @@ void RB_DrawSun(void)
 		// (SA) FIXME: todo: flare effect should render last (on top of everything else) and only when sun is in view (sun moving out of camera past degree n should start to cause flare dimming until view angle to sun is off by angle n + x.
 
 		// draw the flare
-		RB_BeginSurface(tr.sunflareShader[0], tess.fogNum);
+		RB_BeginSurface(tr.sunflareShader_old[0], tess.fogNum);
 		RB_AddQuadStamp(origin, vec1, vec2, color);
 		RB_EndSurface();
 	}
 
 	// back to normal depth range
 	qglDepthRange(0.0, 1.0);
-	qglPopMatrix();
 }
 
 extern void R_Fog(glfog_t *curfog);
@@ -1090,7 +1234,9 @@ void RB_StageIteratorSky(void)
 		}
 	}
 
+
 	backEnd.refdef.rdflags |= RDF_DRAWINGSKY;
+
 
 	// go through all the polygons and project them onto
 	// the sky box to see which blocks on each side need
@@ -1109,20 +1255,28 @@ void RB_StageIteratorSky(void)
 		qglDepthRange(1.0, 1.0);
 	}
 
-	GL_Cull(CT_TWO_SIDED);
-
 	// draw the outer skybox
 	if (tess.shader->sky.outerbox[0] && tess.shader->sky.outerbox[0] != tr.defaultImage)
 	{
-		qglColor3f(tr.identityLight, tr.identityLight, tr.identityLight);
+		matrix_t oldmodelview;
 
-		qglPushMatrix();
 		GL_State(0);
-		qglTranslatef(backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
+		//qglTranslatef( backEnd.viewParms.or.origin[0], backEnd.viewParms.or.origin[1], backEnd.viewParms.or.origin[2] );
+
+		{
+			// FIXME: this could be a lot cleaner
+			matrix_t trans, product;
+
+			Matrix16Copy(glState.modelview, oldmodelview);
+			Matrix16Translation(backEnd.viewParms.or.origin, trans);
+			Matrix16Multiply(glState.modelview, trans, product);
+			GL_SetModelviewMatrix(product);
+
+		}
 
 		DrawSkyBox(tess.shader);
 
-		qglPopMatrix();
+		GL_SetModelviewMatrix(oldmodelview);
 	}
 
 	// generate the vertexes for all the clouds, which will be drawn
@@ -1135,16 +1289,27 @@ void RB_StageIteratorSky(void)
 	// Rafael - drawing inner skybox
 	if (tess.shader->sky.innerbox[0] && tess.shader->sky.innerbox[0] != tr.defaultImage)
 	{
-		qglColor3f(tr.identityLight, tr.identityLight, tr.identityLight);
+		matrix_t oldmodelview;
 
-		qglPushMatrix();
 		GL_State(0);
-		qglTranslatef(backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
+		//qglTranslatef( backEnd.viewParms.or.origin[0], backEnd.viewParms.or.origin[1], backEnd.viewParms.or.origin[2] );
+
+		{
+			// FIXME: this could be a lot cleaner
+			matrix_t trans, product;
+
+			Matrix16Copy(glState.modelview, oldmodelview);
+			Matrix16Translation(backEnd.viewParms.or.origin, trans);
+			Matrix16Multiply(glState.modelview, trans, product);
+			GL_SetModelviewMatrix(product);
+
+		}
 
 		DrawSkyBoxInner(tess.shader);
 
-		qglPopMatrix();
+		GL_SetModelviewMatrix(oldmodelview);
 	}
+	// Rafael - end
 
 	// back to normal depth range
 	qglDepthRange(0.0, 1.0);

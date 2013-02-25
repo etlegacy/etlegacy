@@ -28,7 +28,7 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file tr_public.h
+ * @file tr_publish.c
  */
 
 #ifndef __TR_PUBLIC_H
@@ -37,7 +37,6 @@
 #include "tr_types.h"
 
 #define REF_API_VERSION     8
-
 
 // these are the functions exported by the refresh module
 typedef struct

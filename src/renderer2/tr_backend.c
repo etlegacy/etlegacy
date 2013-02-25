@@ -27,14 +27,13 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_backend.c
  */
 
 #include "tr_local.h"
 
 backEndData_t  *backEndData;
 backEndState_t backEnd;
+
 
 static float s_flipMatrix[16] =
 {
@@ -45,6 +44,7 @@ static float s_flipMatrix[16] =
 	0,  1, 0,  0,
 	0,  0, 0,  1
 };
+
 
 /*
 ** GL_Bind2
@@ -77,7 +77,7 @@ void GL_Bind2(image_t *image, GLenum type)
 }
 
 /*
-GL_Bind
+** GL_Bind
 */
 void GL_Bind(image_t *image)
 {
@@ -85,7 +85,15 @@ void GL_Bind(image_t *image)
 }
 
 /*
-GL_SelectTexture
+** GL_BindCubemap
+*/
+void GL_BindCubemap(image_t *image)
+{
+	GL_Bind2(image, GL_TEXTURE_CUBE_MAP);
+}
+
+/*
+** GL_SelectTexture
 */
 void GL_SelectTexture(int unit)
 {
@@ -94,32 +102,19 @@ void GL_SelectTexture(int unit)
 		return;
 	}
 
-	if (unit == 0)
-	{
-		qglActiveTextureARB(GL_TEXTURE0_ARB);
-		GLimp_LogComment("glActiveTextureARB( GL_TEXTURE0_ARB )\n");
-		qglClientActiveTextureARB(GL_TEXTURE0_ARB);
-		GLimp_LogComment("glClientActiveTextureARB( GL_TEXTURE0_ARB )\n");
-	}
-	else if (unit == 1)
-	{
-		qglActiveTextureARB(GL_TEXTURE1_ARB);
-		GLimp_LogComment("glActiveTextureARB( GL_TEXTURE1_ARB )\n");
-		qglClientActiveTextureARB(GL_TEXTURE1_ARB);
-		GLimp_LogComment("glClientActiveTextureARB( GL_TEXTURE1_ARB )\n");
-	}
-	else
+	if (!(unit >= 0 && unit <= 31))
 	{
 		ri.Error(ERR_DROP, "GL_SelectTexture: unit = %i", unit);
 	}
 
+	qglActiveTextureARB(GL_TEXTURE0_ARB + unit);
+
 	glState.currenttmu = unit;
 }
 
-/*
-GL_BindMultitexture
 
-@note Unused
+/*
+** GL_BindMultitexture
 */
 void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint env1)
 {
@@ -147,14 +142,6 @@ void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint e
 		glState.currenttextures[0] = texnum0;
 		qglBindTexture(GL_TEXTURE_2D, texnum0);
 	}
-}
-
-/*
-** GL_BindCubemap
-*/
-void GL_BindCubemap(image_t *image)
-{
-	GL_Bind2(image, GL_TEXTURE_CUBE_MAP);
 }
 
 /*
@@ -188,7 +175,7 @@ void GL_BindToTMU(image_t *image, int tmu)
 }
 
 /*
-GL_Cull
+** GL_Cull
 */
 void GL_Cull(int cullType)
 {
@@ -205,35 +192,25 @@ void GL_Cull(int cullType)
 	}
 	else
 	{
+		qboolean cullFront;
 		qglEnable(GL_CULL_FACE);
 
-		if (cullType == CT_BACK_SIDED)
+		cullFront = (cullType == CT_FRONT_SIDED);
+		if (backEnd.viewParms.isMirror)
 		{
-			if (backEnd.viewParms.isMirror)
-			{
-				qglCullFace(GL_FRONT);
-			}
-			else
-			{
-				qglCullFace(GL_BACK);
-			}
+			cullFront = !cullFront;
 		}
-		else
+		if (backEnd.currentEntity && backEnd.currentEntity->mirrored)
 		{
-			if (backEnd.viewParms.isMirror)
-			{
-				qglCullFace(GL_BACK);
-			}
-			else
-			{
-				qglCullFace(GL_FRONT);
-			}
+			cullFront = !cullFront;
 		}
+
+		qglCullFace(cullFront ? GL_FRONT : GL_BACK);
 	}
 }
 
 /*
-GL_TexEnv
+** GL_TexEnv
 */
 void GL_TexEnv(int env)
 {
@@ -260,15 +237,16 @@ void GL_TexEnv(int env)
 		qglTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
 		break;
 	default:
-		ri.Error(ERR_DROP, "GL_TexEnv: invalid env '%d' passed\n", env);
+		ri.Error(ERR_DROP, "GL_TexEnv: invalid env '%d' passed", env);
 		break;
 	}
 }
 
 /*
-GL_State
-
-    This routine is responsible for setting the most commonly changed state in Q3.
+** GL_State
+**
+** This routine is responsible for setting the most commonly changed state
+** in Q3.
 */
 void GL_State(unsigned long stateBits)
 {
@@ -279,12 +257,18 @@ void GL_State(unsigned long stateBits)
 		return;
 	}
 
+	//
 	// check depthFunc bits
-	if (diff & GLS_DEPTHFUNC_EQUAL)
+	//
+	if (diff & GLS_DEPTHFUNC_BITS)
 	{
 		if (stateBits & GLS_DEPTHFUNC_EQUAL)
 		{
 			qglDepthFunc(GL_EQUAL);
+		}
+		else if (stateBits & GLS_DEPTHFUNC_GREATER)
+		{
+			qglDepthFunc(GL_GREATER);
 		}
 		else
 		{
@@ -292,7 +276,9 @@ void GL_State(unsigned long stateBits)
 		}
 	}
 
+	//
 	// check blend bits
+	//
 	if (diff & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS))
 	{
 		GLenum srcFactor, dstFactor;
@@ -330,7 +316,7 @@ void GL_State(unsigned long stateBits)
 				break;
 			default:
 				srcFactor = GL_ONE;     // to get warning to shut up
-				ri.Error(ERR_DROP, "GL_State: invalid src blend state bits\n");
+				ri.Error(ERR_DROP, "GL_State: invalid src blend state bits");
 				break;
 			}
 
@@ -362,7 +348,7 @@ void GL_State(unsigned long stateBits)
 				break;
 			default:
 				dstFactor = GL_ONE;     // to get warning to shut up
-				ri.Error(ERR_DROP, "GL_State: invalid dst blend state bits\n");
+				ri.Error(ERR_DROP, "GL_State: invalid dst blend state bits");
 				break;
 			}
 
@@ -375,7 +361,9 @@ void GL_State(unsigned long stateBits)
 		}
 	}
 
+	//
 	// check depthmask
+	//
 	if (diff & GLS_DEPTHMASK_TRUE)
 	{
 		if (stateBits & GLS_DEPTHMASK_TRUE)
@@ -388,7 +376,9 @@ void GL_State(unsigned long stateBits)
 		}
 	}
 
+	//
 	// fill/line mode
+	//
 	if (diff & GLS_POLYMODE_LINE)
 	{
 		if (stateBits & GLS_POLYMODE_LINE)
@@ -401,7 +391,9 @@ void GL_State(unsigned long stateBits)
 		}
 	}
 
+	//
 	// depthtest
+	//
 	if (diff & GLS_DEPTHTEST_DISABLE)
 	{
 		if (stateBits & GLS_DEPTHTEST_DISABLE)
@@ -414,7 +406,9 @@ void GL_State(unsigned long stateBits)
 		}
 	}
 
+	//
 	// alpha test
+	//
 	if (diff & GLS_ATEST_BITS)
 	{
 		switch (stateBits & GLS_ATEST_BITS)
@@ -443,6 +437,20 @@ void GL_State(unsigned long stateBits)
 	glState.glStateBits = stateBits;
 }
 
+void GL_SetProjectionMatrix(matrix_t matrix)
+{
+	Matrix16Copy(matrix, glState.projection);
+	Matrix16Multiply(glState.projection, glState.modelview, glState.modelviewProjection);
+}
+
+
+void GL_SetModelviewMatrix(matrix_t matrix)
+{
+	Matrix16Copy(matrix, glState.modelview);
+	Matrix16Multiply(glState.projection, glState.modelview, glState.modelviewProjection);
+}
+
+
 /*
 ================
 RB_Hyperspace
@@ -454,6 +462,11 @@ static void RB_Hyperspace(void)
 {
 	float c;
 
+	if (!backEnd.isHyperspace)
+	{
+		// do initialization shit
+	}
+
 	c = (backEnd.refdef.time & 255) / 255.0f;
 	qglClearColor(c, c, c, 1);
 	qglClear(GL_COLOR_BUFFER_BIT);
@@ -461,11 +474,10 @@ static void RB_Hyperspace(void)
 	backEnd.isHyperspace = qtrue;
 }
 
+
 static void SetViewportAndScissor(void)
 {
-	qglMatrixMode(GL_PROJECTION);
-	qglLoadMatrixf(backEnd.viewParms.projectionMatrix);
-	qglMatrixMode(GL_MODELVIEW);
+	GL_SetProjectionMatrix(backEnd.viewParms.projectionMatrix);
 
 	// set the window clipping
 	qglViewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
@@ -501,14 +513,37 @@ void RB_BeginDrawingView(void)
 	// 2D images again
 	backEnd.projection2D = qfalse;
 
+	if (glRefConfig.framebufferObject)
+	{
+		// FIXME: HUGE HACK: render to the screen fbo if we've already postprocessed the frame and aren't drawing more world
+		// drawing more world check is in case of double renders, such as skyportals
+		if (backEnd.viewParms.targetFbo == NULL)
+		{
+			if (!tr.renderFbo || (backEnd.framePostProcessed && (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)))
+			{
+				FBO_Bind(tr.screenScratchFbo);
+			}
+			else
+			{
+				FBO_Bind(tr.renderFbo);
+			}
+		}
+		else
+		{
+			FBO_Bind(backEnd.viewParms.targetFbo);
+		}
+	}
+
+	//
 	// set the modelview matrix for the viewer
+	//
 	SetViewportAndScissor();
 
 	// ensures that depth writes are enabled for the depth clear
 	GL_State(GLS_DEFAULT);
 
 
-	////////// (SA) modified to ensure one glclear() per frame at most
+////////// (SA) modified to ensure one glclear() per frame at most
 
 	// clear relevant buffers
 	clearBits = 0;
@@ -517,15 +552,11 @@ void RB_BeginDrawingView(void)
 	{
 		clearBits |= GL_STENCIL_BUFFER_BIT;
 	}
-	// global q3 fog volume
-	else if (tr.world && tr.world->globalFog >= 0)
+
+	if (r_uiFullScreen->integer)
 	{
-		clearBits |= GL_DEPTH_BUFFER_BIT;
-		clearBits |= GL_COLOR_BUFFER_BIT;
-		//
-		qglClearColor(tr.world->fogs[tr.world->globalFog].shader->fogParms.color[0] * tr.identityLight,
-		              tr.world->fogs[tr.world->globalFog].shader->fogParms.color[1] * tr.identityLight,
-		              tr.world->fogs[tr.world->globalFog].shader->fogParms.color[2] * tr.identityLight, 1.0);
+		clearBits = GL_DEPTH_BUFFER_BIT;    // (SA) always just clear depth for menus
+
 	}
 	else if (skyboxportal)
 	{
@@ -546,6 +577,7 @@ void RB_BeginDrawingView(void)
 				}
 				else
 				{
+//					qglClearColor ( 1.0, 0.0, 0.0, 1.0 );	// red clear for testing portal sky clear
 					qglClearColor(0.5, 0.5, 0.5, 1.0);
 				}
 			}
@@ -563,7 +595,7 @@ void RB_BeginDrawingView(void)
 
 			}
 		}
-		else  // world scene with portal sky, don't clear any buffers, just set the fog color if there is one
+		else                                            // world scene with portal sky, don't clear any buffers, just set the fog color if there is one
 		{
 			clearBits |= GL_DEPTH_BUFFER_BIT;   // this will go when I get the portal sky rendering way out in the zbuffer (or not writing to zbuffer at all)
 
@@ -577,29 +609,25 @@ void RB_BeginDrawingView(void)
 					}
 
 				}
-				else if (!(r_portalsky->integer)) // portal skies have been manually turned off, clear bg color
+				else if (!(r_portalsky->integer))            // portal skies have been manually turned off, clear bg color
 				{
 					clearBits |= GL_COLOR_BUFFER_BIT;
 				}
 
 				qglClearColor(glfogsettings[FOG_CURRENT].color[0], glfogsettings[FOG_CURRENT].color[1], glfogsettings[FOG_CURRENT].color[2], glfogsettings[FOG_CURRENT].color[3]);
 			}
-			else if (!(r_portalsky->integer)) // portal skies have been manually turned off, clear bg color
-			{
-				clearBits |= GL_COLOR_BUFFER_BIT;
-				qglClearColor(0.5, 0.5, 0.5, 1.0);
-			}
 		}
 	}
-	else // world scene with no portal sky
+	else                                                  // world scene with no portal sky
 	{
 		clearBits |= GL_DEPTH_BUFFER_BIT;
 
-		// we don't want to clear the buffer when no world model is specified
+		// NERVE - SMF - we don't want to clear the buffer when no world model is specified
 		if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 		{
 			clearBits &= ~GL_COLOR_BUFFER_BIT;
 		}
+		// -NERVE - SMF
 		else if (r_fastsky->integer || backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 		{
 
@@ -611,10 +639,11 @@ void RB_BeginDrawingView(void)
 			}
 			else
 			{
+//				qglClearColor ( 0.0, 0.0, 1.0, 1.0 );	// blue clear for testing world sky clear
 				qglClearColor(0.05, 0.05, 0.05, 1.0);    // JPW NERVE changed per id req was 0.5s
 			}
 		}
-		else  // world scene, no portal sky, not fastsky, clear color if fog says to, otherwise, just set the clearcolor
+		else            // world scene, no portal sky, not fastsky, clear color if fog says to, otherwise, just set the clearcolor
 		{
 			if (glfogsettings[FOG_CURRENT].registered)     // try to clear fastsky with current fog color
 			{
@@ -628,16 +657,19 @@ void RB_BeginDrawingView(void)
 		}
 	}
 
-	// don't clear the color buffer when no world model is specified
-	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+	// clear to white for shadow maps
+	if (backEnd.viewParms.flags & VPF_SHADOWMAP)
 	{
-		clearBits &= ~GL_COLOR_BUFFER_BIT;
+		clearBits |= GL_COLOR_BUFFER_BIT;
+		qglClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	if (clearBits)
 	{
 		qglClear(clearBits);
 	}
+
+//----(SA)	done
 
 	if ((backEnd.refdef.rdflags & RDF_HYPERSPACE))
 	{
@@ -649,7 +681,7 @@ void RB_BeginDrawingView(void)
 		backEnd.isHyperspace = qfalse;
 	}
 
-	glState.faceCulling = -1; // force face culling to set next time
+	glState.faceCulling = -1;       // force face culling to set next time
 
 	// we will only draw a sun if there was sky rendered in this view
 	backEnd.skyRenderedThisView = qfalse;
@@ -657,6 +689,7 @@ void RB_BeginDrawingView(void)
 	// clip to the plane of the portal
 	if (backEnd.viewParms.isPortal)
 	{
+#if 0
 		float  plane[4];
 		double plane2[4];
 
@@ -665,20 +698,17 @@ void RB_BeginDrawingView(void)
 		plane[2] = backEnd.viewParms.portalPlane.normal[2];
 		plane[3] = backEnd.viewParms.portalPlane.dist;
 
-		plane2[0] = DotProduct(backEnd.viewParms.orientation.axis[0], plane);
-		plane2[1] = DotProduct(backEnd.viewParms.orientation.axis[1], plane);
-		plane2[2] = DotProduct(backEnd.viewParms.orientation.axis[2], plane);
-		plane2[3] = DotProduct(plane, backEnd.viewParms.orientation.origin) - plane[3];
+		plane2[0] = DotProduct(backEnd.viewParms.or.axis[0], plane);
+		plane2[1] = DotProduct(backEnd.viewParms.or.axis[1], plane);
+		plane2[2] = DotProduct(backEnd.viewParms.or.axis[2], plane);
+		plane2[3] = DotProduct(plane, backEnd.viewParms.or.origin) - plane[3];
 
-		qglLoadMatrixf(s_flipMatrix);
-		qglClipPlane(GL_CLIP_PLANE0, plane2);
-		qglEnable(GL_CLIP_PLANE0);
-	}
-	else
-	{
-		qglDisable(GL_CLIP_PLANE0);
+#endif
+		GL_SetModelviewMatrix(s_flipMatrix);
 	}
 }
+
+#define MAC_EVENT_PUMP_MSEC     5
 
 /*
 ==================
@@ -690,19 +720,22 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 	shader_t   *shader, *oldShader;
 	int        fogNum, oldFogNum;
 	int        entityNum, oldEntityNum;
-	int        frontFace;
 	int        dlighted, oldDlighted;
-	qboolean   depthRange, oldDepthRange;
+	int        pshadowed, oldPshadowed;
+	qboolean   depthRange, oldDepthRange, isCrosshair, wasCrosshair;
 	int        i;
 	drawSurf_t *drawSurf;
 	int        oldSort;
 	float      originalTime;
+	FBO_t      *fbo    = NULL;
+	qboolean   inQuery = qfalse;
+
+	float depth[2];
 
 	// save original time for entity shader offsets
 	originalTime = backEnd.refdef.floatTime;
 
-	// clear the z buffer, set the modelview, etc
-	RB_BeginDrawingView();
+	fbo = glState.currentFBO;
 
 	// draw everything
 	oldEntityNum          = -1;
@@ -710,9 +743,14 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 	oldShader             = NULL;
 	oldFogNum             = -1;
 	oldDepthRange         = qfalse;
+	wasCrosshair          = qfalse;
 	oldDlighted           = qfalse;
+	oldPshadowed          = qfalse;
 	oldSort               = -1;
 	depthRange            = qfalse;
+
+	depth[0] = 0.f;
+	depth[1] = 1.f;
 
 	backEnd.pc.c_surfaces += numDrawSurfs;
 
@@ -720,17 +758,23 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 	{
 		if (drawSurf->sort == oldSort)
 		{
+			if (backEnd.depthFill && shader && shader->sort != SS_OPAQUE)
+			{
+				continue;
+			}
+
 			// fast path, same as previous sort
-			rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
+			rb_surfaceTable[*drawSurf->surface](drawSurf->surface);
 			continue;
 		}
 		oldSort = drawSurf->sort;
-		R_DecomposeSort(drawSurf->sort, &entityNum, &shader, &fogNum, &frontFace, &dlighted);
+		R_DecomposeSort(drawSurf->sort, &entityNum, &shader, &fogNum, &dlighted, &pshadowed);
 
+		//
 		// change the tess parameters if needed
 		// a "entityMergable" shader is a shader that can have surfaces from seperate
 		// entities merged into a single batch, like smoke and blood puff sprites
-		if (shader != oldShader || fogNum != oldFogNum || dlighted != oldDlighted
+		if (shader != oldShader || fogNum != oldFogNum || dlighted != oldDlighted || pshadowed != oldPshadowed
 		    || (entityNum != oldEntityNum && !shader->entityMergable))
 		{
 			if (oldShader != NULL)
@@ -738,74 +782,130 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 				RB_EndSurface();
 			}
 			RB_BeginSurface(shader, fogNum);
-			oldShader   = shader;
-			oldFogNum   = fogNum;
-			oldDlighted = dlighted;
+			backEnd.pc.c_surfBatches++;
+			oldShader    = shader;
+			oldFogNum    = fogNum;
+			oldDlighted  = dlighted;
+			oldPshadowed = pshadowed;
 		}
 
+		if (backEnd.depthFill && shader && shader->sort != SS_OPAQUE)
+		{
+			continue;
+		}
+
+		//
 		// change the modelview matrix if needed
+		//
 		if (entityNum != oldEntityNum)
 		{
-			depthRange = qfalse;
+			qboolean sunflare = qfalse;
+			depthRange = isCrosshair = qfalse;
 
-			if (entityNum != ENTITYNUM_WORLD)
+			if (entityNum != REFENTITYNUM_WORLD)
 			{
 				backEnd.currentEntity    = &backEnd.refdef.entities[entityNum];
 				backEnd.refdef.floatTime = originalTime; // - backEnd.currentEntity->e.shaderTime; // JPW NERVE pulled this to match q3ta
 
 				// we have to reset the shaderTime as well otherwise image animations start
 				// from the wrong frame
-				// tess.shaderTime = backEnd.refdef.floatTime - tess.shader->timeOffset;
+//				tess.shaderTime = backEnd.refdef.floatTime - tess.shader->timeOffset;
 
 				// set up the transformation matrix
-				R_RotateForEntity(backEnd.currentEntity, &backEnd.viewParms, &backEnd.orientation);
+				R_RotateForEntity(backEnd.currentEntity, &backEnd.viewParms, &backEnd.or);
 
 				// set up the dynamic lighting if needed
 				if (backEnd.currentEntity->needDlights)
 				{
-					R_TransformDlights(backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.orientation);
+					R_TransformDlights(backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.or);
 				}
 
 				if (backEnd.currentEntity->e.renderfx & RF_DEPTHHACK)
 				{
 					// hack the depth range to prevent view model from poking into walls
 					depthRange = qtrue;
+
+					if (backEnd.currentEntity->e.renderfx & RF_CROSSHAIR)
+					{
+						isCrosshair = qtrue;
+					}
 				}
 			}
 			else
 			{
 				backEnd.currentEntity    = &tr.worldEntity;
 				backEnd.refdef.floatTime = originalTime;
-				backEnd.orientation      = backEnd.viewParms.world;
+				backEnd.or               = backEnd.viewParms.world;
 
 				// we have to reset the shaderTime as well otherwise image animations on
 				// the world (like water) continue with the wrong frame
-				// tess.shaderTime = backEnd.refdef.floatTime - tess.shader->timeOffset;
+//				tess.shaderTime = backEnd.refdef.floatTime - tess.shader->timeOffset;
 
-				R_TransformDlights(backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.orientation);
+				R_TransformDlights(backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.or);
 			}
 
-			qglLoadMatrixf(backEnd.orientation.modelMatrix);
+			GL_SetModelviewMatrix(backEnd.or.modelMatrix);
 
-			// change depthrange if needed
-			if (oldDepthRange != depthRange)
+			//
+			// change depthrange. Also change projection matrix so first person weapon does not look like coming
+			// out of the screen.
+			//
+			if (oldDepthRange != depthRange || wasCrosshair != isCrosshair)
 			{
 				if (depthRange)
 				{
-					qglDepthRange(0, 0.3);
+					if (backEnd.viewParms.stereoFrame != STEREO_CENTER)
+					{
+						if (isCrosshair)
+						{
+							if (oldDepthRange)
+							{
+								// was not a crosshair but now is, change back proj matrix
+								GL_SetProjectionMatrix(backEnd.viewParms.projectionMatrix);
+							}
+						}
+						else
+						{
+							viewParms_t temp = backEnd.viewParms;
+
+							R_SetupProjection(&temp, r_znear->value, 0, qfalse);
+
+							GL_SetProjectionMatrix(temp.projectionMatrix);
+						}
+					}
+
+					if (!oldDepthRange)
+					{
+						depth[0] = 0;
+						depth[1] = 0.3f;
+						qglDepthRange(depth[0], depth[1]);
+					}
 				}
 				else
 				{
-					qglDepthRange(0, 1);
+					if (!wasCrosshair && backEnd.viewParms.stereoFrame != STEREO_CENTER)
+					{
+						GL_SetProjectionMatrix(backEnd.viewParms.projectionMatrix);
+					}
+
+					if (!sunflare)
+					{
+						qglDepthRange(0, 1);
+					}
+
+					depth[0] = 0;
+					depth[1] = 1;
 				}
+
 				oldDepthRange = depthRange;
+				wasCrosshair  = isCrosshair;
 			}
 
 			oldEntityNum = entityNum;
 		}
 
 		// add the triangles for this surface
-		rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
+		rb_surfaceTable[*drawSurf->surface](drawSurf->surface);
 	}
 
 	// draw the contents of the last shader batch
@@ -817,48 +917,74 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 	// go back to the world modelview matrix
 	backEnd.currentEntity    = &tr.worldEntity;
 	backEnd.refdef.floatTime = originalTime;
-	backEnd.orientation      = backEnd.viewParms.world;
-	R_TransformDlights(backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.orientation);
+	backEnd.or               = backEnd.viewParms.world;
+	R_TransformDlights(backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.or);
 
-	qglLoadMatrixf(backEnd.viewParms.world.modelMatrix);
-	if (depthRange)
+	if (inQuery)
 	{
-		qglDepthRange(0, 1);
+		inQuery = qfalse;
+		qglEndQueryARB(GL_SAMPLES_PASSED_ARB);
 	}
 
-	// draw sun
-	RB_DrawSun();
+	if (glRefConfig.framebufferObject)
+	{
+		FBO_Bind(fbo);
+	}
 
-	// darken down any stencil shadows
-	RB_ShadowFinish();
+	// go back to the world modelview matrix
 
-	// add light flares on lights that aren't obscured
-	RB_RenderFlares();
+	GL_SetModelviewMatrix(backEnd.viewParms.world.modelMatrix);
+
+	qglDepthRange(0, 1);
 }
+
 
 /*
 ============================================================================
+
 RENDER BACK END FUNCTIONS
+
 ============================================================================
 */
 
 /*
 ================
 RB_SetGL2D
+
 ================
 */
-void RB_SetGL2D(void)
+void    RB_SetGL2D(void)
 {
+	matrix_t matrix;
+	int      width, height;
+
+	if (backEnd.projection2D && backEnd.last2DFBO == glState.currentFBO)
+	{
+		return;
+	}
+
 	backEnd.projection2D = qtrue;
+	backEnd.last2DFBO    = glState.currentFBO;
+
+	if (glState.currentFBO)
+	{
+		width  = glState.currentFBO->width;
+		height = glState.currentFBO->height;
+	}
+	else
+	{
+		width  = glConfig.vidWidth;
+		height = glConfig.vidHeight;
+	}
 
 	// set 2D virtual screen size
-	qglViewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
-	qglScissor(0, 0, glConfig.vidWidth, glConfig.vidHeight);
-	qglMatrixMode(GL_PROJECTION);
-	qglLoadIdentity();
-	qglOrtho(0, glConfig.vidWidth, glConfig.vidHeight, 0, 0, 1);
-	qglMatrixMode(GL_MODELVIEW);
-	qglLoadIdentity();
+	qglViewport(0, 0, width, height);
+	qglScissor(0, 0, width, height);
+
+	Matrix16Ortho(0, width, height, 0, 0, 1, matrix);
+	GL_SetProjectionMatrix(matrix);
+	Matrix16Identity(matrix);
+	GL_SetModelviewMatrix(matrix);
 
 	GL_State(GLS_DEPTHTEST_DISABLE |
 	         GLS_SRCBLEND_SRC_ALPHA |
@@ -870,7 +996,11 @@ void RB_SetGL2D(void)
 	// set time for 2D shaders
 	backEnd.refdef.time      = ri.Milliseconds();
 	backEnd.refdef.floatTime = backEnd.refdef.time * 0.001f;
+
+	// reset color scaling
+	backEnd.refdef.colorScale = 1.0f;
 }
+
 
 /*
 =============
@@ -883,8 +1013,10 @@ Used for cinematics.
 */
 void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty)
 {
-	int i, j;
-	int start;
+	int             i, j;
+	int             start, end;
+	shaderProgram_t *sp = &tr.textureColorShader;
+	vec4_t          color;
 
 	if (!tr.registered)
 	{
@@ -938,29 +1070,109 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 
 	if (r_speeds->integer)
 	{
-		int end = ri.Milliseconds();
-
+		end = ri.Milliseconds();
 		ri.Printf(PRINT_ALL, "qglTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
+	}
+
+	// FIXME: HUGE hack
+	if (glRefConfig.framebufferObject)
+	{
+		if (!tr.renderFbo || backEnd.framePostProcessed)
+		{
+			FBO_Bind(tr.screenScratchFbo);
+		}
+		else
+		{
+			FBO_Bind(tr.renderFbo);
+		}
 	}
 
 	RB_SetGL2D();
 
-	qglColor3f(tr.identityLight, tr.identityLight, tr.identityLight);
+	tess.numIndexes  = 0;
+	tess.numVertexes = 0;
+	tess.firstIndex  = 0;
+	tess.minIndex    = 0;
+	tess.maxIndex    = 0;
 
-	qglBegin(GL_QUADS);
-	qglTexCoord2f(0.5f / cols, 0.5f / rows);
-	qglVertex2f(x, y);
-	qglTexCoord2f((cols - 0.5f) / cols, 0.5f / rows);
-	qglVertex2f(x + w, y);
-	qglTexCoord2f((cols - 0.5f) / cols, (rows - 0.5f) / rows);
-	qglVertex2f(x + w, y + h);
-	qglTexCoord2f(0.5f / cols, (rows - 0.5f) / rows);
-	qglVertex2f(x, y + h);
-	qglEnd();
+	tess.xyz[tess.numVertexes][0]          = x;
+	tess.xyz[tess.numVertexes][1]          = y;
+	tess.xyz[tess.numVertexes][2]          = 0;
+	tess.xyz[tess.numVertexes][3]          = 1;
+	tess.texCoords[tess.numVertexes][0][0] = 0.5f / cols;
+	tess.texCoords[tess.numVertexes][0][1] = 0.5f / rows;
+	tess.texCoords[tess.numVertexes][1][0] = 0;
+	tess.texCoords[tess.numVertexes][1][1] = 1;
+	tess.numVertexes++;
+
+	tess.xyz[tess.numVertexes][0]          = x + w;
+	tess.xyz[tess.numVertexes][1]          = y;
+	tess.xyz[tess.numVertexes][2]          = 0;
+	tess.xyz[tess.numVertexes][3]          = 1;
+	tess.texCoords[tess.numVertexes][0][0] = (cols - 0.5f) / cols;
+	tess.texCoords[tess.numVertexes][0][1] = 0.5f / rows;
+	tess.texCoords[tess.numVertexes][1][0] = 0;
+	tess.texCoords[tess.numVertexes][1][1] = 1;
+	tess.numVertexes++;
+
+	tess.xyz[tess.numVertexes][0]          = x + w;
+	tess.xyz[tess.numVertexes][1]          = y + h;
+	tess.xyz[tess.numVertexes][2]          = 0;
+	tess.xyz[tess.numVertexes][3]          = 1;
+	tess.texCoords[tess.numVertexes][0][0] = (cols - 0.5f) / cols;
+	tess.texCoords[tess.numVertexes][0][1] = (rows - 0.5f) / rows;
+	tess.texCoords[tess.numVertexes][1][0] = 0;
+	tess.texCoords[tess.numVertexes][1][1] = 1;
+	tess.numVertexes++;
+
+	tess.xyz[tess.numVertexes][0]          = x;
+	tess.xyz[tess.numVertexes][1]          = y + h;
+	tess.xyz[tess.numVertexes][2]          = 0;
+	tess.xyz[tess.numVertexes][3]          = 1;
+	tess.texCoords[tess.numVertexes][0][0] = 0.5f / cols;
+	tess.texCoords[tess.numVertexes][0][1] = (rows - 0.5f) / rows;
+	tess.texCoords[tess.numVertexes][1][0] = 0;
+	tess.texCoords[tess.numVertexes][1][1] = 1;
+	tess.numVertexes++;
+
+	tess.indexes[tess.numIndexes++] = 0;
+	tess.indexes[tess.numIndexes++] = 1;
+	tess.indexes[tess.numIndexes++] = 2;
+	tess.indexes[tess.numIndexes++] = 0;
+	tess.indexes[tess.numIndexes++] = 2;
+	tess.indexes[tess.numIndexes++] = 3;
+	tess.minIndex                   = 0;
+	tess.maxIndex                   = 3;
+
+	// FIXME: A lot of this can probably be removed for speed, and refactored into a more convenient function
+	RB_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD);
+
+	sp = &tr.textureColorShader;
+
+	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD);
+
+	GLSL_BindProgram(sp);
+
+	GLSL_SetUniformMatrix16(sp, TEXTURECOLOR_UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
+	VectorSet4(color, 1, 1, 1, 1);
+	GLSL_SetUniformVec4(sp, TEXTURECOLOR_UNIFORM_COLOR, color);
+
+	R_DrawElementsVBO(tess.numIndexes, tess.firstIndex, tess.minIndex, tess.maxIndex);
+
+	//R_BindNullVBO();
+	//R_BindNullIBO();
+
+	tess.numIndexes  = 0;
+	tess.numVertexes = 0;
+	tess.firstIndex  = 0;
+	tess.minIndex    = 0;
+	tess.maxIndex    = 0;
 }
+
 
 void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty)
 {
+
 	GL_Bind(tr.scratchImage[client]);
 
 	// if the scratchImage isn't in the format we want, specify it as a new texture
@@ -985,6 +1197,7 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 	}
 }
 
+
 /*
 =============
 RB_SetColor
@@ -995,14 +1208,14 @@ const void *RB_SetColor(const void *data)
 {
 	const setColorCommand_t *cmd;
 
-	cmd = ( const setColorCommand_t * ) data;
+	cmd = (const setColorCommand_t *)data;
 
 	backEnd.color2D[0] = cmd->color[0] * 255;
 	backEnd.color2D[1] = cmd->color[1] * 255;
 	backEnd.color2D[2] = cmd->color[2] * 255;
 	backEnd.color2D[3] = cmd->color[3] * 255;
 
-	return ( const void * ) (cmd + 1);
+	return (const void *)(cmd + 1);
 }
 
 /*
@@ -1016,12 +1229,22 @@ const void *RB_StretchPic(const void *data)
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
 
-	cmd = ( const stretchPicCommand_t * ) data;
+	cmd = (const stretchPicCommand_t *)data;
 
-	if (!backEnd.projection2D)
+	// FIXME: HUGE hack
+	if (glRefConfig.framebufferObject)
 	{
-		RB_SetGL2D();
+		if (!tr.renderFbo || backEnd.framePostProcessed)
+		{
+			FBO_Bind(tr.screenScratchFbo);
+		}
+		else
+		{
+			FBO_Bind(tr.renderFbo);
+		}
 	}
+
+	RB_SetGL2D();
 
 	shader = cmd->shader;
 	if (shader != tess.shader)
@@ -1048,95 +1271,49 @@ const void *RB_StretchPic(const void *data)
 	tess.indexes[numIndexes + 4] = numVerts + 0;
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
-	*( int * ) tess.vertexColors[numVerts].v                 =
-	    *( int * ) tess.vertexColors[numVerts + 1].v         =
-	        *( int * ) tess.vertexColors[numVerts + 2].v     =
-	            *( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
+	{
+		vec4_t color;
 
-	tess.xyz[numVerts].v[0] = cmd->x;
-	tess.xyz[numVerts].v[1] = cmd->y;
-	tess.xyz[numVerts].v[2] = 0;
+		VectorScale4(backEnd.color2D, 1.0f / 255.0f, color);
 
-	tess.texCoords0[numVerts].v[0] = cmd->s1;
-	tess.texCoords0[numVerts].v[1] = cmd->t1;
+		VectorCopy4(color, tess.vertexColors[numVerts]);
+		VectorCopy4(color, tess.vertexColors[numVerts + 1]);
+		VectorCopy4(color, tess.vertexColors[numVerts + 2]);
+		VectorCopy4(color, tess.vertexColors[numVerts + 3]);
+	}
 
-	tess.xyz[numVerts + 1].v[0] = cmd->x + cmd->w;
-	tess.xyz[numVerts + 1].v[1] = cmd->y;
-	tess.xyz[numVerts + 1].v[2] = 0;
+	tess.xyz[numVerts][0] = cmd->x;
+	tess.xyz[numVerts][1] = cmd->y;
+	tess.xyz[numVerts][2] = 0;
 
-	tess.texCoords0[numVerts + 1].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 1].v[1] = cmd->t1;
+	tess.texCoords[numVerts][0][0] = cmd->s1;
+	tess.texCoords[numVerts][0][1] = cmd->t1;
 
-	tess.xyz[numVerts + 2].v[0] = cmd->x + cmd->w;
-	tess.xyz[numVerts + 2].v[1] = cmd->y + cmd->h;
-	tess.xyz[numVerts + 2].v[2] = 0;
+	tess.xyz[numVerts + 1][0] = cmd->x + cmd->w;
+	tess.xyz[numVerts + 1][1] = cmd->y;
+	tess.xyz[numVerts + 1][2] = 0;
 
-	tess.texCoords0[numVerts + 2].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 2].v[1] = cmd->t2;
+	tess.texCoords[numVerts + 1][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 1][0][1] = cmd->t1;
 
-	tess.xyz[numVerts + 3].v[0] = cmd->x;
-	tess.xyz[numVerts + 3].v[1] = cmd->y + cmd->h;
-	tess.xyz[numVerts + 3].v[2] = 0;
+	tess.xyz[numVerts + 2][0] = cmd->x + cmd->w;
+	tess.xyz[numVerts + 2][1] = cmd->y + cmd->h;
+	tess.xyz[numVerts + 2][2] = 0;
 
-	tess.texCoords0[numVerts + 3].v[0] = cmd->s1;
-	tess.texCoords0[numVerts + 3].v[1] = cmd->t2;
+	tess.texCoords[numVerts + 2][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 2][0][1] = cmd->t2;
 
-	return ( const void * ) (cmd + 1);
+	tess.xyz[numVerts + 3][0] = cmd->x;
+	tess.xyz[numVerts + 3][1] = cmd->y + cmd->h;
+	tess.xyz[numVerts + 3][2] = 0;
+
+	tess.texCoords[numVerts + 3][0][0] = cmd->s1;
+	tess.texCoords[numVerts + 3][0][1] = cmd->t2;
+
+	return (const void *)(cmd + 1);
 }
 
-const void *RB_Draw2dPolys(const void *data)
-{
-	const poly2dCommand_t *cmd;
-	shader_t              *shader;
-	int                   i;
-
-	cmd = ( const poly2dCommand_t * ) data;
-
-	if (!backEnd.projection2D)
-	{
-		RB_SetGL2D();
-	}
-
-	shader = cmd->shader;
-	if (shader != tess.shader)
-	{
-		if (tess.numIndexes)
-		{
-			RB_EndSurface();
-		}
-		backEnd.currentEntity = &backEnd.entity2D;
-		RB_BeginSurface(shader, 0);
-	}
-
-	RB_CHECKOVERFLOW(cmd->numverts, (cmd->numverts - 2) * 3);
-
-	for (i = 0; i < cmd->numverts - 2; i++)
-	{
-		tess.indexes[tess.numIndexes + 0] = tess.numVertexes;
-		tess.indexes[tess.numIndexes + 1] = tess.numVertexes + i + 1;
-		tess.indexes[tess.numIndexes + 2] = tess.numVertexes + i + 2;
-		tess.numIndexes                  += 3;
-	}
-
-	for (i = 0; i < cmd->numverts; i++)
-	{
-		tess.xyz[tess.numVertexes].v[0] = cmd->verts[i].xyz[0];
-		tess.xyz[tess.numVertexes].v[1] = cmd->verts[i].xyz[1];
-		tess.xyz[tess.numVertexes].v[2] = 0;
-
-		tess.texCoords0[tess.numVertexes].v[0] = cmd->verts[i].st[0];
-		tess.texCoords0[tess.numVertexes].v[1] = cmd->verts[i].st[1];
-
-		tess.vertexColors[tess.numVertexes].v[0] = cmd->verts[i].modulate[0];
-		tess.vertexColors[tess.numVertexes].v[1] = cmd->verts[i].modulate[1];
-		tess.vertexColors[tess.numVertexes].v[2] = cmd->verts[i].modulate[2];
-		tess.vertexColors[tess.numVertexes].v[3] = cmd->verts[i].modulate[3];
-		tess.numVertexes++;
-	}
-
-	return ( const void * ) (cmd + 1);
-}
-
+// NERVE - SMF
 /*
 =============
 RB_RotatedPic
@@ -1150,12 +1327,22 @@ const void *RB_RotatedPic(const void *data)
 	float                     angle;
 	float                     pi2 = M_PI * 2;
 
-	cmd = ( const stretchPicCommand_t * ) data;
+	cmd = (const stretchPicCommand_t *)data;
 
-	if (!backEnd.projection2D)
+	// FIXME: HUGE hack
+	if (glRefConfig.framebufferObject)
 	{
-		RB_SetGL2D();
+		if (!tr.renderFbo || backEnd.framePostProcessed)
+		{
+			FBO_Bind(tr.screenScratchFbo);
+		}
+		else
+		{
+			FBO_Bind(tr.renderFbo);
+		}
 	}
+
+	RB_SetGL2D();
 
 	shader = cmd->shader;
 	if (shader != tess.shader)
@@ -1182,45 +1369,52 @@ const void *RB_RotatedPic(const void *data)
 	tess.indexes[numIndexes + 4] = numVerts + 0;
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
-	*( int * ) tess.vertexColors[numVerts].v                 =
-	    *( int * ) tess.vertexColors[numVerts + 1].v         =
-	        *( int * ) tess.vertexColors[numVerts + 2].v     =
-	            *( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
+	{
+		vec4_t color;
 
-	angle                   = cmd->angle * pi2;
-	tess.xyz[numVerts].v[0] = cmd->x + (cos(angle) * cmd->w);
-	tess.xyz[numVerts].v[1] = cmd->y + (sin(angle) * cmd->h);
-	tess.xyz[numVerts].v[2] = 0;
+		VectorScale4(backEnd.color2D, 1.0f / 255.0f, color);
 
-	tess.texCoords0[numVerts].v[0] = cmd->s1;
-	tess.texCoords0[numVerts].v[1] = cmd->t1;
+		VectorCopy4(color, tess.vertexColors[numVerts]);
+		VectorCopy4(color, tess.vertexColors[numVerts + 1]);
+		VectorCopy4(color, tess.vertexColors[numVerts + 2]);
+		VectorCopy4(color, tess.vertexColors[numVerts + 3]);
+	}
 
-	angle                       = cmd->angle * pi2 + 0.25 * pi2;
-	tess.xyz[numVerts + 1].v[0] = cmd->x + (cos(angle) * cmd->w);
-	tess.xyz[numVerts + 1].v[1] = cmd->y + (sin(angle) * cmd->h);
-	tess.xyz[numVerts + 1].v[2] = 0;
+	angle                 = cmd->angle * pi2;
+	tess.xyz[numVerts][0] = cmd->x + (cos(angle) * cmd->w);
+	tess.xyz[numVerts][1] = cmd->y + (sin(angle) * cmd->h);
+	tess.xyz[numVerts][2] = 0;
 
-	tess.texCoords0[numVerts + 1].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 1].v[1] = cmd->t1;
+	tess.texCoords[numVerts][0][0] = cmd->s1;
+	tess.texCoords[numVerts][0][1] = cmd->t1;
 
-	angle                       = cmd->angle * pi2 + 0.50 * pi2;
-	tess.xyz[numVerts + 2].v[0] = cmd->x + (cos(angle) * cmd->w);
-	tess.xyz[numVerts + 2].v[1] = cmd->y + (sin(angle) * cmd->h);
-	tess.xyz[numVerts + 2].v[2] = 0;
+	angle                     = cmd->angle * pi2 + 0.25 * pi2;
+	tess.xyz[numVerts + 1][0] = cmd->x + (cos(angle) * cmd->w);
+	tess.xyz[numVerts + 1][1] = cmd->y + (sin(angle) * cmd->h);
+	tess.xyz[numVerts + 1][2] = 0;
 
-	tess.texCoords0[numVerts + 2].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 2].v[1] = cmd->t2;
+	tess.texCoords[numVerts + 1][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 1][0][1] = cmd->t1;
 
-	angle                       = cmd->angle * pi2 + 0.75 * pi2;
-	tess.xyz[numVerts + 3].v[0] = cmd->x + (cos(angle) * cmd->w);
-	tess.xyz[numVerts + 3].v[1] = cmd->y + (sin(angle) * cmd->h);
-	tess.xyz[numVerts + 3].v[2] = 0;
+	angle                     = cmd->angle * pi2 + 0.50 * pi2;
+	tess.xyz[numVerts + 2][0] = cmd->x + (cos(angle) * cmd->w);
+	tess.xyz[numVerts + 2][1] = cmd->y + (sin(angle) * cmd->h);
+	tess.xyz[numVerts + 2][2] = 0;
 
-	tess.texCoords0[numVerts + 3].v[0] = cmd->s1;
-	tess.texCoords0[numVerts + 3].v[1] = cmd->t2;
+	tess.texCoords[numVerts + 2][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 2][0][1] = cmd->t2;
 
-	return ( const void * ) (cmd + 1);
+	angle                     = cmd->angle * pi2 + 0.75 * pi2;
+	tess.xyz[numVerts + 3][0] = cmd->x + (cos(angle) * cmd->w);
+	tess.xyz[numVerts + 3][1] = cmd->y + (sin(angle) * cmd->h);
+	tess.xyz[numVerts + 3][2] = 0;
+
+	tess.texCoords[numVerts + 3][0][0] = cmd->s1;
+	tess.texCoords[numVerts + 3][0][1] = cmd->t2;
+
+	return (const void *)(cmd + 1);
 }
+// -NERVE - SMF
 
 /*
 ==============
@@ -1233,12 +1427,22 @@ const void *RB_StretchPicGradient(const void *data)
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
 
-	cmd = ( const stretchPicCommand_t * ) data;
+	cmd = (const stretchPicCommand_t *)data;
 
-	if (!backEnd.projection2D)
+	// FIXME: HUGE hack
+	if (glRefConfig.framebufferObject)
 	{
-		RB_SetGL2D();
+		if (!tr.renderFbo || backEnd.framePostProcessed)
+		{
+			FBO_Bind(tr.screenScratchFbo);
+		}
+		else
+		{
+			FBO_Bind(tr.renderFbo);
+		}
 	}
+
+	RB_SetGL2D();
 
 	shader = cmd->shader;
 	if (shader != tess.shader)
@@ -1265,46 +1469,53 @@ const void *RB_StretchPicGradient(const void *data)
 	tess.indexes[numIndexes + 4] = numVerts + 0;
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
-	*( int * ) tess.vertexColors[numVerts].v         =
-	    *( int * ) tess.vertexColors[numVerts + 1].v = *( int * ) backEnd.color2D;
+//	*(int *)tess.vertexColors[ numVerts ] =
+//		*(int *)tess.vertexColors[ numVerts + 1 ] =
+//		*(int *)tess.vertexColors[ numVerts + 2 ] =
+//		*(int *)tess.vertexColors[ numVerts + 3 ] = *(int *)backEnd.color2D;
 
-	*( int * ) tess.vertexColors[numVerts + 2].v     =
-	    *( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) cmd->gradientColor;
+	*(int *)tess.vertexColors[numVerts]         =
+	    *(int *)tess.vertexColors[numVerts + 1] = *(int *)backEnd.color2D;
 
-	tess.xyz[numVerts].v[0] = cmd->x;
-	tess.xyz[numVerts].v[1] = cmd->y;
-	tess.xyz[numVerts].v[2] = 0;
+	*(int *)tess.vertexColors[numVerts + 2]     =
+	    *(int *)tess.vertexColors[numVerts + 3] = *(int *)cmd->gradientColor;
 
-	tess.texCoords0[numVerts].v[0] = cmd->s1;
-	tess.texCoords0[numVerts].v[1] = cmd->t1;
+	tess.xyz[numVerts][0] = cmd->x;
+	tess.xyz[numVerts][1] = cmd->y;
+	tess.xyz[numVerts][2] = 0;
 
-	tess.xyz[numVerts + 1].v[0] = cmd->x + cmd->w;
-	tess.xyz[numVerts + 1].v[1] = cmd->y;
-	tess.xyz[numVerts + 1].v[2] = 0;
+	tess.texCoords[numVerts][0][0] = cmd->s1;
+	tess.texCoords[numVerts][0][1] = cmd->t1;
 
-	tess.texCoords0[numVerts + 1].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 1].v[1] = cmd->t1;
+	tess.xyz[numVerts + 1][0] = cmd->x + cmd->w;
+	tess.xyz[numVerts + 1][1] = cmd->y;
+	tess.xyz[numVerts + 1][2] = 0;
 
-	tess.xyz[numVerts + 2].v[0] = cmd->x + cmd->w;
-	tess.xyz[numVerts + 2].v[1] = cmd->y + cmd->h;
-	tess.xyz[numVerts + 2].v[2] = 0;
+	tess.texCoords[numVerts + 1][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 1][0][1] = cmd->t1;
 
-	tess.texCoords0[numVerts + 2].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 2].v[1] = cmd->t2;
+	tess.xyz[numVerts + 2][0] = cmd->x + cmd->w;
+	tess.xyz[numVerts + 2][1] = cmd->y + cmd->h;
+	tess.xyz[numVerts + 2][2] = 0;
 
-	tess.xyz[numVerts + 3].v[0] = cmd->x;
-	tess.xyz[numVerts + 3].v[1] = cmd->y + cmd->h;
-	tess.xyz[numVerts + 3].v[2] = 0;
+	tess.texCoords[numVerts + 2][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 2][0][1] = cmd->t2;
 
-	tess.texCoords0[numVerts + 3].v[0] = cmd->s1;
-	tess.texCoords0[numVerts + 3].v[1] = cmd->t2;
+	tess.xyz[numVerts + 3][0] = cmd->x;
+	tess.xyz[numVerts + 3][1] = cmd->y + cmd->h;
+	tess.xyz[numVerts + 3][2] = 0;
 
-	return ( const void * ) (cmd + 1);
+	tess.texCoords[numVerts + 3][0][0] = cmd->s1;
+	tess.texCoords[numVerts + 3][0][1] = cmd->t2;
+
+	return (const void *)(cmd + 1);
 }
+
 
 /*
 =============
 RB_DrawSurfs
+
 =============
 */
 const void *RB_DrawSurfs(const void *data)
@@ -1317,26 +1528,291 @@ const void *RB_DrawSurfs(const void *data)
 		RB_EndSurface();
 	}
 
-	cmd = ( const drawSurfsCommand_t * ) data;
+	cmd = (const drawSurfsCommand_t *)data;
 
 	backEnd.refdef    = cmd->refdef;
 	backEnd.viewParms = cmd->viewParms;
 
-	RB_RenderDrawSurfList(cmd->drawSurfs, cmd->numDrawSurfs);
+	// clear the z buffer, set the modelview, etc
+	RB_BeginDrawingView();
 
-	return ( const void * ) (cmd + 1);
+	if (glRefConfig.framebufferObject && (backEnd.viewParms.flags & VPF_DEPTHCLAMP) && glRefConfig.depthClamp)
+	{
+		qglEnable(GL_DEPTH_CLAMP);
+	}
+
+	if (glRefConfig.framebufferObject && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL) && (r_depthPrepass->integer || (backEnd.viewParms.flags & VPF_DEPTHSHADOW)))
+	{
+		FBO_t *oldFbo = glState.currentFBO;
+
+		backEnd.depthFill = qtrue;
+		qglColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		RB_RenderDrawSurfList(cmd->drawSurfs, cmd->numDrawSurfs);
+		qglColorMask(!backEnd.colorMask[0], !backEnd.colorMask[1], !backEnd.colorMask[2], !backEnd.colorMask[3]);
+		backEnd.depthFill = qfalse;
+
+		if (tr.msaaResolveFbo)
+		{
+			// If we're using multisampling, resolve the depth first
+			FBO_FastBlit(tr.renderFbo, NULL, tr.msaaResolveFbo, NULL, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		}
+		else if (tr.renderFbo == NULL)
+		{
+			// If we're rendering directly to the screen, copy the depth to a texture
+			GL_BindToTMU(tr.renderDepthImage, 0);
+			qglCopyTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, 0, 0, glConfig.vidWidth, glConfig.vidHeight, 0);
+		}
+
+		if (r_ssao->integer)
+		{
+			// need the depth in a texture we can do GL_LINEAR sampling on, so copy it to an HDR image
+			FBO_BlitFromTexture(tr.renderDepthImage, NULL, NULL, tr.hdrDepthFbo, NULL, NULL, NULL, 0);
+		}
+
+		if (backEnd.viewParms.flags & VPF_USESUNLIGHT)
+		{
+			vec4_t quadVerts[4];
+			vec2_t texCoords[4];
+			vec4_t box;
+
+			FBO_Bind(tr.screenShadowFbo);
+
+			box[0] = (backEnd.refdef.x) * tr.screenShadowFbo->width  / (float)glConfig.vidWidth;
+			box[1] = (backEnd.refdef.y) * tr.screenShadowFbo->height / (float)glConfig.vidHeight;
+			box[2] = (backEnd.refdef.width) * tr.screenShadowFbo->width  / (float)glConfig.vidWidth;
+			box[3] = (backEnd.refdef.height) * tr.screenShadowFbo->height / (float)glConfig.vidHeight;
+
+			qglViewport(box[0], box[1], box[2], box[3]);
+			qglScissor(box[0], box[1], box[2], box[3]);
+
+			box[0] = (backEnd.refdef.x) / (float)glConfig.vidWidth;
+			box[1] = (backEnd.refdef.y) / (float)glConfig.vidHeight;
+			box[2] = (backEnd.refdef.x + backEnd.refdef.width) / (float)glConfig.vidWidth;
+			box[3] = (backEnd.refdef.y + backEnd.refdef.height) / (float)glConfig.vidHeight;
+
+			texCoords[0][0] = box[0]; texCoords[0][1] = box[3];
+			texCoords[1][0] = box[2]; texCoords[1][1] = box[3];
+			texCoords[2][0] = box[2]; texCoords[2][1] = box[1];
+			texCoords[3][0] = box[0]; texCoords[3][1] = box[1];
+
+			box[0] = -1.0f;
+			box[1] = -1.0f;
+			box[2] = 1.0f;
+			box[3] = 1.0f;
+
+			VectorSet4(quadVerts[0], box[0], box[3], 0, 1);
+			VectorSet4(quadVerts[1], box[2], box[3], 0, 1);
+			VectorSet4(quadVerts[2], box[2], box[1], 0, 1);
+			VectorSet4(quadVerts[3], box[0], box[1], 0, 1);
+
+			GL_State(GLS_DEPTHTEST_DISABLE);
+
+			GLSL_BindProgram(&tr.shadowmaskShader);
+
+			GL_BindToTMU(tr.renderDepthImage, TB_COLORMAP);
+			GL_BindToTMU(tr.sunShadowDepthImage[0], TB_SHADOWMAP);
+			GL_BindToTMU(tr.sunShadowDepthImage[1], TB_SHADOWMAP2);
+			GL_BindToTMU(tr.sunShadowDepthImage[2], TB_SHADOWMAP3);
+
+			GLSL_SetUniformMatrix16(&tr.shadowmaskShader, SHADOWMASK_UNIFORM_SHADOWMVP, backEnd.refdef.sunShadowMvp[0]);
+			GLSL_SetUniformMatrix16(&tr.shadowmaskShader, SHADOWMASK_UNIFORM_SHADOWMVP2, backEnd.refdef.sunShadowMvp[1]);
+			GLSL_SetUniformMatrix16(&tr.shadowmaskShader, SHADOWMASK_UNIFORM_SHADOWMVP3, backEnd.refdef.sunShadowMvp[2]);
+
+			GLSL_SetUniformVec3(&tr.shadowmaskShader, SHADOWMASK_UNIFORM_VIEWORIGIN, backEnd.refdef.vieworg);
+			{
+				vec4_t viewInfo;
+				vec3_t viewVector;
+
+				float zmax = backEnd.viewParms.zFar;
+				float ymax = zmax * tan(backEnd.viewParms.fovY * M_PI / 360.0f);
+				float xmax = zmax * tan(backEnd.viewParms.fovX * M_PI / 360.0f);
+
+				float zmin = r_znear->value;
+
+				VectorScale(backEnd.refdef.viewaxis[0], zmax, viewVector);
+				GLSL_SetUniformVec3(&tr.shadowmaskShader, SHADOWMASK_UNIFORM_VIEWFORWARD, viewVector);
+				VectorScale(backEnd.refdef.viewaxis[1], xmax, viewVector);
+				GLSL_SetUniformVec3(&tr.shadowmaskShader, SHADOWMASK_UNIFORM_VIEWLEFT, viewVector);
+				VectorScale(backEnd.refdef.viewaxis[2], ymax, viewVector);
+				GLSL_SetUniformVec3(&tr.shadowmaskShader, SHADOWMASK_UNIFORM_VIEWUP, viewVector);
+
+				VectorSet4(viewInfo, zmax / zmin, zmax, 0.0, 0.0);
+
+				GLSL_SetUniformVec4(&tr.shadowmaskShader, SHADOWMASK_UNIFORM_VIEWINFO, viewInfo);
+			}
+
+
+			RB_InstantQuad2(quadVerts, texCoords); //, color, shaderProgram, invTexRes);
+		}
+
+		if (r_ssao->integer)
+		{
+			vec4_t quadVerts[4];
+			vec2_t texCoords[4];
+
+			FBO_Bind(tr.quarterFbo[0]);
+
+			qglViewport(0, 0, tr.quarterFbo[0]->width, tr.quarterFbo[0]->height);
+			qglScissor(0, 0, tr.quarterFbo[0]->width, tr.quarterFbo[0]->height);
+
+			VectorSet4(quadVerts[0], -1, 1, 0, 1);
+			VectorSet4(quadVerts[1], 1, 1, 0, 1);
+			VectorSet4(quadVerts[2], 1, -1, 0, 1);
+			VectorSet4(quadVerts[3], -1, -1, 0, 1);
+
+			texCoords[0][0] = 0; texCoords[0][1] = 1;
+			texCoords[1][0] = 1; texCoords[1][1] = 1;
+			texCoords[2][0] = 1; texCoords[2][1] = 0;
+			texCoords[3][0] = 0; texCoords[3][1] = 0;
+
+			GL_State(GLS_DEPTHTEST_DISABLE);
+
+			GLSL_BindProgram(&tr.ssaoShader);
+
+			GL_BindToTMU(tr.hdrDepthImage, TB_COLORMAP);
+
+			{
+				vec4_t viewInfo;
+
+				float zmax = backEnd.viewParms.zFar;
+				float zmin = r_znear->value;
+
+				VectorSet4(viewInfo, zmax / zmin, zmax, 0.0, 0.0);
+
+				GLSL_SetUniformVec4(&tr.ssaoShader, SSAO_UNIFORM_VIEWINFO, viewInfo);
+			}
+
+			RB_InstantQuad2(quadVerts, texCoords); //, color, shaderProgram, invTexRes);
+
+
+			FBO_Bind(tr.quarterFbo[1]);
+
+			qglViewport(0, 0, tr.quarterFbo[1]->width, tr.quarterFbo[1]->height);
+			qglScissor(0, 0, tr.quarterFbo[1]->width, tr.quarterFbo[1]->height);
+
+			GLSL_BindProgram(&tr.depthBlurShader[0]);
+
+			GL_BindToTMU(tr.quarterImage[0], TB_COLORMAP);
+			GL_BindToTMU(tr.hdrDepthImage, TB_LIGHTMAP);
+
+			{
+				vec4_t viewInfo;
+
+				float zmax = backEnd.viewParms.zFar;
+				float zmin = r_znear->value;
+
+				VectorSet4(viewInfo, zmax / zmin, zmax, 0.0, 0.0);
+
+				GLSL_SetUniformVec4(&tr.depthBlurShader[0], DEPTHBLUR_UNIFORM_VIEWINFO, viewInfo);
+			}
+
+			RB_InstantQuad2(quadVerts, texCoords); //, color, shaderProgram, invTexRes);
+
+
+			FBO_Bind(tr.screenSsaoFbo);
+
+			qglViewport(0, 0, tr.screenSsaoFbo->width, tr.screenSsaoFbo->height);
+			qglScissor(0, 0, tr.screenSsaoFbo->width, tr.screenSsaoFbo->height);
+
+			GLSL_BindProgram(&tr.depthBlurShader[1]);
+
+			GL_BindToTMU(tr.quarterImage[1], TB_COLORMAP);
+			GL_BindToTMU(tr.hdrDepthImage, TB_LIGHTMAP);
+
+			{
+				vec4_t viewInfo;
+
+				float zmax = backEnd.viewParms.zFar;
+				float zmin = r_znear->value;
+
+				VectorSet4(viewInfo, zmax / zmin, zmax, 0.0, 0.0);
+
+				GLSL_SetUniformVec4(&tr.depthBlurShader[1], DEPTHBLUR_UNIFORM_VIEWINFO, viewInfo);
+			}
+
+
+			RB_InstantQuad2(quadVerts, texCoords); //, color, shaderProgram, invTexRes);
+		}
+
+		// reset viewport and scissor
+		FBO_Bind(oldFbo);
+		SetViewportAndScissor();
+	}
+
+	if (glRefConfig.framebufferObject && (backEnd.viewParms.flags & VPF_DEPTHCLAMP) && glRefConfig.depthClamp)
+	{
+		qglDisable(GL_DEPTH_CLAMP);
+	}
+
+	if (!(backEnd.viewParms.flags & VPF_DEPTHSHADOW))
+	{
+		RB_RenderDrawSurfList(cmd->drawSurfs, cmd->numDrawSurfs);
+
+		if (r_drawSun->integer)
+		{
+			RB_DrawSun(0.1, tr.sunShader);
+		}
+
+		if (r_drawSunRays->integer)
+		{
+			FBO_t *oldFbo = glState.currentFBO;
+			FBO_Bind(tr.sunRaysFbo);
+
+			qglClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			qglClear(GL_COLOR_BUFFER_BIT);
+
+			if (glRefConfig.occlusionQuery)
+			{
+				tr.sunFlareQueryActive[tr.sunFlareQueryIndex] = qtrue;
+				qglBeginQueryARB(GL_SAMPLES_PASSED_ARB, tr.sunFlareQuery[tr.sunFlareQueryIndex]);
+			}
+
+			RB_DrawSun(0.3, tr.sunFlareShader);
+
+			if (glRefConfig.occlusionQuery)
+			{
+				qglEndQueryARB(GL_SAMPLES_PASSED_ARB);
+			}
+
+			FBO_Bind(oldFbo);
+		}
+
+		// darken down any stencil shadows
+		RB_ShadowFinish();
+
+		// add light flares on lights that aren't obscured
+		RB_RenderFlares();
+	}
+
+	//if (glRefConfig.framebufferObject)
+	//FBO_Bind(NULL);
+
+	return (const void *)(cmd + 1);
 }
+
 
 /*
 =============
 RB_DrawBuffer
+
 =============
 */
 const void *RB_DrawBuffer(const void *data)
 {
 	const drawBufferCommand_t *cmd;
 
-	cmd = ( const drawBufferCommand_t * ) data;
+	cmd = (const drawBufferCommand_t *)data;
+
+	// finish any 2D drawing if needed
+	if (tess.numIndexes)
+	{
+		RB_EndSurface();
+	}
+
+	if (glRefConfig.framebufferObject)
+	{
+		FBO_Bind(NULL);
+	}
 
 	qglDrawBuffer(cmd->buffer);
 
@@ -1347,7 +1823,7 @@ const void *RB_DrawBuffer(const void *data)
 		qglClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	return ( const void * ) (cmd + 1);
+	return (const void *)(cmd + 1);
 }
 
 /*
@@ -1367,14 +1843,12 @@ void RB_ShowImages(void)
 	float   x, y, w, h;
 	int     start, end;
 
-	if (!backEnd.projection2D)
-	{
-		RB_SetGL2D();
-	}
+	RB_SetGL2D();
 
 	qglClear(GL_COLOR_BUFFER_BIT);
 
 	qglFinish();
+
 
 	start = ri.Milliseconds();
 
@@ -1395,74 +1869,107 @@ void RB_ShowImages(void)
 			h *= image->uploadHeight / 512.0f;
 		}
 
-		GL_Bind(image);
-		qglBegin(GL_QUADS);
-		qglTexCoord2f(0, 0);
-		qglVertex2f(x, y);
-		qglTexCoord2f(1, 0);
-		qglVertex2f(x + w, y);
-		qglTexCoord2f(1, 1);
-		qglVertex2f(x + w, y + h);
-		qglTexCoord2f(0, 1);
-		qglVertex2f(x, y + h);
-		qglEnd();
+		{
+			vec4_t quadVerts[4];
+
+			GL_Bind(image);
+
+			VectorSet4(quadVerts[0], x, y, 0, 1);
+			VectorSet4(quadVerts[1], x + w, y, 0, 1);
+			VectorSet4(quadVerts[2], x + w, y + h, 0, 1);
+			VectorSet4(quadVerts[3], x, y + h, 0, 1);
+
+			RB_InstantQuad(quadVerts);
+		}
 	}
 
 	qglFinish();
 
 	end = ri.Milliseconds();
 	ri.Printf(PRINT_ALL, "%i msec to draw all images\n", end - start);
+
 }
 
-/**
- * @note Unused.
- */
-void RB_DrawBounds(vec3_t mins, vec3_t maxs)
+/*
+=============
+RB_ColorMask
+
+=============
+*/
+const void *RB_ColorMask(const void *data)
 {
-	vec3_t center;
+	const colorMaskCommand_t *cmd = data;
 
-	GL_Bind(tr.whiteImage);
-	GL_State(GLS_POLYMODE_LINE);
+	// finish any 2D drawing if needed
+	if (tess.numIndexes)
+	{
+		RB_EndSurface();
+	}
 
-	// box corners
-	qglBegin(GL_LINES);
-	qglColor3f(1, 1, 1);
+	if (glRefConfig.framebufferObject)
+	{
+		// reverse color mask, so 0 0 0 0 is the default
+		backEnd.colorMask[0] = !cmd->rgba[0];
+		backEnd.colorMask[1] = !cmd->rgba[1];
+		backEnd.colorMask[2] = !cmd->rgba[2];
+		backEnd.colorMask[3] = !cmd->rgba[3];
+	}
 
-	qglVertex3f(mins[0], mins[1], mins[2]);
-	qglVertex3f(maxs[0], mins[1], mins[2]);
-	qglVertex3f(mins[0], mins[1], mins[2]);
-	qglVertex3f(mins[0], maxs[1], mins[2]);
-	qglVertex3f(mins[0], mins[1], mins[2]);
-	qglVertex3f(mins[0], mins[1], maxs[2]);
+	qglColorMask(cmd->rgba[0], cmd->rgba[1], cmd->rgba[2], cmd->rgba[3]);
 
-	qglVertex3f(maxs[0], maxs[1], maxs[2]);
-	qglVertex3f(mins[0], maxs[1], maxs[2]);
-	qglVertex3f(maxs[0], maxs[1], maxs[2]);
-	qglVertex3f(maxs[0], mins[1], maxs[2]);
-	qglVertex3f(maxs[0], maxs[1], maxs[2]);
-	qglVertex3f(maxs[0], maxs[1], mins[2]);
-	qglEnd();
+	return (const void *)(cmd + 1);
+}
 
-	center[0] = (mins[0] + maxs[0]) * 0.5;
-	center[1] = (mins[1] + maxs[1]) * 0.5;
-	center[2] = (mins[2] + maxs[2]) * 0.5;
+/*
+=============
+RB_ClearDepth
 
-	// center axis
-	qglBegin(GL_LINES);
-	qglColor3f(1, 0.85, 0);
+=============
+*/
+const void *RB_ClearDepth(const void *data)
+{
+	const clearDepthCommand_t *cmd = data;
 
-	qglVertex3f(mins[0], center[1], center[2]);
-	qglVertex3f(maxs[0], center[1], center[2]);
-	qglVertex3f(center[0], mins[1], center[2]);
-	qglVertex3f(center[0], maxs[1], center[2]);
-	qglVertex3f(center[0], center[1], mins[2]);
-	qglVertex3f(center[0], center[1], maxs[2]);
-	qglEnd();
+	// finish any 2D drawing if needed
+	if (tess.numIndexes)
+	{
+		RB_EndSurface();
+	}
+
+	// texture swapping test
+	if (r_showImages->integer)
+	{
+		RB_ShowImages();
+	}
+
+	if (glRefConfig.framebufferObject)
+	{
+		if (!tr.renderFbo || backEnd.framePostProcessed)
+		{
+			FBO_Bind(tr.screenScratchFbo);
+		}
+		else
+		{
+			FBO_Bind(tr.renderFbo);
+		}
+	}
+
+	qglClear(GL_DEPTH_BUFFER_BIT);
+
+	// if we're doing MSAA, clear the depth texture for the resolve buffer
+	if (tr.msaaResolveFbo)
+	{
+		FBO_Bind(tr.msaaResolveFbo);
+		qglClear(GL_DEPTH_BUFFER_BIT);
+	}
+
+	return (const void *)(cmd + 1);
 }
 
 /*
 =============
 RB_SwapBuffers
+
 =============
 */
 const void *RB_SwapBuffers(const void *data)
@@ -1481,7 +1988,7 @@ const void *RB_SwapBuffers(const void *data)
 		RB_ShowImages();
 	}
 
-	cmd = ( const swapBuffersCommand_t * ) data;
+	cmd = (const swapBuffersCommand_t *)data;
 
 	// we measure overdraw by reading back the stencil buffer and
 	// counting up the number of increments that have happened
@@ -1503,6 +2010,46 @@ const void *RB_SwapBuffers(const void *data)
 		ri.Hunk_FreeTempMemory(stencilReadback);
 	}
 
+	if (glRefConfig.framebufferObject)
+	{
+		if (!backEnd.framePostProcessed)
+		{
+			if (tr.msaaResolveFbo && r_hdr->integer)
+			{
+				// Resolving an RGB16F MSAA FBO to the screen messes with the brightness, so resolve to an RGB16F FBO first
+				FBO_FastBlit(tr.renderFbo, NULL, tr.msaaResolveFbo, NULL, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+				FBO_FastBlit(tr.msaaResolveFbo, NULL, tr.screenScratchFbo, NULL, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			}
+			else if (tr.renderFbo)
+			{
+				FBO_FastBlit(tr.renderFbo, NULL, tr.screenScratchFbo, NULL, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			}
+		}
+
+		if (tr.screenScratchFbo)
+		{
+			vec4_t color;
+
+			color[0]         =
+			    color[1]     =
+			        color[2] = pow(2, tr.overbrightBits); //exp2(tr.overbrightBits);
+			color[3]         = 1.0f;
+
+			// turn off colormask when copying final image
+			if (backEnd.colorMask[0] || backEnd.colorMask[1] || backEnd.colorMask[2] || backEnd.colorMask[3])
+			{
+				qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+			}
+
+			FBO_Blit(tr.screenScratchFbo, NULL, NULL, NULL, NULL, NULL, color, 0);
+
+			if (backEnd.colorMask[0] || backEnd.colorMask[1] || backEnd.colorMask[2] || backEnd.colorMask[3])
+			{
+				qglColorMask(!backEnd.colorMask[0], !backEnd.colorMask[1], !backEnd.colorMask[2], !backEnd.colorMask[3]);
+			}
+		}
+	}
+
 
 	if (!glState.finishCalled)
 	{
@@ -1513,52 +2060,160 @@ const void *RB_SwapBuffers(const void *data)
 
 	GLimp_EndFrame();
 
-	backEnd.projection2D = qfalse;
+	backEnd.framePostProcessed = qfalse;
+	backEnd.projection2D       = qfalse;
 
-	return ( const void * ) (cmd + 1);
+	return (const void *)(cmd + 1);
 }
 
 /*
 =============
-RB_RenderToTexture
+RB_CapShadowMap
+
 =============
 */
-const void *RB_RenderToTexture(const void *data)
+const void *RB_CapShadowMap(const void *data)
 {
-	const renderToTextureCommand_t *cmd;
+	const capShadowmapCommand_t *cmd = data;
 
-//  ri.Printf( PRINT_ALL, "RB_RenderToTexture\n" );
+	// finish any 2D drawing if needed
+	if (tess.numIndexes)
+	{
+		RB_EndSurface();
+	}
 
-	cmd = ( const renderToTextureCommand_t * ) data;
+	if (cmd->map != -1)
+	{
+		GL_SelectTexture(0);
+		if (cmd->cubeSide != -1)
+		{
+			GL_BindCubemap(tr.shadowCubemaps[cmd->map]);
+			qglCopyTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + cmd->cubeSide, 0, GL_RGBA8, backEnd.refdef.x, glConfig.vidHeight - (backEnd.refdef.y + PSHADOW_MAP_SIZE), PSHADOW_MAP_SIZE, PSHADOW_MAP_SIZE, 0);
+		}
+		else
+		{
+			GL_Bind(tr.pshadowMaps[cmd->map]);
+			qglCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, backEnd.refdef.x, glConfig.vidHeight - (backEnd.refdef.y + PSHADOW_MAP_SIZE), PSHADOW_MAP_SIZE, PSHADOW_MAP_SIZE, 0);
+		}
+	}
 
-	GL_Bind(cmd->image);
-	qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
-	qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
-	qglTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
-	qglCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cmd->x, cmd->y, cmd->w, cmd->h, 0);
-//  qglCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, cmd->x, cmd->y, cmd->w, cmd->h );
-
-	return ( const void * ) (cmd + 1);
+	return (const void *)(cmd + 1);
 }
+
+
 
 /*
 =============
-RB_Finish
+RB_PostProcess
+
 =============
 */
-const void *RB_Finish(const void *data)
+const void *RB_PostProcess(const void *data)
 {
-	const renderFinishCommand_t *cmd;
+	const postProcessCommand_t *cmd = data;
+	FBO_t                      *srcFbo;
+	qboolean                   autoExposure;
 
-//  ri.Printf( PRINT_ALL, "RB_Finish\n" );
+	// finish any 2D drawing if needed
+	if (tess.numIndexes)
+	{
+		RB_EndSurface();
+	}
 
-	cmd = ( const renderFinishCommand_t * ) data;
+	if (!glRefConfig.framebufferObject || !r_postProcess->integer)
+	{
+		// do nothing
+		return (const void *)(cmd + 1);
+	}
 
-	qglFinish();
+	srcFbo = tr.renderFbo;
+	if (tr.msaaResolveFbo)
+	{
+		// Resolve the MSAA before anything else
+		FBO_FastBlit(tr.renderFbo, NULL, tr.msaaResolveFbo, NULL, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		srcFbo = tr.msaaResolveFbo;
+	}
 
-	return ( const void * ) (cmd + 1);
+	if (r_ssao->integer)
+	{
+		FBO_BlitFromTexture(tr.screenSsaoImage, NULL, NULL, srcFbo, NULL, NULL, NULL, GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO);
+	}
+
+	if (srcFbo)
+	{
+		if (r_hdr->integer && (r_toneMap->integer || r_forceToneMap->integer))
+		{
+			autoExposure = r_autoExposure->integer || r_forceAutoExposure->integer;
+			RB_ToneMap(srcFbo, autoExposure);
+		}
+		else if (r_cameraExposure->value == 0.0f)
+		{
+			FBO_FastBlit(srcFbo, NULL, tr.screenScratchFbo, NULL, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		}
+		else
+		{
+			vec4_t color;
+
+			color[0]         =
+			    color[1]     =
+			        color[2] = pow(2, r_cameraExposure->value); //exp2(r_cameraExposure->value);
+			color[3]         = 1.0f;
+
+			FBO_Blit(srcFbo, NULL, NULL, tr.screenScratchFbo, NULL, NULL, color, 0);
+		}
+	}
+
+	if (r_drawSunRays->integer)
+	{
+		RB_SunRays();
+	}
+
+	if (1)
+	{
+		RB_BokehBlur(backEnd.refdef.blurFactor);
+	}
+	else
+	{
+		RB_GaussianBlur(backEnd.refdef.blurFactor);
+	}
+
+	if (0)
+	{
+		vec4i_t dstBox;
+		VectorSet4(dstBox, 0, 0, 128, 128);
+		FBO_BlitFromTexture(tr.sunShadowDepthImage[0], NULL, NULL, tr.screenScratchFbo, dstBox, NULL, NULL, 0);
+		VectorSet4(dstBox, 128, 0, 128, 128);
+		FBO_BlitFromTexture(tr.sunShadowDepthImage[1], NULL, NULL, tr.screenScratchFbo, dstBox, NULL, NULL, 0);
+		VectorSet4(dstBox, 256, 0, 128, 128);
+		FBO_BlitFromTexture(tr.sunShadowDepthImage[2], NULL, NULL, tr.screenScratchFbo, dstBox, NULL, NULL, 0);
+	}
+
+	if (0)
+	{
+		vec4i_t dstBox;
+		VectorSet4(dstBox, 256, glConfig.vidHeight - 256, 256, 256);
+		FBO_BlitFromTexture(tr.renderDepthImage, NULL, NULL, tr.screenScratchFbo, dstBox, NULL, NULL, 0);
+		VectorSet4(dstBox, 512, glConfig.vidHeight - 256, 256, 256);
+		FBO_BlitFromTexture(tr.screenShadowImage, NULL, NULL, tr.screenScratchFbo, dstBox, NULL, NULL, 0);
+	}
+
+	if (0)
+	{
+		vec4i_t dstBox;
+		VectorSet4(dstBox, 256, glConfig.vidHeight - 256, 256, 256);
+		FBO_BlitFromTexture(tr.sunRaysImage, NULL, NULL, tr.screenScratchFbo, dstBox, NULL, NULL, 0);
+	}
+
+	backEnd.framePostProcessed = qtrue;
+
+	return (const void *)(cmd + 1);
 }
 
+/*
+====================
+RB_ExecuteRenderCommands
+====================
+*/
 void RB_ExecuteRenderCommands(const void *data)
 {
 	int t1, t2;
@@ -1567,16 +2222,15 @@ void RB_ExecuteRenderCommands(const void *data)
 
 	while (1)
 	{
-		switch (*( const int * ) data)
+		data = PADP(data, sizeof(void *));
+
+		switch (*(const int *)data)
 		{
 		case RC_SET_COLOR:
 			data = RB_SetColor(data);
 			break;
 		case RC_STRETCH_PIC:
 			data = RB_StretchPic(data);
-			break;
-		case RC_2DPOLYS:
-			data = RB_Draw2dPolys(data);
 			break;
 		case RC_ROTATED_PIC:
 			data = RB_RotatedPic(data);
@@ -1599,20 +2253,31 @@ void RB_ExecuteRenderCommands(const void *data)
 		case RC_VIDEOFRAME:
 			data = RB_TakeVideoFrameCmd(data);
 			break;
-		//bani
-		case RC_RENDERTOTEXTURE:
-			data = RB_RenderToTexture(data);
+		case RC_COLORMASK:
+			data = RB_ColorMask(data);
 			break;
-		//bani
-		case RC_FINISH:
-			data = RB_Finish(data);
+		case RC_CLEARDEPTH:
+			data = RB_ClearDepth(data);
+			break;
+		case RC_CAPSHADOWMAP:
+			data = RB_CapShadowMap(data);
+			break;
+		case RC_POSTPROCESS:
+			data = RB_PostProcess(data);
 			break;
 		case RC_END_OF_LIST:
 		default:
-			// stop rendering on this thread
+			// finish any 2D drawing if needed
+			if (tess.numIndexes)
+			{
+				RB_EndSurface();
+			}
+
+			// stop rendering
 			t2              = ri.Milliseconds();
 			backEnd.pc.msec = t2 - t1;
 			return;
 		}
 	}
+
 }
