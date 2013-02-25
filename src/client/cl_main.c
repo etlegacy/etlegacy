@@ -1658,6 +1658,8 @@ void CL_ReferencedPK3List_f(void)
 /*
 ==================
 CL_Configstrings_f
+
+Note: It may occure some CONFIGSTRINGS are not printed (see print buffer)
 ==================
 */
 void CL_Configstrings_f(void)
@@ -4393,8 +4395,11 @@ void CL_LocalServers_f(void)
 			to.type = NA_BROADCAST;
 			NET_SendPacket(NS_CLIENT, strlen(message), message, to);
 
+#ifdef FEATURE_IPV6
+			// FIXME: do only if net_enabled.integer & 2
 			to.type = NA_MULTICAST6;
 			NET_SendPacket(NS_CLIENT, strlen(message), message, to);
+#endif
 		}
 	}
 }
