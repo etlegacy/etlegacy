@@ -64,7 +64,7 @@ option(FEATURE_CURL			"Enable auto-download support using cURL (client)"			ON)
 option(FEATURE_OGG_VORBIS	"Enable OGG Vorbis support (client)"						ON)
 option(FEATURE_OPENAL		"Enable OpenAL sound backend (client)"						OFF)
 option(FEATURE_FREETYPE		"Enable Freetype font library support (client)"				OFF)
-option(FEATURE_TRACKBASE	"Enable extended server statistics (server)"				ON)
+option(FEATURE_TRACKER		"Enable extended server statistics (server)"				ON)
 option(FEATURE_LUA			"Enable Lua support in game code"							ON)
 option(FEATURE_MULTIVIEW	"Compile the mod files with multiview support (broken?!)"	OFF)
 option(FEATURE_ANTICHEAT	"Enable server side anti-wallhack code (experimental)"		ON)
@@ -477,9 +477,9 @@ endif(BUILD_MOD)
 #-----------------------------------------------------------------
 # Server/Common features
 #-----------------------------------------------------------------
-if(FEATURE_TRACKBASE)
-	add_definitions(-DFEATURE_TRACKBASE)
-endif(FEATURE_TRACKBASE)
+if(FEATURE_TRACKER)
+	add_definitions(-DFEATURE_TRACKER)
+endif(FEATURE_TRACKER)
 
 if(FEATURE_ANTICHEAT)
 	add_definitions(-DFEATURE_ANTICHEAT)
