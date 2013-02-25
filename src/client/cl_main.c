@@ -4437,6 +4437,7 @@ void CL_GlobalServers_f(void)
 		cls.pingUpdateSource = AS_GLOBAL;
 	}
 
+#ifdef FEATURE_IPV6
 	// Use the extended query for IPv6 masters
 	if (to.type == NA_IP6 || to.type == NA_MULTICAST6)
 	{
@@ -4446,6 +4447,7 @@ void CL_GlobalServers_f(void)
 		//       request IPv6 servers only by appending " ipv6" to the command
 	}
 	else
+#endif
 	{
 		cmdname = "getservers";
 	}
