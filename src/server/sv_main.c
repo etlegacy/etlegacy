@@ -270,7 +270,11 @@ void SV_MasterHeartbeat(const char *message)
 	netenabled = Cvar_VariableIntegerValue("net_enabled");
 
 	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
-	if (!com_dedicated || com_dedicated->integer != 2 || !(netenabled & (NET_ENABLEV4 | NET_ENABLEV6)))
+	if (!com_dedicated || com_dedicated->integer != 2 || !(netenabled & (
+#ifdef FEATURE_IPV6
+	                                                           NET_ENABLEV6 |
+#endif
+	                                                           NET_ENABLEV4)))
 	{
 		return;     // only dedicated servers send heartbeats
 
@@ -319,6 +323,7 @@ void SV_MasterHeartbeat(const char *message)
 				}
 			}
 
+#ifdef FEATURE_IPV6
 			if (netenabled & NET_ENABLEV6)
 			{
 				Com_Printf("Resolving %s (IPv6)\n", sv_master[i]->string);
@@ -339,6 +344,7 @@ void SV_MasterHeartbeat(const char *message)
 					Com_Printf("%s has no IPv6 address.\n", sv_master[i]->string);
 				}
 			}
+#endif
 
 			if (adr[i][0].type == NA_BAD && adr[i][1].type == NA_BAD)
 			{
