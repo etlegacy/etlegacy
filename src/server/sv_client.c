@@ -1378,7 +1378,7 @@ void SV_UserinfoChanged(client_t *cl)
 	int  i;
 
 #ifdef FEATURE_TRACKER
-	if (sv_advert->integer & SVA_TRACKBASE)
+	if (sv_advert->integer & SVA_TRACKER)
 	{
 		if (strcmp(cl->name, Info_ValueForKey(cl->userinfo, "name")))
 		{

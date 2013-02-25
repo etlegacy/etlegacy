@@ -311,10 +311,10 @@ void Tracker_Frame(int msec)
 		return;
 	}
 
-	if (catchBot == Tracker_BOT_CONNECT)
+	if (catchBot == TR_BOT_CONNECT)
 	{
 		Tracker_ClientConnect(&svs.clients[catchBotNum]);
-		catchBot = Tracker_BOT_NONE;
+		catchBot = TR_BOT_NONE;
 	}
 
 	if (!(time(0) - waittime > t))
@@ -392,7 +392,7 @@ void Tracker_catchBotConnect(int clientNum)
 		return;
 	}
 
-	catchBot    = Tracker_BOT_CONNECT;
+	catchBot    = TR_BOT_CONNECT;
 	catchBotNum = clientNum;
 }
 
