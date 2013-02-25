@@ -968,9 +968,6 @@ static void CL_GenerateETKey(void)
 	char         buff[ETKEY_SIZE];
 	fileHandle_t f;
 
-	time_t    tt;
-	struct tm *t;
-
 	len = FS_SV_FOpenFileRead(BASEGAME "/" ETKEY_FILE, &f);
 	FS_FCloseFile(f);
 	if (len > 0)
@@ -980,10 +977,15 @@ static void CL_GenerateETKey(void)
 	}
 	else
 	{
+		time_t    tt;
+		struct tm *t;
+		int       last;
+
 		tt = time(NULL);
 		t  = localtime(&tt);
 		srand(&tt);
-		int last = rand() % 9999;
+		last = rand() % 9999;
+
 		sprintf(buff, "0000001002%04i%02i%02i%02i%02i%02i%04i", t->tm_year, t->tm_mon, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, last);
 
 		f = FS_SV_FOpenFileWrite(BASEGAME "/" ETKEY_FILE);
