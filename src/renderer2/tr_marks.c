@@ -29,16 +29,18 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
  * @file tr_marks.c
- * @brief polygon projection on the world polygons
  */
 
+// tr_marks.c -- polygon projection on the world polygons
+
 #include "tr_local.h"
+//#include "assert.h"
 
 #define MAX_VERTS_ON_POLY       64
 
 #define MARKER_OFFSET           0   // 1
 
-// just make these global to prevent having to add more paramaters, which add overhead
+// Ridah, just make these global to prevent having to add more paramaters, which add overhead
 static vec3_t bestnormal;
 static float  bestdist;
 
@@ -147,6 +149,7 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 		}
 
 		// clip xyz
+
 		for (j = 0 ; j < 3 ; j++)
 		{
 			clip[j] = p1[j] + dot * (p2[j] - p1[j]);
@@ -159,18 +162,15 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 /*
 =================
 R_BoxSurfaces_r
+
 =================
 */
 void R_BoxSurfaces_r(mnode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **list, int listsize, int *listlength, vec3_t dir)
 {
-	int        s, c;
-	msurface_t *surf, **mark;
 
-	// if this node hasn't been rendered recently, ignore it
-	if (node->visframe < tr.visCount - 2)     // allow us to be a few frames behind
-	{
-		return;
-	}
+	int        s, c;
+	msurface_t *surf;
+	int        *mark;
 
 	// do the tail recursion in a loop
 	while (node->contents == -1)
@@ -191,58 +191,58 @@ void R_BoxSurfaces_r(mnode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **li
 		}
 	}
 
-	// don't mark alpha surfaces
+	// Ridah, don't mark alpha surfaces
 	if (node->contents & CONTENTS_TRANSLUCENT)
 	{
 		return;
 	}
 
 	// add the individual surfaces
-	mark = node->firstmarksurface;
+	mark = tr.world->marksurfaces + node->firstmarksurface;
 	c    = node->nummarksurfaces;
 	while (c--)
 	{
+		int *surfViewCount;
+		//
 		if (*listlength >= listsize)
 		{
 			break;
 		}
-
-		surf = *mark;
-
+		//
+		surfViewCount = &tr.world->surfacesViewCount[*mark];
+		surf          = tr.world->surfaces + *mark;
 		// check if the surface has NOIMPACT or NOMARKS set
 		if ((surf->shader->surfaceFlags & (SURF_NOIMPACT | SURF_NOMARKS))
 		    || (surf->shader->contentFlags & CONTENTS_FOG))
 		{
-			surf->viewCount = tr.viewCount;
+			*surfViewCount = tr.viewCount;
 		}
 		// extra check for surfaces to avoid list overflows
 		else if (*(surf->data) == SF_FACE)
 		{
-			if ((( srfSurfaceFace_t * ) surf->data)->plane.type != PLANE_NON_PLANAR)
+			// the face plane should go through the box
+			s = BoxOnPlaneSide(mins, maxs, &surf->cullinfo.plane);
+			if (s == 1 || s == 2)
 			{
-				// the face plane should go through the box
-				s = BoxOnPlaneSide(mins, maxs, &(( srfSurfaceFace_t * ) surf->data)->plane);
-				if (s == 1 || s == 2)
-				{
-					surf->viewCount = tr.viewCount;
-				}
-				else if (DotProduct((( srfSurfaceFace_t * ) surf->data)->plane.normal, dir) < -0.5)
-				{
-					// don't add faces that make sharp angles with the projection direction
-					surf->viewCount = tr.viewCount;
-				}
+				*surfViewCount = tr.viewCount;
+			}
+			else if (DotProduct(surf->cullinfo.plane.normal, dir) > -0.5)
+			{
+				// don't add faces that make sharp angles with the projection direction
+				*surfViewCount = tr.viewCount;
 			}
 		}
-		else if (*( surfaceType_t * )(surf->data) != SF_GRID && *( surfaceType_t * )(surf->data) != SF_TRIANGLES)
+		else if (*(surf->data) != SF_GRID &&
+		         *(surf->data) != SF_TRIANGLES)
 		{
-			surf->viewCount = tr.viewCount;
+			*surfViewCount = tr.viewCount;
 		}
 		// check the viewCount because the surface may have
 		// already been added if it spans multiple leafs
-		if (surf->viewCount != tr.viewCount)
+		if (*surfViewCount != tr.viewCount)
 		{
-			surf->viewCount   = tr.viewCount;
-			list[*listlength] = (surfaceType_t *) surf->data;
+			*surfViewCount    = tr.viewCount;
+			list[*listlength] = surf->data;
 			(*listlength)++;
 		}
 		mark++;
@@ -252,6 +252,7 @@ void R_BoxSurfaces_r(mnode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **li
 /*
 =================
 R_AddMarkFragments
+
 =================
 */
 void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POLY],
@@ -290,6 +291,18 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
 	{
 		return; // not enough space for this polygon
 	}
+	/*
+	// all the clip points should be within the bounding box
+	for ( i = 0 ; i < numClipPoints ; i++ ) {
+	    int j;
+	    for ( j = 0 ; j < 3 ; j++ ) {
+	        if (clipPoints[pingPong][i][j] < mins[j] - 0.5) break;
+	        if (clipPoints[pingPong][i][j] > maxs[j] + 0.5) break;
+	    }
+	    if (j < 3) break;
+	}
+	if (i < numClipPoints) return;
+	*/
 
 	mf             = fragmentBuffer + (*returnedFragments);
 	mf->firstPoint = (*returnedPoints);
@@ -307,29 +320,29 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
 /*
 =================
 R_OldMarkFragments
+
 =================
 */
 int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t projection,
                        int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer)
 {
-	int              numsurfaces, numPlanes;
-	int              i, j, k, m, n;
-	surfaceType_t    *surfaces[64];
-	vec3_t           mins, maxs;
-	int              returnedFragments;
-	int              returnedPoints;
-	vec3_t           normals[MAX_VERTS_ON_POLY + 2];
-	float            dists[MAX_VERTS_ON_POLY + 2];
-	vec3_t           clipPoints[2][MAX_VERTS_ON_POLY];
-	int              numClipPoints;
-	float            *v;
-	srfSurfaceFace_t *surf;
-	srfGridMesh_t    *cv;
-	drawVert_t       *dv;
-	vec3_t           normal;
-	vec3_t           projectionDir;
-	vec3_t           v1, v2;
-	int              *indexes;
+	int           numsurfaces, numPlanes;
+	int           i, j, k, m, n;
+	surfaceType_t *surfaces[64];
+	vec3_t        mins, maxs;
+	int           returnedFragments;
+	int           returnedPoints;
+	vec3_t        normals[MAX_VERTS_ON_POLY + 2];
+	float         dists[MAX_VERTS_ON_POLY + 2];
+	vec3_t        clipPoints[2][MAX_VERTS_ON_POLY];
+	int           numClipPoints;
+	float         *v;
+	srfGridMesh_t *cv;
+	srfTriangle_t *tri;
+	srfVert_t     *dv;
+	vec3_t        normal;
+	vec3_t        projectionDir;
+	vec3_t        v1, v2;
 
 	if (numPoints <= 0)
 	{
@@ -387,8 +400,10 @@ int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t project
 
 	for (i = 0 ; i < numsurfaces ; i++)
 	{
+
 		if (*surfaces[i] == SF_GRID)
 		{
+
 			cv = (srfGridMesh_t *) surfaces[i];
 			for (m = 0 ; m < cv->height - 1 ; m++)
 			{
@@ -475,21 +490,22 @@ int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t project
 		}
 		else if (*surfaces[i] == SF_FACE)
 		{
-			surf = ( srfSurfaceFace_t * ) surfaces[i];
+
+			srfSurfaceFace_t *surf = ( srfSurfaceFace_t * ) surfaces[i];
 			// check the normal of this face
 			if (DotProduct(surf->plane.normal, projectionDir) > -0.5)
 			{
 				continue;
 			}
 
-			indexes = ( int * )((byte *)surf + surf->ofsIndices);
-			for (k = 0 ; k < surf->numIndices ; k += 3)
+			for (k = 0, tri = surf->triangles; k < surf->numTriangles; k++, tri++)
 			{
-				for (j = 0 ; j < 3 ; j++)
+				for (j = 0; j < 3; j++)
 				{
-					v = surf->points[0] + VERTEXSIZE * indexes[k + j];
+					v = surf->verts[tri->indexes[j]].xyz;
 					VectorMA(v, MARKER_OFFSET, surf->plane.normal, clipPoints[0][j]);
 				}
+
 				// add the fragments of this face
 				R_AddMarkFragments(3, clipPoints,
 				                   numPlanes, normals, dists,
@@ -501,43 +517,30 @@ int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t project
 					return returnedFragments;   // not enough space for more fragments
 				}
 			}
-			continue;
 		}
-		// Arnout: projection on models (mainly for terrain though)
-		else if (*surfaces[i] == SF_TRIANGLES)
+		else if (*surfaces[i] == SF_TRIANGLES && r_marksOnTriangleMeshes->integer)
 		{
-			srfTriangles_t *cts;
-			cts = ( srfTriangles_t * ) surfaces[i];
 
-			indexes = cts->indexes;
-			for (k = 0 ; k < cts->numIndexes ; k += 3)
+			srfTriangles_t *surf = (srfTriangles_t *) surfaces[i];
+
+			for (k = 0, tri = surf->triangles; k < surf->numTriangles; k++, tri++)
 			{
-				for (j = 0 ; j < 3 ; j++)
+				for (j = 0; j < 3; j++)
 				{
-					v = cts->verts[indexes[k + j]].xyz;
-					VectorMA(v, MARKER_OFFSET, cts->verts[indexes[k + j]].normal, clipPoints[0][j]);
+					v = surf->verts[tri->indexes[j]].xyz;
+					VectorMA(v, MARKER_OFFSET, surf->verts[tri->indexes[j]].normal, clipPoints[0][j]);
 				}
+
 				// add the fragments of this face
 				R_AddMarkFragments(3, clipPoints,
 				                   numPlanes, normals, dists,
 				                   maxPoints, pointBuffer,
-				                   maxFragments, fragmentBuffer,
-				                   &returnedPoints, &returnedFragments, mins, maxs);
-
+				                   maxFragments, fragmentBuffer, &returnedPoints, &returnedFragments, mins, maxs);
 				if (returnedFragments == maxFragments)
 				{
 					return returnedFragments;   // not enough space for more fragments
 				}
 			}
-			continue;
-		}
-		else
-		{
-			// ignore all other world surfaces
-			// might be cool to also project polygons on a triangle soup
-			// however this will probably create huge amounts of extra polys
-			// even more than the projection onto curves
-			continue;
 		}
 	}
 	return returnedFragments;
@@ -546,41 +549,46 @@ int R_OldMarkFragments(int numPoints, const vec3_t *points, const vec3_t project
 /*
 =================
 R_MarkFragments
+
 =================
 */
 int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projection,
                     int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer)
 {
-	int              numsurfaces, numPlanes;
-	int              i, j, k, m, n;
-	surfaceType_t    *surfaces[4096];
-	vec3_t           mins, maxs;
-	int              returnedFragments;
-	int              returnedPoints;
-	vec3_t           normals[MAX_VERTS_ON_POLY + 2];
-	float            dists[MAX_VERTS_ON_POLY + 2];
-	vec3_t           clipPoints[2][MAX_VERTS_ON_POLY];
-	int              numClipPoints;
-	float            *v;
-	srfSurfaceFace_t *surf;
-	srfGridMesh_t    *cv;
-	drawVert_t       *dv;
-	vec3_t           normal;
-	vec3_t           projectionDir;
-	vec3_t           v1, v2;
-	int              *indexes;
-	float            radius;
-	vec3_t           center; // center of original mark
-	//vec3_t            bestCenter; // center point projected onto the closest surface
-	//float texCoordScale;
-	//float         dot;
-	int      numPoints  = 4;        // we were only ever passing in 4, so I made this local and used the parameter for the orientation
+	int           numsurfaces, numPlanes;
+	int           i, j, k, m, n;
+	surfaceType_t *surfaces[4096];
+	vec3_t        mins, maxs;
+	int           returnedFragments;
+	int           returnedPoints;
+	vec3_t        normals[MAX_VERTS_ON_POLY + 2];
+	float         dists[MAX_VERTS_ON_POLY + 2];
+	vec3_t        clipPoints[2][MAX_VERTS_ON_POLY];
+	int           numClipPoints;
+	float         *v;
+	srfGridMesh_t *cv;
+	srfTriangle_t *tri;
+	srfVert_t     *dv;
+	vec3_t        normal;
+	vec3_t        projectionDir;
+	vec3_t        v1, v2;
+	float         radius;
+	vec3_t        center;   // center of original mark
+	//vec3_t			bestCenter;	// center point projected onto the closest surface
+	float texCoordScale;
+	//float			dot;
+	int      numPoints  = 4;        // Ridah, we were only ever passing in 4, so I made this local and used the parameter for the orientation
 	qboolean oldMapping = qfalse;
+
+	if (numPoints <= 0)
+	{
+		return 0;
+	}
 
 	//increment view count for double check prevention
 	tr.viewCount++;
 
-	// negative maxFragments means we want original mapping
+	// RF, negative maxFragments means we want original mapping
 	if (maxFragments < 0)
 	{
 		maxFragments = -maxFragments;
@@ -636,8 +644,10 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 
 	numsurfaces = 0;
 	R_BoxSurfaces_r(tr.world->nodes, mins, maxs, surfaces, 4096, &numsurfaces, projectionDir);
+	//assert(numsurfaces <= 64);
+	//assert(numsurfaces != 64);
 
-	//texCoordScale = 0.5 * 1.0 / radius;
+	texCoordScale = 0.5 * 1.0 / radius;
 
 	returnedPoints    = 0;
 	returnedFragments = 0;
@@ -645,13 +655,40 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 	// find the closest surface to center the decal there, and wrap around other surfaces
 	if (!oldMapping)
 	{
+/*
+        for ( i = 0 ; i < numsurfaces ; i++ ) {
+            if (*surfaces[i] == SF_FACE) {
+                surf = ( srfSurfaceFace_t * ) surfaces[i];
+                // Ridah, check if this is the closest surface
+                dot = DotProduct( center, surf->plane.normal );
+                dot -= surf->plane.dist;
+                if (!bestdist) {
+                    if (dot < 0)
+                        bestdist = fabs(dot) + 1000;	// avoid this surface, since the point is behind it
+                    else
+                        bestdist = dot;
+                    VectorCopy( surf->plane.normal, bestnormal );
+                    VectorMA( center, -dot, surf->plane.normal, bestCenter );
+                } else if (dot >= 0 && dot < bestdist) {
+                    bestdist = dot;
+                    VectorCopy( surf->plane.normal, bestnormal );
+                    VectorMA( center, -dot, surf->plane.normal, bestCenter );
+                }
+            }
+        }
+        // bestCenter is now the real center
+        VectorCopy( bestCenter, center );
+Com_Printf("bestnormal: %1.1f %1.1f %1.1f \n", bestnormal[0], bestnormal[1], bestnormal[2] );
+*/
 		VectorNegate(bestnormal, bestnormal);
 	}
 
 	for (i = 0 ; i < numsurfaces ; i++)
 	{
+
 		if (*surfaces[i] == SF_GRID)
 		{
+
 			cv = (srfGridMesh_t *) surfaces[i];
 			for (m = 0 ; m < cv->height - 1 ; m++)
 			{
@@ -740,69 +777,50 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 		{
 			extern float VectorDistance(vec3_t v1, vec3_t v2);
 			vec3_t axis[3];
+			float  texCoordScale, dot;
 			vec3_t originalPoints[4];
-			vec3_t newCenter;
+			vec3_t newCenter, delta;
+			int    oldNumPoints;
+			float  epsilon = 0.5;
 			// duplicated so we don't mess with the original clips for the curved surfaces
 			vec3_t lnormals[MAX_VERTS_ON_POLY + 2];
 			float  ldists[MAX_VERTS_ON_POLY + 2];
-			vec3_t lmins;
-			vec3_t surfnormal;
+			vec3_t lmins, lmaxs;
 
-			surf = ( srfSurfaceFace_t * ) surfaces[i];
-
-			if (surf->plane.type == PLANE_NON_PLANAR)
-			{
-				VectorCopy(bestnormal, surfnormal);
-			}
-			else
-			{
-				VectorCopy(surf->plane.normal, surfnormal);
-			}
+			srfSurfaceFace_t *surf = ( srfSurfaceFace_t * ) surfaces[i];
 
 			if (!oldMapping)
 			{
-				vec3_t lmaxs;
-				float  dot;
-				float  texCoordScale;
-				float  epsilon = 0.5;
-				int    oldNumPoints;
 
-				// create a new clip box such that this decal surface is mapped onto
+				// Ridah, create a new clip box such that this decal surface is mapped onto
 				// the current surface without distortion. To find the center of the new clip box,
 				// we project the center of the original impact center out along the projection vector,
 				// onto the current surface
 
-				if (surf->plane.type == PLANE_NON_PLANAR)
+				// find the center of the new decal
+				dot  = DotProduct(center, surf->plane.normal);
+				dot -= surf->plane.dist;
+				// check the normal of this face
+				if (dot < -epsilon && DotProduct(surf->plane.normal, projectionDir) >= 0.01)
 				{
-					VectorCopy(center, newCenter);
+					continue;
 				}
-				else
+				else if (fabs(dot) > radius)
 				{
-					// find the center of the new decal
-					dot  = DotProduct(center, surfnormal);
-					dot -= surf->plane.dist;
-					// check the normal of this face
-					if (dot < -epsilon && DotProduct(surfnormal, projectionDir) >= 0.01)
-					{
-						continue;
-					}
-					else if (Q_fabs(dot) > radius)
-					{
-						continue;
-					}
-					// if the impact point is behind the surface, subtract the projection, otherwise add it
-					VectorMA(center, -dot, bestnormal, newCenter);
+					continue;
 				}
+				// if the impact point is behind the surface, subtract the projection, otherwise add it
+				VectorMA(center, -dot, bestnormal, newCenter);
 
 				// recalc dot from the offset position
-				dot  = DotProduct(newCenter, surfnormal);
+				dot  = DotProduct(newCenter, surf->plane.normal);
 				dot -= surf->plane.dist;
-				VectorMA(newCenter, -dot, surfnormal, newCenter);
+				VectorMA(newCenter, -dot, surf->plane.normal, newCenter);
 
-				VectorMA(newCenter, MARKER_OFFSET, surfnormal, newCenter);
+				VectorMA(newCenter, MARKER_OFFSET, surf->plane.normal, newCenter);
 
 				// create the texture axis
-				VectorNormalize2(surfnormal, axis[0]);
+				VectorNormalize2(surf->plane.normal, axis[0]);
 				PerpendicularVector(axis[1], axis[0]);
 				RotatePointAroundVector(axis[2], axis[0], axis[1], (float)orientation);
 				CrossProduct(axis[0], axis[2], axis[1]);
@@ -826,7 +844,7 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 					AddPointToBounds(originalPoints[j], lmins, lmaxs);
 
 					VectorSubtract(originalPoints[(j + 1) % numPoints], originalPoints[j], v1);
-					VectorSubtract(originalPoints[j], surfnormal, v2);
+					VectorSubtract(originalPoints[j], surf->plane.normal, v2);
 					VectorSubtract(originalPoints[j], v2, v2);
 					CrossProduct(v1, v2, lnormals[j]);
 					VectorNormalize(lnormals[j]);
@@ -834,14 +852,14 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 				}
 				numPlanes = numPoints;
 
+				// done.
 
-				indexes = ( int * )((byte *)surf + surf->ofsIndices);
-				for (k = 0 ; k < surf->numIndices ; k += 3)
+				for (k = 0, tri = surf->triangles; k < surf->numTriangles; k++, tri++)
 				{
-					for (j = 0 ; j < 3 ; j++)
+					for (j = 0; j < 3; j++)
 					{
-						v = surf->points[0] + VERTEXSIZE * indexes[k + j];
-						VectorMA(v, MARKER_OFFSET, surfnormal, clipPoints[0][j]);
+						v = surf->verts[tri->indexes[j]].xyz;
+						VectorMA(v, MARKER_OFFSET, surf->plane.normal, clipPoints[0][j]);
 					}
 
 					oldNumPoints = returnedPoints;
@@ -855,12 +873,10 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 
 					if (oldNumPoints != returnedPoints)
 					{
-						vec3_t delta;
-
 						// flag this surface as already having computed ST's
 						fragmentBuffer[returnedFragments - 1].numPoints *= -1;
 
-						// calculate ST's
+						// Ridah, calculate ST's
 						for (j = 0 ; j < (returnedPoints - oldNumPoints) ; j++)
 						{
 							VectorSubtract((float *)pointBuffer + 5 * (oldNumPoints + j), newCenter, delta);
@@ -876,14 +892,17 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 				}
 
 			}
-			else  // old mapping
-			{
-				indexes = ( int * )((byte *)surf + surf->ofsIndices);
-				for (k = 0 ; k < surf->numIndices ; k += 3)
+			else        // old mapping
+			{   // check the normal of this face
+				//if (DotProduct(surf->plane.normal, projectionDir) > 0.0) {
+				//	continue;
+				//}
+
+				for (k = 0, tri = surf->triangles; k < surf->numTriangles; k++, tri++)
 				{
-					for (j = 0 ; j < 3 ; j++)
+					for (j = 0; j < 3; j++)
 					{
-						v = surf->points[0] + VERTEXSIZE * indexes[k + j];
+						v = surf->verts[tri->indexes[j]].xyz;
 						VectorMA(v, MARKER_OFFSET, surf->plane.normal, clipPoints[0][j]);
 					}
 					// add the fragments of this face
@@ -897,85 +916,33 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 						return returnedFragments;   // not enough space for more fragments
 					}
 				}
+
 			}
 
-			continue;
 		}
-		// Arnout: projection on models (mainly for terrain though)
-		else if (*surfaces[i] == SF_TRIANGLES)
+		else if (*surfaces[i] == SF_TRIANGLES && r_marksOnTriangleMeshes->integer)
 		{
-			// duplicated so we don't mess with the original clips for the curved surfaces
-			vec3_t lnormals[MAX_VERTS_ON_POLY + 2];
-			float  ldists[MAX_VERTS_ON_POLY + 2];
 
-			srfTriangles_t *cts;
-			cts = ( srfTriangles_t * ) surfaces[i];
-			if (!oldMapping)
+			srfTriangles_t *surf = (srfTriangles_t *) surfaces[i];
+
+			for (k = 0, tri = surf->triangles; k < surf->numTriangles; k++, tri++)
 			{
-				for (k = 0 ; k < numPoints ; k++)
+				for (j = 0; j < 3; j++)
 				{
-					VectorNegate(normals[k], lnormals[k]);
-					ldists[k] = -dists[k];
+					v = surf->verts[tri->indexes[j]].xyz;
+					VectorMA(v, MARKER_OFFSET, surf->verts[tri->indexes[j]].normal, clipPoints[0][j]);
 				}
-				VectorNegate(normals[numPoints], lnormals[numPoints]);
-				ldists[numPoints] = dists[numPoints + 1];
-				VectorNegate(normals[numPoints + 1], lnormals[numPoints + 1]);
-				ldists[numPoints + 1] = dists[numPoints];
 
-				indexes = cts->indexes;
-				for (k = 0 ; k < cts->numIndexes ; k += 3)
+				// add the fragments of this face
+				R_AddMarkFragments(3, clipPoints,
+				                   numPlanes, normals, dists,
+				                   maxPoints, pointBuffer,
+				                   maxFragments, fragmentBuffer, &returnedPoints, &returnedFragments, mins, maxs);
+				if (returnedFragments == maxFragments)
 				{
-					for (j = 0 ; j < 3 ; j++)
-					{
-						v = cts->verts[indexes[k + j]].xyz;
-						VectorMA(v, MARKER_OFFSET, cts->verts[indexes[k + j]].normal, clipPoints[0][j]);
-					}
-					// add the fragments of this face
-					R_AddMarkFragments(3, clipPoints,
-					                   numPlanes, lnormals, ldists,
-					                   maxPoints, pointBuffer,
-					                   maxFragments, fragmentBuffer,
-					                   &returnedPoints, &returnedFragments, mins, maxs);
-
-					if (returnedFragments == maxFragments)
-					{
-						return returnedFragments;   // not enough space for more fragments
-					}
+					return returnedFragments;   // not enough space for more fragments
 				}
 			}
-			else
-			{
-				indexes = cts->indexes;
-				for (k = 0 ; k < cts->numIndexes ; k += 3)
-				{
-					for (j = 0 ; j < 3 ; j++)
-					{
-						v = cts->verts[indexes[k + j]].xyz;
-						VectorMA(v, MARKER_OFFSET, cts->verts[indexes[k + j]].normal, clipPoints[0][j]);
-					}
-					// add the fragments of this face
-					R_AddMarkFragments(3, clipPoints,
-					                   numPlanes, normals, dists,
-					                   maxPoints, pointBuffer,
-					                   maxFragments, fragmentBuffer,
-					                   &returnedPoints, &returnedFragments, mins, maxs);
-
-					if (returnedFragments == maxFragments)
-					{
-						return returnedFragments;   // not enough space for more fragments
-					}
-				}
-			}
-
-			continue;
-		}
-		else
-		{
-			// ignore all other world surfaces
-			// might be cool to also project polygons on a triangle soup
-			// however this will probably create huge amounts of extra polys
-			// even more than the projection onto curves
-			continue;
 		}
 	}
 	return returnedFragments;

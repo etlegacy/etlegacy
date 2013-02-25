@@ -49,8 +49,8 @@
 // for lighting.  This allows entities to sink into the floor
 // with their origin going solid, and allows all parts of a
 // player to get the same lighting
-#define RF_SHADOW_PLANE     0x000040        // use refEntity->shadowPlane
-#define RF_WRAP_FRAMES      0x000080        // mod the model frames by the maxframes to allow continuous
+#define RF_SHADOW_PLANE     0x0100      // use refEntity->shadowPlane  0x000040
+#define RF_WRAP_FRAMES      0x0200      // mod the model frames by the maxframes to allow continuous  0x000080
 // animation without needing to know the frame count
 #define RF_HILIGHT          0x000100        // more than RF_MINLIGHT.  For when an object is "Highlighted" (looked at/training identification/etc)
 #define RF_BLINK            0x000200        // eyes in 'blink' state
@@ -65,6 +65,20 @@
 #define RDF_UNDERWATER      (1 << 4)    // so the renderer knows to use underwater fog when the player is underwater
 #define RDF_DRAWINGSKY      (1 << 5)
 #define RDF_SNOOPERVIEW     (1 << 6)
+
+#define MAX_DLIGHTS     32      // can't be increased, because bit flags are used on surfaces
+
+#define REFENTITYNUM_BITS   10      // can't be increased without changing drawsurf bit packing
+#define REFENTITYNUM_MASK   ((1 << REFENTITYNUM_BITS) - 1)
+// the last N-bit number (2^REFENTITYNUM_BITS - 1) is reserved for the special world refentity,
+//  and this is reflected by the value of MAX_REFENTITIES (which therefore is not a power-of-2)
+#define MAX_REFENTITIES     ((1 << REFENTITYNUM_BITS) - 1)
+#define REFENTITYNUM_WORLD  ((1 << REFENTITYNUM_BITS) - 1)
+
+#define RF_CROSSHAIR        0x0010      // This item is a cross hair and will draw over everything similar to
+// DEPTHHACK in stereo rendering mode, with the difference that the
+// projection matrix won't be hacked to reduce the stereo separation as
+// is done for the gun.
 
 typedef struct
 {
@@ -307,6 +321,9 @@ typedef struct
 	qboolean isFullscreen;
 	qboolean stereoEnabled;
 	qboolean smpActive;                     // obsolete, kept for compatibility
+
+	//Renderer 2
+	int numTextureUnits;
 } glconfig_t;
 
 // =========================================
