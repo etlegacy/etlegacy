@@ -35,7 +35,7 @@
 #include "../botlib/botlib.h"
 
 #ifdef FEATURE_TRACKER
-#include "sv_trackbase.h"
+#include "sv_tracker.h"
 #endif
 
 static bot_debugpoly_t debugpolygons[MAX_DEBUGPOLYS];

@@ -36,7 +36,7 @@
 #include "../botlib/botlib.h"
 
 #ifdef FEATURE_TRACKER
-#include "sv_trackbase.h"
+#include "sv_tracker.h"
 #endif
 
 botlib_export_t *botlib_export;

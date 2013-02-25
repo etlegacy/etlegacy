@@ -35,7 +35,7 @@
 #include "server.h"
 
 #ifdef FEATURE_TRACKER
-#include "sv_trackbase.h"
+#include "sv_tracker.h"
 #endif
 
 static void SV_CloseDownload(client_t *cl);
