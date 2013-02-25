@@ -4407,6 +4407,8 @@ void CL_LocalServers_f(void)
 /*
 ==================
 CL_GlobalServers_f
+
+FIXME/TODO: ADD MULTIPLE MASTER SUPPORT
 ==================
 */
 void CL_GlobalServers_f(void)
@@ -4414,34 +4416,46 @@ void CL_GlobalServers_f(void)
 	netadr_t to;
 	int      i;
 	int      count;
-	char     *buffptr;
 	char     command[1024];
-	char     *cmdname;
 
-	if (Cmd_Argc() < 3)
+	if ((count = Cmd_Argc()) < 3 || (cls.masterNum = atoi(Cmd_Argv(1))) < 0 || cls.masterNum > 1)
 	{
 		Com_Printf("usage: globalservers <master# 0-1> <protocol> [keywords]\n");
 		return;
 	}
 
-	cls.masterNum = atoi(Cmd_Argv(1));
-
-	Com_Printf("Requesting servers from the master...\n");
-
 	// reset the list, waiting for response
 	// -1 is used to distinguish a "no response"
-	if (cls.masterNum == 0)
+
+	i = NET_StringToAdr(MASTER_SERVER_NAME, &to, NA_UNSPEC);
+
+	if (!i)
 	{
-		NET_StringToAdr(MASTER_SERVER_NAME, &to, NA_UNSPEC);
-		cls.numglobalservers = -1;
-		cls.pingUpdateSource = AS_GLOBAL;
+		Com_Printf("CL_GlobalServers_f: Error: could not resolve address of master %s\n", MASTER_SERVER_NAME);
+		return;
 	}
+	else if (i == 2)
+	{
+		to.port = BigShort(PORT_MASTER);
+	}
+
+	Com_Printf("Requesting servers from the master %s (%s)...\n", MASTER_SERVER_NAME, NET_AdrToStringwPort(to));
+
+	/*if (cls.masterNum == 0)
+	{
+	    NET_StringToAdr(MASTER_SERVER_NAME, &to, NA_UNSPEC);
+	    cls.numglobalservers = -1;
+	    cls.pingUpdateSource = AS_GLOBAL;
+	}*/
+
+	cls.numglobalservers = -1;
+	cls.pingUpdateSource = AS_GLOBAL;
 
 #ifdef FEATURE_IPV6
 	// Use the extended query for IPv6 masters
 	if (to.type == NA_IP6 || to.type == NA_MULTICAST6)
 	{
-		cmdname = "getserversExt " GAMENAME_FOR_MASTER;
+		Com_sprintf(command, sizeof(command), "getserversExt %s %s", GAMENAME_FOR_MASTER, Cmd_Argv(2));
 
 		// TODO: test if we only have an IPv6 connection. If it's the case,
 		//       request IPv6 servers only by appending " ipv6" to the command
@@ -4449,19 +4463,15 @@ void CL_GlobalServers_f(void)
 	else
 #endif
 	{
-		cmdname = "getservers";
+		Com_sprintf(command, sizeof(command), "getservers %s", Cmd_Argv(2));
 	}
 
-	to.type = NA_IP;
-	to.port = BigShort(PORT_MASTER);
-
-	sprintf(command, "%s %s", cmdname, Cmd_Argv(2));
-
 	// tack on keywords
-	buffptr = command + strlen(command);
-	count   = Cmd_Argc();
 	for (i = 3; i < count; i++)
-		buffptr += sprintf(buffptr, " %s", Cmd_Argv(i));
+	{
+		Q_strcat(command, sizeof(command), " ");
+		Q_strcat(command, sizeof(command), Cmd_Argv(i));
+	}
 
 	NET_OutOfBandPrint(NS_SERVER, to, command);
 }
