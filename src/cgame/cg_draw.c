@@ -1716,7 +1716,7 @@ static void CG_DrawBinocReticle(void)
 		CG_DrawPic(0, 0, Ccg_WideX(640), 480, cgs.media.binocShaderSimple);
 	}
 
-	CG_FillRect(146, 239, 348, 1, colorBlack);
+	CG_FillRect(146 + cgs.wideXoffset, 239, 348, 1, colorBlack);
 
 	CG_FillRect(188 + cgs.wideXoffset, 234, 1, 13, colorBlack);     // ll
 	CG_FillRect(234 + cgs.wideXoffset, 226, 1, 29, colorBlack);     // l
