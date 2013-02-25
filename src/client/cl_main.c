@@ -2586,7 +2586,7 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 	static qboolean autoupdateRedirected = qfalse;
 
 	// Update server doesn't understand netchan packets
-	if (NET_CompareAdr(cls.autoupdateServer, clc.serverAddress)
+	if (NET_CompareAdr(cls.autoupdateServer, from)
 	    && autoupdateStarted && !autoupdateRedirected)
 	{
 		autoupdateRedirected = qtrue;
