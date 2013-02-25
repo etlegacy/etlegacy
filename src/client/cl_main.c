@@ -537,11 +537,9 @@ void CL_ReadDemoMessage(void)
 
 /*
 ====================
-
   Wave file saving functions
 
   FIXME: make this actually work
-
 ====================
 */
 
@@ -649,7 +647,6 @@ void CL_WriteWaveOpen(void)
 	{
 		int number, len;
 
-		// I STOLE THIS
 		for (number = 0 ; number <= 9999 ; number++)
 		{
 			CL_WavFilename(number, wavName);
@@ -779,10 +776,10 @@ void CL_PlayDemo_f(void)
 	// don't get the first snapshot this frame, to prevent the long
 	// time from the gamestate load from messing causing a time skip
 	clc.firstDemoFrameSkipped = qfalse;
-//  if (clc.waverecording) {
-//      CL_WriteWaveClose();
-//      clc.waverecording = qfalse;
-//  }
+	//if (clc.waverecording) {
+	//  CL_WriteWaveClose();
+	//  clc.waverecording = qfalse;
+	//}
 }
 
 /*
@@ -845,7 +842,7 @@ void CL_ShutdownAll(void)
 	cls.rendererStarted = qfalse;
 	cls.soundRegistered = qfalse;
 
-	// Gordon: stop recording on map change etc, demos aren't valid over map changes anyway
+	// stop recording on map change etc, demos aren't valid over map changes anyway
 	if (clc.demorecording)
 	{
 		CL_StopRecord_f();
@@ -953,6 +950,7 @@ static void CL_UpdateGUID(void)
 	else
 	{
 		char *guid = Com_MD5FileETCompat(ETKEY_FILE);
+
 		if (guid)
 		{
 			Cvar_Set("cl_guid", guid);
@@ -1522,8 +1520,6 @@ void CL_Vid_Restart_f(void)
 	if (CL_VideoRecording())
 	{
 		//Stop recording and close the avi file before vid_restart
-		//Cvar_Set("cl_avidemo", "0");
-		//CL_CloseAVI();
 		Cmd_ExecuteString("stopvideo");
 	}
 
@@ -2915,10 +2911,9 @@ void CL_StopVideo_f(void)
 	{
 		//cl_avidemo->integer = 0;
 		Cvar_Set("cl_avidemo", "0");
-		/*
-		*We need to call something like S_Base_StopAllSounds();
-		*here to stop the stuttering. Something it crashes the game.
-		*/
+
+		// We need to call something like S_Base_StopAllSounds();
+		// here to stop the stuttering. Something it crashes the game.
 		Cmd_ExecuteString("s_stop");
 		S_StopAllSounds();
 		CL_CloseAVI();
@@ -3791,7 +3786,7 @@ void CL_Init(void)
 	Cmd_AddCommand("wav_record", CL_WavRecord_f);
 	Cmd_AddCommand("wav_stoprecord", CL_WavStopRecord_f);
 
-	//Avi recording
+	// Avi recording
 	Cmd_AddCommand("video", CL_Video_f);
 	Cmd_AddCommand("stopvideo", CL_StopVideo_f);
 
@@ -4441,13 +4436,6 @@ void CL_GlobalServers_f(void)
 
 	Com_Printf("Requesting servers from the master %s (%s)...\n", MASTER_SERVER_NAME, NET_AdrToStringwPort(to));
 
-	/*if (cls.masterNum == 0)
-	{
-	    NET_StringToAdr(MASTER_SERVER_NAME, &to, NA_UNSPEC);
-	    cls.numglobalservers = -1;
-	    cls.pingUpdateSource = AS_GLOBAL;
-	}*/
-
 	cls.numglobalservers = -1;
 	cls.pingUpdateSource = AS_GLOBAL;
 
@@ -4564,10 +4552,8 @@ CL_GetPingQueueCount
 int CL_GetPingQueueCount(void)
 {
 	int    i;
-	int    count = 0;
-	ping_t *pingptr;
-
-	pingptr = cl_pinglist;
+	int    count    = 0;
+	ping_t *pingptr = cl_pinglist;
 
 	for (i = 0; i < MAX_PINGREQUESTS; i++, pingptr++)
 	{
@@ -4587,13 +4573,12 @@ CL_GetFreePing
 */
 ping_t *CL_GetFreePing(void)
 {
-	ping_t *pingptr;
+	ping_t *pingptr = cl_pinglist;
 	ping_t *best;
 	int    oldest;
 	int    i;
 	int    time;
 
-	pingptr = cl_pinglist;
 	for (i = 0; i < MAX_PINGREQUESTS; i++, pingptr++)
 	{
 		// find free ping slot
@@ -4842,8 +4827,7 @@ void CL_ServerStatus_f(void)
 	{
 		if (cls.state != CA_ACTIVE || clc.demoplaying)
 		{
-			Com_Printf("Not connected to a server.\n");
-			Com_Printf("usage: serverstatus [-4|-6] server\n");
+			Com_Printf("Not connected to a server.\nusage: serverstatus [-4|-6] server\n");
 			return;
 		}
 
@@ -4912,8 +4896,7 @@ void CL_AddToLimboChat(const char *str)
 {
 	int  len = 0;
 	char *p;
-
-	int i;
+	int  i;
 
 	cl.limboChatPos = LIMBOCHAT_HEIGHT - 1;
 
@@ -5049,7 +5032,7 @@ static trans_t *LookupTrans(char *original, char *translated[MAX_LANGUAGES], qbo
 		{
 			if (isLoading)
 			{
-				Com_DPrintf(S_COLOR_YELLOW "WARNING: Duplicate string found: \"%s\"\n", original);
+				Com_DPrintf(S_COLOR_YELLOW "WARNING LookupTrans: Duplicate string found: \"%s\"\n", original);
 			}
 			return t;
 		}
@@ -5300,7 +5283,7 @@ void CL_LoadTransTable(const char *fileName)
 		return;
 	}
 
-	// Gordon: shouldn't this be a z_malloc or something?
+	// shouldn't this be a z_malloc or something?
 	text = malloc(len + 1);
 	if (!text)
 	{
@@ -5516,7 +5499,6 @@ void CL_LoadTransTable(const char *fileName)
 			break;
 		}
 
-
 		// do lookup
 		t = LookupTrans(original, NULL, qtrue);
 
@@ -5564,7 +5546,7 @@ void CL_LoadTransTable(const char *fileName)
 			}
 		}
 
-		Com_Printf(S_COLOR_YELLOW "WARNING: Problem loading %s on line %i\n", fileName, line);
+		Com_Printf(S_COLOR_YELLOW "WARNING CL_LoadTransTable: Problem loading %s on line %i\n", fileName, line);
 		cl.corruptedTranslationFile = qtrue;
 	}
 	else
@@ -5633,13 +5615,10 @@ CL_TranslateString
 */
 void CL_TranslateString(const char *string, char *dest_buffer)
 {
-	int      i, count, currentLanguage;
+	int      i, count, currentLanguage = cl_language->integer - 1;
 	trans_t  *t;
 	qboolean newline = qfalse;
-	char     *buf;
-
-	buf             = dest_buffer;
-	currentLanguage = cl_language->integer - 1;
+	char     *buf    = dest_buffer;
 
 	// early bail if we only want english or bad language type
 	if (!string)
@@ -5759,7 +5738,7 @@ const char *CL_TranslateStringBuf(const char *string)
 	{
 		*p = '\n';
 		p++;
-		// Com_Memcpy(p, p+1, strlen(p) ); b0rks on win32
+		//Com_Memcpy(p, p+1, strlen(p) ); b0rks on win32
 		l = strlen(p);
 		for (i = 0; i < l; i++)
 		{
