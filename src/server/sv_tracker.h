@@ -32,33 +32,33 @@
  * @file sv_trackbase.h
  * @brief Sends game statistics to Trackbase
  */
-#ifdef FEATURE_TRACKBASE
+#ifdef FEATURE_TRACKER
 
-#ifndef _TRACKBASE_H
-#define _TRACKBASE_H
+#ifndef _TRACKER_H
+#define _TRACKER_H
 
-#define TRACKBASE_ADDR "et-tracker.trackbase.net:4444"
+#define TRACKER_ADDR "et-tracker.trackbase.net:4444"
 
 #include "server.h"
 //#include "../qcommon/q_shared.h"
 
-void TB_Init(void);
-void TB_ServerStart(void);
-void TB_ServerStop(void);
-void TB_ClientConnect(client_t *cl);
-void TB_ClientDisconnect(client_t *cl);
-void TB_ClientName(client_t *cl);
-void TB_Map(char *mapname);
-void TB_MapRestart(void);
-void TB_MapEnd(void);
-// void TB_TeamSwitch(client_t *cl); // unused
-void TB_Frame(int msec);
+void Tracker_Init(void);
+void Tracker_ServerStart(void);
+void Tracker_ServerStop(void);
+void Tracker_ClientConnect(client_t *cl);
+void Tracker_ClientDisconnect(client_t *cl);
+void Tracker_ClientName(client_t *cl);
+void Tracker_Map(char *mapname);
+void Tracker_MapRestart(void);
+void Tracker_MapEnd(void);
+// void Tracker_TeamSwitch(client_t *cl); // unused
+void Tracker_Frame(int msec);
 
-void TB_catchBotConnect(int clientNum);
-qboolean TB_catchServerCommand(int clientNum, char *msg);
+void Tracker_catchBotConnect(int clientNum);
+qboolean Tracker_catchServerCommand(int clientNum, char *msg);
 
-void TB_requestWeaponStats(void);
+void Tracker_requestWeaponStats(void);
 
-#endif // _TRACKBASE_H
+#endif // _TRACKER_H
 
-#endif // FEATURE_TRACKBASE
+#endif // FEATURE_TRACKER

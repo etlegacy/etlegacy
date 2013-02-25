@@ -30,12 +30,12 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
  * @file sv_trackbase.h
- * @brief Sends game statistics to Trackbase
+ * @brief Sends game statistics to Tracker
  * @author Konrad "morsik" Mosoń
  */
-#ifdef FEATURE_TRACKBASE
+#ifdef FEATURE_TRACKER
 
-#include "sv_trackbase.h"
+#include "sv_tracker.h"
 
 long t;
 int  waittime = 15; // seconds
@@ -48,25 +48,25 @@ int querycl = -1;
 
 enum
 {
-	TB_BOT_NONE,
-	TB_BOT_CONNECT
+	TR_BOT_NONE,
+	TR_BOT_CONNECT
 } catchBot;
 qboolean catchBotNum = 0;
 
 netadr_t addr;
-#ifdef TRACKBASE_DEBUG
+#ifdef TRACKER_DEBUG
 netadr_t local;
 #endif
 
 char infostring[MAX_INFO_STRING];
 
-char *TB_getGUID(client_t *cl);
+char *Tracker_getGUID(client_t *cl);
 
 /**
- * @brief Sends data to Trackbase
+ * @brief Sends data to Tracker
  * @param[in] format Formatted data to send
  */
-void TB_Send(char *format, ...)
+void Tracker_Send(char *format, ...)
 {
 	va_list argptr;
 	char    msg[MAX_MSGLEN];
@@ -76,93 +76,93 @@ void TB_Send(char *format, ...)
 	va_end(argptr);
 
 	NET_OutOfBandPrint(NS_SERVER, addr, "%s", msg);
-#ifdef TRACKBASE_DEBUG
+#ifdef TRACKER_DEBUG
 	NET_OutOfBandPrint(NS_SERVER, local, "%s", msg);
 #endif
 }
 
 /**
- * @brief Initialize Trackbase support
+ * @brief Initialize Tracker support
  */
-void TB_Init(void)
+void Tracker_Init(void)
 {
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
-		Com_Printf("Trackbase: Server communication disabled by sv_advert.\n");
+		Com_Printf("Tracker: Server communication disabled by sv_advert.\n");
 		return;
 	}
 
 	t         = time(0);
 	expectnum = 0;
 
-	NET_StringToAdr(TRACKBASE_ADDR, &addr, NA_IP);
-#ifdef TRACKBASE_DEBUG
+	NET_StringToAdr(TRACKER_ADDR, &addr, NA_IP);
+#ifdef TRACKER_DEBUG
 	NET_StringToAdr("127.0.0.1:6066", &local, NA_IP);
 #endif
-	Com_Printf("Trackbase: Server communication enabled.\n");
+	Com_Printf("Tracker: Server communication enabled.\n");
 }
 
 /**
  * @brief Send info about server startup
  */
-void TB_ServerStart(void)
+void Tracker_ServerStart(void)
 {
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
 		return;
 	}
 
-	TB_Send("start");
+	Tracker_Send("start");
 }
 
 /**
  * @brief Send info about server shutdown
  */
-void TB_ServerStop(void)
+void Tracker_ServerStop(void)
 {
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
 		return;
 	}
 
-	TB_Send("stop");
+	Tracker_Send("stop");
 }
 
 /**
  * @brief Send info about new client connected
  * @param[in] cl Client
  */
-void TB_ClientConnect(client_t *cl)
+void Tracker_ClientConnect(client_t *cl)
 {
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
 		return;
 	}
 
-	TB_Send("connect %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), cl->name);
+	Tracker_Send("connect %i %s %s", (int)(cl - svs.clients), Tracker_getGUID(cl), cl->name);
 }
 
 /**
  * @brief Send info when client disconnects
  * @param[in] cl Client
  */
-void TB_ClientDisconnect(client_t *cl)
+void Tracker_ClientDisconnect(client_t *cl)
 {
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
 		return;
 	}
 
-	TB_Send("disconnect %i", (int)(cl - svs.clients));
+	Tracker_Send("disconnect %i", (int)(cl - svs.clients));
 }
 
 /**
  * @brief Send info when player changes his name
  * @param[in] cl Client
  */
-void TB_ClientName(client_t *cl)
+void Tracker_ClientName(client_t *cl)
 {
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
 		return;
 	}
@@ -172,21 +172,21 @@ void TB_ClientName(client_t *cl)
 		return;
 	}
 
-	TB_Send("name %i %s %s", (int)(cl - svs.clients), TB_getGUID(cl), Info_ValueForKey(cl->userinfo, "name"));
+	Tracker_Send("name %i %s %s", (int)(cl - svs.clients), Tracker_getGUID(cl), Info_ValueForKey(cl->userinfo, "name"));
 }
 
 /**
  * @brief Send info when map has changed
  * @param[in] mapname Current Map
  */
-void TB_Map(char *mapname)
+void Tracker_Map(char *mapname)
 {
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
 		return;
 	}
 
-	TB_Send("map %s", mapname);
+	Tracker_Send("map %s", mapname);
 	maprunning = qtrue;
 }
 
@@ -195,14 +195,14 @@ void TB_Map(char *mapname)
  *
  * Allows counting time from 0 again on TB
  */
-void TB_MapRestart(void)
+void Tracker_MapRestart(void)
 {
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
 		return;
 	}
 
-	TB_Send("maprestart");
+	Tracker_Send("maprestart");
 	maprunning = qtrue;
 }
 
@@ -211,15 +211,15 @@ void TB_MapRestart(void)
  *
  * Sometimes intermission is very long, so TB can show appropriate info to players
  */
-void TB_MapEnd(void)
+void Tracker_MapEnd(void)
 {
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
 		return;
 	}
 
-	TB_Send("mapend");
-	TB_requestWeaponStats();
+	Tracker_Send("mapend");
+	Tracker_requestWeaponStats();
 	maprunning = qfalse;
 }
 
@@ -228,9 +228,9 @@ void TB_MapEnd(void)
  * @param[in] cl Client
  */
 /* unused
-void TB_TeamSwitch(client_t *cl)
+void Tracker_TeamSwitch(client_t *cl)
 {
-    TB_Send("team %i", (int)(cl - svs.clients));
+    Tracker_Send("team %i", (int)(cl - svs.clients));
 }
 */
 
@@ -239,7 +239,7 @@ void TB_TeamSwitch(client_t *cl)
  * @param clientNum Client ID (from 0 to MAX_CLIENTS)
  * @note Just for sv_trackbase.c internal use
  */
-char *TB_createClientInfo(int clientNum)
+char *Tracker_createClientInfo(int clientNum)
 {
 	playerState_t *ps;
 	ps = SV_GameClientNum(clientNum);
@@ -250,7 +250,7 @@ char *TB_createClientInfo(int clientNum)
 /**
  * @brief Request weapon stats data from mod
  */
-void TB_requestWeaponStats(void)
+void Tracker_requestWeaponStats(void)
 {
 	int      i;
 	qboolean onlybots = qtrue;
@@ -280,7 +280,7 @@ void TB_requestWeaponStats(void)
 
 	if (expectnum > 0)
 	{
-		TB_Send("wsc %i", expectnum);
+		Tracker_Send("wsc %i", expectnum);
 
 		for (i = 0; i < sv_maxclients->value; i++)
 		{
@@ -289,7 +289,7 @@ void TB_requestWeaponStats(void)
 				// send basic data is client is spectator
 				if (P[i] == '3' || (svs.clients[i].netchan.remoteAddress.type == NA_BOT && onlybots))
 				{
-					TB_Send("ws %i 0 0 0\\%s", i, TB_createClientInfo(i));
+					Tracker_Send("ws %i 0 0 0\\%s", i, Tracker_createClientInfo(i));
 				}
 			}
 		}
@@ -304,17 +304,17 @@ void TB_requestWeaponStats(void)
 /**
  * @brief Frame function
  */
-void TB_Frame(int msec)
+void Tracker_Frame(int msec)
 {
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
 		return;
 	}
 
-	if (catchBot == TB_BOT_CONNECT)
+	if (catchBot == Tracker_BOT_CONNECT)
 	{
-		TB_ClientConnect(&svs.clients[catchBotNum]);
-		catchBot = TB_BOT_NONE;
+		Tracker_ClientConnect(&svs.clients[catchBotNum]);
+		catchBot = Tracker_BOT_NONE;
 	}
 
 	if (!(time(0) - waittime > t))
@@ -322,10 +322,10 @@ void TB_Frame(int msec)
 		return;
 	}
 
-	TB_Send("p"); // send ping to tb to show that server is still alive
+	Tracker_Send("p"); // send ping to tb to show that server is still alive
 
 	expectnum = 0; // reset before next statsall
-	TB_requestWeaponStats();
+	Tracker_requestWeaponStats();
 
 	t = time(0);
 }
@@ -335,11 +335,11 @@ void TB_Frame(int msec)
  * @param     clientNum Client ID (from 0 to MAX_CLIENTS)
  * @param[in] msg       Message sends by backend
  */
-qboolean TB_catchServerCommand(int clientNum, char *msg)
+qboolean Tracker_catchServerCommand(int clientNum, char *msg)
 {
 	int slot;
 
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
 		return qfalse;
 	}
@@ -374,7 +374,7 @@ qboolean TB_catchServerCommand(int clientNum, char *msg)
 		}
 		slot = 0;
 		sscanf(msg, "ws %i", &slot);
-		TB_Send("%s\\%s", msg, TB_createClientInfo(slot));
+		Tracker_Send("%s\\%s", msg, Tracker_createClientInfo(slot));
 
 		return qtrue;
 	}
@@ -385,14 +385,14 @@ qboolean TB_catchServerCommand(int clientNum, char *msg)
 /**
  * @brief Catch bot connection
  */
-void TB_catchBotConnect(int clientNum)
+void Tracker_catchBotConnect(int clientNum)
 {
-	if (!(sv_advert->integer & SVA_TRACKBASE))
+	if (!(sv_advert->integer & SVA_TRACKER))
 	{
 		return;
 	}
 
-	catchBot    = TB_BOT_CONNECT;
+	catchBot    = Tracker_BOT_CONNECT;
 	catchBotNum = clientNum;
 }
 
@@ -402,7 +402,7 @@ void TB_catchBotConnect(int clientNum)
  *
  * We prefer to use original cl_guid, but some mods has their own guid values
  */
-char *TB_getGUID(client_t *cl)
+char *Tracker_getGUID(client_t *cl)
 {
 	if (*Info_ValueForKey(cl->userinfo, "cl_guid"))
 	{
@@ -418,4 +418,4 @@ char *TB_getGUID(client_t *cl)
 	}
 }
 
-#endif // FEATURE_TRACKBASE
+#endif // FEATURE_TRACKER

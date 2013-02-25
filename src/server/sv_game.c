@@ -35,7 +35,7 @@
 #include "server.h"
 #include "../botlib/botlib.h"
 
-#ifdef FEATURE_TRACKBASE
+#ifdef FEATURE_TRACKER
 #include "sv_trackbase.h"
 #endif
 
@@ -441,8 +441,8 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		SV_GameDropClient(args[1], VMA(2), args[3]);
 		return 0;
 	case G_SEND_SERVER_COMMAND:
-#ifdef FEATURE_TRACKBASE
-		if (!TB_catchServerCommand(args[1], VMA(2)))
+#ifdef FEATURE_TRACKER
+		if (!Tracker_catchServerCommand(args[1], VMA(2)))
 #endif
 		{
 			SV_GameSendServerCommand(args[1], VMA(2));
@@ -689,8 +689,8 @@ void SV_RestartGameProgs(void)
 
 	SV_InitGameVM(qtrue);
 
-#ifdef FEATURE_TRACKBASE
-	TB_MapRestart();
+#ifdef FEATURE_TRACKER
+	Tracker_MapRestart();
 #endif
 }
 
@@ -715,8 +715,8 @@ void SV_InitGameProgs(void)
 
 	SV_InitGameVM(qfalse);
 
-#ifdef FEATURE_TRACKBASE
-	TB_Map(sv_mapname->string);
+#ifdef FEATURE_TRACKER
+	Tracker_Map(sv_mapname->string);
 #endif
 }
 

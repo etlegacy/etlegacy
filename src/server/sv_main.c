@@ -33,7 +33,7 @@
 
 #include "server.h"
 
-#ifdef FEATURE_TRACKBASE
+#ifdef FEATURE_TRACKER
 #include "sv_trackbase.h"
 #endif
 
@@ -433,8 +433,8 @@ void SV_MasterGameCompleteStatus()
 		SVC_Status(adr[i], qtrue);
 	}
 
-#ifdef FEATURE_TRACKBASE
-	TB_MapEnd();
+#ifdef FEATURE_TRACKER
+	Tracker_MapEnd();
 #endif
 }
 
@@ -1484,8 +1484,8 @@ void SV_Frame(int msec)
 	// send a heartbeat to the master if needed
 	SV_MasterHeartbeat(HEARTBEAT_GAME);
 
-#ifdef FEATURE_TRACKBASE
-	TB_Frame(msec);
+#ifdef FEATURE_TRACKER
+	Tracker_Frame(msec);
 #endif
 
 	if (com_dedicated->integer)

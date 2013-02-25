@@ -43,7 +43,7 @@
 
 // advert control
 #define SVA_MASTER      0x0001  // 1  - master server
-#define SVA_TRACKBASE   0x0002  // 2  - trackbase
+#define SVA_TRACKER     0x0002  // 2  - tracker
 
 // server attack protection
 #define SVP_IOQ3        0x0001  // 1  - ioQuake3 way
