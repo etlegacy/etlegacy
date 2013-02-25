@@ -206,10 +206,8 @@ void CG_Letterbox(float xsize, float ysize, qboolean center)
 	// letterbox is yy:yy  (85% of 'normal' height)
 	if (cg_letterbox.integer)
 	{
-		float lbheight, lbdiff;
-
-		lbheight = ysize * 0.85;
-		lbdiff   = ysize - lbheight;
+		float lbheight = ysize * 0.85;
+		float lbdiff   = ysize - lbheight;
 
 		if (!center)
 		{
@@ -234,7 +232,6 @@ void CG_Letterbox(float xsize, float ysize, qboolean center)
 		cg.refdef.y = (cgs.glconfig.vidHeight - cg.refdef.height) / 2;
 	}
 }
-
 
 static void CG_CalcVrect(void)
 {
@@ -786,6 +783,7 @@ static void CG_OffsetFirstPersonView(void)
 	{
 		// add leaning offset
 		vec3_t right;
+
 		cg.refdefViewAngles[2] += cg.predictedPlayerState.leanf / 2.0f;
 		AngleVectors(cg.refdefViewAngles, NULL, right, NULL);
 		VectorMA(cg.refdef_current->vieworg, cg.predictedPlayerState.leanf, right, cg.refdef_current->vieworg);
@@ -815,7 +813,7 @@ static void CG_OffsetFirstPersonView(void)
 // probably move to server variables
 float zoomTable[ZOOM_MAX_ZOOMS][2] =
 {
-// max {out,in}
+	// max {out,in}
 	{ 0,  0  },
 
 	{ 36, 8  }, //  binoc
@@ -887,21 +885,24 @@ void CG_Zoom(void)
 
 		// check for scope wepon in use, and switch to if necessary
 		// - spec/demo scaling allowances
-		if (cg.predictedPlayerState.weapon == WP_FG42SCOPE)
+		switch (cg.predictedPlayerState.weapon)
 		{
-			cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;   // was DefaultFG, changed per atvi req
-		}
-		else if (cg.predictedPlayerState.weapon == WP_GARAND_SCOPE)
-		{
-			cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;
-		}
-		else if (cg.predictedPlayerState.weapon == WP_K43_SCOPE)
-		{
-			cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;
-		}
-		else if (!(cg.predictedPlayerState.eFlags & EF_ZOOMING))
-		{
-			cg.zoomval = 0;
+		case WP_FG42SCOPE:
+		case WP_GARAND_SCOPE:
+		case WP_K43_SCOPE:
+			cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;     // JPW NERVE was DefaultFG, changed per atvi req
+			break;
+		default:
+			// show a zoomed binoculars view for spectators.. (still not actively zooming in/out)
+			if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
+			{
+				cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;
+			}
+			else
+			{
+				cg.zoomval = 0;
+			}
+			break;
 		}
 	}
 	if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
@@ -922,21 +923,16 @@ void CG_Zoom(void)
 			cg.zoomTime    = cg.time;
 
 			// check for scope weapon in use, and switch to if necessary
-			if (cg.weaponSelect == WP_FG42SCOPE)
+			switch (cg.weaponSelect)
 			{
-				cg.zoomval = cg_zoomDefaultSniper.value; // was DefaultFG, changed per atvi req
-			}
-			else if (cg.weaponSelect == WP_GARAND_SCOPE)
-			{
-				cg.zoomval = cg_zoomDefaultSniper.value;
-			}
-			else if (cg.weaponSelect == WP_K43_SCOPE)
-			{
-				cg.zoomval = cg_zoomDefaultSniper.value;
-			}
-			else
-			{
+			case WP_FG42SCOPE:
+			case WP_GARAND_SCOPE:
+			case WP_K43_SCOPE:
+				cg.zoomval = cg_zoomDefaultSniper.value;     // JPW NERVE was DefaultFG, changed per atvi req
+				break;
+			default:
 				cg.zoomval = 0;
+				break;
 			}
 		}
 		else
@@ -1099,10 +1095,9 @@ static int CG_CalcFov(void)
 	contents = CG_PointContents(cg.refdef.vieworg, -1);
 	if (contents & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
 	{
-		float v;
 		float phase = cg.time / 1000.0 * WAVE_FREQUENCY * M_PI * 2;
+		float v     = WAVE_AMPLITUDE * sin(phase);
 
-		v                           = WAVE_AMPLITUDE * sin(phase);
 		fov_x                      += v;
 		fov_y                      -= v;
 		inwater                     = qtrue;
@@ -1312,6 +1307,7 @@ int CG_CalcViewValues(void)
 		if (cg.showGameView && cgs.ccPortalEnt != -1)
 		{
 			vec3_t vec;
+
 			VectorSubtract(cg_entities[cgs.ccPortalEnt].lerpOrigin, cg.refdef_current->vieworg, vec);
 			vectoangles(vec, cg.refdefViewAngles);
 		}
@@ -1371,7 +1367,6 @@ int CG_CalcViewValues(void)
 		// lock the viewangles if the game has told us to
 		if (ps->viewlocked)
 		{
-
 			/*
 			if (ps->viewlocked == 4)
 			{
@@ -1413,10 +1408,9 @@ int CG_CalcViewValues(void)
 		// lock the viewangles if the game has told us to
 		if (ps->viewlocked == 7)
 		{
-			centity_t *tent;
+			centity_t *tent = &cg_entities[ps->viewlocked_entNum];
 			vec3_t    vec;
 
-			tent = &cg_entities[ps->viewlocked_entNum];
 			VectorCopy(tent->lerpOrigin, vec);
 			VectorSubtract(vec, cg.refdef_current->vieworg, vec);
 			vectoangles(vec, cg.refdefViewAngles);
@@ -1424,15 +1418,15 @@ int CG_CalcViewValues(void)
 		else if (ps->viewlocked == 4)
 		{
 			vec3_t fwd;
+
 			AngleVectors(cg.refdefViewAngles, fwd, NULL, NULL);
 			VectorMA(cg_entities[ps->viewlocked_entNum].lerpOrigin, 16, fwd, cg.refdef_current->vieworg);
 		}
 		else if (ps->viewlocked)
 		{
 			vec3_t fwd;
-			float  oldZ;
-			// set our position to be behind it
-			oldZ = cg.refdef_current->vieworg[2];
+			float  oldZ = cg.refdef_current->vieworg[2]; // set our position to be behind it
+
 			AngleVectors(cg.refdefViewAngles, fwd, NULL, NULL);
 			if (cg.predictedPlayerState.eFlags & EF_AAGUN_ACTIVE)
 			{
@@ -1463,6 +1457,7 @@ int CG_CalcViewValues(void)
 char *CG_MustParse(char **pString, const char *pErrorMsg)
 {
 	char *token = COM_Parse(pString);
+
 	if (!*token)
 	{
 		CG_Error("%s", pErrorMsg);
@@ -1472,8 +1467,7 @@ char *CG_MustParse(char **pString, const char *pErrorMsg)
 
 void CG_ParseSkyBox(void)
 {
-	char   *cstr, *token;
-	vec4_t fogColor;
+	char *cstr, *token;
 
 	cstr = (char *)CG_ConfigString(CS_SKYBOXORG);
 
@@ -1504,7 +1498,8 @@ void CG_ParseSkyBox(void)
 	token = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring.  No fog state\n");
 	if (atoi(token))         // this camera has fog
 	{
-		int fogStart, fogEnd;
+		vec4_t fogColor;
+		int    fogStart, fogEnd;
 
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring.  No fog[0]\n");
 		fogColor[0] = atof(token);
@@ -1700,13 +1695,10 @@ static plane_t frustum[4];
 //  CG_SetupFrustum
 void CG_SetupFrustum(void)
 {
+	float ang = cg.refdef_current->fov_x / 180 * M_PI * 0.5f;
+	float xs  = sin(ang);
+	float xc  = cos(ang);
 	int   i;
-	float xs, xc;
-	float ang;
-
-	ang = cg.refdef_current->fov_x / 180 * M_PI * 0.5f;
-	xs  = sin(ang);
-	xc  = cos(ang);
 
 	VectorScale(cg.refdef_current->viewaxis[0], xs, frustum[0].normal);
 	VectorMA(frustum[0].normal, xc, cg.refdef_current->viewaxis[1], frustum[0].normal);
