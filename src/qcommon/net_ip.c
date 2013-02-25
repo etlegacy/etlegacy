@@ -169,7 +169,6 @@ typedef struct
 static nip_localaddr_t localIP[MAX_IPS];
 static int             numIP;
 
-
 //=============================================================================
 
 /*
@@ -236,7 +235,6 @@ char *NET_ErrorString(void)
 
 static void NetadrToSockadr(netadr_t *a, struct sockaddr *s)
 {
-
 	switch (a->type)
 	{
 	case NA_BROADCAST:
@@ -267,7 +265,6 @@ static void NetadrToSockadr(netadr_t *a, struct sockaddr *s)
 		break;
 	}
 }
-
 
 static void SockadrToNetadr(struct sockaddr *s, netadr_t *a)
 {
@@ -496,6 +493,7 @@ qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
 		return qfalse;
 	}
 
+	// FIXME: do a switch!
 	if (a.type == NA_LOOPBACK)
 	{
 		return qtrue;
@@ -567,7 +565,6 @@ qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
 	return qfalse;
 }
 
-
 /**
  * @brief Compares ip addresses without the port.
  */
@@ -580,6 +577,7 @@ const char *NET_AdrToString(netadr_t a)
 {
 	static char s[NET_ADDRSTRMAXLEN];
 
+	// FIXME: do a switch
 	if (a.type == NA_LOOPBACK)
 	{
 		Com_sprintf(s, sizeof(s), "loopback");
@@ -618,6 +616,7 @@ const char *NET_AdrToStringwPort(netadr_t a)
 {
 	static char s[NET_ADDRSTRMAXLEN];
 
+	// FIXME: do a switch
 	if (a.type == NA_LOOPBACK)
 	{
 		Com_sprintf(s, sizeof(s), "loopback");
@@ -640,8 +639,7 @@ const char *NET_AdrToStringwPort(netadr_t a)
 	return s;
 }
 
-
-qboolean    NET_CompareAdr(netadr_t a, netadr_t b)
+qboolean NET_CompareAdr(netadr_t a, netadr_t b)
 {
 	if (!NET_CompareBaseAdr(a, b))
 	{
@@ -663,8 +661,7 @@ qboolean    NET_CompareAdr(netadr_t a, netadr_t b)
 	return qfalse;
 }
 
-
-qboolean    NET_IsLocalAddress(netadr_t adr)
+qboolean NET_IsLocalAddress(netadr_t adr)
 {
 	return adr.type == NA_LOOPBACK;
 }
@@ -709,7 +706,6 @@ qboolean Sys_GetPacket(netadr_t *net_from, msg_t *net_message)
 		}
 		else
 		{
-
 			memset(((struct sockaddr_in *)&from)->sin_zero, 0, 8);
 
 			if (usingSocks && memcmp(&from, &socksRelayAddr, fromlen) == 0)
@@ -840,12 +836,12 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
 	{
 		return;
 	}
-#endif
 
 	if (to.type == NA_MULTICAST6 && (net_enabled->integer & NET_DISABLEMCAST))
 	{
 		return;
 	}
+#endif
 
 	memset(&addr, 0, sizeof(addr));
 	NetadrToSockadr(&to, (struct sockaddr *) &addr);
@@ -895,7 +891,6 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
 		Com_Printf("Sys_SendPacket: %s\n", NET_ErrorString());
 	}
 }
-
 
 //=============================================================================
 
@@ -1029,9 +1024,7 @@ void Sys_ShowIP(void)
 	}
 }
 
-
 //=============================================================================
-
 
 /*
 ====================
@@ -1518,7 +1511,6 @@ void NET_OpenSocks(int port)
 	usingSocks = qtrue;
 }
 
-
 /*
 =====================
 NET_AddLocalAddress
@@ -1771,9 +1763,7 @@ void NET_OpenIP(void)
 	}
 }
 
-
 //===================================================================
-
 
 /*
 ====================
@@ -1788,9 +1778,14 @@ static qboolean NET_GetCvars(void)
 	// I want server owners to explicitly turn on ipv6 support.
 	net_enabled = Cvar_Get("net_enabled", "1", CVAR_LATCH | CVAR_ARCHIVE);
 #else
-	/* End users have it enabled so they can connect to ipv6-only hosts, but ipv4 will be
-	 * used if available due to ping */
+
+#ifdef FEATURE_IPV6
+	// End users have it enabled so they can connect to ipv6-only hosts, but ipv4 will be used if available due to ping */
 	net_enabled = Cvar_Get("net_enabled", "3", CVAR_LATCH | CVAR_ARCHIVE);
+#else
+	net_enabled = Cvar_Get("net_enabled", "1", CVAR_LATCH | CVAR_ARCHIVE);
+#endif
+
 #endif
 	modified              = net_enabled->modified;
 	net_enabled->modified = qfalse;
@@ -1799,6 +1794,7 @@ static qboolean NET_GetCvars(void)
 	modified        += net_ip->modified;
 	net_ip->modified = qfalse;
 
+	// FIXME FEATURE_IPV6
 	net_ip6           = Cvar_Get("net_ip6", "::", CVAR_LATCH);
 	modified         += net_ip6->modified;
 	net_ip6->modified = qfalse;
@@ -1846,7 +1842,6 @@ static qboolean NET_GetCvars(void)
 
 	return modified ? qtrue : qfalse;
 }
-
 
 /*
 ====================
@@ -1947,7 +1942,6 @@ void NET_Config(qboolean enableNetworking)
 	}
 }
 
-
 /*
 ====================
 NET_Init
@@ -1990,7 +1984,6 @@ void NET_Init(void)
 	Cmd_AddCommand("net_restart", NET_Restart_f);
 }
 
-
 /*
 ====================
 NET_Shutdown
@@ -2017,7 +2010,6 @@ void NET_Shutdown(void)
 	}
 #endif
 }
-
 
 /*
 ====================
@@ -2079,7 +2071,6 @@ void NET_Sleep(int msec)
 	timeout.tv_usec = (msec % 1000) * 1000;
 	select(highestfd + 1, &fdset, NULL, NULL, &timeout);
 }
-
 
 /*
 ====================
