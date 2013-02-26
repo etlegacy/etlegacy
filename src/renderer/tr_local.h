@@ -1835,9 +1835,9 @@ typedef struct
 	dlight_t dlights[MAX_DLIGHTS];
 	corona_t coronas[MAX_CORONAS];
 	trRefEntity_t entities[MAX_ENTITIES];
-	srfPoly_t polys[MAX_POLYS];
+	srfPoly_t *polys; // [MAX_POLYS];
 	srfPolyBuffer_t polybuffers[MAX_POLYS];
-	polyVert_t polyVerts[MAX_POLYVERTS];
+	polyVert_t *polyVerts; // [MAX_POLYVERTS];
 	decalProjector_t decalProjectors[MAX_DECAL_PROJECTORS];
 	srfDecal_t decals[MAX_DECALS];
 	renderCommandList_t commands;

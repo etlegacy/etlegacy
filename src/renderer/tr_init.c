@@ -1342,8 +1342,9 @@ R_Init
 */
 void R_Init(void)
 {
-	int err;
-	int i;
+	int  err;
+	int  i;
+	byte *ptr;
 
 	ri.Printf(PRINT_ALL, "----- R_Init -----\n");
 
@@ -1414,7 +1415,11 @@ void R_Init(void)
 		max_polyverts = MAX_POLYVERTS;
 	}
 
-	backEndData = ri.Hunk_Alloc(sizeof(*backEndData) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
+	ptr = ri.Hunk_Alloc(sizeof(*backEndData) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
+
+	backEndData            = (backEndData_t *) ptr;
+	backEndData->polys     = (srfPoly_t *) ((char *) ptr + sizeof(*backEndData));
+	backEndData->polyVerts = (polyVert_t *) ((char *) ptr + sizeof(*backEndData) + sizeof(srfPoly_t) * max_polys);
 
 	R_InitNextFrame();
 
