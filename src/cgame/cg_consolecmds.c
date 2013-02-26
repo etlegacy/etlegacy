@@ -1188,6 +1188,119 @@ void CG_ResetTimer_f(void)
 	trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
 }
 
+/**
+ * @brief Sends an class setup message. Enables etpro like classscripts
+ */
+void CG_Class_f(void)
+{
+	char             cls[64];
+	const char       *classtype;
+	int              weapon1, weapon2, playerclass;
+	bg_playerclass_t *classinfo;
+	team_t           team;
+
+	if (cg.demoPlayback)
+	{
+		return;
+	}
+
+	team = cgs.clientinfo[cg.clientNum].team;
+
+	if (team == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	if (trap_Argc() != 3)
+	{
+		CG_Printf("Invalid command format.\n");
+		return;
+	}
+
+	switch (team)
+	{
+	case TEAM_AXIS:
+		classtype = "r";
+		break;
+	case TEAM_ALLIES:
+		classtype = "b";
+		break;
+	default:
+		return;
+	}
+
+	trap_Argv(1, cls, 64);
+
+	if (!Q_stricmp(cls, "s"))
+	{
+		playerclass = PC_SOLDIER;
+	}
+	else if (!Q_stricmp(cls, "m"))
+	{
+		playerclass = PC_MEDIC;
+	}
+	else if (!Q_stricmp(cls, "e"))
+	{
+		playerclass = PC_ENGINEER;
+	}
+	else if (!Q_stricmp(cls, "f"))
+	{
+		playerclass = PC_FIELDOPS;
+	}
+	else if (!Q_stricmp(cls, "c"))
+	{
+		playerclass = PC_COVERTOPS;
+	}
+	else
+	{
+		CG_Printf("Invalid class format.\n");
+		return;
+	}
+
+	trap_Argv(2, cls, 64);
+	weapon1 = atoi(cls);
+
+	classinfo = BG_GetPlayerClassInfo(team, playerclass);
+
+	if (!classinfo->classWeapons[weapon1 - 1])
+	{
+		CG_Printf("Invalid command format for weapon.\n");
+		return;
+	}
+
+	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER)
+	{
+		weapon2 = (team == TEAM_AXIS) ? WP_MP40 : WP_THOMPSON;
+	}
+	else if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4)
+	{
+		if (playerclass == PC_COVERTOPS)
+		{
+			weapon2 = (team == TEAM_AXIS) ? WP_AKIMBO_SILENCEDLUGER : WP_AKIMBO_SILENCEDCOLT;
+		}
+		else
+		{
+			weapon2 = (team == TEAM_AXIS) ? WP_AKIMBO_LUGER : WP_AKIMBO_COLT;
+		}
+	}
+	else
+	{
+		if (playerclass == PC_COVERTOPS)
+		{
+			weapon2 = (team == TEAM_AXIS) ? WP_SILENCER : WP_SILENCED_COLT;
+		}
+		else
+		{
+			weapon2 = (team == TEAM_AXIS) ? WP_LUGER : WP_COLT;
+		}
+	}
+
+	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 - 1], weapon2));
+	//Debug
+	//CG_PriorityCenterPrint(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 -1], weapon2), SCREEN_HEIGHT - 88, SMALLCHAR_WIDTH, -1);
+
+}
+
 typedef struct
 {
 	char *cmd;
@@ -1286,6 +1399,7 @@ static consoleCommand_t commands[] =
 	{ "forcetapout",         CG_ForceTapOut_f        },
 	{ "timerSet",            CG_TimerSet_f           },
 	{ "resetTimer",          CG_ResetTimer_f         },
+	{ "class",               CG_Class_f              },
 };
 
 /*
