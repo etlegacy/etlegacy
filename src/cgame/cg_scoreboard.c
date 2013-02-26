@@ -38,6 +38,7 @@
 
 vec4_t clrUiBack = { 0.f, 0.f, 0.f, .6f };
 vec4_t clrUiBar = { .16f, .2f, .17f, .8f };
+vec4_t tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 /*
 =================
@@ -85,7 +86,6 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 {
 	const char *s;
 	int        rows;
-	vec4_t     tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
@@ -182,6 +182,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
+		// FIXME: do a switch for gametype
 		if (cgs.gametype != GT_WOLF_LMS)
 		{
 			if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
@@ -329,7 +330,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	}
 
 	// GeoIP - draw flag before name
-	if ((score->ping != -1) && (score->ping != 999) && (cg_countryflags.integer))
+	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
 	{
 		if (cf_draw(tempx - 11, y - 8, fade, ci->clientNum))
 		{
@@ -348,7 +349,9 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
 		for (j = 0; j < ci->medals[i]; j++)
+		{
 			Q_strcat(buf, sizeof(buf), va("^%c%c", COLOR_RED + i, skillNames[i][0]));
+		}
 	}
 	maxchars--;
 
@@ -364,9 +367,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	if (ci->team == TEAM_SPECTATOR)
 	{
 		const char *s;
-		int        w, totalwidth;
-
-		totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
+		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
 
 		// Show connecting people as CONNECTING
 		if (score->ping == -1)
@@ -492,7 +493,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	}
 
 	// GeoIP - draw flag before name
-	if ((score->ping != -1) && (score->ping != 999) && (cg_countryflags.integer))
+	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
 	{
 		if (cf_draw(tempx - 11, y - 10, fade, ci->clientNum))
 		{
@@ -530,12 +531,10 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	if (ci->team == TEAM_SPECTATOR)
 	{
 		const char *s;
-		int        w, totalwidth;
-
-		totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
+		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
 
 		// Show connecting people as CONNECTING
-		if ((score->ping = -1))
+		if (score->ping == -1)
 		{
 			s = CG_TranslateString("^3CONNECTING");
 		}
@@ -586,7 +585,6 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 {
 	int        w, defender, winner;
 	const char *s;
-	vec4_t     tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	if (cg.snap->ps.pm_type != PM_INTERMISSION)
 	{
@@ -613,7 +611,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		{
 			if (winner != defender)
 			{
-				s = "ALLIES SUCCESSFULLY BEAT THE CLOCK!";
+				s = "ALLIES SUCCESSFULLY BEAT THE CLOCK!"; // FIXME: translations
 			}
 			else
 			{
@@ -648,7 +646,6 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
                              int absmaxrows)
 {
-	vec4_t   tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
 	vec4_t   hcolor;
 	float    tempx, tempy;
 	int      i;
@@ -792,7 +789,6 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	VectorSet(hcolor, 1, 1, 1);
 	hcolor[3] = fade;
 
-	count = 0;
 	for (i = 0; i < cg.numScores && count < maxrows; i++)
 	{
 		if (team != cgs.clientinfo[cg.scores[i].client].team)
