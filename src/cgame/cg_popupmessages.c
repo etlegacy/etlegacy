@@ -116,15 +116,8 @@ void CG_InitPM(void)
 #define PM_FADETIME_BIG 1000
 #define PM_WAITTIME_BIG 3500
 
-int CG_TimeForPopup(popupMessageType_t type)
-{
-	return 1000;
-}
-
-int CG_TimeForBigPopup(popupMessageBigType_t type)
-{
-	return 2500;
-}
+#define PM_POPUP_TIME    1000
+#define PM_BIGPOPUP_TIME 2500
 
 void CG_AddToListFront(pmListItem_t **list, pmListItem_t *item)
 {
@@ -140,7 +133,7 @@ void CG_UpdatePMLists(void)
 
 	if ((listItem = cg_pmWaitingList))
 	{
-		int t = (CG_TimeForPopup(listItem->type) + listItem->time);
+		int t = PM_POPUP_TIME + listItem->time;
 
 		if (cg.time > t)
 		{
@@ -173,7 +166,7 @@ void CG_UpdatePMLists(void)
 	lastItem = NULL;
 	while (listItem)
 	{
-		int t = (CG_TimeForPopup(listItem->type) + listItem->time + PM_WAITTIME + PM_FADETIME);
+		int t = PM_POPUP_TIME + listItem->time + PM_WAITTIME + PM_FADETIME;
 
 		if (cg.time > t)
 		{
@@ -210,7 +203,7 @@ void CG_UpdatePMLists(void)
 
 	if ((listItem2 = cg_pmWaitingListBig))
 	{
-		int t = CG_TimeForBigPopup(listItem2->type) + listItem2->time;
+		int t = PM_BIGPOPUP_TIME + listItem2->time;
 
 		if (cg.time > t)
 		{
@@ -336,7 +329,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 	listItem->type  = type;
 	Q_strncpyz(listItem->message, message, sizeof(cg_pmStack[0].message));
 
-	// rain - moved this: print and THEN chop off the newline, as the
+	// moved this: print and THEN chop off the newline, as the
 	// console deals with newlines perfectly.  We do chop off the newline
 	// at the end, if any, though.
 	if (listItem->message[strlen(listItem->message) - 1] == '\n')
@@ -470,7 +463,7 @@ void CG_DrawPMItems(void)
 		return;
 	}
 
-	t = cg_pmWaitingList->time + CG_TimeForPopup(cg_pmWaitingList->type) + PM_WAITTIME;
+	t = cg_pmWaitingList->time + PM_POPUP_TIME + PM_WAITTIME;
 	if (cg.time > t)
 	{
 		colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)PM_FADETIME);
@@ -485,7 +478,7 @@ void CG_DrawPMItems(void)
 	{
 		y -= size + 2;
 
-		t = listItem->time + CG_TimeForPopup(listItem->type) + PM_WAITTIME;
+		t = listItem->time + PM_POPUP_TIME + PM_WAITTIME;
 		if (cg.time > t)
 		{
 			colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)PM_FADETIME);
@@ -515,7 +508,7 @@ void CG_DrawPMItemsBig(void)
 		return;
 	}
 
-	t = cg_pmWaitingListBig->time + CG_TimeForBigPopup(cg_pmWaitingListBig->type) + PM_WAITTIME_BIG;
+	t = cg_pmWaitingListBig->time + PM_BIGPOPUP_TIME + PM_WAITTIME_BIG;
 	if (cg.time > t)
 	{
 		colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)PM_FADETIME_BIG);
