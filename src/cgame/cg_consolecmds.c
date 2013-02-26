@@ -1226,6 +1226,7 @@ void CG_Class_f(void)
 		classtype = "b";
 		break;
 	default:
+		CG_Printf("Invalid team.\n");
 		return;
 	}
 
@@ -1298,7 +1299,6 @@ void CG_Class_f(void)
 	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 - 1], weapon2));
 	//Debug
 	//CG_PriorityCenterPrint(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 -1], weapon2), SCREEN_HEIGHT - 88, SMALLCHAR_WIDTH, -1);
-
 }
 
 typedef struct
