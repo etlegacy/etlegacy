@@ -3162,7 +3162,6 @@ void CG_DrawPMItemsBig(void);
 const char *CG_GetPMItemText(centity_t *cent);
 void CG_PlayPMItemSound(centity_t *cent);
 qhandle_t CG_GetPMItemIcon(centity_t *cent);
-void CG_DrawKeyHint(rectDef_t *rect, const char *binding);
 
 // cg_debriefing.c
 clientInfo_t *CG_Debriefing_GetSelectedClientInfo(void);

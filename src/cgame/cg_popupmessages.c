@@ -34,7 +34,6 @@
 #include "cg_local.h"
 
 #define NUM_PM_STACK_ITEMS  32
-#define MAX_VISIBLE_ITEMS   5
 
 #define NUM_PM_STACK_ITEMS_BIG 8 // we shouldn't need many of these
 
@@ -119,20 +118,12 @@ void CG_InitPM(void)
 
 int CG_TimeForPopup(popupMessageType_t type)
 {
-	switch (type)
-	{
-	default:
-		return 1000;
-	}
+	return 1000;
 }
 
 int CG_TimeForBigPopup(popupMessageBigType_t type)
 {
-	switch (type)
-	{
-	default:
-		return 2500;
-	}
+	return 2500;
 }
 
 void CG_AddToListFront(pmListItem_t **list, pmListItem_t *item)
@@ -216,7 +207,6 @@ void CG_UpdatePMLists(void)
 		lastItem = listItem;
 		listItem = listItem->next;
 	}
-
 
 	if ((listItem2 = cg_pmWaitingListBig))
 	{
@@ -356,13 +346,12 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 
 	trap_Print(va("%s\n", listItem->message));
 
-	// rain - added parens
-	while ((end = strchr(listItem->message, '\n')))
+	while ((end = strchr(listItem->message, '\n'))) // added parens
 	{
 		*end = '\0';
 	}
 
-	// rain - don't eat popups for empty lines
+	// don't eat popups for empty lines
 	if (*listItem->message == '\0')
 	{
 		return;
@@ -376,6 +365,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 	else
 	{
 		pmListItem_t *loop = cg_pmWaitingList;
+
 		while (loop->next)
 		{
 			loop = loop->next;
@@ -408,6 +398,7 @@ void CG_PMItemBigSound(pmListItemBig_t *item)
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader)
 {
 	pmListItemBig_t *listItem = CG_FindFreePMItem2();
+
 	if (!listItem)
 	{
 		return;
@@ -437,6 +428,7 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 	else
 	{
 		pmListItemBig_t *loop = cg_pmWaitingListBig;
+
 		while (loop->next)
 		{
 			loop = loop->next;
@@ -612,6 +604,7 @@ const char *CG_GetPMItemText(centity_t *cent)
 		case 0:         // joined
 		{
 			const char *teamstr = NULL;
+
 			switch (cent->currentState.effect2Time)
 			{
 			case TEAM_AXIS:
@@ -732,38 +725,4 @@ qhandle_t CG_GetPMItemIcon(centity_t *cent)
 	default:
 		return cgs.media.pmImages[cent->currentState.effect1Time];
 	}
-}
-
-// FIXME: remove me
-void CG_DrawKeyHint(rectDef_t *rect, const char *binding)
-{
-	/*  int k1, k2;
-	    char buffer[256];
-	    char k[2] = { 0, 0 };
-	    float w;
-
-	    trap_Key_KeysForBinding( binding, &k1, &k2 );
-
-	    if( k1 != -1 ) {
-	        trap_Key_KeynumToStringBuf( k1, buffer, 256 );
-	        if( strlen( buffer ) != 1 ) {
-	            if( k2 != -1 ) {
-	                trap_Key_KeynumToStringBuf( k2, buffer, 256 );
-	                if( strlen( buffer ) == 1 ) {
-	                    *k = toupper( *buffer );
-	                }
-	            }
-	        } else {
-	            *k = toupper( *buffer );
-	        }
-	    }
-
-	    if( !*k ) {
-	        return;
-	    }
-
-	    CG_DrawPic( rect->x, rect->y, rect->w, rect->h, cgs.media.hintKey );
-
-	    w = CG_Text_Width_Ext( k, 0.2f, 0, &cgs.media.limboFont1 );
-	    CG_Text_Paint_Ext( rect->x + ((rect->w - w) * 0.5f), rect->y + 14, 0.2f, 0.2f, colorWhite, k, 0, 0, 0, &cgs.media.limboFont1 );*/
 }
