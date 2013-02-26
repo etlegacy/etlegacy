@@ -170,7 +170,7 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 		return;
 	}
 
-	if (((r_numpolyverts + numVerts) > max_polyverts) || (r_numpolys >= max_polys))
+	if (((r_numpolyverts + numVerts) >= MAX_POLYVERTS) || (r_numpolys >= MAX_POLYS))
 	{
 		return;
 	}
