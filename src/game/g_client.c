@@ -376,14 +376,26 @@ void CopyToBodyQue(gentity_t *ent)
 		body->s.eFlags |= EF_HEADSHOT;          // make sure the dead body draws no head (if killed that way)
 	}
 
-	body->s.eType       = ET_CORPSE;
-	body->classname     = "corpse";
+	body->s.eType   = ET_CORPSE;
+	body->classname = "corpse";
+
 	body->s.powerups    = 0; // clear powerups
 	body->s.loopSound   = 0; // clear lava burning
 	body->s.number      = body - g_entities;
 	body->timestamp     = level.time;
 	body->physicsObject = qtrue;
 	body->physicsBounce = 0;        // don't bounce
+	//body->physicsSlide = qfalse;
+	//body->physicsFlush = qfalse;
+
+	VectorCopy(ent->client->ps.viewangles, body->s.angles);
+	VectorCopy(ent->client->ps.viewangles, body->r.currentAngles);
+
+	//if ( ent->client->ps.powerups[PW_HELMETSHIELD])
+	//{
+	//	body->s.powerups |= (1 << PW_HELMETSHIELD);
+	//}
+
 	if (body->s.groundEntityNum == ENTITYNUM_NONE)
 	{
 		body->s.pos.trType = TR_GRAVITY;
@@ -403,30 +415,12 @@ void CopyToBodyQue(gentity_t *ent)
 	}
 	body->s.eventSequence = 0;
 
-	// change the animation to the last-frame only, so the sequence
-	// doesn't repeat anew for the body
-	switch (body->s.legsAnim & ~ANIM_TOGGLEBIT)
-	{
-	case BOTH_DEATH1:
-	case BOTH_DEAD1:
-	default:
-		body->s.torsoAnim = body->s.legsAnim = BOTH_DEAD1;
-		break;
-	case BOTH_DEATH2:
-	case BOTH_DEAD2:
-		body->s.torsoAnim = body->s.legsAnim = BOTH_DEAD2;
-		break;
-	case BOTH_DEATH3:
-	case BOTH_DEAD3:
-		body->s.torsoAnim = body->s.legsAnim = BOTH_DEAD3;
-		break;
-	}
+	// time needed to complete animation
+	body->s.torsoAnim = body->s.legsAnim = ent->client->legsDeathAnim;
 
 	body->r.svFlags = ent->r.svFlags & ~SVF_BOT;
 	VectorCopy(ent->r.mins, body->r.mins);
 	VectorCopy(ent->r.maxs, body->r.maxs);
-	VectorCopy(ent->r.absmin, body->r.absmin);
-	VectorCopy(ent->r.absmax, body->r.absmax);
 
 	//  bodies have lower bounding box
 	body->r.maxs[2] = 0;
@@ -439,6 +433,42 @@ void CopyToBodyQue(gentity_t *ent)
 		body->s.onFireEnd = ent->client->deathAnimTime + 1500;
 	}
 
+	VectorCopy(body->s.pos.trBase, body->r.currentOrigin);
+	/* WIP
+	if ( ent->client->deathAnim )
+	{
+	    vec3_t			origin, offset;
+	    grefEntity_t	refent;
+
+	    mdx_PlayerAnimation( body );
+	    mdx_gentity_to_grefEntity( body, &refent, level.time );
+	    mdx_tag_position( body, &refent, origin, "tag_ubelt", 0, 0 );
+
+	    // convert it to vector around null pos
+	    offset[0] = origin[0] - body->r.currentOrigin[0];
+	    offset[1] = origin[1] - body->r.currentOrigin[1];
+	    offset[2] = origin[2] = body->r.currentOrigin[2];
+
+	    G_StepSlideCorpse( body, origin );
+	    // this is the max vector we can reach
+	    VectorCopy ( body->s.pos.trBase, origin );
+
+	    // change bounding box to be off the origin of the corpse
+	    // that will make correct box agains model
+	    body->r.maxs[0] = offset[0] + 18;
+	    body->r.maxs[1] = offset[1] + 18;
+	    body->r.mins[0] = offset[0] - 18;
+	    body->r.mins[1] = offset[1] - 18;
+
+	    body->r.currentOrigin[0] = origin[0] - offset[0];
+	    body->r.currentOrigin[1] = origin[1] - offset[1];
+	    body->r.currentOrigin[2] = origin[2];
+
+	    // ok set it und Fertig!
+	    VectorCopy ( body->r.currentOrigin, body->s.pos.trBase );
+	}
+	*/
+
 	body->clipmask = CONTENTS_SOLID | CONTENTS_PLAYERCLIP;
 	// allow bullets to pass through bbox
 	// need something to allow the hint for covert ops
@@ -450,15 +480,17 @@ void CopyToBodyQue(gentity_t *ent)
 	BODY_CHARACTER(body) = ent->client->pers.characterIndex;
 	BODY_VALUE(body)     = 0;
 
+	//if ( ent->client->ps.eFlags & EF_PANTSED ){
+	//	body->s.time2 =	1;
+	//}
+	//else {
 	body->s.time2 = 0;
+	//}
 
 	body->activator = NULL;
-
 	body->nextthink = level.time + BODY_TIME(ent->client->sess.sessionTeam);
-
-	body->think = BodySink;
-
-	body->die = body_die;
+	body->think     = BodySink;
+	body->die       = body_die;
 
 	// don't take more damage if already gibbed
 	if (ent->health <= GIB_HEALTH)
@@ -470,7 +502,6 @@ void CopyToBodyQue(gentity_t *ent)
 		body->takedamage = qtrue;
 	}
 
-	VectorCopy(body->s.pos.trBase, body->r.currentOrigin);
 	trap_LinkEntity(body);
 }
 
@@ -2440,6 +2471,7 @@ void ClientBegin(int clientNum)
 	int       flags;
 	int       spawn_count, lives_left;
 	int       stat_xp, stat_xp_overflow; // restore xp
+	qboolean  inIntermission = (g_gamestate.integer == GS_INTERMISSION && client->ps.pm_type == PM_INTERMISSION) ? qtrue : qfalse;
 
 #ifdef FEATURE_LUA
 	// call LUA clientBegin only once when player connects
@@ -2491,6 +2523,11 @@ void ClientBegin(int clientNum)
 	{
 		ent->client->ps.stats[STAT_XP]          = stat_xp;
 		ent->client->ps.stats[STAT_XP_OVERFLOW] = stat_xp_overflow;
+	}
+
+	if (inIntermission == qtrue)
+	{
+		client->ps.pm_type = PM_INTERMISSION;
 	}
 
 	client->ps.eFlags                         = flags;
@@ -2566,7 +2603,7 @@ void ClientBegin(int clientNum)
 	}
 
 	// Start players in limbo mode if they change teams during the match
-	if (client->sess.sessionTeam != TEAM_SPECTATOR && (level.time - level.startTime > FRAMETIME * GAME_INIT_FRAMES))
+	if (g_gamestate.integer != GS_INTERMISSION && client->sess.sessionTeam != TEAM_SPECTATOR && (level.time - level.startTime > FRAMETIME * GAME_INIT_FRAMES))
 	{
 /*	  if( (client->sess.sessionTeam != TEAM_SPECTATOR && (level.time - client->pers.connectTime) > 60000) ||
         ( g_gamestate.integer == GS_PLAYING && ( client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES ) &&
@@ -2720,6 +2757,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	int                flags;
 	int                savedPing;
 	int                savedTeam;
+	qboolean           inIntermission = (g_gamestate.integer == GS_INTERMISSION && client->ps.pm_type == PM_INTERMISSION) ? qtrue : qfalse;
 
 	G_UpdateSpawnCounts();
 
@@ -2789,6 +2827,11 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	savedSess = client->sess;
 	savedPing = client->ps.ping;
 	savedTeam = client->ps.teamNum;
+
+	if (inIntermission)
+	{
+		client->ps.pm_type = PM_INTERMISSION;
+	}
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
