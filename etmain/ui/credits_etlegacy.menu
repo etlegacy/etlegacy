@@ -97,7 +97,7 @@ menuDef {
 	LABELWHITE( 6, CREDITS_Y+12, .8*(WINDOW_WIDTH-24), 10, "Jan 'Radegast' Simek - Project founder, coding & management", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )	
 	LABELWHITE( 6, CREDITS_Y+24, .8*(WINDOW_WIDTH-24), 10, "IR4T4 - Coding, mod development & bad boy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-24), 10, "Konrad 'morsik' Moson - Website, coding & scripts", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
-//	LABELWHITE( 6, CREDITS_Y+48, .8*(WINDOW_WIDTH-24), 10, " ... ", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+48, .8*(WINDOW_WIDTH-24), 10, "Jacker - main windows coder, render", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	
 		
 // Contributors //
@@ -125,7 +125,7 @@ menuDef {
 	LABELWHITE( 6, CREDITS_Y+132, .7*(WINDOW_WIDTH-24), 10, "Merlin - Bug reports", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6, CREDITS_Y+144, .7*(WINDOW_WIDTH-24), 10, "RaFaL aka ***Rafal*** - Menu scripts and Windows tester", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6, CREDITS_Y+156, .7*(WINDOW_WIDTH-24), 10, "Dusan 'TheDushan' Jocic - Advices, patches", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )	
-//	LABELWHITE( 6, CREDITS_Y+168, .7*(WINDOW_WIDTH-24), 10, " ... ", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+168, .7*(WINDOW_WIDTH-24), 10, "Ensiform - Advices, comments", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 
 // Greetings //
