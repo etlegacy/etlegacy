@@ -548,6 +548,7 @@ if(BUILD_MOD)
 		PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
 		PREFIX ""
 		LIBRARY_OUTPUT_DIRECTORY "legacy"
+		OSX_ARCHITECTURES "i386;x86_64"
 	)
 
 	#
@@ -575,6 +576,7 @@ if(BUILD_MOD)
 		PROPERTIES
 		PREFIX ""
 		LIBRARY_OUTPUT_DIRECTORY "legacy"
+		OSX_ARCHITECTURES "i386;x86_64"
 	)
                         
 	# install bins of cgame, ui and qgame 
