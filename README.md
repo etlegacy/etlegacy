@@ -120,15 +120,24 @@ in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on 
 
     1. download free Visual Studio C++ Express 2010
     2. when you install CMake, make sure it is added into your system PATH
-    3. open `Visual Studio Command Prompt (2010)` (search for it in the Start menu)
-    4. run `cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake` in the ET:L directory
+    3. create `build` directory inside the directory which contains ET:L sources
+    4. open `Visual Studio Command Prompt (2010)` (search for it in the Start menu) and `cd` to the newly created build directory
+    5. run `cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake`
        ... or `cmake -G "Visual Studio 10" ..` and open the resulting project in VS 2010
 
 * option B: open the CMakeLists.txt file in [QT Creator](http://qt.nokia.com/products/developer-tools).
 
 NOTE: In order to compile the jpeg library properly there is a need for a file named 'win32.mak'. 
 Unfortunately this file isn't shipped with later Windows SDK versions. Solution: Get the Windows 
-SDK 6 and copy 'win32.mak' to libs\jpeg\. 
+SDK 6 and copy 'win32.mak' to libs\jpeg\.
+
+NOTE: If build fails during libcurl compilation because of missing *sed* utility,
+download it from http://gnuwin32.sourceforge.net/packages/sed.htm and place it into
+your system path or copy it into MSVC/VC/bin. It also comes with Git and can be placed
+into your system path automatically if you select that option during Git installation.
+
+If compilation of bundled libraries is aborted for any reason, you will probably need to clean libs/ directory
+and start over. This can be done by executing `git clean -df && git reset --hard HEAD` inside libs/ directory.
 
 LICENSE
 =======
