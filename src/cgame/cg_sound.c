@@ -546,7 +546,6 @@ CG_SoundInit
 */
 void CG_SoundInit(void)
 {
-
 	if (numSoundScripts)
 	{
 		// keep all the information, just reset the vars

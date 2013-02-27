@@ -2535,7 +2535,7 @@ void weapon_callSecondPlane(gentity_t *ent)
 {
 	gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
 
-	te->s.eventParm = G_SoundIndex("sound/weapons/airstrike/airstrike_plane.wav");
+	te->s.eventParm = GAMESOUND_WPN_AIRSTRIKE_PLANE;
 	te->r.svFlags  |= SVF_BROADCAST;
 
 	ent->nextthink = level.time + 1000;
@@ -2638,7 +2638,7 @@ void weapon_callAirStrike(gentity_t *ent)
 
 	{
 		gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
-		te->s.eventParm = G_SoundIndex("sound/weapons/airstrike/airstrike_plane.wav");
+		te->s.eventParm = GAMESOUND_WPN_AIRSTRIKE_PLANE;
 		te->r.svFlags  |= SVF_BROADCAST;
 	}
 
@@ -2763,13 +2763,16 @@ void artilleryThink_real(gentity_t *ent)
 		switch (sfx)
 		{
 		case 0:
-			G_AddEvent(ent, EV_GENERAL_SOUND, G_SoundIndex("sound/weapons/artillery/artillery_fly_1.wav"));
+			G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_1);
+			ent->s.onFireStart = 255;
 			break;
 		case 1:
-			G_AddEvent(ent, EV_GENERAL_SOUND, G_SoundIndex("sound/weapons/artillery/artillery_fly_2.wav"));
+			G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_2);
+			ent->s.onFireStart = 255;
 			break;
 		case 2:
-			G_AddEvent(ent, EV_GENERAL_SOUND, G_SoundIndex("sound/weapons/artillery/artillery_fly_3.wav"));
+			G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_3);
+			ent->s.onFireStart = 255;
 			break;
 		}
 	}

@@ -2233,13 +2233,12 @@ void PM_TraceHead(trace_t * trace, vec3_t start, vec3_t end, trace_t * bodytrace
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end);
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 
-
 // Store all sounds used in server engine and send them to client in events only as Enums
-// FIXME: implement this!
 typedef enum
 {
 	GAMESOUND_PLAYER_GURP1,         // "sound/player/gurp1.wav"                         Player takes damage from drowning
 	GAMESOUND_PLAYER_GURP2,         // "sound/player/gurp2.wav"
+	GAMESOUND_PLAYER_BUBBLE,
 	GAMESOUND_WPN_AIRSTRIKE_PLANE,  // "sound/weapons/airstrike/airstrike_plane.wav"    Used by Airstrike marker after it triggers
 	GAMESOUND_WPN_ARTILLERY_FLY_1,  // "sound/weapons/artillery/artillery_fly_1.wav"    Used by Artillery before impact
 	GAMESOUND_WPN_ARTILLERY_FLY_2,  // "sound/weapons/artillery/artillery_fly_2.wav"

@@ -171,7 +171,7 @@ void CG_AddLightstyle(centity_t *cent)
 			cent->dl_oldframe = (cent->dl_oldframe) % stringlength;
 			if (cent->dl_oldframe < 3 && cent->dl_sound)     // < 3 so if an alarm comes back into the pvs it will only start a sound if it's going to be closely synced with the light, otherwise wait till the next cycle
 			{
-				trap_S_StartSound(NULL, cent->currentState.number, CHAN_AUTO, cgs.gameSounds[cent->dl_sound]);
+				trap_S_StartSound(NULL, cent->currentState.number, CHAN_AUTO, CG_GetGameSound(cent->dl_sound));
 			}
 		}
 
@@ -251,16 +251,16 @@ static void CG_EntityEffects(centity_t *cent)
 
 			if (cent->currentState.dmgFlags)      // range is set
 			{
-				trap_S_AddRealLoopingSound(cent->lerpOrigin, vec3_origin, cgs.gameSounds[cent->currentState.loopSound], cent->currentState.dmgFlags, volume, cent->soundTime);
+				trap_S_AddRealLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), cent->currentState.dmgFlags, volume, cent->soundTime);
 			}
 			else
 			{
-				trap_S_AddRealLoopingSound(cent->lerpOrigin, vec3_origin, cgs.gameSounds[cent->currentState.loopSound], 1250, volume, cent->soundTime);
+				trap_S_AddRealLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), 1250, volume, cent->soundTime);
 			}
 		}
 		else if (cent->currentState.eType == ET_MOVER)
 		{
-			trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.gameSounds[cent->currentState.loopSound], cent->currentState.onFireStart, cent->soundTime);
+			trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), cent->currentState.onFireStart, cent->soundTime);
 		}
 		else if (cent->currentState.solid == SOLID_BMODEL)
 		{
@@ -268,11 +268,11 @@ static void CG_EntityEffects(centity_t *cent)
 			float  *v = cgs.inlineModelMidpoints[cent->currentState.modelindex];
 
 			VectorAdd(cent->lerpOrigin, v, origin);
-			trap_S_AddLoopingSound(origin, vec3_origin, cgs.gameSounds[cent->currentState.loopSound], cent->currentState.onFireStart, cent->soundTime);
+			trap_S_AddLoopingSound(origin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), cent->currentState.onFireStart, cent->soundTime);
 		}
 		else
 		{
-			trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.gameSounds[cent->currentState.loopSound], 255, cent->soundTime);
+			trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), 255, cent->soundTime);
 		}
 	}
 	else if (cent->soundTime)
@@ -606,7 +606,7 @@ static void CG_Speaker(centity_t *cent)
 		return;
 	}
 
-	trap_S_StartSound(NULL, cent->currentState.number, CHAN_ITEM, cgs.gameSounds[cent->currentState.eventParm]);
+	trap_S_StartSound(NULL, cent->currentState.number, CHAN_ITEM, CG_GetGameSound(cent->currentState.eventParm));
 
 	//ent->s.frame = ent->wait * 10;
 	//ent->s.clientNum = ent->random * 10;

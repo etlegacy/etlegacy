@@ -1753,6 +1753,7 @@ typedef struct cgs_s
 	qhandle_t gameModelSkins[MAX_MODELS];
 	bg_character_t *gameCharacters[MAX_CHARACTERS];
 	sfxHandle_t gameSounds[MAX_SOUNDS];
+	sfxHandle_t cachedSounds[GAMESOUND_MAX]; // static game sounds
 
 	int numInlineModels;
 	qhandle_t inlineDrawModel[MAX_MODELS];
@@ -2162,6 +2163,8 @@ void CG_EventHandling(int type, qboolean fForced);
 
 qboolean CG_GetTag(int clientNum, char *tagname, orientation_t *orientation);
 qboolean CG_GetWeaponTag(int clientNum, char *tagname, orientation_t *orientation);
+
+sfxHandle_t CG_GetGameSound(int index);
 
 void QDECL CG_WriteToLog(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 

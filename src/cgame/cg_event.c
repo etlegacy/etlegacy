@@ -650,7 +650,7 @@ void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 		}
 		else
 		{
-			sound = cgs.gameSounds[cent->currentState.dl_intensity];
+			sound = CG_GetGameSound(cent->currentState.dl_intensity);
 		}
 
 		CG_Explodef(origin,
@@ -720,7 +720,7 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 		}
 		else
 		{
-			sound = cgs.gameSounds[cent->currentState.dl_intensity];
+			sound = CG_GetGameSound(cent->currentState.dl_intensity);
 		}
 
 		CG_RubbleFx(origin,
@@ -2588,34 +2588,33 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_GENERAL_SOUND:
 		DEBUGNAME("EV_GENERAL_SOUND");
-		// check for a sound script
-		s = CG_ConfigString(CS_SOUNDS + es->eventParm);
-		if (!strstr(s, ".wav"))
 		{
-			if (CG_SoundPlaySoundScript(s, NULL, es->number, qfalse))
-			{
-				break;
-			}
-			// try with .wav
-			Q_strncpyz(tempStr, s, sizeof(tempStr));
-			Q_strcat(tempStr, sizeof(tempStr), ".wav");
-			s = tempStr;
-		}
-		else
-		//{
-		//	CG_Printf(S_COLOR_YELLOW "WARNING CG_EntityEvent: Invalid sound format for EV_GENERAL_SOUND\n");
-		//}
+			sfxHandle_t sound = CG_GetGameSound(es->eventParm);
 
-		if (cgs.gameSounds[es->eventParm])
-		{
-			// crank up the volume
-			trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, cgs.gameSounds[es->eventParm], 255);
-		}
-		else
-		{
-			s = CG_ConfigString(CS_SOUNDS + es->eventParm);
-			// crank up the volume
-			trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, s), 255);
+			if (sound)
+			{
+				// origin is NULL!
+				trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, sound, 255);
+			}
+			else
+			{
+				if (es->eventParm >= GAMESOUND_MAX)
+				{
+					const char *s;
+
+					s = CG_ConfigString(CS_SOUNDS + (es->eventParm - GAMESOUND_MAX));
+
+					if (CG_SoundPlaySoundScript(s, NULL, es->number, qfalse))
+					{
+						break;
+					}
+					sound = CG_CustomSound(es->number, s);
+					if (sound)
+					{
+						trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, sound, 255);
+					}
+				}
+			}
 		}
 		break;
 
@@ -2636,40 +2635,35 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	}
 	break;
 	case EV_GENERAL_SOUND_VOLUME:
-	{
-		int sound  = es->eventParm;
-		int volume = es->onFireStart;
-
 		DEBUGNAME("EV_GENERAL_SOUND_VOLUME");
-		// check for a sound script
-		s = CG_ConfigString(CS_SOUNDS + sound);
-		if (!strstr(s, ".wav"))
 		{
-			if (CG_SoundPlaySoundScript(s, NULL, es->number, qfalse))
-			{
-				break;
-			}
-			// try with .wav
-			Q_strncpyz(tempStr, s, sizeof(tempStr));
-			Q_strcat(tempStr, sizeof(tempStr), ".wav");
-			s = tempStr;
-		}
-		else
-		{
-			CG_Printf(S_COLOR_YELLOW "WARNING CG_EntityEvent: Invalid sound format for EV_GENERAL_SOUND_VOLUME\n");
-		}
+			sfxHandle_t sound = CG_GetGameSound(es->eventParm);
 
-		if (cgs.gameSounds[sound])
-		{
-			trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, cgs.gameSounds[sound], volume);
+			if (sound)
+			{
+				trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, sound, es->onFireStart);
+			}
+			else
+			{
+				if (es->eventParm >= GAMESOUND_MAX)
+				{
+					const char *s;
+
+					s = CG_ConfigString(CS_SOUNDS + (es->eventParm - GAMESOUND_MAX));
+
+					if (CG_SoundPlaySoundScript(s, NULL, es->number, qfalse))
+					{
+						break;
+					}
+					sound = CG_CustomSound(es->number, s);
+					if (sound)
+					{
+						trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, sound, es->onFireStart);
+					}
+				}
+			}
 		}
-		else
-		{
-			s = CG_ConfigString(CS_SOUNDS + sound);
-			trap_S_StartSoundVControl(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, s), volume);
-		}
-	}
-	break;
+		break;
 
 	case EV_GLOBAL_TEAM_SOUND:
 		DEBUGNAME("EV_GLOBAL_TEAM_SOUND");
@@ -2679,66 +2673,67 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 	case EV_GLOBAL_SOUND:   // play from the player's head so it never diminishes
 		DEBUGNAME("EV_GLOBAL_SOUND");
-		// check for a sound script
-		s = CG_ConfigString(CS_SOUNDS + es->eventParm);
-		if (!strstr(s, ".wav"))
 		{
-			if (CG_SoundPlaySoundScript(s, NULL, -1, qtrue))
+			sfxHandle_t sound = CG_GetGameSound(es->eventParm);
+
+			if (sound)
 			{
-				break;
+				// no origin!
+				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
 			}
+			else
+			{
+				if (es->eventParm >= GAMESOUND_MAX)
+				{
+					const char *s;
 
-			// try with .wav
-			Q_strncpyz(tempStr, s, sizeof(tempStr));
-			Q_strcat(tempStr, sizeof(tempStr), ".wav");
-			s = tempStr;
-		}
-		else
-		{
-			CG_Printf(S_COLOR_YELLOW "WARNING CG_EntityEvent: Invalid sound format for EV_GLOBAL_SOUND\n");
-		}
+					s = CG_ConfigString(CS_SOUNDS + (es->eventParm - GAMESOUND_MAX));
 
-		if (cgs.gameSounds[es->eventParm])
-		{
-			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, cgs.gameSounds[es->eventParm]);
-		}
-		else
-		{
-			s = CG_ConfigString(CS_SOUNDS + es->eventParm);
-			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, CG_CustomSound(es->number, s));
+					// origin is NULL!
+					if (CG_SoundPlaySoundScript(s, NULL, -1, qtrue))
+					{
+						break;
+					}
+					sound = CG_CustomSound(es->number, s);
+					if (sound)
+					{
+						// origin is NULL!
+						trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
+					}
+				}
+			}
 		}
 		break;
 
 	case EV_GLOBAL_CLIENT_SOUND:
 		DEBUGNAME("EV_GLOBAL_CLIENT_SOUND");
-
-		if (cg.snap->ps.clientNum == es->teamNum)
 		{
-			s = CG_ConfigString(CS_SOUNDS + es->eventParm);
-			if (!strstr(s, ".wav"))
+			if (cg.snap->ps.clientNum == es->teamNum)
 			{
-				if (CG_SoundPlaySoundScript(s, NULL, -1, (es->effect1Time ? qfalse : qtrue)))
+				sfxHandle_t sound = CG_GetGameSound(es->eventParm);
+				if (sound)
 				{
-					break;
+					trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
 				}
-				// try with .wav
-				Q_strncpyz(tempStr, s, sizeof(tempStr));
-				Q_strcat(tempStr, sizeof(tempStr), ".wav");
-				s = tempStr;
-			}
-			else
-			{
-				CG_Printf(S_COLOR_YELLOW "WARNING CG_EntityEvent: Invalid sound format for EV_GLOBAL_CLIENT_SOUND\n");
-			}
+				else
+				{
+					if (es->eventParm >= GAMESOUND_MAX)
+					{
+						const char *s;
 
-			if (cgs.gameSounds[es->eventParm])
-			{
-				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, cgs.gameSounds[es->eventParm]);
-			}
-			else
-			{
-				s = CG_ConfigString(CS_SOUNDS + es->eventParm);
-				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, CG_CustomSound(es->number, s));
+						s = CG_ConfigString(CS_SOUNDS + (es->eventParm - GAMESOUND_MAX));
+
+						if (CG_SoundPlaySoundScript(s, NULL, -1, (es->effect1Time ? qfalse : qtrue)))
+						{
+							break;
+						}
+						sound = CG_CustomSound(es->number, s);
+						if (sound)
+						{
+							trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
+						}
+					}
+				}
 			}
 		}
 		break;

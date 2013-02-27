@@ -1331,13 +1331,26 @@ static void CG_RegisterSounds(void)
 
 	cgs.media.shoveSound = trap_S_RegisterSound("sound/weapons/impact/flesh1.wav", qfalse);
 
-	// FIXME: send as a special event
-	trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_1.wav", qfalse);
-	trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_2.wav", qfalse);
-	trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_3.wav", qfalse);
-	trap_S_RegisterSound("sound/weapons/airstrike/airstrike_plane.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_PLAYER_GURP1]        = trap_S_RegisterSound("sound/player/gurp1.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_PLAYER_GURP2]        = trap_S_RegisterSound("sound/player/gurp2.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_PLAYER_BUBBLE]       = trap_S_RegisterSound("sound/world/bubbles.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_WPN_AIRSTRIKE_PLANE] = trap_S_RegisterSound("sound/weapons/airstrike/airstrike_plane.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_1] = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_1.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_2] = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_2.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_3] = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_3.wav", qfalse);
+
 
 	CG_PrecacheFXSounds();
+}
+
+sfxHandle_t CG_GetGameSound(int index)
+{
+	// Cached game file
+	if (index < GAMESOUND_MAX)
+	{
+		return cgs.cachedSounds[index];
+	}
+	return cgs.gameSounds[index - GAMESOUND_MAX] ? cgs.gameSounds[index - GAMESOUND_MAX] : 0;
 }
 
 //===================================================================================

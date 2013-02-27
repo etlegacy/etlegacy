@@ -207,7 +207,7 @@ int G_ModelIndex(char *name)
 
 int G_SoundIndex(const char *name)
 {
-	return G_FindConfigstringIndex(name, CS_SOUNDS, MAX_SOUNDS, qtrue);
+	return G_FindConfigstringIndex(name, CS_SOUNDS, MAX_SOUNDS, qtrue) + GAMESOUND_MAX;
 }
 
 int G_SkinIndex(const char *name)
