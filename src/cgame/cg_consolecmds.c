@@ -1211,7 +1211,7 @@ void CG_Class_f(void)
 		return;
 	}
 
-	if (trap_Argc() != 3)
+	if (trap_Argc() < 2)
 	{
 		CG_Printf("Invalid command format.\n");
 		return;
@@ -1258,15 +1258,21 @@ void CG_Class_f(void)
 		return;
 	}
 
-	trap_Argv(2, cls, 64);
-	weapon1 = atoi(cls);
-
 	classinfo = BG_GetPlayerClassInfo(team, playerclass);
 
-	if (!classinfo->classWeapons[weapon1 - 1])
+	if (trap_Argc() > 2)
 	{
-		CG_Printf("Invalid command format for weapon.\n");
-		return;
+		trap_Argv(2, cls, 64);
+		weapon1 = atoi(cls);
+		if (!classinfo->classWeapons[weapon1 - 1])
+		{
+			CG_Printf("Invalid command format for weapon.\n");
+			return;
+		}
+	}
+	else
+	{
+		weapon1 = 1;
 	}
 
 	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER)
