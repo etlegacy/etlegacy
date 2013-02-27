@@ -1957,15 +1957,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	entityState_t    *es   = &cent->currentState;
 	int              event = es->event & ~EV_EVENT_BITS;
 	vec3_t           dir;
-	const char       *s;
 	int              clientNum;
 	clientInfo_t     *ci;
-	char             tempStr[MAX_QPATH];
 	bg_playerclass_t *classInfo;
 	bg_character_t   *character;
-	// copied here for mg42 SFX event
-	vec3_t porg, gorg, norm;                // player/gun origin
-	float  gdist;
 
 	static int footstepcnt       = 0;
 	static int splashfootstepcnt = 0;
@@ -2402,24 +2397,30 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_FIRE_WEAPON_MOUNTEDMG42:
 	case EV_FIRE_WEAPON_MG42:
-		VectorCopy(cent->currentState.pos.trBase, gorg);
-		VectorCopy(cg.refdef_current->vieworg, porg);
-		VectorSubtract(gorg, porg, norm);
-		gdist = VectorNormalize(norm);
-		if (gdist > 512 && gdist < 4096)
-		{
-			VectorMA(cg.refdef_current->vieworg, 64, norm, gorg);
-			if (cg_entities[cg_entities[cg_entities[cent->currentState.number].tagParent].tankparent].currentState.density & 8)       // should we use a browning?
-			{
-				trap_S_StartSoundEx(gorg, cent->currentState.number, CHAN_WEAPON, cgs.media.hWeaponEchoSnd_2, SND_NOCUT);
-			}
-			else
-			{
-				trap_S_StartSoundEx(gorg, cent->currentState.number, CHAN_WEAPON, cgs.media.hWeaponEchoSnd, SND_NOCUT);
-			}
-		}
 		DEBUGNAME("EV_FIRE_WEAPON_MG42");
-		CG_FireWeapon(cent);
+		{
+			vec3_t porg, gorg, norm; // player/gun origin
+			float  gdist;
+
+			VectorCopy(cent->currentState.pos.trBase, gorg);
+			VectorCopy(cg.refdef_current->vieworg, porg);
+			VectorSubtract(gorg, porg, norm);
+			gdist = VectorNormalize(norm);
+			if (gdist > 512 && gdist < 4096)
+			{
+				VectorMA(cg.refdef_current->vieworg, 64, norm, gorg);
+				if (cg_entities[cg_entities[cg_entities[cent->currentState.number].tagParent].tankparent].currentState.density & 8)       // should we use a browning?
+				{
+					trap_S_StartSoundEx(gorg, cent->currentState.number, CHAN_WEAPON, cgs.media.hWeaponEchoSnd_2, SND_NOCUT);
+				}
+				else
+				{
+					trap_S_StartSoundEx(gorg, cent->currentState.number, CHAN_WEAPON, cgs.media.hWeaponEchoSnd, SND_NOCUT);
+				}
+			}
+
+			CG_FireWeapon(cent);
+		}
 		break;
 	case EV_FIRE_WEAPON_AAGUN:
 		DEBUGNAME("EV_FIRE_WEAPON_AAGUN");
