@@ -3,7 +3,7 @@
 # - Wolfenstein: Enemy Territory 2.60b compatible client/server
 # - based on raedwulf-et: https://bitbucket.org/tcmreastwood/raedwulf-et
 #
-# Please use TABs to indent.
+# Please use TABs to indent!
 #
 # TODO/FIXME
 # - make uninstall doesn't delete pathes ('etlegacy' & subfolders - test case: INSTALL_DEFAULT_ dirs are equal)
@@ -16,6 +16,7 @@ set(ETLEGACY_VERSION "2.71rc1-dirty")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(Build)
 include(GetGitRevisionDescription)
+include(CMakeDependentOption)
 
 # Used to store real system processor when we overwrite CMAKE_SYSTEM_PROCESSOR for cross-compile builds
 set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR}) # See IS_64_BIT_BUILD_SYSTEM
@@ -28,20 +29,30 @@ add_definitions(-DBOTLIB)
 
 # Options
 option(BUILD_SERVER		"Build the dedicated server executable"				ON)
-option(BUILD_CLIENT		"Build the client executable"						ON)
-option(BUILD_MOD		"Build the mod libraries"							ON)
-option(BUILD_MOD_PK3	"Pack the mod libraries into etl_bin.pk3"			OFF)
-option(BUILD_PAK3_PK3	"Pack updated game scripts into pak3.pk3"			OFF)
+option(BUILD_CLIENT		"Build the client executable"					ON)
+option(BUILD_MOD		"Build the mod libraries"					ON)
+option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"			OFF)
+option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"			OFF)
 
-option(BUILD_WITH_CSTDIO_INCLUDED "Build will include cstdio - it's required on some non 64bit systems see issue #123 "	OFF)
+# TODO: enable pk3 creation when zip executable is found. Zip.exe can be downloaded on Windows
+#find_program(ZIP_EXECUTABLE zip)
+#if(NOT ZIP_EXECUTABLE AND WIN32)
+#	file(DOWNLOAD http://stahlworks.com/dev/zip.exe zip.exe)
+#endif()
+#...
+#cmake_dependent_option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"		ON "ZIP_EXECUTABLE" OFF)
+#cmake_dependent_option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"		ON "ZIP_EXECUTABLE" OFF)
 
 option(USE_RENDERER2		"Build and use the new renderer"				OFF)
 
-option(BUNDLED_SDL		"Use bundled SDL library instead of the system one."	OFF)
-option(BUNDLED_CURL		"Use bundled CURL library instead of the system one."	OFF)
-option(BUNDLED_JPEG		"Use bundled JPEG library instead of the system one."	OFF)
-option(BUNDLED_LUA		"Use bundled LUA library instead of the system one."	OFF)
-option(BUNDLED_OGG_VORBIS "Use bundled OGG library instead of the system one."	OFF)
+option(BUILD_WITH_CSTDIO_INCLUDED "Build will include cstdio - it's required on some non 64bit systems see issue #123 "	OFF)
+
+option(BUNDLED_LIBS				"Use all available bundled libraries instead of system libs."	OFF)
+cmake_dependent_option(BUNDLED_SDL		"Use bundled SDL library instead of the system one."	ON "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_CURL		"Use bundled CURL library instead of the system one."	ON "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_JPEG		"Use bundled JPEG library instead of the system one."	ON "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_LUA		"Use bundled LUA library instead of the system one."	ON "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_OGG_VORBIS	"Use bundled OGG library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
 if(CMAKE_SYSTEM MATCHES "OpenBSD*")
@@ -51,8 +62,8 @@ else()
 endif()
 
 # Installation options
-set(INSTALL_DEFAULT_BASEDIR	""					CACHE STRING "Should be CMAKE_INSTALL_PREFIX + INSTALL_DEFAULT_MODDIR")
-set(INSTALL_DEFAULT_BINDIR	"bin"				CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
+set(INSTALL_DEFAULT_BASEDIR	""			CACHE STRING "Should be CMAKE_INSTALL_PREFIX + INSTALL_DEFAULT_MODDIR")
+set(INSTALL_DEFAULT_BINDIR	"bin"			CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
 set(INSTALL_DEFAULT_MODDIR	"share/etlegacy"	CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
 
 if(INSTALL_DEFAULT_BASEDIR)
@@ -60,24 +71,24 @@ if(INSTALL_DEFAULT_BASEDIR)
 endif(INSTALL_DEFAULT_BASEDIR)
 
 # Optional features
-option(FEATURE_CURL			"Enable auto-download support using cURL (client)"			ON)
-option(FEATURE_OGG_VORBIS	"Enable OGG Vorbis support (client)"						ON)
-option(FEATURE_OPENAL		"Enable OpenAL sound backend (client)"						OFF)
+option(FEATURE_CURL		"Enable auto-download support using cURL (client)"			ON)
+option(FEATURE_OGG_VORBIS	"Enable OGG Vorbis support (client)"					ON)
+option(FEATURE_OPENAL		"Enable OpenAL sound backend (client)"					OFF)
 option(FEATURE_FREETYPE		"Enable Freetype font library support (client)"				OFF)
 option(FEATURE_TRACKER		"Enable extended server statistics (server)"				ON)
-option(FEATURE_LUA			"Enable Lua support in game code"							ON)
-option(FEATURE_MULTIVIEW	"Compile the mod files with multiview support (broken?!)"	OFF)
-option(FEATURE_ANTICHEAT	"Enable server side anti-wallhack code (experimental)"		ON)
-option(FEATURE_CURSES		"Enable PDCurses console"									OFF)
+option(FEATURE_LUA		"Enable Lua support in game code"					ON)
+option(FEATURE_MULTIVIEW	"Compile the mod files with multiview support (broken)"			OFF)
+option(FEATURE_ANTICHEAT	"Enable server side anti-wallhack code (experimental)"			ON)
+option(FEATURE_CURSES		"Enable PDCurses console"						OFF)
 option(FEATURE_AUTOUPDATE	"Enable updater which downloads latest ET:L files"			ON)
 
 if((WIN32 OR UNIX) AND NOT CMAKE_SYSTEM MATCHES "Darwin")
-	option(FEATURE_OMNIBOT	"Enable omnibot build in mod code (Win & Linux server only!)"	OFF)
-	option(INSTALL_OMNIBOT	"Install Omni-Bot - LINUX only"									OFF)
+	option(FEATURE_OMNIBOT	"Enable omnibot build in mod code (Win & Linux server only!)"		OFF)
+	option(INSTALL_OMNIBOT	"Install Omni-Bot - LINUX only"						OFF)
 endif()
 
-set(ET_FS_BASEPATH			""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
-option(ET_KEY				"Copy etkey file (requires ET_FS_BASEPATH set)"					OFF)
+set(ET_FS_BASEPATH		""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
+option(ET_KEY			"Copy etkey file (requires ET_FS_BASEPATH set)"				OFF)
 	
 #-----------------------------------------------------------------
 # Platform-specific settings
@@ -106,7 +117,6 @@ if(UNIX)
 
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s -ffast-math")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
-
 
 	if(CMAKE_SYSTEM MATCHES "OpenBSD*")
 		set(OS_LIBRARIES m pthread)
@@ -316,7 +326,7 @@ if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 
 # Use bundled libraries
-if(BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA OR FEATURE_OGG_VORBIS AND NOT MINGW)
+if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA OR FEATURE_OGG_VORBIS AND NOT MINGW)
 	if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
 		message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
 		add_subdirectory(libs)
@@ -330,7 +340,7 @@ if(BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA A
 		message(STATUS "and enable BUNDLED_* in CMake configuration.")
 		message(FATAL_ERROR "Build stopped because of missing libraries.")
 	endif()
-endif(BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA OR FEATURE_OGG_VORBIS AND NOT MINGW)
+endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA OR FEATURE_OGG_VORBIS AND NOT MINGW)
 
 #-----------------------------------------------------------------
 # Client features
@@ -731,17 +741,17 @@ add_custom_target(uninstall
 )
 
 # CPack general configuration
-set(CPACK_PACKAGE_NAME					"etlegacy")
-set(CPACK_PACKAGE_CONTACT				"mail@etlegacy.com")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY	"ET: Legacy is an online FPS game compatible with Wolfenstein: Enemy Territory 2.60b.")
+set(CPACK_PACKAGE_NAME				"etlegacy")
+set(CPACK_PACKAGE_CONTACT			"mail@etlegacy.com")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY		"ET: Legacy is an online FPS game compatible with Wolfenstein: Enemy Territory 2.60b.")
 set(CPACK_PACKAGE_DESCRIPTION			${CPACK_PACKAGE_DESCRIPTION_SUMMARY}) # TODO: expand
 set(CPACK_PACKAGE_DESCRIPTION_FILE		"${CMAKE_SOURCE_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENSE			"${CMAKE_SOURCE_DIR}/COPYING.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR			${ETLEGACY_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR			${ETLEGACY_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH			${ETLEGACY_VERSION_PATCH})
-set(CPACK_PACKAGE_VERSION				${ETLEGACY_VERSION})
-set(CPACK_PACKAGE_FILE_NAME				"${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${ARCH}")
+set(CPACK_PACKAGE_VERSION			${ETLEGACY_VERSION})
+set(CPACK_PACKAGE_FILE_NAME			"${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${ARCH}")
 set(CPACK_PROJECT_CONFIG_FILE			"${CMAKE_CURRENT_BINARY_DIR}/CPackOptions.cmake")
 
 # CPack generator-specific configuration

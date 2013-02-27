@@ -68,9 +68,10 @@ If the required dependencies are not installed on your system run:
     $ git submodule init
     $ git submodule update
 
-This downloads the essential dependencies (libjpeg, libSDL and libcurl) into the `libs/` 
-directory. You can choose whether to use bundled library instead of the system one by
-changing the `BUNDLED_XXX` variable in the CMake configuration.
+This downloads the essential dependencies (libjpeg, libSDL and libcurl) into the `libs/`
+directory. You can choose whether to use bundled libraries instead of the system ones by
+changing the `BUNDLED_LIBS` variable in the CMake configuration. You can then select which
+bundled libraries to use by toggling the respective `BUNDLED_XXX` variable.
 
 Compile and install
 -----------------------------------------------------------------------------
@@ -120,7 +121,7 @@ in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on 
     1. download free Visual Studio C++ Express 2010
     2. when you install CMake, make sure it is added into your system PATH
     3. open `Visual Studio Command Prompt (2010)` (search for it in the Start menu)
-    4. run `cmake -G "NMake Makefiles" -DBUNDLED_SDL=YES -DBUNDLED_JPEG=YES -DBUNDLED_LUA=YES -DBUNDLED_CURL=YES -DBUNDLED_OGG_VORBIS=YES .. && nmake` in the ET:L directory
+    4. run `cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake` in the ET:L directory
        ... or `cmake -G "Visual Studio 10" ..` and open the resulting project in VS 2010
 
 * option B: open the CMakeLists.txt file in [QT Creator](http://qt.nokia.com/products/developer-tools).
