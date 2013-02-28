@@ -5311,35 +5311,6 @@ static int UI_MapCountByGameType(qboolean singlePlayer)
 
 /*
 ==================
-UI_MapCountByCampaign
-==================
-*/
-#if 0 // unused
-static int UI_MapCountByCampaign(qboolean singlePlayer)
-{
-	int campaign;
-	int i, count = 0;
-
-	campaign = singlePlayer ? ui_currentCampaign.integer : ui_currentNetCampaign.integer;
-
-	for (i = 0; i < uiInfo.campaignList[campaign].mapCount; i++)
-	{
-		if (singlePlayer && (uiInfo.campaignList[i].typeBits & (1 << GT_SINGLE_PLAYER)))
-		{
-			count++;
-		}
-		else if (!singlePlayer && !(uiInfo.campaignList[i].typeBits & (1 << GT_SINGLE_PLAYER)))
-		{
-			count++;
-		}
-	}
-
-	return(count);
-}
-#endif
-
-/*
-==================
 UI_CampaignCount
 ==================
 */
