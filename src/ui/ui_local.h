@@ -68,8 +68,6 @@ extern vmCvar_t ui_server14;
 extern vmCvar_t ui_server15;
 extern vmCvar_t ui_server16;
 
-extern vmCvar_t ui_smallFont;
-extern vmCvar_t ui_bigFont;
 extern vmCvar_t ui_selectedPlayer;
 extern vmCvar_t ui_selectedPlayerName;
 extern vmCvar_t ui_netSource;

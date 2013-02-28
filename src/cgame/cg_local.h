@@ -697,8 +697,6 @@ typedef struct
 	float damageX, damageY, damageValue;
 } viewDamage_t;
 
-#define MAX_REWARDSTACK     5
-
 //======================================================================
 
 // all cg.stepTime, cg.duckTime, cg.landTime, etc are set to cg.time when the action
@@ -713,7 +711,6 @@ typedef struct
 #define MAX_SPAWNDESC   128
 
 #define MAX_BUFFERED_SOUNDSCRIPTS 16
-
 #define MAX_SOUNDSCRIPT_SOUNDS 16
 
 typedef struct soundScriptHandle_s
@@ -2036,8 +2033,6 @@ extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
 
 extern vmCvar_t cg_timescale;
-extern vmCvar_t cg_smallFont;
-extern vmCvar_t cg_bigFont;
 
 extern vmCvar_t cg_voiceSpriteTime;
 
@@ -2348,12 +2343,7 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 void CG_DrawTracer(vec3_t start, vec3_t finish);
 
 void CG_MG42EFX(centity_t *cent);
-
-void CG_FLAKEFX(centity_t *cent, int whichgun);
-
 void CG_MortarEFX(centity_t *cent);
-
-qboolean CG_MonsterUsingWeapon(centity_t *cent, int aiChar, int weaponNum);
 
 void CG_MissileHitWall2(int weapon, int clientNum, vec3_t origin, vec3_t dir);
 
@@ -2450,7 +2440,6 @@ void CG_AddLocalEntities(void);
 char *CG_GetLocationMsg(int clientNum, vec3_t origin);
 char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag);
 void CG_LoadLocations(void);
-
 
 // cg_effects.c
 int CG_GetOriginForTag(centity_t * cent, refEntity_t * parent, char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
@@ -2634,9 +2623,6 @@ void CG_AddAtmosphericEffects(void);
 // system traps
 // These functions are how the cgame communicates with the main game system
 
-// no engine implementation
-void trap_PumpEventLoop(void);
-
 // print message on the local console
 void trap_Print(const char *fmt);
 
@@ -2740,7 +2726,7 @@ void trap_S_UpdateEntityPosition(int entityNum, const vec3_t origin);
 // talking animations
 int trap_S_GetVoiceAmplitude(int entityNum);
 
-// repatialize recalculates the volumes of sound as they should be heard by the
+// respatialize recalculates the volumes of sound as they should be heard by the
 // given entityNum and position
 void trap_S_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3], int inwater);
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed);          // returns blank if not found

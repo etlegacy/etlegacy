@@ -203,8 +203,6 @@ vmCvar_t cg_messageType;
 vmCvar_t cg_messagePlayer;
 
 vmCvar_t cg_timescale;
-vmCvar_t cg_smallFont;
-vmCvar_t cg_bigFont;
 
 vmCvar_t cg_voiceSpriteTime;
 
@@ -393,9 +391,6 @@ cvarTable_t cvarTable[] =
 	{ &pmove_msec,               "pmove_msec",               "8",     0                            },
 
 	{ &cg_voiceSpriteTime,       "cg_voiceSpriteTime",       "6000",  CVAR_ARCHIVE                 },
-
-	{ &cg_smallFont,             "ui_smallFont",             "0.25",  CVAR_ARCHIVE                 },
-	{ &cg_bigFont,               "ui_bigFont",               "0.4",   CVAR_ARCHIVE                 },
 
 	{ &cg_teamChatsOnly,         "cg_teamChatsOnly",         "0",     CVAR_ARCHIVE                 },
 	{ &cg_noVoiceChats,          "cg_noVoiceChats",          "0",     CVAR_ARCHIVE                 },

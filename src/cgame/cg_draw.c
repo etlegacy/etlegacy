@@ -621,16 +621,6 @@ CG_DrawTeamInfo
 static void CG_DrawTeamInfo(void)
 {
 	int chatHeight = TEAMCHAT_HEIGHT;
-	/*
-	if ( cg_smallFont.integer & SMALLFONT_CHATS )
-	{
-	    lineHeight = 7.5f;
-	    scale = 0.16f;
-	    icon_width = 11.f;
-	    icon_height = 9.f;
-	    x_offset = 2;
-	}
-	*/
 
 	// no need to adjust chat height for intermission here - CG_DrawTeamInfo is called from CG_Draw2D
 	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT)
