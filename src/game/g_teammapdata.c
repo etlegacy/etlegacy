@@ -250,10 +250,6 @@ void G_SetupFrustum(gentity_t *ent)
 	VectorScale(axis[0], xs, frustum[1].normal);
 	VectorMA(frustum[1].normal, -xc, axis[1], frustum[1].normal);
 
-	ang = (90 / 180.f) * M_PI * 0.5f;
-	xs  = sin(ang);
-	xc  = cos(ang);
-
 	VectorScale(axis[0], xs, frustum[2].normal);
 	VectorMA(frustum[2].normal, xc, axis[2], frustum[2].normal);
 
@@ -302,10 +298,6 @@ void G_SetupFrustum_ForBinoculars(gentity_t *ent)
 
 	VectorScale(axis[0], xs, frustum[1].normal);
 	VectorMA(frustum[1].normal, -xc, axis[1], frustum[1].normal);
-
-	ang = (baseAngle / 180.f) * M_PI * 0.5f;
-	xs  = sin(ang);
-	xc  = cos(ang);
 
 	VectorScale(axis[0], xs, frustum[2].normal);
 	VectorMA(frustum[2].normal, xc, axis[2], frustum[2].normal);
@@ -452,11 +444,7 @@ void G_UpdateTeamMapData_Construct(gentity_t *ent)
 		mEnt->startTime = level.time;
 		mEnt->yaw       = 0;
 	}
-	else
-	{
-	}
-
-	if (ent->s.teamNum == TEAM_ALLIES)
+	else if (ent->s.teamNum == TEAM_ALLIES)
 	{
 		teamList = &mapEntityData[1];
 		mEnt     = G_FindMapEntityData(teamList, num);
@@ -471,19 +459,14 @@ void G_UpdateTeamMapData_Construct(gentity_t *ent)
 		mEnt->startTime = level.time;
 		mEnt->yaw       = 0;
 	}
-	else
-	{
-	}
 }
 
 void G_UpdateTeamMapData_Tank(gentity_t *ent)
 {
-	int                  num = ent - g_entities;
-	mapEntityData_Team_t *teamList;
-	mapEntityData_t      *mEnt;
+	int                  num       = ent - g_entities;
+	mapEntityData_Team_t *teamList = &mapEntityData[0];
+	mapEntityData_t      *mEnt     = G_FindMapEntityData(teamList, num);
 
-	teamList = &mapEntityData[0];
-	mEnt     = G_FindMapEntityData(teamList, num);
 	if (!mEnt)
 	{
 		mEnt         = G_AllocMapEntityData(teamList);
@@ -610,24 +593,31 @@ void G_UpdateTeamMapData_Player(gentity_t *ent, qboolean forceAllied, qboolean f
 	mapEntityData_Team_t *teamList;
 	mapEntityData_t      *mEnt;
 
-	if (ent->client)
+	if (!ent->client)
 	{
-		switch (ent->client->sess.sessionTeam)
-		{
-		case TEAM_AXIS:
-			forceAxis = qtrue;
-			break;
-
-		case TEAM_ALLIES:
-			forceAllied = qtrue;
-			break;
-
-		default:
-			break;
-		}
+		return;
 	}
 
-	if (forceAxis && ent->client && !(ent->client->ps.pm_flags & PMF_LIMBO) /*ent->health > 0*/)
+	if (ent->client->ps.pm_flags & PMF_LIMBO)
+	{
+		return;
+	}
+
+	switch (ent->client->sess.sessionTeam)
+	{
+	case TEAM_AXIS:
+		forceAxis = qtrue;
+		break;
+
+	case TEAM_ALLIES:
+		forceAllied = qtrue;
+		break;
+
+	default:
+		break;
+	}
+
+	if (forceAxis)
 	{
 		teamList = &mapEntityData[0];
 		mEnt     = G_FindMapEntityData(teamList, num);
@@ -651,7 +641,7 @@ void G_UpdateTeamMapData_Player(gentity_t *ent, qboolean forceAllied, qboolean f
 		}
 	}
 
-	if (forceAllied && ent->client && !(ent->client->ps.pm_flags & PMF_LIMBO) /*ent->health > 0*/)
+	if (forceAllied)
 	{
 		teamList = &mapEntityData[1];
 		mEnt     = G_FindMapEntityData(teamList, num);
@@ -682,71 +672,17 @@ static void G_UpdateTeamMapData_DisguisedPlayer(gentity_t *spotter, gentity_t *e
 	mapEntityData_Team_t *teamList;
 	mapEntityData_t      *mEnt;
 
-	if (ent->client)
+	if (!ent->client)
 	{
-		switch (ent->client->sess.sessionTeam)
-		{
-		case TEAM_AXIS:
-			forceAxis = qtrue;
-			break;
-
-		case TEAM_ALLIES:
-			forceAllied = qtrue;
-			break;
-
-		default:
-			break;
-		}
+		return;
 	}
 
-	if (ent->client && !(ent->client->ps.pm_flags & PMF_LIMBO))
+	if (ent->client->ps.pm_flags & PMF_LIMBO)
 	{
-		if (forceAxis)
-		{
-			teamList = &mapEntityData[0];
-
-			mEnt = G_FindMapEntityDataSingleClient(teamList, NULL, num, spotter->s.clientNum);
-			if (!mEnt)
-			{
-				mEnt               = G_AllocMapEntityData(teamList);
-				mEnt->entNum       = num;
-				mEnt->singleClient = spotter->s.clientNum;
-			}
-			VectorCopy(ent->client->ps.origin, mEnt->org);
-			mEnt->yaw       = ent->client->ps.viewangles[YAW];
-			mEnt->data      = num;
-			mEnt->startTime = level.time;
-			mEnt->type      = ME_PLAYER_DISGUISED;
-		}
-		if (forceAllied)
-		{
-			teamList = &mapEntityData[1];
-
-			mEnt = G_FindMapEntityDataSingleClient(teamList, NULL, num, spotter->s.clientNum);
-			if (!mEnt)
-			{
-				mEnt               = G_AllocMapEntityData(teamList);
-				mEnt->entNum       = num;
-				mEnt->singleClient = spotter->s.clientNum;
-			}
-			VectorCopy(ent->client->ps.origin, mEnt->org);
-			mEnt->yaw       = ent->client->ps.viewangles[YAW];
-			mEnt->data      = num;
-			mEnt->startTime = level.time;
-			mEnt->type      = ME_PLAYER_DISGUISED;
-		}
+		return;
 	}
-}
 
-void G_UpdateTeamMapData_LandMine(gentity_t *ent, qboolean forceAllied, qboolean forceAxis)
-{
-//void G_UpdateTeamMapData_LandMine(gentity_t* ent) {
-	int                  num = ent - g_entities;
-	mapEntityData_Team_t *teamList;
-	mapEntityData_t      *mEnt;
-
-	// inversed teamlists, we want to see the enemy mines
-	switch (ent->s.teamNum % 4)
+	switch (ent->client->sess.sessionTeam)
 	{
 	case TEAM_AXIS:
 		forceAxis = qtrue;
@@ -755,55 +691,92 @@ void G_UpdateTeamMapData_LandMine(gentity_t *ent, qboolean forceAllied, qboolean
 	case TEAM_ALLIES:
 		forceAllied = qtrue;
 		break;
+
+	default:
+		break;
 	}
 
-	if (forceAxis && (ent->s.teamNum < 4 || ent->s.teamNum >= 8))
+	if (forceAxis)
 	{
 		teamList = &mapEntityData[0];
-		mEnt     = G_FindMapEntityData(teamList, num);
+
+		mEnt = G_FindMapEntityDataSingleClient(teamList, NULL, num, spotter->s.clientNum);
 		if (!mEnt)
 		{
-			mEnt         = G_AllocMapEntityData(teamList);
-			mEnt->entNum = num;
+			mEnt               = G_AllocMapEntityData(teamList);
+			mEnt->entNum       = num;
+			mEnt->singleClient = spotter->s.clientNum;
 		}
-
-		VectorCopy(ent->r.currentOrigin, mEnt->org);
-		//mEnt->data = TEAM_AXIS;
-		mEnt->data      = (ent->s.teamNum % 4);
+		VectorCopy(ent->client->ps.origin, mEnt->org);
+		mEnt->yaw       = ent->client->ps.viewangles[YAW];
+		mEnt->data      = num;
 		mEnt->startTime = level.time;
-		//if( ent->s.teamNum < 4 )
-		mEnt->type = ME_LANDMINE;
-		//else if( ent->s.teamNum >= 8 )
-		//	mEnt->type = ME_LANDMINE_ARMED;
+		mEnt->type      = ME_PLAYER_DISGUISED;
 	}
 
-	if (forceAllied && (ent->s.teamNum < 4 || ent->s.teamNum >= 8))
+	if (forceAllied)
 	{
 		teamList = &mapEntityData[1];
-		mEnt     = G_FindMapEntityData(teamList, num);
+
+		mEnt = G_FindMapEntityDataSingleClient(teamList, NULL, num, spotter->s.clientNum);
 		if (!mEnt)
 		{
-			mEnt         = G_AllocMapEntityData(teamList);
-			mEnt->entNum = num;
+			mEnt               = G_AllocMapEntityData(teamList);
+			mEnt->entNum       = num;
+			mEnt->singleClient = spotter->s.clientNum;
 		}
-
-		VectorCopy(ent->r.currentOrigin, mEnt->org);
-		//mEnt->data = TEAM_ALLIES;
-		mEnt->data      = (ent->s.teamNum % 4);
+		VectorCopy(ent->client->ps.origin, mEnt->org);
+		mEnt->yaw       = ent->client->ps.viewangles[YAW];
+		mEnt->data      = num;
 		mEnt->startTime = level.time;
-		//if( ent->s.teamNum < 4 )
-		mEnt->type = ME_LANDMINE;
-		//else if( ent->s.teamNum >= 8 )
-		//	mEnt->type = ME_LANDMINE_ARMED;
+		mEnt->type      = ME_PLAYER_DISGUISED;
 	}
 }
 
-void G_UpdateTeamMapData_CommandmapMarker(gentity_t *ent)
+void G_UpdateTeamMapData_LandMine(gentity_t *ent, qboolean forceAllied, qboolean forceAxis)
 {
 	int                  num = ent - g_entities;
 	mapEntityData_Team_t *teamList;
 	mapEntityData_t      *mEnt;
+	int                  team = ent->s.teamNum & 3;    //ent->s.teamNum % 4
 
+	if (!(ent->s.teamNum < 4 || ent->s.teamNum >= 8))
+	{
+		return;                                                 // must be armed..
+
+	}
+	// inversed teamlists, we want to see the enemy mines
+	if (ent->s.modelindex2)     // must be spotted..
+	{
+		teamList = &mapEntityData[(team == TEAM_AXIS) ? 1 : 0];
+		mEnt     = G_FindMapEntityData(teamList, num);
+		if (!mEnt)
+		{
+			mEnt         = G_AllocMapEntityData(teamList);
+			mEnt->entNum = num;
+		}
+		VectorCopy(ent->r.currentOrigin, mEnt->org);
+		mEnt->data      = team;
+		mEnt->startTime = level.time;
+		mEnt->type      = ME_LANDMINE;
+	}
+
+	// team mines..
+	teamList = &mapEntityData[(team == TEAM_AXIS) ? 0 : 1];
+	mEnt     = G_FindMapEntityData(teamList, num);
+	if (!mEnt)
+	{
+		mEnt         = G_AllocMapEntityData(teamList);
+		mEnt->entNum = num;
+	}
+	VectorCopy(ent->r.currentOrigin, mEnt->org);
+	mEnt->data      = team;
+	mEnt->startTime = level.time;
+	mEnt->type      = ME_LANDMINE;
+}
+
+void G_UpdateTeamMapData_CommandmapMarker(gentity_t *ent)
+{
 	if (!ent->parent)
 	{
 		return;
@@ -814,26 +787,23 @@ void G_UpdateTeamMapData_CommandmapMarker(gentity_t *ent)
 		return;
 	}
 
-	if (ent->parent->spawnflags & ALLIED_OBJECTIVE)
+	if (ent->parent->spawnflags & (ALLIED_OBJECTIVE | AXIS_OBJECTIVE))
 	{
-		teamList = &mapEntityData[0];
-		mEnt     = G_FindMapEntityData(teamList, num);
-		if (!mEnt)
-		{
-			mEnt         = G_AllocMapEntityData(teamList);
-			mEnt->entNum = num;
-		}
-		VectorCopy(ent->s.origin, mEnt->org);
-		mEnt->data      = ent->parent->s.teamNum;
-		mEnt->startTime = level.time;
-		mEnt->type      = ME_COMMANDMAP_MARKER;
-		mEnt->yaw       = 0;
-	}
+		int                  num = ent - g_entities;
+		mapEntityData_Team_t *teamList;
+		mapEntityData_t      *mEnt;
 
-	if (ent->parent->spawnflags & AXIS_OBJECTIVE)
-	{
-		teamList = &mapEntityData[1];
-		mEnt     = G_FindMapEntityData(teamList, num);
+		if (ent->parent->spawnflags & ALLIED_OBJECTIVE)
+		{
+			teamList = &mapEntityData[0];
+		}
+
+		if (ent->parent->spawnflags & AXIS_OBJECTIVE)
+		{
+			teamList = &mapEntityData[1];
+		}
+
+		mEnt = G_FindMapEntityData(teamList, num);
 		if (!mEnt)
 		{
 			mEnt         = G_AllocMapEntityData(teamList);
@@ -851,14 +821,10 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 {
 	// special version, sends different set of ents - only the objectives, but also team info (string is split in two basically)
 	mapEntityData_t      *mEnt;
-	mapEntityData_Team_t *teamList;
+	mapEntityData_Team_t *teamList = &mapEntityData[0]; // Axis data init
 	char                 buffer[2048];
-	int                  al_cnt, ax_cnt;
+	int                  al_cnt = 0, ax_cnt = 0;
 
-	// Axis data init
-	teamList = &mapEntityData[0];
-
-	ax_cnt = 0;
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
 		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD)
@@ -877,7 +843,6 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 	// Allied data init
 	teamList = &mapEntityData[1];
 
-	al_cnt = 0;
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
 		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD)
