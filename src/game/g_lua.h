@@ -44,12 +44,8 @@
 #define FIELD_FLAG_READONLY 8 // read-only access
 
 // define HOSTARCH and EXTENSION depending on host architecture
-#if defined __linux__
 
-#define HOSTARCH    "UNIX"
-#define EXTENSION   "so"
-
-#elif defined WIN32
+#if defined WIN32
 
 #define HOSTARCH    "WIN32"
 #define EXTENSION   "dll"
@@ -57,6 +53,11 @@
 #elif defined __APPLE__
 
 #define HOSTARCH    "MACOS"
+#define EXTENSION   "so"
+
+#else
+
+#define HOSTARCH    "UNIX"
 #define EXTENSION   "so"
 
 #endif
