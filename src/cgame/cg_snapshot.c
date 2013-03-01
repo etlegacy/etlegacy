@@ -348,10 +348,9 @@ static void CG_TransitionSnapshot(void)
 	// check for playerstate transition events
 	if (oldFrame)
 	{
-		playerState_t *ops, *ps;
+		playerState_t *ops = &oldFrame->ps;
+		playerState_t *ps  = &cg.snap->ps;
 
-		ops = &oldFrame->ps;
-		ps  = &cg.snap->ps;
 		// teleporting checks are irrespective of prediction
 		if ((ps->eFlags ^ ops->eFlags) & EF_TELEPORT_BIT)
 		{
@@ -475,10 +474,14 @@ static snapshot_t *CG_ReadNextSnapshot(void)
 		cgs.processedSnapshotNum++;
 		r = trap_GetSnapshot(cgs.processedSnapshotNum, dest);
 
-		// FIXME: why would trap_GetSnapshot return a snapshot with the same server time
+		// why would trap_GetSnapshot return a snapshot with the same server time
 		if (cg.snap && r && dest->serverTime == cg.snap->serverTime)
 		{
-			//continue;
+			// because we're playing back demos taken by local servers apparently :O
+			if (cg.demoPlayback)
+			{
+				continue;
+			}
 		}
 
 		// if it succeeded, return
