@@ -295,9 +295,9 @@ void SP_misc_gamemodel(gentity_t *ent)
 
 		ent->tagNumber = trap_LoadTag(tagname);
 
-		/*      if( !(ent->tagNumber = trap_LoadTag( tagname )) ) {
-		            Com_Error( ERR_DROP, "Failed to load Tag File (%s)\n", tagname );
-		        }*/
+		//if( !(ent->tagNumber = trap_LoadTag( tagname )) ) {
+		//  Com_Error( ERR_DROP, "Failed to load Tag File (%s)", tagname );
+		//}
 	}
 
 	if (!G_SpawnVector("modelscale_vec", "1 1 1", vScale))

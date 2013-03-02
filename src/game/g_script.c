@@ -1270,9 +1270,9 @@ void SP_script_mover(gentity_t *ent)
 
 		ent->tagNumber = trap_LoadTag(tagname);
 
-		/*      if( !(ent->tagNumber = trap_LoadTag( tagname )) ) {
-		            Com_Error( ERR_DROP, "Failed to load Tag File (%s)\n", tagname );
-		        }*/
+		//if( !(ent->tagNumber = trap_LoadTag( tagname )) ) {
+		//  Com_Error( ERR_DROP, "Failed to load Tag File (%s)", tagname );
+		//}
 	}
 
 	// look for axis specific scaling

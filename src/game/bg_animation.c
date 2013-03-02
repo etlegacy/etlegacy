@@ -398,11 +398,11 @@ void QDECL BG_AnimParseError(const char *msg, ...)
 
 	if (globalFilename)
 	{
-		Com_Error(ERR_DROP, "%s: (%s, line %i)\n", text, globalFilename, COM_GetCurrentParseLine() + 1);
+		Com_Error(ERR_DROP, "%s: (%s, line %i)", text, globalFilename, COM_GetCurrentParseLine() + 1);
 	}
 	else
 	{
-		Com_Error(ERR_DROP, "%s\n", text);
+		Com_Error(ERR_DROP, "%s", text);
 	}
 }
 
@@ -450,7 +450,7 @@ animation_t *BG_AnimationForString(char *string, animModelInfo_t *animModelInfo)
 		}
 	}
 	// no match found
-	Com_Error(ERR_DROP, "BG_AnimationForString: unknown animation '%s' for animation group '%s'\n", string, animModelInfo->animationGroup);
+	Com_Error(ERR_DROP, "BG_AnimationForString: unknown animation '%s' for animation group '%s'", string, animModelInfo->animationGroup);
 	return NULL;    // shutup compiler
 }
 
@@ -1764,7 +1764,7 @@ qboolean BG_GetConditionBitFlag(int client, int condition, int bitNumber)
 	}
 	else
 	{
-		Com_Error(ERR_DROP, "BG_GetConditionBitFlag: animation condition %i is not a bitflag condition\n", animConditionsTable[condition].type);
+		Com_Error(ERR_DROP, "BG_GetConditionBitFlag: animation condition %i is not a bitflag condition", animConditionsTable[condition].type);
 	}
 	return qfalse;
 }
@@ -1875,7 +1875,7 @@ animation_t *BG_GetAnimationForIndex(animModelInfo_t *animModelInfo, int index)
 {
 	if (index < 0 || index >= animModelInfo->numAnimations)
 	{
-		Com_Error(ERR_DROP, "BG_GetAnimationForIndex: index out of bounds\n");
+		Com_Error(ERR_DROP, "BG_GetAnimationForIndex: index out of bounds");
 	}
 
 	return animModelInfo->animations[index];

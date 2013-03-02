@@ -2250,7 +2250,7 @@ gitem_t *BG_FindItemForWeapon(weapon_t weapon)
 		}
 	}
 
-	Com_Error(ERR_DROP, "Couldn't find item for weapon %i\n", weapon);
+	Com_Error(ERR_DROP, "Couldn't find item for weapon %i", weapon);
 	return NULL;
 }
 
@@ -2434,7 +2434,7 @@ gitem_t *BG_FindItemForAmmo(int ammo)
 			return &bg_itemlist[i];
 		}
 	}
-	Com_Error(ERR_DROP, "Item not found for ammo: %d\n", ammo);
+	Com_Error(ERR_DROP, "Item not found for ammo: %d", ammo);
 	return NULL;
 }
 
@@ -2805,7 +2805,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 
 	if (ent->modelindex < 1 || ent->modelindex >= bg_numItems)
 	{
-		Com_Error(ERR_DROP, "BG_CanItemBeGrabbed: index out of range\n");
+		Com_Error(ERR_DROP, "BG_CanItemBeGrabbed: index out of range");
 	}
 
 	item = &bg_itemlist[ent->modelindex];
@@ -2891,7 +2891,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 		return qtrue;   // keys are always picked up
 
 	case IT_BAD:
-		Com_Error(ERR_DROP, "BG_CanItemBeGrabbed: IT_BAD\n");
+		Com_Error(ERR_DROP, "BG_CanItemBeGrabbed: IT_BAD");
 
 	}
 	return qfalse;
@@ -2914,7 +2914,7 @@ void BG_CalculateSpline_r(splinePath_t *spline, vec3_t out1, vec3_t out2, float 
 	if (!spline->next)
 	{
 		return;
-		//Com_Error( ERR_DROP, "Spline (%s) with no target referenced\n", spline->point.name );
+		//Com_Error( ERR_DROP, "Spline (%s) with no target referenced", spline->point.name );
 	}
 	VectorCopy(spline->next->point.origin, points[i + 1]);
 
@@ -2945,7 +2945,7 @@ qboolean BG_TraverseSpline(float *deltaTime, splinePath_t **pSpline)
 		if (!(*pSpline)->next || !(*pSpline)->next->length)
 		{
 			return qfalse;
-			//Com_Error( ERR_DROP, "Spline path end passed (%s)\n", (*pSpline)->point.name );
+			//Com_Error( ERR_DROP, "Spline path end passed (%s)", (*pSpline)->point.name );
 		}
 
 		(*pSpline) = (*pSpline)->next;
@@ -2959,7 +2959,7 @@ qboolean BG_TraverseSpline(float *deltaTime, splinePath_t **pSpline)
 		if (!(*pSpline)->prev || !(*pSpline)->prev->length)
 		{
 			return qfalse;
-			//Com_Error( ERR_DROP, "Spline path end passed (%s)\n", (*pSpline)->point.name );
+			//Com_Error( ERR_DROP, "Spline path end passed (%s)", (*pSpline)->point.name );
 		}
 
 		(*pSpline)   = (*pSpline)->prev;
@@ -3126,7 +3126,7 @@ void BG_LinearPathOrigin2(float radius, splinePath_t **pSpline, float *deltaTime
 			if (!(*pSpline)->prev)
 			{
 				return;
-				//Com_Error( ERR_DROP, "End of spline reached (%s)\n", start->point.name );
+				//Com_Error( ERR_DROP, "End of spline reached (%s)", start->point.name );
 			}
 			*pSpline = (*pSpline)->prev;
 		}
@@ -3135,7 +3135,7 @@ void BG_LinearPathOrigin2(float radius, splinePath_t **pSpline, float *deltaTime
 			if (!(*pSpline)->next)
 			{
 				return;
-				//Com_Error( ERR_DROP, "End of spline reached (%s)\n", start->point.name );
+				//Com_Error( ERR_DROP, "End of spline reached (%s)", start->point.name );
 			}
 			*pSpline = (*pSpline)->next;
 		}
@@ -3457,7 +3457,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 
 		break;
 	default:
-		Com_Error(ERR_DROP, "BG_EvaluateTrajectory: unknown trType: %i\n", tr->trTime);
+		Com_Error(ERR_DROP, "BG_EvaluateTrajectory: unknown trType: %i", tr->trTime);
 		break;
 	}
 }
@@ -3537,7 +3537,7 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 		VectorClear(result);
 		break;
 	default:
-		Com_Error(ERR_DROP, "BG_EvaluateTrajectoryDelta: unknown trType: %i\n", tr->trTime);
+		Com_Error(ERR_DROP, "BG_EvaluateTrajectoryDelta: unknown trType: %i", tr->trTime);
 		break;
 	}
 }
@@ -4075,7 +4075,7 @@ void BG_AddPathCorner(const char *name, vec3_t origin)
 {
 	if (numPathCorners >= MAX_PATH_CORNERS)
 	{
-		Com_Error(ERR_DROP, "MAX PATH CORNERS (%i) hit\n", MAX_PATH_CORNERS);
+		Com_Error(ERR_DROP, "MAX PATH CORNERS (%i) hit", MAX_PATH_CORNERS);
 	}
 
 	VectorCopy(origin, pathCorners[numPathCorners].origin);
@@ -4108,7 +4108,7 @@ splinePath_t *BG_AddSplinePath(const char *name, const char *target, vec3_t orig
 	splinePath_t *spline;
 	if (numSplinePaths >= MAX_SPLINE_PATHS)
 	{
-		Com_Error(ERR_DROP, "MAX SPLINES (%i) hit\n", MAX_SPLINE_PATHS);
+		Com_Error(ERR_DROP, "MAX SPLINES (%i) hit", MAX_SPLINE_PATHS);
 	}
 
 	spline = &splinePaths[numSplinePaths];
@@ -4131,7 +4131,7 @@ void BG_AddSplineControl(splinePath_t *spline, const char *name)
 {
 	if (spline->numControls >= MAX_SPLINE_CONTROLS)
 	{
-		Com_Error(ERR_DROP, "MAX SPLINE CONTROLS (%i) hit\n", MAX_SPLINE_CONTROLS);
+		Com_Error(ERR_DROP, "MAX SPLINE CONTROLS (%i) hit", MAX_SPLINE_CONTROLS);
 	}
 
 	Q_strncpyz(spline->controls[spline->numControls].name, name, 64);
@@ -4484,7 +4484,7 @@ void PC_SourceError(int handle, char *format, ...)
 	trap_PC_SourceFileAndLine(handle, filename, &line);
 
 #ifdef GAMEDLL
-	Com_Error(ERR_DROP, S_COLOR_RED "ERROR: %s, line %d: %s\n", filename, line, string);
+	Com_Error(ERR_DROP, S_COLOR_RED "ERROR: %s, line %d: %s", filename, line, string);
 #else
 	Com_Printf(S_COLOR_RED "ERROR: %s, line %d: %s\n", filename, line, string);
 #endif
