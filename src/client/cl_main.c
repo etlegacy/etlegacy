@@ -121,6 +121,8 @@ clientStatic_t     cls;
 vm_t               *cgvm;
 autoupdate_t       autoupdate;
 
+netadr_t rcon_address;
+
 // Structure containing functions exported from refresh DLL
 refexport_t re;
 #ifdef USE_RENDERER_DLOPEN
@@ -1430,8 +1432,7 @@ static void CL_CompleteRcon(char *args, int argNum)
  */
 void CL_Rcon_f(void)
 {
-	char     message[MAX_RCON_MESSAGE];
-	netadr_t to;
+	char message[MAX_RCON_MESSAGE];
 
 	if (!rcon_client_password->string)
 	{
@@ -1455,7 +1456,7 @@ void CL_Rcon_f(void)
 
 	if (cls.state >= CA_CONNECTED)
 	{
-		to = clc.netchan.remoteAddress;
+		rcon_address = clc.netchan.remoteAddress;
 	}
 	else
 	{
@@ -1467,14 +1468,14 @@ void CL_Rcon_f(void)
 
 			return;
 		}
-		NET_StringToAdr(rconAddress->string, &to, NA_UNSPEC);
-		if (to.port == 0)
+		NET_StringToAdr(rconAddress->string, &rcon_address, NA_UNSPEC);
+		if (rcon_address.port == 0)
 		{
-			to.port = BigShort(PORT_SERVER);
+			rcon_address.port = BigShort(PORT_SERVER);
 		}
 	}
 
-	NET_SendPacket(NS_CLIENT, strlen(message) + 1, message, to);
+	NET_SendPacket(NS_CLIENT, strlen(message) + 1, message, rcon_address);
 }
 
 /*
@@ -2538,7 +2539,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	if (!Q_stricmp(c, "print"))
 	{
 		// NOTE: we may have to add exceptions for auth and update servers
-		if (NET_CompareAdr(from, clc.serverAddress))
+		if (NET_CompareAdr(from, clc.serverAddress) || NET_CompareAdr(from, rcon_address))
 		{
 			CL_PrintPacket(msg);
 		}
