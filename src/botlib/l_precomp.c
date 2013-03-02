@@ -250,7 +250,7 @@ token_t *PC_CopyToken(token_t *token)
 	t = (token_t *) GetMemory(sizeof(token_t));
 	if (!t)
 	{
-		Com_Error(ERR_FATAL, "out of token space\n");
+		Com_Error(ERR_FATAL, "out of token space");
 		return NULL;
 	} //end if
 //  freetokens = freetokens->next;
