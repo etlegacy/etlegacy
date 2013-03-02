@@ -50,7 +50,7 @@ void SV_SetConfigstringNoUpdate(int index, const char *val)
 {
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
-		Com_Error(ERR_DROP, "SV_SetConfigstring: bad index %i\n", index);
+		Com_Error(ERR_DROP, "SV_SetConfigstring: bad index %i", index);
 	}
 
 	if (!val)
@@ -73,7 +73,7 @@ void SV_SetConfigstring(int index, const char *val)
 {
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
-		Com_Error(ERR_DROP, "SV_SetConfigstring: bad index %i\n", index);
+		Com_Error(ERR_DROP, "SV_SetConfigstring: bad index %i", index);
 	}
 
 	if (!val)
@@ -174,11 +174,11 @@ void SV_GetConfigstring(int index, char *buffer, int bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetConfigstring: bufferSize == %i\n", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetConfigstring: bufferSize == %i", bufferSize);
 	}
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
-		Com_Error(ERR_DROP, "SV_GetConfigstring: bad index %i\n", index);
+		Com_Error(ERR_DROP, "SV_GetConfigstring: bad index %i", index);
 	}
 	if (!sv.configstrings[index])
 	{
@@ -198,7 +198,7 @@ void SV_SetUserinfo(int index, const char *val)
 {
 	if (index < 0 || index >= sv_maxclients->integer)
 	{
-		Com_Error(ERR_DROP, "SV_SetUserinfo: bad index %i\n", index);
+		Com_Error(ERR_DROP, "SV_SetUserinfo: bad index %i", index);
 	}
 
 	if (!val)
@@ -219,11 +219,11 @@ void SV_GetUserinfo(int index, char *buffer, int bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetUserinfo: bufferSize == %i\n", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetUserinfo: bufferSize == %i", bufferSize);
 	}
 	if (index < 0 || index >= sv_maxclients->integer)
 	{
-		Com_Error(ERR_DROP, "SV_GetUserinfo: bad index %i\n", index);
+		Com_Error(ERR_DROP, "SV_GetUserinfo: bad index %i", index);
 	}
 	Q_strncpyz(buffer, svs.clients[index].userinfo, bufferSize);
 }
@@ -292,7 +292,7 @@ void SV_Startup(void)
 {
 	if (svs.initialized)
 	{
-		Com_Error(ERR_FATAL, "SV_Startup: svs.initialized\n");
+		Com_Error(ERR_FATAL, "SV_Startup: svs.initialized");
 	}
 	SV_BoundMaxClients(1);
 
@@ -300,7 +300,7 @@ void SV_Startup(void)
 	svs.clients = calloc(sizeof(client_t) * sv_maxclients->integer, 1);
 	if (!svs.clients)
 	{
-		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients\n");
+		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients");
 	}
 
 	if (com_dedicated->integer)
@@ -378,7 +378,7 @@ void SV_ChangeMaxClients(void)
 	svs.clients = calloc(sizeof(client_t) * sv_maxclients->integer, 1);
 	if (!svs.clients)
 	{
-		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients\n");
+		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients");
 	}
 
 	Com_Memset(svs.clients, 0, sv_maxclients->integer * sizeof(client_t));
@@ -490,7 +490,7 @@ void SV_TouchCGameDLL(void)
 	else if (sv_pure->integer)
 	{
 		Com_Error(ERR_DROP, "Failed to locate %s for pure server mode. "
-		                    "You'll probably need cgame for other platforms too.\n",
+		                    "You'll probably need cgame for other platforms too.",
 		          filename);
 	}
 }
