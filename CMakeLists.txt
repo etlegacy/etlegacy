@@ -45,8 +45,6 @@ option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"			OFF)
 
 option(USE_RENDERER2		"Build and use the new renderer"				OFF)
 
-option(BUILD_WITH_CSTDIO_INCLUDED "Build will include cstdio - it's required on some non 64bit systems see issue #123 "	OFF)
-
 option(BUNDLED_LIBS				"Use all available bundled libraries instead of system libs."	OFF)
 cmake_dependent_option(BUNDLED_SDL		"Use bundled SDL library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_CURL		"Use bundled CURL library instead of the system one."	ON "BUNDLED_LIBS" OFF)
