@@ -4,6 +4,7 @@ compiler:
   - gcc
 
 env:
+  - BUNDLED_LIBS=0
   - BUNDLED_SDL=0
   - CROSS_COMPILE32=0
 
