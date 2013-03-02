@@ -834,7 +834,7 @@ void Sys_StartProcess(char *exeName, qboolean doexit)
 	if (!CreateProcess(NULL, va("%s\\%s", szPathOrig, exeName), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
 	{
 		// couldn't start it, popup error box
-		Com_Error(ERR_DROP, "Could not start process: '%s\\%s'\n", szPathOrig, exeName);
+		Com_Error(ERR_DROP, "Could not start process: '%s\\%s'", szPathOrig, exeName);
 		return;
 	}
 	// jpw
