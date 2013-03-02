@@ -4,11 +4,13 @@ compiler:
   - gcc
 
 env:
-  - BUNDLED_LIBS=0 BUNDLED_SDL=0 CROSS_COMPILE32=0
+  native:
+    - BUNDLED_LIBS=0
+    - CROSS_COMPILE32=0
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install libsdl1.2-dev:i386
+  - sudo apt-get install libsdl1.2-dev:i386 libvorbis-dev:i386 libjpeg8-dev:i386 libcurl-dev:i386
 
 script:
   - ./easybuild.sh
@@ -19,4 +21,3 @@ notifications:
       - "irc.freenode.org#etlegacy"
     use_notice: true
     skip_join: true
-
