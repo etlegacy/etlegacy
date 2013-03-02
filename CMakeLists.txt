@@ -19,7 +19,7 @@ include(GetGitRevisionDescription)
 include(CMakeDependentOption)
 
 # Used to store real system processor when we overwrite CMAKE_SYSTEM_PROCESSOR for cross-compile builds
-set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR}) # See IS_64_BIT_BUILD_SYSTEM
+set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
 
 # has to be set to "", otherwise CMake will pass -rdynamic resulting in a client crash
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
@@ -472,12 +472,6 @@ if(BUILD_MOD)
 			LIST(APPEND QAGAME_SRC "src/game/g_etbot_interface.cpp")
 			LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
 			add_definitions(-DFEATURE_OMNIBOT)
-
-			# FIXME: Darwin/WIN64 ?
-			if("${ETLEGACY_SYSTEM_PROCESSOR}" STREQUAL "x86_64" OR BUILD_WITH_CSTDIO_INCLUDED)
-				message(STATUS "Omni-Bot BotLoadLibrary includes cstdio")
-				add_definitions(-DIS_64_BIT_BUILD_SYSTEM)
-			endif()
 		else()
 			message(STATUS "Warning: omni-bot support is 32bit Win & Linux only - build skipped")
 		endif()
