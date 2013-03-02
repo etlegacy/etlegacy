@@ -1071,23 +1071,21 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 	}
 	else
 	{
+		vec4_t color;
+
 		icon_size = COMMANDMAP_PLAYER_ICON_SIZE;
 
+		Vector4Set(color, 1.f, 1.f, 1.f, alpha);
+		trap_R_SetColor(color);
+		if (cgs.ccLayers)
 		{
-			vec4_t color;
-
-			Vector4Set(color, 1.f, 1.f, 1.f, alpha);
-			trap_R_SetColor(color);
-			if (cgs.ccLayers)
-			{
-				CG_DrawPic(x, y, w, h, cgs.media.commandCentreMapShaderTrans[cgs.ccSelectedLayer]);
-			}
-			else
-			{
-				CG_DrawPic(x, y, w, h, cgs.media.commandCentreMapShaderTrans[0]);
-			}
-			trap_R_SetColor(NULL);
+			CG_DrawPic(x, y, w, h, cgs.media.commandCentreMapShaderTrans[cgs.ccSelectedLayer]);
 		}
+		else
+		{
+			CG_DrawPic(x, y, w, h, cgs.media.commandCentreMapShaderTrans[0]);
+		}
+		trap_R_SetColor(NULL);
 
 		// Draw the grid
 		CG_DrawGrid(x, y, w, h, NULL);
@@ -1145,16 +1143,12 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 void CG_DrawExpandedAutoMap(void)
 {
-	float x, y, w, h;
 	float b_x, b_y, b_w, b_h;
 	float s1, t1, s2, t2;
-
-	x = SCREEN_WIDTH + 10.f;
-	y = 20.f;
-
-	w = CC_2D_W;
-	h = CC_2D_H;
-
+	float x = SCREEN_WIDTH + 10.f;
+	float y = 20.f;
+	float w = CC_2D_W;
+	float h = CC_2D_H;
 
 	if (cgs.autoMapExpanded)
 	{
@@ -1402,7 +1396,6 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 		     (cg.spawnTeams[i] != team)) ||
 		    ((cg.spawnTeams[i] & 256) && !changetime))
 		{
-
 			continue;
 		}
 
@@ -1484,6 +1477,7 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 			if (draw)
 			{
 				float size = FLAGSIZE_EXPANDED;
+
 				if (scissor)
 				{
 					size *= (scissor->zoomFactor / 5.159);
@@ -1514,6 +1508,7 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 			if (draw)
 			{
 				float size = FLAGSIZE_NORMAL;
+
 				if (scissor)
 				{
 					size *= (scissor->zoomFactor / 5.159);
@@ -1691,17 +1686,6 @@ mapEntityData_t *CG_ScanForCommandCentreEntity(void)
 	return NULL;
 }
 
-typedef enum
-{
-	MT_CONSTRUCT,
-	MT_CONSTRUCT_BARE,
-	MT_DESTRUCT,
-	MT_DESTRUCT_BARE,
-	MT_TANK_BARE,
-	MT_PLAYER,
-	MT_INFO
-} menuType_t;
-
 qboolean CG_PlayerSelected(void)
 {
 	snapshot_t *snap;
@@ -1726,34 +1710,6 @@ qboolean CG_PlayerSelected(void)
 			}
 		}
 	}
-	return qfalse;
-}
-
-#define CC_MENU_WIDTH 150
-
-qboolean CG_CommandCentreLayersClick(void)
-{
-	int x, y;
-	int i;
-
-	if (!cgs.ccLayers)
-	{
-		return qfalse;
-	}
-
-	x = CC_2D_X + CC_2D_W - 32;
-	y = CC_2D_Y + CC_2D_H - 32;
-
-	for (i = 0; i < cgs.ccLayers; i++)
-	{
-		if (BG_RectContainsPoint(x, y, 32, 32, cgDC.cursorx, cgDC.cursory))
-		{
-			cgs.ccSelectedLayer = i;
-			return qtrue;
-		}
-		y -= 34;
-	}
-
 	return qfalse;
 }
 
@@ -1790,7 +1746,7 @@ qboolean CG_CommandCentreSpawnPointClick(void)
 		point[0] = cg.spawnCoords[i][0];
 		point[1] = cg.spawnCoords[i][1];
 
-		if (BG_RectContainsPoint(point[0] - FLAGSIZE_NORMAL * 0.5f, point[1] - FLAGSIZE_NORMAL * 0.5f, FLAGSIZE_NORMAL, FLAGSIZE_NORMAL, cgDC.cursorx, cgDC.cursory))
+		if (BG_RectContainsPoint((point[0] - FLAGSIZE_NORMAL * 0.5f) + cgs.wideXoffset, point[1] - FLAGSIZE_NORMAL * 0.5f, FLAGSIZE_NORMAL, FLAGSIZE_NORMAL, cgDC.cursorx, cgDC.cursory))
 		{
 			trap_SendConsoleCommand(va("setspawnpt %i\n", i));
 			cg.selectedSpawnPoint    = i;
@@ -1800,19 +1756,6 @@ qboolean CG_CommandCentreSpawnPointClick(void)
 	}
 
 	return qfalse;
-}
-
-void CG_CommandCentreClick(int key)
-{
-	switch (key)
-	{
-	case K_MOUSE1:
-		if (CG_CommandCentreSpawnPointClick())
-		{
-			return;
-		}
-		break;
-	}
 }
 
 char      cg_highlightText[256];
