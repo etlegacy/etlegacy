@@ -1,4 +1,15 @@
+language: c
+
+compiler:
+  - gcc
+  - clang
+
 script: ./easybuild.sh
 
 notifications:
-  irc: "irc.freenode.org#etlegacy"
+  irc:
+    channels:
+      - "irc.freenode.org#etlegacy"
+    use_notice: true
+    skip_join: true
+
