@@ -72,7 +72,7 @@ qboolean CL_GetUserCmd(int cmdNumber, usercmd_t *ucmd)
 	// can't return anything that we haven't created yet
 	if (cmdNumber > cl.cmdNumber)
 	{
-		Com_Error(ERR_DROP, "CL_GetUserCmd: %i >= %i\n", cmdNumber, cl.cmdNumber);
+		Com_Error(ERR_DROP, "CL_GetUserCmd: %i >= %i", cmdNumber, cl.cmdNumber);
 	}
 
 	// the usercmd has been overwritten in the wrapping
@@ -104,7 +104,7 @@ qboolean CL_GetParseEntityState(int parseEntityNumber, entityState_t *state)
 	// can't return anything that hasn't been parsed yet
 	if (parseEntityNumber >= cl.parseEntitiesNum)
 	{
-		Com_Error(ERR_DROP, "CL_GetParseEntityState: %i >= %i\n",
+		Com_Error(ERR_DROP, "CL_GetParseEntityState: %i >= %i",
 		          parseEntityNumber, cl.parseEntitiesNum);
 	}
 
@@ -141,7 +141,7 @@ qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
 
 	if (snapshotNumber > cl.snap.messageNum)
 	{
-		Com_Error(ERR_DROP, "CL_GetSnapshot: snapshotNumber > cl.snapshot.messageNum\n");
+		Com_Error(ERR_DROP, "CL_GetSnapshot: snapshotNumber > cl.snapshot.messageNum");
 	}
 
 	// if the frame has fallen out of the circular buffer, we can't return it
@@ -252,7 +252,7 @@ void CL_ConfigstringModified(void)
 	index = atoi(Cmd_Argv(1));
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
-		Com_Error(ERR_DROP, "configstring > MAX_CONFIGSTRINGS\n");
+		Com_Error(ERR_DROP, "configstring > MAX_CONFIGSTRINGS");
 	}
 	// get everything after "cs <num>"
 	s = Cmd_ArgsFrom(2);
@@ -290,7 +290,7 @@ void CL_ConfigstringModified(void)
 
 		if (len + 1 + cl.gameState.dataCount > MAX_GAMESTATE_CHARS)
 		{
-			Com_Error(ERR_DROP, "MAX_GAMESTATE_CHARS exceeded\n");
+			Com_Error(ERR_DROP, "MAX_GAMESTATE_CHARS exceeded");
 		}
 
 		// append it to the gameState string buffer
@@ -329,13 +329,13 @@ qboolean CL_GetServerCommand(int serverCommandNumber)
 		{
 			return qfalse;
 		}
-		Com_Error(ERR_DROP, "CL_GetServerCommand: a reliable command was cycled out\n");
+		Com_Error(ERR_DROP, "CL_GetServerCommand: a reliable command was cycled out");
 		return qfalse;
 	}
 
 	if (serverCommandNumber > clc.serverCommandSequence)
 	{
-		Com_Error(ERR_DROP, "CL_GetServerCommand: requested a command not received\n");
+		Com_Error(ERR_DROP, "CL_GetServerCommand: requested a command not received");
 		return qfalse;
 	}
 
@@ -357,11 +357,11 @@ rescan:
 		// allow server to indicate why they were disconnected
 		if (argc >= 2)
 		{
-			Com_Error(ERR_SERVERDISCONNECT, "%s\n", va("Server Disconnected - %s", Cmd_Argv(1)));
+			Com_Error(ERR_SERVERDISCONNECT, "%s", va("Server Disconnected - %s", Cmd_Argv(1)));
 		}
 		else
 		{
-			Com_Error(ERR_SERVERDISCONNECT, "Server disconnected\n");
+			Com_Error(ERR_SERVERDISCONNECT, "Server disconnected");
 		}
 	}
 
@@ -376,7 +376,7 @@ rescan:
 		s = Cmd_Argv(2);
 		if (strlen(bigConfigString) + strlen(s) >= BIG_INFO_STRING)
 		{
-			Com_Error(ERR_DROP, "bcs exceeded BIG_INFO_STRING\n");
+			Com_Error(ERR_DROP, "bcs exceeded BIG_INFO_STRING");
 		}
 		strcat(bigConfigString, s);
 		return qfalse;
@@ -387,7 +387,7 @@ rescan:
 		s = Cmd_Argv(2);
 		if (strlen(bigConfigString) + strlen(s) + 1 >= BIG_INFO_STRING)
 		{
-			Com_Error(ERR_DROP, "bcs exceeded BIG_INFO_STRING\n");
+			Com_Error(ERR_DROP, "bcs exceeded BIG_INFO_STRING");
 		}
 		strcat(bigConfigString, s);
 		strcat(bigConfigString, "\"");
@@ -505,7 +505,7 @@ static void CL_SendBinaryMessage(const char *buf, int buflen)
 {
 	if (buflen < 0 || buflen > MAX_BINARY_MESSAGE)
 	{
-		Com_Error(ERR_DROP, "CL_SendBinaryMessage: bad length %i\n", buflen);
+		Com_Error(ERR_DROP, "CL_SendBinaryMessage: bad length %i", buflen);
 		clc.binaryMessageLength = 0;
 		return;
 	}
@@ -1027,7 +1027,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return 0;
 
 	default:
-		Com_Error(ERR_DROP, "Bad cgame system trap: %ld\n", (long int) args[0]);
+		Com_Error(ERR_DROP, "Bad cgame system trap: %ld", (long int) args[0]);
 		break;
 	}
 	return 0;
@@ -1102,7 +1102,7 @@ void CL_UpdateLevelHunkUsage(void)
 				}
 				else
 				{
-					Com_Error(ERR_DROP, "hunkusage.dat file is corrupt\n");
+					Com_Error(ERR_DROP, "hunkusage.dat file is corrupt");
 				}
 			}
 		}
@@ -1110,13 +1110,13 @@ void CL_UpdateLevelHunkUsage(void)
 		handle = FS_FOpenFileWrite(memlistfile);
 		if (handle < 0)
 		{
-			Com_Error(ERR_DROP, "cannot create %s\n", memlistfile);
+			Com_Error(ERR_DROP, "cannot create %s", memlistfile);
 		}
 		// input file is parsed, now output to the new file
 		len = strlen(outbuf);
 		if (FS_Write((void *)outbuf, len, handle) != len)
 		{
-			Com_Error(ERR_DROP, "cannot write to %s\n", memlistfile);
+			Com_Error(ERR_DROP, "cannot write to %s", memlistfile);
 		}
 		FS_FCloseFile(handle);
 
@@ -1127,7 +1127,7 @@ void CL_UpdateLevelHunkUsage(void)
 	FS_FOpenFileByMode(memlistfile, &handle, FS_APPEND);
 	if (handle < 0)
 	{
-		Com_Error(ERR_DROP, "cannot write to hunkusage.dat, check disk full\n");
+		Com_Error(ERR_DROP, "cannot write to hunkusage.dat, check disk full");
 	}
 	Com_sprintf(outstr, sizeof(outstr), "%s %i\n", cl.mapname, memusage);
 	FS_Write(outstr, strlen(outstr), handle);
@@ -1168,7 +1168,7 @@ void CL_InitCGame(void)
 	cgvm = VM_Create("cgame", CL_CgameSystemCalls, VMI_NATIVE);
 	if (!cgvm)
 	{
-		Com_Error(ERR_DROP, "VM_Create on cgame failed\n");
+		Com_Error(ERR_DROP, "VM_Create on cgame failed");
 	}
 	cls.state = CA_LOADING;
 
@@ -1387,7 +1387,7 @@ void CL_SetCGameTime(void)
 	// if we have gotten to this point, cl.snap is guaranteed to be valid
 	if (!cl.snap.valid)
 	{
-		Com_Error(ERR_DROP, "CL_SetCGameTime: !cl.snap.valid\n");
+		Com_Error(ERR_DROP, "CL_SetCGameTime: !cl.snap.valid");
 	}
 
 	// allow pause in single player
@@ -1407,7 +1407,7 @@ void CL_SetCGameTime(void)
 		}
 		else
 		{
-			Com_Error(ERR_DROP, "cl.snap.serverTime < cl.oldFrameServerTime\n");
+			Com_Error(ERR_DROP, "cl.snap.serverTime < cl.oldFrameServerTime");
 		}
 	}
 	cl.oldFrameServerTime = cl.snap.serverTime;

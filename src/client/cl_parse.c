@@ -284,7 +284,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 
 		if (msg->readcount > msg->cursize)
 		{
-			Com_Error(ERR_DROP, "CL_ParsePacketEntities: end of message\n");
+			Com_Error(ERR_DROP, "CL_ParsePacketEntities: end of message");
 		}
 
 		while (oldnum < newnum)
@@ -504,7 +504,7 @@ void CL_ParseSnapshot(msg_t *msg)
 
 	if (len > sizeof(newSnap.areamask))
 	{
-		Com_Error(ERR_DROP, "CL_ParseSnapshot: Invalid size %d for areamask.\n", len);
+		Com_Error(ERR_DROP, "CL_ParseSnapshot: Invalid size %d for areamask.", len);
 		return;
 	}
 
@@ -698,14 +698,14 @@ void CL_ParseGamestate(msg_t *msg)
 			i = MSG_ReadShort(msg);
 			if (i < 0 || i >= MAX_CONFIGSTRINGS)
 			{
-				Com_Error(ERR_DROP, "configstring > MAX_CONFIGSTRINGS\n");
+				Com_Error(ERR_DROP, "configstring > MAX_CONFIGSTRINGS");
 			}
 			s   = MSG_ReadBigString(msg);
 			len = strlen(s);
 
 			if (len + 1 + cl.gameState.dataCount > MAX_GAMESTATE_CHARS)
 			{
-				Com_Error(ERR_DROP, "MAX_GAMESTATE_CHARS exceeded\n");
+				Com_Error(ERR_DROP, "MAX_GAMESTATE_CHARS exceeded");
 			}
 
 			// append it to the gameState string buffer
@@ -718,7 +718,7 @@ void CL_ParseGamestate(msg_t *msg)
 			newnum = MSG_ReadBits(msg, GENTITYNUM_BITS);
 			if (newnum < 0 || newnum >= MAX_GENTITIES)
 			{
-				Com_Error(ERR_DROP, "Baseline number out of range: %i\n", newnum);
+				Com_Error(ERR_DROP, "Baseline number out of range: %i", newnum);
 			}
 			memset(&nullstate, 0, sizeof(nullstate));
 			es = &cl.entityBaselines[newnum];
@@ -726,7 +726,7 @@ void CL_ParseGamestate(msg_t *msg)
 		}
 		else
 		{
-			Com_Error(ERR_DROP, "CL_ParseGamestate: bad command byte\n");
+			Com_Error(ERR_DROP, "CL_ParseGamestate: bad command byte");
 		}
 	}
 
@@ -854,7 +854,7 @@ void CL_ParseDownload(msg_t *msg)
 
 		if (clc.downloadSize < 0)
 		{
-			Com_Error(ERR_DROP, "%s\n", MSG_ReadString(msg));
+			Com_Error(ERR_DROP, "%s", MSG_ReadString(msg));
 			return;
 		}
 	}
@@ -862,7 +862,7 @@ void CL_ParseDownload(msg_t *msg)
 	size = MSG_ReadShort(msg);
 	if (size < 0 || size > sizeof(data))
 	{
-		Com_Error(ERR_DROP, "CL_ParseDownload: Invalid size %d for download chunk.\n", size);
+		Com_Error(ERR_DROP, "CL_ParseDownload: Invalid size %d for download chunk.", size);
 		return;
 	}
 
@@ -1008,7 +1008,7 @@ void CL_ParseServerMessage(msg_t *msg)
 	{
 		if (msg->readcount > msg->cursize)
 		{
-			Com_Error(ERR_DROP, "CL_ParseServerMessage: read past end of server message\n");
+			Com_Error(ERR_DROP, "CL_ParseServerMessage: read past end of server message");
 			break;
 		}
 
@@ -1036,7 +1036,7 @@ void CL_ParseServerMessage(msg_t *msg)
 		switch (cmd)
 		{
 		default:
-			Com_Error(ERR_DROP, "CL_ParseServerMessage: Illegible server message %d\n", cmd);
+			Com_Error(ERR_DROP, "CL_ParseServerMessage: Illegible server message %d", cmd);
 			break;
 		case svc_nop:
 			break;

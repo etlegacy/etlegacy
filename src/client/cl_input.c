@@ -648,7 +648,7 @@ void CL_JoystickEvent(int axis, int value, int time)
 {
 	if (axis < 0 || axis >= MAX_JOYSTICK_AXIS)
 	{
-		Com_Error(ERR_DROP, "CL_JoystickEvent: bad axis %i\n", axis);
+		Com_Error(ERR_DROP, "CL_JoystickEvent: bad axis %i", axis);
 	}
 	cl.joystickAxis[axis] = value;
 }

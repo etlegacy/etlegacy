@@ -232,7 +232,7 @@ static sfxHandle_t S_AL_BufferFindFree(void)
 	}
 
 	// Shit...
-	Com_Error(ERR_FATAL, "S_AL_BufferFindFree: No free sound handles\n");
+	Com_Error(ERR_FATAL, "S_AL_BufferFindFree: No free sound handles");
 	return -1;
 }
 
@@ -285,7 +285,7 @@ static void S_AL_BufferUseDefault(sfxHandle_t sfx)
 {
 	if (sfx == default_sfx)
 	{
-		Com_Error(ERR_FATAL, "Can't load default sound effect %s\n", knownSfx[sfx].filename);
+		Com_Error(ERR_FATAL, "Can't load default sound effect %s", knownSfx[sfx].filename);
 	}
 
 	Com_Printf(S_COLOR_YELLOW "WARNING: [S_AL_BufferUseDefault] Using default sound for %s\n", knownSfx[sfx].filename);
@@ -1249,7 +1249,7 @@ static void S_AL_UpdateEntityPosition(int entityNum, const vec3_t origin)
 	S_AL_SanitiseVector(sanOrigin);
 	if (entityNum < 0 || entityNum >= MAX_GENTITIES)
 	{
-		Com_Error(ERR_DROP, "S_UpdateEntityPosition: bad entitynum %i\n", entityNum);
+		Com_Error(ERR_DROP, "S_UpdateEntityPosition: bad entitynum %i", entityNum);
 	}
 	VectorCopy(sanOrigin, entityPositions[entityNum]);
 }
@@ -1265,7 +1265,7 @@ static qboolean S_AL_CheckInput(int entityNum, sfxHandle_t sfx)
 {
 	if (entityNum < 0 || entityNum >= MAX_GENTITIES)
 	{
-		Com_Error(ERR_DROP, "ERROR S_AL_CheckInput: S_AL_CheckInput: bad entitynum %i\n", entityNum);
+		Com_Error(ERR_DROP, "ERROR S_AL_CheckInput: S_AL_CheckInput: bad entitynum %i", entityNum);
 	}
 
 	if (sfx < 0 || sfx >= numSfx)

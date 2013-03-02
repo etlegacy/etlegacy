@@ -90,13 +90,13 @@ void SND_setup(void)
 	buffer = malloc(scs * sizeof(sndBuffer));
 	if (!buffer)
 	{
-		Com_Error(ERR_FATAL, "Sound buffer failed to allocate %1.1f megs\n", (float)scs / (1024 * 1024));
+		Com_Error(ERR_FATAL, "Sound buffer failed to allocate %1.1f megs", (float)scs / (1024 * 1024));
 	}
 	// allocate the stack based hunk allocator
 	sfxScratchBuffer = malloc(SND_CHUNK_SIZE * sizeof(short) * 4);      //Hunk_Alloc(SND_CHUNK_SIZE * sizeof(short) * 4);
 	if (!sfxScratchBuffer)
 	{
-		Com_Error(ERR_FATAL, "Unable to allocate sound scratch buffer\n");
+		Com_Error(ERR_FATAL, "Unable to allocate sound scratch buffer");
 	}
 	sfxScratchPointer = NULL;
 

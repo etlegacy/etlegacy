@@ -324,7 +324,7 @@ static sfx_t *S_FindName(const char *name)
 	{
 		if (numSfx == MAX_SFX)
 		{
-			Com_Error(ERR_FATAL, "S_FindName: out of sfx_t\n");
+			Com_Error(ERR_FATAL, "S_FindName: out of sfx_t");
 		}
 		numSfx++;
 	}
@@ -596,12 +596,12 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 
 	if (!origin && (entnum < 0 || entnum >= MAX_GENTITIES))
 	{
-		Com_Error(ERR_DROP, "S_Base_StartSoundEx: bad entitynum %i\n", entnum);
+		Com_Error(ERR_DROP, "S_Base_StartSoundEx: bad entitynum %i", entnum);
 	}
 
 	if (sfxHandle < 0 || sfxHandle >= numSfx)
 	{
-		Com_Printf(S_COLOR_YELLOW "S_Base_StartSoundEx: handle %i out of range\n", sfxHandle);
+		Com_Printf(S_COLOR_YELLOW "S_Base_StartSoundEx: handle %i out of range", sfxHandle);
 		return;
 	}
 
@@ -921,7 +921,7 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 
 	if (!sfx->soundLength)
 	{
-		Com_Error(ERR_DROP, "%s has length 0\n", sfx->soundName);
+		Com_Error(ERR_DROP, "%s has length 0", sfx->soundName);
 	}
 
 	VectorCopy(origin, loopSounds[numLoopSounds].origin);
@@ -1027,7 +1027,7 @@ void S_Base_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, int 
 
 	if (!sfx->soundLength)
 	{
-		Com_Error(ERR_DROP, "%s has length 0\n", sfx->soundName);
+		Com_Error(ERR_DROP, "%s has length 0", sfx->soundName);
 	}
 
 	VectorCopy(origin, loopSounds[numLoopSounds].origin);
@@ -1328,7 +1328,7 @@ void S_Base_UpdateEntityPosition(int entnum, const vec3_t origin)
 {
 	if (entnum < 0 || entnum >= MAX_GENTITIES)
 	{
-		Com_Error(ERR_DROP, "S_UpdateEntityPosition: bad entitynum %i\n", entnum);
+		Com_Error(ERR_DROP, "S_UpdateEntityPosition: bad entitynum %i", entnum);
 	}
 	VectorCopy(origin, entityPositions[entnum]);
 }
