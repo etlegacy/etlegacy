@@ -1,4 +1,4 @@
-ET: Legacy
+ET: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=master)](https://travis-ci.org/etlegacy/etlegacy)
 ==========
 
 *A second breath of life for Wolfenstein: Enemy Territory*

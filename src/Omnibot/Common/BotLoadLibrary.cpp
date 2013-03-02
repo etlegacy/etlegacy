@@ -271,7 +271,7 @@ void Omnibot_FreeLibrary()
 
 #elif defined __linux__ || ((defined __MACH__) && (defined __APPLE__))
 
-#include <stdarg.h>
+#include <cstdarg>
 
 //////////////////////////////////////////////////////////////////////////
 // Utilities
