@@ -1,0 +1,4 @@
+script: ./easybuild.sh
+
+notifications:
+  irc: "irc.freenode.org#etlegacy"
