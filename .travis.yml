@@ -2,9 +2,17 @@ language: c
 
 compiler:
   - gcc
-  - clang
 
-script: ./easybuild.sh
+env:
+  - BUNDLED_SDL=0
+  - CROSS_COMPILE32=0
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install libsdl1.2-dev:i386
+
+script:
+  - ./easybuild.sh
 
 notifications:
   irc:
