@@ -16,11 +16,7 @@
 #include <string>
 #include <cstring>
 #include <cstdlib>
-
-// activate comment to do 32bit build on 64bit system
-#ifdef IS_64_BIT_BUILD_SYSTEM
 #include <cstdio>
-#endif
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -276,7 +272,6 @@ void Omnibot_FreeLibrary()
 #elif defined __linux__ || ((defined __MACH__) && (defined __APPLE__))
 
 #include <stdarg.h>
-#include <stdio.h>
 
 //////////////////////////////////////////////////////////////////////////
 // Utilities
