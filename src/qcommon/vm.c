@@ -345,7 +345,7 @@ vm_t *VM_Restart(vm_t *vm)
 	FS_ReadFile(filename, (void **)&header);
 	if (!header)
 	{
-		Com_Error(ERR_DROP, "VM_Restart: restart failed.\n");
+		Com_Error(ERR_DROP, "VM_Restart: restart failed.");
 	}
 
 	// byte swap the header
@@ -359,7 +359,7 @@ vm_t *VM_Restart(vm_t *vm)
 	    || header->bssLength < 0 || header->dataLength < 0 || header->litLength < 0 || header->codeLength <= 0)
 	{
 		VM_Free(vm);
-		Com_Error(ERR_FATAL, "VM_Restart: %s has bad header\n", filename);
+		Com_Error(ERR_FATAL, "VM_Restart: %s has bad header", filename);
 	}
 
 	// round up to next power of 2 so all data operations can
@@ -401,7 +401,7 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 
 	if (!module || !module[0] || !systemCalls)
 	{
-		Com_Error(ERR_FATAL, "VM_Create: bad parms\n");
+		Com_Error(ERR_FATAL, "VM_Create: bad parms");
 	}
 
 	// see if we already have the VM
@@ -425,7 +425,7 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 
 	if (i == MAX_VM)
 	{
-		Com_Error(ERR_FATAL, "VM_Create: no free vm_t\n");
+		Com_Error(ERR_FATAL, "VM_Create: no free vm_t");
 	}
 
 	vm = &vmTable[i];
@@ -469,7 +469,7 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 	    || header->bssLength < 0 || header->dataLength < 0 || header->litLength < 0 || header->codeLength <= 0)
 	{
 		VM_Free(vm);
-		Com_Error(ERR_FATAL, "%s has bad header\n", filename);
+		Com_Error(ERR_FATAL, "%s has bad header", filename);
 	}
 
 	// round up to next power of 2 so all data operations can
@@ -641,7 +641,7 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
 
 	if (!vm)
 	{
-		Com_Error(ERR_FATAL, "VM_Call: NULL vm\n");
+		Com_Error(ERR_FATAL, "VM_Call: NULL vm");
 	}
 
 	oldVM     = currentVM;
@@ -684,7 +684,7 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
 #else
 	else
 	{
-		Com_Error(ERR_FATAL, "VM_Call: call without entrypoint\n");
+		Com_Error(ERR_FATAL, "VM_Call: call without entrypoint");
 	}
 #endif
 

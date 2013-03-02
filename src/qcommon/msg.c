@@ -125,7 +125,7 @@ void MSG_Copy(msg_t *buf, byte *data, int length, msg_t *src)
 {
 	if (length < src->cursize)
 	{
-		Com_Error(ERR_DROP, "MSG_Copy: can't copy %d into a smaller %d msg_t buffer\n", src->cursize, length);
+		Com_Error(ERR_DROP, "MSG_Copy: can't copy %d into a smaller %d msg_t buffer", src->cursize, length);
 	}
 	Com_Memcpy(buf, src, sizeof(msg_t));
 	buf->data = data;
@@ -156,7 +156,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 
 	if (bits == 0 || bits < -31 || bits > 32)
 	{
-		Com_Error(ERR_DROP, "MSG_WriteBits: bad bits %i\n", bits);
+		Com_Error(ERR_DROP, "MSG_WriteBits: bad bits %i", bits);
 	}
 
 	// the overflow count is not used anywhere atm
@@ -211,7 +211,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 		}
 		else
 		{
-			Com_Error(ERR_DROP, "MSG_WriteBits: can't read %d bits\n", bits);
+			Com_Error(ERR_DROP, "MSG_WriteBits: can't read %d bits", bits);
 		}
 	}
 	else
@@ -284,7 +284,7 @@ int MSG_ReadBits(msg_t *msg, int bits)
 		}
 		else
 		{
-			Com_Error(ERR_DROP, "MSG_ReadBits: can't read %d bits\n", bits);
+			Com_Error(ERR_DROP, "MSG_ReadBits: can't read %d bits", bits);
 		}
 	}
 	else
@@ -332,7 +332,7 @@ void MSG_WriteChar(msg_t *sb, int c)
 #ifdef PARANOID
 	if (c < -128 || c > 127)
 	{
-		Com_Error(ERR_FATAL, "MSG_WriteChar: range error\n");
+		Com_Error(ERR_FATAL, "MSG_WriteChar: range error");
 	}
 #endif
 
@@ -344,7 +344,7 @@ void MSG_WriteByte(msg_t *sb, int c)
 #ifdef PARANOID
 	if (c < 0 || c > 255)
 	{
-		Com_Error(ERR_FATAL, "MSG_WriteByte: range error\n");
+		Com_Error(ERR_FATAL, "MSG_WriteByte: range error");
 	}
 #endif
 
@@ -365,7 +365,7 @@ void MSG_WriteShort(msg_t *sb, int c)
 #ifdef PARANOID
 	if (c < ((short)0x8000) || c > (short)0x7fff)
 	{
-		Com_Error(ERR_FATAL, "MSG_WriteShort: range error\n");
+		Com_Error(ERR_FATAL, "MSG_WriteShort: range error");
 	}
 #endif
 
@@ -1170,7 +1170,7 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 
 	if (to->number < 0 || to->number >= MAX_GENTITIES)
 	{
-		Com_Error(ERR_FATAL, "MSG_WriteDeltaEntity: Bad entity number: %i\n", to->number);
+		Com_Error(ERR_FATAL, "MSG_WriteDeltaEntity: Bad entity number: %i", to->number);
 	}
 
 	lc = 0;
@@ -1323,7 +1323,7 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to,
 
 	if (number < 0 || number >= MAX_GENTITIES)
 	{
-		Com_Error(ERR_DROP, "MSG_ReadDeltaEntity: Bad delta entity number: %i\n", number);
+		Com_Error(ERR_DROP, "MSG_ReadDeltaEntity: Bad delta entity number: %i", number);
 	}
 
 	if (msg->bit == 0)

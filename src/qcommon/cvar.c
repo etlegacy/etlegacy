@@ -59,7 +59,7 @@ static long generateHashValue(const char *fname)
 
 	if (!fname)
 	{
-		Com_Error(ERR_DROP, "generateHashValue: null name\n");
+		Com_Error(ERR_DROP, "generateHashValue: null name");
 	}
 	hash = 0;
 	i    = 0;
@@ -271,7 +271,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 
 	if (!var_name || !var_value)
 	{
-		Com_Error(ERR_FATAL, "Cvar_Get: NULL parameter\n");
+		Com_Error(ERR_FATAL, "Cvar_Get: NULL parameter");
 	}
 
 	if (!Cvar_ValidateString(var_name))
@@ -355,7 +355,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 	// allocate a new cvar
 	if (cvar_numIndexes >= MAX_CVARS)
 	{
-		Com_Error(ERR_FATAL, "Cvar_Get: MAX_CVARS (%d) hit -- too many cvars!\n", MAX_CVARS);
+		Com_Error(ERR_FATAL, "Cvar_Get: MAX_CVARS (%d) hit -- too many cvars!", MAX_CVARS);
 	}
 	var = &cvar_indexes[cvar_numIndexes];
 	cvar_numIndexes++;
@@ -1225,7 +1225,7 @@ void Cvar_Update(vmCvar_t *vmCvar)
 
 	if ((unsigned)vmCvar->handle >= cvar_numIndexes)
 	{
-		Com_Error(ERR_DROP, "Cvar_Update: handle out of range\n");
+		Com_Error(ERR_DROP, "Cvar_Update: handle out of range");
 	}
 
 	cv = cvar_indexes + vmCvar->handle;
@@ -1241,7 +1241,7 @@ void Cvar_Update(vmCvar_t *vmCvar)
 	vmCvar->modificationCount = cv->modificationCount;
 	if (strlen(cv->string) + 1 > MAX_CVAR_VALUE_STRING)
 	{
-		Com_Error(ERR_DROP, "Cvar_Update: src %s length %u exceeds MAX_CVAR_VALUE_STRING\n",
+		Com_Error(ERR_DROP, "Cvar_Update: src %s length %u exceeds MAX_CVAR_VALUE_STRING",
 		          cv->string,
 		          (unsigned int) strlen(cv->string));
 	}
