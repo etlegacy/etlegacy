@@ -6211,7 +6211,7 @@ menuDef_t *Menus_ActivateByName(const char *p, qboolean modalStack)
 			{
 				if (modalMenuCount >= MAX_MODAL_MENUS)
 				{
-					Com_Error(ERR_DROP, "MAX_MODAL_MENUS exceeded\n");
+					Com_Error(ERR_DROP, "MAX_MODAL_MENUS exceeded");
 				}
 				modalMenuStack[modalMenuCount++] = focus;
 			}
