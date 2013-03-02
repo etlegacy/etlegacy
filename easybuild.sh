@@ -108,8 +108,8 @@ echo
 # everything looks ok, try to compile!
 
 # cmake varialbes
-[ ! "${RELEASE_TYPE}" ]   && RELEASE_TYPE="Release"
-[ ! "${CROSS_COMPILE32}"] && CROSS_COMPILE32=1
+[ ! "${RELEASE_TYPE}" ]    && RELEASE_TYPE="Release"
+[ ! "${CROSS_COMPILE32}" ] && CROSS_COMPILE32=1
 
 BUILD_CLIENT=1
 [ ! "${BUNDLED_LIBS}" ] && BUNDLED_LIBS=1
