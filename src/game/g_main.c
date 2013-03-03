@@ -1427,15 +1427,6 @@ void G_FindTeams(void)
 }
 
 /*
-==============
-G_RemapTeamShaders
-==============
-*/
-void G_RemapTeamShaders(void)
-{
-}
-
-/*
 =================
 G_RegisterCvars
 =================
@@ -1461,11 +1452,6 @@ void G_RegisterCvars(void)
 		}
 
 		remapped = (remapped || cv->teamShader);
-	}
-
-	if (remapped)
-	{
-		G_RemapTeamShaders();
 	}
 
 	// check some things
@@ -1697,11 +1683,6 @@ void G_UpdateCvars(void)
 	if (fToggles)
 	{
 		trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
-	}
-
-	if (remapped)
-	{
-		G_RemapTeamShaders();
 	}
 
 	if (chargetimechanged)
@@ -2191,8 +2172,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	G_FindTeams();
 
 	G_Printf("-----------------------------------\n");
-
-	G_RemapTeamShaders();
 
 	BG_ClearAnimationPool();
 
