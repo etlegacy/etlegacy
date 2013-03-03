@@ -1194,10 +1194,11 @@ void CG_ResetTimer_f(void)
 void CG_Class_f(void)
 {
 	char             cls[64];
-	const char       *classtype;
+	const char       *classtype, *teamstring;
 	int              weapon1, weapon2, playerclass;
 	bg_playerclass_t *classinfo;
 	team_t           team;
+	weaponType_t     *wt;
 
 	if (cg.demoPlayback)
 	{
@@ -1220,10 +1221,12 @@ void CG_Class_f(void)
 	switch (team)
 	{
 	case TEAM_AXIS:
-		classtype = "r";
+		classtype  = "r";
+		teamstring = "Axis";
 		break;
 	case TEAM_ALLIES:
-		classtype = "b";
+		classtype  = "b";
+		teamstring = "Allies";
 		break;
 	default:
 		CG_Printf("Invalid team.\n");
@@ -1303,8 +1306,10 @@ void CG_Class_f(void)
 	}
 
 	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 - 1], weapon2));
-	//Debug
-	//CG_PriorityCenterPrint(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 -1], weapon2), SCREEN_HEIGHT - 88, SMALLCHAR_WIDTH, -1);
+
+	//Print out the selected class and weapon info
+	wt = WM_FindWeaponTypeForWeapon(classinfo->classWeapons[weapon1 - 1]);
+	CG_PriorityCenterPrint(va("You will spawn as a %s %s with a %s.", teamstring, BG_ClassnameForNumber(playerclass), wt ? wt->desc : "^1UNKNOWN WEAPON"), SCREEN_HEIGHT - 88, SMALLCHAR_WIDTH, -1);
 }
 
 typedef struct

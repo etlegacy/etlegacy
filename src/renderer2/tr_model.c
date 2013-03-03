@@ -37,6 +37,13 @@
 
 #define LL(x) x = LittleLong(x)
 
+static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const char *name);
+static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const char *name);
+static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name);
+qboolean R_LoadIQM(model_t *mod, int lod, void *buffer, int bufferSize, const char *name);
+static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *mod_name);
+
+
 // Ridah
 static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *modName);
 // done.
