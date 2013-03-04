@@ -265,6 +265,10 @@ vmCvar_t g_maxTeamLandmines;
 
 vmCvar_t g_countryflags; // GeoIP
 
+// arty/airstrike rate limiting
+vmCvar_t team_airstrikeTime;
+vmCvar_t team_artyTime;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -493,6 +497,10 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_maxTeamLandmines,        "g_maxTeamLandmines",        "10",                         0 },
 	{ &g_countryflags,            "g_countryflags",            "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse},
+
+	// rename to g_team... ?
+	{ &team_airstrikeTime,        "team_airstrikeTime",        "10",                         0 },
+	{ &team_artyTime,             "team_artyTime",             "10",                         0 },
 };
 
 // made static to avoid aliasing
@@ -4419,6 +4427,8 @@ void G_RunFrame(int levelTime)
 
 	level.axisBombCounter   -= msec;
 	level.alliedBombCounter -= msec;
+	level.axisArtyCounter   -= msec;
+	level.alliedArtyCounter -= msec;
 
 	if (level.axisBombCounter < 0)
 	{
@@ -4427,6 +4437,15 @@ void G_RunFrame(int levelTime)
 	if (level.alliedBombCounter < 0)
 	{
 		level.alliedBombCounter = 0;
+	}
+
+	if (level.axisArtyCounter < 0)
+	{
+		level.axisArtyCounter = 0;
+	}
+	if (level.alliedArtyCounter < 0)
+	{
+		level.alliedArtyCounter = 0;
 	}
 
 #if 0

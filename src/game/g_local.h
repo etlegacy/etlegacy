@@ -1040,6 +1040,7 @@ typedef struct
 	qboolean disableTankEnter;
 
 	int axisBombCounter, alliedBombCounter;
+	int axisArtyCounter, alliedArtyCounter; // arty/airstrike rate limiting
 	int axisAutoSpawn, alliesAutoSpawn;
 	int axisMG42Counter, alliesMG42Counter;
 
@@ -1665,6 +1666,10 @@ extern vmCvar_t g_campaignFile;
 extern vmCvar_t g_maxTeamLandmines;
 
 extern vmCvar_t g_countryflags;
+
+// arty/airstrike rate limiting
+extern vmCvar_t team_airstrikeTime;
+extern vmCvar_t team_artyTime;
 
 typedef struct GeoIPTag
 {

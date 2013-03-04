@@ -2471,14 +2471,14 @@ qboolean G_AvailableAirstrikes(gentity_t *ent)
 {
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
-		if (level.axisBombCounter >= 60 * 1000)
+		if (level.axisBombCounter > 0)
 		{
 			return qfalse;
 		}
 	}
 	else
 	{
-		if (level.alliedBombCounter >= 60 * 1000)
+		if (level.alliedBombCounter > 0)
 		{
 			return qfalse;
 		}
@@ -2487,17 +2487,48 @@ qboolean G_AvailableAirstrikes(gentity_t *ent)
 	return qtrue;
 }
 
-void G_AddAirstrikeToCounters(gentity_t *ent)
+// arty/airstrike rate limiting
+qboolean G_AvailableArtillery(gentity_t *ent)
 {
-	int max = MIN(6, 2 * (ceil(g_heavyWeaponRestriction.integer * G_TeamCount(ent, -1) * 0.1f * 10 * 0.01f)));
-
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
-		level.axisBombCounter += ((60 * 1000) / (float)max);
+		if (level.axisArtyCounter > 0)
+		{
+			return qfalse;
+		}
 	}
 	else
 	{
-		level.alliedBombCounter += ((60 * 1000) / (float)max);
+		if (level.alliedArtyCounter > 0)
+		{
+			return qfalse;
+		}
+	}
+	return qtrue;
+}
+
+void G_AddAirstrikeToCounters(gentity_t *ent)
+{
+	if (ent->client->sess.sessionTeam == TEAM_AXIS)
+	{
+		level.axisBombCounter += team_airstrikeTime.integer * 1000;
+	}
+	else
+	{
+		level.alliedBombCounter += team_airstrikeTime.integer * 1000;
+	}
+}
+
+// arty/airstrike rate limiting
+void G_AddArtilleryToCounters(gentity_t *ent)
+{
+	if (ent->client->sess.sessionTeam == TEAM_AXIS)
+	{
+		level.axisArtyCounter += team_artyTime.integer * 1000;
+	}
+	else
+	{
+		level.alliedArtyCounter += team_artyTime.integer * 1000;
 	}
 }
 
@@ -2573,47 +2604,20 @@ qboolean weapon_checkAirStrike(gentity_t *ent)
 		return qfalse; // do nothing, don't hurt anyone
 	}
 
-	if (ent->s.teamNum == TEAM_AXIS)
+	if (ent->s.teamNum == TEAM_AXIS || ent->s.teamNum == TEAM_ALLIES)
 	{
-		if (level.numActiveAirstrikes[0] > 6 || !G_AvailableAirstrikes(ent->parent))
+		if (level.numActiveAirstrikes[ent->s.teamNum - 1] > 6 || !G_AvailableAirstrikes(ent->parent))
 		{
 			G_SayTo(ent->parent, ent->parent, 2, COLOR_YELLOW, "HQ: ", "All available planes are already en-route.", qtrue);
 
 			G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 0, ent->parent - g_entities);
 
 			ent->active = qfalse;
-			if (ent->s.teamNum == TEAM_AXIS)
-			{
-				level.numActiveAirstrikes[0]--;
-			}
-			else
-			{
-				level.numActiveAirstrikes[1]--;
-			}
+			level.numActiveAirstrikes[ent->s.teamNum - 1]--;
+
 			return qfalse;
 		}
 	}
-	else
-	{
-		if (level.numActiveAirstrikes[1] > 6 || !G_AvailableAirstrikes(ent->parent))
-		{
-			G_SayTo(ent->parent, ent->parent, 2, COLOR_YELLOW, "HQ: ", "All available planes are already en-route.", qtrue);
-
-			G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 0, ent->parent - g_entities);
-
-			ent->active = qfalse;
-			if (ent->s.teamNum == TEAM_AXIS)
-			{
-				level.numActiveAirstrikes[0]--;
-			}
-			else
-			{
-				level.numActiveAirstrikes[1]--;
-			}
-			return qfalse;
-		}
-	}
-
 	return qtrue;
 }
 
@@ -2652,10 +2656,20 @@ void weapon_callAirStrike(gentity_t *ent)
 		if (ent->s.teamNum == TEAM_AXIS)
 		{
 			level.numActiveAirstrikes[0]--;
+			level.axisBombCounter -= team_airstrikeTime.integer * 1000;
+			if (level.axisBombCounter < 0)
+			{
+				level.axisBombCounter = 0;
+			}
 		}
 		else
 		{
 			level.numActiveAirstrikes[1]--;
+			level.alliedBombCounter -= team_airstrikeTime.integer * 1000;
+			if (level.alliedBombCounter < 0)
+			{
+				level.alliedBombCounter = 0;
+			}
 		}
 		ent->active = qfalse;
 		return;
@@ -2868,27 +2882,17 @@ void Weapon_Artillery(gentity_t *ent)
 		return;
 	}
 
+	// FIXME: decide if we want to do charge costs for 'Insufficient fire support' calls
+	//        and remove ReadyToCallArtillery() function
 	// moved energy check into a func, so I can use same check in bot code
-	if (!ReadyToCallArtillery(ent))
-	{
-		return;
-	}
+	//if (!ReadyToCallArtillery(ent))
+	//{
+	//	return;
+	//}
 
-	if (ent->client->sess.sessionTeam == TEAM_AXIS)
+	if (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES)
 	{
-		if (!G_AvailableAirstrikes(ent))
-		{
-			G_SayTo(ent, ent, 2, COLOR_YELLOW, "Fire Mission: ", "Insufficient fire support.", qtrue);
-			ent->active = qfalse;
-
-			G_GlobalClientEvent(EV_ARTYMESSAGE, 0, ent - g_entities);
-
-			return;
-		}
-	}
-	else
-	{
-		if (!G_AvailableAirstrikes(ent))
+		if (!G_AvailableArtillery(ent))
 		{
 			G_SayTo(ent, ent, 2, COLOR_YELLOW, "Fire Mission: ", "Insufficient fire support.", qtrue);
 			ent->active = qfalse;
@@ -2926,7 +2930,8 @@ void Weapon_Artillery(gentity_t *ent)
 		return;
 	}
 
-	G_AddAirstrikeToCounters(ent);
+	// arty/airstrike rate limiting.
+	G_AddArtilleryToCounters(ent);
 
 	G_SayTo(ent, ent, 2, COLOR_YELLOW, "Fire Mission: ", "Firing for effect!", qtrue);
 

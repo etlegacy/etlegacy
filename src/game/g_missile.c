@@ -359,14 +359,7 @@ void G_ExplodeMissile(gentity_t *ent)
 
 	if (ent->s.weapon == WP_SMOKE_MARKER && ent->active)
 	{
-		if (ent->s.teamNum == TEAM_AXIS)
-		{
-			level.numActiveAirstrikes[0]--;
-		}
-		else
-		{
-			level.numActiveAirstrikes[1]--;
-		}
+		level.numActiveAirstrikes[ent->s.teamNum - 1]--;
 	}
 
 	etype        = ent->s.eType;
