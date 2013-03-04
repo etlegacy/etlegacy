@@ -52,7 +52,6 @@ typedef struct
 	int modificationCount;          // for tracking changes
 	qboolean trackChange;           // track this variable, and announce if changed
 	qboolean fConfigReset;          // OSP: set this var to the default on a config reset
-	qboolean teamShader;            // track and if changed, update shader state
 } cvarTable_t;
 
 gentity_t g_entities[MAX_GENTITIES];
@@ -1443,7 +1442,6 @@ void G_RegisterCvars(void)
 {
 	int         i;
 	cvarTable_t *cv;
-	qboolean    remapped = qfalse;
 
 	level.server_settings = 0;
 
@@ -1458,8 +1456,6 @@ void G_RegisterCvars(void)
 			// OSP - Update vote info for clients, if necessary
 			G_checkServerToggle(cv->vmCvar);
 		}
-
-		remapped = (remapped || cv->teamShader);
 	}
 
 	// check some things
@@ -1499,7 +1495,6 @@ void G_UpdateCvars(void)
 	cvarTable_t *cv;
 	qboolean    fToggles          = qfalse;
 	qboolean    fVoteFlags        = qfalse;
-	qboolean    remapped          = qfalse;
 	qboolean    chargetimechanged = qfalse;
 
 	for (i = 0, cv = gameCvarTable ; i < gameCvarTableSize ; i++, cv++)
@@ -1515,11 +1510,6 @@ void G_UpdateCvars(void)
 				if (cv->trackChange && !(cv->cvarFlags & CVAR_LATCH))
 				{
 					trap_SendServerCommand(-1, va("print \"Server:[lof] %s [lon]changed to[lof] %s\n\"", cv->cvarName, cv->vmCvar->string));
-				}
-
-				if (cv->teamShader)
-				{
-					remapped = qtrue;
 				}
 
 				if (cv->vmCvar == &g_filtercams)
@@ -1855,7 +1845,6 @@ void bani_getmapxp(void)
 /*
 ============
 G_InitGame
-
 ============
 */
 void G_InitGame(int levelTime, int randomSeed, int restart)
@@ -2503,6 +2492,7 @@ void CalculateRanks(void)
 				if (level.clients[i].pers.connected == CON_CONNECTED)
 				{
 					int teamIndex = level.clients[i].sess.sessionTeam == TEAM_AXIS ? 0 : 1;
+
 					level.numPlayingClients++;
 					if (!(g_entities[i].r.svFlags & SVF_BOT))
 					{
