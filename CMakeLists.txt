@@ -43,8 +43,6 @@ option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"			OFF)
 #cmake_dependent_option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"		ON "ZIP_EXECUTABLE" OFF)
 #cmake_dependent_option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"		ON "ZIP_EXECUTABLE" OFF)
 
-option(USE_RENDERER2		"Build and use the new renderer"				OFF)
-
 option(BUNDLED_LIBS				"Use all available bundled libraries instead of system libs."	OFF)
 cmake_dependent_option(BUNDLED_SDL		"Use bundled SDL library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_CURL		"Use bundled CURL library instead of the system one."	ON "BUNDLED_LIBS" OFF)
@@ -79,6 +77,7 @@ option(FEATURE_MULTIVIEW	"Compile the mod files with multiview support (broken)"
 option(FEATURE_ANTICHEAT	"Enable server side anti-wallhack code (experimental)"			ON)
 option(FEATURE_CURSES		"Enable PDCurses console"						OFF)
 option(FEATURE_AUTOUPDATE	"Enable updater which downloads latest ET:L files"			ON)
+option(FEATURE_RENDERER2	"Build and use the new renderer"					OFF)
 
 if((WIN32 OR UNIX) AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 	option(FEATURE_OMNIBOT	"Enable omnibot build in mod code (Win & Linux server only!)"		OFF)
@@ -428,7 +427,7 @@ if(BUILD_CLIENT)
 	
 	list(APPEND CLIENT_SRC ${RENDERER_COMMON})
 	list(APPEND RENDERER_FILES ${RENDERER_COMMON})
-	if(USE_RENDERER2) #Builds the client with the other renderer
+	if(FEATURE_RENDERER2) #Builds the client with the other renderer
 		list(APPEND CLIENT_SRC ${RENDERER2_FILES})
 		list(APPEND RENDERER_FILES ${RENDERER2_FILES})
 	else()
