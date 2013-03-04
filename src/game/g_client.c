@@ -1506,7 +1506,8 @@ const char *GetParsedIP(const char *ipadd)
 	{
 		return NULL;
 	}
-	sprintf(ipge, "%u.%u.%u.%u", b1, b2, b3, b4);
+
+	Com_sprintf(ipge, sizeof(ipge), "%u.%u.%u.%u", b1, b2, b3, b4);
 	return ipge;
 }
 
