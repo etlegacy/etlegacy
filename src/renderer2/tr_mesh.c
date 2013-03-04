@@ -45,8 +45,8 @@ static float ProjectRadius(float r, vec3_t location)
 	vec3_t p;
 	float  projected[4];
 
-	c    = DotProduct(tr.viewParms.or.axis[0], tr.viewParms.or.origin);
-	dist = DotProduct(tr.viewParms.or.axis[0], location) - c;
+	c    = DotProduct(tr.viewParms.orientation.axis[0], tr.viewParms.orientation.origin);
+	dist = DotProduct(tr.viewParms.orientation.axis[0], location) - c;
 
 	if (dist <= 0)
 	{
@@ -229,7 +229,7 @@ int R_ComputeLOD(trRefEntity_t *ent)
 			}
 
 			//frame = ( md3Frame_t * )( ( ( unsigned char * ) tr.currentModel->md3[0] ) + tr.currentModel->md3[0]->ofsFrames );
-			frame = tr.currentModel->mdv[0]->frames;
+			frame = tr.currentModel->model.mdv[0]->frames;
 
 			frame += ent->e.frame;
 
@@ -356,8 +356,8 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 
 	if (ent->e.renderfx & RF_WRAP_FRAMES)
 	{
-		ent->e.frame    %= tr.currentModel->mdv[0]->numFrames;
-		ent->e.oldframe %= tr.currentModel->mdv[0]->numFrames;
+		ent->e.frame    %= tr.currentModel->model.mdv[0]->numFrames;
+		ent->e.oldframe %= tr.currentModel->model.mdv[0]->numFrames;
 	}
 
 	//
@@ -366,9 +366,9 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 	// when the surfaces are rendered, they don't need to be
 	// range checked again.
 	//
-	if ((ent->e.frame >= tr.currentModel->mdv[0]->numFrames)
+	if ((ent->e.frame >= tr.currentModel->model.mdv[0]->numFrames)
 	    || (ent->e.frame < 0)
-	    || (ent->e.oldframe >= tr.currentModel->mdv[0]->numFrames)
+	    || (ent->e.oldframe >= tr.currentModel->model.mdv[0]->numFrames)
 	    || (ent->e.oldframe < 0))
 	{
 		ri.Printf(PRINT_DEVELOPER, "R_AddMD3Surfaces: no such frame %d to %d for '%s'\n",
@@ -383,7 +383,7 @@ void R_AddMD3Surfaces(trRefEntity_t *ent)
 	//
 	lod = R_ComputeLOD(ent);
 
-	model = tr.currentModel->mdv[lod];
+	model = tr.currentModel->model.mdv[lod];
 
 	//
 	// cull the entire model if merged bounding box of both frames

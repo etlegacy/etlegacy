@@ -963,11 +963,11 @@ static void ComputeFogValues(vec4_t fogDistanceVector, vec4_t fogDepthVector, fl
 
 	fog = tr.world->fogs + tess.fogNum;
 
-	VectorSubtract(backEnd.or.origin, backEnd.viewParms.or.origin, local);
-	fogDistanceVector[0] = -backEnd.or.modelMatrix[2];
-	fogDistanceVector[1] = -backEnd.or.modelMatrix[6];
-	fogDistanceVector[2] = -backEnd.or.modelMatrix[10];
-	fogDistanceVector[3] = DotProduct(local, backEnd.viewParms.or.axis[0]);
+	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
+	fogDistanceVector[0] = -backEnd.orientation.modelMatrix[2];
+	fogDistanceVector[1] = -backEnd.orientation.modelMatrix[6];
+	fogDistanceVector[2] = -backEnd.orientation.modelMatrix[10];
+	fogDistanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
 
 	// scale the fog vectors based on the fog's thickness
 	VectorScale4(fogDistanceVector, fog->tcScale, fogDistanceVector);
@@ -975,15 +975,15 @@ static void ComputeFogValues(vec4_t fogDistanceVector, vec4_t fogDepthVector, fl
 	// rotate the gradient vector for this orientation
 	if (fog->hasSurface)
 	{
-		fogDepthVector[0] = fog->surface[0] * backEnd.or.axis[0][0] +
-		                    fog->surface[1] * backEnd.or.axis[0][1] + fog->surface[2] * backEnd.or.axis[0][2];
-		fogDepthVector[1] = fog->surface[0] * backEnd.or.axis[1][0] +
-		                    fog->surface[1] * backEnd.or.axis[1][1] + fog->surface[2] * backEnd.or.axis[1][2];
-		fogDepthVector[2] = fog->surface[0] * backEnd.or.axis[2][0] +
-		                    fog->surface[1] * backEnd.or.axis[2][1] + fog->surface[2] * backEnd.or.axis[2][2];
-		fogDepthVector[3] = -fog->surface[3] + DotProduct(backEnd.or.origin, fog->surface);
+		fogDepthVector[0] = fog->surface[0] * backEnd.orientation.axis[0][0] +
+		                    fog->surface[1] * backEnd.orientation.axis[0][1] + fog->surface[2] * backEnd.orientation.axis[0][2];
+		fogDepthVector[1] = fog->surface[0] * backEnd.orientation.axis[1][0] +
+		                    fog->surface[1] * backEnd.orientation.axis[1][1] + fog->surface[2] * backEnd.orientation.axis[1][2];
+		fogDepthVector[2] = fog->surface[0] * backEnd.orientation.axis[2][0] +
+		                    fog->surface[1] * backEnd.orientation.axis[2][1] + fog->surface[2] * backEnd.orientation.axis[2][2];
+		fogDepthVector[3] = -fog->surface[3] + DotProduct(backEnd.orientation.origin, fog->surface);
 
-		*eyeT = DotProduct(backEnd.or.viewOrigin, fogDepthVector) + fogDepthVector[3];
+		*eyeT = DotProduct(backEnd.orientation.viewOrigin, fogDepthVector) + fogDepthVector[3];
 	}
 	else
 	{
@@ -1081,7 +1081,7 @@ static void ForwardDlight(void)
 		GLSL_BindProgram(sp);
 
 		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
-		GLSL_SetUniformVec3(sp, GENERIC_UNIFORM_VIEWORIGIN, backEnd.viewParms.or.origin);
+		GLSL_SetUniformVec3(sp, GENERIC_UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
 
 		GLSL_SetUniformFloat(sp, GENERIC_UNIFORM_VERTEXLERP, glState.vertexAttribsInterpolation);
 
@@ -1140,7 +1140,7 @@ static void ForwardDlight(void)
 		// where they aren't rendered
 		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_EQUAL);
 
-		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELMATRIX, backEnd.or.transformMatrix);
+		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 
 		if (pStage->bundle[TB_DIFFUSEMAP].image[0])
 		{
@@ -1279,7 +1279,7 @@ static void ForwardSunlight(void)
 		GLSL_BindProgram(sp);
 
 		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
-		GLSL_SetUniformVec3(sp, GENERIC_UNIFORM_VIEWORIGIN, backEnd.viewParms.or.origin);
+		GLSL_SetUniformVec3(sp, GENERIC_UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
 
 		GLSL_SetUniformFloat(sp, GENERIC_UNIFORM_VERTEXLERP, glState.vertexAttribsInterpolation);
 
@@ -1346,7 +1346,7 @@ static void ForwardSunlight(void)
 
 		GL_State(stageGlState[stage]);
 
-		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELMATRIX, backEnd.or.transformMatrix);
+		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 
 		if (pStage->bundle[TB_DIFFUSEMAP].image[0])
 		{
@@ -1691,7 +1691,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 		GLSL_BindProgram(sp);
 
 		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
-		GLSL_SetUniformVec3(sp, GENERIC_UNIFORM_VIEWORIGIN, backEnd.viewParms.or.origin);
+		GLSL_SetUniformVec3(sp, GENERIC_UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
 
 		GLSL_SetUniformFloat(sp, GENERIC_UNIFORM_VERTEXLERP, glState.vertexAttribsInterpolation);
 
@@ -1813,7 +1813,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 			GLSL_SetUniformVec3(sp, GENERIC_UNIFORM_TCGEN0VECTOR1, vec);
 		}
 
-		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELMATRIX, backEnd.or.transformMatrix);
+		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 
 		GLSL_SetUniformVec2(sp, GENERIC_UNIFORM_MATERIALINFO, pStage->materialInfo);
 
@@ -2021,7 +2021,7 @@ static void RB_RenderShadowmap(shaderCommands_t *input)
 
 		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELVIEWPROJECTIONMATRIX, glState.modelviewProjection);
 
-		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELMATRIX, backEnd.or.transformMatrix);
+		GLSL_SetUniformMatrix16(sp, GENERIC_UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 
 		GLSL_SetUniformFloat(sp, GENERIC_UNIFORM_VERTEXLERP, glState.vertexAttribsInterpolation);
 
@@ -2032,7 +2032,7 @@ static void RB_RenderShadowmap(shaderCommands_t *input)
 			GLSL_SetUniformFloat(sp, GENERIC_UNIFORM_TIME, tess.shaderTime);
 		}
 
-		VectorCopy(backEnd.viewParms.or.origin, vector);
+		VectorCopy(backEnd.viewParms.orientation.origin, vector);
 		vector[3] = 1.0f;
 		GLSL_SetUniformVec4(sp, GENERIC_UNIFORM_LIGHTORIGIN, vector);
 		GLSL_SetUniformFloat(sp, GENERIC_UNIFORM_LIGHTRADIUS, backEnd.viewParms.zFar);

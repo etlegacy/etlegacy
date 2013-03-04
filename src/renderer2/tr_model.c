@@ -37,12 +37,13 @@
 
 #define LL(x) x = LittleLong(x)
 
+/*
 static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const char *name);
 static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const char *name);
 static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name);
-qboolean R_LoadIQM(model_t *mod, int lod, void *buffer, int bufferSize, const char *name);
 static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *mod_name);
-
+qboolean R_LoadIQM(model_t *mod, void *buffer, int filesize, const char *name);
+*/
 
 // Ridah
 static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *modName);
@@ -183,7 +184,7 @@ qhandle_t R_RegisterMD3(const char *name, model_t *mod)
 		for (lod--; lod >= 0; lod--)
 		{
 			mod->numLods++;
-			mod->mdv[lod] = mod->mdv[lod + 1];
+			mod->model.mdv[lod] = mod->model.mdv[lod + 1];
 		}
 
 		return mod->index;
@@ -671,7 +672,7 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *modNa
 	mod->type      = MOD_MESH;
 	size           = LittleLong(mdcModel->ofsEnd);
 	mod->dataSize += size;
-	mdvModel       = mod->mdv[lod] = ri.Hunk_Alloc(sizeof(mdvModel_t), h_low);
+	mdvModel       = mod->model.mdv[lod] = ri.Hunk_Alloc(sizeof(mdvModel_t), h_low);
 
 	LL(mdcModel->ident);
 	LL(mdcModel->version);
@@ -1176,11 +1177,11 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *modNa
 	// Ridah, convert to compressed format
 	if (!r_compressModels->integer)
 	{
-		mdvModel = mod->mdv[lod] = ri.Hunk_Alloc(sizeof(mdvModel_t), h_low);
+		mdvModel = mod->model.mdv[lod] = ri.Hunk_Alloc(sizeof(mdvModel_t), h_low);
 	}
 	else
 	{
-		mdvModel = mod->mdv[lod] = ri.Hunk_AllocateTempMemory(size);
+		mdvModel = mod->model.mdv[lod] = ri.Hunk_AllocateTempMemory(size);
 	}
 	// done.
 
@@ -1966,7 +1967,7 @@ static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *mod_name)
 	mod->type      = MOD_MDS;
 	size           = LittleLong(pinmodel->ofsEnd);
 	mod->dataSize += size;
-	mds            = mod->mds = ri.Hunk_Alloc(size, h_low);
+	mds            = mod->model.mds = ri.Hunk_Alloc(size, h_low);
 
 	Com_Memcpy(mds, buffer, LittleLong(pinmodel->ofsEnd));
 
@@ -2215,7 +2216,7 @@ void R_Modellist_f(void)
 		lods = 1;
 		for (j = 1 ; j < MD3_MAX_LODS ; j++)
 		{
-			if (mod->mdv[j] && mod->mdv[j] != mod->mdv[j - 1])
+			if (mod->model.mdv[j] && mod->model.mdv[j] != mod->model.mdv[j - 1])
 			{
 				lods++;
 			}
@@ -2346,7 +2347,7 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 	Q_strncpyz(tagName, tagNameIn, MAX_QPATH);
 
 	model = R_GetModelByHandle(handle);
-	if (!model->mdv[0] /*&& !model->mdc[0]*/ && !model->mds)
+	if (!model->model.mdv[0] /*&& !model->mdc[0]*/ && !model->model.mds)
 	{
 #ifdef RAVENMD4
 		if (model->type == MOD_MDR)
@@ -2360,7 +2361,7 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 #endif
 		if (model->type == MOD_IQM)
 		{
-			return R_IQMLerpTag(tag, model->modelData,
+			return R_IQMLerpTag(tag, model->model.iqm,
 			                    startFrame, endFrame,
 			                    frac, tagName);
 		}
@@ -2378,12 +2379,12 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 	if (model->type == MOD_MESH)
 	{
 		// old MD3 style
-		retval = R_GetTag(model->mdv[0], startFrame, tagName, startIndex, &start);
-		retval = R_GetTag(model->mdv[0], endFrame, tagName, startIndex, &end);
+		retval = R_GetTag(model->model.mdv[0], startFrame, tagName, startIndex, &start);
+		retval = R_GetTag(model->model.mdv[0], endFrame, tagName, startIndex, &end);
 	}
 	else if (model->type == MOD_MDS)          // use bone lerping
 	{
-		retval = R_GetBoneTag(tag, model->mds, startIndex, refent, tagNameIn);
+		retval = R_GetBoneTag(tag, model->model.mds, startIndex, refent, tagNameIn);
 
 		if (retval >= 0)
 		{
@@ -2444,21 +2445,21 @@ void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs)
 
 	model = R_GetModelByHandle(handle);
 
-	if (model->bmodel)
+	if (model->model.bmodel)
 	{
-		VectorCopy(model->bmodel->bounds[0], mins);
-		VectorCopy(model->bmodel->bounds[1], maxs);
+		VectorCopy(model->model.bmodel->bounds[0], mins);
+		VectorCopy(model->model.bmodel->bounds[1], maxs);
 
 		return;
 	}
 
 	// Ridah
-	if (model->mdv[0])
+	if (model->model.mdv[0])
 	{
 		mdvModel_t *header;
 		mdvFrame_t *frame;
 
-		header = model->mdv[0];
+		header = model->model.mdv[0];
 		frame  = header->frames;
 
 		VectorCopy(frame->bounds[0], mins);
@@ -2485,7 +2486,7 @@ void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs)
 	{
 		iqmData_t *iqmData;
 
-		iqmData = model->modelData;
+		iqmData = model->model.iqm;
 
 		if (iqmData->bounds)
 		{

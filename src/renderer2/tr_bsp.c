@@ -3094,8 +3094,8 @@ static void R_LoadSubmodels(lump_t *l)
 			ri.Error(ERR_DROP, "R_LoadSubmodels: R_AllocModel() failed");
 		}
 
-		model->type   = MOD_BRUSH;
-		model->bmodel = out;
+		model->type         = MOD_BRUSH;
+		model->model.bmodel = out;
 		Com_sprintf(model->name, sizeof(model->name), "*%d", i);
 
 		for (j = 0 ; j < 3 ; j++)

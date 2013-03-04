@@ -143,7 +143,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 
 	if (normal && (normal[0] || normal[1] || normal[2]))
 	{
-		VectorSubtract(backEnd.viewParms.or.origin, point, local);
+		VectorSubtract(backEnd.viewParms.orientation.origin, point, local);
 		VectorNormalizeFast(local);
 		d = DotProduct(local, normal);
 
@@ -156,7 +156,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 
 	// if the point is off the screen, don't bother adding it
 	// calculate screen coordinates and depth
-	R_TransformModelToClip(point, backEnd.or.modelMatrix,
+	R_TransformModelToClip(point, backEnd.orientation.modelMatrix,
 	                       backEnd.viewParms.projectionMatrix, eye, clip);
 
 	//ri.Printf(PRINT_ALL, "src:  %f  %f  %f  \n", point[0], point[1], point[2]);
@@ -602,7 +602,7 @@ void RB_RenderFlares(void)
 	// Reset currentEntity to world so that any previously referenced entities
 	// don't have influence on the rendering of these flares (i.e. RF_ renderer flags).
 	backEnd.currentEntity = &tr.worldEntity;
-	backEnd.or            = backEnd.viewParms.world;
+	backEnd.orientation   = backEnd.viewParms.world;
 
 	// (SA) turned light flares back on.  must evaluate problem id had with this
 	RB_AddDlightFlares();

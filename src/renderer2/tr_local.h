@@ -975,6 +975,20 @@ enum
 //#define USE_UNIFORM_FIREWALL 1
 //#define LOG_GLSL_UNIFORMS 1
 
+typedef struct decalProjector_s
+{
+	shader_t *shader;
+	byte color[4];
+	int fadeStartTime, fadeEndTime;
+	vec3_t mins, maxs;
+	vec3_t center;
+	float radius, radius2;
+	qboolean omnidirectional;
+	int numPlanes;                  // either 5 or 6, for quad or triangle projectors
+	vec4_t planes[6];
+	vec4_t texMat[3][2];
+} decalProjector_t;
+
 // trRefdef_t holds everything that comes in refdef_t,
 // as well as the locally generated scene information
 typedef struct
@@ -1012,6 +1026,13 @@ typedef struct
 	int numPolys;
 	struct srfPoly_s *polys;
 
+	int decalBits;
+	int numDecalProjectors;
+	decalProjector_t *decalProjectors;
+
+	int numDecals;
+	struct srfDecal_s *decals;
+
 	int numDrawSurfs;
 	struct drawSurf_s *drawSurfs;
 
@@ -1036,6 +1057,7 @@ typedef struct
 typedef struct
 {
 	char name[MAX_QPATH];
+	int hash;
 	shader_t *shader;
 } skinSurface_t;
 
@@ -1086,7 +1108,7 @@ typedef enum
 
 typedef struct
 {
-	orientationr_t or;
+	orientationr_t orientation;
 	orientationr_t world;
 	vec3_t pvsOrigin;               // may be different than or.origin for portals
 	qboolean isPortal;              // true if this view is through a portal
@@ -1168,6 +1190,17 @@ typedef struct srfPoly_s
 	int numVerts;
 	polyVert_t *verts;
 } srfPoly_t;
+
+// decals
+#define MAX_DECAL_VERTS         10  // worst case is triangle clipped by 6 planes
+#define MAX_WORLD_DECALS        1024
+#define MAX_ENTITY_DECALS       128
+typedef struct srfDecal_s
+{
+	surfaceType_t surfaceType;
+	int numVerts;
+	polyVert_t verts[MAX_DECAL_VERTS];
+}srfDecal_t;
 
 typedef struct srfDisplayList_s
 {
@@ -1652,12 +1685,24 @@ typedef enum
 	MOD_BRUSH,
 	MOD_MESH,
 	MOD_MDS,
-	MOD_MDC, // Ridah
-#ifdef RAVENMD4
-	MOD_MDR,
-#endif
+	MOD_MDC,
+	MOD_MDM,
+	MOD_MDX,
 	MOD_IQM
 } modtype_t;
+
+typedef union
+{
+	bmodel_t *bmodel;               // only if type == MOD_BRUSH
+	//md3Header_t *md3[MD3_MAX_LODS]; // only if type == MOD_MESH
+	mdvModel_t *mdv[MD3_MAX_LODS];  // only if type == MOD_MESH
+	mdsHeader_t *mds;               // only if type == MOD_MDS
+	mdcHeader_t *mdc[MD3_MAX_LODS]; // only if type == MOD_MDC
+	mdmHeader_t *mdm;               // only if type == MOD_MDM
+	mdxHeader_t *mdx;               // only if type == MOD_MDX
+	//iqmHeader_t *iqm;				// only if type == MOD_IQM
+	iqmData_t *iqm;                 // only if type == MOD_IQM
+} model_u;
 
 typedef struct model_s
 {
@@ -1666,12 +1711,14 @@ typedef struct model_s
 	int index;                      // model = tr.models[model->index]
 
 	int dataSize;                   // just for listing purposes
+
+	/*
 	bmodel_t *bmodel;               // only if type == MOD_BRUSH
-	//md3Header_t *md3[MD3_MAX_LODS]; // only if type == MOD_MESH
 	mdvModel_t *mdv[MD3_MAX_LODS];  // only if type == MOD_MESH
 	mdsHeader_t *mds;               // only if type == MOD_MDS
-	//mdcHeader_t *mdc[MD3_MAX_LODS]; // only if type == MOD_MDC
 	void *modelData;        // only if type == (MOD_MD4 | MOD_MDR | MOD_IQM)
+	*/
+	model_u model;
 
 	int numLods;
 } model_t;
@@ -1879,7 +1926,7 @@ typedef struct
 {
 	trRefdef_t refdef;
 	viewParms_t viewParms;
-	orientationr_t or;
+	orientationr_t orientation;
 	backEndCounters_t pc;
 	qboolean isHyperspace;
 	trRefEntity_t *currentEntity;
@@ -2024,7 +2071,7 @@ typedef struct
 	int identityLightByte;                      // identityLight * 255
 	int overbrightBits;                         // r_overbrightBits->integer, but set to 0 if no hw gamma
 
-	orientationr_t or;                          // for current entity
+	orientationr_t orientation;                          // for current entity
 
 	trRefdef_t refdef;
 
@@ -2325,6 +2372,8 @@ extern cvar_t *r_wolffog;
 
 extern cvar_t *r_highQualityVideo;
 //====================================================================
+
+void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude);
 
 float R_NoiseGet4f(float x, float y, float z, float t);
 void  R_NoiseInit(void);
@@ -3016,6 +3065,11 @@ typedef enum
 	RC_POSTPROCESS
 } renderCommand_t;
 
+
+// max decal projectors per frame, each can generate lots of polys
+#define MAX_DECAL_PROJECTORS    32  // uses bitmasks, don't increase
+#define DECAL_PROJECTOR_MASK    (MAX_DECAL_PROJECTORS - 1)
+#define MAX_DECALS              1024
 
 // these are sort of arbitrary limits.
 // the limits apply to the sum of all scenes in a frame --

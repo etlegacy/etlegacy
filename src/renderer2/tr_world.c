@@ -92,7 +92,7 @@ static qboolean R_CullSurface(msurface_t *surf)
 		// do proper cull for orthographic projection
 		if (tr.viewParms.flags & VPF_ORTHOGRAPHIC)
 		{
-			d = DotProduct(tr.viewParms.or.axis[0], surf->cullinfo.plane.normal);
+			d = DotProduct(tr.viewParms.orientation.axis[0], surf->cullinfo.plane.normal);
 			if (ct == CT_FRONT_SIDED)
 			{
 				if (d > 0)
@@ -110,7 +110,7 @@ static qboolean R_CullSurface(msurface_t *surf)
 			return qfalse;
 		}
 
-		d = DotProduct(tr.or.viewOrigin, surf->cullinfo.plane.normal);
+		d = DotProduct(tr.orientation.viewOrigin, surf->cullinfo.plane.normal);
 
 		// don't cull exactly on the plane, because there are levels of rounding
 		// through the BSP, ICD, and hardware that may cause pixel gaps if an
@@ -528,7 +528,7 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 
 	pModel = R_GetModelByHandle(ent->e.hModel);
 
-	bmodel = pModel->bmodel;
+	bmodel = pModel->model.bmodel;
 
 	clip = R_CullLocalBox(bmodel->bounds);
 	if (clip == CULL_OUT)
