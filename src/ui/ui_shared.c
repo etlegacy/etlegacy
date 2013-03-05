@@ -4154,15 +4154,9 @@ static rectDef_t *Item_CorrectedTextRect(itemDef_t *item)
 void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 {
 	int       i;
-	itemDef_t *item     = NULL;
-	qboolean  inHandler = qfalse;
+	itemDef_t *item = NULL;
 
 	Menu_HandleMouseMove(menu, DC->cursorx, DC->cursory);       // fix for focus not resetting on unhidden buttons
-
-	if (inHandler)
-	{
-		return;
-	}
 
 	// enter key handling for the window supercedes item enter handling
 	if (down && ((key == K_ENTER || key == K_KP_ENTER) && menu->onEnter))
@@ -4174,11 +4168,9 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		return;
 	}
 
-	inHandler = qtrue;
 	if (g_waitingForKey && down)
 	{
 		Item_Bind_HandleKey(g_bindItem, key, down);
-		inHandler = qfalse;
 		return;
 	}
 
@@ -4188,7 +4180,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		{
 			g_editingField = qfalse;
 			g_editItem     = NULL;
-			inHandler      = qfalse;
 			return;
 		}
 		else if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3)
@@ -4205,7 +4196,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 
 	if (menu == NULL)
 	{
-		inHandler = qfalse;
 		return;
 	}
 
@@ -4219,7 +4209,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 			inHandleKey = qtrue;
 			Menus_HandleOOBClick(menu, key, down);
 			inHandleKey = qfalse;
-			inHandler   = qfalse;
 			return;
 		}
 	}
@@ -4238,14 +4227,12 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		if (Item_HandleKey(item, key, down))
 		{
 			Item_Action(item);
-			inHandler = qfalse;
 			return;
 		}
 	}
 
 	if (!down)
 	{
-		inHandler = qfalse;
 		return;
 	}
 
@@ -4408,7 +4395,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	case K_AUX16:
 		break;
 	}
-	inHandler = qfalse;
 }
 
 void ToWindowCoords(float *x, float *y, windowDef_t *window)
