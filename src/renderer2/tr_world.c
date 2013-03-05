@@ -865,7 +865,26 @@ static const byte *R_ClusterPVS(int cluster)
 	return tr.world->vis + cluster * tr.world->clusterBytes;
 }
 
+/*
+=================
+R_inPVS
+=================
+*/
+qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
+{
+	mnode_t *leaf;
+	byte    *vis;
 
+	leaf = R_PointInLeaf(p1);
+	vis  = CM_ClusterPVS(leaf->cluster);
+	leaf = R_PointInLeaf(p2);
+
+	if (!(vis[leaf->cluster >> 3] & (1 << (leaf->cluster & 7))))
+	{
+		return qfalse;
+	}
+	return qtrue;
+}
 
 /*
 ===============

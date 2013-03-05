@@ -40,12 +40,12 @@
 #include "../qcommon/qfiles.h"
 #include "../qcommon/qcommon.h"
 #include "../renderercommon/tr_public.h"
+#include "../renderercommon/qgl.h"
+#include "../renderercommon/iqm.h"
 #include "tr_extratypes.h"
 #include "tr_extramath.h"
 #include "tr_fbo.h"
 #include "tr_postprocess.h"
-#include "../renderercommon/qgl.h"
-#include "../renderercommon/iqm.h"
 
 #define GL_INDEX_TYPE       GL_UNSIGNED_INT
 typedef unsigned int glIndex_t;
@@ -1511,7 +1511,17 @@ typedef struct msurface_s
 	surfaceType_t *data;                // any of srf*_t
 } msurface_t;
 
-
+// bsp model decal surfaces
+typedef struct decal_s
+{
+	msurface_t *parent;
+	shader_t *shader;
+	float fadeStartTime, fadeEndTime;
+	int fogIndex;
+	int numVerts;
+	polyVert_t verts[MAX_DECAL_VERTS];
+}
+decal_t;
 
 #define CONTENTS_NODE       -1
 typedef struct mnode_s
@@ -1536,6 +1546,7 @@ typedef struct mnode_s
 
 typedef struct
 {
+	decal_t *decals;
 	vec3_t bounds[2];           // for culling
 	int firstSurface;
 	int numSurfaces;
@@ -3160,6 +3171,22 @@ void R_BackupShaders(void);
 void R_PurgeShaders(int count);
 void R_LoadCacheShaders(void);
 // done.
+
+
+//Jacker fixes
+void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime);
+void RE_ClearDecals(void);
+void RE_SaveViewParms(void);
+void RE_RestoreViewParms(void);
+void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader);
+void R_DebugPolygon(int color, int numPoints, float *points);
+void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
+void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
+qboolean R_inPVS(const vec3_t p1, const vec3_t p2);
+qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext);
+int R_GetTextureId(const char *name);
+void RE_RenderToTexture(int textureid, int x, int y, int w, int h);
+void RE_Finish(void);
 
 //------------------------------------------------------------------------------
 // Ridah, mesh compression

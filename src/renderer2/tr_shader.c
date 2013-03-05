@@ -3565,6 +3565,132 @@ static shader_t *FinishShader(void)
 
 //========================================================================================
 
+//bani - dynamic shader list
+typedef struct dynamicshader dynamicshader_t;
+struct dynamicshader
+{
+	char *shadertext;
+	dynamicshader_t *next;
+};
+static dynamicshader_t *dshader = NULL;
+
+/*
+====================
+RE_LoadDynamicShader
+
+bani - load a new dynamic shader
+
+if shadertext is NULL, looks for matching shadername and removes it
+
+returns qtrue if request was successful, qfalse if the gods were angered
+====================
+*/
+qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
+{
+#if 1
+	const char      *func_err = "WARNING: RE_LoadDynamicShader";
+	dynamicshader_t *dptr, *lastdptr;
+	char            *q, *token;
+
+	ri.Printf(PRINT_WARNING, "RE_LoadDynamicShader( name = '%s', text = '%s' )\n", shadername, shadertext);
+
+	if (!shadername && shadertext)
+	{
+		ri.Printf(PRINT_WARNING, "%s called with NULL shadername and non-NULL shadertext:\n%s\n", func_err, shadertext);
+		return qfalse;
+	}
+
+	if (shadername && strlen(shadername) >= MAX_QPATH)
+	{
+		ri.Printf(PRINT_WARNING, "%s shadername %s exceeds MAX_QPATH\n", func_err, shadername);
+		return qfalse;
+	}
+
+	//empty the whole list
+	if (!shadername && !shadertext)
+	{
+		dptr = dshader;
+		while (dptr)
+		{
+			lastdptr = dptr->next;
+			ri.Free(dptr->shadertext);
+			ri.Free(dptr);
+			dptr = lastdptr;
+		}
+		dshader = NULL;
+		return qtrue;
+	}
+
+	//walk list for existing shader to delete, or end of the list
+	dptr     = dshader;
+	lastdptr = NULL;
+	while (dptr)
+	{
+		q = dptr->shadertext;
+
+		token = COM_ParseExt(&q, qtrue);
+
+		if ((token[0] != 0) && !Q_stricmp(token, shadername))
+		{
+			//request to nuke this dynamic shader
+			if (!shadertext)
+			{
+				if (!lastdptr)
+				{
+					dshader = NULL;
+				}
+				else
+				{
+					lastdptr->next = dptr->next;
+				}
+				ri.Free(dptr->shadertext);
+				ri.Free(dptr);
+				return qtrue;
+			}
+			ri.Printf(PRINT_WARNING, "%s shader %s already exists!\n", func_err, shadername);
+			return qfalse;
+		}
+		lastdptr = dptr;
+		dptr     = dptr->next;
+	}
+
+	//cant add a new one with empty shadertext
+	if (!shadertext || !strlen(shadertext))
+	{
+		ri.Printf(PRINT_WARNING, "%s new shader %s has NULL shadertext!\n", func_err, shadername);
+		return qfalse;
+	}
+
+	//create a new shader
+	dptr = (dynamicshader_t *) ri.Z_Malloc(sizeof(*dptr));
+	if (!dptr)
+	{
+		Com_Error(ERR_FATAL, "Couldn't allocate struct for dynamic shader %s\n", shadername);
+	}
+	if (lastdptr)
+	{
+		lastdptr->next = dptr;
+	}
+	dptr->shadertext = ri.Z_Malloc(strlen(shadertext) + 1);
+	if (!dptr->shadertext)
+	{
+		Com_Error(ERR_FATAL, "Couldn't allocate buffer for dynamic shader %s\n", shadername);
+	}
+	Q_strncpyz(dptr->shadertext, shadertext, strlen(shadertext) + 1);
+	dptr->next = NULL;
+	if (!dshader)
+	{
+		dshader = dptr;
+	}
+
+	//  ri.Printf( PRINT_ALL, "Loaded dynamic shader [%s] with shadertext [%s]\n", shadername, shadertext );
+
+	return qtrue;
+#else
+	return qfalse;
+#endif
+}
+
 /*
 ====================
 FindShaderInShaderText

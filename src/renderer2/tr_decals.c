@@ -556,7 +556,7 @@ ProjectDecalOntoWinding()
 projects decal onto a polygon
 */
 
-static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t points[2][MAX_DECAL_VERTS], bspSurface_t *surf, bspModel_t *bmodel)
+static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t points[2][MAX_DECAL_VERTS], msurface_t *surf, bmodel_t *bmodel)
 {
 	int        i, pingPong, count, axis;
 	float      pd, d, d2, alpha = 1.f;
@@ -637,7 +637,7 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 	}
 
 	/* find first free decal (fixme: optimize this) */
-	count  = (bmodel == tr.world->models ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
+	count  = (bmodel == tr.world->bmodels ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
 	oldest = &bmodel->decals[0];
 	decal  = bmodel->decals;
 	for (i = 0; i < count; i++, decal++)
@@ -715,7 +715,7 @@ ProjectDecalOntoTriangles()
 projects a decal onto a triangle surface (brush faces, misc_models, metasurfaces)
 */
 
-static void ProjectDecalOntoTriangles(decalProjector_t *dp, bspSurface_t *surf, bspModel_t *bmodel)
+static void ProjectDecalOntoTriangles(decalProjector_t *dp, msurface_t *surf, bmodel_t *bmodel)
 {
 	int           i;
 	srfTriangle_t *tri;
@@ -765,7 +765,7 @@ ProjectDecalOntoGrid()
 projects a decal onto a grid (patch) surface
 */
 
-static void ProjectDecalOntoGrid(decalProjector_t *dp, bspSurface_t *surf, bspModel_t *bmodel)
+static void ProjectDecalOntoGrid(decalProjector_t *dp, msurface_t *surf, bmodel_t *bmodel)
 {
 	int           x, y;
 	srfGridMesh_t *srf;
@@ -807,7 +807,7 @@ R_ProjectDecalOntoSurface()
 projects a decal onto a world surface
 */
 
-void R_ProjectDecalOntoSurface(decalProjector_t *dp, bspSurface_t *surf, bspModel_t *bmodel)
+void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t *bmodel)
 {
 	float        d;
 	srfGeneric_t *gen;

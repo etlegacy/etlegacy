@@ -40,8 +40,6 @@
 
 #include "tr_local.h"
 
-#include <string.h> // memcpy
-
 trGlobals_t tr;
 
 static float s_flipMatrix[16] =
@@ -54,7 +52,6 @@ static float s_flipMatrix[16] =
 	0,  0, 0,  1
 };
 
-
 refimport_t ri;
 
 // entities that will have procedurally generated surfaces will just
@@ -66,7 +63,6 @@ glfog_t     glfogsettings[NUM_FOGS];
 glfogType_t glfogNum = FOG_NONE;
 qboolean    fogIsOn  = qfalse;
 
-
 /*
 =================
 R_Fog (void)
@@ -74,21 +70,19 @@ R_Fog (void)
 */
 void R_Fog(glfog_t *curfog)
 {
-	static glfog_t setfog;
-
 	if (!r_wolffog->integer)
 	{
 		R_FogOff();
 		return;
 	}
 
-	if (!curfog->registered)       //----(SA)
+	if (!curfog->registered)
 	{
 		R_FogOff();
 		return;
 	}
 
-	//----(SA) assme values of '0' for these parameters means 'use default'
+	// assme values of '0' for these parameters means 'use default'
 	if (!curfog->density)
 	{
 		curfog->density = 1;
@@ -101,64 +95,33 @@ void R_Fog(glfog_t *curfog)
 	{
 		curfog->mode = GL_LINEAR;
 	}
-	//----(SA)	end
-
 
 	R_FogOn();
 
-	// only send changes if necessary
-
-//	if(curfog->mode != setfog.mode || !setfog.registered) {
 	qglFogi(GL_FOG_MODE, curfog->mode);
-//		setfog.mode = curfog->mode;
-//	}
-//	if(curfog->color[0] != setfog.color[0] || curfog->color[1] != setfog.color[1] || curfog->color[2] != setfog.color[2] || !setfog.registered) {
-	qglFogfv(GL_FOG_COLOR, curfog->color);
-//		VectorCopy(setfog.color, curfog->color);
-//	}
-//	if(curfog->density != setfog.density || !setfog.registered) {
-	qglFogf(GL_FOG_DENSITY, curfog->density);
-//		setfog.density = curfog->density;
-//	}
-//	if(curfog->hint != setfog.hint || !setfog.registered) {
-	qglHint(GL_FOG_HINT, curfog->hint);
-//		setfog.hint = curfog->hint;
-//	}
-//	if(curfog->start != setfog.start || !setfog.registered) {
-	qglFogf(GL_FOG_START, curfog->start);
-//		setfog.start = curfog->start;
-//	}
 
-	if (r_zfar->value)                 // (SA) allow override for helping level designers test fog distances
-	{ //		if(setfog.end != r_zfar->value || !setfog.registered) {
+	qglFogfv(GL_FOG_COLOR, curfog->color);
+
+	qglFogf(GL_FOG_DENSITY, curfog->density);
+
+	qglHint(GL_FOG_HINT, curfog->hint);
+
+	qglFogf(GL_FOG_START, curfog->start);
+
+	if (r_zfar->value)                 // allow override for helping level designers test fog distances
+	{
 		qglFogf(GL_FOG_END, r_zfar->value);
-//			setfog.end = r_zfar->value;
-//		}
+
 	}
 	else
 	{
-//		if(curfog->end != setfog.end || !setfog.registered) {
 		qglFogf(GL_FOG_END, curfog->end);
-//			setfog.end = curfog->end;
-//		}
 	}
-
-// TTimo - from SP NV fog code
-	// NV fog mode
-	if (glConfig.NVFogAvailable)
-	{
-		qglFogi(GL_FOG_DISTANCE_MODE_NV, glConfig.NVFogMode);
-	}
-// end
-
-	setfog.registered = qtrue;
 
 	qglClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
-
-
 }
 
-// Ridah, allow disabling fog temporarily
+// allow disabling fog temporarily
 void R_FogOff(void)
 {
 	if (!fogIsOn)
@@ -176,21 +139,10 @@ void R_FogOn(void)
 		return;
 	}
 
-	if (r_uiFullScreen->integer)       // don't fog in the menu
-	{
-		R_FogOff();
-		return;
-	}
-
 	if (!r_wolffog->integer)
 	{
 		return;
 	}
-
-//	if(backEnd.viewParms.isGLFogged) {
-//		if(!(backEnd.viewParms.glFog.registered))
-//			return;
-//	}
 
 	if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)     // don't force world fog on portal sky
 	{
@@ -207,11 +159,7 @@ void R_FogOn(void)
 	qglEnable(GL_FOG);
 	fogIsOn = qtrue;
 }
-// done.
 
-
-
-//----(SA)
 /*
 ==============
 R_SetFog
@@ -240,13 +188,13 @@ void R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float d
 			return;
 		}
 
-		glfogsettings[fogvar].color[0] = r;
-		glfogsettings[fogvar].color[1] = g;
-		glfogsettings[fogvar].color[2] = b;
+		glfogsettings[fogvar].color[0] = r * tr.identityLight;
+		glfogsettings[fogvar].color[1] = g * tr.identityLight;
+		glfogsettings[fogvar].color[2] = b * tr.identityLight;
 		glfogsettings[fogvar].color[3] = 1;
 		glfogsettings[fogvar].start    = var1;
 		glfogsettings[fogvar].end      = var2;
-		if (density > 1)
+		if (density >= 1)
 		{
 			glfogsettings[fogvar].mode        = GL_LINEAR;
 			glfogsettings[fogvar].drawsky     = qfalse;
@@ -293,8 +241,6 @@ void R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float d
 	glfogsettings[FOG_TARGET].startTime  = tr.refdef.time;
 	glfogsettings[FOG_TARGET].finishTime = tr.refdef.time + var2;
 }
-
-//----(SA) end
 
 /*
 ================

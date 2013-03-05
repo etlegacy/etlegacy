@@ -5020,6 +5020,27 @@ void R_FindFreeTexnum(image_t *inImage)
 }
 
 /*
+R_GetTextureId
+*/
+int R_GetTextureId(const char *name)
+{
+	int i;
+
+	//	ri.Printf( PRINT_ALL, "R_GetTextureId [%s].\n", name );
+	for (i = 0 ; i < tr.numImages ; i++)
+	{
+		if (!strcmp(name, tr.images[i]->imgName))
+		{
+			//ri.Printf( PRINT_ALL, "Found textureid %d\n", i );
+			return i;
+		}
+	}
+
+	//ri.Printf( PRINT_ALL, "Image not found.\n" );
+	return -1;
+}
+
+/*
 ===============
 R_LoadCacheImages
 ===============

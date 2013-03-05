@@ -370,6 +370,37 @@ void R_SetColorMode(GLboolean *rgba, stereoFrame_t stereoFrame, int colormode)
 
 /*
 =============
+RE_2DPolyies
+=============
+*/
+extern int r_numpolyverts;
+
+void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
+{
+	poly2dCommand_t *cmd;
+
+	if (r_numpolyverts + numverts > max_polyverts)
+	{
+		return;
+	}
+
+	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	if (!cmd)
+	{
+		return;
+	}
+
+	cmd->commandId = RC_2DPOLYS;
+	cmd->verts     = &backEndData->polyVerts[r_numpolyverts];
+	cmd->numverts  = numverts;
+	memcpy(cmd->verts, verts, sizeof(polyVert_t) * numverts);
+	cmd->shader = R_GetShaderByHandle(hShader);
+
+	r_numpolyverts += numverts;
+}
+
+/*
+=============
 RE_RotatedPic
 =============
 */
@@ -447,6 +478,73 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
 }
 //----(SA)	end
 
+/*
+====================
+RE_SetGlobalFog
+    rgb = colour
+    depthForOpaque is depth for opaque
+
+    the restore flag can be used to restore the original level fog
+    duration can be set to fade over a certain period
+====================
+*/
+void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque)
+{
+	ri.Printf(PRINT_DEVELOPER, "RE_SetGlobalFog( restore = %i, duration = %i, r = %f, g = %f, b = %f, depthForOpaque = %f )\n",
+	          restore, duration, r, g, b, depthForOpaque);
+
+	if (restore)
+	{
+		if (duration > 0)
+		{
+			VectorCopy(tr.world->fogs[tr.world->globalFog].fogParms.color, tr.world->globalTransStartFog);
+			tr.world->globalTransStartFog[3] = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
+
+			Vector4Copy(tr.world->globalOriginalFog, tr.world->globalTransEndFog);
+
+			tr.world->globalFogTransStartTime = tr.refdef.time;
+			tr.world->globalFogTransEndTime   = tr.refdef.time + duration;
+		}
+		else
+		{
+			VectorCopy(tr.world->globalOriginalFog, tr.world->fogs[tr.world->globalFog].fogParms.color);
+			/*
+			tr.world->fogs[tr.world->globalFog].fogParms.colorInt =
+			    ColorBytes4(tr.world->globalOriginalFog[0] * tr.identityLight, tr.world->globalOriginalFog[1] * tr.identityLight,
+			                tr.world->globalOriginalFog[2] * tr.identityLight, 1.0);
+			*/
+			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = tr.world->globalOriginalFog[3];
+			tr.world->fogs[tr.world->globalFog].tcScale                 =
+			    1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
+		}
+	}
+	else
+	{
+		if (duration > 0)
+		{
+			VectorCopy(tr.world->fogs[tr.world->globalFog].fogParms.color, tr.world->globalTransStartFog);
+			tr.world->globalTransStartFog[3] = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
+
+			VectorSet(tr.world->globalTransEndFog, r, g, b);
+			tr.world->globalTransEndFog[3] = depthForOpaque < 1 ? 1 : depthForOpaque;
+
+			tr.world->globalFogTransStartTime = tr.refdef.time;
+			tr.world->globalFogTransEndTime   = tr.refdef.time + duration;
+		}
+		else
+		{
+			VectorSet(tr.world->fogs[tr.world->globalFog].fogParms.color, r, g, b);
+			/*
+			tr.world->fogs[tr.world->globalFog].fogParms.colorInt = ColorBytes4(r * tr.identityLight,
+			                                                                            g * tr.identityLight,
+			                                                                            b * tr.identityLight, 1.0);
+			                                                                            */
+			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = depthForOpaque < 1 ? 1 : depthForOpaque;
+			tr.world->fogs[tr.world->globalFog].tcScale                 =
+			    1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
+		}
+	}
+}
 
 /*
 ====================
@@ -751,6 +849,55 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 		*backEndMsec = backEnd.pc.msec;
 	}
 	backEnd.pc.msec = 0;
+}
+
+/*
+==================
+RE_RenderToTexture
+==================
+*/
+void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
+{
+	renderToTextureCommand_t *cmd;
+
+	//  ri.Printf( PRINT_ALL, "RE_RenderToTexture\n" );
+
+	if (textureid > tr.numImages || textureid < 0)
+	{
+		ri.Printf(PRINT_ALL, "Warning: trap_R_RenderToTexture textureid %d out of range.\n", textureid);
+		return;
+	}
+
+	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	if (!cmd)
+	{
+		return;
+	}
+	cmd->commandId = RC_RENDERTOTEXTURE;
+	cmd->image     = tr.images[textureid];
+	cmd->x         = x;
+	cmd->y         = y;
+	cmd->w         = w;
+	cmd->h         = h;
+}
+
+/*
+==================
+RE_Finish
+==================
+*/
+void RE_Finish(void)
+{
+	renderFinishCommand_t *cmd;
+
+	ri.Printf(PRINT_ALL, "RE_Finish\n");
+
+	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	if (!cmd)
+	{
+		return;
+	}
+	cmd->commandId = RC_FINISH;
 }
 
 /*

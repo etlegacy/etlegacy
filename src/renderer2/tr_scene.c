@@ -312,6 +312,56 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 
 //=================================================================================
 
+/*
+=====================
+RE_AddPolyBufferToScene
+=====================
+*/
+void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
+{
+	srfPolyBuffer_t *pPolySurf;
+	int             fogIndex;
+	fog_t           *fog;
+	vec3_t          bounds[2];
+	int             i;
+
+	if (r_numpolybuffers >= MAX_POLYS)
+	{
+		return;
+	}
+
+	pPolySurf = &backEndData->polybuffers[r_numpolybuffers];
+	r_numpolybuffers++;
+
+	pPolySurf->surfaceType = SF_POLYBUFFER;
+	pPolySurf->pPolyBuffer = pPolyBuffer;
+
+	VectorCopy(pPolyBuffer->xyz[0], bounds[0]);
+	VectorCopy(pPolyBuffer->xyz[0], bounds[1]);
+	for (i = 1 ; i < pPolyBuffer->numVerts ; i++)
+	{
+		AddPointToBounds(pPolyBuffer->xyz[i], bounds[0], bounds[1]);
+	}
+	for (fogIndex = 1 ; fogIndex < tr.world->numfogs ; fogIndex++)
+	{
+		fog = &tr.world->fogs[fogIndex];
+		if (bounds[1][0] >= fog->bounds[0][0]
+		    && bounds[1][1] >= fog->bounds[0][1]
+		    && bounds[1][2] >= fog->bounds[0][2]
+		    && bounds[0][0] <= fog->bounds[1][0]
+		    && bounds[0][1] <= fog->bounds[1][1]
+		    && bounds[0][2] <= fog->bounds[1][2])
+		{
+			break;
+		}
+	}
+	if (fogIndex == tr.world->numfogs)
+	{
+		fogIndex = 0;
+	}
+
+	pPolySurf->fogIndex = fogIndex;
+}
 
 /*
 =====================
@@ -704,4 +754,36 @@ void RE_RenderScene(const refdef_t *fd)
 	r_firstScenePoly     = r_numpolys;
 
 	tr.frontEndMsec += ri.Milliseconds() - startTime;
+}
+
+// Temp storage for saving view paramters.  Drawing the animated head in the corner
+// was creaming important view info.
+viewParms_t g_oldViewParms;
+
+/*
+================
+RE_SaveViewParms
+
+Save out the old render info to a temp place so we don't kill the LOD system
+when we do a second render.
+================
+*/
+void RE_SaveViewParms()
+{
+	// save old viewParms so we can return to it after the mirror view
+	g_oldViewParms = tr.viewParms;
+}
+
+/*
+================
+RE_RestoreViewParms
+
+Restore the old render info so we don't kill the LOD system
+when we do a second render.
+================
+*/
+void RE_RestoreViewParms()
+{
+	// This was killing the LOD computation
+	tr.viewParms = g_oldViewParms;
 }
