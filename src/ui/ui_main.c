@@ -1079,45 +1079,43 @@ qboolean Load_Menu(int handle)
 
 			filename = COM_SkipPath(token.string);
 
-			if (cl_language == 1)
+			switch (cl_language)
 			{
+			case LANGUAGE_FRENCH:
 				s = va("%s%s", out, "french/");
-			}
-			else if (cl_language == 2)
-			{
+				break;
+			case LANGUAGE_GERMAN:
 				s = va("%s%s", out, "german/");
-			}
-			else if (cl_language == 3)
-			{
+				break;
+			case LANGUAGE_ITALIAN:
 				s = va("%s%s", out, "italian/");
-			}
-			else if (cl_language == 4)
-			{
+				break;
+			case LANGUAGE_SPANISH:
 				s = va("%s%s", out, "spanish/");
-			}
-			else if (cl_language == 5)
-			{
+				break;
+			case LANGUAGE_POLISH:
 				s = va("%s%s", out, "polish/");
-			}
-			else if (cl_language == 6)
-			{
+				break;
+			case LANGUAGE_DUTCH:
 				s = va("%s%s", out, "dutch/");
-			}
-			else if (cl_language == 7)
-			{
+				break;
+			case LANGUAGE_CZECH:
 				s = va("%s%s", out, "czech/");
-			}
-			else if (cl_language == 8)
-			{
+				break;
+			case LANGUAGE_SWEDISH:
 				s = va("%s%s", out, "swedish/");
-			}
-			else if (cl_language == 9)
-			{
+				break;
+			case LANGUAGE_FINNISH:
 				s = va("%s%s", out, "finnish/");
-			}
-			else if (cl_language == 10)
-			{
+				break;
+			case LANGUAGE_DANISH:
 				s = va("%s%s", out, "danish/");
+				break;
+			case LANGUAGE_PORTUGUESE:
+				s = va("%s%s", out, "portuguese/");
+				break;
+			default:
+				break;
 			}
 
 			if (UI_ParseMenu(va("%s%s", s, filename)))
