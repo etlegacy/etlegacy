@@ -2970,7 +2970,7 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 		return qfalse;
 	}
 
-	if (ent->client->pers.cmd.buttons & BUTTON_WALKING)
+	if (ent->client->pers.cmd.buttons & BUTTON_WALKING || (ent->client->ps.pm_flags & PMF_DUCKED))
 	{
 		walking = qtrue;
 	}
