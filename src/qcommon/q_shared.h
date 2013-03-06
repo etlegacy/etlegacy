@@ -905,6 +905,7 @@ char *COM_SkipPath(char *pathname);
 void COM_FixPath(char *pathname);
 const char *COM_GetExtension(const char *name);
 void COM_StripExtension(const char *in, char *out, int destsize);
+qboolean COM_CompareExtension(const char *in, const char *ext);
 void COM_StripFilename(char *in, char *out);
 
 void COM_DefaultExtension(char *path, int maxSize, const char *extension);
@@ -988,6 +989,7 @@ int Q_isupper(int c);
 int Q_isalpha(int c);
 int Q_isnumeric(int c);
 int Q_isalphanumeric(int c);
+qboolean Q_isintegral(float f);
 int Q_isforfilename(int c);
 
 // portable case insensitive compare
@@ -1077,6 +1079,11 @@ default values.
 #define CVAR_WOLFINFO               2048    // like userinfo, but for wolf multiplayer info
 #define CVAR_UNSAFE                 4096    // unsafe system cvars (renderer, sound settings, anything that might cause a crash)
 #define CVAR_SERVERINFO_NOUPDATE    8192    // WONT automatically send this to clients, but server browsers will see it
+#define CVAR_SERVER_CREATED         16384   // cvar was created by a server the client connected to.
+#define CVAR_VM_CREATED             32768   // cvar was created exclusively in one of the VMs.
+#define CVAR_PROTECTED              65536   // prevent modifying this var from VMs or the server
+#define CVAR_MODIFIED               1073741824  // Cvar was modified
+#define CVAR_NONEXISTENT            2147483648  // Cvar doesn't exist.
 
 // nothing outside the Cvar_*() functions should modify these fields!
 typedef struct cvar_s
@@ -1091,7 +1098,10 @@ typedef struct cvar_s
 	float value;                    // atof( string )
 	int integer;                    // atoi( string )
 	struct cvar_s *next;
+	struct cvar_s *prev;
 	struct cvar_s *hashNext;
+	struct cvar_s *hashPrev;
+	int hashIndex;
 } cvar_t;
 
 #define MAX_CVAR_VALUE_STRING   256

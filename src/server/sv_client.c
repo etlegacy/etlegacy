@@ -936,7 +936,7 @@ void SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 					fileHandle_t handle;
 					int          downloadSize = FS_SV_FOpenFileRead(cl->downloadName, &handle);
 
-					if (downloadSize)
+					if (downloadSize > 0)
 					{
 						FS_FCloseFile(handle);   // don't keep open, we only care about the size
 

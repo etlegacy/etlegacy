@@ -47,6 +47,11 @@
 #include <winsock.h>
 #endif
 
+// NOTE: if protocol gets bumped please add 84 to the list before 0
+// 2.55 82, 2.56 83, 2.6 84
+int demo_protocols[] =
+{ 83, 0 };
+
 #define MAX_NUM_ARGVS   50
 
 #define MIN_DEDICATED_COMHUNKMEGS   1
@@ -475,9 +480,8 @@ be after execing the config and default.
 */
 void Com_StartupVariable(const char *match)
 {
-	int    i;
-	char   *s;
-	cvar_t *cv;
+	int  i;
+	char *s;
 
 	for (i = 0 ; i < com_numConsoleLines ; i++)
 	{
@@ -490,10 +494,14 @@ void Com_StartupVariable(const char *match)
 		s = Cmd_Argv(1);
 		if (!match || !strcmp(s, match))
 		{
-			Cvar_Set(s, Cmd_Argv(2));
-			cv         = Cvar_Get(s, "", 0);
-			cv->flags |= CVAR_USER_CREATED;
-//			com_consoleLines[i] = 0;
+			if (Cvar_Flags(s) == CVAR_NONEXISTENT)
+			{
+				Cvar_Get(s, Cmd_Argv(2), CVAR_USER_CREATED);
+			}
+			else
+			{
+				Cvar_Set2(s, Cmd_Argv(2), qfalse);
+			}
 		}
 	}
 }
@@ -2909,7 +2917,7 @@ void Com_Init(char *commandLine)
 
 #if DEDICATED
 	// default to internet dedicated, not LAN dedicated
-	com_dedicated = Cvar_Get("dedicated", "2", CVAR_ROM);
+	com_dedicated = Cvar_Get("dedicated", "2", CVAR_INIT);
 #else
 	com_dedicated = Cvar_Get("dedicated", "0", CVAR_LATCH);
 #endif

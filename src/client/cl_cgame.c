@@ -622,7 +622,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		Cvar_Update(VMA(1));
 		return 0;
 	case CG_CVAR_SET:
-		Cvar_Set(VMA(1), VMA(2));
+		Cvar_SetSafe(VMA(1), VMA(2));
 		return 0;
 	case CG_CVAR_VARIABLESTRINGBUFFER:
 		Cvar_VariableStringBuffer(VMA(1), VMA(2), args[3]);
@@ -659,7 +659,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		CL_AddCgameCommand(VMA(1));
 		return 0;
 	case CG_REMOVECOMMAND:
-		Cmd_RemoveCommand(VMA(1));
+		Cmd_RemoveCommandSafe(VMA(1));
 		return 0;
 	case CG_SENDCLIENTCOMMAND:
 		CL_AddReliableCommand(VMA(1));
@@ -1177,6 +1177,12 @@ void CL_InitCGame(void)
 	// otherwise server commands sent just before a gamestate are dropped
 	// bani - added clc.demoplaying, since some mods need this at init time, and drawactiveframe is too late for them
 	VM_Call(cgvm, CG_INIT, clc.serverMessageSequence, clc.lastExecutedServerCommand, clc.clientNum, clc.demoplaying);
+
+	// reset any CVAR_CHEAT cvars registered by cgame
+	if (!clc.demoplaying && !cl_connectedToCheatServer)
+	{
+		Cvar_SetCheatState();
+	}
 
 	// we will send a usercmd this frame, which
 	// will cause the server to send us the first snapshot

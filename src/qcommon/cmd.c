@@ -69,6 +69,10 @@ void Cmd_Wait_f(void)
 	if (Cmd_Argc() == 2)
 	{
 		cmd_wait = atoi(Cmd_Argv(1));
+		if (cmd_wait < 0)
+		{
+			cmd_wait = 1; // ignore the argument
+		}
 	}
 	else
 	{
@@ -298,6 +302,7 @@ Cmd_Exec_f
 */
 void Cmd_Exec_f(void)
 {
+	qboolean quiet;
 	union
 	{
 		char *c;
@@ -305,9 +310,12 @@ void Cmd_Exec_f(void)
 	} f;
 	char filename[MAX_QPATH];
 
+	quiet = !Q_stricmp(Cmd_Argv(0), "execq");
+
 	if (Cmd_Argc() != 2)
 	{
-		Com_Printf("exec <filename> : execute a script file\n");
+		Com_Printf("exec%s <filename> : execute a script file%s\n",
+		           quiet ? "q" : "", quiet ? " without notification" : "");
 		return;
 	}
 
@@ -316,10 +324,13 @@ void Cmd_Exec_f(void)
 	FS_ReadFile(filename, &f.v);
 	if (!f.c)
 	{
-		Com_Printf("couldn't exec %s\n", Cmd_Argv(1));
+		Com_Printf("couldn't exec %s\n", filename);
 		return;
 	}
-	Com_Printf("execing %s\n", Cmd_Argv(1));
+	if (!quiet)
+	{
+		Com_Printf("execing %s\n", filename);
+	}
 
 	Cbuf_InsertText(f.c);
 
@@ -354,7 +365,6 @@ void Cmd_Vstr_f(void)
 void Cmd_Echo_f(void)
 {
 	int i;
-
 #ifndef DEDICATED
 	// "cpm" is a cgame command, so just print the text if disconnected
 	if (cls.state != CA_CONNECTED && cls.state != CA_ACTIVE)
@@ -363,7 +373,6 @@ void Cmd_Echo_f(void)
 		return;
 	}
 #endif
-
 	Cbuf_AddText("cpm \"");
 	for (i = 1; i < Cmd_Argc(); i++)
 	{
@@ -477,6 +486,45 @@ char *Cmd_ArgsFrom(int arg)
 	{
 		strcat(cmd_args, cmd_argv[i]);
 		if (i != cmd_argc - 1)
+		{
+			strcat(cmd_args, " ");
+		}
+	}
+
+	return cmd_args;
+}
+
+/*
+============
+Cmd_Args
+
+Returns a single string containing argv(arg) to argv(max-1)
+============
+*/
+char *Cmd_ArgsFromTo(int arg, int max)
+{
+	static char cmd_args[BIG_INFO_STRING];
+	int         i;
+
+	cmd_args[0] = 0;
+	if (arg < 0)
+	{
+		arg = 0;
+	}
+	//FIXME what should these be
+	if (max > cmd_argc)
+	{
+		max = cmd_argc;
+	}
+	if (max < arg)
+	{
+		max = cmd_argc;
+	}
+
+	for (i = arg ; i < max ; i++)
+	{
+		strcat(cmd_args, cmd_argv[i]);
+		if (i != max - 1)
 		{
 			strcat(cmd_args, " ");
 		}
@@ -779,6 +827,31 @@ void Cmd_RemoveCommand(const char *cmd_name)
 
 /*
 ============
+Cmd_RemoveCommandSafe
+
+Only remove commands with no associated function
+============
+*/
+void Cmd_RemoveCommandSafe(const char *cmd_name)
+{
+	cmd_function_t *cmd = Cmd_FindCommand(cmd_name);
+
+	if (!cmd)
+	{
+		return;
+	}
+	if (cmd->function)
+	{
+		Com_Error(ERR_DROP, "Restricted source tried to remove "
+		                    "system command \"%s\"", cmd_name);
+		return;
+	}
+
+	Cmd_RemoveCommand(cmd_name);
+}
+
+/*
+============
 Cmd_CommandCompletion
 ============
 */
@@ -1014,7 +1087,9 @@ void Cmd_Init(void)
 {
 	Cmd_AddCommand("cmdlist", Cmd_List_f);
 	Cmd_AddCommand("exec", Cmd_Exec_f);
+	Cmd_AddCommand("execq", Cmd_Exec_f);
 	Cmd_SetCommandCompletionFunc("exec", Cmd_CompleteCfgName);
+	Cmd_SetCommandCompletionFunc("execq", Cmd_CompleteCfgName);
 	Cmd_AddCommand("vstr", Cmd_Vstr_f);
 	Cmd_SetCommandCompletionFunc("vstr", Cvar_CompleteCvarName);
 	Cmd_AddCommand("echo", Cmd_Echo_f);

@@ -175,6 +175,11 @@ FILE(GLOB COMMON_SRC
 	"src/qcommon/*.h"
 )
 
+FILE(GLOB ZLIB_SRC
+	"src/zlib/*.c"
+	"src/zlib/*.h"
+)
+
 FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_stubs.c"
@@ -508,7 +513,7 @@ endif(FEATURE_CURSES)
 include_directories(${PROJECT_BINARY_DIR}/include) # git_version.h
 
 if(BUILD_CLIENT)
-	add_executable(etl WIN32 ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC})
+	add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 	source_group("Source Files\\Renderer" FILES ${RENDERER_FILES})
 	source_group("Source Files\\Client" FILES ${CLIENT_FILES})
 	source_group("Source Files\\Server" FILES ${SERVER_FILES})
@@ -517,6 +522,7 @@ if(BUILD_CLIENT)
 	source_group("Source Files\\Botlib" FILES ${BOTLIB_FILES})
 	source_group("Source Files\\Common" FILES ${COMMON_SRC})
 	source_group("Source Files\\Platform" FILES ${PLATFORM_SRC})
+	source_group("Source Files\\zlib" FILES ${ZLIB_SRC})
 	if(BUNDLED_SDL)
 		add_dependencies(etl bundled_sdl)
 	endif(BUNDLED_SDL)
@@ -540,7 +546,7 @@ if(BUILD_CLIENT)
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
-	add_executable(etlded WIN32 ${COMMON_SRC} ${SERVER_SRC} ${PLATFORM_SRC})
+	add_executable(etlded ${COMMON_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
 	target_link_libraries(etlded ${OS_LIBRARIES} ${SERVER_LIBRARIES})
 	set_target_properties(etlded PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
 	install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")

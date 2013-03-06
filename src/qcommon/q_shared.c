@@ -90,21 +90,15 @@ COM_GetExtension
 */
 const char *COM_GetExtension(const char *name)
 {
-	int length, i;
-
-	length = strlen(name) - 1;
-	i      = length;
-
-	while (name[i] != '.')
+	const char *dot = strrchr(name, '.'), *slash;
+	if (dot && (!(slash = strrchr(name, '/')) || slash < dot))
 	{
-		i--;
-		if (name[i] == '/' || i == 0)
-		{
-			return ""; // no extension
-		}
+		return dot + 1;
 	}
-
-	return &name[i + 1];
+	else
+	{
+		return "";
+	}
 }
 
 /*
@@ -124,10 +118,30 @@ void COM_StripExtension(const char *in, char *out, int destsize)
 	{
 		Q_strncpyz(out, in, destsize);
 	}
+}
 
-	// DEBUG
-	//Com_Printf("##########################################\nCOM_StripExtension: in  %s\n", in);
-	//Com_Printf("COM_StripExtension: out %s\n##########################################", out);
+/*
+============
+COM_CompareExtension
+
+string compare the end of the strings and return qtrue if strings match
+============
+*/
+qboolean COM_CompareExtension(const char *in, const char *ext)
+{
+	int inlen = strlen(in), extlen = strlen(ext);
+
+	if (extlen <= inlen)
+	{
+		in += inlen - extlen;
+
+		if (!Q_stricmp(in, ext))
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
 }
 
 void COM_StripFilename(char *in, char *out)
@@ -924,6 +938,11 @@ int Q_isalphanumeric(int c)
 		return(1);
 	}
 	return (0);
+}
+
+qboolean Q_isintegral(float f)
+{
+	return (int)f == f;
 }
 
 int Q_isforfilename(int c)

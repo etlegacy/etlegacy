@@ -299,6 +299,10 @@ You or the server may be running older versions of the game. Press the auto-upda
 #define GAMENAME_STRING     "et"
 #define PROTOCOL_VERSION    84
 
+// maintain a list of compatible protocols for demo playing
+// NOTE: that stuff only works with two digits protocols
+extern int demo_protocols[];
+
 /*
  * @def MASTER_SERVER_NAME
  * @brief location of the master server
@@ -452,6 +456,7 @@ void Cmd_AddCommand(const char *cmd_name, xcommand_t function);
 // as a clc_clientCommand instead of executed locally
 
 void    Cmd_RemoveCommand(const char *cmd_name);
+void    Cmd_RemoveCommandSafe(const char *cmd_name);
 
 typedef void (*completionFunc_t)(char *args, int argNum);
 
@@ -466,6 +471,7 @@ char *Cmd_Argv(int arg);
 void Cmd_ArgvBuffer(int arg, char *buffer, int bufferLength);
 char *Cmd_Args(void);
 char *Cmd_ArgsFrom(int arg);
+char *Cmd_ArgsFromTo(int arg, int max);
 void Cmd_ArgsBuffer(char *buffer, int bufferLength);
 char *Cmd_Cmd(void);
 void Cmd_Args_Sanitize(void);
@@ -523,11 +529,15 @@ void Cvar_Set(const char *var_name, const char *value);
 cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force);
 // same as Cvar_Set, but allows more control over setting of cvar
 
+void Cvar_SetSafe(const char *var_name, const char *value);
+// sometimes we set variables from an untrusted source: fail if flags & CVAR_PROTECTED
+
 void Cvar_SetLatched(const char *var_name, const char *value);
 // don't set the cvar immediately
 
 void Cvar_SetValue(const char *var_name, float value);
-// expands value to a string and calls Cvar_Set
+void Cvar_SetValueSafe(const char *var_name, float value);
+// expands value to a string and calls Cvar_Set/Cvar_SetSafe
 
 float Cvar_VariableValue(const char *var_name);
 int Cvar_VariableIntegerValue(const char *var_name);
@@ -538,6 +548,9 @@ void Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
 // returns an empty string if not defined
 void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
 // returns the latched value if there is one, else the normal one, empty string if not defined as usual
+
+int Cvar_Flags(const char *var_name);
+// returns CVAR_NONEXISTENT if cvar doesn't exist or the flags of that particular CVAR.
 
 void Cvar_CommandCompletion(void (*callback)(const char *s));
 // callback with each valid string
@@ -566,6 +579,7 @@ char *Cvar_InfoString_Big(int bit);
 void Cvar_InfoStringBuffer(int bit, char *buff, int buffsize);
 void Cvar_CheckRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
 
+void Cvar_Restart(qboolean unsetVM);
 void Cvar_Restart_f(void);
 
 void Cvar_CompleteCvarName(char *args, int argNum);
@@ -642,11 +656,11 @@ int FS_GetModList(char *listbuf, int bufsize);
 fileHandle_t FS_FOpenFileWrite(const char *qpath);
 // will properly create any needed paths and deal with seperater character issues
 
-int FS_filelength(fileHandle_t f);
+long FS_filelength(fileHandle_t f);
 fileHandle_t FS_SV_FOpenFileWrite(const char *filename);
-int FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp);
+long FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp);
 void FS_SV_Rename(const char *from, const char *to);
-int FS_FOpenFileRead(const char *qpath, fileHandle_t *file, qboolean uniqueFILE);
+long FS_FOpenFileRead(const char *qpath, fileHandle_t *file, qboolean uniqueFILE);
 
 /*
 if uniqueFILE is true, then a new FILE will be fopened even if the file
@@ -661,7 +675,7 @@ but that's a C++ construct ..
 */
 #define FS_EXCLUDE_DIR 0x1
 #define FS_EXCLUDE_PK3 0x2
-int FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean uniqueFILE, int filter_flag);
+long FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean uniqueFILE, int filter_flag);
 
 int FS_FileIsInPAK(const char *filename, int *pChecksum);
 // returns 1 if a file is in the PAK file, otherwise -1
@@ -694,7 +708,7 @@ void FS_FreeFile(void *buffer);
 void FS_WriteFile(const char *qpath, const void *buffer, int size);
 // writes a complete file, creating any subdirectories needed
 
-int FS_filelength(fileHandle_t f);
+long FS_filelength(fileHandle_t f);
 // doesn't work for files that are opened from a pack file
 
 int FS_FTell(fileHandle_t f);
@@ -736,6 +750,7 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames);
 // separated checksums will be checked for files, with the
 // sole exception of .cfg files.
 
+qboolean FS_CheckDirTraversal(const char *checkdir);
 qboolean FS_VerifyOfficialPaks(void);
 qboolean FS_idPak(char *pak, char *base);
 qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring);
@@ -1137,6 +1152,7 @@ void Sys_ShowIP(void);
 
 qboolean Sys_CheckCD(void);
 
+FILE *Sys_FOpen(const char *ospath, const char *mode);
 qboolean Sys_Mkdir(const char *path);
 char *Sys_Cwd(void);
 char *Sys_DefaultBasePath(void);

@@ -908,7 +908,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_CVAR_SET:
-		Cvar_Set(VMA(1), VMA(2));
+		Cvar_SetSafe(VMA(1), VMA(2));
 		return 0;
 
 	case UI_CVAR_VARIABLEVALUE:
@@ -923,7 +923,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_CVAR_SETVALUE:
-		Cvar_SetValue(VMA(1), VMF(2));
+		Cvar_SetValueSafe(VMA(1), VMF(2));
 		return 0;
 
 	case UI_CVAR_RESET:
@@ -931,7 +931,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_CVAR_CREATE:
-		Cvar_Get(VMA(1), VMA(2), args[3]);
+		Cvar_Register(NULL, VMA(1), VMA(2), args[3]);
 		return 0;
 
 	case UI_CVAR_INFOSTRINGBUFFER:
@@ -946,6 +946,14 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_CMD_EXECUTETEXT:
+		if (args[1] == EXEC_NOW
+		    && (!strncmp(VMA(2), "snd_restart", 11)
+		        || !strncmp(VMA(2), "vid_restart", 11)
+		        || !strncmp(VMA(2), "quit", 5)))
+		{
+			Com_Printf(S_COLOR_YELLOW "turning EXEC_NOW '%.11s' into EXEC_INSERT\n", (const char *)VMA(2));
+			args[1] = EXEC_INSERT;
+		}
 		Cbuf_ExecuteText(args[1], VMA(2));
 		return 0;
 
@@ -1088,7 +1096,8 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return Key_GetCatcher();
 
 	case UI_KEY_SETCATCHER:
-		Key_SetCatcher(args[1]);
+		// Don't allow the ui module to close the console
+		Key_SetCatcher(args[1] | (Key_GetCatcher() & KEYCATCH_CONSOLE));
 		return 0;
 
 	case UI_GETCLIPBOARDDATA:

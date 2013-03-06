@@ -575,6 +575,7 @@ void CL_ParseSnapshot(msg_t *msg)
 //=====================================================================
 
 int cl_connectedToPureServer;
+int cl_connectedToCheatServer;
 
 /*
 ==================
@@ -592,6 +593,7 @@ void CL_SystemInfoChanged(void)
 	const char *s, *t;
 	char       key[BIG_INFO_KEY];
 	char       value[BIG_INFO_VALUE];
+	qboolean   gameSet;
 
 	systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
 
@@ -607,9 +609,9 @@ void CL_SystemInfoChanged(void)
 		return;
 	}
 
-	s         = Info_ValueForKey(systemInfo, "sv_cheats");
-	sv_cheats = atoi(s);      //bani
-	if (atoi(s) == 0)
+	s                         = Info_ValueForKey(systemInfo, "sv_cheats");
+	cl_connectedToCheatServer = atoi(s);      //bani
+	if (!cl_connectedToCheatServer)
 	{
 		Cvar_SetCheatState();
 	}
@@ -623,17 +625,56 @@ void CL_SystemInfoChanged(void)
 	t = Info_ValueForKey(systemInfo, "sv_referencedPakNames");
 	FS_PureServerSetReferencedPaks(s, t);
 
+	gameSet = qfalse;
 	// scan through all the variables in the systeminfo and locally set cvars to match
 	s = systemInfo;
 	while (s)
 	{
+		int cvar_flags;
+
 		Info_NextPair(&s, key, value);
 		if (!key[0])
 		{
 			break;
 		}
 
-		Cvar_Set(key, value);
+		// ehw!
+		if (!Q_stricmp(key, "fs_game"))
+		{
+			if (FS_CheckDirTraversal(value))
+			{
+				Com_Printf(S_COLOR_YELLOW "WARNING: Server sent invalid fs_game value %s\n", value);
+				continue;
+			}
+
+			gameSet = qtrue;
+		}
+
+		if ((cvar_flags = Cvar_Flags(key)) == CVAR_NONEXISTENT)
+		{
+			Cvar_Get(key, value, CVAR_SERVER_CREATED | CVAR_ROM);
+		}
+		else
+		{
+			// If this cvar may not be modified by a server discard the value.
+			if (!(cvar_flags & (CVAR_SYSTEMINFO | CVAR_SERVER_CREATED | CVAR_USER_CREATED)))
+			{
+				if (Q_stricmp(key, "g_synchronousClients") && Q_stricmp(key, "pmove_fixed") &&
+				    Q_stricmp(key, "pmove_msec"))
+				{
+					Com_Printf(S_COLOR_YELLOW "WARNING: server is not allowed to set %s=%s\n", key, value);
+					continue;
+				}
+			}
+
+			Cvar_SetSafe(key, value);
+		}
+	}
+
+	// if game folder should not be set and it is set at the client side
+	if (!gameSet && *Cvar_VariableString("fs_game"))
+	{
+		Cvar_Set("fs_game", "");
 	}
 
 	// big hack to clear the image cache on a pure change

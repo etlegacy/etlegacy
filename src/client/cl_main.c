@@ -109,9 +109,8 @@ cvar_t *cl_waverecording;
 cvar_t *cl_wavefilename;
 cvar_t *cl_waveoffset;
 
-cvar_t          *cl_packetloss;
-cvar_t          *cl_packetdelay;
-extern qboolean sv_cheats;
+cvar_t *cl_packetloss;
+cvar_t *cl_packetdelay;
 
 cvar_t *cl_consoleKeys;
 
@@ -700,6 +699,52 @@ void CL_WriteWaveClose()
 
 /*
 ====================
+CL_WalkDemoExt
+====================
+*/
+static int CL_WalkDemoExt(char *arg, char *name, int *demofile)
+{
+	int i = 0;
+	*demofile = 0;
+
+	Com_sprintf(name, MAX_OSPATH, "demos/%s.%s%d", arg, DEMOEXT, PROTOCOL_VERSION);
+	FS_FOpenFileRead(name, demofile, qtrue);
+
+	if (*demofile)
+	{
+		Com_Printf("Demo file: %s\n", name);
+		return PROTOCOL_VERSION;
+	}
+
+	Com_Printf("Not found: %s\n", name);
+
+	while (demo_protocols[i])
+	{
+		if (demo_protocols[i] == PROTOCOL_VERSION)
+		{
+			continue;
+		}
+
+		Com_sprintf(name, MAX_OSPATH, "demos/%s.%s%d", arg, DEMOEXT, demo_protocols[i]);
+		FS_FOpenFileRead(name, demofile, qtrue);
+		if (*demofile)
+		{
+			Com_Printf("Demo file: %s\n", name);
+
+			return demo_protocols[i];
+		}
+		else
+		{
+			Com_Printf("Not found: %s\n", name);
+		}
+		i++;
+	}
+
+	return -1;
+}
+
+/*
+====================
 CL_CompleteDemoName
 ====================
 */
@@ -719,9 +764,9 @@ static void CL_CompleteDemoName(char *args, int argNum)
  */
 void CL_PlayDemo_f(void)
 {
-	char name[MAX_OSPATH], extension[32];
-	char *arg;
-	int  prot_ver;
+	char name[MAX_OSPATH], retry[MAX_OSPATH];
+	char *arg, *ext_test;
+	int  protocol, i;
 
 	if (Cmd_Argc() != 2)
 	{
@@ -735,22 +780,49 @@ void CL_PlayDemo_f(void)
 	CL_Disconnect(qtrue);
 
 	// open the demo file
-	arg      = Cmd_Argv(1);
-	prot_ver = PROTOCOL_VERSION - 1;
-	while (prot_ver <= PROTOCOL_VERSION && !clc.demofile)
+	arg = Cmd_Argv(1);
+	// check for an extension .DEMOEXT_?? (?? is protocol)
+	ext_test = strrchr(arg, '.');
+
+	if (ext_test && !Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1))
 	{
-		Com_sprintf(extension, sizeof(extension), ".dm_%d", prot_ver);
-		if (!Q_stricmp(arg + strlen(arg) - strlen(extension), extension))
+		protocol = atoi(ext_test + ARRAY_LEN(DEMOEXT));
+
+		for (i = 0; demo_protocols[i]; i++)
+		{
+			if (demo_protocols[i] == protocol)
+			{
+				break;
+			}
+		}
+
+		if (demo_protocols[i] || protocol == PROTOCOL_VERSION)
 		{
 			Com_sprintf(name, sizeof(name), "demos/%s", arg);
+			FS_FOpenFileRead(name, &clc.demofile, qtrue);
 		}
 		else
 		{
-			Com_sprintf(name, sizeof(name), "demos/%s.dm_%d", arg, prot_ver);
+			int len;
+
+			Com_Printf("Protocol %d not supported for demos\n", protocol);
+			len = ext_test - arg;
+
+			if (len >= ARRAY_LEN(retry))
+			{
+				len = ARRAY_LEN(retry) - 1;
+			}
+
+			Q_strncpyz(retry, arg, len + 1);
+			retry[len] = '\0';
+			protocol   = CL_WalkDemoExt(retry, name, &clc.demofile);
 		}
-		FS_FOpenFileRead(name, &clc.demofile, qtrue);
-		prot_ver++;
 	}
+	else
+	{
+		protocol = CL_WalkDemoExt(arg, name, &clc.demofile);
+	}
+
 	if (!clc.demofile)
 	{
 		Com_Error(ERR_DROP, "couldn't open %s", name);

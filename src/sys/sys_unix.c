@@ -298,6 +298,19 @@ const char *Sys_Dirname(char *path)
 	return dirname(path);
 }
 
+FILE *Sys_FOpen(const char *ospath, const char *mode)
+{
+	struct stat buf;
+
+	// check if path exists and is a directory
+	if (!stat(ospath, &buf) && S_ISDIR(buf.st_mode))
+	{
+		return NULL;
+	}
+
+	return fopen(ospath, mode);
+}
+
 /**
  * @brief Create directory
  * @param[in] path Path

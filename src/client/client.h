@@ -430,8 +430,6 @@ extern cvar_t *cl_defaultProfile;
 
 extern cvar_t *cl_consoleKeys;
 
-extern qboolean sv_cheats;
-
 //=================================================
 
 // cl_main
@@ -552,6 +550,7 @@ char *Key_KeynumToString(int keynum);
 // cl_parse.c
 
 extern int cl_connectedToPureServer;
+extern int cl_connectedToCheatServer;
 
 void CL_SystemInfoChanged(void);
 void CL_ParseServerMessage(msg_t *msg);
