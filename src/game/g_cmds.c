@@ -1435,7 +1435,7 @@ int G_TeamCount(gentity_t *ent, weapon_t weap)
 
 qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 {
-	int count, wcount;
+	int playerCount, weaponCount, maxCount;
 
 	// allow selecting weapons as spectator for bots (to avoid endless loops in pfnChangeTeam())
 	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR && !(ent->r.svFlags & SVF_BOT))
@@ -1448,12 +1448,134 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		return qfalse;
 	}
 
-	count  = G_TeamCount(ent, -1);
-	wcount = G_TeamCount(ent, weapon);
+	playerCount = G_TeamCount(ent, -1);
+	weaponCount = G_TeamCount(ent, weapon);
 
-	if (wcount >= ceil(count * g_heavyWeaponRestriction.integer * 0.01f))
+	if (weaponCount >= ceil(playerCount * g_heavyWeaponRestriction.integer * 0.01f))
 	{
 		return qtrue;
+	}
+
+	switch (weapon)
+	{
+	case WP_PANZERFAUST:
+		maxCount = team_maxPanzers.integer;
+		if (maxCount == -1)
+		{
+			return qfalse;
+		}
+		if (strstr(team_maxPanzers.string, "%-"))
+		{
+			maxCount = floor(maxCount * playerCount * 0.01f);
+		}
+		else if (strstr(team_maxPanzers.string, "%"))
+		{
+			maxCount = ceil(maxCount * playerCount * 0.01f);
+		}
+		if (weaponCount >= maxCount)
+		{
+			if (ent->client->ps.pm_flags & PMF_LIMBO)
+			{
+				CP("cp \"^1*^3 PANZERFAUST not available!^1 *\" 1");
+			}
+			return qtrue;
+		}
+		break;
+	case WP_MOBILE_MG42:
+		maxCount = team_maxMg42s.integer;
+		if (maxCount == -1)
+		{
+			return qfalse;
+		}
+		if (strstr(team_maxMg42s.string, "%-"))
+		{
+			maxCount = floor(maxCount * playerCount * 0.01f);
+		}
+		else if (strstr(team_maxMg42s.string, "%"))
+		{
+			maxCount = ceil(maxCount * playerCount * 0.01f);
+		}
+		if (weaponCount >= maxCount)
+		{
+			if (ent->client->ps.pm_flags & PMF_LIMBO)
+			{
+				CP("cp \"^1*^3 MG42 not available!^1 *\" 1");
+			}
+			return qtrue;
+		}
+		break;
+	case WP_FLAMETHROWER:
+		maxCount = team_maxFlamers.integer;
+		if (maxCount == -1)
+		{
+			return qfalse;
+		}
+		if (strstr(team_maxFlamers.string, "%-"))
+		{
+			maxCount = floor(maxCount * playerCount * 0.01f);
+		}
+		else if (strstr(team_maxFlamers.string, "%"))
+		{
+			maxCount = ceil(maxCount * playerCount * 0.01f);
+		}
+		if (weaponCount >= maxCount)
+		{
+			if (ent->client->ps.pm_flags & PMF_LIMBO)
+			{
+				CP("cp \"^1*^3 FLAMETHROWER not available!^1 *\" 1");
+			}
+			return qtrue;
+		}
+		break;
+	case WP_MORTAR:
+		maxCount = team_maxMortars.integer;
+		if (maxCount == -1)
+		{
+			return qfalse;
+		}
+		if (strstr(team_maxMortars.string, "%-"))
+		{
+			maxCount = floor(maxCount * playerCount * 0.01f);
+		}
+		else if (strstr(team_maxMortars.string, "%"))
+		{
+			maxCount = ceil(maxCount * playerCount * 0.01f);
+		}
+		if (weaponCount >= maxCount)
+		{
+			if (ent->client->ps.pm_flags & PMF_LIMBO)
+			{
+				CP("cp \"^1*^3 MORTAR not available!^1 *\" 1");
+			}
+			return qtrue;
+		}
+		break;
+	case WP_KAR98:
+	case WP_CARBINE:
+		maxCount = team_maxRiflegrenades.integer;
+		if (maxCount == -1)
+		{
+			return qfalse;
+		}
+		if (strstr(team_maxRiflegrenades.string, "%-"))
+		{
+			maxCount = floor(maxCount * playerCount * 0.01f);
+		}
+		else if (strstr(team_maxRiflegrenades.string, "%"))
+		{
+			maxCount = ceil(maxCount * playerCount * 0.01f);
+		}
+		if (weaponCount >= maxCount)
+		{
+			if (ent->client->ps.pm_flags & PMF_LIMBO)
+			{
+				CP("cp \"^1*^3 GRENADE LAUNCHER not available!^1 *\" 1");
+			}
+			return qtrue;
+		}
+		break;
+	default:
+		break;
 	}
 
 	return qfalse;
@@ -1492,6 +1614,161 @@ void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updat
 	}
 }
 
+int G_ClassCount(gentity_t *ent, int playerType, team_t team)
+{
+	int i, j, cnt = 0;
+
+	if (playerType < PC_SOLDIER || playerType > PC_COVERTOPS)
+	{
+		return 0;
+	}
+
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		j = level.sortedClients[i];
+
+		if (ent && j == ent - g_entities)
+		{
+			continue;
+		}
+
+		if (level.clients[j].sess.sessionTeam != team)
+		{
+			continue;
+		}
+
+		if (level.clients[j].sess.playerType != playerType &&
+		    level.clients[j].sess.latchPlayerType != playerType)
+		{
+			continue;
+		}
+		cnt++;
+	}
+	return cnt;
+}
+
+qboolean G_IsClassFull(gentity_t *ent, int playerType, team_t team)
+{
+	int maxCount, count, tcount;
+
+	if (playerType < PC_SOLDIER || playerType > PC_COVERTOPS || team == TEAM_SPECTATOR)
+	{
+		return qfalse;
+	}
+
+	count  = G_ClassCount(ent, playerType, team);
+	tcount = G_NumPlayersOnTeam(team);
+	if (ent->client->sess.sessionTeam != team)
+	{
+		tcount++;
+	}
+	switch (playerType)
+	{
+	case PC_SOLDIER:
+		if (team_maxSoldiers.integer == -1)
+		{
+			break;
+		}
+		maxCount = team_maxSoldiers.integer;
+		if (strstr(team_maxSoldiers.string, "%-"))
+		{
+			maxCount = floor(team_maxSoldiers.integer * tcount * 0.01f);
+		}
+		else if (strstr(team_maxSoldiers.string, "%"))
+		{
+			maxCount = ceil(team_maxSoldiers.integer * tcount * 0.01f);
+		}
+
+		if (count >= maxCount)
+		{
+			CP("cp \"^1Soldier^7 is not available! Choose another class!\n\"");
+			return qtrue;
+		}
+		break;
+	case PC_MEDIC:
+		if (team_maxMedics.integer == -1)
+		{
+			break;
+		}
+		maxCount = team_maxMedics.integer;
+		if (strstr(team_maxMedics.string, "%-"))
+		{
+			maxCount = floor(team_maxMedics.integer * tcount * 0.01f);
+		}
+		else if (strstr(team_maxMedics.string, "%"))
+		{
+			maxCount = ceil(team_maxMedics.integer * tcount * 0.01f);
+		}
+		if (count >= maxCount)
+		{
+			CP("cp \"^1Medic^7 is not available! Choose another class!\n\"");
+			return qtrue;
+		}
+		break;
+	case PC_ENGINEER:
+		if (team_maxEngineers.integer == -1)
+		{
+			break;
+		}
+		maxCount = team_maxEngineers.integer;
+		if (strstr(team_maxEngineers.string, "%-"))
+		{
+			maxCount = floor(team_maxEngineers.integer * tcount * 0.01f);
+		}
+		else if (strstr(team_maxEngineers.string, "%"))
+		{
+			maxCount = ceil(team_maxEngineers.integer * tcount * 0.01f);
+		}
+		if (count >= maxCount)
+		{
+			CP("cp \"^1Engineer^7 is not available! Choose another class!\n\"");
+			return qtrue;
+		}
+		break;
+	case PC_FIELDOPS:
+		if (team_maxFieldops.integer == -1)
+		{
+			break;
+		}
+		maxCount = team_maxFieldops.integer;
+		if (strstr(team_maxFieldops.string, "%-"))
+		{
+			maxCount = floor(team_maxFieldops.integer * tcount * 0.01f);
+		}
+		else if (strstr(team_maxFieldops.string, "%"))
+		{
+			maxCount = ceil(team_maxFieldops.integer * tcount * 0.01f);
+		}
+		if (count >= maxCount)
+		{
+			CP("cp \"^1Field Ops^7 is not available! Choose another class!\n\"");
+			return qtrue;
+		}
+		break;
+	case PC_COVERTOPS:
+		if (team_maxCovertops.integer == -1)
+		{
+			break;
+		}
+		maxCount = team_maxCovertops.integer;
+		if (strstr(team_maxCovertops.string, "%-"))
+		{
+			maxCount = floor(team_maxCovertops.integer * tcount * 0.01f);
+		}
+		else if (strstr(team_maxCovertops.string, "%"))
+		{
+			maxCount = ceil(team_maxCovertops.integer * tcount * 0.01f);
+		}
+		if (count >= maxCount)
+		{
+			CP("cp \"^1Covert Ops^7 is not available! Choose another class!\n\"");
+			return qtrue;
+		}
+		break;
+	}
+	return qfalse;
+}
+
 /*
 =================
 Cmd_Team_f
@@ -1499,10 +1776,14 @@ Cmd_Team_f
 */
 void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
-	char     s[MAX_TOKEN_CHARS];
-	char     ptype[4];
-	char     weap[4], weap2[4];
-	weapon_t w, w2;
+	char             s[MAX_TOKEN_CHARS];
+	char             ptype[4];
+	char             weap[4], weap2[4];
+	weapon_t         w, w2;
+	int              playerType;
+	team_t           team;
+	spectatorState_t specState;
+	int              specClient;
 
 	if (trap_Argc() < 2)
 	{
@@ -1536,6 +1817,24 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 
 	w  = atoi(weap);
 	w2 = atoi(weap2);
+
+	G_TeamDataForString(s, ent->s.clientNum, &team, &specState, &specClient);
+
+	playerType = -1;
+	if (*ptype)
+	{
+		playerType = atoi(ptype);
+	}
+	if (playerType < PC_SOLDIER || playerType > PC_COVERTOPS)
+	{
+		playerType = PC_SOLDIER;
+	}
+
+	if (G_IsClassFull(ent, playerType, team))
+	{
+		CP("print \"team: class is not available\n\"");
+		return;
+	}
 
 	ent->client->sess.latchPlayerType = atoi(ptype);
 	if (ent->client->sess.latchPlayerType < PC_SOLDIER || ent->client->sess.latchPlayerType > PC_COVERTOPS)

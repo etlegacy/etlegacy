@@ -1671,6 +1671,20 @@ extern vmCvar_t g_countryflags;
 extern vmCvar_t team_airstrikeTime;
 extern vmCvar_t team_artyTime;
 
+// team class/weapon limiting
+//classes
+extern vmCvar_t team_maxSoldiers;
+extern vmCvar_t team_maxMedics;
+extern vmCvar_t team_maxEngineers;
+extern vmCvar_t team_maxFieldops;
+extern vmCvar_t team_maxCovertops;
+//weapons
+extern vmCvar_t team_maxMortars;
+extern vmCvar_t team_maxFlamers;
+extern vmCvar_t team_maxMg42s;
+extern vmCvar_t team_maxPanzers;
+extern vmCvar_t team_maxRiflegrenades;
+
 typedef struct GeoIPTag
 {
 	fileHandle_t GeoIPDatabase;

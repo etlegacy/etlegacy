@@ -44,7 +44,7 @@ typedef struct decalVert_s
 }
 decalVert_t;
 
-
+#if 0
 /*
 MakeTextureMatrix()
 generates a texture projection matrix for a triangle
@@ -1012,3 +1012,12 @@ void R_CullDecalProjectors(void)
 	/* set bits */
 	tr.refdef.decalBits = decalBits;
 }
+
+#else
+void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime)
+{
+}
+void RE_ClearDecals(void)
+{
+}
+#endif

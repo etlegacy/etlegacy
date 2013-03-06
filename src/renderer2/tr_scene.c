@@ -319,6 +319,8 @@ RE_AddPolyBufferToScene
 */
 void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 {
+	//Jacker....
+#if 0
 	srfPolyBuffer_t *pPolySurf;
 	int             fogIndex;
 	fog_t           *fog;
@@ -361,6 +363,7 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 	}
 
 	pPolySurf->fogIndex = fogIndex;
+#endif
 }
 
 /*

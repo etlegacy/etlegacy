@@ -268,6 +268,20 @@ vmCvar_t g_countryflags; // GeoIP
 vmCvar_t team_airstrikeTime;
 vmCvar_t team_artyTime;
 
+// team class/weapon limiting
+//classes
+vmCvar_t team_maxSoldiers;
+vmCvar_t team_maxMedics;
+vmCvar_t team_maxEngineers;
+vmCvar_t team_maxFieldops;
+vmCvar_t team_maxCovertops;
+//weapons
+vmCvar_t team_maxMortars;
+vmCvar_t team_maxFlamers;
+vmCvar_t team_maxMg42s;
+vmCvar_t team_maxPanzers;
+vmCvar_t team_maxRiflegrenades;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -500,6 +514,19 @@ cvarTable_t gameCvarTable[] =
 	// rename to g_team... ?
 	{ &team_airstrikeTime,        "team_airstrikeTime",        "10",                         0 },
 	{ &team_artyTime,             "team_artyTime",             "10",                         0 },
+	// team class/weapon limiting
+	//classes
+	{ &team_maxSoldiers,          "team_maxSoldiers",          "-1",                         0,                                               0, qfalse, qfalse},
+	{ &team_maxMedics,            "team_maxMedics",            "-1",                         0,                                               0, qfalse, qfalse},
+	{ &team_maxEngineers,         "team_maxEngineers",         "-1",                         0,                                               0, qfalse, qfalse},
+	{ &team_maxFieldops,          "team_maxFieldops",          "-1",                         0,                                               0, qfalse, qfalse},
+	{ &team_maxCovertops,         "team_maxCovertops",         "-1",                         0,                                               0, qfalse, qfalse},
+	//weapons
+	{ &team_maxMortars,           "team_maxMortars",           "-1",                         0,                                               0, qfalse, qfalse},
+	{ &team_maxFlamers,           "team_maxFlamers",           "-1",                         0,                                               0, qfalse, qfalse},
+	{ &team_maxMg42s,             "team_maxMg42s",             "-1",                         0,                                               0, qfalse, qfalse},
+	{ &team_maxPanzers,           "team_maxPanzers",           "-1",                         0,                                               0, qfalse, qfalse},
+	{ &team_maxRiflegrenades,     "team_maxRiflegrenades",     "-1",                         0,                                               0, qfalse, qfalse},
 };
 
 // made static to avoid aliasing

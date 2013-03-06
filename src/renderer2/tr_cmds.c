@@ -377,6 +377,7 @@ extern int r_numpolyverts;
 
 void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 {
+#if 0
 	poly2dCommand_t *cmd;
 
 	if (r_numpolyverts + numverts > max_polyverts)
@@ -397,6 +398,7 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 	cmd->shader = R_GetShaderByHandle(hShader);
 
 	r_numpolyverts += numverts;
+#endif
 }
 
 /*
@@ -490,6 +492,7 @@ RE_SetGlobalFog
 */
 void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque)
 {
+#if 0
 	ri.Printf(PRINT_DEVELOPER, "RE_SetGlobalFog( restore = %i, duration = %i, r = %f, g = %f, b = %f, depthForOpaque = %f )\n",
 	          restore, duration, r, g, b, depthForOpaque);
 
@@ -544,6 +547,7 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 			    1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
 		}
 	}
+#endif
 }
 
 /*
@@ -858,6 +862,7 @@ RE_RenderToTexture
 */
 void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 {
+#if 0
 	renderToTextureCommand_t *cmd;
 
 	//  ri.Printf( PRINT_ALL, "RE_RenderToTexture\n" );
@@ -879,6 +884,7 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 	cmd->y         = y;
 	cmd->w         = w;
 	cmd->h         = h;
+#endif
 }
 
 /*
@@ -888,6 +894,7 @@ RE_Finish
 */
 void RE_Finish(void)
 {
+#if 0
 	renderFinishCommand_t *cmd;
 
 	ri.Printf(PRINT_ALL, "RE_Finish\n");
@@ -898,6 +905,7 @@ void RE_Finish(void)
 		return;
 	}
 	cmd->commandId = RC_FINISH;
+#endif
 }
 
 /*
