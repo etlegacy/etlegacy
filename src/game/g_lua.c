@@ -1432,87 +1432,93 @@ static int _et_G_AddEvent(lua_State *L)
 }
 
 /*
-// new function to easily set XP
-// et.G_XP_Set ( clientNum , xp, skill, add )
-static int _et_G_XP_Set( lua_State *L)
+ * et.G_XP_Set ( clientNum , xp, skill, add )
+ */
+static int _et_G_XP_Set(lua_State *L)
 {
-    gentity_t *ent = NULL;
-    int clientNum = luaL_checkint(L, 1);
-    int xp = luaL_checkint(L, 2);
-    int skill = luaL_checkint(L, 3);
-    int add = luaL_checkbool(L, 4); // IRATA: not updating Lua sources each update do this: luaL_checkint(L, 4);
-                                    // 'add' just checks to be 0 or not to be 0
-    float oldxp = 0.0f;
+	gentity_t *ent      = NULL;
+	int       clientNum = luaL_checkint(L, 1);
+	int       xp        = luaL_checkint(L, 2);
+	int       skill     = luaL_checkint(L, 3);
+	int       add       = luaL_checkbool(L, 4); // not updating Lua sources each update do this: luaL_checkint(L, 4);
+	                                            // 'add' just checks to be 0 or not to be 0
 
-    ent = &g_entities[ clientNum ];
+	ent = &g_entities[clientNum];
 
-    // IRATA:
-    // Did comment the following lines to set XP via Lua on client connect()
-    // - This function is used for clients only
-    // - If used on connect() a moment later the rest of the entity data is set, and the entity data is all valid
-    // - If a client is not 'inuse' and this function is called the client is not in game for real
-    //   and the data should be overwritten again, when the next player uses this client num/slot
-    //
-    //
-    // Check if the entity is valid
-    // if ( !ent->inuse ) {
-    //	luaL_error(L, "clientNum \"%d\" is not an used entity", clientNum);
-    //	return 0;
-    //}
+	// Did comment the following lines to set XP via Lua on client connect()
+	// - This function is used for clients only
+	// - If used on connect() a moment later the rest of the entity data is set, and the entity data is valid
+	// - If a client is not 'inuse' and this function is called the client is not in game for real
+	//   and the data should be overwritten again, when the next player uses this client num/slot
 
-    // Check if the entity is a client
-    if ( !ent->client ) {
-        luaL_error(L, "clientNum \"%d\" is not a client entity", clientNum);
-        return 0;
-    }
+	// Check if the entity is valid
+	// if ( !ent->inuse ) {
+	//	luaL_error(L, "clientNum \"%d\" is not an used entity", clientNum);
+	//	return 0;
+	//}
 
-    // Check if the skill is in the range
-    if ( skill < 0 || skill > SK_NUM_SKILLS-1 ) {
-        luaL_error(L, "\"skill\" must be a number from 0 to 6 both included");
-        return 0;
-    }
+	// Check if the entity is a client
+	if (!ent->client)
+	{
+		luaL_error(L, "clientNum \"%d\" is not a client entity", clientNum);
+		return 0;
+	}
 
-    // Check if the xp value is negative
-    if ( xp < 0 ) {
-        luaL_error(L, "negative xp values are not allowed");
-        return 0;
-    }
+	// Check if the skill is in the range
+	if (skill < 0 || skill > SK_NUM_SKILLS - 1)
+	{
+		luaL_error(L, "\"skill\" must be a number from 0 to 6 both included");
+		return 0;
+	}
 
-    // IlDuca - fix #380
-    if ( add == 0 ) {
-        oldxp = ent->client->sess.skillpoints[skill];
-        ent->client->sess.skillpoints[skill] = (float)xp;
-        // ent->client->sess.mapstartSkillpoints[skill] = (float)xp;
-        ent->client->sess.startxptotal -= oldxp;
-        ent->client->sess.startxptotal += (float)xp;
-    }
-    else {
-        ent->client->sess.skillpoints[skill] += (float)xp;
-        // ent->client->sess.mapstartSkillpoints[skill] += (float)xp;
-        ent->client->sess.startxptotal += (float)xp;
-    }
+	// Check if the xp value is negative
+	if (xp < 0)
+	{
+		luaL_error(L, "negative xp values are not allowed");
+		return 0;
+	}
 
-    ent->client->ps.stats[STAT_XP] = (int)ent->client->sess.startxptotal;
+	// special case for 0
+	if (add == 0)
+	{
+		float oldxp = ent->client->sess.skillpoints[skill];
 
-    G_CalcRank(ent->client);
-    BG_PlayerStateToEntityState(&ent->client->ps,&ent->s,level.time,qtrue);
+		ent->client->sess.skillpoints[skill] = (float)xp;
+		// ent->client->sess.mapstartSkillpoints[skill] = (float)xp;
+		ent->client->sess.startxptotal -= oldxp;
+		ent->client->sess.startxptotal += (float)xp;
+	}
+	else
+	{
+		ent->client->sess.skillpoints[skill] += (float)xp;
+		// ent->client->sess.mapstartSkillpoints[skill] += (float)xp;
+		ent->client->sess.startxptotal += (float)xp;
+	}
 
-    return 1;
+	ent->client->ps.stats[STAT_XP] = (int)ent->client->sess.startxptotal;
+
+	G_CalcRank(ent->client);
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
+
+	return 1;
 }
 
-// new function to easily reset XP
-// et.ResetXP ( clientNum )
+/*
+ * Reset XP
+ * et.ResetXP ( clientNum )
+ */
 static int _et_G_ResetXP(lua_State *L)
 {
-    int entnum = luaL_optint(L, 1, -1);
-    gentity_t *ent = NULL;
-    if ( entnum > -1 ) {
-        ent = g_entities + entnum;
-    }
-    G_ResetXP(ent);
-    return 1;
+	int       entnum = luaL_optint(L, 1, -1);
+	gentity_t *ent   = NULL;
+
+	if (entnum > -1)
+	{
+		ent = g_entities + entnum;
+	}
+	G_ResetXP(ent);
+	return 1;
 }
-*/
 
 // et library initialisation array
 static const luaL_Reg etlib[] =
@@ -1590,11 +1596,9 @@ static const luaL_Reg etlib[] =
 	{ "gentity_set",             _et_gentity_set             },
 	{ "G_AddEvent",              _et_G_AddEvent              },
 
-	/*
-	// new function to easly set XP
-	{"G_XP_Set",                    _et_G_XP_Set},
-	{"G_ResetXP",					_et_G_ResetXP},
-	*/
+	// XP functions
+	{ "G_XP_Set",                _et_G_XP_Set                },
+	{ "G_ResetXP",               _et_G_ResetXP               },
 
 	{ NULL },
 };
@@ -1970,7 +1974,6 @@ void G_LuaStatus(gentity_t *ent)
 		}
 	}
 	G_refPrintf(ent, "-- ------------------------ ---------------------------------------- ------------------------");
-
 }
 
 /*
@@ -1992,7 +1995,6 @@ lua_vm_t *G_LuaGetVM(lua_State *L)
 /*****************************/
 /* Lua API hooks / callbacks */
 /*****************************/
-
 
 /*
  * G_LuaHook_InitGame
