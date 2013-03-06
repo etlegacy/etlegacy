@@ -1928,7 +1928,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 
 			if (ci->skill[i] < NUM_SKILL_LEVELS - 1)
 			{
-				str = va("%4d/%-4d", ci->skillpoints[i], skillLevels[ci->skill[i] + 1]);
+				str = va("%4d/%-4d", ci->skillpoints[i], skillLevels[i][ci->skill[i] + 1]);
 			}
 			else
 			{
@@ -2100,7 +2100,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 			if (ci->skill[i] < NUM_SKILL_LEVELS - 1)
 			{
-				str = va("%d (%d/%d)", ci->skill[i], ci->skillpoints[i], skillLevels[ci->skill[i] + 1]);
+				str = va("%d (%d/%d)", ci->skill[i], ci->skillpoints[i], skillLevels[i][ci->skill[i] + 1]);
 			}
 			else
 			{

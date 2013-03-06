@@ -587,7 +587,7 @@ void Cmd_Give_f(gentity_t *ent)
 				amount = 20;
 				if (ent->client->sess.skill[skill] < NUM_SKILL_LEVELS - 1)
 				{
-					amount = skillLevels[ent->client->sess.skill[skill] + 1] - ent->client->sess.skillpoints[skill];
+					amount = skillLevels[skill][ent->client->sess.skill[skill] + 1] - ent->client->sess.skillpoints[skill];
 				}
 
 				G_AddSkillPoints(ent, skill, amount);
@@ -603,7 +603,7 @@ void Cmd_Give_f(gentity_t *ent)
 				amount = 20;
 				if (ent->client->sess.skill[i] < NUM_SKILL_LEVELS - 1)
 				{
-					amount = skillLevels[ent->client->sess.skill[i] + 1] - ent->client->sess.skillpoints[i];
+					amount = skillLevels[i][ent->client->sess.skill[i] + 1] - ent->client->sess.skillpoints[i];
 				}
 
 				G_AddSkillPoints(ent, i, amount);

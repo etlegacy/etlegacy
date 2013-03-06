@@ -1602,7 +1602,6 @@ extern vmCvar_t server_motd2;
 extern vmCvar_t server_motd3;
 extern vmCvar_t server_motd4;
 extern vmCvar_t server_motd5;
-extern vmCvar_t team_maxPanzers;
 extern vmCvar_t team_maxplayers;
 extern vmCvar_t team_nocontrols;
 
@@ -1684,6 +1683,14 @@ extern vmCvar_t team_maxFlamers;
 extern vmCvar_t team_maxMg42s;
 extern vmCvar_t team_maxPanzers;
 extern vmCvar_t team_maxRiflegrenades;
+//skills
+extern vmCvar_t skill_soldier;
+extern vmCvar_t skill_medic;
+extern vmCvar_t skill_engineer;
+extern vmCvar_t skill_fieldops;
+extern vmCvar_t skill_covertops;
+extern vmCvar_t skill_battlesense;
+extern vmCvar_t skill_lightweapons;
 
 typedef struct GeoIPTag
 {

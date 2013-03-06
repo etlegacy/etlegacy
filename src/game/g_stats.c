@@ -144,7 +144,7 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 
 	for (i = NUM_SKILL_LEVELS - 1; i >= 0; i--)
 	{
-		if (client->sess.skillpoints[skill] >= skillLevels[i])
+		if (client->sess.skillpoints[skill] >= skillLevels[skill][i])
 		{
 			client->sess.skill[skill] = i;
 			break;
@@ -263,7 +263,7 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 	if (oldskill != ent->client->sess.skill[skill])
 	{
 		ent->client->sess.skill[skill]       = oldskill;
-		ent->client->sess.skillpoints[skill] = skillLevels[oldskill];
+		ent->client->sess.skillpoints[skill] = skillLevels[skill][oldskill];
 	}
 
 	G_Printf("%s just lost %.0f skill points for skill %s\n", ent->client->pers.netname, oldskillpoints - ent->client->sess.skillpoints[skill], skillNames[skill]);

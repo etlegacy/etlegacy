@@ -92,14 +92,15 @@ const char *medalNames[SK_NUM_SKILLS] =
 	"Silver Snake"
 };
 
-const int skillLevels[NUM_SKILL_LEVELS] =
+int skillLevels[SK_NUM_SKILLS][NUM_SKILL_LEVELS] =
 {
-	0,      // reaching level 0
-	20,     // reaching level 1
-	50,     // reaching level 2
-	90,     // reaching level 3
-	140     // reaching level 4
-//  200     // reaching level 5
+	{ 0, 20, 50, 90, 140 },
+	{ 0, 20, 50, 90, 140 },
+	{ 0, 20, 50, 90, 140 },
+	{ 0, 20, 50, 90, 140 },
+	{ 0, 20, 50, 90, 140 },
+	{ 0, 20, 50, 90, 140 },
+	{ 0, 20, 50, 90, 140 },
 };
 
 vec3_t playerlegsProneMins = { -13.5f, -13.5f, -24.f };

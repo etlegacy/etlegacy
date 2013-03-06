@@ -775,7 +775,7 @@ extern const char *skillNamesLine2[SK_NUM_SKILLS];
 extern const char *medalNames[SK_NUM_SKILLS];
 
 #define NUM_SKILL_LEVELS 5
-extern const int skillLevels[NUM_SKILL_LEVELS];
+extern int skillLevels[SK_NUM_SKILLS][NUM_SKILL_LEVELS];
 
 typedef struct
 {

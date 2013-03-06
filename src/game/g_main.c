@@ -281,6 +281,14 @@ vmCvar_t team_maxFlamers;
 vmCvar_t team_maxMg42s;
 vmCvar_t team_maxPanzers;
 vmCvar_t team_maxRiflegrenades;
+//skills
+vmCvar_t skill_soldier;
+vmCvar_t skill_medic;
+vmCvar_t skill_engineer;
+vmCvar_t skill_fieldops;
+vmCvar_t skill_covertops;
+vmCvar_t skill_battlesense;
+vmCvar_t skill_lightweapons;
 
 cvarTable_t gameCvarTable[] =
 {
@@ -408,7 +416,6 @@ cvarTable_t gameCvarTable[] =
 	{ &server_motd3,              "server_motd3",              "",                           0,                                               0, qfalse, qfalse},
 	{ &server_motd4,              "server_motd4",              "",                           0,                                               0, qfalse, qfalse},
 	{ &server_motd5,              "server_motd5",              "",                           0,                                               0, qfalse, qfalse},
-	{ &team_maxPanzers,           "team_maxPanzers",           "-1",                         0,                                               0, qfalse, qfalse},
 	{ &team_maxplayers,           "team_maxplayers",           "0",                          0,                                               0, qfalse, qfalse},
 	{ &team_nocontrols,           "team_nocontrols",           "1",                          0,                                               0, qfalse, qfalse},
 	{ &vote_allow_comp,           "vote_allow_comp",           "1",                          0,                                               0, qfalse, qfalse},
@@ -527,6 +534,14 @@ cvarTable_t gameCvarTable[] =
 	{ &team_maxMg42s,             "team_maxMg42s",             "-1",                         0,                                               0, qfalse, qfalse},
 	{ &team_maxPanzers,           "team_maxPanzers",           "-1",                         0,                                               0, qfalse, qfalse},
 	{ &team_maxRiflegrenades,     "team_maxRiflegrenades",     "-1",                         0,                                               0, qfalse, qfalse},
+	//Skills
+	{ &skill_soldier,             "skill_soldier",             "20 50 90 140",               0 },
+	{ &skill_medic,               "skill_medic",               "20 50 90 140",               0 },
+	{ &skill_fieldops,            "skill_fieldops",            "20 50 90 140",               0 },
+	{ &skill_engineer,            "skill_engineer",            "20 50 90 140",               0 },
+	{ &skill_covertops,           "skill_covertops",           "20 50 90 140",               0 },
+	{ &skill_battlesense,         "skill_battlesense",         "20 50 90 140",               0 },
+	{ &skill_lightweapons,        "skill_lightweapons",        "20 50 90 140",               0 },
 };
 
 // made static to avoid aliasing
