@@ -40,18 +40,15 @@
 
 static void SV_CloseDownload(client_t *cl);
 
-/*
-=================
-SV_GetChallenge
-
-A "getchallenge" OOB command has been received
-Returns a challenge number that can be used
-in a subsequent connectResponse command.
-We do this to prevent denial of service attacks that
-flood the server with invalid connection IPs.  With a
-challenge, they must give a valid IP address.
-=================
-*/
+/**
+ * @brief A "getchallenge" OOB command has been received
+ * @returns challenge number that can be used in a subsequent
+ *          connectResponse command.
+ *
+ * We do this to prevent denial of service attacks that flood
+ * the server with invalid connection IPs. With a challenge,
+ * they must give a valid IP address.
+ */
 void SV_GetChallenge(netadr_t from)
 {
 	int         i;
@@ -94,7 +91,6 @@ void SV_GetChallenge(netadr_t from)
 		challenge->firstPing = 0;
 		challenge->time      = svs.time;
 		challenge->connected = qfalse;
-		i                    = oldest;
 	}
 
 	// FIXME: deal with restricted filesystem - done with sv_pure check ?

@@ -2053,20 +2053,16 @@ void CL_InitDownloads(void)
 	CL_DownloadsComplete();
 }
 
-/*
-=================
-CL_CheckForResend
-
-Resend a connect message if the last one has timed out
-=================
-*/
+/**
+ * @brief Resend a connect message if the last one has timed out
+ */
 void CL_CheckForResend(void)
 {
 	int  port, i;
 	char info[MAX_INFO_STRING];
 	char data[MAX_INFO_STRING];
-	char pkt[1024 + 1] ;
-	int  pktlen ;
+	char pkt[1024 + 1];
+	int  pktlen;
 
 	// don't send anything if playing back a demo
 	if (clc.demoplaying)
@@ -2091,8 +2087,7 @@ void CL_CheckForResend(void)
 	switch (cls.state)
 	{
 	case CA_CONNECTING:
-		strcpy(pkt, "getchallenge") ;
-		pktlen = strlen(pkt) ;
+		strcpy(pkt, "getchallenge");
 		NET_OutOfBandPrint(NS_CLIENT, clc.serverAddress, pkt);
 		break;
 
@@ -2118,7 +2113,7 @@ void CL_CheckForResend(void)
 		data[10 + i] = 0;
 
 		pktlen = i + 10 ;
-		memcpy(pkt, &data[0], pktlen) ;
+		memcpy(pkt, &data[0], pktlen);
 
 		NET_OutOfBandData(NS_CLIENT, clc.serverAddress, pkt, pktlen);
 		// the most current userinfo has been sent, so watch for any
