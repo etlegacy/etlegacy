@@ -531,7 +531,6 @@ static void CG_ZoomSway(void)
 /*
 ===============
 CG_OffsetFirstPersonView
-
 ===============
 */
 static void CG_OffsetFirstPersonView(void)
@@ -556,20 +555,10 @@ static void CG_OffsetFirstPersonView(void)
 
 	if (cg.snap->ps.weapon == WP_MOBILE_MG42_SET)
 	{
-		float  yawDiff = cg.refdefViewAngles[YAW] - cg.pmext.mountedWeaponAngles[YAW];
 		vec3_t forward, point;
 		float  oldZ = origin[2];
 
 		AngleVectors(cg.pmext.mountedWeaponAngles, forward, NULL, NULL);
-
-		if (yawDiff > 180)
-		{
-			yawDiff -= 360;
-		}
-		else if (yawDiff < -180)
-		{
-			yawDiff += 360;
-		}
 
 		VectorMA(origin, 31, forward, point);
 		AngleVectors(cg.refdefViewAngles, forward, NULL, NULL);
@@ -579,20 +568,10 @@ static void CG_OffsetFirstPersonView(void)
 	}
 	else if (cg.snap->ps.weapon == WP_MORTAR_SET)
 	{
-		float  yawDiff = cg.refdefViewAngles[YAW] - cg.pmext.mountedWeaponAngles[YAW];
 		vec3_t forward, point;
 		float  oldZ = origin[2];
 
 		AngleVectors(cg.pmext.mountedWeaponAngles, forward, NULL, NULL);
-
-		if (yawDiff > 180)
-		{
-			yawDiff -= 360;
-		}
-		else if (yawDiff < -180)
-		{
-			yawDiff += 360;
-		}
 
 		VectorMA(origin, 31, forward, point);
 		AngleVectors(cg.refdefViewAngles, forward, NULL, NULL);

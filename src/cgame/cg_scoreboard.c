@@ -286,8 +286,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	if (score->client == cg.snap->ps.clientNum)
 	{
-		tempx = x;
-
 		hcolor[3] = fade * 0.3;
 		VectorSet(hcolor, .5f, .5f, .2f);           // DARK-RED
 
@@ -416,7 +414,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		{
 			CG_DrawSmallString(tempx, y, " -", fade);
 		}
-		tempx += INFO_LIVES_WIDTH;
 	}
 }
 
