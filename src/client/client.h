@@ -632,9 +632,9 @@ void SCR_FillRect(float x, float y, float width, float height,
                   const float *color);
 void SCR_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
 
-void SCR_DrawBigString(int x, int y, const char *s, float alpha);               // draws a string with embedded color control characters with fade
-void SCR_DrawBigStringColor(int x, int y, const char *s, vec4_t color);         // ignores embedded color control characters
-void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, qboolean forceColor);
+void SCR_DrawBigString(int x, int y, const char *s, float alpha, qboolean noColorEscape);               // draws a string with embedded color control characters with fade
+void SCR_DrawBigStringColor(int x, int y, const char *s, vec4_t color, qboolean noColorEscape);         // ignores embedded color control characters
+void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, qboolean forceColor, qboolean noColorEscape);
 void SCR_DrawSmallChar(int x, int y, int ch);
 
 // cl_cin.c

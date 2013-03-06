@@ -576,7 +576,7 @@ void Con_DrawInput(void)
 	SCR_DrawSmallChar(con.xadjust + 1 * SMALLCHAR_WIDTH, y, ']');
 
 	Field_Draw(&g_consoleField, con.xadjust + 2 * SMALLCHAR_WIDTH, y,
-	           SCREEN_WIDTH - 3 * SMALLCHAR_WIDTH, qtrue);
+	           SCREEN_WIDTH - 3 * SMALLCHAR_WIDTH, qtrue, qtrue);
 }
 
 /*
@@ -652,26 +652,26 @@ void Con_DrawNotify(void)
 		{
 			char buf[128];
 			CL_TranslateString("say_team:", buf);
-			SCR_DrawBigString(8, v, buf, 1.0f);
+			SCR_DrawBigString(8, v, buf, 1.0f, qfalse);
 			skip = strlen(buf) + 2;
 		}
 		else if (chat_buddy)
 		{
 			char buf[128];
 			CL_TranslateString("say_fireteam:", buf);
-			SCR_DrawBigString(8, v, buf, 1.0f);
+			SCR_DrawBigString(8, v, buf, 1.0f, qfalse);
 			skip = strlen(buf) + 2;
 		}
 		else
 		{
 			char buf[128];
 			CL_TranslateString("say:", buf);
-			SCR_DrawBigString(8, v, buf, 1.0f);
+			SCR_DrawBigString(8, v, buf, 1.0f, qfalse);
 			skip = strlen(buf) + 1;
 		}
 
 		Field_BigDraw(&chatField, skip * BIGCHAR_WIDTH, v,
-		              SCREEN_WIDTH - (skip + 1) * BIGCHAR_WIDTH, qtrue);
+		              SCREEN_WIDTH - (skip + 1) * BIGCHAR_WIDTH, qtrue, qtrue);
 
 		v += BIGCHAR_HEIGHT;
 	}

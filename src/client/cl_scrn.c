@@ -201,7 +201,7 @@ to a fixed color.
 Coordinates are at 640 by 480 virtual resolution
 ==================
 */
-void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setColor, qboolean forceColor)
+void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setColor, qboolean forceColor, qboolean noColorEscape)
 {
 	vec4_t     color;
 	const char *s;
@@ -215,7 +215,7 @@ void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setC
 	xx = x;
 	while (*s)
 	{
-		if (Q_IsColorString(s))
+		if (!noColorEscape && Q_IsColorString(s))
 		{
 			s += 2;
 			continue;
@@ -247,8 +247,11 @@ void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setC
 				color[3] = setColor[3];
 				re.SetColor(color);
 			}
-			s += 2;
-			continue;
+			if (!noColorEscape)
+			{
+				s += 2;
+				continue;
+			}
 		}
 		SCR_DrawChar(xx, y, size, *s);
 		xx += size;
@@ -257,18 +260,18 @@ void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setC
 	re.SetColor(NULL);
 }
 
-void SCR_DrawBigString(int x, int y, const char *s, float alpha)
+void SCR_DrawBigString(int x, int y, const char *s, float alpha, qboolean noColorEscape)
 {
 	float color[4];
 
 	color[0] = color[1] = color[2] = 1.0;
 	color[3] = alpha;
-	SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, s, color, qfalse);
+	SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, s, color, qfalse, noColorEscape);
 }
 
-void SCR_DrawBigStringColor(int x, int y, const char *s, vec4_t color)
+void SCR_DrawBigStringColor(int x, int y, const char *s, vec4_t color, qboolean noColorEscape)
 {
-	SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, s, color, qtrue);
+	SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, s, color, qtrue, noColorEscape);
 }
 
 /*
@@ -281,7 +284,7 @@ to a fixed color.
 Coordinates are at 640 by 480 virtual resolution
 ==================
 */
-void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, qboolean forceColor)
+void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, qboolean forceColor, qboolean noColorEscape)
 {
 	vec4_t     color;
 	const char *s;
@@ -308,8 +311,11 @@ void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, q
 				}
 				re.SetColor(color);
 			}
-			s += 2;
-			continue;
+			if (!noColorEscape)
+			{
+				s += 2;
+				continue;
+			}
 		}
 		SCR_DrawSmallChar(xx, y, *s);
 		xx += SMALLCHAR_WIDTH;
