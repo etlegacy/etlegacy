@@ -3434,7 +3434,7 @@ static void FS_Startup(const char *gameName)
 	homePath = Sys_DefaultHomePath(); // Returns My Documents path on windows now ex: C:\Users\username\Documents where also other games add their data
 	if (!homePath || !homePath[0])
 	{
-#ifdef DEDICATED
+#if defined(DEDICATED) || defined(__AROS__)
 		homePath = fs_basepath->string;
 #else
 		Com_Error(ERR_FATAL, "FS_Startup: Default home path is empty.");

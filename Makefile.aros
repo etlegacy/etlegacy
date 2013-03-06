@@ -2,7 +2,7 @@
 # ET: Legacy Makefile for AROS
 #
 
-ETLEGACY_VERSION = 2.71rc1-dirty
+ETLEGACY_VERSION = 2.71rc1
 
 BUILD_CLIENT = 1
 BUILD_SERVER = 0
@@ -56,11 +56,6 @@ UIDIR = $(MOUNT_DIR)/ui
 #############################################################################
 
 BASE_CFLAGS = -Wall -fno-strict-aliasing -Wimplicit -pipe -I$(BUILD_DIR)
-#	-DETLEGACY_VERSION='"2.71rc1-dirty"' \
-#	-DETLEGACY_VERSION_SHORT='"2.71rc1-dirty"'	
-#	-DETLEGACY_VERSION='"$(ETLEGACY_VERSION)"' \
-#	-DETLEGACY_VERSION_SHORT='"$(ETLEGACY_VERSION)"'
-#	-DC_ONLY
 
 CLIENT_CFLAGS = $(shell sdl-config --cflags)
 SERVER_CFLAGS =
@@ -189,16 +184,16 @@ default: release
 all: debug release
 
 debug:
-	@$(MAKE) targets B=$(BD) CFLAGS="$(CFLAGS) $(BASE_CFLAGS) $(DEPEND_CFLAGS)" \
+	@$(MAKE) -f makefile.aros targets B=$(BD) CFLAGS="$(CFLAGS) $(BASE_CFLAGS) $(DEPEND_CFLAGS)" \
 	  OPTIMIZE="-D_DEBUG $(DEBUG_CFLAGS)" OPTIMIZEVM="-D_DEBUG $(DEBUG_CFLAGS)" \
 	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V) \
-	  STRIP="strip"
+	  STRIP="echo"
 
 release:
-	@$(MAKE) targets B=$(BR) CFLAGS="$(CFLAGS) $(BASE_CFLAGS) $(DEPEND_CFLAGS)" \
+	@$(MAKE) -f makefile.aros targets B=$(BR) CFLAGS="$(CFLAGS) $(BASE_CFLAGS) $(DEPEND_CFLAGS)" \
 	  OPTIMIZE="-DNDEBUG $(OPTIMIZE)" OPTIMIZEVM="-DNDEBUG $(OPTIMIZEVM)" \
 	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V) \
-	  STRIP="#"
+	  STRIP="strip"
 
 # Create the build directories, check libraries and print out
 # an informational message, then start building
@@ -256,7 +251,7 @@ targets: makedirs
 	done
 	@echo ""
 ifneq ($(TARGETS),)
-	@$(MAKE) $(TARGETS) V=$(V)
+	@$(MAKE) -f Makefile.aros $(TARGETS) V=$(V)
 endif
 
 makedirs:
@@ -268,8 +263,8 @@ makedirs:
 	@if [ ! -d $(B)/$(MODNAME)/cgame ];then $(MKDIR) $(B)/$(MODNAME)/cgame;fi
 	@if [ ! -d $(B)/$(MODNAME)/game ];then $(MKDIR) $(B)/$(MODNAME)/game;fi
 	@if [ ! -d $(B)/$(MODNAME)/ui ];then $(MKDIR) $(B)/$(MODNAME)/ui;fi
-	echo "#define ETLEGACY_VERSION \"$(ETLEGACY_VERSION)\"" > $(BUILD_DIR)/git_version.h
-	echo "#define ETLEGACY_VERSION_SHORT \"$(ETLEGACY_VERSION)\"" >> $(BUILD_DIR)/git_version.h
+	@echo "#define ETLEGACY_VERSION \"$(ETLEGACY_VERSION)\"" > $(BUILD_DIR)/git_version.h
+	@echo "#define ETLEGACY_VERSION_SHORT \"$(ETLEGACY_VERSION)\"" >> $(BUILD_DIR)/git_version.h
 
 	
 
