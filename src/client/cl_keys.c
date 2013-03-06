@@ -602,7 +602,8 @@ void Field_CharEvent(field_t *edit, int ch)
 
 	if (key_overstrikeMode)
 	{
-		if (edit->cursor == MAX_EDIT_LINE - 1)
+		// - 2 to leave room for the leading slash and trailing \0
+		if (edit->cursor == MAX_EDIT_LINE - 2)
 		{
 			return;
 		}
@@ -611,7 +612,8 @@ void Field_CharEvent(field_t *edit, int ch)
 	}
 	else        // insert mode
 	{
-		if (len == MAX_EDIT_LINE - 1)
+		// - 2 to leave room for the leading slash and trailing \0
+		if (len == MAX_EDIT_LINE - 2)
 		{
 			return; // all full
 		}
