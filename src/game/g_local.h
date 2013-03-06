@@ -1839,6 +1839,7 @@ void G_LogKill(gentity_t *ent, weapon_t weap);
 void G_LogRegionHit(gentity_t *ent, hitRegion_t hr);
 
 // Skills
+void G_ResetXP(gentity_t *ent);
 void G_SetPlayerScore(gclient_t *client);
 void G_SetPlayerSkill(gclient_t *client, skillType_t skill);
 void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points);

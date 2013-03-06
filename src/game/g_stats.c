@@ -272,6 +272,71 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 	level.teamXP[skill][ent->client->sess.sessionTeam - TEAM_AXIS] -= oldskillpoints - ent->client->sess.skillpoints[skill];
 }
 
+void G_ResetXP(gentity_t *ent)
+{
+	int i = 0;
+	int ammo[MAX_WEAPONS], ammoclip[MAX_WEAPONS];
+	int oldWeapon, newWeapon;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	ent->client->sess.rank = 0;
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		ent->client->sess.skillpoints[i] = 0.0f;
+		ent->client->sess.skill[i]       = 0;
+	}
+
+	G_CalcRank(ent->client);
+	ent->client->ps.stats[STAT_XP]         = 0;
+	ent->client->ps.persistant[PERS_SCORE] = 0;
+
+	// zero out all weapons and grab the default weapons for a player of this XP level.
+	// backup..
+	memcpy(ammo, ent->client->ps.ammo, sizeof(ammo));
+	memcpy(ammoclip, ent->client->ps.ammoclip, sizeof(ammoclip));
+	oldWeapon = ent->client->ps.weapon;
+	// Check weapon validity, maybe dump some weapons for this (now) unskilled player..
+	// It also sets the (possibly new) amounts of ammo for weapons.
+	SetWolfSpawnWeapons(ent->client);
+	// restore..
+	newWeapon = ent->client->ps.weapon;
+
+	for (i = WP_NONE; i < WP_NUM_WEAPONS; ++i)    //i<MAX_WEAPONS
+	{   // only restore ammo for valid weapons..
+		// ..they might have lost some weapons because of skill changes.
+		// Also restore to the old amount of ammo, because..
+		// ..SetWolfSpawnWeapons sets amount of ammo for a fresh spawning player,
+		// which is usually more than the player currently has left.
+		if (COM_BitCheck(ent->client->ps.weapons, i))
+		{
+			if (ammo[i] < ent->client->ps.ammo[i])
+			{
+				ent->client->ps.ammo[i] = ammo[i];
+			}
+			if (ammoclip[i] < ent->client->ps.ammoclip[i])
+			{
+				ent->client->ps.ammoclip[i] = ammoclip[i];
+			}
+		}
+		else
+		{
+			ent->client->ps.ammo[i]     = 0;
+			ent->client->ps.ammoclip[i] = 0;
+		}
+	}
+	// check if the old weapon is still valid.
+	// If so, restore to the last used weapon..
+	if (COM_BitCheck(ent->client->ps.weapons, oldWeapon))
+	{
+		ent->client->ps.weapon = oldWeapon;
+	}
+	ClientUserinfoChanged(ent - g_entities);
+}
+
 void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 {
 	int oldskill;

@@ -1440,19 +1440,17 @@ static int _et_G_XP_Set(lua_State *L)
 	int       clientNum = luaL_checkint(L, 1);
 	int       xp        = luaL_checkint(L, 2);
 	int       skill     = luaL_checkint(L, 3);
-	int       add       = luaL_checkbool(L, 4); // not updating Lua sources each update do this: luaL_checkint(L, 4);
-	                                            // 'add' just checks to be 0 or not to be 0
+	int       add       = luaL_checkint(L, 4); // 'add' just checks to be 0 or not to be 0
 
 	ent = &g_entities[clientNum];
 
 	// Did comment the following lines to set XP via Lua on client connect()
-	// - This function is used for clients only
 	// - If used on connect() a moment later the rest of the entity data is set, and the entity data is valid
 	// - If a client is not 'inuse' and this function is called the client is not in game for real
 	//   and the data should be overwritten again, when the next player uses this client num/slot
 
 	// Check if the entity is valid
-	// if ( !ent->inuse ) {
+	//if ( !ent->inuse ) {
 	//	luaL_error(L, "clientNum \"%d\" is not an used entity", clientNum);
 	//	return 0;
 	//}
@@ -1478,7 +1476,7 @@ static int _et_G_XP_Set(lua_State *L)
 		return 0;
 	}
 
-	// special case for 0
+	// special case for 0 adds
 	if (add == 0)
 	{
 		float oldxp = ent->client->sess.skillpoints[skill];
