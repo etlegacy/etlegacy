@@ -1468,6 +1468,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			return;
 		}
 		Con_ToggleConsole_f();
+		Key_ClearStates();
 
 		// the console key should never be used as a char
 		consoleButtonWasPressed = qtrue;
@@ -1540,6 +1541,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 				if (cls.keyCatchers & KEYCATCH_CONSOLE)      // get rid of the console
 				{
 					Con_ToggleConsole_f();
+					Key_ClearStates();
 				}
 				else
 				{
