@@ -290,6 +290,8 @@ vmCvar_t skill_covertops;
 vmCvar_t skill_battlesense;
 vmCvar_t skill_lightweapons;
 
+vmCvar_t g_misc;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -542,6 +544,7 @@ cvarTable_t gameCvarTable[] =
 	{ &skill_covertops,           "skill_covertops",           "20 50 90 140",               0 },
 	{ &skill_battlesense,         "skill_battlesense",         "20 50 90 140",               0 },
 	{ &skill_lightweapons,        "skill_lightweapons",        "20 50 90 140",               0 },
+	{ &g_misc,                    "g_misc",                    "0",                          0 },
 };
 
 // made static to avoid aliasing

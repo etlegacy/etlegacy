@@ -1692,6 +1692,8 @@ extern vmCvar_t skill_covertops;
 extern vmCvar_t skill_battlesense;
 extern vmCvar_t skill_lightweapons;
 
+extern vmCvar_t g_misc;
+
 typedef struct GeoIPTag
 {
 	fileHandle_t GeoIPDatabase;
@@ -2213,10 +2215,14 @@ int GetFieldIndex(char *fieldname);
 fieldtype_t GetFieldType(char *fieldname);
 #endif
 
+// g_protect flags
 #define G_PROTECT_LOCALHOST_REF  1
 
 // MAPVOTE
 void G_mapvoteinfo_write(void);
 void G_mapvoteinfo_read(void);
+
+// g_misc flags
+#define G_MISC_SHOVE_NOZ           1
 
 #endif

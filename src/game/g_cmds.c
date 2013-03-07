@@ -3631,10 +3631,14 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 	    (push[2] > fabs(push[1])))
 	{
 		// player is being boosted
-		//if(g_shoveNoZ.integer)
-		//	push[2] = 64;
-		//else
-		push[2] = dir[2] * g_shove.integer * 4;     // like in etpro, shoving up gives only 350 speed ( jump gives 270 )
+		if (g_misc.integer & G_MISC_SHOVE_NOZ)
+		{
+			push[2] = 64;
+		}
+		else
+		{
+			push[2] = dir[2] * g_shove.integer * 4;     // like in etpro, shoving up gives only 350 speed ( jump gives 270 )
+		}
 	}
 	else
 	{
