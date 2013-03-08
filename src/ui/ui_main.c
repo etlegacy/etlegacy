@@ -8091,10 +8091,10 @@ static void UI_DoServerRefresh(void)
 
 static void UI_StartServerRefresh(qboolean full)
 {
-	char *ptr;
-	char buff[64];
-
+	char    *ptr;
+	char    buff[64];
 	qtime_t q;
+
 	trap_RealTime(&q);
 	Com_sprintf(buff, sizeof(buff), "%s-%i, %i at %s:%s", MonthAbbrev[q.tm_mon], q.tm_mday, 1900 + q.tm_year, q.tm_hour < 10 ? va("0%i", q.tm_hour) : va("%i", q.tm_hour),
 	            q.tm_min < 10 ? va("0%i", q.tm_min) : va("%i", q.tm_min));
