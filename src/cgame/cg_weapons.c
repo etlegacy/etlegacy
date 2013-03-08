@@ -5284,7 +5284,6 @@ void CG_MortarEFX(centity_t *cent)
 	if (cent->currentState.density & 2)
 	{
 		// light
-		//trap_R_AddLightToScene( cent->currentState.origin, 200 + (rand()&31), 1.0, 1.0, 1.0, 0 );
 		trap_R_AddLightToScene(cent->currentState.origin, 256, 0.75 + 8.0 / (rand() & 31), 1.0, 1.0, 1.0, 0, 0);
 
 		// muzzle flash
@@ -5304,13 +5303,9 @@ CG_WeaponFireRecoil
 */
 void CG_WeaponFireRecoil(int weapon)
 {
-	float  pitchRecoilAdd, pitchAdd;
-	float  yawRandom;
+	float  pitchAdd = 0;
+	float  yawRandom = 0;
 	vec3_t recoil;
-
-	pitchRecoilAdd = 0;
-	pitchAdd       = 0;
-	yawRandom      = 0;
 
 	switch (weapon)
 	{
@@ -5322,15 +5317,12 @@ void CG_WeaponFireRecoil(int weapon)
 	case WP_SILENCED_COLT:
 	case WP_AKIMBO_COLT:
 	case WP_AKIMBO_SILENCEDCOLT:
-		//pitchAdd = 2+rand()%3;
-		//yawRandom = 2;
+	case WP_PANZERFAUST: // push the player back instead
 		break;
 	case WP_GARAND:
 	case WP_KAR98:
 	case WP_CARBINE:
 	case WP_K43:
-		//pitchAdd = 4+rand()%3;
-		//yawRandom = 4;
 		pitchAdd  = 2;
 		yawRandom = 1;
 		break;
@@ -5345,18 +5337,8 @@ void CG_WeaponFireRecoil(int weapon)
 	case WP_MP40:
 	case WP_THOMPSON:
 	case WP_STEN:
-		//pitchRecoilAdd = 1;
-		pitchAdd  = 1 + rand() % 3;
-		yawRandom = 2;
-
-		pitchAdd  *= 0.3;
-		yawRandom *= 0.3;
-		break;
-	case WP_PANZERFAUST:
-		//pitchAdd = 12+rand()%3;
-		//yawRandom = 6;
-
-		// push the player back instead
+		pitchAdd  = (1 + rand() % 3) * 0.3;
+		yawRandom = 0.6;
 		break;
 	default:
 		return;
@@ -5365,13 +5347,12 @@ void CG_WeaponFireRecoil(int weapon)
 	recoil[YAW]   = crandom() * yawRandom;
 	recoil[ROLL]  = -recoil[YAW];   // why not
 	recoil[PITCH] = -pitchAdd;
+
 	// scale it up a bit (easier to modify this while tweaking)
 	VectorScale(recoil, 30, recoil);
 
 	// set the recoil
 	VectorCopy(recoil, cg.kickAVel);
-	// set the recoil
-	cg.recoilPitch -= pitchRecoilAdd;
 }
 
 /*
