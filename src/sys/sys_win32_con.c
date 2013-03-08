@@ -875,7 +875,6 @@ void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 
 	ShowWindow(s_wcd.hWnd, SW_SHOWNORMAL);
 	SendMessage(s_wcd.hwndBuffer, EM_LINESCROLL, 0, 0xffff);
-	Com_Printf("NUMEROA TULEE: %i\n", visLevel);
 
 	switch (visLevel)
 	{
