@@ -1079,7 +1079,7 @@ qboolean Load_Menu(int handle)
 
 			filename = COM_SkipPath(token.string);
 
-			switch (cl_language)
+			switch (cl_language-1) // english isn't in languages_t enum
 			{
 			case LANGUAGE_FRENCH:
 				s = va("%s%s", out, "french/");
