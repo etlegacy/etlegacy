@@ -628,6 +628,19 @@ void CG_UpdateCvars(void)
 	}
 }
 
+void CG_RestoreProfile(void)
+{
+	int i;
+
+	CG_Printf(S_COLOR_GREEN "Restoring CVARS forced by server\n");
+
+	for (i = 0; i < cg.cvarBackupsCount; ++i)
+	{
+		trap_Cvar_Set(cg.cvarBackups[i].cvarName, cg.cvarBackups[i].cvarValue);
+		CG_Printf(S_COLOR_YELLOW "cvar: %s %s\n", cg.cvarBackups[i].cvarName, cg.cvarBackups[i].cvarValue);
+	}
+}
+
 void CG_setClientFlags(void)
 {
 	if (cg.demoPlayback)
@@ -2695,8 +2708,11 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	//int startat = trap_Milliseconds();
 
+	// clean up the config backup if one exists
+	CG_RestoreProfile();
+
 	// clear everything
-	memset( &cgs, 0, sizeof(cgs));
+	memset(&cgs, 0, sizeof(cgs));
 	memset(&cg, 0, sizeof(cg));
 	memset(cg_entities, 0, sizeof(cg_entities));
 	memset(cg_weapons, 0, sizeof(cg_weapons));
@@ -2921,6 +2937,8 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_LoadLocations();
 	memset(cgs.clientLocation, 0, sizeof(cgs.clientLocation));
 
+	CG_UpdateSvCvars();
+
 	//CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
 }
 
@@ -2941,6 +2959,8 @@ void CG_Shutdown(void)
 	{
 		trap_Cvar_Set("timescale", "1");
 	}
+
+	CG_RestoreProfile();
 
 	if (cg.logFile)
 	{
