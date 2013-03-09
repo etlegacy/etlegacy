@@ -3716,7 +3716,7 @@ void CL_Init(void)
 	Cvar_Get("cg_crosshairSize", "48", CVAR_ARCHIVE);
 	Cvar_Get("cg_drawCrosshair", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_zoomDefaultSniper", "20", CVAR_ARCHIVE);
-	Cvar_Get("cg_zoomstepsniper", "2", CVAR_ARCHIVE);
+	Cvar_Get("cg_zoomStepSniper", "2", CVAR_ARCHIVE);
 
 	// userinfo
 	Cvar_Get("name", "ETLegacyPlayer", CVAR_USERINFO | CVAR_ARCHIVE);

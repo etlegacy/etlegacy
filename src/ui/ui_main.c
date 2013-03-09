@@ -1079,7 +1079,7 @@ qboolean Load_Menu(int handle)
 
 			filename = COM_SkipPath(token.string);
 
-			switch (cl_language-1) // english isn't in languages_t enum
+			switch (cl_language - 1) // english isn't in languages_t enum
 			{
 			case LANGUAGE_FRENCH:
 				s = va("%s%s", out, "french/");
@@ -7858,8 +7858,8 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "cg_noAmmoAutoSwitch",                 "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "cg_useWeapsForZoom",                  "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "cg_zoomDefaultSniper",                "20",                         CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_zoomstepsniper",                   "2",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_voicespritetime",                  "6000",                       CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_zoomStepSniper",                   "2",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_voiceSpriteTime",                  "6000",                       CVAR_ARCHIVE                   },
 	{ NULL,                             "cg_complaintPopUp",                   "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "cg_printObjectiveInfo",               "1",                          CVAR_ARCHIVE                   },
 	{ NULL,                             "cg_useScreenshotJPEG",                "1",                          CVAR_ARCHIVE                   },
