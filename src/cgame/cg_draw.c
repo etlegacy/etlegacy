@@ -2957,7 +2957,7 @@ static void CG_DrawWarmup(void)
 
 			s1 = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? "player" : "players");
 			w  = CG_DrawStrlen(s1);
-			CG_DrawStringExt(320 - w * 12 / 2, 188, s1, colorWhite, qfalse, qtrue, 12, 18, 0);
+			CG_DrawStringExt(320 + cgs.wideXoffset - w * 12 / 2, 188, s1, colorWhite, qfalse, qtrue, 12, 18, 0);
 
 			if (!cg.demoPlayback && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR &&
 			    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) || (cg.snap->ps.pm_flags & PMF_LIMBO)))
@@ -2975,12 +2975,10 @@ static void CG_DrawWarmup(void)
 					s2 = CG_TranslateString(s2);
 				}
 				w = CG_DrawStrlen(s2);
-				CG_DrawStringExt(320 - w * cw / 2, 208, s2, colorWhite, qfalse, qtrue, cw, (int)(cw * 1.5), 0);
+				CG_DrawStringExt(320 + cgs.wideXoffset - w * cw / 2, 208, s2, colorWhite, qfalse, qtrue, cw, (int)(cw * 1.5), 0);
 			}
-
 			return;
 		}
-
 		return;
 	}
 
@@ -2993,7 +2991,7 @@ static void CG_DrawWarmup(void)
 	s = va("%s %i", CG_TranslateString("(WARMUP) Match begins in:"), sec + 1);
 
 	w = CG_DrawStrlen(s);
-	CG_DrawStringExt(320 - w * 6, 120, s, colorYellow, qfalse, qtrue, 12, 18, 0);
+	CG_DrawStringExt(320 + cgs.wideXoffset - w * 6, 120, s, colorYellow, qfalse, qtrue, 12, 18, 0);
 
 	// pre start actions
 	if (sec == 3 && !announced)
@@ -3096,15 +3094,15 @@ static void CG_DrawWarmup(void)
 		cw = 10;
 
 		w = CG_DrawStrlen(s);
-		CG_DrawStringExt(320 - w * cw / 2, 140, s, colorWhite,
+		CG_DrawStringExt(320 + cgs.wideXoffset - w * cw / 2, 140, s, colorWhite,
 		                 qfalse, qtrue, cw, (int)(cw * 1.5), 0);
 
 		w = CG_DrawStrlen(s1);
-		CG_DrawStringExt(320 - w * cw / 2, 160, s1, colorWhite,
+		CG_DrawStringExt(320 + cgs.wideXoffset - w * cw / 2, 160, s1, colorWhite,
 		                 qfalse, qtrue, cw, (int)(cw * 1.5), 0);
 
 		w = CG_DrawStrlen(s2);
-		CG_DrawStringExt(320 - w * cw / 2, 180, s2, colorWhite,
+		CG_DrawStringExt(320 + cgs.wideXoffset - w * cw / 2, 180, s2, colorWhite,
 		                 qfalse, qtrue, cw, (int)(cw * 1.5), 0);
 	}
 }
