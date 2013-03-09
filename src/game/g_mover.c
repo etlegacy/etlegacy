@@ -851,10 +851,8 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 {
 	vec3_t   delta;
 	float    f;
-	qboolean kicked = qfalse, soft = qfalse;
-
-	kicked = (qboolean)(ent->flags & FL_KICKACTIVATE);
-	soft   = (qboolean)(ent->flags & FL_SOFTACTIVATE);
+	qboolean kicked = (qboolean)(ent->flags & FL_KICKACTIVATE);
+	qboolean soft   = (qboolean)(ent->flags & FL_SOFTACTIVATE);
 
 	ent->moverState    = moverState;
 	ent->s.pos.trTime  = time;
@@ -1275,16 +1273,15 @@ IsBinaryMoverBlocked
 */
 qboolean IsBinaryMoverBlocked(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	vec3_t   dir;
-	vec3_t   pos;
-	vec3_t   vec;
-	vec3_t   forward;
-	qboolean is_relay = qfalse;
-
 	if (Q_stricmp(ent->classname, "func_door_rotating") == 0)
 	{
-		vec3_t angles;
-		float  dot;
+		vec3_t   angles;
+		vec3_t   dir;
+		vec3_t   pos;
+		vec3_t   vec;
+		vec3_t   forward;
+		qboolean is_relay = qfalse;
+		float    dot;
 
 		if (ent->spawnflags & 32)
 		{
@@ -1464,9 +1461,9 @@ void Use_TrinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	ent->activator = activator;
 
-	if (ent->moverState == MOVER_POS1)
+	switch (ent->moverState)
 	{
-
+	case MOVER_POS1:
 		// start moving 50 msec later, becase if this was player
 		// triggered, level.time hasn't been advanced yet
 		MatchTeam(ent, MOVER_1TO2, level.time + 50);
@@ -1483,10 +1480,8 @@ void Use_TrinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			trap_AdjustAreaPortalState(ent, qtrue);
 		}
 		return;
-	}
 
-	if (ent->moverState == MOVER_POS2)
-	{
+	case MOVER_POS2:
 		// start moving 50 msec later, becase if this was player
 		// triggered, level.time hasn't been advanced yet
 		MatchTeam(ent, MOVER_2TO3, level.time + 50);
@@ -1496,23 +1491,16 @@ void Use_TrinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 		// looping sound
 		ent->s.loopSound = ent->soundLoop;
-
 		return;
-	}
 
-	// if all the way up, just delay before coming down
-	if (ent->moverState == MOVER_POS3)
-	{
+	case MOVER_POS3: // if all the way up, just delay before coming down
 		if (ent->wait != -1000)
 		{
 			ent->nextthink = level.time + ent->wait;
 		}
 		return;
-	}
 
-	// only partway down before reversing
-	if (ent->moverState == MOVER_2TO1)
-	{
+	case MOVER_2TO1: // only partway down before reversing
 		total   = ent->s.pos.trDuration;
 		partial = level.time - ent->s.time;
 		if (partial > total)
@@ -1521,13 +1509,10 @@ void Use_TrinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		}
 
 		MatchTeam(ent, MOVER_1TO2, level.time - (total - partial));
-
 		G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound1to2);
 		return;
-	}
 
-	if (ent->moverState == MOVER_3TO2)
-	{
+	case MOVER_3TO2:
 		total   = ent->s.pos.trDuration;
 		partial = level.time - ent->s.time;
 		if (partial > total)
@@ -1536,14 +1521,10 @@ void Use_TrinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		}
 
 		MatchTeam(ent, MOVER_2TO3, level.time - (total - partial));
-
 		G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound2to3);
 		return;
-	}
 
-	// only partway up before reversing
-	if (ent->moverState == MOVER_1TO2)
-	{
+	case MOVER_1TO2: // only partway up before reversing
 		total   = ent->s.pos.trDuration;
 		partial = level.time - ent->s.time;
 		if (partial > total)
@@ -1562,10 +1543,8 @@ void Use_TrinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 			G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound2to1);
 		}
 		return;
-	}
 
-	if (ent->moverState == MOVER_2TO3)
-	{
+	case MOVER_2TO3:
 		total   = ent->s.pos.trDuration;
 		partial = level.time - ent->s.time;
 		if (partial > total)
@@ -1576,6 +1555,9 @@ void Use_TrinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		MatchTeam(ent, MOVER_3TO2, level.time - (total - partial));
 
 		G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound3to2);
+		return;
+
+	default:
 		return;
 	}
 }
@@ -1639,11 +1621,17 @@ void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		{
 			if (ent->flags & FL_SOFTACTIVATE)
 			{
-				G_AddEvent(ent, EV_GENERAL_SOUND, ent->soundSoftopen);
+				if (ent->soundSoftopen)
+				{
+					G_AddEvent(ent, EV_GENERAL_SOUND, ent->soundSoftopen);
+				}
 			}
 			else
 			{
-				G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound1to2);
+				if (ent->sound1to2)
+				{
+					G_AddEvent(ent, EV_GENERAL_SOUND, ent->sound1to2);
+				}
 			}
 		}
 
@@ -2255,8 +2243,6 @@ finishSpawningKeyedMover
 */
 void finishSpawningKeyedMover(gentity_t *ent)
 {
-	gentity_t *slave;
-
 	// all ents should be spawned, so it's okay to check for special door triggers now
 
 	// update level.doorAllowTeams
@@ -2278,6 +2264,8 @@ void finishSpawningKeyedMover(gentity_t *ent)
 
 	if (!(ent->flags & FL_TEAMSLAVE))
 	{
+		gentity_t *slave;
+
 		if (ent->targetname || ent->takedamage)      // non touch/shoot doors
 		{
 			ent->think = Think_MatchTeam;
@@ -2316,9 +2304,8 @@ Door_reverse_sounds
 */
 void Door_reverse_sounds(gentity_t *ent)
 {
-	int stemp;
+	int stemp = ent->sound1to2;
 
-	stemp          = ent->sound1to2;
 	ent->sound1to2 = ent->sound2to1;
 	ent->sound2to1 = stemp;
 
@@ -2536,6 +2523,7 @@ void SP_func_door(gentity_t *ent)
 		if (ent->closespeed)
 		{
 			int tempi = ent->speed;
+
 			ent->speed      = ent->closespeed;
 			ent->closespeed = tempi;
 		}
@@ -4057,7 +4045,7 @@ void SP_func_door_rotating(gentity_t *ent)
 		ent->flags |= FL_TOGGLE;
 	}
 
-	//door keys
+	// door keys
 	if (G_SpawnInt("key", "", &key))       // if door has a key entered, set it
 	{
 		ent->key = key;
@@ -4140,7 +4128,6 @@ void SP_func_door_rotating(gentity_t *ent)
 /*
 ===============================================================================
 EFFECTS
-
   I'm keeping all this stuff in here just to avoid collisions with Raf right now in g_misc or g_props
   Will move.
 ===============================================================================
@@ -4468,9 +4455,9 @@ void target_explosion_use(gentity_t *self, gentity_t *other, gentity_t *attacker
 
 	G_UseTargets(self, attacker);
 
-	tent->s.density    = self->count;   // pass the "mass" to the client
+	tent->s.density    = self->count;    // pass the "mass" to the client
 	tent->s.weapon     = self->duration; // pass the "force lowgrav" to client
-	tent->s.frame      = self->key;     // pass the type to the client ("glass", "wood", "metal", "gibs", "brick", "stone", "fabric", 0, 1, 2, 3, 4, 5, 6)
+	tent->s.frame      = self->key;      // pass the type to the client ("glass", "wood", "metal", "gibs", "brick", "stone", "fabric", 0, 1, 2, 3, 4, 5, 6)
 	tent->s.angles2[0] = self->s.angles2[0];
 	tent->s.angles2[1] = self->s.angles2[1];
 

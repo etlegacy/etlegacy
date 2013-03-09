@@ -5303,7 +5303,7 @@ CG_WeaponFireRecoil
 */
 void CG_WeaponFireRecoil(int weapon)
 {
-	float  pitchAdd = 0;
+	float  pitchAdd  = 0;
 	float  yawRandom = 0;
 	vec3_t recoil;
 

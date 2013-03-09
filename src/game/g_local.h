@@ -1071,6 +1071,10 @@ typedef struct
 	int mapVoteNumMaps;
 	int mapsSinceLastXPReset;
 
+	// sv_cvars
+	svCvar_t svCvars[MAX_SVCVARS];
+	int svCvarsCount;
+
 } level_locals_t;
 
 typedef struct

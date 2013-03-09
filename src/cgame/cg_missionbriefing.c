@@ -240,7 +240,6 @@ qboolean CG_FindArenaInfo(char *filename, char *mapname, arenaInfo_t *info)
 		{
 			if (found)
 			{
-//				info->image = trap_R_RegisterShaderNoMip(va("levelshots/%s", mapname));
 				trap_PC_FreeSource(handle);
 				return qtrue;
 			}
@@ -443,9 +442,7 @@ void CG_LocateArena(void)
 
 	Com_sprintf(filename, sizeof(filename), "scripts/%s.arena", cgs.rawmapname);
 
-	if ( /*!CG_FindArenaInfo( "scripts/wolfmp.arena", cgs.rawmapname, &cgs.arenaData ) &&
-	    !CG_FindArenaInfo( "scripts/wolfxp.arena", cgs.rawmapname, &cgs.arenaData ) &&*/
-	    !CG_FindArenaInfo(filename, cgs.rawmapname, &cgs.arenaData))
+	if (!CG_FindArenaInfo(filename, cgs.rawmapname, &cgs.arenaData))
 	{
 		return;
 	}

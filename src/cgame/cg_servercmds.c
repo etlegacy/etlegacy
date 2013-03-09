@@ -159,6 +159,43 @@ void CG_ParseServerinfo(void)
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
 }
 
+void CG_UpdateSvCvars(void)
+{
+	const char *info = CG_ConfigString(CS_SVCVAR);
+	int        i;
+	char       *token;
+	char       *buffer;
+
+	cg.svCvarCount = atoi(Info_ValueForKey(info, "NUM"));
+
+	for (i = 0; i < cg.svCvarCount; i++)
+	{
+		// get what is it
+		buffer = Info_ValueForKey(info, va("SVCV%i", i));
+		// get a mode pf ot
+		token              = strtok(buffer, " ");
+		cg.svCvars[i].mode = atoi(token);
+
+		token = strtok(NULL, " ");
+		Q_strncpyz(cg.svCvars[i].cvarName, token, sizeof(cg.svCvars[0].cvarName));
+
+		token = strtok(NULL, " ");
+		Q_strncpyz(cg.svCvars[i].Val1, token, sizeof(cg.svCvars[0].Val1));
+
+		token = strtok(NULL, " ");
+		if (token)
+		{
+			Q_strncpyz(cg.svCvars[i].Val2, token, sizeof(cg.svCvars[0].Val2));
+		}
+
+
+		// do a backup
+		Q_strncpyz(cg.cvarBackups[cg.cvarBackupsCount].cvarName, cg.svCvars[i].cvarName, sizeof(cg.cvarBackups[0].cvarName));
+		trap_Cvar_VariableStringBuffer(cg.svCvars[i].cvarName, cg.cvarBackups[cg.cvarBackupsCount].cvarValue, sizeof(cg.cvarBackups[0].cvarValue));
+		cg.cvarBackupsCount++;
+	}
+}
+
 void CG_ParseLegacyinfo(void)
 {
 	const char *info;
@@ -695,6 +732,13 @@ static void CG_ConfigStringModified(void)
 	str = CG_ConfigString(num);
 
 	// do something with it if necessary
+	switch (num)
+	{
+	case CS_SVCVAR:
+		CG_UpdateSvCvars();
+		break;
+	} // FIXME: do rest in switch too
+
 	if (num == CS_MUSIC)
 	{
 		CG_StartMusic();

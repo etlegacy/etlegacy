@@ -1144,6 +1144,13 @@ typedef struct
 
 	int waterundertime;
 
+	svCvar_t svCvars[MAX_SVCVARS];
+	int svCvarCount;
+
+	// backuping, forceCvar_t is good format, it holds name and value only
+	forceCvar_t cvarBackups[MAX_SVCVARS];
+	int cvarBackupsCount;
+
 	fileHandle_t logFile;
 } cg_t;
 
@@ -2607,6 +2614,8 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *));
 void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
 void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
 void CG_scores_cmd(void);
+
+void CG_UpdateSvCvars(void);
 
 // cg_playerstate.c
 void CG_Respawn(qboolean revived);

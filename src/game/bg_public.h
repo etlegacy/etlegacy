@@ -112,6 +112,32 @@ extern vec3_t playerlegsProneMaxs;
 #define MAX_FIRETEAMS           12
 #define MAX_FIRETEAM_MEMBERS    6
 
+#define MAX_SVCVARS 128
+
+#define SVC_EQUAL           0
+#define SVC_GREATER         1
+#define SVC_GREATEREQUAL    2
+#define SVC_LOWER           3
+#define SVC_LOWEREQUAL      4
+#define SVC_INSIDE          5
+#define SVC_OUTSIDE         6
+#define SVC_INCLUDE         7
+#define SVC_EXCLUDE         8
+
+typedef struct svCvar_s
+{
+	char cvarName[MAX_CVAR_VALUE_STRING];
+	int mode;
+	char Val1[MAX_CVAR_VALUE_STRING];
+	char Val2[MAX_CVAR_VALUE_STRING];
+} svCvar_t;
+
+typedef struct forceCvar_s
+{
+	char cvarName[MAX_CVAR_VALUE_STRING];
+	char cvarValue[MAX_CVAR_VALUE_STRING];
+} forceCvar_t;
+
 // client damage identifiers
 
 // different entity states
@@ -309,6 +335,8 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_CHARGETIMES                  38
 #define CS_FILTERCAMS                   39
 #define CS_LEGACYINFO                   40
+
+#define CS_SVCVAR                       41
 
 #define CS_MODELS                       64
 #define CS_SOUNDS                       (CS_MODELS +               MAX_MODELS)               // 320 (256)
