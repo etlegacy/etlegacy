@@ -3890,19 +3890,15 @@ void FS_PureServerSetReferencedPaks(const char *pakSums, const char *pakNames)
 	}
 }
 
-/*
-================
-FS_InitFilesystem
-
-Called only at inital startup, not when the filesystem
-is resetting due to a game change
-================
-*/
+/**
+ * @brief Called only at initial startup, not when the filesystem
+ * is resetting due to a game change
+ */
 void FS_InitFilesystem(void)
 {
 	cvar_t *tmp_fs_game;
 
-	// allow command line parms to override our defaults
+	// allow command line params to override our defaults
 	// we have to specially handle this, because normal command
 	// line variable sets don't happen until after the filesystem
 	// has already been initialized
@@ -3910,10 +3906,10 @@ void FS_InitFilesystem(void)
 	Com_StartupVariable("fs_homepath");
 	Com_StartupVariable("fs_game");
 
-	// ET:Legacy start
-	// at his point fs_game is set with game/mod path or not - set 'legacy' mod as default fs_game
+	// ET: Legacy start
+	// if fs_game is not specified, set 'legacy' mod as default fs_game
 	// this 'optimization' grants us 2.60b compatibilty w/o deeper changes and users
-	// don't have to set fs_game param run latest mod code
+	// don't have to set fs_game param to run latest mod code
 	tmp_fs_game = Cvar_Get("fs_game", "", 0);
 	if (!strcmp(tmp_fs_game->string, ""))
 	{
@@ -3921,7 +3917,7 @@ void FS_InitFilesystem(void)
 		tmp_fs_game         = Cvar_Get("fs_game", "", 0);
 		tmp_fs_game->flags |= CVAR_USER_CREATED; // deal as startup var
 
-		Com_Printf("Info: fs_game is set to '%s' mod. Start ET:Legacy with param '+set fs_game etmain' for adoring history.\n", tmp_fs_game->string);
+		Com_Printf("Info: fs_game now defaults to '%s' mod instead of 'etmain'\n", tmp_fs_game->string);
 	}
 
 	// try to start up normally
