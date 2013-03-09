@@ -756,7 +756,7 @@ void CL_PlayDemo_f(void)
 		Com_Error(ERR_DROP, "couldn't open %s", name);
 		return;
 	}
-	Q_strncpyz(clc.demoName, Cmd_Argv(1), sizeof(clc.demoName));
+	Q_strncpyz(clc.demoName, arg, sizeof(clc.demoName));
 
 	Con_Close();
 
@@ -768,7 +768,7 @@ void CL_PlayDemo_f(void)
 		CL_WriteWaveOpen();
 	}
 
-	Q_strncpyz(cls.servername, Cmd_Argv(1), sizeof(cls.servername));
+	Q_strncpyz(cls.servername, arg, sizeof(cls.servername));
 
 	// read demo messages until connected
 	while (cls.state >= CA_CONNECTED && cls.state < CA_PRIMED)
