@@ -267,7 +267,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		}
 	}
 
-	ri.Printf(PRINT_ALL, "...setting mode %d:\n", mode);
+	GLimp_DetectAvailableModes();
+
+	ri.Printf(PRINT_ALL, "...setting mode %d: ", mode);
 
 	if (mode == -2)
 	{
@@ -289,10 +291,10 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	}
 	else if (!R_GetModeInfo(&glConfig.vidWidth, &glConfig.vidHeight, &glConfig.windowAspect, mode))
 	{
-		ri.Printf(PRINT_ALL, " invalid mode\n");
+		ri.Printf(PRINT_ALL, "invalid mode\n");
 		return RSERR_INVALID_MODE;
 	}
-	ri.Printf(PRINT_ALL, " %d %d\n", glConfig.vidWidth, glConfig.vidHeight);
+	ri.Printf(PRINT_ALL, "%dx%d\n", glConfig.vidWidth, glConfig.vidHeight);
 
 	if (fullscreen)
 	{
@@ -500,8 +502,6 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		glConfig.stencilBits = tstencilbits;
 		break;
 	}
-
-	GLimp_DetectAvailableModes();
 
 	if (!vidscreen)
 	{
