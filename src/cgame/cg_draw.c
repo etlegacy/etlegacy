@@ -4545,7 +4545,7 @@ static void CG_DrawHud(void)
 	{
 		CG_DrawPlayerStatusHead();
 		CG_DrawPlayerStatus();
-		//CG_DrawPlayerStats();
+		CG_DrawPlayerStats();
 	}
 
 	CG_DrawLivesLeft();

@@ -446,7 +446,7 @@ void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r
 	dl->color[0]           = r;
 	dl->color[1]           = g;
 	dl->color[2]           = b;
-	dl->dlshader             = R_GetShaderByHandle(hShader);
+	dl->dlshader           = R_GetShaderByHandle(hShader);
 	if (dl->dlshader == tr.defaultShader)
 	{
 		dl->dlshader = NULL;
@@ -456,62 +456,62 @@ void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r
 /*
 void RE_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b, int overdraw)
 {
-	dlight_t *dl;
+    dlight_t *dl;
 
-	if (!tr.registered)
-	{
-		return;
-	}
-	if (r_numdlights >= MAX_DLIGHTS)
-	{
-		return;
-	}
-	if (intensity <= 0)
-	{
-		return;
-	}
-	// these cards don't have the correct blend mode
-	if (glConfig.hardwareType == GLHW_RIVA128 || glConfig.hardwareType == GLHW_PERMEDIA2)
-	{
-		return;
-	}
-	// RF, allow us to force some dlights under all circumstances
-	if (!(overdraw & REF_FORCE_DLIGHT))
-	{
-		if (r_dynamiclight->integer == 0)
-		{
-			return;
-		}
-		if (r_dynamiclight->integer == 2 && !(backEndData->dlights[r_numdlights].forced))
-		{
-			return;
-		}
-	}
+    if (!tr.registered)
+    {
+        return;
+    }
+    if (r_numdlights >= MAX_DLIGHTS)
+    {
+        return;
+    }
+    if (intensity <= 0)
+    {
+        return;
+    }
+    // these cards don't have the correct blend mode
+    if (glConfig.hardwareType == GLHW_RIVA128 || glConfig.hardwareType == GLHW_PERMEDIA2)
+    {
+        return;
+    }
+    // RF, allow us to force some dlights under all circumstances
+    if (!(overdraw & REF_FORCE_DLIGHT))
+    {
+        if (r_dynamiclight->integer == 0)
+        {
+            return;
+        }
+        if (r_dynamiclight->integer == 2 && !(backEndData->dlights[r_numdlights].forced))
+        {
+            return;
+        }
+    }
 
-	overdraw &= ~REF_FORCE_DLIGHT;
-	overdraw &= ~REF_JUNIOR_DLIGHT; //----(SA)	added
+    overdraw &= ~REF_FORCE_DLIGHT;
+    overdraw &= ~REF_JUNIOR_DLIGHT; //----(SA)	added
 
-	dl = &backEndData->dlights[r_numdlights++];
-	VectorCopy(org, dl->origin);
-	dl->radius   = intensity;
-	dl->color[0] = r;
-	dl->color[1] = g;
-	dl->color[2] = b;
-	dl->dlshader = NULL;
-	dl->overdraw = 0;
+    dl = &backEndData->dlights[r_numdlights++];
+    VectorCopy(org, dl->origin);
+    dl->radius   = intensity;
+    dl->color[0] = r;
+    dl->color[1] = g;
+    dl->color[2] = b;
+    dl->dlshader = NULL;
+    dl->overdraw = 0;
 
-	if (overdraw == 10)     // sorry, hijacking 10 for a quick hack (SA)
-	{
-		dl->dlshader = R_GetShaderByHandle(RE_RegisterShader("negdlightshader"));
-	}
-	else if (overdraw == 11)       // 11 is flames
-	{
-		dl->dlshader = R_GetShaderByHandle(RE_RegisterShader("flamedlightshader"));
-	}
-	else
-	{
-		dl->overdraw = overdraw;
-	}
+    if (overdraw == 10)     // sorry, hijacking 10 for a quick hack (SA)
+    {
+        dl->dlshader = R_GetShaderByHandle(RE_RegisterShader("negdlightshader"));
+    }
+    else if (overdraw == 11)       // 11 is flames
+    {
+        dl->dlshader = R_GetShaderByHandle(RE_RegisterShader("flamedlightshader"));
+    }
+    else
+    {
+        dl->overdraw = overdraw;
+    }
 }
 // done.
 
