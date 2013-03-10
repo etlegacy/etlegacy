@@ -236,24 +236,24 @@ Wiggle the normals for wavy environment mapping
 */
 void RB_CalcDeformNormals(deformStage_t *ds)
 {
-	int   i;
-	float scale;
-	float *xyz    = ( float * ) tess.xyz;
-	float *normal = ( float * ) tess.normal;
+	int    i;
+	double scale;
+	double *xyz    = ( double * ) tess.xyz;
+	float  *normal = ( float * ) tess.normal;
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4)
 	{
-		scale = 0.98f;
+		scale = 0.98;
 		scale = R_NoiseGet4f(xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
 		                     tess.shaderTime * ds->deformationWave.frequency);
 		normal[0] += ds->deformationWave.amplitude * scale;
 
-		scale = 0.98f;
+		scale = 0.98;
 		scale = R_NoiseGet4f(100 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
 		                     tess.shaderTime * ds->deformationWave.frequency);
 		normal[1] += ds->deformationWave.amplitude * scale;
 
-		scale = 0.98f;
+		scale = 0.98;
 		scale = R_NoiseGet4f(200 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
 		                     tess.shaderTime * ds->deformationWave.frequency);
 		normal[2] += ds->deformationWave.amplitude * scale;
@@ -302,7 +302,7 @@ void RB_CalcMoveVertexes(deformStage_t *ds)
 	int    i;
 	float  *xyz;
 	float  *table;
-	float  scale;
+	double scale;
 	vec3_t offset;
 
 	table = TableForFunc(ds->deformationWave.func);
@@ -1209,9 +1209,9 @@ RB_CalcTurbulentTexCoords
 */
 void RB_CalcTurbulentTexCoords(const waveForm_t *wf, float *st)
 {
-	int   i;
-	float now;
-	float s, t;
+	int    i;
+	double now;
+	float  s, t;
 
 	now = (wf->phase + tess.shaderTime * wf->frequency);
 
@@ -1244,12 +1244,12 @@ RB_CalcScrollTexCoords
 */
 void RB_CalcScrollTexCoords(const float scrollSpeed[2], float *st)
 {
-	int   i;
-	float timeScale = tess.shaderTime;
-	float adjustedScrollS, adjustedScrollT;
+	int    i;
+	double timeScale = tess.shaderTime;
+	double adjustedScrollS, adjustedScrollT;
 
-	adjustedScrollS = scrollSpeed[0] * timeScale;
-	adjustedScrollT = scrollSpeed[1] * timeScale;
+	adjustedScrollS = (double)scrollSpeed[0] * timeScale;
+	adjustedScrollT = (double)scrollSpeed[1] * timeScale;
 
 	// clamp so coordinates don't continuously get larger, causing problems
 	// with hardware limits
@@ -1286,8 +1286,8 @@ RB_CalcRotateTexCoords
 */
 void RB_CalcRotateTexCoords(float degsPerSecond, float *st)
 {
-	float        timeScale = tess.shaderTime;
-	float        degs;
+	double       timeScale = tess.shaderTime;
+	double       degs;
 	int          index;
 	float        sinValue, cosValue;
 	texModInfo_t tmi;

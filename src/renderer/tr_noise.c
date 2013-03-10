@@ -62,14 +62,14 @@ void R_NoiseInit(void)
 	}
 }
 
-float R_NoiseGet4f(float x, float y, float z, float t)
+double R_NoiseGet4f(double x, double y, double z, double t)
 {
-	int   i;
-	int   ix, iy, iz, it;
-	float fx, fy, fz, ft;
-	float front[4];
-	float back[4];
-	float fvalue, bvalue, value[2], finalvalue;
+	int    i;
+	int    ix, iy, iz, it;
+	double fx, fy, fz, ft;
+	double front[4];
+	double back[4];
+	double fvalue, bvalue, value[2], finalvalue;
 
 	ix = ( int ) floor(x);
 	fx = x - ix;

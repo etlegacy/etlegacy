@@ -226,10 +226,10 @@ typedef struct
 {
 	genFunc_t func;
 
-	float base;
-	float amplitude;
-	float phase;
-	float frequency;
+	double base;
+	double amplitude;
+	double phase;
+	double frequency;
 } waveForm_t;
 
 #define TR_MAX_TEXMODS 4
@@ -294,7 +294,7 @@ typedef struct
 {
 	image_t *image[MAX_IMAGE_ANIMATIONS];
 	int numImageAnimations;
-	float imageAnimationSpeed;
+	double imageAnimationSpeed;
 
 	texCoordGen_t tcGen;
 	vec3_t tcGenVectors[2];
@@ -423,8 +423,8 @@ typedef struct shader_s
 
 	void (*optimalStageIteratorFunc)(void);
 
-	float clampTime;                                    // time this shader is clamped to
-	float timeOffset;                                   // current time offset for this shader
+	double clampTime;                                    // time this shader is clamped to
+	double timeOffset;                                   // current time offset for this shader
 
 	int numStates;                                      // if non-zero this is a state shader
 	struct shader_s *currentShader;                     // current state if this is a state shader
@@ -494,7 +494,7 @@ typedef struct
 	byte areamask[MAX_MAP_AREA_BYTES];
 	qboolean areamaskModified;      // qtrue if areamask changed since last scene
 
-	float floatTime;                // tr.refdef.time / 1000.0
+	double floatTime;                // tr.refdef.time / 1000.0
 
 	// text messages for deform text shaders
 	char text[MAX_RENDER_STRINGS][MAX_RENDER_STRING_LENGTH];
@@ -1258,7 +1258,7 @@ extern glstate_t      glState;      // outside of TR since it shouldn't be clear
 
 //====================================================================
 
-float R_NoiseGet4f(float x, float y, float z, float t);
+double R_NoiseGet4f(double x, double y, double z, double t);
 void R_NoiseInit(void);
 
 void R_SwapBuffers(int);
@@ -1461,7 +1461,7 @@ typedef struct shaderCommands_s
 	int maxShaderIndicies;
 
 	shader_t *shader;
-	float shaderTime;
+	double shaderTime;
 	int fogNum;
 
 	int dlightBits;         // or together of all vertexDlightBits

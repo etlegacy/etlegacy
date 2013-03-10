@@ -650,7 +650,7 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 	int        i;
 	drawSurf_t *drawSurf;
 	int        oldSort;
-	float      originalTime;
+	double     originalTime;
 
 	// save original time for entity shader offsets
 	originalTime = backEnd.refdef.floatTime;
