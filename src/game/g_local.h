@@ -1698,6 +1698,9 @@ extern vmCvar_t skill_lightweapons;
 
 extern vmCvar_t g_misc;
 
+extern vmCvar_t g_intermissionTime;
+extern vmCvar_t g_intermissionReadyPercent;
+
 typedef struct GeoIPTag
 {
 	fileHandle_t GeoIPDatabase;
