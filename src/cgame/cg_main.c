@@ -294,6 +294,9 @@ vmCvar_t cg_logFile;
 
 vmCvar_t cg_countryflags; // GeoIP
 
+vmCvar_t cg_altHud;
+vmCvar_t cg_altHudFlags;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -494,6 +497,8 @@ cvarTable_t cvarTable[] =
 	{ &cg_logFile,               "cg_logFile",               "",      CVAR_ARCHIVE                 }, // we don't log the chats per default
 
 	{ &cg_countryflags,          "cg_countryflags",          "1",     CVAR_ARCHIVE                 }, // GeoIP
+	{ &cg_altHud,				 "cg_altHud",                "0",     CVAR_ARCHIVE                 }, // Hudstyles
+	{ &cg_altHudFlags,			 "cg_altHudFlags",           "0",     CVAR_ARCHIVE                 }, // Hudstyles
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

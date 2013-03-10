@@ -618,6 +618,8 @@ typedef struct dlight_s
 	vec3_t origin;
 	vec3_t color;               // range from 0.0 to 1.0, should be color normalized
 	float radius;
+	float radiusInverseCubed;       // attenuation optimization
+	float intensity;                // 1.0 = fullbright, > 1.0 = overbright
 
 	vec3_t transformed;         // origin in local coordinate system
 	int additive;               // texture detail is lost tho when the lightmap is dark
@@ -629,6 +631,7 @@ typedef struct dlight_s
 	shader_t *dlshader;     //----(SA) adding a shader to dlights, so, if desired, we can change the blend or texture of a dlight
 
 	qboolean forced;        //----(SA)	use this dlight when r_dynamiclight is either 1 or 2 (rather than just 1) for "important" gameplay lights (alarm lights, etc)
+	int flags;
 	//done
 } dlight_t;
 
@@ -2822,7 +2825,8 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys);
 // done.
 // Ridah
-void RE_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b, int overdraw);
+//void RE_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b, int overdraw);
+void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags);
 // done.
 //----(SA)
 void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);

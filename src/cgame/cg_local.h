@@ -2135,6 +2135,9 @@ extern vmCvar_t cg_spawnTimer_set;
 
 extern vmCvar_t cg_countryflags; // GeoIP
 
+extern vmCvar_t cg_altHud;
+extern vmCvar_t cg_altHudFlags;
+
 // cg_main.c
 const char *CG_ConfigString(int index);
 int CG_ConfigStringCopy(int index, char *buff, int buffsize);

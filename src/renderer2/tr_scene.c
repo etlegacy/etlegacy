@@ -416,6 +416,44 @@ RE_AddLightToScene
 
 =====================
 */
+void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
+{
+	dlight_t *dl;
+
+	// early out
+	if (!tr.registered || r_numdlights >= MAX_DLIGHTS || radius <= 0 || intensity <= 0)
+	{
+		return;
+	}
+
+	// allow us to force some dlights under all circumstances
+	if (!(flags & REF_FORCE_DLIGHT))
+	{
+		if (r_dynamiclight->integer == 0)
+		{
+			return;
+		}
+	}
+
+	// set up a new dlight
+	dl = &backEndData->dlights[r_numdlights++];
+	VectorCopy(org, dl->origin);
+	VectorCopy(org, dl->transformed);
+	dl->radius             = radius;
+	dl->radiusInverseCubed = (1.0 / dl->radius);
+	dl->radiusInverseCubed = dl->radiusInverseCubed * dl->radiusInverseCubed * dl->radiusInverseCubed;
+	dl->intensity          = intensity;
+	dl->color[0]           = r;
+	dl->color[1]           = g;
+	dl->color[2]           = b;
+	dl->dlshader             = R_GetShaderByHandle(hShader);
+	if (dl->dlshader == tr.defaultShader)
+	{
+		dl->dlshader = NULL;
+	}
+	dl->flags = flags;
+}
+/*
 void RE_AddLightToScene(const vec3_t org, float intensity, float r, float g, float b, int overdraw)
 {
 	dlight_t *dl;

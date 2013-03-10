@@ -4534,6 +4534,40 @@ void CG_DrawDemoRecording(void)
 }
 
 /*
+* Call the draw functions of the Hud elements
+* in the future this will be access point to hud drawing source
+*/
+static void CG_DrawHud(void)
+{
+	rectDef_t rect;
+
+	if (cg.snap->ps.stats[STAT_HEALTH] > 0)
+	{
+		CG_DrawPlayerStatusHead();
+		CG_DrawPlayerStatus();
+		//CG_DrawPlayerStats();
+	}
+
+	CG_DrawLivesLeft();
+
+	// Cursor hint
+	rect.w = rect.h = 48;
+	rect.x = .5f * SCREEN_WIDTH - .5f * rect.w;
+	rect.y = 260;
+	CG_DrawCursorhint(&rect);
+
+	// Stability bar
+	rect.x = 50;
+	rect.y = 208;
+	rect.w = 10;
+	rect.h = 64;
+	CG_DrawWeapStability(&rect);
+
+	// Stats Debugging
+	CG_DrawStatsDebug();
+}
+
+/*
 =================
 CG_Draw2D
 =================
@@ -4622,32 +4656,7 @@ static void CG_Draw2D(void)
 	{
 		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 		{
-			rectDef_t rect;
-
-			if (cg.snap->ps.stats[STAT_HEALTH] > 0)
-			{
-				CG_DrawPlayerStatusHead();
-				CG_DrawPlayerStatus();
-				CG_DrawPlayerStats();
-			}
-
-			CG_DrawLivesLeft();
-
-			// Cursor hint
-			rect.w = rect.h = 48;
-			rect.x = .5f * SCREEN_WIDTH - .5f * rect.w;
-			rect.y = 260;
-			CG_DrawCursorhint(&rect);
-
-			// Stability bar
-			rect.x = 50;
-			rect.y = 208;
-			rect.w = 10;
-			rect.h = 64;
-			CG_DrawWeapStability(&rect);
-
-			// Stats Debugging
-			CG_DrawStatsDebug();
+			CG_DrawHud();
 		}
 
 		if (!cg_paused.integer)
