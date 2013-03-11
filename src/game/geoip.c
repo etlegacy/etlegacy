@@ -70,7 +70,7 @@ unsigned int GeoIP_seek_record(GeoIP *gi, unsigned long ipnum)
 
 		if (step + 6 >= gi->memsize)
 		{
-			G_LogPrintf("GeoIP: Error Traversing Database for ipnum = %lu - Perhaps database is corrupt?\n", ipnum);
+			G_Printf("GeoIP: Error Traversing Database for ipnum = %lu - Perhaps database is corrupt?\n", ipnum);
 			return 255;
 		}
 
@@ -91,7 +91,7 @@ unsigned int GeoIP_seek_record(GeoIP *gi, unsigned long ipnum)
 		}
 	}
 
-	G_LogPrintf("GeoIP: Error Traversing Database for ipnum = %lu - Perhaps database is corrupt?\n", ipnum);
+	G_Printf("GeoIP: Error Traversing Database for ipnum = %lu - Perhaps database is corrupt?\n", ipnum);
 	return 255;
 }
 
@@ -102,7 +102,7 @@ void GeoIP_open(void)
 
 	if (!g_countryflags.integer)
 	{
-		G_LogPrintf("GeoIP is disabled\n");
+		G_Printf("GeoIP is disabled\n");
 		return;
 	}
 
@@ -110,7 +110,7 @@ void GeoIP_open(void)
 
 	if (gidb == NULL)
 	{
-		G_LogPrintf("GeoIP: Memory allocation error for GeoIP struct\n");
+		G_Printf("GeoIP: Memory allocation error for GeoIP struct\n");
 		return;
 	}
 
@@ -118,7 +118,7 @@ void GeoIP_open(void)
 
 	if ((int)gidb->memsize < 0)
 	{
-		G_LogPrintf("GeoIP: Error opening database GeoIP.dat\n");
+		G_Printf("GeoIP: Error opening database GeoIP.dat\n");
 		free(gidb);
 		gidb = NULL;
 		return;
@@ -126,7 +126,7 @@ void GeoIP_open(void)
 	}
 	else if (gidb->memsize == 0)
 	{
-		G_LogPrintf("GeoIP: Error zero-sized database file\n");
+		G_Printf("GeoIP: Error zero-sized database file\n");
 		trap_FS_FCloseFile(gidb->GeoIPDatabase);
 		free(gidb);
 		gidb = NULL;
@@ -139,10 +139,11 @@ void GeoIP_open(void)
 		{
 			trap_FS_Read(gidb->cache, gidb->memsize, gidb->GeoIPDatabase);
 			trap_FS_FCloseFile(gidb->GeoIPDatabase);
+			G_Printf("GeoIP is enabled. Database memory size: %.2f kb\n", gidb->memsize / 1024.f);
 			return;
 		}
 
-		G_LogPrintf("GeoIP: Memory allocation error for GeoIP cache\n");
+		G_Printf("GeoIP: Memory allocation error for GeoIP cache\n");
 		trap_FS_FCloseFile(gidb->GeoIPDatabase);
 		free(gidb);
 		gidb = NULL;

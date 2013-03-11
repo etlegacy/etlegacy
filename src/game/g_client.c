@@ -1798,8 +1798,8 @@ void ClientUserinfoChanged(int clientNum)
 		}
 	}
 
-	// overwrite empty names with a default name,
-	// but do not kick those players..
+	// overwrite empty names with a default name, but do not kick those players ...
+	// (player did delete the profile or profile can't be read)
 	if (strlen(cs_name) == 0)
 	{
 		Q_strncpyz(cs_name, va("Target #%i", clientNum), 15);
@@ -1929,7 +1929,7 @@ void ClientUserinfoChanged(int clientNum)
 
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
-	s = va("n\\%s\\t\\%i\\c\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i",
+	s = va("n\\%s\\t\\%i\\c\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i\\u\\%u",
 	       client->pers.netname,
 	       client->sess.sessionTeam,
 	       client->sess.playerType,
@@ -1942,7 +1942,8 @@ void ClientUserinfoChanged(int clientNum)
 	       client->sess.latchPlayerWeapon,
 	       client->sess.latchPlayerWeapon2,
 	       client->sess.muted ? 1 : 0,
-	       client->sess.referee
+	       client->sess.referee,
+	       client->sess.uci
 	       );
 
 	trap_GetConfigstring(CS_PLAYERS + clientNum, oldname, sizeof(oldname));
