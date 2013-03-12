@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	448
+#define WINDOW_HEIGHT	456
 #define GROUP_NAME		"grpHostGameAdvanced"
 		
 // Host Game Advanced Menu //
@@ -28,40 +28,42 @@ menuDef {
 #define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
 
 // General //
-	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 76, "OGOLNE" )
+	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 100, "OGOLNE" )
 	NUMERICFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Minimalny Ping:", .2, 8, "sv_minping", 4, "Ustawienie pingu minimalnego (0 = Brak Minimum)" )
 	NUMERICFIELD( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Maxymalny Ping:", .2, 8, "sv_maxping", 4, "Ustwawienie pingu maksymalnego (0 = Brak Maximum)" )
 	NUMERICFIELD( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Maksymalny rate gry:", .2, 8, "sv_maxrate", 6, "Maksimum danych jakie wyslac do clienta (0 = porownaj ustawienia z clientem)" )
 	NUMERICFIELD( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Nieaktywnosc Gracza:", .2, 8, "g_inactivity", 3, "Maks. czas, po ktorym client zostanie przerzucony na spectatora (0 = wylaczony)" )
 	NUMERICFIELD( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Nieaktywnosc Widza:", .2, 8, "g_spectatorInactivity", 3, "Maks. czas, po ktorym client zostanie wyrzucony z serwera (0 = wylaczony)" )
+	NUMERICFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Czas Przerwy:", .2, 8, "g_intermissionTime", 3, "Czas Przerwy" )
+	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Procent Gotowosci:", .2, 8, "g_intermissionReadyPercent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "" )
 	
 // Match //
-	SUBWINDOW( 6, 114, (SUBWINDOW_WIDTH), 220, "MECZ" )
-	YESNO( 8, 130, (SUBWINDOW_WIDTH)-4, 10, "Czekaj na gotowosc:", .2, 8, "g_doWarmup", "Wlacza potrzbna ilosc graczy na serwie, aby mozna bylo rozpaczac" )
-	NUMERICFIELD( 8, 142, (SUBWINDOW_WIDTH)-4, 10, "Minimum Graczy:", .2, 8, "match_minplayers", 2, "Sprecyzuj minimalna liczbe graczy, by rozpoczac mecz" )
-	NUMERICFIELD( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Gotowosc Procentowa:", .2, 8, "match_readypercent", 3, "Sprecyzuj minimalna ilosc graczy ktorzy musza kliknac READY przed meczem by rozpoczac" )
-	YESNO( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Pozn. Dolaczenie.:", .2, 8, "match_latejoin", "Czy gracz moze dolaczyc do teamu podczas gdy mecz wystartowal" )
-	YESNO( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Uciszaj Widzow:", .2, 8, "match_mutespecs", "Czy widzowie sa uciszeni" )
-	MULTI( 8, 190, (SUBWINDOW_WIDTH)-4, 10, "Uszko. podcz. rozgrzewki:", .2, 8, "match_warmupDamage", cvarFloatList { "Nikt" 0 "Tylko wrogowie" 1 "Wszyscy" 2 }, "Czy mozesz ranic graczy podczas rozgrzewki" )
-	NUMERICFIELD( 8, 202, (SUBWINDOW_WIDTH)-4, 10, "Maks. Graczy na Team:", .2, 8, "team_maxplayers", 2, "Sprecyzuj maksymalna liczbe graczy na team" )
-	YESNO( 8, 214, (SUBWINDOW_WIDTH)-4, 10, "Wylacz Kontrole Teamu:", .2, 8, "team_nocontrols", "Czy gracze moga uzywac komend ( blokowanie teamu/widzow, gotowy team, itd.)" )
-	NUMERICFIELD( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Czas Rozgrzewki:", .2, 8, "g_warmup", 2, "Dlugosc czasu trwania rozgrzewki" )
-	NUMERICFIELD( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "Maksymalna ilosc skarg:", .2, 8, "g_complaintlimit", 2, "Maksymalna ilosc skarg dla gracza zanim zostanie wykopany z serwera" )
-	MULTI( 8, 250, (SUBWINDOW_WIDTH)-4, 10, "Maksymalna ilosc skarg:", .2, 8, "g_ipcomplaintlimit", cvarFloatList { "Wylacz" 0 "1" 1 "2" 2 "3" 3 "4" 4 "5" 5 "6" 6 }, "Liczba unikalnych skarg zanim gracz zostanie wykopany z serwera" )
-	NUMERICFIELD( 8, 262, (SUBWINDOW_WIDTH)-4, 10, "Limit Czasu Mapy:", .2, 8, "ui_userTimeLimit", 6, "Nadpisz domyslny czas mapy" )
-	NUMERICFIELD( 8, 274, (SUBWINDOW_WIDTH)-4, 10, "Czas Odro. Aliatow:", .2, 8, "ui_userAlliedRespawnTime", 2, "Nadpisz domyslne odrodzenie Aliantow" )
-	NUMERICFIELD( 8, 286, (SUBWINDOW_WIDTH)-4, 10, "Czas Odro. Osi:", .2, 8, "ui_userAxisRespawnTime", 2, "Nadpisz domyslne odrodzenie Osi" )
-	NUMERICFIELD( 8, 298, (SUBWINDOW_WIDTH)-4, 10, "Zycia Aliantow:", .2, 8, "g_alliedmaxlives", 3, "Sprecyzuj maksymalna liczbe zyc Aliantom w grze" )
-	NUMERICFIELD( 8, 310, (SUBWINDOW_WIDTH)-4, 10, "Zycia OSI:", .2, 8, "g_axismaxlives", 3, "Sprecyzuj maksymalna liczbe zyc Osi w grze" )
-	MULTI( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Na Czas Typ-Rundy:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Okreslam typ rundy Na Czas (ABBA = zamiana stron, ABAB = utrzymanie stron)" )	
+	SUBWINDOW( 6, 138, (SUBWINDOW_WIDTH), 220, "MECZ" )
+	YESNO( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Czekaj na gotowosc:", .2, 8, "g_doWarmup", "Wlacza potrzbna ilosc graczy na serwie, aby mozna bylo rozpaczac" )
+	NUMERICFIELD( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Minimum Graczy:", .2, 8, "match_minplayers", 2, "Sprecyzuj minimalna liczbe graczy, by rozpoczac mecz" )
+	NUMERICFIELD( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Gotowosc Procentowa:", .2, 8, "match_readypercent", 3, "Sprecyzuj minimalna ilosc graczy ktorzy musza kliknac READY przed meczem by rozpoczac" )
+	YESNO( 8, 190, (SUBWINDOW_WIDTH)-4, 10, "Pozn. Dolaczenie.:", .2, 8, "match_latejoin", "Czy gracz moze dolaczyc do teamu podczas gdy mecz wystartowal" )
+	YESNO( 8, 202, (SUBWINDOW_WIDTH)-4, 10, "Uciszaj Widzow:", .2, 8, "match_mutespecs", "Czy widzowie sa uciszeni" )
+	MULTI( 8, 214, (SUBWINDOW_WIDTH)-4, 10, "Uszko. podcz. rozgrzewki:", .2, 8, "match_warmupDamage", cvarFloatList { "Nikt" 0 "Tylko wrogowie" 1 "Wszyscy" 2 }, "Czy mozesz ranic graczy podczas rozgrzewki" )
+	NUMERICFIELD( 8, 226, (SUBWINDOW_WIDTH)-4, 10, "Maks. Graczy na Team:", .2, 8, "team_maxplayers", 2, "Sprecyzuj maksymalna liczbe graczy na team" )
+	YESNO( 8, 238, (SUBWINDOW_WIDTH)-4, 10, "Wylacz Kontrole Teamu:", .2, 8, "team_nocontrols", "Czy gracze moga uzywac komend ( blokowanie teamu/widzow, gotowy team, itd.)" )
+	NUMERICFIELD( 8, 250, (SUBWINDOW_WIDTH)-4, 10, "Czas Rozgrzewki:", .2, 8, "g_warmup", 2, "Dlugosc czasu trwania rozgrzewki" )
+	NUMERICFIELD( 8, 262, (SUBWINDOW_WIDTH)-4, 10, "Maksymalna ilosc skarg:", .2, 8, "g_complaintlimit", 2, "Maksymalna ilosc skarg dla gracza zanim zostanie wykopany z serwera" )
+	MULTI( 8, 275, (SUBWINDOW_WIDTH)-4, 10, "Maksymalna ilosc skarg:", .2, 8, "g_ipcomplaintlimit", cvarFloatList { "Wylacz" 0 "1" 1 "2" 2 "3" 3 "4" 4 "5" 5 "6" 6 }, "Liczba unikalnych skarg zanim gracz zostanie wykopany z serwera" )
+	NUMERICFIELD( 8, 286, (SUBWINDOW_WIDTH)-4, 10, "Limit Czasu Mapy:", .2, 8, "ui_userTimeLimit", 6, "Nadpisz domyslny czas mapy" )
+	NUMERICFIELD( 8, 298, (SUBWINDOW_WIDTH)-4, 10, "Czas Odro. Aliatow:", .2, 8, "ui_userAlliedRespawnTime", 2, "Nadpisz domyslne odrodzenie Aliantow" )
+	NUMERICFIELD( 8, 310, (SUBWINDOW_WIDTH)-4, 10, "Czas Odro. Osi:", .2, 8, "ui_userAxisRespawnTime", 2, "Nadpisz domyslne odrodzenie Osi" )
+	NUMERICFIELD( 8, 222, (SUBWINDOW_WIDTH)-4, 10, "Zycia Aliantow:", .2, 8, "g_alliedmaxlives", 3, "Sprecyzuj maksymalna liczbe zyc Aliantom w grze" )
+	NUMERICFIELD( 8, 334, (SUBWINDOW_WIDTH)-4, 10, "Zycia OSI:", .2, 8, "g_axismaxlives", 3, "Sprecyzuj maksymalna liczbe zyc Osi w grze" )
+	MULTI( 8, 346, (SUBWINDOW_WIDTH)-4, 10, "Na Czas Typ-Rundy:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Okreslam typ rundy Na Czas (ABBA = zamiana stron, ABAB = utrzymanie stron)" )	
 	
 // LMS // NA POZNIEJ
-	SUBWINDOW( 6, 340, (SUBWINDOW_WIDTH), 64, "OSTATNI PRZETRWALY" )
+	SUBWINDOW( 6, 364, (SUBWINDOW_WIDTH), 64, "OSTATNI PRZETRWALY" )
 	
-	NUMERICFIELD( 8, 356, (SUBWINDOW_WIDTH)-4, 10, "OCP Rund na Mecz:", .2, 8, "g_lms_roundlimit", 2, "Nadpisz domyslne OCP rund na mecz" )	// fixme: range check
-	NUMERICFIELD( 8, 368, (SUBWINDOW_WIDTH)-4, 10, "OCP Meczow na Mape:", .2, 8, "g_lms_matchlimit", 2, "Nadpisz domyslne OCP mecze ( skladajacy sie z rund ) na mape" )	// fixme: range check
-	YESNO( 8, 380, (SUBWINDOW_WIDTH)-4, 10, "Blokuje Spec. Teamu:", .2, 8, "g_lms_followTeamOnly", "Zatrzymuje graczy podpatrujacych wrogi team" )
-	YESNO( 8, 392, (SUBWINDOW_WIDTH)-4, 10, "OCP Zablokowane Teamy:", .2, 8, "g_lms_lockTeams", "Zatrzymuje graczy chcacych zmienic team" )
+	NUMERICFIELD( 8, 380, (SUBWINDOW_WIDTH)-4, 10, "OCP Rund na Mecz:", .2, 8, "g_lms_roundlimit", 2, "Nadpisz domyslne OCP rund na mecz" )	// fixme: range check
+	NUMERICFIELD( 8, 392, (SUBWINDOW_WIDTH)-4, 10, "OCP Meczow na Mape:", .2, 8, "g_lms_matchlimit", 2, "Nadpisz domyslne OCP mecze ( skladajacy sie z rund ) na mape" )	// fixme: range check
+	YESNO( 8, 404, (SUBWINDOW_WIDTH)-4, 10, "Blokuje Spec. Teamu:", .2, 8, "g_lms_followTeamOnly", "Zatrzymuje graczy podpatrujacych wrogi team" )
+	YESNO( 8, 416, (SUBWINDOW_WIDTH)-4, 10, "OCP Zablokowane Teamy:", .2, 8, "g_lms_lockTeams", "Zatrzymuje graczy chcacych zmienic team" )
 
 // Admin //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 64, "ADMIN" )
