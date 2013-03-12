@@ -905,7 +905,7 @@ static const gentity_field_t gentity_fields[] =
 };
 
 // gentity fields helper functions
-gentity_field_t *_et_gentity_getfield(gentity_t *ent, char *fieldname)
+static gentity_field_t *_et_gentity_getfield(gentity_t *ent, char *fieldname)
 {
 	int i;
 
@@ -932,7 +932,7 @@ gentity_field_t *_et_gentity_getfield(gentity_t *ent, char *fieldname)
 	return 0;
 }
 
-void _et_gentity_getvec3(lua_State *L, vec3_t vec3)
+static void _et_gentity_getvec3(lua_State *L, vec3_t vec3)
 {
 	lua_newtable(L);
 	lua_pushnumber(L, vec3[0]);
@@ -943,7 +943,7 @@ void _et_gentity_getvec3(lua_State *L, vec3_t vec3)
 	lua_rawseti(L, -2, 3);
 }
 
-void _et_gentity_setvec3(lua_State *L, vec3_t *vec3)
+static void _et_gentity_setvec3(lua_State *L, vec3_t *vec3)
 {
 	lua_pushnumber(L, 1);
 	lua_gettable(L, -2);
@@ -959,7 +959,7 @@ void _et_gentity_setvec3(lua_State *L, vec3_t *vec3)
 	lua_pop(L, 1);
 }
 
-void _et_gentity_gettrajectory(lua_State *L, trajectory_t *traj)
+static void _et_gentity_gettrajectory(lua_State *L, trajectory_t *traj)
 {
 	int index;
 
@@ -984,7 +984,7 @@ void _et_gentity_gettrajectory(lua_State *L, trajectory_t *traj)
 	lua_settable(L, -3);
 }
 
-void _et_gentity_settrajectory(lua_State *L, trajectory_t *traj)
+static void _et_gentity_settrajectory(lua_State *L, trajectory_t *traj)
 {
 	lua_pushstring(L, "trType");
 	lua_gettable(L, -2);
@@ -1008,7 +1008,7 @@ void _et_gentity_settrajectory(lua_State *L, trajectory_t *traj)
 	lua_pop(L, 1);
 }
 
-void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
+static void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
 {
 	lua_newtable(L);
 	lua_pushinteger(L, 1);
@@ -1078,7 +1078,7 @@ static int _et_G_EntitiesFree(lua_State *L)
 //   This function _et_G_GetSpawnVar() returns the value of a gentity_t member,
 //    where the argument is a spawnvar name.
 //   (the array called "fields" in g_spawn.c is a mapping of spawnvars<->members)
-int _et_G_GetSpawnVar(lua_State *L)
+static int _et_G_GetSpawnVar(lua_State *L)
 {
 	gentity_t   *ent;
 	int         entnum = luaL_checkint(L, 1);
@@ -1256,7 +1256,7 @@ static int _et_trap_UnlinkEntity(lua_State *L)
 }
 
 // (variable) = et.gentity_get( entnum, fieldname, arrayindex )
-int _et_gentity_get(lua_State *L)
+static int _et_gentity_get(lua_State *L)
 {
 	gentity_t       *ent       = g_entities + luaL_checkint(L, 1);
 	const char      *fieldname = luaL_checkstring(L, 2);
