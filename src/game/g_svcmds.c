@@ -1654,6 +1654,12 @@ qboolean ConsoleCommand(void)
 	}
 #endif
 
+	if (!Q_stricmp(cmd, "cp"))
+	{
+		trap_SendServerCommand(-1, va("cp \"%s\n\"", Q_AddCR(ConcatArgs(1))));
+		return qtrue;
+	}
+
 	if (!Q_stricmp(cmd, "sv_cvarempty"))
 	{
 		memset(level.svCvars, 0, sizeof(level.svCvars));
@@ -1678,7 +1684,7 @@ qboolean ConsoleCommand(void)
 	{
 		if (!Q_stricmp(cmd, "say"))
 		{
-			trap_SendServerCommand(-1, va("cpm \"server: %s\n\"", ConcatArgs(1)));
+			trap_SendServerCommand(-1, va("cpm \"server: %s\n\"", Q_AddCR(ConcatArgs(1))));
 			return qtrue;
 		}
 

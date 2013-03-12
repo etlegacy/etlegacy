@@ -4443,3 +4443,40 @@ void ClientCommand(int clientNum)
 		trap_SendServerCommand(clientNum, va("print \"unknown cmd[lof] %s\n\"", cmd));
 	}
 }
+
+/**
+ *
+ * replaces all occurances of "\n" with '\n'
+ */
+char *Q_AddCR(char *s)
+{
+	char *copy, *place, *start;
+
+	if (!*s)
+	{
+		return s;
+	}
+	start = s;
+	while (*s)
+	{
+		if (*s == '\\')
+		{
+			copy  = s;
+			place = s;
+			*s++;
+			if (*s && *s == 'n')
+			{
+				*copy = '\n';
+				while (*++s)
+				{
+					*++copy = *s;
+				}
+				*++copy = '\0';
+				s       = place;
+				continue;
+			}
+		}
+		*s++;
+	}
+	return start;
+}
