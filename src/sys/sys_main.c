@@ -82,13 +82,7 @@ void Sys_SetBinaryPath(const char *path)
 #ifdef __AROS__
 	if (!strcmp(path, "."))
 	{
-		BPTR lock = Lock("PROGDIR:", ACCESS_READ);
-
-		if (lock)
-		{
-			NameFromLock(lock, binaryPath, sizeof(binaryPath));
-			UnLock(lock);
-		}
+		NameFromLock(GetProgramDir(), binaryPath, sizeof(binaryPath));
 	}
 	else
 #endif
