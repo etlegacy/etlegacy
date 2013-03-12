@@ -175,16 +175,19 @@ void CG_ClearParticles(void)
 	oldtime = cg.time;
 
 	// init the shaderAnims
-	for (i = 0; shaderAnimNames[i]; i++)
+	if (!initparticles) // CG_ClearParticles is also called on maprestart - we don't have to register twice ...
 	{
-		for (j = 0; j < shaderAnimCounts[i]; j++)
+		for (i = 0; shaderAnimNames[i]; i++)
 		{
-			shaderAnims[i][j] = trap_R_RegisterShader(va("%s%i", shaderAnimNames[i], j + 1));
+			for (j = 0; j < shaderAnimCounts[i]; j++)
+			{
+				shaderAnims[i][j] = trap_R_RegisterShader(va("%s%i", shaderAnimNames[i], j + 1));
+			}
 		}
-	}
-	numShaderAnims = i;
+		numShaderAnims = i;
 
-	initparticles = qtrue;
+		initparticles = qtrue;
+	}
 }
 
 /*
