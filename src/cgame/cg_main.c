@@ -637,10 +637,12 @@ void CG_RestoreProfile(void)
 {
 	int i;
 
-	CG_Printf(S_COLOR_GREEN "Restoring CVARS forced by server\n");
-
 	for (i = 0; i < cg.cvarBackupsCount; ++i)
 	{
+		if (i == 0)
+		{
+			CG_Printf(S_COLOR_GREEN "Restoring CVARS forced by server\n");
+		}
 		trap_Cvar_Set(cg.cvarBackups[i].cvarName, cg.cvarBackups[i].cvarValue);
 		CG_Printf(S_COLOR_YELLOW "cvar: %s %s\n", cg.cvarBackups[i].cvarName, cg.cvarBackups[i].cvarValue);
 	}
