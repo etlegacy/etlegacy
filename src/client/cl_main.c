@@ -5182,6 +5182,10 @@ void CL_SaveTransTable(const char *fileName, qboolean newOnly)
 				len = strlen(buf);
 				FS_Write(buf, len, f);
 
+				buf = va("\tnorwegian\t\t\"%s\"\n", t->translated[LANGUAGE_NORWEGIAN]);
+				len = strlen(buf);
+				FS_Write(buf, len, f);
+
 				buf = "}\n";
 				len = strlen(buf);
 				FS_Write(buf, len, f);
@@ -5523,6 +5527,23 @@ void CL_LoadTransTable(const char *fileName)
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_PORTUGUESE]))
 		{
 			Com_Printf(S_COLOR_YELLOW "WARNING: Portuguese translation formatting doesn't match up with english version!\n");
+			aborted = qtrue;
+			break;
+		}
+
+		// norwegian
+		token = COM_Parse(&text_p);
+		if (Q_stricmp("norwegian", token))
+		{
+			aborted = qtrue;
+			break;
+		}
+
+		token = COM_Parse(&text_p);
+		strcpy(translated[LANGUAGE_NORWEGIAN], token);
+		if (!CL_CheckTranslationString(original, translated[LANGUAGE_NORWEGIAN]))
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: Norwegian translation formatting doesn't match up with english version!\n");
 			aborted = qtrue;
 			break;
 		}

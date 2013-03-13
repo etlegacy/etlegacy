@@ -1114,6 +1114,9 @@ qboolean Load_Menu(int handle)
 			case LANGUAGE_PORTUGUESE:
 				s = va("%s%s", out, "portuguese/");
 				break;
+			case LANGUAGE_NORWEGIAN:
+				s = va("%s%s", out, "norwegian/");
+				break;
 			default:
 				break;
 			}
