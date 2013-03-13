@@ -78,7 +78,7 @@ option(FEATURE_ANTICHEAT	"Enable server side anti-wallhack code (experimental)"	
 option(FEATURE_CURSES		"Enable PDCurses console"						OFF)
 option(FEATURE_AUTOUPDATE	"Enable updater which downloads latest ET:L files"			ON)
 option(FEATURE_RENDERER2	"Build and use the new renderer"					OFF)
-option(FEATURE_IPV6		"Enable IPv6 networking code"						ON)
+option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
 
 if((WIN32 OR UNIX) AND NOT CMAKE_SYSTEM MATCHES "Darwin")
 	option(FEATURE_OMNIBOT	"Enable omnibot build in mod code (Win & Linux server only!)"		OFF)
