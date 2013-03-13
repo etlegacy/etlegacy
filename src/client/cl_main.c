@@ -5356,7 +5356,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_FRENCH], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_FRENCH]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: French translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: French translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
@@ -5373,7 +5373,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_GERMAN], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_GERMAN]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: German translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: German translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
@@ -5390,7 +5390,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_ITALIAN], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_ITALIAN]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Italian translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Italian translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
@@ -5407,7 +5407,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_SPANISH], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_SPANISH]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Spanish translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Spanish translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
@@ -5424,7 +5424,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_POLISH], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_POLISH]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Polish translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Polish translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
@@ -5441,7 +5441,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_DUTCH], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_DUTCH]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Dutch translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Dutch translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
@@ -5458,7 +5458,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_CZECH], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_CZECH]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Czech translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Czech translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
@@ -5475,7 +5475,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_SWEDISH], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_SWEDISH]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Swedish translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Swedish translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
@@ -5492,7 +5492,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_FINNISH], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_FINNISH]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Finnish translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Finnish translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
@@ -5509,7 +5509,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_DANISH], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_DANISH]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Danish translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Danish translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
@@ -5526,7 +5526,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_PORTUGUESE], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_PORTUGUESE]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Portuguese translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Portuguese translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
@@ -5543,7 +5543,7 @@ void CL_LoadTransTable(const char *fileName)
 		strcpy(translated[LANGUAGE_NORWEGIAN], token);
 		if (!CL_CheckTranslationString(original, translated[LANGUAGE_NORWEGIAN]))
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Norwegian translation formatting doesn't match up with english version!\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: Norwegian translation formatting doesn't match up with english version: %s\n", original);
 			aborted = qtrue;
 			break;
 		}
