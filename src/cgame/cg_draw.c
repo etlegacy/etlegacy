@@ -521,7 +521,7 @@ static float CG_DrawTimer(float y)
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = "^7WARMUP"; // don't draw reinforcement time in warmup mode // ^*
+		s        = va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode // ^*
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
@@ -706,6 +706,7 @@ static void CG_DrawTeamInfo(void)
 	}
 }
 
+// FIXME: @translations
 const char *CG_PickupItemText(int item)
 {
 	if (bg_itemlist[item].giType == IT_HEALTH)
@@ -929,7 +930,7 @@ static void CG_DrawDisconnect(void)
 	}
 
 	// also add text in center of screen
-	s = CG_TranslateString("Connection Interrupted");   // bk 010215 - FIXME
+	s = CG_TranslateString("Connection Interrupted");
 	w = CG_DrawStrlen(s) * BIGCHAR_WIDTH;
 	CG_DrawBigString(320 - w / 2, 100, s, 1.0F);
 
@@ -1322,13 +1323,6 @@ static void CG_DrawWeapReticle(void)
 		{
 			CG_DrawPic(80 + cgs.wideXoffset, 0, 480, 480, cgs.media.reticleShaderSimple);
 		}
-
-		/*      if(cgs.media.reticleShaderSimpleQ) {
-		            trap_R_DrawStretchPic( x,   0, w, h, 0, 0, 1, 1, cgs.media.reticleShaderSimpleQ );  // tl
-		            trap_R_DrawStretchPic( x+w, 0, w, h, 1, 0, 0, 1, cgs.media.reticleShaderSimpleQ );  // tr
-		            trap_R_DrawStretchPic( x,   h, w, h, 0, 1, 1, 0, cgs.media.reticleShaderSimpleQ );  // bl
-		            trap_R_DrawStretchPic( x+w, h, w, h, 1, 1, 0, 0, cgs.media.reticleShaderSimpleQ );  // br
-		        }*/
 
 		// hairs
 		CG_FillRect(84 + cgs.wideXoffset, 239, 150, 3, colorBlack);     // left
@@ -2440,7 +2434,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
 		s = "Make Fireteam private?";
-		CG_DrawStringExt(8, 200, s, colorYellow, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 80);
+		CG_DrawStringExt(8, 200, CG_TranslateString(s), colorYellow, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 80);
 
 		s = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
 		CG_DrawStringExt(8, 214, s, colorYellow, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 80);
@@ -2453,7 +2447,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
 		s = "Create a Fireteam?";
-		CG_DrawStringExt(8, 200, s, colorYellow, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 80);
+		CG_DrawStringExt(8, 200, CG_TranslateString(s), colorYellow, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 80);
 
 		s = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
 		CG_DrawStringExt(8, 214, s, colorYellow, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 80);
@@ -2466,7 +2460,7 @@ static void CG_DrawVote(void)
 		Q_strncpyz(str2, BindingFromName("vote no"), 32);
 
 		s = "Join a Fireteam?";
-		CG_DrawStringExt(8, 200, s, colorYellow, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 80);
+		CG_DrawStringExt(8, 200, CG_TranslateString(s), colorYellow, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 80);
 
 		s = va(CG_TranslateString("Press '%s' for YES, or '%s' for No"), str1, str2);
 		CG_DrawStringExt(8, 214, s, colorYellow, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 80);
@@ -2998,7 +2992,7 @@ static void CG_DrawWarmup(void)
 	{
 		trap_S_StartLocalSound(cgs.media.countPrepare, CHAN_ANNOUNCER);
 
-		CPri("^3PREPARE TO FIGHT!\n"); // @translate
+		CPri("^3PREPARE TO FIGHT!\n");
 
 		if (!cg.demoPlayback && cg_autoAction.integer & AA_DEMORECORD)
 		{
