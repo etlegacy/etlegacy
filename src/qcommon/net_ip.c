@@ -127,11 +127,14 @@ static cvar_t *net_socksUsername;
 static cvar_t *net_socksPassword;
 
 static cvar_t *net_ip;
-static cvar_t *net_ip6;
 static cvar_t *net_port;
+
+#ifdef FEATURE_IPV6
+static cvar_t *net_ip6;
 static cvar_t *net_port6;
 static cvar_t *net_mcast6addr;
 static cvar_t *net_mcast6iface;
+#endif
 
 static struct sockaddr socksRelayAddr;
 
@@ -145,14 +148,15 @@ static SOCKET multicast6_socket = INVALID_SOCKET;
 static struct ipv6_mreq curgroup;
 // And the currently bound address.
 static struct sockaddr_in6 boundto;
+
+// use an admin local address per default so that network admins can decide on how to handle quake3 traffic.
+#define NET_MULTICAST_IP6 "ff04::696f:7175:616b:6533"
+
 #endif
 
 #ifndef IF_NAMESIZE
   #define IF_NAMESIZE 16
 #endif
-
-// use an admin local address per default so that network admins can decide on how to handle quake3 traffic.
-#define NET_MULTICAST_IP6 "ff04::696f:7175:616b:6533"
 
 #define MAX_IPS     32
 
@@ -646,7 +650,11 @@ qboolean NET_CompareAdr(netadr_t a, netadr_t b)
 		return qfalse;
 	}
 
-	if (a.type == NA_IP || a.type == NA_IP6)
+	if (a.type == NA_IP
+#ifdef FEATURE_IPV6
+	    || a.type == NA_IP6
+#endif
+	    )
 	{
 		if (a.port == b.port)
 		{
@@ -818,7 +826,11 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
 	int                     ret = SOCKET_ERROR;
 	struct sockaddr_storage addr;
 
-	if (to.type != NA_BROADCAST && to.type != NA_IP && to.type != NA_IP6 && to.type != NA_MULTICAST6)
+	if (to.type != NA_BROADCAST && to.type != NA_IP
+#ifdef FEATURE_IPV6
+	    && to.type != NA_IP6 && to.type != NA_MULTICAST6
+#endif
+	    )
 	{
 		Com_Error(ERR_FATAL, "Sys_SendPacket: bad address type");
 		return;
@@ -1643,20 +1655,25 @@ static void NET_GetLocalAddress(void)
 
 	if (!getaddrinfo(hostname, NULL, &hint, &res))
 	{
-		struct sockaddr_in  mask4;
+		struct sockaddr_in mask4;
+#ifdef FEATURE_IPV6
 		struct sockaddr_in6 mask6;
-		struct addrinfo     *search;
+#endif
+		struct addrinfo *search;
 
 		/* On operating systems where it's more difficult to find out the configured interfaces, we'll just assume a
 		 * netmask with all bits set. */
 
 		memset(&mask4, 0, sizeof(mask4));
+#ifdef FEATURE_IPV6
 		memset(&mask6, 0, sizeof(mask6));
+#endif
 		mask4.sin_family = AF_INET;
 		memset(&mask4.sin_addr.s_addr, 0xFF, sizeof(mask4.sin_addr.s_addr));
+#ifdef FEATURE_IPV6
 		mask6.sin6_family = AF_INET6;
 		memset(&mask6.sin6_addr, 0xFF, sizeof(mask6.sin6_addr));
-
+#endif
 		// add all IPs from returned list.
 		for (search = res; search; search = search->ai_next)
 		{
@@ -1664,10 +1681,12 @@ static void NET_GetLocalAddress(void)
 			{
 				NET_AddLocalAddress("", search->ai_addr, (struct sockaddr *) &mask4);
 			}
+#ifdef FEATURE_IPV6
 			else if (search->ai_family == AF_INET6)
 			{
 				NET_AddLocalAddress("", search->ai_addr, (struct sockaddr *) &mask6);
 			}
+#endif
 		}
 
 		Sys_ShowIP();
@@ -1783,9 +1802,9 @@ static qboolean NET_GetCvars(void)
 	net_enabled = Cvar_Get("net_enabled", "3", CVAR_LATCH | CVAR_ARCHIVE);
 #else
 	net_enabled = Cvar_Get("net_enabled", "1", CVAR_LATCH | CVAR_ARCHIVE);
-#endif
+#endif // FEATURE_IPV6
 
-#endif
+#endif // DEDICATED
 	modified              = net_enabled->modified;
 	net_enabled->modified = qfalse;
 
@@ -1793,15 +1812,17 @@ static qboolean NET_GetCvars(void)
 	modified        += net_ip->modified;
 	net_ip->modified = qfalse;
 
-	// FIXME FEATURE_IPV6
+#ifdef FEATURE_IPV6
 	net_ip6           = Cvar_Get("net_ip6", "::", CVAR_LATCH);
 	modified         += net_ip6->modified;
 	net_ip6->modified = qfalse;
+#endif
 
 	net_port           = Cvar_Get("net_port", va("%i", PORT_SERVER), CVAR_LATCH);
 	modified          += net_port->modified;
 	net_port->modified = qfalse;
 
+#ifdef FEATURE_IPV6
 	net_port6           = Cvar_Get("net_port6", va("%i", PORT_SERVER), CVAR_LATCH);
 	modified           += net_port6->modified;
 	net_port6->modified = qfalse;
@@ -1815,9 +1836,10 @@ static qboolean NET_GetCvars(void)
 	net_mcast6iface = Cvar_Get("net_mcast6iface", "0", CVAR_LATCH | CVAR_ARCHIVE);
 #else
 	net_mcast6iface = Cvar_Get("net_mcast6iface", "", CVAR_LATCH | CVAR_ARCHIVE);
-#endif
+#endif //  _WIN32
 	modified                 += net_mcast6iface->modified;
 	net_mcast6iface->modified = qfalse;
+#endif // FEATURE_IPV6
 
 	net_socksEnabled           = Cvar_Get("net_socksEnabled", "0", CVAR_LATCH | CVAR_ARCHIVE);
 	modified                  += net_socksEnabled->modified;
