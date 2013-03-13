@@ -30,7 +30,7 @@ menuDef {
 // Player //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 40, "GRACZ" )
 	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Nazwa Gracza:", .2, 8, "name", 36, 18, "Wpisz nazwe jaka chcialbys by bylo twoje imie" )
-	MULTI( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Jezyk:", .2, 8, "cl_language", cvarFloatList { "Angielski (default)" 0 "Francuski" 1 "Niemiecki" 2 "Wloski" 3 "Hiszpanski" 4 "Polski" 5 "Holenderski" 6 "Czeski" 7 "Szwedzki" 8 "Finski" 9 "Dunski" 10 "Portugarski" 11}, "Ustaw swoj jezyk" )
+	MULTI( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Jezyk:", .2, 8, "cl_language", cvarFloatList { "Angielski (default)" 0 "Francuski" 1 "Niemiecki" 2 "Wloski" 3 "Hiszpanski" 4 "Polski" 5 "Holenderski" 6 "Czeski" 7 "Szwedzki" 8 "Finski" 9 "Dunski" 10 "Portugarski" 11 "Norweski" 12 }, "Ustaw swoj jezyk" )
 	
 // Physics //
 	SUBWINDOW( 6, 74, (SUBWINDOW_WIDTH), 40, "FIZYKA" )
