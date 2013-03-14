@@ -2045,6 +2045,12 @@ int AddBot(const MessageHelper &_data)
 		return -1;
 	}
 
+	//if (level.maxclients == level.numConnectedClients && (level.time % 3000 == 0))
+	//{
+	//	PrintError("Could not add bot! Server is full!");
+	//	return -1;
+	//}
+
 	OB_GETMSG(Msg_Addbot);
 
 	// cs: find a usable slot. this should avoid any game / engine sync problems related to CS_FREE
@@ -2067,7 +2073,7 @@ int AddBot(const MessageHelper &_data)
 
 	if (useSlot == 0)
 	{
-		PrintError("Could not add bot!, no free slots!");
+		PrintError("Could not add bot! No free slots!");
 		return -1;
 	}
 
@@ -6056,7 +6062,7 @@ bool DoesEntityStillExist(const GameEntity &_hndl)
 int GetAutoNavFeatures(AutoNavFeature *_feature, int _max)
 {
 	int iNumFeatures = 0;
-	for (int i = MAX_CLIENTS; i < level.num_entities; ++i)
+	for (int i = MAX_CLIENTS; i < level.num_entities && iNumFeatures < _max; ++i)
 	{
 		gentity_t *e = &g_entities[i];
 
