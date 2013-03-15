@@ -50,11 +50,11 @@ menuDef
 #define SUBWINDOW_X			.5 * (WINDOW_WIDTH - SUBWINDOW_WIDTH)
 #define SUBWINDOW_Y			.5 * (WINDOW_HEIGHT - SUBWINDOW_HEIGHT)
 
-	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "VIDEO EINSTELLUNGEN Ã„NDERN" )
+	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "VIDEO EINSTELLUNGEN ÄNDERN" )
 #ifdef FUI
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Setze empfohlene Video Einstellungen\nund zurÃ¼ck zum Hauptmenu?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Setze empfohlene Video Einstellungen\nund zurück zum Hauptmenu?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 #else
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Setze empfohlene Video Einstellungen\nund zurÃ¼ck zum Spielmenu?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Setze empfohlene Video Einstellungen\nund zurück zum Spielmenu?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 #endif // FUI
 	
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "JA", .3, 14, execnow "setRecommended" ; close rec_restart ; exec "vid_restart" )
