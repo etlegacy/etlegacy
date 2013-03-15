@@ -755,6 +755,7 @@ struct gclient_s
 	int respawnTime;                // can respawn when time > this, force after g_forcerespwan
 	int inactivityTime;             // kick players when time > this
 	qboolean inactivityWarning;     // qtrue if the five seoond warning has been given
+	int inactivitySecondsLeft;      // for displaying a counting-down time on clients (milliseconds before activity kicks in..)
 
 	int airOutTime;
 

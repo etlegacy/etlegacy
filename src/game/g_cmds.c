@@ -1292,6 +1292,17 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 		}
 	}
 
+	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
+	{
+		ent->client->inactivityTime        = level.time + (g_inactivity.integer ? g_inactivity.integer : 60) * 1000;
+		ent->client->inactivitySecondsLeft = (g_inactivity.integer) ? g_inactivity.integer : 60;
+	}
+	else
+	{
+		ent->client->inactivityTime        = level.time + (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60) * 1000;
+		ent->client->inactivitySecondsLeft = (g_spectatorInactivity.integer) ? g_spectatorInactivity.integer : 60;
+	}
+
 	return qtrue;
 }
 

@@ -2547,6 +2547,17 @@ void ClientBegin(int clientNum)
 
 	ClientSpawn(ent, qfalse, qtrue, qtrue);
 
+	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
+	{
+		client->inactivityTime        = level.time + (g_inactivity.integer ? g_inactivity.integer : 60) * 1000;
+		client->inactivitySecondsLeft = (g_inactivity.integer) ? g_inactivity.integer : 60;
+	}
+	else
+	{
+		client->inactivityTime        = level.time + (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60) * 1000;
+		client->inactivitySecondsLeft = (g_spectatorInactivity.integer) ? g_spectatorInactivity.integer : 60;
+	}
+
 	// Changed below for team independant maxlives
 	if (g_gametype.integer != GT_WOLF_LMS)
 	{
@@ -3028,13 +3039,13 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		trap_LinkEntity(ent);
 	}
 
-	client->respawnTime       = level.timeCurrent;
-	client->inactivityTime    = level.time + g_inactivity.integer * 1000;
-	client->inactivityWarning = qfalse;
-	//client->inactivitySecondsLeft = (g_inactivity.integer)? g_inactivity.integer : 60;
-	client->latched_buttons  = 0;
-	client->latched_wbuttons = 0;
-	client->deathTime        = 0;
+	client->respawnTime           = level.timeCurrent;
+	client->inactivityTime        = level.time + g_inactivity.integer * 1000;
+	client->inactivityWarning     = qfalse;
+	client->inactivitySecondsLeft = (g_inactivity.integer) ? g_inactivity.integer : 60;
+	client->latched_buttons       = 0;
+	client->latched_wbuttons      = 0;
+	client->deathTime             = 0;
 
 	if (level.intermissiontime)
 	{
@@ -3170,6 +3181,7 @@ void ClientDisconnect(int clientNum)
 	{
 		mapEntityData_t      *mEnt;
 		mapEntityData_Team_t *teamList;
+		mapEntityData_t      *mEntFree;
 
 		for (i = 0; i < 2; i++)
 		{
@@ -3184,7 +3196,7 @@ void ClientDisconnect(int clientNum)
 
 			while (mEnt)
 			{
-				mapEntityData_t *mEntFree = mEnt;
+				mEntFree = mEnt;
 
 				mEnt = G_FindMapEntityDataSingleClient(teamList, mEnt, ent->s.number, -1);
 

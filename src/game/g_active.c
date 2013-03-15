@@ -605,63 +605,185 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 /**
  * @return Returns qfalse if the client is dropped
  * @param client Client
+ *
+ * @brief
+ * g_inactivity and g_spectatorinactivity :
+ * Values have to be higher then 10 seconds, that is the time after the warn message is sent.
+ * (if it's lower than that value, it will not work at all)
  */
 qboolean ClientInactivityTimer(gclient_t *client)
 {
-/* FIXME: Adjust for OMNIBOT
-    // inactivity timer broken in 2.60 ?
-#ifdef FEATURE_OMNIBOT
-    qboolean	doDrop = (g_spectatorInactivity.integer && (g_maxclients.integer - level.numNonSpectatorClients + g_OmniBotPlaying.integer <= 0))? qtrue : qfalse;
+	int      inactivity     = (g_inactivity.integer) ? g_inactivity.integer : 60;
+	int      inactivityspec = (g_spectatorInactivity.integer) ? g_spectatorInactivity.integer : 60;
+	qboolean inTeam         = (client->sess.sessionTeam == TEAM_ALLIES || client->sess.sessionTeam == TEAM_AXIS) ? qtrue : qfalse;
+
+#ifdef OMNIBOTS
+	qboolean doDrop = (g_spectatorInactivity.integer && (g_maxclients.integer - level.numNonSpectatorClients + g_OmniBotPlaying.integer <= 0)) ? qtrue : qfalse;
 #else
-    qboolean	doDrop = (g_spectatorInactivity.integer && (g_maxclients.integer - level.numNonSpectatorClients <= 0))? qtrue : qfalse;
+	qboolean doDrop = (g_spectatorInactivity.integer && (g_maxclients.integer - level.numNonSpectatorClients <= 0)) ? qtrue : qfalse;
 #endif
-*/
 
-	// OSP - modified
-	if ((g_inactivity.integer == 0 && client->sess.sessionTeam != TEAM_SPECTATOR) || (g_spectatorInactivity.integer == 0 && client->sess.sessionTeam == TEAM_SPECTATOR))
+	// inactivity settings disabled?
+	if (g_inactivity.integer == 0 && g_spectatorInactivity.integer == 0)
 	{
-		// give everyone some time, so if the operator sets g_inactivity during
-		// gameplay, everyone isn't kicked
-		client->inactivityTime    = level.time + 60 * 1000;
+		// Give everyone some time, so if the operator sets g_inactivity or g_spectatorinactivity during
+		// gameplay, everyone isn't kicked or moved to spectators
+		client->inactivityTime    = level.time + 60000;
 		client->inactivityWarning = qfalse;
+		return qtrue;
 	}
-	else if (client->pers.cmd.forwardmove ||
-	         client->pers.cmd.rightmove ||
-	         client->pers.cmd.upmove ||
-	         (client->pers.cmd.wbuttons & WBUTTON_ATTACK2) ||
-	         (client->pers.cmd.buttons & BUTTON_ATTACK) ||
-	         (client->pers.cmd.wbuttons & WBUTTON_LEANLEFT) ||
-	         (client->pers.cmd.wbuttons & WBUTTON_LEANRIGHT)
-	         || client->ps.pm_type == PM_DEAD)
-	{
 
+	// the client is still active?
+	if (client->pers.cmd.forwardmove || client->pers.cmd.rightmove || client->pers.cmd.upmove ||
+	    client->pers.cmd.wbuttons & (WBUTTON_ATTACK2 | WBUTTON_LEANLEFT | WBUTTON_LEANRIGHT)  ||
+	    client->pers.cmd.buttons & BUTTON_ATTACK ||
+	    client->ps.eFlags & (EF_MOUNTEDTANK | EF_MG42_ACTIVE) ||
+	    (client->ps.pm_type == PM_DEAD /*&& !(client->ps.eFlags & EF_PLAYDEAD)*/))     // playdead sets PM_DEAD, so check if playing dead ...
+	{
 		client->inactivityWarning = qfalse;
-		client->inactivityTime    = level.time + 1000 *
-		                            ((client->sess.sessionTeam != TEAM_SPECTATOR) ?
-		                          g_inactivity.integer :
-		                          g_spectatorInactivity.integer);
 
+		if (inTeam)
+		{
+			client->inactivityTime = 1000 * inactivity;
+		}
+		else
+		{
+			client->inactivityTime = level.time + 1000 * inactivityspec;
+		}
+		return qtrue;
 	}
-	else if (!client->pers.localClient)
+
+	// No inactivity for localhost and shrubbot-set clients
+	if (client->pers.localClient /*|| G_shrubbot_permission(&g_entities[client-level.clients], SBF_ACTIVITY)*/)    // FIXME: refs?, how to deal with game manager
 	{
-		if (level.time > client->inactivityTime && client->inactivityWarning)
+		return qtrue;
+	}
+
+	// start displaying the initial warning when the countdown is halfway (1000/2=500)..
+	if (!client->inactivityWarning)
+	{
+		if (g_inactivity.integer &&
+		    (level.time > client->inactivityTime - 500 * inactivity) &&
+		    inTeam)
 		{
-			client->inactivityWarning = qfalse;
-			client->inactivityTime    = level.time + 60 * 1000;
-			trap_DropClient(client - level.clients, "Dropped due to inactivity", 0);
-			return qfalse;
+			CPx(client - level.clients, va("cp \"^3%i seconds until moving to spectator for inactivity!\n\"", inactivity));
+			CPx(client - level.clients, va("print \"^3%i seconds until moving to spectator for inactivity!\n\"", inactivity));
+			G_Printf("Inactivity warning issued to: %s\n", client->pers.netname);
+			client->inactivityWarning     = qtrue;
+			client->inactivityTime        = level.time + 500 * inactivity;
+			client->inactivitySecondsLeft = inactivity;
 		}
-
-		if (!client->inactivityWarning && level.time > client->inactivityTime - 10000)
+		// if a player will not be kicked from the server (because there are still free slots),
+		// do not display messages for inactivity-drop/kick.
+		else if (doDrop && g_spectatorInactivity.integer &&
+		         (level.time > client->inactivityTime - 500 * inactivityspec) &&
+		         !inTeam)
 		{
-			CPx(client - level.clients, "cp \"^310 seconds until inactivity drop!\n\"");
-			CPx(client - level.clients, "print \"^310 seconds until inactivity drop!\n\"");
-			G_Printf("10s inactivity warning issued to: %s\n", client->pers.netname);
-
-			client->inactivityWarning = qtrue;
-			client->inactivityTime    = level.time + 10000; // Just for safety
+			CPx(client - level.clients, va("cp \"^3%i seconds until inactivity drop!\n\"", inactivityspec));
+			CPx(client - level.clients, va("print \"^3%i seconds until inactivity drop!\n\"", inactivityspec));
+			G_Printf("Spectator Inactivity warning issued to: %s\n", client->pers.netname);
+			client->inactivityWarning     = qtrue;
+			client->inactivityTime        = level.time + 500 * inactivityspec;
+			client->inactivitySecondsLeft = inactivityspec;
 		}
 	}
+	else
+	{
+		if (level.time > client->inactivityTime)
+		{
+			if (inTeam)
+			{
+				SetTeam(&g_entities[client - level.clients], "s", qtrue, -1, -1, qfalse);
+				client->inactivityWarning     = qfalse;
+				client->inactivityTime        = level.time + 1000 * inactivityspec;
+				client->inactivitySecondsLeft = inactivityspec;
+			}
+			else
+			{
+				// slots occupied by bots should be considered "free",
+				// because bots will disconnect if a human player connects..
+				if (doDrop)
+				{
+					trap_DropClient(client - level.clients, "Dropped due to inactivity", 0);
+					return qfalse;
+				}
+			}
+		}
+		else
+		{
+			qboolean showMsg     = qfalse;
+			int      secondsLeft = (client->inactivityTime - level.time) / 1000;
+
+			// a second has passed since last message was displayed??
+			if (secondsLeft != client->inactivitySecondsLeft)
+			{
+				client->inactivitySecondsLeft = secondsLeft;
+				if (secondsLeft <= 0)
+				{
+					// countdown expired..
+					showMsg = qtrue;
+				}
+				// wait at least half the (inactivity)timeout, before sending new messages.
+				// to prevent players seeing messages immediately when they don't move anymore..
+				else if (inTeam && g_inactivity.integer && (secondsLeft > (g_inactivity.integer >> 1)))     // integer >>1 == /2 == *0.5
+				{
+					return qtrue;
+				}
+				else if (!inTeam && g_spectatorInactivity.integer && (secondsLeft > (g_spectatorInactivity.integer >> 1)))
+				{
+					return qtrue;
+				}
+				// display a message every second..
+				else if (secondsLeft < 15)
+				{
+					showMsg = qtrue;
+				}
+				// display a message every 5 seconds..
+				else if (secondsLeft < 30 && secondsLeft % 5 == 0)
+				{
+					showMsg = qtrue;
+				}
+				// display a message every 10 seconds..
+				else if (secondsLeft < 60 && secondsLeft % 10 == 0)
+				{
+					showMsg = qtrue;
+				}
+				// display a message every 30 seconds..
+				else if (secondsLeft % 30 == 0)
+				{
+					showMsg = qtrue;
+				}
+			}
+			if (showMsg)
+			{
+				// give a few more messages, so people can see the time counting down..
+				if (g_inactivity.integer && inTeam)
+				{
+					if (secondsLeft <= 0)
+					{
+						CPx(client - level.clients, "cp \"^3moved to spectator for inactivity!\n\"");
+					}
+					else
+					{
+						CPx(client - level.clients, va("cp \"^3%i seconds until moving to spectator for inactivity!\n\"", secondsLeft));
+					}
+				}
+				else if (g_spectatorInactivity.integer && !inTeam && doDrop)
+				{
+					if (secondsLeft <= 0)
+					{
+						CPx(client - level.clients, "cp \"^3dropped for inactivity!\n\"");
+					}
+					else
+					{
+						CPx(client - level.clients, va("cp \"^3%i seconds until inactivity drop!\n\"", secondsLeft));
+					}
+				}
+			}
+		}
+	}
+
+	// do not kick by default..
 	return qtrue;
 }
 
