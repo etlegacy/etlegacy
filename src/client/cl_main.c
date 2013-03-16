@@ -4397,9 +4397,11 @@ void CL_LocalServers_f(void)
 			NET_SendPacket(NS_CLIENT, strlen(message), message, to);
 
 #ifdef FEATURE_IPV6
-			// FIXME: do only if net_enabled.integer & 2
-			to.type = NA_MULTICAST6;
-			NET_SendPacket(NS_CLIENT, strlen(message), message, to);
+			if (net_enabled.integer & NET_ENABLEV6)
+			{
+				to.type = NA_MULTICAST6;
+				NET_SendPacket(NS_CLIENT, strlen(message), message, to);
+			}
 #endif
 		}
 	}
