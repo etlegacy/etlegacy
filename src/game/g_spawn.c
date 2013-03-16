@@ -100,7 +100,6 @@ qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *o
 	return present;
 }
 
-// FIXME: ETPro scripting ...
 field_t fields[] =
 {
 	{ "classname",    FOFS(classname),      F_LSTRING   },
@@ -263,7 +262,6 @@ void SP_target_counter(gentity_t *ent);
 void SP_target_lock(gentity_t *ent);
 void SP_target_effect(gentity_t *ent);
 void SP_target_fog(gentity_t *ent);
-void SP_target_autosave(gentity_t *ent);
 
 // entity visibility dummy
 void SP_misc_vis_dummy(gentity_t *ent);
@@ -379,7 +377,6 @@ void SP_misc_firetrails(gentity_t *ent);
 void SP_misc_spawner(gentity_t *ent);
 void SP_props_decor_Scale(gentity_t *ent);
 
-
 // debris test
 void SP_func_debris(gentity_t *ent);
 // ===================
@@ -470,7 +467,6 @@ spawn_t spawns[] =
 	{ "target_lock",               SP_target_lock               },
 	{ "target_effect",             SP_target_effect             },
 	{ "target_fog",                SP_target_fog                },
-	{ "target_autosave",           SP_target_autosave           }, // obsolete
 
 	{ "target_rumble",             SP_target_rumble             },
 
@@ -646,7 +642,12 @@ qboolean G_CallSpawn(gentity_t *ent)
 			return qtrue;
 		}
 	}
-	G_Printf("%s doesn't have a spawn function\n", ent->classname);
+
+	// hack: this avoids spammy prints on railgun start, bsp uses obsolete classname bot_sniper_spot
+	if (!Q_stricmp(ent->classname, "bot_sniper_spo"))
+	{
+		G_Printf("%s doesn't have a spawn function\n", ent->classname);
+	}
 
 	return qfalse;
 }

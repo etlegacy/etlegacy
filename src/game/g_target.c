@@ -941,14 +941,6 @@ void SP_target_counter(gentity_t *ent)
 	ent->use = Use_Target_Counter;
 }
 
-/*QUAKED target_autosave (1 1 0) (-8 -8 -8) (8 8 8)
-saves game to 'autosave.sav' when triggered then dies.
-*/
-void SP_target_autosave(gentity_t *ent)
-{
-	G_Printf("SP_target_autosave not supported.\n");
-}
-
 //==========================================================
 
 /*
