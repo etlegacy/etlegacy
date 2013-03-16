@@ -31,10 +31,14 @@ option(BUILD_MOD		"Build the mod libraries"					ON)
 
 # Enable pk3 creation if zip executable is found. Download it on Windows
 find_program(ZIP_EXECUTABLE zip)
+find_program(UNZIP_EXECUTABLE unzip)
 if(NOT ZIP_EXECUTABLE AND WIN32)
-	message(STATUS "Downloading zip.exe to " ${CMAKE_BINARY_DIR}/zip.exe)
-	file(DOWNLOAD http://stahlworks.com/dev/zip.exe ${CMAKE_BINARY_DIR}/zip.exe SHOW_PROGRESS TIMEOUT 10)
-	find_program(ZIP_EXECUTABLE zip)
+       message(STATUS "Downloading zip.exe to " ${CMAKE_BINARY_DIR}/zip.exe)
+       file(DOWNLOAD http://stahlworks.com/dev/zip.exe ${CMAKE_BINARY_DIR}/zip.exe SHOW_PROGRESS TIMEOUT 10)
+       find_program(ZIP_EXECUTABLE zip)
+       message(STATUS "Downloading unzip.exe to " ${CMAKE_BINARY_DIR}/unzip.exe)
+       file(DOWNLOAD http://stahlworks.com/dev/unzip.exe ${CMAKE_BINARY_DIR}/unzip.exe SHOW_PROGRESS TIMEOUT 10)
+       find_program(UNZIP_EXECUTABLE unzip)
 endif()
 
 cmake_dependent_option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"		ON "ZIP_EXECUTABLE" OFF)
@@ -618,36 +622,53 @@ if(BUILD_PAK3_PK3)
 	)
 endif(BUILD_PAK3_PK3)
 
-if(INSTALL_OMNIBOT)
-	if(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
+if(INSTALL_OMNIBOT AND BUILD_MOD)
+	if(WIN32 OR UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin" AND NOT CMAKE_SYSTEM MATCHES "OpenBSD*")
 		message(STATUS "Installing Omni-Bot")
+		# Note: used archive (16MB) doesn't contain incomplete nav- and other unwanted files
+		if(UNIX)
+			set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-linux-latest.tar.gz")
+		elseif(WIN32 AND UNZIP_EXECUTABLE)
+			set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-windows-latest.zip")
+		endif()
 
-		# Note: used tar (16MB) doesn't contain windows, incomplete nav- and other unwanted files
-		set(ETLEGACY_OMNIBOT_L_DL_URL "http://mirror.etlegacy.com/omnibot/omnibot-linux-latest.tar.gz")
+		set(ETLEGACY_OMNIBOT_DL_URL "http://mirror.etlegacy.com/omnibot/${ETLEGACY_OMNIBOT_ARCHIVE}")
 
-		message(STATUS "Downloading Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/omnibot-linux-latest.tar.gz")
-		file(DOWNLOAD ${ETLEGACY_OMNIBOT_L_DL_URL} "${CMAKE_CURRENT_BINARY_DIR}/omnibot-linux-latest.tar.gz")
+		message(STATUS "Downloading Omni-Bot archive to ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}")
 
-		message(STATUS "Unzipping Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/omnibot")
-		execute_process(
-			COMMAND tar -xf ${CMAKE_CURRENT_BINARY_DIR}/omnibot-linux-latest.tar.gz
-			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		)
+		if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}")
+			file(DOWNLOAD
+				${ETLEGACY_OMNIBOT_DL_URL}
+				"${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}"
+				SHOW_PROGRESS TIMEOUT 30
+			)
+		endif()
+
+		message(STATUS "Extracting Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot")
+		if(UNIX)
+			execute_process(
+				COMMAND tar -xvf ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
+				WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
+			)
+		elseif(WIN32)
+			execute_process(
+				COMMAND ${UNZIP_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
+				WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
+			)
+		endif()
 
 		message(STATUS "Adding Omni-Bot to installer scripts")
-			install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/omnibot/"
-			DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
-		)
-	else()
-		message(STATUS "Installing Omni-Bot is Linux only")
-	endif(UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin")
-endif(INSTALL_OMNIBOT)
+			install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot/"
+				DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
+			)
+		else()
+		message(STATUS "Installing Omni-Bot is Windows and Linux only.")
+	endif()
+endif(INSTALL_OMNIBOT AND BUILD_MOD)
 
 #-----------------------------------------------------------------
 # Installer/Package generation
 #-----------------------------------------------------------------
-
-# install adds ...
 
 # misc/etmain/ adds
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/misc/etmain/"
