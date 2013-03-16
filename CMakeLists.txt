@@ -31,17 +31,17 @@ add_definitions(-DBOTLIB)
 option(BUILD_SERVER		"Build the dedicated server executable"				ON)
 option(BUILD_CLIENT		"Build the client executable"					ON)
 option(BUILD_MOD		"Build the mod libraries"					ON)
-option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"			OFF)
-option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"			OFF)
 
-# TODO: enable pk3 creation when zip executable is found. Zip.exe can be downloaded on Windows
-#find_program(ZIP_EXECUTABLE zip)
-#if(NOT ZIP_EXECUTABLE AND WIN32)
-#	file(DOWNLOAD http://stahlworks.com/dev/zip.exe zip.exe)
-#endif()
-#...
-#cmake_dependent_option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"		ON "ZIP_EXECUTABLE" OFF)
-#cmake_dependent_option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"		ON "ZIP_EXECUTABLE" OFF)
+# Enable pk3 creation if zip executable is found. Download it on Windows
+find_program(ZIP_EXECUTABLE zip)
+if(NOT ZIP_EXECUTABLE AND WIN32)
+	message(STATUS "Downloading zip.exe to " ${CMAKE_BINARY_DIR}/zip.exe)
+	file(DOWNLOAD http://stahlworks.com/dev/zip.exe ${CMAKE_BINARY_DIR}/zip.exe SHOW_PROGRESS TIMEOUT 10)
+	find_program(ZIP_EXECUTABLE zip)
+endif()
+
+cmake_dependent_option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"		ON "ZIP_EXECUTABLE" OFF)
+cmake_dependent_option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"		ON "ZIP_EXECUTABLE" OFF)
 
 option(BUNDLED_LIBS				"Use all available bundled libraries instead of system libs."	OFF)
 cmake_dependent_option(BUNDLED_SDL		"Use bundled SDL library instead of the system one."	ON "BUNDLED_LIBS" OFF)
@@ -598,7 +598,7 @@ if(BUILD_MOD)
 		add_custom_target(mod_pk3 ALL DEPENDS legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3)
 		add_custom_command(
 			OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3
-			COMMAND zip etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3 cgame${LIB_SUFFIX}${ARCH}* ui${LIB_SUFFIX}${ARCH}*
+			COMMAND ${ZIP_EXECUTABLE} etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3 cgame${LIB_SUFFIX}${ARCH}* ui${LIB_SUFFIX}${ARCH}*
 			DEPENDS cgame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy/
 		)
@@ -612,7 +612,7 @@ endif(BUILD_MOD)
 if(BUILD_PAK3_PK3)
 	add_custom_target(
 		pak3_pk3 ALL
-		COMMAND zip -r ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3_${ETL_CMAKE_VERSION_SHORT}.pk3 *
+		COMMAND ${ZIP_EXECUTABLE} -r ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3_${ETL_CMAKE_VERSION_SHORT}.pk3 *
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/etmain/
 	)
 
