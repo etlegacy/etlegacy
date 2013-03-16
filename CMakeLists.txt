@@ -31,14 +31,16 @@ option(BUILD_MOD		"Build the mod libraries"					ON)
 
 # Enable pk3 creation if zip executable is found. Download it on Windows
 find_program(ZIP_EXECUTABLE zip)
-find_program(UNZIP_EXECUTABLE unzip)
 if(NOT ZIP_EXECUTABLE AND WIN32)
-       message(STATUS "Downloading zip.exe to " ${CMAKE_BINARY_DIR}/zip.exe)
-       file(DOWNLOAD http://stahlworks.com/dev/zip.exe ${CMAKE_BINARY_DIR}/zip.exe SHOW_PROGRESS TIMEOUT 10)
-       find_program(ZIP_EXECUTABLE zip)
-       message(STATUS "Downloading unzip.exe to " ${CMAKE_BINARY_DIR}/unzip.exe)
-       file(DOWNLOAD http://stahlworks.com/dev/unzip.exe ${CMAKE_BINARY_DIR}/unzip.exe SHOW_PROGRESS TIMEOUT 10)
-       find_program(UNZIP_EXECUTABLE unzip)
+	message(STATUS "Downloading zip.exe to " ${CMAKE_BINARY_DIR}/zip.exe)
+	file(DOWNLOAD http://stahlworks.com/dev/zip.exe ${CMAKE_BINARY_DIR}/zip.exe SHOW_PROGRESS TIMEOUT 10)
+	find_program(ZIP_EXECUTABLE zip)
+endif()
+find_program(UNZIP_EXECUTABLE unzip)
+if(NOT UNZIP_EXECUTABLE AND WIN32)
+	message(STATUS "Downloading unzip.exe to " ${CMAKE_BINARY_DIR}/unzip.exe)
+	file(DOWNLOAD http://stahlworks.com/dev/unzip.exe ${CMAKE_BINARY_DIR}/unzip.exe SHOW_PROGRESS TIMEOUT 10)
+	find_program(UNZIP_EXECUTABLE unzip)
 endif()
 
 cmake_dependent_option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"		ON "ZIP_EXECUTABLE" OFF)
@@ -585,13 +587,13 @@ if(BUILD_MOD)
 		LIBRARY_OUTPUT_DIRECTORY "legacy"
 		OSX_ARCHITECTURES "i386;x86_64"
 	)
-                        
+
 	# install bins of cgame, ui and qgame 
 	install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
 		LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
 		ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
 	)
- 
+
 	#
 	# etl_bin.pk3
 	#
@@ -658,10 +660,10 @@ if(INSTALL_OMNIBOT AND BUILD_MOD)
 		endif()
 
 		message(STATUS "Adding Omni-Bot to installer scripts")
-			install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot/"
-				DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
-			)
-		else()
+		install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot/"
+			DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
+		)
+	else()
 		message(STATUS "Installing Omni-Bot is Windows and Linux only.")
 	endif()
 endif(INSTALL_OMNIBOT AND BUILD_MOD)
