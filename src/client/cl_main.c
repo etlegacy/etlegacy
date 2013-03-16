@@ -4397,7 +4397,7 @@ void CL_LocalServers_f(void)
 			NET_SendPacket(NS_CLIENT, strlen(message), message, to);
 
 #ifdef FEATURE_IPV6
-			if (net_enabled.integer & NET_ENABLEV6)
+			if (Cvar_VariableIntegerValue("net_enabled") & NET_ENABLEV6)
 			{
 				to.type = NA_MULTICAST6;
 				NET_SendPacket(NS_CLIENT, strlen(message), message, to);
