@@ -4,11 +4,8 @@
 # - based on raedwulf-et: https://bitbucket.org/tcmreastwood/raedwulf-et
 #
 # Please use TABs to indent!
-#
-# TODO/FIXME
-# - make uninstall doesn't delete pathes ('etlegacy' & subfolders - test case: INSTALL_DEFAULT_ dirs are equal)
 #------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.3)
 
 project(ETLEGACY C CXX)
 set(ETLEGACY_VERSION "2.71rc1-dirty")
