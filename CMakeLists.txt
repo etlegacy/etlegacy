@@ -54,11 +54,7 @@ cmake_dependent_option(BUNDLED_LUA		"Use bundled LUA library instead of the syst
 cmake_dependent_option(BUNDLED_OGG_VORBIS	"Use bundled OGG library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
-if(CMAKE_SYSTEM MATCHES "OpenBSD*")
-	option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" OFF)
-else()
-	option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON)
-endif()
+cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON "NOT CMAKE_SYSTEM MATCHES OpenBSD*" OFF)
 
 # Installation options
 set(INSTALL_DEFAULT_BASEDIR	""			CACHE STRING "Should be CMAKE_INSTALL_PREFIX + INSTALL_DEFAULT_MODDIR")
@@ -83,10 +79,8 @@ option(FEATURE_AUTOUPDATE	"Enable updater which downloads latest ET:L files"			O
 option(FEATURE_RENDERER2	"Build and use the new renderer"					OFF)
 option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
 
-if((WIN32 OR UNIX) AND NOT CMAKE_SYSTEM MATCHES "Darwin")
-	option(FEATURE_OMNIBOT	"Enable omnibot build in mod code (Win & Linux server only!)"		OFF)
-	option(INSTALL_OMNIBOT	"Install Omni-Bot - LINUX only"						OFF)
-endif()
+cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot build in mod code"	ON "WIN32 OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
+cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"			ON "WIN32 OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 
 set(ET_FS_BASEPATH		""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 option(ET_KEY			"Copy etkey file (requires ET_FS_BASEPATH set)"				OFF)
