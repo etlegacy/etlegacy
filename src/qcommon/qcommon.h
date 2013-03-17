@@ -1131,7 +1131,7 @@ cpuFeatures_t Sys_GetProcessorFeatures(void);
 void Sys_SetErrorText(const char *text);
 
 void Sys_SendPacket(int length, const void *data, netadr_t to);
-qboolean Sys_GetPacket(netadr_t *net_from, msg_t *net_message);
+qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message);
 
 qboolean Sys_StringToAdr(const char *s, netadr_t *a, netadrtype_t family);
 //Does NOT parse port numbers, only base addresses.

@@ -2261,7 +2261,7 @@ sysEvent_t Com_GetSystemEvent(void)
 
 	// check for network packets
 	MSG_Init(&netmsg, sys_packetReceived, sizeof(sys_packetReceived));
-	if (Sys_GetPacket(&adr, &netmsg))
+	if (NET_GetPacket(&adr, &netmsg))
 	{
 		netadr_t *buf;
 		int      len;

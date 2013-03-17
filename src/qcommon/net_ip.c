@@ -676,27 +676,15 @@ qboolean NET_IsLocalAddress(netadr_t adr)
 
 //=============================================================================
 
-/*
-==================
-Sys_GetPacket
-
-Never called by the game logic, just the system event queing
-==================
-*/
-#ifdef _DEBUG
-int recvfromCount;
-#endif
-
-qboolean Sys_GetPacket(netadr_t *net_from, msg_t *net_message)
+/**
+ * @brief Never called by the game logic, just the system event queing
+ */
+qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message)
 {
 	int                     ret;
 	struct sockaddr_storage from;
 	socklen_t               fromlen;
 	int                     err;
-
-#ifdef _DEBUG
-	recvfromCount++;        // performance check
-#endif
 
 	if (ip_socket != INVALID_SOCKET)
 	{

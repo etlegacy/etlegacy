@@ -1796,19 +1796,12 @@ extern int snapshotDelayTime;
 #endif // FAKELAG
 #endif // _DEBUG
 
-/*
-=================
-CG_DrawActiveFrame
-
-Generates and draws a game scene and status information at the given time.
-=================
-*/
-
-qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
-
+/**
+ * @brief Generates and draws a game scene and status information at the given time.
+ */
 void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback)
 {
-	char     currentVal[256], tmp[256];
+	char     currentVal[256];
 	float    cvalF, val1F, val2F;
 	int      i, cvalI, val1I, val2I;
 	qboolean cvalIsF, val1IsF, val2IsF;
