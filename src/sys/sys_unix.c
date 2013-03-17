@@ -95,7 +95,11 @@ char *Sys_DefaultHomePath(void)
 		if ((p = getenv("HOME")) != NULL)
 		{
 			Q_strncpyz(homePath, p, sizeof(homePath));
-			Q_strcat(homePath, sizeof(homePath), "/.etlwolf");
+#ifdef __APPLE__
+			Q_strcat(homePath, sizeof(homePath), "/Library/Application Support/etlegacy");
+#else
+			Q_strcat(homePath, sizeof(homePath), "/.etwolf");
+#endif
 		}
 	}
 #endif
