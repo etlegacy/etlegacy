@@ -329,8 +329,6 @@ extern serverStatic_t svs;                  // persistant server info across map
 extern server_t       sv;                   // cleared each map
 extern vm_t           *gvm;                 // game virtual machine
 
-#define MAX_MASTER_SERVERS  5
-
 extern cvar_t *sv_fps;
 extern cvar_t *sv_timeout;
 extern cvar_t *sv_zombietime;
