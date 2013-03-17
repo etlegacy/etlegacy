@@ -644,7 +644,7 @@ qboolean G_CallSpawn(gentity_t *ent)
 	}
 
 	// hack: this avoids spammy prints on railgun start, bsp uses obsolete classname bot_sniper_spot
-	if (!Q_stricmp(ent->classname, "bot_sniper_spo"))
+	if (Q_stricmp(ent->classname, "bot_sniper_spo"))
 	{
 		G_Printf("%s doesn't have a spawn function\n", ent->classname);
 	}
