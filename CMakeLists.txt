@@ -347,15 +347,19 @@ if(BUILD_CLIENT)
 
 	if(NOT BUNDLED_SDL)
 		find_package(SDL32 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
-		if(WIN32 OR CMAKE_SYSTEM MATCHES "Darwin")
+		if(WIN32)
 			list(APPEND CLIENT_LIBRARIES ${SDL32MAIN_LIBRARY})
-		endif(WIN32 OR CMAKE_SYSTEM MATCHES "Darwin")
+		endif()
 		list(APPEND CLIENT_LIBRARIES ${SDL32_LIBRARIES})
 		include_directories(SYSTEM ${SDL32_INCLUDE_DIR})
 	else()
 		list(APPEND CLIENT_LIBRARIES ${SDL32_BUNDLED_LIBRARIES})
 		include_directories(SYSTEM ${SDL32_BUNDLED_INCLUDE_DIR})
 		add_definitions(-DBUNDLED_SDL)
+	endif()
+	if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+		add_library(INTERNAL_SDLMain ${CMAKE_SOURCE_DIR}/src/sys/SDLMain.m )
+		list(APPEND CLIENT_LIBRARIES ${INTERNAL_SDLMain})
 	endif()
 
 	if(NOT BUNDLED_JPEG)
@@ -750,13 +754,21 @@ add_custom_target(uninstall
 	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/Uninstall.cmake
 )
 
+# Packaging support
+# TODO: move this to include(EtlegacyCPack)
 # CPack general configuration
 set(CPACK_PACKAGE_NAME				"etlegacy")
+set(CPACK_BUNDLE_NAME				"etlegacy")
+set(CPACK_PACKAGE_FILE_NAME			"etlegacy")
+set(CPACK_BUNDLE_STARTUP_COMMAND		"etl")
+set(CPACK_PACKAGE_ICON				"${CMAKE_SOURCE_DIR}/misc/etl.ico")
+set(CPACK_BUNDLE_ICON				"${CMAKE_SOURCE_DIR}/misc/etl.ico") # FIXME: convert to icns format
+set(CPACK_BUNDLE_PLIST				"${CMAKE_SOURCE_DIR}/misc/Info.plist")
 set(CPACK_PACKAGE_CONTACT			"mail@etlegacy.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY		"ET: Legacy is an online FPS game compatible with Wolfenstein: Enemy Territory 2.60b.")
 set(CPACK_PACKAGE_DESCRIPTION			${CPACK_PACKAGE_DESCRIPTION_SUMMARY}) # TODO: expand
 set(CPACK_PACKAGE_DESCRIPTION_FILE		"${CMAKE_SOURCE_DIR}/README.md")
-set(CPACK_RESOURCE_FILE_LICENSE			"${CMAKE_SOURCE_DIR}/COPYING.txt")
+#set(CPACK_RESOURCE_FILE_LICENSE		"${CMAKE_SOURCE_DIR}/COPYING.txt") # FIXME: breaks bundle generator
 set(CPACK_PACKAGE_VERSION_MAJOR			${ETLEGACY_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR			${ETLEGACY_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH			${ETLEGACY_VERSION_PATCH})
