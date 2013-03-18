@@ -161,12 +161,10 @@ G_MissileImpact
 */
 void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 {
-	gentity_t *other;
+	gentity_t *other = &g_entities[trace->entityNum];
 	gentity_t *temp;
 	vec3_t    velocity;
 	int       event = 0, param = 0, otherentnum = 0;
-
-	other = &g_entities[trace->entityNum];
 
 	// handle func_explosives
 	if (other->classname && Q_stricmp(other->classname, "func_explosive") == 0)
@@ -240,7 +238,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	}
 	else
 	{
-		// Ridah, try projecting it in the direction it came from, for better decals
+		// try projecting it in the direction it came from, for better decals
 		vec3_t dir;
 		BG_EvaluateTrajectoryDelta(&ent->s.pos, level.time, dir, qfalse, ent->s.effect2Time);
 		BG_GetMarkDir(dir, trace->plane.normal, dir);
@@ -625,15 +623,10 @@ void G_RunMissile(gentity_t *ent)
 				// are we in worldspace again - or did we hit a ceiling from the outside of the world
 				if (skyHeight == 65536)
 				{
-					//if( BG_GetSkyGroundHeightAtPoint( origin ) >= origin[2] ) {
-					//  G_FreeEntity( ent );
-					//  return;
-					//} else {
 					G_RunThink(ent);
 					VectorCopy(origin, ent->r.currentOrigin);
-					//trap_LinkEntity( ent );
+
 					return;     // keep flying
-					//}
 				}
 
 				if (skyHeight <= origin[2])
@@ -2077,10 +2070,8 @@ void fire_lead(gentity_t *self, vec3_t start, vec3_t dir, int damage)
 	gentity_t *traceEnt;
 	vec3_t    forward, right, up;
 	vec3_t    angles;
-	float     r, u;
-
-	r = crandom() * self->random;
-	u = crandom() * self->random;
+	float     r = crandom() * self->random;
+	float     u = crandom() * self->random;
 
 	vectoangles(dir, angles);
 	AngleVectors(angles, forward, right, up);
