@@ -1335,6 +1335,12 @@ void CL_Connect_f(void)
 		server = Cmd_Argv(2);
 	}
 
+	// Game started as a custom protocol handler for et://
+	if (!Q_stricmpn(server, "et://", 5))
+	{
+		Q_strncpyz(server, server + 5, strlen(server));
+	}
+
 	S_StopAllSounds();
 
 	// starting to load a map so we get out of full screen ui mode
