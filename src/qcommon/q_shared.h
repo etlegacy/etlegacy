@@ -891,8 +891,6 @@ void ProjectPointOntoVectorBounded(vec3_t point, vec3_t vStart, vec3_t vEnd, vec
 float DistanceFromLineSquared(vec3_t p, vec3_t lp1, vec3_t lp2);
 float DistanceFromVectorSquared(vec3_t p, vec3_t lp1, vec3_t lp2);
 
-int Q_isnan(float x);
-
 //=============================================
 
 float Com_Clamp(float min, float max, float value);
