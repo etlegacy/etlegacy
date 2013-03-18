@@ -53,7 +53,7 @@ menuDef {
 	NUMERICFIELD( 8, 286, (SUBWINDOW_WIDTH)-4, 10, "Limit Czasu Mapy:", .2, 8, "ui_userTimeLimit", 6, "Nadpisz domyslny czas mapy" )
 	NUMERICFIELD( 8, 298, (SUBWINDOW_WIDTH)-4, 10, "Czas Odro. Aliatow:", .2, 8, "ui_userAlliedRespawnTime", 2, "Nadpisz domyslne odrodzenie Aliantow" )
 	NUMERICFIELD( 8, 310, (SUBWINDOW_WIDTH)-4, 10, "Czas Odro. Osi:", .2, 8, "ui_userAxisRespawnTime", 2, "Nadpisz domyslne odrodzenie Osi" )
-	NUMERICFIELD( 8, 222, (SUBWINDOW_WIDTH)-4, 10, "Zycia Aliantow:", .2, 8, "g_alliedmaxlives", 3, "Sprecyzuj maksymalna liczbe zyc Aliantom w grze" )
+	NUMERICFIELD( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Zycia Aliantow:", .2, 8, "g_alliedmaxlives", 3, "Sprecyzuj maksymalna liczbe zyc Aliantom w grze" )
 	NUMERICFIELD( 8, 334, (SUBWINDOW_WIDTH)-4, 10, "Zycia OSI:", .2, 8, "g_axismaxlives", 3, "Sprecyzuj maksymalna liczbe zyc Osi w grze" )
 	MULTI( 8, 346, (SUBWINDOW_WIDTH)-4, 10, "Na Czas Typ-Rundy:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Okreslam typ rundy Na Czas (ABBA = zamiana stron, ABAB = utrzymanie stron)" )	
 	
@@ -162,6 +162,7 @@ menuDef {
 	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 400, (SUBWINDOW_WIDTH)-4, 10, "Bazwowy URL:", .2, 8, "sv_wwwBaseUrl", 64, 18, "Uzyj adresu URL aby client mogl sciagnac pliki" )
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "COFNIJ", .3, 14, close hostgame_advanced ; open hostgame )
-	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "DOMYSLNIE", .3, 14, open hostgame_advanced_default )
+	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "COFNIJ", .3, 14, close hostgame_advanced ; open hostgame )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "WIECEJ", .3, 14, close hostgame_advanced ; open hostgame_more )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "DOMYSLNIE", .3, 14, open hostgame_advanced_default )
 }
