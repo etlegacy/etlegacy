@@ -1707,7 +1707,6 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	{
 		cmd = &cmds[i];
 		MSG_ReadDeltaUsercmdKey(msg, key, oldcmd, cmd);
-		//MSG_ReadDeltaUsercmd( msg, oldcmd, cmd );
 		oldcmd = cmd;
 	}
 
