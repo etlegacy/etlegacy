@@ -1812,4 +1812,7 @@ typedef enum
 float rint(float v);
 #endif
 
+// this should be used to convert a floating-point value to an integer
+#define roundToInt(x) (((x) < INT_MIN - 0.5 || (x) > INT_MAX + 0.5) ? error() : (x >= 0 ? (int)(x + 0.5) : (int)(x - 0.5)))
+
 #endif  // __Q_SHARED_H
