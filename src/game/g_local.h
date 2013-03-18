@@ -1704,6 +1704,8 @@ extern vmCvar_t g_misc;
 extern vmCvar_t g_intermissionTime;
 extern vmCvar_t g_intermissionReadyPercent;
 
+extern vmCvar_t g_mapScriptDirectory;
+
 typedef struct GeoIPTag
 {
 	fileHandle_t GeoIPDatabase;

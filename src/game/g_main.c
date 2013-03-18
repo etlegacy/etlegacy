@@ -295,6 +295,8 @@ vmCvar_t g_misc;
 vmCvar_t g_intermissionTime;
 vmCvar_t g_intermissionReadyPercent;
 
+vmCvar_t g_mapScriptDirectory;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -550,6 +552,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_misc,                     "g_misc",                     "0",                          0 },
 	{ &g_intermissionTime,         "g_intermissionTime",         "60",                         0 },
 	{ &g_intermissionReadyPercent, "g_intermissionReadyPercent", "100",                        0 },
+	{ &g_mapScriptDirectory,       "g_mapScriptDirectory",       "",                           0 },
 };
 
 // made static to avoid aliasing

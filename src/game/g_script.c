@@ -381,14 +381,16 @@ void G_Script_ScriptLoad(void)
 {
 	char         filename[MAX_QPATH];
 	vmCvar_t     mapname;
-	fileHandle_t f;
-	int          len;
+	fileHandle_t f     = 0;
+	int          len   = 0;
+	qboolean     found = qfalse;
 
 	trap_Cvar_Register(&g_scriptDebug, "g_scriptDebug", "0", 0);
 
 	level.scriptEntity = NULL;
 
 	trap_Cvar_VariableStringBuffer("g_scriptName", filename, sizeof(filename));
+
 	if (strlen(filename) > 0)
 	{
 		trap_Cvar_Register(&mapname, "g_scriptName", "", CVAR_CHEAT);
@@ -397,17 +399,40 @@ void G_Script_ScriptLoad(void)
 	{
 		trap_Cvar_Register(&mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM);
 	}
-	Q_strncpyz(filename, "maps/", sizeof(filename));
-	Q_strcat(filename, sizeof(filename), mapname.string);
 
-	if (g_gametype.integer == GT_WOLF_LMS)
+	if (g_mapScriptDirectory.string[0])
 	{
-		Q_strcat(filename, sizeof(filename), "_lms");
+		Q_strncpyz(filename, g_mapScriptDirectory.string, sizeof(filename));
+		Q_strcat(filename, sizeof(filename), "/");
+		Q_strcat(filename, sizeof(filename), mapname.string);
+
+		if (g_gametype.integer == GT_WOLF_LMS)
+		{
+			Q_strcat(filename, sizeof(filename), "_lms");
+		}
+
+		Q_strcat(filename, sizeof(filename), ".script");
+		len = trap_FS_FOpenFile(filename, &f, FS_READ);
+
+		if (len > 0)
+		{
+			found = qtrue;
+		}
 	}
 
-	Q_strcat(filename, sizeof(filename), ".script");
+	if (!found)
+	{
+		Q_strncpyz(filename, "maps/", sizeof(filename));
+		Q_strcat(filename, sizeof(filename), mapname.string);
 
-	len = trap_FS_FOpenFile(filename, &f, FS_READ);
+		if (g_gametype.integer == GT_WOLF_LMS)
+		{
+			Q_strcat(filename, sizeof(filename), "_lms");
+		}
+
+		Q_strcat(filename, sizeof(filename), ".script");
+		len = trap_FS_FOpenFile(filename, &f, FS_READ);
+	}
 
 	// make sure we clear out the temporary scriptname
 	trap_Cvar_Set("g_scriptName", "");
@@ -418,18 +443,13 @@ void G_Script_ScriptLoad(void)
 	}
 
 	// make sure we terminate the script with a '\0' to prevent parser from choking
-	//level.scriptEntity = G_Alloc( len );
-	//trap_FS_Read( level.scriptEntity, len, f );
 	level.scriptEntity = G_Alloc(len + 1);
 	trap_FS_Read(level.scriptEntity, len, f);
 	*(level.scriptEntity + len) = '\0';
 
 	// and make sure ppl haven't put stuff with uppercase in the string table..
+	// FIXME: check this
 	G_Script_EventStringInit();
-
-	// discard all the comments NOW, so we dont deal with them inside scripts
-	// - disabling for a sec, wanna check if i can get proper line numbers from error output
-	//COM_Compress( level.scriptEntity );
 
 	trap_FS_FCloseFile(f);
 }
