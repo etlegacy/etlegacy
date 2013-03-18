@@ -2160,7 +2160,7 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 			// get knocked into the air more
 			dir[2] += 24;
 
-			G_Damage(ent, inflictor, attacker, dir, origin, (int)points, flags, mod);
+			G_Damage(ent, inflictor, attacker, dir, origin, roundToInt(points), flags, mod);
 		}
 		else
 		{
@@ -2191,7 +2191,7 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 					}
 					VectorSubtract(ent->r.currentOrigin, origin, dir);
 					dir[2] += 24;
-					G_Damage(ent, inflictor, attacker, dir, origin, (int)(points * 0.1f), flags, mod);
+					G_Damage(ent, inflictor, attacker, dir, origin, roundToInt(points * 0.1f), flags, mod);
 				}
 			}
 		}
@@ -2300,7 +2300,7 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 			// get knocked into the air more
 			dir[2] += 24;
 
-			G_Damage(ent, inflictor, attacker, dir, origin, (int)points, flags, mod);
+			G_Damage(ent, inflictor, attacker, dir, origin, roundToInt(points), flags, mod);
 		}
 		else
 		{
@@ -2331,7 +2331,7 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 					}
 					VectorSubtract(ent->r.currentOrigin, origin, dir);
 					dir[2] += 24;
-					G_Damage(ent, inflictor, attacker, dir, origin, (int)(points * 0.1f), flags, mod);
+					G_Damage(ent, inflictor, attacker, dir, origin, roundToInt(points * 0.1f), flags, mod);
 				}
 			}
 		}
