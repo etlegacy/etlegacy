@@ -163,6 +163,6 @@ menuDef {
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "COFNIJ", .3, 14, close hostgame_advanced ; open hostgame )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "WIECEJ", .3, 14, close hostgame_advanced ; open hostgame_more )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "ROZSZEZONE", .3, 14, close hostgame_advanced ; open hostgame_extended )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "DOMYSLNIE", .3, 14, open hostgame_advanced_default )
 }
