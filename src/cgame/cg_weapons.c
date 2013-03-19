@@ -6631,6 +6631,40 @@ void SnapVectorTowards(vec3_t v, vec3_t to)
 
 /*
 ======================
+CG_DrawBulletTracer
+
+Renders bullet tracers if  tracer option is valid.
+======================
+*/
+void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int otherEntityNum)
+{
+	if (cg_tracers.integer == 2 && sourceEntityNum != cg.clientNum)
+	{
+		return;                                                            //Only own tracers
+	}
+	else if (cg_tracers.integer == 3 && sourceEntityNum == cg.clientNum)
+	{
+		return;                                                                 //Only others tracers
+
+	}
+	if (otherEntityNum >= 0 && otherEntityNum != ENTITYNUM_NONE)
+	{
+		if (cg_tracers.integer == 1 || cg_tracers.integer == 3)
+		{
+			CG_SpawnTracer(otherEntityNum, pstart, pend);
+		}
+	}
+	else
+	{
+		if (cg_tracers.integer <= 2)
+		{
+			CG_SpawnTracer(sourceEntityNum, pstart, pend);
+		}
+	}
+}
+
+/*
+======================
 CG_Bullet
 
 Renders bullet effects.
@@ -6704,24 +6738,20 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 				}
 			}
 
-			// if not flesh, then do a moving tracer
-			if (flesh)
+			if (cg_tracers.integer)
 			{
-				// draw a tracer
-				if (random() < cg_tracerChance.value)
+				// if not flesh, then do a moving tracer
+				if (flesh)
 				{
-					CG_Tracer(start, end, 0);
+					// draw a tracer
+					if (random() < cg_tracerChance.value)
+					{
+						CG_Tracer(start, end, 0);
+					}
 				}
-			}
-			else        // (not flesh)
-			{
-				if (otherEntNum2 >= 0 && otherEntNum2 != ENTITYNUM_NONE)
+				else        // (not flesh)
 				{
-					CG_SpawnTracer(otherEntNum2, start, end);
-				}
-				else
-				{
-					CG_SpawnTracer(sourceEntityNum, start, end);
+					CG_DrawBulletTracer(start, end, sourceEntityNum, otherEntNum2);
 				}
 			}
 		}

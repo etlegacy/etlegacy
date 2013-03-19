@@ -296,6 +296,7 @@ vmCvar_t cg_countryflags; // GeoIP
 
 vmCvar_t cg_altHud;
 vmCvar_t cg_altHudFlags;
+vmCvar_t cg_tracers;
 
 typedef struct
 {
@@ -499,6 +500,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_countryflags,          "cg_countryflags",          "1",     CVAR_ARCHIVE                 }, // GeoIP
 	{ &cg_altHud,                "cg_altHud",                "0",     CVAR_ARCHIVE                 }, // Hudstyles
 	{ &cg_altHudFlags,           "cg_altHudFlags",           "0",     CVAR_ARCHIVE                 }, // Hudstyles
+	{ &cg_tracers,               "cg_tracers",               "1",     CVAR_ARCHIVE                 }, // Draw tracers
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

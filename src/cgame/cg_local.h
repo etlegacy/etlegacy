@@ -2137,6 +2137,7 @@ extern vmCvar_t cg_countryflags; // GeoIP
 
 extern vmCvar_t cg_altHud;
 extern vmCvar_t cg_altHudFlags;
+extern vmCvar_t cg_tracers;
 
 // cg_main.c
 const char *CG_ConfigString(int index);
