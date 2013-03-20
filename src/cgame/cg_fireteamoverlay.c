@@ -425,6 +425,11 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 	boxWidth += bestWidth;
 
+	if (cg_fireteamLatchedClass.integer)
+	{
+		boxWidth += 28;
+	}
+
 	CG_DrawRect(x, y, boxWidth, h, 1, borderColor);
 	CG_FillRect(x + 1, y + 1, boxWidth - 2, h - 2, bgColor);
 
@@ -468,7 +473,20 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		// draw class icon in fireteam overlay
 		CG_DrawPic(x, y, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 		x += 14;
-
+		if (cg_fireteamLatchedClass.integer && ci->cls != ci->latchedcls)
+		{
+			// draw the yellow arrow
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, "^3->", 0, 17, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			//x += 2 + CG_Text_Width_Ext("^3->", 0.2f, 17, &cgs.media.limboFont2);
+			x += 14;
+			// draw latched class icon in fireteam overlay
+			CG_DrawPic(x, y, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->latchedcls)]);
+			x += 14;
+		}
+		else if (cg_fireteamLatchedClass.integer)
+		{
+			x += 28;
+		}
 		// draw the mute-icon in the fireteam overlay..
 		//if ( ci->muted ) {
 		//	CG_DrawPic( x, y, 12, 12, cgs.media.muteIcon );

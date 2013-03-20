@@ -1929,10 +1929,11 @@ void ClientUserinfoChanged(int clientNum)
 
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
-	s = va("n\\%s\\t\\%i\\c\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i\\u\\%u",
+	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i\\u\\%u",
 	       client->pers.netname,
 	       client->sess.sessionTeam,
 	       client->sess.playerType,
+	       client->sess.latchPlayerType,
 	       client->sess.rank,
 	       medalStr,
 	       skillStr,

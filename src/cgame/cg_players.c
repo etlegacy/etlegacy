@@ -219,6 +219,10 @@ void CG_NewClientInfo(int clientNum)
 	v           = Info_ValueForKey(configstring, "c");
 	newInfo.cls = atoi(v);
 
+	// latched class
+	v                  = Info_ValueForKey(configstring, "lc");
+	newInfo.latchedcls = atoi(v);
+
 	// rank
 	v            = Info_ValueForKey(configstring, "r");
 	newInfo.rank = atoi(v);
