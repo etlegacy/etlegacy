@@ -1860,7 +1860,15 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 
 	if (!SetTeam(ent, s, qfalse, w, w2, qtrue))
 	{
-		G_SetClientWeapons(ent, w, w2, qtrue);
+		if (ent->client->sess.playerType != ent->client->sess.latchPlayerType)
+		{
+			G_SetClientWeapons(ent, w, w2, qfalse);
+			ClientUserinfoChanged(ent - g_entities);
+		}
+		else
+		{
+			G_SetClientWeapons(ent, w, w2, qtrue);
+		}
 	}
 }
 
