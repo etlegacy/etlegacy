@@ -1268,9 +1268,9 @@ void CG_DrawExpandedAutoMap(void)
 	trap_R_DrawStretchPic(b_x, b_y, b_w, b_h, s1, t1, s2, t2, cgs.media.commandCentreAutomapBorder2Shader);
 }
 
-void CG_DrawAutoMap(void)
+void CG_DrawAutoMap(float x, float y, float w, float h)
 {
-	float        x, y, w, h;
+	//float        x, y, w, h;
 	mapScissor_t mapScissor;
 	vec2_t       automapTransformed;
 
@@ -1281,10 +1281,12 @@ void CG_DrawAutoMap(void)
 		cgs.ccSelectedLayer = CG_CurLayerForZ((int)cg.predictedPlayerEntity.lerpOrigin[2]);
 	}
 
+	/*
 	x = Ccg_WideX(640) - 100 - 20;
 	y = 20;
 	w = 100;
 	h = 100;
+	*/
 
 	if (cgs.autoMapExpanded)
 	{

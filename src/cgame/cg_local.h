@@ -2284,6 +2284,9 @@ qboolean CG_OwnerDrawVisible(int flags);
 void CG_RunMenuScript(char **args);
 void CG_GetTeamColor(vec4_t *color);
 
+void CG_DrawActiveHud(void);
+void CG_DrawGlobalHud(void);
+
 void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, float scaley, float s, float t, float s2, float t2, qhandle_t hShader);
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader);
 
@@ -2523,7 +2526,7 @@ int SkillNumForClass(int classNum);
 
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 
-void CG_DrawAutoMap(void);
+void CG_DrawAutoMap(float x, float y, float w, float h);
 
 qboolean CG_DrawLimboMenu(void);
 qboolean CG_DrawObjectivePanel(void);
