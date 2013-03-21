@@ -93,7 +93,7 @@ menuDef {
 
 // Movement //
   #define MOVEMENT_Y 190
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 88, "Movement" )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 88, "MOVEMENT" )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Run pitch:", .2, 8, "cg_runpitch", cvarFloatList { "0.000" 0.00 "0.002" 0.002 }, "Stops bobbing movement" )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Run roll:", .2, 8, "cg_runroll", cvarFloatList { "0.000" 0.00 "0.005" 0.005 }, "Stops bobbing movement" )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Bob up:", .2, 8, "cg_bobup", cvarFloatList { "0.000" 0.00 "0.005" 0.005 }, "Stops bobbing movement" )
