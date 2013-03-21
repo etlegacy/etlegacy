@@ -35,6 +35,24 @@
 
 #include "cg_local.h"
 
+typedef struct hudStructure_s
+{
+	rectDef_t compas;
+
+	rectDef_t staminabar;
+	rectDef_t healthbar;
+	rectDef_t weaponchargebar;
+
+	rectDef_t healthtext;
+	rectDef_t xptext;
+
+	rectDef_t statsdisplay;
+	qboolean statssimple;
+
+	rectDef_t weaponicon;
+	rectDef_t weaponammo;
+} hudStucture_t;
+
 static void CG_DrawPlayerStatusHead(void)
 {
 	hudHeadAnimNumber_t anim           = cg.idleAnim;
@@ -334,12 +352,9 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	CG_DrawPic(rect->x + (rect->w * 0.25f) - 1, rect->y + rect->h + 4, (rect->w * 0.5f) + 2, rect->w + 2, cgs.media.hudPowerIcon);
 }
 
-static void CG_DrawPlayerStatus(void)
+static void CG_DrawGunIcon(rectDef_t location)
 {
-	int       value, value2, value3;
-	char      buffer[32];
-	rectDef_t rect = { (Ccg_WideX(640) - 82), (480 - 56), 60, 32 };
-
+	rectDef_t rect = location;
 	// Draw weapon icon and overheat bar
 	CG_DrawWeapHeat(&rect, HUD_HORIZONTAL);
 	if (
@@ -369,24 +384,38 @@ static void CG_DrawPlayerStatus(void)
 		    BG_simpleWeaponState(cg.snap->ps.weaponstate);
 		CG_DrawPlayerWeaponIcon(&rect, (ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH) ? &colorWhite : (ws == WSTATE_FIRE) ? &colorRed : &colorYellow));
 	}
+}
 
+static void CG_DrawAmmoCount(float x, float y)
+{
+	int  value, value2, value3;
+	char buffer[32];
 	// Draw ammo
 	CG_PlayerAmmoValue(&value, &value2, &value3);
 	if (value3 >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i|%i/%i", value3, value, value2);
-		CG_Text_Paint_Ext(Ccg_WideX(640) - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(x - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), y, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 	else if (value2 >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i/%i", value, value2);
-		CG_Text_Paint_Ext(Ccg_WideX(640) - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(x - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), y, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 	else if (value >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i", value);
-		CG_Text_Paint_Ext(Ccg_WideX(640) - 22 - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), 480 - 1 * (16 + 2) + 12 - 4, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(x - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), y, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
+}
+
+static void CG_DrawPlayerStatus(void)
+{
+	rectDef_t rect = { (Ccg_WideX(640) - 82), (480 - 56), 60, 32 };
+
+	CG_DrawGunIcon(rect);
+
+	CG_DrawAmmoCount(Ccg_WideX(640) - 22, 480 - 1 * (16 + 2) + 12 - 4);
 
 	rect.x = 24;
 	rect.y = 480 - 92;
@@ -477,27 +506,23 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 	return SK_BATTLE_SENSE;
 }
 
-static void CG_DrawPlayerStats(void)
+static void CG_DrawPlayerHealth(float x, float y)
 {
-	int           value = 0;
+	const char *str;
+	float      w;
+	str = va("%i", cg.snap->ps.stats[STAT_HEALTH]);
+	w   = CG_Text_Width_Ext(str, 0.25f, 0, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x - w, y, 0.25f, 0.25f, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x + 2, y, 0.2f, 0.2f, colorWhite, "HP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+}
+
+static void CG_DrawSkills(float x, float y)
+{
 	playerState_t *ps;
 	clientInfo_t  *ci;
 	skillType_t   skill;
 	int           i;
-	const char    *str;
-	float         w;
 	float         temp;
-	vec_t         *clr;
-
-	str = va("%i", cg.snap->ps.stats[STAT_HEALTH]);
-	w   = CG_Text_Width_Ext(str, 0.25f, 0, &cgs.media.limboFont1);
-	CG_Text_Paint_Ext(SKILLS_X - 28 - w, 480 - 4, 0.25f, 0.25f, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-	CG_Text_Paint_Ext(SKILLS_X - 28 + 2, 480 - 4, 0.2f, 0.2f, colorWhite, "HP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-
-	if (cgs.gametype == GT_WOLF_LMS)
-	{
-		return;
-	}
 
 	ps = &cg.snap->ps;
 	ci = &cgs.clientinfo[ps->clientNum];
@@ -517,7 +542,13 @@ static void CG_DrawPlayerStats(void)
 			CG_Text_Paint_Ext(SKILL_ICON_X + 2, temp + 24, 0.25f, 0.25f, colorWhite, va("%i", ci->skill[skill]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
 	}
+}
 
+static void CG_DrawXP(float x, float y)
+{
+	const char *str;
+	float      w;
+	vec_t      *clr;
 
 	if (cg.time - cg.xpChangeTime < 1000)
 	{
@@ -530,20 +561,44 @@ static void CG_DrawPlayerStats(void)
 
 	str = va("%i", (32768 * cg.snap->ps.stats[STAT_XP_OVERFLOW]) + cg.snap->ps.stats[STAT_XP]);
 	w   = CG_Text_Width_Ext(str, 0.25f, 0, &cgs.media.limboFont1);
-	CG_Text_Paint_Ext(SKILLS_X + 28 - w, 480 - 4, 0.25f, 0.25f, clr, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-	CG_Text_Paint_Ext(SKILLS_X + 28 + 2, 480 - 4, 0.2f, 0.2f, clr, "XP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x - w, y, 0.25f, 0.25f, clr, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x + 2, y, 0.2f, 0.2f, clr, "XP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+}
 
+static void CG_DrawPowerUps(rectDef_t rect)
+{
+	playerState_t *ps;
+
+	ps = &cg.snap->ps;
 	// draw treasure icon if we have the flag
 	// rain - #274 - use the playerstate instead of the clientinfo
 	if (ps->powerups[PW_REDFLAG] || ps->powerups[PW_BLUEFLAG])
 	{
 		trap_R_SetColor(NULL);
-		CG_DrawPic(Ccg_WideX(640) - 40, 480 - 140 - value, 36, 36, cgs.media.objectiveShader);
+		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveShader);
 	}
 	else if (ps->powerups[PW_OPS_DISGUISED])       // Disguised?
 	{
-		CG_DrawPic(Ccg_WideX(640) - 40, 480 - 140 - value, 36, 36, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
+		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 	}
+}
+
+static void CG_DrawPlayerStats(void)
+{
+	rectDef_t rect = { Ccg_WideX(640) - 40, 480 - 140, 36, 36 };
+
+	CG_DrawPlayerHealth(SKILLS_X - 28, 480 - 4);
+
+	if (cgs.gametype == GT_WOLF_LMS)
+	{
+		return;
+	}
+
+	CG_DrawSkills(0, 0);
+
+	CG_DrawXP(SKILLS_X + 28, 480 - 4);
+
+	CG_DrawPowerUps(rect);
 }
 
 int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeight, qboolean dodrawpic, qboolean leftAlign)
@@ -1001,6 +1056,32 @@ void CG_DrawActiveHud(void)
 void CG_DrawGlobalHud(void)
 {
 	rectDef_t rect;
+	/*
+	const hudStucture_t hud0 = {
+	    {(Ccg_WideX(640) - 100 - 20 - 16),20 - 16,100 + 32,100 + 32}, //Compas location
+	    {4,480 - 92,12,72}, //Stamina bar location
+	    {24,480 - 92,12,72}, //Health bar location
+	    {Ccg_WideX(640) - 16,480 - 92,12,72}, //Weapon charge bar location
+	    {0,0,0,0}, //Health text location
+	    {0,0,0,0}, //XP text location
+	    {0,0,0,0}, //Status display
+	    qfalse, //Status display simple
+	    {0,0,0,0}, //Weapon icon location
+	    {0,0,0,0} //Weapon ammo location
+	};
+	const hudStucture_t hud1 = {
+	{504,4,132,132}, //Compas location
+	{4,388,12,72}, //Stamina bar location
+	{24,388,12,72}, //Health bar location
+	{624,388,12,72}, //Weapon charge bar location
+	{0,0,0,0}, //Health text location
+	{0,0,0,0}, //XP text location
+	{0,0,0,0}, //Status display
+	qfalse, //Status display simple
+	{0,0,0,0}, //Weapon icon location
+	{0,0,0,0} //Weapon ammo location
+	};
+	*/
 	if (cg_drawCompass.integer)
 	{
 		if (cg_altHud.integer)
