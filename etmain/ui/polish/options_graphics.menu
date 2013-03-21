@@ -38,28 +38,31 @@ menuDef {
 	YESNOACTION( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Pelnyobraz:", .2, 8, "ui_r_fullscreen", uiScript glCustom, "" )
 	YESNOACTION( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Brak Okna:", .2, 8, "r_noborder", uiScript glCustom, "Tylko mozliwe w nie pelnym oknie" )
 	SLIDER( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Jasnosc:", .2, 8, "ui_r_gamma" 1.3 1 3, "" )
+	MULTIACTION( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Intensywnosc:", .2, 8, "r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, uiScript update "ui_glcustom", "Intensywnosc textur (wymagany vid_restart)" )
+	MULTIACTION( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Map overbright bits:", .2, 8, "r_mapoverbrightbits", cvarFloatList { "0" 0 "1" 1 "2" 2 "3" 3 }, uiScript update "ui_glcustom", "Swiat staje sie intensywniejszy, ale jasniejszy (wymagany vid_restart)" )
+	YESNOACTION( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Overbright Bits:", .2, 8, "r_overBrightBits", uiScript update "ui_glcustom", "Mapa swieci jasniej (wymagany vid_restart)" )
 
 // Advanced settings //
-	SUBWINDOW( 6, 116, (SUBWINDOW_WIDTH), 256, "ZAAWANSOWANE" )
-	YESNO( 8, 132, (SUBWINDOW_WIDTH)-4, 10, "Niebo Slabej Jakosci:", .2, 8, "r_fastsky", "" )
-	MULTIACTION( 8, 144, (SUBWINDOW_WIDTH)-4, 10, "Detale Cieni:", .2, 8, "ui_cg_shadows", cvarFloatList { "Brak (najsz.)" 0 "Blob (stary styl)" 1 "Wzorowe Cienie" 2 "Projektowe Cienie" 3 "Polygonowe Cienie" 4 }, uiScript glCustom, "" )
-	MULTIACTION( 8, 156, (SUBWINDOW_WIDTH)-4, 10, "Detale Textur:", .2, 8, "ui_r_picmip", cvarFloatList { "Niskie" 2 "Srednie" 1 "Mocne" 0 }, uiScript glCustom, "" )
+	SUBWINDOW( 6, 152, (SUBWINDOW_WIDTH), 256, "ZAAWANSOWANE" )
+	YESNO( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Niebo Slabej Jakosci:", .2, 8, "r_fastsky", "" )
+	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Detale Cieni:", .2, 8, "ui_cg_shadows", cvarFloatList { "Brak (najsz.)" 0 "Blob (stary styl)" 1 "Wzorowe Cienie" 2 "Projektowe Cienie" 3 "Polygonowe Cienie" 4 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 192, (SUBWINDOW_WIDTH)-4, 10, "Detale Textur:", .2, 8, "ui_r_picmip", cvarFloatList { "Niskie" 2 "Srednie" 1 "Mocne" 0 }, uiScript glCustom, "" )
 	// add options 0 - disabled, 1 - single path, 2 - path
-	YESNOACTION( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Dynamiczne Swiatla:", .2, 8, "ui_r_dynamiclight", uiScript glCustom; uiScript update "r_dynamicLight", "" )
+	YESNOACTION( 8, 204, (SUBWINDOW_WIDTH)-4, 10, "Dynamiczne Swiatla:", .2, 8, "ui_r_dynamiclight", uiScript glCustom; uiScript update "r_dynamicLight", "" )
 	// check this if ET supports same way
-	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Detale Geometryczne:", .2, 8, "ui_r_lodbias", cvarFloatList { "Niskie" 2 "Srednie" 1 "Mocne" 0 }, uiScript glCustom ; uiScript update "r_lodbias", "" )
-	MULTIACTION( 8, 192, (SUBWINDOW_WIDTH)-4, 10, "Jakosc Textur:", .2, 8, "ui_r_texturebits", cvarFloatList { "Domyslne" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 216, (SUBWINDOW_WIDTH)-4, 10, "Detale Geometryczne:", .2, 8, "ui_r_lodbias", cvarFloatList { "Niskie" 2 "Srednie" 1 "Mocne" 0 }, uiScript glCustom ; uiScript update "r_lodbias", "" )
+	MULTIACTION( 8, 128, (SUBWINDOW_WIDTH)-4, 10, "Jakosc Textur:", .2, 8, "ui_r_texturebits", cvarFloatList { "Domyslne" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
-	MULTIACTION( 8, 204, (SUBWINDOW_WIDTH)-4, 10, "Filtrowanie Textur:", .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glCustom, "" )
-	MULTIACTION( 8, 216, (SUBWINDOW_WIDTH)-4, 10, "Filtrowanie Anizotropoficzne:", .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Wylaczone" 0 "Srednie" 4 "Mocne" 8 }, uiScript glCustom, "" )
-	MULTIACTION( 8, 228, (SUBWINDOW_WIDTH)-4, 10, "Glebia Koloru:", .2, 8, "ui_r_colorbits", cvarFloatList { "Domys. Monitora" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
-	YESNOACTION( 8, 240, (SUBWINDOW_WIDTH)-4, 10, "Detalowe Textury:", .2, 8, "ui_r_detailtextures", uiScript glCustom, "" )
-	MULTIACTION( 8, 252, (SUBWINDOW_WIDTH)-4, 10, "Glebokosc Bufferowania:", .2, 8, "ui_r_depthbits", cvarFloatList { "Domyslne" 0 "16-bit" 16 "24-bit" 24 }, uiScript glCustom, "" )
-	YESNOACTION( 8, 264, (SUBWINDOW_WIDTH)-4, 10, "Kompresowanie Textur:", .2, 8, "ui_r_ext_compressed_textures", uiScript glCustom, "" )
-	YESNOACTION( 8, 276, (SUBWINDOW_WIDTH)-4, 10, "Synchronizacja Klatek:", .2, 8, "ui_r_finish", uiScript glCustom, "" )	
-	MULTIACTION( 8, 288, (SUBWINDOW_WIDTH)-4, 10, "GL Extensions:", .2, 8, "ui_r_allowExtensions", cvarFloatList { "Wlaczone" 1 "Wylaczone" 0 }, uiScript glCustom , "")
+	MULTIACTION( 8, 240, (SUBWINDOW_WIDTH)-4, 10, "Filtrowanie Textur:", .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glCustom, "" )
+	MULTIACTION( 8, 252, (SUBWINDOW_WIDTH)-4, 10, "Filtrowanie Anizotropoficzne:", .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Wylaczone" 0 "Srednie" 4 "Mocne" 8 }, uiScript glCustom, "" )
+	MULTIACTION( 8, 264, (SUBWINDOW_WIDTH)-4, 10, "Glebia Koloru:", .2, 8, "ui_r_colorbits", cvarFloatList { "Domys. Monitora" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, "" )
+	YESNOACTION( 8, 276, (SUBWINDOW_WIDTH)-4, 10, "Detalowe Textury:", .2, 8, "ui_r_detailtextures", uiScript glCustom, "" )
+	MULTIACTION( 8, 288, (SUBWINDOW_WIDTH)-4, 10, "Glebokosc Bufferowania:", .2, 8, "ui_r_depthbits", cvarFloatList { "Domyslne" 0 "16-bit" 16 "24-bit" 24 }, uiScript glCustom, "" )
+	YESNOACTION( 8, 300, (SUBWINDOW_WIDTH)-4, 10, "Kompresowanie Textur:", .2, 8, "ui_r_ext_compressed_textures", uiScript glCustom, "" )
+	YESNOACTION( 8, 312, (SUBWINDOW_WIDTH)-4, 10, "Synchronizacja Klatek:", .2, 8, "ui_r_finish", uiScript glCustom, "" )	
+	MULTIACTION( 8, 324, (SUBWINDOW_WIDTH)-4, 10, "GL Extensions:", .2, 8, "ui_r_allowExtensions", cvarFloatList { "Wlaczone" 1 "Wylaczone" 0 }, uiScript glCustom , "")
 																					
-	BUTTON( 8+.5*((SUBWINDOW_WIDTH)-196), 354, 196, 14, "USTAW REKOMENDOWANE", .24, 11, uiScript vidReset ;
+	BUTTON( 8+.5*((SUBWINDOW_WIDTH)-196), 342, 196, 14, "USTAW REKOMENDOWANE", .24, 11, uiScript vidReset ;
 																					uiScript systemCvarsReset ;
 																					open rec_restart )
 		
