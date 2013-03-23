@@ -3616,7 +3616,6 @@ CG_Draw2D
 static void CG_Draw2D(void)
 {
 	CG_ScreenFade();
-
 	// no 2d when in esc menu
 	// FIXME: do allow for quickchat (bleh)
 	// - Removing for now
@@ -3706,8 +3705,6 @@ static void CG_Draw2D(void)
 		}
 
 		CG_DrawCenterString();
-		CG_DrawPMItems();
-		CG_DrawPMItemsBig();
 
 		CG_DrawFollow();
 		CG_DrawWarmup();

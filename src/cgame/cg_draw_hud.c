@@ -1082,6 +1082,15 @@ void CG_DrawGlobalHud(void)
 	{0,0,0,0} //Weapon ammo location
 	};
 	*/
+
+	rect.x = 4;
+	rect.y = 360;
+	rect.w = 72;
+	rect.h = 72;
+
+	CG_DrawPMItems(rect);
+	CG_DrawPMItemsBig();
+
 	if (cg_drawCompass.integer)
 	{
 		if (cg_altHud.integer)

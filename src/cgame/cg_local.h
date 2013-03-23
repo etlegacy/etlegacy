@@ -3163,7 +3163,7 @@ void CG_InitPMGraphics(void);
 void CG_UpdatePMLists(void);
 void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader);
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader);
-void CG_DrawPMItems(void);
+void CG_DrawPMItems(rectDef_t rect);
 void CG_DrawPMItemsBig(void);
 const char *CG_GetPMItemText(centity_t *cent);
 void CG_PlayPMItemSound(centity_t *cent);

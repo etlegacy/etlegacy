@@ -433,14 +433,14 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 
 #define PM_ICON_SIZE_NORMAL 20
 #define PM_ICON_SIZE_SMALL 12
-void CG_DrawPMItems(void)
+void CG_DrawPMItems(rectDef_t rect)
 {
 	vec4_t       colour     = { 0.f, 0.f, 0.f, 1.f };
 	vec4_t       colourText = { 1.f, 1.f, 1.f, 1.f };
 	float        t;
 	int          i, size;
 	pmListItem_t *listItem = cg_pmOldList;
-	float        y         = 360;
+	float        y         = rect.y; //360;
 
 	if (cg_drawSmallPopupIcons.integer)
 	{
@@ -474,7 +474,7 @@ void CG_DrawPMItems(void)
 	trap_R_SetColor(NULL);
 	CG_Text_Paint_Ext(4 + size + 2, y + 12, 0.2f, 0.2f, colourText, cg_pmWaitingList->message, 0, 0, 0, &cgs.media.limboFont2);
 
-	for (i = 0; i < 4 && listItem; i++, listItem = listItem->next)
+	for (i = 0; i < 6 && listItem; i++, listItem = listItem->next)
 	{
 		y -= size + 2;
 
@@ -489,9 +489,9 @@ void CG_DrawPMItems(void)
 		}
 
 		trap_R_SetColor(colourText);
-		CG_DrawPic(4, y, size, size, listItem->shader);
+		CG_DrawPic(rect.x, y, size, size, listItem->shader); //x=4
 		trap_R_SetColor(NULL);
-		CG_Text_Paint_Ext(4 + size + 2, y + 12, 0.2f, 0.2f, colourText, listItem->message, 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(rect.x + size + 2, y + 12, 0.2f, 0.2f, colourText, listItem->message, 0, 0, 0, &cgs.media.limboFont2);
 	}
 }
 

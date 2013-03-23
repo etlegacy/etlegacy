@@ -1795,6 +1795,7 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	team_t           team;
 	spectatorState_t specState;
 	int              specClient;
+	qboolean         classChange;
 
 	if (trap_Argc() < 2)
 	{
@@ -1847,7 +1848,16 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		return;
 	}
 
-	ent->client->sess.latchPlayerType = atoi(ptype);
+	if (ent->client->sess.playerType != playerType || ent->client->sess.latchPlayerType != playerType)
+	{
+		classChange = qtrue;
+	}
+	else
+	{
+		classChange = qfalse;
+	}
+
+	ent->client->sess.latchPlayerType = playerType;
 	if (ent->client->sess.latchPlayerType < PC_SOLDIER || ent->client->sess.latchPlayerType > PC_COVERTOPS)
 	{
 		ent->client->sess.latchPlayerType = PC_SOLDIER;
@@ -1860,7 +1870,7 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 
 	if (!SetTeam(ent, s, qfalse, w, w2, qtrue))
 	{
-		if (ent->client->sess.playerType != ent->client->sess.latchPlayerType)
+		if (classChange)
 		{
 			G_SetClientWeapons(ent, w, w2, qfalse);
 			ClientUserinfoChanged(ent - g_entities);
