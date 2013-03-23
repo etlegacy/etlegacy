@@ -35,27 +35,27 @@ menuDef {
 	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 136, "HUD DISPLAY" )
 	YESNO( 8, HUD_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Draw Gun:", .2, 8, "cg_drawGun", "Show gun model on-screen" )
 	YESNO( 8, HUD_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Show Compass:", .2, 8, "cg_drawCompass", "Displays compass (with icons when near select events)" )
-	MULTI( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Mission Timer:", .2, 8, "cg_drawRoundTimer", cvarFloatList { "Off" 0 "On" 1 }, "" )
+	MULTI( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Mission Timer:", .2, 8, "cg_drawRoundTimer", cvarFloatList { "Off" 0 "On" 1 }, "Displays remaining mission time." )
 	MULTI( 8, HUD_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Reinforcement Timer:", .2, 8, "cg_drawReinforcementTime", cvarFloatList { "Off" 0 "On" 1 }, "Displays your team's \"reinforcement\" time" )
 	MULTI( 8, HUD_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Cursor Hints:", .2, 8, "cg_cursorHints", cvarFloatList { "Off" 0 "Size Pulse" 1 "Strobe Pulse" 2 "Alpha Pulse" 3 "Solid" 4 }, "Icon display format when near an action item" )
 	YESNO( 8, HUD_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, "Show Lagometer:", .2, 8, "cg_lagometer", "Display lagometer" )
 	YESNO( 8, HUD_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, "Show FPS:", .2, 8, "cg_drawFPS", "Displays Frames Per Second" )
 	MULTI( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Show Locations:", .2, 8, "cg_locations", cvarFloatList { "Cordinates Only" 0 "Names Fireteam Only" 1 "Names Team Chat Only" 2 "Team & Fireteam Chat" 3 }, "Displays locations in fireteam" )
-	YESNO( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Enable Flags:", .2, 8, "cg_countryflags", "" )
+	YESNO( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Enable Flags:", .2, 8, "cg_countryflags", "Display players country flags in score board." )
 	YESNO( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, "Fireteam Latched Class:", .2, 8, "cg_fireteamLatchedClass", "Display Fireteam latched class." )
 	
 // In-Game Display //
 #define DISPLAY_Y 174
 	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, "IN-GAME DISPLAY" )
-	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Ejecting Brass:", .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, "" )
+	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Ejecting Brass:", .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, "Sets the duration ejected bullet shells etc last for." )
 	SLIDER( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Field Of View:", .2, 8, "cg_fov" 1.3 80 120, "BEST FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27" )
 	CVARFLOATLABEL( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Corona Distance:", .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, "" )
-	YESNO( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Particles:", .2, 8, "cg_wolfparticles", "" )
-	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Wall Mark Lifetime:", .2, 8, "cg_markTime", cvarFloatList { "Long" 30000 "Normal" 20000 "Short" 10000 "Off" 0 }, "" )
+	YESNO( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Particles:", .2, 8, "cg_wolfparticles", "Toggles display of particle effects – e.g. Explosions, some smoke effects." )
+	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Wall Mark Lifetime:", .2, 8, "cg_markTime", cvarFloatList { "Long" 30000 "Normal" 20000 "Short" 10000 "Off" 0 }, "Duration of bullet marks on walls etc" )
 	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, "Blood Flash:", .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, "Red blood \"flash\" scale when receiving damage" )
 	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, "Blood Splatter:", .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, "Blood \"splatter\" transparency when taking damage from other players" )
-	YESNO( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Show Blood:", .2, 8, "cg_showblood", "" )
+	YESNO( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Show Blood:", .2, 8, "cg_showblood", "Toggles showing blood spurt effect when player's are shot." )
 	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Atmospheric Effects:", .2, 8, "cg_atmosphericEffects", "Draw Atmospheric effects (Snow/Rain) on-screen." )
 
 // Crosshair //
@@ -94,13 +94,11 @@ menuDef {
 
 // Movement //
   #define MOVEMENT_Y 190
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 88, "MOVEMENT" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Run pitch:", .2, 8, "cg_runpitch", cvarFloatList { "0.000" 0.00 "0.002" 0.002 }, "Stops bobbing movement" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Run roll:", .2, 8, "cg_runroll", cvarFloatList { "0.000" 0.00 "0.005" 0.005 }, "Stops bobbing movement" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Bob up:", .2, 8, "cg_bobup", cvarFloatList { "0.000" 0.00 "0.005" 0.005 }, "Stops bobbing movement" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Bob pitch:", .2, 8, "cg_bobpitch", cvarFloatList { "0.000" 0.00 "0.002" 0.002 }, "Stops bobbing movement" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+64, (SUBWINDOW_WIDTH_R)-4, 10, "Bob roll:", .2, 8, "cg_bobroll", cvarFloatList { "0.000" 0.000 "0.002" 0.002 }, "Stops bobbing movement" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+76, (SUBWINDOW_WIDTH_R)-4, 10, "Bob yaw:", .2, 8, "cg_bobyaw", cvarFloatList { "0.000" 0.00 "0.002" 0.002 }, "Stops bobbing movement" )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 64, "MOVEMENT" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Bob up:", .2, 8, "cg_bobup", cvarFloatList { "Off" 0.00 "On" 0.005 }, "Enable/Disable the vertical bob effect when moving" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Bob pitch:", .2, 8, "cg_bobpitch", cvarFloatList { "Off" 0.00 "On" 0.002 }, "Enable/Disable the bob pitch (forwards/backwards) effect when moving" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Bob roll:", .2, 8, "cg_bobroll", cvarFloatList { "Off" 0.000 "On" 0.002 }, "Enable/Disable the bob roll (left/right) effect when moving" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Bob yaw:", .2, 8, "cg_bobyaw", cvarFloatList { "Off" 0.00 "On" 0.002 }, "Enable/Disable the bob yaw (turn left/right) effect when moving" )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "BACK", .3, 14, close options_customise_hud ; open options )
