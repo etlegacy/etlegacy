@@ -44,7 +44,7 @@ menuDef {
 
 // Advanced settings //
 	SUBWINDOW( 6, 152, (SUBWINDOW_WIDTH), 256, "ZAAWANSOWANE" )
-	YESNO( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Niebo Slabej Jakosci:", .2, 8, "r_fastsky", "" )
+	YESNO( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Niebo Slabej Jakosci:", .2, 8, "r_fastsky", "Rysuj niebo z detalami lub proste" )
 	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Detale Cieni:", .2, 8, "ui_cg_shadows", cvarFloatList { "Brak (najsz.)" 0 "Blob (stary styl)" 1 "Wzorowe Cienie" 2 "Projektowe Cienie" 3 "Polygonowe Cienie" 4 }, uiScript glCustom, "" )
 	MULTIACTION( 8, 192, (SUBWINDOW_WIDTH)-4, 10, "Detale Textur:", .2, 8, "ui_r_picmip", cvarFloatList { "Niskie" 2 "Srednie" 1 "Mocne" 0 }, uiScript glCustom, "" )
 	// add options 0 - disabled, 1 - single path, 2 - path
@@ -59,7 +59,7 @@ menuDef {
 	YESNOACTION( 8, 276, (SUBWINDOW_WIDTH)-4, 10, "Detalowe Textury:", .2, 8, "ui_r_detailtextures", uiScript glCustom, "" )
 	MULTIACTION( 8, 288, (SUBWINDOW_WIDTH)-4, 10, "Glebokosc Bufferowania:", .2, 8, "ui_r_depthbits", cvarFloatList { "Domyslne" 0 "16-bit" 16 "24-bit" 24 }, uiScript glCustom, "" )
 	YESNOACTION( 8, 300, (SUBWINDOW_WIDTH)-4, 10, "Kompresowanie Textur:", .2, 8, "ui_r_ext_compressed_textures", uiScript glCustom, "" )
-	YESNOACTION( 8, 312, (SUBWINDOW_WIDTH)-4, 10, "Synchronizacja Klatek:", .2, 8, "ui_r_finish", uiScript glCustom, "" )	
+	YESNOACTION( 8, 312, (SUBWINDOW_WIDTH)-4, 10, "Synchronizacja Klatek:", .2, 8, "ui_r_finish", uiScript glCustom, "Zapobiega skakaniu obrazu" )	
 	MULTIACTION( 8, 324, (SUBWINDOW_WIDTH)-4, 10, "GL Extensions:", .2, 8, "ui_r_allowExtensions", cvarFloatList { "Wlaczone" 1 "Wylaczone" 0 }, uiScript glCustom , "")
 																					
 	BUTTON( 8+.5*((SUBWINDOW_WIDTH)-196), 342, 196, 14, "USTAW REKOMENDOWANE", .24, 11, uiScript vidReset ;

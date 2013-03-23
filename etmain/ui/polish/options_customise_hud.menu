@@ -35,19 +35,19 @@ menuDef {
 	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 136, "WYGLAD HUD" )
 	YESNO( 8, HUD_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Pokaz Bron:", .2, 8, "cg_drawGun", "Pokazuj model broni" )
 	YESNO( 8, HUD_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Pokaz Kompas:", .2, 8, "cg_drawCompass", "Wyswietl Kompas" )
-	MULTI( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Czas Misji:", .2, 8, "cg_drawRoundTimer", cvarFloatList { "Wylacz" 0 "Wlacz" 1 }, "" )
+	MULTI( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Czas Misji:", .2, 8, "cg_drawRoundTimer", cvarFloatList { "Wylacz" 0 "Wlacz" 1 }, "Wyswietlaj pozostaly czas misji" )
 	MULTI( 8, HUD_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Czas Wsparcia:", .2, 8, "cg_drawReinforcementTime", cvarFloatList { "Wylacz" 0 "Wlacz" 1 }, "Wyswietl czas do respawnu" )
 	MULTI( 8, HUD_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Wskazowki Kursora:", .2, 8, "cg_cursorHints", cvarFloatList { "Wylacz" 0 "Pulsujacy" 1 "Pulsujace obrysowanie" 2 "Alpha Pulse" 3 "Solidny" 4 }, "Wyswietl format ikony kiedy blisko akcji" )
 	YESNO( 8, HUD_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, "Pokaz Lagometr:", .2, 8, "cg_lagometer", "Wyswietl lagometr" )
 	YESNO( 8, HUD_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, "Pokaz FPS:", .2, 8, "cg_drawFPS", "Wyswietl ilosc klatek na sekunde" )
 	MULTI( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Pokaz Lokacje:", .2, 8, "cg_locations", cvarFloatList { "Kordynaty Tylko" 0 "Nazwy Fire-Teamu Tylko" 1 "Nazwy Team Chatu Tylko" 2 "Team & Fireteam Chat" 3 }, "Wyswietl lokalizacje w Fire-Teamie" )
-	YESNO( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Wlacz Flagi:", .2, 8, "cg_countryflags", "" )
+	YESNO( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Wlacz Flagi:", .2, 8, "cg_countryflags", "Wyswietl flagi graczy na tablicy wynikow" )
 	YESNO( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, "Klasa w Fireteamie:", .2, 8, "cg_fireteamLatchedClass", "Pokazuj zmiany klas w firteamie." )
 	
 // In-Game Display //
 #define DISPLAY_Y 174
 	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, "WYGLAD W GRZE" )
-	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Wyswietlanie Lusek:", .2, 8, "cg_brassTime", cvarFloatList { "Wysokie" 15000 "Srednie" 2500 "Wylaczone" 0 }, "" )
+	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Wyswietlanie Lusek:", .2, 8, "cg_brassTime", cvarFloatList { "Wysokie" 15000 "Srednie" 2500 "Wylaczone" 0 }, "Ustaw dlugosc rysowania wypadajacych lusek" )
 	SLIDER( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Pole Widzenia:", .2, 8, "cg_fov" 1.3 80 120, "BEST FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27" )
 	CVARFLOATLABEL( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Odleglosc Korony:", .2, 8, "cg_coronafardist", cvarFloatList { "Wylaczony" 0 "Bliski" 800 "Normalny" 1536 "Daleki" 4096 "Extremalny" 16000 }, "" )
@@ -55,7 +55,7 @@ menuDef {
 	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Znaki Scian Czas:", .2, 8, "cg_markTime", cvarFloatList { "Dlugi" 30000 "Normaly" 20000 "Krotki" 10000 "Wylaczony" 0 }, "" )
 	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, "Slad Krwi:", .2, 8, "cg_bloodFlash", cvarFloatList { "Brak" 0.0 "Lekki" 0.25 "Sredni" 0.5 "Mocny" 0.75 "Pelny" 1.0 }, "Slad czerwonej krwi kiedy zostaniesz trafiony" )
 	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, "Rozprysk Krwi:", .2, 8, "cg_bloodDamageBlend", cvarFloatList { "Brak" 0.0 "Lekki" 0.25 "Srednii" 0.5 "Mocny" 0.75 "Pelny" 1.0 }, "Rozprysk krwi kiedy zostaniesz trafiony przez innego gracza" )
-	YESNO( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Pokaz Krew:", .2, 8, "cg_showblood", "" )
+	YESNO( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Pokaz Krew:", .2, 8, "cg_showblood", "Pokazuje efekt krwi kiedy gracz zostaje trafiony" )
 	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Efekty Atmosferyczne:", .2, 8, "cg_atmosphericEffects", "Rysuj efekty atmosferyczne (Sniej/Deszc) w grze." )
 
 // Crosshair //
@@ -94,13 +94,11 @@ menuDef {
 
 // Movement //
   #define MOVEMENT_Y 190
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 88, "PORUSZANIE SIE" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Run pitch:", .2, 8, "cg_runpitch", cvarFloatList { "0.000" 0.00 "0.002" 0.002 }, "Stops bobbing movement" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Run roll:", .2, 8, "cg_runroll", cvarFloatList { "0.000" 0.00 "0.005" 0.005 }, "Stops bobbing movement" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Bob up:", .2, 8, "cg_bobup", cvarFloatList { "0.000" 0.00 "0.005" 0.005 }, "Stops bobbing movement" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Bob pitch:", .2, 8, "cg_bobpitch", cvarFloatList { "0.000" 0.00 "0.002" 0.002 }, "Stops bobbing movement" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+64, (SUBWINDOW_WIDTH_R)-4, 10, "Bob roll:", .2, 8, "cg_bobroll", cvarFloatList { "0.000" 0.000 "0.002" 0.002 }, "Stops bobbing movement" )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+76, (SUBWINDOW_WIDTH_R)-4, 10, "Bob yaw:", .2, 8, "cg_bobyaw", cvarFloatList { "0.000" 0.00 "0.002" 0.002 }, "Stops bobbing movement" )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 64, "PORUSZANIE SIE" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Bob up:", .2, 8, "cg_bobup", cvarFloatList { "0.000" 0.00 "0.005" 0.005 }, "" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Bob pitch:", .2, 8, "cg_bobpitch", cvarFloatList { "0.000" 0.00 "0.002" 0.002 }, "" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Bob roll:", .2, 8, "cg_bobroll", cvarFloatList { "0.000" 0.000 "0.002" 0.002 }, "" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Bob yaw:", .2, 8, "cg_bobyaw", cvarFloatList { "0.000" 0.00 "0.002" 0.002 }, "" )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "COFNIJ", .3, 14, close options_customise_hud ; open options )
