@@ -45,7 +45,7 @@ menuDef {
 
 // Advanced settings //
 	SUBWINDOW( 6, 152, (SUBWINDOW_WIDTH), 220, "ADVANCED" )
-	YESNO( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Low Quality Sky:", .2, 8, "r_fastsky", "" )
+	YESNO( 8, 168, (SUBWINDOW_WIDTH)-4, 10, "Low Quality Sky:", .2, 8, "r_fastsky", "Toggles wether the detailed skybox is drawn or just a basic sky" )
 	MULTIACTION( 8, 180, (SUBWINDOW_WIDTH)-4, 10, "Shadow Detail:", .2, 8, "ui_cg_shadows", cvarFloatList { "None (fastest)" 0 "Blob (old style)" 1 "Stencil shadows" 2 "Projection shadows" 3 "Polygon shadows" 4 }, uiScript glCustom, "" )
 	MULTIACTION( 8, 192, (SUBWINDOW_WIDTH)-4, 10, "Texture Detail:", .2, 8, "ui_r_picmip", cvarFloatList { "Low" 2 "Medium" 1 "High" 0 }, uiScript glCustom, "" )
 	// add options 0 - disabled, 1 - single path, 2 - path
@@ -60,7 +60,7 @@ menuDef {
 	YESNOACTION( 8, 276, (SUBWINDOW_WIDTH)-4, 10, "Detail Textures:", .2, 8, "ui_r_detailtextures", uiScript glCustom, "" )
 	MULTIACTION( 8, 288, (SUBWINDOW_WIDTH)-4, 10, "Depth Buffer:", .2, 8, "ui_r_depthbits", cvarFloatList { "Default" 0 "16-bit" 16 "24-bit" 24 }, uiScript glCustom, "" )
 	YESNOACTION( 8, 300, (SUBWINDOW_WIDTH)-4, 10, "Compress Textures:", .2, 8, "ui_r_ext_compressed_textures", uiScript glCustom, "" )
-	YESNOACTION( 8, 312, (SUBWINDOW_WIDTH)-4, 10, "Sync Every Frame:", .2, 8, "ui_r_finish", uiScript glCustom, "" )	
+	YESNOACTION( 8, 312, (SUBWINDOW_WIDTH)-4, 10, "Sync Every Frame:", .2, 8, "ui_r_finish", uiScript glCustom, "Prevent screen tearing" )	
 	MULTIACTION( 8, 324, (SUBWINDOW_WIDTH)-4, 10, "GL Extensions:", .2, 8, "ui_r_allowExtensions", cvarFloatList { "Enabled" 1 "Disabled" 0 }, uiScript glCustom , "")
 																					
 	BUTTON( 8+.5*((SUBWINDOW_WIDTH)-196), 342, 196, 14, "SET RECOMMENDED", .24, 11, uiScript vidReset ;
