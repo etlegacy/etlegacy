@@ -1249,8 +1249,8 @@ void CG_Hud_Setup(void)
 	// Hud1
 	hud1.compas          = getRect(44, 480 - 75, 72, 72);
 	hud1.staminabar      = getRect(4, 388, 12, 72);
-	hud1.healthbar       = getRect(604, 388, 12, 72);
-	hud1.weaponchargebar = getRect(624, 388, 12, 72);
+	hud1.healthbar       = getRect((Ccg_WideX(640) - 36), 388, 12, 72);
+	hud1.weaponchargebar = getRect((Ccg_WideX(640) - 16), 388, 12, 72);
 	hud1.healthtext      = getRect(Ccg_WideX(640) - 60, 480 - 65, 0, 0);
 	hud1.xptext          = getRect(28, 480 - 4, 0, 0);
 	hud1.statsdisplay    = getRect(24, 480 - 95, 0, 0);
@@ -1267,7 +1267,7 @@ void CG_Hud_Setup(void)
 	hud2.compas          = getRect(64, 480 - 75, 72, 72);
 	hud2.staminabar      = getRect(4, 388, 12, 72);
 	hud2.healthbar       = getRect(24, 388, 12, 72);
-	hud2.weaponchargebar = getRect(624, 388, 12, 72);
+	hud2.weaponchargebar = getRect((Ccg_WideX(640) - 16), 388, 12, 72);
 	hud2.healthtext      = getRect(65, 480 - 4, 0, 0);
 	hud2.xptext          = getRect(120, 480 - 4, 0, 0);
 	hud2.statsdisplay    = getRect(44, 480 - 95, 0, 0);
