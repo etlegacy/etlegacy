@@ -1725,6 +1725,8 @@ static void CG_RegisterGraphics(void)
 
 	CG_Fireteams_Setup();
 
+	CG_Hud_Setup();
+
 	cgs.media.railCoreShader = trap_R_RegisterShaderNoMip("railCore");       // for debugging server traces
 	cgs.media.ropeShader     = trap_R_RegisterShader("textures/props/cable_m01");
 

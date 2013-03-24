@@ -51,12 +51,24 @@ typedef struct hudStructure_s
 
 	rectDef_t weaponicon;
 	rectDef_t weaponammo;
+
+	rectDef_t fireteam;
+	rectDef_t popupmessages;
+
+	rectDef_t powerups;
+
+	rectDef_t headlocation;
+	qboolean drawhudhead;
 } hudStucture_t;
 
-static void CG_DrawPlayerStatusHead(void)
+hudStucture_t *activehud;
+hudStucture_t hud0;
+hudStucture_t hud1;
+hudStucture_t hud2;
+
+static void CG_DrawPlayerStatusHead(rectDef_t *headRect)
 {
 	hudHeadAnimNumber_t anim           = cg.idleAnim;
-	rectDef_t           headRect       = { 44, 480 - 92, 62, 80 };
 	bg_character_t      *character     = CG_CharacterForPlayerstate(&cg.snap->ps);
 	bg_character_t      *headcharacter = BG_GetCharacter(cgs.clientinfo[cg.snap->ps.clientNum].team, cgs.clientinfo[cg.snap->ps.clientNum].cls);
 	qhandle_t           painshader     = 0;
@@ -117,7 +129,7 @@ static void CG_DrawPlayerStatusHead(void)
 		}
 	}
 
-	CG_DrawPlayerHead(&headRect, character, headcharacter, 180, 0, cg.snap->ps.eFlags & EF_HEADSHOT ? qfalse : qtrue, anim, painshader, cgs.clientinfo[cg.snap->ps.clientNum].rank, qfalse);
+	CG_DrawPlayerHead(headRect, character, headcharacter, 180, 0, cg.snap->ps.eFlags & EF_HEADSHOT ? qfalse : qtrue, anim, painshader, cgs.clientinfo[cg.snap->ps.clientNum].rank, qfalse);
 }
 
 static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
@@ -411,29 +423,15 @@ static void CG_DrawAmmoCount(float x, float y)
 
 static void CG_DrawPlayerStatus(void)
 {
-	rectDef_t rect = { (Ccg_WideX(640) - 82), (480 - 56), 60, 32 };
+	CG_DrawGunIcon(activehud->weaponicon);
 
-	CG_DrawGunIcon(rect);
+	CG_DrawAmmoCount(activehud->weaponammo.x, activehud->weaponammo.y);
 
-	CG_DrawAmmoCount(Ccg_WideX(640) - 22, 480 - 1 * (16 + 2) + 12 - 4);
+	CG_DrawPlayerHealthBar(&activehud->healthbar);
 
-	rect.x = 24;
-	rect.y = 480 - 92;
-	rect.w = 12;
-	rect.h = 72;
-	CG_DrawPlayerHealthBar(&rect);
+	CG_DrawStaminaBar(&activehud->staminabar);
 
-	rect.x = 4;
-	rect.y = 480 - 92;
-	rect.w = 12;
-	rect.h = 72;
-	CG_DrawStaminaBar(&rect);
-
-	rect.x = Ccg_WideX(640) - 16;
-	rect.y = 480 - 92;
-	rect.w = 12;
-	rect.h = 72;
-	CG_DrawWeapRecharge(&rect);
+	CG_DrawWeapRecharge(&activehud->weaponchargebar);
 }
 
 static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
@@ -530,16 +528,16 @@ static void CG_DrawSkills(float x, float y)
 	for (i = 0; i < 3; i++)
 	{
 		skill = CG_ClassSkillForPosition(ci, i);
-		if (!cg_altHud.integer)
+		if (!activehud->statssimple)
 		{
 			CG_DrawSkillBar(i * SKILL_BAR_X_SCALE + SKILL_BAR_X, 480 - (5 * SKILL_BAR_Y_SCALE) + SKILL_BAR_Y, SKILL_BAR_WIDTH, 4 * SKILL_ICON_SIZE, ci->skill[skill]);
 			CG_DrawPic(i * SKILL_ICON_X_SCALE + SKILL_ICON_X, 480 + SKILL_ICON_Y, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
 		}
 		else
 		{
-			temp = 480 - 90 + (i * SKILL_ICON_SIZE * 1.7f);
-			CG_DrawPic(SKILL_ICON_X, temp, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
-			CG_Text_Paint_Ext(SKILL_ICON_X + 2, temp + 24, 0.25f, 0.25f, colorWhite, va("%i", ci->skill[skill]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+			temp = y + (i * SKILL_ICON_SIZE * 1.7f);
+			CG_DrawPic(x, temp, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
+			CG_Text_Paint_Ext(x + 2, temp + 24, 0.25f, 0.25f, colorWhite, va("%i", ci->skill[skill]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
 	}
 }
@@ -585,20 +583,18 @@ static void CG_DrawPowerUps(rectDef_t rect)
 
 static void CG_DrawPlayerStats(void)
 {
-	rectDef_t rect = { Ccg_WideX(640) - 40, 480 - 140, 36, 36 };
-
-	CG_DrawPlayerHealth(SKILLS_X - 28, 480 - 4);
+	CG_DrawPlayerHealth(activehud->healthtext.x, activehud->healthtext.y);
 
 	if (cgs.gametype == GT_WOLF_LMS)
 	{
 		return;
 	}
 
-	CG_DrawSkills(0, 0);
+	CG_DrawSkills(activehud->statsdisplay.x, activehud->statsdisplay.y);
 
-	CG_DrawXP(SKILLS_X + 28, 480 - 4);
+	CG_DrawXP(activehud->xptext.x, activehud->xptext.y);
 
-	CG_DrawPowerUps(rect);
+	CG_DrawPowerUps(activehud->powerups);
 }
 
 int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeight, qboolean dodrawpic, qboolean leftAlign)
@@ -1020,15 +1016,302 @@ static void CG_DrawStatsDebug(void)
 	while (i != statsDebugPos);
 }
 
+/*
+===========================================================================================
+  UPPER RIGHT CORNER
+===========================================================================================
+*/
+
+// FIXME: use these in all functions below to have unique colors
+vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
+vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec4_t HUD_Text = { 0.625f, 0.625f, 0.6f, 1.0f };
+
+#define UPPERRIGHT_X 634
+#define UPPERRIGHT_W 50
+/*
+==================
+CG_DrawSnapshot
+==================
+*/
+static float CG_DrawSnapshot(float y)
+{
+	char *s = va("t:%i sn:%i cmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence);
+	int  w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	int  w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+	int  x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+
+	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
+	return y + 12 + 4;
+}
+
+/*
+==================
+CG_DrawFPS
+==================
+*/
+#define MAX_FPS_FRAMES  500
+
+static float CG_DrawFPS(float y)
+{
+	static int previousTimes[MAX_FPS_FRAMES];
+	static int previous;
+	static int index;
+	static int oldSamples;
+	char       *s;
+	int        t         = trap_Milliseconds(); // don't use serverTime, because that will be drifting to correct for internet lag changes, timescales, timedemos, etc
+	int        frameTime = t - previous;
+	int        x, w, w2;
+	int        samples = cg_drawFPS.integer;
+
+	previous = t;
+
+	if (samples < 4)
+	{
+		samples = 4;
+	}
+	if (samples > MAX_FPS_FRAMES)
+	{
+		samples = MAX_FPS_FRAMES;
+	}
+	if (samples != oldSamples)
+	{
+		index = 0;
+	}
+
+	oldSamples                     = samples;
+	previousTimes[index % samples] = frameTime;
+	index++;
+
+	if (index > samples)
+	{
+		int i, fps;
+		// average multiple frames together to smooth changes out a bit
+		int total = 0;
+
+		for (i = 0 ; i < samples ; ++i)
+		{
+			total += previousTimes[i];
+		}
+
+		total = total ? total : 1;
+
+		fps = 1000 * samples / total;
+
+		s = va("%i FPS", fps);
+	}
+	else
+	{
+		s = "estimating";
+	}
+
+	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+
+	x = (int)(Ccg_WideX(UPPERRIGHT_X)) - w2 - 2;
+	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
+
+	return y + 12 + 4;
+}
+
+/*
+=================
+CG_DrawTimer
+=================
+*/
+static float CG_DrawTimer(float y)
+{
+	char   *s;
+	int    w, w2;
+	vec4_t color = { 0.625f, 0.625f, 0.6f, 1.0f };
+	int    tens;
+	char   *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || cg.snap->ps.pm_flags & PMF_FOLLOW) && cg_drawReinforcementTime.integer > 0) ?
+	             va("^F%d%s", CG_CalculateReinfTime(qfalse), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
+	int x;
+	int msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+	int seconds = msec / 1000;
+	int mins    = seconds / 60;
+
+	seconds -= mins * 60;
+	tens     = seconds / 10;
+	seconds -= tens * 10;
+
+	if (cgs.gamestate != GS_PLAYING)
+	{
+		s        = va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode // ^*
+		color[3] = fabs(sin(cg.time * 0.002));
+	}
+	else if (msec < 0 && cgs.timelimit > 0.0f)
+	{
+		s        = "^N0:00";
+		color[3] = fabs(sin(cg.time * 0.002));
+	}
+	else
+	{
+		if (cgs.timelimit <= 0.0f)
+		{
+			s = va("%s", rt);
+		}
+		else
+		{
+			s = va("%s^7%i:%i%i", rt, mins, tens, seconds);  // ^*
+		}
+
+		color[3] = 1.f;
+	}
+
+	// spawntimer
+	seconds = msec / 1000;
+	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0)
+	{
+		s = va("^1%d %s", cg_spawnTimer_period.integer + (seconds - cg_spawnTimer_set.integer) % cg_spawnTimer_period.integer, s);
+	}
+	// end spawntimer
+
+	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+
+	x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
+
+
+	return y + 12 + 4;
+}
+
+/*
+=====================
+CG_DrawUpperRight
+
+=====================
+*/
+void CG_DrawUpperRight(void)
+{
+	float y = 20 + 100 + 32;
+
+	if (cg_drawFireteamOverlay.integer && CG_IsOnFireteam(cg.clientNum))
+	{
+		CG_DrawFireTeamOverlay(&activehud->fireteam);
+	}
+
+	if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR) &&
+	    (cgs.autoMapExpanded || (!cgs.autoMapExpanded && (cg.time - cgs.autoMapExpandTime < 250.f))))
+	{
+		return;
+	}
+
+	if (cg_drawRoundTimer.integer)
+	{
+		y = CG_DrawTimer(y);
+	}
+
+	if (cg_drawFPS.integer)
+	{
+		y = CG_DrawFPS(y);
+	}
+
+	if (cg_drawSnapshot.integer)
+	{
+		y = CG_DrawSnapshot(y);
+	}
+}
+
+rectDef_t getRect(float x, float y, float w, float h)
+{
+	rectDef_t rect = { x, y, w, h };
+	return rect;
+}
+
+void CG_Hud_Setup(void)
+{
+	// Hud0 aka the Default hud
+	hud0.compas          = getRect((Ccg_WideX(640) - 100 - 20 - 16), 20 - 16, 100 + 32, 100 + 32);
+	hud0.staminabar      = getRect(4, 480 - 92, 12, 72);
+	hud0.healthbar       = getRect(24, 480 - 92, 12, 72);
+	hud0.weaponchargebar = getRect(Ccg_WideX(640) - 16, 480 - 92, 12, 72);
+	hud0.healthtext      = getRect(SKILLS_X - 28, 480 - 4, 0, 0);
+	hud0.xptext          = getRect(SKILLS_X + 28, 480 - 4, 0, 0);
+	hud0.statsdisplay    = getRect(SKILL_ICON_X, 0, 0, 0);
+	hud0.statssimple     = qfalse;
+	hud0.weaponicon      = getRect((Ccg_WideX(640) - 82), (480 - 56), 60, 32);
+	hud0.weaponammo      = getRect(Ccg_WideX(640) - 22, 480 - 1 * (16 + 2) + 12 - 4, 0, 0);
+	hud0.fireteam        = getRect(10, 10, 100, 100);
+	hud0.popupmessages   = getRect(4, 360, 72, 72);
+	hud0.powerups        = getRect(Ccg_WideX(640) - 40, 480 - 140, 36, 36);
+	hud0.headlocation    = getRect(44, 480 - 92, 62, 80);
+	hud0.drawhudhead     = qtrue;
+
+	// Hud1
+	hud1.compas          = getRect(44, 480 - 75, 72, 72);
+	hud1.staminabar      = getRect(4, 388, 12, 72);
+	hud1.healthbar       = getRect(604, 388, 12, 72);
+	hud1.weaponchargebar = getRect(624, 388, 12, 72);
+	hud1.healthtext      = getRect(Ccg_WideX(640) - 60, 480 - 65, 0, 0);
+	hud1.xptext          = getRect(28, 480 - 4, 0, 0);
+	hud1.statsdisplay    = getRect(24, 480 - 95, 0, 0);
+	hud1.statssimple     = qtrue;
+	hud1.weaponicon      = getRect((Ccg_WideX(640) - 82 - 20), (480 - 56), 60, 32);
+	hud1.weaponammo      = getRect(Ccg_WideX(640) - 22 - 20, 480 - 1 * (16 + 2) + 12 - 4, 0, 0);
+	hud1.fireteam        = getRect((Ccg_WideX(640) - 240), 10, 100, 100);
+	hud1.popupmessages   = getRect(4, 100, 72, 72);
+	hud1.powerups        = getRect(Ccg_WideX(640) - 40, 480 - 140, 36, 36);
+	hud1.headlocation    = getRect(44, 480 - 92, 62, 80);
+	hud1.drawhudhead     = qfalse;
+
+	// Hud2
+	hud2.compas          = getRect(64, 480 - 75, 72, 72);
+	hud2.staminabar      = getRect(4, 388, 12, 72);
+	hud2.healthbar       = getRect(24, 388, 12, 72);
+	hud2.weaponchargebar = getRect(624, 388, 12, 72);
+	hud2.healthtext      = getRect(65, 480 - 4, 0, 0);
+	hud2.xptext          = getRect(120, 480 - 4, 0, 0);
+	hud2.statsdisplay    = getRect(44, 480 - 95, 0, 0);
+	hud2.statssimple     = qtrue;
+	hud2.weaponicon      = getRect((Ccg_WideX(640) - 82), (480 - 56), 60, 32);
+	hud2.weaponammo      = getRect(Ccg_WideX(640) - 22, 480 - 1 * (16 + 2) + 12 - 4, 0, 0);
+	hud2.fireteam        = getRect((Ccg_WideX(640) - 240), 10, 100, 100);
+	hud2.popupmessages   = getRect(4, 100, 72, 72);
+	hud2.powerups        = getRect(Ccg_WideX(640) - 40, 480 - 140, 36, 36);
+	hud2.headlocation    = getRect(44, 480 - 92, 62, 80);
+	hud2.drawhudhead     = qfalse;
+}
+
+void CG_SetHud(void)
+{
+	if (cg_altHud.integer)
+	{
+		switch (cg_altHud.integer)
+		{
+		case 1:
+			activehud = &hud1;
+			break;
+		case 2:
+			activehud = &hud2;
+			break;
+		default:
+			activehud = &hud0;
+		}
+	}
+	else
+	{
+		activehud = &hud0;
+	}
+}
+
 void CG_DrawActiveHud(void)
 {
 	rectDef_t rect;
 
 	if (cg.snap->ps.stats[STAT_HEALTH] > 0)
 	{
-		if (!cg_altHud.integer)
+		if (activehud->drawhudhead)
 		{
-			CG_DrawPlayerStatusHead();
+			CG_DrawPlayerStatusHead(&activehud->headlocation);
 		}
 		CG_DrawPlayerStatus();
 		CG_DrawPlayerStats();
@@ -1055,59 +1338,11 @@ void CG_DrawActiveHud(void)
 
 void CG_DrawGlobalHud(void)
 {
-	rectDef_t rect;
-	/*
-	const hudStucture_t hud0 = {
-	    {(Ccg_WideX(640) - 100 - 20 - 16),20 - 16,100 + 32,100 + 32}, //Compas location
-	    {4,480 - 92,12,72}, //Stamina bar location
-	    {24,480 - 92,12,72}, //Health bar location
-	    {Ccg_WideX(640) - 16,480 - 92,12,72}, //Weapon charge bar location
-	    {0,0,0,0}, //Health text location
-	    {0,0,0,0}, //XP text location
-	    {0,0,0,0}, //Status display
-	    qfalse, //Status display simple
-	    {0,0,0,0}, //Weapon icon location
-	    {0,0,0,0} //Weapon ammo location
-	};
-	const hudStucture_t hud1 = {
-	{504,4,132,132}, //Compas location
-	{4,388,12,72}, //Stamina bar location
-	{24,388,12,72}, //Health bar location
-	{624,388,12,72}, //Weapon charge bar location
-	{0,0,0,0}, //Health text location
-	{0,0,0,0}, //XP text location
-	{0,0,0,0}, //Status display
-	qfalse, //Status display simple
-	{0,0,0,0}, //Weapon icon location
-	{0,0,0,0} //Weapon ammo location
-	};
-	*/
-
-	rect.x = 4;
-	rect.y = 360;
-	rect.w = 72;
-	rect.h = 72;
-
-	CG_DrawPMItems(rect);
+	CG_DrawPMItems(activehud->popupmessages);
 	CG_DrawPMItemsBig();
 
 	if (cg_drawCompass.integer)
 	{
-		if (cg_altHud.integer)
-		{
-			//rect = { 44, 480 - 92, 62, 80 };
-			rect.x = 44;
-			rect.y = 480 - 75;
-			rect.w = 72;
-			rect.h = 72;
-		}
-		else
-		{
-			rect.x = (Ccg_WideX(640) - 100 - 20 - 16);
-			rect.y = 20 - 16;
-			rect.w = 100 + 32;
-			rect.h = 100 + 32;
-		}
-		CG_DrawNewCompass(rect);
+		CG_DrawNewCompass(activehud->compas);
 	}
 }
