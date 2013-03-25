@@ -8,7 +8,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608 //400
-#define WINDOW_HEIGHT	332
+#define WINDOW_HEIGHT	356
 #define GROUP_NAME		"grpOptionsCustomiseHud"
 //#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
 	
@@ -32,7 +32,7 @@ menuDef {
 
 // Hud Display //
   #define HUD_Y 32
-	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 136, "WYGLAD HUD" )
+	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 160, "WYGLAD HUD" )
 	YESNO( 8, HUD_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Pokaz Bron:", .2, 8, "cg_drawGun", "Pokazuj model broni" )
 	YESNO( 8, HUD_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Pokaz Kompas:", .2, 8, "cg_drawCompass", "Wyswietl Kompas" )
 	MULTI( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Czas Misji:", .2, 8, "cg_drawRoundTimer", cvarFloatList { "Wylacz" 0 "Wlacz" 1 }, "Wyswietlaj pozostaly czas misji" )
@@ -43,9 +43,11 @@ menuDef {
 	MULTI( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Pokaz Lokacje:", .2, 8, "cg_locations", cvarFloatList { "Kordynaty Tylko" 0 "Nazwy Fire-Teamu Tylko" 1 "Nazwy Team Chatu Tylko" 2 "Team & Fireteam Chat" 3 }, "Wyswietl lokalizacje w Fire-Teamie" )
 	YESNO( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Wlacz Flagi:", .2, 8, "cg_countryflags", "Wyswietl flagi graczy na tablicy wynikow" )
 	YESNO( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, "Klasa w Fireteamie:", .2, 8, "cg_fireteamLatchedClass", "Pokazuj zmiany klas w firteamie." )
-	
+	MULTI( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, "Zmiana HUD:", .2, 8, "cg_altHud", cvarFloatList { "Standardowy Hud" 0 "Alternatywny Hud 1" 1 "Alternatywny Hud 2" 2 }, "Zmieniaj pomiedzy innymi Hudami" )
+	MULTI( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, "Zmiana alternatywna HUD:", .2, 8, "cg_altHudFlags", cvarFloatList { "Standardowy" 0 "Przenies Czasy" 1 "Usun rangi" 2 "Czas + Rangi" 3 }, "Dostosuj alternatywny Hud" )
+
 // In-Game Display //
-#define DISPLAY_Y 174
+#define DISPLAY_Y 198
 	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, "WYGLAD W GRZE" )
 	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Wyswietlanie Lusek:", .2, 8, "cg_brassTime", cvarFloatList { "Wysokie" 15000 "Srednie" 2500 "Wylaczone" 0 }, "Ustaw dlugosc rysowania wypadajacych lusek" )
 	SLIDER( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Pole Widzenia:", .2, 8, "cg_fov" 1.3 80 120, "BEST FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27" )
