@@ -1,0 +1,27 @@
+hudDef {
+	hud {
+		//inside the hud element following keywords apply
+		// except for the hud number which tells the cg_althud variable value
+		// all the others work like the following 1st number: x 2: y 3: width 4: height 5: component style 6: visibility (boolean type)
+		// as expected a single file can contain multiple hud configurations
+		// hudnumber value must be unique, if not then the hud will be discarded
+		// PS. 'x' should be between 0 and 640 and 'y' between 0 and 480
+		hudnumber 3
+		compas 2 3 4 5 1 1
+		staminabar 2 3 4 5 1 1
+		healthbar 2 3 4 5 1 1
+		weaponchangebar 2 3 4 5 1 1
+		healthtext 2 3 4 5 1 1
+		xptext 2 3 4 5 1 1
+		statsdisplay 2 3 4 5 1 1
+		weaponicon 2 3 4 5 1 1
+		weaponammo 2 3 4 5 1 1
+		fireteam 2 3 4 5 1 1
+		popupmessages 2 3 4 5 1 1
+		powerups 2 3 4 5 1 1
+		hudhead 2 3 4 5 1 1
+		cursorhints 2 3 4 5 1 1
+		weaponstability 2 3 4 5 1 1
+		livesleft 2 3 4 5 1 1
+	}
+}

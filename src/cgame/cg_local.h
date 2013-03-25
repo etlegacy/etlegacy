@@ -2285,6 +2285,7 @@ void CG_RunMenuScript(char **args);
 void CG_GetTeamColor(vec4_t *color);
 
 // cg_draw_hud.c
+void CG_ReadHudScripts();
 void CG_Hud_Setup(void);
 void CG_DrawUpperRight(void);
 void CG_SetHud(void);

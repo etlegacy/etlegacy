@@ -1312,6 +1312,11 @@ void CG_Class_f(void)
 	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 - 1], weapon2));
 }
 
+void CG_ReadHuds_f(void)
+{
+	CG_ReadHudScripts();
+}
+
 typedef struct
 {
 	char *cmd;
@@ -1411,6 +1416,7 @@ static consoleCommand_t commands[] =
 	{ "timerSet",            CG_TimerSet_f           },
 	{ "resetTimer",          CG_ResetTimer_f         },
 	{ "class",               CG_Class_f              },
+	{ "readhuds",            CG_ReadHuds_f           },
 };
 
 /*

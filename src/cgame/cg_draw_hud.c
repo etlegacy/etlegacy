@@ -35,43 +35,480 @@
 
 #include "cg_local.h"
 
+typedef enum
+{
+	STYLE_NORMAL,
+	STYLE_SIMPLE
+} componentStyle;
+
+typedef struct hudComponent_s
+{
+	rectDef_t location;
+	qboolean visible;
+	componentStyle style;
+} hudComponent_t;
+
 typedef struct hudStructure_s
 {
-	rectDef_t compas;
+	int hudnumber;
+	hudComponent_t compas;
+	hudComponent_t staminabar;
+	hudComponent_t healthbar;
+	hudComponent_t weaponchargebar;
+	hudComponent_t healthtext;
+	hudComponent_t xptext;
+	hudComponent_t statsdisplay;
+	hudComponent_t weaponicon;
+	hudComponent_t weaponammo;
+	hudComponent_t fireteam;
+	hudComponent_t popupmessages;
+	hudComponent_t powerups;
+	hudComponent_t hudhead;
 
-	rectDef_t staminabar;
-	rectDef_t healthbar;
-	rectDef_t weaponchargebar;
-
-	rectDef_t healthtext;
-	rectDef_t xptext;
-
-	rectDef_t statsdisplay;
-	qboolean statssimple;
-
-	rectDef_t weaponicon;
-	rectDef_t weaponammo;
-
-	rectDef_t fireteam;
-	rectDef_t popupmessages;
-
-	rectDef_t powerups;
-
-	rectDef_t headlocation;
-	qboolean drawhudhead;
+	hudComponent_t cursorhint;
+	hudComponent_t weaponstability;
+	hudComponent_t livesleft;
 } hudStucture_t;
+
+#define SKILL_ICON_SIZE     14
+
+#define SKILLS_X 112
+#define SKILLS_Y 20
+
+#define SKILL_BAR_OFFSET    (2 * SKILL_BAR_X_INDENT)
+#define SKILL_BAR_X_INDENT  0
+#define SKILL_BAR_Y_INDENT  6
+
+#define SKILL_BAR_WIDTH     (SKILL_ICON_SIZE - SKILL_BAR_OFFSET)
+#define SKILL_BAR_X         (SKILL_BAR_OFFSET + SKILL_BAR_X_INDENT + SKILLS_X)
+#define SKILL_BAR_X_SCALE   (SKILL_ICON_SIZE + 2)
+#define SKILL_ICON_X        (SKILL_BAR_OFFSET + SKILLS_X)
+#define SKILL_ICON_X_SCALE  (SKILL_ICON_SIZE + 2)
+#define SKILL_BAR_Y         (SKILL_BAR_Y_INDENT - SKILL_BAR_OFFSET - SKILLS_Y)
+#define SKILL_BAR_Y_SCALE   (SKILL_ICON_SIZE + 2)
+#define SKILL_ICON_Y        (-(SKILL_ICON_SIZE + 2) - SKILL_BAR_OFFSET - SKILLS_Y)
+
+#define MAXHUDS 128
+
+int           hudCount = 0;
+hudStucture_t hudlist[MAXHUDS];
 
 hudStucture_t *activehud;
 hudStucture_t hud0;
-hudStucture_t hud1;
-hudStucture_t hud2;
 
-static void CG_DrawPlayerStatusHead(rectDef_t *headRect)
+rectDef_t CG_getRect(float x, float y, float w, float h)
+{
+	rectDef_t rect = { x, y, w, h };
+	return rect;
+}
+
+hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style)
+{
+	hudComponent_t comp = { { x, y, w, h }, visible, style };
+	return comp;
+}
+
+void CG_setDefaultHudValues(hudStucture_t *hud)
+{
+	// the Default hud
+	hud->hudnumber       = 0;
+	hud->compas          = CG_getComponent((Ccg_WideX(640) - 100 - 20 - 16), 20 - 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
+	hud->staminabar      = CG_getComponent(4, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
+	hud->healthbar       = CG_getComponent(24, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
+	hud->weaponchargebar = CG_getComponent(Ccg_WideX(640) - 16, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
+	hud->healthtext      = CG_getComponent(SKILLS_X - 28, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud->xptext          = CG_getComponent(SKILLS_X + 28, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud->statsdisplay    = CG_getComponent(SKILL_ICON_X, 0, 0, 0, qtrue, STYLE_NORMAL);
+	hud->weaponicon      = CG_getComponent((Ccg_WideX(640) - 82), (480 - 56), 60, 32, qtrue, STYLE_NORMAL);
+	hud->weaponammo      = CG_getComponent(Ccg_WideX(640) - 22, 480 - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud->fireteam        = CG_getComponent(10, 10, 100, 100, qtrue, STYLE_NORMAL);
+	hud->popupmessages   = CG_getComponent(4, 360, 72, 72, qtrue, STYLE_NORMAL);
+	hud->powerups        = CG_getComponent(Ccg_WideX(640) - 40, 480 - 140, 36, 36, qtrue, STYLE_NORMAL);
+	hud->hudhead         = CG_getComponent(44, 480 - 92, 62, 80, qtrue, STYLE_NORMAL);
+	hud->cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
+	hud->weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
+	hud->livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
+}
+
+static hudStucture_t *CG_getNextFreeHud()
+{
+	hudStucture_t *temp;
+	if (hudCount < MAXHUDS)
+	{
+		temp = &hudlist[hudCount];
+		hudCount++;
+		memset(temp, 0, sizeof(hudStucture_t));
+		CG_setDefaultHudValues(temp);
+		return temp;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+static hudStucture_t *CG_getHudByNumber(int number)
+{
+	int           i;
+	hudStucture_t *hud;
+	for (i = 0; i < hudCount; i++)
+	{
+		hud = &hudlist[i];
+		if (!hud)
+		{
+			Com_Printf("getHudByNumber there is an invalid hud in memory REPORT THIS!\n");
+		}
+		else if (hud->hudnumber == number)
+		{
+			return hud;
+		}
+	}
+	return NULL;
+}
+
+static qboolean CG_isHudNumberAvailable(int number)
+{
+	hudStucture_t *hud = CG_getHudByNumber(number);
+	if (!hud)
+	{
+		return qtrue;
+	}
+	else
+	{
+		return qfalse;
+	}
+}
+
+static void CG_addHudToList(hudStucture_t hud)
+{
+	hudlist[hudCount] = hud;
+	hudCount++;
+}
+
+/*
+* HUD SCRIPT FUNCTIONS BELLOW
+*/
+static qboolean CG_HUD_ParseError(int handle, char *format, ...)
+{
+	int         line;
+	char        filename[128];
+	va_list     argptr;
+	static char string[4096];
+
+	va_start(argptr, format);
+	Q_vsnprintf(string, sizeof(string), format, argptr);
+	va_end(argptr);
+
+	filename[0] = '\0';
+	line        = 0;
+	trap_PC_SourceFileAndLine(handle, filename, &line);
+
+	Com_Printf(S_COLOR_RED "ERROR: %s, line %d: %s\n", filename, line, string);
+
+	trap_PC_FreeSource(handle);
+
+	return qfalse;
+}
+
+static qboolean CG_RectParse(int handle, rectDef_t *r)
+{
+	float x = 0;
+	if (PC_Float_Parse(handle, &x))
+	{
+		r->x = Ccg_WideX(x);
+		if (PC_Float_Parse(handle, &r->y))
+		{
+			if (PC_Float_Parse(handle, &r->w))
+			{
+				if (PC_Float_Parse(handle, &r->h))
+				{
+					return qtrue;
+				}
+			}
+		}
+	}
+	return qfalse;
+}
+
+static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
+{
+	CG_RectParse(handle, &comp->location); //PC_Rect_Parse
+	PC_Int_Parse(handle, &comp->style);
+	PC_Int_Parse(handle, &comp->visible);
+	return qtrue;
+}
+
+static qboolean CG_ParseHUD(int handle)
+{
+	pc_token_t    token;
+	int           i;
+	hudStucture_t temphud;
+
+	CG_setDefaultHudValues(&temphud);
+
+	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
+	{
+		return CG_HUD_ParseError(handle, "expected '{'");
+	}
+
+	while (1)
+	{
+		if (!trap_PC_ReadToken(handle, &token))
+		{
+			break;
+		}
+
+		if (token.string[0] == '}')
+		{
+			break;
+		}
+
+		if (!Q_stricmp(token.string, "hudnumber"))
+		{
+			if (!PC_Int_Parse(handle, &temphud.hudnumber))
+			{
+				return CG_HUD_ParseError(handle, "expected hud number");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "compas"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.compas))
+			{
+				return CG_HUD_ParseError(handle, "expected compas");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "staminabar"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.staminabar))
+			{
+				return CG_HUD_ParseError(handle, "expected staminabar");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "healthbar"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.healthbar))
+			{
+				return CG_HUD_ParseError(handle, "expected healthbar");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "weaponchangebar"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.weaponchargebar))
+			{
+				return CG_HUD_ParseError(handle, "expected weaponchangebar");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "healthtext"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.healthtext))
+			{
+				return CG_HUD_ParseError(handle, "expected healthtext");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "xptext"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.xptext))
+			{
+				return CG_HUD_ParseError(handle, "expected xptext");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "statsdisplay"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.statsdisplay))
+			{
+				return CG_HUD_ParseError(handle, "expected statsdisplay");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "weaponicon"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.weaponicon))
+			{
+				return CG_HUD_ParseError(handle, "expected weaponicon");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "weaponammo"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.weaponammo))
+			{
+				return CG_HUD_ParseError(handle, "expected weaponammo");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "fireteam"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.fireteam))
+			{
+				return CG_HUD_ParseError(handle, "expected fireteam");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "popupmessages"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.popupmessages))
+			{
+				return CG_HUD_ParseError(handle, "expected popupmessages");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "powerups"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.powerups))
+			{
+				return CG_HUD_ParseError(handle, "expected powerups");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "hudhead"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.hudhead))
+			{
+				return CG_HUD_ParseError(handle, "expected hudhead");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "cursorhints"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.cursorhint))
+			{
+				return CG_HUD_ParseError(handle, "expected cursorhints");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "weaponstability"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.weaponstability))
+			{
+				return CG_HUD_ParseError(handle, "expected weaponstability");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "livesleft"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.livesleft))
+			{
+				return CG_HUD_ParseError(handle, "expected livesleft");
+			}
+			continue;
+		}
+
+		return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
+	}
+
+	if (CG_isHudNumberAvailable(temphud.hudnumber))
+	{
+		Com_Printf("Hud properties for hud: %i have been read!\n", temphud.hudnumber);
+		CG_addHudToList(temphud);
+	}
+	else
+	{
+		Com_Printf("^1Hud with number: %i already exists!\n", temphud.hudnumber);
+	}
+
+	return qtrue;
+}
+
+static qboolean CG_ReadHudFile(const char *filename)
+{
+	pc_token_t token;
+	int        handle;
+
+	handle = trap_PC_LoadSource(filename);
+
+	if (!handle)
+	{
+		return qfalse;
+	}
+
+	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "hudDef"))
+	{
+		return CG_HUD_ParseError(handle, "expected 'hudDef'");
+	}
+
+	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
+	{
+		return CG_HUD_ParseError(handle, "expected '{'");
+	}
+
+	while (1)
+	{
+		if (!trap_PC_ReadToken(handle, &token))
+		{
+			break;
+		}
+
+		if (token.string[0] == '}')
+		{
+			break;
+		}
+
+		if (!Q_stricmp(token.string, "hud"))
+		{
+			if (!CG_ParseHUD(handle))
+			{
+				return qfalse;
+			}
+		}
+		else
+		{
+			return CG_HUD_ParseError(handle, "unknown token '%s'", token.string);
+		}
+	}
+
+	trap_PC_FreeSource(handle);
+
+	return qtrue;
+}
+
+void CG_ReadHudScripts(void)
+{
+	if (!CG_ReadHudFile("ui/huds.hud"))
+	{
+		Com_Printf("^1ERROR while reading hud file\n");
+	}
+
+	Com_Printf("Hud count is: %i\n", hudCount);
+}
+
+/*
+* HUD DRAWING FUNCTIONS BELLOW
+*/
+static void CG_DrawPlayerStatusHead(hudComponent_t comp)
 {
 	hudHeadAnimNumber_t anim           = cg.idleAnim;
 	bg_character_t      *character     = CG_CharacterForPlayerstate(&cg.snap->ps);
 	bg_character_t      *headcharacter = BG_GetCharacter(cgs.clientinfo[cg.snap->ps.clientNum].team, cgs.clientinfo[cg.snap->ps.clientNum].cls);
 	qhandle_t           painshader     = 0;
+	rectDef_t           *headRect      = &comp.location;
+
+	if (!comp.visible)
+	{
+		return;
+	}
 
 	if (cg.weaponFireTime > 500)
 	{
@@ -421,19 +858,6 @@ static void CG_DrawAmmoCount(float x, float y)
 	}
 }
 
-static void CG_DrawPlayerStatus(void)
-{
-	CG_DrawGunIcon(activehud->weaponicon);
-
-	CG_DrawAmmoCount(activehud->weaponammo.x, activehud->weaponammo.y);
-
-	CG_DrawPlayerHealthBar(&activehud->healthbar);
-
-	CG_DrawStaminaBar(&activehud->staminabar);
-
-	CG_DrawWeapRecharge(&activehud->weaponchargebar);
-}
-
 static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
 {
 	int    i;
@@ -471,24 +895,6 @@ static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
 	}
 }
 
-#define SKILL_ICON_SIZE     14
-
-#define SKILLS_X 112
-#define SKILLS_Y 20
-
-#define SKILL_BAR_OFFSET    (2 * SKILL_BAR_X_INDENT)
-#define SKILL_BAR_X_INDENT  0
-#define SKILL_BAR_Y_INDENT  6
-
-#define SKILL_BAR_WIDTH     (SKILL_ICON_SIZE - SKILL_BAR_OFFSET)
-#define SKILL_BAR_X         (SKILL_BAR_OFFSET + SKILL_BAR_X_INDENT + SKILLS_X)
-#define SKILL_BAR_X_SCALE   (SKILL_ICON_SIZE + 2)
-#define SKILL_ICON_X        (SKILL_BAR_OFFSET + SKILLS_X)
-#define SKILL_ICON_X_SCALE  (SKILL_ICON_SIZE + 2)
-#define SKILL_BAR_Y         (SKILL_BAR_Y_INDENT - SKILL_BAR_OFFSET - SKILLS_Y)
-#define SKILL_BAR_Y_SCALE   (SKILL_ICON_SIZE + 2)
-#define SKILL_ICON_Y        (-(SKILL_ICON_SIZE + 2) - SKILL_BAR_OFFSET - SKILLS_Y)
-
 skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 {
 	switch (pos)
@@ -514,7 +920,7 @@ static void CG_DrawPlayerHealth(float x, float y)
 	CG_Text_Paint_Ext(x + 2, y, 0.2f, 0.2f, colorWhite, "HP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
-static void CG_DrawSkills(float x, float y)
+static void CG_DrawSkills(hudComponent_t comp)
 {
 	playerState_t *ps;
 	clientInfo_t  *ci;
@@ -528,16 +934,16 @@ static void CG_DrawSkills(float x, float y)
 	for (i = 0; i < 3; i++)
 	{
 		skill = CG_ClassSkillForPosition(ci, i);
-		if (!activehud->statssimple)
+		if (comp.style == STYLE_NORMAL)
 		{
 			CG_DrawSkillBar(i * SKILL_BAR_X_SCALE + SKILL_BAR_X, 480 - (5 * SKILL_BAR_Y_SCALE) + SKILL_BAR_Y, SKILL_BAR_WIDTH, 4 * SKILL_ICON_SIZE, ci->skill[skill]);
 			CG_DrawPic(i * SKILL_ICON_X_SCALE + SKILL_ICON_X, 480 + SKILL_ICON_Y, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
 		}
 		else
 		{
-			temp = y + (i * SKILL_ICON_SIZE * 1.7f);
-			CG_DrawPic(x, temp, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
-			CG_Text_Paint_Ext(x + 2, temp + 24, 0.25f, 0.25f, colorWhite, va("%i", ci->skill[skill]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+			temp = comp.location.y + (i * SKILL_ICON_SIZE * 1.7f);
+			CG_DrawPic(comp.location.x, temp, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
+			CG_Text_Paint_Ext(comp.location.x + 2, temp + 24, 0.25f, 0.25f, colorWhite, va("%i", ci->skill[skill]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
 	}
 }
@@ -579,22 +985,6 @@ static void CG_DrawPowerUps(rectDef_t rect)
 	{
 		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 	}
-}
-
-static void CG_DrawPlayerStats(void)
-{
-	CG_DrawPlayerHealth(activehud->healthtext.x, activehud->healthtext.y);
-
-	if (cgs.gametype == GT_WOLF_LMS)
-	{
-		return;
-	}
-
-	CG_DrawSkills(activehud->statsdisplay.x, activehud->statsdisplay.y);
-
-	CG_DrawXP(activehud->xptext.x, activehud->xptext.y);
-
-	CG_DrawPowerUps(activehud->powerups);
 }
 
 int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeight, qboolean dodrawpic, qboolean leftAlign)
@@ -673,7 +1063,7 @@ int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeig
 	return startx;
 }
 
-void CG_DrawLivesLeft(void)
+void CG_DrawLivesLeft(hudComponent_t comp)
 {
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
@@ -1184,10 +1574,197 @@ static float CG_DrawTimer(float y)
 	return y + 12 + 4;
 }
 
+static void CG_DrawPlayerStatus(void)
+{
+	if (activehud->weaponicon.visible)
+	{
+		CG_DrawGunIcon(activehud->weaponicon.location);
+	}
+
+	if (activehud->weaponammo.visible)
+	{
+		CG_DrawAmmoCount(activehud->weaponammo.location.x, activehud->weaponammo.location.y);
+	}
+
+	if (activehud->healthbar.visible)
+	{
+		CG_DrawPlayerHealthBar(&activehud->healthbar.location);
+	}
+
+	if (activehud->staminabar.visible)
+	{
+		CG_DrawStaminaBar(&activehud->staminabar.location);
+	}
+
+	if (activehud->weaponchargebar.visible)
+	{
+		CG_DrawWeapRecharge(&activehud->weaponchargebar.location);
+	}
+}
+
+static void CG_DrawPlayerStats(void)
+{
+	if (activehud->healthtext.visible)
+	{
+		CG_DrawPlayerHealth(activehud->healthtext.location.x, activehud->healthtext.location.y);
+	}
+
+	if (cgs.gametype == GT_WOLF_LMS)
+	{
+		return;
+	}
+
+	if (activehud->statsdisplay.visible)
+	{
+		CG_DrawSkills(activehud->statsdisplay);
+	}
+
+	if (activehud->xptext.visible)
+	{
+		CG_DrawXP(activehud->xptext.location.x, activehud->xptext.location.y);
+	}
+
+	if (activehud->powerups.visible)
+	{
+		CG_DrawPowerUps(activehud->powerups.location);
+	}
+}
+
+void CG_Hud_Setup(void)
+{
+	hudStucture_t hud1;
+	hudStucture_t hud2;
+
+	// Hud0 aka the Default hud
+	CG_setDefaultHudValues(&hud0);
+	activehud = &hud0;
+	CG_addHudToList(hud0);
+
+	// Hud1
+	hud1.hudnumber       = 1;
+	hud1.compas          = CG_getComponent(44, 480 - 75, 72, 72, qtrue, STYLE_NORMAL);
+	hud1.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
+	hud1.healthbar       = CG_getComponent((Ccg_WideX(640) - 36), 388, 12, 72, qtrue, STYLE_NORMAL);
+	hud1.weaponchargebar = CG_getComponent((Ccg_WideX(640) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
+	hud1.healthtext      = CG_getComponent(Ccg_WideX(640) - 60, 480 - 65, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.xptext          = CG_getComponent(28, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.statsdisplay    = CG_getComponent(24, 480 - 95, 0, 0, qtrue, STYLE_SIMPLE);
+	hud1.weaponicon      = CG_getComponent((Ccg_WideX(640) - 82 - 20), (480 - 56), 60, 32, qtrue, STYLE_NORMAL);
+	hud1.weaponammo      = CG_getComponent(Ccg_WideX(640) - 22 - 20, 480 - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.fireteam        = CG_getComponent((Ccg_WideX(640) - 240), 10, 100, 100, qtrue, STYLE_NORMAL);
+	hud1.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
+	hud1.powerups        = CG_getComponent(Ccg_WideX(640) - 40, 480 - 140, 36, 36, qtrue, STYLE_NORMAL);
+	hud1.hudhead         = CG_getComponent(44, 480 - 92, 62, 80, qfalse, STYLE_NORMAL);
+	hud1.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
+	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
+	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
+	CG_addHudToList(hud1);
+
+	// Hud2
+	hud2.hudnumber       = 2;
+	hud2.compas          = CG_getComponent(64, 480 - 75, 72, 72, qtrue, STYLE_NORMAL);
+	hud2.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
+	hud2.healthbar       = CG_getComponent(24, 388, 12, 72, qtrue, STYLE_NORMAL);
+	hud2.weaponchargebar = CG_getComponent((Ccg_WideX(640) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
+	hud2.healthtext      = CG_getComponent(65, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.xptext          = CG_getComponent(120, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.statsdisplay    = CG_getComponent(44, 480 - 95, 0, 0, qtrue, STYLE_SIMPLE);
+	hud2.weaponicon      = CG_getComponent((Ccg_WideX(640) - 82), (480 - 56), 60, 32, qtrue, STYLE_NORMAL);
+	hud2.weaponammo      = CG_getComponent(Ccg_WideX(640) - 22, 480 - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.fireteam        = CG_getComponent((Ccg_WideX(640) - 240), 10, 100, 100, qtrue, STYLE_NORMAL);
+	hud2.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
+	hud2.powerups        = CG_getComponent(Ccg_WideX(640) - 40, 480 - 140, 36, 36, qtrue, STYLE_NORMAL);
+	hud2.hudhead         = CG_getComponent(44, 480 - 92, 62, 80, qfalse, STYLE_NORMAL);
+	hud2.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
+	hud2.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
+	hud2.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
+	CG_addHudToList(hud2);
+
+	// Read the hud files
+	CG_ReadHudScripts();
+}
+
+/*
+=====================
+CG_SetHud
+=====================
+*/
+
+void CG_SetHud(void)
+{
+	if (cg_altHud.integer && activehud->hudnumber != cg_altHud.integer)
+	{
+		activehud = CG_getHudByNumber(cg_altHud.integer);
+		if (!activehud)
+		{
+			Com_Printf("^1ERROR hud with number %i is not available, defaulting to 0\n", cg_altHud.integer);
+			activehud         = &hud0;
+			cg_altHud.integer = 0;
+			return;
+		}
+
+		Com_Printf("Setting hud to: %i\n", cg_altHud.integer);
+	}
+	else if (!cg_altHud.integer && activehud->hudnumber != hud0.hudnumber)
+	{
+		activehud = &hud0;
+	}
+}
+
+/*
+=====================
+CG_DrawActiveHud
+=====================
+*/
+void CG_DrawActiveHud(void)
+{
+	if (cg.snap->ps.stats[STAT_HEALTH] > 0)
+	{
+		if (activehud->hudhead.visible)
+		{
+			CG_DrawPlayerStatusHead(activehud->hudhead);
+		}
+		CG_DrawPlayerStatus();
+		CG_DrawPlayerStats();
+	}
+
+	CG_DrawLivesLeft(activehud->livesleft);
+
+	// Cursor hint
+	if (activehud->cursorhint.visible)
+	{
+		CG_DrawCursorhint(&activehud->cursorhint.location);
+	}
+
+	// Stability bar
+	if (activehud->weaponstability.visible)
+	{
+		CG_DrawWeapStability(&activehud->weaponstability.location);
+	}
+
+	// Stats Debugging
+	CG_DrawStatsDebug();
+}
+
+/*
+=====================
+CG_DrawGlobalHud
+=====================
+*/
+void CG_DrawGlobalHud(void)
+{
+	CG_DrawPMItems(activehud->popupmessages.location);
+	CG_DrawPMItemsBig();
+
+	if (cg_drawCompass.integer)
+	{
+		CG_DrawNewCompass(activehud->compas.location);
+	}
+}
+
 /*
 =====================
 CG_DrawUpperRight
-
 =====================
 */
 void CG_DrawUpperRight(void)
@@ -1196,7 +1773,7 @@ void CG_DrawUpperRight(void)
 
 	if (cg_drawFireteamOverlay.integer && CG_IsOnFireteam(cg.clientNum))
 	{
-		CG_DrawFireTeamOverlay(&activehud->fireteam);
+		CG_DrawFireTeamOverlay(&activehud->fireteam.location);
 	}
 
 	if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR) &&
@@ -1218,131 +1795,5 @@ void CG_DrawUpperRight(void)
 	if (cg_drawSnapshot.integer)
 	{
 		y = CG_DrawSnapshot(y);
-	}
-}
-
-rectDef_t getRect(float x, float y, float w, float h)
-{
-	rectDef_t rect = { x, y, w, h };
-	return rect;
-}
-
-void CG_Hud_Setup(void)
-{
-	// Hud0 aka the Default hud
-	hud0.compas          = getRect((Ccg_WideX(640) - 100 - 20 - 16), 20 - 16, 100 + 32, 100 + 32);
-	hud0.staminabar      = getRect(4, 480 - 92, 12, 72);
-	hud0.healthbar       = getRect(24, 480 - 92, 12, 72);
-	hud0.weaponchargebar = getRect(Ccg_WideX(640) - 16, 480 - 92, 12, 72);
-	hud0.healthtext      = getRect(SKILLS_X - 28, 480 - 4, 0, 0);
-	hud0.xptext          = getRect(SKILLS_X + 28, 480 - 4, 0, 0);
-	hud0.statsdisplay    = getRect(SKILL_ICON_X, 0, 0, 0);
-	hud0.statssimple     = qfalse;
-	hud0.weaponicon      = getRect((Ccg_WideX(640) - 82), (480 - 56), 60, 32);
-	hud0.weaponammo      = getRect(Ccg_WideX(640) - 22, 480 - 1 * (16 + 2) + 12 - 4, 0, 0);
-	hud0.fireteam        = getRect(10, 10, 100, 100);
-	hud0.popupmessages   = getRect(4, 360, 72, 72);
-	hud0.powerups        = getRect(Ccg_WideX(640) - 40, 480 - 140, 36, 36);
-	hud0.headlocation    = getRect(44, 480 - 92, 62, 80);
-	hud0.drawhudhead     = qtrue;
-
-	// Hud1
-	hud1.compas          = getRect(44, 480 - 75, 72, 72);
-	hud1.staminabar      = getRect(4, 388, 12, 72);
-	hud1.healthbar       = getRect((Ccg_WideX(640) - 36), 388, 12, 72);
-	hud1.weaponchargebar = getRect((Ccg_WideX(640) - 16), 388, 12, 72);
-	hud1.healthtext      = getRect(Ccg_WideX(640) - 60, 480 - 65, 0, 0);
-	hud1.xptext          = getRect(28, 480 - 4, 0, 0);
-	hud1.statsdisplay    = getRect(24, 480 - 95, 0, 0);
-	hud1.statssimple     = qtrue;
-	hud1.weaponicon      = getRect((Ccg_WideX(640) - 82 - 20), (480 - 56), 60, 32);
-	hud1.weaponammo      = getRect(Ccg_WideX(640) - 22 - 20, 480 - 1 * (16 + 2) + 12 - 4, 0, 0);
-	hud1.fireteam        = getRect((Ccg_WideX(640) - 240), 10, 100, 100);
-	hud1.popupmessages   = getRect(4, 100, 72, 72);
-	hud1.powerups        = getRect(Ccg_WideX(640) - 40, 480 - 140, 36, 36);
-	hud1.headlocation    = getRect(44, 480 - 92, 62, 80);
-	hud1.drawhudhead     = qfalse;
-
-	// Hud2
-	hud2.compas          = getRect(64, 480 - 75, 72, 72);
-	hud2.staminabar      = getRect(4, 388, 12, 72);
-	hud2.healthbar       = getRect(24, 388, 12, 72);
-	hud2.weaponchargebar = getRect((Ccg_WideX(640) - 16), 388, 12, 72);
-	hud2.healthtext      = getRect(65, 480 - 4, 0, 0);
-	hud2.xptext          = getRect(120, 480 - 4, 0, 0);
-	hud2.statsdisplay    = getRect(44, 480 - 95, 0, 0);
-	hud2.statssimple     = qtrue;
-	hud2.weaponicon      = getRect((Ccg_WideX(640) - 82), (480 - 56), 60, 32);
-	hud2.weaponammo      = getRect(Ccg_WideX(640) - 22, 480 - 1 * (16 + 2) + 12 - 4, 0, 0);
-	hud2.fireteam        = getRect((Ccg_WideX(640) - 240), 10, 100, 100);
-	hud2.popupmessages   = getRect(4, 100, 72, 72);
-	hud2.powerups        = getRect(Ccg_WideX(640) - 40, 480 - 140, 36, 36);
-	hud2.headlocation    = getRect(44, 480 - 92, 62, 80);
-	hud2.drawhudhead     = qfalse;
-}
-
-void CG_SetHud(void)
-{
-	if (cg_altHud.integer)
-	{
-		switch (cg_altHud.integer)
-		{
-		case 1:
-			activehud = &hud1;
-			break;
-		case 2:
-			activehud = &hud2;
-			break;
-		default:
-			activehud = &hud0;
-		}
-	}
-	else
-	{
-		activehud = &hud0;
-	}
-}
-
-void CG_DrawActiveHud(void)
-{
-	rectDef_t rect;
-
-	if (cg.snap->ps.stats[STAT_HEALTH] > 0)
-	{
-		if (activehud->drawhudhead)
-		{
-			CG_DrawPlayerStatusHead(&activehud->headlocation);
-		}
-		CG_DrawPlayerStatus();
-		CG_DrawPlayerStats();
-	}
-
-	CG_DrawLivesLeft();
-
-	// Cursor hint
-	rect.w = rect.h = 48;
-	rect.x = .5f * SCREEN_WIDTH - .5f * rect.w;
-	rect.y = 260;
-	CG_DrawCursorhint(&rect);
-
-	// Stability bar
-	rect.x = 50;
-	rect.y = 208;
-	rect.w = 10;
-	rect.h = 64;
-	CG_DrawWeapStability(&rect);
-
-	// Stats Debugging
-	CG_DrawStatsDebug();
-}
-
-void CG_DrawGlobalHud(void)
-{
-	CG_DrawPMItems(activehud->popupmessages);
-	CG_DrawPMItemsBig();
-
-	if (cg_drawCompass.integer)
-	{
-		CG_DrawNewCompass(activehud->compas);
 	}
 }
