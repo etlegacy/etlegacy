@@ -101,7 +101,7 @@ calls to FS_AddGameDirectory
 Additionaly, we search in several subdirectories:
 current game is the current mode
 base game is a variable to allow mods based on other mods
-(such as baseq3 + missionpack content combination in a mod for instance)
+(such as etmain + missionpack content combination in a mod for instance)
 BASEGAME is the hardcoded base game ("etmain")
 
 e.g. the qpath "sound/newstuff/test.wav" would be searched for in the following places:
@@ -195,9 +195,9 @@ typedef struct fileInPack_s
 
 typedef struct
 {
-	char pakFilename[MAX_OSPATH];               // c:\quake3\baseq3\pak0.pk3
+	char pakFilename[MAX_OSPATH];               // c:\etlegacy\etmain\pak0.pk3
 	char pakBasename[MAX_OSPATH];               // pak0
-	char pakGamename[MAX_OSPATH];               // baseq3
+	char pakGamename[MAX_OSPATH];               // etmain
 	unzFile handle;                             // handle to zip file
 	int checksum;                               // regular checksum
 	int pure_checksum;                          // checksum for pure
@@ -210,9 +210,9 @@ typedef struct
 
 typedef struct
 {
-	char path[MAX_OSPATH];      // c:\quake3
-	char fullpath[MAX_OSPATH];  // c:\quake3\baseq3
-	char gamedir[MAX_OSPATH];   // baseq3
+	char path[MAX_OSPATH];          // c:\etlegacy
+	char fullpath[MAX_OSPATH];      // c:\etlegacy\etmain
+	char gamedir[MAX_OSPATH];       // etmain
 } directory_t;
 
 typedef struct searchpath_s
@@ -685,7 +685,7 @@ fileHandle_t FS_SV_FOpenFileWrite(const char *filename)
 	return f;
 }
 
-/*
+/**
  * @brief search for a file somewhere below the home path, base path or cd path
  * we search in that order, matching FS_SV_FOpenFileRead order
  */
@@ -1902,14 +1902,10 @@ int FS_FileIsInPAK(const char *filename, int *pChecksum)
 	return -1;
 }
 
-/*
-============
-FS_ReadFile
-
-Filename are relative to the quake search path
-a null buffer will just return the file length without loading
-============
-*/
+/**
+ * @brief Open a file relative to the ET:L search path.
+ * A null buffer will just return the file length without loading.
+ */
 int FS_ReadFile(const char *qpath, void **buffer)
 {
 	fileHandle_t h;
@@ -2590,8 +2586,8 @@ static char **Sys_ConcatenateFileLists(char **list0, char **list1, char **list2)
 FS_GetModList
 
 Returns a list of mod directory names
-A mod directory is a peer to baseq3 with a pk3 in it
-The directories are searched in base path, cd path and home path
+A mod directory is a peer to etmain with a pk3 in it
+The directories are searched in base path and home path
 ================
 */
 int FS_GetModList(char *listbuf, int bufsize)
@@ -2641,7 +2637,7 @@ int FS_GetModList(char *listbuf, int bufsize)
 			continue;
 		}
 
-		// we drop "baseq3" "." and ".."
+		// we drop "etmain" "." and ".."
 		if (Q_stricmp(name, BASEGAME) && Q_stricmpn(name, ".", 1))
 		{
 			// now we need to find some .pk3 files to validate the mod
@@ -3066,12 +3062,6 @@ static void FS_AddGameDirectory(const char *path, const char *dir)
 
 	for (i = 0 ; i < numfiles ; i++)
 	{
-		/*if (Q_strncmp(sorted[i],"sp_",3)) { // JPW NERVE -- exclude sp_*
-		// fix filenames broken in mp/sp/pak sort above
-
-		            if (!Q_strncmp(sorted[i],"zz_",3))
-		                memcpy(sorted[i],"mp",2);
-		*/
 		pakfile = FS_BuildOSPath(path, dir, sorted[i]);
 		if ((pak = FS_LoadZipFile(pakfile, sorted[i])) == 0)
 		{
@@ -3084,7 +3074,6 @@ static void FS_AddGameDirectory(const char *path, const char *dir)
 		search->pack   = pak;
 		search->next   = fs_searchpaths;
 		fs_searchpaths = search;
-		//}
 	}
 
 	Sys_FreeFileList(pakfiles);
@@ -3431,7 +3420,8 @@ static void FS_Startup(const char *gameName)
 	fs_basepath = Cvar_Get("fs_basepath", Sys_DefaultInstallPath(), CVAR_INIT);
 	fs_basegame = Cvar_Get("fs_basegame", "", CVAR_INIT);
 
-	homePath = Sys_DefaultHomePath(); // Returns My Documents path on windows now ex: C:\Users\username\Documents where also other games add their data
+	homePath = Sys_DefaultHomePath();
+
 	if (!homePath || !homePath[0])
 	{
 #if defined(DEDICATED) || defined(__AROS__)
@@ -3669,7 +3659,7 @@ const char *FS_ReferencedPakNames(void)
 	info[0] = 0;
 
 	// we want to return ALL pk3's from the fs_game path
-	// and referenced one's from baseq3
+	// and referenced one's from etmain
 	for (search = fs_searchpaths ; search ; search = search->next)
 	{
 		// is the element a pak file?

@@ -415,8 +415,8 @@ static void R_ModeList_f(void)
  *
  * NOTE: some thoughts about the screenshots system:
  * screenshots get written in fs_homepath + fs_gamedir
- * vanilla q3 .. baseq3/screenshots/ *.tga
- * team arena .. missionpack/screenshots/ *.tga
+ * vanilla W:ET .. etmain/screenshots/*.tga
+ * ET: Legacy   .. legacy/screenshots/*.tga
  *
  * two commands: "screenshot" and "screenshotJPEG"
  * we use statics to store a count and start writing the first screenshot/screenshot????.tga (.jpg) available
