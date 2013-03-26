@@ -2785,8 +2785,7 @@ Com_Init
 */
 void Com_Init(char *commandLine)
 {
-	char *s;
-	int  pid;
+	int pid;
 	// gcc warning: variable `safeMode' might be clobbered by `longjmp' or `vfork'
 	volatile qboolean safeMode = qtrue;
 
@@ -2831,8 +2830,7 @@ void Com_Init(char *commandLine)
 #else
 	pid = getpid();
 #endif
-	s       = va("%d", pid);
-	com_pid = Cvar_Get("com_pid", s, CVAR_ROM);
+	com_pid = Cvar_Get("com_pid", va("%d", pid), CVAR_ROM);
 
 	// done early so bind command exists
 	CL_InitKeyCommands();
