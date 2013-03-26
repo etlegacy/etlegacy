@@ -1164,7 +1164,8 @@ void IN_Init(void)
 
 	IN_InitKeyLockStates();
 
-	IN_InitJoystick();
+	// FIXME: Joystick initialization crashes some Mac OS X clients
+	//IN_InitJoystick();
 	Com_DPrintf("------------------------------------\n");
 }
 
