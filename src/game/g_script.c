@@ -1183,9 +1183,6 @@ void SP_script_mover(gentity_t *ent)
 	vec3_t scalevec;
 	char   tagname[MAX_QPATH];
 	char   *modelname;
-	char   *tagent;
-	char   cs[MAX_INFO_STRING];
-	char   *s;
 
 	if (!ent->model)
 	{
@@ -1256,6 +1253,9 @@ void SP_script_mover(gentity_t *ent)
 	G_SpawnInt("health", "0", &ent->health);
 	if (ent->health)
 	{
+		char cs[MAX_INFO_STRING];
+		char *s;
+
 		ent->takedamage = qtrue;
 		ent->count      = ent->health;
 
@@ -1310,6 +1310,8 @@ void SP_script_mover(gentity_t *ent)
 
 	if (ent->spawnflags & 128)
 	{
+		char *tagent;
+
 		ent->s.density |= 4;
 		ent->waterlevel = 0;
 
