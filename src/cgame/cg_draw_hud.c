@@ -99,12 +99,14 @@ hudStucture_t hud0;
 rectDef_t CG_getRect(float x, float y, float w, float h)
 {
 	rectDef_t rect = { x, y, w, h };
+
 	return rect;
 }
 
 hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style)
 {
 	hudComponent_t comp = { { x, y, w, h }, visible, style };
+
 	return comp;
 }
 
@@ -133,6 +135,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 static hudStucture_t *CG_getNextFreeHud()
 {
 	hudStucture_t *temp;
+
 	if (hudCount < MAXHUDS)
 	{
 		temp = &hudlist[hudCount];
@@ -151,6 +154,7 @@ static hudStucture_t *CG_getHudByNumber(int number)
 {
 	int           i;
 	hudStucture_t *hud;
+
 	for (i = 0; i < hudCount; i++)
 	{
 		hud = &hudlist[i];
@@ -169,6 +173,7 @@ static hudStucture_t *CG_getHudByNumber(int number)
 static qboolean CG_isHudNumberAvailable(int number)
 {
 	hudStucture_t *hud = CG_getHudByNumber(number);
+
 	if (!hud)
 	{
 		return qtrue;
@@ -213,6 +218,7 @@ static qboolean CG_HUD_ParseError(int handle, char *format, ...)
 static qboolean CG_RectParse(int handle, rectDef_t *r)
 {
 	float x = 0;
+
 	if (PC_Float_Parse(handle, &x))
 	{
 		r->x = Ccg_WideX(x);
@@ -676,9 +682,10 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	return weap;
 }
 
+vec4_t bgcolour = { 1.f, 1.f, 1.f, 0.3f };
+
 static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 {
-	vec4_t bgcolour = { 1.f, 1.f, 1.f, 0.3f };
 	vec4_t colour;
 	int    flags = 1 | 4 | 16 | 64;
 	float  frac;
@@ -704,7 +711,6 @@ static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 
 static void CG_DrawStaminaBar(rectDef_t *rect)
 {
-	vec4_t bgcolour  = { 1.f, 1.f, 1.f, 0.3f };
 	vec4_t colour    = { 0.1f, 1.0f, 0.1f, 0.5f };
 	vec4_t colourlow = { 1.0f, 0.1f, 0.1f, 0.5f };
 	vec_t  *color    = colour;
@@ -839,6 +845,7 @@ static void CG_DrawAmmoCount(float x, float y)
 {
 	int  value, value2, value3;
 	char buffer[32];
+
 	// Draw ammo
 	CG_PlayerAmmoValue(&value, &value2, &value3);
 	if (value3 >= 0)
@@ -912,24 +919,20 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 
 static void CG_DrawPlayerHealth(float x, float y)
 {
-	const char *str;
-	float      w;
-	str = va("%i", cg.snap->ps.stats[STAT_HEALTH]);
-	w   = CG_Text_Width_Ext(str, 0.25f, 0, &cgs.media.limboFont1);
+	const char *str = va("%i", cg.snap->ps.stats[STAT_HEALTH]);
+	float      w    = CG_Text_Width_Ext(str, 0.25f, 0, &cgs.media.limboFont1);
+
 	CG_Text_Paint_Ext(x - w, y, 0.25f, 0.25f, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	CG_Text_Paint_Ext(x + 2, y, 0.2f, 0.2f, colorWhite, "HP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 static void CG_DrawSkills(hudComponent_t comp)
 {
-	playerState_t *ps;
-	clientInfo_t  *ci;
+	playerState_t *ps = &cg.snap->ps;
+	clientInfo_t  *ci = &cgs.clientinfo[ps->clientNum];
 	skillType_t   skill;
 	int           i;
 	float         temp;
-
-	ps = &cg.snap->ps;
-	ci = &cgs.clientinfo[ps->clientNum];
 
 	for (i = 0; i < 3; i++)
 	{
@@ -971,9 +974,8 @@ static void CG_DrawXP(float x, float y)
 
 static void CG_DrawPowerUps(rectDef_t rect)
 {
-	playerState_t *ps;
+	playerState_t *ps = &cg.snap->ps;
 
-	ps = &cg.snap->ps;
 	// draw treasure icon if we have the flag
 	// rain - #274 - use the playerstate instead of the clientinfo
 	if (ps->powerups[PW_REDFLAG] || ps->powerups[PW_BLUEFLAG])
@@ -1769,7 +1771,7 @@ CG_DrawUpperRight
 */
 void CG_DrawUpperRight(void)
 {
-	float y = 20 + 100 + 32;
+	int y = 152; // 20 + 100 + 32;
 
 	if (cg_drawFireteamOverlay.integer && CG_IsOnFireteam(cg.clientNum))
 	{
