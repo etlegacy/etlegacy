@@ -1165,6 +1165,100 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 	CG_DrawPic(x - (14 * len + 4) / 2, y - (14 * len + 4) / 2, 14 * len + 8, 14 * len + 8, shader);
 }
 
+static void CG_CompasMoveLocationCalc(float *locationvalue, qboolean directionplus, qboolean animationout)
+{
+	if (animationout)
+	{
+		if (directionplus)
+		{
+			*locationvalue += ((cg.time - cgs.autoMapExpandTime) / 100.f) * 128.f;
+		}
+		else
+		{
+			*locationvalue -= ((cg.time - cgs.autoMapExpandTime) / 100.f) * 128.f;
+		}
+	}
+	else
+	{
+		if (!directionplus)
+		{
+			*locationvalue += (((cg.time - cgs.autoMapExpandTime - 150.f) / 100.f) * 128.f) - 128.f;
+		}
+		else
+		{
+			*locationvalue -= (((cg.time - cgs.autoMapExpandTime - 150.f) / 100.f) * 128.f) - 128.f;
+		}
+	}
+}
+
+static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animationout)
+{
+	float x    = *basex;
+	float y    = *basey;
+	float cent = activehud->compas.location.w / 2;
+	x += cent;
+	y += cent;
+
+	if (x < Ccg_WideX(320))
+	{
+		if (y < 240)
+		{
+			if (x < y)
+			{
+				//move left
+				CG_CompasMoveLocationCalc(basex, qfalse, animationout);
+			}
+			else
+			{
+				//move up
+				CG_CompasMoveLocationCalc(basey, qfalse, animationout);
+			}
+		}
+		else
+		{
+			if (x < (480 - y))
+			{
+				//move left
+				CG_CompasMoveLocationCalc(basex, qfalse, animationout);
+			}
+			else
+			{
+				//move down
+				CG_CompasMoveLocationCalc(basey, qtrue, animationout);
+			}
+		}
+	}
+	else
+	{
+		if (y < 240)
+		{
+			if ((Ccg_WideX(640) - x) < y)
+			{
+				//move right
+				CG_CompasMoveLocationCalc(basex, qtrue, animationout);
+			}
+			else
+			{
+				//move up
+				CG_CompasMoveLocationCalc(basey, qfalse, animationout);
+			}
+		}
+		else
+		{
+			if ((Ccg_WideX(640) - x) < (480 - y))
+			{
+				//move right
+				CG_CompasMoveLocationCalc(basex, qtrue, animationout);
+			}
+			else
+			{
+				//move down
+				CG_CompasMoveLocationCalc(basey, qtrue, animationout);
+			}
+		}
+	}
+}
+
 /*
 =================
 CG_DrawNewCompass
@@ -1189,7 +1283,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 		snap = cg.snap;
 	}
 
-	if (snap->ps.pm_flags & PMF_LIMBO || snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR
+	if (snap->ps.pm_flags & PMF_LIMBO /*|| snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR*/
 #if FEATURE_MULTIVIEW
 	    || cg.mvTotalClients > 0
 #endif
@@ -1199,17 +1293,19 @@ static void CG_DrawNewCompass(rectDef_t location)
 	}
 
 	diff = basew * 0.25f;
-	CG_DrawAutoMap(basex + (diff / 2), basey + (diff / 2), basew - diff, baseh - diff);
 
 	if (cgs.autoMapExpanded)
 	{
 		if (cg.time - cgs.autoMapExpandTime < 100.f)
 		{
-			basey -= ((cg.time - cgs.autoMapExpandTime) / 100.f) * 128.f;
+			//basey -= ((cg.time - cgs.autoMapExpandTime) / 100.f) * 128.f;
+			CG_CompasMoveLocation(&basex, &basey, qtrue);
 		}
 		else
 		{
 			//basey -= 128.f;
+			//CG_DrawAutoMap(basex + (diff / 2), basey + (diff / 2), basew - diff, baseh - diff);
+			CG_DrawExpandedAutoMap();
 			return;
 		}
 	}
@@ -1218,15 +1314,24 @@ static void CG_DrawNewCompass(rectDef_t location)
 		if (cg.time - cgs.autoMapExpandTime <= 150.f)
 		{
 			//basey -= 128.f;
+			//CG_DrawAutoMap(basex + (diff / 2), basey + (diff / 2), basew - diff, baseh - diff);
+			CG_DrawExpandedAutoMap();
 			return;
 		}
 		else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
 		{
 
-			basey = (basey - 128.f) + ((cg.time - cgs.autoMapExpandTime - 150.f) / 100.f) * 128.f;
+			//basey = (basey - 128.f) + ((cg.time - cgs.autoMapExpandTime - 150.f) / 100.f) * 128.f;
+			CG_CompasMoveLocation(&basex, &basey, qfalse);
 		}
 	}
 
+	if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	CG_DrawAutoMap(basex + (diff / 2), basey + (diff / 2), basew - diff, baseh - diff);
 	CG_DrawPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compassShader);
 
 	angle       = (cg.predictedPlayerState.viewangles[YAW] + 180.f) / 360.f - (0.125f);
