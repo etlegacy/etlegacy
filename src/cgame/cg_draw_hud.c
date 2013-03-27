@@ -497,6 +497,15 @@ void CG_ReadHudScripts(void)
 /*
 * HUD DRAWING FUNCTIONS BELLOW
 */
+static void CG_DrawPicShadowed(float x, float y, float w, float h, qhandle_t icon)
+{
+	trap_R_SetColor(colorBlack);
+	CG_DrawPic(x + 2, y + 2, w, h, icon);
+	trap_R_SetColor(colorWhite);
+	CG_DrawPic(x, y, w, h, icon);
+
+}
+
 static void CG_DrawPlayerStatusHead(hudComponent_t comp)
 {
 	hudHeadAnimNumber_t anim           = cg.idleAnim;
@@ -942,7 +951,8 @@ static void CG_DrawSkills(hudComponent_t comp)
 		else
 		{
 			temp = comp.location.y + (i * SKILL_ICON_SIZE * 1.7f);
-			CG_DrawPic(comp.location.x, temp, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
+			//CG_DrawPic
+			CG_DrawPicShadowed(comp.location.x, temp, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
 			CG_Text_Paint_Ext(comp.location.x + 2, temp + 24, 0.25f, 0.25f, colorWhite, va("%i", ci->skill[skill]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
 	}
