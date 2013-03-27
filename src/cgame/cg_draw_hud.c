@@ -1300,13 +1300,10 @@ static void CG_DrawNewCompass(rectDef_t location)
 	{
 		if (cg.time - cgs.autoMapExpandTime < 100.f)
 		{
-			//basey -= ((cg.time - cgs.autoMapExpandTime) / 100.f) * 128.f;
 			CG_CompasMoveLocation(&basex, &basey, qtrue);
 		}
 		else
 		{
-			//basey -= 128.f;
-			//CG_DrawAutoMap(basex + (diff / 2), basey + (diff / 2), basew - diff, baseh - diff);
 			CG_DrawExpandedAutoMap();
 			return;
 		}
@@ -1315,15 +1312,11 @@ static void CG_DrawNewCompass(rectDef_t location)
 	{
 		if (cg.time - cgs.autoMapExpandTime <= 150.f)
 		{
-			//basey -= 128.f;
-			//CG_DrawAutoMap(basex + (diff / 2), basey + (diff / 2), basew - diff, baseh - diff);
 			CG_DrawExpandedAutoMap();
 			return;
 		}
 		else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
 		{
-
-			//basey = (basey - 128.f) + ((cg.time - cgs.autoMapExpandTime - 150.f) / 100.f) * 128.f;
 			CG_CompasMoveLocation(&basex, &basey, qfalse);
 		}
 	}
