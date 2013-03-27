@@ -480,7 +480,7 @@ qboolean CL_CloseAVI(void);
 qboolean CL_VideoRecording(void);
 
 // localization
-void CL_InitTranslation(void);
+void CL_InitTranslation(void); // TODO: replace with tinygettext
 void CL_SaveTransTable(const char *fileName, qboolean newOnly);
 void CL_ReloadTranslation(void);
 void CL_TranslateString(const char *string, char *dest_buffer);

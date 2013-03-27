@@ -1,4 +1,4 @@
-/*
+/**
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -28,95 +28,49 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
- * @file null_client.c
+ * @file i18n_main.cpp
+ * @brief Glue for findlocale and tinygettext
  */
 
-#include "../client/client.h"
+#ifndef FEATURE_GETTEXT
+#error This file should only be compiled if you want i18n support
+#endif
 
-cvar_t *cl_shownet;
-// win32 dedicated
+extern "C"
+{
+#include "q_shared.h"
+#include "qcommon.h"
+#include "i18n_findlocale.h"
+}
+
 cvar_t *cl_language;
 
-void CL_Shutdown(void)
+/**
+ * @brief Attempts to detect the system language unless cl_language was already set.
+ */
+void I18N_Init(void)
 {
-}
+	FL_Locale *locale;
 
-void CL_Init(void)
-{
-	cl_shownet = Cvar_Get("cl_shownet", "0", CVAR_TEMP);
-}
+	cl_language = Cvar_Get("cl_language", "", CVAR_ARCHIVE);
 
-void CL_MouseEvent(int dx, int dy, int time)
-{
-}
+	FL_FindLocale(&locale, FL_MESSAGES);
 
-void Key_WriteBindings(fileHandle_t f)
-{
-}
+	// Do not change the language if it is already set
+	if (!cl_language->string[0])
+	{
+		if (locale->lang && locale->lang[0] && locale->country && locale->country[0])
+		{
+			Cvar_Set("cl_language", va("%s_%s", locale->lang, locale->country));
+		}
+		else
+		{
+			// Language detection failed. Fallback to English
+			Cvar_Set("cl_language", "en");
+		}
+	}
 
-void CL_Frame(int msec)
-{
-}
+	Com_Printf("Language set to %s\n", Cvar_VariableString("cl_language"));
 
-void CL_PacketEvent(netadr_t from, msg_t *msg)
-{
-}
-
-void CL_CharEvent(int key)
-{
-}
-
-void CL_Disconnect(qboolean showMainMenu)
-{
-}
-
-void CL_MapLoading(void)
-{
-}
-
-qboolean CL_GameCommand(void)
-{
-	return qfalse;
-}
-
-void CL_KeyEvent(int key, qboolean down, unsigned time)
-{
-}
-
-qboolean UI_GameCommand(void)
-{
-	return qfalse;
-}
-
-void CL_ForwardCommandToServer(const char *string)
-{
-}
-
-void CL_ConsolePrint(char *txt)
-{
-}
-
-void CL_JoystickEvent(int axis, int value, int time)
-{
-}
-
-void CL_InitKeyCommands(void)
-{
-}
-
-void CL_FlushMemory(void)
-{
-}
-
-void CL_StartHunkUsers(void)
-{
-}
-
-void CL_ShutdownAll(void)
-{
-}
-
-// for win32 dedicated
-void Key_ClearStates(void)
-{
+	FL_FreeLocale(&locale);
 }

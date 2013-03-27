@@ -3741,8 +3741,6 @@ void CL_Init(void)
 
 	cl_missionStats = Cvar_Get("g_missionStats", "0", CVAR_ROM);
 
-	// Localization
-	cl_language         = Cvar_Get("cl_language", "0", CVAR_ARCHIVE);
 	cl_debugTranslation = Cvar_Get("cl_debugTranslation", "0", 0);
 
 	// Auto-update
@@ -3817,7 +3815,9 @@ void CL_Init(void)
 	autoupdate.updateChecked = qfalse;
 	autoupdate.updateStarted = qfalse;
 
-	CL_InitTranslation();
+#ifdef FEATURE_GETTEXT
+	I18N_Init();
+#endif
 
 	// Initialize random number to be used in pairing of messages with replies
 	srand(Com_Milliseconds());

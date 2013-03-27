@@ -1255,4 +1255,13 @@ extern huffman_t clientHuffTables;
 
 void Com_GetHunkInfo(int *hunkused, int *hunkexpected);
 
+/*
+==============================================================
+Native language support
+==============================================================
+*/
+#ifdef FEATURE_GETTEXT
+void I18N_Init(void);
+#endif // FEATURE_GETTEXT
+
 #endif // _QCOMMON_H_

@@ -79,6 +79,8 @@ option(FEATURE_AUTOUPDATE	"Enable updater which downloads latest ET:L files"			O
 option(FEATURE_RENDERER2	"Build and use the new renderer"					OFF)
 option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
 
+cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"	ON "BUNDLED_LIBS" OFF)
+
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot build in mod code"	ON "WIN32 OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"			ON "WIN32 OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 
@@ -104,7 +106,6 @@ if(UNIX AND CROSS_COMPILE32) # 32-bit build
 endif(UNIX AND CROSS_COMPILE32)
 
 if(UNIX)
-
 	# optimization/debug flags
 	# Note/FIXME: check this for Darwin, explore Win optimizations options
 	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s -ffast-math")
@@ -178,6 +179,7 @@ FILE(GLOB COMMON_SRC
 FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_stubs.c"
+	"src/qcommon/i18n_*"
 	"src/botlib/botlib_stub.c"
 )
 
@@ -395,6 +397,15 @@ if(BUILD_CLIENT)
 	else(FEATURE_CURL)
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
 	endif(FEATURE_CURL)
+
+	if(FEATURE_GETTEXT AND BUNDLED_LIBS)
+		add_definitions(-DFEATURE_GETTEXT)
+		set(CLIENT_SRC ${CLIENT_SRC}
+			"src/qcommon/i18n_main.cpp"
+			"src/qcommon/i18n_findlocale.c"
+			"src/qcommon/i18n_findlocale.h"
+		)
+	endif(FEATURE_GETTEXT AND BUNDLED_LIBS)
 
 	if(FEATURE_AUTOUPDATE)
 		add_definitions(-DFEATURE_AUTOUPDATE)
