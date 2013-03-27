@@ -128,7 +128,7 @@ Add_Ammo
 
     fillClip will push the ammo straight through into the clip and leave the rest in reserve
 
-    xkan, 10/25/2002 - modified to return whether any ammo was added.
+    - modified to return whether any ammo was added.
 ==============
 */
 int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip)
@@ -595,7 +595,7 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 	other->client->ps.stats[STAT_HEALTH] = other->health;
 
 #ifdef FEATURE_OMNIBOT
-	//omni-bot event
+	// omni-bot event
 	if (ent->parent)
 	{
 		Bot_Event_Healed(other - g_entities, ent->parent);
@@ -644,7 +644,6 @@ void RespawnItem(gentity_t *ent)
 
 	ent->nextthink = 0;
 }
-
 
 /*
 ==============
@@ -725,7 +724,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 	else
 	{
-		// OSP - Don't let them pickup winning stuff in warmup
+		// Don't let them pickup winning stuff in warmup
 		if (ent->item->giType != IT_WEAPON &&
 		    ent->item->giType != IT_AMMO &&
 		    ent->item->giType != IT_HEALTH)
@@ -734,7 +733,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		}
 	}
 
-	//  G_LogPrintf( "Calling item pickup function for %s\n", ent->item->classname );
+	//G_LogPrintf( "Calling item pickup function for %s\n", ent->item->classname );
 
 	// call the item-specific pickup function
 	switch (ent->item->giType)
@@ -752,7 +751,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-	//  G_LogPrintf( "Finished pickup function\n" );
+	//G_LogPrintf( "Finished pickup function\n" );
 
 	if (!respawn)
 	{
@@ -779,7 +778,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		te->r.svFlags  |= SVF_BROADCAST;
 	}
 
-	//  G_LogPrintf( "Firing item targets\n" );
+	//G_LogPrintf( "Firing item targets\n" );
 
 	// fire item targets
 	G_UseTargets(ent, other);
