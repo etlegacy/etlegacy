@@ -3522,6 +3522,7 @@ const char *FS_LoadedPakChecksums(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
+	int len;
 
 	info[0] = 0;
 
@@ -3534,6 +3535,13 @@ const char *FS_LoadedPakChecksums(void)
 		}
 
 		Q_strcat(info, sizeof(info), va("%i ", search->pack->checksum));
+	}
+
+	// remove last space char
+	len = strlen(info);
+	if (len > 1) // foolproof
+	{
+		info[len-1] = 0;
 	}
 
 	return info;
@@ -3551,6 +3559,7 @@ const char *FS_LoadedPakNames(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
+	int          len;
 
 	info[0] = 0;
 
@@ -3573,6 +3582,13 @@ const char *FS_LoadedPakNames(void)
 		Q_strcat(info, sizeof(info), search->pack->pakBasename);
 	}
 
+	// remove last space char
+	len = strlen(info);
+	if (len > 1) // foolproof
+	{
+		info[len-1] = 0;
+	}
+	
 	return info;
 }
 
@@ -3589,7 +3605,8 @@ const char *FS_LoadedPakPureChecksums(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
-
+	int len;
+	
 	info[0] = 0;
 
 	for (search = fs_searchpaths ; search ; search = search->next)
@@ -3603,7 +3620,12 @@ const char *FS_LoadedPakPureChecksums(void)
 		Q_strcat(info, sizeof(info), va("%i ", search->pack->pure_checksum));
 	}
 
-	// FIXME: optimize, remove last space when info isn't empty
+	// remove last space char
+	len = strlen(info);
+	if (len > 1) // foolproof
+	{
+		info[len-1] = 0;
+	}
 
 	// only comment out when you need a new pure checksums string
 	//Com_DPrintf("FS_LoadPakPureChecksums: %s\n", info);
@@ -3623,7 +3645,8 @@ const char *FS_ReferencedPakChecksums(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
-
+    int len;
+    
 	info[0] = 0;
 
 	for (search = fs_searchpaths ; search ; search = search->next)
@@ -3638,7 +3661,12 @@ const char *FS_ReferencedPakChecksums(void)
 		}
 	}
 
-	// FIXME: optimize, remove last space when info isn't empty
+	// remove last space char
+	len = strlen(info);
+	if (len > 1) // foolproof
+	{
+		info[len-1] = 0;
+	}
 
 	return info;
 }
@@ -3655,6 +3683,7 @@ const char *FS_ReferencedPakNames(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
+	int len;
 
 	info[0] = 0;
 
@@ -3675,7 +3704,12 @@ const char *FS_ReferencedPakNames(void)
 		}
 	}
 
-	// FIXME: optimize, remove last space when info isn't empty
+	// remove last space char
+	len = strlen(info);
+	if (len > 1) // foolproof
+	{
+		info[len-1] = 0;
+	}
 
 	return info;
 }
@@ -3697,7 +3731,7 @@ const char *FS_ReferencedPakPureChecksums(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
-	int          nFlags, numPaks = 0, checksum = fs_checksumFeed;
+	int          nFlags, numPaks = 0, checksum = fs_checksumFeed, len;
 
 	info[0] = 0;
 
@@ -3736,7 +3770,12 @@ const char *FS_ReferencedPakPureChecksums(void)
 	checksum ^= numPaks;
 	Q_strcat(info, sizeof(info), va("%i ", checksum));
 
-	// FIXME: optimize, remove last space when info isn't empty
+	// remove last space char
+	len = strlen(info);
+	if (len > 1) // foolproof
+	{
+		info[len-1] = 0;
+	}
 
 	return info;
 }
