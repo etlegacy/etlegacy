@@ -187,6 +187,51 @@ void SP_info_train_spline_main(void)
 	}
 }
 
+/*
+====================
+CG_corona
+====================
+*/
+void CG_corona(void)
+{
+	cg_corona_t *corona;
+	float       scale;
+	vec3_t      color;
+	vec3_t      org;
+	char        *coronaStr;
+
+	if (CG_SpawnString("targetname", "", &coronaStr) || CG_SpawnString("scriptname", "", &coronaStr) || CG_SpawnString("spawnflags", "", &coronaStr))
+	{
+		return;
+	}
+
+	if (cg.numCoronas >= MAX_GAMECORONAS)
+	{
+		CG_Error("^1MAX_GAMECORONAS(%i) hit", MAX_GAMECORONAS);
+	}
+
+	corona = &cgs.corona[cg.numCoronas++];
+
+	CG_SpawnVector("origin", "0 0 0", org);
+
+	VectorCopy(org, corona->org);
+
+	CG_SpawnFloat("scale", "1", &scale);
+	corona->scale = scale;
+
+	if (!CG_SpawnVector("_color", "0 0 0", color))
+	{
+		if (!CG_SpawnVector("color", "0 0 0", color))
+		{
+			VectorSet(corona->color, 1.f, 1.f, 1.f);
+		}
+	}
+
+	VectorCopy(color, corona->color);
+
+	//CG_Printf("loaded corona %i \n", cg.numCoronas );
+}
+
 void SP_misc_gamemodel(void)
 {
 	char           *model;
@@ -286,6 +331,7 @@ spawn_t spawns[] =
 
 	{ "trigger_objective_info",    SP_trigger_objective_info },
 	{ "misc_gamemodel",            SP_misc_gamemodel         },
+	{ "corona",                    CG_corona                 },
 };
 
 #define NUMSPAWNS   (sizeof(spawns) / sizeof(spawn_t))
@@ -583,6 +629,7 @@ void CG_ParseEntitiesFromString(void)
 	cg.spawning          = qtrue;
 	cg.numSpawnVars      = 0;
 	cg.numMiscGameModels = 0;
+	cg.numCoronas        = 0;
 
 	// the worldspawn is not an actual entity, but it still
 	// has a "spawn" function to perform any global setup

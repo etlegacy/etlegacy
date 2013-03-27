@@ -1034,6 +1034,7 @@ typedef struct
 	qboolean mapcoordsValid;
 
 	int numMiscGameModels;
+	int numCoronas;
 
 	qboolean showCampaignBriefing;
 	qboolean showGameView;
@@ -1626,6 +1627,7 @@ typedef struct
 // this is a waste, was 1024
 // there is no map with more than 256 models, current fav is goldrush-ga with 227
 #define MAX_STATIC_GAMEMODELS   512
+#define MAX_GAMECORONAS 1024
 
 typedef struct cg_gamemodel_s
 {
@@ -1634,6 +1636,13 @@ typedef struct cg_gamemodel_s
 	vec3_t axes[3];
 	vec_t radius;
 } cg_gamemodel_t;
+
+typedef struct cg_corona_s
+{
+	float scale;
+	vec3_t org;
+	vec3_t color;
+} cg_corona_t;
 
 typedef struct cg_weaponstats_s
 {
@@ -1864,6 +1873,7 @@ typedef struct cgs_s
 	int thirdpersonUpdate;
 
 	cg_gamemodel_t miscGameModels[MAX_STATIC_GAMEMODELS];
+	cg_corona_t corona[MAX_GAMECORONAS];
 
 	vec2_t ccMenuPos;
 	qboolean ccMenuShowing;

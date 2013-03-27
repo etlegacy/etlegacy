@@ -2140,6 +2140,7 @@ qboolean CG_Asset_Parse(int handle)
 		if (Q_stricmp(token.string, "font") == 0)
 		{
 			int pointSize, fontIndex;
+
 			if (!PC_Int_Parse(handle, &fontIndex) || !PC_String_Parse(handle, &tempStr) || !PC_Int_Parse(handle, &pointSize))
 			{
 				return qfalse;

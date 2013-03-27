@@ -3649,6 +3649,64 @@ void CG_DrawMiscGamemodels(void)
 	}
 }
 
+void CG_Coronas(void)
+{
+	if (cg_coronas.integer == 0)
+	{
+		return;
+	}
+
+	{
+		int      i;
+		trace_t  tr;
+		float    dist;
+		vec3_t   dir;
+		qboolean visible, behind, toofar;
+
+		for (i = 0 ; i < cg.numCoronas ; ++i)
+		{
+			if (!trap_R_inPVS(cg.refdef_current->vieworg, cgs.corona[i].org))
+			{
+				continue;
+			}
+
+			behind = qfalse; // 'init'
+			toofar = qfalse; // 'init'
+
+			VectorSubtract(cg.refdef_current->vieworg, cgs.corona[i].org, dir);
+			dist = VectorNormalize2(dir, dir);
+
+			if (dist > cg_coronafardist.integer)
+			{
+				toofar = qtrue;
+			}
+			// dot = DotProduct(dir, cg.refdef_current->viewaxis[0]);
+			if (DotProduct(dir, cg.refdef_current->viewaxis[0]) >= -0.6)
+			{
+				behind = qtrue;
+			}
+
+			if (cg_coronas.integer == 2)
+			{   // if set to '2' trace everything
+				behind = qfalse;
+				toofar = qfalse;
+			}
+
+			if (!behind && !toofar)
+			{
+				CG_Trace(&tr, cg.refdef_current->vieworg, NULL, NULL, cgs.corona[i].org, -1, MASK_SOLID | CONTENTS_BODY);
+
+				visible = qfalse; // 'init'
+				if (tr.fraction == 1)
+				{
+					visible = qtrue;
+				}
+				trap_R_AddCoronaToScene(cgs.corona[i].org, cgs.corona[i].color[0], cgs.corona[i].color[1], cgs.corona[i].color[2], cgs.corona[i].scale, i, visible);
+			}
+		}
+	}
+}
+
 /*
 =====================
 CG_DrawActive
@@ -3701,6 +3759,8 @@ void CG_DrawActive(stereoFrame_t stereoView)
 	CG_PB_RenderPolyBuffers();
 
 	CG_DrawMiscGamemodels();
+
+	CG_Coronas();
 
 	if (!(cg.limboEndCinematicTime > cg.time && cg.showGameView))
 	{

@@ -1136,6 +1136,7 @@ void CG_Spotlight(centity_t *cent, float *color, vec3_t realstart, vec3_t lightD
 		if (lightInEyes)
 		{
 			float coronasize = flarescale;
+
 			if (dist < 512)     // make even bigger if you're close enough
 			{
 				coronasize *= (512.0f / dist);

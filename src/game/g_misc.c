@@ -670,14 +670,20 @@ void SP_corona(gentity_t *ent)
 {
 	float scale;
 
+	if (!ent->scriptName && !ent->targetname && !ent->spawnflags)
+	{
+		G_FreeEntity(ent);
+		return;
+	}
+
 	ent->s.eType = ET_CORONA;
 
+	
 	if (ent->dl_color[0] <= 0 &&                 // if it's black or has no color assigned
 	    ent->dl_color[1] <= 0 &&
 	    ent->dl_color[2] <= 0)
 	{
 		ent->dl_color[0] = ent->dl_color[1] = ent->dl_color[2] = 1; // set white
-
 	}
 	ent->dl_color[0] = ent->dl_color[0] * 255;
 	ent->dl_color[1] = ent->dl_color[1] * 255;
