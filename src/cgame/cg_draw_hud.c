@@ -114,7 +114,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 {
 	// the Default hud
 	hud->hudnumber       = 0;
-	hud->compas          = CG_getComponent((Ccg_WideX(640) - 100 - 20 - 16), 20 - 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
+	hud->compas          = CG_getComponent((Ccg_WideX(640) - 100 - 20 - 16), 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
 	hud->staminabar      = CG_getComponent(4, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->healthbar       = CG_getComponent(24, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->weaponchargebar = CG_getComponent(Ccg_WideX(640) - 16, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
