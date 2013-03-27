@@ -3522,7 +3522,7 @@ const char *FS_LoadedPakChecksums(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
-	int len;
+	int          len;
 
 	info[0] = 0;
 
@@ -3541,7 +3541,7 @@ const char *FS_LoadedPakChecksums(void)
 	len = strlen(info);
 	if (len > 1) // foolproof
 	{
-		info[len-1] = 0;
+		info[len - 1] = 0;
 	}
 
 	return info;
@@ -3586,9 +3586,9 @@ const char *FS_LoadedPakNames(void)
 	len = strlen(info);
 	if (len > 1) // foolproof
 	{
-		info[len-1] = 0;
+		info[len - 1] = 0;
 	}
-	
+
 	return info;
 }
 
@@ -3605,8 +3605,8 @@ const char *FS_LoadedPakPureChecksums(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
-	int len;
-	
+	int          len;
+
 	info[0] = 0;
 
 	for (search = fs_searchpaths ; search ; search = search->next)
@@ -3624,7 +3624,7 @@ const char *FS_LoadedPakPureChecksums(void)
 	len = strlen(info);
 	if (len > 1) // foolproof
 	{
-		info[len-1] = 0;
+		info[len - 1] = 0;
 	}
 
 	// only comment out when you need a new pure checksums string
@@ -3645,8 +3645,8 @@ const char *FS_ReferencedPakChecksums(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
-    int len;
-    
+	int          len;
+
 	info[0] = 0;
 
 	for (search = fs_searchpaths ; search ; search = search->next)
@@ -3665,7 +3665,7 @@ const char *FS_ReferencedPakChecksums(void)
 	len = strlen(info);
 	if (len > 1) // foolproof
 	{
-		info[len-1] = 0;
+		info[len - 1] = 0;
 	}
 
 	return info;
@@ -3683,7 +3683,7 @@ const char *FS_ReferencedPakNames(void)
 {
 	static char  info[BIG_INFO_STRING];
 	searchpath_t *search;
-	int len;
+	int          len;
 
 	info[0] = 0;
 
@@ -3708,7 +3708,7 @@ const char *FS_ReferencedPakNames(void)
 	len = strlen(info);
 	if (len > 1) // foolproof
 	{
-		info[len-1] = 0;
+		info[len - 1] = 0;
 	}
 
 	return info;
@@ -3774,7 +3774,7 @@ const char *FS_ReferencedPakPureChecksums(void)
 	len = strlen(info);
 	if (len > 1) // foolproof
 	{
-		info[len-1] = 0;
+		info[len - 1] = 0;
 	}
 
 	return info;
