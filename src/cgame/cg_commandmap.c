@@ -1038,7 +1038,12 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 	if (scissor)
 	{
-		icon_size = AUTOMAP_PLAYER_ICON_SIZE;
+		//icon_size = AUTOMAP_PLAYER_ICON_SIZE;
+		icon_size = h / 26;
+		if (icon_size < 4)
+		{
+			icon_size = 4;
+		}
 
 		if (scissor->br[0] >= scissor->tl[0])
 		{
@@ -1067,7 +1072,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		}
 
 		// Draw the grid
-		CG_DrawGrid(x, y, w, h, scissor);
+		//CG_DrawGrid(x, y, w, h, scissor);
 	}
 	else
 	{
@@ -1292,7 +1297,7 @@ void CG_DrawAutoMap(float x, float y, float w, float h)
 	{
 		if (cg.time - cgs.autoMapExpandTime < 100.f)
 		{
-			y -= ((cg.time - cgs.autoMapExpandTime) / 100.f) * 128.f;
+			//y -= ((cg.time - cgs.autoMapExpandTime) / 100.f) * 128.f;
 			CG_DrawExpandedAutoMap();
 		}
 		else
@@ -1312,7 +1317,7 @@ void CG_DrawAutoMap(float x, float y, float w, float h)
 		}
 		else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
 		{
-			y = (y - 128.f) + ((cg.time - cgs.autoMapExpandTime - 150.f) / 100.f) * 128.f;
+			//y = (y - 128.f) + ((cg.time - cgs.autoMapExpandTime - 150.f) / 100.f) * 128.f;
 			CG_DrawExpandedAutoMap();
 		}
 	}

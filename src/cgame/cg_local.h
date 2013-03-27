@@ -2531,6 +2531,7 @@ int SkillNumForClass(int classNum);
 
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 
+void CG_DrawExpandedAutoMap(void);
 void CG_DrawAutoMap(float x, float y, float w, float h);
 
 qboolean CG_DrawLimboMenu(void);
