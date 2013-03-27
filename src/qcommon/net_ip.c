@@ -442,6 +442,7 @@ static void Sys_SockaddrToString(char *dest, int destlen, struct sockaddr *input
 	}
 #else
 	char *addr = inet_ntoa(((struct sockaddr_in *)input)->sin_addr);
+
 	Q_strncpyz(dest, addr, destlen);
 #endif
 }
@@ -497,13 +498,11 @@ qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
 		return qfalse;
 	}
 
-	// FIXME: do a switch!
-	if (a.type == NA_LOOPBACK)
+	switch (a.type)
 	{
+	case NA_LOOPBACK:
 		return qtrue;
-	}
-
-	if (a.type == NA_IP)
+	case NA_IP:
 	{
 		addra = (byte *) &a.ip;
 		addrb = (byte *) &b.ip;
@@ -513,8 +512,9 @@ qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
 			netmask = 32;
 		}
 	}
+	break;
 #ifdef FEATURE_IPV6
-	else if (a.type == NA_IP6)
+	case NA_IP6:
 	{
 		addra = (byte *) &a.ip6;
 		addrb = (byte *) &b.ip6;
@@ -524,9 +524,9 @@ qboolean NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
 			netmask = 128;
 		}
 	}
+	break;
 #endif
-	else
-	{
+	default:
 		Com_Printf("NET_CompareBaseAdrMask: bad address type\n");
 		return qfalse;
 	}
@@ -581,23 +581,21 @@ const char *NET_AdrToString(netadr_t a)
 {
 	static char s[NET_ADDRSTRMAXLEN];
 
-	// FIXME: do a switch
-	if (a.type == NA_LOOPBACK)
+	switch (a.type)
 	{
+	case NA_LOOPBACK:
 		Com_sprintf(s, sizeof(s), "loopback");
-	}
-	else if (a.type == NA_BOT)
-	{
+		break;
+	case NA_BOT:
 		Com_sprintf(s, sizeof(s), "bot");
-	}
-	else if (a.type == NA_IP)
-	{
+		break;
+	case NA_IP:
 		// Port has to be returned along with ip address because of compatibility
 		Com_sprintf(s, sizeof(s), "%i.%i.%i.%i:%hu",
 		            a.ip[0], a.ip[1], a.ip[2], a.ip[3], BigShort(a.port));
-	}
+		break;
 #ifdef FEATURE_IPV6
-	else if (a.type == NA_IP6)
+	case NA_IP6:
 	{
 		// FIXME: add port for compatibility
 		// (joining a server through the server browser)
@@ -607,7 +605,11 @@ const char *NET_AdrToString(netadr_t a)
 		NetadrToSockadr(&a, (struct sockaddr *) &sadr);
 		Sys_SockaddrToString(s, sizeof(s), (struct sockaddr *) &sadr);
 	}
+	break;
 #endif
+	default:
+		Com_Printf("NET_AdrToString: Unknown address type%i\n", a.type);
+	}
 
 	return s;
 }
@@ -1557,6 +1559,10 @@ static void NET_AddLocalAddress(char *ifname, struct sockaddr *addr, struct sock
 
 		numIP++;
 	}
+	else
+	{
+		Com_Printf("WARNING NET_AddLocalAddress: numIP >= MAX_IPS\n");
+	}
 }
 
 #if defined(__linux__) || defined(__APPLE__) || defined(__BSD__)
@@ -1649,8 +1655,8 @@ static void NET_GetLocalAddress(void)
 #endif
 		struct addrinfo *search;
 
-		/* On operating systems where it's more difficult to find out the configured interfaces, we'll just assume a
-		 * netmask with all bits set. */
+		// On operating systems where it's more difficult to find out the configured interfaces,
+		// we'll just assume a netmask with all bits set.
 
 		memset(&mask4, 0, sizeof(mask4));
 #ifdef FEATURE_IPV6
@@ -1696,14 +1702,10 @@ void NET_OpenIP(void)
 {
 	int i;
 	int err;
-	int port;
-
+	int port = net_port->integer;
 #ifdef FEATURE_IPV6
-	int port6;
-
-	port6 = net_port6->integer;
+	int port6 = net_port6->integer;
 #endif
-	port = net_port->integer;
 
 	NET_GetLocalAddress();
 
