@@ -44,8 +44,8 @@ typedef enum
 typedef struct hudComponent_s
 {
 	rectDef_t location;
-	qboolean visible;
-	componentStyle style;
+	int visible;
+	int style;
 } hudComponent_t;
 
 typedef struct hudStructure_s
@@ -507,7 +507,7 @@ static void CG_DrawPicShadowed(float x, float y, float w, float h, qhandle_t ico
 {
 	trap_R_SetColor(colorBlack);
 	CG_DrawPic(x + 2, y + 2, w, h, icon);
-	trap_R_SetColor(colorWhite);
+	trap_R_SetColor(NULL);
 	CG_DrawPic(x, y, w, h, icon);
 
 }
@@ -1794,12 +1794,36 @@ void CG_Hud_Setup(void)
 	CG_ReadHudScripts();
 }
 
+static void CG_PrintHudComponent(const char *name, hudComponent_t comp)
+{
+	Com_Printf("%s location: X %.f Y %.f W %.f H %.f visible: %i\n", name, comp.location.x, comp.location.y, comp.location.w, comp.location.h, comp.visible);
+}
+
+static void CG_PrintHud(hudStucture_t *hud)
+{
+	CG_PrintHudComponent("compas", hud->compas);
+	CG_PrintHudComponent("staminabar", hud->staminabar);
+	CG_PrintHudComponent("healthbar", hud->healthbar);
+	CG_PrintHudComponent("weaponchargebar", hud->weaponchargebar);
+	CG_PrintHudComponent("healthtext", hud->healthtext);
+	CG_PrintHudComponent("xptext", hud->xptext);
+	CG_PrintHudComponent("statsdisplay", hud->statsdisplay);
+	CG_PrintHudComponent("weaponicon", hud->weaponicon);
+	CG_PrintHudComponent("weaponammo", hud->weaponammo);
+	CG_PrintHudComponent("fireteam", hud->fireteam);
+	CG_PrintHudComponent("popupmessages", hud->popupmessages);
+	CG_PrintHudComponent("powerups", hud->powerups);
+	CG_PrintHudComponent("hudhead", hud->hudhead);
+	CG_PrintHudComponent("cursorhint", hud->cursorhint);
+	CG_PrintHudComponent("weaponstability", hud->weaponstability);
+	CG_PrintHudComponent("livesleft", hud->livesleft);
+}
+
 /*
 =====================
 CG_SetHud
 =====================
 */
-
 void CG_SetHud(void)
 {
 	if (cg_altHud.integer && activehud->hudnumber != cg_altHud.integer)
@@ -1812,6 +1836,10 @@ void CG_SetHud(void)
 			cg_altHud.integer = 0;
 			return;
 		}
+
+#if !defined(NDEBUG)
+		CG_PrintHud(activehud);
+#endif // DEBUG
 
 		Com_Printf("Setting hud to: %i\n", cg_altHud.integer);
 	}
