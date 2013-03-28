@@ -602,7 +602,7 @@ void FS_HomeRemove(const char *homePath)
 	                      fs_gamedir, homePath));
 }
 
-/*
+/**
  * @brief Tests if path and file exists
  */
 qboolean FS_FileInPathExists(const char *testpath)
@@ -620,12 +620,12 @@ qboolean FS_FileInPathExists(const char *testpath)
 	return qfalse;
 }
 
-/*
+/**
  * @brief Tests if the file exists in the current gamedir
  *
- * this DOES NOT search the paths. This is to determine if opening a file to
+ * DOES NOT search the paths. This is to determine if opening a file to
  * write (which always goes into the current gamedir) will cause any overwrites.
- * NOTE TTimo: this goes with FS_FOpenFileWrite for opening the file afterwards
+ * @note this goes with FS_FOpenFileWrite for opening the file afterwards
  */
 qboolean FS_FileExists(const char *file)
 {
@@ -2820,7 +2820,7 @@ int FS_PathCmp(const char *s1, const char *s2)
 	return 0;       // strings are equal
 }
 
-/*
+/**
  * FS_IsSamePath
  *
  * @brief Similar to FS_PathCmp but based on the real path name comparison.
