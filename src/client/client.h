@@ -470,6 +470,8 @@ int CL_ServerStatus(char *serverAddress, char *serverStatusString, int maxLen);
 void CL_AddToLimboChat(const char *str);
 qboolean CL_GetLimboString(int index, char *buf);
 
+void CL_CleanHomepath_f(void);
+
 // cl_avi
 
 qboolean CL_OpenAVIForWriting(const char *filename);

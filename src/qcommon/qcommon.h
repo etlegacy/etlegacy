@@ -630,6 +630,7 @@ void FS_FreeFileList(char **list);
 qboolean FS_FileExists(const char *file);
 
 qboolean FS_CreatePath(char *OSPath);
+void FS_Remove(const char *osPath);
 
 char *FS_BuildOSPath(const char *base, const char *game, const char *qpath);
 
@@ -1254,5 +1255,3 @@ extern huffman_t clientHuffTables;
 #define CL_DECODE_START     4
 
 void Com_GetHunkInfo(int *hunkused, int *hunkexpected);
-
-#endif // _QCOMMON_H_
