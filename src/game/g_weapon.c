@@ -2112,7 +2112,7 @@ evilbanigoto:
 							pm->s.effect3Time = hit->s.teamNum;
 							pm->s.teamNum     = ent->client->sess.sessionTeam;
 
-							G_Script_ScriptEvent(hit, "dynamited", "");
+							G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 
 #ifdef FEATURE_OMNIBOT
 							// notify omni-bot framework of planted dynamite
@@ -2198,7 +2198,7 @@ evilbanigoto:
 							pm->s.effect3Time = hit->parent->s.teamNum;
 							pm->s.teamNum     = ent->client->sess.sessionTeam;
 
-							G_Script_ScriptEvent(hit, "dynamited", "");
+							G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 
 #ifdef FEATURE_OMNIBOT
 							// notify omni-bot framework of planted dynamite
