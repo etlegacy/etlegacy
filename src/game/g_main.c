@@ -1899,6 +1899,129 @@ void bani_getmapxp(void)
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, s);
 }
 
+/*
+=============
+G_ConfigParse
+=============
+*/
+static qboolean BG_PCF_ParseError(int handle, char *format, ...)
+{
+	int         line = 0;
+	char        filename[MAX_QPATH];
+	va_list     argptr;
+	static char string[4096];
+
+	va_start(argptr, format);
+	Q_vsnprintf(string, sizeof(string), format, argptr);
+	va_end(argptr);
+
+	filename[0] = '\0';
+
+	trap_PC_SourceFileAndLine(handle, filename, &line);
+
+	Com_Printf(S_COLOR_RED "ERROR: %s, line %d: %s\n", filename, line, string);
+
+	trap_PC_FreeSource(handle);
+
+	return qfalse;
+}
+
+static qboolean G_ConfigParse(int handle, config_t *config)
+{
+	pc_token_t token;
+	char       text[256];
+	char       value[256];
+
+	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
+	{
+		return BG_PCF_ParseError(handle, "expected '{'");
+	}
+
+	while (1)
+	{
+		if (!trap_PC_ReadToken(handle, &token))
+		{
+			break;
+		}
+		if (token.string[0] == '}')
+		{
+			break;
+		}
+
+		// simple set that does not need to save
+		if (!Q_stricmp(token.string, "set"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
+			{
+				return BG_PCF_ParseError(handle, "expected cvar to set");
+			}
+			else
+			{
+				if (!PC_String_ParseNoAlloc(handle, value, sizeof(value)))
+				{
+					return BG_PCF_ParseError(handle, "expected cvar value");
+				}
+
+				if (value[0] == '-')
+				{
+					if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
+					{
+						return BG_PCF_ParseError(handle, "expected value after '-'");
+					}
+
+					Q_strncpyz(value, va("-%s", text), sizeof(value));
+				}
+
+				trap_Cvar_Set(text, value);
+			}
+			// commands do not need to save as well
+		}
+		else if (!Q_stricmp(token.string, "command"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
+			{
+				return BG_PCF_ParseError(handle, "expected command to execute");
+			}
+			else
+			{
+				trap_SendConsoleCommand(EXEC_APPEND, va("%s\n", text));
+			}
+			// setlock - need to save us to whine
+		}
+		else if (!Q_stricmp(token.string, "setl"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, config->setl[config->numSetl].name, sizeof(config->setl[0].name)))
+			{
+				return BG_PCF_ParseError(handle, "expected name of cvar to set and lock");
+			}
+
+			if (!PC_String_ParseNoAlloc(handle, config->setl[config->numSetl].value, sizeof(config->setl[0].value)))
+			{
+				return BG_PCF_ParseError(handle, "expected value of cvar to set and lock");
+			}
+
+			if (config->setl[config->numSetl].value[0] == '-')
+			{
+				if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
+				{
+					return BG_PCF_ParseError(handle, "expected value after '-'");
+				}
+
+				Q_strncpyz(config->setl[config->numSetl].value, va("-%s", text), sizeof(config->setl[0].value));
+			}
+
+			trap_Cvar_Set(config->setl[config->numSetl].name, config->setl[config->numSetl].value);
+			config->numSetl++;
+		}
+		else
+		{
+			return BG_PCF_ParseError(handle, "unknown token '%s'", token.string);
+		}
+	}
+
+	return qtrue;
+}
+
 qboolean G_LoadConfig(char forceFilename[MAX_QPATH], qboolean init)
 {
 	char       filename[MAX_QPATH];
@@ -2032,10 +2155,9 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	G_RegisterCvars();
 
 	// enforcemaxlives stuff
-	/*
-	we need to clear the list even if enforce maxlives is not active
-	in case the g_maxlives was changed, and a map_restart happened
-	*/
+
+	// we need to clear the list even if enforce maxlives is not active
+	// in case the g_maxlives was changed, and a map_restart happened
 	ClearMaxLivesBans();
 
 	// just for verbosity
@@ -2939,15 +3061,12 @@ int QDECL G_SortMapsByzOrder(const void *a, const void *b)
 		return -1;
 	}
 
-	/*
 	// no_randomize ??.. it doesn't sort the list, so NO_SORTING would be a better name for this..
 	// !!!!! what about maps that have been excluded, or have been played too many times..
 	// !!!!! This list always needs to be sorted, to get those maps last in the list.
-	//
-	if ( g_mapVoteFlags.integer & MAPVOTE_NO_RANDOMIZE ) {
-	    return 0;
-	}
-	*/
+	//if ( g_mapVoteFlags.integer & MAPVOTE_NO_RANDOMIZE ) {
+	//  return 0;
+	//}
 
 	if (level.mapvoteinfo[z1].zOrder > level.mapvoteinfo[z2].zOrder)
 	{
