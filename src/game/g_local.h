@@ -872,7 +872,22 @@ typedef struct voteInfo_s
 	char vote_value[VOTE_MAXSTRING];        // Desired vote item setting.
 } voteInfo_t;
 
-typedef struct
+typedef struct cfgCvar_s
+{
+	char name[256];
+	char value[256];
+} cfgCvar_t;
+
+typedef struct config_s
+{
+	char name[256];
+	char version[256];
+	cfgCvar_t setl[256];
+	int numSetl;
+	qboolean loaded;
+} config_t;
+
+typedef struct level_locals_s
 {
 	struct gclient_s *clients;          // [maxclients]
 
@@ -1075,6 +1090,8 @@ typedef struct
 	// sv_cvars
 	svCvar_t svCvars[MAX_SVCVARS];
 	int svCvarsCount;
+
+	config_t config;            // etpro style config
 
 } level_locals_t;
 
@@ -1396,6 +1413,7 @@ void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_Error(const char *fmt, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
+qboolean G_LoadConfig(char forceFilename[MAX_QPATH], qboolean init);
 
 // g_client.c
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
@@ -1705,6 +1723,8 @@ extern vmCvar_t g_intermissionTime;
 extern vmCvar_t g_intermissionReadyPercent;
 
 extern vmCvar_t g_mapScriptDirectory;
+extern vmCvar_t g_mapConfigs;
+extern vmCvar_t g_customConfig;
 
 typedef struct GeoIPTag
 {

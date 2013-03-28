@@ -296,6 +296,8 @@ vmCvar_t g_intermissionTime;
 vmCvar_t g_intermissionReadyPercent;
 
 vmCvar_t g_mapScriptDirectory;
+vmCvar_t g_mapConfigs;
+vmCvar_t g_customConfig;
 
 cvarTable_t gameCvarTable[] =
 {
@@ -553,6 +555,8 @@ cvarTable_t gameCvarTable[] =
 	{ &g_intermissionTime,         "g_intermissionTime",         "60",                         0 },
 	{ &g_intermissionReadyPercent, "g_intermissionReadyPercent", "100",                        0 },
 	{ &g_mapScriptDirectory,       "g_mapScriptDirectory",       "",                           0 },
+	{ &g_mapConfigs,               "g_mapConfigs",               "",                           0 },
+	{ &g_customConfig,             "g_customConfig",             "",                           0 },
 };
 
 // made static to avoid aliasing
@@ -1895,6 +1899,116 @@ void bani_getmapxp(void)
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, s);
 }
 
+qboolean G_LoadConfig(char forceFilename[MAX_QPATH], qboolean init)
+{
+	char       filename[MAX_QPATH];
+	int        handle = 0;
+	config_t   *config;
+	pc_token_t token;
+
+	if (forceFilename[0])
+	{
+		Q_strncpyz(filename, forceFilename, sizeof(filename));
+	}
+	else if (g_customConfig.string[0])
+	{
+		Q_strncpyz(filename, g_customConfig.string, sizeof(filename));
+		// need to reload config?
+		if (!level.config.loaded)
+		{
+			init = qtrue;
+		}
+	}
+	else if (g_mapConfigs.string[0])
+	{
+		Q_strncpyz(filename, g_mapConfigs.string, sizeof(filename));
+		Q_strcat(filename, sizeof(filename), "/");
+		Q_strcat(filename, sizeof(filename), level.rawmapname);
+		Q_strcat(filename, sizeof(filename), ".config");
+		init = qfalse;
+	}
+	else
+	{
+		return qfalse;
+	}
+
+	if (init)
+	{
+		memset(&level.config, 0, sizeof(config_t));
+	}
+
+	handle = trap_PC_LoadSource(filename);
+
+	if (!handle)
+	{
+		G_Printf("^3Warning: No config with filename '%s' found\n", filename);
+		return qfalse;
+	}
+
+	config = &level.config;
+
+	while (1)
+	{
+		if (!trap_PC_ReadToken(handle, &token))
+		{
+			break;
+		}
+
+		if (!Q_stricmp(token.string, "configname"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, config->name, sizeof(config->name)))
+			{
+				return BG_PCF_ParseError(handle, "expected config name");
+			}
+
+			trap_SetConfigstring(CS_CONFIGNAME, config->name);
+		}
+		else if (!Q_stricmp(token.string, "version"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, config->version, sizeof(config->name)))
+			{
+				return BG_PCF_ParseError(handle, "expected config version");
+			}
+		}
+		else if (!Q_stricmp(token.string, "init"))
+		{
+			if (!G_ConfigParse(handle, config))
+			{
+				return BG_PCF_ParseError(handle, "failed to load init struct");
+			}
+			else
+			{
+				if (level.config.version[0] && level.config.name[0])
+				{
+					trap_SendServerCommand(-1, va("cp \"Script '%s^7' version '%s'^7 loaded\n\"", level.config.name, level.config.version));
+				}
+				else if (level.config.name[0])
+				{
+					trap_SendServerCommand(-1, va("cp \"Script '%s^7' loaded\n\"", level.config.name));
+				}
+			}
+		}
+		else if (!Q_stricmp(token.string, "default"))
+		{
+			if (!G_ConfigParse(handle, config))
+			{
+				return BG_PCF_ParseError(handle, "failed to load default struct");
+			}
+		}
+		else if (!Q_stricmp(token.string, level.rawmapname))
+		{
+			if (!G_ConfigParse(handle, config))
+			{
+				return BG_PCF_ParseError(handle, "failed to load %s struct", level.rawmapname);
+			}
+		}
+	}
+	level.config.loaded = qtrue;
+
+	trap_PC_FreeSource(handle);
+	return qtrue;
+}
+
 /*
 ============
 G_InitGame
@@ -2087,34 +2201,37 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	G_InitWorldSession();
 
 	// MAPVOTE
-	/*
-	if ( g_gametype.integer == GT_WOLF_MAPVOTE ) {
-	    char mapConfig[MAX_STRING_CHARS];
-	    trap_Cvar_Set("C", va("%d,%d",
-	            ((level.mapsSinceLastXPReset >= g_resetXPMapCount.integer) ?
-	                    0 : level.mapsSinceLastXPReset)+1,
-	            g_resetXPMapCount.integer));
+	if (g_gametype.integer == GT_WOLF_MAPVOTE)
+	{
+		char mapConfig[MAX_STRING_CHARS];
 
-	    if ( g_mapConfigs.string[0] && g_resetXPMapCount.integer )
-	    {
-	        Q_strncpyz(mapConfig, "exec ", sizeof(mapConfig));
-	        //Q_strcat(mapConfig, sizeof(mapConfig), g_mapConfigs.string);
-	        i = level.mapsSinceLastXPReset;
-	        if ( i == 0 || i == g_resetXPMapCount.integer ) {
-	            i = 2;
-	        }
-	        else if ( i+2 <= g_resetXPMapCount.integer ) {
-	            i += 2;
-	        }
-	        else {
-	            i = 1;
-	        }
-	        Q_strcat(mapConfig, sizeof(mapConfig), va("/vote_%d.cfg",i));
+		//trap_Cvar_Set("C", va("%d,%d",
+		//        ((level.mapsSinceLastXPReset >= g_resetXPMapCount.integer) ?
+		//               0 : level.mapsSinceLastXPReset)+1,
+		//       g_resetXPMapCount.integer));
 
-	        trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
-	    }
+		if (g_mapConfigs.string[0] && g_resetXPMapCount.integer)
+		{
+			Q_strncpyz(mapConfig, "exec ", sizeof(mapConfig));
+			Q_strcat(mapConfig, sizeof(mapConfig), g_mapConfigs.string);
+			i = level.mapsSinceLastXPReset;
+			if (i == 0 || i == g_resetXPMapCount.integer)
+			{
+				i = 2;
+			}
+			else if (i + 2 <= g_resetXPMapCount.integer)
+			{
+				i += 2;
+			}
+			else
+			{
+				i = 1;
+			}
+			Q_strcat(mapConfig, sizeof(mapConfig), va("/vote_%d.cfg", i));
+
+			trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
+		}
 	}
-	*/
 
 	// Clear out spawn target config strings
 	trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
@@ -2153,11 +2270,16 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),
 	                    &level.clients[0].ps, sizeof(level.clients[0]));
 
-	// load level script
-	G_Script_ScriptLoad();
-
 	// reserve some spots for dead player bodies
 	InitBodyQue();
+
+	// load etpro configs
+	trap_SetConfigstring(CS_CONFIGNAME, "");
+
+	G_LoadConfig("", qfalse);
+
+	// load level script
+	G_Script_ScriptLoad();
 
 	numSplinePaths = 0 ;
 	numPathCorners = 0;

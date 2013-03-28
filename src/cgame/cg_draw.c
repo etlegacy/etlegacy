@@ -2641,16 +2641,26 @@ static void CG_DrawWarmup(void)
 	int             cw;
 	const char      *s, *s1, *s2;
 	static qboolean announced = qfalse;
+	int             x;
 
 	if (!sec)
 	{
 		if ((cgs.gamestate == GS_WARMUP && !cg.warmup) || cgs.gamestate == GS_WAITING_FOR_PLAYERS)
 		{
-			cw = 10;
+			cw = 10 - 1;
+
+			if (CG_ConfigString(CS_CONFIGNAME)[0])
+			{
+				s1 = va("^3Config:^7%s^7", CG_ConfigString(CS_CONFIGNAME));
+				w  = CG_DrawStrlen(s1);
+				x  = Ccg_WideX(320) - w * 12 / 2;
+				CG_DrawStringExt(x, 162, s1, colorWhite, qfalse, qtrue, 12, 16, 0);
+			}
 
 			s1 = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? "player" : "players");
 			w  = CG_DrawStrlen(s1);
-			CG_DrawStringExt(320 + cgs.wideXoffset - w * 12 / 2, 188, s1, colorWhite, qfalse, qtrue, 12, 18, 0);
+			x  = Ccg_WideX(320) - w * 12 / 2;
+			CG_DrawStringExt(x, 188, s1, colorWhite, qfalse, qtrue, 12, 18, 0);
 
 			if (!cg.demoPlayback && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR &&
 			    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) || (cg.snap->ps.pm_flags & PMF_LIMBO)))
@@ -2668,7 +2678,8 @@ static void CG_DrawWarmup(void)
 					s2 = CG_TranslateString(s2);
 				}
 				w = CG_DrawStrlen(s2);
-				CG_DrawStringExt(320 + cgs.wideXoffset - w * cw / 2, 208, s2, colorWhite, qfalse, qtrue, cw, (int)(cw * 1.5), 0);
+				x = Ccg_WideX(320) - w * cw / 2;
+				CG_DrawStringExt(x, 208, s2, colorWhite, qfalse, qtrue, cw, (int)(cw * 1.5), 0);
 			}
 			return;
 		}
@@ -2684,7 +2695,8 @@ static void CG_DrawWarmup(void)
 	s = va("%s %i", CG_TranslateString("(WARMUP) Match begins in:"), sec + 1);
 
 	w = CG_DrawStrlen(s);
-	CG_DrawStringExt(320 + cgs.wideXoffset - w * 6, 120, s, colorYellow, qfalse, qtrue, 12, 18, 0);
+	x = Ccg_WideX(320) - w * 6;
+	CG_DrawStringExt(x, 120, s, colorYellow, qfalse, qtrue, 12, 18, 0);
 
 	// pre start actions
 	if (sec == 3 && !announced)
@@ -2784,19 +2796,19 @@ static void CG_DrawWarmup(void)
 			s2 = CG_TranslateString(s2);
 		}
 
-		cw = 10;
+		cw = 10 - 1;
 
 		w = CG_DrawStrlen(s);
-		CG_DrawStringExt(320 + cgs.wideXoffset - w * cw / 2, 140, s, colorWhite,
-		                 qfalse, qtrue, cw, (int)(cw * 1.5), 0);
+		x = Ccg_WideX(320) - w * cw / 2;
+		CG_DrawStringExt(x, 140, s, colorWhite, qfalse, qtrue, cw, (int)(cw * 1.5), 0);
 
 		w = CG_DrawStrlen(s1);
-		CG_DrawStringExt(320 + cgs.wideXoffset - w * cw / 2, 160, s1, colorWhite,
-		                 qfalse, qtrue, cw, (int)(cw * 1.5), 0);
+		x = Ccg_WideX(320) - w * cw / 2;
+		CG_DrawStringExt(x, 160, s1, colorWhite, qfalse, qtrue, cw, (int)(cw * 1.5), 0);
 
 		w = CG_DrawStrlen(s2);
-		CG_DrawStringExt(320 + cgs.wideXoffset - w * cw / 2, 180, s2, colorWhite,
-		                 qfalse, qtrue, cw, (int)(cw * 1.5), 0);
+		x = Ccg_WideX(320) - w * cw / 2;
+		CG_DrawStringExt(x, 180, s2, colorWhite, qfalse, qtrue, cw, (int)(cw * 1.5), 0);
 	}
 }
 

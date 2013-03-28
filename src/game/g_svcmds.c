@@ -1495,6 +1495,28 @@ void CC_svcvar(void)
 
 char *ConcatArgs(int start);
 
+void CC_loadconfig(void)
+{
+	char scriptName[MAX_QPATH];
+
+	if (trap_Argc() != 2)
+	{
+		G_Printf("usage: loadConfig <config name>\n");
+		return;
+	}
+
+	trap_Argv(1, scriptName, sizeof(scriptName));
+
+	trap_SetConfigstring(CS_CONFIGNAME, "");
+	memset(&level.config, 0, sizeof(config_t));
+	if (G_LoadConfig(scriptName, qtrue))
+	{
+		G_Printf("Loaded config: %s\n", level.config.name);
+		trap_Cvar_Set("g_customConfig", scriptName);
+	}
+}
+
+
 /*
 =================
 ConsoleCommand
@@ -1657,6 +1679,24 @@ qboolean ConsoleCommand(void)
 	if (!Q_stricmp(cmd, "cp"))
 	{
 		trap_SendServerCommand(-1, va("cp \"%s\n\"", Q_AddCR(ConcatArgs(1))));
+		return qtrue;
+	}
+
+	if (!Q_stricmp(cmd, "reloadConfig"))
+	{
+		trap_SetConfigstring(CS_CONFIGNAME, "");
+		memset(&level.config, 0, sizeof(config_t));
+		if (G_LoadConfig("", qtrue))
+		{
+			G_Printf("Reloaded config: %s\n", level.config.name);
+		}
+
+		return qtrue;
+	}
+
+	if (!Q_stricmp(cmd, "loadConfig"))
+	{
+		CC_loadconfig();
 		return qtrue;
 	}
 
