@@ -3775,7 +3775,6 @@ void CL_Init(void)
 	Cmd_AddCommand("showip", CL_ShowIP_f);
 	Cmd_AddCommand("fs_openedList", CL_OpenedPK3List_f);
 	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f);
-	Cmd_AddCommand("clean", CL_CleanHomepath_f);
 
 	// startup-caching system
 	Cmd_AddCommand("cache_startgather", CL_Cache_StartGather_f);
@@ -4959,61 +4958,6 @@ qboolean CL_GetLimboString(int index, char *buf)
 
 	strncpy(buf, cl.limboChatMsgs[index], 140);
 	return qtrue;
-}
-
-/**
- * @brief Recursively removes files matching a given pattern from homepath.
- * Useful for removing incomplete downloads and other garbage.
- */
-void CL_CleanHomepath_f(void)
-{
-	int        i, j, k, numFiles = 0;
-	char       **pFiles = NULL;
-	char       buffer[MAX_OSPATH];
-	const char *whitelist[] = { ".cfg", ".dat", "pak0.pk3", "pak1.pk3", "pak2.pk3" };
-
-	if (Cmd_Argc() < 3)
-	{
-		Com_Printf("usage: clean <mod> <pattern[s]>\n");
-		Com_Printf("example: clean all *tmp zzz* etmain/etkey\n");
-		return;
-	}
-
-	Cvar_VariableStringBuffer("fs_homepath", buffer, sizeof(buffer));
-
-	// If the first argument is "all" or "*", search the whole homepath
-	if (Q_stricmp(Cmd_Argv(1), "all") && Q_stricmp(Cmd_Argv(1), "*"))
-	{
-		Q_strcat(buffer, sizeof(buffer), va("%c%s", PATH_SEP, Cmd_Argv(1)));
-	}
-
-	for (i = 2; i < Cmd_Argc(); i++)
-	{
-		pFiles = Sys_ListFiles(buffer, NULL, Cmd_Argv(i), &numFiles, qtrue);
-
-		Com_Printf("Found %i files matching the pattern \"%s\" under %s\n", numFiles, Cmd_Argv(i), buffer);
-
-		for (j = 0; j < numFiles; j++)
-		{
-			for (k = 0; k < ARRAY_LEN(whitelist); k++)
-			{
-				// Prevent clumsy users from deleting important files
-				if (strstr(pFiles[j], whitelist[k]))
-				{
-					Com_Printf("- skipping whitelisted file %s\n", pFiles[j]);
-					break;
-				}
-				if (k == STRARRAY_LEN(whitelist))
-				{
-					Com_Printf("- removing %s\n", pFiles[j]);
-					FS_Remove(va("%s%c%s", buffer, PATH_SEP, pFiles[j]));
-				}
-			}
-		}
-
-		Sys_FreeFileList(pFiles);
-		numFiles = 0;
-	}
 }
 
 // Localization code
