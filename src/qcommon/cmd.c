@@ -932,13 +932,13 @@ void Cmd_CompleteCfgName(char *args, int argNum)
 /**
  * @brief Recursively removes files matching a given pattern from homepath.
  * Useful for removing incomplete downloads and other garbage.
+ * Files listed in the com_cleanWhitelist cvar are protected from deletion.
  */
 void Cmd_CleanHomepath_f(void)
 {
-	int        i, j, k, numFiles = 0;
-	char       **pFiles = NULL;
-	char       buffer[MAX_OSPATH];
-	const char *whitelist[] = { ".cfg", ".dat", "pak0.pk3", "pak1.pk3", "pak2.pk3" };
+	int  i, j, k, numFiles = 0;
+	char **pFiles = NULL, *tokens;
+	char path[MAX_OSPATH], whitelist[MAX_OSPATH];
 
 	if (Cmd_Argc() < 3)
 	{
@@ -947,34 +947,55 @@ void Cmd_CleanHomepath_f(void)
 		return;
 	}
 
-	Cvar_VariableStringBuffer("fs_homepath", buffer, sizeof(buffer));
+	Cvar_VariableStringBuffer("fs_homepath", path, sizeof(path));
+
+	Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
+
+	// Prevent clumsy users from deleting important files
+	Q_strcat(whitelist, sizeof(whitelist), " .cfg .dat pak0.pk3 pak1.pk3 pak2.pk3");
+
+	Com_DPrintf("Whitelist: %s\n", whitelist);
 
 	// If the first argument is "all" or "*", search the whole homepath
 	if (Q_stricmp(Cmd_Argv(1), "all") && Q_stricmp(Cmd_Argv(1), "*"))
 	{
-		Q_strcat(buffer, sizeof(buffer), va("%c%s", PATH_SEP, Cmd_Argv(1)));
+		Q_strcat(path, sizeof(path), va("%c%s", PATH_SEP, Cmd_Argv(1)));
 	}
 
 	for (i = 2; i < Cmd_Argc(); i++)
 	{
-		pFiles = Sys_ListFiles(buffer, NULL, Cmd_Argv(i), &numFiles, qtrue);
+		pFiles = Sys_ListFiles(path, NULL, Cmd_Argv(i), &numFiles, qtrue);
 
-		Com_Printf("Found %i files matching the pattern \"%s\" under %s\n", numFiles, Cmd_Argv(i), buffer);
+		Com_Printf("Found %i files matching the pattern \"%s\" under %s\n", numFiles, Cmd_Argv(i), path);
 
 		for (j = 0; j < numFiles; j++)
 		{
 			for (k = 0; k < ARRAY_LEN(whitelist); k++)
 			{
-				// Prevent clumsy users from deleting important files
-				if (strstr(pFiles[j], whitelist[k]))
+				qboolean whitelisted = qfalse;
+
+				// Check if this file is in the whitelist
+				tokens = strtok(whitelist, " ,;");
+				while (tokens != NULL)
 				{
-					Com_Printf("- skipping whitelisted file %s\n", pFiles[j]);
+					if (strstr(pFiles[j], tokens))
+					{
+						Com_Printf("- skipping whitelisted file %s\n", pFiles[j]);
+						whitelisted = qtrue;
+						break;
+					}
+					tokens = strtok(NULL, " ,;");
+				}
+
+				if (whitelisted)
+				{
 					break;
 				}
+
 				if (k == STRARRAY_LEN(whitelist))
 				{
 					Com_Printf("- removing %s\n", pFiles[j]);
-					FS_Remove(va("%s%c%s", buffer, PATH_SEP, pFiles[j]));
+					FS_Remove(va("%s%c%s", path, PATH_SEP, pFiles[j]));
 				}
 			}
 		}
