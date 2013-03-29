@@ -532,7 +532,7 @@ void S_Play_f(void)
 
 	for (i = 1; i < c; i++)
 	{
-		if (!Q_strrchr(Cmd_Argv(i), '.'))
+		if (!strrchr(Cmd_Argv(i), '.'))
 		{
 			//Com_sprintf(name, sizeof(name), "%s.wav", Cmd_Argv(1)); // genuine ET 'forces' wav
 			Com_Printf("Warning: S_Play_f sound name '%s' has no file extension", Cmd_Argv(i));

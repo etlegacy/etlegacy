@@ -954,30 +954,6 @@ int Q_isforfilename(int c)
 	return (0);
 }
 
-char *Q_strrchr(const char *string, int c)
-{
-	char cc = c;
-	char *s;
-	char *sp = (char *)0;
-
-	s = (char *)string;
-
-	while (*s)
-	{
-		if (*s == cc)
-		{
-			sp = s;
-		}
-		s++;
-	}
-	if (cc == 0)
-	{
-		sp = s;
-	}
-
-	return sp;
-}
-
 #ifdef _MSC_VER
 /*
 =============
