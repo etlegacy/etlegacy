@@ -599,11 +599,13 @@ const char *NET_AdrToString(netadr_t a)
 	{
 		// FIXME: add port for compatibility
 		// (joining a server through the server browser)
+		// Needs to be [ip]:port since : is a valid entry in ipv6
 		struct sockaddr_storage sadr;
 
 		memset(&sadr, 0, sizeof(sadr));
 		NetadrToSockadr(&a, (struct sockaddr *) &sadr);
 		Sys_SockaddrToString(s, sizeof(s), (struct sockaddr *) &sadr);
+		break;
 	}
 	break;
 #endif
@@ -614,33 +616,27 @@ const char *NET_AdrToString(netadr_t a)
 	return s;
 }
 
-/**
- * @warning Function is broken, because NET_AdrToString already adds port to IPv4 addresses.
- * @deprecated Use NET_AdrToString for compatibility with W:ET 2.60b.
- */
 const char *NET_AdrToStringwPort(netadr_t a)
 {
 	static char s[NET_ADDRSTRMAXLEN];
 
-	// FIXME: do a switch
-	if (a.type == NA_LOOPBACK)
+	switch (a.type)
 	{
+	case NA_LOOPBACK:
 		Com_sprintf(s, sizeof(s), "loopback");
-	}
-	else if (a.type == NA_BOT)
-	{
+		break;
+	case NA_BOT:
 		Com_sprintf(s, sizeof(s), "bot");
-	}
-	else if (a.type == NA_IP)
-	{
+		break;
+	case NA_IP:
 		Com_sprintf(s, sizeof(s), "%s:%hu", NET_AdrToString(a), ntohs(a.port));
-	}
+		break;
 #ifdef FEATURE_IPV6
-	else if (a.type == NA_IP6)
-	{
+	case NA_IP6:
 		Com_sprintf(s, sizeof(s), "[%s]:%hu", NET_AdrToString(a), ntohs(a.port));
-	}
+		break;
 #endif
+	}
 
 	return s;
 }
