@@ -652,6 +652,7 @@ void Console_Key(int key)
 	{
 		con.acLength = 0;
 
+#if 0
 		// if not in the game explicitly prepend a slash if needed
 		if (cls.state != CA_ACTIVE && g_consoleField.buffer[0] != '\\'
 		    && g_consoleField.buffer[0] != '/')
@@ -662,9 +663,19 @@ void Console_Key(int key)
 			Com_sprintf(g_consoleField.buffer, sizeof(g_consoleField.buffer), "\\%s", temp);
 			g_consoleField.cursor++;
 		}
+#endif
 
 		Com_Printf("]%s\n", g_consoleField.buffer);
 
+		Cbuf_AddText(g_consoleField.buffer);      // valid command
+		Cbuf_AddText("\n");
+
+		if (!g_consoleField.buffer[0])
+		{
+			return; // empty lines just scroll the console without adding to history
+		}
+
+#if 0
 		// leading slash is an explicit command
 		if (g_consoleField.buffer[0] == '\\' || g_consoleField.buffer[0] == '/')
 		{
@@ -685,6 +696,7 @@ void Console_Key(int key)
 				Cbuf_AddText("\n");
 			}
 		}
+#endif
 
 		// copy line to history buffer
 		historyEditLines[nextHistoryLine % COMMAND_HISTORY] = g_consoleField;

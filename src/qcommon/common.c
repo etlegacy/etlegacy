@@ -3635,6 +3635,7 @@ void Field_CompleteCommand(char *cmd,
 		completionString = Cmd_Argv(completionArgument - 1);
 	}
 
+#if 0
 #ifndef DEDICATED
 	// Unconditionally add a '\' to the start of the buffer
 	if (completionField->buffer[0] &&
@@ -3658,18 +3659,21 @@ void Field_CompleteCommand(char *cmd,
 		completionField->buffer[0] = '\\';
 	}
 #endif
+#endif
 
 	if (completionArgument > 1)
 	{
 		const char *baseCmd = Cmd_Argv(0);
 		char       *p;
 
+#if 0
 #ifndef DEDICATED
 		// This should always be true
 		if (baseCmd[0] == '\\' || baseCmd[0] == '/')
 		{
 			baseCmd++;
 		}
+#endif
 #endif
 
 		if ((p = Field_FindFirstSeparator(cmd)))
@@ -3683,10 +3687,12 @@ void Field_CompleteCommand(char *cmd,
 	}
 	else
 	{
+#if 0
 		if (completionString[0] == '\\' || completionString[0] == '/')
 		{
 			completionString++;
 		}
+#endif
 
 		matchCount       = 0;
 		shortestMatch[0] = 0;
