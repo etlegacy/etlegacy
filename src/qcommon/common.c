@@ -3161,7 +3161,7 @@ int Com_ModifyMsec(int msec)
 		// dedicated servers don't want to clamp for a much longer
 		// period, because it would mess up all the client's views
 		// of time.
-		if (msec > 500 && msec < 500000)
+		if (com_sv_running->integer && msec > 500 && msec < 500000)
 		{
 			Com_Printf("Hitch warning: %i msec frame time\n", msec);
 		}
