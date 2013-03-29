@@ -102,10 +102,11 @@ static void SV_Map_f(void)
 	qboolean cheat;
 	char     expanded[MAX_QPATH];
 
+	cmd = Cmd_Argv(0);
 	map = Cmd_Argv(1);
 	if (!map || !map[0])
 	{
-		Com_Printf("Usage: \n    map <map name>\n    devmap <map name>\n");
+		Com_Printf("Usage: %s <map name>\n", cmd);
 		return;
 	}
 
@@ -121,8 +122,6 @@ static void SV_Map_f(void)
 	Cvar_Set("gamestate", va("%i", GS_INITIALIZE)); // reset gamestate on map/devmap
 	Cvar_Set("g_currentRound", "0");                // reset the current round
 	Cvar_Set("g_nextTimeLimit", "0");               // reset the next time limit
-
-	cmd = Cmd_Argv(0);
 
 	if (!Q_stricmp(cmd, "devmap"))
 	{
