@@ -607,7 +607,15 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 
 	client->deltaMessage     = -1;
 	client->nextSnapshotTime = svs.time;    // generate a snapshot immediately
-	client->lastUsercmd      = *cmd;
+
+	if (cmd)
+	{
+		Com_Memcpy(&client->lastUsercmd, cmd, sizeof(client->lastUsercmd));
+	}
+	else
+	{
+		Com_Memset(&client->lastUsercmd, '\0', sizeof(client->lastUsercmd));
+	}
 
 	// call the game begin function
 	VM_Call(gvm, GAME_CLIENT_BEGIN, client - svs.clients);
@@ -1546,7 +1554,7 @@ void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qbo
 	if (clientOK)
 	{
 		// pass unknown strings to the game
-		if (!u->name && sv.state == SS_GAME)
+		if (!u->name && sv.state == SS_GAME && (cl->state == CS_ACTIVE || cl->state == CS_PRIMED))
 		{
 			Cmd_Args_Sanitize();
 			VM_Call(gvm, GAME_CLIENT_COMMAND, cl - svs.clients);
