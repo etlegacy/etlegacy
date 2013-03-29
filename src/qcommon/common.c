@@ -229,12 +229,21 @@ void QDECL Com_Printf(const char *fmt, ...)
 			newtime = localtime(&aclock);
 
 			logfile = FS_FOpenFileWrite("etconsole.log");
-			Com_Printf("logfile opened on %s\n", asctime(newtime));
-			if (com_logfile->integer > 1)
+
+			if (logfile)
 			{
-				// force it to not buffer so we get valid
-				// data even if we are crashing
-				FS_ForceFlush(logfile);
+				Com_Printf("logfile opened on %s\n", asctime(newtime));
+				if (com_logfile->integer > 1)
+				{
+					// force it to not buffer so we get valid
+					// data even if we are crashing
+					FS_ForceFlush(logfile);
+				}
+			}
+			else
+			{
+				Com_Printf("Opening qconsole.log failed!\n");
+				Cvar_SetValue("logfile", 0);
 			}
 
 			opening_qconsole = qfalse;
