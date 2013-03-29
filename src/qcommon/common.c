@@ -3020,13 +3020,13 @@ void Com_Init(char *commandLine)
 
 	CL_StartHunkUsers();
 
-	// delay this so potential dll can find a wolf window
-	if (!com_dedicated->integer)
+#ifdef USE_RAW_INPUT_MOUSE
+	if (Cvar_VariableIntegerValue("in_mouse") == 3)
 	{
-#if defined (_WIN32) && defined (_DEBUG)
-		Sys_ShowConsole(com_viewlog->integer, qfalse);
-#endif
+		Cbuf_AddText("in_restart;");
 	}
+#endif
+
 
 	// force recommendedSet and don't do vid_restart if in safe mode
 	if (!com_recommendedSet->integer && !safeMode)
