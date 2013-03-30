@@ -292,8 +292,6 @@ void UI_ListCampaigns_f(void);
 void QDECL Com_DPrintf(const char *fmt, ...);
 
 // ui_menu.c
-extern void MainMenu_Cache(void);
-extern void UI_MainMenu(void);
 extern void UI_RegisterCvars(void);
 extern void UI_UpdateCvars(void);
 
@@ -302,26 +300,6 @@ extern void UI_DrawConnectScreen(qboolean overlay);
 
 // ui_loadpanel.c
 extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
-
-// ui_preferences.c
-extern void UI_PreferencesMenu(void);
-extern void Preferences_Cache(void);
-
-// ui_servers2.c
-#define MAX_FAVORITESERVERS 16
-
-extern void UI_ArenaServersMenu(void);
-extern void ArenaServers_Cache(void);
-
-// ui_startserver.c
-extern void UI_StartServerMenu(qboolean multiplayer);
-extern void StartServer_Cache(void);
-extern void ServerOptions_Cache(void);
-
-// ui_serverinfo.c
-extern void UI_ServerInfoMenu(void);
-extern void ServerInfo_Cache(void);
-
 
 // ui_players.c
 
