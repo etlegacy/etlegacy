@@ -232,16 +232,13 @@ void PrintMaxLivesGUID(void)
 G_FindIpData
 =================
 */
-
 ipXPStorage_t *G_FindIpData(ipXPStorageList_t *ipXPStorageList, char *from)
 {
-	int      i;
+	int      i = 0;
 	unsigned in;
 	byte     m[4];
-	char     *p;
+	char     *p = from;
 
-	i = 0;
-	p = from;
 	while (*p && i < 4)
 	{
 		m[i] = 0;
@@ -282,13 +279,11 @@ G_FilterPacket
 */
 qboolean G_FilterPacket(ipFilterList_t *ipFilterList, char *from)
 {
-	int      i;
+	int      i = 0;
 	unsigned in;
 	byte     m[4];
-	char     *p;
+	char     *p = from;
 
-	i = 0;
-	p = from;
 	while (*p && i < 4)
 	{
 		m[i] = 0;
@@ -512,7 +507,8 @@ void AddMaxLivesBan(const char *str)
 /*
 =================
 AddMaxLivesGUID
-Xian - with g_enforcemaxlives enabled, this adds a client GUID to a list
+
+with g_enforcemaxlives enabled, this adds a client GUID to a list
 that prevents them from quitting and reconnecting
 =================
 */
@@ -577,7 +573,6 @@ void Svcmd_AddIP_f(void)
 	trap_Argv(1, str, sizeof(str));
 
 	AddIP(&ipFilters, str);
-
 }
 
 /*
@@ -621,7 +616,7 @@ void Svcmd_RemoveIP_f(void)
 }
 
 /*
- Xian - Clears out the entire list maxlives enforcement banlist
+Clears out the entire list maxlives enforcement banlist
 */
 void ClearMaxLivesBans()
 {
@@ -817,7 +812,6 @@ gclient_t *ClientForString(const char *s)
 
 static qboolean G_Is_SV_Running(void)
 {
-
 	char cvar[MAX_TOKEN_CHARS];
 
 	trap_Cvar_VariableStringBuffer("sv_running", cvar, sizeof(cvar));
@@ -920,7 +914,6 @@ Svcmd_ForceTeam_f
 forceteam <player> <team>
 ===================
 */
-
 void Svcmd_ForceTeam_f(void)
 {
 	gclient_t *cl;
@@ -977,7 +970,7 @@ void Svcmd_StartMatch_f(void)
 ==================
 Svcmd_ResetMatch_f
 
-OSP - multiuse now for both map restarts and total match resets
+multiuse now for both map restarts and total match resets
 ==================
 */
 void Svcmd_ResetMatch_f(qboolean fDoReset, qboolean fDoRestart)
@@ -1030,7 +1023,7 @@ void Svcmd_SwapTeams_f(void)
 ====================
 Svcmd_ShuffleTeams_f
 
-OSP - randomly places players on teams
+randomly places players on teams
 ====================
 */
 void Svcmd_ShuffleTeams_f(void)
@@ -1093,9 +1086,7 @@ void Svcmd_Campaign_f(void)
 
 void Svcmd_ListCampaigns_f(void)
 {
-	int i, mpCampaigns;
-
-	mpCampaigns = 0;
+	int i, mpCampaigns = 0;
 
 	for (i = 0; i < level.campaignCount; i++)
 	{
@@ -1124,7 +1115,7 @@ void Svcmd_ListCampaigns_f(void)
 	}
 }
 
-// ydnar: modified from maddoc sp func
+// modified from maddoc sp func
 extern void ReviveEntity(gentity_t *ent, gentity_t *traceEnt);
 extern int FindClientByName(char *name);
 
@@ -1148,8 +1139,6 @@ void Svcmd_RevivePlayer(char *name)
 
 	ReviveEntity(player, player);
 }
-
-// fretn - kicking
 
 /*
 ==================
@@ -1400,15 +1389,21 @@ void CC_svcvar(void)
 	char cvarValue2[MAX_CVAR_VALUE_STRING];
 	int  i;
 	int  index = level.svCvarsCount;
+	char *p;
 
 	if (trap_Argc() <= 3)
 	{
-		G_Printf("usage: sv_cvar <cvar name> <mode> <value1> <value2>\n");
+		G_Printf("usage: sv_cvar <cvar name> <mode> <value1> <value2>\nexamples: sv_cvar cg_hitsounds EQ 1\n          sv_cvar cl_maxpackets IN 60 100\n");
 		return;
 	}
 	trap_Argv(1, cvarName, sizeof(cvarName));
 	trap_Argv(2, mode, sizeof(mode));
 	trap_Argv(3, cvarValue1, sizeof(cvarValue1));
+
+	for (p = cvarName; *p != '\0'; ++p)
+	{
+		*p = tolower(*p);
+	}
 
 	if (trap_Argc() == 5)
 	{
@@ -1655,7 +1650,7 @@ qboolean ConsoleCommand(void)
 		return qtrue;
 	}
 
-	// fretn - moved from engine
+	// moved from engine
 	if (!Q_stricmp(cmd, "kick"))
 	{
 		Svcmd_Kick_f();
@@ -1728,10 +1723,10 @@ qboolean ConsoleCommand(void)
 			return qtrue;
 		}
 
-		// OSP - console also gets ref commands
+		// console also gets ref commands
 		if (!level.fLocalHost && Q_stricmp(cmd, "ref") == 0)
 		{
-			// G_refCommandCheck expects the next argument (warn, pause, lock,..)
+			//G_refCommandCheck expects the next argument (warn, pause, lock,..)
 			trap_Argv(1, cmd, sizeof(cmd));
 			if (!G_refCommandCheck(NULL, cmd))
 			{
@@ -1741,7 +1736,7 @@ qboolean ConsoleCommand(void)
 		}
 
 		// everything else will also be printed as a say command
-		//      trap_SendServerCommand( -1, va("cpm \"server: %s\n\"", ConcatArgs(0) ) );
+		//trap_SendServerCommand( -1, va("cpm \"server: %s\n\"", ConcatArgs(0) ) );
 
 		// prints to the console instead now
 		return qfalse;
