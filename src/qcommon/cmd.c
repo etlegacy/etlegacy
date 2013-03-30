@@ -952,7 +952,7 @@ void Cmd_CleanHomepath_f(void)
 	Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
 
 	// Prevent clumsy users from deleting important files
-	Q_strcat(whitelist, sizeof(whitelist), " .cfg .dat pak0.pk3 pak1.pk3 pak2.pk3");
+	Q_strcat(whitelist, sizeof(whitelist), " .txt .cfg .dat .gm .way omnibot_et.so omnibot_et.dll");
 
 	Com_DPrintf("Whitelist: %s\n", whitelist);
 
