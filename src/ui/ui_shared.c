@@ -5043,7 +5043,9 @@ static bind_t g_bindings[] =
 	{ "toggleconsole",    '`',             '~', '`',             '~', -1, -1 },
 	{ "togglemenu",       K_ESCAPE,        -1,  K_ESCAPE,        -1,  -1, -1 },
 	{ "openlimbomenu",    'l',             -1,  'l',             -1,  -1, -1 },
+#ifdef FEATURE_MULTIVIEW
 	{ "mvactivate",       'm',             -1,  'm',             -1,  -1, -1 },
+#endif
 	{ "mapzoomout",       ',',             -1,  '[',             -1,  -1, -1 },
 	{ "mapzoomin",        '.',             -1,  ']',             -1,  -1, -1 },
 	{ "zoomin",           '=',             -1,  '-',             -1,  -1, -1 },
