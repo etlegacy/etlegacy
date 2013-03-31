@@ -41,16 +41,20 @@ menuDef {
 	}
 
 // Subwindows //
-#define SUBWINDOW_WIDTH		250
-#define SUBWINDOW_HEIGHT	80
+#define SUBWINDOW_WIDTH		400
+#define SUBWINDOW_HEIGHT	160
 #define SUBWINDOW_X			.5*(WINDOW_WIDTH-SUBWINDOW_WIDTH)
 #define SUBWINDOW_Y			.5*(WINDOW_HEIGHT-SUBWINDOW_HEIGHT)
 
-	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "WARNING!" )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-4, 10, "This will delete all unnecessary files", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+28, (SUBWINDOW_WIDTH)-4, 10, "Are you sure to proceed?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "HOMEPATH CLEAN UP" )
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-4, 10, "This will delete all unnecessary files from you fs_homepath.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-4, 10, "A simple clean will remove tmp- and custom pk3 files.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+56, (SUBWINDOW_WIDTH)-4, 10, "A full clean will remove all downloaded files like map-, campaign- and custom pk3 files. ", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+90, (SUBWINDOW_WIDTH)-4, 10, "^3WARNING: Use at your own risk!", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+106, (SUBWINDOW_WIDTH)-4, 10, "Consult our wiki for documentation.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+122, (SUBWINDOW_WIDTH)-4, 10, "Press 'Abort' if you don't know what you are doing here.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "YES", .3, 14, exec clean.cfg ; close options_clean ; open options )
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "NO", .3, 14, close options_clean ; open options )
-
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .33*(SUBWINDOW_WIDTH-18), 18, "Simple Clean", .3, 14, exec "exec clean_simple.cfg" ; close options_clean ; open options )
+	BUTTON( SUBWINDOW_X+6+.33*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .33*(SUBWINDOW_WIDTH-18), 18, "Full Clean", .3, 14, exec "exec clean_full.cfg" ; close options_clean ; open options )
+	BUTTON( SUBWINDOW_X+6+.33*(SUBWINDOW_WIDTH-18)+6+.34*(SUBWINDOW_WIDTH-24)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .33*(SUBWINDOW_WIDTH-18), 18, "Abort", .3, 14, close options_clean ; open options )
 }
