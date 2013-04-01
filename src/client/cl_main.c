@@ -5665,125 +5665,19 @@ void CL_InitTranslation()
 	}
 }
 
-/*
-=======================
-CL_TranslateString
-=======================
-*/
+/**
+ * @brief Called by mod libs to handle translation.
+ * @deprecated For client translations use _(x) macro instead.
+ */
 void CL_TranslateString(const char *string, char *dest_buffer)
 {
-	int      i, count, currentLanguage = cl_language->integer - 1;
-	trans_t  *t;
-	qboolean newline = qfalse;
-	char     *buf    = dest_buffer;
-
-	// early bail if we only want english or bad language type
-	if (!string)
-	{
-		strcpy(buf, "(null)");
-		return;
-	}
-	else if (currentLanguage < 0 || currentLanguage >= MAX_LANGUAGES || !strlen(string))
-	{
-		strcpy(buf, string);
-		return;
-	}
-
-	// ignore newlines
-	if (string[strlen(string) - 1] == '\n')
-	{
-		newline = qtrue;
-	}
-
-	for (i = 0, count = 0; string[i] != '\0'; i++)
-	{
-		if (string[i] != '\n')
-		{
-			buf[count++] = string[i];
-		}
-	}
-	buf[count] = '\0';
-
-	t = LookupTrans(buf, NULL, qfalse);
-
-	if (t && strlen(t->translated[currentLanguage]))
-	{
-		int offset = 0;
-
-		if (cl_debugTranslation->integer >= 1)
-		{
-			buf[0] = '^';
-			buf[1] = '1';
-			buf[2] = '[';
-			offset = 3;
-		}
-
-		strcpy(buf + offset, t->translated[currentLanguage]);
-
-		if (cl_debugTranslation->integer >= 1)
-		{
-			int len2 = strlen(buf);
-
-			buf[len2]     = ']';
-			buf[len2 + 1] = '^';
-			buf[len2 + 2] = '7';
-			buf[len2 + 3] = '\0';
-		}
-
-		if (newline)
-		{
-			int len2 = strlen(buf);
-
-			buf[len2]     = '\n';
-			buf[len2 + 1] = '\0';
-		}
-	}
-	else
-	{
-		int offset = 0;
-
-		if (cl_debugTranslation->integer >= 1)
-		{
-			buf[0] = '^';
-			buf[1] = '1';
-			buf[2] = '[';
-			offset = 3;
-		}
-
-		strcpy(buf + offset, string);
-
-		if (cl_debugTranslation->integer >= 1)
-		{
-			int      len2       = strlen(buf);
-			qboolean addnewline = qfalse;
-
-			if (buf[len2 - 1] == '\n')
-			{
-				len2--;
-				addnewline = qtrue;
-			}
-
-			buf[len2]     = ']';
-			buf[len2 + 1] = '^';
-			buf[len2 + 2] = '7';
-			buf[len2 + 3] = '\0';
-
-			if (addnewline)
-			{
-				buf[len2 + 3] = '\n';
-				buf[len2 + 4] = '\0';
-			}
-		}
-	}
+	Com_sprintf(dest_buffer, MAX_EDIT_LINE, "%s", _(string));
 }
 
-/*
-=======================
-CL_TranslateStringBuf
-
-handy, stores in a static buf, converts \n to chr(13)
-=======================
-*/
+/**
+ * @brief Stores in a static buf, converts \n to chr(13)
+ * @todo Replace / remove.
+ */
 const char *CL_TranslateStringBuf(const char *string)
 {
 	char        *p;
@@ -5795,7 +5689,7 @@ const char *CL_TranslateStringBuf(const char *string)
 	{
 		*p = '\n';
 		p++;
-		//Com_Memcpy(p, p+1, strlen(p) ); b0rks on win32
+
 		l = strlen(p);
 		for (i = 0; i < l; i++)
 		{
