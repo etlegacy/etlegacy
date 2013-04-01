@@ -748,7 +748,7 @@ void Con_DrawSolidConsole(float frac)
 
 	if (Cvar_VariableIntegerValue("com_updateavailable"))
 	{
-		Q_snprintf(version, sizeof(version), "%s (UPDATE AVAILABLE)", ET_VERSION);
+		Q_snprintf(version, sizeof(version), "%s %s", ET_VERSION, _("(UPDATE AVAILABLE)"));
 	}
 
 	i = strlen(version);

@@ -1261,7 +1261,14 @@ Native language support
 ==============================================================
 */
 #ifdef FEATURE_GETTEXT
+
+#define _(x) I18N_Translate(x)
+
 void I18N_Init(void);
-#endif // FEATURE_GETTEXT
+const char *I18N_Translate(const char *msgid);
+
+#else // FEATURE_GETTEXT
+#define _(x) x
+#endif
 
 #endif // _QCOMMON_H_

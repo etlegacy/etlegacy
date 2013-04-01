@@ -398,14 +398,17 @@ if(BUILD_CLIENT)
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
 	endif(FEATURE_CURL)
 
-	if(FEATURE_GETTEXT AND BUNDLED_LIBS)
+	if(FEATURE_GETTEXT)
 		add_definitions(-DFEATURE_GETTEXT)
-		set(CLIENT_SRC ${CLIENT_SRC}
+		FILE(GLOB GETTEXT_SRC
 			"src/qcommon/i18n_main.cpp"
 			"src/qcommon/i18n_findlocale.c"
 			"src/qcommon/i18n_findlocale.h"
+			${CMAKE_SOURCE_DIR}/src/qcommon/tinygettext/*.hpp
+			${CMAKE_SOURCE_DIR}/src/qcommon/tinygettext/*.cpp
 		)
-	endif(FEATURE_GETTEXT AND BUNDLED_LIBS)
+		set(CLIENT_SRC ${CLIENT_SRC} ${GETTEXT_SRC})
+	endif(FEATURE_GETTEXT)
 
 	if(FEATURE_AUTOUPDATE)
 		add_definitions(-DFEATURE_AUTOUPDATE)

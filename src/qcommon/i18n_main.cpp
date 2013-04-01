@@ -43,25 +43,36 @@ extern "C"
 #include "i18n_findlocale.h"
 }
 
+#include <iostream>
+#include <string.h>
+#include <stdlib.h>
+
+#include "../../libs/tinygettext/po_parser.hpp"
+#include "../../libs/tinygettext/tinygettext.hpp"
+
+tinygettext::DictionaryManager dictionary;
+
 cvar_t *cl_language;
 
 /**
  * @brief Attempts to detect the system language unless cl_language was already set.
+ * Then loads the PO file containing translated strings.
  */
 void I18N_Init(void)
 {
-	FL_Locale *locale;
+	FL_Locale                       *locale;
+	std::set<tinygettext::Language> languages;
 
 	cl_language = Cvar_Get("cl_language", "", CVAR_ARCHIVE);
 
 	FL_FindLocale(&locale, FL_MESSAGES);
 
 	// Do not change the language if it is already set
-	if (!cl_language->string[0])
+	if (cl_language && !cl_language->string[0])
 	{
-		if (locale->lang && locale->lang[0] && locale->country && locale->country[0])
+		if (locale->lang && locale->lang[0]) // && locale->country && locale->country[0])
 		{
-			Cvar_Set("cl_language", va("%s_%s", locale->lang, locale->country));
+			Cvar_Set("cl_language", va("%s", locale->lang)); //, locale->country));
 		}
 		else
 		{
@@ -70,7 +81,28 @@ void I18N_Init(void)
 		}
 	}
 
-	Com_Printf("Language set to %s\n", Cvar_VariableString("cl_language"));
+	dictionary.add_directory("lang");
+
+	languages = dictionary.get_languages();
+
+	Com_Printf("Available translations:");
+	for (std::set<tinygettext::Language>::iterator p = languages.begin(); p != languages.end(); p++)
+	{
+		Com_Printf(" %s", p->get_name().c_str());
+	}
+
+	dictionary.set_language(tinygettext::Language::from_env(std::string(cl_language->string)));
+	Com_Printf("\nLanguage set to %s\n", dictionary.get_language().get_name().c_str());
 
 	FL_FreeLocale(&locale);
+}
+
+/**
+ * @brief Translates a string using the currently selected dictionary
+ * @param msgid original string in English
+ * @return translated string or English text if dictionary was not found
+ */
+const char *I18N_Translate(const char *msgid)
+{
+	return dictionary.get_dictionary().translate(msgid).c_str();
 }
