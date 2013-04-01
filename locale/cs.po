@@ -1,0 +1,355 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Jan Simek
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ET: Legacy 2.70rc2\n"
+"Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
+"POT-Creation-Date: 2013-04-01 23:37+0200\n"
+"PO-Revision-Date: 2013-04-02 00:00+0100\n"
+"Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
+"Language-Team: Czech translators <mail@etlegacy.com>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Czech\n"
+"X-Poedit-Country: CZECH REPUBLIC\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: src/cgame/cg_consolecmds.c:511
+#: src/cgame/cg_consolecmds.c:551
+#: src/cgame/cg_consolecmds.c:599
+msgid "Can't team voice chat as a spectator.\n"
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:574
+msgid "Can't voice chat as a spectator.\n"
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:624
+msgid "Can't buddy voice chat as a spectator.\n"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1962
+#: src/cgame/cg_debriefing.c:3105
+#: src/cgame/cg_scoreboard.c:602
+#, c-format
+msgid "CLOCK IS NOW SET TO %s!"
+msgstr "HODINY JSOU NYNI NASTAVENY NA %s!"
+
+#: src/cgame/cg_draw.c:649
+msgid "Connection Interrupted"
+msgstr "Spojeni preruseno"
+
+#: src/cgame/cg_draw.c:1891
+msgid "Disguised Enemy!"
+msgstr "Prevleceny nepritel!"
+
+#: src/cgame/cg_draw.c:2065
+msgid "SPECTATOR"
+msgstr "POZOROVATEL"
+
+#: src/cgame/cg_draw.c:2083
+#, c-format
+msgid "File complaint against %s for team-killing?"
+msgstr "Podat stiznost proti %s za zabiti spoluhrace?"
+
+#: src/cgame/cg_draw.c:2086
+#: src/cgame/cg_draw.c:2099
+#: src/cgame/cg_draw.c:2112
+#: src/cgame/cg_draw.c:2125
+#: src/cgame/cg_draw.c:2138
+#: src/cgame/cg_draw.c:2151
+#: src/cgame/cg_draw.c:2164
+#, c-format
+msgid "Press '%s' for YES, or '%s' for No"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2096
+#, c-format
+msgid "Accept %s's application to join your fireteam?"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2109
+#, c-format
+msgid "Accept %s's proposition to invite %s to join your fireteam?"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2122
+#, c-format
+msgid "Accept %s's invitation to join their fireteam?"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2218
+#, c-format
+msgid "VOTE(%i): %s"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2223
+msgid "Cannot vote as Spectator"
+msgstr "Neni mozne volit jako pozorovatel"
+
+#: src/cgame/cg_draw.c:2227
+#, c-format
+msgid "YES(%s):%i, NO(%s):%i"
+msgstr "ANO(%s):%i, NE(%s):%i"
+
+#: src/cgame/cg_draw.c:2234
+#, c-format
+msgid "YOU VOTED ON: %s"
+msgstr "VOLIL JSI: %s"
+
+#: src/cgame/cg_draw.c:2237
+#, c-format
+msgid "Y:%i, N:%i"
+msgstr "A:%i, N:%i"
+
+#: src/cgame/cg_draw.c:2460
+#, c-format
+msgid "Press %s to open Limbo Menu"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2464
+#, c-format
+msgid "Press %s to follow next player"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2469
+#, c-format
+msgid "Press %s to %s multiview mode"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2530
+msgid "You are wounded and waiting for a medic."
+msgstr "Jsi ranen a cekas na zdravotnika."
+
+#: src/cgame/cg_draw.c:2540
+msgid "Press JUMP to go into reinforcement queue."
+msgstr ""
+
+#: src/cgame/cg_draw.c:2550
+msgid "No more reinforcements this round."
+msgstr "Toto kolo uz nebudou zadne posily."
+
+#: src/cgame/cg_draw.c:2550
+#, c-format
+msgid "Reinforcements deploy in %d seconds."
+msgstr "Posily prijdou za %d vterin"
+
+#: src/cgame/cg_draw.c:2593
+#, c-format
+msgid "Bonus Life! Deploying in %d seconds"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2597
+msgid "No more deployments this round"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2602
+#, c-format
+msgid "Deploying in %d seconds"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2611
+#: src/cgame/cg_draw.c:2621
+msgid "Following"
+msgstr "Sledujes"
+
+#: src/cgame/cg_draw.c:2651
+#, c-format
+msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2663
+msgid "Type ^3\\ready^* in the console to start"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2684
+msgid "(WARMUP) Match begins in:"
+msgstr "(ZAHRIVACI KOLO) Zápas zacne za:"
+
+#: src/cgame/cg_draw.c:2717
+#: src/cgame/cg_scoreboard.c:213
+msgid "STOPWATCH ROUND"
+msgstr ""
+
+#: src/cgame/cg_draw_hud.c:1535
+#: src/cgame/cg_scoreboard.c:165
+msgid "WARMUP"
+msgstr ""
+
+#: src/cgame/cg_event.c:189
+msgid "You swapped places with"
+msgstr ""
+
+#: src/cgame/cg_event.c:193
+msgid "You killed ^1TEAMMATE^7"
+msgstr ""
+
+#: src/cgame/cg_event.c:198
+msgid "You killed"
+msgstr ""
+
+#: src/cgame/cg_main.c:893
+msgid "User"
+msgstr ""
+
+#: src/cgame/cg_main.c:893
+msgid "is not on the server"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:165
+#: src/cgame/cg_scoreboard.c:171
+#: src/cgame/cg_scoreboard.c:175
+#: src/cgame/cg_scoreboard.c:180
+msgid "MISSION TIME:"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:171
+msgid "GAME STOPPED"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:175
+msgid "SUDDEN DEATH"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:205
+msgid "REINFORCE TIME:"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:222
+msgid "ROUND"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:222
+msgid "SCORE"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:373
+#: src/cgame/cg_scoreboard.c:536
+msgid "^3CONNECTING"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:377
+#: src/cgame/cg_scoreboard.c:540
+msgid "^3SPECTATOR"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:666
+#: src/cgame/cg_scoreboard.c:683
+msgid "AXIS"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:666
+#: src/cgame/cg_scoreboard.c:673
+#: src/cgame/cg_scoreboard.c:683
+#: src/cgame/cg_scoreboard.c:687
+msgid "PLAYERS"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:667
+#: src/cgame/cg_scoreboard.c:674
+msgid "FIRST BLOOD"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:673
+#: src/cgame/cg_scoreboard.c:687
+msgid "ALLIES"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:701
+msgid "Name"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:704
+msgid "Class"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:709
+msgid "Score"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:714
+msgid "XP"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:718
+msgid "Ping"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:405
+msgid "Auto Pick"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2304
+msgid "Map"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2326
+msgid "Could not create logfile"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2866
+msgid "^3Server Restarting"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:338
+#, c-format
+msgid "Awaiting connection...%i"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:341
+#, c-format
+msgid "Awaiting challenge...%i"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:351
+msgid "Awaiting gamestate..."
+msgstr ""
+
+#: src/ui/ui_main.c:2458
+#: src/ui/ui_main.c:2698
+msgid "Waiting for new key... Press ESCAPE to cancel"
+msgstr ""
+
+#: src/ui/ui_main.c:2462
+#: src/ui/ui_main.c:2702
+msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
+msgstr ""
+
+#: src/ui/ui_main.c:2600
+#, c-format
+msgid "Getting info for %d servers (ESC to cancel)"
+msgstr ""
+
+#: src/ui/ui_main.c:2604
+msgid "Waiting for response from Master Server"
+msgstr ""
+
+#: src/ui/ui_main.c:2612
+#, c-format
+msgid "Refresh Time: %s"
+msgstr ""
+
+#: src/ui/ui_main.c:4391
+#: src/ui/ui_main.c:4439
+#: src/ui/ui_main.c:4474
+msgid "Favorite already in list\n"
+msgstr ""
+
+#: src/ui/ui_main.c:4396
+#: src/ui/ui_main.c:4444
+#: src/ui/ui_main.c:4479
+msgid "Favorite list full\n"
+msgstr ""
+
+#: src/ui/ui_main.c:4401
+#: src/ui/ui_main.c:4449
+#: src/ui/ui_main.c:4484
+#, c-format
+msgid "Added favorite server %s\n"
+msgstr ""
+
