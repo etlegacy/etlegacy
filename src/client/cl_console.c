@@ -29,12 +29,14 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
  * @file console.c
- * @brief video and cinematic playback
+ * @brief Ingame console
+ * Must hold SHIFT + ~ to get console. CTRL + SHIFT + '~' opens a small console.
  */
 
 #include "client.h"
 
 int g_console_field_width = 78;
+#define DEFAULT_CONSOLE_WIDTH   78
 
 #define CONSOLE_COLOR  COLOR_WHITE
 
@@ -44,10 +46,6 @@ cvar_t *con_conspeed;
 cvar_t *con_notifytime;
 cvar_t *con_autoclear;
 
-// Must hold CTRL + SHIFT + ~ to get console
-cvar_t *con_restricted;
-
-#define DEFAULT_CONSOLE_WIDTH   78
 
 vec4_t console_color = { 1.0, 1.0, 1.0, 1.0 };
 vec4_t console_highlightcolor = { 0.5, 0.5, 0.2, 0.45 };
@@ -60,11 +58,6 @@ Con_ToggleConsole_f
 void Con_ToggleConsole_f(void)
 {
 	con.acLength = 0;
-
-	if (con_restricted->integer && (!keys[K_CTRL].down || !keys[K_SHIFT].down))
-	{
-		return;
-	}
 
 	// persistent console input is more useful (added cvar)
 	if (con_autoclear->integer)
@@ -351,7 +344,6 @@ void Con_Init(void)
 	con_notifytime = Cvar_Get("con_notifytime", "7", 0);   // increased per id req for obits
 	con_conspeed   = Cvar_Get("scr_conspeed", "3", 0);
 	con_autoclear  = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE);
-	con_restricted = Cvar_Get("con_restricted", "0", CVAR_INIT);
 
 	Field_Clear(&g_consoleField);
 	g_consoleField.widthInChars = g_console_field_width;
@@ -874,7 +866,7 @@ Scroll it up or down
 void Con_RunConsole(void)
 {
 	// decide on the destination height of the console
-	// ydnar: added short console support (via shift+~)
+	// short console support via shift+~
 	if (cls.keyCatchers & KEYCATCH_CONSOLE)
 	{
 		con.finalFrac = con.desiredFrac;
