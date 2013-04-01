@@ -56,5 +56,5 @@ menuDef {
 
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .33*(SUBWINDOW_WIDTH-18), 18, "PROSTE", .3, 14, exec "exec clean_simple.cfg" ; close options_clean ; open options )
 	BUTTON( SUBWINDOW_X+6+.33*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .33*(SUBWINDOW_WIDTH-18), 18, "PELNE", .3, 14, exec "exec clean_full.cfg" ; close options_clean ; open options )
-	BUTTON( SUBWINDOW_X+6+.33*(SUBWINDOW_WIDTH-18)+6+.34*(SUBWINDOW_WIDTH-24)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .33*(SUBWINDOW_WIDTH-18), 18, "PRZERWIJ", .3, 14, close options_clean ; open options )
+	BUTTON( SUBWINDOW_X+6+.33*(SUBWINDOW_WIDTH-18)+6+.33*(SUBWINDOW_WIDTH-24)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .33*(SUBWINDOW_WIDTH-18), 18, "PRZERWIJ", .3, 14, close options_clean ; open options )
 }
