@@ -104,5 +104,13 @@ void I18N_Init(void)
  */
 const char *I18N_Translate(const char *msgid)
 {
-	return dictionary.get_dictionary().translate(msgid).c_str();
+	// HACK: how to tell tinygettext not to translate if cl_language is English?
+	if (Q_stricmp(cl_language->string, "en"))
+	{
+		return dictionary.get_dictionary().translate(msgid).c_str();
+	}
+	else
+	{
+		return msgid;
+	}
 }
