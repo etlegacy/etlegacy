@@ -277,7 +277,7 @@ static qboolean CG_RainParticleGenerate(cg_atmosphericParticle_t *particle, vec3
 	//particle->effectshader = &cg_atmFx.effectshaders[ (int) (random() * ( cg_atmFx.numEffectShaders - 1 )) ];
 
 	//generatetime += trap_Milliseconds() - msec;
-	return(qtrue);
+	return qtrue;
 }
 
 static qboolean CG_RainParticleCheckVisible(cg_atmosphericParticle_t *particle)
@@ -290,7 +290,7 @@ static qboolean CG_RainParticleCheckVisible(cg_atmosphericParticle_t *particle)
 	if (!particle || particle->active == ACT_NOT)
 	{
 		//checkvisibletime += trap_Milliseconds() - msec;
-		return(qfalse);
+		return qfalse;
 	}
 
 	moved = (cg.time - cg_atmFx.lastRainTime) * 0.001;    // Units moved since last frame
@@ -310,7 +310,7 @@ static qboolean CG_RainParticleCheckVisible(cg_atmosphericParticle_t *particle)
 	}
 
 	//checkvisibletime += trap_Milliseconds() - msec;
-	return(qtrue);
+	return qtrue;
 }
 
 static void CG_RainParticleRender(cg_atmosphericParticle_t *particle)
@@ -453,7 +453,7 @@ static qboolean CG_SnowParticleGenerate(cg_atmosphericParticle_t *particle, vec3
 	//particle->effectshader = &cg_atmFx.effectshaders[ (int) (random() * ( cg_atmFx.numEffectShaders - 1 )) ];
 
 	//generatetime += trap_Milliseconds() - msec;
-	return(qtrue);
+	return qtrue;
 }
 
 static qboolean CG_SnowParticleCheckVisible(cg_atmosphericParticle_t *particle)
@@ -469,7 +469,7 @@ static qboolean CG_SnowParticleCheckVisible(cg_atmosphericParticle_t *particle)
 	if (!particle || particle->active == ACT_NOT)
 	{
 //      checkvisibletime += trap_Milliseconds() - msec;
-		return(qfalse);
+		return qfalse;
 	}
 
 	moved = (cg.time - cg_atmFx.lastRainTime) * 0.001;    // Units moved since last frame
@@ -489,7 +489,7 @@ static qboolean CG_SnowParticleCheckVisible(cg_atmosphericParticle_t *particle)
 	}
 
 	//checkvisibletime += trap_Milliseconds() - msec;
-	return(qtrue);
+	return qtrue;
 }
 
 static void CG_SnowParticleRender(cg_atmosphericParticle_t *particle)
@@ -645,11 +645,11 @@ static qboolean CG_EffectGustCurrent(vec3_t curr, float *weight, int *num)
 			*num    = cg_atmFx.baseDrops + ((float)(cg_atmFx.gustDrops - cg_atmFx.baseDrops)) * frac;
 			if (cg.time >= cg_atmFx.baseStartTime)
 			{
-				return(qtrue);
+				return qtrue;
 			}
 		}
 	}
-	return(qfalse);
+	return qfalse;
 }
 
 static void CG_EP_ParseFloats(char *floatstr, float *f1, float *f2)
@@ -918,7 +918,6 @@ void CG_AddAtmosphericEffects()
 	cg_atmFx.dropsActive    = 0;
 
 	cg_atmFx.dropsRendered = cg_atmFx.dropsCreated = cg_atmFx.dropsSkipped = 0;
-
 
 	VectorSet(cg_atmFx.viewDir, cg.refdef_current->viewaxis[0][0], cg.refdef_current->viewaxis[0][1], 0.f);
 

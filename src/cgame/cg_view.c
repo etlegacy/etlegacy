@@ -1714,11 +1714,11 @@ qboolean CG_CullPoint(vec3_t pt)
 
 		if ((DotProduct(pt, frust->normal) - frust->dist) < 0)
 		{
-			return(qtrue);
+			return qtrue;
 		}
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius)
@@ -1733,11 +1733,11 @@ qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius)
 
 		if ((DotProduct(pt, frust->normal) - frust->dist) < -radius)
 		{
-			return(qtrue);
+			return qtrue;
 		}
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 //=========================================================================

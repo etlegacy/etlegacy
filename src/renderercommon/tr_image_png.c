@@ -308,7 +308,7 @@ static qboolean BufferedFileRewind(struct BufferedFile *BF, unsigned Offset)
 	// input verification
 	if (!BF)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// special trick to rewind to the beginning of the buffer
@@ -317,7 +317,7 @@ static qboolean BufferedFileRewind(struct BufferedFile *BF, unsigned Offset)
 		BF->Ptr       = BF->Buffer;
 		BF->BytesLeft = BF->Length;
 
-		return(qtrue);
+		return qtrue;
 	}
 
 	// How many bytes do we have already read?
@@ -326,14 +326,14 @@ static qboolean BufferedFileRewind(struct BufferedFile *BF, unsigned Offset)
 	// We can only rewind to the beginning of the BufferedFile.
 	if (Offset > BytesRead)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// lower the pointer and counter.
 	BF->Ptr       -= Offset;
 	BF->BytesLeft += Offset;
 
-	return(qtrue);
+	return qtrue;
 }
 
 /*
@@ -344,20 +344,20 @@ static qboolean BufferedFileSkip(struct BufferedFile *BF, unsigned Offset)
 	// input verification
 	if (!BF)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// We can only skip to the end of the BufferedFile.
 	if (Offset > BF->BytesLeft)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// lower the pointer and counter.
 	BF->Ptr       += Offset;
 	BF->BytesLeft -= Offset;
 
-	return(qtrue);
+	return qtrue;
 }
 
 /*
@@ -373,7 +373,7 @@ static qboolean FindChunk(struct BufferedFile *BF, uint32_t ChunkType)
 	// input verification
 	if (!BF)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// cycle trough the chunks
@@ -383,7 +383,7 @@ static qboolean FindChunk(struct BufferedFile *BF, uint32_t ChunkType)
 		CH = BufferedFileRead(BF, PNG_ChunkHeader_Size);
 		if (!CH)
 		{
-			return(qfalse);
+			return qfalse;
 		}
 
 		// Do not swap the original types
@@ -405,13 +405,13 @@ static qboolean FindChunk(struct BufferedFile *BF, uint32_t ChunkType)
 			{
 				if (!BufferedFileSkip(BF, Length + PNG_ChunkCRC_Size))
 				{
-					return(qfalse);
+					return qfalse;
 				}
 			}
 		}
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 /*
@@ -671,13 +671,13 @@ static qboolean UnfilterImage(uint8_t *DecompressedData,
 	// input verification
 	if (!(DecompressedData && BytesPerPixel))
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// ImageHeight and BytesPerScanline can be zero in small interlaced images.
 	if ((!ImageHeight) || (!BytesPerScanline))
 	{
-		return(qtrue);
+		return qtrue;
 	}
 
 	// Set the pointer to the start of the decompressed Data.
@@ -753,7 +753,7 @@ static qboolean UnfilterImage(uint8_t *DecompressedData,
 
 				default:
 				{
-					return(qfalse);
+					return qfalse;
 				}
 				}
 			}
@@ -777,7 +777,7 @@ static qboolean UnfilterImage(uint8_t *DecompressedData,
 		}
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 /*
@@ -793,7 +793,7 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 	// input verification
 	if (!(IHDR && OutPtr && DecompPtr && TransparentColour && OutPal))
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	switch (IHDR->ColourType)
@@ -863,7 +863,7 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -919,7 +919,7 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -963,7 +963,7 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -997,7 +997,7 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -1006,11 +1006,11 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 
 	default:
 	{
-		return(qfalse);
+		return qfalse;
 	}
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 /*
@@ -1034,7 +1034,7 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	// input verification
 	if (!(IHDR && OutBuffer && DecompressedData && DecompressedDataLength && TransparentColour && OutPal))
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// byte swapping
@@ -1069,7 +1069,7 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -1091,7 +1091,7 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -1122,7 +1122,7 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -1144,7 +1144,7 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -1166,7 +1166,7 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -1175,7 +1175,7 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 	default:
 	{
-		return(qfalse);
+		return qfalse;
 	}
 	}
 
@@ -1185,13 +1185,13 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	// Check if we have enough data for the whole image.
 	if (!(DecompressedDataLength == ((BytesPerScanline + 1) * IHDR_Height)))
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// Unfilter the image.
 	if (!UnfilterImage(DecompressedData, IHDR_Height, BytesPerScanline, BytesPerPixel))
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// Set the working pointers to the beginning of the buffers.
@@ -1229,7 +1229,7 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 						if (!ConvertPixel(IHDR, OutPtr, &SinglePixel, HasTransparentColour, TransparentColour, OutPal))
 						{
-							return(qfalse);
+							return qfalse;
 						}
 
 						OutPtr += Q3IMAGE_BYTESPERPIXEL;
@@ -1242,7 +1242,7 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 			{
 				if (!ConvertPixel(IHDR, OutPtr, DecompPtr, HasTransparentColour, TransparentColour, OutPal))
 				{
-					return(qfalse);
+					return qfalse;
 				}
 
 
@@ -1253,7 +1253,7 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 		}
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 /*
@@ -1280,7 +1280,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	// input verification
 	if (!(IHDR && OutBuffer && DecompressedData && DecompressedDataLength && TransparentColour && OutPal))
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// byte swapping
@@ -1373,7 +1373,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -1395,7 +1395,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -1426,7 +1426,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -1448,7 +1448,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -1470,7 +1470,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 		default:
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		}
 
@@ -1479,7 +1479,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 	default:
 	{
-		return(qfalse);
+		return qfalse;
 	}
 	}
 
@@ -1500,7 +1500,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	// Check if we have enough data for the whole image.
 	if (!(DecompressedDataLength == TargetLength))
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// Unfilter the image.
@@ -1510,7 +1510,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	{
 		if (!UnfilterImage(DecompPtr, PassHeight[a], BytesPerScanline[a], BytesPerPixel))
 		{
-			return(qfalse);
+			return qfalse;
 		}
 
 		DecompPtr += ((BytesPerScanline[a] + (BytesPerScanline[a] ? 1 : 0)) * PassHeight[a]);
@@ -1558,7 +1558,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 							if (!ConvertPixel(IHDR, OutPtr, &SinglePixel, HasTransparentColour, TransparentColour, OutPal))
 							{
-								return(qfalse);
+								return qfalse;
 							}
 
 							CurrPixel++;
@@ -1572,7 +1572,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 
 					if (!ConvertPixel(IHDR, OutPtr, DecompPtr, HasTransparentColour, TransparentColour, OutPal))
 					{
-						return(qfalse);
+						return qfalse;
 					}
 				}
 
@@ -1581,7 +1581,7 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 		}
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 /*

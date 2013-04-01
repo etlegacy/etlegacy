@@ -445,7 +445,7 @@ qboolean CG_ViewingDraw()
 {
 	if (cg.mvTotalClients < 1)
 	{
-		return(qfalse);
+		return qfalse;
 
 	}
 	else
@@ -477,7 +477,7 @@ qboolean CG_ViewingDraw()
 		                  ITEM_TEXTSTYLE_SHADOWED,
 		                  FONT_TEXT);
 
-		return(qtrue);
+		return qtrue;
 	}
 }
 #endif

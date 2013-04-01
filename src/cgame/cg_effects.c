@@ -1353,7 +1353,7 @@ static qboolean CG_SmokeSpritePhysics(smokesprite_t *smokesprite, const float di
 
 		if (smokesprite->dist < 24.f)
 		{
-			return(qfalse);
+			return qfalse;
 		}
 		VectorCopy(tr.endpos, smokesprite->pos);
 
@@ -1365,7 +1365,7 @@ static qboolean CG_SmokeSpritePhysics(smokesprite_t *smokesprite, const float di
 	  //	smokesprite->size += 1.25f * dist;
 	  //}
 
-	return(qtrue);
+	return qtrue;
 }
 
 qboolean CG_SpawnSmokeSprite(centity_t *cent, float dist)
@@ -1390,7 +1390,7 @@ qboolean CG_SpawnSmokeSprite(centity_t *cent, float dist)
 		if (!CG_SmokeSpritePhysics(smokesprite, dist))
 		{
 			DeAllocSmokeSprite(smokesprite);
-			return(qfalse);
+			return qfalse;
 		}
 		else
 		{
@@ -1398,7 +1398,7 @@ qboolean CG_SpawnSmokeSprite(centity_t *cent, float dist)
 		}
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)

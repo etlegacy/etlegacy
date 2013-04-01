@@ -2373,7 +2373,7 @@ qboolean Item_SettingShow(itemDef_t *item, qboolean fVoteTest)
 		return(!(atoi(info) & item->settingTest));
 	}
 
-	return(qtrue);
+	return qtrue;
 }
 
 // will optionaly set focus to this item
@@ -2407,11 +2407,11 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 
 	if ((item->settingFlags & (SVS_ENABLED_SHOW | SVS_DISABLED_SHOW)) && !Item_SettingShow(item, qfalse))
 	{
-		return(qfalse);
+		return qfalse;
 	}
 	if (item->voteFlag != 0 && !Item_SettingShow(item, qtrue))
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	oldFocus = Menu_ClearFocus(item->parent);
@@ -6465,19 +6465,19 @@ qboolean Item_ValidateTooltipData(itemDef_t *item)
 {
 	if (item->toolTipData != NULL)
 	{
-		return(qtrue);
+		return qtrue;
 	}
 
 	item->toolTipData = UI_Alloc(sizeof(itemDef_t));
 	if (item->toolTipData == NULL)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	Item_Init(item->toolTipData);
 	Tooltip_Initialize(item->toolTipData);
 
-	return(qtrue);
+	return qtrue;
 }
 
 /*

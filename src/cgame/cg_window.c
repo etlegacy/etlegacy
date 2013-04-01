@@ -605,7 +605,7 @@ qboolean CG_addString(cg_window_t *w, char *buf)
 				cg.aStringPool[i].fActive = qtrue;
 				strcpy(cg.aStringPool[i].str, buf);
 
-				return(qtrue);
+				return qtrue;
 			}
 		}
 	}
@@ -618,11 +618,11 @@ qboolean CG_addString(cg_window_t *w, char *buf)
 			strcpy(cg.aStringPool[i].str, buf);
 			w->lineText[w->lineCount++] = (char *)&cg.aStringPool[i].str;
 
-			return(qtrue);
+			return qtrue;
 		}
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 void CG_removeStrings(cg_window_t *w)

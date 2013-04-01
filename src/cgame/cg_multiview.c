@@ -886,11 +886,11 @@ qboolean CG_mvMergedClientLocate(int pID)
 	{
 		if (cg.mvOverlay[i].pID == pID)
 		{
-			return(qtrue);
+			return qtrue;
 		}
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 // Display available client info
