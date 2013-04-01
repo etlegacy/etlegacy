@@ -42,13 +42,9 @@ cvar_t *cl_graphheight;
 cvar_t *cl_graphscale;
 cvar_t *cl_graphshift;
 
-/*
-================
-SCR_AdjustFrom640
-
-Adjusted for resolution and screen aspect ratio
-================
-*/
+/**
+ * @brief Adjusted for resolution and screen aspect ratio
+ */
 void SCR_AdjustFrom640(float *x, float *y, float *w, float *h)
 {
 	float xscale;
@@ -83,13 +79,9 @@ void SCR_AdjustFrom640(float *x, float *y, float *w, float *h)
 	}
 }
 
-/*
-================
-SCR_FillRect
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief Coordinates are 640*480 virtual values
+ */
 void SCR_FillRect(float x, float y, float width, float height, const float *color)
 {
 	re.SetColor(color);
@@ -100,24 +92,18 @@ void SCR_FillRect(float x, float y, float width, float height, const float *colo
 	re.SetColor(NULL);
 }
 
-/*
-================
-SCR_DrawPic
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief Coordinates are 640*480 virtual values
+ */
 void SCR_DrawPic(float x, float y, float width, float height, qhandle_t hShader)
 {
 	SCR_AdjustFrom640(&x, &y, &width, &height);
 	re.DrawStretchPic(x, y, width, height, 0, 0, 1, 1, hShader);
 }
 
-/*
-SCR_DrawChar
-
-Chars are drawn at 640*480 virtual screen size
-*/
+/**
+ * @brief Chars are drawn at 640*480 virtual screen size
+ */
 static void SCR_DrawChar(int x, int y, float size, int ch)
 {
 	int   row, col;
@@ -155,11 +141,9 @@ static void SCR_DrawChar(int x, int y, float size, int ch)
 	                  cls.charSetShader);
 }
 
-/*
-SCR_DrawSmallChar
-
-Small chars are drawn at native screen resolution
-*/
+/**
+ * @brief Small chars are drawn at native screen resolution
+ */
 void SCR_DrawSmallChar(int x, int y, int ch)
 {
 	int   row, col;
@@ -324,9 +308,9 @@ void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, q
 	re.SetColor(NULL);
 }
 
-/*
-SCR_Strlen -- skips color escape codes
-*/
+/**
+ * @brief Like strlen, but skips color escape codes
+ */
 static int SCR_Strlen(const char *str)
 {
 	const char *s    = str;
@@ -348,12 +332,12 @@ static int SCR_Strlen(const char *str)
 	return count;
 }
 
-/*
-SCR_GetBigStringWidth
-*/
+/**
+ * @note Unused.
+ */
 int SCR_GetBigStringWidth(const char *str)
 {
-	return SCR_Strlen(str) * 16;
+	return SCR_Strlen(str) * BIGCHAR_WIDTH;;
 }
 
 //===============================================================================
@@ -447,13 +431,9 @@ void SCR_Init(void)
 
 //=======================================================
 
-/*
-==================
-SCR_DrawScreenField
-
-This will be called twice if rendering in stereo mode
-==================
-*/
+/**
+ * @brief This will be called twice if rendering in stereo mode
+ */
 void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 {
 	re.BeginFrame(stereoFrame);
@@ -539,14 +519,10 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 	}
 }
 
-/*
-==================
-SCR_UpdateScreen
-
-This is called every frame, and can also be called explicitly to flush
-text to the screen.
-==================
-*/
+/**
+ * @brief This is called every frame, and can also be called explicitly to flush
+ * text to the screen.
+ */
 void SCR_UpdateScreen(void)
 {
 	static int recursive = 0;

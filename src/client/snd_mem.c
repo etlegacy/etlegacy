@@ -244,7 +244,7 @@ qboolean S_LoadSound(sfx_t *sfx)
 
 	if ((info.rate != 11025) && (info.rate != 22050) && (info.rate != 44100))
 	{
-		Com_DPrintf(S_COLOR_YELLOW "WARNING: %s is not a 11kHz, 22kHz nor 44kHz wav file. It has sample rate %i\n", sfx->soundName, info.rate);
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: %s is not a 11kHz, 22kHz nor 44kHz audio file. It has sample rate %i\n", sfx->soundName, info.rate);
 	}
 
 	samples = Hunk_AllocateTempMemory(info.samples * sizeof(short) * 2);
