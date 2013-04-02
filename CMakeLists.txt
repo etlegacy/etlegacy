@@ -404,8 +404,8 @@ if(BUILD_CLIENT)
 			"src/qcommon/i18n_main.cpp"
 			"src/qcommon/i18n_findlocale.c"
 			"src/qcommon/i18n_findlocale.h"
-			${CMAKE_SOURCE_DIR}/src/qcommon/tinygettext/*.hpp
-			${CMAKE_SOURCE_DIR}/src/qcommon/tinygettext/*.cpp
+			"libs/tinygettext/*.hpp"
+			"libs/tinygettext/*.cpp"
 		)
 		set(CLIENT_SRC ${CLIENT_SRC} ${GETTEXT_SRC})
 	endif(FEATURE_GETTEXT)
