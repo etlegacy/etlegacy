@@ -201,6 +201,9 @@ G_SendScore_Add
     Add score with clientNum at index i of level.sortedClients[] to the string buf.
 
     returns qtrue if the score was appended to buf, qfalse otherwise.
+
+    FIXME: FEATURE_MULTIVIEW might be buggy -> powerups var is used to store player class/type (differs from GPL Code)
+           playerClass is no longer sent!
 ==================
 */
 qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
@@ -212,20 +215,6 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	int       miscFlags = 0; // 1 - ready 2 - is bot
 
 	entry[0] = '\0';
-
-	//playerClass = 0;
-	//  spectators should be able to see the player's class,
-	//  but apperantly the client won't draw them even if we
-	//      send it.  *clientmod*
-/*	if(
-#ifdef FEATURE_MULTIVIEW
-    G_smvLocateEntityInMVList(ent, level.sortedClients[i], qfalse) ||
-#endif
-        cl->sess.sessionTeam == ent->client->sess.sessionTeam ||
-        ent->client->sess.sessionTeam == TEAM_SPECTATOR) {
-
-        playerClass = cl->sess.playerType;
-    }*/
 
 	// number of respawns left
 	if (g_gametype.integer == GT_WOLF_LMS)
@@ -281,7 +270,6 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	            (level.time - cl->pers.enterTime) / 60000,
 	            g_entities[level.sortedClients[i]].s.powerups,
 	            miscFlags,
-	            //playerClass,
 	            respawnsLeft
 	            );
 

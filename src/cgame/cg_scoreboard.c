@@ -302,6 +302,17 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	if (ci->team != TEAM_SPECTATOR)
 	{
+		/* FIXME: adjust x,y coordinates ...
+		// draw ready icon if client is ready..
+		if (score->scoreflags & 1 && cgs.gamestate != GS_PLAYING)
+		{
+		    CG_DrawPic(tempx - 3, y + 1, 14, 14, cgs.media.readyIcon);
+		    offset += 14;
+		    tempx += 14;
+		    maxchars -= 2;
+		}
+		*/
+
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
 			CG_DrawPic(tempx - 1, y + 1, 10, 10, cgs.media.objectiveShader);
@@ -401,7 +412,18 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		tempx += INFO_XP_WIDTH;
 	}
 
-	CG_DrawSmallString(tempx, y, va("%4i", score->ping), fade);
+	if (score->ping == -1)
+	{
+		CG_DrawSmallString(tempx, y, "^1CONN^7", fade);
+	}
+	else if (score->scoreflags & 2)
+	{
+		CG_DrawSmallString(tempx, y, " BOT", fade);
+	}
+	else
+	{
+		CG_DrawSmallString(tempx, y, va("%4i", score->ping), fade);
+	}
 	tempx += INFO_LATENCY_WIDTH;
 
 	if (cg_gameType.integer != GT_WOLF_LMS)
@@ -464,6 +486,17 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	if (ci->team != TEAM_SPECTATOR)
 	{
+
+		/* FIXME adjust x,y coordinates ...
+		// draw ready icon if client is ready..
+		if ( score->scoreflags & 1 && ( cgs.gamestate == GS_WARMUP || cgs.gamestate == GS_INTERMISSION ) ) {
+		    CG_DrawPic( tempx-2 + 1, y + 1, 14, 14, cgs.media.readyIcon );
+		    offset += 14;
+		    tempx += 14;
+		    maxchars -= 2;
+		}
+		*/
+
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
 			CG_DrawPic(tempx + 1, y + 1, 10, 10, cgs.media.objectiveShader);
@@ -561,7 +594,19 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		tempx += INFO_XP_WIDTH;
 	}
 
-	CG_DrawStringExt(tempx, y, va("%4i", score->ping), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+	if (score->ping == -1)
+	{
+		CG_DrawStringExt(tempx, y, "^1CONN", hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+	}
+	else if (score->scoreflags & 2)
+	{
+		CG_DrawStringExt(tempx, y, " ^4BOT", hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+	}
+	else
+	{
+		CG_DrawStringExt(tempx, y, va("%4i", score->ping), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+	}
+
 	tempx += INFO_LATENCY_WIDTH;
 
 	if (cg_gameType.integer != GT_WOLF_LMS)

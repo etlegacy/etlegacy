@@ -74,7 +74,7 @@ static void CG_ParseScore(team_t team)
 		cg.scores[i].ping         = atoi(CG_Argv(offset + 2 + (j * 7)));
 		cg.scores[i].time         = atoi(CG_Argv(offset + 3 + (j * 7)));
 		powerups                  = atoi(CG_Argv(offset + 4 + (j * 7)));
-		cg.scores[i].playerClass  = atoi(CG_Argv(offset + 5 + (j * 7)));
+		cg.scores[i].scoreflags   = atoi(CG_Argv(offset + 5 + (j * 7)));
 		cg.scores[i].respawnsLeft = atoi(CG_Argv(offset + 6 + (j * 7)));
 
 		if (cg.scores[i].client < 0 || cg.scores[i].client >= MAX_CLIENTS)

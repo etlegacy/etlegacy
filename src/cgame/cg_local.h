@@ -515,7 +515,7 @@ typedef struct
 	int time;
 	int powerUps;
 	int team;
-	int playerClass;
+	int scoreflags;
 	int respawnsLeft;
 } score_t;
 
