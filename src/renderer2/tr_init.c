@@ -479,7 +479,7 @@ static void R_ModeList_f(void)
 	ri.Printf(PRINT_ALL, "\n");
 	for (i = 0; i < s_numVidModes; i++)
 	{
-		ri.Printf(PRINT_ALL, "%s\n", r_vidModes[i].description);
+		ri.Printf(PRINT_ALL, (i == r_mode->integer) ? S_COLOR_GREEN "%s\n" : "%s\n", r_vidModes[i].description);
 	}
 	ri.Printf(PRINT_ALL, "\n");
 }
