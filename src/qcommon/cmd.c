@@ -364,7 +364,6 @@ void Cmd_Vstr_f(void)
  */
 void Cmd_Echo_f(void)
 {
-	int i;
 #ifndef DEDICATED
 	// "cpm" is a cgame command, so just print the text if disconnected
 	if (cls.state != CA_CONNECTED && cls.state != CA_ACTIVE)
@@ -373,12 +372,8 @@ void Cmd_Echo_f(void)
 		return;
 	}
 #endif
-	Cbuf_AddText("cpm \"");
-	for (i = 1; i < Cmd_Argc(); i++)
-	{
-		Cbuf_AddText(va("%s ", Cmd_Argv(i)));
-	}
-	Cbuf_AddText("\"\n");
+
+	Cbuf_AddText(va("cpm \"%s\"\n", Cmd_Args()));
 }
 
 /*
@@ -825,13 +820,9 @@ void Cmd_RemoveCommand(const char *cmd_name)
 	}
 }
 
-/*
-============
-Cmd_RemoveCommandSafe
-
-Only remove commands with no associated function
-============
-*/
+/**
+ * @brief Only remove commands with no associated function
+ */
 void Cmd_RemoveCommandSafe(const char *cmd_name)
 {
 	cmd_function_t *cmd = Cmd_FindCommand(cmd_name);
@@ -842,8 +833,13 @@ void Cmd_RemoveCommandSafe(const char *cmd_name)
 	}
 	if (cmd->function)
 	{
-		Com_Error(ERR_DROP, "Restricted source tried to remove "
-		                    "system command \"%s\"", cmd_name);
+		// FIXME: NQ/ETPub remove several system command(s), and thus drop the client
+		//Com_Error(ERR_DROP, "Restricted source tried to remove "
+		//                    "system command \"%s\"", cmd_name);
+
+		Com_Printf(S_COLOR_RED "Restricted source tried to remove system command \"%s\"\n",
+		           cmd_name);
+
 		return;
 	}
 

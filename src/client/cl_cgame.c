@@ -659,8 +659,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		CL_AddCgameCommand(VMA(1));
 		return 0;
 	case CG_REMOVECOMMAND:
-		// FIXME: NQ/ETPub drop client if Cmd_RemoveCommandSafe is used here
-		Cmd_RemoveCommand(VMA(1));
+		Cmd_RemoveCommandSafe(VMA(1));
 		return 0;
 	case CG_SENDCLIENTCOMMAND:
 		CL_AddReliableCommand(VMA(1));
