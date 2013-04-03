@@ -1081,8 +1081,8 @@ default values.
 #define CVAR_SERVER_CREATED         16384   // cvar was created by a server the client connected to.
 #define CVAR_VM_CREATED             32768   // cvar was created exclusively in one of the VMs.
 #define CVAR_PROTECTED              65536   // prevent modifying this var from VMs or the server
-#define CVAR_MODIFIED               1073741824  // Cvar was modified
-#define CVAR_NONEXISTENT            2147483648  // Cvar doesn't exist.
+#define CVAR_MODIFIED               1073741824   // Cvar was modified
+#define CVAR_NONEXISTENT            2147483648U  // Cvar doesn't exist.
 
 // nothing outside the Cvar_*() functions should modify these fields!
 typedef struct cvar_s
@@ -1826,6 +1826,7 @@ float rint(float v);
 #endif
 
 // this should be used to convert a floating-point value to an integer
+// FIXME optimize this and use asm
 #define ROUND_INT(x) (x >= 0 ? (int)(x + 0.5) : (int)(x - 0.5))
 
 #endif  // __Q_SHARED_H
