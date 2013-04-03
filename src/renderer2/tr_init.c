@@ -469,21 +469,26 @@ qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode)
 	return qtrue;
 }
 
-/*
-** R_ModeList_f
-*/
+/**
+ * @brief Prints hardcoded screen resolutions
+ * @see r_availableModes for supported resolutions
+ */
 static void R_ModeList_f(void)
 {
 	int i;
 
 	ri.Printf(PRINT_ALL, "\n");
+	ri.Printf(PRINT_ALL, (r_mode->integer == -2) ? "%s ^2(current)\n" : "%s\n",
+	          "Mode -2: desktop resolution");
+	ri.Printf(PRINT_ALL, (r_mode->integer == -1) ? "%s ^2(current)\n" : "%s\n",
+	          "Mode -1: custom resolution");
 	for (i = 0; i < s_numVidModes; i++)
 	{
-		ri.Printf(PRINT_ALL, (i == r_mode->integer) ? S_COLOR_GREEN "%s\n" : "%s\n", r_vidModes[i].description);
+		ri.Printf(PRINT_ALL, (i == r_mode->integer) ? "%s ^2(current)\n" : "%s\n",
+		          r_vidModes[i].description);
 	}
 	ri.Printf(PRINT_ALL, "\n");
 }
-
 
 /*
 ==============================================================================
