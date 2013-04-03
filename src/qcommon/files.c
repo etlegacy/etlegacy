@@ -317,7 +317,7 @@ qboolean FS_PakIsPure(pack_t *pack)
 	return qtrue;
 }
 
-/*
+/**
  * @brief return load stack
  */
 int FS_LoadStack(void)
@@ -325,7 +325,7 @@ int FS_LoadStack(void)
 	return fs_loadStack;
 }
 
-/*
+/**
  * @brief return a hash value for the filename
  */
 static long FS_HashFileName(const char *fname, int hashSize)
@@ -413,7 +413,7 @@ long FS_fplength(FILE *h)
 	return end;
 }
 
-/*
+/**
  * If this is called on a non-unique FILE (from a pak file), it will return
  * the size of the pak file, not the expected size of the file.
  */
@@ -433,7 +433,7 @@ long FS_filelength(fileHandle_t f)
 	}
 }
 
-/*
+/**
  * @brief Fix things up differently for win/unix/mac
  */
 static void FS_ReplaceSeparators(char *path)
@@ -462,7 +462,7 @@ static void FS_ReplaceSeparators(char *path)
 	}
 }
 
-/*
+/**
  * @brief Qpath may have either forward or backwards slashes
  */
 char *FS_BuildOSPath(const char *base, const char *game, const char *qpath)
@@ -1427,8 +1427,6 @@ long FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueF
 		}
 	}
 
-	Com_DPrintf(S_COLOR_RED "ERROR: Can't find %s\n", filename);
-
 #ifdef FS_MISSING
 	if (missingFiles)
 	{
@@ -1438,6 +1436,8 @@ long FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueF
 
 	if (file)
 	{
+		Com_DPrintf(S_COLOR_RED "ERROR: Can't find %s\n", filename);
+
 		*file = 0;
 		return -1;
 	}
