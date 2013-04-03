@@ -101,7 +101,7 @@ void GLimp_Shutdown(void)
 	Com_Memset(&glState, 0, sizeof(glState));
 }
 
-/*
+/**
  * @brief Minimize the game so that user is back at the desktop
  */
 void GLimp_Minimize(void)
@@ -186,10 +186,11 @@ static void GLimp_DetectAvailableModes(void)
 	for (numModes = 0; modes[numModes]; numModes++)
 		;
 
-	if (numModes > 1)
-	{
-		qsort(modes, numModes, sizeof(SDL_Rect *), GLimp_CompareModes);
-	}
+	// Uncomment to sort resolutions also by their aspect ratio
+	//if (numModes > 1)
+	//{
+	//	qsort(modes, numModes, sizeof(SDL_Rect *), GLimp_CompareModes);
+	//}
 
 	for (i = 0; i < numModes; i++)
 	{
