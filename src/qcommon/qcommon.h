@@ -1265,6 +1265,7 @@ Native language support
 #define _(x) I18N_Translate(x)
 
 void I18N_Init(void);
+void I18N_SetLanguage(const char *language);
 const char *I18N_Translate(const char *msgid);
 
 #else // FEATURE_GETTEXT

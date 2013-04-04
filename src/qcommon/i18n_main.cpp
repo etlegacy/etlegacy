@@ -46,13 +46,17 @@ extern "C"
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
+#include <map>
 
 #include "../../libs/tinygettext/po_parser.hpp"
 #include "../../libs/tinygettext/tinygettext.hpp"
 
 tinygettext::DictionaryManager dictionary;
 
-cvar_t *cl_language;
+cvar_t      *cl_language;
+static char cl_language_last[3];
+
+std::map <std::string, std::string> strings; // original text / translated text
 
 /**
  * @brief Attempts to detect the system language unless cl_language was already set.
@@ -91,26 +95,51 @@ void I18N_Init(void)
 		Com_Printf(" %s", p->get_name().c_str());
 	}
 
-	dictionary.set_language(tinygettext::Language::from_env(std::string(cl_language->string)));
-	Com_Printf("\nLanguage set to %s\n", dictionary.get_language().get_name().c_str());
-
+	I18N_SetLanguage(cl_language->string);
 	FL_FreeLocale(&locale);
 }
 
 /**
+ * @brief Loads a localization file
+ */
+void I18N_SetLanguage(const char *language)
+{
+	// TODO: check if there is a localization file available for the selected language
+	dictionary.set_language(tinygettext::Language::from_env(std::string(language)));
+
+	Com_Printf("\nLanguage set to %s\n", dictionary.get_language().get_name().c_str());
+	Com_sprintf(cl_language_last, sizeof(cl_language_last), language);
+
+	strings.clear();
+}
+
+/**
  * @brief Translates a string using the currently selected dictionary
+ *
+ * Localized strings are stored in a map container as tinygettext would
+ * attempt to read them from the po file at each call and would endlessly
+ * spam the console with warnings if the requested translation did not exist.
+ *
  * @param msgid original string in English
  * @return translated string or English text if dictionary was not found
  */
 const char *I18N_Translate(const char *msgid)
 {
 	// HACK: how to tell tinygettext not to translate if cl_language is English?
-	if (Q_stricmp(cl_language->string, "en"))
-	{
-		return dictionary.get_dictionary().translate(msgid).c_str();
-	}
-	else
+	if (!Q_stricmp(cl_language->string, "en"))
 	{
 		return msgid;
 	}
+
+	if (Q_stricmp(cl_language->string, cl_language_last))
+	{
+		I18N_SetLanguage(cl_language->string);
+	}
+
+	if (strings.find(msgid) == strings.end())
+	{
+		strings.insert(std::pair<std::string, std::string>(msgid, dictionary.get_dictionary().translate(msgid)));
+	}
+
+	return strings.find(msgid)->second.c_str();
 }
