@@ -17,7 +17,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received a copy of the GNU General Public 
+ 
  * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
  *
  * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
@@ -547,6 +548,18 @@ float CL_KeyState(kbutton_t *key);
 int Key_StringToKeynum(char *str);
 char *Key_KeynumToString(int keynum);
 
+//
+//cl_irc.c
+//
+void CL_OW_IRCSetup(void);
+void CL_OW_InitIRC(void);
+void CL_OW_IRCInitiateShutdown(void);
+void CL_OW_IRCWaitShutdown(void);
+void CL_OW_IRCSay(void);
+qboolean CL_OW_IRCIsConnected(void);
+qboolean CL_OW_IRCIsRunning(void);
+
+//
 // cl_parse.c
 
 extern int cl_connectedToPureServer;

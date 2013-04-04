@@ -3694,6 +3694,8 @@ void CL_Init(void)
 	cls.realtime = 0;
 
 	CL_InitInput();
+	
+	CL_OW_IRCSetup();
 
 	// register our variables
 	cl_noprint = Cvar_Get("cl_noprint", "0", 0);
@@ -3848,6 +3850,10 @@ void CL_Init(void)
 	Cmd_AddCommand("fs_openedList", CL_OpenedPK3List_f);
 	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f);
 
+	Cmd_AddCommand ("irc_connect", CL_OW_InitIRC);
+	Cmd_AddCommand ("irc_quit", CL_OW_IRCInitiateShutdown);
+	Cmd_AddCommand ("irc_say", CL_OW_IRCSay);	
+	
 	// startup-caching system
 	Cmd_AddCommand("cache_startgather", CL_Cache_StartGather_f);
 	Cmd_AddCommand("cache_usedfile", CL_Cache_UsedFile_f);
@@ -3926,6 +3932,8 @@ void CL_Shutdown(void)
 	DL_Shutdown();
 	CL_ShutdownRef();
 
+	CL_OW_IRCInitiateShutdown();
+	
 	CL_ShutdownUI();
 
 	Cmd_RemoveCommand("cmd");
@@ -3959,6 +3967,8 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("updatehunkusage");
 	Cmd_RemoveCommand("wav_record");
 	Cmd_RemoveCommand("wav_stoprecord");
+
+	CL_OW_IRCWaitShutdown( );
 
 	Cvar_Set("cl_running", "0");
 
