@@ -1,3 +1,4 @@
+#ifdef FEATURE_IRC_CLIENT
 /*
 ===========================================================================
 
@@ -2269,3 +2270,5 @@ qboolean CL_OW_IRCIsRunning(void) {
 	// return IRC status
 	return ( IRC_ThreadStatus != IRC_THREAD_DEAD );
 }
+
+#endif // FEATURE_IRC_CLIENT

@@ -1,3 +1,4 @@
+#ifdef FEATURE_IRC_CLIENT
 /*
 ===========================================================================
 
@@ -199,3 +200,5 @@ void HT_Apply(
 
 
 #endif // __H_HASHTABLE
+
+#endif //FEATURE_IRC_CLIENT
