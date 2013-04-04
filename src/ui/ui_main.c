@@ -1039,7 +1039,6 @@ qboolean UI_ParseMenu(const char *menuFile)
 qboolean Load_Menu(int handle)
 {
 	pc_token_t token;
-	int        cl_language;
 
 	if (!trap_PC_ReadToken(handle, &token))
 	{
@@ -1065,66 +1064,6 @@ qboolean Load_Menu(int handle)
 		if (token.string[0] == '}')
 		{
 			return qtrue;
-		}
-
-		cl_language = atoi(UI_Cvar_VariableString("cl_language"));
-
-		if (cl_language)
-		{
-			const char *s = NULL;
-			const char *filename;
-			char       out[256];
-
-			COM_StripFilename(token.string, out);
-
-			filename = COM_SkipPath(token.string);
-
-			switch (cl_language - 1) // english isn't in languages_t enum
-			{
-			case LANGUAGE_FRENCH:
-				s = va("%s%s", out, "french/");
-				break;
-			case LANGUAGE_GERMAN:
-				s = va("%s%s", out, "german/");
-				break;
-			case LANGUAGE_ITALIAN:
-				s = va("%s%s", out, "italian/");
-				break;
-			case LANGUAGE_SPANISH:
-				s = va("%s%s", out, "spanish/");
-				break;
-			case LANGUAGE_POLISH:
-				s = va("%s%s", out, "polish/");
-				break;
-			case LANGUAGE_DUTCH:
-				s = va("%s%s", out, "dutch/");
-				break;
-			case LANGUAGE_CZECH:
-				s = va("%s%s", out, "czech/");
-				break;
-			case LANGUAGE_SWEDISH:
-				s = va("%s%s", out, "swedish/");
-				break;
-			case LANGUAGE_FINNISH:
-				s = va("%s%s", out, "finnish/");
-				break;
-			case LANGUAGE_DANISH:
-				s = va("%s%s", out, "danish/");
-				break;
-			case LANGUAGE_PORTUGUESE:
-				s = va("%s%s", out, "portuguese/");
-				break;
-			case LANGUAGE_NORWEGIAN:
-				s = va("%s%s", out, "norwegian/");
-				break;
-			default:
-				break;
-			}
-
-			if (UI_ParseMenu(va("%s%s", s, filename)))
-			{
-				continue;
-			}
 		}
 
 		UI_ParseMenu(token.string);
