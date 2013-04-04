@@ -3,9 +3,8 @@
 ===========================================================================
 
 OpenWolf GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
 
-This file is part of the OpenWolf GPL Source Code (OpenWolf Source Code).  
+This file is part of the OpenWolf GPL Source Code (OpenWolf Source Code).
 
 OpenWolf Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,15 +19,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with OpenWolf Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the OpenWolf Source Code is also subject to certain additional terms. 
-You should have received a copy of these additional terms immediately following the 
-terms and conditions of the GNU General Public License which accompanied the OpenWolf 
-Source Code.  If not, please request a copy in writing from id Software at the address 
+In addition, the OpenWolf Source Code is also subject to certain additional terms.
+You should have received a copy of these additional terms immediately following the
+terms and conditions of the GNU General Public License which accompanied the OpenWolf
+Source Code.  If not, please request a copy in writing from id Software at the address
 below.
-
-If you have questions concerning this license or the applicable additional terms, you 
-may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, 
-Maryland 20850 USA.
 
 ===========================================================================
 */
@@ -37,9 +32,8 @@ Maryland 20850 USA.
 #ifndef __H_HASHTABLE
 #define __H_HASHTABLE
 
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qcommon.h"
-
+#include "q_shared.h"
+#include "qcommon.h"
 
 /*=============================================*
  * Hash table types                            *
@@ -47,26 +41,23 @@ Maryland 20850 USA.
 
 /* Hash table (opaque type) */
 struct hashtable_s;
-typedef struct hashtable_s * hashtable_t;
+typedef struct hashtable_s *hashtable_t;
 
 /* Function pointer for HT_Apply */
-typedef qboolean ( * ht_apply_funct )( void * item , void * extra );
-
+typedef qboolean ( *ht_apply_funct )(void *item, void *extra);
 
 /*=============================================*
  * Hash table flags                            *
  *=============================================*/
 
 /* Items are stored inside the table */
-#define HT_FLAG_INTABLE		( 1 << 0 )
+#define HT_FLAG_INTABLE     (1 << 0)
 /* Free items on table destruction */
-#define HT_FLAG_FREE		( 1 << 1 )
+#define HT_FLAG_FREE        (1 << 1)
 /* Keys are case-sensitive */
-#define HT_FLAG_CASE		( 1 << 2 )
+#define HT_FLAG_CASE        (1 << 2)
 /* Iteration is sorted by key */
-#define HT_FLAG_SORTED		( 1 << 3 )
-
-
+#define HT_FLAG_SORTED      (1 << 3)
 
 /*=============================================*
  * Hash table functions                        *
@@ -85,28 +76,25 @@ typedef qboolean ( * ht_apply_funct )( void * item , void * extra );
  *			will be accessed as a pointer instead of an array
  */
 hashtable_t HT_Create(
-		size_t		size ,
-		unsigned int	flags ,
-		size_t		item_size ,
-		size_t		key_offset ,
-		size_t		key_length
-	);
-
+    size_t size,
+    unsigned int flags,
+    size_t item_size,
+    size_t key_offset,
+    size_t key_length
+    );
 
 /*
  * Macro that determines the offset of a field in a structure
  */
-#define HT_OffsetOfField(TYPE,FIELD) \
-	( (char *)( &( ( (TYPE *) NULL )->FIELD ) ) - (char *) NULL )
-
+#define HT_OffsetOfField(TYPE, FIELD) \
+	((char *)(&(((TYPE *) NULL)->FIELD)) - (char *) NULL)
 
 /*
  * Hash table destruction
  */
 void HT_Destroy(
-		hashtable_t	table
-	);
-
+    hashtable_t table
+    );
 
 /*
  * Gets an item from the table.
@@ -118,12 +106,11 @@ void HT_Destroy(
  *			the item was created; if NULL, no creation will take
  *			place
  */
-void * HT_GetItem(
-		hashtable_t	table ,
-		const char *	key ,
-		qboolean *	created
-	);
-
+void *HT_GetItem(
+    hashtable_t table,
+    const char *key,
+    qboolean *created
+    );
 
 /*
  * Stores an item into the table
@@ -144,12 +131,11 @@ void * HT_GetItem(
  *	memory they use, a replacement will still return NULL, as the
  *	memory will have been freed or reused.
  */
-void * HT_PutItem(
-		hashtable_t	table ,
-		void *		item ,
-		qboolean	allow_replacement
-	);
-
+void *HT_PutItem(
+    hashtable_t table,
+    void *item,
+    qboolean allow_replacement
+    );
 
 /*
  * Deletes an item from the table
@@ -169,11 +155,10 @@ void * HT_PutItem(
  *	the "found" parameter will always be ignored.
  */
 qboolean HT_DeleteItem(
-		hashtable_t	table ,
-		const char *	key ,
-		void **		found
-	);
-
+    hashtable_t table,
+    const char *key,
+    void **found
+    );
 
 /*
  * Applies a function to all items in the table.
@@ -192,12 +177,10 @@ qboolean HT_DeleteItem(
  *	The function should return false if processing is to stop.
  */
 void HT_Apply(
-		hashtable_t	table ,
-		ht_apply_funct	function ,
-		void *		data
-	);
-
-
+    hashtable_t table,
+    ht_apply_funct function,
+    void *data
+    );
 
 #endif // __H_HASHTABLE
 

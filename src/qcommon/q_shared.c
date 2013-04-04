@@ -1123,6 +1123,60 @@ char *Q_strupr(char *s1)
 	return s1;
 }
 
+#ifdef FEATURE_IRC_CLIENT
+int Q_strnicmp(const char *string1, const char *string2, int n)
+{
+	int c1, c2;
+
+	if (string1 == NULL)
+	{
+		if (string2 == NULL)
+		{
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	else if (string2 == NULL)
+	{
+		return 1;
+	}
+
+	do
+	{
+		c1 = *string1++;
+		c2 = *string2++;
+
+		if (!n--)
+		{
+			return 0; // Strings are equal until end point
+
+		}
+		if (c1 != c2)
+		{
+			if (c1 >= 'a' && c1 <= 'z')
+			{
+				c1 -= ('a' - 'A');
+			}
+			if (c2 >= 'a' && c2 <= 'z')
+			{
+				c2 -= ('a' - 'A');
+			}
+
+			if (c1 != c2)
+			{
+				return c1 < c2 ? -1 : 1;
+			}
+		}
+	}
+	while (c1);
+
+	return 0; // Strings are equal
+}
+#endif
+
 // never goes past bounds or leaves without a terminating 0
 void Q_strcat(char *dest, int size, const char *src)
 {
