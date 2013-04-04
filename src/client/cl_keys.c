@@ -1672,7 +1672,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 				switch (key)
 				{
 				//case 329: // WINDOWS
-				case 331:   // ALT Gr (MODE)
+				case K_MODE:   // 331 - ALT Gr (MODE)
 					//case 337: // MENU
 					return;
 				default:
