@@ -18,7 +18,6 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- 
  * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
  *
  * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
