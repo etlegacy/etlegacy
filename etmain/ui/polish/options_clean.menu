@@ -27,6 +27,7 @@ menuDef {
 	
 	onESC {
 		close options_clean ;
+		open options
 	}
 	
 // Background //
