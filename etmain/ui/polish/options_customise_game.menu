@@ -56,8 +56,8 @@ menuDef {
 	MULTI( 8, 280, (SUBWINDOW_WIDTH)-4, 10, "Mod Szybkiego Czatu:", .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeryczny" 1 }, "Uzycie alpha lub numerycznych klawiszy do wysylania wiadomosci radiowych" )
 	MULTI( 8, 292, (SUBWINDOW_WIDTH)-4, 10, "Ikona Czasu Czatu:", .2, 8, "cg_voicespritetime", cvarFloatList { "Krotka" 3000 "Normalna" 6000 "Dluga" 12000 "Bardzo Dluga" 24000 }, "Ustawia jak dlugo ikona czasu pojawia sie nad glowa gracza" )
 	YESNO( 8, 304, (SUBWINDOW_WIDTH)-4, 10, "Chat Teamu tylko:", .2, 8, "cg_teamChatsOnly", "Graj tylko chat team w grze" )
-	YESNO( 8, 316, (SUBWINDOW_WIDTH)-4, 10, "Brak dzwieku czatu:", .2, 8, "cg_noVoiceChats", "Nie graj dzwiekow czatu w grze" )
-	YESNO( 8, 328, (SUBWINDOW_WIDTH)-4, 10, "Brak dzwieku textu:", .2, 8, "cg_noVoiceText", "Nie pokazuj dzwieku textu w grze" )
+	YESNO( 8, 316, (SUBWINDOW_WIDTH)-4, 10, "Dzwieku czatu:", .2, 8, "cg_noVoiceChats", "Nie graj dzwiekow czatu w grze" )
+	YESNO( 8, 328, (SUBWINDOW_WIDTH)-4, 10, "Dzwieku textu:", .2, 8, "cg_noVoiceText", "Nie graj dzwieku textu w grze" )
 	
 // Miscellaneous //
 	SUBWINDOW( 6, 346, (SUBWINDOW_WIDTH), 88, "ROZNE" )

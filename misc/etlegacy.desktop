@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=ET:Legacy
+GenericName=A team-based multiplayer WWII tactical first-person shooter
+Comment=A team-based multiplayer WWII tactical first-person shooter
+Icon=etlegacy.xpm
+Exec=etl +connect %u
+Terminal=false
+MimeType=x-scheme-handler/et;
+Categories=Application;Game
+StartupNotify=false
+
