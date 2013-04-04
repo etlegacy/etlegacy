@@ -1358,7 +1358,7 @@ Connection established, we will be able to join a channel
 static int IRCH_Connected() {
 	if ( IRC_ThreadStatus != IRC_THREAD_SETNICK ) {
 		IRC_Display( IRC_MakeEvent(QUIT,1) , "" , "IRC client bug\n" );
-		IRC_Send( "QUIT :OpenWolf IRC bug!\n" );
+		IRC_Send( "QUIT :ET: Legacy IRC bug!\n" );
 		return IRC_CMD_RETRY;
 	}
 	IRC_ThreadStatus = IRC_THREAD_CONNECTED;
@@ -1378,7 +1378,7 @@ static int IRCH_Joined() {
 
 	if ( IRC_ThreadStatus < IRC_THREAD_CONNECTED ) {
 		IRC_Display( IRC_MakeEvent(QUIT,1) , "" , "IRC client bug\n" );
-		IRC_Send( "QUIT :OpenWolf IRC bug!\n" );
+		IRC_Send( "QUIT :ET: Legacy IRC bug!\n" );
 		return IRC_CMD_RETRY;
 	}
 
@@ -1482,7 +1482,7 @@ static int IRC_HandleMessage( qboolean is_channel , const char * string ) {
 	}
 
 	if ( IRC_CheckEventRate( IRC_RL_MESSAGE ) )
-		return IRC_Send( "PRIVMSG %s :Sorry, OpenWolf's IRC client does not support private messages\n" , IRC_String( pfx_nickOrServer ) );
+		return IRC_Send( "PRIVMSG %s :Sorry, the ET: Legacy IRC client does not support private messages\n" , IRC_String( pfx_nickOrServer ) );
 	return IRC_CMD_SUCCESS;
 }
 
@@ -1584,7 +1584,7 @@ static int CTCP_Action( qboolean is_channel , const char * argument ) {
 	}
 
 	if ( IRC_CheckEventRate( IRC_RL_MESSAGE ) )
-		return IRC_Send( "PRIVMSG %s :Sorry, OpenWolf's IRC client does not support private messages\n" , IRC_String( pfx_nickOrServer ) );
+		return IRC_Send( "PRIVMSG %s :Sorry, the ET: Legacy IRC client does not support private messages\n" , IRC_String( pfx_nickOrServer ) );
 	return IRC_CMD_SUCCESS;
 }
 
@@ -1616,7 +1616,7 @@ static int CTCP_Version( qboolean is_channel , const char * argument ) {
 	if ( is_channel || !IRC_CheckEventRate( IRC_RL_VERSION ) )
 		return IRC_CMD_SUCCESS;
 
-	return IRC_Send( "NOTICE %s :\001VERSION OpenWolf IRC client - v\n" Q3_VERSION "\001" , IRC_String( pfx_nickOrServer ) );
+	return IRC_Send( "NOTICE %s :\001VERSION ET: Legacy IRC client - v\n" Q3_VERSION "\001" , IRC_String( pfx_nickOrServer ) );
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1883,7 +1883,7 @@ static int IRC_AttemptConnection() {
 	}
 
 	// Find server address
-	Q_strncpyz2( host_name, cl_IRC_server->string, sizeof(host_name) );
+	Q_strncpyz( host_name, cl_IRC_server->string, sizeof(host_name) );
 	if ( (host=gethostbyname(host_name)) == NULL ) {
 		Com_Printf("...IRC: unknown server\n");
 		return IRC_CMD_FATAL;
@@ -2013,7 +2013,7 @@ static void IRC_MainLoop() {
 			if ( IRC_QuitRequested && IRC_ThreadStatus != IRC_THREAD_QUITTING ) {
 				IRC_ThreadStatus = IRC_THREAD_QUITTING;
 				IRC_Display( IRC_MakeEvent(QUIT,1) , "" , "quit from menu\n" );
-				err_code = IRC_Send( "QUIT :OpenWolf IRC %s\n" , Q3_VERSION );
+				err_code = IRC_Send( "QUIT :ET: Legacy IRC %s\n" , Q3_VERSION );
 			} else {
 				// Wait for data or 1s timeout
 				err_code = IRC_Wait( );
@@ -2205,8 +2205,8 @@ CL_IRCSetup
 */
 void CL_OW_IRCSetup(void) {
 	cl_IRC_connect_at_startup = Cvar_Get( "cl_IRC_connect_at_startup" , "1" , CVAR_ARCHIVE );
-	cl_IRC_server = Cvar_Get( "cl_IRC_server" , "irc.freenode.org" , CVAR_ARCHIVE );
-	cl_IRC_channel = Cvar_Get( "cl_IRC_channel" , "openwolf" , CVAR_ARCHIVE );
+	cl_IRC_server = Cvar_Get( "cl_IRC_server" , "irc.freenode.net" , CVAR_ARCHIVE );
+	cl_IRC_channel = Cvar_Get( "cl_IRC_channel" , "etlegacy" , CVAR_ARCHIVE );
 	cl_IRC_port = Cvar_Get( "cl_IRC_port" , "6667" , CVAR_ARCHIVE );
 	cl_IRC_override_nickname = Cvar_Get( "cl_IRC_override_nickname" , "0" , CVAR_ARCHIVE );
 	cl_IRC_nickname = Cvar_Get( "cl_IRC_nickname" , "" , CVAR_ARCHIVE );

@@ -3,7 +3,6 @@
 ===========================================================================
 
 OpenWolf GPL Source Code
-Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company. 
 
 This file is part of the OpenWolf GPL Source Code (OpenWolf Source Code).  
 
@@ -26,10 +25,6 @@ terms and conditions of the GNU General Public License which accompanied the Ope
 Source Code.  If not, please request a copy in writing from id Software at the address 
 below.
 
-If you have questions concerning this license or the applicable additional terms, you 
-may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, 
-Maryland 20850 USA.
-
 ===========================================================================
 */
 
@@ -37,8 +32,8 @@ Maryland 20850 USA.
 #ifndef __H_HASHTABLE
 #define __H_HASHTABLE
 
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qcommon.h"
+#include "q_shared.h"
+#include "qcommon.h"
 
 
 /*=============================================*
