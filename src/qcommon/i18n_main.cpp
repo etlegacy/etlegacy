@@ -50,11 +50,13 @@ extern "C"
 
 #include "../../libs/tinygettext/po_parser.hpp"
 #include "../../libs/tinygettext/tinygettext.hpp"
+#include "../../libs/tinygettext/log.hpp"
 
 tinygettext::DictionaryManager dictionary;
 tinygettext::DictionaryManager dictionary_mod;
 
 cvar_t      *cl_language;
+cvar_t      *cl_languagedebug;
 static char cl_language_last[3];
 
 std::map <std::string, std::string> strings; // original text / translated text
@@ -70,7 +72,12 @@ void I18N_Init(void)
 	FL_Locale                       *locale;
 	std::set<tinygettext::Language> languages;
 
-	cl_language = Cvar_Get("cl_language", "", CVAR_ARCHIVE);
+	cl_language      = Cvar_Get("cl_language", "en", CVAR_ARCHIVE);
+	cl_languagedebug = Cvar_Get("cl_languagedebug", "0", CVAR_ARCHIVE);
+
+	tinygettext::Log::set_log_error_callback(&Tinygettext_Error);
+	tinygettext::Log::set_log_info_callback(&Tinygettext_Info);
+	tinygettext::Log::set_log_warning_callback(&Tinygettext_Warning);
 
 	FL_FindLocale(&locale, FL_MESSAGES);
 
@@ -147,12 +154,13 @@ static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryMan
 		strings.insert(std::make_pair(msgid, dict.get_dictionary().translate(msgid)));
 	}
 
-#ifndef NDEBUG
-	if (!Q_stricmp(strings.find(msgid)->second.c_str(), msgid))
+	if (cl_languagedebug->integer != 0)
 	{
-		TranslationMissing(msgid);
+		if (!Q_stricmp(strings.find(msgid)->second.c_str(), msgid))
+		{
+			TranslationMissing(msgid);
+		}
 	}
-#endif
 
 	return strings.find(msgid)->second.c_str();
 }
@@ -178,7 +186,32 @@ static void TranslationMissing(const char *msgid)
 	fileHandle_t file;
 
 	FS_FOpenFileByMode("missing_translations.txt", &file, FS_APPEND);
-	FS_Write(va("__(\"%s\");\n", msgid), MAX_STRING_CHARS, file);
+	FS_Write(va("TRANSLATE(\"%s\");\n", msgid), MAX_STRING_CHARS, file);
 
 	FS_FCloseFile(file);
+}
+
+/**
+ * Logging functions which override the default ones from Tinygettext
+ */
+
+void Tinygettext_Error(const std::string& str)
+{
+	Com_Printf("^1%s^7", str.c_str());
+}
+
+void Tinygettext_Warning(const std::string& str)
+{
+	if (cl_languagedebug->integer != 0)
+	{
+		Com_Printf("^3%s^7", str.c_str());
+	}
+}
+
+void Tinygettext_Info(const std::string& str)
+{
+	if (cl_languagedebug->integer != 0)
+	{
+		Com_Printf("%s", str.c_str());
+	}
 }

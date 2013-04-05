@@ -572,13 +572,12 @@ qboolean trap_GetLimboString(int index, char *buf)
 
 char *trap_TranslateString(const char *string)
 {
-	// What the heck is this? TODO: remove?
+	// Allows the fnc to be used twice in same context
 	static char staticbuf[2][MAX_VA_STRING];
 	static int  bufcount = 0;
 	char        *buf;
 
 	buf = staticbuf[bufcount++ % 2];
-	// ------------------------------------
 
 	syscall(UI_CL_TRANSLATE_STRING, string, buf);
 
