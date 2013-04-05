@@ -317,7 +317,7 @@ qboolean FS_PakIsPure(pack_t *pack)
 	return qtrue;
 }
 
-/*
+/**
  * @brief return load stack
  */
 int FS_LoadStack(void)
@@ -325,7 +325,7 @@ int FS_LoadStack(void)
 	return fs_loadStack;
 }
 
-/*
+/**
  * @brief return a hash value for the filename
  */
 static long FS_HashFileName(const char *fname, int hashSize)
@@ -4020,7 +4020,7 @@ qboolean FS_ConditionalRestart(int checksumFeed)
 	return qfalse;
 }
 
-/*
+/**
  * @brief Handle based file calls for virtual machines
  */
 int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode)

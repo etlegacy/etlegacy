@@ -52,11 +52,14 @@ extern "C"
 #include "../../libs/tinygettext/tinygettext.hpp"
 
 tinygettext::DictionaryManager dictionary;
+tinygettext::DictionaryManager dictionary_mod;
 
 cvar_t      *cl_language;
 static char cl_language_last[3];
 
 std::map <std::string, std::string> strings; // original text / translated text
+
+static void TranslationMissing(const char *msgid);
 
 /**
  * @brief Attempts to detect the system language unless cl_language was already set.
@@ -85,7 +88,8 @@ void I18N_Init(void)
 		}
 	}
 
-	dictionary.add_directory("lang");
+	dictionary.add_directory("locale");
+	// TODO: dictionary_mod.add_directory();
 
 	languages = dictionary.get_languages();
 
@@ -114,16 +118,17 @@ void I18N_SetLanguage(const char *language)
 }
 
 /**
- * @brief Translates a string using the currently selected dictionary
+ * @brief Translates a string using the specified dictionary
  *
  * Localized strings are stored in a map container as tinygettext would
  * attempt to read them from the po file at each call and would endlessly
  * spam the console with warnings if the requested translation did not exist.
  *
  * @param msgid original string in English
+ * @param dict dictionary to use (client / mod)
  * @return translated string or English text if dictionary was not found
  */
-const char *I18N_Translate(const char *msgid)
+static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryManager &dict)
 {
 	// HACK: how to tell tinygettext not to translate if cl_language is English?
 	if (!Q_stricmp(cl_language->string, "en"))
@@ -136,10 +141,44 @@ const char *I18N_Translate(const char *msgid)
 		I18N_SetLanguage(cl_language->string);
 	}
 
+	// Store translated string if it is not there yet
 	if (strings.find(msgid) == strings.end())
 	{
-		strings.insert(std::pair<std::string, std::string>(msgid, dictionary.get_dictionary().translate(msgid)));
+		strings.insert(std::make_pair(msgid, dict.get_dictionary().translate(msgid)));
 	}
 
+#ifndef NDEBUG
+	if (!Q_stricmp(strings.find(msgid)->second.c_str(), msgid))
+	{
+		TranslationMissing(msgid);
+	}
+#endif
+
 	return strings.find(msgid)->second.c_str();
+}
+
+const char *I18N_Translate(const char *msgid)
+{
+	return _I18N_Translate(msgid, dictionary);
+}
+
+const char *I18N_TranslateMod(const char *msgid)
+{
+	return _I18N_Translate(msgid, dictionary); // TODO: dictionary_mod
+}
+
+/**
+ * @brief A dumb function which saves missing strings for the current language and mod
+ * passed to it
+ * @param msgid original text
+ * @param filename where to save the missing strings
+ */
+static void TranslationMissing(const char *msgid)
+{
+	fileHandle_t file;
+
+	FS_FOpenFileByMode("missing_translations.txt", &file, FS_APPEND);
+	FS_Write(va("__(\"%s\");\n", msgid), MAX_STRING_CHARS, file);
+
+	FS_FCloseFile(file);
 }
