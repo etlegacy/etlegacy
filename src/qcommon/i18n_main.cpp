@@ -62,6 +62,9 @@ static char cl_language_last[3];
 std::map <std::string, std::string> strings; // original text / translated text
 
 static void TranslationMissing(const char *msgid);
+static void Tinygettext_Error(const std::string& str);
+static void Tinygettext_Warning(const std::string& str);
+static void Tinygettext_Info(const std::string& str);
 
 /**
  * @brief Attempts to detect the system language unless cl_language was already set.
@@ -195,12 +198,12 @@ static void TranslationMissing(const char *msgid)
  * Logging functions which override the default ones from Tinygettext
  */
 
-void Tinygettext_Error(const std::string& str)
+static void Tinygettext_Error(const std::string& str)
 {
 	Com_Printf("^1%s^7", str.c_str());
 }
 
-void Tinygettext_Warning(const std::string& str)
+static void Tinygettext_Warning(const std::string& str)
 {
 	if (cl_languagedebug->integer != 0)
 	{
@@ -208,7 +211,7 @@ void Tinygettext_Warning(const std::string& str)
 	}
 }
 
-void Tinygettext_Info(const std::string& str)
+static void Tinygettext_Info(const std::string& str)
 {
 	if (cl_languagedebug->integer != 0)
 	{
