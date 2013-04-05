@@ -42,8 +42,6 @@
 							setcvar ui_userTimeLimit 0 ;			\
 							setcvar ui_userAlliedRespawnTime 0 ;	\
 							setcvar ui_userAxisRespawnTime 0 ;		\
-							setcvar g_alliedmaxlives 0 ;			\
-							setcvar g_axismaxlives 0 ;				\
 							setcvar g_altStopwatchMode 0 ;			\
 							setcvar g_lms_roundlimit 3 ;			\
 							setcvar g_lms_matchlimit 2 ;			\
