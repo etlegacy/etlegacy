@@ -42,8 +42,6 @@
 							setcvar ui_userTimeLimit 0 ;			\
 							setcvar ui_userAlliedRespawnTime 0 ;	\
 							setcvar ui_userAxisRespawnTime 0 ;		\
-							setcvar g_alliedmaxlives 0 ;			\
-							setcvar g_axismaxlives 0 ;				\
 							setcvar g_altStopwatchMode 0 ;			\
 							setcvar g_lms_roundlimit 3 ;			\
 							setcvar g_lms_matchlimit 2 ;			\
@@ -125,6 +123,6 @@ menuDef
 	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "DEFAULT SERVER SETTINGS" )
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Reset server settings to default?", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 	
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "YES", .3, 14, close hostgame_advanced_default ; open hostgame_advanced ; DEFAULT_SETTINGS )
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "YES", .3, 14, close hostgame_advanced_default ; close hostgame_extended ; open hostgame_advanced ; DEFAULT_SETTINGS )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "NO", .3, 14, close hostgame_advanced_default ; open hostgame_advanced )
 }

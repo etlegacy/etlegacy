@@ -22,7 +22,7 @@ menuDef {
 	}
 
 // Window //
-	WINDOW( "ROZSZEZONE", 90)
+	WINDOW( "STAWIANIE SERWERA: ROZSZEZONE", 90)
 
 // Subwindows //
 #define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
@@ -32,5 +32,7 @@ menuDef {
 	MULTI( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Flagi Panstw:", .2, 8, "g_countryflags", cvarFloatList { "Nie" 0 "Tak" 1 }, "Wlancza Flagi Panstw na serwerze" )
 
 // Buttons //	
-	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "COFNIJ", .3, 14, close hostgame_extended ; open hostgame_advanced )
+        BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "COFNIJ", .3, 14, close hostgame_extended ; open hostgame )
+        BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "ZAAWANSOWANE", .3, 14, close hostgame_extended ; open hostgame_advanced )
+        BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "DOMYSLNIE", .3, 14, open hostgame_advanced_default )
 }
