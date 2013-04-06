@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	448
+#define WINDOW_HEIGHT	456
 #define GROUP_NAME		"grpHostGameAdvanced"
 		
 // Host Game Advanced Menu //
@@ -53,15 +53,17 @@ menuDef {
 	NUMERICFIELD( 8, 286, (SUBWINDOW_WIDTH)-4, 10, "Map Time Limit:", .2, 8, "ui_userTimeLimit", 6, "Override the default time limit" )
 	NUMERICFIELD( 8, 298, (SUBWINDOW_WIDTH)-4, 10, "Allied Spawn Time:", .2, 8, "ui_userAlliedRespawnTime", 2, "Override the default Allied spawn time" )
 	NUMERICFIELD( 8, 310, (SUBWINDOW_WIDTH)-4, 10, "Axis Spawn Time:", .2, 8, "ui_userAxisRespawnTime", 2, "Override the default Axis spawn time" )
-	NUMERICFIELD( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Max Lives:", .2, 8, "g_maxlives", 3, "Specify the number of lives in a max lives game" )
-	MULTI( 8, 334, (SUBWINDOW_WIDTH)-4, 10, "Stopwatch Round-Type:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain sides)" )	
+	NUMERICFIELD( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Allied Max Lives:", .2, 8, "g_alliedmaxlives", 3, "Specify the number of Allied lives in a max lives game" )
+	NUMERICFIELD( 8, 334, (SUBWINDOW_WIDTH)-4, 10, "Axis Max Lives:", .2, 8, "g_axismaxlives", 3, "Specify the number of Axis lives in a max lives game" )
+	MULTI( 8, 346, (SUBWINDOW_WIDTH)-4, 10, "Stopwatch Round-Type:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain sides)" )	
 	
 // LMS //
-	SUBWINDOW( 6, 352, (SUBWINDOW_WIDTH), 64, "LAST MAN STANDING" )	
-	NUMERICFIELD( 8, 368, (SUBWINDOW_WIDTH)-4, 10, "LMS Rounds Per Match:", .2, 8, "g_lms_roundlimit", 2, "Override the default LMS rounds per match" )	// fixme: range check
-	NUMERICFIELD( 8, 380, (SUBWINDOW_WIDTH)-4, 10, "LMS Matches Per Map:", .2, 8, "g_lms_matchlimit", 2, "Override the default LMS matches (comprising of rounds) per map" )	// fixme: range check
-	YESNO( 8, 392, (SUBWINDOW_WIDTH)-4, 10, "LMS Spectate Team Only:", .2, 8, "g_lms_followTeamOnly", "Stops players spectating the enemy team" )
-	YESNO( 8, 404, (SUBWINDOW_WIDTH)-4, 10, "LMS Locked Teams:", .2, 8, "g_lms_lockTeams", "Stops players being able to switch teams" )
+	SUBWINDOW( 6, 364, (SUBWINDOW_WIDTH), 64, "LAST MAN STANDING" )
+	
+	NUMERICFIELD( 8, 380, (SUBWINDOW_WIDTH)-4, 10, "LMS Rounds Per Match:", .2, 8, "g_lms_roundlimit", 2, "Override the default LMS rounds per match" )	// fixme: range check
+	NUMERICFIELD( 8, 392, (SUBWINDOW_WIDTH)-4, 10, "LMS Matches Per Map:", .2, 8, "g_lms_matchlimit", 2, "Override the default LMS matches (comprising of rounds) per map" )	// fixme: range check
+	YESNO( 8, 404, (SUBWINDOW_WIDTH)-4, 10, "LMS Spectate Team Only:", .2, 8, "g_lms_followTeamOnly", "Stops players spectating the enemy team" )
+	YESNO( 8, 416, (SUBWINDOW_WIDTH)-4, 10, "LMS Locked Teams:", .2, 8, "g_lms_lockTeams", "Stops players being able to switch teams" )
 
 // Admin //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 64, "ADMIN" )
@@ -73,7 +75,8 @@ menuDef {
 // Voting //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 102, (SUBWINDOW_WIDTH), 40, "VOTING" )
 	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 118, (SUBWINDOW_WIDTH)-4, 10, "Max Votes per Player:", .2, 8, "vote_limit", 2, "Specifies the maximum number of votes per player per match" )
-	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Successful voting:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Specifies the minimum percentage required for a vote to pass" )	
+	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Successful voting:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Specifies the minimum percentage required for a vote to pass" )
+	
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 148, (SUBWINDOW_WIDTH), 112, "ALLOW VOTES" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Comp Settings:", .2, 24, 8, "vote_allow_comp", "Allow players to vote for competition settings" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Game Type:", .2, 24, 8, "vote_allow_gametype", "Allow players to vote for a change in game type" )
@@ -82,7 +85,8 @@ menuDef {
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 212, .5*((SUBWINDOW_WIDTH)-6), 10, "Match Reset:", .2, 24, 8, "vote_allow_matchreset", "Allow players to vote for the match to be reset" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 224, .5*((SUBWINDOW_WIDTH)-6), 10, "Mute Spects:", .2, 24, 8, "vote_allow_mutespecs", "Allow players to vote for spectators to be muted" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 236, .5*((SUBWINDOW_WIDTH)-6), 10, "Next Map:", .2, 24, 8, "vote_allow_nextmap", "Allow players to vote for the next campaign or map" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Balanced Teams:", .2, 24, 8, "vote_allow_balancedteams", "Allow players to vote for enforced team balance" )	
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Balanced Teams:", .2, 24, 8, "vote_allow_balancedteams", "Allow players to vote for enforced team balance" )
+	
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Pub Settings:", .2, 24, 8, "vote_allow_pub", "Allow players to vote for public settings" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Referee:", .2, 24, 8, "vote_allow_referee", "Allow players to vote for a referee" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, "XP Shuffle:", .2, 24, 8, "vote_allow_shuffleteamsxp", "Allow players to vote for teams to be shuffled" )

@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	448
+#define WINDOW_HEIGHT	456
 #define GROUP_NAME		"grpHostGameAdvanced"
 		
 // Host Game Advanced Menu //
@@ -53,15 +53,17 @@ menuDef {
 	NUMERICFIELD( 8, 286, (SUBWINDOW_WIDTH)-4, 10, "Limit Czasu Mapy:", .2, 8, "ui_userTimeLimit", 6, "Nadpisz domyslny czas mapy" )
 	NUMERICFIELD( 8, 298, (SUBWINDOW_WIDTH)-4, 10, "Czas Odro. Aliatow:", .2, 8, "ui_userAlliedRespawnTime", 2, "Nadpisz domyslne odrodzenie Aliantow" )
 	NUMERICFIELD( 8, 310, (SUBWINDOW_WIDTH)-4, 10, "Czas Odro. Osi:", .2, 8, "ui_userAxisRespawnTime", 2, "Nadpisz domyslne odrodzenie Osi" )
-	NUMERICFIELD( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Zycia:", .2, 8, "g_maxlives", 3, "Sprecyzuj maksymalna liczbe zyc w grze" )
-	MULTI( 8, 334, (SUBWINDOW_WIDTH)-4, 10, "Na Czas Typ-Rundy:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Okreslam typ rundy Na Czas (ABBA = zamiana stron, ABAB = utrzymanie stron)" )	
+	NUMERICFIELD( 8, 322, (SUBWINDOW_WIDTH)-4, 10, "Zycia Aliantow:", .2, 8, "g_alliedmaxlives", 3, "Sprecyzuj maksymalna liczbe zyc Aliantom w grze" )
+	NUMERICFIELD( 8, 334, (SUBWINDOW_WIDTH)-4, 10, "Zycia OSI:", .2, 8, "g_axismaxlives", 3, "Sprecyzuj maksymalna liczbe zyc Osi w grze" )
+	MULTI( 8, 346, (SUBWINDOW_WIDTH)-4, 10, "Na Czas Typ-Rundy:", .2, 8, "g_altStopwatchMode", cvarFloatList { "ABBA" 0 "ABAB" 1 }, "Okreslam typ rundy Na Czas (ABBA = zamiana stron, ABAB = utrzymanie stron)" )	
 	
 // LMS // NA POZNIEJ
-	SUBWINDOW( 6, 352, (SUBWINDOW_WIDTH), 64, "OSTATNI PRZETRWALY" )
-	NUMERICFIELD( 8, 368, (SUBWINDOW_WIDTH)-4, 10, "OCP Rund na Mecz:", .2, 8, "g_lms_roundlimit", 2, "Nadpisz domyslne OCP rund na mecz" )	// fixme: range check
-	NUMERICFIELD( 8, 380, (SUBWINDOW_WIDTH)-4, 10, "OCP Meczow na Mape:", .2, 8, "g_lms_matchlimit", 2, "Nadpisz domyslne OCP mecze ( skladajacy sie z rund ) na mape" )	// fixme: range check
-	YESNO( 8, 392, (SUBWINDOW_WIDTH)-4, 10, "Blokuje Spec. Teamu:", .2, 8, "g_lms_followTeamOnly", "Zatrzymuje graczy podpatrujacych wrogi team" )
-	YESNO( 8, 404, (SUBWINDOW_WIDTH)-4, 10, "OCP Zablokowane Teamy:", .2, 8, "g_lms_lockTeams", "Zatrzymuje graczy chcacych zmienic team" )
+	SUBWINDOW( 6, 364, (SUBWINDOW_WIDTH), 64, "OSTATNI PRZETRWALY" )
+	
+	NUMERICFIELD( 8, 380, (SUBWINDOW_WIDTH)-4, 10, "OCP Rund na Mecz:", .2, 8, "g_lms_roundlimit", 2, "Nadpisz domyslne OCP rund na mecz" )	// fixme: range check
+	NUMERICFIELD( 8, 392, (SUBWINDOW_WIDTH)-4, 10, "OCP Meczow na Mape:", .2, 8, "g_lms_matchlimit", 2, "Nadpisz domyslne OCP mecze ( skladajacy sie z rund ) na mape" )	// fixme: range check
+	YESNO( 8, 404, (SUBWINDOW_WIDTH)-4, 10, "Blokuje Spec. Teamu:", .2, 8, "g_lms_followTeamOnly", "Zatrzymuje graczy podpatrujacych wrogi team" )
+	YESNO( 8, 416, (SUBWINDOW_WIDTH)-4, 10, "OCP Zablokowane Teamy:", .2, 8, "g_lms_lockTeams", "Zatrzymuje graczy chcacych zmienic team" )
 
 // Admin //
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 32, (SUBWINDOW_WIDTH), 64, "ADMIN" )
@@ -74,6 +76,7 @@ menuDef {
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 102, (SUBWINDOW_WIDTH), 40, "GLOSOWANIE" )
 	NUMERICFIELD( 6+(SUBWINDOW_WIDTH)+6+2, 118, (SUBWINDOW_WIDTH)-4, 10, "Max Glosowan na Team:", .2, 8, "vote_limit", 2, "Sprecyzuj maksymalna liczbe glosow gracza na mecz" )
 	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, 130, (SUBWINDOW_WIDTH)-4, 10, "Sukces glosowan:", .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Sprecyzuj minimalny procentowy prog glosow, aby glosowanie sie powiodlo" )
+	
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, 148, (SUBWINDOW_WIDTH), 112, "POZWOLENIA NA GLOSOWANIE" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Ustaw. Konkur.:", .2, 24, 8, "vote_allow_comp", "Pozwol graczom glosowac na ustawienia konkurencji" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Typ Gry:", .2, 24, 8, "vote_allow_gametype", "Pozwol graczom glosowac na zmiane trybu gry" )
@@ -82,7 +85,8 @@ menuDef {
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 212, .5*((SUBWINDOW_WIDTH)-6), 10, "Reset Meczu:", .2, 24, 8, "vote_allow_matchreset", "Pozwol graczom glosowac na reset meczu" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 224, .5*((SUBWINDOW_WIDTH)-6), 10, "Wyci. Widzow:", .2, 24, 8, "vote_allow_mutespecs", "Pozwol graczom glosowac na wyciszenie widzow" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 236, .5*((SUBWINDOW_WIDTH)-6), 10, "Nastepna Mapa:", .2, 24, 8, "vote_allow_nextmap", "Pozwol graczom glosowac na nastepna kampanie lub mape" )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Balans. Zespolow:", .2, 24, 8, "vote_allow_balancedteams", "Pozwol graczom glosowac na wymuszone balnsowanie zespolow" )	
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, 248, .5*((SUBWINDOW_WIDTH)-6), 10, "Balans. Zespolow:", .2, 24, 8, "vote_allow_balancedteams", "Pozwol graczom glosowac na wymuszone balnsowanie zespolow" )
+	
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, "Ustaw. Pub.	:", .2, 24, 8, "vote_allow_pub", "Pozwol graczom glosowac na ustawienia publiczne" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, "Sedzia:", .2, 24, 8, "vote_allow_referee", "Pozwol graczom glosowac na bycie sedzia" )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, "XP Wymieszanie:", .2, 24, 8, "vote_allow_shuffleteamsxp", "Pozwol graczom glosowac na wymieszanie zespolow" )
