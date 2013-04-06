@@ -3,4 +3,4 @@
 	url = git://github.com/etlegacy/etlegacy-libs.git
 [submodule "scripts"]
 	path = scripts
-	url = git@github.com:etlegacy/lua_scripts.git
+	url = git://github.com/etlegacy/lua_scripts.git
