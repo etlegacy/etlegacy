@@ -15,7 +15,7 @@
 							setcvar server_autoconfig 0 ;			\
 							setcvar ui_dedicated 0 ;				\
 							setcvar g_countryflags 1;				\
-							setcvar g_intermissionTime 60;			\
+							setcvar g_intermissionTime 25;			\
 							setcvar g_intermissionReadyPercent 50;	\
 							setcvar g_friendlyFire 1 ;				\
 							setcvar g_antilag 1 ;					\
