@@ -15,7 +15,7 @@
 							setcvar server_autoconfig 0 ;			\
 							setcvar ui_dedicated 0 ;				\
 							setcvar g_countryflags 1;				\
-							setcvar g_intermissionTime 60;			\
+							setcvar g_intermissionTime 25;			\
 							setcvar g_intermissionReadyPercent 50;	\
 							setcvar g_friendlyFire 1 ;				\
 							setcvar g_antilag 1 ;					\
@@ -42,6 +42,8 @@
 							setcvar ui_userTimeLimit 0 ;			\
 							setcvar ui_userAlliedRespawnTime 0 ;	\
 							setcvar ui_userAxisRespawnTime 0 ;		\
+							setcvar g_alliedmaxlives 0 ;			\
+							setcvar g_axismaxlives 0 ;				\
 							setcvar g_altStopwatchMode 0 ;			\
 							setcvar g_lms_roundlimit 3 ;			\
 							setcvar g_lms_matchlimit 2 ;			\
