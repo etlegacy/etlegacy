@@ -2,6 +2,9 @@
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
+ * Daemon GPL Source Code
+ * Copyright (C) 2012 Unvanquished Developers
+ *
  * ET: Legacy
  * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
  *
@@ -51,6 +54,7 @@ extern "C"
 #include "../../libs/tinygettext/po_parser.hpp"
 #include "../../libs/tinygettext/tinygettext.hpp"
 #include "../../libs/tinygettext/log.hpp"
+#include "../../libs/tinygettext/file_system.hpp"
 
 tinygettext::DictionaryManager dictionary;
 tinygettext::DictionaryManager dictionary_mod;
@@ -65,6 +69,120 @@ static void TranslationMissing(const char *msgid);
 static void Tinygettext_Error(const std::string& str);
 static void Tinygettext_Warning(const std::string& str);
 static void Tinygettext_Info(const std::string& str);
+
+/**
+ * @brief std::streambuf based class that uses the engine's File I/O functions for input
+ */
+class QInputbuf : public std::streambuf
+{
+private:
+	static const size_t BUFFER_SIZE = 8192;
+	fileHandle_t        fileHandle;
+	char                buffer[BUFFER_SIZE];
+	size_t              putBack;
+public:
+	QInputbuf(const std::string& filename) : putBack(1)
+	{
+		char *end;
+
+		end = buffer + BUFFER_SIZE - putBack;
+		setg(end, end, end);
+
+		FS_FOpenFileRead(filename.c_str(), &fileHandle, qfalse);
+	}
+
+	~QInputbuf()
+	{
+		if (fileHandle)
+		{
+			FS_FCloseFile(fileHandle);
+		}
+	}
+
+	int underflow()
+	{
+		if (gptr() < egptr())  // buffer not exhausted
+		{
+			return traits_type::to_int_type(*gptr());
+		}
+
+		if (!fileHandle)
+		{
+			return traits_type::eof();
+		}
+
+		char *base  = buffer;
+		char *start = base;
+
+		if (eback() == base)
+		{
+			// Make arrangements for putback characters
+			memmove(base, egptr() - putBack, putBack);
+			start += putBack;
+		}
+
+		size_t n = FS_Read(start, BUFFER_SIZE - (start - base), fileHandle);
+
+		if (n == 0)
+		{
+			return traits_type::eof();
+		}
+
+		// Set buffer pointers
+		setg(base, start, start + n);
+
+		return traits_type::to_int_type(*gptr());
+	}
+};
+
+/**
+ * @brief Simple istream based class that takes ownership of the streambuf
+ */
+class QIstream : public std::istream
+{
+public:
+	QIstream(const std::string& filename) : std::istream(new QInputbuf(filename))
+	{
+	}
+	~QIstream()
+	{
+		delete rdbuf();
+	}
+};
+
+/**
+ * @brief Class used by tinygettext to read files and directories.
+ * Uses the engine's File I/O functions for this purpose
+ */
+class QFileSystem : public tinygettext::FileSystem
+{
+public:
+	QFileSystem()
+	{
+	}
+
+	std::vector<std::string> open_directory(const std::string& pathname)
+	{
+		int                      numFiles;
+		char                     **files;
+		std::vector<std::string> ret;
+
+		files = FS_ListFiles(pathname.c_str(), NULL, &numFiles);
+
+		for (int i = 0; i < numFiles; i++)
+		{
+			ret.push_back(std::string(files[i]));
+		}
+
+		FS_FreeFileList(files);
+		return ret;
+	}
+
+	std::auto_ptr<std::istream> open_file(const std::string& filename)
+	{
+		return std::auto_ptr<std::istream>(new QIstream(filename));
+	}
+};
 
 /**
  * @brief Attempts to detect the system language unless cl_language was already set.
@@ -87,9 +205,10 @@ void I18N_Init(void)
 	// Do not change the language if it is already set
 	if (cl_language && !cl_language->string[0])
 	{
-		if (locale->lang && locale->lang[0]) // && locale->country && locale->country[0])
+		// locale->country is also supported for 'en_US' format
+		if (locale->lang && locale->lang[0])
 		{
-			Cvar_Set("cl_language", va("%s", locale->lang)); //, locale->country));
+			Cvar_Set("cl_language", va("%s", locale->lang));
 		}
 		else
 		{
@@ -98,8 +217,11 @@ void I18N_Init(void)
 		}
 	}
 
-	dictionary.add_directory("locale");
-	// TODO: dictionary_mod.add_directory();
+	dictionary.set_filesystem(std::auto_ptr<tinygettext::FileSystem>(new QFileSystem));
+	dictionary_mod.set_filesystem(std::auto_ptr<tinygettext::FileSystem>(new QFileSystem));
+
+	dictionary.add_directory("locale/client");
+	dictionary_mod.add_directory("locale/mod");
 
 	languages = dictionary.get_languages();
 
@@ -120,6 +242,7 @@ void I18N_SetLanguage(const char *language)
 {
 	// TODO: check if there is a localization file available for the selected language
 	dictionary.set_language(tinygettext::Language::from_env(std::string(language)));
+	dictionary_mod.set_language(tinygettext::Language::from_env(std::string(language)));
 
 	Com_Printf("\nLanguage set to %s\n", dictionary.get_language().get_name().c_str());
 	Com_sprintf(cl_language_last, sizeof(cl_language_last), language);
@@ -175,7 +298,7 @@ const char *I18N_Translate(const char *msgid)
 
 const char *I18N_TranslateMod(const char *msgid)
 {
-	return _I18N_Translate(msgid, dictionary); // TODO: dictionary_mod
+	return _I18N_Translate(msgid, dictionary_mod);
 }
 
 /**
@@ -189,7 +312,7 @@ static void TranslationMissing(const char *msgid)
 	fileHandle_t file;
 
 	FS_FOpenFileByMode("missing_translations.txt", &file, FS_APPEND);
-	FS_Write(va("TRANSLATE(\"%s\");\n", msgid), MAX_STRING_CHARS, file);
+	FS_Write(va("TRANSLATE(\"%s\");\n", msgid), strlen(msgid) + 15, file);
 
 	FS_FCloseFile(file);
 }
