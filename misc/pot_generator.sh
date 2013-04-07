@@ -12,7 +12,7 @@ find src/server/ src/client/ src/qcommon/ -name '*.c' -o -name '*.cpp' | sort | 
 
 # MOD
 touch etlegacy_mod.pot
-find src/game/ src/ui/ src/cgame/ -name '*.c' -o -name '*.cpp' -o -name 'missing_translations.txt' | sort | xgettext \
+find src/game/ src/ui/ src/cgame/ -name '*.c' -o -name '*.cpp' -o -name 'missing_translations_*.txt' | sort | xgettext \
 \--from-code=UTF-8 --package-name="ET: Legacy" --copyright-holder="Jan Simek" --package-version="2.70rc2" --msgid-bugs-address="bugs@etlegacy.com" -o etlegacy_mod.pot -k_ -k__ -kCG_TranslateString -ktrap_TranslateString -kTRANSLATE -f -
 
 # TODO: Menu files

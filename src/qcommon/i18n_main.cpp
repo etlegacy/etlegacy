@@ -311,7 +311,7 @@ static void TranslationMissing(const char *msgid)
 {
 	fileHandle_t file;
 
-	FS_FOpenFileByMode("missing_translations.txt", &file, FS_APPEND);
+	FS_FOpenFileByMode(va("missing_translations_%s.txt", Cvar_VariableString("cl_language")), &file, FS_APPEND);
 	FS_Write(va("TRANSLATE(\"%s\");\n", msgid), strlen(msgid) + 15, file);
 
 	FS_FCloseFile(file);
