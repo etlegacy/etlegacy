@@ -3429,10 +3429,11 @@ qboolean FS_idPak(char *pak, char *base)
 {
 	int i;
 
-	if (!FS_FilenameCompare(pak, va("%s/mp_bin", base)))
-	{
-		return qtrue;
-	}
+	// ET:L does not need original mp_bin
+	//if (!FS_FilenameCompare(pak, va("%s/mp_bin", base)))
+	//{
+	//	return qtrue;
+	//}
 
 	for (i = 0; i < NUM_ID_PAKS; i++)
 	{
