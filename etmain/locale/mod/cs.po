@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-07 23:44+0100\n"
+"PO-Revision-Date: 2013-04-08 12:17+0100\n"
 "Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
 "Language-Team: Czech translators <mail@etlegacy.com>\n"
 "Language: \n"
@@ -23,15 +23,15 @@ msgstr ""
 #: src/cgame/cg_consolecmds.c:551
 #: src/cgame/cg_consolecmds.c:599
 msgid "Can't team voice chat as a spectator.\n"
-msgstr ""
+msgstr "Neni mozne vydavat hlasove prikazy tymu jako pozorovatel.\n"
 
 #: src/cgame/cg_consolecmds.c:574
 msgid "Can't voice chat as a spectator.\n"
-msgstr ""
+msgstr "Neni mozne vydavat hlasove prikazy jako pozorovatel.\n"
 
 #: src/cgame/cg_consolecmds.c:624
 msgid "Can't buddy voice chat as a spectator.\n"
-msgstr ""
+msgstr "Neni mozne vydavat hlasove prikazy spoluhraci jako pozorovatel.\n"
 
 #: src/cgame/cg_debriefing.c:1962
 #: src/cgame/cg_debriefing.c:3105
@@ -66,27 +66,27 @@ msgstr "Podat stiznost proti %s za zabiti spoluhrace?"
 #: src/cgame/cg_draw.c:2164
 #, c-format
 msgid "Press '%s' for YES, or '%s' for No"
-msgstr ""
+msgstr "Stiskni '%s' pro ANO nebo '%s' pro Ne"
 
 #: src/cgame/cg_draw.c:2096
 #, c-format
 msgid "Accept %s's application to join your fireteam?"
-msgstr ""
+msgstr "Prijmout zadost od %s k pripojeni do vasi cety?"
 
 #: src/cgame/cg_draw.c:2109
 #, c-format
 msgid "Accept %s's proposition to invite %s to join your fireteam?"
-msgstr ""
+msgstr "Prijmout navrh od %s pro pozvani %s do vasi cety?"
 
 #: src/cgame/cg_draw.c:2122
 #, c-format
 msgid "Accept %s's invitation to join their fireteam?"
-msgstr ""
+msgstr "Prijmout zadost od %s pro pripojeni do vasi cety?"
 
 #: src/cgame/cg_draw.c:2218
 #, c-format
 msgid "VOTE(%i): %s"
-msgstr ""
+msgstr "VOLBA(%i): %s"
 
 #: src/cgame/cg_draw.c:2223
 msgid "Cannot vote as Spectator"
@@ -110,17 +110,17 @@ msgstr "A:%i, N:%i"
 #: src/cgame/cg_draw.c:2460
 #, c-format
 msgid "Press %s to open Limbo Menu"
-msgstr ""
+msgstr "Stiskni %s pro otevreni Limbo nabidky"
 
 #: src/cgame/cg_draw.c:2464
 #, c-format
 msgid "Press %s to follow next player"
-msgstr ""
+msgstr "Stiskni %s pro nasledovani dalsiho hrace"
 
 #: src/cgame/cg_draw.c:2469
 #, c-format
 msgid "Press %s to %s multiview mode"
-msgstr ""
+msgstr "Stiskni %s pro % multiview zobrazeni"
 
 #: src/cgame/cg_draw.c:2530
 msgid "You are wounded and waiting for a medic."
@@ -128,7 +128,7 @@ msgstr "Jsi ranen a cekas na zdravotnika."
 
 #: src/cgame/cg_draw.c:2540
 msgid "Press JUMP to go into reinforcement queue."
-msgstr ""
+msgstr "Stiskni SKOK pro navraceni do fronty posil."
 
 #: src/cgame/cg_draw.c:2550
 msgid "No more reinforcements this round."
@@ -142,16 +142,16 @@ msgstr "Posily prijdou za %d vterin"
 #: src/cgame/cg_draw.c:2593
 #, c-format
 msgid "Bonus Life! Deploying in %d seconds"
-msgstr ""
+msgstr "Zivot navic! Rozmisteni za %d vterin"
 
 #: src/cgame/cg_draw.c:2597
 msgid "No more deployments this round"
-msgstr ""
+msgstr "Zadne dalsi rozmisteni toto kolo"
 
 #: src/cgame/cg_draw.c:2602
 #, c-format
 msgid "Deploying in %d seconds"
-msgstr ""
+msgstr "Rozmisteni za %d vterin"
 
 #: src/cgame/cg_draw.c:2611
 #: src/cgame/cg_draw.c:2621
@@ -161,11 +161,11 @@ msgstr "Sledujes"
 #: src/cgame/cg_draw.c:2651
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
-msgstr ""
+msgstr "^3ZAHRIVANI:^7 Ceka se na ^2%i^7 %s"
 
 #: src/cgame/cg_draw.c:2663
 msgid "Type ^3\\ready^* in the console to start"
-msgstr ""
+msgstr "Napiste ^3\\ready^* do konzole pro zacatek"
 
 #: src/cgame/cg_draw.c:2684
 msgid "(WARMUP) Match begins in:"
@@ -183,7 +183,7 @@ msgstr "ZAHRIVANI"
 
 #: src/cgame/cg_event.c:189
 msgid "You swapped places with"
-msgstr ""
+msgstr "Vymenil jsis misto s"
 
 #: src/cgame/cg_event.c:193
 msgid "You killed ^1TEAMMATE^7"
@@ -206,19 +206,19 @@ msgstr "neni na tomto serveru"
 #: src/cgame/cg_scoreboard.c:175
 #: src/cgame/cg_scoreboard.c:180
 msgid "MISSION TIME:"
-msgstr ""
+msgstr "CAS MISE:"
 
 #: src/cgame/cg_scoreboard.c:171
 msgid "GAME STOPPED"
-msgstr ""
+msgstr "HRA ZASTAVENA"
 
 #: src/cgame/cg_scoreboard.c:175
 msgid "SUDDEN DEATH"
-msgstr ""
+msgstr "NAHLA SMRT"
 
 #: src/cgame/cg_scoreboard.c:205
 msgid "REINFORCE TIME:"
-msgstr ""
+msgstr "CAS POSIL:"
 
 #: src/cgame/cg_scoreboard.c:222
 msgid "ROUND"
@@ -226,17 +226,17 @@ msgstr "KOLO"
 
 #: src/cgame/cg_scoreboard.c:222
 msgid "SCORE"
-msgstr ""
+msgstr "SKORE"
 
 #: src/cgame/cg_scoreboard.c:373
 #: src/cgame/cg_scoreboard.c:536
 msgid "^3CONNECTING"
-msgstr ""
+msgstr "^3PRIPOJUJE"
 
 #: src/cgame/cg_scoreboard.c:377
 #: src/cgame/cg_scoreboard.c:540
 msgid "^3SPECTATOR"
-msgstr ""
+msgstr "^3POZORUJE"
 
 #: src/cgame/cg_scoreboard.c:666
 #: src/cgame/cg_scoreboard.c:683
@@ -253,7 +253,7 @@ msgstr "HRACU"
 #: src/cgame/cg_scoreboard.c:667
 #: src/cgame/cg_scoreboard.c:674
 msgid "FIRST BLOOD"
-msgstr ""
+msgstr "PRVNI KREV"
 
 #: src/cgame/cg_scoreboard.c:673
 #: src/cgame/cg_scoreboard.c:687
@@ -282,7 +282,7 @@ msgstr "Odezva"
 
 #: src/cgame/cg_servercmds.c:405
 msgid "Auto Pick"
-msgstr ""
+msgstr "Vzdy sbirat"
 
 #: src/cgame/cg_servercmds.c:2304
 msgid "Map"
@@ -290,21 +290,20 @@ msgstr "Mapa"
 
 #: src/cgame/cg_servercmds.c:2326
 msgid "Could not create logfile"
-msgstr ""
+msgstr "Nebylo mozne vytvorit soubor s logem"
 
 #: src/cgame/cg_servercmds.c:2866
 msgid "^3Server Restarting"
-msgstr ""
+msgstr "^3Server se restartuje"
 
 msgid "^1ET:Legacy"
-msgstr ""
+msgstr "^1ET:Legacy"
 
 msgid "PLAY ONLINE"
 msgstr "HRAT ONLINE"
 
-#, fuzzy
 msgid "HOST GAME"
-msgstr "OPUSTIT HRU"
+msgstr "HOSTOVAT HRU"
 
 msgid "REPLAYS"
 msgstr "ZAZNAMY"
@@ -322,7 +321,7 @@ msgid "CREDITS"
 msgstr "TITULKY"
 
 msgid "ETLEGACY.COM"
-msgstr ""
+msgstr "ETLEGACY.COM"
 
 msgid "EXIT GAME"
 msgstr "OPUSTIT HRU"
@@ -352,7 +351,7 @@ msgid "Please choose your initial settings below. You can change these at any ti
 msgstr "Prosim vyberte svoje pocatecni nastaveni. Pozdeji je mozne vsechna nastaveni zmenit a provest dalsi upravy v menu Nastaveni. Navic je mozne vytvorit ruzna nastaveni pro jine hrace pri vytvoreni noveho profilu v menu Profily."
 
 msgid "Player Alias:"
-msgstr ""
+msgstr "Prezdivka:"
 
 msgid "Video Quality:"
 msgstr "Kvalita obrazu:"
@@ -363,18 +362,17 @@ msgstr "Rozliseni:"
 msgid "Brightness:"
 msgstr "Jas:"
 
-#, fuzzy
 msgid "Connection:"
-msgstr "Spojeni preruseno"
+msgstr "Spojeni:"
 
 msgid "Mouse Sensitivity:"
-msgstr ""
+msgstr "Citlivost mysi:"
 
 msgid "Invert Mouse:"
-msgstr ""
+msgstr "Obratit mys:"
 
 msgid "Handedness:"
-msgstr ""
+msgstr "Ruka:"
 
 msgid "DEFAULT SETTINGS"
 msgstr "PUVODNI NASTAVENI"
@@ -389,7 +387,7 @@ msgid "RENAME PROFILE"
 msgstr "PREJMENOVAT PROFIL"
 
 msgid "New Profile Name:"
-msgstr ""
+msgstr "Novy nazev profilu:"
 
 msgid "DELETE PROFILE"
 msgstr "SMAZAT PROFIL"
@@ -407,61 +405,61 @@ msgid "DELETE WARNING"
 msgstr "SMAZAT VAROVANI"
 
 msgid "Can't delete"
-msgstr ""
+msgstr "Neni mozne smazat"
 
 msgid "active profile."
-msgstr ""
+msgstr "aktivni profil."
 
 msgid "CREATION ERROR"
-msgstr ""
+msgstr "CHYBA VYTVARENI"
 
 msgid "MESSAGE OF THE DAY"
-msgstr ""
+msgstr "ZPRAVA DNE"
 
 msgid "FILTERS"
-msgstr ""
+msgstr "FILTRY"
 
 msgid "Source:"
-msgstr ""
+msgstr "Zdroj:"
 
 msgid "Game Type:"
 msgstr "Typ hry:"
 
 msgid "PREVIEW"
-msgstr ""
+msgstr "NAHLED"
 
 msgid "SERVER BROWSER"
-msgstr ""
+msgstr "PROHLIZEC SERVERU"
 
 msgid "SERVER NAME"
-msgstr ""
+msgstr "NAZEV SERVERU"
 
 msgid "MAP NAME"
-msgstr ""
+msgstr "MAPA"
 
 msgid "#PLRS"
 msgstr "#HRCI"
 
 msgid "TYPE"
-msgstr ""
+msgstr "TYP"
 
 msgid "PING"
-msgstr ""
+msgstr "PING"
 
 msgid "FAV"
 msgstr "OBL"
 
 msgid "REFRESH LIST"
-msgstr ""
+msgstr "OBNOVIT SEZNAM"
 
 msgid "CONNECT TO IP"
-msgstr ""
+msgstr "PRIPOJIT SE K IP"
 
 msgid "SERVER INFO"
-msgstr ""
+msgstr "INFO O SERVERU"
 
 msgid "JOIN SERVER"
-msgstr ""
+msgstr "JIT NA SERVER"
 
 msgid "Server IP:"
 msgstr "IP serveru:"
@@ -470,7 +468,7 @@ msgid "CONNECT"
 msgstr "PRIPOJIT"
 
 msgid "REFRESH"
-msgstr ""
+msgstr "OBNOVIT"
 
 msgid "SETTINGS"
 msgstr "NASTAVENI"
@@ -482,64 +480,64 @@ msgid "Maximum Players:"
 msgstr "Maximum hracu:"
 
 msgid "Auto-Configure Server:"
-msgstr ""
+msgstr "Samo-nastavit server:"
 
 msgid "Dedicated Server:"
-msgstr ""
+msgstr "Dedikovany server:"
 
 msgid "Password:"
 msgstr "Heslo:"
 
 msgid "FEATURES"
-msgstr ""
+msgstr "VLASTNOSTI"
 
 msgid "Friendly Fire"
-msgstr ""
+msgstr "Palba do vlastnich"
 
 msgid "Anti-Lag"
-msgstr ""
+msgstr "Proti-Lag"
 
 msgid "Max Lives"
-msgstr ""
+msgstr "Max zivotu"
 
 msgid "Weapon Restrictions"
-msgstr ""
+msgstr "Omezeni zbrani:"
 
 msgid "Balanced Teams"
-msgstr ""
+msgstr "Vyrovnane tymy"
 
 msgid "NAME"
-msgstr ""
+msgstr "NAZEV"
 
 msgid "DETAILS"
-msgstr ""
+msgstr "PODROBNOSTI"
 
 msgid "ADVANCED"
-msgstr ""
+msgstr "POKROCILE"
 
 msgid "START SERVER"
-msgstr ""
+msgstr "SPUSTIT SERVER"
 
 msgid "HOST GAME: ADVANCED"
-msgstr ""
+msgstr "HOSTOVAT HRU: POKROCILE"
 
 msgid "GENERAL"
 msgstr "OBECNE"
 
 msgid "Minimum Ping:"
-msgstr ""
+msgstr "Minimalni ping:"
 
 msgid "Maximum Ping:"
-msgstr ""
+msgstr "Maximalni ping:"
 
 msgid "Maximum Game Rate:"
 msgstr ""
 
 msgid "Player Inactivity:"
-msgstr ""
+msgstr "Neaktivita hrace:"
 
 msgid "Spectator Inactivity:"
-msgstr ""
+msgstr "Neaktivita pozorovatelu:"
 
 msgid "Intermission Time:"
 msgstr ""
@@ -548,35 +546,34 @@ msgid "Intermission Ready %:"
 msgstr ""
 
 msgid "MATCH"
-msgstr ""
+msgstr "ZAPAS"
 
 msgid "Wait for Ready:"
-msgstr ""
+msgstr "Cekat na pripravene:"
 
 msgid "Minimum Players:"
-msgstr ""
+msgstr "Minimum hracu:"
 
 msgid "Ready percentage:"
 msgstr ""
 
 msgid "Allow Late Joins:"
-msgstr ""
+msgstr "Povolit pripojeni opozdilcum:"
 
-#, fuzzy
 msgid "Mute Spectators:"
-msgstr "Neni mozne volit jako pozorovatel"
+msgstr "Nemi pozorovatele:"
 
 msgid "Warmup Damage:"
 msgstr ""
 
 msgid "Max Players Per Team:"
-msgstr ""
+msgstr "Max hracu na tym:"
 
 msgid "Disable Team Controls:"
 msgstr ""
 
 msgid "Warmup Duration:"
-msgstr ""
+msgstr "Trvani zahrivaciho kola:"
 
 msgid "Maximum Complaints:"
 msgstr ""
@@ -585,7 +582,7 @@ msgid "Maximum Complainees:"
 msgstr ""
 
 msgid "Map Time Limit:"
-msgstr ""
+msgstr "Casovy limit mapy:"
 
 msgid "Allied Spawn Time:"
 msgstr ""
@@ -618,37 +615,37 @@ msgid "LMS Locked Teams:"
 msgstr ""
 
 msgid "ADMIN"
-msgstr ""
+msgstr "SPRAVCE"
 
 msgid "Pure Server:"
-msgstr ""
+msgstr "Cisty server:"
 
 msgid "Referee Password:"
-msgstr ""
+msgstr "Heslo rozhodci:"
 
 msgid "RCON Password:"
-msgstr ""
+msgstr "Heslo RCON:"
 
 msgid "VOTING"
-msgstr ""
+msgstr "HLASOVANI"
 
 msgid "Max Votes per Player:"
-msgstr ""
+msgstr "Nejvic hlasu na hrace:"
 
 msgid "Successful voting:"
 msgstr ""
 
 msgid "ALLOW VOTES"
-msgstr ""
+msgstr "POVOLIT HLASOVANI"
 
 msgid "Comp Settings:"
 msgstr ""
 
 msgid "Player Kick:"
-msgstr ""
+msgstr "Vykopnuti hrace:"
 
 msgid "Map:"
-msgstr ""
+msgstr "Mapa:"
 
 msgid "Match Reset:"
 msgstr ""
@@ -657,31 +654,31 @@ msgid "Mute Spects:"
 msgstr ""
 
 msgid "Next Map:"
-msgstr ""
+msgstr "Dalsi mapa:"
 
 msgid "Balanced Teams:"
-msgstr ""
+msgstr "Vyrovnane tymy:"
 
 msgid "Pub Settings:"
 msgstr ""
 
 msgid "Referee:"
-msgstr ""
+msgstr "Rozhodci:"
 
 msgid "XP Shuffle:"
-msgstr ""
+msgstr "Promichani XP:"
 
 msgid "Swap Teams:"
-msgstr ""
+msgstr "Prohozeni tymu:"
 
 msgid "Friendly Fire:"
-msgstr ""
+msgstr "Palba do vlastnich:"
 
 msgid "Timelimit:"
-msgstr ""
+msgstr "Casovy limit:"
 
 msgid "Anti-Lag:"
-msgstr ""
+msgstr "Proti-lag:"
 
 msgid "Line 1:"
 msgstr "Radek 1:"
@@ -699,7 +696,7 @@ msgid "Line 5:"
 msgstr "Radek 5:"
 
 msgid "DOWNLOAD"
-msgstr ""
+msgstr "STAHOVANI"
 
 msgid "Client Downloads:"
 msgstr ""
@@ -708,88 +705,88 @@ msgid "Maximum Download Rate:"
 msgstr ""
 
 msgid "FTP/HTTP Redirects:"
-msgstr ""
+msgstr "Presmerovani FTP/HTTP:"
 
 msgid "Base URL:"
 msgstr ""
 
 msgid "EXTENDED"
-msgstr ""
+msgstr "ROZSIRENE"
 
 msgid "DEFAULT"
-msgstr ""
+msgstr "PUVODNI"
 
 msgid "MISC"
-msgstr ""
+msgstr "RUZNE"
 
 msgid "Country Flags:"
 msgstr "Vlajky zemi:"
 
 msgid "DEFAULT SERVER SETTINGS"
-msgstr ""
+msgstr "STANDARDNI NASTAVENI SERVERU"
 
 msgid "Reset server settings to default?"
 msgstr ""
 
 msgid "START DEDICATED SERVER"
-msgstr ""
+msgstr "SPUSTIT DEDIKOVANY SERVER"
 
 msgid "Starting a Dedicated Server will"
-msgstr ""
+msgstr "Spusteni dedikovaneho serveru"
 
 msgid "close the game window and open the"
-msgstr ""
+msgstr "zavre okno se hrou a otevre"
 
 msgid "server console. It will not be possible"
-msgstr ""
+msgstr "serverovou konzoli. Nebude mozne"
 
 msgid "to play the game on the host machine."
-msgstr ""
+msgstr "hrat hru na tomto pocitaci."
 
 msgid "Are you sure you want to start"
-msgstr ""
+msgstr "Jsi si jisty, ze chces spustit"
 
 msgid "a Dedicated Server?"
-msgstr ""
+msgstr "dedikovany server?"
 
 msgid "LOAD MOD"
 msgstr "NAHRAT MOD"
 
 msgid "VIEW"
-msgstr ""
+msgstr "ZOBRAZENI"
 
 msgid "DELETE REPLAY"
-msgstr ""
+msgstr "SMAZAT ZAZNAM"
 
 msgid "GAME"
-msgstr ""
+msgstr "HRA"
 
 msgid "CONTROLS"
-msgstr ""
+msgstr "OVLADANI"
 
 msgid "SYSTEM"
-msgstr ""
+msgstr "SYSTEM"
 
 msgid "GRAPHICS"
-msgstr ""
+msgstr "GRAFIKA"
 
 msgid "PLAYER"
-msgstr ""
+msgstr "HRAC"
 
 msgid "PHYSICS"
-msgstr ""
+msgstr "FYZIKA"
 
 msgid "Always Run:"
-msgstr ""
+msgstr "Vzdy bezet:"
 
 msgid "Double-Tap Prone:"
 msgstr ""
 
 msgid "WEAPONS"
-msgstr ""
+msgstr "ZBRANE"
 
 msgid "Automatic Reload:"
-msgstr ""
+msgstr "Atomaticke prebiti:"
 
 msgid "Autoswitch:"
 msgstr ""
@@ -801,7 +798,7 @@ msgid "Muzzle Flash:"
 msgstr ""
 
 msgid "Bullet Tracers:"
-msgstr ""
+msgstr "Stopy strel:"
 
 msgid "SCOPE"
 msgstr ""
@@ -813,10 +810,10 @@ msgid "Default Zoom Level:"
 msgstr ""
 
 msgid "Zoom Levels:"
-msgstr ""
+msgstr "Urovne priblizeni:"
 
 msgid "CHAT"
-msgstr ""
+msgstr "ROZHOVOR"
 
 msgid "Quick Chat Mode:"
 msgstr ""
@@ -834,19 +831,19 @@ msgid "No voice text:"
 msgstr ""
 
 msgid "MISCELLANEOUS"
-msgstr ""
+msgstr "RUZNE"
 
 msgid "Complaint PopUp:"
 msgstr ""
 
 msgid "Log Important Messages:"
-msgstr ""
+msgstr "Logovat dulezite vzkazy:"
 
 msgid "Auto-Action:"
 msgstr ""
 
 msgid "Use JPEG for AutoScreenshots:"
-msgstr ""
+msgstr "Pouzit JPEG pro automaticke snimky obrazovky:"
 
 msgid "Show Tool Tips :"
 msgstr ""
@@ -855,103 +852,103 @@ msgid "Announcer:"
 msgstr ""
 
 msgid "HUD DISPLAY"
-msgstr ""
+msgstr "HUD ZOBRAZENI"
 
 msgid "Draw Gun:"
-msgstr ""
+msgstr "Zobrazit zbran:"
 
 msgid "Show Compass:"
-msgstr ""
+msgstr "Zobrazit kompas:"
 
 msgid "Mission Timer:"
-msgstr ""
+msgstr "Stopky mise:"
 
 msgid "Reinforcement Timer:"
-msgstr ""
+msgstr "Stopky posil:"
 
 msgid "Cursor Hints:"
 msgstr ""
 
 msgid "Show Lagometer:"
-msgstr ""
+msgstr "Zobrazit lagometer:"
 
 msgid "Show FPS:"
-msgstr ""
+msgstr "Zobrazit FPS:"
 
 msgid "Show Locations:"
-msgstr ""
+msgstr "Zobrazit lokace:"
 
 msgid "Enable Flags:"
-msgstr ""
+msgstr "Povolit vlajky:"
 
 msgid "Fireteam Latched Class:"
 msgstr ""
 
 msgid "Switch HUD:"
-msgstr ""
+msgstr "Zmenit HUD:"
 
 msgid "Modify Alternate HUD:"
-msgstr ""
+msgstr "Upravit alternativni HUD:"
 
 msgid "IN-GAME DISPLAY"
-msgstr ""
+msgstr "ZOBRAZENI VE HRE"
 
 msgid "Ejecting Brass:"
 msgstr ""
 
 msgid "Field Of View:"
-msgstr ""
+msgstr "Zorne pole:"
 
 msgid "Corona Distance:"
 msgstr ""
 
 msgid "Particles:"
-msgstr ""
+msgstr "Castice:"
 
 msgid "Wall Mark Lifetime:"
 msgstr ""
 
 msgid "Blood Flash:"
-msgstr ""
+msgstr "Zablesk krve:"
 
 msgid "Blood Splatter:"
-msgstr ""
+msgstr "Splouchance krve:"
 
 msgid "Show Blood:"
-msgstr ""
+msgstr "Zobrazit krev:"
 
 msgid "Atmospheric Effects:"
-msgstr ""
+msgstr "Atmosfericke efekty:"
 
 msgid "CROSSHAIR"
-msgstr ""
+msgstr "ZAMEROVAC"
 
 msgid "Crosshair Size:"
-msgstr ""
+msgstr "Velikost zamerovace:"
 
 msgid "Crosshair Pulsing:"
-msgstr ""
+msgstr "Pulzovani zamerovace:"
 
 msgid "Crosshair Health Info:"
-msgstr ""
+msgstr "Ukazatel zdravi na zamerovaci:"
 
 msgid "Crosshair Name Drawing:"
-msgstr ""
+msgstr "Zobrazovat jmena na zamerovaci:"
 
 msgid "Primary Color:"
-msgstr ""
+msgstr "Primarni barva:"
 
 msgid "Primary Alpha:"
-msgstr ""
+msgstr "Primarni alfa:"
 
 msgid "Secondary Color:"
-msgstr ""
+msgstr "Sekundarni barva:"
 
 msgid "Secondary Alpha:"
-msgstr ""
+msgstr "Sekundarni alfa:"
 
 msgid "MOVEMENT"
-msgstr ""
+msgstr "POHYB"
 
 msgid "Bob up:"
 msgstr ""
@@ -969,43 +966,43 @@ msgid "MOVE"
 msgstr ""
 
 msgid "Forward:"
-msgstr ""
+msgstr "Dopredu:"
 
 msgid "Back:"
-msgstr ""
+msgstr "Zpet:"
 
 msgid "Move Left:"
-msgstr ""
+msgstr "Pohyb doleva:"
 
 msgid "Move Right:"
-msgstr ""
+msgstr "Pohyb doprava:"
 
 msgid "Lean Left:"
-msgstr ""
+msgstr "Naklon vlevo:"
 
 msgid "Lean Right:"
-msgstr ""
+msgstr "Naklon vpravo:"
 
 msgid "Jump:"
-msgstr ""
+msgstr "Skok:"
 
 msgid "Crouch:"
-msgstr ""
+msgstr "Prikrceni:"
 
 msgid "Prone:"
-msgstr ""
+msgstr "Lehnuti:"
 
 msgid "Walk:"
-msgstr ""
+msgstr "Chuze:"
 
 msgid "Sprint:"
-msgstr ""
+msgstr "Beh:"
 
 msgid "Use (Activate):"
-msgstr ""
+msgstr "Pouzit (aktivovat):"
 
 msgid "INPUT"
-msgstr ""
+msgstr "VSTUP"
 
 msgid "Smooth Mouse:"
 msgstr ""
@@ -1029,25 +1026,25 @@ msgid "Fire-Team Quick Chat:"
 msgstr ""
 
 msgid "POP-UPS"
-msgstr ""
+msgstr "VYSKAKOVACI UPOZORNENI"
 
 msgid "Show Scores:"
 msgstr ""
 
 msgid "Show Limbo Menu:"
-msgstr ""
+msgstr "Otevrit limbo menu:"
 
 msgid "Show Command Map:"
 msgstr ""
 
 msgid "Compass Map Zoom In:"
-msgstr ""
+msgstr "Priblizeni kompasu:"
 
 msgid "Compass Map Zoom Out:"
-msgstr ""
+msgstr "Oddaleni kompasu:"
 
 msgid "Player Stats:"
-msgstr ""
+msgstr "Statistiky hrace:"
 
 msgid "Top Shots:"
 msgstr ""
@@ -1056,25 +1053,25 @@ msgid "USE WEAPONS"
 msgstr ""
 
 msgid "Attack:"
-msgstr ""
+msgstr "Utok:"
 
 msgid "Switch to Alternate:"
 msgstr ""
 
 msgid "Reload Weapon:"
-msgstr ""
+msgstr "Nabit zbran:"
 
 msgid "Binocular Zoom:"
-msgstr ""
+msgstr "Priblizeni dalekohledu:"
 
 msgid "SELECT WEAPONS"
-msgstr ""
+msgstr "VYBER ZBRANI"
 
 msgid "Next Weapon:"
-msgstr ""
+msgstr "Dalsi zbran:"
 
 msgid "Previous Weapon:"
-msgstr ""
+msgstr "Predchozi zbran:"
 
 msgid "Slot 1 - Melee:"
 msgstr ""
@@ -1098,40 +1095,40 @@ msgid "Slot 7 - Special 3:"
 msgstr ""
 
 msgid "Vote Yes:"
-msgstr ""
+msgstr "Hlasovat ano:"
 
 msgid "Vote No:"
-msgstr ""
+msgstr "Hlasovat ne:"
 
 msgid "Take Screenshot:"
-msgstr ""
+msgstr "Snímek obrazovky:"
 
 msgid "Record Replay:"
 msgstr ""
 
 msgid "FIRE-TEAMS"
-msgstr ""
+msgstr "CETY"
 
 msgid "Select All Members:"
-msgstr ""
+msgstr "Vybrat vsechny cleny:"
 
 msgid "Select Member #1:"
-msgstr ""
+msgstr "Vybrat clena #1:"
 
 msgid "Select Member #2:"
-msgstr ""
+msgstr "Vybrat clena #2:"
 
 msgid "Select Member #3:"
-msgstr ""
+msgstr "Vybrat clena #3:"
 
 msgid "Select Member #4:"
-msgstr ""
+msgstr "Vybrat clena #4:"
 
 msgid "Select Member #5:"
-msgstr ""
+msgstr "Vybrat clena #5:"
 
 msgid "Select Member #6:"
-msgstr ""
+msgstr "Vybrat clena #6:"
 
 msgid "Deselect All:"
 msgstr ""
@@ -1140,73 +1137,73 @@ msgid "Fire-Team Admin:"
 msgstr ""
 
 msgid "DEFAULT CONTROLS"
-msgstr ""
+msgstr "PUVODNI NASTAVENI"
 
 msgid "Reset controls to default?"
-msgstr ""
+msgstr "Vratit se k puvodnimu nastaveni?"
 
 msgid "AUDIO"
-msgstr ""
+msgstr "ZVUK"
 
 msgid "Effects Volume:"
-msgstr ""
+msgstr "Hlasitost efektu:"
 
 msgid "Music Volume:"
-msgstr ""
+msgstr "Hlasitost hudby:"
 
 msgid "Sound Quality:"
-msgstr ""
+msgstr "Kvalita zvuku:"
 
 msgid "Doppler FX:"
 msgstr ""
 
 msgid "Mute When Minimized:"
-msgstr ""
+msgstr "Ztlumit pri minimalizaci:"
 
 msgid "Mute When Unfocused:"
-msgstr ""
+msgstr "Ztlumit pri prepnuti na jine okno:"
 
 msgid "Hitsounds:"
-msgstr ""
+msgstr "Zvuky zasahu:"
 
 msgid "NETWORKING"
-msgstr ""
+msgstr "SIT"
 
 msgid "Max Packets:"
-msgstr ""
+msgstr "Nejvic paketu:"
 
 msgid "Packet Duplication:"
-msgstr ""
+msgstr "Duplikace paketu:"
 
 msgid "DOWNLOADS"
-msgstr ""
+msgstr "STAHOVANI"
 
 msgid "Check for Updates on Start-Up:"
-msgstr ""
+msgstr "Zjistit aktualizace pri startu:"
 
 msgid "Get Missing Files from Server:"
-msgstr ""
+msgstr "Stahnout chybejici soubory ze serveru:"
 
 msgid "Use HTTP/FTP Downloads:"
-msgstr ""
+msgstr "Pouzivat HTTP/FTP stahovani:"
 
 msgid "APPLY"
-msgstr ""
+msgstr "POUZIT"
 
 msgid "CALIBRATE BRIGHTNESS"
-msgstr ""
+msgstr "KALIBRACE JASU"
 
 msgid "General Brightness Calibration (All Color Depths)"
-msgstr ""
+msgstr "Obecna kalibrace jasu (vsechny hloubky barev)"
 
 msgid "1. Move the slider below and/or the brightness on your monitor until you can see 16"
-msgstr ""
+msgstr "1. Presun posuvnik dole anebo nastaveni jasu na tvem monitoru dokud neuvidis 16"
 
 msgid "     separate bars below of equal differing brightness."
-msgstr ""
+msgstr "     oddelenych mrizi pod stejnymi rozdily v jasu"
 
 msgid "2. Click the BACK button."
-msgstr ""
+msgstr "2. Klikni na tlacitko ZPET."
 
 msgid "Brightness Fine-Tuning (32 bit Textures and Color Depth)"
 msgstr ""
@@ -1221,19 +1218,19 @@ msgid "3. Click the BACK button."
 msgstr ""
 
 msgid "SIMPLE"
-msgstr ""
+msgstr "JEDNODUCHE"
 
 msgid "Overall Quality:"
-msgstr ""
+msgstr "Celkova kvalita:"
 
 msgid "Fullscreen:"
-msgstr ""
+msgstr "Cela obrazovka:"
 
 msgid "Borderless:"
-msgstr ""
+msgstr "Bez okraju:"
 
 msgid "Intensity:"
-msgstr ""
+msgstr "Intensita:"
 
 msgid "Map overbright bits:"
 msgstr ""
@@ -1242,540 +1239,539 @@ msgid "Overbright Bits:"
 msgstr ""
 
 msgid "Low Quality Sky:"
-msgstr ""
+msgstr "Nizka kvalita nebe:"
 
 msgid "Shadow Detail:"
-msgstr ""
+msgstr "Detaily stinu:"
 
 msgid "Texture Detail:"
-msgstr ""
+msgstr "Detaily textur:"
 
 msgid "Dynamic Lights:"
-msgstr ""
+msgstr "Dynamicke osvetleni:"
 
 msgid "Geometric Detail:"
-msgstr ""
+msgstr "Detaily geometrie:"
 
 msgid "Texture Quality:"
-msgstr ""
+msgstr "Kvalita textur:"
 
 msgid "Texture Filter:"
-msgstr ""
+msgstr "Filtr textur:"
 
 msgid "Anisotropic Filter:"
-msgstr ""
+msgstr "Anisotropicky filtr:"
 
 msgid "Color Depth:"
-msgstr ""
+msgstr "Hloubka barev:"
 
 msgid "Detail Textures:"
-msgstr ""
+msgstr "Detailni textury:"
 
 msgid "Depth Buffer:"
 msgstr ""
 
 msgid "Compress Textures:"
-msgstr ""
+msgstr "Komprese textur:"
 
 msgid "Sync Every Frame:"
-msgstr ""
+msgstr "Synchronizovat kazdou obrazovku:"
 
 msgid "GL Extensions:"
-msgstr ""
+msgstr "Rozsireni OpenGL:"
 
 msgid "SET RECOMMENDED"
-msgstr ""
+msgstr "POUZIT DOPORUCENE"
 
 msgid "^3DEVELOPED BY ET LEGACY TEAM"
-msgstr ""
+msgstr "^3VYTVORENO TYMEM ET: LEGACY"
 
 msgid "^1PROGRAMMING"
-msgstr ""
+msgstr "^1PROGRAMOVANI"
 
 msgid "Jan 'Radegast' Simek - Project founder, coding & management"
-msgstr ""
+msgstr "Jan 'Radegast' Simek - zakladatel projektu, programovani a sprava"
 
 msgid "IR4T4 - Coding, mod development & bad boy"
-msgstr ""
+msgstr "IR4T4 - programovani, tvorba modu & ulicnik"
 
 msgid "Konrad 'morsik' Moson - Website, coding & scripts"
-msgstr ""
+msgstr "Konrad 'morsik' Moson - webhosting, programovani & skripty"
 
 msgid "Jere 'Jacker' S - main windows coder, render"
-msgstr ""
+msgstr "Jere 'Jacker' S - hlavni Windows programator, novy renderer"
 
 msgid "^1CONTRIBUTORS"
-msgstr ""
+msgstr "^1PRISPEVOVATELE"
 
 msgid "Acqu - Bug reports & patches"
-msgstr ""
+msgstr "Acqu - hlaseni chyb a patche"
 
 msgid "Antman - Map location override databases "
-msgstr ""
+msgstr "Antman - dalsi jmena lokaci na mape"
 
 msgid "Dragon aka Dragonji - Bug reports & Windows tester"
-msgstr ""
+msgstr "Dragon aka Dragonji - hlaseni chyb a tester na Windows"
 
 msgid "Lakersforce - Translations, bug reports"
-msgstr ""
+msgstr "Lakersforce - preklady, hlaseni chyb"
 
 msgid "Mathieu Olivier - Bug fixes and code clean up"
-msgstr ""
+msgstr "Mathieu Olivier - opravy chyb a procisteni kodu"
 
 msgid "Merlin - Bug reports"
-msgstr ""
+msgstr "Merlin - hlaseni chyb"
 
 msgid "RaFaL aka ***Rafal*** - Menu scripts and Windows tester"
-msgstr ""
+msgstr "RaFaL aka ***Rafal*** - uprava menu skriptu a tester na Windows"
 
 msgid "Dusan 'TheDushan' Jocic - Advices, patches"
-msgstr ""
+msgstr "Dusan 'TheDushan' Jocic - rady a patche"
 
 msgid "Ensiform - Advices, comments"
-msgstr ""
+msgstr "Ensiform - rady, patche"
 
 msgid "^1GREETINGS"
-msgstr ""
+msgstr "^1PODEKOVANI"
 
 msgid "ETPub Team"
-msgstr ""
+msgstr "Tym ETPub"
 
 msgid "NQ Team - core hug goes to C.."
-msgstr ""
+msgstr "NQ Tym - zvlaste C.."
 
 msgid "Omni-Bot Team - especially crapshot, Dr. Evil & Palota"
-msgstr ""
+msgstr "Tym Omni-bot - zvlaste crapshoot, Dr. Evil a Palota"
 
 msgid "Splash Damage ET Community"
-msgstr ""
+msgstr "ET komunita Splash Damage"
 
 msgid "Zynx"
-msgstr ""
+msgstr "Zynx"
 
 msgid "SPLASH DAMAGE"
-msgstr ""
+msgstr "SPLASH DAMAGE"
 
 msgid "ID SOFTWARE"
-msgstr ""
+msgstr "ID SOFTWARE"
 
 msgid "ACTIVISION"
-msgstr ""
+msgstr "ACTIVISION"
 
 msgid "ADDITIONAL"
-msgstr ""
+msgstr "DALSI"
 
 msgid "ET 2.60"
-msgstr ""
+msgstr "ET 2.60"
 
 msgid "DEVELOPED BY SPLASH DAMAGE"
-msgstr ""
+msgstr "VYTVORILO SPLASH DAMAGE"
 
 msgid "Paul 'Locki' Wedgwood"
-msgstr ""
+msgstr "Paul 'Locki' Wedgwood"
 
 msgid "Game Designer / Managing Director"
 msgstr ""
 
 msgid "Francisca 'Freya' Wedgwood"
-msgstr ""
+msgstr "Francisca 'Freya' Wedgwood"
 
 msgid "Business Director"
-msgstr ""
+msgstr "Obchodni reditel"
 
 msgid "ART"
-msgstr ""
+msgstr "ART"
 
 msgid "Richard 'Fluffy_gIMp' Jolly"
-msgstr ""
+msgstr "Richard 'Fluffy_gIMp' Jolly"
 
 msgid "Lead Artist / Creative Director"
-msgstr ""
+msgstr "Hlavni vytvarnik / Kreativni reditel"
 
 msgid "Francis 'Frankie' Hobbins"
-msgstr ""
+msgstr "Francis 'Frankie' Hobbins"
 
 msgid "Artist / Animator"
-msgstr ""
+msgstr "Vytvarnik / Animator"
 
 msgid "Per 'Per128' Abrahamsen"
-msgstr ""
+msgstr "Per 'Per128' Abrahamsen"
 
 msgid "Additional Art"
-msgstr ""
+msgstr "Dalsi art"
 
 msgid "PROGRAMMING"
-msgstr ""
+msgstr "PROGRAMOVANI"
 
 msgid "Arnout 'RR2DO2' van Meer"
-msgstr ""
+msgstr "Arnout 'RR2DO2' van Meer"
 
 msgid "Lead Programmer"
-msgstr ""
+msgstr "Hlavni programator"
 
 msgid "Gordon 'digibob' Biggans"
-msgstr ""
+msgstr "Gordon 'digibob' Biggans"
 
 msgid "Programmer"
-msgstr ""
+msgstr "Programator"
 
 msgid "Randy 'ydnar' Reddig"
-msgstr ""
+msgstr "Randy 'ydnar' Reddig"
 
 msgid "Programmer / Artist"
-msgstr ""
+msgstr "Programator / Vytvarnik"
 
 msgid "DESIGN"
-msgstr ""
+msgstr "NAVRH"
 
 msgid "Tim 'Marauder' Kautz"
-msgstr ""
+msgstr "Tim 'Marauder' Kautz"
 
 msgid "Designer / Audio Engineer"
 msgstr ""
 
 msgid "Ed 'Bongoboy' Stern"
-msgstr ""
+msgstr "Ed 'Bongoboy' Stern"
 
 msgid "Designer / Writer"
 msgstr ""
 
 msgid "LEVEL DESIGN"
-msgstr ""
+msgstr "NAVRH UROVNI"
 
 msgid "Matt 'Wils' Wilson"
-msgstr ""
+msgstr "Matt 'Wils' Wilson"
 
 msgid "Lead Level Designer"
-msgstr ""
+msgstr "Hlavni navrhar urovni"
 
 msgid "Simon 'sock' O'Callaghan"
-msgstr ""
+msgstr "Simon 'sock' O'Callaghan"
 
 msgid "Senior Level Designer"
 msgstr ""
 
 msgid "Mark 'nakedape' Fry"
-msgstr ""
+msgstr "Mark 'nakedape' Fry"
 
 msgid "Level Designer"
-msgstr ""
+msgstr "Navrhar urovni"
 
 msgid "Thomas 'Q-Fraggel' Creutzenberg"
-msgstr ""
+msgstr "Thomas 'Q-Fraggel' Creutzenberg"
 
 msgid "Chris 'SHoD' Farcy"
-msgstr ""
+msgstr "Chris 'SHoD' Farcy"
 
 msgid "Level Designer / Artist"
-msgstr ""
+msgstr "Navrhar urovni / Vytvarnik"
 
 msgid "Lloyd 'LloydM' Morris"
-msgstr ""
+msgstr "Lloyd 'LloydM' Morris"
 
 msgid "Lee 'Llama' Mercer"
-msgstr ""
+msgstr "Lee 'Llama' Mercer"
 
 msgid "Additional Level Design"
 msgstr ""
 
 msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
-msgstr ""
+msgstr "VYKONNA PRODUKCE ID SOFTWARE"
 
 msgid "Kevin Cloud"
-msgstr ""
+msgstr "Kevin Cloud"
 
 msgid "Executive Producer"
-msgstr ""
+msgstr "Vykonny producent"
 
 msgid "Timothee Besset"
-msgstr ""
+msgstr "Timothee Besset"
 
 msgid "Additional Programming"
-msgstr ""
+msgstr "Dalsi programovani"
 
 msgid "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena (TM) technology."
-msgstr ""
+msgstr "Wolfenstein: Enemy Territory pohani Quake III Arena (TM) technologie od id Software"
 
 msgid "Production, development and technical assistance provided by id Software."
-msgstr ""
+msgstr "Produkci, vyvojovou a technickou asistenci poskytlo id Software."
 
 msgid "PRODUCED BY ACTIVISION"
-msgstr ""
+msgstr "PRODUKOVAL ACTIVISION"
 
 msgid "Jonathan Moses"
-msgstr ""
+msgstr "Jonathan Moses"
 
 msgid "Producer"
-msgstr ""
+msgstr "Producent"
 
 msgid "Doug Avery"
-msgstr ""
+msgstr "Doug Avery"
 
 msgid "Associate Producer"
 msgstr ""
 
 msgid "John Fritts"
-msgstr ""
+msgstr "John Fritts"
 
 msgid "Installer"
-msgstr ""
+msgstr "Instalator"
 
 msgid "Steve Holmes"
-msgstr ""
+msgstr "Steve Holmes"
 
 msgid "Production Coordinator"
 msgstr ""
 
 msgid "Matthew Beal"
-msgstr ""
+msgstr "Matthew Beal"
 
 msgid "Production Tester"
-msgstr ""
+msgstr "Produkcni testr"
 
 msgid "Laird M. Malamed"
-msgstr ""
+msgstr "Laird M. Malamed"
 
 msgid "Sr. Executive Producer"
 msgstr ""
 
 msgid "Mark Lamia"
-msgstr ""
+msgstr "Mark Lamia"
 
 msgid "VP North American Studios"
 msgstr ""
 
 msgid "Brad Saavedra"
-msgstr ""
+msgstr "Brad Saavedra"
 
 msgid "QA Project Lead"
-msgstr ""
+msgstr "QA Project Lead"
 
 msgid "Evan Button"
-msgstr ""
+msgstr "Evan Button"
 
 msgid "Matt McClure"
-msgstr ""
+msgstr "Matt McClure"
 
 msgid "QA Senior Project Lead"
 msgstr ""
 
 msgid "Nathaniel McClure"
-msgstr ""
+msgstr "Nathaniel McClure"
 
 msgid "QA Floor Lead"
 msgstr ""
 
 msgid "Testers:"
-msgstr ""
+msgstr "Testeri:"
 
 msgid "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel Kannard, Cory Rice"
-msgstr ""
+msgstr "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel Kannard, Cory Rice"
 
 msgid "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max Martin, Jim Call"
-msgstr ""
+msgstr "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max Martin, Jim Call"
 
 msgid "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, Lawrence Wong"
-msgstr ""
+msgstr "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, Lawrence Wong"
 
 msgid "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas Todd, Mike Restifo"
-msgstr ""
+msgstr "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas Todd, Mike Restifo"
 
 msgid "Chris Keim"
-msgstr ""
+msgstr "Chris Keim"
 
 msgid "Network"
-msgstr ""
+msgstr "Sit"
 
 msgid "Neil Barizo"
-msgstr ""
+msgstr "Neil Barizo"
 
 msgid "Compatibility"
-msgstr ""
+msgstr "Kompatibilita"
 
 msgid "Marilena Rixford"
-msgstr ""
+msgstr "Marilena Rixford"
 
 msgid "QA Manager"
-msgstr ""
+msgstr "QA Manager"
 
 msgid "Tim Vanlaw"
-msgstr ""
+msgstr "Tim Vanlaw"
 
 msgid "Manager, Code Release Group"
-msgstr ""
+msgstr "Manager, Code Release Group"
 
 msgid "Jason Levine"
-msgstr ""
+msgstr "Jason Levine"
 
 msgid "Sr. Lead, Code Release Group"
 msgstr ""
 
 msgid "Jef Sedivy"
-msgstr ""
+msgstr "Jef Sedivy"
 
 msgid "Lead, Code Release Group"
 msgstr ""
 
 msgid "Bob McPherson"
-msgstr ""
+msgstr "Bob McPherson"
 
 msgid "Manager, Customer Support"
 msgstr ""
 
 msgid "ADDITIONAL DEVELOPMENT"
-msgstr ""
+msgstr "DALSI VYVOJ"
 
 msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
-msgstr ""
+msgstr "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
 
 msgid "Jason 'Rhea' Keimig"
-msgstr ""
+msgstr "Jason 'Rhea' Keimig"
 
 msgid "Programming"
-msgstr ""
+msgstr "Programovani"
 
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
-msgstr ""
+msgstr "PUNKBUSTER BY EVEN BALANCE, INC."
 
 msgid "Tony Ray"
-msgstr ""
+msgstr "Tony Ray"
 
 msgid "President"
-msgstr ""
+msgstr "President"
 
 msgid "Bjrn Christoph"
-msgstr ""
+msgstr "Bjrn Christoph"
 
 msgid "Senior Project Leader"
-msgstr ""
+msgstr "Senior Project Leader"
 
 msgid "VOICE ARTISTS"
-msgstr ""
+msgstr "DABERI"
 
 msgid "Drew Markham"
-msgstr ""
+msgstr "Drew Markham"
 
 msgid "Voice of Allied / Axis soldiers"
-msgstr ""
+msgstr "Hlas spojencu a vojaku osy"
 
 msgid "Neil Ross"
-msgstr ""
+msgstr "Neil Ross"
 
 msgid "Voice of Axis Commander"
-msgstr ""
+msgstr "Hlas velitele osy"
 
 msgid "Granville van Dusen"
-msgstr ""
+msgstr "Granville van Dusen"
 
 msgid "Voice of Allied Commander"
-msgstr ""
+msgstr "Hlas spojeneckeho velitele"
 
-#, fuzzy
 msgid "SPECIAL THANKS TO"
-msgstr "POZOROVATEL"
+msgstr "ZVLASTNI PODEKOVANI"
 
 msgid "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve Software."
-msgstr ""
+msgstr "Return to Castle Wolfenstein byl vytvoren studii Gray Matter Studios & Nerve Software."
 
 msgid "We would like to thank both developers for their help and support"
-msgstr ""
+msgstr "Chteli bychom podekovat obema vyvojarum za jejich podporu"
 
 msgid "during the development of Wolfenstein: Enemy Territory."
-msgstr ""
+msgstr "behem vyvoje Wolfenstein: Enemy Territory."
 
 msgid "Original Soundtrack by Bill Brown."
-msgstr ""
+msgstr "Puvodni hudba od Billa Browna."
 
 msgid "ET 2.60 UPDATE"
-msgstr ""
+msgstr "ET 2.60 AKTUALIZACE"
 
 msgid "ET PRO DEVELOPMENT TEAM"
-msgstr ""
+msgstr "TYM VYVOJARU ET PRO"
 
 msgid "Dan 'bani' Hollis"
-msgstr ""
+msgstr "Dan 'bani' Hollis"
 
 msgid "Ben 'Rain' Winslow"
-msgstr ""
+msgstr "Ben 'Rain' Winslow"
 
 msgid "Frederik 'fretn' Delaere"
-msgstr ""
+msgstr "Frederik 'fretn' Delaere"
 
 msgid "Chris 'Zinx' Lais"
-msgstr ""
+msgstr "Chris 'Zinx' Lais"
 
 msgid "Joe 'Majikthise' D."
-msgstr ""
+msgstr "Joe 'Majikthise' D."
 
 msgid "ET Pro Logo"
-msgstr ""
+msgstr "ET Pro Logo"
 
 msgid "MAC OS X PORT"
-msgstr ""
+msgstr "MAC OS X PORT"
 
 msgid "Brad Oliver"
-msgstr ""
+msgstr "Brad Oliver"
 
 msgid "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and other countries."
-msgstr ""
+msgstr "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and other countries."
 
 msgid "ET Legacy Website"
-msgstr ""
+msgstr "Webova stranka ET: Legacy"
 
 msgid " 2012-2013 ET Legacy developers - under the terms of GPL version 3."
-msgstr ""
+msgstr " 2012-2013 ET: Legacy vyvojari - pod licenci GPL verze 3."
 
 msgid " 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id Software name, and the id logo are either registered trademarks or trademarks of Id Software, Inc. in the United States and/or other countries. All other trademarks and trade names are the properties of their respective owners."
-msgstr ""
+msgstr " 2003 Id Software, Inc. Vsechna prava vyhrazena. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, nazev id Software a id logo jsou bud registrovane ochranne znamky nebo znacky Id Software, Inc. ve Spojenych statech anebo dalsich zemich. Vsechny dalsi ochranne znamky a obchodni znacky jsou vlastnictvim jejich majitelu."
 
 msgid "Yeah, right, like YOU have"
-msgstr ""
+msgstr "Jasne, jako bys mel"
 
 msgid "anything better to do!"
-msgstr ""
+msgstr "neco lepsiho na praci!"
 
 msgid "ERROR"
-msgstr ""
+msgstr "CHYBA"
 
 msgid "RECONNECT"
-msgstr ""
+msgstr "ZNOVU SPOJIT"
 
 msgid "AUTO UPDATE"
-msgstr ""
+msgstr "AKTUALIZACE"
 
 msgid "New version available. Do you want to update now?"
-msgstr ""
+msgstr "Je k dispozici nova verze. Chcete aktualizovat nyni?"
 
 msgid "PASSWORD REQUIRED"
-msgstr ""
+msgstr "POZADOVANO HESLO"
 
 msgid "REDIRECTION ADVISED"
-msgstr ""
+msgstr "NABIDKA PRESMEROVANI"
 
 msgid "Do you want to redirect to:"
-msgstr ""
+msgstr "Chces byt presmerovan na:"
 
 msgid "CHANGE VIDEO SETTINGS"
-msgstr ""
+msgstr "ZMENIT NASTAVENI ZOBRAZENI"
 
 msgid "Apply new settings?"
-msgstr ""
+msgstr "Potvrdit zmeny?"
 
 msgid "CONFIRM VIDEO CHANGE"
-msgstr ""
+msgstr "POTVRDIT ZMENU ZOBRAZENI"
 
 msgid "Use this video mode?"
-msgstr ""
+msgstr "Pouzit toto zobrazeni?"
 
 msgid "Reverting to previous"
-msgstr ""
+msgstr "Navrat k puvodnim nastavenim"
 
 #, c-format
 msgid "setting in %s seconds..."
-msgstr ""
+msgstr "nastaveni za %s vterin..."
 
 msgid "MESSAGE"
-msgstr ""
+msgstr "VZKAZ"
 
 msgid "S. Statements"
 msgstr ""
@@ -1958,7 +1954,7 @@ msgid "3. Commands"
 msgstr ""
 
 msgid "4. Talk"
-msgstr ""
+msgstr "4. Mluvit"
 
 msgid "5. Global"
 msgstr ""
@@ -2051,43 +2047,43 @@ msgid "9. Reinforce Defense"
 msgstr ""
 
 msgid "1. Yes"
-msgstr ""
+msgstr "1. Ano"
 
 msgid "2. No"
-msgstr ""
+msgstr "2. Ne"
 
 msgid "3. Thanks"
-msgstr ""
+msgstr "3. Dekuji"
 
 msgid "4. Welcome"
-msgstr ""
+msgstr "4. Neni zac"
 
 msgid "5. Sorry"
-msgstr ""
+msgstr "5. Promin"
 
 msgid "6. Oops"
-msgstr ""
+msgstr "6. Sakra"
 
 msgid "3. Enemy Weak"
-msgstr ""
+msgstr "3. Nepritel je slaby"
 
 msgid "4. Hi"
-msgstr ""
+msgstr "4. Ahoj"
 
 msgid "5. Bye"
-msgstr ""
+msgstr "5. Zatim"
 
 msgid "6. Great Shot"
-msgstr ""
+msgstr "6. Skvela trefa"
 
 msgid "7. Cheer"
-msgstr ""
+msgstr "7. Jupí"
 
 msgid "8. More Globals"
-msgstr ""
+msgstr "8. Dalsi"
 
 msgid "1. Thanks"
-msgstr ""
+msgstr "1. Diky"
 
 msgid "2. Welcome"
 msgstr ""
@@ -2135,55 +2131,55 @@ msgid "0. Escort Vehicle"
 msgstr ""
 
 msgid "^1Legacy"
-msgstr ""
+msgstr "^1Legacy"
 
 msgid "VOTE"
-msgstr ""
+msgstr "HLASOVAT"
 
 msgid "REFEREE"
-msgstr ""
+msgstr "ROZHODCI"
 
 msgid "RCON"
-msgstr ""
+msgstr "RCON"
 
 msgid "DISCONNECT"
-msgstr ""
+msgstr "ODPOJIT"
 
 msgid "MAP"
-msgstr ""
+msgstr "MAPA"
 
 msgid "Voting is disabled"
-msgstr ""
+msgstr "Hlasovani je zakazano"
 
 msgid "on this server."
-msgstr ""
+msgstr "na tomto serveru."
 
 msgid "START MATCH"
-msgstr ""
+msgstr "ZAHAJIT ZAPAS"
 
 msgid "RESET MATCH"
-msgstr ""
+msgstr "RESETOVAT ZAPAS"
 
 msgid "RESTART MAP"
-msgstr ""
+msgstr "RESTARTOVAT MAPU"
 
 msgid "NEXT MAP"
-msgstr ""
+msgstr "DALSI MAPA"
 
 msgid "NEXT CAMPAIGN"
-msgstr ""
+msgstr "DALSI KAMPAN"
 
 msgid "ANTI-LAG ON"
-msgstr ""
+msgstr "PROTI-LAG ZAPNUT"
 
 msgid "ANTI-LAG OFF"
-msgstr ""
+msgstr "PROTI-LAG VYPNUT"
 
 msgid "XP SHUFFLE"
-msgstr ""
+msgstr "PROMICHANI XP"
 
 msgid "SWAP TEAMS"
-msgstr ""
+msgstr "PROHODIT TYMY"
 
 msgid "MUTE SPECS"
 msgstr ""
@@ -2192,16 +2188,16 @@ msgid "UNMUTE SPECS"
 msgstr ""
 
 msgid "FRIENDLY FIRE ON"
-msgstr ""
+msgstr "STRILENI DO VLASTNICH ZAPNUTO"
 
 msgid "FRIENDLY FIRE OFF"
-msgstr ""
+msgstr "STRILENI DO VLASTNICH VYPNUTO"
 
 msgid "BALANCED TEAMS ON"
-msgstr ""
+msgstr "VYROVNANE TYMY ZAPNUTY"
 
 msgid "BALANCED TEAMS OFF"
-msgstr ""
+msgstr "VYROVNANE TYMY VYPNUTY"
 
 msgid "COMPETITION SETTINGS"
 msgstr ""
@@ -2210,25 +2206,25 @@ msgid "PUBLIC SETTINGS"
 msgstr ""
 
 msgid "OK"
-msgstr ""
+msgstr "POTVRDIT"
 
 msgid "Time Limit:"
 msgstr ""
 
 msgid "OMNI-BOT"
-msgstr ""
+msgstr "OMNI-BOT"
 
 msgid "PAUSE"
-msgstr ""
+msgstr "PAUZA"
 
 msgid "UNPAUSE"
-msgstr ""
+msgstr "ODPAUZOVAT"
 
 msgid "LOCK TEAMS"
-msgstr ""
+msgstr "ZAMKNOUT TYMY"
 
 msgid "UNLOCK TEAMS"
-msgstr ""
+msgstr "ODEMKNOUT TYMY"
 
 msgid "LOCK SPECS"
 msgstr ""
@@ -2237,13 +2233,13 @@ msgid "UNLOCK SPECS"
 msgstr ""
 
 msgid "MAPS"
-msgstr ""
+msgstr "MAPY"
 
 msgid "CAMPAIGNS"
-msgstr ""
+msgstr "KAMPANE"
 
 msgid "KICK"
-msgstr ""
+msgstr "VYKOPNOUT"
 
 msgid "MUTE"
 msgstr ""
@@ -2267,40 +2263,40 @@ msgid "MAKE SPEC"
 msgstr ""
 
 msgid "WARN"
-msgstr ""
+msgstr "VAROVAT"
 
 msgid "BAN"
-msgstr ""
+msgstr "ZABANOVAT"
 
 msgid "WARN PLAYER"
-msgstr ""
+msgstr "VAROVAT HRACE"
 
 msgid "Warning:"
-msgstr ""
+msgstr "Varovani:"
 
 msgid "ADD TO FAVORITES"
-msgstr ""
+msgstr "DAT DO OBLIBENYCH"
 
 msgid "Do you want to disconnect"
-msgstr ""
+msgstr "Chces se odpojit"
 
 msgid "from the server?"
-msgstr ""
+msgstr "ze serveru?"
 
 msgid "SEND MESSAGE"
-msgstr ""
+msgstr "POSLAT VZKAZ"
 
 msgid "Say:"
-msgstr ""
+msgstr "Rict:"
 
 msgid "To:"
-msgstr ""
+msgstr "Komu:"
 
 msgid "CANCEL"
-msgstr ""
+msgstr "ZRUSIT"
 
 msgid "SEND"
-msgstr ""
+msgstr "ODESLAT"
 
 msgid "RESPAWNING"
 msgstr ""
@@ -2312,44 +2308,44 @@ msgid "In Last Man Standing mode you will not respawn if you tap out now. Are yo
 msgstr ""
 
 msgid "MAX OMNI-BOT"
-msgstr ""
+msgstr "MAX OMNI-BOTu"
 
 msgid "MIN OMNI-BOT"
-msgstr ""
+msgstr "MIN OMNI-BOTu"
 
 msgid "KICK OMNI-BOT"
-msgstr ""
+msgstr "VYKOPNOUT OMNI-BOTa"
 
 msgid "Yes"
-msgstr ""
+msgstr "Ano"
 
 msgid "Set recommended video settings"
-msgstr ""
+msgstr "Pouzit doporucene video nastaveni"
 
 msgid "Do you want to open"
-msgstr ""
+msgstr "Chces otevrit"
 
 msgid "^3Thank you for installing ET:Legacy."
-msgstr ""
+msgstr "^3Dekujeme za instalaci ET: Legacy."
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
-msgstr ""
+msgstr "Ceka se na spojeni...%i"
 
 #: src/ui/ui_loadpanel.c:341
 #, c-format
 msgid "Awaiting challenge...%i"
-msgstr ""
+msgstr "Ceka se na odezvu...%i"
 
 #: src/ui/ui_loadpanel.c:351
 msgid "Awaiting gamestate..."
-msgstr ""
+msgstr "Ceka se na nacteni hry..."
 
 #: src/ui/ui_main.c:2397
 #: src/ui/ui_main.c:2637
 msgid "Waiting for new key... Press ESCAPE to cancel"
-msgstr ""
+msgstr "Ceka se na novou klavesu... Stiskni ESCAPE pro zruseni"
 
 #: src/ui/ui_main.c:2401
 #: src/ui/ui_main.c:2641
