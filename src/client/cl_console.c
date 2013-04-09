@@ -758,7 +758,7 @@ void Con_DrawSolidConsole(float frac)
 
 	if (Cvar_VariableIntegerValue("com_updateavailable"))
 	{
-		Com_sprintf(version, sizeof(version), "%s (UPDATE AVAILABLE)", ET_VERSION);
+		Com_sprintf(version, sizeof(version), _("%s (UPDATE AVAILABLE)"), ET_VERSION);
 	}
 
 	i = strlen(version);

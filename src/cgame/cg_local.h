@@ -2265,7 +2265,7 @@ void CG_DrawTopBottom_NoScale(float x, float y, float w, float h, float size);
 void CG_DrawBottom_NoScale(float x, float y, float w, float h, float size);
 
 // localization functions
-void CG_InitTranslation(void);
+void CG_InitTranslation(void); // TODO: replace with tinygettext
 char *CG_TranslateString(const char *string);
 void CG_SaveTransTable(void);
 void CG_ReloadTranslation(void);

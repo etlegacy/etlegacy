@@ -41,6 +41,8 @@
 #include "../game/bg_public.h"
 #include "ui_shared.h"
 
+#define __(x) trap_TranslateString(x)
+
 extern vmCvar_t ui_arenasFile;
 
 extern vmCvar_t ui_brassTime;

@@ -4438,7 +4438,7 @@ qboolean FS_ConditionalRestart(int checksumFeed)
 	return qfalse;
 }
 
-/*
+/**
  * @brief Handle based file calls for virtual machines
  */
 int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode)
