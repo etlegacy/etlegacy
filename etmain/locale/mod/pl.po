@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-11 13:19+0100\n"
+"PO-Revision-Date: 2013-04-11 21:30+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -1832,88 +1832,88 @@ msgid "O. Objectives"
 msgstr "C. Cele"
 
 msgid "P. Path Cleared."
-msgstr ""
+msgstr "D. Droga Wolna."
 
 msgid "W. Enemy Weak!"
-msgstr ""
+msgstr "S. Slaby Wrog!"
 
 msgid "C. All Clear"
-msgstr ""
+msgstr "C. Czysto"
 
 msgid "I. Incoming"
-msgstr ""
+msgstr "N. Nadchodza"
 
 msgid "F. Fire In The Hole!"
-msgstr ""
+msgstr "U. Uwaga Strzal!"
 
 msgid "D. I'm Defending."
-msgstr ""
+msgstr "H. Chronie."
 
 msgid "A. I'm Attacking."
-msgstr ""
+msgstr "A. Atakuje."
 
 msgid "T. Taking Fire!"
-msgstr ""
+msgstr "P. Przy Ogniu!"
 
 msgid "M. Mines Cleared"
-msgstr ""
+msgstr "M. Miny Oczyszczone"
 
 msgid "E. Enemy Disguised"
-msgstr ""
+msgstr "W. Wrog w Ukryciu"
 
 msgid "M. Need Medic!"
-msgstr ""
+msgstr "M. Potrzebuje Medyka!"
 
 msgid "A. Need Ammo!"
-msgstr ""
+msgstr "A. Potrzebuje Amunicje!"
 
 msgid "B. Need Backup!"
-msgstr ""
+msgstr "P. Potrzebuje Pomocy!"
 
 msgid "E. Need Engineer!"
-msgstr ""
+msgstr "I. Potrzebuje Inzyniera!"
 
 msgid "C. Cover Me!"
-msgstr ""
+msgstr "O. Oslaniaj Mnie!"
 
 msgid "H. Hold Fire!"
-msgstr ""
+msgstr "W. Wsztrzymaj Ogien!"
 
 msgid "W. Where To?"
-msgstr ""
+msgstr "D. Dokad?"
 
 msgid "O. Need Covert Ops!"
-msgstr ""
+msgstr "C. Potrzebuje Coverta!"
 
 msgid "F. Follow Me!"
-msgstr ""
+msgstr "Z. Za Mna!"
 
 msgid "G. Let's Go!"
-msgstr ""
+msgstr "D. No Dalej!"
 
 msgid "M. Move!"
-msgstr ""
+msgstr "R. Ruchy!"
 
 msgid "C. Clear The Path!"
-msgstr ""
+msgstr "D. Wyczysc Droge!"
 
 msgid "O. Defend Objective!"
-msgstr ""
+msgstr "O. Obron Cel!"
 
 msgid "D. Disarm Dynamite!"
-msgstr ""
+msgstr "D. Rozbroj Dynamit!"
 
 msgid "N. Clear Mines!"
-msgstr ""
+msgstr "N. Wyczysc Miny!"
 
 msgid "R. Reinforce Offense"
-msgstr ""
+msgstr "R. Atak Posilkow"
 
 msgid "E. Reinforce Defense"
-msgstr ""
+msgstr "E. Obrona Posilkow"
 
 msgid "Y. Yes"
-msgstr ""
+msgstr "T. Tak"
 
 msgid "N. No"
 msgstr "N. Nie"
@@ -1922,7 +1922,7 @@ msgid "T. Thanks"
 msgstr "T. Dzieki"
 
 msgid "W. Welcome"
-msgstr ""
+msgstr "N. Nie ma za co"
 
 msgid "S. Sorry"
 msgstr "S. Przepraszam"
@@ -1931,157 +1931,157 @@ msgid "O. Oops"
 msgstr "O. Oops"
 
 msgid "W. Enemy Weak"
-msgstr ""
+msgstr "S. Slaby Wrog"
 
 msgid "H. Hi"
-msgstr ""
+msgstr "C. Czesc"
 
 msgid "B. Bye"
-msgstr ""
+msgstr "D. Dowidzenia"
 
 msgid "S. Great Shot"
-msgstr ""
+msgstr "S. Niezly Strzal"
 
 msgid "C. Cheer"
-msgstr ""
+msgstr "O. Okrzyki"
 
 msgid "G. More Globals"
-msgstr ""
+msgstr "D. Dalej"
 
 msgid "G. Good Game"
-msgstr ""
+msgstr "G. Niezla Gra"
 
 msgid "A. Command Acknowledged"
-msgstr ""
+msgstr "P. Polecenie Przyznane"
 
 msgid "D. Command Declined"
-msgstr ""
+msgstr "O. Polecenie Odrzucone"
 
 msgid "C. Command Completed"
-msgstr ""
+msgstr "W. Polecenie Wykonane"
 
 msgid "P. Destroy Primary Objective"
-msgstr ""
+msgstr "P. Zniszcz Pierwszy Cel"
 
 msgid "S. Destroy Secondary Objective"
-msgstr ""
+msgstr "D Zniszcz Drugi Cel"
 
 msgid "X. Destroy Construction"
-msgstr ""
+msgstr "X. Zniszcz Konstrukcje"
 
 msgid "M. Commencing Construction"
-msgstr ""
+msgstr "M. Rozpocznij Budowe"
 
 msgid "R. Repair Vehicle"
-msgstr ""
+msgstr "N. Napraw Pojazd"
 
 msgid "V. Disable Vehicle"
-msgstr ""
+msgstr "P. Wylacz Pojazd"
 
 msgid "E. Escort Vehicle"
-msgstr ""
+msgstr "E. Eskortuj Pojazd"
 
 msgid "1. Statements"
-msgstr ""
+msgstr "1. Instrukcje"
 
 msgid "2. Requests"
-msgstr ""
+msgstr "2. Zadania"
 
 msgid "3. Commands"
-msgstr ""
+msgstr "3. Polecenia"
 
 msgid "4. Talk"
 msgstr "4. Mow"
 
 msgid "5. Global"
-msgstr ""
+msgstr "6. Ogolne"
 
 msgid "6. Function"
-msgstr ""
+msgstr "7. Funkcja"
 
 msgid "7. Objectives"
-msgstr ""
+msgstr "7. Cele"
 
 msgid "1. Path Cleared."
-msgstr ""
+msgstr "1. Droga Wolna."
 
 msgid "2. Enemy Weak!"
-msgstr ""
+msgstr "2. Slaby Wrog!"
 
 msgid "3. All Clear"
-msgstr ""
+msgstr "3. Czysto"
 
 msgid "4. Incoming"
-msgstr ""
+msgstr "4. Nadchodza"
 
 msgid "5. Fire In The Hole!"
-msgstr ""
+msgstr "5. Uwaga Strzal!"
 
 msgid "6. I'm Defending."
-msgstr ""
+msgstr "6. Chronie."
 
 msgid "7. I'm Attacking."
-msgstr ""
+msgstr "7. Atakuje."
 
 msgid "8. Taking Fire!"
-msgstr ""
+msgstr "8. Przy Ogniu!"
 
 msgid "9. Mines Cleared"
-msgstr ""
+msgstr "9. Miny Oczyszczone"
 
 msgid "0. Enemy Disguised"
-msgstr ""
+msgstr "0. Wrog w Ukryciu"
 
 msgid "1. Need Medic!"
-msgstr ""
+msgstr "1. Potrzebuje Medyka!"
 
 msgid "2. Need Ammo!"
-msgstr ""
+msgstr "2. Potrzebuje Amunicji!"
 
 msgid "3. Need Backup!"
-msgstr ""
+msgstr "3. Potrzebuje Pomocy!"
 
 msgid "4. Need Engineer!"
-msgstr ""
+msgstr "4. Potrzebuje Inzyniera!"
 
 msgid "5. Cover Me!"
-msgstr ""
+msgstr "6. Oslaniaj Mnie!"
 
 msgid "6. Hold Fire!"
-msgstr ""
+msgstr "6. Wsztrzymaj Ogien!"
 
 msgid "7. Where To?"
-msgstr ""
+msgstr "7. Dokad?"
 
 msgid "8. Need Covert Ops!"
-msgstr ""
+msgstr "8. Potrzebuje Coverta!"
 
 msgid "1. Follow Me!"
-msgstr ""
+msgstr "1. Za mna!"
 
 msgid "2. Let's Go!"
-msgstr ""
+msgstr "2. No Dalej!"
 
 msgid "3. Move!"
-msgstr ""
+msgstr "3. Ruchy!"
 
 msgid "4. Clear The Path!"
-msgstr ""
+msgstr "4. Wyczysc Droge!"
 
 msgid "5. Defend Objective!"
-msgstr ""
+msgstr "5. Obron Cel!"
 
 msgid "6. Disarm Dynamite!"
-msgstr ""
+msgstr "6. Rozbroj Dynamit!"
 
 msgid "7. Clear Mines!"
-msgstr ""
+msgstr "7. Wyczysc Miny!"
 
 msgid "8. Reinforce Offense"
-msgstr ""
+msgstr "8. Atak Posilkow"
 
 msgid "9. Reinforce Defense"
-msgstr ""
+msgstr "9. Obrona Posilkow"
 
 msgid "1. Yes"
 msgstr "1. Tak"
@@ -2123,49 +2123,49 @@ msgid "1. Thanks"
 msgstr "1. Dzieki"
 
 msgid "2. Welcome"
-msgstr ""
+msgstr "2. Nie ma za co"
 
 msgid "3. Oops"
-msgstr ""
+msgstr "3. Oops"
 
 msgid "4. Sorry"
-msgstr ""
+msgstr "4. Przepraszam"
 
 msgid "5. Hold Fire!"
-msgstr ""
+msgstr "5. Wstrzymaj Ogien!"
 
 msgid "6. Good Game"
-msgstr ""
+msgstr "6. Dobra Gra"
 
 msgid "1. Command Acknowledged"
-msgstr ""
+msgstr "1. Polecenie Przyjete"
 
 msgid "2. Command Declined"
-msgstr ""
+msgstr "2. Polecenie Odrzucone"
 
 msgid "3. Command Completed"
-msgstr ""
+msgstr "3. Polecenie Wykonane"
 
 msgid "4. Destroy Primary Objective"
-msgstr ""
+msgstr "4. Zniszcz Pierwszy Cel"
 
 msgid "5. Destroy Secondary Objective"
-msgstr ""
+msgstr "5. Zniszcz Drugi Cel"
 
 msgid "6. Destroy Construction"
-msgstr ""
+msgstr "6. Zniszcz Konstrukcje"
 
 msgid "7. Commencing Construction"
-msgstr ""
+msgstr "7. Rozpocznij Budowe"
 
 msgid "8. Repair Vehicle"
-msgstr ""
+msgstr "8. Napraw Pojazd"
 
 msgid "9. Disable Vehicle"
-msgstr ""
+msgstr "9. Wylacz Pojazd"
 
 msgid "0. Escort Vehicle"
-msgstr ""
+msgstr "0. Eskortuj Pojazd"
 
 msgid "^1Legacy"
 msgstr "^1Legacy"
