@@ -1459,7 +1459,8 @@ qboolean CG_ConsoleCommand(void)
  */
 void CG_InitConsoleCommands(void)
 {
-	int i;
+	int        i;
+	const char *s;
 
 	for (i = 0 ; i < sizeof(commands) / sizeof(commands[0]) ; i++)
 	{
@@ -1541,6 +1542,20 @@ void CG_InitConsoleCommands(void)
 #ifdef FEATURE_LUA
 	trap_AddCommand("lua_status");
 #endif
+
+	// remove engine commands to avoid abuse
+	trap_RemoveCommand("+lookup");
+	trap_RemoveCommand("-lookup");
+	trap_RemoveCommand("+lookdown");
+	trap_RemoveCommand("-lookdown");
+
+	// only allow configstrings command when cheats enabled
+	s = Info_ValueForKey(CG_ConfigString(CS_SYSTEMINFO),
+	                     "sv_cheats");
+	if (s[0] != '1')
+	{
+		trap_RemoveCommand("configstrings");
+	}
 }
 
 void CG_parseMapVoteListInfo()

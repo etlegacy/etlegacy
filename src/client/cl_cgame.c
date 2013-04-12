@@ -1053,7 +1053,7 @@ void CL_UpdateLevelHunkUsage(void)
 	char outstr[256];
 	int  len, memusage;
 
-	memusage = Cvar_VariableIntegerValue("com_hunkused") + Cvar_VariableIntegerValue("hunk_soundadjust"); // FIXME: wtf is hunk_soundadjust ?
+	memusage = Cvar_VariableIntegerValue("com_hunkused");
 
 	len = FS_FOpenFileByMode(memlistfile, &handle, FS_READ);
 	if (len >= 0)     // the file exists, so read it in, strip out the current entry for this map, and save it out, so we can append the new value

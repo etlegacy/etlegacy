@@ -438,6 +438,24 @@ qboolean String_Parse(char **p, const char **out)
 	return qfalse;
 }
 
+/**
+ * @brief Same as PC_String_Parse except it uses a trap call
+ * to client's gettext translation function.
+ */
+qboolean PC_String_ParseTranslate(int handle, const char **out)
+{
+	pc_token_t token;
+
+	if (!trap_PC_ReadToken(handle, &token))
+	{
+		return qfalse;
+	}
+
+	*(out) = String_Alloc(__(token.string));
+
+	return qtrue;
+}
+
 qboolean PC_Char_Parse(int handle, char *out)
 {
 	pc_token_t token;
@@ -6573,7 +6591,7 @@ qboolean ItemParse_focusSound(itemDef_t *item, int handle)
 // text <string>
 qboolean ItemParse_text(itemDef_t *item, int handle)
 {
-	if (!PC_String_Parse(handle, &item->text))
+	if (!PC_String_ParseTranslate(handle, &item->text))
 	{
 		return qfalse;
 	}

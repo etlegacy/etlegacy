@@ -778,12 +778,11 @@ void CL_ParseGamestate(msg_t *msg)
 	// parse serverId and other cvars
 	CL_SystemInfoChanged();
 
-	// FIXME: this needs to be adapted for ET:L
 	// Verify if we have all official pakfiles. As we won't
 	// be downloading them, we should be kicked for not having them.
 	if (cl_connectedToPureServer && !FS_VerifyOfficialPaks())
 	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version.\n");
+		Com_Error(ERR_FATAL, "ERROR: Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version.");
 	}
 
 	// reinitialize the filesystem if the game directory has changed

@@ -572,6 +572,7 @@ qboolean trap_GetLimboString(int index, char *buf)
 
 char *trap_TranslateString(const char *string)
 {
+	// Allows the fnc to be used twice in same context
 	static char staticbuf[2][MAX_VA_STRING];
 	static int  bufcount = 0;
 	char        *buf;
@@ -579,8 +580,6 @@ char *trap_TranslateString(const char *string)
 	buf = staticbuf[bufcount++ % 2];
 
 	syscall(UI_CL_TRANSLATE_STRING, string, buf);
-	// no LOCALIZATION_SUPPORT (translations)
-	// Q_strncpyz(buf, string, MAX_VA_STRING);
 
 	return buf;
 }

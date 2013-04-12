@@ -78,6 +78,9 @@ option(FEATURE_CURSES		"Enable PDCurses console"						OFF)
 option(FEATURE_AUTOUPDATE	"Enable updater which downloads latest ET:L files"			ON)
 option(FEATURE_RENDERER2	"Build and use the new renderer"					OFF)
 option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
+option(FEATURE_IRC_CLIENT	"Enable IRC client"							OFF)
+
+cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"	ON "BUNDLED_LIBS" OFF)
 
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot build in mod code"	ON "WIN32 OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"			ON "WIN32 OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
@@ -104,7 +107,6 @@ if(UNIX AND CROSS_COMPILE32) # 32-bit build
 endif(UNIX AND CROSS_COMPILE32)
 
 if(UNIX)
-
 	# optimization/debug flags
 	# Note/FIXME: check this for Darwin, explore Win optimizations options
 	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s -ffast-math")
@@ -183,6 +185,7 @@ FILE(GLOB ZLIB_SRC
 FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_stubs.c"
+	"src/qcommon/i18n_*"
 	"src/botlib/botlib_stub.c"
 )
 
@@ -302,6 +305,11 @@ FILE(GLOB RENDERER2_FILES
 	"src/renderer2/*.h"
 )
 
+FILE(GLOB IRC_CLIENT_FILES
+	"src/qcommon/htable.c"
+	"src/qcommon/htable.h"
+)
+
 # Version generation
 git_describe(GIT_DESCRIBE)
 git_describe(GIT_DESCRIBE_TAG "--abbrev=0")
@@ -401,6 +409,34 @@ if(BUILD_CLIENT)
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
 	endif(FEATURE_CURL)
 
+	if(FEATURE_GETTEXT)
+		add_definitions(-DFEATURE_GETTEXT)
+		FILE(GLOB GETTEXT_SRC
+			"src/qcommon/i18n_main.cpp"
+			"src/qcommon/i18n_findlocale.c"
+			"src/qcommon/i18n_findlocale.h"
+			"libs/tinygettext/dictionary_manager.hpp"
+			"libs/tinygettext/file_system.hpp"
+			"libs/tinygettext/iconv.cpp"
+			"libs/tinygettext/plural_forms.hpp"
+			"libs/tinygettext/tinygettext.cpp"
+			"libs/tinygettext/tinygettext.hpp"
+			"libs/tinygettext/dictionary.cpp"
+			"libs/tinygettext/dictionary.hpp"
+			"libs/tinygettext/dictionary_manager.cpp"
+			"libs/tinygettext/iconv.hpp"
+			"libs/tinygettext/language.cpp"
+			"libs/tinygettext/language.hpp"
+			"libs/tinygettext/log.cpp"
+			"libs/tinygettext/log.hpp"
+			"libs/tinygettext/log_stream.hpp"
+			"libs/tinygettext/plural_forms.cpp"
+			"libs/tinygettext/po_parser.cpp"
+			"libs/tinygettext/po_parser.hpp"
+		)
+		set(CLIENT_SRC ${CLIENT_SRC} ${GETTEXT_SRC})
+	endif(FEATURE_GETTEXT)
+
 	if(FEATURE_AUTOUPDATE)
 		add_definitions(-DFEATURE_AUTOUPDATE)
 	endif(FEATURE_AUTOUPDATE)
@@ -435,6 +471,11 @@ if(BUILD_CLIENT)
 		endif()
 		add_definitions(-DFEATURE_OGG_VORBIS)
 	endif(FEATURE_OGG_VORBIS)
+	
+	if(FEATURE_IRC_CLIENT)
+		add_definitions(-DFEATURE_IRC_CLIENT)
+		list(APPEND CLIENT_SRC ${IRC_CLIENT_FILES})
+	endif(FEATURE_IRC_CLIENT)
 	
 	list(APPEND CLIENT_SRC ${RENDERER_COMMON})
 	list(APPEND RENDERER_FILES ${RENDERER_COMMON})
@@ -546,7 +587,7 @@ if(BUILD_CLIENT)
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
-	add_executable(etlded ${COMMON_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
+	add_executable(etlded WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
 	target_link_libraries(etlded ${OS_LIBRARIES} ${SERVER_LIBRARIES})
 	set_target_properties(etlded PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
 	install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")

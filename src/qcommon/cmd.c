@@ -825,23 +825,35 @@ void Cmd_RemoveCommand(const char *cmd_name)
  */
 void Cmd_RemoveCommandSafe(const char *cmd_name)
 {
-	cmd_function_t *cmd = Cmd_FindCommand(cmd_name);
+	cmd_function_t *cmd;
+
+	if (!cmd_name[0])
+	{
+		Com_Printf(S_COLOR_RED "Cmd_RemoveCommandSafe called with an empty command name\n");
+		return;
+	}
+
+	cmd = Cmd_FindCommand(cmd_name);
 
 	if (!cmd)
 	{
+		Com_Printf(S_COLOR_RED "Cmd_RemoveCommandSafe called for an unknown command\n");
 		return;
 	}
-	if (cmd->function)
+
+	// don't remove commands in general
+	// this ensures commands like vid_restart, quit etc won't be removed from the engine by mod code
+	if (cmd->function &&
+	    // several mods are removing some system commands to avoid abuse - let's allow these
+	    !(!strcmp(cmd_name, "+lookup") || !strcmp(cmd_name, "+lookdown")
+	      || !strcmp(cmd_name, "-lookup") || !strcmp(cmd_name, "-lookdown")
+	      || !strcmp(cmd_name, "configstrings")))
 	{
-		// FIXME: NQ/ETPub remove several system command(s), and thus drop the client
-		//Com_Error(ERR_DROP, "Restricted source tried to remove "
-		//                    "system command \"%s\"", cmd_name);
-
-		Com_Printf(S_COLOR_RED "Restricted source tried to remove system command \"%s\"\n",
-		           cmd_name);
-
+		Com_Error(ERR_DROP, "Restricted source tried to remove system command \"%s\"", cmd_name);
 		return;
 	}
+
+	Com_DPrintf(S_COLOR_YELLOW "Cmd_RemoveCommandSafe command %s removed\n", cmd_name);
 
 	Cmd_RemoveCommand(cmd_name);
 }

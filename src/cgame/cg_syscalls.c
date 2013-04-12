@@ -145,6 +145,24 @@ void trap_AddCommand(const char *cmdName)
 	syscall(CG_ADDCOMMAND, cmdName);
 }
 
+/*
+===================
+trap_RemoveCommand
+
+cmdName: command name
+
+Although this trap is not actually used anywhere in baseq3 game source, a reasonable assumption, based on
+function name and parameters, is that this trap removes a command name from the list of command completions.
+That is, the inverse of trap_AddCommand().
+
+Unknown: case sensitivity (i.e. if capitalization matters for string matching)
+===================
+*/
+void trap_RemoveCommand(const char *cmdName)
+{
+	syscall(CG_REMOVECOMMAND, cmdName);
+}
+
 void trap_SendClientCommand(const char *s)
 {
 	syscall(CG_SENDCLIENTCOMMAND, s);

@@ -44,8 +44,6 @@ void CL_Shutdown(void)
 void CL_Init(void)
 {
 	cl_shownet = Cvar_Get("cl_shownet", "0", CVAR_TEMP);
-	// localisation, prolly not any use in dedicated / null client
-	cl_language = Cvar_Get("cl_language", "0", CVAR_ARCHIVE);
 }
 
 void CL_MouseEvent(int dx, int dy, int time)

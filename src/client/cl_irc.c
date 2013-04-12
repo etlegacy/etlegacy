@@ -32,7 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "client.h"
 #include "../qcommon/htable.h"
 
-
 #ifdef WIN32
 # include <winsock.h>
 # include <process.h>
@@ -56,7 +55,6 @@ typedef int irc_socket_t;
 #  define INVALID_SOCKET (-1)
 # endif
 #endif
-
 
 /* IRC control cvars */
 cvar_t *cl_IRC_connect_at_startup;
@@ -156,7 +154,6 @@ static qboolean IRC_ParserError;
  * According to RFC 1459, maximal message size is 512 bytes, including trailing
  * CRLF.
  */
-
 #define IRC_MESSAGE_SIZE 512
 #define IRC_SEND_BUF_SIZE IRC_MESSAGE_SIZE
 #define IRC_RECV_BUF_SIZE (IRC_MESSAGE_SIZE * 2)
@@ -429,7 +426,9 @@ static void IRC_SetTimeout(irc_handler_func_t function, int time)
 		{
 			find = IRC_DEQueue;
 			while (find->next && find->next->time_left < time)
+			{
 				find = find->next;
+			}
 			qe->next   = find->next;
 			find->next = qe;
 		}
@@ -1198,10 +1197,12 @@ static ID_INLINE void IRC_UpdateRateLimiter()
 	int i;
 
 	for (i = 0 ; i < sizeof(IRC_RateLimiter) / sizeof(unsigned int) ; i++)
+	{
 		if (IRC_RateLimiter[i])
 		{
 			IRC_RateLimiter[i]--;
 		}
+	}
 }
 
 /*
@@ -2552,9 +2553,9 @@ CL_IRCSetup
 */
 void CL_OW_IRCSetup(void)
 {
-	cl_IRC_connect_at_startup = Cvar_Get("cl_IRC_connect_at_startup", "1", CVAR_ARCHIVE);
+	cl_IRC_connect_at_startup = Cvar_Get("cl_IRC_connect_at_startup", "0", CVAR_ARCHIVE);
 	cl_IRC_server             = Cvar_Get("cl_IRC_server", "irc.freenode.net", CVAR_ARCHIVE);
-	cl_IRC_channel            = Cvar_Get("cl_IRC_channel", "etlegacy", CVAR_ARCHIVE);
+	cl_IRC_channel            = Cvar_Get("cl_IRC_channel", "etlegacy", CVAR_ARCHIVE); // etlegacy_lobby ?
 	cl_IRC_port               = Cvar_Get("cl_IRC_port", "6667", CVAR_ARCHIVE);
 	cl_IRC_override_nickname  = Cvar_Get("cl_IRC_override_nickname", "0", CVAR_ARCHIVE);
 	cl_IRC_nickname           = Cvar_Get("cl_IRC_nickname", "", CVAR_ARCHIVE);

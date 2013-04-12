@@ -1,0 +1,2683 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Jan Simek
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ET: Legacy 2.70rc2\n"
+"Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
+"POT-Creation-Date: 2013-04-07 23:32+0200\n"
+"PO-Revision-Date: 2013-04-12 17:49+0100\n"
+"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
+"Language-Team: Polish translators <mail@etlegacy.com>\n"
+"Language: pl_PL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Generator: Poedit 1.5.5\n"
+
+#: src/cgame/cg_consolecmds.c:511 src/cgame/cg_consolecmds.c:551
+#: src/cgame/cg_consolecmds.c:599
+msgid "Can't team voice chat as a spectator.\n"
+msgstr "Nie mozna uzyc chatu teamu jako widz.\n"
+
+#: src/cgame/cg_consolecmds.c:574
+msgid "Can't voice chat as a spectator.\n"
+msgstr "Nie mozna uzyc chatu glosowego jako widz.\n"
+
+#: src/cgame/cg_consolecmds.c:624
+msgid "Can't buddy voice chat as a spectator.\n"
+msgstr "Nie mozna uzyc chatu kumpli jako widz.\n"
+
+#: src/cgame/cg_debriefing.c:1962 src/cgame/cg_debriefing.c:3105
+#: src/cgame/cg_scoreboard.c:602
+#, c-format
+msgid "CLOCK IS NOW SET TO %s!"
+msgstr "ZEGAR JEST TERAZ USTAWIONY NA %s!"
+
+#: src/cgame/cg_draw.c:649
+msgid "Connection Interrupted"
+msgstr "Polaczenie Przerwane"
+
+#: src/cgame/cg_draw.c:1891
+msgid "Disguised Enemy!"
+msgstr "Wrog Ukryty"
+
+#: src/cgame/cg_draw.c:2065
+msgid "SPECTATOR"
+msgstr "OBSERWATOR"
+
+#: src/cgame/cg_draw.c:2083
+#, c-format
+msgid "File complaint against %s for team-killing?"
+msgstr "Plik narzekajacy przeciwko %s za zabicie teamu"
+
+#: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
+#: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
+#: src/cgame/cg_draw.c:2164
+#, c-format
+msgid "Press '%s' for YES, or '%s' for No"
+msgstr "Wdus '%s' dla TAK, lub '%s' dla NIE"
+
+#: src/cgame/cg_draw.c:2096
+#, c-format
+msgid "Accept %s's application to join your fireteam?"
+msgstr "Akceptuj %s aplikacje aby dolaczyc do zesolu?"
+
+#: src/cgame/cg_draw.c:2109
+#, c-format
+msgid "Accept %s's proposition to invite %s to join your fireteam?"
+msgstr "Akceptuj %s propozycje zaproszenia  %s do dolaczenia twojego zespolu?"
+
+#: src/cgame/cg_draw.c:2122
+#, c-format
+msgid "Accept %s's invitation to join their fireteam?"
+msgstr "Akceptuj %s zaproszenia do dolaczenia ich teamow?"
+
+#: src/cgame/cg_draw.c:2218
+#, c-format
+msgid "VOTE(%i): %s"
+msgstr "WYBOR(%i): %s"
+
+#: src/cgame/cg_draw.c:2223
+msgid "Cannot vote as Spectator"
+msgstr "Nie mozna glosowac jako Widz"
+
+#: src/cgame/cg_draw.c:2227
+#, c-format
+msgid "YES(%s):%i, NO(%s):%i"
+msgstr "TAK(%s):%i, NIE(%s):%i"
+
+#: src/cgame/cg_draw.c:2234
+#, c-format
+msgid "YOU VOTED ON: %s"
+msgstr "ZAGLOSOWALES NA: %s"
+
+#: src/cgame/cg_draw.c:2237
+#, c-format
+msgid "Y:%i, N:%i"
+msgstr "T:%i, N:%i"
+
+#: src/cgame/cg_draw.c:2460
+#, c-format
+msgid "Press %s to open Limbo Menu"
+msgstr "Nacisnij %s aby otworzyc Menu Gracza"
+
+#: src/cgame/cg_draw.c:2464
+#, c-format
+msgid "Press %s to follow next player"
+msgstr "Nacisnij %s aby obserwowac kolejnego gracza"
+
+#: src/cgame/cg_draw.c:2469
+#, c-format
+msgid "Press %s to %s multiview mode"
+msgstr "Wcisnij %s aby %s tryb wielowidoku"
+
+#: src/cgame/cg_draw.c:2530
+msgid "You are wounded and waiting for a medic."
+msgstr "Jestes zraniony i czekasz za medykiem"
+
+#: src/cgame/cg_draw.c:2540
+msgid "Press JUMP to go into reinforcement queue."
+msgstr "Nacisnij SKOK aby wejsc w kolejke posilkow."
+
+#: src/cgame/cg_draw.c:2550
+msgid "No more reinforcements this round."
+msgstr "Brak posilkow w tej rundzie."
+
+#: src/cgame/cg_draw.c:2550
+#, c-format
+msgid "Reinforcements deploy in %d seconds."
+msgstr "Rozstawienie posilkow za %d sekund"
+
+#: src/cgame/cg_draw.c:2593
+#, c-format
+msgid "Bonus Life! Deploying in %d seconds"
+msgstr "Dodatkowe Zycie! Rozstawienie za %d sekund"
+
+#: src/cgame/cg_draw.c:2597
+msgid "No more deployments this round"
+msgstr "Brak rozstawien w tej rundzie"
+
+#: src/cgame/cg_draw.c:2602
+#, c-format
+msgid "Deploying in %d seconds"
+msgstr "Rozstawienie za %d sekund"
+
+#: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621
+msgid "Following"
+msgstr "Podazanie"
+
+#: src/cgame/cg_draw.c:2651
+#, c-format
+msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
+msgstr "^3ROZGRZEWKA:^7 Oczekiwanie na ^2%i^7 %s"
+
+#: src/cgame/cg_draw.c:2663
+msgid "Type ^3\\ready^* in the console to start"
+msgstr "Napisz ^3\\ready^* w konsoli aby zaczac"
+
+#: src/cgame/cg_draw.c:2684
+msgid "(WARMUP) Match begins in:"
+msgstr "(ROZGRZEWKA) Mecz zaczyna sie za:"
+
+#: src/cgame/cg_draw.c:2717 src/cgame/cg_scoreboard.c:213
+msgid "STOPWATCH ROUND"
+msgstr "RUNDA NA CZAS"
+
+#: src/cgame/cg_draw_hud.c:1535 src/cgame/cg_scoreboard.c:165
+msgid "WARMUP"
+msgstr "ROZGRZEWKA"
+
+#: src/cgame/cg_event.c:189
+msgid "You swapped places with"
+msgstr "Zamieniles sie miejscami z"
+
+#: src/cgame/cg_event.c:193
+msgid "You killed ^1TEAMMATE^7"
+msgstr "Zabiles ^1KOMPANA^7"
+
+#: src/cgame/cg_event.c:198
+msgid "You killed"
+msgstr "Zabiles"
+
+#: src/cgame/cg_main.c:893
+msgid "User"
+msgstr "Uzytkownik"
+
+#: src/cgame/cg_main.c:893
+msgid "is not on the server"
+msgstr "nie jest na serwerze"
+
+#: src/cgame/cg_scoreboard.c:165 src/cgame/cg_scoreboard.c:171
+#: src/cgame/cg_scoreboard.c:175 src/cgame/cg_scoreboard.c:180
+msgid "MISSION TIME:"
+msgstr "CZAS MISJI:"
+
+#: src/cgame/cg_scoreboard.c:171
+msgid "GAME STOPPED"
+msgstr "GRA ZATRZYMANA"
+
+#: src/cgame/cg_scoreboard.c:175
+msgid "SUDDEN DEATH"
+msgstr "NAGLA SMIERC"
+
+#: src/cgame/cg_scoreboard.c:205
+msgid "REINFORCE TIME:"
+msgstr "CZAS POSILKOW:"
+
+#: src/cgame/cg_scoreboard.c:222
+msgid "ROUND"
+msgstr "RUNDA"
+
+#: src/cgame/cg_scoreboard.c:222
+msgid "SCORE"
+msgstr "WYNIKI"
+
+#: src/cgame/cg_scoreboard.c:373 src/cgame/cg_scoreboard.c:536
+msgid "^3CONNECTING"
+msgstr "^3LACZENIE"
+
+#: src/cgame/cg_scoreboard.c:377 src/cgame/cg_scoreboard.c:540
+msgid "^3SPECTATOR"
+msgstr "^3OBSERWATOR"
+
+#: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:683
+msgid "AXIS"
+msgstr "OS"
+
+#: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:673
+#: src/cgame/cg_scoreboard.c:683 src/cgame/cg_scoreboard.c:687
+msgid "PLAYERS"
+msgstr "GRACZ"
+
+#: src/cgame/cg_scoreboard.c:667 src/cgame/cg_scoreboard.c:674
+msgid "FIRST BLOOD"
+msgstr "PIERWSZA KREW"
+
+#: src/cgame/cg_scoreboard.c:673 src/cgame/cg_scoreboard.c:687
+msgid "ALLIES"
+msgstr "ALLIANCI"
+
+#: src/cgame/cg_scoreboard.c:701
+msgid "Name"
+msgstr "Imie"
+
+#: src/cgame/cg_scoreboard.c:704
+msgid "Class"
+msgstr "Klasa"
+
+#: src/cgame/cg_scoreboard.c:709
+msgid "Score"
+msgstr "Wyniki"
+
+#: src/cgame/cg_scoreboard.c:714
+msgid "XP"
+msgstr "XP"
+
+#: src/cgame/cg_scoreboard.c:718
+msgid "Ping"
+msgstr "Ping"
+
+#: src/cgame/cg_servercmds.c:405
+msgid "Auto Pick"
+msgstr "Auto Podnoszenie"
+
+#: src/cgame/cg_servercmds.c:2304
+msgid "Map"
+msgstr "Mapa"
+
+#: src/cgame/cg_servercmds.c:2326
+msgid "Could not create logfile"
+msgstr "Nie mozna bylo stworzyc logu"
+
+#: src/cgame/cg_servercmds.c:2866
+msgid "^3Server Restarting"
+msgstr "^3Restartowanie Serwera"
+
+msgid "^1ET:Legacy"
+msgstr "^1ET:Legacy"
+
+msgid "PLAY ONLINE"
+msgstr "GRAJ ONLINE"
+
+msgid "HOST GAME"
+msgstr "STWORZ GRE"
+
+msgid "REPLAYS"
+msgstr "POWTORKI"
+
+msgid "OPTIONS"
+msgstr "OPCJE"
+
+msgid "PROFILE"
+msgstr "PROFIL"
+
+msgid "MODS"
+msgstr "MODY"
+
+msgid "CREDITS"
+msgstr "NAPISY"
+
+msgid "ETLEGACY.COM"
+msgstr "ETLEGACY.COM"
+
+msgid "EXIT GAME"
+msgstr "WYJDZ Z GRY"
+
+msgid "CREATE"
+msgstr "STWORZ"
+
+msgid "DELETE"
+msgstr "USUN"
+
+msgid "RENAME"
+msgstr "ZMIEN NAZWE"
+
+msgid "SET AS DEFAULT"
+msgstr "USTAW DOMYSLNY"
+
+msgid "BACK"
+msgstr "COFNIJ"
+
+msgid "SELECT PROFILE"
+msgstr "WYBIERZ PROFIL"
+
+msgid "CREATE PROFILE"
+msgstr "STWORZ PROFIL"
+
+msgid ""
+"Please choose your initial settings below. You can change these at any time "
+"and access more advanced options by visiting the Options Menu. Should more "
+"than one person wish to play Wolfenstein: Enemy Territory, you can create "
+"additional profiles by visiting the Profiles Menu."
+msgstr ""
+"Wybierz Ustawienia poczatkowe ponizej. Mozesz zmienic je w dowolnym "
+"momencie, a dostep do bardziej zaawansowanych opcji odwiedzajac Menu opcje. "
+"Jezeli wiecej niz jedna osoba zamierza grac Wolfenstein: Enemy Territory na "
+"tym komputerze, mozna utworzyc dodatkowe profile odwiedzajac Menu profile."
+
+msgid "Player Alias:"
+msgstr "Przezwisko:"
+
+msgid "Video Quality:"
+msgstr "Jakosc Obrazu:"
+
+msgid "Resolution:"
+msgstr "Rozdzielczosc:"
+
+msgid "Brightness:"
+msgstr "Jasnosc:"
+
+msgid "Connection:"
+msgstr "Polaczenie:"
+
+msgid "Mouse Sensitivity:"
+msgstr "Czulosc myszy:"
+
+msgid "Invert Mouse:"
+msgstr "Obroc Mysz:"
+
+msgid "Handedness:"
+msgstr "Reka:"
+
+msgid "DEFAULT SETTINGS"
+msgstr "USTAWIENIA DOMYSLNE"
+
+msgid "Language:"
+msgstr "Jezyk:"
+
+msgid "QUIT"
+msgstr "WYJDZ"
+
+msgid "RENAME PROFILE"
+msgstr "ZMIEN NAZWE PROFILU"
+
+msgid "New Profile Name:"
+msgstr "Nowa Nazwa Profilu:"
+
+msgid "DELETE PROFILE"
+msgstr "USUN PROFIL"
+
+msgid "Are you sure?"
+msgstr "Jestes pewien?"
+
+msgid "YES"
+msgstr "TAK"
+
+msgid "NO"
+msgstr "NIE"
+
+msgid "DELETE WARNING"
+msgstr "UWAGA USUWANIE"
+
+msgid "Can't delete"
+msgstr "Nie mozna usunac"
+
+msgid "active profile."
+msgstr "aktywnego profilu."
+
+msgid "CREATION ERROR"
+msgstr "BLAD TWORZENIA"
+
+msgid "MESSAGE OF THE DAY"
+msgstr "WIADOMOSC DNIA"
+
+msgid "FILTERS"
+msgstr "FILTRY"
+
+msgid "Source:"
+msgstr "Zrodlo:"
+
+msgid "Game Type:"
+msgstr "Typ gry:"
+
+msgid "PREVIEW"
+msgstr "PODGLAD"
+
+msgid "SERVER BROWSER"
+msgstr "PRZEGLADARKA SERWERA"
+
+msgid "SERVER NAME"
+msgstr "NAZWA SERWERA"
+
+msgid "MAP NAME"
+msgstr "MAPA"
+
+msgid "#PLRS"
+msgstr "#GRZE"
+
+msgid "TYPE"
+msgstr "TYP"
+
+msgid "PING"
+msgstr "PING"
+
+msgid "FAV"
+msgstr "ULB"
+
+msgid "REFRESH LIST"
+msgstr "ODSWIEZ LISTE"
+
+msgid "CONNECT TO IP"
+msgstr "POLACZ DO IP"
+
+msgid "SERVER INFO"
+msgstr "INFO SERWERA"
+
+msgid "JOIN SERVER"
+msgstr "POLACZ DO SERWERA"
+
+msgid "Server IP:"
+msgstr "IP Serwera:"
+
+msgid "CONNECT"
+msgstr "POLACZ"
+
+msgid "REFRESH"
+msgstr "ODSWIEZ"
+
+msgid "SETTINGS"
+msgstr "USTAWIENIA"
+
+msgid "Server Name:"
+msgstr "Nazwa Serwera:"
+
+msgid "Maximum Players:"
+msgstr "Maximum Graczy:"
+
+msgid "Auto-Configure Server:"
+msgstr "Samo-Konfig. Serwer:"
+
+msgid "Dedicated Server:"
+msgstr "Dedykowany Serwer:"
+
+msgid "Password:"
+msgstr "Haslo:"
+
+msgid "FEATURES"
+msgstr "FUNKCJE"
+
+msgid "Friendly Fire"
+msgstr "Ogien Przyjaciela"
+
+msgid "Anti-Lag"
+msgstr "Anty-Lag"
+
+msgid "Max Lives"
+msgstr "Max zyc"
+
+msgid "Weapon Restrictions"
+msgstr "Restrykcja Broni"
+
+msgid "Balanced Teams"
+msgstr "Balans Teamow"
+
+msgid "NAME"
+msgstr "NAZWA"
+
+msgid "DETAILS"
+msgstr "DETALE"
+
+msgid "ADVANCED"
+msgstr "ZAAWANSOWANE"
+
+msgid "START SERVER"
+msgstr "WLACZ SERWER"
+
+msgid "HOST GAME: ADVANCED"
+msgstr "STAWIANIE SERWERA: ZAAWANSOWANE"
+
+msgid "GENERAL"
+msgstr "OGOLNE"
+
+msgid "Minimum Ping:"
+msgstr "Minimalny Ping:"
+
+msgid "Maximum Ping:"
+msgstr "Maximalny Ping:"
+
+msgid "Maximum Game Rate:"
+msgstr "Maksymalny Rate Gry:"
+
+msgid "Player Inactivity:"
+msgstr "Nieaktywnosc gracza:"
+
+msgid "Spectator Inactivity:"
+msgstr "Nieaktywnosc Widza:"
+
+msgid "Intermission Time:"
+msgstr "Czas Przerwy:"
+
+msgid "Intermission Ready %:"
+msgstr "Procent Gotowosci %:"
+
+msgid "MATCH"
+msgstr "MECZ"
+
+msgid "Wait for Ready:"
+msgstr "Czekaj na Gotowosc:"
+
+msgid "Minimum Players:"
+msgstr "Minimum Graczy:"
+
+msgid "Ready percentage:"
+msgstr "Gotowosc Procentowa:"
+
+msgid "Allow Late Joins:"
+msgstr "Pozwol na pozne dola.:"
+
+msgid "Mute Spectators:"
+msgstr "Ucisz Widzow:"
+
+msgid "Warmup Damage:"
+msgstr "Uszkodzenia Rozgrzewki:"
+
+msgid "Max Players Per Team:"
+msgstr "Max Graczy na team:"
+
+msgid "Disable Team Controls:"
+msgstr "Wylacz Kontrole Teamu:"
+
+msgid "Warmup Duration:"
+msgstr "Czas Rozgrzewki:"
+
+msgid "Maximum Complaints:"
+msgstr "Maksimum Skarg:"
+
+msgid "Maximum Complainees:"
+msgstr "Maksymalna Ilosc Skarg:"
+
+msgid "Map Time Limit:"
+msgstr "Czasowy Limit Mapy:"
+
+msgid "Allied Spawn Time:"
+msgstr "Czas Odro. Aliatow:"
+
+msgid "Axis Spawn Time:"
+msgstr "Czas Odro. Osi:"
+
+msgid "Allied Max Lives:"
+msgstr "Zycia Aliantow:"
+
+msgid "Axis Max Lives:"
+msgstr "Zycia OSi:"
+
+msgid "Stopwatch Round-Type:"
+msgstr "Na Czas Typ-Rundy:"
+
+msgid "LAST MAN STANDING"
+msgstr "OSTATNI PRZETRWALY"
+
+msgid "LMS Rounds Per Match:"
+msgstr "OCP Rund na Mecz:"
+
+msgid "LMS Matches Per Map:"
+msgstr "OCP Meczow na Mape:"
+
+msgid "LMS Spectate Team Only:"
+msgstr "Blokuje Spec. Teamu:"
+
+msgid "LMS Locked Teams:"
+msgstr "OCP Zablokowane Teamy:"
+
+msgid "ADMIN"
+msgstr "ADMIN"
+
+msgid "Pure Server:"
+msgstr "Czysty Serwer:"
+
+msgid "Referee Password:"
+msgstr "Haslo Sedziego:"
+
+msgid "RCON Password:"
+msgstr "Haslo RCON:"
+
+msgid "VOTING"
+msgstr "GLOSOWANIE"
+
+msgid "Max Votes per Player:"
+msgstr "Max Graczy na Team:"
+
+msgid "Successful voting:"
+msgstr "Sukces glosowan:"
+
+msgid "ALLOW VOTES"
+msgstr "POZWOL GLOSOWAC"
+
+msgid "Comp Settings:"
+msgstr "Ustaw. Konkur.:"
+
+msgid "Player Kick:"
+msgstr "Wykop Gracza:"
+
+msgid "Map:"
+msgstr "Mapa:"
+
+msgid "Match Reset:"
+msgstr "Reset Meczu:"
+
+msgid "Mute Spects:"
+msgstr "Wycisz Widzow:"
+
+msgid "Next Map:"
+msgstr "Nastepna Mapa:"
+
+msgid "Balanced Teams:"
+msgstr "Balans Teamow:"
+
+msgid "Pub Settings:"
+msgstr "Ustaw. Pub.:"
+
+msgid "Referee:"
+msgstr "Sedzia:"
+
+msgid "XP Shuffle:"
+msgstr "Pomieszanie XP:"
+
+msgid "Swap Teams:"
+msgstr "Zamiana Teamow:"
+
+msgid "Friendly Fire:"
+msgstr "Ogien Przyjaciela:"
+
+msgid "Timelimit:"
+msgstr "Czasowy Limit:"
+
+msgid "Anti-Lag:"
+msgstr "Anty-Lag:"
+
+msgid "Line 1:"
+msgstr "Linia 1:"
+
+msgid "Line 2:"
+msgstr "Linia 2:"
+
+msgid "Line 3:"
+msgstr "Linia 3:"
+
+msgid "Line 4:"
+msgstr "Linia 4:"
+
+msgid "Line 5:"
+msgstr "Linia 5:"
+
+msgid "DOWNLOAD"
+msgstr "SCIAGANIE"
+
+msgid "Client Downloads:"
+msgstr "Sciag. przez Klienta:"
+
+msgid "Maximum Download Rate:"
+msgstr "Maks Kurs Sciagania:"
+
+msgid "FTP/HTTP Redirects:"
+msgstr "Kierowanie FTP/HTTP:"
+
+msgid "Base URL:"
+msgstr "Bazwowy URL:"
+
+msgid "EXTENDED"
+msgstr "ROZSZERZONE"
+
+msgid "DEFAULT"
+msgstr "DOMYSLNIE"
+
+msgid "MISC"
+msgstr "ROZNE"
+
+msgid "Country Flags:"
+msgstr "Flagi Panstw:"
+
+msgid "DEFAULT SERVER SETTINGS"
+msgstr "DOMYSLNE USTAWIENIA SERWERA"
+
+msgid "Reset server settings to default?"
+msgstr "Zresetowac serwer do domyslnych ustawien?"
+
+msgid "START DEDICATED SERVER"
+msgstr "WLACZ SERWER DEDYKOWANY"
+
+msgid "Starting a Dedicated Server will"
+msgstr "Wlaczenie Serwera Dedykowanego Serwera bedzie"
+
+msgid "close the game window and open the"
+msgstr "zamknij okno gry i otworz"
+
+msgid "server console. It will not be possible"
+msgstr "konsole  serwera. To bedzie nie mozliwe"
+
+msgid "to play the game on the host machine."
+msgstr "aby grac na maszynie gospodarza."
+
+msgid "Are you sure you want to start"
+msgstr "Jestes pewien aby wlaczyc"
+
+msgid "a Dedicated Server?"
+msgstr "Dedykowany Serwer?"
+
+msgid "LOAD MOD"
+msgstr "WCZYTAJ MOD"
+
+msgid "VIEW"
+msgstr "ODTWORZ"
+
+msgid "DELETE REPLAY"
+msgstr "USUN POWTORKE"
+
+msgid "GAME"
+msgstr "GRA"
+
+msgid "CONTROLS"
+msgstr "STEROWANIE"
+
+msgid "SYSTEM"
+msgstr "SYSTEM"
+
+msgid "GRAPHICS"
+msgstr "GRAFIKA"
+
+msgid "PLAYER"
+msgstr "GRACZE"
+
+msgid "PHYSICS"
+msgstr "FYZIKA"
+
+msgid "Always Run:"
+msgstr "Zawsze Biegnij:"
+
+msgid "Double-Tap Prone:"
+msgstr "Podwojne-Klikniecie Padania:"
+
+msgid "WEAPONS"
+msgstr "BRONIE"
+
+msgid "Automatic Reload:"
+msgstr "Atomatyczne Przeladowanie:"
+
+msgid "Autoswitch:"
+msgstr "Auto-zmiana:"
+
+msgid "Weapon Icon Flash:"
+msgstr "Ikona Broni Flash:"
+
+msgid "Muzzle Flash:"
+msgstr "Blysk Lufy:"
+
+msgid "Bullet Tracers:"
+msgstr "Slady Pociskow:"
+
+msgid "SCOPE"
+msgstr "LUNETA"
+
+msgid "Use Weapon Cycle for Zoom:"
+msgstr "Uzyj Zmiany Broni dla przyb.:"
+
+msgid "Default Zoom Level:"
+msgstr "Domyslny Poziom Przyblizenia:"
+
+msgid "Zoom Levels:"
+msgstr "Poziom Przyblizenia:"
+
+msgid "CHAT"
+msgstr "CHAT"
+
+msgid "Quick Chat Mode:"
+msgstr "Mod Szybkiego Czatu:"
+
+msgid "Chat Icon Time:"
+msgstr "Ikona Czasu Czatu:"
+
+msgid "Team chat only:"
+msgstr "Tylko Chat Teamu:"
+
+msgid "No voice chat:"
+msgstr "Bez Dzwieku Czatu:"
+
+msgid "No voice text:"
+msgstr "Bez Dzwieku Textu:"
+
+msgid "MISCELLANEOUS"
+msgstr "ROZNE"
+
+msgid "Complaint PopUp:"
+msgstr "Okienko Skarg:"
+
+msgid "Log Important Messages:"
+msgstr "Zapisuj Wazne Wiadomosci:"
+
+msgid "Auto-Action:"
+msgstr "Auto-Akcja:"
+
+msgid "Use JPEG for AutoScreenshots:"
+msgstr "Uzyj JPEG dla AutoScreenow:"
+
+msgid "Show Tool Tips :"
+msgstr "Pokaz Opis:"
+
+msgid "Announcer:"
+msgstr "Informacje:"
+
+msgid "HUD DISPLAY"
+msgstr "WIDOK HUDU"
+
+msgid "Draw Gun:"
+msgstr "Rysuj Bron:"
+
+msgid "Show Compass:"
+msgstr "Pokaz Kompass:"
+
+msgid "Mission Timer:"
+msgstr "Czas Misji:"
+
+msgid "Reinforcement Timer:"
+msgstr "Czas Posilkow:"
+
+msgid "Cursor Hints:"
+msgstr "Wskazowki Kursora:"
+
+msgid "Show Lagometer:"
+msgstr "Pokaz Lagometer:"
+
+msgid "Show FPS:"
+msgstr "Pokaz FPS:"
+
+msgid "Show Locations:"
+msgstr "Pokaz Lokalizacje:"
+
+msgid "Enable Flags:"
+msgstr "Wlacz Flagi:"
+
+msgid "Fireteam Latched Class:"
+msgstr "Klasa w Fireteamie:"
+
+msgid "Switch HUD:"
+msgstr "Zmien HUD:"
+
+msgid "Modify Alternate HUD:"
+msgstr "Alternatywny HUD:"
+
+msgid "IN-GAME DISPLAY"
+msgstr "WIDOK W GRZE"
+
+msgid "Ejecting Brass:"
+msgstr "Wypadanie Lusek:"
+
+msgid "Field Of View:"
+msgstr "Pole Widzenia:"
+
+msgid "Corona Distance:"
+msgstr "Odleglosc Korony:"
+
+msgid "Particles:"
+msgstr "Czastki:"
+
+msgid "Wall Mark Lifetime:"
+msgstr "Znaki Scian Czas:"
+
+msgid "Blood Flash:"
+msgstr "Blysk Krwi:"
+
+msgid "Blood Splatter:"
+msgstr "Rozprysk Krwi:"
+
+msgid "Show Blood:"
+msgstr "Pokaz Krew:"
+
+msgid "Atmospheric Effects:"
+msgstr "Efekty Atmosferyczne:"
+
+msgid "CROSSHAIR"
+msgstr "CELOWNIK"
+
+msgid "Crosshair Size:"
+msgstr "Wielkosc Celownika:"
+
+msgid "Crosshair Pulsing:"
+msgstr "Pulsowanie Celownika:"
+
+msgid "Crosshair Health Info:"
+msgstr "Poziom Zycia:"
+
+msgid "Crosshair Name Drawing:"
+msgstr "Nazwy Graczy:"
+
+msgid "Primary Color:"
+msgstr "Pierwszy Kolor:"
+
+msgid "Primary Alpha:"
+msgstr "Pierwszy Alfa:"
+
+msgid "Secondary Color:"
+msgstr "Drugi Kolor:"
+
+msgid "Secondary Alpha:"
+msgstr "Drugi Alfa:"
+
+msgid "MOVEMENT"
+msgstr "PORUSZANIE SIE"
+
+msgid "Bob up:"
+msgstr "Hustanie gora:"
+
+msgid "Bob pitch:"
+msgstr "Hustanie pion:"
+
+msgid "Bob roll:"
+msgstr "Hustanie w kolo:"
+
+msgid "Bob yaw:"
+msgstr "Hustanie poziom:"
+
+msgid "MOVE"
+msgstr "RUCH"
+
+msgid "Forward:"
+msgstr "Do przodu:"
+
+msgid "Back:"
+msgstr "Tyl:"
+
+msgid "Move Left:"
+msgstr "Na Lewo:"
+
+msgid "Move Right:"
+msgstr "Na Prawo:"
+
+msgid "Lean Left:"
+msgstr "Wychyl na Lewo:"
+
+msgid "Lean Right:"
+msgstr "Wychyl na Prawo:"
+
+msgid "Jump:"
+msgstr "Skok:"
+
+msgid "Crouch:"
+msgstr "Kucniecie:"
+
+msgid "Prone:"
+msgstr "Lezenie:"
+
+msgid "Walk:"
+msgstr "Chodzenie:"
+
+msgid "Sprint:"
+msgstr "Bieg:"
+
+msgid "Use (Activate):"
+msgstr "Uzyj (aktywuj):"
+
+msgid "INPUT"
+msgstr "WEJSCIE"
+
+msgid "Smooth Mouse:"
+msgstr "Gladka Mysz:"
+
+msgid "Mouse Pitch:"
+msgstr "Pion Myszy:"
+
+msgid "Chat:"
+msgstr "Chat:"
+
+msgid "Team Chat:"
+msgstr "Chat Teamu:"
+
+msgid "Fire-Team Chat:"
+msgstr "Chat Zespolu:"
+
+msgid "Quick Chat:"
+msgstr "Szybki Chat:"
+
+msgid "Fire-Team Quick Chat:"
+msgstr "Szybki Chat Zespolu:"
+
+msgid "POP-UPS"
+msgstr "POWIADOMIENIA"
+
+msgid "Show Scores:"
+msgstr "Pokaz Statystyki:"
+
+msgid "Show Limbo Menu:"
+msgstr "Pokaz Menu Gracza:"
+
+msgid "Show Command Map:"
+msgstr "Pokaz Mape:"
+
+msgid "Compass Map Zoom In:"
+msgstr "Przyblizenie Mapy:"
+
+msgid "Compass Map Zoom Out:"
+msgstr "Oddalenie Mapy:"
+
+msgid "Player Stats:"
+msgstr "Statystyki Gracza:"
+
+msgid "Top Shots:"
+msgstr "Top Strzalow:"
+
+msgid "USE WEAPONS"
+msgstr "UZYJ BRONI"
+
+msgid "Attack:"
+msgstr "Atak:"
+
+msgid "Switch to Alternate:"
+msgstr "Zmiana na Alternatywna:"
+
+msgid "Reload Weapon:"
+msgstr "Przeladowanie Broni:"
+
+msgid "Binocular Zoom:"
+msgstr "Zblizanie Lornetki:"
+
+msgid "SELECT WEAPONS"
+msgstr "WYBOR BRONI"
+
+msgid "Next Weapon:"
+msgstr "Nastepna Bron:"
+
+msgid "Previous Weapon:"
+msgstr "Poprzednia Bron:"
+
+msgid "Slot 1 - Melee:"
+msgstr "Slot 1 - Reczna:"
+
+msgid "Slot 2 - One Handed:"
+msgstr "Slot 2 - Jedno Reczna:"
+
+msgid "Slot 3 - Two Handed:"
+msgstr "Slot 3 - Dwu Reczna:"
+
+msgid "Slot 4 - Grenade:"
+msgstr "Slot 4 - Granat:"
+
+msgid "Slot 5 - Special 1:"
+msgstr "Slot 5 - Specjalna 1:"
+
+msgid "Slot 6 - Special 2:"
+msgstr "Slot 6 - Specjalna 2:"
+
+msgid "Slot 7 - Special 3:"
+msgstr "Slot 7 - Specjalna 3:"
+
+msgid "Vote Yes:"
+msgstr "Glosuj Tak:"
+
+msgid "Vote No:"
+msgstr "Glosuj Nie:"
+
+msgid "Take Screenshot:"
+msgstr "Zrob Screenshota:"
+
+msgid "Record Replay:"
+msgstr "Nagraj Powtorke:"
+
+msgid "FIRE-TEAMS"
+msgstr "ZESPOLY"
+
+msgid "Select All Members:"
+msgstr "Wybierz Wszystkich:"
+
+msgid "Select Member #1:"
+msgstr "Wybierz Czlonka #1:"
+
+msgid "Select Member #2:"
+msgstr "Wybierz Czlonka #2:"
+
+msgid "Select Member #3:"
+msgstr "Wybierz Czlonka #3:"
+
+msgid "Select Member #4:"
+msgstr "Wybierz Czlonka #4:"
+
+msgid "Select Member #5:"
+msgstr "Wybierz Czlonka #5:"
+
+msgid "Select Member #6:"
+msgstr "Wybierz Czlonka #6:"
+
+msgid "Deselect All:"
+msgstr "Odznacz Wszystkich:"
+
+msgid "Fire-Team Admin:"
+msgstr "Admin Zespolu:"
+
+msgid "DEFAULT CONTROLS"
+msgstr "DOMYSLNE STEROWANIE"
+
+msgid "Reset controls to default?"
+msgstr "Zresetowac ustawien do domyslnych?"
+
+msgid "AUDIO"
+msgstr "DZWIEK"
+
+msgid "Effects Volume:"
+msgstr "Glosnosc Efektow:"
+
+msgid "Music Volume:"
+msgstr "Glosnosc Muzyki:"
+
+msgid "Sound Quality:"
+msgstr "Jakosc Dzwieku:"
+
+msgid "Doppler FX:"
+msgstr "Doppler FX:"
+
+msgid "Mute When Minimized:"
+msgstr "Wycisz Kiedy Zminimalizowane:"
+
+msgid "Mute When Unfocused:"
+msgstr "Wycicz kiedy gra nie jest glownym oknem:"
+
+msgid "Hitsounds:"
+msgstr "Dzwieki Trafien:"
+
+msgid "NETWORKING"
+msgstr "SIEC"
+
+msgid "Max Packets:"
+msgstr "Max Pakietow:"
+
+msgid "Packet Duplication:"
+msgstr "Duplikacja Pakietu:"
+
+msgid "DOWNLOADS"
+msgstr "SCIAGANIE"
+
+msgid "Check for Updates on Start-Up:"
+msgstr "Sprawdzaj Aktulizacje przy Starcie:"
+
+msgid "Get Missing Files from Server:"
+msgstr "Zdobadz Brakujace Pliki z Serwera:"
+
+msgid "Use HTTP/FTP Downloads:"
+msgstr "Uzyj HTTP/FTP Sciagania:"
+
+msgid "APPLY"
+msgstr "POTWIERZ"
+
+msgid "CALIBRATE BRIGHTNESS"
+msgstr "KALIBRACJA JASNOSCI"
+
+msgid "General Brightness Calibration (All Color Depths)"
+msgstr "Ogolna Kalibracja Jasnosci (Wszystkie Kolory Glebi)"
+
+msgid ""
+"1. Move the slider below and/or the brightness on your monitor until you can "
+"see 16"
+msgstr ""
+"1. Przesun suwak ponizej i/lub jasnosc na ekranie monitora, az zobaczysz 16"
+
+msgid "     separate bars below of equal differing brightness."
+msgstr "     oddzielnych paskow ponizej rowne roznej jasnosci."
+
+msgid "2. Click the BACK button."
+msgstr "2. Kliknij przycisk COFNIJ."
+
+msgid "Brightness Fine-Tuning (32 bit Textures and Color Depth)"
+msgstr "Tuningowanie Jasnosci (32 bit Textury i Glebia Koloru)"
+
+msgid "1. Move the slider below until you can see 3 separate bars below."
+msgstr "1. Porusz pasek ponizej az zobaczysz 3 oddzielne paski ponizej"
+
+msgid ""
+"2. Adjust the slider until there is no difference between the left and "
+"middle boxes."
+msgstr ""
+"2. Dostosuj pasek az nie bedzie zadnej roznicy pomiedzy lewym i srodkowym "
+"polem."
+
+msgid "3. Click the BACK button."
+msgstr "3. Nadus przycisk COFNIJ."
+
+msgid "SIMPLE"
+msgstr "PROSTE"
+
+msgid "Overall Quality:"
+msgstr "Ogolna Jakosc:"
+
+msgid "Fullscreen:"
+msgstr "Pelny Obraz:"
+
+msgid "Borderless:"
+msgstr "Obramowanie:"
+
+msgid "Intensity:"
+msgstr "Intensywnosc:"
+
+msgid "Map overbright bits:"
+msgstr "Nadjasnosc bitowa Mapy:"
+
+msgid "Overbright Bits:"
+msgstr "Nadjasnosc Bitowa:"
+
+msgid "Low Quality Sky:"
+msgstr "Niska Jakosc Nieba:"
+
+msgid "Shadow Detail:"
+msgstr "Detale Cieni:"
+
+msgid "Texture Detail:"
+msgstr "Detale Textur:"
+
+msgid "Dynamic Lights:"
+msgstr "Dynamiczne Swiatla:"
+
+msgid "Geometric Detail:"
+msgstr "Detale Geometryczne:"
+
+msgid "Texture Quality:"
+msgstr "Jakosc Textur:"
+
+msgid "Texture Filter:"
+msgstr "Filtr Textur:"
+
+msgid "Anisotropic Filter:"
+msgstr "Filtr Anisotroponiczny:"
+
+msgid "Color Depth:"
+msgstr "Glebia Koloru:"
+
+msgid "Detail Textures:"
+msgstr "Detale Textur:"
+
+msgid "Depth Buffer:"
+msgstr "Glebia Bufora:"
+
+msgid "Compress Textures:"
+msgstr "Kompresja Textur:"
+
+msgid "Sync Every Frame:"
+msgstr "Synchronizacja Klatek:"
+
+msgid "GL Extensions:"
+msgstr "Rozszerzenie OpenGL:"
+
+msgid "SET RECOMMENDED"
+msgstr "USTAW REKOMENDOWANE"
+
+msgid "^3DEVELOPED BY ET LEGACY TEAM"
+msgstr "^3WYDANE PRZRZ ET LEGACY TEAM"
+
+msgid "^1PROGRAMMING"
+msgstr "^1PROGRAMISCI"
+
+msgid "Jan 'Radegast' Simek - Project founder, coding & management"
+msgstr "Jan 'Radegast' Simek - zalozyciel projektu, kodowanie & kierowanie"
+
+msgid "IR4T4 - Coding, mod development & bad boy"
+msgstr "IR4T4 - Programista, wydawca moda & zly chlopiec"
+
+msgid "Konrad 'morsik' Moson - Website, coding & scripts"
+msgstr "Konrad 'morsik' Moson - Srona, kodowanie & skrypty"
+
+msgid "Jere 'Jacker' S - main windows coder, render"
+msgstr "Jere 'Jacker' S - glowny programista windowsa, renderowanie"
+
+msgid "^1CONTRIBUTORS"
+msgstr "^1UCZESTNICY"
+
+msgid "Acqu - Bug reports & patches"
+msgstr "Acqu - reporter bugow & latki"
+
+msgid "Antman - Map location override databases "
+msgstr "Antman - Lokalizacje Map"
+
+msgid "Dragon aka Dragonji - Bug reports & Windows tester"
+msgstr "Dragon aka Dragonji - reporter bugow & Tester Windows"
+
+msgid "Lakersforce - Translations, bug reports"
+msgstr "Lakersforce - Tlumaczenie, reporter bugow"
+
+msgid "Mathieu Olivier - Bug fixes and code clean up"
+msgstr "Mathieu Olivier - Naprawa Bugow i wyczyszczenie kodu"
+
+msgid "Merlin - Bug reports"
+msgstr "Merlin - Reporter Bugow"
+
+msgid "RaFaL aka ***Rafal*** - Menu scripts and Windows tester"
+msgstr "RaFaL aka ***Rafal*** - Skrypty Menu i Tester Windows"
+
+msgid "Dusan 'TheDushan' Jocic - Advices, patches"
+msgstr "Dusan 'TheDushan' Jocic - Rady, Latki"
+
+msgid "Ensiform - Advices, comments"
+msgstr "Ensiform - Rady, Komentarze"
+
+msgid "^1GREETINGS"
+msgstr "^1PODZIEKOWANIA"
+
+msgid "ETPub Team"
+msgstr "Zespol ETPub"
+
+msgid "NQ Team - core hug goes to C.."
+msgstr "NQ Tym - core podziekowania ida do C.."
+
+msgid "Omni-Bot Team - especially crapshot, Dr. Evil & Palota"
+msgstr "Zespol Omni-Bot - szczegolnie crapshot, Dr. Evil & Palota"
+
+msgid "Splash Damage ET Community"
+msgstr "Wspolnota ET Splash Damage"
+
+msgid "Zynx"
+msgstr "Zynx"
+
+msgid "SPLASH DAMAGE"
+msgstr "SPLASH DAMAGE"
+
+msgid "ID SOFTWARE"
+msgstr "ID SOFTWARE"
+
+msgid "ACTIVISION"
+msgstr "ACTIVISION"
+
+msgid "ADDITIONAL"
+msgstr "DODATKOWE"
+
+msgid "ET 2.60"
+msgstr "ET 2.60"
+
+msgid "DEVELOPED BY SPLASH DAMAGE"
+msgstr "WYDANE PRZEZ SPLASH DAMAGE"
+
+msgid "Paul 'Locki' Wedgwood"
+msgstr "Paul 'Locki' Wedgwood"
+
+msgid "Game Designer / Managing Director"
+msgstr "Projektant Gry / Dyrektor Zarzadrzajacy"
+
+msgid "Francisca 'Freya' Wedgwood"
+msgstr "Francisca 'Freya' Wedgwood"
+
+msgid "Business Director"
+msgstr "Dyrektor Biznesu"
+
+msgid "ART"
+msgstr "ART"
+
+msgid "Richard 'Fluffy_gIMp' Jolly"
+msgstr "Richard 'Fluffy_gIMp' Jolly"
+
+msgid "Lead Artist / Creative Director"
+msgstr "Artysta Wykonaczy / Dyrektor Kreatywny"
+
+msgid "Francis 'Frankie' Hobbins"
+msgstr "Francis 'Frankie' Hobbins"
+
+msgid "Artist / Animator"
+msgstr "Artysta / Animator"
+
+msgid "Per 'Per128' Abrahamsen"
+msgstr "Per 'Per128' Abrahamsen"
+
+msgid "Additional Art"
+msgstr "Dodatkowy Art"
+
+msgid "PROGRAMMING"
+msgstr "PROGRAMOWANIE"
+
+msgid "Arnout 'RR2DO2' van Meer"
+msgstr "Arnout 'RR2DO2' van Meer"
+
+msgid "Lead Programmer"
+msgstr "Glowny Programista"
+
+msgid "Gordon 'digibob' Biggans"
+msgstr "Gordon 'digibob' Biggans"
+
+msgid "Programmer"
+msgstr "Programista"
+
+msgid "Randy 'ydnar' Reddig"
+msgstr "Randy 'ydnar' Reddig"
+
+msgid "Programmer / Artist"
+msgstr "Programista / Artysta"
+
+msgid "DESIGN"
+msgstr "PROJEKTOWANIE"
+
+msgid "Tim 'Marauder' Kautz"
+msgstr "Tim 'Marauder' Kautz"
+
+msgid "Designer / Audio Engineer"
+msgstr "Projektant / Inzynier Dzwieku"
+
+msgid "Ed 'Bongoboy' Stern"
+msgstr "Ed 'Bongoboy' Stern"
+
+msgid "Designer / Writer"
+msgstr "Projektant / Pisarz"
+
+msgid "LEVEL DESIGN"
+msgstr "PROJEKTOWANIE POZIOMOW"
+
+msgid "Matt 'Wils' Wilson"
+msgstr "Matt 'Wils' Wilson"
+
+msgid "Lead Level Designer"
+msgstr "Glowny Projektant Poziomow"
+
+msgid "Simon 'sock' O'Callaghan"
+msgstr "Simon 'sock' O'Callaghan"
+
+msgid "Senior Level Designer"
+msgstr "Starszy Projektant Poziomu"
+
+msgid "Mark 'nakedape' Fry"
+msgstr "Mark 'nakedape' Fry"
+
+msgid "Level Designer"
+msgstr "Projektant Poziomow"
+
+msgid "Thomas 'Q-Fraggel' Creutzenberg"
+msgstr "Thomas 'Q-Fraggel' Creutzenberg"
+
+msgid "Chris 'SHoD' Farcy"
+msgstr "Chris 'SHoD' Farcy"
+
+msgid "Level Designer / Artist"
+msgstr "Projektant Poziomow / Artysta"
+
+msgid "Lloyd 'LloydM' Morris"
+msgstr "Lloyd 'LloydM' Morris"
+
+msgid "Lee 'Llama' Mercer"
+msgstr "Lee 'Llama' Mercer"
+
+msgid "Additional Level Design"
+msgstr "Dodatkowe Projekt Poziomu"
+
+msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
+msgstr "PRODUCENT WYKONAWCZY ID SOFTWARE"
+
+msgid "Kevin Cloud"
+msgstr "Kevin Cloud"
+
+msgid "Executive Producer"
+msgstr "Producent Wykonawczy"
+
+msgid "Timothee Besset"
+msgstr "Timothee Besset"
+
+msgid "Additional Programming"
+msgstr "Dodatkowe Programowanie"
+
+msgid ""
+"Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
+"(TM) technology."
+msgstr ""
+"Wolfenstein: Enemy Territory jest zasilany przez technologie Quake III Arena "
+"(TM) od id Software"
+
+msgid ""
+"Production, development and technical assistance provided by id Software."
+msgstr "Produkcja, wykonanie i pomoc techniczna dostaczona przez  id Software."
+
+msgid "PRODUCED BY ACTIVISION"
+msgstr "WYKONANE PRZEZ ACTIVISION"
+
+msgid "Jonathan Moses"
+msgstr "Jonathan Moses"
+
+msgid "Producer"
+msgstr "Producent"
+
+msgid "Doug Avery"
+msgstr "Doug Avery"
+
+msgid "Associate Producer"
+msgstr "Kojarzacy Producent"
+
+msgid "John Fritts"
+msgstr "John Fritts"
+
+msgid "Installer"
+msgstr "Instalator"
+
+msgid "Steve Holmes"
+msgstr "Steve Holmes"
+
+msgid "Production Coordinator"
+msgstr "Kordynator Produkcji"
+
+msgid "Matthew Beal"
+msgstr "Matthew Beal"
+
+msgid "Production Tester"
+msgstr "Tester Produkcji"
+
+msgid "Laird M. Malamed"
+msgstr "Laird M. Malamed"
+
+msgid "Sr. Executive Producer"
+msgstr "St. Producent Wykonawczy"
+
+msgid "Mark Lamia"
+msgstr "Mark Lamia"
+
+msgid "VP North American Studios"
+msgstr "VP North American Studios"
+
+msgid "Brad Saavedra"
+msgstr "Brad Saavedra"
+
+msgid "QA Project Lead"
+msgstr "QA Project Lead"
+
+msgid "Evan Button"
+msgstr "Evan Button"
+
+msgid "Matt McClure"
+msgstr "Matt McClure"
+
+msgid "QA Senior Project Lead"
+msgstr "QA Senior Project Lead"
+
+msgid "Nathaniel McClure"
+msgstr "Nathaniel McClure"
+
+msgid "QA Floor Lead"
+msgstr "QA Floor Lead"
+
+msgid "Testers:"
+msgstr "Testerzy:"
+
+msgid ""
+"Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
+"Kannard, Cory Rice"
+msgstr ""
+"Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
+"Kannard, Cory Rice"
+
+msgid ""
+"Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
+"Martin, Jim Call"
+msgstr ""
+"Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
+"Martin, Jim Call"
+
+msgid ""
+"Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
+"Lawrence Wong"
+msgstr ""
+"Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
+"Lawrence Wong"
+
+msgid ""
+"Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
+"Todd, Mike Restifo"
+msgstr ""
+"Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
+"Todd, Mike Restifo"
+
+msgid "Chris Keim"
+msgstr "Chris Keim"
+
+msgid "Network"
+msgstr "Siec"
+
+msgid "Neil Barizo"
+msgstr "Neil Barizo"
+
+msgid "Compatibility"
+msgstr "Kompatybilizacja"
+
+msgid "Marilena Rixford"
+msgstr "Marilena Rixford"
+
+msgid "QA Manager"
+msgstr "QA Manager"
+
+msgid "Tim Vanlaw"
+msgstr "Tim Vanlaw"
+
+msgid "Manager, Code Release Group"
+msgstr "Manager, Code Release Group"
+
+msgid "Jason Levine"
+msgstr "Jason Levine"
+
+msgid "Sr. Lead, Code Release Group"
+msgstr "Sr. Lead, Code Release Group"
+
+msgid "Jef Sedivy"
+msgstr "Jef Sedivy"
+
+msgid "Lead, Code Release Group"
+msgstr "Lead, Code Release Group"
+
+msgid "Bob McPherson"
+msgstr "Bob McPherson"
+
+msgid "Manager, Customer Support"
+msgstr "Menadzer, Pomoc Uzytkownikow"
+
+msgid "ADDITIONAL DEVELOPMENT"
+msgstr "DODATKOWE WYDANIE"
+
+msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
+msgstr "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
+
+msgid "Jason 'Rhea' Keimig"
+msgstr "Jason 'Rhea' Keimig"
+
+msgid "Programming"
+msgstr "Programowanie"
+
+msgid "PUNKBUSTER BY EVEN BALANCE, INC."
+msgstr "PUNKBUSTER BY EVEN BALANCE, INC."
+
+msgid "Tony Ray"
+msgstr "Tony Ray"
+
+msgid "President"
+msgstr "Prezydent"
+
+msgid "Bjrn Christoph"
+msgstr "Bjrn Christoph"
+
+msgid "Senior Project Leader"
+msgstr "Starszy Leader Projektu"
+
+msgid "VOICE ARTISTS"
+msgstr "GLOSY ARTYSTOW"
+
+msgid "Drew Markham"
+msgstr "Drew Markham"
+
+msgid "Voice of Allied / Axis soldiers"
+msgstr "Glosy Aliantow / Zolnierzy OSi"
+
+msgid "Neil Ross"
+msgstr "Neil Ross"
+
+msgid "Voice of Axis Commander"
+msgstr "Glos Dowodcy OSi"
+
+msgid "Granville van Dusen"
+msgstr "Granville van Dusen"
+
+msgid "Voice of Allied Commander"
+msgstr "Glos Dowodcy Aliantow"
+
+msgid "SPECIAL THANKS TO"
+msgstr "SPECJALNE PODZIEKOWANIA"
+
+msgid ""
+"Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
+"Software."
+msgstr ""
+"Return to Castle Wolfenstein byl wykonany przez Gray Matter Studios & Nerve "
+"Software."
+
+msgid "We would like to thank both developers for their help and support"
+msgstr "Chcielibysmy podziekowac wszystkim wykonamcom za ich pomoc i wsparcie"
+
+msgid "during the development of Wolfenstein: Enemy Territory."
+msgstr "podczas tworzenia Wolfenstein: Enemy Territory."
+
+msgid "Original Soundtrack by Bill Brown."
+msgstr "Oryginalne dzwieki od Billa Browna."
+
+msgid "ET 2.60 UPDATE"
+msgstr "ET 2.60 AKTUALIZACJE"
+
+msgid "ET PRO DEVELOPMENT TEAM"
+msgstr "ZESPOL WYKONAWCZY ET PRO"
+
+msgid "Dan 'bani' Hollis"
+msgstr "Dan 'bani' Hollis"
+
+msgid "Ben 'Rain' Winslow"
+msgstr "Ben 'Rain' Winslow"
+
+msgid "Frederik 'fretn' Delaere"
+msgstr "Frederik 'fretn' Delaere"
+
+msgid "Chris 'Zinx' Lais"
+msgstr "Chris 'Zinx' Lais"
+
+msgid "Joe 'Majikthise' D."
+msgstr "Joe 'Majikthise' D."
+
+msgid "ET Pro Logo"
+msgstr "ET Pro Logo"
+
+msgid "MAC OS X PORT"
+msgstr "MAC OS X PORT"
+
+msgid "Brad Oliver"
+msgstr "Brad Oliver"
+
+msgid ""
+"Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
+"other countries."
+msgstr ""
+"Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
+"other countries."
+
+msgid "ET Legacy Website"
+msgstr "Strona Web ET: Legacy"
+
+msgid " 2012-2013 ET Legacy developers - under the terms of GPL version 3."
+msgstr " 2012-2013 ET: Legacy wykonanie - pod licencja GPL wersja 3."
+
+msgid ""
+" 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
+"Software name, and the id logo are either registered trademarks or "
+"trademarks of Id Software, Inc. in the United States and/or other countries. "
+"All other trademarks and trade names are the properties of their respective "
+"owners."
+msgstr ""
+" 2003 Id Software, Inc. Wszystkie prawa zastrzezone. Wolfenstein: Enemy "
+"Territory, Return to Castle Wolfenstein, powrot do zamku Wolfenstein logo, "
+"nazwe oprogramowania id i logo identyfikator sa zarejestrowanymi znakami "
+"handlowymi lub znakami handlowymi firmy Id Software, Inc. w Stanach "
+"Zjednoczonych i/lub innych krajach. Wszystkie inne znaki towarowe i nazwy "
+"handlowe sa wlasciwosci ich wlascicieli."
+
+msgid "Yeah, right, like YOU have"
+msgstr "Taak, napewno, jakbys mial"
+
+msgid "anything better to do!"
+msgstr "cos lepszego do zrobienia!"
+
+msgid "ERROR"
+msgstr "BLAD"
+
+msgid "RECONNECT"
+msgstr "POLACZ PONOWNIE"
+
+msgid "AUTO UPDATE"
+msgstr "AKTUALIZACJA"
+
+msgid "New version available. Do you want to update now?"
+msgstr "Nowa wersja dostepna, Chesz zaktualizowac teraz?"
+
+msgid "PASSWORD REQUIRED"
+msgstr "POTRZEBNE HASLO"
+
+msgid "REDIRECTION ADVISED"
+msgstr "RADA PRZEKIEROWANIA"
+
+msgid "Do you want to redirect to:"
+msgstr "Chcesz przekierowac sie do:"
+
+msgid "CHANGE VIDEO SETTINGS"
+msgstr "ZMIEN USTAWIENIA VIDEO"
+
+msgid "Apply new settings?"
+msgstr "Potwierdzic zmiany?"
+
+msgid "CONFIRM VIDEO CHANGE"
+msgstr "POTWIERDZ ZMIANE VIDEO"
+
+msgid "Use this video mode?"
+msgstr "Uzyc tego modu video?"
+
+msgid "Reverting to previous"
+msgstr "Zmiana na poprzednie"
+
+#, c-format
+msgid "setting in %s seconds..."
+msgstr "ustawienia za %s sekund..."
+
+msgid "MESSAGE"
+msgstr "WIADOMOSC"
+
+msgid "S. Statements"
+msgstr "S. Instrukcje"
+
+msgid "R. Requests"
+msgstr "R. Zadania"
+
+msgid "C. Commands"
+msgstr "C. Polecenia"
+
+msgid "T. Talk"
+msgstr "T. Rozmowa"
+
+msgid "G. Global"
+msgstr "G. Globalne"
+
+msgid "F. Function"
+msgstr "F. Funkcja"
+
+msgid "O. Objectives"
+msgstr "O. Cele"
+
+msgid "P. Path Cleared."
+msgstr "P. Droga Wolna."
+
+msgid "W. Enemy Weak!"
+msgstr "W. Slaby Wrog!"
+
+msgid "C. All Clear"
+msgstr "C. Czysto"
+
+msgid "I. Incoming"
+msgstr "I. Nadchodza"
+
+msgid "F. Fire In The Hole!"
+msgstr "F. Uwaga Strzal!"
+
+msgid "D. I'm Defending."
+msgstr "D. Chronie."
+
+msgid "A. I'm Attacking."
+msgstr "A. Atakuje."
+
+msgid "T. Taking fire!"
+msgstr "T. Przy Ogniu!"
+
+msgid "M. Mines Cleared"
+msgstr "M. Miny Oczyszczone"
+
+msgid "E. Enemy Disguised"
+msgstr "E. Wrog w Ukryciu"
+
+msgid "M. Need Medic!"
+msgstr "M. Potrzebuje Medyka!"
+
+msgid "A. Need Ammo!"
+msgstr "A. Potrzebuje Amunicje!"
+
+msgid "B. Need Backup!"
+msgstr "B. Potrzebuje Pomocy!"
+
+msgid "E. Need Engineer!"
+msgstr "E. Potrzebuje Inzyniera!"
+
+msgid "C. Cover Me!"
+msgstr "C. Oslaniaj Mnie!"
+
+msgid "H. Hold Fire!"
+msgstr "H. Wsztrzymaj Ogien!"
+
+msgid "W. Where To?"
+msgstr "W. Dokad?"
+
+msgid "O. Need Covert Ops!"
+msgstr "O. Potrzebuje Coverta!"
+
+msgid "F. Follow Me!"
+msgstr "F. Za Mna!"
+
+msgid "G. Let's Go!"
+msgstr "G. No Dalej!"
+
+msgid "M. Move!"
+msgstr "M. Ruchy!"
+
+msgid "C. Clear The Path!"
+msgstr "C. Wyczysc Droge!"
+
+msgid "O. Defend Objective!"
+msgstr "O. Obron Cel!"
+
+msgid "D. Disarm Dynamite!"
+msgstr "D. Rozbroj Dynamit!"
+
+msgid "N. Clear Mines!"
+msgstr "N. Wyczysc Miny!"
+
+msgid "R. Reinforce Offense"
+msgstr "R. Atak Posilkow"
+
+msgid "E. Reinforce Defense"
+msgstr "E. Obrona Posilkow"
+
+msgid "Y. Yes"
+msgstr "Y. Tak"
+
+msgid "N. No"
+msgstr "N. Nie"
+
+msgid "T. Thanks"
+msgstr "T. Dzieki"
+
+msgid "W. Welcome"
+msgstr "W. Nie ma za co"
+
+msgid "S. Sorry"
+msgstr "S. Przepraszam"
+
+msgid "O. Oops"
+msgstr "O. Oops"
+
+msgid "W. Enemy Weak"
+msgstr "W. Slaby Wrog"
+
+msgid "H. Hi"
+msgstr "H. Czesc"
+
+msgid "B. Bye"
+msgstr "B. Dowidzenia"
+
+msgid "S. Great Shot"
+msgstr "S. Niezly Strzal"
+
+msgid "C. Cheer"
+msgstr "C. Okrzyki"
+
+msgid "G. More Globals"
+msgstr "G. Dalej"
+
+msgid "G. Good Game"
+msgstr "G. Dobra Gra"
+
+msgid "A. Command Acknowledged"
+msgstr "A. Polecenie Przyznane"
+
+msgid "D. Command Declined"
+msgstr "D. Polecenie Odrzucone"
+
+msgid "C. Command Completed"
+msgstr "C. Polecenie Wykonane"
+
+msgid "P. Destroy Primary Objective"
+msgstr "P. Zniszcz Pierwszy Cel"
+
+msgid "S. Destroy Secondary Objective"
+msgstr "S. Zniszcz Drugi Cel"
+
+msgid "X. Destroy Construction"
+msgstr "X. Zniszcz Konstrukcje"
+
+msgid "M. Commencing Construction"
+msgstr "M. Rozpocznij Budowe"
+
+msgid "R. Repair Vehicle"
+msgstr "R. Napraw Pojazd"
+
+msgid "V. Disable Vehicle"
+msgstr "V. Wylacz Pojazd"
+
+msgid "E. Escort Vehicle"
+msgstr "E. Eskortuj Pojazd"
+
+msgid "1. Statements"
+msgstr "1. Instrukcje"
+
+msgid "2. Requests"
+msgstr "2. Zadania"
+
+msgid "3. Commands"
+msgstr "3. Polecenia"
+
+msgid "4. Talk"
+msgstr "4. Mow"
+
+msgid "5. Global"
+msgstr "5. Ogolne"
+
+msgid "6. Function"
+msgstr "6. Funkcja"
+
+msgid "7. Objectives"
+msgstr "7. Cele"
+
+msgid "1. Path Cleared."
+msgstr "1. Droga Wolna."
+
+msgid "2. Enemy Weak!"
+msgstr "2. Slaby Wrog!"
+
+msgid "3. All Clear"
+msgstr "3. Czysto"
+
+msgid "4. Incoming"
+msgstr "4. Nadchodza"
+
+msgid "5. Fire In The Hole!"
+msgstr "5. Uwaga Strzal!"
+
+msgid "6. I'm Defending."
+msgstr "6. Chronie."
+
+msgid "7. I'm Attacking."
+msgstr "7. Atakuje."
+
+msgid "8. Taking Fire!"
+msgstr "8. Przy Ogniu!"
+
+msgid "9. Mines Cleared"
+msgstr "9. Miny Oczyszczone"
+
+msgid "0. Enemy Disguised"
+msgstr "0. Wrog w Ukryciu"
+
+msgid "1. Need Medic!"
+msgstr "1. Potrzebuje Medyka!"
+
+msgid "2. Need Ammo!"
+msgstr "2. Potrzebuje Amunicji!"
+
+msgid "3. Need Backup!"
+msgstr "3. Potrzebuje Pomocy!"
+
+msgid "4. Need Engineer!"
+msgstr "4. Potrzebuje Inzyniera!"
+
+msgid "5. Cover Me!"
+msgstr "6. Oslaniaj Mnie!"
+
+msgid "6. Hold Fire!"
+msgstr "6. Wsztrzymaj Ogien!"
+
+msgid "7. Where To?"
+msgstr "7. Dokad?"
+
+msgid "8. Need Covert Ops!"
+msgstr "8. Potrzebuje Coverta!"
+
+msgid "1. Follow Me!"
+msgstr "1. Za mna!"
+
+msgid "2. Let's Go!"
+msgstr "2. No Dalej!"
+
+msgid "3. Move!"
+msgstr "3. Ruchy!"
+
+msgid "4. Clear The Path!"
+msgstr "4. Wyczysc Droge!"
+
+msgid "5. Defend Objective!"
+msgstr "5. Obron Cel!"
+
+msgid "6. Disarm Dynamite!"
+msgstr "6. Rozbroj Dynamit!"
+
+msgid "7. Clear Mines!"
+msgstr "7. Wyczysc Miny!"
+
+msgid "8. Reinforce Offense"
+msgstr "8. Atak Posilkow"
+
+msgid "9. Reinforce Defense"
+msgstr "9. Obrona Posilkow"
+
+msgid "1. Yes"
+msgstr "1. Tak"
+
+msgid "2. No"
+msgstr "2. Nie"
+
+msgid "3. Thanks"
+msgstr "3. Dzieki"
+
+msgid "4. Welcome"
+msgstr "4. Nie ma za co"
+
+msgid "5. Sorry"
+msgstr "5. Przepraszam"
+
+msgid "6. Oops"
+msgstr "6. Oops"
+
+msgid "3. Enemy Weak"
+msgstr "3. Slaby Wrog"
+
+msgid "4. Hi"
+msgstr "4. Czesc"
+
+msgid "5. Bye"
+msgstr "5. Dowidzenia"
+
+msgid "6. Great Shot"
+msgstr "6. Niezly Strzal"
+
+msgid "7. Cheer"
+msgstr "7. Okrzyki"
+
+msgid "8. More Globals"
+msgstr "8. Dalej"
+
+msgid "1. Thanks"
+msgstr "1. Dzieki"
+
+msgid "2. Welcome"
+msgstr "2. Nie ma za co"
+
+msgid "3. Oops"
+msgstr "3. Oops"
+
+msgid "4. Sorry"
+msgstr "4. Przepraszam"
+
+msgid "5. Hold Fire!"
+msgstr "5. Wstrzymaj Ogien!"
+
+msgid "6. Good Game"
+msgstr "6. Dobra Gra"
+
+msgid "1. Command Acknowledged"
+msgstr "1. Polecenie Przyjete"
+
+msgid "2. Command Declined"
+msgstr "2. Polecenie Odrzucone"
+
+msgid "3. Command Completed"
+msgstr "3. Polecenie Wykonane"
+
+msgid "4. Destroy Primary Objective"
+msgstr "4. Zniszcz Pierwszy Cel"
+
+msgid "5. Destroy Secondary Objective"
+msgstr "5. Zniszcz Drugi Cel"
+
+msgid "6. Destroy Construction"
+msgstr "6. Zniszcz Konstrukcje"
+
+msgid "7. Commencing Construction"
+msgstr "7. Rozpocznij Budowe"
+
+msgid "8. Repair Vehicle"
+msgstr "8. Napraw Pojazd"
+
+msgid "9. Disable Vehicle"
+msgstr "9. Wylacz Pojazd"
+
+msgid "0. Escort Vehicle"
+msgstr "0. Eskortuj Pojazd"
+
+msgid "Path cleared."
+msgstr "Droga Wolna."
+
+msgid "The enemy is weakened."
+msgstr "Wrog jest slaby"
+
+msgid "All clear."
+msgstr "Czysto"
+
+msgid "Incoming!"
+msgstr "Nadchodza"
+
+msgid "Fire in the hole!"
+msgstr "Uwaga Strzal!"
+
+msgid "I'm on defense."
+msgstr "Jestem na Obronie."
+
+msgid "I'm on offense."
+msgstr "Jestem na Ataku."
+
+msgid "Taking fire!"
+msgstr "Przy Ogniu!"
+
+msgid "Mines cleared."
+msgstr "Miny Oczyszczone."
+
+msgid "Enemy in disguise."
+msgstr "Wrog w uktryciu."
+
+msgid "Need a Medic!"
+msgstr "Potrzebuje Medyka!"
+
+msgid "I need ammo!"
+msgstr "Potrzebuje Amunicji!"
+
+msgid "I need backup!"
+msgstr "Potrzebuje pomocy!"
+
+msgid "We need an engineer!"
+msgstr "Potrzebujemy Inzyniera!"
+
+msgid "Cover me!"
+msgstr "Oslaniaj Mnie!"
+
+msgid "Hold your fire!"
+msgstr "Wstrzymaj Ogien!"
+
+msgid "Where to?"
+msgstr "Dokad?"
+
+msgid "We need Covert Ops!"
+msgstr "Potrzebuje Coverta!"
+
+msgid "Follow me!"
+msgstr "Za Mna!"
+
+msgid "Let's go!"
+msgstr "No Dalej!"
+
+msgid "Move!"
+msgstr "Ruchy!"
+
+msgid "Clear the path!"
+msgstr "Wyczysc Droge!"
+
+msgid "Defend our objective!"
+msgstr "Obron nasz cel!"
+
+msgid "Disarm the dynamite!"
+msgstr "Rozbroj dynamit!"
+
+msgid "Clear the mines!"
+msgstr "Wyczysc miny!"
+
+msgid "Reinforce the offense!"
+msgstr "Wzmocnij Atak!"
+
+msgid "Reinforce the defense!"
+msgstr "Wzmocnij Obrone!"
+
+msgid "Affirmative!"
+msgstr "Pozytywnie!"
+
+msgid "No!"
+msgstr "Nie!"
+
+msgid "Thank you!"
+msgstr "Dzieki Ci!"
+
+msgid "You're welcome."
+msgstr "Nie ma za co."
+
+msgid "Sorry!"
+msgstr "Przepraszam!"
+
+msgid "Oops!"
+msgstr "Oops!"
+
+msgid "Yes!"
+msgstr "Tak!"
+
+msgid "Negative!"
+msgstr "Negatywnie!"
+
+msgid "Hi!"
+msgstr "Czesc!"
+
+msgid "Good bye."
+msgstr "Dowidzenia."
+
+msgid "Bye."
+msgstr "Nara."
+
+msgid "Great shot!"
+msgstr "Niezly Strzal!"
+
+msgid "You got it, man!"
+msgstr "Masz to, czlowieku!"
+
+msgid "Yeah!"
+msgstr "Nareszczie!"
+
+msgid "Yoohoo!"
+msgstr "Tak Jest!"
+
+msgid "Hahaa!"
+msgstr "Hahaha!"
+
+msgid "Alright!"
+msgstr "W Porzadku!"
+
+msgid "Woo!"
+msgstr "Wooo!"
+
+msgid "Yeehaa!"
+msgstr "Wspaniale!"
+
+msgid "'Atta way, baby!"
+msgstr "'Tak trzymac, malenka!"
+
+msgid "Thanks!"
+msgstr "Dzieki!"
+
+msgid "No problem."
+msgstr "Bez problemu."
+
+msgid "Good game!"
+msgstr "Dobra gra!"
+
+msgid "Command acknowledged!"
+msgstr "Polecenie przyjete!"
+
+msgid "Command declined!"
+msgstr "Polecenie odrzucone!"
+
+msgid "Command completed!"
+msgstr "Polecenie wykonane!"
+
+msgid "Destroy primary objective!"
+msgstr "Zniszcz Pierwszy cel!"
+
+msgid "Destroy secondary objective!"
+msgstr "Zniszcz Drugi cel!"
+
+msgid "Destroy construction!"
+msgstr "Zniscz Konstrukcje!"
+
+msgid "I'm constructing!"
+msgstr "Konstruuje!"
+
+msgid "Repair the vehicle!"
+msgstr "Napraw pojazd!"
+
+msgid "Disable the vehicle!"
+msgstr "Wylacz pojazd!"
+
+msgid "Escort the vehicle!"
+msgstr "Eskortuj pojazd!"
+
+msgid "I'm a soldier."
+msgstr "Jestem Zolnierzem."
+
+msgid "I'm an engineer."
+msgstr "Jestem Inzynierem."
+
+msgid "I'm a medic."
+msgstr "Jestem Medykiem."
+
+msgid "I'm a field ops."
+msgstr "Jestem Field Ops."
+
+msgid "I'm a covert ops."
+msgstr "Jestem Covert Ops."
+
+msgid "Create a Fireteam?"
+msgstr "Stworzyc Zespol?"
+
+msgid "Make Fireteam private?"
+msgstr "Zrobic Zepol prywatny?"
+
+msgid "Response Sent"
+msgstr "Otpowiedz Wyslana"
+
+msgid "^1Legacy"
+msgstr "^1Legacy"
+
+msgid "VOTE"
+msgstr "GLOSOWAC"
+
+msgid "REFEREE"
+msgstr "SEDZIA"
+
+msgid "RCON"
+msgstr "RCON"
+
+msgid "DISCONNECT"
+msgstr "ODLACZ"
+
+msgid "MAP"
+msgstr "MAPA"
+
+msgid "Voting is disabled"
+msgstr "Glosowanie jest wylaczone"
+
+msgid "on this server."
+msgstr "na tym serwerze."
+
+msgid "START MATCH"
+msgstr "ZACZNIJ MECZ"
+
+msgid "RESET MATCH"
+msgstr "RESETOWANIE MECZU"
+
+msgid "RESTART MAP"
+msgstr "RESTARTOWANIE MAPY"
+
+msgid "NEXT MAP"
+msgstr "NASTEPNA MAPA"
+
+msgid "NEXT CAMPAIGN"
+msgstr "NASTEPNA KAMPANIA"
+
+msgid "ANTI-LAG ON"
+msgstr "ANTY-LAG WLACZ"
+
+msgid "ANTI-LAG OFF"
+msgstr "ANTY-LAG WYLACZ"
+
+msgid "XP SHUFFLE"
+msgstr "POMIESZANIE XP"
+
+msgid "SWAP TEAMS"
+msgstr "ZAMIANIA TEAMOW"
+
+msgid "MUTE SPECS"
+msgstr "WYCISZ WIDZOW"
+
+msgid "UNMUTE SPECS"
+msgstr "PODGLOS WIDZOW"
+
+msgid "FRIENDLY FIRE ON"
+msgstr "OGIEN PRZYJACIELA WLACZ"
+
+msgid "FRIENDLY FIRE OFF"
+msgstr "OGIEN PRZYJACIELA WYLACZ"
+
+msgid "BALANCED TEAMS ON"
+msgstr "BALANS TEAMOW WLACZ"
+
+msgid "BALANCED TEAMS OFF"
+msgstr "BALANS TEAMOW WYLACZ"
+
+msgid "COMPETITION SETTINGS"
+msgstr "USTAWIENIA KONKURENCJI"
+
+msgid "PUBLIC SETTINGS"
+msgstr "USTAWIENIA PUBLICZNE"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Time Limit:"
+msgstr "Limit Czasu:"
+
+msgid "OMNI-BOT"
+msgstr "OMNI-BOT"
+
+msgid "PAUSE"
+msgstr "PAUZA"
+
+msgid "UNPAUSE"
+msgstr "WZNOW"
+
+msgid "LOCK TEAMS"
+msgstr "ZABLOKUJ TEAMY"
+
+msgid "UNLOCK TEAMS"
+msgstr "ODBLOKUJ TEAMY"
+
+msgid "LOCK SPECS"
+msgstr "ZABLOKUJ WIDZOW"
+
+msgid "UNLOCK SPECS"
+msgstr "ODBLOKUJ WIDZOW"
+
+msgid "MAPS"
+msgstr "MAPY"
+
+msgid "CAMPAIGNS"
+msgstr "KAMPANIE"
+
+msgid "KICK"
+msgstr "WYKOP"
+
+msgid "MUTE"
+msgstr "UCISZ"
+
+msgid "UN-MUTE"
+msgstr "ODMUTUJ"
+
+msgid "MAKE REFEREE"
+msgstr "UCZYN SIEDZIM"
+
+msgid "UN-REFEREE"
+msgstr "ZABIERZ SIEDZIEGO"
+
+msgid "MAKE AXIS"
+msgstr "WRZUC DO OSI"
+
+msgid "MAKE ALLIED"
+msgstr "WRZUC DO ALIANTOW"
+
+msgid "MAKE SPEC"
+msgstr "WRZUC NA WIDZA"
+
+msgid "WARN"
+msgstr "OSTRZEZENIE"
+
+msgid "BAN"
+msgstr "BAN"
+
+msgid "WARN PLAYER"
+msgstr "OSTRZEZ GRACZA"
+
+msgid "Warning:"
+msgstr "Uwaga:"
+
+msgid "ADD TO FAVORITES"
+msgstr "DODAJ DO ULUBIONYCH"
+
+msgid "Do you want to disconnect"
+msgstr "Czy chcesz sie odlaczyc"
+
+msgid "from the server?"
+msgstr "z tego serwera?"
+
+msgid "SEND MESSAGE"
+msgstr "WYSLIJ WIADOMOSC"
+
+msgid "Say:"
+msgstr "Mow:"
+
+msgid "To:"
+msgstr "Do:"
+
+msgid "CANCEL"
+msgstr "ANULUJ"
+
+msgid "SEND"
+msgstr "WYSLIJ"
+
+msgid "RESPAWNING"
+msgstr "ODRODZENIE"
+
+msgid ""
+"This server has Max Lives enabled. Tapping out now will lose a life. Are you "
+"sure?"
+msgstr ""
+"Ten serwer ma wlaczone max zycie. Padanie teraz bedzie tracilo zycie. Jestes "
+"pewien?"
+
+msgid ""
+"In Last Man Standing mode you will not respawn if you tap out now. Are you "
+"sure?"
+msgstr ""
+"W Ostatni Czlowiek Przetrwaly nie odrodzisz sie jesli padniesz teraz. Jestes "
+"pewien?"
+
+msgid "MAX OMNI-BOT"
+msgstr "MAX OMNI-BOTow"
+
+msgid "MIN OMNI-BOT"
+msgstr "MIN OMNI-BOTow"
+
+msgid "KICK OMNI-BOT"
+msgstr "WYWAL OMNI-BOTa"
+
+msgid "Yes"
+msgstr "Tak"
+
+msgid ""
+"Set recommended video settings\n"
+"and return to the main menu?"
+msgstr ""
+"Ustawic reko. ustawienia\n"
+"i wrocic do menu glownego?"
+
+msgid ""
+"Set recommended video settings\n"
+"and return to the ingame menu?"
+msgstr ""
+"Ustawic reko. ustawienia\n"
+"i wrocic do menu w grze?"
+
+msgid "Do you want to open\n www.etlegacy.com ?"
+msgstr "Czy chcesz otworzyc\n www.etlegacy.com ?"
+
+msgid "^3Thank you for installing ET:Legacy."
+msgstr "^3Dzieki za zainstalowanie ET: Legacy."
+
+msgid "HOST GAME: EXTENDED"
+msgstr "STAWIANIE SERWERA: ROZSZERZONE"
+
+msgid "CLEAN"
+msgstr "CZYSC"
+
+msgid "HOMEPATH CLEAN UP"
+msgstr "CZYSZCZENIE HOMEPATH"
+
+msgid "This will delete all unnecessary files from you fs_homepath."
+msgstr "To usunie wszystkie niepotrzebne pliki z twojego fs_homepath."
+
+msgid "A simple clean will remove tmp- and custom pk3 files."
+msgstr "Proste czyszczenie usunie pliki -tmp i niestandardowe pk3."
+
+msgid "A full clean will remove all downloaded files like map-,"
+msgstr "Pelne czyszczenie usunie wszystkie sciagniete pliki jak mapy,"
+
+msgid "campaign- and custom pk3 files."
+msgstr "kampanie i niestandardowe pk3."
+
+msgid "^3WARNING: Use at your own risk!"
+msgstr "^3UWAGA: Uzyj na wlasne ryzyko!"
+
+msgid "Consult our wiki for documentation."
+msgstr "Skonsultuj sie z nami na wiki."
+
+msgid "Press 'ABORT' if you don't know what you are doing here."
+msgstr "Nadus 'PRZERWIJ' jest nie wiesz co tutaj robisz."
+
+msgid "ABORT"
+msgstr "PRZERWIJ"
+
+msgid "SIMPLE CLEAN"
+msgstr "PROSTE"
+
+msgid "FULL CLEAN"
+msgstr "PELNE"
+
+msgid "No"
+msgstr "Nie"
+
+msgid "unknown cmd"
+msgstr "nieznane polec"
+
+#: src/ui/ui_loadpanel.c:338
+#, c-format
+msgid "Awaiting connection...%i"
+msgstr "Oczekiwanie polaczenia...%i"
+
+#: src/ui/ui_loadpanel.c:341
+#, c-format
+msgid "Awaiting challenge...%i"
+msgstr "Oczekiwanie na wyzwanie...%i"
+
+#: src/ui/ui_loadpanel.c:351
+msgid "Awaiting gamestate..."
+msgstr "Oczekiwanie gry..."
+
+#: src/ui/ui_main.c:2397 src/ui/ui_main.c:2637
+msgid "Waiting for new key... Press ESCAPE to cancel"
+msgstr "Oczekanie na nowy klucz... Nadus ESCAPE aby anulowac"
+
+#: src/ui/ui_main.c:2401 src/ui/ui_main.c:2641
+msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
+msgstr "Nadus ENTER lub KLIKNIJ aby zmienic, Nadus BACKSPACE aby wyczyscic"
+
+#: src/ui/ui_main.c:2539
+#, c-format
+msgid "Getting info for %d servers (ESC to cancel)"
+msgstr "Zdobywanie info dla %d serwerow (ESC aby anulowac)"
+
+#: src/ui/ui_main.c:2543
+msgid "Waiting for response from Master Server"
+msgstr "Oczekiwanie za odpowiedzia z Serwera Glownego"
+
+#: src/ui/ui_main.c:2551
+#, c-format
+msgid "Refresh Time: %s"
+msgstr "Czas Odswiezenia %s"
+
+#: src/ui/ui_main.c:4330 src/ui/ui_main.c:4378 src/ui/ui_main.c:4413
+msgid "Favorite already in list\n"
+msgstr "Ulubiony juz w liscie\n"
+
+#: src/ui/ui_main.c:4335 src/ui/ui_main.c:4383 src/ui/ui_main.c:4418
+msgid "Favorite list full\n"
+msgstr "Lista Ulubionych pelna\n"
+
+#: src/ui/ui_main.c:4340 src/ui/ui_main.c:4388 src/ui/ui_main.c:4423
+#, c-format
+msgid "Added favorite server %s\n"
+msgstr "Dodany ulubiony serwer %s\n"

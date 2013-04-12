@@ -468,6 +468,13 @@ int CL_ServerStatus(char *serverAddress, char *serverStatusString, int maxLen);
 void CL_AddToLimboChat(const char *str);
 qboolean CL_GetLimboString(int index, char *buf);
 
+void CL_TranslateString(const char *string, char *dest_buffer);
+const char *CL_TranslateStringBuf(const char *string);
+
+void CL_OpenURL(const char *url);
+
+void CL_Record(const char *name);
+
 // cl_avi
 
 qboolean CL_OpenAVIForWriting(const char *filename);
@@ -476,17 +483,6 @@ void CL_WriteAVIVideoFrame(const byte *imageBuffer, int size);
 void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size);
 qboolean CL_CloseAVI(void);
 qboolean CL_VideoRecording(void);
-
-// localization
-void CL_InitTranslation(void);
-void CL_SaveTransTable(const char *fileName, qboolean newOnly);
-void CL_ReloadTranslation(void);
-void CL_TranslateString(const char *string, char *dest_buffer);
-const char *CL_TranslateStringBuf(const char *string);
-
-void CL_OpenURL(const char *url);
-
-void CL_Record(const char *name);
 
 // cl_input
 
