@@ -3732,25 +3732,17 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 		upangle = .1;
 	}
 
-	if (grenType == WP_GRENADE_LAUNCHER)
+	switch (grenType)
 	{
+	case WP_GRENADE_LAUNCHER:
+	case WP_GRENADE_PINEAPPLE:
+	case WP_SMOKE_MARKER:
+	case WP_SMOKE_BOMB:
 		upangle *= 900;
-	}
-	else if (grenType == WP_GRENADE_PINEAPPLE)
-	{
-		upangle *= 900;
-	}
-	else if (grenType == WP_SMOKE_MARKER)
-	{
-		upangle *= 900;
-	}
-	else if (grenType == WP_SMOKE_BOMB)
-	{
-		upangle *= 900;
-	}
-	else     // WP_DYNAMITE / WP_LANDMINE / WP_SATCHEL
-	{
+		break;
+	default:  // WP_DYNAMITE / WP_LANDMINE / WP_SATCHEL
 		upangle *= 400;
+		break;
 	}
 
 	VectorCopy(muzzleEffect, tosspos);
