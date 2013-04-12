@@ -34,14 +34,12 @@
 #include "tr_local.h"
 
 /*
-
 All bones should be an identity orientation to display the mesh exactly
 as it is specified.
 
 For all other frames, the bones represent the transformation from the
 orientation of the bone in the base frame to the orientation in this
 frame.
-
 */
 
 //#define HIGH_PRECISION_BONES	// enable this for 32bit precision bones
@@ -583,6 +581,7 @@ static __inline void Matrix4MultiplyInto3x3AndTranslation(/*const*/ vec4_t a[4],
 static __inline void Matrix4Transpose(const vec4_t matrix[4], vec4_t transpose[4])
 {
 	int i, j;
+
 	for (i = 0; i < 4; i++)
 	{
 		for (j = 0; j < 4; j++)
@@ -595,6 +594,7 @@ static __inline void Matrix4Transpose(const vec4_t matrix[4], vec4_t transpose[4
 static __inline void Matrix4FromAxis(const vec3_t axis[3], vec4_t dst[4])
 {
 	int i, j;
+
 	for (i = 0; i < 3; i++)
 	{
 		for (j = 0; j < 3; j++)
@@ -656,6 +656,7 @@ static __inline void Matrix4FromTranslation(const vec3_t t, vec4_t dst[4])
 static __inline void Matrix4FromAxisPlusTranslation(/*const*/ vec3_t axis[3], const vec3_t t, vec4_t dst[4])
 {
 	int i, j;
+
 	for (i = 0; i < 3; i++)
 	{
 		for (j = 0; j < 3; j++)
@@ -850,7 +851,6 @@ void R_CalcBone(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 		}
 		else
 		{
-
 			angles[0] = cBonePtr->ofsAngles[0];
 			angles[1] = cBonePtr->ofsAngles[1];
 			angles[2] = 0;
@@ -883,7 +883,6 @@ void R_CalcBone(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 		}
 		else
 		{
-
 			sh      = (short *)cBonePtr->ofsAngles; pf = angles;
 			*(pf++) = SHORT2ANGLE(*(sh++)); *(pf++) = SHORT2ANGLE(*(sh++)); *(pf++) = 0;
 			LocalAngleVector(angles, vec);
@@ -913,14 +912,14 @@ void R_CalcBone(mdsHeader_t *header, const refEntity_t *refent, int boneNum)
 		bonePtr->translation[1] = frame->parentOffset[1];
 		bonePtr->translation[2] = frame->parentOffset[2];
 	}
-	//
+
 	if (boneNum == header->torsoParent)     // this is the torsoParent
 	{
 		VectorCopy(bonePtr->translation, torsoParentOffset);
 	}
-	//
+
 	validBones[boneNum] = 1;
-	//
+
 	rawBones[boneNum] = *bonePtr;
 	newBones[boneNum] = 1;
 
@@ -1348,12 +1347,12 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 		{
 			lodScale = 0.35;
 		}
-		render_count = (int)((float) surface->numVerts * lodScale);
+		render_count = ROUND_INT(surface->numVerts * lodScale);
 
 	}
 	else
 	{
-		render_count = (int)((float) surface->numVerts * lodScale);
+		render_count = ROUND_INT(surface->numVerts * lodScale);
 		if (render_count < surface->minLod)
 		{
 			if (!(refent->reFlags & REFLAG_DEAD_LOD))
