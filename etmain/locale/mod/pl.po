@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-11 21:30+0100\n"
+"PO-Revision-Date: 2013-04-12 17:49+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -1811,16 +1811,16 @@ msgid "MESSAGE"
 msgstr "WIADOMOSC"
 
 msgid "S. Statements"
-msgstr "I. Instrukcje"
+msgstr "S. Instrukcje"
 
 msgid "R. Requests"
-msgstr "Z. Zadania"
+msgstr "R. Zadania"
 
 msgid "C. Commands"
-msgstr "P. Polecenia"
+msgstr "C. Polecenia"
 
 msgid "T. Talk"
-msgstr "R. Rozmowa"
+msgstr "T. Rozmowa"
 
 msgid "G. Global"
 msgstr "G. Globalne"
@@ -1829,37 +1829,37 @@ msgid "F. Function"
 msgstr "F. Funkcja"
 
 msgid "O. Objectives"
-msgstr "C. Cele"
+msgstr "O. Cele"
 
 msgid "P. Path Cleared."
-msgstr "D. Droga Wolna."
+msgstr "P. Droga Wolna."
 
 msgid "W. Enemy Weak!"
-msgstr "S. Slaby Wrog!"
+msgstr "W. Slaby Wrog!"
 
 msgid "C. All Clear"
 msgstr "C. Czysto"
 
 msgid "I. Incoming"
-msgstr "N. Nadchodza"
+msgstr "I. Nadchodza"
 
 msgid "F. Fire In The Hole!"
-msgstr "U. Uwaga Strzal!"
+msgstr "F. Uwaga Strzal!"
 
 msgid "D. I'm Defending."
-msgstr "H. Chronie."
+msgstr "D. Chronie."
 
 msgid "A. I'm Attacking."
 msgstr "A. Atakuje."
 
-msgid "T. Taking Fire!"
-msgstr "P. Przy Ogniu!"
+msgid "T. Taking fire!"
+msgstr "T. Przy Ogniu!"
 
 msgid "M. Mines Cleared"
 msgstr "M. Miny Oczyszczone"
 
 msgid "E. Enemy Disguised"
-msgstr "W. Wrog w Ukryciu"
+msgstr "E. Wrog w Ukryciu"
 
 msgid "M. Need Medic!"
 msgstr "M. Potrzebuje Medyka!"
@@ -1868,34 +1868,34 @@ msgid "A. Need Ammo!"
 msgstr "A. Potrzebuje Amunicje!"
 
 msgid "B. Need Backup!"
-msgstr "P. Potrzebuje Pomocy!"
+msgstr "B. Potrzebuje Pomocy!"
 
 msgid "E. Need Engineer!"
-msgstr "I. Potrzebuje Inzyniera!"
+msgstr "E. Potrzebuje Inzyniera!"
 
 msgid "C. Cover Me!"
-msgstr "O. Oslaniaj Mnie!"
+msgstr "C. Oslaniaj Mnie!"
 
 msgid "H. Hold Fire!"
-msgstr "W. Wsztrzymaj Ogien!"
+msgstr "H. Wsztrzymaj Ogien!"
 
 msgid "W. Where To?"
-msgstr "D. Dokad?"
+msgstr "W. Dokad?"
 
 msgid "O. Need Covert Ops!"
-msgstr "C. Potrzebuje Coverta!"
+msgstr "O. Potrzebuje Coverta!"
 
 msgid "F. Follow Me!"
-msgstr "Z. Za Mna!"
+msgstr "F. Za Mna!"
 
 msgid "G. Let's Go!"
-msgstr "D. No Dalej!"
+msgstr "G. No Dalej!"
 
 msgid "M. Move!"
-msgstr "R. Ruchy!"
+msgstr "M. Ruchy!"
 
 msgid "C. Clear The Path!"
-msgstr "D. Wyczysc Droge!"
+msgstr "C. Wyczysc Droge!"
 
 msgid "O. Defend Objective!"
 msgstr "O. Obron Cel!"
@@ -1913,7 +1913,7 @@ msgid "E. Reinforce Defense"
 msgstr "E. Obrona Posilkow"
 
 msgid "Y. Yes"
-msgstr "T. Tak"
+msgstr "Y. Tak"
 
 msgid "N. No"
 msgstr "N. Nie"
@@ -1922,7 +1922,7 @@ msgid "T. Thanks"
 msgstr "T. Dzieki"
 
 msgid "W. Welcome"
-msgstr "N. Nie ma za co"
+msgstr "W. Nie ma za co"
 
 msgid "S. Sorry"
 msgstr "S. Przepraszam"
@@ -1931,40 +1931,40 @@ msgid "O. Oops"
 msgstr "O. Oops"
 
 msgid "W. Enemy Weak"
-msgstr "S. Slaby Wrog"
+msgstr "W. Slaby Wrog"
 
 msgid "H. Hi"
-msgstr "C. Czesc"
+msgstr "H. Czesc"
 
 msgid "B. Bye"
-msgstr "D. Dowidzenia"
+msgstr "B. Dowidzenia"
 
 msgid "S. Great Shot"
 msgstr "S. Niezly Strzal"
 
 msgid "C. Cheer"
-msgstr "O. Okrzyki"
+msgstr "C. Okrzyki"
 
 msgid "G. More Globals"
-msgstr "D. Dalej"
+msgstr "G. Dalej"
 
 msgid "G. Good Game"
-msgstr "G. Niezla Gra"
+msgstr "G. Dobra Gra"
 
 msgid "A. Command Acknowledged"
-msgstr "P. Polecenie Przyznane"
+msgstr "A. Polecenie Przyznane"
 
 msgid "D. Command Declined"
-msgstr "O. Polecenie Odrzucone"
+msgstr "D. Polecenie Odrzucone"
 
 msgid "C. Command Completed"
-msgstr "W. Polecenie Wykonane"
+msgstr "C. Polecenie Wykonane"
 
 msgid "P. Destroy Primary Objective"
 msgstr "P. Zniszcz Pierwszy Cel"
 
 msgid "S. Destroy Secondary Objective"
-msgstr "D Zniszcz Drugi Cel"
+msgstr "S. Zniszcz Drugi Cel"
 
 msgid "X. Destroy Construction"
 msgstr "X. Zniszcz Konstrukcje"
@@ -1973,10 +1973,10 @@ msgid "M. Commencing Construction"
 msgstr "M. Rozpocznij Budowe"
 
 msgid "R. Repair Vehicle"
-msgstr "N. Napraw Pojazd"
+msgstr "R. Napraw Pojazd"
 
 msgid "V. Disable Vehicle"
-msgstr "P. Wylacz Pojazd"
+msgstr "V. Wylacz Pojazd"
 
 msgid "E. Escort Vehicle"
 msgstr "E. Eskortuj Pojazd"
@@ -1994,10 +1994,10 @@ msgid "4. Talk"
 msgstr "4. Mow"
 
 msgid "5. Global"
-msgstr "6. Ogolne"
+msgstr "5. Ogolne"
 
 msgid "6. Function"
-msgstr "7. Funkcja"
+msgstr "6. Funkcja"
 
 msgid "7. Objectives"
 msgstr "7. Cele"
@@ -2099,7 +2099,7 @@ msgid "5. Sorry"
 msgstr "5. Przepraszam"
 
 msgid "6. Oops"
-msgstr "6. Sakra"
+msgstr "6. Oops"
 
 msgid "3. Enemy Weak"
 msgstr "3. Slaby Wrog"
@@ -2166,6 +2166,210 @@ msgstr "9. Wylacz Pojazd"
 
 msgid "0. Escort Vehicle"
 msgstr "0. Eskortuj Pojazd"
+
+msgid "Path cleared."
+msgstr "Droga Wolna."
+
+msgid "The enemy is weakened."
+msgstr "Wrog jest slaby"
+
+msgid "All clear."
+msgstr "Czysto"
+
+msgid "Incoming!"
+msgstr "Nadchodza"
+
+msgid "Fire in the hole!"
+msgstr "Uwaga Strzal!"
+
+msgid "I'm on defense."
+msgstr "Jestem na Obronie."
+
+msgid "I'm on offense."
+msgstr "Jestem na Ataku."
+
+msgid "Taking fire!"
+msgstr "Przy Ogniu!"
+
+msgid "Mines cleared."
+msgstr "Miny Oczyszczone."
+
+msgid "Enemy in disguise."
+msgstr "Wrog w uktryciu."
+
+msgid "Need a Medic!"
+msgstr "Potrzebuje Medyka!"
+
+msgid "I need ammo!"
+msgstr "Potrzebuje Amunicji!"
+
+msgid "I need backup!"
+msgstr "Potrzebuje pomocy!"
+
+msgid "We need an engineer!"
+msgstr "Potrzebujemy Inzyniera!"
+
+msgid "Cover me!"
+msgstr "Oslaniaj Mnie!"
+
+msgid "Hold your fire!"
+msgstr "Wstrzymaj Ogien!"
+
+msgid "Where to?"
+msgstr "Dokad?"
+
+msgid "We need Covert Ops!"
+msgstr "Potrzebuje Coverta!"
+
+msgid "Follow me!"
+msgstr "Za Mna!"
+
+msgid "Let's go!"
+msgstr "No Dalej!"
+
+msgid "Move!"
+msgstr "Ruchy!"
+
+msgid "Clear the path!"
+msgstr "Wyczysc Droge!"
+
+msgid "Defend our objective!"
+msgstr "Obron nasz cel!"
+
+msgid "Disarm the dynamite!"
+msgstr "Rozbroj dynamit!"
+
+msgid "Clear the mines!"
+msgstr "Wyczysc miny!"
+
+msgid "Reinforce the offense!"
+msgstr "Wzmocnij Atak!"
+
+msgid "Reinforce the defense!"
+msgstr "Wzmocnij Obrone!"
+
+msgid "Affirmative!"
+msgstr "Pozytywnie!"
+
+msgid "No!"
+msgstr "Nie!"
+
+msgid "Thank you!"
+msgstr "Dzieki Ci!"
+
+msgid "You're welcome."
+msgstr "Nie ma za co."
+
+msgid "Sorry!"
+msgstr "Przepraszam!"
+
+msgid "Oops!"
+msgstr "Oops!"
+
+msgid "Yes!"
+msgstr "Tak!"
+
+msgid "Negative!"
+msgstr "Negatywnie!"
+
+msgid "Hi!"
+msgstr "Czesc!"
+
+msgid "Good bye."
+msgstr "Dowidzenia."
+
+msgid "Bye."
+msgstr "Nara."
+
+msgid "Great shot!"
+msgstr "Niezly Strzal!"
+
+msgid "You got it, man!"
+msgstr "Masz to, czlowieku!"
+
+msgid "Yeah!"
+msgstr "Nareszczie!"
+
+msgid "Yoohoo!"
+msgstr "Tak Jest!"
+
+msgid "Hahaa!"
+msgstr "Hahaha!"
+
+msgid "Alright!"
+msgstr "W Porzadku!"
+
+msgid "Woo!"
+msgstr "Wooo!"
+
+msgid "Yeehaa!"
+msgstr "Wspaniale!"
+
+msgid "'Atta way, baby!"
+msgstr "'Tak trzymac, malenka!"
+
+msgid "Thanks!"
+msgstr "Dzieki!"
+
+msgid "No problem."
+msgstr "Bez problemu."
+
+msgid "Good game!"
+msgstr "Dobra gra!"
+
+msgid "Command acknowledged!"
+msgstr "Polecenie przyjete!"
+
+msgid "Command declined!"
+msgstr "Polecenie odrzucone!"
+
+msgid "Command completed!"
+msgstr "Polecenie wykonane!"
+
+msgid "Destroy primary objective!"
+msgstr "Zniszcz Pierwszy cel!"
+
+msgid "Destroy secondary objective!"
+msgstr "Zniszcz Drugi cel!"
+
+msgid "Destroy construction!"
+msgstr "Zniscz Konstrukcje!"
+
+msgid "I'm constructing!"
+msgstr "Konstruuje!"
+
+msgid "Repair the vehicle!"
+msgstr "Napraw pojazd!"
+
+msgid "Disable the vehicle!"
+msgstr "Wylacz pojazd!"
+
+msgid "Escort the vehicle!"
+msgstr "Eskortuj pojazd!"
+
+msgid "I'm a soldier."
+msgstr "Jestem Zolnierzem."
+
+msgid "I'm an engineer."
+msgstr "Jestem Inzynierem."
+
+msgid "I'm a medic."
+msgstr "Jestem Medykiem."
+
+msgid "I'm a field ops."
+msgstr "Jestem Field Ops."
+
+msgid "I'm a covert ops."
+msgstr "Jestem Covert Ops."
+
+msgid "Create a Fireteam?"
+msgstr "Stworzyc Zespol?"
+
+msgid "Make Fireteam private?"
+msgstr "Zrobic Zepol prywatny?"
+
+msgid "Response Sent"
+msgstr "Otpowiedz Wyslana"
 
 msgid "^1Legacy"
 msgstr "^1Legacy"
@@ -2324,7 +2528,7 @@ msgid "SEND MESSAGE"
 msgstr "WYSLIJ WIADOMOSC"
 
 msgid "Say:"
-msgstr "Powiedz:"
+msgstr "Mow:"
 
 msgid "To:"
 msgstr "Do:"
@@ -2364,11 +2568,22 @@ msgstr "WYWAL OMNI-BOTa"
 msgid "Yes"
 msgstr "Tak"
 
-msgid "Set recommended video settings\n"
-msgstr "Ustaw rekomendowane ustawienia video\n"
+msgid ""
+"Set recommended video settings\n"
+"and return to the main menu?"
+msgstr ""
+"Ustawic reko. ustawienia\n"
+"i wrocic do menu glownego?"
 
-msgid "Do you want to open"
-msgstr "Czy chcesz otworzyc"
+msgid ""
+"Set recommended video settings\n"
+"and return to the ingame menu?"
+msgstr ""
+"Ustawic reko. ustawienia\n"
+"i wrocic do menu w grze?"
+
+msgid "Do you want to open\n www.etlegacy.com ?"
+msgstr "Czy chcesz otworzyc\n www.etlegacy.com ?"
 
 msgid "^3Thank you for installing ET:Legacy."
 msgstr "^3Dzieki za zainstalowanie ET: Legacy."
@@ -2415,8 +2630,8 @@ msgstr "PELNE"
 msgid "No"
 msgstr "Nie"
 
-msgid "and return to the main menu?"
-msgstr "i cofnac sie do menu glownego?"
+msgid "unknown cmd"
+msgstr "nieznane polec"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
