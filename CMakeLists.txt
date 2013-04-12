@@ -78,6 +78,7 @@ option(FEATURE_CURSES		"Enable PDCurses console"						OFF)
 option(FEATURE_AUTOUPDATE	"Enable updater which downloads latest ET:L files"			ON)
 option(FEATURE_RENDERER2	"Build and use the new renderer"					OFF)
 option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
+option(FEATURE_IRC_CLIENT	"Enable IRC client"							OFF)
 
 cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"	ON "BUNDLED_LIBS" OFF)
 
@@ -304,6 +305,11 @@ FILE(GLOB RENDERER2_FILES
 	"src/renderer2/*.h"
 )
 
+FILE(GLOB IRC_CLIENT_FILES
+	"src/qcommon/htable.c"
+	"src/qcommon/htable.h"
+)
+
 # Version generation
 git_describe(GIT_DESCRIBE)
 git_describe(GIT_DESCRIBE_TAG "--abbrev=0")
@@ -465,6 +471,11 @@ if(BUILD_CLIENT)
 		endif()
 		add_definitions(-DFEATURE_OGG_VORBIS)
 	endif(FEATURE_OGG_VORBIS)
+	
+	if(FEATURE_IRC_CLIENT)
+		add_definitions(-DFEATURE_IRC_CLIENT)
+		list(APPEND CLIENT_SRC ${IRC_CLIENT_FILES})
+	endif(FEATURE_IRC_CLIENT)
 	
 	list(APPEND CLIENT_SRC ${RENDERER_COMMON})
 	list(APPEND RENDERER_FILES ${RENDERER_COMMON})
