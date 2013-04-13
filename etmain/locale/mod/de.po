@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-12 19:29+0100\n"
+"PO-Revision-Date: 2013-04-13 18:48+0100\n"
 "Last-Translator: Vinzenz Krügl <harlekin@hirntot.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -63,7 +63,7 @@ msgstr "Veranlasse eine Beschwerde gegen %s wegen Teambeschuss?"
 #: src/cgame/cg_draw.c:2164
 #, c-format
 msgid "Press '%s' for YES, or '%s' for No"
-msgstr "Drücke '%s' für JA, oder '%s' für Nein"
+msgstr "Drücke '%s' für JA, oder '%s' fuer Nein"
 
 #: src/cgame/cg_draw.c:2096
 #, c-format
@@ -73,12 +73,12 @@ msgstr "Aktzeptiere %ss Anfrage sich deiner Kampfeinheit anzuschließen?"
 #: src/cgame/cg_draw.c:2109
 #, c-format
 msgid "Accept %s's proposition to invite %s to join your fireteam?"
-msgstr "Aktzeptiere %ss Vorschlag, dass sich %s deiner Kampfeinheit anschließt?"
+msgstr "Aktzeptiere %ss Vorschlag, dass sich %s deiner Kampfeinheit anschliesst?"
 
 #: src/cgame/cg_draw.c:2122
 #, c-format
 msgid "Accept %s's invitation to join their fireteam?"
-msgstr "Aktzeptiere %ss Einladung sich deiner Kampfeinheit anzuschließen?"
+msgstr "Aktzeptiere %ss Einladung sich deiner Kampfeinheit anzuschliessen?"
 
 #: src/cgame/cg_draw.c:2218
 #, c-format
@@ -97,7 +97,7 @@ msgstr "JA(%s):%i, NEIN(%s):%i"
 #: src/cgame/cg_draw.c:2234
 #, c-format
 msgid "YOU VOTED ON: %s"
-msgstr "DU HAST %s GEWÄHLT"
+msgstr "DU HAST %s GEWAEHLT"
 
 #: src/cgame/cg_draw.c:2237
 #, c-format
@@ -107,34 +107,34 @@ msgstr "J:%i, N:%i"
 #: src/cgame/cg_draw.c:2460
 #, c-format
 msgid "Press %s to open Limbo Menu"
-msgstr "Drücke %s um das Limbo Menü zu öffnen"
+msgstr "Drücke %s um das Limbo Menue zu oeffnen"
 
 #: src/cgame/cg_draw.c:2464
 #, c-format
 msgid "Press %s to follow next player"
-msgstr "Drücke %s um dem nächsten Spieler zu folgen"
+msgstr "Drücke %s um dem naechsten Spieler zu folgen"
 
 #: src/cgame/cg_draw.c:2469
 #, c-format
 msgid "Press %s to %s multiview mode"
-msgstr "Drücke %s für %s Multiview Modus"
+msgstr "Drücke %s fuer %s Multiview Modus"
 
 #: src/cgame/cg_draw.c:2530
 msgid "You are wounded and waiting for a medic."
-msgstr "Du bist verwundet und wartest auf einen Sanitäter."
+msgstr "Du bist verwundet und wartest auf einen Sanitaeter."
 
 #: src/cgame/cg_draw.c:2540
 msgid "Press JUMP to go into reinforcement queue."
-msgstr "Drücke SPRINGEN um dich der Verstärkung anzuschließen."
+msgstr "Druecke SPRINGEN um dich der Verstaerkung anzuschließen."
 
 #: src/cgame/cg_draw.c:2550
 msgid "No more reinforcements this round."
-msgstr "Keine weitere Verstärkung in dieser Runde."
+msgstr "Keine weitere Verstaerkung in dieser Runde."
 
 #: src/cgame/cg_draw.c:2550
 #, c-format
 msgid "Reinforcements deploy in %d seconds."
-msgstr "Verstärkung kommt in %d Sekunden."
+msgstr "Verstaerkung kommt in %d Sekunden."
 
 #: src/cgame/cg_draw.c:2593
 #, c-format
@@ -158,7 +158,7 @@ msgstr "Du folgst"
 #: src/cgame/cg_draw.c:2651
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
-msgstr "^3AUFWÄRMPHASE:^7 warte auf ^2%i^7 %s"
+msgstr "^3AUFWAERMPHASE:^7 warte auf ^2%i^7 %s"
 
 #: src/cgame/cg_draw.c:2663
 msgid "Type ^3\\ready^* in the console to start"
@@ -166,7 +166,7 @@ msgstr "Gib ^3\\ready^* in die Konsole ein zum Starten"
 
 #: src/cgame/cg_draw.c:2684
 msgid "(WARMUP) Match begins in:"
-msgstr "(AUFWÄRMPHASE) Spielbeginn in:"
+msgstr "(AUFWAERMPHASE) Spielbeginn in:"
 
 #: src/cgame/cg_draw.c:2717
 #: src/cgame/cg_scoreboard.c:213
@@ -176,7 +176,7 @@ msgstr "STOPPUHR RUNDE"
 #: src/cgame/cg_draw_hud.c:1535
 #: src/cgame/cg_scoreboard.c:165
 msgid "WARMUP"
-msgstr "AUFWÄRMPHASE"
+msgstr "AUFWAERMPHASE"
 
 #: src/cgame/cg_event.c:189
 msgid "You swapped places with"
@@ -184,7 +184,7 @@ msgstr "Du hast den Platz getauscht mit"
 
 #: src/cgame/cg_event.c:193
 msgid "You killed ^1TEAMMATE^7"
-msgstr "Du hast einen ^1KAMERADEN^7 getötet" #: "Von dir getöteter ^1KAMERAD"
+msgstr "Du hast einen ^1KAMERADEN^7 getoetet\""
 
 #: src/cgame/cg_event.c:198
 msgid "You killed"
@@ -211,11 +211,11 @@ msgstr "SPIEL GESTOPPT"
 
 #: src/cgame/cg_scoreboard.c:175
 msgid "SUDDEN DEATH"
-msgstr "PLÖTZLICHER TOD"
+msgstr "PLOETZLICHER TOD"
 
 #: src/cgame/cg_scoreboard.c:205
 msgid "REINFORCE TIME:"
-msgstr "VERSTÄRKUNGSZEIT:"
+msgstr "VERSTAERKUNGSZEIT:"
 
 #: src/cgame/cg_scoreboard.c:222
 msgid "ROUND"
@@ -300,7 +300,7 @@ msgid "PLAY ONLINE"
 msgstr "SPIELE ONLINE"
 
 msgid "HOST GAME"
-msgstr ""
+msgstr "HOSTE SPIEL"
 
 msgid "REPLAYS"
 msgstr ""
@@ -309,7 +309,7 @@ msgid "OPTIONS"
 msgstr "OPTIONEN"
 
 msgid "PROFILE"
-msgstr ""
+msgstr "PROFILE"
 
 msgid "MODS"
 msgstr ""
@@ -321,13 +321,13 @@ msgid "ETLEGACY.COM"
 msgstr "ETLEGACY.COM"
 
 msgid "EXIT GAME"
-msgstr ""
+msgstr "SPIEL BEENDEN"
 
 msgid "CREATE"
 msgstr "ERSTELLE"
 
 msgid "DELETE"
-msgstr "LÖSCHE"
+msgstr "LOESCHE"
 
 msgid "RENAME"
 msgstr "UMBENENNEN"
@@ -336,7 +336,7 @@ msgid "SET AS DEFAULT"
 msgstr "ALS STANDARD"
 
 msgid "BACK"
-msgstr "ZURÜCK"
+msgstr "ZURUECK"
 
 msgid "SELECT PROFILE"
 msgstr "WÄHLE PROFIL"
@@ -351,10 +351,10 @@ msgid "Player Alias:"
 msgstr "Spieler Name:"
 
 msgid "Video Quality:"
-msgstr ""
+msgstr "Video Qualitaet:"
 
 msgid "Resolution:"
-msgstr "Auflösung:"
+msgstr "Aufloesung:"
 
 msgid "Brightness:"
 msgstr "Helligkeit:"
@@ -369,7 +369,7 @@ msgid "Invert Mouse:"
 msgstr ""
 
 msgid "Handedness:"
-msgstr ""
+msgstr "Hand:"
 
 msgid "DEFAULT SETTINGS"
 msgstr "STANDARD EINSTELLUNGEN"
@@ -378,16 +378,16 @@ msgid "Language:"
 msgstr "SPRACHE:"
 
 msgid "QUIT"
-msgstr ""
+msgstr "Beenden"
 
 msgid "RENAME PROFILE"
 msgstr "PROFIL UMBENENNEN"
 
 msgid "New Profile Name:"
-msgstr ""
+msgstr "Neuer Profil Name:"
 
 msgid "DELETE PROFILE"
-msgstr "LÖSCHE PROFIL"
+msgstr "LOESCHE PROFIL"
 
 msgid "Are you sure?"
 msgstr "Bist du sicher?"
@@ -399,7 +399,7 @@ msgid "NO"
 msgstr "NEIN"
 
 msgid "DELETE WARNING"
-msgstr "LÖSCHE WARNUNG"
+msgstr "LOESCHE WARNUNG"
 
 msgid "Can't delete"
 msgstr ""
@@ -438,7 +438,7 @@ msgid "#PLRS"
 msgstr ""
 
 msgid "TYPE"
-msgstr ""
+msgstr "Spiel Typ:"
 
 msgid "PING"
 msgstr "LATENZ"
@@ -462,22 +462,22 @@ msgid "Server IP:"
 msgstr ""
 
 msgid "CONNECT"
-msgstr ""
+msgstr "VERBINDE"
 
 msgid "REFRESH"
 msgstr ""
 
 msgid "SETTINGS"
-msgstr ""
+msgstr "EINSTELLUNGEN"
 
 msgid "Server Name:"
-msgstr ""
+msgstr "Server Name:"
 
 msgid "Maximum Players:"
-msgstr ""
+msgstr "Maximum Spieler:"
 
 msgid "Auto-Configure Server:"
-msgstr ""
+msgstr "Auto-Konfig. Server:"
 
 msgid "Dedicated Server:"
 msgstr ""
@@ -489,13 +489,13 @@ msgid "FEATURES"
 msgstr ""
 
 msgid "Friendly Fire"
-msgstr ""
+msgstr "Teambeschuss"
 
 msgid "Anti-Lag"
 msgstr ""
 
 msgid "Max Lives"
-msgstr ""
+msgstr "MAX Leben"
 
 msgid "Weapon Restrictions"
 msgstr ""
@@ -504,16 +504,16 @@ msgid "Balanced Teams"
 msgstr ""
 
 msgid "NAME"
-msgstr ""
+msgstr "NAME"
 
 msgid "DETAILS"
-msgstr ""
+msgstr "DETAILS"
 
 msgid "ADVANCED"
 msgstr ""
 
 msgid "START SERVER"
-msgstr ""
+msgstr "STARTE SERVER"
 
 msgid "HOST GAME: ADVANCED"
 msgstr ""
@@ -522,19 +522,19 @@ msgid "GENERAL"
 msgstr ""
 
 msgid "Minimum Ping:"
-msgstr ""
+msgstr "Minimal Latenz:"
 
 msgid "Maximum Ping:"
-msgstr ""
+msgstr "Maximal Latenz:"
 
 msgid "Maximum Game Rate:"
 msgstr ""
 
 msgid "Player Inactivity:"
-msgstr ""
+msgstr "Max Spieler Inaktivitaet:"
 
 msgid "Spectator Inactivity:"
-msgstr ""
+msgstr "Max Zuschauer Inaktivitaet:"
 
 msgid "Intermission Time:"
 msgstr ""
@@ -543,7 +543,7 @@ msgid "Intermission Ready %:"
 msgstr ""
 
 msgid "MATCH"
-msgstr ""
+msgstr "SPIEL"
 
 msgid "Wait for Ready:"
 msgstr ""
@@ -612,7 +612,7 @@ msgid "LMS Locked Teams:"
 msgstr ""
 
 msgid "ADMIN"
-msgstr ""
+msgstr "ADMIN"
 
 msgid "Pure Server:"
 msgstr ""
@@ -624,22 +624,22 @@ msgid "RCON Password:"
 msgstr "RCON Passwort:"
 
 msgid "VOTING"
-msgstr ""
+msgstr "ABTIMMUNGEN"
 
 msgid "Max Votes per Player:"
-msgstr ""
+msgstr "Max.Abstimmung/Spieler:"
 
 msgid "Successful voting:"
-msgstr ""
+msgstr "Abstimmung erfolgt ab:"
 
 msgid "ALLOW VOTES"
-msgstr ""
+msgstr "ABSTIMMUNG ERLAUBT"
 
 msgid "Comp Settings:"
-msgstr ""
+msgstr "Wettbewerb Einst.:"
 
 msgid "Player Kick:"
-msgstr ""
+msgstr "Spieler Kicken:"
 
 msgid "Map:"
 msgstr "Karte:"
@@ -651,28 +651,28 @@ msgid "Mute Spects:"
 msgstr ""
 
 msgid "Next Map:"
-msgstr "Nächste Karte:"
+msgstr "Naechste Karte:"
 
 msgid "Balanced Teams:"
-msgstr ""
+msgstr "Ausg.Teams:"
 
 msgid "Pub Settings:"
-msgstr ""
+msgstr "Offentl.Einstell.:"
 
 msgid "Referee:"
-msgstr ""
+msgstr "Schiedsrichter:"
 
 msgid "XP Shuffle:"
-msgstr ""
+msgstr "XP mischen:"
 
 msgid "Swap Teams:"
-msgstr ""
+msgstr "Teams tauschen:"
 
 msgid "Friendly Fire:"
-msgstr ""
+msgstr "Teambeschuss:"
 
 msgid "Timelimit:"
-msgstr ""
+msgstr "Zeitlimit:"
 
 msgid "Anti-Lag:"
 msgstr ""
@@ -693,22 +693,22 @@ msgid "Line 5:"
 msgstr "Zeile 5:"
 
 msgid "DOWNLOAD"
-msgstr ""
+msgstr "DOWNLOAD"
 
 msgid "Client Downloads:"
-msgstr ""
+msgstr "Spieler Download:"
 
 msgid "Maximum Download Rate:"
-msgstr ""
+msgstr "Maximal Download Rate:"
 
 msgid "FTP/HTTP Redirects:"
-msgstr ""
+msgstr "FTP/HTTP Umleitung:"
 
 msgid "Base URL:"
-msgstr ""
+msgstr "FTP/HTTP Adresse:"
 
 msgid "EXTENDED"
-msgstr ""
+msgstr "ERWEITERT"
 
 msgid "DEFAULT"
 msgstr ""
@@ -717,10 +717,10 @@ msgid "MISC"
 msgstr ""
 
 msgid "Country Flags:"
-msgstr ""
+msgstr "Laender Fahnen:"
 
 msgid "DEFAULT SERVER SETTINGS"
-msgstr ""
+msgstr "STANDARD SERVER EINSTELLUNGEN"
 
 msgid "Reset server settings to default?"
 msgstr ""
@@ -786,85 +786,85 @@ msgid "Automatic Reload:"
 msgstr "Automatisches nachladen"
 
 msgid "Autoswitch:"
-msgstr ""
+msgstr "Automatischer Wechsel:"
 
 msgid "Weapon Icon Flash:"
 msgstr ""
 
 msgid "Muzzle Flash:"
-msgstr "Mündungsfeuer"
+msgstr "Muendungsfeuer"
 
 msgid "Bullet Tracers:"
-msgstr ""
+msgstr "Leuchtspurmunition:"
 
 msgid "SCOPE"
-msgstr ""
+msgstr "ZOOM"
 
 msgid "Use Weapon Cycle for Zoom:"
-msgstr ""
+msgstr "Waffenwechseltaste für Zoom:"
 
 msgid "Default Zoom Level:"
-msgstr ""
+msgstr "Standard-Zoom:"
 
 msgid "Zoom Levels:"
-msgstr ""
+msgstr "Zoomstufen"
 
 msgid "CHAT"
-msgstr ""
+msgstr "CHAT"
 
 msgid "Quick Chat Mode:"
-msgstr ""
+msgstr "Schnell Chat Mode:"
 
 msgid "Chat Icon Time:"
-msgstr ""
+msgstr "Chat Icon Zeit:"
 
 msgid "Team chat only:"
-msgstr ""
+msgstr "Nur Team Chat:"
 
 msgid "No voice chat:"
-msgstr ""
+msgstr "Keinen Voice Chat:"
 
 msgid "No voice text:"
-msgstr ""
+msgstr "Keinen Voice Chat Text:"
 
 msgid "MISCELLANEOUS"
 msgstr "VERSCHIEDENES"
 
 msgid "Complaint PopUp:"
-msgstr ""
+msgstr "Beschwerde PopUp:"
 
 msgid "Log Important Messages:"
-msgstr ""
+msgstr "Speichere wichtige Nachrichten:"
 
 msgid "Auto-Action:"
-msgstr ""
+msgstr "Auto-Aktion:"
 
 msgid "Use JPEG for AutoScreenshots:"
-msgstr ""
+msgstr "JPEG für AutoScreenshots:"
 
 msgid "Show Tool Tips :"
-msgstr ""
+msgstr "Zeige Hilfetexte:"
 
 msgid "Announcer:"
-msgstr ""
+msgstr "Ansager:"
 
 msgid "HUD DISPLAY"
-msgstr ""
+msgstr "HUD ANZEIGE"
 
 msgid "Draw Gun:"
-msgstr ""
+msgstr "Waffe anzeigen:"
 
 msgid "Show Compass:"
 msgstr "Zeige Kompass"
 
 msgid "Mission Timer:"
-msgstr ""
+msgstr "Missionszeit:"
 
 msgid "Reinforcement Timer:"
-msgstr ""
+msgstr "Vertärkungszeit:"
 
 msgid "Cursor Hints:"
-msgstr ""
+msgstr "Cursor Tipps:"
 
 msgid "Show Lagometer:"
 msgstr ""
@@ -882,13 +882,13 @@ msgid "Fireteam Latched Class:"
 msgstr ""
 
 msgid "Switch HUD:"
-msgstr ""
+msgstr "Wechsle HUD:"
 
 msgid "Modify Alternate HUD:"
 msgstr ""
 
 msgid "IN-GAME DISPLAY"
-msgstr ""
+msgstr "SPIEL ANZEIGE"
 
 msgid "Ejecting Brass:"
 msgstr ""
@@ -897,13 +897,13 @@ msgid "Field Of View:"
 msgstr "Sichtfeld"
 
 msgid "Corona Distance:"
-msgstr ""
+msgstr "Corona Entfernung:"
 
 msgid "Particles:"
-msgstr ""
+msgstr "Explosionen:"
 
 msgid "Wall Mark Lifetime:"
-msgstr ""
+msgstr "Anzeigedauer Wandtreffer:"
 
 msgid "Blood Flash:"
 msgstr ""
@@ -915,7 +915,7 @@ msgid "Show Blood:"
 msgstr "Zeige Blut:"
 
 msgid "Atmospheric Effects:"
-msgstr ""
+msgstr "Regen/Schneeeffekte:"
 
 msgid "CROSSHAIR"
 msgstr "FADENKREUZ"
@@ -924,28 +924,28 @@ msgid "Crosshair Size:"
 msgstr "Fadenkreuz Größe:"
 
 msgid "Crosshair Pulsing:"
-msgstr ""
+msgstr "Pulsierendes Fandenkreuz:"
 
 msgid "Crosshair Health Info:"
-msgstr ""
+msgstr "Fadenkreuz Lebensanzeige:"
 
 msgid "Crosshair Name Drawing:"
-msgstr ""
+msgstr "Fadenkreuz-Namen anzeigen:"
 
 msgid "Primary Color:"
-msgstr ""
+msgstr "Primaere Farbe:"
 
 msgid "Primary Alpha:"
-msgstr ""
+msgstr "Primaer Transparenz:"
 
 msgid "Secondary Color:"
-msgstr ""
+msgstr "Sekundaere Farbe:"
 
 msgid "Secondary Alpha:"
-msgstr ""
+msgstr "Sekundaer Transparenz:"
 
 msgid "MOVEMENT"
-msgstr ""
+msgstr "BEWEGUNG"
 
 msgid "Bob up:"
 msgstr ""
@@ -960,46 +960,46 @@ msgid "Bob yaw:"
 msgstr ""
 
 msgid "MOVE"
-msgstr ""
+msgstr "BEWEGUNG"
 
 msgid "Forward:"
-msgstr "Vorwärts:"
+msgstr "Vor:"
 
 msgid "Back:"
-msgstr "Rückwärts"
+msgstr "Zurueck:"
 
 msgid "Move Left:"
-msgstr ""
+msgstr "Lenks:"
 
 msgid "Move Right:"
-msgstr ""
+msgstr "Rechts:"
 
 msgid "Lean Left:"
-msgstr ""
+msgstr "Links lehnen:"
 
 msgid "Lean Right:"
-msgstr ""
+msgstr "Rechts lehnen:"
 
 msgid "Jump:"
-msgstr ""
+msgstr "Springen:"
 
 msgid "Crouch:"
-msgstr ""
+msgstr "Kriechen:"
 
 msgid "Prone:"
-msgstr ""
+msgstr "Hinlegen:"
 
 msgid "Walk:"
-msgstr ""
+msgstr "Gehen:"
 
 msgid "Sprint:"
-msgstr ""
+msgstr "Rennen:"
 
 msgid "Use (Activate):"
-msgstr ""
+msgstr "Aktivieren:"
 
 msgid "INPUT"
-msgstr ""
+msgstr "MAUS"
 
 msgid "Smooth Mouse:"
 msgstr ""
@@ -1026,112 +1026,112 @@ msgid "POP-UPS"
 msgstr ""
 
 msgid "Show Scores:"
-msgstr ""
+msgstr "Punkte anzeigen:"
 
 msgid "Show Limbo Menu:"
-msgstr ""
+msgstr "Wartemenue oeffnen:"
 
 msgid "Show Command Map:"
-msgstr ""
+msgstr "Zeige Einsatzkarte:"
 
 msgid "Compass Map Zoom In:"
-msgstr ""
+msgstr "Kompass Karte groesser:"
 
 msgid "Compass Map Zoom Out:"
-msgstr ""
+msgstr "Kompass Karte kleiner:"
 
 msgid "Player Stats:"
-msgstr ""
+msgstr "Spieler Stats:"
 
 msgid "Top Shots:"
 msgstr ""
 
 msgid "USE WEAPONS"
-msgstr ""
+msgstr "WAFFEN BENUTZEN"
 
 msgid "Attack:"
-msgstr ""
+msgstr "Angriff:"
 
 msgid "Switch to Alternate:"
-msgstr ""
+msgstr "2. Feuermodus:"
 
 msgid "Reload Weapon:"
-msgstr ""
+msgstr "Waffe nachladen:"
 
 msgid "Binocular Zoom:"
-msgstr ""
+msgstr "Fernglas:"
 
 msgid "SELECT WEAPONS"
-msgstr ""
+msgstr "WAFFEN AUSWAHL"
 
 msgid "Next Weapon:"
-msgstr "Nächste Waffe:"
+msgstr "Naechste Waffe:"
 
 msgid "Previous Weapon:"
 msgstr "Vorherige Waffe"
 
 msgid "Slot 1 - Melee:"
-msgstr ""
+msgstr "Bank 1 - Messer:"
 
 msgid "Slot 2 - One Handed:"
-msgstr ""
+msgstr "Bank 2 - Pistole"
 
 msgid "Slot 3 - Two Handed:"
-msgstr ""
+msgstr "Bank 3 - Zweihandwaffe"
 
 msgid "Slot 4 - Grenade:"
-msgstr ""
+msgstr "Bank 4 - Granaten:"
 
 msgid "Slot 5 - Special 1:"
-msgstr ""
+msgstr "Bank 5 - Special 1:"
 
 msgid "Slot 6 - Special 2:"
-msgstr ""
+msgstr "Bank 6 - Special 2:"
 
 msgid "Slot 7 - Special 3:"
-msgstr ""
+msgstr "Bank 7 - Special 3:"
 
 msgid "Vote Yes:"
-msgstr ""
+msgstr "Waehle Ja:"
 
 msgid "Vote No:"
-msgstr ""
+msgstr "Waehle Nein:"
 
 msgid "Take Screenshot:"
-msgstr ""
+msgstr "Erstelle Bildschrimfoto:"
 
 msgid "Record Replay:"
-msgstr ""
+msgstr "Demo aufnahme:"
 
 msgid "FIRE-TEAMS"
-msgstr ""
+msgstr "Kampfeinheiten"
 
 msgid "Select All Members:"
-msgstr ""
+msgstr "Wähle alle Mitglieder:"
 
 msgid "Select Member #1:"
-msgstr ""
+msgstr "Wähle Mitglied #1:"
 
 msgid "Select Member #2:"
-msgstr ""
+msgstr "Wähle Mitglied #2:"
 
 msgid "Select Member #3:"
-msgstr ""
+msgstr "Wähle Mitglied #3:"
 
 msgid "Select Member #4:"
-msgstr ""
+msgstr "Wähle Mitglied #4:"
 
 msgid "Select Member #5:"
-msgstr ""
+msgstr "Wähle Mitglied #5:"
 
 msgid "Select Member #6:"
-msgstr ""
+msgstr "Wähle Mitglied #6:"
 
 msgid "Deselect All:"
-msgstr ""
+msgstr "Auswahl aufheben:"
 
 msgid "Fire-Team Admin:"
-msgstr ""
+msgstr "Kampfeinheit Admin:"
 
 msgid "DEFAULT CONTROLS"
 msgstr ""
@@ -1140,16 +1140,16 @@ msgid "Reset controls to default?"
 msgstr ""
 
 msgid "AUDIO"
-msgstr ""
+msgstr "AUDIO"
 
 msgid "Effects Volume:"
-msgstr ""
+msgstr "Effekt Lautstaerke:"
 
 msgid "Music Volume:"
-msgstr ""
+msgstr "Musik Lautstaerke:"
 
 msgid "Sound Quality:"
-msgstr ""
+msgstr "Klang Qualitaet:"
 
 msgid "Doppler FX:"
 msgstr ""
@@ -1167,28 +1167,28 @@ msgid "NETWORKING"
 msgstr ""
 
 msgid "Max Packets:"
-msgstr ""
+msgstr "Max Pakete:"
 
 msgid "Packet Duplication:"
 msgstr ""
 
 msgid "DOWNLOADS"
-msgstr ""
+msgstr "DOWNLOADS"
 
 msgid "Check for Updates on Start-Up:"
-msgstr ""
+msgstr "Suche nach Updates beim Spielstart:"
 
 msgid "Get Missing Files from Server:"
-msgstr ""
+msgstr "Fehlende Dateien vom Server laden:"
 
 msgid "Use HTTP/FTP Downloads:"
-msgstr ""
+msgstr "Benutze HTTP/FTP Downloads:"
 
 msgid "APPLY"
-msgstr ""
+msgstr "UEBERNEHMEN"
 
 msgid "CALIBRATE BRIGHTNESS"
-msgstr ""
+msgstr "KALIBRIERE HELLIGKEIT"
 
 msgid "General Brightness Calibration (All Color Depths)"
 msgstr ""
@@ -1236,7 +1236,7 @@ msgid "Overbright Bits:"
 msgstr ""
 
 msgid "Low Quality Sky:"
-msgstr ""
+msgstr "Einfacher Himmel:"
 
 msgid "Shadow Detail:"
 msgstr "Schatten Detail"
@@ -1251,7 +1251,7 @@ msgid "Geometric Detail:"
 msgstr ""
 
 msgid "Texture Quality:"
-msgstr "Textur Qualität:"
+msgstr "Textur Qualitaet:"
 
 msgid "Texture Filter:"
 msgstr "Textur Filter:"
@@ -1740,7 +1740,7 @@ msgid "New version available. Do you want to update now?"
 msgstr "Neue Version verfügbar. Möchtest do updaten?"
 
 msgid "PASSWORD REQUIRED"
-msgstr "PASSWORT BENÖTIGT"
+msgstr "BENÖTIGE PASSWORT"
 
 msgid "REDIRECTION ADVISED"
 msgstr ""
@@ -1752,7 +1752,7 @@ msgid "CHANGE VIDEO SETTINGS"
 msgstr ""
 
 msgid "Apply new settings?"
-msgstr ""
+msgstr "Uebernehme neue Einstellungen?"
 
 msgid "CONFIRM VIDEO CHANGE"
 msgstr ""
@@ -1771,250 +1771,250 @@ msgid "MESSAGE"
 msgstr ""
 
 msgid "S. Statements"
-msgstr ""
+msgstr "S. Kommentare"
 
 msgid "R. Requests"
-msgstr ""
+msgstr "R. Bitten"
 
 msgid "C. Commands"
-msgstr ""
+msgstr "C. Befehle"
 
 msgid "T. Talk"
-msgstr ""
+msgstr "T. Unterhaltung"
 
 msgid "G. Global"
-msgstr ""
+msgstr "G. Global"
 
 msgid "F. Function"
-msgstr ""
+msgstr "F. Funktion"
 
 msgid "O. Objectives"
-msgstr ""
+msgstr "O. Ziele"
 
 msgid "P. Path Cleared."
-msgstr ""
+msgstr "P. Weg gesichert."
 
 msgid "W. Enemy Weak!"
-msgstr ""
+msgstr "W. Feind ist angeschlagen!"
 
 msgid "C. All Clear"
-msgstr ""
+msgstr "C. Alles klar"
 
 msgid "I. Incoming"
-msgstr ""
+msgstr "F. Eindringling!"
 
 msgid "F. Fire In The Hole!"
 msgstr ""
 
 msgid "D. I'm Defending."
-msgstr ""
+msgstr "D. Ich verteidige."
 
 msgid "A. I'm Attacking."
-msgstr ""
+msgstr "A. Ich greife an."
 
 msgid "T. Taking Fire!"
-msgstr ""
+msgstr "T. Unter Beschuss!"
 
 msgid "M. Mines Cleared"
-msgstr ""
+msgstr "M. Minen entfernt"
 
 msgid "E. Enemy Disguised"
-msgstr ""
+msgstr "E. Getarnter Feind"
 
 msgid "M. Need Medic!"
-msgstr ""
+msgstr "M. Sanitäter!"
 
 msgid "A. Need Ammo!"
-msgstr ""
+msgstr "A. Brauche Munition!"
 
 msgid "B. Need Backup!"
-msgstr ""
+msgstr "B. Ich brauche Unterstützung!"
 
 msgid "E. Need Engineer!"
-msgstr ""
+msgstr "E.  Wir brauchen einen Ingenieur!"
 
 msgid "C. Cover Me!"
-msgstr ""
+msgstr "C. Gib mir Deckung!"
 
 msgid "H. Hold Fire!"
-msgstr ""
+msgstr "H. Feuer einstellen!"
 
 msgid "W. Where To?"
-msgstr ""
+msgstr "W. Wohin?"
 
 msgid "O. Need Covert Ops!"
-msgstr ""
+msgstr "O. Wir brauchen Spione!"
 
 msgid "F. Follow Me!"
-msgstr ""
+msgstr "F. Folge Mir!"
 
 msgid "G. Let's Go!"
-msgstr ""
+msgstr "G. Los gehts!"
 
 msgid "M. Move!"
-msgstr ""
+msgstr "M. Vorwärts!"
 
 msgid "C. Clear The Path!"
-msgstr ""
+msgstr "C. Mach den Weg frei!"
 
 msgid "O. Defend Objective!"
-msgstr ""
+msgstr "O. Verteidige unser Ziel!"
 
 msgid "D. Disarm Dynamite!"
-msgstr ""
+msgstr "D. Entschaerfe das Dynamit!"
 
 msgid "N. Clear Mines!"
-msgstr ""
+msgstr "N. Raeumt die Minen!"
 
 msgid "R. Reinforce Offense"
-msgstr ""
+msgstr "R. Angriff kordinieren"
 
 msgid "E. Reinforce Defense"
-msgstr ""
+msgstr "E. Verteidigung kordinieren"
 
 msgid "Y. Yes"
-msgstr ""
+msgstr "Y. Ja"
 
 msgid "N. No"
-msgstr ""
+msgstr "N. Nein"
 
 msgid "T. Thanks"
-msgstr ""
+msgstr "t. Danke"
 
 msgid "W. Welcome"
-msgstr ""
+msgstr "W. Kein problem"
 
 msgid "S. Sorry"
-msgstr ""
+msgstr "S. Tschuldigung"
 
 msgid "O. Oops"
-msgstr ""
+msgstr "O. Oops"
 
 msgid "W. Enemy Weak"
-msgstr ""
+msgstr "W. Feind ist angeschlagen"
 
 msgid "H. Hi"
-msgstr ""
+msgstr "H. Hallo"
 
 msgid "B. Bye"
-msgstr ""
+msgstr "B. Auf wiedersehen"
 
 msgid "S. Great Shot"
 msgstr "S. Guter Schuss"
 
 msgid "C. Cheer"
-msgstr ""
+msgstr "C. Jubeln"
 
 msgid "G. More Globals"
-msgstr ""
+msgstr "G. Mehr globale Chats"
 
 msgid "G. Good Game"
-msgstr ""
+msgstr "G. Gutes Spiel"
 
 msgid "A. Command Acknowledged"
-msgstr ""
+msgstr "A. Befehl bestädigt"
 
 msgid "D. Command Declined"
-msgstr ""
+msgstr "D. Befehl abgelehnt"
 
 msgid "C. Command Completed"
-msgstr ""
+msgstr "C. Befehl ausgefuehrt"
 
 msgid "P. Destroy Primary Objective"
-msgstr ""
+msgstr "P. Zerstöre das Primaerziel"
 
 msgid "S. Destroy Secondary Objective"
-msgstr ""
+msgstr "S. Zerstöre das sekundaerziel"
 
 msgid "X. Destroy Construction"
-msgstr ""
+msgstr "X. Zerstöre die Anlage"
 
 msgid "M. Commencing Construction"
-msgstr ""
+msgstr "M. Beginne die Anlage zu bauen"
 
 msgid "R. Repair Vehicle"
-msgstr ""
+msgstr "R. Repariere das Fahrzeug"
 
 msgid "V. Disable Vehicle"
-msgstr ""
+msgstr "V. Zerstöre das Fahrzeug"
 
 msgid "E. Escort Vehicle"
-msgstr ""
+msgstr "E. Eskortiere das Fahrzeug"
 
 msgid "1. Statements"
-msgstr ""
+msgstr "1. Kommentare"
 
 msgid "2. Requests"
-msgstr ""
+msgstr "2. Bitten"
 
 msgid "3. Commands"
-msgstr ""
+msgstr "3. Befehle"
 
 msgid "4. Talk"
-msgstr ""
+msgstr "4. Unterhaltung"
 
 msgid "5. Global"
-msgstr ""
+msgstr "6. Global"
 
 msgid "6. Function"
-msgstr ""
+msgstr "6. Funktion"
 
 msgid "7. Objectives"
-msgstr ""
+msgstr "7. Ziele"
 
 msgid "1. Path Cleared."
-msgstr ""
+msgstr "1. Weg gesichert."
 
 msgid "2. Enemy Weak!"
-msgstr ""
+msgstr "2. Feind ist angeschlagen!"
 
 msgid "3. All Clear"
-msgstr ""
+msgstr "3. Alles klar"
 
 msgid "4. Incoming"
-msgstr ""
+msgstr "5. Eindringling!"
 
 msgid "5. Fire In The Hole!"
 msgstr ""
 
 msgid "6. I'm Defending."
-msgstr ""
+msgstr "6. Ich verteidige."
 
 msgid "7. I'm Attacking."
-msgstr ""
+msgstr "7. Ich greife an."
 
 msgid "8. Taking Fire!"
-msgstr ""
+msgstr "8. Unter Beschuss!"
 
 msgid "9. Mines Cleared"
-msgstr ""
+msgstr "9. Minen entfernt"
 
 msgid "0. Enemy Disguised"
-msgstr ""
+msgstr "0. Feindlicher Spion"
 
 msgid "1. Need Medic!"
-msgstr ""
+msgstr "1. Sanitäter!"
 
 msgid "2. Need Ammo!"
 msgstr "2. Brauche Munition"
 
 msgid "3. Need Backup!"
-msgstr ""
+msgstr "2. Brauche Munition!"
 
 msgid "4. Need Engineer!"
-msgstr ""
+msgstr "4. Wir brauchen einen Ingenieur!"
 
 msgid "5. Cover Me!"
-msgstr ""
+msgstr "5. Gib mir Deckung!"
 
 msgid "6. Hold Fire!"
-msgstr ""
+msgstr "6. Feuer einstellen!"
 
 msgid "7. Where To?"
-msgstr ""
+msgstr "7. Wohin?"
 
 msgid "8. Need Covert Ops!"
-msgstr ""
+msgstr "8. Wir brauchen Spione!"
 
 msgid "1. Follow Me!"
 msgstr "1. Folge Mir!"
@@ -2023,25 +2023,25 @@ msgid "2. Let's Go!"
 msgstr "2. Auf gehts!"
 
 msgid "3. Move!"
-msgstr ""
+msgstr "3. Vorwärts!"
 
 msgid "4. Clear The Path!"
-msgstr ""
+msgstr "4. Mach den Weg frei!"
 
 msgid "5. Defend Objective!"
-msgstr ""
+msgstr "5. Verteidige unser Ziel!"
 
 msgid "6. Disarm Dynamite!"
-msgstr ""
+msgstr "6. Entschaerfe das Dynamit!"
 
 msgid "7. Clear Mines!"
-msgstr ""
+msgstr "7. Raeumt die Minen!"
 
 msgid "8. Reinforce Offense"
-msgstr ""
+msgstr "8. Angriff kordinieren"
 
 msgid "9. Reinforce Defense"
-msgstr ""
+msgstr "9. Verteidigung kordinieren"
 
 msgid "1. Yes"
 msgstr "1. Ja"
@@ -2050,19 +2050,19 @@ msgid "2. No"
 msgstr "2. Nein"
 
 msgid "3. Thanks"
-msgstr ""
+msgstr "3. Danke"
 
 msgid "4. Welcome"
-msgstr ""
+msgstr "4. Kein problem"
 
 msgid "5. Sorry"
-msgstr ""
+msgstr "5. Tschuldigung"
 
 msgid "6. Oops"
-msgstr ""
+msgstr "6. Oops"
 
 msgid "3. Enemy Weak"
-msgstr ""
+msgstr "3. Feind ist angeschlagen"
 
 msgid "4. Hi"
 msgstr "4. Hallo"
@@ -2074,58 +2074,58 @@ msgid "6. Great Shot"
 msgstr "6. Guter Schuss"
 
 msgid "7. Cheer"
-msgstr ""
+msgstr "7. Jubeln"
 
 msgid "8. More Globals"
-msgstr ""
+msgstr "8. Mehr globale Chats"
 
 msgid "1. Thanks"
 msgstr "1. Danke"
 
 msgid "2. Welcome"
-msgstr ""
+msgstr "2. Kein problem"
 
 msgid "3. Oops"
-msgstr ""
+msgstr "3. Oops"
 
 msgid "4. Sorry"
 msgstr "4. Entschuldigung"
 
 msgid "5. Hold Fire!"
-msgstr ""
+msgstr "5. Feuer einstellen!"
 
 msgid "6. Good Game"
-msgstr ""
+msgstr "6. Gutes Spiel"
 
 msgid "1. Command Acknowledged"
-msgstr ""
+msgstr "1. Befehl bestädigt"
 
 msgid "2. Command Declined"
-msgstr ""
+msgstr "2. Befehl abgelehnt"
 
 msgid "3. Command Completed"
-msgstr ""
+msgstr "3. Befehl ausgeführt"
 
 msgid "4. Destroy Primary Objective"
-msgstr ""
+msgstr "4. Zerstöre das Primaerziel"
 
 msgid "5. Destroy Secondary Objective"
-msgstr ""
+msgstr "5. Zerstöre das Sekundaerziel"
 
 msgid "6. Destroy Construction"
-msgstr ""
+msgstr "6. Zerstöre die Anlage"
 
 msgid "7. Commencing Construction"
-msgstr ""
+msgstr "7. Beginne die Anlage zu bauen"
 
 msgid "8. Repair Vehicle"
-msgstr ""
+msgstr "8. Repariere das Fahrzeug"
 
 msgid "9. Disable Vehicle"
-msgstr ""
+msgstr "9. Zerstöre das Fahrzeug"
 
 msgid "0. Escort Vehicle"
-msgstr ""
+msgstr "0. Eskortiere das Fahrzeug"
 
 msgid "^1Legacy"
 msgstr ""
@@ -2272,7 +2272,7 @@ msgid "Warning:"
 msgstr "Warnung:"
 
 msgid "ADD TO FAVORITES"
-msgstr ""
+msgstr "ZU FAVORITEN HINZUFUEGEN"
 
 msgid "Do you want to disconnect"
 msgstr ""
@@ -2342,17 +2342,17 @@ msgstr "Warte auf Spielstatus..."
 #: src/ui/ui_main.c:2397
 #: src/ui/ui_main.c:2637
 msgid "Waiting for new key... Press ESCAPE to cancel"
-msgstr "Warte auf einen neuen Schlüssel... Drücke ESCAPE zum abbrechen"
+msgstr "Warte auf einen neuen Schluessel... Drücke ESCAPE zum abbrechen"
 
 #: src/ui/ui_main.c:2401
 #: src/ui/ui_main.c:2641
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
-msgstr "Drücke Enter oder Klick zum verändern, Drücke BACKSPACE zum löschen"
+msgstr "Drücke Enter oder Klick zum veraendern, Druecke BACKSPACE zum loeschen"
 
 #: src/ui/ui_main.c:2539
 #, c-format
 msgid "Getting info for %d servers (ESC to cancel)"
-msgstr "Bekomme Informationen für %d Server (Drücke ESC um abzubrechen)"
+msgstr "Bekomme Informationen für %d Server (Druecke ESC um abzubrechen)"
 
 #: src/ui/ui_main.c:2543
 msgid "Waiting for response from Master Server"
