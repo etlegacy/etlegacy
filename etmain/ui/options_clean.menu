@@ -50,7 +50,7 @@ menuDef {
 	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, "HOMEPATH CLEAN UP" )
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-4, 10, "This will delete all unnecessary files from you fs_homepath.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-4, 10, "A simple clean will remove tmp- and custom pk3 files.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+56, (SUBWINDOW_WIDTH)-4, 10, "A full clean will remove all downloaded files like map-, campaign- and custom pk3 files. ", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+56, (SUBWINDOW_WIDTH)-4, 10, "A full clean will remove all downloaded files like map-,\n campaign- and custom pk3 files.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+90, (SUBWINDOW_WIDTH)-4, 10, "^3WARNING: Use at your own risk!", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+106, (SUBWINDOW_WIDTH)-4, 10, "Consult our wiki for documentation.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+122, (SUBWINDOW_WIDTH)-4, 10, "Press 'ABORT' if you don't know what you are doing here.", .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
