@@ -4388,6 +4388,12 @@ func_explosive_use
 void func_explosive_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
 	G_Script_ScriptEvent(self, "death", "");   // used to trigger script stuff for MP
+	// make the parent (trigger) die too
+	// - maps like stalingrad are using the same scriptName for both
+	if (self->parent && Q_stricmp(self->scriptName, self->parent->scriptName))
+	{
+		G_Script_ScriptEvent(self->parent, "death", "");
+	}
 	func_explosive_explode(self, self, other, self->damage, 0);
 }
 
@@ -4604,7 +4610,15 @@ void SP_func_explosive(gentity_t *ent)
 	char *type;
 	char *cursorhint;
 
-	trap_SetBrushModel(ent, ent->model);
+	if (ent->model)
+	{
+		trap_SetBrushModel(ent, ent->model);
+	}
+	else 
+	{
+		// empty models for ETPro mapscripting
+		G_DPrintf("^6SP_func_explosive: trap_SetBrushModel(NULL) skipped for scriptName '%s'\n", ent->scriptName);
+	}
 	InitExplosive(ent);
 
 	if (ent->spawnflags & EXPLOSIVE_START_INVIS)      // start invis
@@ -5665,11 +5679,7 @@ g_constructible_stats_t g_constructible_classes[NUM_CONSTRUCTIBLE_CLASSES] =
 
 void SP_func_constructible(gentity_t *ent)
 {
-	int /*health, wait, */ i;
-	//char    *s;
-
-	/*G_SpawnInt( "wait", "5000", &wait );
-	ent->wait = wait;*/
+	int i;
 
 	if (ent->spawnflags & AXIS_CONSTRUCTIBLE)
 	{
@@ -5684,15 +5694,9 @@ void SP_func_constructible(gentity_t *ent)
 		G_Error("'func_constructible' does not have a team that can build it\n");
 	}
 
-	/*G_SpawnString ("score", "0", &s);
-	ent->accuracy = atof (s);
-
-	G_SpawnInt( "health", "100", &health ); // default low enough to get killed by dynamite
-	ent->sound1to2 = ent->health = health;*/
-
 	memset(&ent->constructibleStats, 0, sizeof(ent->constructibleStats));
 	G_SpawnInt("constructible_class", "0", &i);
-	i--;    // non-coder friendlyness. Aren't we nice?
+	i--;
 	if (i > 0 && i <= NUM_CONSTRUCTIBLE_CLASSES)
 	{
 		ent->constructibleStats = g_constructible_classes[i];

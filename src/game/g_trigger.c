@@ -40,7 +40,15 @@ void InitTrigger(gentity_t *self)
 		G_SetMovedir(self->s.angles, self->movedir);
 	}
 
-	trap_SetBrushModel(self, self->model);
+	if (self->model)
+	{
+		trap_SetBrushModel(self, self->model);
+	}
+	else
+	{
+		// empty models for ETPro mapscripting
+		G_DPrintf("^6InitTrigger: trap_SetBrushModel(NULL) skipped for scriptName %s\n", self->scriptName);
+	}
 
 	self->r.contents = CONTENTS_TRIGGER;        // replaces the -1 from trap_SetBrushModel
 	self->r.svFlags  = SVF_NOCLIENT;
