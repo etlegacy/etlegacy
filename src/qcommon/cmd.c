@@ -269,9 +269,9 @@ void Cbuf_Execute(void)
 		Com_Memcpy(line, text, i);
 		line[i] = 0;
 
-// delete the text from the command buffer and move remaining commands down
-// this is necessary because commands (exec) can insert data at the
-// beginning of the text buffer
+		// delete the text from the command buffer and move remaining commands down
+		// this is necessary because commands (exec) can insert data at the
+		// beginning of the text buffer
 
 		if (i == cmd_text.cursize)
 		{
@@ -554,7 +554,7 @@ char *Cmd_Cmd(void)
 	return cmd_cmd;
 }
 
-/*
+/**
  * @brief Replaces command separators with space to prevent interpretation
  *
  * This prevents the infamous callvote hack.
@@ -733,6 +733,7 @@ Cmd_FindCommand
 cmd_function_t *Cmd_FindCommand(const char *cmd_name)
 {
 	cmd_function_t *cmd;
+
 	for (cmd = cmd_functions; cmd; cmd = cmd->next)
 		if (!Q_stricmp(cmd_name, cmd->name))
 		{
@@ -849,11 +850,11 @@ void Cmd_RemoveCommandSafe(const char *cmd_name)
 	      || !strcmp(cmd_name, "-lookup") || !strcmp(cmd_name, "-lookdown")
 	      || !strcmp(cmd_name, "configstrings")))
 	{
-		Com_Error(ERR_DROP, "Restricted source tried to remove system command \"%s\"", cmd_name);
+		Com_Printf(S_COLOR_RED "Restricted source tried to remove system command \"%s\"", cmd_name);
 		return;
 	}
 
-	Com_DPrintf(S_COLOR_YELLOW "Cmd_RemoveCommandSafe command %s removed\n", cmd_name);
+	Com_DPrintf(S_COLOR_YELLOW "Cmd_RemoveCommandSafe command \"%s\" removed\n", cmd_name);
 
 	Cmd_RemoveCommand(cmd_name);
 }
@@ -971,7 +972,7 @@ Cmd_List_f
 void Cmd_List_f(void)
 {
 	cmd_function_t *cmd;
-	int            i;
+	int            i = 0;
 	char           *match;
 
 	if (Cmd_Argc() > 1)
@@ -983,7 +984,6 @@ void Cmd_List_f(void)
 		match = NULL;
 	}
 
-	i = 0;
 	for (cmd = cmd_functions ; cmd ; cmd = cmd->next)
 	{
 		if (match && !Com_Filter(match, cmd->name, qfalse))
@@ -1017,9 +1017,10 @@ void Cmd_CompleteCfgName(char *args, int argNum)
  */
 void Cmd_CleanHomepath_f(void)
 {
-	int  i, j, k, numFiles = 0;
-	char **pFiles = NULL, *tokens;
-	char path[MAX_OSPATH], whitelist[MAX_OSPATH];
+	int      i, j, k, numFiles = 0;
+	char     **pFiles = NULL, *tokens;
+	char     path[MAX_OSPATH], whitelist[MAX_OSPATH];
+	qboolean whitelisted;
 
 	if (Cmd_Argc() < 3)
 	{
@@ -1053,7 +1054,7 @@ void Cmd_CleanHomepath_f(void)
 		{
 			for (k = 0; k < ARRAY_LEN(whitelist); k++)
 			{
-				qboolean whitelisted = qfalse;
+				whitelisted = qfalse;
 
 				// Check if this file is in the whitelist
 				tokens = strtok(whitelist, " ,;");
