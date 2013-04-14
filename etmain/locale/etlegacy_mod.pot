@@ -2139,6 +2139,252 @@ msgstr ""
 msgid "0. Escort Vehicle"
 msgstr ""
 
+msgid "Path cleared."
+msgstr ""
+
+msgid "The enemy is weakened."
+msgstr ""
+
+msgid "All clear."
+msgstr ""
+
+msgid "Incoming!"
+msgstr ""
+
+msgid "Fire in the hole!"
+msgstr ""
+
+msgid "I'm on defense."
+msgstr ""
+
+msgid "I'm on offense."
+msgstr ""
+
+msgid "Taking fire!"
+msgstr ""
+
+msgid "Mines cleared."
+msgstr ""
+
+msgid "Enemy in disguise."
+msgstr ""
+
+msgid "Need a Medic!"
+msgstr ""
+
+msgid "I need ammo!"
+msgstr ""
+
+msgid "I need backup!"
+msgstr ""
+
+msgid "We need an engineer!"
+msgstr ""
+
+msgid "Cover me!"
+msgstr ""
+
+msgid "Hold your fire!"
+msgstr ""
+
+msgid "Where to?"
+msgstr ""
+
+msgid "We need Covert Ops!"
+msgstr ""
+
+msgid "Follow me!"
+msgstr ""
+
+msgid "Let's go!"
+msgstr ""
+
+msgid "Move!"
+msgstr ""
+
+msgid "Clear the path!"
+msgstr ""
+
+msgid "Defend our objective!"
+msgstr ""
+
+msgid "Disarm the dynamite!"
+msgstr ""
+
+msgid "Clear the mines!"
+msgstr ""
+
+msgid "Reinforce the offense!"
+msgstr ""
+
+msgid "Reinforce the defense!"
+msgstr ""
+
+msgid "Affirmative!"
+msgstr ""
+
+msgid "No!"
+msgstr ""
+
+msgid "Thank you!"
+msgstr ""
+
+msgid "You're welcome."
+msgstr ""
+
+msgid "Bitte sehr."
+msgstr ""
+
+msgid "Ja!"
+msgstr ""
+
+msgid "Nein!"
+msgstr ""
+
+msgid "Kein problem."
+msgstr ""
+
+msgid "Sorry!"
+msgstr ""
+
+msgid "Oops!"
+msgstr ""
+
+msgid "Yes!"
+msgstr ""
+
+msgid "Jawohl!"
+msgstr ""
+
+msgid "Negative!"
+msgstr ""
+
+msgid "Hi!"
+msgstr ""
+
+msgid "Hallo!"
+msgstr ""
+
+msgid "Good bye."
+msgstr ""
+
+msgid "Auf wiedersehen."
+msgstr ""
+
+msgid "Bye."
+msgstr ""
+
+msgid "Great shot!"
+msgstr ""
+
+msgid "You got it, man!"
+msgstr ""
+
+msgid "Yeah!"
+msgstr ""
+
+msgid "Yoohoo!"
+msgstr ""
+
+msgid "Hahaa!"
+msgstr ""
+
+msgid "Alright!"
+msgstr ""
+
+msgid "Woo!"
+msgstr ""
+
+msgid "Yeehaa!"
+msgstr ""
+
+msgid "'Atta way, baby!"
+msgstr ""
+
+msgid "Jahaa!"
+msgstr ""
+
+msgid "Wunderbar!"
+msgstr ""
+
+msgid "Excellent!"
+msgstr ""
+
+msgid "Oh yes!"
+msgstr ""
+
+msgid "Sehr gut!"
+msgstr ""
+
+msgid "Thanks!"
+msgstr ""
+
+msgid "Danke!"
+msgstr ""
+
+msgid "Danke sehr!"
+msgstr ""
+
+msgid "No problem."
+msgstr ""
+
+msgid "Good game!"
+msgstr ""
+
+msgid "Command acknowledged!"
+msgstr ""
+
+msgid "Command declined!"
+msgstr ""
+
+msgid "Command completed!"
+msgstr ""
+
+msgid "Destroy primary objective!"
+msgstr ""
+
+msgid "Destroy secondary objective!"
+msgstr ""
+
+msgid "Destroy construction!"
+msgstr ""
+
+msgid "I'm constructing!"
+msgstr ""
+
+msgid "Repair the vehicle!"
+msgstr ""
+
+msgid "Disable the vehicle!"
+msgstr ""
+
+msgid "Escort the vehicle!"
+msgstr ""
+
+msgid "I'm a soldier."
+msgstr ""
+
+msgid "I'm an engineer."
+msgstr ""
+
+msgid "I'm a medic."
+msgstr ""
+
+msgid "I'm a field ops."
+msgstr ""
+
+msgid "I'm a covert ops."
+msgstr ""
+
+msgid "Create a Fireteam?"
+msgstr ""
+
+msgid "Make Fireteam private?"
+msgstr ""
+
+msgid "Response Sent"
+msgstr ""
+
 msgid "^1Legacy"
 msgstr ""
 
@@ -2332,13 +2578,77 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-msgid "Set recommended video settings"
+msgid ""
+"Set recommended video settings\n"
+"and return to the main menu?"
 msgstr ""
 
-msgid "Do you want to open"
+msgid ""
+"Set recommended video settings\n"
+"and return to the ingame menu?"
 msgstr ""
 
-msgid "^3Thank you for installing ET:Legacy."
+msgid ""
+"Do you want to open\n"
+" www.etlegacy.com ?"
+msgstr ""
+
+msgid ""
+"^3Thank you for installing ET:Legacy.\n"
+"\n"
+"^3Visit ^1www.etlegacy.com^3 for more information.\n"
+"\n"
+"^3Let's keep ET alive!"
+msgstr ""
+
+msgid "HOST GAME: EXTENDED"
+msgstr ""
+
+msgid "CLEAN"
+msgstr ""
+
+msgid "HOMEPATH CLEAN UP"
+msgstr ""
+
+msgid "This will delete all unnecessary files from you fs_homepath."
+msgstr ""
+
+msgid "A simple clean will remove tmp- and custom pk3 files."
+msgstr ""
+
+msgid ""
+"A full clean will remove all downloaded files like map-,\n"
+" campaign- and custom pk3 files."
+msgstr ""
+
+msgid "^3WARNING: Use at your own risk!"
+msgstr ""
+
+msgid "Consult our wiki for documentation."
+msgstr ""
+
+msgid "Press 'ABORT' if you don't know what you are doing here."
+msgstr ""
+
+msgid "ABORT"
+msgstr ""
+
+msgid "SIMPLE CLEAN"
+msgstr ""
+
+msgid "FULL CLEAN"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "unknown cmd"
+msgstr ""
+
+msgid "Server:"
+msgstr ""
+
+msgid "changed to"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338

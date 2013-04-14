@@ -51,12 +51,11 @@ void script_linkentity(gentity_t *ent);
 
 qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params)
 {
-	char     *pString = params, *token;
+	char     *pString = params;
+	char     *token   = COM_ParseExt(&pString, qfalse);
 	char     modelname[MAX_QPATH];
 	int      i;
 	qboolean solid = qtrue;
-
-	token = COM_ParseExt(&pString, qfalse);
 
 	if (!token[0])
 	{
@@ -80,22 +79,39 @@ qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params)
 		token = COM_ParseExt(&pString, qfalse);
 	}
 
-	for (i = 0; i < level.numBrushModels; i++)
+	if (modelname[0] == '*')
 	{
-		if (!Q_stricmp(level.brushModelInfo[i].modelname, modelname))
+		trap_SetBrushModel(ent, modelname);
+
+		if (!solid)
 		{
-			trap_SetBrushModel(ent, va("*%i", level.brushModelInfo[i].model));
+			ent->s.eFlags  |= EF_NONSOLID_BMODEL;
+			ent->clipmask   = 0;
+			ent->r.contents = 0;
+			trap_LinkEntity(ent);
+		}
 
-			if (!solid)
+		return qtrue;
+	}
+	else
+	{
+		for (i = 0; i < level.numBrushModels; i++)
+		{
+			if (!Q_stricmp(level.brushModelInfo[i].modelname, modelname))
 			{
-				ent->s.eFlags  |= EF_NONSOLID_BMODEL;
-				ent->clipmask   = 0;
-				ent->r.contents = 0;
+				trap_SetBrushModel(ent, va("*%i", level.brushModelInfo[i].model));
 
-				trap_LinkEntity(ent);
+				if (!solid)
+				{
+					ent->s.eFlags  |= EF_NONSOLID_BMODEL;
+					ent->clipmask   = 0;
+					ent->r.contents = 0;
+
+					trap_LinkEntity(ent);
+				}
+
+				return qtrue;
 			}
-
-			return qtrue;
 		}
 	}
 

@@ -75,9 +75,10 @@ void AddRemap(const char *oldShader, const char *newShader, float timeOffset)
 	{
 		// this new but important warning might confuse the community
 		// map makers didn't know about this so it might occure
-		G_Printf("WARNING AddRemap: MAX_SHADER_REMAPS 128 reached - shader not added\n");
+		G_Printf(S_COLOR_YELLOW "WARNING AddRemap: MAX_SHADER_REMAPS 128 reached - shader not added\n");
 	}
 }
+
 
 void G_ResetRemappedShaders(void)
 {
@@ -516,7 +517,7 @@ gentity_t *G_PickTarget(char *targetname)
 
 	if (!num_choices)
 	{
-		G_Printf("G_PickTarget: target %s not found\n", targetname);
+		G_Printf(S_COLOR_YELLOW "WARNING G_PickTarget: target %s not found - returning NULL\n", targetname);
 		return NULL;
 	}
 
@@ -607,7 +608,7 @@ void G_UseTargets(gentity_t *ent, gentity_t *activator)
 	{
 		if (t == ent)
 		{
-			G_Printf("WARNING G_UseTargets: Entity used itself.\n");
+			G_Printf(S_COLOR_YELLOW "WARNING G_UseTargets: Entity used itself.\n");
 		}
 		else
 		{
@@ -639,7 +640,7 @@ void G_UseTargets(gentity_t *ent, gentity_t *activator)
 		}
 		if (!ent->inuse)
 		{
-			G_Printf("G_UseTargets: entity was removed while using targets\n");
+			G_Printf(S_COLOR_YELLOW "WARNING G_UseTargets: entity was removed while using targets\n");
 			return;
 		}
 	}
@@ -958,7 +959,7 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 {
 	if (!event)
 	{
-		G_Printf("G_AddEvent: zero event added for entity %i\n", ent->s.number);
+		G_Printf(S_COLOR_YELLOW "WARNING G_AddEvent: zero event added for entity %i\n", ent->s.number);
 		return;
 	}
 
@@ -1383,7 +1384,7 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 
 	if (!handle)
 	{
-		G_Printf("%s", va(S_COLOR_RED "G_LoadCampaignsFromFile: file not found: %s\n", filename));
+		G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: file not found: %s\n", filename);
 		return qfalse;
 	}
 
@@ -1407,19 +1408,19 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 			// can't handle any more.
 			if (level.campaignCount >= MAX_CAMPAIGNS)
 			{
+				G_Printf(S_COLOR_RED "G_LoadCampaignsFromFile: MAX_CAMPAIGNS reached: '%i'\n", MAX_CAMPAIGNS);
 				break;
 			}
 
 			if (!trap_PC_ReadToken(handle, &token))
 			{
 				// eof
-				trap_PC_FreeSource(handle);
 				break;
 			}
 
 			if (*token.string != '{')
 			{
-				G_Printf("%s", va(S_COLOR_RED "G_LoadCampaignsFromFile: unexpected token '%s' inside: %s\n", token.string, filename));
+				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected token '%s' inside: %s\n", token.string, filename);
 				trap_PC_FreeSource(handle);
 				return qfalse;
 			}
@@ -1430,7 +1431,7 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 		{
 			if ((s = PC_String_Parse(handle)) == NULL)
 			{
-				G_Printf("%s", va(S_COLOR_RED "G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename));
+				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename);
 				trap_PC_FreeSource(handle);
 				return qfalse;
 			}
@@ -1439,7 +1440,7 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 		{
 			if ((s = PC_String_Parse(handle)) == NULL)
 			{
-				G_Printf("%s", va(S_COLOR_RED "G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename));
+				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename);
 				trap_PC_FreeSource(handle);
 				return qfalse;
 			}
@@ -1452,7 +1453,7 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 		{
 			if ((s = PC_String_Parse(handle)) == NULL)
 			{
-				G_Printf("%s", va(S_COLOR_RED "G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename));
+				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename);
 				trap_PC_FreeSource(handle);
 				return qfalse;
 			}
@@ -1465,7 +1466,7 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 		{
 			if (!trap_PC_ReadToken(handle, &token))
 			{
-				G_Printf("%s", va(S_COLOR_RED "G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename));
+				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename);
 				trap_PC_FreeSource(handle);
 				return qfalse;
 			}
@@ -1497,7 +1498,7 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 
 			if (!trap_PC_ReadToken(handle, &token))
 			{
-				G_Printf(S_COLOR_RED "G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename);
+				G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: unexpected end of file inside: %s\n", filename);
 				trap_PC_FreeSource(handle);
 				return qfalse;
 			}
@@ -1553,7 +1554,7 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 					// yell if there are too many maps in this campaign,
 					// and then skip it
 
-					G_Printf("^1ERROR G_LoadCampaignsFromFile: Campaign %s (%s) has too many maps\n", g_campaigns[level.campaignCount].shortname, filename);
+					G_Printf(S_COLOR_RED "ERROR G_LoadCampaignsFromFile: Campaign %s (%s) has too many maps\n", g_campaigns[level.campaignCount].shortname, filename);
 					// hack - end of campaign will increment this
 					// again, so this one will be overwritten
 					// clear out this campaign so that everything's
@@ -1567,6 +1568,7 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 		}
 	}
 
+	trap_PC_FreeSource(handle);
 	return mapFound;
 }
 

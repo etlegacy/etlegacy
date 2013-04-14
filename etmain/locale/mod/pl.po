@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-12 17:49+0100\n"
+"PO-Revision-Date: 2013-04-13 15:34+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -243,7 +243,7 @@ msgstr "ALLIANCI"
 
 #: src/cgame/cg_scoreboard.c:701
 msgid "Name"
-msgstr "Imie"
+msgstr "Nazwa"
 
 #: src/cgame/cg_scoreboard.c:704
 msgid "Class"
@@ -742,7 +742,7 @@ msgid "LOAD MOD"
 msgstr "WCZYTAJ MOD"
 
 msgid "VIEW"
-msgstr "ODTWORZ"
+msgstr "WIDOK"
 
 msgid "DELETE REPLAY"
 msgstr "USUN POWTORKE"
@@ -1852,7 +1852,7 @@ msgstr "D. Chronie."
 msgid "A. I'm Attacking."
 msgstr "A. Atakuje."
 
-msgid "T. Taking fire!"
+msgid "T. Taking Fire!"
 msgstr "T. Przy Ogniu!"
 
 msgid "M. Mines Cleared"
@@ -2260,6 +2260,18 @@ msgstr "Dzieki Ci!"
 msgid "You're welcome."
 msgstr "Nie ma za co."
 
+msgid "Bitte sehr."
+msgstr "Prosze bardzo."
+
+msgid "Ja!"
+msgstr "Tak!"
+
+msgid "Nein!"
+msgstr "Nie!"
+
+msgid "Kein problem."
+msgstr "Bez problemu."
+
 msgid "Sorry!"
 msgstr "Przepraszam!"
 
@@ -2269,13 +2281,22 @@ msgstr "Oops!"
 msgid "Yes!"
 msgstr "Tak!"
 
+msgid "Jawohl!"
+msgstr "Tak jest!"
+
 msgid "Negative!"
 msgstr "Negatywnie!"
 
 msgid "Hi!"
 msgstr "Czesc!"
 
+msgid "Hallo!"
+msgstr "Czesc!"
+
 msgid "Good bye."
+msgstr "Dowidzenia."
+
+msgid "Auf wiedersehen."
 msgstr "Dowidzenia."
 
 msgid "Bye."
@@ -2308,8 +2329,29 @@ msgstr "Wspaniale!"
 msgid "'Atta way, baby!"
 msgstr "'Tak trzymac, malenka!"
 
+msgid "Jahaa!"
+msgstr "Nareszczcie!"
+
+msgid "Wunderbar!"
+msgstr "Wspaniale!"
+
+msgid "Excellent!"
+msgstr "Doskonale!"
+
+msgid "Oh yes!"
+msgstr "Taaak jest!"
+
+msgid "Sehr gut!"
+msgstr "Bardzo dobrze!"
+
 msgid "Thanks!"
 msgstr "Dzieki!"
+
+msgid "Danke!"
+msgstr "Dzieki!"
+
+msgid "Danke sehr!"
+msgstr "Dziekuje bardzo!"
 
 msgid "No problem."
 msgstr "Bez problemu."
@@ -2582,11 +2624,25 @@ msgstr ""
 "Ustawic reko. ustawienia\n"
 "i wrocic do menu w grze?"
 
-msgid "Do you want to open\n www.etlegacy.com ?"
-msgstr "Czy chcesz otworzyc\n www.etlegacy.com ?"
+msgid ""
+"Do you want to open\n"
+" www.etlegacy.com ?"
+msgstr ""
+"Czy chcesz otworzyc\n"
+" www.etlegacy.com ?"
 
-msgid "^3Thank you for installing ET:Legacy."
-msgstr "^3Dzieki za zainstalowanie ET: Legacy."
+msgid ""
+"^3Thank you for installing ET:Legacy.\n"
+"\n"
+"^3Visit ^1www.etlegacy.com^3 for more information.\n"
+"\n"
+"^3Let's keep ET alive!"
+msgstr ""
+"^3Dzieki za zainstalowanie ET:Legacy.\n"
+"\n"
+"^3Odwiedz www.etlegacy.com^3 po wiecej informacji.\n"
+"\n"
+"^3Utrzymajmy ET na zyciu!"
 
 msgid "HOST GAME: EXTENDED"
 msgstr "STAWIANIE SERWERA: ROZSZERZONE"
@@ -2603,11 +2659,12 @@ msgstr "To usunie wszystkie niepotrzebne pliki z twojego fs_homepath."
 msgid "A simple clean will remove tmp- and custom pk3 files."
 msgstr "Proste czyszczenie usunie pliki -tmp i niestandardowe pk3."
 
-msgid "A full clean will remove all downloaded files like map-,"
-msgstr "Pelne czyszczenie usunie wszystkie sciagniete pliki jak mapy,"
-
-msgid "campaign- and custom pk3 files."
-msgstr "kampanie i niestandardowe pk3."
+msgid ""
+"A full clean will remove all downloaded files like map-,\n"
+" campaign- and custom pk3 files."
+msgstr ""
+"Pelne czyszczenie usunie wszystkie sciagniete pliki jak mapy,\n"
+" kampanie i niestandardowe pk3."
 
 msgid "^3WARNING: Use at your own risk!"
 msgstr "^3UWAGA: Uzyj na wlasne ryzyko!"
@@ -2632,6 +2689,12 @@ msgstr "Nie"
 
 msgid "unknown cmd"
 msgstr "nieznane polec"
+
+msgid "Server:"
+msgstr "Serwer:"
+
+msgid "changed to"
+msgstr "zmienil na"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
