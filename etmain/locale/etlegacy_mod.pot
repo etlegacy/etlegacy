@@ -2651,6 +2651,9 @@ msgstr ""
 msgid "changed to"
 msgstr ""
 
+msgid "Auto Map Zoom:"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

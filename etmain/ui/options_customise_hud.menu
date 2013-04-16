@@ -8,7 +8,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608 //400
-#define WINDOW_HEIGHT	356
+#define WINDOW_HEIGHT	364
 #define GROUP_NAME		"grpOptionsCustomiseHud"
 //#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
 	
@@ -32,23 +32,24 @@ menuDef {
 
 // Hud Display //
   #define HUD_Y 32
-	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 160, "HUD DISPLAY" )
+	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 172, "HUD DISPLAY" )
 	YESNO( 8, HUD_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Draw Gun:", .2, 8, "cg_drawGun", "Shows gun model on-screen" )
 	YESNO( 8, HUD_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Show Compass:", .2, 8, "cg_drawCompass", "Displays compass (with icons when near select events)" )
-	MULTI( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Mission Timer:", .2, 8, "cg_drawRoundTimer", cvarFloatList { "Off" 0 "On" 1 }, "Displays remaining mission time." )
-	MULTI( 8, HUD_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Reinforcement Timer:", .2, 8, "cg_drawReinforcementTime", cvarFloatList { "Off" 0 "On" 1 }, "Displays your team's \"reinforcement\" time" )
-	MULTI( 8, HUD_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Cursor Hints:", .2, 8, "cg_cursorHints", cvarFloatList { "Off" 0 "Size Pulse" 1 "Strobe Pulse" 2 "Alpha Pulse" 3 "Solid" 4 }, "Icon display format when near an action item" )
-	YESNO( 8, HUD_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, "Show Lagometer:", .2, 8, "cg_lagometer", "Displays lagometer" )
-	YESNO( 8, HUD_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, "Show FPS:", .2, 8, "cg_drawFPS", "Displays Frames Per Second" )
-	MULTI( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Show Locations:", .2, 8, "cg_locations", cvarFloatList { "Cordinates Only" 0 "Names Fireteam Only" 1 "Names Team Chat Only" 2 "Team & Fireteam Chat" 3 }, "Displays locations in fireteam" )
-	YESNO( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Enable Flags:", .2, 8, "cg_countryflags", "Displays players country flags in score board." )
-	YESNO( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, "Fireteam Latched Class:", .2, 8, "cg_fireteamLatchedClass", "Displays Fireteam latched class." )
-	MULTI( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, "Switch HUD:", .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, "Switches between different HUD" )
-	MULTI( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, "Modify Alternate HUD:", .2, 8, "cg_altHudFlags", cvarFloatList { "Standard" 0 "Move Timers" 1 "Remove Ranks" 2 "Timer + Ranks" 3 }, "Customises Alternate HUD" )
+	SLIDER( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Auto Map Zoom:", .2, 8, "cg_automapZoom" 5.159 1 7.43, "Sets Zoom Level Automatically When Map Loads" )
+	MULTI( 8, HUD_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Mission Timer:", .2, 8, "cg_drawRoundTimer", cvarFloatList { "Off" 0 "On" 1 }, "Displays remaining mission time." )
+	MULTI( 8, HUD_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Reinforcement Timer:", .2, 8, "cg_drawReinforcementTime", cvarFloatList { "Off" 0 "On" 1 }, "Displays your team's \"reinforcement\" time" )
+	MULTI( 8, HUD_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, "Cursor Hints:", .2, 8, "cg_cursorHints", cvarFloatList { "Off" 0 "Size Pulse" 1 "Strobe Pulse" 2 "Alpha Pulse" 3 "Solid" 4 }, "Icon display format when near an action item" )
+	YESNO( 8, HUD_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, "Show Lagometer:", .2, 8, "cg_lagometer", "Displays lagometer" )
+	YESNO( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Show FPS:", .2, 8, "cg_drawFPS", "Displays Frames Per Second" )
+	MULTI( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Show Locations:", .2, 8, "cg_locations", cvarFloatList { "Cordinates Only" 0 "Names Fireteam Only" 1 "Names Team Chat Only" 2 "Team & Fireteam Chat" 3 }, "Displays locations in fireteam" )
+	YESNO( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, "Enable Flags:", .2, 8, "cg_countryflags", "Displays players country flags in score board." )
+	YESNO( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, "Fireteam Latched Class:", .2, 8, "cg_fireteamLatchedClass", "Displays Fireteam latched class." )
+	MULTI( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, "Switch HUD:", .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, "Switches between different HUD" )
+	MULTI( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, "Modify Alternate HUD:", .2, 8, "cg_altHudFlags", cvarFloatList { "Standard" 0 "Move Timers" 1 "Remove Ranks" 2 "Timer + Ranks" 3 }, "Customises Alternate HUD" )
 
 	
 // In-Game Display //
-#define DISPLAY_Y 198
+#define DISPLAY_Y 210
 	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, "IN-GAME DISPLAY" )
 	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Ejecting Brass:", .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, "Sets the duration ejected bullet shells etc last for." )
 	SLIDER( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Field Of View:", .2, 8, "cg_fov" 1.3 80 120, "BEST FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27" )

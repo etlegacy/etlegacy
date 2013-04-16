@@ -299,6 +299,8 @@ vmCvar_t cg_altHudFlags;
 vmCvar_t cg_tracers;
 vmCvar_t cg_fireteamLatchedClass;
 
+vmCvar_t cg_automapZoom;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -503,6 +505,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_altHudFlags,           "cg_altHudFlags",           "0",     CVAR_ARCHIVE                 }, // Hudstyles
 	{ &cg_tracers,               "cg_tracers",               "1",     CVAR_ARCHIVE                 }, // Draw tracers
 	{ &cg_fireteamLatchedClass,  "cg_fireteamLatchedClass",  "1",     CVAR_ARCHIVE                 }, // Draw fireteam members latched class
+	{ &cg_automapZoom,           "cg_automapZoom",           "5.159", CVAR_ARCHIVE                 },
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -1565,6 +1568,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.commandCentreSpawnShader[0]       = trap_R_RegisterShaderNoMip("gfx/limbo/cm_flagaxis");
 	cgs.media.commandCentreSpawnShader[1]       = trap_R_RegisterShaderNoMip("gfx/limbo/cm_flagallied");
 	cgs.media.compassConstructShader            = trap_R_RegisterShaderNoMip("sprites/construct.tga");
+	cgs.media.blackmask                         = trap_R_RegisterShaderNoMip("images/blackmask"); // etpro icons support
 
 	cgs.media.countryFlags = trap_R_RegisterShaderNoMip("gfx/flags/world_flags");   // GeoIP
 

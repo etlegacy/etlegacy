@@ -834,15 +834,22 @@ void Cmd_RemoveCommandSafe(const char *cmd_name)
 		return;
 	}
 
+	// silent return for obsolete genuine ET cmds which have been removed in ETL
+	if (!strcmp(cmd_name, "+button4") || !strcmp(cmd_name, "-button4"))
+	{
+		return;
+	}
+
 	cmd = Cmd_FindCommand(cmd_name);
 
 	if (!cmd)
 	{
-		Com_Printf(S_COLOR_RED "Cmd_RemoveCommandSafe called for an unknown command\n");
+		Com_Printf(S_COLOR_RED "Cmd_RemoveCommandSafe called for an unknown command \"%s\"\n", cmd_name);
 		return;
 	}
 
-	// don't remove commands in general
+	// don't remove commands in general ...
+
 	// this ensures commands like vid_restart, quit etc won't be removed from the engine by mod code
 	if (cmd->function &&
 	    // several mods are removing some system commands to avoid abuse - let's allow these

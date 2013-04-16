@@ -194,8 +194,8 @@ gentity_t *G_TestEntityPosition(gentity_t *ent)
 		pos[2] += 4; // move up a bit - corpses normally got their origin slightly in the ground
 		trap_Trace(&tr, pos, ent->r.mins, ent->r.maxs, pos, ent->s.number, mask);
 		// don't crush corpses against players
-//      if( tr.startsolid && g_entities[ tr.entityNum ].client )
-//          return NULL;
+		//if( tr.startsolid && g_entities[ tr.entityNum ].client )
+		//  return NULL;
 	}
 	else if (ent->s.eType == ET_MISSILE)
 	{
@@ -436,7 +436,6 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 									VectorCopy(org2, check->client->ps.origin);
 								}
 
-								//
 								// do the test
 								block = G_TestEntityPosition(check);
 								if (!block)
@@ -1141,8 +1140,9 @@ void Reached_BinaryMover(gentity_t *ent)
 	// stop the looping sound
 	ent->s.loopSound = 0;
 
-	if (ent->moverState == MOVER_1TO2)
+	switch (ent->moverState)
 	{
+	case MOVER_1TO2:
 		// reached pos2
 		SetMoverState(ent, MOVER_POS2, level.time);
 
@@ -1177,9 +1177,8 @@ void Reached_BinaryMover(gentity_t *ent)
 			ent->think     = ReturnToPos1;
 			ent->nextthink = level.time + ent->wait;
 		}
-	}
-	else if (ent->moverState == MOVER_2TO1)
-	{
+		break;
+	case MOVER_2TO1:
 		// reached pos1
 		SetMoverState(ent, MOVER_POS1, level.time);
 
@@ -1198,9 +1197,8 @@ void Reached_BinaryMover(gentity_t *ent)
 		{
 			trap_AdjustAreaPortalState(ent, qfalse);
 		}
-	}
-	else if (ent->moverState == MOVER_1TO2ROTATE)
-	{
+		break;
+	case MOVER_1TO2ROTATE:
 		// reached pos2
 		SetMoverState(ent, MOVER_POS2ROTATE, level.time);
 
@@ -1231,10 +1229,8 @@ void Reached_BinaryMover(gentity_t *ent)
 		// return to pos1 after a delay
 		ent->think     = ReturnToPos1Rotate;
 		ent->nextthink = level.time + ent->wait;
-
-	}
-	else if (ent->moverState == MOVER_2TO1ROTATE)
-	{
+		break;
+	case MOVER_2TO1ROTATE:
 		// reached pos1
 		SetMoverState(ent, MOVER_POS1ROTATE, level.time);
 
@@ -1256,10 +1252,10 @@ void Reached_BinaryMover(gentity_t *ent)
 		{
 			trap_AdjustAreaPortalState(ent, qfalse);
 		}
-	}
-	else
-	{
+		break;
+	default:
 		G_Error("Reached_BinaryMover: bad moverState\n");
+		break;
 	}
 
 	//ent->flags &= ~(FL_KICKACTIVATE|FL_SOFTACTIVATE);   // it was not opened normally.  Clear this so it thinks it's closed normally
@@ -1358,8 +1354,9 @@ void Reached_TrinaryMover(gentity_t *ent)
 	// stop the looping sound
 	ent->s.loopSound = ent->soundLoop;
 
-	if (ent->moverState == MOVER_1TO2)
+	switch (ent->moverState)
 	{
+	case MOVER_1TO2:
 		// reached pos2
 		SetMoverState(ent, MOVER_POS2, level.time);
 
@@ -1369,9 +1366,8 @@ void Reached_TrinaryMover(gentity_t *ent)
 
 		// play sound
 		G_AddEvent(ent, EV_GENERAL_SOUND, ent->soundPos2);
-	}
-	else if (ent->moverState == MOVER_2TO1)
-	{
+		break;
+	case MOVER_2TO1:
 		// reached pos1
 		SetMoverState(ent, MOVER_POS1, level.time);
 
@@ -1383,9 +1379,8 @@ void Reached_TrinaryMover(gentity_t *ent)
 		{
 			trap_AdjustAreaPortalState(ent, qfalse);
 		}
-	}
-	else if (ent->moverState == MOVER_2TO3)
-	{
+		break;
+	case MOVER_2TO3:
 		// reached pos3
 		SetMoverState(ent, MOVER_POS3, level.time);
 
@@ -1405,9 +1400,8 @@ void Reached_TrinaryMover(gentity_t *ent)
 			ent->activator = ent;
 		}
 		G_UseTargets(ent, ent->activator);
-	}
-	else if (ent->moverState == MOVER_3TO2)
-	{
+		break;
+	case MOVER_3TO2:
 		// reached pos2
 		SetMoverState(ent, MOVER_POS2, level.time);
 
@@ -1417,10 +1411,10 @@ void Reached_TrinaryMover(gentity_t *ent)
 
 		// play sound
 		G_AddEvent(ent, EV_GENERAL_SOUND, ent->soundPos3);
-	}
-	else
-	{
+		break;
+	default:
 		G_Error("Reached_BinaryMover: bad moverState\n");
+		break;
 	}
 }
 
@@ -2077,9 +2071,6 @@ static void Touch_DoorTriggerSpectator(gentity_t *ent, gentity_t *other, trace_t
 Blocked_DoorRotate
 ================
 */
-
-#define DOORPUSHBACK    16
-
 void Blocked_DoorRotate(gentity_t *ent, gentity_t *other)
 {
 	gentity_t *slave;
@@ -2615,7 +2606,6 @@ void SP_func_secret(gentity_t *ent)
 	else
 	{
 		ent->key = -1;                  // otherwise, set the key when this ent finishes spawning
-
 	}
 	// if the key is invalid, set the key in the finishSpawning routine
 	if (ent->key > KEY_NUM_KEYS || ent->key < -1)
@@ -3160,7 +3150,7 @@ void SP_info_train_spline_main(gentity_t *self)
 		return;
 	}
 
-//  if( self->target ) {
+	//if( self->target ) {
 	spline = BG_AddSplinePath(self->targetname, self->target, self->s.origin);
 
 	if (G_SpawnString("end", "", &end))
@@ -3183,9 +3173,9 @@ void SP_info_train_spline_main(gentity_t *self)
 
 		BG_AddSplineControl(spline, control);
 	}
-	/*  } else {
-	        BG_AddPathCorner( self->targetname, self->s.origin );
-	    }*/
+	//} else {
+	//  BG_AddPathCorner( self->targetname, self->s.origin );
+	//}
 
 	G_FreeEntity(self);
 }
@@ -4614,7 +4604,7 @@ void SP_func_explosive(gentity_t *ent)
 	{
 		trap_SetBrushModel(ent, ent->model);
 	}
-	else 
+	else
 	{
 		// empty models for ETPro mapscripting
 		G_DPrintf("^6SP_func_explosive: trap_SetBrushModel(NULL) skipped for scriptName '%s'\n", ent->scriptName);
