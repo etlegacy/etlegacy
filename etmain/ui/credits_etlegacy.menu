@@ -169,13 +169,9 @@ menuDef {
 
 // Buttons //
 #ifdef FUI
-	BUTTON( 25, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-350), 18, "BACK", .2, 14, close credits_etlegacy ; open main )
+        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "BACK", .3, 14, close credits_etlegacy ; open main )
 #else
-	BUTTON( 25, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-350), 18, "BACK", .2, 14, close credits_etlegacy ; open ingame_main )
+        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "BACK", .3, 14, close credits_etlegacy ; open ingame_main )
 #endif
-	BUTTON( 25+.33*(WINDOW_WIDTH-350)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-350), 18, "SPLASH DAMAGE", .2, 14, close credits_etlegacy ; open credits_splashdamage )
-	BUTTON( 25+.33*(WINDOW_WIDTH-350)+6+.34*(WINDOW_WIDTH-350)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-350), 18, "ID SOFTWARE", .2, 14, close credits_etlegacy ; open credits_idsoftware )
-	BUTTON( 25+.33*(WINDOW_WIDTH-350)+6+.703*(WINDOW_WIDTH-350)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-350), 18, "ACTIVISION", .2, 14, close credits_etlegacy ; open credits_activision )
-	BUTTON( 25+.33*(WINDOW_WIDTH-350)+6+1.064*(WINDOW_WIDTH-350)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-350), 18, "ADDITIONAL", .2, 14, close credits_etlegacy ; open credits_additional )
-	BUTTON( 25+.33*(WINDOW_WIDTH-350)+6+1.426*(WINDOW_WIDTH-350)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-350), 18, "ET 2.60", .2, 14, close credits_etlegacy ; open credits_et260 )
+        BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close credits_etlegacy ; open credits_splashdamage )
 }
