@@ -249,6 +249,18 @@ static sfxHandle_t S_AL_BufferFind(const char *filename)
 	sfxHandle_t sfx = -1;
 	int         i;
 
+	if (!filename[0])
+	{
+		Com_Printf(S_COLOR_RED "ERROR S_AL_BufferFind: can't find empty sound - returning default sfx\n");
+		return default_sfx;
+	}
+
+	if (strlen(filename) >= MAX_QPATH)
+	{
+		Com_Printf(S_COLOR_RED "ERROR S_AL_BufferFind: sound name exceeds MAX_QPATH \"%s\" - returning default sfx\n", filename);
+		return default_sfx;
+	}
+
 	for (i = 0; i < numSfx; i++)
 	{
 		if (!Q_stricmp(knownSfx[i].filename, filename))
