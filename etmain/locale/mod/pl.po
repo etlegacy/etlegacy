@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-13 15:34+0100\n"
+"PO-Revision-Date: 2013-04-16 20:44+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -2695,6 +2695,9 @@ msgstr "Serwer:"
 
 msgid "changed to"
 msgstr "zmienil na"
+
+msgid "Auto Map Zoom:"
+msgstr "Auto Przyblizenie Mapy:"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
