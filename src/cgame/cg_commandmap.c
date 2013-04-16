@@ -46,8 +46,7 @@ void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y)
 	*coord_y = CC_2D_Y + ((*coord_y - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * CC_2D_H;
 }
 
-//static float automapZoom = 3.583; // apporoximately 1.2^7
-static float automapZoom = 5.159;
+#define AUTOMAP_ZOOM 5.159f
 
 int CG_CurLayerForZ(int z)
 {
@@ -135,31 +134,34 @@ each map entity within the automap
 */
 void CG_TransformAutomapEntity(void)
 {
-	int i;
+	mapEntityData_t *mEnt;
+	int             i;
 
 	for (i = 0; i < mapEntityCount; i++)
 	{
-		mapEntityData_t *mEnt = &mapEntities[i];
+		mEnt = &mapEntities[i];
 
 		// calculate the screen coordinate of this entity for the automap, consider the zoom value
-		mEnt->automapTransformed[0] = (mEnt->x - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0] * 100 * automapZoom;
-		mEnt->automapTransformed[1] = (mEnt->y - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1] * 100 * automapZoom;
+		mEnt->automapTransformed[0] = (mEnt->x - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0] * 100 * cg_automapZoom.value; // FIXME: check value out of range before?
+		mEnt->automapTransformed[1] = (mEnt->y - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1] * 100 * cg_automapZoom.value;
 	}
 }
 
 void CG_AdjustAutomapZoom(int zoomIn)
 {
+	float automapZoom = cg_automapZoom.value;
+
 	if (zoomIn)
 	{
-		automapZoom *= 1.2;
-		if (automapZoom > 7.43)     // approximately 1.2^11
+		automapZoom *= 1.2f;
+		if (automapZoom > 7.43f)  // approximately 1.2^11
 		{
-			automapZoom = 7.43;
+			automapZoom = 7.43f;
 		}
 	}
 	else
 	{
-		automapZoom /= 1.2;
+		automapZoom /= 1.2f;
 		// zoom value of 1 corresponds to the most zoomed out view. The whole map is displayed
 		// in the automap
 		if (automapZoom < 1)
@@ -167,6 +169,9 @@ void CG_AdjustAutomapZoom(int zoomIn)
 			automapZoom = 1;
 		}
 	}
+
+	trap_Cvar_Set("cg_automapZoom", va("%f", automapZoom));
+
 	// recalculate the screen coordinates since the zoom changed
 	CG_TransformAutomapEntity();
 }
@@ -571,8 +576,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 		if (scissor)
 		{
-			icon_pos[0] = mEnt->automapTransformed[0] - scissor->tl[0] + x - (icon_size * (scissor->zoomFactor / 5.159));
-			icon_pos[1] = mEnt->automapTransformed[1] - scissor->tl[1] + y - (icon_size * (scissor->zoomFactor / 5.159));
+			icon_pos[0] = mEnt->automapTransformed[0] - scissor->tl[0] + x - (icon_size * (scissor->zoomFactor / AUTOMAP_ZOOM));
+			icon_pos[1] = mEnt->automapTransformed[1] - scissor->tl[1] + y - (icon_size * (scissor->zoomFactor / AUTOMAP_ZOOM));
 		}
 		else
 		{
@@ -586,8 +591,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		icon_extends[1] = 2 * icon_size;
 		if (scissor)
 		{
-			icon_extends[0] *= (scissor->zoomFactor / 5.159);
-			icon_extends[1] *= (scissor->zoomFactor / 5.159);
+			icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+			icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 		}
 
 		if (mEnt->type == ME_PLAYER_REVIVE)
@@ -875,8 +880,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			}
 			if (scissor)
 			{
-				icon_extends[0] *= (scissor->zoomFactor / 5.159);
-				icon_extends[1] *= (scissor->zoomFactor / 5.159);
+				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+				icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 			}
 			else
 			{
@@ -916,8 +921,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			icon_extends[1] = CONST_ICON_NORMAL_SIZE + scalesize;
 			if (scissor)
 			{
-				icon_extends[0] *= (scissor->zoomFactor / 5.159);
-				icon_extends[1] *= (scissor->zoomFactor / 5.159);
+				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+				icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 			}
 			else
 			{
@@ -941,8 +946,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			}
 			if (scissor)
 			{
-				icon_extends[0] *= (scissor->zoomFactor / 5.159);
-				icon_extends[1] *= (scissor->zoomFactor / 5.159);
+				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+				icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 			}
 			else
 			{
@@ -999,8 +1004,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		icon_extends[1] = 12;
 		if (scissor)
 		{
-			icon_extends[0] *= (scissor->zoomFactor / 5.159);
-			icon_extends[1] *= (scissor->zoomFactor / 5.159);
+			icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+			icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 		}
 		else
 		{
@@ -1019,13 +1024,43 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 	}
 }
 
+qboolean CG_DisguiseMapCheck(mapEntityData_t *mEnt)
+{
+
+	if (mEnt->data < 0 || mEnt->data >= 64)
+	{
+		return qfalse;
+	}
+
+	if (!cgs.clientinfo[mEnt->data].infoValid)
+	{
+		return qfalse;
+	}
+
+
+	if (!(cg_entities[mEnt->data].currentState.powerups & (1 << PW_OPS_DISGUISED)))
+	{
+		return qfalse;
+	}
+
+	if (VectorDistance(cg.snap->ps.origin, cg_entities[mEnt->data].lerpOrigin) < 512)
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
 void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend)
 {
 	int             i;
 	snapshot_t      *snap;
 	mapEntityData_t *mEnt = &mapEntities[0];
 	int             icon_size;
-	int             exspawn = qfalse;
+	int             exspawn;
+	team_t          RealTeam = CG_LimboPanel_GetRealTeam();
+
+	expanded = qfalse;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -1038,12 +1073,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 	if (scissor)
 	{
-		//icon_size = AUTOMAP_PLAYER_ICON_SIZE;
-		icon_size = h / 26;
-		if (icon_size < 4)
-		{
-			icon_size = 4;
-		}
+		icon_size = AUTOMAP_PLAYER_ICON_SIZE;
 
 		if (scissor->br[0] >= scissor->tl[0])
 		{
@@ -1066,13 +1096,10 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			{
 				trap_R_DrawStretchPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1, cgs.media.commandCentreAutomapShader[0]);
 			}
-			trap_R_DrawStretchPic(0, 0, 0, 0, 0, 0, 0, 0, cgs.media.whiteShader);   // HACK : the code above seems to do weird things to
-			// the next trap_R_DrawStretchPic issued. This works
-			// around this.
+			trap_R_DrawStretchPic(0, 0, 0, 0, 0, 0, 0, 0, cgs.media.whiteShader);   // HACK : the code above seems to do weird things to																	// the next trap_R_DrawStretchPic issued. This works																					// around this.
 		}
-
 		// Draw the grid
-		//CG_DrawGrid(x, y, w, h, scissor);
+		CG_DrawGrid(x, y, w, h, scissor);
 	}
 	else
 	{
@@ -1082,6 +1109,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 		Vector4Set(color, 1.f, 1.f, 1.f, alpha);
 		trap_R_SetColor(color);
+		CG_DrawPic(x, y, w, h, cgs.media.blackmask);
 		if (cgs.ccLayers)
 		{
 			CG_DrawPic(x, y, w, h, cgs.media.commandCentreMapShaderTrans[cgs.ccSelectedLayer]);
@@ -1107,30 +1135,26 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 	exspawn = CG_DrawSpawnPointInfo(x, y, w, h, qfalse, scissor, -1);
 
-	for (i = 0, mEnt = &mapEntities[0]; i < mapEntityCount; i++, mEnt++)
+	// entnfo data..
+	for (i = 0, mEnt = &mapEntities[0]; i < mapEntityCount; ++i, ++mEnt)
 	{
-		if (mEnt->team != CG_LimboPanel_GetRealTeam())
+		// spectators can see icons of both teams
+		if ((interactive && mEnt->team != RealTeam) ||
+		    (mEnt->team != snap->ps.persistant[PERS_TEAM] && snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR))
 		{
-			continue;
+			goto CG_DrawMap_check;
 		}
 
 		if (mEnt->type == ME_PLAYER ||
 		    mEnt->type == ME_PLAYER_DISGUISED ||
 		    mEnt->type == ME_PLAYER_REVIVE)
 		{
-			continue;
+			goto CG_DrawMap_check;
 		}
+		goto CG_DrawMap_draw;
 
-		CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
-	}
-
-	CG_DrawSpawnPointInfo(x, y, w, h, qtrue, scissor, exspawn);
-
-	CG_DrawMortarMarker(x, y, w, h, qtrue, scissor, exspawn);
-
-	for (i = 0, mEnt = &mapEntities[0]; i < mapEntityCount; i++, mEnt++)
-	{
-		if (mEnt->team != CG_LimboPanel_GetRealTeam())
+CG_DrawMap_check:
+		if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt))
 		{
 			continue;
 		}
@@ -1142,7 +1166,72 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			continue;
 		}
 
+CG_DrawMap_draw:
 		CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
+	}
+
+	// entnfo2 data.. dra non-players & non-tanks
+	//for(i = 0, mEnt = &mapEntities2[0]; i < mapEntityCount2; ++i, ++mEnt ) {
+	//  CG_DrawMapEntity( mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size );
+	//}
+
+	CG_DrawSpawnPointInfo(x, y, w, h, qtrue, scissor, exspawn);
+
+	CG_DrawMortarMarker(x, y, w, h, qtrue, scissor, exspawn);
+
+	// draw spectator position and direction
+	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+	{
+		vec2_t           pos, size;
+		bg_playerclass_t *classInfo;
+
+		if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+		{
+			size[0] = size[1] = 16;
+		}
+		else
+		{
+			size[0] = size[1] = 12;
+		}
+
+		if (scissor)
+		{
+			size[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+			size[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+		}
+		else
+		{
+			size[0] *= cgs.ccZoomFactor;
+			size[1] *= cgs.ccZoomFactor;
+		}
+		if (scissor)
+		{
+			pos[0] = ((cg.predictedPlayerEntity.lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w * scissor->zoomFactor - scissor->tl[0] + x;
+			pos[1] = ((cg.predictedPlayerEntity.lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h * scissor->zoomFactor - scissor->tl[1] + y;
+		}
+		else
+		{
+			pos[0] = x + ((cg.predictedPlayerEntity.lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w;
+			pos[1] = y + ((cg.predictedPlayerEntity.lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h;
+		}
+
+		if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+		{
+			// draw a arrow when free-spectating.
+			// don't reuse the ccMortarTargetArrow
+			CG_DrawRotatedPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], cgs.media.ccMortarTargetArrow, (0.625 - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
+		}
+		else
+		{
+			//PLAYER ICON
+
+			// FIXME: make a severside change so it also sends player compass info
+			// when spectating and remove this hack.
+
+			classInfo = CG_PlayerClassForClientinfo(&cgs.clientinfo[snap->ps.clientNum], &cg_entities[snap->ps.clientNum]);
+			CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], classInfo->icon);
+			CG_DrawRotatedPic(pos[0] - (size[0] * 0.5f) - 1, pos[1] - (size[1] * 0.5f) - 1, size[0] + 2, size[1] + 2, classInfo->arrow, (0.5 - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
+		}
 	}
 }
 
@@ -1324,7 +1413,7 @@ void CG_DrawAutoMap(float x, float y, float w, float h)
 
 	mapScissor.circular = qtrue;
 
-	mapScissor.zoomFactor = automapZoom;
+	mapScissor.zoomFactor = cg_automapZoom.value;
 
 	mapScissor.tl[0] = mapScissor.tl[1] = 0;
 	mapScissor.br[0] = mapScissor.br[1] = -1;
@@ -1372,13 +1461,12 @@ void CG_DrawAutoMap(float x, float y, float w, float h)
 
 int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScissor_t *scissor, int expand)
 {
-	int    i;
-	char   buffer[64];
-	vec2_t point;
-	int    e = -1;
-	vec2_t icon_extends;
-
 	team_t team = CG_LimboPanel_GetRealTeam();
+	char   buffer[64];
+	vec2_t icon_extends;
+	vec2_t point;
+	float  changetime;
+	int    i, e = -1;
 
 	if (cgs.ccFilter & CC_FILTER_SPAWNS)
 	{
@@ -1387,7 +1475,7 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 
 	for (i = 1; i < cg.spawnCount; i++)
 	{
-		float changetime = 0;
+		changetime = 0;
 
 		if (cg.spawnTeams_changeTime[i])
 		{
@@ -1440,8 +1528,8 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 		icon_extends[1] = FLAGSIZE_NORMAL;
 		if (scissor)
 		{
-			icon_extends[0] *= (scissor->zoomFactor / 5.159);
-			icon_extends[1] *= (scissor->zoomFactor / 5.159);
+			icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+			icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 		}
 		else
 		{
@@ -1469,7 +1557,7 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 
 				if (scissor)
 				{
-					size *= (scissor->zoomFactor / 5.159);
+					size *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 				}
 				else
 				{
@@ -1487,7 +1575,7 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 
 				if (scissor)
 				{
-					size *= (scissor->zoomFactor / 5.159);
+					size *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 				}
 				else
 				{
@@ -1518,7 +1606,7 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 
 				if (scissor)
 				{
-					size *= (scissor->zoomFactor / 5.159);
+					size *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 				}
 				else
 				{

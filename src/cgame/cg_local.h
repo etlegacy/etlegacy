@@ -1284,6 +1284,7 @@ typedef struct
 	qhandle_t commandCentreAxisMineShader;
 	qhandle_t commandCentreAlliedMineShader;
 	qhandle_t commandCentreSpawnShader[2];
+	qhandle_t blackmask;
 
 	qhandle_t landmineHintShader;
 	qhandle_t compassConstructShader;
@@ -2150,6 +2151,8 @@ extern vmCvar_t cg_altHud;
 extern vmCvar_t cg_altHudFlags;
 extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamLatchedClass;
+
+extern vmCvar_t cg_automapZoom;
 
 // cg_main.c
 const char *CG_ConfigString(int index);
