@@ -1803,7 +1803,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 {
 	char     currentVal[256];
 	float    cvalF, val1F, val2F;
-	int      i, cvalI, val1I, val2I;
+	int      i, val1I, val2I; // cvalI,
 	qboolean cvalIsF, val1IsF, val2IsF;
 #ifdef DEBUGTIME_ENABLED
 	int dbgTime = trap_Milliseconds(), elapsed;
@@ -1816,16 +1816,16 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 #ifdef FAKELAG
 	cg.time -= snapshotDelayTime;
-#endif // _DEBUG
+#endif // FAKELAG
 
 	for (i = 0; i < cg.svCvarCount; ++i)
 	{
 		trap_Cvar_VariableStringBuffer(cg.svCvars[i].cvarName, currentVal, sizeof(currentVal));
 
-		cvalF   = atof(currentVal);
-		val1F   = atof(cg.svCvars[i].Val1);
-		val2F   = atof(cg.svCvars[i].Val2);
-		cvalI   = atoi(currentVal);
+		cvalF = atof(currentVal);
+		val1F = atof(cg.svCvars[i].Val1);
+		val2F = atof(cg.svCvars[i].Val2);
+		//cvalI   = atoi(currentVal);
 		val1I   = atoi(cg.svCvars[i].Val1);
 		val2I   = atoi(cg.svCvars[i].Val2);
 		cvalIsF = (strstr(currentVal, ".")) ? qtrue : qfalse;

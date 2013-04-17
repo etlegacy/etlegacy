@@ -247,7 +247,6 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 static qboolean CG_ParseHUD(int handle)
 {
 	pc_token_t    token;
-	int           i;
 	hudStucture_t temphud;
 
 	CG_setDefaultHudValues(&temphud);

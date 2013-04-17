@@ -1743,8 +1743,8 @@ typedef struct
 {
 	char *tagname;
 	float size;
-	float maxdist;
-	float maxalpha;
+	float maxdist;  // unused
+	float maxalpha; // unused
 	qhandle_t shader;
 } shadowPart_t;
 

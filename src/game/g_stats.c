@@ -276,7 +276,7 @@ void G_ResetXP(gentity_t *ent)
 {
 	int i = 0;
 	int ammo[MAX_WEAPONS], ammoclip[MAX_WEAPONS];
-	int oldWeapon, newWeapon;
+	int oldWeapon; //, newWeapon;
 
 	if (!ent || !ent->client)
 	{
@@ -303,7 +303,7 @@ void G_ResetXP(gentity_t *ent)
 	// It also sets the (possibly new) amounts of ammo for weapons.
 	SetWolfSpawnWeapons(ent->client);
 	// restore..
-	newWeapon = ent->client->ps.weapon;
+	//newWeapon = ent->client->ps.weapon;
 
 	for (i = WP_NONE; i < WP_NUM_WEAPONS; ++i)    //i<MAX_WEAPONS
 	{   // only restore ammo for valid weapons..

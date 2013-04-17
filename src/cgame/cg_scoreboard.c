@@ -61,16 +61,16 @@ WM_DrawObjectives
 #define FLAG_STEP       32.0f
 qboolean cf_draw(float x, float y, float fade, int clientNum)
 {
-	unsigned int flag_sd     = 512;
 	unsigned int client_flag = atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));    // uci
 
 	if (client_flag < 255)
 	{
-		float alpha[4];
-		float x1 = (float)((client_flag * (unsigned int)FLAG_STEP) % flag_sd);
-		float y1 = (float)(floor((client_flag * FLAG_STEP) / flag_sd) * FLAG_STEP);
-		float x2 = x1 + FLAG_STEP;
-		float y2 = y1 + FLAG_STEP;
+		unsigned int flag_sd = 512;
+		float        alpha[4];
+		float        x1 = (float)((client_flag * (unsigned int)FLAG_STEP) % flag_sd);
+		float        y1 = (float)(floor((client_flag * FLAG_STEP) / flag_sd) * FLAG_STEP);
+		float        x2 = x1 + FLAG_STEP;
+		float        y2 = y1 + FLAG_STEP;
 
 		alpha[0] = alpha[1] = alpha[2] = 1.0; alpha[3] = fade;
 

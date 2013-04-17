@@ -158,7 +158,6 @@ CL_ClearParticles
 void CG_ClearParticles(void)
 {
 	int i;
-	int j;
 
 	memset(particles, 0, sizeof(particles));
 
@@ -177,6 +176,8 @@ void CG_ClearParticles(void)
 	// init the shaderAnims
 	if (!initparticles) // CG_ClearParticles is also called on maprestart - we don't have to register twice ...
 	{
+		int j;
+
 		for (i = 0; shaderAnimNames[i]; i++)
 		{
 			for (j = 0; j < shaderAnimCounts[i]; j++)
