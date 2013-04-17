@@ -2903,14 +2903,14 @@ This function will be called when the AVI recording will start either by video o
 void CL_StartVideoRecording(const char *aviname)
 {
 	char filename[MAX_OSPATH];
-	int  i, last;
 
 	if (!aviname || aviname == '\0')
 	{
+		int i, last;
+		int a, b, c, d;
+
 		for (i = 0; i <= 9999; i++)
 		{
-			int a, b, c, d;
-
 			last = i;
 
 			a     = last / 1000;

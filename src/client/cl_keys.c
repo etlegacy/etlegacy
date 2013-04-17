@@ -328,9 +328,7 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
 	int  len     = strlen(edit->buffer); // + 1;
 	int  drawLen = edit->widthInChars - 1; // // - 1 so there is always a space for the cursor
 	int  prestep;
-	int  cursorChar;
 	char str[MAX_STRING_CHARS];
-	int  i;
 
 	// guarantee that cursor will be visible
 	if (len <= drawLen)
@@ -381,6 +379,8 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
 	// draw the cursor
 	if (showCursor)
 	{
+		int cursorChar, i;
+
 		if ((int)(cls.realtime >> 8) & 1)
 		{
 			return;     // off blink

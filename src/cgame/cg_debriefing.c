@@ -1621,13 +1621,13 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 	{
 		vec4_t hcolor;
 		float  lineHeight = 9.f;
-		int    i, len;
+		int    i;
 		int    chatWidth  = button->rect.w;
 		int    chatHeight = button->rect.h;
 
 		for (i = cgs.teamLastChatPos; i < cgs.teamChatPos; i++)
 		{
-			len = CG_Text_Width_Ext(cgs.teamChatMsgs[i % chatHeight], 0.2f, 0, &cgs.media.limboFont2);
+			CG_Text_Width_Ext(cgs.teamChatMsgs[i % chatHeight], 0.2f, 0, &cgs.media.limboFont2);
 		}
 
 		for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i--)

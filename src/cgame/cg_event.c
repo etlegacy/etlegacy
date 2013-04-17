@@ -2221,14 +2221,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_ITEM_PICKUP_QUIET:
 		DEBUGNAME("EV_ITEM_PICKUP");
 		{
-			gitem_t *item;
-			int     index = es->eventParm;      // player predicted
+			//gitem_t *item;
+			int index = es->eventParm;          // player predicted
 
 			if (index < 1 || index >= bg_numItems)
 			{
 				break;
 			}
-			item = &bg_itemlist[index];
+			//item = &bg_itemlist[index];
 
 			if (event == EV_ITEM_PICKUP)     // not quiet
 			{

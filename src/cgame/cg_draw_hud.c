@@ -247,7 +247,6 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 static qboolean CG_ParseHUD(int handle)
 {
 	pc_token_t    token;
-	int           i;
 	hudStucture_t temphud;
 
 	CG_setDefaultHudValues(&temphud);
@@ -1291,6 +1290,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 #endif
 	    )
 	{
+		CG_DrawExpandedAutoMap();
 		return;
 	}
 
@@ -1342,29 +1342,33 @@ static void CG_DrawNewCompass(rectDef_t location)
 
 	//if( !(cgs.ccFilter & CC_FILTER_REQUESTS) ) {
 	// draw voice chats
-	for (i = 0; i < MAX_CLIENTS; i++)
 	{
-		centity_t *cent = &cg_entities[i];
+		centity_t *cent;
 
-		if (cg.predictedPlayerState.clientNum == i || !cgs.clientinfo[i].infoValid || cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[i].team)
+		for (i = 0; i < MAX_CLIENTS; i++)
 		{
-			continue;
-		}
+			cent = &cg_entities[i];
 
-		// also draw revive icons if cent is dead and player is a medic
-		if (cent->voiceChatSpriteTime < cg.time)
-		{
-			continue;
-		}
+			if (cg.predictedPlayerState.clientNum == i || !cgs.clientinfo[i].infoValid || cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[i].team)
+			{
+				continue;
+			}
 
-		if (cgs.clientinfo[i].health <= 0)
-		{
-			// reset
-			cent->voiceChatSpriteTime = cg.time;
-			continue;
-		}
+			// also draw revive icons if cent is dead and player is a medic
+			if (cent->voiceChatSpriteTime < cg.time)
+			{
+				continue;
+			}
 
-		CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cent->voiceChatSprite);
+			if (cgs.clientinfo[i].health <= 0)
+			{
+				// reset
+				cent->voiceChatSpriteTime = cg.time;
+				continue;
+			}
+
+			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cent->voiceChatSprite);
+		}
 	}
 	//}
 
@@ -1388,9 +1392,6 @@ static void CG_DrawNewCompass(rectDef_t location)
 	    }
 	}*/
 
-	//if( !(cgs.ccFilter & CC_FILTER_REQUESTS) ) {
-	// draw revive medic icons
-	if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC)
 	{
 		entityState_t *ent;
 
@@ -1403,47 +1404,34 @@ static void CG_DrawNewCompass(rectDef_t location)
 				continue;
 			}
 
-			if ((ent->eFlags & EF_DEAD) && ent->number == ent->clientNum)
+			if (ent->eFlags & EF_DEAD)
 			{
-				if (!cgs.clientinfo[ent->clientNum].infoValid || cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team)
+				if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && ent->number == ent->clientNum) // && !(cgs.ccFilter & CC_FILTER_REQUESTS)
 				{
-					continue;
+					if (!cgs.clientinfo[ent->clientNum].infoValid || cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team)
+					{
+						continue;
+					}
+
+					CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.medicReviveShader);
 				}
 
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.medicReviveShader);
+				continue;
 			}
+
+			if (!cgs.clientinfo[ent->clientNum].infoValid || cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team)
+			{
+				continue;
+			}
+
+			if (!CG_IsOnSameFireteam(cg.clientNum, ent->clientNum))
+			{
+				continue;
+			}
+
+			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.buddyShader); //if( !(cgs.ccFilter & CC_FILTER_BUDDIES) ) {
 		}
 	}
-	//}
-
-	//if( !(cgs.ccFilter & CC_FILTER_BUDDIES) ) {
-	for (i = 0; i < snap->numEntities; i++)
-	{
-		entityState_t *ent = &snap->entities[i];
-
-		if (ent->eType != ET_PLAYER)
-		{
-			continue;
-		}
-
-		if (ent->eFlags & EF_DEAD)
-		{
-			continue;
-		}
-
-		if (!cgs.clientinfo[ent->clientNum].infoValid || cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team)
-		{
-			continue;
-		}
-
-		if (!CG_IsOnSameFireteam(cg.clientNum, ent->clientNum))
-		{
-			continue;
-		}
-
-		CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.buddyShader);
-	}
-	//}
 }
 
 static void CG_DrawStatsDebug(void)
