@@ -2699,6 +2699,69 @@ msgstr "zmienil na"
 msgid "Auto Map Zoom:"
 msgstr "Auto Przyblizenie Mapy:"
 
+msgid "was killed by"
+msgstr "zostal zabity przez"
+
+msgid "^1WAS KILLED BY TEAMMATE^7"
+msgstr "^1ZOSTAL ZABITY PRZEZ KOMPANA^7"
+
+msgid "Arming landmine..."
+msgstr "Podkladanie miny..."
+
+msgid "Landmine armed..."
+msgstr "Mina uzbrojona..."
+
+msgid "Dynamite is set, but NOT armed!"
+msgstr "Dynamit jest ustawiony, ale NIE uzbrojony!"
+
+msgid "Arming dynamite..."
+msgstr "Podkladanie dynamitu..."
+
+msgid "Dynamite is now armed with a 30 second timer!"
+msgstr "Dynamit jest uzbrojony z czasem 30 sekund!"
+
+msgid "Defusing landmine"
+msgstr "Rozbrajanie miny"
+
+msgid "Landmine defused..."
+msgstr "Mina rozbrojona..."
+
+msgid "Defusing dynamite..."
+msgstr "Rozbrajanie dynamitu..."
+
+msgid "Constructing..."
+msgstr "Budowanie..."
+
+msgid "was sniped by"
+msgstr "zostal zestrzelony przez"
+
+msgid "was mown down by"
+msgstr "zostal ponizony przez"
+
+msgid "never saw"
+msgstr "nigdy nie widzial"
+
+msgid "was cooked by"
+msgstr "zostal usmazony przez"
+
+msgid "played with fire"
+msgstr "bawil sie ogniem"
+
+msgid "failed to spot"
+msgstr "niezauwazyl"
+
+msgid "was silenced by"
+msgstr "zostal uciszony przez"
+
+msgid "was silenced by"
+msgstr "zostal uciszony przez"
+
+msgid "was silenced by"
+msgstr "zostal uciszony przez"
+
+msgid "was silenced by"
+msgstr "zostal uciszony przez"
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
