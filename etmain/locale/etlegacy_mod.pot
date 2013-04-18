@@ -2708,13 +2708,37 @@ msgstr ""
 msgid "was silenced by"
 msgstr ""
 
-msgid "was silenced by"
+msgid "dove on his own grenade"
 msgstr ""
 
-msgid "was silenced by"
+msgid "vaporized himself"
 msgstr ""
 
-msgid "was silenced by"
+msgid "never saw his own mortar round coming"
+msgstr ""
+
+msgid "killed himself"
+msgstr ""
+
+msgid "ate his own rifle grenade"
+msgstr ""
+
+msgid "obliterated himself"
+msgstr ""
+
+msgid "Fire Mission: ^3Firing for effect!"
+msgstr ""
+
+msgid "fired-for-effect on himself"
+msgstr ""
+
+msgid "embraced his own satchel explosion"
+msgstr "zostal uciszony przez"
+
+msgid "failed to spot his own landmine"
+msgstr ""
+
+msgid "dynamited himself to pieces"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-16 20:44+0100\n"
+"PO-Revision-Date: 2013-04-18 12:32+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -2753,14 +2753,38 @@ msgstr "niezauwazyl"
 msgid "was silenced by"
 msgstr "zostal uciszony przez"
 
-msgid "was silenced by"
+msgid "dove on his own grenade"
+msgstr "nadepnal na jego wlasny granat"
+
+msgid "vaporized himself"
+msgstr "wyparowal samego siebie"
+
+msgid "never saw his own mortar round coming"
+msgstr "nigdy nie widzial lecacego wlasnego pocisku mortara"
+
+msgid "killed himself"
+msgstr "zabil sie"
+
+msgid "ate his own rifle grenade"
+msgstr "zjadl wlasnego granata od rifli"
+
+msgid "obliterated himself"
+msgstr "wymarzal sie"
+
+msgid "Fire Mission: ^3Firing for effect!"
+msgstr "Misja Strzalu: ^3Strzelanie dla efektu!"
+
+msgid "fired-for-effect on himself"
+msgstr "zastrzelony dla efektu na sobie"
+
+msgid "embraced his own satchel explosion"
 msgstr "zostal uciszony przez"
 
-msgid "was silenced by"
-msgstr "zostal uciszony przez"
+msgid "failed to spot his own landmine"
+msgstr "niezauwazyl wlasnej miny"
 
-msgid "was silenced by"
-msgstr "zostal uciszony przez"
+msgid "dynamited himself to pieces"
+msgstr "rozwalil sie na kawalki"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
