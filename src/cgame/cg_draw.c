@@ -2703,7 +2703,7 @@ static void CG_DrawWarmup(void)
 	{
 		trap_S_StartLocalSound(cgs.media.countPrepare, CHAN_ANNOUNCER);
 
-		CPri("^3PREPARE TO FIGHT!\n");
+		CPri(CG_TranslateString("^3PREPARE TO FIGHT!\n"));
 
 		if (!cg.demoPlayback && cg_autoAction.integer & AA_DEMORECORD)
 		{
