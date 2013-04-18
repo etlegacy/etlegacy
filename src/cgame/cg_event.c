@@ -105,6 +105,12 @@ static void CG_Obituary(entityState_t *ent)
 	case MOD_LAVA:
 		message = "was incinerated";
 		break;
+	case MOD_MAPMORTAR: // direct hit
+		message = "had an appointment with the map mortar";
+		break;
+	case MOD_MAPMORTAR_SPLASH:
+		message = "took a map mortar shell shower";
+		break;
 	default:
 		message = NULL;
 		break;
@@ -118,7 +124,7 @@ static void CG_Obituary(entityState_t *ent)
 			message = "dynamited himself to pieces";
 			break;
 		case MOD_GRENADE_LAUNCHER:
-		case MOD_GRENADE_PINEAPPLE: // rain - added PINEAPPLE
+		case MOD_GRENADE_PINEAPPLE:
 			message = "dove on his own grenade";
 			break;
 		case MOD_PANZERFAUST:
