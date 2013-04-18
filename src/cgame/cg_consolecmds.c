@@ -216,16 +216,6 @@ void CG_ScoresUp_f(void)
 	}
 }
 
-static void CG_LoadWeapons_f(void)
-{
-	int i;
-
-	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
-	{
-		CG_RegisterWeapon(i, qtrue);
-	}
-}
-
 static void CG_TellTarget_f(void)
 {
 	int  clientNum;
@@ -1348,7 +1338,6 @@ static consoleCommand_t commands[] =
 	{ "tell_attacker",       CG_TellAttacker_f       },
 	{ "tcmd",                CG_TargetCommand_f      },
 	{ "fade",                CG_Fade_f               },
-	{ "loadweapons",         CG_LoadWeapons_f        },
 
 	{ "mp_QuickMessage",     CG_QuickMessage_f       },
 	{ "mp_fireteammsg",      CG_QuickFireteams_f     },

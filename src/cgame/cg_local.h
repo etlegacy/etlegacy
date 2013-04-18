@@ -1288,7 +1288,7 @@ typedef struct
 
 	qhandle_t landmineHintShader;
 	qhandle_t compassConstructShader;
-	qhandle_t compassDestroyShader;
+	//qhandle_t compassDestroyShader;
 	qhandle_t buddyShader;
 
 	qhandle_t slashShader;

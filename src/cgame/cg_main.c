@@ -1572,7 +1572,8 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.countryFlags = trap_R_RegisterShaderNoMip("gfx/flags/world_flags");   // GeoIP
 
-	cgs.media.compassDestroyShader = trap_R_RegisterShaderNoMip("sprites/destroy.tga");
+	//cgs.media.compassDestroyShader = trap_R_RegisterShaderNoMip("sprites/destroy.tga");
+
 	cgs.media.slashShader          = trap_R_RegisterShaderNoMip("gfx/2d/numbers/slash");
 	cgs.media.compass2Shader       = trap_R_RegisterShaderNoMip("gfx/2d/compass2.tga");
 	cgs.media.compassShader        = trap_R_RegisterShaderNoMip("gfx/2d/compass.tga");

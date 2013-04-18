@@ -2654,6 +2654,93 @@ msgstr ""
 msgid "Auto Map Zoom:"
 msgstr ""
 
+msgid "was killed by"
+msgstr ""
+
+msgid "^1WAS KILLED BY TEAMMATE^7"
+msgstr ""
+
+msgid "Arming landmine..."
+msgstr ""
+
+msgid "Landmine armed..."
+msgstr ""
+
+msgid "Dynamite is set, but NOT armed!"
+msgstr ""
+
+msgid "Arming dynamite..."
+msgstr ""
+
+msgid "Dynamite is now armed with a 30 second timer!"
+msgstr ""
+
+msgid "Defusing landmine"
+msgstr ""
+
+msgid "Landmine defused..."
+msgstr ""
+
+msgid "Defusing dynamite..."
+msgstr ""
+
+msgid "Constructing..."
+msgstr ""
+
+msgid "was sniped by"
+msgstr ""
+
+msgid "was mown down by"
+msgstr ""
+
+msgid "never saw"
+msgstr ""
+
+msgid "was cooked by"
+msgstr ""
+
+msgid "played with fire"
+msgstr ""
+
+msgid "failed to spot"
+msgstr ""
+
+msgid "was silenced by"
+msgstr ""
+
+msgid "dove on his own grenade"
+msgstr ""
+
+msgid "vaporized himself"
+msgstr ""
+
+msgid "never saw his own mortar round coming"
+msgstr ""
+
+msgid "killed himself"
+msgstr ""
+
+msgid "ate his own rifle grenade"
+msgstr ""
+
+msgid "obliterated himself"
+msgstr ""
+
+msgid "Fire Mission: ^3Firing for effect!"
+msgstr ""
+
+msgid "fired-for-effect on himself"
+msgstr ""
+
+msgid "embraced his own satchel explosion"
+msgstr "zostal uciszony przez"
+
+msgid "failed to spot his own landmine"
+msgstr ""
+
+msgid "dynamited himself to pieces"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

@@ -413,6 +413,7 @@ static void S_AL_BufferLoad(sfxHandle_t sfx, qboolean cache)
 	if (!data)
 	{
 		S_AL_BufferUseDefault(sfx);
+		Com_Printf(S_COLOR_RED "ERROR S_AL_BufferLoad: S_CodecLoad failed for \"%s\"\n", curSfx->filename);
 		return;
 	}
 
@@ -1334,13 +1335,12 @@ static void S_AL_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHand
 	srcHandle_t src;
 	src_t       *curSource;
 
-	// FIXME: activate/test this
 	// don't process "sound/player/default/blank.wav" dummy sound
-	//if (sfx == default_sfx) // sfx == 0
-	//{
-	//	Com_Printf(S_COLOR_YELLOW "S_AL_StartSoundEx: skipping blank sound - sfx 0\n");
-	//	return;
-	//}
+	if (sfx == default_sfx) // sfx == 0
+	{
+		//Com_Printf(S_COLOR_YELLOW "S_AL_StartSoundEx: skipping blank sound - sfx 0\n");
+		return;
+	}
 
 	if (origin)
 	{

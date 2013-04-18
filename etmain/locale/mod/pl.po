@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-16 20:44+0100\n"
+"PO-Revision-Date: 2013-04-18 12:32+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -2698,6 +2698,93 @@ msgstr "zmienil na"
 
 msgid "Auto Map Zoom:"
 msgstr "Auto Przyblizenie Mapy:"
+
+msgid "was killed by"
+msgstr "zostal zabity przez"
+
+msgid "^1WAS KILLED BY TEAMMATE^7"
+msgstr "^1ZOSTAL ZABITY PRZEZ KOMPANA^7"
+
+msgid "Arming landmine..."
+msgstr "Podkladanie miny..."
+
+msgid "Landmine armed..."
+msgstr "Mina uzbrojona..."
+
+msgid "Dynamite is set, but NOT armed!"
+msgstr "Dynamit jest ustawiony, ale NIE uzbrojony!"
+
+msgid "Arming dynamite..."
+msgstr "Podkladanie dynamitu..."
+
+msgid "Dynamite is now armed with a 30 second timer!"
+msgstr "Dynamit jest uzbrojony z czasem 30 sekund!"
+
+msgid "Defusing landmine"
+msgstr "Rozbrajanie miny"
+
+msgid "Landmine defused..."
+msgstr "Mina rozbrojona..."
+
+msgid "Defusing dynamite..."
+msgstr "Rozbrajanie dynamitu..."
+
+msgid "Constructing..."
+msgstr "Budowanie..."
+
+msgid "was sniped by"
+msgstr "zostal zestrzelony przez"
+
+msgid "was mown down by"
+msgstr "zostal ponizony przez"
+
+msgid "never saw"
+msgstr "nigdy nie widzial"
+
+msgid "was cooked by"
+msgstr "zostal usmazony przez"
+
+msgid "played with fire"
+msgstr "bawil sie ogniem"
+
+msgid "failed to spot"
+msgstr "niezauwazyl"
+
+msgid "was silenced by"
+msgstr "zostal uciszony przez"
+
+msgid "dove on his own grenade"
+msgstr "nadepnal na jego wlasny granat"
+
+msgid "vaporized himself"
+msgstr "wyparowal samego siebie"
+
+msgid "never saw his own mortar round coming"
+msgstr "nigdy nie widzial lecacego wlasnego pocisku mortara"
+
+msgid "killed himself"
+msgstr "zabil sie"
+
+msgid "ate his own rifle grenade"
+msgstr "zjadl wlasnego granata od rifli"
+
+msgid "obliterated himself"
+msgstr "wymarzal sie"
+
+msgid "Fire Mission: ^3Firing for effect!"
+msgstr "Misja Strzalu: ^3Strzelanie dla efektu!"
+
+msgid "fired-for-effect on himself"
+msgstr "zastrzelony dla efektu na sobie"
+
+msgid "embraced his own satchel explosion"
+msgstr "zostal uciszony przez"
+
+msgid "failed to spot his own landmine"
+msgstr "niezauwazyl wlasnej miny"
+
+msgid "dynamited himself to pieces"
+msgstr "rozwalil sie na kawalki"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
