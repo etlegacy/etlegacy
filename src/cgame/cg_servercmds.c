@@ -367,7 +367,7 @@ void CG_ParseWolfinfo(void)
 		trap_S_StartLocalSound(cgs.media.countFight, CHAN_ANNOUNCER);
 
 		Pri("^1FIGHT!\n");
-		CPri("^1FIGHT!\n"); // @translate
+		CPri(CG_TranslateString("^1FIGHT!\n"));
 	}
 
 	if (!cgs.localServer)
