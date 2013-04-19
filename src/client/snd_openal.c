@@ -1335,13 +1335,6 @@ static void S_AL_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHand
 	srcHandle_t src;
 	src_t       *curSource;
 
-	// don't process "sound/player/default/blank.wav" dummy sound
-	if (sfx == default_sfx) // sfx == 0
-	{
-		//Com_Printf(S_COLOR_YELLOW "S_AL_StartSoundEx: skipping blank sound - sfx 0\n");
-		return;
-	}
-
 	if (origin)
 	{
 		if (S_AL_CheckInput(0, sfx))

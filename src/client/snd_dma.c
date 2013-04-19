@@ -587,13 +587,6 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 		return;
 	}
 
-	// don't process "sound/player/default/blank.wav" dummy sound
-	if (sfxHandle == 0)
-	{
-		//Com_Printf(S_COLOR_YELLOW "S_Base_StartSoundEx: skipping blank sound - sfxHandle 0\n");
-		return;
-	}
-
 	if (!origin && (entnum < 0 || entnum >= MAX_GENTITIES))
 	{
 		Com_Error(ERR_DROP, "S_Base_StartSoundEx: bad entitynum %i", entnum);
