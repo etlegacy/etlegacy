@@ -23,10 +23,6 @@ msgstr ""
 msgid "Can't team voice chat as a spectator.\n"
 msgstr "Nie mozna uzyc chatu teamu jako widz.\n"
 
-#: src/cgame/cg_consolecmds.c:574
-msgid "Can't voice chat as a spectator.\n"
-msgstr "Nie mozna uzyc chatu glosowego jako widz.\n"
-
 #: src/cgame/cg_consolecmds.c:624
 msgid "Can't buddy voice chat as a spectator.\n"
 msgstr "Nie mozna uzyc chatu kumpli jako widz.\n"
