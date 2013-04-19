@@ -2786,6 +2786,14 @@ msgstr "niezauwazyl wlasnej miny"
 msgid "dynamited himself to pieces"
 msgstr "rozwalil sie na kawalki"
 
+#: src/cgame/cg_draw.c:2706
+msgid "^3PREPARE TO FIGHT!\n"
+msgstr "^3PRZYGOTUJ SIE DO WALKI!\n"
+
+#: src/cgame/cg_servercmds.c:370
+msgid "^1FIGHT!\n"
+msgstr "^1WALKA!\n"
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

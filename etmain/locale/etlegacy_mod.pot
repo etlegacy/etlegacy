@@ -2741,6 +2741,12 @@ msgstr ""
 msgid "dynamited himself to pieces"
 msgstr ""
 
+msgid "^3PREPARE TO FIGHT!\n"
+msgstr ""
+
+msgid "^1FIGHT!\n"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
