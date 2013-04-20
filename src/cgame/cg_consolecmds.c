@@ -174,7 +174,7 @@ void CG_ScoresDown_f(void)
 		// so request new ones
 		cg.scoresRequestTime = cg.time;
 
-		// OSP - we get periodic score updates if we are merging clients
+		// we get periodic score updates if we are merging clients
 		if (!cg.demoPlayback
 #ifdef FEATURE_MULTIVIEW
 		    && cg.mvTotalClients < 1
@@ -388,11 +388,6 @@ static void CG_Fade_f(void)
 
 void CG_QuickMessage_f(void)
 {
-	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
-	{
-		return;
-	}
-
 	CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 
 	if (cg_quickMessageAlt.integer)
@@ -468,10 +463,8 @@ static void CG_QuickFireteams_f(void)
 
 static void CG_FTSayPlayerClass_f(void)
 {
-	int        playerType;
+	int        playerType = cgs.clientinfo[cg.clientNum].cls;
 	const char *s;
-
-	playerType = cgs.clientinfo[cg.clientNum].cls;
 
 	if (playerType == PC_MEDIC)
 	{
@@ -508,10 +501,8 @@ static void CG_FTSayPlayerClass_f(void)
 
 static void CG_SayPlayerClass_f(void)
 {
-	int        playerType;
+	int        playerType = cgs.clientinfo[cg.clientNum].cls;
 	const char *s;
-
-	playerType = cgs.clientinfo[cg.clientNum].cls;
 
 	if (playerType == PC_MEDIC)
 	{
@@ -555,19 +546,7 @@ static void CG_VoiceChat_f(void)
 		return;
 	}
 
-	// don't let spectators voice chat
-	// NOTE - This cg.snap will be the person you are following, but its just for intermission test
-	if (cg.snap && (cg.snap->ps.pm_type != PM_INTERMISSION))
-	{
-		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
-		{
-			CG_Printf("%s", CG_TranslateString("Can't voice chat as a spectator.\n"));
-			return;
-		}
-	}
-
 	trap_Argv(1, chatCmd, 64);
-
 	trap_SendConsoleCommand(va("cmd vsay %s\n", chatCmd));
 }
 
@@ -586,7 +565,7 @@ static void CG_TeamVoiceChat_f(void)
 	{
 		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
 		{
-			CG_Printf("%s", CG_TranslateString("Can't team voice chat as a spectator.\n"));
+			CG_Printf("%s", CG_TranslateString("Can't team voice chat as a spectator.\n")); // FIXME? find a way to print this on screen
 			return;
 		}
 	}
@@ -978,6 +957,7 @@ static void CG_EditSpeakers_f(void)
 	else
 	{
 		const char *s = Info_ValueForKey(CG_ConfigString(CS_SYSTEMINFO), "sv_cheats");
+
 		if (s[0] != '1')
 		{
 			CG_Printf("editSpeakers is cheat protected.\n");
@@ -1124,7 +1104,9 @@ static void CG_CPM_f(void)
 	CG_AddPMItem(PM_MESSAGE, CG_Argv(1), cgs.media.voiceChatShader);
 }
 
-// etpro style enemy spawntimer
+/**
+ * @brief ETPro style enemy spawntimer
+ */
 void CG_TimerSet_f(void)
 {
 
@@ -1163,7 +1145,9 @@ void CG_TimerSet_f(void)
 	}
 }
 
-// etpro style timer resetting
+/**
+ * @brief ETPro style timer resetting
+ */
 void CG_ResetTimer_f(void)
 {
 	int msec;
@@ -1295,10 +1279,10 @@ void CG_Class_f(void)
 		}
 	}
 
-	//Print out the selected class and weapon info
+	// Print out the selected class and weapon info
 	wt = WM_FindWeaponTypeForWeapon(classinfo->classWeapons[weapon1 - 1]);
 	CG_PriorityCenterPrint(va("You will spawn as a %s %s with a %s.", teamstring, BG_ClassnameForNumber(playerclass), wt ? wt->desc : "^1UNKNOWN WEAPON"), SCREEN_HEIGHT - 88, SMALLCHAR_WIDTH, -1);
-	//Send the switch command to the server
+	// Send the switch command to the server
 	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, classinfo->classWeapons[weapon1 - 1], weapon2));
 }
 
