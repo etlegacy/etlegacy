@@ -6,7 +6,7 @@ images/blackmask
 	nocompress
 	nomipmaps
 	{
-		map gfx/2d/mapmask1.tga
+		map gfx/2d/mapmask.tga
 		depthwrite
 		blendfunc blend
 		rgbGen identity
