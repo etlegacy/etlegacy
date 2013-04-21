@@ -2258,6 +2258,9 @@ msgstr ""
 msgid "Hi!"
 msgstr ""
 
+msgid "Hello!"
+msgstr ""
+
 msgid "Hallo!"
 msgstr ""
 
@@ -2746,7 +2749,7 @@ msgstr ""
 msgid "was stabbed by"
 msgstr ""
 
-msgid "was exploded by""
+msgid "was exploded by"
 msgstr ""
 
 msgid "was blasted by"

@@ -2286,6 +2286,9 @@ msgstr "Negatywnie!"
 msgid "Hi!"
 msgstr "Czesc!"
 
+msgid "Hello!"
+msgstr "Witam!"
+
 msgid "Hallo!"
 msgstr "Czesc!"
 
@@ -2793,7 +2796,7 @@ msgstr "^1WALKA!\n"
 msgid "was stabbed by"
 msgstr "zostal pchniety nozem przez"
 
-msgid "was exploded by""
+msgid "was exploded by"
 msgstr "zostal zdetonowany przez"
 
 msgid "was blasted by"
