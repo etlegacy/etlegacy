@@ -22,10 +22,6 @@ msgstr ""
 msgid "Can't team voice chat as a spectator.\n"
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:574
-msgid "Can't voice chat as a spectator.\n"
-msgstr ""
-
 #: src/cgame/cg_consolecmds.c:624
 msgid "Can't buddy voice chat as a spectator.\n"
 msgstr ""
@@ -2262,6 +2258,9 @@ msgstr ""
 msgid "Hi!"
 msgstr ""
 
+msgid "Hello!"
+msgstr ""
+
 msgid "Hallo!"
 msgstr ""
 
@@ -2745,6 +2744,27 @@ msgid "^3PREPARE TO FIGHT!\n"
 msgstr ""
 
 msgid "^1FIGHT!\n"
+msgstr ""
+
+msgid "was stabbed by"
+msgstr ""
+
+msgid "was exploded by"
+msgstr ""
+
+msgid "was blasted by"
+msgstr ""
+
+msgid "Affirmative!!"
+msgstr ""
+
+msgid "^1Spam Protection^7: VoiceChat ignored"
+msgstr ""
+
+msgid "I need a Medic!"
+msgstr ""
+
+msgid "entered the game\n"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338

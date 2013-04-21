@@ -23,10 +23,6 @@ msgstr ""
 msgid "Can't team voice chat as a spectator.\n"
 msgstr "Nie mozna uzyc chatu teamu jako widz.\n"
 
-#: src/cgame/cg_consolecmds.c:574
-msgid "Can't voice chat as a spectator.\n"
-msgstr "Nie mozna uzyc chatu glosowego jako widz.\n"
-
 #: src/cgame/cg_consolecmds.c:624
 msgid "Can't buddy voice chat as a spectator.\n"
 msgstr "Nie mozna uzyc chatu kumpli jako widz.\n"
@@ -2290,6 +2286,9 @@ msgstr "Negatywnie!"
 msgid "Hi!"
 msgstr "Czesc!"
 
+msgid "Hello!"
+msgstr "Witam!"
+
 msgid "Hallo!"
 msgstr "Czesc!"
 
@@ -2793,6 +2792,27 @@ msgstr "^3PRZYGOTUJ SIE DO WALKI!\n"
 #: src/cgame/cg_servercmds.c:370
 msgid "^1FIGHT!\n"
 msgstr "^1WALKA!\n"
+
+msgid "was stabbed by"
+msgstr "zostal pchniety nozem przez"
+
+msgid "was exploded by"
+msgstr "zostal zdetonowany przez"
+
+msgid "was blasted by"
+msgstr "zostal wysadzony przez"
+
+msgid "Affirmative!!"
+msgstr "Pozytywnie!!"
+
+msgid "^1Spam Protection^7: VoiceChat ignored"
+msgstr "^1Ochrona przed Spamem^7: ChatGlosowy zignorowany"
+
+msgid "I need a Medic!"
+msgstr "Potrzebuje Medyka!"
+
+msgid "entered the game\n"
+msgstr "wszedl do gry\n"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
