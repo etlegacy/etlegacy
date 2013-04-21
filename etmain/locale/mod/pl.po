@@ -2811,6 +2811,9 @@ msgstr "^1Ochrona przed Spamem^7: ChatGlosowy zignorowany"
 msgid "I need a Medic!"
 msgstr "Potrzebuje Medyka!"
 
+msgid "entered the game\n"
+msgstr "wszedl do gry\n"
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

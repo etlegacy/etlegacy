@@ -2764,6 +2764,9 @@ msgstr ""
 msgid "I need a Medic!"
 msgstr ""
 
+msgid "entered the game\n"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
