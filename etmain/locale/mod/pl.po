@@ -2790,6 +2790,24 @@ msgstr "^3PRZYGOTUJ SIE DO WALKI!\n"
 msgid "^1FIGHT!\n"
 msgstr "^1WALKA!\n"
 
+msgid "was stabbed by"
+msgstr "zostal pchniety nozem przez"
+
+msgid "was exploded by""
+msgstr "zostal zdetonowany przez"
+
+msgid "was blasted by"
+msgstr "zostal wysadzony przez"
+
+msgid "Affirmative!!"
+msgstr "Pozytywnie!!"
+
+msgid "^1Spam Protection^7: VoiceChat ignored"
+msgstr "^1Ochrona przed Spamem^7: ChatGlosowy zignorowany"
+
+msgid "I need a Medic!"
+msgstr "Potrzebuje Medyka!"
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
