@@ -1297,6 +1297,7 @@ typedef enum
 #define MAX_STATS               16
 #define MAX_PERSISTANT          16
 #define MAX_POWERUPS            16
+#define MAX_HOLDABLE            16
 #define MAX_WEAPONS             64
 
 #define MAX_EVENTS              4   // max events per frame before we drop events
@@ -1387,7 +1388,7 @@ typedef struct playerState_s
 	int powerups[MAX_POWERUPS];                     // level.time that the powerup runs out
 	int ammo[MAX_WEAPONS];                          // total amount of ammo
 	int ammoclip[MAX_WEAPONS];                      // ammo in clip
-	int holdable[16];
+	int holdable[MAX_HOLDABLE];
 	int holding;                                    // the current item in holdable[] that is selected (held)
 	int weapons[MAX_WEAPONS / (sizeof(int) * 8)];   // 64 bits for weapons held
 
