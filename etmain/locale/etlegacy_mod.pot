@@ -2767,6 +2767,24 @@ msgstr ""
 msgid "entered the game\n"
 msgstr ""
 
+msgid "was shelled by"
+msgstr ""
+
+msgid "Mines have been reported in this area."
+msgstr ""
+
+msgid "was perforated by"
+msgstr ""
+
+msgid "'s mortar round coming"
+msgstr ""
+
+msgid "'s artillery support"
+msgstr ""
+
+msgid "rediscovered gravity."
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

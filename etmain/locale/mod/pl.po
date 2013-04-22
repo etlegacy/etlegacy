@@ -2814,6 +2814,24 @@ msgstr "Potrzebuje Medyka!"
 msgid "entered the game\n"
 msgstr "wszedl do gry\n"
 
+msgid "was shelled by"
+msgstr "zostal ostrzelony przez"
+
+msgid "Mines have been reported in this area."
+msgstr "Miny zostaly zgloszone w tym terenie."
+
+msgid "was perforated by"
+msgstr "zostal sperforowany przez"
+
+msgid "'s mortar round coming"
+msgstr "'s pocisku mortara"
+
+msgid "'s artillery support"
+msgstr "'s artylerii"
+
+msgid "rediscovered gravity."
+msgstr "ponownie odkryl grawitacje."
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
