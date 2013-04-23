@@ -267,6 +267,8 @@ const char *CG_LoadPanel_GameTypeName(gametype_t gt)
 	return "Invalid";
 }
 
+static vec4_t clr3 = { 1.f, 1.f, 1.f, .6f };
+
 void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 {
 	static qboolean inside = qfalse;
@@ -324,14 +326,11 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 	if (*buffer)
 	{
 		const char *str;
-		qboolean   enabled = qfalse;
-		float      x, y;
+		float      x = 540.0f + cgs.wideXoffset;
+		float      y = 322;
 		int        i;
-		vec4_t     clr3 = { 1.f, 1.f, 1.f, .6f };
+		qboolean   enabled = qfalse;
 
-		x = 540.0f + cgs.wideXoffset;
-
-		y = 322;
 		CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, ("^1" PRODUCT_LABEL " ^0" ETLEGACY_VERSION_SHORT), 0, 0, 0, &bg_loadscreenfont1);
 
 		y   = 340;
@@ -485,10 +484,42 @@ void CG_LoadPanel_RenderCampaignTypeText(panel_button_t *button)
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%s:", CG_LoadPanel_GameTypeName(cgs.gametype)), 0, 0, button->font->style, button->font->font);
 }
 
+float campaignNameTextScaleFactor(int len)
+{
+	float scaleF = 1.f;
+
+	//CG_Printf("CampaignNameText len: %i\n", len);
+
+	if (len >= 27)
+	{
+		scaleF *= 0.8f;
+		return scaleF;
+	}
+	// in between scale is 1
+	else if (len <= 20 && len > 17)
+	{
+		scaleF *= 1.25f;
+		return scaleF;
+	}
+	else if (len <= 17 && len > 13)
+	{
+		scaleF *= 1.5f;
+		return scaleF;
+	}
+	else if (len <= 13)
+	{
+		scaleF *= 2;
+		return scaleF;
+	}
+
+	return scaleF;
+}
+
 void CG_LoadPanel_RenderCampaignNameText(panel_button_t *button)
 {
 	const char *cs;
 	float      w;
+	float      scaleF;
 
 	if (cgs.gametype == GT_WOLF_CAMPAIGN)
 	{
@@ -500,8 +531,10 @@ void CG_LoadPanel_RenderCampaignNameText(panel_button_t *button)
 
 		cs = va("%s %iof%i", cs, cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
 
-		w = CG_Text_Width_Ext(cs, button->font->scalex, 0, button->font->font);
-		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, cs, 0, 0, 0, button->font->font);
+		scaleF = campaignNameTextScaleFactor(Q_PrintStrlen(cs));
+
+		w = CG_Text_Width_Ext(cs, button->font->scalex * scaleF, 0, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex * scaleF, button->font->scaley * scaleF, button->font->colour, cs, 0, 0, 0, button->font->font);
 
 	}
 	else
@@ -511,8 +544,10 @@ void CG_LoadPanel_RenderCampaignNameText(panel_button_t *button)
 			return;
 		}
 
-		w = CG_Text_Width_Ext(cgs.arenaData.longname, button->font->scalex, 0, button->font->font);
-		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, cgs.arenaData.longname, 0, 0, 0, button->font->font);
+		scaleF = campaignNameTextScaleFactor(Q_PrintStrlen(cgs.arenaData.longname)); // FIXME: up to 128 chars !
+
+		w = CG_Text_Width_Ext(cgs.arenaData.longname, button->font->scalex * scaleF, 0, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex * scaleF, button->font->scaley * scaleF, button->font->colour, cgs.arenaData.longname, 0, 0, 0, button->font->font);
 	}
 }
 
@@ -525,7 +560,6 @@ void CG_LoadPanel_RenderMissionDescriptionText(panel_button_t *button)
 
 	if (cgs.gametype == GT_WOLF_CAMPAIGN)
 	{
-
 		cs = DC->descriptionForCampaign();
 		if (!cs)
 		{
@@ -655,8 +689,9 @@ void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 	}
 	else
 	{
-		int       i;
 		qhandle_t shader;
+		float     px, py;
+		int       i;
 
 		if (!cgs.campaignInfoLoaded)
 		{
@@ -665,8 +700,6 @@ void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 
 		for (i = 0; i < cgs.campaignData.mapCount; i++)
 		{
-			float px, py;
-
 			cg.teamWonRounds[1] = atoi(CG_ConfigString(CS_ROUNDSCORES1));
 			cg.teamWonRounds[0] = atoi(CG_ConfigString(CS_ROUNDSCORES2));
 
