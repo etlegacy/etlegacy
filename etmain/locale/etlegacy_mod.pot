@@ -2360,6 +2360,9 @@ msgstr ""
 msgid "Escort the vehicle!"
 msgstr ""
 
+msgid "Covering fire!"
+msgstr ""
+
 msgid "I'm a soldier."
 msgstr ""
 
@@ -2784,6 +2787,78 @@ msgstr ""
 
 msgid "rediscovered gravity."
 msgstr ""
+
+msgid "'s Landmine"
+msgstr ""
+
+msgid "'s Mobile MG42"
+msgstr ""
+
+msgid "'s rifle grenade"
+msgstr ""
+
+msgid "'s support fire"
+msgstr ""
+
+msgid "'s crew-served MG"
+msgstr ""
+
+msgid "was thrown to his doom by"
+msgstr ""
+
+msgid "You have been revived by "
+msgstr ""
+
+msgid "Allies have built the Oasis Water Pump!"
+msgstr ""
+
+msgid "Allied Command Post constructed. Charge speed increased!"
+msgstr ""
+
+msgid "Axis Command Post constructed. Charge speed increased!"
+msgstr ""
+
+msgid "Allies capture the Old City!"
+msgstr ""
+
+msgid "Axis reclaim the Old City!"
+msgstr ""
+
+msgid "Allies have built the Old City Water Pump!"
+msgstr ""
+
+msgid "Allies have repaired both Water Pumps!"
+msgstr ""
+
+msgid "The Old City MG Nest has been constructed!"
+msgstr ""
+
+msgid "The Garrison MG Nest has been constructed!"
+msgstr ""
+
+msgid "Axis have damaged the Old City Water Pump!"
+msgstr ""
+
+msgid "Axis have damaged the Oasis Water Pump!"
+msgstr ""
+
+msgid "Axis have damaged both Water Pumps!"
+msgstr ""
+
+msgid "The Old City MG Nest has been damaged!"
+msgstr ""
+
+msgid "Axis team has destroyed the Allied Command Post!"
+msgstr ""
+
+msgid "Allies have breached the Old City wall"
+msgstr ""
+
+msgid "drowned"
+msgstr ""
+
+msgid "Picked up %s"
+msgstr "Podniosl %s"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
