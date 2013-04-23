@@ -1416,7 +1416,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 	else if (targ->s.eType == ET_CONSTRUCTIBLE)
 	{
-
 		if (G_GetTeamFromEntity(inflictor) == G_GetTeamFromEntity(targ))
 		{
 			return;
@@ -1584,25 +1583,28 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// save some from flak jacket
 	if (targ->client && targ->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 4 && targ->client->sess.playerType == PC_ENGINEER)
 	{
-		if (mod == MOD_GRENADE ||
-		    mod == MOD_GRENADE_LAUNCHER ||
-		    mod == MOD_ROCKET ||
-		    mod == MOD_GRENADE_PINEAPPLE ||
-		    mod == MOD_MAPMORTAR ||
-		    mod == MOD_MAPMORTAR_SPLASH ||
-		    mod == MOD_EXPLOSIVE ||
-		    mod == MOD_LANDMINE ||
-		    mod == MOD_GPG40 ||
-		    mod == MOD_M7 ||
-		    mod == MOD_SATCHEL ||
-		    mod == MOD_ARTY ||
-		    mod == MOD_AIRSTRIKE ||
-		    mod == MOD_DYNAMITE ||
-		    mod == MOD_MORTAR ||
-		    mod == MOD_PANZERFAUST ||
-		    mod == MOD_MAPMORTAR)
+		switch (mod)
 		{
+		case MOD_GRENADE:
+		case MOD_GRENADE_LAUNCHER:
+		case MOD_ROCKET:
+		case MOD_GRENADE_PINEAPPLE:
+		case MOD_MAPMORTAR:
+		case MOD_MAPMORTAR_SPLASH:
+		case MOD_EXPLOSIVE:
+		case MOD_LANDMINE:
+		case MOD_GPG40:
+		case MOD_M7:
+		case MOD_SATCHEL:
+		case MOD_ARTY:
+		case MOD_AIRSTRIKE:
+		case MOD_DYNAMITE:
+		case MOD_MORTAR:
+		case MOD_PANZERFAUST:
 			take -= take * .5f;
+			break;
+		default:
+			break;
 		}
 	}
 
