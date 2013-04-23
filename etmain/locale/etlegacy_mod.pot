@@ -2258,6 +2258,9 @@ msgstr ""
 msgid "Hi!"
 msgstr ""
 
+msgid "Hello!"
+msgstr ""
+
 msgid "Hallo!"
 msgstr ""
 
@@ -2741,6 +2744,45 @@ msgid "^3PREPARE TO FIGHT!\n"
 msgstr ""
 
 msgid "^1FIGHT!\n"
+msgstr ""
+
+msgid "was stabbed by"
+msgstr ""
+
+msgid "was exploded by"
+msgstr ""
+
+msgid "was blasted by"
+msgstr ""
+
+msgid "Affirmative!!"
+msgstr ""
+
+msgid "^1Spam Protection^7: VoiceChat ignored"
+msgstr ""
+
+msgid "I need a Medic!"
+msgstr ""
+
+msgid "entered the game\n"
+msgstr ""
+
+msgid "was shelled by"
+msgstr ""
+
+msgid "Mines have been reported in this area."
+msgstr ""
+
+msgid "was perforated by"
+msgstr ""
+
+msgid "'s mortar round coming"
+msgstr ""
+
+msgid "'s artillery support"
+msgstr ""
+
+msgid "rediscovered gravity."
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338
