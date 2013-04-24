@@ -989,7 +989,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 typedef struct
 {
 	char *ext;
-	void (*ImageLoader)(const char *, unsigned char **, int *, int *);
+	void (*ImageLoader)(const char *, unsigned char **, int *, int *, byte);
 } imageExtToLoaderMap_t;
 
 // Note that the ordering indicates the order of preference used
@@ -1033,7 +1033,7 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 		if (FS_FOpenFileRead(altName, NULL, qfalse))
 		{
 			// Load
-			imageLoaders[i].ImageLoader(altName, pic, width, height);
+			imageLoaders[i].ImageLoader(altName, pic, width, height, 0xFF);
 		}
 
 		if (*pic)

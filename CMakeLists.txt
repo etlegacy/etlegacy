@@ -302,6 +302,7 @@ FILE(GLOB RENDERER1_FILES
 
 FILE(GLOB RENDERER2_FILES
 	"src/renderer2/*.c"
+	"src/renderer2/*.cpp"
 	"src/renderer2/*.h"
 )
 

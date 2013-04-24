@@ -392,7 +392,14 @@ extern cvar_t *sv_wh_bbox_vert;
 extern cvar_t *sv_wh_check_fov;
 #endif
 
+//server side demo recording
+extern cvar_t *sv_demopath;
+
 //===========================================================
+
+//sv_demo.c
+void SV_AddDemoCommands(void);
+qboolean SV_DemoRecording(void);
 
 // sv_main.c
 

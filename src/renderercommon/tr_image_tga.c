@@ -50,7 +50,7 @@ typedef struct _TargaHeader
 	unsigned char pixel_size, attributes;
 } TargaHeader;
 
-void R_LoadTGA(const char *name, byte **pic, int *width, int *height)
+void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alphaByte)
 {
 	unsigned columns, rows, numPixels;
 	byte     *pixbuf;
@@ -168,7 +168,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height)
 			pixbuf = targa_rgba + row * columns * 4;
 			for (column = 0; column < columns; column++)
 			{
-				unsigned char red, green, blue, alphabyte;
+				unsigned char red, green, blue, alpha;
 				switch (targa_header.pixel_size)
 				{
 
@@ -179,7 +179,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height)
 					*pixbuf++ = red;
 					*pixbuf++ = green;
 					*pixbuf++ = blue;
-					*pixbuf++ = 255;
+					*pixbuf++ = alphaByte;
 					break;
 
 				case 24:
@@ -189,17 +189,17 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height)
 					*pixbuf++ = red;
 					*pixbuf++ = green;
 					*pixbuf++ = blue;
-					*pixbuf++ = 255;
+					*pixbuf++ = alphaByte;
 					break;
 				case 32:
 					blue      = *buf_p++;
 					green     = *buf_p++;
 					red       = *buf_p++;
-					alphabyte = *buf_p++;
+					alpha     = *buf_p++;
 					*pixbuf++ = red;
 					*pixbuf++ = green;
 					*pixbuf++ = blue;
-					*pixbuf++ = alphabyte;
+					*pixbuf++ = alpha;
 					break;
 				default:
 					ri.Error(ERR_DROP, "LoadTGA: illegal pixel_size '%d' in file '%s'\n", targa_header.pixel_size, name);
@@ -210,12 +210,12 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height)
 	}
 	else if (targa_header.image_type == 10)   // Runlength encoded RGB images
 	{
-		unsigned char red, green, blue, alphabyte, packetHeader, packetSize, j;
+		unsigned char red, green, blue, alpha, packetHeader, packetSize, j;
 
-		red       = 0;
-		green     = 0;
-		blue      = 0;
-		alphabyte = 0xff;
+		red   = 0;
+		green = 0;
+		blue  = 0;
+		alpha = alphaByte;
 
 		for (row = rows - 1; row >= 0; row--)
 		{
@@ -237,16 +237,16 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height)
 					switch (targa_header.pixel_size)
 					{
 					case 24:
-						blue      = *buf_p++;
-						green     = *buf_p++;
-						red       = *buf_p++;
-						alphabyte = 255;
+						blue  = *buf_p++;
+						green = *buf_p++;
+						red   = *buf_p++;
+						alpha = alphaByte;
 						break;
 					case 32:
-						blue      = *buf_p++;
-						green     = *buf_p++;
-						red       = *buf_p++;
-						alphabyte = *buf_p++;
+						blue  = *buf_p++;
+						green = *buf_p++;
+						red   = *buf_p++;
+						alpha = *buf_p++;
 						break;
 					default:
 						ri.Error(ERR_DROP, "LoadTGA: illegal pixel_size '%d' in file '%s'\n", targa_header.pixel_size, name);
@@ -258,7 +258,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height)
 						*pixbuf++ = red;
 						*pixbuf++ = green;
 						*pixbuf++ = blue;
-						*pixbuf++ = alphabyte;
+						*pixbuf++ = alpha;
 						column++;
 						if (column == columns)   // run spans across rows
 						{
@@ -292,17 +292,17 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height)
 							*pixbuf++ = red;
 							*pixbuf++ = green;
 							*pixbuf++ = blue;
-							*pixbuf++ = 255;
+							*pixbuf++ = alphaByte;
 							break;
 						case 32:
 							blue      = *buf_p++;
 							green     = *buf_p++;
 							red       = *buf_p++;
-							alphabyte = *buf_p++;
+							alpha     = *buf_p++;
 							*pixbuf++ = red;
 							*pixbuf++ = green;
 							*pixbuf++ = blue;
-							*pixbuf++ = alphabyte;
+							*pixbuf++ = alpha;
 							break;
 						default:
 							ri.Error(ERR_DROP, "LoadTGA: illegal pixel_size '%d' in file '%s'\n", targa_header.pixel_size, name);
@@ -329,14 +329,18 @@ breakOut:;
 		}
 	}
 
-#if 0
+#if 1
 	// this is the chunk of code to ensure a behavior that meets TGA specs
+	// bk0101024 - fix from Leonardo
 	// bit 5 set => top-down
 	if (targa_header.attributes & 0x20)
 	{
-		unsigned char *flip = (unsigned char *)malloc(columns * 4);
+		unsigned char *flip;
 		unsigned char *src, *dst;
 
+		//ri.Printf(PRINT_WARNING, "WARNING: '%s' TGA file header declares top-down image, flipping\n", name);
+
+		flip = (unsigned char *)malloc(columns * 4);
 		for (row = 0; row < rows / 2; row++)
 		{
 			src = targa_rgba + row * 4 * columns;
@@ -348,12 +352,13 @@ breakOut:;
 		}
 		free(flip);
 	}
-#endif
+#else
 	// instead we just print a warning
 	if (targa_header.attributes & 0x20)
 	{
-		ri.Printf(PRINT_DEVELOPER, "WARNING: '%s' TGA file header declares top-down image, ignoring\n", name);
+		ri.Printf(PRINT_WARNING, "WARNING: '%s' TGA file header declares top-down image, ignoring\n", name);
 	}
+#endif
 
 	if (width)
 	{

@@ -109,6 +109,8 @@ cvar_t *sv_wh_bbox_vert;
 cvar_t *sv_wh_check_fov;
 #endif
 
+cvar_t *sv_demopath;
+
 static void SVC_Status(netadr_t from, qboolean force);
 
 #define LL(x) x = LittleLong(x)

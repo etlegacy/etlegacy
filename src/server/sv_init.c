@@ -947,6 +947,10 @@ void SV_Init(void)
 	sv_protectLog = Cvar_Get("sv_protectLog", "", CVAR_ARCHIVE);
 	SV_InitAttackLog();
 
+	// init the server side demo recording stuff
+	SV_AddDemoCommands();
+	sv_demopath = Cvar_Get("sv_demopath", "", CVAR_ARCHIVE);
+
 	// init the botlib here because we need the pre-compiler in the UI
 	SV_BotInitBotLib();
 

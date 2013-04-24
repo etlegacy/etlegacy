@@ -1,6 +1,7 @@
 /*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
  * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
@@ -27,10 +28,10 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_decals.c
- * @brief handles projection of decals (nee marks) onto brush model surfaces
  */
+
+// tr_decal.c - ydnar
+// handles projection of decals (nee marks) onto brush model surfaces
 
 #include "tr_local.h"
 
@@ -44,7 +45,7 @@ typedef struct decalVert_s
 }
 decalVert_t;
 
-#if 0
+
 /*
 MakeTextureMatrix()
 generates a texture projection matrix for a triangle
@@ -327,19 +328,19 @@ void RE_ClearDecals(void)
 	int i, j;
 
 	/* dummy check */
-	if (tr.world == NULL || tr.world->numBModels <= 0)
+	if (tr.world == NULL || tr.world->numModels <= 0)
 	{
 		return;
 	}
 
 	/* clear world decals */
 	for (j = 0; j < MAX_WORLD_DECALS; j++)
-		tr.world->bmodels[0].decals[j].shader = NULL;
+		tr.world->models[0].decals[j].shader = NULL;
 
 	/* clear entity decals */
-	for (i = 0; i < tr.world->numBModels; i++)
+	for (i = 0; i < tr.world->numModels; i++)
 		for (j = 0; j < MAX_ENTITY_DECALS; j++)
-			tr.world->bmodels[i].decals[j].shader = NULL;
+			tr.world->models[i].decals[j].shader = NULL;
 }
 
 
@@ -556,7 +557,8 @@ ProjectDecalOntoWinding()
 projects decal onto a polygon
 */
 
-static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t points[2][MAX_DECAL_VERTS], msurface_t *surf, bmodel_t *bmodel)
+static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t points[2][MAX_DECAL_VERTS], bspSurface_t *surf,
+                                    bspModel_t *bmodel)
 {
 	int        i, pingPong, count, axis;
 	float      pd, d, d2, alpha = 1.f;
@@ -637,7 +639,7 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 	}
 
 	/* find first free decal (fixme: optimize this) */
-	count  = (bmodel == tr.world->bmodels ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
+	count  = (bmodel == tr.world->models ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
 	oldest = &bmodel->decals[0];
 	decal  = bmodel->decals;
 	for (i = 0; i < count; i++, decal++)
@@ -715,7 +717,7 @@ ProjectDecalOntoTriangles()
 projects a decal onto a triangle surface (brush faces, misc_models, metasurfaces)
 */
 
-static void ProjectDecalOntoTriangles(decalProjector_t *dp, msurface_t *surf, bmodel_t *bmodel)
+static void ProjectDecalOntoTriangles(decalProjector_t *dp, bspSurface_t *surf, bspModel_t *bmodel)
 {
 	int           i;
 	srfTriangle_t *tri;
@@ -765,7 +767,7 @@ ProjectDecalOntoGrid()
 projects a decal onto a grid (patch) surface
 */
 
-static void ProjectDecalOntoGrid(decalProjector_t *dp, msurface_t *surf, bmodel_t *bmodel)
+static void ProjectDecalOntoGrid(decalProjector_t *dp, bspSurface_t *surf, bspModel_t *bmodel)
 {
 	int           x, y;
 	srfGridMesh_t *srf;
@@ -807,7 +809,7 @@ R_ProjectDecalOntoSurface()
 projects a decal onto a world surface
 */
 
-void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t *bmodel)
+void R_ProjectDecalOntoSurface(decalProjector_t *dp, bspSurface_t *surf, bspModel_t *bmodel)
 {
 	float        d;
 	srfGeneric_t *gen;
@@ -1012,12 +1014,3 @@ void R_CullDecalProjectors(void)
 	/* set bits */
 	tr.refdef.decalBits = decalBits;
 }
-
-#else
-void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime, int fadeTime)
-{
-}
-void RE_ClearDecals(void)
-{
-}
-#endif

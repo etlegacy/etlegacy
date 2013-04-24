@@ -1,6 +1,7 @@
 /*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
  * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
@@ -27,14 +28,9 @@
  * If not, please request a copy in writing from id Software at the address below.
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- *
- * @file tr_noise.c
  */
-
 // tr_noise.c
-#include "../qcommon/q_shared.h"
-#include "../qcommon/qfiles.h"
-#include "../qcommon/qcommon.h"
+#include "tr_local.h"
 
 #define NOISE_SIZE 256
 #define NOISE_MASK (NOISE_SIZE - 1)
@@ -45,9 +41,11 @@
 static float s_noise_table[NOISE_SIZE];
 static int   s_noise_perm[NOISE_SIZE];
 
+#define LERP(a, b, w) (a * (1.0f - w) + b * w)
+
 static float GetNoiseValue(int x, int y, int z, int t)
 {
-	int index = INDEX(( int ) x, ( int ) y, ( int ) z, ( int ) t);
+	int index = INDEX((int)x, (int)y, (int)z, (int)t);
 
 	return s_noise_table[index];
 }
@@ -56,10 +54,12 @@ void R_NoiseInit(void)
 {
 	int i;
 
+	srand(1001);
+
 	for (i = 0; i < NOISE_SIZE; i++)
 	{
-		s_noise_table[i] = ( float ) (((rand() / ( float ) RAND_MAX) * 2.0 - 1.0));
-		s_noise_perm[i]  = ( unsigned char )(rand() / ( float ) RAND_MAX * 255);
+		s_noise_table[i] = (float)(((rand() / (float)RAND_MAX) * 2.0 - 1.0));
+		s_noise_perm[i]  = (unsigned char)(rand() / (float)RAND_MAX * 255);
 	}
 }
 
@@ -72,13 +72,13 @@ float R_NoiseGet4f(float x, float y, float z, float t)
 	float back[4];
 	float fvalue, bvalue, value[2], finalvalue;
 
-	ix = ( int ) floor(x);
+	ix = (int)floor(x);
 	fx = x - ix;
-	iy = ( int ) floor(y);
+	iy = (int)floor(y);
 	fy = y - iy;
-	iz = ( int ) floor(z);
+	iz = (int)floor(z);
 	fz = z - iz;
-	it = ( int ) floor(t);
+	it = (int)floor(t);
 	ft = t - it;
 
 	for (i = 0; i < 2; i++)

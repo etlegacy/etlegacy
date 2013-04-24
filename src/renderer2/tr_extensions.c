@@ -1,6 +1,7 @@
 /*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
  * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
@@ -39,6 +40,135 @@
 
 #include "tr_local.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void (APIENTRY *qglMultiTexCoord2fARB)(GLenum texture, GLfloat s, GLfloat t);
+void (APIENTRY *qglActiveTextureARB)(GLenum texture);
+void (APIENTRY *qglClientActiveTextureARB)(GLenum texture);
+
+void (APIENTRY *qglLockArraysEXT)(GLint, GLint);
+void (APIENTRY *qglUnlockArraysEXT)(void);
+
+//----(SA)	added
+void (APIENTRY *qglPNTrianglesiATI)(GLenum pname, GLint param);
+void (APIENTRY *qglPNTrianglesfATI)(GLenum pname, GLfloat param);
+//----(SA)	end
+
+GLhandleARB (APIENTRY *qglCreateShaderObjectARB)(GLenum shaderType);
+
+// GL_EXT_draw_range_elements
+void (APIENTRY *qglDrawRangeElementsEXT)(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices);
+// GL_EXT_multi_draw_arrays
+void (APIENTRY *qglMultiDrawArraysEXT)(GLenum mode, GLint *first, GLsizei *count, GLsizei primcount);
+void (APIENTRY *qglMultiDrawElementsEXT)(GLenum mode, const GLsizei *count, GLenum type, const GLvoid **indices, GLsizei primcount);
+// GL_ARB_vertex_shader
+void (APIENTRY *qglBindAttribLocationARB)(GLhandleARB programObj, GLuint index, const GLcharARB *name);
+void (APIENTRY *qglGetActiveAttribARB)(GLhandleARB programObj, GLuint index, GLsizei maxLength, GLsizei *length, GLint *size, GLenum *type, GLcharARB *name);
+GLint (APIENTRY *qglGetAttribLocationARB)(GLhandleARB programObj, const GLcharARB *name);
+// GL_ARB_vertex_program
+void (APIENTRY *qglVertexAttrib4fARB)(GLuint, GLfloat, GLfloat, GLfloat, GLfloat);
+void (APIENTRY *qglVertexAttrib4fvARB)(GLuint, const GLfloat *);
+void (APIENTRY *qglVertexAttribPointerARB)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer);
+void (APIENTRY *qglEnableVertexAttribArrayARB)(GLuint index);
+void (APIENTRY *qglDisableVertexAttribArrayARB)(GLuint index);
+// GL_ARB_vertex_buffer_object
+void (APIENTRY *qglBindBufferARB)(GLenum target, GLuint buffer);
+void (APIENTRY *qglDeleteBuffersARB)(GLsizei n, const GLuint *buffers);
+void (APIENTRY *qglGenBuffersARB)(GLsizei n, GLuint *buffers);
+GLboolean (APIENTRY *qglIsBufferARB)(GLuint buffer);
+void (APIENTRY *qglBufferDataARB)(GLenum target, GLsizeiptrARB size, const GLvoid *data, GLenum usage);
+void (APIENTRY *qglBufferSubDataARB)(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const GLvoid *data);
+void (APIENTRY *qglGetBufferSubDataARB)(GLenum target, GLintptrARB offset, GLsizeiptrARB size, GLvoid *data);
+void (APIENTRY *qglGetBufferParameterivARB)(GLenum target, GLenum pname, GLint *params);
+void (APIENTRY *qglGetBufferPointervARB)(GLenum target, GLenum pname, GLvoid **params);
+// GL_ARB_shader_objects
+void (APIENTRY *qglDeleteObjectARB)(GLhandleARB obj);
+GLhandleARB (APIENTRY *qglGetHandleARB)(GLenum pname);
+void (APIENTRY *qglDetachObjectARB)(GLhandleARB containerObj, GLhandleARB attachedObj);
+void (APIENTRY *qglShaderSourceARB)(GLhandleARB shaderObj, GLsizei count, const GLcharARB **string, const GLint *length);
+void (APIENTRY *qglCompileShaderARB)(GLhandleARB shaderObj);
+GLhandleARB (APIENTRY *qglCreateProgramObjectARB)(void);
+void (APIENTRY *qglAttachObjectARB)(GLhandleARB containerObj, GLhandleARB obj);
+void (APIENTRY *qglLinkProgramARB)(GLhandleARB programObj);
+void (APIENTRY *qglUseProgramObjectARB)(GLhandleARB programObj);
+void (APIENTRY *qglValidateProgramARB)(GLhandleARB programObj);
+void (APIENTRY *qglUniform1fARB)(GLint location, GLfloat v0);
+void (APIENTRY *qglUniform2fARB)(GLint location, GLfloat v0, GLfloat v1);
+void (APIENTRY *qglUniform3fARB)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
+void (APIENTRY *qglUniform4fARB)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+void (APIENTRY *qglUniform1iARB)(GLint location, GLint v0);
+void (APIENTRY *qglUniform2iARB)(GLint location, GLint v0, GLint v1);
+void (APIENTRY *qglUniform3iARB)(GLint location, GLint v0, GLint v1, GLint v2);
+void (APIENTRY *qglUniform4iARB)(GLint location, GLint v0, GLint v1, GLint v2, GLint v3);
+void (APIENTRY *qglUniform1fvARB)(GLint location, GLsizei count, const GLfloat *value);
+void (APIENTRY *qglUniform2fvARB)(GLint location, GLsizei count, const GLfloat *value);
+void (APIENTRY *qglUniform3fvARB)(GLint location, GLsizei count, const GLfloat *value);
+void (APIENTRY *qglUniform4fvARB)(GLint location, GLsizei count, const GLfloat *value);
+void (APIENTRY *qglUniform2ivARB)(GLint location, GLsizei count, const GLint *value);
+void (APIENTRY *qglUniform3ivARB)(GLint location, GLsizei count, const GLint *value);
+void (APIENTRY *qglUniform4ivARB)(GLint location, GLsizei count, const GLint *value);
+void (APIENTRY *qglUniformMatrix2fvARB)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+void (APIENTRY *qglUniformMatrix3fvARB)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+void (APIENTRY *qglUniformMatrix4fvARB)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+void (APIENTRY *qglGetObjectParameterfvARB)(GLhandleARB obj, GLenum pname, GLfloat *params);
+void (APIENTRY *qglGetObjectParameterivARB)(GLhandleARB obj, GLenum pname, GLint *params);
+void (APIENTRY *qglGetInfoLogARB)(GLhandleARB obj, GLsizei maxLength, GLsizei *length, GLcharARB *infoLog);
+void (APIENTRY *qglGetAttachedObjectsARB)(GLhandleARB containerObj, GLsizei maxCount, GLsizei *count, GLhandleARB *obj);
+GLint (APIENTRY *qglGetUniformLocationARB)(GLhandleARB programObj, const GLcharARB *name);
+void (APIENTRY *qglGetActiveUniformARB)(GLhandleARB programObj, GLuint index, GLsizei maxIndex, GLsizei *length, GLint *size, GLenum *type, GLcharARB *name);
+void (APIENTRY *qglGetUniformfvARB)(GLhandleARB programObj, GLint location, GLfloat *params);
+void (APIENTRY *qglGetUniformivARB)(GLhandleARB programObj, GLint location, GLint *params);
+void (APIENTRY *qglGetShaderSourceARB)(GLhandleARB obj, GLsizei maxLength, GLsizei *length, GLcharARB *source);
+//  ARB_vertex_array_object
+void (APIENTRY *qglBindVertexArrayARB)(GLuint varray);
+void (APIENTRY *qglDeleteVertexArraysARB)(GLsizei n, const GLuint *varrays);
+void (APIENTRY *qglGenVertexArraysARB)(GLsizei n, GLuint *varrays);
+void (APIENTRY *qglIsVertexArrayARB)(GLuint varray);
+// GL_ARB_texture_compression
+void (APIENTRY *qglCompressedTexImage3DARB)(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid *data);
+void (APIENTRY *qglCompressedTexImage2DARB)(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const GLvoid *data);
+void (APIENTRY *qglCompressedTexImage1DARB)(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const GLvoid *data);
+void (APIENTRY *qglCompressedTexSubImage3DARB)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const GLvoid *data);
+void (APIENTRY *qglCompressedTexSubImage2DARB)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const GLvoid *data);
+void (APIENTRY *qglCompressedTexSubImage1DARB)(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const GLvoid *data);
+void (APIENTRY *qglGetCompressedTexImageARB)(GLenum target, GLint lod, GLvoid *img);
+// GL_EXT_framebuffer_object
+GLboolean (APIENTRY *qglIsRenderbufferEXT)(GLuint renderbuffer);
+void (APIENTRY *qglBindRenderbufferEXT)(GLenum target, GLuint renderbuffer);
+void (APIENTRY *qglDeleteRenderbuffersEXT)(GLsizei n, const GLuint *renderbuffers);
+void (APIENTRY *qglGenRenderbuffersEXT)(GLsizei n, GLuint *renderbuffers);
+void (APIENTRY *qglRenderbufferStorageEXT)(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
+void (APIENTRY *qglGetRenderbufferParameterivEXT)(GLenum target, GLenum pname, GLint *params);
+GLboolean (APIENTRY *qglIsFramebufferEXT)(GLuint framebuffer);
+void (APIENTRY *qglBindFramebufferEXT)(GLenum target, GLuint framebuffer);
+void (APIENTRY *qglDeleteFramebuffersEXT)(GLsizei n, const GLuint *framebuffers);
+void (APIENTRY *qglGenFramebuffersEXT)(GLsizei n, GLuint *framebuffers);
+GLenum (APIENTRY *qglCheckFramebufferStatusEXT)(GLenum target);
+void (APIENTRY *qglFramebufferTexture1DEXT)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
+void (APIENTRY *qglFramebufferTexture2DEXT)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
+void (APIENTRY *qglFramebufferTexture3DEXT)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset);
+void (APIENTRY *qglFramebufferRenderbufferEXT)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
+void (APIENTRY *qglGetFramebufferAttachmentParameterivEXT)(GLenum target, GLenum attachment, GLenum pname, GLint *params);
+void (APIENTRY *qglGenerateMipmapEXT)(GLenum target);
+// GL_ARB_occlusion_query
+void (APIENTRY *qglGenQueriesARB)(GLsizei n, GLuint *ids);
+void (APIENTRY *qglDeleteQueriesARB)(GLsizei n, const GLuint *ids);
+GLboolean (APIENTRY *qglIsQueryARB)(GLuint id);
+void (APIENTRY *qglBeginQueryARB)(GLenum target, GLuint id);
+void (APIENTRY *qglEndQueryARB)(GLenum target);
+void (APIENTRY *qglGetQueryivARB)(GLenum target, GLenum pname, GLint *params);
+void (APIENTRY *qglGetQueryObjectivARB)(GLuint id, GLenum pname, GLint *params);
+void (APIENTRY *qglGetQueryObjectuivARB)(GLuint id, GLenum pname, GLuint *params);
+// GL_EXT_framebuffer_blit
+void (APIENTRY *qglBlitFramebufferEXT)(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+// GL_EXT_framebuffer_multisample
+void (APIENTRY *qglRenderbufferStorageMultisampleEXT)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+// GL_ARB_draw_buffers
+void (APIENTRY *qglDrawBuffersARB)(GLsizei n, const GLenum *bufs);
+void (APIENTRY *qglTexImage3D)(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
+
 static qboolean GLimp_HaveExtension(const char *ext)
 {
 	const char *ptr = Q_stristr(glConfig.extensions_string, ext);
@@ -54,6 +184,8 @@ void GLimp_InitExtraExtensions()
 {
 	char       *extension;
 	const char *result[3] = { "...ignoring %s\n", "...using %s\n", "...%s not found\n" };
+	ri.Printf(PRINT_DEVELOPER, "Will now init Opengl extensions");
+	qglTexImage3D = (void *)SDL_GL_GetProcAddress("glTexImage3DEXT");
 
 	// GL_EXT_draw_range_elements
 	extension                     = "GL_EXT_draw_range_elements";
@@ -64,7 +196,7 @@ void GLimp_InitExtraExtensions()
 	{
 		qglDrawRangeElementsEXT = (void *) SDL_GL_GetProcAddress("glDrawRangeElementsEXT");
 
-		if (r_ext_draw_range_elements->integer)
+		if (qtrue) //r_ext_draw_range_elements->integer
 		{
 			glRefConfig.drawRangeElements = qtrue;
 		}
@@ -86,7 +218,7 @@ void GLimp_InitExtraExtensions()
 		qglMultiDrawArraysEXT   = (PFNGLMULTIDRAWARRAYSEXTPROC) SDL_GL_GetProcAddress("glMultiDrawArraysEXT");
 		qglMultiDrawElementsEXT = (PFNGLMULTIDRAWELEMENTSEXTPROC) SDL_GL_GetProcAddress("glMultiDrawElementsEXT");
 
-		if (r_ext_multi_draw_arrays->integer)
+		if (qtrue) //r_ext_multi_draw_arrays->integer
 		{
 			glRefConfig.multiDrawArrays = qtrue;
 		}
@@ -244,6 +376,25 @@ void GLimp_InitExtraExtensions()
 		ri.Error(ERR_FATAL, result[2], extension);
 	}
 
+	//GL_ARB_vertex_array_object
+	extension                = "GL_ARB_vertex_array_object";
+	qglBindVertexArrayARB    = NULL;
+	qglDeleteVertexArraysARB = NULL;
+	qglGenVertexArraysARB    = NULL;
+	qglIsVertexArrayARB      = NULL;
+	if (GLimp_HaveExtension(extension))
+	{
+		qglBindVertexArrayARB    = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glBindVertexArrayARB");
+		qglDeleteVertexArraysARB = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glDeleteVertexArraysARB");
+		qglGenVertexArraysARB    = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glGenVertexArraysARB");
+		qglIsVertexArrayARB      = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glIsVertexArrayARB");
+		ri.Printf(PRINT_ALL, result[1], extension);
+	}
+	else
+	{
+		ri.Error(ERR_FATAL, result[2], extension);
+	}
+
 	// GL_ARB_vertex_shader
 	//glRefConfig.vertexShader = qfalse;
 	extension                = "GL_ARB_vertex_shader";
@@ -352,7 +503,7 @@ void GLimp_InitExtraExtensions()
 	glRefConfig.halfFloatPixel = qfalse;
 	if (GLimp_HaveExtension(extension))
 	{
-		if (r_arb_half_float_pixel->integer)
+		if (qtrue) //r_arb_half_float_pixel->integer
 		{
 			glRefConfig.halfFloatPixel = qtrue;
 		}
@@ -469,12 +620,26 @@ void GLimp_InitExtraExtensions()
 	glRefConfig.texture_srgb = qfalse;
 	if (GLimp_HaveExtension(extension))
 	{
-		if (r_srgb->integer)
+		if (qtrue) //r_srgb->integer
 		{
 			glRefConfig.texture_srgb = qtrue;
 		}
 
 		ri.Printf(PRINT_ALL, result[glRefConfig.texture_srgb], extension);
+	}
+	else
+	{
+		ri.Printf(PRINT_ALL, result[2], extension);
+	}
+
+	// GL_ARB_multitexture
+	extension                = "GL_ARB_multitexture";
+	glRefConfig.multiTexture = qfalse;
+	if (GLimp_HaveExtension(extension))
+	{
+		glRefConfig.multiTexture = qtrue;
+
+		ri.Printf(PRINT_ALL, result[glRefConfig.multiTexture], extension);
 	}
 	else
 	{
@@ -541,4 +706,10 @@ void GLimp_InitExtraExtensions()
 	{
 		ri.Printf(PRINT_ALL, result[2], extension);
 	}
+
+	ri.Printf(PRINT_DEVELOPER, "Initialized Opengl extensions");
 }
+
+#ifdef __cplusplus
+}
+#endif

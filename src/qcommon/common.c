@@ -113,7 +113,7 @@ cvar_t *com_updatefiles;
 #if idx64
 int (*Q_VMftol)(void); // Unused in ET:L. Used in ioquake’s VM code
 #elif id386
-long (QDECL *Q_ftol)(float f);
+//long (QDECL *Q_ftol)(float f);
 int (QDECL *Q_VMftol)(void);  // Unused.
 void (QDECL *Q_SnapVector)(vec3_t vec);
 #endif

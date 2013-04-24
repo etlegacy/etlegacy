@@ -3530,6 +3530,9 @@ int CL_ScaledMilliseconds(void)
 {
 	return Sys_Milliseconds() * com_timescale->value;
 }
+#ifndef USE_RENDERER_DLOPEN
+extern refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp);
+#endif
 
 /*
 ============
@@ -3581,6 +3584,7 @@ void CL_InitRef(void)
 	ri.Printf            = CL_RefPrintf;
 	ri.Error             = Com_Error;
 	ri.Milliseconds      = CL_ScaledMilliseconds;
+	ri.RealTime          = Com_RealTime;
 #ifdef ZONE_DEBUG
 	ri.Z_MallocDebug = CL_RefMallocDebug;
 #else
@@ -3598,6 +3602,7 @@ void CL_InitRef(void)
 	ri.Hunk_FreeTempMemory     = Hunk_FreeTempMemory;
 
 //     ri.CM_ClusterPVS = CM_ClusterPVS;
+	ri.CM_PointContents    = CM_PointContents;
 	ri.CM_DrawDebugSurface = CM_DrawDebugSurface;
 
 	ri.FS_ReadFile     = FS_ReadFile;

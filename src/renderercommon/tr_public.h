@@ -36,7 +36,7 @@
 
 #include "tr_types.h"
 
-#define REF_API_VERSION     8
+#define REF_API_VERSION     10
 
 // these are the functions exported by the refresh module
 typedef struct
@@ -141,6 +141,22 @@ typedef struct
 	// avi output stuff
 	void (*TakeVideoFrame)(int h, int w, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg);
 
+#if defined(USE_REFLIGHT)
+	void (*AddRefLightToScene)(const refLight_t *light);
+#endif
+
+	// RB: alternative skeletal animation system
+#if defined(USE_REFENTITY_ANIMATIONSYSTEM)
+	qhandle_t (*RegisterAnimation)(const char *name);
+	int (*CheckSkeleton)(refSkeleton_t *skel, qhandle_t model, qhandle_t anim);
+	int (*BuildSkeleton)(refSkeleton_t *skel, qhandle_t anim, int startFrame, int endFrame, float frac,
+	                     qboolean clearOrigin);
+	int (*BlendSkeleton)(refSkeleton_t *skel, const refSkeleton_t *blend, float frac);
+	int (*BoneIndex)(qhandle_t hModel, const char *boneName);
+	int (*AnimNumFrames)(qhandle_t hAnim);
+	int (*AnimFrameRate)(qhandle_t hAnim);
+#endif
+
 } refexport_t;
 
 // these are the functions imported by the refresh module
@@ -155,6 +171,7 @@ typedef struct
 	// milliseconds should only be used for profiling, never
 	// for anything game related.  Get time from the refdef
 	int (*Milliseconds)(void);
+	int (*RealTime)(qtime_t *qtime);
 
 	// stack based memory allocation for per-level things that
 	// won't be freed
@@ -188,6 +205,7 @@ typedef struct
 	void (*Cmd_ExecuteText)(int exec_when, const char *text);
 
 	// visualization for debugging collision detection
+	int (*CM_PointContents)(const vec3_t p, clipHandle_t model);
 	void (*CM_DrawDebugSurface)(void (*drawPoly)(int color, int numPoints, float *points));
 
 	// a -1 return means the file does not exist
@@ -217,7 +235,7 @@ typedef struct
 #ifdef USE_RENDERER_DLOPEN
 typedef refexport_t * (QDECL * GetRefAPI_t)(int apiVersion, refimport_t *rimp);
 #else
-refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp);
+//refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp);
 #endif
 
 #endif  // __TR_PUBLIC_H

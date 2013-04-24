@@ -34,6 +34,13 @@
 #ifndef __TR_TYPES_H
 #define __TR_TYPES_H
 
+// XreaL BEGIN
+#define MAX_REF_LIGHTS      1024
+#define MAX_REF_ENTITIES    1023        // can't be increased without changing drawsurf bit packing
+#define MAX_BONES           128         // RB: same as MDX_MAX_BONES
+#define MAX_WEIGHTS         4           // GPU vertex skinning limit, never change this without rewriting many GLSL shaders
+// XreaL END
+
 #define MAX_CORONAS     32          // unused - not really a reason to limit this other than trying to keep a reasonable count
 #define MAX_DLIGHTS     32          // can't be increased, because bit flags are used on surfaces
 #define MAX_ENTITIES    1023        // can't be increased without changing drawsurf bit packing
@@ -173,6 +180,50 @@ typedef struct
 
 } refEntity_t;
 
+// XreaL BEGIN
+
+typedef enum
+{
+	RL_OMNI,            // point light
+	RL_PROJ,            // spot light
+	RL_DIRECTIONAL,     // sun light
+
+	RL_MAX_REF_LIGHT_TYPE
+} refLightType_t;
+
+typedef struct
+{
+	refLightType_t rlType;
+	//  int             lightfx;
+
+	qhandle_t attenuationShader;
+
+	vec3_t origin;
+	quat_t rotation;
+	vec3_t center;
+	vec3_t color;               // range from 0.0 to 1.0, should be color normalized
+
+	float scale;                // r_lightScale if not set
+
+	// omni-directional light specific
+	vec3_t radius;
+
+	// projective light specific
+	vec3_t projTarget;
+	vec3_t projRight;
+	vec3_t projUp;
+	vec3_t projStart;
+	vec3_t projEnd;
+
+	qboolean noShadows;
+	short noShadowID;           // don't cast shadows of all entities with this id
+
+	qboolean inverseShadows;        // don't cast light and draw shadows by darken the scene
+	// this is useful for drawing player shadows with shadow mapping
+} refLight_t;
+
+// XreaL END
+
 //                                                                  //
 // WARNING:: synch FOG_SERVER in sv_ccmds.c if you change anything  //
 //                                                                  //
@@ -265,7 +316,11 @@ typedef enum
 {
 	GLDRV_ICD,                  // driver is integrated with window system
 	GLDRV_STANDALONE,           // deprecated
-	GLDRV_VOODOO                // deprecated
+	GLDRV_VOODOO,                // deprecated
+	// XreaL BEGIN
+	GLDRV_OPENGL3,              // new driver system
+	GLDRV_MESA                  // crap
+	// XreaL END
 } glDriverType_t;
 
 typedef enum
@@ -274,7 +329,12 @@ typedef enum
 	GLHW_3DFX_2D3D,         // deprecated
 	GLHW_RIVA128,           // deprecated
 	GLHW_RAGEPRO,           // deprecated
-	GLHW_PERMEDIA2          // deprecated
+	GLHW_PERMEDIA2,         // deprecated
+	// XreaL BEGIN
+	GLHW_ATI,                   // where you don't have proper GLSL support
+	GLHW_ATI_DX10,              // ATI Radeon HD series DX10 hardware
+	GLHW_NV_DX10                // Geforce 8/9 class DX10 hardware
+	// XreaL END
 } glHardwareType_t;
 
 typedef struct

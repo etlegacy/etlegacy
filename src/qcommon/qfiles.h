@@ -36,8 +36,9 @@
 #define __QFILES_H__
 
 // surface geometry should not exceed these limits
-#define SHADER_MAX_VERTEXES 1025 // Arnout: 1024+1 (1 buffer for RB_EndSurface overflow check) // JPW NERVE was 4000, 1000 in q3ta
+#define SHADER_MAX_VERTEXES 10000 // Arnout: 1024+1 (1 buffer for RB_EndSurface overflow check) // JPW NERVE was 4000, 1000 in q3ta //Jacker changed from 1025 to 10000
 #define SHADER_MAX_INDEXES  (6 * SHADER_MAX_VERTEXES)
+#define SHADER_MAX_TRIANGLES (SHADER_MAX_INDEXES / 3)
 
 
 // the maximum size of game reletive pathnames
@@ -746,6 +747,117 @@ typedef struct
 
 	int ofsEnd;                     // end of file
 } mdxHeader_t;
+
+/*
+========================================================================
+
+Actor X - .PSK / .PSA skeletal triangle model file format
+
+========================================================================
+*/
+
+#define PSK_IDENTSTRING     "ACTRHEAD"
+#define PSK_IDENTLEN        8
+#define PSK_VERSION         1
+
+typedef struct
+{
+	char ident[20];
+	int flags;
+
+	int dataSize;               // sizeof(struct)
+	int numData;                // number of structs put into this data chunk
+} axChunkHeader_t;
+
+typedef struct
+{
+	float point[3];
+} axPoint_t;
+
+typedef struct
+{
+	unsigned short pointIndex;
+	unsigned short unknownA;
+	float st[2];
+	byte materialIndex;
+	byte reserved;                  // we don't care about this one
+	unsigned short unknownB;
+} axVertex_t;
+
+typedef struct
+{
+	unsigned short indexes[3];
+	byte materialIndex;
+	byte materialIndex2;
+	unsigned int smoothingGroups;
+} axTriangle_t;
+
+typedef struct
+{
+	char name[64];
+	int shaderIndex;                // for in-game use
+	unsigned int polyFlags;
+	int auxMaterial;
+	unsigned int auxFlags;
+	int lodBias;
+	int lodStyle;
+} axMaterial_t;
+
+typedef struct
+{
+	float quat[4];                  // x y z w
+	float position[3];              // x y z
+
+	float length;
+	float xSize;
+	float ySize;
+	float zSize;
+} axBone_t;
+
+typedef struct
+{
+	char name[64];
+	unsigned int flags;
+	int numChildren;
+	int parentIndex;
+	axBone_t bone;
+} axReferenceBone_t;
+
+typedef struct
+{
+	float weight;
+	unsigned int pointIndex;
+	unsigned int boneIndex;
+} axBoneWeight_t;
+
+typedef struct
+{
+	char name[64];
+	char group[64];
+
+	int numBones;                   // same as numChannels
+	int rootInclude;
+
+	int keyCompressionStyle;
+	int keyQuotum;
+	float keyReduction;
+
+	float trackTime;
+
+	float frameRate;
+
+	int startBoneIndex;
+
+	int firstRawFrame;
+	int numRawFrames;
+} axAnimationInfo_t;
+
+typedef struct
+{
+	float position[3];
+	float quat[4];
+	float time;
+} axAnimationKey_t;
 
 /*
 ==============================================================================

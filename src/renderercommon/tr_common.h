@@ -38,6 +38,10 @@
 #include "iqm.h"
 #include "qgl.h"
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 extern refimport_t ri;
 
 // image buffer
@@ -198,5 +202,9 @@ extern cvar_t *r_bonesDebug;
 extern cvar_t *r_wolffog;
 
 extern cvar_t *r_highQualityVideo;
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif  // __TR_COMMON_H
