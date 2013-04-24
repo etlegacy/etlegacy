@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-18 12:32+0100\n"
+"PO-Revision-Date: 2013-04-24 12:27+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -2388,6 +2388,9 @@ msgstr "Wylacz pojazd!"
 msgid "Escort the vehicle!"
 msgstr "Eskortuj pojazd!"
 
+msgid "Covering fire!"
+msgstr "Ogien oslaniajacy!"
+
 msgid "I'm a soldier."
 msgstr "Jestem Zolnierzem."
 
@@ -2785,11 +2788,9 @@ msgstr "niezauwazyl wlasnej miny"
 msgid "dynamited himself to pieces"
 msgstr "rozwalil sie na kawalki"
 
-#: src/cgame/cg_draw.c:2706
 msgid "^3PREPARE TO FIGHT!\n"
 msgstr "^3PRZYGOTUJ SIE DO WALKI!\n"
 
-#: src/cgame/cg_servercmds.c:370
 msgid "^1FIGHT!\n"
 msgstr "^1WALKA!\n"
 
@@ -2815,7 +2816,7 @@ msgid "entered the game\n"
 msgstr "wszedl do gry\n"
 
 msgid "was shelled by"
-msgstr "zostal ostrzelony przez"
+msgstr "zostal ostrzelany przez"
 
 msgid "Mines have been reported in this area."
 msgstr "Miny zostaly zgloszone w tym terenie."
@@ -2827,10 +2828,94 @@ msgid "'s mortar round coming"
 msgstr "'s pocisku mortara"
 
 msgid "'s artillery support"
-msgstr "'s artylerii"
+msgstr "'s artylerie"
 
 msgid "rediscovered gravity."
 msgstr "ponownie odkryl grawitacje."
+
+msgid "'s Landmine"
+msgstr "'s Mine"
+
+msgid "'s Mobile MG42"
+msgstr "'s Mobilne MG42"
+
+msgid "'s rifle grenade"
+msgstr "'s granata od rifli"
+
+msgid "'s support fire"
+msgstr "'s ogien wsparcia"
+
+msgid "'s crew-served MG"
+msgstr "'s zaserwowawana zaloge MG"
+
+msgid "was thrown to his doom by"
+msgstr "zostal rzucony do zaglady przez"
+
+msgid "You have been revived by "
+msgstr "Zostales ozywiony przez "
+
+msgid "Allies have built the Oasis Water Pump!"
+msgstr "Alianci wybudowali Pompe Wodna Oasis!"
+
+msgid "Allied Command Post constructed. Charge speed increased!"
+msgstr "Aliancke Centrum Dowodzenia wybudowane. Szybkosc ladowania zwiekszona!"
+
+msgid "Axis Command Post constructed. Charge speed increased!"
+msgstr "Centrum Dowodzenia OSi wybudowane. Szybkosc ladowania zwiekszona!"
+
+msgid "Allies capture the Old City!"
+msgstr "Alianci zdobyli Stare Miasto!"
+
+msgid "Axis reclaim the Old City!"
+msgstr "Os odzyskala Stare Miasto!"
+
+msgid "Allies have built the Old City Water Pump!"
+msgstr "Alianci wybudowali Pompe Wodna Starego Miasta!"
+
+msgid "Allies have repaired both Water Pumps!"
+msgstr "Alianci naprawili obie Pompy Wodne!"
+
+msgid "The Old City MG Nest has been constructed!"
+msgstr "Gniazdo MG Stargo Miasta zostalo wybudowane!"
+
+msgid "The Garrison MG Nest has been constructed!"
+msgstr "Gniazdo MG Garnizonu zostalo wybudowane!"
+
+msgid "Axis have damaged the Old City Water Pump!"
+msgstr "OS zepsula Pompe Wodna Starego Miasta!"
+
+msgid "Axis have damaged the Oasis Water Pump!"
+msgstr "OS zepsula Pompe Wodna Oasis!"
+
+msgid "Axis have damaged both Water Pumps!"
+msgstr "OS zepsula obie Pompy Wodne!"
+
+msgid "The Old City MG Nest has been damaged!"
+msgstr "Gniazdo MG Starego Miasta zostalo zepsute!"
+
+msgid "Axis team has destroyed the Allied Command Post!"
+msgstr "OS zepsula Alianckie Centrum Dowodzenia!"
+
+msgid "Allies have breached the Old City wall"
+msgstr "Alianci przelamali Sciane Starego Miasta"
+
+msgid "drowned"
+msgstr "utopil sie"
+
+msgid "Picked up %s"
+msgstr "Podniosl %s"
+
+msgid "%s^7 has joined the %s^7!"
+msgstr "%s^7 dolaczyl do %s^7!"
+
+msgid "Axis team"
+msgstr "Teamu OSi"
+
+msgid "Allied team"
+msgstr "Teamu Aliantow"
+
+msgid "Spectators"
+msgstr "Obserwatorow"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format

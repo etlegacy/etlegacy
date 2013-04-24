@@ -258,6 +258,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 		if (mod < MOD_CROSS && attacker && attacker->client)
 		{
 			int x = attacker->client->sess.aWeaponStats[G_weapStatIndex_MOD(mod)].atts--;
+
 			if (x < 1)
 			{
 				attacker->client->sess.aWeaponStats[G_weapStatIndex_MOD(mod)].atts = 1;
@@ -347,104 +348,101 @@ void G_addStatsHeadShot(gentity_t *attacker, int mod)
 	attacker->client->sess.aWeaponStats[G_weapStatIndex_MOD(mod)].headshots++;
 }
 
-// Ugh, converting enums is my day-time job :)
 //  --> MOD_* to WS_* conversion
 //
 // WS_MAX = no equivalent/not used
-//
-// FIXME: Remove everything that maps to WS_MAX to save space
-//
 static const weap_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 {
-	{ MOD_UNKNOWN,                 WS_MAX             },
-	{ MOD_MACHINEGUN,              WS_MG42            },
-	{ MOD_GRENADE,                 WS_GRENADE         },
-	{ MOD_ROCKET,                  WS_PANZERFAUST     },
+	{ MOD_UNKNOWN,                            WS_MAX             },
+	{ MOD_MACHINEGUN,                         WS_MG42            },
+	{ MOD_BROWNING,                           WS_MG42            },
+	{ MOD_MG42,                               WS_MG42            },
+	{ MOD_GRENADE,                            WS_GRENADE         },
+	{ MOD_ROCKET,                             WS_PANZERFAUST     },
 
-	{ MOD_KNIFE,                   WS_KNIFE           },
-	{ MOD_LUGER,                   WS_LUGER           },
-	{ MOD_COLT,                    WS_COLT            },
-	{ MOD_MP40,                    WS_MP40            },
-	{ MOD_THOMPSON,                WS_THOMPSON        },
-	{ MOD_STEN,                    WS_STEN            },
-	{ MOD_GARAND,                  WS_GARAND          },
-	{ MOD_SILENCER,                WS_LUGER           },
-	{ MOD_FG42,                    WS_FG42            },
-	{ MOD_FG42SCOPE,               WS_FG42            },
-	{ MOD_PANZERFAUST,             WS_PANZERFAUST     },
-	{ MOD_GRENADE_LAUNCHER,        WS_GRENADE         },
-	{ MOD_FLAMETHROWER,            WS_FLAMETHROWER    },
-	{ MOD_GRENADE_PINEAPPLE,       WS_GRENADE         },
-	{ MOD_CROSS,                   WS_MAX             },
-	{ MOD_AKIMBO_COLT,             WS_COLT            },
-	{ MOD_AKIMBO_LUGER,            WS_LUGER           },
-	{ MOD_AKIMBO_SILENCEDCOLT,     WS_COLT            },
-	{ MOD_AKIMBO_SILENCEDLUGER,    WS_LUGER           },
+	{ MOD_KNIFE,                              WS_KNIFE           },
+	{ MOD_LUGER,                              WS_LUGER           },
+	{ MOD_COLT,                               WS_COLT            },
+	{ MOD_MP40,                               WS_MP40            },
+	{ MOD_THOMPSON,                           WS_THOMPSON        },
+	{ MOD_STEN,                               WS_STEN            },
+	{ MOD_GARAND,                             WS_GARAND          },
 
-	{ MOD_MAPMORTAR,               WS_MORTAR          },
-	{ MOD_MAPMORTAR_SPLASH,        WS_MORTAR          },
+	{ MOD_SILENCER,                           WS_LUGER           },
+	{ MOD_FG42,                               WS_FG42            },
+	{ MOD_FG42SCOPE,                          WS_FG42            },
+	{ MOD_PANZERFAUST,                        WS_PANZERFAUST     },
+	{ MOD_GRENADE_LAUNCHER,                   WS_GRENADE         },
+	{ MOD_FLAMETHROWER,                       WS_FLAMETHROWER    },
+	{ MOD_GRENADE_PINEAPPLE,                  WS_GRENADE         },
+	{ MOD_CROSS,                              WS_MAX             },
 
-	{ MOD_KICKED,                  WS_MAX             },
+	{ MOD_MAPMORTAR,                          WS_MORTAR          },
+	{ MOD_MAPMORTAR_SPLASH,                   WS_MORTAR          },
 
-	{ MOD_DYNAMITE,                WS_DYNAMITE        },
-	{ MOD_AIRSTRIKE,               WS_AIRSTRIKE       },
-	{ MOD_SYRINGE,                 WS_SYRINGE         },
-	{ MOD_AMMO,                    WS_MAX             },
-	{ MOD_ARTY,                    WS_ARTILLERY       },
+	{ MOD_KICKED,                             WS_MAX             },
 
-	{ MOD_WATER,                   WS_MAX             },
-	{ MOD_SLIME,                   WS_MAX             },
-	{ MOD_LAVA,                    WS_MAX             },
-	{ MOD_CRUSH,                   WS_MAX             },
-	{ MOD_TELEFRAG,                WS_MAX             },
-	{ MOD_FALLING,                 WS_MAX             },
-	{ MOD_SUICIDE,                 WS_MAX             },
-	{ MOD_TARGET_LASER,            WS_MAX             },
-	{ MOD_TRIGGER_HURT,            WS_MAX             },
-	{ MOD_EXPLOSIVE,               WS_MAX             },
+	{ MOD_DYNAMITE,                           WS_DYNAMITE        },
+	{ MOD_AIRSTRIKE,                          WS_AIRSTRIKE       },
+	{ MOD_SYRINGE,                            WS_SYRINGE         },
+	{ MOD_AMMO,                               WS_MAX             },
+	{ MOD_ARTY,                               WS_ARTILLERY       },
 
-	{ MOD_CARBINE,                 WS_GARAND          },
+	{ MOD_WATER,                              WS_MAX             },
+	{ MOD_SLIME,                              WS_MAX             },
+	{ MOD_LAVA,                               WS_MAX             },
+	{ MOD_CRUSH,                              WS_MAX             },
+	{ MOD_TELEFRAG,                           WS_MAX             },
+	{ MOD_FALLING,                            WS_MAX             },
+	{ MOD_SUICIDE,                            WS_MAX             },
+	{ MOD_TARGET_LASER,                       WS_MAX             },
+	{ MOD_TRIGGER_HURT,                       WS_MAX             },
+	{ MOD_EXPLOSIVE,                          WS_MAX             },
 
-	{ MOD_KAR98,                   WS_K43             },
-	{ MOD_GPG40,                   WS_GRENADELAUNCHER },
-	{ MOD_M7,                      WS_GRENADELAUNCHER },
-	{ MOD_LANDMINE,                WS_LANDMINE        },
-	{ MOD_SATCHEL,                 WS_SATCHEL         },
+	{ MOD_CARBINE,                            WS_GARAND          },
+	{ MOD_KAR98,                              WS_K43             },
+	{ MOD_GPG40,                              WS_GRENADELAUNCHER },
+	{ MOD_M7,                                 WS_GRENADELAUNCHER },
+	{ MOD_LANDMINE,                           WS_LANDMINE        },
+	{ MOD_SATCHEL,                            WS_SATCHEL         },
 
-	{ MOD_SMOKEBOMB,               WS_SMOKE           },
-	{ MOD_SMOKEGRENADE,            WS_AIRSTRIKE       }, // airstrike tag
-	{ MOD_MOBILE_MG42,             WS_MG42            },
-	{ MOD_SILENCED_COLT,           WS_COLT            },
-	{ MOD_GARAND_SCOPE,            WS_GARAND          },
+	{ MOD_SMOKEBOMB,                          WS_SMOKE           },
+	{ MOD_MOBILE_MG42,                        WS_MG42            },
+	{ MOD_SILENCED_COLT,                      WS_COLT            },
+	{ MOD_GARAND_SCOPE,                       WS_GARAND          },
 
-	{ MOD_CRUSH_CONSTRUCTION,      WS_MAX             },
-	{ MOD_CRUSH_CONSTRUCTIONDEATH, WS_MAX             },
+	{ MOD_CRUSH_CONSTRUCTION,                 WS_MAX             },
+	{ MOD_CRUSH_CONSTRUCTIONDEATH,            WS_MAX             },
+	{ MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER, WS_MAX             },
 
-	{ MOD_K43,                     WS_K43             },
-	{ MOD_K43_SCOPE,               WS_K43             },
+	{ MOD_K43,                                WS_K43             },
+	{ MOD_K43_SCOPE,                          WS_K43             },
 
-	{ MOD_MORTAR,                  WS_MORTAR          },
+	{ MOD_MORTAR,                             WS_MORTAR          },
 
-	{ MOD_SWAP_PLACES,             WS_MAX             },
+	{ MOD_AKIMBO_COLT,                        WS_COLT            },
+	{ MOD_AKIMBO_LUGER,                       WS_LUGER           },
+	{ MOD_AKIMBO_SILENCEDCOLT,                WS_COLT            },
+	{ MOD_AKIMBO_SILENCEDLUGER,               WS_LUGER           },
 
-	{ MOD_SWITCHTEAM,              WS_MAX             },
+	{ MOD_SMOKEGRENADE,                       WS_AIRSTRIKE       }, // airstrike tag
 
-	{ MOD_SHOVE,                   WS_MAX             },
+	{ MOD_SWAP_PLACES,                        WS_MAX             },
+
+	{ MOD_SWITCHTEAM,                         WS_MAX             },
+
+	{ MOD_SHOVE,                              WS_MAX             },
 };
 
 // Get right stats index based on weapon mod
 unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD)
 {
-	unsigned int i;
-
-	for (i = 0; i < MOD_NUM_MODS; i++)
+	if (iWeaponMOD < 0 || iWeaponMOD >= MOD_NUM_MODS)
 	{
-		if (iWeaponMOD == aWeapMOD[i].iWeapon)
-		{
-			return(aWeapMOD[i].iWS);
-		}
+		return WS_MAX;
 	}
-	return(WS_MAX);
+
+	return aWeapMOD[iWeaponMOD].iWS;
 }
 
 // Generates weapon stat info for given ent

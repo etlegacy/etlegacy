@@ -37,13 +37,6 @@
 //	--> WP_* to WS_* conversion
 //
 // WS_MAX = no equivalent/not used
-//
-// FIXME: Remove everything that maps to WS_MAX to save space
-//
-// - why not er, just map directly to the stat?
-// - er, several reasons: its less than half the size of a brute-force approach,
-//							gives us a simple map to what we actually care about, and the
-//							fact that we dont want to go above (if at all possible) 32 bits
 static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =
 {
 	{ WP_NONE,                 WS_MAX             }, // 0
@@ -106,14 +99,9 @@ static const weap_ws_convert_t aWeapID[WP_NUM_WEAPONS] =
 // Get right stats index based on weapon id
 extWeaponStats_t BG_WeapStatForWeapon(weapon_t iWeaponID)
 {
-	weapon_t i;
-
-	for (i = WP_NONE; i < WP_NUM_WEAPONS; i++)
+	if (iWeaponID < 0 || iWeaponID <= WP_NUM_WEAPONS)
 	{
-		if (iWeaponID == aWeapID[i].iWeapon)
-		{
-			return aWeapID[i].iWS;
-		}
+		return aWeapID[iWeaponID].iWS;
 	}
 
 	return WS_MAX;

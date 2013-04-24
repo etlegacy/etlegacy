@@ -611,7 +611,7 @@ const char *CG_GetPMItemText(centity_t *cent)
 				break;
 			}
 
-			return va("%s^7 has joined the %s^7!", cgs.clientinfo[cent->currentState.effect3Time].name, teamstr);
+			return va(CG_TranslateString("%s^7 has joined the %s^7!"), cgs.clientinfo[cent->currentState.effect3Time].name, CG_TranslateString(teamstr));
 		}
 		case 1:
 			return va("%s^7 disconnected", cgs.clientinfo[cent->currentState.effect3Time].name);

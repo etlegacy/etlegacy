@@ -1012,7 +1012,6 @@ static void CG_Missile(centity_t *cent)
 	else if (s1->weapon == WP_SATCHEL && s1->clientNum == cg.snap->ps.clientNum)
 	{
 		// use snap client number so that the detonator works right when spectating (#218)
-
 		cg.satchelCharge = cent;
 	}
 	else if (s1->weapon == WP_ARTY && s1->otherEntityNum2 && s1->teamNum == cgs.clientinfo[cg.clientNum].team)
@@ -1133,6 +1132,7 @@ static void CG_Missile(centity_t *cent)
 	}
 	ent.renderfx = weapon->missileRenderfx | RF_NOSHADOW;
 
+
 	if (cent->currentState.weapon == WP_LANDMINE)
 	{
 		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
@@ -1200,7 +1200,11 @@ static void CG_Missile(centity_t *cent)
 	}
 
 	// convert direction of travel into axis
-	if (cent->currentState.weapon == WP_MORTAR_SET)
+	if (cent->currentState.weapon == WP_MORTAR_SET
+	    || cent->currentState.weapon == WP_PANZERFAUST
+	    || cent->currentState.weapon == WP_MAPMORTAR
+	    || cent->currentState.weapon == WP_GPG40
+	    || cent->currentState.weapon == WP_M7)
 	{
 		vec3_t delta;
 
@@ -1226,6 +1230,8 @@ static void CG_Missile(centity_t *cent)
 	{
 		ent.axis[0][2] = 1;
 	}
+
+	AxisToAngles(ent.axis, cent->lerpAngles);
 
 	// spin as it moves
 	if (s1->pos.trType != TR_STATIONARY)
