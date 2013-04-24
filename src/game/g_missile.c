@@ -366,8 +366,7 @@ void G_ExplodeMissile(gentity_t *ent)
 	// splash damage
 	if (ent->splashDamage)
 	{
-		vec3_t  origin;
-		trace_t tr;
+		vec3_t origin;
 
 		VectorCopy(ent->r.currentOrigin, origin);
 
@@ -375,8 +374,6 @@ void G_ExplodeMissile(gentity_t *ent)
 		{
 			origin[2] += 4;
 		}
-
-		trap_Trace(&tr, origin, vec3_origin, vec3_origin, origin, ENTITYNUM_NONE, MASK_SHOT);
 
 		if ((ent->s.weapon == WP_DYNAMITE && (ent->etpro_misc_1 & 1)) || ent->s.weapon == WP_SATCHEL)
 		{
@@ -501,7 +498,7 @@ void G_ExplodeMissile(gentity_t *ent)
 			}
 		}
 
-		// give big weapons the shakey shakey
+		// give big weapons the shakey shakey // FIXME: WP_MORTAR/SET
 		if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_PANZERFAUST || ent->s.weapon == WP_GRENADE_LAUNCHER ||
 		    ent->s.weapon == WP_GRENADE_PINEAPPLE || ent->s.weapon == WP_MAPMORTAR || ent->s.weapon == WP_ARTY || ent->s.weapon == WP_SMOKE_MARKER
 		    || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL /*|| ent->s.weapon == WP_SMOKE_BOMB*/
@@ -2186,10 +2183,19 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->splashMethodOfDeath = MOD_MAPMORTAR_SPLASH;
 	bolt->clipmask            = MASK_MISSILESHOT;
 
+	if (self->client)
+	{
+		bolt->s.clientNum = self->client->ps.clientNum;
+	}
+	else
+	{
+		bolt->s.clientNum = -1;
+	}
+
 	bolt->s.pos.trType = TR_GRAVITY;
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
 	VectorCopy(start, bolt->s.pos.trBase);
-	//VectorScale( dir, 900, bolt->s.pos.trDelta );
+
 	VectorCopy(dir, bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
 	VectorCopy(start, bolt->r.currentOrigin);

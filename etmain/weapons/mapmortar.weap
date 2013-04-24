@@ -1,0 +1,13 @@
+weaponDef
+{
+	// This basically fills out weaponInfo_t
+	client {
+		spinupSound			"sound/weapons/mortar/mortar_fire.wav"		 // sound started when fire button goes down, and stepped on when the first fire event happens
+		flashDlightColor	1 0.7 0.5
+		missileModel		"models/multiplayer/mortar/mortar_shell.md3"
+		flashSound			"sound/weapons/mortar/mortar_fire.wav"
+		missileSound		"sound/weapons/mortar/mortar_fly.wav"
+		missileTrailFunc	"GrenadeTrail"                               // supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		missileDlightColor	1 0.7 0.5
+	}
+}

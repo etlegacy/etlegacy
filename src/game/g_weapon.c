@@ -46,8 +46,6 @@ vec3_t muzzleTrace;
 void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_falloff);
 qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, float spread, int damage, qboolean distance_falloff);
 
-int G_GetWeaponDamage(int weapon);
-
 qboolean G_WeaponIsExplosive(meansOfDeath_t mod)
 {
 	switch (mod)
