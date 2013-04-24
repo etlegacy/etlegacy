@@ -1025,13 +1025,11 @@ void R_FBOList_f(void)
 	int   i;
 	FBO_t *fbo;
 
-#if !defined(USE_D3D10)
 	if (!glConfig2.framebufferObjectAvailable)
 	{
 		ri.Printf(PRINT_ALL, "GL_EXT_framebuffer_object is not available.\n");
 		return;
 	}
-#endif
 
 	ri.Printf(PRINT_ALL, "             size       name\n");
 	ri.Printf(PRINT_ALL, "----------------------------------------------------------\n");
