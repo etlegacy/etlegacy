@@ -389,7 +389,7 @@ void GLimp_InitExtraExtensions()
 		qglGenVertexArraysARB    = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glGenVertexArraysARB");
 		qglIsVertexArrayARB      = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glIsVertexArrayARB");
 
-		if(r_ext_vertex_array_object->integer)
+		if (r_ext_vertex_array_object->integer)
 		{
 			glConfig2.vertexArrayObjectAvailable = qtrue;
 			ri.Printf(PRINT_ALL, "...using GL_ARB_vertex_array_object\n");
@@ -410,7 +410,7 @@ void GLimp_InitExtraExtensions()
 	qglGetAttribLocationARB  = NULL;
 	if (GLimp_HaveExtension(extension))
 	{
-		int				reservedComponents;
+		int reservedComponents;
 
 		//qglGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB, &glConfig.maxVertexUniforms);
 		//qglGetIntegerv(GL_MAX_VARYING_FLOATS_ARB, &glConfig.maxVaryingFloats);
@@ -438,8 +438,8 @@ void GLimp_InitExtraExtensions()
 		ri.Printf(PRINT_ALL, result[1], extension);
 		//glRefConfig.vertexShader = qtrue;
 
-		reservedComponents = 16 * 10; // approximation how many uniforms we have besides the bone matrices
-		glConfig2.maxVertexSkinningBones = (int) Q_bound(0.0, (Q_max(glConfig2.maxVertexUniforms - reservedComponents, 0) / 16), MAX_BONES);
+		reservedComponents                   = 16 * 10; // approximation how many uniforms we have besides the bone matrices
+		glConfig2.maxVertexSkinningBones     = (int) Q_bound(0.0, (Q_max(glConfig2.maxVertexUniforms - reservedComponents, 0) / 16), MAX_BONES);
 		glConfig2.vboVertexSkinningAvailable = r_vboVertexSkinning->integer && ((glConfig2.maxVertexSkinningBones >= 12) ? qtrue : qfalse);
 	}
 	else
@@ -484,7 +484,7 @@ void GLimp_InitExtraExtensions()
 		{
 			glRefConfig.textureNonPowerOfTwo = qtrue;
 		}
-		
+
 		glConfig2.textureNPOTAvailable = qtrue;
 
 
@@ -525,7 +525,7 @@ void GLimp_InitExtraExtensions()
 			glRefConfig.halfFloatPixel = qtrue;
 		}
 
-		if(r_ext_half_float_pixel->integer)
+		if (r_ext_half_float_pixel->integer)
 		{
 			glConfig2.textureHalfFloatAvailable = qtrue;
 			ri.Printf(PRINT_ALL, "...using GL_ARB_half_float_pixel\n");
@@ -574,11 +574,11 @@ void GLimp_InitExtraExtensions()
 		}
 
 		glConfig2.generateMipmapAvailable = qtrue;
-		glConfig2.texture3DAvailable = qtrue;
+		glConfig2.texture3DAvailable      = qtrue;
 		glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE_EXT, &glConfig2.maxRenderbufferSize);
 		glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &glConfig2.maxColorAttachments);
 
-		if(r_ext_framebuffer_object->value)
+		if (r_ext_framebuffer_object->value)
 		{
 			glConfig2.framebufferObjectAvailable = qtrue;
 			ri.Printf(PRINT_ALL, "...using GL_EXT_framebuffer_object\n");
@@ -599,7 +599,7 @@ void GLimp_InitExtraExtensions()
 	{
 		glRefConfig.packedDepthStencil = qtrue;
 
-		if(r_ext_packed_depth_stencil->integer)
+		if (r_ext_packed_depth_stencil->integer)
 		{
 			glConfig2.framebufferPackedDepthStencilAvailable = qtrue;
 			ri.Printf(PRINT_ALL, "...using GL_EXT_packed_depth_stencil\n");
@@ -630,7 +630,7 @@ void GLimp_InitExtraExtensions()
 
 		glConfig2.occlusionQueryAvailable = qtrue;
 		qglGetQueryivARB(GL_SAMPLES_PASSED, GL_QUERY_COUNTER_BITS, &glConfig2.occlusionQueryBits);
-		
+
 		ri.Printf(PRINT_ALL, result[glRefConfig.occlusionQuery], extension);
 	}
 	else
@@ -646,7 +646,7 @@ void GLimp_InitExtraExtensions()
 		qglBlitFramebufferEXT       = (void *)SDL_GL_GetProcAddress("glBlitFramebufferEXT");
 		glRefConfig.framebufferBlit = qtrue;
 
-		if(r_ext_framebuffer_blit->integer)
+		if (r_ext_framebuffer_blit->integer)
 		{
 			glConfig2.framebufferBlitAvailable = qtrue;
 			ri.Printf(PRINT_ALL, "...using GL_EXT_framebuffer_blit\n");
@@ -698,7 +698,7 @@ void GLimp_InitExtraExtensions()
 	{
 		glRefConfig.multiTexture = qtrue;
 		qglGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &glConfig.maxActiveTextures);
-		if(glConfig.maxActiveTextures > 1)
+		if (glConfig.maxActiveTextures > 1)
 		{
 			ri.Printf(PRINT_ALL, "...using GL_ARB_multitexture\n");
 		}
@@ -722,7 +722,7 @@ void GLimp_InitExtraExtensions()
 	{
 		if (r_ext_compressed_textures->integer)
 		{
-			glRefConfig.textureCompression |= TCR_LATC;
+			glRefConfig.textureCompression          |= TCR_LATC;
 			glConfig2.ARBTextureCompressionAvailable = qtrue;
 		}
 
@@ -739,7 +739,7 @@ void GLimp_InitExtraExtensions()
 	{
 		if (r_ext_compressed_textures->integer >= 2)
 		{
-			glRefConfig.textureCompression |= TCR_BPTC;
+			glRefConfig.textureCompression          |= TCR_BPTC;
 			glConfig2.ARBTextureCompressionAvailable = qtrue;
 		}
 
@@ -759,7 +759,7 @@ void GLimp_InitExtraExtensions()
 
 		glGetIntegerv(GL_MAX_DRAW_BUFFERS_ARB, &glConfig2.maxDrawBuffers);
 
-		if(r_ext_draw_buffers->integer)
+		if (r_ext_draw_buffers->integer)
 		{
 			glConfig2.drawBuffersAvailable = qtrue;
 			ri.Printf(PRINT_ALL, "...using GL_ARB_draw_buffers\n");
@@ -792,7 +792,7 @@ void GLimp_InitExtraExtensions()
 
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glConfig2.maxTextureAnisotropy);
 
-	if(r_ext_texture_filter_anisotropic->value)
+	if (r_ext_texture_filter_anisotropic->value)
 	{
 		glConfig2.textureAnisotropyAvailable = qtrue;
 		ri.Printf(PRINT_ALL, "...using GL_EXT_texture_filter_anisotropic\n");
