@@ -823,6 +823,8 @@ void Cmd_RemoveCommand(const char *cmd_name)
 
 /**
  * @brief Only remove commands with no associated function
+ * Already removed in ETL: +button4, -button4
+ * Allowed to remove:      +lookup, +lookdown, -lookup, +lookup, configstrings
  */
 void Cmd_RemoveCommandSafe(const char *cmd_name)
 {
@@ -844,7 +846,13 @@ void Cmd_RemoveCommandSafe(const char *cmd_name)
 
 	if (!cmd)
 	{
-		Com_Printf(S_COLOR_RED "Cmd_RemoveCommandSafe called for an unknown command \"%s\"\n", cmd_name);
+		// don't nag for commands which might have been removed
+		if (!(!strcmp(cmd_name, "+lookup") || !strcmp(cmd_name, "+lookdown")
+		      || !strcmp(cmd_name, "-lookup") || !strcmp(cmd_name, "-lookdown")
+		      || !strcmp(cmd_name, "configstrings")))
+		{
+			Com_Printf(S_COLOR_RED "Cmd_RemoveCommandSafe called for an unknown command \"%s\"\n", cmd_name);
+		}
 		return;
 	}
 
@@ -857,7 +865,7 @@ void Cmd_RemoveCommandSafe(const char *cmd_name)
 	      || !strcmp(cmd_name, "-lookup") || !strcmp(cmd_name, "-lookdown")
 	      || !strcmp(cmd_name, "configstrings")))
 	{
-		Com_Printf(S_COLOR_RED "Restricted source tried to remove system command \"%s\"", cmd_name);
+		Com_Printf(S_COLOR_RED "Restricted source tried to remove system command \"%s\"\n", cmd_name);
 		return;
 	}
 
