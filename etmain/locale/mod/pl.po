@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-23 21:55+0100\n"
+"PO-Revision-Date: 2013-04-24 12:27+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -2846,7 +2846,7 @@ msgid "'s support fire"
 msgstr "'s ogien wsparcia"
 
 msgid "'s crew-served MG"
-msgstr "'s zaserwowawano zaloge MG"
+msgstr "'s zaserwowawana zaloge MG"
 
 msgid "was thrown to his doom by"
 msgstr "zostal rzucony do zaglady przez"
@@ -2904,6 +2904,18 @@ msgstr "utopil sie"
 
 msgid "Picked up %s"
 msgstr "Podniosl %s"
+
+msgid "%s^7 has joined the %s^7!"
+msgstr "%s^7 dolaczyl do %s^7!"
+
+msgid "Axis team"
+msgstr "Teamu OSi"
+
+msgid "Allied team"
+msgstr "Teamu Aliantow"
+
+msgid "Spectators"
+msgstr "Obserwatorow"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format

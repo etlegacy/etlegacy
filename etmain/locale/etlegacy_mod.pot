@@ -2860,6 +2860,18 @@ msgstr ""
 msgid "Picked up %s"
 msgstr "Podniosl %s"
 
+msgid "%s^7 has joined the %s^7!"
+msgstr ""
+
+msgid "Axis team"
+msgstr ""
+
+msgid "Allied team"
+msgstr ""
+
+msgid "Spectators"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
