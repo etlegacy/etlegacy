@@ -392,7 +392,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		return;
 	}
 	// allow MV clients see the class of its merged client's on the scoreboard
-	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR
+	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION
 #if FEATURE_MULTIVIEW
 	         || CG_mvMergedClientLocate(score->client)
 #endif
@@ -402,7 +402,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	}
 	tempx += INFO_CLASS_WIDTH;
 
-	CG_DrawSmallString(tempx, y, va("%3i", score->score), fade);
+	CG_DrawSmallString(tempx, y, va("^7%3i", score->score), fade);
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
 		tempx += INFO_SCORE_WIDTH;
@@ -544,8 +544,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	{
 		for (j = 0; j < ci->medals[i]; j++)
 		{
-			Q_strcat(buf, sizeof(buf), va("^%c%c",
-			                              COLOR_RED + i, skillNames[i][0]));
+			Q_strcat(buf, sizeof(buf), va("^%c%c", COLOR_RED + i, skillNames[i][0]));
 		}
 		maxchars--;
 	}
@@ -578,13 +577,13 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		                 MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
 		return;
 	}
-	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
 		CG_DrawPic(tempx, y - 2, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 	}
 	tempx += INFO_CLASS_WIDTH;
 
-	CG_DrawStringExt(tempx, y, va("%3i", score->score), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+	CG_DrawStringExt(tempx, y, va("^7%3i", score->score), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
 		tempx += INFO_SCORE_WIDTH;
@@ -600,7 +599,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	}
 	else if (score->scoreflags & 2)
 	{
-		CG_DrawStringExt(tempx, y, " ^4BOT", hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+		CG_DrawStringExt(tempx, y, " BOT", hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
 	}
 	else
 	{
