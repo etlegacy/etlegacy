@@ -195,7 +195,7 @@ void CG_LoadLocations(void)
 	int          fLen = trap_FS_FOpenFile(va("maps/%s_loc_override.dat", cgs.rawmapname), &f, FS_READ);     // length of the file
 	char         fBuffer[MAX_BUFFER];   // buffer to read the file into
 	char         message[64] = "\0";    // location description
-	char         temp[64]    = "\0";    // temporary buffer
+	char         temp[128]   = "\0";     // temporary buffer
 	int          x           = 0;       // x-coord of the location
 	int          y           = 0;       // y-coord of the location
 	int          z           = 0;       // z-coord of the location
