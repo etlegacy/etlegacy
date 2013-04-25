@@ -4066,7 +4066,7 @@ void SP_func_door_rotating(gentity_t *ent)
 		ent->rotate[1] = 1;
 	}
 
-	if (VectorLengthSquared(ent->rotate) > SQR(1))         // check that rotation is only set for one axis
+	if (VectorLengthSquared(ent->rotate) > Square(1))         // check that rotation is only set for one axis
 	{
 		G_Error("Too many axis marked in func_door_rotating entity. Only choose one axis of rotation. (defaulting to standard door rotation)\n");
 		VectorClear(ent->rotate);

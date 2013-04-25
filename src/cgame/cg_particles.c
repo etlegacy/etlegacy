@@ -259,7 +259,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		}
 
 		// had to do this or MAX_POLYS is being exceeded in village1.bsp
-		if (VectorDistanceSquared(cg.snap->ps.origin, org) > SQR(1024))
+		if (VectorDistanceSquared(cg.snap->ps.origin, org) > Square(1024))
 		{
 			return;
 		}
@@ -430,7 +430,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		vec3_t rup2;
 		float  invratio;
 
-		if (p->type == P_SMOKE_IMPACT && VectorDistanceSquared(cg.snap->ps.origin, org) > SQR(1024))
+		if (p->type == P_SMOKE_IMPACT && VectorDistanceSquared(cg.snap->ps.origin, org) > Square(1024))
 		{
 			return;
 		}
@@ -483,8 +483,8 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 
 			if (p->color == EMISIVEFADE)
 			{
-				float fval;
-				fval = (invratio * invratio);
+				float fval = invratio * invratio;
+
 				if (fval < 0)
 				{
 					fval = 0;
@@ -599,9 +599,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	{
 		vec3_t rr, ru;
 		vec3_t rotate_ang;
-		float  alpha;
-
-		alpha = p->alpha;
+		float  alpha = p->alpha;
 
 		if (p->roll)
 		{
@@ -805,7 +803,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		}
 
 		// if we are "inside" this sprite, don't draw
-		if (VectorDistanceSquared(cg.snap->ps.origin, org) < SQR(width / 1.5f))
+		if (VectorDistanceSquared(cg.snap->ps.origin, org) < Square(width / 1.5f))
 		{
 			return;
 		}
@@ -1337,8 +1335,8 @@ void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 		p->endwidth  = cent->currentState.angles2[1];
 
 		{
-			int rval;
-			rval = rand() % 6;
+			int rval = rand() % 6;
+
 			if (rval == 1)
 			{
 				p->pshader = cgs.media.smokePuffShaderb1;
@@ -2003,12 +2001,9 @@ qboolean ValidBloodPool(vec3_t start)
 	vec3_t  right, up;
 	vec3_t  this_pos, x_pos, center_pos, end_pos;
 	float   x, y;
-	float   fwidth, fheight;
+	float   fwidth = 16, fheight = 16;
 	trace_t trace;
 	vec3_t  normal;
-
-	fwidth  = 16;
-	fheight = 16;
 
 	VectorSet(normal, 0, 0, 1);
 

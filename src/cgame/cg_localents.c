@@ -1303,7 +1303,7 @@ void CG_AddDebrisElements(localEntity_t *le)
 		{
 			// reflect the velocity on the trace plane
 			CG_ReflectVelocity(le, &trace);
-			if (VectorLengthSquared(le->pos.trDelta) < SQR(1))
+			if (VectorLengthSquared(le->pos.trDelta) < Square(1))
 			{
 				CG_FreeLocalEntity(le);
 				return;
