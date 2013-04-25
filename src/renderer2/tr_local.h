@@ -4132,8 +4132,6 @@ extern cvar_t *r_portalSky;
 extern cvar_t *r_subdivisions;
 extern cvar_t *r_stitchCurves;
 
-extern cvar_t *r_smp;
-extern cvar_t *r_showSmp;
 extern cvar_t *r_skipBackEnd;
 extern cvar_t *r_skipLightBuffer;
 

@@ -68,8 +68,6 @@ cvar_t *r_displayRefresh;
 cvar_t *r_znear;
 cvar_t *r_zfar;
 
-cvar_t *r_smp;
-cvar_t *r_showSmp;
 cvar_t *r_skipBackEnd;
 cvar_t *r_skipLightBuffer;
 
@@ -1474,8 +1472,6 @@ void R_Register(void)
 	r_forceAmbient = ri.Cvar_Get("r_forceAmbient", "0.125", CVAR_ARCHIVE | CVAR_LATCH);
 	AssertCvarRange(r_forceAmbient, 0.0f, 0.3f, qfalse);
 
-	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
-
 	// temporary latched variables that can only change over a restart
 	r_displayRefresh = ri.Cvar_Get("r_displayRefresh", "0", CVAR_LATCH);
 	AssertCvarRange(r_displayRefresh, 0, 200, qtrue);
@@ -1610,7 +1606,6 @@ void R_Register(void)
 	r_flareSize = ri.Cvar_Get("r_flareSize", "40", CVAR_CHEAT);
 	r_flareFade = ri.Cvar_Get("r_flareFade", "7", CVAR_CHEAT);
 
-	r_showSmp         = ri.Cvar_Get("r_showSmp", "0", CVAR_CHEAT);
 	r_skipBackEnd     = ri.Cvar_Get("r_skipBackEnd", "0", CVAR_CHEAT);
 	r_skipLightBuffer = ri.Cvar_Get("r_skipLightBuffer", "0", CVAR_CHEAT);
 
@@ -1841,17 +1836,8 @@ void R_Init(void)
 	backEndData[0]->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxPolyVerts->integer * sizeof(polyVert_t), h_low);
 	backEndData[0]->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxPolys->integer * sizeof(srfPolyBuffer_t), h_low);
 
-	if (r_smp->integer)
-	{
-		backEndData[1]              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData[1]), h_low);
-		backEndData[1]->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxPolys->integer * sizeof(srfPoly_t), h_low);
-		backEndData[1]->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxPolyVerts->integer * sizeof(polyVert_t), h_low);
-		backEndData[1]->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxPolys->integer * sizeof(srfPolyBuffer_t), h_low);
-	}
-	else
-	{
-		backEndData[1] = NULL;
-	}
+	//SMP removed
+	backEndData[1] = NULL;
 
 	R_ToggleSmpFrame();
 

@@ -3405,7 +3405,7 @@ static void R_CreateBlackCubeImage(void)
 	int  width, height;
 	byte *data[6];
 
-	return;
+	//return;
 
 	ri.Printf(PRINT_ALL, "STARTS R_CreateBlackCubeImage\n");
 
@@ -3423,7 +3423,7 @@ static void R_CreateBlackCubeImage(void)
 
 	for (i = 5; i >= 0; i--)
 	{
-		ri.Hunk_FreeTempMemory(data[i]);
+		//ri.Hunk_FreeTempMemory(data[i]);
 	}
 }
 // *INDENT-ON*
@@ -3435,7 +3435,7 @@ static void R_CreateWhiteCubeImage(void)
 	int  width, height;
 	byte *data[6];
 
-	return;
+	//return;
 
 	width  = REF_CUBEMAP_SIZE;
 	height = REF_CUBEMAP_SIZE;
@@ -3450,7 +3450,7 @@ static void R_CreateWhiteCubeImage(void)
 
 	for (i = 5; i >= 0; i--)
 	{
-		ri.Hunk_FreeTempMemory(data[i]);
+		//ri.Hunk_FreeTempMemory(data[i]);
 	}
 }
 // *INDENT-ON*

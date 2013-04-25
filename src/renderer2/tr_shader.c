@@ -5525,13 +5525,6 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		}
 	}
 
-	// make sure the render thread is stopped, because we are probably
-	// going to have to upload an image
-	if (r_smp->integer)
-	{
-		R_IssuePendingRenderCommands();
-	}
-
 	// clear the global shader
 	Com_Memset(&shader, 0, sizeof(shader));
 	Com_Memset(&stages, 0, sizeof(stages));
@@ -5688,13 +5681,6 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, image_t *image, qboolean 
 			// match found
 			return sh->index;
 		}
-	}
-
-	// make sure the render thread is stopped, because we are probably
-	// going to have to upload an image
-	if (r_smp->integer)
-	{
-		R_IssuePendingRenderCommands();
 	}
 
 	// clear the global shader
