@@ -65,6 +65,8 @@ extern "C" {
 
 #define MAX_MASTER_SERVERS      5   // number of supported master servers
 
+#define SLASH_COMMAND 1 //Will the client require a '/' sign in front of commands
+
 #ifdef _MSC_VER
 
 #pragma warning(disable : 4018) // signed/unsigned mismatch

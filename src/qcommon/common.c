@@ -3644,7 +3644,7 @@ void Field_CompleteCommand(char *cmd,
 		completionString = Cmd_Argv(completionArgument - 1);
 	}
 
-#if 0
+#if SLASH_COMMAND
 #ifndef DEDICATED
 	// Unconditionally add a '\' to the start of the buffer
 	if (completionField->buffer[0] &&
@@ -3675,7 +3675,7 @@ void Field_CompleteCommand(char *cmd,
 		const char *baseCmd = Cmd_Argv(0);
 		char       *p;
 
-#if 0
+#if SLASH_COMMAND
 #ifndef DEDICATED
 		// This should always be true
 		if (baseCmd[0] == '\\' || baseCmd[0] == '/')
@@ -3696,7 +3696,7 @@ void Field_CompleteCommand(char *cmd,
 	}
 	else
 	{
-#if 0
+#if SLASH_COMMAND
 		if (completionString[0] == '\\' || completionString[0] == '/')
 		{
 			completionString++;
