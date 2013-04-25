@@ -556,7 +556,10 @@ include_directories(${PROJECT_BINARY_DIR}/include) # git_version.h
 
 if(BUILD_CLIENT)
 	add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
-	source_group("Source Files\\Renderer" FILES ${RENDERER_FILES})
+	#source_group("Source Files\\Renderer" FILES ${RENDERER_FILES})
+	source_group("Source Files\\Renderer" FILES ${RENDERER1_FILES})
+	source_group("Source Files\\Renderer2" FILES ${RENDERER2_FILES})
+	source_group("Source Files\\RendererCommon" FILES ${RENDERER_COMMON})
 	source_group("Source Files\\Client" FILES ${CLIENT_FILES})
 	source_group("Source Files\\Server" FILES ${SERVER_FILES})
 	source_group("Source Files\\System" FILES ${SYSTEM_FILES})
