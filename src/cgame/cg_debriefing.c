@@ -1843,7 +1843,7 @@ qboolean CG_Debriefing_Draw(void)
 			cgs.dbSortedClients[i] = i;
 		}
 
-		qsort(cgs.dbSortedClients, MAX_CLIENTS, sizeof(int), CG_SortPlayersByXP);
+		qsort(cgs.dbSortedClients, cgs.maxclients, sizeof(int), CG_SortPlayersByXP);
 
 		BG_PanelButtonsRender(debriefPanelButtons);
 		BG_PanelButtonsRender(chatPanelButtons);
@@ -1864,7 +1864,7 @@ qboolean CG_DebriefingPlayerList_KeyDown(panel_button_t *button, int key)
 	if (key == K_MOUSE1)
 	{
 		int pos = ((cgs.cursorY - DH_HEADING_Y) / 12) + cgs.dbPlayerListOffset;
-		if (pos < 0 || pos >= MAX_CLIENTS)
+		if (pos < 0 || pos >= cgs.maxclients)
 		{
 			return qfalse;
 		}
@@ -2034,21 +2034,25 @@ void CG_DebriefingXPHeader_Draw(panel_button_t *button)
 	}
 }
 
+static vec4_t clrSelectedClient = { 1.f, 1.f, 1.f, 0.3f };
+
 void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 {
-	int     i, j;
-	float   y      = button->rect.y + 12;
-	score_t *score = NULL;
+	int          i, j;
+	float        y      = button->rect.y + 12;
+	score_t      *score = NULL;
+	clientInfo_t *ci;
 
-	for (i = 0; i + cgs.dbPlayerListOffset < MAX_CLIENTS && i < 24; i++)
+	for (i = 0; i + cgs.dbPlayerListOffset < cgs.maxclients && i < 24; i++)
 	{
-		clientInfo_t *ci = &cgs.clientinfo[cgs.dbSortedClients[i + cgs.dbPlayerListOffset]];
+		ci = &cgs.clientinfo[cgs.dbSortedClients[i + cgs.dbPlayerListOffset]];
+
 		if (!ci->infoValid)
 		{
 			break;
 		}
 
-		for (j = 0; j < MAX_CLIENTS; j++)
+		for (j = 0; j < cgs.maxclients; j++)
 		{
 			if (cg.scores[j].client == cgs.dbSortedClients[i + cgs.dbPlayerListOffset])
 			{
@@ -2056,15 +2060,14 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 				break;
 			}
 		}
-		if (j == MAX_CLIENTS)
+		if (j == cgs.maxclients)
 		{
 			continue;
 		}
 
 		if (cgs.dbSelectedClient == cgs.dbSortedClients[i + cgs.dbPlayerListOffset])
 		{
-			vec4_t clr = { 1.f, 1.f, 1.f, 0.3f };
-			CG_FillRect(button->rect.x, y - 10, 640 - 10 - 8 - 16 - button->rect.x + cgs.wideXoffset, 12, clr);
+			CG_FillRect(button->rect.x, y - 10, 640 - 10 - 8 - 16 - button->rect.x + cgs.wideXoffset, 12, clrSelectedClient);
 		}
 
 		CG_Text_Paint_Ext(DB_RANK_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_RankNameForClientInfo(ci), 0, 0, 0, button->font->font);
@@ -2140,7 +2143,7 @@ void CG_Debriefing_ParseWeaponAccuracies(void)
 {
 	int i;
 
-	for (i = 0; i < MAX_CLIENTS; i++)
+	for (i = 0; i < cgs.maxclients; i++)
 	{
 		cgs.clientinfo[i].totalWeapAcc = atoi(CG_Argv(i + 1));
 	}
@@ -2151,7 +2154,7 @@ void CG_Debriefing_ParsePlayerKillsDeaths(void)
 {
 	int i;
 
-	for (i = 0; i < MAX_CLIENTS; i++)
+	for (i = 0; i < cgs.maxclients; i++)
 	{
 		cgs.clientinfo[i].kills  = atoi(CG_Argv(i * 2 + 1));
 		cgs.clientinfo[i].deaths = atoi(CG_Argv(i * 2 + 2));
@@ -2231,14 +2234,14 @@ int CG_Debriefing_ScrollGetCount(panel_button_t *button)
 	switch (button->data[0])
 	{
 	case 0:     // player list
-		for (i = 0; i < MAX_CLIENTS; i++)
+		for (i = 0; i < cgs.maxclients; i++)
 		{
 			if (!cgs.clientinfo[cgs.dbSortedClients[i]].infoValid)
 			{
 				return i;
 			}
 		}
-		return MAX_CLIENTS;
+		return cgs.maxclients;
 	case 1:
 		if (!cgs.dbWeaponStatsRecieved)
 		{
@@ -2554,7 +2557,7 @@ void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 	int     i;
 	float   w;
 
-	for (i = 0; i < MAX_CLIENTS; i++)
+	for (i = 0; i < cgs.maxclients; i++)
 	{
 		if (cg.scores[i].client == cgs.dbSelectedClient)
 		{
@@ -2615,7 +2618,7 @@ clientInfo_t *CG_Debriefing_GetSelectedClientInfo(void)
 {
 	clientInfo_t *ci;
 
-	if (cgs.dbSelectedClient < 0 || cgs.dbSelectedClient > MAX_CLIENTS)
+	if (cgs.dbSelectedClient < 0 || cgs.dbSelectedClient >= cgs.maxclients)
 	{
 		CG_Debrieing_SetSelectedClient(cg.clientNum);
 	}
@@ -2632,7 +2635,7 @@ clientInfo_t *CG_Debriefing_GetSelectedClientInfo(void)
 
 void CG_Debrieing_SetSelectedClient(int clientNum)
 {
-	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
+	if (clientNum < 0 || clientNum >= cgs.maxclients)
 	{
 		return;
 	}
