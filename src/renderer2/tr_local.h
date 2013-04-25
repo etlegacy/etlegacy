@@ -502,12 +502,9 @@ typedef struct image_s
 	// can contain stuff like this now:
 	// addnormals ( textures/base_floor/stetile4_local.tga ,
 	// heightmap ( textures/base_floor/stetile4_bmp.tga , 4 ) )
-#if defined(USE_D3D10)
-	// TODO
-#else
 	GLenum type;
 	GLuint texnum;              // gl texture binding
-#endif
+
 	uint16_t width, height;         // source image
 	uint16_t uploadWidth, uploadHeight;         // after power of two and picmip but not including clamp to MAX_TEXTURE_SIZE
 
@@ -1321,7 +1318,6 @@ enum
 
 // Tr3B - shaderProgram_t represents a pair of one
 // GLSL vertex and one GLSL fragment shader
-#if !defined(USE_D3D10)
 
 typedef struct shaderProgram_s
 {
@@ -2376,17 +2372,6 @@ static ID_INLINE void GLSL_SetUniform_Time(shaderProgram_t *program, float value
 
 // *INDENT-ON*
 
-#endif // #if !defined(USE_D3D10)
-
-
-
-
-
-
-
-
-
-
 // trRefdef_t holds everything that comes in refdef_t,
 // as well as the locally generated scene information
 typedef struct
@@ -3007,11 +2992,9 @@ typedef struct bspNode_s
 	int volumeVerts;
 	int volumeIndexes;
 
-#if 1 //!defined(USE_D3D10)
 	uint32_t occlusionQueryObjects[MAX_VIEWS];
 	int occlusionQuerySamples[MAX_VIEWS];               // visible fragment count
 	int occlusionQueryNumbers[MAX_VIEWS];               // for debugging
-#endif
 
 	// node specific
 	cplane_t *plane;
@@ -3585,23 +3568,7 @@ typedef struct
 
 #define MAX_GLSTACK         5
 
-// the renderer front end should never modify glState_t or dxGlobals_t
-#if defined(USE_D3D10)
-typedef struct
-{
-	D3D10_DRIVER_TYPE driverType;      // = D3D10_DRIVER_TYPE_NULL;
-	ID3D10Device *d3dDevice;
-	IDXGISwapChain *swapChain;
-	ID3D10RenderTargetView *renderTargetView;
-
-	ID3D10Effect *genericEffect;
-	ID3D10EffectTechnique *genericTechnique;
-
-	ID3D10InputLayout *vertexLayout;
-	ID3D10Buffer *vertexBuffer;
-}
-dxGlobals_t;
-#else
+// the renderer front end should never modify glState_t
 typedef struct
 {
 	int blendSrc, blendDst;
@@ -3643,7 +3610,6 @@ typedef struct
 	VBO_t *currentVBO;
 	IBO_t *currentIBO;
 } glstate_t;
-#endif // !defined(USE_D3D10)
 
 typedef struct
 {
@@ -3981,11 +3947,7 @@ extern trGlobals_t    tr;
 extern glconfig_t     glConfig; // outside of TR since it shouldn't be cleared during ref re-init
 extern glconfig2_t    glConfig2;
 
-#if defined(USE_D3D10)
-extern dxGlobals_t dx;
-#else
 extern glstate_t glState;       // outside of TR since it shouldn't be cleared during ref re-init
-#endif
 
 // These three variables should live inside glConfig but can't because of compatibility issues to the original ID vms.
 // If you release a stand-alone game and your mod uses tr_types.h from this build you can safely move them to
@@ -4377,7 +4339,6 @@ OpenGL WRAPPERS, tr_backend.c
 
 ====================================================================
 */
-#if !defined(USE_D3D10)
 void            GL_Bind(image_t *image);
 void            GL_BindNearestCubeMap(const vec3_t xyz);
 void            GL_Unbind();
@@ -4417,9 +4378,6 @@ void            GL_State(uint32_t stateVector);
 void            GL_VertexAttribsState(uint32_t stateBits);
 void            GL_VertexAttribPointers(uint32_t attribBits);
 void            GL_Cull(int cullType);
-#endif // !defined(USE_D3D10)
-
-
 
 /*
 ====================================================================
@@ -4618,10 +4576,8 @@ typedef struct shaderCommands_s
 
 extern shaderCommands_t tess;
 
-#if !defined(USE_D3D10)
 void            GLSL_InitGPUShaders();
 void            GLSL_ShutdownGPUShaders();
-#endif
 
 // *INDENT-OFF*
 void            Tess_Begin(void (*stageIteratorFunc)(),

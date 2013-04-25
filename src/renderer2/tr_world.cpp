@@ -1160,12 +1160,7 @@ static void R_UpdateClusterSurfaces()
 				vboSurf->vbo = tr.world->vbo;
 				vboSurf->ibo = ibo = (IBO_t *) ri.Hunk_Alloc(sizeof(*ibo), h_low);
 
-#if defined(USE_D3D10)
-				// TODO
-#else
 				glGenBuffersARB(1, &ibo->indexesVBO);
-#endif
-
 				Com_AddToGrowList(&tr.world->clusterVBOSurfaces[tr.visIndex], vboSurf);
 			}
 
@@ -1191,11 +1186,8 @@ static void R_UpdateClusterSurfaces()
 			ibo->indexesSize = indexesSize;
 
 			R_BindIBO(ibo);
-#if defined(USE_D3D10)
-			// TODO
-#else
+
 			glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexesSize, indexes, GL_DYNAMIC_DRAW_ARB);
-#endif
 			R_BindNullIBO();
 
 			//GL_CheckErrors();

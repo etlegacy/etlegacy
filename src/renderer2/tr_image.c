@@ -36,10 +36,8 @@
 static byte          s_intensitytable[256];
 static unsigned char s_gammatable[256];
 
-#if !defined(USE_D3D10)
 int gl_filter_min = GL_LINEAR_MIPMAP_NEAREST;
 int gl_filter_max = GL_LINEAR;
-#endif
 
 image_t *r_imageHashTable[IMAGE_FILE_HASH_SIZE];
 
@@ -56,8 +54,6 @@ void R_GammaCorrect(byte *buffer, int bufSize)
 	}
 }
 
-
-#if !defined(USE_D3D10)
 typedef struct
 {
 	char *name;
@@ -73,7 +69,6 @@ textureMode_t modes[] =
 	{ "GL_NEAREST_MIPMAP_LINEAR",  GL_NEAREST_MIPMAP_LINEAR,  GL_NEAREST },
 	{ "GL_LINEAR_MIPMAP_LINEAR",   GL_LINEAR_MIPMAP_LINEAR,   GL_LINEAR  }
 };
-#endif
 
 
 /*
@@ -226,10 +221,6 @@ void R_ImageList_f(void)
 		ri.Printf(PRINT_ALL, "%4i: %4i %4i  %s   ",
 		          i, image->uploadWidth, image->uploadHeight, yesno[image->filterType == FT_DEFAULT]);
 
-
-#if defined(USE_D3D10)
-		// TODO
-#else
 		switch (image->type)
 		{
 		case GL_TEXTURE_2D:
@@ -354,7 +345,6 @@ void R_ImageList_f(void)
 			imageDataSize *= 4;
 			break;
 		}
-#endif
 
 		switch (image->wrapType)
 		{
@@ -1072,9 +1062,6 @@ R_UploadImage
 */
 void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 {
-#if defined(USE_D3D10)
-	// TODO
-#else
 	const byte *data         = dataArray[0];
 	byte       *scaledBuffer = NULL;
 	int        scaledWidth, scaledHeight;
@@ -1513,7 +1500,6 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 	{
 		ri.Hunk_FreeTempMemory(scaledBuffer);
 	}
-#endif // defined(USE_D3D10)
 }
 
 
@@ -1539,12 +1525,7 @@ image_t *R_AllocImage(const char *name, qboolean linkIntoHashTable)
 	image = ri.Hunk_Alloc(sizeof(image_t), h_low);
 	Com_Memset(image, 0, sizeof(image_t));
 
-#if defined(USE_D3D10)
-	// TODO
-#else
-	glGenTextures(1, &image->texnum);
-#endif
-
+	qglGenTextures(1, &image->texnum);
 	Com_AddToGrowList(&tr.images, image);
 
 	Q_strncpyz(image->name, name, sizeof(image->name));
@@ -1577,12 +1558,7 @@ image_t *R_CreateImage(const char *name,
 		return NULL;
 	}
 
-#if defined(USE_D3D10)
-	// TODO
-#else
-	image->type = GL_TEXTURE_2D;
-#endif
-
+	image->type   = GL_TEXTURE_2D;
 	image->width  = width;
 	image->height = height;
 
@@ -1590,21 +1566,11 @@ image_t *R_CreateImage(const char *name,
 	image->filterType = filterType;
 	image->wrapType   = wrapType;
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	GL_Bind(image);
-#endif
-
 	R_UploadImage(&pic, 1, image);
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	//GL_Unbind();
 	glBindTexture(image->type, 0);
-#endif
-
 	return image;
 }
 
@@ -2235,9 +2201,6 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 		}
 	}
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	if (glConfig.textureCompression == TC_S3TC && !(bits & IF_NOCOMPRESSION) && Q_stricmpn(imageName, "fonts", 5))
 	{
 		Q_strncpyz(ddsName, imageName, sizeof(ddsName));
@@ -2252,7 +2215,6 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 			return image;
 		}
 	}
-#endif
 
 #if 0
 	else if (r_tryCachedDDSImages->integer && !(bits & IF_NOCOMPRESSION) && Q_strncasecmp(name, "fonts", 5))
@@ -2546,10 +2508,6 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 		}
 	}
 
-
-#if defined(USE_D3D10)
-	// TODO
-#else
 	if (glConfig.textureCompression == TC_S3TC && !(bits & IF_NOCOMPRESSION) && Q_stricmpn(imageName, "fonts", 5))
 	{
 		Q_strncpyz(ddsName, imageName, sizeof(ddsName));
@@ -2564,7 +2522,6 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 			return image;
 		}
 	}
-#endif
 
 #if 0
 	else if (r_tryCachedDDSImages->integer && !(bits & IF_NOCOMPRESSION) && Q_strncasecmp(name, "fonts", 5))

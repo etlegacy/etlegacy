@@ -3418,9 +3418,6 @@ Visualization aid for movement clipping debugging
 */
 static void R_DebugGraphics(void)
 {
-#if defined(USE_D3D10)
-	// TODO
-#else
 	if (r_debugSurface->integer)
 	{
 		// the render thread can't make callbacks to the main thread
@@ -3432,7 +3429,6 @@ static void R_DebugGraphics(void)
 		GL_Cull(CT_FRONT_SIDED);
 		ri.CM_DrawDebugSurface(R_DebugPolygon);
 	}
-#endif
 }
 
 

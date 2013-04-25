@@ -476,12 +476,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	}
 
 	GLimp_LogComment("--- RE_BeginFrame ---\n");
-
-#if defined(USE_D3D10)
-	// TODO
-#else
 	glState.finishCalled = qfalse;
-#endif
 
 	tr.frameCount++;
 	tr.frameSceneNum = 0;

@@ -505,12 +505,7 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 	tr.visIndex = 0;
 	memset(tr.visClusters, -2, sizeof(tr.visClusters)); // force markleafs to regenerate
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	R_ClearFlares();
-#endif
-
 	RE_ClearScene();
 
 	// HACK: give world entity white color for "colored" shader keyword

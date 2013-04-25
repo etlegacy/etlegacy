@@ -9235,13 +9235,7 @@ void GL_BindNearestCubeMap(const vec3_t xyz)
 			maxDistance      = distance;
 		}
 	}
-#endif
-
-#if defined(USE_D3D10)
-	// TODO
-#else
 	GL_Bind(tr.autoCubeImage);
-#endif
 }
 
 void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeNearest, cubemapProbe_t **cubeProbeSecondNearest)
@@ -9705,11 +9699,6 @@ void R_BuildCubeMaps(void)
 				}
 			}
 		}
-
-#if defined(USE_D3D10)
-		// TODO
-		continue;
-#else
 		// build the cubemap
 		//cubeProbe->cubemap = R_CreateCubeImage(va("_autoCube%d", j), (const byte **)tr.cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
 		cubeProbe->cubemap = R_AllocImage(va("_autoCube%d", j), qfalse);
@@ -9733,69 +9722,69 @@ void R_BuildCubeMaps(void)
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
 #endif
-	}
-	ri.Printf(PRINT_ALL, "\n");
+}
+ri.Printf(PRINT_ALL, "\n");
 
-	// turn pixel targets off
-	tr.refdef.pixelTarget = NULL;
+// turn pixel targets off
+tr.refdef.pixelTarget = NULL;
 
 
-	// assign the surfs a cubemap
+// assign the surfs a cubemap
 #if 0
-	for (i = 0; i < tr.world->numnodes; i++)
+for (i = 0; i < tr.world->numnodes; i++)
+{
+	msurface_t **mark;
+	msurface_t *surf;
+
+	if (tr.world->nodes[i].contents != CONTENTS_SOLID)
 	{
-		msurface_t **mark;
-		msurface_t *surf;
-
-		if (tr.world->nodes[i].contents != CONTENTS_SOLID)
+		mark = tr.world->nodes[i].firstmarksurface;
+		j    = tr.world->nodes[i].nummarksurfaces;
+		while (j--)
 		{
-			mark = tr.world->nodes[i].firstmarksurface;
-			j    = tr.world->nodes[i].nummarksurfaces;
-			while (j--)
+			int dist = 9999999;
+			int best = 0;
+
+			surf = *mark;
+			mark++;
+			sv = (void *)surf->data;
+			if (sv->surfaceType != SF_STATIC)
 			{
-				int dist = 9999999;
-				int best = 0;
-
-				surf = *mark;
-				mark++;
-				sv = (void *)surf->data;
-				if (sv->surfaceType != SF_STATIC)
-				{
-					continue;   //
-				}
-				if (sv->numIndices == 0 || sv->numVerts == 0)
-				{
-					continue;
-				}
-				if (sv->cubemap != NULL)
-				{
-					continue;
-				}
-
-				for (x = 0; x < tr.cubeProbesCount; x++)
-				{
-					vec3_t pos;
-
-					pos[0] = tr.cubeProbes[x].origin[0] - sv->origin[0];
-					pos[1] = tr.cubeProbes[x].origin[1] - sv->origin[1];
-					pos[2] = tr.cubeProbes[x].origin[2] - sv->origin[2];
-
-					distance = VectorLength(pos);
-					if (distance < dist)
-					{
-						dist = distance;
-						best = x;
-					}
-				}
-				sv->cubemap = tr.cubeProbes[best].cubemap;
+				continue;       //
 			}
+			if (sv->numIndices == 0 || sv->numVerts == 0)
+			{
+				continue;
+			}
+			if (sv->cubemap != NULL)
+			{
+				continue;
+			}
+
+			for (x = 0; x < tr.cubeProbesCount; x++)
+			{
+				vec3_t pos;
+
+				pos[0] = tr.cubeProbes[x].origin[0] - sv->origin[0];
+				pos[1] = tr.cubeProbes[x].origin[1] - sv->origin[1];
+				pos[2] = tr.cubeProbes[x].origin[2] - sv->origin[2];
+
+				distance = VectorLength(pos);
+				if (distance < dist)
+				{
+					dist = distance;
+					best = x;
+				}
+			}
+			sv->cubemap = tr.cubeProbes[best].cubemap;
 		}
 	}
+}
 #endif
 
-	endTime = ri.Milliseconds();
-	ri.Printf(PRINT_ALL, "cubemap probes pre-rendering time of %i cubes = %5.2f seconds\n", tr.cubeProbes.currentElements,
-	          (endTime - startTime) / 1000.0);
+endTime = ri.Milliseconds();
+ri.Printf(PRINT_ALL, "cubemap probes pre-rendering time of %i cubes = %5.2f seconds\n", tr.cubeProbes.currentElements,
+          (endTime - startTime) / 1000.0);
 
 #endif
 }
