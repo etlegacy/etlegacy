@@ -451,17 +451,14 @@ A new item was picked up this frame
 */
 static void CG_ItemPickup(int itemNum)
 {
-	int itemid;
+	int itemid = bg_itemlist[itemNum].giTag;
 	int wpbank_cur, wpbank_pickup;
-
-	itemid = bg_itemlist[itemNum].giTag;
 
 	CG_AddPMItem(PM_MESSAGE, va(CG_TranslateString("Picked up %s"), CG_PickupItemText(itemNum)), cgs.media.pmImages[PM_MESSAGE]);
 
 	// see if it should be the grabbed weapon
 	if (bg_itemlist[itemNum].giType == IT_WEAPON)
 	{
-
 		if (cg_autoswitch.integer && cg.predictedPlayerState.weaponstate != WEAPON_RELOADING)
 		{
 			//  0 - "Off"
@@ -518,13 +515,9 @@ static void CG_ItemPickup(int itemNum)
 							}
 						}
 					}   // end 3
-
 				}   // end cg_autoswitch.integer != 1
-
 			}
-
 		}   // end cg_autoswitch.integer
-
 	}   // end bg_itemlist[itemNum].giType == IT_WEAPON
 }
 
@@ -535,9 +528,6 @@ CG_PainEvent
 Also called by playerstate transition
 ================
 */
-
-#define PEFOFS(x) ((int)&(((playerEntity_t *)0)->x))
-
 void CG_PainEvent(centity_t *cent, int health, qboolean crouching)
 {
 	// don't do more than two pain sounds a second
@@ -648,25 +638,28 @@ void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 	}
 	else
 	{
-		sfxHandle_t sound;
-
 		if (cent->currentState.dl_intensity == -1)
 		{
-			sound = 0;
+			CG_Explodef(origin,
+			            dir,
+			            cent->currentState.density,             // mass
+			            cent->currentState.frame,               // type
+			            0,                                      // sound
+			            cent->currentState.weapon,              // forceLowGrav
+			            shader
+			            );
 		}
 		else
 		{
-			sound = CG_GetGameSound(cent->currentState.dl_intensity);
+			CG_Explodef(origin,
+			            dir,
+			            cent->currentState.density,             // mass
+			            cent->currentState.frame,               // type
+			            CG_GetGameSound(cent->currentState.dl_intensity), // sound
+			            cent->currentState.weapon,              // forceLowGrav
+			            shader
+			            );
 		}
-
-		CG_Explodef(origin,
-		            dir,
-		            cent->currentState.density,             // mass
-		            cent->currentState.frame,               // type
-		            sound,                                  // sound
-		            cent->currentState.weapon,              // forceLowGrav
-		            shader
-		            );
 	}
 }
 
@@ -718,27 +711,32 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 	}
 	else
 	{
-		sfxHandle_t sound;
-
 		if (cent->currentState.dl_intensity == -1)
 		{
-			sound = 0;
+			CG_RubbleFx(origin,
+			            dir,
+			            cent->currentState.density,             // mass
+			            cent->currentState.frame,               // type
+			            0,                                  // sound
+			            cent->currentState.weapon,              // forceLowGrav
+			            shader,
+			            cent->currentState.angles2[0],
+			            cent->currentState.angles2[1]
+			            );
 		}
 		else
 		{
-			sound = CG_GetGameSound(cent->currentState.dl_intensity);
+			CG_RubbleFx(origin,
+			            dir,
+			            cent->currentState.density,             // mass
+			            cent->currentState.frame,               // type
+			            CG_GetGameSound(cent->currentState.dl_intensity),                                  // sound
+			            cent->currentState.weapon,              // forceLowGrav
+			            shader,
+			            cent->currentState.angles2[0],
+			            cent->currentState.angles2[1]
+			            );
 		}
-
-		CG_RubbleFx(origin,
-		            dir,
-		            cent->currentState.density,             // mass
-		            cent->currentState.frame,               // type
-		            sound,                                  // sound
-		            cent->currentState.weapon,              // forceLowGrav
-		            shader,
-		            cent->currentState.angles2[0],
-		            cent->currentState.angles2[1]
-		            );
 	}
 }
 
@@ -1480,7 +1478,6 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				le->pos.trDelta[0] += ((random() * 100) - 50);
 				le->pos.trDelta[1] += ((random() * 100) - 50);
 				le->pos.trDelta[2]  = (random() * 200) + 200;
-
 			}
 			else
 			{
@@ -1535,6 +1532,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 	{
 		int    i, j;
 		vec3_t sprVel, sprOrg;
+
 		// explosion sprite animation
 		VectorScale(dir, 16, sprVel);
 		for (i = 0; i < 5; i++)
@@ -2375,28 +2373,21 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		if (es->number == cg.snap->ps.clientNum)
 		{
-			int newweap = 0;
-
 			// client will get this message if reloading while using an alternate weapon
 			// client should voluntarily switch back to primary at that point
 			switch (es->weapon)
 			{
 			case WP_FG42SCOPE:
-				newweap = WP_FG42;
+				CG_FinishWeaponChange(es->weapon, WP_FG42);
 				break;
 			case WP_GARAND_SCOPE:
-				newweap = WP_GARAND;
+				CG_FinishWeaponChange(es->weapon, WP_GARAND);
 				break;
 			case WP_K43_SCOPE:
-				newweap = WP_K43;
+				CG_FinishWeaponChange(es->weapon, WP_K43);
 				break;
 			default:
 				break;
-			}
-
-			if (newweap)
-			{
-				CG_FinishWeaponChange(es->weapon, newweap);
 			}
 		}
 		break;
@@ -3195,11 +3186,6 @@ void CG_CheckEvents(centity_t *cent)
 		{
 			return; // already fired
 		}
-		// if this is a player event set the entity number of the client entity number
-		// note: EF_PLAYER_EVENT never set
-		//if ( cent->currentState.eFlags & EF_PLAYER_EVENT ) {
-		//	cent->currentState.number = cent->currentState.otherEntityNum;
-		//}
 
 		cent->previousEvent      = 1;
 		cent->currentState.event = cent->currentState.eType - ET_EVENTS;
