@@ -495,7 +495,8 @@ void CG_GameStatsDraw(void)
 	}
 	else
 	{
-		int         i, x = GS_X + 4, y = GS_Y, h;
+		int         realX = (Ccg_WideX(640) / 2) - (GS_W / 2);
+		int         i, x = realX + 4, y = GS_Y, h;
 		gameStats_t *gs = &cgs.gamestats;
 
 		vec4_t bgColor     = COLOR_BG;      // window
@@ -572,12 +573,12 @@ void CG_GameStatsDraw(void)
 			return;
 		}
 
-		CG_DrawRect(GS_X, y, GS_W, h, 1, borderColor);
-		CG_FillRect(GS_X, y, GS_W, h, bgColor);
+		CG_DrawRect(realX, y, GS_W, h, 1, borderColor);
+		CG_FillRect(realX, y, GS_W, h, bgColor);
 
 		// Header
-		CG_FillRect(GS_X, y, GS_W, tSpacing + 4, bgColorTitle);
-		CG_DrawRect(GS_X, y, GS_W, tSpacing + 4, 1, borderColorTitle);
+		CG_FillRect(realX, y, GS_W, tSpacing + 4, bgColorTitle);
+		CG_DrawRect(realX, y, GS_W, tSpacing + 4, 1, borderColorTitle);
 
 		y += 1;
 		y += tSpacing;
@@ -588,8 +589,8 @@ void CG_GameStatsDraw(void)
 
 		// Weapon stats
 		y += 2;
-		CG_FillRect(GS_X, y, GS_W, tSpacing + 3, bgColorTitle);
-		CG_DrawRect(GS_X, y, GS_W, tSpacing + 3, 1, borderColorTitle);
+		CG_FillRect(realX, y, GS_W, tSpacing + 3, bgColorTitle);
+		CG_DrawRect(realX, y, GS_W, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Weapon", 0.0f, 0, hStyle2, hFont2);
@@ -604,7 +605,7 @@ void CG_GameStatsDraw(void)
 		x += 40;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Headshots", 0.0f, 0, hStyle2, hFont2);
 
-		x  = GS_X + 4;
+		x  = realX + 4;
 		y += 2;
 
 		y += 1;
@@ -642,15 +643,15 @@ void CG_GameStatsDraw(void)
 		// Rank/XP info
 		y += tSpacing;
 		y += 2;
-		CG_FillRect(GS_X, y, GS_W, tSpacing + 3, bgColorTitle);
-		CG_DrawRect(GS_X, y, GS_W, tSpacing + 3, 1, borderColorTitle);
+		CG_FillRect(realX, y, GS_W, tSpacing + 3, bgColorTitle);
+		CG_DrawRect(realX, y, GS_W, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Rank", 0.0f, 0, hStyle2, hFont2);
 		x += 82;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "XP", 0.0f, 0, hStyle2, hFont2);
 
-		x = GS_X + 4;
+		x = realX + 4;
 
 		y += 1;
 		y += tSpacing;
@@ -659,8 +660,8 @@ void CG_GameStatsDraw(void)
 		// Skill info
 		y += tSpacing;
 		y += 2;
-		CG_FillRect(GS_X, y, GS_W, tSpacing + 3, bgColorTitle);
-		CG_DrawRect(GS_X, y, GS_W, tSpacing + 3, 1, borderColorTitle);
+		CG_FillRect(realX, y, GS_W, tSpacing + 3, bgColorTitle);
+		CG_DrawRect(realX, y, GS_W, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Skills", 0.0f, 0, hStyle2, hFont2);
@@ -674,7 +675,7 @@ void CG_GameStatsDraw(void)
 			CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Medals", 0.0f, 0, hStyle2, hFont2);
 		}
 
-		x = GS_X + 4;
+		x = realX + 4;
 
 		y += 1;
 		if (gs->cSkills == 0)
