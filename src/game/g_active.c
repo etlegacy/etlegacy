@@ -249,7 +249,7 @@ void PushBot(gentity_t *ent, gentity_t *other)
 	s = 100 * ((level.time + (ent->s.number * 1000)) % 4000 < 2000 ? 1.0 : -1.0);
 	VectorMA(other->client->ps.velocity, s, r, other->client->ps.velocity);
 
-	if (VectorLengthSquared(other->client->ps.velocity) > SQR(oldspeed))
+	if (VectorLengthSquared(other->client->ps.velocity) > Square(oldspeed))
 	{
 		VectorNormalize(other->client->ps.velocity);
 		VectorScale(other->client->ps.velocity, oldspeed, other->client->ps.velocity);
@@ -1352,7 +1352,7 @@ void ClientThink_real(gentity_t *ent)
 	    }
 
 	    VectorSubtract(g_entities[level.sortedClients[i]].r.currentOrigin, ent->r.currentOrigin, dist);
-	    if (VectorLengthSquared(dist) > SQR(512))
+	    if (VectorLengthSquared(dist) > Square(512))
 	    {
 	        continue;
 	    }

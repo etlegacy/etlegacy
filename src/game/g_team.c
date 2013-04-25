@@ -258,8 +258,8 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		VectorSubtract(targ->client->ps.origin, flag->s.origin, v1);
 		VectorSubtract(attacker->client->ps.origin, flag->s.origin, v2);
 
-		if ((VectorLengthSquared(v1) < SQR(CTF_TARGET_PROTECT_RADIUS) ||
-		     VectorLengthSquared(v2) < SQR(CTF_TARGET_PROTECT_RADIUS) ||
+		if ((VectorLengthSquared(v1) < Square(CTF_TARGET_PROTECT_RADIUS) ||
+		     VectorLengthSquared(v2) < Square(CTF_TARGET_PROTECT_RADIUS) ||
 		     CanDamage(flag, targ->client->ps.origin) || CanDamage(flag, attacker->client->ps.origin)) &&
 		    attacker->client->sess.sessionTeam != targ->client->sess.sessionTeam)
 		{
@@ -277,7 +277,7 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		VectorSubtract(targ->client->ps.origin, flag->s.origin, v1);
 		if ((flag->s.frame != WCP_ANIM_NOFLAG) && (flag->count == attacker->client->sess.sessionTeam))
 		{
-			if (VectorLengthSquared(v1) < SQR(WOLF_CP_PROTECT_RADIUS))
+			if (VectorLengthSquared(v1) < Square(WOLF_CP_PROTECT_RADIUS))
 			{
 				if (flag->spawnflags & 1)                         // protected spawnpoint
 				{

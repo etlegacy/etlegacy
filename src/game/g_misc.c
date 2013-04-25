@@ -1156,7 +1156,7 @@ void aagun_think(gentity_t *self)
 
 		VectorSubtract(self->r.currentOrigin, owner->r.currentOrigin, vec);
 
-		if (VectorLengthSquared(vec) < SQR(96) && owner->active && owner->health > 0)
+		if (VectorLengthSquared(vec) < Square(96) && owner->active && owner->health > 0)
 		{
 			int i;
 

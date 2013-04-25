@@ -630,7 +630,7 @@ static void CG_DrawDisconnect(void)
 		return;
 	}
 
-	// ydnar: don't draw if the server is respawning
+	// don't draw if the server is respawning
 	if (cg.serverRespawning)
 	{
 		return;
@@ -1086,7 +1086,7 @@ static void CG_DrawMortarReticle(void)
 	vec4_t   color_lastfire    = { .77f, .1f, .1f, 1.f };
 	vec4_t   color_firerequest = { 1.f, 1.f, 1.f, 1.f };
 	float    offset, localOffset;
-	int      i, min, majorOffset, val, printval, fadeTime;
+	int      i, min, majorOffset, val, printval, fadeTime, requestFadeTime;
 	char     *s;
 	float    angle, angleMin, angleMax;
 	qboolean hasRightTarget, hasLeftTarget;
@@ -1190,7 +1190,7 @@ static void CG_DrawMortarReticle(void)
 	hasRightTarget = hasLeftTarget = qfalse;
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
-		int requestFadeTime = cg.time - (cg.artilleryRequestTime[i] + 25000);
+		requestFadeTime = cg.time - (cg.artilleryRequestTime[i] + 25000);
 
 		if (requestFadeTime < 5000)
 		{
@@ -1469,7 +1469,7 @@ static void CG_DrawCrosshair(void)
 		if (!BG_PlayerMounted(cg.snap->ps.eFlags))
 		{
 			// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run
-			if (VectorLengthSquared(cg.snap->ps.velocity) > SQR(127))
+			if (VectorLengthSquared(cg.snap->ps.velocity) > Square(127))
 			{
 				if (cg.snap->ps.weapon == WP_FG42SCOPE)
 				{
@@ -1915,9 +1915,8 @@ static void CG_DrawCrosshairNames(void)
 				CG_DrawSmallStringColor((320 - w / 2) + cgs.wideXoffset, 170, s, color);
 
 				// set the health
-				// rain - #480 - make sure it's the health for the right entity;
-				// if it's not, use the clientinfo health (which is updated
-				// by tinfo)
+				// - make sure it's the health for the right entity;
+				// if it's not, use the clientinfo health (which is updated by tinfo)
 				if (cg.crosshairClientNum == cg.snap->ps.identifyClient)
 				{
 					playerHealth = cg.snap->ps.identifyClientHealth;
@@ -1931,8 +1930,7 @@ static void CG_DrawCrosshairNames(void)
 			}
 			else
 			{
-				// rain - #480 - don't show the name after you look away, should this be
-				// a disguised covert
+				// don't show the name after you look away, should this be a disguised covert
 				cg.crosshairClientTime = 0;
 				return;
 			}
@@ -2856,7 +2854,7 @@ static void CG_DrawFlashFade(void)
 		}
 	}
 
-	// OSP - ugh, have to inform the ui that we need to remain blacked out (or not)
+	// have to inform the ui that we need to remain blacked out (or not)
 	if (int_ui_blackout.integer == 0)
 	{
 		if (
@@ -3271,9 +3269,7 @@ void CG_DrawTimedMenus(void)
 {
 	if (cg.voiceTime)
 	{
-		int t = cg.time - cg.voiceTime;
-
-		if (t > 2500)
+		if (cg.time - cg.voiceTime > 2500)
 		{
 			Menus_CloseByName("voiceMenu");
 			trap_Cvar_Set("cl_conXOffset", "0");

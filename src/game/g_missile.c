@@ -73,7 +73,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
 
 	// record this for mover pushing
-	if (trace->plane.normal[2] > 0.2 /*&& VectorLengthSquared( ent->s.pos.trDelta ) < SQR(40)*/)
+	if (trace->plane.normal[2] > 0.2 /*&& VectorLengthSquared( ent->s.pos.trDelta ) < Square(40)*/)
 	{
 		ent->s.groundEntityNum = trace->entityNum;
 	}
@@ -124,8 +124,8 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 		}
 
 		// check for stop
-		//if ( trace->plane.normal[2] > 0.2 && VectorLengthSquared( ent->s.pos.trDelta ) < SQR(40) )
-		if (trace->plane.normal[2] > 0.2 && VectorLengthSquared(relativeDelta) < SQR(40))
+		//if ( trace->plane.normal[2] > 0.2 && VectorLengthSquared( ent->s.pos.trDelta ) < Square(40) )
+		if (trace->plane.normal[2] > 0.2 && VectorLengthSquared(relativeDelta) < Square(40))
 		{
 			// make the world the owner of the dynamite, so the player can shoot it after it stops moving
 			if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB)
@@ -618,7 +618,7 @@ void G_RunMissile(gentity_t *ent)
 				}
 
 				// are we in worldspace again - or did we hit a ceiling from the outside of the world
-				if (skyHeight == 65536)
+				if (skyHeight == MAX_MAP_SIZE)
 				{
 					G_RunThink(ent);
 					VectorCopy(origin, ent->r.currentOrigin);
@@ -740,6 +740,7 @@ void G_RunMissile(gentity_t *ent)
 			impactDamage = 20;  // "grenade"/"dynamite"     // probably adjust this based on velocity
 
 		}
+
 		if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL)
 		{
 			if (ent->s.pos.trType != TR_STATIONARY)
@@ -801,7 +802,7 @@ void G_PredictBounceMissile(gentity_t *ent, trajectory_t *pos, trace_t *trace, i
 		}
 
 		// check for stop
-		if (trace->plane.normal[2] > 0.2 && VectorLengthSquared(pos->trDelta) < SQR(40))
+		if (trace->plane.normal[2] > 0.2 && VectorLengthSquared(pos->trDelta) < Square(40))
 		{
 			VectorCopy(trace->endpos, pos->trBase);
 			return;
@@ -1477,7 +1478,7 @@ qboolean G_ExplodeSatchels(gentity_t *ent)
 		}
 
 		VectorSubtract(e->r.currentOrigin, ent->r.currentOrigin, dist);
-		if (VectorLengthSquared(dist) > SQR(2000))
+		if (VectorLengthSquared(dist) > Square(2000))
 		{
 			continue;
 		}
@@ -1566,10 +1567,11 @@ qboolean sEntWillTriggerMine(gentity_t *ent, gentity_t *mine)
 	if (ent->s.eType == ET_PLAYER && ent->client)
 	{
 		vec3_t dist;
+
 		VectorSubtract(mine->r.currentOrigin, ent->r.currentOrigin, dist);
 		// have to be within the trigger distance AND on the ground -- if we jump over a mine, we don't set it off
 		//      (or if we fly by after setting one off)
-		if ((VectorLengthSquared(dist) <= SQR(LANDMINE_TRIGGER_DIST)) && (fabs(dist[2]) < 45.f))
+		if ((VectorLengthSquared(dist) <= Square(LANDMINE_TRIGGER_DIST)) && (fabs(dist[2]) < 45.f))
 		{
 			return qtrue;
 		}
@@ -1758,6 +1760,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->nextthink = level.time + 2500;
 	}
 
+	// FIXME: do a switch
 	if (grenadeWPID == WP_DYNAMITE)
 	{
 		noExplode       = qtrue;

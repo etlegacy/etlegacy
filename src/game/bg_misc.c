@@ -3565,7 +3565,7 @@ void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out)
 		return;
 	}
 
-	if (VectorLengthSquared(normal) < SQR(1.f))            // this is needed to get rid of (0,0,0) normals (happens with entities?)
+	if (VectorLengthSquared(normal) < Square(1.f))            // this is needed to get rid of (0,0,0) normals (happens with entities?)
 	{
 		VectorSet(lnormal, 0.f, 0.f, 1.f);
 	}

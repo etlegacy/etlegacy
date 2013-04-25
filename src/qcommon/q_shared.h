@@ -1784,6 +1784,7 @@ typedef struct
 	char name[MAX_QPATH];
 } fontInfo_t;
 
+// SQR
 #define Square(x) ((x) * (x))
 
 // real time
@@ -1835,8 +1836,6 @@ typedef enum
 	GS_WAITING_FOR_PLAYERS,
 	GS_RESET
 } gamestate_t;
-
-#define SQR(a) ((a) * (a))
 
 #ifdef _MSC_VER
 float rint(float v);
