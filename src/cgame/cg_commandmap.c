@@ -1026,7 +1026,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 qboolean CG_DisguiseMapCheck(mapEntityData_t *mEnt)
 {
-
 	if (mEnt->data < 0 || mEnt->data >= 64)
 	{
 		return qfalse;
@@ -1050,6 +1049,8 @@ qboolean CG_DisguiseMapCheck(mapEntityData_t *mEnt)
 
 	return qtrue;
 }
+
+static vec4_t clrBorderblend = { 0.f, 0.f, 0.f, 0.75f };
 
 void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend)
 {
@@ -1126,9 +1127,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 	if (borderblend)
 	{
-		vec4_t clr = { 0.f, 0.f, 0.f, 0.75f };
-
-		trap_R_SetColor(clr);
+		trap_R_SetColor(clrBorderblend);
 		CG_DrawPic(x, y, w, h, cgs.media.limboBlendThingy);
 		trap_R_SetColor(NULL);
 	}
@@ -1742,44 +1741,46 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 	}
 }
 
+/*
 mapEntityData_t *CG_ScanForCommandCentreEntity(void)
 {
-	vec_t           rangeSquared = Square(1000);
-	int             ent          = 0;
-	mapEntityData_t *mEnt        = &mapEntities[0];
-	int             i;
-	float           rngSquared;
+    vec_t           rangeSquared = Square(1000);
+    int             ent          = 0;
+    mapEntityData_t *mEnt        = &mapEntities[0];
+    int             i;
+    float           rngSquared;
 
-	if (mapEntityCount <= 0)
-	{
-		return NULL;
-	}
+    if (mapEntityCount <= 0)
+    {
+        return NULL;
+    }
 
-	for (i = 0; i < mapEntityCount; i++, mEnt++)
-	{
-		if (cgs.ccLayers)
-		{
-			if (CG_CurLayerForZ(mEnt->z) != cgs.ccSelectedLayer)
-			{
-				continue;
-			}
-		}
+    for (i = 0; i < mapEntityCount; i++, mEnt++)
+    {
+        if (cgs.ccLayers)
+        {
+            if (CG_CurLayerForZ(mEnt->z) != cgs.ccSelectedLayer)
+            {
+                continue;
+            }
+        }
 
-		rngSquared = Square(CC_2D_X + mEnt->transformed[0] - cgDC.cursorx) + Square(CC_2D_Y + mEnt->transformed[1] - cgDC.cursory);
+        rngSquared = Square(CC_2D_X + mEnt->transformed[0] - cgDC.cursorx) + Square(CC_2D_Y + mEnt->transformed[1] - cgDC.cursory);
 
-		if (i == 0 || rngSquared < rangeSquared)
-		{
-			rangeSquared = rngSquared;
-			ent          = i;
-		}
-	}
+        if (i == 0 || rngSquared < rangeSquared)
+        {
+            rangeSquared = rngSquared;
+            ent          = i;
+        }
+    }
 
-	if (rangeSquared < Square(8))
-	{
-		return &mapEntities[ent];
-	}
-	return NULL;
+    if (rangeSquared < Square(8))
+    {
+        return &mapEntities[ent];
+    }
+    return NULL;
 }
+*/
 
 qboolean CG_PlayerSelected(void)
 {
