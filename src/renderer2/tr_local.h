@@ -4391,6 +4391,7 @@ void            RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, co
 void            RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
 
 void            RE_BeginFrame(stereoFrame_t stereoFrame);
+void            RE_EndFrame(int *frontEndMsec, int *backEndMsec);
 void            RE_BeginRegistration(glconfig_t *glconfig);
 void            RE_LoadWorldMap(const char *mapname);
 void            RE_SetWorldVisData(const byte *vis);
@@ -5175,11 +5176,6 @@ void            RE_StretchPicGradient(float x, float y, float w, float h,
                                       float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor,
                                       int gradientType);
 void            RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader);
-
-
-
-void            RE_BeginFrame(stereoFrame_t stereoFrame);
-void            RE_EndFrame(int *frontEndMsec, int *backEndMsec);
 
 // video stuff
 const void *RB_TakeVideoFrameCmd(const void *data);
