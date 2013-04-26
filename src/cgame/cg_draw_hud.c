@@ -1687,11 +1687,11 @@ static float CG_DrawLocalTime(float y)
 	{
 		if (cg_drawTimeSeconds.integer)
 		{
-			s = va("%i:%i", time.tm_hour, time.tm_min);
+			s = va("%02i:%02i:%02i", time.tm_hour, time.tm_min, time.tm_sec);
 		}
 		else
 		{
-			s = va("%i:%i.%i", time.tm_hour, time.tm_min, time.tm_sec);
+			s = va("%02i:%02i", time.tm_hour, time.tm_min);
 		}
 	}
 	else
@@ -1703,11 +1703,11 @@ static float CG_DrawLocalTime(float y)
 
 		if (cg_drawTimeSeconds.integer)
 		{
-			s = va("%i:%i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, (pmtime ? "PM" : "AM"));
+			s = va("%i:%02i:%02i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, time.tm_sec, (pmtime ? "PM" : "AM"));
 		}
 		else
 		{
-			s = va("%i:%i.%i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, time.tm_sec, (pmtime ? "PM" : "AM"));
+			s = va("%i:%02i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, (pmtime ? "PM" : "AM"));
 		}
 	}
 
