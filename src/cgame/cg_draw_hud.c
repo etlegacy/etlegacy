@@ -1685,7 +1685,14 @@ static float CG_DrawLocalTime(float y)
 
 	if (cg_drawTime.integer == 1)
 	{
-		s = va("%i:%i.%i", time.tm_hour, time.tm_min, time.tm_sec);
+		if (cg_drawTimeSeconds.integer)
+		{
+			s = va("%i:%i", time.tm_hour, time.tm_min);
+		}
+		else
+		{
+			s = va("%i:%i.%i", time.tm_hour, time.tm_min, time.tm_sec);
+		}
 	}
 	else
 	{
@@ -1693,7 +1700,15 @@ static float CG_DrawLocalTime(float y)
 		{
 			pmtime = qtrue;
 		}
-		s = va("%i:%i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, (pmtime ? "PM" : "AM"));
+
+		if (cg_drawTimeSeconds.integer)
+		{
+			s = va("%i:%i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, (pmtime ? "PM" : "AM"));
+		}
+		else
+		{
+			s = va("%i:%i.%i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, time.tm_sec, (pmtime ? "PM" : "AM"));
+		}
 	}
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
