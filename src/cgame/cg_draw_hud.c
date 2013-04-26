@@ -1683,31 +1683,34 @@ static float CG_DrawLocalTime(float y)
 	//Fetch the local time
 	trap_RealTime(&time);
 
-	if (cg_drawTime.integer == 1)
+	if (cg_drawTime.integer & LOCALTIME_SECOND)
 	{
-		if (cg_drawTimeSeconds.integer)
+		if (cg_drawTime.integer & LOCALTIME_12HOUR)
 		{
-			s = va("%02i:%02i:%02i", time.tm_hour, time.tm_min, time.tm_sec);
-		}
-		else
-		{
-			s = va("%02i:%02i", time.tm_hour, time.tm_min);
-		}
-	}
-	else
-	{
-		if (time.tm_hour > 12)
-		{
-			pmtime = qtrue;
-		}
-
-		if (cg_drawTimeSeconds.integer)
-		{
+			if (time.tm_hour > 12)
+			{
+				pmtime = qtrue;
+			}
 			s = va("%i:%02i:%02i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, time.tm_sec, (pmtime ? "PM" : "AM"));
 		}
 		else
 		{
+			s = va("%02i:%02i:%02i", time.tm_hour, time.tm_min, time.tm_sec);
+		}
+	}
+	else
+	{
+		if (cg_drawTime.integer & LOCALTIME_12HOUR)
+		{
+			if (time.tm_hour > 12)
+			{
+				pmtime = qtrue;
+			}
 			s = va("%i:%02i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, (pmtime ? "PM" : "AM"));
+		}
+		else
+		{
+			s = va("%02i:%02i", time.tm_hour, time.tm_min);
 		}
 	}
 
@@ -1973,7 +1976,7 @@ void CG_DrawUpperRight(void)
 		y = CG_DrawSnapshot(y);
 	}
 
-	if (cg_drawTime.integer)
+	if (cg_drawTime.integer & LOCALTIME_ON)
 	{
 		y = CG_DrawLocalTime(y);
 	}
