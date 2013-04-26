@@ -682,7 +682,7 @@ extern long qftolsse(float f);
 extern int qvmftolsse(void);
 extern void qsnapvectorsse(vec3_t vec);
 
-#define Q_ftol qftolsse
+//#define Q_ftol qftolsse
 #define Q_SnapVector qsnapvectorsse
 
 extern int (*Q_VMftol)(void); // Unused.
@@ -719,6 +719,8 @@ static ID_INLINE long Q_ftol(float f)
 	__asm fld f
 	__asm fistp tmp
 	__asm mov eax, tmp
+#elif idx64
+	return qftolsse
 #else
 	return (long)f;
 #endif
