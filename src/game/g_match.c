@@ -351,7 +351,7 @@ void G_addStatsHeadShot(gentity_t *attacker, int mod)
 //  --> MOD_* to WS_* conversion
 //
 // WS_MAX = no equivalent/not used
-static const weap_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
+static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 {
 	{ MOD_UNKNOWN,                            WS_MAX             },
 	{ MOD_MACHINEGUN,                         WS_MG42            },

@@ -2040,6 +2040,12 @@ void G_spawnPrintf(int print_type, int print_time, gentity_t *owner);
 void G_statsPrint(gentity_t *ent, int nType);
 unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD);
 
+typedef struct mod_ws_convert_s
+{
+	meansOfDeath_t mod;
+	extWeaponStats_t iWS;
+} mod_ws_convert_t;
+
 #ifdef FEATURE_MULTIVIEW
 // g_multiview.c
 qboolean G_smvCommands(gentity_t *ent, char *cmd);
