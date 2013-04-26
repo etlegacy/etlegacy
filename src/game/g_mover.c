@@ -518,9 +518,8 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 	if (pusher->r.currentAngles[0] || pusher->r.currentAngles[1] || pusher->r.currentAngles[2]
 	    || amove[0] || amove[1] || amove[2])
 	{
-		float radius;
+		float radius = RadiusFromBounds(pusher->r.mins, pusher->r.maxs);
 
-		radius = RadiusFromBounds(pusher->r.mins, pusher->r.maxs);
 		for (i = 0; i < 3; i++)
 		{
 			mins[i]      = pusher->r.currentOrigin[i] - radius + move[i];
@@ -899,6 +898,7 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 #ifdef FEATURE_OMNIBOT
 		{
 			const char *pName = _GetEntityName(ent);
+
 			if (Q_stricmp(pName, ""))
 			{
 				Bot_Util_SendTrigger(ent, NULL, va("%s_Moving", pName), "opening");
@@ -924,6 +924,7 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 #ifdef FEATURE_OMNIBOT
 		{
 			const char *pName = _GetEntityName(ent);
+
 			if (Q_stricmp(pName, ""))
 			{
 				Bot_Util_SendTrigger(ent, NULL, va("%s_Moving", pName), "closing");
@@ -938,6 +939,7 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 #ifdef FEATURE_OMNIBOT
 		{
 			const char *pName = _GetEntityName(ent);
+
 			if (Q_stricmp(pName, ""))
 			{
 				Bot_Util_SendTrigger(ent, NULL, va("%s_Moving", pName), "closed");
@@ -951,6 +953,7 @@ void SetMoverState(gentity_t *ent, moverState_t moverState, int time)
 #ifdef FEATURE_OMNIBOT
 		{
 			const char *pName = _GetEntityName(ent);
+
 			if (Q_stricmp(pName, ""))
 			{
 				Bot_Util_SendTrigger(ent, NULL, va("%s_Moving", pName), "opened");
@@ -2947,13 +2950,12 @@ Reached_Train
 */
 void Reached_Train(gentity_t *ent)
 {
-	gentity_t *next;
+	// copy the apropriate values
+	gentity_t *next = ent->nextTrain;
 	float     speed;
 	vec3_t    move;
 	float     length;
 
-	// copy the apropriate values
-	next = ent->nextTrain;
 	if (!next || !next->nextTrain)
 	{
 		return;     // just stop
@@ -2981,7 +2983,7 @@ void Reached_Train(gentity_t *ent)
 	// if the path_corner has a speed, use that
 	if (next->speed)
 	{
-		speed = next->speed;
+		speed = next->speed * (float)g_moverScale.value;
 	}
 	else
 	{
@@ -3348,13 +3350,12 @@ Reached_Train_rotating
 */
 void Reached_Train_rotating(gentity_t *ent)
 {
+	// copy the apropriate values
 	gentity_t *next = ent->nextTrain;
 	float     speed;
 	vec3_t    move;
 	float     length;
 	float     frames;
-
-	// copy the apropriate values
 
 	if (!next || !next->nextTrain)
 	{
@@ -3372,7 +3373,7 @@ void Reached_Train_rotating(gentity_t *ent)
 	// if the path_corner has a speed, use that
 	if (next->speed)
 	{
-		speed = next->speed;
+		speed = next->speed * (float)g_moverScale.value;
 	}
 	else
 	{
@@ -3402,6 +3403,7 @@ void Reached_Train_rotating(gentity_t *ent)
 	}
 
 	// Rotate the train
+	// FIXME: trDuration is not float, does floor(int) make sense? - inspect!
 	frames = floor(ent->s.pos.trDuration / 100);
 
 	if (!frames)
@@ -3458,11 +3460,8 @@ void Reached_Train_rotating(gentity_t *ent)
 
 	ent->TargetFlag      = 1;
 	ent->TargetAngles[0] = ent->r.currentAngles[0] + ent->rotate[0];
-	//ent->TargetAngles[0] = AngleNormalize360 (ent->TargetAngles[0]);
 	ent->TargetAngles[1] = ent->r.currentAngles[1] + ent->rotate[1];
-	//ent->TargetAngles[1] = AngleNormalize360 (ent->TargetAngles[1]);
 	ent->TargetAngles[2] = ent->r.currentAngles[2] + ent->rotate[2];
-	//ent->TargetAngles[2] = AngleNormalize360 (ent->TargetAngles[2]);
 
 	// start it going
 	SetMoverState(ent, MOVER_1TO2, level.time);

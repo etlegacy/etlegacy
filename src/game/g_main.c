@@ -299,6 +299,8 @@ vmCvar_t g_mapScriptDirectory;
 vmCvar_t g_mapConfigs;
 vmCvar_t g_customConfig;
 
+vmCvar_t g_moverScale;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -557,6 +559,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_mapScriptDirectory,       "g_mapScriptDirectory",       "",                           0 },
 	{ &g_mapConfigs,               "g_mapConfigs",               "",                           0 },
 	{ &g_customConfig,             "g_customConfig",             "",                           0 },
+	{ &g_moverScale,               "g_moverScale",               "1.0",                        0 },
 };
 
 // made static to avoid aliasing
