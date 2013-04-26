@@ -1704,7 +1704,7 @@ typedef struct location_s
 {
 	int index;
 	vec3_t origin;
-	char message[64];
+	char message[128];
 } location_t;
 
 typedef struct
