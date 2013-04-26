@@ -862,6 +862,13 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	qboolean            tried[NUM_DIALOG_PROGRAMS] = { qfalse };
 	dialogCommandType_t preferredCommandType       = NONE;
 
+	if (session == NULL || session[0] == 0)
+	{
+		// no desktop session found
+		Com_DPrintf("No desktop session available for Sys_Dialog().\n");
+		return DR_OK;
+	}
+
 	// This may not be the best way
 	if (!Q_stricmp(session, "gnome")) //  // && if getenv('GNOME_DESKTOP_SESSION_ID')
 	{
@@ -875,10 +882,10 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	{
 		// FIXME see #91
 		// ... XMESSAGE ?!
-		// ... MAC OS ?!
 		// ... OpenBSD
 		// ... others?
-		Com_DPrintf(S_COLOR_YELLOW "WARNING: unsupported desktop session in Sys_Dialog().\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: unsupported desktop session '%s' in Sys_Dialog(). Please contact the ET: Legacy team.\n", session);
+		return DR_OK;
 	}
 
 	while (1)
@@ -943,7 +950,7 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 		break;
 	}
 
-	Com_DPrintf(S_COLOR_YELLOW "WARNING: failed to show a dialog\n");
+	Com_Printf(S_COLOR_YELLOW "WARNING: failed to show a system dialog\n");
 	return DR_OK;
 }
 #endif
