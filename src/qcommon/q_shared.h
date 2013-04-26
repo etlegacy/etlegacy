@@ -720,7 +720,7 @@ static ID_INLINE long Q_ftol(float f)
 	__asm fistp tmp
 	__asm mov eax, tmp
 #elif idx64
-	return qftolsse
+	return qftolsse(f);
 #else
 	return (long)f;
 #endif
