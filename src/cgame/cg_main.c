@@ -301,6 +301,8 @@ vmCvar_t cg_fireteamLatchedClass;
 
 vmCvar_t cg_automapZoom;
 
+vmCvar_t cg_drawTime;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -506,6 +508,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_tracers,               "cg_tracers",               "1",     CVAR_ARCHIVE                 }, // Draw tracers
 	{ &cg_fireteamLatchedClass,  "cg_fireteamLatchedClass",  "1",     CVAR_ARCHIVE                 }, // Draw fireteam members latched class
 	{ &cg_automapZoom,           "cg_automapZoom",           "5.159", CVAR_ARCHIVE                 },
+	{ &cg_drawTime,              "cg_drawTime",              "0",     CVAR_ARCHIVE                 },
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

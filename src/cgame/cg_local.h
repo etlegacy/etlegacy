@@ -2154,6 +2154,8 @@ extern vmCvar_t cg_fireteamLatchedClass;
 
 extern vmCvar_t cg_automapZoom;
 
+extern vmCvar_t cg_drawTime;
+
 // cg_main.c
 const char *CG_ConfigString(int index);
 int CG_ConfigStringCopy(int index, char *buff, int buffsize);

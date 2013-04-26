@@ -1672,6 +1672,41 @@ static float CG_DrawTimer(float y)
 	return y + 12 + 4;
 }
 
+static float CG_DrawLocalTime(float y)
+{
+	vec4_t   color = { 0.625f, 0.625f, 0.6f, 1.0f };
+	qtime_t  time;
+	int      w, w2, x;
+	char     *s;
+	qboolean pmtime = qfalse;
+
+	//Fetch the local time
+	trap_RealTime(&time);
+
+	if (cg_drawTime.integer == 1)
+	{
+		s = va("%i:%i.%i", time.tm_hour, time.tm_min, time.tm_sec);
+	}
+	else
+	{
+		if (time.tm_hour > 12)
+		{
+			pmtime = qtrue;
+		}
+		s = va("%i:%i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, (pmtime ? "PM" : "AM"));
+	}
+
+	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+
+	x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
+
+	return y + 12 + 4;
+}
+
 static void CG_DrawPlayerStatus(void)
 {
 	if (activehud->weaponicon.visible)
@@ -1921,5 +1956,10 @@ void CG_DrawUpperRight(void)
 	if (cg_drawSnapshot.integer)
 	{
 		y = CG_DrawSnapshot(y);
+	}
+
+	if (cg_drawTime.integer)
+	{
+		y = CG_DrawLocalTime(y);
 	}
 }
