@@ -135,20 +135,20 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 /* unused
 static hudStucture_t *CG_getNextFreeHud()
 {
-	hudStucture_t *temp;
+    hudStucture_t *temp;
 
-	if (hudCount < MAXHUDS)
-	{
-		temp = &hudlist[hudCount];
-		hudCount++;
-		memset(temp, 0, sizeof(hudStucture_t));
-		CG_setDefaultHudValues(temp);
-		return temp;
-	}
-	else
-	{
-		return NULL;
-	}
+    if (hudCount < MAXHUDS)
+    {
+        temp = &hudlist[hudCount];
+        hudCount++;
+        memset(temp, 0, sizeof(hudStucture_t));
+        CG_setDefaultHudValues(temp);
+        return temp;
+    }
+    else
+    {
+        return NULL;
+    }
 }
 */
 

@@ -1698,7 +1698,7 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 		vec3_t point;
 		int    i, fadeTime;
 
-		for (i = 0; i < MAX_CLIENTS; i++)
+		for (i = 0; i < cgs.maxclients; i++)
 		{
 			fadeTime = cg.time - (cg.artilleryRequestTime[i] + 25000);
 
@@ -1741,7 +1741,7 @@ void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapSciss
 	}
 }
 
-/*
+/* unused
 mapEntityData_t *CG_ScanForCommandCentreEntity(void)
 {
     vec_t           rangeSquared = Square(1000);
@@ -1780,34 +1780,35 @@ mapEntityData_t *CG_ScanForCommandCentreEntity(void)
     }
     return NULL;
 }
-*/
 
+// unused
 qboolean CG_PlayerSelected(void)
 {
-	snapshot_t *snap;
-	int        i;
+    snapshot_t *snap;
+    int        i;
 
-	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
-	{
-		snap = cg.nextSnap;
-	}
-	else
-	{
-		snap = cg.snap;
-	}
+    if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
+    {
+        snap = cg.nextSnap;
+    }
+    else
+    {
+        snap = cg.snap;
+    }
 
-	for (i = 0; i < MAX_CLIENTS; i++)
-	{
-		if (cgs.clientinfo[i].team == snap->ps.persistant[PERS_TEAM])
-		{
-			if (cgs.clientinfo[i].ccSelected)
-			{
-				return qtrue;
-			}
-		}
-	}
-	return qfalse;
+    for (i = 0; i < MAX_CLIENTS; i++)
+    {
+        if (cgs.clientinfo[i].team == snap->ps.persistant[PERS_TEAM])
+        {
+            if (cgs.clientinfo[i].ccSelected)
+            {
+                return qtrue;
+            }
+        }
+    }
+    return qfalse;
 }
+*/
 
 qboolean CG_CommandCentreSpawnPointClick(void)
 {
