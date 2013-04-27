@@ -4480,7 +4480,7 @@ char *Q_AddCR(char *s)
 		{
 			copy  = s;
 			place = s;
-			*s++;
+			s++;
 			if (*s && *s == 'n')
 			{
 				*copy = '\n';
@@ -4493,7 +4493,7 @@ char *Q_AddCR(char *s)
 				continue;
 			}
 		}
-		*s++;
+		s++;
 	}
 	return start;
 }
