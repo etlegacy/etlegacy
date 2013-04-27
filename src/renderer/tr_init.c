@@ -419,8 +419,8 @@ static void R_ModeList_f(void)
  *
  * NOTE: some thoughts about the screenshots system:
  * screenshots get written in fs_homepath + fs_gamedir
- * vanilla W:ET .. etmain/screenshots/*.tga
- * ET: Legacy   .. legacy/screenshots/*.tga
+ * vanilla W:ET .. etmain/screenshots/<FILE>.tga
+ * ET: Legacy   .. legacy/screenshots/<FILE>.tga
  *
  * two commands: "screenshot" and "screenshotJPEG"
  * we use statics to store a count and start writing the first screenshot/screenshot????.tga (.jpg) available

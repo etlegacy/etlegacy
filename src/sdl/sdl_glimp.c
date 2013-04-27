@@ -164,11 +164,11 @@ void GLimp_LogComment(char *comment)
 {
 }
 
-/*
+/* unused - see GLimp_DetectAvailableModes
 ===============
 GLimp_CompareModes
 ===============
-*/
+
 static int GLimp_CompareModes(const void *a, const void *b)
 {
 	const float ASPECT_EPSILON  = 0.001f;
@@ -195,6 +195,7 @@ static int GLimp_CompareModes(const void *a, const void *b)
 		return areaA - areaB;
 	}
 }
+*/
 
 /*
 ===============

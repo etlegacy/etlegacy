@@ -1053,6 +1053,7 @@ static int _et_G_TempEntity(lua_State *L)
 static int _et_G_FreeEntity(lua_State *L)
 {
 	int entnum = luaL_checkint(L, 1);
+
 	G_FreeEntity(g_entities + entnum);
 	// a succesful LUA function has to return 1
 	return 1;
@@ -1138,6 +1139,7 @@ static int _et_G_GetSpawnVar(lua_State *L)
 	{
 		// core: return the entity-number  of the entity that the pointer is pointing at.
 		int entNum = C_gentity_ptr_to_entNum(*(int *)((byte *)ent + ofs));
+
 		if (entNum < 0)
 		{
 			lua_pushnil(L);
@@ -1243,6 +1245,7 @@ static int _et_G_SetSpawnVar(lua_State *L)
 static int _et_trap_LinkEntity(lua_State *L)
 {
 	int entnum = luaL_checkint(L, 1);
+
 	trap_LinkEntity(g_entities + entnum);
 	return 0;
 }
@@ -1251,6 +1254,7 @@ static int _et_trap_LinkEntity(lua_State *L)
 static int _et_trap_UnlinkEntity(lua_State *L)
 {
 	int entnum = luaL_checkint(L, 1);
+
 	trap_UnlinkEntity(g_entities + entnum);
 	return 0;
 }
@@ -1310,6 +1314,7 @@ static int _et_gentity_get(lua_State *L)
 	{
 		// core: return the entity-number  of the entity that the pointer is pointing at.
 		int entNum = C_gentity_ptr_to_entNum(*(int *)addr);
+
 		if (entNum < 0)
 		{
 			lua_pushnil(L);
@@ -1611,6 +1616,7 @@ static const luaL_Reg etlib[] =
  */
 qboolean G_LuaInit(void)
 {
+	char         allowedModules[MAX_CVAR_VALUE_STRING];
 	int          i, num_vm = 0, len, flen = 0;
 	char         buff[MAX_CVAR_VALUE_STRING], *crt, *code, *signature;
 	fileHandle_t f;
@@ -1621,14 +1627,19 @@ qboolean G_LuaInit(void)
 		return qtrue;
 	}
 
+	Q_strncpyz(allowedModules, Q_strupr(lua_allowedModules.string), sizeof(allowedModules));
+
 	Q_strncpyz(buff, lua_modules.string, sizeof(buff));
 	len = strlen(buff);
 	crt = buff;
 
 	for (i = 0; i < LUA_NUM_VM; i++)
+	{
 		lVM[i] = NULL;
+	}
 
 	for (i = 0; i <= len; i++)
+	{
 		if (buff[i] == ' ' || buff[i] == '\0' || buff[i] == ',' || buff[i] == ';')
 		{
 			buff[i] = '\0';
@@ -1654,8 +1665,7 @@ qboolean G_LuaInit(void)
 				trap_FS_FCloseFile(f);
 				signature = G_SHA1(code);
 
-				if (Q_stricmp(lua_allowedModules.string, "") &&
-				    !strstr(lua_allowedModules.string, signature))
+				if (Q_stricmp(lua_allowedModules.string, "") && !strstr(allowedModules, signature))
 				{
 					// don't load disallowed lua modules into vm
 					free(code); // fixed memory leaking in Lua API - thx ETPub/goesa
@@ -1703,6 +1713,7 @@ qboolean G_LuaInit(void)
 				break;
 			}
 		}
+	}
 	return qtrue;
 }
 
@@ -1944,10 +1955,12 @@ void G_LuaStatus(gentity_t *ent)
 	int i, cnt = 0;
 
 	for (i = 0; i < LUA_NUM_VM; i++)
+	{
 		if (lVM[i])
 		{
 			cnt++;
 		}
+	}
 
 	if (cnt == 0)
 	{

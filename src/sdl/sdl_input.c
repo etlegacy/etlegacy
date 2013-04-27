@@ -83,7 +83,7 @@ static SDL_Joystick *stick                = NULL;
 static cvar_t       *in_joystick          = NULL;
 static cvar_t       *in_joystickDebug     = NULL;
 static cvar_t       *in_joystickThreshold = NULL;
-static cvar_t       *in_joystickNo        = NULL;
+//static cvar_t       *in_joystickNo        = NULL; // currently unused see IN_Init()
 static cvar_t       *in_joystickUseAnalog = NULL;
 
 static int vidRestartTime = 0;
@@ -783,6 +783,7 @@ struct
 	unsigned int oldhats;
 } stick_state;
 
+/* unused see - IN_Init()
 static void IN_InitJoystick(void)
 {
 	int  i          = 0;
@@ -853,6 +854,7 @@ static void IN_InitJoystick(void)
 
 	SDL_JoystickEventState(SDL_QUERY);
 }
+*/
 
 static void IN_ShutdownJoystick(void)
 {
