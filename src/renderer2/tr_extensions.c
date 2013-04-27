@@ -384,10 +384,10 @@ void GLimp_InitExtraExtensions()
 	qglIsVertexArrayARB      = NULL;
 	if (GLimp_HaveExtension(extension))
 	{
-		qglBindVertexArrayARB    = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glBindVertexArrayARB");
-		qglDeleteVertexArraysARB = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glDeleteVertexArraysARB");
-		qglGenVertexArraysARB    = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glGenVertexArraysARB");
-		qglIsVertexArrayARB      = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glIsVertexArrayARB");
+		qglBindVertexArrayARB    = (PFNGLBINDVERTEXARRAYPROC) SDL_GL_GetProcAddress("glBindVertexArray");
+		qglDeleteVertexArraysARB = (PFNGLDELETEVERTEXARRAYSPROC) SDL_GL_GetProcAddress("glDeleteVertexArrays");
+		qglGenVertexArraysARB    = (PFNGLGENVERTEXARRAYSPROC) SDL_GL_GetProcAddress("glGenVertexArrays");
+		qglIsVertexArrayARB      = (PFNGLISVERTEXARRAYPROC) SDL_GL_GetProcAddress("glIsVertexArray");
 
 		if (r_ext_vertex_array_object->integer)
 		{
@@ -503,9 +503,7 @@ void GLimp_InitExtraExtensions()
 		if (r_ext_texture_float->integer)
 		{
 			glRefConfig.textureFloat = qtrue;
-
 			glConfig2.textureFloatAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...using GL_ARB_texture_float\n");
 		}
 
 		ri.Printf(PRINT_ALL, result[glRefConfig.textureFloat], extension);
@@ -528,11 +526,6 @@ void GLimp_InitExtraExtensions()
 		if (r_ext_half_float_pixel->integer)
 		{
 			glConfig2.textureHalfFloatAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...using GL_ARB_half_float_pixel\n");
-		}
-		else
-		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_ARB_half_float_pixel\n");
 		}
 
 		ri.Printf(PRINT_ALL, result[glRefConfig.halfFloatPixel], extension);
@@ -602,7 +595,6 @@ void GLimp_InitExtraExtensions()
 		if (r_ext_packed_depth_stencil->integer)
 		{
 			glConfig2.framebufferPackedDepthStencilAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...using GL_EXT_packed_depth_stencil\n");
 		}
 
 
@@ -649,7 +641,6 @@ void GLimp_InitExtraExtensions()
 		if (r_ext_framebuffer_blit->integer)
 		{
 			glConfig2.framebufferBlitAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...using GL_EXT_framebuffer_blit\n");
 		}
 
 
