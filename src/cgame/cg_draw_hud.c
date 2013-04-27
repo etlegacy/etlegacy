@@ -132,6 +132,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
 }
 
+/* unused
 static hudStucture_t *CG_getNextFreeHud()
 {
 	hudStucture_t *temp;
@@ -149,6 +150,7 @@ static hudStucture_t *CG_getNextFreeHud()
 		return NULL;
 	}
 }
+*/
 
 static hudStucture_t *CG_getHudByNumber(int number)
 {
