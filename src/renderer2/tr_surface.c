@@ -115,7 +115,7 @@ void Tess_AddQuadStampExt(vec3_t origin, vec3_t left, vec3_t up, const vec4_t co
 	int    i;
 	vec3_t normal;
 	int    ndx;
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_AddQuadStampExt ---\n");
 	}
@@ -215,7 +215,7 @@ void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, fl
 	vec4_t plane;
 	int    ndx;
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_AddQuadStampExt2 ---\n");
 	}
@@ -803,7 +803,7 @@ static void Tess_SurfacePolychain(srfPoly_t *p)
 	int numVertexes;
 	int numIndexes;
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfacePolychain ---\n");
 	}
@@ -903,8 +903,8 @@ void Tess_SurfacePolybuffer(srfPolyBuffer_t *surf)
 	float *xyzw;
 	float *st;
 	byte  *color;
-	
-	if(r_logFile->integer)
+
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfacePolybuffer ---\n");
 	}
@@ -948,7 +948,7 @@ void Tess_SurfaceDecal(srfDecal_t *srf)
 {
 	int i;
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfaceDecal ---\n");
 	}
@@ -996,7 +996,7 @@ static void Tess_SurfaceFace(srfSurfaceFace_t *srf)
 	srfVert_t     *dv;
 	float         *xyz, *tangent, *binormal, *normal, *texCoords, *lightCoords, *color, *paintColor, *lightDirection;
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfaceFace ---\n");
 	}
@@ -1151,7 +1151,7 @@ static void Tess_SurfaceGrid(srfGridMesh_t *srf)
 	srfVert_t     *dv;
 	float         *xyz, *tangent, *binormal, *normal, *texCoords, *lightCoords, *color, *paintColor, *lightDirection;
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfaceGrid ---\n");
 	}
@@ -1304,7 +1304,7 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
 	srfVert_t     *dv;
 	float         *xyz, *tangent, *binormal, *normal, *texCoords, *lightCoords, *color, *paintColor, *lightDirection;
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfaceTriangles ---\n");
 	}
@@ -1467,8 +1467,8 @@ static void Tess_SurfaceBeam(void)
 	vec3_t      direction, normalized_direction;
 	vec3_t      start_points[NUM_BEAM_SEGS], end_points[NUM_BEAM_SEGS];
 	vec3_t      oldorigin, origin;
-	
-	if(r_logFile->integer)
+
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfaceBeam ---\n");
 	}
@@ -1676,7 +1676,7 @@ static void Tess_SurfaceRailRings(void)
 	vec3_t      right, up;
 	vec3_t      start, end;
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfaceRailRings ---\n");
 	}
@@ -1715,7 +1715,7 @@ static void Tess_SurfaceRailCore(void)
 	vec3_t      start, end;
 	vec3_t      v1, v2;
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfaceRailCore ---\n");
 	}
@@ -1754,7 +1754,7 @@ static void Tess_SurfaceLightningBolt(void)
 	vec3_t      v1, v2;
 	int         i;
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfaceLightningBolt ---\n");
 	}
@@ -1808,7 +1808,7 @@ static void Tess_SurfaceMDV(mdvSurface_t *srf)
 	float         backlerp;
 	float         oldXyzScale, newXyzScale;
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfaceMDV ---\n");
 	}
@@ -1961,7 +1961,7 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 	float           *xyzw, *xyzw2;
 	static matrix_t boneMatrices[MAX_BONES];
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfaceMD5 ---\n");
 	}
@@ -2152,7 +2152,7 @@ static void Tess_SurfaceAxis(void)
 	//vec4_t          verts[3];
 	//vec3_t          forward, right, up;
 
-	if(r_logFile->integer)
+	if (r_logFile->integer)
 	{
 		GLimp_LogComment("--- Tess_SurfaceAxis ---\n");
 	}

@@ -384,10 +384,10 @@ extern GLXContext (APIENTRY *qglXCreateContextAttribsARB)(Display *dpy, GLXFBCon
 #define GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT 0x0001
 
 
-typedef void (APIENTRY * PFNGLBINDVERTEXARRAYPROC) (GLuint array);
-typedef void (APIENTRY * PFNGLDELETEVERTEXARRAYSPROC) (GLsizei n, const GLuint* arrays);
-typedef void (APIENTRY * PFNGLGENVERTEXARRAYSPROC) (GLsizei n, GLuint* arrays);
-typedef GLboolean (APIENTRY * PFNGLISVERTEXARRAYPROC) (GLuint array);
+typedef void (APIENTRY * PFNGLBINDVERTEXARRAYPROC)(GLuint array);
+typedef void (APIENTRY * PFNGLDELETEVERTEXARRAYSPROC)(GLsizei n, const GLuint *arrays);
+typedef void (APIENTRY * PFNGLGENVERTEXARRAYSPROC)(GLsizei n, GLuint *arrays);
+typedef GLboolean (APIENTRY * PFNGLISVERTEXARRAYPROC)(GLuint array);
 
 
 // extensions will be function pointers on all platforms
