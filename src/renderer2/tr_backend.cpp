@@ -11245,8 +11245,10 @@ RB_SetColor
 const void *RB_SetColor(const void *data)
 {
 	const setColorCommand_t *cmd;
-
-	GLimp_LogComment("--- RB_SetColor ---\n");
+	if (r_logFile->integer)
+	{
+		GLimp_LogComment("--- RB_SetColor ---\n");
+	}
 
 	cmd = (const setColorCommand_t *)data;
 
@@ -11270,7 +11272,10 @@ const void *RB_StretchPic(const void *data)
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
 
-	GLimp_LogComment("--- RB_StretchPic ---\n");
+	if (r_logFile->integer)
+	{
+		GLimp_LogComment("--- RB_StretchPic ---\n");
+	}
 
 	cmd = (const stretchPicCommand_t *)data;
 

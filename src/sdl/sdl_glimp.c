@@ -33,8 +33,10 @@
 
 #ifdef BUNDLED_SDL
 #    include "SDL.h"
+#    include "SDL_syswm.h"
 #else
 #    include <SDL/SDL.h>
+#    include "SDL/SDL_syswm.h"
 #endif
 
 #include <stdarg.h>
@@ -42,7 +44,11 @@
 #include <stdlib.h>
 #include <math.h>
 
+#ifdef FEATURE_RENDERER2
+#include "../renderer2/tr_local.h"
+#else
 #include "../renderer/tr_local.h"
+#endif
 #include "../sys/sys_local.h"
 #include "sdl_icon.h"
 
@@ -52,6 +58,37 @@
 typedef CGLContextObj QGLContext;
 #define GLimp_GetCurrentContext() CGLGetCurrentContext()
 #define GLimp_SetCurrentContext(ctx) CGLSetCurrentContext(ctx)
+#elif _WIN32
+
+typedef HGLRC (WINAPI * PFNWGLCREATECONTEXTATTRIBSARBPROC)(HDC hDC, HGLRC hShareContext, const int *attribList);
+PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = NULL;
+
+typedef struct
+{
+	HDC hDC;                    // handle to device context
+	HGLRC hGLRC;                // handle to GL rendering context
+} QGLContext_t;
+typedef QGLContext_t QGLContext;
+
+static QGLContext opengl_context;
+
+static void GLimp_GetCurrentContext(void)
+{
+	SDL_SysWMinfo info;
+
+	SDL_VERSION(&info.version);
+
+	if (!SDL_GetWMInfo(&info))
+	{
+		ri.Printf(PRINT_WARNING, "Failed to obtain HWND from SDL (InputRegistry)");
+		return;
+	}
+
+	opengl_context.hDC = GetDC(info.window);
+}
+
+#define GLimp_SetCurrentContext(ctx)
+
 #else
 typedef void *QGLContext;
 #define GLimp_GetCurrentContext() (NULL)
@@ -66,6 +103,8 @@ typedef enum
 
 	RSERR_INVALID_FULLSCREEN,
 	RSERR_INVALID_MODE,
+
+	RSERR_OLD_GL,
 
 	RSERR_UNKNOWN
 } rserr_t;
@@ -215,6 +254,120 @@ static void GLimp_DetectAvailableModes(void)
 		ri.Cvar_Set("r_availableModes", buf);
 	}
 }
+
+#ifdef FEATURE_RENDERER2
+static qboolean GLimp_InitOpenGL3xContext()
+{
+#if defined(WIN32) || defined(__linux__)
+	int        retVal;
+	const char *success[] = { "failed", "success" };
+#endif
+	int GLmajor, GLminor;
+
+	GLimp_GetCurrentContext();
+	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
+
+	Q_strncpyz(glConfig.extensions_string, (char *) qglGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
+
+	// Check if we have to create a core profile.
+	// Core profiles are not necessarily compatible, so we have
+	// to request the desired version.
+#if defined(WIN32)
+	wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)SDL_GL_GetProcAddress("wglCreateContextAttribsARB");
+
+	if (wglCreateContextAttribsARB)
+	{
+		int attribs[256];   // should be really enough
+		int numAttribs;
+
+		memset(attribs, 0, sizeof(attribs));
+		numAttribs = 0;
+		if (qtrue)
+		{
+			attribs[numAttribs++] = WGL_CONTEXT_MAJOR_VERSION_ARB;
+			attribs[numAttribs++] = 3;
+
+			attribs[numAttribs++] = WGL_CONTEXT_MINOR_VERSION_ARB;
+			attribs[numAttribs++] = 2;
+		}
+
+		attribs[numAttribs++] = WGL_CONTEXT_FLAGS_ARB;
+
+		if (qfalse)
+		{
+			attribs[numAttribs++] = WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB |  WGL_CONTEXT_DEBUG_BIT_ARB;
+		}
+		else
+		{
+			attribs[numAttribs++] = WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB;
+		}
+
+		attribs[numAttribs++] = WGL_CONTEXT_PROFILE_MASK_ARB;
+
+		if (qtrue)
+		{
+			attribs[numAttribs++] = WGL_CONTEXT_CORE_PROFILE_BIT_ARB;
+		}
+		else
+		{
+			attribs[numAttribs++] = WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
+		}
+
+		// set current context to NULL
+		retVal = wglMakeCurrent(opengl_context.hDC, NULL) != 0;
+		ri.Printf(PRINT_ALL, "...wglMakeCurrent( %p, %p ): %s\n", opengl_context.hDC, NULL, success[retVal]);
+
+		// delete HGLRC
+		if (opengl_context.hGLRC)
+		{
+			retVal = wglDeleteContext(opengl_context.hGLRC) != 0;
+			ri.Printf(PRINT_ALL, "...deleting initial GL context: %s\n", success[retVal]);
+			opengl_context.hGLRC = NULL;
+		}
+
+		ri.Printf(PRINT_ALL, "...initializing new OpenGL context");
+
+		opengl_context.hGLRC = wglCreateContextAttribsARB(opengl_context.hDC, 0, attribs);
+
+		if (wglMakeCurrent(opengl_context.hDC, opengl_context.hGLRC))
+		{
+			ri.Printf(PRINT_ALL, " done\n");
+		}
+		else
+		{
+			ri.Printf(PRINT_WARNING, "Could not initialize requested OpenGL profile\n");
+		}
+	}
+	else
+	{
+		ri.Error(ERR_FATAL, "Couldn't initialize opengl 3 context\n");
+	}
+
+#elif defined(__linux__)
+	ri.Error(ERR_FATAL, "Couldn't initialize opengl 3 context because Linux is not supported\n");
+#else
+	ri.Error(ERR_FATAL, "Couldn't initialize opengl 3 context because your systems is not supported\n");
+#endif
+
+	if (GLmajor < 2)
+	{
+		// missing shader support, switch to 1.x renderer
+		return qfalse;
+	}
+
+	if (GLmajor < 3 || (GLmajor == 3 && GLminor < 2))
+	{
+		// shaders are supported, but not all GL3.x features
+		ri.Printf(PRINT_ALL, "Using enhanced (GL3) Renderer in GL 2.x mode...\n");
+		return qtrue;
+	}
+
+	ri.Printf(PRINT_ALL, "Using enhanced (GL3) Renderer in GL 3.x mode...\n");
+	glConfig.driverType = GLDRV_OPENGL3;
+
+	return qtrue;
+}
+#endif
 
 /*
 ===============
@@ -494,7 +647,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			continue;
 		}
 
-		opengl_context = GLimp_GetCurrentContext();
+		GLimp_GetCurrentContext();
 
 		ri.Printf(PRINT_ALL, "Using %d/%d/%d Color bits, %d depth, %d stencil display.\n",
 		          sdlcolorbits, sdlcolorbits, sdlcolorbits, tdepthbits, tstencilbits);
@@ -504,6 +657,13 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		glConfig.stencilBits = tstencilbits;
 		break;
 	}
+
+#ifdef FEATURE_RENDERER2
+	if (!GLimp_InitOpenGL3xContext())
+	{
+		return RSERR_OLD_GL;
+	}
+#endif
 
 	if (!vidscreen)
 	{
@@ -561,6 +721,9 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 		return qfalse;
 	case RSERR_INVALID_MODE:
 		ri.Printf(PRINT_ALL, "...WARNING: could not set the given mode (%d)\n", mode);
+		return qfalse;
+	case RSERR_OLD_GL:
+		ri.Error(ERR_VID_FATAL, "Could not create opengl 3 context");
 		return qfalse;
 	default:
 		break;
@@ -749,6 +912,107 @@ static void GLimp_InitExtensions(void)
 	}
 }
 
+void GLimp_SetHardware(void)
+{
+	if (*glConfig.renderer_string && glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] == '\n')
+	{
+		glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] = 0;
+	}
+
+	Q_strncpyz(glConfig.version_string, ( char * ) glGetString(GL_VERSION), sizeof(glConfig.version_string));
+
+	if (glConfig.driverType != GLDRV_OPENGL3)
+	{
+		Q_strncpyz(glConfig.extensions_string, ( char * ) glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
+	}
+
+	if (Q_stristr(glConfig.renderer_string, "mesa") ||
+	    Q_stristr(glConfig.renderer_string, "gallium") ||
+	    Q_stristr(glConfig.vendor_string, "nouveau") ||
+	    Q_stristr(glConfig.vendor_string, "mesa"))
+	{
+		// suckage
+		glConfig.driverType = GLDRV_MESA;
+	}
+
+	if (Q_stristr(glConfig.renderer_string, "geforce"))
+	{
+		if (Q_stristr(glConfig.renderer_string, "8400") ||
+		    Q_stristr(glConfig.renderer_string, "8500") ||
+		    Q_stristr(glConfig.renderer_string, "8600") ||
+		    Q_stristr(glConfig.renderer_string, "8800") ||
+		    Q_stristr(glConfig.renderer_string, "9500") ||
+		    Q_stristr(glConfig.renderer_string, "9600") ||
+		    Q_stristr(glConfig.renderer_string, "9800") ||
+		    Q_stristr(glConfig.renderer_string, "gts 240") ||
+		    Q_stristr(glConfig.renderer_string, "gts 250") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 260") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 275") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 280") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 285") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 295") ||
+		    Q_stristr(glConfig.renderer_string, "gt 320") ||
+		    Q_stristr(glConfig.renderer_string, "gt 330") ||
+		    Q_stristr(glConfig.renderer_string, "gt 340") ||
+		    Q_stristr(glConfig.renderer_string, "gt 415") ||
+		    Q_stristr(glConfig.renderer_string, "gt 420") ||
+		    Q_stristr(glConfig.renderer_string, "gt 425") ||
+		    Q_stristr(glConfig.renderer_string, "gt 430") ||
+		    Q_stristr(glConfig.renderer_string, "gt 435") ||
+		    Q_stristr(glConfig.renderer_string, "gt 440") ||
+		    Q_stristr(glConfig.renderer_string, "gt 520") ||
+		    Q_stristr(glConfig.renderer_string, "gt 525") ||
+		    Q_stristr(glConfig.renderer_string, "gt 540") ||
+		    Q_stristr(glConfig.renderer_string, "gt 550") ||
+		    Q_stristr(glConfig.renderer_string, "gt 555") ||
+		    Q_stristr(glConfig.renderer_string, "gts 450") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 460") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 470") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 480") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 485") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 560") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 570") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 580") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 590") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 630") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 640") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 645") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 670") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 680") ||
+		    Q_stristr(glConfig.renderer_string, "gtx 690"))
+		{
+
+			glConfig.hardwareType = GLHW_NV_DX10;
+		}
+
+	}
+	else if (Q_stristr(glConfig.renderer_string, "quadro fx"))
+	{
+		if (Q_stristr(glConfig.renderer_string, "3600"))
+		{
+			glConfig.hardwareType = GLHW_NV_DX10;
+		}
+	}
+	else if (Q_stristr(glConfig.renderer_string, "gallium") &&
+	         Q_stristr(glConfig.renderer_string, " amd "))
+	{
+		// anything prior to R600 is listed as ATI.
+		glConfig.hardwareType = GLHW_ATI_DX10;
+	}
+	else if (Q_stristr(glConfig.renderer_string, "rv770") ||
+	         Q_stristr(glConfig.renderer_string, "eah4850") ||
+	         Q_stristr(glConfig.renderer_string, "eah4870") ||
+	         // previous three are too specific?
+	         Q_stristr(glConfig.renderer_string, "radeon hd"))
+	{
+		glConfig.hardwareType = GLHW_ATI_DX10;
+	}
+	else if (Q_stristr(glConfig.renderer_string, "radeon"))
+	{
+		glConfig.hardwareType = GLHW_ATI;
+	}
+}
+
 #define R_MODE_FALLBACK 3 // 640 * 480
 
 /*
@@ -803,8 +1067,16 @@ void GLimp_Init(void)
 	ri.Error(ERR_FATAL, "GLimp_Init() - could not load OpenGL subsystem\n");
 
 success:
+
+#ifdef FEATURE_RENDERER2
+	if (glConfig.driverType != GLDRV_OPENGL3)
+	{
+		glConfig.driverType = GLDRV_ICD;
+	}
+#else
 	// This values force the UI to disable driver selection
-	glConfig.driverType          = GLDRV_ICD;
+	glConfig.driverType = GLDRV_ICD;
+#endif
 	glConfig.hardwareType        = GLHW_GENERIC;
 	glConfig.deviceSupportsGamma = SDL_SetGamma(1.0f, 1.0f, 1.0f) >= 0;
 
@@ -825,6 +1097,7 @@ success:
 	}
 
 	// get our config strings
+
 	Q_strncpyz(glConfig.vendor_string, (char *) qglGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
 	Q_strncpyz(glConfig.renderer_string, (char *) qglGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
 	if (*glConfig.renderer_string && glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] == '\n')
@@ -832,10 +1105,18 @@ success:
 		glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] = 0;
 	}
 	Q_strncpyz(glConfig.version_string, (char *) qglGetString(GL_VERSION), sizeof(glConfig.version_string));
-	Q_strncpyz(glConfig.extensions_string, (char *) qglGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
+	if (glConfig.driverType != GLDRV_OPENGL3)
+	{
+		Q_strncpyz(glConfig.extensions_string, ( char * ) glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
+	}
+
 
 	// initialize extensions
 	GLimp_InitExtensions();
+
+#ifdef FEATURE_RENDERER2
+	GLimp_SetHardware();
+#endif
 
 	ri.Cvar_Get("r_availableModes", "", CVAR_ROM);
 

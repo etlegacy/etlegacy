@@ -384,10 +384,10 @@ void GLimp_InitExtraExtensions()
 	qglIsVertexArrayARB      = NULL;
 	if (GLimp_HaveExtension(extension))
 	{
-		qglBindVertexArrayARB    = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glBindVertexArrayARB");
-		qglDeleteVertexArraysARB = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glDeleteVertexArraysARB");
-		qglGenVertexArraysARB    = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glGenVertexArraysARB");
-		qglIsVertexArrayARB      = (PFNGLDELETEOBJECTARBPROC) SDL_GL_GetProcAddress("glIsVertexArrayARB");
+		qglBindVertexArrayARB    = (PFNGLBINDVERTEXARRAYPROC) SDL_GL_GetProcAddress("glBindVertexArray");
+		qglDeleteVertexArraysARB = (PFNGLDELETEVERTEXARRAYSPROC) SDL_GL_GetProcAddress("glDeleteVertexArrays");
+		qglGenVertexArraysARB    = (PFNGLGENVERTEXARRAYSPROC) SDL_GL_GetProcAddress("glGenVertexArrays");
+		qglIsVertexArrayARB      = (PFNGLISVERTEXARRAYPROC) SDL_GL_GetProcAddress("glIsVertexArray");
 
 		if (r_ext_vertex_array_object->integer)
 		{
@@ -438,6 +438,11 @@ void GLimp_InitExtraExtensions()
 		ri.Printf(PRINT_ALL, result[1], extension);
 		//glRefConfig.vertexShader = qtrue;
 
+		GL_CheckErrors();
+		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB, &glConfig2.maxVertexUniforms); GL_CheckErrors();
+		//glGetIntegerv(GL_MAX_VARYING_FLOATS_ARB, &glConfig2.maxVaryingFloats); GL_CheckErrors();
+		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS_ARB, &glConfig2.maxVertexAttribs); GL_CheckErrors();
+
 		reservedComponents                   = 16 * 10; // approximation how many uniforms we have besides the bone matrices
 		glConfig2.maxVertexSkinningBones     = (int) Q_bound(0.0, (Q_max(glConfig2.maxVertexUniforms - reservedComponents, 0) / 16), MAX_BONES);
 		glConfig2.vboVertexSkinningAvailable = r_vboVertexSkinning->integer && ((glConfig2.maxVertexSkinningBones >= 12) ? qtrue : qfalse);
@@ -456,8 +461,9 @@ void GLimp_InitExtraExtensions()
 
 		Q_strncpyz(version, (char *) qglGetString(GL_SHADING_LANGUAGE_VERSION_ARB), sizeof(version));
 
-		sscanf(version, "%d.%d", &glRefConfig.glslMajorVersion, &glRefConfig.glslMinorVersion);
+		Q_strncpyz(glConfig2.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION_ARB), sizeof(glConfig2.shadingLanguageVersion));
 
+		sscanf(version, "%d.%d", &glRefConfig.glslMajorVersion, &glRefConfig.glslMinorVersion);
 		ri.Printf(PRINT_ALL, "...using GLSL version %s\n", version);
 	}
 	else
@@ -502,10 +508,8 @@ void GLimp_InitExtraExtensions()
 	{
 		if (r_ext_texture_float->integer)
 		{
-			glRefConfig.textureFloat = qtrue;
-
+			glRefConfig.textureFloat        = qtrue;
 			glConfig2.textureFloatAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...using GL_ARB_texture_float\n");
 		}
 
 		ri.Printf(PRINT_ALL, result[glRefConfig.textureFloat], extension);
@@ -528,11 +532,6 @@ void GLimp_InitExtraExtensions()
 		if (r_ext_half_float_pixel->integer)
 		{
 			glConfig2.textureHalfFloatAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...using GL_ARB_half_float_pixel\n");
-		}
-		else
-		{
-			ri.Printf(PRINT_ALL, "...ignoring GL_ARB_half_float_pixel\n");
 		}
 
 		ri.Printf(PRINT_ALL, result[glRefConfig.halfFloatPixel], extension);
@@ -602,7 +601,6 @@ void GLimp_InitExtraExtensions()
 		if (r_ext_packed_depth_stencil->integer)
 		{
 			glConfig2.framebufferPackedDepthStencilAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...using GL_EXT_packed_depth_stencil\n");
 		}
 
 
@@ -649,7 +647,6 @@ void GLimp_InitExtraExtensions()
 		if (r_ext_framebuffer_blit->integer)
 		{
 			glConfig2.framebufferBlitAvailable = qtrue;
-			ri.Printf(PRINT_ALL, "...using GL_EXT_framebuffer_blit\n");
 		}
 
 
