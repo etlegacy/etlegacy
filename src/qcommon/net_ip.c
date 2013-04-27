@@ -610,7 +610,7 @@ const char *NET_AdrToString(netadr_t a)
 	break;
 #endif
 	default:
-		Com_Printf("NET_AdrToString: Unknown address type%i\n", a.type);
+		Com_Printf("NET_AdrToString: Unknown address type: %i\n", a.type);
 	}
 
 	return s;
@@ -636,6 +636,8 @@ const char *NET_AdrToStringwPort(netadr_t a)
 		Com_sprintf(s, sizeof(s), "[%s]:%hu", NET_AdrToString(a), ntohs(a.port));
 		break;
 #endif
+	default:
+		Com_Printf("NET_AdrToStringwPort: Unknown address type: %i\n", a.type);
 	}
 
 	return s;
