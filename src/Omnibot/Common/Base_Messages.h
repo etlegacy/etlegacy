@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// $LastChangedBy: drevil $
-// $LastChangedDate: 2010-05-01 10:36:37 -0700 (Sat, 01 May 2010) $
-// $LastChangedRevision: 4841 $
+// $LastChangedBy: jswigart@gmail.com $
+// $LastChangedDate: 2011-04-10 12:06:32 +0200 (So, 10 Apr 2011) $
+// $LastChangedRevision: 319 $
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -11,10 +11,8 @@
 
 #include "Omni-Bot_Types.h"
 
-#ifdef _MSC_VER
 #pragma pack(push)
 #pragma pack(4)
-#endif
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -403,14 +401,6 @@ struct Event_EntityCreated
 	int				m_EntityClass;
 };
 
-struct EntityInstance
-{
-	GameEntity		m_Entity;
-	BitFlag32		m_EntityCategory;
-	int				m_EntityClass;
-	int				m_TimeStamp;
-};
-
 struct Event_EntityDeleted
 {
 	GameEntity		m_Entity;
@@ -576,8 +566,6 @@ struct Event_EntLeaveRadius
 	GameEntity	m_Entity;
 };
 
-#ifdef _MSC_VER
 #pragma pack(pop)
-#endif
 
 #endif

@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: drevil $
-// $LastChangedDate: 2009-05-16 18:53:18 -0700 (Sat, 16 May 2009) $
-// $LastChangedRevision: 4155 $
+// $LastChangedBy: jswigart $
+// $LastChangedDate: 2010-09-20 04:04:56 +0200 (Mo, 20 Sep 2010) $
+// $LastChangedRevision: 153 $
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -60,6 +60,7 @@ public:
 	inline obColor fade(obuint8 _a) const { obColor c(cdata.m_RGBAi); c.cdata.m_RGBA[3]=_a; return c; }
 
 	inline obint32 rgba() const { return cdata.m_RGBAi; }
+	inline obint32 argb() const { return obColor( a(), r(), g(), b() ); }
 private:
 	union cdatatype
 	{

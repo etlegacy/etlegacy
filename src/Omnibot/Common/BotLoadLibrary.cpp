@@ -1,22 +1,22 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// $LastChangedBy: drevil $
-// $LastChangedDate: 2010-04-24 20:51:13 -0700 (Sat, 24 Apr 2010) $
-// $LastChangedRevision: 4828 $
+// $LastChangedBy: ken.nickel $
+// $LastChangedDate: 2011-08-23 21:36:43 +0200 (Di, 23 Aug 2011) $
+// $LastChangedRevision: 365 $
 //
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "BotExports.h"
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #pragma warning(disable:4530) //C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc
 #pragma warning(disable:4706) //assignment within conditional expression
-#endif
+#endif // _WIN32
 
 #include <string>
-#include <cstring>
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -128,7 +128,7 @@ const char *Omnibot_FixPath(const char *_path)
 //////////////////////////////////////////////////////////////////////////
 // Utilities
 
-const char *OB_VA(const char* _msg, ...)
+const char *OB_VA( const char* _msg, ...)
 {
 	static int iCurrentBuffer = 0;
 	const int iNumBuffers = 3;
@@ -271,7 +271,7 @@ void Omnibot_FreeLibrary()
 
 #elif defined __linux__ || ((defined __MACH__) && (defined __APPLE__))
 
-#include <cstdarg>
+#include <stdarg.h>
 
 //////////////////////////////////////////////////////////////////////////
 // Utilities

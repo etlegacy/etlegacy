@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: drevil $
-// $LastChangedDate: 2009-05-03 23:56:13 -0700 (Sun, 03 May 2009) $
-// $LastChangedRevision: 4069 $
+// $LastChangedBy: jswigart $
+// $LastChangedDate: 2010-08-28 07:12:05 +0200 (Sa, 28 Aug 2010) $
+// $LastChangedRevision: 32 $
 //
 // Title: TF Message Structure Definitions
 //
@@ -13,10 +13,8 @@
 
 #include "../Common/Base_Messages.h"
 
-#ifdef _MSC_VER
 #pragma pack(push)
 #pragma pack(4)
-#endif
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -244,8 +242,6 @@ struct ET_DisableBotPush
 	int			m_Push;
 };
 
-#ifdef _MSC_VER
 #pragma pack(pop)
-#endif
 
 #endif

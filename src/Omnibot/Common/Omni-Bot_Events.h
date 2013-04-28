@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: drevil $
-// $LastChangedDate: 2010-03-17 22:09:36 -0700 (Wed, 17 Mar 2010) $
-// $LastChangedRevision: 4739 $
+// $LastChangedBy: jswigart $
+// $LastChangedDate: 2010-08-28 07:12:05 +0200 (Sa, 28 Aug 2010) $
+// $LastChangedRevision: 32 $
 //
 // about: Generic Bot Events
 //

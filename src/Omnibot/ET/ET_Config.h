@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: drevil $
-// $LastChangedDate: 2010-02-09 21:32:10 -0800 (Tue, 09 Feb 2010) $
-// $LastChangedRevision: 4671 $
+// $LastChangedBy: jswigart $
+// $LastChangedDate: 2010-08-28 07:12:05 +0200 (Sa, 28 Aug 2010) $
+// $LastChangedRevision: 32 $
 //
 // Title: ET Config
 //
@@ -75,7 +75,7 @@ typedef enum eET_Msgs
 	ET_MSG_ISGUNMOUNTED,
 	ET_MSG_ISGUNREPAIRABLE,
 	ET_MSG_MOUNTEDMG42INFO,
-	
+
 	// weapon query stuff
 	ET_MSG_WPOVERHEATED,
 	//ET_MSG_WPGRENSPEED,
@@ -265,7 +265,7 @@ typedef enum eET_EntityFlags
 {
 	// bit: ET_ENT_FLAG_DISGUISED
 	//		This entity is disguised
-	ET_ENT_FLAG_DISGUISED = ENT_FLAG_FIRST_USER,	
+	ET_ENT_FLAG_DISGUISED = ENT_FLAG_FIRST_USER,
 	// bit: ET_ENT_MOUNTED
 	//		This entity is mounted on an mg42, tank, or aagun
 	ET_ENT_FLAG_MOUNTED,

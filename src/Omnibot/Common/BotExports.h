@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: DrEvil $
-// $LastChangedDate: 2007-05-16 16:53:29 -0700 (Wed, 16 May 2007) $
-// $LastChangedRevision: 1924 $
+// $LastChangedBy: jswigart $
+// $LastChangedDate: 2010-08-28 07:12:05 +0200 (Sa, 28 Aug 2010) $
+// $LastChangedRevision: 32 $
 //
 // Title: BotExports
 //		In order for the game to call functions from the bot, we must export

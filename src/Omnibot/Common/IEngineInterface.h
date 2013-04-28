@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // 
-// $LastChangedBy: drevil $
-// $LastChangedDate: 2010-05-01 10:37:51 -0700 (Sat, 01 May 2010) $
-// $LastChangedRevision: 4842 $
+// $LastChangedBy: ken.nickel $
+// $LastChangedDate: 2011-08-16 06:47:44 +0200 (Di, 16 Aug 2011) $
+// $LastChangedRevision: 351 $
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -13,6 +13,8 @@
 #include "Omni-Bot_BitFlags.h"
 #include "Omni-Bot_Color.h"
 #include "MessageHelper.h"
+
+#define _UNUSED(x) ((void)x) // cs: for gcc warnings
 
 // Title: Engine Interface
 
@@ -299,12 +301,12 @@ public:
 	// Function: DebugLine
 	//		Adds a line to immediately display between 2 positions, with a specific color
 	virtual bool DebugLine(const float _start[3], const float _end[3], const obColor &_color, float _time) 
-	{ _start; _end; _color; _time; return false; }
+	{ _UNUSED(_start); _UNUSED(_end); _UNUSED(_color); _UNUSED(_time); return false; }
 	
 	// Function: DebugBox
 	//		Adds a line to immediately display between 2 positions, with a specific color
 	virtual bool DebugBox(const float _mins[3], const float _maxs[3], const obColor &_color, float _time) 
-	{ _mins; _maxs; _color; _time; return false; }
+	{ _UNUSED(_mins); _UNUSED(_maxs); _UNUSED(_color); _UNUSED(_time); return false; }
 
 	// Function: DebugArrow
 	//		Adds a line to immediately display between 2 positions, with a specific color
@@ -314,17 +316,17 @@ public:
 	// Function: DebugRadius
 	//		Adds a radius indicator to be displayed at a certain position with radius and color
 	virtual bool DebugRadius(const float _pos[3], const float _radius, const obColor &_color, float _time)
-	{ _pos; _radius; _color; _time; return false; }
+	{ _UNUSED(_pos); _UNUSED(_radius); _UNUSED(_color); _UNUSED(_time); return false; }
 
 	// Function: DebugPolygon
 	//		Draw a shaded polygon.
 	virtual bool DebugPolygon(const obVec3 *_verts, const int _numverts, const obColor &_color, float _time, int _flags)
-	{ _verts; _numverts; _color; _time; _flags; return false; }
+	{ _UNUSED(_verts); _UNUSED(_numverts); _UNUSED(_color); _UNUSED(_time); _UNUSED(_flags); return false; }
 
 	// Function: PrintScreenMessage
 	//		This function should print a message the the game screen if possible
 	virtual bool PrintScreenText(const float _pos[3], float _duration, const obColor &_color, const char *_msg)
-	{ _pos; _duration; _color; _msg; return false; }
+	{ _UNUSED(_pos); _UNUSED(_duration); _UNUSED(_color); _UNUSED(_msg); return false; }
 
 	// Function: PrintError
 	//		This function should print an error the the game however desired,
