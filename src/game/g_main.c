@@ -1553,9 +1553,10 @@ void G_UpdateCvars(void)
 {
 	int         i;
 	cvarTable_t *cv;
-	qboolean    fToggles          = qfalse;
-	qboolean    fVoteFlags        = qfalse;
-	qboolean    chargetimechanged = qfalse;
+	qboolean    fToggles           = qfalse;
+	qboolean    fVoteFlags         = qfalse;
+	qboolean    chargetimechanged  = qfalse;
+	qboolean    clsweaprestriction = qfalse;
 
 	for (i = 0, cv = gameCvarTable ; i < gameCvarTableSize ; i++, cv++)
 	{
@@ -1690,6 +1691,10 @@ void G_UpdateCvars(void)
 						trap_Cvar_Set(cv->cvarName, "33");
 					}
 				}
+				else if (cv->vmCvar == &team_maxSoldiers || cv->vmCvar == &team_maxMedics || cv->vmCvar == &team_maxEngineers || cv->vmCvar == &team_maxFieldops || cv->vmCvar == &team_maxCovertops || cv->vmCvar == &team_maxMortars || cv->vmCvar == &team_maxFlamers || cv->vmCvar == &team_maxMg42s || cv->vmCvar == &team_maxPanzers || cv->vmCvar == &team_maxRiflegrenades)
+				{
+					clsweaprestriction = qtrue;
+				}
 #ifdef FEATURE_LUA
 				else if (cv->vmCvar == &lua_modules || cv->vmCvar == &lua_allowedModules)
 				{
@@ -1759,6 +1764,25 @@ void G_UpdateCvars(void)
 		Info_SetValueForKey(cs, "axs_cvo", va("%i", level.covertopsChargeTime[0]));
 		Info_SetValueForKey(cs, "ald_cvo", va("%i", level.covertopsChargeTime[1]));
 		trap_SetConfigstring(CS_CHARGETIMES, cs);
+	}
+
+	if (clsweaprestriction)
+	{
+		char cs[MAX_INFO_STRING];
+
+		cs[0] = '\0';
+
+		Info_SetValueForKey(cs, "soldier", team_maxSoldiers.string);
+		Info_SetValueForKey(cs, "medic", team_maxMedics.string);
+		Info_SetValueForKey(cs, "engineer", team_maxEngineers.string);
+		Info_SetValueForKey(cs, "fieldop", team_maxFieldops.string);
+		Info_SetValueForKey(cs, "covop", team_maxCovertops.string);
+		Info_SetValueForKey(cs, "mortar", team_maxMortars.string);
+		Info_SetValueForKey(cs, "flamer", team_maxFlamers.string);
+		Info_SetValueForKey(cs, "mg42", team_maxMg42s.string);
+		Info_SetValueForKey(cs, "panzer", team_maxPanzers.string);
+		Info_SetValueForKey(cs, "riglegr", team_maxRiflegrenades.string);
+		trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
 	}
 }
 

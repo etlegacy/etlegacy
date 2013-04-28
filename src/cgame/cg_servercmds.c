@@ -725,6 +725,29 @@ void CG_ChargeTimesChanged(void)
 }
 
 /*
+===============
+CG_TeamRestrictionsChanged
+===============
+*/
+void CG_TeamRestrictionsChanged(void)
+{
+	const char *info;
+
+	info = CG_ConfigString(CS_TEAMRESTRICTIONS);
+
+	Q_strncpyz(cg.maxSoldiers, Info_ValueForKey(info, "soldier"), sizeof(cg.maxSoldiers));
+	Q_strncpyz(cg.maxMedics, Info_ValueForKey(info, "medic"), sizeof(cg.maxSoldiers));
+	Q_strncpyz(cg.maxEngineers, Info_ValueForKey(info, "engineer"), sizeof(cg.maxSoldiers));
+	Q_strncpyz(cg.maxFieldops, Info_ValueForKey(info, "fieldop"), sizeof(cg.maxSoldiers));
+	Q_strncpyz(cg.maxCovertops, Info_ValueForKey(info, "covop"), sizeof(cg.maxSoldiers));
+	Q_strncpyz(cg.maxMortars, Info_ValueForKey(info, "mortar"), sizeof(cg.maxSoldiers));
+	Q_strncpyz(cg.maxFlamers, Info_ValueForKey(info, "flamer"), sizeof(cg.maxSoldiers));
+	Q_strncpyz(cg.maxMg42s, Info_ValueForKey(info, "mg42"), sizeof(cg.maxSoldiers));
+	Q_strncpyz(cg.maxPanzers, Info_ValueForKey(info, "panzer"), sizeof(cg.maxSoldiers));
+	Q_strncpyz(cg.maxRiflegrenades, Info_ValueForKey(info, "riglegr"), sizeof(cg.maxSoldiers));
+}
+
+/*
 ================
 CG_ConfigStringModified
 ================
@@ -895,6 +918,10 @@ static void CG_ConfigStringModified(void)
 	else if (num == CS_CHARGETIMES)
 	{
 		CG_ChargeTimesChanged();
+	}
+	else if (num == CS_TEAMRESTRICTIONS)
+	{
+		CG_TeamRestrictionsChanged();
 	}
 	else if (num >= CS_FIRETEAMS && num < CS_FIRETEAMS + MAX_FIRETEAMS)
 	{

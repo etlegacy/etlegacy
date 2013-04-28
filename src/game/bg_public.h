@@ -339,6 +339,9 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_SVCVAR                       41
 #define CS_CONFIGNAME                   42
 
+#define CS_TEAMRESTRICTIONS             43      // Class restrictions have been changed
+#define CS_UPGRADERANGE                 44      // Upgrade range levels have been changed
+
 #define CS_MODELS                       64
 #define CS_SOUNDS                       (CS_MODELS +               MAX_MODELS)               // 320 (256)
 #define CS_SHADERS                      (CS_SOUNDS +               MAX_SOUNDS)               // 576 (256)

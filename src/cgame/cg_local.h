@@ -1098,6 +1098,17 @@ typedef struct
 	int medicChargeTime[2];
 	int covertopsChargeTime[2];
 
+	char maxSoldiers[MAX_QPATH];
+	char maxMedics[MAX_QPATH];
+	char maxEngineers[MAX_QPATH];
+	char maxFieldops[MAX_QPATH];
+	char maxCovertops[MAX_QPATH];
+	char maxMortars[MAX_QPATH];
+	char maxFlamers[MAX_QPATH];
+	char maxMg42s[MAX_QPATH];
+	char maxPanzers[MAX_QPATH];
+	char maxRiflegrenades[MAX_QPATH];
+
 	int binocZoomTime;
 	int limboEndCinematicTime;
 	int proneMovingTime;
@@ -2638,6 +2649,7 @@ void CG_ParseReinforcementTimes(const char *pszReinfSeedString);
 void CG_SetConfigValues(void);
 void CG_ShaderStateChanged(void);
 void CG_ChargeTimesChanged(void);
+void CG_TeamRestrictionsChanged(void);
 void CG_LoadVoiceChats(void);
 void CG_PlayBufferedVoiceChats(void);
 void CG_AddToNotify(const char *str);

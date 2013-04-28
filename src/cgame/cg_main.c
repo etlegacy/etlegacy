@@ -2925,6 +2925,8 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_ChargeTimesChanged();
 
+	CG_TeamRestrictionsChanged();
+
 	trap_S_ClearLoopingSounds();
 	trap_S_ClearSounds(qfalse);
 
