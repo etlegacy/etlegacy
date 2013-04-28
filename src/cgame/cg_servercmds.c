@@ -712,16 +712,16 @@ void CG_ChargeTimesChanged(void)
 
 	info = CG_ConfigString(CS_CHARGETIMES);
 
-	cg.soldierChargeTime[0]   = atoi(Info_ValueForKey(info, "axs_sld"));
-	cg.soldierChargeTime[1]   = atoi(Info_ValueForKey(info, "ald_sld"));
-	cg.medicChargeTime[0]     = atoi(Info_ValueForKey(info, "axs_mdc"));
-	cg.medicChargeTime[1]     = atoi(Info_ValueForKey(info, "ald_mdc"));
-	cg.engineerChargeTime[0]  = atoi(Info_ValueForKey(info, "axs_eng"));
-	cg.engineerChargeTime[1]  = atoi(Info_ValueForKey(info, "ald_eng"));
-	cg.ltChargeTime[0]        = atoi(Info_ValueForKey(info, "axs_lnt"));
-	cg.ltChargeTime[1]        = atoi(Info_ValueForKey(info, "ald_lnt"));
-	cg.covertopsChargeTime[0] = atoi(Info_ValueForKey(info, "axs_cvo"));
-	cg.covertopsChargeTime[1] = atoi(Info_ValueForKey(info, "ald_cvo"));
+	cg.soldierChargeTime[0]   = atoi(Info_ValueForKey(info, "x0"));
+	cg.soldierChargeTime[1]   = atoi(Info_ValueForKey(info, "a0"));
+	cg.medicChargeTime[0]     = atoi(Info_ValueForKey(info, "x1"));
+	cg.medicChargeTime[1]     = atoi(Info_ValueForKey(info, "a1"));
+	cg.engineerChargeTime[0]  = atoi(Info_ValueForKey(info, "x2"));
+	cg.engineerChargeTime[1]  = atoi(Info_ValueForKey(info, "a2"));
+	cg.ltChargeTime[0]        = atoi(Info_ValueForKey(info, "x3"));
+	cg.ltChargeTime[1]        = atoi(Info_ValueForKey(info, "a3"));
+	cg.covertopsChargeTime[0] = atoi(Info_ValueForKey(info, "x4"));
+	cg.covertopsChargeTime[1] = atoi(Info_ValueForKey(info, "a4"));
 }
 
 /*
@@ -735,16 +735,16 @@ void CG_TeamRestrictionsChanged(void)
 
 	info = CG_ConfigString(CS_TEAMRESTRICTIONS);
 
-	Q_strncpyz(cg.maxSoldiers, Info_ValueForKey(info, "soldier"), sizeof(cg.maxSoldiers));
-	Q_strncpyz(cg.maxMedics, Info_ValueForKey(info, "medic"), sizeof(cg.maxSoldiers));
-	Q_strncpyz(cg.maxEngineers, Info_ValueForKey(info, "engineer"), sizeof(cg.maxSoldiers));
-	Q_strncpyz(cg.maxFieldops, Info_ValueForKey(info, "fieldop"), sizeof(cg.maxSoldiers));
-	Q_strncpyz(cg.maxCovertops, Info_ValueForKey(info, "covop"), sizeof(cg.maxSoldiers));
-	Q_strncpyz(cg.maxMortars, Info_ValueForKey(info, "mortar"), sizeof(cg.maxSoldiers));
-	Q_strncpyz(cg.maxFlamers, Info_ValueForKey(info, "flamer"), sizeof(cg.maxSoldiers));
-	Q_strncpyz(cg.maxMg42s, Info_ValueForKey(info, "mg42"), sizeof(cg.maxSoldiers));
-	Q_strncpyz(cg.maxPanzers, Info_ValueForKey(info, "panzer"), sizeof(cg.maxSoldiers));
-	Q_strncpyz(cg.maxRiflegrenades, Info_ValueForKey(info, "riglegr"), sizeof(cg.maxSoldiers));
+	Q_strncpyz(cg.maxSoldiers, Info_ValueForKey(info, "c0"), sizeof(cg.maxSoldiers));
+	Q_strncpyz(cg.maxMedics, Info_ValueForKey(info, "c1"), sizeof(cg.maxMedics));
+	Q_strncpyz(cg.maxEngineers, Info_ValueForKey(info, "c2"), sizeof(cg.maxEngineers));
+	Q_strncpyz(cg.maxFieldops, Info_ValueForKey(info, "c3"), sizeof(cg.maxFieldops));
+	Q_strncpyz(cg.maxCovertops, Info_ValueForKey(info, "c4"), sizeof(cg.maxCovertops));
+	Q_strncpyz(cg.maxMortars, Info_ValueForKey(info, "w0"), sizeof(cg.maxMortars));
+	Q_strncpyz(cg.maxFlamers, Info_ValueForKey(info, "w1"), sizeof(cg.maxFlamers));
+	Q_strncpyz(cg.maxMg42s, Info_ValueForKey(info, "w2"), sizeof(cg.maxMg42s));
+	Q_strncpyz(cg.maxPanzers, Info_ValueForKey(info, "w3"), sizeof(cg.maxPanzers));
+	Q_strncpyz(cg.maxRiflegrenades, Info_ValueForKey(info, "w4"), sizeof(cg.maxRiflegrenades));
 }
 
 /*

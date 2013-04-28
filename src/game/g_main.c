@@ -1753,16 +1753,16 @@ void G_UpdateCvars(void)
 		char cs[MAX_INFO_STRING];
 
 		cs[0] = '\0';
-		Info_SetValueForKey(cs, "axs_sld", va("%i", level.soldierChargeTime[0]));
-		Info_SetValueForKey(cs, "ald_sld", va("%i", level.soldierChargeTime[1]));
-		Info_SetValueForKey(cs, "axs_mdc", va("%i", level.medicChargeTime[0]));
-		Info_SetValueForKey(cs, "ald_mdc", va("%i", level.medicChargeTime[1]));
-		Info_SetValueForKey(cs, "axs_eng", va("%i", level.engineerChargeTime[0]));
-		Info_SetValueForKey(cs, "ald_eng", va("%i", level.engineerChargeTime[1]));
-		Info_SetValueForKey(cs, "axs_lnt", va("%i", level.lieutenantChargeTime[0]));
-		Info_SetValueForKey(cs, "ald_lnt", va("%i", level.lieutenantChargeTime[1]));
-		Info_SetValueForKey(cs, "axs_cvo", va("%i", level.covertopsChargeTime[0]));
-		Info_SetValueForKey(cs, "ald_cvo", va("%i", level.covertopsChargeTime[1]));
+		Info_SetValueForKey(cs, "x0", va("%i", level.soldierChargeTime[0]));
+		Info_SetValueForKey(cs, "a0", va("%i", level.soldierChargeTime[1]));
+		Info_SetValueForKey(cs, "x1", va("%i", level.medicChargeTime[0]));
+		Info_SetValueForKey(cs, "a1", va("%i", level.medicChargeTime[1]));
+		Info_SetValueForKey(cs, "x2", va("%i", level.engineerChargeTime[0]));
+		Info_SetValueForKey(cs, "a2", va("%i", level.engineerChargeTime[1]));
+		Info_SetValueForKey(cs, "x3", va("%i", level.lieutenantChargeTime[0]));
+		Info_SetValueForKey(cs, "a3", va("%i", level.lieutenantChargeTime[1]));
+		Info_SetValueForKey(cs, "x4", va("%i", level.covertopsChargeTime[0]));
+		Info_SetValueForKey(cs, "a4", va("%i", level.covertopsChargeTime[1]));
 		trap_SetConfigstring(CS_CHARGETIMES, cs);
 	}
 
@@ -1772,16 +1772,16 @@ void G_UpdateCvars(void)
 
 		cs[0] = '\0';
 
-		Info_SetValueForKey(cs, "soldier", team_maxSoldiers.string);
-		Info_SetValueForKey(cs, "medic", team_maxMedics.string);
-		Info_SetValueForKey(cs, "engineer", team_maxEngineers.string);
-		Info_SetValueForKey(cs, "fieldop", team_maxFieldops.string);
-		Info_SetValueForKey(cs, "covop", team_maxCovertops.string);
-		Info_SetValueForKey(cs, "mortar", team_maxMortars.string);
-		Info_SetValueForKey(cs, "flamer", team_maxFlamers.string);
-		Info_SetValueForKey(cs, "mg42", team_maxMg42s.string);
-		Info_SetValueForKey(cs, "panzer", team_maxPanzers.string);
-		Info_SetValueForKey(cs, "riglegr", team_maxRiflegrenades.string);
+		Info_SetValueForKey(cs, "c0", team_maxSoldiers.string);
+		Info_SetValueForKey(cs, "c1", team_maxMedics.string);
+		Info_SetValueForKey(cs, "c2", team_maxEngineers.string);
+		Info_SetValueForKey(cs, "c3", team_maxFieldops.string);
+		Info_SetValueForKey(cs, "c4", team_maxCovertops.string);
+		Info_SetValueForKey(cs, "w0", team_maxMortars.string);
+		Info_SetValueForKey(cs, "w1", team_maxFlamers.string);
+		Info_SetValueForKey(cs, "w2", team_maxMg42s.string);
+		Info_SetValueForKey(cs, "w3", team_maxPanzers.string);
+		Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
 		trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
 	}
 }
@@ -2250,16 +2250,16 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	level.covertopsChargeTimeModifier[0]  = level.covertopsChargeTimeModifier[1] = 1.f;
 
 	cs[0] = '\0';
-	Info_SetValueForKey(cs, "axs_sld", va("%i", level.soldierChargeTime[0]));
-	Info_SetValueForKey(cs, "ald_sld", va("%i", level.soldierChargeTime[1]));
-	Info_SetValueForKey(cs, "axs_mdc", va("%i", level.medicChargeTime[0]));
-	Info_SetValueForKey(cs, "ald_mdc", va("%i", level.medicChargeTime[1]));
-	Info_SetValueForKey(cs, "axs_eng", va("%i", level.engineerChargeTime[0]));
-	Info_SetValueForKey(cs, "ald_eng", va("%i", level.engineerChargeTime[1]));
-	Info_SetValueForKey(cs, "axs_lnt", va("%i", level.lieutenantChargeTime[0]));
-	Info_SetValueForKey(cs, "ald_lnt", va("%i", level.lieutenantChargeTime[1]));
-	Info_SetValueForKey(cs, "axs_cvo", va("%i", level.covertopsChargeTime[0]));
-	Info_SetValueForKey(cs, "ald_cvo", va("%i", level.covertopsChargeTime[1]));
+	Info_SetValueForKey(cs, "x0", va("%i", level.soldierChargeTime[0]));
+	Info_SetValueForKey(cs, "a0", va("%i", level.soldierChargeTime[1]));
+	Info_SetValueForKey(cs, "x1", va("%i", level.medicChargeTime[0]));
+	Info_SetValueForKey(cs, "a1", va("%i", level.medicChargeTime[1]));
+	Info_SetValueForKey(cs, "x2", va("%i", level.engineerChargeTime[0]));
+	Info_SetValueForKey(cs, "a2", va("%i", level.engineerChargeTime[1]));
+	Info_SetValueForKey(cs, "x3", va("%i", level.lieutenantChargeTime[0]));
+	Info_SetValueForKey(cs, "a3", va("%i", level.lieutenantChargeTime[1]));
+	Info_SetValueForKey(cs, "x4", va("%i", level.covertopsChargeTime[0]));
+	Info_SetValueForKey(cs, "a4", va("%i", level.covertopsChargeTime[1]));
 	trap_SetConfigstring(CS_CHARGETIMES, cs);
 	trap_SetConfigstring(CS_FILTERCAMS, va("%i", g_filtercams.integer));
 

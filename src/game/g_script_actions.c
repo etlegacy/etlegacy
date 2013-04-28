@@ -974,16 +974,16 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 	{
 		char cs[MAX_INFO_STRING];
 		cs[0] = '\0';
-		Info_SetValueForKey(cs, "axs_sld", va("%i", level.soldierChargeTime[0]));
-		Info_SetValueForKey(cs, "ald_sld", va("%i", level.soldierChargeTime[1]));
-		Info_SetValueForKey(cs, "axs_mdc", va("%i", level.medicChargeTime[0]));
-		Info_SetValueForKey(cs, "ald_mdc", va("%i", level.medicChargeTime[1]));
-		Info_SetValueForKey(cs, "axs_eng", va("%i", level.engineerChargeTime[0]));
-		Info_SetValueForKey(cs, "ald_eng", va("%i", level.engineerChargeTime[1]));
-		Info_SetValueForKey(cs, "axs_lnt", va("%i", level.lieutenantChargeTime[0]));
-		Info_SetValueForKey(cs, "ald_lnt", va("%i", level.lieutenantChargeTime[1]));
-		Info_SetValueForKey(cs, "axs_cvo", va("%i", level.covertopsChargeTime[0]));
-		Info_SetValueForKey(cs, "ald_cvo", va("%i", level.covertopsChargeTime[1]));
+		Info_SetValueForKey(cs, "x0", va("%i", level.soldierChargeTime[0]));
+		Info_SetValueForKey(cs, "a0", va("%i", level.soldierChargeTime[1]));
+		Info_SetValueForKey(cs, "x1", va("%i", level.medicChargeTime[0]));
+		Info_SetValueForKey(cs, "a1", va("%i", level.medicChargeTime[1]));
+		Info_SetValueForKey(cs, "x2", va("%i", level.engineerChargeTime[0]));
+		Info_SetValueForKey(cs, "a2", va("%i", level.engineerChargeTime[1]));
+		Info_SetValueForKey(cs, "x3", va("%i", level.lieutenantChargeTime[0]));
+		Info_SetValueForKey(cs, "a3", va("%i", level.lieutenantChargeTime[1]));
+		Info_SetValueForKey(cs, "x4", va("%i", level.covertopsChargeTime[0]));
+		Info_SetValueForKey(cs, "a4", va("%i", level.covertopsChargeTime[1]));
 		trap_SetConfigstring(CS_CHARGETIMES, cs);
 	}
 
