@@ -105,9 +105,21 @@ static void CG_ParseTeamInfo(void)
 
 	numSortedTeamPlayers = atoi(CG_Argv(1));
 
+	if (numSortedTeamPlayers < 0 || numSortedTeamPlayers >= MAX_CLIENTS)
+	{
+		CG_Printf("CG_ParseTeamInfo: numSortedTeamPlayers out of range (%i)", numSortedTeamPlayers);
+		return;
+	}
+
 	for (i = 0 ; i < numSortedTeamPlayers ; i++)
 	{
 		client = atoi(CG_Argv(i * NUMARGS + 2));
+
+		if (client < 0 || client >= MAX_CLIENTS)
+		{
+			CG_Printf("CG_ParseTeamInfo: bad client number: %i", client);
+			return;
+		}
 
 		cgs.clientinfo[client].location[0] = atoi(CG_Argv(i * NUMARGS + 3));
 		cgs.clientinfo[client].location[1] = atoi(CG_Argv(i * NUMARGS + 4));
