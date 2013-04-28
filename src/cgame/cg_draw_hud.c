@@ -1656,7 +1656,7 @@ static float CG_DrawTimer(float y)
 
 	// spawntimer
 	seconds = msec / 1000;
-	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0)
+	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING)
 	{
 		s = va("^1%d %s", cg_spawnTimer_period.integer + (seconds - cg_spawnTimer_set.integer) % cg_spawnTimer_period.integer, s);
 	}

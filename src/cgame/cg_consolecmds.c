@@ -1127,9 +1127,14 @@ void CG_TimerSet_f(void)
 
 		trap_Argv(1, buff, sizeof(buff));
 		spawnPeriod = atoi(buff);
-		if (spawnPeriod < 1 || spawnPeriod > 60)
+
+		if (spawnPeriod == 0)
 		{
-			CG_Printf("Argument must be a number between 1 and 60.\n");
+			trap_Cvar_Set("cg_spawnTimer_set", "-1");
+		}
+		else if (spawnPeriod < 1 || spawnPeriod > 60)
+		{
+			CG_Printf("Argument must be a number between 1 and 60 - no argument will disable the spawn timer.\n");
 		}
 		else
 		{
