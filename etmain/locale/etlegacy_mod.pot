@@ -2872,6 +2872,15 @@ msgstr ""
 msgid "Spectators"
 msgstr ""
 
+msgid "You must be a player or following a player to use +stats\n"
+msgstr ""
+
+msgid "^9You must be alive to use ^3/kill.\n"
+msgstr ""
+
+msgid "No vote in progress.\n"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

@@ -2917,6 +2917,15 @@ msgstr "Teamu Aliantow"
 msgid "Spectators"
 msgstr "Obserwatorow"
 
+msgid "You must be a player or following a player to use +stats\n"
+msgstr "Musisz byc graczem lub obserwowac gracza aby uzyc +stats\n"
+
+msgid "^9You must be alive to use ^3/kill.\n"
+msgstr "^9Musisz byc zywy aby uzyc ^3/kill.\n"
+
+msgid "No vote in progress.\n"
+msgstr "Brak glosowan.\n"
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
