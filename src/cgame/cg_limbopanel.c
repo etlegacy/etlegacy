@@ -1263,12 +1263,7 @@ qboolean CG_LimboPanel_TeamButton_KeyDown(panel_button_t *button, int key)
 
 			if (CG_LimboPanel_ClassIsDisabled(teamOrder[button->data[0]], CG_LimboPanel_GetClass()))
 			{
-				int freeClass;
-				freeClass = CG_LimboPanel_FindFreeClass(teamOrder[button->data[0]]);
-				if (freeClass >= 0)
-				{
-					cgs.ccSelectedClass = freeClass;
-				}
+				cgs.ccSelectedClass = CG_LimboPanel_FindFreeClass(teamOrder[button->data[0]]);
 			}
 
 			CG_LimboPanel_SetSelectedWeaponNumForSlot(0, 0);
@@ -3525,7 +3520,7 @@ qboolean CG_LimboPanel_ClassIsDisabled(team_t selectedTeam, int classIndex)
 	playerTeam = CG_LimboPanel_GetRealTeam();
 	classinfo  = CG_LimboPanel_GetPlayerClass();
 
-	if (classinfo->classNum == classIndex && playerTeam == selectedTeam)
+	if (classinfo->classNum == classIndex && playerTeam == selectedTeam && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
 	{
 		return qfalse;
 	}
