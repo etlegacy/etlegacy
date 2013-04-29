@@ -33,5 +33,5 @@ menuDef {
 	// MULTILEFT( 8, 86+2, .66*(WINDOW_WIDTH-18), 10, "Difficulty:", .2, 8, exec "bot currentdifficulty", cvarFloatList { "Poorest" 0 "Very Poor" 1 "Poor" 2 "Easy Frag" 3 "Standard" 4 "Professional" 5 "Uber" 6 } "Sets a difficulty of bots" )
 	// NAMEDBUTTONEXT( "bttnextDifficulty", 6+.80*(WINDOW_WIDTH-18)+6, 86, .20*(WINDOW_WIDTH-18), 14, "OK", .24, 11, uiScript closeingame )
 
-	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "BACK", .3, 14, close ingame_vote_misc_refrcon ; open ingame_vote )
+	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "BACK", .3, 14, close ingame_vote_bot ; open ingame_vote )
 }
