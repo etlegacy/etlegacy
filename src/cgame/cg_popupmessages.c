@@ -48,6 +48,8 @@ struct pmStackItem_s
 	char message[128];
 	qhandle_t shader;
 
+	vec3_t color;
+
 	pmListItem_t *next;
 };
 
@@ -297,7 +299,7 @@ pmListItem_t *CG_FindFreePMItem(void)
 	}
 }
 
-void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader)
+void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader, vec3_t color)
 {
 	pmListItem_t *listItem;
 	char         *end;
@@ -306,7 +308,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 	{
 		return;
 	}
-	if (type >= PM_NUM_TYPES)
+	if (type < 0 || type >= PM_NUM_TYPES)
 	{
 		CG_Printf("Invalid popup type: %d\n", type);
 		return;
@@ -331,6 +333,13 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 	listItem->inuse = qtrue;
 	listItem->type  = type;
 	Q_strncpyz(listItem->message, message, sizeof(cg_pmStack[0].message));
+
+	// jaquboss - colored obituaries
+	listItem->color[0] = listItem->color[1] = listItem->color[2] = 1.f;
+	if (color != NULL)
+	{
+		VectorCopy(color, listItem->color);
+	}
 
 	// moved this: print and THEN chop off the newline, as the
 	// console deals with newlines perfectly.  We do chop off the newline

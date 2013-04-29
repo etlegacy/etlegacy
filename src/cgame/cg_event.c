@@ -38,6 +38,9 @@ extern void CG_StartShakeCamera(float param);
 extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
 //==========================================================================
 
+vec3_t OB_YELLOW = { 1.f, 1.f, 0.f };
+vec3_t OB_RED = { 1.f, 0.f, 0.f };
+
 /*
 =============
 CG_Obituary
@@ -179,7 +182,8 @@ static void CG_Obituary(entityState_t *ent)
 	if (message)
 	{
 		message = CG_TranslateString(message);
-		CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, message), deathShader);
+		CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, message), deathShader, NULL);
+
 		return;
 	}
 
@@ -426,7 +430,7 @@ static void CG_Obituary(entityState_t *ent)
 			if (message2)
 			{
 				message2 = CG_TranslateString(message2);
-				CG_AddPMItem(PM_DEATH, va("%s %s %s%s", targetName, message, attackerName, message2), deathShader);
+				CG_AddPMItem(PM_DEATH, va("%s %s %s%s", targetName, message, attackerName, message2), deathShader, NULL);
 				//CG_Printf( "[cgnotify]%s %s %s%s\n", targetName, message, attackerName, message2 );
 			}
 			return;
@@ -434,7 +438,7 @@ static void CG_Obituary(entityState_t *ent)
 	}
 
 	// we don't know what it was
-	CG_AddPMItem(PM_DEATH, va("%s died.", targetName), deathShader);
+	CG_AddPMItem(PM_DEATH, va("%s died.", targetName), deathShader, NULL);
 }
 
 //==========================================================================
@@ -454,7 +458,7 @@ static void CG_ItemPickup(int itemNum)
 	int itemid = bg_itemlist[itemNum].giTag;
 	int wpbank_cur, wpbank_pickup;
 
-	CG_AddPMItem(PM_MESSAGE, va(CG_TranslateString("Picked up %s"), CG_PickupItemText(itemNum)), cgs.media.pmImages[PM_MESSAGE]);
+	CG_AddPMItem(PM_MESSAGE, va(CG_TranslateString("Picked up %s"), CG_PickupItemText(itemNum)), cgs.media.pmImages[PM_MESSAGE], NULL);
 
 	// see if it should be the grabbed weapon
 	if (bg_itemlist[itemNum].giType == IT_WEAPON)
@@ -3011,7 +3015,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_POPUPMESSAGE");
 		if (str)
 		{
-			CG_AddPMItem(cent->currentState.effect1Time, str, shader);
+			CG_AddPMItem(cent->currentState.effect1Time, str, shader, NULL);
 		}
 		CG_PlayPMItemSound(cent);
 	}
