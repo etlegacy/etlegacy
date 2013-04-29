@@ -1281,8 +1281,9 @@ qboolean CG_LimboPanel_TeamButton_KeyDown(panel_button_t *button, int key)
 
 void CG_LimboPanel_RenderTeamButton(panel_button_t *button)
 {
-	vec4_t clr2 = { 1.f, 1.f, 1.f, 0.4f };
-	vec4_t clr4 = { 1.f, 0.f, 0.f, 0.75f };
+	vec4_t    clr2 = { 1.f, 1.f, 1.f, 0.4f };
+	vec4_t    clr4 = { 1.f, 0.f, 0.f, 0.75f };
+	rectDef_t lock;
 
 	qhandle_t shader;
 	qboolean  teamDisabled = qfalse;
@@ -1335,6 +1336,17 @@ void CG_LimboPanel_RenderTeamButton(panel_button_t *button)
 
 	trap_R_SetColor(NULL);
 	CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, shader);
+
+	if (qfalse) //There is no lock status transfer yet.
+	{
+		lock.w = lock.h = button->rect.h * 0.6;
+
+		lock.x = button->rect.x + (button->rect.w / 2) - (lock.w / 2);
+		lock.y = button->rect.y + (button->rect.h / 2) - (lock.h / 2);
+
+		CG_DrawPic(lock.x, lock.y, lock.w, lock.h, cgs.media.limboTeamLocked);
+	}
+
 }
 
 qboolean CG_LimboPanel_ClassButton_KeyDown(panel_button_t *button, int key)

@@ -256,7 +256,6 @@ void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 		else
 		{
 			char *info = va("\"The %s team is now %sed!\n\"", aTeams[tteam], lock_status[fLock]);
-
 			teamInfo[tteam].team_lock = fLock;
 			AP(va("print %s", info));
 			AP(va("cp %s", info));

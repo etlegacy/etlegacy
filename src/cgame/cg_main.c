@@ -2004,6 +2004,8 @@ static void CG_RegisterGraphics(void)
 	cgs.media.limboSpectator      = trap_R_RegisterShaderNoMip("gfx/limbo/spectator");
 	cgs.media.limboRadioBroadcast = trap_R_RegisterShaderNoMip("ui/assets/radio_tower");
 
+	cgs.media.limboTeamLocked = trap_R_RegisterShaderNoMip("gfx/limbo/lock");
+
 	cgs.media.cursorIcon = trap_R_RegisterShaderNoMip("ui/assets/3_cursor3");
 
 	cgs.media.hudDamagedStates[0] = trap_R_RegisterSkin("models/players/hud/damagedskins/blood01.skin");

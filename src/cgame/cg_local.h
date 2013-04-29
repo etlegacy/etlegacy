@@ -1585,6 +1585,8 @@ typedef struct
 	qhandle_t limboSpectator;
 	qhandle_t limboRadioBroadcast;
 
+	qhandle_t limboTeamLocked;
+
 	qhandle_t cursorIcon;
 
 	qhandle_t hudPowerIcon;
