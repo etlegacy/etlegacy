@@ -171,6 +171,20 @@ void CG_ParseServerinfo(void)
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
 }
 
+qboolean CG_inSVCVARBackupList(const char *cvar1)
+{
+	int j;
+
+	for (j = 0; j < cg.cvarBackupsCount; ++j)
+	{
+		if (!Q_stricmp(cg.cvarBackups[j].cvarName, cvar1))
+		{
+			return qtrue;
+		}
+	}
+	return qfalse;
+}
+
 void CG_UpdateSvCvars(void)
 {
 	const char *info = CG_ConfigString(CS_SVCVAR);
@@ -178,12 +192,12 @@ void CG_UpdateSvCvars(void)
 	char       *token;
 	char       *buffer;
 
-	cg.svCvarCount = atoi(Info_ValueForKey(info, "NUM"));
+	cg.svCvarCount = atoi(Info_ValueForKey(info, "N"));
 
 	for (i = 0; i < cg.svCvarCount; i++)
 	{
 		// get what is it
-		buffer = Info_ValueForKey(info, va("SVCV%i", i));
+		buffer = Info_ValueForKey(info, va("V%i", i));
 		// get a mode pf ot
 		token              = strtok(buffer, " ");
 		cg.svCvars[i].mode = atoi(token);
@@ -200,11 +214,14 @@ void CG_UpdateSvCvars(void)
 			Q_strncpyz(cg.svCvars[i].Val2, token, sizeof(cg.svCvars[0].Val2));
 		}
 
-
-		// do a backup
-		Q_strncpyz(cg.cvarBackups[cg.cvarBackupsCount].cvarName, cg.svCvars[i].cvarName, sizeof(cg.cvarBackups[0].cvarName));
-		trap_Cvar_VariableStringBuffer(cg.svCvars[i].cvarName, cg.cvarBackups[cg.cvarBackupsCount].cvarValue, sizeof(cg.cvarBackups[0].cvarValue));
-		cg.cvarBackupsCount++;
+		// FIFO! - only put into backup list if not already in
+		if (!CG_inSVCVARBackupList(cg.svCvars[i].cvarName))
+		{
+			// do a backup
+			Q_strncpyz(cg.cvarBackups[cg.cvarBackupsCount].cvarName, cg.svCvars[i].cvarName, sizeof(cg.cvarBackups[0].cvarName));
+			trap_Cvar_VariableStringBuffer(cg.svCvars[i].cvarName, cg.cvarBackups[cg.cvarBackupsCount].cvarValue, sizeof(cg.cvarBackups[0].cvarValue));
+			cg.cvarBackupsCount++;
+		}
 	}
 }
 

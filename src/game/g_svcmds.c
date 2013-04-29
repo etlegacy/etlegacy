@@ -1372,12 +1372,21 @@ void G_UpdateSvCvars(void)
 
 	for (i = 0; i < level.svCvarsCount; i++)
 	{
-		Info_SetValueForKey(cs, va("SVCV%i", i),
-		                    va("%i %s %s %s", level.svCvars[i].mode, level.svCvars[i].cvarName, level.svCvars[i].Val1, level.svCvars[i].Val2));
+		if (level.svCvars[i].Val2[0] == 0) // don't send a space char when not set
+		{
+			Info_SetValueForKey(cs, va("V%i", i),
+			                    va("%i %s %s", level.svCvars[i].mode, level.svCvars[i].cvarName, level.svCvars[i].Val1));
+		}
+		else
+		{
+			Info_SetValueForKey(cs, va("V%i", i),
+			                    va("%i %s %s %s", level.svCvars[i].mode, level.svCvars[i].cvarName, level.svCvars[i].Val1, level.svCvars[i].Val2));
+		}
 	}
 
-	Info_SetValueForKey(cs, "NUM", va("%i", level.svCvarsCount));
+	Info_SetValueForKey(cs, "N", va("%i", level.svCvarsCount));
 
+	// FIXME: print a warning when this configstring has nearly reached MAX_INFO_STRING size and don't set it if greater
 	trap_SetConfigstring(CS_SVCVAR, cs);
 }
 
