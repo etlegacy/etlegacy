@@ -1691,7 +1691,7 @@ void G_UpdateCvars(void)
 						trap_Cvar_Set(cv->cvarName, "33");
 					}
 				}
-				else if (cv->vmCvar == &team_maxSoldiers || cv->vmCvar == &team_maxMedics || cv->vmCvar == &team_maxEngineers || cv->vmCvar == &team_maxFieldops || cv->vmCvar == &team_maxCovertops || cv->vmCvar == &team_maxMortars || cv->vmCvar == &team_maxFlamers || cv->vmCvar == &team_maxMg42s || cv->vmCvar == &team_maxPanzers || cv->vmCvar == &team_maxRiflegrenades)
+				else if (cv->vmCvar == &team_maxSoldiers || cv->vmCvar == &team_maxMedics || cv->vmCvar == &team_maxEngineers || cv->vmCvar == &team_maxFieldops || cv->vmCvar == &team_maxCovertops || cv->vmCvar == &team_maxMortars || cv->vmCvar == &team_maxFlamers || cv->vmCvar == &team_maxMg42s || cv->vmCvar == &team_maxPanzers || cv->vmCvar == &team_maxRiflegrenades || cv->vmCvar == &team_maxplayers)
 				{
 					clsweaprestriction = qtrue;
 				}
@@ -1782,6 +1782,7 @@ void G_UpdateCvars(void)
 		Info_SetValueForKey(cs, "w2", team_maxMg42s.string);
 		Info_SetValueForKey(cs, "w3", team_maxPanzers.string);
 		Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
+		Info_SetValueForKey(cs, "m", team_maxplayers.string);
 		trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
 	}
 }
@@ -2274,6 +2275,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	Info_SetValueForKey(cs, "w2", team_maxMg42s.string);
 	Info_SetValueForKey(cs, "w3", team_maxPanzers.string);
 	Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
+	Info_SetValueForKey(cs, "m", team_maxplayers.string);
 	trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
 
 	G_SoundIndex("sound/misc/referee.wav");

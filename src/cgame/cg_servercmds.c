@@ -762,6 +762,7 @@ void CG_TeamRestrictionsChanged(void)
 	Q_strncpyz(cg.maxMg42s, Info_ValueForKey(info, "w2"), sizeof(cg.maxMg42s));
 	Q_strncpyz(cg.maxPanzers, Info_ValueForKey(info, "w3"), sizeof(cg.maxPanzers));
 	Q_strncpyz(cg.maxRiflegrenades, Info_ValueForKey(info, "w4"), sizeof(cg.maxRiflegrenades));
+	cg.maxPlayers = atoi(Info_ValueForKey(info, "m"));
 }
 
 /*

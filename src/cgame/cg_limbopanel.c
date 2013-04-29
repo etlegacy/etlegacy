@@ -3567,12 +3567,55 @@ qboolean CG_LimboPanel_ClassIsDisabled(team_t selectedTeam, int classIndex)
 	return qfalse;
 }
 
+qboolean CG_LimboPanel_TeamIsFull(team_t checkTeam)
+{
+	int i, cnt;
+	cnt = 0;
+
+	if (checkTeam == TEAM_SPECTATOR)
+	{
+		return qfalse;
+	}
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (i == cg.clientNum)
+		{
+			continue;
+		}
+
+		if (!cgs.clientinfo[i].infoValid)
+		{
+			continue;
+		}
+
+		if (cgs.clientinfo[i].team != checkTeam)
+		{
+			continue;
+		}
+
+		cnt++;
+	}
+
+	if (cg.maxPlayers > 0 && cg.maxPlayers <= cnt && cgs.clientinfo[cg.clientNum].team != checkTeam)
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
 qboolean CG_LimboPanel_TeamIsDisabled(team_t checkTeam)
 {
 
 	if (checkTeam == TEAM_SPECTATOR)
 	{
 		return qfalse;
+	}
+
+	if (CG_LimboPanel_TeamIsFull(checkTeam))
+	{
+		return qtrue;
 	}
 
 	if (CG_LimboPanel_FindFreeClass(checkTeam) != -1)

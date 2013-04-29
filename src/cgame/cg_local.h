@@ -1108,6 +1108,7 @@ typedef struct
 	char maxMg42s[MAX_QPATH];
 	char maxPanzers[MAX_QPATH];
 	char maxRiflegrenades[MAX_QPATH];
+	int maxPlayers;
 
 	int binocZoomTime;
 	int limboEndCinematicTime;
