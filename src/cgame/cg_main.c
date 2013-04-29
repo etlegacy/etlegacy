@@ -303,6 +303,10 @@ vmCvar_t cg_automapZoom;
 
 vmCvar_t cg_drawTime;
 
+vmCvar_t cg_popupTime;
+vmCvar_t cg_popupFadeTime;
+vmCvar_t cg_popupStayTime;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -509,6 +513,9 @@ cvarTable_t cvarTable[] =
 	{ &cg_fireteamLatchedClass,  "cg_fireteamLatchedClass",  "1",     CVAR_ARCHIVE                 }, // Draw fireteam members latched class
 	{ &cg_automapZoom,           "cg_automapZoom",           "5.159", CVAR_ARCHIVE                 },
 	{ &cg_drawTime,              "cg_drawTime",              "0",     CVAR_ARCHIVE                 },
+	{ &cg_popupTime,             "cg_popupTime",             "1000",  CVAR_ARCHIVE                 },
+	{ &cg_popupFadeTime,         "cg_popupFadeTime",         "2500",  CVAR_ARCHIVE                 },
+	{ &cg_popupStayTime,         "cg_popupStayTime",         "2000",  CVAR_ARCHIVE                 },
 };
 
 int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

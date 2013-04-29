@@ -110,13 +110,16 @@ void CG_InitPM(void)
 	cg_pmWaitingListBig = NULL;
 }
 
-#define PM_FADETIME 2500
-#define PM_WAITTIME 2000
+
+/*
+* These have been replaced by cvars
+* #define PM_FADETIME 2500
+* #define PM_WAITTIME 2000
+* #define PM_POPUP_TIME 1000
+*/
 
 #define PM_FADETIME_BIG 1000
 #define PM_WAITTIME_BIG 3500
-
-#define PM_POPUP_TIME    1000
 #define PM_BIGPOPUP_TIME 2500
 
 void CG_AddToListFront(pmListItem_t **list, pmListItem_t *item)
@@ -133,7 +136,7 @@ void CG_UpdatePMLists(void)
 
 	if ((listItem = cg_pmWaitingList))
 	{
-		int t = PM_POPUP_TIME + listItem->time;
+		int t = cg_popupTime.integer + listItem->time;
 
 		if (cg.time > t)
 		{
@@ -147,7 +150,7 @@ void CG_UpdatePMLists(void)
 			}
 			else
 			{
-				if (cg.time > t + PM_WAITTIME + PM_FADETIME)
+				if (cg.time > t + cg_popupStayTime.integer + cg_popupFadeTime.integer)
 				{
 					// we're gone completely
 					cg_pmWaitingList = NULL;
@@ -166,7 +169,7 @@ void CG_UpdatePMLists(void)
 	lastItem = NULL;
 	while (listItem)
 	{
-		int t = PM_POPUP_TIME + listItem->time + PM_WAITTIME + PM_FADETIME;
+		int t = cg_popupTime.integer + listItem->time + cg_popupStayTime.integer + cg_popupFadeTime.integer;
 
 		if (cg.time > t)
 		{
@@ -220,7 +223,7 @@ void CG_UpdatePMLists(void)
 			}
 			else
 			{
-				if (cg.time > t + PM_WAITTIME + PM_FADETIME)
+				if (cg.time > t + cg_popupStayTime.integer + cg_popupFadeTime.integer)
 				{
 					// we're gone completely
 					cg_pmWaitingListBig = NULL;
@@ -463,10 +466,10 @@ void CG_DrawPMItems(rectDef_t rect)
 		return;
 	}
 
-	t = cg_pmWaitingList->time + PM_POPUP_TIME + PM_WAITTIME;
+	t = cg_pmWaitingList->time + cg_popupTime.integer + cg_popupStayTime.integer;
 	if (cg.time > t)
 	{
-		colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)PM_FADETIME);
+		colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
 	}
 
 	trap_R_SetColor(colourText);
@@ -478,10 +481,10 @@ void CG_DrawPMItems(rectDef_t rect)
 	{
 		y -= size + 2;
 
-		t = listItem->time + PM_POPUP_TIME + PM_WAITTIME;
+		t = listItem->time + cg_popupTime.integer + cg_popupStayTime.integer;
 		if (cg.time > t)
 		{
-			colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)PM_FADETIME);
+			colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
 		}
 		else
 		{

@@ -1460,7 +1460,7 @@ void CG_LimboPanel_RenderClassButton(panel_button_t *button)
 	vec4_t clr  = { 1.f, 1.f, 1.f, 0.4f };
 	vec4_t clr2 = { 1.f, 1.f, 1.f, 0.75f };
 	vec4_t clr3 = { 1.f, 1.f, 1.f, 0.6f };
-	vec4_t clr4 = { 1.f, 0.f, 0.f, 0.75f };
+	vec4_t clr4 = { 1.f, 0.f, 0.f, 0.5f };
 
 	int   i;
 	float s0, t0, s1, t1;
@@ -1547,14 +1547,12 @@ void CG_LimboPanel_RenderClassButton(panel_button_t *button)
 	}
 	else
 	{
-		if (CG_LimboPanel_ClassIsDisabled(CG_LimboPanel_GetTeam(), button->data[1]))
+		if (CG_LimboPanel_GetTeam() != TEAM_SPECTATOR && CG_LimboPanel_ClassIsDisabled(CG_LimboPanel_GetTeam(), button->data[1]))
 		{
 			trap_R_SetColor(clr4);
+			CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboClassButton2Back_on);
 		}
-		else
-		{
-			trap_R_SetColor(clr2);
-		}
+		trap_R_SetColor(clr2);
 		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboClassButtons2[button->data[1]]);
 		trap_R_SetColor(NULL);
 	}

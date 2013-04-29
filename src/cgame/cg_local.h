@@ -2169,6 +2169,11 @@ extern vmCvar_t cg_fireteamLatchedClass;
 extern vmCvar_t cg_automapZoom;
 
 extern vmCvar_t cg_drawTime;
+
+extern vmCvar_t cg_popupTime;
+extern vmCvar_t cg_popupFadeTime;
+extern vmCvar_t cg_popupStayTime;
+
 // local clock flags
 #define LOCALTIME_ON                0x01
 #define LOCALTIME_SECOND            0x02
