@@ -2263,6 +2263,19 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	trap_SetConfigstring(CS_CHARGETIMES, cs);
 	trap_SetConfigstring(CS_FILTERCAMS, va("%i", g_filtercams.integer));
 
+	cs[0] = '\0';
+	Info_SetValueForKey(cs, "c0", team_maxSoldiers.string);
+	Info_SetValueForKey(cs, "c1", team_maxMedics.string);
+	Info_SetValueForKey(cs, "c2", team_maxEngineers.string);
+	Info_SetValueForKey(cs, "c3", team_maxFieldops.string);
+	Info_SetValueForKey(cs, "c4", team_maxCovertops.string);
+	Info_SetValueForKey(cs, "w0", team_maxMortars.string);
+	Info_SetValueForKey(cs, "w1", team_maxFlamers.string);
+	Info_SetValueForKey(cs, "w2", team_maxMg42s.string);
+	Info_SetValueForKey(cs, "w3", team_maxPanzers.string);
+	Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
+	trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
+
 	G_SoundIndex("sound/misc/referee.wav");
 	G_SoundIndex("sound/misc/vote.wav");
 	G_SoundIndex("sound/player/gurp1.wav");

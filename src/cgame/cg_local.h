@@ -3161,6 +3161,9 @@ weapon_t CG_LimboPanel_GetWeaponForNumber(int number, int slot, qboolean ignoreD
 extWeaponStats_t CG_LimboPanel_GetSelectedWeaponStat(void);
 qboolean CG_LimboPanel_WeaponIsDisabled(int weap);
 qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weap);
+qboolean CG_LimboPanel_ClassIsDisabled(team_t selectedTeam, int classIndex);
+qboolean CG_LimboPanel_TeamIsDisabled(team_t checkTeam);
+int CG_LimboPanel_FindFreeClass(team_t checkTeam);
 int CG_LimboPanel_GetWeaponNumberForPos(int pos);
 
 void CG_LimboPanel_SetSelectedWeaponNumForSlot(int index, int number);

@@ -1250,7 +1250,7 @@ qboolean CG_LimboPanel_TeamButton_KeyDown(panel_button_t *button, int key)
 	{
 		SOUND_SELECT;
 
-		if (cgs.ccSelectedTeam != button->data[0])
+		if (cgs.ccSelectedTeam != button->data[0] && !CG_LimboPanel_TeamIsDisabled(teamOrder[button->data[0]]))
 		{
 			int oldmax = CG_LimboPanel_GetMaxObjectives();
 
@@ -1259,6 +1259,16 @@ qboolean CG_LimboPanel_TeamButton_KeyDown(panel_button_t *button, int key)
 			if (cgs.ccSelectedObjective == oldmax)
 			{
 				cgs.ccSelectedObjective = CG_LimboPanel_GetMaxObjectives();
+			}
+
+			if (CG_LimboPanel_ClassIsDisabled(teamOrder[button->data[0]], CG_LimboPanel_GetClass()))
+			{
+				int freeClass;
+				freeClass = CG_LimboPanel_FindFreeClass(teamOrder[button->data[0]]);
+				if (freeClass >= 0)
+				{
+					cgs.ccSelectedClass = freeClass;
+				}
 			}
 
 			CG_LimboPanel_SetSelectedWeaponNumForSlot(0, 0);
@@ -1277,13 +1287,25 @@ qboolean CG_LimboPanel_TeamButton_KeyDown(panel_button_t *button, int key)
 void CG_LimboPanel_RenderTeamButton(panel_button_t *button)
 {
 	vec4_t clr2 = { 1.f, 1.f, 1.f, 0.4f };
+	vec4_t clr4 = { 1.f, 0.f, 0.f, 0.75f };
 
 	qhandle_t shader;
+	qboolean  teamDisabled = qfalse;
+
+	teamDisabled = CG_LimboPanel_TeamIsDisabled(teamOrder[button->data[0]]);
 
 	trap_R_SetColor(colorBlack);
 	CG_DrawPic(button->rect.x + 1, button->rect.y + 1, button->rect.w, button->rect.h, cgs.media.limboTeamButtonBack_off);
 
-	trap_R_SetColor(NULL);
+	if (teamDisabled)
+	{
+		trap_R_SetColor(clr4);
+	}
+	else
+	{
+		trap_R_SetColor(NULL);
+	}
+
 	CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboTeamButtonBack_off);
 
 	if (CG_LimboPanel_GetTeam() == teamOrder[button->data[0]])
@@ -1292,10 +1314,14 @@ void CG_LimboPanel_RenderTeamButton(panel_button_t *button)
 	}
 	else if (BG_CursorInRect(&button->rect))
 	{
-		trap_R_SetColor(clr2);
+		if (!teamDisabled)
+		{
+			trap_R_SetColor(clr2);
+		}
 		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboTeamButtonBack_on);
 		trap_R_SetColor(NULL);
 	}
+
 
 	switch (button->data[0])
 	{
@@ -1322,6 +1348,13 @@ qboolean CG_LimboPanel_ClassButton_KeyDown(panel_button_t *button, int key)
 	{
 		return qfalse;
 	}
+
+
+	if (CG_LimboPanel_ClassIsDisabled(CG_LimboPanel_GetTeam(), button->data[1]))
+	{
+		return qfalse;
+	}
+
 
 	if (key == K_MOUSE1)
 	{
@@ -1420,6 +1453,7 @@ void CG_LimboPanel_RenderClassButton(panel_button_t *button)
 	vec4_t clr  = { 1.f, 1.f, 1.f, 0.4f };
 	vec4_t clr2 = { 1.f, 1.f, 1.f, 0.75f };
 	vec4_t clr3 = { 1.f, 1.f, 1.f, 0.6f };
+	vec4_t clr4 = { 1.f, 0.f, 0.f, 0.75f };
 
 	int   i;
 	float s0, t0, s1, t1;
@@ -1506,7 +1540,14 @@ void CG_LimboPanel_RenderClassButton(panel_button_t *button)
 	}
 	else
 	{
-		trap_R_SetColor(clr2);
+		if (CG_LimboPanel_ClassIsDisabled(CG_LimboPanel_GetTeam(), button->data[1]))
+		{
+			trap_R_SetColor(clr4);
+		}
+		else
+		{
+			trap_R_SetColor(clr2);
+		}
 		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboClassButtons2[button->data[1]]);
 		trap_R_SetColor(NULL);
 	}
@@ -3305,33 +3346,72 @@ qboolean CG_IsHeavyWeapon(weapon_t weap)
 
 qboolean CG_LimboPanel_WeaponIsDisabled(int index)
 {
-	bg_playerclass_t *classinfo;
-	int              count, wcount;
-
-	if (CG_LimboPanel_GetTeam() == TEAM_SPECTATOR)
-	{
-		return qtrue;
-	}
-
-	classinfo = CG_LimboPanel_GetPlayerClass();
-
-	if (!CG_IsHeavyWeapon(classinfo->classWeapons[index]))
-	{
-		return qfalse;
-	}
-
-	count  = CG_LimboPanel_TeamCount(-1);
-	wcount = CG_LimboPanel_TeamCount(classinfo->classWeapons[index]);
-
-	if (wcount >= ceil(count * cgs.weaponRestrictions))
-	{
-		return qtrue;
-	}
-
-	return qfalse;
+	weapon_t weapon = CG_LimboPanel_GetPlayerClass()->classWeapons[index];
+	return CG_LimboPanel_RealWeaponIsDisabled(weapon);
 }
 
-qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weap)
+// Dens: originates from q_shared.c
+// Convert a string to an integer, with the same behavior that the engine converts
+// cvars to their integer representation:
+// - Integer is obtained from concatenating all the integers in the string,
+//   regardless of the other characters present in the string ("-" is the exception,
+//   of there is a "-" before the first integer, the number is turned into a negative)
+// - If there are no integers in the string, return 0
+int ExtractInt(char *src)
+{
+	int  i;
+	int  srclen = strlen(src) + 1;
+	int  destIx = 0;
+	char *tmp   = malloc(srclen);
+	int  result = 0;
+	int  sign   = 1;
+
+	// Go through all the characters in the source string
+	for (i = 0; i < srclen; i++)
+	{
+		// Pick out negative sign before first integer, or integers only
+		if (((src[i] == '-') && (destIx == 0)) || Q_isnumeric(src[i]))
+		{
+			tmp[destIx++] = src[i];
+		}
+	}
+
+	// put string terminator in temp var
+	tmp[destIx] = 0;
+
+	// convert temp var to integer
+	if (tmp[0] != 0)
+	{
+		result = sign * atoi(tmp);
+	}
+
+	free(tmp);
+
+	return result;
+}
+
+int CG_LimboPanel_MaxCount(int playerCount, char *variableString)
+{
+	int maxCount;
+
+	maxCount = ExtractInt(variableString);
+	if (maxCount == -1)
+	{
+		return MAX_CLIENTS;
+	}
+	if (strstr(variableString, ".-"))
+	{
+		maxCount = floor(maxCount * playerCount * 0.01f);
+	}
+	else if (strstr(variableString, "."))
+	{
+		maxCount = ceil(maxCount * playerCount * 0.01f);
+	}
+
+	return maxCount;
+}
+
+qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 {
 	int count, wcount;
 
@@ -3340,18 +3420,196 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weap)
 		return qtrue;
 	}
 
-	if (!CG_IsHeavyWeapon(weap))
+	// Never restrict normal weapons
+	if (!CG_IsHeavyWeapon(weapon) && weapon != WP_KAR98 && weapon != WP_CARBINE)
 	{
 		return qfalse;
 	}
 
 	count  = CG_LimboPanel_TeamCount(-1);
-	wcount = CG_LimboPanel_TeamCount(weap);
+	wcount = CG_LimboPanel_TeamCount(weapon);
 
-	if (wcount >= ceil(count * cgs.weaponRestrictions))
+	if (CG_IsHeavyWeapon(weapon))
+	{
+		if (wcount >= ceil(count * cgs.weaponRestrictions))
+		{
+			return qtrue;
+		}
+	}
+
+	switch (weapon)
+	{
+	case WP_PANZERFAUST:
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxPanzers))
+		{
+			return qtrue;
+		}
+		break;
+	case WP_MORTAR:
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMortars))
+		{
+			return qtrue;
+		}
+		break;
+	case WP_MOBILE_MG42:
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
+		{
+			return qtrue;
+		}
+		break;
+	case WP_FLAMETHROWER:
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxFlamers))
+		{
+			return qtrue;
+		}
+		break;
+	case WP_KAR98:
+	case WP_CARBINE:
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
+		{
+			return qtrue;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return qfalse;
+}
+
+int CG_LimboPanel_ClassCount(team_t checkTeam, int classIndex)
+{
+	int i, cnt;
+
+	cnt = 0;
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (i == cg.clientNum)
+		{
+			continue;
+		}
+
+		if (!cgs.clientinfo[i].infoValid)
+		{
+			continue;
+		}
+
+		if (cgs.clientinfo[i].team != checkTeam)
+		{
+			continue;
+		}
+
+		if (cgs.clientinfo[i].cls != classIndex && cgs.clientinfo[i].latchedcls != classIndex)
+		{
+			continue;
+		}
+
+		cnt++;
+	}
+
+	return cnt;
+}
+
+qboolean CG_LimboPanel_ClassIsDisabled(team_t selectedTeam, int classIndex)
+{
+	bg_playerclass_t *classinfo;
+	team_t           playerTeam;
+	int              classCount, playerCount;
+
+	if (selectedTeam == TEAM_SPECTATOR)
 	{
 		return qtrue;
 	}
 
+	playerTeam = CG_LimboPanel_GetRealTeam();
+	classinfo  = CG_LimboPanel_GetPlayerClass();
+
+	if (classinfo->classNum == classIndex && playerTeam == selectedTeam)
+	{
+		return qfalse;
+	}
+
+	classCount  = CG_LimboPanel_ClassCount(selectedTeam, classIndex);
+	playerCount = CG_LimboPanel_TeamCount(-1);
+
+	switch (classIndex)
+	{
+	case PC_SOLDIER:
+		if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxSoldiers))
+		{
+			return qtrue;
+		}
+		break;
+	case PC_MEDIC:
+		if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxMedics))
+		{
+			return qtrue;
+		}
+		break;
+	case PC_ENGINEER:
+		if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxEngineers))
+		{
+			return qtrue;
+		}
+		break;
+	case PC_FIELDOPS:
+		if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxFieldops))
+		{
+			return qtrue;
+		}
+		break;
+	case PC_COVERTOPS:
+		if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxCovertops))
+		{
+			return qtrue;
+		}
+		break;
+	default:
+		break;
+	}
+
 	return qfalse;
+}
+
+qboolean CG_LimboPanel_TeamIsDisabled(team_t checkTeam)
+{
+
+	if (checkTeam == TEAM_SPECTATOR)
+	{
+		return qfalse;
+	}
+
+	if (CG_LimboPanel_FindFreeClass(checkTeam) != -1)
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+int CG_LimboPanel_FindFreeClass(team_t checkTeam)
+{
+	if (!CG_LimboPanel_ClassIsDisabled(checkTeam, PC_SOLDIER))
+	{
+		return PC_SOLDIER;
+	}
+	else if (!CG_LimboPanel_ClassIsDisabled(checkTeam, PC_MEDIC))
+	{
+		return PC_MEDIC;
+	}
+	else if (!CG_LimboPanel_ClassIsDisabled(checkTeam, PC_ENGINEER))
+	{
+		return PC_ENGINEER;
+	}
+	else if (!CG_LimboPanel_ClassIsDisabled(checkTeam, PC_FIELDOPS))
+	{
+		return PC_FIELDOPS;
+	}
+	else if (!CG_LimboPanel_ClassIsDisabled(checkTeam, PC_COVERTOPS))
+	{
+		return PC_COVERTOPS;
+	}
+
+	return -1;
 }
