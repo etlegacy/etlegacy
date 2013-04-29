@@ -1261,7 +1261,7 @@ qboolean CG_LimboPanel_TeamButton_KeyDown(panel_button_t *button, int key)
 				cgs.ccSelectedObjective = CG_LimboPanel_GetMaxObjectives();
 			}
 
-			if (CG_LimboPanel_ClassIsDisabled(teamOrder[button->data[0]], CG_LimboPanel_GetClass()))
+			if (teamOrder[button->data[0]] != TEAM_SPECTATOR && CG_LimboPanel_ClassIsDisabled(teamOrder[button->data[0]], CG_LimboPanel_GetClass()))
 			{
 				cgs.ccSelectedClass = CG_LimboPanel_FindFreeClass(teamOrder[button->data[0]]);
 			}
