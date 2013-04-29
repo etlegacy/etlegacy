@@ -1076,4 +1076,25 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		G_ProposeFireTeamPlayer(ent - g_entities, clientnum - 1);
 	}
+	else if (!Q_stricmp(command, "privacy"))
+	{
+		fireteamData_t *ft;
+		if (G_IsFireteamLeader(ent - g_entities, &ft))
+		{
+			if (ft->priv)
+			{
+				ft->priv = qfalse;
+				G_ClientPrintAndReturn(ent - g_entities, "Your fireteam is now public");
+			}
+			else
+			{
+				ft->priv = qtrue;
+				G_ClientPrintAndReturn(ent - g_entities, "Your fireteam is now private");
+			}
+		}
+		else
+		{
+			G_ClientPrintAndReturn(ent - g_entities, "You are not an fireteam admin");
+		}
+	}
 }

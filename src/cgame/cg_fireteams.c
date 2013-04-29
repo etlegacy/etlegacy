@@ -399,6 +399,7 @@ const char *ftLeaderMenuList[] =
 	"Invite",
 	"Kick",
 	"Warn",
+	"Change privacy",
 	NULL,
 };
 
@@ -1262,7 +1263,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 			}
 			else
 			{
-				if (i >= 5)
+				if (i >= 6)
 				{
 					break;
 				}
@@ -1287,6 +1288,11 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 					else if (i == 1)
 					{
 						trap_SendConsoleCommand("fireteam leave\n");
+						CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+					}
+					else if (i == 5)
+					{
+						trap_SendConsoleCommand("fireteam privacy\n");
 						CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 					}
 					else
