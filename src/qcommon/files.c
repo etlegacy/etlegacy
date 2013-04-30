@@ -1069,12 +1069,12 @@ Return qtrue if filename has a demo extension
 qboolean FS_IsDemoExt(const char *filename, int namelen)
 {
 	char *ext_test;
-	int  index, protocol;
 
 	ext_test = strrchr(filename, '.');
 	if (ext_test && !Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1))
 	{
-		protocol = atoi(ext_test + ARRAY_LEN(DEMOEXT));
+		int index;
+		int protocol = atoi(ext_test + ARRAY_LEN(DEMOEXT));
 
 		if (protocol == PROTOCOL_VERSION /*com_protocol->integer*/)
 		{
