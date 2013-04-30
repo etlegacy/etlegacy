@@ -375,7 +375,7 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
 
-		if (i >= 6)
+		if (i >= MAX_FIRETEAM_MEMBERS)
 		{
 			G_ClientPrintAndReturn(entityNum, "Too many players already on this Fireteam");
 			return;
@@ -866,6 +866,61 @@ fireteamData_t *G_FindFreePublicFireteam(team_t team)
 	return NULL;
 }
 
+void G_GiveAdminOfFireTeam(int entityNum, int otherEntityNum)
+{
+	fireteamData_t *ft, *ft2;
+	char           tempArray[MAX_CLIENTS];
+	int            i, x;
+
+	if (entityNum == otherEntityNum)
+	{
+		return;
+	}
+
+	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
+	{
+		G_Error("G_KickFireTeamPlayer: invalid client\n");
+	}
+
+	if ((otherEntityNum < 0 || otherEntityNum >= MAX_CLIENTS) || !g_entities[otherEntityNum].client)
+	{
+		G_Error("G_KickFireTeamPlayer: invalid client\n");
+	}
+
+	if (!G_IsFireteamLeader(entityNum, &ft))
+	{
+		G_ClientPrintAndReturn(entityNum, "You must a fireteam admin to give admin rights to someone else");
+	}
+
+	if ((!G_IsOnFireteam(otherEntityNum, &ft2)) || ft != ft2)
+	{
+		G_ClientPrintAndReturn(entityNum, "The other player must be on the same fireteam for you to give admin rights to");
+	}
+
+	tempArray[0] = otherEntityNum;
+	tempArray[1] = entityNum;
+	x            = 2;
+	for (i = 1; i < MAX_FIRETEAM_MEMBERS; i++)
+	{
+		if (ft->joinOrder[i] != otherEntityNum || ft->joinOrder[i] == -1)
+		{
+			tempArray[x++] = ft->joinOrder[i];
+			continue;
+		}
+	}
+
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
+	{
+		ft->joinOrder[i] = tempArray[i];
+	}
+
+	ft->leader = otherEntityNum;
+
+	G_UpdateFireteamConfigString(ft);
+	G_ClientPrintAndReturn(otherEntityNum, "You have been given fireteam admin rights");
+	G_ClientPrintAndReturn(entityNum, "You have been been stripped of fireteam admin rights");
+}
+
 
 // Command handler
 void Cmd_FireTeam_MP_f(gentity_t *ent)
@@ -1096,5 +1151,46 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 		{
 			G_ClientPrintAndReturn(ent - g_entities, "You are not an fireteam admin");
 		}
+	}
+	else if (!Q_stricmp(command, "admin"))
+	{
+		char namebuffer[32];
+		int  clientnum = 0;
+
+		if (trap_Argc() < 3)
+		{
+			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam admin <clientname|clientnumber>");
+		}
+
+		trap_Argv(2, namebuffer, 32);
+		for (i = 0; i < MAX_CLIENTS; i++)
+		{
+			if (!g_entities[i].inuse || !g_entities[i].client)
+			{
+				continue;
+			}
+
+			if (!Q_stricmp(g_entities[i].client->pers.netname, namebuffer))
+			{
+				clientnum = i + 1;
+			}
+		}
+
+		if (clientnum <= 0)
+		{
+			clientnum = atoi(namebuffer);
+
+			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
+			{
+				G_ClientPrintAndReturn(ent - g_entities, "Invalid client selected");
+			}
+		}
+
+		if (clientnum <= 0)
+		{
+			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam admin <clientname|clientnumber>");
+		}
+
+		G_GiveAdminOfFireTeam(ent - g_entities, clientnum - 1);
 	}
 }
