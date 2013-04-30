@@ -1333,7 +1333,7 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t velocity);
 
 // g_client.c
-team_t TeamCount(int ignoreClientNum, int team);
+int TeamCount(int ignoreClientNum, team_t team);
 team_t PickTeam(int ignoreClientNum);
 void SetClientViewAngle(gentity_t *ent, vec3_t angle);
 gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles);
