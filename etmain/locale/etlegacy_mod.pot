@@ -2881,6 +2881,9 @@ msgstr ""
 msgid "No vote in progress.\n"
 msgstr ""
 
+msgid "Show Clock:"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

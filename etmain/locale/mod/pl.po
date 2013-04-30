@@ -2926,6 +2926,9 @@ msgstr "^9Musisz byc zywy aby uzyc ^3/kill.\n"
 msgid "No vote in progress.\n"
 msgstr "Brak glosowan.\n"
 
+msgid "Show Clock:"
+msgstr "Pokaz Zegar:"
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
