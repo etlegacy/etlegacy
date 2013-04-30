@@ -2921,6 +2921,7 @@ void Cmd_Vote_f(gentity_t *ent)
 			if (G_IsFireteamLeader(ent - g_entities, &ft))
 			{
 				ft->priv = qtrue;
+				G_UpdateFireteamConfigString(ft);
 			}
 		}
 		else

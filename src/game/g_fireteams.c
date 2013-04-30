@@ -151,8 +151,9 @@ void G_UpdateFireteamConfigString(fireteamData_t *ft)
 		}
 
 //		Com_sprintf(buffer, 128, "\\n\\%s\\l\\%i\\c\\%.8x%.8x", ft->name, ft->joinOrder[0], clnts[1], clnts[0]);
-		Com_sprintf(buffer, 128, "\\id\\%i\\l\\%i\\c\\%.8x%.8x", ft->ident - 1, ft->joinOrder[0], clnts[1], clnts[0]);
+//		Com_sprintf(buffer, 128, "\\id\\%i\\l\\%i\\c\\%.8x%.8x", ft->ident - 1, ft->joinOrder[0], clnts[1], clnts[0]);
 //		G_Printf(va("%s\n", buffer));
+		Com_sprintf(buffer, 128, "\\id\\%i\\l\\%i\\p\\%i\\c\\%.8x%.8x", ft->ident - 1, ft->joinOrder[0], ft->priv, clnts[1], clnts[0]);
 	}
 
 	trap_SetConfigstring(CS_FIRETEAMS + (ft - level.fireTeams), buffer);
@@ -1139,11 +1140,13 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 			if (ft->priv)
 			{
 				ft->priv = qfalse;
+				G_UpdateFireteamConfigString(ft);
 				G_ClientPrintAndReturn(ent - g_entities, "Your fireteam is now public");
 			}
 			else
 			{
 				ft->priv = qtrue;
+				G_UpdateFireteamConfigString(ft);
 				G_ClientPrintAndReturn(ent - g_entities, "Your fireteam is now private");
 			}
 		}

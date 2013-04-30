@@ -151,6 +151,9 @@ void CG_ParseFireteams()
 		s                      = Info_ValueForKey(p, "l");
 		cg.fireTeams[i].leader = atoi(s);
 
+		s                    = Info_ValueForKey(p, "p");
+		cg.fireTeams[i].priv = atoi(s);
+
 		s = Info_ValueForKey(p, "c");
 		Q_strncpyz(hexbuffer + 2, s, 9);
 		sscanf(hexbuffer, "%x", &clnts[1]);
@@ -438,7 +441,15 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 	CG_FillRect(x, y, boxWidth - 4, 12, clr1);
 
-	Com_sprintf(buffer, 64, "Fireteam: %s", bg_fireteamNames[f->ident]);
+	if (f->priv)
+	{
+		Com_sprintf(buffer, 64, "Private Fireteam: %s", bg_fireteamNames[f->ident]);
+	}
+	else
+	{
+		Com_sprintf(buffer, 64, "Fireteam: %s", bg_fireteamNames[f->ident]);
+	}
+
 	Q_strupr(buffer);
 	CG_Text_Paint_Ext(x + 3, y + FT_BAR_HEIGHT, .19f, .19f, tclr, buffer, 0, 0, 0, &cgs.media.limboFont1);
 
