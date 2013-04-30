@@ -2362,6 +2362,23 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 
 	G_ResetRemappedShaders();
 
+	if (g_mapConfigs.string[0])
+	{
+		char mapConfig[MAX_STRING_CHARS];
+
+		Q_strncpyz(mapConfig, "exec ", sizeof(mapConfig));
+		Q_strcat(mapConfig, sizeof(mapConfig), g_mapConfigs.string);
+		Q_strcat(mapConfig, sizeof(mapConfig), "/default.cfg\n");
+		trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
+
+		Q_strncpyz(mapConfig, "exec ", sizeof(mapConfig));
+		Q_strcat(mapConfig, sizeof(mapConfig), g_mapConfigs.string);
+		Q_strcat(mapConfig, sizeof(mapConfig), "/");
+		Q_strcat(mapConfig, sizeof(mapConfig), level.rawmapname);
+		Q_strcat(mapConfig, sizeof(mapConfig), ".cfg\n");
+		trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
+	}
+
 	G_InitWorldSession();
 
 	// MAPVOTE
