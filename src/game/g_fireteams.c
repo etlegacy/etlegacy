@@ -890,7 +890,7 @@ void G_GiveAdminOfFireTeam(int entityNum, int otherEntityNum)
 
 	if (!G_IsFireteamLeader(entityNum, &ft))
 	{
-		G_ClientPrintAndReturn(entityNum, "You must a fireteam admin to give admin rights to someone else");
+		G_ClientPrintAndReturn(entityNum, "You must be a fireteam admin to give admin rights to someone else");
 	}
 
 	if ((!G_IsOnFireteam(otherEntityNum, &ft2)) || ft != ft2)

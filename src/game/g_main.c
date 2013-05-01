@@ -4736,6 +4736,52 @@ void G_RunEntity(gentity_t *ent, int msec)
 	VectorScale(ent->instantVelocity, 1000.0f / msec, ent->instantVelocity);
 }
 
+void G_DrawEntityBox(gentity_t *boxEntity,qboolean freeEntity)
+{
+	if(boxEntity)
+	{
+		vec3_t    b1, b2;
+		gentity_t *tent;
+		VectorCopy(boxEntity->r.currentOrigin, b1);
+		VectorCopy(boxEntity->r.currentOrigin, b2);
+		VectorAdd(b1, boxEntity->r.mins, b1);
+		VectorAdd(b2, boxEntity->r.maxs, b2);
+		
+		if(freeEntity)
+		{
+			G_FreeEntity(boxEntity);
+		}
+		
+		tent = G_TempEntity(b1, EV_RAILTRAIL);
+		VectorCopy(b2, tent->s.origin2);
+		tent->s.dmgFlags = 1;
+	}
+}
+
+/*
+================
+G_DebugHitBoxes
+
+Show players hitboxes
+================
+*/
+void G_DebugHitBoxes()
+{
+	int i;
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		gentity_t *tent,*boxEntity;
+		if (!g_entities[i].inuse || !g_entities[i].client || g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR)
+		{
+			continue;
+		}
+		
+		G_DrawEntityBox(G_BuildHead(&g_entities[i]),qtrue);
+		G_DrawEntityBox(G_BuildLeg(&g_entities[i]),qtrue);
+		G_DrawEntityBox(&g_entities[i],qfalse);
+	}
+}
+
 /*
 ================
 G_RunFrame
@@ -4861,6 +4907,11 @@ uebrgpiebrpgibqeripgubeqrpigubqifejbgipegbrtibgurepqgbn%i", level.time)
 #ifdef FEATURE_LUA
 	G_LuaHook_RunFrame(levelTime);
 #endif
+
+	if(g_debugBullets.integer == 3)
+	{
+		G_DebugHitBoxes();
+	}
 }
 
 // MAPVOTE

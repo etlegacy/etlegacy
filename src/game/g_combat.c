@@ -1892,15 +1892,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 }
 
-/*
-============
-CanDamage
-
-Returns qtrue if the inflictor can directly damage the target.  Used for
-explosions and melee attacks.
-============
-*/
-
 void G_RailTrail(vec_t *start, vec_t *end)
 {
 	gentity_t *temp = G_TempEntity(start, EV_RAILTRAIL);
@@ -1910,6 +1901,14 @@ void G_RailTrail(vec_t *start, vec_t *end)
 
 #define MASK_CAN_DAMAGE     (CONTENTS_SOLID | CONTENTS_BODY)
 
+/*
+============
+CanDamage
+
+Returns qtrue if the inflictor can directly damage the target.  Used for
+explosions and melee attacks.
+============
+*/
 qboolean CanDamage(gentity_t *targ, vec3_t origin)
 {
 	vec3_t  dest;
