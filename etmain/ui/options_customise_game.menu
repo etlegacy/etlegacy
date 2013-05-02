@@ -42,7 +42,7 @@ menuDef {
 	SUBWINDOW( 6, 124, (SUBWINDOW_WIDTH), 78, "WEAPONS" )
 	YESNO( 8, 140, (SUBWINDOW_WIDTH)-4, 10, "Automatic Reload:", .2, 8, "cg_autoReload", "Automatically reload when ammunition clip runs out" )
 	YESNO( 8, 152, (SUBWINDOW_WIDTH)-4, 10, "Autoswitch:", .2, 8, "cg_noAmmoAutoSwitch", "Automatically switch to a new weapon when out of ammunition" )
-	YESNO( 8, 164, (SUBWINDOW_WIDTH)-4, 10, "Weapon Icon Flash:", .2, 8, "cg_drawWeaponIconFlash", "Flash weapon icon when firing, reloading, or switching" )
+	MULTI( 8, 164, (SUBWINDOW_WIDTH)-4, 10, "Weapon Icon Flash:", .2, 8, "cg_drawWeaponIconFlash", cvarFloatList { "Off" 0 "On" 1 "ETPro style" 2}, "Flash weapon icon when firing, reloading, or switching" )
 	YESNO( 8, 176, (SUBWINDOW_WIDTH)-4, 10, "Muzzle Flash:", .2, 8, "cg_muzzleflash", "" )
 	MULTI( 8, 188, (SUBWINDOW_WIDTH)-4, 10, "Bullet Tracers:", .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, "Enable/Disable bullet tracers" )
 	

@@ -445,7 +445,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_crosshairColorAlt,     "cg_crosshairColorAlt",     "White", CVAR_ARCHIVE                 },
 	{ &cg_crosshairPulse,        "cg_crosshairPulse",        "1",     CVAR_ARCHIVE                 },
 	{ &cg_drawReinforcementTime, "cg_drawReinforcementTime", "1",     CVAR_ARCHIVE                 },
-	{ &cg_drawWeaponIconFlash,   "cg_drawWeaponIconFlash",   "0",     CVAR_ARCHIVE                 },
+	{ &cg_drawWeaponIconFlash,   "cg_drawWeaponIconFlash",   "2",     CVAR_ARCHIVE                 },
 	{ &cg_noAmmoAutoSwitch,      "cg_noAmmoAutoSwitch",      "1",     CVAR_ARCHIVE                 },
 	{ &cg_printObjectiveInfo,    "cg_printObjectiveInfo",    "1",     CVAR_ARCHIVE                 },
 #if FEATURE_MULTIVIEW
