@@ -2569,7 +2569,6 @@ void G_ShutdownGame(int restart)
 	    (g_gametype.integer == GT_WOLF_LMS && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_LMS))
 	    )
 	{
-
 		if (!(g_entities[ENTITYNUM_WORLD].r.worldflags & NO_GT_WOLF))
 		{
 			trap_Cvar_Set("g_gametype", va("%i", GT_WOLF));
@@ -3800,7 +3799,7 @@ void G_LogExit(const char *string)
 }
 
 /**
- * The level will stay at the intermission for a minimum of 5 seconds
+ * @brief The level will stay at the intermission for a minimum of 5 seconds
  * If all players wish to continue, the level will then exit.
  * If one or more players have not acknowledged the continue, the game will
  * wait 10 seconds before going on.
@@ -4553,7 +4552,6 @@ void G_RunEntity(gentity_t *ent, int msec)
 
 	if (ent->tagParent)
 	{
-
 		G_RunEntity(ent->tagParent, msec);
 
 		if (ent->tagParent)
@@ -4577,7 +4575,6 @@ void G_RunEntity(gentity_t *ent, int msec)
 	}
 	else if (ent->s.eFlags & EF_PATH_LINK)
 	{
-
 		G_TagLinkEntity(ent, msec);
 	}
 
@@ -4641,7 +4638,6 @@ void G_RunEntity(gentity_t *ent, int msec)
 		return;
 	}
 
-
 	if (ent->s.eType == ET_MISSILE
 	    || ent->s.eType == ET_FLAMEBARREL
 	    || ent->s.eType == ET_FP_PARTS
@@ -4650,7 +4646,6 @@ void G_RunEntity(gentity_t *ent, int msec)
 	    || ent->s.eType == ET_EXPLO_PART
 	    || ent->s.eType == ET_RAMJET)
 	{
-
 		// pausing
 		if (level.match_pause == PAUSE_NONE)
 		{
@@ -4736,9 +4731,9 @@ void G_RunEntity(gentity_t *ent, int msec)
 	VectorScale(ent->instantVelocity, 1000.0f / msec, ent->instantVelocity);
 }
 
-void G_DrawEntityBox(gentity_t *boxEntity,qboolean freeEntity)
+void G_DrawEntityBox(gentity_t *boxEntity, qboolean freeEntity)
 {
-	if(boxEntity)
+	if (boxEntity)
 	{
 		vec3_t    b1, b2;
 		gentity_t *tent;
@@ -4746,12 +4741,12 @@ void G_DrawEntityBox(gentity_t *boxEntity,qboolean freeEntity)
 		VectorCopy(boxEntity->r.currentOrigin, b2);
 		VectorAdd(b1, boxEntity->r.mins, b1);
 		VectorAdd(b2, boxEntity->r.maxs, b2);
-		
-		if(freeEntity)
+
+		if (freeEntity)
 		{
 			G_FreeEntity(boxEntity);
 		}
-		
+
 		tent = G_TempEntity(b1, EV_RAILTRAIL);
 		VectorCopy(b2, tent->s.origin2);
 		tent->s.dmgFlags = 1;
@@ -4768,17 +4763,19 @@ Show players hitboxes
 void G_DebugHitBoxes()
 {
 	int i;
+
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
-		gentity_t *tent,*boxEntity;
+		//gentity_t *tent, *boxEntity;
+
 		if (!g_entities[i].inuse || !g_entities[i].client || g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR)
 		{
 			continue;
 		}
-		
-		G_DrawEntityBox(G_BuildHead(&g_entities[i]),qtrue);
-		G_DrawEntityBox(G_BuildLeg(&g_entities[i]),qtrue);
-		G_DrawEntityBox(&g_entities[i],qfalse);
+
+		G_DrawEntityBox(G_BuildHead(&g_entities[i]), qtrue);
+		G_DrawEntityBox(G_BuildLeg(&g_entities[i]), qtrue);
+		G_DrawEntityBox(&g_entities[i], qfalse);
 	}
 }
 
@@ -4908,7 +4905,7 @@ uebrgpiebrpgibqeripgubeqrpigubqifejbgipegbrtibgurepqgbn%i", level.time)
 	G_LuaHook_RunFrame(levelTime);
 #endif
 
-	if(g_debugBullets.integer == 3)
+	if (g_debugBullets.integer == 3)
 	{
 		G_DebugHitBoxes();
 	}
@@ -4918,11 +4915,12 @@ uebrgpiebrpgibqeripgubeqrpigubqifejbgipegbrtibgurepqgbn%i", level.time)
 // G_shrubbot_writeconfig_string
 void G_writeconfigfile_string(char *s, fileHandle_t f)
 {
-	char buf[MAX_STRING_CHARS];
-
-	buf[0] = '\0';
 	if (s[0])
 	{
+		char buf[MAX_STRING_CHARS];
+
+		buf[0] = '\0';
+
 		//Q_strcat(buf, sizeof(buf), s);
 		Q_strncpyz(buf, s, sizeof(buf));
 		trap_FS_Write(buf, strlen(buf), f);
