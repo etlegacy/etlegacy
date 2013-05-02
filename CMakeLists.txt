@@ -52,6 +52,7 @@ cmake_dependent_option(BUNDLED_CURL		"Use bundled CURL library instead of the sy
 cmake_dependent_option(BUNDLED_JPEG		"Use bundled JPEG library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_LUA		"Use bundled LUA library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_OGG_VORBIS	"Use bundled OGG library instead of the system one."	ON "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_GLEW		"Use bundled GLEW library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
 cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON "NOT CMAKE_SYSTEM MATCHES OpenBSD*" OFF)
@@ -335,7 +336,7 @@ if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 
 # Use bundled libraries
-if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS AND NOT MINGW)
+if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS OR BUNDLED_GLEW AND NOT MINGW)
 	if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")
 		message(STATUS "Using bundled libraries located at ${CMAKE_SOURCE_DIR}/libs")
 		add_subdirectory(libs)
@@ -349,7 +350,7 @@ if(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG 
 		message(STATUS "and enable BUNDLED_* in CMake configuration.")
 		message(FATAL_ERROR "Build stopped because of missing libraries.")
 	endif()
-endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS AND NOT MINGW)
+endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JPEG OR BUNDLED_LUA AND FEATURE_LUA OR BUNDLED_OGG_VORBIS AND FEATURE_OGG_VORBIS OR BUNDLED_GLEW AND NOT MINGW)
 
 #-----------------------------------------------------------------
 # Client features
@@ -358,6 +359,13 @@ if(BUILD_CLIENT)
 	find_package(OpenGL REQUIRED)
 	list(APPEND CLIENT_LIBRARIES ${OPENGL_LIBRARIES})
 	include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
+	
+	if(BUNDLED_GLEW)
+		list(APPEND CLIENT_LIBRARIES ${BUNDLED_GLEW_LIBRARIES})
+		include_directories(SYSTEM ${BUNDLED_GLEW_INCLUDE_DIR})
+		add_definitions(-DBUNDLED_GLEW)
+		add_definitions(-DGLEW_STATIC)
+	endif()
 
 	if(NOT BUNDLED_SDL)
 		find_package(SDL32 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
@@ -581,6 +589,9 @@ if(BUILD_CLIENT)
 	if(BUNDLED_OGG_VORBIS)
 		add_dependencies(etl bundled_ogg bundled_ogg_vorbis)
 	endif(BUNDLED_OGG_VORBIS)
+	if(BUNDLED_GLEW)
+			add_dependencies(etl bundled_glew)
+	endif(BUNDLED_GLEW)
 	target_link_libraries(etl
 		${OS_LIBRARIES} # Has to go after cURL and SDL
 		${CLIENT_LIBRARIES}

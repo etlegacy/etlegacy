@@ -386,7 +386,6 @@ static void InitOpenGL(void)
 		GLint temp;
 
 		GLimp_Init();
-		GLimp_InitExtraExtensions();
 
 		GL_CheckErrors();
 
