@@ -334,7 +334,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 	listItem->type  = type;
 	Q_strncpyz(listItem->message, message, sizeof(cg_pmStack[0].message));
 
-	// jaquboss - colored obituaries
+	// colored obituaries
 	listItem->color[0] = listItem->color[1] = listItem->color[2] = 1.f;
 	if (color != NULL)
 	{
@@ -450,7 +450,7 @@ void CG_DrawPMItems(rectDef_t rect)
 	vec4_t       colour     = { 0.f, 0.f, 0.f, 1.f };
 	vec4_t       colourText = { 1.f, 1.f, 1.f, 1.f };
 	float        t;
-	int          i, size;
+	int          i, j, size;
 	pmListItem_t *listItem = cg_pmOldList;
 	float        y         = rect.y; //360;
 
@@ -481,9 +481,28 @@ void CG_DrawPMItems(rectDef_t rect)
 		colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
 	}
 
-	trap_R_SetColor(colourText);
-	CG_DrawPic(4, y, size, size, cg_pmWaitingList->shader);
-	trap_R_SetColor(NULL);
+	if (cg_pmWaitingList->shader > 0)
+	{
+		// colorize
+		for (j = 0; j < 3; j++)
+		{
+			colourText[j] = cg_pmWaitingList->color[j];
+		}
+		trap_R_SetColor(colourText);
+		// draw
+		CG_DrawPic(4, y, size, size, cg_pmWaitingList->shader);
+		// decolorize
+		for (j = 0; j < 3; j++)
+		{
+			colourText[j] = 1.f;
+		}
+		trap_R_SetColor(NULL);
+	}
+	else
+	{
+		size = 0;
+	}
+
 	CG_Text_Paint_Ext(4 + size + 2, y + 12, 0.2f, 0.2f, colourText, cg_pmWaitingList->message, 0, 0, 0, &cgs.media.limboFont2);
 
 	for (i = 0; i < 6 && listItem; i++, listItem = listItem->next)
@@ -500,9 +519,27 @@ void CG_DrawPMItems(rectDef_t rect)
 			colourText[3] = colour[3] = 1.f;
 		}
 
-		trap_R_SetColor(colourText);
-		CG_DrawPic(rect.x, y, size, size, listItem->shader); //x=4
-		trap_R_SetColor(NULL);
+		if (listItem->shader > 0)
+		{
+			for (j = 0; j < 3; j++) // colorize
+			{
+				colourText[j] = listItem->color[j];
+			}
+
+			trap_R_SetColor(colourText);
+			CG_DrawPic(4, y, size, size, listItem->shader);
+
+			for (j = 0; j < 3; j++) // decolorize
+			{
+				colourText[j] = 1.f;
+			}
+			trap_R_SetColor(NULL);
+		}
+		else
+		{
+			size = 0;
+		}
+
 		CG_Text_Paint_Ext(rect.x + size + 2, y + 12, 0.2f, 0.2f, colourText, listItem->message, 0, 0, 0, &cgs.media.limboFont2);
 	}
 }

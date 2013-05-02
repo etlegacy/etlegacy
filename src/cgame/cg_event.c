@@ -170,6 +170,8 @@ static void CG_Obituary(entityState_t *ent)
 		case MOD_SMOKEGRENADE:
 			message = "danced on his airstrike marker";
 			break;
+		case MOD_SUICIDE: // message is already set above
+			break;
 		// no obituary message if changing teams
 		case MOD_SWITCHTEAM:
 			return;
@@ -182,7 +184,7 @@ static void CG_Obituary(entityState_t *ent)
 	if (message)
 	{
 		message = CG_TranslateString(message);
-		CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, message), deathShader, NULL);
+		CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, message), deathShader, (attacker == target ? OB_YELLOW : NULL));
 
 		return;
 	}
@@ -420,7 +422,7 @@ static void CG_Obituary(entityState_t *ent)
 
 		if (ci->team == ca->team)
 		{
-			message  = "^1WAS KILLED BY TEAMMATE^7";
+			// message  = "^1WAS KILLED BY TEAMMATE^7";
 			message2 = "";
 		}
 
@@ -430,7 +432,15 @@ static void CG_Obituary(entityState_t *ent)
 			if (message2)
 			{
 				message2 = CG_TranslateString(message2);
-				CG_AddPMItem(PM_DEATH, va("%s %s %s%s", targetName, message, attackerName, message2), deathShader, NULL);
+
+				if (ci->team == ca->team)
+				{
+					CG_AddPMItem(PM_DEATH, va("%s ^1%s^7 %s%s", targetName, message, attackerName, message2), deathShader, OB_RED);
+				}
+				else
+				{
+					CG_AddPMItem(PM_DEATH, va("%s %s %s%s", targetName, message, attackerName, message2), deathShader, NULL);
+				}
 				//CG_Printf( "[cgnotify]%s %s %s%s\n", targetName, message, attackerName, message2 );
 			}
 			return;
