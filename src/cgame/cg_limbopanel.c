@@ -493,7 +493,6 @@ panel_button_t playerSkillIcon2 =
 
 // =======================
 
-
 panel_button_t mapTimeCounter =
 {
 	NULL,
@@ -694,7 +693,6 @@ panel_button_t weaponStatsShotsCounter =
 	CG_LimboPanel_RenderCounter,
 	NULL,
 };
-
 
 panel_button_t weaponStatsHitsText =
 {
@@ -1048,7 +1046,6 @@ qboolean CG_LimboPanel_BriefingButton_KeyDown(panel_button_t *button, int key)
 
 	if (key == K_MOUSE1)
 	{
-
 		SOUND_SELECT;
 
 		if (cg.limboEndCinematicTime > cg.time)
@@ -1284,7 +1281,6 @@ void CG_LimboPanel_RenderTeamButton(panel_button_t *button)
 	vec4_t    clr2 = { 1.f, 1.f, 1.f, 0.4f };
 	vec4_t    clr4 = { 1.f, 0.f, 0.f, 0.75f };
 	rectDef_t lock;
-
 	qhandle_t shader;
 	qboolean  teamDisabled = qfalse;
 
@@ -2413,6 +2409,7 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 int CG_LimboPanel_RenderCounter_RollTimeForButton(panel_button_t *button)
 {
 	float diff;
+
 	switch (button->data[0])
 	{
 	case 0:     // class counts
@@ -2453,6 +2450,7 @@ int CG_LimboPanel_RenderCounter_MaxChangeForButton(panel_button_t *button)
 
 	return 1;
 }
+
 int CG_LimboPanel_RenderCounter_NumRollers(panel_button_t *button)
 {
 	switch (button->data[0])
@@ -2608,10 +2606,10 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 	qhandle_t shaderBack;
 	qhandle_t shaderRoll;
 	int       numimages;
+	float     counter_rolltime = CG_LimboPanel_RenderCounter_RollTimeForButton(button);
+	int       num              = CG_LimboPanel_RenderCounter_NumRollers(button);
+	int       value            = CG_LimboPanel_RenderCounter_ValueForButton(button);
 
-	float counter_rolltime = CG_LimboPanel_RenderCounter_RollTimeForButton(button);
-	int   num              = CG_LimboPanel_RenderCounter_NumRollers(button);
-	int   value            = CG_LimboPanel_RenderCounter_ValueForButton(button);
 	if (num > MAX_ROLLERS)
 	{
 		num = MAX_ROLLERS;
@@ -2876,6 +2874,7 @@ qboolean CG_LimboPanel_Draw(void)
 void CG_LimboPanel_KeyHandling(int key, qboolean down)
 {
 	int b1, b2;
+
 	if (BG_PanelButtonsKeyEvent(key, down, limboPanelButtons))
 	{
 		return;
@@ -3123,6 +3122,7 @@ int CG_LimboPanel_GetWeaponNumberForPos(int pos)
 weapon_t CG_LimboPanel_GetWeaponForNumber(int number, int slot, qboolean ignoreDisabled)
 {
 	bg_playerclass_t *classInfo;
+
 	if (CG_LimboPanel_GetTeam() == TEAM_SPECTATOR)
 	{
 		return WP_NONE;
@@ -3242,6 +3242,7 @@ int CG_LimboPanel_GetSelectedWeaponNum(void)
 void CG_LimboPanel_RequestWeaponStats(void)
 {
 	extWeaponStats_t weapStat = CG_LimboPanel_GetSelectedWeaponStat();
+
 	if (weapStat == WS_MAX)
 	{
 		// Bleh?
@@ -3266,7 +3267,6 @@ void CG_LimboPanel_RequestObjective(void)
 	cgs.ccRequestedObjective       = cgs.ccSelectedObjective;
 	cgs.ccLastObjectiveRequestTime = cg.time;
 }
-
 
 void CG_LimboPanel_SetSelectedWeaponNum(int number)
 {
@@ -3352,6 +3352,7 @@ qboolean CG_IsHeavyWeapon(weapon_t weap)
 qboolean CG_LimboPanel_WeaponIsDisabled(int index)
 {
 	weapon_t weapon = CG_LimboPanel_GetPlayerClass()->classWeapons[index];
+
 	return CG_LimboPanel_RealWeaponIsDisabled(weapon);
 }
 
@@ -3484,9 +3485,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 
 int CG_LimboPanel_ClassCount(team_t checkTeam, int classIndex)
 {
-	int i, cnt;
-
-	cnt = 0;
+	int i, cnt = 0;
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
@@ -3579,8 +3578,7 @@ qboolean CG_LimboPanel_ClassIsDisabled(team_t selectedTeam, int classIndex)
 
 qboolean CG_LimboPanel_TeamIsFull(team_t checkTeam)
 {
-	int i, cnt;
-	cnt = 0;
+	int i, cnt = 0;
 
 	if (checkTeam == TEAM_SPECTATOR)
 	{
@@ -3617,7 +3615,6 @@ qboolean CG_LimboPanel_TeamIsFull(team_t checkTeam)
 
 qboolean CG_LimboPanel_TeamIsDisabled(team_t checkTeam)
 {
-
 	if (checkTeam == TEAM_SPECTATOR)
 	{
 		return qfalse;
