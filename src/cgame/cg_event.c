@@ -44,6 +44,9 @@ vec3_t OB_RED = { 1.f, 0.f, 0.f };
 /*
 =============
 CG_Obituary
+
+FIXME: - MOD_ROCKET, MOD_CROSS ... some MODs are not catched - check all!
+       - MOD_CRUSH_X is selfkill only
 =============
 */
 static void CG_Obituary(entityState_t *ent)
@@ -76,8 +79,6 @@ static void CG_Obituary(entityState_t *ent)
 
 	Q_strncpyz(targetName, ci->name, sizeof(targetName) - 2);
 	strcat(targetName, S_COLOR_WHITE);
-
-	message2 = "";
 
 	// check for single client messages
 	switch (mod)
@@ -113,6 +114,9 @@ static void CG_Obituary(entityState_t *ent)
 		break;
 	case MOD_MAPMORTAR_SPLASH:
 		message = "took a map mortar shell shower";
+		break;
+	case MOD_EXPLOSIVE:
+		message = "was pulverized by an explosion";
 		break;
 	default:
 		message = NULL;
@@ -416,15 +420,17 @@ static void CG_Obituary(entityState_t *ent)
 			break;
 
 		default:
-			message = "was killed by";
+			message  = "was killed by";
+			message2 = "";
 			break;
 		}
 
-		if (ci->team == ca->team)
-		{
-			// message  = "^1WAS KILLED BY TEAMMATE^7";
-			message2 = "";
-		}
+		// vanilla style
+		//if (ci->team == ca->team)
+		//{
+		//  message  = "^1WAS KILLED BY TEAMMATE^7";
+		//  message2 = "";
+		//}
 
 		if (message)
 		{
@@ -442,6 +448,17 @@ static void CG_Obituary(entityState_t *ent)
 					CG_AddPMItem(PM_DEATH, va("%s %s %s%s", targetName, message, attackerName, message2), deathShader, NULL);
 				}
 				//CG_Printf( "[cgnotify]%s %s %s%s\n", targetName, message, attackerName, message2 );
+			}
+			else
+			{
+				if (ci->team == ca->team)
+				{
+					CG_AddPMItem(PM_DEATH, va("%s ^1%s^7 %s", targetName, message, attackerName), deathShader, OB_RED);
+				}
+				else
+				{
+					CG_AddPMItem(PM_DEATH, va("%s %s %s", targetName, message, attackerName), deathShader, NULL);
+				}
 			}
 			return;
 		}
@@ -3182,7 +3199,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 /*
 ==============
 CG_CheckEvents
-
 ==============
 */
 void CG_CheckEvents(centity_t *cent)
@@ -3211,7 +3227,6 @@ void CG_CheckEvents(centity_t *cent)
 		//      circular 'events' list contains the valid events.  So we
 		//      skip processing the single 'event' field and go straight
 		//      to the circular list.
-
 		goto skipEvent;
 	}
 
