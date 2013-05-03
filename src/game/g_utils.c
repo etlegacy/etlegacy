@@ -894,6 +894,8 @@ G_TempEntityNotLinked
 
 Spawns an event entity that will be auto-removed
 Use this for non visible and not origin based events like global sounds etc.
+
+Note: Don't forget to call e->r.svFlags = SVF_BROADCAST; after
 =================
 */
 gentity_t *G_TempEntityNotLinked(int event)
@@ -1005,12 +1007,13 @@ void G_ClientSound(gentity_t *ent, int soundIndex)
 {
 	if (ent && ent->client)
 	{
-		// FIXME: G_TempEntityNotLinked
-		// playsound 0 sound/world/build.wav crashes the server
-		gentity_t *te = G_TempEntity(ent->client->ps.origin, EV_GLOBAL_CLIENT_SOUND);
+		gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_CLIENT_SOUND);
 
 		te->s.teamNum   = (ent->client - level.clients);
 		te->s.eventParm = soundIndex;
+
+		te->r.singleClient = ent->s.number;
+		te->r.svFlags      = SVF_SINGLECLIENT | SVF_BROADCAST;
 	}
 }
 

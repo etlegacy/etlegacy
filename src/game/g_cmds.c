@@ -1249,10 +1249,12 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 			{
 				if (level.commanderSounds[x][i].index)
 				{
-					gentity_t *tent = G_TempEntity(client->ps.origin, EV_GLOBAL_CLIENT_SOUND);
+					gentity_t *tent = G_TempEntityNotLinked(EV_GLOBAL_CLIENT_SOUND);
 
 					tent->s.eventParm = level.commanderSounds[x][i].index - 1;
 					tent->s.teamNum   = clientNum;
+					tent->r.singleClient = clientNum;
+					tent->r.svFlags      = SVF_SINGLECLIENT | SVF_BROADCAST;
 				}
 			}
 		}
@@ -2300,6 +2302,7 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 		if (ent->s.clientNum != other->s.clientNum)
 		{
 			fireteamData_t *ft1, *ft2;
+
 			if (!G_IsOnFireteam(other - g_entities, &ft1))
 			{
 				return;
@@ -4463,8 +4466,7 @@ void ClientCommand(int clientNum)
 }
 
 /**
- *
- * replaces all occurances of "\n" with '\n'
+ * @brief replaces all occurances of "\n" with '\n'
  */
 char *Q_AddCR(char *s)
 {
