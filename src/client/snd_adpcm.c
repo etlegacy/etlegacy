@@ -57,31 +57,20 @@ static int stepsizeTable[89] =
 	15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767
 };
 
-
 void S_AdpcmEncode(short indata[], char outdata[], int len, struct adpcm_state *state)
 {
-	short       *inp;   /* Input buffer pointer */
-	signed char *outp;      /* output buffer pointer */
-	int         val;    /* Current input sample value */
-	int         sign;   /* Current adpcm sign bit */
-	int         delta;  /* Current adpcm output value */
-	int         diff;   /* Difference between val and sample */
-	int         step;   /* Stepsize */
-	int         valpred; /* Predicted output value */
-	int         vpdiff; /* Current change to valpred */
-	int         index;  /* Current step change index */
-	int         outputbuffer; /* place to keep previous 4-bit value */
-	int         bufferstep; /* toggle between outputbuffer/output */
-
-	outp = (signed char *)outdata;
-	inp  = indata;
-
-	valpred = state->sample;
-	index   = state->index;
-	step    = stepsizeTable[index];
-
-	outputbuffer = 0;   // quiet a compiler warning
-	bufferstep   = 1;
+	short       *inp  = indata;  // Input buffer pointer
+	signed char *outp = (signed char *)outdata;      // output buffer pointer
+	int         val;    // Current input sample value
+	int         sign;   // Current adpcm sign bit
+	int         delta;  // Current adpcm output value
+	int         diff;   // Difference between val and sample
+	int         index   = state->index;        // Current step change index
+	int         step    = stepsizeTable[index]; // Stepsize
+	int         valpred = state->sample;       // Predicted output value
+	int         vpdiff;           // Current change to valpred
+	int         outputbuffer = 0; // place to keep previous 4-bit value
+	int         bufferstep   = 1; // toggle between outputbuffer/output
 
 	for ( ; len > 0 ; len--)
 	{
@@ -183,31 +172,21 @@ void S_AdpcmEncode(short indata[], char outdata[], int len, struct adpcm_state *
 	state->index  = index;
 }
 
-/* static */ void S_AdpcmDecode(const char indata[], short *outdata, int len, struct adpcm_state *state)
+static void S_AdpcmDecode(const char indata[], short *outdata, int len, struct adpcm_state *state)
 {
-	signed char *inp;       /* Input buffer pointer */
-	int         outp;   /* output buffer pointer */
-	int         sign;   /* Current adpcm sign bit */
-	int         delta;  /* Current adpcm output value */
-	int         step;   /* Stepsize */
-	int         valpred; /* Predicted value */
-	int         vpdiff; /* Current change to valpred */
-	int         index;  /* Current step change index */
-	int         inputbuffer; /* place to keep next 4-bit value */
-	int         bufferstep; /* toggle between inputbuffer/input */
+	signed char *inp = (signed char *)indata;  // Input buffer pointer
+	int         outp = 0;   // output buffer pointer
+	int         sign;       // Current adpcm sign bit
+	int         delta;      // Current adpcm output value
+	int         index   = state->index;        // Current step change index
+	int         step    = stepsizeTable[index]; // Stepsize
+	int         valpred = state->sample;       // Predicted value
+	int         vpdiff;          // Current change to valpred
+	int         inputbuffer = 0; // place to keep next 4-bit value
+	int         bufferstep  = 0; // toggle between inputbuffer/input
 
-	outp = 0;
-	inp  = (signed char *)indata;
-
-	valpred = state->sample;
-	index   = state->index;
-	step    = stepsizeTable[index];
-
-	bufferstep  = 0;
-	inputbuffer = 0;    // quiet a compiler warning
 	for ( ; len > 0 ; len--)
 	{
-
 		/* Step 1 - get the delta value */
 		if (bufferstep)
 		{
@@ -287,40 +266,42 @@ void S_AdpcmEncode(short indata[], char outdata[], int len, struct adpcm_state *
 
 /*
 ====================
-S_AdpcmMemoryNeeded
+S_AdpcmMemoryNeeded - unused
 
 Returns the amount of memory (in bytes) needed to store the samples in out internal adpcm format
+
 ====================
-*/
+
 int S_AdpcmMemoryNeeded(const wavinfo_t *info)
 {
-	float scale;
-	int   scaledSampleCount;
-	int   sampleMemory;
-	int   blockCount;
-	int   headerMemory;
+    float scale;
+    int   scaledSampleCount;
+    int   sampleMemory;
+    int   blockCount;
+    int   headerMemory;
 
-	// determine scale to convert from input sampling rate to desired sampling rate
-	scale = (float)info->rate / dma.speed;
+    // determine scale to convert from input sampling rate to desired sampling rate
+    scale = (float)info->rate / dma.speed;
 
-	// calc number of samples at playback sampling rate
-	scaledSampleCount = info->samples / scale;
+    // calc number of samples at playback sampling rate
+    scaledSampleCount = info->samples / scale;
 
-	// calc memory need to store those samples using ADPCM at 4 bits per sample
-	sampleMemory = scaledSampleCount / 2;
+    // calc memory need to store those samples using ADPCM at 4 bits per sample
+    sampleMemory = scaledSampleCount / 2;
 
-	// calc number of sample blocks needed of PAINTBUFFER_SIZE
-	blockCount = scaledSampleCount / PAINTBUFFER_SIZE;
-	if (scaledSampleCount % PAINTBUFFER_SIZE)
-	{
-		blockCount++;
-	}
+    // calc number of sample blocks needed of PAINTBUFFER_SIZE
+    blockCount = scaledSampleCount / PAINTBUFFER_SIZE;
+    if (scaledSampleCount % PAINTBUFFER_SIZE)
+    {
+        blockCount++;
+    }
 
-	// calc memory needed to store the block headers
-	headerMemory = blockCount * sizeof(adpcm_state_t);
+    // calc memory needed to store the block headers
+    headerMemory = blockCount * sizeof(adpcm_state_t);
 
-	return sampleMemory + headerMemory;
+    return sampleMemory + headerMemory;
 }
+*/
 
 /*
 ====================
@@ -349,18 +330,15 @@ S_AdpcmEncodeSound
 void S_AdpcmEncodeSound(sfx_t *sfx, short *samples)
 {
 	adpcm_state_t state;
-	int           inOffset;
-	int           count;
+	int           inOffset = 0;
+	int           count    = sfx->soundLength;
 	int           n;
-	sndBuffer     *newchunk, *chunk;
+	sndBuffer     *newchunk, *chunk = NULL;
 	byte          *out;
 
-	inOffset     = 0;
-	count        = sfx->soundLength;
 	state.index  = 0;
 	state.sample = samples[0];
 
-	chunk = NULL;
 	while (count)
 	{
 		n = count;

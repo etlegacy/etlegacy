@@ -268,7 +268,7 @@ void S_PaintChannels(int endtime);
 void S_memoryLoad(sfx_t *sfx);
 
 // adpcm functions
-int S_AdpcmMemoryNeeded(const wavinfo_t *info);
+// int S_AdpcmMemoryNeeded(const wavinfo_t *info); // unused
 void S_AdpcmEncodeSound(sfx_t *sfx, short *samples);
 void S_AdpcmGetSamples(sndBuffer *chunk, short *to);
 
