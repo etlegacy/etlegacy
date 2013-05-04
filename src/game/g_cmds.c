@@ -531,11 +531,11 @@ Give items to a client
 void Cmd_Give_f(gentity_t *ent)
 {
 	char *name, *amt;
-//  gitem_t     *it;
+	//gitem_t     *it;
 	int      i;
 	qboolean give_all;
-//  gentity_t       *it_ent;
-//  trace_t     trace;
+	//gentity_t       *it_ent;
+	//trace_t     trace;
 	int      amount;
 	qboolean hasAmount = qfalse;
 
@@ -1251,8 +1251,8 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 				{
 					gentity_t *tent = G_TempEntityNotLinked(EV_GLOBAL_CLIENT_SOUND);
 
-					tent->s.eventParm = level.commanderSounds[x][i].index - 1;
-					tent->s.teamNum   = clientNum;
+					tent->s.eventParm    = level.commanderSounds[x][i].index - 1;
+					tent->s.teamNum      = clientNum;
 					tent->r.singleClient = clientNum;
 					tent->r.svFlags      = SVF_SINGLECLIENT | SVF_BROADCAST;
 				}
@@ -3282,7 +3282,6 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 {
 	qboolean found   = qfalse;
 	qboolean walking = qfalse;
-	vec3_t   forward;       //, offset, end;
 
 	// invisible entities can't be used
 	if (traceEnt->entstate == STATE_INVISIBLE || traceEnt->entstate == STATE_UNDERCONSTRUCTION)
@@ -3356,8 +3355,9 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 		}
 		else if (G_EmplacedGunIsMountable(traceEnt, ent))
 		{
-			gclient_t *cl = &level.clients[ent->s.clientNum];
 			vec3_t    point;
+			vec3_t   forward;       //, offset, end;
+			gclient_t *cl = &level.clients[ent->s.clientNum];
 
 			AngleVectors(traceEnt->s.apos.trBase, forward, NULL, NULL);
 			VectorMA(traceEnt->r.currentOrigin, -36, forward, point);
