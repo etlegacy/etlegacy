@@ -1264,7 +1264,7 @@ static void CG_RegisterSounds(void)
 		}
 
 		// register sound scripts seperately
-		if (!strstr(soundName, ".wav"))
+		if (!strstr(soundName, ".wav") && !strstr(soundName, ".ogg"))
 		{
 			CG_SoundScriptPrecache(soundName);
 		}
