@@ -32,7 +32,9 @@
 // tr_world.c
 
 #include "tr_local.h"
+#if !defined(USE_D3D10)
 #include "gl_shader.h"
+#endif
 
 
 /*
@@ -486,6 +488,19 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 
 			R_AddDrawSurf((surfaceType_t *) vboSurface, vboSurface->shader, vboSurface->lightmapNum, fogNum);
 		}
+
+		// Tr3B: also add surfaces like deform autosprite
+		for (i = 0; i < bspModel->numSurfaces; i++)
+		{
+			bspSurface_t *surf = bspModel->firstSurface + i;
+
+			if (!ShaderRequiresCPUDeforms(surf->shader))
+			{
+				continue;
+			}
+
+			R_AddBrushModelSurface(surf, fogNum);
+		}
 	}
 	else
 	{
@@ -654,46 +669,79 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 	int i;
 	int r;
 
-	// if the node wasn't marked as potentially visible, exit
-	if (node->visCounts[tr.visIndex] != tr.visCounts[tr.visIndex])
+	do
 	{
-		return;
-	}
-
-	// light already hit node
-	if (node->lightCount == tr.lightCount)
-	{
-		return;
-	}
-	node->lightCount = tr.lightCount;
-
-	// if the bounding volume is outside the frustum, nothing
-	// inside can be visible OPTIMIZE: don't do this all the way to leafs?
-
-	// Tr3B - even surfaces that belong to nodes that are outside of the view frustum
-	// can cast shadows into the view frustum
-	if (!r_nocull->integer && r_shadows->integer <= SHADOWING_BLOB)
-	{
-		for (i = 0; i < FRUSTUM_PLANES; i++)
+		// if the node wasn't marked as potentially visible, exit
+		if (node->visCounts[tr.visIndex] != tr.visCounts[tr.visIndex])
 		{
-			if (planeBits & (1 << i))
+			return;
+		}
+
+		// light already hit node
+		if (node->lightCount == tr.lightCount)
+		{
+			return;
+		}
+
+		node->lightCount = tr.lightCount;
+
+		// if the bounding volume is outside the frustum, nothing
+		// inside can be visible OPTIMIZE: don't do this all the way to leafs?
+
+		// Tr3B - even surfaces that belong to nodes that are outside of the view frustum
+		// can cast shadows into the view frustum
+		if (!r_nocull->integer && r_shadows->integer <= SHADOWING_BLOB)
+		{
+			for (i = 0; i < FRUSTUM_PLANES; i++)
 			{
-				r = BoxOnPlaneSide(node->mins, node->maxs, &tr.viewParms.frustums[0][i]);
-
-				if (r == 2)
+				if (planeBits & (1 << i))
 				{
-					return;     // culled
-				}
+					r = BoxOnPlaneSide(node->mins, node->maxs, &tr.viewParms.frustums[0][i]);
 
-				if (r == 1)
-				{
-					planeBits &= ~(1 << i); // all descendants will also be in front
+					if (r == 2)
+					{
+						return; // culled
+					}
+
+					if (r == 1)
+					{
+						planeBits &= ~(1 << i);    // all descendants will also be in front
+					}
 				}
 			}
 		}
-	}
 
-	if (node->contents != -1)
+		if (node->contents != -1)
+		{
+			break;
+		}
+
+		// node is just a decision point, so go down both sides
+		// since we don't care about sort orders, just go positive to negative
+		r = BoxOnPlaneSide(light->worldBounds[0], light->worldBounds[1], node->plane);
+
+		switch (r)
+		{
+		case 1:
+			node = node->children[0];
+			break;
+
+		case 2:
+			node = node->children[1];
+			break;
+
+		case 3:
+		default:
+			// recurse down the children, front side first
+			R_RecursiveInteractionNode(node->children[0], light, planeBits);
+
+			// tail recurse
+			node = node->children[1];
+			break;
+		}
+	}
+	while (1);
+
 	{
 		// leaf node, so add mark surfaces
 		int          c;
@@ -702,6 +750,7 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 		// add the individual surfaces
 		mark = node->markSurfaces;
 		c    = node->numMarkSurfaces;
+
 		while (c--)
 		{
 			// the surface may have already been added if it
@@ -710,29 +759,6 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 			R_AddInteractionSurface(surf, light);
 			mark++;
 		}
-		return;
-	}
-
-	// node is just a decision point, so go down both sides
-	// since we don't care about sort orders, just go positive to negative
-	r = BoxOnPlaneSide(light->worldBounds[0], light->worldBounds[1], node->plane);
-
-	switch (r)
-	{
-	case 1:
-		R_RecursiveInteractionNode(node->children[0], light, planeBits);
-		break;
-
-	case 2:
-		R_RecursiveInteractionNode(node->children[1], light, planeBits);
-		break;
-
-	case 3:
-	default:
-		// recurse down the children, front side first
-		R_RecursiveInteractionNode(node->children[0], light, planeBits);
-		R_RecursiveInteractionNode(node->children[1], light, planeBits);
-		break;
 	}
 }
 
@@ -817,6 +843,7 @@ BSPSurfaceCompare
 compare function for qsort()
 =================
 */
+#if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 static int BSPSurfaceCompare(const void *a, const void *b)
 {
 	bspSurface_t *aa, *bb;
@@ -852,7 +879,6 @@ static int BSPSurfaceCompare(const void *a, const void *b)
 R_UpdateClusterSurfaces()
 ===============
 */
-#if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 static void R_UpdateClusterSurfaces()
 {
 	int i, k, l;
@@ -1144,7 +1170,7 @@ static void R_UpdateClusterSurfaces()
 				/*
 				   if(ibo->indexesVBO)
 				   {
-				   glDeleteBuffersARB(1, &ibo->indexesVBO);
+				   glDeleteBuffers(1, &ibo->indexesVBO);
 				   ibo->indexesVBO = 0;
 				   }
 				 */
@@ -1160,7 +1186,12 @@ static void R_UpdateClusterSurfaces()
 				vboSurf->vbo = tr.world->vbo;
 				vboSurf->ibo = ibo = (IBO_t *) ri.Hunk_Alloc(sizeof(*ibo), h_low);
 
-				glGenBuffersARB(1, &ibo->indexesVBO);
+#if defined(USE_D3D10)
+				// TODO
+#else
+				glGenBuffers(1, &ibo->indexesVBO);
+#endif
+
 				Com_AddToGrowList(&tr.world->clusterVBOSurfaces[tr.visIndex], vboSurf);
 			}
 
@@ -1177,7 +1208,7 @@ static void R_UpdateClusterSurfaces()
 			VectorCopy(bounds[1], vboSurf->bounds[1]);
 
 			// make sure the render thread is stopped
-			R_IssuePendingRenderCommands();
+			R_SyncRenderThread();
 
 			// update IBO
 			Q_strncpyz(ibo->name,
@@ -1186,8 +1217,11 @@ static void R_UpdateClusterSurfaces()
 			ibo->indexesSize = indexesSize;
 
 			R_BindIBO(ibo);
-
-			glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexesSize, indexes, GL_DYNAMIC_DRAW_ARB);
+#if defined(USE_D3D10)
+			// TODO
+#else
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexesSize, indexes, GL_DYNAMIC_DRAW);
+#endif
 			R_BindNullIBO();
 
 			//GL_CheckErrors();
@@ -1443,6 +1477,7 @@ static qboolean InsideViewFrustum(bspNode_t *node, int planeBits)
 
 static void DrawNode_r(bspNode_t *node, int planeBits)
 {
+#if !defined(USE_D3D10)
 	do
 	{
 		// if the bounding volume is outside the frustum, nothing
@@ -1471,7 +1506,7 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 
 		if (r_logFile->integer)
 		{
-			GLimp_LogComment(va("--- DrawNode_r( node = %i, isLeaf = %i ) ---\n", node - tr.world->nodes, node->contents == -1));
+			GLimp_LogComment(va("--- DrawNode_r( node = %li, isLeaf = %i ) ---\n", (long)(node - tr.world->nodes), node->contents == -1));
 		}
 
 		if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
@@ -1512,6 +1547,7 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 		node = node->children[1];
 	}
 	while (1);
+#endif // USE_D3D10
 }
 
 
@@ -1544,17 +1580,18 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 		QueueInit(&node->multiQuery);
 	}
 
+#if !defined(USE_D3D10)
 	GL_CheckErrors();
 
 #if 0
-	if (glIsQueryARB(node->occlusionQueryObjects[tr.viewCount]))
+	if (glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 	{
 		ri.Error(ERR_FATAL, "IssueOcclusionQuery: node %i has already an occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
 	// begin the occlusion query
-	qglBeginQueryARB(GL_SAMPLES_PASSED, node->occlusionQueryObjects[tr.viewCount]);
+	glBeginQuery(GL_SAMPLES_PASSED, node->occlusionQueryObjects[tr.viewCount]);
 
 	GL_CheckErrors();
 
@@ -1569,10 +1606,10 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 	Tess_DrawElements();
 
 	// end the query
-	qglEndQueryARB(GL_SAMPLES_PASSED);
+	glEndQuery(GL_SAMPLES_PASSED);
 
 #if 1
-	if (!qglIsQueryARB(node->occlusionQueryObjects[tr.viewCount]))
+	if (!glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 	{
 		ri.Error(ERR_FATAL, "IssueOcclusionQuery: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
 	}
@@ -1586,6 +1623,7 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 	tess.numVertexes         = 0;
 
 	GL_CheckErrors();
+#endif
 
 	GLimp_LogComment("--- IssueOcclusionQuery end ---\n");
 }
@@ -1604,7 +1642,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 		{
 			node = (bspNode_t *) l->data;
 
-			GLimp_LogComment(va("%i, ", node - tr.world->nodes));
+			GLimp_LogComment(va("%li, ", (long)(node - tr.world->nodes)));
 		}
 		GLimp_LogComment("])");
 	}
@@ -1617,18 +1655,22 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 	multiQueryNode = (bspNode_t *) QueueFront(multiQueue)->data;
 
 	// begin the occlusion query
+#if defined(USE_D3D10)
+	// TODO
+#else
 	GL_CheckErrors();
 
 #if 0
-	if (!qglIsQueryARB(multiQueryNode->occlusionQueryObjects[tr.viewCount]))
+	if (!glIsQuery(multiQueryNode->occlusionQueryObjects[tr.viewCount]))
 	{
 		ri.Error(ERR_FATAL, "IssueMultiOcclusionQueries: node %i has already occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, tr.viewCount, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
 	}
 #endif
 
-	qglBeginQueryARB(GL_SAMPLES_PASSED, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
+	glBeginQuery(GL_SAMPLES_PASSED, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
 
 	GL_CheckErrors();
+#endif
 
 	//GLimp_LogComment("rendering nodes:[");
 	for (l = multiQueue->prev; l != multiQueue; l = l->prev)
@@ -1637,11 +1679,19 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 
 		if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
 		{
+#if defined(USE_D3D10)
+			// TODO
+#else
 			gl_genericShader->SetUniform_Color(colorGreen);
+#endif
 		}
 		else
 		{
+#if defined(USE_D3D10)
+			// TODO
+#else
 			gl_genericShader->SetUniform_Color(colorMdGrey);
+#endif
 		}
 
 		//if(r_logFile->integer)
@@ -1651,6 +1701,9 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 
 		//Tess_EndBegin();
 
+#if defined(USE_D3D10)
+		// TODO
+#else
 		R_BindVBO(node->volumeVBO);
 		R_BindIBO(node->volumeIBO);
 
@@ -1664,6 +1717,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 
 		tess.numIndexes  = 0;
 		tess.numVertexes = 0;
+#endif
 	}
 	//GLimp_LogComment("]\n");
 
@@ -1672,12 +1726,16 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 	tr.pc.c_occlusionQueriesMulti++;
 
 	// end the query
-	qglEndQueryARB(GL_SAMPLES_PASSED);
+#if defined(USE_D3D10)
+	// TODO
+#else
+	glEndQuery(GL_SAMPLES_PASSED);
 
 	GL_CheckErrors();
+#endif
 
 #if 0
-	if (!glIsQueryARB(multiQueryNode->occlusionQueryObjects[tr.viewCount]))
+	if (!glIsQuery(multiQueryNode->occlusionQueryObjects[tr.viewCount]))
 	{
 		ri.Error(ERR_FATAL, "IssueMultiOcclusionQueries: node %i has no occlusion query object in slot %i: %i", multiQueryNode - tr.world->nodes, tr.viewCount, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
 	}
@@ -1697,22 +1755,25 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 	GLimp_LogComment("--- IssueMultiOcclusionQueries end ---\n");
 }
 
-static qboolean ResultAvailable(bspNode_t *node)
+#if !defined(USE_D3D10)
+static GLint ResultAvailable(bspNode_t *node)
 {
 	GLint available;
 
 	//glFinish();
 
 	available = 0;
-	//if(glIsQueryARB(node->occlusionQueryObjects[tr.viewCount]))
+	//if(glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 	{
-		qglGetQueryObjectivARB(node->occlusionQueryObjects[tr.viewCount], GL_QUERY_RESULT_AVAILABLE_ARB, &available);
+		glGetQueryObjectiv(node->occlusionQueryObjects[tr.viewCount], GL_QUERY_RESULT_AVAILABLE, &available);
 		GL_CheckErrors();
 	}
 
-	return (qboolean) available;
+	return available;
 }
+#endif
 
+#if !defined(USE_D3D10)
 static void GetOcclusionQueryResult(bspNode_t *node)
 {
 	link_t *l, *sentinel;
@@ -1725,7 +1786,7 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 	//glFinish();
 
 #if 0
-	if (!glIsQueryARB(node->occlusionQueryObjects[tr.viewCount]))
+	if (!glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 	{
 		ri.Error(ERR_FATAL, "GetOcclusionQueryResult: node %i has no occlusion query object in slot %i: %i", node - tr.world->nodes, tr.viewCount, node->occlusionQueryObjects[tr.viewCount]);
 	}
@@ -1734,19 +1795,19 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 	available = 0;
 	while (!available)
 	{
-		//if(glIsQueryARB(node->occlusionQueryObjects[tr.viewCount]))
+		//if(glIsQuery(node->occlusionQueryObjects[tr.viewCount]))
 		{
-			qglGetQueryObjectivARB(node->occlusionQueryObjects[tr.viewCount], GL_QUERY_RESULT_AVAILABLE_ARB, &available);
+			glGetQueryObjectiv(node->occlusionQueryObjects[tr.viewCount], GL_QUERY_RESULT_AVAILABLE, &available);
 			//GL_CheckErrors();
 		}
 	}
 
-	qglGetQueryObjectivARB(node->occlusionQueryObjects[tr.viewCount], GL_QUERY_RESULT, &ocSamples);
+	glGetQueryObjectiv(node->occlusionQueryObjects[tr.viewCount], GL_QUERY_RESULT, &ocSamples);
 
 
 	if (r_logFile->integer)
 	{
-		GLimp_LogComment(va("GetOcclusionQueryResult(%i): available = %i, samples = %i\n", node - tr.world->nodes, available, ocSamples));
+		GLimp_LogComment(va("GetOcclusionQueryResult(%li): available = %i, samples = %i\n", (long)(node - tr.world->nodes), available, ocSamples));
 	}
 
 	GL_CheckErrors();
@@ -1764,6 +1825,7 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 		node->lastQueried[tr.viewCount]           = tr.frameCount;
 	}
 }
+#endif
 
 static void PullUpVisibility(bspNode_t *node)
 {
@@ -1877,8 +1939,8 @@ static void TraverseNode(link_t *distanceQueue, bspNode_t *node)
 
 		if (r_logFile->integer)
 		{
-			GLimp_LogComment(va("distance-queue <-- node %i\n", node->children[0] - tr.world->nodes));
-			GLimp_LogComment(va("distance-queue <-- node %i\n", node->children[1] - tr.world->nodes));
+			GLimp_LogComment(va("distance-queue <-- node %li\n", (long)(node->children[0] - tr.world->nodes)));
+			GLimp_LogComment(va("distance-queue <-- node %li\n", (long)(node->children[1] - tr.world->nodes)));
 		}
 	}
 }
@@ -1927,16 +1989,24 @@ static void BuildNodeTraversalStackPost_r(bspNode_t *node)
 }
 
 
-static bool WasVisible(bspNode_t *node)
+static qboolean WasVisible(bspNode_t *node)
 {
-	return (node->visible[tr.viewCount] && ((tr.frameCount - node->lastVisited[tr.viewCount]) <= r_chcMaxVisibleFrames->integer));
+	if (node->visible[tr.viewCount] && ((tr.frameCount - node->lastVisited[tr.viewCount]) <= r_chcMaxVisibleFrames->integer))
+	{
+		return qtrue;
+	}
+	return qfalse;
 }
 
-static bool QueryReasonable(bspNode_t *node)
+static qboolean QueryReasonable(bspNode_t *node)
 {
 	// if r_chcMaxVisibleFrames 10 then range from 5 to 10
 	//return ((tr.frameCount - node->lastQueried[tr.viewCount]) > r_chcMaxVisibleFrames->integer);
-	return ((tr.frameCount - node->lastQueried[tr.viewCount]) > Q_min((int)ceil((r_chcMaxVisibleFrames->value * 0.5f) + (r_chcMaxVisibleFrames->value * 0.5f) * random()), r_chcMaxVisibleFrames->integer));
+	if ((tr.frameCount - node->lastQueried[tr.viewCount]) > Q_min((int)ceil((r_chcMaxVisibleFrames->value * 0.5f) + (r_chcMaxVisibleFrames->value * 0.5f) * random()), r_chcMaxVisibleFrames->integer))
+	{
+		return qtrue;
+	}
+	return qfalse;
 }
 
 static void R_CoherentHierachicalCulling()
@@ -1954,6 +2024,10 @@ static void R_CoherentHierachicalCulling()
 
 	//ri.Cvar_Set("r_logFile", "1");
 
+#if defined(USE_D3D10)
+	// TODO
+#else
+
 	GLimp_LogComment("--- R_CoherentHierachicalCulling ---\n");
 
 	if (r_logFile->integer)
@@ -1963,7 +2037,7 @@ static void R_CoherentHierachicalCulling()
 
 	if (r_speeds->integer)
 	{
-		qglFinish();
+		glFinish();
 		startTime = ri.Milliseconds();
 	}
 
@@ -2014,7 +2088,7 @@ static void R_CoherentHierachicalCulling()
 
 #if 0
 	GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	qglClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 
@@ -2025,7 +2099,7 @@ static void R_CoherentHierachicalCulling()
 
 #if 0
 	GL_ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	qglClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	GL_State(GLS_COLORMASK_BITS | GLS_DEPTHMASK_TRUE);
 
@@ -2035,15 +2109,23 @@ static void R_CoherentHierachicalCulling()
 
 	if (r_logFile->integer)
 	{
+#if defined(USE_D3D10)
+		// TODO
+#else
 		GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		qglClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
+#endif
 	}
 	else
 	{
 		// use the depth buffer of the previous frame for occlusion culling
+#if defined(USE_D3D10)
+		//TODO
+#else
 		GL_State(GLS_COLORMASK_BITS);
+#endif
 	}
 
 	ClearLink(&tr.traversalStack);
@@ -2094,7 +2176,7 @@ static void R_CoherentHierachicalCulling()
 					{
 						if (r_logFile->integer)
 						{
-							GLimp_LogComment(va("MULTI query node %i visible\n", node - tr.world->nodes));
+							GLimp_LogComment(va("MULTI query node %li visible\n", (long)(node - tr.world->nodes)));
 						}
 
 						multiQueryNode = node;
@@ -2117,7 +2199,7 @@ static void R_CoherentHierachicalCulling()
 					{
 						if (r_logFile->integer)
 						{
-							GLimp_LogComment(va("single query node %i visible\n", node - tr.world->nodes));
+							GLimp_LogComment(va("single query node %li visible\n", (long)(node - tr.world->nodes)));
 						}
 
 						if (r_dynamicBspOcclusionCulling->integer == 1)
@@ -2183,7 +2265,7 @@ static void R_CoherentHierachicalCulling()
 
 			if (r_logFile->integer)
 			{
-				GLimp_LogComment(va("distance-queue --> node %i\n", node - tr.world->nodes));
+				GLimp_LogComment(va("distance-queue --> node %li\n", (long)(node - tr.world->nodes)));
 			}
 
 			if (node->visCounts[tr.visIndex] == tr.visCounts[tr.visIndex] && // node was marked as potentially visible
@@ -2192,12 +2274,20 @@ static void R_CoherentHierachicalCulling()
 			    )
 			{
 				// identify previously visible nodes
-				bool wasVisible = WasVisible(node);
+				qboolean wasVisible = WasVisible(node);
 
 				if (r_dynamicBspOcclusionCulling->integer > 1)
 				{
 					// reset node's visibility classification
-					node->visible[tr.viewCount] = (qboolean) !QueryReasonable(node);
+					//node->visible[tr.viewCount] = !QueryReasonable(node);
+					if (QueryReasonable(node))
+					{
+						node->visible[tr.viewCount] = qfalse;
+					}
+					else
+					{
+						node->visible[tr.viewCount] = qtrue;
+					}
 				}
 
 				// identify nodes that we cannot skip queries for
@@ -2269,7 +2359,7 @@ static void R_CoherentHierachicalCulling()
 					{
 						if (r_logFile->integer)
 						{
-							GLimp_LogComment(va("i-queue <-- node %i\n", node - tr.world->nodes));
+							GLimp_LogComment(va("i-queue <-- node %li\n", (long)(node - tr.world->nodes)));
 						}
 
 						EnQueue(&invisibleQueue, node);
@@ -2286,7 +2376,7 @@ static void R_CoherentHierachicalCulling()
 						{
 							if (r_logFile->integer)
 							{
-								GLimp_LogComment(va("v-queue <-- node %i\n", node - tr.world->nodes));
+								GLimp_LogComment(va("v-queue <-- node %li\n", (long)(node - tr.world->nodes)));
 							}
 
 							EnQueue(&visibleQueue, node);
@@ -2367,6 +2457,7 @@ static void R_CoherentHierachicalCulling()
 		endTime         = ri.Milliseconds();
 		tr.pc.c_CHCTime = endTime - startTime;
 	}
+#endif
 }
 
 

@@ -1,6 +1,6 @@
 /*
 ===========================================================================
-Copyright (C) 2009 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 2006 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
@@ -20,30 +20,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-/* depthToColor_vp.glsl */
+/* reflection_C_fp.glsl */
 
-attribute vec4		attr_Position;
-attribute vec3      attr_Normal;
+uniform samplerCube	u_ColorMap;
+uniform vec3		u_ViewOrigin;
 
-uniform mat4		u_ModelViewProjectionMatrix;
+varying vec3		var_Position;
+varying vec3		var_Normal;
 
 void	main()
 {
-#if defined(USE_VERTEX_SKINNING)
-	{
-		vec4 vertex = vec4(0.0);
-		vec4 position;
-		vec3 normal;
-		
-		VertexSkinning_P_N(	attr_Position, attr_Normal, position, normal);
+	// compute incident ray
+	vec3 I = normalize(var_Position - u_ViewOrigin);
+	
+	// compute normal
+	vec3 N = normalize(var_Normal);
+	
+	// compute reflection ray
+	vec3 R = reflect(I, N);
+	
+	// compute reflection color
+	vec4 reflectColor = textureCube(u_ColorMap, R).rgba;
 
-		// transform vertex position into homogenous clip-space
-		gl_Position = u_ModelViewProjectionMatrix * vertex;
-	}
-#else
-	{
-		// transform vertex position into homogenous clip-space
-		gl_Position = u_ModelViewProjectionMatrix * attr_Position;
-	}
-#endif	
+	// compute final color
+	vec4 color = reflectColor;
+	
+	gl_FragColor = color;
 }

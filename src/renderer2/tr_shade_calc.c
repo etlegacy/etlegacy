@@ -214,7 +214,7 @@ static float GetOpValue(const expOperation_t *op)
 		break;
 
 	case OP_DISTANCE:
-		value = 0.0;        // FIXME ?
+		value = 0.0;    // FIXME ?
 		break;
 
 	default:
@@ -1041,11 +1041,15 @@ void Tess_DeformGeometry(void)
 	int           i;
 	deformStage_t *ds;
 
+#if defined(USE_D3D10)
+	// TODO
+#else
 	if (glState.currentVBO != tess.vbo || glState.currentIBO != tess.ibo)
 	{
 		// static VBOs are incompatible with deformVertexes
 		return;
 	}
+#endif
 
 	if (!ShaderRequiresCPUDeforms(tess.surfaceShader))
 	{
@@ -1110,7 +1114,10 @@ void Tess_DeformGeometry(void)
 			break;
 		}
 	}
+
+#if !defined(USE_D3D10)
 	GL_CheckErrors();
+#endif
 }
 
 /*
@@ -1139,7 +1146,7 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, matrix_t matrix)
 		switch (bundle->texMods[j].type)
 		{
 		case TMOD_NONE:
-			j = TR_MAX_TEXMODS;     // break out of for loop
+			j = TR_MAX_TEXMODS; // break out of for loop
 			break;
 
 		case TMOD_TURBULENT:

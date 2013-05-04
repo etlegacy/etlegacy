@@ -119,7 +119,7 @@ void R_AddBrushModelInteractions(trRefEntity_t *ent, trRefLight_t *light)
 				continue;
 			}
 
-			R_AddLightInteraction(light, (void *)vboSurface, shader, cubeSideBits, iaType);
+			R_AddLightInteraction(light, (surfaceType_t *)vboSurface, shader, cubeSideBits, iaType);
 			tr.pc.c_dlightSurfaces++;
 		}
 	}
@@ -815,8 +815,8 @@ void R_SetupLightFrustum(trRefLight_t *light)
 
 			Tess_AddCube(vec3_origin, worldBounds[0], worldBounds[1], colorWhite);
 
-			verts     = ri.Hunk_AllocateTempMemory(tess.numVertexes * sizeof(srfVert_t));
-			triangles = ri.Hunk_AllocateTempMemory((tess.numIndexes / 3) * sizeof(srfTriangle_t));
+			verts     = (srfVert_t *)ri.Hunk_AllocateTempMemory(tess.numVertexes * sizeof(srfVert_t));
+			triangles = (srfTriangle_t *)ri.Hunk_AllocateTempMemory((tess.numIndexes / 3) * sizeof(srfTriangle_t));
 
 			for (i = 0; i < tess.numVertexes; i++)
 			{
@@ -925,8 +925,8 @@ void R_SetupLightFrustum(trRefLight_t *light)
 				Tess_AddQuadStamp2(quadVerts, colorRed);
 			}
 
-			verts     = ri.Hunk_AllocateTempMemory(tess.numVertexes * sizeof(srfVert_t));
-			triangles = ri.Hunk_AllocateTempMemory((tess.numIndexes / 3) * sizeof(srfTriangle_t));
+			verts     = (srfVert_t *)ri.Hunk_AllocateTempMemory(tess.numVertexes * sizeof(srfVert_t));
+			triangles = (srfTriangle_t *)ri.Hunk_AllocateTempMemory((tess.numIndexes / 3) * sizeof(srfTriangle_t));
 
 			for (i = 0; i < tess.numVertexes; i++)
 			{
@@ -1158,7 +1158,7 @@ qboolean R_AddLightInteraction(trRefLight_t *light, surfaceType_t *surface, shad
 	ia      = &tr.refdef.interactions[iaIndex];
 	tr.refdef.numInteractions++;
 
-	light->noSort = iaIndex == 0;
+	light->noSort = iaIndex = 0;
 
 	// connect to interaction grid
 	if (!light->firstInteraction)

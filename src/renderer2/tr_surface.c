@@ -66,6 +66,9 @@ Tess_CheckOverflow
 */
 void Tess_CheckOverflow(int verts, int indexes)
 {
+#if defined(USE_D3D10)
+	// TODO
+#else
 	if ((glState.currentVBO != NULL && glState.currentVBO != tess.vbo) ||
 	    (glState.currentIBO != NULL && glState.currentIBO != tess.ibo))
 	{
@@ -74,7 +77,7 @@ void Tess_CheckOverflow(int verts, int indexes)
 		R_BindVBO(tess.vbo);
 		R_BindIBO(tess.ibo);
 	}
-
+#endif
 	if (tess.numVertexes + verts < SHADER_MAX_VERTEXES && tess.numIndexes + indexes < SHADER_MAX_INDEXES)
 	{
 		return;
@@ -115,10 +118,8 @@ void Tess_AddQuadStampExt(vec3_t origin, vec3_t left, vec3_t up, const vec4_t co
 	int    i;
 	vec3_t normal;
 	int    ndx;
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_AddQuadStampExt ---\n");
-	}
+
+	GLimp_LogComment("--- Tess_AddQuadStampExt ---\n");
 
 	Tess_CheckOverflow(4, 6);
 
@@ -215,10 +216,7 @@ void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, fl
 	vec4_t plane;
 	int    ndx;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_AddQuadStampExt2 ---\n");
-	}
+	GLimp_LogComment("--- Tess_AddQuadStampExt2 ---\n");
 
 	Tess_CheckOverflow(4, 6);
 
@@ -241,7 +239,7 @@ void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, fl
 	// constant normal all the way around
 	if (calcNormals)
 	{
-		PlaneFromPoints(plane, quadVerts[0], quadVerts[1], quadVerts[2]);
+		PlaneFromPoints(plane, quadVerts[0], quadVerts[1], quadVerts[2], qtrue);
 	}
 	else
 	{
@@ -438,19 +436,30 @@ Tr3B: update the default VBO to replace the client side vertex arrays
 */
 void Tess_UpdateVBOs(uint32_t attribBits)
 {
+#if defined(USE_D3D10)
+	// TODO
+#else
 	if (r_logFile->integer)
 	{
 		GLimp_LogComment(va("--- Tess_UpdateVBOs( attribBits = %i ) ---\n", attribBits));
 	}
 
+#if defined(USE_D3D10)
+	// TODO
+#else
 	GL_CheckErrors();
+#endif
 
 	// update the default VBO
 	if (tess.numVertexes > 0 && tess.numVertexes <= SHADER_MAX_VERTEXES)
 	{
 		R_BindVBO(tess.vbo);
 
+#if defined(USE_D3D10)
+		// TODO
+#else
 		GL_CheckErrors();
+#endif
 
 		if (!(attribBits & ATTR_BITS))
 		{
@@ -466,7 +475,9 @@ void Tess_UpdateVBOs(uint32_t attribBits)
 				}
 			}
 
-			if (backEnd.currentEntity == &tr.worldEntity)
+			if (backEnd.currentEntity == &tr.worldEntity ||
+			    (backEnd.currentEntity->e.reType == RT_MODEL &&
+			     tr.models[backEnd.currentEntity->e.hModel]->type == MOD_BSP))
 			{
 #if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 				attribBits |= ATTR_LIGHTCOORD;
@@ -482,63 +493,63 @@ void Tess_UpdateVBOs(uint32_t attribBits)
 		{
 			if (r_logFile->integer)
 			{
-				GLimp_LogComment(va("glBufferSubDataARB( ATTR_POSITION, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
+				GLimp_LogComment(va("glBufferSubData( ATTR_POSITION, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
 			}
-			qglBufferSubDataARB(GL_ARRAY_BUFFER_ARB, tess.vbo->ofsXYZ, tess.numVertexes * sizeof(vec4_t), tess.xyz);
+			glBufferSubData(GL_ARRAY_BUFFER, tess.vbo->ofsXYZ, tess.numVertexes * sizeof(vec4_t), tess.xyz);
 		}
 
 		if (attribBits & ATTR_TEXCOORD)
 		{
 			if (r_logFile->integer)
 			{
-				GLimp_LogComment(va("glBufferSubDataARB( ATTR_TEXCOORD, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
+				GLimp_LogComment(va("glBufferSubData( ATTR_TEXCOORD, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
 			}
-			qglBufferSubDataARB(GL_ARRAY_BUFFER_ARB, tess.vbo->ofsTexCoords, tess.numVertexes * sizeof(vec4_t), tess.texCoords);
+			glBufferSubData(GL_ARRAY_BUFFER, tess.vbo->ofsTexCoords, tess.numVertexes * sizeof(vec4_t), tess.texCoords);
 		}
 
 		if (attribBits & ATTR_LIGHTCOORD)
 		{
 			if (r_logFile->integer)
 			{
-				GLimp_LogComment(va("glBufferSubDataARB( ATTR_LIGHTCOORD, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
+				GLimp_LogComment(va("glBufferSubData( ATTR_LIGHTCOORD, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
 			}
-			qglBufferSubDataARB(GL_ARRAY_BUFFER_ARB, tess.vbo->ofsLightCoords, tess.numVertexes * sizeof(vec4_t), tess.lightCoords);
+			glBufferSubData(GL_ARRAY_BUFFER, tess.vbo->ofsLightCoords, tess.numVertexes * sizeof(vec4_t), tess.lightCoords);
 		}
 
 		if (attribBits & ATTR_TANGENT)
 		{
 			if (r_logFile->integer)
 			{
-				GLimp_LogComment(va("glBufferSubDataARB( ATTR_TANGENT, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
+				GLimp_LogComment(va("glBufferSubData( ATTR_TANGENT, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
 			}
-			qglBufferSubDataARB(GL_ARRAY_BUFFER_ARB, tess.vbo->ofsTangents, tess.numVertexes * sizeof(vec4_t), tess.tangents);
+			glBufferSubData(GL_ARRAY_BUFFER, tess.vbo->ofsTangents, tess.numVertexes * sizeof(vec4_t), tess.tangents);
 		}
 
 		if (attribBits & ATTR_BINORMAL)
 		{
 			if (r_logFile->integer)
 			{
-				GLimp_LogComment(va("glBufferSubDataARB( ATTR_BINORMAL, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
+				GLimp_LogComment(va("glBufferSubData( ATTR_BINORMAL, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
 			}
-			qglBufferSubDataARB(GL_ARRAY_BUFFER_ARB, tess.vbo->ofsBinormals, tess.numVertexes * sizeof(vec4_t), tess.binormals);
+			glBufferSubData(GL_ARRAY_BUFFER, tess.vbo->ofsBinormals, tess.numVertexes * sizeof(vec4_t), tess.binormals);
 		}
 
 		if (attribBits & ATTR_NORMAL)
 		{
 			if (r_logFile->integer)
 			{
-				GLimp_LogComment(va("glBufferSubDataARB( ATTR_NORMAL, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
+				GLimp_LogComment(va("glBufferSubData( ATTR_NORMAL, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
 			}
-			qglBufferSubDataARB(GL_ARRAY_BUFFER_ARB, tess.vbo->ofsNormals, tess.numVertexes * sizeof(vec4_t), tess.normals);
+			glBufferSubData(GL_ARRAY_BUFFER, tess.vbo->ofsNormals, tess.numVertexes * sizeof(vec4_t), tess.normals);
 		}
 
 		if (attribBits & ATTR_COLOR)
 		{
 			if (r_logFile->integer)
 			{
-				GLimp_LogComment(va("glBufferSubDataARB( ATTR_COLOR, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
+				GLimp_LogComment(va("glBufferSubData( ATTR_COLOR, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
 			}
-			qglBufferSubDataARB(GL_ARRAY_BUFFER_ARB, tess.vbo->ofsColors, tess.numVertexes * sizeof(vec4_t), tess.colors);
+			glBufferSubData(GL_ARRAY_BUFFER, tess.vbo->ofsColors, tess.numVertexes * sizeof(vec4_t), tess.colors);
 		}
 
 #if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
@@ -546,33 +557,43 @@ void Tess_UpdateVBOs(uint32_t attribBits)
 		{
 			if (r_logFile->integer)
 			{
-				GLimp_LogComment(va("glBufferSubDataARB( ATTR_PAINTCOLOR, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
+				GLimp_LogComment(va("glBufferSubData( ATTR_PAINTCOLOR, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
 			}
-			qglBufferSubDataARB(GL_ARRAY_BUFFER_ARB, tess.vbo->ofsPaintColors, tess.numVertexes * sizeof(vec4_t), tess.paintColors);
+			glBufferSubData(GL_ARRAY_BUFFER, tess.vbo->ofsPaintColors, tess.numVertexes * sizeof(vec4_t), tess.paintColors);
 		}
 
 		if (attribBits & ATTR_LIGHTDIRECTION)
 		{
 			if (r_logFile->integer)
 			{
-				GLimp_LogComment(va("glBufferSubDataARB( ATTR_LIGHTDIRECTION, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
+				GLimp_LogComment(va("glBufferSubData( ATTR_LIGHTDIRECTION, vbo = '%s', numVertexes = %i )\n", tess.vbo->name, tess.numVertexes));
 			}
-			qglBufferSubDataARB(GL_ARRAY_BUFFER_ARB, tess.vbo->ofsLightDirections, tess.numVertexes * sizeof(vec4_t), tess.lightDirections);
+			glBufferSubData(GL_ARRAY_BUFFER, tess.vbo->ofsLightDirections, tess.numVertexes * sizeof(vec4_t), tess.lightDirections);
 		}
 #endif
 	}
 
+#if defined(USE_D3D10)
+	// TODO
+#else
 	GL_CheckErrors();
+#endif
 
 	// update the default IBO
 	if (tess.numIndexes > 0 && tess.numIndexes <= SHADER_MAX_INDEXES)
 	{
 		R_BindIBO(tess.ibo);
 
-		qglBufferSubDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0, tess.numIndexes * sizeof(glIndex_t), tess.indexes);
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, tess.numIndexes * sizeof(glIndex_t), tess.indexes);
 	}
 
+#if defined(USE_D3D10)
+	// TODO
+#else
 	GL_CheckErrors();
+#endif
+
+#endif // USE_D3D10
 }
 
 
@@ -648,7 +669,11 @@ void Tess_InstantQuad(vec4_t quadVerts[4])
 	tess.numVertexes         = 0;
 	tess.numIndexes          = 0;
 
+#if defined(USE_D3D10)
+	// TODO
+#else
 	GL_CheckErrors();
+#endif
 }
 
 /*
@@ -799,14 +824,11 @@ Tess_SurfacePolychain
 */
 static void Tess_SurfacePolychain(srfPoly_t *p)
 {
-	int i;
+	int i, j;
 	int numVertexes;
 	int numIndexes;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfacePolychain ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfacePolychain ---\n");
 
 	Tess_CheckOverflow(p->numVerts, 3 * (p->numVerts - 2));
 
@@ -840,7 +862,7 @@ static void Tess_SurfacePolychain(srfPoly_t *p)
 		numIndexes                               += 3;
 	}
 
-#if 0
+#if 1
 	// calc tangent spaces
 	if (tess.surfaceShader->interactLight && !tess.skipTangentSpaces)
 	{
@@ -851,7 +873,7 @@ static void Tess_SurfacePolychain(srfPoly_t *p)
 		vec3_t      tangent;
 		vec3_t      binormal;
 		vec3_t      normal;
-		int         *indices;
+		glIndex_t   *indices;
 
 		for (i = 0; i < numVertexes; i++)
 		{
@@ -896,18 +918,15 @@ static void Tess_SurfacePolychain(srfPoly_t *p)
 
 void Tess_SurfacePolybuffer(srfPolyBuffer_t *surf)
 {
-	int   i;
-	int   numIndexes;
-	int   numVertexes;
-	int   *indices;
-	float *xyzw;
-	float *st;
-	byte  *color;
+	int       i;
+	int       numIndexes;
+	int       numVertexes;
+	glIndex_t *indices;
+	float     *xyzw;
+	float     *st;
+	byte      *color;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfacePolybuffer ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfacePolybuffer ---\n");
 
 	Tess_CheckOverflow(surf->pPolyBuffer->numVerts, surf->pPolyBuffer->numIndicies);
 
@@ -948,10 +967,7 @@ void Tess_SurfaceDecal(srfDecal_t *srf)
 {
 	int i;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfaceDecal ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfaceDecal ---\n");
 
 	Tess_CheckOverflow(srf->numVerts, 3 * (srf->numVerts - 2));
 
@@ -996,10 +1012,7 @@ static void Tess_SurfaceFace(srfSurfaceFace_t *srf)
 	srfVert_t     *dv;
 	float         *xyz, *tangent, *binormal, *normal, *texCoords, *lightCoords, *color, *paintColor, *lightDirection;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfaceFace ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfaceFace ---\n");
 
 	if (r_vboFaces->integer && srf->vbo && srf->ibo &&
 	    !tess.skipVBO &&
@@ -1151,10 +1164,7 @@ static void Tess_SurfaceGrid(srfGridMesh_t *srf)
 	srfVert_t     *dv;
 	float         *xyz, *tangent, *binormal, *normal, *texCoords, *lightCoords, *color, *paintColor, *lightDirection;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfaceGrid ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfaceGrid ---\n");
 
 	if (r_vboCurves->integer && srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader))
 	{
@@ -1304,10 +1314,7 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
 	srfVert_t     *dv;
 	float         *xyz, *tangent, *binormal, *normal, *texCoords, *lightCoords, *color, *paintColor, *lightDirection;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfaceTriangles ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfaceTriangles ---\n");
 
 	if (r_vboTriangles->integer && srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader))
 	{
@@ -1468,10 +1475,7 @@ static void Tess_SurfaceBeam(void)
 	vec3_t      start_points[NUM_BEAM_SEGS], end_points[NUM_BEAM_SEGS];
 	vec3_t      oldorigin, origin;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfaceBeam ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfaceBeam ---\n");
 
 	if (glState.currentVBO != tess.vbo || glState.currentIBO != tess.ibo)
 	{
@@ -1676,10 +1680,7 @@ static void Tess_SurfaceRailRings(void)
 	vec3_t      right, up;
 	vec3_t      start, end;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfaceRailRings ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfaceRailRings ---\n");
 
 	e = &backEnd.currentEntity->e;
 
@@ -1715,10 +1716,7 @@ static void Tess_SurfaceRailCore(void)
 	vec3_t      start, end;
 	vec3_t      v1, v2;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfaceRailCore ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfaceRailCore ---\n");
 
 	e = &backEnd.currentEntity->e;
 
@@ -1754,10 +1752,7 @@ static void Tess_SurfaceLightningBolt(void)
 	vec3_t      v1, v2;
 	int         i;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfaceLightningBolt ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfaceLightningBolt ---\n");
 
 	e = &backEnd.currentEntity->e;
 
@@ -1801,17 +1796,14 @@ static void Tess_SurfaceMDV(mdvSurface_t *srf)
 	int           numIndexes = 0;
 	int           numVertexes;
 	mdvModel_t    *model;
-	mdvVertex_t   *oldVert, *newVert;
+	mdvXyz_t      *oldVert, *newVert;
 	mdvSt_t       *st;
 	srfTriangle_t *tri;
 	vec3_t        lightOrigin;
 	float         backlerp;
 	float         oldXyzScale, newXyzScale;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfaceMDV ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfaceMDV ---\n");
 
 	if (backEnd.currentEntity->e.oldframe == backEnd.currentEntity->e.frame)
 	{
@@ -1882,7 +1874,7 @@ static void Tess_SurfaceMDV(mdvSurface_t *srf)
 		vec3_t      tangent;
 		vec3_t      binormal;
 		vec3_t      normal;
-		int         *indices;
+		glIndex_t   *indices;
 
 		for (i = 0; i < numVertexes; i++)
 		{
@@ -1961,10 +1953,7 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 	float           *xyzw, *xyzw2;
 	static matrix_t boneMatrices[MAX_BONES];
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfaceMD5 ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfaceMD5 ---\n");
 
 	Tess_CheckOverflow(srf->numVerts, srf->numTriangles * 3);
 
@@ -2152,10 +2141,7 @@ static void Tess_SurfaceAxis(void)
 	//vec4_t          verts[3];
 	//vec3_t          forward, right, up;
 
-	if (r_logFile->integer)
-	{
-		GLimp_LogComment("--- Tess_SurfaceAxis ---\n");
-	}
+	GLimp_LogComment("--- Tess_SurfaceAxis ---\n");
 
 #if 0
 	Tess_CheckOverflow(9, 9);
@@ -2232,6 +2218,9 @@ static void Tess_SurfaceEntity(surfaceType_t *surfType)
 {
 	GLimp_LogComment("--- Tess_SurfaceEntity ---\n");
 
+#if defined(USE_D3D10)
+	// TODO
+#else
 	if (glState.currentVBO != tess.vbo || glState.currentIBO != tess.ibo)
 	{
 		Tess_EndBegin();
@@ -2239,6 +2228,7 @@ static void Tess_SurfaceEntity(surfaceType_t *surfType)
 		R_BindVBO(tess.vbo);
 		R_BindIBO(tess.ibo);
 	}
+#endif
 
 	switch (backEnd.currentEntity->e.reType)
 	{
@@ -2282,6 +2272,9 @@ static void Tess_SurfaceFlare(srfFlare_t *surf)
 
 	GLimp_LogComment("--- Tess_SurfaceFlare ---\n");
 
+#if defined(USE_D3D10)
+	// TODO
+#else
 	if (glState.currentVBO != tess.vbo || glState.currentIBO != tess.ibo)
 	{
 		Tess_EndBegin();
@@ -2289,6 +2282,7 @@ static void Tess_SurfaceFlare(srfFlare_t *surf)
 		R_BindVBO(tess.vbo);
 		R_BindIBO(tess.ibo);
 	}
+#endif
 
 	VectorMA(surf->origin, 2.0, surf->normal, origin);
 	VectorSubtract(origin, backEnd.viewParms.orientation.origin, dir);
@@ -2301,7 +2295,11 @@ static void Tess_SurfaceFlare(srfFlare_t *surf)
 		return;
 	}
 
+#if defined(USE_D3D10)
+	// TODO
+#else
 	RB_AddFlare((void *)surf, tess.fogNum, origin, surf->color, surf->normal);
+#endif
 }
 
 
@@ -2363,6 +2361,7 @@ void Tess_SurfaceVBOMDVMesh(srfVBOMDVMesh_t *surface)
 
 	refEnt = &backEnd.currentEntity->e;
 
+#if !defined(USE_D3D10)
 	if (refEnt->oldframe == refEnt->frame)
 	{
 		glState.vertexAttribsInterpolation = 0;
@@ -2374,6 +2373,7 @@ void Tess_SurfaceVBOMDVMesh(srfVBOMDVMesh_t *surface)
 
 	glState.vertexAttribsOldFrame = refEnt->oldframe;
 	glState.vertexAttribsNewFrame = refEnt->frame;
+#endif
 
 	//glState.vertexAttribPointersSet = 0;
 	//GL_VertexAttribPointers(ATTR_BITS | ATTR_POSITION2 | ATTR_TANGENT2 | ATTR_BINORMAL2 | ATTR_NORMAL2);

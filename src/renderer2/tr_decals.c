@@ -285,7 +285,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	}
 
 	/* make the front plane */
-	if (!PlaneFromPoints(temp.planes[0], dv[0].xyz, dv[1].xyz, dv[2].xyz))
+	if (!PlaneFromPoints(temp.planes[0], dv[0].xyz, dv[1].xyz, dv[2].xyz, qtrue))
 	{
 		return;
 	}
@@ -299,7 +299,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	for (i = 0; i < numPoints; i++)
 	{
 		VectorMA(dv[i].xyz, projection[3], projection, xyz);
-		if (!PlaneFromPoints(temp.planes[i + 2], dv[(i + 1) % numPoints].xyz, dv[i].xyz, xyz))
+		if (!PlaneFromPoints(temp.planes[i + 2], dv[(i + 1) % numPoints].xyz, dv[i].xyz, xyz, qtrue))
 		{
 			return;
 		}
@@ -569,7 +569,7 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 
 
 	/* make a plane from the winding */
-	if (!PlaneFromPoints(plane, points[0][0], points[0][1], points[0][2]))
+	if (!PlaneFromPoints(plane, points[0][0], points[0][1], points[0][2], qtrue))
 	{
 		return;
 	}
@@ -941,7 +941,7 @@ void R_AddDecalSurface(decal_t *decal)
 
 	/* add surface to scene */
 	//R_AddDrawSurf((void *)srf, decal->shader, decal->fogIndex, 0, dlightMap);
-	R_AddDrawSurf((void *)srf, decal->shader, -1, decal->fogIndex);
+	R_AddDrawSurf((surfaceType_t *)srf, decal->shader, -1, decal->fogIndex);
 	tr.pc.c_decalSurfaces++;
 
 	/* free temporary decal */

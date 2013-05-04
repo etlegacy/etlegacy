@@ -45,6 +45,9 @@ extern "C" {
 #define Q_clamp(a, b, c) ((b) >= (c) ? (a) = (b) : (a) < (b) ? (a) = (b) : (a) > (c) ? (a) = (c) : (a))
 #define Q_lerp(from, to, frac) (from + ((to - from) * frac))
 
+#define BSP_VERSION_Q3      46
+#define REF_HARD_LINKED 1
+
 // XreaL BEGIN
 typedef struct
 {
@@ -100,6 +103,8 @@ typedef enum
 	SHADOWING_VSM16,
 	SHADOWING_VSM32,
 	SHADOWING_EVSM32,
+	//SHADOWING_PLANAR,
+	SHADOWING_STENCIL,
 } shadowingMode_t;
 // XreaL END
 

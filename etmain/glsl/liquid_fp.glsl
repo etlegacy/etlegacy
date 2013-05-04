@@ -45,7 +45,7 @@ varying vec3		var_Normal;
 varying vec4		var_LightColor;
 varying vec3		var_LightDirection;
 
-#if defined(r_ParallaxMapping)
+#if defined(USE_PARALLAX_MAPPING)
 float RayIntersectDisplaceMap(vec2 dp, vec2 ds)
 {
 	const int linearSearchSteps = 16;
@@ -97,7 +97,7 @@ float RayIntersectDisplaceMap(vec2 dp, vec2 ds)
 
 	return bestDepth;
 }
-#endif
+#endif //USE_PARALLAX_MAPPING
 
 
 void	main()
@@ -124,7 +124,7 @@ void	main()
 	vec2 texScreen = gl_FragCoord.st * r_FBufScale * r_NPOTScale;
 	vec2 texNormal = var_TexNormal.st;
 
-#if defined(r_ParallaxMapping)
+#if defined(USE_PARALLAX_MAPPING)
 	// compute view direction in tangent space
 	vec3 V = worldToTangentMatrix * (I);
 	V = normalize(V);
@@ -142,14 +142,14 @@ void	main()
 	
 	texScreen.st += texOffset;
 	texNormal.st += texOffset;
-#endif
+#endif //USE_PARALLAX_MAPPING
 
 	// compute normals
 	
 	vec3 N = normalize(var_Normal);
 
 	vec3 N2 = 2.0 * (texture2D(u_NormalMap, texNormal).xyz - 0.5);
-	N2 = tangentToWorldMatrix * N2;
+	N2 = normalize(tangentToWorldMatrix * N2);
 			
 	// compute fresnel term
 	float fresnel = clamp(u_FresnelBias + pow(1.0 - dot(I, N), u_FresnelPower) * 

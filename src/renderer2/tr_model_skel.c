@@ -212,6 +212,7 @@ qboolean AddTriangleToVBOTriangleList(growList_t *vboTriangles, skelTriangle_t *
 
 void AddSurfaceToVBOSurfacesList(growList_t *vboSurfaces, growList_t *vboTriangles, md5Model_t *md5, md5Surface_t *surf, int skinIndex, int numBoneReferences, int boneReferences[MAX_BONES])
 {
+#if !defined(USE_D3D10)
 	int j, k;
 
 	int  vertexesNum;
@@ -246,7 +247,7 @@ void AddSurfaceToVBOSurfacesList(growList_t *vboSurfaces, growList_t *vboTriangl
 	indexesNum  = vboTriangles->currentElements * 3;
 
 	// create surface
-	vboSurf = ri.Hunk_Alloc(sizeof(*vboSurf), h_low);
+	vboSurf = (srfVBOMD5Mesh_t *)ri.Hunk_Alloc(sizeof(*vboSurf), h_low);
 	Com_AddToGrowList(vboSurfaces, vboSurf);
 
 	vboSurf->surfaceType = SF_VBO_MD5MESH;
@@ -257,11 +258,11 @@ void AddSurfaceToVBOSurfacesList(growList_t *vboSurfaces, growList_t *vboTriangl
 	vboSurf->numVerts    = vertexesNum;
 
 	dataSize = vertexesNum * (sizeof(vec4_t) * 8);
-	data     = ri.Hunk_AllocateTempMemory(dataSize);
+	data     = (byte *)ri.Hunk_AllocateTempMemory(dataSize);
 	dataOfs  = 0;
 
 	indexesSize = indexesNum * sizeof(int);
-	indexes     = ri.Hunk_AllocateTempMemory(indexesSize);
+	indexes     = (byte *)ri.Hunk_AllocateTempMemory(indexesSize);
 	indexesOfs  = 0;
 
 	//ri.Printf(PRINT_ALL, "AddSurfaceToVBOSurfacesList( %i verts, %i tris )\n", surf->numVerts, vboTriangles->currentElements);
@@ -288,7 +289,7 @@ void AddSurfaceToVBOSurfacesList(growList_t *vboSurfaces, growList_t *vboTriangl
 	//for(j = 0, tri = surf->triangles; j < surf->numTriangles; j++, tri++)
 	for (j = 0; j < vboTriangles->currentElements; j++)
 	{
-		tri = Com_GrowListElement(vboTriangles, j);
+		tri = (skelTriangle_t *)Com_GrowListElement(vboTriangles, j);
 
 		for (k = 0; k < 3; k++)
 		{
@@ -436,10 +437,12 @@ void AddSurfaceToVBOSurfacesList(growList_t *vboSurfaces, growList_t *vboTriangl
 	   ri.Printf(PRINT_ALL, "md5 mesh tris VBO size: %d.%02d MB\n", indexesSize / (1024 * 1024),
 	   (indexesSize % (1024 * 1024)) * 100 / (1024 * 1024));
 	 */
+#endif // USE_D3D10
 }
 
 void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriangles, growList_t *vboVertexes, md5Model_t *md5, int skinIndex, const char *materialName, int numBoneReferences, int boneReferences[MAX_BONES])
 {
+#if !defined(USE_D3D10)
 	int j, k;
 
 	int  vertexesNum;
@@ -477,7 +480,7 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	indexesNum  = vboTriangles->currentElements * 3;
 
 	// create surface
-	vboSurf = ri.Hunk_Alloc(sizeof(*vboSurf), h_low);
+	vboSurf = (srfVBOMD5Mesh_t *)ri.Hunk_Alloc(sizeof(*vboSurf), h_low);
 	Com_AddToGrowList(vboSurfaces, vboSurf);
 
 	vboSurf->surfaceType = SF_VBO_MD5MESH;
@@ -500,11 +503,11 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	vboSurf->numVerts   = vertexesNum;
 
 	dataSize = vertexesNum * (sizeof(vec4_t) * 8);
-	data     = ri.Hunk_AllocateTempMemory(dataSize);
+	data     = (byte *)ri.Hunk_AllocateTempMemory(dataSize);
 	dataOfs  = 0;
 
 	indexesSize = indexesNum * sizeof(int);
-	indexes     = ri.Hunk_AllocateTempMemory(indexesSize);
+	indexes     = (byte *)ri.Hunk_AllocateTempMemory(indexesSize);
 	indexesOfs  = 0;
 
 	//ri.Printf(PRINT_ALL, "AddSurfaceToVBOSurfacesList( %i verts, %i tris )\n", surf->numVerts, vboTriangles->currentElements);
@@ -531,7 +534,7 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	//for(j = 0, tri = surf->triangles; j < surf->numTriangles; j++, tri++)
 	for (j = 0; j < vboTriangles->currentElements; j++)
 	{
-		tri = Com_GrowListElement(vboTriangles, j);
+		tri = (skelTriangle_t *)Com_GrowListElement(vboTriangles, j);
 
 		for (k = 0; k < 3; k++)
 		{
@@ -545,7 +548,7 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	// feed vertex XYZ
 	for (j = 0; j < vertexesNum; j++)
 	{
-		v = Com_GrowListElement(vboVertexes, j);
+		v = (md5Vertex_t *)Com_GrowListElement(vboVertexes, j);
 
 		for (k = 0; k < 3; k++)
 		{
@@ -560,7 +563,7 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	ofsTexCoords = dataOfs;
 	for (j = 0; j < vertexesNum; j++)
 	{
-		v = Com_GrowListElement(vboVertexes, j);
+		v = (md5Vertex_t *)Com_GrowListElement(vboVertexes, j);
 
 		for (k = 0; k < 2; k++)
 		{
@@ -576,7 +579,7 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	ofsTangents = dataOfs;
 	for (j = 0; j < vertexesNum; j++)
 	{
-		v = Com_GrowListElement(vboVertexes, j);
+		v = (md5Vertex_t *)Com_GrowListElement(vboVertexes, j);
 
 		for (k = 0; k < 3; k++)
 		{
@@ -591,7 +594,7 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	ofsBinormals = dataOfs;
 	for (j = 0; j < vertexesNum; j++)
 	{
-		v = Com_GrowListElement(vboVertexes, j);
+		v = (md5Vertex_t *)Com_GrowListElement(vboVertexes, j);
 
 		for (k = 0; k < 3; k++)
 		{
@@ -606,7 +609,7 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	ofsNormals = dataOfs;
 	for (j = 0; j < vertexesNum; j++)
 	{
-		v = Com_GrowListElement(vboVertexes, j);
+		v = (md5Vertex_t *)Com_GrowListElement(vboVertexes, j);
 
 		for (k = 0; k < 3; k++)
 		{
@@ -629,7 +632,7 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	ofsBoneIndexes = dataOfs;
 	for (j = 0; j < vertexesNum; j++)
 	{
-		v = Com_GrowListElement(vboVertexes, j);
+		v = (md5Vertex_t *)Com_GrowListElement(vboVertexes, j);
 
 		for (k = 0; k < MAX_WEIGHTS; k++)
 		{
@@ -651,7 +654,7 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	ofsBoneWeights = dataOfs;
 	for (j = 0; j < vertexesNum; j++)
 	{
-		v = Com_GrowListElement(vboVertexes, j);
+		v = (md5Vertex_t *)Com_GrowListElement(vboVertexes, j);
 
 		for (k = 0; k < MAX_WEIGHTS; k++)
 		{
@@ -695,4 +698,5 @@ void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriang
 	 */
 
 	ri.Printf(PRINT_ALL, "created VBO surface %i with %i vertices and %i triangles\n", vboSurfaces->currentElements, vboSurf->numVerts, vboSurf->numIndexes / 3);
+#endif //USE_D3D10
 }

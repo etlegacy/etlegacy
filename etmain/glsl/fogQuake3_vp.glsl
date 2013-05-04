@@ -96,20 +96,20 @@ void	main()
 #if defined(EYE_OUTSIDE)
 	if(t < 1.0)
 	{
-		t = 1.0 / 32;	// point is outside, so no fogging
+		t = 1.0 / 32.0;	// point is outside, so no fogging
 	}
 	else
 	{
-		t = 1.0 / 32 + 30.0 / 32 * t / (t - u_FogEyeT);	// cut the distance at the fog plane
+		t = 1.0 / 32.0 + 30.0 / 32.0 * t / (t - u_FogEyeT);	// cut the distance at the fog plane
 	}
 #else
-	if(t < 0)
+	if(t < 0.0)
 	{
-		t = 1.0 / 32;	// point is outside, so no fogging
+		t = 1.0 / 32.0;	// point is outside, so no fogging
 	}
 	else
 	{
-		t = 31.0 / 32;
+		t = 31.0 / 32.0;
 	}
 #endif
 

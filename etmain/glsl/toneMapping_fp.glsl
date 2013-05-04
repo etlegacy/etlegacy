@@ -103,7 +103,7 @@ void	main()
 	XYZ.g = Yxy.r;
 	
 	// Z = Y * (1-x-y) / y  or  Z = (1 - x - y) * (Y / y)
-	XYZ.b = (1 - Yxy.g - Yxy.b) * (Yxy.r / Yxy.b);
+	XYZ.b = (1.0 - Yxy.g - Yxy.b) * (Yxy.r / Yxy.b);
 	
 	// XYZ -> RGB conversion
 	const mat3 XYZ2RGB  = mat3(	3.2404542, -1.5371385, -0.4985314,

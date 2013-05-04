@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 attribute vec4		attr_Position;
 attribute vec4		attr_TexCoord0;
+attribute vec4      attr_TexCoord1;
 attribute vec3		attr_Normal;
 attribute vec4		attr_Color;
 
@@ -101,6 +102,8 @@ void	main()
 		texCoord.q = 0;
 		texCoord.w = 1;
 	}
+#elif defined(USE_TCGEN_LIGHTMAP)
+	texCoord = attr_TexCoord1;
 #else
 	texCoord = attr_TexCoord0;
 #endif

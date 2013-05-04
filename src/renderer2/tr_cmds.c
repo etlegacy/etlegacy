@@ -131,10 +131,12 @@ void R_PerformanceCounters(void)
 		          backEnd.pc.c_occlusionQueriesResponseTime,
 		          backEnd.pc.c_occlusionQueriesFetchTime);
 	}
+#if 0
 	else if (r_speeds->integer == RSPEEDS_DEPTH_BOUNDS_TESTS)
 	{
 		ri.Printf(PRINT_ALL, "depth bounds tests:%i rejected:%i\n", tr.pc.c_depthBoundsTests, tr.pc.c_depthBoundsTestsRejected);
 	}
+#endif
 	else if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
 		if (DS_STANDARD_ENABLED())
@@ -171,6 +173,45 @@ void R_PerformanceCounters(void)
 	Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
 
+
+/*
+====================
+R_InitCommandBuffers
+====================
+*/
+void R_InitCommandBuffers(void)
+{
+	glConfig.smpActive = qfalse;
+	if (r_smp->integer)
+	{
+		ri.Printf(PRINT_ALL, "Trying SMP acceleration...\n");
+		if (GLimp_SpawnRenderThread(RB_RenderThread))
+		{
+			ri.Printf(PRINT_ALL, "...succeeded.\n");
+			glConfig.smpActive = qtrue;
+		}
+		else
+		{
+			ri.Printf(PRINT_ALL, "...failed.\n");
+		}
+	}
+}
+
+/*
+====================
+R_ShutdownCommandBuffers
+====================
+*/
+void R_ShutdownCommandBuffers(void)
+{
+	// kill the rendering thread
+	if (glConfig.smpActive)
+	{
+		GLimp_WakeRenderer(NULL);
+		glConfig.smpActive = qfalse;
+	}
+}
+
 /*
 ====================
 R_IssueRenderCommands
@@ -191,6 +232,30 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	// clear it out, in case this is a sync and not a buffer flip
 	cmdList->used = 0;
 
+	if (glConfig.smpActive)
+	{
+		// if the render thread is not idle, wait for it
+		if (renderThreadActive)
+		{
+			c_blockedOnRender++;
+			if (r_showSmp->integer)
+			{
+				ri.Printf(PRINT_ALL, "R");
+			}
+		}
+		else
+		{
+			c_blockedOnMain++;
+			if (r_showSmp->integer)
+			{
+				ri.Printf(PRINT_ALL, ".");
+			}
+		}
+
+		// sleep until the renderer has completed
+		GLimp_FrontEndSleep();
+	}
+
 	// at this point, the back end thread is idle, so it is ok
 	// to look at it's performance counters
 	if (runPerformanceCounters)
@@ -202,14 +267,21 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	if (!r_skipBackEnd->integer)
 	{
 		// let it start on the new batch
-		RB_ExecuteRenderCommands(cmdList->cmds);
+		if (!glConfig.smpActive)
+		{
+			RB_ExecuteRenderCommands(cmdList->cmds);
+		}
+		else
+		{
+			GLimp_WakeRenderer(cmdList);
+		}
 	}
 }
 
 
 /*
 ====================
-R_IssuePendingRenderCommands
+R_SyncRenderThread
 
 Issue any pending commands and wait for them to complete.
 After exiting, the render thread will have completed its work
@@ -217,13 +289,24 @@ and will remain idle and the main thread is free to issue
 OpenGL calls until R_IssueRenderCommands is called.
 ====================
 */
-void R_IssuePendingRenderCommands(void)
+void R_SyncRenderThread(void)
 {
 	if (!tr.registered)
 	{
 		return;
 	}
 	R_IssueRenderCommands(qfalse);
+
+	if (!glConfig.smpActive)
+	{
+		return;
+	}
+	GLimp_FrontEndSleep();
+}
+
+void R_IssuePendingRenderCommands(void)
+{
+	R_SyncRenderThread();
 }
 
 /*
@@ -267,7 +350,7 @@ void R_AddDrawViewCmd()
 {
 	drawViewCommand_t *cmd;
 
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (drawViewCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
@@ -294,7 +377,7 @@ void RE_SetColor(const float *rgba)
 	{
 		return;
 	}
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (setColorCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
@@ -313,6 +396,100 @@ void RE_SetColor(const float *rgba)
 	cmd->color[3] = rgba[3];
 }
 
+/*
+=============
+R_ClipRegion
+=============
+*/
+static qboolean R_ClipRegion(float *x, float *y, float *w, float *h, float *s1, float *t1, float *s2, float *t2)
+{
+	float left, top, right, bottom;
+	float _s1, _t1, _s2, _t2;
+	float clipLeft, clipTop, clipRight, clipBottom;
+
+	if (tr.clipRegion[2] <= tr.clipRegion[0] ||
+	    tr.clipRegion[3] <= tr.clipRegion[1])
+	{
+		return qfalse;
+	}
+
+	left   = *x;
+	top    = *y;
+	right  = *x + *w;
+	bottom = *y + *h;
+
+	_s1 = *s1;
+	_t1 = *t1;
+	_s2 = *s2;
+	_t2 = *t2;
+
+	clipLeft   = tr.clipRegion[0];
+	clipTop    = tr.clipRegion[1];
+	clipRight  = tr.clipRegion[2];
+	clipBottom = tr.clipRegion[3];
+
+	// Completely clipped away
+	if (right <= clipLeft || left >= clipRight ||
+	    bottom <= clipTop || top >= clipBottom)
+	{
+		return qtrue;
+	}
+
+	// Clip left edge
+	if (left < clipLeft)
+	{
+		float f = (clipLeft - left) / (right - left);
+		*s1 = (f * (_s2 - _s1)) + _s1;
+		*x  = clipLeft;
+		*w -= (clipLeft - left);
+	}
+
+	// Clip right edge
+	if (right > clipRight)
+	{
+		float f = (clipRight - right) / (left - right);
+		*s2 = (f * (_s1 - _s2)) + _s2;
+		*w  = clipRight - *x;
+	}
+
+	// Clip top edge
+	if (top < clipTop)
+	{
+		float f = (clipTop - top) / (bottom - top);
+		*t1 = (f * (_t2 - _t1)) + _t1;
+		*y  = clipTop;
+		*h -= (clipTop - top);
+	}
+
+	// Clip bottom edge
+	if (bottom > clipBottom)
+	{
+		float f = (clipBottom - bottom) / (top - bottom);
+		*t2 = (f * (_t1 - _t2)) + _t2;
+		*h  = clipBottom - *y;
+	}
+
+	return qfalse;
+}
+
+
+/*
+=============
+RE_SetClipRegion
+=============
+*/
+void RE_SetClipRegion(const float *region)
+{
+	if (region == NULL)
+	{
+		Com_Memset(tr.clipRegion, 0, sizeof(vec4_t));
+	}
+	else
+	{
+		Vector4Copy(region, tr.clipRegion);
+	}
+}
+
 
 /*
 =============
@@ -327,7 +504,12 @@ void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float
 	{
 		return;
 	}
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	if (R_ClipRegion(&x, &y, &w, &h, &s1, &t1, &s2, &t2))
+	{
+		return;
+	}
+
+	cmd = (stretchPicCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
@@ -360,7 +542,7 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 		return;
 	}
 
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (poly2dCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
@@ -385,7 +567,7 @@ void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float
 {
 	stretchPicCommand_t *cmd;
 
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (stretchPicCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
@@ -424,7 +606,7 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
 {
 	stretchPicCommand_t *cmd;
 
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (stretchPicCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
@@ -474,13 +656,29 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	{
 		return;
 	}
+
 	GLimp_LogComment("--- RE_BeginFrame ---\n");
+
+#if defined(USE_D3D10)
+	// TODO
+#else
 	glState.finishCalled = qfalse;
+#endif
 
 	tr.frameCount++;
 	tr.frameSceneNum = 0;
 	tr.viewCount     = 0;
 
+#if defined(USE_D3D10)
+	// draw buffer stuff
+	cmd = (drawBufferCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
+	if (!cmd)
+	{
+		return;
+	}
+	cmd->commandId = RC_DRAW_BUFFER;
+	cmd->buffer    = 0;
+#else
 	// do overdraw measurement
 	if (r_measureOverdraw->integer)
 	{
@@ -492,7 +690,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		}
 		else
 		{
-			R_IssuePendingRenderCommands();
+			R_SyncRenderThread();
 			glEnable(GL_STENCIL_TEST);
 			glStencilMask(~0U);
 			GL_ClearStencil(0U);
@@ -506,7 +704,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		// this is only reached if it was on and is now off
 		if (r_measureOverdraw->modified)
 		{
-			R_IssuePendingRenderCommands();
+			R_SyncRenderThread();
 			glDisable(GL_STENCIL_TEST);
 		}
 		r_measureOverdraw->modified = qfalse;
@@ -515,7 +713,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	// texturemode stuff
 	if (r_textureMode->modified)
 	{
-		R_IssuePendingRenderCommands();
+		R_SyncRenderThread();
 		GL_TextureMode(r_textureMode->string);
 		r_textureMode->modified = qfalse;
 	}
@@ -525,8 +723,15 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	{
 		r_gamma->modified = qfalse;
 
-		R_IssuePendingRenderCommands();
-		R_SetColorMappings();
+		if (!glConfig.deviceSupportsGamma)
+		{
+			Com_Printf("r_gamma will be changed upon restarting.\n");
+		}
+		else
+		{
+			R_SyncRenderThread();
+			R_SetColorMappings();
+		}
 	}
 
 	// check for errors
@@ -535,7 +740,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		int  err;
 		char s[128];
 
-		R_IssuePendingRenderCommands();
+		R_SyncRenderThread();
 
 		if ((err = glGetError()) != GL_NO_ERROR)
 		{
@@ -576,7 +781,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	}
 
 	// draw buffer stuff
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (drawBufferCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
@@ -613,6 +818,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 			cmd->buffer = (int)GL_BACK;
 		}
 	}
+#endif
 }
 
 
@@ -631,7 +837,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	{
 		return;
 	}
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (swapBuffersCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
@@ -670,7 +876,7 @@ void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeB
 		return;
 	}
 
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (videoFrameCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
@@ -693,29 +899,25 @@ RE_RenderToTexture
 */
 void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 {
-
-	ri.Printf(PRINT_ALL, S_COLOR_RED "TODO RE_RenderToTexture\n");
-
-#if 0
 	renderToTextureCommand_t *cmd;
+
 	if (textureid > tr.numImages || textureid < 0)
 	{
 		ri.Printf(PRINT_ALL, "Warning: trap_R_RenderToTexture textureid %d out of range.\n", textureid);
 		return;
 	}
 
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (renderToTextureCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;
 	}
 	cmd->commandId = RC_RENDERTOTEXTURE;
-	cmd->image     = tr.images[textureid];
+	cmd->image     = (image_t *)tr.images.currentElements;
 	cmd->x         = x;
 	cmd->y         = y;
 	cmd->w         = w;
 	cmd->h         = h;
-#endif
 }
 
 /*
@@ -729,7 +931,7 @@ void RE_Finish(void)
 
 	ri.Printf(PRINT_ALL, "RE_Finish\n");
 
-	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (renderFinishCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
 		return;

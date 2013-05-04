@@ -479,7 +479,7 @@ static void R_UploadCompressedImage2D(image_t *img, GLenum target, int level, GL
 
 	if (glConfig2.ARBTextureCompressionAvailable && glConfig.textureCompression == TC_S3TC)
 	{
-		qglCompressedTexImage2DARB(target, level, format, width, height, 0, size, data);
+		glCompressedTexImage2DARB(target, level, format, width, height, 0, size, data);
 		return;
 	}
 
@@ -736,8 +736,8 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 			break;
 
 		default:
-			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported FOURCC \"%s\", \"%s\"\n",
-			          &ddsd->u4.ddpfPixelFormat.dwFourCC, name);
+			ri.Printf(PRINT_WARNING, "R_LoadDDSImage: unsupported FOURCC 0x%16x, \"%s\"\n",
+			          ddsd->u4.ddpfPixelFormat.dwFourCC, name);
 			goto ret_error;
 		}
 
@@ -970,7 +970,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 		for (i = 0; i < mipLevels; i++)
 		{
-			qglTexImage3D(GL_TEXTURE_3D_EXT, i, internal_format, w, h, d, 0, format, type, mipOffsets[i]);
+			glTexImage3DEXT(GL_TEXTURE_3D_EXT, i, internal_format, w, h, d, 0, format, type, mipOffsets[i]);
 
 			w >>= 1;
 			if (w == 0)

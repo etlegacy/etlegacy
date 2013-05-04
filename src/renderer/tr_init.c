@@ -170,9 +170,9 @@ cvar_t *r_debugSort;
 cvar_t *r_printShaders;
 cvar_t *r_saveFontData;
 
-cvar_t *r_cache;
-cvar_t *r_cacheShaders;
-cvar_t *r_cacheModels;
+cvar_t   *r_cache;
+cvar_t   *r_cacheShaders
+; cvar_t *r_cacheModels;
 
 cvar_t *r_cacheGathering;
 
@@ -196,13 +196,6 @@ vec2hack_t     tess_texCoords0[SHADER_MAX_VERTEXES];
 vec2hack_t     tess_texCoords1[SHADER_MAX_VERTEXES];
 glIndex_t      tess_indexes[SHADER_MAX_INDEXES];
 color4ubhack_t tess_vertexColors[SHADER_MAX_VERTEXES];
-
-void (APIENTRY *qglMultiTexCoord2fARB)(GLenum texture, GLfloat s, GLfloat t);
-void (APIENTRY *qglActiveTextureARB)(GLenum texture);
-void (APIENTRY *qglClientActiveTextureARB)(GLenum texture);
-
-void (APIENTRY *qglLockArraysEXT)(GLint, GLint);
-void (APIENTRY *qglUnlockArraysEXT)(void);
 
 static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
 {

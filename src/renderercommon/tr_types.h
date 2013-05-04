@@ -34,6 +34,9 @@
 #ifndef __TR_TYPES_H
 #define __TR_TYPES_H
 
+//#define USE_REFENTITY_ANIMATIONSYSTEM 1
+#define COMPAT_ET 1
+
 // XreaL BEGIN
 #define MAX_REF_LIGHTS      1024
 #define MAX_REF_ENTITIES    1023        // can't be increased without changing drawsurf bit packing
@@ -138,14 +141,14 @@ typedef struct
 	vec3_t axis[3];                 // rotation vectors
 	vec3_t torsoAxis[3];            // rotation vectors for torso section of skeletal animation
 	qboolean nonNormalizedAxes;     // axis are not normalized, i.e. they have scale
-	float origin[3];                // also used as MODEL_BEAM's "from"
+	vec3_t origin;                  // also used as MODEL_BEAM's "from"
 	int frame;                      // also used as MODEL_BEAM's diameter
 	qhandle_t frameModel;
 	int torsoFrame;                 // skeletal torso can have frame independant of legs frame
 	qhandle_t torsoFrameModel;
 
 	// previous data for frame interpolation
-	float oldorigin[3];             // also used as MODEL_BEAM's "to"
+	vec3_t oldorigin;             // also used as MODEL_BEAM's "to"
 	int oldframe;
 	qhandle_t oldframeModel;
 	int oldTorsoFrame;

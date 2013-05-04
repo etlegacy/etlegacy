@@ -96,7 +96,7 @@ void	main()
 		
 		float shadow = 1.0;
 
-		#if defined(VSM)
+#if defined(VSM)
 		if(bool(u_ShadowCompare))
 		{
 			// compute incident ray
@@ -137,7 +137,7 @@ void	main()
 			continue;
 		}
 		else
-		#endif
+#endif
 		{
 			color.rgb += attenuationXY * attenuationZ;
 		}

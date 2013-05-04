@@ -31,7 +31,9 @@
  */
 // tr_sky.c
 #include "tr_local.h"
+#if !defined(USE_D3D10)
 #include "gl_shader.h"
+#endif
 
 #define SKY_SUBDIVISIONS        8
 #define HALF_SKY_SUBDIVISIONS   (SKY_SUBDIVISIONS / 2)
@@ -431,11 +433,11 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
 
         for(s = mins[0] + HALF_SKY_SUBDIVISIONS; s <= maxs[0] + HALF_SKY_SUBDIVISIONS; s++)
         {
-            glVertexAttrib4fvARB(ATTR_INDEX_TEXCOORD0, s_skyTexCoords[t][s]);
-            glVertexAttrib4fvARB(ATTR_INDEX_POSITION, s_skyPoints[t][s]);
+            glVertexAttrib4fv(ATTR_INDEX_TEXCOORD0, s_skyTexCoords[t][s]);
+            glVertexAttrib4fv(ATTR_INDEX_POSITION, s_skyPoints[t][s]);
 
-            glVertexAttrib4fvARB(ATTR_INDEX_TEXCOORD0, s_skyTexCoords[t + 1][s]);
-            glVertexAttrib4fvARB(ATTR_INDEX_POSITION, s_skyPoints[t + 1][s]);
+            glVertexAttrib4fv(ATTR_INDEX_TEXCOORD0, s_skyTexCoords[t + 1][s]);
+            glVertexAttrib4fv(ATTR_INDEX_POSITION, s_skyPoints[t + 1][s]);
         }
 
         glEnd();
@@ -512,6 +514,12 @@ static void DrawSkyBox(shader_t *shader)
 	tess.numIndexes          = 0;
 	tess.numVertexes         = 0;
 
+#if defined(USE_D3D10)
+	// TODO
+#else
+	GL_State(GLS_DEFAULT);
+#endif
+
 	for (i = 0; i < 6; i++)
 	{
 		int sky_mins_subd[2], sky_maxs_subd[2];
@@ -582,9 +590,6 @@ static void DrawSkyBox(shader_t *shader)
 		// only add indexes for first stage
 		FillCloudySkySide(sky_mins_subd, sky_maxs_subd, qtrue);
 	}
-
-	// Tr3B: FIXME analyze required vertex attribs by the current material
-	Tess_UpdateVBOs(0);
 
 	Tess_DrawElements();
 }
@@ -793,7 +798,6 @@ void R_InitSkyTexCoords(float heightCloud)
 */
 void RB_DrawSun(void)
 {
-#if 0
 	float    size;
 	float    dist;
 	vec3_t   origin, vec1, vec2;
@@ -810,31 +814,38 @@ void RB_DrawSun(void)
 		return;
 	}
 
+#if defined(USE_D3D10)
+	//TODO
+#else
 	GL_PushMatrix();
 
-	GL_BindProgram(&tr.genericShader);
+	gl_genericShader->DisableAlphaTesting();
+	gl_genericShader->DisablePortalClipping();
+	gl_genericShader->DisableVertexSkinning();
+	gl_genericShader->DisableVertexAnimation();
+	gl_genericShader->DisableDeformVertexes();
+	gl_genericShader->DisableTCGenEnvironment();
+
+	gl_genericShader->BindProgram();
 
 	// set uniforms
-	GLSL_SetUniform_TCGen_Environment(&tr.genericShader, qfalse);
-	GLSL_SetUniform_InverseVertexColor(&tr.genericShader, qfalse);
-	if (glConfig2.vboVertexSkinningAvailable)
-	{
-		GLSL_SetUniform_VertexSkinning(&tr.genericShader, qfalse);
-	}
-	GLSL_SetUniform_DeformGen(&tr.genericShader, DGEN_NONE);
-	GLSL_SetUniform_AlphaTest(&tr.genericShader, -1.0);
+	gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
+#endif
 
-	MatrixSetupTranslation(transformMatrix, backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1],
-	                       backEnd.viewParms.orientation.origin[2]);
-	MatrixMultiply(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
+	MatrixSetupTranslation(transformMatrix, backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
+	MatrixMultiplyMOD(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
 
+#if defined(USE_D3D10)
+	//TODO
+#else
 	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 	GL_LoadModelViewMatrix(modelViewMatrix);
 
-	GLSL_SetUniform_ModelMatrix(&tr.genericShader, backEnd.orientation.transformMatrix);
-	GLSL_SetUniform_ModelViewProjectionMatrix(&tr.genericShader, glState.modelViewProjectionMatrix[glState.stackIndex]);
+	gl_genericShader->SetUniform_ModelMatrix(backEnd.orientation.transformMatrix);
+	gl_genericShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 
-	GLSL_SetUniform_PortalClipping(&tr.genericShader, backEnd.viewParms.isPortal);
+	gl_genericShader->SetPortalClipping(backEnd.viewParms.isPortal);
+#endif
 	if (backEnd.viewParms.isPortal)
 	{
 		float plane[4];
@@ -845,7 +856,11 @@ void RB_DrawSun(void)
 		plane[2] = backEnd.viewParms.portalPlane.normal[2];
 		plane[3] = backEnd.viewParms.portalPlane.dist;
 
-		GLSL_SetUniform_PortalPlane(&tr.genericShader, plane);
+#if defined(USE_D3D10)
+		//TODO
+#else
+		gl_genericShader->SetUniform_PortalPlane(plane);
+#endif
 	}
 
 
@@ -860,10 +875,14 @@ void RB_DrawSun(void)
 	VectorScale(vec2, size, vec2);
 
 	// farthest depth range
+#if defined(USE_D3D10)
+	//TODO
+#else
 	glDepthRange(1.0, 1.0);
+#endif
 
 	// FIXME: use quad stamp
-	Tess_Begin(Tess_StageIteratorGeneric, tr.sunShader, NULL, tess.skipTangentSpaces, qfalse, -1, tess.fogNum);
+	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.sunShader, NULL, tess.skipTangentSpaces, qfalse, -1, tess.fogNum);
 	VectorCopy(origin, temp);
 	VectorSubtract(temp, vec1, temp);
 	VectorSubtract(temp, vec2, temp);
@@ -930,6 +949,9 @@ void RB_DrawSun(void)
 	Tess_End();
 
 	// back to normal depth range
+#if defined(USE_D3D10)
+	//TODO
+#else
 	glDepthRange(0.0, 1.0);
 
 	GL_PopMatrix();
@@ -950,12 +972,15 @@ Other things could be stuck in here, like birds in the sky, etc
 */
 void Tess_StageIteratorSky(void)
 {
+#if !defined(USE_D3D10)
 	// log this call
 	if (r_logFile->integer)
 	{
 		// don't just call LogComment, or we will get
 		// a call to va() every frame!
-		GLimp_LogComment(va("--- Tess_StageIteratorSky( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name, tess.numVertexes, tess.numIndexes / 3));
+		GLimp_LogComment(va
+		                     ("--- Tess_StageIteratorSky( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
+		                     tess.numVertexes, tess.numIndexes / 3));
 	}
 
 	if (r_fastsky->integer)
@@ -1015,7 +1040,7 @@ void Tess_StageIteratorSky(void)
 		// draw the outer skybox
 		if (tess.surfaceShader->sky.outerbox && tess.surfaceShader->sky.outerbox != tr.blackCubeImage)
 		{
-#if 0
+#if 1
 			R_BindVBO(tess.vbo);
 			R_BindIBO(tess.ibo);
 
@@ -1077,4 +1102,5 @@ void Tess_StageIteratorSky(void)
 			backEnd.skyRenderedThisView = qtrue;
 		}
 	}
+#endif
 }

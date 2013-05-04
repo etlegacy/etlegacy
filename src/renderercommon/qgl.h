@@ -35,20 +35,22 @@
 #define __QGL_H__
 
 #ifdef BUNDLED_GLEW
-#	 include "GL/glew.h"
+#    include "GL/glew.h"
 #endif
-/*
+
+#ifndef FEATURE_RENDERER2
 #ifdef BUNDLED_SDL
 #    include "SDL_opengl.h"
 #else
 #    include <SDL/SDL_opengl.h>
 #endif
-*/
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define qglMultiTexCoord2fARB				                    glMultiTexCoord2fARB
+#define qglMultiTexCoord2fARB                                   glMultiTexCoord2fARB
 #define qglActiveTextureARB                                     glActiveTextureARB
 #define qglClientActiveTextureARB                               glClientActiveTextureARB
 #define qglLockArraysEXT                                        glLockArraysEXT
@@ -65,6 +67,7 @@ extern "C" {
 #define qglVertexAttrib4fARB                                    glVertexAttrib4fARB
 #define qglVertexAttrib4fvARB                                   glVertexAttrib4fvARB
 #define qglVertexAttribPointerARB                               glVertexAttribPointerARB
+#define qglVertexAttribPointer                                  glVertexAttribPointer
 #define qglEnableVertexAttribArrayARB                           glEnableVertexAttribArrayARB
 #define qglDisableVertexAttribArrayARB                          glDisableVertexAttribArrayARB
 #define qglBindBufferARB                                        glBindBufferARB
@@ -84,8 +87,8 @@ extern "C" {
 #define qglCreateProgramObjectARB                               glCreateProgramObjectARB
 #define qglAttachObjectARB                                      glAttachObjectARB
 #define qglLinkProgramARB                                       glLinkProgramARB
-#define qglUseProgramObjectARB                                  glUseProgramObjectARB
-#define qglValidateProgramARB                                   glValidateProgramARB
+#define qglUseProgramObjectARB                                  glUseProgram //glUseProgramObjectARB
+#define qglValidateProgramARB                                   glValidateProgram //glValidateProgramARB
 #define qglUniform1fARB                                         glUniform1fARB
 #define qglUniform2fARB                                         glUniform2fARB
 #define qglUniform3fARB                                         glUniform3fARB
@@ -152,7 +155,7 @@ extern "C" {
 #define qglBlitFramebufferEXT                                   glBlitFramebufferEXT
 #define qglRenderbufferStorageMultisampleEXT                    glRenderbufferStorageMultisampleEXT
 #define qglDrawBuffersARB                                       glDrawBuffersARB
-#define qglTexImage3D											glTexImage3D
+#define qglTexImage3D                                           glTexImage3D
 
 #define qglAccum glAccum
 #define qglAlphaFunc glAlphaFunc

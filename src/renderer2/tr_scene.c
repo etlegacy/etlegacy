@@ -38,6 +38,9 @@ static int r_firstSceneInteraction;
 static int r_numLights;
 static int r_firstSceneLight;
 
+static int r_numcoronas;
+static int r_firstSceneCorona;
+
 static int r_numEntities;
 static int r_firstSceneEntity;
 
@@ -62,7 +65,16 @@ R_ToggleSmpFrame
 */
 void R_ToggleSmpFrame(void)
 {
-	tr.smpFrame = 0;
+	if (r_smp->integer)
+	{
+		// use the other buffers next frame, because another CPU
+		// may still be rendering into the current ones
+		tr.smpFrame ^= 1;
+	}
+	else
+	{
+		tr.smpFrame = 0;
+	}
 
 	backEndData[tr.smpFrame]->commands.used = 0;
 
@@ -134,7 +146,7 @@ void R_AddPolygonSurfaces(void)
 	for (i = 0, poly = tr.refdef.polys; i < tr.refdef.numPolys; i++, poly++)
 	{
 		sh = R_GetShaderByHandle(poly->hShader);
-		R_AddDrawSurf((void *)poly, sh, -1, poly->fogIndex);
+		R_AddDrawSurf((surfaceType_t *)poly, sh, -1, poly->fogIndex);
 	}
 }
 
@@ -158,7 +170,7 @@ void R_AddPolygonBufferSurfaces(void)
 		sh = R_GetShaderByHandle(polybuffer->pPolyBuffer->shader);
 
 		//R_AddDrawSurf((void *)polybuffer, sh, polybuffer->fogIndex, 0, 0);
-		R_AddDrawSurf((void *)polybuffer, sh, -1, polybuffer->fogIndex);
+		R_AddDrawSurf((surfaceType_t *)polybuffer, sh, -1, polybuffer->fogIndex);
 	}
 }
 
@@ -359,7 +371,7 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 		return;
 	}
 
-	if (ent->reType < 0 || ent->reType >= RT_MAX_REF_ENTITY_TYPE)
+	if ((unsigned)ent->reType >= RT_MAX_REF_ENTITY_TYPE)
 	{
 		ri.Error(ERR_DROP, "RE_AddRefEntityToScene: bad reType %i", ent->reType);
 	}
@@ -395,7 +407,7 @@ void RE_AddRefLightToScene(const refLight_t *l)
 		return;
 	}
 
-	if (l->rlType < 0 || l->rlType >= RL_MAX_REF_LIGHT_TYPE)
+	if ((unsigned)l->rlType >= RL_MAX_REF_LIGHT_TYPE)
 	{
 		ri.Error(ERR_DROP, "RE_AddRefLightToScene: bad rlType %i", l->rlType);
 	}
@@ -419,7 +431,7 @@ void RE_AddRefLightToScene(const refLight_t *l)
 		}
 	}
 
-	if (!r_dynamicLightShadows->integer && !light->l.inverseShadows)
+	if (!r_dynamicLightCastShadows->integer && !light->l.inverseShadows)
 	{
 		light->l.noShadows = qtrue;
 	}
@@ -525,7 +537,7 @@ void RE_AddDynamicLightToSceneET(const vec3_t org, float radius, float intensity
 	light->l.color[1] = g;
 	light->l.color[2] = b;
 
-	light->l.noShadows      = r_dynamicLightShadows->integer ? qfalse : qtrue;
+	light->l.noShadows      = r_dynamicLightCastShadows->integer ? qfalse : qtrue;
 	light->l.inverseShadows = qfalse;
 
 	light->isStatic = qfalse;
@@ -548,13 +560,10 @@ void RE_AddDynamicLightToSceneQ3A(const vec3_t org, float radius, float r, float
 /*
 ==============
 RE_AddCoronaToScene
-
-RB: TODO
 ==============
 */
 void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible)
 {
-#if 0
 	corona_t *cor;
 
 	if (!tr.registered)
@@ -574,7 +583,6 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 	cor->scale    = scale;
 	cor->id       = id;
 	cor->visible  = visible;
-#endif
 }
 
 
@@ -676,6 +684,9 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.refdef.numLights = r_numLights - r_firstSceneLight;
 	tr.refdef.lights    = &backEndData[tr.smpFrame]->lights[r_firstSceneLight];
 
+	tr.refdef.num_coronas = r_numcoronas - r_firstSceneCorona;
+	tr.refdef.coronas     = &backEndData[tr.smpFrame]->coronas[r_firstSceneCorona];
+
 	tr.refdef.numPolys = r_numPolys - r_firstScenePoly;
 	tr.refdef.polys    = &backEndData[tr.smpFrame]->polys[r_firstScenePoly];
 
@@ -741,6 +752,8 @@ void RE_RenderScene(const refdef_t *fd)
 
 	parms.fovX = tr.refdef.fov_x;
 	parms.fovY = tr.refdef.fov_y;
+
+	parms.stereoFrame = tr.refdef.stereoFrame;
 
 	VectorCopy(fd->vieworg, parms.orientation.origin);
 	VectorCopy(fd->viewaxis[0], parms.orientation.axis[0]);

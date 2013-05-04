@@ -1,6 +1,6 @@
 /*
 ===========================================================================
-Copyright (C) 2009 Robert Beckebans <trebor_7@users.sourceforge.net>
+Copyright (C) 2006-2009 Robert Beckebans <trebor_7@users.sourceforge.net>
 
 This file is part of XreaL source code.
 
@@ -20,30 +20,34 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-/* depthToColor_vp.glsl */
+/* depthFill_fp.glsl */
 
-attribute vec4		attr_Position;
-attribute vec3      attr_Normal;
+uniform sampler2D	u_ColorMap;
+uniform int			u_AlphaTest;
 
-uniform mat4		u_ModelViewProjectionMatrix;
+varying vec2		var_Tex;
+varying vec4		var_Color;
 
 void	main()
 {
-#if defined(USE_VERTEX_SKINNING)
+	vec4 color = texture2D(u_ColorMap, var_Tex);
+	
+	if(u_AlphaTest == ATEST_GT_0 && color.a <= 0.0)
 	{
-		vec4 vertex = vec4(0.0);
-		vec4 position;
-		vec3 normal;
-		
-		VertexSkinning_P_N(	attr_Position, attr_Normal, position, normal);
+		discard;
+		return;
+	}
+	else if(u_AlphaTest == ATEST_LT_128 && color.a >= 0.5)
+	{
+		discard;
+		return;
+	}
+	else if(u_AlphaTest == ATEST_GE_128 && color.a < 0.5)
+	{
+		discard;
+		return;
+	}
 
-		// transform vertex position into homogenous clip-space
-		gl_Position = u_ModelViewProjectionMatrix * vertex;
-	}
-#else
-	{
-		// transform vertex position into homogenous clip-space
-		gl_Position = u_ModelViewProjectionMatrix * attr_Position;
-	}
-#endif	
+	color *= var_Color;
+	gl_FragColor = color;
 }

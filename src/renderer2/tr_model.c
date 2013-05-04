@@ -43,8 +43,8 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name);
 static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *name);
 #endif
 
-qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *name);
-qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *name);
+qboolean R_LoadMD5(model_t *mod, byte *buffer, int bufferSize, const char *name);
+qboolean R_LoadPSK(model_t *mod, byte *buffer, int bufferSize, const char *name);
 
 model_t *loadmodel;
 
@@ -80,7 +80,7 @@ model_t *R_AllocModel(void)
 		return NULL;
 	}
 
-	mod                     = ri.Hunk_Alloc(sizeof(*tr.models[tr.numModels]), h_low);
+	mod                     = (model_t *)ri.Hunk_Alloc(sizeof(*tr.models[tr.numModels]), h_low);
 	mod->index              = tr.numModels;
 	tr.models[tr.numModels] = mod;
 	tr.numModels++;
@@ -103,8 +103,8 @@ asked for again.
 qhandle_t RE_RegisterModel(const char *name)
 {
 	model_t   *mod;
-	unsigned  *buffer;
-	int       bufferLen;
+	byte      *buffer;
+	int       bufferLen = 0;
 	int       lod;
 	int       ident;
 	qboolean  loaded;
@@ -113,12 +113,7 @@ qhandle_t RE_RegisterModel(const char *name)
 
 	if (!name || !name[0])
 	{
-		// Tr3B: changed to PRINT_DEVELOPER FOR ET
-#if defined(COMPAT_ET)
 		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: NULL name\n");
-#else
-		ri.Printf(PRINT_ALL, "RE_RegisterModel: NULL name\n");
-#endif
 		return 0;
 	}
 
@@ -153,18 +148,14 @@ qhandle_t RE_RegisterModel(const char *name)
 	Q_strncpyz(mod->name, name, sizeof(mod->name));
 
 	// make sure the render thread is stopped
-	R_IssuePendingRenderCommands();
+	R_SyncRenderThread();
 
 	mod->numLods = 0;
 
 	// load the files
 	numLoaded = 0;
 
-#if defined(COMPAT_ET)
 	if (strstr(name, ".mds") || strstr(name, ".mdm") || strstr(name, ".mdx") || strstr(name, ".md5mesh") || strstr(name, ".psk"))
-#else
-	if (strstr(name, ".md5mesh") || strstr(name, ".psk"))
-#endif
 	{
 		// try loading skeletal file
 
@@ -368,7 +359,7 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 	mod->type      = MOD_MDX;
 	size           = LittleLong(pinmodel->ofsEnd);
 	mod->dataSize += size;
-	mdx            = mod->mdx = ri.Hunk_Alloc(size, h_low);
+	mdx            = mod->mdx = (mdxHeader_t *)ri.Hunk_Alloc(size, h_low);
 
 	memcpy(mdx, buffer, LittleLong(pinmodel->ofsEnd));
 
@@ -500,12 +491,17 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 
 	*glconfigOut = glConfig;
 
-	R_IssuePendingRenderCommands();
+	R_SyncRenderThread();
 
 	tr.visIndex = 0;
 	memset(tr.visClusters, -2, sizeof(tr.visClusters)); // force markleafs to regenerate
 
+#if defined(USE_D3D10)
+	// TODO
+#else
 	R_ClearFlares();
+#endif
+
 	RE_ClearScene();
 
 	// HACK: give world entity white color for "colored" shader keyword
@@ -813,6 +809,26 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 		return -1;
 
 	}
+#if defined(USE_REFENTITY_ANIMATIONSYSTEM)
+	else if (model->type == MOD_MD5)
+	{
+		// Dushan: VS need this first
+		vec3_t tmp;
+
+		retval = RE_BoneIndex(handle, tagName);
+		if (retval <= 0)
+		{
+			return -1;
+		}
+		VectorCopy(refent->skeleton.bones[retval].origin, tag->origin);
+		QuatToAxis(refent->skeleton.bones[retval].rotation, tag->axis);
+		VectorCopy(tag->axis[2], tmp);
+		VectorCopy(tag->axis[1], tag->axis[2]);
+		VectorCopy(tag->axis[0], tag->axis[1]);
+		VectorCopy(tmp, tag->axis[0]);
+		return retval;
+	}
+#endif
 	/*
 	else
 	{
