@@ -240,6 +240,18 @@ void MatrixSetupShear(matrix_t m, vec_t x, vec_t y);
 void MatrixMultiplyShear(matrix_t m, vec_t x, vec_t y);
 void QuatToAxis(const quat_t q, vec3_t axis[3]);
 void MatrixFromPlanes(matrix_t m, const vec4_t left, const vec4_t right, const vec4_t bottom, const vec4_t top, const vec4_t nearvec, const vec4_t farvec);
+void QuatSlerp(const quat_t from, const quat_t to, float frac, quat_t out);
+void QuatMultiply0(quat_t qa, const quat_t qb);
+void QuatMultiply1(const quat_t qa, const quat_t qb, quat_t qc);
+void QuatMultiply2(const quat_t qa, const quat_t qb, quat_t qc);
+void QuatMultiply3(const quat_t qa, const quat_t qb, quat_t qc);
+void QuatMultiply4(const quat_t qa, const quat_t qb, quat_t qc);
+void QuatFromAngles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll);
+vec_t QuatNormalize(quat_t q);
+void QuatToVectorsFRU(const quat_t q, vec3_t forward, vec3_t right, vec3_t up);
+void QuatToVectorsFLU(const quat_t q, vec3_t forward, vec3_t left, vec3_t up);
+void MatrixSetupTransformFromVectorsFRU(matrix_t m, const vec3_t forward, const vec3_t right, const vec3_t up, const vec3_t origin);
+void MatrixToVectorsFRU(const matrix_t m, vec3_t forward, vec3_t right, vec3_t up);
 
 byte ClampByte(int i);
 
@@ -287,6 +299,13 @@ static ID_INLINE void VectorToAngles(const vec3_t value1, vec3_t angles)
 
 #define QuatCompare(a, b)    ((a)[0] == (b)[0] && (a)[1] == (b)[1] && (a)[2] == (b)[2] && (a)[3] == (b)[3])
 
+static ID_INLINE void VectorLerp(const vec3_t from, const vec3_t to, float frac, vec3_t out)
+{
+	out[0] = from[0] + ((to[0] - from[0]) * frac);
+	out[1] = from[1] + ((to[1] - from[1]) * frac);
+	out[2] = from[2] + ((to[2] - from[2]) * frac);
+}
+
 static ID_INLINE void QuatClear(quat_t q)
 {
 	q[0] = 0;
@@ -312,6 +331,41 @@ static ID_INLINE void QuatCalcW(quat_t q)
 	q[3] = sqrt(fabs(1.0f - (q[0] * q[0] + q[1] * q[1] + q[2] * q[2])));
 #endif
 }
+
+//=============================================================================
+
+enum
+{
+	MEMSTREAM_SEEK_SET,
+	MEMSTREAM_SEEK_CUR,
+	MEMSTREAM_SEEK_END
+};
+
+enum
+{
+	MEMSTREAM_FLAGS_EOF = BIT(0),
+	MEMSTREAM_FLAGS_ERR = BIT(1),
+};
+
+// helper struct for reading binary file formats
+typedef struct memStream_s
+{
+	byte           *buffer;
+	int				bufSize;
+	byte           *curPos;
+	int             flags;
+}
+memStream_t;
+
+memStream_t    *AllocMemStream(byte *buffer, int bufSize);
+void			FreeMemStream(memStream_t * s);
+int				MemStreamRead(memStream_t *s, void *buffer, int len);
+int				MemStreamGetC(memStream_t *s);
+int				MemStreamGetLong(memStream_t * s);
+int				MemStreamGetShort(memStream_t * s);
+float			MemStreamGetFloat(memStream_t * s);
+
+//=============================================
 
 #ifdef __cplusplus
 }

@@ -918,7 +918,7 @@ void R_AddMD5Surfaces(trRefEntity_t *ent)
 	md5Surface_t *surface;
 	shader_t     *shader;
 	int          i;
-	bool         personalModel;
+	qboolean     personalModel;
 	int          fogNum;
 
 	model = tr.currentModel->md5;
@@ -1057,7 +1057,7 @@ void R_AddMD5Interactions(trRefEntity_t *ent, trRefLight_t *light)
 	md5Model_t        *model;
 	md5Surface_t      *surface;
 	shader_t          *shader = 0;
-	bool              personalModel;
+	qboolean          personalModel;
 	byte              cubeSideBits = CUBESIDE_CLIPALL;
 	interactionType_t iaType       = IA_DEFAULT;
 

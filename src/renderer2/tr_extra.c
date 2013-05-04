@@ -977,6 +977,193 @@ void QuatTransformVector(const quat_t q, const vec3_t in, vec3_t out)
 	MatrixTransformNormal(m, in, out);
 }
 
+void QuatSlerp(const quat_t from, const quat_t to, float frac, quat_t out)
+{
+#if 0
+	quat_t          to1;
+	double          omega, cosom, sinom, scale0, scale1;
+
+	cosom = from[0] * to[0] + from[1] * to[1] + from[2] * to[2] + from[3] * to[3];
+
+	if(cosom < 0.0)
+	{
+		cosom = -cosom;
+
+		QuatCopy(to, to1);
+		QuatAntipodal(to1);
+	}
+	else
+	{
+		QuatCopy(to, to1);
+	}
+
+	if((1.0 - cosom) > 0)
+	{
+		omega = acos(cosom);
+		sinom = sin(omega);
+		scale0 = sin((1.0 - frac) * omega) / sinom;
+		scale1 = sin(frac * omega) / sinom;
+	}
+	else
+	{
+		scale0 = 1.0 - frac;
+		scale1 = frac;
+	}
+
+	out[0] = scale0 * from[0] + scale1 * to1[0];
+	out[1] = scale0 * from[1] + scale1 * to1[1];
+	out[2] = scale0 * from[2] + scale1 * to1[2];
+	out[3] = scale0 * from[3] + scale1 * to1[3];
+#else
+	/*
+	   Slerping Clock Cycles
+	   February 27th 2005
+	   J.M.P. van Waveren
+
+	   http://www.intel.com/cd/ids/developer/asmo-na/eng/293747.htm
+	 */
+	float           cosom, absCosom, sinom, sinSqr, omega, scale0, scale1;
+
+	if(frac <= 0.0f)
+	{
+		QuatCopy(from, out);
+		return;
+	}
+
+	if(frac >= 1.0f)
+	{
+		QuatCopy(to, out);
+		return;
+	}
+
+	if(QuatCompare(from, to))
+	{
+		QuatCopy(from, out);
+		return;
+	}
+
+	cosom = from[0] * to[0] + from[1] * to[1] + from[2] * to[2] + from[3] * to[3];
+	absCosom = fabs(cosom);
+
+	if((1.0f - absCosom) > 1e-6f)
+	{
+		sinSqr = 1.0f - absCosom * absCosom;
+		sinom = 1.0f / sqrt(sinSqr);
+		omega = atan2(sinSqr * sinom, absCosom);
+
+		scale0 = sin((1.0f - frac) * omega) * sinom;
+		scale1 = sin(frac * omega) * sinom;
+	}
+	else
+	{
+		scale0 = 1.0f - frac;
+		scale1 = frac;
+	}
+
+	scale1 = (cosom >= 0.0f) ? scale1 : -scale1;
+
+	out[0] = scale0 * from[0] + scale1 * to[0];
+	out[1] = scale0 * from[1] + scale1 * to[1];
+	out[2] = scale0 * from[2] + scale1 * to[2];
+	out[3] = scale0 * from[3] + scale1 * to[3];
+#endif
+}
+
+void QuatMultiply0(quat_t qa, const quat_t qb)
+{
+	quat_t          tmp;
+
+	QuatCopy(qa, tmp);
+	QuatMultiply1(tmp, qb, qa);
+}
+
+void QuatMultiply1(const quat_t qa, const quat_t qb, quat_t qc)
+{
+	/*
+	   from matrix and quaternion faq
+	   x = w1x2 + x1w2 + y1z2 - z1y2
+	   y = w1y2 + y1w2 + z1x2 - x1z2
+	   z = w1z2 + z1w2 + x1y2 - y1x2
+
+	   w = w1w2 - x1x2 - y1y2 - z1z2
+	 */
+
+	qc[0] = qa[3] * qb[0] + qa[0] * qb[3] + qa[1] * qb[2] - qa[2] * qb[1];
+	qc[1] = qa[3] * qb[1] + qa[1] * qb[3] + qa[2] * qb[0] - qa[0] * qb[2];
+	qc[2] = qa[3] * qb[2] + qa[2] * qb[3] + qa[0] * qb[1] - qa[1] * qb[0];
+	qc[3] = qa[3] * qb[3] - qa[0] * qb[0] - qa[1] * qb[1] - qa[2] * qb[2];
+}
+
+void QuatMultiply2(const quat_t qa, const quat_t qb, quat_t qc)
+{
+	qc[0] = qa[3] * qb[0] + qa[0] * qb[3] + qa[1] * qb[2] + qa[2] * qb[1];
+	qc[1] = qa[3] * qb[1] - qa[1] * qb[3] - qa[2] * qb[0] + qa[0] * qb[2];
+	qc[2] = qa[3] * qb[2] - qa[2] * qb[3] - qa[0] * qb[1] + qa[1] * qb[0];
+	qc[3] = qa[3] * qb[3] - qa[0] * qb[0] - qa[1] * qb[1] + qa[2] * qb[2];
+}
+
+void QuatMultiply3(const quat_t qa, const quat_t qb, quat_t qc)
+{
+	qc[0] = qa[3] * qb[0] + qa[0] * qb[3] + qa[1] * qb[2] + qa[2] * qb[1];
+	qc[1] = -qa[3] * qb[1] + qa[1] * qb[3] - qa[2] * qb[0] + qa[0] * qb[2];
+	qc[2] = -qa[3] * qb[2] + qa[2] * qb[3] - qa[0] * qb[1] + qa[1] * qb[0];
+	qc[3] = -qa[3] * qb[3] + qa[0] * qb[0] - qa[1] * qb[1] + qa[2] * qb[2];
+}
+
+void QuatMultiply4(const quat_t qa, const quat_t qb, quat_t qc)
+{
+	qc[0] = qa[3] * qb[0] - qa[0] * qb[3] - qa[1] * qb[2] - qa[2] * qb[1];
+	qc[1] = -qa[3] * qb[1] - qa[1] * qb[3] + qa[2] * qb[0] - qa[0] * qb[2];
+	qc[2] = -qa[3] * qb[2] - qa[2] * qb[3] + qa[0] * qb[1] - qa[1] * qb[0];
+	qc[3] = -qa[3] * qb[3] - qa[0] * qb[0] + qa[1] * qb[1] - qa[2] * qb[2];
+}
+
+vec_t QuatNormalize(quat_t q)
+{
+	float           length, ilength;
+
+	length = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
+	length = sqrt(length);
+
+	if(length)
+	{
+		ilength = 1 / length;
+		q[0] *= ilength;
+		q[1] *= ilength;
+		q[2] *= ilength;
+		q[3] *= ilength;
+	}
+
+	return length;
+}
+
+void QuatFromAngles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll)
+{
+#if 1
+	matrix_t        tmp;
+
+	MatrixFromAngles(tmp, pitch, yaw, roll);
+	QuatFromMatrix(q, tmp);
+#else
+	static float    sr, sp, sy, cr, cp, cy;
+
+	// static to help MS compiler fp bugs
+	sp = sin(DEG2RAD(pitch));
+	cp = cos(DEG2RAD(pitch));
+
+	sy = sin(DEG2RAD(yaw));
+	cy = cos(DEG2RAD(yaw));
+
+	sr = sin(DEG2RAD(roll));
+	cr = cos(DEG2RAD(roll));
+
+	q[0] = sr * cp * cy - cr * sp * sy;	// x
+	q[1] = cr * sp * cy + sr * cp * sy;	// y
+	q[2] = cr * cp * sy - sr * sp * cy;	// z
+	q[3] = cr * cp * cy + sr * sp * sy;	// w
+#endif
+}
+
 static void m4_submat(matrix_t mr, matrix3x3_t mb, int i, int j)
 {
 	int ti, tj, idst = 0, jdst = 0;
@@ -1077,6 +1264,54 @@ void MatrixMultiplyShear(matrix_t m, vec_t x, vec_t y)
 	MatrixMultiply(tmp, shear, m);
 }
 
+void MatrixToVectorsFRU(const matrix_t m, vec3_t forward, vec3_t right, vec3_t up)
+{
+	if(forward)
+	{
+		forward[0] = m[ 0];
+		forward[1] = m[ 1];
+		forward[2] = m[ 2];
+	}
+
+	if(right)
+	{
+		right[0] =-m[ 4];
+		right[1] =-m[ 5];
+		right[2] =-m[ 6];
+	}
+
+	if(up)
+	{
+		up[0] = m[ 8];
+		up[1] = m[ 9];
+		up[2] = m[10];
+	}
+}
+
+void MatrixSetupTransformFromVectorsFRU(matrix_t m, const vec3_t forward, const vec3_t right, const vec3_t up, const vec3_t origin)
+{
+	m[ 0] = forward[0];     m[ 4] = -right[0];        m[ 8] = up[0];  m[12] = origin[0];
+	m[ 1] = forward[1];     m[ 5] = -right[1];        m[ 9] = up[1];  m[13] = origin[1];
+	m[ 2] = forward[2];     m[ 6] = -right[2];        m[10] = up[2];  m[14] = origin[2];
+	m[ 3] = 0;              m[ 7] = 0;             	  m[11] = 0;      m[15] = 1;
+}
+
+void QuatToVectorsFLU(const quat_t q, vec3_t forward, vec3_t left, vec3_t up)
+{
+	matrix_t        tmp;
+
+	MatrixFromQuat(tmp, q);
+	MatrixToVectorsFRU(tmp, forward, left, up);
+}
+
+void QuatToVectorsFRU(const quat_t q, vec3_t forward, vec3_t right, vec3_t up)
+{
+	matrix_t        tmp;
+
+	MatrixFromQuat(tmp, q);
+	MatrixToVectorsFRU(tmp, forward, right, up);
+}
+
 void QuatToAxis(const quat_t q, vec3_t axis[3])
 {
 	matrix_t tmp;
@@ -1165,6 +1400,110 @@ qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *re
 		return qtrue;
 	}
 }
+
+//=============================================================================
+
+memStream_t *AllocMemStream(byte *buffer, int bufSize)
+{
+	memStream_t		*s;
+
+	if(buffer == NULL || bufSize <= 0)
+		return NULL;
+
+	s = Com_Allocate(sizeof(memStream_t));
+	if(s == NULL)
+		return NULL;
+
+	Com_Memset(s, 0, sizeof(memStream_t));
+
+	s->buffer 	= buffer;
+	s->curPos 	= buffer;
+	s->bufSize	= bufSize;
+	s->flags	= 0;
+
+	return s;
+}
+
+void FreeMemStream(memStream_t * s)
+{
+	Com_Dealloc(s);
+}
+
+int MemStreamRead(memStream_t *s, void *buffer, int len)
+{
+	int				ret = 1;
+
+	if(s == NULL || buffer == NULL)
+		return 0;
+
+	if(s->curPos + len > s->buffer + s->bufSize)
+	{
+		s->flags |= MEMSTREAM_FLAGS_EOF;
+		len = s->buffer + s->bufSize - s->curPos;
+		ret = 0;
+
+		Com_Error(ERR_FATAL, "MemStreamRead: EOF reached");
+	}
+
+	Com_Memcpy(buffer, s->curPos, len);
+	s->curPos += len;
+
+	return ret;
+}
+
+int MemStreamGetC(memStream_t *s)
+{
+	int				c = 0;
+
+	if(s == NULL)
+		return -1;
+
+	if(MemStreamRead(s, &c, 1) == 0)
+		return -1;
+
+	return c;
+}
+
+int MemStreamGetLong(memStream_t * s)
+{
+	int				c = 0;
+
+	if(s == NULL)
+		return -1;
+
+	if(MemStreamRead(s, &c, 4) == 0)
+		return -1;
+
+	return LittleLong(c);
+}
+
+int MemStreamGetShort(memStream_t * s)
+{
+	int				c = 0;
+
+	if(s == NULL)
+		return -1;
+
+	if(MemStreamRead(s, &c, 2) == 0)
+		return -1;
+
+	return LittleShort(c);
+}
+
+float MemStreamGetFloat(memStream_t * s)
+{
+	floatint_t		c;
+
+	if(s == NULL)
+		return -1;
+
+	if(MemStreamRead(s, &c.i, 4) == 0)
+		return -1;
+
+	return LittleFloat(c.f);
+}
+
+//============================================================================
 
 #ifdef __cplusplus
 }
