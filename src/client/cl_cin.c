@@ -381,13 +381,9 @@ static void blit2_32(byte *src, byte *dst, int spl)
 
 static void blitVQQuad32fs(byte **status, unsigned char *data)
 {
-	unsigned short newd, celdata, code;
-	unsigned int   index, i;
+	unsigned short newd  = 0, celdata = 0, code;
+	unsigned int   index = 0, i;
 	int            spl;
-
-	newd    = 0;
-	celdata = 0;
-	index   = 0;
 
 	spl = cinTable[currentHandle].samplesPerLine;
 
@@ -469,18 +465,19 @@ static void blitVQQuad32fs(byte **status, unsigned char *data)
 	while (status[index] != NULL);
 }
 
+float t_ub = (1.77200f / 2.0f) * (float)(1 << 6) + 0.5f;
+float t_vr = (1.40200f / 2.0f) * (float)(1 << 6) + 0.5f;
+float t_ug = (0.34414f / 2.0f) * (float)(1 << 6) + 0.5f;
+float t_vg = (0.71414f / 2.0f) * (float)(1 << 6) + 0.5f;
+
 static void ROQ_GenYUVTables(void)
 {
-	float t_ub, t_vr, t_ug, t_vg;
 	long  i;
+	float x;
 
-	t_ub = (1.77200f / 2.0f) * (float)(1 << 6) + 0.5f;
-	t_vr = (1.40200f / 2.0f) * (float)(1 << 6) + 0.5f;
-	t_ug = (0.34414f / 2.0f) * (float)(1 << 6) + 0.5f;
-	t_vg = (0.71414f / 2.0f) * (float)(1 << 6) + 0.5f;
 	for (i = 0; i < 256; i++)
 	{
-		float x = (float)(2 * i - 255);
+		x = (float)(2 * i - 255);
 
 		ROQ_UB_tab[i] = (long)((t_ub * x) + (1 << 5));
 		ROQ_VR_tab[i] = (long)((t_vr * x) + (1 << 5));
@@ -920,14 +917,10 @@ static void decodeCodeBook(byte *input, unsigned short roq_flags)
 static void recurseQuad(long startX, long startY, long quadSize, long xOff, long yOff)
 {
 	byte *scroff;
-	long bigx, bigy, lowx, lowy;
-	long offset;
-
-	offset = cinTable[currentHandle].screenDelta;
-
-	lowx = lowy = 0;
-	bigx = cinTable[currentHandle].xsize;
-	bigy = cinTable[currentHandle].ysize;
+	long lowx   = 0, lowy = 0;
+	long offset = cinTable[currentHandle].screenDelta;
+	long bigx   = cinTable[currentHandle].xsize;
+	long bigy   = cinTable[currentHandle].ysize;
 
 	if (bigx > cinTable[currentHandle].CIN_WIDTH)
 	{
@@ -941,6 +934,7 @@ static void recurseQuad(long startX, long startY, long quadSize, long xOff, long
 	if ((startX >= lowx) && (startX + quadSize) <= (bigx) && (startY + quadSize) <= (bigy) && (startY >= lowy) && quadSize <= MAXSIZE)
 	{
 		long useY = startY;
+
 		scroff = cin.linbuf + (useY + ((cinTable[currentHandle].CIN_HEIGHT - bigy) >> 1) + yOff) * (cinTable[currentHandle].samplesPerLine) + (((startX + xOff)) * cinTable[currentHandle].samplesPerPixel);
 
 		cin.qStatus[0][cinTable[currentHandle].onQuad]   = scroff;
@@ -983,9 +977,12 @@ static void setupQuad(long xOff, long yOff)
 	cinTable[currentHandle].onQuad = 0;
 
 	for (y = 0; y < (long)cinTable[currentHandle].ysize; y += 16)
+	{
 		for (x = 0; x < (long)cinTable[currentHandle].xsize; x += 16)
+		{
 			recurseQuad(x, y, 16, xOff, yOff);
-
+		}
+	}
 	temp = NULL;
 
 	for (i = (numQuadCels - 64); i < numQuadCels; i++)
@@ -1028,10 +1025,10 @@ static void readQuadInfo(byte *qData)
 
 static void RoQPrepMcomp(long xoff, long yoff)
 {
-	long i, j, x, y, temp, temp2;
+	long x, y, temp, temp2;
+	long i = cinTable[currentHandle].samplesPerLine;
+	long j = cinTable[currentHandle].samplesPerPixel;
 
-	i = cinTable[currentHandle].samplesPerLine;
-	j = cinTable[currentHandle].samplesPerPixel;
 	if (cinTable[currentHandle].xsize == (cinTable[currentHandle].ysize * 4) && !cinTable[currentHandle].half)
 	{
 		j = j + j;
@@ -1082,7 +1079,6 @@ static byte* RoQFetchInterlaced( byte *source ) {
 
 static void RoQReset(void)
 {
-
 	if (currentHandle < 0)
 	{
 		return;
@@ -1261,10 +1257,8 @@ redump:
 static void RoQ_init(void)
 {
 	cinTable[currentHandle].startTime = cinTable[currentHandle].lastTime = CL_ScaledMilliseconds() * com_timescale->value;
-
 	cinTable[currentHandle].RoQPlayed = 24;
-
-	/*  get frame rate */
+	//  get frame rate
 	cinTable[currentHandle].roqFPS = cin.file[6] + cin.file[7] * 256;
 
 	if (!cinTable[currentHandle].roqFPS)
@@ -1582,11 +1576,11 @@ void CIN_DrawCinematic(int handle)
 
 	if (cinTable[handle].dirty && (cinTable[handle].CIN_WIDTH != cinTable[handle].drawX || cinTable[handle].CIN_HEIGHT != cinTable[handle].drawY))
 	{
-		int ix, iy, *buf2, *buf3, xm, ym, ll;
+		int ix, iy, *buf2, *buf3;
+		int xm = cinTable[handle].CIN_WIDTH / 256;
+		int ym = cinTable[handle].CIN_HEIGHT / 256;
+		int ll = 8;
 
-		xm = cinTable[handle].CIN_WIDTH / 256;
-		ym = cinTable[handle].CIN_HEIGHT / 256;
-		ll = 8;
 		if (cinTable[handle].CIN_WIDTH == 512)
 		{
 			ll = 9;
@@ -1596,11 +1590,10 @@ void CIN_DrawCinematic(int handle)
 		buf2 = Hunk_AllocateTempMemory(256 * 256 * 4);
 		if (xm == 2 && ym == 2)
 		{
-			byte *bc2, *bc3;
 			int  ic, iiy;
+			byte *bc2 = (byte *)buf2;
+			byte *bc3 = (byte *)buf3;
 
-			bc2 = (byte *)buf2;
-			bc3 = (byte *)buf3;
 			for (iy = 0; iy < 256; iy++)
 			{
 				iiy = iy << 12;
@@ -1616,11 +1609,10 @@ void CIN_DrawCinematic(int handle)
 		}
 		else if (xm == 2 && ym == 1)
 		{
-			byte *bc2, *bc3;
 			int  ic, iiy;
+			byte *bc2 = (byte *)buf2;
+			byte *bc3 = (byte *)buf3;
 
-			bc2 = (byte *)buf2;
-			bc3 = (byte *)buf3;
 			for (iy = 0; iy < 256; iy++)
 			{
 				iiy = iy << 11;
