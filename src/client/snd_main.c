@@ -46,7 +46,7 @@ cvar_t *s_muteWhenUnfocused;
 
 static soundInterface_t si;
 
-/*
+/**
  * @brief Checks if the chosen sound system conforms to the interface
  */
 static qboolean S_ValidSoundInterface(soundInterface_t *si)
@@ -433,7 +433,7 @@ int S_GetVoiceAmplitude(int entityNum)
 	}
 }
 
-/*
+/**
  * @brief Returns how long the sound lasts in milliseconds
  */
 int S_GetSoundLength(sfxHandle_t sfxHandle)
@@ -448,7 +448,7 @@ int S_GetSoundLength(sfxHandle_t sfxHandle)
 	}
 }
 
-/*
+/**
  * @brief For looped sound synchronisation
  */
 int S_GetCurrentSoundTime(void)
@@ -635,14 +635,14 @@ void S_StopMusic_f(void)
 	si.StopBackgroundTrack();
 }
 
-/*
+/**
  * @brief Initiates the sound system
  */
 void S_Init(void)
 {
-	cvar_t *cv = Cvar_Get("s_initsound", "1", 0);
+	cvar_t *cv = Cvar_Get("s_initsound", "1", 0); // 1 = base, 2 = OpenAL
 
-	Com_Printf("------ Initializing Sound ------\n");
+	Com_Printf("------ Initializing Sound (%i)------\n", cv->integer);
 
 	s_volume            = Cvar_Get("s_volume", "0.8", CVAR_ARCHIVE);
 	s_musicVolume       = Cvar_Get("s_musicvolume", "0.25", CVAR_ARCHIVE);
@@ -671,8 +671,7 @@ void S_Init(void)
 		Cmd_AddCommand("s_info", S_SoundInfo);
 
 #ifdef FEATURE_OPENAL
-		cv = Cvar_Get("s_useOpenAL", "1", CVAR_ARCHIVE);
-		if (cv->integer)
+		if (cv->integer == 2)
 		{
 			//OpenAL
 			started = S_AL_Init(&si);
@@ -682,6 +681,11 @@ void S_Init(void)
 
 		if (!started)
 		{
+			if (cv->integer == 2)
+			{
+				Com_Printf("Can't initialize OpenAL - reverting to base interface.\n");
+			}
+
 			started = S_Base_Init(&si);
 			Cvar_Set("s_backend", "base");
 		}
@@ -690,12 +694,11 @@ void S_Init(void)
 		{
 			if (!S_ValidSoundInterface(&si))
 			{
-				Com_Error(ERR_FATAL, "Sound interface invalid.");
+				Com_Error(ERR_FATAL, "Invalid sound interface.");
 			}
 
 			S_SoundInfo();
-			Com_Printf("Sound initialization successful.\n");
-			Com_Printf("s_backend set to %s\n", s_backend->string);
+			Com_Printf("Sound initialization successfully done.\ns_backend set to %s\n", s_backend->string);
 		}
 		else
 		{
@@ -714,7 +717,7 @@ void S_Reload(void)
 	}
 }
 
-/*
+/**
  * @brief Destroys the sound system
  */
 void S_Shutdown(void)
