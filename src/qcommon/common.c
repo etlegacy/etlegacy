@@ -569,18 +569,7 @@ void Info_Print(const char *s)
 		o = key;
 		while (*s && *s != '\\')
 			*o++ = *s++;
-
-		l = o - key;
-		if (l < 20)
-		{
-			Com_Memset(o, ' ', 20 - l);
-			key[20] = 0;
-		}
-		else
-		{
-			*o = 0;
-		}
-		Com_Printf("%s", key);
+		*o = 0;
 
 		if (!*s)
 		{
@@ -598,7 +587,8 @@ void Info_Print(const char *s)
 		{
 			s++;
 		}
-		Com_Printf("%s\n", value);
+
+		Com_Printf("%-24s  %s\n", key, value);
 	}
 }
 
