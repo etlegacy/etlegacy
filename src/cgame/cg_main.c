@@ -1740,8 +1740,6 @@ static void CG_RegisterGraphics(void)
 
 	CG_Fireteams_Setup();
 
-	CG_Hud_Setup();
-
 	cgs.media.railCoreShader = trap_R_RegisterShaderNoMip("railCore");       // for debugging server traces
 	cgs.media.ropeShader     = trap_R_RegisterShader("textures/props/cable_m01");
 
@@ -1769,6 +1767,9 @@ static void CG_RegisterGraphics(void)
 		Com_sprintf(name, sizeof(name), "models/mapobjects/debris/personal%i.md3", i + 1);
 		cgs.media.shardJunk[i] = trap_R_RegisterModel(name);
 	}
+
+	CG_LoadingString(" - heads-up display");
+	CG_Hud_Setup();
 
 	memset(cg_items, 0, sizeof(cg_items));
 	memset(cg_weapons, 0, sizeof(cg_weapons));
@@ -1863,7 +1864,7 @@ static void CG_RegisterGraphics(void)
 		cgs.gameModels[i] = trap_R_RegisterModel(modelName);
 	}
 
-	for (i = 1 ; i < MAX_MODELS ; i++)
+	for (i = 1 ; i < MAX_CS_SKINS ; i++)
 	{
 		const char *skinName;
 

@@ -428,7 +428,7 @@ static qboolean CG_ParseHUD(int handle)
 
 	if (CG_isHudNumberAvailable(temphud.hudnumber))
 	{
-		Com_Printf("Hud properties for hud: %i have been read!\n", temphud.hudnumber);
+		Com_Printf("...properties for hud %i have been read.\n", temphud.hudnumber);
 		CG_addHudToList(temphud);
 	}
 	else
@@ -498,7 +498,7 @@ void CG_ReadHudScripts(void)
 		Com_Printf("^1ERROR while reading hud file\n");
 	}
 
-	Com_Printf("Hud count is: %i\n", hudCount);
+	Com_Printf("...hud count: %i\n", hudCount);
 }
 
 /*

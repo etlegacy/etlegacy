@@ -1779,7 +1779,7 @@ typedef struct cgs_s
 	qhandle_t gameModels[MAX_MODELS];
 	char gameShaderNames[MAX_CS_SHADERS][MAX_QPATH];
 	qhandle_t gameShaders[MAX_CS_SHADERS];
-	qhandle_t gameModelSkins[MAX_MODELS];
+	qhandle_t gameModelSkins[MAX_CS_SKINS];
 	bg_character_t *gameCharacters[MAX_CHARACTERS];
 	sfxHandle_t gameSounds[MAX_SOUNDS];
 	sfxHandle_t cachedSounds[GAMESOUND_MAX]; // static game sounds
