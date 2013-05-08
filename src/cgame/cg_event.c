@@ -1162,7 +1162,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 	int                 i;
 	localEntity_t       *le;
 	refEntity_t         *re;
-	int                 howmany, total, totalsounds;
+	int                 howmany, total, totalsounds = 0;
 	int                 pieces[6]; // how many of each piece
 	qhandle_t           modelshader = 0;
 	float               materialmul = 1; // multiplier for different types
@@ -1209,8 +1209,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 		}
 	}
 
-	total       = pieces[5] + pieces[4] + pieces[3] + pieces[2] + pieces[1] + pieces[0];
-	totalsounds = 0;
+	total = pieces[5] + pieces[4] + pieces[3] + pieces[2] + pieces[1] + pieces[0];
 
 	if (sound)
 	{
@@ -2718,17 +2717,29 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 					s = CG_ConfigString(CS_SOUNDS + (es->eventParm - GAMESOUND_MAX));
 
-					// origin is NULL!
-					if (CG_SoundPlaySoundScript(s, NULL, -1, qtrue))
+					if (!strstr(s, ".wav") && !strstr(s, ".ogg")) // sound script names haven't got file extensions
 					{
-						break;
+						// origin is NULL!
+						if (CG_SoundPlaySoundScript(s, NULL, -1, qtrue))
+						{
+							break;
+						}
 					}
+
 					sound = CG_CustomSound(es->number, s);
 					if (sound)
 					{
 						// origin is NULL!
 						trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
 					}
+					else
+					{
+						CG_Printf(S_COLOR_YELLOW "WARNING: CG_EntityEvent() cannot play EV_GLOBAL_SOUND sound '%s'\n", s);
+					}
+				}
+				else
+				{
+					CG_Printf(S_COLOR_YELLOW "WARNING: CG_EntityEvent() es->eventParm < GAMESOUND_MAX\n");
 				}
 			}
 		}
@@ -2740,6 +2751,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			if (cg.snap->ps.clientNum == es->teamNum)
 			{
 				sfxHandle_t sound = CG_GetGameSound(es->eventParm);
+
 				if (sound)
 				{
 					trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
@@ -2752,15 +2764,27 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 						s = CG_ConfigString(CS_SOUNDS + (es->eventParm - GAMESOUND_MAX));
 
-						if (CG_SoundPlaySoundScript(s, NULL, -1, (es->effect1Time ? qfalse : qtrue)))
+						if (!strstr(s, ".wav") && !strstr(s, ".ogg")) // sound script names haven't got file extensions
 						{
-							break;
+							if (CG_SoundPlaySoundScript(s, NULL, -1, (es->effect1Time ? qfalse : qtrue)))
+							{
+								break;
+							}
 						}
+
 						sound = CG_CustomSound(es->number, s);
 						if (sound)
 						{
 							trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
 						}
+						else
+						{
+							CG_Printf(S_COLOR_YELLOW "WARNING: CG_EntityEvent() cannot play EV_GLOBAL_CLIENT_SOUND sound '%s'\n", s);
+						}
+					}
+					else
+					{
+						CG_Printf(S_COLOR_YELLOW "WARNING: CG_EntityEvent() es->eventParm < GAMESOUND_MAX\n");
 					}
 				}
 			}

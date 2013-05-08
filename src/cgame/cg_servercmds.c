@@ -887,7 +887,7 @@ static void CG_ConfigStringModified(void)
 	{
 		if (str[0] != '*')       // player specific sounds don't register here
 		{   // register sound scripts seperately
-			if (!strstr(str, ".wav"))
+			if (!strstr(str, ".wav") && !strstr(str, ".ogg"))
 			{
 				CG_SoundScriptPrecache(str);
 			}

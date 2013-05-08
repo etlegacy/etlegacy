@@ -2929,6 +2929,9 @@ msgstr "Brak glosowan.\n"
 msgid "Show Clock:"
 msgstr "Pokaz Zegar:"
 
+msgid "No or bad challenge for address.\n"
+msgstr "Brak lub zle wezwanie dla adresu.\n"
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

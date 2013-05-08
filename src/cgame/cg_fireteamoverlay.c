@@ -533,7 +533,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 		// draw the player's weapon icon
 		curWeap = cg_entities[ci->clientNum].currentState.weapon;
-		if (cg_weapons[curWeap].weaponIcon[0])     // jaquboss - do not try to draw nothing
+		if (cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 		{
 			CG_DrawPic(x, y, weaponIconScale(curWeap) * 10, 10, cg_weapons[curWeap].weaponIcon[0]);
 		}

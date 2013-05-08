@@ -2884,6 +2884,9 @@ msgstr ""
 msgid "Show Clock:"
 msgstr ""
 
+msgid "No or bad challenge for address.\n"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

@@ -192,9 +192,8 @@ Returns the fraction of the frame that the key was down
 float CL_KeyState(kbutton_t *key)
 {
 	float val;
-	int   msec;
+	int   msec = key->msec;
 
-	msec      = key->msec;
 	key->msec = 0;
 
 	if (key->active)
@@ -507,7 +506,7 @@ Sets the usercmd_t based on key states
 void CL_KeyMove(usercmd_t *cmd)
 {
 	int movespeed;
-	int forward, side, up;
+	int forward = 0, side = 0, up = 0;
 
 	// adjust for speed key / running
 	// the walking flag is to keep animations consistant
@@ -524,9 +523,6 @@ void CL_KeyMove(usercmd_t *cmd)
 		movespeed     = 64;
 	}
 
-	forward = 0;
-	side    = 0;
-	up      = 0;
 	if (kb[KB_STRAFE].active)
 	{
 		side += movespeed * CL_KeyState(&kb[KB_RIGHT]);
