@@ -275,10 +275,9 @@ R_LoadVisibility
 */
 static void R_LoadVisibility(lump_t *l)
 {
-	int  len;
+	int  len = (s_worldData.numClusters + 63) & ~63;
 	byte *buf;
 
-	len               = (s_worldData.numClusters + 63) & ~63;
 	s_worldData.novis = ri.Hunk_Alloc(len, h_low);
 	memset(s_worldData.novis, 0xff, len);
 
@@ -577,7 +576,6 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	int          i, j, numVerts, numIndexes, numInstances, size;
 	vec3_t       bounds[2], boundsTranslated[2];
 	float        scale;
-
 
 	// get fog volume
 	surf->fogIndex = LittleLong(ds->fogNum) + 1;
@@ -1061,11 +1059,10 @@ R_StitchPatches
 int R_StitchPatches(int grid1num, int grid2num)
 {
 	int           k, l, m, n, offset1, offset2, row, column;
-	srfGridMesh_t *grid1, *grid2;
 	float         *v1, *v2;
+	srfGridMesh_t *grid1 = (srfGridMesh_t *) s_worldData.surfaces[grid1num].data;
+	srfGridMesh_t *grid2 = (srfGridMesh_t *) s_worldData.surfaces[grid2num].data;
 
-	grid1 = (srfGridMesh_t *) s_worldData.surfaces[grid1num].data;
-	grid2 = (srfGridMesh_t *) s_worldData.surfaces[grid2num].data;
 	for (n = 0; n < 2; n++)
 	{
 		if (n)
@@ -1756,11 +1753,10 @@ might still appear at that side.
 */
 int R_TryStitchingPatch(int grid1num)
 {
-	int           j, numstitches;
-	srfGridMesh_t *grid1, *grid2;
+	int           j, numstitches = 0;
+	srfGridMesh_t *grid1 = (srfGridMesh_t *) s_worldData.surfaces[grid1num].data;
+	srfGridMesh_t *grid2;
 
-	numstitches = 0;
-	grid1       = (srfGridMesh_t *) s_worldData.surfaces[grid1num].data;
 	for (j = 0; j < s_worldData.numsurfaces; j++)
 	{
 		grid2 = (srfGridMesh_t *) s_worldData.surfaces[j].data;
@@ -2269,7 +2265,6 @@ static void R_LoadPlanes(lump_t *l)
 /*
 =================
 R_LoadFogs
-
 =================
 */
 static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
@@ -2419,116 +2414,8 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 }
 
 /*
-==============
-R_FindLightGridBounds
-==============
-*/
-void R_FindLightGridBounds(vec3_t mins, vec3_t maxs)
-{
-	world_t          *w;
-	msurface_t       *surf;
-	srfSurfaceFace_t *surfFace;
-	struct shader_s  *shd;
-
-	qboolean foundGridBrushes = qfalse;
-	int      i, j;
-
-	w = &s_worldData;
-
-//----(SA)  temp - disable this whole thing for now
-	VectorCopy(w->bmodels[0].bounds[0], mins);
-	VectorCopy(w->bmodels[0].bounds[1], maxs);
-	return;
-
-
-	ClearBounds(mins, maxs);
-
-// wrong!
-	for (i = 0; i < w->bmodels[0].numSurfaces; i++)
-	{
-		surf = w->bmodels[0].firstSurface + i;
-		shd  = surf->shader;
-
-		if (!(*surf->data == SF_FACE))
-		{
-			continue;
-		}
-
-		if (!(shd->contentFlags & CONTENTS_LIGHTGRID))
-		{
-			continue;
-		}
-
-		foundGridBrushes = qtrue;
-	}
-
-// wrong!
-	for (i = 0; i < w->numsurfaces; i++)
-	{
-		surf = &w->surfaces[i];
-		shd  = surf->shader;
-		if (!(*surf->data == SF_FACE))
-		{
-			continue;
-		}
-
-		if (!(shd->contentFlags & CONTENTS_LIGHTGRID))
-		{
-			continue;
-		}
-
-		foundGridBrushes = qtrue;
-
-		surfFace = ( srfSurfaceFace_t * )surf->data;
-
-		for (j = 0; j < surfFace->numPoints; j++)
-		{
-			AddPointToBounds(surfFace->points[j], mins, maxs);
-		}
-
-	}
-
-	// go through brushes looking for lightgrid
-//  for ( i = 0 ; i < numbrushes ; i++ ) {
-//      db = &dbrushes[i];
-//
-//      if (!(dshaders[db->shaderNum].contentFlags & CONTENTS_LIGHTGRID)) {
-//          continue;
-//      }
-//
-//      foundGridBrushes = qtrue;
-//
-//      // go through light grid surfaces for bounds
-//      for ( j = 0 ; j < db->numSides ; j++ ) {
-//          s = &dbrushsides[ db->firstSide + j ];
-//
-//          surfmin[0] = -dplanes[ dbrushsides[ db->firstSide + 0 ].planeNum ].dist - 1;
-//          surfmin[1] = -dplanes[ dbrushsides[ db->firstSide + 2 ].planeNum ].dist - 1;
-//          surfmin[2] = -dplanes[ dbrushsides[ db->firstSide + 4 ].planeNum ].dist - 1;
-//          surfmax[0] = dplanes[ dbrushsides[ db->firstSide + 1 ].planeNum ].dist + 1;
-//          surfmax[1] = dplanes[ dbrushsides[ db->firstSide + 3 ].planeNum ].dist + 1;
-//          surfmax[2] = dplanes[ dbrushsides[ db->firstSide + 5 ].planeNum ].dist + 1;
-//          AddPointToBounds (surfmin, mins, maxs);
-//          AddPointToBounds (surfmax, mins, maxs);
-//      }
-//  }
-
-
-//----(SA)  temp
-	foundGridBrushes = qfalse;  // disable this whole thing for now
-//----(SA)  temp
-
-	if (!foundGridBrushes)
-	{
-		VectorCopy(w->bmodels[0].bounds[0], mins);
-		VectorCopy(w->bmodels[0].bounds[1], maxs);
-	}
-}
-
-/*
 ================
 R_LoadLightGrid
-
 ================
 */
 void R_LoadLightGrid(lump_t *l)
@@ -2536,16 +2423,15 @@ void R_LoadLightGrid(lump_t *l)
 	int     i;
 	vec3_t  maxs;
 	int     numGridPoints;
-	world_t *w;
-	vec3_t  wMins, wMaxs;
-
-	w = &s_worldData;
+	world_t *w = &s_worldData;
+	float   *wMins, *wMaxs;
 
 	w->lightGridInverseSize[0] = 1.0 / w->lightGridSize[0];
 	w->lightGridInverseSize[1] = 1.0 / w->lightGridSize[1];
 	w->lightGridInverseSize[2] = 1.0 / w->lightGridSize[2];
 
-	R_FindLightGridBounds(wMins, wMaxs);
+	wMins = w->bmodels[0].bounds[0];
+	wMaxs = w->bmodels[0].bounds[1];
 
 	for (i = 0 ; i < 3 ; i++)
 	{
@@ -2584,9 +2470,8 @@ void R_LoadEntities(lump_t *l)
 	char    *p, *token, *s;
 	char    keyname[MAX_TOKEN_CHARS];
 	char    value[MAX_TOKEN_CHARS];
-	world_t *w;
+	world_t *w = &s_worldData;
 
-	w                   = &s_worldData;
 	w->lightGridSize[0] = 64;
 	w->lightGridSize[1] = 64;
 	w->lightGridSize[2] = 128;
