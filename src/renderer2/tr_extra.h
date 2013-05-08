@@ -350,20 +350,20 @@ enum
 // helper struct for reading binary file formats
 typedef struct memStream_s
 {
-	byte           *buffer;
-	int				bufSize;
-	byte           *curPos;
-	int             flags;
+	byte *buffer;
+	int bufSize;
+	byte *curPos;
+	int flags;
 }
 memStream_t;
 
-memStream_t    *AllocMemStream(byte *buffer, int bufSize);
-void			FreeMemStream(memStream_t * s);
-int				MemStreamRead(memStream_t *s, void *buffer, int len);
-int				MemStreamGetC(memStream_t *s);
-int				MemStreamGetLong(memStream_t * s);
-int				MemStreamGetShort(memStream_t * s);
-float			MemStreamGetFloat(memStream_t * s);
+memStream_t *AllocMemStream(byte *buffer, int bufSize);
+void            FreeMemStream(memStream_t *s);
+int             MemStreamRead(memStream_t *s, void *buffer, int len);
+int             MemStreamGetC(memStream_t *s);
+int             MemStreamGetLong(memStream_t *s);
+int             MemStreamGetShort(memStream_t *s);
+float           MemStreamGetFloat(memStream_t *s);
 
 //=============================================
 
