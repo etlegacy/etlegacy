@@ -206,6 +206,7 @@ void S_ChannelFree(channel_t *v)
 channel_t *S_ChannelMalloc(void)
 {
 	channel_t *v;
+
 	if (freelist == NULL)
 	{
 		return NULL;
@@ -579,7 +580,6 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 	channel_t *ch;
 	sfx_t     *sfx;
 	int       i, time;
-	int       inplay, allowed;
 
 	if (!s_soundStarted || s_soundMuted)
 	{
@@ -611,17 +611,8 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 	}
 
 	time = Com_Milliseconds();
+	ch   = s_channels;
 
-	// pick a channel to play on
-	// this limits same sounds played at same time
-	allowed = 16; // was 4 before see #159
-	if (entnum == listener_number)
-	{
-		allowed = 8;
-	}
-
-	ch     = s_channels;
-	inplay = 0;
 	for (i = 0; i < MAX_CHANNELS ; i++, ch++)
 	{
 		if (ch->entnum == entnum && ch->thesfx == sfx)
@@ -630,13 +621,7 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 			{
 				return;
 			}
-			inplay++;
 		}
-	}
-
-	if (inplay > allowed)
-	{
-		return;
 	}
 
 	sfx->lastTimeUsed = time;
@@ -684,7 +669,7 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 				}
 				if (chosen == -1)
 				{
-					Com_Printf("dropping sound\n");
+					Com_Printf("S_Base_StartSoundEx WARNING: dropping sound\n");
 					return;
 				}
 			}
