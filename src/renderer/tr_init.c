@@ -1154,6 +1154,7 @@ void GfxInfo_f(void)
 	{
 		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
 	}
+	ri.Printf(PRINT_ALL, "Renderer: vanilla\n");
 }
 
 /*
@@ -1519,10 +1520,13 @@ void RE_Shutdown(qboolean destroyWindow)
 void RE_EndRegistration(void)
 {
 	R_IssuePendingRenderCommands();
+	/*
+	RB: disabled unneeded reference to Sys_LowPhysicalMemory
 	if (!Sys_LowPhysicalMemory())
 	{
-//              RB_ShowImages();
+	//              RB_ShowImages();
 	}
+	*/
 }
 
 void R_DebugPolygon(int color, int numPoints, float *points);
@@ -1532,7 +1536,11 @@ void R_DebugPolygon(int color, int numPoints, float *points);
 GetRefAPI
 ==================
 */
-refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
+#ifdef USE_RENDERER_DLOPEN
+Q_EXPORT refexport_t * QDECL GetRefAPI(int apiVersion, refimport_t *rimp)
+#else
+refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
+#endif
 {
 	static refexport_t re;
 
@@ -1620,3 +1628,43 @@ refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
 
 	return &re;
 }
+
+#ifdef USE_RENDERER_DLOPEN
+void QDECL Com_Printf(const char *msg, ...)
+{
+	va_list argptr;
+	char    text[1024];
+
+	va_start(argptr, msg);
+	Q_vsnprintf(text, sizeof(text), msg, argptr);
+	va_end(argptr);
+
+	ri.Printf(PRINT_ALL, "%s", text);
+}
+
+/*
+void QDECL Com_DPrintf(const char *msg, ...)
+{
+    va_list argptr;
+    char    text[1024];
+
+    va_start(argptr, msg);
+    Q_vsnprintf(text, sizeof(text), msg, argptr);
+    va_end(argptr);
+
+    ri.Printf(PRINT_DEVELOPER, "%s", text);
+}
+*/
+
+void QDECL Com_Error(int level, const char *error, ...)
+{
+	va_list argptr;
+	char    text[1024];
+
+	va_start(argptr, error);
+	Q_vsnprintf(text, sizeof(text), error, argptr);
+	va_end(argptr);
+
+	ri.Error(level, "%s", text);
+}
+#endif

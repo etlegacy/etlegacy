@@ -195,6 +195,7 @@ typedef struct
 
 	cvar_t * (*Cvar_Get)(const char *name, const char *value, int flags);
 	void (*Cvar_Set)(const char *name, const char *value);
+	int (*Cvar_VariableIntegerValue)(const char *var_name);
 
 	void (*Cmd_AddCommand)(const char *name, void (*cmd)(void));
 	void (*Cmd_RemoveCommand)(const char *name);
@@ -218,6 +219,9 @@ typedef struct
 	void (*FS_WriteFile)(const char *qpath, const void *buffer, int size);
 	qboolean (*FS_FileExists)(const char *file);
 
+	long (*FS_FOpenFileRead)(const char *filename, fileHandle_t *file, qboolean uniqueFILE);
+	int (*FS_Read)(void *buffer, int len, fileHandle_t f);
+
 	// cinematic stuff
 	void (*CIN_UploadCinematic)(int handle);
 	int (*CIN_PlayCinematic)(const char *arg0, int xpos, int ypos, int width, int height, int bits);
@@ -227,6 +231,14 @@ typedef struct
 	qboolean (*CL_VideoRecording)(void);
 	void (*CL_WriteAVIVideoFrame)(const byte *buffer, int size);
 
+	void (*Sys_GLimpSafeInit)(void);
+	void (*Sys_GLimpInit)(void);
+	void (*Sys_SetEnv)(const char *name, const char *value);
+
+	// input event handling
+	void (*IN_Init)(void);
+	void (*IN_Shutdown)(void);
+	void (*IN_Restart)(void);
 } refimport_t;
 
 // this is the only function actually exported at the linker level

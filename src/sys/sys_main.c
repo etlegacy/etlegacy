@@ -540,8 +540,67 @@ void Sys_UnloadDll(void *dllHandle)
 	Sys_UnloadLibrary(dllHandle);
 }
 
+/*
+=================
+Sys_LoadDll
+
+First try to load library name from system library path,
+from executable path, then fs_basepath.
+=================
+*/
+
+void *Sys_LoadDll(const char *name, qboolean useSystemLib)
+{
+	void *dllhandle;
+
+	if (useSystemLib)
+	{
+		Com_Printf("Trying to load \"%s\"...\n", name);
+	}
+
+	if (!useSystemLib || !(dllhandle = Sys_LoadLibrary(name)))
+	{
+		const char *topDir;
+		char       libPath[MAX_OSPATH];
+
+		topDir = Sys_BinaryPath();
+
+		if (!*topDir)
+		{
+			topDir = ".";
+		}
+
+		Com_Printf("Trying to load \"%s\" from \"%s\"...\n", name, topDir);
+		Com_sprintf(libPath, sizeof(libPath), "%s%c%s", topDir, PATH_SEP, name);
+
+		if (!(dllhandle = Sys_LoadLibrary(libPath)))
+		{
+			const char *basePath = Cvar_VariableString("fs_basepath");
+
+			if (!basePath || !*basePath)
+			{
+				basePath = ".";
+			}
+
+			if (FS_FilenameCompare(topDir, basePath))
+			{
+				Com_Printf("Trying to load \"%s\" from \"%s\"...\n", name, basePath);
+				Com_sprintf(libPath, sizeof(libPath), "%s%c%s", basePath, PATH_SEP, name);
+				dllhandle = Sys_LoadLibrary(libPath);
+			}
+
+			if (!dllhandle)
+			{
+				Com_Printf("Loading \"%s\" failed\n", name);
+			}
+		}
+	}
+
+	return dllhandle;
+}
+
 /**
- * @brief Used by Sys_LoadDll to get handle on a mod library
+ * @brief Used by Sys_LoadGameDll to get handle on a mod library
  * @return Handle to a mod library
  */
 static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const char *fname)
@@ -580,9 +639,9 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
  * #2 look in fs_basepath
  * #3 try to revert to the default mod library
  */
-void *Sys_LoadDll(const char *name,
-                  intptr_t(**entryPoint) (int, ...),
-                  intptr_t (*systemcalls)(intptr_t, ...))
+void *Sys_LoadGameDll(const char *name,
+                      intptr_t(**entryPoint) (int, ...),
+                      intptr_t (*systemcalls)(intptr_t, ...))
 {
 	void *libHandle;
 	void (*dllEntry)(intptr_t (*syscallptr)(intptr_t, ...));

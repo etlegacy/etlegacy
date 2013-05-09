@@ -2583,6 +2583,7 @@ void RE_LoadWorldMap(const char *name)
 	dheader_t *header;
 	byte      *buffer;
 	byte      *startMarker;
+	int       nameLength;
 
 	skyboxportal = 0;
 
@@ -2626,7 +2627,9 @@ void RE_LoadWorldMap(const char *name)
 
 	// set map meta dir for lightmaps
 	// THIS MUST BE IN SYNC WITH Q3MAP2
-	tr.worldDir = CopyString(name);
+	nameLength  = strlen(name) + 1;
+	tr.worldDir = ri.Hunk_Alloc(sizeof(char) * nameLength, h_low);
+	Q_strncpyz(tr.worldDir, name, sizeof(char) * nameLength);
 	RE_StripExtensionForWorldDir(tr.worldDir, tr.worldDir);
 
 	// clear tr.world so if the level fails to load, the next

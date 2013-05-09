@@ -80,6 +80,7 @@ option(FEATURE_AUTOUPDATE	"Enable updater which downloads latest ET:L files"			O
 option(FEATURE_RENDERER2	"Build and use the new renderer"					OFF)
 option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
 option(FEATURE_IRC_CLIENT	"Enable IRC client"							OFF)
+option(RENDERER_DYNAMIC "Build renderer into a dynamic library"		OFF)
 
 cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"	ON "BUNDLED_LIBS" OFF)
 
@@ -239,6 +240,14 @@ FILE(GLOB CLIENT_SRC
 	"src/sdl/*.h"
 )
 
+FILE(GLOB CLIENT_SRC_REMOVE
+	"src/sdl/sdl_glimp.c"
+	"src/sdl/sdl_gamma.c"
+	"src/sdl/sdl_icon.h"
+)
+
+LIST(REMOVE_ITEM CLIENT_SRC ${CLIENT_SRC_REMOVE})
+
 FILE(GLOB CGAME_SRC
 	"src/cgame/*.c"
 	"src/cgame/*.h"
@@ -288,12 +297,19 @@ FILE(GLOB BOTLIB_FILES
 	"src/botlib/l_*.c"
 )
 
-FILE(GLOB RENDERER_FILES
-)
-
 FILE(GLOB RENDERER_COMMON
 	"src/renderercommon/*.c"
 	"src/renderercommon/*.h"
+	#Library build requires the following
+	"src/sdl/sdl_glimp.c"
+	"src/sdl/sdl_gamma.c"
+	"src/sdl/sdl_icon.h"
+	"src/sys/sys_local.h"
+	"src/qcommon/q_shared.h"
+	"src/qcommon/q_shared.c"
+	"src/qcommon/q_math.c"
+	"src/qcommon/puff.c"
+	"src/qcommon/puff.h"
 )
 	
 FILE(GLOB RENDERER1_FILES
@@ -357,11 +373,11 @@ endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JP
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
 	find_package(OpenGL REQUIRED)
-	list(APPEND CLIENT_LIBRARIES ${OPENGL_LIBRARIES})
+	list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
 	include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
 	
 	if(BUNDLED_GLEW)
-		list(APPEND CLIENT_LIBRARIES ${BUNDLED_GLEW_LIBRARIES})
+		list(APPEND RENDERER_LIBRARIES ${BUNDLED_GLEW_LIBRARIES})
 		include_directories(SYSTEM ${BUNDLED_GLEW_INCLUDE_DIR})
 		add_definitions(-DBUNDLED_GLEW)
 		add_definitions(-DGLEW_STATIC)
@@ -370,23 +386,23 @@ if(BUILD_CLIENT)
 	if(NOT BUNDLED_SDL)
 		find_package(SDL32 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
 		if(WIN32)
-			list(APPEND CLIENT_LIBRARIES ${SDL32MAIN_LIBRARY})
+			list(APPEND SDL_LIBRARIES ${SDL32MAIN_LIBRARY})
 		endif()
-		list(APPEND CLIENT_LIBRARIES ${SDL32_LIBRARIES})
+		list(APPEND SDL_LIBRARIES ${SDL32_LIBRARIES})
 		include_directories(SYSTEM ${SDL32_INCLUDE_DIR})
 	else()
-		list(APPEND CLIENT_LIBRARIES ${SDL32_BUNDLED_LIBRARIES})
+		list(APPEND SDL_LIBRARIES ${SDL32_BUNDLED_LIBRARIES})
 		include_directories(SYSTEM ${SDL32_BUNDLED_INCLUDE_DIR})
 		add_definitions(-DBUNDLED_SDL)
 	endif()
 	if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 		add_library(INTERNAL_SDLMain ${CMAKE_SOURCE_DIR}/src/sys/SDLMain.m )
-		list(APPEND CLIENT_LIBRARIES ${INTERNAL_SDLMain})
+		list(APPEND RENDERER_LIBRARIES ${INTERNAL_SDLMain})
 	endif()
 
 	if(NOT BUNDLED_JPEG)
 		find_package(JPEG 8 REQUIRED)
-		list(APPEND CLIENT_LIBRARIES ${JPEG_LIBRARIES})
+		list(APPEND RENDERER_LIBRARIES ${JPEG_LIBRARIES})
 		include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
 
 		# Check for libjpeg v8
@@ -396,7 +412,7 @@ if(BUILD_CLIENT)
 		# FIXME: function is checked, but HAVE_JPEG_MEM_SRC is empty. Why?
 		check_function_exists("jpeg_mem_src" HAVE_JPEG_MEM_SRC)
 	else()
-		list(APPEND CLIENT_LIBRARIES ${JPEG_BUNDLED_LIBRARIES})
+		list(APPEND RENDERER_LIBRARIES ${JPEG_BUNDLED_LIBRARIES})
 		include_directories(SYSTEM ${JPEG_BUNDLED_INCLUDE_DIR})
 	endif()
 
@@ -456,7 +472,7 @@ if(BUILD_CLIENT)
 
 	if(FEATURE_FREETYPE)
 		find_package(Freetype REQUIRED)
-		list(APPEND CLIENT_LIBRARIES ${FREETYPE_LIBRARIES})
+		list(APPEND RENDERER_LIBRARIES ${FREETYPE_LIBRARIES})
 		include_directories(SYSTEM ${FREETYPE_INCLUDE_DIRS})
 		add_definitions(-DFEATURE_FREETYPE)
 	endif(FEATURE_FREETYPE)
@@ -485,17 +501,6 @@ if(BUILD_CLIENT)
 		add_definitions(-DFEATURE_IRC_CLIENT)
 		list(APPEND CLIENT_SRC ${IRC_CLIENT_FILES})
 	endif(FEATURE_IRC_CLIENT)
-	
-	list(APPEND CLIENT_SRC ${RENDERER_COMMON})
-	list(APPEND RENDERER_FILES ${RENDERER_COMMON})
-	if(FEATURE_RENDERER2) #Builds the client with the other renderer
-		add_definitions(-DFEATURE_RENDERER2)
-		list(APPEND CLIENT_SRC ${RENDERER2_FILES})
-		list(APPEND RENDERER_FILES ${RENDERER2_FILES})
-	else()
-		list(APPEND CLIENT_SRC ${RENDERER1_FILES})
-		list(APPEND RENDERER_FILES ${RENDERER1_FILES})
-	endif()
 endif(BUILD_CLIENT)
 
 #-----------------------------------------------------------------
@@ -559,16 +564,9 @@ if(FEATURE_CURSES)
 endif(FEATURE_CURSES)
 
 #-----------------------------------------------------------------
-# Build
+# Groups for Visual Studio (Windows)
 #-----------------------------------------------------------------
-include_directories(${PROJECT_BINARY_DIR}/include) # git_version.h
-
-if(BUILD_CLIENT)
-	add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
-	#source_group("Source Files\\Renderer" FILES ${RENDERER_FILES})
-	source_group("Source Files\\Renderer" FILES ${RENDERER1_FILES})
-	source_group("Source Files\\Renderer2" FILES ${RENDERER2_FILES})
-	source_group("Source Files\\RendererCommon" FILES ${RENDERER_COMMON})
+if(WIN32)
 	source_group("Source Files\\Client" FILES ${CLIENT_FILES})
 	source_group("Source Files\\Server" FILES ${SERVER_FILES})
 	source_group("Source Files\\System" FILES ${SYSTEM_FILES})
@@ -577,24 +575,87 @@ if(BUILD_CLIENT)
 	source_group("Source Files\\Common" FILES ${COMMON_SRC})
 	source_group("Source Files\\Platform" FILES ${PLATFORM_SRC})
 	source_group("Source Files\\zlib" FILES ${ZLIB_SRC})
+	source_group("Source Files\\Renderer" FILES ${RENDERER1_FILES})
+	source_group("Source Files\\Renderer2" FILES ${RENDERER2_FILES})
+	source_group("Source Files\\RendererCommon" FILES ${RENDERER_COMMON})
+endif(WIN32)
+
+#-----------------------------------------------------------------
+# Build
+#-----------------------------------------------------------------
+include_directories(${PROJECT_BINARY_DIR}/include) # git_version.h
+
+if(BUILD_CLIENT)
+	#RENDERER BUILDS
+	if(RENDERER_DYNAMIC)
+		MESSAGE("Will build dynamic renderer libraries")
+		add_definitions( "-DUSE_RENDERER_DLOPEN" )
+		set(REND_LIBTYPE MODULE)
+	else(RENDERER_DYNAMIC)
+		set(REND_LIBTYPE STATIC)
+	endif(RENDERER_DYNAMIC)
+	if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
+		add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
+		if(BUNDLED_SDL)
+			add_dependencies(renderer_opengl1_${ARCH} bundled_sdl)
+		endif(BUNDLED_SDL)
+		if(BUNDLED_GLEW)
+				add_dependencies(renderer_opengl1_${ARCH} bundled_glew)
+		endif(BUNDLED_GLEW)
+		if(BUNDLED_JPEG)
+			add_dependencies(renderer_opengl1_${ARCH} bundled_jpeg)
+		endif(BUNDLED_JPEG)
+		target_link_libraries(renderer_opengl1_${ARCH} ${RENDERER_LIBRARIES} ${SDL_LIBRARIES})
+		set_target_properties(renderer_opengl1_${ARCH}
+			PROPERTIES COMPILE_DEFINITIONS "USE_ICON"
+		)
+		install(TARGETS renderer_opengl1_${ARCH}
+			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+			ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+		)
+		if(NOT RENDERER_DYNAMIC)
+			list(APPEND CLIENT_LIBRARIES renderer_opengl1_${ARCH})
+		endif()
+	endif()
+	if(FEATURE_RENDERER2)
+		add_library(renderer_opengl2_${ARCH} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON})
+		if(BUNDLED_SDL)
+			add_dependencies(renderer_opengl2_${ARCH} bundled_sdl)
+		endif(BUNDLED_SDL)
+		if(BUNDLED_GLEW)
+				add_dependencies(renderer_opengl2_${ARCH} bundled_glew)
+		endif(BUNDLED_GLEW)
+		if(BUNDLED_JPEG)
+			add_dependencies(renderer_opengl2_${ARCH} bundled_jpeg)
+		endif(BUNDLED_JPEG)
+		target_link_libraries(renderer_opengl2_${ARCH} ${RENDERER_LIBRARIES} ${SDL_LIBRARIES})
+		set_target_properties(renderer_opengl2_${ARCH}
+			PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER2;USE_ICON"
+		)
+		install(TARGETS renderer_opengl2_${ARCH}
+			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+			ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+		)
+		if(NOT RENDERER_DYNAMIC)
+			list(APPEND CLIENT_LIBRARIES renderer_opengl2_${ARCH})
+		endif()
+	endif(FEATURE_RENDERER2)
+	
+	add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 	if(BUNDLED_SDL)
 		add_dependencies(etl bundled_sdl)
 	endif(BUNDLED_SDL)
 	if(BUNDLED_CURL)
 		add_dependencies(etl bundled_curl)
 	endif(BUNDLED_CURL)
-	if(BUNDLED_JPEG)
-		add_dependencies(etl bundled_jpeg)
-	endif(BUNDLED_JPEG)
 	if(BUNDLED_OGG_VORBIS)
 		add_dependencies(etl bundled_ogg bundled_ogg_vorbis)
 	endif(BUNDLED_OGG_VORBIS)
-	if(BUNDLED_GLEW)
-			add_dependencies(etl bundled_glew)
-	endif(BUNDLED_GLEW)
+	
 	target_link_libraries(etl
 		${OS_LIBRARIES} # Has to go after cURL and SDL
 		${CLIENT_LIBRARIES}
+		${SDL_LIBRARIES}
 	)
 	set_target_properties(etl
 		PROPERTIES COMPILE_DEFINITIONS "USE_ICON")

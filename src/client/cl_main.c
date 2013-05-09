@@ -3612,8 +3612,12 @@ void CL_InitRef(void)
 	ri.FS_ListFiles    = FS_ListFiles;
 	ri.FS_FileIsInPAK  = FS_FileIsInPAK;
 	ri.FS_FileExists   = FS_FileExists;
-	ri.Cvar_Get        = Cvar_Get;
-	ri.Cvar_Set        = Cvar_Set;
+
+	ri.FS_FOpenFileRead = FS_FOpenFileRead;
+	ri.FS_Read          = FS_Read;
+
+	ri.Cvar_Get = Cvar_Get;
+	ri.Cvar_Set = Cvar_Set;
 //     ri.Cvar_SetValue = Cvar_SetValue;
 //     ri.Cvar_CheckRange = Cvar_CheckRange;
 //     ri.Cvar_VariableIntegerValue = Cvar_VariableIntegerValue;
@@ -3626,15 +3630,19 @@ void CL_InitRef(void)
 	ri.CL_VideoRecording     = CL_VideoRecording;
 	ri.CL_WriteAVIVideoFrame = CL_WriteAVIVideoFrame;
 
-//     ri.IN_Init = IN_Init;
-//     ri.IN_Shutdown = IN_Shutdown;
-//     ri.IN_Restart = IN_Restart;
+	ri.Sys_GLimpSafeInit = Sys_GLimpSafeInit;
+	ri.Sys_GLimpInit     = Sys_GLimpInit;
+	ri.Sys_SetEnv        = Sys_SetEnv;
+
+	ri.Cvar_VariableIntegerValue = Cvar_VariableIntegerValue;
+
+	ri.IN_Init     = IN_Init;
+	ri.IN_Shutdown = IN_Shutdown;
+	ri.IN_Restart  = IN_Restart;
 //
 //     ri.ftol = Q_ftol;
 //
 //     ri.Sys_SetEnv = Sys_SetEnv;
-//     ri.Sys_GLimpSafeInit = Sys_GLimpSafeInit;
-//     ri.Sys_GLimpInit = Sys_GLimpInit;
 //     ri.Sys_LowPhysicalMemory = Sys_LowPhysicalMemory;
 
 	ret = GetRefAPI(REF_API_VERSION, &ri);

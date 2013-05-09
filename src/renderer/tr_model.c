@@ -103,7 +103,7 @@ void R_LoadModelShadow(model_t *mod)
 
 	// load file
 	buf = NULL;
-	if (FS_FOpenFileRead(filename, NULL, qfalse))
+	if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
 	{
 		ri.FS_ReadFile(filename, (void **) &buf);
 	}
@@ -281,7 +281,7 @@ qhandle_t RE_RegisterModel(const char *name)
 
 		filename[strlen(filename) - 1] = 'c';    // try MDC first
 
-		if (FS_FOpenFileRead(filename, NULL, qfalse))
+		if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
 		{
 			ri.FS_ReadFile(filename, (void **)&buf);
 		}
@@ -290,7 +290,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		{
 			filename[strlen(filename) - 1] = '3';    // try MD3 second
 
-			if (FS_FOpenFileRead(filename, NULL, qfalse))
+			if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
 			{
 				ri.FS_ReadFile(filename, (void **)&buf);
 			}

@@ -1352,6 +1352,7 @@ void GfxInfo_f(void)
 	{
 		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
 	}
+	ri.Printf(PRINT_ALL, "Renderer: (c)rap\n");
 }
 
 #if !defined(USE_D3D10)
@@ -1379,7 +1380,7 @@ void R_Register(void)
 	r_glDebugProfile = ri.Cvar_Get("r_glDebugProfile", "", CVAR_LATCH);
 
 #ifdef USE_GLSL_OPTIMIZER
-	r_glslOptimizer = ri.Cvar_Get("r_glslOptimizer", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_SHADER);
+	r_glslOptimizer = ri.Cvar_Get("r_glslOptimizer", "1", CVAR_ARCHIVE | CVAR_LATCH);
 #endif
 
 	// latched and archived variables
@@ -2314,7 +2315,11 @@ GetRefAPI
 //#if defined(__cplusplus)
 //extern "C" {
 //#endif
-refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
+#ifdef USE_RENDERER_DLOPEN
+Q_EXPORT refexport_t * QDECL GetRefAPI(int apiVersion, refimport_t *rimp)
+#else
+refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
+#endif
 {
 	static refexport_t re;
 
@@ -2453,12 +2458,7 @@ refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
 }
 
 
-#ifndef REF_HARD_LINKED
-
-// this is only here so the functions in q_shared.c and q_math.c can link
-#if defined(__cplusplus)
-extern "C" {
-#endif
+#ifdef USE_RENDERER_DLOPEN
 void QDECL Com_Printf(const char *msg, ...)
 {
 	va_list argptr;
@@ -2471,17 +2471,19 @@ void QDECL Com_Printf(const char *msg, ...)
 	ri.Printf(PRINT_ALL, "%s", text);
 }
 
+/*
 void QDECL Com_DPrintf(const char *msg, ...)
 {
-	va_list argptr;
-	char    text[1024];
+    va_list argptr;
+    char    text[1024];
 
-	va_start(argptr, msg);
-	Q_vsnprintf(text, sizeof(text), msg, argptr);
-	va_end(argptr);
+    va_start(argptr, msg);
+    Q_vsnprintf(text, sizeof(text), msg, argptr);
+    va_end(argptr);
 
-	ri.Printf(PRINT_DEVELOPER, "%s", text);
+    ri.Printf(PRINT_DEVELOPER, "%s", text);
 }
+*/
 
 void QDECL Com_Error(int level, const char *error, ...)
 {
@@ -2494,10 +2496,6 @@ void QDECL Com_Error(int level, const char *error, ...)
 
 	ri.Error(level, "%s", text);
 }
-#if defined(__cplusplus)
-}
-#endif
-
 #endif
 
 #if defined(__cplusplus)
