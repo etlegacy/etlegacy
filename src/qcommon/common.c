@@ -558,7 +558,6 @@ void Info_Print(const char *s)
 	char key[512];
 	char value[512];
 	char *o;
-	int  l;
 
 	if (*s == '\\')
 	{
@@ -568,19 +567,23 @@ void Info_Print(const char *s)
 	{
 		o = key;
 		while (*s && *s != '\\')
+		{
 			*o++ = *s++;
+		}
 		*o = 0;
 
 		if (!*s)
 		{
-			Com_Printf("MISSING VALUE\n");
+			Com_Printf("Info_Print: MISSING VALUE\n");
 			return;
 		}
 
 		o = value;
 		s++;
 		while (*s && *s != '\\')
+		{
 			*o++ = *s++;
+		}
 		*o = 0;
 
 		if (*s)
@@ -806,9 +809,8 @@ Com_HashKey
 */
 int Com_HashKey(char *string, int maxlen)
 {
-	int register hash, i;
+	int register hash = 0, i;
 
-	hash = 0;
 	for (i = 0; i < maxlen && string[i] != '\0'; i++)
 	{
 		hash += string[i] * (119 + i);
@@ -1423,15 +1425,11 @@ Com_Meminfo_f
 void Com_Meminfo_f(void)
 {
 	memblock_t *block;
-	int        zoneBytes, zoneBlocks;
+	int        zoneBytes = 0, zoneBlocks = 0;
 	int        smallZoneBytes, smallZoneBlocks;
-	int        botlibBytes, rendererBytes;
+	int        botlibBytes = 0, rendererBytes = 0;
 	int        unused;
 
-	zoneBytes     = 0;
-	botlibBytes   = 0;
-	rendererBytes = 0;
-	zoneBlocks    = 0;
 	for (block = mainzone->blocklist.next ; ; block = block->next)
 	{
 		if (Cmd_Argc() != 1)
@@ -1789,10 +1787,8 @@ Hunk_MemoryRemaining
 */
 int Hunk_MemoryRemaining(void)
 {
-	int low, high;
-
-	low  = hunk_low.permanent > hunk_low.temp ? hunk_low.permanent : hunk_low.temp;
-	high = hunk_high.permanent > hunk_high.temp ? hunk_high.permanent : hunk_high.temp;
+	int low  = hunk_low.permanent > hunk_low.temp ? hunk_low.permanent : hunk_low.temp;
+	int high = hunk_high.permanent > hunk_high.temp ? hunk_high.permanent : hunk_high.temp;
 
 	return s_hunkTotal - (low + high);
 }
@@ -2107,7 +2103,6 @@ void Hunk_ClearTempMemory(void)
 
 /*
 ===================================================================
-
 EVENTS AND JOURNALING
 
 In addition to these events, .cfg files are also copied to the
@@ -2183,9 +2178,7 @@ be freed by the game later.
 */
 void Com_QueueEvent(int time, sysEventType_t type, int value, int value2, int ptrLength, void *ptr)
 {
-	sysEvent_t *ev;
-
-	ev = &eventQueue[eventHead & MASK_QUEUED_EVENTS];
+	sysEvent_t *ev = &eventQueue[eventHead & MASK_QUEUED_EVENTS];
 
 	if (eventHead - eventTail >= MAX_QUEUED_EVENTS)
 	{
@@ -2363,10 +2356,8 @@ Com_PushEvent
 */
 void Com_PushEvent(sysEvent_t *event)
 {
-	sysEvent_t *ev;
+	sysEvent_t *ev            = &com_pushedEvents[com_pushedEventsHead & (MAX_PUSHED_EVENTS - 1)];
 	static int printedWarning = 0;
-
-	ev = &com_pushedEvents[com_pushedEventsHead & (MAX_PUSHED_EVENTS - 1)];
 
 	if (com_pushedEventsHead - com_pushedEventsTail >= MAX_PUSHED_EVENTS)
 	{
@@ -2398,7 +2389,7 @@ void Com_PushEvent(sysEvent_t *event)
 Com_GetEvent
 =================
 */
-sysEvent_t  Com_GetEvent(void)
+sysEvent_t Com_GetEvent(void)
 {
 	if (com_pushedEventsHead > com_pushedEventsTail)
 	{
@@ -3383,7 +3374,6 @@ void Com_Frame(void)
 	// trace optimization tracking
 	if (com_showtrace->integer)
 	{
-
 		extern int c_traces, c_brush_traces, c_patch_traces;
 		extern int c_pointcontents;
 
@@ -3758,5 +3748,7 @@ void Com_RandomBytes(byte *string, int len)
 
 	Com_Printf("Com_RandomBytes: using weak randomization\n");
 	for (i = 0; i < len; i++)
+	{
 		string[i] = (unsigned char)(rand() % 255);
+	}
 }
