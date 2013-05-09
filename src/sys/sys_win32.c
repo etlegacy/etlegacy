@@ -943,10 +943,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Com_Init(sys_cmdline);
 	NET_Init();
 
-#ifndef DEDICATED
-	IN_Init(); // fretn - directinput must be inited after video etc
-#endif
-
 	_getcwd(cwd, sizeof(cwd));
 	Com_Printf("Working directory: %s\n", cwd);
 

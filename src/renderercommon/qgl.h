@@ -34,7 +34,11 @@
 #ifndef __QGL_H__
 #define __QGL_H__
 
-#include "GL/glew.h"
+#ifdef BUNDLED_GLEW
+#	include "GL/glew.h"
+#else
+#	include <GL/glew.h>
+#endif
 
 #ifndef FEATURE_RENDERER2
 #ifdef BUNDLED_SDL
