@@ -217,12 +217,12 @@ panel_button_t loadScreenMeterBackText =
 {
 	NULL,
 	"LOADING",
-	{ 440 + 28,                480 - 28 + 12 + 1,   200 - 56 - 2, 16 },
-	{ 0,                       0,                   0,            0, 0, 0, 0, 0},
-	&loadScreenMeterBackTxt,   /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
-	BG_PanelButtonsRender_Text,
+	{ 440 + 28,                 480 - 28 + 12 + 1,   200 - 56 - 2, 16 },
+	{ 0,                        0,                   0,            0, 0, 0, 0, 0},
+	&loadScreenMeterBackTxt,    /* font     */
+	NULL,                       /* keyDown  */
+	NULL,                       /* keyUp    */
+	CG_LoadPanel_LoadingBarText,
 	NULL,
 };
 
@@ -722,4 +722,12 @@ void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 			CG_LoadPanel_DrawPin(cgs.campaignData.arenas[i].longname, px, py, 0.22f, 0.25f, shader, 16.f, 16.f);
 		}
 	}
+}
+
+/**
+ * @brief draws infoScreenText in loading bar
+ */
+void CG_LoadPanel_LoadingBarText(panel_button_t *button)
+{
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, cg.infoScreenText, 0, 0, 0, button->font->font);
 }

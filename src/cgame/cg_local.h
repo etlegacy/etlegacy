@@ -1240,7 +1240,7 @@ typedef struct
 	qhandle_t fleshSmokePuffShader;   // for bullet hit flesh smoke puffs
 
 	qhandle_t smokePuffShader;
-	qhandle_t smokePuffRageProShader;
+	// qhandle_t smokePuffRageProShader;
 	qhandle_t shotgunSmokePuffShader;
 	qhandle_t waterBubbleShader;
 	qhandle_t bloodTrailShader;
@@ -3288,6 +3288,7 @@ void CG_LoadPanel_RenderCampaignNameText(panel_button_t *button);
 void CG_LoadPanel_RenderPercentageMeter(panel_button_t *button);
 void CG_LoadPanel_RenderContinueButton(panel_button_t *button);
 void CG_LoadPanel_RenderLoadingBar(panel_button_t *button);
+void CG_LoadPanel_LoadingBarText(panel_button_t *button);
 void CG_LoadPanel_KeyHandling(int key, qboolean down);
 qboolean CG_LoadPanel_ContinueButtonKeyDown(panel_button_t *button, int key);
 void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh);

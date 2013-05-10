@@ -3356,7 +3356,7 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 		else if (G_EmplacedGunIsMountable(traceEnt, ent))
 		{
 			vec3_t    point;
-			vec3_t   forward;       //, offset, end;
+			vec3_t    forward;      //, offset, end;
 			gclient_t *cl = &level.clients[ent->s.clientNum];
 
 			AngleVectors(traceEnt->s.apos.trBase, forward, NULL, NULL);
