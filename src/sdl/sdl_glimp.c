@@ -501,7 +501,11 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 				}
 				break;
 			case 1:
-				if (depthbits == 24)
+				if (depthbits == 32)
+				{
+					depthbits = 24;
+				}
+				else if (depthbits == 24)
 				{
 					depthbits = 16;
 				}
