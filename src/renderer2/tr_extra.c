@@ -284,7 +284,7 @@ void MatrixMultiplyScale(matrix_t m, vec_t x, vec_t y, vec_t z)
 
 	MatrixCopy(m, tmp);
 	MatrixSetupScale(scale, x, y, z);
-	MatrixMultiply(tmp, scale, m);
+	MatrixMultiplyMOD(tmp, scale, m);
 #else
 	m[0] *= x;     m[4] *= y;        m[8] *= z;
 	m[1] *= x;     m[5] *= y;        m[9] *= z;
@@ -1261,7 +1261,7 @@ void MatrixMultiplyShear(matrix_t m, vec_t x, vec_t y)
 
 	MatrixCopy(m, tmp);
 	MatrixSetupShear(shear, x, y);
-	MatrixMultiply(tmp, shear, m);
+	MatrixMultiplyMOD(tmp, shear, m);
 }
 
 void MatrixToVectorsFRU(const matrix_t m, vec3_t forward, vec3_t right, vec3_t up)

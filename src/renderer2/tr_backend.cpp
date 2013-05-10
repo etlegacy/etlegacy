@@ -2640,7 +2640,7 @@ static void RB_RenderInteractionsShadowMapped()
 							                             -splitFrustumViewBounds[1][2],
 							                             -splitFrustumViewBounds[0][2]);
 								#endif
-							MatrixMultiply(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
+							MatrixMultiplyMOD(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
 
 							// find the bounding box of the current split in the light's clip space
 							ClearBounds(splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
@@ -2803,7 +2803,7 @@ static void RB_RenderInteractionsShadowMapped()
 							// transform from OpenGL's right handed into D3D's left handed coordinate system
 #if 0
 							MatrixScaleTranslateToUnitCube(projectionMatrix, cropBounds[0], cropBounds[1]);
-							MatrixMultiply(flipZMatrix, projectionMatrix, light->projectionMatrix);
+							MatrixMultiplyMOD(flipZMatrix, projectionMatrix, light->projectionMatrix);
 #else
 							MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
 #endif
@@ -3799,7 +3799,7 @@ skipInteraction:
 							axis_t   axis;
 
 							MatrixSetupScale(scale, light->l.radius[0], light->l.radius[1], light->l.radius[2]);
-							MatrixMultiply(scale, light->transformMatrix, transform);
+							MatrixMultiplyMOD(scale, light->transformMatrix, transform);
 
 							GL_LoadModelViewMatrix(transform);
 							GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
@@ -4702,8 +4702,8 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 #if 0
 							MatrixOrthogonalProjection(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], cropBounds[0][2], cropBounds[1][2]);
-							MatrixMultiply(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
-							MatrixMultiply(viewProjectionMatrix, backEnd.viewParms.world.viewMatrix, postMatrix);
+							MatrixMultiplyMOD(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
+							MatrixMultiplyMOD(viewProjectionMatrix, backEnd.viewParms.world.viewMatrix, postMatrix);
 
 							VectorSet(viewOrigin, 0, 0, 0);
 							MatrixTransformPoint2(viewOrigin);
@@ -4852,19 +4852,19 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 								MatrixMultiply2(viewProjectionMatrix, lispMatrix);
 								//MatrixMultiply2(viewProjectionMatrix, switchToGL);
 								//MatrixMultiplyScale(viewProjectionMatrix, 1, 1, -1);
-								//MatrixMultiply(flipZMatrix, lispMatrix, viewProjectionMatrix);
-								//MatrixMultiply(lispMatrix, light->viewMatrix, viewProjectionMatrix);
+								//MatrixMultiplyMOD(flipZMatrix, lispMatrix, viewProjectionMatrix);
+								//MatrixMultiplyMOD(lispMatrix, light->viewMatrix, viewProjectionMatrix);
 								//MatrixMultiply2(viewProjectionMatrix, cropMatrix);
 								MatrixMultiply2(viewProjectionMatrix, light->viewMatrix);
 								//MatrixMultiply2(viewProjectionMatrix, projectionCenter);
 								//MatrixMultiply2(viewProjectionMatrix, transformMatrix);
 #else
-								MatrixMultiply(lispMatrix, light->viewMatrix, viewProjectionMatrix);
-								//MatrixMultiply(flipZMatrix, lispMatrix, viewProjectionMatrix);
+								MatrixMultiplyMOD(lispMatrix, light->viewMatrix, viewProjectionMatrix);
+								//MatrixMultiplyMOD(flipZMatrix, lispMatrix, viewProjectionMatrix);
 								//MatrixMultiply2(viewProjectionMatrix, light->viewMatrix);
 #endif
-								//MatrixMultiply(lispMatrix, light->viewMatrix, viewProjectionMatrix);
-								//MatrixMultiply(light->viewMatrix, lispMatrix, viewProjectionMatrix);
+								//MatrixMultiplyMOD(lispMatrix, light->viewMatrix, viewProjectionMatrix);
+								//MatrixMultiplyMOD(light->viewMatrix, lispMatrix, viewProjectionMatrix);
 
 								//transform the light volume points from world into the distorted light space
 								//transformVecPoint(&Bcopy,lightProjection);
@@ -5054,7 +5054,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							                             -splitFrustumViewBounds[1][2],
 							                             -splitFrustumViewBounds[0][2]);
 
-							MatrixMultiply(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
+							MatrixMultiplyMOD(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
 
 							// find the bounding box of the current split in the light's clip space
 							ClearBounds(splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
@@ -5213,7 +5213,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							// transform from OpenGL's right handed into D3D's left handed coordinate system
 #if 0
 							MatrixScaleTranslateToUnitCube(projectionMatrix, cropBounds[0], cropBounds[1]);
-							MatrixMultiply(flipZMatrix, projectionMatrix, light->projectionMatrix);
+							MatrixMultiplyMOD(flipZMatrix, projectionMatrix, light->projectionMatrix);
 #else
 							MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
 #endif
@@ -5378,7 +5378,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							axis_t   axis;
 
 							MatrixSetupScale(scale, light->l.radius[0], light->l.radius[1], light->l.radius[2]);
-							MatrixMultiply(scale, light->transformMatrix, transform);
+							MatrixMultiplyMOD(scale, light->transformMatrix, transform);
 
 							GL_LoadModelViewMatrix(transform);
 							GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
@@ -8843,7 +8843,7 @@ static void RB_RenderDebugUtils()
 						matrix_t transform, scale, rot;
 
 						MatrixSetupScale(scale, light->l.radius[0], light->l.radius[1], light->l.radius[2]);
-						MatrixMultiply(light->transformMatrix, scale, transform);
+						MatrixMultiplyMOD(light->transformMatrix, scale, transform);
 
 						GL_LoadModelViewMatrix(transform);
 						//GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
@@ -9942,7 +9942,7 @@ static void RB_RenderDebugUtils()
 						MatrixFromAngles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
 						MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, backEnd.viewParms.orientation.origin);
 						MatrixAffineInverse(transformMatrix, viewMatrix);
-						MatrixMultiply(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
+						MatrixMultiplyMOD(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
 						#else
 						MatrixLookAtRH(viewMatrix, backEnd.viewParms.orientation.origin, forward, up);
 						#endif

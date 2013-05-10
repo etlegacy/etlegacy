@@ -1100,7 +1100,7 @@ void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *vie
 
 	MatrixSetupTransformFromVectorsFLU(_or->transformMatrix, _or->axis[0], _or->axis[1], _or->axis[2], _or->origin);
 	MatrixAffineInverse(_or->transformMatrix, _or->viewMatrix);
-	MatrixMultiply(viewParms->world.viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
+	MatrixMultiplyMOD(viewParms->world.viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
 
 	// calculate the viewer origin in the model's space
 	// needed for fog, specular, and environment mapping
@@ -1156,7 +1156,7 @@ void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light,
 
 		MatrixIdentity(_or->transformMatrix);
 		//MatrixAffineInverse(_or->transformMatrix, _or->viewMatrix);
-		MatrixMultiply(light->viewMatrix, _or->transformMatrix, _or->viewMatrix);
+		MatrixMultiplyMOD(light->viewMatrix, _or->transformMatrix, _or->viewMatrix);
 		MatrixCopy(_or->viewMatrix, _or->modelViewMatrix);
 		return;
 	}
@@ -1170,7 +1170,7 @@ void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light,
 	MatrixSetupTransformFromVectorsFLU(_or->transformMatrix, _or->axis[0], _or->axis[1], _or->axis[2], _or->origin);
 	MatrixAffineInverse(_or->transformMatrix, _or->viewMatrix);
 
-	MatrixMultiply(light->viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
+	MatrixMultiplyMOD(light->viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
 
 	// calculate the viewer origin in the model's space
 	// needed for fog, specular, and environment mapping
@@ -1214,7 +1214,7 @@ void R_RotateLightForViewParms(const trRefLight_t *light, const viewParms_t *vie
 
 	MatrixSetupTransformFromVectorsFLU(_or->transformMatrix, _or->axis[0], _or->axis[1], _or->axis[2], _or->origin);
 	MatrixAffineInverse(_or->transformMatrix, _or->viewMatrix);
-	MatrixMultiply(viewParms->world.viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
+	MatrixMultiplyMOD(viewParms->world.viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
 
 	// calculate the viewer origin in the light's space
 	// needed for fog, specular, and environment mapping
@@ -1266,11 +1266,11 @@ void R_RotateForViewer(void)
 #if 0
 	// convert from our right handed coordinate system (looking down X)
 	// to D3D's left handed coordinate system (looking down Z)
-	MatrixMultiply(quakeToD3DMatrix, tr.orientation.viewMatrix2, viewMatrix);
+	MatrixMultiplyMOD(quakeToD3DMatrix, tr.orientation.viewMatrix2, viewMatrix);
 #elif 1
 	// convert from our right handed coordinate system (looking down X)
 	// to OpenGL's right handed coordinate system (looking down -Z)
-	MatrixMultiply(quakeToOpenGLMatrix, tr.orientation.viewMatrix2, viewMatrix);
+	MatrixMultiplyMOD(quakeToOpenGLMatrix, tr.orientation.viewMatrix2, viewMatrix);
 #else
 
 	// Tr3B:  !!! THIS BREAKS MIRRORS !!!
@@ -1322,8 +1322,8 @@ void R_RotateForViewer(void)
 #if 1
 		MatrixPlaneReflection(mirrorMatrix, plane);
 		//MatrixInverse(mirrorMatrix);
-		MatrixMultiply(mirrorMatrix, viewMatrix, tr.orientation.viewMatrix);
-		//MatrixMultiply(viewMatrix, mirrorMatrix, tr.orientation.viewMatrix);
+		MatrixMultiplyMOD(mirrorMatrix, viewMatrix, tr.orientation.viewMatrix);
+		//MatrixMultiplyMOD(viewMatrix, mirrorMatrix, tr.orientation.viewMatrix);
 #else
 
 		// clipping plane in view space
@@ -1337,11 +1337,11 @@ void R_RotateForViewer(void)
 
 		MatrixPlaneReflection(mirrorMatrix, plane2);
 
-		//MatrixMultiply(mirrorMatrix, quakeToOpenGLMatrix, mirrorMatrix2);
-		//MatrixMultiply(quakeToOpenGLMatrix, mirrorMatrix, mirrorMatrix2);
+		//MatrixMultiplyMOD(mirrorMatrix, quakeToOpenGLMatrix, mirrorMatrix2);
+		//MatrixMultiplyMOD(quakeToOpenGLMatrix, mirrorMatrix, mirrorMatrix2);
 
-		MatrixMultiply(mirrorMatrix, viewMatrix, tr.orientation.viewMatrix);
-		//MatrixMultiply(viewMatrix, mirrorMatrix, tr.orientation.viewMatrix);
+		MatrixMultiplyMOD(mirrorMatrix, viewMatrix, tr.orientation.viewMatrix);
+		//MatrixMultiplyMOD(viewMatrix, mirrorMatrix, tr.orientation.viewMatrix);
 #endif
 	}
 	else
@@ -1649,7 +1649,7 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 	vec4_t   axis[3];
 	vec4_t   trans;
 
-	MatrixMultiply(tr.viewParms.projectionMatrix, tr.orientation.modelViewMatrix, mvp);
+	MatrixMultiplyMOD(tr.viewParms.projectionMatrix, tr.orientation.modelViewMatrix, mvp);
 	MatrixCopy(tr.orientation.modelViewMatrix, mvp);
 
 	Vector4Set(axis[0], 1, 0, 0, 1);
@@ -3515,7 +3515,7 @@ void R_RenderView(viewParms_t *parms)
 
 	// set camera frustum planes in world space again, but this time including the far plane
 	tr.orientation = tr.viewParms.world;
-	MatrixMultiply(tr.viewParms.projectionMatrix, tr.orientation.modelViewMatrix, mvp);
+	MatrixMultiplyMOD(tr.viewParms.projectionMatrix, tr.orientation.modelViewMatrix, mvp);
 	R_SetupFrustum2(tr.viewParms.frustums[0], mvp);
 
 	// for parallel split shadow mapping

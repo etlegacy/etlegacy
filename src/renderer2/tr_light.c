@@ -1773,7 +1773,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 
 		// convert from our coordinate system (looking down X)
 		// to OpenGL's coordinate system (looking down -Z)
-		MatrixMultiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
+		MatrixMultiplyMOD(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
 
 		// OpenGL projection matrix
 		fovX = 90;
@@ -1799,7 +1799,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		proj[3] = 0;                    proj[7] = 0;                    proj[11] = -1;                      proj[15] = 0;
 
 		// calculate frustum planes using the modelview projection matrix
-		MatrixMultiply(projectionMatrix, viewMatrix, viewProjectionMatrix);
+		MatrixMultiplyMOD(projectionMatrix, viewMatrix, viewProjectionMatrix);
 		R_SetupFrustum2(frustum, viewProjectionMatrix);
 
 		// use the frustum planes to cut off shadowmaps beyond the light volume
@@ -1986,7 +1986,7 @@ void R_ComputeFinalAttenuation(shaderStage_t *pStage, trRefLight_t *light)
 
 	RB_CalcTexMatrix(&pStage->bundle[TB_COLORMAP], matrix);
 
-	MatrixMultiply(matrix, light->attenuationMatrix, light->attenuationMatrix2);
+	MatrixMultiplyMOD(matrix, light->attenuationMatrix, light->attenuationMatrix2);
 }
 
 /*

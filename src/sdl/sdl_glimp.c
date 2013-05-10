@@ -1371,13 +1371,14 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	{
 		ri.Printf(PRINT_ALL, "Using GLEW %s\n", glewGetString(GLEW_VERSION));
 	}
-
+	/*
 #ifdef FEATURE_RENDERER2
 	if (!GLimp_InitOpenGL3xContext())
 	{
 		return RSERR_OLD_GL;
 	}
 #endif
+	*/
 
 	if (!vidscreen)
 	{

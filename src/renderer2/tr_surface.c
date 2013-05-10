@@ -1987,7 +1987,7 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 
 				MatrixSetupTransformFromQuat(m2, backEnd.currentEntity->e.skeleton.bones[i].rotation,
 				                             backEnd.currentEntity->e.skeleton.bones[i].origin);
-				MatrixMultiply(m2, m, boneMatrices[i]);
+				MatrixMultiplyMOD(m2, m, boneMatrices[i]);
 			}
 			else
 #endif
@@ -2044,7 +2044,7 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 
 				MatrixSetupTransformFromQuat(m2, backEnd.currentEntity->e.skeleton.bones[i].rotation,
 				                             backEnd.currentEntity->e.skeleton.bones[i].origin);
-				MatrixMultiply(m2, m, boneMatrices[i]);
+				MatrixMultiplyMOD(m2, m, boneMatrices[i]);
 
 				MatrixMultiply2(boneMatrices[i], model->bones[i].inverseTransform);
 			}
@@ -2430,7 +2430,7 @@ static void Tess_SurfaceVBOMD5Mesh(srfVBOMD5Mesh_t *srf)
 			                             backEnd.currentEntity->e.skeleton.bones[i].origin);
 
 
-			MatrixMultiply(m2, m, tess.boneMatrices[i]);
+			MatrixMultiplyMOD(m2, m, tess.boneMatrices[i]);
 			MatrixMultiply2(tess.boneMatrices[i], model->bones[i].inverseTransform);
 		}
 
@@ -2440,7 +2440,7 @@ static void Tess_SurfaceVBOMD5Mesh(srfVBOMD5Mesh_t *srf)
 			MatrixSetupTransformFromQuat(m2, backEnd.currentEntity->e.skeleton.bones[srf->boneRemapInverse[i]].rotation,
 			                             backEnd.currentEntity->e.skeleton.bones[srf->boneRemapInverse[i]].origin);
 
-			MatrixMultiply(m2, m, tess.boneMatrices[i]);
+			MatrixMultiplyMOD(m2, m, tess.boneMatrices[i]);
 			MatrixMultiply2(tess.boneMatrices[i], model->bones[srf->boneRemapInverse[i]].inverseTransform);
 		}
 #endif
