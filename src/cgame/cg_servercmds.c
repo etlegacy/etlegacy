@@ -1748,7 +1748,6 @@ const char *CG_LocalizeServerCommand(const char *buf)
 		// modified to the correct behaviour
 		if (*s == '[' && (!Q_strncmp(s, "[lon]", 5) || !Q_strncmp(s, "[lof]", 5)))
 		{
-
 			if (togloc)
 			{
 				memset(temp, 0, sizeof(temp));
@@ -2358,7 +2357,6 @@ void CG_ForceTapOut_f(void);
 static void CG_ServerCommand(void)
 {
 	const char *cmd;
-	char       text[MAX_SAY_TEXT];
 
 	cmd = CG_Argv(0);
 
@@ -2499,11 +2497,18 @@ static void CG_ServerCommand(void)
 	}
 	else if (!Q_stricmp(cmd, "chat"))
 	{
+		char       text[MAX_SAY_TEXT];
 		const char *s;
+		int        clientNum = -1;
 
 		if (cg_teamChatsOnly.integer)
 		{
 			return;
+		}
+
+		if (trap_Argc() >= 3)
+		{
+			clientNum = atoi(CG_Argv(2));
 		}
 
 		if (atoi(CG_Argv(3)))
@@ -2517,7 +2522,7 @@ static void CG_ServerCommand(void)
 
 		Q_strncpyz(text, s, MAX_SAY_TEXT);
 		CG_RemoveChatEscapeChar(text);
-		CG_AddToTeamChat(text, atoi(CG_Argv(2)));
+		CG_AddToTeamChat(text, clientNum);
 		CG_Printf("%s\n", text);
 		CG_WriteToLog("%s\n", text);
 
@@ -2525,10 +2530,17 @@ static void CG_ServerCommand(void)
 	}
 	else if (!Q_stricmp(cmd, "tchat"))
 	{
-		const char *s;
+		char       text[MAX_SAY_TEXT];
 		vec3_t     origin;
-		char       *locStr   = NULL;
-		int        clientNum = atoi(CG_Argv(2));
+		char       *locStr = NULL;
+		const char *s;
+		int        clientNum;
+
+		clientNum = atoi(CG_Argv(2));
+
+		origin[0] = atoi(CG_Argv(4));
+		origin[1] = atoi(CG_Argv(5));
+		origin[2] = atoi(CG_Argv(6));
 
 		if (atoi(CG_Argv(3)))
 		{
@@ -2539,10 +2551,6 @@ static void CG_ServerCommand(void)
 			s = CG_Argv(1);
 		}
 
-		origin[0] = atoi(CG_Argv(4));
-		origin[1] = atoi(CG_Argv(5));
-		origin[2] = atoi(CG_Argv(6));
-
 		locStr = CG_BuildLocationString(clientNum, origin, LOC_TCHAT);
 
 		if (!locStr || !*locStr)
@@ -2550,7 +2558,7 @@ static void CG_ServerCommand(void)
 			locStr = "";
 		}
 
-		// process locations and name here
+		// process locations and name
 		Com_sprintf(text, sizeof(text), "(%s^7)^3(%s):%s", cgs.clientinfo[clientNum].name, locStr, s);
 
 		CG_RemoveChatEscapeChar(text);
@@ -2800,7 +2808,8 @@ static void CG_ServerCommand(void)
 	// loops \/
 	else if (!Q_stricmp(cmd, "mu_start"))         // has optional parameter for fade-up time
 	{
-		int fadeTime = 0;   // default to instant start
+		char text[MAX_SAY_TEXT];
+		int  fadeTime = 0;   // default to instant start
 
 		Q_strncpyz(text, CG_Argv(2), MAX_SAY_TEXT);
 		if (*text)
@@ -2814,7 +2823,8 @@ static void CG_ServerCommand(void)
 	// plays once then back to whatever the loop was \/
 	else if (!Q_stricmp(cmd, "mu_play"))          // has optional parameter for fade-up time
 	{
-		int fadeTime = 0;   // default to instant start
+		char text[MAX_SAY_TEXT];
+		int  fadeTime = 0;   // default to instant start
 
 		Q_strncpyz(text, CG_Argv(2), MAX_SAY_TEXT);
 		if (*text)
@@ -2827,7 +2837,8 @@ static void CG_ServerCommand(void)
 	}
 	else if (!Q_stricmp(cmd, "mu_stop"))          // has optional parameter for fade-down time
 	{
-		int fadeTime = 0;   // default to instant stop
+		char text[MAX_SAY_TEXT];
+		int  fadeTime = 0;   // default to instant stop
 
 		Q_strncpyz(text, CG_Argv(1), MAX_SAY_TEXT);
 		if (*text)

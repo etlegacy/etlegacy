@@ -2139,6 +2139,8 @@ G_Say
 
 void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, qboolean localize)
 {
+	char cmd[6];
+
 	if (!other || !other->inuse || !other->client)
 	{
 		return;
@@ -2177,7 +2179,36 @@ void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *
 			}
 		}
 
-		trap_SendServerCommand(other - g_entities, va("%s \"%s%c%c%s\" %i %i", mode == SAY_TEAM || mode == SAY_BUDDY ? "tchat" : "chat", name, Q_COLOR_ESCAPE, color, message, (int)(ent - g_entities), localize));
+		if (COM_BitCheck(other->client->sess.ignoreClients, (ent - g_entities)))
+		{
+			//Q_strncpyz(cmd, "print", sizeof(cmd));
+		}
+		else if (mode == SAY_TEAM || mode == SAY_BUDDY)
+		{
+			Q_strncpyz(cmd, "tchat", sizeof(cmd));
+
+			trap_SendServerCommand((int)(other - g_entities),
+			                       va("%s \"%c%c%s%s\" %i %i %i %i %i",
+			                          cmd,
+			                          Q_COLOR_ESCAPE, color, message,
+			                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
+			                          (int)(ent - g_entities), localize,
+			                          (int)ent->s.pos.trBase[0],
+			                          (int)ent->s.pos.trBase[1],
+			                          (int)ent->s.pos.trBase[2]));
+		}
+		else
+		{
+			Q_strncpyz(cmd, "chat", sizeof(cmd));
+
+			trap_SendServerCommand((int)(other - g_entities),
+			                       va("%s \"%s%c%c%s%s\" %i %i",
+			                          cmd, name, Q_COLOR_ESCAPE, color,
+			                          message,
+			                          (!Q_stricmp(cmd, "print")) ? "\n" : "",
+			                          (int)(ent - g_entities), localize));
+		}
+
 #ifdef FEATURE_OMNIBOT
 		// Omni-bot: Tell the bot about the chat message
 		Bot_Event_ChatMessage(other - g_entities, ent, mode, message);
@@ -2192,9 +2223,7 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 	int       color;
 	char      name[64];
 	// don't let text be too long for malicious reasons
-	char     text[MAX_SAY_TEXT];
-	qboolean localize = qfalse;
-	char     *loc;
+	char text[MAX_SAY_TEXT];
 
 	switch (mode)
 	{
@@ -2205,17 +2234,13 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 		color = COLOR_GREEN;
 		break;
 	case SAY_BUDDY:
-		localize = qtrue;
 		G_LogPrintf("saybuddy: %s: %s\n", ent->client->pers.netname, chatText);
-		loc = BG_GetLocationString(ent->r.currentOrigin);
-		Com_sprintf(name, sizeof(name), "[lof](%s%c%c) (%s): ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, loc);
+		Com_sprintf(name, sizeof(name), "[lof](%s%c%c): ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE);
 		color = COLOR_YELLOW;
 		break;
 	case SAY_TEAM:
-		localize = qtrue;
 		G_LogPrintf("sayteam: %s: %s\n", ent->client->pers.netname, chatText);
-		loc = BG_GetLocationString(ent->r.currentOrigin);
-		Com_sprintf(name, sizeof(name), "[lof](%s%c%c) (%s): ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, loc);
+		Com_sprintf(name, sizeof(name), "[lof](%s%c%c): ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE);
 		color = COLOR_CYAN;
 		break;
 	case SAY_TEAMNL:
@@ -2231,7 +2256,7 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 	{
 		if (!COM_BitCheck(target->client->sess.ignoreClients, ent - g_entities))
 		{
-			G_SayTo(ent, target, mode, color, name, text, localize);
+			G_SayTo(ent, target, mode, color, name, text, qfalse);
 		}
 		return;
 	}
@@ -2248,7 +2273,7 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 		other = &g_entities[level.sortedClients[j]];
 		if (!COM_BitCheck(other->client->sess.ignoreClients, ent - g_entities))
 		{
-			G_SayTo(ent, other, mode, color, name, text, localize);
+			G_SayTo(ent, other, mode, color, name, text, qfalse);
 		}
 	}
 }
@@ -2267,10 +2292,11 @@ void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0)
 	G_Say(ent, NULL, mode, ConcatArgs(((arg0) ? 0 : 1)));
 }
 
-void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly)
+void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum)
 {
-	int  color;
-	char *cmd;
+	int      color;
+	char     *cmd;
+	qboolean disguise = 0;
 
 	if (!other)
 	{
@@ -2284,9 +2310,20 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 	{
 		return;
 	}
+
 	if (mode == SAY_TEAM && !OnSameTeam(ent, other))
 	{
-		return;
+		if (ent->client->sess.playerType == PC_COVERTOPS &&
+		    ent->client->ps.powerups[PW_OPS_DISGUISED] &&
+		    (!Q_stricmp(id, "Medic") || !Q_stricmp(id, "NeedAmmo") || !Q_stricmp(id, "FTHealMe") || !Q_stricmp(id, "FTResupplyMe"))
+		    )
+		{
+			disguise = 1;
+		}
+		else
+		{
+			return;
+		}
 	}
 
 	// spec vchat rules follow the same as normal chatting rules
@@ -2351,17 +2388,18 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 
 	if (mode == SAY_TEAM || mode == SAY_BUDDY)
 	{
-		CPx(other - g_entities, va("%s %d %d %d %s %i %i %i", cmd, voiceonly, (int)(ent - g_entities), color, id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2]));
+		CPx(other - g_entities, va("%s %d %d %d %s %i %i %i %f %i", cmd, voiceonly, (int)(ent - g_entities), color, id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], randomNum, disguise));
 	}
 	else
 	{
-		CPx(other - g_entities, va("%s %d %d %d %s", cmd, voiceonly, (int)(ent - g_entities), color, id));
+		CPx(other - g_entities, va("%s %d %d %d %s %f", cmd, voiceonly, (int)(ent - g_entities), color, id, randomNum));
 	}
 }
 
 void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboolean voiceonly)
 {
-	int j;
+	int   j;
+	float randomNum = random();
 
 	// Don't allow excessive spamming of voice chats
 	ent->voiceChatSquelch     -= (level.time - ent->voiceChatPreviousTime);
@@ -2390,7 +2428,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 
 	if (target)
 	{
-		G_VoiceTo(ent, target, mode, id, voiceonly);
+		G_VoiceTo(ent, target, mode, id, voiceonly, randomNum);
 		return;
 	}
 
@@ -2455,7 +2493,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 				}
 			}
 
-			G_VoiceTo(ent, &g_entities[level.sortedClients[j]], mode, id, voiceonly);
+			G_VoiceTo(ent, &g_entities[level.sortedClients[j]], mode, id, voiceonly, randomNum);
 		}
 	}
 	else
@@ -2463,7 +2501,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 		// send it to all the apropriate clients
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
-			G_VoiceTo(ent, &g_entities[level.sortedClients[j]], mode, id, voiceonly);
+			G_VoiceTo(ent, &g_entities[level.sortedClients[j]], mode, id, voiceonly, randomNum);
 		}
 	}
 }
