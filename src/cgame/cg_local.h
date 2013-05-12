@@ -2671,6 +2671,12 @@ void CG_scores_cmd(void);
 
 void CG_UpdateSvCvars(void);
 
+typedef struct
+{
+	const char *cmd;
+	void (*function)(void);
+} consoleCommand_t;
+
 // cg_playerstate.c
 void CG_Respawn(qboolean revived);
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops);

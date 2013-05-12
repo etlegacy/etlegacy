@@ -1296,12 +1296,6 @@ void CG_ReadHuds_f(void)
 	CG_ReadHudScripts();
 }
 
-typedef struct
-{
-	char *cmd;
-	void (*function)(void);
-} consoleCommand_t;
-
 static consoleCommand_t commands[] =
 {
 	{ "testgun",             CG_TestGun_f            },
