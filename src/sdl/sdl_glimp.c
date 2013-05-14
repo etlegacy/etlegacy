@@ -52,12 +52,13 @@
 #include "../sys/sys_local.h"
 #include "sdl_icon.h"
 
-/* HACK: Just hack it for now. */
-#ifdef __APPLE__
+#ifdef __APPLE__ // Just hack it for now.
 #include <OpenGL/OpenGL.h>
 typedef CGLContextObj QGLContext;
 #define GLimp_GetCurrentContext() CGLGetCurrentContext()
 #define GLimp_SetCurrentContext(ctx) CGLSetCurrentContext(ctx)
+static QGLContext opengl_context;
+
 #elif _WIN32
 
 typedef HGLRC (WINAPI * PFNWGLCREATECONTEXTATTRIBSARBPROC)(HDC hDC, HGLRC hShareContext, const int *attribList);
@@ -70,7 +71,9 @@ typedef struct
 } QGLContext_t;
 typedef QGLContext_t QGLContext;
 
+#if defined(FEATURE_RENDERER2)
 static QGLContext opengl_context;
+#endif
 
 static void GLimp_GetCurrentContext(void)
 {
@@ -89,13 +92,13 @@ static void GLimp_GetCurrentContext(void)
 
 #define GLimp_SetCurrentContext(ctx)
 
-#else
+#else // *nix
+
 typedef void *QGLContext;
 #define GLimp_GetCurrentContext() (NULL)
 #define GLimp_SetCurrentContext(ctx)
-#endif
 
-static QGLContext opengl_context;
+#endif
 
 typedef enum
 {
@@ -264,7 +267,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 #endif
 	int GLmajor, GLminor;
 
-	GLimp_GetCurrentContext();
+	GLimp_GetCurrentContext(); // FIXME: Linux
 	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
 
 	Q_strncpyz(glConfig.extensions_string, (char *) qglGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
@@ -651,7 +654,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			continue;
 		}
 
+#ifdef __APPLE__ // apple hack renderer1
 		GLimp_GetCurrentContext();
+#endif
 
 		ri.Printf(PRINT_ALL, "Using %d/%d/%d Color bits, %d depth, %d stencil display.\n",
 		          sdlcolorbits, sdlcolorbits, sdlcolorbits, tdepthbits, tstencilbits);
