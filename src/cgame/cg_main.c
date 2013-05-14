@@ -355,7 +355,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_gun_x,                 "cg_gunX",                  "0",     CVAR_CHEAT                   },
 	{ &cg_gun_y,                 "cg_gunY",                  "0",     CVAR_CHEAT                   },
 	{ &cg_gun_z,                 "cg_gunZ",                  "0",     CVAR_CHEAT                   },
-	{ &cg_centertime,            "cg_centertime",            "5",     CVAR_CHEAT                   }, // changed from 3 to 5
+	{ &cg_centertime,            "cg_centertime",            "5",     CVAR_ARCHIVE                 }, // changed from 3 to 5
 	{ &cg_runpitch,              "cg_runpitch",              "0.002", CVAR_ARCHIVE                 },
 	{ &cg_runroll,               "cg_runroll",               "0.005", CVAR_ARCHIVE                 },
 	{ &cg_bobup,                 "cg_bobup",                 "0.005", CVAR_ARCHIVE                 },
@@ -498,7 +498,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_recording_statusline,  "cg_recording_statusline",  "9",     CVAR_ARCHIVE                 },
 
 	{ &cg_hitSounds,             "cg_hitSounds",             "0",     CVAR_ARCHIVE                 },
-	{ &cg_locations,             "cg_locations",             "3",     CVAR_ARCHIVE                 },
+	{ &cg_locations,             "cg_locations",             "7",     CVAR_ARCHIVE                 },
 
 	{ &cg_spawnTimer_set,        "cg_spawnTimer_set",        "-1",    CVAR_TEMP                    },
 
