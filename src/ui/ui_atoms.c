@@ -122,22 +122,24 @@ qboolean UI_ConsoleCommand(int realTime)
 	{
 		UI_ShowPostGame(qtrue);
 	}
-
-	if (Q_stricmp(cmd, "ui_report") == 0)
+	else if (Q_stricmp(cmd, "ui_report") == 0)
 	{
 		UI_Report();
 		return qtrue;
 	}
-
-	if (Q_stricmp(cmd, "ui_load") == 0)
+	else if (Q_stricmp(cmd, "ui_load") == 0)
 	{
 		UI_Load();
 		return qtrue;
 	}
-
-	if (Q_stricmp(cmd, "ui_cache") == 0)
+	else if (Q_stricmp(cmd, "ui_cache") == 0)
 	{
 		UI_Cache_f();
+		return qtrue;
+	}
+	else if (Q_stricmp(cmd, "listfav") == 0)
+	{
+		UI_ListFavourites_f();
 		return qtrue;
 	}
 
@@ -149,8 +151,7 @@ qboolean UI_ConsoleCommand(int realTime)
 			UI_Campaign_f();
 			return qtrue;
 		}
-
-		if (Q_stricmp(cmd, "listcampaigns") == 0)
+		else if (Q_stricmp(cmd, "listcampaigns") == 0)
 		{
 			UI_ListCampaigns_f();
 			return qtrue;

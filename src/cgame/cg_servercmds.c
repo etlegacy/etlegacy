@@ -138,10 +138,9 @@ and whenever the server updates any serverinfo flagged cvars
 */
 void CG_ParseServerinfo(void)
 {
-	const char *info;
+	const char *info = CG_ConfigString(CS_SERVERINFO);
 	char       *mapname;
 
-	info                = CG_ConfigString(CS_SERVERINFO);
 	cg_gameType.integer = cgs.gametype = atoi(Info_ValueForKey(info, "g_gametype"));
 	cg_antilag.integer  = cgs.antilag = atoi(Info_ValueForKey(info, "g_antilag"));
 	if (!cgs.localServer)
@@ -163,7 +162,6 @@ void CG_ParseServerinfo(void)
 	trap_Cvar_Set("g_bluelimbotime", Info_ValueForKey(info, "g_bluelimbotime"));
 	cg_bluelimbotime.integer = atoi(Info_ValueForKey(info, "g_bluelimbotime"));
 	cgs.weaponRestrictions   = atoi(Info_ValueForKey(info, "g_heavyWeaponRestriction")) * 0.01f;
-
 
 	cgs.minclients = atoi(Info_ValueForKey(info, "g_minGameClients")); //  overloaded for ready counts
 
@@ -227,14 +225,11 @@ void CG_UpdateSvCvars(void)
 
 void CG_ParseLegacyinfo(void)
 {
-	const char *info;
-
-	info = CG_ConfigString(CS_LEGACYINFO);
+	const char *info = CG_ConfigString(CS_LEGACYINFO);
 
 	cgs.mapVoteMapX = atoi(Info_ValueForKey(info, "X"));
 	cgs.mapVoteMapY = atoi(Info_ValueForKey(info, "Y"));
 }
-
 
 /*
 ==================
@@ -243,12 +238,8 @@ CG_ParseWarmup
 */
 static void CG_ParseWarmup(void)
 {
-	const char *info;
-	int        warmup;
-
-	info = CG_ConfigString(CS_WARMUP);
-
-	warmup = atoi(info);
+	const char *info  = CG_ConfigString(CS_WARMUP);
+	int        warmup = atoi(info);
 
 	if (warmup == 0 && cg.warmup)
 	{
@@ -294,11 +285,9 @@ oidInfo_t *CG_OIDInfoForEntityNum(int num)
 
 void CG_ParseOIDInfo(int num)
 {
-	const char *info;
+	const char *info = CG_ConfigString(num);
 	const char *cs;
 	int        index = num - CS_OID_DATA;
-
-	info = CG_ConfigString(num);
 
 	memset(&cgs.oidInfo[index], 0, sizeof(cgs.oidInfo[0]));
 
@@ -380,9 +369,7 @@ CG_ParseWolfinfo
 void CG_ParseWolfinfo(void)
 {
 	int        old_gs = cgs.gamestate;
-	const char *info;
-
-	info = CG_ConfigString(CS_WOLFINFO);
+	const char *info  = CG_ConfigString(CS_WOLFINFO);
 
 	cgs.currentRound       = atoi(Info_ValueForKey(info, "g_currentRound"));
 	cgs.nextTimeLimit      = atof(Info_ValueForKey(info, "g_nextTimeLimit"));
@@ -417,13 +404,12 @@ CG_ParseSpawns
 */
 void CG_ParseSpawns(void)
 {
-	const char *info;
+	const char *info = CG_ConfigString(CS_MULTI_INFO);
 	const char *s;
 	int        i;
 	int        newteam;
 
-	info = CG_ConfigString(CS_MULTI_INFO);
-	s    = Info_ValueForKey(info, "numspawntargets");
+	s = Info_ValueForKey(info, "numspawntargets");
 
 	if (!s || !strlen(s))
 	{
@@ -496,10 +482,8 @@ CG_ParseScreenFade
 */
 static void CG_ParseScreenFade(void)
 {
-	const char *info;
+	const char *info = CG_ConfigString(CS_SCREENFADE);
 	char       *token;
-
-	info = CG_ConfigString(CS_SCREENFADE);
 
 	token         = COM_Parse((char **)&info);
 	cgs.fadeAlpha = atof(token);
@@ -527,12 +511,10 @@ CG_ParseFog
 */
 static void CG_ParseFog(void)
 {
-	const char *info;
+	const char *info = CG_ConfigString(CS_FOGVARS);
 	char       *token;
 	float      ne, fa, r, g, b, density;
 	int        time;
-
-	info = CG_ConfigString(CS_FOGVARS);
 
 	token   = COM_Parse((char **)&info);
 	ne      = atof(token);
@@ -562,12 +544,10 @@ static void CG_ParseFog(void)
 
 static void CG_ParseGlobalFog(void)
 {
-	const char *info;
+	const char *info = CG_ConfigString(CS_GLOBALFOGVARS);
 	char       *token;
 	qboolean   restore;
 	int        duration;
-
-	info = CG_ConfigString(CS_GLOBALFOGVARS);
 
 	token    = COM_Parse((char **)&info);
 	restore  = atoi(token);
@@ -677,10 +657,9 @@ void CG_ShaderStateChanged(void)
 	char       originalShader[MAX_QPATH];
 	char       newShader[MAX_QPATH];
 	char       timeOffset[16];
-	const char *o;
+	const char *o = CG_ConfigString(CS_SHADERSTATE);
 	char       *n, *t;
 
-	o = CG_ConfigString(CS_SHADERSTATE);
 	while (o && *o)
 	{
 		n = strstr(o, "=");
@@ -725,9 +704,7 @@ CG_ChargeTimesChanged
 */
 void CG_ChargeTimesChanged(void)
 {
-	const char *info;
-
-	info = CG_ConfigString(CS_CHARGETIMES);
+	const char *info = CG_ConfigString(CS_CHARGETIMES);
 
 	cg.soldierChargeTime[0]   = atoi(Info_ValueForKey(info, "x0"));
 	cg.soldierChargeTime[1]   = atoi(Info_ValueForKey(info, "a0"));
@@ -748,9 +725,7 @@ CG_TeamRestrictionsChanged
 */
 void CG_TeamRestrictionsChanged(void)
 {
-	const char *info;
-
-	info = CG_ConfigString(CS_TEAMRESTRICTIONS);
+	const char *info = CG_ConfigString(CS_TEAMRESTRICTIONS);
 
 	Q_strncpyz(cg.maxSoldiers, Info_ValueForKey(info, "c0"), sizeof(cg.maxSoldiers));
 	Q_strncpyz(cg.maxMedics, Info_ValueForKey(info, "c1"), sizeof(cg.maxMedics));
@@ -772,8 +747,7 @@ CG_ConfigStringModified
 */
 static void CG_ConfigStringModified(void)
 {
-	const char *str;
-	int        num;
+	int num;
 
 	num = atoi(CG_Argv(1));
 
@@ -781,193 +755,171 @@ static void CG_ConfigStringModified(void)
 	// new configstring already integrated
 	trap_GetGameState(&cgs.gameState);
 
-	// look up the individual string that was modified
-	str = CG_ConfigString(num);
-
 	// do something with it if necessary
 	switch (num)
 	{
 	case CS_SVCVAR:
 		CG_UpdateSvCvars();
 		break;
-	} // FIXME: do rest in switch too
-
-	if (num == CS_MUSIC)
-	{
+	case CS_MUSIC:
 		CG_StartMusic();
-	}
-	else if (num == CS_MUSIC_QUEUE)
-	{
+		break;
+	case CS_MUSIC_QUEUE:
 		CG_QueueMusic();
-	}
-	else if (num == CS_SERVERINFO)
-	{
+		break;
+	case CS_SERVERINFO:
 		CG_ParseServerinfo();
-	}
-	else if (num == CS_WARMUP)
-	{
+		break;
+	case CS_WARMUP:
 		CG_ParseWarmup();
-	}
-	else if (num == CS_WOLFINFO)
-	{
+		break;
+	case CS_WOLFINFO:
 		CG_ParseWolfinfo();
-	}
-	else if (num == CS_FIRSTBLOOD)
-	{
-		cg.teamFirstBlood = atoi(str);
-	}
-	else if (num == CS_ROUNDSCORES1)
-	{
-		cg.teamWonRounds[1] = atoi(str);
-	}
-	else if (num == CS_ROUNDSCORES2)
-	{
-		cg.teamWonRounds[0] = atoi(str);
-	}
-	else if (num >= CS_MULTI_SPAWNTARGETS && num < CS_MULTI_SPAWNTARGETS + MAX_MULTI_SPAWNTARGETS)
-	{
-		CG_ParseSpawns();
-	}
-	else if (num == CS_VERSIONINFO)
-	{
-		CG_ParseServerVersionInfo(str);           // set versioning info for older demo playback
-	}
-	else if (num == CS_REINFSEEDS)
-	{
-		CG_ParseReinforcementTimes(str);          // set reinforcement times for each team
-	}
-	else if (num == CS_LEVEL_START_TIME)
-	{
-		cgs.levelStartTime = atoi(str);
-	}
-	else if (num == CS_INTERMISSION_START_TIME)
-	{
-		cgs.intermissionStartTime = atoi(str);
-	}
-	else if (num == CS_VOTE_TIME)
-	{
-		cgs.voteTime     = atoi(str);
+		break;
+	case CS_FIRSTBLOOD:
+		cg.teamFirstBlood = atoi(CG_ConfigString(num));
+		break;
+	case CS_ROUNDSCORES1:
+		cg.teamWonRounds[1] = atoi(CG_ConfigString(num));
+		break;
+	case CS_ROUNDSCORES2:
+		cg.teamWonRounds[0] = atoi(CG_ConfigString(num));
+		break;
+	case CS_VERSIONINFO:
+		CG_ParseServerVersionInfo(CG_ConfigString(num));           // set versioning info for older demo playback
+		break;
+	case CS_REINFSEEDS:
+		CG_ParseReinforcementTimes(CG_ConfigString(num));          // set reinforcement times for each team
+		break;
+	case CS_LEVEL_START_TIME:
+		cgs.levelStartTime = atoi(CG_ConfigString(num));
+		break;
+	case CS_INTERMISSION_START_TIME:
+		cgs.intermissionStartTime = atoi(CG_ConfigString(num));
+		break;
+	case CS_VOTE_TIME:
+		cgs.voteTime     = atoi(CG_ConfigString(num));
 		cgs.voteModified = qtrue;
-	}
-	else if (num == CS_VOTE_YES)
-	{
-		cgs.voteYes      = atoi(str);
+		break;
+	case CS_VOTE_YES:
+		cgs.voteYes      = atoi(CG_ConfigString(num));
 		cgs.voteModified = qtrue;
-	}
-	else if (num == CS_VOTE_NO)
-	{
-		cgs.voteNo       = atoi(str);
+		break;
+	case CS_VOTE_NO:
+		cgs.voteNo       = atoi(CG_ConfigString(num));
 		cgs.voteModified = qtrue;
-	}
-	else if (num == CS_VOTE_STRING)
-	{
-		Q_strncpyz(cgs.voteString, str, sizeof(cgs.voteString));
-	}
-	else if (num == CS_INTERMISSION)
-	{
-		cg.intermissionStarted = atoi(str);
-	}
-	else if (num == CS_SCREENFADE)
-	{
+		break;
+	case CS_VOTE_STRING:
+		Q_strncpyz(cgs.voteString, CG_ConfigString(num), sizeof(cgs.voteString));
+		break;
+	case CS_INTERMISSION:
+		cg.intermissionStarted = atoi(CG_ConfigString(num));
+		break;
+	case CS_SCREENFADE:
 		CG_ParseScreenFade();
-	}
-	else if (num == CS_FOGVARS)
-	{
+		break;
+	case CS_FOGVARS:
 		CG_ParseFog();
-	}
-	else if (num == CS_GLOBALFOGVARS)
-	{
+		break;
+	case CS_GLOBALFOGVARS:
 		CG_ParseGlobalFog();
-	}
-	else if (num >= CS_MODELS && num < CS_MODELS + MAX_MODELS)
-	{
-		cgs.gameModels[num - CS_MODELS] = trap_R_RegisterModel(str);
-	}
-	else if (num >= CS_SOUNDS && num < CS_SOUNDS + MAX_SOUNDS)
-	{
-		if (str[0] != '*')       // player specific sounds don't register here
-		{   // register sound scripts seperately
-			if (!strstr(str, ".wav") && !strstr(str, ".ogg"))
-			{
-				CG_SoundScriptPrecache(str);
-			}
-			else
-			{
-				cgs.gameSounds[num - CS_SOUNDS] = trap_S_RegisterSound(str, qfalse);      //FIXME: add a compress flag?
-			}
-
-		}
-	}
-	else if (num >= CS_SHADERS && num < CS_SHADERS + MAX_CS_SHADERS)
-	{
-		cgs.gameShaders[num - CS_SHADERS] = str[0] == '*' ? trap_R_RegisterShader(str + 1) : trap_R_RegisterShaderNoMip(str);
-		Q_strncpyz(cgs.gameShaderNames[num - CS_SHADERS], str[0] == '*' ? str + 1 : str, MAX_QPATH);
-	}
-	else if (num >= CS_SKINS && num < CS_SKINS + MAX_CS_SKINS)
-	{
-		cgs.gameModelSkins[num - CS_SKINS] = trap_R_RegisterSkin(str);
-	}
-	else if (num >= CS_CHARACTERS && num < CS_CHARACTERS + MAX_CHARACTERS)
-	{
-		if (!BG_FindCharacter(str))
-		{
-			cgs.gameCharacters[num - CS_CHARACTERS] = BG_FindFreeCharacter(str);
-
-			Q_strncpyz(cgs.gameCharacters[num - CS_CHARACTERS]->characterFile, str, sizeof(cgs.gameCharacters[num - CS_CHARACTERS]->characterFile));
-
-			if (!CG_RegisterCharacter(str, cgs.gameCharacters[num - CS_CHARACTERS]))
-			{
-				CG_Error("ERROR: CG_ConfigStringModified: failed to load character file '%s'\n", str);
-			}
-		}
-	}
-	else if (num >= CS_PLAYERS && num < CS_PLAYERS + MAX_CLIENTS)
-	{
-		CG_NewClientInfo(num - CS_PLAYERS);
-	}
-	else if (num >= CS_DLIGHTS && num < CS_DLIGHTS + MAX_DLIGHT_CONFIGSTRINGS)
-	{
-		// FIXME - dlight changes ignored!
-	}
-	else if (num == CS_SHADERSTATE)
-	{
+		break;
+	case CS_SHADERSTATE:
 		CG_ShaderStateChanged();
-	}
-	else if (num == CS_CHARGETIMES)
-	{
+		break;
+	case CS_CHARGETIMES:
 		CG_ChargeTimesChanged();
-	}
-	else if (num == CS_TEAMRESTRICTIONS)
-	{
+		break;
+	case CS_TEAMRESTRICTIONS:
 		CG_TeamRestrictionsChanged();
-	}
-	else if (num >= CS_FIRETEAMS && num < CS_FIRETEAMS + MAX_FIRETEAMS)
-	{
-		CG_ParseFireteams();
-	}
-	else if (num == CS_SKYBOXORG)
-	{
+		break;
+	case CS_SKYBOXORG:
 		CG_ParseSkyBox();
-	}
-	else if (num >= CS_TAGCONNECTS && num < CS_TAGCONNECTS + MAX_TAGCONNECTS)
-	{
-		CG_ParseTagConnect(num);
-	}
-	else if (num == CS_ALLIED_MAPS_XP || num == CS_AXIS_MAPS_XP)
-	{
+		break;
+	case CS_ALLIED_MAPS_XP:
+	case CS_AXIS_MAPS_XP:
 		CG_ParseTeamXPs(num - CS_AXIS_MAPS_XP);
-	}
-	else if (num == CS_FILTERCAMS)
-	{
-		cg.filtercams = atoi(str) ? qtrue : qfalse;
-	}
-	else if (num >= CS_OID_DATA && num < CS_OID_DATA + MAX_OID_TRIGGERS)
-	{
-		CG_ParseOIDInfo(num);
-	}
-	else if (num == CS_LEGACYINFO)
-	{
+		break;
+	case CS_FILTERCAMS:
+		cg.filtercams = atoi(CG_ConfigString(num)) ? qtrue : qfalse;
+		break;
+	case CS_LEGACYINFO:
 		CG_ParseLegacyinfo();
+		break;
+
+	default:
+		if (num >= CS_MULTI_SPAWNTARGETS && num < CS_MULTI_SPAWNTARGETS + MAX_MULTI_SPAWNTARGETS)
+		{
+			CG_ParseSpawns();
+		}
+		else if (num >= CS_MODELS && num < CS_MODELS + MAX_MODELS)
+		{
+			cgs.gameModels[num - CS_MODELS] = trap_R_RegisterModel(CG_ConfigString(num));
+		}
+		else if (num >= CS_SOUNDS && num < CS_SOUNDS + MAX_SOUNDS)
+		{
+			const char *str = CG_ConfigString(num);
+
+			if (str[0] != '*')       // player specific sounds don't register here
+			{   // register sound scripts seperately
+				if (!strstr(str, ".wav") && !strstr(str, ".ogg"))
+				{
+					CG_SoundScriptPrecache(str);
+				}
+				else
+				{
+					cgs.gameSounds[num - CS_SOUNDS] = trap_S_RegisterSound(str, qfalse);      //FIXME: add a compress flag?
+				}
+			}
+		}
+		else if (num >= CS_SHADERS && num < CS_SHADERS + MAX_CS_SHADERS)
+		{
+			const char *str = CG_ConfigString(num);
+
+			cgs.gameShaders[num - CS_SHADERS] = str[0] == '*' ? trap_R_RegisterShader(str + 1) : trap_R_RegisterShaderNoMip(str);
+			Q_strncpyz(cgs.gameShaderNames[num - CS_SHADERS], str[0] == '*' ? str + 1 : str, MAX_QPATH);
+		}
+		else if (num >= CS_SKINS && num < CS_SKINS + MAX_CS_SKINS)
+		{
+			cgs.gameModelSkins[num - CS_SKINS] = trap_R_RegisterSkin(CG_ConfigString(num));
+		}
+		else if (num >= CS_CHARACTERS && num < CS_CHARACTERS + MAX_CHARACTERS)
+		{
+			const char *str = CG_ConfigString(num);
+
+			if (!BG_FindCharacter(str))
+			{
+				cgs.gameCharacters[num - CS_CHARACTERS] = BG_FindFreeCharacter(str);
+
+				Q_strncpyz(cgs.gameCharacters[num - CS_CHARACTERS]->characterFile, str, sizeof(cgs.gameCharacters[num - CS_CHARACTERS]->characterFile));
+
+				if (!CG_RegisterCharacter(str, cgs.gameCharacters[num - CS_CHARACTERS]))
+				{
+					CG_Error("ERROR: CG_ConfigStringModified: failed to load character file '%s'\n", str);
+				}
+			}
+		}
+		else if (num >= CS_PLAYERS && num < CS_PLAYERS + MAX_CLIENTS)
+		{
+			CG_NewClientInfo(num - CS_PLAYERS);
+		}
+		else if (num >= CS_DLIGHTS && num < CS_DLIGHTS + MAX_DLIGHT_CONFIGSTRINGS)
+		{
+			// FIXME - dlight changes ignored!
+		}
+		else if (num >= CS_FIRETEAMS && num < CS_FIRETEAMS + MAX_FIRETEAMS)
+		{
+			CG_ParseFireteams();
+		}
+		else if (num >= CS_TAGCONNECTS && num < CS_TAGCONNECTS + MAX_TAGCONNECTS)
+		{
+			CG_ParseTagConnect(num);
+		}
+		else if (num >= CS_OID_DATA && num < CS_OID_DATA + MAX_OID_TRIGGERS)
+		{
+			CG_ParseOIDInfo(num);
+		}
+		break;
 	}
 }
 
@@ -1665,7 +1617,6 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 	sfxHandle_t     snd;
 	qhandle_t       sprite;
 
-
 	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 	{
 		clientNum = 0;
@@ -1785,12 +1736,10 @@ const char *CG_LocalizeServerCommand(const char *buf)
 	static char token[MAX_TOKEN_CHARS];
 	char        temp[MAX_TOKEN_CHARS];
 	qboolean    togloc = qtrue;
-	const char  *s;
-	int         i, prev;
+	const char  *s     = buf;
+	int         i, prev = 0;
 
 	memset(token, 0, sizeof(token));
-	s    = buf;
-	prev = 0;
 
 	for (i = 0; *s; i++, s++)
 	{
@@ -1799,7 +1748,6 @@ const char *CG_LocalizeServerCommand(const char *buf)
 		// modified to the correct behaviour
 		if (*s == '[' && (!Q_strncmp(s, "[lon]", 5) || !Q_strncmp(s, "[lof]", 5)))
 		{
-
 			if (togloc)
 			{
 				memset(temp, 0, sizeof(temp));
@@ -2224,8 +2172,8 @@ void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 {
 	int      iArg  = 1;
 	qboolean fFull = (txt_dump != CG_printWindow);
+	int      iWeap = atoi(CG_Argv(iArg++));
 
-	int iWeap = atoi(CG_Argv(iArg++));
 	if (!iWeap)
 	{
 		txt_dump(va("^3No qualifying %sshot info available.\n", ((doTop) ? "top" : "bottom")));
@@ -2409,7 +2357,6 @@ void CG_ForceTapOut_f(void);
 static void CG_ServerCommand(void)
 {
 	const char *cmd;
-	char       text[MAX_SAY_TEXT];
 
 	cmd = CG_Argv(0);
 
@@ -2418,12 +2365,13 @@ static void CG_ServerCommand(void)
 		// server claimed the command
 		return;
 	}
+
 	if (!strcmp(cmd, "tinfo"))
 	{
 		CG_ParseTeamInfo();
 		return;
 	}
-	if (!strcmp(cmd, "sc0"))
+	else if (!strcmp(cmd, "sc0"))
 	{
 		CG_ParseScore(TEAM_AXIS);
 		return;
@@ -2433,13 +2381,12 @@ static void CG_ServerCommand(void)
 		CG_ParseScore(TEAM_ALLIES);
 		return;
 	}
-	if (!strcmp(cmd, "WeaponStats"))
+	else if (!strcmp(cmd, "WeaponStats"))
 	{
 		int i, start = 1;
 
 		for (i = 0; i < WP_NUM_WEAPONS; i++)
 		{
-
 			if (!BG_ValidStatWeapon(i))
 			{
 				continue;
@@ -2467,12 +2414,12 @@ static void CG_ServerCommand(void)
 
 		return;
 	}
-	if (!Q_stricmp(cmd, "cpm"))
+	else if (!Q_stricmp(cmd, "cpm"))
 	{
 		CG_AddPMItem(PM_MESSAGE, CG_LocalizeServerCommand(CG_Argv(1)), cgs.media.voiceChatShader, NULL);
 		return;
 	}
-	if (!Q_stricmp(cmd, "cp"))
+	else if (!Q_stricmp(cmd, "cp"))
 	{
 		int  args = trap_Argc();
 		char *s;
@@ -2499,7 +2446,7 @@ static void CG_ServerCommand(void)
 		}
 		return;
 	}
-	if (!Q_stricmp(cmd, "reqforcespawn"))
+	else if (!Q_stricmp(cmd, "reqforcespawn"))
 	{
 		if (cg_instanttapout.integer)
 		{
@@ -2518,22 +2465,22 @@ static void CG_ServerCommand(void)
 		}
 		return;
 	}
-	if (!Q_stricmp(cmd, "sdbg"))
+	else if (!Q_stricmp(cmd, "sdbg"))
 	{
 		CG_StatsDebugAddText(CG_Argv(1));
 		return;
 	}
-	if (!Q_stricmp(cmd, "cs"))
+	else if (!Q_stricmp(cmd, "cs"))
 	{
 		CG_ConfigStringModified();
 		return;
 	}
-	if (!Q_stricmp(cmd, "print"))
+	else if (!Q_stricmp(cmd, "print"))
 	{
 		CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(CG_Argv(1)));
 		return;
 	}
-	if (!Q_stricmp(cmd, "entnfo"))
+	else if (!Q_stricmp(cmd, "entnfo"))
 	{
 		char buffer[16];
 		int  allied_number, axis_number;
@@ -2548,13 +2495,20 @@ static void CG_ServerCommand(void)
 
 		return;
 	}
-	if (!Q_stricmp(cmd, "chat"))
+	else if (!Q_stricmp(cmd, "chat"))
 	{
+		char       text[MAX_SAY_TEXT];
 		const char *s;
+		int        clientNum = -1;
 
 		if (cg_teamChatsOnly.integer)
 		{
 			return;
+		}
+
+		if (trap_Argc() >= 3)
+		{
+			clientNum = atoi(CG_Argv(2));
 		}
 
 		if (atoi(CG_Argv(3)))
@@ -2568,18 +2522,25 @@ static void CG_ServerCommand(void)
 
 		Q_strncpyz(text, s, MAX_SAY_TEXT);
 		CG_RemoveChatEscapeChar(text);
-		CG_AddToTeamChat(text, atoi(CG_Argv(2)));
+		CG_AddToTeamChat(text, clientNum);
 		CG_Printf("%s\n", text);
 		CG_WriteToLog("%s\n", text);
 
 		return;
 	}
-	if (!Q_stricmp(cmd, "tchat"))
+	else if (!Q_stricmp(cmd, "tchat"))
 	{
-		const char *s;
+		char       text[MAX_SAY_TEXT];
 		vec3_t     origin;
-		char       *locStr   = NULL;
-		int        clientNum = atoi(CG_Argv(2));
+		char       *locStr = NULL;
+		const char *s;
+		int        clientNum;
+
+		clientNum = atoi(CG_Argv(2));
+
+		origin[0] = atoi(CG_Argv(4));
+		origin[1] = atoi(CG_Argv(5));
+		origin[2] = atoi(CG_Argv(6));
 
 		if (atoi(CG_Argv(3)))
 		{
@@ -2590,10 +2551,6 @@ static void CG_ServerCommand(void)
 			s = CG_Argv(1);
 		}
 
-		origin[0] = atoi(CG_Argv(4));
-		origin[1] = atoi(CG_Argv(5));
-		origin[2] = atoi(CG_Argv(6));
-
 		locStr = CG_BuildLocationString(clientNum, origin, LOC_TCHAT);
 
 		if (!locStr || !*locStr)
@@ -2601,7 +2558,7 @@ static void CG_ServerCommand(void)
 			locStr = "";
 		}
 
-		// process locations and name here
+		// process locations and name
 		Com_sprintf(text, sizeof(text), "(%s^7)^3(%s):%s", cgs.clientinfo[clientNum].name, locStr, s);
 
 		CG_RemoveChatEscapeChar(text);
@@ -2611,23 +2568,23 @@ static void CG_ServerCommand(void)
 
 		return;
 	}
-	if (!Q_stricmp(cmd, "vchat"))
+	else if (!Q_stricmp(cmd, "vchat"))
 	{
 		CG_VoiceChat(SAY_ALL);              // enabled support
 		return;
 	}
-	if (!Q_stricmp(cmd, "vtchat"))
+	else if (!Q_stricmp(cmd, "vtchat"))
 	{
 		CG_VoiceChat(SAY_TEAM);             // enabled support
 		return;
 	}
-	if (!Q_stricmp(cmd, "vbchat"))
+	else if (!Q_stricmp(cmd, "vbchat"))
 	{
 		CG_VoiceChat(SAY_BUDDY);
 		return;
 	}
 	// Allow client to lodge a complaing
-	if (!Q_stricmp(cmd, "complaint") && cgs.gamestate == GS_PLAYING)
+	else if (!Q_stricmp(cmd, "complaint") && cgs.gamestate == GS_PLAYING)
 	{
 		if (cg_complaintPopUp.integer == 0)
 		{
@@ -2644,19 +2601,19 @@ static void CG_ServerCommand(void)
 
 		return;
 	}
-	if (!Q_stricmp(cmd, "map_restart"))
+	else if (!Q_stricmp(cmd, "map_restart"))
 	{
 		CG_MapRestart();
 		return;
 	}
 	// match stats
-	if (!Q_stricmp(cmd, "sc"))
+	else if (!Q_stricmp(cmd, "sc"))
 	{
 		CG_scores_cmd();
 		return;
 	}
 	// weapon stats parsing
-	if (!Q_stricmp(cmd, "ws"))
+	else if (!Q_stricmp(cmd, "ws"))
 	{
 		if (cgs.dumpStatsTime > cg.time)
 		{
@@ -2670,84 +2627,84 @@ static void CG_ServerCommand(void)
 
 		return;
 	}
-	if (!Q_stricmp(cmd, "wws"))
+	else if (!Q_stricmp(cmd, "wws"))
 	{
 		CG_wstatsParse_cmd();
 		return;
 	}
-	if (!Q_stricmp(cmd, "gstats"))
+	else if (!Q_stricmp(cmd, "gstats"))
 	{
 		CG_parseWeaponStatsGS_cmd();
 		return;
 	}
 	// "topshots"-related commands
-	if (!Q_stricmp(cmd, "astats"))
+	else if (!Q_stricmp(cmd, "astats"))
 	{
 		CG_parseTopShotsStats_cmd(qtrue, CG_printConsoleString);
 		return;
 	}
-	if (!Q_stricmp(cmd, "astatsb"))
+	else if (!Q_stricmp(cmd, "astatsb"))
 	{
 		CG_parseTopShotsStats_cmd(qfalse, CG_printConsoleString);
 		return;
 	}
-	if (!Q_stricmp(cmd, "bstats"))
+	else if (!Q_stricmp(cmd, "bstats"))
 	{
 		CG_parseBestShotsStats_cmd(qtrue, CG_printConsoleString);
 		return;
 	}
-	if (!Q_stricmp(cmd, "bstatsb"))
+	else if (!Q_stricmp(cmd, "bstatsb"))
 	{
 		CG_parseBestShotsStats_cmd(qfalse, CG_printConsoleString);
 		return;
 	}
-	if (!Q_stricmp(cmd, "immaplist")) //MAPVOTE
+	else if (!Q_stricmp(cmd, "immaplist")) //MAPVOTE
 	{
 		CG_parseMapVoteListInfo();
 		return;
 	}
-	if (!Q_stricmp(cmd, "imvotetally")) //MAPVOTE
+	else if (!Q_stricmp(cmd, "imvotetally")) //MAPVOTE
 	{
 		CG_parseMapVoteTally();
 		return;
 	}
-	if (!Q_stricmp(cmd, "wbstats"))
+	else if (!Q_stricmp(cmd, "wbstats"))
 	{
 		CG_topshotsParse_cmd(qtrue);
 		return;
 	}
 	// single weapon stat (requested weapon stats)
-	if (!Q_stricmp(cmd, "rws"))
+	else if (!Q_stricmp(cmd, "rws"))
 	{
 		CG_ParseWeaponStats();
 		return;
 	}
-	if (!Q_stricmp(cmd, "portalcampos"))
+	else if (!Q_stricmp(cmd, "portalcampos"))
 	{
 		CG_ParsePortalPos();
 		return;
 	}
-	if (!Q_stricmp(cmd, "startCam"))
+	else if (!Q_stricmp(cmd, "startCam"))
 	{
 		CG_StartCamera(CG_Argv(1), atoi(CG_Argv(2)));
 		return;
 	}
-	if (!Q_stricmp(cmd, "SetInitialCamera"))
+	else if (!Q_stricmp(cmd, "SetInitialCamera"))
 	{
 		CG_SetInitialCamera(CG_Argv(1), atoi(CG_Argv(2)));
 		return;
 	}
-	if (!Q_stricmp(cmd, "stopCam"))
+	else if (!Q_stricmp(cmd, "stopCam"))
 	{
 		CG_StopCamera();
 		return;
 	}
-	if (!Q_stricmp(cmd, "setspawnpt"))
+	else if (!Q_stricmp(cmd, "setspawnpt"))
 	{
 		cg.selectedSpawnPoint = atoi(CG_Argv(1)) + 1;
 		return;
 	}
-	if (!strcmp(cmd, "rockandroll"))         // map loaded, game is ready to begin. - FIXME: obsolete?
+	else if (!strcmp(cmd, "rockandroll"))         // map loaded, game is ready to begin. - FIXME: obsolete?
 	{   // FIXME: re-enable when we get menus that deal with fade properly
 		//CG_Fade(0, 0, 0, 255, cg.time, 0);    // go black
 		//trap_UI_Popup("pregame");             // start pregame menu
@@ -2758,7 +2715,7 @@ static void CG_ServerCommand(void)
 
 		return;
 	}
-	if (!Q_stricmp(cmd, "application"))
+	else if (!Q_stricmp(cmd, "application"))
 	{
 		cgs.applicationEndTime = cg.time + 20000;
 		cgs.applicationClient  = atoi(CG_Argv(1));
@@ -2770,7 +2727,7 @@ static void CG_ServerCommand(void)
 
 		return;
 	}
-	if (!Q_stricmp(cmd, "invitation"))
+	else if (!Q_stricmp(cmd, "invitation"))
 	{
 		cgs.invitationEndTime = cg.time + 20000;
 		cgs.invitationClient  = atoi(CG_Argv(1));
@@ -2782,7 +2739,7 @@ static void CG_ServerCommand(void)
 
 		return;
 	}
-	if (!Q_stricmp(cmd, "proposition"))
+	else if (!Q_stricmp(cmd, "proposition"))
 	{
 		cgs.propositionEndTime = cg.time + 20000;
 		cgs.propositionClient  = atoi(CG_Argv(1));
@@ -2795,7 +2752,7 @@ static void CG_ServerCommand(void)
 
 		return;
 	}
-	if (!Q_stricmp(cmd, "aft"))
+	else if (!Q_stricmp(cmd, "aft"))
 	{
 		cgs.autoFireteamEndTime = cg.time + 20000;
 		cgs.autoFireteamNum     = atoi(CG_Argv(1));
@@ -2806,7 +2763,7 @@ static void CG_ServerCommand(void)
 		}
 		return;
 	}
-	if (!Q_stricmp(cmd, "aftc"))
+	else if (!Q_stricmp(cmd, "aftc"))
 	{
 		cgs.autoFireteamCreateEndTime = cg.time + 20000;
 		cgs.autoFireteamCreateNum     = atoi(CG_Argv(1));
@@ -2817,7 +2774,7 @@ static void CG_ServerCommand(void)
 		}
 		return;
 	}
-	if (!Q_stricmp(cmd, "aftj"))
+	else if (!Q_stricmp(cmd, "aftj"))
 	{
 		cgs.autoFireteamJoinEndTime = cg.time + 20000;
 		cgs.autoFireteamJoinNum     = atoi(CG_Argv(1));
@@ -2828,7 +2785,7 @@ static void CG_ServerCommand(void)
 		}
 		return;
 	}
-	if (Q_stricmp(cmd, "remapShader") == 0)
+	else if (Q_stricmp(cmd, "remapShader") == 0)
 	{
 		if (trap_Argc() == 4)
 		{
@@ -2842,16 +2799,17 @@ static void CG_ServerCommand(void)
 
 			trap_R_RemapShader(shader1, shader2, shader3);
 		}
+		return;
 	}
-
 	// GS Copied in code from old source for mu_start, mu_play & mu_stop
 
 	// music
 
 	// loops \/
-	if (!Q_stricmp(cmd, "mu_start"))         // has optional parameter for fade-up time
+	else if (!Q_stricmp(cmd, "mu_start"))         // has optional parameter for fade-up time
 	{
-		int fadeTime = 0;   // default to instant start
+		char text[MAX_SAY_TEXT];
+		int  fadeTime = 0;   // default to instant start
 
 		Q_strncpyz(text, CG_Argv(2), MAX_SAY_TEXT);
 		if (*text)
@@ -2863,9 +2821,10 @@ static void CG_ServerCommand(void)
 		return;
 	}
 	// plays once then back to whatever the loop was \/
-	if (!Q_stricmp(cmd, "mu_play"))          // has optional parameter for fade-up time
+	else if (!Q_stricmp(cmd, "mu_play"))          // has optional parameter for fade-up time
 	{
-		int fadeTime = 0;   // default to instant start
+		char text[MAX_SAY_TEXT];
+		int  fadeTime = 0;   // default to instant start
 
 		Q_strncpyz(text, CG_Argv(2), MAX_SAY_TEXT);
 		if (*text)
@@ -2876,9 +2835,10 @@ static void CG_ServerCommand(void)
 		trap_S_StartBackgroundTrack(CG_Argv(1), "onetimeonly", fadeTime);
 		return;
 	}
-	if (!Q_stricmp(cmd, "mu_stop"))          // has optional parameter for fade-down time
+	else if (!Q_stricmp(cmd, "mu_stop"))          // has optional parameter for fade-down time
 	{
-		int fadeTime = 0;   // default to instant stop
+		char text[MAX_SAY_TEXT];
+		int  fadeTime = 0;   // default to instant stop
 
 		Q_strncpyz(text, CG_Argv(1), MAX_SAY_TEXT);
 		if (*text)
@@ -2890,18 +2850,18 @@ static void CG_ServerCommand(void)
 		trap_S_StartBackgroundTrack("", "", -2);   // '-2' for 'queue looping track' (QUEUED_PLAY_LOOPED)
 		return;
 	}
-	if (!Q_stricmp(cmd, "mu_fade"))
+	else if (!Q_stricmp(cmd, "mu_fade"))
 	{
 		trap_S_FadeBackgroundTrack(atof(CG_Argv(1)), atoi(CG_Argv(2)), 0);
 		return;
 	}
-	if (!Q_stricmp(cmd, "snd_fade"))
+	else if (!Q_stricmp(cmd, "snd_fade"))
 	{
 		trap_S_FadeAllSound(atof(CG_Argv(1)), atoi(CG_Argv(2)), atoi(CG_Argv(3)));
 		return;
 	}
 	// ensure a file gets into a build (mainly for scripted music calls)
-	if (!Q_stricmp(cmd, "addToBuild"))
+	else if (!Q_stricmp(cmd, "addToBuild"))
 	{
 		fileHandle_t f;
 
@@ -2917,7 +2877,7 @@ static void CG_ServerCommand(void)
 		return;
 	}
 	// server sends this command when it's about to kill the current server, before the client can reconnect
-	if (!Q_stricmp(cmd, "spawnserver"))
+	else if (!Q_stricmp(cmd, "spawnserver"))
 	{
 		// print message informing player the server is restarting with a new map
 		CG_PriorityCenterPrint(va("%s", CG_TranslateString("^3Server Restarting")), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.25), SMALLCHAR_WIDTH, 999999);
@@ -2930,7 +2890,7 @@ static void CG_ServerCommand(void)
 
 		return;
 	}
-	if (CG_Debriefing_ServerCommand(cmd))
+	else if (CG_Debriefing_ServerCommand(cmd))
 	{
 		return;
 	}

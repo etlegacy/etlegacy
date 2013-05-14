@@ -1882,6 +1882,11 @@ void WolfRevivePushEnt(gentity_t *self, gentity_t *other)
 {
 	vec3_t dir, push;
 
+	if (self->props_frame_state == -1)
+	{
+		return;
+	}
+
 	VectorSubtract(self->r.currentOrigin, other->r.currentOrigin, dir);
 	dir[2] = 0;
 	VectorNormalizeFast(dir);

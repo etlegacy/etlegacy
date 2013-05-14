@@ -53,23 +53,6 @@ extern vmCvar_t ui_marks;
 
 extern vmCvar_t ui_autoactivate;
 
-extern vmCvar_t ui_server1;
-extern vmCvar_t ui_server2;
-extern vmCvar_t ui_server3;
-extern vmCvar_t ui_server4;
-extern vmCvar_t ui_server5;
-extern vmCvar_t ui_server6;
-extern vmCvar_t ui_server7;
-extern vmCvar_t ui_server8;
-extern vmCvar_t ui_server9;
-extern vmCvar_t ui_server10;
-extern vmCvar_t ui_server11;
-extern vmCvar_t ui_server12;
-extern vmCvar_t ui_server13;
-extern vmCvar_t ui_server14;
-extern vmCvar_t ui_server15;
-extern vmCvar_t ui_server16;
-
 extern vmCvar_t ui_selectedPlayer;
 extern vmCvar_t ui_selectedPlayerName;
 extern vmCvar_t ui_netSource;

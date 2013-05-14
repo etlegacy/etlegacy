@@ -2183,26 +2183,23 @@ qboolean CG_Debriefing_ServerCommand(const char *cmd)
 		CG_Debriefing_ParseWeaponAccuracies();
 		return qtrue;
 	}
-
-	if (!Q_stricmp(cmd, "imws"))
+	else if (!Q_stricmp(cmd, "imws"))
 	{
 		CG_Debriefing_ParseWeaponStats();
 		return qtrue;
 	}
-
-	if (!Q_stricmp(cmd, "impkd"))
+	else if (!Q_stricmp(cmd, "impkd"))
 	{
 		CG_Debriefing_ParsePlayerKillsDeaths();
 		return qtrue;
 	}
-
 	// MAPVOTE
-	if (!Q_stricmp(cmd, "immaplist"))
+	else if (!Q_stricmp(cmd, "immaplist"))
 	{
 		CG_parseMapVoteListInfo();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "imvotetally"))
+	else if (!Q_stricmp(cmd, "imvotetally"))
 	{
 		CG_parseMapVoteTally();
 		return qtrue;
@@ -2907,6 +2904,7 @@ void CG_TeamDebriefingMapList_Draw(panel_button_t *button)
 		if (cgs.tdbSelectedMap == i + cgs.tdbMapListOffset)
 		{
 			vec4_t clr = { 1.f, 1.f, 1.f, 0.3f };
+
 			CG_FillRect(button->rect.x, y - 10, button->rect.w, 12, clr);
 		}
 

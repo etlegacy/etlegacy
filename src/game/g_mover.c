@@ -5309,20 +5309,22 @@ void func_constructible_underconstructionthink(gentity_t *ent)
 
 		if (ent->s.angles2[0] < 5)
 		{
-			//gentity_t *te; // FIXME: inspect decay sound (isn't always played or played in intermission)
-
 			// it decayed into oblivion
 
-			// Play sound
-			if (ent->parent->spawnflags & 8)
+			// Play sound (in range of ent)
+			if (ent->parent->spawnflags & OBJECTIVE_INFO_TANK) // trigger objective info // FIXME: truck?
 			{
-				//te = G_TempEntity(ent->parent->r.currentOrigin, EV_BUILDDECAYED_SOUND);
-				G_TempEntity(ent->parent->r.currentOrigin, EV_BUILDDECAYED_SOUND);
+				if (g_gamestate.integer == GS_PLAYING)
+				{
+					G_TempEntity(ent->parent->r.currentOrigin, EV_BUILDDECAYED_SOUND);
+				}
 			}
 			else
 			{
-				//te = G_TempEntity(ent->s.origin2, EV_BUILDDECAYED_SOUND);
-				G_TempEntity(ent->s.origin2, EV_BUILDDECAYED_SOUND);
+				if (g_gamestate.integer == GS_PLAYING)
+				{
+					G_TempEntity(ent->s.origin2, EV_BUILDDECAYED_SOUND);
+				}
 			}
 
 			if (ent->count2)
@@ -5360,7 +5362,7 @@ void func_constructible_underconstructionthink(gentity_t *ent)
 			}
 
 			// Stop sound
-			if (ent->parent->spawnflags & 8)
+			if (ent->parent->spawnflags & OBJECTIVE_INFO_TANK)
 			{
 				ent->parent->s.loopSound = 0;
 			}

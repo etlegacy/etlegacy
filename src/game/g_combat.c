@@ -1895,6 +1895,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 void G_RailTrail(vec_t *start, vec_t *end)
 {
 	gentity_t *temp = G_TempEntity(start, EV_RAILTRAIL);
+
 	VectorCopy(end, temp->s.origin2);
 	temp->s.dmgFlags = 0;
 }

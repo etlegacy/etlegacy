@@ -441,7 +441,7 @@ static void CG_Obituary(entityState_t *ent)
 
 				if (ci->team == ca->team)
 				{
-					CG_AddPMItem(PM_DEATH, va("%s ^1%s^7 %s%s", targetName, message, attackerName, message2), deathShader, OB_RED);
+					CG_AddPMItem(PM_DEATH, va("%s ^1%s^7 %s^1%s", targetName, message, attackerName, message2), deathShader, OB_RED);
 				}
 				else
 				{

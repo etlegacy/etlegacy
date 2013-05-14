@@ -108,17 +108,6 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 {
 	switch (command)
 	{
-	case UI_GETAPIVERSION:
-		return UI_API_VERSION;
-
-	case UI_INIT:
-		_UI_Init();
-		return 0;
-
-	case UI_SHUTDOWN:
-		_UI_Shutdown();
-		return 0;
-
 	case UI_KEY_EVENT:
 		_UI_KeyEvent(arg0, arg1);
 		return 0;
@@ -152,6 +141,17 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		return UI_CheckExecKey(arg0);
 	case UI_WANTSBINDKEYS:
 		return (g_waitingForKey && g_bindItem) ? qtrue : qfalse;
+
+	case UI_GETAPIVERSION:
+		return UI_API_VERSION;
+
+	case UI_INIT:
+		_UI_Init();
+		return 0;
+
+	case UI_SHUTDOWN:
+		_UI_Shutdown();
+		return 0;
 	}
 
 	return -1;
@@ -510,9 +510,11 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 			else
 			{
 				float yadj = scaley * glyph->top;
+
 				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 				{
 					int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+
 					colorBlack[3] = newColor[3];
 
 					trap_R_SetColor(colorBlack);
@@ -570,6 +572,7 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 			if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
 			{
 				int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+
 				colorBlack[3] = newColor[3];
 				trap_R_SetColor(colorBlack);
 				Text_PaintChar(x + (glyph->pitch * useScale) + ofs, y - yadj + ofs,
@@ -636,7 +639,6 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 
 static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit)
 {
-
 	vec4_t      newColor;
 	glyphInfo_t *glyph;
 	if (text)
@@ -4431,6 +4433,7 @@ void UI_RunMenuScript(char **args)
 			if (String_Parse(args, &orders))
 			{
 				int selectedPlayer = trap_Cvar_VariableValue("cg_selectedPlayer");
+
 				if (selectedPlayer < uiInfo.myTeamCount)
 				{
 					strcpy(buff, orders);
@@ -7275,6 +7278,8 @@ void _UI_Init(void)
 
 	trap_AddCommand("campaign");
 	trap_AddCommand("listcampaigns");
+
+	trap_AddCommand("listfav");
 }
 
 void _UI_KeyEvent(int key, qboolean down)
@@ -7638,23 +7643,6 @@ vmCvar_t ui_drawCrosshairPickups;
 vmCvar_t ui_marks;
 vmCvar_t ui_autoactivate;
 
-vmCvar_t ui_server1;
-vmCvar_t ui_server2;
-vmCvar_t ui_server3;
-vmCvar_t ui_server4;
-vmCvar_t ui_server5;
-vmCvar_t ui_server6;
-vmCvar_t ui_server7;
-vmCvar_t ui_server8;
-vmCvar_t ui_server9;
-vmCvar_t ui_server10;
-vmCvar_t ui_server11;
-vmCvar_t ui_server12;
-vmCvar_t ui_server13;
-vmCvar_t ui_server14;
-vmCvar_t ui_server15;
-vmCvar_t ui_server16;
-
 vmCvar_t ui_selectedPlayer;
 vmCvar_t ui_selectedPlayerName;
 vmCvar_t ui_netSource;
@@ -7738,23 +7726,6 @@ cvarTable_t cvarTable[] =
 	{ &ui_drawCrosshairPickups,         "cg_drawCrosshairPickups",             "1",                          CVAR_ARCHIVE                   },
 	{ &ui_marks,                        "cg_markTime",                         "20000",                      CVAR_ARCHIVE                   },
 	{ &ui_autoactivate,                 "cg_autoactivate",                     "1",                          CVAR_ARCHIVE                   },
-
-	{ &ui_server1,                      "server1",                             "",                           CVAR_ARCHIVE                   },
-	{ &ui_server2,                      "server2",                             "",                           CVAR_ARCHIVE                   },
-	{ &ui_server3,                      "server3",                             "",                           CVAR_ARCHIVE                   },
-	{ &ui_server4,                      "server4",                             "",                           CVAR_ARCHIVE                   },
-	{ &ui_server5,                      "server5",                             "",                           CVAR_ARCHIVE                   },
-	{ &ui_server6,                      "server6",                             "",                           CVAR_ARCHIVE                   },
-	{ &ui_server7,                      "server7",                             "",                           CVAR_ARCHIVE                   },
-	{ &ui_server8,                      "server8",                             "",                           CVAR_ARCHIVE                   },
-	{ &ui_server9,                      "server9",                             "",                           CVAR_ARCHIVE                   },
-	{ &ui_server10,                     "server10",                            "",                           CVAR_ARCHIVE                   },
-	{ &ui_server11,                     "server11",                            "",                           CVAR_ARCHIVE                   },
-	{ &ui_server12,                     "server12",                            "",                           CVAR_ARCHIVE                   },
-	{ &ui_server13,                     "server13",                            "",                           CVAR_ARCHIVE                   },
-	{ &ui_server14,                     "server14",                            "",                           CVAR_ARCHIVE                   },
-	{ &ui_server15,                     "server15",                            "",                           CVAR_ARCHIVE                   },
-	{ &ui_server16,                     "server16",                            "",                           CVAR_ARCHIVE                   },
 
 	{ &ui_dedicated,                    "ui_dedicated",                        "0",                          CVAR_ARCHIVE                   },
 	{ &ui_selectedPlayer,               "cg_selectedPlayer",                   "0",                          CVAR_ARCHIVE                   },
@@ -7978,7 +7949,6 @@ static void UI_StopServerRefresh(void)
 		Com_Printf("%d servers not listed (filtered out by game browser settings)\n",
 		           count - uiInfo.serverStatus.numDisplayServers);
 	}
-
 }
 
 static void UI_DoServerRefresh(void)
@@ -8162,6 +8132,45 @@ void UI_ListCampaigns_f(void)
 		{
 			Com_Printf(" %s\n", uiInfo.campaignList[i].campaignShortName);
 		}
+	}
+}
+
+/**
+ * @brief prints favourite servers list to console
+ *
+ * FIXME: WIP - values (clients, mapname) are not in sync with real server status because of master server delay?
+ *        -> get the values directly from the servers ...
+ *        - add command /confav x for easy connects
+ */
+void UI_ListFavourites_f(void)
+{
+	int c;
+
+	// update current status
+	// trap_LAN_UpdateVisiblePings(AS_FAVORITES);
+
+	c = trap_LAN_GetServerCount(AS_FAVORITES);
+
+	if (c >= 0)
+	{
+		int  i;
+		char info[MAX_STRING_CHARS];
+		char *hostinfo;
+		char *gameinfo;
+
+		for (i = 0; i < c; i++)
+		{
+			trap_LAN_GetServerInfo(AS_FAVORITES, i, info, MAX_STRING_CHARS);
+
+			hostinfo = va("%s^7 %s", Info_ValueForKey(info, "hostname"), Info_ValueForKey(info, "game"));
+			gameinfo = va("%s %i players", Info_ValueForKey(info, "mapname"), atoi(Info_ValueForKey(info, "clients")));
+
+			Com_Printf("^7#%i: %s - %s\n", i, hostinfo, gameinfo);
+		}
+	}
+	else
+	{
+		Com_Printf(trap_TranslateString("No favourite servers found.\n"));
 	}
 }
 

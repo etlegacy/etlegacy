@@ -313,7 +313,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 #endif
 	int GLmajor, GLminor;
 
-	GLimp_GetCurrentContext();
+	GLimp_GetCurrentContext(); // FIXME: Linux
 	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
 
 	Q_strncpyz(glConfig.extensions_string, (char *) qglGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
@@ -1203,7 +1203,11 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 				}
 				break;
 			case 1:
-				if (depthbits == 24)
+				if (depthbits == 32)
+				{
+					depthbits = 24;
+				}
+				else if (depthbits == 24)
 				{
 					depthbits = 16;
 				}
@@ -1349,7 +1353,9 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			continue;
 		}
 
+#ifdef __APPLE__ // apple hack renderer1
 		GLimp_GetCurrentContext();
+#endif
 
 		ri.Printf(PRINT_ALL, "Using %d/%d/%d Color bits, %d depth, %d stencil display.\n",
 		          sdlcolorbits, sdlcolorbits, sdlcolorbits, tdepthbits, tstencilbits);
@@ -1371,14 +1377,14 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	{
 		ri.Printf(PRINT_ALL, "Using GLEW %s\n", glewGetString(GLEW_VERSION));
 	}
-	/*
+
 	#ifdef FEATURE_RENDERER2
 	if (!GLimp_InitOpenGL3xContext())
 	{
-	    return RSERR_OLD_GL;
+		return RSERR_OLD_GL;
 	}
 	#endif
-	*/
+
 
 	if (!vidscreen)
 	{

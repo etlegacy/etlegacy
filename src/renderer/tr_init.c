@@ -1189,15 +1189,6 @@ void R_Register(void)
 	r_stencilbits    = ri.Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
 	r_depthbits = ri.Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-#if defined(__linux__)
-	// r_depthbits values > 24 are invalid (no visual) - the var is latched so let's adjust it here
-	if (r_depthbits->value > 24)
-	{
-		ri.Cvar_Set("r_depthbits", "24");
-		r_depthbits->modified = qfalse;
-		ri.Printf(PRINT_ALL, "Invalid value of r_deptphbits set to 24.\n");
-	}
-#endif
 
 	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	AssertCvarRange(r_ext_multisample, 0, 4, qtrue);

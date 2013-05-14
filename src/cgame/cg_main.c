@@ -355,7 +355,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_gun_x,                 "cg_gunX",                  "0",     CVAR_CHEAT                   },
 	{ &cg_gun_y,                 "cg_gunY",                  "0",     CVAR_CHEAT                   },
 	{ &cg_gun_z,                 "cg_gunZ",                  "0",     CVAR_CHEAT                   },
-	{ &cg_centertime,            "cg_centertime",            "5",     CVAR_CHEAT                   }, // changed from 3 to 5
+	{ &cg_centertime,            "cg_centertime",            "5",     CVAR_ARCHIVE                 }, // changed from 3 to 5
 	{ &cg_runpitch,              "cg_runpitch",              "0.002", CVAR_ARCHIVE                 },
 	{ &cg_runroll,               "cg_runroll",               "0.005", CVAR_ARCHIVE                 },
 	{ &cg_bobup,                 "cg_bobup",                 "0.005", CVAR_ARCHIVE                 },
@@ -498,7 +498,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_recording_statusline,  "cg_recording_statusline",  "9",     CVAR_ARCHIVE                 },
 
 	{ &cg_hitSounds,             "cg_hitSounds",             "0",     CVAR_ARCHIVE                 },
-	{ &cg_locations,             "cg_locations",             "3",     CVAR_ARCHIVE                 },
+	{ &cg_locations,             "cg_locations",             "7",     CVAR_ARCHIVE                 },
 
 	{ &cg_spawnTimer_set,        "cg_spawnTimer_set",        "-1",    CVAR_TEMP                    },
 
@@ -1440,7 +1440,7 @@ static void CG_RegisterGraphics(void)
 	// precache status bar pics
 	CG_LoadingString("game media");
 
-	CG_LoadingString(" - textures");
+	CG_LoadingString(" - textures -");
 
 	// dynamic shader api example
 	// replaces a fueldump texture with a dynamically generated one.
@@ -1500,7 +1500,7 @@ static void CG_RegisterGraphics(void)
 		cgs.media.viewFlashFire[i] = trap_R_RegisterShader(va("viewFlashFire%i", i + 1));
 	}
 
-	cgs.media.smokePuffRageProShader = trap_R_RegisterShader("smokePuffRagePro");
+	// cgs.media.smokePuffRageProShader = trap_R_RegisterShader("smokePuffRagePro"); // unused FIXME: remove from shader def
 	cgs.media.shotgunSmokePuffShader = trap_R_RegisterShader("shotgunSmokePuff");
 	cgs.media.bloodTrailShader       = trap_R_RegisterShader("bloodTrail");
 	cgs.media.lagometerShader        = trap_R_RegisterShader("lagometer");
@@ -1610,7 +1610,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.hudAlliedHelmet = trap_R_RegisterShader("AlliedHelmet");
 	cgs.media.hudAxisHelmet   = trap_R_RegisterShader("AxisHelmet");
 
-	CG_LoadingString(" - models");
+	CG_LoadingString(" - models -");
 
 	cgs.media.machinegunBrassModel  = trap_R_RegisterModel("models/weapons2/shells/m_shell.md3");
 	cgs.media.panzerfaustBrassModel = trap_R_RegisterModel("models/weapons2/shells/pf_shell.md3");
@@ -1768,19 +1768,19 @@ static void CG_RegisterGraphics(void)
 		cgs.media.shardJunk[i] = trap_R_RegisterModel(name);
 	}
 
-	CG_LoadingString(" - heads-up display");
+	CG_LoadingString(" - heads-up display -");
 	CG_Hud_Setup();
 
 	memset(cg_items, 0, sizeof(cg_items));
 	memset(cg_weapons, 0, sizeof(cg_weapons));
 
-	CG_LoadingString(" - weapons");
+	CG_LoadingString(" - weapons -");
 	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 	{
 		CG_RegisterWeapon(i, qfalse);
 	}
 
-	CG_LoadingString(" - items");
+	CG_LoadingString(" - items -");
 	for (i = 1 ; i < bg_numItems ; i++)
 	{
 		CG_RegisterItemVisuals(i);
@@ -1823,7 +1823,7 @@ static void CG_RegisterGraphics(void)
 		cgs.media.bloodDotShaders[i] = trap_R_RegisterShader(name);
 	}
 
-	CG_LoadingString(" - inline models");
+	CG_LoadingString(" - inline models -");
 
 	// register the inline models
 	cgs.numInlineModels = trap_CM_NumInlineModels();
@@ -1849,7 +1849,7 @@ static void CG_RegisterGraphics(void)
 		}
 	}
 
-	CG_LoadingString(" - server models");
+	CG_LoadingString(" - server models -");
 
 	// register all the server specified models
 	for (i = 1 ; i < MAX_MODELS ; i++)
@@ -1912,12 +1912,12 @@ static void CG_RegisterGraphics(void)
 		}
 	}
 
-	CG_LoadingString(" - particles");
+	CG_LoadingString(" - particles -");
 	CG_ClearParticles();
 
 	InitSmokeSprites();
 
-	CG_LoadingString(" - classes");
+	CG_LoadingString(" - classes -");
 
 	CG_RegisterPlayerClasses();
 
@@ -2032,7 +2032,7 @@ static void CG_RegisterGraphics(void)
 		cgs.media.fireteamicons[i] = trap_R_RegisterShaderNoMip(va("gfx/hud/fireteam/fireteam%i", i + 1));
 	}
 
-	CG_LoadingString(" - game media done");
+	CG_LoadingString("game media done");
 }
 
 /*
