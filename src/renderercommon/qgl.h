@@ -35,9 +35,9 @@
 #define __QGL_H__
 
 #ifdef BUNDLED_GLEW
-#	include "GL/glew.h"
+#   include "GL/glew.h"
 #else
-#	include <GL/glew.h>
+#   include <GL/glew.h>
 #endif
 
 #ifndef FEATURE_RENDERER2
@@ -48,11 +48,6 @@
 #endif
 #endif
 
-/*
-#ifndef APIENTRY
-#	define APIENTRY GLAPIENTRY
-#endif
-*/
 #ifdef __cplusplus
 extern "C" {
 #endif

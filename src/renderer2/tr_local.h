@@ -3232,7 +3232,7 @@ typedef struct
 
 typedef struct
 {
-	char name[MAX_QPATH];               // tag name
+	char name[MAX_QPATH];   // tag name
 } mdvTagName_t;
 
 typedef struct
@@ -3242,11 +3242,10 @@ typedef struct
 
 typedef struct
 {
-	vec3_t xyz;
 	vec3_t normal;
 	vec3_t tangent;
 	vec3_t binormal;
-} mdvVertex_t;
+} mdvNormTanBi_t;
 
 typedef struct
 {
@@ -3257,7 +3256,7 @@ typedef struct mdvSurface_s
 {
 	surfaceType_t surfaceType;
 
-	char name[MAX_QPATH];               // polyset name
+	char name[MAX_QPATH];                // polyset name
 
 	shader_t *shader;
 

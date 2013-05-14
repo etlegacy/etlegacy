@@ -41,7 +41,6 @@ const float mdmLODResolutions[MD3_MAX_LODS] = { 1.0f, 0.75f, 0.5f, 0.35f };
 
 static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *vboTriangles, mdmModel_t *mdm, mdmSurfaceIntern_t *surf, int skinIndex, int numBoneReferences, int boneReferences[MAX_BONES])
 {
-#if !defined(USE_D3D10)
 	int j, k, lod;
 
 	int  vertexesNum;
@@ -69,16 +68,15 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	srfVBOMDMMesh_t *vboSurf;
 	md5Vertex_t     *v;
 
-	vec4_t tmpColor = { 1, 1, 1, 1 };
+//	vec4_t          tmpColor = { 1, 1, 1, 1 };
 
 	static int32_t collapse[MDM_MAX_VERTS];
-
 
 	vertexesNum = surf->numVerts;
 	indexesNum  = vboTriangles->currentElements * 3;
 
 	// create surface
-	vboSurf = (srfVBOMDMMesh_t *)ri.Hunk_Alloc(sizeof(*vboSurf), h_low);
+	vboSurf = ri.Hunk_Alloc(sizeof(*vboSurf), h_low);
 	Com_AddToGrowList(vboSurfaces, vboSurf);
 
 	vboSurf->surfaceType = SF_VBO_MDMMESH;
@@ -90,10 +88,8 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	vboSurf->numVerts    = vertexesNum;
 
 	dataSize = vertexesNum * (sizeof(vec4_t) * 7);
-	data     = (byte *)ri.Hunk_AllocateTempMemory(dataSize);
+	data     = ri.Hunk_AllocateTempMemory(dataSize);
 	dataOfs  = 0;
-
-
 
 	//ri.Printf(PRINT_ALL, "AddSurfaceToVBOSurfacesList( %i verts, %i tris )\n", surf->numVerts, vboTriangles->currentElements);
 
@@ -104,7 +100,7 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	//ri.Printf(PRINT_ALL, "original referenced bones: [ ");
 	//for(j = 0; j < surf->numBoneReferences; j++)
 	//{
-	//	ri.Printf(PRINT_ALL, "%i, ", surf->boneReferences[j]);
+	//  ri.Printf(PRINT_ALL, "%i, ", surf->boneReferences[j]);
 	//}
 	//ri.Printf(PRINT_ALL, "]\n");
 
@@ -121,6 +117,7 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 			//ri.Printf(PRINT_ALL, "(%i -> %i) ", j, vboSurf->boneRemap[j]);
 		}
 	}
+
 	//ri.Printf(PRINT_ALL, "\n");
 
 	// feed vertex XYZ
@@ -130,66 +127,76 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 		{
 			tmp[k] = surf->verts[j].position[k];
 		}
+
 		tmp[3] = 1;
-		Com_Memcpy(data + dataOfs, (vec_t *) tmp, sizeof(vec4_t));
+		Com_Memcpy(data + dataOfs, ( vec_t * ) tmp, sizeof(vec4_t));
 		dataOfs += sizeof(vec4_t);
 	}
 
 	// feed vertex texcoords
 	ofsTexCoords = dataOfs;
+
 	for (j = 0; j < vertexesNum; j++)
 	{
 		for (k = 0; k < 2; k++)
 		{
 			tmp[k] = surf->verts[j].texCoords[k];
 		}
+
 		tmp[2] = 0;
 		tmp[3] = 1;
-		Com_Memcpy(data + dataOfs, (vec_t *) tmp, sizeof(vec4_t));
+		Com_Memcpy(data + dataOfs, ( vec_t * ) tmp, sizeof(vec4_t));
 		dataOfs += sizeof(vec4_t);
 	}
 
 	// feed vertex tangents
 	ofsTangents = dataOfs;
+
 	for (j = 0; j < vertexesNum; j++)
 	{
 		for (k = 0; k < 3; k++)
 		{
 			tmp[k] = surf->verts[j].tangent[k];
 		}
+
 		tmp[3] = 1;
-		Com_Memcpy(data + dataOfs, (vec_t *) tmp, sizeof(vec4_t));
+		Com_Memcpy(data + dataOfs, ( vec_t * ) tmp, sizeof(vec4_t));
 		dataOfs += sizeof(vec4_t);
 	}
 
 	// feed vertex binormals
 	ofsBinormals = dataOfs;
+
 	for (j = 0; j < vertexesNum; j++)
 	{
 		for (k = 0; k < 3; k++)
 		{
 			tmp[k] = surf->verts[j].binormal[k];
 		}
+
 		tmp[3] = 1;
-		Com_Memcpy(data + dataOfs, (vec_t *) tmp, sizeof(vec4_t));
+		Com_Memcpy(data + dataOfs, ( vec_t * ) tmp, sizeof(vec4_t));
 		dataOfs += sizeof(vec4_t);
 	}
 
 	// feed vertex normals
 	ofsNormals = dataOfs;
+
 	for (j = 0; j < vertexesNum; j++)
 	{
 		for (k = 0; k < 3; k++)
 		{
 			tmp[k] = surf->verts[j].normal[k];
 		}
+
 		tmp[3] = 1;
-		Com_Memcpy(data + dataOfs, (vec_t *) tmp, sizeof(vec4_t));
+		Com_Memcpy(data + dataOfs, ( vec_t * ) tmp, sizeof(vec4_t));
 		dataOfs += sizeof(vec4_t);
 	}
 
 	// feed bone indices
 	ofsBoneIndexes = dataOfs;
+
 	for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 	{
 		for (k = 0; k < MAX_WEIGHTS; k++)
@@ -210,6 +217,7 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 
 	// feed bone weights
 	ofsBoneWeights = dataOfs;
+
 	for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 	{
 		for (k = 0; k < MAX_WEIGHTS; k++)
@@ -223,7 +231,8 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 				tmp[k] = 0;
 			}
 		}
-		Com_Memcpy(data + dataOfs, (vec_t *) tmp, sizeof(vec4_t));
+
+		Com_Memcpy(data + dataOfs, ( vec_t * ) tmp, sizeof(vec4_t));
 		dataOfs += sizeof(vec4_t);
 	}
 
@@ -235,13 +244,14 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	vboSurf->vbo->ofsBinormals       = ofsBinormals;
 	vboSurf->vbo->ofsNormals         = ofsNormals;
 	vboSurf->vbo->ofsColors          = ofsNormals;
-	vboSurf->vbo->ofsLightCoords     = 0;   // not required anyway
-	vboSurf->vbo->ofsLightDirections = 0;   // not required anyway
+	vboSurf->vbo->ofsLightCoords     = 0; // not required anyway
+	vboSurf->vbo->ofsLightDirections = 0; // not required anyway
 	vboSurf->vbo->ofsBoneIndexes     = ofsBoneIndexes;
 	vboSurf->vbo->ofsBoneWeights     = ofsBoneWeights;
 
 	// calculate LOD IBOs
 	lod = 0;
+
 	do
 	{
 		float flod;
@@ -249,24 +259,24 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 
 		flod = mdmLODResolutions[lod];
 
-		renderCount = Q_min((int)((float)surf->numVerts * flod), surf->numVerts);
+		renderCount = MIN(( int )(( float ) surf->numVerts * flod), surf->numVerts);
 
 		if (renderCount < surf->minLod)
 		{
 			renderCount = surf->minLod;
-			flod        = (float)renderCount / surf->numVerts;
+			flod        = ( float ) renderCount / surf->numVerts;
 		}
 
 		if (renderCount == surf->numVerts)
 		{
 			indexesNum  = vboTriangles->currentElements * 3;
 			indexesSize = indexesNum * sizeof(int);
-			indexes     = (byte *)ri.Hunk_AllocateTempMemory(indexesSize);
+			indexes     = ri.Hunk_AllocateTempMemory(indexesSize);
 			indexesOfs  = 0;
 
 			for (j = 0; j < vboTriangles->currentElements; j++)
 			{
-				tri = (skelTriangle_t *)Com_GrowListElement(vboTriangles, j);
+				tri = Com_GrowListElement(vboTriangles, j);
 
 				for (k = 0; k < 3; k++)
 				{
@@ -284,23 +294,25 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 			int32_t *pCollapse;
 
 			pCollapse = collapse;
+
 			for (j = 0; j < renderCount; pCollapse++, j++)
 			{
 				*pCollapse = j;
 			}
 
 			pCollapseMap = &surf->collapseMap[renderCount];
+
 			for (j = renderCount; j < surf->numVerts; j++, pCollapse++, pCollapseMap++)
 			{
 				int32_t collapseValue = *pCollapseMap;
 				*pCollapse = collapse[collapseValue];
 			}
 
-
 			indexesNum = 0;
+
 			for (j = 0; j < vboTriangles->currentElements; j++)
 			{
-				tri = (skelTriangle_t *)Com_GrowListElement(vboTriangles, j);
+				tri = Com_GrowListElement(vboTriangles, j);
 
 				ci[0] = collapse[tri->indexes[0]];
 				ci[1] = collapse[tri->indexes[1]];
@@ -318,14 +330,13 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 				indexesNum += 3;
 			}
 
-
 			indexesSize = indexesNum * sizeof(int);
-			indexes     = (byte *)ri.Hunk_AllocateTempMemory(indexesSize);
+			indexes     = ri.Hunk_AllocateTempMemory(indexesSize);
 			indexesOfs  = 0;
 
 			for (j = 0; j < vboTriangles->currentElements; j++)
 			{
-				tri = (skelTriangle_t *)Com_GrowListElement(vboTriangles, j);
+				tri = Com_GrowListElement(vboTriangles, j);
 
 				ci[0] = collapse[tri->indexes[0]];
 				ci[1] = collapse[tri->indexes[1]];
@@ -368,13 +379,13 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	ri.Hunk_FreeTempMemory(data);
 
 	// megs
+
 	/*
 	   ri.Printf(PRINT_ALL, "md5 mesh data VBO size: %d.%02d MB\n", dataSize / (1024 * 1024),
 	   (dataSize % (1024 * 1024)) * 100 / (1024 * 1024));
 	   ri.Printf(PRINT_ALL, "md5 mesh tris VBO size: %d.%02d MB\n", indexesSize / (1024 * 1024),
 	   (indexesSize % (1024 * 1024)) * 100 / (1024 * 1024));
 	 */
-#endif
 }
 
 /*
@@ -393,10 +404,9 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 	mdmVertex_t   *mdmVertex;
 	mdmTag_t      *mdmTag;
 	int           version;
-	int           size;
-	shader_t      *sh;
-	int32_t       *collapseMap, *collapseMapOut, *boneref, *bonerefOut;
-
+//	int             size;
+	shader_t *sh;
+	int32_t  *collapseMap, *collapseMapOut, *boneref, *bonerefOut;
 
 	mdmModel_t         *mdmModel;
 	mdmTagIntern_t     *tag;
@@ -404,23 +414,24 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 	srfTriangle_t      *tri;
 	md5Vertex_t        *v;
 
-	mdm = (mdmHeader_t *) buffer;
+	mdm = ( mdmHeader_t * ) buffer;
 
 	version = LittleLong(mdm->version);
+
 	if (version != MDM_VERSION)
 	{
 		ri.Printf(PRINT_WARNING, "R_LoadMDM: %s has wrong version (%i should be %i)\n", modName, version, MDM_VERSION);
 		return qfalse;
 	}
 
-	mod->type      = MOD_MDM;
-	size           = LittleLong(mdm->ofsEnd);
+	mod->type = MOD_MDM;
+//	size = LittleLong(mdm->ofsEnd);
 	mod->dataSize += sizeof(mdmModel_t);
 
 	//mdm = mod->mdm = ri.Hunk_Alloc(size, h_low);
 	//memcpy(mdm, buffer, LittleLong(pinmodel->ofsEnd));
 
-	mdmModel = mod->mdm = (mdmModel_t *)ri.Hunk_Alloc(sizeof(mdmModel_t), h_low);
+	mdmModel = mod->mdm = ri.Hunk_Alloc(sizeof(mdmModel_t), h_low);
 
 	LL(mdm->ident);
 	LL(mdm->version);
@@ -435,19 +446,18 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 	mdmModel->lodBias  = LittleFloat(mdm->lodBias);
 	mdmModel->lodScale = LittleFloat(mdm->lodScale);
 
-/*	mdm->skel = RE_RegisterModel(mdm->bonesfile);
-    if ( !mdm->skel ) {
-        ri.Error (ERR_DROP, "R_LoadMDM: %s skeleton not found\n", mdm->bonesfile );
-    }
+	/*  mdm->skel = RE_RegisterModel(mdm->bonesfile);
+	        if ( !mdm->skel ) {
+	                ri.Error (ERR_DROP, "R_LoadMDM: %s skeleton not found", mdm->bonesfile );
+	        }
 
-    if ( mdm->numFrames < 1 ) {
-        ri.Printf( PRINT_WARNING, "R_LoadMDM: %s has no frames\n", modName );
-        return qfalse;
-    }*/
-
-
+	        if ( mdm->numFrames < 1 ) {
+	                ri.Printf( PRINT_WARNING, "R_LoadMDM: %s has no frames\n", modName );
+	                return qfalse;
+	        }*/
 
 	// swap all the frames
+
 	/*frameSize = (int) ( sizeof( mdmFrame_t ) );
 	   for ( i = 0 ; i < mdm->numFrames ; i++, frame++) {
 	   frame = (mdmFrame_t *) ( (byte *)mdm + mdm->ofsFrames + i * frameSize );
@@ -462,9 +472,10 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 	// swap all the tags
 	mdmModel->numTags = mdm->numTags;
-	mdmModel->tags    = tag = (mdmTagIntern_t *)ri.Hunk_Alloc(sizeof(*tag) * mdm->numTags, h_low);
+	mdmModel->tags    = tag = ri.Hunk_Alloc(sizeof(*tag) * mdm->numTags, h_low);
 
-	mdmTag = (mdmTag_t *) ((byte *) mdm + mdm->ofsTags);
+	mdmTag = ( mdmTag_t * )(( byte * ) mdm + mdm->ofsTags);
+
 	for (i = 0; i < mdm->numTags; i++, tag++)
 	{
 		int ii;
@@ -484,32 +495,31 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 		tag->offset[1] = LittleFloat(mdmTag->offset[1]);
 		tag->offset[2] = LittleFloat(mdmTag->offset[2]);
 
-
 		LL(mdmTag->numBoneReferences);
 		LL(mdmTag->ofsBoneReferences);
 		LL(mdmTag->ofsEnd);
 
 		tag->numBoneReferences = mdmTag->numBoneReferences;
-		tag->boneReferences    = (int *)ri.Hunk_Alloc(sizeof(*bonerefOut) * mdmTag->numBoneReferences, h_low);
+		tag->boneReferences    = ri.Hunk_Alloc(sizeof(*bonerefOut) * mdmTag->numBoneReferences, h_low);
 
 		// swap the bone references
-		boneref = (int32_t *)((byte *) mdmTag + mdmTag->ofsBoneReferences);
+		boneref = ( int32_t * )(( byte * ) mdmTag + mdmTag->ofsBoneReferences);
+
 		for (j = 0, bonerefOut = tag->boneReferences; j < mdmTag->numBoneReferences; j++, boneref++, bonerefOut++)
 		{
 			*bonerefOut = LittleLong(*boneref);
 		}
 
-
 		// find the next tag
-		mdmTag = (mdmTag_t *) ((byte *) mdmTag + mdmTag->ofsEnd);
+		mdmTag = ( mdmTag_t * )(( byte * ) mdmTag + mdmTag->ofsEnd);
 	}
-
 
 	// swap all the surfaces
 	mdmModel->numSurfaces = mdm->numSurfaces;
-	mdmModel->surfaces    = (mdmSurfaceIntern_t *)ri.Hunk_Alloc(sizeof(*surf) * mdmModel->numSurfaces, h_low);
+	mdmModel->surfaces    = ri.Hunk_Alloc(sizeof(*surf) * mdmModel->numSurfaces, h_low);
 
-	mdmSurf = (mdmSurface_t *) ((byte *) mdm + mdm->ofsSurfaces);
+	mdmSurf = ( mdmSurface_t * )(( byte * ) mdm + mdm->ofsSurfaces);
+
 	for (i = 0, surf = mdmModel->surfaces; i < mdm->numSurfaces; i++, surf++)
 	{
 		LL(mdmSurf->shaderIndex);
@@ -549,6 +559,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 			Q_strncpyz(surf->shader, mdmSurf->shader, sizeof(surf->shader));
 
 			sh = R_FindShader(surf->shader, SHADER_3D_DYNAMIC, qtrue);
+
 			if (sh->defaultShader)
 			{
 				surf->shaderIndex = 0;
@@ -563,12 +574,12 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 			surf->shaderIndex = 0;
 		}
 
-
 		// swap all the triangles
 		surf->numTriangles = mdmSurf->numTriangles;
-		surf->triangles    = (srfTriangle_t *)ri.Hunk_Alloc(sizeof(*tri) * surf->numTriangles, h_low);
+		surf->triangles    = ri.Hunk_Alloc(sizeof(*tri) * surf->numTriangles, h_low);
 
-		mdmTri = (mdmTriangle_t *) ((byte *) mdmSurf + mdmSurf->ofsTriangles);
+		mdmTri = ( mdmTriangle_t * )(( byte * ) mdmSurf + mdmSurf->ofsTriangles);
+
 		for (j = 0, tri = surf->triangles; j < surf->numTriangles; j++, mdmTri++, tri++)
 		{
 			tri->indexes[0] = LittleLong(mdmTri->indexes[0]);
@@ -578,9 +589,10 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 		// swap all the vertexes
 		surf->numVerts = mdmSurf->numVerts;
-		surf->verts    = (md5Vertex_t *)ri.Hunk_Alloc(sizeof(*v) * surf->numVerts, h_low);
+		surf->verts    = ri.Hunk_Alloc(sizeof(*v) * surf->numVerts, h_low);
 
-		mdmVertex = (mdmVertex_t *) ((byte *) mdmSurf + mdmSurf->ofsVerts);
+		mdmVertex = ( mdmVertex_t * )(( byte * ) mdmSurf + mdmSurf->ofsVerts);
+
 		for (j = 0, v = surf->verts; j < mdmSurf->numVerts; j++, v++)
 		{
 			v->normal[0] = LittleFloat(mdmVertex->normal[0]);
@@ -603,10 +615,11 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 #endif
 			}
 
-			v->weights = (md5Weight_t **)ri.Hunk_Alloc(sizeof(*v->weights) * v->numWeights, h_low);
+			v->weights = ri.Hunk_Alloc(sizeof(*v->weights) * v->numWeights, h_low);
+
 			for (k = 0; k < v->numWeights; k++)
 			{
-				md5Weight_t *weight = (md5Weight_t *)ri.Hunk_Alloc(sizeof(*weight), h_low);
+				md5Weight_t *weight = ri.Hunk_Alloc(sizeof(*weight), h_low);
 
 				weight->boneIndex  = LittleLong(mdmVertex->weights[k].boneIndex);
 				weight->boneWeight = LittleFloat(mdmVertex->weights[k].boneWeight);
@@ -617,13 +630,14 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 				v->weights[k] = weight;
 			}
 
-			mdmVertex = (mdmVertex_t *) &mdmVertex->weights[v->numWeights];
+			mdmVertex = ( mdmVertex_t * ) &mdmVertex->weights[v->numWeights];
 		}
 
 		// swap the collapse map
-		surf->collapseMap = (int32_t *)ri.Hunk_Alloc(sizeof(*collapseMapOut) * mdmSurf->numVerts, h_low);
+		surf->collapseMap = ri.Hunk_Alloc(sizeof(*collapseMapOut) * mdmSurf->numVerts, h_low);
 
-		collapseMap = (int32_t *)((byte *) mdmSurf + mdmSurf->ofsCollapseMap);
+		collapseMap = ( int32_t * )(( byte * ) mdmSurf + mdmSurf->ofsCollapseMap);
+
 		//ri.Printf(PRINT_ALL, "collapse map for mdm surface '%s': ", surf->name);
 		for (j = 0, collapseMapOut = surf->collapseMap; j < mdmSurf->numVerts; j++, collapseMap++, collapseMapOut++)
 		{
@@ -633,29 +647,33 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 			//ri.Printf(PRINT_ALL, "(%i -> %i) ", j, value);
 		}
+
 		//ri.Printf(PRINT_ALL, "\n");
 
 #if 0
 		ri.Printf(PRINT_ALL, "collapse map for mdm surface '%s': ", surf->name);
+
 		for (j = 0, collapseMap = surf->collapseMap; j < mdmSurf->numVerts; j++, collapseMap++)
 		{
 			ri.Printf(PRINT_ALL, "(%i -> %i) ", j, *collapseMap);
 		}
+
 		ri.Printf(PRINT_ALL, "\n");
 #endif
 
 		// swap the bone references
 		surf->numBoneReferences = mdmSurf->numBoneReferences;
-		surf->boneReferences    = (int *)ri.Hunk_Alloc(sizeof(*bonerefOut) * mdmSurf->numBoneReferences, h_low);
+		surf->boneReferences    = ri.Hunk_Alloc(sizeof(*bonerefOut) * mdmSurf->numBoneReferences, h_low);
 
-		boneref = (int32_t *)((byte *) mdmSurf + mdmSurf->ofsBoneReferences);
+		boneref = ( int32_t * )(( byte * ) mdmSurf + mdmSurf->ofsBoneReferences);
+
 		for (j = 0, bonerefOut = surf->boneReferences; j < surf->numBoneReferences; j++, boneref++, bonerefOut++)
 		{
 			*bonerefOut = LittleLong(*boneref);
 		}
 
 		// find the next surface
-		mdmSurf = (mdmSurface_t *) ((byte *) mdmSurf + mdmSurf->ofsEnd);
+		mdmSurf = ( mdmSurface_t * )(( byte * ) mdmSurf + mdmSurf->ofsEnd);
 	}
 
 	// loading is done now calculate the bounding box and tangent spaces
@@ -762,6 +780,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 				// calculate barycentric basis for the triangle
 				bb = (dv[1]->texCoords[0] - dv[0]->texCoords[0]) * (dv[2]->texCoords[1] - dv[0]->texCoords[1]) - (dv[2]->texCoords[0] - dv[0]->texCoords[0]) * (dv[1]->texCoords[1] -
 				                                                                                                                                                dv[0]->texCoords[1]);
+
 				if (fabs(bb) < 0.00000001f)
 				{
 					continue;
@@ -814,6 +833,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 						//VectorInverse(dv[k]->tangent);
 						//VectorInverse(dv[k]->binormal);
 					}
+
 #else
 					//VectorAdd(dv[k]->normal, faceNormal, dv[k]->normal);
 #endif
@@ -821,17 +841,20 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 			}
 
 #if 1
+
 			for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 			{
 				//VectorNormalize(v->tangent);
 				//VectorNormalize(v->binormal);
 				//VectorNormalize(v->normal);
 			}
+
 #endif
 		}
 #endif
 
 #if 0
+
 		// do another extra smoothing for normals to avoid flat shading
 		for (j = 0; j < surf->numVerts; j++)
 		{
@@ -850,6 +873,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 			VectorNormalize(surf->verts[j].normal);
 		}
+
 #endif
 	}
 
@@ -872,13 +896,14 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 			for (j = 0, tri = surf->triangles; j < surf->numTriangles; j++, tri++)
 			{
-				skelTriangle_t *sortTri = (skelTriangle_t *)Com_Allocate(sizeof(*sortTri));
+				skelTriangle_t *sortTri = Com_Allocate(sizeof(*sortTri));
 
 				for (k = 0; k < 3; k++)
 				{
 					sortTri->indexes[k]  = tri->indexes[k];
 					sortTri->vertexes[k] = &surf->verts[tri->indexes[k]];
 				}
+
 				sortTri->referenced = qfalse;
 
 				Com_AddToGrowList(&sortedTriangles, sortTri);
@@ -886,7 +911,8 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 			//qsort(sortedTriangles.elements, sortedTriangles.currentElements, sizeof(void *), CompareTrianglesByBoneReferences);
 
-	#if 0
+#if 0
+
 			for (j = 0; j < sortedTriangles.currentElements; j++)
 			{
 				int b[MAX_WEIGHTS * 3];
@@ -906,9 +932,11 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 					//ri.Printf(PRINT_ALL, "bone indices: %i %i %i %i\n", b[k * 3 + 0], b[k * 3 + 1], b[k * 3 + 2], b[k * 3 + 3]);
 				}
 			}
-	#endif
+
+#endif
 
 			numRemaining = sortedTriangles.currentElements;
+
 			while (numRemaining)
 			{
 				numBoneReferences = 0;
@@ -918,7 +946,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 				for (j = 0; j < sortedTriangles.currentElements; j++)
 				{
-					skelTriangle_t *sortTri = (skelTriangle_t *)Com_GrowListElement(&sortedTriangles, j);
+					skelTriangle_t *sortTri = Com_GrowListElement(&sortedTriangles, j);
 
 					if (sortTri->referenced)
 					{
@@ -945,20 +973,21 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 			for (j = 0; j < sortedTriangles.currentElements; j++)
 			{
-				skelTriangle_t *sortTri = (skelTriangle_t *)Com_GrowListElement(&sortedTriangles, j);
+				skelTriangle_t *sortTri = Com_GrowListElement(&sortedTriangles, j);
 
 				Com_Dealloc(sortTri);
 			}
+
 			Com_DestroyGrowList(&sortedTriangles);
 		}
 
 		// move VBO surfaces list to hunk
 		mdmModel->numVBOSurfaces = vboSurfaces.currentElements;
-		mdmModel->vboSurfaces    = (srfVBOMDMMesh_t **)ri.Hunk_Alloc(mdmModel->numVBOSurfaces * sizeof(*mdmModel->vboSurfaces), h_low);
+		mdmModel->vboSurfaces    = ri.Hunk_Alloc(mdmModel->numVBOSurfaces * sizeof(*mdmModel->vboSurfaces), h_low);
 
 		for (i = 0; i < mdmModel->numVBOSurfaces; i++)
 		{
-			mdmModel->vboSurfaces[i] = (srfVBOMDMMesh_t *) Com_GrowListElement(&vboSurfaces, i);
+			mdmModel->vboSurfaces[i] = ( srfVBOMDMMesh_t * ) Com_GrowListElement(&vboSurfaces, i);
 		}
 
 		Com_DestroyGrowList(&vboSurfaces);
