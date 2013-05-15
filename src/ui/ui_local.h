@@ -271,6 +271,8 @@ void            Text_Paint_Ext(float x, float y, float scalex, float scaley, vec
 void UI_Campaign_f(void);
 void UI_ListCampaigns_f(void);
 
+void UI_ListCampaigns_f(void)
+
 #define GLINFO_LINES        128
 
 // ui_atoms.c
