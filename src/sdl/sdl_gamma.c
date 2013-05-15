@@ -48,6 +48,10 @@
 //#    include <SDL/SDL_opengl.h>
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 /*
 =================
 GLimp_SetGamma
@@ -71,7 +75,6 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 	}
 
 #ifdef _WIN32
-#include <windows.h>
 
 	// Win2K and newer put this odd restriction on gamma ramps...
 	{
