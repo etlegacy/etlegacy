@@ -242,24 +242,6 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 		VERTEXCOPY(lightColor);
 	}
 
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-
-	// feed vertex paint colors
-	if (stateBits & ATTR_PAINTCOLOR)
-	{
-		vbo->ofsPaintColors = dataOfs;
-		VERTEXCOPY(paintColor);
-	}
-
-	// feed vertex light directions
-	if (stateBits & ATTR_LIGHTDIRECTION)
-	{
-		vbo->ofsLightDirections = dataOfs;
-		VERTEXCOPY(lightDirection);
-	}
-
-#endif
-
 	vbo->vertexesSize = dataSize;
 	vbo->vertexesNum  = numVertexes;
 
@@ -617,16 +599,10 @@ void R_InitVBOs(void)
 	tess.vbo->ofsBinormals   = tess.vbo->ofsTangents + sizeof(tess.tangents);
 	tess.vbo->ofsNormals     = tess.vbo->ofsBinormals + sizeof(tess.binormals);
 	tess.vbo->ofsColors      = tess.vbo->ofsNormals + sizeof(tess.normals);
-
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	tess.vbo->ofsPaintColors     = tess.vbo->ofsColors + sizeof(tess.colors);
-	tess.vbo->ofsLightDirections = tess.vbo->ofsPaintColors + sizeof(tess.paintColors);
-#endif
-
-	tess.vbo->sizeXYZ       = sizeof(tess.xyz);
-	tess.vbo->sizeTangents  = sizeof(tess.tangents);
-	tess.vbo->sizeBinormals = sizeof(tess.binormals);
-	tess.vbo->sizeNormals   = sizeof(tess.normals);
+	tess.vbo->sizeXYZ        = sizeof(tess.xyz);
+	tess.vbo->sizeTangents   = sizeof(tess.tangents);
+	tess.vbo->sizeBinormals  = sizeof(tess.binormals);
+	tess.vbo->sizeNormals    = sizeof(tess.normals);
 #endif
 
 	Com_Dealloc(data);

@@ -3001,11 +3001,7 @@ static void Render_liquid(int stage)
 
 	// enable shader, set arrays
 	gl_liquidShader->BindProgram();
-	GL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_COLOR
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	                      | ATTR_LIGHTDIRECTION
-#endif
-	                      );
+	GL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_COLOR);
 
 	// set uniforms
 	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
@@ -3085,13 +3081,11 @@ static void Render_fog()
 
 	//ri.Printf(PRINT_ALL, "--- Render_fog ---\n");
 
-#if defined(COMPAT_ET)
 	// no fog pass in snooper
 	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.surfaceShader->noFog || !r_wolfFog->integer)
 	{
 		return;
 	}
-#endif
 
 	// ydnar: no world, no fogging
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
@@ -3784,7 +3778,6 @@ SetIteratorFog
     set the fog parameters for this pass
 ==============
 */
-#if defined(COMPAT_ET)
 static void SetIteratorFog()
 {
 	GLimp_LogComment("--- SetIteratorFog() ---\n");
@@ -3834,8 +3827,6 @@ static void SetIteratorFog()
 		}
 	}
 }
-#endif // #if defined(COMPAT_ET)
-
 
 void Tess_StageIteratorDebug()
 {
@@ -3988,8 +3979,7 @@ void Tess_StageIteratorGeneric()
 			continue;
 		}
 
-#if defined(COMPAT_ET)
-		// Ridah, per stage fogging (detail textures)
+		// per stage fogging (detail textures)
 		if (tess.surfaceShader->noFog && pStage->isFogged)
 		{
 			RB_FogOn();
@@ -4003,7 +3993,6 @@ void Tess_StageIteratorGeneric()
 			// make sure it's on
 			RB_FogOn();
 		}
-#endif
 
 		Tess_ComputeColor(pStage);
 		Tess_ComputeTexMatrices(pStage);
@@ -4022,13 +4011,11 @@ void Tess_StageIteratorGeneric()
 			break;
 		}
 
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 		case ST_LIGHTMAP:
 		{
 			Render_lightMapping(stage, true, false);
 			break;
 		}
-#endif
 
 		case ST_DIFFUSEMAP:
 		case ST_COLLAPSE_lighting_DB:
@@ -4128,12 +4115,10 @@ void Tess_StageIteratorGeneric()
 			RB_SetStencil(0, NULL);
 		}
 
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 		if (r_showLightMaps->integer && pStage->type == ST_LIGHTMAP)
 		{
 			break;
 		}
-#endif
 	}
 
 	if (!r_noFog->integer && tess.fogNum >= 1 && tess.surfaceShader->fogPass)
@@ -4519,13 +4504,12 @@ void Tess_StageIteratorDepthFill()
 			break;
 		}
 
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 		case ST_LIGHTMAP:
 		{
 			Render_depthFill(stage);
 			break;
 		}
-#endif
+
 		case ST_DIFFUSEMAP:
 		case ST_COLLAPSE_lighting_DB:
 		case ST_COLLAPSE_lighting_DBS:
@@ -4604,9 +4588,7 @@ void Tess_StageIteratorShadowFill()
 			break;
 		}
 
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 		case ST_LIGHTMAP:
-#endif
 		case ST_DIFFUSEMAP:
 		case ST_COLLAPSE_lighting_DB:
 		case ST_COLLAPSE_lighting_DBS:

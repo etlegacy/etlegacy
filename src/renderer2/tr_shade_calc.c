@@ -490,7 +490,6 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 	float  *normal = (float *)tess.normals;
 	float  *table;
 
-#if defined(COMPAT_ET)
 	if (ds->deformationWave.frequency < 0)
 	{
 		qboolean inverse = qfalse;
@@ -550,9 +549,7 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 		}
 		ds->deformationWave.frequency *= -1;
 	}
-	else
-#endif // #if defined(COMPAT_ET)
-	if (ds->deformationWave.frequency == 0)
+	else if (ds->deformationWave.frequency == 0)
 	{
 		scale = RB_EvalWaveForm(&ds->deformationWave);
 

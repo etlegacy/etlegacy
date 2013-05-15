@@ -87,7 +87,7 @@ long GenerateImageHashValue(const char *fname)
 	long hash;
 	char letter;
 
-//  ri.Printf(PRINT_ALL, "tr_image::GenerateImageHashValue: '%s'\n", fname);
+	//ri.Printf(PRINT_ALL, "tr_image::GenerateImageHashValue: '%s'\n", fname);
 
 	hash = 0;
 	i    = 0;
@@ -396,8 +396,6 @@ void R_ImageList_f(void)
 	ri.Printf(PRINT_ALL, " %i total images\n\n", tr.images.currentElements);
 }
 
-
-
 //=======================================================================
 
 /*
@@ -424,8 +422,8 @@ static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *o
 	vec3_t   n, n2, n3, n4;
 
 	// NOTE: Tr3B - limitation not needed anymore
-//  if(outwidth > 2048)
-//      ri.Error(ERR_DROP, "ResampleTexture: max width");
+	//if(outwidth > 2048)
+	//  ri.Error(ERR_DROP, "ResampleTexture: max width");
 
 	fracstep = inwidth * 0x10000 / outwidth;
 
@@ -515,7 +513,6 @@ static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *o
 	}
 }
 
-
 /*
 ================
 R_LightScaleTexture
@@ -577,8 +574,6 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean onlyG
 		}
 	}
 }
-
-
 
 /*
 ================
@@ -690,8 +685,6 @@ static void R_MipMap(byte *in, int width, int height)
 		}
 	}
 }
-
-
 
 /*
 ================
@@ -1000,7 +993,6 @@ static void R_MakeAlpha(byte *in, int width, int height)
 	}
 }
 
-
 /*
 ==================
 R_BlendOverTexture
@@ -1026,7 +1018,6 @@ static void R_BlendOverTexture(byte *data, int pixelCount, byte blend[4])
 		data[2] = (data[2] * inverseAlpha + premult[2]) >> 9;
 	}
 }
-
 
 byte mipBlendColors[16][4] =
 {
@@ -1063,7 +1054,6 @@ byte mipBlendColors[16][4] =
 	{ 0,   0,   255, 128 }
 	,
 };
-
 
 /*
 ===============
@@ -1508,8 +1498,6 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 #endif // defined(USE_D3D10)
 }
 
-
-
 /*
 ================
 R_AllocImage
@@ -1551,7 +1539,6 @@ image_t *R_AllocImage(const char *name, qboolean linkIntoHashTable)
 
 	return image;
 }
-
 
 /*
 ================
@@ -1646,9 +1633,6 @@ image_t *R_CreateCubeImage(const char *name,
 
 	return image;
 }
-
-
-
 
 static void     R_LoadImage(char **buffer, byte **pic, int *width, int *height, int *bits, const char *materialName);
 image_t *R_LoadDDSImage(const char *name, int bits, filterType_t filterType, wrapType_t wrapType);
@@ -2175,8 +2159,6 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 	}
 }
 
-
-
 /*
 ===============
 R_FindImageFile
@@ -2282,14 +2264,12 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 		return NULL;
 	}
 
-#if defined(COMPAT_ET)
 	if (bits & IF_LIGHTMAP)
 	{
 		R_ProcessLightmap(&pic, 4, width, height, &pic);
 
 		bits |= IF_NOCOMPRESSION;
 	}
-#endif
 
 #if 0
 	//if(r_tryCachedDDSImages->integer && !(bits & IF_NOCOMPRESSION) && Q_strncasecmp(name, "fonts", 5))
@@ -2303,7 +2283,6 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 	ri.Free(pic);
 	return image;
 }
-
 
 static ID_INLINE void SwapPixel(byte *inout, int x, int y, int x2, int y2, int width, int height)
 {
@@ -2675,8 +2654,6 @@ skipCubeImage:
 	return image;
 }
 
-
-
 /*
 =================
 R_InitFogTable
@@ -2697,7 +2674,6 @@ void R_InitFogTable(void)
 		tr.fogTable[i] = d;
 	}
 }
-
 
 /*
 ================
@@ -2738,7 +2714,6 @@ float R_FogFactor(float s, float t)
 
 	return d;
 }
-
 
 /*
 ================
@@ -2787,7 +2762,6 @@ static void R_CreateFogImage(void)
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 #endif
 }
-
 
 /*
 ==================
@@ -3320,7 +3294,6 @@ static void R_CreateShadowMapFBOImage(void)
 		ri.Hunk_FreeTempMemory(data);
 	}
 
-
 	// sun shadow maps
 	for (i = 0; i < MAX_SHADOWMAPS; i++)
 	{
@@ -3622,9 +3595,6 @@ void R_CreateBuiltinImages(void)
 	R_CreateWhiteCubeImage();
 }
 
-
-
-
 /*
 ===============
 R_SetColorMappings
@@ -3735,7 +3705,6 @@ void R_SetColorMappings(void)
 	GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
 }
 
-
 /*
 ===============
 R_InitImages
@@ -3778,7 +3747,6 @@ void R_InitImages(void)
 		ri.Error(ERR_FATAL, "R_InitImages: could not load '%s'", vignetteImage);
 	}
 }
-
 
 /*
 ===============
@@ -3833,7 +3801,6 @@ void R_ShutdownImages(void)
 
 	FreeVertexHashTable(tr.cubeHashTable);
 }
-
 
 int RE_GetTextureId(const char *name)
 {

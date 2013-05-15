@@ -1784,9 +1784,7 @@ void R_Init(void)
 
 	ri.Printf(PRINT_ALL, "----- R_Init -----\n");
 
-#if defined (COMPAT_ET)
 	//Swap_Init();
-#endif
 
 	// clear all our internal state
 	Com_Memset(&tr, 0, sizeof(tr));
@@ -2346,9 +2344,7 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.RegisterSkin        = RE_RegisterSkin;
 	re.RegisterShader      = RE_RegisterShader;
 	re.RegisterShaderNoMip = RE_RegisterShaderNoMip;
-#if !defined(COMPAT_ET)
-	re.RegisterShaderLightAttenuation = RE_RegisterShaderLightAttenuation;
-#endif
+	//re.RegisterShaderLightAttenuation = RE_RegisterShaderLightAttenuation;
 
 	re.LoadWorld       = RE_LoadWorldMap;
 	re.SetWorldVisData = RE_SetWorldVisData;
@@ -2376,12 +2372,8 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.LightForPoint = R_LightForPoint;
 #endif
 
-#if defined(COMPAT_ET)
 	re.AddLightToScene = RE_AddDynamicLightToSceneET;
 	//re.AddAdditiveLightToScene = RE_AddDynamicLightToSceneQ3A;
-#else
-
-#endif
 
 	re.RenderScene = RE_RenderScene;
 
@@ -2402,7 +2394,6 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	// Q3A END
 
 	// ET BEGIN
-#if defined(COMPAT_ET)
 	re.GetSkinModel       = RE_GetSkinModel;
 	re.GetShaderFromModel = RE_GetShaderFromModel;
 
@@ -2427,15 +2418,12 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 	re.GetTextureId      = RE_GetTextureId;
 	re.RenderToTexture   = RE_RenderToTexture;
 	re.Finish            = RE_Finish;
-#endif
 	// ET END
 
 	// XreaL BEGIN
 	re.TakeVideoFrame = RE_TakeVideoFrame;
 
-#if !defined(COMPAT_ET)
-	re.TakeScreenshotPNG = RB_TakeScreenshotPNG;
-#endif
+	//re.TakeScreenshotPNG = RB_TakeScreenshotPNG;
 
 #if defined(USE_REFLIGHT)
 	re.RegisterShaderLightAttenuation = RE_RegisterShaderLightAttenuation;

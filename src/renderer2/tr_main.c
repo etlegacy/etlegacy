@@ -90,8 +90,6 @@ refimport_t ri;
 // point at this for their sorting surface
 surfaceType_t entitySurface = SF_ENTITY;
 
-
-
 /*
 ================
 R_CompareVert
@@ -177,9 +175,6 @@ void R_CalcTangentsForTriangle(vec3_t tangent, vec3_t binormal,
 	binormal[2] = -planes[2][2] / planes[2][0];
 	VectorNormalize(binormal);
 }
-
-
-
 
 /*
 =============
@@ -479,7 +474,6 @@ void R_CalcTBN2(vec3_t tangent, vec3_t binormal, vec3_t normal,
 	}
 }
 
-
 qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 {
 	int    i;
@@ -532,7 +526,6 @@ qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 
 	return qtrue;
 }
-
 
 /*
 =================
@@ -600,31 +593,32 @@ void R_CalcSurfaceTriangleNeighbors(int numTriangles, srfTriangle_t *triangles)
 =================
 R_CalcSurfaceTrianglePlanes
 =================
-*/
+
 #if !defined(COMPAT_Q3A) || !defined(COMPAT_ET)
 void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srfVert_t *verts)
 {
-	int           i;
-	srfTriangle_t *tri;
-	vec4_t        triPlane;
+    int           i;
+    srfTriangle_t *tri;
+    vec4_t        triPlane;
 
-	for (i = 0, tri = triangles; i < numTriangles; i++, tri++)
-	{
-		float  *v1, *v2, *v3;
-		vec3_t d1, d2;
+    for (i = 0, tri = triangles; i < numTriangles; i++, tri++)
+    {
+        float  *v1, *v2, *v3;
+        vec3_t d1, d2;
 
-		v1 = verts[tri->indexes[0]].xyz;
-		v2 = verts[tri->indexes[1]].xyz;
-		v3 = verts[tri->indexes[2]].xyz;
+        v1 = verts[tri->indexes[0]].xyz;
+        v2 = verts[tri->indexes[1]].xyz;
+        v3 = verts[tri->indexes[2]].xyz;
 
-		VectorSubtract(v2, v1, d1);
-		VectorSubtract(v3, v1, d2);
+        VectorSubtract(v2, v1, d1);
+        VectorSubtract(v3, v1, d2);
 
-		CrossProduct(d2, d1, triPlane);
-		DotProduct(triPlane, v1);
-	}
+        CrossProduct(d2, d1, triPlane);
+        DotProduct(triPlane, v1);
+    }
 }
 #endif
+*/
 
 /*
 Tr3B: this function breaks the VC9 compiler for some unknown reason ...
@@ -2664,7 +2658,6 @@ void R_AddEntitySurfaces(void)
 				case MOD_MESH:
 					R_AddMDVSurfaces(ent);
 					break;
-#if defined(COMPAT_ET)
 				case MOD_MDX:
 					// not a model, just a skeleton
 					break;
@@ -2672,7 +2665,6 @@ void R_AddEntitySurfaces(void)
 				case MOD_MDM:
 					R_MDM_AddAnimSurfaces(ent);
 					break;
-#endif
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 				case MOD_MD5:
@@ -2768,7 +2760,6 @@ void R_AddEntityInteractions(trRefLight_t *light)
 					R_AddMDVInteractions(ent, light);
 					break;
 
-#if defined(COMPAT_ET)
 				case MOD_MDX:
 					// not a model, just a skeleton
 					break;
@@ -2776,7 +2767,6 @@ void R_AddEntityInteractions(trRefLight_t *light)
 				case MOD_MDM:
 					R_AddMDMInteractions(ent, light);
 					break;
-#endif
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 				case MOD_MD5:
@@ -3507,9 +3497,7 @@ void R_RenderView(viewParms_t *parms)
 	// matrix for lod calculation
 	R_SetupProjection(qfalse);
 
-#if defined(COMPAT_ET)
 	R_SetFrameFog();
-#endif
 
 	R_SetupUnprojection();
 

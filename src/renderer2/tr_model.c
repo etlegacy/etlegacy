@@ -37,11 +37,9 @@
 
 qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const char *name);
 
-#if defined(COMPAT_ET)
 qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const char *name);
 qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name);
 static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *name);
-#endif
 
 qboolean R_LoadMD5(model_t *mod, byte *buffer, int bufferSize, const char *name);
 qboolean R_LoadPSK(model_t *mod, byte *buffer, int bufferSize, const char *name);
@@ -166,7 +164,6 @@ qhandle_t RE_RegisterModel(const char *name)
 			loadmodel = mod;
 
 			ident = LittleLong(*(unsigned *)buffer);
-#if defined(COMPAT_ET)
 #if 0
 			if (ident == MDS_IDENT)
 			{
@@ -182,7 +179,6 @@ qhandle_t RE_RegisterModel(const char *name)
 			{
 				loaded = R_LoadMDX(mod, buffer, name);
 			}
-#endif
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 			if (!Q_stricmpn((const char *)buffer, "MD5Version", 10))
@@ -248,13 +244,11 @@ qhandle_t RE_RegisterModel(const char *name)
 			loaded = R_LoadMD3(mod, lod, buffer, bufferLen, name);
 			ri.FS_FreeFile(buffer);
 		}
-#if defined(COMPAT_ET)
 		else if (ident == MDC_IDENT)
 		{
 			loaded = R_LoadMDC(mod, lod, buffer, bufferLen, name);
 			ri.FS_FreeFile(buffer);
 		}
-#endif
 		else
 		{
 			ri.FS_FreeFile(buffer);
@@ -326,16 +320,11 @@ fail:
 	return 0;
 }
 
-
-
-
-
 /*
 =================
 R_LoadMDX
 =================
 */
-#if defined(COMPAT_ET)
 static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 {
 	int           i, j;
@@ -408,9 +397,6 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 
 	return qtrue;
 }
-#endif // #if defined(COMPAT_ET)
-
-
 
 //=============================================================================
 
@@ -730,7 +716,6 @@ int RE_LerpTagQ3A(orientation_t *tag, qhandle_t handle, int startFrame, int endF
 RE_LerpTag
 ================
 */
-#if defined(COMPAT_ET)
 int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagNameIn, int startIndex)
 {
 	mdvTag_t  *start, *end;
@@ -884,7 +869,6 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 
 	return retval;
 }
-#endif
 
 /*
 ================

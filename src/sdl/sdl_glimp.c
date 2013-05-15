@@ -1453,6 +1453,7 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 	return qtrue;
 }
 
+#ifndef FEATURE_RENDERER2
 /*
 ===============
 GLimp_InitExtensions
@@ -1562,6 +1563,7 @@ static void GLimp_InitExtensions(void)
 		ri.Printf(PRINT_ALL, "...GL_ARB_multitexture not found\n");
 	}
 }
+#endif
 
 void GLimp_SetHardware(void)
 {

@@ -940,9 +940,7 @@ typedef enum
 	ST_HEATHAZEMAP,             // heatHaze post process effect
 	ST_LIQUIDMAP,
 
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 	ST_LIGHTMAP,
-#endif
 
 	ST_COLLAPSE_lighting_DB,    // diffusemap + bumpmap
 	ST_COLLAPSE_lighting_DBS,   // diffusemap + bumpmap + specularmap
@@ -1226,10 +1224,8 @@ enum
 	ATTR_INDEX_NORMAL,
 	ATTR_INDEX_COLOR,
 
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	ATTR_INDEX_PAINTCOLOR,
-	ATTR_INDEX_LIGHTDIRECTION,
-#endif
+	//ATTR_INDEX_PAINTCOLOR,
+	//ATTR_INDEX_LIGHTDIRECTION,
 
 	// GPU vertex skinning
 	ATTR_INDEX_BONE_INDEXES,
@@ -1332,10 +1328,8 @@ enum
 	ATTR_NORMAL     = BIT(5),
 	ATTR_COLOR      = BIT(6),
 
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	ATTR_PAINTCOLOR     = BIT(7),
-	ATTR_LIGHTDIRECTION = BIT(8),
-#endif
+	//ATTR_PAINTCOLOR     = BIT(7),
+	//ATTR_LIGHTDIRECTION = BIT(8),
 
 	ATTR_BONE_INDEXES = BIT(9),
 	ATTR_BONE_WEIGHTS = BIT(10),
@@ -1357,10 +1351,8 @@ enum
 	            ATTR_NORMAL |
 	            ATTR_COLOR
 
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	            | ATTR_PAINTCOLOR |
-	            ATTR_LIGHTDIRECTION
-#endif
+	            //|ATTR_PAINTCOLOR |
+	            //ATTR_LIGHTDIRECTION
 
 	            //ATTR_BONE_INDEXES |
 	            //ATTR_BONE_WEIGHTS
@@ -1639,7 +1631,6 @@ static ID_INLINE void GLSL_SetUniform_SpecularTextureMatrix(shaderProgram_t *pro
 
 	qglUniformMatrix4fvARB(program->u_SpecularTextureMatrix, 1, GL_FALSE, m);
 }
-
 
 void            GLimp_LogComment(char *comment);
 
@@ -2506,13 +2497,10 @@ typedef struct
 	int pixelTargetWidth;
 	int pixelTargetHeight;
 
-#if defined(COMPAT_ET)
 	glfog_t glFog;                      // (SA) added (needed to pass fog infos into the portal sky scene)
-#endif
 } trRefdef_t;
 
 //=================================================================================
-
 
 // skins allow models to be retextured without modifying the model file
 typedef struct
@@ -2521,7 +2509,6 @@ typedef struct
 	shader_t *shader;
 } skinSurface_t;
 
-//----(SA) modified
 #define MAX_PART_MODELS 5
 
 typedef struct
@@ -2539,9 +2526,6 @@ typedef struct skin_s
 	skinSurface_t *surfaces[MD3_MAX_SURFACES];
 	skinModel_t *models[MAX_PART_MODELS];
 } skin_t;
-
-//----(SA) end
-
 
 //=================================================================================
 
@@ -2602,9 +2586,7 @@ typedef struct
 
 /*
 ==============================================================================
-
 SURFACES
-
 ==============================================================================
 */
 
@@ -2623,9 +2605,7 @@ typedef enum
 	SF_DECAL,                   // ydnar: decal surfaces
 
 	SF_MDV,
-#if defined(COMPAT_ET)
 	SF_MDM,
-#endif
 	SF_MD5,
 
 	SF_FLARE,
@@ -2633,9 +2613,9 @@ typedef enum
 
 	SF_VBO_MESH,
 	SF_VBO_MD5MESH,
-#if defined(COMPAT_ET)
+
 	SF_VBO_MDMMESH,
-#endif
+
 	SF_VBO_MDVMESH,
 
 	SF_NUM_SURFACE_TYPES,
@@ -3020,7 +3000,6 @@ typedef struct decal_s
 }
 decal_t;
 
-
 #define CONTENTS_NODE       -1
 typedef struct bspNode_s
 {
@@ -3116,7 +3095,7 @@ typedef struct
 	vec3_t direction;
 } bspGridPoint_t;
 
-// ydnar: optimization
+// optimization
 #define WORLD_MAX_SKY_NODES 32
 
 typedef struct
@@ -3524,10 +3503,8 @@ typedef enum
 	MOD_BAD,
 	MOD_BSP,
 	MOD_MESH,
-#if defined(COMPAT_ET)
 	MOD_MDM,
 	MOD_MDX,
-#endif
 	MOD_MD5
 } modtype_t;
 
@@ -3540,10 +3517,8 @@ typedef struct model_s
 	int dataSize;               // just for listing purposes
 	bspModel_t *bsp;            // only if type == MOD_BSP
 	mdvModel_t *mdv[MD3_MAX_LODS];      // only if type == MOD_MESH
-#if defined(COMPAT_ET)
 	mdmModel_t *mdm;            // only if type == MOD_MDM
 	mdxHeader_t *mdx;           // only if type == MOD_MDX
-#endif
 	md5Model_t *md5;            // only if type == MOD_MD5
 
 	int numLods;
@@ -3930,10 +3905,8 @@ typedef struct
 	vec3_t fogColor;
 	float fogDensity;
 
-#if defined(COMPAT_ET)
 	glfog_t glfogsettings[NUM_FOGS];
 	glfogType_t glfogNum;
-#endif
 
 	frontEndCounters_t pc;
 	int frontEndMsec;               // not in pc due to clearing issue
@@ -4015,9 +3988,8 @@ extern glRefConfig_t glRefConfig;
 extern float         displayAspect; //FIXME
 
 
-//
 // cvars
-//
+
 extern cvar_t *r_glCoreProfile;
 extern cvar_t *r_glMinMajorVersion;
 extern cvar_t *r_glMinMinorVersion;
@@ -4392,14 +4364,9 @@ void            R_DebugBoundingBox(const vec3_t origin, const vec3_t mins, const
 void            R_DebugPolygon(int color, int numPoints, float *points);
 void            R_DebugText(const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude);
 
-
-
-
 /*
 ====================================================================
-
 OpenGL WRAPPERS, tr_backend.c
-
 ====================================================================
 */
 void            GL_Bind(image_t *image);
@@ -4444,8 +4411,6 @@ void            GL_Cull(int cullType);
 
 /*
 ====================================================================
-
-
 
 ====================================================================
 */
@@ -4495,12 +4460,9 @@ skin_t *R_GetSkinByHandle(qhandle_t hSkin);
 
 void            R_DeleteSurfaceVBOs();
 
-
 /*
 ====================================================================
-
 IMAGES, tr_image.c
-
 ====================================================================
 */
 void            R_InitImages(void);
@@ -4522,16 +4484,12 @@ void            R_UploadImage(const byte **dataArray, int numData, image_t *imag
 
 int             RE_GetTextureId(const char *name);
 
-
 void            R_InitFogTable(void);
 float           R_FogFactor(float s, float t);
 
-
 /*
 ====================================================================
-
 SHADERS, tr_shader.c
-
 ====================================================================
 */
 qhandle_t       RE_RegisterShader(const char *name);
@@ -4551,9 +4509,7 @@ void            R_RemapShader(const char *oldShader, const char *newShader, cons
 
 /*
 ====================================================================
-
 IMPLEMENTATION SPECIFIC FUNCTIONS
-
 ====================================================================
 */
 
@@ -4570,15 +4526,13 @@ void            GLimp_FrontEndSleep(void);
 
 void            GLimp_LogComment(char *comment);
 
-
 // NOTE TTimo linux works with float gamma value, not the gamma table
 //   the params won't be used, getting the r_gamma cvar directly
 void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
+
 /*
 ====================================================================
-
 TESSELATOR/SHADER DECLARATIONS
-
 ====================================================================
 */
 
@@ -4602,10 +4556,9 @@ typedef struct shaderCommands_s
 	vec4_t binormals[SHADER_MAX_VERTEXES];
 	vec4_t normals[SHADER_MAX_VERTEXES];
 	vec4_t colors[SHADER_MAX_VERTEXES];
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	vec4_t paintColors[SHADER_MAX_VERTEXES];                // for advanced terrain blending
-	vec4_t lightDirections[SHADER_MAX_VERTEXES];
-#endif
+
+	//vec4_t paintColors[SHADER_MAX_VERTEXES];                // for advanced terrain blending
+	//vec4_t lightDirections[SHADER_MAX_VERTEXES];
 
 	glIndex_t indexes[SHADER_MAX_INDEXES];
 
@@ -4694,9 +4647,7 @@ void            RB_ShowImages(void);
 
 /*
 ============================================================
-
 WORLD MAP, tr_world.c
-
 ============================================================
 */
 
@@ -4710,9 +4661,7 @@ void            R_ShutdownVBOs();
 
 /*
 ============================================================
-
 FLARES, tr_flares.c
-
 ============================================================
 */
 
@@ -4724,9 +4673,7 @@ void            RB_RenderFlares(void);
 
 /*
 ============================================================
-
 LIGHTS, tr_light.c
-
 ============================================================
 */
 
@@ -4763,28 +4710,20 @@ void            R_ComputeFinalAttenuation(shaderStage_t *pStage, trRefLight_t *l
 
 /*
 ============================================================
-
 FOG, tr_fog.c
-
 ============================================================
 */
 
-#if defined(COMPAT_ET)
 void            R_SetFrameFog();
 void            RB_Fog(glfog_t *curfog);
 void            RB_FogOff();
 void            RB_FogOn();
 void            RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density);
 void            RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
-#endif
-
-
 
 /*
 ============================================================
-
 SHADOWS, tr_shadows.c
-
 ============================================================
 */
 
@@ -4792,9 +4731,7 @@ void            RB_ProjectionShadowDeform();
 
 /*
 ============================================================
-
 SKIES
-
 ============================================================
 */
 
@@ -4803,9 +4740,7 @@ void            RB_DrawSun(void);
 
 /*
 ============================================================
-
 CURVE TESSELATION, tr_curve.c
-
 ============================================================
 */
 
@@ -4816,21 +4751,16 @@ void            R_FreeSurfaceGridMesh(srfGridMesh_t *grid);
 
 /*
 ============================================================
-
 MARKERS, POLYGON PROJECTION ON WORLD POLYGONS, tr_marks.c
-
 ============================================================
 */
 
 int             R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection,
                                 int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
 
-
 /*
 ============================================================
-
 FRAME BUFFER OBJECTS, tr_fbo.c
-
 ============================================================
 */
 qboolean        R_CheckFBO(const FBO_t *fbo);
@@ -4853,12 +4783,9 @@ void            R_InitFBOs(void);
 void            R_ShutdownFBOs(void);
 void            R_FBOList_f(void);
 
-
 /*
 ============================================================
-
 VERTEX BUFFER OBJECTS, tr_vbo.c
-
 ============================================================
 */
 VBO_t *R_CreateVBO(const char *name, byte *vertexes, int vertexesSize, vboUsage_t usage);
@@ -4877,12 +4804,9 @@ void            R_InitVBOs(void);
 void            R_ShutdownVBOs(void);
 void            R_VBOList_f(void);
 
-
 /*
 ============================================================
-
-DECALS - ydnar, tr_decals.c
-
+DECALS - tr_decals.c
 ============================================================
 */
 
@@ -4905,9 +4829,7 @@ void            R_CullDecalProjectors(void);
 
 /*
 ============================================================
-
 SCENE GENERATION, tr_scene.c
-
 ============================================================
 */
 
@@ -4935,9 +4857,7 @@ void            RE_RestoreViewParms();
 
 /*
 =============================================================
-
 ANIMATED MODELS
-
 =============================================================
 */
 
@@ -4964,9 +4884,7 @@ int             RE_AnimFrameRate(qhandle_t hAnim);
 
 /*
 =============================================================
-
 ANIMATED MODELS WOLFENSTEIN
-
 =============================================================
 */
 
@@ -4980,9 +4898,7 @@ int             R_GetBoneTag(orientation_t * outTag, mdsHeader_t * mds, int star
 
 /*
 =============================================================
-
 ANIMATED MODELS WOLF:ET  MDM/MDX
-
 =============================================================
 */
 
@@ -4998,6 +4914,7 @@ void            Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surfType);
 
 /*
 =============================================================
+
 =============================================================
 */
 
@@ -5018,12 +4935,9 @@ float           RB_EvalExpression(const expression_t *exp, float defaultValue);
 
 void            RB_CalcTexMatrix(const textureBundle_t *bundle, matrix_t matrix);
 
-
 /*
 =============================================================
-
 RENDERER IMAGE FUNCTIONS
-
 =============================================================
 */
 
@@ -5041,9 +4955,7 @@ void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte a
 
 /*
 =============================================================
-
 RENDERER BACK END FUNCTIONS
-
 =============================================================
 */
 
@@ -5052,9 +4964,7 @@ void            RB_ExecuteRenderCommands(const void *data);
 
 /*
 =============================================================
-
 RENDERER BACK END COMMAND QUEUE
-
 =============================================================
 */
 
@@ -5188,8 +5098,7 @@ typedef enum
 	RC_FINISH                   //bani
 } renderCommand_t;
 
-
-// ydnar: max decal projectors per frame, each can generate lots of polys
+// max decal projectors per frame, each can generate lots of polys
 #define MAX_DECAL_PROJECTORS    32  // uses bitmasks, don't increase
 #define DECAL_PROJECTOR_MASK    (MAX_DECAL_PROJECTORS - 1)
 #define MAX_DECALS              1024

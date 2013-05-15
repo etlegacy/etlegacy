@@ -110,7 +110,6 @@ void HSVtoRGB(float h, float s, float v, float rgb[3])
 R_ColorShiftLightingBytes
 ===============
 */
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 {
 	int shift, r, g, b;
@@ -140,7 +139,6 @@ static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 	out[2] = b;
 	out[3] = in[3];
 }
-#endif
 
 /*
 ===============
@@ -294,12 +292,11 @@ R_ProcessLightmap
     returns maxIntensity
 ===============
 */
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte **pic_out)
 {
-	int    j;
-	float  maxIntensity = 0;
-	double sumIntensity = 0;
+	int   j;
+	float maxIntensity = 0;
+	//double sumIntensity = 0;
 
 	/*
 	if(r_lightmap->integer > 1)
@@ -361,7 +358,6 @@ float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte 
 
 	return maxIntensity;
 }
-#endif
 
 static int QDECL LightmapNameCompare(const void *a, const void *b)
 {
@@ -1028,7 +1024,6 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 			}
 		}
 	}
-#if defined(COMPAT_ET)
 	else
 	{
 		static byte data[LIGHTMAP_SIZE * LIGHTMAP_SIZE * 4], *buf, *buf_p;
@@ -1086,7 +1081,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 			}
 		}
 	}
-#elif defined(COMPAT_Q3A)
+#if defined(COMPAT_Q3A)
 	else
 	{
 		int  i;
@@ -1612,11 +1607,7 @@ static void ParseMesh(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf)
 
 	// we may have a nodraw surface, because they might still need to
 	// be around for movement clipping
-#if defined(COMPAT_ET)
 	if (s_worldData.shaders[LittleLong(ds->shaderNum)].surfaceFlags & SURF_NODRAW)
-#else
-	if (s_worldData.shaders[LittleLong(ds->shaderNum)].surfaceFlags & (SURF_NODRAW | SURF_COLLISION))
-#endif
 	{
 		surf->data = &skipData;
 		return;
@@ -1748,11 +1739,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 
 	// we may have a nodraw surface, because they might still need to
 	// be around for movement clipping
-#if defined(COMPAT_ET)
 	if (s_worldData.shaders[LittleLong(ds->shaderNum)].surfaceFlags & SURF_NODRAW)
-#else
-	if (s_worldData.shaders[LittleLong(ds->shaderNum)].surfaceFlags & (SURF_NODRAW | SURF_COLLISION))
-#endif
 	{
 		surf->data = &skipData;
 		return;
@@ -6322,7 +6309,7 @@ void R_LoadEntities(lump_t *l)
 
 		if (!*token)
 		{
-			ri.Printf(PRINT_WARNING, "WARNING: unexpected end of entities string while parsing worldspawn\n", token);
+			ri.Printf(PRINT_WARNING, "R_LoadEntities WARNING: unexpected end of entities string while parsing worldspawn\n");
 			break;
 		}
 
@@ -9276,7 +9263,7 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeN
 void R_BuildCubeMaps(void)
 {
 #if 1
-	int      i, j, k;
+	int      i, j; // k;
 	int      ii, jj;
 	refdef_t rf;
 	qboolean flipx;
@@ -9469,11 +9456,7 @@ void R_BuildCubeMaps(void)
 			do
 			{
 				ri.Printf(PRINT_ALL, "*");
-
-				#if defined(COMPAT_ET)
 				ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n");
-				#endif
-
 			}
 			while (++tics < ticsNeeded);
 
@@ -9866,7 +9849,6 @@ void RE_LoadWorldMap(const char *name)
 	//          now that I can see how it's been used.  (functionality can narrow since
 	//          it's not used as much as it's designed for.)
 
-#if defined(COMPAT_ET)
 	RE_SetFog(FOG_SKY, 0, 0, 0, 0, 0, 0);
 	RE_SetFog(FOG_PORTALVIEW, 0, 0, 0, 0, 0, 0);
 	RE_SetFog(FOG_HUD, 0, 0, 0, 0, 0, 0);
@@ -9877,7 +9859,6 @@ void RE_LoadWorldMap(const char *name)
 	RE_SetFog(FOG_SERVER, 0, 0, 0, 0, 0, 0);
 
 	tr.glfogNum = (glfogType_t)0;
-#endif
 
 	VectorCopy(colorMdGrey, tr.fogColor);
 	tr.fogDensity = 0;
@@ -9981,10 +9962,8 @@ void RE_LoadWorldMap(const char *name)
 	// only set tr.world now that we know the entire level has loaded properly
 	tr.world = &s_worldData;
 
-#if defined(COMPAT_ET)
 	// reset fog to world fog (if present)
 	RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
-#endif
 
 	// make sure the VBO glState entries are save
 	R_BindNullVBO();

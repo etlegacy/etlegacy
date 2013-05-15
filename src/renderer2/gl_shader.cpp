@@ -321,9 +321,7 @@ std::string GLShader::BuildGPUShaderText(const char *mainShaderName,
 		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef COMPAT_Q3A\n#define COMPAT_Q3A 1\n#endif\n");
 #endif
 
-#if defined(COMPAT_ET)
 		Q_strcat(bufferExtra, sizeof(bufferExtra), "#ifndef COMPAT_ET\n#define COMPAT_ET 1\n#endif\n");
-#endif
 
 		// HACK: add some macros to avoid extra uniforms and save speed and code maintenance
 		Q_strcat(bufferExtra, sizeof(bufferExtra),
@@ -1352,14 +1350,6 @@ void GLShader::BindAttribLocations(GLuint program) const
 	//if(attribs & ATTR_COLOR)
 	glBindAttribLocation(program, ATTR_INDEX_COLOR, "attr_Color");
 
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	//if(attribs & ATTR_PAINTCOLOR)
-	glBindAttribLocation(program, ATTR_INDEX_PAINTCOLOR, "attr_PaintColor");
-
-	//if(attribs & ATTR_LIGHTDIRECTION)
-	glBindAttribLocation(program, ATTR_INDEX_LIGHTDIRECTION, "attr_LightDirection");
-#endif
-
 	//if(glConfig2.vboVertexSkinningAvailable)
 	{
 		glBindAttribLocation(program, ATTR_INDEX_BONE_INDEXES, "attr_BoneIndexes");
@@ -1620,12 +1610,7 @@ void GLShader_vertexLighting_DBS_entity::SetShaderProgramUniforms(shaderProgram_
 }
 
 GLShader_vertexLighting_DBS_world::GLShader_vertexLighting_DBS_world() :
-	GLShader("vertexLighting_DBS_world",
-	         ATTR_POSITION | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_COLOR
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	         | ATTR_LIGHTDIRECTION
-#endif
-	         ),
+	GLShader("vertexLighting_DBS_world", ATTR_POSITION | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_COLOR),
 	u_DiffuseTextureMatrix(this),
 	u_NormalTextureMatrix(this),
 	u_SpecularTextureMatrix(this),
@@ -2595,11 +2580,7 @@ void GLShader_debugShadowMap::SetShaderProgramUniforms(shaderProgram_t *shaderPr
 
 // Dushan
 GLShader_liquid::GLShader_liquid() :
-	GLShader("liquid", ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_COLOR
-#if !defined(COMPAT_Q3A) && !defined(COMPAT_ET)
-	         | ATTR_LIGHTDIRECTION
-#endif
-	         ),
+	GLShader("liquid", ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_COLOR),
 	u_NormalTextureMatrix(this),
 	u_ModelViewProjectionMatrix(this),
 	u_ViewOrigin(this),

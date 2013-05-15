@@ -475,11 +475,7 @@ void Tess_UpdateVBOs(uint32_t attribBits)
 			    (backEnd.currentEntity->e.reType == RT_MODEL &&
 			     tr.models[backEnd.currentEntity->e.hModel]->type == MOD_BSP))
 			{
-#if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 				attribBits |= ATTR_LIGHTCOORD;
-#else
-				attribBits |= ATTR_LIGHTCOORD | ATTR_PAINTCOLOR | ATTR_LIGHTDIRECTION;
-#endif
 			}
 		}
 

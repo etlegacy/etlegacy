@@ -398,10 +398,6 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
 		}
 	}
 
-#if !defined(COMPAT_Q3A) || !defined(COMPAT_ET)
-	R_CalcSurfaceTrianglePlanes(numTriangles, triangles, ctrl2);
-#endif
-
 	return numTriangles;
 }
 
