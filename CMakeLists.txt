@@ -306,10 +306,13 @@ FILE(GLOB RENDERER_COMMON
 	"src/sdl/sdl_icon.h"
 	"src/sys/sys_local.h"
 	"src/qcommon/q_shared.h"
+	"src/qcommon/puff.h"
+)
+
+FILE(GLOB RENDERER_COMMON_DYNAMIC
 	"src/qcommon/q_shared.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/puff.c"
-	"src/qcommon/puff.h"
 )
 	
 FILE(GLOB RENDERER1_FILES
@@ -595,6 +598,7 @@ if(BUILD_CLIENT)
 		MESSAGE("Will build dynamic renderer libraries")
 		add_definitions( "-DUSE_RENDERER_DLOPEN" )
 		set(REND_LIBTYPE MODULE)
+		list(APPEND RENDERER_COMMON ${RENDERER_COMMON_DYNAMIC}) 
 	else(RENDERER_DYNAMIC)
 		set(REND_LIBTYPE STATIC)
 	endif(RENDERER_DYNAMIC)
