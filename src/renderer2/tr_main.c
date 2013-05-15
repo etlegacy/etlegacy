@@ -593,32 +593,29 @@ void R_CalcSurfaceTriangleNeighbors(int numTriangles, srfTriangle_t *triangles)
 =================
 R_CalcSurfaceTrianglePlanes
 =================
-
-#if !defined(COMPAT_Q3A) || !defined(COMPAT_ET)
+*/
 void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srfVert_t *verts)
 {
-    int           i;
-    srfTriangle_t *tri;
-    vec4_t        triPlane;
+	int           i;
+	srfTriangle_t *tri;
+	vec4_t        triPlane;
 
-    for (i = 0, tri = triangles; i < numTriangles; i++, tri++)
-    {
-        float  *v1, *v2, *v3;
-        vec3_t d1, d2;
+	for (i = 0, tri = triangles; i < numTriangles; i++, tri++)
+	{
+		float  *v1, *v2, *v3;
+		vec3_t d1, d2;
 
-        v1 = verts[tri->indexes[0]].xyz;
-        v2 = verts[tri->indexes[1]].xyz;
-        v3 = verts[tri->indexes[2]].xyz;
+		v1 = verts[tri->indexes[0]].xyz;
+		v2 = verts[tri->indexes[1]].xyz;
+		v3 = verts[tri->indexes[2]].xyz;
 
-        VectorSubtract(v2, v1, d1);
-        VectorSubtract(v3, v1, d2);
+		VectorSubtract(v2, v1, d1);
+		VectorSubtract(v3, v1, d2);
 
-        CrossProduct(d2, d1, triPlane);
-        DotProduct(triPlane, v1);
-    }
+		CrossProduct(d2, d1, triPlane);
+		DotProduct(triPlane, v1);
+	}
 }
-#endif
-*/
 
 /*
 Tr3B: this function breaks the VC9 compiler for some unknown reason ...
