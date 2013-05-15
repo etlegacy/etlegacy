@@ -1355,10 +1355,10 @@ void R_RotateForViewer(void)
 static void SetFarClip(void)
 {
 	float farthestCornerDistance;
-	int   i, j;
-//	vec3_t          v;
-//	vec3_t          eye;
-//	float          *modelMatrix;
+	int   i; //j;
+	//vec3_t          v;
+	//vec3_t          eye;
+	//float          *modelMatrix;
 
 	// if not rendering the world (icons, menus, etc)
 	// set a 2k far clip plane
@@ -2847,11 +2847,11 @@ R_AddLightInteractions
 */
 void R_AddLightInteractions()
 {
-	int          i, j;
+	int          i; //j;
 	trRefLight_t *light;
-	bspNode_t    **leafs;
-	bspNode_t    *leaf;
-	link_t       *l, *sentinel;
+	//bspNode_t    **leafs;
+	bspNode_t *leaf;
+	link_t    *l;    //*sentinel;
 
 	for (i = 0; i < tr.refdef.numLights; i++)
 	{
@@ -3085,11 +3085,11 @@ void R_AddLightInteractions()
 
 void R_AddLightBoundsToVisBounds()
 {
-	int          i, j;
+	int          i; //j;
 	trRefLight_t *light;
-	bspNode_t    **leafs;
-	bspNode_t    *leaf;
-	link_t       *l, *sentinel;
+	//bspNode_t    **leafs;
+	bspNode_t *leaf;
+	link_t    *l;    //*sentinel;
 
 	for (i = 0; i < tr.refdef.numLights; i++)
 	{

@@ -30,7 +30,6 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  */
 
-
 #include "tr_local.h"
 
 /*
@@ -53,9 +52,9 @@ frame.
 // Static Vars, ugly but easiest (and fastest) means of seperating RB_SurfaceAnim
 // and R_CalcBones
 
-static float                    frontlerp, backlerp;
-static float                    torsoFrontlerp, torsoBacklerp;
-static int                      *boneRefs;
+static float frontlerp, backlerp;
+static float torsoFrontlerp, torsoBacklerp;
+//static int                      *boneRefs;
 static mdxBoneFrame_t           bones[MDX_MAX_BONES], rawBones[MDX_MAX_BONES], oldBones[MDX_MAX_BONES];
 static char                     validBones[MDX_MAX_BONES];
 static char                     newBones[MDX_MAX_BONES];
@@ -76,11 +75,11 @@ static int           render_count;
 static float         lodRadius, lodScale;
 static int32_t       *pCollapseMap;
 static int32_t       collapse[MDM_MAX_VERTS], *pCollapse;
-static int           p0, p1, p2;
-static qboolean      isTorso, fullTorso;
-static vec4_t        m1[4], m2[4];
-static vec3_t        t;
-static refEntity_t   lastBoneEntity;
+//static int           p0, p1, p2;
+static qboolean    isTorso, fullTorso;
+static vec4_t      m1[4], m2[4];
+static vec3_t      t;
+static refEntity_t lastBoneEntity;
 
 static int totalrv, totalrt, totalv, totalt;        //----(SA)
 
@@ -536,7 +535,7 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 	// draw all surfaces
 	if (r_vboModels->integer && mdm->numVBOSurfaces && glConfig2.vboVertexSkinningAvailable) // && ent->e.skeleton.type == SK_ABSOLUTE))
 	{
-		int             i, j;
+		int             i;
 		srfVBOMDMMesh_t *vboSurface;
 		shader_t        *shader;
 
@@ -581,7 +580,6 @@ void R_AddMDMInteractions(trRefEntity_t *ent, trRefLight_t *light)
 	mdmModel_t         *model      = 0;
 	mdmSurfaceIntern_t *mdmSurface = 0;
 	shader_t           *shader     = 0;
-	int                lod;
 	qboolean           personalModel;
 	byte               cubeSideBits;
 	interactionType_t  iaType = IA_DEFAULT;

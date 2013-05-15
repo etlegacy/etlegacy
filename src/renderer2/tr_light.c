@@ -305,42 +305,43 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 }
 
 
-/*
+/* unused
 ===============
 LogLight
 ===============
-*/
+
 static void LogLight(trRefEntity_t *ent)
 {
-	int max1, max2;
+    int max1, max2;
 
-	if (!(ent->e.renderfx & RF_FIRST_PERSON))
-	{
-		return;
-	}
+    if (!(ent->e.renderfx & RF_FIRST_PERSON))
+    {
+        return;
+    }
 
-	max1 = ent->ambientLight[0];
-	if (ent->ambientLight[1] > max1)
-	{
-		max1 = ent->ambientLight[1];
-	}
-	else if (ent->ambientLight[2] > max1)
-	{
-		max1 = ent->ambientLight[2];
-	}
+    max1 = ent->ambientLight[0];
+    if (ent->ambientLight[1] > max1)
+    {
+        max1 = ent->ambientLight[1];
+    }
+    else if (ent->ambientLight[2] > max1)
+    {
+        max1 = ent->ambientLight[2];
+    }
 
-	max2 = ent->directedLight[0];
-	if (ent->directedLight[1] > max2)
-	{
-		max2 = ent->directedLight[1];
-	}
-	else if (ent->directedLight[2] > max2)
-	{
-		max2 = ent->directedLight[2];
-	}
+    max2 = ent->directedLight[0];
+    if (ent->directedLight[1] > max2)
+    {
+        max2 = ent->directedLight[1];
+    }
+    else if (ent->directedLight[2] > max2)
+    {
+        max2 = ent->directedLight[2];
+    }
 
-	ri.Printf(PRINT_ALL, "amb:%i  dir:%i\n", max1, max2);
+    ri.Printf(PRINT_ALL, "amb:%i  dir:%i\n", max1, max2);
 }
+*/
 
 /*
 =================

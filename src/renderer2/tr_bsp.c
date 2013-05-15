@@ -48,7 +48,7 @@ static growList_t s_interactions;
 static byte       *fileBase;
 
 static int c_redundantInteractions;
-static int c_redundantVertexes;
+//static int c_redundantVertexes;
 static int c_vboWorldSurfaces;
 static int c_vboLightSurfaces;
 static int c_vboShadowSurfaces;
@@ -177,113 +177,114 @@ static void R_ColorShiftLightingFloats(const vec4_t in, vec4_t out)
 }
 #endif
 
-/*
+/* unused
 ===============
 R_HDRTonemapLightingColors
 ===============
-*/
+
 static void R_HDRTonemapLightingColors(const vec4_t in, vec4_t out, qboolean applyGamma)
 {
 #if 0 //!defined(USE_HDR_LIGHTMAPS)
-	R_ColorShiftLightingFloats(in, out);
+    R_ColorShiftLightingFloats(in, out);
 #else
-	int i;
-	//float           scaledLuminance;
-	//float           finalLuminance;
-	//const vec3_t    LUMINANCE_VECTOR = { 0.2125f, 0.7154f, 0.0721f };
-	vec4_t sample;
+    int i;
+    //float           scaledLuminance;
+    //float           finalLuminance;
+    //const vec3_t    LUMINANCE_VECTOR = { 0.2125f, 0.7154f, 0.0721f };
+    vec4_t sample;
 
-	if (!tr.worldHDR_RGBE)
-	{
-		R_ColorShiftLightingFloats(in, out);
-		return;
-	}
+    if (!tr.worldHDR_RGBE)
+    {
+        R_ColorShiftLightingFloats(in, out);
+        return;
+    }
 
 #if 0
-	scaledLuminance = r_hdrLightmapExposure->value * DotProduct(in, LUMINANCE_VECTOR);
+    scaledLuminance = r_hdrLightmapExposure->value * DotProduct(in, LUMINANCE_VECTOR);
 
 #if 0
-	finalLuminance = scaledLuminance / (scaledLuminance + 1.0);
+    finalLuminance = scaledLuminance / (scaledLuminance + 1.0);
 #else
-	// exponential tone mapping
-	finalLuminance = 1.0 - exp(-scaledLuminance);
+    // exponential tone mapping
+    finalLuminance = 1.0 - exp(-scaledLuminance);
 #endif
 
-	VectorScale(sample, finalLuminance, sample);
-	sample[3] = Q_min(1.0f, sample[3]);
+    VectorScale(sample, finalLuminance, sample);
+    sample[3] = Q_min(1.0f, sample[3]);
 
-	if (!r_hdrRendering->integer || !r_hdrLightmap->integer || !glConfig2.framebufferObjectAvailable ||
-	    !glConfig2.textureFloatAvailable || !glConfig2.framebufferBlitAvailable)
-	{
-		float max;
+    if (!r_hdrRendering->integer || !r_hdrLightmap->integer || !glConfig2.framebufferObjectAvailable ||
+        !glConfig2.textureFloatAvailable || !glConfig2.framebufferBlitAvailable)
+    {
+        float max;
 
-		// clamp with color normalization
-		NormalizeColor(sample, out);
-		out[3] = Q_min(1.0f, sample[3]);
-	}
-	else
-	{
-		Vector4Copy(sample, out);
-	}
+        // clamp with color normalization
+        NormalizeColor(sample, out);
+        out[3] = Q_min(1.0f, sample[3]);
+    }
+    else
+    {
+        Vector4Copy(sample, out);
+    }
 #else
-	if (!r_hdrRendering->integer || !r_hdrLightmap->integer || !glConfig2.framebufferObjectAvailable ||
-	    !glConfig2.textureFloatAvailable || !glConfig2.framebufferBlitAvailable)
-	{
-		float max;
+    if (!r_hdrRendering->integer || !r_hdrLightmap->integer || !glConfig2.framebufferObjectAvailable ||
+        !glConfig2.textureFloatAvailable || !glConfig2.framebufferBlitAvailable)
+    {
+        float max;
 
-		Vector4Copy(in, sample);
+        Vector4Copy(in, sample);
 
-		// clamp with color normalization
-		max = sample[0];
-		if (sample[1] > max)
-		{
-			max = sample[1];
-		}
-		if (sample[2] > max)
-		{
-			max = sample[2];
-		}
-		if (max > 255.0f)
-		{
-			VectorScale(sample, (255.0f / max), out);
-		}
+        // clamp with color normalization
+        max = sample[0];
+        if (sample[1] > max)
+        {
+            max = sample[1];
+        }
+        if (sample[2] > max)
+        {
+            max = sample[2];
+        }
+        if (max > 255.0f)
+        {
+            VectorScale(sample, (255.0f / max), out);
+        }
 
-		VectorScale(out, (1.0f / 255.0f), out);
+        VectorScale(out, (1.0f / 255.0f), out);
 
-		out[3] = Q_min(1.0f, sample[3]);
-	}
-	else
-	{
-		Vector4Scale(in, 1.0f / 255.0f, sample);
+        out[3] = Q_min(1.0f, sample[3]);
+    }
+    else
+    {
+        Vector4Scale(in, 1.0f / 255.0f, sample);
 
-		if (applyGamma)
-		{
-			for (i = 0; i < 3; i++)
-			{
-				sample[i] = pow(sample[i], 1.0f / r_hdrLightmapGamma->value);
-			}
-		}
+        if (applyGamma)
+        {
+            for (i = 0; i < 3; i++)
+            {
+                sample[i] = pow(sample[i], 1.0f / r_hdrLightmapGamma->value);
+            }
+        }
 
 #if 0
-		scaledLuminance = r_hdrLightmapExposure->value * DotProduct(in, LUMINANCE_VECTOR);
+        scaledLuminance = r_hdrLightmapExposure->value * DotProduct(in, LUMINANCE_VECTOR);
 
 #if 0
-		finalLuminance = scaledLuminance / (scaledLuminance + 1.0);
+        finalLuminance = scaledLuminance / (scaledLuminance + 1.0);
 #else
-		// exponential tone mapping
-		finalLuminance = 1.0 - exp(-scaledLuminance);
+        // exponential tone mapping
+        finalLuminance = 1.0 - exp(-scaledLuminance);
 #endif
 
-		VectorScale(sample, finalLuminance, out);
+        VectorScale(sample, finalLuminance, out);
 #else
-		VectorCopy(sample, out);
+        VectorCopy(sample, out);
 #endif
 
-		out[3] = Q_min(1.0f, sample[3]);
-	}
+        out[3] = Q_min(1.0f, sample[3]);
+    }
 #endif
 #endif
 }
+*/
 
 /*
 ===============
@@ -3188,9 +3189,9 @@ static void CopyVert(const srfVert_t *in, srfVert_t *out)
 #endif
 }
 
-
 #define EQUAL_EPSILON   0.001
-/*static qboolean CompareWorldVert(const srfVert_t * v1, const srfVert_t * v2)
+/*
+static qboolean CompareWorldVert(const srfVert_t * v1, const srfVert_t * v2)
 {
     int             i;
 
@@ -3283,25 +3284,25 @@ static qboolean CompareShadowVert(const srfVert_t * v1, const srfVert_t * v2)
     }
 
     return qtrue;
-}*/
+}
 
 static qboolean CompareShadowVolumeVert(const srfVert_t *v1, const srfVert_t *v2)
 {
-	int i;
+    int i;
 
-	for (i = 0; i < 3; i++)
-	{
-		// don't consider epsilon to avoid shadow volume z-fighting
-		if (v1->xyz[i] != v2->xyz[i])
-		{
-			return qfalse;
-		}
-	}
+    for (i = 0; i < 3; i++)
+    {
+        // don't consider epsilon to avoid shadow volume z-fighting
+        if (v1->xyz[i] != v2->xyz[i])
+        {
+            return qfalse;
+        }
+    }
 
-	return qtrue;
+    return qtrue;
 }
 
-/*static qboolean CompareWorldVertSmoothNormal(const srfVert_t * v1, const srfVert_t * v2)
+static qboolean CompareWorldVertSmoothNormal(const srfVert_t * v1, const srfVert_t * v2)
 {
     int             i;
 
@@ -3312,242 +3313,242 @@ static qboolean CompareShadowVolumeVert(const srfVert_t *v1, const srfVert_t *v2
     }
 
     return qtrue;
-}*/
+}
+*/
 
-/*
+/* unused
 remove duplicated / redundant vertices from a batch of vertices
 return the new number of vertices
-*/
 static int OptimizeVertices(int numVerts, srfVert_t *verts, int numTriangles, srfTriangle_t *triangles, srfVert_t *outVerts,
                             qboolean (*CompareVert) (const srfVert_t *v1, const srfVert_t *v2))
 {
-	srfTriangle_t *tri;
-	int           i, j, k, l;
+    srfTriangle_t *tri;
+    int           i, j, k, l;
+    static int redundantIndex[MAX_MAP_DRAW_VERTS];
+    int        numOutVerts;
 
-	static int redundantIndex[MAX_MAP_DRAW_VERTS];
-	int        numOutVerts;
+    if (r_vboOptimizeVertices->integer)
+    {
+        if (numVerts >= MAX_MAP_DRAW_VERTS)
+        {
+            ri.Printf(PRINT_WARNING, "OptimizeVertices: MAX_MAP_DRAW_VERTS reached\n");
+            for (j = 0; j < numVerts; j++)
+            {
+                CopyVert(&verts[j], &outVerts[j]);
+            }
+            return numVerts;
+        }
 
-	if (r_vboOptimizeVertices->integer)
-	{
-		if (numVerts >= MAX_MAP_DRAW_VERTS)
-		{
-			ri.Printf(PRINT_WARNING, "OptimizeVertices: MAX_MAP_DRAW_VERTS reached\n");
-			for (j = 0; j < numVerts; j++)
-			{
-				CopyVert(&verts[j], &outVerts[j]);
-			}
-			return numVerts;
-		}
+        memset(redundantIndex, -1, sizeof(redundantIndex));
 
-		memset(redundantIndex, -1, sizeof(redundantIndex));
-
-		c_redundantVertexes = 0;
-		numOutVerts         = 0;
-		for (i = 0; i < numVerts; i++)
-		{
+        c_redundantVertexes = 0;
+        numOutVerts         = 0;
+        for (i = 0; i < numVerts; i++)
+        {
 #if DEBUG_OPTIMIZEVERTICES
-			verts[i].id = i;
+            verts[i].id = i;
 #endif
-			if (redundantIndex[i] == -1)
-			{
-				for (j = i + 1; j < numVerts; j++)
-				{
-					if (redundantIndex[i] != -1)
-					{
-						continue;
-					}
+            if (redundantIndex[i] == -1)
+            {
+                for (j = i + 1; j < numVerts; j++)
+                {
+                    if (redundantIndex[i] != -1)
+                    {
+                        continue;
+                    }
 
-					if (CompareVert(&verts[i], &verts[j]))
-					{
-						// mark vertex as redundant
-						redundantIndex[j] = i;  //numOutVerts;
-					}
-				}
-			}
-		}
-
-#if DEBUG_OPTIMIZEVERTICES
-		ri.Printf(PRINT_ALL, "input triangles: ");
-		for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
-		{
-			ri.Printf(PRINT_ALL, "(%i,%i,%i),", verts[tri->indexes[0]].id, verts[tri->indexes[1]].id, verts[tri->indexes[2]].id);
-		}
-		ri.Printf(PRINT_ALL, "\n");
-#endif
+                    if (CompareVert(&verts[i], &verts[j]))
+                    {
+                        // mark vertex as redundant
+                        redundantIndex[j] = i;  //numOutVerts;
+                    }
+                }
+            }
+        }
 
 #if DEBUG_OPTIMIZEVERTICES
-		ri.Printf(PRINT_ALL, "input vertices: ");
-		for (i = 0; i < numVerts; i++)
-		{
-			if (redundantIndex[i] != -1)
-			{
-				ri.Printf(PRINT_ALL, "(%i,%i),", i, redundantIndex[i]);
-			}
-			else
-			{
-				ri.Printf(PRINT_ALL, "(%i,-),", i);
-			}
-		}
-		ri.Printf(PRINT_ALL, "\n");
+        ri.Printf(PRINT_ALL, "input triangles: ");
+        for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
+        {
+            ri.Printf(PRINT_ALL, "(%i,%i,%i),", verts[tri->indexes[0]].id, verts[tri->indexes[1]].id, verts[tri->indexes[2]].id);
+        }
+        ri.Printf(PRINT_ALL, "\n");
 #endif
-
-		for (i = 0; i < numVerts; i++)
-		{
-			if (redundantIndex[i] != -1)
-			{
-				c_redundantVertexes++;
-			}
-			else
-			{
-				CopyVert(&verts[i], &outVerts[numOutVerts]);
-				numOutVerts++;
-			}
-		}
 
 #if DEBUG_OPTIMIZEVERTICES
-		ri.Printf(PRINT_ALL, "output vertices: ");
-		for (i = 0; i < numOutVerts; i++)
-		{
-			ri.Printf(PRINT_ALL, "(%i),", outVerts[i].id);
-		}
-		ri.Printf(PRINT_ALL, "\n");
+        ri.Printf(PRINT_ALL, "input vertices: ");
+        for (i = 0; i < numVerts; i++)
+        {
+            if (redundantIndex[i] != -1)
+            {
+                ri.Printf(PRINT_ALL, "(%i,%i),", i, redundantIndex[i]);
+            }
+            else
+            {
+                ri.Printf(PRINT_ALL, "(%i,-),", i);
+            }
+        }
+        ri.Printf(PRINT_ALL, "\n");
 #endif
 
-		for (i = 0; i < numVerts; )
-		{
-			qboolean noIncrement = qfalse;
+        for (i = 0; i < numVerts; i++)
+        {
+            if (redundantIndex[i] != -1)
+            {
+                c_redundantVertexes++;
+            }
+            else
+            {
+                CopyVert(&verts[i], &outVerts[numOutVerts]);
+                numOutVerts++;
+            }
+        }
 
-			if (redundantIndex[i] != -1)
-			{
 #if DEBUG_OPTIMIZEVERTICES
-				ri.Printf(PRINT_ALL, "-------------------------------------------------\n");
-				ri.Printf(PRINT_ALL, "changing triangles for redundant vertex (%i->%i):\n", i, redundantIndex[i]);
+        ri.Printf(PRINT_ALL, "output vertices: ");
+        for (i = 0; i < numOutVerts; i++)
+        {
+            ri.Printf(PRINT_ALL, "(%i),", outVerts[i].id);
+        }
+        ri.Printf(PRINT_ALL, "\n");
 #endif
 
-				// kill redundant vert
-				for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
-				{
-					for (l = 0; l < 3; l++)
-					{
-						if (tri->indexes[l] == i)    //redundantIndex[i])
-						{
-							// replace duplicated index j with the original vertex index i
-							tri->indexes[l] = redundantIndex[i];    //numOutVerts;
+        for (i = 0; i < numVerts; )
+        {
+            qboolean noIncrement = qfalse;
+
+            if (redundantIndex[i] != -1)
+            {
+#if DEBUG_OPTIMIZEVERTICES
+                ri.Printf(PRINT_ALL, "-------------------------------------------------\n");
+                ri.Printf(PRINT_ALL, "changing triangles for redundant vertex (%i->%i):\n", i, redundantIndex[i]);
+#endif
+
+                // kill redundant vert
+                for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
+                {
+                    for (l = 0; l < 3; l++)
+                    {
+                        if (tri->indexes[l] == i)    //redundantIndex[i])
+                        {
+                            // replace duplicated index j with the original vertex index i
+                            tri->indexes[l] = redundantIndex[i];    //numOutVerts;
 
 #if DEBUG_OPTIMIZEVERTICES
-							ri.Printf(PRINT_ALL, "mapTriangleIndex<%i,%i>(%i->%i)\n", k, l, i, redundantIndex[i]);
+                            ri.Printf(PRINT_ALL, "mapTriangleIndex<%i,%i>(%i->%i)\n", k, l, i, redundantIndex[i]);
 #endif
-						}
+                        }
 #if 1
-						else if (tri->indexes[l] > i)    // && redundantIndex[tri->indexes[l]] == -1)
-						{
-							tri->indexes[l]--;
+                        else if (tri->indexes[l] > i)    // && redundantIndex[tri->indexes[l]] == -1)
+                        {
+                            tri->indexes[l]--;
 #if DEBUG_OPTIMIZEVERTICES
-							ri.Printf(PRINT_ALL, "decTriangleIndex<%i,%i>(%i->%i)\n", k, l, tri->indexes[l] + 1, tri->indexes[l]);
+                            ri.Printf(PRINT_ALL, "decTriangleIndex<%i,%i>(%i->%i)\n", k, l, tri->indexes[l] + 1, tri->indexes[l]);
 #endif
 
-							if (tri->indexes[l] < 0)
-							{
-								ri.Printf(PRINT_WARNING, "OptimizeVertices: triangle index < 0\n");
-								for (j = 0; j < numVerts; j++)
-								{
-									CopyVert(&verts[j], &outVerts[j]);
-								}
-								return numVerts;
-							}
-						}
+                            if (tri->indexes[l] < 0)
+                            {
+                                ri.Printf(PRINT_WARNING, "OptimizeVertices: triangle index < 0\n");
+                                for (j = 0; j < numVerts; j++)
+                                {
+                                    CopyVert(&verts[j], &outVerts[j]);
+                                }
+                                return numVerts;
+                            }
+                        }
 #endif
-					}
-				}
-
-#if DEBUG_OPTIMIZEVERTICES
-				ri.Printf(PRINT_ALL, "pending redundant vertices: ");
-				for (j = i + 1; j < numVerts; j++)
-				{
-					if (redundantIndex[j] != -1)
-					{
-						ri.Printf(PRINT_ALL, "(%i,%i),", j, redundantIndex[j]);
-					}
-					else
-					{
-						//ri.Printf(PRINT_ALL, "(%i,-),", j);
-					}
-				}
-				ri.Printf(PRINT_ALL, "\n");
-#endif
-
-
-				for (j = i + 1; j < numVerts; j++)
-				{
-					if (redundantIndex[j] != -1) //> i)//== tri->indexes[l])
-					{
-#if DEBUG_OPTIMIZEVERTICES
-						ri.Printf(PRINT_ALL, "updateRedundantIndex(%i->%i) to (%i->%i)\n", j, redundantIndex[j], j - 1,
-						          redundantIndex[j]);
-#endif
-
-						if (redundantIndex[j] <= i)
-						{
-							redundantIndex[j - 1] = redundantIndex[j];
-							redundantIndex[j]     = -1;
-						}
-						else
-						{
-							redundantIndex[j - 1] = redundantIndex[j] - 1;
-							redundantIndex[j]     = -1;
-						}
-
-						if ((j - 1) == i)
-						{
-							noIncrement = qtrue;
-						}
-					}
-				}
+                    }
+                }
 
 #if DEBUG_OPTIMIZEVERTICES
-				ri.Printf(PRINT_ALL, "current triangles: ");
-				for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
-				{
-					ri.Printf(PRINT_ALL, "(%i,%i,%i),", verts[tri->indexes[0]].id, verts[tri->indexes[1]].id,
-					          verts[tri->indexes[2]].id);
-				}
-				ri.Printf(PRINT_ALL, "\n");
+                ri.Printf(PRINT_ALL, "pending redundant vertices: ");
+                for (j = i + 1; j < numVerts; j++)
+                {
+                    if (redundantIndex[j] != -1)
+                    {
+                        ri.Printf(PRINT_ALL, "(%i,%i),", j, redundantIndex[j]);
+                    }
+                    else
+                    {
+                        //ri.Printf(PRINT_ALL, "(%i,-),", j);
+                    }
+                }
+                ri.Printf(PRINT_ALL, "\n");
 #endif
-			}
 
-			if (!noIncrement)
-			{
-				i++;
-			}
-		}
+
+                for (j = i + 1; j < numVerts; j++)
+                {
+                    if (redundantIndex[j] != -1) //> i)//== tri->indexes[l])
+                    {
+#if DEBUG_OPTIMIZEVERTICES
+                        ri.Printf(PRINT_ALL, "updateRedundantIndex(%i->%i) to (%i->%i)\n", j, redundantIndex[j], j - 1,
+                                  redundantIndex[j]);
+#endif
+
+                        if (redundantIndex[j] <= i)
+                        {
+                            redundantIndex[j - 1] = redundantIndex[j];
+                            redundantIndex[j]     = -1;
+                        }
+                        else
+                        {
+                            redundantIndex[j - 1] = redundantIndex[j] - 1;
+                            redundantIndex[j]     = -1;
+                        }
+
+                        if ((j - 1) == i)
+                        {
+                            noIncrement = qtrue;
+                        }
+                    }
+                }
 
 #if DEBUG_OPTIMIZEVERTICES
-		ri.Printf(PRINT_ALL, "output triangles: ");
-		for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
-		{
-			ri.Printf(PRINT_ALL, "(%i,%i,%i),", verts[tri->indexes[0]].id, verts[tri->indexes[1]].id, verts[tri->indexes[2]].id);
-		}
-		ri.Printf(PRINT_ALL, "\n");
+                ri.Printf(PRINT_ALL, "current triangles: ");
+                for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
+                {
+                    ri.Printf(PRINT_ALL, "(%i,%i,%i),", verts[tri->indexes[0]].id, verts[tri->indexes[1]].id,
+                              verts[tri->indexes[2]].id);
+                }
+                ri.Printf(PRINT_ALL, "\n");
+#endif
+            }
+
+            if (!noIncrement)
+            {
+                i++;
+            }
+        }
+
+#if DEBUG_OPTIMIZEVERTICES
+        ri.Printf(PRINT_ALL, "output triangles: ");
+        for (k = 0, tri = triangles; k < numTriangles; k++, tri++)
+        {
+            ri.Printf(PRINT_ALL, "(%i,%i,%i),", verts[tri->indexes[0]].id, verts[tri->indexes[1]].id, verts[tri->indexes[2]].id);
+        }
+        ri.Printf(PRINT_ALL, "\n");
 #endif
 
-		if (c_redundantVertexes)
-		{
-			//*numVerts -= c_redundantVertexes;
+        if (c_redundantVertexes)
+        {
+            // *numVerts -= c_redundantVertexes;
 
-			//ri.Printf(PRINT_ALL, "removed %i redundant vertices\n", c_redundantVertexes);
-		}
+            //ri.Printf(PRINT_ALL, "removed %i redundant vertices\n", c_redundantVertexes);
+        }
 
-		return numOutVerts;
-	}
-	else
-	{
-		for (j = 0; j < numVerts; j++)
-		{
-			CopyVert(&verts[j], &outVerts[j]);
-		}
-		return numVerts;
-	}
+        return numOutVerts;
+    }
+    else
+    {
+        for (j = 0; j < numVerts; j++)
+        {
+            CopyVert(&verts[j], &outVerts[j]);
+        }
+        return numVerts;
+    }
 }
+*/
 
 /*static void OptimizeTriangles(int numVerts, srfVert_t * verts, int numTriangles, srfTriangle_t * triangles,
                               qboolean(*compareVert) (const srfVert_t * v1, const srfVert_t * v2))
@@ -3714,8 +3715,6 @@ static void BuildRedundantIndices(int numVerts, const srfVert_t * verts, int *re
         }
     }
 }*/
-
-
 
 /*
 static void R_LoadAreaPortals(const char *bspName)
@@ -4272,9 +4271,11 @@ R_CreateClusters
 static void R_CreateClusters()
 {
 	int          i, j;
-	bspSurface_t *surface, **mark;
-	bspNode_t    *node, *parent;
+	bspNode_t    *node;
+	bspSurface_t *surface;
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
+	bspNode_t    *parent;
+	bspSurface_t **mark;
 	int          numClusters;
 	bspCluster_t *cluster;
 	growList_t   clusterSurfaces;
@@ -4467,7 +4468,7 @@ void SmoothNormals(const char *name, srfVert_t *verts, int numTotalVerts)
 	int   i, j, k, f, cs, numVerts, numVotes, fOld, startTime, endTime;
 	float shadeAngle, defaultShadeAngle, maxShadeAngle, dot, testAngle;
 
-//  shaderInfo_t   *si;
+	//shaderInfo_t   *si;
 	float  *shadeAngles;
 	byte   *smoothed;
 	vec3_t average, diff;
@@ -4657,27 +4658,19 @@ R_CreateWorldVBO
 */
 static void R_CreateWorldVBO()
 {
-	int i, j, k;
-
-	int       numVerts;
+	int       i, j, k;
+	int       numVerts = 0;
 	srfVert_t *verts;
-
-//  srfVert_t      *optimizedVerts;
-
-	int           numTriangles;
+	//srfVert_t      *optimizedVerts;
+	int           numTriangles = 0;
 	srfTriangle_t *triangles;
-
-//  int             numSurfaces;
+	//int             numSurfaces;
 	bspSurface_t *surface;
-
-//	trRefLight_t   *light;
-
+	//trRefLight_t   *light;
 	int startTime, endTime;
 
 	startTime = ri.Milliseconds();
 
-	numVerts     = 0;
-	numTriangles = 0;
 	for (k = 0, surface = &s_worldData.surfaces[0]; k < s_worldData.numWorldSurfaces; k++, surface++)
 	{
 		if (*surface->data == SF_FACE)
@@ -9754,7 +9747,6 @@ void R_BuildCubeMaps(void)
 	// turn pixel targets off
 	tr.refdef.pixelTarget = NULL;
 
-
 	// assign the surfs a cubemap
 #if 0
 	for (i = 0; i < tr.world->numnodes; i++)
@@ -9969,12 +9961,11 @@ void RE_LoadWorldMap(const char *name)
 	R_BindNullVBO();
 	R_BindNullIBO();
 
-	//----(SA)  set the sun shader if there is one
+	// set the sun shader if there is one
 	if (tr.sunShaderName)
 	{
 		tr.sunShader = R_FindShader(tr.sunShaderName, SHADER_3D_STATIC, qtrue);
 	}
-	//----(SA)  end
 
 	// build cubemaps after the necessary vbo stuff is done
 	//R_BuildCubeMaps();

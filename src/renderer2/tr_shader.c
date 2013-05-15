@@ -69,16 +69,16 @@ static long generateHashValue(const char *fname, const int size)
 {
 	int i;
 
-//  int             len;
+	//int len;
 	long hash;
 	char letter;
 
 	hash = 0;
 	i    = 0;
-//  len = strlen(fname);
+	//len = strlen(fname);
 
 	while (fname[i] != '\0')
-//  for(i = 0; i < len; i++)
+	//for(i = 0; i < len; i++)
 	{
 		letter = tolower(fname[i]);
 
@@ -195,8 +195,7 @@ static qboolean ParseVector(char **text, int count, float *v)
 	return qtrue;
 }
 
-
-extern const opstring_t opStrings[] =
+const opstring_t opStrings[] =
 {
 	{ "bad",                OP_BAD                }
 	,
@@ -927,7 +926,6 @@ static void ParseExpression(char **text, expression_t *exp)
 #endif
 }
 
-
 /*
 ===============
 NameToAFunc
@@ -951,7 +949,6 @@ static unsigned NameToAFunc(const char *funcname)
 	ri.Printf(PRINT_WARNING, "WARNING: invalid alphaFunc name '%s' in shader '%s'\n", funcname, shader.name);
 	return 0;
 }
-
 
 /*
 ===============
@@ -1310,7 +1307,6 @@ static void ParseWaveForm(char **text, waveForm_t *wave)
 	wave->frequency = atof(token);
 }
 
-
 /*
 ===================
 ParseTexMod
@@ -1546,8 +1542,6 @@ static qboolean ParseTexMod(char **text, shaderStage_t *stage)
 	return qtrue;
 }
 
-
-
 static qboolean ParseMap(shaderStage_t *stage, char **text, char *buffer, int bufferSize)
 {
 	int  len;
@@ -1590,8 +1584,8 @@ static qboolean LoadMap(shaderStage_t *stage, char *buffer)
 	int          imageBits = 0;
 	filterType_t filterType;
 	wrapType_t   wrapType;
-	qboolean     uncompressed;
-	char         *buffer_p = &buffer[0];
+	//qboolean     uncompressed;
+	char *buffer_p = &buffer[0];
 
 	if (!buffer || !buffer[0])
 	{
@@ -1599,7 +1593,7 @@ static qboolean LoadMap(shaderStage_t *stage, char *buffer)
 		return qfalse;
 	}
 
-//  ri.Printf(PRINT_ALL, "LoadMap: buffer '%s'\n", buffer);
+	//ri.Printf(PRINT_ALL, "LoadMap: buffer '%s'\n", buffer);
 
 	token = COM_ParseExt2(&buffer_p, qfalse);
 
@@ -1626,7 +1620,6 @@ static qboolean LoadMap(shaderStage_t *stage, char *buffer)
 		stage->type = ST_LIGHTMAP;
 		return qtrue;
 	}
-
 
 	// determine image options
 	if (stage->overrideNoPicMip || shader.noPicMip || stage->highQuality || stage->forceHighQuality)
@@ -3089,7 +3082,6 @@ static void ParseSkyParms(char **text)
 	shader.isSky = qtrue;
 }
 
-
 /*
 =================
 ParseSort
@@ -3167,8 +3159,6 @@ static void ParseSort(char **text)
 		shader.sort = atof(token);
 	}
 }
-
-
 
 // this table is also present in xmap
 
@@ -3563,7 +3553,6 @@ static char *FindGuideInGuideText(const char *guideName)
 
 	return NULL;
 }
-
 
 /*
 =================
@@ -4304,7 +4293,6 @@ static qboolean ParseShader(char *_text)
 			tr.sunShaderName = (char *)ri.Hunk_Alloc(sizeof(char) * tokenLen, h_low);
 			Q_strncpyz(tr.sunShaderName, token, tokenLen);
 		}
-//----(SA)  added
 		else if (!Q_stricmp(token, "lightgridmulamb"))
 		{
 			// ambient multiplier for lightgrid
@@ -4333,7 +4321,6 @@ static qboolean ParseShader(char *_text)
 				tr.lightGridMulDirected = atof(token);
 			}
 		}
-//----(SA)  end
 		// light <value> determines flaring in xmap, not needed here
 		else if (!Q_stricmp(token, "light"))
 		{
@@ -4406,7 +4393,7 @@ static qboolean ParseShader(char *_text)
 			ParseSort(text);
 			continue;
 		}
-		// ydnar: implicit default mapping to eliminate redundant/incorrect explicit shader stages
+		// implicit default mapping to eliminate redundant/incorrect explicit shader stages
 		else if (!Q_stricmpn(token, "implicit", 8))
 		{
 			//ri.Printf(PRINT_WARNING, "WARNING: keyword '%s' not supported in shader '%s'\n", token, shader.name);
@@ -4557,9 +4544,7 @@ static qboolean ParseShader(char *_text)
 
 /*
 ========================================================================================
-
 SHADER OPTIMIZATION AND FOGGING
-
 ========================================================================================
 */
 
@@ -4694,7 +4679,6 @@ static void CollapseStages()
 			numStages++;
 			continue;
 		}
-
 
 #if 0 //defined(COMPAT_Q3A) || defined(COMPAT_ET)
 		for (i = 0; i < 2; i++)
@@ -5389,9 +5373,7 @@ static shader_t *FinishShader(void)
 //========================================================================================
 
 
-
-
-//bani - dynamic shader list
+// dynamic shader list
 typedef struct dynamicshader dynamicshader_t;
 struct dynamicshader
 {
@@ -5404,7 +5386,7 @@ static dynamicshader_t *dshader = NULL;
 ====================
 RE_LoadDynamicShader
 
-bani - load a new dynamic shader
+load a new dynamic shader
 
 if shadertext is NULL, looks for matching shadername and removes it
 
@@ -5509,7 +5491,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 		dshader = dptr;
 	}
 
-//  ri.Printf( PRINT_ALL, "Loaded dynamic shader [%s] with shadertext [%s]\n", shadername, shadertext );
+	//ri.Printf( PRINT_ALL, "Loaded dynamic shader [%s] with shadertext [%s]\n", shadername, shadertext );
 
 	return qtrue;
 #else
@@ -5632,7 +5614,6 @@ static char *FindShaderInShaderText(const char *shaderName)
 	return NULL;
 }
 
-
 /*
 ==================
 R_FindShaderByName
@@ -5672,7 +5653,6 @@ shader_t *R_FindShaderByName(const char *name)
 
 	return tr.defaultShader;
 }
-
 
 /*
 ===============
@@ -5872,7 +5852,6 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 	return FinishShader();
 }
 
-
 qhandle_t RE_RegisterShaderFromImage(const char *name, image_t *image, qboolean mipRawImage)
 {
 	int      i, hash;
@@ -5924,7 +5903,6 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, image_t *image, qboolean 
 	return sh->index;
 }
 
-
 /*
 ====================
 RE_RegisterShader
@@ -5960,7 +5938,6 @@ qhandle_t RE_RegisterShader(const char *name)
 
 	return sh->index;
 }
-
 
 /*
 ====================
@@ -6025,7 +6002,6 @@ qhandle_t RE_RegisterShaderLightAttenuation(const char *name)
 
 	return sh->index;
 }
-
 
 /*
 ====================
@@ -6371,7 +6347,6 @@ static void ScanAndLoadGuideFiles(void)
 	}
 
 	size = 0;
-	//
 	for (i = 0; i < numGuides; i++)
 	{
 		Com_sprintf(filename, sizeof(filename), "guides/%s", guideFiles[i]);
@@ -6459,7 +6434,7 @@ static void ScanAndLoadGuideFiles(void)
 	}
 
 	Com_Memset(guideTextHashTableSizes, 0, sizeof(guideTextHashTableSizes));
-	//
+
 	for (i = 0; i < numGuides; i++)
 	{
 		Com_sprintf(filename, sizeof(filename), "guides/%s", guideFiles[i]);
@@ -6890,7 +6865,6 @@ static void ScanAndLoadShaderFiles(void)
 		}
 	}
 }
-
 
 /*
 ====================

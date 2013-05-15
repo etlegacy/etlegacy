@@ -109,12 +109,9 @@ typedef enum
 
 } renderSpeeds_t;
 
-
 #define DS_STANDARD_ENABLED() ((r_deferredShading->integer == DS_STANDARD && glConfig2.maxColorAttachments >= 4 && glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4 && /*glConfig2.framebufferPackedDepthStencilAvailable &&*/ glConfig.driverType != GLDRV_MESA))
 
 #define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable && glConfig.driverType != GLDRV_MESA))
-
-
 
 #define REF_CUBEMAP_SIZE    32
 #define REF_CUBEMAP_STORE_SIZE  1024
@@ -157,8 +154,6 @@ enum
 	CUBESIDE_NZ      = (1 << 5),
 	CUBESIDE_CLIPALL = 1 | 2 | 4 | 8 | 16 | 32
 };
-
-
 
 typedef struct link_s
 {
@@ -205,8 +200,6 @@ static ID_INLINE void InsertLink(link_t *l, link_t *sentinel)
 	l->next->prev = l;
 	l->prev->next = l;
 }
-
-
 
 static ID_INLINE qboolean StackEmpty(link_t *l)
 {
@@ -255,7 +248,6 @@ static ID_INLINE void *StackPop(link_t *l)
 
 	return data;
 }
-
 
 static ID_INLINE void QueueInit(link_t *l)
 {
@@ -328,7 +320,6 @@ static ID_INLINE link_t *QueueFront(link_t *l)
 {
 	return l->prev;
 }
-
 
 // a trRefLight_t has all the information passed in by
 // the client game, as well as some locally derived info
@@ -406,7 +397,6 @@ typedef struct trRefLight_s
 	//struct bspNode_s **leafs;
 	//int             numLeafs;
 } trRefLight_t;
-
 
 // a trRefEntity_t has all the information passed in by
 // the client game, as well as some locally derived info
@@ -898,7 +888,6 @@ typedef struct
 	expression_t rExp;
 
 } texModInfo_t;
-
 
 #define MAX_IMAGE_ANIMATIONS    16
 
@@ -1698,9 +1687,6 @@ static ID_INLINE void GLSL_SetUniform_ViewOrigin(shaderProgram_t *program, const
 
 	qglUniform3fARB(program->u_ViewOrigin, v[0], v[1], v[2]);
 }
-
-
-
 
 static ID_INLINE void GLSL_SetUniform_Color(shaderProgram_t *program, const vec4_t v)
 {
@@ -2705,7 +2691,6 @@ typedef struct
 
 extern shadowState_t shadowState;
 
-
 #define MAX_FACE_POINTS     64
 
 #define MAX_PATCH_SIZE      64  // max dimensions of a patch mesh in map file
@@ -2729,7 +2714,7 @@ typedef struct srfPolyBuffer_s
 	polyBuffer_t *pPolyBuffer;
 } srfPolyBuffer_t;
 
-// ydnar: decals
+// decals
 #define MAX_DECAL_VERTS         10  // worst case is triangle clipped by 6 planes
 #define MAX_WORLD_DECALS        1024
 #define MAX_ENTITY_DECALS       128
@@ -5103,7 +5088,6 @@ typedef enum
 #define DECAL_PROJECTOR_MASK    (MAX_DECAL_PROJECTORS - 1)
 #define MAX_DECALS              1024
 #define DECAL_MASK              (MAX_DECALS - 1)
-
 
 // all of the information needed by the back end must be
 // contained in a backEndData_t.  This entire structure is
