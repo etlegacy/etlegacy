@@ -6980,7 +6980,7 @@ static int R_BuildShadowPlanes(int numTriangles, const srfTriangle_t * triangles
             //VectorNormalize(lightDir);
             //VectorMA(verts[tri->indexes[0]].xyz, 9999, lightDir, pos[2]);
 
-            if(PlaneFromPoints(plane, pos[0], pos[1], pos[2], qtrue))
+            if(PlaneFromPoints(plane, pos[0], pos[1], pos[2]))
             {
                 shadowPlanes[numShadowPlanes].normal[0] = plane[0];
                 shadowPlanes[numShadowPlanes].normal[1] = plane[1];
@@ -7010,7 +7010,7 @@ static int R_BuildShadowPlanes(int numTriangles, const srfTriangle_t * triangles
             //VectorNormalize(lightDir);
             //VectorMA(verts[tri->indexes[1]].xyz, 9999, lightDir, pos[2]);
 
-            if(PlaneFromPoints(plane, pos[0], pos[1], pos[2], qtrue))
+            if(PlaneFromPoints(plane, pos[0], pos[1], pos[2]))
             {
                 shadowPlanes[numShadowPlanes].normal[0] = plane[0];
                 shadowPlanes[numShadowPlanes].normal[1] = plane[1];
@@ -7040,7 +7040,7 @@ static int R_BuildShadowPlanes(int numTriangles, const srfTriangle_t * triangles
             //VectorNormalize(lightDir);
             //VectorMA(verts[tri->indexes[2]].xyz, 9999, lightDir, pos[2]);
 
-            if(PlaneFromPoints(plane, pos[0], pos[1], pos[2], qtrue))
+            if(PlaneFromPoints(plane, pos[0], pos[1], pos[2]))
             {
                 shadowPlanes[numShadowPlanes].normal[0] = plane[0];
                 shadowPlanes[numShadowPlanes].normal[1] = plane[1];
@@ -7073,7 +7073,7 @@ static int R_BuildShadowPlanes(int numTriangles, const srfTriangle_t * triangles
         VectorCopy(verts[tri->indexes[1]].xyz, pos[1]);
         VectorCopy(verts[tri->indexes[2]].xyz, pos[2]);
 
-        if(PlaneFromPoints(plane, pos[0], pos[1], pos[2], qfalse))
+        if(PlaneFromPoints(plane, pos[0], pos[1], pos[2]))
         {
             shadowPlanes[numShadowPlanes].normal[0] = plane[0];
             shadowPlanes[numShadowPlanes].normal[1] = plane[1];
@@ -7554,7 +7554,7 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 		VectorCopy(verts[tri->indexes[1]].xyz, pos[1]);
 		VectorCopy(verts[tri->indexes[2]].xyz, pos[2]);
 
-		if (PlaneFromPoints(triPlane, pos[0], pos[1], pos[2], qtrue))
+		if (PlaneFromPoints(triPlane, pos[0], pos[1], pos[2]))
 		{
 			if (light->l.rlType == RL_DIRECTIONAL)
 			{

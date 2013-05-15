@@ -1948,13 +1948,13 @@ void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
 		v1  = tri->verts + tri->triangles[0].indexes[0];
 		v2  = tri->verts + tri->triangles[0].indexes[1];
 		v3  = tri->verts + tri->triangles[0].indexes[2];
-		PlaneFromPoints(plane4, v1->xyz, v2->xyz, v3->xyz, qtrue);
+		PlaneFromPoints(plane4, v1->xyz, v2->xyz, v3->xyz);
 		VectorCopy(plane4, plane->normal);
 		plane->dist = plane4[3];
 		return;
 	case SF_POLY:
 		poly = (srfPoly_t *) surfType;
-		PlaneFromPoints(plane4, poly->verts[0].xyz, poly->verts[1].xyz, poly->verts[2].xyz, qtrue);
+		PlaneFromPoints(plane4, poly->verts[0].xyz, poly->verts[1].xyz, poly->verts[2].xyz);
 		VectorCopy(plane4, plane->normal);
 		plane->dist = plane4[3];
 		return;

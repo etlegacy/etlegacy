@@ -393,7 +393,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 
 #elif defined(__linux__)
 
-	if (GLXEW_ARB_create_context_profile &&)
+	if (GLXEW_ARB_create_context_profile)
 	{
 		int         numAttribs;
 		int         attribs[256];
@@ -417,7 +417,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 		memset(attribs, 0, sizeof(attribs));
 		numAttribs = 0;
 
-		if (r_glMajorVersion->integer > 0)
+		if (qtrue)
 		{
 			attribs[numAttribs++] = GLX_CONTEXT_MAJOR_VERSION_ARB;
 			attribs[numAttribs++] = 3;
@@ -434,7 +434,7 @@ static qboolean GLimp_InitOpenGL3xContext()
 		}
 		else
 		{
-			attribs[numAttribs++] = 0;
+			attribs[numAttribs++] = GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB;
 		}
 
 		attribs[numAttribs++] = GLX_CONTEXT_PROFILE_MASK_ARB;

@@ -239,7 +239,7 @@ void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, fl
 	// constant normal all the way around
 	if (calcNormals)
 	{
-		PlaneFromPoints(plane, quadVerts[0], quadVerts[1], quadVerts[2], qtrue);
+		PlaneFromPoints(plane, quadVerts[0], quadVerts[1], quadVerts[2]);
 	}
 	else
 	{
