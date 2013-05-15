@@ -233,7 +233,6 @@ void MatrixTransformPlane(const matrix_t m, const vec4_t in, vec4_t out);
 void MatrixTransformPlane2(const matrix_t m, vec4_t inout);
 
 void MatrixPerspectiveProjectionFovXYInfiniteRH(matrix_t m, vec_t fovX, vec_t fovY, vec_t nearvec);
-static float m3_det(matrix3x3_t mat);
 void QuatTransformVector(const quat_t q, const vec3_t in, vec3_t out);
 qboolean MatrixInverse(matrix_t matrix);
 void MatrixSetupShear(matrix_t m, vec_t x, vec_t y);
