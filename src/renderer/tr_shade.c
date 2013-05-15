@@ -44,7 +44,7 @@ R_ArrayElementDiscrete
 This is just for OpenGL conformance testing, it should never be the fastest
 ================
 */
-static void APIENTRY R_ArrayElementDiscrete(GLint index)
+static void GLAPIENTRY R_ArrayElementDiscrete(GLint index)
 {
 	qglColor4ubv(tess.svars.colors[index]);
 	if (glState.currenttmu)
@@ -67,7 +67,7 @@ R_DrawStripElements
 static int c_vertexes;          // for seeing how long our average strips are
 static int c_begins;
 
-static void R_DrawStripElements(int numIndexes, const glIndex_t *indexes, void (APIENTRY *element)(GLint))
+static void R_DrawStripElements(int numIndexes, const glIndex_t *indexes, void (GLAPIENTRY *element)(GLint))
 {
 	int      i;
 	int      last[3] = { -1, -1, -1 };
@@ -199,7 +199,7 @@ static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 
 	if (primitives == 1)
 	{
-		R_DrawStripElements(numIndexes, indexes, qglArrayElement);
+		R_DrawStripElements(numIndexes, indexes, 0); //R_DrawStripElements(numIndexes, indexes, qglArrayElement); FIX THIS
 		return;
 	}
 

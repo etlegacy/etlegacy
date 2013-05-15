@@ -34,6 +34,10 @@
 
 #include "tr_local.h"
 
+#ifdef _WIN32
+#	include <Windows.h>
+#endif
+
 #define LL(x) x = LittleLong(x)
 
 static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_name);

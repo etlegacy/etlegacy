@@ -42,10 +42,10 @@
 
 #ifdef BUNDLED_SDL
 #    include "SDL.h"
-#    include "SDL_opengl.h"
+//#    include "SDL_opengl.h"
 #else
 #    include <SDL/SDL.h>
-#    include <SDL/SDL_opengl.h>
+//#    include <SDL/SDL_opengl.h>
 #endif
 
 /*

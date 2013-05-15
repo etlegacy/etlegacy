@@ -40,6 +40,7 @@
 #   include <GL/glew.h>
 #endif
 
+/*
 #ifndef FEATURE_RENDERER2
 #ifdef BUNDLED_SDL
 #    include "SDL_opengl.h"
@@ -47,6 +48,7 @@
 #    include <SDL/SDL_opengl.h>
 #endif
 #endif
+*/
 
 #ifdef __cplusplus
 extern "C" {
