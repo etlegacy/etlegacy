@@ -1046,7 +1046,7 @@ const char *Q_stristr(const char *s, const char *find);
 // buffer size safe library replacements
 void Q_strncpyz(char *dest, const char *src, int destsize);
 void Q_strcat(char *dest, int size, const char *src);
-#ifdef FEATURE_IRC_CLIENT
+#if defined(FEATURE_IRC_CLIENT) || defined(FEATURE_RENDERER2)
 int Q_strnicmp(const char *string1, const char *string2, int n);
 #endif
 

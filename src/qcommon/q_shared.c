@@ -1406,7 +1406,7 @@ char *Q_strupr(char *s1)
 	return s1;
 }
 
-#ifdef FEATURE_IRC_CLIENT
+#if defined(FEATURE_IRC_CLIENT) || defined(FEATURE_RENDERER2)
 int Q_strnicmp(const char *string1, const char *string2, int n)
 {
 	int c1, c2;
