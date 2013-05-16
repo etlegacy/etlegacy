@@ -119,7 +119,9 @@ static void GLimp_GetCurrentContext(void)
 	opengl_context.hGLRC = info.hglrc;
 }
 #else // *nix
-//static void GLimp_GetCurrentContext(void)
+static void GLimp_GetCurrentContext(void) // don't remove
+{
+}
 #endif
 
 // No SMP - stubs
@@ -312,9 +314,8 @@ static qboolean GLimp_InitOpenGL3xContext()
 #endif
 	int GLmajor, GLminor;
 
-#if defined(WIN32)
 	GLimp_GetCurrentContext();
-#endif
+
 	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
 
 	Q_strncpyz(glConfig.extensions_string, (char *) qglGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
@@ -326,10 +327,10 @@ static qboolean GLimp_InitOpenGL3xContext()
 	if (WGLEW_ARB_create_context_profile)
 	{
 		int attribs[256];   // should be really enough
-		int numAttribs;
+		int numAttribs = 0;
 
 		memset(attribs, 0, sizeof(attribs));
-		numAttribs = 0;
+
 		if (qtrue)
 		{
 			attribs[numAttribs++] = WGL_CONTEXT_MAJOR_VERSION_ARB;
@@ -395,13 +396,12 @@ static qboolean GLimp_InitOpenGL3xContext()
 
 	if (GLXEW_ARB_create_context_profile)
 	{
-		int         numAttribs;
+		int         numAttribs = 0;
 		int         attribs[256];
 		GLXFBConfig *FBConfig;
 
 		// get FBConfig XID
 		memset(attribs, 0, sizeof(attribs));
-		numAttribs = 0;
 
 		attribs[numAttribs++] = GLX_FBCONFIG_ID;
 		glXQueryContext(opengl_context.dpy, opengl_context.ctx,
@@ -540,7 +540,6 @@ static void GLimp_XreaLInitExtensions(void)
 		}
 	}
 
-
 	// GL_ARB_depth_texture
 	if (GLEW_ARB_depth_texture)
 	{
@@ -555,7 +554,6 @@ static void GLimp_XreaLInitExtensions(void)
 		Q_strcat(missingExts, sizeof(missingExts), "GL_ARB_depth_texture\n");
 		ri.Error(ERR_FATAL, MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_depth_texture");
 	}
-
 
 	// GL_ARB_texture_cube_map
 	if (GLEW_ARB_texture_cube_map)
@@ -1087,6 +1085,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	SDL_Surface *vidscreen = NULL;
 	Uint32      flags      = SDL_OPENGL;
 	GLenum      glewResult;
+
 	ri.Printf(PRINT_ALL, "Initializing OpenGL display\n");
 
 	if (r_allowResize->integer)
@@ -1378,13 +1377,12 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		ri.Printf(PRINT_ALL, "Using GLEW %s\n", glewGetString(GLEW_VERSION));
 	}
 
-	#ifdef FEATURE_RENDERER2
+#ifdef FEATURE_RENDERER2
 	if (!GLimp_InitOpenGL3xContext())
 	{
 		return RSERR_OLD_GL;
 	}
-	#endif
-
+#endif
 
 	if (!vidscreen)
 	{
@@ -1511,7 +1509,6 @@ static void GLimp_InitExtensions(void)
 		}
 	}
 
-
 	// GL_EXT_texture_env_add
 	glConfig.textureEnvAddAvailable = qfalse;
 	if (GLEW_EXT_texture_env_add)
@@ -1634,7 +1631,6 @@ void GLimp_SetHardware(void)
 		    Q_stristr(glConfig.renderer_string, "gtx 680") ||
 		    Q_stristr(glConfig.renderer_string, "gtx 690"))
 		{
-
 			glConfig.hardwareType = GLHW_NV_DX10;
 		}
 
@@ -1668,7 +1664,7 @@ void GLimp_SetHardware(void)
 
 #define R_MODE_FALLBACK 3 // 640 * 480
 
-/*
+/**
  * @brief This routine is responsible for initializing the OS specific portions of OpenGL
  */
 void GLimp_Init(void)
