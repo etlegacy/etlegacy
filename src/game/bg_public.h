@@ -517,10 +517,6 @@ typedef struct
 
 	int *skill;                     // player skills
 
-#ifdef GAMEDLL  // the whole stamina thing is only in qagame
-	qboolean leadership;            // within 512 units of a player with level 5 Signals skill (that player has to be in PVS as well to make sue we can predict it)
-#endif // GAMEDLL
-
 	// for fixed msec Pmove
 	int pmove_fixed;
 	int pmove_msec;

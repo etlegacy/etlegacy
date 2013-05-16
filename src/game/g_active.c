@@ -1328,38 +1328,6 @@ void ClientThink_real(gentity_t *ent)
 		client->combatState                   = COMBATSTATE_COLD; // cool down again
 	}
 
-	pm.leadership = qfalse;
-	/*for (i = 0 ; i < level.numConnectedClients; i++)
-	{
-	    gclient_t *cl = &level.clients[level.sortedClients[i]];
-	    vec3_t dist;
-
-	    if (cl->sess.sessionTeam != client->sess.sessionTeam)
-	    {
-	        continue;
-	    }
-
-	    if (cl->sess.skill[SK_SIGNALS] < 5)
-	    {
-	        continue;
-	    }
-
-	    if (!trap_InPVS(g_entities[level.sortedClients[i]].r.currentOrigin, ent->r.currentOrigin))
-	    {
-	        continue;
-	    }
-
-	    VectorSubtract(g_entities[level.sortedClients[i]].r.currentOrigin, ent->r.currentOrigin, dist);
-	    if (VectorLengthSquared(dist) > Square(512))
-	    {
-	        continue;
-	    }
-
-	    pm.leadership = qtrue;
-
-	    break;
-	}*/
-
 	// bit hacky, stop the slight lag from client -> server even on locahost, switching back to the weapon you were holding
 	// and then back to what weapon you should have, became VERY noticible for the kar98/carbine + gpg40, esp now i've added the
 	// animation locking

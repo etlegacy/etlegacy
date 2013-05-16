@@ -1304,7 +1304,6 @@ static void PM_WalkMove(void)
 
 		if (!(pm->cmd.serverTime - pm->pmext->jumpTime < 850))
 		{
-
 			pm->pmext->sprintTime -= 2500;
 			if (pm->pmext->sprintTime < 0)
 			{
@@ -5740,90 +5739,85 @@ PM_Sprint
 */
 void PM_Sprint(void)
 {
-	if (pm->cmd.buttons & BUTTON_SPRINT && (pm->cmd.forwardmove || pm->cmd.rightmove) && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE))
+	if (pm->waterlevel <= 1) // no sprint & no stamina recharge under water
 	{
-		if (pm->ps->powerups[PW_ADRENALINE])
+		if (pm->cmd.buttons & BUTTON_SPRINT && (pm->cmd.forwardmove || pm->cmd.rightmove) && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE))
 		{
-			pm->pmext->sprintTime = SPRINTTIME;
-		}
-		else if (pm->ps->powerups[PW_NOFATIGUE])
-		{
-			// take time from powerup before taking it from sprintTime
-			pm->ps->powerups[PW_NOFATIGUE] -= 50;
+			if (pm->ps->powerups[PW_ADRENALINE])
+			{
+				pm->pmext->sprintTime = SPRINTTIME;
+			}
+			else if (pm->ps->powerups[PW_NOFATIGUE])
+			{
+				// take time from powerup before taking it from sprintTime
+				pm->ps->powerups[PW_NOFATIGUE] -= 50;
 
-			// go ahead and continue to recharge stamina at double
-			// rate with stamina powerup even when exerting
-			pm->pmext->sprintTime += 10;
+				// go ahead and continue to recharge stamina at double
+				// rate with stamina powerup even when exerting
+				pm->pmext->sprintTime += 10;
+				if (pm->pmext->sprintTime > SPRINTTIME)
+				{
+					pm->pmext->sprintTime = SPRINTTIME;
+				}
+
+				if (pm->ps->powerups[PW_NOFATIGUE] < 0)
+				{
+					pm->ps->powerups[PW_NOFATIGUE] = 0;
+				}
+			}
+			// sprint time tuned for multiplayer
+			else
+			{
+				// adjusted for framerate independence
+				pm->pmext->sprintTime -= 5000 * pml.frametime;
+			}
+
+			if (pm->pmext->sprintTime < 0)
+			{
+				pm->pmext->sprintTime = 0;
+			}
+
+			if (!pm->ps->sprintExertTime)
+			{
+				pm->ps->sprintExertTime = 1;
+			}
+		}
+		else
+		{
+			// in multiplayer, recharge faster for top 75% of sprint bar
+			// (for people that *just* use it for jumping, not sprint) this code was
+			// mucked about with to eliminate client-side framerate-dependancy in wolf single player
+			if (pm->ps->powerups[PW_ADRENALINE])
+			{
+				pm->pmext->sprintTime = SPRINTTIME;
+			}
+			else if (pm->ps->powerups[PW_NOFATIGUE])       // recharge at 2x with stamina powerup
+			{
+				pm->pmext->sprintTime += 10;
+			}
+			else
+			{
+				int rechargebase = 500;
+
+				if (pm->skill[SK_BATTLE_SENSE] >= 2)
+				{
+					rechargebase *= 1.6f;
+				}
+
+				pm->pmext->sprintTime += rechargebase * pml.frametime;        // adjusted for framerate independence
+				if (pm->pmext->sprintTime > 5000)
+				{
+					pm->pmext->sprintTime += rechargebase * pml.frametime;    // adjusted for framerate independence
+				}
+			}
+
 			if (pm->pmext->sprintTime > SPRINTTIME)
 			{
 				pm->pmext->sprintTime = SPRINTTIME;
 			}
 
-			if (pm->ps->powerups[PW_NOFATIGUE] < 0)
-			{
-				pm->ps->powerups[PW_NOFATIGUE] = 0;
-			}
+			pm->ps->sprintExertTime = 0;
 		}
-		// sprint time tuned for multiplayer
-		else
-		{
-			// adjusted for framerate independence
-			pm->pmext->sprintTime -= 5000 * pml.frametime;
-		}
-
-		if (pm->pmext->sprintTime < 0)
-		{
-			pm->pmext->sprintTime = 0;
-		}
-
-		if (!pm->ps->sprintExertTime)
-		{
-			pm->ps->sprintExertTime = 1;
-		}
-	}
-	else
-	{
-		// in multiplayer, recharge faster for top 75% of sprint bar
-		// (for people that *just* use it for jumping, not sprint) this code was
-		// mucked about with to eliminate client-side framerate-dependancy in wolf single player
-		if (pm->ps->powerups[PW_ADRENALINE])
-		{
-			pm->pmext->sprintTime = SPRINTTIME;
-		}
-		else if (pm->ps->powerups[PW_NOFATIGUE])       // recharge at 2x with stamina powerup
-		{
-			pm->pmext->sprintTime += 10;
-		}
-		else
-		{
-			int rechargebase = 500;
-
-#ifdef GAMEDLL // FIXME: predict leadership clientside ... leadership is never set to qtrue
-			if (pm->leadership)
-			{
-				rechargebase = 1000;
-			}
-			else
-#endif // GAMEDLL
-			{
-				if (pm->skill[SK_BATTLE_SENSE] >= 2)
-				{
-					rechargebase *= 1.6f;
-				}
-			}
-
-			pm->pmext->sprintTime += rechargebase * pml.frametime;        // adjusted for framerate independence
-			if (pm->pmext->sprintTime > 5000)
-			{
-				pm->pmext->sprintTime += rechargebase * pml.frametime;    // adjusted for framerate independence
-			}
-		}
-		if (pm->pmext->sprintTime > SPRINTTIME)
-		{
-			pm->pmext->sprintTime = SPRINTTIME;
-		}
-
-		pm->ps->sprintExertTime = 0;
 	}
 }
 
