@@ -94,8 +94,9 @@ option(ET_KEY			"Copy etkey file (requires ET_FS_BASEPATH set)"				OFF)
 # Platform-specific settings
 #-----------------------------------------------------------------
 
+message(STATUS "System: ${CMAKE_SYSTEM} (${ETLEGACY_SYSTEM_PROCESSOR})")
+
 if(UNIX AND CROSS_COMPILE32) # 32-bit build
-	message(STATUS "System: ${CMAKE_SYSTEM} (${ETLEGACY_SYSTEM_PROCESSOR})")
 	set(CMAKE_SYSTEM_PROCESSOR i386)
 	message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
 	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
@@ -626,6 +627,8 @@ if(BUILD_CLIENT)
 		endif()
 	endif()
 	if(FEATURE_RENDERER2)
+		# increased default hunkmegs value
+		add_definitions(-DFEATURE_INC_HUNKMEGS)
 		add_library(renderer_opengl2_${ARCH} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON})
 		if(BUNDLED_SDL)
 			add_dependencies(renderer_opengl2_${ARCH} bundled_sdl)
