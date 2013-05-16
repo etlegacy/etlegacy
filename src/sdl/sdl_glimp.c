@@ -49,6 +49,7 @@
 #else
 #include "../renderer/tr_local.h"
 #endif
+
 #include "../sys/sys_local.h"
 #include "sdl_icon.h"
 
@@ -117,10 +118,8 @@ static void GLimp_GetCurrentContext(void)
 	opengl_context.hDC   = GetDC(info.window);
 	opengl_context.hGLRC = info.hglrc;
 }
-#else
-static void GLimp_GetCurrentContext(void)
-{
-}
+#else // *nix
+//static void GLimp_GetCurrentContext(void)
 #endif
 
 // No SMP - stubs
