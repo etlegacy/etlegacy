@@ -2322,7 +2322,7 @@ PM_WaterEvents
 Generate sound events for entering and leaving water
 ==============
 */
-static void PM_WaterEvents(void)            // FIXME?
+static void PM_WaterEvents(void)
 {
 	// if just entered a water volume, play a sound
 	if (!pml.previous_waterlevel && pm->waterlevel)
@@ -2354,6 +2354,8 @@ static void PM_WaterEvents(void)            // FIXME?
 			PM_AddEventExt(EV_WATER_CLEAR, 0);
 		}
 	}
+
+	pm->ps->stats[STAT_AIRLEFT] = pm->pmext->airleft;
 }
 
 /*
@@ -6022,37 +6024,31 @@ void PmoveSingle(pmove_t *pmove)
 		pm->cmd.upmove      = 0;
 	}
 
-	if (pm->ps->pm_type == PM_SPECTATOR)
+	switch (pm->ps->pm_type)
 	{
+	case PM_SPECTATOR:
 		PM_CheckDuck();
 		PM_FlyMove();
 		PM_DropTimers();
 		return;
-	}
-
-	if (pm->ps->pm_type == PM_NOCLIP)
-	{
+	case PM_NOCLIP:
 		PM_NoclipMove();
 		PM_DropTimers();
 		return;
-	}
+	case PM_FREEZE:       // no movement at all
+	case PM_INTERMISSION: // no movement at all
+		return;
+	case PM_NORMAL:
+		if (pm->ps->weapon == WP_MORTAR_SET)
+		{
+			pm->cmd.forwardmove = 0;
+			pm->cmd.rightmove   = 0;
+			pm->cmd.upmove      = 0;
+		}
+		break;
 
-	if (pm->ps->pm_type == PM_FREEZE)
-	{
-		return;     // no movement at all
-	}
-
-	if (pm->ps->pm_type == PM_INTERMISSION)
-	{
-		return;     // no movement at all
-	}
-
-	// need gravity etc to affect a player with a set mortar
-	if (pm->ps->weapon == WP_MORTAR_SET && pm->ps->pm_type == PM_NORMAL)
-	{
-		pm->cmd.forwardmove = 0;
-		pm->cmd.rightmove   = 0;
-		pm->cmd.upmove      = 0;
+	default:
+		break;
 	}
 
 	// set watertype, and waterlevel

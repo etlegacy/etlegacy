@@ -9,6 +9,7 @@ hudDef {
 		hudnumber 3
 		compas 44 405 72 72 0 1
 		staminabar 4 388 12 72 0 1
+		breathbar 4 388 12 72 0 1
 		healthbar 604 388 12 75 0 1
 		weaponchangebar 624 388 12 75 0 1
 		healthtext 580 415 0 0 0 1

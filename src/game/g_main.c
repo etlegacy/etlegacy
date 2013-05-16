@@ -951,7 +951,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 	if (tr->entityNum == ENTITYNUM_WORLD)
 	{
-		if ((tr->contents & CONTENTS_WATER) && !(ps->powerups[PW_BREATHER]))
+		if ((tr->contents & CONTENTS_WATER))
 		{
 			hintDist = CH_WATER_DIST;
 			hintType = HINT_WATER;

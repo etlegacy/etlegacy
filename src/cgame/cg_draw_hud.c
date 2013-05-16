@@ -53,6 +53,7 @@ typedef struct hudStructure_s
 	int hudnumber;
 	hudComponent_t compas;
 	hudComponent_t staminabar;
+	hudComponent_t breathbar;
 	hudComponent_t healthbar;
 	hudComponent_t weaponchargebar;
 	hudComponent_t healthtext;
@@ -116,6 +117,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->hudnumber       = 0;
 	hud->compas          = CG_getComponent((Ccg_WideX(640) - 100 - 20 - 16), 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
 	hud->staminabar      = CG_getComponent(4, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
+	hud->breathbar       = CG_getComponent(4, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->healthbar       = CG_getComponent(24, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->weaponchargebar = CG_getComponent(Ccg_WideX(640) - 16, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->healthtext      = CG_getComponent(SKILLS_X - 28, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
@@ -293,6 +295,15 @@ static qboolean CG_ParseHUD(int handle)
 			if (!CG_ParseHudComponent(handle, &temphud.staminabar))
 			{
 				return CG_HUD_ParseError(handle, "expected staminabar");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "breathbar"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.breathbar))
+			{
+				return CG_HUD_ParseError(handle, "expected breathbar");
 			}
 			continue;
 		}
@@ -692,6 +703,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	return weap;
 }
 
+// stamina-/breathbar
 vec4_t bgcolour = { 1.f, 1.f, 1.f, 0.3f };
 
 static void CG_DrawPlayerHealthBar(rectDef_t *rect)
@@ -760,6 +772,29 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 	trap_R_SetColor(NULL);
 	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, cgs.media.hudSprintBar);
 	CG_DrawPic(rect->x, rect->y + rect->h + 4, rect->w, rect->w, cgs.media.hudSprintIcon);
+}
+
+// draw the breath bar! Thanks to bacon from the splashdamage forums for this
+static void CG_DrawBreathBar(rectDef_t *rect)
+{
+	static vec4_t colour    = { 0.1f, 0.1f, 1.0f, 0.5f };
+	static vec4_t colourlow = { 1.0f, 0.1f, 0.1f, 0.5f };
+	vec_t         *color    = colour;
+	int           flags     = 1 | 4 | 16 | 64;
+	float         frac;
+
+	frac = cg.snap->ps.stats[STAT_AIRLEFT] / (float)HOLDBREATHTIME;
+
+	if (frac < 0.25)
+	{
+		color = colourlow;
+	}
+
+	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, color, NULL, bgcolour, frac, flags);
+
+	trap_R_SetColor(NULL);
+	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, cgs.media.hudSprintBar);
+	CG_DrawPic(rect->x, rect->y + rect->h + 4, rect->w, rect->w, cgs.media.waterHintShader);
 }
 
 static void CG_DrawWeapRecharge(rectDef_t *rect)
@@ -1746,7 +1781,36 @@ static void CG_DrawPlayerStatus(void)
 
 	if (activehud->staminabar.visible)
 	{
-		CG_DrawStaminaBar(&activehud->staminabar.location);
+		qboolean underwater = qfalse;
+
+		// check if we are underwater.
+		// This check has changed to make it work for spectators following another player.
+		// That's why ps.stats[STAT_AIRLEFT] has been added..
+		//
+		// While following high-pingers, You sometimes see the breathbar, even while they are not submerged..
+		// So we check for underwater status differently when we are following others.
+		// (It doesn't matter to do a more complex check for spectators.. they are not playing)
+		if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+		{
+			vec3_t origin;
+
+			VectorCopy(cg.snap->ps.origin, origin);
+			origin[2] += 36;
+			underwater = (CG_PointContents(origin, cg.snap->ps.clientNum) & CONTENTS_WATER);
+		}
+		else
+		{
+			underwater = (cg.snap->ps.stats[STAT_AIRLEFT] < HOLDBREATHTIME) ? qtrue : qfalse;
+		}
+
+		if (underwater)
+		{
+			CG_DrawBreathBar(&activehud->breathbar.location);
+		}
+		else
+		{
+			CG_DrawStaminaBar(&activehud->staminabar.location);
+		}
 	}
 
 	if (activehud->weaponchargebar.visible)
@@ -1797,6 +1861,7 @@ void CG_Hud_Setup(void)
 	hud1.hudnumber       = 1;
 	hud1.compas          = CG_getComponent(44, 480 - 75, 72, 72, qtrue, STYLE_NORMAL);
 	hud1.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
+	hud1.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.healthbar       = CG_getComponent((Ccg_WideX(640) - 36), 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.weaponchargebar = CG_getComponent((Ccg_WideX(640) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.healthtext      = CG_getComponent(Ccg_WideX(640) - 60, 480 - 65, 0, 0, qtrue, STYLE_NORMAL);
@@ -1817,6 +1882,7 @@ void CG_Hud_Setup(void)
 	hud2.hudnumber       = 2;
 	hud2.compas          = CG_getComponent(64, 480 - 75, 72, 72, qtrue, STYLE_NORMAL);
 	hud2.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
+	hud2.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.healthbar       = CG_getComponent(24, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.weaponchargebar = CG_getComponent((Ccg_WideX(640) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.healthtext      = CG_getComponent(65, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
@@ -1846,6 +1912,7 @@ static void CG_PrintHud(hudStucture_t *hud)
 {
 	CG_PrintHudComponent("compas", hud->compas);
 	CG_PrintHudComponent("staminabar", hud->staminabar);
+	CG_PrintHudComponent("breathbar", hud->breathbar);
 	CG_PrintHudComponent("healthbar", hud->healthbar);
 	CG_PrintHudComponent("weaponchargebar", hud->weaponchargebar);
 	CG_PrintHudComponent("healthtext", hud->healthtext);

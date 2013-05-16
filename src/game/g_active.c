@@ -115,7 +115,10 @@ void P_WorldEffects(gentity_t *ent)
 
 	if (ent->client->noclip)
 	{
-		ent->client->airOutTime = level.time + HOLDBREATHTIME;  // don't need air
+		ent->client->airOutTime = level.time + HOLDBREATHTIME;
+		// air left while underwater..
+		ent->client->pmext.airleft          = ent->client->airOutTime - level.time;
+		ent->client->ps.stats[STAT_AIRLEFT] = HOLDBREATHTIME;
 		return;
 	}
 
@@ -127,50 +130,45 @@ void P_WorldEffects(gentity_t *ent)
 		// if out of air, start drowning
 		if (ent->client->airOutTime < level.time)
 		{
-			if (ent->client->ps.powerups[PW_BREATHER])     // take air from the breather now that we need it
+			// drown!
+			ent->client->airOutTime += 1000;
+			if (ent->health > 0)
 			{
-				ent->client->ps.powerups[PW_BREATHER] -= (level.time - ent->client->airOutTime);
-				ent->client->airOutTime                = level.time + (level.time - ent->client->airOutTime);
-			}
-			else
-			{
-				// drown!
-				ent->client->airOutTime += 1000;
-				if (ent->health > 0)
+				// take more damage the longer underwater
+				ent->damage += 2;
+				if (ent->damage > 15)
 				{
-					// take more damage the longer underwater
-					ent->damage += 2;
-					if (ent->damage > 15)
-					{
-						ent->damage = 15;
-					}
-
-					// play a gurp sound instead of a normal pain sound
-					if (ent->health <= ent->damage)
-					{
-						G_Sound(ent, GAMESOUND_PLAYER_BUBBLE);
-					}
-					else if (rand() & 1)
-					{
-						G_Sound(ent, GAMESOUND_PLAYER_GURP1);
-					}
-					else
-					{
-						G_Sound(ent, GAMESOUND_PLAYER_GURP2);
-					}
-
-					// don't play a normal pain sound
-					ent->pain_debounce_time = level.time + 200;
-
-					G_Damage(ent, NULL, NULL, NULL, NULL, ent->damage, 0, MOD_WATER);
+					ent->damage = 15;
 				}
+
+				// play a gurp sound instead of a normal pain sound
+				if (ent->health <= ent->damage)
+				{
+					G_Sound(ent, GAMESOUND_PLAYER_BUBBLE);
+				}
+				else if (rand() & 1)
+				{
+					G_Sound(ent, GAMESOUND_PLAYER_GURP1);
+				}
+				else
+				{
+					G_Sound(ent, GAMESOUND_PLAYER_GURP2);
+				}
+
+				// don't play a normal pain sound
+				ent->pain_debounce_time = level.time + 200;
+
+				G_Damage(ent, NULL, NULL, NULL, NULL, ent->damage, 0, MOD_WATER);
 			}
 		}
 	}
 	else
 	{
-		ent->client->airOutTime = level.time + 12000;
-		ent->damage             = 2;
+		ent->client->airOutTime = level.time + HOLDBREATHTIME;
+		// air left while underwater..
+		ent->client->pmext.airleft          = ent->client->airOutTime - level.time;
+		ent->client->ps.stats[STAT_AIRLEFT] = HOLDBREATHTIME;
+		ent->damage                         = 2;
 	}
 
 	// check for sizzle damage (move to pmove?)

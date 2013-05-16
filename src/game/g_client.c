@@ -2879,7 +2879,10 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->ps.persistant[PERS_TEAM]        = client->sess.sessionTeam;
 	client->ps.persistant[PERS_HWEAPON_USE] = 0;
 
-	client->airOutTime = level.time + 12000;
+	client->airOutTime = level.time + HOLDBREATHTIME;
+	// breathbar
+	ent->client->pmext.airleft          = ent->client->airOutTime - level.time;
+	ent->client->ps.stats[STAT_AIRLEFT] = HOLDBREATHTIME;
 
 	// clear entity values
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;

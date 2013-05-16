@@ -563,6 +563,7 @@ typedef enum
 	STAT_XP,                        // "realtime" version of xp that doesnt need to go thru the scoreboard
 	STAT_XP_OVERFLOW,               // count XP overflow(every 2^15)
 	STAT_PS_FLAGS,
+	STAT_AIRLEFT,                   // airtime for CG_DrawBreathBar()
 } statIndex_t;
 
 // player_state->persistant[] indexes
@@ -647,7 +648,7 @@ typedef enum
 	PW_INVULNERABLE,
 	PW_FIRE,
 	PW_ELECTRIC,
-	PW_BREATHER,
+	PW_BREATHER, // obsolete
 	PW_NOFATIGUE,
 
 	PW_REDFLAG,
