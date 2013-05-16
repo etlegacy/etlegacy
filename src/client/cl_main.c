@@ -3553,20 +3553,27 @@ void CL_InitRef(void)
 #ifdef USE_RENDERER_DLOPEN
 	cl_renderer = Cvar_Get("cl_renderer", "opengl1", CVAR_ARCHIVE | CVAR_LATCH);
 
-	Com_sprintf(dllName, sizeof(dllName), "renderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
 
+#ifdef _WIN32
+	Com_sprintf(dllName, sizeof(dllName), "renderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
+#else // *nix
+	Com_sprintf(dllName, sizeof(dllName), "librenderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
+#endif
 	if (!(rendererLib = Sys_LoadDll(dllName, qfalse)) && strcmp(cl_renderer->string, cl_renderer->resetString))
 	{
 		Cvar_ForceReset("cl_renderer");
-
+#ifdef _WIN32
 		Com_sprintf(dllName, sizeof(dllName), "renderer_opengl1_" ARCH_STRING DLL_EXT);
+#else // *nix
+		Com_sprintf(dllName, sizeof(dllName), "librenderer_opengl1_" ARCH_STRING DLL_EXT);
+#endif
 		rendererLib = Sys_LoadLibrary(dllName);
 	}
 
 	if (!rendererLib)
 	{
 		Com_Printf("failed:\n\"%s\"\n", Sys_LibraryError());
-		Com_Error(ERR_FATAL, "Failed to load renderer");
+		Com_Error(ERR_FATAL, "Failed to load renderer lib");
 	}
 
 	GetRefAPI = Sys_LoadFunction(rendererLib, "GetRefAPI");
@@ -4650,7 +4657,7 @@ int CL_GetPingQueueCount(void)
 		}
 	}
 
-	return (count);
+	return count;
 }
 
 /*
@@ -4688,7 +4695,7 @@ ping_t *CL_GetFreePing(void)
 
 		// clear it
 		pingptr->adr.port = 0;
-		return (pingptr);
+		return pingptr;
 	}
 
 	// use oldest entry
@@ -4706,7 +4713,7 @@ ping_t *CL_GetFreePing(void)
 		}
 	}
 
-	return (best);
+	return best;
 }
 
 /*
