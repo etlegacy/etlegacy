@@ -56,7 +56,13 @@ int demo_protocols[] =
 
 #define MIN_DEDICATED_COMHUNKMEGS   1
 #define MIN_COMHUNKMEGS             64
+
+#ifdef FEATURE_RENDERER2
+#define DEF_COMHUNKMEGS             256
+#else
 #define DEF_COMHUNKMEGS             128
+#endif
+
 #define DEF_COMZONEMEGS             24
 #define DEF_COMHUNKMEGS_S           XSTRING(DEF_COMHUNKMEGS)
 #define DEF_COMZONEMEGS_S           XSTRING(DEF_COMZONEMEGS)
