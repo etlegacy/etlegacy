@@ -47,7 +47,7 @@ float Com_Clamp(float min, float max, float value)
 	return value;
 }
 
-/*
+/**
  * @brief unixifies a pathname
  */
 void COM_FixPath(char *pathname)
@@ -152,7 +152,7 @@ void COM_StripFilename(char *in, char *out)
 	*end = 0;
 }
 
-/*
+/**
  * @brief if path doesn't have an extension, then append the specified one
  * (which should include the .)
  */
@@ -1406,7 +1406,6 @@ char *Q_strupr(char *s1)
 	return s1;
 }
 
-#if defined(FEATURE_IRC_CLIENT) || defined(FEATURE_RENDERER2)
 int Q_strnicmp(const char *string1, const char *string2, int n)
 {
 	int c1, c2;
@@ -1458,7 +1457,6 @@ int Q_strnicmp(const char *string1, const char *string2, int n)
 
 	return 0; // Strings are equal
 }
-#endif
 
 // never goes past bounds or leaves without a terminating 0
 void Q_strcat(char *dest, int size, const char *src)
@@ -1473,9 +1471,9 @@ void Q_strcat(char *dest, int size, const char *src)
 	Q_strncpyz(dest + l1, src, size - l1);
 }
 
-/*
-* Find the first occurrence of find in s.
-*/
+/**
+ * @brief Find the first occurrence of find in s.
+ */
 const char *Q_stristr(const char *s, const char *find)
 {
 	char c;
@@ -1638,7 +1636,7 @@ int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...)
 	return len;
 }
 
-/*
+/**
  * @brief Does a varargs printf into a temp buffer, so I don't need to have
  * varargs versions of all text functions.
 
@@ -1703,7 +1701,7 @@ char *QDECL va(const char *format, ...)
 	return buf;
 }
 
-/*
+/**
  * @brief Assumes buffer is atleast TRUNCATE_LENGTH big
  */
 void Com_TruncateLongString(char *buffer, const char *s)
@@ -1726,7 +1724,7 @@ void Com_TruncateLongString(char *buffer, const char *s)
 =============
 TempVector
 
-(SA) this is straight out of g_utils.c around line 210
+This is straight out of g_utils.c around line 210
 
 This is just a convenience function
 for making temporary vectors for function calls
