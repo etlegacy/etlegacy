@@ -199,7 +199,6 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		return qfalse;
 	}
 
-
 	// parse bounds {
 	token = COM_ParseExt2(&buf_p, qtrue);
 	if (Q_stricmp(token, "bounds"))
@@ -270,7 +269,6 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		ri.Printf(PRINT_WARNING, "RE_RegisterAnimation: expected '}' found '%s' in model '%s'\n", token, name);
 		return qfalse;
 	}
-
 
 	// parse baseframe {
 	token = COM_ParseExt2(&buf_p, qtrue);
@@ -385,8 +383,6 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 	// everything went ok
 	return qtrue;
 }
-
-
 
 static void GetChunkHeader(memStream_t *s, axChunkHeader_t *chunkHeader)
 {
@@ -810,7 +806,6 @@ qhandle_t RE_RegisterAnimation(const char *name)
 	return anim->index;
 }
 
-
 /*
 ================
 R_GetAnimationByHandle
@@ -1143,11 +1138,11 @@ void R_AddMD5Interactions(trRefEntity_t *ent, trRefLight_t *light)
 				}
 				if (shader == tr.defaultShader)
 				{
-					ri.Printf(PRINT_DEVELOPER, "WARNING: no shader for surface %i in skin %s\n", i, skin->name);
+					ri.Printf(PRINT_DEVELOPER, "R_AddMD5Interactions WARNING: no shader for surface %i in skin %s\n", i, skin->name);
 				}
 				else if (shader->defaultShader)
 				{
-					ri.Printf(PRINT_DEVELOPER, "WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
+					ri.Printf(PRINT_DEVELOPER, "R_AddMD5Interactions WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
 				}
 			}
 			else
@@ -1201,11 +1196,11 @@ void R_AddMD5Interactions(trRefEntity_t *ent, trRefLight_t *light)
 				}
 				if (shader == tr.defaultShader)
 				{
-					ri.Printf(PRINT_DEVELOPER, "WARNING: no shader for surface %i in skin %s\n", i, skin->name);
+					ri.Printf(PRINT_DEVELOPER, "R_AddMD5Interactions WARNING: no shader for surface %i in skin %s\n", i, skin->name);
 				}
 				else if (shader->defaultShader)
 				{
-					ri.Printf(PRINT_DEVELOPER, "WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
+					ri.Printf(PRINT_DEVELOPER, "R_AddMD5Interactions WARNING: shader %s in skin %s not found\n", shader->name, skin->name);
 				}
 			}
 			else
@@ -1228,7 +1223,6 @@ void R_AddMD5Interactions(trRefEntity_t *ent, trRefLight_t *light)
 		}
 	}
 }
-
 
 /*
 ==============
@@ -1353,14 +1347,12 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 		// This will write directly into the entity structure, so
 		// when the surfaces are rendered, they don't need to be
 		// range checked again.
-		/*
-		   if((startFrame >= anim->numFrames) || (startFrame < 0) || (endFrame >= anim->numFrames) || (endFrame < 0))
-		   {
-		   ri.Printf(PRINT_DEVELOPER, "RE_BuildSkeleton: no such frame %d to %d for '%s'\n", startFrame, endFrame, anim->name);
-		   //startFrame = 0;
-		   //endFrame = 0;
-		   }
-		 */
+		//if((startFrame >= anim->numFrames) || (startFrame < 0) || (endFrame >= anim->numFrames) || (endFrame < 0))
+		//{
+		//  ri.Printf(PRINT_DEVELOPER, "RE_BuildSkeleton: no such frame %d to %d for '%s'\n", startFrame, endFrame, anim->name);
+		//  //startFrame = 0;
+		//  //endFrame = 0;
+		//}
 
 		Q_clamp(startFrame, 0, anim->numFrames - 1);
 		Q_clamp(endFrame, 0, anim->numFrames - 1);
@@ -1571,7 +1563,6 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 	return qfalse;
 }
 
-
 /*
 ==============
 RE_BlendSkeleton
@@ -1612,7 +1603,6 @@ int RE_BlendSkeleton(refSkeleton_t *skel, const refSkeleton_t *blend, float frac
 	return qtrue;
 }
 
-
 /*
 ==============
 RE_AnimNumFrames
@@ -1637,7 +1627,6 @@ int RE_AnimNumFrames(qhandle_t hAnim)
 	return 0;
 }
 
-
 /*
 ==============
 RE_AnimFrameRate
@@ -1661,6 +1650,5 @@ int RE_AnimFrameRate(qhandle_t hAnim)
 
 	return 0;
 }
-
 
 #endif
