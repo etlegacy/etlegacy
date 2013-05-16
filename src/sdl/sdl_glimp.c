@@ -313,7 +313,9 @@ static qboolean GLimp_InitOpenGL3xContext()
 #endif
 	int GLmajor, GLminor;
 
-	GLimp_GetCurrentContext(); // FIXME: Linux
+#if defined(WIN32)
+	GLimp_GetCurrentContext();
+#endif
 	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
 
 	Q_strncpyz(glConfig.extensions_string, (char *) qglGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
@@ -322,7 +324,6 @@ static qboolean GLimp_InitOpenGL3xContext()
 	// Core profiles are not necessarily compatible, so we have
 	// to request the desired version.
 #if defined(WIN32)
-
 	if (WGLEW_ARB_create_context_profile)
 	{
 		int attribs[256];   // should be really enough
