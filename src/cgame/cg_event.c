@@ -45,7 +45,7 @@ vec3_t OB_RED = { 1.f, 0.f, 0.f };
 =============
 CG_Obituary
 
-FIXME: - MOD_ROCKET, MOD_CROSS ... some MODs are not catched - check all!
+FIXME: ... some MODs are not catched - check all!
        - MOD_CRUSH_X is selfkill only
 =============
 */

@@ -286,7 +286,6 @@ char *modNames[] =
 	"MOD_BROWNING",
 	"MOD_MG42",
 	"MOD_GRENADE",
-	"MOD_ROCKET",
 
 	// modified wolf weap mods
 	"MOD_KNIFE",
@@ -303,7 +302,6 @@ char *modNames[] =
 	"MOD_GRENADE_LAUNCHER",
 	"MOD_FLAMETHROWER",
 	"MOD_GRENADE_PINEAPPLE",
-	"MOD_CROSS",
 
 	"MOD_MAPMORTAR",
 	"MOD_MAPMORTAR_SPLASH",
@@ -1326,7 +1324,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			{
 			case MOD_GRENADE:
 			case MOD_GRENADE_LAUNCHER:
-			case MOD_ROCKET:
 			case MOD_GRENADE_PINEAPPLE:
 			case MOD_MAPMORTAR:
 			case MOD_EXPLOSIVE:
@@ -1504,13 +1501,13 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			targ->client->pmext.pusher = attacker - g_entities;
 		}
 
-		if (targ == attacker && !(mod != MOD_ROCKET &&
-		                          mod != MOD_GRENADE &&
+		// MOD_ROCKET removed (now MOD_EXPLOSIVE) which is never targ == attacker
+		if (targ == attacker && !(mod != MOD_GRENADE &&
 		                          mod != MOD_GRENADE_LAUNCHER &&
 		                          mod != MOD_GRENADE_PINEAPPLE &&
 		                          mod != MOD_DYNAMITE
-		                          && mod != MOD_GPG40
-		                          && mod != MOD_M7
+		                          && mod != MOD_GPG40 // ?!
+		                          && mod != MOD_M7 // ?!
 		                          && mod != MOD_LANDMINE
 		                          ))
 		{
@@ -1586,7 +1583,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		{
 		case MOD_GRENADE:
 		case MOD_GRENADE_LAUNCHER:
-		case MOD_ROCKET:
 		case MOD_GRENADE_PINEAPPLE:
 		case MOD_MAPMORTAR:
 		case MOD_MAPMORTAR_SPLASH:

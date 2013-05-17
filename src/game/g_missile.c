@@ -1970,11 +1970,10 @@ fire_rocket
 */
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir)
 {
-	gentity_t *bolt;
+	gentity_t *bolt = G_Spawn();
 
 	VectorNormalize(dir);
 
-	bolt            = G_Spawn();
 	bolt->classname = "rocket";
 	bolt->nextthink = level.time + 20000;   // push it out a little
 	bolt->think     = G_ExplodeMissile;
@@ -2018,11 +2017,9 @@ fire_flamebarrel
 */
 gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 {
-	gentity_t *bolt;
+	gentity_t *bolt = G_Spawn();
 
 	VectorNormalize(dir);
-
-	bolt = G_Spawn();
 
 	// for explosion type
 	bolt->accuracy = 3;
@@ -2040,8 +2037,8 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->splashDamage = 20;
 	bolt->splashRadius = 60;
 
-	bolt->methodOfDeath       = MOD_ROCKET;
-	bolt->splashMethodOfDeath = MOD_ROCKET;
+	bolt->methodOfDeath       = MOD_EXPLOSIVE;
+	bolt->splashMethodOfDeath = MOD_EXPLOSIVE;
 
 	bolt->clipmask = MASK_MISSILESHOT;
 
@@ -2152,7 +2149,7 @@ fire_mortar
 */
 gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 {
-	gentity_t *bolt;
+	gentity_t *bolt = G_Spawn();
 
 	//  VectorNormalize (dir);
 
@@ -2165,7 +2162,6 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 		VectorCopy(self->s.apos.trBase, tent->s.angles);
 	}
 
-	bolt            = G_Spawn();
 	bolt->classname = "mortar";
 	bolt->nextthink = level.time + 20000;   // push it out a little
 	bolt->think     = G_ExplodeMissile;

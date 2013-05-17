@@ -240,13 +240,18 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 {
 	int dmg, ref;
 
+	if (!targ || !targ->client)
+	{
+		return;
+	}
+
 	// Keep track of only active player-to-player interactions in a real game
-	if (!targ || !targ->client ||
+	if (
 #ifndef DEBUG_STATS
 	    g_gamestate.integer != GS_PLAYING ||
 #endif
 	    mod == MOD_SWITCHTEAM ||
-	    (g_gametype.integer >= GT_WOLF && (targ->client->ps.pm_flags & PMF_LIMBO)) ||
+	    (g_gametype.integer >= GT_WOLF && (targ->client->ps.pm_flags & PMF_LIMBO)) || // FIXME: inspect - this is a bit odd by gametype
 	    (g_gametype.integer < GT_WOLF && (targ->s.eFlags == EF_DEAD || targ->client->ps.pm_type == PM_DEAD)))
 	{
 		return;
@@ -255,13 +260,16 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 	// Special hack for intentional gibbage
 	if (targ->health <= 0 && targ->client->ps.pm_type == PM_DEAD)
 	{
-		if (mod < MOD_CROSS && attacker && attacker->client)
+		if (attacker && attacker->client)
 		{
-			int x = attacker->client->sess.aWeaponStats[G_weapStatIndex_MOD(mod)].atts--;
+			int x;
+
+			ref = G_weapStatIndex_MOD(mod);
+			x   = attacker->client->sess.aWeaponStats[ref].atts--;
 
 			if (x < 1)
 			{
-				attacker->client->sess.aWeaponStats[G_weapStatIndex_MOD(mod)].atts = 1;
+				attacker->client->sess.aWeaponStats[ref].atts = 1;
 			}
 		}
 		return;
@@ -270,7 +278,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 	//  G_Printf("mod: %d, Index: %d, dmg: %d\n", mod, G_weapStatIndex_MOD(mod), dmg_ref);
 
 	// Suicides only affect the player specifically
-	if (targ == attacker || !attacker || !attacker->client || mod == MOD_SUICIDE)
+	if (targ == attacker || !attacker || !attacker->client || mod == MOD_SUICIDE) // FIXME: inspect world kills count as suicide?
 	{
 		if (targ->health <= 0)
 		{
@@ -357,8 +365,7 @@ static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 	{ MOD_MACHINEGUN,                         WS_MG42            },
 	{ MOD_BROWNING,                           WS_MG42            },
 	{ MOD_MG42,                               WS_MG42            },
-	{ MOD_GRENADE,                            WS_GRENADE         },
-	{ MOD_ROCKET,                             WS_PANZERFAUST     },
+	{ MOD_GRENADE,                            WS_GRENADE         }, // FIXME: explosion (world kills = WS_GREANDE) ?!
 
 	{ MOD_KNIFE,                              WS_KNIFE           },
 	{ MOD_LUGER,                              WS_LUGER           },
@@ -375,9 +382,8 @@ static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 	{ MOD_GRENADE_LAUNCHER,                   WS_GRENADE         },
 	{ MOD_FLAMETHROWER,                       WS_FLAMETHROWER    },
 	{ MOD_GRENADE_PINEAPPLE,                  WS_GRENADE         },
-	{ MOD_CROSS,                              WS_MAX             },
 
-	{ MOD_MAPMORTAR,                          WS_MORTAR          },
+	{ MOD_MAPMORTAR,                          WS_MORTAR          }, // FIXME: do we have to convert an attacker=world weapon as WS?
 	{ MOD_MAPMORTAR_SPLASH,                   WS_MORTAR          },
 
 	{ MOD_KICKED,                             WS_MAX             },
