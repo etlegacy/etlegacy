@@ -2091,6 +2091,8 @@ char *IsFakepConnection(int clientNum, char const *ip, char const *rate)
 	return NULL;
 }
 
+extern const char *country_name[MAX_COUNTRY_NUM];
+
 /*
 ===========
 ClientConnect
@@ -2294,39 +2296,30 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		if (!strcmp(cs_ip, "localhost"))
 		{
 			// give bots country flag of the server location g_countryflags 2
-			if (isBot && g_countryflags.integer > 1)
+			if (isBot && g_countryflags.integer & CF_BOTS)
 			{
+				char          server_ip[MAX_IP4_LENGTH];
+				unsigned int  ret;
+				unsigned long ip;
 
-				// hidden feature - draws kind of world flag ...
-				if (g_countryflags.integer >= 777)
+				// get the server flag
+				trap_Cvar_VariableStringBuffer("net_ip", server_ip, sizeof(server_ip));
+				ip  = GeoIP_addr_to_num(server_ip);
+				ret = GeoIP_seek_record(gidb, ip);
+
+				if (ret > 0)
 				{
-					client->sess.uci = 244;
+					client->sess.uci = ret;
 				}
 				else
 				{
-					char          server_ip[MAX_IP4_LENGTH];
-					unsigned int  ret;
-					unsigned long ip;
-
-					// get the server flag
-					trap_Cvar_VariableStringBuffer("net_ip", server_ip, sizeof(server_ip));
-					ip  = GeoIP_addr_to_num(server_ip);
-					ret = GeoIP_seek_record(gidb, ip);
-
-					if (ret > 0)
-					{
-						client->sess.uci = ret;
-					}
-					else
-					{
-						// default
-						client->sess.uci = 0;
-					}
+					// default
+					client->sess.uci = 0;
 				}
 			}
 			else
 			{
-				client->sess.uci = 0;
+				client->sess.uci = 0; // localhost players
 			}
 		}
 		else
@@ -2429,11 +2422,17 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	ClientUserinfoChanged(clientNum);
 
 	// don't do the "xxx connected" messages if they were caried over from previous level
-	// Don't display connected messages in single player
-	// disabled for bots - see join message
+	// disabled for bots - see join message ... make cvar ?
 	if (firstTime && !(ent->r.svFlags & SVF_BOT))
 	{
-		trap_SendServerCommand(-1, va("cpm \"%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
+		if ((g_countryflags.integer & CF_CONNECT) && client->sess.uci > 0 && client->sess.uci < MAX_COUNTRY_NUM)
+		{
+			trap_SendServerCommand(-1, va("cpm \"%s" S_COLOR_WHITE " connected from %s\n\"", client->pers.netname, country_name[client->sess.uci]));
+		}
+		else
+		{
+			trap_SendServerCommand(-1, va("cpm \"%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
+		}
 	}
 
 	// count current clients and rank for scoreboard
