@@ -580,6 +580,8 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 #ifdef FEATURE_ANTICHEAT
 		if (e < sv_maxclients->integer && sv_wh_active->integer > 0)     // client
 		{
+			// note: !r.linked is already exclused - see above
+
 			if (e == frame->ps.clientNum)
 			{
 				continue;
@@ -587,8 +589,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 
 			client = SV_GentityNum(frame->ps.clientNum);
 
-			// FIXME: check for active/ingame/free fly spec client?
-			if (!portal && !(client->r.svFlags & SVF_BOT))
+			if (!portal && !(client->r.svFlags & SVF_BOT) && (frame->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR))
 			{
 				if (!SV_CanSee(frame->ps.clientNum, e))
 				{

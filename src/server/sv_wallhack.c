@@ -330,6 +330,16 @@ static void calc_viewpoint(playerState_t *ps, vec3_t org, vec3_t vp)
 {
 	VectorCopy(org, vp);
 
+	if (ps->leanf != 0)
+	{
+		vec3_t right, v3ViewAngles;
+
+		VectorCopy(ps->viewangles, v3ViewAngles);
+		v3ViewAngles[2] += ps->leanf / 2.0f;
+		AngleVectors(v3ViewAngles, NULL, right, NULL);
+		VectorMA(org, ps->leanf, right, org);
+	}
+
 	if (ps->pm_flags & PMF_DUCKED)
 	{
 		vp[2] += CROUCH_VIEWHEIGHT;
@@ -435,7 +445,9 @@ static void init_vert_delta(void)
 	bbox_vert = sv_wh_bbox_vert->integer;
 
 	for (i = 0; i < 8; i++)
+	{
 		delta[i][2] = ((float) bbox_vert * delta_sign[i][2]) / 2.0;
+	}
 }
 
 //======================================================================
