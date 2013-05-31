@@ -7634,8 +7634,6 @@ typedef struct
 	int modificationCount;          // for tracking changes
 } cvarTable_t;
 
-vmCvar_t ui_arenasFile;
-
 vmCvar_t ui_brassTime;
 vmCvar_t ui_drawCrosshair;
 vmCvar_t ui_drawCrosshairNames;
@@ -7682,7 +7680,6 @@ vmCvar_t ui_isSpectator;
 
 vmCvar_t ui_friendlyFire;
 
-vmCvar_t ui_userTimeLimit;
 vmCvar_t ui_userAlliedRespawnTime;
 vmCvar_t ui_userAxisRespawnTime;
 vmCvar_t ui_glCustom;
@@ -7713,10 +7710,8 @@ cvarTable_t cvarTable[] =
 {
 	{ &ui_glCustom,                     "ui_glCustom",                         "4",                          CVAR_ARCHIVE                   },
 
-	{ &ui_arenasFile,                   "g_arenasFile",                        "",                           CVAR_INIT | CVAR_ROM           },
 	{ &ui_friendlyFire,                 "g_friendlyFire",                      "1",                          CVAR_ARCHIVE                   },
 
-	{ &ui_userTimeLimit,                "ui_userTimeLimit",                    "0",                          0                              },
 	{ &ui_userAlliedRespawnTime,        "ui_userAlliedRespawnTime",            "0",                          0                              },
 	{ &ui_userAxisRespawnTime,          "ui_userAxisRespawnTime",              "0",                          0                              },
 

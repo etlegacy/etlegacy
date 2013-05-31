@@ -6176,6 +6176,7 @@ void Menu_SetFeederSelection(menuDef_t *menu, int feeder, int index, const char 
 				if (index == 0)
 				{
 					listBoxDef_t *listPtr = (listBoxDef_t *)menu->items[i]->typeData;
+
 					listPtr->cursorPos = 0;
 					listPtr->startPos  = 0;
 				}

@@ -43,8 +43,6 @@
 
 #define __(x) trap_TranslateString(x)
 
-extern vmCvar_t ui_arenasFile;
-
 extern vmCvar_t ui_brassTime;
 extern vmCvar_t ui_drawCrosshair;
 extern vmCvar_t ui_drawCrosshairNames;
