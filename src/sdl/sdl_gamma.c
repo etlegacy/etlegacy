@@ -64,6 +64,7 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 
 	if (!glConfig.deviceSupportsGamma || r_ignorehwgamma->integer > 0)
 	{
+		ri.Printf(PRINT_WARNING, "Device doesn't support gamma or r_ignorehwgamma is set.\n");
 		return;
 	}
 
