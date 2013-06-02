@@ -143,6 +143,30 @@ int ClientNumbersFromString(char *s, int *plist)
 	return found;
 }
 
+/* unused
+void G_TeamDamageStats(gentity_t *ent)
+{
+    if (!ent->client) return;
+
+    {
+        float teamHitPct =
+            ent->client->sess.hits ?
+            (ent->client->sess.team_hits / ent->client->sess.hits)*(100):
+            0;
+
+        CPx(ent-g_entities,
+            va("print \"Team Hits: %.2f Total Hits: %.2f "
+                "Pct: %.2f Limit: %d\n\"",
+            ent->client->sess.team_hits,
+            ent->client->sess.hits,
+            teamHitPct,
+            g_teamDamageRestriction.integer
+            ));
+    }
+    return;
+}
+*/
+
 void G_PlaySound_Cmd(void)
 {
 	char sound[MAX_QPATH], name[MAX_NAME_LENGTH], cmd[32] = { "playsound" };
@@ -4256,10 +4280,13 @@ void ClientCommand(int clientNum)
 		{
 			Cmd_Say_f(ent, SAY_ALL, qfalse);
 		}
+		else
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"\n");
+		}
 		return;
 	}
-
-	if (Q_stricmp(cmd, "say_team") == 0)
+	else if (Q_stricmp(cmd, "say_team") == 0)
 	{
 		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
 		{
@@ -4271,6 +4298,10 @@ void ClientCommand(int clientNum)
 		{
 			Cmd_Say_f(ent, SAY_TEAM, qfalse);
 		}
+		else
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat - you are muted\n\"\n");
+		}
 		return;
 	}
 	else if (Q_stricmp(cmd, "vsay") == 0)
@@ -4278,6 +4309,10 @@ void ClientCommand(int clientNum)
 		if (!ent->client->sess.muted)
 		{
 			Cmd_Voice_f(ent, SAY_ALL, qfalse, qfalse);
+		}
+		else
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"\n");
 		}
 		return;
 	}
@@ -4293,6 +4328,10 @@ void ClientCommand(int clientNum)
 		{
 			Cmd_Voice_f(ent, SAY_TEAM, qfalse, qfalse);
 		}
+		else
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat - you are muted\n\"\n");
+		}
 		return;
 	}
 	else if (Q_stricmp(cmd, "say_buddy") == 0)
@@ -4301,6 +4340,10 @@ void ClientCommand(int clientNum)
 		{
 			Cmd_Say_f(ent, SAY_BUDDY, qfalse);
 		}
+		else
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat - you are muted\n\"\n");
+		}
 		return;
 	}
 	else if (Q_stricmp(cmd, "vsay_buddy") == 0)
@@ -4308,6 +4351,10 @@ void ClientCommand(int clientNum)
 		if (!ent->client->sess.muted)
 		{
 			Cmd_Voice_f(ent, SAY_BUDDY, qfalse, qfalse);
+		}
+		else
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat - you are muted\n\"\n");
 		}
 		return;
 	}
