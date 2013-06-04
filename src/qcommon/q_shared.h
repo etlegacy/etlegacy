@@ -92,7 +92,7 @@ extern "C" {
 #pragma warning(disable : 4220) // varargs matches remaining parameters
 #endif
 
-//Ignore __attribute__ on non-gcc platforms
+// Ignore __attribute__ on non-gcc platforms
 #ifndef __GNUC__
 #ifndef __attribute__
 #define __attribute__(x)
@@ -175,8 +175,8 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 #else // not using MSVC
 #include <stdint.h>
 #define Q_vsnprintf vsnprintf
-#endif
-#endif
+#endif // defined (_MSC_VER) && (_MSC_VER >= 1600)
+#endif // Q3_VM
 
 #include "q_platform.h"
 
@@ -189,7 +189,7 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 #undef QDECL
 #define QDECL   __cdecl
 
-/*
+/**
  * @def CPUSTRING
  * @brief Platform and architecture string incorporated into the version string.
  *
@@ -204,7 +204,7 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 
 #define PATH_SEP '\\'
 
-#endif
+#endif // _WIN32
 
 //======================= MAC OS X DEFINES =====================
 
@@ -261,7 +261,7 @@ static ID_NONSTATIC_INLINE float idSqrt(float x)
 #define sqrt idSqrt
 */
 
-#endif
+#endif // defined(__APPLE__)
 
 //======================= LINUX DEFINES =================================
 
@@ -283,7 +283,7 @@ static ID_NONSTATIC_INLINE float idSqrt(float x)
 
 #define PATH_SEP '/'
 
-#endif
+#endif // __linux__
 
 //======================= OPENBSD DEFINES =================================
 
@@ -303,7 +303,27 @@ static ID_NONSTATIC_INLINE float idSqrt(float x)
 
 #define PATH_SEP '/'
 
+#endif // __OpenBSD__
+
+//======================= FREEBSD DEFINES =================================
+
+// the mac compiler can't handle >32k of locals, so we
+// just waste space and make big arrays static...
+#ifdef __FreeBSD__
+
+#define MAC_STATIC
+
+#ifdef __i386__
+#define CPUSTRING   "freebsd-i386"
+#elif defined __x86_64__
+#define CPUSTRING   "freebsd-x86_64"
+#else
+#define CPUSTRING   "freebsd-other"
 #endif
+
+#define PATH_SEP '/'
+
+#endif // __FreeBSD__
 
 //======================= AROS DEFINES =================================
 
@@ -325,7 +345,7 @@ static ID_NONSTATIC_INLINE float idSqrt(float x)
 
 #define PATH_SEP '/'
 
-#endif
+#endif // __AROS__
 
 //=============================================================
 
@@ -949,7 +969,7 @@ int COM_GetCurrentParseLine(void);
 char *COM_Parse(char **data_p);
 char *COM_ParseExt(char **data_p, qboolean allowLineBreak);
 
-// RB: added COM_Parse2 for having a Doom 3 style tokenizer.
+// added COM_Parse2 for having a Doom 3 style tokenizer.
 char *COM_Parse2(char **data_p);
 char *COM_ParseExt2(char **data_p, qboolean allowLineBreak);
 

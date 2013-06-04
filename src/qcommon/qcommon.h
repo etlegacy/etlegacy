@@ -1110,6 +1110,8 @@ qboolean Sys_IsNumLockDown(void);
 #define Sys_GetDLLName(x) x "_mp_" ARCH_STRING DLL_EXT
 #elif __OpenBSD__ //TODO: detect the *BSD variant
 #define Sys_GetDLLName(x) x ".mp.obsd." ARCH_STRING DLL_EXT
+#elif __FreeBSD__ //TODO: detect the *BSD variant
+#define Sys_GetDLLName(x) x ".mp.fbsd." ARCH_STRING DLL_EXT
 #elif __APPLE__
 #define Sys_GetDLLName(x) x DLL_EXT
 #elif defined __AROS__
