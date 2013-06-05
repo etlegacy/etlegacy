@@ -94,10 +94,6 @@ cvar_t *cl_inGameVideo;
 cvar_t *cl_serverStatusResendTime;
 cvar_t *cl_missionStats;
 
-// Localization
-cvar_t *cl_language;
-cvar_t *cl_debugTranslation;
-
 cvar_t *cl_profile;
 cvar_t *cl_defaultProfile;
 
@@ -3809,8 +3805,6 @@ void CL_Init(void)
 	Cvar_Get("cg_autoReload", "1", CVAR_ARCHIVE);
 
 	cl_missionStats = Cvar_Get("g_missionStats", "0", CVAR_ROM);
-
-	cl_debugTranslation = Cvar_Get("cl_debugTranslation", "0", 0);
 
 	// Auto-update
 	com_updateavailable = Cvar_Get("com_updateavailable", "0", CVAR_ROM);

@@ -35,7 +35,6 @@
 
 cvar_t *cl_shownet;
 // win32 dedicated
-cvar_t *cl_language;
 
 void CL_Shutdown(void)
 {

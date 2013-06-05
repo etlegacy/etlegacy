@@ -60,7 +60,7 @@ tinygettext::DictionaryManager dictionary;
 tinygettext::DictionaryManager dictionary_mod;
 
 cvar_t      *cl_language;
-cvar_t      *cl_languagedebug;
+cvar_t      *cl_languageDebug;
 static char cl_language_last[3];
 
 std::map <std::string, std::string> strings; // original text / translated text
@@ -194,7 +194,7 @@ void I18N_Init(void)
 	std::set<tinygettext::Language> languages;
 
 	cl_language      = Cvar_Get("cl_language", "en", CVAR_ARCHIVE);
-	cl_languagedebug = Cvar_Get("cl_languagedebug", "0", CVAR_ARCHIVE);
+	cl_languageDebug = Cvar_Get("cl_languagedebug", "0", CVAR_ARCHIVE);
 
 	tinygettext::Log::set_log_error_callback(&Tinygettext_Error);
 	tinygettext::Log::set_log_info_callback(&Tinygettext_Info);
@@ -280,7 +280,7 @@ static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryMan
 		strings.insert(std::make_pair(msgid, dict.get_dictionary().translate(msgid)));
 	}
 
-	if (cl_languagedebug->integer != 0)
+	if (cl_languageDebug)
 	{
 		if (!Q_stricmp(strings.find(msgid)->second.c_str(), msgid))
 		{
@@ -328,7 +328,7 @@ static void Tinygettext_Error(const std::string& str)
 
 static void Tinygettext_Warning(const std::string& str)
 {
-	if (cl_languagedebug->integer != 0)
+	if (cl_languageDebug)
 	{
 		Com_Printf("^3%s^7", str.c_str());
 	}
@@ -336,7 +336,7 @@ static void Tinygettext_Warning(const std::string& str)
 
 static void Tinygettext_Info(const std::string& str)
 {
-	if (cl_languagedebug->integer != 0)
+	if (cl_languageDebug)
 	{
 		Com_Printf("%s", str.c_str());
 	}
