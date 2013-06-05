@@ -1037,7 +1037,7 @@ static void IRC_HandleError(void)
 
 	WSASetLastError(0);
 }
-#elif defined __linux__ || defined MACOS_X || defined __FreeBSD__
+#elif defined __linux__ || defined __APPLE__ || defined __FreeBSD__
 static void IRC_HandleError(void)
 {
 	Com_Printf("IRC socket connection error: %s\n", strerror(errno));
@@ -1104,7 +1104,7 @@ static __attribute__((format(printf, 1, 2))) int IRC_Send(const char *format, ..
 #ifdef WIN32
 # define SELECT_ARG 0
 # define SELECT_CHECK (rv == -1 && WSAGetLastError() == WSAEINTR)
-#elif defined __linux__ || defined __FreeBSD__ || defined MACOS_X
+#else // defined __linux__ || defined __FreeBSD__ || defined __APPLE__
 # define SELECT_ARG (IRC_Socket + 1)
 # define SELECT_CHECK (rv == -1 && errno == EINTR)
 #endif
@@ -1157,7 +1157,7 @@ static void IRC_Sleep(int seconds)
 	{
 #ifdef WIN32
 		Sleep(IRC_TIMEOUT_MS);
-#elif defined __linux__
+#else // defined __linux__
 		usleep(IRC_TIMEOUT_US);
 #endif
 	}
@@ -2487,7 +2487,7 @@ static void IRC_WaitThread()
 	}
 }
 
-#elif defined __linux__ || defined MACOS_X || defined __FreeBSD__
+#else // defined __linux__ || defined __APPLE__ || defined __FreeBSD__
 
 /****** THREAD HANDLING - UNIX VARIANT ******/
 
