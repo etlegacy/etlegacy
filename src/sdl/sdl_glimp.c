@@ -36,7 +36,7 @@
 #    include "SDL_syswm.h"
 #else
 #    include <SDL/SDL.h>
-#    include "SDL/SDL_syswm.h"
+#    include <SDL/SDL_syswm.h>
 #endif
 
 #include <stdarg.h>
@@ -63,7 +63,7 @@
 //static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
 
 /* Just hack it for now. */
-#ifdef MACOS_X
+#ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
 typedef CGLContextObj QGLContext;
 

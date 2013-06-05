@@ -382,7 +382,12 @@ if(BUILD_CLIENT)
 	find_package(OpenGL REQUIRED)
 	list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
 	include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
-	
+
+	if(NOT WIN32) # Dependency of GLEW and SDL_syswm.h
+		find_package(X11 REQUIRED)
+		include_directories(${X11_INCLUDE_DIR})
+	endif(NOT WIN32)
+
 	if(NOT BUNDLED_GLEW)
 		find_package(GLEW REQUIRED)
 		list(APPEND RENDERER_LIBRARIES ${GLEW_LIBRARY})
