@@ -199,7 +199,7 @@ static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 
 	if (primitives == 1)
 	{
-		R_DrawStripElements(numIndexes, indexes, 0); //R_DrawStripElements(numIndexes, indexes, qglArrayElement); FIX THIS
+		R_DrawStripElements(numIndexes, indexes, qglArrayElement);
 		return;
 	}
 
@@ -924,8 +924,6 @@ ComputeColors
 */
 static void ComputeColors(shaderStage_t *pStage)
 {
-	int i;
-
 	// rgbGen
 	switch (pStage->rgbGen)
 	{
@@ -943,11 +941,15 @@ static void ComputeColors(shaderStage_t *pStage)
 		memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0].v));
 		break;
 	case CGEN_CONST:
+	{
+		int i;
+
 		for (i = 0; i < tess.numVertexes; i++)
 		{
 			*(int *)tess.svars.colors[i] = *(int *)pStage->constantColor;
 		}
-		break;
+	}
+	break;
 	case CGEN_VERTEX:
 		if (tr.identityLight == 1)
 		{
@@ -955,6 +957,8 @@ static void ComputeColors(shaderStage_t *pStage)
 		}
 		else
 		{
+			int i;
+
 			for (i = 0; i < tess.numVertexes; i++)
 			{
 				tess.svars.colors[i][0] = tess.vertexColors[i].v[0] * tr.identityLight;
@@ -965,6 +969,9 @@ static void ComputeColors(shaderStage_t *pStage)
 		}
 		break;
 	case CGEN_ONE_MINUS_VERTEX:
+	{
+		int i;
+
 		if (tr.identityLight == 1)
 		{
 			for (i = 0; i < tess.numVertexes; i++)
@@ -983,12 +990,12 @@ static void ComputeColors(shaderStage_t *pStage)
 				tess.svars.colors[i][2] = (255 - tess.vertexColors[i].v[2]) * tr.identityLight;
 			}
 		}
-		break;
+	}
+	break;
 	case CGEN_FOG:
 	{
-		fog_t *fog;
-
-		fog = tr.world->fogs + tess.fogNum;
+		int   i;
+		fog_t *fog = tr.world->fogs + tess.fogNum;
 
 		for (i = 0; i < tess.numVertexes; i++)
 		{
@@ -1018,6 +1025,8 @@ static void ComputeColors(shaderStage_t *pStage)
 			if ((pStage->rgbGen == CGEN_VERTEX && tr.identityLight != 1) ||
 			    pStage->rgbGen != CGEN_VERTEX)
 			{
+				int i;
+
 				for (i = 0; i < tess.numVertexes; i++)
 				{
 					tess.svars.colors[i][3] = 0xff;
@@ -1028,6 +1037,8 @@ static void ComputeColors(shaderStage_t *pStage)
 	case AGEN_CONST:
 		if (pStage->rgbGen != CGEN_CONST)
 		{
+			int i;
+
 			for (i = 0; i < tess.numVertexes; i++)
 			{
 				tess.svars.colors[i][3] = pStage->constantColor[3];
@@ -1050,6 +1061,7 @@ static void ComputeColors(shaderStage_t *pStage)
 	{
 		float    alpha, range, lowest, highest, dot;
 		vec3_t   worldUp;
+		int      i;
 		qboolean zombieEffect = qfalse;
 
 		if (VectorCompare(backEnd.currentEntity->e.fireRiseDir, vec3_origin))
@@ -1144,6 +1156,8 @@ static void ComputeColors(shaderStage_t *pStage)
 	case AGEN_VERTEX:
 		if (pStage->rgbGen != CGEN_VERTEX)
 		{
+			int i;
+
 			for (i = 0; i < tess.numVertexes; i++)
 			{
 				tess.svars.colors[i][3] = tess.vertexColors[i].v[3];
@@ -1151,16 +1165,21 @@ static void ComputeColors(shaderStage_t *pStage)
 		}
 		break;
 	case AGEN_ONE_MINUS_VERTEX:
+	{
+		int i;
+
 		for (i = 0; i < tess.numVertexes; i++)
 		{
 			tess.svars.colors[i][3] = 255 - tess.vertexColors[i].v[3];
 		}
-		break;
+	}
+	break;
 	case AGEN_PORTAL:
 	{
 		unsigned char alpha;
 		float         len;
 		vec3_t        v;
+		int           i;
 
 		for (i = 0; i < tess.numVertexes; i++)
 		{
@@ -1697,11 +1716,8 @@ RB_StageIteratorLightmappedMultitexture
 */
 void RB_StageIteratorLightmappedMultitexture(void)
 {
-	shaderCommands_t *input;
-	shader_t         *shader;
-
-	input  = &tess;
-	shader = input->shader;
+	shaderCommands_t *input  = &tess;
+	shader_t         *shader = input->shader;
 
 	// log this call
 	if (r_logFile->integer)
@@ -1817,9 +1833,7 @@ RB_EndSurface
 */
 void RB_EndSurface(void)
 {
-	shaderCommands_t *input;
-
-	input = &tess;
+	shaderCommands_t *input = &tess;
 
 	if (input->numIndexes == 0)
 	{
