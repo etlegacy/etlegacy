@@ -702,8 +702,8 @@ R_inPVS
 */
 qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 {
-	mnode_t *leaf;
-	byte    *vis;
+	mnode_t    *leaf;
+	const byte *vis;
 
 	leaf = R_PointInLeaf(p1);
 	vis  = R_ClusterPVS(leaf->cluster);
