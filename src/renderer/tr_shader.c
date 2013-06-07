@@ -403,7 +403,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 
 	if (stage->bundle[0].numTexMods == TR_MAX_TEXMODS)
 	{
-		ri.Error(ERR_DROP, "ERROR: too many tcMod stages in shader '%s'", shader.name);
+		ri.Error(ERR_DROP, "ParseTexMod ERROR: too many tcMod stages in shader '%s'", shader.name);
 		return;
 	}
 
@@ -710,7 +710,9 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			else
 			{
 				while (token[0])
+				{
 					COM_ParseExt(text, qfalse);     // ignore the map
+				}
 				continue;
 			}
 		}
@@ -725,7 +727,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				return qfalse;
 			}
 
-			//----(SA)  fixes startup error and allows polygon shadows to work again
+			// fixes startup error and allows polygon shadows to work again
 			if (!Q_stricmp(token, "$whiteimage") || !Q_stricmp(token, "*white"))
 			{
 				stage->bundle[0].image[0] = tr.whiteImage;
@@ -786,7 +788,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				return qfalse;
 			}
 
-			//----(SA)  fixes startup error and allows polygon shadows to work again
+			// fixes startup error and allows polygon shadows to work again
 			if (!Q_stricmp(token, "$whiteimage") || !Q_stricmp(token, "*white"))
 			{
 				stage->bundle[0].image[0] = tr.whiteImage;
@@ -1104,7 +1106,6 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				}
 
 			}
-			// done.
 			else if (!Q_stricmp(token, "vertex"))
 			{
 				stage->alphaGen = AGEN_VERTEX;
@@ -1682,7 +1683,7 @@ static qboolean ParseShader(char **text)
 	char *token;
 	int  s = 0;
 
-	tr.allowCompress = qtrue;   // Arnout: allow compression by default
+	tr.allowCompress = qtrue;   // allow compression by default
 
 	token = COM_ParseExt(text, qtrue);
 	if (token[0] != '{')
@@ -1703,7 +1704,7 @@ static qboolean ParseShader(char **text)
 		// end of shader definition
 		if (token[0] == '}')
 		{
-			tr.allowCompress = qtrue;   // Arnout: allow compression by default
+			tr.allowCompress = qtrue;   // allow compression by default
 			break;
 		}
 		// stage definition
@@ -1881,6 +1882,7 @@ static qboolean ParseShader(char **text)
 		else if (!Q_stricmp(token, "sunshader"))
 		{
 			int tokenLen;
+
 			token = COM_ParseExt(text, qfalse);
 			if (!token[0])
 			{
@@ -1936,9 +1938,9 @@ static qboolean ParseShader(char **text)
 
 			fogvar = atof(token);
 
-			//----(SA)  right now allow one water color per map.  I'm sure this will need
-			//          to change at some point, but I'm not sure how to track fog parameters
-			//          on a "per-water volume" basis yet.
+			// right now allow one water color per map.  I'm sure this will need
+			// to change at some point, but I'm not sure how to track fog parameters
+			// on a "per-water volume" basis yet.
 
 			if (fogvar == 0)           // '0' specifies "use the map values for everything except the fog color
 			{   // TODO
@@ -1974,8 +1976,8 @@ static qboolean ParseShader(char **text)
 			}
 
 
-			//----(SA)  NOTE:   fogFar > 1 means the shader is setting the farclip, < 1 means setting
-			//                  density (so old maps or maps that just need softening fog don't have to care about farclip)
+			// NOTE:   fogFar > 1 means the shader is setting the farclip, < 1 means setting
+			//         density (so old maps or maps that just need softening fog don't have to care about farclip)
 
 			fogDensity = atof(token);
 			if (fogDensity > 1)      // linear
@@ -2382,7 +2384,7 @@ static qboolean CollapseMultitexture(void)
 =============
 FixRenderCommandList
 
-Arnout: this is a nasty issue. Shaders can be registered after drawsurfaces are generated
+This is a nasty issue. Shaders can be registered after drawsurfaces are generated
 but before the frame is rendered. This will, for the duration of one frame, cause drawsurfaces
 to be rendered with bad shaders. To fix this, need to go through all render commands and fix
 sortedIndex.
@@ -2479,10 +2481,9 @@ static void SortNewShader(void)
 {
 	int      i;
 	float    sort;
-	shader_t *newShader;
+	shader_t *newShader = tr.shaders[tr.numShaders - 1];
 
-	newShader = tr.shaders[tr.numShaders - 1];
-	sort      = newShader->sort;
+	sort = newShader->sort;
 
 	for (i = tr.numShaders - 2 ; i >= 0 ; i--)
 	{
@@ -2772,9 +2773,7 @@ from the current global working shader
 static shader_t *FinishShader(void)
 {
 	int      stage, i;
-	qboolean hasLightmapStage;
-
-	hasLightmapStage = qfalse;
+	qboolean hasLightmapStage = qfalse;
 
 	// set sky stuff appropriate
 	if (shader.isSky)
@@ -2945,7 +2944,7 @@ static shader_t *FinishShader(void)
 
 //========================================================================================
 
-//bani - dynamic shader list
+// dynamic shader list
 typedef struct dynamicshader dynamicshader_t;
 struct dynamicshader
 {
@@ -2958,10 +2957,8 @@ static dynamicshader_t *dshader = NULL;
 ====================
 RE_LoadDynamicShader
 
-bani - load a new dynamic shader
-
+load a new dynamic shader
 if shadertext is NULL, looks for matching shadername and removes it
-
 returns qtrue if request was successful, qfalse if the gods were angered
 ====================
 */
@@ -2973,13 +2970,13 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 
 	if (!shadername && shadertext)
 	{
-		ri.Printf(PRINT_WARNING, "%s called with NULL shadername and non-NULL shadertext:\n%s\n", func_err, shadertext);
+		ri.Printf(PRINT_WARNING, "RE_LoadDynamicShader: %s called with NULL shadername and non-NULL shadertext:\n%s\n", func_err, shadertext);
 		return qfalse;
 	}
 
 	if (shadername && strlen(shadername) >= MAX_QPATH)
 	{
-		ri.Printf(PRINT_WARNING, "%s shadername %s exceeds MAX_QPATH\n", func_err, shadername);
+		ri.Printf(PRINT_WARNING, "RE_LoadDynamicShader: %s shadername %s exceeds MAX_QPATH\n", func_err, shadername);
 		return qfalse;
 	}
 
@@ -3024,7 +3021,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 				ri.Free(dptr);
 				return qtrue;
 			}
-			ri.Printf(PRINT_WARNING, "%s shader %s already exists!\n", func_err, shadername);
+			ri.Printf(PRINT_WARNING, "RE_LoadDynamicShader: %s shader %s already exists!\n", func_err, shadername);
 			return qfalse;
 		}
 		lastdptr = dptr;
@@ -3034,7 +3031,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 	// cant add a new one with empty shadertext
 	if (!shadertext || !strlen(shadertext))
 	{
-		ri.Printf(PRINT_WARNING, "%s new shader %s has NULL shadertext!\n", func_err, shadername);
+		ri.Printf(PRINT_WARNING, "RE_LoadDynamicShader: %s new shader %s has NULL shadertext!\n", func_err, shadername);
 		return qfalse;
 	}
 
@@ -3092,7 +3089,7 @@ static char *FindShaderInShaderText(const char *shadername)
 		return NULL;
 	}
 
-	// bani - if we have any dynamic shaders loaded, check them first
+	// if we have any dynamic shaders loaded, check them first
 	if (dshader)
 	{
 		dynamicshader_t *dptr;
@@ -3208,6 +3205,7 @@ shader_t *R_FindShaderByName(const char *name)
 
 	if ((name == NULL) || (name[0] == 0))
 	{
+		ri.Printf(PRINT_WARNING, "R_FindShaderByName WARNING: Name is empty - returning default shader\n");
 		return tr.defaultShader;
 	}
 
@@ -3655,12 +3653,11 @@ A second parameter will cause it to print in sorted order
 void R_ShaderList_f(void)
 {
 	int      i;
-	int      count;
+	int      count = 0;
 	shader_t *shader;
 
 	ri.Printf(PRINT_ALL, "-----------------------\n");
 
-	count = 0;
 	for (i = 0 ; i < tr.numShaders ; i++)
 	{
 		if (ri.Cmd_Argc() > 1)
@@ -3772,7 +3769,6 @@ static void BuildShaderChecksumLookup(void)
 	// loop for all labels
 	while (1)
 	{
-
 		pOld = p;
 
 		token = COM_ParseExt(&p, qtrue);
@@ -3823,40 +3819,40 @@ a single large text block that can be scanned for shader names
 #define MAX_SHADER_FILES    4096
 static void ScanAndLoadShaderFiles(void)
 {
+	char filename[MAX_QPATH];
 	char **shaderFiles;
 	char *buffers[MAX_SHADER_FILES];
 	int  buffersize[MAX_SHADER_FILES];
 	char *p;
 	int  numShaders;
 	int  i;
-
 	long sum = 0;
+
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaders);
 
 	if (!shaderFiles || !numShaders)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: no shader files found\n");
+		ri.Printf(PRINT_WARNING, "ScanAndLoadShaderFiles WARNING: no shader files found\n");
 		return;
 	}
 
 	if (numShaders > MAX_SHADER_FILES)
 	{
 		numShaders = MAX_SHADER_FILES;
+		ri.Printf(PRINT_WARNING, "ScanAndLoadShaderFiles WARNING: MAX_SHADER_FILES reached\n");
 	}
 
 	// load and parse shader files
 	for (i = 0; i < numShaders; i++)
 	{
-		char filename[MAX_QPATH];
-
 		Com_sprintf(filename, sizeof(filename), "scripts/%s", shaderFiles[i]);
 		ri.Printf(PRINT_DEVELOPER, "...loading '%s'\n", filename);
 		buffersize[i] = ri.FS_ReadFile(filename, (void **)&buffers[i]);
 		sum          += buffersize[i];
 		if (!buffers[i])
 		{
-			ri.Error(ERR_DROP, "Couldn't load %s", filename);
+			ri.Error(ERR_DROP, "ScanAndLoadShaderFiles: Couldn't load %s", filename);
 		}
 	}
 
@@ -3975,9 +3971,7 @@ void R_PurgeShaders(int count)
 	}
 
 	purgeallshaders = qtrue;
-
 	R_PurgeLightmapShaders();
-
 	purgeallshaders = qfalse;
 }
 
@@ -4001,7 +3995,7 @@ qboolean R_ShaderCanBeCached(shader_t *sh)
 		{
 			for (b = 0 ; b < NUM_TEXTURE_BUNDLES ; b++)
 			{
-				// rain - swapped order of for() comparisons so that
+				// swapped order of for() comparisons so that
 				// image[16] (out of bounds) isn't dereferenced
 				//for (j=0; sh->stages[i]->bundle[b].image[j] && j < MAX_IMAGE_ANIMATIONS; j++) {
 				for (j = 0; j < MAX_IMAGE_ANIMATIONS && sh->stages[i]->bundle[b].image[j]; j++)
@@ -4221,7 +4215,7 @@ shader_t *R_FindCachedShader(const char *name, int lightmapIndex, int hash)
 
 			numBackupShaders--;
 
-			sh->remappedShader = NULL;  // Arnout: remove any remaps
+			sh->remappedShader = NULL;  // remove any remaps
 
 			SortNewShader();    // make sure it renders in the right order
 

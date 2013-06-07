@@ -173,43 +173,31 @@ without compiled vertex arrays.
 */
 static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 {
-	int primitives = r_primitives->integer;
-
-	// default is to use triangles if compiled vertex arrays are present
-	if (primitives == 0)
+	switch (r_primitives->integer)
 	{
+	case 0:
+		// default is to use triangles if compiled vertex arrays are present
 		if (qglLockArraysEXT)
 		{
-			primitives = 2;
+			qglDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, indexes);
 		}
 		else
 		{
-			primitives = 1;
+			R_DrawStripElements(numIndexes, indexes, qglArrayElement);
 		}
-	}
-
-	if (primitives == 2)
-	{
-		qglDrawElements(GL_TRIANGLES,
-		                numIndexes,
-		                GL_INDEX_TYPE,
-		                indexes);
 		return;
-	}
-
-	if (primitives == 1)
-	{
+	case 1:
 		R_DrawStripElements(numIndexes, indexes, qglArrayElement);
 		return;
-	}
-
-	if (primitives == 3)
-	{
+	case 2:
+		qglDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, indexes);
+		return;
+	case 3:
 		R_DrawStripElements(numIndexes, indexes, R_ArrayElementDiscrete);
 		return;
+	default: // anything else will cause no drawing
+		return;
 	}
-
-	// anything else will cause no drawing
 }
 
 /*
