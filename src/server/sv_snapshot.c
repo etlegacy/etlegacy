@@ -64,8 +64,8 @@ Writes a delta update of an entityState_t list to the message.
 */
 static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, msg_t *msg)
 {
-	entityState_t *oldent, *newent;
-	int           oldindex, newindex;
+	entityState_t *oldent  = NULL, *newent = NULL;
+	int           oldindex = 0, newindex = 0;
 	int           oldnum, newnum;
 	int           from_num_entities;
 
@@ -79,10 +79,6 @@ static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, 
 		from_num_entities = from->num_entities;
 	}
 
-	newent   = NULL;
-	oldent   = NULL;
-	newindex = 0;
-	oldindex = 0;
 	while (newindex < to->num_entities || oldindex < from_num_entities)
 	{
 		if (newindex >= to->num_entities)
@@ -157,8 +153,7 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 		oldframe  = NULL;
 		lastframe = 0;
 	}
-	else if (client->netchan.outgoingSequence - client->deltaMessage
-	         >= (PACKET_BACKUP - 3))
+	else if (client->netchan.outgoingSequence - client->deltaMessage >= (PACKET_BACKUP - 3))
 	{
 		// client hasn't gotten a good message through in a long time
 		Com_DPrintf("%s: Delta request from out of date packet.\n", client->name);
@@ -209,22 +204,22 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 	MSG_WriteByte(msg, frame->areabytes);
 	MSG_WriteData(msg, frame->areabits, frame->areabytes);
 
+	//{
+	//int sz = msg->cursize;
+	//int usz = msg->uncompsize;
+
+	// delta encode the playerstate
+	if (oldframe)
 	{
-		//int sz = msg->cursize;
-		//int usz = msg->uncompsize;
-
-		// delta encode the playerstate
-		if (oldframe)
-		{
-			MSG_WriteDeltaPlayerstate(msg, &oldframe->ps, &frame->ps);
-		}
-		else
-		{
-			MSG_WriteDeltaPlayerstate(msg, NULL, &frame->ps);
-		}
-
-		//Com_Printf( "Playerstate delta size: %f\n", ((msg->cursize - sz) * sv_fps->integer) / 8.f );
+		MSG_WriteDeltaPlayerstate(msg, &oldframe->ps, &frame->ps);
 	}
+	else
+	{
+		MSG_WriteDeltaPlayerstate(msg, NULL, &frame->ps);
+	}
+
+	//Com_Printf( "Playerstate delta size: %f\n", ((msg->cursize - sz) * sv_fps->integer) / 8.f );
+	//}
 
 	// delta encode the entities
 	SV_EmitPacketEntities(oldframe, frame, msg);
@@ -505,7 +500,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		// added "visibility dummies"
 		if (ent->r.svFlags & SVF_VISDUMMY)
 		{
-			//find master;
+			// find master;
 			ment = SV_GentityNum(ent->s.otherEntityNum);
 
 			if (ment)
@@ -524,61 +519,59 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 		}
 		else if (ent->r.svFlags & SVF_VISDUMMY_MULTIPLE)
 		{
+			int            h;
+			sharedEntity_t *ment   = 0;
+			svEntity_t     *master = 0;
+
+			for (h = 0; h < sv.num_entities; h++)
 			{
-				int            h;
-				sharedEntity_t *ment   = 0;
-				svEntity_t     *master = 0;
+				ment = SV_GentityNum(h);
 
-				for (h = 0; h < sv.num_entities; h++)
+				if (ment == ent)
 				{
-					ment = SV_GentityNum(h);
-
-					if (ment == ent)
-					{
-						continue;
-					}
-
-					if (ment)
-					{
-						master = SV_SvEntityForGentity(ment);
-					}
-					else
-					{
-						continue;
-					}
-
-					if (!(ment->r.linked))
-					{
-						continue;
-					}
-
-					if (ment->s.number != h)
-					{
-						Com_DPrintf("FIXING vis dummy multiple ment->S.NUMBER!!!\n");
-						ment->s.number = h;
-					}
-
-					if (ment->r.svFlags & SVF_NOCLIENT)
-					{
-						continue;
-					}
-
-					if (master->snapshotCounter == sv.snapshotCounter)
-					{
-						continue;
-					}
-
-					if (ment->s.otherEntityNum == ent->s.number)
-					{
-						SV_AddEntToSnapshot(playerEnt, master, ment, eNums);
-					}
+					continue;
 				}
-				continue;
+
+				if (ment)
+				{
+					master = SV_SvEntityForGentity(ment);
+				}
+				else
+				{
+					continue;
+				}
+
+				if (!(ment->r.linked))
+				{
+					continue;
+				}
+
+				if (ment->s.number != h)
+				{
+					Com_DPrintf("FIXING vis dummy multiple ment->S.NUMBER!!!\n");
+					ment->s.number = h;
+				}
+
+				if (ment->r.svFlags & SVF_NOCLIENT)
+				{
+					continue;
+				}
+
+				if (master->snapshotCounter == sv.snapshotCounter)
+				{
+					continue;
+				}
+
+				if (ment->s.otherEntityNum == ent->s.number)
+				{
+					SV_AddEntToSnapshot(playerEnt, master, ment, eNums);
+				}
 			}
+			continue;
 		}
 
 #ifdef FEATURE_ANTICHEAT
-		if (e < sv_maxclients->integer && sv_wh_active->integer > 0)     // client
+		if (sv_wh_active->integer > 0 && e < sv_maxclients->integer)     // client
 		{
 			// note: !r.linked is already exclused - see above
 
@@ -589,7 +582,8 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 
 			client = SV_GentityNum(frame->ps.clientNum);
 
-			if (!portal && !(client->r.svFlags & SVF_BOT) && (frame->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR))
+			// exclude bots and free flying specs
+			if (!portal && !(client->r.svFlags & SVF_BOT) && (frame->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR) && !(frame->ps.pm_flags & PMF_FOLLOW))
 			{
 				if (!SV_CanSee(frame->ps.clientNum, e))
 				{
@@ -756,7 +750,7 @@ SV_RateMsec
 
 Return the number of msec a given size message is supposed
 to take to clear, based on the current rate
-TTimo - use sv_maxRate or sv_dl_maxRate depending on regular or downloading client
+- use sv_maxRate or sv_dl_maxRate depending on regular or downloading client
 ====================
 */
 #define HEADER_RATE_BYTES   48      // include our header, IP header, and some overhead
@@ -863,7 +857,7 @@ void SV_SendMessageToClient(msg_t *msg, client_t *client)
 =======================
 SV_SendClientIdle
 
-bani - There is no need to send full snapshots to clients who are loading a map.
+There is no need to send full snapshots to clients who are loading a map.
 So we send them "idle" packets with the bare minimum required to keep them on the server.
 =======================
 */
@@ -985,7 +979,7 @@ void SV_SendClientMessages(void)
 	sv.bpsTotalBytes  = 0;      // net debugging
 	sv.ubpsTotalBytes = 0;      // net debugging
 
-	// Gordon: update any changed configstrings from this frame
+	// update any changed configstrings from this frame
 	SV_UpdateConfigStrings();
 
 	// send a message to each connected client
