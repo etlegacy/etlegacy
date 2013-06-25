@@ -2544,8 +2544,9 @@ static void CG_DrawLimboMessage(void)
 			trap_R_SetColor(NULL);
 			return;
 		}
-
-		str = CG_TranslateString("Press JUMP to go into reinforcement queue.");
+	
+		str = va(CG_TranslateString("Press %s to go into reinforcement queue."), BindingFromName("+moveup"));
+		
 		CG_DrawSmallStringColor(INFOTEXT_STARTX, 134, str, colorWhite);
 		y += 18;
 	}
@@ -2902,7 +2903,7 @@ static void CG_DrawFlashFade(void)
 		if (fBlackout)
 		{
 			int   i, nOffset = 90;
-			char  *str, *format = "The %s team is speclocked!";
+			char  *str, *format = "The %s team is speclocked!"; // FIXME: Translations
 			char  *teams[TEAM_NUM_TEAMS] = { "??", "AXIS", "ALLIES", "???" };
 			float color[4]               = { 1, 1, 0, 1 };
 
@@ -2930,7 +2931,7 @@ CG_DrawFlashZoomTransition
 static void CG_DrawFlashZoomTransition(void)
 {
 	float frac;
-	int   fadeTime;
+	float fadeTime;
 
 	if (!cg.snap)
 	{
@@ -2950,7 +2951,7 @@ static void CG_DrawFlashZoomTransition(void)
 		return;
 	}
 
-	fadeTime = 400;
+	fadeTime = 400.f;
 
 	frac = cg.time - cg.zoomTime;
 
@@ -2958,7 +2959,7 @@ static void CG_DrawFlashZoomTransition(void)
 	{
 		vec4_t color;
 
-		frac = frac / (float)fadeTime;
+		frac = frac / fadeTime;
 		Vector4Set(color, 0, 0, 0, 1.0f - frac);
 		CG_FillRect(0, 0, Ccg_WideX(640), 480, color);
 	}
