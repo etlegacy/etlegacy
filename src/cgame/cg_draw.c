@@ -2544,9 +2544,9 @@ static void CG_DrawLimboMessage(void)
 			trap_R_SetColor(NULL);
 			return;
 		}
-	
+
 		str = va(CG_TranslateString("Press %s to go into reinforcement queue."), BindingFromName("+moveup"));
-		
+
 		CG_DrawSmallStringColor(INFOTEXT_STARTX, 134, str, colorWhite);
 		y += 18;
 	}
@@ -2656,7 +2656,7 @@ static void CG_DrawWarmup(void)
 	{
 		if ((cgs.gamestate == GS_WARMUP && !cg.warmup) || cgs.gamestate == GS_WAITING_FOR_PLAYERS)
 		{
-			cw = 10 - 1;
+			cw = 9; // 10 - 1;
 
 			if (CG_ConfigString(CS_CONFIGNAME)[0])
 			{
@@ -3003,8 +3003,7 @@ CG_DrawFlashFire
 */
 static void CG_DrawFlashFire(void)
 {
-	vec4_t col = { 1, 1, 1, 1 };
-	float  alpha;
+	float alpha;
 
 	if (!cg.snap)
 	{
@@ -3025,7 +3024,8 @@ static void CG_DrawFlashFire(void)
 	alpha = (float)((FIRE_FLASH_TIME - 1000) - (cg.time - cg.snap->ps.onFireStart)) / (FIRE_FLASH_TIME - 1000);
 	if (alpha > 0)
 	{
-		float max, f;
+		vec4_t col = { 1, 1, 1, 1 };
+		float  max, f;
 
 		if (alpha >= 1.0)
 		{
@@ -3306,8 +3306,7 @@ void CG_Fade(int r, int g, int b, int a, int time, int duration)
 	{
 		cgs.fadeAlphaCurrent = cgs.fadeAlpha;
 	}
-	return;
-
+	return; // FIXME: early return?
 
 	if (time <= 0)      // do instantly
 	{
@@ -3518,18 +3517,12 @@ static void CG_Draw2D(void)
 		}
 
 		CG_DrawCenterString();
-
 		CG_DrawFollow();
 		CG_DrawWarmup();
-
 		CG_DrawNotify();
-
 		CG_DrawGlobalHud();
-
 		CG_DrawObjectiveInfo();
-
 		CG_DrawSpectatorMessage();
-
 		CG_DrawLimboMessage();
 	}
 	else
