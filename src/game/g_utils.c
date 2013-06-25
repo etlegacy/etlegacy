@@ -79,7 +79,6 @@ void AddRemap(const char *oldShader, const char *newShader, float timeOffset)
 	}
 }
 
-
 void G_ResetRemappedShaders(void)
 {
 	int i;
@@ -1351,6 +1350,7 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 		else if (ent->s.eType == ET_WOLF_OBJECTIVE)
 		{
 			char cs[MAX_STRING_CHARS];
+
 			trap_GetConfigstring(ent->count, cs, sizeof(cs));
 			ent->count2 |= 256;
 			Info_SetValueForKey(cs, "t", va("%i", ent->count2));
@@ -1712,11 +1712,11 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 	case ET_PLAYER:
 		if (ent->client)
 		{
-			return(ent->client->sess.sessionTeam);
+			return ent->client->sess.sessionTeam;
 		}
 		else
 		{
-			return(TEAM_FREE);
+			return TEAM_FREE;
 		}
 		break;
 	case ET_MISSILE:
