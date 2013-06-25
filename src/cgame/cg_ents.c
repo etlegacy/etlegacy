@@ -2196,7 +2196,7 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 	}
 
 	BG_CreateRotationMatrix(deltaAngles, transpose);
-	BG_TransposeMatrix((const vec3_t *)transpose, matrix);
+	TransposeMatrix(transpose, matrix);
 
 	VectorSubtract(cg.snap->ps.origin, cent->lerpOrigin, org);
 

@@ -967,9 +967,8 @@ Internal brace depths are properly skipped.
 void SkipBracedSection(char **program)
 {
 	char *token;
-	int  depth;
+	int  depth = 0;
 
-	depth = 0;
 	do
 	{
 		token = COM_ParseExt(program, qtrue);
@@ -995,10 +994,9 @@ SkipRestOfLine
 */
 void SkipRestOfLine(char **data)
 {
-	char *p;
+	char *p = *data;
 	int  c;
 
-	p = *data;
 	while ((c = *p++) != 0)
 	{
 		if (c == '\n')
@@ -1063,10 +1061,8 @@ Com_ParseInfos
 int Com_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING])
 {
 	const char *token;
-	int        count;
+	int        count = 0;
 	char       key[MAX_TOKEN_CHARS];
-
-	count = 0;
 
 	while (1)
 	{
@@ -1537,12 +1533,10 @@ int Q_PrintStrlen(const char *string)
 
 char *Q_CleanStr(char *string)
 {
-	char *d;
-	char *s;
+	char *d = string;
+	char *s = string;
 	int  c;
 
-	s = string;
-	d = string;
 	while ((c = *s) != 0)
 	{
 		if (Q_IsColorString(s))
@@ -1579,11 +1573,8 @@ qboolean Q_isBadDirChar(char c)
 
 char *Q_CleanDirName(char *dirname)
 {
-	char *d;
-	char *s;
-
-	s = dirname;
-	d = dirname;
+	char *d = dirname;
+	char *s = dirname;
 
 	// clear trailing .'s
 	while (*s == '.')

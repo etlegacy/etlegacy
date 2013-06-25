@@ -66,26 +66,6 @@ void RotatePoint(vec3_t point, /*const*/ vec3_t matrix[3])
 
 /*
 ================
-TransposeMatrix
-================
-*/
-// const vec_t ** would require explicit casts for ANSI C conformance
-// see unix/const-arg.c in Wolf MP source
-void TransposeMatrix(/*const*/ vec3_t matrix[3], vec3_t transpose[3])
-{
-	int i, j;
-
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			transpose[i][j] = matrix[j][i];
-		}
-	}
-}
-
-/*
-================
 CreateRotationMatrix
 ================
 */
@@ -542,11 +522,9 @@ CM_TraceThroughPatch
 
 static void CM_TraceThroughPatch(traceWork_t *tw, cPatch_t *patch)
 {
-	float oldFrac;
+	float oldFrac = tw->trace.fraction;
 
 	c_patch_traces++;
-
-	oldFrac = tw->trace.fraction;
 
 	CM_TraceThroughPatchCollide(tw, patch->pc);
 

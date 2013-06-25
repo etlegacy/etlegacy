@@ -628,7 +628,7 @@ float Q_rsqrt(float number)
 	t.i = 0x5f3759df - (t.i >> 1);                  // what the fuck?
 	y   = t.f;
 	y   = y * (threehalfs - (x2 * y * y));      // 1st iteration
-//  y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
+	//y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
 
 	return y;
 }
@@ -647,7 +647,6 @@ float Q_fabs(float f)
 /*
 ===============
 LerpAngle
-
 ===============
 */
 float LerpAngle(float from, float to, float frac)
@@ -667,10 +666,8 @@ float LerpAngle(float from, float to, float frac)
 /*
 =================
 LerpPosition
-
 =================
 */
-
 void LerpPosition(vec3_t start, vec3_t end, float frac, vec3_t out)
 {
 	vec3_t dist;
@@ -772,10 +769,10 @@ SetPlaneSignbits
 */
 void SetPlaneSignbits(cplane_t *out)
 {
-	int bits, j;
+	int bits = 0, j;
 
 	// for fast box on planeside test
-	bits = 0;
+
 	for (j = 0 ; j < 3 ; j++)
 	{
 		if (out->normal[j] < 0)
@@ -1411,9 +1408,8 @@ void Vector4Scale(const vec4_t in, vec_t scale, vec4_t out)
  */
 int Q_log2(int val)
 {
-	int answer;
+	int answer = 0;
 
-	answer = 0;
 	while ((val >>= 1) != 0)
 	{
 		answer++;
@@ -1455,6 +1451,24 @@ void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3])
 	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] + in1[2][2] * in2[2][0];
 	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] + in1[2][2] * in2[2][1];
 	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] + in1[2][2] * in2[2][2];
+}
+
+/*
+================
+TransposeMatrix
+================
+*/
+void TransposeMatrix(vec3_t matrix[3], vec3_t transpose[3])
+{
+	int i, j;
+
+	for (i = 0; i < 3; i++)
+	{
+		for (j = 0; j < 3; j++)
+		{
+			transpose[i][j] = matrix[j][i];
+		}
+	}
 }
 
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
@@ -1505,9 +1519,7 @@ void PerpendicularVector(vec3_t dst, const vec3_t src)
 	float  minelem = 1.0F;
 	vec3_t tempvec;
 
-	/*
-	** find the smallest magnitude axially aligned vector
-	*/
+	// find the smallest magnitude axially aligned vector
 	for (pos = 0, i = 0; i < 3; i++)
 	{
 		if (Q_fabs(src[i]) < minelem)
@@ -1519,14 +1531,10 @@ void PerpendicularVector(vec3_t dst, const vec3_t src)
 	tempvec[0]   = tempvec[1] = tempvec[2] = 0.0F;
 	tempvec[pos] = 1.0F;
 
-	/*
-	** project the point onto the plane defined by src
-	*/
+	// project the point onto the plane defined by src
 	ProjectPointOnPlane(dst, tempvec, src);
 
-	/*
-	** normalize the result
-	*/
+	// normalize the result
 	VectorNormalize(dst);
 }
 

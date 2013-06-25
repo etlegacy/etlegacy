@@ -348,7 +348,7 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 
 	// figure movement due to the pusher's amove
 	BG_CreateRotationMatrix(amove, transpose);
-	BG_TransposeMatrix((const vec3_t *)transpose, matrix);
+	TransposeMatrix(transpose, matrix);
 	if (check->client)
 	{
 		VectorSubtract(check->client->ps.origin, pusher->r.currentOrigin, org);
