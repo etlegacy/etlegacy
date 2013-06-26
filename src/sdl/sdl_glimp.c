@@ -75,6 +75,7 @@ static void GLimp_GetCurrentContext(void)
 }
 #elif SDL_VIDEO_DRIVER_X11
 
+#ifdef FEATURE_RENDERER2
 #include <GL/glx.h>
 typedef struct
 {
@@ -92,6 +93,8 @@ static void GLimp_GetCurrentContext(void)
 	opengl_context.dpy      = glXGetCurrentDisplay();
 	opengl_context.drawable = glXGetCurrentDrawable();
 }
+#endif // FEATURE_RENDERER2
+
 #elif _WIN32
 
 typedef struct
@@ -118,10 +121,12 @@ static void GLimp_GetCurrentContext(void)
 	opengl_context.hDC   = GetDC(info.window);
 	opengl_context.hGLRC = info.hglrc;
 }
-#else // *nix
-static void GLimp_GetCurrentContext(void) // don't remove
-{
-}
+#else // other *NON* SDL_VIDEO_DRIVER_X11 *nix - FIXME
+
+#ifdef FEATURE_RENDERER2
+static void GLimp_GetCurrentContext(void)
+#endif // FEATURE_RENDERER2
+
 #endif
 
 // No SMP - stubs
@@ -151,8 +156,6 @@ void GLimp_FrontEndSleep(void)
 void GLimp_WakeRenderer(void *data)
 {
 }
-
-static QGLContext opengl_context;
 
 typedef enum
 {
@@ -212,6 +215,7 @@ GLimp_LogComment
 */
 void GLimp_LogComment(char *comment)
 {
+	// FIXME
 }
 
 /* unused - see GLimp_DetectAvailableModes
