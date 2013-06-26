@@ -312,7 +312,7 @@ void CG_NewClientInfo(int clientNum)
 
 			CG_SoundPlaySoundScript(cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES ? rankSoundNames_Allies[newInfo.rank] : rankSoundNames_Axis[newInfo.rank], NULL, -1, qtrue);
 
-			CG_AddPMItemBig(PM_RANK, va("Promoted to rank %s!", cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? rankNames_Axis[newInfo.rank] : rankNames_Allies[newInfo.rank]), rankicons[newInfo.rank][0].shader);
+			CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? rankNames_Axis[newInfo.rank] : rankNames_Allies[newInfo.rank]), rankicons[newInfo.rank][0].shader);
 		}
 
 		// Make sure primary class and primary weapons are correct for
@@ -362,9 +362,9 @@ void CG_NewClientInfo(int clientNum)
 					}
 				}
 
-				CG_AddPMItemBig(PM_SKILL, va("Increased %s skill to level %i!", skillNames[i], newInfo.skill[i]), cgs.media.skillPics[i]);
+				CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), skillNames[i], newInfo.skill[i]), cgs.media.skillPics[i]);
 
-				CG_PriorityCenterPrint(va("You have been rewarded with %s", cg_skillRewards[i][newInfo.skill[i] - 1]), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.20), SMALLCHAR_WIDTH, 99999);
+				CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.20), SMALLCHAR_WIDTH, 99999);
 			}
 		}
 
