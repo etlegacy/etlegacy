@@ -53,11 +53,11 @@ void CG_Text_SetActiveFont(int font)
 
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	const char *s  = text;
-	float      out = 0, useScale = scale * font->glyphScale;
+	float out = 0, useScale = scale * font->glyphScale;
 
 	if (text)
 	{
+		const char  *s = text;
 		glyphInfo_t *glyph;
 		int         count = 0;
 		int         len   = strlen(text);
@@ -96,12 +96,12 @@ int CG_Text_Width(const char *text, float scale, int limit)
 
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontInfo_t *font)
 {
-	float      max      = 0;
-	float      useScale = scale * font->glyphScale;
-	const char *s       = text;
+	float max      = 0;
+	float useScale = scale * font->glyphScale;
 
 	if (text)
 	{
+		const char  *s = text;
 		glyphInfo_t *glyph;
 		int         count = 0;
 		int         len   = strlen(text);
@@ -297,18 +297,19 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
 {
 	vec4_t hcolor;
 
-	hcolor[3] = alpha;
 	if (team == TEAM_AXIS)
 	{
 		hcolor[0] = 1;
 		hcolor[1] = 0;
 		hcolor[2] = 0;
+		hcolor[3] = alpha;
 	}
 	else if (team == TEAM_ALLIES)
 	{
 		hcolor[0] = 0;
 		hcolor[1] = 0;
 		hcolor[2] = 1;
+		hcolor[3] = alpha;
 	}
 	else
 	{
@@ -422,33 +423,33 @@ static void CG_DrawTeamInfo(void)
 	}
 }
 
-// FIXME: @translations
 const char *CG_PickupItemText(int item)
 {
 	if (bg_itemlist[item].giType == IT_HEALTH)
 	{
 		if (bg_itemlist[item].world_model[2])          // this is a multi-stage item
 		{   // FIXME: print the correct amount for multi-stage
-			return va("a %s", bg_itemlist[item].pickup_name);
+			return va("a %s", bg_itemlist[item].pickup_name); // FIXME: @translations ?
 		}
 		else
 		{
-			return va("%i %s", bg_itemlist[item].quantity, bg_itemlist[item].pickup_name);
+			return va("%i %s", bg_itemlist[item].quantity, bg_itemlist[item].pickup_name); // FIXME: @translations ?
 		}
 	}
 	else if (bg_itemlist[item].giType == IT_TEAM)
 	{
-		return "an Objective";
+		return CG_TranslateString("an Objective");
 	}
 	else
 	{
+		// FIXME: this is just related to english
 		if (bg_itemlist[item].pickup_name[0] == 'a' ||  bg_itemlist[item].pickup_name[0] == 'A')
 		{
-			return va("an %s", bg_itemlist[item].pickup_name);
+			return va("an %s", bg_itemlist[item].pickup_name); // FIXME: @translations
 		}
 		else
 		{
-			return va("a %s", bg_itemlist[item].pickup_name);
+			return va("a %s", bg_itemlist[item].pickup_name); // FIXME: @translations
 		}
 	}
 }
@@ -2831,8 +2832,6 @@ CG_DrawFlashFade
 static void CG_DrawFlashFade(void)
 {
 	static int lastTime;
-	int        time;
-	vec4_t     col;
 	qboolean   fBlackout = (int_ui_blackout.integer > 0);
 
 	if (cgs.fadeStartTime + cgs.fadeDuration < cg.time)
@@ -2841,6 +2840,7 @@ static void CG_DrawFlashFade(void)
 	}
 	else if (cgs.fadeAlphaCurrent != cgs.fadeAlpha)
 	{
+		int time;
 		int elapsed = (time = trap_Milliseconds()) - lastTime;    // we need to use trap_Milliseconds() here since the cg.time gets modified upon reloading
 
 		lastTime = time;
@@ -2889,6 +2889,8 @@ static void CG_DrawFlashFade(void)
 	// now draw the fade
 	if (cgs.fadeAlphaCurrent > 0.0 || fBlackout)
 	{
+		vec4_t col;
+
 		VectorClear(col);
 		col[3] = (fBlackout) ? 1.0f : cgs.fadeAlphaCurrent;
 		CG_FillRect(0, 0, Ccg_WideX(640), 480, col);
@@ -2903,16 +2905,14 @@ static void CG_DrawFlashFade(void)
 		if (fBlackout)
 		{
 			int   i, nOffset = 90;
-			char  *str, *format = "The %s team is speclocked!"; // FIXME: Translations
-			char  *teams[TEAM_NUM_TEAMS] = { "??", "AXIS", "ALLIES", "???" };
+			char  *teams[TEAM_NUM_TEAMS] = { "??", "AXIS", "ALLIES", "???" }; // FIXME: translate team names? team name
 			float color[4]               = { 1, 1, 0, 1 };
 
 			for (i = TEAM_AXIS; i <= TEAM_ALLIES; i++)
 			{
 				if (cg.snap->ps.powerups[PW_BLACKOUT] & i)
 				{
-					str = va(format, teams[i]);
-					CG_DrawStringExt(INFOTEXT_STARTX, nOffset, str, color, qtrue, qfalse, 10, 10, 0);
+					CG_DrawStringExt(INFOTEXT_STARTX, nOffset, va(CG_TranslateString("The %s team is speclocked!"), teams[i]), color, qtrue, qfalse, 10, 10, 0);
 					nOffset += 12;
 				}
 			}
@@ -3375,10 +3375,6 @@ static void CG_ScreenFade(void)
 	}
 }
 
-#define HEAD_TURNTIME 10000
-#define HEAD_TURNANGLE 20
-#define HEAD_PITCHANGLE 2.5
-
 void CG_DrawDemoRecording(void)
 {
 	char status[1024];
@@ -3429,9 +3425,9 @@ static void CG_Draw2D(void)
 	// no 2d when in esc menu
 	// FIXME: do allow for quickchat (bleh)
 	// - Removing for now
-	/*  if( trap_Key_GetCatcher() & KEYCATCH_UI ) {
-	        return;
-	    }*/
+	//if( trap_Key_GetCatcher() & KEYCATCH_UI ) {
+	//  return;
+	//}
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
@@ -3767,11 +3763,8 @@ void CG_DrawActive(stereoFrame_t stereoView)
 	cg.refdef_current->glfog.registered = 0;    // make sure it doesn't use fog from another scene
 
 	CG_ShakeCamera();
-
 	CG_PB_RenderPolyBuffers();
-
 	CG_DrawMiscGamemodels();
-
 	CG_Coronas();
 
 	if (!(cg.limboEndCinematicTime > cg.time && cg.showGameView))

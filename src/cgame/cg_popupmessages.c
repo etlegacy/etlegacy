@@ -582,9 +582,9 @@ const char *CG_GetPMItemText(centity_t *cent)
 		switch (cent->currentState.effect2Time)
 		{
 		case 0:
-			return va("Planted at %s.", CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("Planted at %s."), CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
 		case 1:
-			return va("Defused at %s.", CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("Defused at %s."), CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
 		}
 		break;
 	case PM_CONSTRUCTION:
@@ -593,16 +593,16 @@ const char *CG_GetPMItemText(centity_t *cent)
 		case -1:
 			return CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time);
 		case 0:
-			return va("%s has been constructed.", CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("%s has been constructed."), CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
 		}
 		break;
 	case PM_DESTRUCTION:
 		switch (cent->currentState.effect2Time)
 		{
 		case 0:
-			return va("%s has been damaged.", CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("%s has been damaged."), CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
 		case 1:
-			return va("%s has been destroyed.", CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("%s has been destroyed."), CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
 		}
 		break;
 	case PM_MINES:
@@ -624,20 +624,20 @@ const char *CG_GetPMItemText(centity_t *cent)
 			{
 				return va("%sSpotted by ^7%s", TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name);
 			}
-			return va("%sSpotted by ^7%s%s at %s", TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name, TXTCOLOR_OBJ, locStr);
+			return va(CG_TranslateString("%sSpotted by ^7%s%s at %s"), TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name, TXTCOLOR_OBJ, locStr);
 		}
 		else
 		{
-			return va("%sSpotted by ^7%s", TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name);
+			return va(CG_TranslateString("%sSpotted by ^7%s"), TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name);
 		}
 		break;
 	case PM_OBJECTIVE:
 		switch (cent->currentState.density)
 		{
 		case 0:
-			return va("%s have stolen %s!", cent->currentState.effect2Time == TEAM_ALLIES ? "Allies" : "Axis", CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("%s have stolen %s!"), cent->currentState.effect2Time == TEAM_ALLIES ? CG_TranslateString("Allies") : CG_TranslateString("Axis"), CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time));
 		case 1:
-			return va("%s have returned %s!", cent->currentState.effect2Time == TEAM_ALLIES ? "Allies" : "Axis", CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("%s have returned %s!"), cent->currentState.effect2Time == TEAM_ALLIES ? CG_TranslateString("Allies") : CG_TranslateString("Axis"), CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time));
 		}
 		break;
 	case PM_TEAM:
@@ -663,7 +663,7 @@ const char *CG_GetPMItemText(centity_t *cent)
 			return va(CG_TranslateString("%s^7 has joined the %s^7!"), cgs.clientinfo[cent->currentState.effect3Time].name, CG_TranslateString(teamstr));
 		}
 		case 1:
-			return va("%s^7 disconnected", cgs.clientinfo[cent->currentState.effect3Time].name);
+			return va(CG_TranslateString("%s^7 disconnected"), cgs.clientinfo[cent->currentState.effect3Time].name);
 		}
 	}
 
