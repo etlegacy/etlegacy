@@ -166,15 +166,6 @@ int Sys_Milliseconds(void)
 }
 
 /**
- * @brief Converts float to long
- * @return Number in long type
- */
-long fastftol(float f)
-{
-	return (long)f;
-}
-
-/**
  * @param[in,out] v Vector
  */
 void Sys_SnapVector(float *v)
@@ -862,30 +853,14 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	qboolean            tried[NUM_DIALOG_PROGRAMS] = { qfalse };
 	dialogCommandType_t preferredCommandType       = NONE;
 
-	if (session == NULL || session[0] == 0)
-	{
-		// no desktop session found
-		Com_DPrintf("No desktop session available for Sys_Dialog().\n");
-		return DR_OK;
-	}
-
 	// This may not be the best way
-	if (!Q_stricmp(session, "gnome")) //  // && if getenv('GNOME_DESKTOP_SESSION_ID')
+	if (!Q_stricmp(session, "gnome"))
 	{
 		preferredCommandType = ZENITY;
 	}
-	else if (!Q_stricmp(session, "kde") || !Q_stricmp(session, "kde-4")) // && getenv('KDE_FULL_SESSION') == 'true'
+	else if (!Q_stricmp(session, "kde") || !Q_stricmp(session, "kde-4"))
 	{
 		preferredCommandType = KDIALOG;
-	}
-	else // preferredCommandType == NONE;
-	{
-		// FIXME see #91
-		// ... XMESSAGE ?!
-		// ... OpenBSD
-		// ... others?
-		Com_Printf(S_COLOR_YELLOW "WARNING: unsupported desktop session '%s' in Sys_Dialog(). Please contact the ET: Legacy team.\n", session);
-		return DR_OK;
 	}
 
 	while (1)
