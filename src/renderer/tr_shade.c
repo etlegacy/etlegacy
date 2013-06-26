@@ -60,6 +60,18 @@ static void GLAPIENTRY R_ArrayElementDiscrete(GLint index)
 }
 
 /*
+================
+R_ArrayElement
+
+This is just because of the GLEW and Windows idiocy. Straight call to glArrayElement brakes the build on function type mismatch.
+================
+*/
+static void GLAPIENTRY R_ArrayElement(GLint index)
+{
+	qglArrayElement(index);
+}
+
+/*
 ===================
 R_DrawStripElements
 ===================
@@ -183,11 +195,11 @@ static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 		}
 		else
 		{
-			R_DrawStripElements(numIndexes, indexes, qglArrayElement);
+			R_DrawStripElements(numIndexes, indexes, R_ArrayElement);
 		}
 		return;
 	case 1:
-		R_DrawStripElements(numIndexes, indexes, qglArrayElement);
+		R_DrawStripElements(numIndexes, indexes, R_ArrayElement);
 		return;
 	case 2:
 		qglDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, indexes);
