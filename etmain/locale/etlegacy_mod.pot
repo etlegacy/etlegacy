@@ -2887,6 +2887,15 @@ msgstr ""
 msgid "No or bad challenge for address.\n"
 msgstr ""
 
+msgid "Match is already in progress!\n"
+msgstr ""
+
+msgid "^1** Referee Server Setting Change **\n"
+msgstr ""
+
+msgid "committed suicide"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

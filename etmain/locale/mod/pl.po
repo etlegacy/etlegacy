@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-24 12:27+0100\n"
+"PO-Revision-Date: 2013-06-27 20:38+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -2931,6 +2931,15 @@ msgstr "Pokaz Zegar:"
 
 msgid "No or bad challenge for address.\n"
 msgstr "Brak lub zle wezwanie dla adresu.\n"
+
+msgid "Match is already in progress!\n"
+msgstr "Mecz juz trwa!\n"
+
+msgid "^1** Referee Server Setting Change **\n"
+msgstr "^1** Sedzia Zmiana Ustawien Serwera **\n"
+
+msgid "committed suicide"
+msgstr "wykonal samobojstwo"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
