@@ -845,7 +845,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 
 			if (!lightmapFiles || !numLightmaps)
 			{
-				ri.Printf(PRINT_WARNING, "WARNING: no lightmap files found\n");
+				ri.Printf(PRINT_WARNING, "WARNING: no lightmap files found for map %s\n", mapName);
 				return;
 			}
 
@@ -970,7 +970,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 
 				for (i = 0; i < numLightmaps; i++)
 				{
-					ri.Printf(PRINT_ALL, "...loading external lightmap '%s/%s'\n", mapName, lightmapFiles[i]);
+					ri.Printf(PRINT_DEVELOPER, "...loading external lightmap '%s/%s'\n", mapName, lightmapFiles[i]);
 
 					image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_NORMALMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_CLAMP, NULL);
 					Com_AddToGrowList(&tr.deluxemaps, image);
@@ -988,7 +988,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 
 				if (!lightmapFiles || !numLightmaps)
 				{
-					ri.Printf(PRINT_WARNING, "WARNING: no lightmap files found\n");
+					ri.Printf(PRINT_WARNING, "WARNING: no lightmap files found for %s\n", mapName);
 					return;
 				}
 			}
@@ -1002,7 +1002,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 
 			for (i = 0; i < numLightmaps; i++)
 			{
-				ri.Printf(PRINT_ALL, "...loading external lightmap '%s/%s'\n", mapName, lightmapFiles[i]);
+				ri.Printf(PRINT_DEVELOPER, "...loading external lightmap '%s/%s'\n", mapName, lightmapFiles[i]);
 
 				if (tr.worldDeluxeMapping)
 				{
