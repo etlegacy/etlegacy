@@ -2195,13 +2195,13 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 		CG_AddLinkedEntity(cent, qtrue, cg.time);
 	}
 
-	BG_CreateRotationMatrix(deltaAngles, transpose);
+	CreateRotationMatrix(deltaAngles, transpose);
 	TransposeMatrix(transpose, matrix);
 
 	VectorSubtract(cg.snap->ps.origin, cent->lerpOrigin, org);
 
 	VectorCopy(org, org2);
-	BG_RotatePoint(org2, (const vec3_t *)matrix);
+	RotatePoint(org2, matrix);
 	VectorSubtract(org2, org, move);
 	VectorAdd(deltaOrigin, move, deltaOrigin);
 
@@ -2683,7 +2683,7 @@ qboolean CG_AddEntityToTag(centity_t *cent)
 		{   // fixed to rotate about the object's axis, not the world
 			vec3_t mat[3], mat2[3];
 			memcpy(mat2, ent.axis, sizeof(mat2));
-			BG_CreateRotationMatrix(cent->lerpAngles, mat);
+			CreateRotationMatrix(cent->lerpAngles, mat);
 			MatrixMultiply(mat, mat2, ent.axis);
 			AxisToAngles(ent.axis, cent->lerpAngles);
 		}

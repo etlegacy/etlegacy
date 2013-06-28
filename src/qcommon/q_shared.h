@@ -900,8 +900,7 @@ float Q_crandom(int *seed);
 void vectoangles(const vec3_t value1, vec3_t angles);
 float vectoyaw(const vec3_t vec);
 void AnglesToAxis(const vec3_t angles, vec3_t axis[3]);
-// const vec_t ** would require explicit casts for ANSI C conformance, see unix/const-arg.c
-void AxisToAngles(/*const*/ vec3_t axis[3], vec3_t angles);
+void AxisToAngles(vec3_t axis[3], vec3_t angles);
 float VectorDistance(vec3_t v1, vec3_t v2);
 float VectorDistanceSquared(vec3_t v1, vec3_t v2);
 
@@ -924,11 +923,15 @@ float AngleDelta(float angle1, float angle2);
 
 qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c);
 void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
+void RotatePoint(vec3_t point, vec3_t matrix[3]);
 void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, float degrees);
 void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, const vec3_t origin); // Unused.
 void RotateAroundDirection(vec3_t axis[3], float yaw);
+void CreateRotationMatrix(const vec3_t angles, vec3_t matrix[3]);
 void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up);
 // perpendicular vector could be replaced by this
+
+
 
 int PlaneTypeForNormal(vec3_t normal);
 

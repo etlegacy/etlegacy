@@ -356,6 +356,21 @@ qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec
 }
 
 /*
+================
+RotatePoint
+================
+*/
+void RotatePoint(vec3_t point, vec3_t matrix[3])
+{
+	vec3_t tvec;
+
+	VectorCopy(point, tvec);
+	point[0] = DotProduct(matrix[0], tvec);
+	point[1] = DotProduct(matrix[1], tvec);
+	point[2] = DotProduct(matrix[2], tvec);
+}
+
+/*
 ===============
 RotatePointAroundVector
 
@@ -475,6 +490,17 @@ void RotateAroundDirection(vec3_t axis[3], float yaw)
 
 	// cross to get axis[2]
 	CrossProduct(axis[0], axis[1], axis[2]);
+}
+
+/*
+================
+BG_CreateRotationMatrix
+================
+*/
+void CreateRotationMatrix(const vec3_t angles, vec3_t matrix[3])
+{
+	AngleVectors(angles, matrix[0], matrix[1], matrix[2]);
+	VectorInverse(matrix[1]);
 }
 
 void vectoangles(const vec3_t value1, vec3_t angles)
@@ -1764,7 +1790,7 @@ int Q_isnan(float x)
 }
 
 #ifndef Q3_VM
-/*
+/**
  * @brief The msvc acos doesn't always return a value between -PI and PI:
  *
  * int i;

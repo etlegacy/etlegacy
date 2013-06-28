@@ -49,59 +49,6 @@ BASIC MATH
 
 /*
 ================
-RotatePoint
-================
-*/
-// const vec_t ** would require explicit casts for ANSI C conformance
-// see unix/const-arg.c in Wolf MP source
-void RotatePoint(vec3_t point, /*const*/ vec3_t matrix[3])
-{
-	vec3_t tvec;
-
-	VectorCopy(point, tvec);
-	point[0] = DotProduct(matrix[0], tvec);
-	point[1] = DotProduct(matrix[1], tvec);
-	point[2] = DotProduct(matrix[2], tvec);
-}
-
-/*
-================
-CreateRotationMatrix
-================
-*/
-void CreateRotationMatrix(const vec3_t angles, vec3_t matrix[3])
-{
-	float        angle;
-	static float sr, sp, sy, cr, cp, cy;
-	// static to help MS compiler fp bugs
-
-	angle = angles[YAW] * (M_PI * 2 / 360);
-	sy    = sin(angle);
-	cy    = cos(angle);
-
-	angle = angles[PITCH] * (M_PI * 2 / 360);
-	sp    = sin(angle);
-	cp    = cos(angle);
-
-	angle = angles[ROLL] * (M_PI * 2 / 360);
-	sr    = sin(angle);
-	cr    = cos(angle);
-
-	matrix[0][0] = cp * cy;
-	matrix[0][1] = cp * sy;
-	matrix[0][2] = -sp;
-
-	matrix[1][0] = (sr * sp * cy + cr * -sy);
-	matrix[1][1] = (sr * sp * sy + cr * cy);
-	matrix[1][2] = sr * cp;
-
-	matrix[2][0] = (cr * sp * cy + -sr * -sy);
-	matrix[2][1] = (cr * sp * sy + -sr * cy);
-	matrix[2][2] = cr * cp;
-}
-
-/*
-================
 CM_ProjectPointOntoVector
 ================
 */
@@ -1808,8 +1755,7 @@ void CM_TransformedBoxTrace(trace_t *results, const vec3_t start, const vec3_t e
 	}
 
 	// adjust so that mins and maxs are always symetric, which
-	// avoids some complications with plane expanding of rotated
-	// bmodels
+	// avoids some complications with plane expanding of rotated bmodels
 	for (i = 0 ; i < 3 ; i++)
 	{
 		offset[i]          = (mins[i] + maxs[i]) * 0.5;

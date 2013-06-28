@@ -2033,9 +2033,6 @@ typedef struct
 long BG_StringHashValue(const char *fname);
 long BG_StringHashValue_Lwr(const char *fname);
 
-void BG_RotatePoint(vec3_t point, const vec3_t matrix[3]);
-void BG_CreateRotationMatrix(const vec3_t angles, vec3_t matrix[3]);
-
 int trap_PC_AddGlobalDefine(char *define);
 int trap_PC_LoadSource(const char *filename);
 int trap_PC_FreeSource(int handle);
