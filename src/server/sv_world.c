@@ -62,14 +62,12 @@ clipHandle_t SV_ClipHandleForEntity(const sharedEntity_t *ent)
 
 /*
 ===============================================================================
-
 ENTITY CHECKING
 
 To avoid linearly searching through lists of entities during environment testing,
 the world is carved up with an evenly spaced, axially aligned bsp tree.  Entities
 are kept in chains either at the final leafs, or at the first node that splits
 them, which prevents having to deal with multiple fragments of a single entity.
-
 ===============================================================================
 */
 
@@ -120,11 +118,10 @@ Builds a uniformly subdivided tree for the given world size
 */
 worldSector_t *SV_CreateworldSector(int depth, vec3_t mins, vec3_t maxs)
 {
-	worldSector_t *anode;
+	worldSector_t *anode = &sv_worldSectors[sv_numworldSectors];
 	vec3_t        size;
 	vec3_t        mins1, maxs1, mins2, maxs2;
 
-	anode = &sv_worldSectors[sv_numworldSectors];
 	sv_numworldSectors++;
 
 	if (depth == AREA_DEPTH)
@@ -161,7 +158,6 @@ worldSector_t *SV_CreateworldSector(int depth, vec3_t mins, vec3_t maxs)
 /*
 ===============
 SV_ClearWorld
-
 ===============
 */
 void SV_ClearWorld(void)
@@ -181,7 +177,6 @@ void SV_ClearWorld(void)
 /*
 ===============
 SV_UnlinkEntity
-
 ===============
 */
 void SV_UnlinkEntity(sharedEntity_t *gEnt)
@@ -241,7 +236,7 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 
 	ent = SV_SvEntityForGentity(gEnt);
 
-	// Ridah, sanity check for possible currentOrigin being reset bug
+	// sanity check for possible currentOrigin being reset bug
 	if (!gEnt->r.bmodel && VectorCompare(gEnt->r.currentOrigin, vec3_origin))
 	{
 		Com_DPrintf("WARNING: BBOX entity is being linked at world origin, this is probably a bug\n");
@@ -257,7 +252,7 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 	{
 		gEnt->s.solid = SOLID_BMODEL;       // a solid_box will never create this value
 
-		// Gordon: for the origin only bmodel checks
+		// for the origin only bmodel checks
 		ent->originCluster = CM_LeafCluster(CM_PointLeafnum(gEnt->r.currentOrigin));
 	}
 	else if (gEnt->r.contents & (CONTENTS_SOLID | CONTENTS_BODY))
@@ -451,7 +446,6 @@ typedef struct
 /*
 ====================
 SV_AreaEntities_r
-
 ====================
 */
 void SV_AreaEntities_r(worldSector_t *node, areaParms_t *ap)
@@ -544,7 +538,6 @@ typedef struct
 /*
 ====================
 SV_ClipToEntity
-
 ====================
 */
 void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int entityNum, int contentmask, int capsule)
@@ -592,7 +585,6 @@ void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, cons
 /*
 ====================
 SV_ClipMoveToEntities
-
 ====================
 */
 void SV_ClipMoveToEntities(moveclip_t *clip)
@@ -655,13 +647,13 @@ void SV_ClipMoveToEntities(moveclip_t *clip)
 		// might intersect, so do an exact clip
 		clipHandle = SV_ClipHandleForEntity(touch);
 
-		// ydnar: non-worldspawn entities must not use world as clip model!
+		// non-worldspawn entities must not use world as clip model!
 		if (clipHandle == 0)
 		{
 			continue;
 		}
 
-		// DHM - Nerve :: If clipping against BBOX, set to correct contents
+		// If clipping against BBOX, set to correct contents
 		if (clipHandle == BOX_MODEL_HANDLE)
 		{
 			CM_SetTempBoxModelContents(touch->r.contents);
@@ -703,7 +695,7 @@ void SV_ClipMoveToEntities(moveclip_t *clip)
 			clip->trace.startsolid |= oldStart;
 		}
 
-		// DHM - Nerve :: Reset contents to default
+		// Reset contents to default
 		if (clipHandle == BOX_MODEL_HANDLE)
 		{
 			CM_SetTempBoxModelContents(CONTENTS_BODY);

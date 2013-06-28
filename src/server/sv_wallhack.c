@@ -97,16 +97,11 @@ static void predict_clip_velocity(vec3_t in, vec3_t normal, vec3_t out)
 
 static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t *tr, vec3_t result)
 {
-	int count, numbumps, numplanes, i, j, k;
-
-	float d, time_left, into;
-
+	int    count, numbumps = 4, numplanes = 0, i, j, k;
+	float  d, time_left = frametime, into;
 	vec3_t planes[MAX_CLIP_PLANES],
 	       velocity, origin, clipVelocity, endVelocity, endClipVelocity, dir, end;
-
 	trace_t trace;
-
-	numbumps = 4;
 
 	VectorCopy(tr->trBase, origin);
 	origin[2] += Z_ADJUST;  // move it off the floor
@@ -114,18 +109,13 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 	VectorCopy(tr->trDelta, velocity);
 	VectorCopy(tr->trDelta, endVelocity);
 
-	time_left = frametime;
-
-	numplanes = 0;
-
 	for (count = 0; count < numbumps; count++)
 	{
 		// calculate position we are trying to move to
 		VectorMA(origin, time_left, velocity, end);
 
 		// see if we can make it there
-		SV_Trace(&trace, origin, ent->r.mins, ent->r.maxs, end, ent->s.number,
-		         CONTENTS_SOLID, qfalse);
+		SV_Trace(&trace, origin, ent->r.mins, ent->r.maxs, end, ent->s.number, CONTENTS_SOLID, qfalse);
 
 		if (trace.allsolid)
 		{
@@ -266,10 +256,8 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 
 static void predict_move(sharedEntity_t *ent, float frametime, trajectory_t *tr, vec3_t result)
 {
-	float stepSize;
-
-	vec3_t start_o, start_v, down, up;
-
+	float   stepSize;
+	vec3_t  start_o, start_v, down, up;
 	trace_t trace;
 
 	VectorCopy(tr->trBase, result); // assume the move fails
@@ -320,12 +308,12 @@ static void predict_move(sharedEntity_t *ent, float frametime, trajectory_t *tr,
 }
 
 //======================================================================
-/*
-  Calculates the view point of a player model at position 'org' using
-  information in the player state 'ps' of its client, and stores the
-  viewpoint coordinates in 'vp'.
-*/
 
+/**
+ * @brief Calculates the view point of a player model at position 'org' using
+ * information in the player state 'ps' of its client, and stores the
+ * viewpoint coordinates in 'vp'.
+ */
 static void calc_viewpoint(playerState_t *ps, vec3_t org, vec3_t vp)
 {
 	VectorCopy(org, vp);
@@ -352,8 +340,6 @@ static void calc_viewpoint(playerState_t *ps, vec3_t org, vec3_t vp)
 
 //======================================================================
 
-#define MAX_PITCH    20
-
 static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 {
 	float  yaw, pitch, cos_angle;
@@ -362,12 +348,10 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 
 	VectorSubtract(opos, ppos, los);
 
-	/*
-	   Check if the two players are roughly on the same X/Y plane
-	   and skip the test if not. We only want to eliminate info that
-	   would reveal the position of opponents behind the player on
-	   the same X/Y plane (e.g. on the same floor in a room).
-	*/
+	// Check if the two players are roughly on the same X/Y plane
+	// and skip the test if not. We only want to eliminate info that
+	// would reveal the position of opponents behind the player on
+	// the same X/Y plane (e.g. on the same floor in a room).
 	vofs = (int) (opos[2] - ppos[2]);
 	if (VectorLength(los) < 5 * abs(vofs))
 	{
@@ -502,7 +486,7 @@ int SV_CanSee(int player, int other)
 	pent = SV_GentityNum(player);
 	oent = SV_GentityNum(other);
 
-	/* check if 'other' is in the maximum fov allowed */
+	// check if 'other' is in the maximum fov allowed
 	if (sv_wh_check_fov->integer > 0)
 	{
 		if (!player_in_fov(pent->s.apos.trBase, pent->s.pos.trBase, oent->s.pos.trBase))
@@ -511,7 +495,7 @@ int SV_CanSee(int player, int other)
 		}
 	}
 
-	/* check if visible in this frame */
+	// check if visible in this frame
 	calc_viewpoint(ps, pent->s.pos.trBase, viewpoint);
 
 	for (i = 0; i < 8; i++)
@@ -527,19 +511,17 @@ int SV_CanSee(int player, int other)
 		}
 	}
 
-	/* predict player positions */
+	// predict player positions
 	copy_trajectory(&pent->s.pos, &traject);
 	predict_move(pent, PREDICT_TIME, &traject, pred_ppos);
 
 	copy_trajectory(&oent->s.pos, &traject);
 	predict_move(oent, PREDICT_TIME, &traject, pred_opos);
 
-	/*
-	   Check again if 'other' is in the maximum fov allowed.
-	   FIXME: We use the original viewangle that may have
-	   changed during the move. This could introduce some
-	   errors.
-	 */
+	// Check again if 'other' is in the maximum fov allowed.
+	// FIXME: We use the original viewangle that may have
+	// changed during the move. This could introduce some
+	// errors.
 	if (sv_wh_check_fov->integer > 0)
 	{
 		if (!player_in_fov(pent->s.apos.trBase, pred_ppos, pred_opos))
@@ -548,7 +530,7 @@ int SV_CanSee(int player, int other)
 		}
 	}
 
-	/* check if expected to be visible in the next frame */
+	// check if expected to be visible in the next frame
 	calc_viewpoint(ps, pred_ppos, viewpoint);
 
 	for (i = 0; i < 8; i++)
@@ -568,14 +550,13 @@ int SV_CanSee(int player, int other)
 }
 
 //======================================================================
-/*
-  Changes the position of client 'other' so that it is directly
-  below 'player'. The distance is maintained so that sound scaling
-  will work correctly.
-*/
 
-void
-SV_RandomizePos(int player, int other)
+/**
+ * @brief Changes the position of client 'other' so that it is directly
+ * below 'player'. The distance is maintained so that sound scaling
+ * will work correctly.
+ */
+void SV_RandomizePos(int player, int other)
 {
 	sharedEntity_t *pent, *oent;
 	vec3_t         los;
