@@ -767,7 +767,7 @@ qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_
 
 	// lets try and remove the inconsitancy between ded/non-ded servers...
 	// - bleh, some code in clientthink_real really relies on this working on player models...
-#ifndef DEDICATED // TTimo: dedicated only binary defines DEDICATED
+#ifndef DEDICATED // dedicated only
 	if (com_dedicated->integer)
 	{
 		return qfalse;

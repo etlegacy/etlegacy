@@ -121,7 +121,7 @@ EVENT MESSAGES
 =============================================================================
 */
 
-/*
+/**
  * @brief Converts newlines to "\n" so a line prints nicer
  */
 static char *SV_ExpandNewlines(char *in)
@@ -154,7 +154,7 @@ static char *SV_ExpandNewlines(char *in)
 	return string;
 }
 
-/*
+/**
  * @brief The given command will be transmitted to the client, and is guaranteed
  * to not have future snapshot_t executed before it is executed
  */
@@ -246,7 +246,7 @@ MASTER SERVER FUNCTIONS
 ==============================================================================
 */
 
-/*
+/**
  * @brief Send a message to the masters every few minutes to let it know we are
  * alive, and log information.
  *
@@ -440,7 +440,7 @@ void SV_MasterGameCompleteStatus()
 #endif
 }
 
-/*
+/**
  * @brief Informs all masters that this server is going down
  */
 void SV_MasterShutdown(void)
@@ -458,32 +458,9 @@ CONNECTIONLESS COMMANDS
 ==============================================================================
 */
 
-typedef struct leakyBucket_s leakyBucket_t;
-struct leakyBucket_s
-{
-	netadrtype_t type;
-
-	union
-	{
-		byte _4[4];
-		byte _6[16];
-	} ipv;
-
-	int lastTime;
-	signed char burst;
-
-	long hash;
-
-	leakyBucket_t *prev, *next;
-};
-
-// This is deliberately quite large to make it more of an effort to DoS
-#define MAX_BUCKETS         16384
-#define MAX_HASHES          1024
-
 static leakyBucket_t buckets[MAX_BUCKETS];
 static leakyBucket_t *bucketHashes[MAX_HASHES];
-static leakyBucket_t outboundLeakyBucket;
+leakyBucket_t        outboundLeakyBucket;
 
 static long SVC_HashForAddress(netadr_t address)
 {
@@ -510,7 +487,7 @@ static long SVC_HashForAddress(netadr_t address)
 	return hash;
 }
 
-/*
+/**
  * @brief Find or allocate a bucket for an address
  */
 static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int period)
@@ -603,8 +580,10 @@ static leakyBucket_t *SVC_BucketForAddress(netadr_t address, int burst, int peri
 	return NULL;
 }
 
-// @note  Don't call if sv_protect 1 (SVP_IOQ3) flag is not set!
-static qboolean SVC_RateLimit(leakyBucket_t *bucket, int burst, int period)
+/**
+ * @note Don't call if sv_protect 1 (SVP_IOQ3) flag is not set!
+ */
+qboolean SVC_RateLimit(leakyBucket_t *bucket, int burst, int period)
 {
 	if (bucket != NULL)
 	{
@@ -635,18 +614,18 @@ static qboolean SVC_RateLimit(leakyBucket_t *bucket, int burst, int period)
 	return qtrue;
 }
 
-/*
+/**
  * @brief Rate limit for a particular address
  * @note  Don't call if sv_protect 1 (SVP_IOQ3) flag is not set!
  */
-static qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period)
+qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period)
 {
 	leakyBucket_t *bucket = SVC_BucketForAddress(from, burst, period);
 
 	return SVC_RateLimit(bucket, burst, period);
 }
 
-/*
+/**
  * @brief Send serverinfo cvars, etc to master servers when game complete or
  * by request of getstatus calls.
  * Useful for tracking global player stats.
@@ -713,7 +692,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 	NET_OutOfBandPrint(NS_SERVER, from, "statusResponse\n%s\n%s", infostring, status);
 }
 
-/*
+/**
  * @brief Responds with a short info message that should be enough to determine
  * if a user is interested in a server to do a full status
  */
@@ -828,8 +807,8 @@ static void SV_FlushRedirect(char *outputbuf)
 	NET_OutOfBandPrint(NS_SERVER, svs.redirectAddress, "print\n%s", outputbuf);
 }
 
-/*
- * DRDoS stands for "Distributed Reflected Denial of Service".
+/**
+ * @brief DRDoS stands for "Distributed Reflected Denial of Service".
  * See here: http://www.lemuria.org/security/application-drdos.html
  *
  * If the address isn't NA_IP, it's automatically denied.
@@ -929,7 +908,7 @@ qboolean SV_CheckDRDoS(netadr_t from)
 	return qfalse;
 }
 
-/*
+/**
  * @brief An rcon packet arrived from the network.
  *
  * Shift down the remaining args. Redirect all printfs.
@@ -1017,8 +996,8 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 	Com_EndRedirect();
 }
 
-/*
- * A connectionless packet has four leading 0xff characters to distinguish it
+/**
+ * @brief A connectionless packet has four leading 0xff characters to distinguish it
  * from a game channel.
  * Clients that are in the game can still send connectionless packets.
  */
@@ -1060,6 +1039,10 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	}
 	else if (!Q_stricmp(c, "getchallenge"))
 	{
+		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
+		{
+			return;
+		}
 		SV_GetChallenge(from);
 	}
 	else if (!Q_stricmp(c, "connect"))
@@ -1149,7 +1132,7 @@ void SV_PacketEvent(netadr_t from, msg_t *msg)
 	NET_OutOfBandPrint(NS_SERVER, from, "disconnect");
 }
 
-/*
+/**
  * @brief Updates the cl->ping variables
  */
 static void SV_CalcPings(void)
@@ -1215,7 +1198,7 @@ static void SV_CalcPings(void)
 	}
 }
 
-/*
+/**
  * @brief If a packet has not been received from a client for timeout->integer
  * seconds, drop the conneciton.
  *
@@ -1313,7 +1296,7 @@ static qboolean SV_CheckPaused(void)
 	return qtrue;
 }
 
-/*
+/**
  * @brief Return time in millseconds until processing of the next server frame.
  * @note Unused
  */
@@ -1338,7 +1321,7 @@ int SV_FrameMsec()
 	}
 }
 
-/*
+/**
  * @brief Player movement occurs as a result of packet events, which happen
  * before SV_Frame is called
  */

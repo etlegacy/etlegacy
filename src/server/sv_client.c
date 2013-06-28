@@ -62,6 +62,25 @@ void SV_GetChallenge(netadr_t from)
 		return;
 	}
 
+	if (sv_protect->integer & SVP_IOQ3)
+	{
+		// Prevent using getchallenge as an amplifier
+		if (SVC_RateLimitAddress(from, 10, 1000))
+		{
+			SV_WriteAttackLog(va("SV_GetChallenge: rate limit from %s exceeded, dropping request\n",
+			                     NET_AdrToString(from)));
+			return;
+		}
+
+		// Allow getchallenge to be DoSed relatively easily, but prevent
+		// excess outbound bandwidth usage when being flooded inbound
+		if (SVC_RateLimit(&outboundLeakyBucket, 10, 100))
+		{
+			SV_WriteAttackLog("SV_GetChallenge: rate limit exceeded, dropping request\n");
+			return;
+		}
+	}
+
 	oldest     = 0;
 	oldestTime = 0x7fffffff;
 
@@ -657,7 +676,7 @@ static void SV_CloseDownload(client_t *cl)
 	}
 }
 
-/*
+/**
  * @brief Abort a download if in progress
  */
 static void SV_StopDownload_f(client_t *cl)
@@ -670,7 +689,7 @@ static void SV_StopDownload_f(client_t *cl)
 	SV_CloseDownload(cl);
 }
 
-/*
+/**
  * @brief Downloads are finished
  */
 static void SV_DoneDownload_f(client_t *cl)

@@ -371,7 +371,7 @@ void SV_ChangeMaxClients(void)
 
 	// free old clients arrays
 	//Z_Free( svs.clients );
-	free(svs.clients);      // RF, avoid trying to allocate large chunk on a fragmented zone
+	free(svs.clients);      // avoid trying to allocate large chunk on a fragmented zone
 
 	// allocate new clients
 	// RF, avoid trying to allocate large chunk on a fragmented zone
@@ -472,7 +472,7 @@ static void SV_ClearServer(void)
 	Com_Memset(&sv, 0, sizeof(sv));
 }
 
-/*
+/**
  * @brief Touch the cgame DLL so that a pure client (with DLL sv_pure support)
  * can load do the correct checks
  */

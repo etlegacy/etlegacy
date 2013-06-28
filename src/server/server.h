@@ -402,7 +402,6 @@ void SV_AddDemoCommands(void);
 qboolean SV_DemoRecording(void);
 
 // sv_main.c
-
 void SV_FinalCommand(char *cmd, qboolean disconnect);   // added disconnect flag so map changes can use this function as well
 void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
 void SV_AddOperatorCommands(void);
@@ -410,6 +409,33 @@ void SV_RemoveOperatorCommands(void);
 void SV_MasterHeartbeat(const char *hbname);
 void SV_MasterShutdown(void);
 void SV_MasterGameCompleteStatus(void);
+
+typedef struct leakyBucket_s leakyBucket_t;
+struct leakyBucket_s
+{
+	netadrtype_t type;
+
+	union
+	{
+		byte _4[4];
+		byte _6[16];
+	} ipv;
+
+	int lastTime;
+	signed char burst;
+
+	long hash;
+
+	leakyBucket_t *prev, *next;
+};
+
+// This is deliberately quite large to make it more of an effort to DoS
+#define MAX_BUCKETS         16384
+#define MAX_HASHES          1024
+
+qboolean SVC_RateLimit(leakyBucket_t *bucket, int burst, int period);
+qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period);
+extern leakyBucket_t outboundLeakyBucket;
 
 // sv_init.c
 void SV_SetConfigstringNoUpdate(int index, const char *val);
