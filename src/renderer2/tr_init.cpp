@@ -69,8 +69,6 @@ cvar_t *r_railSegmentLength;
 cvar_t *r_verbose;
 cvar_t *r_ignore;
 
-cvar_t *r_displayRefresh;
-
 cvar_t *r_znear;
 cvar_t *r_zfar;
 
@@ -1453,8 +1451,6 @@ void R_Register(void)
 	r_smp = ri.Cvar_Get("r_smp", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	// temporary latched variables that can only change over a restart
-	r_displayRefresh = ri.Cvar_Get("r_displayRefresh", "0", CVAR_LATCH);
-	AssertCvarRange(r_displayRefresh, 0, 200, qtrue);
 #if defined(COMPAT_Q3A) || defined(COMPAT_ET)
 	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "1", CVAR_CHEAT | CVAR_LATCH);
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_CHEAT | CVAR_LATCH);
