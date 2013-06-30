@@ -128,35 +128,17 @@ char *Sys_DefaultInstallPath(void)
 	}
 }
 
-/*
-=================
-Sys_DefaultAppPath
-=================
-*/
-char *Sys_DefaultAppPath(void)
-{
-	return Sys_BinaryPath();
-}
-
-/*
-=================
-Sys_In_Restart_f
-
-Restart the input subsystem
-=================
-*/
+/**
+ * @brief Restart the input subsystem
+ */
 void Sys_In_Restart_f(void)
 {
 	IN_Restart();
 }
 
-/*
-=================
-Sys_ConsoleInput
-
-Handle new console input
-=================
-*/
+/**
+ * @brief Handle new console input
+ */
 #if !defined (_WIN32)
 char *Sys_ConsoleInput(void)
 {
@@ -169,29 +151,48 @@ char *Sys_ConsoleInput(void)
 }
 #endif
 
-#ifdef DEDICATED
-#   define PID_FILENAME PRODUCT_NAME "_server.pid"
-#else
-#   define PID_FILENAME PRODUCT_NAME ".pid"
-#endif
-
-/*
-=================
-Sys_PIDFileName
-=================
-*/
-static char *Sys_PIDFileName(void)
+/**
+ * @brief Writes pid to profile or to the homepath root if running a server
+ * @retval qtrue  if pid file successfully created
+ * @retval qfalse if it wasn't possible to create a new pid file
+ */
+qboolean Sys_WritePIDFile(void)
 {
-	const char *homePath = Sys_DefaultHomePath();
+	fileHandle_t f;
 
-	if (*homePath != '\0')
+	// First, check if the pid file is already there
+	if (FS_FileInPathExists(com_pidfile->string))
 	{
-		return va("%s/%s", homePath, PID_FILENAME);
+		// TODO: check if we are hijacking live pid file
+		/*
+		FS_FOpenFileRead(com_pidfile->string, &f, qtrue);
+
+		if(Sys_PIDIsRunning(pid))
+		{
+		    Com_Printf("WARNING: another instance of ET:L is using this path!\n");
+		    return qfalse;
+		}
+		*/
+		FS_Delete(com_pidfile->string); // stale pid from previous run
 	}
-	return NULL;
+
+	f = FS_FOpenFileWrite(com_pidfile->string);
+	if (f < 0)
+	{
+		return qfalse;
+	}
+
+	FS_Printf(f, "%d", com_pid->integer);
+
+	FS_FCloseFile(f);
+
+	// track profile changes
+	Com_TrackProfile(com_pidfile->string);
+
+	return qtrue;
 }
 
-/*
+/**
  * @brief Single exit point (regular exit or in case of error)
  */
 static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
@@ -205,11 +206,12 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 	if (exitCode < 2)
 	{
 		// Normal exit
-		char *pidFile = Sys_PIDFileName();
-
-		if (pidFile != NULL)
+		if (FS_FileExists(com_pidfile->string))
 		{
-			remove(pidFile);
+			// FIXME: delete even when outside of homepath
+			remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
+			          PATH_SEP, Cvar_VariableString("fs_game"),
+			          PATH_SEP, com_pidfile->string));
 		}
 	}
 
@@ -299,13 +301,9 @@ void Sys_Init(void)
 	Cvar_Set("username", Sys_GetCurrentUser());
 }
 
-/*
-=================
-Sys_AnsiColorPrint
-
-Transform Q3 colour codes to ANSI escape sequences
-=================
-*/
+/**
+ * @brief Transform Q3 colour codes to ANSI escape sequences
+ */
 void Sys_AnsiColorPrint(const char *msg)
 {
 	static char buffer[MAXPRINTMSG];

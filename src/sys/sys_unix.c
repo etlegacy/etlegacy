@@ -1100,7 +1100,7 @@ int Sys_PID(void)
 	return getpid();
 }
 
-/*
+/**
  * @brief Check if specified PID is running
  * @param pid PID to check
  * @retval qfalse on failure

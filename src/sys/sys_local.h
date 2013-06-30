@@ -63,6 +63,7 @@ void Sys_ErrorDialog(const char *error);
 void Sys_AnsiColorPrint(const char *msg);
 
 int Sys_PID(void);
+qboolean Sys_WritePIDFile(void);
 qboolean Sys_PIDIsRunning(int pid);
 
 void *Sys_LoadDll(const char *name, qboolean useSystemLib);

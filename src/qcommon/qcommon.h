@@ -854,13 +854,13 @@ void Com_SetRecommended(void);
 
 // profile functions
 void Com_TrackProfile(char *profile_path);
-qboolean Com_CheckProfile(char *profile_path);
-qboolean Com_WriteProfile(char *profile_path);
+qboolean Com_CheckProfile(void);
 
 extern cvar_t *com_crashed;
 extern cvar_t *com_ignorecrash;
 
 extern cvar_t *com_pid;
+extern cvar_t *com_pidfile;
 
 extern cvar_t *com_developer;
 extern cvar_t *com_dedicated;

@@ -34,6 +34,7 @@
 
 #include "q_shared.h"
 #include "qcommon.h"
+
 #include <setjmp.h>
 #if defined (_WIN32)
 #include "../sys/sys_win32.h"
@@ -84,6 +85,7 @@ cvar_t *com_crashed = NULL;         // set in case of a crash, prevents CVAR_UNS
 
 cvar_t *com_ignorecrash = NULL;     // let experienced users ignore crashes, explicit NULL to make win32 teh happy
 cvar_t *com_pid;                    // process id
+cvar_t *com_pidfile;                // full path to the pid file
 
 cvar_t *com_viewlog;
 cvar_t *com_speeds;
@@ -2573,14 +2575,9 @@ int Com_Milliseconds(void)
 
 //============================================================================
 
-/*
-=============
-Com_Error_f
-
-Just throw a fatal error to
-test error shutdown procedures
-=============
-*/
+/**
+ * @brief Just throw a fatal error to test error shutdown procedures
+ */
 static void Com_Error_f(void)
 {
 	if (Cmd_Argc() > 1)
@@ -2593,14 +2590,10 @@ static void Com_Error_f(void)
 	}
 }
 
-/*
-=============
-Com_Freeze_f
-
-Just freeze in place for a given number of seconds to test
-error recovery
-=============
-*/
+/**
+ * @brief Just freeze in place for a given number of seconds to test
+ * error recovery
+ */
 static void Com_Freeze_f(void)
 {
 	float s;
@@ -2659,8 +2652,9 @@ void Com_SetRecommended()
  * @brief Checks if profile.pid is valid
  * @retval qtrue if valid
  * @retval qfalse if invalid(!)
+ * @todo If pid is found, make sure it is not in use
  */
-qboolean Com_CheckProfile(char *profile_path)
+qboolean Com_CheckProfile(void)
 {
 	fileHandle_t f;
 	char         f_data[32];
@@ -2672,7 +2666,7 @@ qboolean Com_CheckProfile(char *profile_path)
 		return qtrue;
 	}
 
-	if (FS_FOpenFileRead(profile_path, &f, qtrue) < 0)
+	if (FS_FOpenFileRead(com_pidfile->string, &f, qtrue) < 0)
 	{
 		// no profile found, we're ok
 		return qtrue;
@@ -2683,7 +2677,7 @@ qboolean Com_CheckProfile(char *profile_path)
 		//b0rk3d!
 		FS_FCloseFile(f);
 		//try to delete corrupted pid file
-		FS_Delete(profile_path);
+		FS_Delete(com_pidfile->string);
 		return qfalse;
 	}
 
@@ -2705,14 +2699,15 @@ extern char fs_gamedir[MAX_OSPATH];
 char        last_fs_gamedir[MAX_OSPATH];
 char        last_profile_path[MAX_OSPATH];
 
-// track profile changes, delete old profile.pid if we change fs_game(dir)
-// hackish, we fiddle with fs_gamedir to make FS_* calls work "right"
+/**
+ * @brief Track profile changes, delete old pid file if we change fs_game(dir)
+ * Hackish, we fiddle with fs_gamedir to make FS_* calls work "right"
+ */
 void Com_TrackProfile(char *profile_path)
 {
 	char temp_fs_gamedir[MAX_OSPATH];
 
-//	Com_Printf( "Com_TrackProfile: Tracking profile [%s] [%s]\n", fs_gamedir, profile_path );
-	//have we changed fs_game(dir)?
+	// have we changed fs_game(dir)?
 	if (strcmp(last_fs_gamedir, fs_gamedir))
 	{
 		if (strlen(last_fs_gamedir) && strlen(last_profile_path))
@@ -2735,37 +2730,6 @@ void Com_TrackProfile(char *profile_path)
 	}
 }
 
-/**
- * @brief Writes pid to profile
- * @retval qtrue if successful
- * @retval qfalse if not(!!)
- */
-qboolean Com_WriteProfile(char *profile_path)
-{
-	fileHandle_t f;
-
-	if (FS_FileExists(profile_path))
-	{
-		FS_Delete(profile_path);
-	}
-
-	f = FS_FOpenFileWrite(profile_path);
-	if (f < 0)
-	{
-		Com_Printf("Com_WriteProfile: Can't write %s.\n", profile_path);
-		return qfalse;
-	}
-
-	FS_Printf(f, "%d", com_pid->integer);
-
-	FS_FCloseFile(f);
-
-	// track profile changes
-	Com_TrackProfile(profile_path);
-
-	return qtrue;
-}
-
 /*
 =================
 Com_Init
@@ -2773,7 +2737,6 @@ Com_Init
 */
 void Com_Init(char *commandLine)
 {
-	int pid;
 	// gcc warning: variable `safeMode' might be clobbered by `longjmp' or `vfork'
 	volatile qboolean safeMode = qtrue;
 
@@ -2812,13 +2775,8 @@ void Com_Init(char *commandLine)
 	// init crashed variable as early as possible
 	com_crashed = Cvar_Get("com_crashed", "0", CVAR_TEMP);
 
-	// init pid
-#ifdef _WIN32
-	pid = GetCurrentProcessId();
-#else
-	pid = getpid();
-#endif
-	com_pid = Cvar_Get("com_pid", va("%d", pid), CVAR_ROM);
+	// init process id
+	com_pid = Cvar_Get("com_pid", va("%d", Sys_PID()), CVAR_ROM);
 
 	// done early so bind command exists
 	CL_InitKeyCommands();
@@ -2860,10 +2818,16 @@ void Com_Init(char *commandLine)
 			}
 		}
 
+#ifdef DEDICATED
+		com_pidfile = Cvar_Get("com_pidfile", "etlegacy_server.pid", CVAR_TEMP);
+#else
+		com_pidfile = Cvar_Get("com_pidfile", va("profiles/%s/profile.pid", Cvar_VariableString("cl_profile")), CVAR_TEMP);
+#endif
+
 		if (cl_profileStr[0])
 		{
 			// check existing pid file and make sure it's ok
-			if (!Com_CheckProfile(va("profiles/%s/profile.pid", cl_profileStr)))
+			if (!Com_CheckProfile())
 			{
 #ifdef NDEBUG
 				Com_Printf("^3WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
@@ -2873,9 +2837,9 @@ void Com_Init(char *commandLine)
 			}
 
 			// write a new one
-			if (!Com_WriteProfile(va("profiles/%s/profile.pid", cl_profileStr)))
+			if (!Sys_WritePIDFile())
 			{
-				Com_Printf("^3WARNING: couldn't write profiles/%s/profile.pid\n", cl_profileStr);
+				Com_Printf("^3WARNING: couldn't write %s\n", com_pidfile->string);
 			}
 
 			// exec the config
@@ -3384,15 +3348,10 @@ Com_Shutdown
 */
 void Com_Shutdown(qboolean badProfile)
 {
-	char *cl_profileStr = Cvar_VariableString("cl_profile");
-
 	// delete pid file
-	if (cl_profileStr[0] && !badProfile)
+	if (!badProfile && FS_FileExists(com_pidfile->string))
 	{
-		if (FS_FileExists(va("profiles/%s/profile.pid", cl_profileStr)))
-		{
-			FS_Delete(va("profiles/%s/profile.pid", cl_profileStr));
-		}
+		FS_Delete(com_pidfile->string);
 	}
 
 	if (logfile)

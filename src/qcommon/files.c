@@ -1379,16 +1379,12 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 	return -1;
 }
 
-/*
-===========
-FS_FOpenFileRead
-
-Finds the file in the search path.
-Returns filesize and an open FILE pointer.
-Used for streaming data out of either a
-separate file or a ZIP file.
-===========
-*/
+/**
+ * @brief Finds the file in the search path.
+ * @returns filesize and an open FILE pointer.
+ *
+ * Used for streaming data out of either a separate file or a ZIP file.
+ */
 long FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFILE)
 {
 	searchpath_t *search;
@@ -1702,13 +1698,9 @@ int FS_OSStatFile(char *ospath)
 }
 #endif
 
-/*
-==============
-FS_Delete
-
-using fs_homepath for the file to remove
-==============
-*/
+/**
+ * @brief Removes file in the current fs_gamedir in homepath
+ */
 int FS_Delete(char *filename)
 {
 	char *ospath;
@@ -4392,7 +4384,7 @@ void FS_Restart(int checksumFeed)
 			if (cl_profileStr[0])
 			{
 				// check existing pid file and make sure it's ok
-				if (!Com_CheckProfile(va("profiles/%s/profile.pid", cl_profileStr)))
+				if (!Com_CheckProfile())
 				{
 #ifdef NDEBUG
 					Com_Printf("^3WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
@@ -4402,9 +4394,9 @@ void FS_Restart(int checksumFeed)
 				}
 
 				// write a new one
-				if (!Com_WriteProfile(va("profiles/%s/profile.pid", cl_profileStr)))
+				if (!Sys_WritePIDFile())
 				{
-					Com_Printf("^3WARNING: couldn't write profiles/%s/profile.pid\n", cl_profileStr);
+					Com_Printf("^3WARNING: couldn't write %s\n", com_pidfile->string);
 				}
 
 				// exec the config
