@@ -32,15 +32,12 @@
  * @brief structure reading / writing
  */
 
-#ifdef BOTLIB
 #include "../qcommon/q_shared.h"
 #include "../botlib/botlib.h"              //for the include of be_interface.h
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"
-#include "l_utils.h"
 #include "be_interface.h"
-#endif //BOTLIB
 
 //===========================================================================
 //
@@ -164,8 +161,8 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 	{
 		if (fd->type & FT_BOUNDED)
 		{
-			intmin = Maximum(intmin, fd->floatmin);
-			intmax = Minimum(intmax, fd->floatmax);
+			intmin = MAX(intmin, fd->floatmin);
+			intmax = MAX(intmax, fd->floatmax);
 		} //end if
 		if (intval < intmin || intval > intmax)
 		{

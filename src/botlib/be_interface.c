@@ -99,11 +99,8 @@ int Export_BotLibSetup(qboolean singleplayer)
 {
 	//initialize byte swapping (litte endian etc.)
 	Log_Open("botlib.log");
-	//
+
 	botimport.Print(PRT_MESSAGE, "------- BotLib Initialization -------\n");
-	//
-	botlibglobals.maxclients  = (int) LibVarValue("maxclients", "128");
-	botlibglobals.maxentities = (int) LibVarValue("maxentities", "1024");
 
 	globaldefines = NULL;
 

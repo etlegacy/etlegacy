@@ -21,9 +21,6 @@ set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
 # has to be set to "", otherwise CMake will pass -rdynamic resulting in a client crash
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
-# this is hardly used .. we may delete that
-add_definitions(-DBOTLIB)
-
 # Options
 option(BUILD_SERVER		"Build the dedicated server executable"				ON)
 option(BUILD_CLIENT		"Build the client executable"					ON)
@@ -192,7 +189,6 @@ FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_stubs.c"
 	"src/qcommon/i18n_*"
-	"src/botlib/botlib_stub.c"
 )
 
 LIST(REMOVE_ITEM COMMON_SRC ${COMMON_SRC_REMOVE})
@@ -756,7 +752,7 @@ endif(BUILD_MOD)
 if(BUILD_PAK3_PK3)
 	add_custom_target(
 		pak3_pk3 ALL
-		COMMAND ${ZIP_EXECUTABLE} -r ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3_${ETL_CMAKE_VERSION_SHORT}.pk3 *
+		COMMAND ${ZIP_EXECUTABLE} -q -r ${CMAKE_CURRENT_BINARY_DIR}/legacy/pak3_${ETL_CMAKE_VERSION_SHORT}.pk3 *
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/etmain/
 	)
 
@@ -790,7 +786,7 @@ if(INSTALL_OMNIBOT AND BUILD_MOD)
 		message(STATUS "Extracting Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot")
 		if(UNIX)
 			execute_process(
-				COMMAND tar -xvf ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
+				COMMAND tar -xf ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
 				WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
 			)
 		elseif(WIN32)
