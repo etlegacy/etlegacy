@@ -3128,10 +3128,7 @@ msgstr ""
 msgid "Allies have destroyed the gun tracking"
 msgstr ""
 
-msgid "^3All players ready!"
-msgstr ""
-
-msgid "^7Match starting..."
+msgid "^3All players ready!^7\nMatch starting...\n"
 msgstr ""
 
 msgid "The Axis North-West MG Nest has been destroyed."
