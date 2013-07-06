@@ -115,7 +115,7 @@ msgid "You are wounded and waiting for a medic."
 msgstr ""
 
 #: src/cgame/cg_draw.c:2540
-msgid "Press JUMP to go into reinforcement queue."
+msgid "Press %s to go into reinforcement queue."
 msgstr ""
 
 #: src/cgame/cg_draw.c:2550
@@ -2894,6 +2894,253 @@ msgid "^1** Referee Server Setting Change **\n"
 msgstr ""
 
 msgid "committed suicide"
+msgstr ""
+
+msgid "Your fireteam is now public"
+msgstr ""
+
+msgid "Your fireteam is now private"
+msgstr ""
+
+msgid "The Allies have too many players."
+msgstr ""
+
+msgid "The Axis have too many players."
+msgstr ""
+
+msgid "Attack!"
+msgstr ""
+
+msgid "Fall back!"
+msgstr ""
+
+#: src/cgame/cg_players.c:315
+#, c-format
+msgid "Promoted to rank %s!"
+msgstr ""
+
+#: src/cgame/cg_players.c:365
+#, c-format
+msgid "Increased %s skill to level %i!"
+msgstr ""
+
+#: src/cgame/cg_players.c:367
+#, c-format
+msgid "You have been rewarded with %s"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:585
+#, c-format
+msgid "Planted at %s."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:587
+#, c-format
+msgid "Defused at %s."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:596
+#, c-format
+msgid "%s has been constructed."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:603
+#, c-format
+msgid "%s has been damaged."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:605
+#, c-format
+msgid "%s has been destroyed."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:627
+#, c-format
+msgid "%sSpotted by ^7%s%s at %s"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:631
+#, c-format
+msgid "%sSpotted by ^7%s"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:638
+#, c-format
+msgid "%s have stolen %s!"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:638
+msgid "Allies"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:638
+msgid "Axis"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:640
+#, c-format
+msgid "%s have returned %s!"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:666
+#, c-format
+msgid "%s^7 disconnected"
+msgstr ""
+
+msgid "Improved use of Explosive Ammunition"
+msgstr ""
+
+msgid "Improved Dexterity"
+msgstr ""
+
+msgid "Improved Construction and Destruction"
+msgstr ""
+
+msgid "a Flak Jacket"
+msgstr ""
+
+msgid "Improved use of Scoped Weapon Ammunition"
+msgstr ""
+
+msgid "Improved use of Sabotage and Misdirection"
+msgstr ""
+
+msgid "Breath Control"
+msgstr ""
+
+msgid "Assassin"
+msgstr ""
+
+msgid "Improved Resources"
+msgstr ""
+
+msgid "Improved Signals"
+msgstr ""
+
+msgid "Improved Air and Ground Support"
+msgstr ""
+
+msgid "Enemy Recognition"
+msgstr ""
+
+msgid "Medic Ammo"
+msgstr ""
+
+msgid "Binoculars"
+msgstr ""
+
+msgid "Full Revive"
+msgstr ""
+
+msgid "Adrenalin Self"
+msgstr ""
+
+msgid "Improved Projectile Resources"
+msgstr ""
+
+msgid "Heavy Weapon Proficiency"
+msgstr ""
+
+msgid "Improved Physical Fitness"
+msgstr ""
+
+msgid "Improved Health"
+msgstr ""
+
+msgid "Improved Weapon Handling"
+msgstr ""
+
+msgid "Trap Awareness"
+msgstr ""
+
+msgid "Improved use of Light Weapon Ammunition"
+msgstr ""
+
+msgid "Faster Reload"
+msgstr ""
+
+msgid "Improved Light Weapon Handling"
+msgstr ""
+
+msgid "Dual-Wield Pistols"
+msgstr ""
+
+msgid "Allies have destroyed the North Anti-Tank Gun!"
+msgstr ""
+
+msgid "Allied team has destroyed the Axis Command Post!"
+msgstr ""
+
+msgid "The Garrison MG Nest has been damaged!"
+msgstr ""
+
+msgid "Allied team has destroyed the South Anti-Tank Gun!"
+msgstr ""
+
+msgid "Allies have destroyed both Anti-Tank Guns!"
+msgstr ""
+
+msgid "The Allied West beach MG Nest has been constructed."
+msgstr ""
+
+msgid "The Allied Beach Assault Ramp has been constructed."
+msgstr ""
+
+msgid "The Allied East beach MG Nest has been constructed."
+msgstr ""
+
+msgid "Allied team has destroyed the Door Controls Generator!"
+msgstr ""
+
+msgid "Magnetic seal deactivated - opening emergency bunker doors"
+msgstr ""
+
+msgid "The Axis North-West MG Nest has been constructed."
+msgstr ""
+
+msgid "got buried under a pile of rubble"
+msgstr ""
+
+msgid "The Axis Main Bunker MG Nest has been constructed."
+msgstr ""
+
+msgid "The Axis South-East MG Nest has been constructed."
+msgstr ""
+
+msgid "Axis have constructed the Door Controls Generator!"
+msgstr ""
+
+msgid "Axis have destroyed the Allied Beach Assault Ramp."
+msgstr ""
+
+msgid "The Allied West beach MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Allied East beach MG Nest has been destroyed."
+msgstr ""
+
+msgid "Allies capture the Forward Bunker!"
+msgstr ""
+
+msgid "Axis capture the West Bunker!"
+msgstr ""
+
+msgid "Allies have destroyed the gun tracking"
+msgstr ""
+
+msgid "^3All players ready!"
+msgstr ""
+
+msgid "^7Match starting..."
+msgstr ""
+
+msgid "The Axis North-West MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Axis Main Bunker MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Axis South-East MG Nest has been destroyed."
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338

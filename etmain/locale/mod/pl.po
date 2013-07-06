@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-06-27 20:38+0100\n"
+"PO-Revision-Date: 2013-07-06 20:20+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -70,7 +70,7 @@ msgstr "Akceptuj %s propozycje zaproszenia  %s do dolaczenia twojego zespolu?"
 #: src/cgame/cg_draw.c:2122
 #, c-format
 msgid "Accept %s's invitation to join their fireteam?"
-msgstr "Akceptuj %s zaproszenia do dolaczenia ich teamow?"
+msgstr "Akceptuj %s zaproszenie do dolaczenia ich zespolu?"
 
 #: src/cgame/cg_draw.c:2218
 #, c-format
@@ -116,8 +116,8 @@ msgid "You are wounded and waiting for a medic."
 msgstr "Jestes zraniony i czekasz za medykiem"
 
 #: src/cgame/cg_draw.c:2540
-msgid "Press JUMP to go into reinforcement queue."
-msgstr "Nacisnij SKOK aby wejsc w kolejke posilkow."
+msgid "Press %s to go into reinforcement queue."
+msgstr "Nacisnij %s aby wejsc w kolejke posilkow."
 
 #: src/cgame/cg_draw.c:2550
 msgid "No more reinforcements this round."
@@ -867,7 +867,7 @@ msgid "Enable Flags:"
 msgstr "Wlacz Flagi:"
 
 msgid "Fireteam Latched Class:"
-msgstr "Klasa w Fireteamie:"
+msgstr "Klasa w Zespole:"
 
 msgid "Switch HUD:"
 msgstr "Zmien HUD:"
@@ -2940,6 +2940,253 @@ msgstr "^1** Sedzia Zmiana Ustawien Serwera **\n"
 
 msgid "committed suicide"
 msgstr "wykonal samobojstwo"
+
+msgid "Your fireteam is now public"
+msgstr "Twoj zespol jest teraz publiczny"
+
+msgid "Your fireteam is now private"
+msgstr "Twoj zespol jest teraz prywatny"
+
+msgid "The Allies have too many players."
+msgstr "Alianci maja zbyt duzo graczy."
+
+msgid "The Axis have too many players."
+msgstr "Os ma zbyt duzo graczy."
+
+msgid "Attack!"
+msgstr "Atak!"
+
+msgid "Fall back!"
+msgstr "Odwrot!"
+
+#: src/cgame/cg_players.c:315
+#, c-format
+msgid "Promoted to rank %s!"
+msgstr "Awansowany do rangi %s!"
+
+#: src/cgame/cg_players.c:365
+#, c-format
+msgid "Increased %s skill to level %i!"
+msgstr "Zwiekszona %s umiejetnosc do poziomu %i!"
+
+#: src/cgame/cg_players.c:367
+#, c-format
+msgid "You have been rewarded with %s"
+msgstr "Zostales nagrodzony z %s"
+
+#: src/cgame/cg_popupmessages.c:585
+#, c-format
+msgid "Planted at %s."
+msgstr "Podlozone na %s."
+
+#: src/cgame/cg_popupmessages.c:587
+#, c-format
+msgid "Defused at %s."
+msgstr "Rozbrojone na %s."
+
+#: src/cgame/cg_popupmessages.c:596
+#, c-format
+msgid "%s has been constructed."
+msgstr "%s zostal wybudowane."
+
+#: src/cgame/cg_popupmessages.c:603
+#, c-format
+msgid "%s has been damaged."
+msgstr "%s zostal uszkodzony."
+
+#: src/cgame/cg_popupmessages.c:605
+#, c-format
+msgid "%s has been destroyed."
+msgstr "%s zostal zniszczony."
+
+#: src/cgame/cg_popupmessages.c:627
+#, c-format
+msgid "%sSpotted by ^7%s%s at %s"
+msgstr "%sZauwazony przez ^7%s%s at %s"
+
+#: src/cgame/cg_popupmessages.c:631
+#, c-format
+msgid "%sSpotted by ^7%s"
+msgstr "%sZauwazony przez ^7%s"
+
+#: src/cgame/cg_popupmessages.c:638
+#, c-format
+msgid "%s have stolen %s!"
+msgstr "%s ukradli %s!"
+
+#: src/cgame/cg_popupmessages.c:638
+msgid "Allies"
+msgstr "Alianci"
+
+#: src/cgame/cg_popupmessages.c:638
+msgid "Axis"
+msgstr "Os"
+
+#: src/cgame/cg_popupmessages.c:640
+#, c-format
+msgid "%s have returned %s!"
+msgstr "%s zwrocili %s!"
+
+#: src/cgame/cg_popupmessages.c:666
+#, c-format
+msgid "%s^7 disconnected"
+msgstr "%s^7 rozlaczony"
+
+msgid "Improved use of Explosive Ammunition"
+msgstr "Lepsze uzycie Amunicji Wybuchowej"
+
+msgid "Improved Dexterity"
+msgstr "Lepsza Zrecznosc"
+
+msgid "Improved Construction and Destruction"
+msgstr "Ulepszona Budowa i Rozbudowa"
+
+msgid "a Flak Jacket"
+msgstr "Kamizelka Kuloodporna"
+
+msgid "Improved use of Scoped Weapon Ammunition"
+msgstr "Lepsze uzycie Amunicji do Snajperki"
+
+msgid "Improved use of Sabotage and Misdirection"
+msgstr "Lepsze uzycie Sabotazu i Odwrocenia Uwagi"
+
+msgid "Breath Control"
+msgstr "Kontrola Oddechu"
+
+msgid "Assassin"
+msgstr "Zabojstwo"
+
+msgid "Improved Resources"
+msgstr "Ulepszone Zasoby"
+
+msgid "Improved Signals"
+msgstr "Ulepszone Sygnaly"
+
+msgid "Improved Air and Ground Support"
+msgstr "Lepsze Powietrzne i Ladowe Wsparcie"
+
+msgid "Enemy Recognition"
+msgstr "Rozpoznanie Wroga"
+
+msgid "Medic Ammo"
+msgstr "Amunicja Medyka"
+
+msgid "Binoculars"
+msgstr "Lornetki"
+
+msgid "Full Revive"
+msgstr "Pelne Ozywienie"
+
+msgid "Adrenalin Self"
+msgstr "Wlasna Adrelanina"
+
+msgid "Improved Projectile Resources"
+msgstr "Lepszy Zasob Pociskow"
+
+msgid "Heavy Weapon Proficiency"
+msgstr "Bieglosc Ciezkiej Bronii"
+
+msgid "Improved Physical Fitness"
+msgstr "Poprawa Sprawnosci Fizycznej"
+
+msgid "Improved Health"
+msgstr "Ulepszome Zycie"
+
+msgid "Improved Weapon Handling"
+msgstr "Ulepszona Obsluga Bronii"
+
+msgid "Trap Awareness"
+msgstr "Pulapka Swiadomosci"
+
+msgid "Improved use of Light Weapon Ammunition"
+msgstr "Lepsze uzycie Amunicji do Bronii Lekkiej"
+
+msgid "Faster Reload"
+msgstr "Szybsze Przeladowanie"
+
+msgid "Improved Light Weapon Handling"
+msgstr "Lepsza Obsluga Bronii Lekkiej"
+
+msgid "Dual-Wield Pistols"
+msgstr "Podwojne Pistolety"
+
+msgid "Allies have destroyed the North Anti-Tank Gun!"
+msgstr "Allianci rozwalili Polnocne Dzialo Przeciw Czolgowe!"
+
+msgid "Allied team has destroyed the Axis Command Post!"
+msgstr "Allianci rozwalili Stanowisko Dowodzenia Osi!"
+
+msgid "The Garrison MG Nest has been damaged!"
+msgstr "Gniazdo MG Garnizonu zostalo uszkodzone!"
+
+msgid "Allied team has destroyed the South Anti-Tank Gun!"
+msgstr "Allianci rozwalili Poludniowe Dzialo Przeciw Czolgowe!"
+
+msgid "Allies have destroyed both Anti-Tank Guns!"
+msgstr "Allianci rozwalili obydwa Dziala Przeciw Czolgowe!"
+
+msgid "The Allied West beach MG Nest has been constructed."
+msgstr "Allianci zbudowali Gniazdo MG na Wschodniej plazy."
+
+msgid "The Allied Beach Assault Ramp has been constructed."
+msgstr "Allianci zbudowali Rampe na Plazy."
+
+msgid "The Allied East beach MG Nest has been constructed."
+msgstr "Allianci zbudowali Gniazdo MG na Wchodniej plazy."
+
+msgid "Allied team has destroyed the Door Controls Generator!"
+msgstr "Allianci rozwalili Generator Komtrolujacy Drzwi!"
+
+msgid "Magnetic seal deactivated - opening emergency bunker doors"
+msgstr "Deaktywowano Magnetyczna Zapore - awaryjne otwieranie drzwi bunkra"
+
+msgid "The Axis North-West MG Nest has been constructed."
+msgstr "Os zbudowala Gniazdo MG na Polnocny-Zachod."
+
+msgid "got buried under a pile of rubble"
+msgstr "pochowany pod sterta gruzow"
+
+msgid "The Axis Main Bunker MG Nest has been constructed."
+msgstr "Os zbudowala Gniazdo MG w Glownym Bunkrze."
+
+msgid "The Axis South-East MG Nest has been constructed."
+msgstr "Os zbudowala Gniazdo MG na Poludniowy-Wschod."
+
+msgid "Axis have constructed the Door Controls Generator!"
+msgstr "Os zbudowala Generator Kontrolujacy Drzwi!"
+
+msgid "Axis have destroyed the Allied Beach Assault Ramp."
+msgstr "OS rozwalila Alliancka Rampe na Plazy."
+
+msgid "The Allied West beach MG Nest has been destroyed."
+msgstr "Zachodnie Allianckie Gniazdo MG zostalo rozwalone."
+
+msgid "The Allied East beach MG Nest has been destroyed."
+msgstr "Wchodnie Allianckie Gniazdo MG zostalo rozwalone."
+
+msgid "Allies capture the Forward Bunker!"
+msgstr "Allianci zdobyli Przedni Bunkier!"
+
+msgid "Axis capture the West Bunker!"
+msgstr "Os zbobyla Wschodni Bunkier!"
+
+msgid "Allies have destroyed the gun tracking"
+msgstr "Allianci rozwalili Kierowanie Dziala"
+
+msgid "^3All players ready!"
+msgstr "^3Wszyscy gracze gotowi!"
+
+msgid "^7Match starting..."
+msgstr "^7Mecz zaczyna sie..."
+
+msgid "The Axis North-West MG Nest has been destroyed."
+msgstr "Polnocno-Zachodnie Gniazdo MG Osi zostalo rozwalone."
+
+msgid "The Axis Main Bunker MG Nest has been destroyed."
+msgstr "Gniazdo MG Osi w Glownym Bunkrze zostalo rozwalone."
+
+msgid "The Axis South-East MG Nest has been destroyed."
+msgstr "Poludniowo-Wschodnie Gniazdo MG Osi zostalo rozwalone."
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
