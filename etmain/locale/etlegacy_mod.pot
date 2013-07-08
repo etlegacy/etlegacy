@@ -3341,6 +3341,159 @@ msgstr ""
 msgid "was killed"
 msgstr ""
 
+msgid "You are near the Old City Wall\n"
+msgstr ""
+
+msgid "You are near the Old City Water Pump\n"
+msgstr ""
+
+msgid "You are near the Oasis Water Pump\n"
+msgstr ""
+
+msgid "You are near the Allied Command Post\n"
+msgstr ""
+
+msgid "You are near the Old City MG Nest\n"
+msgstr ""
+
+msgid "You are near the Axis Command Post\n"
+msgstr ""
+
+msgid "You are near the Garrison MG Nest\n"
+msgstr ""
+
+msgid "You are near the North Anti-Tank Gun\n"
+msgstr ""
+
+msgid "You are near the South Anti-Tank Gun\n"
+msgstr ""
+
+msgid "You are near the Health and Ammo Cabinets\n"
+msgstr ""
+
+msgid "You are near the Allied East beach MG nest\n"
+msgstr ""
+
+msgid "You are near the Allied West beach MG nest\n"
+msgstr ""
+
+msgid "You are near the Allied Beach Assault Ramp\n"
+msgstr ""
+
+msgid "You are near the Command Post\n"
+msgstr ""
+
+msgid "You are near the Axis North-West MG nest\n"
+msgstr ""
+
+msgid "You are near the Axis Main Bunker MG nest\n"
+msgstr ""
+
+msgid "You are near the Axis South-East MG nest\n"
+msgstr ""
+
+msgid "You are near the Generator\n"
+msgstr ""
+
+msgid "You are near the Gun Controls\n"
+msgstr ""
+
+msgid "You are near the Tank\n"
+msgstr ""
+
+msgid "You are near Tank Barrier #1\n"
+msgstr ""
+
+msgid "You are near Tank Barrier #2\n"
+msgstr ""
+
+msgid "You are near the Bank Doors\n"
+msgstr ""
+
+msgid "You are near the Gold Crates\n"
+msgstr ""
+
+msgid "You are near the Truck\n"
+msgstr ""
+
+msgid "You are near Truck Barrier #1\n"
+msgstr ""
+
+msgid "You are near Truck Barrier #2\n"
+msgstr ""
+
+msgid "You are near the Axis Watchtower MG Nest\n"
+msgstr ""
+
+msgid "You are near the West Radar Parts\n"
+msgstr ""
+
+msgid "You are near the East Radar Parts\n"
+msgstr ""
+
+msgid "You are near the Side Entrance\n"
+msgstr ""
+
+msgid "You are near the Bunker MG Nest\n"
+msgstr ""
+
+msgid "You are near the Escape Truck\n"
+msgstr ""
+
+msgid "You are near the Main Entrance\n"
+msgstr ""
+
+msgid "You are near the Axis Road MG Nest\n"
+msgstr ""
+
+msgid "You are near the East Axis Base Fortification\n"
+msgstr ""
+
+msgid "You are near the West Axis Base Fortification\n"
+msgstr ""
+
+msgid "You are near the Fuel Dump\n"
+msgstr ""
+
+msgid "You are near the Fuel Depot Side Wall\n"
+msgstr ""
+
+msgid "You are near the Fuel Depot Front Gates\n"
+msgstr ""
+
+msgid "You are near the Side MG\n"
+msgstr ""
+
+msgid "You are near the Tunnel Doors\n"
+msgstr ""
+
+msgid "You are near the Tunnel MG\n"
+msgstr ""
+
+msgid "You are near the Foot Bridge\n"
+msgstr ""
+
+msgid "You are near the Bridge\n"
+msgstr ""
+
+msgid "You are near the Road MG\n"
+msgstr ""
+
+msgid "You are near the Track Switch MG Nest\n"
+msgstr ""
+
+msgid "You are near the Depot Yard MG Nest\n"
+msgstr ""
+
+msgid "You are near the First Tug\n"
+msgstr ""
+
+msgid "You are near the Second Tug\n"
+msgstr ""
+
+msgid "You are near the Rail Gun Firing Controls\n"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
