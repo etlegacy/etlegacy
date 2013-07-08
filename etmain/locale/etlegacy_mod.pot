@@ -3140,6 +3140,207 @@ msgstr ""
 msgid "The Axis South-East MG Nest has been destroyed."
 msgstr ""
 
+msgid "The Tank has been repaired!"
+msgstr ""
+
+msgid "Allied team has stolen the Tank!"
+msgstr ""
+
+msgid "The Tank has been damaged!"
+msgstr ""
+
+msgid "Allied team has destroyed the Bank Doors!"
+msgstr ""
+
+msgid "Allied team has secured the first Gold Crate!"
+msgstr ""
+
+msgid "Allied team has secured the second Gold Crate!"
+msgstr ""
+
+msgid "Allied team is escaping with the Gold Crates!"
+msgstr ""
+
+msgid "Allied team escaped with the Gold Crates!"
+msgstr ""
+
+msgid "Tank Barrier #1 has been constructed."
+msgstr ""
+
+msgid "Tank Barrier #2 has been constructed."
+msgstr ""
+
+msgid "Truck Barrier #1 has been constructed."
+msgstr ""
+
+msgid "Truck Barrier #2 has been constructed."
+msgstr ""
+
+msgid "The Truck has been damaged!"
+msgstr ""
+
+msgid "Tank Barrier #1 has been destroyed."
+msgstr ""
+
+msgid "Tank Barrier #2 has been destroyed."
+msgstr ""
+
+msgid "Truck Barrier #1 has been destroyed."
+msgstr ""
+
+msgid "Truck Barrier #2 has been destroyed."
+msgstr ""
+
+msgid "The Truck has been repaired!"
+msgstr ""
+
+msgid "The Bunker MG Nest has been constructed."
+msgstr ""
+
+msgid "The Axis Road MG Nest has been constructed."
+msgstr ""
+
+msgid "The Axis Watchtower MG Nest has been constructed."
+msgstr ""
+
+msgid "Axis reclaim the Forward Bunker!"
+msgstr ""
+
+msgid "Allies have breached the Main Entrance and secured the Forward Bunker!"
+msgstr ""
+
+msgid "Allies have breached the Side Entrance!"
+msgstr ""
+
+msgid "The Bunker MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Axis Road MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Axis Watchtower MG Nest has been destroyed."
+msgstr ""
+
+msgid "Allies have secured the West Radar Parts!"
+msgstr ""
+
+msgid "Allies have secured the East Radar Parts!"
+msgstr ""
+
+msgid "The Track Switch MG Nest has been constructed."
+msgstr ""
+
+msgid "The Depot Yard MG has been constructed."
+msgstr ""
+
+msgid "Allies capture the Depot Yard!"
+msgstr ""
+
+msgid "Rail Gun Firing Controls destroyed!"
+msgstr ""
+
+msgid "Rail Gun Firing Controls rebuilt!"
+msgstr ""
+
+msgid "The Track Switch MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Depot Yard MG has been destroyed."
+msgstr ""
+
+msgid "Axis captures the Depot Yard!"
+msgstr ""
+
+msgid "Track Switch raised!"
+msgstr ""
+
+msgid "Track Switch lowered!"
+msgstr ""
+
+msgid "Axis loaded the Rail Gun Ammo onto the First Tug!"
+msgstr ""
+
+msgid "Axis transported the Ammo to the North Crane!"
+msgstr ""
+
+msgid "Axis transferred the Ammo to the Second Tug!"
+msgstr ""
+
+msgid "Axis team have loaded the Rail Gun!"
+msgstr ""
+
+msgid "Axis fired the Rail Gun!"
+msgstr ""
+
+msgid "Axis team has constructed the Tunnel MG!"
+msgstr ""
+
+msgid "Axis team has constructed the Side MG Nest!"
+msgstr ""
+
+msgid "Axis team has constructed the East Axis Base Fortification!"
+msgstr ""
+
+msgid "Axis team has constructed the West Axis Base Fortification!"
+msgstr ""
+
+msgid "Allied team has constructed the Foot Bridge!"
+msgstr ""
+
+msgid "Allied team has constructed the Road MG Nest!"
+msgstr ""
+
+msgid "Allied team has breached the Tunnel Grate!"
+msgstr ""
+
+msgid "Axis team has destroyed the Foot Bridge!"
+msgstr ""
+
+msgid "Axis team has destroyed the Road MG Nest!"
+msgstr ""
+
+msgid "Allied team has reinforced the Bridge!"
+msgstr ""
+
+msgid "Axis team has damaged the Bridge!"
+msgstr ""
+
+msgid "Allied team has breached the Tunnel Doors!"
+msgstr ""
+
+msgid "Allied team has destroyed the Tunnel MG!"
+msgstr ""
+
+msgid "Allied team has destroyed the Side MG Nest!"
+msgstr ""
+
+msgid "Allied team has breached the Depot Gates!"
+msgstr ""
+
+msgid "Allied team has constructed the Side MG Nest!"
+msgstr ""
+
+msgid "Allied team has breached the Depot Side Wall!"
+msgstr ""
+
+msgid "Allied team has damaged the East Axis Base Fortification!"
+msgstr ""
+
+msgid "Allied team has destroyed the East Axis Base Fortification!"
+msgstr ""
+
+msgid "Allied team has damaged the West Axis Base Fortification!"
+msgstr ""
+
+msgid "Allied team has destroyed the West Axis Base Fortification!"
+msgstr ""
+
+msgid "Allied team has destroyed the Axis Fuel Dump!"
+msgstr ""
+
+msgid "was killed"
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"

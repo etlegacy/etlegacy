@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-07 00:40+0100\n"
+"PO-Revision-Date: 2013-07-08 12:03+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -3188,6 +3188,207 @@ msgstr "Gniazdo MG Osi w Glownym Bunkrze zostalo rozwalone."
 
 msgid "The Axis South-East MG Nest has been destroyed."
 msgstr "Poludniowo-Wschodnie Gniazdo MG Osi zostalo rozwalone."
+
+msgid "The Tank has been repaired!"
+msgstr "Czolg zostal naprawiony!"
+
+msgid "Allied team has stolen the Tank!"
+msgstr "Allianci ukradli Czolg!"
+
+msgid "The Tank has been damaged!"
+msgstr "Czolg zostal uszkodzony!"
+
+msgid "Allied team has destroyed the Bank Doors!"
+msgstr "Allianci rozwalili Drzwi Banku!"
+
+msgid "Allied team has secured the first Gold Crate!"
+msgstr "Allianci zabezpieczyli pierwsza Skrzynie Zlota!"
+
+msgid "Allied team has secured the second Gold Crate!"
+msgstr "Allianci zabezpieczyli druga Skrzynie Zlota!"
+
+msgid "Allied team is escaping with the Gold Crates!"
+msgstr "Allianci uciekaja z Skrzyniami Zlota!"
+
+msgid "Allied team escaped with the Gold Crates!"
+msgstr "Allianci uciekli z Skrzyniami Zlota!"
+
+msgid "Tank Barrier #1 has been constructed."
+msgstr "Barriera Czolgu #1 zostala wybudowana."
+
+msgid "Tank Barrier #2 has been constructed."
+msgstr "Barriera Czolgu #2 zostala wybudowana."
+
+msgid "Truck Barrier #1 has been constructed."
+msgstr "Barriera Ciezarowki #1 zostala wybudowana."
+
+msgid "Truck Barrier #2 has been constructed."
+msgstr "Barriera Ciezarowki #2 zostala wybudowana."
+
+msgid "The Truck has been damaged!"
+msgstr "Ciezarowka zostala zniszczona!"
+
+msgid "Tank Barrier #1 has been destroyed."
+msgstr "Barriera Czolgu #1 zostala zniszczona."
+
+msgid "Tank Barrier #2 has been destroyed."
+msgstr "Barriera Czolgu #2 zostala zniszczona."
+
+msgid "Truck Barrier #1 has been destroyed."
+msgstr "Barriera Ciezarowki #1 zostala zniszczona."
+
+msgid "Truck Barrier #2 has been destroyed."
+msgstr "Barriera Ciezarowki #2 zostala zniszczona."
+
+msgid "The Truck has been repaired!"
+msgstr "Ciezarowka zostala naprawiona!"
+
+msgid "The Bunker MG Nest has been constructed."
+msgstr "Gniazdo MG Bunkra zostalo wybudowane."
+
+msgid "The Axis Road MG Nest has been constructed."
+msgstr "Gniazdo MG Drogi Osi zostalo wybudowane."
+
+msgid "The Axis Watchtower MG Nest has been constructed."
+msgstr "Gniazdo MG Wiezy Obserwacyjnej Osi zostalo wybudowane."
+
+msgid "Axis reclaim the Forward Bunker!"
+msgstr "Os odzyskala Przedni Bunkier!"
+
+msgid "Allies have breached the Main Entrance and secured the Forward Bunker!"
+msgstr "Allianci przebili Glowne Wejscie i zabezpieczyli Przedni Bunkier!"
+
+msgid "Allies have breached the Side Entrance!"
+msgstr "Allianci przebili Boczne Wejscie!"
+
+msgid "The Bunker MG Nest has been destroyed."
+msgstr "Gniazdo MG Bunkra zostalo zniszczone."
+
+msgid "The Axis Road MG Nest has been destroyed."
+msgstr "Gniazdo MG Drogi Osi zostalo zniszczone."
+
+msgid "The Axis Watchtower MG Nest has been destroyed."
+msgstr "Gniazdo MG Wiezy Obserwacyjnej Osi zostalo zniszczone."
+
+msgid "Allies have secured the West Radar Parts!"
+msgstr "Alianci zabezpieczyli Zachodnia Czesc Radaru!"
+
+msgid "Allies have secured the East Radar Parts!"
+msgstr "Alianci zabezpieczyli Wchodnia Czesc Radaru!"
+
+msgid "The Track Switch MG Nest has been constructed."
+msgstr "Gniazdo MG Zmiany Toru zostalo wybudowane."
+
+msgid "The Depot Yard MG has been constructed."
+msgstr "MG Magazynu zostalo wybudowane!"
+
+msgid "Allies capture the Depot Yard!"
+msgstr "Allianci przechwycili Magazyn!"
+
+msgid "Rail Gun Firing Controls destroyed!"
+msgstr "Kontrola Strzelania z Dziala na Torach zniszczona!"
+
+msgid "Rail Gun Firing Controls rebuilt!"
+msgstr "Kontrola Strzelania z Dziala na Torach odbudowana!"
+
+msgid "The Track Switch MG Nest has been destroyed."
+msgstr "Gniazdo MG Zmiany Toru zostalo zniszczone."
+
+msgid "The Depot Yard MG has been destroyed."
+msgstr "MG Magazynu zostalo zniszczone."
+
+msgid "Axis captures the Depot Yard!"
+msgstr "Os przechwycila Magazyn!"
+
+msgid "Track Switch raised!"
+msgstr "Przelacznik Toru podniesiony!"
+
+msgid "Track Switch lowered!"
+msgstr "Przelacznik Toru obnizony!"
+
+msgid "Axis loaded the Rail Gun Ammo onto the First Tug!"
+msgstr "Os zaladowala Amunicje do Dziala na Torach do pierwszego Holownika!"
+
+msgid "Axis transported the Ammo to the North Crane!"
+msgstr "Os przetransportowala Amunicje do Polnocnego Dzwigu!"
+
+msgid "Axis transferred the Ammo to the Second Tug!"
+msgstr "Os przeniosla Amunicja do Drugiego Holownika!"
+
+msgid "Axis team have loaded the Rail Gun!"
+msgstr "Os zaladowala Dzialo na Torach!"
+
+msgid "Axis fired the Rail Gun!"
+msgstr "Os wystrzelila z Dziala na Torach!"
+
+msgid "Axis team has constructed the Tunnel MG!"
+msgstr "Os zbudowala Tunel MG"
+
+msgid "Axis team has constructed the Side MG Nest!"
+msgstr "Os zbudowala Boczne Gniazdo MG!"
+
+msgid "Axis team has constructed the East Axis Base Fortification!"
+msgstr "Os zbudowala Wschodnie Umocnienia Bazy!"
+
+msgid "Axis team has constructed the West Axis Base Fortification!"
+msgstr "Os zbudowala Zachodnie Umocnienia Bazy!"
+
+msgid "Allied team has constructed the Foot Bridge!"
+msgstr "Allianci wybudowali Most Kladkowy !"
+
+msgid "Allied team has constructed the Road MG Nest!"
+msgstr "Allianci wybudowali Gniazdo MG przy Drodze!"
+
+msgid "Allied team has breached the Tunnel Grate!"
+msgstr "Allianci przebili Brame Tunelu!"
+
+msgid "Axis team has destroyed the Foot Bridge!"
+msgstr "Os rozwalili Most Kladkowy!"
+
+msgid "Axis team has destroyed the Road MG Nest!"
+msgstr "Os rozwalili Gniazdo MG przy Drodze!"
+
+msgid "Allied team has reinforced the Bridge!"
+msgstr "Allianci umocnili Most!"
+
+msgid "Axis team has damaged the Bridge!"
+msgstr "Os rozwalila Most!"
+
+msgid "Allied team has breached the Tunnel Doors!"
+msgstr "Allianci przebili Drzwi Tunelu!"
+
+msgid "Allied team has destroyed the Tunnel MG!"
+msgstr "Allianci rozwalili MG Tunelu!"
+
+msgid "Allied team has destroyed the Side MG Nest!"
+msgstr "Allianci rozwalili Boczne Gniazdo MG!"
+
+msgid "Allied team has breached the Depot Gates!"
+msgstr "Allianci przebili Brame Magazynu!"
+
+msgid "Allied team has constructed the Side MG Nest!"
+msgstr "Allianci wybudowali Boczne Gniazdo MG!"
+
+msgid "Allied team has breached the Depot Side Wall!"
+msgstr "Alianci przebili Boczna Sciane Magazynu"
+
+msgid "Allied team has damaged the East Axis Base Fortification!"
+msgstr "Allianci uszkodzili Wschodnie Umocnienia Bazy Osi!"
+
+msgid "Allied team has destroyed the East Axis Base Fortification!"
+msgstr "Allianci rozwalili Wschodnie Umocnienia Bazy Osi!"
+
+msgid "Allied team has damaged the West Axis Base Fortification!"
+msgstr "Allianci uszkodzili Zachodnie Umocnienia Bazy Osi!"
+
+msgid "Allied team has destroyed the West Axis Base Fortification!"
+msgstr "Allianci rozwalili Zachodnie Umocnienia Bazy Osi!"
+
+msgid "Allied team has destroyed the Axis Fuel Dump!"
+msgstr "Allianci rozwalili Zrzut Paliwa!"
+
+msgid "was killed"
+msgstr "zostal zabity"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
