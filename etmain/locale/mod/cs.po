@@ -8,33 +8,26 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-04-08 12:17+0100\n"
+"PO-Revision-Date: 2013-07-08 22:24+0100\n"
 "Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
 "Language-Team: Czech translators <mail@etlegacy.com>\n"
-"Language: \n"
+"Language: cs_CZ\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Czech\n"
-"X-Poedit-Country: CZECH REPUBLIC\n"
 "X-Poedit-SourceCharset: UTF-8\n"
+"X-Generator: Poedit 1.5.5\n"
 
-#: src/cgame/cg_consolecmds.c:511
-#: src/cgame/cg_consolecmds.c:551
+#: src/cgame/cg_consolecmds.c:511 src/cgame/cg_consolecmds.c:551
 #: src/cgame/cg_consolecmds.c:599
 msgid "Can't team voice chat as a spectator.\n"
 msgstr "Neni mozne vydavat hlasove prikazy tymu jako pozorovatel.\n"
-
-#: src/cgame/cg_consolecmds.c:574
-msgid "Can't voice chat as a spectator.\n"
-msgstr "Neni mozne vydavat hlasove prikazy jako pozorovatel.\n"
 
 #: src/cgame/cg_consolecmds.c:624
 msgid "Can't buddy voice chat as a spectator.\n"
 msgstr "Neni mozne vydavat hlasove prikazy spoluhraci jako pozorovatel.\n"
 
-#: src/cgame/cg_debriefing.c:1962
-#: src/cgame/cg_debriefing.c:3105
+#: src/cgame/cg_debriefing.c:1962 src/cgame/cg_debriefing.c:3105
 #: src/cgame/cg_scoreboard.c:602
 #, c-format
 msgid "CLOCK IS NOW SET TO %s!"
@@ -57,12 +50,8 @@ msgstr "POZOROVATEL"
 msgid "File complaint against %s for team-killing?"
 msgstr "Podat stiznost proti %s za zabiti spoluhrace?"
 
-#: src/cgame/cg_draw.c:2086
-#: src/cgame/cg_draw.c:2099
-#: src/cgame/cg_draw.c:2112
-#: src/cgame/cg_draw.c:2125
-#: src/cgame/cg_draw.c:2138
-#: src/cgame/cg_draw.c:2151
+#: src/cgame/cg_draw.c:2086 src/cgame/cg_draw.c:2099 src/cgame/cg_draw.c:2112
+#: src/cgame/cg_draw.c:2125 src/cgame/cg_draw.c:2138 src/cgame/cg_draw.c:2151
 #: src/cgame/cg_draw.c:2164
 #, c-format
 msgid "Press '%s' for YES, or '%s' for No"
@@ -120,14 +109,15 @@ msgstr "Stiskni %s pro nasledovani dalsiho hrace"
 #: src/cgame/cg_draw.c:2469
 #, c-format
 msgid "Press %s to %s multiview mode"
-msgstr "Stiskni %s pro % multiview zobrazeni"
+msgstr "Stiskni %s pro %s multiview zobrazeni"
 
 #: src/cgame/cg_draw.c:2530
 msgid "You are wounded and waiting for a medic."
 msgstr "Jsi ranen a cekas na zdravotnika."
 
 #: src/cgame/cg_draw.c:2540
-msgid "Press JUMP to go into reinforcement queue."
+#, fuzzy
+msgid "Press %s to go into reinforcement queue."
 msgstr "Stiskni SKOK pro navraceni do fronty posil."
 
 #: src/cgame/cg_draw.c:2550
@@ -153,8 +143,7 @@ msgstr "Zadne dalsi rozmisteni toto kolo"
 msgid "Deploying in %d seconds"
 msgstr "Rozmisteni za %d vterin"
 
-#: src/cgame/cg_draw.c:2611
-#: src/cgame/cg_draw.c:2621
+#: src/cgame/cg_draw.c:2611 src/cgame/cg_draw.c:2621
 msgid "Following"
 msgstr "Sledujes"
 
@@ -171,13 +160,11 @@ msgstr "Napiste ^3\\ready^* do konzole pro zacatek"
 msgid "(WARMUP) Match begins in:"
 msgstr "(ZAHRIVACI KOLO) Zápas zacne za:"
 
-#: src/cgame/cg_draw.c:2717
-#: src/cgame/cg_scoreboard.c:213
+#: src/cgame/cg_draw.c:2717 src/cgame/cg_scoreboard.c:213
 msgid "STOPWATCH ROUND"
 msgstr ""
 
-#: src/cgame/cg_draw_hud.c:1535
-#: src/cgame/cg_scoreboard.c:165
+#: src/cgame/cg_draw_hud.c:1535 src/cgame/cg_scoreboard.c:165
 msgid "WARMUP"
 msgstr "ZAHRIVANI"
 
@@ -201,10 +188,8 @@ msgstr "Uzivatel"
 msgid "is not on the server"
 msgstr "neni na tomto serveru"
 
-#: src/cgame/cg_scoreboard.c:165
-#: src/cgame/cg_scoreboard.c:171
-#: src/cgame/cg_scoreboard.c:175
-#: src/cgame/cg_scoreboard.c:180
+#: src/cgame/cg_scoreboard.c:165 src/cgame/cg_scoreboard.c:171
+#: src/cgame/cg_scoreboard.c:175 src/cgame/cg_scoreboard.c:180
 msgid "MISSION TIME:"
 msgstr "CAS MISE:"
 
@@ -228,35 +213,28 @@ msgstr "KOLO"
 msgid "SCORE"
 msgstr "SKORE"
 
-#: src/cgame/cg_scoreboard.c:373
-#: src/cgame/cg_scoreboard.c:536
+#: src/cgame/cg_scoreboard.c:373 src/cgame/cg_scoreboard.c:536
 msgid "^3CONNECTING"
 msgstr "^3PRIPOJUJE"
 
-#: src/cgame/cg_scoreboard.c:377
-#: src/cgame/cg_scoreboard.c:540
+#: src/cgame/cg_scoreboard.c:377 src/cgame/cg_scoreboard.c:540
 msgid "^3SPECTATOR"
 msgstr "^3POZORUJE"
 
-#: src/cgame/cg_scoreboard.c:666
-#: src/cgame/cg_scoreboard.c:683
+#: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:683
 msgid "AXIS"
 msgstr "OSA"
 
-#: src/cgame/cg_scoreboard.c:666
-#: src/cgame/cg_scoreboard.c:673
-#: src/cgame/cg_scoreboard.c:683
-#: src/cgame/cg_scoreboard.c:687
+#: src/cgame/cg_scoreboard.c:666 src/cgame/cg_scoreboard.c:673
+#: src/cgame/cg_scoreboard.c:683 src/cgame/cg_scoreboard.c:687
 msgid "PLAYERS"
 msgstr "HRACU"
 
-#: src/cgame/cg_scoreboard.c:667
-#: src/cgame/cg_scoreboard.c:674
+#: src/cgame/cg_scoreboard.c:667 src/cgame/cg_scoreboard.c:674
 msgid "FIRST BLOOD"
 msgstr "PRVNI KREV"
 
-#: src/cgame/cg_scoreboard.c:673
-#: src/cgame/cg_scoreboard.c:687
+#: src/cgame/cg_scoreboard.c:673 src/cgame/cg_scoreboard.c:687
 msgid "ALLIES"
 msgstr "SPOJENCI"
 
@@ -347,8 +325,15 @@ msgstr "VYBRAT PROFIL"
 msgid "CREATE PROFILE"
 msgstr "VYTVORIT PROFIL"
 
-msgid "Please choose your initial settings below. You can change these at any time and access more advanced options by visiting the Options Menu. Should more than one person wish to play Wolfenstein: Enemy Territory, you can create additional profiles by visiting the Profiles Menu."
-msgstr "Prosim vyberte svoje pocatecni nastaveni. Pozdeji je mozne vsechna nastaveni zmenit a provest dalsi upravy v menu Nastaveni. Navic je mozne vytvorit ruzna nastaveni pro jine hrace pri vytvoreni noveho profilu v menu Profily."
+msgid ""
+"Please choose your initial settings below. You can change these at any time "
+"and access more advanced options by visiting the Options Menu. Should more "
+"than one person wish to play Wolfenstein: Enemy Territory, you can create "
+"additional profiles by visiting the Profiles Menu."
+msgstr ""
+"Prosim vyberte svoje pocatecni nastaveni. Pozdeji je mozne vsechna nastaveni "
+"zmenit a provest dalsi upravy v menu Nastaveni. Navic je mozne vytvorit "
+"ruzna nastaveni pro jine hrace pri vytvoreni noveho profilu v menu Profily."
 
 msgid "Player Alias:"
 msgstr "Prezdivka:"
@@ -1196,8 +1181,12 @@ msgstr "KALIBRACE JASU"
 msgid "General Brightness Calibration (All Color Depths)"
 msgstr "Obecna kalibrace jasu (vsechny hloubky barev)"
 
-msgid "1. Move the slider below and/or the brightness on your monitor until you can see 16"
-msgstr "1. Presun posuvnik dole anebo nastaveni jasu na tvem monitoru dokud neuvidis 16"
+msgid ""
+"1. Move the slider below and/or the brightness on your monitor until you can "
+"see 16"
+msgstr ""
+"1. Presun posuvnik dole anebo nastaveni jasu na tvem monitoru dokud neuvidis "
+"16"
 
 msgid "     separate bars below of equal differing brightness."
 msgstr "     oddelenych mrizi pod stejnymi rozdily v jasu"
@@ -1211,7 +1200,9 @@ msgstr ""
 msgid "1. Move the slider below until you can see 3 separate bars below."
 msgstr ""
 
-msgid "2. Adjust the slider until there is no difference between the left and middle boxes."
+msgid ""
+"2. Adjust the slider until there is no difference between the left and "
+"middle boxes."
 msgstr ""
 
 msgid "3. Click the BACK button."
@@ -1490,10 +1481,15 @@ msgstr "Timothee Besset"
 msgid "Additional Programming"
 msgstr "Dalsi programovani"
 
-msgid "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena (TM) technology."
-msgstr "Wolfenstein: Enemy Territory pohani Quake III Arena (TM) technologie od id Software"
+msgid ""
+"Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
+"(TM) technology."
+msgstr ""
+"Wolfenstein: Enemy Territory pohani Quake III Arena (TM) technologie od id "
+"Software"
 
-msgid "Production, development and technical assistance provided by id Software."
+msgid ""
+"Production, development and technical assistance provided by id Software."
 msgstr "Produkci, vyvojovou a technickou asistenci poskytlo id Software."
 
 msgid "PRODUCED BY ACTIVISION"
@@ -1565,17 +1561,33 @@ msgstr ""
 msgid "Testers:"
 msgstr "Testeri:"
 
-msgid "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel Kannard, Cory Rice"
-msgstr "Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel Kannard, Cory Rice"
+msgid ""
+"Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
+"Kannard, Cory Rice"
+msgstr ""
+"Matt Nelson, Shane Sasaki, Erik Melen, Erik Beaumont, Sean Berrett, Daniel "
+"Kannard, Cory Rice"
 
-msgid "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max Martin, Jim Call"
-msgstr "Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max Martin, Jim Call"
+msgid ""
+"Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
+"Martin, Jim Call"
+msgstr ""
+"Mike Castillo - Walsh, Randolph L. S. d'Amore, Andrew S. Molloy, Robert Max "
+"Martin, Jim Call"
 
-msgid "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, Lawrence Wong"
-msgstr "Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, Lawrence Wong"
+msgid ""
+"Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
+"Lawrence Wong"
+msgstr ""
+"Julian Dimarco, Ayal Moreno, Charlie Staples, James White, Paul Fortin, "
+"Lawrence Wong"
 
-msgid "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas Todd, Mike Restifo"
-msgstr "Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas Todd, Mike Restifo"
+msgid ""
+"Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
+"Todd, Mike Restifo"
+msgstr ""
+"Chris Wagener, Kyle C. Jackson, Paul Goldilla, Stephen Peterson, Douglas "
+"Todd, Mike Restifo"
 
 msgid "Chris Keim"
 msgstr "Chris Keim"
@@ -1670,8 +1682,12 @@ msgstr "Hlas spojeneckeho velitele"
 msgid "SPECIAL THANKS TO"
 msgstr "ZVLASTNI PODEKOVANI"
 
-msgid "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve Software."
-msgstr "Return to Castle Wolfenstein byl vytvoren studii Gray Matter Studios & Nerve Software."
+msgid ""
+"Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
+"Software."
+msgstr ""
+"Return to Castle Wolfenstein byl vytvoren studii Gray Matter Studios & Nerve "
+"Software."
 
 msgid "We would like to thank both developers for their help and support"
 msgstr "Chteli bychom podekovat obema vyvojarum za jejich podporu"
@@ -1712,8 +1728,12 @@ msgstr "MAC OS X PORT"
 msgid "Brad Oliver"
 msgstr "Brad Oliver"
 
-msgid "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and other countries."
-msgstr "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and other countries."
+msgid ""
+"Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
+"other countries."
+msgstr ""
+"Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
+"other countries."
 
 msgid "ET Legacy Website"
 msgstr "Webova stranka ET: Legacy"
@@ -1721,8 +1741,19 @@ msgstr "Webova stranka ET: Legacy"
 msgid " 2012-2013 ET Legacy developers - under the terms of GPL version 3."
 msgstr " 2012-2013 ET: Legacy vyvojari - pod licenci GPL verze 3."
 
-msgid " 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id Software name, and the id logo are either registered trademarks or trademarks of Id Software, Inc. in the United States and/or other countries. All other trademarks and trade names are the properties of their respective owners."
-msgstr " 2003 Id Software, Inc. Vsechna prava vyhrazena. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, nazev id Software a id logo jsou bud registrovane ochranne znamky nebo znacky Id Software, Inc. ve Spojenych statech anebo dalsich zemich. Vsechny dalsi ochranne znamky a obchodni znacky jsou vlastnictvim jejich majitelu."
+msgid ""
+" 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
+"Software name, and the id logo are either registered trademarks or "
+"trademarks of Id Software, Inc. in the United States and/or other countries. "
+"All other trademarks and trade names are the properties of their respective "
+"owners."
+msgstr ""
+" 2003 Id Software, Inc. Vsechna prava vyhrazena. Wolfenstein: Enemy "
+"Territory, Return to Castle Wolfenstein, the Return to Castle Wolfenstein "
+"logo, nazev id Software a id logo jsou bud registrovane ochranne znamky nebo "
+"znacky Id Software, Inc. ve Spojenych statech anebo dalsich zemich. Vsechny "
+"dalsi ochranne znamky a obchodni znacky jsou vlastnictvim jejich majitelu."
 
 msgid "Yeah, right, like YOU have"
 msgstr "Jasne, jako bys mel"
@@ -2130,6 +2161,263 @@ msgstr ""
 msgid "0. Escort Vehicle"
 msgstr ""
 
+msgid "Path cleared."
+msgstr ""
+
+msgid "The enemy is weakened."
+msgstr ""
+
+msgid "All clear."
+msgstr ""
+
+msgid "Incoming!"
+msgstr ""
+
+msgid "Fire in the hole!"
+msgstr ""
+
+msgid "I'm on defense."
+msgstr ""
+
+msgid "I'm on offense."
+msgstr ""
+
+msgid "Taking fire!"
+msgstr ""
+
+msgid "Mines cleared."
+msgstr ""
+
+msgid "Enemy in disguise."
+msgstr ""
+
+msgid "Need a Medic!"
+msgstr ""
+
+msgid "I need ammo!"
+msgstr ""
+
+msgid "I need backup!"
+msgstr ""
+
+msgid "We need an engineer!"
+msgstr ""
+
+msgid "Cover me!"
+msgstr ""
+
+msgid "Hold your fire!"
+msgstr ""
+
+msgid "Where to?"
+msgstr ""
+
+msgid "We need Covert Ops!"
+msgstr ""
+
+#, fuzzy
+msgid "Follow me!"
+msgstr "Sledujes"
+
+msgid "Let's go!"
+msgstr ""
+
+msgid "Move!"
+msgstr ""
+
+msgid "Clear the path!"
+msgstr ""
+
+msgid "Defend our objective!"
+msgstr ""
+
+msgid "Disarm the dynamite!"
+msgstr ""
+
+msgid "Clear the mines!"
+msgstr ""
+
+msgid "Reinforce the offense!"
+msgstr ""
+
+msgid "Reinforce the defense!"
+msgstr ""
+
+msgid "Affirmative!"
+msgstr ""
+
+msgid "No!"
+msgstr ""
+
+msgid "Thank you!"
+msgstr ""
+
+msgid "You're welcome."
+msgstr ""
+
+msgid "Bitte sehr."
+msgstr ""
+
+msgid "Ja!"
+msgstr ""
+
+msgid "Nein!"
+msgstr ""
+
+msgid "Kein problem."
+msgstr ""
+
+#, fuzzy
+msgid "Sorry!"
+msgstr "S. Promin"
+
+#, fuzzy
+msgid "Oops!"
+msgstr "O. Oops"
+
+msgid "Yes!"
+msgstr ""
+
+msgid "Jawohl!"
+msgstr ""
+
+msgid "Negative!"
+msgstr ""
+
+msgid "Hi!"
+msgstr ""
+
+msgid "Hello!"
+msgstr ""
+
+msgid "Hallo!"
+msgstr ""
+
+msgid "Good bye."
+msgstr ""
+
+msgid "Auf wiedersehen."
+msgstr ""
+
+msgid "Bye."
+msgstr ""
+
+#, fuzzy
+msgid "Great shot!"
+msgstr "6. Skvela trefa"
+
+msgid "You got it, man!"
+msgstr ""
+
+msgid "Yeah!"
+msgstr ""
+
+msgid "Yoohoo!"
+msgstr ""
+
+msgid "Hahaa!"
+msgstr ""
+
+msgid "Alright!"
+msgstr ""
+
+msgid "Woo!"
+msgstr ""
+
+msgid "Yeehaa!"
+msgstr ""
+
+msgid "'Atta way, baby!"
+msgstr ""
+
+msgid "Jahaa!"
+msgstr ""
+
+msgid "Wunderbar!"
+msgstr ""
+
+msgid "Excellent!"
+msgstr ""
+
+msgid "Oh yes!"
+msgstr ""
+
+msgid "Sehr gut!"
+msgstr ""
+
+#, fuzzy
+msgid "Thanks!"
+msgstr "T. Dekuji"
+
+msgid "Danke!"
+msgstr ""
+
+msgid "Danke sehr!"
+msgstr ""
+
+msgid "No problem."
+msgstr ""
+
+msgid "Good game!"
+msgstr ""
+
+msgid "Command acknowledged!"
+msgstr ""
+
+msgid "Command declined!"
+msgstr ""
+
+msgid "Command completed!"
+msgstr ""
+
+msgid "Destroy primary objective!"
+msgstr ""
+
+msgid "Destroy secondary objective!"
+msgstr ""
+
+msgid "Destroy construction!"
+msgstr ""
+
+msgid "I'm constructing!"
+msgstr ""
+
+msgid "Repair the vehicle!"
+msgstr ""
+
+msgid "Disable the vehicle!"
+msgstr ""
+
+msgid "Escort the vehicle!"
+msgstr ""
+
+msgid "Covering fire!"
+msgstr ""
+
+msgid "I'm a soldier."
+msgstr ""
+
+msgid "I'm an engineer."
+msgstr ""
+
+msgid "I'm a medic."
+msgstr ""
+
+msgid "I'm a field ops."
+msgstr ""
+
+msgid "I'm a covert ops."
+msgstr ""
+
+msgid "Create a Fireteam?"
+msgstr ""
+
+msgid "Make Fireteam private?"
+msgstr ""
+
+msgid "Response Sent"
+msgstr ""
+
 msgid "^1Legacy"
 msgstr "^1Legacy"
 
@@ -2301,10 +2589,14 @@ msgstr "ODESLAT"
 msgid "RESPAWNING"
 msgstr ""
 
-msgid "This server has Max Lives enabled. Tapping out now will lose a life. Are you sure?"
+msgid ""
+"This server has Max Lives enabled. Tapping out now will lose a life. Are you "
+"sure?"
 msgstr ""
 
-msgid "In Last Man Standing mode you will not respawn if you tap out now. Are you sure?"
+msgid ""
+"In Last Man Standing mode you will not respawn if you tap out now. Are you "
+"sure?"
 msgstr ""
 
 msgid "MAX OMNI-BOT"
@@ -2319,14 +2611,950 @@ msgstr "VYKOPNOUT OMNI-BOTa"
 msgid "Yes"
 msgstr "Ano"
 
-msgid "Set recommended video settings"
+#, fuzzy
+msgid ""
+"Set recommended video settings\n"
+"and return to the main menu?"
 msgstr "Pouzit doporucene video nastaveni"
 
-msgid "Do you want to open"
+#, fuzzy
+msgid ""
+"Set recommended video settings\n"
+"and return to the ingame menu?"
+msgstr "Pouzit doporucene video nastaveni"
+
+#, fuzzy
+msgid ""
+"Do you want to open\n"
+" www.etlegacy.com ?"
 msgstr "Chces otevrit"
 
-msgid "^3Thank you for installing ET:Legacy."
-msgstr "^3Dekujeme za instalaci ET: Legacy."
+msgid ""
+"^3Thank you for installing ET:Legacy.\n"
+"\n"
+"^3Visit ^1www.etlegacy.com^3 for more information.\n"
+"\n"
+"^3Let's keep ET alive!"
+msgstr ""
+
+#, fuzzy
+msgid "HOST GAME: EXTENDED"
+msgstr "HOSTOVAT HRU: POKROCILE"
+
+msgid "CLEAN"
+msgstr ""
+
+msgid "HOMEPATH CLEAN UP"
+msgstr ""
+
+msgid "This will delete all unnecessary files from you fs_homepath."
+msgstr ""
+
+msgid "A simple clean will remove tmp- and custom pk3 files."
+msgstr ""
+
+msgid ""
+"A full clean will remove all downloaded files like map-,\n"
+" campaign- and custom pk3 files."
+msgstr ""
+
+msgid "^3WARNING: Use at your own risk!"
+msgstr ""
+
+msgid "Consult our wiki for documentation."
+msgstr ""
+
+msgid "Press 'ABORT' if you don't know what you are doing here."
+msgstr ""
+
+msgid "ABORT"
+msgstr ""
+
+#, fuzzy
+msgid "SIMPLE CLEAN"
+msgstr "JEDNODUCHE"
+
+msgid "FULL CLEAN"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "unknown cmd"
+msgstr ""
+
+#, fuzzy
+msgid "Server:"
+msgstr "IP serveru:"
+
+msgid "changed to"
+msgstr ""
+
+#, fuzzy
+msgid "Auto Map Zoom:"
+msgstr "Priblizeni kompasu:"
+
+#, fuzzy
+msgid "was killed by"
+msgstr "Zabil jsi"
+
+msgid "^1WAS KILLED BY TEAMMATE^7"
+msgstr ""
+
+msgid "Arming landmine..."
+msgstr ""
+
+msgid "Landmine armed..."
+msgstr ""
+
+msgid "Dynamite is set, but NOT armed!"
+msgstr ""
+
+#, fuzzy
+msgid "Arming dynamite..."
+msgstr "Ceka se na nacteni hry..."
+
+msgid "Dynamite is now armed with a 30 second timer!"
+msgstr ""
+
+msgid "Defusing landmine"
+msgstr ""
+
+msgid "Landmine defused..."
+msgstr ""
+
+msgid "Defusing dynamite..."
+msgstr ""
+
+msgid "Constructing..."
+msgstr ""
+
+msgid "was sniped by"
+msgstr ""
+
+msgid "was mown down by"
+msgstr ""
+
+msgid "never saw"
+msgstr ""
+
+msgid "was cooked by"
+msgstr ""
+
+msgid "played with fire"
+msgstr ""
+
+msgid "failed to spot"
+msgstr ""
+
+msgid "was silenced by"
+msgstr ""
+
+msgid "dove on his own grenade"
+msgstr ""
+
+msgid "vaporized himself"
+msgstr ""
+
+msgid "never saw his own mortar round coming"
+msgstr ""
+
+msgid "killed himself"
+msgstr ""
+
+msgid "ate his own rifle grenade"
+msgstr ""
+
+msgid "obliterated himself"
+msgstr ""
+
+msgid "Fire Mission: ^3Firing for effect!"
+msgstr ""
+
+msgid "fired-for-effect on himself"
+msgstr ""
+
+msgid "embraced his own satchel explosion"
+msgstr "zostal uciszony przez"
+
+msgid "failed to spot his own landmine"
+msgstr ""
+
+msgid "dynamited himself to pieces"
+msgstr ""
+
+msgid "^3PREPARE TO FIGHT!\n"
+msgstr ""
+
+msgid "^1FIGHT!\n"
+msgstr ""
+
+msgid "was stabbed by"
+msgstr ""
+
+msgid "was exploded by"
+msgstr ""
+
+msgid "was blasted by"
+msgstr ""
+
+msgid "Affirmative!!"
+msgstr ""
+
+msgid "^1Spam Protection^7: VoiceChat ignored"
+msgstr ""
+
+msgid "I need a Medic!"
+msgstr ""
+
+msgid "entered the game\n"
+msgstr ""
+
+msgid "was shelled by"
+msgstr ""
+
+msgid "Mines have been reported in this area."
+msgstr ""
+
+msgid "was perforated by"
+msgstr ""
+
+msgid "'s mortar round coming"
+msgstr ""
+
+msgid "'s artillery support"
+msgstr ""
+
+msgid "rediscovered gravity."
+msgstr ""
+
+msgid "'s Landmine"
+msgstr ""
+
+msgid "'s Mobile MG42"
+msgstr ""
+
+msgid "'s rifle grenade"
+msgstr ""
+
+msgid "'s support fire"
+msgstr ""
+
+msgid "'s crew-served MG"
+msgstr ""
+
+msgid "was thrown to his doom by"
+msgstr ""
+
+msgid "You have been revived by "
+msgstr ""
+
+msgid "Allies have built the Oasis Water Pump!"
+msgstr ""
+
+msgid "Allied Command Post constructed. Charge speed increased!"
+msgstr ""
+
+msgid "Axis Command Post constructed. Charge speed increased!"
+msgstr ""
+
+msgid "Allies capture the Old City!"
+msgstr ""
+
+msgid "Axis reclaim the Old City!"
+msgstr ""
+
+msgid "Allies have built the Old City Water Pump!"
+msgstr ""
+
+msgid "Allies have repaired both Water Pumps!"
+msgstr ""
+
+msgid "The Old City MG Nest has been constructed!"
+msgstr ""
+
+msgid "The Garrison MG Nest has been constructed!"
+msgstr ""
+
+msgid "Axis have damaged the Old City Water Pump!"
+msgstr ""
+
+msgid "Axis have damaged the Oasis Water Pump!"
+msgstr ""
+
+msgid "Axis have damaged both Water Pumps!"
+msgstr ""
+
+msgid "The Old City MG Nest has been damaged!"
+msgstr ""
+
+msgid "Axis team has destroyed the Allied Command Post!"
+msgstr ""
+
+msgid "Allies have breached the Old City wall"
+msgstr ""
+
+msgid "drowned"
+msgstr ""
+
+msgid "Picked up %s"
+msgstr "Podniosl %s"
+
+msgid "%s^7 has joined the %s^7!"
+msgstr ""
+
+msgid "Axis team"
+msgstr ""
+
+msgid "Allied team"
+msgstr ""
+
+#, fuzzy
+msgid "Spectators"
+msgstr "Nemi pozorovatele:"
+
+msgid "You must be a player or following a player to use +stats\n"
+msgstr ""
+
+msgid "^9You must be alive to use ^3/kill.\n"
+msgstr ""
+
+msgid "No vote in progress.\n"
+msgstr ""
+
+#, fuzzy
+msgid "Show Clock:"
+msgstr "Zobrazit krev:"
+
+msgid "No or bad challenge for address.\n"
+msgstr ""
+
+msgid "Match is already in progress!\n"
+msgstr ""
+
+msgid "^1** Referee Server Setting Change **\n"
+msgstr ""
+
+msgid "committed suicide"
+msgstr ""
+
+msgid "Your fireteam is now public"
+msgstr ""
+
+msgid "Your fireteam is now private"
+msgstr ""
+
+msgid "The Allies have too many players."
+msgstr ""
+
+msgid "The Axis have too many players."
+msgstr ""
+
+#, fuzzy
+msgid "Attack!"
+msgstr "Utok:"
+
+msgid "Fall back!"
+msgstr ""
+
+#: src/cgame/cg_players.c:315
+#, c-format
+msgid "Promoted to rank %s!"
+msgstr ""
+
+#: src/cgame/cg_players.c:365
+#, c-format
+msgid "Increased %s skill to level %i!"
+msgstr ""
+
+#: src/cgame/cg_players.c:367
+#, c-format
+msgid "You have been rewarded with %s"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:585
+#, c-format
+msgid "Planted at %s."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:587
+#, c-format
+msgid "Defused at %s."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:596
+#, c-format
+msgid "%s has been constructed."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:603
+#, c-format
+msgid "%s has been damaged."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:605
+#, c-format
+msgid "%s has been destroyed."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:627
+#, c-format
+msgid "%sSpotted by ^7%s%s at %s"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:631
+#, c-format
+msgid "%sSpotted by ^7%s"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:638
+#, c-format
+msgid "%s have stolen %s!"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:638
+msgid "Allies"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:638
+msgid "Axis"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:640
+#, c-format
+msgid "%s have returned %s!"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:666
+#, c-format
+msgid "%s^7 disconnected"
+msgstr ""
+
+msgid "Improved use of Explosive Ammunition"
+msgstr ""
+
+msgid "Improved Dexterity"
+msgstr ""
+
+msgid "Improved Construction and Destruction"
+msgstr ""
+
+msgid "a Flak Jacket"
+msgstr ""
+
+msgid "Improved use of Scoped Weapon Ammunition"
+msgstr ""
+
+msgid "Improved use of Sabotage and Misdirection"
+msgstr ""
+
+msgid "Breath Control"
+msgstr ""
+
+msgid "Assassin"
+msgstr ""
+
+msgid "Improved Resources"
+msgstr ""
+
+msgid "Improved Signals"
+msgstr ""
+
+msgid "Improved Air and Ground Support"
+msgstr ""
+
+msgid "Enemy Recognition"
+msgstr ""
+
+msgid "Medic Ammo"
+msgstr ""
+
+#, fuzzy
+msgid "Binoculars"
+msgstr "Priblizeni dalekohledu:"
+
+msgid "Full Revive"
+msgstr ""
+
+msgid "Adrenalin Self"
+msgstr ""
+
+msgid "Improved Projectile Resources"
+msgstr ""
+
+msgid "Heavy Weapon Proficiency"
+msgstr ""
+
+msgid "Improved Physical Fitness"
+msgstr ""
+
+msgid "Improved Health"
+msgstr ""
+
+msgid "Improved Weapon Handling"
+msgstr ""
+
+msgid "Trap Awareness"
+msgstr ""
+
+msgid "Improved use of Light Weapon Ammunition"
+msgstr ""
+
+#, fuzzy
+msgid "Faster Reload"
+msgstr "Atomaticke prebiti:"
+
+msgid "Improved Light Weapon Handling"
+msgstr ""
+
+msgid "Dual-Wield Pistols"
+msgstr ""
+
+msgid "Allies have destroyed the North Anti-Tank Gun!"
+msgstr ""
+
+msgid "Allied team has destroyed the Axis Command Post!"
+msgstr ""
+
+msgid "The Garrison MG Nest has been damaged!"
+msgstr ""
+
+msgid "Allied team has destroyed the South Anti-Tank Gun!"
+msgstr ""
+
+msgid "Allies have destroyed both Anti-Tank Guns!"
+msgstr ""
+
+msgid "The Allied West beach MG Nest has been constructed."
+msgstr ""
+
+msgid "The Allied Beach Assault Ramp has been constructed."
+msgstr ""
+
+msgid "The Allied East beach MG Nest has been constructed."
+msgstr ""
+
+msgid "Allied team has destroyed the Door Controls Generator!"
+msgstr ""
+
+msgid "Magnetic seal deactivated - opening emergency bunker doors"
+msgstr ""
+
+msgid "The Axis North-West MG Nest has been constructed."
+msgstr ""
+
+msgid "got buried under a pile of rubble"
+msgstr ""
+
+msgid "The Axis Main Bunker MG Nest has been constructed."
+msgstr ""
+
+msgid "The Axis South-East MG Nest has been constructed."
+msgstr ""
+
+msgid "Axis have constructed the Door Controls Generator!"
+msgstr ""
+
+msgid "Axis have destroyed the Allied Beach Assault Ramp."
+msgstr ""
+
+msgid "The Allied West beach MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Allied East beach MG Nest has been destroyed."
+msgstr ""
+
+msgid "Allies capture the Forward Bunker!"
+msgstr ""
+
+msgid "Axis capture the West Bunker!"
+msgstr ""
+
+msgid "Allies have destroyed the gun tracking"
+msgstr ""
+
+msgid ""
+"^3All players ready!^7\n"
+"Match starting..."
+msgstr ""
+
+msgid "The Axis North-West MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Axis Main Bunker MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Axis South-East MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Tank has been repaired!"
+msgstr ""
+
+msgid "Allied team has stolen the Tank!"
+msgstr ""
+
+msgid "The Tank has been damaged!"
+msgstr ""
+
+msgid "Allied team has destroyed the Bank Doors!"
+msgstr ""
+
+msgid "Allied team has secured the first Gold Crate!"
+msgstr ""
+
+msgid "Allied team has secured the second Gold Crate!"
+msgstr ""
+
+msgid "Allied team is escaping with the Gold Crates!"
+msgstr ""
+
+msgid "Allied team escaped with the Gold Crates!"
+msgstr ""
+
+msgid "Tank Barrier #1 has been constructed."
+msgstr ""
+
+msgid "Tank Barrier #2 has been constructed."
+msgstr ""
+
+msgid "Truck Barrier #1 has been constructed."
+msgstr ""
+
+msgid "Truck Barrier #2 has been constructed."
+msgstr ""
+
+msgid "The Truck has been damaged!"
+msgstr ""
+
+msgid "Tank Barrier #1 has been destroyed."
+msgstr ""
+
+msgid "Tank Barrier #2 has been destroyed."
+msgstr ""
+
+msgid "Truck Barrier #1 has been destroyed."
+msgstr ""
+
+msgid "Truck Barrier #2 has been destroyed."
+msgstr ""
+
+msgid "The Truck has been repaired!"
+msgstr ""
+
+msgid "The Bunker MG Nest has been constructed."
+msgstr ""
+
+msgid "The Axis Road MG Nest has been constructed."
+msgstr ""
+
+msgid "The Axis Watchtower MG Nest has been constructed."
+msgstr ""
+
+msgid "Axis reclaim the Forward Bunker!"
+msgstr ""
+
+msgid "Allies have breached the Main Entrance and secured the Forward Bunker!"
+msgstr ""
+
+msgid "Allies have breached the Side Entrance!"
+msgstr ""
+
+msgid "The Bunker MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Axis Road MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Axis Watchtower MG Nest has been destroyed."
+msgstr ""
+
+msgid "Allies have secured the West Radar Parts!"
+msgstr ""
+
+msgid "Allies have secured the East Radar Parts!"
+msgstr ""
+
+msgid "The Track Switch MG Nest has been constructed."
+msgstr ""
+
+msgid "The Depot Yard MG has been constructed."
+msgstr ""
+
+msgid "Allies capture the Depot Yard!"
+msgstr ""
+
+msgid "Rail Gun Firing Controls destroyed!"
+msgstr ""
+
+msgid "Rail Gun Firing Controls rebuilt!"
+msgstr ""
+
+msgid "The Track Switch MG Nest has been destroyed."
+msgstr ""
+
+msgid "The Depot Yard MG has been destroyed."
+msgstr ""
+
+msgid "Axis captures the Depot Yard!"
+msgstr ""
+
+msgid "Track Switch raised!"
+msgstr ""
+
+msgid "Track Switch lowered!"
+msgstr ""
+
+msgid "Axis loaded the Rail Gun Ammo onto the First Tug!"
+msgstr ""
+
+msgid "Axis transported the Ammo to the North Crane!"
+msgstr ""
+
+msgid "Axis transferred the Ammo to the Second Tug!"
+msgstr ""
+
+msgid "Axis team have loaded the Rail Gun!"
+msgstr ""
+
+msgid "Axis fired the Rail Gun!"
+msgstr ""
+
+msgid "Axis team has constructed the Tunnel MG!"
+msgstr ""
+
+msgid "Axis team has constructed the Side MG Nest!"
+msgstr ""
+
+msgid "Axis team has constructed the East Axis Base Fortification!"
+msgstr ""
+
+msgid "Axis team has constructed the West Axis Base Fortification!"
+msgstr ""
+
+msgid "Allied team has constructed the Foot Bridge!"
+msgstr ""
+
+msgid "Allied team has constructed the Road MG Nest!"
+msgstr ""
+
+msgid "Allied team has breached the Tunnel Grate!"
+msgstr ""
+
+msgid "Axis team has destroyed the Foot Bridge!"
+msgstr ""
+
+msgid "Axis team has destroyed the Road MG Nest!"
+msgstr ""
+
+msgid "Allied team has reinforced the Bridge!"
+msgstr ""
+
+msgid "Axis team has damaged the Bridge!"
+msgstr ""
+
+msgid "Allied team has breached the Tunnel Doors!"
+msgstr ""
+
+msgid "Allied team has destroyed the Tunnel MG!"
+msgstr ""
+
+msgid "Allied team has destroyed the Side MG Nest!"
+msgstr ""
+
+msgid "Allied team has breached the Depot Gates!"
+msgstr ""
+
+msgid "Allied team has constructed the Side MG Nest!"
+msgstr ""
+
+msgid "Allied team has breached the Depot Side Wall!"
+msgstr ""
+
+msgid "Allied team has damaged the East Axis Base Fortification!"
+msgstr ""
+
+msgid "Allied team has destroyed the East Axis Base Fortification!"
+msgstr ""
+
+msgid "Allied team has damaged the West Axis Base Fortification!"
+msgstr ""
+
+msgid "Allied team has destroyed the West Axis Base Fortification!"
+msgstr ""
+
+msgid "Allied team has destroyed the Axis Fuel Dump!"
+msgstr ""
+
+#, fuzzy
+msgid "was killed"
+msgstr "Zabil jsi"
+
+msgid "You are near the Old City Wall\n"
+msgstr ""
+
+msgid "You are near the Old City Water Pump\n"
+msgstr ""
+
+msgid "You are near the Oasis Water Pump\n"
+msgstr ""
+
+msgid "You are near the Allied Command Post\n"
+msgstr ""
+
+msgid "You are near the Old City MG Nest\n"
+msgstr ""
+
+msgid "You are near the Axis Command Post\n"
+msgstr ""
+
+msgid "You are near the Garrison MG Nest\n"
+msgstr ""
+
+msgid "You are near the North Anti-Tank Gun\n"
+msgstr ""
+
+msgid "You are near the South Anti-Tank Gun\n"
+msgstr ""
+
+msgid "You are near the Health and Ammo Cabinets\n"
+msgstr ""
+
+msgid "You are near the Allied East beach MG nest\n"
+msgstr ""
+
+msgid "You are near the Allied West beach MG nest\n"
+msgstr ""
+
+msgid "You are near the Allied Beach Assault Ramp\n"
+msgstr ""
+
+msgid "You are near the Command Post\n"
+msgstr ""
+
+msgid "You are near the Axis North-West MG nest\n"
+msgstr ""
+
+msgid "You are near the Axis Main Bunker MG nest\n"
+msgstr ""
+
+msgid "You are near the Axis South-East MG nest\n"
+msgstr ""
+
+msgid "You are near the Generator\n"
+msgstr ""
+
+msgid "You are near the Gun Controls\n"
+msgstr ""
+
+msgid "You are near the Tank\n"
+msgstr ""
+
+msgid "You are near Tank Barrier #1\n"
+msgstr ""
+
+msgid "You are near Tank Barrier #2\n"
+msgstr ""
+
+msgid "You are near the Bank Doors\n"
+msgstr ""
+
+msgid "You are near the Gold Crates\n"
+msgstr ""
+
+msgid "You are near the Truck\n"
+msgstr ""
+
+msgid "You are near Truck Barrier #1\n"
+msgstr ""
+
+msgid "You are near Truck Barrier #2\n"
+msgstr ""
+
+msgid "You are near the Axis Watchtower MG Nest\n"
+msgstr ""
+
+msgid "You are near the West Radar Parts\n"
+msgstr ""
+
+msgid "You are near the East Radar Parts\n"
+msgstr ""
+
+msgid "You are near the Side Entrance\n"
+msgstr ""
+
+msgid "You are near the Bunker MG Nest\n"
+msgstr ""
+
+msgid "You are near the Escape Truck\n"
+msgstr ""
+
+msgid "You are near the Main Entrance\n"
+msgstr ""
+
+msgid "You are near the Axis Road MG Nest\n"
+msgstr ""
+
+msgid "You are near the East Axis Base Fortification\n"
+msgstr ""
+
+msgid "You are near the West Axis Base Fortification\n"
+msgstr ""
+
+msgid "You are near the Fuel Dump\n"
+msgstr ""
+
+msgid "You are near the Fuel Depot Side Wall\n"
+msgstr ""
+
+msgid "You are near the Fuel Depot Front Gates\n"
+msgstr ""
+
+msgid "You are near the Side MG\n"
+msgstr ""
+
+msgid "You are near the Tunnel Doors\n"
+msgstr ""
+
+msgid "You are near the Tunnel MG\n"
+msgstr ""
+
+msgid "You are near the Foot Bridge\n"
+msgstr ""
+
+msgid "You are near the Bridge\n"
+msgstr ""
+
+msgid "You are near the Road MG\n"
+msgstr ""
+
+msgid "You are near the Track Switch MG Nest\n"
+msgstr ""
+
+msgid "You are near the Depot Yard MG Nest\n"
+msgstr ""
+
+msgid "You are near the First Tug\n"
+msgstr ""
+
+msgid "You are near the Second Tug\n"
+msgstr ""
+
+msgid "You are near the Rail Gun Firing Controls\n"
+msgstr ""
+
+msgid ""
+"^3All players ready!^7\n"
+"Match starting...\n"
+msgstr ""
+
+msgid "You are on the Allied team"
+msgstr ""
+
+msgid "^1*** Match Reset! ***\n"
+msgstr ""
+
+msgid "You are on the Axis team"
+msgstr ""
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
@@ -2342,13 +3570,11 @@ msgstr "Ceka se na odezvu...%i"
 msgid "Awaiting gamestate..."
 msgstr "Ceka se na nacteni hry..."
 
-#: src/ui/ui_main.c:2397
-#: src/ui/ui_main.c:2637
+#: src/ui/ui_main.c:2397 src/ui/ui_main.c:2637
 msgid "Waiting for new key... Press ESCAPE to cancel"
 msgstr "Ceka se na novou klavesu... Stiskni ESCAPE pro zruseni"
 
-#: src/ui/ui_main.c:2401
-#: src/ui/ui_main.c:2641
+#: src/ui/ui_main.c:2401 src/ui/ui_main.c:2641
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
 msgstr ""
 
@@ -2366,22 +3592,21 @@ msgstr ""
 msgid "Refresh Time: %s"
 msgstr ""
 
-#: src/ui/ui_main.c:4330
-#: src/ui/ui_main.c:4378
-#: src/ui/ui_main.c:4413
+#: src/ui/ui_main.c:4330 src/ui/ui_main.c:4378 src/ui/ui_main.c:4413
 msgid "Favorite already in list\n"
 msgstr ""
 
-#: src/ui/ui_main.c:4335
-#: src/ui/ui_main.c:4383
-#: src/ui/ui_main.c:4418
+#: src/ui/ui_main.c:4335 src/ui/ui_main.c:4383 src/ui/ui_main.c:4418
 msgid "Favorite list full\n"
 msgstr ""
 
-#: src/ui/ui_main.c:4340
-#: src/ui/ui_main.c:4388
-#: src/ui/ui_main.c:4423
+#: src/ui/ui_main.c:4340 src/ui/ui_main.c:4388 src/ui/ui_main.c:4423
 #, c-format
 msgid "Added favorite server %s\n"
 msgstr ""
 
+#~ msgid "Can't voice chat as a spectator.\n"
+#~ msgstr "Neni mozne vydavat hlasove prikazy jako pozorovatel.\n"
+
+#~ msgid "^3Thank you for installing ET:Legacy."
+#~ msgstr "^3Dekujeme za instalaci ET: Legacy."

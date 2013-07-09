@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-08 17:55+0100\n"
+"PO-Revision-Date: 2013-07-09 15:19+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -3542,6 +3542,100 @@ msgstr "Jestes blisko Drugiego Holownika\n"
 
 msgid "You are near the Rail Gun Firing Controls\n"
 msgstr "Jestes blisko Kontroli Strzelania Dziala na Torach\n"
+
+msgid ""
+"^3All players ready!^7\n"
+"Match starting...\n"
+msgstr ""
+"^3Wszyscy gracze gotowi!^7\n"
+"Mecz zaczyna...\n"
+
+msgid "You are on the Allied team"
+msgstr "Jestes w Zespole Alliantow"
+
+msgid "^1*** Match Reset! ***\n"
+msgstr "^1*** Reset Meczu! ***\n"
+
+msgid "You are on the Axis team"
+msgstr "Jestes w Zepspole Osi"
+
+#: src/cgame/cg_fireteamoverlay.c:446
+#, c-format
+msgid "Private Fireteam: %s"
+msgstr "Prywatny Zespol: %s"
+
+#: src/cgame/cg_fireteamoverlay.c:450
+#, c-format
+msgid "Fireteam: %s"
+msgstr "Zespol: %s"
+
+#: src/cgame/cg_info.c:585
+msgid "PLAYER STATS"
+msgstr "STATYSTYKI GRACZA"
+
+#: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802
+msgid "Weapon"
+msgstr "Bron"
+
+#: src/cgame/cg_info.c:598 src/cgame/cg_info.c:804
+msgid "Accuracy"
+msgstr "Celnosc"
+
+#: src/cgame/cg_info.c:600 src/cgame/cg_info.c:806
+msgid "Hits / Shots"
+msgstr "Hity / Strzal."
+
+#: src/cgame/cg_info.c:602 src/cgame/cg_info.c:808
+msgid "Kills"
+msgstr "Zabic"
+
+#: src/cgame/cg_info.c:604
+msgid "Deaths"
+msgstr "Zgonow"
+
+#: src/cgame/cg_info.c:606
+msgid "Headshots"
+msgstr "    W Glowe"
+
+#: src/cgame/cg_info.c:615
+msgid "No weapon info available."
+msgstr "Brak informacji o broni."
+
+#: src/cgame/cg_info.c:650
+msgid "Rank"
+msgstr "Ranga"
+
+#: src/cgame/cg_info.c:667
+msgid "Skills"
+msgstr "Umiejetnosci"
+
+#: src/cgame/cg_info.c:669
+msgid "Level"
+msgstr "Poziom"
+
+#: src/cgame/cg_info.c:671
+msgid "XP / Next Level"
+msgstr "XP / Nast Poziom"
+
+#: src/cgame/cg_info.c:675
+msgid "Medals"
+msgstr "Medale"
+
+#: src/cgame/cg_info.c:684
+msgid "No skills acquired!"
+msgstr "Brak nabytych umiejetnosci!"
+
+#: src/cgame/cg_info.c:792
+msgid "\"TOPSHOT\" ACCURACIES"
+msgstr "\"NAJSTZAL\" CELNOSC"
+
+#: src/cgame/cg_info.c:810
+msgid "Player"
+msgstr "Gracz"
+
+#: src/cgame/cg_info.c:818
+msgid "No qualifying weapon info available."
+msgstr "Brak dostepnych informacji o broni."
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format

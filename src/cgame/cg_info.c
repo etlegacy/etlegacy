@@ -582,7 +582,7 @@ void CG_GameStatsDraw(void)
 
 		y += 1;
 		y += tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor, "PLAYER STATS", 0.0f, 0, hStyle, hFont);
+		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor, CG_TranslateString("PLAYER STATS"), 0.0f, 0, hStyle, hFont);
 		y += 3;
 
 		y += 2;
@@ -593,17 +593,17 @@ void CG_GameStatsDraw(void)
 		CG_DrawRect(realX, y, GS_W, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Weapon", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Weapon"), 0.0f, 0, hStyle2, hFont2);
 		x += 66;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Accuracy", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Accuracy"), 0.0f, 0, hStyle2, hFont2);
 		x += 53;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Hits / Shots", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Hits / Shots"), 0.0f, 0, hStyle2, hFont2);
 		x += 62;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Kills", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Kills"), 0.0f, 0, hStyle2, hFont2);
 		x += 29;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Deaths", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Deaths"), 0.0f, 0, hStyle2, hFont2);
 		x += 40;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Headshots", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Headshots"), 0.0f, 0, hStyle2, hFont2);
 
 		x  = realX + 4;
 		y += 2;
@@ -612,7 +612,7 @@ void CG_GameStatsDraw(void)
 		if (gs->cWeapons == 0)
 		{
 			y += tSpacing;
-			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "No weapon info available.", 0.0f, 0, tStyle, tFont);
+			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, CG_TranslateString("No weapon info available."), 0.0f, 0, tStyle, tFont);
 		}
 		else
 		{
@@ -647,7 +647,7 @@ void CG_GameStatsDraw(void)
 		CG_DrawRect(realX, y, GS_W, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Rank", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Rank"), 0.0f, 0, hStyle2, hFont2);
 		x += 82;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "XP", 0.0f, 0, hStyle2, hFont2);
 
@@ -664,15 +664,15 @@ void CG_GameStatsDraw(void)
 		CG_DrawRect(realX, y, GS_W, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Skills", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Skills"), 0.0f, 0, hStyle2, hFont2);
 		x += 84;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Level", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Level"), 0.0f, 0, hStyle2, hFont2);
 		x += 40;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "XP / Next Level", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("XP / Next Level"), 0.0f, 0, hStyle2, hFont2);
 		if (cgs.gametype == GT_WOLF_CAMPAIGN)
 		{
 			x += 86;
-			CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Medals", 0.0f, 0, hStyle2, hFont2);
+			CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Medals"), 0.0f, 0, hStyle2, hFont2);
 		}
 
 		x = realX + 4;
@@ -681,7 +681,7 @@ void CG_GameStatsDraw(void)
 		if (gs->cSkills == 0)
 		{
 			y += tSpacing;
-			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "No skills acquired!", 0.0f, 0, tStyle, tFont);
+			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, CG_TranslateString("No skills acquired!"), 0.0f, 0, tStyle, tFont);
 		}
 		else
 		{
@@ -789,7 +789,7 @@ void CG_TopShotsDraw(void)
 
 		y += 1;
 		y += tSpacing;
-		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, "\"TOPSHOT\" ACCURACIES", 0.0f, 0, hStyle, hFont);
+		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, CG_TranslateString("\"TOPSHOT\" ACCURACIES"), 0.0f, 0, hStyle, hFont);
 		y += 4;
 
 		// Weapon stats
@@ -799,15 +799,15 @@ void CG_TopShotsDraw(void)
 
 		x += 4;
 		y += 1 + tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Weapon", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Weapon"), 0.0f, 0, hStyle2, hFont2);
 		x += 60;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Accuracy", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Accuracy"), 0.0f, 0, hStyle2, hFont2);
 		x += 53;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Hits / Shots", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Hits / Shots"), 0.0f, 0, hStyle2, hFont2);
 		x += 62;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Kills", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Kills"), 0.0f, 0, hStyle2, hFont2);
 		x += 32;
-		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, "Player", 0.0f, 0, hStyle2, hFont2);
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Player"), 0.0f, 0, hStyle2, hFont2);
 
 		x  = 640 + TS_X - TS_W + 4;
 		y += 1;
@@ -815,7 +815,7 @@ void CG_TopShotsDraw(void)
 		if (ts->cWeapons == 0)
 		{
 			y += tSpacing;
-			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, "No qualifying weapon info available.", 0.0f, 0, tStyle, tFont);
+			CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, CG_TranslateString("No qualifying weapon info available."), 0.0f, 0, tStyle, tFont);
 		}
 		else
 		{

@@ -443,11 +443,11 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 	if (f->priv)
 	{
-		Com_sprintf(buffer, 64, "Private Fireteam: %s", bg_fireteamNames[f->ident]);
+		Com_sprintf(buffer, 64, CG_TranslateString("Private Fireteam: %s"), bg_fireteamNames[f->ident]);
 	}
 	else
 	{
-		Com_sprintf(buffer, 64, "Fireteam: %s", bg_fireteamNames[f->ident]);
+		Com_sprintf(buffer, 64, CG_TranslateString("Fireteam: %s"), bg_fireteamNames[f->ident]);
 	}
 
 	Q_strupr(buffer);
