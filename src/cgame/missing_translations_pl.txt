@@ -1,5 +1,0 @@
-Corporal
-TRANSLATE("^3All players ready!^7\nMatch starting...\n");
-TRANSLATE("You are on the Allied team");
-TRANSLATE("^1*** Match Reset! ***\n");
-TRANSLATE("You are on the Axis team");
