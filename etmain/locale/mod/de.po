@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-08 22:24+0100\n"
+"PO-Revision-Date: 2013-07-09 15:23+0100\n"
 "Last-Translator: Vinzenz Krügl <harlekin@hirntot.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -3569,6 +3569,88 @@ msgid "^1*** Match Reset! ***\n"
 msgstr ""
 
 msgid "You are on the Axis team"
+msgstr ""
+
+#: src/cgame/cg_fireteamoverlay.c:446
+#, c-format
+msgid "Private Fireteam: %s"
+msgstr ""
+
+#: src/cgame/cg_fireteamoverlay.c:450
+#, c-format
+msgid "Fireteam: %s"
+msgstr ""
+
+#: src/cgame/cg_info.c:585
+#, fuzzy
+msgid "PLAYER STATS"
+msgstr "SPIELER"
+
+#: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802
+#, fuzzy
+msgid "Weapon"
+msgstr "Nächste Waffe:"
+
+#: src/cgame/cg_info.c:598 src/cgame/cg_info.c:804
+msgid "Accuracy"
+msgstr ""
+
+#: src/cgame/cg_info.c:600 src/cgame/cg_info.c:806
+msgid "Hits / Shots"
+msgstr ""
+
+#: src/cgame/cg_info.c:602 src/cgame/cg_info.c:808
+msgid "Kills"
+msgstr ""
+
+#: src/cgame/cg_info.c:604
+msgid "Deaths"
+msgstr ""
+
+#: src/cgame/cg_info.c:606
+#, fuzzy
+msgid "Headshots"
+msgstr "S. Guter Schuss"
+
+#: src/cgame/cg_info.c:615
+msgid "No weapon info available."
+msgstr ""
+
+#: src/cgame/cg_info.c:650
+msgid "Rank"
+msgstr ""
+
+#: src/cgame/cg_info.c:667
+msgid "Skills"
+msgstr ""
+
+#: src/cgame/cg_info.c:669
+msgid "Level"
+msgstr ""
+
+#: src/cgame/cg_info.c:671
+msgid "XP / Next Level"
+msgstr ""
+
+#: src/cgame/cg_info.c:675
+msgid "Medals"
+msgstr ""
+
+#: src/cgame/cg_info.c:684
+msgid "No skills acquired!"
+msgstr ""
+
+#: src/cgame/cg_info.c:792
+msgid "\"TOPSHOT\" ACCURACIES"
+msgstr ""
+
+#: src/cgame/cg_info.c:810
+#, fuzzy
+msgid "Player"
+msgstr "Spieler Kicken:"
+
+#: src/cgame/cg_info.c:818
+msgid "No qualifying weapon info available."
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338
