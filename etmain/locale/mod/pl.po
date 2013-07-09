@@ -3469,7 +3469,7 @@ msgid "You are near Truck Barrier #1\n"
 msgstr "Jestes blisko Bariery Ciezarowki #1\n"
 
 msgid "You are near Truck Barrier #2\n"
-msgstr "Jestes blisko Bariery Ciezarowki #1\n"
+msgstr "Jestes blisko Bariery Ciezarowki #2\n"
 
 msgid "You are near the Axis Watchtower MG Nest\n"
 msgstr "Jestes blisko Gniazda MG w Wiezy Obserwacyjnej Osi\n"
