@@ -1344,8 +1344,13 @@ void SV_Frame(int msec)
 		return;
 	}
 
+	// Running as a server, but no map loaded
 	if (!com_sv_running->integer)
 	{
+#ifdef DEDICATED
+		// Block until something interesting happens
+		Sys_Sleep(-1);
+#endif
 		return;
 	}
 
