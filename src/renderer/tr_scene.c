@@ -258,7 +258,7 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 		}
 		if (r_numpolys >= r_maxpolyverts->integer)
 		{
-			ri.Printf(PRINT_DEVELOPER, "WARNING RE_AddPolysToScene: r_maxpolyverts[%i] reached. r_numpolys: &i\n", r_maxpolyverts->integer, r_numpolys);
+			ri.Printf(PRINT_DEVELOPER, "WARNING RE_AddPolysToScene: r_maxpolyverts[%i] reached. r_numpolys: %i\n", r_maxpolyverts->integer, r_numpolys);
 			return;
 		}
 
