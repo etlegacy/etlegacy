@@ -185,9 +185,7 @@ cvar_t *r_highQualityVideo;
 cvar_t *r_screenshotJpegQuality;
 
 cvar_t *r_maxpolys;
-int    max_polys;
 cvar_t *r_maxpolyverts;
-int    max_polyverts;
 
 // TODO: check if this crazy stuff is needed
 vec4hack_t     tess_xyz[SHADER_MAX_VERTEXES];
@@ -1254,7 +1252,7 @@ void R_Register(void)
 	r_printShaders = ri.Cvar_Get("r_printShaders", "0", 0);
 	r_saveFontData = ri.Cvar_Get("r_saveFontData", "0", 0);
 
-	//   with r_cache enabled, non-win32 OSes were leaking 24Mb per R_Init..
+	// with r_cache enabled, non-win32 OSes were leaking 24Mb per R_Init..
 	r_cache        = ri.Cvar_Get("r_cache", "1", CVAR_LATCH); // leaving it as this for backwards compability. but it caches models and shaders also
 	r_cacheShaders = ri.Cvar_Get("r_cacheShaders", "1", CVAR_LATCH);
 
@@ -1305,9 +1303,13 @@ void R_Register(void)
 
 	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE);
 
-	r_portalsky    = ri.Cvar_Get("cg_skybox", "1", 0);
-	r_maxpolys     = ri.Cvar_Get("r_maxpolys", va("%d", MAX_POLYS), 0);
-	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", va("%d", MAX_POLYVERTS), 0);
+	r_portalsky = ri.Cvar_Get("cg_skybox", "1", 0);
+
+	// note: MAX_POLYS and MAX_POLYVERTS are heavily increased in ET compared to q3
+	r_maxpolys = ri.Cvar_Get("r_maxpolys", va("%d", MAX_POLYS), CVAR_LATCH);     // now latched to check against used r_maxpolys and not MAX_POLYS
+	AssertCvarRange(r_maxpolys, 600, MAX_POLYS, qtrue); // 600 in vanilla Q3A - FIXME: find a good min value for ET:L
+	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", va("%d", MAX_POLYVERTS), CVAR_LATCH); // now latched to check against used r_maxpolyverts and not MAX_POLYVERTS
+	AssertCvarRange(r_maxpolyverts, 3000, MAX_POLYVERTS, qtrue); // 3000 in vanilla Q3A - FIXME: find a good min value for ET:L
 
 	r_highQualityVideo = ri.Cvar_Get("r_highQualityVideo", "1", CVAR_ARCHIVE);
 	// make sure all the commands added here are also
@@ -1392,23 +1394,11 @@ void R_Init(void)
 
 	R_Register();
 
-	max_polys = r_maxpolys->integer;
-	if (max_polys < MAX_POLYS)
-	{
-		max_polys = MAX_POLYS;
-	}
-
-	max_polyverts = r_maxpolyverts->integer;
-	if (max_polyverts < MAX_POLYVERTS)
-	{
-		max_polyverts = MAX_POLYVERTS;
-	}
-
-	ptr = ri.Hunk_Alloc(sizeof(*backEndData) + sizeof(srfPoly_t) * max_polys + sizeof(polyVert_t) * max_polyverts, h_low);
+	ptr = ri.Hunk_Alloc(sizeof(*backEndData) + sizeof(srfPoly_t) * r_maxpolys->integer + sizeof(polyVert_t) * r_maxpolyverts->integer, h_low);
 
 	backEndData            = (backEndData_t *) ptr;
 	backEndData->polys     = (srfPoly_t *) ((char *) ptr + sizeof(*backEndData));
-	backEndData->polyVerts = (polyVert_t *) ((char *) ptr + sizeof(*backEndData) + sizeof(srfPoly_t) * max_polys);
+	backEndData->polyVerts = (polyVert_t *) ((char *) ptr + sizeof(*backEndData) + sizeof(srfPoly_t) * r_maxpolys->integer);
 
 	R_InitNextFrame();
 
@@ -1505,7 +1495,7 @@ void RE_Shutdown(qboolean destroyWindow)
 	tr.registered = qfalse;
 }
 
-/*
+/**
  * @brief Touch all images to make sure they are resident
  */
 void RE_EndRegistration(void)

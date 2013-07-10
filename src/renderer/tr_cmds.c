@@ -262,8 +262,9 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 {
 	poly2dCommand_t *cmd;
 
-	if (r_numpolyverts + numverts > max_polyverts)
+	if (r_numpolyverts + numverts >= r_maxpolyverts->integer)
 	{
+		ri.Printf(PRINT_ALL, "Warning RE_2DPolyies: r_maxpolyverts reached\n");
 		return;
 	}
 

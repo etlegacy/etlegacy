@@ -326,9 +326,7 @@ void RB_ClipSkyPolygons(shaderCommands_t *input)
 
 /*
 ===================================================================================
-
 CLOUD VERTEX GENERATION
-
 ===================================================================================
 */
 
@@ -647,10 +645,8 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 {
 	int s, t;
 	int vertexStart = tess.numVertexes;
-	int tHeight, sWidth;
-
-	tHeight = maxs[1] - mins[1] + 1;
-	sWidth  = maxs[0] - mins[0] + 1;
+	int tHeight     = maxs[1] - mins[1] + 1;
+	int sWidth      = maxs[0] - mins[0] + 1;
 
 	// overflow check
 	RB_CHECKOVERFLOW((maxs[0] - mins[0]) * (maxs[1] - mins[1]), (sWidth - 1) * (tHeight - 1) * 6);
@@ -812,9 +808,7 @@ R_BuildCloudData
 */
 void R_BuildCloudData(shaderCommands_t *input)
 {
-	shader_t *shader;
-
-	shader = input->shader;
+	shader_t *shader = input->shader;
 
 	assert(shader->isSky);
 
@@ -912,7 +906,7 @@ void R_InitSkyTexCoords(float heightCloud)
 /*
 ==============
 RB_DrawSun
-    (SA) FIXME: sun should render behind clouds, so passing dark areas cover it up
+    FIXME: sun should render behind clouds, so passing dark areas cover it up
 ==============
 */
 void RB_DrawSun(void)
@@ -920,7 +914,6 @@ void RB_DrawSun(void)
 	float  size;
 	float  dist;
 	vec3_t origin, vec1, vec2;
-	vec3_t temp;
 	byte   color[4];
 
 	if (!tr.sunShader)
@@ -942,7 +935,7 @@ void RB_DrawSun(void)
 
 	dist = backEnd.viewParms.zFar / 1.75;       // div sqrt(3)
 
-	// (SA) shrunk the size of the sun
+	// shrunk the size of the sun
 	size = dist * 0.2;
 
 	VectorScale(tr.sunDirection, dist, origin);
@@ -957,11 +950,12 @@ void RB_DrawSun(void)
 
 	color[0] = color[1] = color[2] = color[3] = 255;
 
-	// (SA) simpler sun drawing
+	// simpler sun drawing
 	RB_BeginSurface(tr.sunShader, tess.fogNum);
 
 	RB_AddQuadStamp(origin, vec1, vec2, color);
 	/*
+	        // vec3_t temp; init moved down
 	        VectorCopy( origin, temp );
 	        VectorSubtract( temp, vec1, temp );
 	        VectorSubtract( temp, vec2, temp );
@@ -1015,10 +1009,11 @@ void RB_DrawSun(void)
 	*/
 	RB_EndSurface();
 
-
 	if (r_drawSun->integer > 1)     // draw flare effect
-	{   // (SA) FYI:    This is cheezy and was only a test so far.
-		//              If we decide to use the flare business I will /definatly/ improve all this
+	{
+		vec3_t temp;
+		// FYI: This is cheezy and was only a test so far.
+		//      If we decide to use the flare business I will /definatly/ improve all this
 
 		// get a point a little closer
 		dist = dist * 0.7;
@@ -1037,7 +1032,7 @@ void RB_DrawSun(void)
 		origin[1] += temp[1] * 500.0;
 		origin[2] += temp[2] * 500.0;
 
-		// (SA) FIXME: todo: flare effect should render last (on top of everything else) and only when sun is in view (sun moving out of camera past degree n should start to cause flare dimming until view angle to sun is off by angle n + x.
+		// FIXME: todo: flare effect should render last (on top of everything else) and only when sun is in view (sun moving out of camera past degree n should start to cause flare dimming until view angle to sun is off by angle n + x.
 
 		// draw the flare
 		RB_BeginSurface(tr.sunflareShader[0], tess.fogNum);
@@ -1132,7 +1127,6 @@ void RB_StageIteratorSky(void)
 	RB_StageIteratorGeneric();
 
 	// draw the inner skybox
-	// Rafael - drawing inner skybox
 	if (tess.shader->sky.innerbox[0] && tess.shader->sky.innerbox[0] != tr.defaultImage)
 	{
 		qglColor3f(tr.identityLight, tr.identityLight, tr.identityLight);

@@ -1827,7 +1827,7 @@ qboolean Hunk_CheckMark(void)
 void CL_ShutdownUI(void);
 void SV_ShutdownGameProgs(void);
 
-/*
+/**
  * @brief The server calls this before shutting down or loading a new map
  */
 void Hunk_Clear(void)
@@ -2144,9 +2144,7 @@ void Com_InitJournaling(void)
 
 /*
 ========================================================================
-
 EVENT LOOP
-
 ========================================================================
 */
 
@@ -2200,7 +2198,6 @@ void Com_QueueEvent(int time, sysEventType_t type, int value, int value2, int pt
 /*
 ================
 Com_GetSystemEvent
-
 ================
 */
 sysEvent_t Com_GetSystemEvent(void)
@@ -3425,7 +3422,6 @@ static void FindMatches(const char *s)
 /*
 ===============
 PrintMatches
-
 ===============
 */
 static void PrintMatches(const char *s)
@@ -3439,7 +3435,6 @@ static void PrintMatches(const char *s)
 /*
 ===============
 PrintCvarMatches
-
 ===============
 */
 static void PrintCvarMatches(const char *s)
@@ -3671,7 +3666,7 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
 	*hunkexpected = com_expectedhunkusage;
 }
 
-/*
+/**
  * @brief Perform Tab expansion
  */
 void Field_AutoComplete(field_t *field)
@@ -3681,7 +3676,7 @@ void Field_AutoComplete(field_t *field)
 	Field_CompleteCommand(completionField->buffer, qtrue, qtrue);
 }
 
-/*
+/**
  * @brief fills string array with len radom bytes, peferably from the OS randomizer
  * @author ioquake3
  */

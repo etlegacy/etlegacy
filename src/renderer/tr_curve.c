@@ -119,13 +119,9 @@ static void Transpose(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX_
 	}
 }
 
-/*
-=================
-MakeMeshNormals
-
-Handles all the complicated wrapping and degenerate cases
-=================
-*/
+/**
+ * @brief Handles all the complicated wrapping and degenerate cases
+ */
 static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE])
 {
 	int        i, j, k, dist;
@@ -137,14 +133,13 @@ static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE
 	drawVert_t *dv;
 	vec3_t     around[8], temp;
 	qboolean   good[8];
-	qboolean   wrapWidth, wrapHeight;
+	qboolean   wrapWidth = qfalse, wrapHeight = qfalse;
 	float      len;
 	static int neighbors[8][2] =
 	{
 		{ 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, -1 }, { -1, 0 }, { -1, 1 }
 	};
 
-	wrapWidth = qfalse;
 	for (i = 0 ; i < height ; i++)
 	{
 		VectorSubtract(ctrl[i][0].xyz, ctrl[i][width - 1].xyz, delta);
@@ -159,7 +154,6 @@ static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE
 		wrapWidth = qtrue;
 	}
 
-	wrapHeight = qfalse;
 	for (i = 0 ; i < width ; i++)
 	{
 		VectorSubtract(ctrl[0][i].xyz, ctrl[height - 1][i].xyz, delta);
@@ -589,14 +583,12 @@ R_GridInsertColumn
 srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3_t point, float loderror)
 {
 	int                   i, j;
-	int                   width, height, oldwidth;
+	int                   width = grid->width + 1, height, oldwidth = 0;
 	MAC_STATIC drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
 	float                 errorTable[2][MAX_GRID_SIZE];
 	float                 lodRadius;
 	vec3_t                lodOrigin;
 
-	oldwidth = 0;
-	width    = grid->width + 1;
 	if (width > MAX_GRID_SIZE)
 	{
 		return NULL;
@@ -653,15 +645,12 @@ R_GridInsertRow
 srfGridMesh_t *R_GridInsertRow(srfGridMesh_t *grid, int row, int column, vec3_t point, float loderror)
 {
 	int                   i, j;
-	int                   width, height, oldheight;
+	int                   width = grid->width, height = grid->height + 1, oldheight = 0;
 	MAC_STATIC drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
 	float                 errorTable[2][MAX_GRID_SIZE];
 	float                 lodRadius;
 	vec3_t                lodOrigin;
 
-	oldheight = 0;
-	width     = grid->width;
-	height    = grid->height + 1;
 	if (height > MAX_GRID_SIZE)
 	{
 		return NULL;
