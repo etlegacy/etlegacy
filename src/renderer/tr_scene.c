@@ -170,9 +170,9 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 		return;
 	}
 
-	if (((r_numpolyverts + numVerts) >= r_maxpolyverts->integer) || (r_numpolys >= r_maxpolys->integer))
+	if (((r_numpolyverts + numVerts) >= r_maxpolys->integer) || (r_numpolys >= r_maxpolyverts->integer))
 	{
-		ri.Printf(PRINT_WARNING, "WARNING RE_AddPolyToScene: r_maxpolyverts or r_maxpolys reached\n");
+		ri.Printf(PRINT_DEVELOPER, "WARNING RE_AddPolyToScene: r_maxpolyverts or r_maxpolys reached\n");
 		return;
 	}
 
@@ -251,9 +251,14 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 
 	for (j = 0; j < numPolys; j++)
 	{
-		if (r_numpolyverts + numVerts >= r_maxpolys->integer || r_numpolys >= r_maxpolyverts->integer)
+		if (r_numpolyverts + numVerts >= r_maxpolys->integer)
 		{
-			ri.Printf(PRINT_WARNING, "WARNING RE_AddPolysToScene: r_maxpolys or r_maxpolyverts reached\n");
+			ri.Printf(PRINT_DEVELOPER, "WARNING RE_AddPolysToScene: r_maxpolys[%i] reached. r_numpolyverts: %i - numVerts: %i\n", r_maxpolys->integer, r_numpolyverts, numVerts);
+			return;
+		}
+		if (r_numpolys >= r_maxpolyverts->integer)
+		{
+			ri.Printf(PRINT_DEVELOPER, "WARNING RE_AddPolysToScene: r_maxpolyverts[%i] reached. r_numpolys: &i\n", r_maxpolyverts->integer, r_numpolys);
 			return;
 		}
 
@@ -637,6 +642,8 @@ void RE_RenderScene(const refdef_t *fd)
 
 	tr.frontEndMsec += ri.Milliseconds() - startTime;
 }
+
+
 
 // Temp storage for saving view paramters.  Drawing the animated head in the corner
 // was creaming important view info.

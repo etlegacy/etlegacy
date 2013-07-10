@@ -1819,8 +1819,12 @@ typedef enum
 // the limits apply to the sum of all scenes in a frame --
 // the main view, all the 3D icons, etc
 // Heavily increased compared to ioquake
-#define MAX_POLYS       4096
-#define MAX_POLYVERTS   8192
+#define MIN_POLYS       4096
+#define MIN_POLYVERTS   8192
+
+// modern computers can deal with more than our old MAX (now MIN)
+#define MAX_POLYS       16384 // was 4096
+#define MAX_POLYVERTS   32768 // was 8192
 
 // max decal projectors per frame, each can generate lots of polys
 #define MAX_DECAL_PROJECTORS    32  // uses bitmasks, don't increase

@@ -1306,10 +1306,12 @@ void R_Register(void)
 	r_portalsky = ri.Cvar_Get("cg_skybox", "1", 0);
 
 	// note: MAX_POLYS and MAX_POLYVERTS are heavily increased in ET compared to q3
-	r_maxpolys = ri.Cvar_Get("r_maxpolys", va("%d", MAX_POLYS), CVAR_LATCH);     // now latched to check against used r_maxpolys and not MAX_POLYS
-	AssertCvarRange(r_maxpolys, 600, MAX_POLYS, qtrue); // 600 in vanilla Q3A - FIXME: find a good min value for ET:L
-	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", va("%d", MAX_POLYVERTS), CVAR_LATCH); // now latched to check against used r_maxpolyverts and not MAX_POLYVERTS
-	AssertCvarRange(r_maxpolyverts, 3000, MAX_POLYVERTS, qtrue); // 3000 in vanilla Q3A - FIXME: find a good min value for ET:L
+	//       - but run 20 bots on oasis and you'll see limits reached (developer 1)
+	//       - modern computers can deal with more than our old default values -> users can increase this now to MAX_POLYS/MAX_POLYVERTS
+	r_maxpolys = ri.Cvar_Get("r_maxpolys", va("%d", MIN_POLYS), CVAR_LATCH);     // now latched to check against used r_maxpolys and not MAX_POLYS
+	AssertCvarRange(r_maxpolys, MIN_POLYS, MAX_POLYS, qtrue); // MIN_POLYS was old static value
+	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", va("%d", MIN_POLYVERTS), CVAR_LATCH); // now latched to check against used r_maxpolyverts and not MAX_POLYVERTS
+	AssertCvarRange(r_maxpolyverts, MIN_POLYVERTS, MAX_POLYVERTS, qtrue); // MIN_POLYVERTS was old static value
 
 	r_highQualityVideo = ri.Cvar_Get("r_highQualityVideo", "1", CVAR_ARCHIVE);
 	// make sure all the commands added here are also
