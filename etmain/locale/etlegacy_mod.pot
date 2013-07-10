@@ -17,34 +17,34 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/cgame/cg_consolecmds.c:511 src/cgame/cg_consolecmds.c:551
-#: src/cgame/cg_consolecmds.c:599
+#: src/cgame/cg_consolecmds.c:494 src/cgame/cg_consolecmds.c:532
+#: src/cgame/cg_consolecmds.c:568
 msgid "Can't team voice chat as a spectator.\n"
 msgstr ""
 
-#: src/cgame/cg_consolecmds.c:624
+#: src/cgame/cg_consolecmds.c:593
 msgid "Can't buddy voice chat as a spectator.\n"
 msgstr ""
 
-#: src/cgame/cg_debriefing.c:1962 src/cgame/cg_debriefing.c:3105
-#: src/cgame/cg_scoreboard.c:602
+#: src/cgame/cg_debriefing.c:1962 src/cgame/cg_debriefing.c:3106
+#: src/cgame/cg_scoreboard.c:646
 #, c-format
 msgid "CLOCK IS NOW SET TO %s!"
 msgstr ""
 
-#: src/cgame/cg_draw.c:649
+#: src/cgame/cg_draw.c:650
 msgid "Connection Interrupted"
 msgstr ""
 
-#: src/cgame/cg_draw.c:1891
+#: src/cgame/cg_draw.c:1902
 msgid "Disguised Enemy!"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2065
+#: src/cgame/cg_draw.c:2074
 msgid "SPECTATOR"
 msgstr ""
 
-#: src/cgame/cg_draw.c:2083
+#: src/cgame/cg_draw.c:2092
 #, c-format
 msgid "File complaint against %s for team-killing?"
 msgstr ""
@@ -2969,12 +2969,14 @@ msgstr ""
 msgid "%s have stolen %s!"
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:638
-msgid "Allies"
+#: src/cgame/cg_consolecmds.c:1204 src/cgame/cg_popupmessages.c:638
+#: src/cgame/cg_popupmessages.c:640
+msgid "Axis"
 msgstr ""
 
-#: src/cgame/cg_popupmessages.c:638
-msgid "Axis"
+#: src/cgame/cg_consolecmds.c:1208 src/cgame/cg_popupmessages.c:638
+#: src/cgame/cg_popupmessages.c:640
+msgid "Allies"
 msgstr ""
 
 #: src/cgame/cg_popupmessages.c:640
@@ -3582,6 +3584,15 @@ msgstr ""
 
 #: src/cgame/cg_info.c:818
 msgid "No qualifying weapon info available."
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:1289
+#, c-format
+msgid "You will spawn as a %s %s with a %s."
+msgstr ""
+
+#: src/cgame/cg_draw.c:441
+msgid "an Objective"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338

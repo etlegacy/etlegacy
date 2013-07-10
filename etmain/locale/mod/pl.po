@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-09 15:23+0100\n"
+"PO-Revision-Date: 2013-07-10 16:12+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -18,34 +18,34 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Generator: Poedit 1.5.5\n"
 
-#: src/cgame/cg_consolecmds.c:511 src/cgame/cg_consolecmds.c:551
-#: src/cgame/cg_consolecmds.c:599
+#: src/cgame/cg_consolecmds.c:494 src/cgame/cg_consolecmds.c:532
+#: src/cgame/cg_consolecmds.c:568
 msgid "Can't team voice chat as a spectator.\n"
 msgstr "Nie mozna uzyc chatu teamu jako widz.\n"
 
-#: src/cgame/cg_consolecmds.c:624
+#: src/cgame/cg_consolecmds.c:593
 msgid "Can't buddy voice chat as a spectator.\n"
 msgstr "Nie mozna uzyc chatu kumpli jako widz.\n"
 
-#: src/cgame/cg_debriefing.c:1962 src/cgame/cg_debriefing.c:3105
-#: src/cgame/cg_scoreboard.c:602
+#: src/cgame/cg_debriefing.c:1962 src/cgame/cg_debriefing.c:3106
+#: src/cgame/cg_scoreboard.c:646
 #, c-format
 msgid "CLOCK IS NOW SET TO %s!"
 msgstr "ZEGAR JEST TERAZ USTAWIONY NA %s!"
 
-#: src/cgame/cg_draw.c:649
+#: src/cgame/cg_draw.c:650
 msgid "Connection Interrupted"
 msgstr "Polaczenie Przerwane"
 
-#: src/cgame/cg_draw.c:1891
+#: src/cgame/cg_draw.c:1902
 msgid "Disguised Enemy!"
 msgstr "Wrog Ukryty"
 
-#: src/cgame/cg_draw.c:2065
+#: src/cgame/cg_draw.c:2074
 msgid "SPECTATOR"
 msgstr "OBSERWATOR"
 
-#: src/cgame/cg_draw.c:2083
+#: src/cgame/cg_draw.c:2092
 #, c-format
 msgid "File complaint against %s for team-killing?"
 msgstr "Plik narzekajacy przeciwko %s za zabicie teamu"
@@ -3014,13 +3014,15 @@ msgstr "%sZauwazony przez ^7%s"
 msgid "%s have stolen %s!"
 msgstr "%s ukradli %s!"
 
-#: src/cgame/cg_popupmessages.c:638
-msgid "Allies"
-msgstr "Alianci"
-
-#: src/cgame/cg_popupmessages.c:638
+#: src/cgame/cg_consolecmds.c:1204 src/cgame/cg_popupmessages.c:638
+#: src/cgame/cg_popupmessages.c:640
 msgid "Axis"
 msgstr "Os"
+
+#: src/cgame/cg_consolecmds.c:1208 src/cgame/cg_popupmessages.c:638
+#: src/cgame/cg_popupmessages.c:640
+msgid "Allies"
+msgstr "Alianci"
 
 #: src/cgame/cg_popupmessages.c:640
 #, c-format
@@ -3636,6 +3638,15 @@ msgstr "Gracz"
 #: src/cgame/cg_info.c:818
 msgid "No qualifying weapon info available."
 msgstr "Brak dostepnych informacji o broni."
+
+#: src/cgame/cg_consolecmds.c:1289
+#, c-format
+msgid "You will spawn as a %s %s with a %s."
+msgstr "Zespawnujesz sie jako %s %s z %s."
+
+#: src/cgame/cg_draw.c:441
+msgid "an Objective"
+msgstr "Cel"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
