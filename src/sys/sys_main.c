@@ -156,6 +156,8 @@ char *Sys_ConsoleInput(void)
  * @retval qtrue  if pid file successfully created
  * @retval qfalse if it wasn't possible to create a new pid file
  */
+extern qboolean FS_FileInPathExists(const char *testpath);
+
 qboolean Sys_WritePIDFile(void)
 {
 	fileHandle_t f;
