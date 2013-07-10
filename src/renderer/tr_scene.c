@@ -166,12 +166,13 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 
 	if (!hShader)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: RE_AddPolyToScene: NULL poly shader\n");
+		ri.Printf(PRINT_WARNING, "WARNING RE_AddPolyToScene: NULL poly shader\n");
 		return;
 	}
 
-	if (((r_numpolyverts + numVerts) >= MAX_POLYVERTS) || (r_numpolys >= MAX_POLYS))
+	if (((r_numpolyverts + numVerts) >= r_maxpolyverts->integer) || (r_numpolys >= r_maxpolys->integer))
 	{
+		ri.Printf(PRINT_WARNING, "WARNING RE_AddPolyToScene: r_maxpolyverts or r_maxpolys reached\n");
 		return;
 	}
 
@@ -244,15 +245,15 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 
 	if (!hShader)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: RE_AddPolysToScene: NULL poly shader\n");
+		ri.Printf(PRINT_WARNING, "WARNING RE_AddPolysToScene: NULL poly shader\n");
 		return;
 	}
 
 	for (j = 0; j < numPolys; j++)
 	{
-		if (r_numpolyverts + numVerts > max_polyverts || r_numpolys >= max_polys)
+		if (r_numpolyverts + numVerts >= r_maxpolys->integer || r_numpolys >= r_maxpolyverts->integer)
 		{
-			//ri.Printf( PRINT_WARNING, "WARNING: RE_AddPolysToScene: MAX_POLYS or MAX_POLYVERTS reached\n");
+			ri.Printf(PRINT_WARNING, "WARNING RE_AddPolysToScene: r_maxpolys or r_maxpolyverts reached\n");
 			return;
 		}
 
@@ -345,8 +346,9 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 	vec3_t          bounds[2];
 	int             i;
 
-	if (r_numpolybuffers >= MAX_POLYS)
+	if (r_numpolybuffers >= r_maxpolys->integer)
 	{
+		ri.Printf(PRINT_WARNING, "WARNING RE_AddPolyBufferToScene: r_maxpolys reached\n");
 		return;
 	}
 
