@@ -1321,6 +1321,10 @@ int SV_FrameMsec()
 	}
 }
 
+#ifdef DEDICATED
+extern void Sys_Sleep(int msec);
+#endif
+
 /**
  * @brief Player movement occurs as a result of packet events, which happen
  * before SV_Frame is called
