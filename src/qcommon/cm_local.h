@@ -85,7 +85,6 @@ typedef struct
 	int checkcount;             // to avoid repeated testings
 } cbrush_t;
 
-
 typedef struct
 {
 	int checkcount;                     // to avoid repeated testings
@@ -93,7 +92,6 @@ typedef struct
 	int contents;
 	struct patchCollide_s *pc;
 } cPatch_t;
-
 
 typedef struct
 {
@@ -208,7 +206,6 @@ typedef struct leafList_s
 	int lastLeaf;           // for overflows where each leaf can't be stored individually
 	void (*storeLeafs)(struct leafList_s *ll, int nodenum);
 } leafList_t;
-
 
 int CM_BoxBrushes(const vec3_t mins, const vec3_t maxs, cbrush_t **list, int listsize);
 

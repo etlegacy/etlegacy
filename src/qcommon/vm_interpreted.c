@@ -144,6 +144,7 @@ static inline unsigned int loadWord(void *addr)
 char *VM_Indent(vm_t *vm)
 {
 	static char *string = "                                        ";
+
 	if (vm->callLevel > 20)
 	{
 		return string;
@@ -153,9 +154,8 @@ char *VM_Indent(vm_t *vm)
 
 void VM_StackTrace(vm_t *vm, int programCounter, int programStack)
 {
-	int count;
+	int count = 0;
 
-	count = 0;
 	do
 	{
 		Com_Printf("%s\n", VM_ValueToSymbol(vm, programCounter));
@@ -173,9 +173,9 @@ VM_PrepareInterpreter
 void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 {
 	int  op;
-	int  pc;
-	byte *code = { 0 };
-	int  instruction;
+	int  pc          = 0;
+	byte *code       = { 0 };
+	int  instruction = 0;
 	int  *codeBase;
 
 	vm->codeBase = Hunk_Alloc(vm->codeLength * 4, h_high);            // we're now int aligned
@@ -183,9 +183,8 @@ void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 
 	// we don't need to translate the instructions, but we still need
 	// to find each instructions starting point for jumps
-	pc          = 0;
-	instruction = 0;
-	codeBase    = (int *)vm->codeBase;
+
+	codeBase = (int *)vm->codeBase;
 
 	while (instruction < header->instructionCount)
 	{

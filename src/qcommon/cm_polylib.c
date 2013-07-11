@@ -220,7 +220,7 @@ winding_t *BaseWindingForPlane(vec3_t normal, vec_t dist)
 	vec3_t    org, vright, vup;
 	winding_t *w;
 
-// find the major axis
+	// find the major axis
 
 	for (i = 0 ; i < 3; i++)
 	{
@@ -259,7 +259,7 @@ winding_t *BaseWindingForPlane(vec3_t normal, vec_t dist)
 	VectorScale(vup, MAX_MAP_BOUNDS, vup);
 	VectorScale(vright, MAX_MAP_BOUNDS, vright);
 
-// project a really big	axis aligned box onto the plane
+	// project a really big	axis aligned box onto the plane
 	w = AllocWinding(4);
 
 	VectorSubtract(org, vright, w->p[0]);
@@ -324,7 +324,7 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
 {
 	vec_t        dists[MAX_POINTS_ON_WINDING + 4];
 	int          sides[MAX_POINTS_ON_WINDING + 4];
-	int          counts[3];
+	int          counts[3] = { 0, 0, 0 };
 	static vec_t dot;           // VC 4.2 optimizer bug if not static
 	int          i, j;
 	vec_t        *p1, *p2;
@@ -332,9 +332,7 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
 	winding_t    *f, *b;
 	int          maxpts;
 
-	counts[0] = counts[1] = counts[2] = 0;
-
-// determine sides for each point
+	// determine sides for each point
 	for (i = 0 ; i < in->numpoints ; i++)
 	{
 		dot      = DotProduct(in->p[i], normal);
@@ -448,19 +446,16 @@ ChopWindingInPlace
 */
 void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsilon)
 {
-	winding_t    *in;
+	winding_t    *in = *inout;
 	vec_t        dists[MAX_POINTS_ON_WINDING + 4];
 	int          sides[MAX_POINTS_ON_WINDING + 4];
-	int          counts[3];
+	int          counts[3] = { 0, 0, 0 };
 	static vec_t dot;           // VC 4.2 optimizer bug if not static
 	int          i, j;
 	vec_t        *p1, *p2;
 	vec3_t       mid;
 	winding_t    *f;
 	int          maxpts;
-
-	in        = *inout;
-	counts[0] = counts[1] = counts[2] = 0;
 
 	// determine sides for each point
 	for (i = 0 ; i < in->numpoints ; i++)

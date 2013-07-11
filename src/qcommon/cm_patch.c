@@ -986,7 +986,7 @@ void CM_AddFacetBevels(facet_t *facet)
 			{
 				plane[3] = -mins[axis];
 			}
-			//if it's the surface plane
+			// if it's the surface plane
 			if (CM_PlaneEqual(&planes[facet->surfacePlane], plane, &flipped))
 			{
 				continue;
@@ -1030,7 +1030,7 @@ void CM_AddFacetBevels(facet_t *facet)
 	{
 		k = (j + 1) % w->numpoints;
 		VectorSubtract(w->p[j], w->p[k], vec);
-		//if it's a degenerate edge
+		// if it's a degenerate edge
 		if (VectorNormalize(vec) < 0.5f)
 		{
 			continue;
@@ -1143,7 +1143,7 @@ void CM_AddFacetBevels(facet_t *facet)
 					}
 
 					facet->numBorders++;
-					//already got a bevel
+					// already got a bevel
 					//break;
 				}
 			}
@@ -1151,7 +1151,7 @@ void CM_AddFacetBevels(facet_t *facet)
 	}
 	FreeWinding(w);
 
-	//add opposite plane
+	// add opposite plane
 	facet->borderPlanes[facet->numBorders]   = facet->surfacePlane;
 	facet->borderNoAdjust[facet->numBorders] = 0;
 	facet->borderInward[facet->numBorders]   = qtrue;
@@ -1698,7 +1698,6 @@ int CM_CheckFacetPlane(float *plane, vec3_t start, vec3_t end, float *enterFrac,
 	// if completely in front of face, no intersection with the entire facet
 	if (d1 > 0 && (d2 >= SURFACE_CLIP_EPSILON || d2 >= d1))
 	{
-//	if (d1 > 0 && d2 > 0) {
 		return qfalse;
 	}
 
@@ -1716,7 +1715,7 @@ int CM_CheckFacetPlane(float *plane, vec3_t start, vec3_t end, float *enterFrac,
 		{
 			f = 0;
 		}
-		//always favor previous plane hits and thus also the surface plane hit
+		// always favor previous plane hits and thus also the surface plane hit
 		if (f > *enterFrac)
 		{
 			*enterFrac = f;
@@ -1762,7 +1761,7 @@ void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *p
 	CM_TracePointThroughPatchCollide(tw, pc);
 	return;
 #endif
-	//
+
 	facet = pc->facets;
 	for (i = 0 ; i < pc->numFacets ; i++, facet++)
 	{
@@ -1862,7 +1861,7 @@ void CM_TraceThroughPatchCollide(traceWork_t *tw, const struct patchCollide_s *p
 		{
 			continue;
 		}
-		//never clip against the back side
+		// never clip against the back side
 		if (hitnum == facet->numBorders - 1)
 		{
 			continue;
@@ -2074,7 +2073,7 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 
 			Vector4Copy(pc->planes[planenum].plane, plane);
 
-			//planenum = facet->surfacePlane;
+			// planenum = facet->surfacePlane;
 			if (inward)
 			{
 				VectorSubtract(vec3_origin, plane, plane);

@@ -499,7 +499,7 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 {
 	cvar_t *var;
 
-//	Com_DPrintf("Cvar_Set2: %s %s\n", var_name, value);
+	//Com_DPrintf("Cvar_Set2: %s %s\n", var_name, value);
 
 	if (!Cvar_ValidateString(var_name))
 	{
@@ -1279,7 +1279,6 @@ Cvar_Unset
 Unsets a cvar
 ============
 */
-
 cvar_t *Cvar_Unset(cvar_t *cv)
 {
 	cvar_t *next = cv->next;
@@ -1339,7 +1338,6 @@ Cvar_Unset_f
 Unsets a userdefined cvar
 ============
 */
-
 void Cvar_Unset_f(void)
 {
 	cvar_t *cv;
@@ -1375,12 +1373,9 @@ Resets all cvars to their hardcoded values and removes userdefined variables
 and variables added via the VMs if requested.
 ============
 */
-
 void Cvar_Restart(qboolean unsetVM)
 {
-	cvar_t *curvar;
-
-	curvar = cvar_vars;
+	cvar_t *curvar = cvar_vars;
 
 	while (curvar)
 	{
@@ -1478,10 +1473,10 @@ Cvar_CheckRange
  */
 void Cvar_CheckRange(cvar_t *var, float min, float max, qboolean integral)
 {
-//     var->validate = qtrue;
-//     var->min = min;
-//     var->max = max;
-//     var->integral = integral;
+	//var->validate = qtrue;
+	//var->min = min;
+	//var->max = max;
+	//var->integral = integral;
 
 	// Force an initial range check
 	Cvar_Set(var->name, var->string);

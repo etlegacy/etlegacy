@@ -485,7 +485,7 @@ char *FS_BuildOSPath(const char *base, const char *game, const char *qpath)
 	return ospath[toggle];
 }
 
-/*
+/**
  * @brief Creates any directories needed to store the given filename
  */
 qboolean FS_CreatePath(char *OSPath)
@@ -525,7 +525,7 @@ qboolean FS_CreatePath(char *OSPath)
 	return qfalse;
 }
 
-/*
+/**
  * @brief Copy a fully specified file from one place to another
  */
 void FS_CopyFile(char *fromOSPath, char *toOSPath)
@@ -588,8 +588,8 @@ void FS_CopyFile(char *fromOSPath, char *toOSPath)
 	free(buf);
 }
 
-/*
- * ERR_FATAL if trying to manipulate a file with the platform library extension
+/**
+ * @brief ERR_FATAL if trying to manipulate a file with the platform library extension
  */
 static void FS_CheckFilenameIsNotExecutable(const char *filename, const char *function)
 {
@@ -646,7 +646,7 @@ qboolean FS_FileExists(const char *file)
 	return FS_FileInPathExists(FS_BuildOSPath(fs_homepath->string, fs_gamedir, file));
 }
 
-/*
+/**
  * @brief Tests if the file exists
  */
 qboolean FS_SV_FileExists(const char *file)
@@ -1042,7 +1042,6 @@ FS_IsExt
 Return qtrue if ext matches file extension filename
 ===========
 */
-
 qboolean FS_IsExt(const char *filename, const char *ext, int namelen)
 {
 	int extlen;
@@ -2016,10 +2015,9 @@ int FS_FileIsInPAK(const char *filename, int *pChecksum)
 	}
 
 	// search through the path, one element at a time
-
 	for (search = fs_searchpaths ; search ; search = search->next)
 	{
-		//
+		// is the element a pak file?
 		if (search->pack)
 		{
 			hash = FS_HashFileName(filename, search->pack->hashSize);

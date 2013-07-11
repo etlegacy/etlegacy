@@ -40,7 +40,6 @@
 #define SHADER_MAX_INDEXES  (6 * SHADER_MAX_VERTEXES)
 #define SHADER_MAX_TRIANGLES (SHADER_MAX_INDEXES / 3)
 
-
 // the maximum size of game reletive pathnames
 #define MAX_QPATH       64
 
@@ -221,7 +220,6 @@ MDC file format
 typedef struct
 {
 	unsigned int ofsVec;                    // offset direction from the last base frame
-//  unsigned short  ofsVec;
 } mdcXyzCompressed_t;
 
 typedef struct
@@ -468,8 +466,6 @@ typedef struct
 
 typedef struct
 {
-	//float     angles[3];
-	//float     ofsAngles[2];
 	short angles[4];            // to be converted to axis at run-time (this is also better for lerping)
 	short ofsAngles[2];         // PITCH/YAW, head in this direction from parent to go to the offset position
 } mdsBoneFrameCompressed_t;
@@ -708,8 +704,6 @@ typedef struct
 
 typedef struct
 {
-	//float     angles[3];
-	//float     ofsAngles[2];
 	short angles[4];                // to be converted to axis at run-time (this is also better for lerping)
 	short ofsAngles[2];             // PITCH/YAW, head in this direction from parent to go to the offset position
 } mdxBoneFrameCompressed_t;
@@ -750,9 +744,7 @@ typedef struct
 
 /*
 ========================================================================
-
 Actor X - .PSK / .PSA skeletal triangle model file format
-
 ========================================================================
 */
 
@@ -865,12 +857,10 @@ typedef struct
 ==============================================================================
 */
 
-
 #define BSP_IDENT   (('P' << 24) + ('S' << 16) + ('B' << 8) + 'I')
 // little-endian "IBSP"
 
 #define BSP_VERSION         47
-
 
 // there shouldn't be any problem with increasing these values at the
 // expense of more memory allocation in the utilities
@@ -897,7 +887,6 @@ typedef struct
 #define MAX_MAP_DRAW_SURFS  0x20000
 #define MAX_MAP_DRAW_VERTS  0x80000
 #define MAX_MAP_DRAW_INDEXES    0x80000
-
 
 // key / value pair sizes in the entities lump
 #define MAX_KEY             32

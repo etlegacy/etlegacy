@@ -90,9 +90,7 @@ LEAF LISTING
 
 void CM_StoreLeafs(leafList_t *ll, int nodenum)
 {
-	int leafNum;
-
-	leafNum = -1 - nodenum;
+	int leafNum = -1 - nodenum;
 
 	// store the lastLeaf even if the list is overflowed
 	if (cm.leafs[leafNum].cluster != -1)
@@ -320,7 +318,6 @@ rotating entities
 int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t origin, const vec3_t angles)
 {
 	vec3_t p_l;
-	vec3_t temp;
 
 	// subtract origin offset
 	VectorSubtract(p, origin, p_l);
@@ -329,7 +326,7 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 	if (model != BOX_MODEL_HANDLE &&
 	    (angles[0] || angles[1] || angles[2]))
 	{
-		vec3_t forward, right, up;
+		vec3_t temp, forward, right, up;
 
 		AngleVectors(angles, forward, right, up);
 
@@ -399,13 +396,12 @@ CM_FloodAreaConnections
 void CM_FloodAreaConnections(void)
 {
 	int     i;
-	cArea_t *area;
+	cArea_t *area    = cm.areas; // optimization
 	int     floodnum = 0;
 
 	// all current floods are now invalid
 	cm.floodvalid++;
 
-	area = cm.areas;    // Ridah, optimization
 	for (i = 0 ; i < cm.numAreas ; i++, area++)
 	{
 		if (area->floodvalid == cm.floodvalid)
