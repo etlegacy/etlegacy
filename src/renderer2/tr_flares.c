@@ -284,9 +284,7 @@ void RB_AddLightFlares(void)
 
 /*
 ===============================================================================
-
 FLARE BACK END
-
 ===============================================================================
 */
 
@@ -360,7 +358,6 @@ void RB_RenderFlare(flare_t *f)
 	backEnd.pc.c_flareRenders++;
 
 #if 1
-	//VectorScale(f->color, f->drawIntensity, color);
 	VectorScale(colorWhite, f->drawIntensity, color);
 
 	size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / -f->eyeZ);
@@ -498,29 +495,13 @@ void RB_RenderFlares(void)
 		return;
 	}
 
-#if 0
-	if (r_flareCoeff->modified)
-	{
-		if (r_flareCoeff->value == 0.0f)
-		{
-			flareCoeff = atof("150");
-		}
-		else
-		{
-			flareCoeff = r_flareCoeff->value;
-		}
-
-		r_flareCoeff->modified = qfalse;
-	}
-#endif
-
 	// reset currentEntity to world so that any previously referenced entities don't have influence
 	// on the rendering of these flares (i.e. RF_ renderer flags).
 	backEnd.currentEntity = &tr.worldEntity;
 	backEnd.orientation   = backEnd.viewParms.world;
 	GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
 
-	if (tr.world != NULL)        // thx Thilo
+	if (tr.world != NULL)
 	{
 		RB_AddLightFlares();
 	}

@@ -49,7 +49,6 @@ cvar_t *com_altivec;
 
 cvar_t *r_flareSize;
 cvar_t *r_flareFade;
-cvar_t *r_flareCoeff;
 
 cvar_t *r_railWidth;
 cvar_t *r_railSegmentLength;
