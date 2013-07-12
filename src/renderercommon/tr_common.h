@@ -173,7 +173,7 @@ extern cvar_t *r_skipBackEnd;
 
 extern cvar_t *r_stereoEnabled;
 
-extern cvar_t *r_greyscale;
+extern cvar_t *r_greyscale; // FIXME: move out -> renderer1 only
 
 extern cvar_t *r_ignoreGLErrors;
 

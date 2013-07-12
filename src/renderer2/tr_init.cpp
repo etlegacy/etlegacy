@@ -1487,12 +1487,12 @@ void R_Register(void)
 	r_ignoreGLErrors = ri.Cvar_Get("r_ignoreGLErrors", "1", CVAR_ARCHIVE);
 	r_fastsky        = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE);
 
-	r_drawSun        = ri.Cvar_Get("r_drawSun", "0", CVAR_ARCHIVE);
-	r_finish         = ri.Cvar_Get("r_finish", "0", CVAR_CHEAT);
-	r_textureMode    = ri.Cvar_Get("r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
-	r_swapInterval   = ri.Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
-	r_gamma          = ri.Cvar_Get("r_gamma", "1", CVAR_ARCHIVE);
-	r_facePlaneCull  = ri.Cvar_Get("r_facePlaneCull", "1", CVAR_ARCHIVE);
+	r_drawSun       = ri.Cvar_Get("r_drawSun", "0", CVAR_ARCHIVE);
+	r_finish        = ri.Cvar_Get("r_finish", "0", CVAR_CHEAT);
+	r_textureMode   = ri.Cvar_Get("r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
+	r_swapInterval  = ri.Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
+	r_gamma         = ri.Cvar_Get("r_gamma", "1", CVAR_ARCHIVE);
+	r_facePlaneCull = ri.Cvar_Get("r_facePlaneCull", "1", CVAR_ARCHIVE);
 
 	r_railWidth         = ri.Cvar_Get("r_railWidth", "96", CVAR_ARCHIVE);
 	r_railCoreWidth     = ri.Cvar_Get("r_railCoreWidth", "16", CVAR_ARCHIVE);
