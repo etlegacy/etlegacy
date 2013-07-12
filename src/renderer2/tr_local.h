@@ -4039,7 +4039,7 @@ extern cvar_t *r_ext_generate_mipmap;
 
 extern cvar_t *r_nobind;        // turns off binding to appropriate textures
 extern cvar_t *r_collapseStages;
-extern cvar_t *r_singleShader;  // make most world faces use default shader
+
 extern cvar_t *r_roundImagesDown;
 extern cvar_t *r_colorMipLevels;    // development aid to see texture mip usage
 extern cvar_t *r_picmip;        // controls picmip values
@@ -4128,9 +4128,6 @@ extern cvar_t *r_showImages;
 extern cvar_t *r_debugSort;
 
 extern cvar_t *r_printShaders;
-
-extern cvar_t *r_maxPolys;
-extern cvar_t *r_maxPolyVerts;
 
 extern cvar_t *r_showTris;      // enables wireframe rendering of the world
 extern cvar_t *r_showSky;       // forces sky in front of all surfaces

@@ -189,18 +189,15 @@ extern cvar_t *r_debugSort;
 extern cvar_t *r_printShaders;
 extern cvar_t *r_saveFontData;
 
+extern cvar_t *r_cache; // FIXME: move out -> renderer1 only
+extern cvar_t *r_cacheShaders; // FIXME: move out -> renderer1 only
+extern cvar_t *r_cacheModels; // FIXME: move out -> renderer1 only
 
-extern cvar_t *r_cache;
-extern cvar_t *r_cacheShaders;
-extern cvar_t *r_cacheModels;
+extern cvar_t *r_cacheGathering;  // FIXME: move out -> renderer1 only
 
-extern cvar_t *r_cacheGathering;
-
-extern cvar_t *r_bonesDebug;
+extern cvar_t *r_bonesDebug; // FIXME: move out -> renderer1 only
 
 extern cvar_t *r_wolffog;
-
-extern cvar_t *r_highQualityVideo;
 
 //extern cvar_t *r_screenshotJpegQuality;
 
