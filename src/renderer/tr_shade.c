@@ -497,9 +497,7 @@ t1 = most downstream according to spec
 */
 static void DrawMultitextured(shaderCommands_t *input, int stage)
 {
-	shaderStage_t *pStage;
-
-	pStage = tess.xstages[stage];
+	shaderStage_t *pStage = tess.xstages[stage];
 
 	if (tess.shader->noFog && pStage->isFogged)
 	{
@@ -849,7 +847,7 @@ static void DynamicLightPass(void)
 
 		// debug code (fixme, there's a bug in this function!)
 		//for( i = 0; i < numIndexes; i++ )
-		//    intColors[ hitIndexes[ i ] ] = 0x000000FF;
+		//  intColors[ hitIndexes[ i ] ] = 0x000000FF;
 
 		qglEnableClientState(GL_COLOR_ARRAY);
 		qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
@@ -1399,11 +1397,12 @@ RB_IterateStagesGeneric
 */
 static void RB_IterateStagesGeneric(shaderCommands_t *input)
 {
-	int stage;
+	shaderStage_t *pStage;
+	int           stage;
 
 	for (stage = 0; stage < MAX_SHADER_STAGES; stage++)
 	{
-		shaderStage_t *pStage = tess.xstages[stage];
+		pStage = tess.xstages[stage];
 
 		if (!pStage)
 		{
@@ -1494,11 +1493,9 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 			// lightmap stages should be GL_ONE GL_ZERO so they can be seen
 			else if (r_lightmap->integer && (pStage->bundle[0].isLightmap || pStage->bundle[1].isLightmap))
 			{
-				unsigned int stateBits;
+				unsigned int stateBits = (pStage->stateBits & ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) |
+				                         (GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
 
-
-				stateBits = (pStage->stateBits & ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) |
-				            (GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
 				GL_State(stateBits);
 			}
 			else
@@ -1525,11 +1522,8 @@ RB_StageIteratorGeneric
 */
 void RB_StageIteratorGeneric(void)
 {
-	shaderCommands_t *input;
-	shader_t         *shader;
-
-	input  = &tess;
-	shader = input->shader;
+	shaderCommands_t *input  = &tess;
+	shader_t         *shader = input->shader;
 
 	RB_DeformTessGeometry();
 
@@ -1636,11 +1630,8 @@ RB_StageIteratorVertexLitTexture
 */
 void RB_StageIteratorVertexLitTexture(void)
 {
-	shaderCommands_t *input;
-	shader_t         *shader;
-
-	input  = &tess;
-	shader = input->shader;
+	shaderCommands_t *input  = &tess;
+	shader_t         *shader = input->shader;
 
 	// compute colors
 	RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
