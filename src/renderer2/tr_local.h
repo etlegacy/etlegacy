@@ -4252,118 +4252,116 @@ void R_SwapBuffers(int);
 
 void R_RenderView(viewParms_t *parms);
 
-void            R_AddMDVSurfaces(trRefEntity_t *e);
-void            R_AddMDVInteractions(trRefEntity_t *e, trRefLight_t *light);
-void            R_AddNullModelSurfaces(trRefEntity_t *e);
-void            R_AddBeamSurfaces(trRefEntity_t *e);
-void            R_AddRailSurfaces(trRefEntity_t *e, qboolean isUnderwater);
-void            R_AddLightningBoltSurfaces(trRefEntity_t *e);
+void R_AddMDVSurfaces(trRefEntity_t *e);
+void R_AddMDVInteractions(trRefEntity_t *e, trRefLight_t *light);
+void R_AddNullModelSurfaces(trRefEntity_t *e);
+void R_AddBeamSurfaces(trRefEntity_t *e);
+void R_AddRailSurfaces(trRefEntity_t *e, qboolean isUnderwater);
+void R_AddLightningBoltSurfaces(trRefEntity_t *e);
 
-void            R_AddPolygonSurfaces(void);
-void            R_AddPolygonBufferSurfaces(void);
+void R_AddPolygonSurfaces(void);
+void R_AddPolygonBufferSurfaces(void);
 
-void            R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int lightmapNum, int fogNum);
+void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int lightmapNum, int fogNum);
 
-
-void            R_LocalNormalToWorld(const vec3_t local, vec3_t world);
-void            R_LocalPointToWorld(const vec3_t local, vec3_t world);
+void R_LocalNormalToWorld(const vec3_t local, vec3_t world);
+void R_LocalPointToWorld(const vec3_t local, vec3_t world);
 
 cullResult_t R_CullLocalBox(vec3_t bounds[2]);
-int             R_CullLocalPointAndRadius(vec3_t origin, float radius);
-int             R_CullPointAndRadius(vec3_t origin, float radius);
+int R_CullLocalPointAndRadius(vec3_t origin, float radius);
+int R_CullPointAndRadius(vec3_t origin, float radius);
 
-int             R_FogLocalPointAndRadius(const vec3_t pt, float radius);
-int             R_FogPointAndRadius(const vec3_t pt, float radius);
+int R_FogLocalPointAndRadius(const vec3_t pt, float radius);
+int R_FogPointAndRadius(const vec3_t pt, float radius);
 int R_FogWorldBox(vec3_t bounds[2]);
 
-void            R_SetupEntityWorldBounds(trRefEntity_t *ent);
+void R_SetupEntityWorldBounds(trRefEntity_t *ent);
 
-void            R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *orien);
-void            R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light, orientationr_t *orien);
-void            R_RotateLightForViewParms(const trRefLight_t *ent, const viewParms_t *viewParms, orientationr_t *orien);
+void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *orien);
+void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light, orientationr_t *orien);
+void R_RotateLightForViewParms(const trRefLight_t *ent, const viewParms_t *viewParms, orientationr_t *orien);
 
-void            R_SetupFrustum2(frustum_t frustum, const matrix_t modelViewProjectionMatrix);
+void R_SetupFrustum2(frustum_t frustum, const matrix_t modelViewProjectionMatrix);
 
-qboolean        R_CompareVert(srfVert_t *v1, srfVert_t *v2, qboolean checkst);
-void            R_CalcNormalForTriangle(vec3_t normal, const vec3_t v0, const vec3_t v1, const vec3_t v2);
+qboolean R_CompareVert(srfVert_t *v1, srfVert_t *v2, qboolean checkst);
+void R_CalcNormalForTriangle(vec3_t normal, const vec3_t v0, const vec3_t v1, const vec3_t v2);
 
-void            R_CalcTangentsForTriangle(vec3_t tangent, vec3_t binormal,
-                                          const vec3_t v0, const vec3_t v1, const vec3_t v2,
-                                          const vec2_t t0, const vec2_t t1, const vec2_t t2);
+void R_CalcTangentsForTriangle(vec3_t tangent, vec3_t binormal,
+                               const vec3_t v0, const vec3_t v1, const vec3_t v2,
+                               const vec2_t t0, const vec2_t t1, const vec2_t t2);
 
-void            R_CalcTangentsForTriangle2(vec3_t tangent, vec3_t binormal,
-                                           const vec3_t v0, const vec3_t v1, const vec3_t v2,
-                                           const vec2_t t0, const vec2_t t1, const vec2_t t2);
+void R_CalcTangentsForTriangle2(vec3_t tangent, vec3_t binormal,
+                                const vec3_t v0, const vec3_t v1, const vec3_t v2,
+                                const vec2_t t0, const vec2_t t1, const vec2_t t2);
 
-void            R_CalcTangentSpace(vec3_t tangent, vec3_t binormal, vec3_t normal,
-                                   const vec3_t v0, const vec3_t v1, const vec3_t v2,
-                                   const vec2_t t0, const vec2_t t1, const vec2_t t2);
+void R_CalcTangentSpace(vec3_t tangent, vec3_t binormal, vec3_t normal,
+                        const vec3_t v0, const vec3_t v1, const vec3_t v2,
+                        const vec2_t t0, const vec2_t t1, const vec2_t t2);
 
-void            R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
-                                       const vec3_t v0, const vec3_t v1, const vec3_t v2,
-                                       const vec2_t t0, const vec2_t t1, const vec2_t t2);
+void R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
+                            const vec3_t v0, const vec3_t v1, const vec3_t v2,
+                            const vec2_t t0, const vec2_t t1, const vec2_t t2);
 
-void            R_CalcTBN(vec3_t tangent, vec3_t binormal, vec3_t normal,
-                          const vec3_t v0, const vec3_t v1, const vec3_t v2,
-                          const vec2_t t0, const vec2_t t1, const vec2_t t2);
+void R_CalcTBN(vec3_t tangent, vec3_t binormal, vec3_t normal,
+               const vec3_t v0, const vec3_t v1, const vec3_t v2,
+               const vec2_t t0, const vec2_t t1, const vec2_t t2);
 
 qboolean R_CalcTangentVectors(srfVert_t * dv[3]);
 
-void            R_CalcSurfaceTriangleNeighbors(int numTriangles, srfTriangle_t *triangles);
-void            R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srfVert_t *verts);
+void R_CalcSurfaceTriangleNeighbors(int numTriangles, srfTriangle_t *triangles);
+void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srfVert_t *verts);
 
-float           R_CalcFov(float fovX, float width, float height);
+float R_CalcFov(float fovX, float width, float height);
 
 // Tr3B - visualisation tools to help debugging the renderer frontend
-void            R_DebugAxis(const vec3_t origin, const matrix_t transformMatrix);
-void            R_DebugBoundingBox(const vec3_t origin, const vec3_t mins, const vec3_t maxs, vec4_t color);
-void            R_DebugPolygon(int color, int numPoints, float *points);
-void            R_DebugText(const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude);
+void R_DebugAxis(const vec3_t origin, const matrix_t transformMatrix);
+void R_DebugBoundingBox(const vec3_t origin, const vec3_t mins, const vec3_t maxs, vec4_t color);
+void R_DebugPolygon(int color, int numPoints, float *points);
+void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude);
 
 /*
 ====================================================================
 OpenGL WRAPPERS, tr_backend.c
 ====================================================================
 */
-void            GL_Bind(image_t *image);
-void            GL_BindNearestCubeMap(const vec3_t xyz);
-void            GL_Unbind();
-void            BindAnimatedImage(textureBundle_t *bundle);
-void            GL_TextureFilter(image_t *image, filterType_t filterType);
-void            GL_BindProgram(shaderProgram_t *program);
-void            GL_BindNullProgram(void);
-void            GL_SetDefaultState(void);
-void            GL_SelectTexture(int unit);
-void            GL_TextureMode(const char *string);
+void GL_Bind(image_t *image);
+void GL_BindNearestCubeMap(const vec3_t xyz);
+void GL_Unbind();
+void BindAnimatedImage(textureBundle_t *bundle);
+void GL_TextureFilter(image_t *image, filterType_t filterType);
+void GL_BindProgram(shaderProgram_t *program);
+void GL_BindNullProgram(void);
+void GL_SetDefaultState(void);
+void GL_SelectTexture(int unit);
+void GL_TextureMode(const char *string);
 
+void GL_BlendFunc(GLenum sfactor, GLenum dfactor);
+void GL_ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
+void GL_ClearDepth(GLclampd depth);
+void GL_ClearStencil(GLint s);
+void GL_ColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
+void GL_CullFace(GLenum mode);
+void GL_DepthFunc(GLenum func);
+void GL_DepthMask(GLboolean flag);
+void GL_DrawBuffer(GLenum mode);
+void GL_FrontFace(GLenum mode);
+void GL_LoadModelViewMatrix(const matrix_t m);
+void GL_LoadProjectionMatrix(const matrix_t m);
+void GL_PushMatrix();
+void GL_PopMatrix();
+void GL_PolygonMode(GLenum face, GLenum mode);
+void GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height);
+void GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height);
+void GL_PolygonOffset(float factor, float units);
 
-void            GL_BlendFunc(GLenum sfactor, GLenum dfactor);
-void            GL_ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
-void            GL_ClearDepth(GLclampd depth);
-void            GL_ClearStencil(GLint s);
-void            GL_ColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
-void            GL_CullFace(GLenum mode);
-void            GL_DepthFunc(GLenum func);
-void            GL_DepthMask(GLboolean flag);
-void            GL_DrawBuffer(GLenum mode);
-void            GL_FrontFace(GLenum mode);
-void            GL_LoadModelViewMatrix(const matrix_t m);
-void            GL_LoadProjectionMatrix(const matrix_t m);
-void            GL_PushMatrix();
-void            GL_PopMatrix();
-void            GL_PolygonMode(GLenum face, GLenum mode);
-void            GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height);
-void            GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height);
-void            GL_PolygonOffset(float factor, float units);
+void GL_CheckErrors_(const char *filename, int line);
 
-void            GL_CheckErrors_(const char *filename, int line);
+#define GL_CheckErrors()    GL_CheckErrors_(__FILE__, __LINE__)
 
-#define         GL_CheckErrors()    GL_CheckErrors_(__FILE__, __LINE__)
-
-void            GL_State(uint32_t stateVector);
-void            GL_VertexAttribsState(uint32_t stateBits);
-void            GL_VertexAttribPointers(uint32_t attribBits);
-void            GL_Cull(int cullType);
+void GL_State(uint32_t stateVector);
+void GL_VertexAttribsState(uint32_t stateBits);
+void GL_VertexAttribPointers(uint32_t attribBits);
+void GL_Cull(int cullType);
 
 /*
 ====================================================================
@@ -4371,59 +4369,55 @@ void            GL_Cull(int cullType);
 ====================================================================
 */
 
-void            RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
-void            RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
+void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
+void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
 
-void            RE_BeginFrame(stereoFrame_t stereoFrame);
-void            RE_EndFrame(int *frontEndMsec, int *backEndMsec);
-void            RE_BeginRegistration(glconfig_t *glconfig);
-void            RE_LoadWorldMap(const char *mapname);
-void            RE_SetWorldVisData(const byte *vis);
-qhandle_t       RE_RegisterModel(const char *name);
-qhandle_t       RE_RegisterSkin(const char *name);
-void            RE_Shutdown(qboolean destroyWindow);
+void RE_BeginFrame(stereoFrame_t stereoFrame);
+void RE_EndFrame(int *frontEndMsec, int *backEndMsec);
+void RE_BeginRegistration(glconfig_t *glconfig);
+void RE_LoadWorldMap(const char *mapname);
+void RE_SetWorldVisData(const byte *vis);
+qhandle_t RE_RegisterModel(const char *name);
+qhandle_t RE_RegisterSkin(const char *name);
+void RE_Shutdown(qboolean destroyWindow);
 
-//----(SA)
-qboolean        RE_GetSkinModel(qhandle_t skinid, const char *type, char *name);
-qhandle_t       RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);    //----(SA)
-//----(SA) end
+qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name);
+qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);    //----(SA)
 
-qboolean        R_GetEntityToken(char *buffer, int size);
-float           R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte **pic_out);   // Arnout
+qboolean R_GetEntityToken(char *buffer, int size);
+float R_ProcessLightmap(byte **pic, int in_padding, int width, int height, byte **pic_out);   // Arnout
 
 model_t *R_AllocModel(void);
 
+void R_Init(void);
 
-void            R_Init(void);
+qboolean R_GetModeInfo(int *width, int *height, float *windowAspect, int mode);
 
+void R_SetColorMappings(void);
+void R_GammaCorrect(byte *buffer, int bufSize);
 
-qboolean        R_GetModeInfo(int *width, int *height, float *windowAspect, int mode);
+void R_ImageList_f(void);
+void R_SkinList_f(void);
 
-void            R_SetColorMappings(void);
-void            R_GammaCorrect(byte *buffer, int bufSize);
-
-void            R_ImageList_f(void);
-void            R_SkinList_f(void);
-
-void            R_SubImageCpy(byte *dest, size_t destx, size_t desty, size_t destw, size_t desth, byte *src, size_t srcw, size_t srch, size_t bytes, qboolean in);
+void R_SubImageCpy(byte *dest, size_t destx, size_t desty, size_t destw, size_t desth, byte *src, size_t srcw, size_t srch, size_t bytes, qboolean in);
 
 // https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=516
 const void *RB_TakeScreenshotCmd(const void *data);
 
 
-void            R_InitSkins(void);
+void R_InitSkins(void);
 skin_t *R_GetSkinByHandle(qhandle_t hSkin);
 
-void            R_DeleteSurfaceVBOs();
+void R_DeleteSurfaceVBOs();
 
 /*
 ====================================================================
 IMAGES, tr_image.c
 ====================================================================
 */
-void            R_InitImages(void);
-void            R_ShutdownImages(void);
-int             R_SumOfUsedImages(void);
+void R_InitImages(void);
+void R_ShutdownImages(void);
+int R_SumOfUsedImages(void);
 
 image_t *R_FindImageFile(const char *name, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
 image_t *R_FindCubeImage(const char *name, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
@@ -4436,23 +4430,23 @@ image_t *R_CreateCubeImage(const char *name,
                            int width, int height, int bits, filterType_t filterType, wrapType_t wrapType);
 
 image_t *R_AllocImage(const char *name, qboolean linkIntoHashTable);
-void            R_UploadImage(const byte **dataArray, int numData, image_t *image);
+void R_UploadImage(const byte **dataArray, int numData, image_t *image);
 
-int             RE_GetTextureId(const char *name);
+int RE_GetTextureId(const char *name);
 
-void            R_InitFogTable(void);
-float           R_FogFactor(float s, float t);
+void R_InitFogTable(void);
+float R_FogFactor(float s, float t);
 
 /*
 ====================================================================
 SHADERS, tr_shader.c
 ====================================================================
 */
-qhandle_t       RE_RegisterShader(const char *name);
-qhandle_t       RE_RegisterShaderNoMip(const char *name);
-qhandle_t       RE_RegisterShaderLightAttenuation(const char *name);
-qhandle_t       RE_RegisterShaderFromImage(const char *name, image_t *image, qboolean mipRawImage);
-qboolean        RE_LoadDynamicShader(const char *shadername, const char *shadertext);
+qhandle_t RE_RegisterShader(const char *name);
+qhandle_t RE_RegisterShaderNoMip(const char *name);
+qhandle_t RE_RegisterShaderLightAttenuation(const char *name);
+qhandle_t RE_RegisterShaderFromImage(const char *name, image_t *image, qboolean mipRawImage);
+qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext);
 
 shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage);
 shader_t *R_GetShaderByHandle(qhandle_t hShader);
@@ -4556,12 +4550,12 @@ void GLSL_ShutdownGPUShaders();
 
 // *INDENT-OFF*
 void Tess_Begin(void (*stageIteratorFunc)(),
-                           void (*stageIteratorFunc2)(),
-                           shader_t *surfaceShader, shader_t *lightShader,
-                           qboolean skipTangentSpaces,
-                           qboolean skipVBO,
-                           int lightmapNum,
-                           int fogNum);
+                void (*stageIteratorFunc2)(),
+                shader_t *surfaceShader, shader_t *lightShader,
+                qboolean skipTangentSpaces,
+                qboolean skipVBO,
+                int lightmapNum,
+                int fogNum);
 // *INDENT-ON*
 void Tess_End(void);
 void Tess_EndBegin();
@@ -4645,7 +4639,7 @@ void R_SetupLightFrustum(trRefLight_t *light);
 void R_SetupLightProjection(trRefLight_t *light);
 
 qboolean R_AddLightInteraction(trRefLight_t *light, surfaceType_t *surface, shader_t *surfaceShader, byte cubeSideBits,
-                                      interactionType_t iaType);
+                               interactionType_t iaType);
 
 void R_SortInteractions(trRefLight_t *light);
 
@@ -4711,7 +4705,7 @@ MARKERS, POLYGON PROJECTION ON WORLD POLYGONS, tr_marks.c
 */
 
 int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection,
-                                int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
+                    int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
 
 /*
 ============================================================
@@ -4734,9 +4728,9 @@ void R_AttachFBOTextureDepth(int texId);
 void R_BindFBO(FBO_t *fbo);
 void R_BindNullFBO(void);
 
-void            R_InitFBOs(void);
-void            R_ShutdownFBOs(void);
-void            R_FBOList_f(void);
+void R_InitFBOs(void);
+void R_ShutdownFBOs(void);
+void R_FBOList_f(void);
 
 /*
 ============================================================
@@ -4766,7 +4760,7 @@ DECALS - tr_decals.c
 */
 
 void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime,
-                                int fadeTime);
+                     int fadeTime);
 void RE_ClearDecals(void);
 
 void R_AddModelShadow(refEntity_t *ent);
