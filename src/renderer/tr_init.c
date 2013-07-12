@@ -178,8 +178,6 @@ cvar_t *r_bonesDebug;
 
 cvar_t *r_wolffog;
 
-cvar_t *r_highQualityVideo;
-
 cvar_t *r_screenshotJpegQuality;
 
 cvar_t *r_maxpolys;
@@ -1311,7 +1309,6 @@ void R_Register(void)
 	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", va("%d", MIN_POLYVERTS), CVAR_LATCH); // now latched to check against used r_maxpolyverts and not MAX_POLYVERTS
 	AssertCvarRange(r_maxpolyverts, MIN_POLYVERTS, MAX_POLYVERTS, qtrue); // MIN_POLYVERTS was old static value
 
-	r_highQualityVideo = ri.Cvar_Get("r_highQualityVideo", "1", CVAR_ARCHIVE);
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
 	ri.Cmd_AddCommand("imagelist", R_ImageList_f);
