@@ -52,7 +52,7 @@ int r_numPolyVerts;
 int r_firstScenePolybuffer;
 int r_numPolybuffers;
 
-// ydnar: decals
+// decals
 int r_firstSceneDecalProjector;
 int r_numDecalProjectors;
 int r_firstSceneDecal;
@@ -95,13 +95,12 @@ void R_ToggleSmpFrame(void)
 	r_numPolybuffers       = 0;
 	r_firstScenePolybuffer = 0;
 
-	// ydnar: decals
+	// decals
 	r_numDecalProjectors       = 0;
 	r_firstSceneDecalProjector = 0;
 	r_numDecals                = 0;
 	r_firstSceneDecal          = 0;
 }
-
 
 /*
 ====================
@@ -117,9 +116,7 @@ void RE_ClearScene(void)
 
 /*
 ===========================================================================
-
 DISCRETE POLYS
-
 ===========================================================================
 */
 
@@ -174,7 +171,6 @@ void R_AddPolygonBufferSurfaces(void)
 	}
 }
 
-
 /*
 =====================
 R_AddPolysToScene
@@ -214,7 +210,7 @@ static void R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t 
 			   since we don't plan on changing the const and making for room for those effects
 			   simply cut this message to developer only
 			 */
-			ri.Printf(PRINT_DEVELOPER, "WARNING: RE_AddPolyToScene: r_max_polys or r_max_polyverts reached\n");
+			ri.Printf(PRINT_DEVELOPER, "WARNING: RE_AddPolyToScene: r_maxPolyVerts or r_maxPolys reached\n");
 			return;
 		}
 
@@ -349,9 +345,7 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 	pPolySurf->fogIndex = fogIndex;
 }
 
-
 //=================================================================================
-
 
 /*
 =====================
@@ -488,7 +482,7 @@ static void R_AddWorldLightsToScene()
 =====================
 RE_AddDynamicLightToScene
 
-ydnar: modified dlight system to support seperate radius and intensity
+modified dlight system to support seperate radius and intensity
 =====================
 */
 void RE_AddDynamicLightToSceneET(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
@@ -513,7 +507,7 @@ void RE_AddDynamicLightToSceneET(const vec3_t org, float radius, float intensity
 	light = &backEndData[tr.smpFrame]->lights[r_numLights++];
 
 	light->l.rlType = RL_OMNI;
-//  light->l.lightfx = 0;
+	//light->l.lightfx = 0;
 	VectorCopy(org, light->l.origin);
 
 	QuatClear(light->l.rotation);
@@ -584,7 +578,6 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 	cor->id       = id;
 	cor->visible  = visible;
 }
-
 
 /*
 @@@@@@@@@@@@@@@@@@@@@
@@ -729,9 +722,9 @@ void RE_RenderScene(const refdef_t *fd)
 	}
 	else
 	{
-		//Driver bug, if we try and do pixel target work along the top edge of a window
-		//we can end up capturing part of the status bar. (see screenshot corruption..)
-		//Soooo.. use the middle.
+		// Driver bug, if we try and do pixel target work along the top edge of a window
+		// we can end up capturing part of the status bar. (see screenshot corruption..)
+		// Soooo.. use the middle.
 		parms.viewportX = glConfig.vidWidth / 2;
 		parms.viewportY = glConfig.vidHeight / 2;
 	}
@@ -775,7 +768,6 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.frontEndMsec += ri.Milliseconds() - startTime;
 }
 
-
 // Temp storage for saving view paramters.  Drawing the animated head in the corner
 // was creaming important view info.
 static viewParms_t g_oldViewParms;
@@ -793,7 +785,6 @@ void RE_SaveViewParms()
 	// save old viewParms so we can return to it after the mirror view
 	g_oldViewParms = tr.viewParms;
 }
-
 
 /*
 ================
