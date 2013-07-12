@@ -80,7 +80,6 @@ cvar_t *r_skipLightBuffer;
 cvar_t *r_ignorehwgamma;
 cvar_t *r_measureOverdraw;
 
-cvar_t *r_inGameVideo;
 cvar_t *r_fastsky;
 cvar_t *r_drawSun;
 
@@ -1487,7 +1486,7 @@ void R_Register(void)
 	r_zfar           = ri.Cvar_Get("r_zfar", "1024", CVAR_CHEAT);
 	r_ignoreGLErrors = ri.Cvar_Get("r_ignoreGLErrors", "1", CVAR_ARCHIVE);
 	r_fastsky        = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE);
-	r_inGameVideo    = ri.Cvar_Get("r_inGameVideo", "1", CVAR_ARCHIVE);
+
 	r_drawSun        = ri.Cvar_Get("r_drawSun", "0", CVAR_ARCHIVE);
 	r_finish         = ri.Cvar_Get("r_finish", "0", CVAR_CHEAT);
 	r_textureMode    = ri.Cvar_Get("r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
