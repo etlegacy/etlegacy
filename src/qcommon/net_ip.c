@@ -81,7 +81,7 @@ typedef int SOCKET;
 
 struct Library *SocketBase;
 
-#else
+#else // *NIX & APPLE
 
 #   if MAC_OS_X_VERSION_MIN_REQUIRED == 1020
 // needed for socklen_t on OSX 10.2
@@ -140,6 +140,7 @@ static struct sockaddr socksRelayAddr;
 
 static SOCKET ip_socket    = INVALID_SOCKET;
 static SOCKET socks_socket = INVALID_SOCKET;
+
 #ifdef FEATURE_IPV6
 static SOCKET ip6_socket        = INVALID_SOCKET;
 static SOCKET multicast6_socket = INVALID_SOCKET;
@@ -151,7 +152,6 @@ static struct sockaddr_in6 boundto;
 
 // use an admin local address per default so that network admins can decide on how to handle quake3 traffic.
 #define NET_MULTICAST_IP6 "ff04::696f:7175:616b:6533"
-
 #endif
 
 #ifndef IF_NAMESIZE
@@ -392,7 +392,7 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 	}
 
 	return qfalse;
-#else
+#else // IPV4
 	struct hostent *h;
 
 	memset(sadr, 0, sizeof(*sadr));
@@ -440,7 +440,7 @@ static void Sys_SockaddrToString(char *dest, int destlen, struct sockaddr *input
 	{
 		*dest = '\0';
 	}
-#else
+#else // IPV4
 	char *addr = inet_ntoa(((struct sockaddr_in *)input)->sin_addr);
 
 	Q_strncpyz(dest, addr, destlen);
@@ -1786,7 +1786,7 @@ static qboolean NET_GetCvars(void)
 #else
 
 #ifdef FEATURE_IPV6
-	// End users have it enabled so they can connect to ipv6-only hosts, but ipv4 will be used if available due to ping */
+	// End users have it enabled so they can connect to ipv6-only hosts, but ipv4 will be used if available due to ping
 	net_enabled = Cvar_Get("net_enabled", "3", CVAR_LATCH | CVAR_ARCHIVE);
 #else
 	net_enabled = Cvar_Get("net_enabled", "1", CVAR_LATCH | CVAR_ARCHIVE);
@@ -2037,18 +2037,15 @@ void NET_Sleep(int msec)
 		return; // we're not a server, just run full speed
 
 	}
-	if (ip_socket == INVALID_SOCKET)
-	{
-		return;
-	}
 
+	if (ip_socket == INVALID_SOCKET
 #ifdef FEATURE_IPV6
-	if (ip6_socket == INVALID_SOCKET)
+	    && ip6_socket == INVALID_SOCKET
+#endif
+	    )
 	{
 		return;
 	}
-#endif
-
 
 	if (msec < 0)
 	{
