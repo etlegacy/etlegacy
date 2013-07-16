@@ -3595,6 +3595,10 @@ msgstr ""
 msgid "an Objective"
 msgstr ""
 
+#: src/cgame/cg_draw.c:441
+msgid "Warning, leave the construction area..."
+msgstr ""
+
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
