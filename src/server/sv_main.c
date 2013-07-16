@@ -1599,15 +1599,15 @@ int SV_LoadTag(const char *mod_name)
 	version = LittleLong(pinmodel->version);
 	if (version != TAG_VERSION)
 	{
+		FS_FreeFile(buffer);
 		Com_Printf(S_COLOR_YELLOW "WARNING: SV_LoadTag: %s has wrong version (%i should be %i)\n", mod_name, version, TAG_VERSION);
 		return 0;
 	}
 
 	if (sv.num_tagheaders >= MAX_TAG_FILES)
 	{
-		Com_Error(ERR_DROP, "MAX_TAG_FILES reached");
-
 		FS_FreeFile(buffer);
+		Com_Error(ERR_DROP, "MAX_TAG_FILES reached");
 		return 0;
 	}
 
@@ -1622,9 +1622,8 @@ int SV_LoadTag(const char *mod_name)
 
 	if (sv.num_tags + pinmodel->numTags >= MAX_SERVER_TAGS)
 	{
-		Com_Error(ERR_DROP, "MAX_SERVER_TAGS reached");
-
 		FS_FreeFile(buffer);
+		Com_Error(ERR_DROP, "MAX_SERVER_TAGS reached");
 		return qfalse;
 	}
 
