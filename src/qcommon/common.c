@@ -424,13 +424,9 @@ quake3 set test blah + map test
 int  com_numConsoleLines;
 char *com_consoleLines[MAX_CONSOLE_LINES];
 
-/*
-==================
-Com_ParseCommandLine
-
-Break it up into multiple console lines
-==================
-*/
+/**
+ * @brief Break it up into multiple console lines
+ */
 void Com_ParseCommandLine(char *commandLine)
 {
 	int inq = 0;
@@ -459,14 +455,9 @@ void Com_ParseCommandLine(char *commandLine)
 	}
 }
 
-/*
-===================
-Com_SafeMode
-
-Check for "safe" on the command line, which will
-skip loading of wolfconfig.cfg
-===================
-*/
+/**
+ * @brief Check for "safe" on the command line, which will skip loading of wolfconfig.cfg
+ */
 qboolean Com_SafeMode(void)
 {
 	int i;
@@ -2040,7 +2031,6 @@ void Hunk_FreeTempMemory(void *buf)
 		return;
 	}
 
-
 	hdr = ((hunkHeader_t *)buf) - 1;
 	if (hdr->magic != HUNK_MAGIC)
 	{
@@ -2623,6 +2613,9 @@ static void Com_Crash_f(void)
 	*( volatile int * ) 0 = 0x12345678;
 }
 
+/**
+ * @brief sets recommended values
+ */
 void Com_SetRecommended()
 {
 	cvar_t   *r_highQualityVideo;
@@ -3023,8 +3016,6 @@ Writes key bindings and archived cvars to config file if modified
 */
 void Com_WriteConfiguration(void)
 {
-	char *cl_profileStr = Cvar_VariableString("cl_profile");
-
 	// if we are quiting without fully initializing, make sure
 	// we don't write out anything
 	if (!com_fullyInitialized)
@@ -3038,13 +3029,17 @@ void Com_WriteConfiguration(void)
 	}
 	cvar_modifiedFlags &= ~CVAR_ARCHIVE;
 
-	if (cl_profileStr[0])
 	{
-		Com_WriteConfigToFile(va("profiles/%s/%s", cl_profileStr, CONFIG_NAME));
-	}
-	else
-	{
-		Com_WriteConfigToFile(CONFIG_NAME);
+		char *cl_profileStr = Cvar_VariableString("cl_profile");
+
+		if (cl_profileStr[0])
+		{
+			Com_WriteConfigToFile(va("profiles/%s/%s", cl_profileStr, CONFIG_NAME));
+		}
+		else
+		{
+			Com_WriteConfigToFile(CONFIG_NAME);
+		}
 	}
 }
 
@@ -3345,6 +3340,9 @@ Com_Shutdown
 */
 void Com_Shutdown(qboolean badProfile)
 {
+	Cmd_RemoveCommand("meminfo");
+	// FIXME: common defines more cmds - remove all
+
 	// delete pid file
 	if (!badProfile && FS_FileExists(com_pidfile->string))
 	{
