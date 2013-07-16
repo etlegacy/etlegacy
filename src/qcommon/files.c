@@ -4172,8 +4172,8 @@ void FS_ClearPakReferences(int flags)
 	}
 }
 
-/*
- * If the string is empty, all data sources will be allowed.
+/**
+ * @brief If the string is empty, all data sources will be allowed.
  * If not empty, only pk3 files that match one of the space separated checksums
  * will be checked for files, with the exception of .cfg and .dat files.
  */
@@ -4237,8 +4237,8 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames)
 	}
 }
 
-/*
- * The checksums and names of the pk3 files referenced at the server are sent to
+/**
+ * @brief The checksums and names of the pk3 files referenced at the server are sent to
  * the client and stored here. The client will use these checksums to see if any
  * pk3 files need to be auto-downloaded.
  */
@@ -4289,6 +4289,27 @@ void FS_PureServerSetReferencedPaks(const char *pakSums, const char *pakNames)
 }
 
 /**
+ * @brief Prints file system info
+ */
+void FS_Fileinfo_f(void)
+{
+	Com_Printf("fs_gamedir %s\n", fs_gamedir);
+	Com_Printf("fs_debug %s\n", fs_debug->string);
+
+	Com_Printf("fs_homepath %s\n", fs_homepath->string);
+	Com_Printf("fs_basepath %s\n", fs_basepath->string);
+	Com_Printf("fs_basegame %s\n", fs_basegame->string);
+	Com_Printf("fs_gamedirvar %s\n", fs_gamedirvar->string);
+
+	// static searchpath_t *fs_searchpaths;
+
+	Com_Printf("Total megs read %i\n", fs_readCount / (1024 * 1024)); // total at runtime, isn't reset
+	Com_Printf("Total files read %i\n", fs_loadCount);                // total at runtime, isn't reset
+	Com_Printf("Total files in memory %i\n", fs_loadStack);           // should be 0 in game
+	Com_Printf("Total number of files in packs %i\n", fs_packFiles);
+}
+
+/**
  * @brief Called only at initial startup, not when the filesystem
  * is resetting due to a game change
  */
@@ -4332,6 +4353,11 @@ void FS_InitFilesystem(void)
 
 	Q_strncpyz(lastValidBase, fs_basepath->string, sizeof(lastValidBase));
 	Q_strncpyz(lastValidGame, fs_gamedirvar->string, sizeof(lastValidGame));
+
+	if (fs_debug->integer)
+	{
+		Cmd_AddCommand("fileinfo", FS_Fileinfo_f);
+	}
 }
 
 void FS_Restart(int checksumFeed)
