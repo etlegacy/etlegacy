@@ -269,7 +269,6 @@ static void MD5Final(struct MD5Context *ctx, unsigned char *digest)
 	memset(ctx, 0, sizeof(*ctx));          /* In case it's sensitive */
 }
 
-
 char *Com_MD5File(const char *fn, int length, const char *prefix, int prefix_len)
 {
 	static char   final[33]  = { "" };
@@ -373,6 +372,7 @@ static char *CalculateGUID(const char *key)
 {
 	int  i;
 	char *tmp, *hash;
+
 	tmp  = CalculateMD5ForSeed(key, 0x00b684a3);
 	hash = CalculateMD5ForSeed(tmp, 0x00051a56);
 
@@ -396,10 +396,13 @@ char *Com_MD5FileETCompat(const char *filename)
 		if (len >= 28)
 		{
 			int i;
+
 			for (i = 0; i < 18; i++)
 			{
 				key[i] = buffer[i + 10];
 			}
+
+			FS_FreeFile(buffer);
 
 			return CalculateGUID(key);
 		}
