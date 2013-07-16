@@ -186,13 +186,14 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 
 	if (msg->oob)
 	{
-		if (bits == 8)
+		switch (bits)
 		{
+		case 8:
 			msg->data[msg->cursize] = value;
 			msg->cursize           += 1;
 			msg->bit               += 8;
-		}
-		else if (bits == 16)
+			break;
+		case 16:
 		{
 			unsigned short *sp = (unsigned short *)&msg->data[msg->cursize];
 
@@ -200,7 +201,8 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 			msg->cursize += 2;
 			msg->bit     += 16;
 		}
-		else if (bits == 32)
+		break;
+		case 32:
 		{
 			unsigned int *ip = (unsigned int *)&msg->data[msg->cursize];
 
@@ -208,8 +210,8 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 			msg->cursize += 4;
 			msg->bit     += 8;
 		}
-		else
-		{
+		break;
+		default:
 			Com_Error(ERR_DROP, "MSG_WriteBits: can't read %d bits", bits);
 		}
 	}
@@ -244,7 +246,6 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 int MSG_ReadBits(msg_t *msg, int bits)
 {
 	int      value = 0;
-	int      get;
 	qboolean sgn;
 
 	if (bits < 0)
@@ -259,13 +260,14 @@ int MSG_ReadBits(msg_t *msg, int bits)
 
 	if (msg->oob)
 	{
-		if (bits == 8)
+		switch (bits)
 		{
+		case 8:
 			value           = msg->data[msg->readcount];
 			msg->readcount += 1;
 			msg->bit       += 8;
-		}
-		else if (bits == 16)
+			break;
+		case 16:
 		{
 			unsigned short *sp = (unsigned short *)&msg->data[msg->readcount];
 
@@ -273,7 +275,8 @@ int MSG_ReadBits(msg_t *msg, int bits)
 			msg->readcount += 2;
 			msg->bit       += 16;
 		}
-		else if (bits == 32)
+		break;
+		case 32:
 		{
 			unsigned int *ip = (unsigned int *)&msg->data[msg->readcount];
 
@@ -281,8 +284,8 @@ int MSG_ReadBits(msg_t *msg, int bits)
 			msg->readcount += 4;
 			msg->bit       += 32;
 		}
-		else
-		{
+		break;
+		default:
 			Com_Error(ERR_DROP, "MSG_ReadBits: can't read %d bits", bits);
 		}
 	}
@@ -301,6 +304,8 @@ int MSG_ReadBits(msg_t *msg, int bits)
 		}
 		if (bits)
 		{
+			int get;
+
 			for (i = 0; i < bits; i += 8)
 			{
 				Huff_offsetReceive(msgHuff.decompressor.tree, &get, msg->data, &msg->bit);
@@ -1053,13 +1058,11 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
                           qboolean force)
 {
 	int        i, lc;
-	int        numFields;
+	int        numFields = sizeof(entityStateFields) / sizeof(entityStateFields[0]);
 	netField_t *field;
 	int        trunc;
 	float      fullFloat;
 	int        *fromF, *toF;
-
-	numFields = sizeof(entityStateFields) / sizeof(entityStateFields[0]);
 
 	// all fields should be 32 bits to avoid any compiler packing issues
 	// the "number" field is not part of the field list
@@ -1162,18 +1165,18 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 					// send as small integer
 					MSG_WriteBits(msg, 0, 1);
 					MSG_WriteBits(msg, trunc + FLOAT_INT_BIAS, FLOAT_INT_BITS);
-//                  if ( print ) {
-//                      Com_Printf( "%s:%i ", field->name, trunc );
-//                  }
+					//if (print) {
+					//  Com_Printf( "%s:%i ", field->name, trunc );
+					//}
 				}
 				else
 				{
 					// send as full floating point value
 					MSG_WriteBits(msg, 1, 1);
 					MSG_WriteBits(msg, *toF, 32);
-//                  if ( print ) {
-//                      Com_Printf( "%s:%f ", field->name, *(float *)toF );
-//                  }
+					//if (print) {
+					//  Com_Printf( "%s:%f ", field->name, *(float *)toF );
+					//}
 				}
 			}
 		}
@@ -1188,14 +1191,14 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 				MSG_WriteBits(msg, 1, 1);
 				// integer
 				MSG_WriteBits(msg, *toF, field->bits);
-//              if ( print ) {
-//                  Com_Printf( "%s:%i ", field->name, *toF );
-//              }
+				//if ( print ) {
+				//  Com_Printf( "%s:%i ", field->name, *toF );
+				//}
 			}
 		}
 	}
 
-//  Com_Printf( "\n" );
+	//Com_Printf( "\n" );
 
 	/*
 	    c = msg->cursize - c;
@@ -1602,27 +1605,27 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 				// send as small integer
 				MSG_WriteBits(msg, 0, 1);
 				MSG_WriteBits(msg, trunc + FLOAT_INT_BIAS, FLOAT_INT_BITS);
-//              if ( print ) {
-//                  Com_Printf( "%s:%i ", field->name, trunc );
-//              }
+				//if ( print ) {
+				//  Com_Printf( "%s:%i ", field->name, trunc );
+				//}
 			}
 			else
 			{
 				// send as full floating point value
 				MSG_WriteBits(msg, 1, 1);
 				MSG_WriteBits(msg, *toF, 32);
-//              if ( print ) {
-//                  Com_Printf( "%s:%f ", field->name, *(float *)toF );
-//              }
+				//if ( print ) {
+				//  Com_Printf( "%s:%f ", field->name, *(float *)toF );
+				//}
 			}
 		}
 		else
 		{
 			// integer
 			MSG_WriteBits(msg, *toF, field->bits);
-//          if ( print ) {
-//              Com_Printf( "%s:%i ", field->name, *toF );
-//          }
+			//if ( print ) {
+			//  Com_Printf( "%s:%i ", field->name, *toF );
+			//}
 		}
 	}
 
@@ -1952,7 +1955,6 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 				if (bits & (1 << i))
 				{
 					to->stats[i] = MSG_ReadShort(msg);
-
 				}
 			}
 		}
@@ -1999,7 +2001,6 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 			}
 		}
 	}
-
 
 	// Split this into two groups using shorts so it wouldn't have
 	// to use a long every time ammo changed for any weap.
@@ -2335,8 +2336,8 @@ void MSG_initHuffman(void)
 	{
 		for (j = 0; j < msg_hData[i]; j++)
 		{
-			Huff_addRef(&msgHuff.compressor, (byte)i);                /* Do update */
-			Huff_addRef(&msgHuff.decompressor, (byte)i);              /* Do update */
+			Huff_addRef(&msgHuff.compressor, (byte)i);    // Do update
+			Huff_addRef(&msgHuff.decompressor, (byte)i);  // Do update
 		}
 	}
 }
