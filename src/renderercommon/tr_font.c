@@ -435,6 +435,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 			font->glyphs[i].glyph = RE_RegisterShaderNoMip(font->glyphs[i].shaderName);
 		}
 		Com_Memcpy(&registeredFont[registeredFontCount++], font, sizeof(fontInfo_t));
+		ri.FS_FreeFile(faceData);
 		return;
 	}
 
@@ -457,12 +458,14 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 	// allocate on the stack first in case we fail
 	if (FT_New_Memory_Face(ftLibrary, faceData, len, 0, &face))
 	{
+		// FIXME: ri.FS_FreeFile(faceData); ?
 		ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType, unable to allocate new face.\n");
 		return;
 	}
 
 	if (FT_Set_Char_Size(face, pointSize << 6, pointSize << 6, dpi, dpi))
 	{
+		// FIXME: ri.FS_FreeFile(faceData); ?
 		ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType, unable to set face char size.\n");
 		return;
 	}
@@ -475,6 +478,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 	out = ri.Z_Malloc(1024 * 1024);
 	if (out == NULL)
 	{
+		// FIXME: ri.FS_FreeFile(faceData); ?
 		ri.Printf(PRINT_WARNING, "RE_RegisterFont: ri.Z_Malloc failure during output image creation.\n");
 		return;
 	}
