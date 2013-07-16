@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-10 16:13+0100\n"
+"PO-Revision-Date: 2013-07-16 13:32+0100\n"
 "Last-Translator: Vinzenz Krügl <harlekin@hirntot.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -3664,6 +3664,10 @@ msgstr ""
 #, fuzzy
 msgid "an Objective"
 msgstr "O. Ziele"
+
+#: src/cgame/cg_draw.c:441
+msgid "Warning, leave the construction area..."
+msgstr ""
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
