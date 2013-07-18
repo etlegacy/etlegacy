@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-16 13:32+0100\n"
+"PO-Revision-Date: 2013-07-18 23:20+0100\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish translators <mail@etlegacy.com>\n"
 "Language: pl_PL\n"
@@ -3648,9 +3648,14 @@ msgstr "Zespawnujesz sie jako %s %s z %s."
 msgid "an Objective"
 msgstr "Cel"
 
-#: src/cgame/cg_draw.c:441
 msgid "Warning, leave the construction area..."
 msgstr "Uwaga, opusc plac budowy..."
+
+msgid "got caught in"
+msgstr "zostal zlapany w"
+
+msgid "'s construction madness"
+msgstr "'s szalenstwie budowlanym"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format

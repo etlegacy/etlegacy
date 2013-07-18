@@ -3595,8 +3595,13 @@ msgstr ""
 msgid "an Objective"
 msgstr ""
 
-#: src/cgame/cg_draw.c:441
 msgid "Warning, leave the construction area..."
+msgstr ""
+
+msgid "got caught in"
+msgstr ""
+
+msgid "'s construction madness"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338

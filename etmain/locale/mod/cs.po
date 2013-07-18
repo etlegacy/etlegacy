@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-16 13:32+0100\n"
+"PO-Revision-Date: 2013-07-18 23:21+0100\n"
 "Last-Translator: Jan Šimek <jsimek.cz@gmail.com>\n"
 "Language-Team: Czech translators <mail@etlegacy.com>\n"
 "Language: cs_CZ\n"
@@ -3649,8 +3649,13 @@ msgstr ""
 msgid "an Objective"
 msgstr ""
 
-#: src/cgame/cg_draw.c:441
 msgid "Warning, leave the construction area..."
+msgstr ""
+
+msgid "got caught in"
+msgstr ""
+
+msgid "'s construction madness"
 msgstr ""
 
 #: src/ui/ui_loadpanel.c:338
