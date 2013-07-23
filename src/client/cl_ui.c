@@ -93,15 +93,15 @@ void LAN_LoadCachedServers(void)
 		FS_FCloseFile(fileIn);
 	}
 
-	Com_Printf("Favourite servers restored: %i\n", cls.numfavoriteservers);
+	Com_Printf("Total favourite servers restored: %i\n", cls.numfavoriteservers);
 }
 
 /*
 ====================
-LAN_SaveServersToCache
+LAN_SaveServersToFile
 ====================
 */
-void LAN_SaveServersToCache(void)
+void LAN_SaveServersToFile(void)
 {
 	int          size;
 	fileHandle_t fileOut;
@@ -126,7 +126,7 @@ void LAN_SaveServersToCache(void)
 	FS_Write(&cls.favoriteServers, sizeof(cls.favoriteServers), fileOut);
 	FS_FCloseFile(fileOut);
 
-	Com_Printf("Favourite servers saved: %i\n", cls.numfavoriteservers);
+	Com_Printf("Total favourite servers saved: %i\n", cls.numfavoriteservers);
 }
 
 /*
@@ -154,6 +154,7 @@ static void LAN_ResetPings(int source)
 		count   = MAX_OTHER_SERVERS;
 		break;
 	}
+
 	if (servers)
 	{
 		for (i = 0; i < count; i++)
@@ -190,6 +191,7 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 		servers = &cls.favoriteServers[0];
 		break;
 	}
+
 	if (servers && *count < max)
 	{
 		int i;
@@ -208,6 +210,12 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 			Q_strncpyz(servers[*count].hostName, name, sizeof(servers[*count].hostName));
 			servers[*count].visible = qtrue;
 			(*count)++;
+
+			if (source == AS_FAVORITES)
+			{
+				LAN_SaveServersToFile();
+			}
+
 			return 1;
 		}
 		return 0;
@@ -260,6 +268,11 @@ static void LAN_RemoveServer(int source, const char *addr)
 				(*count)--;
 				break;
 			}
+		}
+
+		if (source == AS_FAVORITES)
+		{
+			LAN_SaveServersToFile();
 		}
 	}
 }
@@ -1120,7 +1133,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_LAN_SAVECACHEDSERVERS:
-		LAN_SaveServersToCache();
+		//LAN_SaveServersToFile(); // now done on add/remove fav server so we no longer save LAN favs on shutdown & restart
 		return 0;
 
 	case UI_LAN_ADDSERVER:
