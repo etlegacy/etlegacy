@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET: Legacy 2.70rc2\n"
 "Report-Msgid-Bugs-To: bugs@etlegacy.com\n"
 "POT-Creation-Date: 2013-04-07 23:32+0200\n"
-"PO-Revision-Date: 2013-07-23 20:26+0200\n"
+"PO-Revision-Date: 2013-07-23 21:40+0200\n"
 "Last-Translator: Jere S <shogaiam@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -799,139 +799,139 @@ msgid "CHAT"
 msgstr "KESKUSTELU"
 
 msgid "Quick Chat Mode:"
-msgstr ""
+msgstr "Pikaviestintätila:"
 
 msgid "Chat Icon Time:"
-msgstr ""
+msgstr "Kuskustelun Aikaleimat:"
 
 msgid "Team chat only:"
-msgstr ""
+msgstr "Vain Joukkueviestit:"
 
 msgid "No voice chat:"
-msgstr ""
+msgstr "Ei ääniviestejä:"
 
 msgid "No voice text:"
-msgstr ""
+msgstr "Ei tekstiviestejä:"
 
 msgid "MISCELLANEOUS"
-msgstr ""
+msgstr "SEKALAISET"
 
 msgid "Complaint PopUp:"
-msgstr ""
+msgstr "Valitus- Ponnahdusikkuna:"
 
 msgid "Log Important Messages:"
-msgstr ""
+msgstr "Logita Tärkeät Viestit:"
 
 msgid "Auto-Action:"
-msgstr ""
+msgstr "Automaattinen Toiminta:"
 
 msgid "Use JPEG for AutoScreenshots:"
-msgstr ""
+msgstr "Käytä JPEG Pakkausta Kuvissa:"
 
 msgid "Show Tool Tips :"
-msgstr ""
+msgstr "Näytä Vinkit:"
 
 msgid "Announcer:"
-msgstr ""
+msgstr "Tiedottaja:"
 
 msgid "HUD DISPLAY"
-msgstr ""
+msgstr "HUD- NÄYTTÖ"
 
 msgid "Draw Gun:"
-msgstr ""
+msgstr "Näytä Ase:"
 
 msgid "Show Compass:"
-msgstr ""
+msgstr "Näytä Kompassi:"
 
 msgid "Mission Timer:"
-msgstr ""
+msgstr "Tehtäväaika:"
 
 msgid "Reinforcement Timer:"
-msgstr ""
+msgstr "Vahvistusaika:"
 
 msgid "Cursor Hints:"
-msgstr ""
+msgstr "Osoittimen Vihjeet:"
 
 msgid "Show Lagometer:"
-msgstr ""
+msgstr "Näytä Lagimittari:"
 
 msgid "Show FPS:"
-msgstr ""
+msgstr "Näytä Ruudunpäivitys:"
 
 msgid "Show Locations:"
-msgstr ""
+msgstr "Näytä Lokaatiot:"
 
 msgid "Enable Flags:"
-msgstr ""
+msgstr "Enabloi Liput:"
 
 msgid "Fireteam Latched Class:"
-msgstr ""
+msgstr "Tulijoukkueen seuraavat luokat:"
 
 msgid "Switch HUD:"
-msgstr ""
+msgstr "Vaihda HUD:"
 
 msgid "Modify Alternate HUD:"
-msgstr ""
+msgstr "Muokkaa Vaihtoehtoista HUD:ia:"
 
 msgid "IN-GAME DISPLAY"
-msgstr ""
+msgstr "PELIRUUTU"
 
 msgid "Ejecting Brass:"
-msgstr ""
+msgstr "Hylsynpoisto:"
 
 msgid "Field Of View:"
-msgstr ""
+msgstr "Näkyvyysalue:"
 
 msgid "Corona Distance:"
-msgstr ""
+msgstr "Koronan Etäisyys:"
 
 msgid "Particles:"
-msgstr ""
+msgstr "Hiukkaset:"
 
 msgid "Wall Mark Lifetime:"
-msgstr ""
+msgstr "Luodinreikien Elinaika:"
 
 msgid "Blood Flash:"
-msgstr ""
+msgstr "Verenvälähdys:"
 
 msgid "Blood Splatter:"
-msgstr ""
+msgstr "Veritirskeet:"
 
 msgid "Show Blood:"
-msgstr ""
+msgstr "Näytä Veri:"
 
 msgid "Atmospheric Effects:"
-msgstr ""
+msgstr "Sääefektit:"
 
 msgid "CROSSHAIR"
-msgstr ""
+msgstr "TÄHTÄIN"
 
 msgid "Crosshair Size:"
-msgstr ""
+msgstr "Tähtäminen Koko:"
 
 msgid "Crosshair Pulsing:"
-msgstr ""
+msgstr "Tähtäimen Sykehdintä:"
 
 msgid "Crosshair Health Info:"
-msgstr ""
+msgstr "Terveystieto Tähtäimessä:"
 
 msgid "Crosshair Name Drawing:"
-msgstr ""
+msgstr "Nimet Tähtäimessä:"
 
 msgid "Primary Color:"
-msgstr ""
+msgstr "Pääväri:"
 
 msgid "Primary Alpha:"
-msgstr ""
+msgstr "Päävärin Vahvuus:"
 
 msgid "Secondary Color:"
-msgstr ""
+msgstr "Toissijainen Väri:"
 
 msgid "Secondary Alpha:"
-msgstr ""
+msgstr "Toisen Värin Vahvuus:"
 
 msgid "MOVEMENT"
-msgstr ""
+msgstr "LIIKKUMINEN"
 
 msgid "Bob up:"
 msgstr ""
@@ -946,235 +946,235 @@ msgid "Bob yaw:"
 msgstr ""
 
 msgid "MOVE"
-msgstr ""
+msgstr "LIIKU"
 
 msgid "Forward:"
-msgstr ""
+msgstr "Eteenpäin:"
 
 msgid "Back:"
-msgstr ""
+msgstr "Taaksepäin:"
 
 msgid "Move Left:"
-msgstr ""
+msgstr "Vasemmalle:"
 
 msgid "Move Right:"
-msgstr ""
+msgstr "Oikealle:"
 
 msgid "Lean Left:"
-msgstr ""
+msgstr "Kallista Vasemmalle:"
 
 msgid "Lean Right:"
-msgstr ""
+msgstr "Kallista Oikealle:"
 
 msgid "Jump:"
-msgstr ""
+msgstr "Hyppää:"
 
 msgid "Crouch:"
-msgstr ""
+msgstr "Kyykisty:"
 
 msgid "Prone:"
-msgstr ""
+msgstr "Maastoudu:"
 
 msgid "Walk:"
-msgstr ""
+msgstr "Kävele:"
 
 msgid "Sprint:"
-msgstr ""
+msgstr "Pinkaise:"
 
 msgid "Use (Activate):"
-msgstr ""
+msgstr "Käytä (Aktivoi):"
 
 msgid "INPUT"
-msgstr ""
+msgstr "SYÖTEET"
 
 msgid "Smooth Mouse:"
-msgstr ""
+msgstr "Sujuva Hiiri:"
 
 msgid "Mouse Pitch:"
 msgstr ""
 
 msgid "Chat:"
-msgstr ""
+msgstr "Keskustelu:"
 
 msgid "Team Chat:"
-msgstr ""
+msgstr "Joukkuekeskustelu:"
 
 msgid "Fire-Team Chat:"
-msgstr ""
+msgstr "Tulijoukkuekeskustelu:"
 
 msgid "Quick Chat:"
-msgstr ""
+msgstr "Pikakeskustelu:"
 
 msgid "Fire-Team Quick Chat:"
-msgstr ""
+msgstr "Tulijoukkueen Pikakeskustelu:"
 
 msgid "POP-UPS"
-msgstr ""
+msgstr "PONNAHDUSIKKUNAT"
 
 msgid "Show Scores:"
-msgstr ""
+msgstr "Näytät Pisteet:"
 
 msgid "Show Limbo Menu:"
-msgstr ""
+msgstr "Näytä Limbo Valikko:"
 
 msgid "Show Command Map:"
-msgstr ""
+msgstr "Näytä Komentokartta:"
 
 msgid "Compass Map Zoom In:"
-msgstr ""
+msgstr "Zoomaa Kompassiin Karttaa Sisään:"
 
 msgid "Compass Map Zoom Out:"
-msgstr ""
+msgstr "Zoomaa Kompassin Karttaa Ulos:"
 
 msgid "Player Stats:"
-msgstr ""
+msgstr "Pelaajat Tilastot:"
 
 msgid "Top Shots:"
-msgstr ""
+msgstr "Parhaat Osumat:"
 
 msgid "USE WEAPONS"
-msgstr ""
+msgstr "KÄYTÄ ASEITA"
 
 msgid "Attack:"
-msgstr ""
+msgstr "Hyökkää:"
 
 msgid "Switch to Alternate:"
-msgstr ""
+msgstr "Vaihda Toissijaiseen:"
 
 msgid "Reload Weapon:"
-msgstr ""
+msgstr "Lataa Ase:"
 
 msgid "Binocular Zoom:"
-msgstr ""
+msgstr "Kiikareiden Zoomaus:"
 
 msgid "SELECT WEAPONS"
-msgstr ""
+msgstr "VALITSE ASEET"
 
 msgid "Next Weapon:"
-msgstr ""
+msgstr "Seuraava Ase:"
 
 msgid "Previous Weapon:"
-msgstr ""
+msgstr "Edellinen Ase:"
 
 msgid "Slot 1 - Melee:"
-msgstr ""
+msgstr "1 - Lähitaistelu:"
 
 msgid "Slot 2 - One Handed:"
-msgstr ""
+msgstr "2 - Käsiase:"
 
 msgid "Slot 3 - Two Handed:"
-msgstr ""
+msgstr "3 - Kivääri:"
 
 msgid "Slot 4 - Grenade:"
-msgstr ""
+msgstr "4 - Käsigranaatti:"
 
 msgid "Slot 5 - Special 1:"
-msgstr ""
+msgstr "5 - Erikois 1:"
 
 msgid "Slot 6 - Special 2:"
-msgstr ""
+msgstr "6 - Erikois 2:"
 
 msgid "Slot 7 - Special 3:"
-msgstr ""
+msgstr "7 - Erikois 3:"
 
 msgid "Vote Yes:"
-msgstr ""
+msgstr "Äänestä Kyllä:"
 
 msgid "Vote No:"
-msgstr ""
+msgstr "Äänestä Ei:"
 
 msgid "Take Screenshot:"
-msgstr ""
+msgstr "Ota Ruudunkaappaus:"
 
 msgid "Record Replay:"
-msgstr ""
+msgstr "Nauhoita:"
 
 msgid "FIRE-TEAMS"
-msgstr ""
+msgstr "TULIJOUKKUEET"
 
 msgid "Select All Members:"
-msgstr ""
+msgstr "Valitse Kaikki Osalliset:"
 
 msgid "Select Member #1:"
-msgstr ""
+msgstr "Valitse jäsen #1:"
 
 msgid "Select Member #2:"
-msgstr ""
+msgstr "Valitse jäsen #2:"
 
 msgid "Select Member #3:"
-msgstr ""
+msgstr "Valitse jäsen #3:"
 
 msgid "Select Member #4:"
-msgstr ""
+msgstr "Valitse jäsen #4:"
 
 msgid "Select Member #5:"
-msgstr ""
+msgstr "Valitse jäsen #5:"
 
 msgid "Select Member #6:"
-msgstr ""
+msgstr "Valitse jäsen #6:"
 
 msgid "Deselect All:"
-msgstr ""
+msgstr "Poista Valinnat:"
 
 msgid "Fire-Team Admin:"
-msgstr ""
+msgstr "Tulijoukkueen Ylläpitäjä:"
 
 msgid "DEFAULT CONTROLS"
-msgstr ""
+msgstr "OLETUSHALLINNAT"
 
 msgid "Reset controls to default?"
-msgstr ""
+msgstr "Palauta hallinnat oletuksiin?"
 
 msgid "AUDIO"
-msgstr ""
+msgstr "ÄÄNI"
 
 msgid "Effects Volume:"
-msgstr ""
+msgstr "Efektien Voluumi:"
 
 msgid "Music Volume:"
-msgstr ""
+msgstr "Musiikin Voluumi:"
 
 msgid "Sound Quality:"
-msgstr ""
+msgstr "Äänien Voluumi:"
 
 msgid "Doppler FX:"
 msgstr ""
 
 msgid "Mute When Minimized:"
-msgstr ""
+msgstr "Mykistä Minimoitaessa:"
 
 msgid "Mute When Unfocused:"
-msgstr ""
+msgstr "Mykistä Ikkunaa Vaihdettaessa:"
 
 msgid "Hitsounds:"
-msgstr ""
+msgstr "Osumaäänet:"
 
 msgid "NETWORKING"
-msgstr ""
+msgstr "VERKKOYHTEYDET"
 
 msgid "Max Packets:"
-msgstr ""
+msgstr "Pakettien Määrä:"
 
 msgid "Packet Duplication:"
-msgstr ""
+msgstr "Pakettien Toistanta:"
 
 msgid "DOWNLOADS"
-msgstr ""
+msgstr "LATAUKSET:"
 
 msgid "Check for Updates on Start-Up:"
-msgstr ""
+msgstr "Tarkista Päivitykset Käynnistettäessä:"
 
 msgid "Get Missing Files from Server:"
-msgstr ""
+msgstr "Lataa Puuttuvat Tiedostot Palvelimelta:"
 
 msgid "Use HTTP/FTP Downloads:"
-msgstr ""
+msgstr "Käytä HTTP/FTP Latauksia:"
 
 msgid "APPLY"
-msgstr ""
+msgstr "HYVÄKSY"
 
 msgid "CALIBRATE BRIGHTNESS"
-msgstr ""
+msgstr "SÄÄDÄ KIRKAUTTA"
 
 msgid "General Brightness Calibration (All Color Depths)"
 msgstr ""
