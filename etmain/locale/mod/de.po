@@ -63,8 +63,7 @@ msgstr "Aktzeptiere %ss Anfrage sich deiner Kampfeinheit anzuschließen?"
 #: src/cgame/cg_draw.c:2109
 #, c-format
 msgid "Accept %s's proposition to invite %s to join your fireteam?"
-msgstr ""
-"Aktzeptiere %ss Vorschlag, dass sich %s deiner Kampfeinheit anschliesst?"
+msgstr "Aktzeptiere %ss Vorschlag, dass sich %s deiner Kampfeinheit anschliesst?"
 
 #: src/cgame/cg_draw.c:2122
 #, c-format
@@ -255,7 +254,7 @@ msgstr "XP"
 
 #: src/cgame/cg_scoreboard.c:718
 msgid "Ping"
-msgstr "Latenz"
+msgstr "Ping"
 
 #: src/cgame/cg_servercmds.c:405
 msgid "Auto Pick"
@@ -292,7 +291,7 @@ msgid "PROFILE"
 msgstr "PROFILE"
 
 msgid "MODS"
-msgstr ""
+msgstr "MODIFIKATIONEN"
 
 msgid "CREDITS"
 msgstr ""
@@ -423,13 +422,13 @@ msgid "MAP NAME"
 msgstr "KARTEN NAME"
 
 msgid "#PLRS"
-msgstr ""
+msgstr "#SP"
 
 msgid "TYPE"
-msgstr "Spiel Typ:"
+msgstr "TYP"
 
 msgid "PING"
-msgstr "LATENZ"
+msgstr "PING"
 
 msgid "FAV"
 msgstr "FAV"
@@ -444,7 +443,7 @@ msgid "SERVER INFO"
 msgstr ""
 
 msgid "JOIN SERVER"
-msgstr ""
+msgstr "SPIEL BEITRETEN"
 
 msgid "Server IP:"
 msgstr "Server IP:"
@@ -510,10 +509,10 @@ msgid "GENERAL"
 msgstr ""
 
 msgid "Minimum Ping:"
-msgstr "Minimal Latenz:"
+msgstr "Minimal Ping:"
 
 msgid "Maximum Ping:"
-msgstr "Maximal Latenz:"
+msgstr "Maximal Ping:"
 
 msgid "Maximum Game Rate:"
 msgstr ""
@@ -753,7 +752,7 @@ msgid "SYSTEM"
 msgstr "SYSTEM"
 
 msgid "GRAPHICS"
-msgstr ""
+msgstr "GRAFIK"
 
 msgid "PLAYER"
 msgstr "SPIELER"
@@ -1271,7 +1270,7 @@ msgid "Sync Every Frame:"
 msgstr ""
 
 msgid "GL Extensions:"
-msgstr ""
+msgstr "GL Erweiterungen"
 
 msgid "SET RECOMMENDED"
 msgstr ""
@@ -1280,7 +1279,7 @@ msgid "^3DEVELOPED BY ET LEGACY TEAM"
 msgstr ""
 
 msgid "^1PROGRAMMING"
-msgstr ""
+msgstr "PROGRAMMIERUNG"
 
 msgid "Jan 'Radegast' Simek - Project founder, coding & management"
 msgstr ""
