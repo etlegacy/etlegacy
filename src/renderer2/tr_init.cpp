@@ -236,8 +236,8 @@ cvar_t *r_debugLight;
 cvar_t *r_debugSort;
 cvar_t *r_printShaders;
 
-cvar_t *r_maxPolys;
-cvar_t *r_maxPolyVerts;
+cvar_t *r_maxpolys;
+cvar_t *r_maxpolyverts;
 
 cvar_t *r_showTris;
 cvar_t *r_showSky;
@@ -1693,11 +1693,11 @@ void R_Register(void)
 	r_noShadowFrustums           = ri.Cvar_Get("r_noShadowFrustums", "0", CVAR_CHEAT);
 	r_noLightFrustums            = ri.Cvar_Get("r_noLightFrustums", "0", CVAR_CHEAT);
 
-	r_maxPolys = ri.Cvar_Get("r_maxpolys", "10000", 0); // 600 in vanilla Q3A
-	AssertCvarRange(r_maxPolys, 600, 30000, qtrue);
+	r_maxpolys = ri.Cvar_Get("r_maxpolys", "10000", 0); // 600 in vanilla Q3A
+	AssertCvarRange(r_maxpolys, 600, 30000, qtrue);
 
-	r_maxPolyVerts = ri.Cvar_Get("r_maxpolyverts", "100000", 0);    // 3000 in vanilla Q3A
-	AssertCvarRange(r_maxPolyVerts, 3000, 200000, qtrue);
+	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", "100000", 0);    // 3000 in vanilla Q3A
+	AssertCvarRange(r_maxpolyverts, 3000, 200000, qtrue);
 
 	r_showTris                 = ri.Cvar_Get("r_showTris", "0", CVAR_CHEAT);
 	r_showSky                  = ri.Cvar_Get("r_showSky", "0", CVAR_CHEAT);
@@ -2076,16 +2076,16 @@ void R_Init(void)
 #endif
 
 	backEndData[0]              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData[0]), h_low);
-	backEndData[0]->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxPolys->integer * sizeof(srfPoly_t), h_low);
-	backEndData[0]->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxPolyVerts->integer * sizeof(polyVert_t), h_low);
-	backEndData[0]->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxPolys->integer * sizeof(srfPolyBuffer_t), h_low);
+	backEndData[0]->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPoly_t), h_low);
+	backEndData[0]->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxpolyverts->integer * sizeof(polyVert_t), h_low);
+	backEndData[0]->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPolyBuffer_t), h_low);
 
 	if (r_smp->integer)
 	{
 		backEndData[1]              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData[1]), h_low);
-		backEndData[1]->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxPolys->integer * sizeof(srfPoly_t), h_low);
-		backEndData[1]->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxPolyVerts->integer * sizeof(polyVert_t), h_low);
-		backEndData[1]->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxPolys->integer * sizeof(srfPolyBuffer_t), h_low);
+		backEndData[1]->polys       = (srfPoly_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPoly_t), h_low);
+		backEndData[1]->polyVerts   = (polyVert_t *) ri.Hunk_Alloc(r_maxpolyverts->integer * sizeof(polyVert_t), h_low);
+		backEndData[1]->polybuffers = (srfPolyBuffer_t *) ri.Hunk_Alloc(r_maxpolys->integer * sizeof(srfPolyBuffer_t), h_low);
 	}
 	else
 	{

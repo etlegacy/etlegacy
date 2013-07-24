@@ -537,7 +537,7 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 {
 	poly2dCommand_t *cmd;
 
-	if (r_numPolyVerts + numverts > r_maxPolyVerts->integer)
+	if (r_numPolyVerts + numverts > r_maxpolyverts->integer)
 	{
 		return;
 	}
