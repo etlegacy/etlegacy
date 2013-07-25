@@ -29,7 +29,7 @@
  *
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  */
-
+#ifndef RENDERER2C
 #ifndef GL_SHADER_H
 #define GL_SHADER_H
 
@@ -3683,3 +3683,4 @@ extern struct glslopt_ctx *s_glslOptimizer;
 #endif
 
 #endif // GL_SHADER_H
+#endif //RENDERER2C

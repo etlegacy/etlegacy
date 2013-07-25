@@ -30,7 +30,7 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  */
 // gl_shader.cpp -- GLSL shader handling
-
+#ifndef RENDERER2C
 #include "gl_shader.h"
 
 #if defined(USE_GLSL_OPTIMIZER)
@@ -2793,3 +2793,4 @@ void GLShader_dispersion::SetShaderProgramUniforms(shaderProgram_t *shaderProgra
 {
 	glUniform1i(shaderProgram->u_ColorMap, 0);
 }
+#endif //RENDERER2C
