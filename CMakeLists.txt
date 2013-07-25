@@ -326,6 +326,10 @@ FILE(GLOB RENDERER2_FILES
 	"src/renderer2/*.h"
 )
 
+FILE(GLOB RENDERER2_SHADERS
+	"etmain/glsl/*.glsl"
+)
+
 FILE(GLOB IRC_CLIENT_FILES
 	"src/qcommon/htable.c"
 	"src/qcommon/htable.h"
@@ -590,6 +594,7 @@ if(WIN32)
 	source_group("Source Files\\Renderer" FILES ${RENDERER1_FILES})
 	source_group("Source Files\\Renderer2" FILES ${RENDERER2_FILES})
 	source_group("Source Files\\RendererCommon" FILES ${RENDERER_COMMON})
+	source_group("Shaders" FILES ${RENDERER2_SHADERS})
 endif(WIN32)
 
 #-----------------------------------------------------------------
@@ -631,6 +636,9 @@ if(BUILD_CLIENT)
 		endif()
 	endif()
 	if(FEATURE_RENDERER2)
+		if(MSVC)
+			list(APPEND RENDERER2_FILES ${RENDERER2_SHADERS})
+		endif(MSVC)
 		# increased default hunkmegs value
 		add_definitions(-DFEATURE_INC_HUNKMEGS)
 		add_library(renderer_opengl2_${ARCH} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON})
