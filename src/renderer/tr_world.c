@@ -159,10 +159,6 @@ static int R_DlightSurface(msurface_t *surface, int dlightBits)
 	float        radius;
 	srfGeneric_t *gen;
 
-
-	// get generic surface
-	gen = (srfGeneric_t *) surface->data;
-
 	// made surface dlighting generic, inline with q3map2 surface classification
 	switch ((surfaceType_t) *surface->data)
 	{
@@ -173,9 +169,11 @@ static int R_DlightSurface(msurface_t *surface, int dlightBits)
 		break;
 
 	default:
-		gen->dlightBits = 0;
 		return 0;
 	}
+
+	// get generic surface
+	gen = (srfGeneric_t *) surface->data;
 
 	// debug code
 	// gen->dlightBits = dlightBits;
