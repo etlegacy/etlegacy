@@ -111,6 +111,7 @@ static LONG WINAPI RawWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		{
 			RAWINPUT     ri;
 			unsigned int i = sizeof(ri);
+
 			GetRawInputData((HRAWINPUT)lParam, RID_INPUT, &ri, &i, sizeof(RAWINPUTHEADER));
 			if (mouseActive)
 			{
@@ -148,10 +149,8 @@ static LONG WINAPI RawWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 /*
 ============================================================
-
 RAW INPUT MOUSE
 (Cgg)
-
 ============================================================
 */
 
@@ -215,7 +214,7 @@ qboolean IN_ShutdownRawMouse(void)
 
 #endif
 
-/*
+/**
  * @brief Prints keyboard identifiers in the console
  */
 static void IN_PrintKey(const SDL_keysym *keysym, keyNum_t key, qboolean down)
@@ -399,7 +398,7 @@ static qboolean IN_IsConsoleKey(keyNum_t key, const unsigned char character)
 	return qfalse;
 }
 
-/*
+/**
  * @brief translates SDL keyboard identifier to its Q3 counterpart
  */
 static const char *IN_TranslateSDLToQ3Key(SDL_keysym *keysym,
@@ -774,7 +773,6 @@ static int hat_keys[16] =
 	K_JOY19, K_JOY20
 };
 
-
 struct
 {
 	qboolean buttons[16];  // !!! FIXME: these might be too many.
@@ -890,10 +888,14 @@ static void IN_JoyMove(void)
 	{
 		int balldx = 0;
 		int balldy = 0;
+		int dx;
+		int dy;
+
 		for (i = 0; i < total; i++)
 		{
-			int dx = 0;
-			int dy = 0;
+			dx = 0;
+			dy = 0;
+
 			SDL_JoystickGetBall(stick, i, &dx, &dy);
 			balldx += dx;
 			balldy += dy;
@@ -925,6 +927,7 @@ static void IN_JoyMove(void)
 		for (i = 0; i < total; i++)
 		{
 			qboolean pressed = (SDL_JoystickGetButton(stick, i) != 0);
+
 			if (pressed != stick_state.buttons[i])
 			{
 				Com_QueueEvent(0, SE_KEY, K_JOY1 + i, pressed, 0, NULL);
@@ -1059,6 +1062,7 @@ static void IN_JoyMove(void)
 			else
 			{
 				float f = ((float) axis) / 32767.0f;
+
 				if (f < -in_joystickThreshold->value)
 				{
 					axes |= (1 << (i * 2));
@@ -1071,7 +1075,7 @@ static void IN_JoyMove(void)
 		}
 	}
 
-	/* Time to update axes state based on old vs. new. */
+	// Time to update axes state based on old vs. new.
 	if (axes != stick_state.oldaxes)
 	{
 		for (i = 0; i < 16; i++)
@@ -1088,7 +1092,7 @@ static void IN_JoyMove(void)
 		}
 	}
 
-	/* Save for future generations. */
+	// Save for future generations.
 	stick_state.oldaxes = axes;
 }
 
@@ -1151,20 +1155,20 @@ static void IN_ProcessEvents(void)
 		case SDL_MOUSEBUTTONDOWN:
 		case SDL_MOUSEBUTTONUP:
 		{
-			unsigned char b;
+			int b;
+
 			switch (e.button.button)
 			{
-			case 1:   b = K_MOUSE1;     break;
-			case 2:   b = K_MOUSE3;     break;
-			case 3:   b = K_MOUSE2;     break;
-			case 4:   b = K_MWHEELUP;   break;
-			case 5:   b = K_MWHEELDOWN; break;
-			case 6:   b = K_MOUSE4;     break;
-			case 7:   b = K_MOUSE5;     break;
-			default:  b = K_AUX1 + (e.button.button - 8) % 16; break;
+			case SDL_BUTTON_LEFT:      b = K_MOUSE1;     break;
+			case SDL_BUTTON_MIDDLE:    b = K_MOUSE3;     break;
+			case SDL_BUTTON_RIGHT:     b = K_MOUSE2;     break;
+			case SDL_BUTTON_WHEELUP:   b = K_MWHEELUP;   break;
+			case SDL_BUTTON_WHEELDOWN: b = K_MWHEELDOWN; break;
+			case SDL_BUTTON_X1:        b = K_MOUSE4;     break;
+			case SDL_BUTTON_X2:        b = K_MOUSE5;     break;
+			default:                   b = K_AUX1 + (e.button.button - SDL_BUTTON_X2 + 1) % 16; break;
 			}
-			Com_QueueEvent(0, SE_KEY, b,
-			               (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
+			Com_QueueEvent(0, SE_KEY, b, (e.type == SDL_MOUSEBUTTONDOWN ? qtrue : qfalse), 0, NULL);
 		}
 		break;
 
@@ -1175,14 +1179,15 @@ static void IN_ProcessEvents(void)
 		case SDL_VIDEORESIZE:
 		{
 			char width[32], height[32];
+
 			Com_sprintf(width, sizeof(width), "%d", e.resize.w);
 			Com_sprintf(height, sizeof(height), "%d", e.resize.h);
 			Cvar_Set("r_customwidth", width);
 			Cvar_Set("r_customheight", height);
 			Cvar_Set("r_mode", "-1");
-			/* wait until user stops dragging for 1 second, so
-			   we aren't constantly recreating the GL context while
-			   he tries to drag...*/
+			// wait until user stops dragging for 1 second, so
+			// we aren't constantly recreating the GL context while
+			// he tries to drag...
 			vidRestartTime = Sys_Milliseconds() + 1000;
 		}
 		break;
@@ -1201,8 +1206,8 @@ static void IN_ProcessEvents(void)
 			if (e.active.state & SDL_APPACTIVE)
 			{
 				Cvar_SetValue("com_minimized", !e.active.gain);
-				//  if ( e.active.gain && Cvar_VariableIntegerValue("r_fullscreen") )
-				//      Cbuf_ExecuteText( EXEC_APPEND, "vid_restart\n" );
+				//if ( e.active.gain && Cvar_VariableIntegerValue("r_fullscreen") )
+				//  Cbuf_ExecuteText( EXEC_APPEND, "vid_restart\n" );
 			}
 			break;
 
@@ -1244,7 +1249,7 @@ void IN_Frame(void)
 		IN_ActivateMouse();
 	}
 
-	/* in case we had to delay actual restart of video system... */
+	// in case we had to delay actual restart of video system...
 	if ((vidRestartTime != 0) && (vidRestartTime < Sys_Milliseconds()))
 	{
 		vidRestartTime = 0;
@@ -1326,6 +1331,7 @@ void IN_Init(void)
 
 void IN_Shutdown(void)
 {
+	Com_Printf("SDL input devices shut down.\n");
 #ifdef USE_RAW_INPUT_MOUSE
 	IN_ShutdownRawMouse();
 #endif
