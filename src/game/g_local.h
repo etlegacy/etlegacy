@@ -694,7 +694,7 @@ typedef struct
 	int time;
 } clientMarker_t;
 
-#define MAX_CLIENT_MARKERS 10
+#define MAX_CLIENT_MARKERS 17
 
 #define LT_SPECIAL_PICKUP_MOD   3       // # of times (minus one for modulo) LT must drop ammo before scoring a point
 #define MEDIC_SPECIAL_PICKUP_MOD    4   // same thing for medic
@@ -820,7 +820,6 @@ struct gclient_s
 
 	int lastSpammyCentrePrintTime;
 	pmoveExt_t pmext;
-	qboolean isCivilian;            // whether this is a civilian
 	int deathAnimTime;              // time when anim ends
 
 	int deathTime;                  // if we are dead, when did we die
@@ -1702,19 +1701,19 @@ extern vmCvar_t team_airstrikeTime;
 extern vmCvar_t team_artyTime;
 
 // team class/weapon limiting
-//classes
+// classes
 extern vmCvar_t team_maxSoldiers;
 extern vmCvar_t team_maxMedics;
 extern vmCvar_t team_maxEngineers;
 extern vmCvar_t team_maxFieldops;
 extern vmCvar_t team_maxCovertops;
-//weapons
+// weapons
 extern vmCvar_t team_maxMortars;
 extern vmCvar_t team_maxFlamers;
 extern vmCvar_t team_maxMg42s;
 extern vmCvar_t team_maxPanzers;
 extern vmCvar_t team_maxRiflegrenades;
-//skills
+// skills
 extern vmCvar_t skill_soldier;
 extern vmCvar_t skill_medic;
 extern vmCvar_t skill_engineer;
@@ -1839,7 +1838,7 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 #define BODY_CLASS(ENT) ENT->s.modelindex2
 #define BODY_CHARACTER(ENT) ENT->s.onFireStart
 
-//g_buddy_list.c
+// g_buddy_list.c
 
 #define MAX_FIRE_TEAMS 8
 
@@ -1858,7 +1857,7 @@ int G_IsOnAFireTeam(int clientNum);
 
 void G_RemoveFromAllIgnoreLists(int clientNum);
 
-//g_teammapdata.c
+// g_teammapdata.c
 
 typedef struct mapEntityData_s
 {
@@ -2232,7 +2231,6 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define MAPVOTE_MULTI_VOTE 4
 #define MAPVOTE_NO_RANDOMIZE 8
 #define MAPVOTE_NEXTMAP_VOTEMAP 16
-
 
 typedef enum
 {

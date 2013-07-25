@@ -716,7 +716,7 @@ void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 #define CH_BREAKABLE_DIST   64
 #define CH_DOOR_DIST        96
 #define CH_ACTIVATE_DIST    96
-#define CH_FRIENDLY_DIST    1024
+#define CH_REVIVE_DIST      48
 
 #define CH_MAX_DIST         1024    // use the largest value from above
 #define CH_MAX_DIST_ZOOM    8192    // max dist for zooming hints
@@ -969,15 +969,9 @@ void G_CheckForCursorHints(gentity_t *ent)
 		{
 			if (ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC && traceEnt->client->ps.pm_type == PM_DEAD && !(traceEnt->client->ps.pm_flags & PMF_LIMBO))
 			{
-				hintDist = 48;        // matches weapon_syringe in g_weapon.c
+				hintDist = CH_REVIVE_DIST;        // matches weapon_syringe in g_weapon.c
 				hintType = HINT_REVIVE;
 			}
-		}
-		else if (traceEnt->client && traceEnt->client->isCivilian)
-		{
-			// check for civilian, show neutral cursor (no matter which team)
-			hintType = HINT_PLYR_NEUTRAL;
-			hintDist = CH_FRIENDLY_DIST;    // far, since this will be used to determine whether to shoot bullet weaps or not
 		}
 	}
 	else
