@@ -845,31 +845,39 @@ void SV_Init(void)
 	// just enable sv_wh_active by random intervals ... (would also save CPU usage too)
 
 	sv_wh_active = Cvar_Get("sv_wh_active", "0", CVAR_ARCHIVE);
-	// FIXME: adjust bounding box ?
-	sv_wh_bbox_horz = Cvar_Get("sv_wh_bbox_horz", "50", CVAR_ARCHIVE);
+	
+	// Note on bounding box dimensions:
+	// The default values are considerably larger than the normal values (36 and 72) used by ET.
+	// The reason for this is that it is better to predict a player as visible when
+	// he/she is not than the contrary. 
+	// It may give a slight advantage to cheaters using wallhacks, but IMO it is not significant.
+	// You can change these Cvars, but if you set them to smaller values then it may happen that 
+	// players do not become immediately visible when you go around corners. 
 
-	if (sv_wh_bbox_horz->integer < 10)
-	{
-		Cvar_Set("sv_wh_bbox_horz", "10");
-	}
-	if (sv_wh_bbox_horz->integer > 50)
-	{
-		Cvar_Set("sv_wh_bbox_horz", "50");
-	}
+	sv_wh_bbox_horz = Cvar_Get("sv_wh_bbox_horz", "60", CVAR_ARCHIVE); // was 50 - now real player x bbox size(36) + offset
 
-	sv_wh_bbox_vert = Cvar_Get("sv_wh_bbox_vert", "60", CVAR_ARCHIVE);
-
-	if (sv_wh_bbox_vert->integer < 10)
+	if (sv_wh_bbox_horz->integer < 20)
 	{
-		Cvar_Set("sv_wh_bbox_vert", "30");
+		Cvar_Set("sv_wh_bbox_horz", "20");
 	}
-	if (sv_wh_bbox_vert->integer > 50)
+	if (sv_wh_bbox_horz->integer > 100)
 	{
-		Cvar_Set("sv_wh_bbox_vert", "80");
+		Cvar_Set("sv_wh_bbox_horz", "100");
 	}
 
+	sv_wh_bbox_vert = Cvar_Get("sv_wh_bbox_vert", "100", CVAR_ARCHIVE); // was 60 - now real player y bbox size(72) + offset
+
+	if (sv_wh_bbox_vert->integer < 40)
+	{
+		Cvar_Set("sv_wh_bbox_vert", "40");
+	}
+	if (sv_wh_bbox_vert->integer > 150)
+	{
+		Cvar_Set("sv_wh_bbox_vert", "150");
+	}
 
 	sv_wh_check_fov = Cvar_Get("wh_check_fov", "0", CVAR_ARCHIVE);
+
 	SV_InitWallhack();
 #endif
 
