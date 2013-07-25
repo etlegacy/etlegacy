@@ -753,7 +753,7 @@ static void CL_CompleteDemoName(char *args, int argNum)
 	}
 }
 
-/*
+/**
  * @brief Usage: demo <demoname>
  */
 void CL_PlayDemo_f(void)
@@ -1537,7 +1537,6 @@ void CL_Rcon_f(void)
 			Com_Printf("You must either be connected,\n"
 			           "or set the 'rconAddress' cvar\n"
 			           "to issue rcon commands\n");
-
 			return;
 		}
 		NET_StringToAdr(rconAddress->string, &rcon_address, NA_UNSPEC);
@@ -1606,10 +1605,9 @@ void CL_Vid_Restart_f(void)
 		Cmd_ExecuteString("stopvideo");
 	}
 
-	/* Do we want to stop the recording of demos on vid_restart?
-	if(clc.demorecording)
-	    CL_StopRecord_f();
-	*/
+	// Do we want to stop the recording of demos on vid_restart?
+	//if(clc.demorecording)
+	//  CL_StopRecord_f();
 
 	// don't let them loop during the restart
 	S_StopAllSounds();
@@ -1871,7 +1869,7 @@ void CL_DownloadsComplete(void)
 
 		return;
 	}
-#endif /* FEATURE_AUTOUPDATE */
+#endif // FEATURE_AUTOUPDATE
 
 	// if we downloaded files we need to restart the file system
 	if (cls.downloadRestart)
@@ -2092,7 +2090,7 @@ void CL_InitDownloads(void)
 		}
 	}
 	else
-#endif /* FEATURE_AUTOUPDATE */
+#endif // FEATURE_AUTOUPDATE
 	{
 		// whatever autodownlad configuration, store missing files in a cvar, use later in the ui maybe
 		if (FS_ComparePaks(missingfiles, sizeof(missingfiles), qfalse))
@@ -3604,7 +3602,7 @@ void CL_InitRef(void)
 	ri.Hunk_AllocateTempMemory = Hunk_AllocateTempMemory;
 	ri.Hunk_FreeTempMemory     = Hunk_FreeTempMemory;
 
-//     ri.CM_ClusterPVS = CM_ClusterPVS;
+	//ri.CM_ClusterPVS = CM_ClusterPVS;
 	ri.CM_PointContents    = CM_PointContents;
 	ri.CM_DrawDebugSurface = CM_DrawDebugSurface;
 
@@ -3621,9 +3619,9 @@ void CL_InitRef(void)
 
 	ri.Cvar_Get = Cvar_Get;
 	ri.Cvar_Set = Cvar_Set;
-//     ri.Cvar_SetValue = Cvar_SetValue;
-//     ri.Cvar_CheckRange = Cvar_CheckRange;
-//     ri.Cvar_VariableIntegerValue = Cvar_VariableIntegerValue;
+	//ri.Cvar_SetValue = Cvar_SetValue;
+	//ri.Cvar_CheckRange = Cvar_CheckRange;
+	//ri.Cvar_VariableIntegerValue = Cvar_VariableIntegerValue;
 
 	// cinematic stuff
 	ri.CIN_UploadCinematic = CIN_UploadCinematic;
@@ -3642,11 +3640,11 @@ void CL_InitRef(void)
 	ri.IN_Init     = IN_Init;
 	ri.IN_Shutdown = IN_Shutdown;
 	ri.IN_Restart  = IN_Restart;
-//
-//     ri.ftol = Q_ftol;
-//
-//     ri.Sys_SetEnv = Sys_SetEnv;
-//     ri.Sys_LowPhysicalMemory = Sys_LowPhysicalMemory;
+
+	//ri.ftol = Q_ftol;
+
+	//ri.Sys_SetEnv = Sys_SetEnv;
+	//ri.Sys_LowPhysicalMemory = Sys_LowPhysicalMemory;
 
 	ret = GetRefAPI(REF_API_VERSION, &ri);
 
@@ -3691,7 +3689,7 @@ void CL_Init(void)
 	// register our variables
 	cl_noprint = Cvar_Get("cl_noprint", "0", 0);
 
-	cl_timeout = Cvar_Get("cl_timeout", "60", 0);
+	cl_timeout = Cvar_Get("cl_timeout", "30", 0);
 
 	cl_wavefilerecord = Cvar_Get("cl_wavefilerecord", "0", CVAR_TEMP);
 
