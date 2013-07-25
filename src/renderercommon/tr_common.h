@@ -44,6 +44,12 @@ extern "C" {
 
 extern refimport_t ri;
 
+#ifdef ZONE_DEBUG
+#define Ren_Malloc(size)    ri.Z_MallocDebug(size, # size, __FILE__, __LINE__)
+#else
+#define Ren_Malloc(size)    ri.Z_Malloc(size, # size)
+#endif
+
 // image buffer
 typedef enum
 {
