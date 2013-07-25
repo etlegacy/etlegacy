@@ -32,10 +32,6 @@
 // tr_init.c -- functions that are not called every frame
 #include "tr_local.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 glconfig_t  glConfig;
 glconfig2_t glConfig2;
 
@@ -377,7 +373,6 @@ static qboolean InitOpenGL(void)
 {
 	char renderer_buffer[1024];
 
-	//
 	// initialize OS specific portions of the renderer
 	//
 	// GLimp_Init directly or indirectly references the following cvars:
@@ -583,10 +578,8 @@ static void R_ModeList_f(void)
 	ri.Printf(PRINT_ALL, "\n");
 }
 
-
 /*
 ==============================================================================
-
                         SCREEN SHOTS
 
 screenshots get written in fs_homepath + fs_gamedir
@@ -1234,7 +1227,7 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "GL_SHADING_LANGUAGE_VERSION_ARB: %s\n", glConfig2.shadingLanguageVersion);
 
 	ri.Printf(PRINT_ALL, "GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB %d\n", glConfig2.maxVertexUniforms);
-//	ri.Printf(PRINT_ALL, "GL_MAX_VARYING_FLOATS_ARB %d\n", glConfig2.maxVaryingFloats);
+	//ri.Printf(PRINT_ALL, "GL_MAX_VARYING_FLOATS_ARB %d\n", glConfig2.maxVaryingFloats);
 	ri.Printf(PRINT_ALL, "GL_MAX_VERTEX_ATTRIBS_ARB %d\n", glConfig2.maxVertexAttribs);
 
 	if (glConfig2.occlusionQueryAvailable)
@@ -1650,14 +1643,11 @@ void R_Register(void)
 	r_shadowMapSizeLow = ri.Cvar_Get("r_shadowMapSizeLow", "64", CVAR_ARCHIVE | CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeLow, 32, 2048, qtrue);
 
-
 	shadowMapResolutions[0] = r_shadowMapSizeUltra->integer;
 	shadowMapResolutions[1] = r_shadowMapSizeVeryHigh->integer;
 	shadowMapResolutions[2] = r_shadowMapSizeHigh->integer;
 	shadowMapResolutions[3] = r_shadowMapSizeMedium->integer;
 	shadowMapResolutions[4] = r_shadowMapSizeLow->integer;
-
-
 
 	r_shadowMapSizeSunUltra = ri.Cvar_Get("r_shadowMapSizeSunUltra", "1024", CVAR_ARCHIVE | CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeSunUltra, 32, 2048, qtrue);
@@ -1674,13 +1664,11 @@ void R_Register(void)
 	r_shadowMapSizeSunLow = ri.Cvar_Get("r_shadowMapSizeSunLow", "1024", CVAR_ARCHIVE | CVAR_LATCH);
 	AssertCvarRange(r_shadowMapSizeSunLow, 512, 2048, qtrue);
 
-
 	sunShadowMapResolutions[0] = r_shadowMapSizeSunUltra->integer;
 	sunShadowMapResolutions[1] = r_shadowMapSizeSunVeryHigh->integer;
 	sunShadowMapResolutions[2] = r_shadowMapSizeSunHigh->integer;
 	sunShadowMapResolutions[3] = r_shadowMapSizeSunMedium->integer;
 	sunShadowMapResolutions[4] = r_shadowMapSizeSunLow->integer;
-
 
 	r_shadowOffsetFactor         = ri.Cvar_Get("r_shadowOffsetFactor", "0", CVAR_CHEAT);
 	r_shadowOffsetUnits          = ri.Cvar_Get("r_shadowOffsetUnits", "0", CVAR_CHEAT);
@@ -1730,8 +1718,6 @@ void R_Register(void)
 
 	r_detailTextures = ri.Cvar_Get("r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
-
-
 	//FOR sdl_glimp.c
 	r_noborder        = ri.Cvar_Get("r_noborder", "0", CVAR_ARCHIVE);
 	r_stereoEnabled   = ri.Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1774,7 +1760,6 @@ R_Init
 */
 void R_Init(void)
 {
-	int err;
 	int i;
 
 	ri.Printf(PRINT_ALL, "----- R_Init -----\n");
@@ -2235,7 +2220,6 @@ void RE_Shutdown(qboolean destroyWindow)
 	if (destroyWindow)
 #endif
 	{
-
 #if defined(GLSL_COMPILE_STARTUP_ONLY)
 		GLSL_ShutdownGPUShaders();
 #endif
@@ -2478,9 +2462,5 @@ void QDECL Com_Error(int level, const char *error, ...)
 	va_end(argptr);
 
 	ri.Error(level, "%s", text);
-}
-#endif
-
-#if defined(__cplusplus)
 }
 #endif
