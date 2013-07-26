@@ -439,9 +439,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font)
 		return;
 	}
 
-#ifndef FEATURE_FREETYPE
-	ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType code not available\n");
-#else
+#ifdef FEATURE_FREETYPE
 	if (ftLibrary == NULL)
 	{
 		ri.Printf(PRINT_WARNING, "RE_RegisterFont: FreeType not initialized.\n");

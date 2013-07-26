@@ -719,14 +719,15 @@ typedef enum
 	CGEN_CUSTOM_RGBs,           // multiple expressions
 } colorGen_t;
 
-typedef enum {
+typedef enum
+{
 	TCGEN_BAD,
-	TCGEN_IDENTITY,			// clear to 0,0
+	TCGEN_IDENTITY,         // clear to 0,0
 	TCGEN_LIGHTMAP,
 	TCGEN_TEXTURE,
 	TCGEN_ENVIRONMENT_MAPPED,
 	TCGEN_FOG,
-	TCGEN_VECTOR			// S and T from world coordinates
+	TCGEN_VECTOR            // S and T from world coordinates
 } texCoordGen_t;
 
 typedef enum
@@ -1379,9 +1380,9 @@ enum
 
 enum
 {
-	DLIGHTDEF_USE_DEFORM_VERTEXES  = 0x0001,
-	DLIGHTDEF_ALL                  = 0x0001,
-	DLIGHTDEF_COUNT                = 0x0002,
+	DLIGHTDEF_USE_DEFORM_VERTEXES = 0x0001,
+	DLIGHTDEF_ALL                 = 0x0001,
+	DLIGHTDEF_COUNT               = 0x0002,
 };
 
 enum
