@@ -3344,9 +3344,9 @@ void Com_Shutdown(qboolean badProfile)
 	// FIXME: common defines more cmds - remove all
 
 	// delete pid file
-	if (!badProfile && FS_FileExists(com_pidfile->string))
+	if (!badProfile && FS_FileExists(Cvar_VariableString("com_pidfile")))
 	{
-		FS_Delete(com_pidfile->string);
+		FS_Delete(Cvar_VariableString("com_pidfile"));
 	}
 
 	if (logfile)
