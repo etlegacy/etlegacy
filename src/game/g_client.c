@@ -1701,6 +1701,7 @@ void ClientUserinfoChanged(int clientNum)
 		{
 			G_Printf("ClientUserinfoChanged: CheckUserinfo: client %d: %s\n", clientNum, reason);
 			trap_DropClient(clientNum, va("^1%s", "Bad userinfo."), 99999);
+			return;
 		}
 	}
 
@@ -1723,7 +1724,7 @@ void ClientUserinfoChanged(int clientNum)
 			{
 				trap_DropClient(clientNum, "Bad userinfo.", 0);
 			}
-			break;
+			return;
 		}
 		// Empty string for key and we exit...
 		if (cs_key[0] == 0)
@@ -1741,7 +1742,7 @@ void ClientUserinfoChanged(int clientNum)
 				// They're trying to hack their ip address....
 				G_Printf("ClientUserinfoChanged: client %d hacking ip, old=%s, new=%s\n", clientNum, client->pers.client_ip, cs_value);
 				trap_DropClient(clientNum, "Bad userinfo.", 0);
-				break;
+				return;
 			}
 			Q_strncpyz(client->pers.client_ip, cs_value, MAX_IP4_LENGTH);
 			break;
@@ -1775,6 +1776,7 @@ void ClientUserinfoChanged(int clientNum)
 				// They're trying long names
 				G_Printf("ClientUserinfoChanged: client %d kicked for long name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
 				trap_DropClient(clientNum, "Name too long. Plase change your name.", 0);
+				return;
 			}
 			Q_strncpyz(cs_name, cs_value, MAX_NETNAME);
 			break;
@@ -1786,7 +1788,7 @@ void ClientUserinfoChanged(int clientNum)
 				// They're trying to hack their guid...
 				G_Printf("ClientUserinfoChanged: client %d hacking cl_guid, old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
 				trap_DropClient(clientNum, "Bad userinfo.", 0);
-				break;
+				return;
 			}
 			Q_strncpyz(client->pers.cl_guid, cs_value, MAX_GUID_LENGTH + 1);
 			break;
@@ -1822,6 +1824,7 @@ void ClientUserinfoChanged(int clientNum)
 		Q_strncpyz(userinfo, "\\name\\badinfo", sizeof(userinfo));
 		G_Printf("ClientUserinfoChanged: CheckUserinfo: client %d: Invalid userinfo\n", clientNum);
 		trap_DropClient(clientNum, "Invalid userinfo", 300);
+		return;
 	}
 
 #ifndef DEBUG_STATS
@@ -1950,7 +1953,7 @@ void ClientUserinfoChanged(int clientNum)
 	trap_GetConfigstring(CS_PLAYERS + clientNum, oldname, sizeof(oldname));
 	trap_SetConfigstring(CS_PLAYERS + clientNum, s);
 
-	if (!Q_stricmp(oldname, s))
+	if (!Q_stricmp(oldname, s)) // not changed
 	{
 		return;
 	}
