@@ -454,10 +454,11 @@ qboolean trap_LAN_ServerIsInFavoriteList(int source, int n)
 	return syscall(UI_LAN_SERVERISINFAVORITELIST, source, n);
 }
 
-void trap_LAN_SaveCachedServers(void)
-{
-	syscall(UI_LAN_SAVECACHEDSERVERS);
-}
+// obsolete, kept as reminder - ETL saves on add/remove
+//void trap_LAN_SaveCachedServers(void)
+//{
+//	syscall(UI_LAN_SAVECACHEDSERVERS);
+//}
 
 void trap_LAN_LoadCachedServers(void)
 {

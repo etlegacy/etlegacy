@@ -281,7 +281,7 @@ typedef enum
  * in detecting binds, so we leave it defined to the old hardcoded value
  * of maxiumum keys to prevent mods from crashing older versions of the engine
  */
-#define K_LAST_KEY              256
+//#define K_LAST_KEY              256
 
 /*
  * @def K_CHAR_FLAG

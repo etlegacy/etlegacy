@@ -160,6 +160,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 void AssetCache(void)
 {
 	int n;
+
 	//Com_Printf("Menu Size: %i bytes\n", sizeof(Menus));
 	uiInfo.uiDC.Assets.gradientBar         = trap_R_RegisterShaderNoMip(ASSET_GRADIENTBAR);
 	uiInfo.uiDC.Assets.fxBasePic           = trap_R_RegisterShaderNoMip(ART_FX_BASE);
@@ -785,7 +786,7 @@ void _UI_Refresh(int realtime)
 
 void _UI_Shutdown(void)
 {
-	trap_LAN_SaveCachedServers();
+	//trap_LAN_SaveCachedServers(); // obsolete - ETL saves on add/remove
 }
 
 char *defaultMenu = NULL;
@@ -1486,7 +1487,6 @@ void UI_DrawNetMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean n
 
 static void UI_DrawMapCinematic(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 {
-
 	int map  = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
 	int game = net ? ui_netGameType.integer : uiInfo.gameTypes[ui_gameType.integer].gtEnum;
 
@@ -1553,6 +1553,7 @@ static void UI_DrawMapCinematic(rectDef_t *rect, float scale, vec4_t color, qboo
 static void UI_DrawCampaignPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 {
 	int campaign = (net) ? ui_currentNetCampaign.integer : ui_currentCampaign.integer;
+
 	if (campaign < 0 || campaign > uiInfo.campaignCount)
 	{
 		if (net)
@@ -1586,6 +1587,7 @@ static void UI_DrawCampaignPreview(rectDef_t *rect, float scale, vec4_t color, q
 static void UI_DrawCampaignCinematic(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 {
 	int campaign = (net) ? ui_currentNetCampaign.integer : ui_currentCampaign.integer;
+
 	if (campaign < 0 || campaign > uiInfo.campaignCount)
 	{
 		if (net)
@@ -1763,8 +1765,7 @@ void UI_DrawGametypeDescription(rectDef_t *rect, float scale, vec4_t color, floa
 	int        height, len, textWidth, newLine, newLineWidth, i;
 	float      y;
 	rectDef_t  textRect;
-
-	int game = (net) ? ui_netGameType.integer : ui_netGameType.integer;
+	int        game = (net) ? ui_netGameType.integer : ui_netGameType.integer;
 
 	for (i = 0; i < uiInfo.numGameTypes; i++)
 	{
@@ -2055,9 +2056,8 @@ static void UI_DrawMissionBriefingObjectives(rectDef_t *rect, float scale, vec4_
 	int        height, len, textWidth, newLine, newLineWidth;
 	float      y;
 	rectDef_t  textRect;
-
-	char    buffer[64];
-	mapInfo *mi;
+	char       buffer[64];
+	mapInfo    *mi;
 
 	trap_Cvar_VariableStringBuffer("mapname", buffer, 64);
 
@@ -2156,6 +2156,7 @@ static void UI_NextOpponent(void)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
 	int j = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
+
 	i++;
 	if (i >= uiInfo.teamCount)
 	{
@@ -2176,6 +2177,7 @@ static void UI_PriorOpponent(void)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
 	int j = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
+
 	i--;
 	if (i < 0)
 	{
@@ -2615,6 +2617,7 @@ static void UI_DrawServerMOTD(rectDef_t *rect, float scale, vec4_t color)
 		if (uiInfo.serverStatus.motdPaintX2 >= 0)
 		{
 			float maxX2 = rect->x + rect->w - 2;
+
 			Text_Paint_Limit(&maxX2, uiInfo.serverStatus.motdPaintX2, rect->y, scale, color, uiInfo.serverStatus.motd, 0, uiInfo.serverStatus.motdOffset);
 		}
 		if (uiInfo.serverStatus.motdOffset && maxX > 0)
@@ -3068,6 +3071,7 @@ static qboolean UI_Handicap_HandleKey(int flags, float *special, int key)
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
 	{
 		int h;
+
 		h = Com_Clamp(5, 100, trap_Cvar_VariableValue("handicap"));
 		if (key == K_MOUSE2)
 		{
@@ -3457,7 +3461,6 @@ static int QDECL UI_ServersQsortCompare(const void *arg1, const void *arg2)
 
 void UI_ServersSort(int column, qboolean force)
 {
-
 	if (!force)
 	{
 		if (uiInfo.serverStatus.sortKey == column)
@@ -4178,6 +4181,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "ServerSort") == 0)
 		{
 			int sortColumn;
+
 			if (Int_Parse(args, &sortColumn))
 			{
 				// if same column we're already sorting on then flip the direction
@@ -4192,6 +4196,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "ServerSortDown") == 0)
 		{
 			int sortColumn;
+
 			if (Int_Parse(args, &sortColumn))
 			{
 				uiInfo.serverStatus.sortDir = 0;
@@ -4262,6 +4267,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "voteGame") == 0)
 		{
 			int ui_voteGameType = trap_Cvar_VariableValue("ui_voteGameType");
+
 			if (ui_voteGameType >= 0 && ui_voteGameType < uiInfo.numGameTypes)
 			{
 				trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote gametype %i\n", ui_voteGameType));
@@ -4270,6 +4276,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "refGame") == 0)
 		{
 			int ui_voteGameType = trap_Cvar_VariableValue("ui_voteGameType");
+
 			if (ui_voteGameType >= 0 && ui_voteGameType < uiInfo.numGameTypes)
 			{
 				trap_Cmd_ExecuteText(EXEC_APPEND, va("ref gametype %i\n", ui_voteGameType));
@@ -4349,6 +4356,7 @@ void UI_RunMenuScript(char **args)
 			if (ui_netSource.integer == AS_FAVORITES)
 			{
 				char addr[MAX_NAME_LENGTH];
+
 				trap_LAN_GetServerInfo(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer], buff, MAX_STRING_CHARS);
 				addr[0] = '\0';
 				Q_strncpyz(addr, Info_ValueForKey(buff, "addr"), MAX_NAME_LENGTH);
@@ -4464,6 +4472,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "voiceOrdersTeam") == 0)
 		{
 			const char *orders;
+
 			if (String_Parse(args, &orders))
 			{
 				int selectedPlayer = trap_Cvar_VariableValue("cg_selectedPlayer");
@@ -4481,6 +4490,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "voiceOrders") == 0)
 		{
 			const char *orders;
+
 			if (String_Parse(args, &orders))
 			{
 				int selectedPlayer = trap_Cvar_VariableValue("cg_selectedPlayer");
@@ -5219,9 +5229,9 @@ UI_MapCountByGameType
 */
 static int UI_MapCountByGameType(qboolean singlePlayer)
 {
-	int i, c, game;
-	c    = 0;
-	game = singlePlayer ? uiInfo.gameTypes[ui_gameType.integer].gtEnum : ui_netGameType.integer;
+	int i;
+	int c    = 0;
+	int game = singlePlayer ? uiInfo.gameTypes[ui_gameType.integer].gtEnum : ui_netGameType.integer;
 
 	if (game == GT_WOLF_CAMPAIGN)
 	{
@@ -5666,13 +5676,12 @@ UI_SortServerStatusInfo
 */
 static void UI_SortServerStatusInfo(serverStatusInfo_t *info)
 {
-	int  i, j, index;
+	int  i, j, index = 0;
 	char *tmp1, *tmp2;
 
 	// FIXME: replace the gametype number by game type
 	//        e.g. Objective, Stopwatch, Map Voting, Custom, etc.
 
-	index = 0;
 	for (i = 0; serverStatusCvars[i].name; i++)
 	{
 		for (j = 0; j < info->numLines; j++)
@@ -6117,6 +6126,7 @@ UI_FeederCount
 */
 static int UI_FeederCount(float feederID)
 {
+	// FIXME: do a switch!
 	if (feederID == FEEDER_HEADS)
 	{
 		return uiInfo.characterCount;
@@ -6188,9 +6198,10 @@ static int UI_FeederCount(float feederID)
 
 static const char *UI_SelectedMap(qboolean singlePlayer, int index, int *actual)
 {
-	int i, c, game;
-	c       = 0;
-	game    = singlePlayer ? uiInfo.gameTypes[ui_gameType.integer].gtEnum : ui_netGameType.integer;
+	int i;
+	int c    = 0;
+	int game = singlePlayer ? uiInfo.gameTypes[ui_gameType.integer].gtEnum : ui_netGameType.integer;
+
 	*actual = 0;
 
 	if (game == GT_WOLF_CAMPAIGN)
@@ -6288,6 +6299,8 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 	static int  lastTime   = 0;
 
 	*numhandles = 0;
+
+	// FIXME: do a switch!
 	if (feederID == FEEDER_HEADS)
 	{
 		if (index >= 0 && index < uiInfo.characterCount)
@@ -6305,11 +6318,13 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 	else if (feederID == FEEDER_MAPS || feederID == FEEDER_ALLMAPS)
 	{
 		int actual;
+
 		return UI_SelectedMap(feederID == FEEDER_MAPS ? qtrue : qfalse, index, &actual);
 	}
 	else if (feederID == FEEDER_CAMPAIGNS || feederID == FEEDER_ALLCAMPAIGNS)
 	{
 		int actual;
+
 		return UI_SelectedCampaign(index, &actual);
 	}
 	else if (feederID == FEEDER_GLINFO)
@@ -6340,6 +6355,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 		if (index >= 0 && index < uiInfo.serverStatus.numDisplayServers)
 		{
 			int ping, game, antilag, needpass, friendlyfire, maxlives, punkbuster, weaponrestrictions, balancedteams, serverload;
+
 			if (lastColumn != column || lastTime > uiInfo.uiDC.realTime + 5000)
 			{
 				trap_LAN_GetServerInfo(ui_netSource.integer, uiInfo.serverStatus.displayServers[index], info, MAX_STRING_CHARS);
@@ -6613,6 +6629,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 
 static qhandle_t UI_FeederItemImage(float feederID, int index)
 {
+	// FIXME: do a switch!
 	if (feederID == FEEDER_HEADS)
 	{
 		if (index >= 0 && index < uiInfo.characterCount)
@@ -6682,6 +6699,8 @@ static qhandle_t UI_FeederItemImage(float feederID, int index)
 void UI_FeederSelection(float feederID, int index)
 {
 	static char info[MAX_STRING_CHARS];
+
+	// FIXME: do a switch!
 	if (feederID == FEEDER_HEADS)
 	{
 		if (index >= 0 && index < uiInfo.characterCount)
@@ -8085,13 +8104,7 @@ void UI_Campaign_f(void)
 
 	// we got a campaign, start it
 	trap_Cvar_Set("g_gametype", va("%i", GT_WOLF_CAMPAIGN));
-#if 0
-	if (trap_Cvar_VariableValue("developer"))
-	{
-		trap_Cmd_ExecuteText(EXEC_APPEND, va("devmap %s\n", campaign->mapInfos[0]->mapLoadName));
-	}
-	else
-#endif
+
 	trap_Cmd_ExecuteText(EXEC_APPEND, va("map %s\n", campaign->mapInfos[0]->mapLoadName));
 }
 

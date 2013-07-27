@@ -250,7 +250,6 @@ extern vec4_t text_color_disabled;
 extern vec4_t text_color_normal;
 extern vec4_t text_color_highlight;
 
-
 // ui_main.c
 void            UI_Report(void);
 void            UI_Load(void);
@@ -744,7 +743,6 @@ void trap_LAN_RemoveServer(int source, const char *addr);
 int trap_LAN_GetServerPing(int source, int n);
 int trap_LAN_ServerIsVisible(int source, int n);
 int trap_LAN_ServerStatus(const char *serverAddress, char *serverStatus, int maxLen);
-void trap_LAN_SaveCachedServers(void);
 void trap_LAN_LoadCachedServers(void);
 qboolean trap_LAN_ServerIsInFavoriteList(int source, int n);
 

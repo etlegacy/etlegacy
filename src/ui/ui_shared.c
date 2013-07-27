@@ -767,7 +767,6 @@ void Item_UpdatePosition(itemDef_t *item)
 	}*/
 
 	Item_SetScreenCoords(item, x, y);
-
 }
 
 // menus
@@ -989,13 +988,12 @@ itemDef_t *Menu_GetMatchingItemByNumber(menuDef_t *menu, int index, const char *
 void Script_SetColor(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
-	float      f     = 0.0f;
-	vec4_t     *out;
 
 	// expecting type of color to set and 4 args for the color
 	if (String_Parse(args, &name))
 	{
-		out = NULL;
+		vec4_t *out = NULL;
+
 		if (Q_stricmp(name, "backcolor") == 0)
 		{
 			out                 = &item->window.backColor;
@@ -1013,7 +1011,8 @@ void Script_SetColor(itemDef_t *item, qboolean *bAbort, char **args)
 
 		if (out)
 		{
-			int i;
+			float f = 0.0f;
+			int   i;
 
 			for (i = 0; i < 4; i++)
 			{
@@ -1439,7 +1438,6 @@ void Script_ConditionalOpen(itemDef_t *item, qboolean *bAbort, char **args)
 	const char *cvar  = NULL;
 	const char *name1 = NULL;
 	const char *name2 = NULL;
-	char       buff[1024];
 	int        testtype;  // 0: check val not 0
 	// 1: check cvar not empty
 
@@ -1462,6 +1460,9 @@ void Script_ConditionalOpen(itemDef_t *item, qboolean *bAbort, char **args)
 			}
 			break;
 		case 1:
+		{
+			char buff[1024];
+
 			DC->getCVarString(cvar, buff, sizeof(buff));
 			if (!buff[0])
 			{
@@ -1471,7 +1472,8 @@ void Script_ConditionalOpen(itemDef_t *item, qboolean *bAbort, char **args)
 			{
 				Menus_OpenByName(name1);
 			}
-			break;
+		}
+		break;
 		}
 	}
 }
@@ -1482,7 +1484,6 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 	const char *script1;
 	const char *script2;
 	const char *token;
-	char       buff[1024];
 	int        testtype;  // 0: check val not 0
 	// 1: check cvar not empty
 	int testval;
@@ -1513,6 +1514,9 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 			}
 			break;
 		case 1:
+		{
+			char buff[1024];
+
 			DC->getCVarString(cvar, buff, sizeof(buff));
 			if (!buff[0])
 			{
@@ -1522,7 +1526,8 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 			{
 				Item_RunScript(item, bAbort, script1);
 			}
-			break;
+		}
+		break;
 		case 3:
 			if (Int_Parse(args, &testval))
 			{
@@ -2018,6 +2023,7 @@ void Script_AddListItem(itemDef_t *item, qboolean *bAbort, char **args)
 	if (String_Parse(args, &itemname) && String_Parse(args, &val) && String_Parse(args, &name))
 	{
 		itemDef_t *t = Menu_FindItemByName(item->parent, itemname);
+
 		if (t && t->special)
 		{
 			DC->feederAddItem(t->special, name, atoi(val));
@@ -2741,6 +2747,21 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 	return 0;
 }
 
+
+qboolean Rect_ContainsPointN(rectDef_t *rect, float x, float y)
+{
+	if (rect)
+	{
+		if (x > rect->x && x < rect->x + rect->w + 200 && y > rect->y && y < rect->y + rect->h)
+		{
+			return qtrue;
+		}
+	}
+	return qfalse;
+}
+
+
+
 void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click)
 {
 	rectDef_t    r;
@@ -2762,9 +2783,10 @@ void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click)
 					r.y = item->window.rect.y;
 					r.h = item->window.rect.h - SCROLLBAR_SIZE;
 					r.w = item->window.rect.w - listPtr->drawPadding;
-					if (Rect_ContainsPoint(&r, x, y))
+					if (Rect_ContainsPointN(&r, x, y))
 					{
 						listPtr->cursorPos = (int)((x - r.x) / listPtr->elementWidth)  + listPtr->startPos;
+
 						if (listPtr->cursorPos >= listPtr->endPos)
 						{
 							listPtr->cursorPos = listPtr->endPos;
@@ -2783,9 +2805,10 @@ void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click)
 			r.y = item->window.rect.y;
 			r.w = item->window.rect.w - SCROLLBAR_SIZE;
 			r.h = item->window.rect.h - listPtr->drawPadding;
-			if (Rect_ContainsPoint(&r, x, y))
+			if (Rect_ContainsPointN(&r, x, y))
 			{
 				listPtr->cursorPos = (int)((y - 2 - r.y) / listPtr->elementHeight)  + listPtr->startPos;
+
 				if (listPtr->cursorPos > listPtr->endPos)
 				{
 					listPtr->cursorPos = listPtr->endPos;
@@ -2799,9 +2822,8 @@ void Item_MouseEnter(itemDef_t *item, float x, float y)
 {
 	if (item)
 	{
-		rectDef_t r;
+		rectDef_t r = item->textRect;
 
-		r    = item->textRect;
 		r.y -= r.h;
 		// in the text rect?
 
@@ -3402,6 +3424,7 @@ qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
 				else
 				{
 					float value = multiPtr->cvarValue[current];
+
 					if (((float)((int) value)) == value)
 					{
 						DC->setCVar(item->cvar, va("%i", (int) value));
