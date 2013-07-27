@@ -8165,7 +8165,7 @@ void UI_ListFavourites_f(void)
 	}
 	else
 	{
-		Com_Printf(trap_TranslateString("No favourite servers found.\n"));
+		Com_Printf("%s\n", trap_TranslateString("No favourite servers found."));
 	}
 }
 
