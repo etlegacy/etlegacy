@@ -443,7 +443,7 @@ static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 // Get right stats index based on weapon mod
 unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD)
 {
-	if (iWeaponMOD < 0 || iWeaponMOD >= MOD_NUM_MODS)
+	if (iWeaponMOD >= MOD_NUM_MODS)
 	{
 		return WS_MAX;
 	}

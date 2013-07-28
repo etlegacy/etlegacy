@@ -1622,7 +1622,7 @@ typedef struct
 
 typedef enum
 {
-	ET_GENERAL,
+	ET_GENERAL = 0,
 	ET_PLAYER,
 	ET_ITEM,
 	ET_MISSILE,

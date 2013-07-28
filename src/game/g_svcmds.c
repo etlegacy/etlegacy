@@ -740,7 +740,7 @@ void Svcmd_EntityList_f(void)
 
 		G_Printf("%4i:", e);
 
-		if (check->s.eType >= 0 && check->s.eType <= ET_EVENTS)
+		if (check->s.eType <= ET_EVENTS)
 		{
 			G_Printf("%-27s", enttypenames[check->s.eType]);
 		}

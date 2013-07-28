@@ -697,7 +697,7 @@ typedef enum
 // NOTE: should be 31 now (I added 1 bit in msg.c)
 typedef enum
 {
-	WP_NONE,                // 0
+	WP_NONE = 0,            // 0
 	WP_KNIFE,               // 1
 	WP_LUGER,               // 2
 	WP_MP40,                // 3
@@ -1289,7 +1289,7 @@ extern const weap_ws_t aWeaponInfo[WS_MAX];
 // means of death
 typedef enum
 {
-	MOD_UNKNOWN,
+	MOD_UNKNOWN = 0,
 	MOD_MACHINEGUN,
 	MOD_BROWNING,
 	MOD_MG42,
@@ -2226,7 +2226,7 @@ extWeaponStats_t BG_WeapStatForWeapon(weapon_t iWeaponID);
 
 typedef enum popupMessageType_e
 {
-	PM_DYNAMITE,
+	PM_DYNAMITE = 0,
 	PM_CONSTRUCTION,
 	PM_MINES,
 	PM_DEATH,
