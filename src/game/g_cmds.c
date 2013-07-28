@@ -1337,6 +1337,7 @@ void StopFollowing(gentity_t *ent)
 		// drop to free floating, somewhere above the current position (that's the client you were following)
 		vec3_t    pos, angle;
 		gclient_t *client = ent->client;
+
 		VectorCopy(client->ps.origin, pos);
 		//pos[2] += 16; // removing for now
 		VectorCopy(client->ps.viewangles, angle);
@@ -2564,51 +2565,6 @@ static void Cmd_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceo
 		G_Voice(ent, NULL, mode, ConcatArgs(((arg0) ? 2 + index : 3 + index)), voiceonly);
 	}
 }
-
-// TTimo gcc: defined but not used
-#if 0
-/*
-==================
-Cmd_VoiceTell_f
-==================
-*/
-static void Cmd_VoiceTell_f(gentity_t *ent, qboolean voiceonly)
-{
-	int       targetNum;
-	gentity_t *target;
-	char      *id;
-	char      arg[MAX_TOKEN_CHARS];
-
-	if (trap_Argc() < 2)
-	{
-		return;
-	}
-
-	trap_Argv(1, arg, sizeof(arg));
-	targetNum = atoi(arg);
-	if (targetNum < 0 || targetNum >= level.maxclients)
-	{
-		return;
-	}
-
-	target = &g_entities[targetNum];
-	if (!target || !target->inuse || !target->client)
-	{
-		return;
-	}
-
-	id = ConcatArgs(2);
-
-	G_LogPrintf("vtell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, id);
-	G_Voice(ent, target, SAY_TELL, id, voiceonly);
-	// don't tell to the player self if it was already directed to this player
-	// also don't send the chat back to a bot
-	if (ent != target && !(ent->r.svFlags & SVF_BOT))
-	{
-		G_Voice(ent, ent, SAY_TELL, id, voiceonly);
-	}
-}
-#endif
 
 /*
 ==================
@@ -3995,6 +3951,12 @@ void Cmd_IntermissionReady_f(gentity_t *ent)
 		return;
 	}
 
+	if (g_gametype.integer == GT_WOLF_MAPVOTE && g_gamestate.integer == GS_INTERMISSION)
+	{
+		trap_SendServerCommand(ent - g_entities, "print \"'imready' not allowed during intermission and gametype map voting!\n\"\n");
+		return;
+	}
+
 	G_MakeReady(ent);
 }
 
@@ -4248,10 +4210,9 @@ ClientCommand
 */
 void ClientCommand(int clientNum)
 {
-	gentity_t *ent;
+	gentity_t *ent = g_entities + clientNum;
 	char      cmd[MAX_TOKEN_CHARS];
 
-	ent = g_entities + clientNum;
 	if (!ent->client)
 	{
 		return;     // not fully in game yet
@@ -4272,7 +4233,6 @@ void ClientCommand(int clientNum)
 		return;
 	}
 #endif
-
 
 	if (Q_stricmp(cmd, "say") == 0)
 	{
@@ -4452,7 +4412,6 @@ void ClientCommand(int clientNum)
 		G_IntermissionVoteTally(ent);
 		return;
 	}
-
 
 	// Do these outside as we don't want to advertise it in the help screen
 	if (!Q_stricmp(cmd, "wstats"))
