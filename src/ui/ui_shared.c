@@ -5048,7 +5048,6 @@ typedef struct
 // These MUST be all lowercase now
 static bind_t g_bindings[] =
 {
-
 	{ "+forward",         'w',             -1,  K_UPARROW,       -1,  -1, -1 },
 	{ "+back",            's',             -1,  K_DOWNARROW,     -1,  -1, -1 },
 	{ "+moveleft",        'a',             -1,  K_LEFTARROW,     -1,  -1, -1 },
@@ -5073,7 +5072,7 @@ static bind_t g_bindings[] =
 	{ "weaponbank 8",     '8',             -1,  '8',             -1,  -1, -1 },
 	{ "weaponbank 9",     '9',             -1,  '9',             -1,  -1, -1 },
 	{ "+sprint",          K_SHIFT,         -1,  K_MOUSE3,        -1,  -1, -1 },
-//  { "+speed",           K_CAPSLOCK,      -1,  K_CAPSLOCK,      -1,  -1, -1 },
+	{ "+speed",           K_CAPSLOCK,      -1,  K_CAPSLOCK,      -1,  -1, -1 },
 	{ "+activate",        'f',             -1,  K_ENTER,         -1,  -1, -1 },
 	{ "+zoom",            'b',             -1,  'b',             -1,  -1, -1 },
 	{ "+mapexpand",       'g',             -1,  '#',             -1,  -1, -1 },
