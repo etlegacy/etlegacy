@@ -2735,7 +2735,7 @@ msgid "fired-for-effect on himself"
 msgstr ""
 
 msgid "embraced his own satchel explosion"
-msgstr "zostal uciszony przez"
+msgstr ""
 
 msgid "failed to spot his own landmine"
 msgstr ""
@@ -2858,7 +2858,7 @@ msgid "drowned"
 msgstr ""
 
 msgid "Picked up %s"
-msgstr "Podniosl %s"
+msgstr ""
 
 msgid "%s^7 has joined the %s^7!"
 msgstr ""

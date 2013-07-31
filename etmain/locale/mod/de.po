@@ -2788,7 +2788,7 @@ msgid "fired-for-effect on himself"
 msgstr ""
 
 msgid "embraced his own satchel explosion"
-msgstr "zostal uciszony przez"
+msgstr ""
 
 msgid "failed to spot his own landmine"
 msgstr ""
@@ -2912,7 +2912,7 @@ msgid "drowned"
 msgstr ""
 
 msgid "Picked up %s"
-msgstr "Podniosl %s"
+msgstr ""
 
 msgid "%s^7 has joined the %s^7!"
 msgstr ""
@@ -3187,11 +3187,6 @@ msgid "Axis capture the West Bunker!"
 msgstr ""
 
 msgid "Allies have destroyed the gun tracking"
-msgstr ""
-
-msgid ""
-"^3All players ready!^7\n"
-"Match starting..."
 msgstr ""
 
 msgid "The Axis North-West MG Nest has been destroyed."
@@ -3558,19 +3553,20 @@ msgstr ""
 msgid "You are near the Rail Gun Firing Controls\n"
 msgstr ""
 
-msgid ""
-"^3All players ready!^7\n"
-"Match starting...\n"
+msgid "^3All players ready!^7\n"
+msgstr ""
+
+msgid "Match starting...\n"
 msgstr ""
 
 msgid "You are on the Allied team"
-msgstr ""
+msgstr Du bist nicht im Aliierten Team""
 
 msgid "^1*** Match Reset! ***\n"
 msgstr ""
 
 msgid "You are on the Axis team"
-msgstr ""
+msgstr "Du bist nicht im Axen Team"
 
 #: src/cgame/cg_fireteamoverlay.c:446
 #, c-format
@@ -3585,12 +3581,12 @@ msgstr ""
 #: src/cgame/cg_info.c:585
 #, fuzzy
 msgid "PLAYER STATS"
-msgstr "SPIELER"
+msgstr "SPIELER STAT"
 
 #: src/cgame/cg_info.c:596 src/cgame/cg_info.c:802
 #, fuzzy
 msgid "Weapon"
-msgstr "Nächste Waffe:"
+msgstr "Waffe"
 
 #: src/cgame/cg_info.c:598 src/cgame/cg_info.c:804
 msgid "Accuracy"
@@ -3615,7 +3611,7 @@ msgstr "S. Guter Schuss"
 
 #: src/cgame/cg_info.c:615
 msgid "No weapon info available."
-msgstr ""
+msgstr "Keine Waffe verfügbar."
 
 #: src/cgame/cg_info.c:650
 msgid "Rank"
@@ -3648,7 +3644,7 @@ msgstr ""
 #: src/cgame/cg_info.c:810
 #, fuzzy
 msgid "Player"
-msgstr "Spieler Kicken:"
+msgstr "Spieler"
 
 #: src/cgame/cg_info.c:818
 msgid "No qualifying weapon info available."
@@ -3662,17 +3658,17 @@ msgstr ""
 #: src/cgame/cg_draw.c:441
 #, fuzzy
 msgid "an Objective"
-msgstr "O. Ziele"
+msgstr "ein Ziel"
 
 msgid "Warning, leave the construction area..."
-msgstr ""
+msgstr "Warnung, verlasse die Baustelle..."
 
 msgid "got caught in"
 msgstr ""
 
 #, fuzzy
 msgid "'s construction madness"
-msgstr "X. Zerstöre die Anlage"
+msgstr ""
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
