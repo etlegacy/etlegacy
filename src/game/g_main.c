@@ -3340,13 +3340,7 @@ void ExitLevel(void)
 		if (campaign->current + 1 < campaign->mapCount)
 		{
 			trap_Cvar_Set("g_currentCampaignMap", va("%i", campaign->current + 1));
-#if 0
-			if (g_developer.integer)
-			{
-				trap_SendConsoleCommand(EXEC_APPEND, va("devmap %s\n", campaign->mapnames[campaign->current + 1]));
-			}
-			else
-#endif
+
 			trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[campaign->current + 1]));
 		}
 		else
@@ -3362,13 +3356,7 @@ void ExitLevel(void)
 			{
 				// restart the campaign
 				trap_Cvar_Set("g_currentCampaignMap", "0");
-#if 0
-				if (g_developer.integer)
-				{
-					trap_SendConsoleCommand(EXEC_APPEND, va("devmap %s\n", campaign->mapnames[0]));
-				}
-				else
-#endif
+
 				trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[0]));
 			}
 
@@ -4836,24 +4824,6 @@ void G_RunFrame(int levelTime)
 	{
 		level.alliedArtyCounter = 0;
 	}
-
-#if 0
-	if (trap_Cvar_VariableIntegerValue("dbg_spam"))
-	{
-		trap_SetConfigstring(CS_VOTE_STRING, va(
-		                         "vvvvvvvvvvvvvvvvvvvwiubgfiwebxqbwigb3qir4gviqrbegiuertbgiuoeyvqrugyveru\
-qogyjvuqeyrvguqoehvrguorevqguoveruygqueorvguoqeyrvguyervguverougvequryvg\
-uoerqvgouqevrguoerqvguoerqvguoyqevrguoyvreuogvqeuogiyvureoyvnguoeqvguoqe\
-rvguoeqrvuoeqvrguoyvqeruogverquogvqoeurvgouqervguerqvgqiertbgiqerubgipqe\
-rbgipqebgierqviqrviertqyvbgyerqvgieqrbgipqebrgpiqbergibepbreqgupqruiperq\
-ubgipqeurbgpiqjefgpkeiueripgberipgubreugqeirpqgbipeqygbibgpibqpebiqgefpi\
-mgbqepigjbriqpirbgipvbiqpgvbpqiegvbiepqbgqiebgipqgjebiperqbgpiqebpireqbg\
-ipqbgipjqfebzipjgbqipqervbgiyreqvbgipqertvgbiprqbgipgbipertqjgbipubriuqi\
-pjgpifjbqzpiebgipuerqbgpibuergpijfebgqiepgbiupreqbgpqegjfebzpigu4ebrigpq\
-uebrgpiebrpgibqeripgubeqrpigubqifejbgipegbrtibgurepqgbn%i", level.time)
-		                     );
-	}
-#endif
 
 	// get any cvar changes
 	G_UpdateCvars();

@@ -4757,8 +4757,6 @@ void SP_func_explosive(gentity_t *ent)
 	ent->die = func_explosive_explode;
 }
 
-// TODO: stick this somewhere ;) "sonic from australia is the bestest ninja in the world"
-
 /*
 QUAKED func_invisible_user (.3 .5 .8) ? STARTOFF HAS_USER NO_OFF_NOISE NOT_KICKABLE
 when activated will use its target
@@ -4771,47 +4769,8 @@ The sound defaults to "sound/movers/invis_user_off.wav"
 NO_OFF_NOISE - no sound will play if the invis_user is used when 'off'
 NOT_KICKABLE - kicking doesn't fire, only player activating
 
-"cursorhint" cursor types: (probably more, ask sherman if you think the list is out of date)
-they /don't/ need to be all uppercase
-    HINT_NONE
-    HINT_PLAYER
-    HINT_ACTIVATE
-    HINT_DOOR
-    HINT_DOOR_ROTATING
-    HINT_DOOR_LOCKED
-    HINT_DOOR_ROTATING_LOCKED
-    HINT_MG42
-    HINT_BREAKABLE
-    HINT_BREAKABLE_BIG
-    HINT_CHAIR
-    HINT_ALARM
-    HINT_HEALTH
-    HINT_TREASURE
-    HINT_KNIFE
-    HINT_LADDER
-    HINT_BUTTON
-    HINT_WATER
-    HINT_CAUTION
-    HINT_DANGER
-    HINT_SECRET
-    HINT_QUESTION
-    HINT_EXCLAMATION
-    HINT_CLIPBOARD
-    HINT_WEAPON
-    HINT_AMMO
-    HINT_ARMOR
-    HINT_POWERUP
-    HINT_HOLDABLE
-    HINT_INVENTORY
-    HINT_SCENARIC
-    HINT_EXIT
-    HINT_NOEXIT
-    HINT_PLYR_FRIEND
-    HINT_PLYR_NEUTRAL
-    HINT_PLYR_ENEMY
-    HINT_PLYR_UNKNOWN
+"cursorhint" cursor types: see hintType_t
 */
-
 void use_invisible_user(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	if (ent->wait < level.time)

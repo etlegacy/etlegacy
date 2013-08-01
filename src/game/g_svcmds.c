@@ -302,10 +302,12 @@ qboolean G_FilterPacket(ipFilterList_t *ipFilterList, char *from)
 	in = *(unsigned *)m;
 
 	for (i = 0; i < ipFilterList->numIPFilters; i++)
+	{
 		if ((in & ipFilterList->ipFilters[i].mask) == ipFilterList->ipFilters[i].compare)
 		{
 			return g_filterBan.integer != 0;
 		}
+	}
 
 	return g_filterBan.integer == 0;
 }
@@ -770,7 +772,6 @@ gclient_t *ClientForString(const char *s)
 {
 	gclient_t *cl;
 	int       i;
-	int       idnum;
 
 	// check for a name match
 	for (i = 0 ; i < level.maxclients ; i++)
@@ -789,7 +790,8 @@ gclient_t *ClientForString(const char *s)
 	// numeric values are just slot numbers
 	if (s[0] >= '0' && s[0] <= '9')
 	{
-		idnum = atoi(s);
+		int idnum = atoi(s);
+
 		if (idnum < 0 || idnum >= level.maxclients)
 		{
 			Com_Printf("Bad client slot: %i\n", idnum);
@@ -1074,13 +1076,7 @@ void Svcmd_Campaign_f(void)
 
 	// we got a campaign, start it
 	trap_Cvar_Set("g_gametype", va("%i", GT_WOLF_CAMPAIGN));
-#if 0
-	if (g_developer.integer)
-	{
-		trap_SendConsoleCommand(EXEC_APPEND, va("devmap %s\n", campaign->mapnames[0]));
-	}
-	else
-#endif
+
 	trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[0]));
 }
 
