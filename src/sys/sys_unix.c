@@ -269,7 +269,7 @@ char *Sys_GetClipboardData(void)
 #endif
 }
 
-#define MEM_THRESHOLD 96 * 1024 * 1024
+//#define MEM_THRESHOLD 96 * 1024 * 1024
 
 /**
  * @todo
@@ -341,9 +341,7 @@ char *Sys_Cwd(void)
 
 /*
 ==============================================================
-
 DIRECTORY SCANNING
-
 ==============================================================
 */
 
@@ -439,7 +437,6 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 
 	if (filter)
 	{
-
 		nfiles = 0;
 		Sys_ListFilteredFiles(directory, "", filter, list, &nfiles);
 
