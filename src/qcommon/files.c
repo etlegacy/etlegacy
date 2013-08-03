@@ -2421,8 +2421,6 @@ DIRECTORY SCANNING FUNCTIONS
 =================================================================================
 */
 
-#define MAX_FOUND_FILES 0x1000
-
 static int FS_ReturnPath(const char *zname, char *zpath, int *depth)
 {
 	int len = 0, at = 0, newdep = 0;
