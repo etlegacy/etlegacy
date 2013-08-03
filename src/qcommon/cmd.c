@@ -1048,9 +1048,9 @@ void Cmd_CleanHomepath_f(void)
 	//Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
 
 	// Prevent clumsy users from deleting important files
-	//Q_strcat(whitelist, sizeof(whitelist), ".txt .cfg .dat .gm .way z_hdet");
+	//Q_strcat(whitelist, sizeof(whitelist), ".txt .cfg .dat .gm .way");
 
-	//Com_DPrintf("Whitelist files/patterns: %s\n", whitelist);	                                                                            // clean all */z*.pk3
+	//Com_DPrintf("Whitelist files/patterns: %s\n", whitelist);
 
 	// If the first argument is "all" or "*", search the whole homepath
 	if (Q_stricmp(Cmd_Argv(1), "all") && Q_stricmp(Cmd_Argv(1), "*"))
@@ -1070,11 +1070,11 @@ void Cmd_CleanHomepath_f(void)
 			{
 				whitelisted = qfalse;
 
-				// FIXME: - don't let admins force this! - move to config file?
+				// FIXME: - don't let admins force this! - move to dat file?
 				//        - optimize - don't do this each loop!
 				Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
-				// Prevent clumsy users from deleting important files
-				Q_strcat(whitelist, sizeof(whitelist), ".txt .cfg .dat .gm .way z_hdet"); // no need to add *.so or *.dll, FS_Remove denies that per default
+				// Prevent clumsy users from deleting important files - keep leading space!
+				Q_strcat(whitelist, sizeof(whitelist), " .txt .cfg .dat .gm .way"); // no need to add *.so or *.dll, FS_Remove denies that per default
 
 				//Com_DPrintf("Whitelist files/patterns: %s\n", whitelist);
 
@@ -1085,7 +1085,7 @@ void Cmd_CleanHomepath_f(void)
 				{
 					if (strstr(pFiles[j], tokens))
 					{
-						Com_Printf("- skipping file: %s - pattern: %s\n", pFiles[j], tokens);
+						Com_Printf("- skipping file: %s%c%s - pattern: %s\n", path, PATH_SEP, pFiles[j], tokens);
 						whitelisted = qtrue;
 						break;
 					}

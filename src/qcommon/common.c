@@ -2775,7 +2775,7 @@ void Com_Init(char *commandLine)
 
 	Com_InitJournaling();
 
-	com_cleanwhitelist = Cvar_Get("com_cleanwhitelist", "", CVAR_ARCHIVE);
+	com_cleanwhitelist = Cvar_Get("com_cleanwhitelist", "z_hdet", CVAR_ARCHIVE);
 
 	Cbuf_AddText("exec default.cfg\n");
 
