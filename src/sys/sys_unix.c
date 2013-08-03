@@ -345,8 +345,6 @@ DIRECTORY SCANNING
 ==============================================================
 */
 
-#define MAX_FOUND_FILES 0x1000
-
 void Sys_ListFilteredFiles(const char *basedir, char *subdirs, char *filter, char **list, int *numfiles)
 {
 	char          search[MAX_OSPATH], newsubdirs[MAX_OSPATH];

@@ -323,13 +323,9 @@ char *Sys_Cwd(void)
 
 /*
 ==============================================================
-
 DIRECTORY SCANNING
-
 ==============================================================
 */
-
-#define MAX_FOUND_FILES 0x1000
 
 /*
 ==============
@@ -446,7 +442,6 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 
 	if (filter)
 	{
-
 		nfiles = 0;
 		Sys_ListFilteredFiles(directory, "", filter, list, &nfiles);
 
@@ -847,9 +842,8 @@ void Sys_StartProcess(char *exeName, qboolean doexit)
 		Com_Error(ERR_DROP, "Could not start process: '%s\\%s'", szPathOrig, exeName);
 		return;
 	}
-	// jpw
 
-	// TTimo: similar way of exiting as used in Sys_OpenURL below
+	// similar way of exiting as used in Sys_OpenURL below
 	if (doexit)
 	{
 		Cbuf_ExecuteText(EXEC_APPEND, "quit\n");
@@ -859,8 +853,6 @@ void Sys_StartProcess(char *exeName, qboolean doexit)
 /*
 ==================
 Sys_OpenURL
-
-NERVE - SMF
 ==================
 */
 void Sys_OpenURL(const char *url, qboolean doexit)

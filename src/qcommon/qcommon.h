@@ -617,6 +617,8 @@ issues.
 
 #define MAX_FILE_HANDLES    64
 
+#define MAX_FOUND_FILES 0x1000 // max return of listing files
+
 #ifdef _WIN32
 #include <direct.h>
 #define Q_rmdir _rmdir
