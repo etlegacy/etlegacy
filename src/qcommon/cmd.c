@@ -198,12 +198,12 @@ void Cbuf_Execute(void)
 	char *text;
 	char line[MAX_CMD_LINE];
 	int  quotes;
-
 	// This will keep // style comments all on one line by not breaking on
 	// a semicolon.  It will keep /* ... */ style comments all on one line by not
 	// breaking it for semicolon or newline.
 	qboolean in_star_comment  = qfalse;
 	qboolean in_slash_comment = qfalse;
+
 	while (cmd_text.cursize)
 	{
 		if (cmd_wait > 0)
@@ -302,13 +302,13 @@ Cmd_Exec_f
 */
 void Cmd_Exec_f(void)
 {
-	qboolean quiet;
+	char filename[MAX_QPATH];
 	union
 	{
 		char *c;
 		void *v;
 	} f;
-	char filename[MAX_QPATH];
+	qboolean quiet;
 
 	quiet = !Q_stricmp(Cmd_Argv(0), "execq");
 
@@ -433,7 +433,6 @@ void Cmd_ArgvBuffer(int arg, char *buffer, int bufferLength)
 {
 	Q_strncpyz(buffer, Cmd_Argv(arg), bufferLength);
 }
-
 
 /*
 ============
@@ -796,9 +795,8 @@ Cmd_RemoveCommand
 */
 void Cmd_RemoveCommand(const char *cmd_name)
 {
-	cmd_function_t *cmd, **back;
+	cmd_function_t *cmd, **back = &cmd_functions;
 
-	back = &cmd_functions;
 	while (1)
 	{
 		cmd = *back;
@@ -1046,12 +1044,13 @@ void Cmd_CleanHomepath_f(void)
 
 	Cvar_VariableStringBuffer("fs_homepath", path, sizeof(path));
 
-	Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
+	// moved down to fix pattern bug - don't call strtok(whitelist, " ,;"); twice! 2nd call returns pointer to first token only!
+	//Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
 
 	// Prevent clumsy users from deleting important files
-	Q_strcat(whitelist, sizeof(whitelist), " .txt .cfg .dat .gm .way omnibot_et.so omnibot_et.dll");
+	//Q_strcat(whitelist, sizeof(whitelist), ".txt .cfg .dat .gm .way z_hdet");
 
-	Com_DPrintf("Whitelist: %s\n", whitelist);
+	//Com_DPrintf("Whitelist files/patterns: %s\n", whitelist);	                                                                            // clean all */z*.pk3
 
 	// If the first argument is "all" or "*", search the whole homepath
 	if (Q_stricmp(Cmd_Argv(1), "all") && Q_stricmp(Cmd_Argv(1), "*"))
@@ -1071,13 +1070,22 @@ void Cmd_CleanHomepath_f(void)
 			{
 				whitelisted = qfalse;
 
+				// FIXME: - don't let admins force this! - move to config file?
+				//        - optimize - don't do this each loop!
+				Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
+				// Prevent clumsy users from deleting important files
+				Q_strcat(whitelist, sizeof(whitelist), ".txt .cfg .dat .gm .way z_hdet"); // no need to add *.so or *.dll, FS_Remove denies that per default
+
+				//Com_DPrintf("Whitelist files/patterns: %s\n", whitelist);
+
 				// Check if this file is in the whitelist
 				tokens = strtok(whitelist, " ,;");
+
 				while (tokens != NULL)
 				{
 					if (strstr(pFiles[j], tokens))
 					{
-						Com_Printf("- skipping whitelisted file %s\n", pFiles[j]);
+						Com_Printf("- skipping file: %s - pattern: %s\n", pFiles[j], tokens);
 						whitelisted = qtrue;
 						break;
 					}
@@ -1091,7 +1099,8 @@ void Cmd_CleanHomepath_f(void)
 
 				if (k == STRARRAY_LEN(whitelist))
 				{
-					Com_Printf("- removing %s\n", pFiles[j]);
+					Com_Printf("- removing %s%c%s\n", path, PATH_SEP, pFiles[j]);
+					//remove(va("%s%c%s", path, PATH_SEP, pFiles[j])); // enable *.so & *.dll lib deletion
 					FS_Remove(va("%s%c%s", path, PATH_SEP, pFiles[j]));
 				}
 			}
