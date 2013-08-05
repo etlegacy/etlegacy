@@ -203,7 +203,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				seconds -= tens * 10;
 
 				s = va("%s %2.0f:%i%i", CG_TranslateString("REINFORCE TIME:"), (float)mins, tens, seconds);
-				CG_Text_Paint_Ext(640 - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+				CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 			}
 		}
 		if (cgs.gametype == GT_WOLF_STOPWATCH)
@@ -898,9 +898,9 @@ Draw the normal in-game scoreboard
 */
 qboolean CG_DrawScoreboard(void)
 {
-	int   x = 20, y = 6, x_right = 640 - x - (INFO_TOTAL_WIDTH - 5);
+	int   x = 20, y = 6, x_right = SCREEN_WIDTH - x - (INFO_TOTAL_WIDTH - 5);
 	float fade;
-	int   width = 640 - 2 * x + 5;
+	int   width = SCREEN_WIDTH - 2 * x + 5;
 
 	x       += cgs.wideXoffset;
 	x_right += cgs.wideXoffset;

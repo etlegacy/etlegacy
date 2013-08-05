@@ -176,7 +176,7 @@ cg_window_t *CG_windowAlloc(int fx, int startupLength)
 	cg_window_t        *w;
 	cg_windowHandler_t *wh = &cg.winHandler;
 
-	if (wh->numActiveWindows == MAX_WINDOW_COUNT)
+	if (wh->numActiveWindows >= MAX_WINDOW_COUNT)
 	{
 		return(NULL);
 	}
@@ -521,11 +521,11 @@ void CG_windowNormalizeOnText(cg_window_t *w)
 	// Set up bottom alignment
 	if (w->x < 0)
 	{
-		w->x += 640 - w->w;
+		w->x += SCREEN_WIDTH - w->w;
 	}
 	if (w->y < 0)
 	{
-		w->y += 480 - w->h;
+		w->y += SCREEN_HEIGHT - w->h;
 	}
 }
 
@@ -739,9 +739,9 @@ void CG_cursorUpdate(void)
 						if (fResize)
 						{
 							w->w += nx - w->m_x;
-							if (w->x + w->w > 640 - 2)
+							if (w->x + w->w > SCREEN_WIDTH - 2)
 							{
-								w->w = 640 - 2 - w->x;
+								w->w = SCREEN_WIDTH - 2 - w->x;
 							}
 							if (w->w < 64)
 							{
@@ -749,9 +749,9 @@ void CG_cursorUpdate(void)
 							}
 
 							w->h += ny - w->m_y;
-							if (w->y + w->h > 480 - 2)
+							if (w->y + w->h > SCREEN_HEIGHT - 2)
 							{
-								w->h = 480 - 2 - w->y;
+								w->h = SCREEN_HEIGHT - 2 - w->y;
 							}
 							if (w->h < 48)
 							{
@@ -761,9 +761,9 @@ void CG_cursorUpdate(void)
 						else
 						{
 							w->x += nx - w->m_x;
-							if (w->x + w->w > 640 - 2)
+							if (w->x + w->w > SCREEN_WIDTH - 2)
 							{
-								w->x = 640 - 2 - w->w;
+								w->x = SCREEN_WIDTH - 2 - w->w;
 							}
 							if (w->x < 2)
 							{
@@ -771,9 +771,9 @@ void CG_cursorUpdate(void)
 							}
 
 							w->y += ny - w->m_y;
-							if (w->y + w->h > 480 - 2)
+							if (w->y + w->h > SCREEN_HEIGHT - 2)
 							{
-								w->y = 480 - 2 - w->h;
+								w->y = SCREEN_HEIGHT - 2 - w->h;
 							}
 							if (w->y < 2)
 							{

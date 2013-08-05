@@ -354,7 +354,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 			soundScripts[numSoundScripts] = sound;
 			hashTable[hash]               = &soundScripts[numSoundScripts++];
 
-			if (numSoundScripts == MAX_SOUND_SCRIPTS)
+			if (numSoundScripts >= MAX_SOUND_SCRIPTS)
 			{
 				CG_Error(S_COLOR_RED "CG_SoundParseSounds: MAX_SOUND_SCRIPTS exceeded. Reduce number of sound scripts.\n");
 			}

@@ -1864,7 +1864,7 @@ void CG_Hud_Setup(void)
 	hud1.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.healthbar       = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 36), 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.weaponchargebar = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.healthtext      = CG_getComponent(Ccg_WideX(640) - 60, SCREEN_HEIGHT - 65, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.healthtext      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 65, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.xptext          = CG_getComponent(28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.statsdisplay    = CG_getComponent(24, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
 	hud1.weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82 - 20), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
