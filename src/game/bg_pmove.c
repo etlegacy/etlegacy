@@ -3079,12 +3079,17 @@ PM_SwitchIfEmpty
 static void PM_SwitchIfEmpty(void)
 {
 	// weapon from here down will be a thrown explosive
-	if (pm->ps->weapon != WP_GRENADE_LAUNCHER &&
-	    pm->ps->weapon != WP_GRENADE_PINEAPPLE &&
-	    pm->ps->weapon != WP_DYNAMITE &&
-	    pm->ps->weapon != WP_SMOKE_BOMB &&
-	    pm->ps->weapon != WP_LANDMINE)
+	switch (pm->ps->weapon)
 	{
+	case WP_GRENADE_LAUNCHER:
+	case WP_GRENADE_PINEAPPLE:
+	case WP_DYNAMITE:
+	case WP_SMOKE_BOMB:
+	case WP_LANDMINE:
+		//case WP_KNIFE:
+		//case WP_SATCHEL_DET:
+		break;
+	default:
 		return;
 	}
 
@@ -3275,7 +3280,7 @@ void PM_AdjustAimSpreadScale(void)
 {
 	int   i;
 	float increase, decrease;       // was losing lots of precision on slower weapons (scoped)
-	float viewchange, cmdTime, wpnScale;
+	float cmdTime, wpnScale;
 
 	// all weapons are very inaccurate in zoomed mode
 	if (pm->ps->eFlags & EF_ZOOMING)
@@ -3342,6 +3347,8 @@ void PM_AdjustAimSpreadScale(void)
 
 	if (wpnScale)
 	{
+		float viewchange = 0;
+		
 		// crouched players recover faster (mostly useful for snipers)
 		if (pm->ps->eFlags & EF_CROUCHING || pm->ps->eFlags & EF_PRONE)
 		{
@@ -3350,7 +3357,6 @@ void PM_AdjustAimSpreadScale(void)
 
 		decrease = (cmdTime * AIMSPREAD_DECREASE_RATE) / wpnScale;
 
-		viewchange = 0;
 		// take player movement into account (even if only for the scoped weapons)
 		// TODO: also check for jump/crouch and adjust accordingly
 		if (BG_IsScopedWeapon(pm->ps->weapon))
@@ -3556,11 +3562,17 @@ static qboolean PM_MountedFire(void)
 
 static qboolean PM_CheckGrenade()
 {
-	if (pm->ps->weapon != WP_GRENADE_LAUNCHER &&
-	    pm->ps->weapon != WP_GRENADE_PINEAPPLE &&
-	    pm->ps->weapon != WP_DYNAMITE &&
-	    pm->ps->weapon != WP_SMOKE_BOMB)
+	switch (pm->ps->weapon)
 	{
+	case WP_GRENADE_LAUNCHER:
+	case WP_GRENADE_PINEAPPLE:
+	case WP_DYNAMITE:
+	case WP_SMOKE_BOMB:
+		//case WP_LANDMINE:
+		//case WP_KNIFE:
+		//case WP_SATCHEL_DET:
+		break;
+	default:
 		return qfalse;
 	}
 
