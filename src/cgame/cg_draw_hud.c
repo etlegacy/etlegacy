@@ -115,21 +115,21 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 {
 	// the Default hud
 	hud->hudnumber       = 0;
-	hud->compas          = CG_getComponent((Ccg_WideX(640) - 100 - 20 - 16), 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
-	hud->staminabar      = CG_getComponent(4, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->breathbar       = CG_getComponent(4, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->healthbar       = CG_getComponent(24, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->weaponchargebar = CG_getComponent(Ccg_WideX(640) - 16, 480 - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->healthtext      = CG_getComponent(SKILLS_X - 28, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud->xptext          = CG_getComponent(SKILLS_X + 28, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud->compas          = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16), 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
+	hud->staminabar      = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
+	hud->breathbar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
+	hud->healthbar       = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
+	hud->weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
+	hud->healthtext      = CG_getComponent(SKILLS_X - 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud->xptext          = CG_getComponent(SKILLS_X + 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
 	hud->statsdisplay    = CG_getComponent(SKILL_ICON_X, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud->weaponicon      = CG_getComponent((Ccg_WideX(640) - 82), (480 - 56), 60, 32, qtrue, STYLE_NORMAL);
-	hud->weaponammo      = CG_getComponent(Ccg_WideX(640) - 22, 480 - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud->weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
+	hud->weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
 	hud->fireteam        = CG_getComponent(10, 10, 100, 100, qtrue, STYLE_NORMAL);
 	hud->popupmessages   = CG_getComponent(4, 360, 72, 72, qtrue, STYLE_NORMAL);
-	hud->powerups        = CG_getComponent(Ccg_WideX(640) - 40, 480 - 140, 36, 36, qtrue, STYLE_NORMAL);
-	hud->hudhead         = CG_getComponent(44, 480 - 92, 62, 80, qtrue, STYLE_NORMAL);
-	hud->cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
+	hud->powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
+	hud->hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL);
+	hud->cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL); // FIXME: widescreen ?
 	hud->weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud->livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
 }
@@ -984,8 +984,8 @@ static void CG_DrawSkills(hudComponent_t comp)
 		skill = CG_ClassSkillForPosition(ci, i);
 		if (comp.style == STYLE_NORMAL)
 		{
-			CG_DrawSkillBar(i * SKILL_BAR_X_SCALE + SKILL_BAR_X, 480 - (5 * SKILL_BAR_Y_SCALE) + SKILL_BAR_Y, SKILL_BAR_WIDTH, 4 * SKILL_ICON_SIZE, ci->skill[skill]);
-			CG_DrawPic(i * SKILL_ICON_X_SCALE + SKILL_ICON_X, 480 + SKILL_ICON_Y, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
+			CG_DrawSkillBar(i * SKILL_BAR_X_SCALE + SKILL_BAR_X, SCREEN_HEIGHT - (5 * SKILL_BAR_Y_SCALE) + SKILL_BAR_Y, SKILL_BAR_WIDTH, 4 * SKILL_ICON_SIZE, ci->skill[skill]);
+			CG_DrawPic(i * SKILL_ICON_X_SCALE + SKILL_ICON_X, SCREEN_HEIGHT + SKILL_ICON_Y, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
 		}
 		else
 		{
@@ -1254,7 +1254,7 @@ static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animation
 		}
 		else
 		{
-			if (x < (480 - y))
+			if (x < (SCREEN_HEIGHT - y))
 			{
 				//move left
 				CG_CompasMoveLocationCalc(basex, qfalse, animationout);
@@ -1270,7 +1270,7 @@ static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animation
 	{
 		if (y < 240)
 		{
-			if ((Ccg_WideX(640) - x) < y)
+			if ((Ccg_WideX(SCREEN_WIDTH) - x) < y)
 			{
 				//move right
 				CG_CompasMoveLocationCalc(basex, qtrue, animationout);
@@ -1283,7 +1283,7 @@ static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animation
 		}
 		else
 		{
-			if ((Ccg_WideX(640) - x) < (480 - y))
+			if ((Ccg_WideX(SCREEN_WIDTH) - x) < (SCREEN_HEIGHT - y))
 			{
 				//move right
 				CG_CompasMoveLocationCalc(basex, qtrue, animationout);
@@ -1494,8 +1494,8 @@ static void CG_DrawStatsDebug(void)
 
 	w = textWidth + 6;
 	h = 9;
-	x = 640 - w;
-	y = (480 - 5 * (12 + 2) + 6 - 4) - 6 - h;     // don't ask
+	x = SCREEN_WIDTH - w;
+	y = (SCREEN_HEIGHT - 5 * (12 + 2) + 6 - 4) - 6 - h;     // don't ask
 
 	i = statsDebugPos;
 
@@ -1859,20 +1859,20 @@ void CG_Hud_Setup(void)
 
 	// Hud1
 	hud1.hudnumber       = 1;
-	hud1.compas          = CG_getComponent(44, 480 - 75, 72, 72, qtrue, STYLE_NORMAL);
+	hud1.compas          = CG_getComponent(44, SCREEN_HEIGHT - 75, 72, 72, qtrue, STYLE_NORMAL);
 	hud1.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.healthbar       = CG_getComponent((Ccg_WideX(640) - 36), 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.weaponchargebar = CG_getComponent((Ccg_WideX(640) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.healthtext      = CG_getComponent(Ccg_WideX(640) - 60, 480 - 65, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.xptext          = CG_getComponent(28, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.statsdisplay    = CG_getComponent(24, 480 - 95, 0, 0, qtrue, STYLE_SIMPLE);
-	hud1.weaponicon      = CG_getComponent((Ccg_WideX(640) - 82 - 20), (480 - 56), 60, 32, qtrue, STYLE_NORMAL);
-	hud1.weaponammo      = CG_getComponent(Ccg_WideX(640) - 22 - 20, 480 - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.fireteam        = CG_getComponent((Ccg_WideX(640) - 240), 10, 100, 100, qtrue, STYLE_NORMAL);
+	hud1.healthbar       = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 36), 388, 12, 72, qtrue, STYLE_NORMAL);
+	hud1.weaponchargebar = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
+	hud1.healthtext      = CG_getComponent(Ccg_WideX(640) - 60, SCREEN_HEIGHT - 65, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.xptext          = CG_getComponent(28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.statsdisplay    = CG_getComponent(24, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
+	hud1.weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82 - 20), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
+	hud1.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22 - 20, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.fireteam        = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 240), 10, 100, 100, qtrue, STYLE_NORMAL);
 	hud1.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
-	hud1.powerups        = CG_getComponent(Ccg_WideX(640) - 40, 480 - 140, 36, 36, qtrue, STYLE_NORMAL);
-	hud1.hudhead         = CG_getComponent(44, 480 - 92, 62, 80, qfalse, STYLE_NORMAL);
+	hud1.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
+	hud1.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
 	hud1.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
@@ -1880,20 +1880,20 @@ void CG_Hud_Setup(void)
 
 	// Hud2
 	hud2.hudnumber       = 2;
-	hud2.compas          = CG_getComponent(64, 480 - 75, 72, 72, qtrue, STYLE_NORMAL);
+	hud2.compas          = CG_getComponent(64, SCREEN_HEIGHT - 75, 72, 72, qtrue, STYLE_NORMAL);
 	hud2.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.healthbar       = CG_getComponent(24, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud2.weaponchargebar = CG_getComponent((Ccg_WideX(640) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud2.healthtext      = CG_getComponent(65, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.xptext          = CG_getComponent(120, 480 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.statsdisplay    = CG_getComponent(44, 480 - 95, 0, 0, qtrue, STYLE_SIMPLE);
-	hud2.weaponicon      = CG_getComponent((Ccg_WideX(640) - 82), (480 - 56), 60, 32, qtrue, STYLE_NORMAL);
-	hud2.weaponammo      = CG_getComponent(Ccg_WideX(640) - 22, 480 - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.fireteam        = CG_getComponent((Ccg_WideX(640) - 240), 10, 100, 100, qtrue, STYLE_NORMAL);
+	hud2.weaponchargebar = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
+	hud2.healthtext      = CG_getComponent(65, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.xptext          = CG_getComponent(120, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.statsdisplay    = CG_getComponent(44, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
+	hud2.weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
+	hud2.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.fireteam        = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 240), 10, 100, 100, qtrue, STYLE_NORMAL);
 	hud2.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
-	hud2.powerups        = CG_getComponent(Ccg_WideX(640) - 40, 480 - 140, 36, 36, qtrue, STYLE_NORMAL);
-	hud2.hudhead         = CG_getComponent(44, 480 - 92, 62, 80, qfalse, STYLE_NORMAL);
+	hud2.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
+	hud2.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
 	hud2.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud2.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud2.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);

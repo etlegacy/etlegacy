@@ -360,7 +360,7 @@ static void CG_DrawTeamInfo(void)
 		float  scale       = 0.2f;
 		float  icon_width  = 12.f;
 		float  icon_height = 10.f;
-		int    chatWidth   = 640 - CHATLOC_X - 80 /*(cg_drawHUDHead.integer ? 80 : 0)*/;
+		int    chatWidth   = SCREEN_WIDTH - CHATLOC_X - 80 /*(cg_drawHUDHead.integer ? 80 : 0)*/;
 		int    chatPosX    = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) ? 20 : CHATLOC_TEXT_X - x_offset;
 
 		if (cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
@@ -618,8 +618,8 @@ Should we draw something differnet for long lag vs no packets?
 */
 static void CG_DrawDisconnect(void)
 {
-	float      x = Ccg_WideX(640) - 48; // disconnect icon
-	float      y = 480 - 200; // disconnect icon
+	float      x = Ccg_WideX(SCREEN_WIDTH) - 48; // disconnect icon
+	float      y = SCREEN_HEIGHT - 200; // disconnect icon
 	int        cmdNum;
 	usercmd_t  cmd;
 	const char *s;
@@ -683,8 +683,8 @@ static void CG_DrawLagometer(void)
 	}
 
 	// draw the graph
-	x = Ccg_WideX(640) - 48;
-	y = 480 - 200;
+	x = Ccg_WideX(SCREEN_WIDTH) - 48;
+	y = SCREEN_HEIGHT - 200;
 
 	trap_R_SetColor(NULL);
 	CG_DrawPic(x, y, 48, 48, cgs.media.lagometerShader);
@@ -1015,13 +1015,13 @@ static void CG_DrawWeapReticle(void)
 	if (fg)
 	{
 		// sides
-		CG_FillRect(0, 0, 80 + cgs.wideXoffset, 480, colorBlack);
-		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, 480, colorBlack);
+		CG_FillRect(0, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
+		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
 
 		// center
 		if (cgs.media.reticleShaderSimple)
 		{
-			CG_DrawPic(80 + cgs.wideXoffset, 0, 480, 480, cgs.media.reticleShaderSimple);
+			CG_DrawPic(80 + cgs.wideXoffset, 0, SCREEN_HEIGHT, SCREEN_HEIGHT, cgs.media.reticleShaderSimple);
 		}
 
 		// hairs
@@ -1039,13 +1039,13 @@ static void CG_DrawWeapReticle(void)
 	else if (garand)
 	{
 		// sides
-		CG_FillRect(0, 0, 80 + cgs.wideXoffset, 480, colorBlack);
-		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, 480, colorBlack);
+		CG_FillRect(0, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
+		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
 
 		// center
 		if (cgs.media.reticleShaderSimple)
 		{
-			CG_DrawPic(80 + cgs.wideXoffset, 0, 480, 480, cgs.media.reticleShaderSimple);
+			CG_DrawPic(80 + cgs.wideXoffset, 0, SCREEN_HEIGHT, SCREEN_HEIGHT, cgs.media.reticleShaderSimple);
 		}
 
 		// hairs
@@ -1057,13 +1057,13 @@ static void CG_DrawWeapReticle(void)
 	else if (k43)
 	{
 		// sides
-		CG_FillRect(0, 0, 80 + cgs.wideXoffset, 480, colorBlack);
-		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, 480, colorBlack);
+		CG_FillRect(0, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
+		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
 
 		// center
 		if (cgs.media.reticleShaderSimple)
 		{
-			CG_DrawPic(80 + cgs.wideXoffset, 0, 480, 480, cgs.media.reticleShaderSimple);
+			CG_DrawPic(80 + cgs.wideXoffset, 0, SCREEN_HEIGHT, SCREEN_HEIGHT, cgs.media.reticleShaderSimple);
 		}
 
 		// hairs
@@ -1397,7 +1397,7 @@ static void CG_DrawBinocReticle(void)
 
 	if (cgs.media.binocShaderSimple)
 	{
-		CG_DrawPic(0, 0, Ccg_WideX(640), 480, cgs.media.binocShaderSimple);
+		CG_DrawPic(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, cgs.media.binocShaderSimple);
 	}
 
 	CG_FillRect(146 + cgs.wideXoffset, 239, 348, 1, colorBlack);
@@ -2893,7 +2893,7 @@ static void CG_DrawFlashFade(void)
 
 		VectorClear(col);
 		col[3] = (fBlackout) ? 1.0f : cgs.fadeAlphaCurrent;
-		CG_FillRect(0, 0, Ccg_WideX(640), 480, col);
+		CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, col);
 
 		// bail out if we're a speclocked spectator with cg_draw2d = 0
 		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && !cg_draw2D.integer)
@@ -2961,7 +2961,7 @@ static void CG_DrawFlashZoomTransition(void)
 
 		frac = frac / fadeTime;
 		Vector4Set(color, 0, 0, 0, 1.0f - frac);
-		CG_FillRect(0, 0, Ccg_WideX(640), 480, color);
+		CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, color);
 	}
 }
 
@@ -2992,7 +2992,7 @@ static void CG_DrawFlashDamage(void)
 		                                   (cg_bloodFlash.value < 0.0) ? 0.0 :
 		                                   cg_bloodFlash.value);
 
-		CG_FillRect(0, 0, Ccg_WideX(640), 480, col);
+		CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, col);
 	}
 }
 
@@ -3049,7 +3049,7 @@ static void CG_DrawFlashFire(void)
 		col[2] = alpha;
 		col[3] = alpha;
 		trap_R_SetColor(col);
-		CG_DrawPic(0, 0, Ccg_WideX(640), 480, cgs.media.viewFlashFire[(cg.time / 50) % 16]);
+		CG_DrawPic(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, cgs.media.viewFlashFire[(cg.time / 50) % 16]);
 		trap_R_SetColor(NULL);
 
 		trap_S_AddLoopingSound(cg.snap->ps.origin, vec3_origin, cgs.media.flameSound, (int)(255.0 * alpha), 0);
@@ -3353,7 +3353,7 @@ static void CG_ScreenFade(void)
 			return;
 		}
 
-		CG_FillRect(0, 0, Ccg_WideX(640), 480, cg.fadeColor1);
+		CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, cg.fadeColor1);
 
 	}
 	else
@@ -3370,7 +3370,7 @@ static void CG_ScreenFade(void)
 
 		if (color[3])
 		{
-			CG_FillRect(0, 0, Ccg_WideX(640), 480, color);
+			CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, color);
 		}
 	}
 }

@@ -126,8 +126,8 @@ panel_button_t loadScreenPins =
 {
 	NULL,
 	NULL,
-	{ 0,                            0,  640, 480 },
-	{ 0,                            0,  0,   0, 0, 0, 0, 0},
+	{ 0,                            0,  SCREEN_WIDTH, SCREEN_HEIGHT },
+	{ 0,                            0,  0,            0, 0, 0, 0, 0 },
 	NULL,                           /* font     */
 	NULL,                           /* keyDown  */
 	NULL,                           /* keyUp    */

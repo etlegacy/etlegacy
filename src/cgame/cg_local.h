@@ -110,7 +110,7 @@
 #ifdef FEATURE_MULTIVIEW
 // MV overlay
 #define MVINFO_TEXTSIZE     10
-#define MVINFO_RIGHT        640 - 3
+#define MVINFO_RIGHT        SCREEN_WIDTH - 3
 #define MVINFO_TOP          100
 #endif
 

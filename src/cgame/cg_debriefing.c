@@ -574,8 +574,8 @@ panel_button_t debriefPlayerList =
 {
 	NULL,
 	NULL,
-	{ DB_RANK_X,                 DH_HEADING_Y,         640 - 10 - 8 - 16 - DB_RANK_X - 16, 292 },
-	{ 0,                         0,                    0,                                  0, 0, 0, 0, 0},
+	{ DB_RANK_X,                 DH_HEADING_Y,         SCREEN_WIDTH - 10 - 8 - 16 - DB_RANK_X - 16, 292 },
+	{ 0,                         0,                    0,                                           0, 0, 0, 0, 0},
 	&debriefPlayerListFont,      /* font     */
 	CG_DebriefingPlayerList_KeyDown, /* keyDown  */
 	NULL,                        /* keyUp    */
@@ -587,8 +587,8 @@ panel_button_t debriefPlayerListScroll =
 {
 	NULL,
 	NULL,
-	{ 640 - 10 - 8 - 16,         DH_HEADING_Y,                 16, 292 },
-	{ 0,                         0,                            0,  0, 0, 0, 0, 0},
+	{ SCREEN_WIDTH - 10 - 8 - 16,DH_HEADING_Y,                          16, 292 },
+	{ 0,                         0,                                     0,  0, 0, 0, 0, 0},
 	NULL,                        /* font     */
 	CG_Debriefing_Scrollbar_KeyDown, /* keyDown  */
 	CG_Debriefing_Scrollbar_KeyUp, /* keyUp    */
@@ -721,9 +721,6 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefTitleWindow,
 	&debriefPlayerListWindow,       &debriefPlayerList,                   &debriefPlayerListScroll,
 	&debriefHeadingRank,            &debriefHeadingName,
-#if 0
-	&debriefHeadingMedals,
-#endif // 0
 	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,
 	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,            &debriefPlayerInfoTime,                &debriefPlayerInfoXP, &debriefPlayerInfoACC,
 	&debriefPlayerInfoSkills0,
@@ -1051,8 +1048,8 @@ panel_button_t chatPanelWindow =
 {
 	NULL,
 	"CHAT",
-	{ 10,                        480 - 120,620, 110 },
-	{ 0,                         0,        0,   0, 0, 0, 0, 0},
+	{ 10,                        SCREEN_HEIGHT - 120,620, 110 },
+	{ 0,                         0,                  0,   0, 0, 0, 0, 0},
 	NULL,                        /* font     */
 	NULL,                        /* keyDown  */
 	NULL,                        /* keyUp    */
@@ -1064,8 +1061,8 @@ panel_button_t chatPanelText =
 {
 	NULL,
 	NULL,
-	{ 18,                      480 - 34,  640 - 36, TEAMCHAT_HEIGHT },
-	{ 0,                       0,         0,        0, 0, 0, 0, 0   },
+	{ 18,                      SCREEN_HEIGHT - 34,  SCREEN_WIDTH - 36, TEAMCHAT_HEIGHT },
+	{ 0,                       0,                   0,                 0, 0, 0, 0, 0   },
 	NULL,                      /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -1077,8 +1074,8 @@ panel_button_t chatPanelNextButton =
 {
 	NULL,
 	"MORE",
-	{ 640 - 10 - 60 - 4,          480 - 30,               60, 16 },
-	{ 0,                          0,                      0,  0, 0, 0, 0, 0},
+	{ SCREEN_WIDTH - 10 - 60 - 4, SCREEN_HEIGHT - 30,                        60, 16 },
+	{ 0,                          0,                                         0,  0, 0, 0, 0, 0},
 	NULL,                         /* font     */
 	CG_Debriefing_NextButton_KeyDown, /* keyDown  */
 	NULL,                         /* keyUp    */
@@ -1090,8 +1087,8 @@ panel_button_t chatPanelHTMLButton =
 {
 	NULL,
 	"^1REPORT",
-	{ 640 - 10 - 60 - 4 - 60 - 4, 480 - 30,                    60, 16 },
-	{ 0,                          0,                           0,  0, 0, 0, 0, 0},
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                             60, 16 },
+	{ 0,                          0,                                              0,  0, 0, 0, 0, 0},
 	NULL,                         /* font */
 	NULL,                         /* keyDown  */
 	NULL,                         /* keyUp    */
@@ -1103,8 +1100,8 @@ panel_button_t chatPanelQCButton =
 {
 	NULL,
 	"QUICK CHAT",
-	{ 640 - 10 - 60 - 4 - 60 - 4 - 80 - 4,480 - 30,                           80, 16 },
-	{ 0,                         0,                                  0,  0, 0, 0, 0, 0},
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4,SCREEN_HEIGHT - 30,                                    80, 16 },
+	{ 0,                         0,                                                     0,  0, 0, 0, 0, 0},
 	NULL,                        /* font     */
 	CG_Debriefing_QCButton_KeyDown, /* keyDown  */
 	NULL,                        /* keyUp    */
@@ -1116,8 +1113,8 @@ panel_button_t chatPanelReadyButton =
 {
 	NULL,
 	"READY",
-	{ 640 - 10 - 60 - 4 - 60 - 4 - 80 - 4 - 60 - 4,480 - 30,                                         60, 16 },
-	{ 0,                           0,                                                0,  0, 0, 0, 0, 0},
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                                                  60, 16 },
+	{ 0,                           0,                                                                   0,  0, 0, 0, 0, 0},
 	NULL,                          /* font     */
 	CG_Debriefing_ReadyButton_KeyDown, /* keyDown  */
 	NULL,                          /* keyUp    */
@@ -1129,8 +1126,8 @@ panel_button_t chatTypeButton =
 {
 	NULL,
 	NULL,
-	{ 10 + 4,                     480 - 30,      80, 16 },
-	{ 0,                          0,             0,  0, 0, 0, 0, 0},
+	{ 10 + 4,                     SCREEN_HEIGHT - 30,      80, 16 },
+	{ 0,                          0,                       0,  0, 0, 0, 0, 0},
 	NULL,                         /* font     */
 	CG_Debriefing_ChatButton_KeyDown, /* keyDown  */
 	NULL,                         /* keyUp    */
@@ -1142,8 +1139,8 @@ panel_button_t charPanelEditSurround =
 {
 	NULL,
 	NULL,
-	{ 10 + 4 + 80 + 4,           480 - 30,               252, 16 },
-	{ 0,                         0,                      0,   0, 0, 0, 0, 0},
+	{ 10 + 4 + 80 + 4,           SCREEN_HEIGHT - 30,               252, 16 },
+	{ 0,                         0,                                0,   0, 0, 0, 0, 0},
 	NULL,                        /* font     */
 	NULL,                        /* keyDown  */
 	NULL,                        /* keyUp    */
@@ -1155,8 +1152,8 @@ panel_button_t charPanelEdit =
 {
 	NULL,
 	"chattext",
-	{ 10 + 4 + 80 + 4 + 8,       480 - 34,             236, 16 },
-	{ 0,                         0,                    0,   0, 0, 0, 0, 0},
+	{ 10 + 4 + 80 + 4 + 8,       SCREEN_HEIGHT - 34,             236, 16 },
+	{ 0,                         0,                              0,   0, 0, 0, 0, 0},
 	&chatPanelButtonFont,        /* font     */
 	NULL,                        /*BG_PanelButton_EditClick,*/         /* keyDown  */
 	NULL,                        /* keyUp    */
@@ -2067,7 +2064,7 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 
 		if (cgs.dbSelectedClient == cgs.dbSortedClients[i + cgs.dbPlayerListOffset])
 		{
-			CG_FillRect(button->rect.x, y - 10, 640 - 10 - 8 - 16 - button->rect.x + cgs.wideXoffset, 12, clrSelectedClient);
+			CG_FillRect(button->rect.x, y - 10, SCREEN_WIDTH - 10 - 8 - 16 - button->rect.x + cgs.wideXoffset, 12, clrSelectedClient);
 		}
 
 		CG_Text_Paint_Ext(DB_RANK_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_RankNameForClientInfo(ci), 0, 0, 0, button->font->font);
@@ -2391,9 +2388,9 @@ void CG_Debriefing_MouseEvent(int x, int y)
 	{
 		cgs.cursorX = 0;
 	}
-	else if (cgs.cursorX > 640)
+	else if (cgs.cursorX > SCREEN_WIDTH)
 	{
-		cgs.cursorX = 640;
+		cgs.cursorX = SCREEN_WIDTH;
 	}
 
 	cgs.cursorY += y;
@@ -2401,9 +2398,9 @@ void CG_Debriefing_MouseEvent(int x, int y)
 	{
 		cgs.cursorY = 0;
 	}
-	else if (cgs.cursorY > 480)
+	else if (cgs.cursorY > SCREEN_HEIGHT)
 	{
-		cgs.cursorY = 480;
+		cgs.cursorY = SCREEN_HEIGHT;
 	}
 }
 

@@ -149,8 +149,8 @@ panel_button_t rightLimboPannel =
 {
 	"gfx/limbo/limbo_back",
 	NULL,
-	{ 440,                    0,  200, 480 },
-	{ 0,                      0,  0,   0, 0, 0, 0, 0},
+	{ 440,                    0,  200, SCREEN_HEIGHT },
+	{ 0,                      0,  0,   0, 0, 0, 0, 0 },
 	NULL,                     /* font     */
 	NULL,                     /* keyDown  */
 	NULL,                     /* keyUp    */
@@ -356,7 +356,7 @@ panel_button_t filterTitleText =
 
 #define LF_Y1 23
 #define LF_Y2 375
-#define LF_Y3 480
+#define LF_Y3 SCREEN_HEIGHT
 
 #define LF_H1 (LF_Y1 - 0)
 #define LF_H2 (LF_Y2 - LF_Y1)
@@ -915,8 +915,8 @@ panel_button_t nameEdit =
 {
 	NULL,
 	"limboname",
-	{ 480,                       150,120, 20 },
-	{ 0,                         0,  0,   0, 0, 0, 0, 0},
+	{ SCREEN_HEIGHT,             150,      120, 20 },
+	{ 0,                         0,        0,   0, 0, 0, 0, 0},
 	&nameEditFont,               /* font     */
 	BG_PanelButton_EditClick,    /* keyDown  */
 	NULL,                        /* keyUp    */

@@ -683,9 +683,9 @@ void CG_MouseEvent(int x, int y)
 		{
 			cgs.cursorX = 0;
 		}
-		else if (cgs.cursorX > 640)
+		else if (cgs.cursorX > SCREEN_WIDTH)
 		{
-			cgs.cursorX = 640;
+			cgs.cursorX = SCREEN_WIDTH;
 		}
 
 		cgs.cursorY += y;
@@ -693,9 +693,9 @@ void CG_MouseEvent(int x, int y)
 		{
 			cgs.cursorY = 0;
 		}
-		else if (cgs.cursorY > 480)
+		else if (cgs.cursorY > SCREEN_HEIGHT)
 		{
-			cgs.cursorY = 480;
+			cgs.cursorY = SCREEN_HEIGHT;
 		}
 
 		if (cgs.eventHandling == CGAME_EVENT_SPEAKEREDITOR)
@@ -710,9 +710,9 @@ void CG_MouseEvent(int x, int y)
 		{
 			cgs.cursorX = 0;
 		}
-		else if (cgs.cursorX > 640)
+		else if (cgs.cursorX > SCREEN_WIDTH)
 		{
-			cgs.cursorX = 640;
+			cgs.cursorX = SCREEN_WIDTH;
 		}
 
 		cgs.cursorY += y;
@@ -720,9 +720,9 @@ void CG_MouseEvent(int x, int y)
 		{
 			cgs.cursorY = 0;
 		}
-		else if (cgs.cursorY > 480)
+		else if (cgs.cursorY > SCREEN_HEIGHT)
 		{
-			cgs.cursorY = 480;
+			cgs.cursorY = SCREEN_HEIGHT;
 		}
 
 		if (x != 0 || y != 0)

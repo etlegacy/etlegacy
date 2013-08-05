@@ -495,7 +495,7 @@ void CG_GameStatsDraw(void)
 	}
 	else
 	{
-		int         realX = (Ccg_WideX(640) / 2) - (GS_W / 2);
+		int         realX = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
 		int         i, x = realX + 4, y = GS_Y, h;
 		gameStats_t *gs = &cgs.gamestats;
 
@@ -708,7 +708,7 @@ void CG_TopShotsDraw(void)
 	}
 	else
 	{
-		int            x   = 640 + TS_X - TS_W, y = 480, h;
+		int            x   = SCREEN_WIDTH + TS_X - TS_W, y = SCREEN_HEIGHT, h;
 		topshotStats_t *ts = &cgs.topshots;
 
 		vec4_t bgColor     = COLOR_BG;          // window
@@ -809,7 +809,7 @@ void CG_TopShotsDraw(void)
 		x += 32;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Player"), 0.0f, 0, hStyle2, hFont2);
 
-		x  = 640 + TS_X - TS_W + 4;
+		x  = SCREEN_WIDTH + TS_X - TS_W + 4;
 		y += 1;
 
 		if (ts->cWeapons == 0)
@@ -872,7 +872,7 @@ void CG_DemoHelpDraw(void)
 		};
 #endif
 
-		int i, x, y = 480, w, h;
+		int i, x, y = SCREEN_HEIGHT, w, h;
 
 		vec4_t bgColor     = COLOR_BG;              // window
 		vec4_t borderColor = COLOR_BORDER;          // window
@@ -903,7 +903,7 @@ void CG_DemoHelpDraw(void)
 		    (cg.mvTotalClients > 1) ? 12 :
 #endif
 		    0);
-		x = 640 + DH_X - w;
+		x = SCREEN_WIDTH + DH_X - w;
 		h = 2 + tSpacing + 2 +                                  // Header
 		    2 + 1 +
 		    tSpacing * (2 + (sizeof(help) +
@@ -1037,7 +1037,7 @@ void CG_SpecHelpDraw(void)
 			{ "spechelp", "help on/off"        }
 		};
 
-		int  i, x, y = 480, w, h;
+		int  i, x, y = SCREEN_HEIGHT, w, h;
 		int  len, maxlen = 0;
 		char format[MAX_STRING_TOKENS], buf[MAX_STRING_TOKENS];
 		char *lines[16];

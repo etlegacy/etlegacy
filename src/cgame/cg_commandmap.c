@@ -1375,7 +1375,7 @@ void CG_DrawAutoMap(float x, float y, float w, float h)
 	}
 
 	/*
-	x = Ccg_WideX(640) - 100 - 20;
+	x = Ccg_WideX(SCREEN_WIDTH) - 100 - 20;
 	y = 20;
 	w = 100;
 	h = 100;
