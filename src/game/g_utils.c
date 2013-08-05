@@ -1684,7 +1684,7 @@ void G_ParseCampaigns(void)
 			// no campaign found, fallback to GT_WOLF
 			// and reload the map
 			trap_Cvar_Set("g_gametype", "2");
-			trap_SendConsoleCommand(EXEC_APPEND, va("%s %s", buf, level.rawmapname));
+			trap_SendConsoleCommand(EXEC_APPEND, va("%s %s\n", buf, level.rawmapname));
 		}
 	}
 }
