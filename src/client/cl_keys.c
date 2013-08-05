@@ -59,7 +59,6 @@ qboolean key_overstrikeMode;
 int    anykeydown;
 qkey_t keys[MAX_KEYS];
 
-
 typedef struct
 {
 	char *name;
@@ -89,7 +88,6 @@ keyname_t keynames[] =
 	{ "COMMAND",       K_COMMAND       },
 
 	{ "CAPSLOCK",      K_CAPSLOCK      },
-
 
 	{ "F1",            K_F1            },
 	{ "F2",            K_F2            },
@@ -1098,7 +1096,7 @@ int Key_GetKey(const char *binding)
 	{
 		int i;
 
-		for (i = 0 ; i < 256 ; i++)
+		for (i = 0 ; i < MAX_KEYS ; i++)
 		{
 			if (keys[i].binding && Q_stricmp(binding, keys[i].binding) == 0)
 			{
@@ -1143,7 +1141,7 @@ void Key_Unbindall_f(void)
 {
 	int i;
 
-	for (i = 0 ; i < 256 ; i++)
+	for (i = 0 ; i < MAX_KEYS ; i++)
 	{
 		if (keys[i].binding)
 		{
