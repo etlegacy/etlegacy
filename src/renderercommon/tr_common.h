@@ -88,10 +88,10 @@ extern cvar_t *r_stencilbits;           // number of desired stencil bits
 extern cvar_t *r_depthbits;             // number of desired depth bits
 extern cvar_t *r_colorbits;             // number of desired color bits, only relevant for fullscreen
 extern cvar_t *r_texturebits;           // number of desired texture bits
-// 0 = use framebuffer depth
-// 16 = use 16-bit textures
-// 32 = use 32-bit textures
-// all else = error
+                                        // 0 = use framebuffer depth
+                                        // 16 = use 16-bit textures
+                                        // 32 = use 32-bit textures
+                                        // all else = error
 extern cvar_t *r_ext_multisample;
 extern cvar_t *r_measureOverdraw;       // enables stencil buffer overdraw measurement
 
@@ -99,15 +99,15 @@ extern cvar_t *r_lodbias;               // push/pull LOD transitions
 extern cvar_t *r_lodscale;
 
 extern cvar_t *r_primitives;            // "0" = based on compiled vertex array existance
-// "1" = glDrawElemet tristrips
-// "2" = glDrawElements triangles
-// "-1" = no drawing
+                                        // "1" = glDrawElemet tristrips
+                                        // "2" = glDrawElements triangles
+                                        // "-1" = no drawing
 
 extern cvar_t *r_fastsky;               // controls whether sky should be cleared or drawn
 extern cvar_t *r_drawSun;               // controls drawing of sun quad
-// "0" no sun
-// "1" draw sun
-// "2" also draw lens flare effect centered on sun
+                                        // "0" no sun
+                                        // "1" draw sun
+                                        // "2" also draw lens flare effect centered on sun
 extern cvar_t *r_dynamiclight;          // dynamic lights enabled/disabled
 
 extern cvar_t *r_norefresh;             // bypasses the ref rendering
@@ -195,13 +195,13 @@ extern cvar_t *r_debugSort;
 extern cvar_t *r_printShaders;
 extern cvar_t *r_saveFontData;
 
-extern cvar_t *r_cache; // FIXME: move out -> renderer1 only
-extern cvar_t *r_cacheShaders; // FIXME: move out -> renderer1 only
-extern cvar_t *r_cacheModels; // FIXME: move out -> renderer1 only
+extern cvar_t *r_cache;           // FIXME: move out -> renderer1 only
+extern cvar_t *r_cacheShaders;    // FIXME: move out -> renderer1 only
+extern cvar_t *r_cacheModels;     // FIXME: move out -> renderer1 only
 
 extern cvar_t *r_cacheGathering;  // FIXME: move out -> renderer1 only
 
-extern cvar_t *r_bonesDebug; // FIXME: move out -> renderer1 only
+extern cvar_t *r_bonesDebug;      // FIXME: move out -> renderer1 only
 
 extern cvar_t *r_wolffog;
 
