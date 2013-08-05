@@ -1027,30 +1027,42 @@ void Cmd_CompleteCfgName(char *args, int argNum)
  * @brief Recursively removes files matching a given pattern from homepath.
  * Useful for removing incomplete downloads and other garbage.
  * Files listed in the com_cleanWhitelist cvar are protected from deletion.
+ *
+ * FIXME: When clean_simple.cfg is executed from inside legacy_mod.pk3 ALL sub pathes are
+ *        parsed by Sys_ListFiles. I did put clean simple in fs_basepath/etmain (not inside pk3)
+ *        and in that case there are no matches from inside fs_homepath/etmain
+ *        Test case: z_mycustom.pk3 (in etmain & mod pathes)
  */
 void Cmd_CleanHomepath_f(void)
 {
-	int      i, j, k, numFiles = 0;
+	int      i, j, numFiles = 0, delFiles = 0;
 	char     **pFiles = NULL, *tokens;
 	char     path[MAX_OSPATH], whitelist[MAX_OSPATH];
 	qboolean whitelisted;
 
 	if (Cmd_Argc() < 3)
 	{
-		Com_Printf("usage: clean <mod> <pattern[s]>\n");
-		Com_Printf("example: clean all *tmp zzz* etmain/etkey\n");
+		// basically files are downloaded again when required - but better print a warning for inexperienced users
+		Com_Printf("usage: clean <mod> <pattern[1]> <pattern[n]>\nexample: clean all *tmp */zzz* etmain/etkey\nwarning: This command deletes files in fs_homepath. If you are not sure how to use this command do not play with fire!");
 		return;
 	}
 
+	// avoid unreferenced pk3 runtime issues (not on HD but still referenced in game)
+#ifndef DEDICATED
+	if (cls.state != CA_DISCONNECTED)
+	{
+		Com_Printf("You are connected to a server - '/disconnect' to run '/clean'.\n");
+		return;
+	}
+#else
+	if (com_sv_running && com_sv_running->integer)
+	{
+		Com_Printf("Server is running - '/killserver'  to run '/clean'.\n");
+		return;
+	}
+#endif // DEDICATED
+
 	Cvar_VariableStringBuffer("fs_homepath", path, sizeof(path));
-
-	// moved down to fix pattern bug - don't call strtok(whitelist, " ,;"); twice! 2nd call returns pointer to first token only!
-	//Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
-
-	// Prevent clumsy users from deleting important files
-	//Q_strcat(whitelist, sizeof(whitelist), ".txt .cfg .dat .gm .way");
-
-	//Com_DPrintf("Whitelist files/patterns: %s\n", whitelist);
 
 	// If the first argument is "all" or "*", search the whole homepath
 	if (Q_stricmp(Cmd_Argv(1), "all") && Q_stricmp(Cmd_Argv(1), "*"))
@@ -1066,49 +1078,47 @@ void Cmd_CleanHomepath_f(void)
 
 		for (j = 0; j < numFiles; j++)
 		{
-			for (k = 0; k < ARRAY_LEN(whitelist); k++)
+			whitelisted = qfalse;
+
+			// FIXME: - don't let admins force this! - move to dat file?
+			//        - optimize - don't do this each loop! -> strtok modifies the input string, which is undefined behaviour on a literal char[], at least in C99
+			//          & print the whitelist files on top again
+
+			Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
+			// Prevent clumsy users from deleting important files - keep leading space!
+			Q_strcat(whitelist, sizeof(whitelist), " .txt .cfg .dat .gm .way"); // no need to add *.so or *.dll, FS_Remove denies that per default
+
+			//Com_DPrintf("Whitelist files/patterns: %s\n", whitelist);
+
+			// Check if this file is in the whitelist
+			tokens = strtok(whitelist, " ,;");
+
+			while (tokens != NULL)
 			{
-				whitelisted = qfalse;
-
-				// FIXME: - don't let admins force this! - move to dat file?
-				//        - optimize - don't do this each loop!
-				Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
-				// Prevent clumsy users from deleting important files - keep leading space!
-				Q_strcat(whitelist, sizeof(whitelist), " .txt .cfg .dat .gm .way"); // no need to add *.so or *.dll, FS_Remove denies that per default
-
-				//Com_DPrintf("Whitelist files/patterns: %s\n", whitelist);
-
-				// Check if this file is in the whitelist
-				tokens = strtok(whitelist, " ,;");
-
-				while (tokens != NULL)
+				if (strstr(pFiles[j], tokens))
 				{
-					if (strstr(pFiles[j], tokens))
-					{
-						Com_Printf("- skipping file: %s%c%s - pattern: %s\n", path, PATH_SEP, pFiles[j], tokens);
-						whitelisted = qtrue;
-						break;
-					}
-					tokens = strtok(NULL, " ,;");
-				}
-
-				if (whitelisted)
-				{
+					Com_Printf("- skipping file[%i]: %s%c%s - pattern: %s\n", j + 1, path, PATH_SEP, pFiles[j], tokens);
+					whitelisted = qtrue;
 					break;
 				}
-
-				if (k == STRARRAY_LEN(whitelist))
-				{
-					Com_Printf("- removing %s%c%s\n", path, PATH_SEP, pFiles[j]);
-					//remove(va("%s%c%s", path, PATH_SEP, pFiles[j])); // enable *.so & *.dll lib deletion
-					FS_Remove(va("%s%c%s", path, PATH_SEP, pFiles[j]));
-				}
+				tokens = strtok(NULL, " ,;");
 			}
+
+			if (whitelisted)
+			{
+				continue;
+			}
+
+			Com_Printf("- removing file[%i]: %s%c%s\n", j + 1, path, PATH_SEP, pFiles[j]);
+			//remove(va("%s%c%s", path, PATH_SEP, pFiles[j])); // enable *.so & *.dll lib deletion
+			FS_Remove(va("%s%c%s", path, PATH_SEP, pFiles[j]));
+			delFiles++;
 		}
 
 		Sys_FreeFileList(pFiles);
 		numFiles = 0;
 	}
+	Com_Printf("fs_homepath cleaned. Total files deleted: %i\n", delFiles);
 }
 
 /*
