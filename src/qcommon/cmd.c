@@ -734,10 +734,12 @@ cmd_function_t *Cmd_FindCommand(const char *cmd_name)
 	cmd_function_t *cmd;
 
 	for (cmd = cmd_functions; cmd; cmd = cmd->next)
+	{
 		if (!Q_stricmp(cmd_name, cmd->name))
 		{
 			return cmd;
 		}
+	}
 	return NULL;
 }
 
@@ -1027,15 +1029,10 @@ void Cmd_CompleteCfgName(char *args, int argNum)
  * @brief Recursively removes files matching a given pattern from homepath.
  * Useful for removing incomplete downloads and other garbage.
  * Files listed in the com_cleanWhitelist cvar are protected from deletion.
- *
- * FIXME: When clean_simple.cfg is executed from inside legacy_mod.pk3 ALL sub pathes are
- *        parsed by Sys_ListFiles. I did put clean simple in fs_basepath/etmain (not inside pk3)
- *        and in that case there are no matches from inside fs_homepath/etmain
- *        Test case: z_mycustom.pk3 (in etmain & mod pathes)
  */
 void Cmd_CleanHomepath_f(void)
 {
-	int      i, j, numFiles = 0, delFiles = 0;
+	int      i, j, numFiles = 0, delFiles = 0, totalNumFiles = 0;
 	char     **pFiles = NULL, *tokens;
 	char     path[MAX_OSPATH], whitelist[MAX_OSPATH];
 	qboolean whitelisted;
@@ -1065,6 +1062,7 @@ void Cmd_CleanHomepath_f(void)
 	Cvar_VariableStringBuffer("fs_homepath", path, sizeof(path));
 
 	// If the first argument is "all" or "*", search the whole homepath
+	// FIXME: add more options ? see #53
 	if (Q_stricmp(Cmd_Argv(1), "all") && Q_stricmp(Cmd_Argv(1), "*"))
 	{
 		Q_strcat(path, sizeof(path), va("%c%s", PATH_SEP, Cmd_Argv(1)));
@@ -1076,9 +1074,16 @@ void Cmd_CleanHomepath_f(void)
 
 		Com_Printf("Found %i files matching the pattern \"%s\" under %s\n", numFiles, Cmd_Argv(i), path);
 
+		// debug
+		//for (j = 0; j < numFiles; j++)
+		//{
+		//	Com_Printf("FILE[%i]: %s - pattern: %s\n", j + 1, pFiles[j], Cmd_Argv(i));
+		//}
+
 		for (j = 0; j < numFiles; j++)
 		{
 			whitelisted = qfalse;
+			totalNumFiles++;
 
 			// FIXME: - don't let admins force this! - move to dat file?
 			//        - optimize - don't do this each loop! -> strtok modifies the input string, which is undefined behaviour on a literal char[], at least in C99
@@ -1118,7 +1123,7 @@ void Cmd_CleanHomepath_f(void)
 		Sys_FreeFileList(pFiles);
 		numFiles = 0;
 	}
-	Com_Printf("fs_homepath cleaned. Total files deleted: %i\n", delFiles);
+	Com_Printf("Path of fs_homepath cleaned - %i matches - %i files skipped - %i files deleted.\n", totalNumFiles, totalNumFiles - delFiles, delFiles);
 }
 
 /*
