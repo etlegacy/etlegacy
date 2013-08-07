@@ -3986,7 +3986,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "RunMod") == 0)
 		{
 			trap_Cvar_Set("fs_game", uiInfo.modList[uiInfo.modIndex].modName);
-			trap_Cmd_ExecuteText(EXEC_APPEND, "vid_restart;");
+			trap_Cmd_ExecuteText(EXEC_APPEND, "vid_restart\n");
 		}
 		else if (Q_stricmp(name, "RunDemo") == 0)
 		{
