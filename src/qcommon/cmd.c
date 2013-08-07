@@ -1091,7 +1091,7 @@ void Cmd_CleanHomepath_f(void)
 
 			Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
 			// Prevent clumsy users from deleting important files - keep leading space!
-			Q_strcat(whitelist, sizeof(whitelist), " .txt .cfg .dat .gm .way"); // no need to add *.so or *.dll, FS_Remove denies that per default
+			Q_strcat(whitelist, sizeof(whitelist), " .txt .cfg .dat .gm .way .so .dll"); // *.so and *.dll are denied per default in FS_Remove but throw a Com_Error() -> game aborts
 
 			//Com_DPrintf("Whitelist files/patterns: %s\n", whitelist);
 
@@ -1115,7 +1115,7 @@ void Cmd_CleanHomepath_f(void)
 			}
 
 			Com_Printf("- removing file[%i]: %s%c%s\n", j + 1, path, PATH_SEP, pFiles[j]);
-			//remove(va("%s%c%s", path, PATH_SEP, pFiles[j])); // enable *.so & *.dll lib deletion
+			//remove(va("%s%c%s", path, PATH_SEP, pFiles[j])); // enable *.so & *.dll lib deletion - see whitelist
 			FS_Remove(va("%s%c%s", path, PATH_SEP, pFiles[j]));
 			delFiles++;
 		}
