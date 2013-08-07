@@ -154,7 +154,7 @@ RAW INPUT MOUSE
 ============================================================
 */
 
-qboolean IN_InitRawMouse(void)
+static qboolean IN_InitRawMouse(void)
 {
 	// http://www.usb.org/developers/devclass_docs/Hut1_12.pdf
 	if (!SDLWindowProc)
@@ -185,7 +185,7 @@ qboolean IN_InitRawMouse(void)
 	return qtrue;
 }
 
-qboolean IN_ShutdownRawMouse(void)
+static qboolean IN_ShutdownRawMouse(void)
 {
 	RAWINPUTDEVICE dev =
 	{
@@ -1254,7 +1254,7 @@ void IN_Frame(void)
 	}
 }
 
-void IN_InitKeyLockStates(void)
+static void IN_InitKeyLockStates(void)
 {
 	unsigned char *keystate = SDL_GetKeyState(NULL);
 
