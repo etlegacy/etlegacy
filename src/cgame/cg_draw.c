@@ -2275,6 +2275,12 @@ static void CG_DrawVote(void)
 			CG_DrawStringExt(8, 200, CG_TranslateString(s), colorYellow, qtrue, qtrue, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 80);
 			return;
 		}
+		if (cgs.complaintClient == -5)
+		{
+			s = "You were team-killed by a bot.";
+			CG_DrawStringExt(8, 200, CG_TranslateString(s), colorYellow, qtrue, qtrue, TINYCHAR_WIDTH - 2, TINYCHAR_HEIGHT - 2, 80);
+			return;
+		}
 	}
 
 	if (cgs.applicationEndTime > cg.time && cgs.applicationClient < 0)
