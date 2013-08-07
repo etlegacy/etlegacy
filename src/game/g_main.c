@@ -2661,11 +2661,11 @@ int QDECL SortRanks(const void *a, const void *b)
 	cb = &level.clients[*(int *)b];
 
 	// sort special clients last
-	if (/*ca->sess.spectatorState == SPECTATOR_SCOREBOARD ||*/ ca->sess.spectatorClient < 0)
+	if (ca->sess.spectatorClient < 0)
 	{
 		return 1;
 	}
-	if (/*cb->sess.spectatorState == SPECTATOR_SCOREBOARD ||*/ cb->sess.spectatorClient < 0)
+	if (cb->sess.spectatorClient < 0)
 	{
 		return -1;
 	}
