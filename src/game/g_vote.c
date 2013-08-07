@@ -52,12 +52,12 @@ static const char *DISABLED    = "DISABLED";
 
 static const char *gameNames[] =
 {
-	"Single Player", // Obsolete
-	"Cooperative", // Obsolete
+	"Single Player",    // Obsolete
+	"Cooperative",      // Obsolete
 	"Objective",
 	"Stopwatch",
 	"Campaign",
-	"Last Man Standing"
+	"Last Man Standing",
 	"Map Voting"        // GT_WOLF_MAPVOTE
 	// GT_MAX_GAME_TYPE
 };
@@ -307,9 +307,7 @@ void G_voteSetVoteString(const char *desc)
 }
 
 ////////////////////////////////////////////////////////
-//
 // Actual vote command implementation
-//
 ////////////////////////////////////////////////////////
 
 // *** Load competition settings for current mode ***
