@@ -545,6 +545,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		ent->s.otherEntityNum  = self->s.number;
 		ent->s.otherEntityNum2 = killer;
 		ent->r.svFlags         = SVF_BROADCAST; // send to everyone
+		ent->s.weapon          = weap;
 	}
 
 	self->enemy = attacker;
@@ -569,6 +570,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		{
 			// fixes premature grenade explosion, ta bani ;)
 			gentity_t *m = fire_grenade(self, launchspot, launchvel, self->s.weapon);
+
 			m->damage = 0;
 		}
 	}
