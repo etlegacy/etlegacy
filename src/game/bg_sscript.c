@@ -82,6 +82,7 @@ qboolean BG_SS_StoreSpeaker(bg_speaker_t *speaker)
 {
 	if (numScriptSpeakers >= MAX_SCRIPTSPEAKERS)
 	{
+		Com_Printf(S_COLOR_RED "ERROR BG_SS_StoreSpeaker: MAX_SCRIPTSPEAKERS reached %i\n", MAX_SCRIPTSPEAKERS);
 		return qfalse;
 	}
 
