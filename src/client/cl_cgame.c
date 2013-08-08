@@ -795,7 +795,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return 0;
 	case CG_R_ADDPOLYBUFFERTOSCENE:
 		re.AddPolyBufferToScene(VMA(1));
-		break;
+		return 0;
 	case CG_R_ADDLIGHTTOSCENE:
 		re.AddLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), args[7], args[8]);
 		return 0;
