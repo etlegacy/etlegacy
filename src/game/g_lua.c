@@ -502,6 +502,35 @@ static int _et_Q_CleanStr(lua_State *L)
 }
 
 // ET Filesystem
+
+extern char bigTextBuffer[100000];
+
+static int _et_trap_FS_GetFileList(lua_State *L)
+{
+	const char *dirname            = luaL_checkstring(L, 1);
+	const char *filename_extension = luaL_checkstring(L, 2);
+	int        newTable, index, i, filelen, numfiles;
+	char       filename[MAX_QPATH]; // was 128
+	char       *filenameptr = bigTextBuffer;
+
+	numfiles = trap_FS_GetFileList(dirname, filename_extension, bigTextBuffer, sizeof(bigTextBuffer));
+
+	lua_createtable(L, numfiles, 0);
+	newTable = lua_gettop(L);
+	index    = 1;
+
+	for (i = 0; i < numfiles; i++, filenameptr += filelen + 1)
+	{
+		filelen = strlen(filenameptr);
+		strcpy(filename, filenameptr);
+
+		lua_pushstring(L, filename);
+		lua_rawseti(L, newTable, index++);
+	}
+
+	return 1;
+}
+
 // fd, len = et.trap_FS_FOpenFile( filename, mode )
 static int _et_trap_FS_FOpenFile(lua_State *L)
 {
@@ -1506,8 +1535,8 @@ static int _et_G_XP_Set(lua_State *L)
 	return 1;
 }
 
-/*
- * Reset XP
+/**
+ * @brief Reset XP
  * et.ResetXP ( clientNum )
  */
 static int _et_G_ResetXP(lua_State *L)
@@ -1567,6 +1596,7 @@ static const luaL_Reg etlib[] =
 	{ "Info_ValueForKey",        _et_Info_ValueForKey        },
 	{ "Q_CleanStr",              _et_Q_CleanStr              },
 	// ET Filesystem
+	{ "trap_FS_GetFileList",     _et_trap_FS_GetFileList     },
 	{ "trap_FS_FOpenFile",       _et_trap_FS_FOpenFile       },
 	{ "trap_FS_Read",            _et_trap_FS_Read            },
 	{ "trap_FS_Write",           _et_trap_FS_Write           },
