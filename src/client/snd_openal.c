@@ -572,7 +572,27 @@ S_AL_RegisterSound
 */
 static sfxHandle_t S_AL_RegisterSound(const char *sample, qboolean compressed)
 {
-	sfxHandle_t sfx = S_AL_BufferFind(sample);
+	sfxHandle_t sfx;
+
+	if (!sample)
+	{
+		Com_DPrintf(S_COLOR_RED "ERROR: [S_AL_RegisterSound: NULL");
+		return 0;
+	}
+	if (!sample[0])
+	{
+		Com_DPrintf(S_COLOR_RED "ERROR: [S_AL_RegisterSound: empty name");
+		return 0;
+	}
+
+	if (strlen(sample) >= MAX_QPATH)
+	{
+		Com_DPrintf(S_COLOR_RED "ERROR: [S_AL_RegisterSound] Sound name exceeds MAX_QPATH - %s\n", sample);
+		return 0;
+	}
+
+	sfx = S_AL_BufferFind(sample);
+
 
 	if ((!knownSfx[sfx].inMemory) && (!knownSfx[sfx].isDefault))
 	{

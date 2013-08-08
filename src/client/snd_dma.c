@@ -419,9 +419,20 @@ sfxHandle_t S_Base_RegisterSound(const char *name, qboolean compressed)
 		return 0;
 	}
 
+	if (!name)
+	{
+		Com_DPrintf(S_COLOR_RED "ERROR: [S_AL_RegisterSound: NULL");
+		return 0;
+	}
+	if (!name[0])
+	{
+		Com_DPrintf(S_COLOR_RED "ERROR: [S_AL_RegisterSound: empty name");
+		return 0;
+	}
+
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_DPrintf(S_COLOR_RED "ERROR: [S_Base_RegisterSound] Sound name exceeds MAX_QPATH\n");
+		Com_DPrintf(S_COLOR_RED "ERROR: [S_Base_RegisterSound] Sound name exceeds MAX_QPATH - %s\n", name);
 		return 0;
 	}
 
@@ -499,7 +510,6 @@ Used for spatializing s_channels
 void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right_vol, float range, int no_attenuation)
 {
 	vec_t lscale, rscale;
-	float dist_fullvol = range * 0.064f;
 
 	if (dma.channels == 1 || no_attenuation)     // no attenuation = no spatialization
 	{
@@ -511,6 +521,7 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 		vec_t  dist;
 		vec3_t source_vec;
 		vec3_t vec;
+		float  dist_fullvol = range * 0.064f;
 
 		// calculate stereo seperation and distance attenuation
 		VectorSubtract(origin, listener_origin, source_vec);
@@ -737,9 +748,6 @@ S_ClearSounds
 */
 void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 {
-	streamingSound_t *ss;
-	channel_t        *ch;
-
 	if (!s_soundStarted)
 	{
 		return;
@@ -755,7 +763,9 @@ void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 	// and leave us with a snippet off streaming sounds after we reload
 	if (clearStreaming)
 	{
-		int i;
+		int              i;
+		streamingSound_t *ss;
+		channel_t        *ch;
 
 		for (i = 0, ss = streamingSounds; i < MAX_STREAMING_SOUNDS; i++, ss++)
 		{
