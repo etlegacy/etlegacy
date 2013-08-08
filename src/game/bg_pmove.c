@@ -3348,7 +3348,7 @@ void PM_AdjustAimSpreadScale(void)
 	if (wpnScale)
 	{
 		float viewchange = 0;
-		
+
 		// crouched players recover faster (mostly useful for snipers)
 		if (pm->ps->eFlags & EF_CROUCHING || pm->ps->eFlags & EF_PRONE)
 		{

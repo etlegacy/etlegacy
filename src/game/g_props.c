@@ -33,8 +33,6 @@
 
 #include "g_local.h"
 
-#define GENERIC_DAMAGE  6
-
 int snd_chaircreak;
 
 void DropToFloorG(gentity_t *ent)
@@ -324,7 +322,6 @@ void Psparks_think(gentity_t *ent)
 void sparks_angles_think(gentity_t *ent)
 {
 	gentity_t *target = NULL;
-	vec3_t    vec;
 
 	if (ent->target)
 	{
@@ -337,6 +334,8 @@ void sparks_angles_think(gentity_t *ent)
 	}
 	else
 	{
+		vec3_t vec;
+
 		VectorSubtract(ent->s.origin, target->s.origin, vec);
 		VectorNormalize(vec);
 		VectorCopy(vec, ent->r.currentAngles);
@@ -480,7 +479,6 @@ or you could set its angles in the editor
 void dust_use(gentity_t *ent, gentity_t *self, gentity_t *activator)
 {
 	gentity_t *tent;
-	vec3_t    forward;
 
 	if (ent->target)
 	{
@@ -494,6 +492,8 @@ void dust_use(gentity_t *ent, gentity_t *self, gentity_t *activator)
 	}
 	else
 	{
+		vec3_t forward;
+
 		AngleVectors(ent->r.currentAngles, forward, NULL, NULL);
 
 		tent = G_TempEntity(ent->r.currentOrigin, EV_DUST);
@@ -544,34 +544,36 @@ void SP_Dust(gentity_t *ent)
 
 extern void G_ExplodeMissile(gentity_t *ent);
 
+/* unused
 void propExplosionLarge(gentity_t *ent)
 {
-	gentity_t *bolt = G_Spawn();
+    gentity_t *bolt = G_Spawn();
 
-	// for explosion type
-	bolt->accuracy = 2;
+    // for explosion type
+    bolt->accuracy = 2;
 
-	bolt->classname = "props_explosion_large";
-	bolt->nextthink = level.time + FRAMETIME;
-	bolt->think     = G_ExplodeMissile;
-	bolt->s.eType   = ET_MISSILE;
-	bolt->r.svFlags = 0;
+    bolt->classname = "props_explosion_large";
+    bolt->nextthink = level.time + FRAMETIME;
+    bolt->think     = G_ExplodeMissile;
+    bolt->s.eType   = ET_MISSILE;
+    bolt->r.svFlags = 0;
 
-	bolt->s.weapon = WP_NONE;
+    bolt->s.weapon = WP_NONE;
 
-	bolt->s.eFlags            = EF_BOUNCE_HALF;
-	bolt->r.ownerNum          = ent->s.number;
-	bolt->parent              = ent;
-	bolt->damage              = ent->health;
-	bolt->splashDamage        = ent->health;
-	bolt->splashRadius        = ent->health * 1.5;
-	bolt->methodOfDeath       = MOD_GRENADE;
-	bolt->splashMethodOfDeath = MOD_GRENADE;
-	bolt->clipmask            = MASK_SHOT;
+    bolt->s.eFlags            = EF_BOUNCE_HALF;
+    bolt->r.ownerNum          = ent->s.number;
+    bolt->parent              = ent;
+    bolt->damage              = ent->health;
+    bolt->splashDamage        = ent->health;
+    bolt->splashRadius        = ent->health * 1.5;
+    bolt->methodOfDeath       = MOD_GRENADE;
+    bolt->splashMethodOfDeath = MOD_GRENADE;
+    bolt->clipmask            = MASK_SHOT;
 
-	VectorCopy(ent->r.currentOrigin, bolt->s.pos.trBase);
-	VectorCopy(ent->r.currentOrigin, bolt->r.currentOrigin);
+    VectorCopy(ent->r.currentOrigin, bolt->s.pos.trBase);
+    VectorCopy(ent->r.currentOrigin, bolt->r.currentOrigin);
 }
+*/
 
 void G_ExplodeMissile(gentity_t *ent);
 
@@ -610,6 +612,8 @@ void InitProp(gentity_t *ent)
 	vec3_t   color;
 	qboolean lightSet, colorSet;
 	char     *sound;
+
+	// FIXME: the following models are missing in genuine ET pk3s - relics ?
 
 	if (!Q_stricmp(ent->classname, "props_bench"))
 	{
@@ -3881,8 +3885,6 @@ void props_locker_spawn_item(gentity_t *ent)
 		G_Printf("props_locker_spawn_item at %s failed!\n", vtos(ent->r.currentOrigin));
 	}
 }
-
-extern qhandle_t trap_R_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);
 
 void props_locker_mass(gentity_t *ent)
 {
