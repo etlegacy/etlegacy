@@ -397,8 +397,10 @@ typedef struct
 	char renderer_string[MAX_STRING_CHARS];
 	char vendor_string[MAX_STRING_CHARS];
 	char version_string[MAX_STRING_CHARS];
-	char extensions_string[MAX_STRING_CHARS * 4];   // bumping, some cards have a big extension string
-	                                                // no need to increase MAX_STRING_CHARS *4 - console doesn't print more
+	char extensions_string[BIG_INFO_STRING];        // bumping, some cards have a big extension string
+	                                                // - no need to increase MAX_STRING_CHARS *4 - console doesn't print more
+	                                                // - increased again to BIG_INFO_STRING - see R_PrintLongString(glConfig.extensions_string);
+                                                    // -- FIXME: http://stackoverflow.com/questions/8500586/what-size-of-an-array-should-i-use-to-print-glgetstringgl-extensions
 
 	int maxTextureSize;                             // queried from GL
 	int maxActiveTextures;                          // multitexture ability

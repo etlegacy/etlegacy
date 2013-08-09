@@ -270,7 +270,7 @@ void UI_ListCampaigns_f(void);
 
 void UI_ListFavourites_f(void);
 
-#define GLINFO_LINES        128
+#define GLINFO_LINES        256
 
 // ui_atoms.c
 void QDECL Com_DPrintf(const char *fmt, ...);
