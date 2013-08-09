@@ -29,6 +29,9 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
  * @file tr_types.h
+ *
+ * NOTE: Never ever change existing members of structs in this file, it'll break 2.60 mod compatibility
+ *       when they are referenced in cgame or ui
  */
 
 #ifndef __TR_TYPES_H
@@ -38,9 +41,9 @@
 
 // XreaL BEGIN
 #define MAX_REF_LIGHTS      1024
-#define MAX_REF_ENTITIES    1023        // can't be increased without changing drawsurf bit packing
-#define MAX_BONES           128         // RB: same as MDX_MAX_BONES
-#define MAX_WEIGHTS         4           // GPU vertex skinning limit, never change this without rewriting many GLSL shaders
+#define MAX_REF_ENTITIES    1023    // can't be increased without changing drawsurf bit packing
+#define MAX_BONES           128     // RB: same as MDX_MAX_BONES
+#define MAX_WEIGHTS         4       // GPU vertex skinning limit, never change this without rewriting many GLSL shaders
 // XreaL END
 
 #define MAX_CORONAS     32          // unused - not really a reason to limit this other than trying to keep a reasonable count
@@ -48,21 +51,21 @@
 #define MAX_ENTITIES    1023        // can't be increased without changing drawsurf bit packing
 
 // renderfx flags
-#define RF_MINLIGHT         0x000001        // allways have some light (viewmodel, some items)
-#define RF_THIRD_PERSON     0x000002        // don't draw through eyes, only mirrors (player bodies, chat sprites)
-#define RF_FIRST_PERSON     0x000004        // only draw through eyes (view weapon, damage blood blob)
-#define RF_DEPTHHACK        0x000008        // for view weapon Z crunching
-#define RF_NOSHADOW         0x000010        // don't add stencil shadows
+#define RF_MINLIGHT         0x000001    // allways have some light (viewmodel, some items)
+#define RF_THIRD_PERSON     0x000002    // don't draw through eyes, only mirrors (player bodies, chat sprites)
+#define RF_FIRST_PERSON     0x000004    // only draw through eyes (view weapon, damage blood blob)
+#define RF_DEPTHHACK        0x000008    // for view weapon Z crunching
+#define RF_NOSHADOW         0x000010    // don't add stencil shadows
 
-#define RF_LIGHTING_ORIGIN  0x000020        // use refEntity->lightingOrigin instead of refEntity->origin
+#define RF_LIGHTING_ORIGIN  0x000020    // use refEntity->lightingOrigin instead of refEntity->origin
 // for lighting.  This allows entities to sink into the floor
 // with their origin going solid, and allows all parts of a
 // player to get the same lighting
 #define RF_SHADOW_PLANE     0x0100      // use refEntity->shadowPlane  0x000040
 #define RF_WRAP_FRAMES      0x0200      // mod the model frames by the maxframes to allow continuous  0x000080
 // animation without needing to know the frame count
-#define RF_HILIGHT          0x000100        // more than RF_MINLIGHT.  For when an object is "Highlighted" (looked at/training identification/etc)
-#define RF_BLINK            0x000200        // eyes in 'blink' state
+#define RF_HILIGHT          0x000100    // more than RF_MINLIGHT.  For when an object is "Highlighted" (looked at/training identification/etc)
+#define RF_BLINK            0x000200    // eyes in 'blink' state
 #define RF_FORCENOLOD       0x000400
 
 // refdef flags
@@ -119,8 +122,6 @@ typedef enum
 	RT_MAX_REF_ENTITY_TYPE
 } refEntityType_t;
 
-#define ZOMBIEFX_FADEOUT_TIME   10000
-
 #define REFLAG_ONLYHAND     1   // only draw hand surfaces
 #define REFLAG_FORCE_LOD    8   // force a low lod
 #define REFLAG_ORIENT_LOD   16  // on LOD switch, align the model to the player's camera
@@ -138,7 +139,7 @@ typedef struct
 #if defined(REFBONE_NAMES)
 	char name[64];
 #endif
-	short parentIndex;              // parent index (-1 if root)
+	short parentIndex;           // parent index (-1 if root)
 	vec3_t origin;
 	quat_t rotation;
 } refBone_t;
@@ -170,12 +171,12 @@ typedef struct
 	qhandle_t hModel;           // opaque type outside refresh
 
 	// most recent data
-	vec3_t lightingOrigin;          // so multi-part models can be lit identically (RF_LIGHTING_ORIGIN)
-	float shadowPlane;              // projection shadows go here, stencils go slightly lower
+	vec3_t lightingOrigin;      // so multi-part models can be lit identically (RF_LIGHTING_ORIGIN)
+	float shadowPlane;          // projection shadows go here, stencils go slightly lower
 
 	vec3_t axis[3];             // rotation vectors
-	vec3_t torsoAxis[3];            // rotation vectors for torso section of skeletal animation
-	qboolean nonNormalizedAxes;         // axis are not normalized, i.e. they have scale
+	vec3_t torsoAxis[3];        // rotation vectors for torso section of skeletal animation
+	qboolean nonNormalizedAxes; // axis are not normalized, i.e. they have scale
 	vec3_t origin;              // also used as MODEL_BEAM's "from"
 	int frame;                  // also used as MODEL_BEAM's diameter
 	qhandle_t frameModel;
@@ -194,30 +195,27 @@ typedef struct
 	// texturing
 	int skinNum;                // inline skin index
 	qhandle_t customSkin;       // NULL for default skin
-	qhandle_t customShader;         // use one image for the entire thing
+	qhandle_t customShader;     // use one image for the entire thing
 
 	// misc
-	byte shaderRGBA[4];             // colors used by rgbgen entity shaders
-	float shaderTexCoord[2];            // texture coordinates used by tcMod entity modifiers
+	byte shaderRGBA[4];         // colors used by rgbgen entity shaders
+	float shaderTexCoord[2];    // texture coordinates used by tcMod entity modifiers
 	float shaderTime;           // subtracted from refdef time to control effect start times
 
 	// extra sprite information
 	float radius;
 	float rotation;
 
-	// Ridah
 	vec3_t fireRiseDir;
 
 	// Ridah, entity fading (gibs, debris, etc)
 	int fadeStartTime, fadeEndTime;
 
-	float hilightIntensity;             //----(SA)  added
+	float hilightIntensity;
 
 	int reFlags;
 
 	int entityNum;              // currentState.number, so we can attach rendering effects to specific entities (Zombie)
-
-
 
 	// XreaL BEGIN
 
@@ -249,7 +247,7 @@ typedef enum
 typedef struct
 {
 	refLightType_t rlType;
-	//  int             lightfx;
+	//int             lightfx;
 
 	qhandle_t attenuationShader;
 
@@ -279,9 +277,9 @@ typedef struct
 
 // XreaL END
 
-//                                                                  //
-// WARNING:: synch FOG_SERVER in sv_ccmds.c if you change anything  //
-//                                                                  //
+
+// WARNING:: synch FOG_SERVER in sv_ccmds.c if you change anything
+
 typedef enum
 {
 	FOG_NONE,       //  0
@@ -329,10 +327,10 @@ typedef struct
 	int x, y, width, height;
 	float fov_x, fov_y;
 	vec3_t vieworg;
-	vec3_t viewaxis[3];             // transformation matrix
+	vec3_t viewaxis[3];         // transformation matrix
 
-	int time;           // time in milliseconds for shader effects and other time dependent rendering issues
-	int rdflags;                    // RDF_NOWORLDMODEL, etc
+	int time;                   // time in milliseconds for shader effects and other time dependent rendering issues
+	int rdflags;                // RDF_NOWORLDMODEL, etc
 
 	// 1 bits will prevent the associated area from rendering at all
 	byte areamask[MAX_MAP_AREA_BYTES];
@@ -341,7 +339,7 @@ typedef struct
 	char text[MAX_RENDER_STRINGS][MAX_RENDER_STRING_LENGTH];
 
 
-	//----(SA)  added (needed to pass fog infos into the portal sky scene)
+	// needed to pass fog infos into the portal sky scene
 	glfog_t glfog;
 
 } refdef_t;
@@ -371,7 +369,7 @@ typedef enum
 {
 	GLDRV_ICD,                  // driver is integrated with window system
 	GLDRV_STANDALONE,           // deprecated
-	GLDRV_VOODOO,                // deprecated
+	GLDRV_VOODOO,               // deprecated
 	// XreaL BEGIN
 	GLDRV_OPENGL3,              // new driver system
 	GLDRV_MESA                  // crap
@@ -397,10 +395,8 @@ typedef struct
 	char renderer_string[MAX_STRING_CHARS];
 	char vendor_string[MAX_STRING_CHARS];
 	char version_string[MAX_STRING_CHARS];
-	char extensions_string[BIG_INFO_STRING];        // bumping, some cards have a big extension string
+	char extensions_string[MAX_STRING_CHARS * 4];   // bumping, some cards have a big extension string
 	                                                // - no need to increase MAX_STRING_CHARS *4 - console doesn't print more
-	                                                // - increased again to BIG_INFO_STRING - see R_PrintLongString(glConfig.extensions_string);
-                                                    // -- FIXME: http://stackoverflow.com/questions/8500586/what-size-of-an-array-should-i-use-to-print-glgetstringgl-extensions
 
 	int maxTextureSize;                             // queried from GL
 	int maxActiveTextures;                          // multitexture ability
