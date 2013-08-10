@@ -3,7 +3,7 @@
 # - Wolfenstein: Enemy Territory 2.60b compatible client/server
 # - based on raedwulf-et: https://bitbucket.org/tcmreastwood/raedwulf-et
 #
-# Please use TABs to indent!
+# Please use TABs to indent! (x8)
 #------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.3)
 
@@ -77,12 +77,12 @@ option(FEATURE_AUTOUPDATE	"Enable updater which downloads latest ET:L files"			O
 option(FEATURE_RENDERER2	"Build and use the new renderer"					OFF)
 option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
 option(FEATURE_IRC_CLIENT	"Enable IRC client"							OFF)
-option(RENDERER_DYNAMIC "Build renderer into a dynamic library"		OFF)
+option(RENDERER_DYNAMIC		"Build renderer into a dynamic library"					OFF)
 
 cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"	ON "BUNDLED_LIBS" OFF)
 
-cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot build in mod code"	ON "WIN32 OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
-cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"			ON "WIN32 OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
+cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (32-bit Windows or linux only)"	ON "WIN32 OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
+cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"						ON "FEATURE_OMNIBOT" OFF)
 
 set(ET_FS_BASEPATH		""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 option(ET_KEY			"Copy etkey file (requires ET_FS_BASEPATH set)"				OFF)
@@ -770,47 +770,45 @@ if(BUILD_PAK3_PK3)
 endif(BUILD_PAK3_PK3)
 
 if(INSTALL_OMNIBOT AND BUILD_MOD)
-	if(WIN32 OR UNIX AND NOT CMAKE_SYSTEM MATCHES "Darwin" AND NOT CMAKE_SYSTEM MATCHES "OpenBSD*")
-		message(STATUS "Installing Omni-Bot")
-		# Note: used archive (16MB) doesn't contain incomplete nav- and other unwanted files
-		if(UNIX)
-			set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-linux-latest.tar.gz")
-		elseif(WIN32 AND UNZIP_EXECUTABLE)
-			set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-windows-latest.zip")
-		endif()
-
-		set(ETLEGACY_OMNIBOT_DL_URL "http://mirror.etlegacy.com/omnibot/${ETLEGACY_OMNIBOT_ARCHIVE}")
-
-		message(STATUS "Downloading Omni-Bot archive to ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}")
-
-		if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}")
-			file(DOWNLOAD
-				${ETLEGACY_OMNIBOT_DL_URL}
-				"${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}"
-				SHOW_PROGRESS TIMEOUT 30
-			)
-		endif()
-
-		message(STATUS "Extracting Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot")
-		if(UNIX)
-			execute_process(
-				COMMAND tar -xf ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
-				WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
-			)
-		elseif(WIN32)
-			execute_process(
-				COMMAND ${UNZIP_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
-				WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
-			)
-		endif()
-
-		message(STATUS "Adding Omni-Bot to installer scripts")
-		install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot/"
-			DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
-		)
-	else()
-		message(STATUS "Installing Omni-Bot is Windows and Linux only.")
+	message(STATUS "Installing Omni-Bot")
+	# Note: used archive (16MB) doesn't contain incomplete nav- and other unwanted files
+	if(UNIX)
+		set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-linux-latest.tar.gz")
+	elseif(WIN32 AND UNZIP_EXECUTABLE)
+		set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-windows-latest.zip")
 	endif()
+
+	set(ETLEGACY_OMNIBOT_DL_URL "http://mirror.etlegacy.com/omnibot/${ETLEGACY_OMNIBOT_ARCHIVE}")
+
+	#file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy")
+	
+	message(STATUS "Downloading Omni-Bot archive to ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}")
+
+	if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}")
+		file(DOWNLOAD
+			${ETLEGACY_OMNIBOT_DL_URL}
+			"${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}"
+			SHOW_PROGRESS TIMEOUT 30
+		)
+	endif()
+
+	message(STATUS "Extracting Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot")
+	if(UNIX)
+		execute_process(
+			COMMAND tar -xf ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
+		)
+	elseif(WIN32)
+		execute_process(
+			COMMAND ${UNZIP_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
+		)
+	endif()
+
+	message(STATUS "Adding Omni-Bot to installer scripts")
+	install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot/"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
+	)
 endif(INSTALL_OMNIBOT AND BUILD_MOD)
 
 #-----------------------------------------------------------------
@@ -847,49 +845,49 @@ install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt"
 )
 
 # copy required genuine files
-if(ET_FS_BASEPATH)
+if(ET_FS_BASEPATH AND INSTALL_DEFAULT_BASEDIR)
 	message(STATUS "Installing genuine ET files")
 
 	install(FILES "${ET_FS_BASEPATH}/etmain/mp_bin.pk3"
-		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain"
 		PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ
 	)
 
 	install(FILES "${ET_FS_BASEPATH}/etmain/pak0.pk3"
-		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain"
 		PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ
 	)
 
 	install(FILES "${ET_FS_BASEPATH}/etmain/pak1.pk3"
-		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain"
 		PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ
 	)
 
 	install(FILES "${ET_FS_BASEPATH}/etmain/pak2.pk3"
-		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain"
 		PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ
 	)
 
 	# personal data (owner only)
 	install(FILES "${ET_FS_BASEPATH}/etmain/video/etintro.roq"
-		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain/video"
+		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain/video"
 		PERMISSIONS OWNER_WRITE OWNER_READ
 	)
 	
 	if(ET_KEY)
 		install(FILES "${ET_FS_BASEPATH}/etmain/etkey"
-			DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+			DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain"
 			PERMISSIONS OWNER_WRITE OWNER_READ
 		)
 	endif(ET_KEY)
-else()
+elseif(NOT ET_FS_BASEPATH AND INSTALL_DEFAULT_BASEDIR)
 	message(STATUS "***********************************************************")
-	message(STATUS "Genuine ET files are not copied - ET:Legacy won't start !!!")
+	message(STATUS "Genuine ET files are not copied - ET: Legacy won't start !!!")
 	message(STATUS "In order to start the game copy")
 	message(STATUS "mp_bin.pk3, pak0.pk3, pak1.pk3 and pak2.pk3")
-	message(STATUS "to ${INSTALL_DEFAULT_MODDIR}/etmain")
+	message(STATUS "to ${INSTALL_DEFAULT_BASEDIR}/etmain")
 	message(STATUS "***********************************************************")
-endif(ET_FS_BASEPATH)
+endif()
 
 # Uninstall target
 configure_file(
