@@ -1007,7 +1007,8 @@ static void GLimp_XreaLInitExtensions(void)
 	// GL_EXTX_framebuffer_mixed_formats
 	/*
 	glConfig2.framebufferMixedFormatsAvailable = qfalse;
-	if(Q_stristr(glConfig.extensions_string, "GL_EXTX_framebuffer_mixed_formats"))
+	if(Q_stristr(glConfig.extensions_string, "GL_EXTX_framebuffer_mixed_formats")) // note: if you activate this use (char *) qglGetString(GL_EXTENSIONS)
+	                                                                                        glConfig.extensions_string is unsafe
 	{
 	    if(r_extx_framebuffer_mixed_formats->integer)
 	    {

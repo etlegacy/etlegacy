@@ -625,9 +625,7 @@ RB_TakeScreenshotCmd
 */
 const void *RB_TakeScreenshotCmd(const void *data)
 {
-	const screenshotCommand_t *cmd;
-
-	cmd = ( const screenshotCommand_t * ) data;
+	const screenshotCommand_t *cmd = ( const screenshotCommand_t * ) data;
 
 	if (cmd->jpeg)
 	{
@@ -728,11 +726,9 @@ RB_TakeVideoFrameCmd
 */
 const void *RB_TakeVideoFrameCmd(const void *data)
 {
-	const videoFrameCommand_t *cmd;
+	const videoFrameCommand_t *cmd = (const videoFrameCommand_t *)data;
 	int                       frameSize;
 	int                       i;
-
-	cmd = (const videoFrameCommand_t *)data;
 
 	// check if the recording is still going on, the buffer might have cmds eventho the recording has stopped
 	if (ri.CL_VideoRecording())
@@ -1039,10 +1035,9 @@ Workaround for ri.Printf's 1024 characters buffer limit.
 void R_PrintLongString(const char *string)
 {
 	char       buffer[1024];
-	const char *p;
+	const char *p   = string;
 	int        size = strlen(string);
 
-	p = string;
 	while (size > 0)
 	{
 		Q_strncpyz(buffer, p, sizeof(buffer));
@@ -1075,7 +1070,7 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string);
 
 	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: ");
-	R_PrintLongString(glConfig.extensions_string);
+	R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
 
 	ri.Printf(PRINT_ALL, "\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 	ri.Printf(PRINT_ALL, "GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);

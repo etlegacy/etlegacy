@@ -39,12 +39,12 @@
 
 #define COMPAT_ET 1
 
-// XreaL BEGIN
+// renderer2 BEGIN
 #define MAX_REF_LIGHTS      1024
 #define MAX_REF_ENTITIES    1023    // can't be increased without changing drawsurf bit packing
 #define MAX_BONES           128     // RB: same as MDX_MAX_BONES
 #define MAX_WEIGHTS         4       // GPU vertex skinning limit, never change this without rewriting many GLSL shaders
-// XreaL END
+// renderer2 END
 
 #define MAX_CORONAS     32          // unused - not really a reason to limit this other than trying to keep a reasonable count
 #define MAX_DLIGHTS     32          // can't be increased, because bit flags are used on surfaces
@@ -58,12 +58,12 @@
 #define RF_NOSHADOW         0x000010    // don't add stencil shadows
 
 #define RF_LIGHTING_ORIGIN  0x000020    // use refEntity->lightingOrigin instead of refEntity->origin
-// for lighting.  This allows entities to sink into the floor
-// with their origin going solid, and allows all parts of a
-// player to get the same lighting
+                                        // for lighting.  This allows entities to sink into the floor
+                                        // with their origin going solid, and allows all parts of a
+                                        // player to get the same lighting
 #define RF_SHADOW_PLANE     0x0100      // use refEntity->shadowPlane  0x000040
 #define RF_WRAP_FRAMES      0x0200      // mod the model frames by the maxframes to allow continuous  0x000080
-// animation without needing to know the frame count
+                                        // animation without needing to know the frame count
 #define RF_HILIGHT          0x000100    // more than RF_MINLIGHT.  For when an object is "Highlighted" (looked at/training identification/etc)
 #define RF_BLINK            0x000200    // eyes in 'blink' state
 #define RF_FORCENOLOD       0x000400
@@ -78,8 +78,7 @@
 #define RDF_DRAWINGSKY      (1 << 5)
 #define RDF_SNOOPERVIEW     (1 << 6)
 
-#define MAX_DLIGHTS     32      // can't be increased, because bit flags are used on surfaces
-
+// renderer2 BEGIN
 #define REFENTITYNUM_BITS   10      // can't be increased without changing drawsurf bit packing
 #define REFENTITYNUM_MASK   ((1 << REFENTITYNUM_BITS) - 1)
 // the last N-bit number (2^REFENTITYNUM_BITS - 1) is reserved for the special world refentity,
@@ -91,6 +90,7 @@
 // DEPTHHACK in stereo rendering mode, with the difference that the
 // projection matrix won't be hacked to reduce the stereo separation as
 // is done for the gun.
+// renderer2 END
 
 typedef struct
 {
@@ -111,10 +111,10 @@ typedef enum
 	RT_MODEL,
 	RT_POLY,
 	RT_SPRITE,
-	RT_SPLASH,  // ripple effect
+	RT_SPLASH,              // ripple effect
 	RT_BEAM,
 	RT_RAIL_CORE,
-	RT_RAIL_CORE_TAPER, // a modified core that creates a properly texture mapped core that's wider at one end
+	RT_RAIL_CORE_TAPER,     // a modified core that creates a properly texture mapped core that's wider at one end
 	RT_RAIL_RINGS,
 	RT_LIGHTNING,
 	RT_PORTALSURFACE,       // doesn't draw anything, just info for portals
@@ -127,10 +127,11 @@ typedef enum
 #define REFLAG_ORIENT_LOD   16  // on LOD switch, align the model to the player's camera
 #define REFLAG_DEAD_LOD     32  // allow the LOD to go lower than recommended
 
+// renderer2 BEGIN
 // RB: having bone names for each refEntity_t takes several MiBs
 // in backEndData_t so only use it for debugging and development
 // enabling this will show the bone names with r_showSkeleton 1
-#define USE_REFENTITY_ANIMATIONSYSTEM 1
+#define USE_REFENTITY_ANIMATIONSYSTEM 1 // renderer2
 //#define REFBONE_NAMES 1
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
@@ -162,6 +163,7 @@ typedef struct
 	vec3_t scale;
 } refSkeleton_t;
 #endif
+// renderer2 END
 
 typedef struct
 {
@@ -208,7 +210,7 @@ typedef struct
 
 	vec3_t fireRiseDir;
 
-	// Ridah, entity fading (gibs, debris, etc)
+	// entity fading (gibs, debris, etc)
 	int fadeStartTime, fadeEndTime;
 
 	float hilightIntensity;
@@ -217,7 +219,7 @@ typedef struct
 
 	int entityNum;              // currentState.number, so we can attach rendering effects to specific entities (Zombie)
 
-	// XreaL BEGIN
+	// renderer2 BEGIN
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 	// extra animation information
@@ -229,12 +231,11 @@ typedef struct
 	short noShadowID;
 #endif
 
-	// XreaL END
+	// renderer2  END
 
 } refEntity_t;
 
-// XreaL BEGIN
-
+// renderer2 BEGIN
 typedef enum
 {
 	RL_OMNI,            // point light
@@ -271,12 +272,10 @@ typedef struct
 	qboolean noShadows;
 	short noShadowID;           // don't cast shadows of all entities with this id
 
-	qboolean inverseShadows;        // don't cast light and draw shadows by darken the scene
-	// this is useful for drawing player shadows with shadow mapping
+	qboolean inverseShadows;    // don't cast light and draw shadows by darken the scene
+	                            // this is useful for drawing player shadows with shadow mapping
 } refLight_t;
-
-// XreaL END
-
+// renderer2 END
 
 // WARNING:: synch FOG_SERVER in sv_ccmds.c if you change anything
 
@@ -338,7 +337,6 @@ typedef struct
 	// text messages for deform text shaders
 	char text[MAX_RENDER_STRINGS][MAX_RENDER_STRING_LENGTH];
 
-
 	// needed to pass fog infos into the portal sky scene
 	glfog_t glfog;
 
@@ -370,10 +368,10 @@ typedef enum
 	GLDRV_ICD,                  // driver is integrated with window system
 	GLDRV_STANDALONE,           // deprecated
 	GLDRV_VOODOO,               // deprecated
-	// XreaL BEGIN
+	// renderer2 BEGIN
 	GLDRV_OPENGL3,              // new driver system
 	GLDRV_MESA                  // crap
-	// XreaL END
+	// renderer2 END
 } glDriverType_t;
 
 typedef enum
@@ -383,11 +381,11 @@ typedef enum
 	GLHW_RIVA128,           // deprecated
 	GLHW_RAGEPRO,           // deprecated
 	GLHW_PERMEDIA2,         // deprecated
-	// XreaL BEGIN
+	// renderer2 BEGIN
 	GLHW_ATI,                   // where you don't have proper GLSL support
 	GLHW_ATI_DX10,              // ATI Radeon HD series DX10 hardware
 	GLHW_NV_DX10                // Geforce 8/9 class DX10 hardware
-	// XreaL END
+	// renderer2 END
 } glHardwareType_t;
 
 typedef struct
@@ -397,6 +395,8 @@ typedef struct
 	char version_string[MAX_STRING_CHARS];
 	char extensions_string[MAX_STRING_CHARS * 4];   // bumping, some cards have a big extension string
 	                                                // - no need to increase MAX_STRING_CHARS *4 - console doesn't print more
+	                                                // ET: L also stores this data in char* to fix extensions_string overflow issues
+	                                                // see end of struct - modern gfx cards have huge extensions string
 
 	int maxTextureSize;                             // queried from GL
 	int maxActiveTextures;                          // multitexture ability
@@ -435,8 +435,9 @@ typedef struct
 	qboolean stereoEnabled;
 	qboolean smpActive;                     // obsolete, kept for compatibility
 
-	//Renderer 2
+	// renderer2 BEGIN
 	int numTextureUnits;
+	// renderer2 END
 } glconfig_t;
 
 // =========================================
