@@ -2193,7 +2193,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	}
 
 	{
-		int i;
+		unsigned int i;
 
 		// Avoid ext. ASCII chars in the CS
 		for (i = 0; i < strlen(cs_name); ++i)

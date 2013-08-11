@@ -451,7 +451,7 @@ lcid_to_fl(LCID lcid,
 
 
 FL_Success
-FL_FindLocale(FL_Locale **locale, FL_Domain domain)
+FL_FindLocale(FL_Locale **locale)
 {
 	FL_Success success = FL_FAILED;
 	FL_Locale  *rtn    = malloc(sizeof(FL_Locale));

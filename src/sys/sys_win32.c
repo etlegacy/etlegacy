@@ -792,11 +792,11 @@ int Sys_PID(void)
 Sys_PIDIsRunning
 ==============
 */
-qboolean Sys_PIDIsRunning(int pid)
+qboolean Sys_PIDIsRunning(unsigned int pid)
 {
-	DWORD processes[1024];
-	DWORD numBytes, numProcesses;
-	int   i;
+	DWORD        processes[1024];
+	DWORD        numBytes, numProcesses;
+	unsigned int i;
 
 	if (!EnumProcesses(processes, sizeof(processes), &numBytes))
 	{

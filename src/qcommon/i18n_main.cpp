@@ -200,7 +200,7 @@ void I18N_Init(void)
 	tinygettext::Log::set_log_info_callback(&Tinygettext_Info);
 	tinygettext::Log::set_log_warning_callback(&Tinygettext_Warning);
 
-	FL_FindLocale(&locale, FL_MESSAGES);
+	FL_FindLocale(&locale);
 
 	// Do not change the language if it is already set
 	if (cl_language && !cl_language->string[0])

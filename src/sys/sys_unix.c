@@ -1101,7 +1101,7 @@ int Sys_PID(void)
  * @retval qfalse on failure
  * @retval qtrue  on success
  */
-qboolean Sys_PIDIsRunning(int pid)
+qboolean Sys_PIDIsRunning(unsigned int pid)
 {
 	return kill(pid, 0) == 0;
 }

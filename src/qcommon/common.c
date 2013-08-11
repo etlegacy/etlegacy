@@ -3453,7 +3453,7 @@ Field_FindFirstSeparator
 */
 static char *Field_FindFirstSeparator(char *s)
 {
-	int i;
+	unsigned int i;
 
 	for (i = 0; i < strlen(s); i++)
 	{

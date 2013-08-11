@@ -2269,7 +2269,7 @@ static pack_t *FS_LoadZipFile(const char *zipfile, const char *basename)
 	unz_global_info gi;
 	char            filename_inzip[MAX_ZPATH];
 	unz_file_info   file_info;
-	int             i, len;
+	unsigned int    i, len;
 	long            hash;
 	int             fs_numHeaderLongs = 0;
 	int             *fs_headerLongs;

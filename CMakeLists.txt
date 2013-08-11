@@ -108,7 +108,6 @@ endif(UNIX AND CROSS_COMPILE32)
 
 if(UNIX)
 	# optimization/debug flags
-	# Note/FIXME: check this for Darwin, explore Win optimizations options
 	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s -ffast-math")
 	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
 
@@ -151,6 +150,8 @@ elseif(WIN32)
 	set(OS_LIBRARIES ws2_32 psapi winmm)
 	set(LIB_SUFFIX "_mp_")
 	if(MSVC)
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /Oi")
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")
 		add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
 	endif(MSVC)
 endif()

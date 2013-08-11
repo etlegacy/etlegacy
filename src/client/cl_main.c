@@ -4777,7 +4777,7 @@ qboolean CL_UpdateVisiblePings_f(int source)
 	int      slots, i;
 	char     buff[MAX_STRING_CHARS];
 	int      pingTime;
-	int      max;
+	int      max    = 0;
 	qboolean status = qfalse;
 
 	if (source < 0 || source > AS_FAVORITES)

@@ -464,10 +464,10 @@ leakyBucket_t        outboundLeakyBucket;
 
 static long SVC_HashForAddress(netadr_t address)
 {
-	byte   *ip  = NULL;
-	size_t size = 0;
-	int    i;
-	long   hash = 0;
+	byte         *ip  = NULL;
+	size_t       size = 0;
+	unsigned int i;
+	long         hash = 0;
 
 	switch (address.type)
 	{

@@ -65,31 +65,14 @@ extern "C" {
 
 #define MAX_MASTER_SERVERS      5   // number of supported master servers
 
-#define SLASH_COMMAND 1 //Will the client require a '/' sign in front of commands
+#define SLASH_COMMAND 1         // Will the client require a '/' sign in front of commands
 
 #ifdef _MSC_VER
-
 #pragma warning(disable : 4018) // signed/unsigned mismatch
-#pragma warning(disable : 4032)
-#pragma warning(disable : 4051)
-#pragma warning(disable : 4057) // slightly different base types
-#pragma warning(disable : 4100) // unreferenced formal parameter
-#pragma warning(disable : 4115)
-#pragma warning(disable : 4125) // decimal digit terminates octal escape sequence
-#pragma warning(disable : 4127) // conditional expression is constant
-//#pragma warning(disable : 4136) // there is no warning number '4136'
-#pragma warning(disable : 4152) // nonstandard extension, function/data pointer conversion in expression
-#pragma warning(disable : 4201)
-#pragma warning(disable : 4214)
-#pragma warning(disable : 4244)
-//#pragma warning(disable   : 4142)     // benign redefinition
+#pragma warning(disable : 4244) // number conversion (possible loss of data)
 #pragma warning(disable : 4305) // truncation from const double to float
-//#pragma warning(disable : 4310)       // cast truncates constant value
-//#pragma warning(disable : 4505)       // unreferenced local function has been removed
-#pragma warning(disable : 4514)
-#pragma warning(disable : 4702) // unreachable code
 #pragma warning(disable : 4711) // selected for automatic inline expansion
-#pragma warning(disable : 4220) // varargs matches remaining parameters
+#pragma warning(disable : 4996) // deprecated POSIX function names
 #endif
 
 // Ignore __attribute__ on non-gcc platforms

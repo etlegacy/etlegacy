@@ -1136,7 +1136,7 @@ int Sys_Milliseconds(void);
 
 int Sys_PID(void);
 qboolean Sys_WritePIDFile(void);
-qboolean Sys_PIDIsRunning(int pid);
+qboolean Sys_PIDIsRunning(unsigned int pid);
 
 void Sys_SnapVector(float *v);
 
