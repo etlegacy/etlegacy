@@ -1,0 +1,104 @@
+/////////////////////////////////////////////////////////
+// Map name       Seawall Battery                      //
+// Locations by   Rain                                 //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 27                //
+// Last edited    14-10-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+1837 -2654 820 "^1Assault Ramp"
+4508 -4700 1093 "^1Back Door"
+6119 -3584 1144 "^1Command Post"
+3901 -5102 1064 "^1Generator"
+3201 -3001 975 "^1Gun Controls"
+2549 -4113 1244 "^3Axis Gun Teamdoor"
+2706 -4568 960 "^3Axis Lobby"
+2989 -4652 1104 @
+2946 -4264 1216 @
+2598 -4348 1216 @
+2948 -5312 1056 "^3Axis Main Bunker"
+2426 -4969 953 "^3Axis Rear MG42"
+3537 -5151 996 "^3Axis Spawn Stairs"
+4617 -4911 1092 "^3Back Door"
+4798 -5126 1104 @
+4608 -5384 1085 @
+4419 -5168 1100 @
+4910 -5773 1088 "^3Back Gate"
+4149 -4926 1084 "^3Back MG42"
+4413 -3144 1221 "^3Back Path"
+5178 -3161 1190 @
+5415 -3626 1170 @
+5282 -4337 1141 @
+5140 -4757 1125 @
+3888 -4493 1028 "^3Back Stairs"
+2088 -4081 1221 "^3Base Front MG42"
+3616 -4368 738 "^3Basement Access Hatch"
+3039 -4067 768 "^3Basement Storage"
+3302 -3894 763 @
+3301 -4252 768 @
+3435 -4717 768 @
+2653 -2991 972 "^3Battery Gun"
+3768 -3024 972 @
+3144 -4672 1216 "^3Cabinets Catwalk"
+3712 -4673 1216 @
+5591 -3507 1228 "^3Command Post MG Nest"
+3991 -1070 338 "^3East Beach MG42"
+5211 -1568 704 "^3East Beach Path"
+4300 -340 159 "^3East Beach Spawn"
+4515 -988 214 "^3East Dinghy"
+3612 -3676 961 "^3East Gun Stairs"
+6659 907 185 "^3East Ocean"
+4738 908 204 @
+3855 -3707 1216 "^3Eastern Gun Entrance"
+3671 -4153 1216 @
+3454 -3809 816 "^3Eastern Gun Stairs"
+2373 -4570 1234 "^3Fan Shaft"
+2755 -4669 1329 @
+1121 -2671 1088 "^3Forward Bunker MG42"
+695 -2597 1040 "^3Forward Bunker Spawn"
+89 -3125 1081 @
+2618 -4315 947 "^3Generator Cage"
+3206 -2001 1146 "^3Gun Barrel"
+3435 -4966 1216 "^3Health & Ammo Cabinets"
+3425 -4351 1216 "^3Large Generator Catwalk"
+3728 -4405 1216 @
+3410 -4686 984 "^3Large Generators"
+3129 -4319 960 @
+3757 -4242 960 @
+6639 -866 525 "^3Lighthouse"
+5464 -808 478 "^3Lighthouse Path"
+6240 -284 185 "^3Lighthouse Shore"
+930 -2222 832 "^3Lower Forward Bunker MG42"
+2133 -3784 1036 "^3North Door"
+2319 -3777 1024 "^3North Door Switch"
+1892 -4261 988 "^3Northern Corridor"
+2396 -4342 966 @
+3323 858 220 "^3Ocean"
+1236 -4252 946 "^3Radar Equipment"
+704 -3572 1113 "^3Radar Tower"
+-7527 -2391 1023 "^3Really Far Away Rock"
+1058 -3639 976 "^3Rear Bluff Trench"
+1721 -3806 968 @
+2621 56 245 "^3Sea Rock-Barrier"
+4564 -6242 1163 "^3Secret Area"
+4610 -5149 1113 "^3Shell Train"
+2530 -5287 1096 "^3The Sink"
+3879 -4057 925 "^3Track Ramp"
+3601 -4059 792 @
+4618 -4361 1096 @
+1936 -3170 1096 "^3Upper Bluff"
+1485 -3054 1051 @
+3991 -3225 1216 "^3Upper Gun Walkway"
+3305 -3491 1216 @
+2522 -3262 1216 @
+3978 -3329 1216 @
+1872 -2079 571 "^3West Beach"
+888 -978 200 "^3West Beach Spawn"
+229 -753 194 "^3West Dinghy"
+2442 811 229 "^3West Ocean"
+677 676 248 @
+2476 -3557 1216 "^3Western Gun Entrance"
+2583 -4294 1216 @
+2861 -3913 1056 "^3Western Gun Stairs"
+3176 -3725 800 @
+-173 -139 340 "^3Western Spawn Bluff"

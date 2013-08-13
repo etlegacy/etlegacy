@@ -39,11 +39,6 @@ extern botlib_export_t *botlib_export;
 
 vm_t *uivm;
 
-
-// ydnar: can we put this in a header, pls?
-void Key_GetBindingByString(const char *binding, int *key1, int *key2);
-
-
 /*
 ====================
 GetClientState
@@ -73,68 +68,66 @@ void LAN_LoadCachedServers(void)
 	cls.numglobalservers         = cls.numfavoriteservers = 0;
 	cls.numGlobalServerAddresses = 0;
 
-	if (com_gameInfo.usesProfiles && cl_profile->string[0])
+	if (cl_profile->string[0])
 	{
-		Com_sprintf(filename, sizeof(filename), "profiles/%s/servercache.dat", cl_profile->string);
+		Com_sprintf(filename, sizeof(filename), "profiles/%s/favcache.dat", cl_profile->string);
 	}
 	else
 	{
-		Q_strncpyz(filename, "servercache.dat", sizeof(filename));
+		Q_strncpyz(filename, "favcache.dat", sizeof(filename));
 	}
 
-	// Arnout: moved to mod/profiles dir
-	//if (FS_SV_FOpenFileRead(filename, &fileIn)) {
+	// moved to mod/profiles dir
 	if (FS_FOpenFileRead(filename, &fileIn, qtrue))
 	{
-		FS_Read(&cls.numglobalservers, sizeof(int), fileIn);
 		FS_Read(&cls.numfavoriteservers, sizeof(int), fileIn);
 		FS_Read(&size, sizeof(int), fileIn);
-		if (size == sizeof(cls.globalServers) + sizeof(cls.favoriteServers))
+		if (size == sizeof(cls.favoriteServers))
 		{
-			FS_Read(&cls.globalServers, sizeof(cls.globalServers), fileIn);
 			FS_Read(&cls.favoriteServers, sizeof(cls.favoriteServers), fileIn);
 		}
 		else
 		{
-			cls.numglobalservers         = cls.numfavoriteservers = 0;
-			cls.numGlobalServerAddresses = 0;
+			cls.numfavoriteservers = 0;
 		}
 		FS_FCloseFile(fileIn);
 	}
+
+	Com_Printf("Total favourite servers restored: %i\n", cls.numfavoriteservers);
 }
 
 /*
 ====================
-LAN_SaveServersToCache
+LAN_SaveServersToFile
 ====================
 */
-void LAN_SaveServersToCache(void)
+void LAN_SaveServersToFile(void)
 {
 	int          size;
 	fileHandle_t fileOut;
 	char         filename[MAX_QPATH];
 
-	if (com_gameInfo.usesProfiles && cl_profile->string[0])
+	if (cl_profile->string[0])
 	{
-		Com_sprintf(filename, sizeof(filename), "profiles/%s/servercache.dat", cl_profile->string);
+		Com_sprintf(filename, sizeof(filename), "profiles/%s/favcache.dat", cl_profile->string);
 	}
 	else
 	{
-		Q_strncpyz(filename, "servercache.dat", sizeof(filename));
+		Q_strncpyz(filename, "favcache.dat", sizeof(filename));
 	}
 
-	// Arnout: moved to mod/profiles dir
-	//fileOut = FS_SV_FOpenFileWrite(filename);
-	fileOut = FS_FOpenFileWrite(filename);
-	FS_Write(&cls.numglobalservers, sizeof(int), fileOut);
+	// moved to mod/profiles dir
+	fileOut = FS_FOpenFileWrite(filename); // FIXME: catch error
 	FS_Write(&cls.numfavoriteservers, sizeof(int), fileOut);
-	size = sizeof(cls.globalServers) + sizeof(cls.favoriteServers);
+
+	size = sizeof(cls.favoriteServers);
+
 	FS_Write(&size, sizeof(int), fileOut);
-	FS_Write(&cls.globalServers, sizeof(cls.globalServers), fileOut);
 	FS_Write(&cls.favoriteServers, sizeof(cls.favoriteServers), fileOut);
 	FS_FCloseFile(fileOut);
-}
 
+	Com_Printf("Total favourite servers saved: %i\n", cls.numfavoriteservers);
+}
 
 /*
 ====================
@@ -143,9 +136,8 @@ LAN_ResetPings
 */
 static void LAN_ResetPings(int source)
 {
-	int          count, i;
+	int          count    = 0, i;
 	serverInfo_t *servers = NULL;
-	count = 0;
 
 	switch (source)
 	{
@@ -162,6 +154,7 @@ static void LAN_ResetPings(int source)
 		count   = MAX_OTHER_SERVERS;
 		break;
 	}
+
 	if (servers)
 	{
 		for (i = 0; i < count; i++)
@@ -178,11 +171,9 @@ LAN_AddServer
 */
 static int LAN_AddServer(int source, const char *name, const char *address)
 {
-	int          max, *count, i;
+	int          max = MAX_OTHER_SERVERS, *count = 0;
 	netadr_t     adr;
 	serverInfo_t *servers = NULL;
-	max   = MAX_OTHER_SERVERS;
-	count = 0;
 
 	switch (source)
 	{
@@ -200,9 +191,12 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 		servers = &cls.favoriteServers[0];
 		break;
 	}
+
 	if (servers && *count < max)
 	{
-		NET_StringToAdr(address, &adr, NA_IP);
+		int i;
+
+		NET_StringToAdr(address, &adr, NA_UNSPEC);
 		for (i = 0; i < *count; i++)
 		{
 			if (NET_CompareAdr(servers[i].adr, adr))
@@ -216,6 +210,12 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 			Q_strncpyz(servers[*count].hostName, name, sizeof(servers[*count].hostName));
 			servers[*count].visible = qtrue;
 			(*count)++;
+
+			if (source == AS_FAVORITES)
+			{
+				LAN_SaveServersToFile();
+			}
+
 			return 1;
 		}
 		return 0;
@@ -230,9 +230,9 @@ LAN_RemoveServer
 */
 static void LAN_RemoveServer(int source, const char *addr)
 {
-	int          *count, i;
+	int          *count   = 0;
 	serverInfo_t *servers = NULL;
-	count = 0;
+
 	switch (source)
 	{
 	case AS_LOCAL:
@@ -251,12 +251,15 @@ static void LAN_RemoveServer(int source, const char *addr)
 	if (servers)
 	{
 		netadr_t comp;
-		NET_StringToAdr(addr, &comp, NA_IP);
+		int      i, j;
+
+		NET_StringToAdr(addr, &comp, NA_UNSPEC);
 		for (i = 0; i < *count; i++)
 		{
 			if (NET_CompareAdr(comp, servers[i].adr))
 			{
-				int j = i;
+				j = i;
+
 				while (j < *count - 1)
 				{
 					Com_Memcpy(&servers[j], &servers[j + 1], sizeof(servers[j]));
@@ -266,9 +269,13 @@ static void LAN_RemoveServer(int source, const char *addr)
 				break;
 			}
 		}
+
+		if (source == AS_FAVORITES)
+		{
+			LAN_SaveServersToFile();
+		}
 	}
 }
-
 
 /*
 ====================
@@ -336,6 +343,7 @@ static void LAN_GetServerInfo(int source, int n, char *buf, int buflen)
 	char         info[MAX_STRING_CHARS];
 	serverInfo_t *server = NULL;
 	info[0] = '\0';
+
 	switch (source)
 	{
 	case AS_LOCAL:
@@ -373,12 +381,12 @@ static void LAN_GetServerInfo(int source, int n, char *buf, int buflen)
 		Info_SetValueForKey(info, "nettype", va("%i", server->netType));
 		Info_SetValueForKey(info, "addr", NET_AdrToString(server->adr));
 		Info_SetValueForKey(info, "sv_allowAnonymous", va("%i", server->allowAnonymous));
-		Info_SetValueForKey(info, "friendlyFire", va("%i", server->friendlyFire));                   // NERVE - SMF
-		Info_SetValueForKey(info, "maxlives", va("%i", server->maxlives));                           // NERVE - SMF
-		Info_SetValueForKey(info, "needpass", va("%i", server->needpass));                           // NERVE - SMF
-		Info_SetValueForKey(info, "punkbuster", va("%i", server->punkbuster));                       // DHM - Nerve
-		Info_SetValueForKey(info, "gamename", server->gameName);                                  // Arnout
-		Info_SetValueForKey(info, "g_antilag", va("%i", server->antilag));     // TTimo
+		Info_SetValueForKey(info, "friendlyFire", va("%i", server->friendlyFire));
+		Info_SetValueForKey(info, "maxlives", va("%i", server->maxlives));
+		Info_SetValueForKey(info, "needpass", va("%i", server->needpass));
+		Info_SetValueForKey(info, "punkbuster", va("%i", server->punkbuster));
+		Info_SetValueForKey(info, "gamename", server->gameName);
+		Info_SetValueForKey(info, "g_antilag", va("%i", server->antilag));
 		Info_SetValueForKey(info, "weaprestrict", va("%i", server->weaprestrict));
 		Info_SetValueForKey(info, "balancedteams", va("%i", server->balancedteams));
 		Q_strncpyz(buf, info, buflen);
@@ -400,6 +408,7 @@ LAN_GetServerPing
 static int LAN_GetServerPing(int source, int n)
 {
 	serverInfo_t *server = NULL;
+
 	switch (source)
 	{
 	case AS_LOCAL:
@@ -602,6 +611,7 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible)
 	{
 		int          count   = MAX_OTHER_SERVERS;
 		serverInfo_t *server = NULL;
+
 		switch (source)
 		{
 		case AS_LOCAL:
@@ -622,7 +632,6 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible)
 				server[n].visible = visible;
 			}
 		}
-
 	}
 	else
 	{
@@ -649,7 +658,6 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible)
 		}
 	}
 }
-
 
 /*
 =======================
@@ -829,7 +837,7 @@ Ket_SetCatcher
 */
 void Key_SetCatcher(int catcher)
 {
-	// NERVE - SMF - console overrides everything
+	// console overrides everything
 	if (cls.keyCatchers & KEYCATCH_CONSOLE)
 	{
 		cls.keyCatchers = catcher | KEYCATCH_CONSOLE;
@@ -838,7 +846,6 @@ void Key_SetCatcher(int catcher)
 	{
 		cls.keyCatchers = catcher;
 	}
-
 }
 
 /*
@@ -878,6 +885,7 @@ FloatAsInt
 static int FloatAsInt(float f)
 {
 	floatint_t fi;
+
 	fi.f = f;
 	return fi.i;
 }
@@ -913,7 +921,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_CVAR_SET:
-		Cvar_Set(VMA(1), VMA(2));
+		Cvar_SetSafe(VMA(1), VMA(2));
 		return 0;
 
 	case UI_CVAR_VARIABLEVALUE:
@@ -928,7 +936,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_CVAR_SETVALUE:
-		Cvar_SetValue(VMA(1), VMF(2));
+		Cvar_SetValueSafe(VMA(1), VMF(2));
 		return 0;
 
 	case UI_CVAR_RESET:
@@ -936,7 +944,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_CVAR_CREATE:
-		Cvar_Get(VMA(1), VMA(2), args[3]);
+		Cvar_Register(NULL, VMA(1), VMA(2), args[3]);
 		return 0;
 
 	case UI_CVAR_INFOSTRINGBUFFER:
@@ -951,6 +959,14 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_CMD_EXECUTETEXT:
+		if (args[1] == EXEC_NOW
+		    && (!strncmp(VMA(2), "snd_restart", 11)
+		        || !strncmp(VMA(2), "vid_restart", 11)
+		        || !strncmp(VMA(2), "quit", 5)))
+		{
+			Com_Printf(S_COLOR_YELLOW "turning EXEC_NOW '%.11s' into EXEC_INSERT\n", (const char *)VMA(2));
+			args[1] = EXEC_INSERT;
+		}
 		Cbuf_ExecuteText(args[1], VMA(2));
 		return 0;
 
@@ -1000,15 +1016,12 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		re.AddPolyToScene(args[1], args[2], VMA(3));
 		return 0;
 
-	// Ridah
 	case UI_R_ADDPOLYSTOSCENE:
 		re.AddPolysToScene(args[1], args[2], VMA(3), args[4]);
 		return 0;
-	// done.
 
 	case UI_R_ADDLIGHTTOSCENE:
-		// ydnar: new dlight code
-		//% re.AddLightToScene( VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), args[6] );
+		// new dlight code
 		re.AddLightToScene(VMA(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), args[7], args[8]);
 		return 0;
 
@@ -1078,7 +1091,6 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		Key_GetBindingByString(VMA(1), VMA(2), VMA(3));
 		return 0;
 
-
 	case UI_KEY_ISDOWN:
 		return Key_IsDown(args[1]);
 
@@ -1097,7 +1109,8 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return Key_GetCatcher();
 
 	case UI_KEY_SETCATCHER:
-		Key_SetCatcher(args[1]);
+		// Don't allow the ui module to close the console
+		Key_SetCatcher(args[1] | (Key_GetCatcher() & KEYCATCH_CONSOLE));
 		return 0;
 
 	case UI_GETCLIPBOARDDATA:
@@ -1120,7 +1133,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 
 	case UI_LAN_SAVECACHEDSERVERS:
-		LAN_SaveServersToCache();
+		//LAN_SaveServersToFile(); // now done on add/remove fav server so we no longer save LAN favs on shutdown & restart
 		return 0;
 
 	case UI_LAN_ADDSERVER:
@@ -1178,12 +1191,6 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 
 	case UI_LAN_SERVERISINFAVORITELIST:
 		return LAN_ServerIsInFavoriteList(args[1], args[2]);
-
-	case UI_SET_PBCLSTATUS:
-		return 0;
-
-	case UI_SET_PBSVSTATUS:
-		return 0;
 
 	case UI_LAN_COMPARESERVERS:
 		return LAN_CompareServers(args[1], args[2], args[3], args[4], args[5]);
@@ -1243,7 +1250,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		S_StopBackgroundTrack();
 		return 0;
 	case UI_S_STARTBACKGROUNDTRACK:
-		S_StartBackgroundTrack(VMA(1), VMA(2), args[3]);         //----(SA) added fadeup time
+		S_StartBackgroundTrack(VMA(1), VMA(2), args[3]); // added fadeup time
 		return 0;
 
 	case UI_REAL_TIME:
@@ -1271,24 +1278,23 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		re.RemapShader(VMA(1), VMA(2), VMA(3));
 		return 0;
 
-	// NERVE - SMF
 	case UI_CL_GETLIMBOSTRING:
 		return CL_GetLimboString(args[1], VMA(2));
 
 	case UI_CL_TRANSLATE_STRING:
 		CL_TranslateString(VMA(1), VMA(2));
 		return 0;
-	// -NERVE - SMF
 
-	// DHM - Nerve
 	case UI_CHECKAUTOUPDATE:
+		CL_RequestMotd();
 		CL_CheckAutoUpdate();
 		return 0;
 
 	case UI_GET_AUTOUPDATE:
+#ifdef FEATURE_AUTOUPDATE
 		CL_GetAutoUpdate();
+#endif /* FEATURE_AUTOUPDATE */
 		return 0;
-	// DHM - Nerve
 
 	case UI_OPENURL:
 		CL_OpenURL((const char *)VMA(1));
@@ -1298,8 +1304,13 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		Com_GetHunkInfo(VMA(1), VMA(2));
 		return 0;
 
+	// obsolete
+	case UI_SET_PBCLSTATUS:
+	case UI_SET_PBSVSTATUS:
+		return 0;
+
 	default:
-		Com_Error(ERR_DROP, "Bad UI system trap: %ld\n", (long int) args[0]);
+		Com_Error(ERR_DROP, "Bad UI system trap: %ld", (long int) args[0]);
 		break;
 	}
 
@@ -1329,7 +1340,6 @@ void CL_ShutdownUI(void)
 CL_InitUI
 ====================
 */
-
 void CL_InitUI(void)
 {
 	int v;
@@ -1337,14 +1347,14 @@ void CL_InitUI(void)
 	uivm = VM_Create("ui", CL_UISystemCalls, VMI_NATIVE);
 	if (!uivm)
 	{
-		Com_Error(ERR_FATAL, "VM_Create on UI failed\n");
+		Com_Error(ERR_FATAL, "VM_Create on UI failed");
 	}
 
 	// sanity check
 	v = VM_Call(uivm, UI_GETAPIVERSION);
 	if (v != UI_API_VERSION)
 	{
-		Com_Error(ERR_FATAL, "User Interface is version %d, expected %d\n", v, UI_API_VERSION);
+		Com_Error(ERR_FATAL, "User Interface is version %d, expected %d", v, UI_API_VERSION);
 		cls.uiStarted = qfalse;
 	}
 

@@ -1,0 +1,15 @@
+/////////////////////////////////////////////////////////
+// Map name       Valhalla                             //
+// Locations by   antman                               //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 15                //
+// Last edited    07-07-2009                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+536 1336 192 "^1Axis Spawn"
+-95 -350 64 "^3Valhalla"
+-404 -13 64 @
+-248 -148 216 @
+793 1339 192 @
+531 1034 192 @
+-416 -360 64 "^4Allied Spawn"

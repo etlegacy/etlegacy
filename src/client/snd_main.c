@@ -46,7 +46,7 @@ cvar_t *s_muteWhenUnfocused;
 
 static soundInterface_t si;
 
-/*
+/**
  * @brief Checks if the chosen sound system conforms to the interface
  */
 static qboolean S_ValidSoundInterface(soundInterface_t *si)
@@ -344,7 +344,6 @@ void S_UpdateEntityPosition(int entityNum, const vec3_t origin)
 
 void S_Update(void)
 {
-
 	if (s_muted->integer)
 	{
 		if (!(s_muteWhenMinimized->integer && Cvar_VariableIntegerValue("com_minimized")) &&
@@ -434,7 +433,7 @@ int S_GetVoiceAmplitude(int entityNum)
 	}
 }
 
-/*
+/**
  * @brief Returns how long the sound lasts in milliseconds
  */
 int S_GetSoundLength(sfxHandle_t sfxHandle)
@@ -449,7 +448,7 @@ int S_GetSoundLength(sfxHandle_t sfxHandle)
 	}
 }
 
-/*
+/**
  * @brief For looped sound synchronisation
  */
 int S_GetCurrentSoundTime(void)
@@ -505,37 +504,50 @@ void S_MasterGain(float gain)
 		si.MasterGain(gain);
 	}
 }
-#endif
-// USE_VOIP
+#endif // USE_VOIP
 
+/*
+=================
+S_Play_f
+=================
+*/
 void S_Play_f(void)
 {
 	int         i;
+	int         c;
 	sfxHandle_t h;
-	char        name[256];
 
 	if (!si.RegisterSound || !si.StartLocalSound)
 	{
 		return;
 	}
 
-	i = 1;
-	while (i < Cmd_Argc())
+	c = Cmd_Argc();
+
+	if (c < 2)
 	{
-		if (!Q_strrchr(Cmd_Argv(i), '.'))
+		Com_Printf("Usage: play <sound filename> [sound filename] [sound filename] ...\n");
+		return;
+	}
+
+	for (i = 1; i < c; i++)
+	{
+		if (!strrchr(Cmd_Argv(i), '.'))
 		{
-			Com_sprintf(name, sizeof(name), "%s.wav", Cmd_Argv(1));
+			//Com_sprintf(name, sizeof(name), "%s.wav", Cmd_Argv(1)); // genuine ET 'forces' wav
+			Com_Printf("Warning: S_Play_f sound name '%s' has no file extension", Cmd_Argv(i));
 		}
-		else
-		{
-			Q_strncpyz(name, Cmd_Argv(i), sizeof(name));
-		}
-		h = si.RegisterSound(name, qfalse);
+
+		h = si.RegisterSound(Cmd_Argv(i), qfalse); // *qtrue* TODO: detect compression via extension?
+
 		if (h)
 		{
 			si.StartLocalSound(h, CHAN_LOCAL_SOUND, 1.0f);
 		}
-		i++;
+		else
+		{
+			Com_Printf("Warning: S_Play_f sound '%s' not played.", Cmd_Argv(i));
+		}
 	}
 }
 
@@ -564,10 +576,9 @@ void S_Music_f(void)
 	}
 	else
 	{
-		Com_Printf("music <musicfile> [loopfile] [fadeupTime]\n");
+		Com_Printf("Usage: music <musicfile> [loopfile] [fadeupTime]\n");
 		return;
 	}
-
 }
 
 void S_Stream_f(void)
@@ -609,10 +620,9 @@ void S_Stream_f(void)
 	}
 	else
 	{
-		Com_Printf("stream <streamfile> [loopfile] [entnum] [channel] [attenuation]\n");
+		Com_Printf("Usage: stream <streamfile> [loopfile] [entnum] [channel] [attenuation]\n");
 		return;
 	}
-
 }
 
 void S_StopMusic_f(void)
@@ -625,15 +635,14 @@ void S_StopMusic_f(void)
 	si.StopBackgroundTrack();
 }
 
-/*
+/**
  * @brief Initiates the sound system
  */
 void S_Init(void)
 {
-	cvar_t   *cv;
-	qboolean started = qfalse;
+	cvar_t *cv = Cvar_Get("s_initsound", "1", 0); // 1 = base, 2 = OpenAL
 
-	Com_Printf("------ Initializing Sound ------\n");
+	Com_Printf("------ Initializing Sound (%i)------\n", cv->integer);
 
 	s_volume            = Cvar_Get("s_volume", "0.8", CVAR_ARCHIVE);
 	s_musicVolume       = Cvar_Get("s_musicvolume", "0.25", CVAR_ARCHIVE);
@@ -643,13 +652,13 @@ void S_Init(void)
 	s_muteWhenMinimized = Cvar_Get("s_muteWhenMinimized", "1", CVAR_ARCHIVE);
 	s_muteWhenUnfocused = Cvar_Get("s_muteWhenUnfocused", "0", CVAR_ARCHIVE);
 
-	cv = Cvar_Get("s_initsound", "1", 0);
 	if (!cv->integer)
 	{
 		Com_Printf("Sound disabled.\n");
 	}
 	else
 	{
+		qboolean started = qfalse;
 
 		S_CodecInit();
 
@@ -661,16 +670,22 @@ void S_Init(void)
 		Cmd_AddCommand("s_stop", S_StopAllSounds);
 		Cmd_AddCommand("s_info", S_SoundInfo);
 
-		cv = Cvar_Get("s_useOpenAL", "1", CVAR_ARCHIVE);
-		if (cv->integer)
+#ifdef FEATURE_OPENAL
+		if (cv->integer == 2)
 		{
 			//OpenAL
 			started = S_AL_Init(&si);
 			Cvar_Set("s_backend", "OpenAL");
 		}
+#endif // FEATURE_OPENAL
 
 		if (!started)
 		{
+			if (cv->integer == 2)
+			{
+				Com_Printf("Can't initialize OpenAL - reverting to base interface.\n");
+			}
+
 			started = S_Base_Init(&si);
 			Cvar_Set("s_backend", "base");
 		}
@@ -679,11 +694,11 @@ void S_Init(void)
 		{
 			if (!S_ValidSoundInterface(&si))
 			{
-				Com_Error(ERR_FATAL, "Sound interface invalid.\n");
+				Com_Error(ERR_FATAL, "Invalid sound interface.");
 			}
 
 			S_SoundInfo();
-			Com_Printf("Sound initialization successful.\n");
+			Com_Printf("Sound initialization successfully done.\ns_backend set to %s\n", s_backend->string);
 		}
 		else
 		{
@@ -702,7 +717,7 @@ void S_Reload(void)
 	}
 }
 
-/*
+/**
  * @brief Destroys the sound system
  */
 void S_Shutdown(void)

@@ -163,8 +163,6 @@ const char *ftMenuRootStringsAlphachars[] =
 	NULL
 };
 
-
-
 const char *ftMenuSoliderStrings[] =
 {
 	"Cover Me",
@@ -188,8 +186,6 @@ const char *ftMenuSoliderStringsMsg[] =
 	"FTMortar",
 	NULL
 };
-
-
 
 const char *ftMenuMedicStrings[] =
 {
@@ -252,7 +248,6 @@ const char *ftMenuEngineerStringsMsg[] =
 	NULL
 };
 
-
 const char *ftMenuFieldOpsStrings[] =
 {
 	"Call Air-Strike",
@@ -279,7 +274,6 @@ const char *ftMenuFieldOpsStringsMsg[] =
 	"FTResupplyMe",
 	NULL
 };
-
 
 const char *ftMenuCovertOpsStrings[] =
 {
@@ -366,6 +360,9 @@ void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button)
 		case 4:
 			CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, "WARN", 0, 0, button->font->style, button->font->font);
 			break;
+		case 6:
+			CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, "SET ADMIN", 0, 0, button->font->style, button->font->font);
+			break;
 		}
 	}
 }
@@ -405,6 +402,8 @@ const char *ftLeaderMenuList[] =
 	"Invite",
 	"Kick",
 	"Warn",
+	"Change privacy",
+	"Change admin",
 	NULL,
 };
 
@@ -911,7 +910,7 @@ void CG_Fireteams_MenuText_Draw(panel_button_t *button)
 						continue;
 					}
 
-					if ((i == 3 || i == 4) && !CG_CountPlayersSF())
+					if ((i == 3 || i == 4 || i == 6) && !CG_CountPlayersSF())
 					{
 						continue;
 					}
@@ -967,6 +966,15 @@ void CG_Fireteams_MenuText_Draw(panel_button_t *button)
 			break;
 		case 3:
 		case 4:
+			if (!CG_CountPlayersSF())
+			{
+				cgs.ftMenuMode = 1;
+				break;
+			}
+
+			CG_DrawPlayerSF(button, &cgs.ftMenuModeEx);
+			break;
+		case 6:
 			if (!CG_CountPlayersSF())
 			{
 				cgs.ftMenuMode = 1;
@@ -1060,10 +1068,10 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 			}
 			else
 			{
-				int i;
-
 				if (key >= 'a' || key <= 'z')
 				{
+					int i;
+
 					for (i = 0; ftMenuRootStrings[i]; i++)
 					{
 						if (key == tolower(*ftMenuRootStringsAlphachars[i]))
@@ -1131,11 +1139,12 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 			}
 			else
 			{
-				int        i;
 				const char **strings = ftMenuStrings[cgs.ftMenuPos];
 
 				if (key >= 'a' || key <= 'z')
 				{
+					int i;
+
 					for (i = 0; strings[i]; i++)
 					{
 						if (key == tolower(*ftMenuStringsAlphachars[cgs.ftMenuPos][i]))
@@ -1156,7 +1165,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 		break;
 	case 1:
 	{
-		int i = -1, x;
+		int i = -1;
 
 		if (cg_quickMessageAlt.integer)
 		{
@@ -1187,6 +1196,8 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 
 			if (key >= 'a' || key <= 'z')
 			{
+				int x;
+
 				for (x = 0; strings[x]; x++)
 				{
 					if (key == tolower(*strings[x]))
@@ -1265,7 +1276,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 			}
 			else
 			{
-				if (i >= 5)
+				if (i >= 7)
 				{
 					break;
 				}
@@ -1290,6 +1301,11 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 					else if (i == 1)
 					{
 						trap_SendConsoleCommand("fireteam leave\n");
+						CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+					}
+					else if (i == 5)
+					{
+						trap_SendConsoleCommand("fireteam privacy\n");
 						CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 					}
 					else
@@ -1491,6 +1507,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 			break;
 		case 3:
 		case 4:
+		case 6:
 			if (CG_CountPlayersSF() > (cgs.ftMenuModeEx + 1) * 8)
 			{
 				if (i == 0)
@@ -1512,6 +1529,10 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 				{
 					switch (cgs.ftMenuPos)
 					{
+					case 6:
+						trap_SendConsoleCommand(va("fireteam admin %i", x + 1));
+						CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+						break;
 					case 4:
 						trap_SendConsoleCommand(va("fireteam warn %i", x + 1));
 						CG_EventHandling(CGAME_EVENT_NONE, qfalse);

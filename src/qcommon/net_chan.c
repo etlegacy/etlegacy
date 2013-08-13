@@ -31,11 +31,10 @@
  * @file net_chan.c
  */
 
-#include "../qcommon/q_shared.h"
+#include "q_shared.h"
 #include "qcommon.h"
 
 /*
-
 packet header
 -------------
 4   outgoing sequence.  high bit will be set if this is a fragmented message
@@ -54,9 +53,7 @@ sometimes remap the client's source port on a packet during gameplay.
 If the base part of the net address matches and the qport matches, then the
 channel matches even if the IP port differs.  The IP port should be updated
 to the new value before sending out any replies.
-
 */
-
 
 #define MAX_PACKETLEN           1400        // max size of a network packet
 
@@ -78,7 +75,6 @@ static char *netsrcString[2] =
 /*
 ===============
 Netchan_Init
-
 ===============
 */
 void Netchan_Init(int port)
@@ -183,7 +179,7 @@ void Netchan_Transmit(netchan_t *chan, int length, const byte *data)
 
 	if (length > MAX_MSGLEN)
 	{
-		Com_Error(ERR_DROP, "Netchan_Transmit: length = %i\n", length);
+		Com_Error(ERR_DROP, "Netchan_Transmit: length = %i", length);
 	}
 	chan->unsentFragmentStart = 0;
 
@@ -227,18 +223,13 @@ void Netchan_Transmit(netchan_t *chan, int length, const byte *data)
 	}
 }
 
-/*
-=================
-Netchan_Process
-
-Returns qfalse if the message should not be processed due to being
-out of order or a fragment.
-
-Msg must be large enough to hold MAX_MSGLEN, because if this is the
-final fragment of a multi-part message, the entire thing will be
-copied out.
-=================
-*/
+/**
+ * @brief Msg must be large enough to hold #MAX_MSGLEN, because if this is the
+ * final fragment of a multi-part message, the entire thing will be copied out.
+ *
+ * @retval qfalse   if the message should not be processed due to being
+ *                  out of order or a fragment.
+ */
 qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 {
 	int      sequence;
@@ -297,9 +288,7 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		}
 	}
 
-	//
 	// discard out of order or duplicated packets
-	//
 	if (sequence <= chan->incomingSequence)
 	{
 		if (showdrop->integer || showpackets->integer)
@@ -312,9 +301,7 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		return qfalse;
 	}
 
-	//
 	// dropped packets don't keep the message from being used
-	//
 	chan->dropped = sequence - (chan->incomingSequence + 1);
 	if (chan->dropped > 0)
 	{
@@ -327,14 +314,10 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		}
 	}
 
-
-	//
 	// if this is the final framgent of a reliable message,
 	// bump incoming_reliable_sequence
-	//
 	if (fragmented)
 	{
-		// TTimo
 		// make sure we add the fragments in correct order
 		// either a packet was dropped, or we received this one too soon
 		// we don't reconstruct the fragments. we will wait till this fragment gets to us again
@@ -390,7 +373,6 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		}
 
 		// copy the full message over the partial fragment
-
 		// make sure the sequence number is still there
 		*(int *)msg->data = LittleLong(sequence);
 
@@ -400,24 +382,19 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 		msg->readcount       = 4; // past the sequence number
 		msg->bit             = 32; // past the sequence number
 
-		// TTimo
 		// clients were not acking fragmented messages
 		chan->incomingSequence = sequence;
 
 		return qtrue;
 	}
 
-	//
 	// the message can now be read from the current message pointer
-	//
 	chan->incomingSequence = sequence;
 
 	return qtrue;
 }
 
-
 //==============================================================================
-
 
 /*
 =============================================================================
@@ -473,7 +450,6 @@ qboolean    NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_mess
 	return qtrue;
 
 }
-
 
 void NET_SendLoopPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 {
@@ -594,13 +570,9 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 	}
 }
 
-/*
-===============
-NET_OutOfBandPrint
-
-Sends a text message in an out-of-band datagram
-================
-*/
+/**
+ * @brief Sends a text message in an out-of-band datagram
+ */
 void QDECL NET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, ...)
 {
 	va_list argptr;
@@ -628,7 +600,7 @@ NET_OutOfBandPrint
 Sends a data message in an out-of-band datagram (only used for "connect")
 ================
 */
-void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, byte *format, int len)
+void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, const char *format, int len)
 {
 	byte  string[MAX_MSGLEN * 2];
 	int   i;
@@ -652,14 +624,10 @@ void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, byte *format, int len)
 	NET_SendPacket(sock, mbuf.cursize, mbuf.data, adr);
 }
 
-/*
-=============
-NET_StringToAdr
-
-Traps "localhost" for loopback, passes everything else to system
-return 0 on address not found, 1 on address found with port, 2 on address found without port.
-=============
-*/
+/**
+ * @brief Traps "localhost" for loopback, passes everything else to system.
+ * @return 0 on address not found, 1 on address found with port, 2 on address found without port.
+ */
 int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family)
 {
 	char base[MAX_STRING_CHARS], *search;

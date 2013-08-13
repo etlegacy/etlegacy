@@ -39,7 +39,6 @@ int iWeap = WS_MAX;
 
 char *lock_status[2] = { "unlock", "lock" };
 
-//
 // Update info:
 //  1. Add line to aCommandInfo w/appropriate info
 //  2. Add implementation for specific command (see an existing command for an example)
@@ -62,9 +61,7 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "autorecord",     qtrue,  qtrue,  NULL,                  ":^7 Creates a demo with a consistent naming scheme"                                         },
 	{ "autoscreenshot", qtrue,  qtrue,  NULL,                  ":^7 Creates a screenshot with a consistent naming scheme"                                   },
 	{ "bottomshots",    qtrue,  qfalse, G_weaponRankings_cmd,  ":^7 Shows WORST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon" },
-//  { "callvote",       qtrue,  qfalse, Cmd_CallVote_f, " <params>:^7 Calls a vote" },
 	{ "callvote",       qtrue,  qfalse, (void (*)(gentity_t *, unsigned int, qboolean))Cmd_CallVote_f, " <params>:^7 Calls a vote"                          },
-//  { "captains",       qtrue,  qtrue,  NULL, ":^7 Shows team captains" },
 //  { "coach",          qtrue,  qtrue,  NULL, ":^7 Accepts coach invitation/restarts coach view" },
 //  { "coachdecline",   qtrue,  qtrue,  NULL, ":^7 Declines coach invitation or resigns coach status" },
 //  { "coachinvite",    qtrue,  qtrue,  NULL, " <player_ID>:^7 Invites a player to coach team" },
@@ -81,7 +78,6 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "readyteam",      qfalse, qtrue,  G_teamready_cmd,       ":^7 Sets an entire team's status to ^5ready^7 to start a match"                             },
 	{ "ref",            qtrue,  qtrue,  G_ref_cmd,             " <password>:^7 Become a referee (admin access)"                                             },
 //  { "remove",         qtrue,  qtrue,  NULL, " <player_ID>:^7 Removes a player from the team" },
-//  { "resign",         qtrue,  qtrue,  NULL, " [player_ID]:^7 Resigns captainship.  Can optionally be given to another teammate" },
 	{ "say_teamnl",     qtrue,  qtrue,  G_say_teamnl_cmd,      "<msg>:^7 Sends a team chat without location info"                                           },
 	{ "scores",         qtrue,  qtrue,  G_scores_cmd,          ":^7 Displays current match stat info"                                                       },
 	{ "specinvite",     qtrue,  qtrue,  G_specinvite_cmd,      ":^7 Invites a player to spectate a speclock'ed team"                                        },
@@ -117,7 +113,6 @@ static const cmd_reference_t aCommandInfo[] =
 	{ 0,                qfalse, qtrue,  NULL,                  0                                                                                            }
 };
 
-
 // OSP-specific Commands
 qboolean G_commandCheck(gentity_t *ent, char *cmd, qboolean fDoAnytime)
 {
@@ -133,13 +128,16 @@ qboolean G_commandCheck(gentity_t *ent, char *cmd, qboolean fDoAnytime)
 			{
 				pCR->pCommand(ent, i, pCR->fValue);
 			}
-			return(qtrue);
+			return qtrue;
 		}
 	}
 
+#ifdef FEATURE_MULTIVIEW
 	return(G_smvCommands(ent, cmd));
+#else
+	return qfalse;
+#endif
 }
-
 
 // Prints specific command help info.
 qboolean G_commandHelp(gentity_t *ent, char *pszCommand, unsigned int dwCommand)
@@ -148,18 +146,17 @@ qboolean G_commandHelp(gentity_t *ent, char *pszCommand, unsigned int dwCommand)
 
 	if (!ent)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 	trap_Argv(1, arg, sizeof(arg));
 	if (!Q_stricmp(arg, "?"))
 	{
 		CP(va("print \"\n^3%s%s\n\n\"", pszCommand, aCommandInfo[dwCommand].pszHelpInfo));
-		return(qtrue);
+		return qtrue;
 	}
 
-	return(qfalse);
+	return qfalse;
 }
-
 
 // Debounces cmd request as necessary.
 qboolean G_cmdDebounce(gentity_t *ent, const char *pszCommandName)
@@ -168,29 +165,23 @@ qboolean G_cmdDebounce(gentity_t *ent, const char *pszCommandName)
 	{
 		CP(va("print \"Wait another %.1fs to issue ^3%s\n\"", 1.0 * (float)(ent->client->pers.cmd_debounce - level.time) / 1000.0,
 		      pszCommandName));
-		return(qfalse);
+		return qfalse;
 	}
 
 	ent->client->pers.cmd_debounce = level.time + CMD_DEBOUNCE;
-	return(qtrue);
+	return qtrue ;
 }
-
 
 void G_noTeamControls(gentity_t *ent)
 {
 	CP("cpm \"Team commands not enabled on this server.\n\"");
 }
 
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////
 /////
 /////           Match Commands
 /////
 /////
-
 
 // ************** COMMANDS / ?
 //
@@ -238,7 +229,6 @@ void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	CP("print \"\nType: ^3\\command_name ?^7 for more information\n\"");
 }
 
-
 // ************** LOCK / UNLOCK
 //
 // Locks/unlocks a player's team.
@@ -266,7 +256,6 @@ void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 		else
 		{
 			char *info = va("\"The %s team is now %sed!\n\"", aTeams[tteam], lock_status[fLock]);
-
 			teamInfo[tteam].team_lock = fLock;
 			AP(va("print %s", info));
 			AP(va("cp %s", info));
@@ -277,7 +266,6 @@ void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 		CP(va("print \"Spectators can't %s a team!\n\"", lock_status[fLock]));
 	}
 }
-
 
 // ************** PAUSE / UNPAUSE
 //
@@ -347,7 +335,6 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
 	}
 }
 
-
 // ************** PLAYERS
 //
 // Show client info
@@ -359,7 +346,6 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	gentity_t *cl_ent;
 	char      n2[MAX_NETNAME], ready[16], ref[16], rate[256];
 	char      *s, *tc, *coach, userinfo[MAX_INFO_STRING];
-
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
@@ -572,7 +558,6 @@ void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 	G_readyMatchState();
 }
 
-
 // ************** SAY_TEAMNL
 //
 // Team chat w/no location info
@@ -580,7 +565,6 @@ void G_say_teamnl_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
 	Cmd_Say_f(ent, SAY_TEAMNL, qfalse);
 }
-
 
 // ************** SCORES
 //
@@ -590,13 +574,12 @@ void G_scores_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	G_printMatchInfo(ent);
 }
 
-
 // ************** SPECINVITE
 //
 // Sends an invitation to a player to spectate a team.
 void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 {
-	int       tteam, pid;
+	int       tteam;
 	gentity_t *player;
 	char      arg[MAX_TOKEN_CHARS];
 
@@ -613,6 +596,8 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 	tteam = G_teamID(ent);
 	if (tteam == TEAM_AXIS || tteam == TEAM_ALLIES)
 	{
+		int pid;
+
 		if (!teamInfo[tteam].spec_lock)
 		{
 			CP("cpm \"Your team isn't locked from spectators!\n\"");
@@ -655,7 +640,6 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 	}
 }
 
-
 // ************** SPECLOCK / SPECUNLOCK
 //
 // Locks/unlocks a player's team from spectators.
@@ -697,7 +681,6 @@ void G_speclock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 	}
 }
 
-
 // ************** WEAPONSTATS
 //
 // Shows a player's stats to the requesting client.
@@ -705,7 +688,6 @@ void G_weaponStats_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 {
 	G_statsPrint(ent, 0);
 }
-
 
 // ************** STATSALL
 //
@@ -725,7 +707,6 @@ void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 		CP(va("ws %s\n", G_createStats(player)));
 	}
 }
-
 
 // ************** TEAMREADY
 //
@@ -774,8 +755,6 @@ void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 	G_printFull(va("The %s team is ready!", aTeams[tteam]), NULL);
 	G_readyMatchState();
 }
-
-
 
 // These map to WS_* weapon indexes
 const unsigned int cQualifyingShots[WS_MAX] =
@@ -916,7 +895,6 @@ void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow)
 	}
 	CP(va("%sbstats%s %s 0", ((doWindow) ? "w" : ""), ((doTop) ? "" : "b"), z));
 }
-
 
 // Shows best/worst accuracy for all weapons, or sorted
 // accuracies for a single weapon.

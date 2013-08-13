@@ -34,7 +34,6 @@
 
 #include "g_local.h"
 
-
 #define M_FFA       0x01
 #define M_1V1       0x02
 #define M_SP        0x04
@@ -102,8 +101,6 @@ static const modeCvarTable_t aPubSettings[] =
 	{ M_ALL, "vote_limit",             "5"  },
 	{ 0,     NULL,                     NULL } //end of list
 };
-
-
 
 // Force settings to predefined state.
 void G_configSet(int dwMode, qboolean doComp)

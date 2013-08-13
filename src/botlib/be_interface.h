@@ -43,17 +43,10 @@
 //FIXME: get rid of this global structure
 typedef struct botlib_globals_s
 {
-	int botlibsetup;                        //true when the bot library has been setup
-	int maxentities;                        //maximum number of entities
-	int maxclients;                         //maximum number of clients
-	float time;                             //the global time
-//#ifdef DEBUG
-	qboolean debug;                         //true if debug is on
-	int goalareanum;
-	vec3_t goalorigin;
-	int runai;
-	qboolean lastsuccess;
-//#endif
+	int botlibsetup;                        // true when the bot library has been setup
+
+	float time;                             // the global time
+
 } botlib_globals_t;
 
 //==========================================================

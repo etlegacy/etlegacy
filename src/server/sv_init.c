@@ -33,21 +33,24 @@
 
 #include "server.h"
 
-#ifdef TRACKBASE_SUPPORT
-#include "sv_trackbase.h"
+#ifdef FEATURE_TRACKER
+#include "sv_tracker.h"
 #endif
+
+// Attack log file is started when server is init (!= sv_running 1!)
+// we even log attacks when the server is waiting for rcon and doesn't run a map
+int attHandle = 0; // server attack log file handle
 
 /*
 ===============
 SV_SetConfigstring
-
 ===============
 */
 void SV_SetConfigstringNoUpdate(int index, const char *val)
 {
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
-		Com_Error(ERR_DROP, "SV_SetConfigstring: bad index %i\n", index);
+		Com_Error(ERR_DROP, "SV_SetConfigstring: bad index %i", index);
 	}
 
 	if (!val)
@@ -70,7 +73,7 @@ void SV_SetConfigstring(int index, const char *val)
 {
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
-		Com_Error(ERR_DROP, "SV_SetConfigstring: bad index %i\n", index);
+		Com_Error(ERR_DROP, "SV_SetConfigstring: bad index %i", index);
 	}
 
 	if (!val)
@@ -123,19 +126,6 @@ void SV_UpdateConfigStrings(void)
 					continue;
 				}
 
-				// RF, don't send to bot/AI
-				// Gordon: Note: might want to re-enable later for bot support
-				// RF, re-enabled
-				// Arnout: removed hardcoded gametype
-				// Arnout: added coop
-				// Ir4T4: fully disabled never true for MP - FIXME: do we have to send to OB ?
-				/*
-				if ((SV_GameIsSinglePlayer() || SV_GameIsCoop()) && client->gentity && (client->gentity->r.svFlags & SVF_BOT))
-				{
-				    continue;
-				}
-				*/
-
 				len = strlen(sv.configstrings[index]);
 				if (len >= maxChunkSize)
 				{
@@ -178,18 +168,17 @@ void SV_UpdateConfigStrings(void)
 /*
 ===============
 SV_GetConfigstring
-
 ===============
 */
 void SV_GetConfigstring(int index, char *buffer, int bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetConfigstring: bufferSize == %i\n", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetConfigstring: bufferSize == %i", bufferSize);
 	}
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
-		Com_Error(ERR_DROP, "SV_GetConfigstring: bad index %i\n", index);
+		Com_Error(ERR_DROP, "SV_GetConfigstring: bad index %i", index);
 	}
 	if (!sv.configstrings[index])
 	{
@@ -203,14 +192,13 @@ void SV_GetConfigstring(int index, char *buffer, int bufferSize)
 /*
 ===============
 SV_SetUserinfo
-
 ===============
 */
 void SV_SetUserinfo(int index, const char *val)
 {
 	if (index < 0 || index >= sv_maxclients->integer)
 	{
-		Com_Error(ERR_DROP, "SV_SetUserinfo: bad index %i\n", index);
+		Com_Error(ERR_DROP, "SV_SetUserinfo: bad index %i", index);
 	}
 
 	if (!val)
@@ -225,18 +213,17 @@ void SV_SetUserinfo(int index, const char *val)
 /*
 ===============
 SV_GetUserinfo
-
 ===============
 */
 void SV_GetUserinfo(int index, char *buffer, int bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetUserinfo: bufferSize == %i\n", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetUserinfo: bufferSize == %i", bufferSize);
 	}
 	if (index < 0 || index >= sv_maxclients->integer)
 	{
-		Com_Error(ERR_DROP, "SV_GetUserinfo: bad index %i\n", index);
+		Com_Error(ERR_DROP, "SV_GetUserinfo: bad index %i", index);
 	}
 	Q_strncpyz(buffer, svs.clients[index].userinfo, bufferSize);
 }
@@ -264,9 +251,7 @@ void SV_CreateBaseline(void)
 		}
 		svent->s.number = entnum;
 
-		//
 		// take current state as baseline
-		//
 		sv.svEntities[entnum].baseline = svent->s;
 	}
 }
@@ -274,17 +259,12 @@ void SV_CreateBaseline(void)
 /*
 ===============
 SV_BoundMaxClients
-
 ===============
 */
 void SV_BoundMaxClients(int minimum)
 {
 	// get the current maxclients value
-#ifdef __MACOS__
-	Cvar_Get("sv_maxclients", "16", 0);           //DAJ HOG
-#else
-	Cvar_Get("sv_maxclients", "20", 0);           // NERVE - SMF - changed to 20 from 8
-#endif
+	Cvar_Get("sv_maxclients", "20", 0);
 
 	sv_maxclients->modified = qfalse;
 
@@ -312,7 +292,7 @@ void SV_Startup(void)
 {
 	if (svs.initialized)
 	{
-		Com_Error(ERR_FATAL, "SV_Startup: svs.initialized\n");
+		Com_Error(ERR_FATAL, "SV_Startup: svs.initialized");
 	}
 	SV_BoundMaxClients(1);
 
@@ -320,7 +300,7 @@ void SV_Startup(void)
 	svs.clients = calloc(sizeof(client_t) * sv_maxclients->integer, 1);
 	if (!svs.clients)
 	{
-		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients\n");
+		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients");
 	}
 
 	if (com_dedicated->integer)
@@ -336,8 +316,8 @@ void SV_Startup(void)
 
 	Cvar_Set("sv_running", "1");
 
-#ifdef TRACKBASE_SUPPORT
-	TB_ServerStart();
+#ifdef FEATURE_TRACKER
+	Tracker_ServerStart();
 #endif
 }
 
@@ -391,14 +371,14 @@ void SV_ChangeMaxClients(void)
 
 	// free old clients arrays
 	//Z_Free( svs.clients );
-	free(svs.clients);      // RF, avoid trying to allocate large chunk on a fragmented zone
+	free(svs.clients);      // avoid trying to allocate large chunk on a fragmented zone
 
 	// allocate new clients
 	// RF, avoid trying to allocate large chunk on a fragmented zone
 	svs.clients = calloc(sizeof(client_t) * sv_maxclients->integer, 1);
 	if (!svs.clients)
 	{
-		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients\n");
+		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients");
 	}
 
 	Com_Memset(svs.clients, 0, sv_maxclients->integer * sizeof(client_t));
@@ -427,13 +407,9 @@ void SV_ChangeMaxClients(void)
 	}
 }
 
-/*
-====================
-SV_SetExpectedHunkUsage
-
-  Sets com_expectedhunkusage, so the client knows how to draw the percentage bar
-====================
-*/
+/**
+ * @brief Sets com_expectedhunkusage, so the client knows how to draw the percentage bar
+ */
 void SV_SetExpectedHunkUsage(char *mapname)
 {
 	int  handle;
@@ -482,7 +458,7 @@ void SV_SetExpectedHunkUsage(char *mapname)
 SV_ClearServer
 ================
 */
-void SV_ClearServer(void)
+static void SV_ClearServer(void)
 {
 	int i;
 
@@ -496,8 +472,8 @@ void SV_ClearServer(void)
 	Com_Memset(&sv, 0, sizeof(sv));
 }
 
-/*
- * @brief Touch the cgame DLL so that a pure client (with DLL sv_pure support) 
+/**
+ * @brief Touch the cgame DLL so that a pure client (with DLL sv_pure support)
  * can load do the correct checks
  */
 void SV_TouchCGameDLL(void)
@@ -514,28 +490,24 @@ void SV_TouchCGameDLL(void)
 	else if (sv_pure->integer)
 	{
 		Com_Error(ERR_DROP, "Failed to locate %s for pure server mode. "
-		                    "You'll probably need cgame for other platforms too.\n",
+		                    "You'll probably need cgame for other platforms too.",
 		          filename);
 	}
 }
 
-/*
-================
-SV_SpawnServer
-
-Change the server to a new map, taking all connected
-clients along with it.
-This is NOT called for map_restart
-================
-*/
-void SV_SpawnServer(char *server, qboolean killBots)
+/**
+ * @brief Change the server to a new map, taking all connected
+ * clients along with it.
+ * This is NOT called for map_restart
+ */
+void SV_SpawnServer(char *server)
 {
 	int        i;
 	int        checksum;
 	qboolean   isBot;
 	const char *p;
 
-	// ydnar: broadcast a level change to all connected clients
+	// broadcast a level change to all connected clients
 	if (svs.clients && !com_errorEntered)
 	{
 		SV_FinalCommand("spawnserver", qfalse);
@@ -557,13 +529,13 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	// clear the whole hunk because we're (re)loading the server
 	Hunk_Clear();
 
-	// clear collision map data		// (SA) NOTE: TODO: used in missionpack
+	// clear collision map data
 	CM_ClearMap();
 
 	// wipe the entire per-level structure
 	SV_ClearServer();
 
-	// MrE: main zone should be pretty much emtpy at this point
+	// main zone should be pretty much emtpy at this point
 	// except for file system data and cached renderer data
 	Z_LogHeap();
 
@@ -608,22 +580,13 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	// make sure we are not paused
 	Cvar_Set("cl_paused", "0");
 
-#if !defined(DO_LIGHT_DEDICATED)
 	// get a new checksum feed and restart the file system
 	srand(Sys_Milliseconds());
 	sv.checksumFeed = (((int) rand() << 16) ^ rand()) ^ Sys_Milliseconds();
 
-	// DO_LIGHT_DEDICATED
 	// only comment out when you need a new pure checksum string and it's associated random feed
-	//Com_DPrintf("SV_SpawnServer checksum feed: %p\n", sv.checksumFeed);
+	// Com_DPrintf("SV_SpawnServer checksum feed: %p\n", sv.checksumFeed);
 
-#else // DO_LIGHT_DEDICATED implementation below
-	  // we are not able to randomize the checksum feed since the feed is used as key for pure_checksum computations
-	  // files.c 1776 : pack->pure_checksum = Com_BlockChecksumKey( fs_headerLongs, 4 * fs_numHeaderLongs, LittleLong(fs_checksumFeed) );
-	  // we request a fake randomized feed, files.c knows the answer
-	srand(Sys_Milliseconds());
-	sv.checksumFeed = FS_RandChecksumFeed();
-#endif
 	FS_Restart(sv.checksumFeed);
 
 	CM_LoadMap(va("maps/%s.bsp", server), qfalse, &checksum);
@@ -647,8 +610,6 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	// to load during actual gameplay
 	sv.state = SS_LOADING;
 
-	Cvar_Set("sv_serverRestarting", "1");
-
 	// load and spawn all other entities
 	SV_InitGameProgs();
 
@@ -671,11 +632,6 @@ void SV_SpawnServer(char *server, qboolean killBots)
 
 			if (svs.clients[i].netchan.remoteAddress.type == NA_BOT)
 			{
-				if (killBots)
-				{
-					SV_DropClient(&svs.clients[i], "");
-					continue;
-				}
 				isBot = qtrue;
 			}
 			else
@@ -761,7 +717,6 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	SV_SetConfigstring(CS_SERVERINFO, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
 	cvar_modifiedFlags &= ~CVAR_SERVERINFO;
 
-	// NERVE - SMF
 	SV_SetConfigstring(CS_WOLFINFO, Cvar_InfoString(CVAR_WOLFINFO));
 	cvar_modifiedFlags &= ~CVAR_WOLFINFO;
 
@@ -773,29 +728,80 @@ void SV_SpawnServer(char *server, qboolean killBots)
 	// send a heartbeat now so the master will get up to date info
 	if (sv_advert->integer & SVA_MASTER)
 	{
-		SV_Heartbeat_f();	}
+		SV_Heartbeat_f();
+	}
 	else // let admin's know it's disabled
 	{
-		Com_Printf("Master servers: heartbeats disabled by sv_advert.\n");
+		Com_Printf("Not sending heartbeats to master servers - disabled by sv_advert.\n");
 	}
 
 	Hunk_SetMark();
 
 	SV_UpdateConfigStrings();
 
-	Cvar_Set("sv_serverRestarting", "0");
-
 	Com_Printf("-----------------------------------\n");
-
 }
 
-/*
-===============
-SV_Init
+void SV_WriteAttackLog(const char *log)
+{
+	if (attHandle > 0)
+	{
+		char    string[512]; // 512 chars seem enough here
+		qtime_t time;
 
-Only called at main exe startup, not for each game
-===============
-*/
+		Com_RealTime(&time);
+		Com_sprintf(string, sizeof(string), "%i/%i/%i %i:%i:%i %s", 1900 + time.tm_year, time.tm_mday, time.tm_mon + 1, time.tm_hour, time.tm_min, time.tm_sec, log);
+		FS_Write(string, strlen(string), attHandle);
+	}
+	else
+	{
+		Com_Printf("%s", log);
+	}
+}
+
+void SV_InitAttackLog()
+{
+	if (sv_protectLog->string[0] == '\0')
+	{
+		Com_Printf("Not logging server attacks to disk.\n");
+	}
+	else
+	{
+		// in sync so admins can check this at runtime
+		FS_FOpenFileByMode(sv_protectLog->string, &attHandle, FS_APPEND_SYNC);
+
+		if (attHandle <= 0)
+		{
+			Com_Printf("WARNING: Couldn't open server attack logfile %s\n", sv_protectLog->string);
+		}
+		else
+		{
+			Com_Printf("Logging server attacks to %s\n", sv_protectLog->string);
+			SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
+			SV_WriteAttackLog("Start server attack log\n");
+			SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
+		}
+	}
+}
+
+void SV_CloseAttackLog()
+{
+	if (attHandle > 0)
+	{
+		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
+		SV_WriteAttackLog("End server attack log\n"); // FIXME: add date & additional info
+		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
+		Com_Printf("Server attack log closed.\n");
+	}
+
+	FS_FCloseFile(attHandle);
+
+	attHandle = 0;  // local handle
+}
+
+/**
+ * @brief Only called at main exe startup, not for each game
+ */
 void SV_BotInitBotLib(void);
 
 void SV_Init(void)
@@ -805,33 +811,25 @@ void SV_Init(void)
 	SV_AddOperatorCommands();
 
 	// serverinfo vars
-	Cvar_Get("dmflags", "0", /*CVAR_SERVERINFO*/ 0);
-	Cvar_Get("fraglimit", "0", /*CVAR_SERVERINFO*/ 0);
 	Cvar_Get("timelimit", "0", CVAR_SERVERINFO);
 
-	Cvar_Get("sv_keywords", "", CVAR_SERVERINFO);
+	Cvar_Get("sv_keywords", "", CVAR_SERVERINFO); // unused. Kept for GameTracker.com compatibility
 	Cvar_Get("protocol", va("%i", PROTOCOL_VERSION), CVAR_SERVERINFO | CVAR_ROM);
 	sv_mapname        = Cvar_Get("mapname", "nomap", CVAR_SERVERINFO | CVAR_ROM);
 	sv_privateClients = Cvar_Get("sv_privateClients", "0", CVAR_SERVERINFO);
-	sv_hostname       = Cvar_Get("sv_hostname", "ETHost", CVAR_SERVERINFO | CVAR_ARCHIVE);
-	//
-#ifdef __MACOS__
-	sv_maxclients = Cvar_Get("sv_maxclients", "16", CVAR_SERVERINFO | CVAR_LATCH);                 //DAJ HOG
-#else
-	sv_maxclients = Cvar_Get("sv_maxclients", "20", CVAR_SERVERINFO | CVAR_LATCH);                 // NERVE - SMF - changed to 20 from 8
-#endif
-
+	sv_hostname       = Cvar_Get("sv_hostname", "ETLHost", CVAR_SERVERINFO | CVAR_ARCHIVE);
+	sv_maxclients     = Cvar_Get("sv_maxclients", "20", CVAR_SERVERINFO | CVAR_LATCH);
 	sv_maxRate        = Cvar_Get("sv_maxRate", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_minPing        = Cvar_Get("sv_minPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_maxPing        = Cvar_Get("sv_maxPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_floodProtect   = Cvar_Get("sv_floodProtect", "1", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_allowAnonymous = Cvar_Get("sv_allowAnonymous", "0", CVAR_SERVERINFO);
-	sv_friendlyFire   = Cvar_Get("g_friendlyFire", "1", CVAR_SERVERINFO | CVAR_ARCHIVE);           // NERVE - SMF
-	sv_maxlives       = Cvar_Get("g_maxlives", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO);  // NERVE - SMF
+	sv_friendlyFire   = Cvar_Get("g_friendlyFire", "1", CVAR_SERVERINFO | CVAR_ARCHIVE);
+	sv_maxlives       = Cvar_Get("g_maxlives", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO);
 	sv_needpass       = Cvar_Get("g_needpass", "0", CVAR_SERVERINFO | CVAR_ROM);
 
 	// systeminfo
-	//bani - added cvar_t for sv_cheats so server engine can reference it
+	// added cvar_t for sv_cheats so server engine can reference it
 	sv_cheats   = Cvar_Get("sv_cheats", "1", CVAR_SYSTEMINFO | CVAR_ROM);
 	sv_serverid = Cvar_Get("sv_serverid", "0", CVAR_SYSTEMINFO | CVAR_ROM);
 	sv_pure     = Cvar_Get("sv_pure", "1", CVAR_SYSTEMINFO);
@@ -840,11 +838,55 @@ void SV_Init(void)
 	Cvar_Get("sv_referencedPaks", "", CVAR_SYSTEMINFO | CVAR_ROM);
 	Cvar_Get("sv_referencedPakNames", "", CVAR_SYSTEMINFO | CVAR_ROM);
 
+#ifdef FEATURE_ANTICHEAT
+	// note:
+	// we might add CVAR_LATCH flag to wh_active saving SV_InitWallhack() call when not needed
+	// but it may be helpfully (see sound issue) when wh_active isn't active all the time - we should give that a try
+	// just enable sv_wh_active by random intervals ... (would also save CPU usage too)
+
+	sv_wh_active = Cvar_Get("sv_wh_active", "0", CVAR_ARCHIVE);
+
+	// Note on bounding box dimensions:
+	// The default values are considerably larger than the normal values (36 and 72) used by ET.
+	// The reason for this is that it is better to predict a player as visible when
+	// he/she is not than the contrary.
+	// It may give a slight advantage to cheaters using wallhacks, but IMO it is not significant.
+	// You can change these Cvars, but if you set them to smaller values then it may happen that
+	// players do not become immediately visible when you go around corners.
+
+	sv_wh_bbox_horz = Cvar_Get("sv_wh_bbox_horz", "60", CVAR_ARCHIVE); // was 50 - now real player x bbox size(36) + offset
+
+	if (sv_wh_bbox_horz->integer < 20)
+	{
+		Cvar_Set("sv_wh_bbox_horz", "20");
+	}
+	if (sv_wh_bbox_horz->integer > 100)
+	{
+		Cvar_Set("sv_wh_bbox_horz", "100");
+	}
+
+	sv_wh_bbox_vert = Cvar_Get("sv_wh_bbox_vert", "100", CVAR_ARCHIVE); // was 60 - now real player y bbox size(72) + offset
+
+	if (sv_wh_bbox_vert->integer < 40)
+	{
+		Cvar_Set("sv_wh_bbox_vert", "40");
+	}
+	if (sv_wh_bbox_vert->integer > 150)
+	{
+		Cvar_Set("sv_wh_bbox_vert", "150");
+	}
+
+	sv_wh_check_fov = Cvar_Get("wh_check_fov", "0", CVAR_ARCHIVE);
+
+	SV_InitWallhack();
+#endif
+
 	// server vars
 	sv_rconPassword    = Cvar_Get("rconPassword", "", CVAR_TEMP);
 	sv_privatePassword = Cvar_Get("sv_privatePassword", "", CVAR_TEMP);
 	sv_fps             = Cvar_Get("sv_fps", "20", CVAR_TEMP);
-	sv_timeout         = Cvar_Get("sv_timeout", "240", CVAR_TEMP);
+	sv_timeout         = Cvar_Get("sv_timeout", "40", CVAR_TEMP); // used in game (also vid_restart)
+	sv_dl_timeout      = Cvar_Get("sv_dl_timeout", "240", CVAR_TEMP);
 	sv_zombietime      = Cvar_Get("sv_zombietime", "2", CVAR_TEMP);
 	Cvar_Get("nextmap", "", CVAR_TEMP);
 
@@ -866,11 +908,11 @@ void SV_Init(void)
 
 	sv_lanForceRate = Cvar_Get("sv_lanForceRate", "1", CVAR_ARCHIVE);
 
-	sv_onlyVisibleClients = Cvar_Get("sv_onlyVisibleClients", "0", 0);         // DHM - Nerve
+	sv_onlyVisibleClients = Cvar_Get("sv_onlyVisibleClients", "0", 0);
 
-	sv_showAverageBPS = Cvar_Get("sv_showAverageBPS", "0", 0);             // NERVE - SMF - net debugging
+	sv_showAverageBPS = Cvar_Get("sv_showAverageBPS", "0", 0); // net debugging
 
-	// NERVE - SMF - create user set cvars
+	// create user set cvars
 	Cvar_Get("g_userTimeLimit", "0", 0);
 	Cvar_Get("g_userAlliedRespawnTime", "0", 0);
 	Cvar_Get("g_userAxisRespawnTime", "0", 0);
@@ -881,20 +923,17 @@ void SV_Init(void)
 	Cvar_Get("gamestate", "-1", CVAR_WOLFINFO | CVAR_ROM);
 	Cvar_Get("g_currentRound", "0", CVAR_WOLFINFO);
 	Cvar_Get("g_nextTimeLimit", "0", CVAR_WOLFINFO);
-	// -NERVE - SMF
 
 	Cvar_Get("g_fastres", "0", CVAR_ARCHIVE);
 	Cvar_Get("g_fastResMsec", "1000", CVAR_ARCHIVE);
 
-	// ATVI Tracker Wolfenstein Misc #273
 	Cvar_Get("g_voteFlags", "0", CVAR_ROM | CVAR_SERVERINFO);
 
-	// ATVI Tracker Wolfenstein Misc #263
 	Cvar_Get("g_antilag", "1", CVAR_ARCHIVE | CVAR_SERVERINFO);
 
 	Cvar_Get("g_needpass", "0", CVAR_SERVERINFO);
 
-	g_gameType = Cvar_Get("g_gametype", va("%i", com_gameInfo.defaultGameType), CVAR_SERVERINFO | CVAR_LATCH);
+	g_gameType = Cvar_Get("g_gametype", "4", CVAR_SERVERINFO | CVAR_LATCH);
 
 	// the download netcode tops at 18/20 kb/s, no need to make you think you can go above
 	sv_dl_maxRate = Cvar_Get("sv_dl_maxRate", "42000", CVAR_ARCHIVE);
@@ -904,23 +943,29 @@ void SV_Init(void)
 	sv_wwwDlDisconnected = Cvar_Get("sv_wwwDlDisconnected", "0", CVAR_ARCHIVE);
 	sv_wwwFallbackURL    = Cvar_Get("sv_wwwFallbackURL", "", CVAR_ARCHIVE);
 
-	//bani
-	sv_packetloss  = Cvar_Get("sv_packetloss", "0", CVAR_CHEAT);
 	sv_packetdelay = Cvar_Get("sv_packetdelay", "0", CVAR_CHEAT);
 
-	// fretn - note: redirecting of clients to other servers relies on this,
+	// note: redirecting of clients to other servers relies on this,
 	// ET://someserver.com
 	sv_fullmsg = Cvar_Get("sv_fullmsg", "Server is full.", CVAR_ARCHIVE);
 
-	sv_advert = Cvar_Get("sv_advert", "3", CVAR_ARCHIVE);
+	sv_advert = Cvar_Get("sv_advert", "1", CVAR_ARCHIVE);
+
+	sv_protect    = Cvar_Get("sv_protect", "1", CVAR_ARCHIVE);
+	sv_protectLog = Cvar_Get("sv_protectLog", "", CVAR_ARCHIVE);
+	SV_InitAttackLog();
+
+	// init the server side demo recording stuff
+	SV_AddDemoCommands();
+	sv_demopath = Cvar_Get("sv_demopath", "", CVAR_ARCHIVE);
 
 	// init the botlib here because we need the pre-compiler in the UI
 	SV_BotInitBotLib();
 
 	svs.serverLoad = -1;
 
-#ifdef TRACKBASE_SUPPORT
-	TB_Init();
+#ifdef FEATURE_TRACKER
+	Tracker_Init();
 #endif
 }
 
@@ -949,10 +994,10 @@ void SV_FinalCommand(char *cmd, qboolean disconnect)
 				// don't send a disconnect to a local client
 				if (cl->netchan.remoteAddress.type != NA_LOOPBACK)
 				{
-					//%	SV_SendServerCommand( cl, "print \"%s\"", message );
+					//SV_SendServerCommand( cl, "print \"%s\"", message );
 					SV_SendServerCommand(cl, "%s", cmd);
 
-					// ydnar: added this so map changes can use this functionality
+					// added this so map changes can use this functionality
 					if (disconnect)
 					{
 						SV_SendServerCommand(cl, "disconnect");
@@ -966,16 +1011,14 @@ void SV_FinalCommand(char *cmd, qboolean disconnect)
 	}
 }
 
-/*
-================
-SV_Shutdown
-
-Called when each game quits,
-before Sys_Quit or Sys_Error
-================
-*/
+/**
+ * @brief Called when each game quits, before Sys_Quit or Sys_Error
+ */
 void SV_Shutdown(char *finalmsg)
 {
+	// close attack log
+	SV_CloseAttackLog();
+
 	if (!com_sv_running || !com_sv_running->integer)
 	{
 		return;
@@ -999,7 +1042,7 @@ void SV_Shutdown(char *finalmsg)
 	if (svs.clients)
 	{
 		//Z_Free( svs.clients );
-		free(svs.clients);      // RF, avoid trying to allocate large chunk on a fragmented zone
+		free(svs.clients);      // avoid trying to allocate large chunk on a fragmented zone
 	}
 	memset(&svs, 0, sizeof(svs));
 	svs.serverLoad = -1;
@@ -1011,7 +1054,7 @@ void SV_Shutdown(char *finalmsg)
 	// disconnect any local clients
 	CL_Disconnect(qfalse);
 
-#ifdef TRACKBASE_SUPPORT
-	TB_ServerStop();
+#ifdef FEATURE_TRACKER
+	Tracker_ServerStop();
 #endif
 }

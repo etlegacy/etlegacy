@@ -39,9 +39,7 @@
 
 /*
 ===============================================================================
-
 memory management
-
 ===============================================================================
 */
 
@@ -54,7 +52,7 @@ short *sfxScratchBuffer  = NULL;
 sfx_t *sfxScratchPointer = NULL;
 int   sfxScratchIndex    = 0;
 
-void    SND_free(sndBuffer *v)
+void SND_free(sndBuffer *v)
 {
 	*(sndBuffer **)v = freelist;
 	freelist         = (sndBuffer *)v;
@@ -86,25 +84,40 @@ void SND_setup(void)
 	cvar_t    *cv;
 	int       scs;
 
-	cv = Cvar_Get("com_soundMegs", DEF_COMSOUNDMEGS, CVAR_LATCH | CVAR_ARCHIVE);
-
-	scs = (cv->integer * 1536);
+	cv  = Cvar_Get("com_soundMegs", DEF_COMSOUNDMEGS, CVAR_LATCH | CVAR_ARCHIVE);
+	scs = (cv->integer * 512); // q3 uses a value of 1536 - reverted to genuine ET value
 
 	buffer = malloc(scs * sizeof(sndBuffer));
+	if (!buffer)
+	{
+		Com_Error(ERR_FATAL, "Sound buffer failed to allocate %1.1f megs", (float)scs / (1024 * 1024));
+	}
 	// allocate the stack based hunk allocator
-	sfxScratchBuffer  = malloc(SND_CHUNK_SIZE * sizeof(short) * 4);     //Hunk_Alloc(SND_CHUNK_SIZE * sizeof(short) * 4);
+	sfxScratchBuffer = malloc(SND_CHUNK_SIZE * sizeof(short) * 4);      //Hunk_Alloc(SND_CHUNK_SIZE * sizeof(short) * 4);
+	if (!sfxScratchBuffer)
+	{
+		Com_Error(ERR_FATAL, "Unable to allocate sound scratch buffer");
+	}
 	sfxScratchPointer = NULL;
 
 	inUse = scs * sizeof(sndBuffer);
-	p     = buffer;;
+	p     = buffer;
 	q     = p + scs;
 	while (--q > p)
+	{
 		*(sndBuffer **)q = q - 1;
+	}
 
 	*(sndBuffer **)q = NULL;
 	freelist         = p + scs - 1;
 
 	Com_Printf("Sound memory manager started\n");
+}
+
+void SND_shutdown(void)
+{
+	free(sfxScratchBuffer);
+	free(buffer);
 }
 
 /*
@@ -116,22 +129,15 @@ resample / decimate to the current source rate
 */
 static void ResampleSfx(sfx_t *sfx, int inrate, int inwidth, byte *data, qboolean compressed)
 {
-	int       outcount;
+	float     stepscale = (float)inrate / dma.speed;  // this is usually 0.5, 1, or 2
+	int       outcount  = sfx->soundLength / stepscale;
 	int       srcsample;
-	float     stepscale;
 	int       i;
-	int       sample, samplefrac, fracstep;
+	int       sample, samplefrac = 0, fracstep = stepscale * 256;
 	int       part;
-	sndBuffer *chunk;
+	sndBuffer *chunk = sfx->soundData;
 
-	stepscale = (float)inrate / dma.speed;  // this is usually 0.5, 1, or 2
-
-	outcount         = sfx->soundLength / stepscale;
 	sfx->soundLength = outcount;
-
-	samplefrac = 0;
-	fracstep   = stepscale * 256;
-	chunk      = sfx->soundData;
 
 	for (i = 0 ; i < outcount ; i++)
 	{
@@ -174,18 +180,10 @@ resample / decimate to the current source rate
 */
 static int ResampleSfxRaw(short *sfx, int inrate, int inwidth, int samples, byte *data)
 {
-	int   outcount;
-	int   srcsample;
-	float stepscale;
-	int   i;
-	int   sample, samplefrac, fracstep;
-
-	stepscale = (float)inrate / dma.speed;  // this is usually 0.5, 1, or 2
-
-	outcount = samples / stepscale;
-
-	samplefrac = 0;
-	fracstep   = stepscale * 256;
+	float stepscale = (float)inrate / dma.speed;  // this is usually 0.5, 1, or 2
+	int   outcount  = samples / stepscale;
+	int   srcsample, i, sample;
+	int   samplefrac = 0, fracstep = stepscale * 256;
 
 	for (i = 0 ; i < outcount ; i++)
 	{
@@ -219,11 +217,16 @@ qboolean S_LoadSound(sfx_t *sfx)
 	byte       *data;
 	short      *samples;
 	snd_info_t info;
-//  int     size;
 
 	// player specific sounds are never directly loaded
 	if (sfx->soundName[0] == '*')
 	{
+		return qfalse;
+	}
+
+	if (!FS_FOpenFileRead(sfx->soundName, NULL, qfalse))
+	{
+		Com_DPrintf(S_COLOR_RED "ERROR: sound file \"%s\" does not exist\n", sfx->soundName);
 		return qfalse;
 	}
 
@@ -239,9 +242,9 @@ qboolean S_LoadSound(sfx_t *sfx)
 		Com_DPrintf(S_COLOR_YELLOW "WARNING: %s is a 8 bit wav file\n", sfx->soundName);
 	}
 
-	if (info.rate != 22050)
+	if ((info.rate != 11025) && (info.rate != 22050) && (info.rate != 44100))
 	{
-		Com_DPrintf(S_COLOR_YELLOW "WARNING: %s is not a 22kHz wav file\n", sfx->soundName);
+		Com_DPrintf(S_COLOR_YELLOW "WARNING: %s is not a 11kHz, 22kHz nor 44kHz audio file. It has sample rate %i\n", sfx->soundName, info.rate);
 	}
 
 	samples = Hunk_AllocateTempMemory(info.samples * sizeof(short) * 2);

@@ -1,0 +1,5 @@
+Put the separate files in gzip format with same name 
+into the man path structure of you *nix system. 
+This is usually /usr/share/man
+
+Example: usr/share/man/man6/etl.6.gz

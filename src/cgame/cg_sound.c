@@ -39,11 +39,11 @@
 #define FILE_HASH_SIZE          1024
 static soundScript_t *hashTable[FILE_HASH_SIZE];
 
-#define MAX_SOUND_SCRIPTS       4096
+#define MAX_SOUND_SCRIPTS       1024 // decreased from 4096  - we never reach more than 500 sounds
 static soundScript_t soundScripts[MAX_SOUND_SCRIPTS];
 int                  numSoundScripts = 0;
 
-#define MAX_SOUND_SCRIPT_SOUNDS 8192
+#define MAX_SOUND_SCRIPT_SOUNDS 4096 // decreased from 8096 - engine hashes 4096 total sounds - see MAX_SFX
 static soundScriptSound_t soundScriptSounds[MAX_SOUND_SCRIPT_SOUNDS];
 int                       numSoundScriptSounds = 0;
 
@@ -54,12 +54,10 @@ return a hash value for the filename
 */
 static long generateHashValue(const char *fname)
 {
-	int  i;
-	long hash;
+	int  i    = 0;
+	long hash = 0;
 	char letter;
 
-	hash = 0;
-	i    = 0;
 	while (fname[i] != '\0')
 	{
 		letter = tolower(fname[i]);
@@ -91,11 +89,11 @@ int CG_SoundScriptPrecache(const char *name)
 	long               hash;
 	char               *s;
 	soundScript_t      *sound;
-//  byte buf[1024];
-	int i;
+	int                i;
 
 	if (!name || !name[0])
 	{
+		CG_Printf(S_COLOR_YELLOW "WARNING: CG_SoundScriptPrecache invalid name\n");
 		return 0;
 	}
 
@@ -108,6 +106,8 @@ int CG_SoundScriptPrecache(const char *name)
 		{
 			// found a match, precache these sounds
 			scriptSound = sound->soundList;
+
+			// FIXME: do we have case !sound->streaming here ?
 			if (!sound->streaming)
 			{
 				for ( ; scriptSound; scriptSound = scriptSound->next)
@@ -115,24 +115,10 @@ int CG_SoundScriptPrecache(const char *name)
 					for (i = 0; i < scriptSound->numsounds; i++)
 					{
 						scriptSound->sounds[i].sfxHandle = 0;
-//                      scriptSound->sounds[i].sfxHandle = trap_S_RegisterSound( scriptSound->sounds[i].filename, qfalse ); // FIXME: make compressed settable through the soundscript
 					}
 				}
 			}
-			else
-			{ /*if (cg_buildScript.integer)*/           // Enabled this permanently so that streaming sounds get touched within file system on startup
-				for ( ; scriptSound; scriptSound = scriptSound->next)
-				{
-					for (i = 0; i < scriptSound->numsounds; i++)
-					{
-						// just open the file so it gets copied to the build dir
-						/*                      fileHandle_t f;
-						                        trap_FS_FOpenFile( scriptSound->sounds[i].filename, &f, FS_READ );
-						                        trap_FS_Read( buf, sizeof( buf ), f ); // read a few bytes so the operating system does a better job of caching it for us
-						                        trap_FS_FCloseFile( f );*/
-					}
-				}
-			}
+
 			return sound->index + 1;
 		}
 	}
@@ -147,12 +133,10 @@ CG_SoundPickOldestRandomSound
 */
 int CG_SoundPickOldestRandomSound(soundScript_t *sound, vec3_t org, int entnum)
 {
-	int                oldestTime = 0; // TTimo: init
-	soundScriptSound_t *oldestSound;
-	soundScriptSound_t *scriptSound;
+	int                oldestTime   = 0;
+	soundScriptSound_t *oldestSound = NULL;
+	soundScriptSound_t *scriptSound = sound->soundList;
 
-	oldestSound = NULL;
-	scriptSound = sound->soundList;
 	while (scriptSound)
 	{
 		if (!oldestSound || (scriptSound->lastPlayed < oldestTime))
@@ -185,7 +169,7 @@ int CG_SoundPickOldestRandomSound(soundScript_t *sound, vec3_t org, int entnum)
 	}
 	else
 	{
-		CG_Error("Unable to locate a valid sound for soundScript: %s\n", sound->name);
+		CG_Error(S_COLOR_RED "CG_SoundPickOldestRandomSound: Unable to locate a valid sound for soundScript: %s\n", sound->name);
 	}
 
 	return 0;
@@ -208,8 +192,6 @@ void CG_AddBufferedSoundScript(soundScript_t *sound)
 
 void CG_UpdateBufferedSoundScripts(void)
 {
-	int i;
-
 	if (!cg.numbufferedSoundScripts)
 	{
 		return;
@@ -217,6 +199,8 @@ void CG_UpdateBufferedSoundScripts(void)
 
 	if (cg.time > cg.bufferedSoundScriptEndTime)
 	{
+		int i;
+
 		for (i = 1; i < MAX_BUFFERED_SOUNDSCRIPTS; i++)
 		{
 			cg.bufferSoundScripts[i - 1] = cg.bufferSoundScripts[i];
@@ -274,7 +258,7 @@ int CG_SoundPlaySoundScript(const char *name, vec3_t org, int entnum, qboolean b
 		sound = sound->nextHash;
 	}
 
-	CG_Printf(S_COLOR_YELLOW "WARNING: CG_SoundPlaySoundScript: cannot find sound script '%s'\n", name);
+	CG_Printf(S_COLOR_YELLOW "WARNING: CG_SoundPlaySoundScript cannot find sound script '%s'\n", name);
 	return 0;
 }
 
@@ -311,17 +295,11 @@ CG_SoundParseSounds
 */
 static void CG_SoundParseSounds(char *filename, char *buffer)
 {
-	char               *token, **text;
-	int                s;
+	char               *token, **text = &buffer;
 	long               hash;
 	soundScript_t      sound;           // the current sound being read
 	soundScriptSound_t *scriptSound = NULL;
-	qboolean           inSound, wantSoundName;
-
-	s             = 0;
-	inSound       = qfalse;
-	wantSoundName = qtrue;
-	text          = &buffer;
+	qboolean           inSound      = qfalse, wantSoundName = qtrue;
 
 	while (1)
 	{
@@ -330,7 +308,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 		{
 			if (inSound)
 			{
-				CG_Error("no concluding '}' in sound %s, file %s\n", sound.name, filename);
+				CG_Error(S_COLOR_RED  "CG_SoundParseSounds: no concluding '}' in sound %s, file %s\n", sound.name, filename);
 			}
 			return;
 		}
@@ -339,11 +317,11 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 		{
 			if (inSound)
 			{
-				CG_Error("no concluding '}' in sound %s, file %s\n", sound.name, filename);
+				CG_Error(S_COLOR_RED "CG_SoundParseSounds: no concluding '}' in sound %s, file %s\n", sound.name, filename);
 			}
 			if (wantSoundName)
 			{
-				CG_Error("'{' found but not expected, after %s, file %s\n", sound.name, filename);
+				CG_Error(S_COLOR_RED "CG_SoundParseSounds:'{' found but not expected, after %s, file %s\n", sound.name, filename);
 			}
 			inSound = qtrue;
 
@@ -352,7 +330,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 
 			if (numSoundScripts == MAX_SOUND_SCRIPT_SOUNDS)
 			{
-				CG_Error("MAX_SOUND_SCRIPT_SOUNDS exceeded.\nReduce number of sound scripts.\n");
+				CG_Error(S_COLOR_RED "CG_SoundParseSounds: MAX_SOUND_SCRIPT_SOUNDS exceeded.\nReduce number of sound scripts.\n");
 			}
 
 			scriptSound->lastPlayed = 0;
@@ -367,7 +345,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 		{
 			if (!inSound)
 			{
-				CG_Error("'}' unexpected after sound %s, file %s\n", sound.name, filename);
+				CG_Error(S_COLOR_RED "CG_SoundParseSounds: '}' unexpected after sound %s, file %s\n", sound.name, filename);
 			}
 
 			// end of a sound, copy it to the global list and stick it in the hashTable
@@ -376,9 +354,9 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 			soundScripts[numSoundScripts] = sound;
 			hashTable[hash]               = &soundScripts[numSoundScripts++];
 
-			if (numSoundScripts == MAX_SOUND_SCRIPTS)
+			if (numSoundScripts >= MAX_SOUND_SCRIPTS)
 			{
-				CG_Error("MAX_SOUND_SCRIPTS exceeded. Reduce number of sound scripts.\n");
+				CG_Error(S_COLOR_RED "CG_SoundParseSounds: MAX_SOUND_SCRIPTS exceeded. Reduce number of sound scripts.\n");
 			}
 
 			inSound       = qfalse;
@@ -394,7 +372,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 			// this is the identifier for a new sound
 			if (!wantSoundName)
 			{
-				CG_Error("'%s' unexpected after sound %s, file %s\n", token, sound.name, filename);
+				CG_Error(S_COLOR_RED "CG_SoundParseSounds: '%s' unexpected after sound %s, file %s\n", token, sound.name, filename);
 			}
 			memset(&sound, 0, sizeof(sound));
 			Q_strncpyz(sound.name, token, sizeof(sound.name));
@@ -403,7 +381,6 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 			// setup the new sound defaults
 			sound.channel     = CHAN_AUTO;
 			sound.attenuation = 1;  // default to fade away with distance (for streaming sounds)
-			//
 			continue;
 		}
 
@@ -466,14 +443,12 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 		}
 		if (!Q_stricmp(token, "sound"))
 		{
-
 			if (scriptSound->numsounds >= MAX_SOUNDSCRIPT_SOUNDS)
 			{
-				CG_Error(S_COLOR_RED "Too many sounds for soundscript\n");
+				CG_Error(S_COLOR_RED "CG_SoundParseSounds: Too many sounds for soundscript\n");
 			}
 
 			token = COM_ParseExt(text, qtrue);
-
 
 			Q_strncpyz(scriptSound->sounds[scriptSound->numsounds].filename, token, sizeof(scriptSound->sounds[0].filename));
 			scriptSound->numsounds++;
@@ -490,7 +465,7 @@ CG_SoundLoadSoundFiles
 */
 extern char bigTextBuffer[100000];  // we got it anyway, might as well use it
 
-#define MAX_SOUND_FILES     128
+#define MAX_SOUND_FILES     16 // decreased from 128 - ET uses 3! (2 x team voice & map)
 static void CG_SoundLoadSoundFiles(void)
 {
 	char         soundFiles[MAX_SOUND_FILES][MAX_QPATH];
@@ -506,12 +481,12 @@ static void CG_SoundLoadSoundFiles(void)
 	len = trap_FS_FOpenFile(filename, &f, FS_READ);
 	if (len <= 0)
 	{
-		CG_Printf(S_COLOR_RED "WARNING: no sound files found (filelist.txt not found in sound/scripts)\n");
+		CG_Printf(S_COLOR_RED "ERROR CG_SoundLoadSoundFiles: No sound files found (filelist.txt not found in sound/scripts)\n");
 		return;
 	}
 	if (len > sizeof(bigTextBuffer))
 	{
-		CG_Error("%s is too big, make it smaller (max = %i bytes)\n", filename, 100000);
+		CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: %s is too big, make it smaller (max = %i bytes)\n", filename, 100000);
 	}
 	// load the file into memory
 	trap_FS_Read(bigTextBuffer, len, f);
@@ -535,7 +510,7 @@ static void CG_SoundLoadSoundFiles(void)
 
 	if (!numSounds)
 	{
-		CG_Printf(S_COLOR_RED "WARNING: no sound files found\n");
+		CG_Printf(S_COLOR_RED "ERROR CG_SoundLoadSoundFiles: No sound files found\n");
 		return;
 	}
 
@@ -549,13 +524,13 @@ static void CG_SoundLoadSoundFiles(void)
 		{
 			if (i != (numSounds - 1))
 			{
-				CG_Error("Couldn't load %s\n", filename);
+				CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: Couldn't load %s\n", filename);
 			}
 			continue;
 		}
 		if (len > sizeof(bigTextBuffer))
 		{
-			CG_Error("%s is too big, make it smaller (max = %i bytes)\n", filename, 100000);
+			CG_Error(S_COLOR_RED "CG_SoundLoadSoundFiles: %s is too big, make it smaller (max = %i bytes)\n", filename, 100000);
 		}
 		memset(bigTextBuffer, 0, sizeof(bigTextBuffer));
 		trap_FS_Read(bigTextBuffer, len, f);
@@ -571,7 +546,6 @@ CG_SoundInit
 */
 void CG_SoundInit(void)
 {
-
 	if (numSoundScripts)
 	{
 		// keep all the information, just reset the vars
@@ -589,19 +563,14 @@ void CG_SoundInit(void)
 	}
 	else
 	{
-		CG_Printf("\n.........................\n"
-		          "Initializing Sound Scripts\n");
+		CG_Printf("Initializing Sound Scripts\n");
 		CG_SoundLoadSoundFiles();
 		CG_Printf("done.\n");
 	}
 
 }
 
-//
-// Script Speakers
-//
-
-// Editing
+// Script Speakers Editing
 
 typedef struct editHandle_s
 {
@@ -643,7 +612,7 @@ qboolean CG_SaveSpeakersToScript(void)
 
 	if (trap_FS_FOpenFile(va("sound/maps/%s.sps", cgs.rawmapname), &fh, FS_WRITE) < 0)
 	{
-		CG_Printf(S_COLOR_RED "ERROR: failed to save speakers to 'sound/maps/%s.sps'\n", cgs.rawmapname);
+		CG_Printf(S_COLOR_RED "ERROR CG_SaveSpeakersToScript: failed to save speakers to 'sound/maps/%s.sps'\n", cgs.rawmapname);
 		return qfalse;
 	}
 
@@ -799,6 +768,7 @@ static void CG_RenderScriptSpeakers(void)
 		if (editSpeakerActive && editSpeaker == speaker)
 		{
 			vec4_t colour;
+
 			for (j = 0; j < 3; j++)
 			{
 				VectorClear(colour);
@@ -1167,7 +1137,6 @@ void CG_SpeakerEditor_RenderDropdown(panel_button_t *button)
 	vec4_t    colour;
 	float     textboxW;
 	rectDef_t rect;
-	int       i;
 	char      *s;
 
 	memcpy(&rect, &button->rect, sizeof(rect));
@@ -1237,6 +1206,8 @@ void CG_SpeakerEditor_RenderDropdown(panel_button_t *button)
 
 	if (button == BG_PanelButtons_GetFocusButton())
 	{
+		int i;
+
 		memcpy(&rect, &button->rect, sizeof(rect));
 
 		for (i = 0; i < button->data[0]; i++)
@@ -1406,6 +1377,7 @@ qboolean CG_SpeakerEditor_NoiseEdit_KeyDown(panel_button_t *button, int key)
 			if (key & K_CHAR_FLAG)
 			{
 				int localkey = key;
+
 				localkey &= ~K_CHAR_FLAG;
 				if (localkey == 'h' - 'a' + 1 || localkey >= 32)
 				{
@@ -2418,7 +2390,7 @@ void CG_AddScriptSpeakers(void)
 			if (cg.time >= speaker->nextActivateTime && (speaker->wait || speaker->random))
 			{
 				speaker->activated        = qtrue;
-				speaker->nextActivateTime = cg.time + speaker->wait + speaker->random *crandom();
+				speaker->nextActivateTime = cg.time + speaker->wait + speaker->random * crandom();
 			}
 		}
 

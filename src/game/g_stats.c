@@ -33,6 +33,10 @@
 
 #include "g_local.h"
 
+#ifdef FEATURE_LUA
+#include "g_lua.h"
+#endif
+
 void G_LogDeath(gentity_t *ent, weapon_t weap)
 {
 	weap = BG_DuplicateWeapon(weap);
@@ -43,9 +47,6 @@ void G_LogDeath(gentity_t *ent, weapon_t weap)
 	}
 
 	ent->client->pers.playerStats.weaponStats[weap].killedby++;
-
-	trap_PbStat(ent - g_entities, "death",
-	            va("%d %d %d", ent->client->sess.sessionTeam, ent->client->sess.playerType, weap)) ;
 }
 
 void G_LogKill(gentity_t *ent, weapon_t weap)
@@ -58,9 +59,6 @@ void G_LogKill(gentity_t *ent, weapon_t weap)
 	}
 
 	ent->client->pers.playerStats.weaponStats[weap].kills++;
-
-	trap_PbStat(ent - g_entities, "kill",
-	            va("%d %d %d", ent->client->sess.sessionTeam, ent->client->sess.playerType, weap)) ;
 }
 
 void G_LogTeamKill(gentity_t *ent, weapon_t weap)
@@ -73,9 +71,6 @@ void G_LogTeamKill(gentity_t *ent, weapon_t weap)
 	}
 
 	ent->client->pers.playerStats.weaponStats[weap].teamkills++;
-
-	trap_PbStat(ent - g_entities, "tk",
-	            va("%d %d %d", ent->client->sess.sessionTeam, ent->client->sess.playerType, weap)) ;
 }
 
 void G_LogRegionHit(gentity_t *ent, hitRegion_t hr)
@@ -85,9 +80,6 @@ void G_LogRegionHit(gentity_t *ent, hitRegion_t hr)
 		return;
 	}
 	ent->client->pers.playerStats.hitRegions[hr]++;
-
-	trap_PbStat(ent - g_entities, "hr",
-	            va("%d %d %d", ent->client->sess.sessionTeam, ent->client->sess.playerType, hr)) ;
 }
 
 void G_PrintAccuracyLog(gentity_t *ent)
@@ -142,9 +134,17 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 {
 	int i;
 
+#ifdef FEATURE_LUA
+	// *LUA* API callbacks
+	if (G_LuaHook_SetPlayerSkill(client - level.clients, skill))
+	{
+		return;
+	}
+#endif
+
 	for (i = NUM_SKILL_LEVELS - 1; i >= 0; i--)
 	{
-		if (client->sess.skillpoints[skill] >= skillLevels[i])
+		if (client->sess.skillpoints[skill] >= skillLevels[skill][i])
 		{
 			client->sess.skill[skill] = i;
 			break;
@@ -156,11 +156,19 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 
 extern qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammoclip, qboolean setcurrent);
 
-// TAT 11/6/2002
-//		Local func to actual do skill upgrade, used by both MP skill system, and SP scripted skill system
+
+// Local func to actual do skill upgrade, used by both MP skill system, and SP scripted skill system
 static void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 {
-	int i, cnt = 0;
+	int i;
+
+#ifdef FEATURE_LUA
+	// *LUA* API callbacks
+	if (G_LuaHook_UpgradeSkill(g_entities - ent, skill))
+	{
+		return;
+	}
+#endif
 
 	// See if this is the first time we've reached this skill level
 	for (i = 0; i < SK_NUM_SKILLS; i++)
@@ -186,7 +194,9 @@ static void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 
 	if (ent->client->sess.rank >= 4)
 	{
-		// Gordon: count the number of maxed out skills
+		int cnt = 0;
+
+		// count the number of maxed out skills
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
 			if (ent->client->sess.skill[i] >= 4)
@@ -241,7 +251,7 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
-		return; // Gordon: no xp in LMS
+		return; // no xp in LMS
 	}
 
 	oldskillpoints                        = ent->client->sess.skillpoints[skill];
@@ -253,17 +263,78 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 	if (oldskill != ent->client->sess.skill[skill])
 	{
 		ent->client->sess.skill[skill]       = oldskill;
-		ent->client->sess.skillpoints[skill] = skillLevels[oldskill];
+		ent->client->sess.skillpoints[skill] = skillLevels[skill][oldskill];
 	}
 
 	G_Printf("%s just lost %.0f skill points for skill %s\n", ent->client->pers.netname, oldskillpoints - ent->client->sess.skillpoints[skill], skillNames[skill]);
 
-	trap_PbStat(ent - g_entities, "loseskill",
-	            va("%d %d %d %f", ent->client->sess.sessionTeam, ent->client->sess.playerType,
-	               skill, oldskillpoints - ent->client->sess.skillpoints[skill])) ;
-
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]]        -= oldskillpoints - ent->client->sess.skillpoints[skill];
 	level.teamXP[skill][ent->client->sess.sessionTeam - TEAM_AXIS] -= oldskillpoints - ent->client->sess.skillpoints[skill];
+}
+
+void G_ResetXP(gentity_t *ent)
+{
+	int i = 0;
+	int ammo[MAX_WEAPONS], ammoclip[MAX_WEAPONS];
+	int oldWeapon; //, newWeapon;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	ent->client->sess.rank = 0;
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		ent->client->sess.skillpoints[i] = 0.0f;
+		ent->client->sess.skill[i]       = 0;
+	}
+
+	G_CalcRank(ent->client);
+	ent->client->ps.stats[STAT_XP]         = 0;
+	ent->client->ps.persistant[PERS_SCORE] = 0;
+
+	// zero out all weapons and grab the default weapons for a player of this XP level.
+	// backup..
+	memcpy(ammo, ent->client->ps.ammo, sizeof(ammo));
+	memcpy(ammoclip, ent->client->ps.ammoclip, sizeof(ammoclip));
+	oldWeapon = ent->client->ps.weapon;
+	// Check weapon validity, maybe dump some weapons for this (now) unskilled player..
+	// It also sets the (possibly new) amounts of ammo for weapons.
+	SetWolfSpawnWeapons(ent->client);
+	// restore..
+	//newWeapon = ent->client->ps.weapon;
+
+	for (i = WP_NONE; i < WP_NUM_WEAPONS; ++i)    //i<MAX_WEAPONS
+	{   // only restore ammo for valid weapons..
+		// ..they might have lost some weapons because of skill changes.
+		// Also restore to the old amount of ammo, because..
+		// ..SetWolfSpawnWeapons sets amount of ammo for a fresh spawning player,
+		// which is usually more than the player currently has left.
+		if (COM_BitCheck(ent->client->ps.weapons, i))
+		{
+			if (ammo[i] < ent->client->ps.ammo[i])
+			{
+				ent->client->ps.ammo[i] = ammo[i];
+			}
+			if (ammoclip[i] < ent->client->ps.ammoclip[i])
+			{
+				ent->client->ps.ammoclip[i] = ammoclip[i];
+			}
+		}
+		else
+		{
+			ent->client->ps.ammo[i]     = 0;
+			ent->client->ps.ammoclip[i] = 0;
+		}
+	}
+	// check if the old weapon is still valid.
+	// If so, restore to the last used weapon..
+	if (COM_BitCheck(ent->client->ps.weapons, oldWeapon))
+	{
+		ent->client->ps.weapon = oldWeapon;
+	}
+	ClientUserinfoChanged(ent - g_entities);
 }
 
 void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
@@ -288,7 +359,7 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
-		return; // Gordon: no xp in LMS
+		return; // no xp in LMS
 	}
 
 	level.teamXP[skill][ent->client->sess.sessionTeam - TEAM_AXIS] += points;
@@ -297,18 +368,14 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]] += points;
 
-	//	G_Printf( "%s just got %.0f skill points for skill %s\n", ent->client->pers.netname, points, skillNames[skill] );
-
-	trap_PbStat(ent - g_entities, "addskill",
-	            va("%d %d %d %f", ent->client->sess.sessionTeam, ent->client->sess.playerType,
-	               skill, points)) ;
+	//G_Printf( "%s just got %.0f skill points for skill %s\n", ent->client->pers.netname, points, skillNames[skill] );
 
 	// see if player increased in skill
 	oldskill = ent->client->sess.skill[skill];
 	G_SetPlayerSkill(ent->client, skill);
 	if (oldskill != ent->client->sess.skill[skill])
 	{
-		// TAT - call the new func that encapsulates the skill giving behavior
+		// call the new func that encapsulates the skill giving behavior
 		G_UpgradeSkill(ent, skill);
 	}
 }
@@ -334,22 +401,22 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_GARAND:
 	case MOD_SILENCER:
 	case MOD_FG42:
-//		case MOD_FG42SCOPE:
+	//case MOD_FG42SCOPE:
 	case MOD_CARBINE:
 	case MOD_KAR98:
 	case MOD_SILENCED_COLT:
 	case MOD_K43:
-//bani - akimbo weapons lose score now as well
+	// akimbo weapons lose score now as well
 	case MOD_AKIMBO_COLT:
 	case MOD_AKIMBO_LUGER:
 	case MOD_AKIMBO_SILENCEDCOLT:
 	case MOD_AKIMBO_SILENCEDLUGER:
 	case MOD_GRENADE_LAUNCHER:
 	case MOD_GRENADE_PINEAPPLE:
-//bani - airstrike marker kills
+	// airstrike marker kills
 	case MOD_SMOKEGRENADE:
 		G_LoseSkillPoints(tker, SK_LIGHT_WEAPONS, 3.f);
-//			G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "kill" );
+		//G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "kill" );
 		break;
 
 	// scoped weapons
@@ -358,7 +425,7 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_FG42SCOPE:
 	case MOD_SATCHEL:
 		G_LoseSkillPoints(tker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f);
-//			G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "legshot kill" );
+		//G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "legshot kill" );
 		break;
 
 	case MOD_MOBILE_MG42:
@@ -369,7 +436,7 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_FLAMETHROWER:
 	case MOD_MORTAR:
 		G_LoseSkillPoints(tker, SK_HEAVY_WEAPONS, 3.f);
-//			G_DebugAddSkillPoints( attacker, SK_HEAVY_WEAPONS, 3.f, "emplaced mg42 kill" );
+		//G_DebugAddSkillPoints( attacker, SK_HEAVY_WEAPONS, 3.f, "emplaced mg42 kill" );
 		break;
 
 	case MOD_DYNAMITE:
@@ -377,13 +444,17 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	case MOD_GPG40:
 	case MOD_M7:
 		G_LoseSkillPoints(tker, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f);
-//			G_DebugAddSkillPoints( attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f, "dynamite or landmine kill" );
+		//G_DebugAddSkillPoints( attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f, "dynamite or landmine kill" );
 		break;
 
 	case MOD_ARTY:
 	case MOD_AIRSTRIKE:
 		G_LoseSkillPoints(tker, SK_SIGNALS, 3.f);
-//			G_DebugAddSkillPoints( attacker, SK_SIGNALS, 4.f, "artillery kill" );
+		//G_DebugAddSkillPoints( attacker, SK_SIGNALS, 4.f, "artillery kill" );
+		break;
+
+	case MOD_SHOVE:
+		G_LoseSkillPoints(tker, SK_BATTLE_SENSE, 5.f);
 		break;
 
 	// no skills for anything else
@@ -394,7 +465,6 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 
 void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash)
 {
-
 	if (!attacker->client)
 	{
 		return;
@@ -415,7 +485,7 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 	case MOD_GARAND:
 	case MOD_SILENCER:
 	case MOD_FG42:
-//		case MOD_FG42SCOPE:
+	//case MOD_FG42SCOPE:
 	case MOD_CARBINE:
 	case MOD_KAR98:
 	case MOD_SILENCED_COLT:
@@ -497,7 +567,7 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 		break;
 	case MOD_GRENADE_LAUNCHER:
 	case MOD_GRENADE_PINEAPPLE:
-//bani - airstrike marker kills
+	// airstrike marker kills
 	case MOD_SMOKEGRENADE:
 		G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f);
 		G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f, "hand grenade kill");
@@ -519,6 +589,11 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 	case MOD_M7:
 		G_AddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f);
 		G_DebugAddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f, "rifle grenade kill");
+		break;
+
+	case MOD_SHOVE:
+		G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 5.f);
+		G_DebugAddSkillPoints(attacker, SK_BATTLE_SENSE, 5.f, "shove kill");
 		break;
 
 	// no skills for anything else
@@ -563,6 +638,7 @@ void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod,
 }
 
 /////// SKILL DEBUGGING ///////
+
 static fileHandle_t skillDebugLog = -1;
 
 void G_DebugOpenSkillLog(void)
@@ -659,8 +735,8 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 }
 
 #define CHECKSTAT1(XX)                                                        \
-    best = NULL;                                                                \
-    for (i = 0; i < level.numConnectedClients; i++) {                          \
+	best = NULL;                                                                \
+	for (i = 0; i < level.numConnectedClients; i++) {                          \
 		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
 		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
 			continue;                                                           \
@@ -673,12 +749,12 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 			best = cl;                                                          \
 		}                                                                       \
 	}                                                                           \
-    if (best) { best->hasaward = qtrue; }                                      \
-    Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
+	if (best) { best->hasaward = qtrue; }                                      \
+	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
 
 #define CHECKSTATMIN(XX, YY)                                                  \
-    best = NULL;                                                                \
-    for (i = 0; i < level.numConnectedClients; i++) {                          \
+	best = NULL;                                                                \
+	for (i = 0; i < level.numConnectedClients; i++) {                          \
 		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
 		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
 			continue;                                                           \
@@ -687,12 +763,12 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 			best = cl;                                                          \
 		}                                                                       \
 	}                                                                           \
-    if (best) { best->hasaward = qtrue; }                                      \
-    Q_strcat(buffer, 1024, va(";%s; %i ", best && best->XX >= YY ? best->pers.netname : "", best && best->XX >= YY ? best->sess.sessionTeam : -1))
+	if (best) { best->hasaward = qtrue; }                                      \
+	Q_strcat(buffer, 1024, va(";%s; %i ", best && best->XX >= YY ? best->pers.netname : "", best && best->XX >= YY ? best->sess.sessionTeam : -1))
 
 #define CHECKSTATSKILL(XX)                                                            \
-    best = NULL;                                                                \
-    for (i = 0; i < level.numConnectedClients; i++) {                          \
+	best = NULL;                                                                \
+	for (i = 0; i < level.numConnectedClients; i++) {                          \
 		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
 		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
 			continue;                                                           \
@@ -709,12 +785,12 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 			best = cl;                                                          \
 		}                                                                       \
 	}                                                                           \
-    if (best) { best->hasaward = qtrue; }                                      \
-    Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
+	if (best) { best->hasaward = qtrue; }                                      \
+	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
 
 #define CHECKSTAT3(XX, YY, ZZ)                                                \
-    best = NULL;                                                                \
-    for (i = 0; i < level.numConnectedClients; i++) {                          \
+	best = NULL;                                                                \
+	for (i = 0; i < level.numConnectedClients; i++) {                          \
 		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
 		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
 			continue;                                                           \
@@ -727,12 +803,12 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 			best = cl;                                                          \
 		}                                                                       \
 	}                                                                           \
-    if (best) { best->hasaward = qtrue; }                                      \
-    Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
+	if (best) { best->hasaward = qtrue; }                                      \
+	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
 
 #define CHECKSTATTIME(XX, YY)                                                 \
-    best = NULL;                                                                \
-    for (i = 0; i < level.numConnectedClients; i++) {                          \
+	best = NULL;                                                                \
+	for (i = 0; i < level.numConnectedClients; i++) {                          \
 		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
 		if (cl->sess.sessionTeam == TEAM_SPECTATOR) {                          \
 			continue;                                                           \
@@ -741,12 +817,12 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 			best = cl;                                                          \
 		}                                                                       \
 	}                                                                           \
-    if (best) {                                                                \
+	if (best) {                                                                \
 		if ((best->sess.startxptotal - best->ps.persistant[PERS_SCORE]) >= 100 || best->medals || best->hasaward) { \
 			best = NULL;                                                        \
 		}                                                                       \
 	}                                                                           \
-    Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
+	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : -1))
 
 void G_BuildEndgameStats(void)
 {

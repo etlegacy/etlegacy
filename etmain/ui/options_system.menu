@@ -1,0 +1,67 @@
+// System menu for ET-XreaL - editted System menu from ET
+// Removed 'video' sub-menu (see graphics menu) and added some extra controls
+// Joshua 'ethr' England - the_england@hotmail.com
+
+// Hint text taken from: http://www.antman.info/wolf/cvar/
+
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+#define WINDOW_X		16
+#define WINDOW_Y		16
+#define WINDOW_WIDTH	400
+#define WINDOW_HEIGHT	280
+#define GROUP_NAME		"grpOptionsSystem"
+#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
+
+menuDef {
+	name		"options_system"
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
+	
+	onOpen
+	{
+		uiScript systemCvarsGet ;
+		uiScript vidSave ;
+		uiScript glCustom
+	}
+	
+	onESC {
+		uiScript systemCvarsReset ;
+		uiScript vidReset ;
+		close options_system ;
+		open options
+	}
+
+	WINDOW( "SYSTEM", 90 )
+	
+// Audio //
+	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 102, "AUDIO" )
+	SLIDER( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Effects Volume:", .2, 8, "s_volume" .7 0 1, "" )
+	SLIDER( 8, 60, (SUBWINDOW_WIDTH)-4, 10, "Music Volume:", .2, 8, "s_musicvolume" .25 0 1, "" )
+	MULTI( 8, 72, (SUBWINDOW_WIDTH)-4, 10, "Sound Quality:", .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (high)" 22 "44 khz (ultra high)" 44 }, "" )
+	YESNO( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Doppler FX:", .2, 8, "s_doppler", "" )
+	YESNO( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Mute When Minimized:", .2, 8, "s_muteWhenMinimized", "" )
+	YESNO( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Mute When Unfocused:", .2, 8, "s_muteWhenUnfocused", "" )
+	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Hitsounds:", .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Team Hit Sound" 2 "No Head Hit Sound" 4 "No Body Hit Sound" 8 }, "" )
+
+// Networking //
+	SUBWINDOW( 6, 138, (SUBWINDOW_WIDTH), 54, "NETWORKING" )
+	MULTIACTION( 8, 154, (SUBWINDOW_WIDTH)-4, 10, "Connection:", .2, 8, "ui_rate", cvarFloatList { "Modem" 4000 "ISDN" 5000 "LAN/CABLE/xDSL" 25000 } cvarListUndefined "Unselected", uiScript update "ui_setRate", "Choose your connection type" )
+	MULTIACTION( 8, 166, (SUBWINDOW_WIDTH)-4, 10, "Max Packets:", .2, 8, "ui_cl_maxpackets", cvarFloatList { "Low" 30 "Medium" 60 "High" 100 } , uiScript update "ui_cl_maxpackets", "cap for upstream data packet transmissions" )
+	MULTIACTION( 8, 178, (SUBWINDOW_WIDTH)-4, 10, "Packet Duplication:", .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", "number of duplicates for every data packet sent upstream, minimized packetloss" )
+
+// Downloads //
+	SUBWINDOW( 6, 196, (SUBWINDOW_WIDTH), 52, "DOWNLOADS" )
+	YESNO( 8, 212, (SUBWINDOW_WIDTH)-4, 10, "Check for Updates on Start-Up:", .2, 8, "cl_autoupdate", "" )
+	YESNO( 8, 224, (SUBWINDOW_WIDTH)-4, 10, "Get Missing Files from Server:", .2, 8, "cl_allowDownload", "" )
+	YESNO( 8, 236, (SUBWINDOW_WIDTH)-4, 10, "Use HTTP/FTP Downloads:", .2, 8, "cl_wwwDownload", "" )
+		
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "BACK", .3, 14, uiScript vidReset ; close options_system ; open options )
+	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, "APPLY", .3, 14,
+		conditionalScript vidrestartIsRequired 2
+		( "open vid_restart" )
+		( "uiScript systemCvarsApply ; close options_system ; open options" ) )
+}

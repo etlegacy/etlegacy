@@ -29,14 +29,13 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  *
  * @file sys_osx.m
+ * @brief This file is just some Mac-specific bits.
+ * Most of the Mac OS X code is shared with other Unix platforms in sys_unix.c
  */
 
-#ifndef MACOS_X
+#ifndef __APPLE__
 #error This file is for Mac OS X only. You probably should not compile it.
 #endif
-
-// Please note that this file is just some Mac-specific bits. Most of the
-// Mac OS X code is shared with other Unix platforms in sys_unix.c ...
 
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
@@ -45,35 +44,10 @@
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 
-/*
-================
-Sys_TempPath
-================
-*/
-const char *Sys_TempPath(void)
-{
-	static UInt8 posixPath[MAX_OSPATH];
-	FSRef        ref;
-	if (FSFindFolder(kOnAppropriateDisk,
-	                 kTemporaryFolderType, kCreateFolder, &ref) == noErr)
-	{
-		if (FSRefMakePath(&ref, posixPath,
-		                  sizeof(posixPath) - 1) == noErr)
-		{
-			return (const char *)posixPath;
-		}
-	}
 
-	return "/tmp";
-}
-
-/*
-==============
-Sys_Dialog
-
-Display an OS X dialog box
-==============
-*/
+/**
+ * @brief Display an OS X dialog box
+ */
 dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title)
 {
 	dialogResult_t result = DR_OK;
@@ -125,27 +99,4 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	[alert release];
 
 	return result;
-}
-
-char *Sys_StripAppBundle(char *dir)
-{
-	static char cwd[MAX_OSPATH];
-
-	Q_strncpyz(cwd, dir, sizeof(cwd));
-	if (strcmp(Sys_Basename(cwd), "MacOS"))
-	{
-		return dir;
-	}
-	Q_strncpyz(cwd, Sys_Dirname(cwd), sizeof(cwd));
-	if (strcmp(Sys_Basename(cwd), "Contents"))
-	{
-		return dir;
-	}
-	Q_strncpyz(cwd, Sys_Dirname(cwd), sizeof(cwd));
-	if (!strstr(Sys_Basename(cwd), ".app"))
-	{
-		return dir;
-	}
-	Q_strncpyz(cwd, Sys_Dirname(cwd), sizeof(cwd));
-	return cwd;
 }

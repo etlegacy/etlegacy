@@ -1,0 +1,37 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define WINDOW_X		16
+#define WINDOW_Y		16
+#define WINDOW_WIDTH	160
+#define WINDOW_HEIGHT	128
+#define GROUP_NAME		"grpIngameVoteBot"
+
+// Omni-bot Menu //
+menuDef {
+	name		"ingame_vote_bot"
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
+
+	onEsc {
+		close ingame_vote_bot ;
+		open ingame_vote_misc_refrcon
+	}
+
+// Window //
+	WINDOW( "OMNI-BOT", 50)
+
+// Buttons //
+
+	BUTTON( 6, 32, WINDOW_WIDTH-12, 14, "MAX OMNI-BOT", .24, 11,exec "bot maxbots 20"; uiScript closeingame )
+	BUTTON( 6, 50, WINDOW_WIDTH-12, 14, "MIN OMNI-BOT", .24, 11,exec "bot minbots -1"; uiScript closeingame )
+	BUTTON( 6, 68, WINDOW_WIDTH-12, 14, "KICK OMNI-BOT", .24, 11,exec "bot kickall"; uiScript closeingame )
+	// fix me pls
+	// MULTILEFT( 8, 86+2, .66*(WINDOW_WIDTH-18), 10, "Difficulty:", .2, 8, exec "bot currentdifficulty", cvarFloatList { "Poorest" 0 "Very Poor" 1 "Poor" 2 "Easy Frag" 3 "Standard" 4 "Professional" 5 "Uber" 6 } "Sets a difficulty of bots" )
+	// NAMEDBUTTONEXT( "bttnextDifficulty", 6+.80*(WINDOW_WIDTH-18)+6, 86, .20*(WINDOW_WIDTH-18), 14, "OK", .24, 11, uiScript closeingame )
+
+	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "BACK", .3, 14, close ingame_vote_bot ; open ingame_vote )
+}

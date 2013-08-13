@@ -35,7 +35,7 @@
 
 #include "ui_local.h"
 
-static intptr_t (QDECL *syscall)(intptr_t arg, ...) = (intptr_t ( QDECL * )(intptr_t, ...)) - 1;
+static intptr_t (QDECL *syscall)(intptr_t arg, ...) = (intptr_t (QDECL *)(intptr_t, ...)) - 1;
 
 Q_EXPORT void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
 {
@@ -45,6 +45,7 @@ Q_EXPORT void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
 int PASSFLOAT(float x)
 {
 	floatint_t fi;
+
 	fi.f = x;
 	return fi.i;
 }
@@ -84,6 +85,7 @@ void trap_Cvar_Set(const char *var_name, const char *value)
 float trap_Cvar_VariableValue(const char *var_name)
 {
 	floatint_t fi;
+
 	fi.i = syscall(UI_CVAR_VARIABLEVALUE, var_name);
 	return fi.f;
 }
@@ -207,7 +209,7 @@ void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *ve
 //% void    trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b, int overdraw ) {
 //%     syscall( UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), overdraw );
 //% }
-void    trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
+void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
 	syscall(UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity),
 	        PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), hShader, flags);
@@ -255,17 +257,18 @@ void trap_UpdateScreen(void)
 
 int trap_CM_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex)
 {
-	return syscall(UI_CM_LERPTAG, tag, refent, tagName, 0);             // NEFVE - SMF - fixed
+	return syscall(UI_CM_LERPTAG, tag, refent, tagName, 0);
 }
 
 void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum)
 {
-	syscall(UI_S_STARTLOCALSOUND, sfx, channelNum, 127 /* Gordon: default volume always for the moment*/);
+	syscall(UI_S_STARTLOCALSOUND, sfx, channelNum, 127 /* default volume always for the moment*/);
 }
 
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 {
-	int i = syscall(UI_S_REGISTERSOUND, sample, qfalse /* compressed */);
+	int i = syscall(UI_S_REGISTERSOUND, sample, compressed);
+
 #ifdef DEBUG
 	if (i == 0)
 	{
@@ -396,7 +399,6 @@ void trap_LAN_GetPingInfo(int n, char *buf, int buflen)
 	syscall(UI_LAN_GETPINGINFO, n, buf, buflen);
 }
 
-// NERVE - SMF
 qboolean trap_LAN_UpdateVisiblePings(int source)
 {
 	return syscall(UI_LAN_UPDATEVISIBLEPINGS, source);
@@ -452,10 +454,11 @@ qboolean trap_LAN_ServerIsInFavoriteList(int source, int n)
 	return syscall(UI_LAN_SERVERISINFAVORITELIST, source, n);
 }
 
-void trap_LAN_SaveCachedServers(void)
-{
-	syscall(UI_LAN_SAVECACHEDSERVERS);
-}
+// obsolete, kept as reminder - ETL saves on add/remove
+//void trap_LAN_SaveCachedServers(void)
+//{
+//	syscall(UI_LAN_SAVECACHEDSERVERS);
+//}
 
 void trap_LAN_LoadCachedServers(void)
 {
@@ -467,24 +470,10 @@ void trap_LAN_MarkServerVisible(int source, int n, qboolean visible)
 	syscall(UI_LAN_MARKSERVERVISIBLE, source, n, visible);
 }
 
-// DHM - Nerve :: PunkBuster
-void trap_SetPbClStatus(int status)
-{
-	syscall(UI_SET_PBCLSTATUS, status);
-}
-// DHM - Nerve
-
-// TTimo: also for Sv
-void trap_SetPbSvStatus(int status)
-{
-	syscall(UI_SET_PBSVSTATUS, status);
-}
-
 void trap_LAN_ResetPings(int n)
 {
 	syscall(UI_LAN_RESETPINGS, n);
 }
-// -NERVE - SMF
 
 int trap_MemoryRemaining(void)
 {
@@ -554,13 +543,11 @@ e_status trap_CIN_StopCinematic(int handle)
 	return syscall(UI_CIN_STOPCINEMATIC, handle);
 }
 
-
 // will run a frame of the cinematic but will not draw it.  Will return FMV_EOF if the end of the cinematic has been reached.
 e_status trap_CIN_RunCinematic(int handle)
 {
 	return syscall(UI_CIN_RUNCINEMATIC, handle);
 }
-
 
 // draws the current frame
 void trap_CIN_DrawCinematic(int handle)
@@ -568,45 +555,36 @@ void trap_CIN_DrawCinematic(int handle)
 	syscall(UI_CIN_DRAWCINEMATIC, handle);
 }
 
-
 // allows you to resize the animation dynamically
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h)
 {
 	syscall(UI_CIN_SETEXTENTS, handle, x, y, w, h);
 }
 
-
-void    trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset)
+void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset)
 {
 	syscall(UI_R_REMAP_SHADER, oldShader, newShader, timeOffset);
 }
 
-// NERVE - SMF
 qboolean trap_GetLimboString(int index, char *buf)
 {
 	return syscall(UI_CL_GETLIMBOSTRING, index, buf);
 }
 
-#define MAX_VA_STRING       32000
-
 char *trap_TranslateString(const char *string)
 {
+	// Allows the fnc to be used twice in same context
 	static char staticbuf[2][MAX_VA_STRING];
 	static int  bufcount = 0;
 	char        *buf;
 
 	buf = staticbuf[bufcount++ % 2];
 
-#ifdef LOCALIZATION_SUPPORT
 	syscall(UI_CL_TRANSLATE_STRING, string, buf);
-#else
-	Q_strncpyz(buf, string, MAX_VA_STRING);
-#endif // LOCALIZATION_SUPPORT
+
 	return buf;
 }
-// -NERVE - SMF
 
-// DHM - Nerve
 void trap_CheckAutoUpdate(void)
 {
 	syscall(UI_CHECKAUTOUPDATE);
@@ -616,7 +594,6 @@ void trap_GetAutoUpdate(void)
 {
 	syscall(UI_GET_AUTOUPDATE);
 }
-// DHM - Nerve
 
 void trap_openURL(const char *s)
 {

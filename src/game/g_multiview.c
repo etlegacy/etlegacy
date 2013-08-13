@@ -32,12 +32,12 @@
  * @brief Multiview handling
  */
 
-#include "g_local.h"
+#ifdef FEATURE_MULTIVIEW
 
+#include "g_local.h"
 
 qboolean G_smvCommands(gentity_t *ent, char *cmd)
 {
-#ifdef MV_SUPPORT
 	if (!Q_stricmp(cmd, "mvadd"))
 	{
 		G_smvAdd_cmd(ent);
@@ -69,17 +69,10 @@ qboolean G_smvCommands(gentity_t *ent, char *cmd)
 	}
 	else
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
-	return(qtrue);
-
-#else
-
-	return(qfalse);
-
-#endif
-
+	return qtrue;
 }
 
 
@@ -228,10 +221,10 @@ void G_smvAddView(gentity_t *ent, int pID)
 // Find, and optionally delete an entity in a player's MV list
 qboolean G_smvLocateEntityInMVList(gentity_t *ent, int pID, qboolean fRemove)
 {
-	int i;
-
 	if (ent->client->pers.mvCount > 0)
 	{
+		int i;
+
 		for (i = 0; i < MULTIVIEW_MAXVIEWS; i++)
 		{
 			if (ent->client->pers.mv[i].fActive && ent->client->pers.mv[i].entID == pID)
@@ -240,12 +233,12 @@ qboolean G_smvLocateEntityInMVList(gentity_t *ent, int pID, qboolean fRemove)
 				{
 					G_smvRemoveEntityInMVList(ent, &ent->client->pers.mv[i]);
 				}
-				return(qtrue);
+				return qtrue;
 			}
 		}
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 
@@ -353,19 +346,19 @@ qboolean G_smvRunCamera(gentity_t *ent)
 	// Opt out if not a real MV portal
 	if (ent->tagParent == NULL || ent->tagParent->client == NULL)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	if ((ps = &ent->tagParent->client->ps) == NULL)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// If viewing client is no longer connected, delete this camera
 	if (ent->tagParent->client->pers.connected != CON_CONNECTED)
 	{
 		G_FreeEntity(ent);
-		return(qtrue);
+		return qtrue;
 	}
 
 	// Also remove if the target player is no longer in the game playing
@@ -373,7 +366,7 @@ qboolean G_smvRunCamera(gentity_t *ent)
 	    ent->target_ent->client->sess.sessionTeam == TEAM_SPECTATOR)
 	{
 		G_smvLocateEntityInMVList(ent->tagParent, ent->target_ent - g_entities, qtrue);
-		return(qtrue);
+		return qtrue;
 	}
 
 	// Seems that depending on player's state, we pull from either r.currentOrigin, or s.origin
@@ -390,7 +383,7 @@ qboolean G_smvRunCamera(gentity_t *ent)
 	// Only allow client ids 0 to (MAX_MVCLIENTS-1) to be updated with extra info
 	if (id >= MAX_MVCLIENTS)
 	{
-		return(qtrue);
+		return qtrue;
 	}
 
 	tps = &ent->target_ent->client->ps;
@@ -453,5 +446,7 @@ qboolean G_smvRunCamera(gentity_t *ent)
 		ps->ammoclip[id - 1] |= (sprintTime & 0x07) << 13;    // 3 bits for fatigue
 	}
 
-	return(qtrue);
+	return qtrue;
 }
+
+#endif

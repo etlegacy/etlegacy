@@ -1,0 +1,12 @@
+/////////////////////////////////////////////////////////
+// Map name       1v1DM                                //
+// Locations by   antman                               //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 10                //
+// Last edited    22-11-2006                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+566 301 64 "1v1 Arena"
+1057 325 72 @
+-242 150 64 @
+-812 122 72 @

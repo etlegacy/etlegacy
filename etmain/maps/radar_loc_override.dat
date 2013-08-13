@@ -1,0 +1,142 @@
+/////////////////////////////////////////////////////////
+// Map name       Würzburg Radar                       //
+// Locations by   Rain                                 //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 26                //
+// Last edited    14-10-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+3172 -1270 1564 "^1Command Post"
+258 -3104 1576 "^1East Radar"
+662 -3178 1475 @
+-577 1703 1378 "^1Forward Bunker Flag"
+-1268 -164 1416 "^1Main Entrance"
+3260 -591 1564 "^1Side Entrance"
+-1922 -2271 1594 "^1West Radar"
+1147 -3863 1288 "^3Axis Garage"
+868 -3874 1216 @
+1097 -3200 1288 "^3Axis Garage Road"
+903 -2671 1288 @
+208 -2346 1288 @
+1119 -3648 1546 "^3Axis Garage Roof"
+585 -3690 1557 @
+1443 -3775 1613 @
+643 -4252 1550 @
+1122 -3925 1537 @
+-3529 -835 1464 "^3Axis Hut"
+-491 -3374 1288 "^3Axis Road"
+-637 -4071 1288 "^3Axis Shed"
+-601 -1648 1640 "^3Axis Watchtower"
+1038 -4454 1262 "^3Behind Axis Garage"
+627 -4645 1268 @
+-1476 -4682 1306 "^3Behind Warehouse"
+-2103 -4697 1292 @
+808 1515 1427 "^3Bunker East Entrance"
+-35 1400 1436 "^3Bunker MG Nest"
+-1162 1414 1436 "^3Bunker-Truck Corridor"
+3273 -893 1576 "^3Command Post MG42"
+2103 -2010 1459 "^3Command Post Yard"
+153 6070 512 "^3Dead!"
+200 5118 1341 "^3Don't do it, man!"
+195 5501 1142 "^3Dying..."
+3287 -1886 1780 "^3East Antenna"
+236 -4127 1316 "^3East Radar Hill"
+469 -3634 1444 @
+1856 -3014 1464 "^3East Steps"
+-964 1660 1388 "^3Forward Bunker"
+-277 1684 1436 @
+-589 1996 1436 @
+-893 2717 1476 "^3Foward Bunker Side Exit"
+-2262 -2626 1614 "^3Grassy Crossroads"
+-1054 138 1412 "^3Guard Booth"
+-2412 3392 1456 "^3Guard House"
+-2432 3156 1456 @
+-2161 3130 1384 @
+-2238 3327 1465 "^3Guard House MG42"
+-2345 3269 1606 "^3Guardhouse Bed"
+-1520 -3987 1288 "^3Lower Warehouse"
+-1945 -4214 1288 @
+-1246 -3615 1288 @
+-1959 -3910 1472 "^3Lower Warehouse Stairs"
+-2113 -3804 1400 @
+-225 -1463 1663 "^3North Radio Dish"
+-261 -1269 1662 @
+529 4731 1360 "^3North Road"
+513 3989 1358 @
+-862 3293 1447 @
+-1921 3203 1431 @
+411 4986 1360 @
+-1534 3257 1421 @
+-46 3276 1397 @
+-2342 1744 1273 "^3Northeast Road"
+-2229 2829 1441 @
+-590 -2408 1288 "^3Road Intersection"
+-1455 3947 1579 "^3Roadway Hillside"
+-488 3970 1528 @
+158 4844 1387 @
+19 4053 1448 @
+-1939 1179 1289 "^3Roadway Underpass"
+3078 322 1554 "^3Side Entrance Path"
+2281 538 1570 @
+1303 935 1420 @
+2433 -1505 1506 "^3Side Entrance Stairs"
+1863 -3916 1372 "^3South East Hill"
+2482 -4403 1643 "^3South East Hilltop"
+-3161 -4723 1667 "^3South West Radio Dish"
+-2621 -4416 1324 @
+470 -5525 1594 "^3Southern Hill"
+-1232 491 1453 "^3Truck"
+-1598 861 1359 @
+750 4593 1350 "^3Tunnel Gate"
+3032 -805 1748 "^3Upper Side Entrance"
+3307 3288 1375 "^3Villa Back Yard"
+3167 3559 1373 @
+3271 3948 1375 @
+3264 3726 1375 @
+3217 2879 1390 @
+3305 3155 1373 @
+2885 3079 1384 "^3Villa Dining Room"
+2919 2976 1384 @
+2942 3549 1384 "^3Villa Entryway"
+2629 3582 1387 @
+2300 3570 1376 "^3Villa Front Yard"
+2298 3731 1371 @
+2316 3901 1370 @
+2876 3066 1564 "^3Villa Library"
+1919 2720 1363 "^3Villa MG42 Nest"
+2918 3903 1564 "^3Villa North East Bedroom"
+2663 3869 1564 "^3Villa North West Bedroom"
+2627 4248 1369 "^3Villa North Yard"
+2760 4285 1371 @
+3003 4283 1368 @
+2909 3906 1384 "^3Villa Office"
+2624 3907 1384 @
+2934 3520 1604 "^3Villa Overlook"
+2617 3523 1609 @
+2788 3577 1600 @
+2625 3597 1600 @
+2512 3163 1564 "^3Villa South West Bedroom"
+2467 3069 1600 @
+2464 2726 1363 "^3Villa South Yard"
+2896 2680 1389 @
+2492 3071 1385 "^3Villa Study"
+1761 4616 1362 "^3Villa Tunnel"
+1036 4600 1350 @
+-1074 -3839 1348 "^3Warehouse Cabinets"
+-853 -3009 1384 "^3Warehouse Cache"
+-867 -3454 1288 "^3Warehouse Dumpsters"
+-726 -3349 1664 "^3Warehouse Lookout"
+-1786 -3852 1472 "^3Warehouse Office"
+251 -1732 1462 "^3Watchtower Hill"
+-274 -1903 1480 @
+-592 -1136 1547 @
+-3592 -2391 1480 "^3West Fence"
+-2091 -1625 1522 "^3West Radar Hill"
+-2840 -2700 1471 @
+-2712 -3459 1404 @
+-2589 -1907 1513 @
+-2924 -1724 1338 "^3West Radar Trench"
+-2813 -929 1336 @
+-1384 -1777 1404 "^3West Radar Wall"
+-1567 -3112 1288 "^3West Shed"
+-1311 -1202 1552 "^3Wooden Bridge"

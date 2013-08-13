@@ -1,0 +1,77 @@
+// menu defs
+{	
+	loadMenu { "ui/global.menu" }	
+	loadMenu { "ui/main.menu" }
+	loadMenu { "ui/profile.menu" }
+	loadMenu { "ui/profile_create.menu" }
+	loadMenu { "ui/profile_create_initial.menu" }
+	loadMenu { "ui/profile_rename.menu" }
+	loadMenu { "ui/profile_delete.menu" }
+	loadMenu { "ui/profile_delete_error.menu" }
+	loadMenu { "ui/profile_create_error.menu" }
+	loadMenu { "ui/playonline.menu" }
+	loadMenu { "ui/playonline_connecttoip.menu" }
+	loadMenu { "ui/playonline_serverinfo.menu" }
+	loadMenu { "ui/hostgame.menu" }
+	loadMenu { "ui/hostgame_advanced.menu" }
+	loadMenu { "ui/hostgame_extended.menu" }	
+	loadMenu { "ui/hostgame_advanced_default.menu" }
+	loadMenu { "ui/hostgame_dedicated_warning.menu" }
+	loadMenu { "ui/mods.menu" }
+	loadMenu { "ui/viewreplay.menu" }
+	loadMenu { "ui/viewreplay_delete.menu" }
+	loadMenu { "ui/options.menu" }
+	loadMenu { "ui/options_clean.menu" }	
+	loadMenu { "ui/options_customise_game.menu" }
+	loadMenu { "ui/options_customise_hud.menu" }
+	loadMenu { "ui/options_controls.menu" }
+	loadMenu { "ui/options_controls_default.menu" }
+	loadMenu { "ui/options_system.menu" }
+	loadMenu { "ui/options_system_gamma.menu" }
+	loadMenu { "ui/options_graphics.menu" }
+	loadMenu { "ui/options_graphics_gamma.menu" }
+	loadMenu { "ui/credits_etlegacy.menu" }
+	loadMenu { "ui/credits_splashdamage.menu" }
+	loadMenu { "ui/credits_idsoftware.menu" }
+	loadMenu { "ui/credits_activision.menu" }
+	loadMenu { "ui/credits_additional.menu" }
+	loadMenu { "ui/credits_et260.menu" }
+	loadMenu { "ui/etlegacywebsite.menu" }
+	loadMenu { "ui/credits_quit.menu" }
+	loadMenu { "ui/quit.menu" }
+
+	// popups
+	loadMenu { "ui/popup_errormessage.menu" }
+	loadMenu { "ui/popup_errormessage_pb.menu" }	
+	loadMenu { "ui/popup_hostgameerrormessage.menu" }
+	loadMenu { "ui/popup_autoupdate.menu" }
+	loadMenu { "ui/popup_password.menu" }
+	loadMenu { "ui/popup_serverredirect.menu"}
+
+	// video confirmation
+	loadMenu { "ui/vid_restart.menu" }
+	loadMenu { "ui/vid_confirm.menu" }
+	loadMenu { "ui/rec_restart.menu" }
+
+	// quickchats
+	loadMenu { "ui/wm_quickmessage.menu" }
+	loadMenu { "ui/wm_quickmessageAlt.menu" }
+	loadMenu { "ui/wm_ftquickmessage.menu" }
+	loadMenu { "ui/wm_ftquickmessageAlt.menu" }
+
+	// ingame
+	loadMenu { "ui/ingame_main.menu" }
+	loadMenu { "ui/ingame_vote.menu" }
+	loadMenu { "ui/ingame_vote_disabled.menu" }
+	loadMenu { "ui/ingame_vote_misc.menu" }
+	loadMenu { "ui/ingame_vote_misc_refrcon.menu" }
+	loadMenu { "ui/ingame_vote_map.menu" }
+	loadMenu { "ui/ingame_vote_players.menu" }
+	loadMenu { "ui/ingame_vote_players_warn.menu" }
+	loadMenu { "ui/ingame_serverinfo.menu" }
+	loadMenu { "ui/ingame_disconnect.menu" }
+	loadMenu { "ui/ingame_messagemode.menu" }
+	loadMenu { "ui/ingame_tapout.menu" }
+	loadMenu { "ui/ingame_tapoutlms.menu" }
+	loadMenu { "ui/ingame_vote_bot.menu" }
+}

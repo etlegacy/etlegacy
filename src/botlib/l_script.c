@@ -32,24 +32,6 @@
  * @brief lexicographical parser
  */
 
-//#define SCREWUP
-//#define BOTLIB
-//#define MEQCC
-
-#ifdef SCREWUP
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <string.h>
-#include <stdarg.h>
-#include "l_memory.h"
-#include "l_script.h"
-
-typedef enum { qfalse, qtrue }    qboolean;
-
-#endif //SCREWUP
-
-#ifdef BOTLIB
 //include files for usage in the bot library
 #include "../qcommon/q_shared.h"
 #include "botlib.h"
@@ -58,18 +40,6 @@ typedef enum { qfalse, qtrue }    qboolean;
 #include "l_memory.h"
 #include "l_log.h"
 #include "l_libvar.h"
-#endif //BOTLIB
-
-#ifdef MEQCC
-//include files for usage in MrElusive's QuakeC Compiler
-#include "qcc.h"
-#include "l_script.h"
-#include "l_memory.h"
-#include "l_log.h"
-
-#define qtrue   true
-#define qfalse  false
-#endif //MEQCC
 
 #define PUNCTABLE
 
@@ -246,12 +216,7 @@ void QDECL ScriptError(script_t *script, char *str, ...)
 	va_start(ap, str);
 	Q_vsnprintf(text, sizeof(text), str, ap);
 	va_end(ap);
-#ifdef BOTLIB
 	botimport.Print(PRT_ERROR, "file %s, line %d: %s\n", script->filename, script->line, text);
-#endif //BOTLIB
-#ifdef MEQCC
-	printf("error: file %s, line %d: %s\n", script->filename, script->line, text);
-#endif //MEQCC
 } //end of the function ScriptError
 //===========================================================================
 //
@@ -272,12 +237,7 @@ void QDECL ScriptWarning(script_t *script, char *str, ...)
 	va_start(ap, str);
 	Q_vsnprintf(text, sizeof(text), str, ap);
 	va_end(ap);
-#ifdef BOTLIB
 	botimport.Print(PRT_WARNING, "file %s, line %d: %s\n", script->filename, script->line, text);
-#endif //BOTLIB
-#ifdef MEQCC
-	printf("warning: file %s, line %d: %s\n", script->filename, script->line, text);
-#endif //MEQCC
 } //end of the function ScriptWarning
 //===========================================================================
 //
@@ -628,13 +588,13 @@ int PS_ReadName(script_t *script, token_t *token)
 void NumberValue(char *string, int subtype, unsigned long int *intvalue,
                  long double *floatvalue)
 {
-	unsigned long int dotfound = 0;
-
 	*intvalue   = 0;
 	*floatvalue = 0;
 	//floating point number
 	if (subtype & TT_FLOAT)
 	{
+		unsigned long int dotfound = 0;
+
 		while (*string)
 		{
 			if (*string == '.')
@@ -1468,26 +1428,7 @@ int ScriptSkipTo(script_t *script, char *value)
 	}
 	while (1);
 } //end of the function ScriptSkipTo
-#ifndef BOTLIB
-//============================================================================
-//
-// Parameter:				-
-// Returns:					-
-// Changes Globals:		-
-//============================================================================
-int FileLength(FILE *fp)
-{
-	int pos;
-	int end;
 
-	pos = ftell(fp);
-	fseek(fp, 0, SEEK_END);
-	end = ftell(fp);
-	fseek(fp, pos, SEEK_SET);
-
-	return end;
-} //end of the function FileLength
-#endif
 //============================================================================
 //
 // Parameter:				-
@@ -1497,17 +1438,12 @@ int FileLength(FILE *fp)
 int COM_Compress(char *data_p);
 script_t *LoadScriptFile(const char *filename)
 {
-#ifdef BOTLIB
 	fileHandle_t fp;
 	char         pathname[MAX_QPATH];
-#else
-	FILE *fp;
-#endif
-	int      length;
-	void     *buffer;
-	script_t *script;
+	int          length;
+	void         *buffer;
+	script_t     *script;
 
-#ifdef BOTLIB
 	if (strlen(basefolder))
 	{
 		Com_sprintf(pathname, sizeof(pathname), "%s/%s", basefolder, filename);
@@ -1521,15 +1457,6 @@ script_t *LoadScriptFile(const char *filename)
 	{
 		return NULL;
 	}
-#else
-	fp = fopen(filename, "rb");
-	if (!fp)
-	{
-		return NULL;
-	}
-
-	length = FileLength(fp);
-#endif
 
 	buffer = GetClearedMemory(sizeof(script_t) + length + 1);
 	script = (script_t *) buffer;
@@ -1546,24 +1473,14 @@ script_t *LoadScriptFile(const char *filename)
 	script->end_p = &script->buffer[length];
 	//set if there's a token available in script->token
 	script->tokenavailable = 0;
-	//
+
 	script->line     = 1;
 	script->lastline = 1;
-	//
+
 	SetScriptPunctuations(script, NULL);
-	//
-#ifdef BOTLIB
+
 	botimport.FS_Read(script->buffer, length, fp);
 	botimport.FS_FCloseFile(fp);
-#else
-	if (fread(script->buffer, length, 1, fp) != 1)
-	{
-		FreeMemory(buffer);
-		script = NULL;
-	} //end if
-	fclose(fp);
-#endif
-	//
 
 	return script;
 } //end of the function LoadScriptFile

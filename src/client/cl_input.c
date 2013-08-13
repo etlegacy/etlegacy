@@ -59,7 +59,7 @@ at the same time.
 
 static kbutton_t kb[NUM_BUTTONS];
 
-// Arnout: doubleTap button mapping
+// doubleTap button mapping
 static kbuttons_t dtmapping[] =
 {
 	-1,                 // DT_NONE
@@ -80,10 +80,6 @@ void IN_MLookDown(void)
 void IN_MLookUp(void)
 {
 	kb[KB_MLOOK].active = qfalse;
-	if (!cl_freelook->integer)
-	{
-//      IN_CenterView ();
-	}
 }
 
 void IN_KeyDown(kbutton_t *b)
@@ -186,8 +182,6 @@ void IN_KeyUp(kbutton_t *b)
 	b->active = qfalse;
 }
 
-
-
 /*
 ===============
 CL_KeyState
@@ -198,9 +192,8 @@ Returns the fraction of the frame that the key was down
 float CL_KeyState(kbutton_t *key)
 {
 	float val;
-	int   msec;
+	int   msec = key->msec;
 
-	msec      = key->msec;
 	key->msec = 0;
 
 	if (key->active)
@@ -236,8 +229,6 @@ float CL_KeyState(kbutton_t *key)
 
 	return val;
 }
-
-
 
 void IN_UpDown(void)
 {
@@ -396,11 +387,10 @@ void IN_SprintUp(void)
 	IN_KeyUp(&kb[KB_BUTTONS5]);
 }
 
-
 // wbuttons (wolf buttons)
 void IN_Wbutton0Down(void)
 {
-	IN_KeyDown(&kb[KB_WBUTTONS0]);         //----(SA) secondary fire button
+	IN_KeyDown(&kb[KB_WBUTTONS0]);         // secondary fire button
 }
 void IN_Wbutton0Up(void)
 {
@@ -408,7 +398,7 @@ void IN_Wbutton0Up(void)
 }
 void IN_ZoomDown(void)
 {
-	IN_KeyDown(&kb[KB_WBUTTONS1]);         //----(SA)   zoom key
+	IN_KeyDown(&kb[KB_WBUTTONS1]);         // zoom key
 }
 void IN_ZoomUp(void)
 {
@@ -416,7 +406,7 @@ void IN_ZoomUp(void)
 }
 void IN_ReloadDown(void)
 {
-	IN_KeyDown(&kb[KB_WBUTTONS3]);         //----(SA)   manual weapon re-load
+	IN_KeyDown(&kb[KB_WBUTTONS3]);         // manual weapon re-load
 }
 void IN_ReloadUp(void)
 {
@@ -424,7 +414,7 @@ void IN_ReloadUp(void)
 }
 void IN_LeanLeftDown(void)
 {
-	IN_KeyDown(&kb[KB_WBUTTONS4]);         //----(SA)   lean left
+	IN_KeyDown(&kb[KB_WBUTTONS4]);         // lean left
 }
 void IN_LeanLeftUp(void)
 {
@@ -432,15 +422,15 @@ void IN_LeanLeftUp(void)
 }
 void IN_LeanRightDown(void)
 {
-	IN_KeyDown(&kb[KB_WBUTTONS5]);         //----(SA)   lean right
+	IN_KeyDown(&kb[KB_WBUTTONS5]);         // lean right
 }
 void IN_LeanRightUp(void)
 {
 	IN_KeyUp(&kb[KB_WBUTTONS5]);
 }
 
-// Rafael Kick
-// Arnout: now wbutton prone
+// Kick
+// now wbutton prone
 void IN_ProneDown(void)
 {
 	IN_KeyDown(&kb[KB_WBUTTONS7]);
@@ -459,19 +449,6 @@ void IN_ButtonUp(void)
 	IN_KeyUp(&kb[KB_BUTTONS1]);
 }
 
-/*
-void IN_CenterView (void) {
-    cl.viewangles[PITCH] = -SHORT2ANGLE(cl.snap.ps.delta_angles[PITCH]);
-}
-*/
-
-void IN_Notebook(void)
-{
-	//if ( cls.state == CA_ACTIVE && !clc.demoplaying ) {
-	//VM_Call( uivm, UI_SET_ACTIVE_MENU, UIMENU_NOTEBOOK);  // startup notebook
-	//}
-}
-
 void IN_Help(void)
 {
 	if (cls.state == CA_ACTIVE && !clc.demoplaying)
@@ -480,19 +457,13 @@ void IN_Help(void)
 	}
 }
 
-
 //==========================================================================
 cvar_t *cl_yawspeed;
 cvar_t *cl_pitchspeed;
-
 cvar_t *cl_run;
-
 cvar_t *cl_anglespeedkey;
-
 cvar_t *cl_recoilPitch;
-
-cvar_t *cl_bypassMouseInput;        // NERVE - SMF
-
+cvar_t *cl_bypassMouseInput;
 cvar_t *cl_doubletapdelay;
 
 /*
@@ -535,13 +506,12 @@ Sets the usercmd_t based on key states
 void CL_KeyMove(usercmd_t *cmd)
 {
 	int movespeed;
-	int forward, side, up;
+	int forward = 0, side = 0, up = 0;
 
-	//
 	// adjust for speed key / running
 	// the walking flag is to keep animations consistant
 	// even during acceleration and develeration
-	//
+
 	if (kb[KB_SPEED].active ^ cl_run->integer)
 	{
 		movespeed     = 127;
@@ -553,9 +523,6 @@ void CL_KeyMove(usercmd_t *cmd)
 		movespeed     = 64;
 	}
 
-	forward = 0;
-	side    = 0;
-	up      = 0;
 	if (kb[KB_STRAFE].active)
 	{
 		side += movespeed * CL_KeyState(&kb[KB_RIGHT]);
@@ -565,7 +532,6 @@ void CL_KeyMove(usercmd_t *cmd)
 	side += movespeed * CL_KeyState(&kb[KB_MOVERIGHT]);
 	side -= movespeed * CL_KeyState(&kb[KB_MOVELEFT]);
 
-//----(SA)  added
 	if (cmd->buttons & BUTTON_ACTIVATE)
 	{
 		if (side > 0)
@@ -579,7 +545,6 @@ void CL_KeyMove(usercmd_t *cmd)
 
 		side = 0;   // disallow the strafe when holding 'activate'
 	}
-//----(SA)  end
 
 	up += movespeed * CL_KeyState(&kb[KB_UP]);
 	up -= movespeed * CL_KeyState(&kb[KB_DOWN]);
@@ -587,15 +552,11 @@ void CL_KeyMove(usercmd_t *cmd)
 	forward += movespeed * CL_KeyState(&kb[KB_FORWARD]);
 	forward -= movespeed * CL_KeyState(&kb[KB_BACK]);
 
-	// fretn - moved this to bg_pmove.c
-	//if (!(cl.snap.ps.persistant[PERS_HWEAPON_USE]))
-	//{
 	cmd->forwardmove = ClampChar(forward);
 	cmd->rightmove   = ClampChar(side);
 	cmd->upmove      = ClampChar(up);
-	//}
 
-	// Arnout: double tap
+	// double tap
 	cmd->doubleTap = DT_NONE; // reset
 	if (com_frameTime - cl.doubleTap.lastdoubleTap > cl_doubletapdelay->integer + 150 + cls.frametime)       // double tap only once every 500 msecs (add
 	{   // frametime for low(-ish) fps situations)
@@ -642,8 +603,7 @@ void CL_MouseEvent(int dx, int dy, int time)
 {
 	if (cls.keyCatchers & KEYCATCH_UI)
 	{
-
-		// NERVE - SMF - if we just want to pass it along to game
+		// if we just want to pass it along to game
 		if (cl_bypassMouseInput->integer == 1)
 		{
 			cl.mouseDx[cl.mouseIndex] += dx;
@@ -653,7 +613,6 @@ void CL_MouseEvent(int dx, int dy, int time)
 		{
 			VM_Call(uivm, UI_MOUSE_EVENT, dx, dy);
 		}
-
 	}
 	else if (cls.keyCatchers & KEYCATCH_CGAME)
 	{
@@ -685,7 +644,7 @@ void CL_JoystickEvent(int axis, int value, int time)
 {
 	if (axis < 0 || axis >= MAX_JOYSTICK_AXIS)
 	{
-		Com_Error(ERR_DROP, "CL_JoystickEvent: bad axis %i\n", axis);
+		Com_Error(ERR_DROP, "CL_JoystickEvent: bad axis %i", axis);
 	}
 	cl.joystickAxis[axis] = value;
 }
@@ -713,9 +672,6 @@ void CL_JoystickMove(usercmd_t *cmd)
 		anglespeed = 0.001 * cls.frametime;
 	}
 
-#ifdef __MACOS__
-	cmd->rightmove = ClampChar(cmd->rightmove + cl.joystickAxis[AXIS_SIDE]);
-#else
 	if (!kb[KB_STRAFE].active)
 	{
 		cl.viewangles[YAW] += anglespeed * cl_yawspeed->value * cl.joystickAxis[AXIS_SIDE];
@@ -724,7 +680,7 @@ void CL_JoystickMove(usercmd_t *cmd)
 	{
 		cmd->rightmove = ClampChar(cmd->rightmove + cl.joystickAxis[AXIS_SIDE]);
 	}
-#endif
+
 	if (kb[KB_MLOOK].active)
 	{
 		cl.viewangles[PITCH] += anglespeed * cl_pitchspeed->value * cl.joystickAxis[AXIS_FORWARD];
@@ -769,24 +725,12 @@ void CL_MouseMove(usercmd_t *cmd)
 	// scale by FOV
 	accelSensitivity *= cl.cgameSensitivity;
 
-	/*  NERVE - SMF - this has moved to CG_CalcFov to fix zoomed-in/out transition movement bug
-	    if ( cl.snap.ps.stats[STAT_ZOOMED_VIEW] ) {
-	        if(cl.snap.ps.weapon == WP_SNIPERRIFLE) {
-	            accelSensitivity *= 0.1;
-	        }
-	        else if(cl.snap.ps.weapon == WP_SNOOPERSCOPE) {
-	            accelSensitivity *= 0.2;
-	        }
-	    }
-	*/
 	if (rate && cl_showMouseRate->integer)
 	{
 		Com_Printf("%f : %f\n", rate, accelSensitivity);
 	}
 
-// Ridah, experimenting with a slow tracking gun
-
-	// Rafael - mg42
+	// mg42
 	if (cl.snap.ps.persistant[PERS_HWEAPON_USE])
 	{
 		mx *= 2.5; //(accelSensitivity * 0.1);
@@ -823,7 +767,6 @@ void CL_MouseMove(usercmd_t *cmd)
 	}
 }
 
-
 /*
 ==============
 CL_CmdButtons
@@ -833,11 +776,10 @@ void CL_CmdButtons(usercmd_t *cmd)
 {
 	int i;
 
-	//
 	// figure button bits
 	// send a button bit even if the key was pressed and released in
 	// less than a frame
-	//
+
 	for (i = 0 ; i < 7 ; i++)
 	{
 		if (kb[KB_BUTTONS0 + i].active || kb[KB_BUTTONS0 + i].wasPressed)
@@ -847,7 +789,7 @@ void CL_CmdButtons(usercmd_t *cmd)
 		kb[KB_BUTTONS0 + i].wasPressed = qfalse;
 	}
 
-	for (i = 0 ; i < 8 ; i++)         // Arnout: this was i < 7, but there are 8 wbuttons
+	for (i = 0 ; i < 8 ; i++)         // this was i < 7, but there are 8 wbuttons
 	{
 		if (kb[KB_WBUTTONS0 + i].active || kb[KB_WBUTTONS0 + i].wasPressed)
 		{
@@ -868,13 +810,12 @@ void CL_CmdButtons(usercmd_t *cmd)
 		cmd->buttons |= BUTTON_ANY;
 	}
 
-	// Arnout: clear 'waspressed' from double tap buttons
+	// clear 'waspressed' from double tap buttons
 	for (i = 1; i < DT_NUM; i++)
 	{
 		kb[dtmapping[i]].wasPressed = qfalse;
 	}
 }
-
 
 /*
 ==============
@@ -890,7 +831,7 @@ void CL_FinishMove(usercmd_t *cmd)
 
 	cmd->flags = cl.cgameFlags;
 
-	cmd->identClient = cl.cgameMpIdentClient;   // NERVE - SMF
+	cmd->identClient = cl.cgameMpIdentClient;
 
 	// send the current server time so the amount of movement
 	// can be determined without allowing cheating
@@ -901,7 +842,6 @@ void CL_FinishMove(usercmd_t *cmd)
 		cmd->angles[i] = ANGLE2SHORT(cl.viewangles[i]);
 	}
 }
-
 
 /*
 =================
@@ -942,7 +882,7 @@ usercmd_t CL_CreateCmd(void)
 		cl.viewangles[PITCH] = oldAngles[PITCH] - 90;
 	}
 
-	// RF, set the kickAngles so aiming is effected
+	// set the kickAngles so aiming is effected
 	recoilAdd = cl_recoilPitch->value;
 	if (Q_fabs(cl.viewangles[PITCH] + recoilAdd) < 40)
 	{
@@ -970,7 +910,6 @@ usercmd_t CL_CreateCmd(void)
 	return cmd;
 }
 
-
 /*
 =================
 CL_CreateNewCommands
@@ -997,7 +936,6 @@ void CL_CreateNewCommands(void)
 		frame_msec = 200;
 	}
 	old_com_frameTime = com_frameTime;
-
 
 	// generate a command for this frame
 	cl.cmdNumber++;
@@ -1133,7 +1071,7 @@ void CL_WritePacket(void)
 	MSG_WriteLong(&buf, clc.serverCommandSequence);
 
 	// write any unacknowledged clientCommands
-	// NOTE TTimo: if you verbose this, you will see that there are quite a few duplicates
+	// NOTE: if you verbose this, you will see that there are quite a few duplicates
 	// typically several unacknowledged cp or userinfo commands stacked up
 	for (i = clc.reliableAcknowledge + 1 ; i <= clc.reliableSequence ; i++)
 	{
@@ -1198,9 +1136,7 @@ void CL_WritePacket(void)
 		}
 	}
 
-	//
 	// deliver the message
-	//
 	packetNum                             = clc.netchan.outgoingSequence & PACKET_MASK;
 	cl.outPackets[packetNum].p_realtime   = cls.realtime;
 	cl.outPackets[packetNum].p_serverTime = oldcmd->serverTime;
@@ -1216,7 +1152,7 @@ void CL_WritePacket(void)
 	// clients never really should have messages large enough
 	// to fragment, but in case they do, fire them all off
 	// at once
-	// TTimo: this causes a packet burst, which is bad karma for winsock
+	// - this causes a packet burst, which is bad karma for winsock
 	// added a WARNING message, we'll see if there are legit situations where this happens
 	while (clc.netchan.unsentFragments)
 	{
@@ -1272,8 +1208,6 @@ CL_InitInput
 */
 void CL_InitInput(void)
 {
-//  Cmd_AddCommand ("centerview",IN_CenterView);    // this is an exploit nowadays
-
 	Cmd_AddCommand("+moveup", IN_UpDown);
 	Cmd_AddCommand("-moveup", IN_UpUp);
 	Cmd_AddCommand("+movedown", IN_DownDown);
@@ -1321,11 +1255,11 @@ void CL_InitInput(void)
 	Cmd_AddCommand("-sprint", IN_SprintUp);
 
 	// wolf buttons
-	Cmd_AddCommand("+attack2", IN_Wbutton0Down);          //----(SA) secondary firing
+	Cmd_AddCommand("+attack2", IN_Wbutton0Down);          // secondary firing
 	Cmd_AddCommand("-attack2", IN_Wbutton0Up);
-	Cmd_AddCommand("+zoom", IN_ZoomDown);             //
+	Cmd_AddCommand("+zoom", IN_ZoomDown);
 	Cmd_AddCommand("-zoom", IN_ZoomUp);
-	Cmd_AddCommand("+reload", IN_ReloadDown);             //
+	Cmd_AddCommand("+reload", IN_ReloadDown);
 	Cmd_AddCommand("-reload", IN_ReloadUp);
 	Cmd_AddCommand("+leanleft", IN_LeanLeftDown);
 	Cmd_AddCommand("-leanleft", IN_LeanLeftUp);
@@ -1336,13 +1270,11 @@ void CL_InitInput(void)
 	Cmd_AddCommand("+mlook", IN_MLookDown);
 	Cmd_AddCommand("-mlook", IN_MLookUp);
 
-	//Cmd_AddCommand ("notebook",IN_Notebook);
 	Cmd_AddCommand("help", IN_Help);
 
 	cl_nodelta   = Cvar_Get("cl_nodelta", "0", 0);
 	cl_debugMove = Cvar_Get("cl_debugMove", "0", 0);
 }
-
 
 /*
 ============

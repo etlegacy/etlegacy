@@ -34,127 +34,6 @@
 #include "tr_local.h"
 
 /*
-=================
-R_CullGenericSurface - ydnar
-based on R_CullTriSurf()
-this culls the basic subset of all triangle/mesh map drawsurfaces
-=================
-*/
-
-#if 0
-
-#define SPHERE_CULL
-
-#ifdef SPHERE_CULL
-
-/*static qboolean   R_CullGenericSurface( srfGeneric_t *surface )
-{
-    int     cull;
-
-
-    // allow disabling of foliage
-    if( surface->surfaceType == SF_FOLIAGE && !r_drawfoliage->integer )
-        return qtrue;
-
-    // allow disabling of foliage
-    if( surface->surfaceType == SF_GRID && r_nocurves->integer )
-        return qtrue;
-
-    // try sphere cull
-    if( tr.currentEntityNum != ENTITYNUM_WORLD )
-        cull = R_CullLocalPointAndRadius( surface->origin, surface->radius );
-    else
-        cull = R_CullPointAndRadius( surface->origin, surface->radius );
-    if( cull == CULL_OUT )
-        return qtrue;
-
-    // it's ok
-    return qfalse;
-}*/
-
-#else
-
-static qboolean R_CullTriSurf(srfTriangles_t *cv)
-{
-	int boxCull;
-
-	boxCull = R_CullLocalBox(cv->bounds);
-
-	if (boxCull == CULL_OUT)
-	{
-		return qtrue;
-	}
-	return qfalse;
-}
-
-
-/*
-=================
-R_CullGrid
-
-Returns true if the grid is completely culled away.
-Also sets the clipped hint bit in tess
-=================
-*/
-static qboolean R_CullGrid(srfGridMesh_t *cv)
-{
-	int boxCull;
-	int sphereCull;
-
-	if (r_nocurves->integer)
-	{
-		return qtrue;
-	}
-
-	if (tr.currentEntityNum != ENTITYNUM_WORLD)
-	{
-		sphereCull = R_CullLocalPointAndRadius(cv->localOrigin, cv->meshRadius);
-	}
-	else
-	{
-		sphereCull = R_CullPointAndRadius(cv->localOrigin, cv->meshRadius);
-	}
-
-	// check for trivial reject
-	if (sphereCull == CULL_OUT)
-	{
-		tr.pc.c_sphere_cull_patch_out++;
-		return qtrue;
-	}
-	// check bounding box if necessary
-	else if (sphereCull == CULL_CLIP)
-	{
-		tr.pc.c_sphere_cull_patch_clip++;
-
-		boxCull = R_CullLocalBox(cv->meshBounds);
-
-		if (boxCull == CULL_OUT)
-		{
-			tr.pc.c_box_cull_patch_out++;
-			return qtrue;
-		}
-		else if (boxCull == CULL_IN)
-		{
-			tr.pc.c_box_cull_patch_in++;
-		}
-		else
-		{
-			tr.pc.c_box_cull_patch_clip++;
-		}
-	}
-	else
-	{
-		tr.pc.c_sphere_cull_patch_in++;
-	}
-
-	return qfalse;
-}
-
-#endif
-
-#endif // 0
-
-/*
 ================
 R_CullSurface
 
@@ -167,9 +46,6 @@ This will also allow mirrors on both sides of a model without recursion.
 static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *frontFace)
 {
 	srfGeneric_t *gen;
-	int          cull;
-	float        d;
-
 
 	// force to non-front facing
 	*frontFace = 0;
@@ -180,7 +56,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		return qfalse;
 	}
 
-	// ydnar: made surface culling generic, inline with q3map2 surface classification
+	// made surface culling generic, inline with q3map2 surface classification
 	switch (*surface)
 	{
 	case SF_FACE:
@@ -209,7 +85,8 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	// plane cull
 	if (gen->plane.type != PLANE_NON_PLANAR && r_facePlaneCull->integer)
 	{
-		d = DotProduct(tr.orientation.viewOrigin, gen->plane.normal) - gen->plane.dist;
+		float d = DotProduct(tr.orientation.viewOrigin, gen->plane.normal) - gen->plane.dist;
+
 		if (d > 0.0f)
 		{
 			*frontFace = 1;
@@ -239,6 +116,8 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	}
 
 	{
+		int cull;
+
 		// try sphere cull
 		if (tr.currentEntityNum != ENTITYNUM_WORLD)
 		{
@@ -248,6 +127,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		{
 			cull = R_CullPointAndRadius(gen->origin, gen->radius);
 		}
+
 		if (cull == CULL_OUT)
 		{
 			tr.pc.c_sphere_cull_out++;
@@ -261,121 +141,6 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	return qfalse;
 }
 
-#if 0
-static int R_DlightFace(srfSurfaceFace_t *face, int dlightBits)
-{
-	float    d;
-	int      i;
-	dlight_t *dl;
-
-
-	// ydnar: quick hack, need to rewrite for generic surfaces
-	return dlightBits;
-
-	for (i = 0 ; i < tr.refdef.num_dlights ; i++)
-	{
-		if (!(dlightBits & (1 << i)))
-		{
-			continue;
-		}
-		dl = &tr.refdef.dlights[i];
-		d  = DotProduct(dl->origin, face->plane.normal) - face->plane.dist;
-		if (d < -dl->radius || d > dl->radius)
-		{
-			// dlight doesn't reach the plane
-			dlightBits &= ~(1 << i);
-		}
-	}
-
-	if (!dlightBits)
-	{
-		tr.pc.c_dlightSurfacesCulled++;
-	}
-
-	face->dlightBits[tr.smpFrame] = dlightBits;
-	return dlightBits;
-}
-
-/*static int R_DlightGrid( srfGridMesh_t *grid, int dlightBits ) {
-    int         i;
-    dlight_t    *dl;
-
-    for ( i = 0 ; i < tr.refdef.num_dlights ; i++ ) {
-        if ( ! ( dlightBits & ( 1 << i ) ) ) {
-            continue;
-        }
-        dl = &tr.refdef.dlights[i];
-        if ( dl->origin[0] - dl->radius > grid->bounds[1][0]
-            || dl->origin[0] + dl->radius < grid->bounds[0][0]
-            || dl->origin[1] - dl->radius > grid->bounds[1][1]
-            || dl->origin[1] + dl->radius < grid->bounds[0][1]
-            || dl->origin[2] - dl->radius > grid->bounds[1][2]
-            || dl->origin[2] + dl->radius < grid->bounds[0][2] ) {
-            // dlight doesn't reach the bounds
-            dlightBits &= ~( 1 << i );
-        }
-    }
-
-    if ( !dlightBits ) {
-        tr.pc.c_dlightSurfacesCulled++;
-    }
-
-    grid->dlightBits[ tr.smpFrame ] = dlightBits;
-    return dlightBits;
-}*/
-
-
-// ydnar: fixed this function (can be used for trisurfs and foliage)
-
-static int R_DlightTrisurf(srfTriangles_t *srf, int dlightBits)
-
-#if 0
-{
-	// FIXME: more dlight culling to trisurfs...
-	surf->dlightBits[tr.smpFrame] = dlightBits;
-	return dlightBits;
-}
-#else
-{
-	int      i;
-	dlight_t *dl;
-	vec3_t   origin, delta;
-	float    radius2, dist2;
-
-
-	VectorCopy(srf->origin, origin);
-	radius2 = srf->radius * srf->radius;
-
-	for (i = 0; i < tr.refdef.num_dlights; i++)
-	{
-		if (!(dlightBits & (1 << i)))
-		{
-			continue;
-		}
-
-		dl = &tr.refdef.dlights[i];
-
-		VectorSubtract(dl->origin, srf->origin, delta);
-		dist2 = DotProduct(delta, delta) - (dl->radius * dl->radius);
-		if (dist2 > radius2)
-		{
-			dlightBits &= ~(1 << i);
-		}
-	}
-
-	// Com_Printf( "Surf: 0x%08X dlightBits: 0x%08X\n", srf, dlightBits );
-
-	if (!dlightBits)
-	{
-		tr.pc.c_dlightSurfacesCulled++;
-	}
-
-	srf->dlightBits[tr.smpFrame] = dlightBits;
-	return dlightBits;
-}
-#endif
-#endif // 0
-
 /*
 ====================
 R_DlightSurface
@@ -383,42 +148,10 @@ R_DlightSurface
 The given surface is going to be drawn, and it touches a leaf
 that is touched by one or more dlights, so try to throw out
 more dlights if possible.
+
+ made this use generic surface
 ====================
 */
-
-#if 0
-
-static int R_DlightSurface(msurface_t *surf, int dlightBits)
-{
-	if (*surf->data == SF_FACE)
-	{
-		dlightBits = R_DlightFace((srfSurfaceFace_t *)surf->data, dlightBits);
-	}
-	else if (*surf->data == SF_GRID)
-	{
-		dlightBits = R_DlightGrid((srfGridMesh_t *)surf->data, dlightBits);
-	}
-	else if (*surf->data == SF_TRIANGLES || *surf->data == SF_FOLIAGE)          // ydnar
-	{
-		dlightBits = R_DlightTrisurf((srfTriangles_t *)surf->data, dlightBits);
-	}
-	else
-	{
-		dlightBits = 0;
-	}
-
-	if (dlightBits)
-	{
-		tr.pc.c_dlightSurfaces++;
-	}
-
-	return dlightBits;
-}
-
-#else
-
-// ydnar: made this use generic surface
-
 static int R_DlightSurface(msurface_t *surface, int dlightBits)
 {
 	int          i;
@@ -426,11 +159,7 @@ static int R_DlightSurface(msurface_t *surface, int dlightBits)
 	float        radius;
 	srfGeneric_t *gen;
 
-
-	// get generic surface
-	gen = (srfGeneric_t *) surface->data;
-
-	// ydnar: made surface dlighting generic, inline with q3map2 surface classification
+	// made surface dlighting generic, inline with q3map2 surface classification
 	switch ((surfaceType_t) *surface->data)
 	{
 	case SF_FACE:
@@ -440,13 +169,15 @@ static int R_DlightSurface(msurface_t *surface, int dlightBits)
 		break;
 
 	default:
-		gen->dlightBits[tr.smpFrame] = 0;
 		return 0;
 	}
 
+	// get generic surface
+	gen = (srfGeneric_t *) surface->data;
+
 	// debug code
-	//% gen->dlightBits[ tr.smpFrame ] = dlightBits;
-	//% return dlightBits;
+	// gen->dlightBits = dlightBits;
+	// return dlightBits;
 
 	// try to cull out dlights
 	for (i = 0; i < tr.refdef.num_dlights; i++)
@@ -497,13 +228,9 @@ static int R_DlightSurface(msurface_t *surface, int dlightBits)
 	}
 
 	// set surface dlight bits and return
-	gen->dlightBits[tr.smpFrame] = dlightBits;
+	gen->dlightBits = dlightBits;
 	return dlightBits;
 }
-
-#endif
-
-
 
 /*
 ======================
@@ -512,7 +239,7 @@ R_AddWorldSurface
 */
 static void R_AddWorldSurface(msurface_t *surf, shader_t *shader, int dlightMap, int decalBits)
 {
-	int i, frontFace;
+	int frontFace;
 
 
 	if (surf->viewCount == tr.viewCount)
@@ -539,7 +266,9 @@ static void R_AddWorldSurface(msurface_t *surf, shader_t *shader, int dlightMap,
 	// add decals
 	if (decalBits)
 	{
-		// ydnar: project any decals
+		int i;
+
+		// project any decals
 		for (i = 0; i < tr.refdef.numDecalProjectors; i++)
 		{
 			if (decalBits & (1 << i))
@@ -554,13 +283,9 @@ static void R_AddWorldSurface(msurface_t *surf, shader_t *shader, int dlightMap,
 
 /*
 =============================================================
-
     BRUSH MODELS
-
 =============================================================
 */
-
-//----(SA) added
 
 /*
 =================
@@ -568,14 +293,11 @@ R_BmodelFogNum
 
 See if a sprite is inside a fog volume
 Return positive with /any part/ of the brush falling within a fog volume
+
+the original implementation of this function is a bit flaky...
 =================
 */
-
-// ydnar: the original implementation of this function is a bit flaky...
 int R_BmodelFogNum(trRefEntity_t *re, bmodel_t *bmodel)
-
-#if 1
-
 {
 	int   i, j;
 	fog_t *fog;
@@ -603,56 +325,6 @@ int R_BmodelFogNum(trRefEntity_t *re, bmodel_t *bmodel)
 	return 0;
 }
 
-#else
-
-{
-	int   i, j;
-	fog_t *fog;
-
-	for (i = 1 ; i < tr.world->numfogs ; i++)
-	{
-		fog = &tr.world->fogs[i];
-		for (j = 0 ; j < 3 ; j++)
-		{
-			if (re->e.origin[j] + bmodel->bounds[0][j] > fog->bounds[1][j])
-			{
-				break;
-			}
-			if (re->e.origin[j] + bmodel->bounds[0][j] < fog->bounds[0][j])
-			{
-				break;
-			}
-		}
-		if (j == 3)
-		{
-			return i;
-		}
-		for (j = 0 ; j < 3 ; j++)
-		{
-			if (re->e.origin[j] + bmodel->bounds[1][j] > fog->bounds[1][j])
-			{
-				break;
-			}
-			if (bmodel->bounds[1][j] < fog->bounds[0][j])
-			{
-				break;
-			}
-		}
-		if (j == 3)
-		{
-			return i;
-		}
-	}
-
-	return 0;
-}
-
-#endif
-
-//----(SA) done
-
-
-
 /*
 =================
 R_AddBrushModelSurfaces
@@ -678,23 +350,23 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 		return;
 	}
 
-	// ydnar: set current brush model to world
+	// set current brush model to world
 	tr.currentBModel = bmodel;
 
-	// ydnar: set model state for decals and dynamic fog
-	VectorCopy(ent->e.origin, bmodel->orientation[tr.smpFrame].origin);
-	VectorCopy(ent->e.axis[0], bmodel->orientation[tr.smpFrame].axis[0]);
-	VectorCopy(ent->e.axis[1], bmodel->orientation[tr.smpFrame].axis[1]);
-	VectorCopy(ent->e.axis[2], bmodel->orientation[tr.smpFrame].axis[2]);
-	bmodel->visible[tr.smpFrame]   = qtrue;
-	bmodel->entityNum[tr.smpFrame] = tr.currentEntityNum;
+	// set model state for decals and dynamic fog
+	VectorCopy(ent->e.origin, bmodel->orientation.origin);
+	VectorCopy(ent->e.axis[0], bmodel->orientation.axis[0]);
+	VectorCopy(ent->e.axis[1], bmodel->orientation.axis[1]);
+	VectorCopy(ent->e.axis[2], bmodel->orientation.axis[2]);
+	bmodel->visible   = qtrue;
+	bmodel->entityNum = tr.currentEntityNum;
 
 	R_DlightBmodel(bmodel);
 
 	// determine if in fog
 	fognum = R_BmodelFogNum(ent, bmodel);
 
-	// ydnar: project any decals
+	// project any decals
 	decalBits          = 0;
 	numLocalProjectors = 0;
 	for (i = 0; i < tr.refdef.numDecalProjectors; i++)
@@ -719,7 +391,7 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 		}
 	}
 
-	// ydnar: save old decal projectors
+	// save old decal projectors
 	savedNumDecalProjectors = tr.refdef.numDecalProjectors;
 	savedDecalProjectors    = tr.refdef.decalProjectors;
 
@@ -731,7 +403,7 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 	for (i = 0; i < bmodel->numSurfaces; i++)
 	{
 		(bmodel->firstSurface + i)->fogIndex = fognum;
-		// Arnout: custom shader support for brushmodels
+		// custom shader support for brushmodels
 		if (ent->e.customShader)
 		{
 			R_AddWorldSurface(bmodel->firstSurface + i, R_GetShaderByHandle(ent->e.customShader), tr.currentEntity->needDlights, decalBits);
@@ -742,37 +414,31 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 		}
 	}
 
-	// ydnar: restore old decal projectors
+	// restore old decal projectors
 	tr.refdef.numDecalProjectors = savedNumDecalProjectors;
 	tr.refdef.decalProjectors    = savedDecalProjectors;
 
-	// ydnar: add decal surfaces
+	// add decal surfaces
 	R_AddDecalSurfaces(bmodel);
 
-	// ydnar: clear current brush model
+	// clear current brush model
 	tr.currentBModel = NULL;
 }
 
-
 /*
 =============================================================
-
     WORLD MODEL
-
 =============================================================
 */
 
-
 /*
-R_AddLeafSurfaces() - ydnar
+R_AddLeafSurfaces()
 adds a leaf's drawsurfaces
 */
-
 static void R_AddLeafSurfaces(mnode_t *node, int dlightBits, int decalBits)
 {
 	int        c;
 	msurface_t *surf, **mark;
-
 
 	// add to count
 	tr.pc.c_leafs++;
@@ -817,7 +483,6 @@ static void R_AddLeafSurfaces(mnode_t *node, int dlightBits, int decalBits)
 	}
 }
 
-
 /*
 ================
 R_RecursiveWorldNode
@@ -827,7 +492,6 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 {
 	int      i, r;
 	dlight_t *dl;
-
 
 	do
 	{
@@ -894,7 +558,7 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 				}
 			}
 
-			// ydnar: farplane culling
+			// farplane culling
 			if (planeBits & 16)
 			{
 				r = BoxOnPlaneSide(node->mins, node->maxs, &tr.viewParms.frustum[4]);
@@ -910,7 +574,7 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 
 		}
 
-		// ydnar: cull dlights
+		// cull dlights
 		if (dlightBits)      //%    && node->contents != -1 )
 		{
 			for (i = 0; i < tr.refdef.num_dlights; i++)
@@ -935,7 +599,7 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 			}
 		}
 
-		// ydnar: cull decals
+		// cull decals
 		if (decalBits)
 		{
 			for (i = 0; i < tr.refdef.numDecalProjectors; i++)
@@ -972,10 +636,9 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 		return;
 	}
 
-	// ydnar: moved off to separate function
+	// moved off to separate function
 	R_AddLeafSurfaces(node, dlightBits, decalBits);
 }
-
 
 /*
 ===============
@@ -1037,11 +700,11 @@ R_inPVS
 */
 qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 {
-	mnode_t *leaf;
-	byte    *vis;
+	mnode_t    *leaf;
+	const byte *vis;
 
 	leaf = R_PointInLeaf(p1);
-	vis  = CM_ClusterPVS(leaf->cluster);
+	vis  = R_ClusterPVS(leaf->cluster);
 	leaf = R_PointInLeaf(p2);
 
 	if (!(vis[leaf->cluster >> 3] & (1 << (leaf->cluster & 7))))
@@ -1050,7 +713,6 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 	}
 	return qtrue;
 }
-
 
 /*
 ===============
@@ -1134,7 +796,7 @@ static void R_MarkLeaves(void)
 			continue;       // not visible
 		}
 
-		// ydnar: don't want to walk the entire bsp to add skybox surfaces
+		// don't want to walk the entire bsp to add skybox surfaces
 		if (tr.refdef.rdflags & RDF_SKYBOXPORTAL)
 		{
 			// this only happens once, as game/cgame know the origin of the skybox
@@ -1161,7 +823,6 @@ static void R_MarkLeaves(void)
 	}
 }
 
-
 /*
 =============
 R_AddWorldSurfaces
@@ -1182,7 +843,7 @@ void R_AddWorldSurfaces(void)
 	tr.currentEntityNum = ENTITYNUM_WORLD;
 	tr.shiftedEntityNum = tr.currentEntityNum << QSORT_ENTITYNUM_SHIFT;
 
-	// ydnar: set current brush model to world
+	// set current brush model to world
 	tr.currentBModel = &tr.world->bmodels[0];
 
 	// clear out the visible min/max
@@ -1205,7 +866,7 @@ void R_AddWorldSurfaces(void)
 		// perform frustum culling and add all the potentially visible surfaces
 		R_RecursiveWorldNode(tr.world->nodes, 255, tr.refdef.dlightBits, tr.refdef.decalBits);
 
-		// ydnar: add decal surfaces
+		// add decal surfaces
 		R_AddDecalSurfaces(tr.world->bmodels);
 	}
 

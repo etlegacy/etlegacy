@@ -59,12 +59,9 @@ void SHOWNET(msg_t *msg, char *s)
 
 /*
 =========================================================================
-
 MESSAGE PARSING
-
 =========================================================================
 */
-#if 1
 
 int entLastVisible[MAX_CLIENTS];
 
@@ -187,8 +184,6 @@ qboolean isEntVisible(entityState_t *ent)
 	return qfalse;
 }
 
-#endif
-
 /*
 ==================
 CL_DeltaEntity
@@ -197,8 +192,7 @@ Parses deltas from the given base and adds the resulting entity
 to the current frame
 ==================
 */
-void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *old,
-                    qboolean unchanged)
+void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *old, qboolean unchanged)
 {
 	entityState_t *state;
 
@@ -220,8 +214,7 @@ void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *
 		return;     // entity was delta removed
 	}
 
-#if 1
-	// DHM - Nerve :: Only draw clients if visible
+	// Only draw clients if visible
 	if (clc.onlyVisibleClients)
 	{
 		if (state->number < MAX_CLIENTS)
@@ -240,7 +233,6 @@ void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *
 			}
 		}
 	}
-#endif
 
 	cl.parseEntitiesNum++;
 	frame->numEntities++;
@@ -249,21 +241,19 @@ void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *
 /*
 ==================
 CL_ParsePacketEntities
-
 ==================
 */
 void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe)
 {
 	int           newnum;
-	entityState_t *oldstate;
-	int           oldindex, oldnum;
+	entityState_t *oldstate = NULL;
+	int           oldindex  = 0, oldnum;
 
 	newframe->parseEntitiesNum = cl.parseEntitiesNum;
 	newframe->numEntities      = 0;
 
 	// delta from the entities present in oldframe
-	oldindex = 0;
-	oldstate = NULL;
+
 	if (!oldframe)
 	{
 		oldnum = 99999;
@@ -294,7 +284,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 
 		if (msg->readcount > msg->cursize)
 		{
-			Com_Error(ERR_DROP, "CL_ParsePacketEntities: end of message\n");
+			Com_Error(ERR_DROP, "CL_ParsePacketEntities: end of message");
 		}
 
 		while (oldnum < newnum)
@@ -386,7 +376,6 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 	}
 }
 
-
 /*
 ================
 CL_ParseSnapshot
@@ -443,9 +432,9 @@ void CL_ParseSnapshot(msg_t *msg)
 		if (clc.demorecording)
 		{
 			clc.demowaiting = qfalse;   // we can start recording now
-//          if(cl_autorecord->integer) {
-//              Cvar_Set( "g_synchronousClients", "0" );
-//          }
+			//if(cl_autorecord->integer) {
+			//  Cvar_Set( "g_synchronousClients", "0" );
+			//}
 		}
 		else
 		{
@@ -515,7 +504,7 @@ void CL_ParseSnapshot(msg_t *msg)
 
 	if (len > sizeof(newSnap.areamask))
 	{
-		Com_Error(ERR_DROP, "CL_ParseSnapshot: Invalid size %d for areamask.\n", len);
+		Com_Error(ERR_DROP, "CL_ParseSnapshot: Invalid size %d for areamask.", len);
 		return;
 	}
 
@@ -583,10 +572,10 @@ void CL_ParseSnapshot(msg_t *msg)
 	cl.newSnapshots = qtrue;
 }
 
-
 //=====================================================================
 
 int cl_connectedToPureServer;
+int cl_connectedToCheatServer;
 
 /*
 ==================
@@ -604,11 +593,11 @@ void CL_SystemInfoChanged(void)
 	const char *s, *t;
 	char       key[BIG_INFO_KEY];
 	char       value[BIG_INFO_VALUE];
+	qboolean   gameSet;
 
 	systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
-	// NOTE TTimo:
-	// when the serverId changes, any further messages we send to the server will use this new serverId
-	// show_bug.cgi?id=475
+
+	// NOTE: when the serverId changes, any further messages we send to the server will use this new serverId
 	// in some cases, outdated cp commands might get sent with this news serverId
 	cl.serverId = atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
 
@@ -620,9 +609,9 @@ void CL_SystemInfoChanged(void)
 		return;
 	}
 
-	s         = Info_ValueForKey(systemInfo, "sv_cheats");
-	sv_cheats = atoi(s);      //bani
-	if (atoi(s) == 0)
+	s                         = Info_ValueForKey(systemInfo, "sv_cheats");
+	cl_connectedToCheatServer = atoi(s);      //bani
+	if (!cl_connectedToCheatServer)
 	{
 		Cvar_SetCheatState();
 	}
@@ -636,20 +625,59 @@ void CL_SystemInfoChanged(void)
 	t = Info_ValueForKey(systemInfo, "sv_referencedPakNames");
 	FS_PureServerSetReferencedPaks(s, t);
 
+	gameSet = qfalse;
 	// scan through all the variables in the systeminfo and locally set cvars to match
 	s = systemInfo;
 	while (s)
 	{
+		int cvar_flags;
+
 		Info_NextPair(&s, key, value);
 		if (!key[0])
 		{
 			break;
 		}
 
-		Cvar_Set(key, value);
+		// ehw!
+		if (!Q_stricmp(key, "fs_game"))
+		{
+			if (FS_CheckDirTraversal(value))
+			{
+				Com_Printf(S_COLOR_YELLOW "WARNING: Server sent invalid fs_game value %s\n", value);
+				continue;
+			}
+
+			gameSet = qtrue;
+		}
+
+		if ((cvar_flags = Cvar_Flags(key)) == CVAR_NONEXISTENT)
+		{
+			Cvar_Get(key, value, CVAR_SERVER_CREATED | CVAR_ROM);
+		}
+		else
+		{
+			// If this cvar may not be modified by a server discard the value.
+			if (!(cvar_flags & (CVAR_SYSTEMINFO | CVAR_SERVER_CREATED | CVAR_USER_CREATED)))
+			{
+				if (Q_stricmp(key, "g_synchronousClients") && Q_stricmp(key, "pmove_fixed") &&
+				    Q_stricmp(key, "pmove_msec"))
+				{
+					Com_Printf(S_COLOR_YELLOW "WARNING: server is not allowed to set %s=%s\n", key, value);
+					continue;
+				}
+			}
+
+			Cvar_SetSafe(key, value);
+		}
 	}
 
-	// Arnout: big hack to clear the image cache on a pure change
+	// if game folder should not be set and it is set at the client side
+	if (!gameSet && *Cvar_VariableString("fs_game"))
+	{
+		Cvar_Set("fs_game", "");
+	}
+
+	// big hack to clear the image cache on a pure change
 	//cl_connectedToPureServer = Cvar_VariableValue( "sv_pure" );
 	if (Cvar_VariableValue("sv_pure"))
 	{
@@ -683,7 +711,7 @@ void CL_ParseGamestate(msg_t *msg)
 	int           cmd;
 	char          *s;
 
-	Con_Close();
+	// Con_Close();
 
 	clc.connectPacketCount = 0;
 
@@ -711,14 +739,14 @@ void CL_ParseGamestate(msg_t *msg)
 			i = MSG_ReadShort(msg);
 			if (i < 0 || i >= MAX_CONFIGSTRINGS)
 			{
-				Com_Error(ERR_DROP, "configstring > MAX_CONFIGSTRINGS\n");
+				Com_Error(ERR_DROP, "configstring > MAX_CONFIGSTRINGS");
 			}
 			s   = MSG_ReadBigString(msg);
 			len = strlen(s);
 
 			if (len + 1 + cl.gameState.dataCount > MAX_GAMESTATE_CHARS)
 			{
-				Com_Error(ERR_DROP, "MAX_GAMESTATE_CHARS exceeded\n");
+				Com_Error(ERR_DROP, "MAX_GAMESTATE_CHARS exceeded");
 			}
 
 			// append it to the gameState string buffer
@@ -731,7 +759,7 @@ void CL_ParseGamestate(msg_t *msg)
 			newnum = MSG_ReadBits(msg, GENTITYNUM_BITS);
 			if (newnum < 0 || newnum >= MAX_GENTITIES)
 			{
-				Com_Error(ERR_DROP, "Baseline number out of range: %i\n", newnum);
+				Com_Error(ERR_DROP, "Baseline number out of range: %i", newnum);
 			}
 			memset(&nullstate, 0, sizeof(nullstate));
 			es = &cl.entityBaselines[newnum];
@@ -739,7 +767,7 @@ void CL_ParseGamestate(msg_t *msg)
 		}
 		else
 		{
-			Com_Error(ERR_DROP, "CL_ParseGamestate: bad command byte\n");
+			Com_Error(ERR_DROP, "CL_ParseGamestate: bad command byte");
 		}
 	}
 
@@ -750,11 +778,13 @@ void CL_ParseGamestate(msg_t *msg)
 	// parse serverId and other cvars
 	CL_SystemInfoChanged();
 
-	// Arnout: verify if we have all official pakfiles. As we won't
+	// Verify if we have all official pakfiles. As we won't
 	// be downloading them, we should be kicked for not having them.
 	if (cl_connectedToPureServer && !FS_VerifyOfficialPaks())
 	{
-		Com_Error(ERR_DROP, "Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version.\n");
+		//Com_Error(ERR_FATAL, "ERROR: Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version.");
+		//Brought this back temporarily - Jacker
+		Com_Printf(S_COLOR_YELLOW "WARNING: Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version.\n");
 	}
 
 	// reinitialize the filesystem if the game directory has changed
@@ -767,7 +797,6 @@ void CL_ParseGamestate(msg_t *msg)
 	// make sure the game starts
 	Cvar_Set("cl_paused", "0");
 }
-
 
 //=====================================================================
 
@@ -794,7 +823,7 @@ void CL_ParseDownload(msg_t *msg)
 	// read the data
 	block = MSG_ReadShort(msg);
 
-	// TTimo - www dl
+	// www dl
 	// if we haven't acked the download redirect yet
 	if (block == -1)
 	{
@@ -828,7 +857,7 @@ void CL_ParseDownload(msg_t *msg)
 			// make downloadTempName an OS path
 			Q_strncpyz(cls.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), cls.downloadTempName, ""), sizeof(cls.downloadTempName));
 			cls.downloadTempName[strlen(cls.downloadTempName) - 1] = '\0';
-			if (!DL_BeginDownload(cls.downloadTempName, cls.downloadName, com_developer->integer))
+			if (!DL_BeginDownload(cls.downloadTempName, cls.downloadName))
 			{
 				// setting bWWWDl to false after sending the wwwdl fail doesn't work
 				// not sure why, but I suspect we have to eat all remaining block -1 that the server has sent us
@@ -867,7 +896,7 @@ void CL_ParseDownload(msg_t *msg)
 
 		if (clc.downloadSize < 0)
 		{
-			Com_Error(ERR_DROP, "%s\n", MSG_ReadString(msg));
+			Com_Error(ERR_DROP, "%s", MSG_ReadString(msg));
 			return;
 		}
 	}
@@ -875,7 +904,7 @@ void CL_ParseDownload(msg_t *msg)
 	size = MSG_ReadShort(msg);
 	if (size < 0 || size > sizeof(data))
 	{
-		Com_Error(ERR_DROP, "CL_ParseDownload: Invalid size %d for download chunk.\n", size);
+		Com_Error(ERR_DROP, "CL_ParseDownload: Invalid size %d for download chunk.", size);
 		return;
 	}
 
@@ -995,10 +1024,7 @@ CL_ParseServerMessage
 */
 void CL_ParseServerMessage(msg_t *msg)
 {
-	int   cmd;
-	msg_t msgback;
-
-	msgback = *msg;
+	int cmd;
 
 	if (cl_shownet->integer == 1)
 	{
@@ -1013,20 +1039,18 @@ void CL_ParseServerMessage(msg_t *msg)
 
 	// get the reliable sequence acknowledge number
 	clc.reliableAcknowledge = MSG_ReadLong(msg);
-	//
+
 	if (clc.reliableAcknowledge < clc.reliableSequence - MAX_RELIABLE_COMMANDS)
 	{
 		clc.reliableAcknowledge = clc.reliableSequence;
 	}
 
-	//
 	// parse the message
-	//
 	while (1)
 	{
 		if (msg->readcount > msg->cursize)
 		{
-			Com_Error(ERR_DROP, "CL_ParseServerMessage: read past end of server message\n");
+			Com_Error(ERR_DROP, "CL_ParseServerMessage: read past end of server message");
 			break;
 		}
 
@@ -1054,7 +1078,7 @@ void CL_ParseServerMessage(msg_t *msg)
 		switch (cmd)
 		{
 		default:
-			Com_Error(ERR_DROP, "CL_ParseServerMessage: Illegible server message %d\n", cmd);
+			Com_Error(ERR_DROP, "CL_ParseServerMessage: Illegible server message %d", cmd);
 			break;
 		case svc_nop:
 			break;

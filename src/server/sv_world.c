@@ -60,18 +60,14 @@ clipHandle_t SV_ClipHandleForEntity(const sharedEntity_t *ent)
 	return CM_TempBoxModel(ent->r.mins, ent->r.maxs, qfalse);
 }
 
-
-
 /*
 ===============================================================================
-
 ENTITY CHECKING
 
 To avoid linearly searching through lists of entities during environment testing,
 the world is carved up with an evenly spaced, axially aligned bsp tree.  Entities
 are kept in chains either at the final leafs, or at the first node that splits
 them, which prevents having to deal with multiple fragments of a single entity.
-
 ===============================================================================
 */
 
@@ -88,7 +84,6 @@ typedef struct worldSector_s
 
 worldSector_t sv_worldSectors[AREA_NODES];
 int           sv_numworldSectors;
-
 
 /*
 ===============
@@ -123,11 +118,10 @@ Builds a uniformly subdivided tree for the given world size
 */
 worldSector_t *SV_CreateworldSector(int depth, vec3_t mins, vec3_t maxs)
 {
-	worldSector_t *anode;
+	worldSector_t *anode = &sv_worldSectors[sv_numworldSectors];
 	vec3_t        size;
 	vec3_t        mins1, maxs1, mins2, maxs2;
 
-	anode = &sv_worldSectors[sv_numworldSectors];
 	sv_numworldSectors++;
 
 	if (depth == AREA_DEPTH)
@@ -164,7 +158,6 @@ worldSector_t *SV_CreateworldSector(int depth, vec3_t mins, vec3_t maxs)
 /*
 ===============
 SV_ClearWorld
-
 ===============
 */
 void SV_ClearWorld(void)
@@ -181,11 +174,9 @@ void SV_ClearWorld(void)
 	SV_CreateworldSector(0, mins, maxs);
 }
 
-
 /*
 ===============
 SV_UnlinkEntity
-
 ===============
 */
 void SV_UnlinkEntity(sharedEntity_t *gEnt)
@@ -223,7 +214,6 @@ void SV_UnlinkEntity(sharedEntity_t *gEnt)
 	Com_Printf("WARNING: SV_UnlinkEntity: not found in worldSector\n");
 }
 
-
 /*
 ===============
 SV_LinkEntity
@@ -231,6 +221,7 @@ SV_LinkEntity
 ===============
 */
 #define MAX_TOTAL_ENT_LEAFS     128
+
 void SV_LinkEntity(sharedEntity_t *gEnt)
 {
 	worldSector_t *node;
@@ -245,7 +236,7 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 
 	ent = SV_SvEntityForGentity(gEnt);
 
-	// Ridah, sanity check for possible currentOrigin being reset bug
+	// sanity check for possible currentOrigin being reset bug
 	if (!gEnt->r.bmodel && VectorCompare(gEnt->r.currentOrigin, vec3_origin))
 	{
 		Com_DPrintf("WARNING: BBOX entity is being linked at world origin, this is probably a bug\n");
@@ -261,7 +252,7 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 	{
 		gEnt->s.solid = SOLID_BMODEL;       // a solid_box will never create this value
 
-		// Gordon: for the origin only bmodel checks
+		// for the origin only bmodel checks
 		ent->originCluster = CM_LeafCluster(CM_PointLeafnum(gEnt->r.currentOrigin));
 	}
 	else if (gEnt->r.contents & (CONTENTS_SOLID | CONTENTS_BODY))
@@ -437,7 +428,6 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 
 /*
 ============================================================================
-
 AREA QUERY
 
 Fills in a list of all entities who's absmin / absmax intersects the given
@@ -453,11 +443,9 @@ typedef struct
 	int count, maxcount;
 } areaParms_t;
 
-
 /*
 ====================
 SV_AreaEntities_r
-
 ====================
 */
 void SV_AreaEntities_r(worldSector_t *node, areaParms_t *ap)
@@ -532,10 +520,7 @@ int SV_AreaEntities(const vec3_t mins, const vec3_t maxs, int *entityList, int m
 	return ap.count;
 }
 
-
-
 //===========================================================================
-
 
 typedef struct
 {
@@ -550,11 +535,9 @@ typedef struct
 	int capsule;
 } moveclip_t;
 
-
 /*
 ====================
 SV_ClipToEntity
-
 ====================
 */
 void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int entityNum, int contentmask, int capsule)
@@ -586,22 +569,15 @@ void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, cons
 		angles = vec3_origin;   // boxes don't rotate
 	}
 
-#ifdef __MACOS__
-	// compiler bug with const
-	CM_TransformedBoxTrace(trace, (float *)start, (float *)end,
-	                       (float *)mins, (float *)maxs, clipHandle, contentmask,
-	                       origin, angles, capsule);
-#else
 	CM_TransformedBoxTrace(trace, start, end,
 	                       mins, maxs, clipHandle, contentmask,
 	                       origin, angles, capsule);
-#endif
+
 	if (trace->fraction < 1)
 	{
 		trace->entityNum = touch->s.number;
 	}
 }
-
 
 // FIXME: Copied from cm_local.h
 #define BOX_MODEL_HANDLE        511
@@ -609,7 +585,6 @@ void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, cons
 /*
 ====================
 SV_ClipMoveToEntities
-
 ====================
 */
 void SV_ClipMoveToEntities(moveclip_t *clip)
@@ -672,13 +647,13 @@ void SV_ClipMoveToEntities(moveclip_t *clip)
 		// might intersect, so do an exact clip
 		clipHandle = SV_ClipHandleForEntity(touch);
 
-		// ydnar: non-worldspawn entities must not use world as clip model!
+		// non-worldspawn entities must not use world as clip model!
 		if (clipHandle == 0)
 		{
 			continue;
 		}
 
-		// DHM - Nerve :: If clipping against BBOX, set to correct contents
+		// If clipping against BBOX, set to correct contents
 		if (clipHandle == BOX_MODEL_HANDLE)
 		{
 			CM_SetTempBoxModelContents(touch->r.contents);
@@ -693,16 +668,10 @@ void SV_ClipMoveToEntities(moveclip_t *clip)
 			angles = vec3_origin;   // boxes don't rotate
 		}
 
-#ifdef __MACOS__
-		// compiler bug with const
-		CM_TransformedBoxTrace(&trace, (float *)clip->start, (float *)clip->end,
-		                       (float *)clip->mins, (float *)clip->maxs, clipHandle, clip->contentmask,
-		                       origin, angles, clip->capsule);
-#else
 		CM_TransformedBoxTrace(&trace, clip->start, clip->end,
 		                       clip->mins, clip->maxs, clipHandle, clip->contentmask,
 		                       origin, angles, clip->capsule);
-#endif
+
 		if (trace.allsolid)
 		{
 			clip->trace.allsolid = qtrue;
@@ -726,14 +695,13 @@ void SV_ClipMoveToEntities(moveclip_t *clip)
 			clip->trace.startsolid |= oldStart;
 		}
 
-		// DHM - Nerve :: Reset contents to default
+		// Reset contents to default
 		if (clipHandle == BOX_MODEL_HANDLE)
 		{
 			CM_SetTempBoxModelContents(CONTENTS_BODY);
 		}
 	}
 }
-
 
 /*
 ==================
@@ -770,7 +738,7 @@ void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec
 
 	clip.contentmask = contentmask;
 	clip.start       = start;
-//	VectorCopy( clip.trace.endpos, clip.end );
+	//	VectorCopy( clip.trace.endpos, clip.end );
 	VectorCopy(end, clip.end);
 	clip.mins          = mins;
 	clip.maxs          = maxs;
@@ -801,8 +769,6 @@ void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec
 	*results = clip.trace;
 }
 
-
-
 /*
 =============
 SV_PointContents
@@ -832,15 +798,15 @@ int SV_PointContents(const vec3_t p, int passEntityNum)
 		// might intersect, so do an exact clip
 		clipHandle = SV_ClipHandleForEntity(hit);
 
-		// ydnar: non-worldspawn entities must not use world as clip model!
+		// non-worldspawn entities must not use world as clip model!
 		if (clipHandle == 0)
 		{
 			continue;
 		}
 
 		c2 = CM_TransformedPointContents(p, clipHandle, hit->r.currentOrigin, hit->r.currentAngles);
-		// Gordon: s.origin/angles is base origin/angles, need to use the current origin/angles for moving entity based water, or water locks in movement start position.
-//		c2 = CM_TransformedPointContents (p, clipHandle, hit->s.origin, hit->s.angles);
+		// s.origin/angles is base origin/angles, need to use the current origin/angles for moving entity based water, or water locks in movement start position.
+		//c2 = CM_TransformedPointContents (p, clipHandle, hit->s.origin, hit->s.angles);
 
 		contents |= c2;
 	}

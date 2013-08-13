@@ -71,7 +71,7 @@ static void MD5Init(struct MD5Context *ctx)
 
 /* This is the central step in the MD5 algorithm. */
 #define MD5STEP(f, w, x, y, z, data, s) \
-    (w += f(x, y, z) + data, w = w << s | w >> (32 - s), w += x)
+	(w += f(x, y, z) + data, w = w << s | w >> (32 - s), w += x)
 
 /*
  * The core of the MD5 algorithm, this alters an existing MD5 hash to
@@ -266,9 +266,8 @@ static void MD5Final(struct MD5Context *ctx, unsigned char *digest)
 	{
 		memcpy(digest, ctx->buf, 16);
 	}
-	memset(ctx, 0, sizeof(ctx));          /* In case it's sensitive */
+	memset(ctx, 0, sizeof(*ctx));          /* In case it's sensitive */
 }
-
 
 char *Com_MD5File(const char *fn, int length, const char *prefix, int prefix_len)
 {
@@ -373,6 +372,7 @@ static char *CalculateGUID(const char *key)
 {
 	int  i;
 	char *tmp, *hash;
+
 	tmp  = CalculateMD5ForSeed(key, 0x00b684a3);
 	hash = CalculateMD5ForSeed(tmp, 0x00051a56);
 
@@ -396,10 +396,13 @@ char *Com_MD5FileETCompat(const char *filename)
 		if (len >= 28)
 		{
 			int i;
+
 			for (i = 0; i < 18; i++)
 			{
 				key[i] = buffer[i + 10];
 			}
+
+			FS_FreeFile(buffer);
 
 			return CalculateGUID(key);
 		}

@@ -1,0 +1,13 @@
+// Game type info
+
+gametypes {
+  { 0 "Single Player" "SP" "Playing with yourself. Woohoo." }
+  { 1 "Cooperative" "Coop" "Playing with yourself. And with others. More woohoo." }
+  { 2 "Objective" "Obj" "Instead of playing through each map of a campaign, the teams can go straight to battle in a single map of their choosing." }
+  { 3 "Stopwatch" "SW" "Each team struggles to complete the map's mission objectives against the clock. The teams then swap sides to try to better their opponents' time." }
+  { 4 "Campaign" "Cmpgn" "Both teams battle across a series of maps. Skills and rewards awarded to each player will persist from map to map." }
+  { 5 "Last Man Standing" "LMS" "Both teams meet in a map for a fight to the death. Each player only has one life. Use it well." }
+  { 6 "Map Voting" "MpVote" "Instead of playing through each map of a cycle, players vote for the next map in intermission." }
+  { 7 "Custom" "Cstm" "Custom gametype provided by the mod." }
+  { 8 "Custom" "Cstm" "Custom gametype provided by the mod." }
+}

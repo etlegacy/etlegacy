@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>CFBundleDisplayName</key>
+        <string>ET: Legacy</string>
+        <key>CFBundleExecutable</key>
+        <string>etl</string>
+        <key>CFBundleIconFile</key>
+        <string>misc/etl.ico</string>
+        <key>CFBundleIdentifier</key>
+        <string>com.etlegacy</string>
+        <key>CFBundleInfoDictionaryVersion</key>
+        <string>6.0</string>
+        <key>CFBundleName</key>
+        <string>etlegacy</string>
+        <key>CFBundlePackageType</key>
+        <string>APPL</string>
+        <key>CFBundleURLTypes</key>
+        <array>
+                <dict>
+                        <key>CFBundleTypeRole</key>
+                        <string>Viewer</string>
+                        <key>CFBundleURLName</key>
+                        <string>Wolfenstein: Enemy Territory 2.60b Server Link</string>
+                        <key>CFBundleURLSchemes</key>
+                        <array>
+                                <string>et</string>
+                        </array>
+                </dict>
+        </array>
+        <key>CFBundleVersion</key>
+        <string>0.6</string>
+</dict>
+</plist>

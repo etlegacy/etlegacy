@@ -35,15 +35,11 @@
 #include "cg_local.h"
 #include "../ui/ui_shared.h"
 
+#if FEATURE_MULTIVIEW
 extern pmove_t cg_pmove;        // cg_predict.c
+#endif
 
-
-vec4_t colorClear = { 0.0f, 0.0f, 0.0f, 0.0f };     // Transparent
-vec4_t colorBrown1 = { 0.3f, 0.2f, 0.1f, 0.9f };    // Brown
-vec4_t colorGreen1 = { 0.21f, 0.3f, 0.0f, 0.9f };   // Greenish (darker)
 vec4_t colorGreen2 = { 0.305f, 0.475f, 0.305f, 0.48f }; // Slightly off from default fill
-
-
 
 void CG_createStatsWindow(void)
 {
@@ -59,12 +55,9 @@ void CG_createStatsWindow(void)
 	sw->id         = WID_STATS;
 	sw->fontScaleX = cf_wstats.value * 0.2f;
 	sw->fontScaleY = cf_wstats.value * 0.2f;
-//  sw->x = (cg.snap->ps.pm_type == PM_INTERMISSION) ?  10 : 160;
-//  sw->y = (cg.snap->ps.pm_type == PM_INTERMISSION) ? -20 : -7;    // Align from bottom minus offset and height
-	sw->x = (cg.snap->ps.pm_type == PM_INTERMISSION) ?  10 : 4;
-	sw->y = (cg.snap->ps.pm_type == PM_INTERMISSION) ? -20 : -100;    // Align from bottom minus offset and height
+	sw->x          = (cg.snap->ps.pm_type == PM_INTERMISSION) ?  10 : 4;
+	sw->y          = (cg.snap->ps.pm_type == PM_INTERMISSION) ? -20 : -100; // Align from bottom minus offset and height
 }
-
 
 void CG_createTopShotsWindow(void)
 {
@@ -85,7 +78,6 @@ void CG_createTopShotsWindow(void)
 	sw->flashMidpoint = sw->flashPeriod * 0.8f;
 	memcpy(&sw->colorBackground2, &colorGreen2, sizeof(vec4_t));
 }
-
 
 void CG_createMOTDWindow(void)
 {
@@ -128,196 +120,6 @@ void CG_createMOTDWindow(void)
 	}
 }
 
-/*
-void CG_createWstatsMsgWindow(void)
-{
-    cg_window_t *sw = CG_windowAlloc(WFX_TEXTSIZING|WFX_FLASH, 0);
-
-    cg.msgWstatsWindow = sw;
-    if(sw == NULL) return;
-
-    // Window specific
-    sw->id = WID_NONE;
-    sw->fontScaleX = 1.0f;
-    sw->fontScaleY = 1.0f;
-    sw->x = 300;
-    sw->y = -1;
-    sw->flashPeriod = 800;
-    sw->flashMidpoint = sw->flashPeriod * 0.5f;
-
-    memcpy(&sw->colorBorder, &colorClear, sizeof(vec4_t));
-    memcpy(&sw->colorBackground, &colorBrown1, sizeof(vec4_t));
-    memcpy(&sw->colorBackground2, &colorGreen1, sizeof(vec4_t));
-
-    cg.windowCurrent = sw;
-    CG_printWindow("^3Stats (+wstats)");
-}
-
-
-void CG_createWtopshotsMsgWindow(void)
-{
-    cg_window_t *sw = CG_windowAlloc(WFX_TEXTSIZING|WFX_FLASH, 0);
-
-    cg.msgWtopshotsWindow = sw;
-    if(sw == NULL) return;
-
-    // Window specific
-    sw->id = WID_NONE;
-    sw->fontScaleX = 1.0f;
-    sw->fontScaleY = 1.0f;
-    sw->x = -20;
-    sw->y = -1;
-    sw->flashPeriod = 1000;
-    sw->flashMidpoint = sw->flashPeriod * 0.7f;
-
-    memcpy(&sw->colorBorder, &colorClear, sizeof(vec4_t));
-    memcpy(&sw->colorBackground, &colorBrown1, sizeof(vec4_t));
-    memcpy(&sw->colorBackground2, &colorGreen1, sizeof(vec4_t));
-
-    cg.windowCurrent = sw;
-    CG_printWindow("^3Rankings (+wtopshots)");
-}
-*/
-
-/*
-void CG_createDemoHelpWindow(void)
-{
-    int i;
-    cg_window_t *sw = CG_windowAlloc(WFX_TEXTSIZING|WFX_FADEIN|WFX_TRUETYPE, 250);
-    const char *help[] = {
-        "^2TAB      ^Nscores",
-        "^2F1-F5    ^Navidemo record",
-        "^2F11-F12  ^Nscreenshot",
-        " ", " ",
-        "^2KP_DOWN  ^Nslow down (--)",
-        "^2KP_LEFT  ^Nslow down (-)",
-        "^2KP_UP    ^Nspeed up (++)",
-        "^2KP_RIGHT ^Nspeed up (+)",
-        "^2SPACE    ^Nnormal speed",
-        " ", " ",
-        "^2ENTER    ^NExternal view",
-        "^2LFT/RGHT ^NChange angle",
-        "^2UP/DOWN  ^NMove in/out"
-    };
-    const char *mvhelp[] = {
-        " ", " ",
-        "^2MOUSE1   ^NSelect/move view",
-        "^2MOUSE2   ^NSwap w/main view",
-        "^2MOUSE3   ^NToggle on/off",
-        "^2SHIFT    ^NHold to resize",
-        "^2KP_PGUP  ^NEnable a view",
-        "^2KP_PGDN  ^NClose a view"
-    };
-
-    cg.demohelpWindow = sw;
-    if(sw == NULL) return;
-
-    // Window specific
-    sw->id = WID_DEMOHELP;
-    sw->fontScaleX = 0.2f;
-    sw->fontScaleY = 0.3f;
-    sw->x = 2;
-    sw->y = 155;
-    sw->flashMidpoint = sw->flashPeriod * 0.8f;
-    memcpy(&sw->colorBackground2, &colorGreen2, sizeof(vec4_t));
-
-    cg.windowCurrent = sw;
-    for(i=0; i<sizeof(help)/sizeof(char *); i++) {
-        CG_printWindow((char*)help[i]);
-    }
-
-    if(cg.mvTotalClients > 1) {
-        for(i=0; i<sizeof(mvhelp)/sizeof(char *); i++) {
-            CG_printWindow((char*)mvhelp[i]);
-        }
-    }
-
-    CG_printWindow(" ");
-    CG_printWindow("^2BACKSPACE ^Nhelp on/off");
-}
-*/
-/*
-char *CG_getBindKeyName(const char *cmd, char *buf, int len)
-{
-    int j;
-
-    for(j=0; j<256; j++) {
-        trap_Key_GetBindingBuf(j, buf, len);
-        if(*buf == 0) continue;
-
-        if(!Q_stricmp(buf, cmd)) {
-            trap_Key_KeynumToStringBuf(j, buf, MAX_STRING_TOKENS);
-            Q_strupr(buf);
-            return(buf);
-        }
-    }
-
-    Q_strncpyz(buf, va("(%s)", cmd), len);
-    return(buf);
-}
-
-typedef struct
-{
-    char *cmd;
-    char *info;
-} helpType_t;
-
-void CG_createSpecHelpWindow(void)
-{
-    int i, maxlen = 0;
-    char *format, buf[MAX_STRING_TOKENS];
-    cg_window_t *sw = CG_windowAlloc(WFX_TEXTSIZING|WFX_FADEIN|WFX_TRUETYPE, 250);
-    const helpType_t help[] =
-    {
-        { "+zoom", "hold for pointer" },
-        { "+attack", "window move/resize" },
-        { "+sprint", "hold to resize" },
-        { "weapnext", "window on/off" },
-        { "weapprev", "swap w/main view"},
-        { NULL, NULL },
-        { NULL, NULL },
-        { NULL, NULL },
-        { NULL, NULL },
-        { "weapalt", "swingcam toggle" },
-        { "togglespechelp", "help on/off" }
-    };
-
-    cg.spechelpWindow = sw;
-    if(sw == NULL) return;
-
-    // Window specific
-    sw->id = WID_SPECHELP;
-    sw->fontScaleX = 0.2f;
-    sw->fontScaleY = 0.3f;
-    sw->x = 2;
-    sw->y = 155;
-    sw->flashMidpoint = sw->flashPeriod * 0.8f;
-    memcpy(&sw->colorBackground2, &colorGreen2, sizeof(vec4_t));
-
-    for(i=0; i<sizeof(help)/sizeof(helpType_t); i++) {
-        if(help[i].cmd != NULL) {
-            int len = strlen(CG_getBindKeyName(help[i].cmd, buf, sizeof(buf)));
-            if(len > maxlen) {
-                maxlen = len;
-            }
-        }
-    }
-
-    cg.windowCurrent = sw;
-    format = va("^2%%%ds ^N%%s", maxlen);
-
-    for(i=0; i<sizeof(help)/sizeof(helpType_t); i++) {
-        if(help[i].cmd == NULL) {
-            CG_printWindow(" ");
-        } else {
-            CG_printWindow(va(format, CG_getBindKeyName(help[i].cmd, buf, sizeof(buf)), help[i].info));
-        }
-    }
-}
-*/
-
-
-
 //////////////////////////////////////////////
 //////////////////////////////////////////////
 //
@@ -325,7 +127,6 @@ void CG_createSpecHelpWindow(void)
 //
 //////////////////////////////////////////////
 //////////////////////////////////////////////
-
 
 // Windowing system setup
 void CG_windowInit(void)
@@ -343,7 +144,6 @@ void CG_windowInit(void)
 	cg.statsWindow        = NULL;
 	cg.topshotsWindow     = NULL;
 }
-
 
 // Window stuct "constructor" with some common defaults
 void CG_windowReset(cg_window_t *w, int fx, int startupLength)
@@ -376,7 +176,7 @@ cg_window_t *CG_windowAlloc(int fx, int startupLength)
 	cg_window_t        *w;
 	cg_windowHandler_t *wh = &cg.winHandler;
 
-	if (wh->numActiveWindows == MAX_WINDOW_COUNT)
+	if (wh->numActiveWindows >= MAX_WINDOW_COUNT)
 	{
 		return(NULL);
 	}
@@ -395,7 +195,6 @@ cg_window_t *CG_windowAlloc(int fx, int startupLength)
 	// Fail if we're a full airplane
 	return(NULL);
 }
-
 
 // Free up a window reservation
 void CG_windowFree(cg_window_t *w)
@@ -440,7 +239,6 @@ void CG_windowFree(cg_window_t *w)
 	}
 }
 
-
 void CG_windowCleanup(void)
 {
 	int                i;
@@ -457,7 +255,6 @@ void CG_windowCleanup(void)
 		}
 	}
 }
-
 
 void CG_demoAviFPSDraw(void)
 {
@@ -485,17 +282,17 @@ void CG_demoTimescaleDraw(void)
 	}
 }
 
-
 // Main window-drawing handler
 void CG_windowDraw(void)
 {
 	int         h, x, y, i, j, milli, t_offset, tmp;
 	cg_window_t *w;
 	qboolean    fCleanup = qfalse;
-	// Gordon: FIXME, the limbomenu var no longer exists
-	qboolean fAllowMV = (cg.snap != NULL && cg.snap->ps.pm_type != PM_INTERMISSION /*&& !cg.limboMenu*/);
-	vec4_t   *bg;
-	vec4_t   textColor, borderColor, bgColor;
+#if FEATURE_MULTIVIEW
+	qboolean fAllowMV = (cg.snap != NULL && cg.snap->ps.pm_type != PM_INTERMISSION);
+#endif
+	vec4_t *bg;
+	vec4_t textColor, borderColor, bgColor;
 
 	if (cg.winHandler.numActiveWindows == 0)
 	{
@@ -508,12 +305,14 @@ void CG_windowDraw(void)
 	milli = trap_Milliseconds();
 	memcpy(textColor, colorWhite, sizeof(vec4_t));
 
+#if FEATURE_MULTIVIEW
 	// Mouse cursor position for MV highlighting (offset for cursor pointer position)
 	// Also allow for swingcam toggling
 	if (cg.mvTotalClients > 0 && fAllowMV)
 	{
 		CG_cursorUpdate();
 	}
+#endif
 
 	for (i = 0; i < cg.winHandler.numActiveWindows; i++)
 	{
@@ -525,8 +324,8 @@ void CG_windowDraw(void)
 			continue;
 		}
 
+#if FEATURE_MULTIVIEW
 		// Multiview rendering has its own handling
-
 		if (w->effects & WFX_MULTIVIEW)
 		{
 			if (w != cg.mvCurrentMainview && fAllowMV)
@@ -535,6 +334,7 @@ void CG_windowDraw(void)
 			}
 			continue;
 		}
+#endif
 
 		if (w->effects & WFX_TEXTSIZING)
 		{
@@ -624,7 +424,6 @@ void CG_windowDraw(void)
 		{
 			if (w->effects & WFX_TRUETYPE)
 			{
-//              CG_Text_Paint(x, y + h, w->fontScale, textColor, (char*)w->lineText[j], 0.0f, 0, 0);
 				CG_Text_Paint_Ext(x, y + h, w->fontScaleX, w->fontScaleY, textColor,
 				                  (char *)w->lineText[j], 0.0f, 0, 0, &cgs.media.limboFont2);
 			}
@@ -639,29 +438,31 @@ void CG_windowDraw(void)
 		}
 	}
 
+#if FEATURE_MULTIVIEW
 	// Wedge in MV info overlay
 	if (cg.mvTotalClients > 0 && fAllowMV)
 	{
 		CG_mvOverlayDisplay();
 	}
+#endif
 
 	// Extra rate info
 	CG_demoAviFPSDraw();
 	CG_demoTimescaleDraw();
 
+#if FEATURE_MULTIVIEW
 	// Mouse cursor lays on top of everything
 	if (cg.mvTotalClients > 0 && cg.time < cgs.cursorUpdate && fAllowMV)
 	{
-		//CG_DrawPic(cgs.cursorX - CURSOR_OFFSETX, cgs.cursorY - CURSOR_OFFSETY, 32, 32, cgs.media.cursor);
 		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 	}
+#endif
 
 	if (fCleanup)
 	{
 		CG_windowCleanup();
 	}
 }
-
 
 // Set the window width and height based on the windows text/font parameters
 void CG_windowNormalizeOnText(cg_window_t *w)
@@ -720,14 +521,13 @@ void CG_windowNormalizeOnText(cg_window_t *w)
 	// Set up bottom alignment
 	if (w->x < 0)
 	{
-		w->x += 640 - w->w;
+		w->x += SCREEN_WIDTH - w->w;
 	}
 	if (w->y < 0)
 	{
-		w->y += 480 - w->h;
+		w->y += SCREEN_HEIGHT - w->h;
 	}
 }
-
 
 void CG_printWindow(char *str)
 {
@@ -773,11 +573,7 @@ void CG_printWindow(char *str)
 	}
 }
 
-
-
-//
 // String buffer handling
-//
 void CG_initStrings(void)
 {
 	int i;
@@ -809,7 +605,7 @@ qboolean CG_addString(cg_window_t *w, char *buf)
 				cg.aStringPool[i].fActive = qtrue;
 				strcpy(cg.aStringPool[i].str, buf);
 
-				return(qtrue);
+				return qtrue;
 			}
 		}
 	}
@@ -822,11 +618,11 @@ qboolean CG_addString(cg_window_t *w, char *buf)
 			strcpy(cg.aStringPool[i].str, buf);
 			w->lineText[w->lineCount++] = (char *)&cg.aStringPool[i].str;
 
-			return(qtrue);
+			return qtrue;
 		}
 	}
 
-	return(qfalse);
+	return qfalse;
 }
 
 void CG_removeStrings(cg_window_t *w)
@@ -856,17 +652,13 @@ void CG_removeStrings(cg_window_t *w)
 	}
 }
 
-
-
-
-//
 // cgame cursor handling
-//
 
+#if FEATURE_MULTIVIEW
 // Mouse overlay for controlling multiview windows
 void CG_cursorUpdate(void)
 {
-	int                i, j, x;
+	int                i, x;
 	float              nx, ny;
 	int                nSelectedWindow = -1;
 	cg_window_t        *w;
@@ -874,11 +666,9 @@ void CG_cursorUpdate(void)
 	qboolean           fFound = qfalse, fUpdateOverlay = qfalse;
 	qboolean           fSelect, fResize;
 
-
 	// Get cursor current position (when connected to a server)
 	if (!cg.demoPlayback)
 	{
-
 		// Allow for limbo'd updates as well
 		trap_GetUserCmd(trap_GetCurrentCmdNumber(), &cg_pmove.cmd);
 
@@ -949,9 +739,9 @@ void CG_cursorUpdate(void)
 						if (fResize)
 						{
 							w->w += nx - w->m_x;
-							if (w->x + w->w > 640 - 2)
+							if (w->x + w->w > SCREEN_WIDTH - 2)
 							{
-								w->w = 640 - 2 - w->x;
+								w->w = SCREEN_WIDTH - 2 - w->x;
 							}
 							if (w->w < 64)
 							{
@@ -959,9 +749,9 @@ void CG_cursorUpdate(void)
 							}
 
 							w->h += ny - w->m_y;
-							if (w->y + w->h > 480 - 2)
+							if (w->y + w->h > SCREEN_HEIGHT - 2)
 							{
-								w->h = 480 - 2 - w->y;
+								w->h = SCREEN_HEIGHT - 2 - w->y;
 							}
 							if (w->h < 48)
 							{
@@ -971,9 +761,9 @@ void CG_cursorUpdate(void)
 						else
 						{
 							w->x += nx - w->m_x;
-							if (w->x + w->w > 640 - 2)
+							if (w->x + w->w > SCREEN_WIDTH - 2)
 							{
-								w->x = 640 - 2 - w->w;
+								w->x = SCREEN_WIDTH - 2 - w->w;
 							}
 							if (w->x < 2)
 							{
@@ -981,9 +771,9 @@ void CG_cursorUpdate(void)
 							}
 
 							w->y += ny - w->m_y;
-							if (w->y + w->h > 480 - 2)
+							if (w->y + w->h > SCREEN_HEIGHT - 2)
 							{
-								w->y = 480 - 2 - w->h;
+								w->y = SCREEN_HEIGHT - 2 - w->h;
 							}
 							if (w->y < 2)
 							{
@@ -1099,6 +889,7 @@ void CG_cursorUpdate(void)
 	// drawn last (on top of all other windows)
 	if (nSelectedWindow >= 0)
 	{
+		int j;
 		fUpdateOverlay = qtrue;
 		x              = wh->activeWindows[nSelectedWindow];
 
@@ -1116,3 +907,4 @@ void CG_cursorUpdate(void)
 		CG_mvOverlayUpdate();
 	}
 }
+#endif

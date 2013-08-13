@@ -35,8 +35,7 @@
 
 #include "cg_local.h"
 
-// rain - minor optimization - we only want to reset ents that were valid
-// in the last frame
+// minor optimization - we only want to reset ents that were valid in the last frame
 static qboolean oldValid[MAX_GENTITIES];
 
 /*
@@ -48,17 +47,14 @@ static void CG_ResetEntity(centity_t *cent)
 {
 	// if an event is set, assume it is new enough to use
 	// if the event had timed out, it would have been cleared
-	// RF, not needed for wolf
-	// DHM - Nerve :: Wolf is now using this.
+	// Wolf is now using this.
 	cent->previousEvent         = 0;
 	cent->previousEventSequence = cent->currentState.eventSequence;
 
 	cent->trailTime = cg.snap->serverTime;
 
-	// Ridah
 	cent->headJuncIndex  = 0;
 	cent->headJuncIndex2 = 0;
-	// done.
 
 	VectorCopy(cent->currentState.origin, cent->lerpOrigin);
 	VectorCopy(cent->currentState.angles, cent->lerpAngles);
@@ -67,7 +63,7 @@ static void CG_ResetEntity(centity_t *cent)
 		CG_ResetPlayerEntity(cent);
 	}
 
-	// rain - reset a bunch of extra stuff
+	// reset a bunch of extra stuff
 	cent->muzzleFlashTime = 0;
 	cent->overheatTime    = 0;
 
@@ -85,7 +81,6 @@ static void CG_ResetEntity(centity_t *cent)
 	cent->akimboFire = qfalse;
 }
 
-
 /*
 ===============
 CG_TransitionEntity
@@ -95,7 +90,7 @@ cent->nextState is moved to cent->currentState and events are fired
 */
 static void CG_TransitionEntity(centity_t *cent)
 {
-	// Ridah, update the fireDir if it's on fire
+	// update the fireDir if it's on fire
 	if (CG_EntOnFire(cent))
 	{
 		vec3_t newDir, newPos, oldPos;
@@ -137,7 +132,6 @@ static void CG_TransitionEntity(centity_t *cent)
 	CG_CheckEvents(cent);
 }
 
-
 /*
 ==================
 CG_SetInitialSnapshot
@@ -158,9 +152,9 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 
 	cg.snap = snap;
 
-//  trap_S_ClearSounds( qtrue );
+	//  trap_S_ClearSounds( qtrue );
 
-	BG_PlayerStateToEntityState(&snap->ps, &cg_entities[snap->ps.clientNum].currentState, qfalse);
+	BG_PlayerStateToEntityState(&snap->ps, &cg_entities[snap->ps.clientNum].currentState, cg.time, qfalse);
 
 	// sort out solid entities
 	CG_BuildSolidList();
@@ -187,13 +181,10 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 		CG_CheckEvents(cent);
 	}
 
-	cg_fxflags = 0;
-
-
 	trap_Cvar_VariableStringBuffer("r_oldMode", buff, sizeof(buff));
 	if (atoi(buff))
 	{
-		// Arnout: confirmation screen
+		// confirmation screen
 		trap_UI_Popup(UIMENU_INGAME);
 	}
 	else if (cg.demoPlayback)
@@ -225,7 +216,7 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 		}
 	}
 
-	// OSP - remove motd window
+	// remove motd window
 	if (cg.motdWindow != NULL)
 	{
 		CG_windowFree(cg.motdWindow);
@@ -241,9 +232,19 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 			CG_ShowHelp_On(&cg.demohelpWindow);
 		}
 	}
-	// OSP
-}
 
+	// update client XP for spectator frames
+	if (cg.snap->ps.clientNum == cg.clientNum)    // sanity check
+	{
+		int cXP = (32768 * cg.snap->ps.stats[STAT_XP_OVERFLOW]) + cg.snap->ps.stats[STAT_XP];
+
+		if (cg.xp < cXP)
+		{
+			cg.xpChangeTime = cg.time;
+		}
+		cg.xp = cXP;
+	}
+}
 
 /*
 ===================
@@ -277,7 +278,7 @@ static void CG_TransitionSnapshot(void)
 		return;
 	}
 
-	// rain - I hate doing things like this for enums.  Oh well.
+	// I hate doing things like this for enums.  Oh well.
 	memset(&oldValid, 0, sizeof(oldValid));
 
 	// clear the currentValid flag for all entities in the existing snapshot
@@ -288,8 +289,8 @@ static void CG_TransitionSnapshot(void)
 		oldValid[cg.snap->entities[i].number] = qtrue;
 	}
 
-	// OSP -- check for MV updates from new snapshot info
-#ifdef MV_SUPPORT
+	// check for MV updates from new snapshot info
+#ifdef FEATURE_MULTIVIEW
 	if (cg.snap->ps.powerups[PW_MVCLIENTLIST] != cg.mvClientList)
 	{
 		CG_mvProcessClientList();
@@ -302,14 +303,16 @@ static void CG_TransitionSnapshot(void)
 
 	if (cg.snap->ps.clientNum == cg.clientNum)
 	{
-		if (cg.xp < cg.snap->ps.stats[STAT_XP])
+		int cXP = (32768 * cg.snap->ps.stats[STAT_XP_OVERFLOW]) + cg.snap->ps.stats[STAT_XP];
+
+		if (cg.xp < cXP)
 		{
 			cg.xpChangeTime = cg.time;
 		}
-		cg.xp = cg.snap->ps.stats[STAT_XP];
+		cg.xp = cXP;
 	}
 
-	BG_PlayerStateToEntityState(&cg.snap->ps, &cg_entities[cg.snap->ps.clientNum].currentState, qfalse);
+	BG_PlayerStateToEntityState(&cg.snap->ps, &cg_entities[cg.snap->ps.clientNum].currentState, cg.time, qfalse);
 	cg_entities[cg.snap->ps.clientNum].interpolate = qfalse;
 
 	for (i = 0 ; i < cg.snap->numEntities ; i++)
@@ -317,7 +320,7 @@ static void CG_TransitionSnapshot(void)
 		id = cg.snap->entities[i].number;
 		CG_TransitionEntity(&cg_entities[id]);
 
-		// rain - #374 - ent doesn't exist in this frame, reset it.
+		// ent doesn't exist in this frame, reset it.
 		// this is to fix the silent landmines bug, which is caused
 		// by a stale miscTime in the cent
 		if (cg_entities[id].currentValid == qfalse && oldValid[id] == qtrue)
@@ -325,26 +328,29 @@ static void CG_TransitionSnapshot(void)
 			CG_ResetEntity(&cg_entities[id]);
 		}
 
+#if FEATURE_MULTIVIEW
 		if (cg.mvTotalClients > 0 && CG_mvMergedClientLocate(id))
 		{
 			CG_mvUpdateClientInfo(id);
 		}
+#endif
 	}
 
+#if FEATURE_MULTIVIEW
 	if (cg.mvTotalClients > 0)
 	{
 		CG_mvTransitionPlayerState(&cg.snap->ps);
 	}
+#endif
 
 	cg.nextSnap = NULL;
 
 	// check for playerstate transition events
 	if (oldFrame)
 	{
-		playerState_t *ops, *ps;
+		playerState_t *ops = &oldFrame->ps;
+		playerState_t *ps  = &cg.snap->ps;
 
-		ops = &oldFrame->ps;
-		ps  = &cg.snap->ps;
 		// teleporting checks are irrespective of prediction
 		if ((ps->eFlags ^ ops->eFlags) & EF_TELEPORT_BIT)
 		{
@@ -363,9 +369,7 @@ static void CG_TransitionSnapshot(void)
 			CG_TransitionPlayerState(ps, ops);
 		}
 	}
-
 }
-
 
 /*
 ===================
@@ -382,7 +386,7 @@ static void CG_SetNextSnap(snapshot_t *snap)
 
 	cg.nextSnap = snap;
 
-	BG_PlayerStateToEntityState(&snap->ps, &cg_entities[snap->ps.clientNum].nextState, qfalse);
+	BG_PlayerStateToEntityState(&snap->ps, &cg_entities[snap->ps.clientNum].nextState, cg.time, qfalse);
 	cg_entities[cg.snap->ps.clientNum].interpolate = qtrue;
 
 	// check for extrapolation errors
@@ -433,7 +437,6 @@ static void CG_SetNextSnap(snapshot_t *snap)
 	CG_BuildSolidList();
 }
 
-
 /*
 ========================
 CG_ReadNextSnapshot
@@ -471,10 +474,14 @@ static snapshot_t *CG_ReadNextSnapshot(void)
 		cgs.processedSnapshotNum++;
 		r = trap_GetSnapshot(cgs.processedSnapshotNum, dest);
 
-		// FIXME: why would trap_GetSnapshot return a snapshot with the same server time
+		// why would trap_GetSnapshot return a snapshot with the same server time
 		if (cg.snap && r && dest->serverTime == cg.snap->serverTime)
 		{
-			//continue;
+			// because we're playing back demos taken by local servers apparently :O
+			if (cg.demoPlayback)
+			{
+				continue;
+			}
 		}
 
 		// if it succeeded, return
@@ -508,7 +515,6 @@ static snapshot_t *CG_ReadNextSnapshot(void)
 	// nothing left to read
 	return NULL;
 }
-
 
 /*
 ============
@@ -619,5 +625,4 @@ void CG_ProcessSnapshots(void)
 	{
 		CG_Error("CG_ProcessSnapshots: cg.nextSnap->serverTime <= cg.time\n");
 	}
-
 }

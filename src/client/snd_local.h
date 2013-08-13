@@ -32,6 +32,9 @@
  * @brief private sound definitions
  */
 
+#ifndef __SND_LOCAL_H__
+#define __SND_LOCAL_H__
+
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 #include "snd_public.h"
@@ -40,8 +43,8 @@
 #define PAINTBUFFER_SIZE        4096                    // this is in samples
 
 #define SND_CHUNK_SIZE          1024                    // samples
-#define SND_CHUNK_SIZE_FLOAT    (SND_CHUNK_SIZE / 2)        // floats
-#define SND_CHUNK_SIZE_BYTE     (SND_CHUNK_SIZE * 2)        // floats
+#define SND_CHUNK_SIZE_FLOAT    (SND_CHUNK_SIZE / 2)    // floats
+#define SND_CHUNK_SIZE_BYTE     (SND_CHUNK_SIZE * 2)    // floats
 
 typedef struct
 {
@@ -127,9 +130,7 @@ typedef struct
 	int flags;
 } channel_t;
 
-
 #define WAV_FORMAT_PCM      1
-
 
 typedef struct
 {
@@ -182,12 +183,9 @@ typedef struct
 #endif
 } soundInterface_t;
 
-
 /*
 ====================================================================
-
   SYSTEM SPECIFIC FUNCTIONS
-
 ====================================================================
 */
 
@@ -195,14 +193,14 @@ typedef struct
 qboolean SNDDMA_Init(void);
 
 // gets the current DMA position
-int     SNDDMA_GetDMAPos(void);
+int SNDDMA_GetDMAPos(void);
 
 // shutdown the DMA xfer.
-void    SNDDMA_Shutdown(void);
+void SNDDMA_Shutdown(void);
 
-void    SNDDMA_BeginPainting(void);
+void SNDDMA_BeginPainting(void);
 
-void    SNDDMA_Submit(void);
+void SNDDMA_Submit(void);
 
 //====================================================================
 
@@ -212,11 +210,8 @@ extern channel_t s_channels[MAX_CHANNELS];
 extern channel_t loop_channels[MAX_CHANNELS];
 extern int       numLoopChannels;
 
-extern int    s_paintedtime;
-extern vec3_t listener_forward;
-extern vec3_t listener_right;
-extern vec3_t listener_up;
-extern dma_t  dma;
+extern int   s_paintedtime;
+extern dma_t dma;
 
 typedef struct
 {
@@ -263,19 +258,17 @@ extern float s_volCurrent;
 
 qboolean S_LoadSound(sfx_t *sfx);
 
-void        SND_free(sndBuffer *v);
+void SND_free(sndBuffer *v);
 sndBuffer *SND_malloc(void);
-void        SND_setup(void);
+void SND_setup(void);
+void SND_shutdown(void);
 
 void S_PaintChannels(int endtime);
 
 void S_memoryLoad(sfx_t *sfx);
 
-// spatializes a channel
-void S_Spatialize(channel_t *ch);
-
 // adpcm functions
-int  S_AdpcmMemoryNeeded(const wavinfo_t *info);
+// int S_AdpcmMemoryNeeded(const wavinfo_t *info); // unused
 void S_AdpcmEncodeSound(sfx_t *sfx, short *samples);
 void S_AdpcmGetSamples(sndBuffer *chunk, short *to);
 
@@ -300,16 +293,23 @@ extern int   sfxScratchIndex;
 
 qboolean S_Base_Init(soundInterface_t *si);
 
+#ifdef FEATURE_OPENAL
+
 // OpenAL stuff
 typedef enum
 {
 	SRCPRI_AMBIENT = 0, // Ambient sound effects
-	SRCPRI_ENTITY,          // Entity sound effects
-	SRCPRI_ONESHOT,         // One-shot sounds
-	SRCPRI_LOCAL,               // Local sounds
-	SRCPRI_STREAM               // Streams (music, cutscenes)
+	SRCPRI_ENTITY,      // Entity sound effects
+	SRCPRI_ONESHOT,     // One-shot sounds
+	SRCPRI_LOCAL,       // Local sounds
+	SRCPRI_STREAM       // Streams (music, cutscenes)
 } alSrcPriority_t;
+
 
 typedef int srcHandle_t;
 
 qboolean S_AL_Init(soundInterface_t *si);
+
+#endif // FEATURE_OPENAL
+
+#endif // __SND_LOCAL_H__

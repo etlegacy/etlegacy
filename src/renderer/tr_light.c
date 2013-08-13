@@ -39,7 +39,6 @@
 #define DLIGHT_MINIMUM_RADIUS   16
 // never calculate a range less than this to prevent huge light numbers
 
-
 /*
 ===============
 R_TransformDlights
@@ -63,17 +62,17 @@ void R_TransformDlights(int count, dlight_t *dl, orientationr_t *or)
 	}
 }
 
-
 /*
+=================
 R_CullDlights()
-frustum culls dynamic lights
-*/
 
+frustum culls dynamic lights
+=================
+*/
 void R_CullDlights(void)
 {
 	int      i, numDlights, dlightBits;
 	dlight_t *dl;
-
 
 	/* limit */
 	if (tr.refdef.num_dlights > MAX_DLIGHTS)
@@ -100,8 +99,6 @@ void R_CullDlights(void)
 	tr.refdef.dlightBits = dlightBits;
 }
 
-
-
 /*
 =============
 R_DlightBmodel
@@ -113,18 +110,17 @@ void R_DlightBmodel(bmodel_t *bmodel)
 {
 	int        i, j;
 	dlight_t   *dl;
-	int        mask;
+	int        mask = 0;
 	msurface_t *surf;
 
 	// transform all the lights
 	R_TransformDlights(tr.refdef.num_dlights, tr.refdef.dlights, &tr.orientation);
 
-	mask = 0;
 	for (i = 0 ; i < tr.refdef.num_dlights ; i++)
 	{
 		dl = &tr.refdef.dlights[i];
 
-		// ydnar: parallel dlights affect all entities
+		// parallel dlights affect all entities
 		if (!(dl->flags & REF_DIRECTED_DLIGHT))
 		{
 			// see if the point is close enough to the bounds to matter
@@ -149,11 +145,7 @@ void R_DlightBmodel(bmodel_t *bmodel)
 		mask |= 1 << i;
 	}
 
-	// RF, this is why some dlights wouldn't light up bmodels
-
-	//tr.currentEntity->needDlights = (mask != 0);
-
-	// (SA) isn't this dangerous to do to an enumerated type? (setting it to an int)
+	// isn't this dangerous to do to an enumerated type? (setting it to an int)
 	//		meaning, shouldn't ->needDlights be changed to an int rather than a qbool?
 
 	tr.currentEntity->needDlights = mask;
@@ -166,30 +158,26 @@ void R_DlightBmodel(bmodel_t *bmodel)
 
 		if (*surf->data == SF_FACE)
 		{
-			((srfSurfaceFace_t *)surf->data)->dlightBits[tr.smpFrame] = mask;
+			((srfSurfaceFace_t *)surf->data)->dlightBits = mask;
 		}
 		else if (*surf->data == SF_GRID)
 		{
-			((srfGridMesh_t *)surf->data)->dlightBits[tr.smpFrame] = mask;
+			((srfGridMesh_t *)surf->data)->dlightBits = mask;
 		}
 		else if (*surf->data == SF_TRIANGLES)
 		{
-//			((srfTriangles_t *)surf->data)->dlightBits[ tr.smpFrame ] = mask;
-			((srfTriangles2_t *)surf->data)->dlightBits[tr.smpFrame] = mask;
+			((srfTriangles2_t *)surf->data)->dlightBits = mask;
 		}
-		else if (*surf->data == SF_FOLIAGE)         // ydnar
+		else if (*surf->data == SF_FOLIAGE)
 		{
-			((srfFoliage_t *)surf->data)->dlightBits[tr.smpFrame] = mask;
+			((srfFoliage_t *)surf->data)->dlightBits = mask;
 		}
 	}
 }
 
-
 /*
 =============================================================================
-
 LIGHT SAMPLING
-
 =============================================================================
 */
 
@@ -200,7 +188,6 @@ extern cvar_t *r_debugLight;
 /*
 =================
 R_SetupEntityLightingGrid
-
 =================
 */
 static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
@@ -213,6 +200,11 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	int    gridStep[3];
 	vec3_t direction;
 	float  totalFactor;
+	float  factor;
+	byte   *data;
+	int    lat, lng;
+	vec3_t normal;
+	float  v;
 
 	if (ent->e.renderfx & RF_LIGHTING_ORIGIN)
 	{
@@ -229,8 +221,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	VectorSubtract(lightOrigin, tr.world->lightGridOrigin, lightOrigin);
 	for (i = 0 ; i < 3 ; i++)
 	{
-		float v;
-
 		v       = lightOrigin[i] * tr.world->lightGridInverseSize[i];
 		pos[i]  = floor(v);
 		frac[i] = v - pos[i];
@@ -260,11 +250,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	totalFactor = 0;
 	for (i = 0 ; i < 8 ; i++)
 	{
-		float  factor;
-		byte   *data;
-		int    lat, lng;
-		vec3_t normal;
-
 		factor = 1.0;
 		data   = gridData;
 		for (j = 0 ; j < 3 ; j++)
@@ -309,7 +294,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 
 		VectorMA(direction, factor, normal, direction);
 
-		// ydnar: test code
+		// test code
 		//%	if( strstr( tr.models[ ent->e.hModel ]->name, ".mdm" ) && i == 0 )
 		//%		ri.Printf( PRINT_ALL, "lat: %3d lng: %3d dir: %2.3f %2.3f %2.3f\n",
 		//%			data[ 7 ], data[ 8 ], normal[ 0 ], normal[ 1 ], normal[ 2 ] );
@@ -325,7 +310,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	VectorScale(ent->ambientLight, r_ambientScale->value, ent->ambientLight);
 	VectorScale(ent->directedLight, r_directedScale->value, ent->directedLight);
 
-//----(SA)	added
 	// cheats?  check for single player?
 	if (tr.lightGridMulDirected)
 	{
@@ -335,14 +319,12 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	{
 		VectorScale(ent->ambientLight, tr.lightGridMulAmbient, ent->ambientLight);
 	}
-//----(SA)	end
 
 	VectorNormalize2(direction, ent->lightDir);
 
-	// ydnar: debug hack
+	// debug hack
 	//%	VectorSubtract( vec3_origin, direction, ent->lightDir );
 }
-
 
 /*
 ===============
@@ -400,7 +382,6 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 	vec3_t   lightValue;
 	byte     *entityLight;
 
-
 	// lighting calculations
 	if (ent->lightingCalculated)
 	{
@@ -408,9 +389,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 	}
 	ent->lightingCalculated = qtrue;
 
-	//
 	// trace a sample point down to find ambient light
-	//
 	if (ent->e.renderfx & RF_LIGHTING_ORIGIN)
 	{
 		// seperate lightOrigins are needed so an object that is
@@ -466,10 +445,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 		VectorSet(ent->ambientLight, 245, 245, 245);      // allow a little room for flicker from directed light
 	}
 
-
-	//
 	// modify the light by dynamic lights
-	//
 	d = VectorLength(ent->directedLight);
 	VectorScale(ent->lightDir, d, lightDir);
 
@@ -482,19 +458,6 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 			continue;
 		}
 
-
-
-		#if 0
-		VectorSubtract(dl->origin, lightOrigin, dir);
-		d        = VectorNormalize(dir);
-		modulate = DLIGHT_AT_RADIUS * (dl->radius * dl->radius);
-		if (d < DLIGHT_MINIMUM_RADIUS)
-		{
-			d = DLIGHT_MINIMUM_RADIUS;
-		}
-
-		modulate = modulate / (d * d);
-		#else
 		// directional dlight, origin is a directional normal
 		if (dl->flags & REF_DIRECTED_DLIGHT)
 		{
@@ -515,7 +478,6 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 				modulate = dl->intensity * d;
 			}
 		}
-		#endif
 
 		VectorMA(ent->directedLight, modulate, dl->color, ent->directedLight);
 		VectorMA(lightDir, modulate, dir, lightDir);
@@ -535,8 +497,8 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 		LogLight(ent);
 	}
 
-	// ydnar: test code
-	//%	VectorClear( ent->ambientLight );
+	// test code
+	//VectorClear( ent->ambientLight );
 
 	// save out the byte packet version
 	((byte *)&ent->ambientLightInt)[0] = (int)(ent->ambientLight[0]);
@@ -544,7 +506,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 	((byte *)&ent->ambientLightInt)[2] = (int)(ent->ambientLight[2]);
 	((byte *)&ent->ambientLightInt)[3] = 0xff;
 
-	// ydnar: save out the light table
+	// save out the light table
 	d           = 0.0f;
 	entityLight = (byte *) ent->entityLightInt;
 	modulate    = 1.0f / (ENTITY_LIGHT_STEPS - 1);
@@ -560,8 +522,8 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 		entityLight += 4;
 	}
 
-	// ydnar: test code
-	//%	VectorSet( lightDir, 0, 0, 1 );
+	// test code
+	//VectorSet( lightDir, 0, 0, 1 );
 
 	// transform the direction to local space
 	VectorNormalize(lightDir);
@@ -569,22 +531,23 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 	ent->lightDir[1] = DotProduct(lightDir, ent->e.axis[1]);
 	ent->lightDir[2] = DotProduct(lightDir, ent->e.axis[2]);
 
-	// ydnar: renormalize if necessary
+	// renormalize if necessary
 	if (ent->e.nonNormalizedAxes)
 	{
 		VectorNormalize(ent->lightDir);
 	}
 
-	// ydnar: test code
-	//%	if( strstr( tr.models[ ent->e.hModel ]->name, ".mdm" ) )
-	//%		ri.Printf( PRINT_ALL, "vec: %f %f %f   localvec: %f %f %f\n",
-	//%			lightDir[ 0 ], lightDir[ 1 ], lightDir[ 2 ],
-	//%			ent->lightDir[ 0 ], ent->lightDir[ 1 ], ent->lightDir[ 2 ] );
+	// test code
+	//if( strstr( tr.models[ ent->e.hModel ]->name, ".mdm" ) )
+	//	ri.Printf( PRINT_ALL, "vec: %f %f %f   localvec: %f %f %f\n",
+	//		lightDir[ 0 ], lightDir[ 1 ], lightDir[ 2 ],
+	//		ent->lightDir[ 0 ], ent->lightDir[ 1 ], ent->lightDir[ 2 ] );
 }
 
 /*
 =================
 R_LightForPoint
+@brief unused
 =================
 */
 int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir)

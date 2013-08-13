@@ -37,7 +37,7 @@
 // Require a minimum version of SDL
 #define MINSDL_MAJOR 1
 #define MINSDL_MINOR 2
-#define MINSDL_PATCH 10
+#define MINSDL_PATCH 14
 
 // Input subsystem
 void IN_Init(void);
@@ -55,10 +55,6 @@ unsigned int CON_LogSize(void);
 unsigned int CON_LogWrite(const char *in);
 unsigned int CON_LogRead(char *out, unsigned int outSize);
 
-#ifdef MACOS_X
-char *Sys_StripAppBundle(char *pwd);
-#endif
-
 void Sys_GLimpSafeInit(void);
 void Sys_GLimpInit(void);
 void Sys_PlatformInit(void);
@@ -66,10 +62,11 @@ void Sys_SigHandler(int signal) __attribute__ ((noreturn));
 void Sys_ErrorDialog(const char *error);
 void Sys_AnsiColorPrint(const char *msg);
 
-int Sys_PID(void);
-qboolean Sys_PIDIsRunning(int pid);
-
-void *Sys_LoadDll(const char *name, char *fqpath,
-                  intptr_t(**entryPoint) (int, ...),
-                  intptr_t (*systemcalls)(intptr_t, ...));
+void *Sys_LoadDll(const char *name, qboolean useSystemLib);
+void *Sys_LoadGameDll(const char *name, intptr_t(**entryPoint) (int, ...), intptr_t (*systemcalls)(intptr_t, ...));
 void Sys_UnloadDll(void *dllHandle);
+
+#if defined(_WIN32)
+void Conbuf_AppendText(const char *msg);
+void Sys_DestroyConsole(void);
+#endif

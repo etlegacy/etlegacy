@@ -91,34 +91,23 @@ static client_t *SV_GetPlayerByName(void)
 
 //=========================================================
 
-/*
-==================
-SV_Map_f
-
-Restart the server on a different map
-==================
-*/
+/**
+ * @brief Restart the server on a different map
+ */
 static void SV_Map_f(void)
 {
 	char     *cmd;
 	char     *map;
 	char     mapname[MAX_QPATH];
-	qboolean killBots, cheat;
+	qboolean cheat;
 	char     expanded[MAX_QPATH];
 
+	cmd = Cmd_Argv(0);
 	map = Cmd_Argv(1);
-	if (!map)
+	if (!map || !map[0])
 	{
+		Com_Printf("Usage: %s <map name>\n", cmd);
 		return;
-	}
-
-	if (!com_gameInfo.spEnabled)
-	{
-		if (!Q_stricmp(Cmd_Argv(0), "spdevmap") || !Q_stricmp(Cmd_Argv(0), "spmap"))
-		{
-			Com_Printf("Single Player is not enabled.\n");
-			return;
-		}
 	}
 
 	// make sure the level exists before trying to change, so that
@@ -130,49 +119,30 @@ static void SV_Map_f(void)
 		return;
 	}
 
-	Cvar_Set("gamestate", va("%i", GS_INITIALIZE)); // NERVE - SMF - reset gamestate on map/devmap
-
-	Cvar_Set("g_currentRound", "0");              // NERVE - SMF - reset the current round
-	Cvar_Set("g_nextTimeLimit", "0");             // NERVE - SMF - reset the next time limit
-
-	// START    Mad Doctor I changes, 8/14/2002.  Need a way to force load a single player map as single player
-	if (!Q_stricmp(Cmd_Argv(0), "spdevmap") || !Q_stricmp(Cmd_Argv(0), "spmap"))
-	{
-		// This is explicitly asking for a single player load of this map
-		Cvar_Set("g_gametype", va("%i", com_gameInfo.defaultSPGameType));
-		// force latched values to get set
-		Cvar_Get("g_gametype", va("%i", com_gameInfo.defaultSPGameType), CVAR_SERVERINFO | CVAR_USERINFO | CVAR_LATCH);
-	}
-
-	cmd = Cmd_Argv(0);
+	Cvar_Set("gamestate", va("%i", GS_INITIALIZE)); // reset gamestate on map/devmap
+	Cvar_Set("g_currentRound", "0");                // reset the current round
+	Cvar_Set("g_nextTimeLimit", "0");               // reset the next time limit
 
 	if (!Q_stricmp(cmd, "devmap"))
 	{
-		cheat    = qtrue;
-		killBots = qtrue;
-	}
-	else
-	if (!Q_stricmp(Cmd_Argv(0), "spdevmap"))
-	{
-		cheat    = qtrue;
-		killBots = qtrue;
+		cheat = qtrue;
 	}
 	else
 	{
-		cheat    = qfalse;
-		killBots = qfalse;
+		cheat = qfalse;
 	}
 
-	// save the map name here cause on a map restart we reload the q3config.cfg
+	// save the map name here cause on a map restart we reload the etconfig.cfg
 	// and thus nuke the arguments of the map command
 	Q_strncpyz(mapname, map, sizeof(mapname));
 
 	// start up the map
-	SV_SpawnServer(mapname, killBots);
+	SV_SpawnServer(mapname);
 
 	// set the cheat value
-	// if the level was started with "map <levelname>", then
-	// cheats will not be allowed.  If started with "devmap <levelname>"
+	// if the level was started with "map <mapname>", then
+	// cheats will not be allowed.
+	// If started with "devmap <mapname>"
 	// then cheats will be allowed
 	if (cheat)
 	{
@@ -267,7 +237,7 @@ static void SV_MapRestart_f(void)
 	char        *denied;
 	qboolean    isBot;
 	int         delay = 0;
-	gamestate_t new_gs, old_gs;     // NERVE - SMF
+	gamestate_t new_gs, old_gs;
 
 	// make sure we aren't restarting twice in the same frame
 	if (com_frameTime == sv.serverId)
@@ -282,7 +252,6 @@ static void SV_MapRestart_f(void)
 		return;
 	}
 
-
 	if (Cmd_Argc() > 1)
 	{
 		delay = atoi(Cmd_Argv(1));
@@ -295,7 +264,7 @@ static void SV_MapRestart_f(void)
 		return;
 	}
 
-	// NERVE - SMF - read in gamestate or just default to GS_PLAYING
+	// read in gamestate or just default to GS_PLAYING
 	old_gs = atoi(Cvar_VariableString("gamestate"));
 
 	if (Cmd_Argc() > 2)
@@ -322,7 +291,7 @@ static void SV_MapRestart_f(void)
 		// restart the map the slow way
 		Q_strncpyz(mapname, Cvar_VariableString("mapname"), sizeof(mapname));
 
-		SV_SpawnServer(mapname, qfalse);
+		SV_SpawnServer(mapname);
 		return;
 	}
 
@@ -331,7 +300,7 @@ static void SV_MapRestart_f(void)
 	svs.snapFlagServerBit ^= SNAPFLAG_SERVERCOUNT;
 
 	// generate a new serverid
-	// TTimo - don't update restartedserverId there, otherwise we won't deal correctly with multiple map_restart
+	// don't update restartedserverId there, otherwise we won't deal correctly with multiple map_restart
 	sv.serverId = com_frameTime;
 	Cvar_Set("sv_serverid", va("%i", sv.serverId));
 
@@ -340,8 +309,6 @@ static void SV_MapRestart_f(void)
 	// had been changed from their default values will generate broadcast updates
 	sv.state      = SS_LOADING;
 	sv.restarting = qtrue;
-
-	Cvar_Set("sv_serverRestarting", "1");
 
 	SV_RestartGameProgs();
 
@@ -392,16 +359,22 @@ static void SV_MapRestart_f(void)
 			continue;
 		}
 
-		client->state = CS_ACTIVE;
-
-		SV_ClientEnterWorld(client, &client->lastUsercmd);
+		if (client->state == CS_ACTIVE)
+		{
+			SV_ClientEnterWorld(client, &client->lastUsercmd);
+		}
+		else
+		{
+			// If we don't reset client->lastUsercmd and are restarting during map load,
+			// the client will hang because we'll use the last Usercmd from the previous map,
+			// which is wrong obviously.
+			SV_ClientEnterWorld(client, NULL);
+		}
 	}
 
 	// run another frame to allow things to look at all the players
 	VM_Call(gvm, GAME_RUN_FRAME, svs.time);
 	svs.time += FRAMETIME;
-
-	Cvar_Set("sv_serverRestarting", "0");
 }
 
 //===============================================================
@@ -479,9 +452,14 @@ static void SV_Status_f(void)
 		return;
 	}
 
-	Com_Printf("map: %s\n", sv_mapname->string);
-	Com_Printf("num score ping name            lastmsg address               qport rate\n");
-	Com_Printf("--- ----- ---- --------------- ------- --------------------- ----- -----\n");
+	Com_Printf("cpu server utilization: %i %%\n"
+	           "avg response time: %i ms\n"
+	           "map: %s\n"
+	           "num score ping name            lastmsg address               qport rate\n"
+	           "--- ----- ---- --------------- ------- --------------------- ----- -----\n",
+	           ( int ) svs.stats.cpu,
+	           ( int ) svs.stats.avg,
+	           sv_mapname->string);
 
 	// FIXME: extend player name lenght (>16 chars) ? - they are printed!
 	// FIXME: do a Com_Printf per line! ... create the row at first
@@ -518,7 +496,7 @@ static void SV_Status_f(void)
 
 		Com_Printf("%7i ", svs.time - cl->lastPacketTime);
 
-		s = NET_AdrToStringwPort(cl->netchan.remoteAddress);
+		s = NET_AdrToString(cl->netchan.remoteAddress);
 		Com_Printf("%s", s);
 
 		l = 22 - strlen(s);
@@ -592,6 +570,13 @@ Examine the serverinfo string
 */
 static void SV_Serverinfo_f(void)
 {
+	// make sure server is running
+	if (!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running.\n");
+		return;
+	}
+
 	Com_Printf("Server info settings:\n");
 	Info_Print(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
 }
@@ -702,16 +687,12 @@ void SV_AddOperatorCommands(void)
 	Cmd_AddCommand("map_restart", SV_MapRestart_f);
 	Cmd_AddCommand("fieldinfo", SV_FieldInfo_f);
 	Cmd_AddCommand("sectorlist", SV_SectorList_f);
+	Cmd_AddCommand("gameCompleteStatus", SV_GameCompleteStatus_f);
+
 	Cmd_AddCommand("map", SV_Map_f);
 	Cmd_SetCommandCompletionFunc("map", SV_CompleteMapName);
-	Cmd_AddCommand("gameCompleteStatus", SV_GameCompleteStatus_f);        // NERVE - SMF
-
 	Cmd_AddCommand("devmap", SV_Map_f);
 	Cmd_SetCommandCompletionFunc("devmap", SV_CompleteMapName);
-	Cmd_AddCommand("spmap", SV_Map_f);
-	Cmd_SetCommandCompletionFunc("spmap", SV_CompleteMapName);
-	Cmd_AddCommand("spdevmap", SV_Map_f);
-	Cmd_SetCommandCompletionFunc("spdevmap", SV_CompleteMapName);
 
 	Cmd_AddCommand("killserver", SV_KillServer_f);
 	if (com_dedicated->integer)

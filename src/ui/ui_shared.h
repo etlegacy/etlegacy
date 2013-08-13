@@ -34,16 +34,12 @@
 #ifndef __UI_SHARED_H
 #define __UI_SHARED_H
 
-
 #include "../qcommon/q_shared.h"
-#include "../renderer/tr_types.h"
+#include "../renderercommon/tr_types.h"
 #include "keycodes.h"
 
 #include "../../etmain/ui/menudef.h"
 
-#define MAX_MENUNAME 32
-#define MAX_ITEMTEXT 64
-#define MAX_ITEMACTION 64
 #define MAX_MENUDEFFILE 4096
 #define MAX_MENUFILE 32768
 #define MAX_MENUS 128
@@ -94,8 +90,6 @@
 #define STRING_POOL_SIZE    384 * 1024
 #endif
 
-#define MAX_STRING_HANDLES  4096
-#define MAX_SCRIPT_ARGS     12
 #define MAX_EDITFIELD       256
 
 #define ART_FX_BASE         "menu/art/fx_base"
@@ -126,13 +120,6 @@
 #define SLIDER_THUMB_WIDTH  12.0
 #define SLIDER_THUMB_HEIGHT 12.0    // 20.0
 #define NUM_CROSSHAIRS      10
-
-typedef struct scriptDef_s
-{
-	const char *command;
-	const char *args[MAX_SCRIPT_ARGS];
-} scriptDef_t;
-
 
 typedef struct rectDef_s
 {
@@ -172,7 +159,6 @@ typedef struct
 } windowDef_t;
 
 typedef windowDef_t Window;
-
 
 typedef struct
 {
@@ -266,7 +252,7 @@ typedef struct modelDef_s
 #define CVAR_HIDE       0x00000008
 #define CVAR_NOTOGGLE   0x00000010
 
-// OSP - "setting" flags for items
+// "setting" flags for items
 #define SVS_DISABLED_SHOW   0x01
 #define SVS_ENABLED_SHOW    0x02
 
@@ -282,7 +268,7 @@ typedef struct itemDef_s
 	float textalignx;               // ( optional ) text alignment x coord
 	float textaligny;               // ( optional ) text alignment x coord
 	float textscale;                // scale percentage from 72pts
-	int font;                       // (SA)
+	int font;                       //
 	int textStyle;                  // ( optional ) style, normal and shadowed are it for now
 	const char *text;   // display text
 	void *parent;                   // menu owner
@@ -292,7 +278,7 @@ typedef struct itemDef_s
 	const char *mouseEnter;         // mouse enter script
 	const char *mouseExit;          // mouse exit script
 	const char *action;             // select script
-	const char *onAccept;           // NERVE - SMF - run when the users presses the enter key
+	const char *onAccept;           // run when the users presses the enter key
 	const char *onFocus;            // select script
 	const char *leaveFocus;         // select script
 	const char *cvar;               // associated cvar
@@ -307,16 +293,14 @@ typedef struct itemDef_s
 	int cursorPos;                  // cursor position in characters
 	void *typeData;                 // type specific data ptr's
 
-	// START - TAT 9/16/2002
 	//      For the bot menu, we have context sensitive menus
 	//      the way it works, we could have multiple items in a menu with the same hotkey
 	//      so in the mission pack, we search through all the menu items to find the one that is applicable to this key press
 	//      so the item has to store both the hotkey and the command to execute
 	int hotkey;
 	const char *onKey;
-	// END - TAT 9/16/2002
 
-	// OSP - on-the-fly enable/disable of items
+	// on-the-fly enable/disable of items
 	int settingTest;
 	int settingFlags;
 	int voteFlag;
@@ -324,7 +308,7 @@ typedef struct itemDef_s
 	const char *onEsc;
 	const char *onEnter;
 
-	struct itemDef_s *toolTipData;  // OSP - Tag an item to this item for auto-help popups
+	struct itemDef_s *toolTipData;  // Tag an item to this item for auto-help popups
 
 } itemDef_t;
 
@@ -344,22 +328,20 @@ typedef struct
 	const char *onESC;              // run when the escape key is hit
 	const char *onEnter;            // run when the enter key is hit
 
-	int timeout;                    // ydnar: milliseconds until menu times out
-	int openTime;                   // ydnar: time menu opened
-	const char *onTimeout;          // ydnar: run when menu times out
+	int timeout;                    // milliseconds until menu times out
+	int openTime;                   // time menu opened
+	const char *onTimeout;          // run when menu times out
 
-	const char *onKey[255];         // NERVE - SMF - execs commands when a key is pressed
+	const char *onKey[255];         // execs commands when a key is pressed
 	const char *soundName;          // background loop sound for menu
 
 	vec4_t focusColor;              // focus color for items
 	vec4_t disableColor;            // focus color for items
 	itemDef_t *items[MAX_MENUITEMS]; // items this menu contains
 
-	// START - TAT 9/16/2002
 	// should we search through all the items to find the hotkey instead of using the onKey array?
 	//      The bot command menu needs to do this, see note above
 	qboolean itemHotkeyMode;
-	// END - TAT 9/16/2002
 } menuDef_t;
 
 typedef struct
@@ -425,7 +407,7 @@ typedef struct
 	int (*textHeight)(const char *text, float scale, int limit);
 	int (*textHeightExt)(const char *text, float scale, int limit, fontInfo_t *font);
 	int (*multiLineTextHeight)(const char *text, float scale, int limit);
-	void (*textFont)(int font);              // NERVE - SMF
+	void (*textFont)(int font);
 	qhandle_t (*registerModel)(const char *p);
 	void (*modelBounds)(qhandle_t model, vec3_t min, vec3_t max);
 	void (*fillRect)(float x, float y, float w, float h, const vec4_t color);
@@ -455,10 +437,10 @@ typedef struct
 	qhandle_t (*feederItemImage)(float feederID, int index);
 	void (*feederSelection)(float feederID, int index);
 	qboolean (*feederSelectionClick)(itemDef_t *item);
-	void (*feederAddItem)(float feederID, const char *name, int index);               // NERVE - SMF
-	char * (*translateString)(const char *string);                                    // NERVE - SMF
-	void (*checkAutoUpdate)(void);                                             // DHM - Nerve
-	void (*getAutoUpdate)(void);                                               // DHM - Nerve
+	void (*feederAddItem)(float feederID, const char *name, int index);
+	char * (*translateString)(const char *string);
+	void (*checkAutoUpdate)(void);
+	void (*getAutoUpdate)(void);
 
 	void (*keynumToStringBuf)(int keynum, char *buf, int buflen);
 	void (*getBindingBuf)(int keynum, char *buf, int buflen);
@@ -480,14 +462,13 @@ typedef struct
 	void (*drawCinematic)(int handle, float x, float y, float w, float h);
 	void (*runCinematicFrame)(int handle);
 
-	// Gordon: campaign stuffs
+	// campaign stuffs
 	const char * (*descriptionForCampaign)(void);
 	const char * (*nameForCampaign)(void);
 	void (*add2dPolys)(polyVert_t *verts, int numverts, qhandle_t hShader);
 	void (*updateScreen)(void);
 	void (*getHunkData)(int *hunkused, int *hunkexpected);
 	int (*getConfigString)(int index, char *buff, int buffsize);
-
 
 	float yscale;
 	float xscale;
@@ -511,7 +492,6 @@ const char *String_Alloc(const char *p);
 void String_Init(void);
 void String_Report(void);
 void Init_Display(displayContextDef_t *dc);
-void Display_ExpandMacros(char *buff);
 void Menu_Init(menuDef_t *menu);
 void Item_Init(itemDef_t *item);
 void Menu_PostParse(menuDef_t *menu);
@@ -533,7 +513,7 @@ qboolean PC_Int_Parse(int handle, int *i);
 qboolean PC_Rect_Parse(int handle, rectDef_t *r);
 qboolean PC_String_Parse(int handle, const char **out);
 qboolean PC_Script_Parse(int handle, const char **out);
-qboolean PC_Char_Parse(int handle, char *out);                // NERVE - SMF
+qboolean PC_Char_Parse(int handle, char *out);
 int Menu_Count(void);
 menuDef_t *Menu_Get(int handle);
 void Menu_New(int handle);
@@ -546,43 +526,39 @@ qboolean Menus_CaptureFuncActive(void);
 
 displayContextDef_t *Display_GetContext(void);
 void *Display_CaptureItem(int x, int y);
-qboolean    Display_MouseMove(void *p, int x, int y);
-int         Display_CursorType(int x, int y);
-qboolean    Display_KeyBindPending(void);
-void        Menus_OpenByName(const char *p);
+qboolean Display_MouseMove(void *p, int x, int y);
+int Display_CursorType(int x, int y);
+qboolean Display_KeyBindPending(void);
+void Menus_OpenByName(const char *p);
 menuDef_t *Menus_FindByName(const char *p);
-void        Menus_ShowByName(const char *p);
-void        Menus_CloseByName(const char *p);
-void        Display_HandleKey(int key, qboolean down, int x, int y);
-void        LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
-void        Menus_CloseAll(void);
-void        Menu_Paint(menuDef_t *menu, qboolean forcePaint);
-void        Menu_SetFeederSelection(menuDef_t *menu, int feeder, int index, const char *name);
-void        Display_CacheAll(void);
+void Menus_ShowByName(const char *p);
+void Menus_CloseByName(const char *p);
+void Display_HandleKey(int key, qboolean down, int x, int y);
+void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
+void Menus_CloseAll(void);
+void Menu_Paint(menuDef_t *menu, qboolean forcePaint);
+void Menu_SetFeederSelection(menuDef_t *menu, int feeder, int index, const char *name);
+void Display_CacheAll(void);
 
-// TTimo
 void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
 void *UI_Alloc(int size);
-void        UI_InitMemory(void);
-qboolean    UI_OutOfMemory(void);
+void UI_InitMemory(void);
+qboolean UI_OutOfMemory(void);
 
-void        Controls_GetConfig(void);
-void        Controls_SetConfig(qboolean restart);
-void        Controls_SetDefaults(qboolean lefthanded);
+void Controls_GetConfig(void);
+void Controls_SetConfig(qboolean restart);
+void Controls_SetDefaults(qboolean lefthanded);
 
-int         trap_PC_AddGlobalDefine(char *define);
-int         trap_PC_RemoveAllGlobalDefines(void);
-int         trap_PC_LoadSource(const char *filename);
-int         trap_PC_FreeSource(int handle);
-int         trap_PC_ReadToken(int handle, pc_token_t *pc_token);
-int         trap_PC_SourceFileAndLine(int handle, char *filename, int *line);
-int         trap_PC_UnReadToken(int handle);
+int trap_PC_AddGlobalDefine(char *define);
+int trap_PC_RemoveAllGlobalDefines(void);
+int trap_PC_LoadSource(const char *filename);
+int trap_PC_FreeSource(int handle);
+int trap_PC_ReadToken(int handle, pc_token_t *pc_token);
+int trap_PC_SourceFileAndLine(int handle, char *filename, int *line);
+int trap_PC_UnReadToken(int handle);
 
-
-//
 // panelhandling
-//
 
 typedef struct panel_button_s panel_button_t;
 
@@ -648,6 +624,10 @@ qboolean BG_CursorInRect(rectDef_t *rect);
 void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo_t *font);
 
 void AdjustFrom640(float *x, float *y, float *w, float *h);
-void SetupRotatedThing(polyVert_t *verts, vec2_t org, float w, float h, vec_t angle);
+
+void Cui_WideRect(Rectangle *rect);
+float Cui_WideX(float x);
+float Cui_WideXoffset(void);
+void C_PanelButtonsSetup(panel_button_t **buttons, float xoffset);      // called from UI & CGAME
 
 #endif

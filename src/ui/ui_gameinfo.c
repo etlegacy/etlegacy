@@ -33,80 +33,6 @@
 
 #include "ui_local.h"
 
-// arena info
-static int ui_numArenas;
-
-/*
-===============
-UI_ParseInfos
-===============
-*/
-int UI_ParseInfos(char *buf, int max, char *infos[], int totalmax)
-{
-	char *token;
-	int  count;
-	char key[MAX_TOKEN_CHARS];
-	char info[MAX_INFO_STRING];
-
-	count = 0;
-
-	while (1)
-	{
-		token = COM_Parse(&buf);
-		if (!token[0])
-		{
-			break;
-		}
-		if (strcmp(token, "{"))
-		{
-			Com_Printf("Missing { in info file\n");
-			break;
-		}
-
-		if (count == max)
-		{
-			Com_Printf("Max infos exceeded\n");
-			break;
-		}
-
-		info[0] = '\0';
-		while (1)
-		{
-			token = COM_ParseExt(&buf, qtrue);
-			if (!token[0])
-			{
-				Com_Printf("Unexpected end of info file\n");
-				break;
-			}
-			if (!strcmp(token, "}"))
-			{
-				break;
-			}
-			Q_strncpyz(key, token, sizeof(key));
-
-			token = COM_ParseExt(&buf, qfalse);
-			if (!token[0])
-			{
-				strcpy(token, "<NULL>");
-			}
-			Info_SetValueForKey(info, key, token);
-		}
-		//NOTE: extra space for arena number
-		infos[count] = UI_Alloc(strlen(info) + strlen("\\num\\") + strlen(va("%d", totalmax)) + 1);
-		if (infos[count])
-		{
-			strcpy(infos[count], info);
-			count++;
-		}
-	}
-	return count;
-}
-
-/*
-===============
-UI_LoadArenasFromFile
-===============
-*/
 static void UI_LoadArenasFromFile(char *filename)
 {
 	int        handle;
@@ -201,13 +127,18 @@ static void UI_LoadArenasFromFile(char *filename)
 				trap_PC_FreeSource(handle);
 				return;
 			}
-			/*} else if( !Q_stricmp( token.string, "objectives" ) ) {
-			    if( !PC_String_Parse( handle, &uiInfo.mapList[uiInfo.mapCount].objectives ) ) {
-			        trap_Print( va( S_COLOR_RED "unexpected end of file inside: %s\n", filename ) );
-			        trap_PC_FreeSource( handle );
-			        return;
-			    }*/
 		}
+		/*
+		else if (!Q_stricmp(token.string, "objectives"))
+		{
+		    if (!PC_String_Parse(handle, &uiInfo.mapList[uiInfo.mapCount].objectives))
+		    {
+		        trap_Print(va(S_COLOR_RED "unexpected end of file inside: %s\n", filename));
+		        trap_PC_FreeSource(handle);
+		        return;
+		    }
+		}
+		*/
 		else if (!Q_stricmp(token.string, "timelimit"))
 		{
 			if (!PC_Int_Parse(handle, &uiInfo.mapList[uiInfo.mapCount].Timelimit))
@@ -287,8 +218,8 @@ static void UI_LoadArenasFromFile(char *filename)
 	return;
 }
 
-/*
- * Sorting the map list
+/**
+ * @brief Sorting the map list
  */
 int QDECL UI_SortArenas(const void *a, const void *b)
 {
@@ -305,23 +236,15 @@ int QDECL UI_SortArenas(const void *a, const void *b)
 	return strcmp(cleanNameA, cleanNameB);
 }
 
-/*
-===============
-UI_LoadArenas
-===============
-*/
 void UI_LoadArenas(void)
 {
-	int numdirs;
-//	vmCvar_t	arenasFile;
+	int  numdirs;
 	char filename[128];
 	char dirlist[1024];
 	char *dirptr;
-	int  i /*, n*/;
+	int  i;
 	int  dirlen;
-	//char		*type, *str;
 
-	ui_numArenas    = 0;
 	uiInfo.mapCount = 0;
 
 	// get all arenas from .arena files
@@ -609,11 +532,6 @@ const char *UI_NameForCampaign(void)
 	return NULL;
 }
 
-/*
-===============
-UI_FindCampaignInCampaignList
-===============
-*/
 int UI_FindCampaignInCampaignList(const char *shortName)
 {
 	int i;
@@ -634,8 +552,8 @@ int UI_FindCampaignInCampaignList(const char *shortName)
 	return(-1);
 }
 
-/*
- * Sorting the campaign list
+/**
+ * @brief Sorting the campaign list
  */
 int QDECL UI_SortCampaigns(const void *a, const void *b)
 {
@@ -652,11 +570,6 @@ int QDECL UI_SortCampaigns(const void *a, const void *b)
 	return strcmp(cleanNameA, cleanNameB);
 }
 
-/*
-===============
-UI_LoadCampaigns
-===============
-*/
 void UI_LoadCampaigns(void)
 {
 	int  numdirs;
@@ -745,4 +658,3 @@ void UI_LoadCampaigns(void)
 	// Sorting the campaign list
 	qsort(uiInfo.campaignList, uiInfo.campaignCount, sizeof(uiInfo.campaignList[0]), UI_SortCampaigns);
 }
-

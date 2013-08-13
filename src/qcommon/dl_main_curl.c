@@ -37,7 +37,7 @@
 
 #include <curl/curl.h>
 
-#include "../qcommon/q_shared.h"
+#include "q_shared.h"
 #include "qcommon.h"
 #include "dl_public.h"
 
@@ -52,7 +52,9 @@ static CURL  *dl_request = NULL;
 static FILE  *dl_file    = NULL;
 
 /*
-** Write to file
+============
+Write to file
+============
 */
 static size_t DL_cb_FWriteFile(void *ptr, size_t size, size_t nmemb, void *stream)
 {
@@ -61,7 +63,9 @@ static size_t DL_cb_FWriteFile(void *ptr, size_t size, size_t nmemb, void *strea
 }
 
 /*
-** Print progress
+============
+Print progress
+============
 */
 static int DL_cb_Progress(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
 {
@@ -91,7 +95,6 @@ void DL_InitDownload(void)
 /*
 ================
 DL_Shutdown
-
 ================
 */
 void DL_Shutdown(void)
@@ -115,19 +118,19 @@ inspired from http://www.w3.org/Library/Examples/LoadToFile.c
 setup the download, return once we have a connection
 ===============
 */
-int DL_BeginDownload(const char *localName, const char *remoteName, int debug)
+int DL_BeginDownload(char *localName, const char *remoteName)
 {
 	char referer[MAX_STRING_CHARS + 5 /*"ET://"*/];
 
 	if (dl_request)
 	{
-		Com_Printf("ERROR: DL_BeginDownload called with a download request already active\n");
+		Com_Printf("DL_BeginDownload: ERROR - called with a download request already active\n");
 		return 0;
 	}
 
 	if (!localName || !remoteName)
 	{
-		Com_DPrintf("Empty download URL or empty local file name\n");
+		Com_Printf("Empty download URL or empty local file name\n");
 		return 0;
 	}
 
@@ -135,7 +138,7 @@ int DL_BeginDownload(const char *localName, const char *remoteName, int debug)
 	dl_file = fopen(localName, "wb+");
 	if (!dl_file)
 	{
-		Com_Printf("ERROR: DL_BeginDownload unable to open '%s' for writing\n", localName);
+		Com_Printf("DL_BeginDownload: ERROR - unable to open '%s' for writing\n", localName);
 		return 0;
 	}
 
@@ -172,7 +175,7 @@ dlStatus_t DL_DownloadLoop(void)
 
 	if (!dl_request)
 	{
-		Com_DPrintf("DL_DownloadLoop: unexpected call with dl_request == NULL\n");
+		Com_Printf("DL_DownloadLoop: unexpected call with dl_request == NULL\n");
 		return DL_DONE;
 	}
 
@@ -191,11 +194,7 @@ dlStatus_t DL_DownloadLoop(void)
 
 	if (msg->data.result != CURLE_OK)
 	{
-#ifdef __MACOS__ // ���
-		err = "unknown curl error.";
-#else
 		err = curl_easy_strerror(msg->data.result);
-#endif
 	}
 	else
 	{
@@ -214,7 +213,7 @@ dlStatus_t DL_DownloadLoop(void)
 
 	if (err)
 	{
-		Com_DPrintf("DL_DownloadLoop: request terminated with failure status '%s'\n", err);
+		Com_Printf("DL_DownloadLoop: request terminated with failure status '%s'\n", err);
 		return DL_FAILED;
 	}
 

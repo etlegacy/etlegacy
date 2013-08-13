@@ -61,7 +61,7 @@ qboolean BG_LoadCampaignSave(const char *filename, cpsFile_t *file, const char *
 	// open the file
 	if (trap_FS_FOpenFile(filename, &f, FS_READ) < 0)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// read the header
@@ -71,7 +71,7 @@ qboolean BG_LoadCampaignSave(const char *filename, cpsFile_t *file, const char *
 	{
 		trap_FS_FCloseFile(f);
 		Com_Printf("^1ERROR: BG_LoadCampaignSave: not a campaignsave\n");
-		return(qfalse);
+		return qfalse;
 	}
 
 	trap_FS_Read(&file->header.version, 1, f);
@@ -88,7 +88,7 @@ qboolean BG_LoadCampaignSave(const char *filename, cpsFile_t *file, const char *
 	{
 		trap_FS_FCloseFile(f);
 		Com_Printf("^1WARNING: BG_LoadCampaignSave: campaignsave is for another profile\n");
-		return(qfalse);
+		return qfalse;
 	}
 
 	// read the campaigns and maps
@@ -104,10 +104,9 @@ qboolean BG_LoadCampaignSave(const char *filename, cpsFile_t *file, const char *
 		}
 	}
 
-	// done
 	trap_FS_FCloseFile(f);
 
-	return(qtrue);
+	return qtrue;
 }
 
 qboolean BG_StoreCampaignSave(const char *filename, cpsFile_t *file, const char *profile)
@@ -120,7 +119,7 @@ qboolean BG_StoreCampaignSave(const char *filename, cpsFile_t *file, const char 
 	// open the file
 	if (trap_FS_FOpenFile(filename, &f, FS_WRITE) < 0)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	// write the header
@@ -154,8 +153,7 @@ qboolean BG_StoreCampaignSave(const char *filename, cpsFile_t *file, const char 
 		}
 	}
 
-	// done
 	trap_FS_FCloseFile(f);
 
-	return(qtrue);
+	return qtrue;
 }

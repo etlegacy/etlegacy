@@ -46,7 +46,6 @@ static float s_flipMatrix[16] =
 	0,  0, 0,  1
 };
 
-
 refimport_t ri;
 
 // entities that will have procedurally generated surfaces will just
@@ -58,7 +57,6 @@ glfog_t     glfogsettings[NUM_FOGS];
 glfogType_t glfogNum = FOG_NONE;
 qboolean    fogIsOn  = qfalse;
 
-
 /*
 =================
 R_Fog (void)
@@ -66,21 +64,19 @@ R_Fog (void)
 */
 void R_Fog(glfog_t *curfog)
 {
-	static glfog_t setfog;
-
 	if (!r_wolffog->integer)
 	{
 		R_FogOff();
 		return;
 	}
 
-	if (!curfog->registered)       //----(SA)
+	if (!curfog->registered)
 	{
 		R_FogOff();
 		return;
 	}
 
-	//----(SA) assme values of '0' for these parameters means 'use default'
+	// assme values of '0' for these parameters means 'use default'
 	if (!curfog->density)
 	{
 		curfog->density = 1;
@@ -93,56 +89,33 @@ void R_Fog(glfog_t *curfog)
 	{
 		curfog->mode = GL_LINEAR;
 	}
-	//----(SA)  end
-
 
 	R_FogOn();
 
-	// only send changes if necessary
-
-//  if(curfog->mode != setfog.mode || !setfog.registered) {
 	qglFogi(GL_FOG_MODE, curfog->mode);
-//      setfog.mode = curfog->mode;
-//  }
-//  if(curfog->color[0] != setfog.color[0] || curfog->color[1] != setfog.color[1] || curfog->color[2] != setfog.color[2] || !setfog.registered) {
-	qglFogfv(GL_FOG_COLOR, curfog->color);
-//      VectorCopy(setfog.color, curfog->color);
-//  }
-//  if(curfog->density != setfog.density || !setfog.registered) {
-	qglFogf(GL_FOG_DENSITY, curfog->density);
-//      setfog.density = curfog->density;
-//  }
-//  if(curfog->hint != setfog.hint || !setfog.registered) {
-	qglHint(GL_FOG_HINT, curfog->hint);
-//      setfog.hint = curfog->hint;
-//  }
-//  if(curfog->start != setfog.start || !setfog.registered) {
-	qglFogf(GL_FOG_START, curfog->start);
-//      setfog.start = curfog->start;
-//  }
 
-	if (r_zfar->value)                 // (SA) allow override for helping level designers test fog distances
-	{ //      if(setfog.end != r_zfar->value || !setfog.registered) {
+	qglFogfv(GL_FOG_COLOR, curfog->color);
+
+	qglFogf(GL_FOG_DENSITY, curfog->density);
+
+	qglHint(GL_FOG_HINT, curfog->hint);
+
+	qglFogf(GL_FOG_START, curfog->start);
+
+	if (r_zfar->value)                 // allow override for helping level designers test fog distances
+	{
 		qglFogf(GL_FOG_END, r_zfar->value);
-//          setfog.end = r_zfar->value;
-//      }
+
 	}
 	else
 	{
-//      if(curfog->end != setfog.end || !setfog.registered) {
 		qglFogf(GL_FOG_END, curfog->end);
-//          setfog.end = curfog->end;
-//      }
 	}
 
-	setfog.registered = qtrue;
-
 	qglClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
-
-
 }
 
-// Ridah, allow disabling fog temporarily
+// allow disabling fog temporarily
 void R_FogOff(void)
 {
 	if (!fogIsOn)
@@ -160,20 +133,10 @@ void R_FogOn(void)
 		return;
 	}
 
-//  if(r_uiFullScreen->integer) {   // don't fog in the menu
-//      R_FogOff();
-//      return;
-//  }
-
 	if (!r_wolffog->integer)
 	{
 		return;
 	}
-
-//  if(backEnd.viewParms.isGLFogged) {
-//      if(!(backEnd.viewParms.glFog.registered))
-//          return;
-//  }
 
 	if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)     // don't force world fog on portal sky
 	{
@@ -190,11 +153,7 @@ void R_FogOn(void)
 	qglEnable(GL_FOG);
 	fogIsOn = qtrue;
 }
-// done.
 
-
-
-//----(SA)
 /*
 ==============
 R_SetFog
@@ -229,7 +188,7 @@ void R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float d
 		glfogsettings[fogvar].color[3] = 1;
 		glfogsettings[fogvar].start    = var1;
 		glfogsettings[fogvar].end      = var2;
-		if (density > 1)
+		if (density >= 1)
 		{
 			glfogsettings[fogvar].mode        = GL_LINEAR;
 			glfogsettings[fogvar].drawsky     = qfalse;
@@ -276,8 +235,6 @@ void R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float d
 	glfogsettings[FOG_TARGET].startTime  = tr.refdef.time;
 	glfogsettings[FOG_TARGET].finishTime = tr.refdef.time + var2;
 }
-
-//----(SA) end
 
 /*
 =================
@@ -354,7 +311,7 @@ int R_CullLocalBox(vec3_t bounds[2])
 }
 
 /*
-** R_CullLocalPointAndRadius
+R_CullLocalPointAndRadius
 */
 int R_CullLocalPointAndRadius(vec3_t pt, float radius)
 {
@@ -366,7 +323,7 @@ int R_CullLocalPointAndRadius(vec3_t pt, float radius)
 }
 
 /*
-** R_CullPointAndRadius
+R_CullPointAndRadius
 */
 int R_CullPointAndRadius(vec3_t pt, float radius)
 {
@@ -404,11 +361,9 @@ int R_CullPointAndRadius(vec3_t pt, float radius)
 	return CULL_IN;     // completely inside frustum
 }
 
-
 /*
 =================
 R_LocalNormalToWorld
-
 =================
 */
 void R_LocalNormalToWorld(vec3_t local, vec3_t world)
@@ -421,7 +376,6 @@ void R_LocalNormalToWorld(vec3_t local, vec3_t world)
 /*
 =================
 R_LocalPointToWorld
-
 =================
 */
 void R_LocalPointToWorld(vec3_t local, vec3_t world)
@@ -434,7 +388,6 @@ void R_LocalPointToWorld(vec3_t local, vec3_t world)
 /*
 =================
 R_WorldToLocal
-
 =================
 */
 void R_WorldToLocal(vec3_t world, vec3_t local)
@@ -447,7 +400,6 @@ void R_WorldToLocal(vec3_t world, vec3_t local)
 /*
 ==========================
 R_TransformModelToClip
-
 ==========================
 */
 void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const float *projectionMatrix,
@@ -477,7 +429,6 @@ void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const fl
 /*
 ==========================
 R_TransformClipToWindow
-
 ==========================
 */
 void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window)
@@ -494,11 +445,9 @@ void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t 
 	window[1] = (int) (window[1] + 0.5);
 }
 
-
 /*
 ==========================
 myGlMultMatrix
-
 ==========================
 */
 void myGlMultMatrix(const float *a, const float *b, float *out)
@@ -641,10 +590,7 @@ void R_RotateForViewer(void)
 	myGlMultMatrix(viewerMatrix, s_flipMatrix, tr.orientation.modelMatrix);
 
 	tr.viewParms.world = tr.orientation;
-
 }
-
-
 
 /*
 ==============
@@ -653,17 +599,14 @@ R_SetFrameFog
 */
 void R_SetFrameFog(void)
 {
-
 	// Arnout: new style global fog transitions
 	if (tr.world->globalFogTransEndTime)
 	{
 		if (tr.world->globalFogTransEndTime >= tr.refdef.time)
 		{
-			float lerpPos;
-			int   fadeTime;
+			int   fadeTime = tr.world->globalFogTransEndTime - tr.world->globalFogTransStartTime;
+			float lerpPos  = (float)(tr.refdef.time - tr.world->globalFogTransStartTime) / (float)fadeTime;
 
-			fadeTime = tr.world->globalFogTransEndTime - tr.world->globalFogTransStartTime;
-			lerpPos  = (float)(tr.refdef.time - tr.world->globalFogTransStartTime) / (float)fadeTime;
 			if (lerpPos > 1)
 			{
 				lerpPos = 1;
@@ -703,7 +646,7 @@ void R_SetFrameFog(void)
 		}
 	}
 
-	// DHM - Nerve :: If fog is not valid, don't use it
+	// If fog is not valid, don't use it
 	if (!glfogsettings[FOG_TARGET].registered)
 	{
 		return;
@@ -712,9 +655,6 @@ void R_SetFrameFog(void)
 	// still fading
 	if (glfogsettings[FOG_TARGET].finishTime && glfogsettings[FOG_TARGET].finishTime >= tr.refdef.time)
 	{
-		float lerpPos;
-		int   fadeTime;
-
 		// transitioning from density to distance
 		if (glfogsettings[FOG_LAST].mode == GL_EXP && glfogsettings[FOG_TARGET].mode == GL_LINEAR)
 		{
@@ -731,13 +671,12 @@ void R_SetFrameFog(void)
 		// transitioning like fog modes
 		else
 		{
+			float lerpPos;
+			int   fadeTime = glfogsettings[FOG_TARGET].finishTime - glfogsettings[FOG_TARGET].startTime;
 
-			fadeTime = glfogsettings[FOG_TARGET].finishTime - glfogsettings[FOG_TARGET].startTime;
 			if (fadeTime <= 0)
 			{
 				fadeTime = 1;   // avoid divide by zero
-
-
 			}
 			lerpPos = (float)(tr.refdef.time - glfogsettings[FOG_TARGET].startTime) / (float)fadeTime;
 			if (lerpPos > 1)
@@ -769,7 +708,6 @@ void R_SetFrameFog(void)
 		memcpy(&glfogsettings[FOG_CURRENT], &glfogsettings[FOG_TARGET], sizeof(glfog_t));
 	}
 
-
 	// shorten the far clip if the fog opaque distance is closer than the procedural farcip dist
 
 	if (glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
@@ -779,9 +717,6 @@ void R_SetFrameFog(void)
 			tr.viewParms.zFar = glfogsettings[FOG_CURRENT].end;
 		}
 	}
-//  else
-//      glfogsettings[FOG_CURRENT].end = 5;
-
 
 	if (r_speeds->integer == 5)
 	{
@@ -795,7 +730,6 @@ void R_SetFrameFog(void)
 		}
 	}
 }
-
 
 /*
 ==============
@@ -815,8 +749,8 @@ static void SetFarClip(void)
 		return;
 	}
 
-	//----(SA)  this lets you use r_zfar from the command line to experiment with different
-	//          distances, but setting it back to 0 uses the map (or procedurally generated) default
+	// this lets you use r_zfar from the command line to experiment with different
+	// distances, but setting it back to 0 uses the map (or procedurally generated) default
 	if (r_zfar->value)
 	{
 
@@ -831,9 +765,7 @@ static void SetFarClip(void)
 		return;
 	}
 
-	//
 	// set far clipping planes dynamically
-	//
 	farthestCornerDistance = 0;
 	for (i = 0; i < 8; i++)
 	{
@@ -880,7 +812,7 @@ static void SetFarClip(void)
 
 	tr.viewParms.zFar = sqrt(farthestCornerDistance);
 
-	// ydnar: add global q3 fog
+	// add global q3 fog
 	if (tr.world != NULL && tr.world->globalFog >= 0 && tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque < tr.viewParms.zFar)
 	{
 		tr.viewParms.zFar = tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque;
@@ -888,7 +820,6 @@ static void SetFarClip(void)
 
 	R_SetFrameFog();
 }
-
 
 /*
 =================
@@ -900,12 +831,9 @@ Setup that culling frustum planes for the current view
 void R_SetupFrustum(void)
 {
 	int   i;
-	float xs, xc;
-	float ang;
-
-	ang = tr.viewParms.fovX / 180 * M_PI * 0.5f;
-	xs  = sin(ang);
-	xc  = cos(ang);
+	float ang = tr.viewParms.fovX / 180 * M_PI * 0.5f;
+	float xs  = sin(ang);
+	float xc  = cos(ang);
 
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustum[0].normal);
 	VectorMA(tr.viewParms.frustum[0].normal, xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustum[0].normal);
@@ -930,13 +858,12 @@ void R_SetupFrustum(void)
 		SetPlaneSignbits(&tr.viewParms.frustum[i]);
 	}
 
-	// ydnar: farplane (testing! use farplane for real)
+	// farplane (testing! use farplane for real)
 	VectorScale(tr.viewParms.orientation.axis[0], -1, tr.viewParms.frustum[4].normal);
 	tr.viewParms.frustum[4].dist = DotProduct(tr.viewParms.orientation.origin, tr.viewParms.frustum[4].normal) - tr.viewParms.zFar;
 	tr.viewParms.frustum[4].type = PLANE_NON_AXIAL;
 	SetPlaneSignbits(&tr.viewParms.frustum[4]);
 }
-
 
 /*
 ===============
@@ -952,15 +879,13 @@ void R_SetupProjection(void)
 	// dynamically compute far clip plane distance
 	SetFarClip();
 
-	// ydnar: set frustum planes (this happens here because of zfar manipulation)
+	// set frustum planes (this happens here because of zfar manipulation)
 	R_SetupFrustum();
 
-	//
 	// set up projection matrix
-	//
 	zNear = r_znear->value;
 
-	// ydnar: high fov values let players see through walls
+	// high fov values let players see through walls
 	// solution is to move z near plane inward, which decreases zbuffer precision
 	// but if a player wants to play with fov 160, then they can deal with z-fighting
 	// assume fov 90 = scale 1, fov 180 = scale 1/16th
@@ -971,7 +896,7 @@ void R_SetupProjection(void)
 
 	if (r_zfar->value)
 	{
-		zFar = r_zfar->value;   // (SA) allow override for helping level designers test fog distances
+		zFar = r_zfar->value;   // allow override for helping level designers test fog distances
 	}
 	else
 	{
@@ -1008,7 +933,6 @@ void R_SetupProjection(void)
 	tr.viewParms.projectionMatrix[11] = -1;
 	tr.viewParms.projectionMatrix[15] = 0;
 }
-
 
 /*
 =================
@@ -1047,7 +971,6 @@ void R_MirrorVector(vec3_t in, orientation_t *surface, orientation_t *camera, ve
 	}
 }
 
-
 /*
 =============
 R_PlaneForSurface
@@ -1055,36 +978,40 @@ R_PlaneForSurface
 */
 void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
 {
-	srfTriangles_t *tri;
-	srfPoly_t      *poly;
-	drawVert_t     *v1, *v2, *v3;
-	vec4_t         plane4;
-
 	if (!surfType)
 	{
 		memset(plane, 0, sizeof(*plane));
 		plane->normal[0] = 1;
 		return;
 	}
+
 	switch (*surfType)
 	{
 	case SF_FACE:
 		*plane = ((srfSurfaceFace_t *)surfType)->plane;
 		return;
 	case SF_TRIANGLES:
-		tri = (srfTriangles_t *)surfType;
-		v1  = tri->verts + tri->indexes[0];
-		v2  = tri->verts + tri->indexes[1];
-		v3  = tri->verts + tri->indexes[2];
+	{
+		vec4_t         plane4;
+		srfTriangles_t *tri = (srfTriangles_t *)surfType;
+		drawVert_t     *v1  = tri->verts + tri->indexes[0];
+		drawVert_t     *v2  = tri->verts + tri->indexes[1];
+		drawVert_t     *v3  = tri->verts + tri->indexes[2];
+
 		PlaneFromPoints(plane4, v1->xyz, v2->xyz, v3->xyz);
 		VectorCopy(plane4, plane->normal);
 		plane->dist = plane4[3];
+	}
 		return;
 	case SF_POLY:
-		poly = (srfPoly_t *)surfType;
+	{
+		vec4_t    plane4;
+		srfPoly_t *poly = (srfPoly_t *)surfType;
+
 		PlaneFromPoints(plane4, poly->verts[0].xyz, poly->verts[1].xyz, poly->verts[2].xyz);
 		VectorCopy(plane4, plane->normal);
 		plane->dist = plane4[3];
+	}
 		return;
 	default:
 		memset(plane, 0, sizeof(*plane));
@@ -1297,29 +1224,24 @@ static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
 	return qfalse;
 }
 
-/*
-** SurfIsOffscreen
-**
-** Determines if a surface is completely offscreen.
-*/
+/**
+ * @brief Determines if a surface is completely offscreen.
+ */
 static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128])
 {
-	float        shortest = 100000000;
-	int          entityNum;
-	int          numTriangles;
-	shader_t     *shader;
-	int          fogNum;
-	int          frontFace;
-	int          dlighted;
-	vec4_t       clip, eye;
-	int          i;
-	unsigned int pointOr  = 0;
+	float    shortest = 100000000;
+	int      entityNum;
+	int      numTriangles;
+	shader_t *shader;
+	int      fogNum;
+	int      frontFace;
+	int      dlighted;
+	vec4_t   clip, eye;
+	int      i;
+	//unsigned int pointOr  = 0;
 	unsigned int pointAnd = (unsigned int)~0;
-
-	if (glConfig.smpActive)         // FIXME!  we can't do RB_BeginSurface/RB_EndSurface stuff with smp!
-	{
-		return qfalse;
-	}
+	int          j;
+	unsigned int pointFlags;
 
 	R_RotateForViewer();
 
@@ -1331,8 +1253,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 
 	for (i = 0; i < tess.numVertexes; i++)
 	{
-		int          j;
-		unsigned int pointFlags = 0;
+		pointFlags = 0;
 
 		R_TransformModelToClip(tess.xyz[i].v, tr.orientation.modelMatrix, tr.viewParms.projectionMatrix, eye, clip);
 
@@ -1348,7 +1269,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 			}
 		}
 		pointAnd &= pointFlags;
-		pointOr  |= pointFlags;
+		//pointOr  |= pointFlags;
 	}
 
 	// trivially reject
@@ -1382,6 +1303,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 			numTriangles--;
 		}
 	}
+
 	if (!numTriangles)
 	{
 		return qtrue;
@@ -1423,7 +1345,6 @@ qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf, int entityNum)
 		return qfalse;
 	}
 
-//  if ( r_noportals->integer || r_fastsky->integer || tr.levelGLFog) {
 	if (r_noportals->integer || r_fastsky->integer)
 	{
 		return qfalse;
@@ -1507,19 +1428,16 @@ int R_SpriteFogNum(trRefEntity_t *ent)
 
 /*
 ==========================================================================================
-
 DRAWSURF SORTING
-
 ==========================================================================================
 */
-
 
 /*
 ===============
 R_Radix
 ===============
 */
-static ID_INLINE void R_Radix(int byte, int size, drawSurf_t *source, drawSurf_t *dest)
+static ID_NONSTATIC_INLINE void R_Radix(int byte, int size, drawSurf_t *source, drawSurf_t *dest)
 {
 	int           count[256] = { 0 };
 	int           index[256];
@@ -1552,6 +1470,7 @@ Radix sort with 4 byte size buckets
 static void R_RadixSort(drawSurf_t *source, int size)
 {
 	static drawSurf_t scratch[MAX_DRAWSURFS];
+
 #ifdef Q3_LITTLE_ENDIAN
 	R_Radix(0, size, source, scratch);
 	R_Radix(1, size, scratch, source);
@@ -1695,11 +1614,9 @@ void R_AddEntitySurfaces(void)
 		// preshift the value we are going to OR into the drawsurf sort
 		tr.shiftedEntityNum = tr.currentEntityNum << QSORT_ENTITYNUM_SHIFT;
 
-		//
 		// the weapon model must be handled special --
 		// we don't want the hacked weapon position showing in
 		// mirrors, because the true body position will already be drawn
-		//
 		if ((ent->e.renderfx & RF_FIRST_PERSON) && tr.viewParms.isPortal)
 		{
 			continue;
@@ -1744,11 +1661,9 @@ void R_AddEntitySurfaces(void)
 				case MOD_MESH:
 					R_AddMD3Surfaces(ent);
 					break;
-				// Ridah
 				case MOD_MDC:
 					R_AddMDCSurfaces(ent);
 					break;
-				// done.
 				case MOD_MDS:
 					R_AddAnimSurfaces(ent);
 					break;
@@ -1776,10 +1691,7 @@ void R_AddEntitySurfaces(void)
 			ri.Error(ERR_DROP, "R_AddEntitySurfaces: Bad reType");
 		}
 	}
-
 }
-
-
 
 /*
 ====================
@@ -1801,7 +1713,6 @@ void R_GenerateDrawSurfs(void)
 		VectorCopy(tr.world->nodes->mins, tr.viewParms.visBounds[0]);
 		VectorCopy(tr.world->nodes->maxs, tr.viewParms.visBounds[1]);
 	}
-
 
 	R_SetupProjection();
 
@@ -1836,7 +1747,6 @@ void R_DebugPolygon(int color, int numPoints, float *points)
 	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
 	// draw solid shade
-
 	qglColor3f(color & 1, (color >> 1) & 1, (color >> 2) & 1);
 	qglBegin(GL_POLYGON);
 	for (i = 0 ; i < numPoints ; i++)
@@ -1902,13 +1812,12 @@ void R_DebugGraphics(void)
 	R_FogOff(); // moved this in here to keep from /always/ doing the fog state change
 
 	// the render thread can't make callbacks to the main thread
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	GL_Bind(tr.whiteImage);
 	GL_Cull(CT_FRONT_SIDED);
 	ri.CM_DrawDebugSurface(R_DebugPolygon);
 }
-
 
 /*
 ================
@@ -1927,7 +1836,7 @@ void R_RenderView(viewParms_t *parms)
 		return;
 	}
 
-	// Ridah, purge media that were left over from the last level
+	// purge media that were left over from the last level
 	if (r_cache->integer)
 	{
 		extern void R_PurgeBackupImages(int purgeCount);
@@ -1942,7 +1851,6 @@ void R_RenderView(viewParms_t *parms)
 			lastTime = tr.refdef.time;
 		}
 	}
-	// done.
 
 	tr.viewCount++;
 
@@ -1957,10 +1865,6 @@ void R_RenderView(viewParms_t *parms)
 	// set viewParms.world
 	R_RotateForViewer();
 
-	// ydnar: removed this because we do a full frustum/projection setup
-	// based on world bounds zfar or fog bounds
-	// R_SetupFrustum ();
-
 	R_GenerateDrawSurfs();
 
 	R_SortDrawSurfs(tr.refdef.drawSurfs + firstDrawSurf, tr.refdef.numDrawSurfs - firstDrawSurf);
@@ -1969,5 +1873,4 @@ void R_RenderView(viewParms_t *parms)
 	R_FogOff();
 	R_DebugGraphics();
 	R_FogOn();
-
 }

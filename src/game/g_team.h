@@ -31,7 +31,10 @@
  * @file g_team.h
  */
 
-// JPW NERVE -- more #defs for GT_WOLF gametype
+#ifndef __G_TEAM_H__
+#define __G_TEAM_H__
+
+// more #defs for GT_WOLF gametype
 #define WOLF_CAPTURE_BONUS      15      // capturing major game objective
 #define WOLF_STEAL_OBJ_BONUS    10      // stealing objective (first part of capture)
 #define WOLF_SECURE_OBJ_BONUS   10      // securing objective from slain enemy
@@ -56,7 +59,6 @@
 #define AXIS_OBJECTIVE      1
 #define ALLIED_OBJECTIVE    2
 #define OBJECTIVE_DESTROYED 4
-// jpw
 
 #define CONSTRUCTIBLE_START_BUILT   1
 #define CONSTRUCTIBLE_INVULNERABLE  2
@@ -107,17 +109,18 @@ const char *TeamColorString(int team);
 void Team_RemoveFlag(int team);
 void Team_DroppedFlagThink(gentity_t *ent);
 void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker);
-void Team_CheckHurtCarrier(gentity_t *targ, gentity_t *attacker);
-void Team_InitGame(void);
+
 void Team_ReturnFlag(gentity_t *ent);
 void Team_FreeEntity(gentity_t *ent);
 gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles, int spawnObjective);
-// START Mad Doc - TDF
+
 gentity_t *SelectPlayerSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles);
-// END Mad Doc - TDF
+
 int Team_GetLocation(gentity_t *ent);
 qboolean Team_GetLocationMsg(gentity_t *ent, char *loc, int loclen);
 void TeamplayInfoMessage(team_t team);
 void CheckTeamStatus(void);
 
 int Pickup_Team(gentity_t *ent, gentity_t *other);
+
+#endif

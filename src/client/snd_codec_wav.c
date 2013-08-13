@@ -154,9 +154,9 @@ S_ReadRIFFHeader
 static qboolean S_ReadRIFFHeader(fileHandle_t file, snd_info_t *info)
 {
 	char dump[16];
-	int  wav_format;
-	int  bits;
-	int  fmtlen = 0;
+	//int  wav_format;
+	int bits;
+	int fmtlen = 0;
 
 	// skip the riff wav header
 	FS_Read(dump, 12, file);
@@ -169,7 +169,8 @@ static qboolean S_ReadRIFFHeader(fileHandle_t file, snd_info_t *info)
 	}
 
 	// Save the parameters
-	wav_format     = FGetLittleShort(file);
+	//wav_format     = FGetLittleShort(file);
+	FGetLittleShort(file);
 	info->channels = FGetLittleShort(file);
 	info->rate     = FGetLittleLong(file);
 	FGetLittleLong(file);
@@ -228,8 +229,10 @@ void *S_WAV_CodecLoad(const char *filename, snd_info_t *info)
 	FS_FOpenFileRead(filename, &file, qtrue);
 	if (!file)
 	{
-		Com_Printf(S_COLOR_RED "ERROR: Could not open \"%s\"\n",
-		           filename);
+		if (com_developer->integer)
+		{
+			Com_Printf(S_COLOR_RED "ERROR: Could not open \"%s\"\n", filename);
+		}
 		return NULL;
 	}
 
@@ -237,8 +240,10 @@ void *S_WAV_CodecLoad(const char *filename, snd_info_t *info)
 	if (!S_ReadRIFFHeader(file, info))
 	{
 		FS_FCloseFile(file);
-		Com_Printf(S_COLOR_RED "ERROR: Incorrect/unsupported format in \"%s\"\n",
-		           filename);
+		if (com_developer->integer)
+		{
+			Com_Printf(S_COLOR_RED "ERROR: Incorrect/unsupported format in \"%s\"\n", filename);
+		}
 		return NULL;
 	}
 
@@ -247,8 +252,7 @@ void *S_WAV_CodecLoad(const char *filename, snd_info_t *info)
 	if (!buffer)
 	{
 		FS_FCloseFile(file);
-		Com_Printf(S_COLOR_RED "ERROR: Out of memory reading \"%s\"\n",
-		           filename);
+		Com_Printf(S_COLOR_RED "ERROR: Out of memory reading \"%s\"\n", filename);
 		return NULL;
 	}
 

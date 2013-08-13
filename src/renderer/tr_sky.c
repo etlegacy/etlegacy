@@ -41,9 +41,7 @@ static float s_cloudTexP[6][SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 
 /*
 ===================================================================================
-
 POLYGON TO BOX SIDE PROJECTION
-
 ===================================================================================
 */
 
@@ -72,7 +70,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 	float  s, t, dv;
 	int    axis;
 	float  *vp;
-	// s = [0]/[2], t = [1]/[2]
+
 	static int vec_to_st[6][3] =
 	{
 		{ -2, 3,  1  },
@@ -83,9 +81,6 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 
 		{ -2, -1, 3  },
 		{ -2, 1,  -3 }
-
-		//  {-1,2,3},
-		//  {1,2,-3}
 	};
 
 	// decide which face it maps to
@@ -331,16 +326,14 @@ void RB_ClipSkyPolygons(shaderCommands_t *input)
 
 /*
 ===================================================================================
-
 CLOUD VERTEX GENERATION
-
 ===================================================================================
 */
 
 /*
-** MakeSkyVec
-**
-** Parms: s, t range from -1 to 1
+MakeSkyVec
+
+Parms: s, t range from -1 to 1
 */
 static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ)
 {
@@ -361,26 +354,27 @@ static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ
 	int    j, k;
 	float  boxSize;
 
-// JPW NERVE swiped from Sherman SP fix
-//  if(glfogNum > FOG_NONE && glfogsettings[FOG_CURRENT].mode == GL_EXP) {
+	// JPW NERVE swiped from Sherman SP fix
+	//  if(glfogNum > FOG_NONE && glfogsettings[FOG_CURRENT].mode == GL_EXP) {
 	if (glfogsettings[FOG_SKY].registered)         // (SA) trying this...
-	{ ///     boxSize = backEnd.viewParms.zFar / 1.75;        // div sqrt(3)
-//      boxSize = glfogsettings[FOG_CURRENT].end / 1.75;
+	{
+		// boxSize = backEnd.viewParms.zFar / 1.75;        // div sqrt(3)
+		// boxSize = glfogsettings[FOG_CURRENT].end / 1.75;
 		boxSize = glfogsettings[FOG_SKY].end;       // (SA) trying this...
-// jpw
+
 	}
 	else
 	{
 		boxSize = backEnd.viewParms.zFar / 1.75;        // div sqrt(3)
 
 	}
-// JPW NERVE swiped from Sherman
+	// JPW NERVE swiped from Sherman
 	// make sure the sky is not near clipped
 	if (boxSize < r_znear->value * 2.0)
 	{
 		boxSize = r_znear->value * 2.0;
 	}
-// jpw
+
 	b[0] = s * boxSize;
 	b[1] = t * boxSize;
 	b[2] = boxSize;
@@ -489,6 +483,8 @@ static void DrawSkySideInner(struct image_s *image, const int mins[2], const int
 static void DrawSkyBox(shader_t *shader)
 {
 	int i;
+	int sky_mins_subd[2], sky_maxs_subd[2];
+	int s, t;
 
 	memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
@@ -497,9 +493,6 @@ static void DrawSkyBox(shader_t *shader)
 
 	for (i = 0 ; i < 6 ; i++)
 	{
-		int sky_mins_subd[2], sky_maxs_subd[2];
-		int s, t;
-
 		sky_mins[0][i] = floor(sky_mins[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_mins[1][i] = floor(sky_mins[1][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_maxs[0][i] = ceil(sky_maxs[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
@@ -550,9 +543,7 @@ static void DrawSkyBox(shader_t *shader)
 			sky_maxs_subd[1] = HALF_SKY_SUBDIVISIONS;
 		}
 
-		//
 		// iterate through the subdivisions
-		//
 		for (t = sky_mins_subd[1] + HALF_SKY_SUBDIVISIONS; t <= sky_maxs_subd[1] + HALF_SKY_SUBDIVISIONS; t++)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
@@ -569,21 +560,18 @@ static void DrawSkyBox(shader_t *shader)
 		            sky_mins_subd,
 		            sky_maxs_subd);
 	}
-
 }
-
 
 static void DrawSkyBoxInner(shader_t *shader)
 {
 	int i;
+	int sky_mins_subd[2], sky_maxs_subd[2];
+	int s, t;
 
 	memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
 	for (i = 0 ; i < 6 ; i++)
 	{
-		int sky_mins_subd[2], sky_maxs_subd[2];
-		int s, t;
-
 		sky_mins[0][i] = floor(sky_mins[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_mins[1][i] = floor(sky_mins[1][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_maxs[0][i] = ceil(sky_maxs[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
@@ -634,9 +622,7 @@ static void DrawSkyBoxInner(shader_t *shader)
 			sky_maxs_subd[1] = HALF_SKY_SUBDIVISIONS;
 		}
 
-		//
 		// iterate through the subdivisions
-		//
 		for (t = sky_mins_subd[1] + HALF_SKY_SUBDIVISIONS; t <= sky_maxs_subd[1] + HALF_SKY_SUBDIVISIONS; t++)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
@@ -653,20 +639,16 @@ static void DrawSkyBoxInner(shader_t *shader)
 		                 sky_mins_subd,
 		                 sky_maxs_subd);
 	}
-
 }
 
 static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean addIndexes)
 {
 	int s, t;
 	int vertexStart = tess.numVertexes;
-	int tHeight, sWidth;
+	int tHeight     = maxs[1] - mins[1] + 1;
+	int sWidth      = maxs[0] - mins[0] + 1;
 
-
-	tHeight = maxs[1] - mins[1] + 1;
-	sWidth  = maxs[0] - mins[0] + 1;
-
-	// ydnar: overflow check
+	// overflow check
 	RB_CHECKOVERFLOW((maxs[0] - mins[0]) * (maxs[1] - mins[1]), (sWidth - 1) * (tHeight - 1) * 6);
 
 	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t <= maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
@@ -713,14 +695,13 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 
 static void FillCloudBox(const shader_t *shader, int stage)
 {
-	int i;
+	int   i;
+	int   sky_mins_subd[2], sky_maxs_subd[2];
+	int   s, t;
+	float MIN_T;
 
 	for (i = 0; i < 6; i++)
 	{
-		int   sky_mins_subd[2], sky_maxs_subd[2];
-		int   s, t;
-		float MIN_T;
-
 		if (1)     // FIXME? shader->sky.fullClouds )
 		{
 			MIN_T = -HALF_SKY_SUBDIVISIONS;
@@ -801,9 +782,7 @@ static void FillCloudBox(const shader_t *shader, int stage)
 			sky_maxs_subd[1] = HALF_SKY_SUBDIVISIONS;
 		}
 
-		//
 		// iterate through the subdivisions
-		//
 		for (t = sky_mins_subd[1] + HALF_SKY_SUBDIVISIONS; t <= sky_maxs_subd[1] + HALF_SKY_SUBDIVISIONS; t++)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
@@ -825,14 +804,11 @@ static void FillCloudBox(const shader_t *shader, int stage)
 }
 
 /*
-** R_BuildCloudData
+R_BuildCloudData
 */
 void R_BuildCloudData(shaderCommands_t *input)
 {
-	// int          i;
-	shader_t *shader;
-
-	shader = input->shader;
+	shader_t *shader = input->shader;
 
 	assert(shader->isSky);
 
@@ -849,6 +825,8 @@ void R_BuildCloudData(shaderCommands_t *input)
 		// which is unecessary for a multi-stage sky shader, as far as i can tell
 		// nuking this
 #if 0
+		// int          i;
+
 		for (i = 0; i < MAX_SHADER_STAGES; i++)
 		{
 			if (!tess.xstages[i])
@@ -864,8 +842,8 @@ void R_BuildCloudData(shaderCommands_t *input)
 }
 
 /*
-** R_InitSkyTexCoords
-** Called when a sky shader is parsed
+R_InitSkyTexCoords
+    Called when a sky shader is parsed
 */
 void R_InitSkyTexCoords(float heightCloud)
 {
@@ -928,7 +906,7 @@ void R_InitSkyTexCoords(float heightCloud)
 /*
 ==============
 RB_DrawSun
-    (SA) FIXME: sun should render behind clouds, so passing dark areas cover it up
+    FIXME: sun should render behind clouds, so passing dark areas cover it up
 ==============
 */
 void RB_DrawSun(void)
@@ -936,7 +914,6 @@ void RB_DrawSun(void)
 	float  size;
 	float  dist;
 	vec3_t origin, vec1, vec2;
-	vec3_t temp;
 	byte   color[4];
 
 	if (!tr.sunShader)
@@ -958,7 +935,7 @@ void RB_DrawSun(void)
 
 	dist = backEnd.viewParms.zFar / 1.75;       // div sqrt(3)
 
-	// (SA) shrunk the size of the sun
+	// shrunk the size of the sun
 	size = dist * 0.2;
 
 	VectorScale(tr.sunDirection, dist, origin);
@@ -973,11 +950,12 @@ void RB_DrawSun(void)
 
 	color[0] = color[1] = color[2] = color[3] = 255;
 
-	// (SA) simpler sun drawing
+	// simpler sun drawing
 	RB_BeginSurface(tr.sunShader, tess.fogNum);
 
 	RB_AddQuadStamp(origin, vec1, vec2, color);
 	/*
+	        // vec3_t temp; init moved down
 	        VectorCopy( origin, temp );
 	        VectorSubtract( temp, vec1, temp );
 	        VectorSubtract( temp, vec2, temp );
@@ -1031,10 +1009,11 @@ void RB_DrawSun(void)
 	*/
 	RB_EndSurface();
 
-
 	if (r_drawSun->integer > 1)     // draw flare effect
-	{   // (SA) FYI:    This is cheezy and was only a test so far.
-		//              If we decide to use the flare business I will /definatly/ improve all this
+	{
+		vec3_t temp;
+		// FYI: This is cheezy and was only a test so far.
+		//      If we decide to use the flare business I will /definatly/ improve all this
 
 		// get a point a little closer
 		dist = dist * 0.7;
@@ -1053,7 +1032,7 @@ void RB_DrawSun(void)
 		origin[1] += temp[1] * 500.0;
 		origin[2] += temp[2] * 500.0;
 
-		// (SA) FIXME: todo: flare effect should render last (on top of everything else) and only when sun is in view (sun moving out of camera past degree n should start to cause flare dimming until view angle to sun is off by angle n + x.
+		// FIXME: todo: flare effect should render last (on top of everything else) and only when sun is in view (sun moving out of camera past degree n should start to cause flare dimming until view angle to sun is off by angle n + x.
 
 		// draw the flare
 		RB_BeginSurface(tr.sunflareShader[0], tess.fogNum);
@@ -1065,8 +1044,6 @@ void RB_DrawSun(void)
 	qglDepthRange(0.0, 1.0);
 	qglPopMatrix();
 }
-
-
 
 extern void R_Fog(glfog_t *curfog);
 
@@ -1108,9 +1085,7 @@ void RB_StageIteratorSky(void)
 		}
 	}
 
-
 	backEnd.refdef.rdflags |= RDF_DRAWINGSKY;
-
 
 	// go through all the polygons and project them onto
 	// the sky box to see which blocks on each side need
@@ -1128,6 +1103,8 @@ void RB_StageIteratorSky(void)
 	{
 		qglDepthRange(1.0, 1.0);
 	}
+
+	GL_Cull(CT_TWO_SIDED);
 
 	// draw the outer skybox
 	if (tess.shader->sky.outerbox[0] && tess.shader->sky.outerbox[0] != tr.defaultImage)
@@ -1150,7 +1127,6 @@ void RB_StageIteratorSky(void)
 	RB_StageIteratorGeneric();
 
 	// draw the inner skybox
-	// Rafael - drawing inner skybox
 	if (tess.shader->sky.innerbox[0] && tess.shader->sky.innerbox[0] != tr.defaultImage)
 	{
 		qglColor3f(tr.identityLight, tr.identityLight, tr.identityLight);
@@ -1163,7 +1139,6 @@ void RB_StageIteratorSky(void)
 
 		qglPopMatrix();
 	}
-	// Rafael - end
 
 	// back to normal depth range
 	qglDepthRange(0.0, 1.0);

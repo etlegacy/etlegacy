@@ -35,18 +35,9 @@
 
 #include "g_local.h"
 
-typedef struct teamgame_s
-{
-	float last_flag_capture;
-	int last_capture_team;
-} teamgame_t;
-
-teamgame_t teamgame;
-
-void Team_InitGame(void)
-{
-	memset(&teamgame, 0, sizeof teamgame);
-}
+#ifdef FEATURE_OMNIBOT
+#include "g_etbot_interface.h"
+#endif
 
 int OtherTeam(int team)
 {
@@ -154,7 +145,6 @@ qboolean OnSameTeam(gentity_t *ent1, gentity_t *ent2)
 	return qfalse;
 }
 
-// JPW NERVE moved these up
 #define WCP_ANIM_NOFLAG             0
 #define WCP_ANIM_RAISE_AXIS         1
 #define WCP_ANIM_RAISE_AMERICAN     2
@@ -164,7 +154,6 @@ qboolean OnSameTeam(gentity_t *ent1, gentity_t *ent2)
 #define WCP_ANIM_AMERICAN_TO_AXIS   6
 #define WCP_ANIM_AXIS_FALLING       7
 #define WCP_ANIM_AMERICAN_FALLING   8
-// jpw
 
 /*
 ================
@@ -177,8 +166,6 @@ order.
 */
 void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker)
 {
-	int       i;
-	gentity_t *ent;
 	int       flag_pw, enemy_flag_pw;
 	int       otherteam;
 	gentity_t *flag, *carrier = NULL;
@@ -199,12 +186,11 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		return; // whoever died isn't on a team
 
 	}
-// JPW NERVE -- no bonuses for fragging friendlies, penalties scored elsewhere
+	// no bonuses for fragging friendlies, penalties scored elsewhere
 	if (team == attacker->client->sess.sessionTeam)
 	{
 		return;
 	}
-// jpw
 
 	// same team, if the flag at base, check to he has the enemy flag
 	if (team == TEAM_AXIS)
@@ -221,22 +207,8 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 	// did the attacker frag the flag carrier?
 	if (targ->client->ps.powerups[enemy_flag_pw])
 	{
-		attacker->client->pers.teamState.lastfraggedcarrier = level.time;
 		AddScore(attacker, WOLF_FRAG_CARRIER_BONUS);
-		attacker->client->pers.teamState.fragcarrier++;
 
-		//G_AddExperience( attacker, 0.5f );
-
-		// the target had the flag, clear the hurt carrier
-		// field on the other team
-		for (i = 0; i < g_maxclients.integer; i++)
-		{
-			ent = g_entities + i;
-			if (ent->inuse && ent->client->sess.sessionTeam == otherteam)
-			{
-				ent->client->pers.teamState.lasthurtcarrier = 0;
-			}
-		}
 		return;
 	}
 	// flag and flag carrier area defense bonuses
@@ -265,8 +237,9 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		}
 	}
 
-	if (flag)     // JPW NERVE -- added some more stuff after this fn
+	if (flag)     // added some more stuff after this fn
 	{ //      return; // can't find attacker's flag
+		int i;
 
 		// find attacker's team's flag carrier
 		for (i = 0; i < g_maxclients.integer; i++)
@@ -285,128 +258,39 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		VectorSubtract(targ->client->ps.origin, flag->s.origin, v1);
 		VectorSubtract(attacker->client->ps.origin, flag->s.origin, v2);
 
-		if ((VectorLengthSquared(v1) < SQR(CTF_TARGET_PROTECT_RADIUS) ||
-		     VectorLengthSquared(v2) < SQR(CTF_TARGET_PROTECT_RADIUS) ||
+		if ((VectorLengthSquared(v1) < Square(CTF_TARGET_PROTECT_RADIUS) ||
+		     VectorLengthSquared(v2) < Square(CTF_TARGET_PROTECT_RADIUS) ||
 		     CanDamage(flag, targ->client->ps.origin) || CanDamage(flag, attacker->client->ps.origin)) &&
 		    attacker->client->sess.sessionTeam != targ->client->sess.sessionTeam)
 		{
 			// we defended the base flag
-			// JPW NERVE FIXME -- don't report flag defense messages, change to gooder message
+			// FIXME -- don't report flag defense messages, change to gooder message
 			AddScore(attacker, WOLF_FLAG_DEFENSE_BONUS);
-			//G_AddExperience( attacker, 0.5f );
-			attacker->client->pers.teamState.basedefense++;
 			return;
 		}
+	}
 
-		/*      if (g_gametype.integer < GT_WOLF) { // JPW NERVE no attacker protect in wolf MP
-		            if (carrier && carrier != attacker) {
-		                VectorSubtract(targ->s.origin, carrier->s.origin, v1);
-		                VectorSubtract(attacker->s.origin, carrier->s.origin, v1);
-
-		                if (VectorLengthSquared(v1) < SQR(CTF_ATTACKER_PROTECT_RADIUS) ||
-		                    VectorLengthSquared(v2) < SQR(CTF_ATTACKER_PROTECT_RADIUS) ||
-		                    CanDamage(carrier, targ->s.origin) || CanDamage(carrier, attacker->s.origin)) {
-		                    AddScore(attacker, CTF_CARRIER_PROTECT_BONUS);
-		                    attacker->client->pers.teamState.carrierdefense++;
-		                    PrintMsg(NULL, "%s" S_COLOR_WHITE " defends the %s's flag carrier.\n",
-		                        attacker->client->pers.netname,
-		                        TeamName(attacker->client->sess.sessionTeam));
-		                    return;
-		                }
-		            }
-		        }*/
-
-	} // JPW NERVE
-
-// JPW NERVE -- look for nearby checkpoints and spawnpoints
+	// look for nearby checkpoints and spawnpoints
 	flag = NULL;
 	while ((flag = G_Find(flag, FOFS(classname), "team_WOLF_checkpoint")) != NULL)
 	{
 		VectorSubtract(targ->client->ps.origin, flag->s.origin, v1);
 		if ((flag->s.frame != WCP_ANIM_NOFLAG) && (flag->count == attacker->client->sess.sessionTeam))
 		{
-			if (VectorLengthSquared(v1) < SQR(WOLF_CP_PROTECT_RADIUS))
+			if (VectorLengthSquared(v1) < Square(WOLF_CP_PROTECT_RADIUS))
 			{
 				if (flag->spawnflags & 1)                         // protected spawnpoint
 				{
 					AddScore(attacker, WOLF_SP_PROTECT_BONUS);
-					//G_AddExperience( attacker, 0.5f );
 				}
 				else
 				{
 					AddScore(attacker, WOLF_CP_PROTECT_BONUS);    // protected checkpoint
-					//G_AddExperience( attacker, 0.5f );
 				}
 			}
 		}
 	}
-// jpw
-
 }
-
-/*
-================
-Team_CheckHurtCarrier
-
-Check to see if attacker hurt the flag carrier.  Needed when handing out bonuses for assistance to flag
-carrier defense.
-================
-*/
-void Team_CheckHurtCarrier(gentity_t *targ, gentity_t *attacker)
-{
-	int flag_pw;
-
-	if (!targ->client || !attacker->client)
-	{
-		return;
-	}
-
-	if (targ->client->sess.sessionTeam == TEAM_AXIS)
-	{
-		flag_pw = PW_BLUEFLAG;
-	}
-	else
-	{
-		flag_pw = PW_REDFLAG;
-	}
-
-	if (targ->client->ps.powerups[flag_pw] &&
-	    targ->client->sess.sessionTeam != attacker->client->sess.sessionTeam)
-	{
-		attacker->client->pers.teamState.lasthurtcarrier = level.time;
-	}
-}
-
-
-/*gentity_t *Team_ResetFlag(int team)
-{
-    char *c;
-    gentity_t *ent, *rent = NULL;
-
-    switch (team) {
-    case TEAM_AXIS:
-        c = "team_CTF_redflag";
-        break;
-    case TEAM_ALLIES:
-        c = "team_CTF_blueflag";
-        break;
-    default:
-        return NULL;
-    }
-
-    ent = NULL;
-    while ((ent = G_Find (ent, FOFS(classname), c)) != NULL) {
-        if (ent->flags & FL_DROPPED_ITEM)
-            G_FreeEntity(ent);
-        else {
-            rent = ent;
-            ent->s.density++;
-            RespawnItem(ent);
-        }
-    }
-
-    return rent;
-}*/
 
 void Team_ResetFlag(gentity_t *ent)
 {
@@ -423,61 +307,17 @@ void Team_ResetFlag(gentity_t *ent)
 		if (ent->s.density == 1)
 		{
 			RespawnItem(ent);
+#ifdef FEATURE_OMNIBOT
+
+			Bot_Util_SendTrigger(ent, NULL, va("Flag returned %s!", _GetEntityName(ent)), "returned");
+#endif
 		}
-	}
-}
-
-/*void Team_RemoveFlag(int team)
-{
-    char *c;
-    gentity_t *ent, *rent = NULL;
-    int pw;
-    int i = 0;
-
-    switch (team) {
-    case TEAM_AXIS:
-        c = "team_CTF_redflag";
-        pw = PW_REDFLAG;
-        break;
-    case TEAM_ALLIES:
-        c = "team_CTF_blueflag";
-        pw = PW_BLUEFLAG;
-        break;
-    default:
-        return;
-    }
-
-    ent = NULL;
-    while ((ent = G_Find (ent, FOFS(classname), c)) != NULL) {
-        G_FreeEntity(ent);
-    }
-
-    for( i = 0; i < level.numConnectedClients; i++ ) {
-        level.clients[ level.sortedClients[i] ].ps.powerups[pw] = 0;
-    }
-}*/
-
-void Team_ResetFlags(void)
-{
-	gentity_t *ent;
-
-	ent = NULL;
-	while ((ent = G_Find(ent, FOFS(classname), "team_CTF_redflag")) != NULL)
-	{
-		Team_ResetFlag(ent);
-	}
-
-	ent = NULL;
-	while ((ent = G_Find(ent, FOFS(classname), "team_CTF_blueflag")) != NULL)
-	{
-		Team_ResetFlag(ent);
 	}
 }
 
 void Team_ReturnFlagSound(gentity_t *ent, int team)
 {
 	// play powerup spawn sound to all clients
-	//gentity_t *te;
 	gentity_t *pm;
 
 	if (ent == NULL)
@@ -490,12 +330,6 @@ void Team_ReturnFlagSound(gentity_t *ent, int team)
 	pm->s.effect3Time = G_StringIndex(ent->message);
 	pm->s.effect2Time = team;
 	pm->s.density     = 1; // 1 = returned
-
-	/*te = G_TempEntity( ent->s.pos.trBase, EV_GLOBAL_SOUND );
-	te->s.eventParm = G_SoundIndex( team == TEAM_AXIS ?
-	    "sound/chat/axis/g-objective_secure.wav" :
-	    "sound/chat/allies/a-objective_secure.wav" );
-	te->r.svFlags |= SVF_BROADCAST;*/
 }
 
 void Team_ReturnFlag(gentity_t *ent)
@@ -547,81 +381,60 @@ void Team_DroppedFlagThink(gentity_t *ent)
 int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 {
 	gclient_t *cl = other->client;
-	int       our_flag, enemy_flag;
-
-	if (cl->sess.sessionTeam == TEAM_AXIS)
-	{
-		our_flag   = PW_REDFLAG;
-		enemy_flag = PW_BLUEFLAG;
-	}
-	else
-	{
-		our_flag   = PW_BLUEFLAG;
-		enemy_flag = PW_REDFLAG;
-	}
 
 	if (ent->flags & FL_DROPPED_ITEM)
 	{
 		// hey, its not home.  return it by teleporting it back
 		AddScore(other, WOLF_SECURE_OBJ_BONUS);
-		//G_AddExperience( other, 0.8f );
-//      te = G_TempEntity( other->s.pos.trBase, EV_GLOBAL_SOUND );
-//      te->r.svFlags |= SVF_BROADCAST;
-//      te->s.teamNum = cl->sess.sessionTeam;
 
 		if (cl->sess.sessionTeam == TEAM_AXIS)
 		{
-//          te->s.eventParm = G_SoundIndex( "sound/chat/axis/g-objective_secure.wav" );
-
-//          trap_SendServerCommand(-1, va("cp \"Axis have returned %s!\n\" 2", ent->message));
-
 			if (level.gameManager)
 			{
 				G_Script_ScriptEvent(level.gameManager, "trigger", "axis_object_returned");
 			}
 			G_Script_ScriptEvent(&g_entities[ent->s.otherEntityNum], "trigger", "returned");
+#ifdef FEATURE_OMNIBOT
+			{
+				const char *pName = ent->message ? ent->message : _GetEntityName(ent);
+				Bot_Util_SendTrigger(ent, NULL, va("Axis have returned %s!", pName ? pName : ""), "returned");
+			}
+#endif
 		}
 		else
 		{
-//          te->s.eventParm = G_SoundIndex( "sound/chat/allies/a-objective_secure.wav" );
-
-//          trap_SendServerCommand(-1, va("cp \"Allies have returned %s!\n\" 2", ent->message));
-
 			if (level.gameManager)
 			{
 				G_Script_ScriptEvent(level.gameManager, "trigger", "allied_object_returned");
 			}
 			G_Script_ScriptEvent(&g_entities[ent->s.otherEntityNum], "trigger", "returned");
+#ifdef FEATURE_OMNIBOT
+			{
+				const char *pName = ent->message ? ent->message : _GetEntityName(ent);
+				Bot_Util_SendTrigger(ent, NULL, va("Allies have returned %s!", pName ? pName : ""), "returned");
+			}
+#endif
 		}
-		// dhm
-// jpw 800 672 2420
-		other->client->pers.teamState.flagrecovery++;
-		other->client->pers.teamState.lastreturnedflag = level.time;
+
 		//ResetFlag will remove this entity!  We must return zero
 		Team_ReturnFlagSound(ent, team);
 		Team_ResetFlag(ent);
 		return 0;
 	}
 
-	// DHM - Nerve :: GT_WOLF doesn't support capturing the flag
+	// GT_WOLF doesn't support capturing the flag
 	return 0;
 }
 
 int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 {
 	gclient_t *cl = other->client;
-//  gentity_t *te;
 	gentity_t *tmp;
 
 	ent->s.density--;
 
 	// hey, its not our flag, pick it up
-// JPW NERVE
 	AddScore(other, WOLF_STEAL_OBJ_BONUS);
-	//G_AddExperience( other, 0.8f );
-//  te = G_TempEntity( other->s.pos.trBase, EV_GLOBAL_SOUND );
-//  te->r.svFlags |= SVF_BROADCAST;
-//  te->s.teamNum = cl->sess.sessionTeam;
 
 	tmp         = ent->parent;
 	ent->parent = other;
@@ -633,15 +446,14 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 		pm->s.effect2Time = TEAM_AXIS;
 		pm->s.density     = 0; // 0 = stolen
 
-//      te->s.eventParm = G_SoundIndex( "sound/chat/axis/g-objective_taken.wav" );
-
-//      trap_SendServerCommand(-1, va("cp \"Axis have stolen %s!\n\" 2", ent->message));
-
 		if (level.gameManager)
 		{
 			G_Script_ScriptEvent(level.gameManager, "trigger", "allied_object_stolen");
 		}
 		G_Script_ScriptEvent(ent, "trigger", "stolen");
+#ifdef FEATURE_OMNIBOT
+		Bot_Util_SendTrigger(ent, NULL, va("Axis have stolen %s!", ent->message), "stolen");
+#endif
 	}
 	else
 	{
@@ -650,22 +462,19 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 		pm->s.effect2Time = TEAM_ALLIES;
 		pm->s.density     = 0; // 0 = stolen
 
-//      te->s.eventParm = G_SoundIndex( "sound/chat/allies/a-objective_taken.wav" );
-
-//      trap_SendServerCommand(-1, va("cp \"Allies have stolen %s!\n\" 2", ent->message));
-
 		if (level.gameManager)
 		{
 			G_Script_ScriptEvent(level.gameManager, "trigger", "axis_object_stolen");
 		}
 		G_Script_ScriptEvent(ent, "trigger", "stolen");
+#ifdef FEATURE_OMNIBOT
+		Bot_Util_SendTrigger(ent, NULL, va("Allies have stolen %s!", ent->message), "stolen");
+#endif
 	}
-	// dhm
-// jpw
 
 	ent->parent = tmp;
 
-	// Gordon: reset player disguise on stealing docs
+	// reset player disguise on stealing docs
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 
 
@@ -688,8 +497,6 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 		cl->flagParent = ent->s.number;
 	}
 
-	cl->pers.teamState.flagsince = level.time;
-
 	other->client->speedScale = ent->splashDamage; // Alter player speed
 
 	if (ent->s.density > 0)
@@ -707,116 +514,31 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 	int       team;
 	gclient_t *cl = other->client;
 
-	// START Mad Doc - TDF
-	if ((g_gametype.integer != GT_SINGLE_PLAYER) && (g_gametype.integer != GT_COOP))
+	// figure out what team this flag is
+	if (strcmp(ent->classname, "team_CTF_redflag") == 0)
 	{
-
-		// figure out what team this flag is
-		if (strcmp(ent->classname, "team_CTF_redflag") == 0)
-		{
-			team = TEAM_AXIS;
-		}
-		else if (strcmp(ent->classname, "team_CTF_blueflag") == 0)
-		{
-			team = TEAM_ALLIES;
-		}
-		else
-		{
-			PrintMsg(other, "Don't know what team the flag is on.\n");
-			return 0;
-		}
-
-		// JPW NERVE -- set flag model in carrying entity if multiplayer and flagmodel is set
-		other->message           = ent->message;
-		other->s.otherEntityNum2 = ent->s.modelindex2;
-		// jpw
-
-		return ((team == cl->sess.sessionTeam) ?
-		        Team_TouchOurFlag : Team_TouchEnemyFlag)
-		           (ent, other, team);
+		team = TEAM_AXIS;
+	}
+	else if (strcmp(ent->classname, "team_CTF_blueflag") == 0)
+	{
+		team = TEAM_ALLIES;
 	}
 	else
 	{
-		other->message           = ent->message;
-		other->s.otherEntityNum2 = ent->s.modelindex2;
-
-		// for single player, we want the allies to be able to pick up both flags
-		return Team_TouchEnemyFlag(ent, other, TEAM_ALLIES);
-
+		PrintMsg(other, "Don't know what team the flag is on.\n");
+		return 0;
 	}
-	// END Mad Doc - TDF
+
+	// set flag model in carrying entity if multiplayer and flagmodel is set
+	other->message           = ent->message;
+	other->s.otherEntityNum2 = ent->s.modelindex2;
+
+	return ((team == cl->sess.sessionTeam) ?
+	        Team_TouchOurFlag : Team_TouchEnemyFlag)
+	           (ent, other, team);
 }
 
 /*---------------------------------------------------------------------------*/
-
-// JPW NERVE
-/*
-=======================
-FindFarthestObjectiveIndex
-
-pick MP objective farthest from passed in vector, return table index
-=======================
-*/
-int FindFarthestObjectiveIndex(vec3_t source)
-{
-	int    i, j = 0;
-	float  dist = 0, tdist;
-	vec3_t tmp;
-//  int cs_obj = CS_MULTI_SPAWNTARGETS;
-//  char    cs[MAX_STRING_CHARS];
-//  char *objectivename;
-
-	for (i = 0; i < level.numspawntargets; i++)
-	{
-		VectorSubtract(level.spawntargets[i], source, tmp);
-		tdist = VectorLength(tmp);
-		if (tdist > dist)
-		{
-			dist = tdist;
-			j    = i;
-		}
-	}
-
-	/*
-	    cs_obj += j;
-	    trap_GetConfigstring( cs_obj, cs, sizeof(cs) );
-	    objectivename = Info_ValueForKey( cs, "spawn_targ");
-
-	    G_Printf("got furthest dist (%f) at point %d (%s) of %d\n",dist,j,objectivename,i);
-	*/
-
-	return j;
-}
-// jpw
-
-// NERVE - SMF
-/*
-=======================
-FindClosestObjectiveIndex
-
-NERVE - SMF - pick MP objective closest to the passed in vector, return table index
-=======================
-*/
-int FindClosestObjectiveIndex(vec3_t source)
-{
-	int    i, j = 0;
-	float  dist = 10E20, tdist;
-	vec3_t tmp;
-
-	for (i = 0; i < level.numspawntargets; i++)
-	{
-		VectorSubtract(level.spawntargets[i], source, tmp);
-		tdist = VectorLength(tmp);
-		if (tdist < dist)
-		{
-			dist = tdist;
-			j    = i;
-		}
-	}
-
-	return j;
-}
-// -NERVE - SMF
 
 /*
 ================
@@ -831,7 +553,7 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 	gentity_t *spot;
 	gentity_t *spots[MAX_TEAM_SPAWN_POINTS];
 
-	int count, closest, defendingTeam;
+	int count, closest;
 	int i = 0;
 
 	char  *classname;
@@ -839,8 +561,6 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 
 	vec3_t target;
 	vec3_t farthest;
-
-	defendingTeam = -1;
 
 	if (team == TEAM_AXIS)
 	{
@@ -866,13 +586,13 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 			continue;
 		}
 
-		// Arnout - modified to allow initial spawnpoints to be disabled at gamestart
+		// modified to allow initial spawnpoints to be disabled at gamestart
 		if (!(spot->spawnflags & 2))
 		{
 			continue;
 		}
 
-		// Arnout: invisible entities can't be used for spawning
+		// invisible entities can't be used for spawning
 		if (spot->entstate == STATE_INVISIBLE || spot->entstate == STATE_UNDERCONSTRUCTION)
 		{
 			continue;
@@ -890,13 +610,13 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 		spot = NULL;
 		while ((spot = G_Find(spot, FOFS(classname), classname)) != NULL)
 		{
-			// Arnout - modified to allow initial spawnpoints to be disabled at gamestart
+			// modified to allow initial spawnpoints to be disabled at gamestart
 			if (!(spot->spawnflags & 2))
 			{
 				continue;
 			}
 
-			// Arnout: invisible entities can't be used for spawning
+			// invisible entities can't be used for spawning
 			if (spot->entstate == STATE_INVISIBLE || spot->entstate == STATE_UNDERCONSTRUCTION)
 			{
 				continue;
@@ -915,7 +635,7 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 	}
 	else
 	{
-		// Gordon: adding ability to set autospawn
+		// adding ability to set autospawn
 		if (!spawnObjective)
 		{
 			switch (team)
@@ -954,12 +674,9 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 	}
 }
 
-
-
 /*
 ===========
 SelectCTFSpawnPoint
-
 ============
 */
 gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles, int spawnObjective)
@@ -988,7 +705,6 @@ TeamplayLocationsMessage
 
 Format:
     clientNum location health armor weapon powerups
-
 ==================
 */
 
@@ -1014,7 +730,7 @@ void TeamplayInfoMessage(team_t team)
 		if (player->inuse && player->client->sess.sessionTeam == team)
 		{
 
-			// DHM - Nerve :: If in LIMBO, don't show followee's health
+			// If in LIMBO, don't show followee's health
 			if (player->client->ps.pm_flags & PMF_LIMBO)
 			{
 				h = -1;
@@ -1028,10 +744,6 @@ void TeamplayInfoMessage(team_t team)
 				}
 			}
 
-			if (player->r.svFlags & SVF_POW)
-			{
-				continue;
-			}
 			Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i", level.sortedClients[i], player->client->pers.teamState.location[0], player->client->pers.teamState.location[1], h, player->s.powerups);
 
 			j = strlen(entry);
@@ -1048,7 +760,7 @@ void TeamplayInfoMessage(team_t team)
 	bufferedData = team == TEAM_AXIS ? level.tinfoAxis : level.tinfoAllies;
 
 	tinfo = va("tinfo %i%s", cnt, string);
-	if (!Q_stricmp(bufferedData, tinfo))       // Gordon: no change so just return
+	if (!Q_stricmp(bufferedData, tinfo))       // no change so just return
 	{
 		return;
 	}
@@ -1070,11 +782,12 @@ void TeamplayInfoMessage(team_t team)
 
 void CheckTeamStatus(void)
 {
-	int       i;
 	gentity_t *ent;
 
 	if (level.time - level.lastTeamLocationTime > TEAM_LOCATION_UPDATE_TIME)
 	{
+		int i;
+
 		level.lastTeamLocationTime = level.time;
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
@@ -1092,18 +805,6 @@ void CheckTeamStatus(void)
 }
 
 /*-----------------------------------------------------------------*/
-
-void Use_Team_InitialSpawnpoint(gentity_t *ent, gentity_t *other, gentity_t *activator)
-{
-	if (ent->spawnflags & 4)
-	{
-		ent->spawnflags &= ~4;
-	}
-	else
-	{
-		ent->spawnflags |= 4;
-	}
-}
 
 void Use_Team_Spawnpoint(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
@@ -1134,17 +835,10 @@ Axis players spawn here at game start.
 */
 void SP_team_CTF_redplayer(gentity_t *ent)
 {
-	// Gordon: these are obsolete
+	// these are obsolete
 	G_Printf("^1team_ctf_*player entities are now obsolete, please remove them!\n");
 	G_FreeEntity(ent);
 	return;
-
-	/*  ent->use = Use_Team_InitialSpawnpoint;
-
-	    VectorSet (ent->r.mins, -16, -16, -24);
-	    VectorSet (ent->r.maxs, 16, 16, 32);
-
-	    ent->think = DropToFloor;*/
 }
 
 /*QUAKED team_CTF_blueplayer (0 0 0.5) (-16 -16 -16) (16 16 32) INVULNERABLE - STARTDISABLED
@@ -1152,20 +846,13 @@ Allied players spawn here at game start.
 */
 void SP_team_CTF_blueplayer(gentity_t *ent)
 {
-	// Gordon: these are obsolete
+	// these are obsolete
 	G_Printf("^1team_ctf_*player entities are now obsolete, please remove them!\n");
 	G_FreeEntity(ent);
 	return;
-
-	/*  ent->use = Use_Team_InitialSpawnpoint;
-
-	    VectorSet (ent->r.mins, -16, -16, -24);
-	    VectorSet (ent->r.maxs, 16, 16, 32);
-
-	    ent->think = DropToFloor;*/
 }
 
-// JPW NERVE edited quaked def
+// edited quaked def
 /*QUAKED team_CTF_redspawn (1 0 0) (-16 -16 -24) (16 16 32) ? INVULNERABLE STARTACTIVE
 potential spawning position for axis team in wolfdm games.
 
@@ -1182,7 +869,6 @@ If target is set, point spawnpoint toward target activation
 */
 void SP_team_CTF_redspawn(gentity_t *ent)
 {
-// JPW NERVE
 	vec3_t dir;
 
 	ent->enemy = G_PickTarget(ent->target);
@@ -1193,7 +879,6 @@ void SP_team_CTF_redspawn(gentity_t *ent)
 	}
 
 	ent->use = Use_Team_Spawnpoint;
-// jpw
 
 	VectorSet(ent->r.mins, -16, -16, -24);
 	VectorSet(ent->r.maxs, 16, 16, 32);
@@ -1201,7 +886,7 @@ void SP_team_CTF_redspawn(gentity_t *ent)
 	ent->think = DropToFloor;
 }
 
-// JPW NERVE edited quaked def
+// edited quaked def
 /*QUAKED team_CTF_bluespawn (0 0 1) (-16 -16 -24) (16 16 32) ? INVULNERABLE STARTACTIVE
 potential spawning position for allied team in wolfdm games.
 
@@ -1218,7 +903,6 @@ If target is set, point spawnpoint toward target activation
 */
 void SP_team_CTF_bluespawn(gentity_t *ent)
 {
-// JPW NERVE
 	vec3_t dir;
 
 	ent->enemy = G_PickTarget(ent->target);
@@ -1229,7 +913,6 @@ void SP_team_CTF_bluespawn(gentity_t *ent)
 	}
 
 	ent->use = Use_Team_Spawnpoint;
-// jpw
 
 	VectorSet(ent->r.mins, -16, -16, -24);
 	VectorSet(ent->r.maxs, 16, 16, 32);
@@ -1237,8 +920,6 @@ void SP_team_CTF_bluespawn(gentity_t *ent)
 	ent->think = DropToFloor;
 }
 
-
-// JPW NERVE
 /*QUAKED team_WOLF_objective (1 1 0.3) (-16 -16 -24) (16 16 32) DEFAULT_AXIS DEFAULT_ALLIES
 marker for objective
 
@@ -1252,14 +933,19 @@ screen.
 DEFAULT_AXIS - This spawn region belongs to the Axis at the start of the map
 DEFAULT_ALLIES - This spawn region belongs to the Alles at the start of the map
 */
-static int numobjectives = 0; // TTimo
+static int numobjectives = 0;
+
+void reset_numobjectives(void)
+{
+	numobjectives = 0;
+}
 
 // swaps the team
 void team_wolf_objective_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
 	char cs[MAX_STRING_CHARS];
 
-	// Gordon 256 is a disabled flag
+	// 256 is a disabled flag
 	if ((self->count2 & ~256) == TEAM_AXIS)
 	{
 		self->count2 = (self->count2 & 256) + TEAM_ALLIES;
@@ -1280,7 +966,6 @@ void team_wolf_objective_use(gentity_t *self, gentity_t *other, gentity_t *activ
 
 void objective_Register(gentity_t *self)
 {
-
 	char numspawntargets[128];
 	int  cs_obj = CS_MULTI_SPAWNTARGETS;
 	char cs[MAX_STRING_CHARS];
@@ -1323,9 +1008,7 @@ void SP_team_WOLF_objective(gentity_t *ent)
 
 	G_SpawnString("description", "WARNING: No objective description set", &desc);
 
-
-
-	// Gordon: wtf is this g_alloced? just use a static buffer fgs...
+	// wtf is this g_alloced? just use a static buffer fgs...
 	ent->message = G_Alloc(strlen(desc) + 1);
 	Q_strncpyz(ent->message, desc, strlen(desc) + 1);
 
@@ -1343,7 +1026,7 @@ void SP_team_WOLF_objective(gentity_t *ent)
 	}
 }
 
-// DHM - Nerve :: Capture and Hold Checkpoint flag
+// Capture and Hold Checkpoint flag
 #define SPAWNPOINT  1
 #define CP_HOLD     2
 #define AXIS_ONLY   4
@@ -1368,7 +1051,6 @@ void checkpoint_use_think(gentity_t *self)
 
 void checkpoint_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-
 	int holderteam;
 	int time;
 
@@ -1437,13 +1119,12 @@ void checkpoint_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	ent->think     = checkpoint_use_think;
 	ent->nextthink = level.time + 2000;
 
-	// Gordon: reset player disguise on touching flag
+	// reset player disguise on touching flag
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 }
 
-void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace);   // JPW NERVE
+void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace);
 
-// JPW NERVE
 void checkpoint_hold_think(gentity_t *self)
 {
 	switch (self->s.frame)
@@ -1461,11 +1142,9 @@ void checkpoint_hold_think(gentity_t *self)
 	}
 	self->nextthink = level.time + 5000;
 }
-// jpw
 
 void checkpoint_think(gentity_t *self)
 {
-
 	switch (self->s.frame)
 	{
 
@@ -1498,7 +1177,6 @@ void checkpoint_think(gentity_t *self)
 
 	}
 
-// JPW NERVE
 	if (self->spawnflags & SPAWNPOINT)
 	{
 		self->touch = checkpoint_spawntouch;
@@ -1508,29 +1186,23 @@ void checkpoint_think(gentity_t *self)
 		self->touch = checkpoint_touch;
 	}
 	self->nextthink = 0;
-// jpw
 }
 
 void checkpoint_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
-
 	if (self->count == other->client->sess.sessionTeam)
 	{
 		return;
 	}
 
-// JPW NERVE
 	if (self->s.frame == WCP_ANIM_NOFLAG)
 	{
 		AddScore(other, WOLF_CP_CAPTURE);
-		//G_AddExperience( other, 0.8f );
 	}
 	else
 	{
 		AddScore(other, WOLF_CP_RECOVER);
-		//G_AddExperience( other, 0.8f );
 	}
-// jpw
 
 	// Set controlling team
 	self->count = other->client->sess.sessionTeam;
@@ -1569,7 +1241,7 @@ void checkpoint_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	self->parent = other;
 
-	// Gordon: reset player disguise on touching flag
+	// reset player disguise on touching flag
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 	// Run script trigger
 	if (self->count == TEAM_AXIS)
@@ -1593,30 +1265,29 @@ void checkpoint_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	self->nextthink = level.time + 1000;
 }
 
-// JPW NERVE -- if spawn flag is set, use this touch fn instead to turn on/off targeted spawnpoints
+// if spawn flag is set, use this touch fn instead to turn on/off targeted spawnpoints
 void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	gentity_t *ent      = NULL;
 	qboolean  playsound = qtrue;
 	qboolean  firsttime = qfalse;
+#ifdef FEATURE_OMNIBOT
+	char *flagAction = "touch";
+#endif
 
 	if (self->count == other->client->sess.sessionTeam)
 	{
 		return;
 	}
 
-// JPW NERVE
 	if (self->s.frame == WCP_ANIM_NOFLAG)
 	{
 		AddScore(other, WOLF_SP_CAPTURE);
-		//G_AddExperience( other, 0.8f );
 	}
 	else
 	{
 		AddScore(other, WOLF_SP_RECOVER);
-		//G_AddExperience( other, 0.8f );
 	}
-// jpw
 
 	if (self->count < 0)
 	{
@@ -1632,6 +1303,9 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 		if (self->s.frame == WCP_ANIM_NOFLAG && !(self->spawnflags & ALLIED_ONLY))
 		{
 			self->s.frame = WCP_ANIM_RAISE_AXIS;
+#ifdef FEATURE_OMNIBOT
+			flagAction = "capture";
+#endif
 		}
 		else if (self->s.frame == WCP_ANIM_NOFLAG)
 		{
@@ -1641,10 +1315,16 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 		else if (self->s.frame == WCP_ANIM_AMERICAN_RAISED && !(self->spawnflags & ALLIED_ONLY))
 		{
 			self->s.frame = WCP_ANIM_AMERICAN_TO_AXIS;
+#ifdef FEATURE_OMNIBOT
+			flagAction = "reclaims";
+#endif
 		}
 		else if (self->s.frame == WCP_ANIM_AMERICAN_RAISED)
 		{
 			self->s.frame = WCP_ANIM_AMERICAN_FALLING;
+#ifdef FEATURE_OMNIBOT
+			flagAction = "neutralized";
+#endif
 		}
 		else
 		{
@@ -1656,6 +1336,9 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 		if (self->s.frame == WCP_ANIM_NOFLAG && !(self->spawnflags & AXIS_ONLY))
 		{
 			self->s.frame = WCP_ANIM_RAISE_AMERICAN;
+#ifdef FEATURE_OMNIBOT
+			flagAction = "capture";
+#endif
 		}
 		else if (self->s.frame == WCP_ANIM_NOFLAG)
 		{
@@ -1665,10 +1348,16 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 		else if (self->s.frame == WCP_ANIM_AXIS_RAISED && !(self->spawnflags & AXIS_ONLY))
 		{
 			self->s.frame = WCP_ANIM_AXIS_TO_AMERICAN;
+#ifdef FEATURE_OMNIBOT
+			flagAction = "reclaims";
+#endif
 		}
 		else if (self->s.frame == WCP_ANIM_AXIS_RAISED)
 		{
 			self->s.frame = WCP_ANIM_AXIS_FALLING;
+#ifdef FEATURE_OMNIBOT
+			flagAction = "neutralized";
+#endif
 		}
 		else
 		{
@@ -1691,16 +1380,22 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	self->parent = other;
 
-	// Gordon: reset player disguise on touching flag
+	// reset player disguise on touching flag
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 	// Run script trigger
 	if (self->count == TEAM_AXIS)
 	{
 		G_Script_ScriptEvent(self, "trigger", "axis_capture");
+#ifdef FEATURE_OMNIBOT
+		Bot_Util_SendTrigger(self, NULL, va("axis_%s_%s", flagAction, _GetEntityName(self)), flagAction);
+#endif
 	}
 	else
 	{
 		G_Script_ScriptEvent(self, "trigger", "allied_capture");
+#ifdef FEATURE_OMNIBOT
+		Bot_Util_SendTrigger(self, NULL, va("allies_%s_%s", flagAction, _GetEntityName(self)), flagAction);
+#endif
 	}
 
 	// Don't allow touch again until animation is finished
@@ -1710,7 +1405,7 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 	self->nextthink = level.time + 1000;
 
 	// activate all targets
-	// Arnout - updated this to allow toggling of initial spawnpoints as well, plus now it only
+	// updated this to allow toggling of initial spawnpoints as well, plus now it only
 	// toggles spawnflags 2 for spawnpoint entities
 	if (self->target)
 	{
@@ -1730,11 +1425,6 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 				else if (!strcmp(ent->classname, "team_CTF_bluespawn"))
 				{
 					ent->spawnflags &= ~2;
-// Gordon: these are obsolete
-					/*              } else if (!strcmp(ent->classname,"team_CTF_redplayer")) {
-					                    ent->spawnflags &= ~4;
-					                } else if (!strcmp(ent->classname,"team_CTF_blueplayer")) {
-					                    ent->spawnflags |= 4;*/
 				}
 			}
 			else
@@ -1746,18 +1436,12 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 				else if (!strcmp(ent->classname, "team_CTF_redspawn"))
 				{
 					ent->spawnflags &= ~2;
-// Gordon: these are obsolete
-					/*              } else if (!strcmp(ent->classname,"team_CTF_blueplayer")) {
-					                    ent->spawnflags &= ~4;
-					                } else if (!strcmp(ent->classname,"team_CTF_redplayer")) {
-					                    ent->spawnflags |= 4;*/
 				}
 			}
 		}
 	}
-
 }
-// jpw
+
 /*QUAKED team_WOLF_checkpoint (.9 .3 .9) (-16 -16 0) (16 16 128) SPAWNPOINT CP_HOLD AXIS_ONLY ALLIED_ONLY
 This is the flagpole players touch in Capture and Hold game scenarios.
 
@@ -1765,8 +1449,8 @@ It will call specific trigger funtions in the map script for this object.
 When allies capture, it will call "allied_capture".
 When axis capture, it will call "axis_capture".
 
-// JPW NERVE if spawnpoint flag is set, think will turn on spawnpoints (specified as targets)
-// for capture team and turn *off* targeted spawnpoints for opposing team
+if spawnpoint flag is set, think will turn on spawnpoints (specified as targets)
+for capture team and turn *off* targeted spawnpoints for opposing team
 */
 void SP_team_WOLF_checkpoint(gentity_t *ent)
 {
@@ -1818,7 +1502,6 @@ void SP_team_WOLF_checkpoint(gentity_t *ent)
 	// 'count' signifies which team holds the checkpoint
 	ent->count = -1;
 
-// JPW NERVE
 	if (ent->spawnflags & SPAWNPOINT)
 	{
 		ent->touch = checkpoint_spawntouch;
@@ -1834,7 +1517,6 @@ void SP_team_WOLF_checkpoint(gentity_t *ent)
 			ent->touch = checkpoint_touch;
 		}
 	}
-// jpw
 
 	trap_LinkEntity(ent);
 }
@@ -1873,7 +1555,12 @@ int Team_ClassForString(char *string)
 	return -1;
 }
 
-// OSP
+/*
+===============================================================================
+OSP
+===============================================================================
+*/
+
 char      *aTeams[TEAM_NUM_TEAMS] = { "FFA", "^1Axis^7", "^4Allies^7", "Spectators" };
 team_info teamInfo[TEAM_NUM_TEAMS];
 
@@ -1891,7 +1578,6 @@ void G_teamReset(int team_num, qboolean fClearSpecLock)
 		teamInfo[team_num].spec_lock = qfalse;
 	}
 }
-
 
 // Swaps active players on teams
 void G_swapTeams(void)
@@ -1929,7 +1615,6 @@ void G_swapTeams(void)
 	AP("cp \"^1Teams have been swapped!\n\"");
 }
 
-
 int QDECL G_SortPlayersByXP(const void *a, const void *b)
 {
 	gclient_t *cla = &level.clients[*((int *)a)];
@@ -1947,12 +1632,10 @@ int QDECL G_SortPlayersByXP(const void *a, const void *b)
 	return 0;
 }
 
-
 // Shuffle active players onto teams
 void G_shuffleTeams(void)
 {
 	int i, cTeam; //, cMedian = level.numNonSpectatorClients / 2;
-	int aTeamCount[TEAM_NUM_TEAMS];
 	int cnt = 0;
 	int sortClients[MAX_CLIENTS];
 
@@ -1960,11 +1643,6 @@ void G_shuffleTeams(void)
 
 	G_teamReset(TEAM_AXIS, qtrue);
 	G_teamReset(TEAM_ALLIES, qtrue);
-
-	for (i = 0; i < TEAM_NUM_TEAMS; i++)
-	{
-		aTeamCount[i] = 0;
-	}
 
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
@@ -1984,7 +1662,8 @@ void G_shuffleTeams(void)
 	{
 		cl = level.clients + sortClients[i];
 
-		cTeam = (i % 2) + TEAM_AXIS;
+		//	cTeam = (i % 2) + TEAM_AXIS;
+		cTeam = (((i + 1) % 4) - ((i + 1) % 2)) / 2 + TEAM_AXIS;
 
 		if (cl->sess.sessionTeam != cTeam)
 		{
@@ -2007,7 +1686,6 @@ void G_shuffleTeams(void)
 	AP("cp \"^1Teams have been shuffled!\n\"");
 }
 
-
 // Returns player's "real" team.
 int G_teamID(gentity_t *ent)
 {
@@ -2018,22 +1696,21 @@ int G_teamID(gentity_t *ent)
 	return(ent->client->sess.sessionTeam);
 }
 
-
 // Determine if the "ready" player threshold has been reached.
 qboolean G_checkReady(void)
 {
-	int       i, ready = 0, notReady = match_minplayers.integer;
+	int       ready = 0, notReady = match_minplayers.integer;
 	gclient_t *cl;
-
 
 	if (0 == g_doWarmup.integer)
 	{
-		return(qtrue);
+		return qtrue;
 	}
 
 	// Ensure we have enough real players
 	if (level.numNonSpectatorClients >= match_minplayers.integer && level.voteInfo.numVotingClients > 0)
 	{
+		int i;
 		// Step through all active clients
 		notReady = 0;
 		for (i = 0; i < level.numConnectedClients; i++)
@@ -2065,7 +1742,6 @@ qboolean G_checkReady(void)
 	return(level.ref_allready || ((ready + notReady > 0) && 100 * ready / (ready + notReady) >= match_readypercent.integer));
 }
 
-
 // Checks ready states to start/stop the sequence to get the match rolling.
 qboolean G_readyMatchState(void)
 {
@@ -2081,7 +1757,7 @@ qboolean G_readyMatchState(void)
 			teamInfo[TEAM_ALLIES].team_lock = qtrue;
 		}
 
-		return(qtrue);
+		return qtrue;
 
 	}
 	else if (!G_checkReady())
@@ -2092,12 +1768,10 @@ qboolean G_readyMatchState(void)
 		}
 		level.lastRestartTime = level.time;
 		trap_SendConsoleCommand(EXEC_APPEND, va("map_restart 0 %i\n", GS_WARMUP));
-//      G_LogPrintf("Warmup:\n");
 	}
 
-	return(qfalse);
+	return qfalse;
 }
-
 
 // Check if we need to reset the game state due to an empty team
 void G_verifyMatchState(int nTeam)
@@ -2134,7 +1808,6 @@ void G_verifyMatchState(int nTeam)
 	G_checkReady();
 }
 
-
 // Checks to see if a specified team is allowing players to join.
 qboolean G_teamJoinCheck(int team_num, gentity_t *ent)
 {
@@ -2152,7 +1825,7 @@ qboolean G_teamJoinCheck(int team_num, gentity_t *ent)
 	{
 		if (ent->client->sess.sessionTeam == team_num)
 		{
-			return(qtrue);
+			return qtrue;
 		}
 
 		if (g_gametype.integer != GT_WOLF_LMS)
@@ -2161,14 +1834,14 @@ qboolean G_teamJoinCheck(int team_num, gentity_t *ent)
 			if (team_maxplayers.integer > 0 && team_maxplayers.integer <= cnt)
 			{
 				G_printFull(va("The %s team is full!", aTeams[team_num]), ent);
-				return(qfalse);
+				return qfalse;
 
 				// Check for locked teams
 			}
 			else if (teamInfo[team_num].team_lock && (!(ent->client->pers.invite & team_num)))
 			{
 				G_printFull(va("The %s team is LOCKED!", aTeams[team_num]), ent);
-				return(qfalse);
+				return qfalse;
 			}
 		}
 		else
@@ -2176,19 +1849,18 @@ qboolean G_teamJoinCheck(int team_num, gentity_t *ent)
 			if (team_maxplayers.integer > 0 && team_maxplayers.integer <= cnt)
 			{
 				G_printFull(va("The %s team is full!", aTeams[team_num]), ent);
-				return(qfalse);
+				return qfalse;
 			}
 			else if (g_gamestate.integer == GS_PLAYING && g_lms_lockTeams.integer && (!(ent->client->pers.invite & team_num)))
 			{
 				G_printFull(va("The %s team is LOCKED!", aTeams[team_num]), ent);
-				return(qfalse);
+				return qfalse;
 			}
 		}
 	}
 
-	return(qtrue);
+	return qtrue;
 }
-
 
 // Update specs for blackout, as needed
 void G_updateSpecLock(int nTeam, qboolean fLock)
@@ -2222,24 +1894,30 @@ void G_updateSpecLock(int nTeam, qboolean fLock)
 			continue;
 		}
 
+#ifdef FEATURE_MULTIVIEW
 		if (ent->client->pers.mvCount > 0)
 		{
 			G_smvRemoveInvalidClients(ent, nTeam);
 		}
-		else if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
+		else
+#endif
+		if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
 		{
 			StopFollowing(ent);
 			ent->client->sess.spec_team &= ~nTeam;
 		}
 
+#ifdef FEATURE_MULTIVIEW
 		// ClientBegin sets blackout
 		if (ent->client->pers.mvCount < 1)
 		{
-			SetTeam(ent, "s", qtrue, -1, -1, qfalse);
-		}
+#endif
+		SetTeam(ent, "s", qtrue, -1, -1, qfalse);
+#ifdef FEATURE_MULTIVIEW
+	}
+#endif
 	}
 }
-
 
 // Swap team speclocks
 void G_swapTeamLocks(void)
@@ -2253,11 +1931,10 @@ void G_swapTeamLocks(void)
 	teamInfo[TEAM_ALLIES].team_lock = fLock;
 }
 
-
 // Removes everyone's specinvite for a particular team.
 void G_removeSpecInvite(int team)
 {
-	int       i;
+	int i;
 	gentity_t *cl;
 
 	for (i = 0; i < level.numConnectedClients; i++)
@@ -2272,13 +1949,11 @@ void G_removeSpecInvite(int team)
 	}
 }
 
-
 // Return blockout status for a player
 int G_blockoutTeam(gentity_t *ent, int nTeam)
 {
 	return(!G_allowFollow(ent, nTeam));
 }
-
 
 // Figure out if we are allowed/want to follow a given player
 qboolean G_allowFollow(gentity_t *ent, int nTeam)
@@ -2311,16 +1986,14 @@ qboolean G_allowFollow(gentity_t *ent, int nTeam)
 	return((!teamInfo[nTeam].spec_lock || ent->client->sess.sessionTeam != TEAM_SPECTATOR || (ent->client->sess.spec_invite & nTeam) == nTeam));
 }
 
-
 // Figure out if we are allowed/want to follow a given player
 qboolean G_desiredFollow(gentity_t *ent, int nTeam)
 {
 	if (G_allowFollow(ent, nTeam) &&
 	    (ent->client->sess.spec_team == 0 || ent->client->sess.spec_team == nTeam))
 	{
-		return(qtrue);
+		return qtrue;
 	}
 
-	return(qfalse);
+	return qfalse;
 }
-// -OSP

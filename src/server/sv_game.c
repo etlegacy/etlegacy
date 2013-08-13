@@ -35,42 +35,31 @@
 #include "server.h"
 #include "../botlib/botlib.h"
 
-#ifdef TRACKBASE_SUPPORT
-#include "sv_trackbase.h"
+#ifdef FEATURE_TRACKER
+#include "sv_tracker.h"
 #endif
 
 botlib_export_t *botlib_export;
-
-void SV_GamePrint(const char *string)
-{
-	Com_Printf("%s", string);
-}
 
 // these functions must be used instead of pointer arithmetic, because
 // the game allocates gentities with private information after the server shared part
 int SV_NumForGentity(sharedEntity_t *ent)
 {
-	int num;
-
-	num = ((byte *)ent - (byte *)sv.gentities) / sv.gentitySize;
+	int num = ((byte *)ent - (byte *)sv.gentities) / sv.gentitySize;
 
 	return num;
 }
 
 sharedEntity_t *SV_GentityNum(int num)
 {
-	sharedEntity_t *ent;
-
-	ent = ( sharedEntity_t * )((byte *)sv.gentities + sv.gentitySize * (num));
+	sharedEntity_t *ent = ( sharedEntity_t * )((byte *)sv.gentities + sv.gentitySize * (num));
 
 	return ent;
 }
 
 playerState_t *SV_GameClientNum(int num)
 {
-	playerState_t *ps;
-
-	ps = ( playerState_t * )((byte *)sv.gameClients + sv.gameClientSize * (num));
+	playerState_t *ps = ( playerState_t * )((byte *)sv.gameClients + sv.gameClientSize * (num));
 
 	return ps;
 }
@@ -79,16 +68,15 @@ svEntity_t *SV_SvEntityForGentity(sharedEntity_t *gEnt)
 {
 	if (!gEnt || gEnt->s.number < 0 || gEnt->s.number >= MAX_GENTITIES)
 	{
-		Com_Error(ERR_DROP, "SV_SvEntityForGentity: bad gEnt\n");
+		Com_Error(ERR_DROP, "SV_SvEntityForGentity: bad gEnt");
 	}
 	return &sv.svEntities[gEnt->s.number];
 }
 
 sharedEntity_t *SV_GEntityForSvEntity(svEntity_t *svEnt)
 {
-	int num;
+	int num = svEnt - sv.svEntities;
 
-	num = svEnt - sv.svEntities;
 	return SV_GentityNum(num);
 }
 
@@ -115,7 +103,6 @@ void SV_GameSendServerCommand(int clientNum, const char *text)
 	}
 }
 
-
 /*
 ===============
 SV_GameDropClient
@@ -136,7 +123,6 @@ void SV_GameDropClient(int clientNum, const char *reason, int length)
 	}
 }
 
-
 /*
 =================
 SV_SetBrushModel
@@ -151,14 +137,13 @@ void SV_SetBrushModel(sharedEntity_t *ent, const char *name)
 
 	if (!name)
 	{
-		Com_Error(ERR_DROP, "SV_SetBrushModel: NULL\n");
+		Com_Error(ERR_DROP, "SV_SetBrushModel: NULL for #%i", ent->s.number);
 	}
 
 	if (name[0] != '*')
 	{
-		Com_Error(ERR_DROP, "SV_SetBrushModel: %s isn't a brush model\n", name);
+		Com_Error(ERR_DROP, "SV_SetBrushModel: %s of #%i isn't a brush model", name, ent->s.number);
 	}
-
 
 	ent->s.modelindex = atoi(name + 1);
 
@@ -172,8 +157,6 @@ void SV_SetBrushModel(sharedEntity_t *ent, const char *name)
 
 	SV_LinkEntity(ent);         // FIXME: remove
 }
-
-
 
 /*
 =================
@@ -208,7 +191,6 @@ qboolean SV_inPVS(const vec3_t p1, const vec3_t p2)
 	return qtrue;
 }
 
-
 /*
 =================
 SV_inPVSIgnorePortals
@@ -237,7 +219,6 @@ qboolean SV_inPVSIgnorePortals(const vec3_t p1, const vec3_t p2)
 	return qtrue;
 }
 
-
 /*
 ========================
 SV_AdjustAreaPortalState
@@ -245,9 +226,8 @@ SV_AdjustAreaPortalState
 */
 void SV_AdjustAreaPortalState(sharedEntity_t *ent, qboolean open)
 {
-	svEntity_t *svEnt;
+	svEntity_t *svEnt = SV_SvEntityForGentity(ent);
 
-	svEnt = SV_SvEntityForGentity(ent);
 	if (svEnt->areanum2 == -1)
 	{
 		return;
@@ -255,22 +235,19 @@ void SV_AdjustAreaPortalState(sharedEntity_t *ent, qboolean open)
 	CM_AdjustAreaPortalState(svEnt->areanum, svEnt->areanum2, open);
 }
 
-
 /*
 ==================
-SV_GameAreaEntities
+SV_EntityContact
 ==================
 */
-qboolean    SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedEntity_t *gEnt, const int capsule)
+qboolean SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedEntity_t *gEnt, const int capsule)
 {
-	const float  *origin, *angles;
+	const float  *origin = gEnt->r.currentOrigin;
+	const float  *angles = gEnt->r.currentAngles;
 	clipHandle_t ch;
 	trace_t      trace;
 
 	// check for exact collision
-	origin = gEnt->r.currentOrigin;
-	angles = gEnt->r.currentAngles;
-
 	ch = SV_ClipHandleForEntity(gEnt);
 	CM_TransformedBoxTrace(&trace, vec3_origin, vec3_origin, mins, maxs,
 	                       ch, -1, origin, angles, capsule);
@@ -278,18 +255,16 @@ qboolean    SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedE
 	return trace.startsolid;
 }
 
-
 /*
 ===============
 SV_GetServerinfo
-
 ===============
 */
 void SV_GetServerinfo(char *buffer, int bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetServerinfo: bufferSize == %i\n", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetServerinfo: bufferSize == %i", bufferSize);
 	}
 	Q_strncpyz(buffer, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), bufferSize);
 }
@@ -297,7 +272,6 @@ void SV_GetServerinfo(char *buffer, int bufferSize)
 /*
 ===============
 SV_LocateGameData
-
 ===============
 */
 void SV_LocateGameData(sharedEntity_t *gEnts, int numGEntities, int sizeofGEntity_t,
@@ -311,7 +285,6 @@ void SV_LocateGameData(sharedEntity_t *gEnts, int numGEntities, int sizeofGEntit
 	sv.gameClientSize = sizeofGameClient;
 }
 
-
 /*
 ===============
 SV_GetUsercmd
@@ -322,7 +295,7 @@ void SV_GetUsercmd(int clientNum, usercmd_t *cmd)
 {
 	if (clientNum < 0 || clientNum >= sv_maxclients->integer)
 	{
-		Com_Error(ERR_DROP, "SV_GetUsercmd: bad clientNum:%i\n", clientNum);
+		Com_Error(ERR_DROP, "SV_GetUsercmd: bad clientNum:%i", clientNum);
 	}
 	*cmd = svs.clients[clientNum].lastUsercmd;
 }
@@ -336,13 +309,13 @@ static void SV_SendBinaryMessage(int cno, char *buf, int buflen)
 {
 	if (cno < 0 || cno >= sv_maxclients->integer)
 	{
-		Com_Error(ERR_DROP, "SV_SendBinaryMessage: bad client %i\n", cno);
+		Com_Error(ERR_DROP, "SV_SendBinaryMessage: bad client %i", cno);
 		return;
 	}
 
 	if (buflen < 0 || buflen > MAX_BINARY_MESSAGE)
 	{
-		Com_Error(ERR_DROP, "SV_SendBinaryMessage: bad length %i\n", buflen);
+		Com_Error(ERR_DROP, "SV_SendBinaryMessage: bad length %i", buflen);
 		svs.clients[cno].binaryMessageLength = 0;
 		return;
 	}
@@ -388,9 +361,10 @@ void SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int comm
 
 //==============================================
 
-static int  FloatAsInt(float f)
+static int FloatAsInt(float f)
 {
 	floatint_t fi;
+
 	fi.f = f;
 	return fi.i;
 }
@@ -403,7 +377,6 @@ The module is making a system call
 ====================
 */
 
-// show_bug.cgi?id=574
 extern int S_RegisterSound(const char *name, qboolean compressed);
 extern int S_GetSoundLength(sfxHandle_t sfxHandle);
 
@@ -426,7 +399,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		Cvar_Update(VMA(1));
 		return 0;
 	case G_CVAR_SET:
-		Cvar_Set((const char *)VMA(1), (const char *)VMA(2));
+		Cvar_SetSafe((const char *)VMA(1), (const char *)VMA(2));
 		return 0;
 	case G_CVAR_VARIABLE_INTEGER_VALUE:
 		return Cvar_VariableIntegerValue((const char *)VMA(1));
@@ -468,8 +441,8 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		SV_GameDropClient(args[1], VMA(2), args[3]);
 		return 0;
 	case G_SEND_SERVER_COMMAND:
-#ifdef TRACKBASE_SUPPORT
-		if (!TB_catchServerCommand(args[1], VMA(2)))
+#ifdef FEATURE_TRACKER
+		if (!Tracker_catchServerCommand(args[1], VMA(2)))
 #endif
 		{
 			SV_GameSendServerCommand(args[1], VMA(2));
@@ -642,7 +615,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return SV_BinaryMessageStatus(args[1]);
 
 	default:
-		Com_Error(ERR_DROP, "Bad game system trap: %ld\n", (long int) args[0]);
+		Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int) args[0]);
 		break;
 	}
 	return -1;
@@ -692,8 +665,6 @@ static void SV_InitGameVM(qboolean restart)
 	VM_Call(gvm, GAME_INIT, svs.time, Com_Milliseconds(), restart);
 }
 
-
-
 /*
 ===================
 SV_RestartGameProgs
@@ -713,16 +684,15 @@ void SV_RestartGameProgs(void)
 	gvm = VM_Restart(gvm);
 	if (!gvm)
 	{
-		Com_Error(ERR_FATAL, "VM_Restart on game failed\n");
+		Com_Error(ERR_FATAL, "VM_Restart on game failed");
 	}
 
 	SV_InitGameVM(qtrue);
 
-#ifdef TRACKBASE_SUPPORT
-	TB_MapRestart();
+#ifdef FEATURE_TRACKER
+	Tracker_MapRestart();
 #endif
 }
-
 
 /*
 ===============
@@ -740,16 +710,15 @@ void SV_InitGameProgs(void)
 	gvm = VM_Create("qagame", SV_GameSystemCalls, VMI_NATIVE);
 	if (!gvm)
 	{
-		Com_Error(ERR_FATAL, "VM_Create on game failed\n");
+		Com_Error(ERR_FATAL, "VM_Create on game failed");
 	}
 
 	SV_InitGameVM(qfalse);
 
-#ifdef TRACKBASE_SUPPORT
-	TB_Map(sv_mapname->string);
+#ifdef FEATURE_TRACKER
+	Tracker_Map(sv_mapname->string);
 #endif
 }
-
 
 /*
 ====================
@@ -775,36 +744,36 @@ SV_GetTag
   return qfalse if unable to retrieve tag information for this client
 ====================
 */
-extern qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *or);
+extern qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientation);
 
-qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *or)
+qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *orientation)
 {
-	int i;
-
 	if (tagFileNumber > 0 && tagFileNumber <= sv.num_tagheaders)
 	{
+		int i;
+
 		for (i = sv.tagHeadersExt[tagFileNumber - 1].start; i < sv.tagHeadersExt[tagFileNumber - 1].start + sv.tagHeadersExt[tagFileNumber - 1].count; i++)
 		{
 			if (!Q_stricmp(sv.tags[i].name, tagname))
 			{
-				VectorCopy(sv.tags[i].origin, or->origin);
-				VectorCopy(sv.tags[i].axis[0], or->axis[0]);
-				VectorCopy(sv.tags[i].axis[1], or->axis[1]);
-				VectorCopy(sv.tags[i].axis[2], or->axis[2]);
+				VectorCopy(sv.tags[i].origin, orientation->origin);
+				VectorCopy(sv.tags[i].axis[0], orientation->axis[0]);
+				VectorCopy(sv.tags[i].axis[1], orientation->axis[1]);
+				VectorCopy(sv.tags[i].axis[2], orientation->axis[2]);
 				return qtrue;
 			}
 		}
 	}
 
-	// Gordon: lets try and remove the inconsitancy between ded/non-ded servers...
-	// Gordon: bleh, some code in clientthink_real really relies on this working on player models...
-#ifndef DEDICATED // TTimo: dedicated only binary defines DEDICATED
+	// lets try and remove the inconsitancy between ded/non-ded servers...
+	// - bleh, some code in clientthink_real really relies on this working on player models...
+#ifndef DEDICATED // dedicated only
 	if (com_dedicated->integer)
 	{
 		return qfalse;
 	}
 
-	return CL_GetTag(clientNum, tagname, or);
+	return CL_GetTag(clientNum, tagname, orientation);
 #else
 	return qfalse;
 #endif

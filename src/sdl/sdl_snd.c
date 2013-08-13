@@ -31,7 +31,7 @@
  * @file sdl_snd.c
  */
 
-#ifdef BUNDLED_LIBS
+#ifdef BUNDLED_SDL
 #    include "SDL.h"
 #else
 #    include <SDL2/SDL.h>
@@ -45,44 +45,16 @@
 
 qboolean snd_inited = qfalse;
 
-cvar_t *s_sdlBits;
-cvar_t *s_sdlSpeed;
-cvar_t *s_sdlChannels;
+
+cvar_t *s_bits;     // before rc2 -> *s_sdlBits;
+cvar_t *s_khz;      // before rc2 -> *s_sdlSpeed
+cvar_t *s_sdlChannels; // external s_channels (GPL: cvar_t s_numchannels )
 cvar_t *s_sdlDevSamps;
 cvar_t *s_sdlMixSamps;
 
 /* The audio callback. All the magic happens here. */
 static int dmapos  = 0;
 static int dmasize = 0;
-
-static qboolean use_custom_memset = qfalse;
-
-/*
-===============
-Snd_Memset
-===============
-*/
-#ifdef __linux__
-#ifdef Snd_Memset
-#undef Snd_Memset
-#endif
-void Snd_Memset(void *dest, const int val, const size_t count)
-{
-	int *pDest, i, iterate;
-
-	if (!use_custom_memset)
-	{
-		Com_Memset(dest, val, count);
-		return;
-	}
-	iterate = count / sizeof(int);
-	pDest   = (int *)dest;
-	for (i = 0; i < iterate; i++)
-	{
-		pDest[i] = val;
-	}
-}
-#endif
 
 /*
 ===============
@@ -92,6 +64,7 @@ SNDDMA_AudioCallback
 static void SNDDMA_AudioCallback(void *userdata, Uint8 *stream, int len)
 {
 	int pos = (dmapos * (dma.samplebits / 8));
+
 	if (pos >= dmasize)
 	{
 		dmapos = pos = 0;
@@ -179,6 +152,8 @@ static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
 	Com_Printf("  Freq:     %d\n", (int) spec->freq);
 	Com_Printf("  Samples:  %d\n", (int) spec->samples);
 	Com_Printf("  Channels: %d\n", (int) spec->channels);
+	Com_Printf("  Silence:  %d\n", (int) spec->silence);
+	Com_Printf("  Size:     %d\n", (int) spec->size);
 }
 
 /*
@@ -198,14 +173,16 @@ qboolean SNDDMA_Init(void)
 		return qtrue;
 	}
 
-	if (!s_sdlBits)
-	{
-		s_sdlBits     = Cvar_Get("s_sdlBits", "16", CVAR_ARCHIVE);
-		s_sdlSpeed    = Cvar_Get("s_sdlSpeed", "0", CVAR_ARCHIVE);
-		s_sdlChannels = Cvar_Get("s_sdlChannels", "2", CVAR_ARCHIVE);
-		s_sdlDevSamps = Cvar_Get("s_sdlDevSamps", "0", CVAR_ARCHIVE);
-		s_sdlMixSamps = Cvar_Get("s_sdlMixSamps", "0", CVAR_ARCHIVE);
-	}
+	// before rc 2 we have had own s_sdl_ cvars to set this
+	// changed back to use genuine cvar names
+	// - it's more compatible when existing profiles are used
+	// - we don't have to touch menu & ui to make speed/khz work (uses s_khz!)
+	s_bits        = Cvar_Get("s_bits", "16", CVAR_LATCH | CVAR_ARCHIVE);
+	s_khz         = Cvar_Get("s_khz", "44", CVAR_LATCH | CVAR_ARCHIVE);
+	s_sdlChannels = Cvar_Get("s_channels", "2", CVAR_LATCH | CVAR_ARCHIVE);
+
+	s_sdlDevSamps = Cvar_Get("s_sdlDevSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
+	s_sdlMixSamps = Cvar_Get("s_sdlMixSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
 
 	Com_Printf("SDL_Init( SDL_INIT_AUDIO )... ");
 
@@ -230,17 +207,37 @@ qboolean SNDDMA_Init(void)
 	memset(&desired, '\0', sizeof(desired));
 	memset(&obtained, '\0', sizeof(obtained));
 
-	tmp = ((int) s_sdlBits->value);
+	tmp = ((int) s_bits->value);
 	if ((tmp != 16) && (tmp != 8))
 	{
 		tmp = 16;
 	}
 
-	desired.freq = (int) s_sdlSpeed->value;
+	desired.freq = (int) s_khz->value * 1000; // desired freq expects Hz not kHz
+
 	if (!desired.freq)
 	{
 		desired.freq = 22050;
 	}
+
+	// dirty correction for profile values
+	if (desired.freq == 11000)
+	{
+		desired.freq = 11025;
+	}
+	else if (desired.freq == 22000)
+	{
+		desired.freq = 22050;
+	}
+	else if (desired.freq == 44000)
+	{
+		desired.freq = 44100;
+	}
+	else
+	{
+		desired.freq = 22050;
+	}
+
 	desired.format = ((tmp == 16) ? AUDIO_S16SYS : AUDIO_U8);
 
 	// I dunno if this is the best idea, but I'll give it a try...
@@ -312,6 +309,12 @@ qboolean SNDDMA_Init(void)
 	dma.speed            = obtained.freq;
 	dmasize              = (dma.samples * (dma.samplebits / 8));
 	dma.buffer           = calloc(1, dmasize);
+	if (!dma.buffer)
+	{
+		Com_Printf("Unable to allocate dma buffer\n");
+		SDL_QuitSubSystem(SDL_INIT_AUDIO);
+		return qfalse;
+	}
 
 	Com_Printf("Starting SDL audio callback...\n");
 	SDL_PauseAudio(0);  // start callback.

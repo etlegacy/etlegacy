@@ -33,7 +33,10 @@
 
 #include "g_local.h"
 
-// Gordon
+#ifdef FEATURE_OMNIBOT
+#include "g_etbot_interface.h"
+#endif
+
 // What we need....
 // invite <clientname|number>
 // apply <fireteamname|number>
@@ -129,7 +132,6 @@ int G_CountTeamFireteams(team_t team)
 void G_UpdateFireteamConfigString(fireteamData_t *ft)
 {
 	char buffer[128];
-	int  i;
 	int  clnts[2] = { 0, 0 };
 
 	if (!ft->inuse)
@@ -138,6 +140,8 @@ void G_UpdateFireteamConfigString(fireteamData_t *ft)
 	}
 	else
 	{
+		int i;
+
 		for (i = 0; i < MAX_CLIENTS; i++)
 		{
 			if (ft->joinOrder[i] != -1)
@@ -147,8 +151,9 @@ void G_UpdateFireteamConfigString(fireteamData_t *ft)
 		}
 
 //		Com_sprintf(buffer, 128, "\\n\\%s\\l\\%i\\c\\%.8x%.8x", ft->name, ft->joinOrder[0], clnts[1], clnts[0]);
-		Com_sprintf(buffer, 128, "\\id\\%i\\l\\%i\\c\\%.8x%.8x", ft->ident - 1, ft->joinOrder[0], clnts[1], clnts[0]);
+//		Com_sprintf(buffer, 128, "\\id\\%i\\l\\%i\\c\\%.8x%.8x", ft->ident - 1, ft->joinOrder[0], clnts[1], clnts[0]);
 //		G_Printf(va("%s\n", buffer));
+		Com_sprintf(buffer, 128, "\\id\\%i\\l\\%i\\p\\%i\\c\\%.8x%.8x", ft->ident - 1, ft->joinOrder[0], ft->priv, clnts[1], clnts[0]);
 	}
 
 	trap_SetConfigstring(CS_FIRETEAMS + (ft - level.fireTeams), buffer);
@@ -256,7 +261,7 @@ int G_FindFreeFireteamIdent(team_t team)
 		}
 	}
 
-	// Gordon: this should never happen
+	// this should never happen
 	return -1;
 }
 
@@ -329,6 +334,11 @@ void G_RegisterFireteam(/*const char* name,*/ int entityNum)
 
 //	Q_strncpyz(ft->name, name, 32);
 
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_FireTeamCreated(entityNum, ft->ident);
+	Bot_Event_JoinedFireTeam(leader - g_entities, leader);
+#endif
+
 	G_UpdateFireteamConfigString(ft);
 }
 
@@ -366,7 +376,7 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
 
-		if (i >= 6)
+		if (i >= MAX_FIRETEAM_MEMBERS)
 		{
 			G_ClientPrintAndReturn(entityNum, "Too many players already on this Fireteam");
 			return;
@@ -377,6 +387,10 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 			// found a free position
 			ft->joinOrder[i] = entityNum;
 
+#ifdef FEATURE_OMNIBOT
+			Bot_Event_JoinedFireTeam(entityNum, &g_entities[leaderNum]);
+#endif
+
 			G_UpdateFireteamConfigString(ft);
 
 			return;
@@ -384,11 +398,51 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 	}
 }
 
+// core: Check if the fireteam contains only bots..
+// excludeEntityNum will be excluded from the test (if -1, it has no effect)
+// firstHuman returns the joinOrder of the first human found in the fireteam (-1 if none is found)
+qboolean G_OnlyBotsInFireteam(fireteamData_t *ft, int excludeEntityNum, int *firstHuman)
+{
+	int      i;
+	qboolean botFound = qfalse;
+
+	*firstHuman = -1;
+	if (!ft || !ft->inuse)
+	{
+		return qfalse;
+	}
+
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS && i < g_maxclients.integer; i++)
+	{
+		if (ft->joinOrder[i] == excludeEntityNum)
+		{
+			continue;
+		}
+		if (ft->joinOrder[i] == -1)
+		{
+			return botFound;
+		}
+		if (g_entities[(int)(ft->joinOrder[i])].r.svFlags & SVF_BOT)
+		{
+			botFound = qtrue;
+		}
+		else
+		{
+			if (*firstHuman == -1)
+			{
+				*firstHuman = i;
+			}
+			return qfalse;
+		}
+	}
+	return botFound;
+}
+
 // The only way a client should be removed from a fireteam
 void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 {
 	fireteamData_t *ft;
-	int            i, j;
+	int            i, firstHuman;
 
 	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
 	{
@@ -397,7 +451,8 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 
 	if (G_IsOnFireteam(entityNum, &ft))
 	{
-		for (i = 0; i < MAX_CLIENTS; i++)
+		int j;
+		for (i = 0; i < MAX_FIRETEAM_MEMBERS && i < g_maxclients.integer; ++i)
 		{
 			if (ft->joinOrder[i] == entityNum)
 			{
@@ -410,14 +465,53 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 					}
 					else
 					{
-						// TODO: Inform client of promotion to leader
+						// core: only bots left in the fireteam? we disband the fireteam..
+						if (G_OnlyBotsInFireteam(ft, entityNum, &firstHuman))
+						{
+							// empty the fireteam
+							for (j = 0; j < g_maxclients.integer - 1; j++)
+							{
+#ifdef FEATURE_OMNIBOT
+								Bot_Event_LeftFireTeam(ft->joinOrder[j]);
+#endif
+								ft->joinOrder[j] = -1;
+							}
+							ft->inuse = qfalse;
+							ft->ident = -1;
+							G_UpdateFireteamConfigString(ft);
+							return;
+						}
+						else
+						{
+							// core: a bot as FT-leader? we try to pick a human..
+							if (g_entities[(int)(ft->joinOrder[1])].r.svFlags & SVF_BOT)
+							{
+								if (firstHuman != -1)
+								{
+									// Swap first human with first bot..
+									int tmp = ft->joinOrder[1];
+
+									ft->joinOrder[1]          = ft->joinOrder[firstHuman];
+									ft->joinOrder[firstHuman] = tmp;
+								}
+							}
+							else
+							{
+								firstHuman = 1;
+							}
+							// Inform client of promotion to leader
+							if (firstHuman != -1)
+							{
+								trap_SendServerCommand(ft->joinOrder[firstHuman], "cpm \"You are now the leader of your fireteam\"\n");
+							}
+						}
 					}
 				}
-				for (j = i; j < MAX_CLIENTS - 1; j++)
+				for (j = i; j < g_maxclients.integer - 1; j++)
 				{
 					ft->joinOrder[j] = ft->joinOrder[j + 1];
 				}
-				ft->joinOrder[MAX_CLIENTS - 1] = -1;
+				ft->joinOrder[g_maxclients.integer - 1] = -1;
 
 				break;
 			}
@@ -428,13 +522,9 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 		return;
 	}
 
-	if (ft->joinOrder[0] != -1)
-	{
-		if (g_entities[(int)ft->joinOrder[0]].r.svFlags & SVF_BOT)
-		{
-			G_RemoveClientFromFireteams(ft->joinOrder[0], qfalse, qfalse);
-		}
-	}
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_LeftFireTeam(entityNum);
+#endif
 
 	if (print)
 	{
@@ -487,7 +577,7 @@ void G_InviteToFireTeam(int entityNum, int otherEntityNum)
 
 	if (g_entities[otherEntityNum].r.svFlags & SVF_BOT)
 	{
-		// Gordon: bots auto join
+		// bots auto join
 		G_AddClientToFireteam(otherEntityNum, entityNum);
 	}
 	else
@@ -497,6 +587,10 @@ void G_InviteToFireTeam(int entityNum, int otherEntityNum)
 		g_entities[otherEntityNum].client->pers.invitationClient  = entityNum;
 		g_entities[otherEntityNum].client->pers.invitationEndTime = level.time + 20500;
 	}
+
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_InviteFireTeam(entityNum, otherEntityNum);
+#endif
 }
 
 void G_DestroyFireteam(int entityNum)
@@ -517,6 +611,9 @@ void G_DestroyFireteam(int entityNum)
 	{
 		if (ft->joinOrder[0] != entityNum)
 		{
+#ifdef FEATURE_OMNIBOT
+			Bot_Event_FireTeamDestroyed(ft->joinOrder[0]);
+#endif
 			trap_SendServerCommand(ft->joinOrder[0], "cpm \"The Fireteam you are on has been disbanded\"\n");
 		}
 
@@ -556,11 +653,15 @@ void G_WarnFireTeamPlayer(int entityNum, int otherEntityNum)
 	}
 
 	trap_SendServerCommand(otherEntityNum, "cpm \"You have been warned by your Fireteam Commander\n\"");
+
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_FireTeam_Warn(entityNum, otherEntityNum);
+#endif
 }
 
 void G_KickFireTeamPlayer(int entityNum, int otherEntityNum)
 {
-	fireteamData_t *ft, *ft2;;
+	fireteamData_t *ft, *ft2;
 
 	if (entityNum == otherEntityNum)
 	{
@@ -587,6 +688,9 @@ void G_KickFireTeamPlayer(int entityNum, int otherEntityNum)
 		G_ClientPrintAndReturn(entityNum, "You are not on the same Fireteam as the other player");
 	}
 
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_LeftFireTeam(otherEntityNum);
+#endif
 
 	G_RemoveClientFromFireteams(otherEntityNum, qtrue, qfalse);
 
@@ -683,6 +787,10 @@ void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 	leader->client->pers.propositionClient  = otherEntityNum;
 	leader->client->pers.propositionClient2 = entityNum;
 	leader->client->pers.propositionEndTime = level.time + 20000;
+
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_FireTeam_Proposal(leader - g_entities, otherEntityNum);
+#endif
 }
 
 
@@ -757,6 +865,61 @@ fireteamData_t *G_FindFreePublicFireteam(team_t team)
 	}
 
 	return NULL;
+}
+
+void G_GiveAdminOfFireTeam(int entityNum, int otherEntityNum)
+{
+	fireteamData_t *ft, *ft2;
+	char           tempArray[MAX_CLIENTS];
+	int            i, x;
+
+	if (entityNum == otherEntityNum)
+	{
+		return;
+	}
+
+	if ((entityNum < 0 || entityNum >= MAX_CLIENTS) || !g_entities[entityNum].client)
+	{
+		G_Error("G_KickFireTeamPlayer: invalid client\n");
+	}
+
+	if ((otherEntityNum < 0 || otherEntityNum >= MAX_CLIENTS) || !g_entities[otherEntityNum].client)
+	{
+		G_Error("G_KickFireTeamPlayer: invalid client\n");
+	}
+
+	if (!G_IsFireteamLeader(entityNum, &ft))
+	{
+		G_ClientPrintAndReturn(entityNum, "You must be a fireteam admin to give admin rights to someone else");
+	}
+
+	if ((!G_IsOnFireteam(otherEntityNum, &ft2)) || ft != ft2)
+	{
+		G_ClientPrintAndReturn(entityNum, "The other player must be on the same fireteam for you to give admin rights to");
+	}
+
+	tempArray[0] = otherEntityNum;
+	tempArray[1] = entityNum;
+	x            = 2;
+	for (i = 1; i < MAX_FIRETEAM_MEMBERS; i++)
+	{
+		if (ft->joinOrder[i] != otherEntityNum || ft->joinOrder[i] == -1)
+		{
+			tempArray[x++] = ft->joinOrder[i];
+			continue;
+		}
+	}
+
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
+	{
+		ft->joinOrder[i] = tempArray[i];
+	}
+
+	ft->leader = otherEntityNum;
+
+	G_UpdateFireteamConfigString(ft);
+	G_ClientPrintAndReturn(otherEntityNum, "You have been given fireteam admin rights");
+	G_ClientPrintAndReturn(entityNum, "You have been been stripped of fireteam admin rights");
 }
 
 
@@ -968,5 +1131,69 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 		}
 
 		G_ProposeFireTeamPlayer(ent - g_entities, clientnum - 1);
+	}
+	else if (!Q_stricmp(command, "privacy"))
+	{
+		fireteamData_t *ft;
+		if (G_IsFireteamLeader(ent - g_entities, &ft))
+		{
+			if (ft->priv)
+			{
+				ft->priv = qfalse;
+				G_UpdateFireteamConfigString(ft);
+				G_ClientPrintAndReturn(ent - g_entities, "Your fireteam is now public");
+			}
+			else
+			{
+				ft->priv = qtrue;
+				G_UpdateFireteamConfigString(ft);
+				G_ClientPrintAndReturn(ent - g_entities, "Your fireteam is now private");
+			}
+		}
+		else
+		{
+			G_ClientPrintAndReturn(ent - g_entities, "You are not an fireteam admin");
+		}
+	}
+	else if (!Q_stricmp(command, "admin"))
+	{
+		char namebuffer[32];
+		int  clientnum = 0;
+
+		if (trap_Argc() < 3)
+		{
+			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam admin <clientname|clientnumber>");
+		}
+
+		trap_Argv(2, namebuffer, 32);
+		for (i = 0; i < MAX_CLIENTS; i++)
+		{
+			if (!g_entities[i].inuse || !g_entities[i].client)
+			{
+				continue;
+			}
+
+			if (!Q_stricmp(g_entities[i].client->pers.netname, namebuffer))
+			{
+				clientnum = i + 1;
+			}
+		}
+
+		if (clientnum <= 0)
+		{
+			clientnum = atoi(namebuffer);
+
+			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
+			{
+				G_ClientPrintAndReturn(ent - g_entities, "Invalid client selected");
+			}
+		}
+
+		if (clientnum <= 0)
+		{
+			G_ClientPrintAndReturn(ent - g_entities, "usage: fireteam admin <clientname|clientnumber>");
+		}
+
+		G_GiveAdminOfFireTeam(ent - g_entities, clientnum - 1);
 	}
 }

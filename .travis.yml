@@ -1,0 +1,25 @@
+language: c
+
+compiler:
+  - gcc
+
+env:
+  native:
+    - BUNDLED_LIBS=0
+    - CROSS_COMPILE32=0
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libsdl1.2-dev:i386 libvorbis-dev:i386 libjpeg8-dev:i386 libcurl4-openssl-dev:i386 liblua5.1-dev:i386
+
+script:
+  - ./easybuild.sh
+
+notifications:
+  irc:
+    template:
+      - "%{repository}#%{build_number} %{commit} %{author}: %{message} %{build_url}"
+    channels:
+      - "irc.freenode.org#etlegacy"
+    use_notice: true
+    skip_join: true

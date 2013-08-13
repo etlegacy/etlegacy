@@ -80,7 +80,7 @@ void CG_BuildSolidList(void)
 		cent = &cg_entities[snap->entities[i].number];
 		ent  = &cent->currentState;
 
-		// rain - don't clip against temporarily non-solid SOLID_BMODELS
+		// don't clip against temporarily non-solid SOLID_BMODELS
 		// (e.g. constructibles); use current state so prediction isn't fubar
 		if (cent->currentState.solid == SOLID_BMODEL &&
 		    (cent->currentState.eFlags & EF_NONSOLID_BMODEL))
@@ -114,33 +114,12 @@ void CG_BuildSolidList(void)
 
 		if (cent->nextState.solid)
 		{
-			/*          if(cg_fastSolids.integer) { // Gordon: "optimization" (disabling until i fix it)
-			                vec3_t vec;
-			                float len;
+			cg_solidEntities[cg_numSolidEntities] = cent;
+			cg_numSolidEntities++;
 
-			                cg_solidFTEntities[cg_numSolidFTEntities] = cent;
-			                cg_numSolidFTEntities++;
-
-			                // FIXME: use range to bbox, not to origin
-			                if ( cent->nextState.solid == SOLID_BMODEL ) {
-			                    VectorAdd( cgs.inlineModelMidpoints[ cent->currentState.modelindex ], cent->lerpOrigin, vec );
-			                    VectorSubtract( vec, cg.predictedPlayerEntity.lerpOrigin, vec );
-			                } else {
-			                    VectorSubtract( cent->lerpOrigin, cg.predictedPlayerEntity.lerpOrigin, vec );
-			                }
-			                if((len = DotProduct( vec, vec )) < (512 * 512)) {
-			                    cg_solidEntities[cg_numSolidEntities] = cent;
-			                    cg_numSolidEntities++;
-			                    continue;
-			                }
-			            } else*/{
-				cg_solidEntities[cg_numSolidEntities] = cent;
-				cg_numSolidEntities++;
-
-				cg_solidFTEntities[cg_numSolidFTEntities] = cent;
-				cg_numSolidFTEntities++;
-				continue;
-			}
+			cg_solidFTEntities[cg_numSolidFTEntities] = cent;
+			cg_numSolidFTEntities++;
+			continue;
 		}
 	}
 }
@@ -148,7 +127,6 @@ void CG_BuildSolidList(void)
 /*
 ====================
 CG_ClipMoveToEntities
-
 ====================
 */
 static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
@@ -176,8 +154,8 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 		{
 			// special value for bmodel
 			cmodel = trap_CM_InlineModel(ent->modelindex);
-//          VectorCopy( cent->lerpAngles, angles );
-//          VectorCopy( cent->lerpOrigin, origin );
+			//VectorCopy( cent->lerpAngles, angles );
+			//VectorCopy( cent->lerpOrigin, origin );
 			BG_EvaluateTrajectory(&cent->currentState.apos, cg.physicsTime, angles, qtrue, cent->currentState.effect2Time);
 			BG_EvaluateTrajectory(&cent->currentState.pos, cg.physicsTime, origin, qfalse, cent->currentState.effect2Time);
 		}
@@ -199,7 +177,7 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 			VectorCopy(vec3_origin, angles);
 			VectorCopy(cent->lerpOrigin, origin);
 		}
-		// MrE: use bbox of capsule
+		// use bbox of capsule
 		if (capsule)
 		{
 			trap_CM_TransformedCapsuleTrace(&trace, start, end,
@@ -251,8 +229,8 @@ static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, cons
 		{
 			// special value for bmodel
 			cmodel = trap_CM_InlineModel(ent->modelindex);
-//          VectorCopy( cent->lerpAngles, angles );
-//          VectorCopy( cent->lerpOrigin, origin );
+			//VectorCopy( cent->lerpAngles, angles );
+			//VectorCopy( cent->lerpOrigin, origin );
 			BG_EvaluateTrajectory(&cent->currentState.apos, cg.physicsTime, angles, qtrue, cent->currentState.effect2Time);
 			BG_EvaluateTrajectory(&cent->currentState.pos, cg.physicsTime, origin, qfalse, cent->currentState.effect2Time);
 		}
@@ -306,8 +284,8 @@ static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, cons
 CG_Trace
 ================
 */
-void    CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
-                 int skipNumber, int mask)
+void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
+              int skipNumber, int mask)
 {
 	trace_t t;
 
@@ -319,8 +297,8 @@ void    CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const v
 	*result = t;
 }
 
-void    CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
-                       int skipNumber, int mask)
+void CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
+                    int skipNumber, int mask)
 {
 	trace_t t;
 
@@ -330,10 +308,9 @@ void    CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, c
 	*result = t;
 }
 
-void    CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask)
+void CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask)
 {
 	trace_t t;
-
 
 	trap_CM_BoxTrace(&t, start, end, mins, maxs, 0, mask);
 	t.entityNum = t.fraction != 1.0 ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
@@ -343,7 +320,6 @@ void    CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const
 
 	*result = t;
 }
-
 
 /*
 ================
@@ -375,7 +351,7 @@ void CG_TraceCapsule_World(trace_t *result, const vec3_t start, const vec3_t min
 CG_PointContents
 ================
 */
-int     CG_PointContents(const vec3_t point, int passEntityNum)
+int CG_PointContents(const vec3_t point, int passEntityNum)
 {
 	int           i;
 	entityState_t *ent;
@@ -408,13 +384,12 @@ int     CG_PointContents(const vec3_t point, int passEntityNum)
 		}
 
 		contents |= trap_CM_TransformedPointContents(point, cmodel, cent->lerpOrigin, cent->lerpAngles);
-		// Gordon: again, need to use the projected water position to allow for moving entity based water.
-//      contents |= trap_CM_TransformedPointContents( point, cmodel, ent->origin, ent->angles );
+		// again, need to use the projected water position to allow for moving entity based water.
+		//contents |= trap_CM_TransformedPointContents( point, cmodel, ent->origin, ent->angles );
 	}
 
 	return contents;
 }
-
 
 /*
 ========================
@@ -428,12 +403,9 @@ static void CG_InterpolatePlayerState(qboolean grabAngles)
 {
 	float         f;
 	int           i;
-	playerState_t *out;
-	snapshot_t    *prev, *next;
-
-	out  = &cg.predictedPlayerState;
-	prev = cg.snap;
-	next = cg.nextSnap;
+	playerState_t *out  = &cg.predictedPlayerState;
+	snapshot_t    *prev = cg.snap;
+	snapshot_t    *next = cg.nextSnap;
 
 	*out = cg.snap->ps;
 
@@ -486,125 +458,6 @@ static void CG_InterpolatePlayerState(qboolean grabAngles)
 		out->velocity[i] = prev->ps.velocity[i] +
 		                   f * (next->ps.velocity[i] - prev->ps.velocity[i]);
 	}
-
-}
-
-/*
-===================
-CG_TouchItem
-===================
-*/
-static void CG_TouchItem(centity_t *cent)
-{
-	gitem_t *item;
-
-	return;
-
-	if (!cg_predictItems.integer)
-	{
-		return;
-	}
-
-	if (!cg_autoactivate.integer)
-	{
-		return;
-	}
-
-	if (!BG_PlayerTouchesItem(&cg.predictedPlayerState, &cent->currentState, cg.time))
-	{
-		return;
-	}
-
-	// never pick an item up twice in a prediction
-	if (cent->miscTime == cg.time)
-	{
-		return;
-	}
-
-	if (!BG_CanItemBeGrabbed(&cent->currentState, &cg.predictedPlayerState, cgs.clientinfo[cg.snap->ps.clientNum].skill, cgs.clientinfo[cg.snap->ps.clientNum].team))
-	{
-		return;     // can't hold it
-	}
-
-	item = &bg_itemlist[cent->currentState.modelindex];
-
-	// force activate only for weapons you don't have
-	if (item->giType == IT_WEAPON)
-	{
-		if (item->giTag != WP_AMMO)
-		{
-			if (!COM_BitCheck(cg.predictedPlayerState.weapons, item->giTag))
-			{
-				return; // force activate only
-			}
-		}
-	}
-
-	// OSP - Do it here rather than forcing gamestate into BG_CanItemBeGrabbed
-	if (cgs.gamestate != GS_PLAYING &&
-	    item->giType != IT_WEAPON &&
-	    item->giType != IT_AMMO &&
-	    item->giType != IT_HEALTH)
-	{
-		return;
-	}
-
-	// OSP - special case for panzers, as server may not allow us to pick them up
-	//       let the server tell us for sure that we got it
-	if (item->giType == IT_WEAPON && item->giTag == WP_PANZERFAUST)
-	{
-		return;
-	}
-
-
-	// (SA) no prediction of books/clipboards
-	if (item->giType == IT_HOLDABLE)
-	{
-		if (item->giTag >= HI_BOOK1 && item->giTag <= HI_BOOK3)
-		{
-			return;
-		}
-	}
-
-	// (SA) treasure needs to be activeated, no touch
-	if (item->giType == IT_TREASURE)
-	{
-		return;
-	}
-
-	// Special case for flags.
-	// We don't predict touching our own flag
-	if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS &&
-	    item->giTag == PW_REDFLAG)
-	{
-		return;
-	}
-	if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES &&
-	    item->giTag == PW_BLUEFLAG)
-	{
-		return;
-	}
-
-
-	// grab it
-	BG_AddPredictableEventToPlayerstate(EV_ITEM_PICKUP, cent->currentState.modelindex, &cg.predictedPlayerState);
-
-	// remove it from the frame so it won't be drawn
-	cent->currentState.eFlags |= EF_NODRAW;
-
-	// don't touch it again this prediction
-	cent->miscTime = cg.time;
-
-	// if its a weapon, give them some predicted ammo so the autoswitch will work
-	if (item->giType == IT_WEAPON)
-	{
-		COM_BitSet(cg.predictedPlayerState.weapons, item->giTag);
-
-		if (!cg.predictedPlayerState.ammo[BG_FindAmmoForWeapon(item->giTag)])
-		{
-			cg.predictedPlayerState.ammo[BG_FindAmmoForWeapon(item->giTag)] = 1;
-		}
-	}
 }
 
 /*
@@ -616,14 +469,12 @@ Predict push triggers and items
 */
 static void CG_TouchTriggerPrediction(void)
 {
-	int i;
-//  trace_t         trace;
+	int           i;
 	entityState_t *ent;
 	clipHandle_t  cmodel;
 	centity_t     *cent;
 	qboolean      spectator;
-//  vec3_t          mins, maxs; // TTimo: unused
-	const char *cs;
+	const char    *cs;
 
 	// dead clients don't activate triggers
 	if (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0)
@@ -631,7 +482,7 @@ static void CG_TouchTriggerPrediction(void)
 		return;
 	}
 
-	spectator = ((cg.predictedPlayerState.pm_type == PM_SPECTATOR) || (cg.predictedPlayerState.pm_flags & PMF_LIMBO));       // JPW NERVE
+	spectator = ((cg.predictedPlayerState.pm_type == PM_SPECTATOR) || (cg.predictedPlayerState.pm_flags & PMF_LIMBO));
 
 	if (cg.predictedPlayerState.pm_type != PM_NORMAL && !spectator)
 	{
@@ -645,21 +496,22 @@ static void CG_TouchTriggerPrediction(void)
 
 		if (ent->eType == ET_ITEM && !spectator && (cg.predictedPlayerState.groundEntityNum == ENTITYNUM_WORLD))
 		{
-			CG_TouchItem(cent);
 			continue;
 		}
 
-		if (ent->solid != SOLID_BMODEL)
+		if (!(ent->eFlags & EF_FAKEBMODEL))
 		{
-			continue;
-		}
+			if (ent->solid != SOLID_BMODEL)
+			{
+				continue;
+			}
 
-		// Gordon: er, this lookup was wrong...
-		cmodel = cgs.inlineDrawModel[ent->modelindex];
-//      cmodel = trap_CM_InlineModel( ent->modelindex );
-		if (!cmodel)
-		{
-			continue;
+			cmodel = cgs.inlineDrawModel[ent->modelindex];
+
+			if (!cmodel)
+			{
+				continue;
+			}
 		}
 
 		if (ent->eType == ET_CONSTRUCTIBLE ||
@@ -678,7 +530,21 @@ static void CG_TouchTriggerPrediction(void)
 				continue;
 			}
 
-			trap_R_ModelBounds(cmodel, mins, maxs);
+			if (ent->solid != SOLID_BMODEL)
+			{
+				int x  = (ent->solid & 255);
+				int zd = ((ent->solid >> 8) & 255);
+				int zu = ((ent->solid >> 16) & 255) - 32;
+
+				mins[0] = mins[1] = -x;
+				mins[2] = -zd;
+				maxs[0] = maxs[1] = x;
+				maxs[2] = zu;
+			}
+			else
+			{
+				trap_R_ModelBounds(cmodel, mins, maxs);
+			}
 
 			VectorAdd(cent->lerpOrigin, mins, mins);
 			VectorAdd(cent->lerpOrigin, maxs, maxs);
@@ -726,7 +592,6 @@ static void CG_TouchTriggerPrediction(void)
 		}
 	}
 }
-
 
 #define MAX_PREDICT_ORIGIN_DELTA        0.1f
 #define MAX_PREDICT_VELOCITY_DELTA      0.1f
@@ -881,9 +746,9 @@ qboolean CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 }
 
 #define RESET_PREDICTION                        \
-    cg.lastPredictedCommand = 0;                \
-    cg.backupStateTail      = cg.backupStateTop;     \
-    useCommand              = current - CMD_BACKUP + 1;
+	cg.lastPredictedCommand = 0;                \
+	cg.backupStateTail      = cg.backupStateTop;     \
+	useCommand              = current - CMD_BACKUP + 1;
 
 
 /*
@@ -907,14 +772,14 @@ each frame.
 OPTIMIZE: don't re-simulate unless the newly arrived snapshot playerState_t
 differs from the predicted one.  Would require saving all intermediate
 playerState_t during prediction. (this is "dead reckoning" and would definately
-be nice to have in there (SA))
+be nice to have in there
 
 We detect prediction errors and allow them to be decayed off over several frames
 to ease the jerk.
 =================
 */
 
-// rain - we need to keep pmext around for old frames, because Pmove()
+//  we need to keep pmext around for old frames, because Pmove()
 // fills in some values when it does prediction.  This in itself is fine,
 // but the prediction loop starts in the past and predicts from the
 // snapshot time up to the current time, and having things like jumpTime
@@ -932,7 +797,6 @@ void CG_PredictPlayerState(void)
 	usercmd_t     latestCmd;
 	vec3_t        deltaAngles;
 	pmoveExt_t    pmext;
-//  int useCommand = 0;
 
 	cg.hyperspace = qfalse; // will be set if touching a trigger_teleport
 
@@ -964,7 +828,7 @@ void CG_PredictPlayerState(void)
 
 		cg.pmext.airleft = (cg.waterundertime - cg.time);
 
-		// Arnout: are we using an mg42?
+		// are we using an mg42?
 		if ((cg_pmove.ps->eFlags & EF_MG42_ACTIVE) || (cg_pmove.ps->eFlags & EF_AAGUN_ACTIVE))
 		{
 			cg.pmext.harc = cg_entities[cg_pmove.ps->viewlocked_entNum].currentState.origin2[0];
@@ -995,7 +859,7 @@ void CG_PredictPlayerState(void)
 	cg_pmove.character = CG_CharacterForClientinfo(&cgs.clientinfo[cg.snap->ps.clientNum], &cg_entities[cg.snap->ps.clientNum]);
 	cg.pmext.airleft   = (cg.waterundertime - cg.time);
 
-	// Arnout: are we using an mg42?
+	// are we using an mg42?
 	if ((cg_pmove.ps->eFlags & EF_MG42_ACTIVE) || (cg_pmove.ps->eFlags & EF_AAGUN_ACTIVE))
 	{
 		cg.pmext.harc = cg_entities[cg_pmove.ps->viewlocked_entNum].currentState.origin2[0];
@@ -1022,11 +886,11 @@ void CG_PredictPlayerState(void)
 	if (cg_pmove.ps->pm_type == PM_DEAD)
 	{
 		cg_pmove.tracemask   = MASK_PLAYERSOLID & ~CONTENTS_BODY;
-		cg_pmove.ps->eFlags |= EF_DEAD; // DHM-Nerve added:: EF_DEAD is checked for in Pmove functions, but wasn't being set until after Pmove
+		cg_pmove.ps->eFlags |= EF_DEAD; // added:: EF_DEAD is checked for in Pmove functions, but wasn't being set until after Pmove
 	}
 	else if (cg_pmove.ps->pm_type == PM_SPECTATOR)
 	{
-		// rain - fix the spectator can-move-partway-through-world weirdness
+		// fix the spectator can-move-partway-through-world weirdness
 		// bug by actually setting tracemask when spectating :x
 		cg_pmove.tracemask = MASK_PLAYERSOLID & ~CONTENTS_BODY;
 		cg_pmove.trace     = CG_TraceCapsule_World;
@@ -1036,7 +900,7 @@ void CG_PredictPlayerState(void)
 		cg_pmove.tracemask = MASK_PLAYERSOLID;
 	}
 
-	if ((cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) || (cg.snap->ps.pm_flags & PMF_LIMBO))         // JPW NERVE limbo
+	if ((cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) || (cg.snap->ps.pm_flags & PMF_LIMBO)) // limbo
 	{
 		cg_pmove.tracemask &= ~CONTENTS_BODY;   // spectators can fly through bodies
 	}
@@ -1049,7 +913,7 @@ void CG_PredictPlayerState(void)
 
 	current = trap_GetCurrentCmdNumber();
 
-	// rain - fill in the current cmd with the latest prediction from
+	// fill in the current cmd with the latest prediction from
 	// cg.pmext (#166)
 	memcpy(&oldpmext[current & CMD_MASK], &cg.pmext, sizeof(pmoveExt_t));
 
@@ -1074,7 +938,7 @@ void CG_PredictPlayerState(void)
 	// the server time is beyond our current cg.time,
 	// because predicted player positions are going to
 	// be ahead of everything else anyway
-	// rain - NEIN - this'll cause us to execute events from the next frame
+	// - NEIN - this'll cause us to execute events from the next frame
 	// early, resulting in doubled events and the like.  it seems to be
 	// worse as far as prediction, too, so BLAH at id. (#405)
 #if 0
@@ -1088,7 +952,6 @@ void CG_PredictPlayerState(void)
 #endif
 	cg.predictedPlayerState = cg.snap->ps;
 	cg.physicsTime          = cg.snap->serverTime;
-//  }
 
 	if (pmove_msec.integer < 8)
 	{
@@ -1113,7 +976,7 @@ void CG_PredictPlayerState(void)
 
 		if (cg_pmove.pmove_fixed)
 		{
-			// rain - added tracemask
+			// added tracemask
 			PM_UpdateViewAngles(cg_pmove.ps, cg_pmove.pmext, &cg_pmove.cmd, CG_Trace, cg_pmove.tracemask);
 		}
 
@@ -1137,7 +1000,6 @@ void CG_PredictPlayerState(void)
 		if (cg.predictedPlayerState.commandTime == oldPlayerState.commandTime)
 		{
 			vec3_t delta;
-			float  len;
 
 			if (BG_PlayerMounted(cg_pmove.ps->eFlags))
 			{
@@ -1157,9 +1019,10 @@ void CG_PredictPlayerState(void)
 			else if (!cg.showGameView)
 			{
 				vec3_t adjusted;
+				float  len;
 				CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.oldTime, adjusted, deltaAngles);
-				// RF, add the deltaAngles (fixes jittery view while riding trains)
-				// ydnar: only do this if player is prone or using set mortar
+				// add the deltaAngles (fixes jittery view while riding trains)
+				// only do this if player is prone or using set mortar
 				if ((cg.predictedPlayerState.eFlags & EF_PRONE) || cg.weaponSelect == WP_MORTAR_SET)
 				{
 					cg.predictedPlayerState.delta_angles[YAW] += ANGLE2SHORT(deltaAngles[YAW]);
@@ -1216,7 +1079,7 @@ void CG_PredictPlayerState(void)
 			cg_pmove.cmd.serverTime = ((cg_pmove.cmd.serverTime + pmove_msec.integer - 1) / pmove_msec.integer) * pmove_msec.integer;
 		}
 
-		// ydnar: if server respawning, freeze the player
+		// if server respawning, freeze the player
 		if (cg.serverRespawning)
 		{
 			cg_pmove.ps->pm_type = PM_FREEZE;
@@ -1224,7 +1087,7 @@ void CG_PredictPlayerState(void)
 
 		cg_pmove.gametype = cgs.gametype;
 
-		// rain - only fill in the charge times if we're on a playing team
+		// only fill in the charge times if we're on a playing team
 		if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS || cg.snap->ps.persistant[PERS_TEAM] == TEAM_ALLIES)
 		{
 			cg_pmove.ltChargeTime        = cg.ltChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
@@ -1234,7 +1097,7 @@ void CG_PredictPlayerState(void)
 			cg_pmove.covertopsChargeTime = cg.covertopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 		}
 
-//      memcpy( &pmext, &cg.pmext, sizeof(pmoveExt_t) );    // grab data, we only want the final result
+		//memcpy( &pmext, &cg.pmext, sizeof(pmoveExt_t) );    // grab data, we only want the final result
 		// rain - copy the pmext as it was just before we
 		// previously ran this cmd (or, this will be the
 		// current predicted data if this is the current cmd)  (#166)
@@ -1276,8 +1139,7 @@ void CG_PredictPlayerState(void)
 	// fire events and other transition triggered things
 	CG_TransitionPlayerState(&cg.predictedPlayerState, &oldPlayerState);
 
-
-	// ydnar: shake player view here, rather than fiddle with view angles
+	// shake player view here, rather than fiddle with view angles
 	if (cg.time > cg.cameraShakeTime)
 	{
 		cg.cameraShakeScale = 0;
@@ -1285,7 +1147,6 @@ void CG_PredictPlayerState(void)
 	else
 	{
 		float x;
-
 
 		// starts at 1, approaches 0 over time
 		x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;

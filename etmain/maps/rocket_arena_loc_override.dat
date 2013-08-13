@@ -1,0 +1,12 @@
+/////////////////////////////////////////////////////////
+// Map name       Rocket Arena TWL                     //
+// Locations by   antman                               //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 15                //
+// Last edited    28-05-2006                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+3708 20 192 "Allied Spawn"
+1250 -1083 192 "Axis Spawn"
+1231 -894 192 "Warehouse"
+3702 -116 192 @

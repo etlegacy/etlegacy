@@ -32,15 +32,12 @@
  * @brief structure reading / writing
  */
 
-#ifdef BOTLIB
 #include "../qcommon/q_shared.h"
 #include "../botlib/botlib.h"              //for the include of be_interface.h
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_struct.h"
-#include "l_utils.h"
 #include "be_interface.h"
-#endif //BOTLIB
 
 //===========================================================================
 //
@@ -72,7 +69,6 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 	token_t  token;
 	int      negative = qfalse;
 	long int intval, intmin = 0, intmax = 0;
-	double   floatval;
 
 	if (!PC_ExpectAnyToken(source, &token))
 	{
@@ -109,6 +105,8 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 	  //check for a float value
 	if (token.subtype & TT_FLOAT)
 	{
+		double floatval;
+
 		if ((fd->type & FT_TYPE) != FT_FLOAT)
 		{
 			SourceError(source, "unexpected float");
@@ -163,8 +161,8 @@ qboolean ReadNumber(source_t *source, fielddef_t *fd, void *p)
 	{
 		if (fd->type & FT_BOUNDED)
 		{
-			intmin = Maximum(intmin, fd->floatmin);
-			intmax = Minimum(intmax, fd->floatmax);
+			intmin = MIN(intmin, fd->floatmin);
+			intmax = MAX(intmax, fd->floatmax);
 		} //end if
 		if (intval < intmin || intval > intmax)
 		{

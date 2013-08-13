@@ -40,7 +40,9 @@
 
 #include "g_local.h"
 
-
+#ifdef FEATURE_OMNIBOT
+#include "g_etbot_interface.h"
+#endif
 
 #define RESPAWN_SP          -1
 #define RESPAWN_KEY         4
@@ -54,248 +56,8 @@
 #define RESPAWN_PARTIAL     998     // for multi-stage ammo/health
 #define RESPAWN_PARTIAL_DONE 999    // for multi-stage ammo/health
 
-
 //======================================================================
 
-int Pickup_Powerup(gentity_t *ent, gentity_t *other)
-{
-	int       quantity;
-	int       i;
-	gclient_t *client;
-
-	if (!other->client->ps.powerups[ent->item->giTag])
-	{
-
-		// some powerups are time based on how long the powerup is /used/
-		// rather than timed from when the player picks it up.
-		if (ent->item->giTag == PW_NOFATIGUE)
-		{
-		}
-		else
-		{
-			// round timing to seconds to make multiple powerup timers
-			// count in sync
-			other->client->ps.powerups[ent->item->giTag] = level.time - (level.time % 1000);
-		}
-	}
-
-	// if an amount was specified in the ent, use it
-	if (ent->count)
-	{
-		quantity = ent->count;
-	}
-	else
-	{
-		quantity = ent->item->quantity;
-	}
-
-	other->client->ps.powerups[ent->item->giTag] += quantity * 1000;
-
-
-	// brandy also gives a little health (10)
-	if (ent->item->giTag == PW_NOFATIGUE)
-	{
-		if (Q_stricmp(ent->item->classname, "item_stamina_brandy") == 0)
-		{
-			other->health += 10;
-			if (other->health > other->client->ps.stats[STAT_MAX_HEALTH])
-			{
-				other->health = other->client->ps.stats[STAT_MAX_HEALTH];
-			}
-			other->client->ps.stats[STAT_HEALTH] = other->health;
-		}
-	}
-
-
-	// give any nearby players a "denied" anti-reward
-	for (i = 0 ; i < level.maxclients ; i++)
-	{
-		vec3_t  delta;
-		float   len;
-		vec3_t  forward;
-		trace_t tr;
-
-		client = &level.clients[i];
-		if (client == other->client)
-		{
-			continue;
-		}
-		if (client->pers.connected == CON_DISCONNECTED)
-		{
-			continue;
-		}
-		if (client->ps.stats[STAT_HEALTH] <= 0)
-		{
-			continue;
-		}
-
-		// if too far away, no sound
-		VectorSubtract(ent->s.pos.trBase, client->ps.origin, delta);
-		len = VectorNormalize(delta);
-		if (len > 192)
-		{
-			continue;
-		}
-
-		// if not facing, no sound
-		AngleVectors(client->ps.viewangles, forward, NULL, NULL);
-		if (DotProduct(delta, forward) < 0.4)
-		{
-			continue;
-		}
-
-		// if not line of sight, no sound
-		trap_Trace(&tr, client->ps.origin, NULL, NULL, ent->s.pos.trBase, ENTITYNUM_NONE, CONTENTS_SOLID);
-		if (tr.fraction != 1.0)
-		{
-			continue;
-		}
-	}
-
-	if (ent->s.density == 2)       // multi-stage health first stage
-	{
-		return RESPAWN_PARTIAL;
-	}
-	else if (ent->s.density == 1)          // last stage, leave the plate
-	{
-		return RESPAWN_PARTIAL_DONE;
-	}
-
-	return RESPAWN_POWERUP;
-}
-
-//----(SA) Wolf keys
-//======================================================================
-int Pickup_Key(gentity_t *ent, gentity_t *other)
-{
-	other->client->ps.stats[STAT_KEYS] |= (1 << ent->item->giTag);
-	return RESPAWN_KEY;
-}
-
-
-#ifdef KITS
-
-// START Mad Doc - TDF
-// in single player, the player can pick up the 'kits' of dead allies. Kits contain ammo for the special weapons
-// that bot was carrying
-int Pickup_Kit(gentity_t *ent, gentity_t *other)
-{
-
-	switch (ent->item->giTag)
-	{
-	case KIT_ENGINEER:
-		drop->item->giAmmoIndex = ps->ammoclip[BG_FindClipForWeapon(WP_LANDMINE)];
-		drop->item->giClipIndex = ps->ammoclip[BG_FindClipForWeapon(WP_DYNAMITE)];
-		break;
-	}
-case PC_FIELDOPS:
-{
-	drop->item->giAmmoIndex = ps->ammoclip[BG_FindClipForWeapon(WP_AMMO)];
-	drop->item->giClipIndex = ps->ammoclip[BG_FindClipForWeapon(WP_SMOKE_MARKER)];
-	break;
-}
-case PC_COVERTOPS:
-{
-	drop->item->giAmmoIndex = ps->ammoclip[BG_FindClipForWeapon(WP_SMOKE_BOMB)];
-	// no second special for covert ops
-	break;
-}
-
-}
-// END Mad Doc - TDF
-
-#endif
-
-/*
-==============
-Pickup_Clipboard
-==============
-*/
-int Pickup_Clipboard(gentity_t *ent, gentity_t *other)
-{
-
-	if (ent->spawnflags & 4)
-	{
-		return 0;   // leave in world
-
-	}
-	return -1;
-}
-
-
-/*
-==============
-Pickup_Treasure
-==============
-*/
-int Pickup_Treasure(gentity_t *ent, gentity_t *other)
-{
-	return -1;
-}
-
-
-/*
-==============
-UseHoldableItem
-    server side handling of holdable item use
-==============
-*/
-void UseHoldableItem(gentity_t *ent, int item)
-{
-	switch (item)
-	{
-	case HI_MEDKIT:
-		ent->health = ent->client->ps.stats[STAT_MAX_HEALTH];
-		break;
-
-	case HI_WINE:           // 1921 Chateu Lafite - gives 25 pts health up to max health
-		ent->health += 25;
-		if (ent->health > ent->client->ps.stats[STAT_MAX_HEALTH])
-		{
-			ent->health = ent->client->ps.stats[STAT_MAX_HEALTH];
-		}
-		break;
-
-	case HI_SKULL:          // skull of invulnerable - 30 sec invincible
-		ent->client->ps.powerups[PW_INVULNERABLE] = level.time + 30000;
-		break;
-
-	case HI_WATER:          // protection from drowning - 30 sec underwater breathing time
-		ent->client->ps.powerups[PW_BREATHER] = 30000;
-		break;
-
-	case HI_ELECTRIC:       // protection from electric attacks - absorbs 500 points of electric damage
-		ent->client->ps.powerups[PW_ELECTRIC] = 500;
-		break;
-
-	case HI_FIRE:           // protection from fire attacks - absorbs 500 points of fire damage
-		ent->client->ps.powerups[PW_FIRE] = 500;
-		break;
-
-	case HI_STAMINA:        // restores fatigue bar and sets "nofatigue" for a time period (currently forced to 60 sec)
-		//----(SA)  NOTE:   currently only gives free nofatigue time, doesn't reset fatigue bar.
-		//                  (this is because I'd like the restore to be visually gradual (on the HUD item representing
-		//                  current status of your fatigue) rather than snapping back to 'full')
-		ent->client->ps.powerups[PW_NOFATIGUE] = 60000;
-		break;
-
-	case HI_BOOK1:
-	case HI_BOOK2:
-	case HI_BOOK3:
-		//G_AddEvent(   ent, EV_POPUPBOOK, (item - HI_BOOK1)+1 );
-		break;
-	}
-}
-
-
-//======================================================================
-
-int Pickup_Holdable(gentity_t *ent, gentity_t *other)
-{
-	return RESPAWN_HOLDABLE;
-}
-
-// xkan, 10/26/2002
 // extracted from Fill_Clip: add the specified ammount of ammo into the clip
 // returns whether ammo was added to the clip
 int AddToClip(
@@ -365,17 +127,15 @@ Add_Ammo
     (like the AI "infinite ammo" where they get below 900 and force back up to 999)
 
     fillClip will push the ammo straight through into the clip and leave the rest in reserve
+
+    - modified to return whether any ammo was added.
 ==============
 */
-//----(SA)  modified
-// xkan, 10/25/2002 - modified to return whether any ammo was added.
 int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip)
 {
-	int ammoweap = BG_FindAmmoForWeapon(weapon);
-	int originalCount;
-	int maxammo = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill);
-
-	originalCount = ent->client->ps.ammo[ammoweap];
+	int ammoweap      = BG_FindAmmoForWeapon(weapon);
+	int maxammo       = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill);
+	int originalCount = ent->client->ps.ammo[ammoweap];
 
 	if (ammoweap == WP_GRENADE_LAUNCHER)             // make sure if he picks up a grenade that he get's the "launcher" too
 	{
@@ -430,34 +190,11 @@ int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip)
 	return (ent->client->ps.ammo[ammoweap] > originalCount);
 }
 
-
-
-/*
-==============
-Pickup_Ammo
-==============
-*/
-int Pickup_Ammo(gentity_t *ent, gentity_t *other)
-{
-	// added some ammo pickups, so I'll use ent->item->quantity if no ent->count
-	if (ent->count)
-	{
-		Add_Ammo(other, ent->item->giTag, ent->count, qfalse);
-	}
-	else
-	{
-		Add_Ammo(other, ent->item->giTag, ent->item->quantity, qfalse);
-	}
-
-	return RESPAWN_AMMO;
-}
-
-// xkan, 9/18/2002 - Extracted AddMagicAmmo from Pickup_Weapon()
 /*
 =================================================================
-AddMagicAmmo - added the specified number of clips of magic ammo
-for any two-handed weapon
+AddMagicAmmo (extracted AddMagicAmmo from Pickup_Weapon())
 
+- added the specified number of clips of magic ammo for any two-handed weapon
 - returns whether any ammo was actually added
 =================================================================
 */
@@ -614,8 +351,12 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 		ent2->delay = 0;
 	}
 
-//  ent2->item->quantity = client->ps.ammoclip[BG_FindClipForWeapon(weapon)]; // Gordon: um, modifying an item is not a good idea
+	//  ent2->item->quantity = client->ps.ammoclip[BG_FindClipForWeapon(weapon)]; // um, modifying an item is not a good idea
 	client->ps.ammoclip[BG_FindClipForWeapon(weapon)] = 0;
+
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_RemoveWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
+#endif
 }
 
 qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
@@ -634,7 +375,6 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 		{
 			weapon = WP_K43;
 		}
-
 	}
 	else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
 	{
@@ -665,7 +405,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	int      quantity;
 	qboolean alreadyHave = qfalse;
 
-	// JPW NERVE -- magic ammo for any two-handed weapon
+	// magic ammo for any two-handed weapon
 	if (ent->item->giTag == WP_AMMO)
 	{
 		AddMagicAmmo(other, ent->count);
@@ -687,7 +427,15 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				G_AddSkillPoints(ent->parent, SK_SIGNALS, 1.f);
 				G_DebugAddSkillPoints(ent->parent, SK_SIGNALS, 1.f, "ammo pack picked up");
 
-				// extracted code originally here into AddMagicAmmo -xkan, 9/18/2002
+#ifdef FEATURE_OMNIBOT
+				//omni-bot event
+				if (ent->parent)
+				{
+					Bot_Event_RecievedAmmo(other - g_entities, ent->parent);
+				}
+#endif
+
+				// extracted code originally here into AddMagicAmmo
 				// add 1 clip of magic ammo for any two-handed weapon
 			}
 			return RESPAWN_SP;
@@ -699,12 +447,12 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	// check if player already had the weapon
 	alreadyHave = COM_BitCheck(other->client->ps.weapons, ent->item->giTag);
 
-	// JPW NERVE  prevents drop/pickup weapon "quick reload" exploit
+	// prevents drop/pickup weapon "quick reload" exploit
 	if (alreadyHave)
 	{
 		Add_Ammo(other, ent->item->giTag, quantity, qfalse);
 
-		// Gordon: secondary weapon ammo
+		// secondary weapon ammo
 		if (ent->delay)
 		{
 			Add_Ammo(other, weapAlts[ent->item->giTag], ent->delay, qfalse);
@@ -727,11 +475,10 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		{
 			weapon_t primaryWeapon = G_GetPrimaryWeaponForClient(other->client);
 
-			// rain - added parens around ambiguous &&
+			// added parens around ambiguous &&
 			if (primaryWeapon ||
 			    (other->client->sess.playerType == PC_SOLDIER && other->client->sess.skill[SK_HEAVY_WEAPONS] >= 4))
 			{
-
 				if (primaryWeapon)
 				{
 					// drop our primary weapon
@@ -744,7 +491,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				// add the weapon
 				COM_BitSet(other->client->ps.weapons, ent->item->giTag);
 
-				// DHM - Fixup mauser/sniper issues
+				// Fixup mauser/sniper issues
 				if (ent->item->giTag == WP_FG42)
 				{
 					COM_BitSet(other->client->ps.weapons, WP_FG42SCOPE);
@@ -781,7 +528,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				{
 					other->client->ps.ammo[BG_FindClipForWeapon(ent->item->giTag)] = quantity;
 
-					// Gordon: secondary weapon ammo
+					// secondary weapon ammo
 					if (ent->delay)
 					{
 						Add_Ammo(other, weapAlts[ent->item->giTag], ent->delay, qfalse);
@@ -791,7 +538,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				{
 					other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giTag)] = quantity;
 
-					// Gordon: secondary weapon ammo
+					// secondary weapon ammo
 					if (ent->delay)
 					{
 						other->client->ps.ammo[weapAlts[ent->item->giTag]] = ent->delay;
@@ -805,16 +552,18 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		}
 	}
 
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_AddWeapon(other->client->ps.clientNum, Bot_WeaponGameToBot(ent->item->giTag));
+#endif
+
 	return -1;
 }
-
 
 //======================================================================
 
 int Pickup_Health(gentity_t *ent, gentity_t *other)
 {
 	int max;
-//  int         quantity = 0;
 
 	// if medic isn't giving ammo to self or another medic or the enemy, give him some props
 	if (other->client->ps.stats[STAT_PLAYER_CLASS] != PC_MEDIC)
@@ -824,7 +573,7 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 			if (!(ent->parent->client->PCSpecialPickedUpCount % MEDIC_SPECIAL_PICKUP_MOD))
 			{
 				AddScore(ent->parent, WOLF_HEALTH_UP);
-				G_LogPrintf("Health_Pack: %d %d\n", (int)(ent->parent - g_entities), (int)(other - g_entities));      // OSP
+				G_LogPrintf("Health_Pack: %d %d\n", (int)(ent->parent - g_entities), (int)(other - g_entities));
 			}
 			G_AddSkillPoints(ent->parent, SK_FIRST_AID, 1.f);
 			G_DebugAddSkillPoints(ent->parent, SK_FIRST_AID, 1.f, "health pack picked up");
@@ -844,6 +593,14 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 		other->health = max;
 	}
 	other->client->ps.stats[STAT_HEALTH] = other->health;
+
+#ifdef FEATURE_OMNIBOT
+	// omni-bot event
+	if (ent->parent)
+	{
+		Bot_Event_Healed(other - g_entities, ent->parent);
+	}
+#endif
 
 	return -1;
 }
@@ -885,16 +642,13 @@ void RespawnItem(gentity_t *ent)
 	ent->r.svFlags &= ~SVF_NOCLIENT;
 	trap_LinkEntity(ent);
 
-	// play the normal respawn sound only to nearby clients
-	G_AddEvent(ent, EV_ITEM_RESPAWN, 0);
-
 	ent->nextthink = 0;
 }
-
 
 /*
 ==============
 Touch_Item
+
     if other->client->pers.autoActivate == PICKUP_ACTIVATE  (0), he will pick up items only when using +activate
     if other->client->pers.autoActivate == PICKUP_TOUCH     (1), he will pickup items when touched
     if other->client->pers.autoActivate == PICKUP_FORCE     (2), he will pickup the next item when touched (and reset to PICKUP_ACTIVATE when done)
@@ -923,7 +677,7 @@ void Touch_Item_Auto(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 	if (other->client->pers.autoActivate == PICKUP_FORCE)        // autoactivate probably forced by the "Cmd_Activate_f()" function
 	{
-		other->client->pers.autoActivate = PICKUP_ACTIVATE;     // so reset it.
+		other->client->pers.autoActivate = PICKUP_ACTIVATE;      // so reset it.
 	}
 }
 
@@ -970,7 +724,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 	else
 	{
-		// OSP - Don't let them pickup winning stuff in warmup
+		// Don't let them pickup winning stuff in warmup
 		if (ent->item->giType != IT_WEAPON &&
 		    ent->item->giType != IT_AMMO &&
 		    ent->item->giType != IT_HEALTH)
@@ -979,7 +733,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		}
 	}
 
-//  G_LogPrintf( "Calling item pickup function for %s\n", ent->item->classname );
+	//G_LogPrintf( "Calling item pickup function for %s\n", ent->item->classname );
 
 	// call the item-specific pickup function
 	switch (ent->item->giType)
@@ -997,7 +751,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-//  G_LogPrintf( "Finished pickup function\n" );
+	//G_LogPrintf( "Finished pickup function\n" );
 
 	if (!respawn)
 	{
@@ -1007,13 +761,12 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	// play sounds
 	if (ent->noise_index)
 	{
-		// (SA) a sound was specified in the entity, so play that sound
+		// a sound was specified in the entity, so play that sound
 		// (this G_AddEvent) and send the pickup as "EV_ITEM_PICKUP_QUIET"
 		// so it doesn't make the default pickup sound when the pickup event is recieved
 		makenoise = EV_ITEM_PICKUP_QUIET;
 		G_AddEvent(other, EV_GENERAL_SOUND, ent->noise_index);
 	}
-
 
 	G_AddEvent(other, makenoise, ent->s.modelindex);
 
@@ -1025,7 +778,7 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 		te->r.svFlags  |= SVF_BROADCAST;
 	}
 
-//  G_LogPrintf( "Firing item targets\n" );
+	//G_LogPrintf( "Firing item targets\n" );
 
 	// fire item targets
 	G_UseTargets(ent, other);
@@ -1043,7 +796,6 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	ent->flags     |= FL_NODRAW;
 	ent->r.contents = 0;
 
-	// ZOID
 	// A negative respawn times means to never respawn this item (but don't
 	// delete it).  This is used by items that are respawned by third party
 	// events such as ctf flags
@@ -1060,7 +812,6 @@ void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace)
 	trap_LinkEntity(ent);
 }
 
-
 //======================================================================
 
 /*
@@ -1072,30 +823,29 @@ Spawns an item and tosses it forward
 */
 gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNum)
 {
-	gentity_t *dropped;
+	gentity_t *dropped = G_Spawn();
 	trace_t   tr;
 	vec3_t    vec, temp;
-	int       i;
-
-	dropped = G_Spawn();
 
 	dropped->s.eType           = ET_ITEM;
 	dropped->s.modelindex      = item - bg_itemlist; // store item number in modelindex
-	dropped->s.otherEntityNum2 = 1; // DHM - Nerve :: this is taking modelindex2's place for a dropped item
+	dropped->s.otherEntityNum2 = 1; // this is taking modelindex2's place for a dropped item
 
 	dropped->classname = item->classname;
 	dropped->item      = item;
-	VectorSet(dropped->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, 0);              //----(SA)  so items sit on the ground
-	VectorSet(dropped->r.maxs, ITEM_RADIUS, ITEM_RADIUS, 2 * ITEM_RADIUS);    //----(SA)    so items sit on the ground
+	VectorSet(dropped->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, 0);              // so items sit on the ground
+	VectorSet(dropped->r.maxs, ITEM_RADIUS, ITEM_RADIUS, 2 * ITEM_RADIUS);    // so items sit on the ground
 	dropped->r.contents = CONTENTS_TRIGGER | CONTENTS_ITEM;
 
-	dropped->clipmask = CONTENTS_SOLID | CONTENTS_MISSILECLIP;      // NERVE - SMF - fix for items falling through grates
+	dropped->clipmask = CONTENTS_SOLID | CONTENTS_MISSILECLIP;      // fix for items falling through grates
 
 	dropped->touch = Touch_Item_Auto;
 
 	trap_Trace(&tr, origin, dropped->r.mins, dropped->r.maxs, origin, ownerNum, MASK_SOLID);
 	if (tr.startsolid)
 	{
+		int i;
+
 		VectorSubtract(g_entities[ownerNum].s.origin, origin, temp);
 		VectorNormalize(temp);
 
@@ -1117,7 +867,7 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	dropped->s.pos.trTime = level.time;
 	VectorCopy(velocity, dropped->s.pos.trDelta);
 
-	// ydnar: set yaw to parent angles
+	// set yaw to parent angles
 	temp[PITCH] = 0;
 	temp[YAW]   = g_entities[ownerNum].s.apos.trBase[YAW];
 	temp[ROLL]  = 0;
@@ -1184,7 +934,6 @@ gentity_t *Drop_Item(gentity_t *ent, gitem_t *item, float angle, qboolean novelo
 	return LaunchItem(item, ent->s.pos.trBase, velocity, ent->s.number);
 }
 
-
 /*
 ================
 Use_Item
@@ -1221,7 +970,6 @@ void FinishSpawningItem(gentity_t *ent)
 	}
 	else
 	{
-		// Rafael
 		// had to modify this so that items would spawn in shelves
 		VectorSet(ent->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, 0);
 		VectorSet(ent->r.maxs, ITEM_RADIUS, ITEM_RADIUS, ITEM_RADIUS);
@@ -1234,25 +982,18 @@ void FinishSpawningItem(gentity_t *ent)
 	ent->s.eType      = ET_ITEM;
 	ent->s.modelindex = ent->item - bg_itemlist;        // store item number in modelindex
 
-	ent->s.otherEntityNum2 = 0;     // DHM - Nerve :: takes modelindex2's place in signaling a dropped item
-//----(SA)  we don't use this (yet, anyway) so I'm taking it so you can specify a model for treasure items and clipboards
-//  ent->s.modelindex2 = 0; // zero indicates this isn't a dropped item
+	ent->s.otherEntityNum2 = 0;     // takes modelindex2's place in signaling a dropped item
+	// we don't use this (yet, anyway) so I'm taking it so you can specify a model for treasure items and clipboards
+	//ent->s.modelindex2 = 0; // zero indicates this isn't a dropped item
 	if (ent->model)
 	{
 		ent->s.modelindex2 = G_ModelIndex(ent->model);
 	}
 
-//----(SA)  added
-	if (ent->item->giType == IT_TREASURE)
-	{
-		ent->touch = Touch_Item;    // no auto-pickup, only activate
-	}
-//----(SA)  end
-
 	// using an item causes it to respawn
 	ent->use = Use_Item;
 
-//----(SA) moved this up so it happens for suspended items too (and made it a function)
+	// moved this up so it happens for suspended items too (and made it a function)
 	G_SetAngle(ent, ent->s.angles);
 
 	if (ent->spawnflags & 1)        // suspended
@@ -1261,7 +1002,6 @@ void FinishSpawningItem(gentity_t *ent)
 	}
 	else
 	{
-
 		VectorSet(dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096);
 		trap_Trace(&tr, ent->s.origin, ent->r.mins, maxs, dest, ent->s.number, MASK_SOLID);
 
@@ -1276,11 +1016,6 @@ void FinishSpawningItem(gentity_t *ent)
 			trap_Trace(&tr, temp, ent->r.mins, maxs, dest, ent->s.number, MASK_SOLID);
 		}
 
-#if 0
-		// drop to floor
-		VectorSet(dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096);
-		trap_Trace(&tr, ent->s.origin, ent->r.mins, maxs, dest, ent->s.number, MASK_SOLID);
-#endif
 		if (tr.startsolid)
 		{
 			G_Printf("FinishSpawningItem: %s startsolid at %s\n", ent->classname, vtos(ent->s.origin));
@@ -1299,7 +1034,6 @@ void FinishSpawningItem(gentity_t *ent)
 		ent->s.eFlags |= EF_SPINNING;
 	}
 
-
 	// team slaves and targeted items aren't present at start
 	if ((ent->flags & FL_TEAMSLAVE) || ent->targetname)
 	{
@@ -1315,7 +1049,7 @@ void FinishSpawningItem(gentity_t *ent)
 		int i;
 
 		// having alternate models defined in bg_misc.c for a health or ammo item specify it as "multi-stage"
-		// TTimo left-hand operand of comma expression has no effect
+		// - left-hand operand of comma expression has no effect
 		// initial line: for(i=0;i<4,ent->item->world_model[i];i++) {}
 		for (i = 0; i < 4 && ent->item->world_model[i] ; i++)
 		{
@@ -1326,7 +1060,6 @@ void FinishSpawningItem(gentity_t *ent)
 
 	trap_LinkEntity(ent);
 }
-
 
 /*
 ============
@@ -1374,21 +1107,19 @@ void G_SpawnItem(gentity_t *ent, gitem_t *item)
 	}
 }
 
-
 /*
 ================
 G_BounceItem
-
 ================
 */
 void G_BounceItem(gentity_t *ent, trace_t *trace)
 {
 	vec3_t velocity;
 	float  dot;
-	int    hitTime;
+	int    hitTime = level.previousTime + (level.time - level.previousTime) * trace->fraction;
 
 	// reflect the velocity on the trace plane
-	hitTime = level.previousTime + (level.time - level.previousTime) * trace->fraction;
+
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
@@ -1416,16 +1147,13 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 G_RunItemProp
 =================
 */
-
 void G_RunItemProp(gentity_t *ent, vec3_t origin)
 {
 	gentity_t *traceEnt;
 	trace_t   trace;
-	gentity_t *owner;
+	gentity_t *owner = &g_entities[ent->r.ownerNum];
 	vec3_t    start;
 	vec3_t    end;
-
-	owner = &g_entities[ent->r.ownerNum];
 
 	VectorCopy(ent->r.currentOrigin, start);
 	start[2] += 1;
@@ -1445,7 +1173,6 @@ void G_RunItemProp(gentity_t *ent, vec3_t origin)
 
 	if (owner->client && trace.startsolid && traceEnt != owner && traceEnt != ent /* && !traceEnt->active*/)
 	{
-
 		ent->takedamage = qfalse;
 		ent->die(ent, ent, NULL, 10, 0);
 		Prop_Break_Sound(ent);
@@ -1465,7 +1192,6 @@ void G_RunItemProp(gentity_t *ent, vec3_t origin)
 /*
 ================
 G_RunItem
-
 ================
 */
 void G_RunItem(gentity_t *ent)
@@ -1485,8 +1211,8 @@ void G_RunItem(gentity_t *ent)
 		}
 	}
 
-	if (ent->s.pos.trType == TR_STATIONARY || ent->s.pos.trType == TR_GRAVITY_PAUSED)     //----(SA)
-	{   // check think function
+	if (ent->s.pos.trType == TR_STATIONARY || ent->s.pos.trType == TR_GRAVITY_PAUSED) // check think function
+	{
 		G_RunThink(ent);
 		return;
 	}

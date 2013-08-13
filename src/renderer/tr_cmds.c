@@ -31,13 +31,9 @@
  * @file tr_cmds.c
  */
 
-
 #include "tr_local.h"
 
 volatile renderCommandList_t *renderCommandList;
-
-volatile qboolean renderThreadActive;
-
 
 /*
 =====================
@@ -54,7 +50,7 @@ void R_PerformanceCounters(void)
 		return;
 	}
 
-	if (r_speeds->integer)     //%  == 1)
+	if (r_speeds->integer)
 	{
 		ri.Printf(PRINT_ALL, "%i/%i shaders/surfs %i leafs %i verts %i/%i tris %.2f mtex %.2f dc\n",
 		          backEnd.pc.c_shaders, backEnd.pc.c_surfaces, tr.pc.c_leafs, backEnd.pc.c_vertexes,
@@ -99,91 +95,22 @@ void R_PerformanceCounters(void)
 	memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
 
-
-/*
-====================
-R_InitCommandBuffers
-====================
-*/
-void R_InitCommandBuffers(void)
-{
-	glConfig.smpActive = qfalse;
-	if (r_smp->integer)
-	{
-		ri.Printf(PRINT_ALL, "Trying SMP acceleration...\n");
-		if (GLimp_SpawnRenderThread(RB_RenderThread))
-		{
-			ri.Printf(PRINT_ALL, "...succeeded.\n");
-			glConfig.smpActive = qtrue;
-		}
-		else
-		{
-			ri.Printf(PRINT_ALL, "...failed.\n");
-		}
-	}
-}
-
-/*
-====================
-R_ShutdownCommandBuffers
-====================
-*/
-void R_ShutdownCommandBuffers(void)
-{
-	// kill the rendering thread
-	if (glConfig.smpActive)
-	{
-		GLimp_WakeRenderer(NULL);
-		glConfig.smpActive = qfalse;
-	}
-}
-
 /*
 ====================
 R_IssueRenderCommands
 ====================
 */
-int c_blockedOnRender;
-int c_blockedOnMain;
-
 void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
-	renderCommandList_t *cmdList;
+	renderCommandList_t *cmdList = &backEndData->commands;
 
-	cmdList = &backEndData[tr.smpFrame]->commands;
-	assert(cmdList);   // bk001205
+	assert(cmdList);
 	// add an end-of-list command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
 
 	// clear it out, in case this is a sync and not a buffer flip
 	cmdList->used = 0;
 
-	if (glConfig.smpActive)
-	{
-		// if the render thread is not idle, wait for it
-		if (renderThreadActive)
-		{
-			c_blockedOnRender++;
-			if (r_showSmp->integer)
-			{
-				ri.Printf(PRINT_ALL, "R");
-			}
-		}
-		else
-		{
-			c_blockedOnMain++;
-			if (r_showSmp->integer)
-			{
-				ri.Printf(PRINT_ALL, ".");
-			}
-		}
-
-		// sleep until the renderer has completed
-		GLimp_FrontEndSleep();
-	}
-
-	// at this point, the back end thread is idle, so it is ok
-	// to look at it's performance counters
 	if (runPerformanceCounters)
 	{
 		R_PerformanceCounters();
@@ -193,21 +120,13 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	if (!r_skipBackEnd->integer)
 	{
 		// let it start on the new batch
-		if (!glConfig.smpActive)
-		{
-			RB_ExecuteRenderCommands(cmdList->cmds);
-		}
-		else
-		{
-			GLimp_WakeRenderer(cmdList);
-		}
+		RB_ExecuteRenderCommands(cmdList->cmds);
 	}
 }
 
-
 /*
 ====================
-R_SyncRenderThread
+R_IssuePendingRenderCommands
 
 Issue any pending commands and wait for them to complete.
 After exiting, the render thread will have completed its work
@@ -215,19 +134,13 @@ and will remain idle and the main thread is free to issue
 OpenGL calls until R_IssueRenderCommands is called.
 ====================
 */
-void R_SyncRenderThread(void)
+void R_IssuePendingRenderCommands(void)
 {
 	if (!tr.registered)
 	{
 		return;
 	}
 	R_IssueRenderCommands(qfalse);
-
-	if (!glConfig.smpActive)
-	{
-		return;
-	}
-	GLimp_FrontEndSleep();
 }
 
 /*
@@ -240,9 +153,7 @@ render thread if needed.
 */
 void *R_GetCommandBuffer(int bytes)
 {
-	renderCommandList_t *cmdList;
-
-	cmdList = &backEndData[tr.smpFrame]->commands;
+	renderCommandList_t *cmdList = &backEndData->commands;
 
 	// always leave room for the swap buffers and end of list commands
 	if (cmdList->used + bytes + (sizeof(swapBuffersCommand_t) + sizeof(int)) > MAX_RENDER_COMMANDS)
@@ -260,14 +171,12 @@ void *R_GetCommandBuffer(int bytes)
 	return cmdList->cmds + cmdList->used - bytes;
 }
 
-
 /*
 =============
 R_AddDrawSurfCmd
-
 =============
 */
-void    R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
+void R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
 {
 	drawSurfsCommand_t *cmd;
 
@@ -285,7 +194,6 @@ void    R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
 	cmd->viewParms = tr.viewParms;
 }
 
-
 /*
 =============
 RE_SetColor
@@ -293,7 +201,7 @@ RE_SetColor
 Passing NULL will set the color to white
 =============
 */
-void    RE_SetColor(const float *rgba)
+void RE_SetColor(const float *rgba)
 {
 	setColorCommand_t *cmd;
 
@@ -315,7 +223,6 @@ void    RE_SetColor(const float *rgba)
 	cmd->color[2] = rgba[2];
 	cmd->color[3] = rgba[3];
 }
-
 
 /*
 =============
@@ -355,8 +262,9 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 {
 	poly2dCommand_t *cmd;
 
-	if (r_numpolyverts + numverts > max_polyverts)
+	if (r_numpolyverts + numverts >= r_maxpolyverts->integer)
 	{
+		ri.Printf(PRINT_ALL, "Warning RE_2DPolyies: r_maxpolyverts reached\n");
 		return;
 	}
 
@@ -367,14 +275,13 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 	}
 
 	cmd->commandId = RC_2DPOLYS;
-	cmd->verts     = &backEndData[tr.smpFrame]->polyVerts[r_numpolyverts];
+	cmd->verts     = &backEndData->polyVerts[r_numpolyverts];
 	cmd->numverts  = numverts;
 	memcpy(cmd->verts, verts, sizeof(polyVert_t) * numverts);
 	cmd->shader = R_GetShaderByHandle(hShader);
 
 	r_numpolyverts += numverts;
 }
-
 
 /*
 =============
@@ -413,7 +320,6 @@ void RE_RotatedPic(float x, float y, float w, float h,
 	cmd->t2    = t2;
 }
 
-//----(SA)  added
 /*
 ==============
 RE_StretchPicGradient
@@ -453,7 +359,6 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
 	cmd->gradientColor[3] = gradientColor[3] * 255;
 	cmd->gradientType     = gradientType;
 }
-//----(SA)  end
 
 /*
 ====================
@@ -535,9 +440,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	tr.frameCount++;
 	tr.frameSceneNum = 0;
 
-	//
 	// do overdraw measurement
-	//
 	if (r_measureOverdraw->integer)
 	{
 		if (glConfig.stencilBits < 4)
@@ -554,7 +457,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		}
 		else
 		{
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 			qglEnable(GL_STENCIL_TEST);
 			qglStencilMask(~0U);
 			qglClearStencil(0U);
@@ -568,30 +471,26 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 		// this is only reached if it was on and is now off
 		if (r_measureOverdraw->modified)
 		{
-			R_SyncRenderThread();
+			R_IssuePendingRenderCommands();
 			qglDisable(GL_STENCIL_TEST);
 		}
 		r_measureOverdraw->modified = qfalse;
 	}
 
-	//
 	// texturemode stuff
-	//
 	if (r_textureMode->modified)
 	{
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 		GL_TextureMode(r_textureMode->string);
 		r_textureMode->modified = qfalse;
 	}
 
-	//
 	// gamma stuff
-	//
 	if (r_gamma->modified)
 	{
 		r_gamma->modified = qfalse;
 
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 		R_SetColorMappings();
 	}
 
@@ -600,16 +499,14 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	{
 		int err;
 
-		R_SyncRenderThread();
+		R_IssuePendingRenderCommands();
 		if ((err = qglGetError()) != GL_NO_ERROR)
 		{
 			ri.Error(ERR_FATAL, "RE_BeginFrame() - glGetError() failed (0x%x)!\n", err);
 		}
 	}
 
-	//
 	// draw buffer stuff
-	//
 	cmd = R_GetCommandBuffer(sizeof(*cmd));
 	if (!cmd)
 	{
@@ -649,7 +546,6 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	}
 }
 
-
 /*
 =============
 RE_EndFrame
@@ -667,7 +563,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	}
 
 	// Needs to use reserved space, so no R_GetCommandBuffer.
-	cmdList = &backEndData[tr.smpFrame]->commands;
+	cmdList = &backEndData->commands;
 	assert(cmdList);
 	// add swap-buffers command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_SWAP_BUFFERS;
@@ -678,7 +574,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 
 	// use the other buffers next frame, because another CPU
 	// may still be rendering into the current ones
-	R_ToggleSmpFrame();
+	R_InitNextFrame();
 
 	if (frontEndMsec)
 	{
@@ -692,7 +588,6 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	backEnd.pc.msec = 0;
 }
 
-//bani
 /*
 ==================
 RE_RenderToTexture
@@ -702,7 +597,7 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 {
 	renderToTextureCommand_t *cmd;
 
-//  ri.Printf( PRINT_ALL, "RE_RenderToTexture\n" );
+	//  ri.Printf( PRINT_ALL, "RE_RenderToTexture\n" );
 
 	if (textureid > tr.numImages || textureid < 0)
 	{
@@ -723,7 +618,6 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 	cmd->h         = h;
 }
 
-//bani
 /*
 ==================
 RE_Finish
@@ -741,4 +635,34 @@ void RE_Finish(void)
 		return;
 	}
 	cmd->commandId = RC_FINISH;
+}
+
+/*
+=============
+RE_TakeVideoFrame
+=============
+*/
+void RE_TakeVideoFrame(int width, int height,
+                       byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg)
+{
+	videoFrameCommand_t *cmd;
+
+	if (!tr.registered)
+	{
+		return;
+	}
+
+	cmd = R_GetCommandBuffer(sizeof(*cmd));
+	if (!cmd)
+	{
+		return;
+	}
+
+	cmd->commandId = RC_VIDEOFRAME;
+
+	cmd->width         = width;
+	cmd->height        = height;
+	cmd->captureBuffer = captureBuffer;
+	cmd->encodeBuffer  = encodeBuffer;
+	cmd->motionJpeg    = motionJpeg;
 }

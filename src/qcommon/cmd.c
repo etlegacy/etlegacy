@@ -35,6 +35,10 @@
 #include "q_shared.h"
 #include "qcommon.h"
 
+#ifndef DEDICATED
+#include "../client/client.h"
+#endif
+
 #define MAX_CMD_BUFFER  131072
 #define MAX_CMD_LINE    1024
 
@@ -48,7 +52,6 @@ typedef struct
 int   cmd_wait;
 cmd_t cmd_text;
 byte  cmd_text_buf[MAX_CMD_BUFFER];
-
 
 //=============================================================================
 
@@ -66,6 +69,10 @@ void Cmd_Wait_f(void)
 	if (Cmd_Argc() == 2)
 	{
 		cmd_wait = atoi(Cmd_Argv(1));
+		if (cmd_wait < 0)
+		{
+			cmd_wait = 1; // ignore the argument
+		}
 	}
 	else
 	{
@@ -73,12 +80,9 @@ void Cmd_Wait_f(void)
 	}
 }
 
-
 /*
 =============================================================================
-
                         COMMAND BUFFER
-
 =============================================================================
 */
 
@@ -116,7 +120,6 @@ void Cbuf_AddText(const char *text)
 	cmd_text.cursize += l;
 }
 
-
 /*
 ============
 Cbuf_InsertText
@@ -152,7 +155,6 @@ void Cbuf_InsertText(const char *text)
 	cmd_text.cursize += len;
 }
 
-
 /*
 ============
 Cbuf_ExecuteText
@@ -170,8 +172,8 @@ void Cbuf_ExecuteText(int exec_when, const char *text)
 		}
 		else
 		{
-			Cbuf_Execute();
 			Com_DPrintf(S_COLOR_YELLOW "EXEC_NOW %s\n", cmd_text.data);
+			Cbuf_Execute();
 		}
 		break;
 	case EXEC_INSERT:
@@ -181,7 +183,7 @@ void Cbuf_ExecuteText(int exec_when, const char *text)
 		Cbuf_AddText(text);
 		break;
 	default:
-		Com_Error(ERR_FATAL, "Cbuf_ExecuteText: bad exec_when\n");
+		Com_Error(ERR_FATAL, "Cbuf_ExecuteText: bad exec_when");
 	}
 }
 
@@ -196,12 +198,12 @@ void Cbuf_Execute(void)
 	char *text;
 	char line[MAX_CMD_LINE];
 	int  quotes;
-
 	// This will keep // style comments all on one line by not breaking on
 	// a semicolon.  It will keep /* ... */ style comments all on one line by not
 	// breaking it for semicolon or newline.
 	qboolean in_star_comment  = qfalse;
 	qboolean in_slash_comment = qfalse;
+
 	while (cmd_text.cursize)
 	{
 		if (cmd_wait > 0)
@@ -218,6 +220,8 @@ void Cbuf_Execute(void)
 		quotes = 0;
 		for (i = 0 ; i < cmd_text.cursize ; i++)
 		{
+			// FIXME: ignore quoted text
+
 			if (text[i] == '"')
 			{
 				quotes++;
@@ -265,9 +269,9 @@ void Cbuf_Execute(void)
 		Com_Memcpy(line, text, i);
 		line[i] = 0;
 
-// delete the text from the command buffer and move remaining commands down
-// this is necessary because commands (exec) can insert data at the
-// beginning of the text buffer
+		// delete the text from the command buffer and move remaining commands down
+		// this is necessary because commands (exec) can insert data at the
+		// beginning of the text buffer
 
 		if (i == cmd_text.cursize)
 		{
@@ -280,21 +284,16 @@ void Cbuf_Execute(void)
 			memmove(text, text + i, cmd_text.cursize);
 		}
 
-// execute the command line
-
+		// execute the command line
 		Cmd_ExecuteString(line);
 	}
 }
 
-
 /*
 ==============================================================================
-
                         SCRIPT COMMANDS
-
 ==============================================================================
 */
-
 
 /*
 ===============
@@ -303,16 +302,20 @@ Cmd_Exec_f
 */
 void Cmd_Exec_f(void)
 {
+	char filename[MAX_QPATH];
 	union
 	{
 		char *c;
 		void *v;
 	} f;
-	char filename[MAX_QPATH];
+	qboolean quiet;
+
+	quiet = !Q_stricmp(Cmd_Argv(0), "execq");
 
 	if (Cmd_Argc() != 2)
 	{
-		Com_Printf("exec <filename> : execute a script file\n");
+		Com_Printf("exec%s <filename> : execute a script file%s\n",
+		           quiet ? "q" : "", quiet ? " without notification" : "");
 		return;
 	}
 
@@ -321,16 +324,18 @@ void Cmd_Exec_f(void)
 	FS_ReadFile(filename, &f.v);
 	if (!f.c)
 	{
-		Com_Printf("couldn't exec %s\n", Cmd_Argv(1));
+		Com_Printf("couldn't exec %s\n", filename);
 		return;
 	}
-	Com_Printf("execing %s\n", Cmd_Argv(1));
+	if (!quiet)
+	{
+		Com_Printf("execing %s\n", filename);
+	}
 
 	Cbuf_InsertText(f.c);
 
 	FS_FreeFile(f.v);
 }
-
 
 /*
 ===============
@@ -353,32 +358,27 @@ void Cmd_Vstr_f(void)
 	Cbuf_InsertText(va("%s\n", v));
 }
 
-
-/*
-===============
-Cmd_Echo_f
-
-Just prints the rest of the line to the console
-===============
-*/
+/**
+ * @brief Prints the rest of the line to the console
+ * and shows a notification if connected to a server.
+ */
 void Cmd_Echo_f(void)
 {
-	int i;
-
-	Cbuf_AddText("cpm \"");
-	for (i = 1; i < Cmd_Argc(); i++)
+#ifndef DEDICATED
+	// "cpm" is a cgame command, so just print the text if disconnected
+	if (cls.state != CA_CONNECTED && cls.state != CA_ACTIVE)
 	{
-		Cbuf_AddText(va("%s ", Cmd_Argv(i)));
+		Com_Printf("%s\n", Cmd_Args());
+		return;
 	}
-	Cbuf_AddText("\"\n");
-}
+#endif
 
+	Cbuf_AddText(va("cpm \"%s\"\n", Cmd_Args()));
+}
 
 /*
 =============================================================================
-
                     COMMAND EXECUTION
-
 =============================================================================
 */
 
@@ -389,7 +389,6 @@ typedef struct cmd_function_s
 	xcommand_t function;
 	completionFunc_t complete;
 } cmd_function_t;
-
 
 static int  cmd_argc;
 static char *cmd_argv[MAX_STRING_TOKENS];               // points into cmd_tokenized
@@ -403,7 +402,7 @@ static cmd_function_t *cmd_functions;       // possible commands to execute
 Cmd_Argc
 ============
 */
-int     Cmd_Argc(void)
+int Cmd_Argc(void)
 {
 	return cmd_argc;
 }
@@ -430,11 +429,10 @@ The interpreted versions use this because
 they can't have pointers returned to them
 ============
 */
-void    Cmd_ArgvBuffer(int arg, char *buffer, int bufferLength)
+void Cmd_ArgvBuffer(int arg, char *buffer, int bufferLength)
 {
 	Q_strncpyz(buffer, Cmd_Argv(arg), bufferLength);
 }
-
 
 /*
 ============
@@ -492,13 +490,52 @@ char *Cmd_ArgsFrom(int arg)
 
 /*
 ============
+Cmd_Args
+
+Returns a single string containing argv(arg) to argv(max-1)
+============
+*/
+char *Cmd_ArgsFromTo(int arg, int max)
+{
+	static char cmd_args[BIG_INFO_STRING];
+	int         i;
+
+	cmd_args[0] = 0;
+	if (arg < 0)
+	{
+		arg = 0;
+	}
+	//FIXME what should these be
+	if (max > cmd_argc)
+	{
+		max = cmd_argc;
+	}
+	if (max < arg)
+	{
+		max = cmd_argc;
+	}
+
+	for (i = arg ; i < max ; i++)
+	{
+		strcat(cmd_args, cmd_argv[i]);
+		if (i != max - 1)
+		{
+			strcat(cmd_args, " ");
+		}
+	}
+
+	return cmd_args;
+}
+
+/*
+============
 Cmd_ArgsBuffer
 
 The interpreted versions use this because
 they can't have pointers returned to them
 ============
 */
-void    Cmd_ArgsBuffer(char *buffer, int bufferLength)
+void Cmd_ArgsBuffer(char *buffer, int bufferLength)
 {
 	Q_strncpyz(buffer, Cmd_Args(), bufferLength);
 }
@@ -516,12 +553,10 @@ char *Cmd_Cmd(void)
 	return cmd_cmd;
 }
 
-/*
+/**
  * @brief Replaces command separators with space to prevent interpretation
  *
- * This is a hack to protect buggy qvms
- * https://bugzilla.icculus.org/show_bug.cgi?id=3593
- * https://bugzilla.icculus.org/show_bug.cgi?id=4769
+ * This prevents the infamous callvote hack.
  */
 void Cmd_Args_Sanitize(void)
 {
@@ -594,7 +629,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 			// skip // comments
 			if (text[0] == '/' && text[1] == '/')
 			{
-				//bani - lets us put 'http://' in commandlines
+				// lets us put 'http://' in commandlines
 				if (text == text_in || (text > text_in && text[-1] != ':'))
 				{
 					return;         // all tokens parsed
@@ -654,7 +689,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 
 			if (text[0] == '/' && text[1] == '/')
 			{
-				//bani - lets us put 'http://' in commandlines
+				// lets us put 'http://' in commandlines
 				if (text == text_in || (text > text_in && text[-1] != ':'))
 				{
 					break;
@@ -677,7 +712,6 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 			return;     // all tokens parsed
 		}
 	}
-
 }
 
 void Cmd_TokenizeString(const char *text_in)
@@ -698,11 +732,14 @@ Cmd_FindCommand
 cmd_function_t *Cmd_FindCommand(const char *cmd_name)
 {
 	cmd_function_t *cmd;
+
 	for (cmd = cmd_functions; cmd; cmd = cmd->next)
+	{
 		if (!Q_stricmp(cmd_name, cmd->name))
 		{
 			return cmd;
 		}
+	}
 	return NULL;
 }
 
@@ -711,7 +748,7 @@ cmd_function_t *Cmd_FindCommand(const char *cmd_name)
 Cmd_AddCommand
 ============
 */
-void    Cmd_AddCommand(const char *cmd_name, xcommand_t function)
+void Cmd_AddCommand(const char *cmd_name, xcommand_t function)
 {
 	cmd_function_t *cmd;
 
@@ -758,11 +795,10 @@ void Cmd_SetCommandCompletionFunc(const char *command, completionFunc_t complete
 Cmd_RemoveCommand
 ============
 */
-void    Cmd_RemoveCommand(const char *cmd_name)
+void Cmd_RemoveCommand(const char *cmd_name)
 {
-	cmd_function_t *cmd, **back;
+	cmd_function_t *cmd, **back = &cmd_functions;
 
-	back = &cmd_functions;
 	while (1)
 	{
 		cmd = *back;
@@ -785,13 +821,65 @@ void    Cmd_RemoveCommand(const char *cmd_name)
 	}
 }
 
+/**
+ * @brief Only remove commands with no associated function
+ * Already removed in ETL: +button4, -button4
+ * Allowed to remove:      +lookup, +lookdown, -lookup, +lookup, configstrings
+ */
+void Cmd_RemoveCommandSafe(const char *cmd_name)
+{
+	cmd_function_t *cmd;
+
+	if (!cmd_name[0])
+	{
+		Com_Printf(S_COLOR_RED "Cmd_RemoveCommandSafe called with an empty command name\n");
+		return;
+	}
+
+	// silent return for obsolete genuine ET cmds which have been removed in ETL
+	if (!strcmp(cmd_name, "+button4") || !strcmp(cmd_name, "-button4"))
+	{
+		return;
+	}
+
+	cmd = Cmd_FindCommand(cmd_name);
+
+	if (!cmd)
+	{
+		// don't nag for commands which might have been removed
+		if (!(!strcmp(cmd_name, "+lookup") || !strcmp(cmd_name, "+lookdown")
+		      || !strcmp(cmd_name, "-lookup") || !strcmp(cmd_name, "-lookdown")
+		      || !strcmp(cmd_name, "configstrings")))
+		{
+			Com_Printf(S_COLOR_RED "Cmd_RemoveCommandSafe called for an unknown command \"%s\"\n", cmd_name);
+		}
+		return;
+	}
+
+	// don't remove commands in general ...
+
+	// this ensures commands like vid_restart, quit etc won't be removed from the engine by mod code
+	if (cmd->function &&
+	    // several mods are removing some system commands to avoid abuse - let's allow these
+	    !(!strcmp(cmd_name, "+lookup") || !strcmp(cmd_name, "+lookdown")
+	      || !strcmp(cmd_name, "-lookup") || !strcmp(cmd_name, "-lookdown")
+	      || !strcmp(cmd_name, "configstrings")))
+	{
+		Com_Printf(S_COLOR_RED "Restricted source tried to remove system command \"%s\"\n", cmd_name);
+		return;
+	}
+
+	Com_DPrintf(S_COLOR_YELLOW "Cmd_RemoveCommandSafe command \"%s\" removed\n", cmd_name);
+
+	Cmd_RemoveCommand(cmd_name);
+}
 
 /*
 ============
 Cmd_CommandCompletion
 ============
 */
-void    Cmd_CommandCompletion(void (*callback)(const char *s))
+void Cmd_CommandCompletion(void (*callback)(const char *s))
 {
 	cmd_function_t *cmd;
 
@@ -826,7 +914,7 @@ Cmd_ExecuteString
 A complete command line has been parsed, so try to execute it
 ============
 */
-void    Cmd_ExecuteString(const char *text)
+void Cmd_ExecuteString(const char *text)
 {
 	cmd_function_t *cmd, **prev;
 
@@ -888,7 +976,6 @@ void    Cmd_ExecuteString(const char *text)
 	}
 
 	// send it as a server command if we are connected
-	// this will usually result in a chat message
 	CL_ForwardCommandToServer(text);
 }
 
@@ -900,7 +987,7 @@ Cmd_List_f
 void Cmd_List_f(void)
 {
 	cmd_function_t *cmd;
-	int            i;
+	int            i = 0;
 	char           *match;
 
 	if (Cmd_Argc() > 1)
@@ -912,7 +999,6 @@ void Cmd_List_f(void)
 		match = NULL;
 	}
 
-	i = 0;
 	for (cmd = cmd_functions ; cmd ; cmd = cmd->next)
 	{
 		if (match && !Com_Filter(match, cmd->name, qfalse))
@@ -939,6 +1025,107 @@ void Cmd_CompleteCfgName(char *args, int argNum)
 	}
 }
 
+/**
+ * @brief Recursively removes files matching a given pattern from homepath.
+ * Useful for removing incomplete downloads and other garbage.
+ * Files listed in the com_cleanWhitelist cvar are protected from deletion.
+ */
+void Cmd_CleanHomepath_f(void)
+{
+	int      i, j, numFiles = 0, delFiles = 0, totalNumFiles = 0;
+	char     **pFiles = NULL, *tokens;
+	char     path[MAX_OSPATH], whitelist[MAX_OSPATH];
+	qboolean whitelisted;
+
+	if (Cmd_Argc() < 3)
+	{
+		// basically files are downloaded again when required - but better print a warning for inexperienced users
+		Com_Printf("usage: clean <mod> <pattern[1]> <pattern[n]>\nexample: clean all *tmp */zzz* etmain/etkey\nwarning: This command deletes files in fs_homepath. If you are not sure how to use this command do not play with fire!");
+		return;
+	}
+
+	// avoid unreferenced pk3 runtime issues (not on HD but still referenced in game)
+#ifndef DEDICATED
+	if (cls.state != CA_DISCONNECTED)
+	{
+		Com_Printf("You are connected to a server - '/disconnect' to run '/clean'.\n");
+		return;
+	}
+#else
+	if (com_sv_running && com_sv_running->integer)
+	{
+		Com_Printf("Server is running - '/killserver'  to run '/clean'.\n");
+		return;
+	}
+#endif // DEDICATED
+
+	Cvar_VariableStringBuffer("fs_homepath", path, sizeof(path));
+
+	// If the first argument is "all" or "*", search the whole homepath
+	// FIXME: add more options ? see #53
+	if (Q_stricmp(Cmd_Argv(1), "all") && Q_stricmp(Cmd_Argv(1), "*"))
+	{
+		Q_strcat(path, sizeof(path), va("%c%s", PATH_SEP, Cmd_Argv(1)));
+	}
+
+	for (i = 2; i < Cmd_Argc(); i++)
+	{
+		pFiles = Sys_ListFiles(path, NULL, Cmd_Argv(i), &numFiles, qtrue);
+
+		Com_Printf("Found %i files matching the pattern \"%s\" under %s\n", numFiles, Cmd_Argv(i), path);
+
+		// debug
+		//for (j = 0; j < numFiles; j++)
+		//{
+		//	Com_Printf("FILE[%i]: %s - pattern: %s\n", j + 1, pFiles[j], Cmd_Argv(i));
+		//}
+
+		for (j = 0; j < numFiles; j++)
+		{
+			whitelisted = qfalse;
+			totalNumFiles++;
+
+			// FIXME: - don't let admins force this! - move to dat file?
+			//        - optimize - don't do this each loop! -> strtok modifies the input string, which is undefined behaviour on a literal char[], at least in C99
+			//          & print the whitelist files on top again
+
+			Cvar_VariableStringBuffer("com_cleanwhitelist", whitelist, sizeof(whitelist));
+			// Prevent clumsy users from deleting important files - keep leading space!
+			Q_strcat(whitelist, sizeof(whitelist), " .txt .cfg .dat .gm .way .so .dll"); // *.so and *.dll are denied per default in FS_Remove but throw a Com_Error() -> game aborts
+
+			//Com_DPrintf("Whitelist files/patterns: %s\n", whitelist);
+
+			// Check if this file is in the whitelist
+			tokens = strtok(whitelist, " ,;");
+
+			while (tokens != NULL)
+			{
+				if (strstr(pFiles[j], tokens))
+				{
+					Com_Printf("- skipping file[%i]: %s%c%s - pattern: %s\n", j + 1, path, PATH_SEP, pFiles[j], tokens);
+					whitelisted = qtrue;
+					break;
+				}
+				tokens = strtok(NULL, " ,;");
+			}
+
+			if (whitelisted)
+			{
+				continue;
+			}
+
+			Com_Printf("- removing file[%i]: %s%c%s\n", j + 1, path, PATH_SEP, pFiles[j]);
+			//remove(va("%s%c%s", path, PATH_SEP, pFiles[j])); // enable *.so & *.dll lib deletion - see whitelist
+			FS_Remove(va("%s%c%s", path, PATH_SEP, pFiles[j]));
+			delFiles++;
+		}
+
+		Sys_FreeFileList(pFiles);
+		numFiles = 0;
+	}
+	Com_Printf("Path of fs_homepath cleaned - %i matches - %i files skipped - %i files deleted.\n", totalNumFiles, totalNumFiles - delFiles, delFiles);
+}
+
 /*
 ============
 Cmd_Init
@@ -948,9 +1135,12 @@ void Cmd_Init(void)
 {
 	Cmd_AddCommand("cmdlist", Cmd_List_f);
 	Cmd_AddCommand("exec", Cmd_Exec_f);
+	Cmd_AddCommand("execq", Cmd_Exec_f);
 	Cmd_SetCommandCompletionFunc("exec", Cmd_CompleteCfgName);
+	Cmd_SetCommandCompletionFunc("execq", Cmd_CompleteCfgName);
 	Cmd_AddCommand("vstr", Cmd_Vstr_f);
 	Cmd_SetCommandCompletionFunc("vstr", Cvar_CompleteCvarName);
 	Cmd_AddCommand("echo", Cmd_Echo_f);
 	Cmd_AddCommand("wait", Cmd_Wait_f);
+	Cmd_AddCommand("clean", Cmd_CleanHomepath_f);
 }

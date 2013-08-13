@@ -1,0 +1,96 @@
+/////////////////////////////////////////////////////////
+// Map name       Bramburg Dam Beta 1                  //
+// Locations by   pr0t3st                              //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 25                //
+// Last edited    22-10-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+-2119 -1121 2372 "^1Dam Stairwell Door"
+-1130 -186 1716 "^1Lower Dam Door"
+-1461 4067 2376 "^1Lower Front Door"
+-750 2130 2348 "^1Main Doors"
+-2759 -1811 1602 "^1Main Water Regulator"
+-287 4162 2496 "^1Upper Front Door"
+-1092 -4189 2376 "^3Axis Supply Truck"
+-1628 -190 1576 "^3Dam Access Tunnels"
+-2031 -350 1559 @
+-2442 -807 1580 @
+-2024 -1206 1580 @
+-2084 -2135 1580 @
+-2326 -1816 1580 @
+-1648 -2894 1714 @
+-1806 -2047 1715 @
+-2200 -2111 1772 "^3Dam Air Vent"
+-2454 -2197 1814 @
+-762 1057 2372 "^3Dam Road"
+-214 594 2376 @
+-1273 227 2406 @
+-1640 -1058 2406 @
+-1532 -2210 2418 @
+-1355 -3308 2408 @
+-1276 -3796 2372 @
+-1587 -1733 2372 @
+-1886 -1730 2388 "^3Dam Road MG Nest"
+76 2457 2668 "^3Generator Controls"
+56 2698 2688 "^3Generator Hallway"
+211 1722 2432 "^3Generator Room"
+779 1282 2445 @
+-109 1332 2465 @
+-301 1629 2432 @
+183 2087 2634 "^3Generator Room Stairs"
+50 2162 2624 @
+-365 2091 2716 "^3Generator Room Vent"
+-352 1717 2669 @
+527 2617 2654 "^3Generator Transformers"
+-1461 5638 2368 "^3Hillside Path"
+-2200 6257 2479 @
+-53 2984 2688 "^3Long Hallway"
+258 2980 2656 @
+29 393 1717 "^3Lower Dam Walkway"
+-855 10 1779 @
+-885 -3381 1712 @
+-284 -3809 1728 @
+-760 2614 2360 "^3Main Doors Hallway"
+-321 2814 2647 "^3Main Doors Stairwell"
+-755 1720 2372 "^3Main Doors Tunnel"
+-39 800 2058 "^3North Access Ladder"
+-2547 -1200 2112 "^3North Dam Stairwell"
+-2441 -1197 1580 @
+-170 440 2743 "^3Observation Tower"
+-761 -3843 2680 @
+-2515 -3830 2176 "^3Pipes Room"
+-2122 -3837 2270 "^3Pipes Room Stairs"
+-1751 -3813 2337 "^3Planning Room"
+-1294 1343 2549 "^3Radio Room"
+-1300 946 2560 "^3Radio Room Stairwell"
+-1448 996 2560 @
+-1376 1656 2668 "^3Radio Room Vent"
+-1709 4067 2376 "^3Service Halls"
+-1514 3866 2496 @
+-1576 4050 2568 @
+-278 3924 2504 @
+-23 4109 2496 @
+-224 3537 2496 @
+-55 3124 2688 @
+-1249 4065 2376 "^3Service Yard"
+-1461 4291 2368 @
+-286 4306 2400 @
+-771 4226 2368 @
+-1452 5446 2368 @
+-19 4193 2496 @
+-1285 3835 2616 "^3Service Yard Overlook"
+-766 4017 2372 "^3Service Yard Tunnel"
+-747 3554 2372 @
+-1309 1351 2343 "^3Sleeping Quarters"
+-311 -3810 2049 "^3South Access Ladder"
+-768 -6018 2368 "^3South Access Tunnel"
+-908 -4717 2368 "^3South Access Yard"
+-358 -3887 2376 @
+-2566 -2477 2158 "^3South Dam Stairwell"
+-2538 -2486 1580 @
+-2818 -3048 2176 "^3Upper Dam Tunnels"
+-2817 -1823 2176 @
+-1483 2636 2443 "^3Warehouse"
+-1356 2144 2480 @
+-1315 1892 2443 "^3Warehouse Passage"

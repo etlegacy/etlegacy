@@ -35,6 +35,13 @@
 
 #include "g_local.h"
 
+#ifdef FEATURE_OMNIBOT
+#include "g_etbot_interface.h"
+#endif
+
+#ifdef FEATURE_LUA
+#include "g_lua.h"
+#endif
 
 /*
 ==============================================================================
@@ -225,16 +232,13 @@ void PrintMaxLivesGUID(void)
 G_FindIpData
 =================
 */
-
 ipXPStorage_t *G_FindIpData(ipXPStorageList_t *ipXPStorageList, char *from)
 {
-	int      i;
+	int      i = 0;
 	unsigned in;
 	byte     m[4];
-	char     *p;
+	char     *p = from;
 
-	i = 0;
-	p = from;
 	while (*p && i < 4)
 	{
 		m[i] = 0;
@@ -275,13 +279,11 @@ G_FilterPacket
 */
 qboolean G_FilterPacket(ipFilterList_t *ipFilterList, char *from)
 {
-	int      i;
+	int      i = 0;
 	unsigned in;
 	byte     m[4];
-	char     *p;
+	char     *p = from;
 
-	i = 0;
-	p = from;
 	while (*p && i < 4)
 	{
 		m[i] = 0;
@@ -300,10 +302,12 @@ qboolean G_FilterPacket(ipFilterList_t *ipFilterList, char *from)
 	in = *(unsigned *)m;
 
 	for (i = 0; i < ipFilterList->numIPFilters; i++)
+	{
 		if ((in & ipFilterList->ipFilters[i].mask) == ipFilterList->ipFilters[i].compare)
 		{
 			return g_filterBan.integer != 0;
 		}
+	}
 
 	return g_filterBan.integer == 0;
 }
@@ -457,7 +461,6 @@ void G_AddXPBackup(gentity_t *ent)
 }
 #endif // USEXPSTORAGE
 
-
 /*
 =================
 AddIP
@@ -506,7 +509,8 @@ void AddMaxLivesBan(const char *str)
 /*
 =================
 AddMaxLivesGUID
-Xian - with g_enforcemaxlives enabled, this adds a client GUID to a list
+
+with g_enforcemaxlives enabled, this adds a client GUID to a list
 that prevents them from quitting and reconnecting
 =================
 */
@@ -571,7 +575,6 @@ void Svcmd_AddIP_f(void)
 	trap_Argv(1, str, sizeof(str));
 
 	AddIP(&ipFilters, str);
-
 }
 
 /*
@@ -615,7 +618,7 @@ void Svcmd_RemoveIP_f(void)
 }
 
 /*
- Xian - Clears out the entire list maxlives enforcement banlist
+Clears out the entire list maxlives enforcement banlist
 */
 void ClearMaxLivesBans()
 {
@@ -631,85 +634,137 @@ void ClearMaxLivesBans()
 	Q_strncpyz(ipMaxLivesFilters.cvarIPList, "g_maxlivesbanIPs", sizeof(ipMaxLivesFilters.cvarIPList));
 }
 
+// names of enume entityType_t for Svcmd_EntityList_f
+char *enttypenames[] =
+{
+	"ET_GENERAL",
+	"ET_PLAYER",
+	"ET_ITEM",
+	"ET_MISSILE",
+	"ET_MOVER",
+	"ET_BEAM",
+	"ET_PORTAL",
+	"ET_SPEAKER",
+	"ET_PUSH_TRIGGER",
+	"ET_TELEPORT_TRIGGER",
+	"ET_INVISIBLE",
+	"ET_CONCUSSIVE_TRIGGER",
+	"ET_OID_TRIGGER",
+	"ET_EXPLOSIVE_INDICATOR",
+
+	"ET_EXPLOSIVE",
+	"ET_EF_SPOTLIGHT",
+	"ET_ALARMBOX",
+	"ET_CORONA",
+	"ET_TRAP",
+
+	"ET_GAMEMODEL",
+	"ET_FOOTLOCKER",
+
+	"ET_FLAMEBARREL",
+	"ET_FP_PARTS",
+
+	"ET_FIRE_COLUMN",
+	"ET_FIRE_COLUMN_SMOKE",
+	"ET_RAMJET",
+
+	"ET_FLAMETHROWER_CHUNK",
+
+	"ET_EXPLO_PART",
+
+	"ET_PROP",
+
+	"ET_AI_EFFECT",
+
+	"ET_CAMERA",
+	"ET_MOVERSCALED",
+
+	"ET_CONSTRUCTIBLE_INDICATOR",
+	"ET_CONSTRUCTIBLE",
+	"ET_CONSTRUCTIBLE_MARKER",
+	"ET_BOMB",
+	"ET_WAYPOINT",
+	"ET_BEAM_2",
+	"ET_TANK_INDICATOR",
+	"ET_TANK_INDICATOR_DEAD",
+
+	"ET_BOTGOAL_INDICATOR",
+	"ET_CORPSE",
+	"ET_SMOKER",
+
+	"ET_TEMPHEAD",
+	"ET_MG42_BARREL",
+	"ET_TEMPLEGS",
+	"ET_TRIGGER_MULTIPLE",
+	"ET_TRIGGER_FLAGONLY",
+	"ET_TRIGGER_FLAGONLY_MULTIPLE",
+	"ET_GAMEMANAGER",
+	"ET_AAGUN",
+	"ET_CABINET_H",
+	"ET_CABINET_A",
+	"ET_HEALER",
+	"ET_SUPPLIER",
+
+	"ET_LANDMINE_HINT",
+	"ET_ATTRACTOR_HINT",
+	"ET_SNIPER_HINT",
+	"ET_LANDMINESPOT_HINT",
+
+	"ET_COMMANDMAP_MARKER",
+
+	"ET_WOLF_OBJECTIVE",
+
+	"ET_EVENTS"
+};
+
 /*
 ===================
 Svcmd_EntityList_f
 ===================
 */
-void    Svcmd_EntityList_f(void)
+void Svcmd_EntityList_f(void)
 {
-	int       e;
-	gentity_t *check;
+	int       e, entsFree = 0;
+	gentity_t *check = g_entities + 1;
 
-	check = g_entities + 1;
-	for (e = 1; e < level.num_entities ; e++, check++)
+	// FIXME: create line before print
+	for (e = 0; e < MAX_GENTITIES ; e++, check++)
 	{
 		if (!check->inuse)
 		{
+			if (trap_Argc() > 1)
+			{
+				G_Printf("^2%4i: %s\n", e, check->classname);
+			}
+			entsFree++;
 			continue;
 		}
-		G_Printf("%3i:", e);
-		switch (check->s.eType)
+
+		G_Printf("%4i:", e);
+
+		if (check->s.eType <= ET_EVENTS)
 		{
-		case ET_GENERAL:
-			G_Printf("ET_GENERAL          ");
-			break;
-		case ET_PLAYER:
-			G_Printf("ET_PLAYER           ");
-			break;
-		case ET_ITEM:
-			G_Printf("ET_ITEM             ");
-			break;
-		case ET_MISSILE:
-			G_Printf("ET_MISSILE          ");
-			break;
-		case ET_MOVER:
-			G_Printf("ET_MOVER            ");
-			break;
-		case ET_BEAM:
-			G_Printf("ET_BEAM             ");
-			break;
-		case ET_PORTAL:
-			G_Printf("ET_PORTAL           ");
-			break;
-		case ET_SPEAKER:
-			G_Printf("ET_SPEAKER          ");
-			break;
-		case ET_PUSH_TRIGGER:
-			G_Printf("ET_PUSH_TRIGGER     ");
-			break;
-		case ET_CONCUSSIVE_TRIGGER:
-			G_Printf("ET_CONCUSSIVE_TRIGGR");
-			break;
-		case ET_TELEPORT_TRIGGER:
-			G_Printf("ET_TELEPORT_TRIGGER ");
-			break;
-		case ET_INVISIBLE:
-			G_Printf("ET_INVISIBLE        ");
-			break;
-		case ET_EXPLOSIVE:
-			G_Printf("ET_EXPLOSIVE        ");
-			break;
-		case ET_EF_SPOTLIGHT:
-			G_Printf("ET_EF_SPOTLIGHT     ");
-			break;
-		case ET_ALARMBOX:
-			G_Printf("ET_ALARMBOX          ");
-			break;
-		default:
-			G_Printf("%3i                 ", check->s.eType);
-			break;
+			G_Printf("%-27s", enttypenames[check->s.eType]);
+		}
+		else
+		{
+			G_Printf("%-27i", check->s.eType); // tempEntity FIXME: print event
 		}
 
 		if (check->classname)
 		{
-			G_Printf("%s", check->classname);
+			G_Printf(" %s\n", check->classname);
 		}
-		G_Printf("\n");
+		else
+		{
+			G_Printf(" *unknown classname*\n");
+		}
 	}
+	G_Printf("%4i: entities not in use\n", entsFree);
+	G_Printf("%4i: num_entities\n", level.num_entities);
 }
 
-// fretn, note: if a player is called '3' and there are only 2 players
+// note: if a player is called '3' and there are only 2 players
 // on the server (clientnum 0 and 1)
 // this function will say 'client 3 is not connected'
 // solution: first check for usernames, if none is found, check for slotnumbers
@@ -717,7 +772,6 @@ gclient_t *ClientForString(const char *s)
 {
 	gclient_t *cl;
 	int       i;
-	int       idnum;
 
 	// check for a name match
 	for (i = 0 ; i < level.maxclients ; i++)
@@ -736,7 +790,8 @@ gclient_t *ClientForString(const char *s)
 	// numeric values are just slot numbers
 	if (s[0] >= '0' && s[0] <= '9')
 	{
-		idnum = atoi(s);
+		int idnum = atoi(s);
+
 		if (idnum < 0 || idnum >= level.maxclients)
 		{
 			Com_Printf("Bad client slot: %i\n", idnum);
@@ -757,11 +812,8 @@ gclient_t *ClientForString(const char *s)
 	return NULL;
 }
 
-// fretn
-
 static qboolean G_Is_SV_Running(void)
 {
-
 	char cvar[MAX_TOKEN_CHARS];
 
 	trap_Cvar_VariableStringBuffer("sv_running", cvar, sizeof(cvar));
@@ -776,7 +828,6 @@ G_GetPlayerByNum
 gclient_t *G_GetPlayerByNum(int clientNum)
 {
 	gclient_t *cl;
-
 
 	// make sure server is running
 	if (!G_Is_SV_Running())
@@ -808,7 +859,6 @@ gclient_t *G_GetPlayerByNum(int clientNum)
 		return cl;
 	}
 
-
 	G_Printf("User %d is not on the server\n", clientNum);
 
 	return NULL;
@@ -821,7 +871,6 @@ G_GetPlayerByName
 */
 gclient_t *G_GetPlayerByName(char *name)
 {
-
 	int       i;
 	gclient_t *cl;
 	char      cleanName[64];
@@ -860,8 +909,6 @@ gclient_t *G_GetPlayerByName(char *name)
 	return NULL;
 }
 
-// -fretn
-
 /*
 ===================
 Svcmd_ForceTeam_f
@@ -869,7 +916,6 @@ Svcmd_ForceTeam_f
 forceteam <player> <team>
 ===================
 */
-
 void Svcmd_ForceTeam_f(void)
 {
 	gclient_t *cl;
@@ -892,7 +938,7 @@ void Svcmd_ForceTeam_f(void)
 ============
 Svcmd_StartMatch_f
 
-NERVE - SMF - starts match if in tournament mode
+starts match if in tournament mode
 ============
 */
 void Svcmd_StartMatch_f(void)
@@ -926,7 +972,7 @@ void Svcmd_StartMatch_f(void)
 ==================
 Svcmd_ResetMatch_f
 
-OSP - multiuse now for both map restarts and total match resets
+multiuse now for both map restarts and total match resets
 ==================
 */
 void Svcmd_ResetMatch_f(qboolean fDoReset, qboolean fDoRestart)
@@ -954,7 +1000,7 @@ void Svcmd_ResetMatch_f(qboolean fDoReset, qboolean fDoRestart)
 ============
 Svcmd_SwapTeams_f
 
-NERVE - SMF - swaps all clients to opposite team
+swaps all clients to opposite team
 ============
 */
 void Svcmd_SwapTeams_f(void)
@@ -975,12 +1021,11 @@ void Svcmd_SwapTeams_f(void)
 	Svcmd_ResetMatch_f(qfalse, qtrue);
 }
 
-
 /*
 ====================
 Svcmd_ShuffleTeams_f
 
-OSP - randomly places players on teams
+randomly places players on teams
 ====================
 */
 void Svcmd_ShuffleTeams_f(void)
@@ -1024,7 +1069,6 @@ void Svcmd_Campaign_f(void)
 		return;
 	}
 
-	trap_Cvar_Set("g_oldCampaign", g_currentCampaign.string);
 	trap_Cvar_Set("g_currentCampaign", campaign->shortname);
 	trap_Cvar_Set("g_currentCampaignMap", "0");
 
@@ -1032,21 +1076,13 @@ void Svcmd_Campaign_f(void)
 
 	// we got a campaign, start it
 	trap_Cvar_Set("g_gametype", va("%i", GT_WOLF_CAMPAIGN));
-#if 0
-	if (g_developer.integer)
-	{
-		trap_SendConsoleCommand(EXEC_APPEND, va("devmap %s\n", campaign->mapnames[0]));
-	}
-	else
-#endif
+
 	trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[0]));
 }
 
 void Svcmd_ListCampaigns_f(void)
 {
-	int i, mpCampaigns;
-
-	mpCampaigns = 0;
+	int i, mpCampaigns = 0;
 
 	for (i = 0; i < level.campaignCount; i++)
 	{
@@ -1075,9 +1111,7 @@ void Svcmd_ListCampaigns_f(void)
 	}
 }
 
-
-
-// ydnar: modified from maddoc sp func
+// modified from maddoc sp func
 extern void ReviveEntity(gentity_t *ent, gentity_t *traceEnt);
 extern int FindClientByName(char *name);
 
@@ -1085,7 +1119,6 @@ void Svcmd_RevivePlayer(char *name)
 {
 	int       clientNum;
 	gentity_t *player;
-
 
 	if (!g_cheats.integer)
 	{
@@ -1101,11 +1134,7 @@ void Svcmd_RevivePlayer(char *name)
 	player = &g_entities[clientNum];
 
 	ReviveEntity(player, player);
-
 }
-
-
-// fretn - kicking
 
 /*
 ==================
@@ -1122,7 +1151,6 @@ Kick a user off of the server
 static void Svcmd_Kick_f(void)
 {
 	gclient_t *cl;
-	int       i;
 	int       timeout = -1;
 	char      sTimeout[MAX_TOKEN_CHARS];
 	char      name[MAX_TOKEN_CHARS];
@@ -1157,9 +1185,10 @@ static void Svcmd_Kick_f(void)
 	{
 		if (!Q_stricmp(name, "all"))
 		{
+			int i;
+
 			for (i = 0, cl = level.clients; i < level.numConnectedClients; i++, cl++)
 			{
-
 				// dont kick localclients ...
 				if (cl->pers.localClient)
 				{
@@ -1196,7 +1225,6 @@ static void Svcmd_Kick_f(void)
 							AddIPBan(ip);
 						}
 					}
-
 				}
 				else
 				{
@@ -1204,18 +1232,7 @@ static void Svcmd_Kick_f(void)
 				}
 			}
 		}
-		else if (!Q_stricmp(name, "allbots"))
-		{
-			for (i = 0, cl = level.clients; i < level.numConnectedClients; i++, cl++)
-			{
-				if (!(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
-				{
-					continue;
-				}
-				// kick but dont ban bots, they arent that lame
-				trap_DropClient(cl->ps.clientNum, "player kicked", 0);
-			}
-		}
+
 		return;
 	}
 	else
@@ -1238,7 +1255,6 @@ static void Svcmd_Kick_f(void)
 			// use engine banning system, mods may choose to use their own banlist
 			if (USE_ENGINE_BANLIST)
 			{
-
 				// kick but dont ban bots, they arent that lame
 				if ((g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
 				{
@@ -1256,7 +1272,6 @@ static void Svcmd_Kick_f(void)
 					AddIPBan(ip);
 				}
 			}
-
 		}
 		else
 		{
@@ -1344,23 +1359,188 @@ static void Svcmd_KickNum_f(void)
 	}
 }
 
-// -fretn
+void G_UpdateSvCvars(void)
+{
+	char cs[MAX_INFO_STRING];
+	int  i;
 
+	cs[0] = '\0';
 
+	for (i = 0; i < level.svCvarsCount; i++)
+	{
+		if (level.svCvars[i].Val2[0] == 0) // don't send a space char when not set
+		{
+			Info_SetValueForKey(cs, va("V%i", i),
+			                    va("%i %s %s", level.svCvars[i].mode, level.svCvars[i].cvarName, level.svCvars[i].Val1));
+		}
+		else
+		{
+			Info_SetValueForKey(cs, va("V%i", i),
+			                    va("%i %s %s %s", level.svCvars[i].mode, level.svCvars[i].cvarName, level.svCvars[i].Val1, level.svCvars[i].Val2));
+		}
+	}
+
+	Info_SetValueForKey(cs, "N", va("%i", level.svCvarsCount));
+
+	// FIXME: print a warning when this configstring has nearly reached MAX_INFO_STRING size and don't set it if greater
+	trap_SetConfigstring(CS_SVCVAR, cs);
+}
+
+void CC_svcvar(void)
+{
+	char cvarName[MAX_CVAR_VALUE_STRING];
+	char mode[16];
+	char cvarValue1[MAX_CVAR_VALUE_STRING];
+	char cvarValue2[MAX_CVAR_VALUE_STRING];
+	int  i;
+	int  index = level.svCvarsCount;
+	char *p;
+
+	if (trap_Argc() <= 3)
+	{
+		G_Printf("usage: sv_cvar <cvar name> <mode> <value1> <value2>\nexamples: sv_cvar cg_hitsounds EQ 1\n          sv_cvar cl_maxpackets IN 60 100\n");
+		return;
+	}
+	trap_Argv(1, cvarName, sizeof(cvarName));
+	trap_Argv(2, mode, sizeof(mode));
+	trap_Argv(3, cvarValue1, sizeof(cvarValue1));
+
+	for (p = cvarName; *p != '\0'; ++p)
+	{
+		*p = tolower(*p);
+	}
+
+	if (trap_Argc() == 5)
+	{
+		trap_Argv(4, cvarValue2, sizeof(cvarValue2));
+	}
+
+	// is this cvar already in the array?.. (maybe they have a double entry)
+	for (i = 0; i < level.svCvarsCount; i++)
+	{
+		if (!Q_stricmp(cvarName, level.svCvars[i].cvarName))
+		{
+			index = i;
+		}
+	}
+
+	if (index >= MAX_SVCVARS)
+	{
+		G_Printf("sv_cvar: MAX_SVCVARS hit\n");
+		return;
+	}
+
+	if (!Q_stricmp(mode, "EQ") || !Q_stricmp(mode, "EQUAL"))
+	{
+		level.svCvars[index].mode = SVC_EQUAL;
+	}
+	else if (!Q_stricmp(mode, "G") || !Q_stricmp(mode, "GREATER"))
+	{
+		level.svCvars[index].mode = SVC_GREATER;
+	}
+	else if (!Q_stricmp(mode, "GE") || !Q_stricmp(mode, "GREATEREQUAL"))
+	{
+		level.svCvars[index].mode = SVC_GREATEREQUAL;
+	}
+	else if (!Q_stricmp(mode, "L") || !Q_stricmp(mode, "LOWER"))
+	{
+		level.svCvars[index].mode = SVC_LOWER;
+	}
+	else if (!Q_stricmp(mode, "LE") || !Q_stricmp(mode, "LOWEREQUAL"))
+	{
+		level.svCvars[index].mode = SVC_LOWEREQUAL;
+	}
+	else if (!Q_stricmp(mode, "IN") || !Q_stricmp(mode, "INSIDE"))
+	{
+		level.svCvars[index].mode = SVC_INSIDE;
+	}
+	else if (!Q_stricmp(mode, "OUT") || !Q_stricmp(mode, "OUTSIDE"))
+	{
+		level.svCvars[index].mode = SVC_OUTSIDE;
+	}
+	else if (!Q_stricmp(mode, "INC") || !Q_stricmp(mode, "INCLUDE"))
+	{
+		level.svCvars[index].mode = SVC_INCLUDE;
+	}
+	else if (!Q_stricmp(mode, "EXC") || !Q_stricmp(mode, "EXCLUDE"))
+	{
+		level.svCvars[index].mode = SVC_EXCLUDE;
+	}
+	else
+	{
+		G_Printf("sv_cvar: invalid mode\n");
+		return;
+	}
+
+	if (trap_Argc() == 5)
+	{
+		Q_strncpyz(level.svCvars[index].Val2, cvarValue2, sizeof(level.svCvars[0].Val2));
+	}
+	else
+	{
+		Q_strncpyz(level.svCvars[index].Val2, "", sizeof(level.svCvars[0].Val2));
+	}
+
+	Q_strncpyz(level.svCvars[index].cvarName, cvarName, sizeof(level.svCvars[0].cvarName));
+	Q_strncpyz(level.svCvars[index].Val1, cvarValue1, sizeof(level.svCvars[0].Val1));
+
+	// cvar wasn't yet in the array?
+	if (index >= level.svCvarsCount)
+	{
+		level.svCvarsCount++;
+	}
+
+	G_UpdateSvCvars();
+}
 
 char *ConcatArgs(int start);
+
+void CC_loadconfig(void)
+{
+	char scriptName[MAX_QPATH];
+
+	if (trap_Argc() != 2)
+	{
+		G_Printf("usage: loadConfig <config name>\n");
+		return;
+	}
+
+	trap_Argv(1, scriptName, sizeof(scriptName));
+
+	trap_SetConfigstring(CS_CONFIGNAME, "");
+	memset(&level.config, 0, sizeof(config_t));
+	if (G_LoadConfig(scriptName, qtrue))
+	{
+		G_Printf("Loaded config: %s\n", level.config.name);
+		trap_Cvar_Set("g_customConfig", scriptName);
+	}
+}
+
 
 /*
 =================
 ConsoleCommand
-
 =================
 */
-qboolean    ConsoleCommand(void)
+qboolean ConsoleCommand(void)
 {
 	char cmd[MAX_TOKEN_CHARS];
 
 	trap_Argv(0, cmd, sizeof(cmd));
+
+#ifdef FEATURE_LUA
+	if (!Q_stricmp(cmd, "lua_status"))
+	{
+		G_LuaStatus(NULL);
+		return qtrue;
+	}
+
+	// *LUA* API callbacks
+	if (G_LuaHook_ConsoleCommand(cmd))
+	{
+		return qtrue;
+	}
+#endif
 
 	if (Q_stricmp(cmd, "entitylist") == 0)
 	{
@@ -1404,7 +1584,6 @@ qboolean    ConsoleCommand(void)
 		return qtrue;
 	}
 
-	// NERVE - SMF
 	if (Q_stricmp(cmd, "start_match") == 0)
 	{
 		Svcmd_StartMatch_f();
@@ -1428,8 +1607,6 @@ qboolean    ConsoleCommand(void)
 		Svcmd_ShuffleTeams_f();
 		return qtrue;
 	}
-
-	// -NERVE - SMF
 
 	if (Q_stricmp(cmd, "makeReferee") == 0)
 	{
@@ -1471,17 +1648,14 @@ qboolean    ConsoleCommand(void)
 		return qtrue;
 	}
 
-
-// START - Mad Doc - TDF
 	if (Q_stricmp(cmd, "revive") == 0)
 	{
 		trap_Argv(1, cmd, sizeof(cmd));
 		Svcmd_RevivePlayer(cmd);
 		return qtrue;
 	}
-// END - Mad Doc - TDF
 
-	// fretn - moved from engine
+	// moved from engine
 	if (!Q_stricmp(cmd, "kick"))
 	{
 		Svcmd_Kick_f();
@@ -1493,30 +1667,81 @@ qboolean    ConsoleCommand(void)
 		Svcmd_KickNum_f();
 		return qtrue;
 	}
-	// -fretn
+
+#ifdef FEATURE_OMNIBOT
+	if (!Q_stricmp(cmd, "bot"))
+	{
+		Bot_Interface_ConsoleCommand();
+		return qtrue;
+	}
+#endif
+
+	if (!Q_stricmp(cmd, "cp"))
+	{
+		trap_SendServerCommand(-1, va("cp \"%s\n\"", Q_AddCR(ConcatArgs(1))));
+		return qtrue;
+	}
+
+	if (!Q_stricmp(cmd, "reloadConfig"))
+	{
+		trap_SetConfigstring(CS_CONFIGNAME, "");
+		memset(&level.config, 0, sizeof(config_t));
+		if (G_LoadConfig("", qtrue))
+		{
+			G_Printf("Reloaded config: %s\n", level.config.name);
+		}
+
+		return qtrue;
+	}
+
+	if (!Q_stricmp(cmd, "loadConfig"))
+	{
+		CC_loadconfig();
+		return qtrue;
+	}
+
+	if (!Q_stricmp(cmd, "sv_cvarempty"))
+	{
+		memset(level.svCvars, 0, sizeof(level.svCvars));
+		level.svCvarsCount = 0;
+		G_UpdateSvCvars();
+		return qtrue;
+	}
+
+	if (!Q_stricmp(cmd, "sv_cvar"))
+	{
+		CC_svcvar();
+		return qtrue;
+	}
+
+	if (!Q_stricmp(cmd, "playsound") || !Q_stricmp(cmd, "playsound_env"))
+	{
+		G_PlaySound_Cmd();
+		return qtrue;
+	}
 
 	if (g_dedicated.integer)
 	{
 		if (!Q_stricmp(cmd, "say"))
 		{
-			trap_SendServerCommand(-1, va("cpm \"server: %s\n\"", ConcatArgs(1)));
+			trap_SendServerCommand(-1, va("cpm \"server: %s\n\"", Q_AddCR(ConcatArgs(1))));
 			return qtrue;
 		}
 
-		// OSP - console also gets ref commands
+		// console also gets ref commands
 		if (!level.fLocalHost && Q_stricmp(cmd, "ref") == 0)
 		{
-			// G_refCommandCheck expects the next argument (warn, pause, lock,..)
+			//G_refCommandCheck expects the next argument (warn, pause, lock,..)
 			trap_Argv(1, cmd, sizeof(cmd));
 			if (!G_refCommandCheck(NULL, cmd))
 			{
 				G_refHelp_cmd(NULL);
 			}
-			return(qtrue);
+			return qtrue;
 		}
 
 		// everything else will also be printed as a say command
-//      trap_SendServerCommand( -1, va("cpm \"server: %s\n\"", ConcatArgs(0) ) );
+		//trap_SendServerCommand( -1, va("cpm \"server: %s\n\"", ConcatArgs(0) ) );
 
 		// prints to the console instead now
 		return qfalse;

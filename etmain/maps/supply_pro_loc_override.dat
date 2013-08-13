@@ -1,0 +1,185 @@
+/////////////////////////////////////////////////////////
+// Map name       Supply Depot (pro)                   //
+// Locations by   KingJackaL                           //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 27                //
+// Last edited    30-06-2009                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+2437 883 288 "^1Command Post"
+688 -1497 384 "^1Crane Controls"
+683 -328 64 "^1Depot Gate"
+1738 -1265 69 "^1East Depot Breach"
+55 2370 -63 "^1Forward Bunker Gate"
+-64 2368 304 "^1Forward Bunker Spawn Exit"
+-404 -1476 73 "^1West Depot Breach"
+-2113 236 64 "^3Allied Deployment"
+-2079 -100 64 @
+744 -1664 -95 "^3Axis Depot Spawn"
+857 -1907 -95 @
+455 -1810 -95 @
+874 -2113 -123 "^3Axis Spawn Tunnels"
+930 -2469 -127 @
+709 -2584 64 @
+2632 451 256 "^3Behind Command Post Hut"
+2289 458 256 @
+2916 671 256 @
+2886 1053 256 @
+683 -2238 64 "^3Behind Supply Depot"
+725 -2062 64 @
+1274 -2169 64 @
+211 -2160 64 @
+2042 849 256 "^3Command Post Gate"
+1750 963 256 "^3Command Post Hill"
+1961 539 250 @
+1656 -1 64 @
+1128 -67 64 @
+1472 402 116 @
+1443 941 226 @
+2617 879 288 "^3Command Post Hut"
+2621 646 288 @
+2411 727 288 @
+1890 1397 256 "^3Command Post Plateau"
+923 1413 256 @
+1334 1490 256 @
+2432 763 503 "^3Command Post Roof"
+2605 986 473 @
+948 -1221 384 "^3Crane Controls Room"
+629 -1214 384 @
+920 -1421 384 @
+319 -110 64 "^3Depot Caves Exit"
+-88 -194 64 @
+619 1891 320 "^3Depot Caves Plateau"
+119 1832 320 @
+1037 -593 64 "^3Depot Entry"
+461 -814 64 @
+715 -490 64 @
+830 -783 64 @
+-85 -625 64 @
+336 -530 64 @
+191 -1937 64 "^3Depot Fence"
+1121 -1557 80 "^3Depot Foyer"
+755 -1343 80 @
+368 -1421 80 @
+447 -1081 80 @
+1056 -1128 80 @
+757 -1550 80 @
+820 -274 264 "^3Depot Gate Radio"
+849 -371 256 "^3Depot Gate Tower"
+730 -309 256 @
+541 -390 256 @
+682 -365 416 "^3Depot Gate Tower Roof"
+1154 892 191 "^3Depot Road"
+1118 387 64 @
+635 -130 64 @
+1039 -1896 384 "^3Depot Stairwell"
+949 -1837 224 @
+1116 -1755 80 @
+934 -1759 80 @
+1427 -1926 64 "^3East Courtyard"
+1574 -1254 64 @
+1499 -611 64 @
+1232 -990 64 @
+1720 -533 256 "^3East Depot Tower"
+1554 -372 256 @
+1698 -446 416 "^3East Depot Tower Roof"
+1743 -1131 256 "^3East Depot Wall"
+1728 -710 256 @
+-242 2504 304 "^3Flag Room"
+-217 2202 304 @
+183 2371 -63 "^3Forward Bunker Hill"
+1309 1912 163 @
+657 2167 128 @
+170 2117 128 @
+178 2627 -63 @
+-304 2205 160 "^3Forward Bunker Office"
+-303 2539 160 @
+-14 2369 160 @
+-678 1945 -63 "^3Forward Bunker Road"
+-2279 1727 64 @
+-2070 2313 64 @
+-1442 2416 64 @
+-758 2567 -58 @
+-694 2206 -63 @
+29 2101 304 "^3Forward Bunker Upper Exit"
+15 2374 304 @
+52 2710 304 @
+-844 2989 169 "^3Forward Bunker Upper Path"
+-1490 2660 192 @
+-2190 2510 192 @
+-2520 1980 192 @
+-2715 2297 192 @
+-2473 2553 192 @
+-439 1979 160 "^3Forward Bunker Walkway"
+-455 2734 160 @
+-585 2180 160 @
+-588 2561 160 @
+-47 -375 256 "^3Front Depot Wall"
+431 -384 256 @
+1000 -380 256 @
+1404 -388 256 @
+340 -1788 72 "^3Gold Cage"
+534 -1761 64 @
+-162 -1768 412 "^3Gold Crane"
+343 -1751 412 @
+-61 -1964 64 "^3Gold Dropoff"
+3037 1389 256 "^3Gold Exit"
+-1541 1177 0 "^3Lower Allied Caves"
+-626 1495 -63 @
+-284 1135 192 "^3Lower Depot Caves"
+124 290 64 @
+741 -1764 80 "^3Lower Depot Hallway"
+739 -1921 80 @
+-60 2514 -63 "^3Lower Forward Bunker"
+-46 2228 -63 @
+-450 2128 -63 @
+-445 2592 -63 @
+-286 2829 -63 "^3North Bunker Stairwell"
+-226 2699 160 @
+-223 2716 304 @
+-1756 219 64 "^3Outside Allied Deployment"
+-2162 553 64 @
+-1525 771 0 @
+-2350 1197 64 @
+2654 1119 256 "^3Outside Command Post"
+2652 1503 256 @
+2116 1189 256 @
+1907 -1195 64 "^3Outside East Depot"
+1927 -710 64 @
+1920 -315 64 @
+-445 -85 64 "^3Outside West Depot"
+-602 -468 64 @
+-591 -879 64 @
+-615 -1425 64 @
+286 -1566 186 "^3Rear Depot Scaffolding"
+345 -1189 384 "^3Rear Depot Outlook"
+316 -1436 384 @
+-217 2001 304 "^3South Bunker Stairwell"
+-208 2023 160 @
+-305 1906 -63 @
+-594 1030 82 "^3Upper Allied Caves"
+-1143 766 0 @
+-2098 -98 256 "^3Upper Allied Deployment"
+-2133 253 256 @
+-68 1310 203 "^3Upper Depot Caves"
+581 1606 320 @
+345 -1433 224 "^3Upper Depot Foyer"
+712 -1405 224 @
+706 -1607 224 @
+353 -1018 384 "^3Upper Depot Hallway"
+911 -1037 384 @
+624 -1044 384 @
+1138 -1269 384 @
+1109 -1606 384 @
+798 -1647 384 @
+860 -1908 384 @
+-2493 2303 192 "^3Upper Path MG Bunker"
+-2493 2303 352 "^3Upper Path MG Bunker Roof"
+-87 -1114 64 "^3West Courtyard"
+-247 -1411 64 @
+7 -1619 64 @
+-221 -392 256 "^3West Depot Tower"
+-387 -562 256 @
+-342 -383 416 "^3West Depot Tower Roof"
+-385 -718 256 "^3West Depot Wall"
+-399 -1314 256 @

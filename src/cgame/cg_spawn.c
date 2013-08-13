@@ -187,24 +187,65 @@ void SP_info_train_spline_main(void)
 	}
 }
 
+/*
+====================
+CG_corona
+====================
+*/
+void CG_corona(void)
+{
+	cg_corona_t *corona;
+	float       scale;
+	vec3_t      color;
+	vec3_t      org;
+	char        *coronaStr;
+
+	if (CG_SpawnString("targetname", "", &coronaStr) || CG_SpawnString("scriptname", "", &coronaStr) || CG_SpawnString("spawnflags", "", &coronaStr))
+	{
+		return;
+	}
+
+	if (cg.numCoronas >= MAX_GAMECORONAS)
+	{
+		CG_Error("^1MAX_GAMECORONAS(%i) hit", MAX_GAMECORONAS);
+	}
+
+	corona = &cgs.corona[cg.numCoronas++];
+
+	CG_SpawnVector("origin", "0 0 0", org);
+
+	VectorCopy(org, corona->org);
+
+	CG_SpawnFloat("scale", "1", &scale);
+	corona->scale = scale;
+
+	if (!CG_SpawnVector("_color", "0 0 0", color))
+	{
+		if (!CG_SpawnVector("color", "0 0 0", color))
+		{
+			VectorSet(corona->color, 1.f, 1.f, 1.f);
+		}
+	}
+
+	VectorCopy(color, corona->color);
+
+	//CG_Printf("loaded corona %i \n", cg.numCoronas );
+}
+
 void SP_misc_gamemodel(void)
 {
-	char   *model;
-	vec_t  angle;
-	vec3_t angles;
-
-	vec_t  scale;
-	vec3_t vScale;
-
-	vec3_t org;
-
+	char           *model;
+	vec_t          angle;
+	vec3_t         angles;
+	vec_t          scale;
+	vec3_t         vScale;
+	vec3_t         org;
 	cg_gamemodel_t *gamemodel;
-
-	int i;
+	int            i;
 
 	if (CG_SpawnString("targetname", "", &model) || CG_SpawnString("scriptname", "", &model) || CG_SpawnString("spawnflags", "", &model))
 	{
-		// Gordon: this model may not be static, so let the server handle it
+		// this model may not be static, so let the server handle it
 		return;
 	}
 
@@ -290,6 +331,7 @@ spawn_t spawns[] =
 
 	{ "trigger_objective_info",    SP_trigger_objective_info },
 	{ "misc_gamemodel",            SP_misc_gamemodel         },
+	{ "corona",                    CG_corona                 },
 };
 
 #define NUMSPAWNS   (sizeof(spawns) / sizeof(spawn_t))
@@ -325,7 +367,6 @@ void CG_ParseEntityFromSpawnVars(void)
 			}
 		}
 	}
-
 }
 
 /*
@@ -431,7 +472,7 @@ void SP_worldspawn(void)
 	cgs.ccLayers = 0;
 
 	if (CG_SpawnVector2D("mapcoordsmins", "-128 128", cg.mapcoordsMins) &&     // top left
-	    CG_SpawnVector2D("mapcoordsmaxs", "128 -128", cg.mapcoordsMaxs))          // bottom right
+	    CG_SpawnVector2D("mapcoordsmaxs", "128 -128", cg.mapcoordsMaxs))       // bottom right
 	{
 		cg.mapcoordsValid = qtrue;
 	}
@@ -451,7 +492,7 @@ void SP_worldspawn(void)
 	{
 		cgs.ccLayers = MAX_COMMANDMAP_LAYERS;
 		CG_Printf("^3Warning: The maximum number (%i) of command map layers is exceeded.\n",
-		             MAX_COMMANDMAP_LAYERS);
+		          MAX_COMMANDMAP_LAYERS);
 	}
 
 	for (i = 0; i < cgs.ccLayers; i++)
@@ -472,7 +513,7 @@ void SP_worldspawn(void)
 	    cg.fiveMinuteSound_a[0]                   = \
 	        cg.twoMinuteSound_g[0]                = \
 	            cg.twoMinuteSound_a[0]            = \
-	                cg.thirtySecondSound_g[0]     =   \
+	                cg.thirtySecondSound_g[0]     = \
 	                    cg.thirtySecondSound_a[0] = '\0';
 
 	CG_SpawnString("fiveMinuteSound_axis", "axis_hq_5minutes", &s);
@@ -497,7 +538,7 @@ void SP_worldspawn(void)
 	}
 	else if (strstr(cg.fiveMinuteSound_g, ".wav"))
 	{
-		cgs.media.fiveMinuteSound_g = trap_S_RegisterSound(cg.fiveMinuteSound_g, qtrue);
+		cgs.media.fiveMinuteSound_g = trap_S_RegisterSound(cg.fiveMinuteSound_g, qfalse);
 	}
 	else
 	{
@@ -511,7 +552,7 @@ void SP_worldspawn(void)
 	}
 	else if (strstr(cg.fiveMinuteSound_a, ".wav"))
 	{
-		cgs.media.fiveMinuteSound_a = trap_S_RegisterSound(cg.fiveMinuteSound_a, qtrue);
+		cgs.media.fiveMinuteSound_a = trap_S_RegisterSound(cg.fiveMinuteSound_a, qfalse);
 	}
 	else
 	{
@@ -525,7 +566,7 @@ void SP_worldspawn(void)
 	}
 	else if (strstr(cg.twoMinuteSound_g, ".wav"))
 	{
-		cgs.media.twoMinuteSound_g = trap_S_RegisterSound(cg.twoMinuteSound_g, qtrue);
+		cgs.media.twoMinuteSound_g = trap_S_RegisterSound(cg.twoMinuteSound_g, qfalse);
 	}
 	else
 	{
@@ -553,7 +594,7 @@ void SP_worldspawn(void)
 	}
 	else if (strstr(cg.thirtySecondSound_g, ".wav"))
 	{
-		cgs.media.thirtySecondSound_g = trap_S_RegisterSound(cg.thirtySecondSound_g, qtrue);
+		cgs.media.thirtySecondSound_g = trap_S_RegisterSound(cg.thirtySecondSound_g, qfalse);
 	}
 	else
 	{
@@ -567,7 +608,7 @@ void SP_worldspawn(void)
 	}
 	else if (strstr(cg.thirtySecondSound_a, ".wav"))
 	{
-		cgs.media.thirtySecondSound_a = trap_S_RegisterSound(cg.thirtySecondSound_a, qtrue);
+		cgs.media.thirtySecondSound_a = trap_S_RegisterSound(cg.thirtySecondSound_a, qfalse);
 	}
 	else
 	{
@@ -588,6 +629,7 @@ void CG_ParseEntitiesFromString(void)
 	cg.spawning          = qtrue;
 	cg.numSpawnVars      = 0;
 	cg.numMiscGameModels = 0;
+	cg.numCoronas        = 0;
 
 	// the worldspawn is not an actual entity, but it still
 	// has a "spawn" function to perform any global setup

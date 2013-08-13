@@ -34,15 +34,6 @@
 
 #include "ui_local.h"
 
-uiStatic_t uis;
-qboolean   m_entersound;            // after a frame, so caching won't disrupt the sound
-
-// these are here so the functions in q_shared.c can link
-#ifndef UI_HARD_LINKED
-
-
-// JPW NERVE added Com_DPrintf
-#define MAXPRINTMSG 4096
 void QDECL Com_DPrintf(const char *fmt, ...)
 {
 	va_list argptr;
@@ -61,7 +52,6 @@ void QDECL Com_DPrintf(const char *fmt, ...)
 
 	Com_Printf("%s", msg);
 }
-// jpw
 
 void QDECL Com_Error(int level, const char *error, ...)
 {
@@ -87,26 +77,6 @@ void QDECL Com_Printf(const char *msg, ...)
 	trap_Print(va("%s", text));
 }
 
-#endif
-
-/*
-=================
-UI_ClampCvar
-=================
-*/
-float UI_ClampCvar(float min, float max, float value)
-{
-	if (value < min)
-	{
-		return min;
-	}
-	if (value > max)
-	{
-		return max;
-	}
-	return value;
-}
-
 char *UI_Argv(int arg)
 {
 	static char buffer[MAX_STRING_CHARS];
@@ -115,7 +85,6 @@ char *UI_Argv(int arg)
 
 	return buffer;
 }
-
 
 char *UI_Cvar_VariableString(const char *var_name)
 {
@@ -129,37 +98,10 @@ char *UI_Cvar_VariableString(const char *var_name)
 	return buffer[toggle];
 }
 
-
-
-void UI_LoadBestScores(const char *map, int game)
-{
-}
-
-/*
-===============
-UI_ClearScores
-===============
-*/
-void UI_ClearScores()
-{
-}
-
-
-
 static void UI_Cache_f(void)
 {
 	Display_CacheAll();
 }
-
-/*
-=======================
-UI_CalcPostGameStats
-=======================
-*/
-static void UI_CalcPostGameStats(void)
-{
-}
-
 
 /*
 =================
@@ -176,69 +118,28 @@ qboolean UI_ConsoleCommand(int realTime)
 
 	cmd = UI_Argv(0);
 
-	// ensure minimum menu data is available
-	//Menu_Cache();
-
 	if (Q_stricmp(cmd, "ui_test") == 0)
 	{
 		UI_ShowPostGame(qtrue);
 	}
-
-	if (Q_stricmp(cmd, "ui_report") == 0)
+	else if (Q_stricmp(cmd, "ui_report") == 0)
 	{
 		UI_Report();
 		return qtrue;
 	}
-
-	if (Q_stricmp(cmd, "ui_load") == 0)
+	else if (Q_stricmp(cmd, "ui_load") == 0)
 	{
 		UI_Load();
 		return qtrue;
 	}
-
-	// Arnout: we DEFINATELY do NOT want this here
-	/*if ( Q_stricmp (cmd, "remapShader") == 0 ) {
-	    if (trap_Argc() == 4) {
-	        char shader1[MAX_QPATH];
-	        char shader2[MAX_QPATH];
-	        Q_strncpyz(shader1, UI_Argv(1), sizeof(shader1));
-	        Q_strncpyz(shader2, UI_Argv(2), sizeof(shader2));
-	        trap_R_RemapShader(shader1, shader2, UI_Argv(3));
-	        return qtrue;
-	    }
-	}*/
-
-	if (Q_stricmp(cmd, "postgame") == 0)
-	{
-		UI_CalcPostGameStats();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "ui_cache") == 0)
+	else if (Q_stricmp(cmd, "ui_cache") == 0)
 	{
 		UI_Cache_f();
 		return qtrue;
 	}
-
-	if (Q_stricmp(cmd, "ui_teamOrders") == 0)
+	else if (Q_stricmp(cmd, "listfav") == 0)
 	{
-		//UI_TeamOrdersMenu_f();
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd, "iamacheater") == 0)
-	{
-		int i;
-
-		// unlock all available levels and campaigns for SP
-		for (i = 0; i < uiInfo.campaignCount; i++)
-		{
-			if (uiInfo.campaignList[i].typeBits & (1 << GT_SINGLE_PLAYER))
-			{
-				uiInfo.campaignList[i].unlocked = qtrue;
-				uiInfo.campaignList[i].progress = uiInfo.campaignList[i].mapCount;
-			}
-		}
+		UI_ListFavourites_f();
 		return qtrue;
 	}
 
@@ -250,8 +151,7 @@ qboolean UI_ConsoleCommand(int realTime)
 			UI_Campaign_f();
 			return qtrue;
 		}
-
-		if (Q_stricmp(cmd, "listcampaigns") == 0)
+		else if (Q_stricmp(cmd, "listcampaigns") == 0)
 		{
 			UI_ListCampaigns_f();
 			return qtrue;
@@ -270,30 +170,29 @@ void UI_Shutdown(void)
 {
 }
 
-/*
-================
-UI_AdjustFrom640
-
-Adjusted for resolution and screen aspect ratio
-================
-*/
+/**
+ * @brief Adjusted for resolution and screen aspect ratio
+ */
 void UI_AdjustFrom640(float *x, float *y, float *w, float *h)
 {
 	// expect valid pointers
-#if 0
-	*x  = *x * uiInfo.uiDC.scale + uiInfo.uiDC.bias;
-	*y *= uiInfo.uiDC.scale;
-	*w *= uiInfo.uiDC.scale;
-	*h *= uiInfo.uiDC.scale;
-#endif
-
 	*x *= uiInfo.uiDC.xscale;
 	*y *= uiInfo.uiDC.yscale;
 	*w *= uiInfo.uiDC.xscale;
 	*h *= uiInfo.uiDC.yscale;
 
+	// adjusting
+	if (uiInfo.uiDC.glconfig.windowAspect > RATIO43)
+	{
+		*x *= RATIO43 / uiInfo.uiDC.glconfig.windowAspect;
+		*w *= RATIO43 / uiInfo.uiDC.glconfig.windowAspect;
+	}
 }
 
+/**
+ * @brief UI_DrawNamedPic
+ * @note Unused.
+ */
 void UI_DrawNamedPic(float x, float y, float width, float height, const char *picname)
 {
 	qhandle_t hShader;
@@ -338,28 +237,22 @@ void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader)
 	trap_R_DrawStretchPic(x, y, w, h, s0, t0, s1, t1, hShader);
 }
 
-/*
-================
-UI_DrawRotatedPic
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief UI_DrawRotatedPic
+ * Coordinates are 640*480 virtual values
+ * @note Unused (cool stuff for ETL logo?!)
+ */
 void UI_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle)
 {
-
 	UI_AdjustFrom640(&x, &y, &width, &height);
 
 	trap_R_DrawRotatedPic(x, y, width, height, 0, 0, 1, 1, hShader, angle);
 }
 
-/*
-================
-UI_FillRect
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief UI_FillRect
+ * Coordinates are 640*480 virtual values
+ */
 void UI_FillRect(float x, float y, float width, float height, const float *color)
 {
 	trap_R_SetColor(color);
@@ -383,13 +276,11 @@ void UI_DrawTopBottom(float x, float y, float w, float h)
 	trap_R_DrawStretchPic(x, y, w, 1, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 	trap_R_DrawStretchPic(x, y + h - 1, w, 1, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 }
-/*
-================
-UI_DrawRect
 
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief UI_DrawRect
+ * Coordinates are 640*480 virtual values
+ */
 void UI_DrawRect(float x, float y, float width, float height, const float *color)
 {
 	trap_R_SetColor(color);
@@ -410,13 +301,18 @@ void UI_UpdateScreen(void)
 	trap_UpdateScreen();
 }
 
-
+/**
+ * @note Unused.
+ */
 void UI_DrawTextBox(int x, int y, int width, int lines)
 {
 	UI_FillRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorBlack);
 	UI_DrawRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorWhite);
 }
 
+/**
+ * @note Unused.
+ */
 qboolean UI_CursorInRect(int x, int y, int width, int height)
 {
 	if (uiInfo.uiDC.cursorx < x ||

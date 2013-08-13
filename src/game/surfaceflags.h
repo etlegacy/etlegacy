@@ -31,6 +31,8 @@
  * @file surfaceflags.h
  * @brief This file must be identical in the quake and utils directories
  */
+#ifndef __SURFACEFLAGS_H__
+#define __SURFACEFLAGS_H__
 
 /*
  * contents flags are seperate bits
@@ -41,7 +43,7 @@
 #define CONTENTS_SOLID              0x00000001
 #define CONTENTS_LIGHTGRID          0x00000004
 #define CONTENTS_LAVA               0x00000008
-#define CONTENTS_SLIME              0x00000010
+#define CONTENTS_SLIME              0x00000010  // slag uses the CONTENTS_SLIME flag, the shader reference is changed to 'slag'
 #define CONTENTS_WATER              0x00000020
 #define CONTENTS_FOG                0x00000040
 #define CONTENTS_MISSILECLIP        0x00000080
@@ -85,6 +87,7 @@
 #define SURF_NODLIGHT           0x00020000  // don't dlight even if solid (solid lava, skies)
 #define SURF_WOOD               0x00040000
 #define SURF_GRASS              0x00080000
+#define SURF_CERAMIC            0x40    // out of surf's, so replacing unused 'SURF_FLESH'
 #define SURF_GRAVEL             0x00100000
 #define SURF_GLASS              0x00200000  // out of surf's, so replacing unused 'SURF_SMGROUP'
 #define SURF_SNOW               0x00400000
@@ -98,3 +101,5 @@
 #define SURF_MONSLICK_S         0x40000000
 
 #define SURF_LANDMINE           0x80000000  // ydnar: ok to place landmines on this surface
+
+#endif

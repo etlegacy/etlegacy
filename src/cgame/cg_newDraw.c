@@ -33,54 +33,7 @@
 
 #include "cg_local.h"
 
-int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeight, qboolean dodrawpic, qboolean leftAlign);        // NERVE - SMF
-
-/*void CG_FitTextToWidth( char* instr, int w, int size) {
-    char buffer[1024];
-    char    *s, *p, *c, *ls;
-    int     l;
-
-    strcpy(buffer, instr);
-    memset(instr, 0, size);
-
-    c = s = instr;
-    p = buffer;
-    ls = NULL;
-    l = 0;
-    while(*p) {
-        *c = *p++;
-        l++;
-
-        if(*c == ' ') {
-            ls = c;
-        } // store last space, to try not to break mid word
-
-        c++;
-
-        if(*p == '\n') {
-            s = c+1;
-            l = 0;
-        } else if(l > w) {
-            if(ls) {
-                *ls = '\n';
-                l = strlen(ls+1);
-            } else {
-                *c = *(c-1);
-                *(c-1) = '\n';
-                s = c++;
-                l = 0;
-            }
-
-            ls = NULL;
-        }
-    }
-
-    if(c != buffer && (*(c-1) != '\n')) {
-        *c++ = '\n';
-    }
-
-    *c = '\0';
-}*/
+int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeight, qboolean dodrawpic, qboolean leftAlign);
 
 int CG_TrimLeftPixels(char *instr, float scale, float w, int size)
 {
@@ -110,20 +63,18 @@ int CG_TrimLeftPixels(char *instr, float scale, float w, int size)
 	return -1;
 }
 
-
 void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo_t *font)
 {
 	char buffer[1024];
-	char *s, *p, *c, *ls;
-	int  l;
+	char *s, *p, *c, *ls = NULL;
+	int  l = 0;
 
 	Q_strncpyz(buffer, instr, 1024);
 	memset(instr, 0, size);
 
-	c  = s = instr;
-	p  = buffer;
-	ls = NULL;
-	l  = 0;
+	c = s = instr;
+	p = buffer;
+
 	while (*p)
 	{
 		*c = *p++;
@@ -171,16 +122,15 @@ void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontInfo
 void CG_FitTextToWidth2(char *instr, float scale, float w, int size)
 {
 	char buffer[1024];
-	char *s, *p, *c, *ls;
-	int  l;
+	char *s, *p, *c, *ls = NULL;
+	int  l = 0;
 
 	Q_strncpyz(buffer, instr, 1024);
 	memset(instr, 0, size);
 
-	c  = s = instr;
-	p  = buffer;
-	ls = NULL;
-	l  = 0;
+	c = s = instr;
+	p = buffer;
+
 	while (*p)
 	{
 		*c = *p++;
@@ -265,7 +215,6 @@ static int weapIconDrawSize(int weap)
 	case WP_STEN:
 	case WP_PANZERFAUST:
 	case WP_FLAMETHROWER:
-//      case WP_SPEARGUN:
 	case WP_GARAND:
 	case WP_FG42:
 	case WP_FG42SCOPE:
@@ -286,7 +235,6 @@ static int weapIconDrawSize(int weap)
 	return 1;
 }
 
-
 /*
 ==============
 CG_DrawPlayerWeaponIcon
@@ -295,7 +243,7 @@ CG_DrawPlayerWeaponIcon
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor)
 {
 	int       size;
-	int       realweap;             // DHM - Nerve
+	int       realweap;
 	qhandle_t icon;
 	float     scale, halfScale;
 	vec4_t    hcolor;
@@ -328,16 +276,14 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	{
 		if (drawHighlighted)
 		{
-			//icon = cg_weapons[ realweap ].weaponIcon[1];
-			icon = cg_weapons[realweap].weaponIcon[1];      // we don't have icon[0];
+			// we don't have icon[0];
+			icon = cg_weapons[realweap].weaponIcon[1];
 		}
 		else
 		{
 			icon = cg_weapons[realweap].weaponIcon[1];
 		}
 	}
-
-
 
 	// pulsing grenade icon to help the player 'count' in their head
 	if (cg.predictedPlayerState.grenadeTimeLeft)       // grenades and dynamite set this
@@ -381,7 +327,6 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 		scale = halfScale = 0;
 	}
 
-
 	if (icon)
 	{
 		float x, y, w, h;
@@ -405,7 +350,6 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 			default:
 				break;
 			}
-
 		}
 		else
 		{
@@ -415,8 +359,7 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 			h = rect->h + scale;
 		}
 
-
-		trap_R_SetColor(hcolor);   // JPW NERVE
+		trap_R_SetColor(hcolor);
 		CG_DrawPic(x, y, w, h, icon);
 	}
 }
@@ -441,8 +384,8 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	float     *color;
 	qhandle_t icon, icon2 = 0;
 	float     scale, halfscale;
-	//qboolean  redbar = qfalse;
-	qboolean yellowbar = qfalse;
+	qboolean  yellowbar = qfalse;
+	float     middle    = rect->x + cgs.wideXoffset;
 
 	if (!cg_cursorHints.integer)
 	{
@@ -496,22 +439,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		break;
 	case HINT_CHAIR:
 		icon = cgs.media.notUsableHintShader;
-
-		// only show 'pickupable' if you're not armed, or are armed with a single handed weapon
-
-		// rain - WEAPS_ONE_HANDED isn't valid anymore, because
-		// WP_SILENCED_COLT uses a bit >31 (and, therefore, is too large
-		// to be shifted in the way WEAPS_ONE_HANDED does on a 32-bit
-		// system.) If you want to use HINT_CHAIR, you'll need to fix
-		// this.
-#if 0
-		if (!(cg.predictedPlayerState.weapon) ||
-		    WEAPS_ONE_HANDED & (1 << (cg.predictedPlayerState.weapon))
-		    )
-		{
-			icon = cgs.media.chairHintShader;
-		}
-#endif
 		break;
 	case HINT_ALARM:
 		icon = cgs.media.alarmHintShader;
@@ -571,19 +498,12 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		icon = cgs.media.inventoryHintShader;
 		break;
 	case HINT_PLYR_FRIEND:
-		icon = cgs.media.hintPlrFriendShader;
-		break;
 	case HINT_PLYR_NEUTRAL:
-		icon = cgs.media.hintPlrNeutralShader;
-		break;
 	case HINT_PLYR_ENEMY:
-		icon = cgs.media.hintPlrEnemyShader;
-		break;
 	case HINT_PLYR_UNKNOWN:
-		icon = cgs.media.hintPlrUnknownShader;
-		break;
+		return;
 
-	// DHM - Nerve :: multiplayer hints
+	// multiplayer hints
 	case HINT_BUILD:
 		icon = cgs.media.buildHintShader;
 		break;
@@ -596,13 +516,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	case HINT_DYNAMITE:
 		icon = cgs.media.dynamiteHintShader;
 		break;
-	// dhm - end
-
-	// Mad Doc - TDF
-	case HINT_LOCKPICK:
-		icon      = cgs.media.doorLockHintShader;       // TAT 1/30/2003 - use the locked door hint cursor
-		yellowbar = qtrue;      // draw the status bar in yellow so it shows up better
-		break;
 
 	case HINT_ACTIVATE:
 	case HINT_PLAYER:
@@ -611,12 +524,10 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		break;
 	}
 
-
 	if (!icon)
 	{
 		return;
 	}
-
 
 	// color
 	color = CG_FadeColor(cg.cursorHintTime, cg.cursorHintFade);
@@ -630,7 +541,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	{
 		color[3] *= 0.5 + 0.5 * sin((float)cg.time / 150.0);
 	}
-
 
 	// size
 	if (cg_cursorHints.integer >= 3)       // no size pulsing
@@ -653,11 +563,11 @@ void CG_DrawCursorhint(rectDef_t *rect)
 
 	// set color and draw the hint
 	trap_R_SetColor(color);
-	CG_DrawPic(rect->x - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon);
+	CG_DrawPic(middle - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon);
 
 	if (icon2)
 	{
-		CG_DrawPic(rect->x - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon2);
+		CG_DrawPic(middle - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon2);
 	}
 
 	trap_R_SetColor(NULL);
@@ -673,33 +583,16 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		{
 			Vector4Set(color, 0, 0, 1, 0.5f);
 		}
-		CG_FilledBar(rect->x, rect->y + rect->h + 4, rect->w, 8, color, NULL, NULL, (float)cg.cursorHintValue / 255.0f, 0);
+		CG_FilledBar(middle, rect->y + rect->h + 4, rect->w, 8, color, NULL, NULL, (float)cg.cursorHintValue / 255.0f, 0);
 	}
-
 }
 
-float CG_GetValue(int ownerDraw, int type)
+float CG_GetValue(int ownerDraw, int type) // FIXME: what's this ??
 {
-	switch (ownerDraw)
-	{
-	default:
-		break;
-	}
 	return -1;
 }
 
-qboolean CG_OtherTeamHasFlag()
-{
-	return qfalse;
-}
-
-qboolean CG_YourTeamHasFlag()
-{
-	return qfalse;
-}
-
 // THINKABOUTME: should these be exclusive or inclusive..
-//
 qboolean CG_OwnerDrawVisible(int flags)
 {
 	return qfalse;
@@ -717,7 +610,7 @@ CG_DrawWeapStability
 */
 void CG_DrawWeapStability(rectDef_t *rect)
 {
-	vec4_t goodColor = { 0, 1, 0, 0.5f }, badColor = { 1, 0, 0, 0.5f };
+	static vec4_t goodColor = { 0, 1, 0, 0.5f }, badColor = { 1, 0, 0, 0.5f };
 
 	if (!cg_drawSpreadScale.integer)
 	{
@@ -748,7 +641,6 @@ void CG_DrawWeapStability(rectDef_t *rect)
 	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, 2 | 4 | 256);   // flags (BAR_CENTER|BAR_VERT|BAR_LERP_COLOR)
 }
 
-
 /*
 ==============
 CG_DrawWeapHeat
@@ -756,8 +648,8 @@ CG_DrawWeapHeat
 */
 void CG_DrawWeapHeat(rectDef_t *rect, int align)
 {
-	vec4_t color = { 1, 0, 0, 0.2f }, color2 = { 1, 0, 0, 0.5f };
-	int    flags = 0;
+	static vec4_t color = { 1, 0, 0, 0.2f }, color2 = { 1, 0, 0, 0.5f };
+	int           flags = 0;
 
 	if (!(cg.snap->ps.curWeapHeat))
 	{
@@ -771,37 +663,11 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align)
 
 	flags |= 1;       // BAR_LEFT           - this is hardcoded now, but will be decided by the menu script
 	flags |= 16;      // BAR_BG         - draw the filled contrast box
-//  flags|=32;      // BAR_BGSPACING_X0Y5   - different style
+	//flags|=32;      // BAR_BGSPACING_X0Y5   - different style
 
 	flags |= 256;     // BAR_COLOR_LERP
 
 	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, flags);
-}
-
-/*
-==============
-CG_OwnerDraw
-==============
-*/
-void CG_OwnerDraw(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, float special, float scale, vec4_t color, qhandle_t shader, int textStyle)
-{
-	rectDef_t rect;
-
-	if (cg_drawStatus.integer == 0)
-	{
-		return;
-	}
-
-	rect.x = x;
-	rect.y = y;
-	rect.w = w;
-	rect.h = h;
-
-	switch (ownerDraw)
-	{
-	default:
-		break;
-	}
 }
 
 void CG_MouseEvent(int x, int y)
@@ -817,9 +683,9 @@ void CG_MouseEvent(int x, int y)
 		{
 			cgs.cursorX = 0;
 		}
-		else if (cgs.cursorX > 640)
+		else if (cgs.cursorX > SCREEN_WIDTH)
 		{
-			cgs.cursorX = 640;
+			cgs.cursorX = SCREEN_WIDTH;
 		}
 
 		cgs.cursorY += y;
@@ -827,9 +693,9 @@ void CG_MouseEvent(int x, int y)
 		{
 			cgs.cursorY = 0;
 		}
-		else if (cgs.cursorY > 480)
+		else if (cgs.cursorY > SCREEN_HEIGHT)
 		{
-			cgs.cursorY = 480;
+			cgs.cursorY = SCREEN_HEIGHT;
 		}
 
 		if (cgs.eventHandling == CGAME_EVENT_SPEAKEREDITOR)
@@ -844,9 +710,9 @@ void CG_MouseEvent(int x, int y)
 		{
 			cgs.cursorX = 0;
 		}
-		else if (cgs.cursorX > 640)
+		else if (cgs.cursorX > SCREEN_WIDTH)
 		{
-			cgs.cursorX = 640;
+			cgs.cursorX = SCREEN_WIDTH;
 		}
 
 		cgs.cursorY += y;
@@ -854,9 +720,9 @@ void CG_MouseEvent(int x, int y)
 		{
 			cgs.cursorY = 0;
 		}
-		else if (cgs.cursorY > 480)
+		else if (cgs.cursorY > SCREEN_HEIGHT)
 		{
-			cgs.cursorY = 480;
+			cgs.cursorY = SCREEN_HEIGHT;
 		}
 
 		if (x != 0 || y != 0)
@@ -904,7 +770,7 @@ void CG_EventHandling(int type, qboolean fForced)
 
 	switch (type)
 	{
-	// OSP - Demo support
+	// Demo support
 	case CGAME_EVENT_DEMO:
 		cgs.fResize         = qfalse;
 		cgs.fSelect         = qfalse;
@@ -964,10 +830,8 @@ void CG_EventHandling(int type, qboolean fForced)
 			trap_UI_Popup(UIMENU_INGAME);
 		}
 
-
 		break;
 	}
-
 
 	cgs.eventHandling = type;
 
@@ -1052,6 +916,7 @@ void CG_KeyEvent(int key, qboolean down)
 int CG_ClientNumFromName(const char *p)
 {
 	int i;
+
 	for (i = 0; i < cgs.maxclients; i++)
 	{
 		if (cgs.clientinfo[i].infoValid && Q_stricmp(cgs.clientinfo[i].name, p) == 0)

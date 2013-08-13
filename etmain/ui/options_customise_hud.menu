@@ -1,0 +1,118 @@
+// View menu for ET-XreaL - editted view menu from ET
+// Removed r_fastsky control and added a cg_fov one instead
+// Joshua 'ethr' England - the_england@hotmail.com
+
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+#define WINDOW_X		16
+#define WINDOW_Y		16
+#define WINDOW_WIDTH	608 //400
+#define WINDOW_HEIGHT	376
+#define GROUP_NAME		"grpOptionsCustomiseHud"
+//#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
+	
+menuDef {
+	name		"options_customise_hud"
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
+
+	onESC {
+		close options_customise_hud ;
+		open options
+	}
+
+// Subwindows //
+#define SUBWINDOW_WIDTH_L		.50*(WINDOW_WIDTH-18)
+#define SUBWINDOW_WIDTH_R		.50*(WINDOW_WIDTH-18)
+
+	WINDOW( "VIEW", 94 ) 
+
+// Hud Display //
+  #define HUD_Y 32
+	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 184, "HUD DISPLAY" )
+	YESNO( 8, HUD_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Draw Gun:", .2, 8, "cg_drawGun", "Shows gun model on-screen" )
+	YESNO( 8, HUD_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Show Compass:", .2, 8, "cg_drawCompass", "Displays compass (with icons when near select events)" )
+	SLIDER( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Auto Map Zoom:", .2, 8, "cg_automapZoom" 5.159 1 7.43, "Sets Zoom Level Automatically When Map Loads" )
+	MULTI( 8, HUD_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Mission Timer:", .2, 8, "cg_drawRoundTimer", cvarFloatList { "Off" 0 "On" 1 }, "Displays remaining mission time." )
+	MULTI( 8, HUD_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Reinforcement Timer:", .2, 8, "cg_drawReinforcementTime", cvarFloatList { "Off" 0 "On" 1 }, "Displays your team's \"reinforcement\" time" )
+	MULTI( 8, HUD_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, "Cursor Hints:", .2, 8, "cg_cursorHints", cvarFloatList { "Off" 0 "Size Pulse" 1 "Strobe Pulse" 2 "Alpha Pulse" 3 "Solid" 4 }, "Icon display format when near an action item" )
+	YESNO( 8, HUD_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, "Show Lagometer:", .2, 8, "cg_lagometer", "Displays lagometer" )
+	YESNO( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Show FPS:", .2, 8, "cg_drawFPS", "Displays Frames Per Second" )
+	MULTI( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Show Clock:", .2, 8, "cg_drawTime", cvarFloatList { "Off" 0 "24 hours" 1 "24 hours + seconds" 3 "12 hours" 5 "12 hours + seconds" 7 }, "Displays local time" )
+	MULTI( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, "Show Locations:", .2, 8, "cg_locations", cvarFloatList { "Cordinates Only" 0 "Names Fireteam Only" 1 "Names Team Chat Only" 2 "Team & Fireteam Chat" 3 }, "Displays locations in fireteam" )
+	YESNO( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, "Enable Flags:", .2, 8, "cg_countryflags", "Displays players country flags in score board." )
+	YESNO( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, "Fireteam Latched Class:", .2, 8, "cg_fireteamLatchedClass", "Displays Fireteam latched class." )
+	MULTI( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, "Switch HUD:", .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, "Switches between different HUD" )
+	MULTI( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, "Modify Alternate HUD:", .2, 8, "cg_altHudFlags", cvarFloatList { "Standard" 0 "Move Timers" 1 "Remove Ranks" 2 "Timer + Ranks" 3 }, "Customises Alternate HUD" )
+
+	
+// In-Game Display //
+#define DISPLAY_Y 222
+	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, "IN-GAME DISPLAY" )
+	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "Ejecting Brass:", .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, "Sets the duration ejected bullet shells etc last for." )
+	SLIDER( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "Field Of View:", .2, 8, "cg_fov" 1.3 80 120, "BEST FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27" )
+	CVARFLOATLABEL( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "Corona Distance:", .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, "Sets the maximum distance light corona is displayed" )
+	YESNO( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "Particles:", .2, 8, "cg_wolfparticles", "Toggles display of particle effects – e.g. Explosions, some smoke effects." )
+	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "Wall Mark Lifetime:", .2, 8, "cg_markTime", cvarFloatList { "Long" 30000 "Normal" 20000 "Short" 10000 "Off" 0 }, "Duration of bullet marks on walls etc" )
+	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, "Blood Flash:", .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, "Red blood \"flash\" scale when receiving damage" )
+	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, "Blood Splatter:", .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, "Blood \"splatter\" transparency when taking damage from other players" )
+	YESNO( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "Show Blood:", .2, 8, "cg_showblood", "Toggles showing blood spurt effect when player's are shot." )
+	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "Atmospheric Effects:", .2, 8, "cg_atmosphericEffects", "Draws Atmospheric effects (Snow/Rain) on-screen." )
+
+// Crosshair //
+#define CROSSHAIR_Y 32
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CROSSHAIR_Y, (SUBWINDOW_WIDTH_R), 152, "CROSSHAIR" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Size:", .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, "Sets the size of the displayed crosshair" )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Pulsing:", .2, 8, "cg_crosshairPulse", "Toggles crosshair spread sizing while moving/firing" )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Health Info:", .2, 8, "cg_crosshairHealth", "Colors the crosshair based on current health (overrides crosshair color settings)" )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Crosshair Name Drawing:", .2, 8, "cg_drawCrosshairNames", "Displays player info when the crosshair is over a teammate" )
+
+	itemDef {
+		name		"crosshair_select"
+		group		GROUP_NAME
+		rect		$evalfloat((SUBWINDOW_WIDTH_L)+.5*((SUBWINDOW_WIDTH_R)-64)) 97 35 35
+		style		WINDOW_STYLE_FILLED
+		ownerdraw	UI_CROSSHAIR
+		backcolor	.4 .4 .4 .9
+		border		WINDOW_BORDER_FULL
+		bordercolor	.6 .6 .6 1
+		visible		1
+		tooltip		""
+		
+		mouseEnter {
+			setitemcolor "crosshair_select" bordercolor .9 .9 .9 1
+		}
+
+		mouseExit {
+			setitemcolor "crosshair_select" bordercolor .6 .6 .6 1
+		}
+	}
+	
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+104, (SUBWINDOW_WIDTH_R)-4, 10, "Primary Color:", .2, 8, "cg_crosshairColor", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, "Set the color for the primary crosshair" )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+116, (SUBWINDOW_WIDTH_R)-4, 10, "Primary Alpha:", .2, 8, "cg_crosshairAlpha" 1 0 1, "Set the transparency level for the primary crosshair" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+128, (SUBWINDOW_WIDTH_R)-4, 10, "Secondary Color:", .2, 8, "cg_crosshairColorAlt", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, "Set the color for the secondary crosshair" )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+140, (SUBWINDOW_WIDTH_R)-4, 10, "Secondary Alpha:", .2, 8, "cg_crosshairAlphaAlt" 1 0 1, "Set the transparency level for the secondary crosshair" )
+
+// Movement //
+  #define MOVEMENT_Y 190
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 64, "MOVEMENT" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, "Bob up:", .2, 8, "cg_bobup", cvarFloatList { "Off" 0.00 "On" 0.005 }, "Enable/Disable the vertical bob effect when moving" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, "Bob pitch:", .2, 8, "cg_bobpitch", cvarFloatList { "Off" 0.00 "On" 0.002 }, "Enable/Disable the bob pitch (forwards/backwards) effect when moving" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, "Bob roll:", .2, 8, "cg_bobroll", cvarFloatList { "Off" 0.000 "On" 0.002 }, "Enable/Disable the bob roll (left/right) effect when moving" )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, "Bob yaw:", .2, 8, "cg_bobyaw", cvarFloatList { "Off" 0.00 "On" 0.002 }, "Enable/Disable the bob yaw (turn left/right) effect when moving" )
+
+// Misc //
+  #define MISC_Y 260
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 52, "MISC" )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTime:", .2, 8, "cg_popupTime" 2500 0 6000, "" )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_popupTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTimeStay:", .2, 8, "cg_popupStayTime" 2500 0 6000, "" )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "PopUpTimeFade:", .2, 8, "cg_popupFadeTime" 2500 0 6000, "" )
+	
+// Buttons //
+	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, "BACK", .3, 14, close options_customise_hud ; open options )
+}

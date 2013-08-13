@@ -1,0 +1,44 @@
+/////////////////////////////////////////////////////////
+// Map name       Subway                               //
+// Locations by   ausman                               //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 25                //
+// Last edited    28-05-2006                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+-3054 825 1376 "Command Post"
+-5064 1120 1200 "Axis Spawn"
+-3008 544 1200 "City Houses"
+-3267 944 1376 @
+-2621 314 1448 @
+-2605 457 1216 @
+-2855 679 1216 @
+-3143 767 1128 @
+-4296 1952 1184 "City Square"
+-2288 1256 1200 "City Streets"
+-2854 1138 1024 @
+-3562 1216 1000 @
+360 -288 1120 "Eastern Station Ground"
+640 72 552 "Eastern Station Spawn"
+-4168 -2560 160 "Generator Room"
+-2602 736 1216 "Health and Ammo"
+640 72 160 "Lower Eastern Station"
+-3040 -2672 160 "Lower Southern Station"
+-6376 1096 160 "Lower Western Station"
+-2496 -2808 584 "Middle Southern Station"
+-6376 1096 584 "Middle Western Station"
+-2536 4736 480 "Northern Station"
+-4304 -240 1200 "Outer City"
+-2792 -208 1200 @
+536 -2640 1120 "South East Ground"
+-2360 -2672 1152 "Southern Station Ground"
+-4160 -2680 1448 "Southern Station Spawn"
+-208 -1808 160 "Subways"
+-5744 -1416 160 @
+-5640 4264 160 @
+672 4424 480 @
+-6568 4320 480 @
+-6576 -2824 584 @
+648 -2952 584 @
+96 3672 784 @
+-5840 2968 784 "Western station"

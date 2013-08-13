@@ -1,0 +1,91 @@
+/////////////////////////////////////////////////////////
+// Map name       Vengeance TE                         //
+// Locations by   Ifurita                              //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 25                //
+// Last edited    10-11-2008                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+2594 -1520 217 "^1Bunker Door"
+2820 1584 96 "^1Command Post"
+2389 940 96 "^1Control Console"
+207 -1245 209 "^1Main Gate"
+232 -1610 160 @
+-2881 2662 136 "^1V2 Rocket"
+2303 -589 209 "^3Ammo Bunker 1"
+2831 -1517 209 "^3Ammo Bunker 2"
+2735 -2269 209 "^3Ammo Bunker 3"
+1345 -838 168 "^3Ammo Depot"
+1027 -850 168 @
+783 -141 -127 "^3Ammo Depot Hallway"
+1567 -221 -127 @
+1951 -1389 209 "^3Depot Yard"
+2321 -2241 223 @
+2332 -1647 221 @
+2229 -1053 207 @
+1439 -1198 185 @
+1557 -1774 206 @
+2587 -1131 198 @
+399 -2669 257 "^3East Lower Base"
+93 -211 244 "^3Guard Booth"
+639 419 -111 "^3Junction Room"
+-481 -2141 257 "^3Lower Base"
+-2234 -2238 368 @
+-745 1019 241 "^3Mapping Supplies"
+975 -1037 209 "^3North Depot"
+846 -1298 168 @
+959 -1469 168 "^3North Depot Hallway"
+462 -1615 168 @
+-2513 2675 129 "^3North Hanger"
+-769 2659 129 "^3North Launch Tower"
+-209 1267 433 "^3North MG Bunker"
+1279 1763 369 "^3North Pass"
+-1633 2675 129 "^3North Ramp"
+-1430 2940 80 @
+-1430 3250 170 "^3North Ramp Bunker"
+-817 1779 241 "^3North Upper Base"
+495 2067 225 "^3Pump Room"
+2255 771 81 "^3Radar Station"
+2687 1315 81 @
+2175 1827 81 @
+1871 1347 81 @
+2335 1711 96 @
+2824 1342 105 @
+2773 1933 96 @
+2641 1627 96 @
+2028 998 96 @
+2693 905 96 @
+1263 755 -127 "^3Radar Station Hallway"
+1119 -3021 209 "^3Side Passage"
+1567 -3245 209 @
+1823 -2989 209 @
+1599 -2493 209 "^3South Depot"
+1569 -2109 232 @
+-3361 -221 177 "^3South Hanger"
+-2977 -237 177 @
+-2561 -237 177 @
+-849 -253 177 "^3South Launch Tower"
+255 403 433 "^3South MG Bunker"
+-1617 -253 177 "^3South Ramp"
+-1660 182 80 @
+-1300 452 301 @
+-1643 497 184 "^3South Ramp Bunker"
+-1153 -3181 -15 "^3South Tunnel"
+-417 -3181 -15 @
+287 -3197 49 @
+-1025 675 241 "^3South Upper Base"
+-209 931 241 @
+-769 1235 241 "^3Upper Base"
+15 499 -127 "^3Upper Base Hallway"
+-593 499 -31 @
+-1057 835 65 @
+543 211 241 "^3Upper Tunnel"
+703 387 241 @
+1183 403 241 @
+1359 531 241 @
+1327 883 241 @
+-1857 -3005 209 "^3West Lower Base"
+-3281 2003 -95 "^3West Tunnel"
+-3153 1587 -95 @
+-3393 1075 -95 @
+-3393 419 -95 @

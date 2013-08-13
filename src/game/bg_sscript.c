@@ -82,6 +82,7 @@ qboolean BG_SS_StoreSpeaker(bg_speaker_t *speaker)
 {
 	if (numScriptSpeakers >= MAX_SCRIPTSPEAKERS)
 	{
+		Com_Printf(S_COLOR_RED "ERROR BG_SS_StoreSpeaker: MAX_SCRIPTSPEAKERS reached %i\n", MAX_SCRIPTSPEAKERS);
 		return qfalse;
 	}
 
@@ -92,7 +93,7 @@ qboolean BG_SS_StoreSpeaker(bg_speaker_t *speaker)
 
 static qboolean BG_SS_ParseError(int handle, char *format, ...)
 {
-	int         line;
+	int         line = 0;
 	char        filename[128];
 	va_list     argptr;
 	static char string[4096];
@@ -102,7 +103,7 @@ static qboolean BG_SS_ParseError(int handle, char *format, ...)
 	va_end(argptr);
 
 	filename[0] = '\0';
-	line        = 0;
+
 	trap_PC_SourceFileAndLine(handle, filename, &line);
 
 	Com_Printf(S_COLOR_RED "ERROR: %s, line %d: %s\n", filename, line, string);

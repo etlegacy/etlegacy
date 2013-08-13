@@ -1,0 +1,112 @@
+/////////////////////////////////////////////////////////
+// Map name       Gold Rush 2 Beta 1                   //
+// Locations by   Rain                                 //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 25                //
+// Last edited    12-02-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+-3580 -220 -51 "Allied Spawn"
+2652 -818 -395 "Axis Spawn"
+1122 114 217 "Balcony"
+980 -189 218 @
+-110 -190 288 @
+539 -193 265 @
+257 -181 288 @
+-116 73 214 "Balcony Stairs"
+2303 -2070 -311 "Bank"
+1932 -2257 -311 @
+2564 -2501 -311 @
+2292 -2248 -311 @
+2488 -2022 -311 @
+850 -694 -326 "Bank Alley"
+598 -415 -241 @
+3138 -1818 -383 "Bank Alleyway"
+2816 -2785 -391 @
+2143 -2801 -348 @
+2954 -1332 -395 @
+1926 -2276 64 "Bank Balcony"
+2669 -2268 32 @
+2301 -1995 32 @
+2557 -2537 32 @
+2493 -1837 -319 "Bank Balcony Ladder"
+2550 -1712 32 @
+1614 -1114 -308 "Bank Courtyard"
+1804 -433 -351 @
+2008 -1784 -301 @
+1093 -1580 -350 @
+1168 -964 -351 @
+1619 -1521 -348 @
+2161 -1133 -351 @
+735 -1780 -159 "Bank Courtyard Terrace"
+1600 -1813 -287 "Bank Doors"
+1593 -2219 -311 "Bank Lobby"
+-987 477 275 "Barrier #1 Alley"
+-393 439 202 @
+1565 -2861 -351 "Behind Bank"
+914 -2637 -336 @
+953 -2111 -351 @
+1824 67 -31 "Bridge"
+1315 17 -6 @
+1348 714 -200 "Bridge North Stairs"
+1448 -141 -127 "Bridge South Stairs"
+1058 1948 257 "Cart"
+-382 1154 360 "Command Post"
+-352 952 353 "Command Post Corridor"
+726 -2075 -151 "Corridor Between Yards"
+499 -2487 -351 @
+220 -1612 -199 @
+-2949 305 -24 "Depot Road"
+-2184 540 44 @
+-2138 1674 216 @
+-1576 1762 265 @
+2897 15 -191 "East Tank Path"
+2454 -2238 -267 "Gold Desk"
+217 -187 65 "Lower Colonnade"
+933 -179 38 @
+518 -179 54 @
+-143 -300 66 "Lower Colonnade Stairs"
+1439 307 -21 "Lower Ladder Room"
+1157 403 -31 @
+553 -376 70 "Mezzanine"
+1013 -417 8 "Mezzanine Access"
+-1857 556 96 "Narrow Alley"
+-1556 248 128 @
+2924 1085 -351 "North East Tank Path"
+2276 674 -347 "Pavilion"
+1981 1174 -351 @
+1825 450 -351 @
+1938 1438 -159 "Pavilion Terrace"
+1124 754 264 "Shortcut Corridors"
+1086 1411 264 @
+1691 1423 -135 @
+1772 1365 72 @
+1099 1268 56 @
+-771 -1681 -41 "South Courtyard"
+-413 -1342 -119 @
+-79 -968 -151 @
+52 -1598 -199 @
+-1289 -394 144 "South Courtyard Alley"
+-1296 323 232 @
+-1316 82 200 @
+-331 -1849 -147 "South Health & Ammo"
+-1187 -869 96 "South Platform"
+-1765 -1723 156 "South West MG Nest"
+792 188 4 "Tank Barrier #1"
+290 2032 331 "Tank Depot Road"
+795 1411 229 @
+778 988 157 @
+0 3660 432 "Tank Depot Spawn"
+-1931 2073 216 "Tank Depot Supplies"
+-464 2031 378 "Tank Depot Yard"
+-388 1551 366 @
+-82 2588 360 @
+240 359 132 "Tower"
+430 34 63 @
+355 -603 -192 "Truck Barrier #1"
+-3290 -1066 -31 "Truck Escape"
+-2652 -785 -13 "Truck Path"
+-1856 -1071 11 @
+1838 74 -351 "Under The Bridge"
+1439 286 225 "Upper Ladder Room"
+1140 395 224 @

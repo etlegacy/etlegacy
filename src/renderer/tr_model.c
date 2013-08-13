@@ -34,11 +34,13 @@
 
 #include "tr_local.h"
 
+#ifdef _WIN32
+#   include <Windows.h>
+#endif
+
 #define LL(x) x = LittleLong(x)
 
-// Ridah
 static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_name);
-// done.
 static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *name);
 static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *name);
 static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name);
@@ -47,7 +49,7 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *name);
 model_t *loadmodel;
 
 /*
-** R_GetModelByHandle
+R_GetModelByHandle
 */
 model_t *R_GetModelByHandle(qhandle_t index)
 {
@@ -67,7 +69,7 @@ model_t *R_GetModelByHandle(qhandle_t index)
 //===============================================================================
 
 /*
-** R_AllocModel
+R_AllocModel
 */
 model_t *R_AllocModel(void)
 {
@@ -86,13 +88,10 @@ model_t *R_AllocModel(void)
 	return mod;
 }
 
-
-
 /*
 R_LoadModelShadow()
-loads a model's shadow script
+    loads a model's shadow script
 */
-
 void R_LoadModelShadow(model_t *mod)
 {
 	unsigned *buf;
@@ -107,7 +106,12 @@ void R_LoadModelShadow(model_t *mod)
 	COM_DefaultExtension(filename, 1024, ".shadow");
 
 	// load file
-	ri.FS_ReadFile(filename, (void **) &buf);
+	buf = NULL;
+	if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
+	{
+		ri.FS_ReadFile(filename, (void **) &buf);
+	}
+
 	if (buf != NULL)
 	{
 		char *shadowBits;
@@ -144,8 +148,6 @@ void R_LoadModelShadow(model_t *mod)
 	}
 }
 
-
-
 /*
 ====================
 RE_RegisterModel
@@ -163,7 +165,7 @@ qhandle_t RE_RegisterModel(const char *name)
 	model_t   *mod;
 	unsigned  *buf;
 	int       lod;
-	int       ident = 0;   // TTimo: init
+	int       ident = 0;
 	qboolean  loaded;
 	qhandle_t hModel;
 	int       numLoaded;
@@ -171,8 +173,7 @@ qhandle_t RE_RegisterModel(const char *name)
 
 	if (!name || !name[0])
 	{
-		// Ridah, disabled this, we can see models that can't be found because they won't be there
-		//ri.Printf( PRINT_ALL, "RE_RegisterModel: NULL name\n" );
+		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: NULL name\n");
 		return 0;
 	}
 
@@ -182,15 +183,13 @@ qhandle_t RE_RegisterModel(const char *name)
 		return 0;
 	}
 
-	// Ridah, caching
+	// caching
 	if (r_cacheGathering->integer)
 	{
 		ri.Cmd_ExecuteText(EXEC_NOW, va("cache_usedfile model %s\n", name));
 	}
 
-	//
 	// search the currently loaded models
-	//
 	for (hModel = 1 ; hModel < tr.numModels; hModel++)
 	{
 		mod = tr.models[hModel];
@@ -198,14 +197,16 @@ qhandle_t RE_RegisterModel(const char *name)
 		{
 			if (mod->type == MOD_BAD)
 			{
+				ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: bad model '%s'\n", name);
 				return 0;
 			}
+
+			// ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: model already loaded '%s'\n", name);
 			return hModel;
 		}
 	}
 
 	// allocate a new model_t
-
 	if ((mod = R_AllocModel()) == NULL)
 	{
 		ri.Printf(PRINT_WARNING, "RE_RegisterModel: R_AllocModel() failed for '%s'\n", name);
@@ -217,23 +218,20 @@ qhandle_t RE_RegisterModel(const char *name)
 
 
 	// make sure the render thread is stopped
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
-	// Ridah, look for it cached
+	// look for it cached
 	if (R_FindCachedModel(name, mod))
 	{
 		R_LoadModelShadow(mod);
 		return mod->index;
 	}
-	// done.
 
 	R_LoadModelShadow(mod);
 
 	mod->numLods = 0;
 
-	//
 	// load the files
-	//
 	numLoaded = 0;
 
 	if (strstr(name, ".mds") || strstr(name, ".mdm") || strstr(name, ".mdx"))              // try loading skeletal file
@@ -269,6 +267,7 @@ qhandle_t RE_RegisterModel(const char *name)
 
 	for (lod = MD3_MAX_LODS - 1 ; lod >= 0 ; lod--)
 	{
+		buf = NULL;
 
 		strcpy(filename, name);
 
@@ -285,12 +284,21 @@ qhandle_t RE_RegisterModel(const char *name)
 		}
 
 		filename[strlen(filename) - 1] = 'c';    // try MDC first
-		ri.FS_ReadFile(filename, (void **)&buf);
+
+		if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
+		{
+			ri.FS_ReadFile(filename, (void **)&buf);
+		}
 
 		if (!buf)
 		{
 			filename[strlen(filename) - 1] = '3';    // try MD3 second
-			ri.FS_ReadFile(filename, (void **)&buf);
+
+			if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
+			{
+				ri.FS_ReadFile(filename, (void **)&buf);
+			}
+
 			if (!buf)
 			{
 				continue;
@@ -300,7 +308,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		loadmodel = mod;
 
 		ident = LittleLong(*(unsigned *)buf);
-		// Ridah, mesh compression
+		// mesh compression
 		if (ident != MD3_IDENT && ident != MDC_IDENT)
 		{
 			ri.Printf(PRINT_WARNING, "RE_RegisterModel: unknown fileid for %s\n", name);
@@ -315,7 +323,6 @@ qhandle_t RE_RegisterModel(const char *name)
 		{
 			loaded = R_LoadMDC(mod, lod, buf, name);
 		}
-		// done.
 
 		ri.FS_FreeFile(buf);
 
@@ -334,16 +341,8 @@ qhandle_t RE_RegisterModel(const char *name)
 		{
 			mod->numLods++;
 			numLoaded++;
-			// if we have a valid model and are biased
-			// so that we won't see any higher detail ones,
-			// stop loading them
-// Arnout: don't need this anymore,
-//          if ( lod <= r_lodbias->integer ) {
-//              break;
-//          }
 		}
 	}
-
 
 	if (numLoaded)
 	{
@@ -352,19 +351,18 @@ qhandle_t RE_RegisterModel(const char *name)
 		for (lod-- ; lod >= 0 ; lod--)
 		{
 			mod->numLods++;
-			// Ridah, mesh compression
+			// mesh compression
 			//  this check for mod->md3[0] could leave mod->md3[0] == 0x0000000 if r_lodbias is set to anything except '0'
 			//  which causes trouble in tr_mesh.c in R_AddMD3Surfaces() and other locations since it checks md3[0]
 			//  for various things.
-			if (ident == MD3_IDENT)     //----(SA)  modified
-			{ //          if (mod->md3[0])        //----(SA)  end
+			if (ident == MD3_IDENT)
+			{
 				mod->model.md3[lod] = mod->model.md3[lod + 1];
 			}
 			else
 			{
 				mod->model.mdc[lod] = mod->model.mdc[lod + 1];
 			}
-			// done.
 		}
 
 		return mod->index;
@@ -373,12 +371,27 @@ qhandle_t RE_RegisterModel(const char *name)
 fail:
 	// we still keep the model_t around, so if the model name is asked for
 	// again, we won't bother scanning the filesystem
+
+	// if the name contains no extension it might be a shader ...
+	if (!strstr(name, "."))
+	{
+		// FIXME: catch shader case earlier and avoid i/o (mod code?)
+		// - does this function add anything which is required for the shaders? see cacheGathering etc (on top)
+		// -- an early return for shader case shows it does ...
+		// - check mod->type = MOD_BAD for this case (see below)
+		ri.Printf(PRINT_DEVELOPER, "^6RE_RegisterModel: model not loaded %s - this is probably a shader\n", name);
+	}
+	else
+	{
+		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: model not loaded %s\n", name);
+	}
+
 	mod->type = MOD_BAD;
 	return 0;
 }
 
 //-------------------------------------------------------------------------------
-// Ridah, mesh compression
+// mesh compression
 float r_anormals[NUMMDCVERTEXNORMALS][3] =
 {
 #include "anorms256.h"
@@ -402,12 +415,11 @@ R_MDC_GetAnorm
 unsigned char R_MDC_GetAnorm(const vec3_t dir)
 {
 	int   i, best_start_i[3] = { 0 }, next_start, next_end;
-	int   best = 0; // TTimo: init
+	int   best = 0;
 	float best_diff, group_val, this_val, diff;
 	float *this_norm;
 
 	// find best Z match
-
 	if (dir[2] > 0.097545f)
 	{
 		next_start = 144;
@@ -468,13 +480,7 @@ unsigned char R_MDC_GetAnorm(const vec3_t dir)
 		{
 			break; // done checking the group
 		}
-		/*
-		        if (    (this_norm[0] < 0 && dir[0] > 0)
-		            ||  (this_norm[0] > 0 && dir[0] < 0)
-		            ||  (this_norm[1] < 0 && dir[1] > 0)
-		            ||  (this_norm[1] > 0 && dir[1] < 0))
-		            continue;
-		*/
+
 		diff = DotProduct(dir, this_norm);
 
 		if (diff > best_diff)
@@ -947,7 +953,6 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 	surf = ( mdcSurface_t * )((byte *)mod->model.mdc[lod] + mod->model.mdc[lod]->ofsSurfaces);
 	for (i = 0 ; i < mod->model.mdc[lod]->numSurfaces ; i++)
 	{
-
 		LL(surf->ident);
 		LL(surf->flags);
 		LL(surf->numBaseFrames);
@@ -1006,10 +1011,9 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 			}
 		}
 
-		// Ridah, optimization, only do the swapping if we really need to
+		// optimization, only do the swapping if we really need to
 		if (LittleShort(1) != 1)
 		{
-
 			// swap all the triangles
 			tri = ( md3Triangle_t * )((byte *)surf + surf->ofsTriangles);
 			for (j = 0 ; j < surf->numTriangles ; j++, tri++)
@@ -1059,7 +1063,6 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 				*ps = LittleShort(*ps);
 			}
 		}
-		// done.
 
 		// find the next surface
 		surf = ( mdcSurface_t * )((byte *)surf + surf->ofsEnd);
@@ -1068,7 +1071,6 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 	return qtrue;
 }
 
-// done.
 //-------------------------------------------------------------------------------
 
 /*
@@ -1183,7 +1185,6 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 	surf = ( md3Surface_t * )((byte *)mod->model.md3[lod] + mod->model.md3[lod]->ofsSurfaces);
 	for (i = 0 ; i < mod->model.md3[lod]->numSurfaces ; i++)
 	{
-
 		LL(surf->ident);
 		LL(surf->flags);
 		LL(surf->numFrames);
@@ -1238,7 +1239,7 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 			}
 		}
 
-		// Ridah, optimization, only do the swapping if we really need to
+		// optimization, only do the swapping if we really need to
 		if (LittleShort(1) != 1)
 		{
 
@@ -1271,7 +1272,6 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 			}
 
 		}
-		// done.
 
 		// find the next surface
 		surf = ( md3Surface_t * )((byte *)surf + surf->ofsEnd);
@@ -1279,7 +1279,6 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 
 	return qtrue;
 }
-
 
 /*
 =================
@@ -1731,14 +1730,12 @@ R_LoadMDX
 */
 static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 {
-	int           i, j;
 	mdxHeader_t   *pinmodel, *mdx;
 	mdxFrame_t    *frame;
 	short         *bframe;
 	mdxBoneInfo_t *bi;
 	int           version;
 	int           size;
-	int           frameSize;
 
 	pinmodel = (mdxHeader_t *)buffer;
 
@@ -1768,8 +1765,10 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 
 	if (LittleLong(1) != 1)
 	{
+		int i, j;
 		// swap all the frames
-		frameSize = (int) (sizeof(mdxBoneFrameCompressed_t)) * mdx->numBones;
+		int frameSize = (int) (sizeof(mdxBoneFrameCompressed_t)) * mdx->numBones;
+
 		for (i = 0 ; i < mdx->numFrames ; i++)
 		{
 			frame         = ( mdxFrame_t * )((byte *)mdx + mdx->ofsFrames + i * frameSize + i * sizeof(mdxFrame_t));
@@ -1803,11 +1802,10 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 	return qtrue;
 }
 
-
 //=============================================================================
 
 /*
-** RE_BeginRegistration
+RE_BeginRegistration
 */
 void RE_BeginRegistration(glconfig_t *glconfigOut)
 {
@@ -1816,7 +1814,7 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 	R_Init();
 	*glconfigOut = glConfig;
 
-	R_SyncRenderThread();
+	R_IssuePendingRenderCommands();
 
 	tr.viewCluster = -1;        // force markleafs to regenerate
 	R_ClearFlares();
@@ -1845,18 +1843,15 @@ void R_ModelInit(void)
 	mod       = R_AllocModel();
 	mod->type = MOD_BAD;
 
-	// Ridah, load in the cacheModels
+	// load in the cacheModels
 	R_LoadCacheModels();
-	// done.
 }
-
 
 /*
 ================
 R_Modellist_f
 ================
 */
-
 void R_Modellist_f(void)
 {
 	int     i, j;
@@ -1876,7 +1871,7 @@ void R_Modellist_f(void)
 				lods++;
 			}
 		}
-		ri.Printf(PRINT_ALL, "%8i : (%i) %s\n", mod->dataSize, lods, mod->name);
+		ri.Printf(PRINT_ALL, "%8i : (%i) %s   %s\n", mod->dataSize, lods, mod->name, (mod->type == MOD_BAD ? "BAD" : "OK")); // "^1BAD":"^2OK"));
 		total += mod->dataSize;
 	}
 	ri.Printf(PRINT_ALL, "%8i : Total models\n", total);
@@ -1889,9 +1884,7 @@ void R_Modellist_f(void)
 #endif
 }
 
-
 //=============================================================================
-
 
 /*
 ================
@@ -1923,13 +1916,6 @@ static int R_GetTag(byte *mod, int frame, const char *tagName, int startTagIndex
 	{
 		if ((i >= startTagIndex) && !strcmp(tag->name, tagName))
 		{
-
-			// if we are looking for an indexed tag, wait until we find the correct number of matches
-			//if (startTagIndex) {
-			//  startTagIndex--;
-			//  continue;
-			//}
-
 			*outTag = tag;
 			return i;   // found it
 		}
@@ -1987,44 +1973,6 @@ static int R_GetMDCTag(byte *mod, int frame, const char *tagName, int startTagIn
 
 /*
 ================
-R_GetMDSTag
-================
-*/
-/*
-// TTimo: unused
-static int R_GetMDSTag( byte *mod, const char *tagName, int startTagIndex, mdsTag_t **outTag ) {
-    mdsTag_t        *tag;
-    int             i;
-    mdsHeader_t     *mds;
-
-    mds = (mdsHeader_t *) mod;
-
-    if (startTagIndex > mds->numTags) {
-        *outTag = NULL;
-        return -1;
-    }
-
-    tag = (mdsTag_t *)((byte *)mod + mds->ofsTags);
-    for ( i = 0 ; i < mds->numTags ; i++ ) {
-        if ( (i >= startTagIndex) && !strcmp( tag->name, tagName ) ) {
-            break;  // found it
-        }
-
-        tag = (mdsTag_t *) ((byte *)tag + sizeof(mdsTag_t) - sizeof(mdsBoneFrameCompressed_t) + mds->numFrames * sizeof(mdsBoneFrameCompressed_t) );
-    }
-
-    if (i >= mds->numTags) {
-        *outTag = NULL;
-        return -1;
-    }
-
-    *outTag = tag;
-    return i;
-}
-*/
-
-/*
-================
 R_LerpTag
 
   returns the index of the tag it found, for cycling through tags with the same name
@@ -2050,14 +1998,7 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 	frac       = 1.0 - refent->backlerp;
 
 	Q_strncpyz(tagName, tagNameIn, MAX_QPATH);
-	/*
-	    // if the tagName has a space in it, then it is passing through the starting tag number
-	    if (ch = strrchr(tagName, ' ')) {
-	        *ch = 0;
-	        ch++;
-	        startIndex = atoi(ch);
-	    }
-	*/
+
 	model = R_GetModelByHandle(handle);
 	if (!model->model.md3[0] && !model->model.mdc[0] && !model->model.mds)
 	{
@@ -2164,9 +2105,7 @@ R_TagInfo_f
 */
 void R_TagInfo_f(void)
 {
-
 	Com_Printf("command not functional\n");
-
 	/*
 	    int handle;
 	    orientation_t tag;
@@ -2213,7 +2152,7 @@ void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs)
 
 	model = R_GetModelByHandle(handle);
 
-	// Gordon: fixing now that it's a union
+	// fixing now that it's a union
 	switch (model->type)
 	{
 	case MOD_BRUSH:
@@ -2240,7 +2179,6 @@ void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs)
 
 	VectorClear(mins);
 	VectorClear(maxs);
-	// done.
 }
 
 //---------------------------------------------------------------------------
@@ -2280,11 +2218,10 @@ void *R_Hunk_Begin(void)
 		// now if needed
 		membase = VirtualAlloc(NULL, maxsize, MEM_RESERVE, PAGE_NOACCESS);
 #else
-		// show_bug.cgi?id=440
 		// if not win32, then just allocate it now
 		// it is possible that we have been allocated already, in case we don't do anything
 		membase = malloc(maxsize);
-		// TTimo NOTE: initially, I was doing the memset even if we had an existing membase
+		// NOTE: initially, I was doing the memset even if we had an existing membase
 		// but this breaks some shaders (i.e. /map mp_beach, then go back to the main menu .. some shaders are missing)
 		// I assume the shader missing is because we don't clear memory either on win32
 		// meaning even on win32 we are using memory that is still reserved but was uncommited .. it works out of pure luck
@@ -2370,7 +2307,7 @@ void R_Hunk_Reset(void)
 }
 
 //=============================================================================
-// Ridah, model caching
+// model caching
 
 // TODO: convert the Hunk_Alloc's in the model loading to malloc's, so we don't have
 // to move so much memory around during transitions
@@ -2404,7 +2341,7 @@ void R_CacheModelFree(void *ptr)
 {
 	if (r_cache->integer && r_cacheModels->integer)
 	{
-		// TTimo: it's in the hunk, leave it there, next R_Hunk_Begin will clear it all
+		// it's in the hunk, leave it there, next R_Hunk_Begin will clear it all
 	}
 	else
 	{
@@ -2420,14 +2357,14 @@ R_PurgeModels
 */
 void R_PurgeModels(int count)
 {
-	static int lastPurged = 0;
+	//static int lastPurged = 0;
 
 	if (!numBackupModels)
 	{
 		return;
 	}
 
-	lastPurged      = 0;
+	//lastPurged      = 0;
 	numBackupModels = 0;
 
 	// note: we can only do this since we only use the virtual memory for the model caching!
@@ -2511,7 +2448,6 @@ void R_BackupModels(void)
 		}
 	}
 }
-
 
 /*
 =================
@@ -2597,8 +2533,7 @@ qboolean R_FindCachedModel(const char *name, model_t *newmod)
 	int     i, j, index;
 	model_t *mod;
 
-	// NOTE TTimo
-	// would need an r_cache check here too?
+	// NOTE: would need an r_cache check here too?
 
 	if (!r_cacheModels->integer)
 	{
@@ -2686,7 +2621,7 @@ R_LoadCacheModels
 void R_LoadCacheModels(void)
 {
 	int  len;
-	byte *buf;
+	char *buf;
 	char *token, *pString;
 	char name[MAX_QPATH];
 
@@ -2708,7 +2643,7 @@ void R_LoadCacheModels(void)
 		return;
 	}
 
-	buf = (byte *)ri.Hunk_AllocateTempMemory(len);
+	buf = (char *)ri.Hunk_AllocateTempMemory(len);
 	ri.FS_ReadFile("model.cache", (void **)&buf);
 	pString = buf;
 
@@ -2720,5 +2655,5 @@ void R_LoadCacheModels(void)
 
 	ri.Hunk_FreeTempMemory(buf);
 }
-// done.
+
 //========================================================================

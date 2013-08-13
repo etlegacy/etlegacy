@@ -1,0 +1,38 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define WINDOW_X		16
+#define WINDOW_Y		16
+#define WINDOW_WIDTH	608
+#define WINDOW_HEIGHT	456
+#define GROUP_NAME		"grpHostGameExtended"
+
+// Host Game More Menu //
+menuDef {
+	name		"hostgame_extended"
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
+
+	onEsc {
+		close hostgame_extended ;
+		open hostgame_advanced
+	}
+
+// Window //
+	WINDOW( "HOST GAME: EXTENDED", 90)
+
+// Subwindows //
+#define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
+
+// Extended //
+	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 34, "MISC" )
+	MULTI( 8, 48, (SUBWINDOW_WIDTH)-4, 10, "Country Flags:", .2, 8, "g_countryflags", cvarFloatList { "No" 0 "Yes" 1 }, "Enable Country Flags on the server" )
+	
+// Buttons //	
+        BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "BACK", .3, 14, close hostgame_extended ; open hostgame )
+        BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, "ADVANCED", .3, 14, close hostgame_extended ; open hostgame_advanced )
+        BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, "DEFAULT", .3, 14, open hostgame_advanced_default )
+}

@@ -38,6 +38,7 @@
 
 vec4_t clrUiBack = { 0.f, 0.f, 0.f, .6f };
 vec4_t clrUiBar = { .16f, .2f, .17f, .8f };
+vec4_t tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 /*
 =================
@@ -56,43 +57,40 @@ WM_DrawObjectives
 #define INFO_LINE_HEIGHT        30
 #define INFO_TOTAL_WIDTH        (INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH)
 
+// GeoIP
+#define FLAG_STEP       32.0f
+qboolean cf_draw(float x, float y, float fade, int clientNum)
+{
+	unsigned int client_flag = atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));    // uci
+
+	if (client_flag < 255)
+	{
+		unsigned int flag_sd = 512;
+		float        alpha[4];
+		float        x1 = (float)((client_flag * (unsigned int)FLAG_STEP) % flag_sd);
+		float        y1 = (float)(floor((client_flag * FLAG_STEP) / flag_sd) * FLAG_STEP);
+		float        x2 = x1 + FLAG_STEP;
+		float        y2 = y1 + FLAG_STEP;
+
+		alpha[0] = alpha[1] = alpha[2] = 1.0; alpha[3] = fade;
+
+		trap_R_SetColor(alpha);
+		CG_DrawPicST(x, y, FLAG_STEP, FLAG_STEP, x1 / flag_sd, y1 / flag_sd, x2 / flag_sd, y2 / flag_sd, cgs.media.countryFlags);
+		trap_R_SetColor(NULL);
+		return qtrue;
+	}
+	return qfalse;
+}
+
 int WM_DrawObjectives(int x, int y, int width, float fade)
 {
-	const char *s, *str;
-	int        tempy, rows;
-	int        msec, mins, seconds, tens; // JPW NERVE
-	vec4_t     tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
+	const char *s;
+	int        rows;
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
 		const char *s, *buf, *shader = NULL, *flagshader = NULL, *nameshader = NULL;
 
-		// Moved to CG_DrawIntermission
-		/*      static int doScreenshot = 0, doDemostop = 0;
-
-		        // OSP - End-of-level autoactions
-		        if(!cg.demoPlayback) {
-		            if(!cg.latchVictorySound) {
-		                if(cg_autoAction.integer & AA_SCREENSHOT) {
-		                    doScreenshot = cg.time + 1000;
-		                }
-		                if(cg_autoAction.integer & AA_STATSDUMP) {
-		                    CG_dumpStats_f();
-		                }
-		                if((cg_autoAction.integer & AA_DEMORECORD) && (cgs.gametype == GT_WOLF_STOPWATCH && cgs.currentRound != 1)) {
-		                    doDemostop = cg.time + 5000;    // stats should show up within 5 seconds
-		                }
-		            }
-		            if(doScreenshot > 0 && doScreenshot < cg.time) {
-		                CG_autoScreenShot_f();
-		                doScreenshot = 0;
-		            }
-		            if(doDemostop > 0 && doDemostop < cg.time) {
-		                trap_SendConsoleCommand("stoprecord\n");
-		                doDemostop = 0;
-		            }
-		        }
-		*/
 		rows = 8;
 		y   += SMALLCHAR_HEIGHT * (rows - 1);
 
@@ -101,57 +99,46 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		if (atoi(buf) == -1)
 		{
-			str = "ITS A TIE!";
+			// "ITS A TIE!";
 		}
 		else if (atoi(buf))
 		{
-			str = "ALLIES";
-//          shader = "ui/assets/portraits/allies_win";
+			// "ALLIES";
 			flagshader = "ui/assets/portraits/allies_win_flag.tga";
 			nameshader = "ui/assets/portraits/text_allies.tga";
-
-			/*          if ( !cg.latchVictorySound ) {
-			                cg.latchVictorySound = qtrue;
-			                trap_S_StartLocalSound( trap_S_RegisterSound( "sound/music/allies_win.wav", qtrue ), CHAN_LOCAL_SOUND );    // FIXME: stream
-			            }*/
 		}
 		else
 		{
-			str = "AXIS";
-//          shader = "ui/assets/portraits/axis_win";
+			// "AXIS";
 			flagshader = "ui/assets/portraits/axis_win_flag.tga";
 			nameshader = "ui/assets/portraits/text_axis.tga";
-
-			/*          if ( !cg.latchVictorySound ) {
-			                cg.latchVictorySound = qtrue;
-			                trap_S_StartLocalSound( trap_S_RegisterSound( "sound/music/axis_win.wav", qtrue ), CHAN_LOCAL_SOUND );  // FIXME: stream
-			            }*/
 		}
 
 		y += SMALLCHAR_HEIGHT * ((rows - 2) / 2);
 
 		if (flagshader)
 		{
-			CG_DrawPic(100, 10, 210, 136, trap_R_RegisterShaderNoMip(flagshader));
-			CG_DrawPic(325, 10, 210, 136, trap_R_RegisterShaderNoMip(flagshader));
+			CG_DrawPic(100 + cgs.wideXoffset, 10, 210, 136, trap_R_RegisterShaderNoMip(flagshader));
+			CG_DrawPic(325 + cgs.wideXoffset, 10, 210, 136, trap_R_RegisterShaderNoMip(flagshader));
 		}
 
 		if (shader)
 		{
-			CG_DrawPic(229, 10, 182, 136, trap_R_RegisterShaderNoMip(shader));
+			CG_DrawPic(229 + cgs.wideXoffset, 10, 182, 136, trap_R_RegisterShaderNoMip(shader));
 		}
 		if (nameshader)
 		{
-			CG_DrawPic(140, 50, 127, 64, trap_R_RegisterShaderNoMip(nameshader));
-			CG_DrawPic(365, 50, 127, 64, trap_R_RegisterShaderNoMip("ui/assets/portraits/text_win.tga"));
+			CG_DrawPic(140 + cgs.wideXoffset, 50, 127, 64, trap_R_RegisterShaderNoMip(nameshader));
+			CG_DrawPic(365 + cgs.wideXoffset, 50, 127, 64, trap_R_RegisterShaderNoMip("ui/assets/portraits/text_win.tga"));
 		}
 		return y;
 	}
-// JPW NERVE -- mission time & reinforce time
+	// mission time & reinforce time
 	else
 	{
-		tempy = y;
-		rows  = 1;
+		int msec, mins, seconds, tens;
+
+		rows = 1;
 
 		CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBack);
 		CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBar);
@@ -195,6 +182,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
+		// FIXME: do a switch for gametype
 		if (cgs.gametype != GT_WOLF_LMS)
 		{
 			if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
@@ -215,16 +203,14 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				seconds -= tens * 10;
 
 				s = va("%s %2.0f:%i%i", CG_TranslateString("REINFORCE TIME:"), (float)mins, tens, seconds);
-				CG_Text_Paint_Ext(640 - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1), y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+				CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 			}
 		}
-
-		// NERVE - SMF
 		if (cgs.gametype == GT_WOLF_STOPWATCH)
 		{
 			int w;
-			s = va("%s %i", CG_TranslateString("STOPWATCH ROUND"), cgs.currentRound + 1);
 
+			s = va("%s %i", CG_TranslateString("STOPWATCH ROUND"), cgs.currentRound + 1);
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
 			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
@@ -232,6 +218,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		else if (cgs.gametype == GT_WOLF_LMS)
 		{
 			int w;
+
 			s = va("%s %i  %s %i-%i", CG_TranslateString("ROUND"), cgs.currentRound + 1, CG_TranslateString("SCORE"), cg.teamWonRounds[1], cg.teamWonRounds[0]);
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
@@ -240,7 +227,18 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		else if (cgs.gametype == GT_WOLF_CAMPAIGN)
 		{
 			int w;
+
 			s = va("MAP %i of %i", cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
+			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
+
+			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+		}
+		// MAPVOTE
+		else if (cgs.gametype == GT_WOLF_MAPVOTE)
+		{
+			int w;
+
+			s = (cgs.mapVoteMapY ? va("MAP %i of %i", cgs.mapVoteMapX + 1, cgs.mapVoteMapY) : "");
 			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
 			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
@@ -248,9 +246,26 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		y += SMALLCHAR_HEIGHT * 2;
 	}
-// jpw
-
 	return y;
+}
+
+int SkillNumForClass(int classNum)
+{
+	switch (classNum)
+	{
+	case PC_SOLDIER:
+		return SK_SOLDIER;
+	case PC_MEDIC:
+		return SK_MEDIC;
+	case PC_ENGINEER:
+		return SK_ENGINEER;
+	case PC_FIELDOPS:
+		return SK_SIGNALS;
+	case PC_COVERTOPS:
+		return SK_COVERTOPS;
+	default:
+		return SK_BATTLE_SENSE;
+	}
 }
 
 static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float fade)
@@ -271,19 +286,14 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	if (score->client == cg.snap->ps.clientNum)
 	{
-		tempx = x;
-
 		hcolor[3] = fade * 0.3;
 		VectorSet(hcolor, .5f, .5f, .2f);           // DARK-RED
 
-		CG_FillRect(x - 5, y,
-		            (INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH + 5),
-		            SMALLCHAR_HEIGHT - 1, hcolor);
+		CG_FillRect(x - 5, y, (INFO_TOTAL_WIDTH + 5), SMALLCHAR_HEIGHT - 1, hcolor);
 	}
 
 	tempx = x;
 
-	// DHM - Nerve
 	VectorSet(hcolor, 1, 1, 1);
 	hcolor[3] = fade;
 
@@ -292,6 +302,17 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	if (ci->team != TEAM_SPECTATOR)
 	{
+		/* FIXME: adjust x,y coordinates ...
+		// draw ready icon if client is ready..
+		if (score->scoreflags & 1 && cgs.gamestate != GS_PLAYING)
+		{
+		    CG_DrawPic(tempx - 3, y + 1, 14, 14, cgs.media.readyIcon);
+		    offset += 14;
+		    tempx += 14;
+		    maxchars -= 2;
+		}
+		*/
+
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
 			CG_DrawPic(tempx - 1, y + 1, 10, 10, cgs.media.objectiveShader);
@@ -317,6 +338,17 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		}
 	}
 
+	// GeoIP - draw flag before name
+	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
+	{
+		if (cf_draw(tempx - 11, y - 8, fade, ci->clientNum))
+		{
+			offset   += 14;
+			tempx    += 14;
+			maxchars -= 2;
+		}
+	}
+
 	// draw name
 	CG_DrawStringExt(tempx, y, ci->name, hcolor, qfalse, qfalse, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, maxchars);
 	maxchars -= CG_DrawStrlen(ci->name);
@@ -326,7 +358,9 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
 		for (j = 0; j < ci->medals[i]; j++)
+		{
 			Q_strcat(buf, sizeof(buf), va("^%c%c", COLOR_RED + i, skillNames[i][0]));
+		}
 	}
 	maxchars--;
 
@@ -342,9 +376,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	if (ci->team == TEAM_SPECTATOR)
 	{
 		const char *s;
-		int        w, totalwidth;
-
-		totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
+		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
 
 		// Show connecting people as CONNECTING
 		if (score->ping == -1)
@@ -359,14 +391,18 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		CG_DrawSmallString(tempx + totalwidth - w, y, s, fade);
 		return;
 	}
-	// OSP - allow MV clients see the class of its merged client's on the scoreboard
-	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || CG_mvMergedClientLocate(score->client))
+	// allow MV clients see the class of its merged client's on the scoreboard
+	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION
+#if FEATURE_MULTIVIEW
+	         || CG_mvMergedClientLocate(score->client)
+#endif
+	         )
 	{
-		CG_DrawSmallString(tempx, y, CG_TranslateString(BG_ShortClassnameForNumber(score->playerClass)), fade);
+		CG_DrawPic(tempx - 3, y + 1, 14, 14, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 	}
 	tempx += INFO_CLASS_WIDTH;
 
-	CG_DrawSmallString(tempx, y, va("%3i", score->score), fade);
+	CG_DrawSmallString(tempx, y, va("^7%3i", score->score), fade);
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
 		tempx += INFO_SCORE_WIDTH;
@@ -376,7 +412,18 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		tempx += INFO_XP_WIDTH;
 	}
 
-	CG_DrawSmallString(tempx, y, va("%4i", score->ping), fade);
+	if (score->ping == -1)
+	{
+		CG_DrawSmallString(tempx, y, "^1CONN^7", fade);
+	}
+	else if (score->scoreflags & 2)
+	{
+		CG_DrawSmallString(tempx, y, " BOT", fade);
+	}
+	else
+	{
+		CG_DrawSmallString(tempx, y, va("%4i", score->ping), fade);
+	}
 	tempx += INFO_LATENCY_WIDTH;
 
 	if (cg_gameType.integer != GT_WOLF_LMS)
@@ -389,7 +436,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		{
 			CG_DrawSmallString(tempx, y, " -", fade);
 		}
-		tempx += INFO_LIVES_WIDTH;
 	}
 }
 
@@ -412,10 +458,8 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	float        tempx;
 	vec4_t       hcolor;
 	clientInfo_t *ci;
-
-	// To draw medals
-	int  i, j;
-	char buf[64];
+	int          i, j;    // To draw medals
+	char         buf[64]; // To draw medals
 
 	if (y + MINICHAR_HEIGHT >= 470)
 	{
@@ -427,11 +471,9 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	if (score->client == cg.snap->ps.clientNum)
 	{
 		hcolor[3] = fade * 0.3;
-		VectorSet(hcolor, .5f, .5f, .2f);           // DARK-RED
+		VectorSet(hcolor, .5f, .5f, .2f); // DARK-RED
 
-		CG_FillRect(x - 5, y,
-		            (INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH + 5),
-		            MINICHAR_HEIGHT - 1, hcolor);
+		CG_FillRect(x - 5, y, (INFO_TOTAL_WIDTH + 5), MINICHAR_HEIGHT - 1, hcolor);
 	}
 
 	tempx = x;
@@ -444,6 +486,17 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	if (ci->team != TEAM_SPECTATOR)
 	{
+
+		/* FIXME adjust x,y coordinates ...
+		// draw ready icon if client is ready..
+		if ( score->scoreflags & 1 && ( cgs.gamestate == GS_WARMUP || cgs.gamestate == GS_INTERMISSION ) ) {
+		    CG_DrawPic( tempx-2 + 1, y + 1, 14, 14, cgs.media.readyIcon );
+		    offset += 14;
+		    tempx += 14;
+		    maxchars -= 2;
+		}
+		*/
+
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
 			CG_DrawPic(tempx + 1, y + 1, 10, 10, cgs.media.objectiveShader);
@@ -469,6 +522,17 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		}
 	}
 
+	// GeoIP - draw flag before name
+	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
+	{
+		if (cf_draw(tempx - 11, y - 10, fade, ci->clientNum))
+		{
+			offset   += 14;
+			tempx    += 14;
+			maxchars -= 2;
+		}
+	}
+
 	// draw name
 	CG_DrawStringExt(tempx, y, ci->name, hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, maxchars);
 
@@ -480,8 +544,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	{
 		for (j = 0; j < ci->medals[i]; j++)
 		{
-			Q_strcat(buf, sizeof(buf), va("^%c%c",
-			                              COLOR_RED + i, skillNames[i][0]));
+			Q_strcat(buf, sizeof(buf), va("^%c%c", COLOR_RED + i, skillNames[i][0]));
 		}
 		maxchars--;
 	}
@@ -497,12 +560,10 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	if (ci->team == TEAM_SPECTATOR)
 	{
 		const char *s;
-		int        w, totalwidth;
-
-		totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
+		int        w, totalwidth = INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH - 8;
 
 		// Show connecting people as CONNECTING
-		if ((score->ping = -1))
+		if (score->ping == -1)
 		{
 			s = CG_TranslateString("^3CONNECTING");
 		}
@@ -516,14 +577,13 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		                 MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
 		return;
 	}
-	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team)
+	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
-		CG_DrawStringExt(tempx, y, CG_TranslateString(BG_ShortClassnameForNumber(score->playerClass)), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
-//      CG_DrawSmallString( tempx, y, CG_TranslateString( s ), fade );
+		CG_DrawPic(tempx, y - 2, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 	}
 	tempx += INFO_CLASS_WIDTH;
 
-	CG_DrawStringExt(tempx, y, va("%3i", score->score), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+	CG_DrawStringExt(tempx, y, va("^7%3i", score->score), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
 		tempx += INFO_SCORE_WIDTH;
@@ -533,7 +593,19 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		tempx += INFO_XP_WIDTH;
 	}
 
-	CG_DrawStringExt(tempx, y, va("%4i", score->ping), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+	if (score->ping == -1)
+	{
+		CG_DrawStringExt(tempx, y, "^1CONN", hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+	}
+	else if (score->scoreflags & 2)
+	{
+		CG_DrawStringExt(tempx, y, " BOT", hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+	}
+	else
+	{
+		CG_DrawStringExt(tempx, y, va("%4i", score->ping), hcolor, qfalse, qfalse, MINICHAR_WIDTH, MINICHAR_HEIGHT, 0);
+	}
+
 	tempx += INFO_LATENCY_WIDTH;
 
 	if (cg_gameType.integer != GT_WOLF_LMS)
@@ -554,7 +626,6 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 {
 	int        w, defender, winner;
 	const char *s;
-	vec4_t     tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	if (cg.snap->ps.pm_type != PM_INTERMISSION)
 	{
@@ -562,7 +633,6 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	}
 
 	w = 360;
-//  CG_DrawPic( 320 - w/2, y, w, INFO_LINE_HEIGHT, trap_R_RegisterShaderNoMip( "ui/assets/mp_line_strip.tga" ) );
 
 	s        = CG_ConfigString(CS_MULTI_INFO);
 	defender = atoi(Info_ValueForKey(s, "defender"));
@@ -582,7 +652,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		{
 			if (winner != defender)
 			{
-				s = "ALLIES SUCCESSFULLY BEAT THE CLOCK!";
+				s = "ALLIES SUCCESSFULLY BEAT THE CLOCK!"; // FIXME: translations
 			}
 			else
 			{
@@ -610,7 +680,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 
 	CG_Text_Paint_Ext(320 - w * 0.5f, y + 15, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
-//  CG_DrawSmallString( 320 - w/2, ( y + INFO_LINE_HEIGHT / 2 ) - SMALLCHAR_HEIGHT / 2, s, fade );
+
 	return y + INFO_LINE_HEIGHT + 6;
 }
 
@@ -619,14 +689,10 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 {
 	vec4_t   hcolor;
 	float    tempx, tempy;
-	int      height, width;
 	int      i;
 	int      count          = 0;
+	int      width          = INFO_TOTAL_WIDTH;
 	qboolean use_mini_chars = qfalse;
-	vec4_t   tclr           = { 0.6f, 0.6f, 0.6f, 1.0f };
-
-	height = SMALLCHAR_HEIGHT * maxrows;
-	width  = INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH;
 
 	CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBack);
 	CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBar);
@@ -638,6 +704,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
 		char *s;
+
 		if (team == TEAM_AXIS)
 		{
 			s = va("%s [%d] (%d %s)", CG_TranslateString("AXIS"), cg.teamScores[0], cg.teamPlayers[team], CG_TranslateString("PLAYERS"));
@@ -703,7 +770,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 
 	y += SMALLCHAR_HEIGHT + 2;
 
-	cg.teamPlayers[team] = 0; // JPW NERVE
+	cg.teamPlayers[team] = 0;
 	for (i = 0; i < cg.numScores; i++)
 	{
 		if (team != cgs.clientinfo[cg.scores[i].client].team)
@@ -763,7 +830,6 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	VectorSet(hcolor, 1, 1, 1);
 	hcolor[3] = fade;
 
-	count = 0;
 	for (i = 0; i < cg.numScores && count < maxrows; i++)
 	{
 		if (team != cgs.clientinfo[cg.scores[i].client].team)
@@ -826,18 +892,18 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 }
 
 /*
- * Draw the normal in-game scoreboard
- */
+=================
+Draw the normal in-game scoreboard
+=================
+*/
 qboolean CG_DrawScoreboard(void)
 {
-	int   x = 0, y = 0, x_right;
+	int   x = 20, y = 6, x_right = SCREEN_WIDTH - x - (INFO_TOTAL_WIDTH - 5);
 	float fade;
-	float *fadeColor;
+	int   width = SCREEN_WIDTH - 2 * x + 5;
 
-	x = 20;
-	y = 10;
-
-	x_right = 640 - x - (INFO_TOTAL_WIDTH - 5);
+	x       += cgs.wideXoffset;
+	x_right += cgs.wideXoffset;
 
 	// don't draw anything if the menu or console is up
 	if (cg_paused.integer)
@@ -846,7 +912,7 @@ qboolean CG_DrawScoreboard(void)
 	}
 
 	// don't draw scoreboard during death while warmup up
-	// OSP - also for pesky scoreboards in demos
+	// also for pesky scoreboards in demos
 	if ((cg.warmup || (cg.demoPlayback && cg.snap->ps.pm_type != PM_INTERMISSION)) && !cg.showScores)
 	{
 		return qfalse;
@@ -860,12 +926,11 @@ qboolean CG_DrawScoreboard(void)
 
 	if (cg.showScores || cg.predictedPlayerState.pm_type == PM_INTERMISSION)
 	{
-		fade      = 1.0;
-		fadeColor = colorWhite;
+		fade = 1.0;
 	}
 	else
 	{
-		fadeColor = CG_FadeColor(cg.scoreFadeTime, FADE_TIME);
+		float *fadeColor = CG_FadeColor(cg.scoreFadeTime, FADE_TIME);
 
 		if (!fadeColor)
 		{
@@ -876,7 +941,7 @@ qboolean CG_DrawScoreboard(void)
 		fade = fadeColor[3];
 	}
 
-	y = WM_DrawObjectives(x, y, 640 - 2 * x + 5, fade);
+	y = WM_DrawObjectives(x, y, width, fade);
 
 	if (cgs.gametype == GT_WOLF_STOPWATCH && (cg.snap->ps.pm_type == PM_INTERMISSION))
 	{

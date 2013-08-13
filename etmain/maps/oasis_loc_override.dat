@@ -1,0 +1,122 @@
+/////////////////////////////////////////////////////////
+// Map name       Siwa Oasis                           //
+// Locations by   Rain                                 //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 26                //
+// Last edited    14-10-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+2439 4801 -215 "^1Allied Command Post"
+8570 5698 -99 "^1Axis Command Post"
+9637 4695 -62 "^1North Anti-Tank Gun"
+5109 7304 -479 "^1Old City Wall"
+4945 6995 -215 @
+4623 6465 -303 "^1Old City Water Pump"
+3478 2914 -487 "^1Oasis Water Pump"
+9396 3923 -159 "^1South Anti-Tank Gun"
+1484 2812 -337 "^3Allied Camp"
+7283 4802 -423 "^3Axis Garrison"
+7852 4034 -415 @
+5200 6802 -133 "^3Axis Vestibule"
+3189 6005 -157 "^3Broken Roof"
+3635 5887 -223 @
+3224 6330 -235 @
+11951 4375 -397 "^3Burning Pile of Flames"
+9262 3951 -381 "^3Cart"
+5090 6476 -135 "^3City Pump Lookout"
+5438 7745 -215 "^3Drainage Perch"
+9571 4340 -423 "^3East Arch"
+2179 1860 -579 "^3Excavation Drainage"
+2328 4430 -215 "^3Excavation Exit"
+3734 7354 -390 "^3Forward Spawn"
+4360 7477 -199 "^3Forward Spawn Roof"
+3694 7298 -231 @
+3627 8036 -127 @
+3173 7659 -127 @
+8139 4605 -111 "^3Garrison Bunks"
+8201 4060 -159 "^3Garrison Catwalk"
+8279 3219 -159 @
+8218 3593 -159 @
+8056 4112 -159 @
+8736 3227 -142 @
+9281 3231 -111 @
+9955 5519 -343 "^3Garrison East"
+9970 4815 -399 @
+9974 3979 -416 @
+8681 4208 -137 "^3Garrison MG Nest"
+8238 5956 -357 "^3Garrison North"
+9233 5961 -155 @
+7194 3567 -387 "^3Garrison Palms"
+7574 3556 -414 @
+9600 2901 -258 "^3Garrison South"
+8645 2911 -216 @
+7997 2946 -286 @
+6963 4775 -159 "^3Garrison Spawn Overlook"
+7500 4158 -159 @
+7889 4913 -295 "^3Garrison Spawn Stairs"
+8449 3550 -350 "^3Garrison Tank"
+6594 5200 -395 "^3Garrison West"
+6696 4121 -399 @
+8964 4341 -423 "^3Gun Courtyard"
+9038 3763 -418 @
+8518 4676 -423 @
+4908 7519 -78 "^3Jumping The Wall"
+2760 4620 -483 "^3Lower Excavation Exit"
+3300 5165 -491 @
+2423 5074 -479 @
+6538 6506 -477 "^3Lower Grotto"
+8556 5566 -390 "^3North Arch"
+9294 5514 -159 "^3North Gun Stairs"
+9540 5232 -159 "^3Northern Generator"
+3901 3077 -659 "^3Oasis Tunnel"
+4345 4038 -760 @
+5059 4591 -811 @
+4806 5102 -797 @
+4468 5333 -740 @
+3958 4956 -694 @
+3695 5221 -661 @
+3942 5754 -600 @
+5341 4570 -791 "^3Oasis Tunnel Wrong Way"
+3990 6019 -477 "^3Oasis Tunnel Exit"
+3660 6749 -423 "^3Old City"
+4150 6548 -410 @
+4110 7121 -444 @
+4779 6901 -463 @
+3898 6354 -423 @
+4624 7283 -489 @
+4140 7373 -447 "^3Old City Cabinets"
+5829 7227 -560 "^3Old City Drainage"
+5973 7849 -353 @
+6304 6905 -191 @
+4321 6367 -143 "^3Old City Lookout"
+3251 7156 -279 "^3Old City MG Nest"
+3114 6744 -175 "^3Old City Tower"
+4888 6341 -711 "^3Old City Tunnel"
+5702 6136 -772 @
+6066 3275 -615 @
+4905 6465 -516 "^3Old City Tunnel Entrance"
+6624 3166 -602 "^3Old City Tunnel Exit"
+2169 6534 -367 "^3Outer Wall Passage"
+2043 6162 -381 @
+8040 3415 -415 "^3Palms Room"
+2409 5517 -223 "^3Patio Ruins"
+2740 5755 -471 "^3Ruined Alley"
+2712 6546 -452 @
+2749 7296 -385 @
+2803 5246 -502 @
+3075 5446 -239 "^3Ruined Alley Overlook"
+2798 5110 -215 @
+3281 6033 -580 "^3Skylight Room"
+3497 6012 -493 "^3Skylight Stairs"
+9082 3205 -380 "^3South Arch"
+9590 3418 -143 "^3South Gun Stairs"
+2361 6848 -471 "^3Spawn Roof Stairs"
+2701 7772 -255 @
+8462 3868 -353 "^3Storage Room"
+8768 4867 -370 "^3Truck"
+7992 5209 -159 "^3Upper Garrison Access"
+7433 5344 -99 "^3Upper Garrison Office"
+6516 6366 -215 "^3Upper Grotto"
+4936 7760 -415 "^3Wall Service Door"
+5359 7779 -419 "^3Wall Service Room"
+8160 4670 -413 "^3West Arch"

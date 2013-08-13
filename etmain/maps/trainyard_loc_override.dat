@@ -1,0 +1,25 @@
+/////////////////////////////////////////////////////////
+// Map name       2on2 Trainyard                       //
+// Locations by   antman                               //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 15                //
+// Last edited    28-05-2006                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+-544 -408 88 "Allied Spawn"
+493 449 88 "Axis Spawn"
+-46 -86 172 "Goldbars"
+220 -84 172 "Health and Ammo"
+325 476 88 "Trainyard"
+542 234 90 @
+-340 -473 88 @
+-553 -192 88 @
+-37 -268 88 @
+121 -91 172 @
+366 -78 147 @
+-44 52 90 @
+223 35 88 @
+221 -210 88 @
+226 -70 311 @
+-37 -80 311 @
+-189 -74 176 @

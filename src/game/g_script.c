@@ -36,6 +36,10 @@
 #include "../game/g_local.h"
 #include "../qcommon/q_shared.h"
 
+#ifdef FEATURE_OMNIBOT
+#include "g_etbot_interface.h"
+#endif
+
 /*
 Scripting that allows the designers to control the behaviour of entities
 according to each different scenario.
@@ -43,9 +47,8 @@ according to each different scenario.
 
 vmCvar_t g_scriptDebug;
 
-//
 //====================================================================
-//
+
 // action functions need to be declared here so they can be accessed in the scriptAction table
 qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params);
 qboolean G_ScriptAction_Wait(gentity_t *ent, char *params);
@@ -139,8 +142,9 @@ qboolean G_ScriptAction_ConstructibleHealth(gentity_t *ent, char *params) ;
 qboolean G_ScriptAction_ConstructibleWeaponclass(gentity_t *ent, char *params) ;
 qboolean G_ScriptAction_ConstructibleDuration(gentity_t *ent, char *params) ;
 
-//bani
 qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params);
+qboolean G_ScriptAction_Create(gentity_t *ent, char *params);
+qboolean G_ScriptAction_Delete(gentity_t *ent, char *params);
 
 // these are the actions that each event can call
 g_script_stack_action_t gScriptActions[] =
@@ -162,7 +166,7 @@ g_script_stack_action_t gScriptActions[] =
 	{ "attachtotag",                    G_ScriptAction_TagConnect                    },
 	{ "halt",                           G_ScriptAction_Halt                          },
 	{ "stopsound",                      G_ScriptAction_StopSound                     },
-//  {"startcam",                        G_ScriptAction_StartCam},
+	//{"startcam",                        G_ScriptAction_StartCam},
 	{ "entityscriptname",               G_ScriptAction_EntityScriptName              },
 	{ "aiscriptname",                   G_ScriptAction_AIScriptName                  },
 	{ "wm_axis_respawntime",            G_ScriptAction_AxisRespawntime               },
@@ -218,12 +222,11 @@ g_script_stack_action_t gScriptActions[] =
 	{ "setposition",                    G_ScriptAction_SetPosition                   },
 	{ "setautospawn",                   G_ScriptAction_SetAutoSpawn                  },
 
-	// Gordon: going for longest silly script command ever here :) (sets a model for a brush to one stolen from a func_brushmodel
+	// going for longest silly script command ever here :) (sets a model for a brush to one stolen from a func_brushmodel
 	{ "setmodelfrombrushmodel",         G_ScriptAction_SetModelFromBrushmodel        },
 
 	// fade all sounds up or down
 	{ "fadeallsounds",                  G_ScriptAction_FadeAllSounds                 },
-
 
 	{ "construct",                      G_ScriptAction_Construct                     },
 	{ "spawnrubble",                    G_ScriptAction_SpawnRubble                   },
@@ -235,8 +238,9 @@ g_script_stack_action_t gScriptActions[] =
 	{ "kill",                           G_ScriptAction_Kill                          },
 	{ "disablemessage",                 G_ScriptAction_DisableMessage                },
 
-//bani
 	{ "set",                            etpro_ScriptAction_SetValues                 },
+	{ "create",                         G_ScriptAction_Create,                       },
+	{ "delete",                         G_ScriptAction_Delete,                       },
 
 	{ "constructible_class",            G_ScriptAction_ConstructibleClass            },
 	{ "constructible_chargebarreq",     G_ScriptAction_ConstructibleChargeBarReq     },
@@ -271,6 +275,7 @@ g_script_event_define_t gScriptEvents[] =
 	{ "defused",     NULL                            },
 	{ "mg42",        G_Script_EventMatch_StringEqual },
 	{ "message",     G_Script_EventMatch_StringEqual }, // contains a sequence of VO in a message
+	{ "exploded",    NULL                            }, // added for omni-bot 0.7
 
 	{ NULL,          NULL                            }
 };
@@ -376,14 +381,16 @@ void G_Script_ScriptLoad(void)
 {
 	char         filename[MAX_QPATH];
 	vmCvar_t     mapname;
-	fileHandle_t f;
-	int          len;
+	fileHandle_t f     = 0;
+	int          len   = 0;
+	qboolean     found = qfalse;
 
 	trap_Cvar_Register(&g_scriptDebug, "g_scriptDebug", "0", 0);
 
 	level.scriptEntity = NULL;
 
 	trap_Cvar_VariableStringBuffer("g_scriptName", filename, sizeof(filename));
+
 	if (strlen(filename) > 0)
 	{
 		trap_Cvar_Register(&mapname, "g_scriptName", "", CVAR_CHEAT);
@@ -392,17 +399,40 @@ void G_Script_ScriptLoad(void)
 	{
 		trap_Cvar_Register(&mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM);
 	}
-	Q_strncpyz(filename, "maps/", sizeof(filename));
-	Q_strcat(filename, sizeof(filename), mapname.string);
 
-	if (g_gametype.integer == GT_WOLF_LMS)
+	if (g_mapScriptDirectory.string[0])
 	{
-		Q_strcat(filename, sizeof(filename), "_lms");
+		Q_strncpyz(filename, g_mapScriptDirectory.string, sizeof(filename));
+		Q_strcat(filename, sizeof(filename), "/");
+		Q_strcat(filename, sizeof(filename), mapname.string);
+
+		if (g_gametype.integer == GT_WOLF_LMS)
+		{
+			Q_strcat(filename, sizeof(filename), "_lms");
+		}
+
+		Q_strcat(filename, sizeof(filename), ".script");
+		len = trap_FS_FOpenFile(filename, &f, FS_READ);
+
+		if (len > 0)
+		{
+			found = qtrue;
+		}
 	}
 
-	Q_strcat(filename, sizeof(filename), ".script");
+	if (!found)
+	{
+		Q_strncpyz(filename, "maps/", sizeof(filename));
+		Q_strcat(filename, sizeof(filename), mapname.string);
 
-	len = trap_FS_FOpenFile(filename, &f, FS_READ);
+		if (g_gametype.integer == GT_WOLF_LMS)
+		{
+			Q_strcat(filename, sizeof(filename), "_lms");
+		}
+
+		Q_strcat(filename, sizeof(filename), ".script");
+		len = trap_FS_FOpenFile(filename, &f, FS_READ);
+	}
 
 	// make sure we clear out the temporary scriptname
 	trap_Cvar_Set("g_scriptName", "");
@@ -412,90 +442,16 @@ void G_Script_ScriptLoad(void)
 		return;
 	}
 
-	// END Mad Doc - TDF
-	// Arnout: make sure we terminate the script with a '\0' to prevent parser from choking
-	//level.scriptEntity = G_Alloc( len );
-	//trap_FS_Read( level.scriptEntity, len, f );
+	// make sure we terminate the script with a '\0' to prevent parser from choking
 	level.scriptEntity = G_Alloc(len + 1);
 	trap_FS_Read(level.scriptEntity, len, f);
 	*(level.scriptEntity + len) = '\0';
 
-	// Gordon: and make sure ppl haven't put stuff with uppercase in the string table..
+	// and make sure ppl haven't put stuff with uppercase in the string table..
+	// FIXME: check this
 	G_Script_EventStringInit();
 
-	// Gordon: discard all the comments NOW, so we dont deal with them inside scripts
-	// Gordon: disabling for a sec, wanna check if i can get proper line numbers from error output
-//  COM_Compress( level.scriptEntity );
-
 	trap_FS_FCloseFile(f);
-}
-
-/*
-==============
-G_Script_ParseSpawnbot
-
-  Parses "Spawnbot" command, precaching a custom character if specified
-==============
-*/
-void G_Script_ParseSpawnbot(char **ppScript, char params[], int paramsize)
-{
-	qboolean parsingCharacter = qfalse;
-	char     *token;
-
-	token = COM_ParseExt(ppScript, qfalse);
-	while (token[0])
-	{
-		// if we are currently parsing a spawnbot command, check the parms for
-		// a custom character, which we will need to precache on the client
-
-		// did we just see a '/character' parm?
-		if (parsingCharacter)
-		{
-
-			parsingCharacter = qfalse;
-
-			G_CharacterIndex(token);
-
-			if (!BG_FindCharacter(token))
-			{
-				bg_character_t *character = BG_FindFreeCharacter(token);
-
-				Q_strncpyz(character->characterFile, token, sizeof(character->characterFile));
-
-				if (!G_RegisterCharacter(token, character))
-				{
-					G_Error("ERROR: G_Script_ParseSpawnbot: failed to load character file '%s'\n", token);
-				}
-			}
-
-#ifdef DEBUG
-			G_DPrintf("precached character %s\n", token);
-#endif
-		}
-		else if (!Q_stricmp(token, "/character"))
-		{
-			parsingCharacter = qtrue;
-		}
-
-		if (strlen(params))          // add a space between each param
-		{
-			Q_strcat(params, paramsize, " ");
-		}
-
-		if (strrchr(token, ' '))      // need to wrap this param in quotes since it has more than one word
-		{
-			Q_strcat(params, paramsize, "\"");
-		}
-
-		Q_strcat(params, paramsize, token);
-
-		if (strrchr(token, ' '))      // need to wrap this param in quotes since it has more than one word
-		{
-			Q_strcat(params, paramsize, "\"");
-		}
-
-		token = COM_ParseExt(ppScript, qfalse);
-	}
 }
 
 /*
@@ -507,21 +463,19 @@ G_Script_ScriptParse
 */
 void G_Script_ScriptParse(gentity_t *ent)
 {
-	char             *pScript;
-	char             *token;
-	qboolean         wantName;
-	qboolean         inScript;
-	int              eventNum;
-	g_script_event_t events[G_MAX_SCRIPT_STACK_ITEMS];
-	int              numEventItems;
-	g_script_event_t *curEvent;
-	// DHM - Nerve :: Some of our multiplayer script commands have longer parameters
-	//char      params[MAX_QPATH];
-	char params[MAX_INFO_STRING];
-	// dhm - end
+	char                    *pScript;
+	char                    *token;
+	qboolean                wantName;
+	qboolean                inScript;
+	int                     eventNum;
+	g_script_event_t        events[G_MAX_SCRIPT_STACK_ITEMS];
+	int                     numEventItems;
+	g_script_event_t        *curEvent;
+	char                    params[MAX_INFO_STRING]; // was MAX_QPATH some of our multiplayer script commands have longer parameters
 	g_script_stack_action_t *action;
 	int                     i;
 	int                     bracketLevel;
+	int                     len;
 	qboolean                buildScript;
 
 	if (!ent->scriptName)
@@ -579,15 +533,6 @@ void G_Script_ScriptParse(gentity_t *ent)
 		}
 		else if (wantName)
 		{
-			if (!Q_stricmp(token, "bot"))
-			{
-				// a bot, skip this whole entry
-				SkipRestOfLine(&pScript);
-				// skip this section
-				SkipBracedSection(&pScript);
-				//
-				continue;
-			}
 			if (!Q_stricmp(token, "entity"))
 			{
 				// this is an entity, so go back to look for a name
@@ -633,10 +578,12 @@ void G_Script_ScriptParse(gentity_t *ent)
 				Q_strcat(params, sizeof(params), token);
 			}
 
-			if (strlen(params))          // copy the params into the event
+			len = strlen(params);
+
+			if (len)          // copy the params into the event
 			{
-				curEvent->params = G_Alloc(strlen(params) + 1);
-				Q_strncpyz(curEvent->params, params, strlen(params) + 1);
+				curEvent->params = G_Alloc(len + 1);
+				Q_strncpyz(curEvent->params, params, len + 1);
 			}
 
 			// parse the actions for this event
@@ -657,8 +604,8 @@ void G_Script_ScriptParse(gentity_t *ent)
 
 				memset(params, 0, sizeof(params));
 
-				// Ikkyo - Parse for {}'s if this is a set command
-				if (!Q_stricmp(action->actionString, "set"))
+				// Parse for {}'s if this is a set command
+				if (!Q_stricmp(action->actionString, "set") || !Q_stricmp(action->actionString, "create") || !Q_stricmp(action->actionString, "delete"))
 				{
 					token = COM_Parse(&pScript);
 					if (token[0] != '{')
@@ -685,13 +632,6 @@ void G_Script_ScriptParse(gentity_t *ent)
 							Q_strcat(params, sizeof(params), "\"");
 						}
 					}
-				}
-				else
-				// hackly precaching of custom characters
-				if (!Q_stricmp(token, "spawnbot"))
-				{
-					// this is fairly indepth, so I'll move it to a separate function for readability
-					G_Script_ParseSpawnbot(&pScript, params, MAX_INFO_STRING);
 				}
 				else
 				{
@@ -769,7 +709,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 			numEventItems++;
 		}
 		else     // skip this character completely
-		{   // TTimo gcc: suggest parentheses around assignment used as truth value
+		{
 			while ((token = COM_Parse(&pScript)) != NULL)
 			{
 				if (!token[0])
@@ -830,7 +770,7 @@ void G_Script_ScriptChange(gentity_t *ent, int newScriptNum)
 	}
 }
 
-// Gordon: lower the strings and hash them
+// lower the strings and hash them
 void G_Script_EventStringInit(void)
 {
 	int i;
@@ -851,7 +791,7 @@ void G_Script_EventStringInit(void)
 G_Script_GetEventIndex
 
   returns the event index within the entity for the specified event string
-  xkan, 10/28/2002 - extracted from G_Script_ScriptEvent.
+  - extracted from G_Script_ScriptEvent.
 ================
 */
 int G_Script_GetEventIndex(gentity_t *ent, char *eventStr, char *params)
@@ -915,6 +855,53 @@ void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 	{
 		G_Script_ScriptChange(ent, i);
 	}
+
+#ifdef FEATURE_OMNIBOT
+	// skip these
+	if (!Q_stricmp(eventStr, "trigger") ||
+	    !Q_stricmp(eventStr, "activate") ||
+	    !Q_stricmp(eventStr, "spawn") ||
+	    !Q_stricmp(eventStr, "death") ||
+	    !Q_stricmp(eventStr, "pain") ||
+	    !Q_stricmp(eventStr, "playerstart"))
+	{
+		return;
+	}
+
+	if (!Q_stricmp(eventStr, "defused"))
+	{
+		Bot_Util_SendTrigger(ent, NULL,
+		                     va("Defused at %s.", ent->parent ? ent->parent->track : ent->track),
+		                     eventStr);
+
+		// log script defused actions (ETPro behavior)
+		G_LogPrintf("legacy popup: %s defused \"%s\"\n",
+		            params,
+		            ent->parent ? ent->parent->track : ent->track);
+	}
+	else if (!Q_stricmp(eventStr, "dynamited"))
+	{
+		Bot_Util_SendTrigger(ent, NULL,
+		                     va("Planted at %s.", ent->parent ? ent->parent->track : ent->track),
+		                     eventStr);
+
+		// log script dynamited actions (ETPro behavior)
+		G_LogPrintf("legacy popup: %s planted \"%s\"\n",
+		            params,
+		            ent->parent ? ent->parent->track : ent->track);
+	}
+	else if (!Q_stricmp(eventStr, "destroyed"))
+	{
+		Bot_Util_SendTrigger(ent, NULL,
+		                     va("%s Destroyed.", ent->parent ? ent->parent->track : ent->track),
+		                     eventStr);
+	}
+	else if (!Q_stricmp(eventStr, "exploded"))
+	{
+		Bot_Util_SendTrigger(ent, NULL,
+		                     va("Explode_%s Exploded.", _GetEntityName(ent)), eventStr);
+	}
+#endif
 }
 
 /*
@@ -959,7 +946,7 @@ qboolean G_Script_ScriptRun(gentity_t *ent)
 		ent->scriptStatus.scriptEventIndex = -1;
 		return qtrue;
 	}
-	//
+
 	// show debugging info
 	if (g_scriptDebug.integer && ent->scriptStatus.scriptStackChangeTime == level.time)
 	{
@@ -968,7 +955,7 @@ qboolean G_Script_ScriptRun(gentity_t *ent)
 			G_Printf("%i : (%s) GScript command: %s %s\n", level.time, ent->scriptName, stack->items[ent->scriptStatus.scriptStackHead].action->actionString, (stack->items[ent->scriptStatus.scriptStackHead].params ? stack->items[ent->scriptStatus.scriptStackHead].params : ""));
 		}
 	}
-	//
+
 	while (ent->scriptStatus.scriptStackHead < stack->numItems)
 	{
 		oldScriptId = ent->scriptStatus.scriptId;
@@ -977,7 +964,7 @@ qboolean G_Script_ScriptRun(gentity_t *ent)
 			ent->scriptStatus.scriptFlags &= ~SCFL_FIRST_CALL;
 			return qfalse;
 		}
-		//if the scriptId changed, a new event was triggered in our scripts which did not finish
+		// if the scriptId changed, a new event was triggered in our scripts which did not finish
 		if (oldScriptId != ent->scriptStatus.scriptId)
 		{
 			return qfalse;
@@ -1019,7 +1006,7 @@ void mountedmg42_fire(gentity_t *other)
 
 	AngleVectors(other->client->ps.viewangles, forward, right, up);
 	VectorCopy(other->s.pos.trBase, muzzle);
-//  VectorMA( muzzle, 42, up, muzzle );
+	//VectorMA( muzzle, 42, up, muzzle );
 	muzzle[2] += other->client->ps.viewheight;
 	VectorMA(muzzle, 58, forward, muzzle);
 
@@ -1037,13 +1024,8 @@ void mountedmg42_fire(gentity_t *other)
 
 void script_linkentity(gentity_t *ent)
 {
-
 	// this is required since non-solid brushes need to be linked but not solid
 	trap_LinkEntity(ent);
-
-//  if ((ent->s.eType == ET_MOVER) && !(ent->spawnflags & 2)) {
-//      ent->s.solid = 0;
-//  }
 }
 
 void script_mover_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
@@ -1096,7 +1078,6 @@ void script_mover_think(gentity_t *ent)
 
 	ent->nextthink = level.time + 100;
 }
-
 
 void script_mover_spawn(gentity_t *ent)
 {
@@ -1167,14 +1148,12 @@ void script_mover_blocked(gentity_t *ent, gentity_t *other)
 	// remove it, we must not stop for anything or it will screw up script timing
 	if (!other->client && other->s.eType != ET_CORPSE)
 	{
-		// /me slaps nerve
 		// except CTF flags!!!!
 		if (other->s.eType == ET_ITEM && other->item->giType == IT_TEAM)
 		{
 			Team_DroppedFlagThink(other);
 			return;
 		}
-		G_TempEntity(other->s.origin, EV_ITEM_POP);
 		G_FreeEntity(other);
 		return;
 	}
@@ -1200,14 +1179,10 @@ Scripted brush entity. A simplified means of moving brushes around based on even
 */
 void SP_script_mover(gentity_t *ent)
 {
-
 	float  scale[3] = { 1, 1, 1 };
 	vec3_t scalevec;
 	char   tagname[MAX_QPATH];
 	char   *modelname;
-	char   *tagent;
-	char   cs[MAX_INFO_STRING];
-	char   *s;
 
 	if (!ent->model)
 	{
@@ -1223,7 +1198,7 @@ void SP_script_mover(gentity_t *ent)
 	// first position at start
 	VectorCopy(ent->s.origin, ent->pos1);
 
-//  VectorCopy( ent->r.currentOrigin, ent->pos1 );
+	//VectorCopy( ent->r.currentOrigin, ent->pos1 );
 	VectorCopy(ent->pos1, ent->pos2);   // don't go anywhere just yet
 
 	trap_SetBrushModel(ent, ent->model);
@@ -1278,6 +1253,9 @@ void SP_script_mover(gentity_t *ent)
 	G_SpawnInt("health", "0", &ent->health);
 	if (ent->health)
 	{
+		char cs[MAX_INFO_STRING];
+		char *s;
+
 		ent->takedamage = qtrue;
 		ent->count      = ent->health;
 
@@ -1312,9 +1290,9 @@ void SP_script_mover(gentity_t *ent)
 
 		ent->tagNumber = trap_LoadTag(tagname);
 
-		/*      if( !(ent->tagNumber = trap_LoadTag( tagname )) ) {
-		            Com_Error( ERR_DROP, "Failed to load Tag File (%s)\n", tagname );
-		        }*/
+		//if( !(ent->tagNumber = trap_LoadTag( tagname )) ) {
+		//  Com_Error( ERR_DROP, "Failed to load Tag File (%s)", tagname );
+		//}
 	}
 
 	// look for axis specific scaling
@@ -1332,6 +1310,8 @@ void SP_script_mover(gentity_t *ent)
 
 	if (ent->spawnflags & 128)
 	{
+		char *tagent;
+
 		ent->s.density |= 4;
 		ent->waterlevel = 0;
 
@@ -1445,7 +1425,7 @@ void SP_script_camera(gentity_t *ent)
 
   This is used to script multiplayer maps.  Entity not displayed in game.
 
-// Gordon: also storing some stuff that will change often but needs to be broadcast, so we dont want to use a configstring
+// also storing some stuff that will change often but needs to be broadcast, so we dont want to use a configstring
 
 "scriptname" name used for scripting purposes (REQUIRED)
 */
@@ -1453,18 +1433,17 @@ void SP_script_multiplayer(gentity_t *ent)
 {
 	ent->scriptName = "game_manager";
 
-	// Gordon: broadcasting this to clients now, should be cheaper in bandwidth for sending landmine info
+	// broadcasting this to clients now, should be cheaper in bandwidth for sending landmine info
 	ent->s.eType   = ET_GAMEMANAGER;
 	ent->r.svFlags = SVF_BROADCAST;
 
 	if (level.gameManager)
 	{
-		// Gordon: ok, making this an error now
 		G_Error("^1ERROR: multiple script_multiplayers found^7\n");
 	}
 	level.gameManager                    = ent;
-	level.gameManager->s.otherEntityNum  = MAX_TEAM_LANDMINES;  // axis landmine count
-	level.gameManager->s.otherEntityNum2 = MAX_TEAM_LANDMINES;  // allies landmine count
+	level.gameManager->s.otherEntityNum  = g_maxTeamLandmines.integer;  // axis landmine count
+	level.gameManager->s.otherEntityNum2 = g_maxTeamLandmines.integer;  // allies landmine count
 	level.gameManager->s.modelindex      = qfalse; // axis HQ doesn't exist
 	level.gameManager->s.modelindex2     = qfalse; // allied HQ doesn't exist
 

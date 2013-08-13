@@ -39,6 +39,7 @@
  * srfGridMesh_t *R_SubdividePatchToGrid( int width, int height,
  *      drawVert_t points[MAX_PATCH_SIZE*MAX_PATCH_SIZE] ) {
  */
+
 #include "tr_local.h"
 
 /*
@@ -116,17 +117,11 @@ static void Transpose(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX_
 			}
 		}
 	}
-
 }
 
-
-/*
-=================
-MakeMeshNormals
-
-Handles all the complicated wrapping and degenerate cases
-=================
-*/
+/**
+ * @brief Handles all the complicated wrapping and degenerate cases
+ */
 static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE])
 {
 	int        i, j, k, dist;
@@ -138,14 +133,13 @@ static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE
 	drawVert_t *dv;
 	vec3_t     around[8], temp;
 	qboolean   good[8];
-	qboolean   wrapWidth, wrapHeight;
+	qboolean   wrapWidth = qfalse, wrapHeight = qfalse;
 	float      len;
 	static int neighbors[8][2] =
 	{
 		{ 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, -1 }, { -1, 0 }, { -1, 1 }
 	};
 
-	wrapWidth = qfalse;
 	for (i = 0 ; i < height ; i++)
 	{
 		VectorSubtract(ctrl[i][0].xyz, ctrl[i][width - 1].xyz, delta);
@@ -160,7 +154,6 @@ static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE
 		wrapWidth = qtrue;
 	}
 
-	wrapHeight = qfalse;
 	for (i = 0 ; i < width ; i++)
 	{
 		VectorSubtract(ctrl[0][i].xyz, ctrl[height - 1][i].xyz, delta);
@@ -174,7 +167,6 @@ static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE
 	{
 		wrapHeight = qtrue;
 	}
-
 
 	for (i = 0 ; i < width ; i++)
 	{
@@ -272,7 +264,6 @@ static void InvertCtrl(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX
 	}
 }
 
-
 /*
 =================
 InvertErrorTable
@@ -294,7 +285,6 @@ static void InvertErrorTable(float errorTable[2][MAX_GRID_SIZE], int width, int 
 	{
 		errorTable[0][i] = copy[1][height - 1 - i];
 	}
-
 }
 
 /*
@@ -329,7 +319,6 @@ static void PutPointsOnCurve(drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE],
 		}
 	}
 }
-
 
 /*
 =================
@@ -389,7 +378,7 @@ srfGridMesh_t *R_CreateSurfaceGridMesh(int width, int height,
 
 	VectorCopy(grid->origin, grid->lodOrigin);
 	grid->lodRadius = grid->radius;
-	//
+
 	return grid;
 }
 
@@ -431,7 +420,6 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 
 	for (dir = 0 ; dir < 2 ; dir++)
 	{
-
 		for (j = 0 ; j < MAX_GRID_SIZE ; j++)
 		{
 			errorTable[dir][j] = 0;
@@ -530,7 +518,6 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 		height = t;
 	}
 
-
 	// put all the aproximating points on the curve
 	PutPointsOnCurve(ctrl, width, height);
 
@@ -569,7 +556,6 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 		height--;
 	}
 
-#if 1
 	// flip for longest tristrips as an optimization
 	// the results should be visually identical with or
 	// without this step
@@ -582,7 +568,6 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 		height = t;
 		InvertCtrl(width, height, ctrl);
 	}
-#endif
 
 	// calculate normals
 	MakeMeshNormals(width, height, ctrl);
@@ -598,14 +583,12 @@ R_GridInsertColumn
 srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3_t point, float loderror)
 {
 	int                   i, j;
-	int                   width, height, oldwidth;
+	int                   width = grid->width + 1, height, oldwidth = 0;
 	MAC_STATIC drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
 	float                 errorTable[2][MAX_GRID_SIZE];
 	float                 lodRadius;
 	vec3_t                lodOrigin;
 
-	oldwidth = 0;
-	width    = grid->width + 1;
 	if (width > MAX_GRID_SIZE)
 	{
 		return NULL;
@@ -662,15 +645,12 @@ R_GridInsertRow
 srfGridMesh_t *R_GridInsertRow(srfGridMesh_t *grid, int row, int column, vec3_t point, float loderror)
 {
 	int                   i, j;
-	int                   width, height, oldheight;
+	int                   width = grid->width, height = grid->height + 1, oldheight = 0;
 	MAC_STATIC drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
 	float                 errorTable[2][MAX_GRID_SIZE];
 	float                 lodRadius;
 	vec3_t                lodOrigin;
 
-	oldheight = 0;
-	width     = grid->width;
-	height    = grid->height + 1;
 	if (height > MAX_GRID_SIZE)
 	{
 		return NULL;

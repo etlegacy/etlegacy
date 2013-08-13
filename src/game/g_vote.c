@@ -35,8 +35,6 @@
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h" // For vote options
 
-
-
 #define T_FFA   0x01
 #define T_1V1   0x02
 #define T_SP    0x04
@@ -47,7 +45,6 @@
 #define T_WCP   0x80
 #define T_WCH   0x100
 
-
 static const char *ACTIVATED   = "ACTIVATED";
 static const char *DEACTIVATED = "DEACTIVATED";
 static const char *ENABLED     = "ENABLED";
@@ -55,20 +52,19 @@ static const char *DISABLED    = "DISABLED";
 
 static const char *gameNames[] =
 {
-	"Single Player",
-	"Cooperative",
+	"Single Player",    // Obsolete
+	"Cooperative",      // Obsolete
 	"Objective",
 	"Stopwatch",
 	"Campaign",
-	"Last Man Standing"
+	"Last Man Standing",
+	"Map Voting"        // GT_WOLF_MAPVOTE
+	// GT_MAX_GAME_TYPE
 };
 
-
-//
 // Update info:
 //  1. Add line to aVoteInfo w/appropriate info
 //  2. Add implementation for attempt and success (see an existing command for an example)
-//
 typedef struct
 {
 	unsigned int dwGameTypes;
@@ -106,7 +102,6 @@ static const vote_reference_t aVoteInfo[] =
 	{ 0,     0,                NULL,              0 }
 };
 
-
 // Checks for valid custom callvote requests from the client.
 int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -135,13 +130,11 @@ int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd)
 	return(G_NOTFOUND);
 }
 
-
 // Voting help summary.
 void G_voteHelp(gentity_t *ent, qboolean fShowVote)
 {
 	int i, rows = 0, num_cmds = sizeof(aVoteInfo) / sizeof(aVoteInfo[0]) - 1;     // Remove terminator;
 	int vi[100];            // Just make it large static.
-
 
 	if (fShowVote)
 	{
@@ -229,7 +222,7 @@ qboolean G_voteDescription(gentity_t *ent, qboolean fRefereeCmd, int cmd)
 
 	if (!ent)
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	trap_Argv(2, arg, sizeof(arg));
@@ -237,19 +230,17 @@ qboolean G_voteDescription(gentity_t *ent, qboolean fRefereeCmd, int cmd)
 	{
 		trap_Argv(1, arg, sizeof(arg));
 		G_refPrintf(ent, "\nUsage: ^3%s %s%s\n", ref_cmd, arg, aVoteInfo[cmd].pszVoteHelp);
-		return(qtrue);
+		return qtrue;
 	}
 
-	return(qfalse);
+	return qfalse;
 }
-
 
 // Localize disable message info.
 void G_voteDisableMessage(gentity_t *ent, const char *cmd)
 {
 	G_refPrintf(ent, "Sorry, [lof]^3%s^7 [lon]voting has been disabled", cmd);
 }
-
 
 // Player ID message stub.
 void G_playersMessage(gentity_t *ent)
@@ -263,7 +254,6 @@ void G_voteCurrentSetting(gentity_t *ent, const char *cmd, const char *setting)
 {
 	G_refPrintf(ent, "^2%s^7 is currently ^3%s\n", cmd, setting);
 }
-
 
 // Vote toggling
 int G_voteProcessOnOff(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd, int curr_setting, int vote_allow, int vote_type)
@@ -292,10 +282,10 @@ int G_voteProcessOnOff(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeC
 	return(G_OK);
 }
 
-
 //
 // Several commands to help with cvar setting
 //
+
 void G_voteSetOnOff(const char *desc, const char *cvar)
 {
 	AP(va("cpm \"^3%s is: ^5%s\n\"", desc, (atoi(level.voteInfo.vote_value)) ? ENABLED : DISABLED));
@@ -316,19 +306,9 @@ void G_voteSetVoteString(const char *desc)
 	trap_SendConsoleCommand(EXEC_APPEND, va("%s\n", level.voteInfo.voteString));
 }
 
-
-
-
-
-
 ////////////////////////////////////////////////////////
-//
 // Actual vote command implementation
-//
 ////////////////////////////////////////////////////////
-
-
-
 
 // *** Load competition settings for current mode ***
 int G_Comp_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -358,7 +338,6 @@ int G_Comp_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 
 	return(G_OK);
 }
-
 
 void G_GametypeList(gentity_t *ent)
 {
@@ -426,7 +405,6 @@ int G_Gametype_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2
 
 	return(G_OK);
 }
-
 
 // *** Player Kick ***
 int G_Kick_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -613,6 +591,7 @@ int G_Map_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qbo
 	if (arg)
 	{
 		char serverinfo[MAX_INFO_STRING];
+
 		trap_GetServerinfo(serverinfo, sizeof(serverinfo));
 
 		if (!vote_allow_map.integer && ent && !ent->client->sess.referee)
@@ -658,6 +637,7 @@ int G_Campaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2
 	if (arg)
 	{
 		char serverinfo[MAX_INFO_STRING];
+
 		trap_GetServerinfo(serverinfo, sizeof(serverinfo));
 
 		if (!vote_allow_map.integer && ent && !ent->client->sess.referee)
@@ -720,7 +700,6 @@ int G_MapRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 	return(G_OK);
 }
 
-
 // *** Match Restart ***
 int G_MatchReset_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -735,11 +714,6 @@ int G_MatchReset_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 		else if (trap_Argc() != 2 && G_voteDescription(ent, fRefereeCmd, dwVoteIndex))
 		{
 			return(G_INVALID);
-//      } else if(trap_Argc() > 2) {
-//          if(!Q_stricmp(arg2, "?")) {
-//              G_refPrintf(ent, "Usage: ^3%s %s%s\n", ((fRefereeCmd) ? "\\ref" : "\\callvote"), arg, aVoteInfo[dwVoteIndex].pszVoteHelp);
-//              return(G_INVALID);
-//          }
 		}
 
 		// Vote action (vote has passed)
@@ -753,7 +727,6 @@ int G_MatchReset_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 
 	return(G_OK);
 }
-
 
 // *** Mute Spectators ***
 int G_Mutespecs_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -777,7 +750,6 @@ int G_Mutespecs_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 	return(G_OK);
 }
 
-
 // *** Nextmap ***
 int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -797,6 +769,7 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 		else
 		{
 			char s[MAX_STRING_CHARS];
+
 			if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 			{
 				trap_Cvar_VariableStringBuffer("nextcampaign", s, sizeof(s));
@@ -827,6 +800,28 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 			trap_SendConsoleCommand(EXEC_APPEND, "vstr nextcampaign\n");
 			AP("cp \"^3*** Loading nextcampaign! ***\n\"");
 		}
+		else if (g_gametype.integer == GT_WOLF_MAPVOTE)
+		{
+			if (g_gamestate.integer == GS_PLAYING     // don't do in intermission (check warmup/warmup-countdown
+			    && g_mapVoteFlags.integer & MAPVOTE_NEXTMAP_VOTEMAP)
+			{
+				// Don't do this. This is awkward, since it is not done at
+				// !nextmap nor nextcampaignvotes. Besides we don't want to store
+				// mapstats of an unfinished map or spend resources at generating
+				// playerstats
+				// LogExit( "Nextmap vote passed" );
+				// - There is a flag for so let the users decide
+				//   Some log parsers require LogExit
+				AP("chat \"^3*** Nextmap vote passed - vote a new map! ***\"");
+				G_LogExit("Nextmap vote passed");
+			}
+			else
+			{
+				AP("cp \"^3*** Loading nextmap! ***\n\"");
+				// Load in the nextmap
+				trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+			}
+		}
 		else
 		{
 			// Load in the nextmap
@@ -837,7 +832,6 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 
 	return(G_OK);
 }
-
 
 // *** Load public settings for current mode ***
 int G_Pub_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -867,7 +861,6 @@ int G_Pub_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qbo
 
 	return(G_OK);
 }
-
 
 // *** Referee voting ***
 int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -938,7 +931,6 @@ int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 	return(G_OK);
 }
 
-
 // *** Shuffle teams
 int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -966,7 +958,6 @@ int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *
 
 	return(G_OK);
 }
-
 
 // *** Start Match ***
 int G_StartMatch_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -1012,7 +1003,6 @@ int G_StartMatch_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 	return(G_OK);
 }
 
-
 // *** Swap teams
 int G_SwapTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
@@ -1040,7 +1030,6 @@ int G_SwapTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 
 	return(G_OK);
 }
-
 
 // *** Team Damage ***
 int G_FriendlyFire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -1153,7 +1142,9 @@ void G_WarmupDamageTypeList(gentity_t *ent)
 
 	G_refPrintf(ent, "\nAvailable Warmup Damage types:\n------------------------------");
 	for (i = 0; i < (sizeof(warmupType) / sizeof(char *)); i++)
+	{
 		G_refPrintf(ent, "  %d ^3(%s)", i, warmupType[i]);
+	}
 	G_refPrintf(ent, "\n");
 }
 
@@ -1197,7 +1188,6 @@ int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 		Com_sprintf(level.voteInfo.vote_value, VOTE_MAXSTRING, "%s", arg2);
 		Com_sprintf(arg2, VOTE_MAXSTRING, "%s", warmupType[i]);
 
-
 		// Vote action (vote has passed)
 	}
 	else
@@ -1209,7 +1199,6 @@ int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 
 	return(G_OK);
 }
-
 
 // *** Un-Referee voting ***
 int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
@@ -1279,3 +1268,152 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 
 	return(G_OK);
 }
+
+// MAPVOTE
+void G_IntermissionMapVote(gentity_t *ent)
+{
+	char arg[MAX_TOKEN_CHARS];
+
+	if (g_gametype.integer != GT_WOLF_MAPVOTE)
+	{
+		CP(va("print \"^3Map voting not enabled!\n\""));
+		return;
+	}
+
+	if (g_gamestate.integer != GS_INTERMISSION)
+	{
+		CP(va("print \"^3Can't vote until intermission\n\""));
+		return;
+	}
+
+	if (!level.intermissiontime)
+	{
+		CP(va("print \"^3You can only vote during intermission\n\""));
+		return;
+	}
+
+	trap_Argv(1, arg, sizeof(arg));
+	// normal one-map vote
+	if (trap_Argc() == 2)
+	{
+		if (ent->client->ps.eFlags & EF_VOTED)
+		{
+			level.mapvoteinfo[ent->client->sess.mapVotedFor[0]].numVotes--;
+			level.mapvoteinfo[ent->client->sess.mapVotedFor[0]].totalVotes--;
+		}
+		ent->client->ps.eFlags |= EF_VOTED;
+		level.mapvoteinfo[atoi(arg)].numVotes++;
+		level.mapvoteinfo[atoi(arg)].totalVotes++;
+		ent->client->sess.mapVotedFor[0] = atoi(arg);
+	}
+	else if (trap_Argc() == 3)
+	{
+		char arg2[MAX_TOKEN_CHARS];
+		int  voteRank = 0, i;
+
+		trap_Argv(2, arg2, sizeof(arg2));
+		voteRank = atoi(arg2);
+		if (voteRank < 1 || voteRank > 3)
+		{
+			return;
+		}
+
+		for (i = 0; i < 3; i++)
+		{
+			if (voteRank - 1 == i)
+			{
+				continue;
+			}
+			if (ent->client->sess.mapVotedFor[i] == atoi(arg))
+			{
+				CP(va("print \"^3Can't vote for the same map twice\n\""));
+				return;
+			}
+		}
+		if (ent->client->sess.mapVotedFor[voteRank - 1] != -1)
+		{
+			level.mapvoteinfo[ent->client->sess.mapVotedFor[voteRank - 1]].numVotes   -= voteRank;
+			level.mapvoteinfo[ent->client->sess.mapVotedFor[voteRank - 1]].totalVotes -= voteRank;
+		}
+		level.mapvoteinfo[atoi(arg)].numVotes      += voteRank;
+		level.mapvoteinfo[atoi(arg)].totalVotes    += voteRank;
+		ent->client->sess.mapVotedFor[voteRank - 1] = atoi(arg);
+		ent->client->ps.eFlags                     |= EF_VOTED;
+	}
+
+	// Someone has voted. Send the votetally to all ...
+	// Doing it now, so there is no need for players to keep polling for this.
+	G_IntermissionVoteTally(NULL);
+}
+
+void G_IntermissionMapList(gentity_t *ent)
+{
+	int  i;
+	char mapList[MAX_STRING_CHARS];
+	int  maxMaps;
+
+	if (g_gametype.integer != GT_WOLF_MAPVOTE || !level.intermissiontime)
+	{
+		return;
+	}
+
+	maxMaps = g_maxMapsVotedFor.integer;
+	if (maxMaps > level.mapVoteNumMaps)
+	{
+		maxMaps = level.mapVoteNumMaps;
+	}
+
+	Q_strncpyz(mapList, va("immaplist %d ", (g_mapVoteFlags.integer & MAPVOTE_MULTI_VOTE)), MAX_STRING_CHARS);
+
+	for (i = 0; i < maxMaps; i++)
+	{
+		Q_strcat(mapList, MAX_STRING_CHARS,
+		         va("%s %d %d %d ",
+		            level.mapvoteinfo[level.sortedMaps[i]].bspName,
+		            level.sortedMaps[i],
+		            level.mapvoteinfo[level.sortedMaps[i]].lastPlayed,
+		            level.mapvoteinfo[level.sortedMaps[i]].totalVotes));
+	}
+
+	trap_SendServerCommand(ent - g_entities, mapList);
+	return;
+}
+
+void G_IntermissionVoteTally(gentity_t *ent)
+{
+	int  i;
+	char voteTally[MAX_STRING_CHARS];
+	int  maxMaps;
+
+	if (g_gametype.integer != GT_WOLF_MAPVOTE || !level.intermissiontime)
+	{
+		return;
+	}
+
+	maxMaps = g_maxMapsVotedFor.integer;
+	if (maxMaps > level.mapVoteNumMaps)
+	{
+		maxMaps = level.mapVoteNumMaps;
+	}
+
+	Q_strncpyz(voteTally, "imvotetally ", MAX_STRING_CHARS);
+	for (i = 0; i < maxMaps; i++)
+	{
+		Q_strcat(voteTally, MAX_STRING_CHARS, va("%d ", level.mapvoteinfo[level.sortedMaps[i]].numVotes));
+	}
+
+	// when argument "ent" == NULL, the votetally should be send to all players..
+	if (ent)
+	{
+		trap_SendServerCommand(ent - g_entities, voteTally);
+	}
+	else
+	{
+		for (i = 0; i < level.numConnectedClients; ++i)
+		{
+			trap_SendServerCommand(level.sortedClients[i], voteTally);
+		}
+	}
+	return;
+}
+// MAPVOTE END

@@ -1,6 +1,8 @@
-/build/
-/obj/
+/build
+/obj
+/doc
 *.sh
+!easybuild.sh
 *.kdev4
 *~
 /Makefile

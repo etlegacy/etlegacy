@@ -45,8 +45,8 @@ int  vm_debugLevel;
 #define MAX_VM      3
 vm_t vmTable[MAX_VM];
 
-void            VM_VmInfo_f(void);
-void            VM_VmProfile_f(void);
+void VM_VmInfo_f(void);
+void VM_VmProfile_f(void);
 
 // converts a VM pointer to a C pointer and
 // checks to make sure that the range is acceptable
@@ -62,26 +62,20 @@ void VM_Debug(int level)
 
 void VM_Init(void)
 {
-	Cvar_Get("vm_cgame", "0", CVAR_ARCHIVE);
-	Cvar_Get("vm_game", "0", CVAR_ARCHIVE);
-	Cvar_Get("vm_ui", "0", CVAR_ARCHIVE);
-
-	Cmd_AddCommand("vmprofile", VM_VmProfile_f);
+	Cmd_AddCommand("vmprofile", VM_VmProfile_f); // FIXME: doesn't print anything with +set developer 1
 	Cmd_AddCommand("vminfo", VM_VmInfo_f);
 
 	Com_Memset(vmTable, 0, sizeof(vmTable));
 }
-
 
 /*
  * Assumes a program counter value
  */
 const char *VM_ValueToSymbol(vm_t *vm, int value)
 {
-	vmSymbol_t  *sym;
+	vmSymbol_t  *sym = vm->symbols;
 	static char text[MAX_TOKEN_CHARS];
 
-	sym = vm->symbols;
 	if (!sym)
 	{
 		return "NO SYMBOLS";
@@ -108,10 +102,9 @@ const char *VM_ValueToSymbol(vm_t *vm, int value)
  */
 vmSymbol_t *VM_ValueToFunctionSymbol(vm_t *vm, int value)
 {
-	vmSymbol_t        *sym;
+	vmSymbol_t        *sym = vm->symbols;
 	static vmSymbol_t nullSym;
 
-	sym = vm->symbols;
 	if (!sym)
 	{
 		return &nullSym;
@@ -139,39 +132,11 @@ int VM_SymbolToValue(vm_t *vm, const char *symbol)
 	return 0;
 }
 
-const char *VM_SymbolForCompiledPointer(vm_t *vm, void *code)
-{
-	int i;
-
-	if (code < (void *)vm->codeBase)
-	{
-		return "Before code block";
-	}
-	if (code >= (void *)(vm->codeBase + vm->codeLength))
-	{
-		return "After code block";
-	}
-
-	// find which original instruction it is after
-	for (i = 0; i < vm->codeLength; i++)
-	{
-		if ((void *)vm->instructionPointers[i] > code)
-		{
-			break;
-		}
-	}
-	i--;
-
-	// now look up the bytecode instruction pointer
-	return VM_ValueToSymbol(vm, i);
-}
-
 int ParseHex(const char *text)
 {
-	int value;
+	int value = 0;
 	int c;
 
-	value = 0;
 	while ((c = *text++) != 0)
 	{
 		if (c >= '0' && c <= '9')
@@ -194,6 +159,9 @@ int ParseHex(const char *text)
 	return value;
 }
 
+/*
+ * @brief unused
+ */
 void VM_LoadSymbols(vm_t *vm)
 {
 	union
@@ -325,7 +293,7 @@ Dlls will call this directly
 */
 intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 {
-#if defined(__x86_64__) || ((defined __linux__) && (defined __powerpc__))           //|| (defined MACOS_X)
+#if defined(__x86_64__) || defined (__llvm__) || ((defined __linux__) && (defined __powerpc__))
 	// rcg010206 - see commentary above
 	intptr_t args[16];
 	int      i;
@@ -377,7 +345,7 @@ vm_t *VM_Restart(vm_t *vm)
 	FS_ReadFile(filename, (void **)&header);
 	if (!header)
 	{
-		Com_Error(ERR_DROP, "VM_Restart failed.\n");
+		Com_Error(ERR_DROP, "VM_Restart: restart failed.");
 	}
 
 	// byte swap the header
@@ -391,7 +359,7 @@ vm_t *VM_Restart(vm_t *vm)
 	    || header->bssLength < 0 || header->dataLength < 0 || header->litLength < 0 || header->codeLength <= 0)
 	{
 		VM_Free(vm);
-		Com_Error(ERR_FATAL, "%s has bad header\n", filename);
+		Com_Error(ERR_FATAL, "VM_Restart: %s has bad header", filename);
 	}
 
 	// round up to next power of 2 so all data operations can
@@ -433,7 +401,7 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 
 	if (!module || !module[0] || !systemCalls)
 	{
-		Com_Error(ERR_FATAL, "VM_Create: bad parms\n");
+		Com_Error(ERR_FATAL, "VM_Create: bad parms");
 	}
 
 	// see if we already have the VM
@@ -457,7 +425,7 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 
 	if (i == MAX_VM)
 	{
-		Com_Error(ERR_FATAL, "VM_Create: no free vm_t\n");
+		Com_Error(ERR_FATAL, "VM_Create: no free vm_t");
 	}
 
 	vm = &vmTable[i];
@@ -468,8 +436,9 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 	if (interpret == VMI_NATIVE)
 	{
 		// try to load as a system dll
-		vm->dllHandle = Sys_LoadDll(module, vm->fqpath, &vm->entryPoint, VM_DllSyscall);
-		// TTimo - never try qvm
+		vm->dllHandle = Sys_LoadGameDll(module, &vm->entryPoint, VM_DllSyscall);
+
+		// never try qvm
 		if (vm->dllHandle)
 		{
 			return vm;
@@ -500,7 +469,7 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 	    || header->bssLength < 0 || header->dataLength < 0 || header->litLength < 0 || header->codeLength <= 0)
 	{
 		VM_Free(vm);
-		Com_Error(ERR_FATAL, "%s has bad header\n", filename);
+		Com_Error(ERR_FATAL, "%s has bad header", filename);
 	}
 
 	// round up to next power of 2 so all data operations can
@@ -562,7 +531,6 @@ vm_t *VM_Create(const char *module, intptr_t (*systemCalls)(intptr_t *), vmInter
 
 void VM_Free(vm_t *vm)
 {
-
 	if (vm->dllHandle)
 	{
 		Sys_UnloadDll(vm->dllHandle);
@@ -639,7 +607,6 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
 		return NULL;
 	}
 
-	//
 	if (vm->entryPoint)
 	{
 		return (void *)(vm->dataBase + intValue);
@@ -667,24 +634,14 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
  * An interpreted function will immediately execute an OP_ENTER instruction,
  * which will subtract space for locals from sp
  */
-#define MAX_STACK   256
-#define STACK_MASK  (MAX_STACK - 1)
-
 intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
 {
 	vm_t     *oldVM;
 	intptr_t r;
 
-	//rcg010207 see dissertation at top of VM_DllSyscall() in this file.
-#if ((defined __linux__) && (defined __powerpc__)) || (defined MACOS_X)
-	int     i;
-	int     args[16];
-	va_list ap;
-#endif
-
 	if (!vm)
 	{
-		Com_Error(ERR_FATAL, "VM_Call with NULL vm\n");
+		Com_Error(ERR_FATAL, "VM_Call: NULL vm");
 	}
 
 	oldVM     = currentVM;
@@ -699,7 +656,7 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
 	// if we have a dll loaded, call it directly
 	if (vm->entryPoint)
 	{
-		//rcg010207 -  see dissertation at top of VM_DllSyscall() in this file.
+		// rcg010207 -  see dissertation at top of VM_DllSyscall() in this file.
 		int     args[16];
 		va_list ap;
 		int     i;
@@ -727,7 +684,7 @@ intptr_t QDECL VM_Call(vm_t *vm, int callnum, ...)
 #else
 	else
 	{
-		Com_Error(ERR_FATAL, "VM_Call without entrypoint\n");
+		Com_Error(ERR_FATAL, "VM_Call: call without entrypoint");
 	}
 #endif
 
@@ -772,6 +729,7 @@ void VM_VmProfile_f(void)
 
 	if (!vm->numSymbols)
 	{
+		Com_Printf("VM symbols not available\n");
 		return;
 	}
 
@@ -851,18 +809,3 @@ void VM_LogSyscalls(int *args)
 	fprintf(f, "%i: %p (%i) = %i %i %i %i\n", callnum, (void *)(args - (int *)currentVM->dataBase),
 	        args[0], args[1], args[2], args[3], args[4]);
 }
-
-#if defined(__MACOS__)
-#define DLL_ONLY                //DAJ
-#endif
-
-#ifdef DLL_ONLY                 // bk010215 - for DLL_ONLY dedicated servers/builds w/o VM
-int VM_CallCompiled(vm_t *vm, int *args)
-{
-	return (0);
-}
-
-void VM_Compile(vm_t *vm, vmHeader_t *header)
-{
-}
-#endif                          // DLL_ONLY

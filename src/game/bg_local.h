@@ -31,6 +31,8 @@
  * @file bg_local.h
  * @brief local definitions for the bg (both games) files
  */
+#ifndef __BG_LOCAL_H__
+#define __BG_LOCAL_H__
 
 #define MIN_WALK_NORMAL 0.7     // can't walk on very steep slopes
 
@@ -66,7 +68,7 @@ typedef struct
 	vec3_t previous_velocity;
 	int previous_waterlevel;
 
-	// Ridah, ladders
+	// ladders
 	qboolean ladder;
 } pml_t;
 
@@ -75,9 +77,7 @@ extern pml_t   pml;
 
 // movement parameters
 extern float pm_stopspeed;
-//extern    float   pm_duckScale;
 
-//----(SA)  modified
 extern float pm_waterSwimScale;
 extern float pm_waterWadeScale;
 extern float pm_slagSwimScale;
@@ -94,17 +94,17 @@ extern float pm_waterfriction;
 extern float pm_slagfriction;
 extern float pm_flightfriction;
 
-//----(SA)  end
-
 extern int c_pmove;
 
 void PM_AddTouchEnt(int entityNum);
 void PM_AddEvent(int newEvent);
 
-qboolean    PM_SlideMove(qboolean gravity);
-void        PM_StepSlideMove(qboolean gravity);
+qboolean PM_SlideMove(qboolean gravity);
+void PM_StepSlideMove(qboolean gravity);
 
-qboolean    PM_SlideMoveProne(qboolean gravity);
-void        PM_StepSlideMoveProne(qboolean gravity);
+qboolean PM_SlideMoveProne(qboolean gravity);
+void PM_StepSlideMoveProne(qboolean gravity);
 
 void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload);
+
+#endif

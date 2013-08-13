@@ -227,7 +227,7 @@ void G_UpdateCharacter(gclient_t *client)
 				}
 			}
 
-			// RF, reset anims so client's dont freak out
+			// reset anims so client's dont freak out
 
 			// xkan: this can only be done if the model really changed - otherwise, the
 			// animation may get screwed up if we are in the middle of some animation

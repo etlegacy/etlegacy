@@ -31,14 +31,26 @@
  * @file sdl_gamma.c
  */
 
-#ifdef BUNDLED_LIBS
-#    include "SDL.h"
+
+#ifdef FEATURE_RENDERER2
+#include "../renderer2/tr_local.h"
 #else
-#    include <SDL2/SDL.h>
+#include "../renderer/tr_local.h"
 #endif
 
-#include "../renderer/tr_local.h"
 #include "../qcommon/qcommon.h"
+
+#ifdef BUNDLED_SDL
+#    include "SDL.h"
+//#    include "SDL_opengl.h"
+#else
+#    include <SDL2/SDL.h>
+//#    include <SDL/SDL_opengl.h>
+#endif
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 // @todo SDL 2.0 window pointer from sdl_glimp.c
 extern SDL_Window *screen;
@@ -55,6 +67,7 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 
 	if (!glConfig.deviceSupportsGamma || r_ignorehwgamma->integer > 0)
 	{
+		ri.Printf(PRINT_WARNING, "Device doesn't support gamma or r_ignorehwgamma is set.\n");
 		return;
 	}
 
@@ -66,7 +79,6 @@ void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned c
 	}
 
 #ifdef _WIN32
-#include <windows.h>
 
 	// Win2K and newer put this odd restriction on gamma ramps...
 	{

@@ -31,7 +31,7 @@
  * @file sys_loadlib.h
  */
 
-#ifdef DEDICATED
+#if defined (DEDICATED) || defined (__AROS__)
 #   ifdef _WIN32
 #       include <windows.h>
 #       define Sys_LoadLibrary(f)   (void *)LoadLibrary(f)
@@ -46,7 +46,7 @@
 #       define Sys_LibraryError()   dlerror()
 #   endif
 #else
-#   ifdef BUNDLED_LIBS
+#   ifdef BUNDLED_SDL
 #       include "SDL.h"
 #       include "SDL_loadso.h"
 #   else

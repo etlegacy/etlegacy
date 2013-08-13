@@ -38,7 +38,7 @@
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 
-#ifdef USE_OPENAL_DLOPEN
+#ifdef FEATURE_OPENAL_DLOPEN
 #define AL_NO_PROTOTYPES
 #define ALC_NO_PROTOTYPES
 #endif
@@ -47,12 +47,22 @@
 // MSVC users must install the OpenAL SDK which doesn't use the AL/*.h scheme.
   #include <al.h>
   #include <alc.h>
+#elif __APPLE__
+  #include <OpenAL/al.h>
+  #include <OpenAL/alc.h>
 #else
   #include <AL/al.h>
   #include <AL/alc.h>
 #endif
 
-#ifdef USE_OPENAL_DLOPEN
+/* Hack to enable compiling both on OpenAL SDK and OpenAL-soft. */
+#ifndef ALC_ENUMERATE_ALL_EXT
+#  define ALC_ENUMERATE_ALL_EXT 1
+#  define ALC_DEFAULT_ALL_DEVICES_SPECIFIER        0x1012
+#  define ALC_ALL_DEVICES_SPECIFIER                0x1013
+#endif
+
+#ifdef FEATURE_OPENAL_DLOPEN
 extern LPALENABLE               qalEnable;
 extern LPALDISABLE              qalDisable;
 extern LPALISENABLED            qalIsEnabled;

@@ -33,7 +33,6 @@
 
 #include "cm_local.h"
 
-
 /*
 ==================
 CM_PointLeafnum_r
@@ -83,21 +82,15 @@ int CM_PointLeafnum(const vec3_t p)
 	return CM_PointLeafnum_r(p, 0);
 }
 
-
 /*
 ======================================================================
-
 LEAF LISTING
-
 ======================================================================
 */
 
-
 void CM_StoreLeafs(leafList_t *ll, int nodenum)
 {
-	int leafNum;
-
-	leafNum = -1 - nodenum;
+	int leafNum = -1 - nodenum;
 
 	// store the lastLeaf even if the list is overflowed
 	if (cm.leafs[leafNum].cluster != -1)
@@ -116,14 +109,10 @@ void CM_StoreLeafs(leafList_t *ll, int nodenum)
 void CM_StoreBrushes(leafList_t *ll, int nodenum)
 {
 	int      i, k;
-	int      leafnum;
+	int      leafnum = -1 - nodenum;
 	int      brushnum;
-	cLeaf_t  *leaf;
+	cLeaf_t  *leaf = &cm.leafs[leafnum];
 	cbrush_t *b;
-
-	leafnum = -1 - nodenum;
-
-	leaf = &cm.leafs[leafnum];
 
 	for (k = 0 ; k < leaf->numLeafBrushes ; k++)
 	{
@@ -203,7 +192,6 @@ void CM_BoxLeafnums_r(leafList_t *ll, int nodenum)
 			CM_BoxLeafnums_r(ll, node->children[0]);
 			nodenum = node->children[1];
 		}
-
 	}
 }
 
@@ -258,14 +246,11 @@ int CM_BoxBrushes(const vec3_t mins, const vec3_t maxs, cbrush_t **list, int lis
 	return ll.count;
 }
 
-
 //====================================================================
-
 
 /*
 ==================
 CM_PointContents
-
 ==================
 */
 int CM_PointContents(const vec3_t p, clipHandle_t model)
@@ -333,8 +318,6 @@ rotating entities
 int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t origin, const vec3_t angles)
 {
 	vec3_t p_l;
-	vec3_t temp;
-	vec3_t forward, right, up;
 
 	// subtract origin offset
 	VectorSubtract(p, origin, p_l);
@@ -343,6 +326,8 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 	if (model != BOX_MODEL_HANDLE &&
 	    (angles[0] || angles[1] || angles[2]))
 	{
+		vec3_t temp, forward, right, up;
+
 		AngleVectors(angles, forward, right, up);
 
 		VectorCopy(p_l, temp);
@@ -354,13 +339,9 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 	return CM_PointContents(p_l, model);
 }
 
-
-
 /*
 ===============================================================================
-
 PVS
-
 ===============================================================================
 */
 
@@ -374,23 +355,17 @@ byte *CM_ClusterPVS(int cluster)
 	return cm.visibility + cluster * cm.clusterBytes;
 }
 
-
-
 /*
 ===============================================================================
-
 AREAPORTALS
-
 ===============================================================================
 */
 
 void CM_FloodArea_r(int areaNum, int floodnum)
 {
 	int     i;
-	cArea_t *area;
+	cArea_t *area = &cm.areas[areaNum];
 	int     *con;
-
-	area = &cm.areas[areaNum];
 
 	if (area->floodvalid == cm.floodvalid)
 	{
@@ -398,7 +373,7 @@ void CM_FloodArea_r(int areaNum, int floodnum)
 		{
 			return;
 		}
-		Com_Error(ERR_DROP, "FloodArea_r: reflooded\n");
+		Com_Error(ERR_DROP, "CM_FloodArea_r: reflooded");
 	}
 
 	area->floodnum   = floodnum;
@@ -416,20 +391,17 @@ void CM_FloodArea_r(int areaNum, int floodnum)
 /*
 ====================
 CM_FloodAreaConnections
-
 ====================
 */
-void    CM_FloodAreaConnections(void)
+void CM_FloodAreaConnections(void)
 {
 	int     i;
-	cArea_t *area;
-	int     floodnum;
+	cArea_t *area    = cm.areas; // optimization
+	int     floodnum = 0;
 
 	// all current floods are now invalid
 	cm.floodvalid++;
-	floodnum = 0;
 
-	area = cm.areas;    // Ridah, optimization
 	for (i = 0 ; i < cm.numAreas ; i++, area++)
 	{
 		if (area->floodvalid == cm.floodvalid)
@@ -439,16 +411,14 @@ void    CM_FloodAreaConnections(void)
 		floodnum++;
 		CM_FloodArea_r(i, floodnum);
 	}
-
 }
 
 /*
 ====================
 CM_AdjustAreaPortalState
-
 ====================
 */
-void    CM_AdjustAreaPortalState(int area1, int area2, qboolean open)
+void CM_AdjustAreaPortalState(int area1, int area2, qboolean open)
 {
 	if (area1 < 0 || area2 < 0)
 	{
@@ -457,7 +427,7 @@ void    CM_AdjustAreaPortalState(int area1, int area2, qboolean open)
 
 	if (area1 >= cm.numAreas || area2 >= cm.numAreas)
 	{
-		Com_Error(ERR_DROP, "CM_ChangeAreaPortalState: bad area number\n");
+		Com_Error(ERR_DROP, "CM_ChangeAreaPortalState: bad area number");
 	}
 
 	if (open)
@@ -471,7 +441,7 @@ void    CM_AdjustAreaPortalState(int area1, int area2, qboolean open)
 		cm.areaPortals[area2 * cm.numAreas + area1]--;
 		if (cm.areaPortals[area2 * cm.numAreas + area1] < 0)
 		{
-			Com_Error(ERR_DROP, "CM_AdjustAreaPortalState: negative reference count\n");
+			Com_Error(ERR_DROP, "CM_AdjustAreaPortalState: negative reference count");
 		}
 	}
 
@@ -481,10 +451,9 @@ void    CM_AdjustAreaPortalState(int area1, int area2, qboolean open)
 /*
 ====================
 CM_AreasConnected
-
 ====================
 */
-qboolean    CM_AreasConnected(int area1, int area2)
+qboolean CM_AreasConnected(int area1, int area2)
 {
 	if (cm_noAreas->integer)
 	{
@@ -498,7 +467,7 @@ qboolean    CM_AreasConnected(int area1, int area2)
 
 	if (area1 >= cm.numAreas || area2 >= cm.numAreas)
 	{
-		Com_Error(ERR_DROP, "area >= cm.numAreas\n");
+		Com_Error(ERR_DROP, "CM_AreasConnected: area >= cm.numAreas");
 	}
 
 	if (cm.areas[area1].floodnum == cm.areas[area2].floodnum)
@@ -507,7 +476,6 @@ qboolean    CM_AreasConnected(int area1, int area2)
 	}
 	return qfalse;
 }
-
 
 /*
 =================
@@ -525,11 +493,7 @@ This is used to cull non-visible entities from snapshots
 */
 int CM_WriteAreaBits(byte *buffer, int area)
 {
-	int i;
-	int floodnum;
-	int bytes;
-
-	bytes = (cm.numAreas + 7) >> 3;
+	int bytes = (cm.numAreas + 7) >> 3;
 
 	if (cm_noAreas->integer || area == -1) // for debugging, send everything
 	{
@@ -537,7 +501,9 @@ int CM_WriteAreaBits(byte *buffer, int area)
 	}
 	else
 	{
-		floodnum = cm.areas[area].floodnum;
+		int i;
+		int floodnum = cm.areas[area].floodnum;
+
 		for (i = 0 ; i < cm.numAreas ; i++)
 		{
 			if (cm.areas[i].floodnum == floodnum || area == -1)

@@ -32,29 +32,8 @@
  * @brief pre compiler
  */
 
-//Notes:            fix: PC_StringizeTokens
+// Notes:            FIXME: PC_StringizeTokens ?!
 
-//#define SCREWUP
-//#define BOTLIB
-//#define QUAKE
-//#define QUAKEC
-//#define MEQCC
-
-#ifdef SCREWUP
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <string.h>
-#include <stdarg.h>
-#include <time.h>
-#include "l_memory.h"
-#include "l_script.h"
-#include "l_precomp.h"
-
-typedef enum { qfalse, qtrue }    qboolean;
-#endif //SCREWUP
-
-#ifdef BOTLIB
 #include "../qcommon/q_shared.h"
 #include "../botlib/botlib.h"
 #include "be_interface.h"
@@ -62,24 +41,6 @@ typedef enum { qfalse, qtrue }    qboolean;
 #include "l_script.h"
 #include "l_precomp.h"
 #include "l_log.h"
-#endif //BOTLIB
-
-#ifdef MEQCC
-#include "qcc.h"
-#include "time.h"   //time & ctime
-#include "math.h"   //fabs
-#include "l_memory.h"
-#include "l_script.h"
-#include "l_precomp.h"
-#include "l_log.h"
-
-#define qtrue   true
-#define qfalse  false
-#endif //MEQCC
-
-#if defined(QUAKE)
-#include "l_utils.h"
-#endif //QUAKE
 
 //#define DEBUG_EVAL
 
@@ -117,12 +78,7 @@ void QDECL SourceError(source_t *source, char *str, ...)
 	va_start(ap, str);
 	Q_vsnprintf(text, sizeof(text), str, ap);
 	va_end(ap);
-#ifdef BOTLIB
 	botimport.Print(PRT_ERROR, "file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
-#endif  //BOTLIB
-#ifdef MEQCC
-	printf("error: file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
-#endif //MEQCC
 } //end of the function SourceError
 //===========================================================================
 //
@@ -138,12 +94,7 @@ void QDECL SourceWarning(source_t *source, char *str, ...)
 	va_start(ap, str);
 	Q_vsnprintf(text, sizeof(text), str, ap);
 	va_end(ap);
-#ifdef BOTLIB
 	botimport.Print(PRT_WARNING, "file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
-#endif //BOTLIB
-#ifdef MEQCC
-	printf("warning: file %s, line %d: %s\n", source->scriptstack->filename, source->scriptstack->line, text);
-#endif //MEQCC
 } //end of the function ScriptWarning
 //============================================================================
 //
@@ -250,7 +201,7 @@ token_t *PC_CopyToken(token_t *token)
 	t = (token_t *) GetMemory(sizeof(token_t));
 	if (!t)
 	{
-		Com_Error(ERR_FATAL, "out of token space\n");
+		Com_Error(ERR_FATAL, "out of token space");
 		return NULL;
 	} //end if
 //  freetokens = freetokens->next;
@@ -1016,9 +967,6 @@ int PC_Directive_include(source_t *source)
 	script_t *script;
 	token_t  token;
 	char     path[_MAX_PATH];
-#ifdef QUAKE
-	foundfile_t file;
-#endif //QUAKE
 
 	if (source->skip > 0)
 	{
@@ -1080,26 +1028,10 @@ int PC_Directive_include(source_t *source)
 		SourceError(source, "#include without file name");
 		return qfalse;
 	} //end else
-#ifdef QUAKE
 	if (!script)
 	{
-		memset(&file, 0, sizeof(foundfile_t));
-		script = LoadScriptFile(path);
-		if (script)
-		{
-			strncpy(script->filename, path, _MAX_PATH);
-		}
-	} //end if
-#endif //QUAKE
-	if (!script)
-	{
-#ifdef SCREWUP
-		SourceWarning(source, "file %s not found", path);
-		return qtrue;
-#else
 		SourceError(source, "file %s not found", path);
 		return qfalse;
-#endif //SCREWUP
 	} //end if
 	PC_PushScript(source, script);
 	return qtrue;
@@ -1812,22 +1744,22 @@ int PC_OperatorPriority(int op)
 #define MAX_VALUES      64
 #define MAX_OPERATORS   64
 #define AllocValue(val)                                 \
-    if (numvalues >= MAX_VALUES) {                      \
+	if (numvalues >= MAX_VALUES) {                      \
 		SourceError(source, "out of value space\n");      \
 		error = 1;                                      \
 		break;                                          \
 	}                                                   \
-    else { \
+	else { \
 		val = &value_heap[numvalues++]; }
 #define FreeValue(val)
 //
 #define AllocOperator(op)                               \
-    if (numoperators >= MAX_OPERATORS) {                \
+	if (numoperators >= MAX_OPERATORS) {                \
 		SourceError(source, "out of operator space\n");   \
 		error = 1;                                      \
 		break;                                          \
 	}                                                   \
-    else { \
+	else { \
 		op = &operator_heap[numoperators++]; }
 #define FreeOperator(op)
 
@@ -2894,7 +2826,6 @@ directive_t directives[20] =
 int PC_ReadDirective(source_t *source)
 {
 	token_t token;
-	int     i;
 
 	//read the directive name
 	if (!PC_ReadSourceToken(source, &token))
@@ -2912,6 +2843,8 @@ int PC_ReadDirective(source_t *source)
 	  //if if is a name
 	if (token.type == TT_NAME)
 	{
+		int i;
+
 		//find the precompiler directive
 		for (i = 0; directives[i].name; i++)
 		{
@@ -3007,7 +2940,6 @@ directive_t dollardirectives[20] =
 int PC_ReadDollarDirective(source_t *source)
 {
 	token_t token;
-	int     i;
 
 	//read the directive name
 	if (!PC_ReadSourceToken(source, &token))
@@ -3025,6 +2957,7 @@ int PC_ReadDollarDirective(source_t *source)
 	  //if if is a name
 	if (token.type == TT_NAME)
 	{
+		int i;
 		//find the precompiler directive
 		for (i = 0; dollardirectives[i].name; i++)
 		{
@@ -3039,65 +2972,6 @@ int PC_ReadDollarDirective(source_t *source)
 	return qfalse;
 } //end of the function PC_ReadDirective
 
-#ifdef QUAKEC
-//============================================================================
-//
-// Parameter:               -
-// Returns:                 -
-// Changes Globals:     -
-//============================================================================
-int BuiltinFunction(source_t *source)
-{
-	token_t token;
-
-	if (!PC_ReadSourceToken(source, &token))
-	{
-		return qfalse;
-	}
-	if (token.type == TT_NUMBER)
-	{
-		PC_UnreadSourceToken(source, &token);
-		return qtrue;
-	} //end if
-	else
-	{
-		PC_UnreadSourceToken(source, &token);
-		return qfalse;
-	} //end else
-} //end of the function BuiltinFunction
-//============================================================================
-//
-// Parameter:               -
-// Returns:                 -
-// Changes Globals:     -
-//============================================================================
-int QuakeCMacro(source_t *source)
-{
-	int     i;
-	token_t token;
-
-	if (!PC_ReadSourceToken(source, &token))
-	{
-		return qtrue;
-	}
-	if (token.type != TT_NAME)
-	{
-		PC_UnreadSourceToken(source, &token);
-		return qtrue;
-	} //end if
-	  //find the precompiler directive
-	for (i = 0; dollardirectives[i].name; i++)
-	{
-		if (!strcmp(dollardirectives[i].name, token.string))
-		{
-			PC_UnreadSourceToken(source, &token);
-			return qfalse;
-		} //end if
-	} //end for
-	PC_UnreadSourceToken(source, &token);
-	return qtrue;
-} //end of the function QuakeCMacro
-#endif //QUAKEC
 //============================================================================
 //
 // Parameter:               -
@@ -3117,31 +2991,21 @@ int PC_ReadToken(source_t *source, token_t *token)
 		//check for precompiler directives
 		if (token->type == TT_PUNCTUATION && *token->string == '#')
 		{
-#ifdef QUAKEC
-			if (!BuiltinFunction(source))
-#endif //QUAKC
+			//read the precompiler directive
+			if (!PC_ReadDirective(source))
 			{
-				//read the precompiler directive
-				if (!PC_ReadDirective(source))
-				{
-					return qfalse;
-				}
-				continue;
-			} //end if
+				return qfalse;
+			}
+			continue;
 		} //end if
 		if (token->type == TT_PUNCTUATION && *token->string == '$')
 		{
-#ifdef QUAKEC
-			if (!QuakeCMacro(source))
-#endif //QUAKEC
+			//read the precompiler directive
+			if (!PC_ReadDollarDirective(source))
 			{
-				//read the precompiler directive
-				if (!PC_ReadDollarDirective(source))
-				{
-					return qfalse;
-				}
-				continue;
-			} //end if
+				return qfalse;
+			}
+			continue;
 		} //end if
 		  //if skipping source because of conditional compilation
 		if (source->skip)
@@ -3742,9 +3606,7 @@ void PC_CheckOpenSourceHandles(void)
 	{
 		if (sourceFiles[i])
 		{
-#ifdef BOTLIB
 			botimport.Print(PRT_ERROR, "file %s still open in precompiler\n", sourceFiles[i]->scriptstack->filename);
-#endif  //BOTLIB
 		} //end if
 	} //end for
 } //end of the function PC_CheckOpenSourceHandles

@@ -33,9 +33,7 @@
 
 #include "tr_local.h"
 
-
 /*
-
   for a projection shadow:
 
   point[x] += light vector * ( z - shadow plane )
@@ -43,7 +41,6 @@
   point[z] = shadow plane
 
   1 0 light[x] / light[z]
-
 */
 
 typedef struct
@@ -76,38 +73,6 @@ void R_AddEdgeDef(int i1, int i2, int facing)
 void R_RenderShadowEdges(void)
 {
 	int i;
-
-#if 0
-	int numTris;
-
-	// dumb way -- render every triangle's edges
-	numTris = tess.numIndexes / 3;
-
-	for (i = 0 ; i < numTris ; i++)
-	{
-		int i1, i2, i3;
-
-		if (!facing[i])
-		{
-			continue;
-		}
-
-		i1 = tess.indexes[i * 3 + 0];
-		i2 = tess.indexes[i * 3 + 1];
-		i3 = tess.indexes[i * 3 + 2];
-
-		qglBegin(GL_TRIANGLE_STRIP);
-		qglVertex3fv(tess.xyz[i1].v);
-		qglVertex3fv(tess.xyz[i1 + tess.numVertexes].v);
-		qglVertex3fv(tess.xyz[i2].v);
-		qglVertex3fv(tess.xyz[i2 + tess.numVertexes].v);
-		qglVertex3fv(tess.xyz[i3].v);
-		qglVertex3fv(tess.xyz[i3 + tess.numVertexes].v);
-		qglVertex3fv(tess.xyz[i1].v);
-		qglVertex3fv(tess.xyz[i1 + tess.numVertexes].v);
-		qglEnd();
-	}
-#else
 	int c, c2;
 	int j, k;
 	int i2;
@@ -162,7 +127,6 @@ void R_RenderShadowEdges(void)
 			}
 		}
 	}
-#endif
 }
 
 /*
@@ -170,7 +134,6 @@ void R_RenderShadowEdges(void)
 RB_ShadowTessEnd
 
 triangleFromEdge[ v1 ][ v2 ]
-
 
   set triangle from edge( v1, v2, tri )
   if ( facing[ triangleFromEdge[ v1 ][ v2 ] ] && !facing[ triangleFromEdge[ v2 ][ v1 ] ) {
@@ -206,40 +169,44 @@ void RB_ShadowTessEnd(void)
 	memset(numEdgeDefs, 0, 4 * tess.numVertexes);
 
 	numTris = tess.numIndexes / 3;
-	for (i = 0 ; i < numTris ; i++)
+
 	{
 		int    i1, i2, i3;
 		vec3_t d1, d2, normal;
 		float  *v1, *v2, *v3;
 		float  d;
 
-		i1 = tess.indexes[i * 3 + 0];
-		i2 = tess.indexes[i * 3 + 1];
-		i3 = tess.indexes[i * 3 + 2];
-
-		v1 = tess.xyz[i1].v;
-		v2 = tess.xyz[i2].v;
-		v3 = tess.xyz[i3].v;
-
-		VectorSubtract(v2, v1, d1);
-		VectorSubtract(v3, v1, d2);
-		CrossProduct(d1, d2, normal);
-
-		d = DotProduct(normal, lightDir);
-		if (d > 0)
+		for (i = 0 ; i < numTris ; i++)
 		{
-			facing[i] = 1;
-		}
-		else
-		{
-			facing[i] = 0;
-		}
+			i1 = tess.indexes[i * 3 + 0];
+			i2 = tess.indexes[i * 3 + 1];
+			i3 = tess.indexes[i * 3 + 2];
 
-		// create the edges
-		R_AddEdgeDef(i1, i2, facing[i]);
-		R_AddEdgeDef(i2, i3, facing[i]);
-		R_AddEdgeDef(i3, i1, facing[i]);
+			v1 = tess.xyz[i1].v;
+			v2 = tess.xyz[i2].v;
+			v3 = tess.xyz[i3].v;
+
+			VectorSubtract(v2, v1, d1);
+			VectorSubtract(v3, v1, d2);
+			CrossProduct(d1, d2, normal);
+
+			d = DotProduct(normal, lightDir);
+			if (d > 0)
+			{
+				facing[i] = 1;
+			}
+			else
+			{
+				facing[i] = 0;
+			}
+
+			// create the edges
+			R_AddEdgeDef(i1, i2, facing[i]);
+			R_AddEdgeDef(i2, i3, facing[i]);
+			R_AddEdgeDef(i3, i1, facing[i]);
+		}
 	}
+
 
 	// draw the silhouette edges
 
@@ -280,11 +247,9 @@ void RB_ShadowTessEnd(void)
 		R_RenderShadowEdges();
 	}
 
-
 	// reenable writing to the color buffer
 	qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
-
 
 /*
 =================
@@ -319,9 +284,6 @@ void RB_ShadowFinish(void)
 	qglColor3f(0.6f, 0.6f, 0.6f);
 	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO);
 
-//	qglColor3f( 1, 0, 0 );
-//	GL_State( GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO );
-
 	qglBegin(GL_QUADS);
 	qglVertex3f(-100, 100, -10);
 	qglVertex3f(100, 100, -10);
@@ -332,7 +294,6 @@ void RB_ShadowFinish(void)
 	qglColor4f(1, 1, 1, 1);
 	qglDisable(GL_STENCIL_TEST);
 }
-
 
 /*
 =================

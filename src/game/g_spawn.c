@@ -7,6 +7,9 @@
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
+ * Portions of this file were taken from the NQ project.
+ * Credit goes to core
+ *
  * ET: Legacy is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -32,6 +35,7 @@
  */
 
 #include "g_local.h"
+
 qboolean G_SpawnStringExt(const char *key, const char *defaultString, char **out, const char *file, int line)
 {
 	int i;
@@ -39,7 +43,6 @@ qboolean G_SpawnStringExt(const char *key, const char *defaultString, char **out
 	if (!level.spawning)
 	{
 		*out = (char *)defaultString;
-		// Gordon: 26/11/02: re-enabling
 		// see InitMover
 		G_Error("G_SpawnString() called while not spawning, file %s, line %i\n", file, line);
 	}
@@ -57,7 +60,7 @@ qboolean G_SpawnStringExt(const char *key, const char *defaultString, char **out
 	return qfalse;
 }
 
-qboolean    G_SpawnFloatExt(const char *key, const char *defaultString, float *out, const char *file, int line)
+qboolean G_SpawnFloatExt(const char *key, const char *defaultString, float *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
@@ -67,7 +70,7 @@ qboolean    G_SpawnFloatExt(const char *key, const char *defaultString, float *o
 	return present;
 }
 
-qboolean    G_SpawnIntExt(const char *key, const char *defaultString, int *out, const char *file, int line)
+qboolean G_SpawnIntExt(const char *key, const char *defaultString, int *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
@@ -77,7 +80,7 @@ qboolean    G_SpawnIntExt(const char *key, const char *defaultString, int *out, 
 	return present;
 }
 
-qboolean    G_SpawnVectorExt(const char *key, const char *defaultString, float *out, const char *file, int line)
+qboolean G_SpawnVectorExt(const char *key, const char *defaultString, float *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
@@ -87,7 +90,7 @@ qboolean    G_SpawnVectorExt(const char *key, const char *defaultString, float *
 	return present;
 }
 
-qboolean    G_SpawnVector2DExt(const char *key, const char *defaultString, float *out, const char *file, int line)
+qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *out, const char *file, int line)
 {
 	char     *s;
 	qboolean present;
@@ -97,33 +100,6 @@ qboolean    G_SpawnVector2DExt(const char *key, const char *defaultString, float
 	return present;
 }
 
-
-
-//
-// fields are needed for spawning from the entity string
-//
-typedef enum
-{
-	F_INT,
-	F_FLOAT,
-	F_LSTRING,          // string on disk, pointer in memory, TAG_LEVEL
-	F_GSTRING,          // string on disk, pointer in memory, TAG_GAME
-	F_VECTOR,
-	F_ANGLEHACK,
-	F_ENTITY,           // index on disk, pointer in memory
-	F_ITEM,             // index on disk, pointer in memory
-	F_CLIENT,           // index on disk, pointer in memory
-	F_IGNORE
-} fieldtype_t;
-
-typedef struct
-{
-	char *name;
-	int ofs;
-	fieldtype_t type;
-	int flags;
-} field_t;
-
 field_t fields[] =
 {
 	{ "classname",    FOFS(classname),      F_LSTRING   },
@@ -131,13 +107,17 @@ field_t fields[] =
 	{ "model",        FOFS(model),          F_LSTRING   },
 	{ "model2",       FOFS(model2),         F_LSTRING   },
 	{ "spawnflags",   FOFS(spawnflags),     F_INT       },
+	{ "eflags",       FOFS(s.eFlags),       F_INT       },
+	{ "svflags",      FOFS(r.svFlags),      F_INT       },
+	{ "maxs",         FOFS(r.maxs),         F_VECTOR    },
+	{ "mins",         FOFS(r.mins),         F_VECTOR    },
 	{ "speed",        FOFS(speed),          F_FLOAT     },
-	{ "closespeed",   FOFS(closespeed),     F_FLOAT     }, //----(SA)	added
+	{ "closespeed",   FOFS(closespeed),     F_FLOAT     },
 	{ "target",       FOFS(target),         F_LSTRING   },
 	{ "targetname",   FOFS(targetname),     F_LSTRING   },
 	{ "message",      FOFS(message),        F_LSTRING   },
-	{ "popup",        FOFS(message),        F_LSTRING   }, // (SA) mutually exclusive from 'message', but makes the ent more logical for the level designer
-	{ "book",         FOFS(message),        F_LSTRING   }, // (SA) mutually exclusive from 'message', but makes the ent more logical for the level designer
+	{ "popup",        FOFS(message),        F_LSTRING   }, // mutually exclusive from 'message', but makes the ent more logical for the level designer
+	{ "book",         FOFS(message),        F_LSTRING   }, // mutually exclusive from 'message', but makes the ent more logical for the level designer
 	{ "team",         FOFS(team),           F_LSTRING   },
 	{ "wait",         FOFS(wait),           F_FLOAT     },
 	{ "random",       FOFS(random),         F_FLOAT     },
@@ -147,50 +127,42 @@ field_t fields[] =
 	{ "dmg",          FOFS(damage),         F_INT       },
 	{ "angles",       FOFS(s.angles),       F_VECTOR    },
 	{ "angle",        FOFS(s.angles),       F_ANGLEHACK },
-	// JOSEPH 9-27-99
+
 	{ "duration",     FOFS(duration),       F_FLOAT     },
 	{ "rotate",       FOFS(rotate),         F_VECTOR    },
-	// END JOSEPH
+
 	{ "degrees",      FOFS(angle),          F_FLOAT     },
 	{ "time",         FOFS(speed),          F_FLOAT     },
 
-	//----(SA) additional ai field
+	// additional ai field
 	{ "skin",         FOFS(aiSkin),         F_LSTRING   },
 
-	//----(SA) done
-
-	// (SA) dlight lightstyles (made all these unique variables for testing)
+	// dlight lightstyles (made all these unique variables for testing)
 	{ "_color",       FOFS(dl_color),       F_VECTOR    }, // color of the light	(the underscore is inserted by the color picker in QER)
 	{ "color",        FOFS(dl_color),       F_VECTOR    }, // color of the light
 	{ "stylestring",  FOFS(dl_stylestring), F_LSTRING   }, // user defined stylestring "fffndlsfaaaaaa" for example
-	// done
 
-	//----(SA)
 	{ "shader",       FOFS(dl_shader),      F_LSTRING   }, // shader to use for a target_effect or dlight
 
-	// (SA) for target_unlock
+	// for target_unlock
 	{ "key",          FOFS(key),            F_INT       },
-	// done
 
-	// Rafael - mg42
+	// mg42
 	{ "harc",         FOFS(harc),           F_FLOAT     },
 	{ "varc",         FOFS(varc),           F_FLOAT     },
-	// done.
 
-	// Rafael - sniper
+	// sniper
 	{ "delay",        FOFS(delay),          F_FLOAT     },
 	{ "radius",       FOFS(radius),         F_INT       },
 
-	// Ridah, for reloading savegames at correct mission spot
+	// for reloading savegames at correct mission spot
 	{ "missionlevel", FOFS(missionLevel),   F_INT       },
 
-	// Rafel
 	{ "start_size",   FOFS(start_size),     F_INT       },
 	{ "end_size",     FOFS(end_size),       F_INT       },
 
 	{ "shard",        FOFS(count),          F_INT       },
 
-	// Rafael
 	{ "spawnitem",    FOFS(spawnitem),      F_LSTRING   },
 
 	{ "track",        FOFS(track),          F_LSTRING   },
@@ -205,9 +177,17 @@ field_t fields[] =
 
 	{ "damageparent", FOFS(damageparent),   F_LSTRING   },
 
+	{ "numPlayers",   FOFS(numPlayers),     F_INT       }, // number of players needed to trigger this
+
+	{ "contents",     FOFS(r.contents),     F_INT       },
+	{ "clipmask",     FOFS(clipmask),       F_INT       },
+	{ "count2",       FOFS(count2),         F_INT       },
+	// doors need this one
+	{ "baseAngle",    FOFS(s.apos.trBase),  F_VECTOR    },
+	{ "baseOrigin",   FOFS(s.pos.trBase),   F_VECTOR    },
+
 	{ NULL }
 };
-
 
 typedef struct
 {
@@ -222,7 +202,7 @@ void SP_info_player_intermission(gentity_t *ent);
 
 void SP_func_plat(gentity_t *ent);
 void SP_func_static(gentity_t *ent);
-void SP_func_leaky(gentity_t *ent);   //----(SA)	added
+void SP_func_leaky(gentity_t *ent);
 void SP_func_rotating(gentity_t *ent);
 void SP_func_bobbing(gentity_t *ent);
 void SP_func_pendulum(gentity_t *ent);
@@ -231,13 +211,12 @@ void SP_func_explosive(gentity_t *ent);
 void SP_func_door(gentity_t *ent);
 void SP_func_train(gentity_t *ent);
 void SP_func_timer(gentity_t *self);
-// JOSEPH 1-26-00
+
 void SP_func_train_rotating(gentity_t *ent);
 void SP_func_secret(gentity_t *ent);
-// END JOSEPH
-// Rafael
+
 void SP_func_door_rotating(gentity_t *ent);
-// RF
+
 void SP_func_constructible(gentity_t *ent);
 void SP_func_brushmodel(gentity_t *ent);
 void SP_misc_constructiblemarker(gentity_t *ent);
@@ -250,17 +229,15 @@ void SP_trigger_push(gentity_t *ent);
 void SP_trigger_teleport(gentity_t *ent);
 void SP_trigger_hurt(gentity_t *ent);
 
-void SP_trigger_heal(gentity_t *ent);     // xkan,	9/17/2002
-void SP_trigger_ammo(gentity_t *ent);     // xkan,	9/17/2002
+void SP_trigger_heal(gentity_t *ent);
+void SP_trigger_ammo(gentity_t *ent);
 
-// Gordon
 void SP_misc_cabinet_health(gentity_t *self);
 void SP_misc_cabinet_supply(gentity_t *self);
 
-//---- (SA) Wolf triggers
-void SP_trigger_concussive_dust(gentity_t *ent);   // JPW NERVE
+// Wolf triggers
+void SP_trigger_concussive_dust(gentity_t *ent);
 void SP_trigger_once(gentity_t *ent);
-//---- done
 
 void SP_target_remove_powerups(gentity_t *ent);
 void SP_target_give(gentity_t *ent);
@@ -279,20 +256,16 @@ void SP_target_push(gentity_t *ent);
 void SP_target_script_trigger(gentity_t *ent);
 void SP_misc_beam(gentity_t *self);
 
-//---- (SA) Wolf targets
-// targets
+// Wolf targets
 void SP_target_alarm(gentity_t *ent);
 void SP_target_counter(gentity_t *ent);
 void SP_target_lock(gentity_t *ent);
 void SP_target_effect(gentity_t *ent);
 void SP_target_fog(gentity_t *ent);
-void SP_target_autosave(gentity_t *ent);
 
 // entity visibility dummy
 void SP_misc_vis_dummy(gentity_t *ent);
 void SP_misc_vis_dummy_multiple(gentity_t *ent);
-
-//----(SA) done
 
 void SP_light(gentity_t *self);
 void SP_info_null(gentity_t *self);
@@ -302,7 +275,6 @@ void SP_path_corner(gentity_t *self);
 void SP_path_corner_2(gentity_t *self);
 void SP_info_limbo_camera(gentity_t *self);
 void SP_info_train_spline_main(gentity_t *self);
-//void SP_bazooka (gentity_t *self);
 
 void SP_misc_teleporter_dest(gentity_t *self);
 void SP_misc_model(gentity_t *ent);
@@ -310,8 +282,7 @@ void SP_misc_gamemodel(gentity_t *ent);
 void SP_misc_portal_camera(gentity_t *ent);
 void SP_misc_portal_surface(gentity_t *ent);
 void SP_misc_light_surface(gentity_t *ent);
-void SP_misc_grabber_trap(gentity_t *ent);
-void SP_misc_spotlight(gentity_t *ent);   //----(SA)	added
+void SP_misc_spotlight(gentity_t *ent);
 
 void SP_misc_commandmap_marker(gentity_t *ent);
 
@@ -324,51 +295,37 @@ void SP_team_CTF_blueplayer(gentity_t *ent);
 void SP_team_CTF_redspawn(gentity_t *ent);
 void SP_team_CTF_bluespawn(gentity_t *ent);
 
-// JPW NERVE for multiplayer spawnpoint selection
+// for multiplayer spawnpoint selection
 void SP_team_WOLF_objective(gentity_t *ent);
-// jpw
 
-void SP_team_WOLF_checkpoint(gentity_t *ent);       // DHM - Nerve
+void SP_team_WOLF_checkpoint(gentity_t *ent);
 
-// JOSEPH 1-18-00
 void SP_props_box_32(gentity_t *self);
 void SP_props_box_48(gentity_t *self);
 void SP_props_box_64(gentity_t *self);
-// END JOSEPH
 
-// Rafael particles
+// particles
 void SP_target_smoke(gentity_t *ent);
-// done.
 
-// (SA) dlights
+// dlights
 void SP_dlight(gentity_t *ent);
-// done
+
 void SP_corona(gentity_t *ent);
 
 void SP_mg42(gentity_t *ent);
 void SP_aagun(gentity_t *ent);
 
-//----(SA)
-//void SP_shooter_zombiespit (gentity_t *ent);
 void SP_shooter_mortar(gentity_t *ent);
 
 // alarm
 void SP_alarm_box(gentity_t *ent);
-//----(SA)	end
 
-void SP_trigger_flagonly(gentity_t *ent);       // DHM - Nerve
-void SP_trigger_flagonly_multiple(gentity_t *ent);          // DHM - Nerve
-void SP_trigger_objective_info(gentity_t *ent);     // DHM - Nerve
+void SP_trigger_flagonly(gentity_t *ent);
+void SP_trigger_flagonly_multiple(gentity_t *ent);
+void SP_trigger_objective_info(gentity_t *ent);
 
-void SP_gas(gentity_t *ent);
 void SP_target_rumble(gentity_t *ent);
 
-// Mad Doc - TDF
-// put this back in for single player bots
-void SP_trigger_aidoor(gentity_t *ent);
-
-// Rafael
-//void SP_trigger_aidoor (gentity_t *ent);
 void SP_SmokeDust(gentity_t *ent);
 void SP_Dust(gentity_t *ent);
 void SP_props_sparks(gentity_t *ent);
@@ -392,14 +349,13 @@ void SP_crate_32(gentity_t *self);
 void SP_Props_Crate32x64(gentity_t *ent);
 void SP_Props_58x112tablew(gentity_t *ent);
 void SP_Props_RadioSEVEN(gentity_t *ent);
-//void SP_propsFireColumn (gentity_t *ent);
+
 void SP_props_flamethrower(gentity_t *ent);
 
 void SP_func_invisible_user(gentity_t *ent);
 
 void SP_lightJunior(gentity_t *self);
 
-//void SP_props_me109 (gentity_t *ent);
 void SP_misc_flak(gentity_t *ent);
 
 void SP_props_snowGenerator(gentity_t *ent);
@@ -410,10 +366,10 @@ void SP_props_statue(gentity_t *ent);
 void SP_props_statueBRUSH(gentity_t *ent);
 void SP_skyportal(gentity_t *ent);
 
-// RF, scripting
+// scripting
 void SP_script_model_med(gentity_t *ent);
 void SP_script_mover(gentity_t *ent);
-void SP_script_multiplayer(gentity_t *ent);           // DHM - Nerve
+void SP_script_multiplayer(gentity_t *ent);
 
 void SP_props_footlocker(gentity_t *self);
 void SP_misc_firetrails(gentity_t *ent);
@@ -421,10 +377,12 @@ void SP_misc_firetrails(gentity_t *ent);
 void SP_misc_spawner(gentity_t *ent);
 void SP_props_decor_Scale(gentity_t *ent);
 
-
-// Gordon: debris test
+// debris test
 void SP_func_debris(gentity_t *ent);
 // ===================
+
+// forty - etpro mapscripting - spawn function for fakebrushes
+void SP_func_fakebrush(gentity_t *ent);
 
 spawn_t spawns[] =
 {
@@ -439,7 +397,7 @@ spawn_t spawns[] =
 	{ "info_notnull_big",          SP_info_notnull              }, // use target_position instead
 	{ "info_camp",                 SP_info_camp                 },
 
-	// Gordon: debris test
+	// debris test
 	{ "func_debris",               SP_func_debris               },
 	// ===================
 
@@ -454,11 +412,10 @@ spawn_t spawns[] =
 	{ "func_pendulum",             SP_func_pendulum             },
 	{ "func_train",                SP_func_train                },
 	{ "func_group",                SP_info_null                 },
-	// JOSEPH 1-26-00
+
 	{ "func_train_rotating",       SP_func_train_rotating       },
 	{ "func_secret",               SP_func_secret               },
-	// END JOSEPH
-	// Rafael
+
 	{ "func_door_rotating",        SP_func_door_rotating        },
 
 	{ "func_timer",                SP_func_timer                }, // rename trigger_timer?
@@ -476,28 +433,16 @@ spawn_t spawns[] =
 	{ "trigger_teleport",          SP_trigger_teleport          },
 	{ "trigger_hurt",              SP_trigger_hurt              },
 
-	//---- (SA) Wolf triggers
-	{ "trigger_concussive_dust",   SP_trigger_concussive_dust   }, // JPW NERVE
+	// Wolf triggers
+	{ "trigger_concussive_dust",   SP_trigger_concussive_dust   },
 	{ "trigger_once",              SP_trigger_once              },
-	//---- done
 
-	// Mad Doc - TDf
-	// I'm going to put trigger_aidoors back in. I'll make sure they only work in single player
-	{ "trigger_aidoor",            SP_trigger_aidoor            },
-	// START	xkan,	9/17/2002
 	{ "trigger_heal",              SP_trigger_heal              },
 	{ "trigger_ammo",              SP_trigger_ammo              },
-	// END		xkan,	9/17/2002
 
-	// Gordon: 16/12/02: adding the model things to go with the triggers
+	// adding the model things to go with the triggers
 	{ "misc_cabinet_health",       SP_misc_cabinet_health       },
 	{ "misc_cabinet_supply",       SP_misc_cabinet_supply       },
-	// end
-
-
-	// Rafael
-//	{"trigger_aidoor", SP_trigger_aidoor},
-//	{"trigger_deathCheck",SP_trigger_deathCheck},
 
 	// targets perform no action by themselves, but must be triggered
 	// by another entity
@@ -516,17 +461,14 @@ spawn_t spawns[] =
 	{ "target_push",               SP_target_push               },
 	{ "target_script_trigger",     SP_target_script_trigger     },
 
-	//---- (SA) Wolf targets
+	// Wolf targets
 	{ "target_alarm",              SP_target_alarm              },
 	{ "target_counter",            SP_target_counter            },
 	{ "target_lock",               SP_target_lock               },
 	{ "target_effect",             SP_target_effect             },
 	{ "target_fog",                SP_target_fog                },
-	{ "target_autosave",           SP_target_autosave           }, // obsolete
-	//---- done
 
 	{ "target_rumble",             SP_target_rumble             },
-
 
 	{ "light",                     SP_light                     },
 
@@ -550,9 +492,7 @@ spawn_t spawns[] =
 	{ "misc_vis_dummy",            SP_misc_vis_dummy            },
 	{ "misc_vis_dummy_multiple",   SP_misc_vis_dummy_multiple   },
 	{ "misc_light_surface",        SP_misc_light_surface        },
-	{ "misc_grabber_trap",         SP_misc_grabber_trap         },
 	{ "misc_spotlight",            SP_misc_spotlight            },
-
 
 	{ "misc_mg42",                 SP_mg42                      },
 	{ "misc_aagun",                SP_aagun                     },
@@ -566,7 +506,7 @@ spawn_t spawns[] =
 	{ "shooter_mortar",            SP_shooter_mortar            },
 	{ "alarm_box",                 SP_alarm_box                 },
 
-	// Gordon: FIXME remove
+	// FIXME remove
 	{ "team_CTF_redplayer",        SP_team_CTF_redplayer        },
 	{ "team_CTF_blueplayer",       SP_team_CTF_blueplayer       },
 
@@ -608,7 +548,7 @@ spawn_t spawns[] =
 	{ "props_58x112tablew",        SP_Props_58x112tablew        },
 	{ "props_radioSEVEN",          SP_Props_RadioSEVEN          },
 	{ "props_snowGenerator",       SP_props_snowGenerator       },
-//	{"props_FireColumn", SP_propsFireColumn},
+
 	{ "props_decoration",          SP_props_decoration          },
 	{ "props_decorBRUSH",          SP_props_decorBRUSH          },
 	{ "props_statue",              SP_props_statue              },
@@ -625,10 +565,9 @@ spawn_t spawns[] =
 	{ "trigger_flagonly",          SP_trigger_flagonly          },
 	{ "trigger_flagonly_multiple", SP_trigger_flagonly_multiple },
 
-	{ "test_gas",                  SP_gas                       },
 	{ "trigger_objective_info",    SP_trigger_objective_info    },
 
-	// RF, scripting
+	// scripting
 	{ "script_model_med",          SP_script_model_med          },
 	{ "script_mover",              SP_script_mover              },
 	{ "script_multiplayer",        SP_script_multiplayer        },
@@ -639,6 +578,8 @@ spawn_t spawns[] =
 	{ "misc_constructiblemarker",  SP_misc_constructiblemarker  },
 	{ "target_explosion",          SP_target_explosion          },
 	{ "misc_landmine",             SP_misc_landmine             },
+
+	{ "func_fakebrush",            SP_func_fakebrush            },
 
 	{ 0,                           0                            }
 };
@@ -668,7 +609,7 @@ qboolean G_CallSpawn(gentity_t *ent)
 		if (!strcmp(item->classname, ent->classname))
 		{
 			// found it
-			if (g_gametype.integer != GT_WOLF_LMS)     // Gordon: lets not have items in last man standing for the moment
+			if (g_gametype.integer != GT_WOLF_LMS)     // lets not have items in last man standing for the moment
 			{
 				G_SpawnItem(ent, item);
 
@@ -691,7 +632,7 @@ qboolean G_CallSpawn(gentity_t *ent)
 			// found it
 			s->spawn(ent);
 
-			// RF, entity scripting
+			// entity scripting
 			if (/*ent->s.number >= MAX_CLIENTS &&*/ ent->scriptName)
 			{
 				G_Script_ScriptParse(ent);
@@ -701,7 +642,13 @@ qboolean G_CallSpawn(gentity_t *ent)
 			return qtrue;
 		}
 	}
-	G_Printf("%s doesn't have a spawn function\n", ent->classname);
+
+	// hack: this avoids spammy prints on railgun start, bsp uses obsolete classname bot_sniper_spot
+	if (Q_stricmp(ent->classname, "bot_sniper_spot"))
+	{
+		G_Printf("%s doesn't have a spawn function\n", ent->classname);
+	}
+
 	return qfalse;
 }
 
@@ -747,9 +694,6 @@ char *G_NewString(const char *string)
 
 	return newb;
 }
-
-
-
 
 /*
 ===============
@@ -805,9 +749,6 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent)
 	}
 }
 
-
-
-
 /*
 ===================
 G_SpawnGEntityFromSpawnVars
@@ -816,14 +757,11 @@ Spawn an entity and fill in all of the level fields from
 level.spawnVars[], then call the class specfic spawn function
 ===================
 */
-void G_SpawnGEntityFromSpawnVars(void)
+gentity_t *G_SpawnGEntityFromSpawnVars(void)
 {
 	int       i;
-	gentity_t *ent;
+	gentity_t *ent = G_Spawn(); // get the next free entity
 	char      *str;
-
-	// get the next free entity
-	ent = G_Spawn();
 
 	for (i = 0 ; i < level.numSpawnVars ; i++)
 	{
@@ -835,7 +773,7 @@ void G_SpawnGEntityFromSpawnVars(void)
 	if (i)
 	{
 		G_FreeEntity(ent);
-		return;
+		return NULL;
 	}
 
 	// allowteams handling
@@ -875,9 +813,9 @@ void G_SpawnGEntityFromSpawnVars(void)
 	{
 		G_FreeEntity(ent);
 	}
+
+	return ent;
 }
-
-
 
 /*
 ====================
@@ -968,7 +906,6 @@ qboolean G_ParseSpawnVars(void)
 	return qtrue;
 }
 
-
 /*QUAKED worldspawn (0 0 0) ? NO_GT_WOLF NO_GT_STOPWATCH NO_GT_CHECKPOINT NO_LMS
 
 Every map should have exactly one worldspawn.
@@ -1007,7 +944,7 @@ void SP_worldspawn(void)
 	}
 
 	level.mapcoordsValid = qfalse;
-	if (G_SpawnVector2D("mapcoordsmins", "-128 128", level.mapcoordsMins) &&       // top left
+	if (G_SpawnVector2D("mapcoordsmins", "-128 128", level.mapcoordsMins) &&     // top left
 	    G_SpawnVector2D("mapcoordsmaxs", "128 -128", level.mapcoordsMaxs))       // bottom right
 	{
 		level.mapcoordsValid = qtrue;
@@ -1041,6 +978,20 @@ void SP_worldspawn(void)
 	}
 }
 
+/*
+==============
+SP_func_fakebrush
+
+forty - etpro mapscripting - spawn function for fake brushes
+==============
+*/
+void SP_func_fakebrush(gentity_t *ent)
+{
+	ent->s.eFlags |= EF_FAKEBMODEL;
+	G_SetOrigin(ent, ent->s.origin);
+
+	return;
+}
 
 /*
 ==============
@@ -1074,3 +1025,36 @@ void G_SpawnEntitiesFromString(void)
 	G_Printf("Disable spawning!\n");
 	level.spawning = qfalse;            // any future calls to G_Spawn*() will be errors
 }
+
+#ifdef FEATURE_LUA
+//===============================================================
+// Some helper functions for entity property handling..
+// these functions are used by Lua.
+
+// return the index in the fiels[] array of the given fieldname,
+// return -1 if not found..
+int GetFieldIndex(char *fieldname)
+{
+	int i;
+
+	for (i = 0; fields[i].name; i++)
+		if (!Q_stricmp(fields[i].name, fieldname))
+		{
+			return i;
+		}
+	return -1;
+}
+
+// return the fieldType of the given fieldname..
+// return F_IGNORE if the field is not found.
+fieldtype_t GetFieldType(char *fieldname)
+{
+	int index = GetFieldIndex(fieldname);
+
+	if (index == -1)
+	{
+		return F_IGNORE;
+	}
+	return fields[index].type;
+}
+#endif // FEATURE_LUA

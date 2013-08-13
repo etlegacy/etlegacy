@@ -34,12 +34,11 @@
  * defined by the location of a node within a doubly-linked list
  */
 
-#include "../qcommon/q_shared.h"
+#include "q_shared.h"
 #include "qcommon.h"
 
 static int bloc = 0;
 
-//bani - optimized version
 //clears data along the way so we dont have to memset() it ahead of time
 void    Huff_putBit(int bit, byte *fout, int *offset)
 {
@@ -56,8 +55,6 @@ void    Huff_putBit(int bit, byte *fout, int *offset)
 	*offset = bloc;
 }
 
-//bani - optimized version
-//optimization works on gcc 3.x, but not 2.95 ? most curious.
 int Huff_getBit(byte *fin, int *offset)
 {
 	int t;
@@ -68,7 +65,6 @@ int Huff_getBit(byte *fin, int *offset)
 	return t;
 }
 
-//bani - optimized version
 //clears data along the way so we dont have to memset() it ahead of time
 static void add_bit(char bit, byte *fout)
 {
@@ -83,8 +79,6 @@ static void add_bit(char bit, byte *fout)
 	fout[y] |= bit << x;
 }
 
-//bani - optimized version
-//optimization works on gcc 3.x, but not 2.95 ? most curious.
 static int get_bit(byte *fin)
 {
 	int t;
@@ -357,7 +351,7 @@ int Huff_Receive(node_t *node, int *ch, byte *fin)
 	if (!node)
 	{
 		return 0;
-//      Com_Error(ERR_DROP, "Illegal tree!\n");
+		//Com_Error(ERR_DROP, "Illegal tree!");
 	}
 	return (*ch = node->symbol);
 }
@@ -381,7 +375,7 @@ void Huff_offsetReceive(node_t *node, int *ch, byte *fin, int *offset)
 	{
 		*ch = 0;
 		return;
-//      Com_Error(ERR_DROP, "Illegal tree!\n");
+		//Com_Error(ERR_DROP, "Illegal tree!");
 	}
 	*ch     = node->symbol;
 	*offset = bloc;
@@ -410,9 +404,10 @@ static void send(node_t *node, node_t *child, byte *fout)
 /* Send a symbol */
 void Huff_transmit(huff_t *huff, int ch, byte *fout)
 {
-	int i;
 	if (huff->loc[ch] == NULL)
 	{
+		int i;
+
 		/* node_t hasn't been transmitted, send a NYT, then the symbol */
 		Huff_transmit(huff, NYT, fout);
 		for (i = 7; i >= 0; i--)
@@ -526,11 +521,11 @@ void Huff_Compress(msg_t *mbuf, int offset)
 	for (i = 0; i < size; i++)
 	{
 		ch = buffer[i];
-		Huff_transmit(&huff, ch, seq);                        /* Transmit symbol */
-		Huff_addRef(&huff, (byte)ch);                                 /* Do update */
+		Huff_transmit(&huff, ch, seq);  /* Transmit symbol */
+		Huff_addRef(&huff, (byte)ch);   /* Do update */
 	}
 
-	bloc += 8;                                              // next byte
+	bloc += 8; // next byte
 
 	mbuf->cursize = (bloc >> 3) + offset;
 	Com_Memcpy(mbuf->data + offset, seq, (bloc >> 3));

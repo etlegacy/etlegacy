@@ -36,8 +36,6 @@
 
 char bigTextBuffer[100000];
 
-// TTimo - defined but not used
-#if 0
 /*
 ======================
 CG_ParseGibModels
@@ -45,7 +43,7 @@ CG_ParseGibModels
 Read a configuration file containing gib models for use with this character
 ======================
 */
-static qboolean CG_ParseGibModels(bg_playerclass_t *classInfo)
+static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 {
 	char         *text_p;
 	int          len;
@@ -53,19 +51,25 @@ static qboolean CG_ParseGibModels(bg_playerclass_t *classInfo)
 	char         *token;
 	fileHandle_t f;
 
-	memset(classInfo->gibModels, 0, sizeof(classInfo->gibModels));
+	memset(character->gibModels, 0, sizeof(character->gibModels));
 
 	// load the file
-	len = trap_FS_FOpenFile(va("models/players/%s/gibs.cfg", classInfo->modelPath), &f, FS_READ);
+	len = trap_FS_FOpenFile(va("%s.gibs", modelPath), &f, FS_READ);
 	if (len <= 0)
 	{
+		CG_Printf("File %s not found\n", va("%s.gibs", modelPath));
+		trap_FS_FCloseFile(f);
 		return qfalse;
 	}
+
 	if (len >= sizeof(bigTextBuffer) - 1)
 	{
-		CG_Printf("File %s too long\n", va("models/players/%s/gibs.cfg", classInfo->modelPath));
+		CG_Printf("File %s too long\n", va("%s.gibs", modelPath));
 		return qfalse;
 	}
+
+	//CG_Printf( "CG_ParseGibModel reading %s\n", va("%s.gibs", modelPath) );
+
 	trap_FS_Read(bigTextBuffer, len, f);
 	bigTextBuffer[len] = 0;
 	trap_FS_FCloseFile(f);
@@ -76,17 +80,22 @@ static qboolean CG_ParseGibModels(bg_playerclass_t *classInfo)
 	for (i = 0; i < MAX_GIB_MODELS; i++)
 	{
 		token = COM_Parse(&text_p);
-		if (!token)
+		if (!token || !token[0])
 		{
 			break;
 		}
+
 		// cache this model
-		classInfo->gibModels[i] = trap_R_RegisterModel(token);
+		character->gibModels[i] = trap_R_RegisterModel(token);
+
+		if (!character->gibModels[i])
+		{
+			CG_Printf("CG_ParseGibModels gibModel[%i] %s not registered from %s.gibs\n", i, token, modelPath);
+		}
 	}
 
 	return qtrue;
 }
-#endif
 
 /*
 ======================
@@ -193,7 +202,7 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 	int           i, j, k;
 	float         totalSpeed;
 	int           numSpeed;
-	int           lastLow, low;
+	int           low;
 	orientation_t o[2];
 
 	memset(&refent, 0, sizeof(refent));
@@ -210,7 +219,6 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 		}
 
 		totalSpeed = 0;
-		lastLow    = -1;
 		numSpeed   = 0;
 
 		// for each frame
@@ -263,7 +271,6 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 			{
 				VectorCopy(o[k].origin, oldPos[k]);
 			}
-			lastLow = low;
 		}
 
 		// record the speed
@@ -354,7 +361,7 @@ static qboolean CG_CheckForExistingAnimModelInfo(const char *animationGroup, con
 	{
 		*animModelInfo = firstFree;
 		// clear the structure out ready for use
-		memset(*animModelInfo, 0, sizeof(*animModelInfo));
+		memset(*animModelInfo, 0, sizeof(**animModelInfo));
 	}
 
 	// qfalse signifies that we need to parse the information from the script files
@@ -422,8 +429,6 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 	bg_characterDef_t characterDef;
 	char              *filename;
 	char              buf[MAX_QPATH];
-	char              accessoryname[MAX_QPATH];
-	int               i;
 
 	memset(&characterDef, 0, sizeof(characterDef));
 
@@ -447,6 +452,9 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 	}
 	else
 	{
+		char accessoryname[MAX_QPATH];
+		int  i;
+
 		for (i = 0; i < cg_numAccessories; i++)
 		{
 			if (trap_R_GetSkinModel(character->skin, cg_accessories[i].type, accessoryname))
@@ -470,6 +478,10 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 		}
 	}
 
+	// gib models
+	COM_StripExtension(characterDef.mesh, buf, sizeof(buf));
+	CG_ParseGibModels(buf, character); // it is here so we can use modelpath from above
+
 	// Register Undressed Corpse Media
 	if (*characterDef.undressedCorpseModel)
 	{
@@ -487,6 +499,10 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 			CG_Printf(S_COLOR_YELLOW "WARNING: failed to register undressed corpse skin '%s' referenced from '%s'\n", filename, characterFile);
 		}
 	}
+	else
+	{
+		CG_Printf(S_COLOR_YELLOW "WARNING: no undressed coprse model definition in '%s'\n", characterFile);
+	}
 
 	// Register the head for the hud
 	if (*characterDef.hudhead)
@@ -502,17 +518,14 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 			CG_Printf(S_COLOR_YELLOW "WARNING: failed to register hud head skin '%s' referenced from '%s'\n", characterDef.hudheadskin, characterFile);
 		}
 
-		if (*characterDef.hudheadanims)
+		if (!CG_ParseHudHeadConfig(characterDef.hudheadanims, character->hudheadanimations))
 		{
-			if (!CG_ParseHudHeadConfig(characterDef.hudheadanims, character->hudheadanimations))
-			{
-				CG_Printf(S_COLOR_YELLOW "WARNING: failed to register hud head animations '%s' referenced from '%s'\n", characterDef.hudheadanims, characterFile);
-			}
+			CG_Printf(S_COLOR_YELLOW "WARNING: failed to register hud head animations '%s' referenced from '%s'\n", characterDef.hudheadanims, characterFile);
 		}
-		else
-		{
-			CG_Printf(S_COLOR_YELLOW "WARNING: no hud head animations supplied in '%s'\n", characterFile);
-		}
+	}
+	else
+	{
+		CG_Printf(S_COLOR_YELLOW "WARNING: no hud head character definition in '%s'\n", characterFile);
 	}
 
 	// Parse Animation Files

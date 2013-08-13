@@ -40,9 +40,8 @@
 
 void daub4(float b[], unsigned long n, int isign)
 {
-	float wksp[4097];
-	float *a = b - 1;                       // numerical recipies so a[1] = b[0]
-
+	float         wksp[4097];
+	float         *a = b - 1;               // numerical recipies so a[1] = b[0]
 	unsigned long nh, nh1, i, j;
 
 	if (n < 4)
@@ -81,6 +80,7 @@ void wt1(float a[], unsigned long n, int isign)
 {
 	unsigned long nn;
 	int           inverseStartLength = n / 4;
+
 	if (n < inverseStartLength)
 	{
 		return;
@@ -113,9 +113,8 @@ static unsigned char numBits[] =
 byte MuLawEncode(short s)
 {
 	unsigned long adjusted;
-	byte          sign, exponent, mantissa;
-
-	sign = (s < 0) ? 0 : 0x80;
+	byte          exponent, mantissa;
+	byte          sign = (s < 0) ? 0 : 0x80;
 
 	if (s < 0)
 	{
@@ -150,17 +149,18 @@ static qboolean madeTable = qfalse;
 
 static int NXStreamCount;
 
+
+// @brief Unused
 void NXPutc(NXStream *stream, char out)
 {
 	stream[NXStreamCount++] = out;
 }
 
-
 void encodeWavelet(sfx_t *sfx, short *packets)
 {
 	float     wksp[4097], temp;
-	int       i, samples, size;
-	sndBuffer *newchunk, *chunk;
+	int       i, samples = sfx->soundLength, size;
+	sndBuffer *newchunk, *chunk = NULL;
 	byte      *out;
 
 	if (!madeTable)
@@ -171,9 +171,7 @@ void encodeWavelet(sfx_t *sfx, short *packets)
 		}
 		madeTable = qtrue;
 	}
-	chunk = NULL;
 
-	samples = sfx->soundLength;
 	while (samples > 0)
 	{
 		size = samples;
@@ -228,11 +226,9 @@ void decodeWavelet(sndBuffer *chunk, short *to)
 {
 	float wksp[4097];
 	int   i;
-	byte  *out;
+	int   size = chunk->size;
+	byte  *out = (byte *)chunk->sndChunk;
 
-	int size = chunk->size;
-
-	out = (byte *)chunk->sndChunk;
 	for (i = 0; i < size; i++)
 	{
 		wksp[i] = mulawToShort[out[i]];
@@ -251,11 +247,10 @@ void decodeWavelet(sndBuffer *chunk, short *to)
 	}
 }
 
-
 void encodeMuLaw(sfx_t *sfx, short *packets)
 {
-	int       i, samples, size, grade, poop;
-	sndBuffer *newchunk, *chunk;
+	int       i, samples = sfx->soundLength, size, grade = 0, poop;
+	sndBuffer *newchunk, *chunk = NULL;
 	byte      *out;
 
 	if (!madeTable)
@@ -266,10 +261,6 @@ void encodeMuLaw(sfx_t *sfx, short *packets)
 		}
 		madeTable = qtrue;
 	}
-
-	chunk   = NULL;
-	samples = sfx->soundLength;
-	grade   = 0;
 
 	while (samples > 0)
 	{
@@ -310,14 +301,13 @@ void encodeMuLaw(sfx_t *sfx, short *packets)
 	}
 }
 
+// @brief Unused
 void decodeMuLaw(sndBuffer *chunk, short *to)
 {
 	int  i;
-	byte *out;
+	int  size = chunk->size;
+	byte *out = (byte *)chunk->sndChunk;
 
-	int size = chunk->size;
-
-	out = (byte *)chunk->sndChunk;
 	for (i = 0; i < size; i++)
 	{
 		to[i] = mulawToShort[out[i]];

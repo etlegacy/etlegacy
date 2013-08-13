@@ -42,32 +42,9 @@ cvar_t *cl_graphheight;
 cvar_t *cl_graphscale;
 cvar_t *cl_graphshift;
 
-/*
-================
-SCR_DrawNamedPic
-
-Coordinates are 640*480 virtual values
-=================
-*/
-void SCR_DrawNamedPic(float x, float y, float width, float height, const char *picname)
-{
-	qhandle_t hShader;
-
-	assert(width != 0);
-
-	hShader = re.RegisterShader(picname);
-	SCR_AdjustFrom640(&x, &y, &width, &height);
-	re.DrawStretchPic(x, y, width, height, 0, 0, 1, 1, hShader);
-}
-
-
-/*
-================
-SCR_AdjustFrom640
-
-Adjusted for resolution and screen aspect ratio
-================
-*/
+/**
+ * @brief Adjusted for resolution and screen aspect ratio
+ */
 void SCR_AdjustFrom640(float *x, float *y, float *w, float *h)
 {
 	float xscale;
@@ -102,13 +79,9 @@ void SCR_AdjustFrom640(float *x, float *y, float *w, float *h)
 	}
 }
 
-/*
-================
-SCR_FillRect
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief Coordinates are 640*480 virtual values
+ */
 void SCR_FillRect(float x, float y, float width, float height, const float *color)
 {
 	re.SetColor(color);
@@ -119,26 +92,18 @@ void SCR_FillRect(float x, float y, float width, float height, const float *colo
 	re.SetColor(NULL);
 }
 
-
-/*
-================
-SCR_DrawPic
-
-Coordinates are 640*480 virtual values
-=================
-*/
+/**
+ * @brief Coordinates are 640*480 virtual values
+ */
 void SCR_DrawPic(float x, float y, float width, float height, qhandle_t hShader)
 {
 	SCR_AdjustFrom640(&x, &y, &width, &height);
 	re.DrawStretchPic(x, y, width, height, 0, 0, 1, 1, hShader);
 }
 
-
-
-/*
-** SCR_DrawChar
-** chars are drawn at 640*480 virtual screen size
-*/
+/**
+ * @brief Chars are drawn at 640*480 virtual screen size
+ */
 static void SCR_DrawChar(int x, int y, float size, int ch)
 {
 	int   row, col;
@@ -176,10 +141,9 @@ static void SCR_DrawChar(int x, int y, float size, int ch)
 	                  cls.charSetShader);
 }
 
-/*
-** SCR_DrawSmallChar
-** small chars are drawn at native screen resolution
-*/
+/**
+ * @brief Small chars are drawn at native screen resolution
+ */
 void SCR_DrawSmallChar(int x, int y, int ch)
 {
 	int   row, col;
@@ -211,7 +175,6 @@ void SCR_DrawSmallChar(int x, int y, int ch)
 	                  cls.charSetShader);
 }
 
-
 /*
 ==================
 SCR_DrawBigString[Color]
@@ -222,7 +185,7 @@ to a fixed color.
 Coordinates are at 640 by 480 virtual resolution
 ==================
 */
-void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setColor, qboolean forceColor)
+void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setColor, qboolean forceColor, qboolean noColorEscape)
 {
 	vec4_t     color;
 	const char *s;
@@ -236,7 +199,7 @@ void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setC
 	xx = x;
 	while (*s)
 	{
-		if (Q_IsColorString(s))
+		if (!noColorEscape && Q_IsColorString(s))
 		{
 			s += 2;
 			continue;
@@ -245,7 +208,6 @@ void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setC
 		xx += size;
 		s++;
 	}
-
 
 	// draw the colored text
 	s  = string;
@@ -269,8 +231,11 @@ void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setC
 				color[3] = setColor[3];
 				re.SetColor(color);
 			}
-			s += 2;
-			continue;
+			if (!noColorEscape)
+			{
+				s += 2;
+				continue;
+			}
 		}
 		SCR_DrawChar(xx, y, size, *s);
 		xx += size;
@@ -279,21 +244,19 @@ void SCR_DrawStringExt(int x, int y, float size, const char *string, float *setC
 	re.SetColor(NULL);
 }
 
-
-void SCR_DrawBigString(int x, int y, const char *s, float alpha)
+void SCR_DrawBigString(int x, int y, const char *s, float alpha, qboolean noColorEscape)
 {
 	float color[4];
 
 	color[0] = color[1] = color[2] = 1.0;
 	color[3] = alpha;
-	SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, s, color, qfalse);
+	SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, s, color, qfalse, noColorEscape);
 }
 
-void SCR_DrawBigStringColor(int x, int y, const char *s, vec4_t color)
+void SCR_DrawBigStringColor(int x, int y, const char *s, vec4_t color, qboolean noColorEscape)
 {
-	SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, s, color, qtrue);
+	SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, s, color, qtrue, noColorEscape);
 }
-
 
 /*
 ==================
@@ -305,7 +268,7 @@ to a fixed color.
 Coordinates are at 640 by 480 virtual resolution
 ==================
 */
-void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, qboolean forceColor)
+void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, qboolean forceColor, qboolean noColorEscape)
 {
 	vec4_t     color;
 	const char *s;
@@ -332,8 +295,11 @@ void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, q
 				}
 				re.SetColor(color);
 			}
-			s += 2;
-			continue;
+			if (!noColorEscape)
+			{
+				s += 2;
+				continue;
+			}
 		}
 		SCR_DrawSmallChar(xx, y, *s);
 		xx += SMALLCHAR_WIDTH;
@@ -342,11 +308,9 @@ void SCR_DrawSmallStringExt(int x, int y, const char *string, float *setColor, q
 	re.SetColor(NULL);
 }
 
-
-
-/*
-** SCR_Strlen -- skips color escape codes
-*/
+/**
+ * @brief Like strlen, but skips color escape codes
+ */
 static int SCR_Strlen(const char *str)
 {
 	const char *s    = str;
@@ -368,14 +332,13 @@ static int SCR_Strlen(const char *str)
 	return count;
 }
 
-/*
-** SCR_GetBigStringWidth
-*/
+/**
+ * @note Unused.
+ */
 int SCR_GetBigStringWidth(const char *str)
 {
-	return SCR_Strlen(str) * 16;
+	return SCR_Strlen(str) * BIGCHAR_WIDTH;;
 }
-
 
 //===============================================================================
 
@@ -391,16 +354,12 @@ void SCR_DrawDemoRecording(void)
 		return;
 	}
 
-	//bani
 	Cvar_Set("cl_demooffset", va("%d", FS_FTell(clc.demofile)));
 }
 
-
 /*
 ===============================================================================
-
 DEBUG GRAPH
-
 ===============================================================================
 */
 
@@ -428,9 +387,7 @@ void SCR_DrawDebugGraph(void)
 	int   a, x, y, w, i, h;
 	float v;
 
-	//
 	// draw the graph
-	//
 	w = cls.glconfig.vidWidth;
 	x = 0;
 	y = cls.glconfig.vidHeight;
@@ -472,16 +429,11 @@ void SCR_Init(void)
 	scr_initialized = qtrue;
 }
 
-
 //=======================================================
 
-/*
-==================
-SCR_DrawScreenField
-
-This will be called twice if rendering in stereo mode
-==================
-*/
+/**
+ * @brief This will be called twice if rendering in stereo mode
+ */
 void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 {
 	re.BeginFrame(stereoFrame);
@@ -509,7 +461,7 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 		switch (cls.state)
 		{
 		default:
-			Com_Error(ERR_FATAL, "SCR_DrawScreenField: bad cls.state\n");
+			Com_Error(ERR_FATAL, "SCR_DrawScreenField: bad cls.state");
 			break;
 		case CA_CINEMATIC:
 			SCR_DrawCinematic();
@@ -527,12 +479,12 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 			VM_Call(uivm, UI_REFRESH, cls.realtime);
 			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qfalse);
 			break;
-//          // Ridah, if the cgame is valid, fall through to there
-//          if (!cls.cgameStarted || !com_sv_running->integer) {
-//              // connecting clients will only show the connection dialog
-//              VM_Call( uivm, UI_DRAW_CONNECT_SCREEN, qfalse );
-//              break;
-//          }
+		// if the cgame is valid, fall through to there
+		//if (!cls.cgameStarted || !com_sv_running->integer) {
+		// connecting clients will only show the connection dialog
+		//VM_Call( uivm, UI_DRAW_CONNECT_SCREEN, qfalse );
+		//break;
+		//}
 		case CA_LOADING:
 		case CA_PRIMED:
 			// draw the game information screen and loading progress
@@ -540,7 +492,7 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 
 			// also draw the connection information, so it doesn't
 			// flash away too briefly on local or lan games
-			//if (!com_sv_running->value || Cvar_VariableIntegerValue("sv_cheats")) // Ridah, don't draw useless text if not in dev mode
+			//if (!com_sv_running->value || Cvar_VariableIntegerValue("sv_cheats")) // don't draw useless text if not in dev mode
 			VM_Call(uivm, UI_REFRESH, cls.realtime);
 			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qtrue);
 			break;
@@ -567,14 +519,10 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 	}
 }
 
-/*
-==================
-SCR_UpdateScreen
-
-This is called every frame, and can also be called explicitly to flush
-text to the screen.
-==================
-*/
+/**
+ * @brief This is called every frame, and can also be called explicitly to flush
+ * text to the screen.
+ */
 void SCR_UpdateScreen(void)
 {
 	static int recursive = 0;
@@ -589,7 +537,7 @@ void SCR_UpdateScreen(void)
 		recursive = 0;
 		// Gordon: i'm breaking this again, because we've removed most of our cases but still have one which will not fix easily
 		return;
-//      Com_Error( ERR_FATAL, "SCR_UpdateScreen: recursively called" );
+		//Com_Error( ERR_FATAL, "SCR_UpdateScreen: recursively called" );
 	}
 	recursive = 1;
 

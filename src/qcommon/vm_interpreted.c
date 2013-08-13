@@ -34,7 +34,7 @@
 
 #include "vm_local.h"
 
-#ifdef DEBUG_VM // bk001204
+#ifdef DEBUG_VM
 static char *opnames[256] =
 {
 	"OP_UNDEF",
@@ -144,6 +144,7 @@ static inline unsigned int loadWord(void *addr)
 char *VM_Indent(vm_t *vm)
 {
 	static char *string = "                                        ";
+
 	if (vm->callLevel > 20)
 	{
 		return string;
@@ -153,9 +154,8 @@ char *VM_Indent(vm_t *vm)
 
 void VM_StackTrace(vm_t *vm, int programCounter, int programStack)
 {
-	int count;
+	int count = 0;
 
-	count = 0;
 	do
 	{
 		Com_Printf("%s\n", VM_ValueToSymbol(vm, programCounter));
@@ -163,9 +163,7 @@ void VM_StackTrace(vm_t *vm, int programCounter, int programStack)
 		programCounter = *(int *)&vm->dataBase[programStack];
 	}
 	while (programCounter != -1 && ++count < 32);
-
 }
-
 
 /*
 ====================
@@ -175,19 +173,18 @@ VM_PrepareInterpreter
 void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 {
 	int  op;
-	int  pc;
-	byte *code = { 0 };
-	int  instruction;
+	int  pc          = 0;
+	byte *code       = { 0 };
+	int  instruction = 0;
 	int  *codeBase;
 
 	vm->codeBase = Hunk_Alloc(vm->codeLength * 4, h_high);            // we're now int aligned
-//	memcpy( vm->codeBase, (byte *)header + header->codeOffset, vm->codeLength );
+	//memcpy( vm->codeBase, (byte *)header + header->codeOffset, vm->codeLength );
 
 	// we don't need to translate the instructions, but we still need
 	// to find each instructions starting point for jumps
-	pc          = 0;
-	instruction = 0;
-	codeBase    = (int *)vm->codeBase;
+
+	codeBase = (int *)vm->codeBase;
 
 	while (instruction < header->instructionCount)
 	{
@@ -198,7 +195,7 @@ void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 		codeBase[pc] = op;
 		if (pc > header->codeLength)
 		{
-			Com_Error(ERR_FATAL, "VM_PrepareInterpreter: pc > header->codeLength\n");
+			Com_Error(ERR_FATAL, "VM_PrepareInterpreter: pc > header->codeLength");
 		}
 
 		pc++;
@@ -303,7 +300,6 @@ void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 		default:
 			break;
 		}
-
 	}
 }
 
@@ -393,7 +389,7 @@ int VM_CallInterpreted(vm_t *vm, int *args)
 
 	VM_Debug(0);
 
-//	vm_debugLevel=2;
+	//vm_debugLevel=2;
 	// main interpreter loop, will exit when a LEAVE instruction
 	// grabs the -1 program counter
 
@@ -402,7 +398,7 @@ int VM_CallInterpreted(vm_t *vm, int *args)
 	while (1)
 	{
 		int opcode, r0, r1;
-//		unsigned int	r2;
+		//unsigned int	r2;
 
 nextInstruction:
 		r0 = ((int *)opStack)[0];
@@ -412,26 +408,26 @@ nextInstruction2:
 #ifdef DEBUG_VM
 		if ((unsigned)programCounter > vm->codeLength)
 		{
-			Com_Error(ERR_DROP, "VM pc out of range\n");
+			Com_Error(ERR_DROP, "VM_CallInterpreted: VM pc out of range");
 		}
 
 		if (opStack < stack)
 		{
-			Com_Error(ERR_DROP, "VM opStack underflow\n");
+			Com_Error(ERR_DROP, "VM_CallInterpreted: VM opStack underflow");
 		}
 		if (opStack >= stack + MAX_STACK)
 		{
-			Com_Error(ERR_DROP, "VM opStack overflow\n");
+			Com_Error(ERR_DROP, "VM_CallInterpreted: VM opStack overflow");
 		}
 
 		if (programStack <= vm->stackBottom)
 		{
-			Com_Error(ERR_DROP, "VM stack overflow\n");
+			Com_Error(ERR_DROP, "VM_CallInterpreted: VM stack overflow");
 		}
 
 		if (programStack & 3)
 		{
-			Com_Error(ERR_DROP, "VM program stack misaligned\n");
+			Com_Error(ERR_DROP, "VM_CallInterpreted: VM program stack misaligned");
 		}
 
 		if (vm_debugLevel > 1)
@@ -445,7 +441,7 @@ nextInstruction2:
 		{
 #ifdef DEBUG_VM
 		default:
-			Com_Error(ERR_DROP, "Bad VM instruction\n");    // this should be scanned on load!
+			Com_Error(ERR_DROP, "VM_CallInterpreted: Bad VM instruction");    // this should be scanned on load!
 #endif
 		case OP_BREAK:
 			vm->breakCount++;
@@ -469,7 +465,7 @@ nextInstruction2:
 #ifdef DEBUG_VM
 			if (*opStack & 3)
 			{
-				Com_Error(ERR_DROP, "OP_LOAD4 misaligned\n");
+				Com_Error(ERR_DROP, "VM_CallInterpreted: OP_LOAD4 misaligned");
 			}
 #endif
 			r0 = *opStack = *(int *)&image[r0 & dataMask];
@@ -507,7 +503,7 @@ nextInstruction2:
 			int i, count, srci, desti;
 
 			count = r2;
-			// MrE: copy range check
+			// copy range check
 			srci  = r0 & dataMask;
 			desti = r1 & dataMask;
 			count = ((srci + count) & dataMask) - srci;
@@ -517,7 +513,7 @@ nextInstruction2:
 			dest = (int *)&image[r1 & dataMask];
 			if (((intptr_t)src | (intptr_t)dest | count) & 3)
 			{
-				Com_Error(ERR_DROP, "OP_BLOCK_COPY not dword aligned\n");
+				Com_Error(ERR_DROP, "VM_CallInterpreted: OP_BLOCK_COPY not dword aligned");
 			}
 			count >>= 2;
 			for (i = count - 1 ; i >= 0 ; i--)
@@ -557,8 +553,8 @@ nextInstruction2:
 #endif
 				*(int *)&image[programStack + 4] = -1 - programCounter;
 
-//VM_LogSyscalls( (int *)&image[ programStack + 4 ] );
-				r = vm->systemCall((int *)&image[programStack + 4]);
+				//VM_LogSyscalls( (int *)&image[ programStack + 4 ] );
+				r = vm->systemCall((intptr_t *)&image[programStack + 4]);
 
 #ifdef DEBUG_VM
 				// this is just our stack frame pointer, only needed
@@ -611,8 +607,8 @@ nextInstruction2:
 				{
 					// this is to allow setting breakpoints here in the debugger
 					vm->breakCount++;
-//					vm_debugLevel = 2;
-//					VM_StackTrace( vm, programCounter, programStack );
+					//vm_debugLevel = 2;
+					//VM_StackTrace( vm, programCounter, programStack );
 				}
 				vm->callLevel++;
 			}
@@ -975,7 +971,7 @@ done:
 
 	if (opStack != &stack[1])
 	{
-		Com_Error(ERR_DROP, "Interpreter error: opStack = %li\n", (long)(opStack - stack));
+		Com_Error(ERR_DROP, "VM_CallInterpreted: Interpreter error - opStack = %li", (long)(opStack - stack));
 	}
 
 	vm->programStack = stackOnEntry;

@@ -57,12 +57,12 @@
 #define idppc 1
 #if defined(__VEC__)
 #define idppc_altivec 1
-#ifdef MACOS_X  // Apple's GCC does this differently than the FSF.
+#ifdef __APPLE__  // Apple's GCC does this differently than the FSF.
 #define VECCONST_UINT8(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) \
-    (vector unsigned char) (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+	(vector unsigned char) (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
 #else
 #define VECCONST_UINT8(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) \
-    (vector unsigned char) { a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p }
+	(vector unsigned char) { a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p }
 #endif
 #else
 #define idppc_altivec 0
@@ -118,6 +118,8 @@
 
 #define DLL_EXT ".dll"
 
+#define USE_RAW_INPUT_MOUSE
+
 #elif defined(_WIN32) || defined(__WIN32__)
 
 #undef QDECL
@@ -145,20 +147,24 @@
 
 #define DLL_EXT ".dll"
 
+#define USE_RAW_INPUT_MOUSE
+
 #endif
 
 
 //============================================================== MAC OS X ===
 
-#if defined(MACOS_X) || defined(__APPLE_CC__)
-
-// make sure this is defined, just for sanity's sake...
-#ifndef MACOS_X
-#define MACOS_X
-#endif
+#if defined(__APPLE__) || defined(__APPLE_CC__)
 
 #define OS_STRING "macosx"
+
+#ifdef __clang__
+#define ID_INLINE static inline
+#define ID_NONSTATIC_INLINE inline
+#else
 #define ID_INLINE inline
+#endif
+
 #define PATH_SEP '/'
 
 #ifdef __ppc__
@@ -174,7 +180,7 @@
 #define Q3_LITTLE_ENDIAN
 #endif
 
-#define DLL_EXT ".dylib"
+#define DLL_EXT "_mac"
 
 #endif
 
@@ -192,6 +198,7 @@
 
 #ifdef __clang__
 #define ID_INLINE static inline
+#define ID_NONSTATIC_INLINE inline
 #else
 #define ID_INLINE inline
 #endif
@@ -325,6 +332,36 @@
 
 #endif
 
+//================================================================== AROS ===
+
+#ifdef __AROS__
+
+#include <aros/cpu.h>
+
+#define OS_STRING "AROS"
+#define ID_INLINE inline
+#define PATH_SEP '/'
+
+#if defined __i386__
+#define ARCH_STRING "i386"
+#elif defined __x86_64__
+#define ARCH_STRING "x86_64"
+#elif defined __powerpc__
+#define ARCH_STRING "ppc"
+#elif defined __arm__
+#define ARCH_STRING "arm"
+#endif
+
+#if AROS_BIG_ENDIAN == 1
+#define Q3_BIG_ENDIAN
+#else
+#define Q3_LITTLE_ENDIAN
+#endif
+
+#define DLL_EXT ".dll"
+
+#endif
+
 //================================================================== Q3VM ===
 
 #ifdef Q3_VM
@@ -352,6 +389,10 @@
 
 #ifndef ID_INLINE
 #error "ID_INLINE not defined"
+#endif
+
+#ifndef ID_NONSTATIC_INLINE
+#define ID_NONSTATIC_INLINE ID_INLINE
 #endif
 
 #ifndef PATH_SEP

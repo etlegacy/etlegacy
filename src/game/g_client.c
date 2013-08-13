@@ -34,15 +34,24 @@
 
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
+#include "g_strparse.h"
 
-// Ridah, new bounding box
-//static vec3_t	playerMins = {-15, -15, -24};
-//static vec3_t	playerMaxs = {15, 15, 32};
+#ifdef FEATURE_OMNIBOT
+#include "g_etbot_interface.h"
+#endif
+
+#ifdef FEATURE_LUA
+#include "g_lua.h"
+#endif
+
+qboolean CompareIPNoPort(char const *ip1, char const *ip2);
+
+// new bounding box
 vec3_t playerMins = { -18, -18, -24 };
 vec3_t playerMaxs = { 18, 18, 48 };
-// done.
 
-/*QUAKED info_player_deathmatch (1 0 1) (-18 -18 -24) (18 18 48)
+/*
+QUAKED info_player_deathmatch (1 0 1) (-18 -18 -24) (18 18 48)
 potential spawning position for deathmatch games.
 Targets will be fired when someone spawns in on them.
 "nobots" will prevent bots from using this spot.
@@ -71,11 +80,10 @@ void SP_info_player_deathmatch(gentity_t *ent)
 		VectorSubtract(ent->enemy->s.origin, ent->s.origin, dir);
 		vectoangles(dir, ent->s.angles);
 	}
-
 }
 
-//----(SA) added
-/*QUAKED info_player_checkpoint (1 0 0) (-16 -16 -24) (16 16 32) a b c d
+/*
+QUAKED info_player_checkpoint (1 0 0) (-16 -16 -24) (16 16 32) a b c d
 these are start points /after/ the level start
 the letter (a b c d) designates the checkpoint that needs to be complete in order to use this start position
 */
@@ -85,10 +93,8 @@ void SP_info_player_checkpoint(gentity_t *ent)
 	SP_info_player_deathmatch(ent);
 }
 
-//----(SA) end
-
-
-/*QUAKED info_player_start (1 0 0) (-18 -18 -24) (18 18 48)
+/*
+QUAKED info_player_start (1 0 0) (-18 -18 -24) (18 18 48)
 equivelant to info_player_deathmatch
 */
 void SP_info_player_start(gentity_t *ent)
@@ -97,28 +103,23 @@ void SP_info_player_start(gentity_t *ent)
 	SP_info_player_deathmatch(ent);
 }
 
-/*QUAKED info_player_intermission (1 0 1) (-16 -16 -24) (16 16 32) AXIS ALLIED
+/*
+QUAKED info_player_intermission (1 0 1) (-16 -16 -24) (16 16 32) AXIS ALLIED
 The intermission will be viewed from this point.  Target an info_notnull for the view direction.
 */
 void SP_info_player_intermission(gentity_t *ent)
 {
-
 }
-
-
 
 /*
 =======================================================================
-
   SelectSpawnPoint
-
 =======================================================================
 */
 
 /*
 ================
 SpotWouldTelefrag
-
 ================
 */
 qboolean SpotWouldTelefrag(gentity_t *spot)
@@ -139,7 +140,6 @@ qboolean SpotWouldTelefrag(gentity_t *spot)
 		{
 			return qtrue;
 		}
-
 	}
 
 	return qfalse;
@@ -155,18 +155,13 @@ Find the spot that we DON'T want to use
 #define MAX_SPAWN_POINTS    128
 gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from)
 {
-	gentity_t *spot;
+	gentity_t *spot = NULL;
 	vec3_t    delta;
-	float     dist, nearestDist;
-	gentity_t *nearestSpot;
-
-	nearestDist = 999999;
-	nearestSpot = NULL;
-	spot        = NULL;
+	float     dist, nearestDist = 999999;
+	gentity_t *nearestSpot = NULL;
 
 	while ((spot = G_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL)
 	{
-
 		VectorSubtract(spot->r.currentOrigin, from, delta);
 		dist = VectorLength(delta);
 		if (dist < nearestDist)
@@ -179,7 +174,6 @@ gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from)
 	return nearestSpot;
 }
 
-
 /*
 ================
 SelectRandomDeathmatchSpawnPoint
@@ -190,13 +184,10 @@ go to a random point that doesn't telefrag
 #define MAX_SPAWN_POINTS    128
 gentity_t *SelectRandomDeathmatchSpawnPoint(void)
 {
-	gentity_t *spot;
-	int       count;
+	gentity_t *spot = NULL;
+	int       count = 0;
 	int       selection;
 	gentity_t *spots[MAX_SPAWN_POINTS];
-
-	count = 0;
-	spot  = NULL;
 
 	while ((spot = G_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL)
 	{
@@ -217,7 +208,6 @@ gentity_t *SelectRandomDeathmatchSpawnPoint(void)
 	return spots[selection];
 }
 
-
 /*
 ===========
 SelectSpawnPoint
@@ -227,12 +217,9 @@ Chooses a player start, deathmatch start, etc
 */
 gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 {
-	gentity_t *spot;
-	gentity_t *nearestSpot;
+	gentity_t *nearestSpot = SelectNearestDeathmatchSpawnPoint(avoidPoint);
+	gentity_t *spot        = SelectRandomDeathmatchSpawnPoint();
 
-	nearestSpot = SelectNearestDeathmatchSpawnPoint(avoidPoint);
-
-	spot = SelectRandomDeathmatchSpawnPoint();
 	if (spot == nearestSpot)
 	{
 		// roll again if it would be real close to point of death
@@ -244,7 +231,7 @@ gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 		}
 	}
 
-	// find a single player start spot
+	// find a player start spot
 	if (!spot)
 	{
 		G_Error("Couldn't find a spawn point\n");
@@ -259,37 +246,7 @@ gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 
 /*
 ===========
-SelectInitialSpawnPoint
-
-Try to find a spawn point marked 'initial', otherwise
-use normal spawn selection.
-============
-*/
-/*gentity_t *SelectInitialSpawnPoint( vec3_t origin, vec3_t angles ) {
-    gentity_t	*spot;
-
-    spot = NULL;
-    while ((spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != NULL) {
-        if ( spot->spawnflags & 1 ) {
-            break;
-        }
-    }
-
-    if ( !spot || SpotWouldTelefrag( spot ) ) {
-        return SelectSpawnPoint( vec3_origin, origin, angles );
-    }
-
-    VectorCopy (spot->r.currentOrigin, origin);
-    origin[2] += 9;
-    VectorCopy (spot->s.angles, angles);
-
-    return spot;
-}*/
-
-/*
-===========
 SelectSpectatorSpawnPoint
-
 ============
 */
 gentity_t *SelectSpectatorSpawnPoint(vec3_t origin, vec3_t angles)
@@ -304,9 +261,7 @@ gentity_t *SelectSpectatorSpawnPoint(vec3_t origin, vec3_t angles)
 
 /*
 =======================================================================
-
 BODYQUE
-
 =======================================================================
 */
 
@@ -387,7 +342,6 @@ void BodySink(gentity_t *ent)
 	BodySink2(ent);
 }
 
-
 /*
 =============
 CopyToBodyQue
@@ -414,9 +368,6 @@ void CopyToBodyQue(gentity_t *ent)
 	body               = level.bodyQue[level.bodyQueIndex];
 	level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
 
-	// Gordon: um, what on earth was this here for?
-//	trap_UnlinkEntity (body);
-
 	body->s        = ent->s;
 	body->s.eFlags = EF_DEAD;       // clear EF_TALK, etc
 
@@ -425,14 +376,26 @@ void CopyToBodyQue(gentity_t *ent)
 		body->s.eFlags |= EF_HEADSHOT;          // make sure the dead body draws no head (if killed that way)
 	}
 
-	body->s.eType       = ET_CORPSE;
-	body->classname     = "corpse";
+	body->s.eType   = ET_CORPSE;
+	body->classname = "corpse";
+
 	body->s.powerups    = 0; // clear powerups
 	body->s.loopSound   = 0; // clear lava burning
 	body->s.number      = body - g_entities;
 	body->timestamp     = level.time;
 	body->physicsObject = qtrue;
 	body->physicsBounce = 0;        // don't bounce
+	//body->physicsSlide = qfalse;
+	//body->physicsFlush = qfalse;
+
+	VectorCopy(ent->client->ps.viewangles, body->s.angles);
+	VectorCopy(ent->client->ps.viewangles, body->r.currentAngles);
+
+	//if ( ent->client->ps.powerups[PW_HELMETSHIELD])
+	//{
+	//	body->s.powerups |= (1 << PW_HELMETSHIELD);
+	//}
+
 	if (body->s.groundEntityNum == ENTITYNUM_NONE)
 	{
 		body->s.pos.trType = TR_GRAVITY;
@@ -445,43 +408,70 @@ void CopyToBodyQue(gentity_t *ent)
 	}
 	body->s.event = 0;
 
-	// DHM - Clear out event system
+	// Clear out event system
 	for (i = 0; i < MAX_EVENTS; i++)
+	{
 		body->s.events[i] = 0;
+	}
 	body->s.eventSequence = 0;
 
-	// DHM - Nerve
-	// change the animation to the last-frame only, so the sequence
-	// doesn't repeat anew for the body
-	switch (body->s.legsAnim & ~ANIM_TOGGLEBIT)
-	{
-	case BOTH_DEATH1:
-	case BOTH_DEAD1:
-	default:
-		body->s.torsoAnim = body->s.legsAnim = BOTH_DEAD1;
-		break;
-	case BOTH_DEATH2:
-	case BOTH_DEAD2:
-		body->s.torsoAnim = body->s.legsAnim = BOTH_DEAD2;
-		break;
-	case BOTH_DEATH3:
-	case BOTH_DEAD3:
-		body->s.torsoAnim = body->s.legsAnim = BOTH_DEAD3;
-		break;
-	}
+	// time needed to complete animation
+	body->s.torsoAnim = body->s.legsAnim = ent->client->legsDeathAnim;
 
 	body->r.svFlags = ent->r.svFlags & ~SVF_BOT;
 	VectorCopy(ent->r.mins, body->r.mins);
 	VectorCopy(ent->r.maxs, body->r.maxs);
-	VectorCopy(ent->r.absmin, body->r.absmin);
-	VectorCopy(ent->r.absmax, body->r.absmax);
 
-	// ydnar: bodies have lower bounding box
+	//  bodies have lower bounding box
 	body->r.maxs[2] = 0;
 
+	body->s.effect1Time = ent->client->deathAnimTime;
+
+	// this'll look better
+	if (body->s.onFireEnd > level.time)
+	{
+		body->s.onFireEnd = ent->client->deathAnimTime + 1500;
+	}
+
+	VectorCopy(body->s.pos.trBase, body->r.currentOrigin);
+	/* WIP
+	if ( ent->client->deathAnim )
+	{
+	    vec3_t			origin, offset;
+	    grefEntity_t	refent;
+
+	    mdx_PlayerAnimation( body );
+	    mdx_gentity_to_grefEntity( body, &refent, level.time );
+	    mdx_tag_position( body, &refent, origin, "tag_ubelt", 0, 0 );
+
+	    // convert it to vector around null pos
+	    offset[0] = origin[0] - body->r.currentOrigin[0];
+	    offset[1] = origin[1] - body->r.currentOrigin[1];
+	    offset[2] = origin[2] = body->r.currentOrigin[2];
+
+	    G_StepSlideCorpse( body, origin );
+	    // this is the max vector we can reach
+	    VectorCopy ( body->s.pos.trBase, origin );
+
+	    // change bounding box to be off the origin of the corpse
+	    // that will make correct box agains model
+	    body->r.maxs[0] = offset[0] + 18;
+	    body->r.maxs[1] = offset[1] + 18;
+	    body->r.mins[0] = offset[0] - 18;
+	    body->r.mins[1] = offset[1] - 18;
+
+	    body->r.currentOrigin[0] = origin[0] - offset[0];
+	    body->r.currentOrigin[1] = origin[1] - offset[1];
+	    body->r.currentOrigin[2] = origin[2];
+
+	    // ok set it und Fertig!
+	    VectorCopy ( body->r.currentOrigin, body->s.pos.trBase );
+	}
+	*/
+
 	body->clipmask = CONTENTS_SOLID | CONTENTS_PLAYERCLIP;
-	// DHM - Nerve :: allow bullets to pass through bbox
-	// Gordon: need something to allow the hint for covert ops
+	// allow bullets to pass through bbox
+	// need something to allow the hint for covert ops
 	body->r.contents = CONTENTS_CORPSE;
 	body->r.ownerNum = ent->r.ownerNum;
 
@@ -490,15 +480,17 @@ void CopyToBodyQue(gentity_t *ent)
 	BODY_CHARACTER(body) = ent->client->pers.characterIndex;
 	BODY_VALUE(body)     = 0;
 
+	//if ( ent->client->ps.eFlags & EF_PANTSED ){
+	//	body->s.time2 =	1;
+	//}
+	//else {
 	body->s.time2 = 0;
+	//}
 
 	body->activator = NULL;
-
 	body->nextthink = level.time + BODY_TIME(ent->client->sess.sessionTeam);
-
-	body->think = BodySink;
-
-	body->die = body_die;
+	body->think     = BodySink;
+	body->die       = body_die;
 
 	// don't take more damage if already gibbed
 	if (ent->health <= GIB_HEALTH)
@@ -510,29 +502,24 @@ void CopyToBodyQue(gentity_t *ent)
 		body->takedamage = qtrue;
 	}
 
-
-	VectorCopy(body->s.pos.trBase, body->r.currentOrigin);
 	trap_LinkEntity(body);
 }
 
 //======================================================================
 
-
 /*
 ==================
 SetClientViewAngle
-
 ==================
 */
 void SetClientViewAngle(gentity_t *ent, vec3_t angle)
 {
 	int i;
+	int cmdAngle;
 
 	// set the delta angle
 	for (i = 0 ; i < 3 ; i++)
 	{
-		int cmdAngle;
-
 		cmdAngle                        = ANGLE2SHORT(angle[i]);
 		ent->client->ps.delta_angles[i] = cmdAngle - ent->client->pers.cmd.angles[i];
 	}
@@ -540,35 +527,98 @@ void SetClientViewAngle(gentity_t *ent, vec3_t angle)
 	VectorCopy(ent->s.angles, ent->client->ps.viewangles);
 }
 
-void SetClientViewAnglePitch(gentity_t *ent, vec_t angle)
+void G_DropLimboHealth(gentity_t *ent)
 {
-	int cmdAngle;
+	if (g_dropHealth.integer == 0 || !ent->client || ent->client->sess.playerType != PC_MEDIC || g_gamestate.integer != GS_PLAYING)
+	{
+		return;
+	}
 
-	cmdAngle                            = ANGLE2SHORT(angle);
-	ent->client->ps.delta_angles[PITCH] = cmdAngle - ent->client->pers.cmd.angles[PITCH];
+	{
+		vec3_t launchvel, launchspot;
+		int    i, packs = g_dropHealth.integer;
+		int    cwt = ent->client->ps.classWeaponTime;
 
-	ent->s.angles[PITCH] = 0;
-	VectorCopy(ent->s.angles, ent->client->ps.viewangles);
+		if (g_dropHealth.integer == -1 || g_dropHealth.integer > 5)
+		{
+			packs                            = 5; // max packs
+			ent->client->ps.classWeaponTime += (level.time - ent->client->deathTime + 10000);
+		}
+
+		for (i = 0; i < packs; ++i)
+		{
+			if (g_dropHealth.integer == -1 && ent->client->ps.classWeaponTime >= level.time)
+			{
+				break;
+			}
+			launchvel[0] = crandom();
+			launchvel[1] = crandom();
+			launchvel[2] = 0;
+			VectorScale(launchvel, 100, launchvel);
+			launchvel[2] = 100;
+			VectorCopy(ent->r.currentOrigin, launchspot);
+
+			Weapon_Medic_Ext(ent, launchspot, launchspot, launchvel);
+		}
+		ent->client->ps.classWeaponTime = cwt;
+	}
 }
 
-/* JPW NERVE
+void G_DropLimboAmmo(gentity_t *ent)
+{
+	if (g_dropAmmo.integer == 0 || !ent->client || ent->client->sess.playerType != PC_FIELDOPS)
+	{
+		return;
+	}
+
+	{
+		vec3_t launchvel, launchspot;
+		int    i, packs = g_dropAmmo.integer;
+		int    cwt = ent->client->ps.classWeaponTime;
+
+		if (g_dropAmmo.integer == -1 || g_dropAmmo.integer > 5)
+		{
+			packs = 5; // max packs
+			// adjust the charge timer so that the fops only drops as much ammo as he could have before he died.
+			// don't ask me where the 10000 comes from, it just makes this more accurate.
+			ent->client->ps.classWeaponTime += (level.time - ent->client->deathTime + 10000);
+		}
+
+		for (i = 0; i < packs; ++i)
+		{
+			if (g_dropAmmo.integer == -1 && ent->client->ps.classWeaponTime >= level.time)
+			{
+				break;
+			}
+
+			launchvel[0] = crandom();
+			launchvel[1] = crandom();
+			launchvel[2] = 0;
+
+			VectorScale(launchvel, 100, launchvel);
+
+			launchvel[2] = 100;
+			VectorCopy(ent->r.currentOrigin, launchspot);
+
+			Weapon_MagicAmmo_Ext(ent, launchspot, launchspot, launchvel);
+		}
+
+		ent->client->ps.classWeaponTime = cwt;
+	}
+}
+
+/*
 ================
 limbo
 ================
 */
 void limbo(gentity_t *ent, qboolean makeCorpse)
 {
-	int i, contents;
-	//int startclient = ent->client->sess.spectatorClient;
-	int startclient = ent->client->ps.clientNum;
-
-	if (ent->r.svFlags & SVF_POW)
-	{
-		return;
-	}
-
 	if (!(ent->client->ps.pm_flags & PMF_LIMBO))
 	{
+		gclient_t *cl;
+		int       i, contents;
+		int       startclient = ent->client->ps.clientNum;
 
 		if (ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0)
 		{
@@ -582,7 +632,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			}
 		}
 
-		// DHM - Nerve :: First save off persistant info we'll need for respawn
+		// First save off persistant info we'll need for respawn
 		for (i = 0; i < MAX_PERSISTANT; i++)
 		{
 			ent->client->saved_persistant[i] = ent->client->ps.persistant[i];
@@ -591,9 +641,14 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 		ent->client->ps.pm_flags |= PMF_LIMBO;
 		ent->client->ps.pm_flags |= PMF_FOLLOW;
 
+#ifdef FEATURE_OMNIBOT
+		ent->client->sess.botSuicide = qfalse; // cs: avoid needlessly /killing at next spawn
+#endif
 
 		if (makeCorpse)
 		{
+			G_DropLimboHealth(ent);
+			G_DropLimboAmmo(ent);
 			CopyToBodyQue(ent);   // make a nice looking corpse
 		}
 		else
@@ -601,7 +656,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			trap_UnlinkEntity(ent);
 		}
 
-		// DHM - Nerve :: reset these values
+		// reset these values
 		ent->client->ps.viewlocked        = 0;
 		ent->client->ps.viewlocked_entNum = 0;
 
@@ -627,7 +682,6 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
 		}
 
-//		ClientUserinfoChanged( ent->client - level.clients );		// NERVE - SMF - don't do this
 		if (ent->client->sess.sessionTeam == TEAM_AXIS)
 		{
 			ent->client->deployQueueNumber = level.redNumWaiting;
@@ -641,7 +695,8 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
-			gclient_t *cl = &level.clients[level.sortedClients[i]];
+			cl = &level.clients[level.sortedClients[i]];
+
 			if (((cl->ps.pm_flags & PMF_LIMBO) ||
 			     (cl->sess.sessionTeam == TEAM_SPECTATOR && cl->sess.spectatorState == SPECTATOR_FOLLOW)) &&
 			    cl->sess.spectatorClient == ent - g_entities)     //ent->s.number ) {
@@ -652,28 +707,15 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 	}
 }
 
-/* JPW NERVE
+/*
 ================
 reinforce
+    called when time expires for a team deployment cycle and there is at least one guy ready to go
 ================
-// -- called when time expires for a team deployment cycle and there is at least one guy ready to go
 */
 void reinforce(gentity_t *ent)
 {
-	int       p, team; // numDeployable=0, finished=0; // TTimo unused
-	char      *classname;
-	gclient_t *rclient;
-	char      userinfo[MAX_INFO_STRING], *respawnStr;
-
-	if (ent->r.svFlags & SVF_BOT)
-	{
-		trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
-		respawnStr = Info_ValueForKey(userinfo, "respawn");
-		if (!Q_stricmp(respawnStr, "no") || !Q_stricmp(respawnStr, "off"))
-		{
-			return; // no respawns
-		}
-	}
+	int p;
 
 	if (!(ent->client->ps.pm_flags & PMF_LIMBO))
 	{
@@ -681,39 +723,21 @@ void reinforce(gentity_t *ent)
 		return;
 	}
 
+#ifdef FEATURE_MULTIVIEW
 	if (ent->client->pers.mvCount > 0)
 	{
 		G_smvRemoveInvalidClients(ent, TEAM_AXIS);
 		G_smvRemoveInvalidClients(ent, TEAM_ALLIES);
 	}
-
-	// get team to deploy from passed entity
-	team = ent->client->sess.sessionTeam;
-
-	// find number active team spawnpoints
-	if (team == TEAM_AXIS)
-	{
-		classname = "team_CTF_redspawn";
-	}
-	else if (team == TEAM_ALLIES)
-	{
-		classname = "team_CTF_bluespawn";
-	}
-	else
-	{
-		assert(0);
-	}
-
-	// DHM - Nerve :: restore persistant data now that we're out of Limbo
-	rclient = ent->client;
+#endif
+	// restore persistant data now that we're out of Limbo
 	for (p = 0; p < MAX_PERSISTANT; p++)
-		rclient->ps.persistant[p] = rclient->saved_persistant[p];
-	// dhm
+	{
+		ent->client->ps.persistant[p] = ent->client->saved_persistant[p];
+	}
 
 	respawn(ent);
 }
-// jpw
-
 
 /*
 ================
@@ -722,9 +746,9 @@ respawn
 */
 void respawn(gentity_t *ent)
 {
-	ent->client->ps.pm_flags &= ~PMF_LIMBO; // JPW NERVE turns off limbo
+	ent->client->ps.pm_flags &= ~PMF_LIMBO; // turns off limbo
 
-	// DHM - Nerve :: Decrease the number of respawns left
+	// Decrease the number of respawns left
 	if (g_gametype.integer != GT_WOLF_LMS)
 	{
 		if (ent->client->ps.persistant[PERS_RESPAWNS_LEFT] > 0 && g_gamestate.integer == GS_PLAYING)
@@ -749,23 +773,17 @@ void respawn(gentity_t *ent)
 
 	G_DPrintf("Respawning %s, %i lives left\n", ent->client->pers.netname, ent->client->ps.persistant[PERS_RESPAWNS_LEFT]);
 
-	ClientSpawn(ent, qfalse);
-
-	// DHM - Nerve :: Add back if we decide to have a spawn effect
-	// add a teleportation effect
-	//tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
-	//tent->s.clientNum = ent->s.clientNum;
+	ClientSpawn(ent, qfalse, qfalse, qtrue);
 }
 
-// NERVE - SMF - merge from team arena
 /*
 ================
 TeamCount
 
-Returns number of players on a team
+    Returns number of players on a team
 ================
 */
-team_t TeamCount(int ignoreClientNum, int team)
+int TeamCount(int ignoreClientNum, team_t team)
 {
 	int i, ref, count = 0;
 
@@ -781,14 +799,12 @@ team_t TeamCount(int ignoreClientNum, int team)
 		}
 	}
 
-	return(count);
+	return count;
 }
-// -NERVE - SMF
 
 /*
 ================
 PickTeam
-
 ================
 */
 team_t PickTeam(int ignoreClientNum)
@@ -864,17 +880,6 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 			}
 		}
 		break;
-	/*case WP_MOBILE_MG42:
-	case WP_PANZERFAUST:
-	case WP_FLAMETHROWER:
-	    if( client->sess.skill[SK_HEAVY_WEAPONS] >= 1 )
-	        client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += GetAmmoTableData(weaponNum)->maxclip;
-	    break;
-	case WP_MORTAR:
-	case WP_MORTAR_SET:
-	    if( client->sess.skill[SK_HEAVY_WEAPONS] >= 1 )
-	        client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += 2;
-	    break;*/
 	case WP_MEDIC_SYRINGE:
 	case WP_MEDIC_ADRENALINE:
 		if (client->sess.skill[SK_FIRST_AID] >= 2)
@@ -916,6 +921,10 @@ qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int amm
 	// skill handling
 	AddExtraSpawnAmmo(client, weapon);
 
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_AddWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
+#endif
+
 	return qtrue;
 }
 
@@ -927,12 +936,15 @@ SetWolfSpawnWeapons
 void SetWolfSpawnWeapons(gclient_t *client)
 {
 	int pc = client->sess.playerType;
-	// qboolean isBot = (g_entities[client->ps.clientNum].r.svFlags & SVF_BOT) ? qtrue : qfalse;
 
 	if (client->sess.sessionTeam == TEAM_SPECTATOR)
 	{
 		return;
 	}
+
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_ResetWeapons(client->ps.clientNum);
+#endif
 
 	// Reset special weapon time
 	client->ps.classWeaponTime = -999999;
@@ -943,7 +955,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	// Abuse teamNum to store player class as well (can't see stats for all clients in cgame)
 	client->ps.teamNum = pc;
 
-	// JPW NERVE -- zero out all ammo counts
+	// zero out all ammo counts
 	memset(client->ps.ammo, 0, MAX_WEAPONS * sizeof(int));
 
 	// All players start with a knife (not OR-ing so that it clears previous weapons)
@@ -1357,15 +1369,11 @@ int G_CountTeamMedics(team_t team, qboolean alivecheck)
 	return numMedics;
 }
 
-//
 // AddMedicTeamBonus
-//
 void AddMedicTeamBonus(gclient_t *client)
 {
-	int numMedics = G_CountTeamMedics(client->sess.sessionTeam, qfalse);
-
 	// compute health mod
-	client->pers.maxHealth = 100 + 10 * numMedics;
+	client->pers.maxHealth = 100 + 10 * G_CountTeamMedics(client->sess.sessionTeam, qfalse);
 
 	if (client->pers.maxHealth > 125)
 	{
@@ -1387,19 +1395,15 @@ ClientCheckName
 */
 static void ClientCleanName(const char *in, char *out, int outSize)
 {
-	int  len, colorlessLen;
+	int  len = 0, colorlessLen = 0;
 	char ch;
 	char *p;
-	int  spaces;
+	int  spaces = 0;
 
-	//save room for trailing null byte
+	// save room for trailing null byte
 	outSize--;
-
-	len          = 0;
-	colorlessLen = 0;
-	p            = out;
-	*p           = 0;
-	spaces       = 0;
+	p  = out;
+	*p = 0;
 
 	while (1)
 	{
@@ -1474,8 +1478,187 @@ static void ClientCleanName(const char *in, char *out, int outSize)
 	}
 }
 
-void G_StartPlayerAppropriateSound(gentity_t *ent, char *soundType)
+// courtesy of Dens
+// FIXME: @IP6
+const char *GetParsedIP(const char *ipadd)
 {
+	// code by Dan Pop, http://bytes.com/forum/thread212174.html
+	unsigned      b1, b2, b3, b4, port = 0;
+	unsigned char c;
+	int           rc;
+	static char   ipge[20];
+
+	if (!Q_strncmp(ipadd, "localhost", 9))
+	{
+		return "localhost";
+	}
+
+	rc = sscanf(ipadd, "%3u.%3u.%3u.%3u:%u%c", &b1, &b2, &b3, &b4, &port, &c);
+	if (rc < 4 || rc > 5)
+	{
+		return NULL;
+	}
+	if ((b1 | b2 | b3 | b4) > 255 || port > 65535)
+	{
+		return NULL;
+	}
+	if (strspn(ipadd, "0123456789.:") < strlen(ipadd))
+	{
+		return NULL;
+	}
+
+	Com_sprintf(ipge, sizeof(ipge), "%u.%u.%u.%u", b1, b2, b3, b4);
+	return ipge;
+}
+
+// based on userinfocheck.lua and combinedfixes.lua
+// FIXME: @IP6
+char *CheckUserinfo(int clientNum, char *userinfo)
+{
+	char *value;
+	int  length = strlen(userinfo);
+	int  i, slashCount = 0, count = 0;
+
+	if (length < 1)
+	{
+		return "Userinfo too short";
+	}
+
+	// 44 is a bit random now: MAX_INFO_STRING - 44 = 980. The LUA script
+	// uses 980, but I don't know if there is a specific reason for that
+	// number. Userinfo should never get this big anyway, unless someone is
+	// trying to force the engine to truncate it, so that the real IP is lost
+	if (length > MAX_INFO_STRING - 44)
+	{
+		return "Userinfo too long.";
+	}
+
+	// userinfo always has to have a leading slash
+	if (userinfo[0] != '\\')
+	{
+		return "Missing leading slash in userinfo.";
+	}
+	// the engine always adds ip\ip:port at the end, so there will never
+	// be a trailing slash
+	if (userinfo[length - 1] == '\\')
+	{
+		return "Trailing slash in userinfo.";
+	}
+
+	for (i = 0; userinfo[i]; ++i)
+	{
+		if (userinfo[i] == '\\')
+		{
+			slashCount++;
+		}
+	}
+	if (slashCount % 2 != 0)
+	{
+		return "Bad number of slashes in userinfo.";
+	}
+
+	// make sure there is only one ip, cl_guid, name and cl_punkbuster field
+	if (length > 4)
+	{
+		for (i = 0; userinfo[i + 3]; ++i)
+		{
+			if (userinfo[i] == '\\' && userinfo[i + 1] == 'i' &&
+			    userinfo[i + 2] == 'p' && userinfo[i + 3] == '\\')
+			{
+				count++;
+			}
+		}
+	}
+	if (count == 0)
+	{
+		return "Missing IP in userinfo.";
+	}
+	else if (count > 1)
+	{
+		return "Too many IP fields in userinfo.";
+	}
+	else
+	{
+		if (GetParsedIP(Info_ValueForKey(userinfo, "ip")) == NULL)
+		{
+			return "Malformed IP in userinfo.";
+		}
+	}
+	count = 0;
+
+	if (length > 9)
+	{
+		for (i = 0; userinfo[i + 8]; ++i)
+		{
+			if (userinfo[i] == '\\' && userinfo[i + 1] == 'c' &&
+			    userinfo[i + 2] == 'l' && userinfo[i + 3] == '_' &&
+			    userinfo[i + 4] == 'g' && userinfo[i + 5] == 'u' &&
+			    userinfo[i + 6] == 'i' && userinfo[i + 7] == 'd' &&
+			    userinfo[i + 8] == '\\')
+			{
+				count++;
+			}
+		}
+	}
+	if (count > 1)
+	{
+		return "Too many cl_guid fields in userinfo.";
+	}
+	count = 0;
+
+	if (length > 6)
+	{
+		for (i = 0; userinfo[i + 5]; ++i)
+		{
+			if (userinfo[i] == '\\' && userinfo[i + 1] == 'n' &&
+			    userinfo[i + 2] == 'a' && userinfo[i + 3] == 'm' &&
+			    userinfo[i + 4] == 'e' && userinfo[i + 5] == '\\')
+			{
+				count++;
+			}
+		}
+	}
+	if (count == 0)
+	{
+		// if an empty name is entered, the userinfo will not contain a /name key/value at all..
+		// FIXME: replace ?
+		return "Missing name field in userinfo.";
+	}
+	else if (count > 1)
+	{
+		return "Too many name fields in userinfo.";
+	}
+	count = 0;
+
+	if (length > 15)
+	{
+		for (i = 0; userinfo[i + 14]; ++i)
+		{
+			if (userinfo[i] == '\\' && userinfo[i + 1] == 'c' &&
+			    userinfo[i + 2] == 'l' && userinfo[i + 3] == '_' &&
+			    userinfo[i + 4] == 'p' && userinfo[i + 5] == 'u' &&
+			    userinfo[i + 6] == 'n' && userinfo[i + 7] == 'k' &&
+			    userinfo[i + 8] == 'b' && userinfo[i + 9] == 'u' &&
+			    userinfo[i + 10] == 's' && userinfo[i + 11] == 't' &&
+			    userinfo[i + 12] == 'e' && userinfo[i + 13] == 'r' &&
+			    userinfo[i + 14] == '\\')
+			{
+				count++;
+			}
+		}
+	}
+	if (count > 1)
+	{
+		return "Too many cl_punkbuster fields in userinfo.";
+	}
+
+	value = Info_ValueForKey(userinfo, "rate");
+	if (value == NULL || value[0] == '\0')
+	{
+		return "Wrong rate field in userinfo.";
+	}
+
+	return 0;
 }
 
 /*
@@ -1491,21 +1674,143 @@ if desired.
 */
 void ClientUserinfoChanged(int clientNum)
 {
-	gentity_t *ent;
-	char      *s;
-	char      oldname[MAX_STRING_CHARS];
-	char      userinfo[MAX_INFO_STRING];
-	gclient_t *client;
-	int       i;
-	char      skillStr[16] = "";
-	char      medalStr[16] = "";
-	int       characterIndex;
-
-
-	ent    = g_entities + clientNum;
-	client = ent->client;
+	gentity_t  *ent    = g_entities + clientNum;
+	gclient_t  *client = ent->client;
+	int        i;
+	const char *userinfo_ptr                 = NULL;
+	char       cs_key[MAX_STRING_CHARS]      = "";
+	char       cs_value[MAX_STRING_CHARS]    = "";
+	char       cs_cg_uinfo[MAX_STRING_CHARS] = "";
+	char       cs_skill[MAX_STRING_CHARS]    = "";
+	char       *reason;
+	char       *s;
+	char       cs_name[MAX_NETNAME] = "";
+	char       oldname[MAX_STRING_CHARS];
+	char       userinfo[MAX_INFO_STRING];
+	char       skillStr[16] = "";
+	char       medalStr[16] = "";
 
 	client->ps.clientNum = clientNum;
+
+	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
+
+	if (!(ent->r.svFlags & SVF_BOT))
+	{
+		reason = CheckUserinfo(clientNum, userinfo);
+		if (reason)
+		{
+			G_Printf("ClientUserinfoChanged: CheckUserinfo: client %d: %s\n", clientNum, reason);
+			trap_DropClient(clientNum, va("^1%s", "Bad userinfo."), 99999);
+			return;
+		}
+	}
+
+	// Cache config string values used in ClientUserinfoChanged
+	// Every time we call Info_ValueForKey we search through the string from the start....
+	// let's grab the values we need in just one pass... key matching is fast because
+	// we will use our minimal perfect hashing function.
+	userinfo_ptr = userinfo;
+
+	while (1)
+	{
+		g_StringToken_t token;
+		// Get next key/value pair
+		if (qfalse == Info_NextPair(&userinfo_ptr, cs_key, cs_value))
+		{
+			// This would only happen if the end user is trying to manually modify the user info string
+			G_Printf("ClientUserinfoChanged: client %d hacking clientinfo, empty key found!\n", clientNum);
+
+			if (!(ent->r.svFlags & SVF_BOT))
+			{
+				trap_DropClient(clientNum, "Bad userinfo.", 0);
+			}
+			return;
+		}
+		// Empty string for key and we exit...
+		if (cs_key[0] == 0)
+		{
+			break;
+		}
+
+		token = G_GetTokenForString(cs_key);
+		switch (token)
+		{
+		case TOK_ip:
+		{
+			if (!(ent->r.svFlags & SVF_BOT) && CompareIPNoPort(client->pers.client_ip, cs_value) == qfalse)
+			{
+				// They're trying to hack their ip address....
+				G_Printf("ClientUserinfoChanged: client %d hacking ip, old=%s, new=%s\n", clientNum, client->pers.client_ip, cs_value);
+				trap_DropClient(clientNum, "Bad userinfo.", 0);
+				return;
+			}
+			Q_strncpyz(client->pers.client_ip, cs_value, MAX_IP4_LENGTH);
+			break;
+		}
+		case TOK_cg_uinfo:
+			Q_strncpyz(cs_cg_uinfo, cs_value, MAX_STRING_CHARS);
+			break;
+		/*
+		            case TOK_pmove_fixed:
+		                if ( cs_value[0] )
+		                    client->pers.pmoveFixed = atoi(cs_value);
+		                else
+		                    client->pers.pmoveFixed = 0;
+		                break;
+		            case TOK_pmove_msec:
+		                if ( cs_value[0] )
+		                    client->pers.pmoveMsec = atoi(cs_value);
+		                else
+		                    client->pers.pmoveMsec = 8;
+		                // paranoia
+		                if (  client->pers.pmoveMsec > 33 )
+		                    client->pers.pmoveMsec = 33;
+		                if ( client->pers.pmoveMsec < 3 )
+		                    client->pers.pmoveMsec = 3;
+		                break;
+		*/
+		case TOK_name:
+			// see also MAX_NAME_LENGTH
+			if (strlen(cs_value) >= MAX_NETNAME)
+			{
+				// They're trying long names
+				G_Printf("ClientUserinfoChanged: client %d kicked for long name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
+				trap_DropClient(clientNum, "Name too long. Plase change your name.", 0);
+				return;
+			}
+			Q_strncpyz(cs_name, cs_value, MAX_NETNAME);
+			break;
+		case TOK_cl_guid:
+			if (!(ent->r.svFlags & SVF_BOT) &&
+			    strcmp(client->pers.cl_guid, "unknown") &&
+			    strcmp(client->pers.cl_guid, cs_value))
+			{
+				// They're trying to hack their guid...
+				G_Printf("ClientUserinfoChanged: client %d hacking cl_guid, old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
+				trap_DropClient(clientNum, "Bad userinfo.", 0);
+				return;
+			}
+			Q_strncpyz(client->pers.cl_guid, cs_value, MAX_GUID_LENGTH + 1);
+			break;
+		case TOK_skill:
+			Q_strncpyz(cs_skill, cs_value, MAX_STRING_CHARS);
+			break;
+		default:
+			continue;
+		}
+	}
+
+	// overwrite empty names with a default name, but do not kick those players ...
+	// (player did delete the profile or profile can't be read)
+	if (strlen(cs_name) == 0)
+	{
+		Q_strncpyz(cs_name, va("Target #%i", clientNum), 15);
+		Info_SetValueForKey(userinfo, "name", cs_name);
+		trap_SetUserinfo(clientNum, userinfo);
+		CP("cp \"You cannot assign an empty playername! (Your name is reset)\"");
+		G_LogPrintf("ClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
+		G_DPrintf("ClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
+	}
 
 	client->medals = 0;
 	for (i = 0; i < SK_NUM_SKILLS; i++)
@@ -1513,12 +1818,13 @@ void ClientUserinfoChanged(int clientNum)
 		client->medals += client->sess.medals[i];
 	}
 
-	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
-
 	// check for malformed or illegal info strings
 	if (!Info_Validate(userinfo))
 	{
 		Q_strncpyz(userinfo, "\\name\\badinfo", sizeof(userinfo));
+		G_Printf("ClientUserinfoChanged: CheckUserinfo: client %d: Invalid userinfo\n", clientNum);
+		trap_DropClient(clientNum, "Invalid userinfo", 300);
+		return;
 	}
 
 #ifndef DEBUG_STATS
@@ -1528,16 +1834,21 @@ void ClientUserinfoChanged(int clientNum)
 		G_Printf("Userinfo: %s\n", userinfo);
 	}
 
-	// check for local client
-	s = Info_ValueForKey(userinfo, "ip");
-	if (s && !strcmp(s, "localhost"))
+	if (!(g_protect.integer & G_PROTECT_LOCALHOST_REF))
 	{
-		client->pers.localClient = qtrue;
-		level.fLocalHost         = qtrue;
-		client->sess.referee     = RL_REFEREE;
+		// check for local client and set ref
+		if (!strcmp(client->pers.client_ip, "localhost"))
+		{
+			client->pers.localClient = qtrue;
+			level.fLocalHost         = qtrue;
+			client->sess.referee     = RL_REFEREE;
+		}
 	}
 
-	// OSP - extra client info settings
+	// added for zinx etpro antiwarp
+	client->pers.pmoveMsec = pmove_msec.integer;
+
+	// extra client info settings
 	//		 FIXME: move other userinfo flag settings in here
 	if (ent->r.svFlags & SVF_BOT)
 	{
@@ -1545,14 +1856,36 @@ void ClientUserinfoChanged(int clientNum)
 		client->pers.bAutoReloadAux    = qtrue;
 		client->pmext.bAutoReload      = qtrue;
 		client->pers.predictItemPickup = qfalse;
+		client->pers.pmoveFixed        = qfalse;
 	}
 	else
 	{
-		s = Info_ValueForKey(userinfo, "cg_uinfo");
-		sscanf(s, "%i %i %i",
-		       &client->pers.clientFlags,
-		       &client->pers.clientTimeNudge,
-		       &client->pers.clientMaxPackets);
+		if (cs_cg_uinfo[0])
+		{
+			sscanf(cs_cg_uinfo, "%i %i %i",
+			       &client->pers.clientFlags,
+			       &client->pers.clientTimeNudge,
+			       &client->pers.clientMaxPackets);
+		}
+		else
+		{
+			// cg_uinfo was empty and useless.
+			// Let us fill these values in with something useful,
+			// if there not present to prevent auto reload
+			// from failing. - forty
+			if (!client->pers.clientFlags)
+			{
+				client->pers.clientFlags = 13;
+			}
+			if (!client->pers.clientTimeNudge)
+			{
+				client->pers.clientTimeNudge = 0;
+			}
+			if (!client->pers.clientMaxPackets)
+			{
+				client->pers.clientMaxPackets = 30;
+			}
+		}
 
 		client->pers.autoActivate      = (client->pers.clientFlags & CGF_AUTOACTIVATE) ? PICKUP_TOUCH : PICKUP_ACTIVATE;
 		client->pers.predictItemPickup = ((client->pers.clientFlags & CGF_PREDICTITEMS) != 0);
@@ -1571,8 +1904,7 @@ void ClientUserinfoChanged(int clientNum)
 
 	// set name
 	Q_strncpyz(oldname, client->pers.netname, sizeof(oldname));
-	s = Info_ValueForKey(userinfo, "name");
-	ClientCleanName(s, client->pers.netname, sizeof(client->pers.netname));
+	ClientCleanName(cs_name, client->pers.netname, sizeof(client->pers.netname));
 
 	if (client->pers.connected == CON_CONNECTED)
 	{
@@ -1587,21 +1919,12 @@ void ClientUserinfoChanged(int clientNum)
 	{
 		Q_strcat(skillStr, sizeof(skillStr), va("%i", client->sess.skill[i]));
 		Q_strcat(medalStr, sizeof(medalStr), va("%i", client->sess.medals[i]));
-		// FIXME: Gordon: wont this break if medals > 9 arnout? JK: Medal count is tied to skill count :() Gordon: er, it's based on >> skill per map, so for a huuuuuuge campaign it could break...
+		// FIXME: Gordon: wont this break if medals > 9 arnout?
+		// Medal count is tied to skill count :()
+		// er, it's based on >> skill per map, so for a huuuuuuge campaign it could break...
 	}
 
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
-
-	// check for custom character
-	s = Info_ValueForKey(userinfo, "ch");
-	if (*s)
-	{
-		characterIndex = atoi(s);
-	}
-	else
-	{
-		characterIndex = -1;
-	}
 
 	// To communicate it to cgame
 	client->ps.stats[STAT_PLAYER_CLASS] = client->sess.playerType;
@@ -1609,70 +1932,169 @@ void ClientUserinfoChanged(int clientNum)
 
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
-	if (ent->r.svFlags & SVF_BOT)
-	{
-		// n: netname
-		// t: sessionTeam
-		// c1: color
-		// hc: maxHealth
-		// skill: skill
-		// c: playerType (class?)
-		// r: rank
-		// f: fireteam
-		// bot: botSlotNumber
-		// nwp: noWeapon
-		// m: medals
-		// ch: character
-
-		s = va("n\\%s\\t\\%i\\skill\\%s\\c\\%i\\r\\%i\\m\\%s\\s\\%s%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i",
-		       client->pers.netname,
-		       client->sess.sessionTeam,
-		       Info_ValueForKey(userinfo, "skill"),
-		       client->sess.playerType,
-		       client->sess.rank,
-		       medalStr,
-		       skillStr,
-		       characterIndex >= 0 ? va("\\ch\\%i", characterIndex) : "",
-		       client->disguiseNetname,
-		       client->disguiseRank,
-		       client->sess.playerWeapon,
-		       client->sess.latchPlayerWeapon,
-		       client->sess.latchPlayerWeapon2,
-		       client->sess.muted ? 1 : 0
-		       );
-	}
-	else
-	{
-		s = va("n\\%s\\t\\%i\\c\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i",
-		       client->pers.netname,
-		       client->sess.sessionTeam,
-		       client->sess.playerType,
-		       client->sess.rank,
-		       medalStr,
-		       skillStr,
-		       client->disguiseNetname,
-		       client->disguiseRank,
-		       client->sess.playerWeapon,
-		       client->sess.latchPlayerWeapon,
-		       client->sess.latchPlayerWeapon2,
-		       client->sess.muted ? 1 : 0,
-		       client->sess.referee
-		       );
-	}
+	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i\\u\\%u",
+	       client->pers.netname,
+	       client->sess.sessionTeam,
+	       client->sess.playerType,
+	       client->sess.latchPlayerType,
+	       client->sess.rank,
+	       medalStr,
+	       skillStr,
+	       client->disguiseNetname,
+	       client->disguiseRank,
+	       client->sess.playerWeapon,
+	       client->sess.latchPlayerWeapon,
+	       client->sess.latchPlayerWeapon2,
+	       client->sess.muted ? 1 : 0,
+	       client->sess.referee,
+	       client->sess.uci
+	       );
 
 	trap_GetConfigstring(CS_PLAYERS + clientNum, oldname, sizeof(oldname));
-
 	trap_SetConfigstring(CS_PLAYERS + clientNum, s);
 
-	if (!Q_stricmp(oldname, s))
+	if (!Q_stricmp(oldname, s)) // not changed
 	{
 		return;
 	}
+
+#ifdef FEATURE_LUA
+	// *LUA* API callbacks
+	// This only gets called when the ClientUserinfo is changed, replicating ETPro's behaviour.
+	G_LuaHook_ClientUserinfoChanged(clientNum);
+#endif
 
 	G_LogPrintf("ClientUserinfoChanged: %i %s\n", clientNum, s);
 	G_DPrintf("ClientUserinfoChanged: %i :: %s\n", clientNum, s);
 }
 
+/*
+IsFakepConnection
+
+    Ported from the etpro lua module
+
+    FIXME: nice to have in engine too - implement this server side !!!
+*/
+
+// This defines the default value and also the minimum value we will allow the client to set...
+#define DEF_IP_MAX_CLIENTS  3
+
+// Return the length of the IP address if it has a port, or INT_MAX otherwise
+int GetIPLength(char const *ip)
+{
+	char *start = strchr(ip, ':');
+
+	return (start == NULL ? INT_MAX : start - ip);
+}
+
+qboolean CompareIPNoPort(char const *ip1, char const *ip2)
+{
+	int checkLength = MIN(GetIPLength(ip1), GetIPLength(ip2));
+
+	// Don't compare the port - just the IP
+	if (checkLength < INT_MAX && !Q_strncmp(ip1, ip2, checkLength))
+	{
+		return qtrue;
+	}
+	else if (checkLength == INT_MAX && !strcmp(ip1, ip2))
+	{
+		return qtrue;
+	}
+	else
+	{
+		return qfalse;
+	}
+}
+
+char *IsFakepConnection(int clientNum, char const *ip, char const *rate)
+{
+	gentity_t *ent;
+	int       theirIPLength;
+	int       checkLength;
+	int       count      = 1; // we count as the first one
+	int       max        = trap_Cvar_VariableIntegerValue("g_ip_max_clients");
+	int       myIPLength = GetIPLength(ip);
+	int       i;
+	char      *theirIP;
+
+	// Default it to DEF_IP_MAX_CLIENTS as the minimum
+	if (!max || max <= 0)
+	{
+		max = DEF_IP_MAX_CLIENTS;
+	}
+
+	// validate userinfo to filter out the people blindly using hack code
+	if (rate[0] == 0)
+	{
+		return "Invalid connection!";
+	}
+
+	// let localhost ( mostly bots and host player ) be
+	// FIXME: move to loop and check for bots ... default of 3 connections should be enough
+	// for localhost
+	if (!strcmp(ip, "localhost"))
+	{
+		return NULL;
+	}
+
+	// Iterate over each connected client and check the IP, keeping a count of connections
+	// from the same IP as this connecting client
+	// FIXME: use connected clients
+	for (i = 0; i < level.maxclients; ++i)
+	{
+		// Skip our own slot
+		if (i == clientNum)
+		{
+			continue;
+		}
+
+		ent = &g_entities[i];
+		if (ent->client == NULL)
+		{
+			continue;
+		}
+
+		theirIP       = ent->client->pers.client_ip;
+		theirIPLength = GetIPLength(theirIP);
+		checkLength   = MIN(theirIPLength, myIPLength);
+
+		// pers.connected is set correctly for fake players can't rely on userinfo being empty
+		if (ent->client->pers.connected != CON_DISCONNECTED)
+		{
+			qboolean ipMatch = qfalse;
+
+			// Don't compare the port - just the IP
+			if (checkLength < INT_MAX && !Q_strncmp(ip, theirIP, checkLength))
+			{
+				ipMatch = qtrue;
+			}
+			else if (checkLength == INT_MAX && !strcmp(ip, theirIP))
+			{
+				ipMatch = qtrue;
+			}
+
+			if (ipMatch == qtrue)
+			{
+				++count;
+				if (count > max)
+				{
+					G_Printf("IsFakepConnection: too many connections from %s\n", ip);
+					G_LogPrintf("IsFakepConnection: too many connections from %s\n", ip);
+					// TODO: should we drop / ban all connections from this IP?
+					return va("Only %d connection%s per IP %s allowed on this server!",
+					          max,
+					          max == 1 ? "" : "s",
+					          max == 1 ? "is" : "are");
+				}
+			}
+		}
+	}
+
+	// Ok let them connect
+	return NULL;
+}
+
+extern const char *country_name[MAX_COUNTRY_NUM];
 
 /*
 ===========
@@ -1696,72 +2118,145 @@ restarts.
 */
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 {
-	char      *value;
-	gclient_t *client;
-	char      userinfo[MAX_INFO_STRING];
-	gentity_t *ent;
+	gclient_t  *client;
+	gentity_t  *ent          = &g_entities[clientNum];
+	const char *userinfo_ptr = NULL;
+	char       userinfo[MAX_INFO_STRING];
+	char       cs_key[MAX_STRING_CHARS]      = "";
+	char       cs_value[MAX_STRING_CHARS]    = "";
+	char       cs_ip[MAX_STRING_CHARS]       = "";
+	char       cs_password[MAX_STRING_CHARS] = "";
+	char       cs_name[MAX_NETNAME]          = "";
+	char       cs_guid[MAX_GUID_LENGTH + 1]  = "";
+	char       cs_rate[MAX_STRING_CHARS]     = "";
+	char       *value;
+#ifdef FEATURE_LUA
+	char reason[MAX_STRING_CHARS] = "";
+#endif
+
 #ifdef USEXPSTORAGE
 	ipXPStorage_t *xpBackup;
 	int           i;
 #endif // USEXPSTORAGE
 
-	ent = &g_entities[clientNum];
-
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
+	// grab the values we need in just one pass
+	// Use our minimal perfect hash generated code to give us the
+	// result token in optimal time
+	userinfo_ptr = userinfo;
+	while (1)
+	{
+		g_StringToken_t token;
+		// Get next key/value pair
+		Info_NextPair(&userinfo_ptr, cs_key, cs_value);
+		// Empty string for key and we exit...
+		if (cs_key[0] == 0)
+		{
+			break;
+		}
+		token = G_GetTokenForString(cs_key);
+		switch (token)
+		{
+		case TOK_ip:
+			Q_strncpyz(cs_ip, cs_value, MAX_STRING_CHARS);
+			break;
+		case TOK_name:
+			Q_strncpyz(cs_name, cs_value, MAX_NETNAME);
+			break;
+		case TOK_cl_guid:
+			Q_strncpyz(cs_guid, cs_value, MAX_GUID_LENGTH + 1);
+			break;
+		case TOK_password:
+			Q_strncpyz(cs_password, cs_value, MAX_STRING_CHARS);
+			break;
+		case TOK_rate:
+			Q_strncpyz(cs_rate, cs_value, MAX_STRING_CHARS);
+			break;
+		default:
+			continue;
+		}
+	}
+
 	// IP filtering
-	// show_bug.cgi?id=500
 	// recommanding PB based IP / GUID banning, the builtin system is pretty limited
 	// check to see if they are on the banned IP list
-	value = Info_ValueForKey(userinfo, "ip");
-	if (G_FilterIPBanPacket(value))
+	if (G_FilterIPBanPacket(cs_ip))
 	{
 		return "You are banned from this server.";
 	}
 
-	// Xian - check for max lives enforcement ban
+	// don't permit long names ... - see also MAX_NETNAME
+	if (strlen(cs_name) >= MAX_NAME_LENGTH)
+	{
+		return "Bad name: Name too long. Please change your name.";
+	}
+
+	{
+		unsigned int i;
+
+		// Avoid ext. ASCII chars in the CS
+		for (i = 0; i < strlen(cs_name); ++i)
+		{
+			if (cs_name[i] < 0)  // extended ASCII chars have values between -128 and 0 (signed char)
+			{
+				return "Bad name: Extended ASCII characters. Please change your name.";
+			}
+		}
+	}
+
+	// check for max lives enforcement ban
 	if (g_gametype.integer != GT_WOLF_LMS)
 	{
 		if (g_enforcemaxlives.integer && (g_maxlives.integer > 0 || g_axismaxlives.integer > 0 || g_alliedmaxlives.integer > 0))
 		{
-			if (trap_Cvar_VariableIntegerValue("sv_punkbuster"))
+			if (trap_Cvar_VariableIntegerValue("sv_punkbuster")) // <- FIXME: -> g_protect cvar
 			{
-				value = Info_ValueForKey(userinfo, "cl_guid");
-				if (G_FilterMaxLivesPacket(value))
+				if (G_FilterMaxLivesPacket(cs_guid))
 				{
 					return "Max Lives Enforcement Temp Ban. You will be able to reconnect when the next round starts. This ban is enforced to ensure you don't reconnect to get additional lives.";
 				}
 			}
 			else
 			{
-				value = Info_ValueForKey(userinfo, "ip");   // this isn't really needed, oh well.
-				if (G_FilterMaxLivesIPPacket(value))
+				// this isn't really needed, oh well.
+				if (G_FilterMaxLivesIPPacket(cs_ip))
 				{
 					return "Max Lives Enforcement Temp Ban. You will be able to reconnect when the next round starts. This ban is enforced to ensure you don't reconnect to get additional lives.";
 				}
 			}
 		}
 	}
-	// End Xian
 
-	// we don't check password for bots and local client
-	// NOTE: local client <-> "ip" "localhost"
-	//   this means this client is not running in our current process
-	if (!isBot && !(ent->r.svFlags & SVF_BOT) && (strcmp(Info_ValueForKey(userinfo, "ip"), "localhost") != 0))
+	if (!isBot)
 	{
-		// check for a password
-		value = Info_ValueForKey(userinfo, "password");
-		if (g_password.string[0] && Q_stricmp(g_password.string, "none") && strcmp(g_password.string, value) != 0)
+		// Check for fakep connections
+		value = IsFakepConnection(clientNum, cs_ip, cs_rate);
+		if (value != NULL)
 		{
-			if (!sv_privatepassword.string[0] || strcmp(sv_privatepassword.string, value))
+			// Too many connections from the same IP - don't permit the connection
+			return value;
+		}
+
+		// we don't check password for bots and local client
+		// NOTE: local client <-> "ip" "localhost"
+		//   this means this client is not running in our current process
+		if ((strcmp(cs_ip, "localhost") != 0))
+		{
+			// check for a password
+			if (g_password.string[0] && Q_stricmp(g_password.string, "none") && strcmp(g_password.string, cs_password) != 0)
 			{
-				return "Invalid password";
+				if (!sv_privatepassword.string[0] || strcmp(sv_privatepassword.string, cs_password))
+				{
+					return "Invalid password";
+				}
 			}
 		}
 	}
 
-	// Gordon: porting q3f flag bug fix
-	//			If a player reconnects quickly after a disconnect, the client disconnect may never be called, thus flag can get lost in the ether
+	// porting q3f flag bug fix
+	// If a player reconnects quickly after a disconnect, the client disconnect may never be called, thus flag can get lost in the ether
+	// see ZOMBIE state
 	if (ent->inuse)
 	{
 		G_LogPrintf("Forcing disconnect on active client: %i\n", (int)(ent - g_entities));
@@ -1773,21 +2268,20 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	ent->client = level.clients + clientNum;
 	client      = ent->client;
 
-
-
 	memset(client, 0, sizeof(*client));
 
 	client->pers.connected   = CON_CONNECTING;
-	client->pers.connectTime = level.time;          // DHM - Nerve
+	client->pers.connectTime = level.time;
+
+	// Set the client ip and guid
+	Q_strncpyz(client->pers.client_ip, cs_ip, MAX_IP4_LENGTH);
+	Q_strncpyz(client->pers.cl_guid, cs_guid, MAX_GUID_LENGTH + 1);
 
 	if (firstTime)
 	{
-		client->pers.initialSpawn = qtrue;              // DHM - Nerve
+		client->pers.initialSpawn = qtrue;
 
-	}
-	// read or initialize the session data
-	if (firstTime)
-	{
+		// read or initialize the session data
 		G_InitSessionData(client, userinfo);
 		client->pers.enterTime            = level.time;
 		client->ps.persistant[PERS_SCORE] = 0;
@@ -1796,6 +2290,76 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	{
 		G_ReadSessionData(client);
 	}
+
+	// GeoIP
+	// comment out the following check to hide the country flag for bots
+	if (gidb != NULL /*&& !isBot*/)
+	{
+		//value = Info_ValueForKey (userinfo, "ip");
+		if (!strcmp(cs_ip, "localhost"))
+		{
+			// give bots country flag of the server location g_countryflags 2
+			if (isBot && g_countryflags.integer & CF_BOTS)
+			{
+				char          server_ip[MAX_IP4_LENGTH];
+				unsigned int  ret;
+				unsigned long ip;
+
+				// get the server flag
+				trap_Cvar_VariableStringBuffer("net_ip", server_ip, sizeof(server_ip));
+				ip  = GeoIP_addr_to_num(server_ip);
+				ret = GeoIP_seek_record(gidb, ip);
+
+				if (ret > 0)
+				{
+					client->sess.uci = ret;
+				}
+				else
+				{
+					// default
+					client->sess.uci = 0;
+				}
+			}
+			else
+			{
+				client->sess.uci = 0; // localhost players
+			}
+		}
+		else
+		{
+			unsigned long ip = GeoIP_addr_to_num(cs_ip);
+
+			//10.0.0.0/8			[RFC1918]
+			//172.16.0.0/12			[RFC1918]
+			//192.168.0.0/16		[RFC1918]
+			//169.254.0.0/16		[RFC3330] we need this ?
+			if (((ip & 0xFF000000) == 0x0A000000) ||
+			    ((ip & 0xFFF00000) == 0xAC100000) ||
+			    ((ip & 0xFFFF0000) == 0xC0A80000) ||
+			    (ip  == 0x7F000001))                    // recognise also 127.0.0.1
+			{
+				client->sess.uci = 0;
+			}
+			else
+			{
+				unsigned int ret = GeoIP_seek_record(gidb, ip);
+
+				if (ret > 0)
+				{
+					client->sess.uci = ret;
+				}
+				else
+				{
+					client->sess.uci = 246;
+					G_LogPrintf("GeoIP: This IP:%s cannot be located\n", cs_ip);
+				}
+			}
+		}
+	}
+	else
+	{
+		client->sess.uci = 255; //Don't draw anything if DB error
+	} // end GeoIP
 
 #ifdef USEXPSTORAGE
 	value = Info_ValueForKey(userinfo, "ip");
@@ -1839,17 +2403,39 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		trap_UnlinkEntity(ent);
 	}
 
+#ifdef FEATURE_LUA
+	// LUA API callbacks (check with Lua scripts)
+	if (G_LuaHook_ClientConnect(clientNum, firstTime, isBot, reason))
+	{
+		if (!isBot && !(ent->r.svFlags & SVF_BOT))
+		{
+			return va("You are excluded from this server. %s\n", reason);
+		}
+	}
+#endif
+
 	// get and distribute relevent paramters
 	G_LogPrintf("ClientConnect: %i\n", clientNum);
+
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_ClientConnected(clientNum, isBot);
+#endif
+
 	G_UpdateCharacter(client);
 	ClientUserinfoChanged(clientNum);
 
-
 	// don't do the "xxx connected" messages if they were caried over from previous level
-	//		TAT 12/10/2002 - Don't display connected messages in single player
-	if (firstTime && !G_IsSinglePlayerGame())
+	// disabled for bots - see join message ... make cvar ?
+	if (firstTime && !(ent->r.svFlags & SVF_BOT))
 	{
-		trap_SendServerCommand(-1, va("cpm \"%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
+		if ((g_countryflags.integer & CF_CONNECT) && client->sess.uci > 0 && client->sess.uci < MAX_COUNTRY_NUM)
+		{
+			trap_SendServerCommand(-1, va("cpm \"%s" S_COLOR_WHITE " connected from %s\n\"", client->pers.netname, country_name[client->sess.uci]));
+		}
+		else
+		{
+			trap_SendServerCommand(-1, va("cpm \"%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
+		}
 	}
 
 	// count current clients and rank for scoreboard
@@ -1858,9 +2444,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	return NULL;
 }
 
-//
 // Scaling for late-joiners of maxlives based on current game time
-//
 int G_ComputeMaxLives(gclient_t *cl, int maxRespawns)
 {
 	float scaled = (float)(maxRespawns - 1) * (1.0f - ((float)(level.time - level.startTime) / (g_timelimit.value * 60000.0f)));
@@ -1887,14 +2471,21 @@ and on transition between teams, but doesn't happen on respawns
 */
 void ClientBegin(int clientNum)
 {
-	gentity_t *ent;
-	gclient_t *client;
+	gentity_t *ent    = g_entities + clientNum;
+	gclient_t *client = level.clients + clientNum;
 	int       flags;
-	int       spawn_count, lives_left;          // DHM - Nerve
+	int       spawn_count, lives_left;
+	int       stat_xp, stat_xp_overflow; // restore xp
+	qboolean  inIntermission = (g_gamestate.integer == GS_INTERMISSION && client->ps.pm_type == PM_INTERMISSION) ? qtrue : qfalse;
 
-	ent = g_entities + clientNum;
-
-	client = level.clients + clientNum;
+#ifdef FEATURE_LUA
+	// call LUA clientBegin only once when player connects
+	qboolean firsttime = qfalse;
+	if (client->pers.connected == CON_CONNECTING)
+	{
+		firsttime = qtrue;
+	}
+#endif
 
 	if (ent->r.linked)
 	{
@@ -1914,9 +2505,9 @@ void ClientBegin(int clientNum)
 	// want to make sure the teleport bit is set right
 	// so the viewpoint doesn't interpolate through the
 	// world to the new position
-	// DHM - Nerve :: Also save PERS_SPAWN_COUNT, so that CG_Respawn happens
+	// Also save PERS_SPAWN_COUNT, so that CG_Respawn happens
 	spawn_count = client->ps.persistant[PERS_SPAWN_COUNT];
-	//bani - proper fix for #328
+
 	if (client->ps.persistant[PERS_RESPAWNS_LEFT] > 0)
 	{
 		lives_left = client->ps.persistant[PERS_RESPAWNS_LEFT] - 1;
@@ -1926,24 +2517,55 @@ void ClientBegin(int clientNum)
 		lives_left = client->ps.persistant[PERS_RESPAWNS_LEFT];
 	}
 	flags = client->ps.eFlags;
+
+	// restore xp
+	stat_xp          = ent->client->ps.stats[STAT_XP];
+	stat_xp_overflow = ent->client->ps.stats[STAT_XP_OVERFLOW] ;
+
 	memset(&client->ps, 0, sizeof(client->ps));
+
+	if (ent->client->sess.spectatorState == SPECTATOR_FREE) // restore xp
+	{
+		ent->client->ps.stats[STAT_XP]          = stat_xp;
+		ent->client->ps.stats[STAT_XP_OVERFLOW] = stat_xp_overflow;
+	}
+
+	if (inIntermission == qtrue)
+	{
+		client->ps.pm_type = PM_INTERMISSION;
+	}
+
 	client->ps.eFlags                         = flags;
 	client->ps.persistant[PERS_SPAWN_COUNT]   = spawn_count;
 	client->ps.persistant[PERS_RESPAWNS_LEFT] = lives_left;
 
-
 	client->pers.complaintClient  = -1;
 	client->pers.complaintEndTime = -1;
 
-	// locate ent at a spawn point
-	ClientSpawn(ent, qfalse);
+#ifdef FEATURE_OMNIBOT
+	// Omni-bot
+	client->sess.botSuicide = qfalse; // make sure this is not set
+	client->sess.botPush    = (ent->r.svFlags & SVF_BOT) ? qtrue : qfalse;
+#endif
 
-	// Xian -- Changed below for team independant maxlives
+	ClientSpawn(ent, qfalse, qtrue, qtrue);
+
+	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
+	{
+		client->inactivityTime        = level.time + (g_inactivity.integer ? g_inactivity.integer : 60) * 1000;
+		client->inactivitySecondsLeft = (g_inactivity.integer) ? g_inactivity.integer : 60;
+	}
+	else
+	{
+		client->inactivityTime        = level.time + (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60) * 1000;
+		client->inactivitySecondsLeft = (g_spectatorInactivity.integer) ? g_spectatorInactivity.integer : 60;
+	}
+
+	// Changed below for team independant maxlives
 	if (g_gametype.integer != GT_WOLF_LMS)
 	{
 		if ((client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES))
 		{
-
 			if (!client->maxlivescalced)
 			{
 				if (g_maxlives.integer > 0)
@@ -1996,9 +2618,8 @@ void ClientBegin(int clientNum)
 		}
 	}
 
-
-	// DHM - Nerve :: Start players in limbo mode if they change teams during the match
-	if (client->sess.sessionTeam != TEAM_SPECTATOR && (level.time - level.startTime > FRAMETIME * GAME_INIT_FRAMES))
+	// Start players in limbo mode if they change teams during the match
+	if (g_gamestate.integer != GS_INTERMISSION && client->sess.sessionTeam != TEAM_SPECTATOR && (level.time - level.startTime > FRAMETIME * GAME_INIT_FRAMES))
 	{
 /*	  if( (client->sess.sessionTeam != TEAM_SPECTATOR && (level.time - client->pers.connectTime) > 60000) ||
         ( g_gamestate.integer == GS_PLAYING && ( client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES ) &&
@@ -2027,13 +2648,14 @@ void ClientBegin(int clientNum)
 
 	G_LogPrintf("ClientBegin: %i\n", clientNum);
 
-	// Xian - Check for maxlives enforcement
+	// Check for maxlives enforcement
 	if (g_gametype.integer != GT_WOLF_LMS)
 	{
 		if (g_enforcemaxlives.integer == 1 && (g_maxlives.integer > 0 || g_axismaxlives.integer > 0 || g_alliedmaxlives.integer > 0))
 		{
 			char *value;
 			char userinfo[MAX_INFO_STRING];
+
 			trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 			value = Info_ValueForKey(userinfo, "cl_guid");
 			G_LogPrintf("EnforceMaxLives-GUID: %s\n", value);
@@ -2044,7 +2666,6 @@ void ClientBegin(int clientNum)
 			AddMaxLivesBan(value);
 		}
 	}
-	// End Xian
 
 	// count current clients and rank for scoreboard
 	CalculateRanks();
@@ -2052,23 +2673,31 @@ void ClientBegin(int clientNum)
 	// No surface determined yet.
 	ent->surfaceFlags = 0;
 
-	// OSP
+#ifdef FEATURE_MULTIVIEW
 	G_smvUpdateClientCSList(ent);
-	// OSP
+#endif
+
+#ifdef FEATURE_LUA
+	// call LUA clientBegin only once
+	if (firsttime == qtrue)
+	{
+		// LUA API callbacks
+		G_LuaHook_ClientBegin(clientNum);
+	}
+#endif
 }
+
+#define MAX_SPAWNPOINTFROMLIST_POINTS   16
 
 gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spawn_angles)
 {
-	char      *pStr, *token;
+	char      *pStr       = list, *token;
 	gentity_t *spawnPoint = NULL, *trav;
-	#define MAX_SPAWNPOINTFROMLIST_POINTS   16
-	int valid[MAX_SPAWNPOINTFROMLIST_POINTS];
-	int numValid;
+	int       valid[MAX_SPAWNPOINTFROMLIST_POINTS];
+	int       numValid = 0;
 
 	memset(valid, 0, sizeof(valid));
-	numValid = 0;
 
-	pStr = list;
 	while ((token = COM_Parse(&pStr)) != NULL && token[0])
 	{
 		trav = g_entities + level.maxclients;
@@ -2104,8 +2733,7 @@ gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spaw
 	return spawnPoint;
 }
 
-
-#if 0 // rain - not used
+#if 0 // not used
 static char *G_CheckVersion(gentity_t *ent)
 {
 	// Prevent nasty version mismatches (or people sticking in Q3Aimbot cgames)
@@ -2132,11 +2760,11 @@ after the first ClientBegin, and after each respawn
 Initializes all non-persistant parts of playerState
 ============
 */
-void ClientSpawn(gentity_t *ent, qboolean revived)
+void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth)
 {
-	int                index;
+	int                index = ent - g_entities;
 	vec3_t             spawn_origin, spawn_angles;
-	gclient_t          *client;
+	gclient_t          *client = ent->client;
 	int                i;
 	clientPersistant_t saved;
 	clientSession_t    savedSess;
@@ -2145,9 +2773,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	int                flags;
 	int                savedPing;
 	int                savedTeam;
-	int                savedSlotNumber;
-	index  = ent - g_entities;
-	client = ent->client;
+	qboolean           inIntermission = (g_gamestate.integer == GS_INTERMISSION && client->ps.pm_type == PM_INTERMISSION) ? qtrue : qfalse;
 
 	G_UpdateSpawnCounts();
 
@@ -2179,7 +2805,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	}
 	else
 	{
-		// Arnout: let's just be sure it does the right thing at all times. (well maybe not the right thing, but at least not the bad thing!)
+		// let's just be sure it does the right thing at all times. (well maybe not the right thing, but at least not the bad thing!)
 		//if( client->sess.sessionTeam == TEAM_SPECTATOR || client->sess.sessionTeam == TEAM_FREE ) {
 		if (client->sess.sessionTeam != TEAM_AXIS && client->sess.sessionTeam != TEAM_ALLIES)
 		{
@@ -2187,7 +2813,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 		}
 		else
 		{
-			// RF, if we have requested a specific spawn point, use it (fixme: what if this will place us inside another character?)
+			// if we have requested a specific spawn point, use it (fixme: what if this will place us inside another character?)
 /*			spawnPoint = NULL;
             trap_GetUserinfo( ent->s.number, userinfo, sizeof(userinfo) );
             if( (str = Info_ValueForKey( userinfo, "spawnPoint" )) != NULL && str[0] ) {
@@ -2217,9 +2843,11 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	savedSess = client->sess;
 	savedPing = client->ps.ping;
 	savedTeam = client->ps.teamNum;
-	// START	xkan, 8/27/2002
-	savedSlotNumber = client->botSlotNumber;
-	// END		xkan, 8/27/2002
+
+	if (inIntermission)
+	{
+		client->ps.pm_type = PM_INTERMISSION;
+	}
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
@@ -2238,9 +2866,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	client->sess       = savedSess;
 	client->ps.ping    = savedPing;
 	client->ps.teamNum = savedTeam;
-	// START	xkan, 8/27/2002
-	client->botSlotNumber = savedSlotNumber;
-	// END		xkan, 8/27/2002
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
@@ -2256,31 +2881,24 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	client->ps.persistant[PERS_TEAM]        = client->sess.sessionTeam;
 	client->ps.persistant[PERS_HWEAPON_USE] = 0;
 
-	client->airOutTime = level.time + 12000;
+	client->airOutTime = level.time + HOLDBREATHTIME;
+	// breathbar
+	ent->client->pmext.airleft          = ent->client->airOutTime - level.time;
+	ent->client->ps.stats[STAT_AIRLEFT] = HOLDBREATHTIME;
 
 	// clear entity values
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 	client->ps.eFlags                 = flags;
-	// MrE: use capsules for AI and player
-	//client->ps.eFlags |= EF_CAPSULE;
 
 	ent->s.groundEntityNum = ENTITYNUM_NONE;
 	ent->client            = &level.clients[index];
 	ent->takedamage        = qtrue;
 	ent->inuse             = qtrue;
-	if (ent->r.svFlags & SVF_BOT)
-	{
-		ent->classname = "bot";
-	}
-	else
-	{
-		ent->classname = "player";
-	}
-	ent->r.contents = CONTENTS_BODY;
+	ent->classname         = "player";
+	ent->r.contents        = CONTENTS_BODY;
+	ent->clipmask          = MASK_PLAYERSOLID;
 
-	ent->clipmask = MASK_PLAYERSOLID;
-
-	// DHM - Nerve :: Init to -1 on first spawn;
+	// Init to -1 on first spawn;
 	if (!revived)
 	{
 		ent->props_frame_state = -1;
@@ -2294,7 +2912,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	VectorCopy(playerMins, ent->r.mins);
 	VectorCopy(playerMaxs, ent->r.maxs);
 
-	// Ridah, setup the bounding boxes and viewheights for prediction
+	// setup the bounding boxes and viewheights for prediction
 	VectorCopy(ent->r.mins, client->ps.mins);
 	VectorCopy(ent->r.maxs, client->ps.maxs);
 
@@ -2309,23 +2927,19 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	client->ps.crouchSpeedScale = 0.25;
 	client->ps.weaponstate      = WEAPON_READY;
 
-	// Rafael
 	client->pmext.sprintTime   = SPRINTTIME;
 	client->ps.sprintExertTime = 0;
 
 	client->ps.friction = 1.0;
-	// done.
 
-	// TTimo
 	// retrieve from the persistant storage (we use this in pmoveExt_t beause we need it in bg_*)
 	client->pmext.bAutoReload = client->pers.bAutoReloadAux;
-	// done
 
 	client->ps.clientNum = index;
 
-	trap_GetUsercmd(client - level.clients, &ent->client->pers.cmd);    // NERVE - SMF - moved this up here
+	trap_GetUsercmd(client - level.clients, &ent->client->pers.cmd);
 
-	// DHM - Nerve :: Add appropriate weapons
+	// Add appropriate weapons
 	if (!revived)
 	{
 		qboolean update = qfalse;
@@ -2334,10 +2948,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 		{
 			update = qtrue;
 		}
-
-		//if ( update || client->sess.playerWeapon != client->sess.latchPlayerWeapon) {
-		//	G_ExplodeMines(ent);
-		//}
 
 		client->sess.playerType = client->sess.latchPlayerType;
 
@@ -2369,10 +2979,10 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 		}
 	}
 
-	// TTimo keep it isolated from spectator to be safe still
+	// keep it isolated from spectator to be safe still
 	if (client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		// Xian - Moved the invul. stuff out of SetWolfSpawnWeapons and put it here for clarity
+		// Moved the invul. stuff out of SetWolfSpawnWeapons and put it here for clarity
 		if (g_fastres.integer == 1 && revived)
 		{
 			client->ps.powerups[PW_INVULNERABLE] = level.time + 1000;
@@ -2382,26 +2992,20 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 			client->ps.powerups[PW_INVULNERABLE] = level.time + 3000;
 		}
 	}
-	// End Xian
 
 	G_UpdateCharacter(client);
 
 	SetWolfSpawnWeapons(client);
 
-	// START	Mad Doctor I changes, 8/17/2002
-
-	// JPW NERVE -- increases stats[STAT_MAX_HEALTH] based on # of medics in game
+	// increases stats[STAT_MAX_HEALTH] based on # of medics in game
 	AddMedicTeamBonus(client);
-
-	// END		Mad Doctor I changes, 8/17/2002
 
 	if (!revived)
 	{
 		client->pers.cmd.weapon = ent->client->ps.weapon;
 	}
-// dhm - end
 
-	// JPW NERVE ***NOTE*** the following line is order-dependent and must *FOLLOW* SetWolfSpawnWeapons() in multiplayer
+	// ***NOTE*** the following line is order-dependent and must *FOLLOW* SetWolfSpawnWeapons() in multiplayer
 	// AddMedicTeamBonus() now adds medic team bonus and stores in ps.stats[STAT_MAX_HEALTH].
 
 	if (client->sess.skill[SK_BATTLE_SENSE] >= 3)
@@ -2426,7 +3030,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	}
 	else
 	{
-		//bani - #245 - we try to orient them in the freelook direction when revived
+		// we try to orient them in the freelook direction when revived
 		vec3_t newangle;
 
 		newangle[YAW]   = SHORT2ANGLE(ent->client->pers.cmd.angles[YAW] + ent->client->ps.delta_angles[YAW]);
@@ -2438,17 +3042,16 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 
 	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		//G_KillBox( ent );
 		trap_LinkEntity(ent);
 	}
 
-	client->respawnTime      = level.timeCurrent;
-	client->inactivityTime   = level.time + g_inactivity.integer * 1000;
-	client->latched_buttons  = 0;
-	client->latched_wbuttons = 0;   //----(SA)	added
-
-	// xkan, 1/13/2003 - reset death time
-	client->deathTime = 0;
+	client->respawnTime           = level.timeCurrent;
+	client->inactivityTime        = level.time + g_inactivity.integer * 1000;
+	client->inactivityWarning     = qfalse;
+	client->inactivitySecondsLeft = (g_inactivity.integer) ? g_inactivity.integer : 60;
+	client->latched_buttons       = 0;
+	client->latched_wbuttons      = 0;
+	client->deathTime             = 0;
 
 	if (level.intermissiontime)
 	{
@@ -2463,16 +3066,22 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 		}
 	}
 
+#ifdef FEATURE_LUA
+	// *LUA* API callbacks
+	G_LuaHook_ClientSpawn(ent - g_entities, revived, teamChange, restoreHealth);
+#endif
+
 	// run a client frame to drop exactly to the floor,
 	// initialize animations and other things
 	client->ps.commandTime           = level.time - 100;
 	ent->client->pers.cmd.serverTime = level.time;
+
 	ClientThink(ent - g_entities);
 
 	// positively link the client, even if the command times are weird
 	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		BG_PlayerStateToEntityState(&client->ps, &ent->s, qtrue);
+		BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qtrue);
 		VectorCopy(ent->client->ps.origin, ent->r.currentOrigin);
 		trap_LinkEntity(ent);
 	}
@@ -2484,19 +3093,17 @@ void ClientSpawn(gentity_t *ent, qboolean revived)
 	ent->client->ps.weapAnim = ((ent->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | PM_IdleAnimForWeapon(ent->client->ps.weapon);
 
 	// clear entity state values
-	BG_PlayerStateToEntityState(&client->ps, &ent->s, qtrue);
+	BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qtrue);
 
-	// show_bug.cgi?id=569
 	G_ResetMarkers(ent);
 
-	// RF, start the scripting system
+	// start the scripting system
 	if (!revived && client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		// RF, call entity scripting event
+		// call entity scripting event
 		G_Script_ScriptEvent(ent, "playerstart", "");
 	}
 }
-
 
 /*
 ===========
@@ -2512,17 +3119,25 @@ server system housekeeping.
 */
 void ClientDisconnect(int clientNum)
 {
-	gentity_t *ent;
+	gentity_t *ent  = g_entities + clientNum;
 	gentity_t *flag = NULL;
 	gitem_t   *item = NULL;
 	vec3_t    launchvel;
 	int       i;
 
-	ent = g_entities + clientNum;
 	if (!ent->client)
 	{
 		return;
 	}
+
+#ifdef FEATURE_LUA
+	// LUA API callbacks
+	G_LuaHook_ClientDisconnect(clientNum);
+#endif
+
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_ClientDisConnected(clientNum);
+#endif
 
 #ifdef USEXPSTORAGE
 	G_AddXPBackup(ent);
@@ -2549,7 +3164,7 @@ void ClientDisconnect(int clientNum)
 		}
 	}
 
-	// NERVE - SMF - remove complaint client
+	// remove complaint client
 	for (i = 0 ; i < level.numConnectedClients ; i++)
 	{
 		if (flag->client->pers.complaintEndTime > level.time && flag->client->pers.complaintClient == clientNum)
@@ -2572,6 +3187,7 @@ void ClientDisconnect(int clientNum)
 	{
 		mapEntityData_t      *mEnt;
 		mapEntityData_Team_t *teamList;
+		mapEntityData_t      *mEntFree;
 
 		for (i = 0; i < 2; i++)
 		{
@@ -2586,7 +3202,7 @@ void ClientDisconnect(int clientNum)
 
 			while (mEnt)
 			{
-				mapEntityData_t *mEntFree = mEnt;
+				mEntFree = mEnt;
 
 				mEnt = G_FindMapEntityDataSingleClient(teamList, mEnt, ent->s.number, -1);
 
@@ -2629,20 +3245,26 @@ void ClientDisconnect(int clientNum)
 
 		if (item)
 		{
-			// OSP - fix for suicide drop exploit through walls/gates
+			// fix for suicide drop exploit through walls/gates
 			launchvel[0] = 0;    //crandom()*20;
 			launchvel[1] = 0;    //crandom()*20;
 			launchvel[2] = 0;    //10+random()*10;
 
 			flag                = LaunchItem(item, ent->r.currentOrigin, launchvel, ent - g_entities);
-			flag->s.modelindex2 = ent->s.otherEntityNum2;    // JPW NERVE FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
-			flag->message       = ent->message; // DHM - Nerve :: also restore item name
+			flag->s.modelindex2 = ent->s.otherEntityNum2;    // FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
+			flag->message       = ent->message; // also restore item name
+
+#ifdef FEATURE_OMNIBOT
+			// FIXME: see ETPub G_DropItems()
+			Bot_Util_SendTrigger(flag, NULL, va("%s dropped.", flag->message), "dropped");
+#endif
+
 			// Clear out player's temp copies
 			ent->s.otherEntityNum2 = 0;
 			ent->message           = NULL;
 		}
 
-		// OSP - Log stats too
+		// Log stats too
 		G_LogPrintf("WeaponStats: %s\n", G_createStats(ent));
 	}
 
@@ -2660,24 +3282,18 @@ void ClientDisconnect(int clientNum)
 
 	trap_SetConfigstring(CS_PLAYERS + clientNum, "");
 
-
 	CalculateRanks();
 
-	// OSP
 	G_verifyMatchState(i);
+#ifdef FEATURE_MULTIVIEW
 	G_smvAllRemoveSingleClient(ent - g_entities);
-	// OSP
+#endif
 }
 
 // In just the GAME DLL, we want to store the groundtrace surface stuff,
 // so we don't have to keep tracing.
-void ClientStoreSurfaceFlags
-(
-    int clientNum,
-    int surfaceFlags
-)
+void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags)
 {
 	// Store the surface flags
 	g_entities[clientNum].surfaceFlags = surfaceFlags;
-
 }

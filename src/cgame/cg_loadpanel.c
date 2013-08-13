@@ -82,7 +82,7 @@ panel_button_text_t campaignpheaderTxt =
 
 panel_button_text_t campaignpTxt =
 {
-	0.30f,               0.30f,
+	0.22f,               0.22f,
 	{ 1.0f,              1.0f, 1.0f,  0.6f },
 	0,                   0,
 	&bg_loadscreenfont2,
@@ -100,7 +100,7 @@ panel_button_t loadScreenMap =
 {
 	"gfx/loading/camp_map",
 	NULL,
-	{ 0,                      0,  440, 480 }, // shouldn't this be square?? // Gordon: no, the map is actually WIDER that tall, which makes it even worse...
+	{ 0,                      0,  440, 480 }, // shouldn't this be square?? // no, the map is actually WIDER that tall, which makes it even worse...
 	{ 0,                      0,  0,   0, 0, 0, 0, 0},
 	NULL,                     /* font     */
 	NULL,                     /* keyDown  */
@@ -126,8 +126,8 @@ panel_button_t loadScreenPins =
 {
 	NULL,
 	NULL,
-	{ 0,                            0,  640, 480 },
-	{ 0,                            0,  0,   0, 0, 0, 0, 0},
+	{ 0,                            0,  SCREEN_WIDTH, SCREEN_HEIGHT },
+	{ 0,                            0,  0,            0, 0, 0, 0, 0 },
 	NULL,                           /* font     */
 	NULL,                           /* keyDown  */
 	NULL,                           /* keyUp    */
@@ -217,28 +217,22 @@ panel_button_t loadScreenMeterBackText =
 {
 	NULL,
 	"LOADING",
-	{ 440 + 28,                480 - 28 + 12 + 1,   200 - 56 - 2, 16 },
-	{ 0,                       0,                   0,            0, 0, 0, 0, 0},
-	&loadScreenMeterBackTxt,   /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
-	BG_PanelButtonsRender_Text,
+	{ 440 + 28,                 480 - 28 + 12 + 1,   200 - 56 - 2, 16 },
+	{ 0,                        0,                   0,            0, 0, 0, 0, 0},
+	&loadScreenMeterBackTxt,    /* font     */
+	NULL,                       /* keyDown  */
+	NULL,                       /* keyUp    */
+	CG_LoadPanel_LoadingBarText,
 	NULL,
 };
 
 panel_button_t *loadpanelButtons[] =
 {
 	&loadScreenMap,               &loadScreenBack,
-
-
 	&missiondescriptionPanelText, &missiondescriptionPanelHeaderText,
-
 	&campaignheaderPanelText,     &campaignPanelText,
-
 	&loadScreenMeterBack,         &loadScreenMeterBack2,             &loadScreenMeterBackText,
-
 	&loadScreenPins,
-
 	NULL,
 };
 
@@ -264,12 +258,16 @@ const char *CG_LoadPanel_GameTypeName(gametype_t gt)
 		return "Campaign";
 	case GT_WOLF_LMS:
 		return "Last Man Standing";
+	case GT_WOLF_MAPVOTE:
+		return "Map Voting";
 	default:
 		break;
 	}
 
 	return "Invalid";
 }
+
+static vec4_t clr3 = { 1.f, 1.f, 1.f, .6f };
 
 void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 {
@@ -302,7 +300,6 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		bg_neutralpin = DC->registerShaderNoMip("gfx/loading/pin_neutral");
 		bg_pin        = DC->registerShaderNoMip("gfx/loading/pin_shot");
 
-
 		bg_filter_pb = DC->registerShaderNoMip("ui/assets/filter_pb");
 		bg_filter_ff = DC->registerShaderNoMip("ui/assets/filter_ff");
 		bg_filter_hw = DC->registerShaderNoMip("ui/assets/filter_weap");
@@ -310,10 +307,10 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		bg_filter_al = DC->registerShaderNoMip("ui/assets/filter_antilag");
 		bg_filter_bt = DC->registerShaderNoMip("ui/assets/filter_balance");
 
-
 		bg_mappic = 0;
 
 		BG_PanelButtonsSetup(loadpanelButtons);
+		C_PanelButtonsSetup(loadpanelButtons, cgs.wideXoffset);
 
 		bg_loadscreeninited = qtrue;
 	}
@@ -329,25 +326,16 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 	if (*buffer)
 	{
 		const char *str;
-		qboolean   enabled = qfalse;
-		float      x, y;
+		float      x = 540.0f + cgs.wideXoffset;
+		float      y = 322;
 		int        i;
-//      vec4_t clr1 = { 41/255.f,   51/255.f,   43/255.f,   204/255.f };
-//      vec4_t clr2 = { 0.f,        0.f,        0.f,        225/255.f };
-		vec4_t clr3 = { 1.f, 1.f, 1.f, .6f };
+		qboolean   enabled = qfalse;
 
-		/*      CG_FillRect( 8, 8, 230, 16, clr1 );
-		        CG_DrawRect_FixedBorder( 8, 8, 230, 16, 1, colorMdGrey );
-
-		        CG_FillRect( 8, 23, 230, 210, clr2 );
-		        CG_DrawRect_FixedBorder( 8, 23, 230, 216, 1, colorMdGrey );*/
-
-		y = 322;
-		CG_Text_Paint_Centred_Ext(540, y, 0.22f, 0.22f, clr3, "SERVER INFO", 0, 0, 0, &bg_loadscreenfont1);
+		CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, ("^1" PRODUCT_LABEL " ^0" ETLEGACY_VERSION_SHORT), 0, 0, 0, &bg_loadscreenfont1);
 
 		y   = 340;
 		str = Info_ValueForKey(buffer, "sv_hostname");
-		CG_Text_Paint_Centred_Ext(540, y, 0.2f, 0.2f, colorWhite, str && *str ? str : "ETHost", 0, 26, 0, &bg_loadscreenfont2);
+		CG_Text_Paint_Centred_Ext(x, y, 0.2f, 0.2f, colorWhite, str && *str ? str : "ETHost", 0, 26, 0, &bg_loadscreenfont2);
 
 
 		y += 14;
@@ -359,7 +347,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 				break;
 			}
 
-			CG_Text_Paint_Centred_Ext(540, y, 0.2f, 0.2f, colorWhite, str, 0, 26, 0, &bg_loadscreenfont2);
+			CG_Text_Paint_Centred_Ext(x, y, 0.2f, 0.2f, colorWhite, str, 0, 26, 0, &bg_loadscreenfont2);
 
 			y += 10;
 		}
@@ -369,7 +357,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		str = Info_ValueForKey(buffer, "g_friendlyfire");
 		if (str && *str && atoi(str))
 		{
-			x = 461;
+			x = 461 + cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_ff);
 		}
 
@@ -400,41 +388,43 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 
 		if (enabled)
 		{
-			x = 489;
+			x = +cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_lv);
 		}
 
 		str = Info_ValueForKey(buffer, "sv_punkbuster");
 		if (str && *str && atoi(str))
 		{
-			x = 518;
+			x = 518 + cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_pb);
 		}
 
 		str = Info_ValueForKey(buffer, "g_heavyWeaponRestriction");
 		if (str && *str && atoi(str) != 100)
 		{
-			x = 546;
+			x = 546 + cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_hw);
 		}
 
 		str = Info_ValueForKey(buffer, "g_antilag");
 		if (str && *str && atoi(str))
 		{
-			x = 575;
+			x = 575 + cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_al);
 		}
 
 		str = Info_ValueForKey(buffer, "g_balancedteams");
 		if (str && *str && atoi(str))
 		{
-			x = 604;
+			x = 604 + cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_bt);
 		}
 	}
 
 	if (*cgs.rawmapname)
 	{
+		float x = 16 + cgs.wideXoffset + 1;
+
 		if (!bg_mappic)
 		{
 			bg_mappic = DC->registerShaderNoMip(va("levelshots/%s", cgs.rawmapname));
@@ -446,12 +436,14 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		}
 
 		trap_R_SetColor(colorBlack);
-		CG_DrawPic(16 + 1, 2 + 1, 192, 144, bg_mappic);
+		CG_DrawPic(x, 2 + 1, 192, 144, bg_mappic);
 
 		trap_R_SetColor(NULL);
-		CG_DrawPic(16, 2, 192, 144, bg_mappic);
+		x = 16 + cgs.wideXoffset;
+		CG_DrawPic(x, 2, 192, 144, bg_mappic);
 
-		CG_DrawPic(16 + 80, 2 + 6, 20, 20, bg_pin);
+		x = 16 + cgs.wideXoffset + 80;
+		CG_DrawPic(x, 2 + 6, 20, 20, bg_pin);
 	}
 
 	if (forcerefresh)
@@ -489,33 +481,48 @@ void CG_LoadPanel_RenderLoadingBar(panel_button_t *button)
 
 void CG_LoadPanel_RenderCampaignTypeText(panel_button_t *button)
 {
-	/*  char buffer[1024];
-	    const char* str;
-	    DC->getConfigString( CS_SERVERINFO, buffer, sizeof( buffer ) );
-	    if( !*buffer ) {
-	        return;
-	    }
-
-	    str = Info_ValueForKey( buffer, "g_gametype" );
-	*/
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%s:", CG_LoadPanel_GameTypeName(cgs.gametype)), 0, 0, button->font->style, button->font->font);
 }
 
+float campaignNameTextScaleFactor(int len)
+{
+	float scaleF = 1.f;
+
+	//CG_Printf("CampaignNameText len: %i\n", len);
+
+	if (len >= 27)
+	{
+		scaleF *= 0.8f;
+		return scaleF;
+	}
+	// in between scale is 1
+	else if (len <= 20 && len > 17)
+	{
+		scaleF *= 1.25f;
+		return scaleF;
+	}
+	else if (len <= 17 && len > 13)
+	{
+		scaleF *= 1.5f;
+		return scaleF;
+	}
+	else if (len <= 13)
+	{
+		scaleF *= 2;
+		return scaleF;
+	}
+
+	return scaleF;
+}
 
 void CG_LoadPanel_RenderCampaignNameText(panel_button_t *button)
 {
 	const char *cs;
 	float      w;
-	//char buffer[1024];
-	//int gametype;
-
-	//DC->getConfigString( CS_SERVERINFO, buffer, sizeof( buffer ) );
-	//cs = Info_ValueForKey( buffer, "g_gametype" );
-	//gametype = atoi(cs);
+	float      scaleF;
 
 	if (cgs.gametype == GT_WOLF_CAMPAIGN)
 	{
-
 		cs = DC->nameForCampaign();
 		if (!cs)
 		{
@@ -524,20 +531,23 @@ void CG_LoadPanel_RenderCampaignNameText(panel_button_t *button)
 
 		cs = va("%s %iof%i", cs, cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
 
-		w = CG_Text_Width_Ext(cs, button->font->scalex, 0, button->font->font);
-		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, cs, 0, 0, 0, button->font->font);
+		scaleF = campaignNameTextScaleFactor(Q_PrintStrlen(cs));
+
+		w = CG_Text_Width_Ext(cs, button->font->scalex * scaleF, 0, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex * scaleF, button->font->scaley * scaleF, button->font->colour, cs, 0, 0, 0, button->font->font);
 
 	}
 	else
 	{
-
 		if (!cgs.arenaInfoLoaded)
 		{
 			return;
 		}
 
-		w = CG_Text_Width_Ext(cgs.arenaData.longname, button->font->scalex, 0, button->font->font);
-		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, cgs.arenaData.longname, 0, 0, 0, button->font->font);
+		scaleF = campaignNameTextScaleFactor(Q_PrintStrlen(cgs.arenaData.longname)); // FIXME: up to 128 chars !
+
+		w = CG_Text_Width_Ext(cgs.arenaData.longname, button->font->scalex * scaleF, 0, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex * scaleF, button->font->scaley * scaleF, button->font->colour, cgs.arenaData.longname, 0, 0, 0, button->font->font);
 	}
 }
 
@@ -547,17 +557,9 @@ void CG_LoadPanel_RenderMissionDescriptionText(panel_button_t *button)
 	char       *s, *p;
 	char       buffer[1024];
 	float      y;
-	//int gametype;
-
-	//DC->getConfigString( CS_SERVERINFO, buffer, sizeof( buffer ) );
-	//cs = Info_ValueForKey( buffer, "g_gametype" );
-	//gametype = atoi(cs);
-
-//  DC->fillRect( button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorRed );
 
 	if (cgs.gametype == GT_WOLF_CAMPAIGN)
 	{
-
 		cs = DC->descriptionForCampaign();
 		if (!cs)
 		{
@@ -567,20 +569,15 @@ void CG_LoadPanel_RenderMissionDescriptionText(panel_button_t *button)
 	}
 	else if (cgs.gametype == GT_WOLF_LMS)
 	{
-
-		//cs = CG_ConfigString( CS_MULTI_MAPDESC3 );
-
 		if (!cgs.arenaInfoLoaded)
 		{
 			return;
 		}
 
 		cs = cgs.arenaData.lmsdescription;
-
 	}
 	else
 	{
-
 		if (!cgs.arenaInfoLoaded)
 		{
 			return;
@@ -635,19 +632,19 @@ qboolean CG_LoadPanel_ContinueButtonKeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
-
 void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float sy, qhandle_t shader, float pinsize, float backheight)
 {
-	float  w;
-	vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
+	static vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
+	float         w                = DC->textWidthExt(text, sx, 0, &bg_loadscreenfont2);
+	qboolean      fit              = (px + 20 + w > 440) ? qtrue : qfalse;
 
-	w = DC->textWidthExt(text, sx, 0, &bg_loadscreenfont2);
+	px += cgs.wideXoffset;
 
 	// Pin half width is 16
 	// Pin left margin is 4
 	// Pin right margin is 0
 	// Text margin is 4
-	if (px + 20 + w > 440)
+	if (fit)
 	{
 		// x - pinhwidth (16) - pin left margin (4) - w - text margin (4) => x - w - 24
 		DC->fillRect(px - w - 24 + 2, py - (backheight / 2.f) + 2, 24 + w, backheight, colourFadedBlack);
@@ -660,7 +657,9 @@ void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float 
 		DC->fillRect(px, py - (backheight / 2.f), 20 + w, backheight, colorBlack);
 	}
 
-	if (px + 20 + w > 440)
+	DC->drawHandlePic(px - pinsize, py - pinsize, pinsize * 2.f, pinsize * 2.f, shader);
+
+	if (fit)
 	{
 		// x - pinhwidth (16) - pin left margin (4) - w => x - w - 20
 		DC->drawTextExt(px - w - 20, py + 4, sx, sy, colorWhite, text, 0, 0, 0, &bg_loadscreenfont2);
@@ -674,17 +673,7 @@ void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float 
 
 void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 {
-	int       i;
-	qhandle_t shader;
-	/*char buffer[1024];
-	char *s;
-	int gametype;
-
-	DC->getConfigString( CS_SERVERINFO, buffer, sizeof( buffer ) );
-	s = Info_ValueForKey( buffer, "g_gametype" );
-	gametype = atoi(s);*/
-
-	if (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF)
+	if (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF || cgs.gametype == GT_WOLF_MAPVOTE)
 	{
 		float px, py;
 
@@ -700,6 +689,10 @@ void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 	}
 	else
 	{
+		qhandle_t shader;
+		float     px, py;
+		int       i;
+
 		if (!cgs.campaignInfoLoaded)
 		{
 			return;
@@ -707,8 +700,6 @@ void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 
 		for (i = 0; i < cgs.campaignData.mapCount; i++)
 		{
-			float px, py;
-
 			cg.teamWonRounds[1] = atoi(CG_ConfigString(CS_ROUNDSCORES1));
 			cg.teamWonRounds[0] = atoi(CG_ConfigString(CS_ROUNDSCORES2));
 
@@ -731,4 +722,12 @@ void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 			CG_LoadPanel_DrawPin(cgs.campaignData.arenas[i].longname, px, py, 0.22f, 0.25f, shader, 16.f, 16.f);
 		}
 	}
+}
+
+/**
+ * @brief draws infoScreenText in loading bar
+ */
+void CG_LoadPanel_LoadingBarText(panel_button_t *button)
+{
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, cg.infoScreenText, 0, 0, 0, button->font->font);
 }

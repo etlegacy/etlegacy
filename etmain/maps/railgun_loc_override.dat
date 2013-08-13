@@ -1,0 +1,68 @@
+/////////////////////////////////////////////////////////
+// Map name       Rail Gun                             //
+// Locations by   Rain                                 //
+// Modified by    antman                               //
+// Recommended    b_locationMaxChars 30                //
+// Last edited    14-10-2007                           //
+// http://www.antman.info/wolf/etpro/locations/        //
+/////////////////////////////////////////////////////////
+3012 2746 192 "^1Command Post"
+511 1600 485 "^1Depot Yard Flag"
+3901 5601 360 "^1Gun Controls"
+6903 3008 322 "^3Allied Camp"
+5351 3372 440 @
+7167 3664 352 @
+1274 5285 728 "^3Allied Crane"
+2909 3389 192 "^3Ammo and Health Racks"
+1209 1383 410 "^3Ammo Crate"
+1407 4324 325 "^3Axis Construction Site"
+709 5158 335 @
+-1290 4955 371 "^3Axis Spawn Hut"
+-766 5475 608 "^3Axis Spawn Lookout Bridge"
+-604 5678 324 "^3Axis Spawn MG42"
+2713 4025 120 "^3Bunker"
+3013 3804 120 @
+3296 3331 204 @
+3020 3175 192 @
+2551 1727 212 @
+2616 2322 192 "^3Bunker: Stove"
+3675 2816 348 "^3Command Post MG42"
+8037 5051 287 "^3Confused n00b Land"
+989 1763 384 "^3Depot Yard"
+1205 2138 372 @
+1574 1901 384 @
+1631 1341 336 @
+1196 1129 336 @
+2555 1132 328 @
+2563 1430 656 "^3Depot Yard Bridge"
+424 1082 336 "^3Depot Yard Garage"
+1215 1851 420 "^3Depot Yard MG"
+2202 1530 500 "^3Depot Yard Stairs"
+2578 888 656 "^3Depot Yard Water Tower"
+2085 2980 466 "^3East Mountain Path"
+2066 3379 450 @
+2065 5110 624 "^3Lookout Tower"
+1988 5210 360 "^3Lookout Tower Storage"
+1277 5278 522 "^3North Ammo Crane"
+891 4464 441 "^3North Ammo Crane Transformer"
+2133 4043 312 "^3North Bunker Entrance"
+482 5467 325 "^3North Construction Barrier"
+1763 4621 384 "^3North Yard Coal Piles"
+1491 5171 435 "^3North Yard Log Pile"
+5476 5588 172 "^3Rail Gun"
+3901 5596 172 @
+4570 5597 607 "^3Rail Gun Barrel"
+448 4843 336 "^3South Construction Barrier"
+1321 3440 791 "^3Secret Mountain Camping Spot"
+4633 1442 491 "^3South Allies Spawn Exit"
+7842 4287 259 "^3Storage Ruins"
+7366 4167 358 "^3Storage Shed"
+4037 3509 316 "^3Track Switch"
+3733 3992 433 "^3Track Switch Nest"
+4632 3757 560 "^3Track Switch MG Nest"
+3584 1924 332 "^3Track: Depot Yard - Switch"
+2577 5611 253 "^3Track: Lookout Tower"
+1955 5579 311 @
+3427 5033 330 "^3Track: Rail Gun Netting"
+1008 2785 473 "^3West Mountain Path"
+626 3725 628 @

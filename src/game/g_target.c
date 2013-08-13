@@ -35,7 +35,8 @@
 
 //==========================================================
 
-/*QUAKED target_give (1 0 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED target_give (1 0 0) (-8 -8 -8) (8 8 8)
 Gives the activator all the items pointed to.
 */
 void Use_Target_Give(gentity_t *ent, gentity_t *other, gentity_t *activator)
@@ -74,10 +75,10 @@ void SP_target_give(gentity_t *ent)
 	ent->use = Use_Target_Give;
 }
 
-
 //==========================================================
 
-/*QUAKED target_remove_powerups (1 0 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED target_remove_powerups (1 0 0) (-8 -8 -8) (8 8 8)
 takes away all the activators powerups.
 Used to drop flight powerups into death puts.
 */
@@ -101,10 +102,10 @@ void SP_target_remove_powerups(gentity_t *ent)
 	ent->use = Use_target_remove_powerups;
 }
 
-
 //==========================================================
 
-/*QUAKED target_delay (1 1 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED target_delay (1 1 0) (-8 -8 -8) (8 8 8)
 "wait" seconds to pause before firing targets.
 "random" delay variance, total delay = delay +/- random seconds
 */
@@ -135,10 +136,10 @@ void SP_target_delay(gentity_t *ent)
 	ent->use = Use_Target_Delay;
 }
 
-
 //==========================================================
 
-/*QUAKED target_score (1 0 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED target_score (1 0 0) (-8 -8 -8) (8 8 8)
 "count" number of points to add, default 1
 
 The activator is given this many points.
@@ -146,7 +147,6 @@ The activator is given this many points.
 void Use_Target_Score(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	AddScore(activator, ent->count);
-	//G_AddExperience( activator, 0 ); // Gordon: FIXME: add this to part of the entity?
 }
 
 void SP_target_score(gentity_t *ent)
@@ -158,11 +158,10 @@ void SP_target_score(gentity_t *ent)
 	ent->use = Use_Target_Score;
 }
 
-
-
 //==========================================================
 
-/*QUAKED target_print (1 0 0) (-8 -8 -8) (8 8 8) redteam blueteam private
+/*
+QUAKED target_print (1 0 0) (-8 -8 -8) (8 8 8) redteam blueteam private
 "message"	text to print
 If "private", only the activator gets the message.  If no checks, all clients get the message.
 */
@@ -203,11 +202,10 @@ void SP_target_print(gentity_t *ent)
 	ent->use = Use_Target_Print;
 }
 
-
 //==========================================================
 
-
-/*QUAKED target_speaker (1 0 0) (-8 -8 -8) (8 8 8) LOOPED_ON LOOPED_OFF GLOBAL ACTIVATOR VIS_MULTIPLE NO_PVS
+/*
+QUAKED target_speaker (1 0 0) (-8 -8 -8) (8 8 8) LOOPED_ON LOOPED_OFF GLOBAL ACTIVATOR VIS_MULTIPLE NO_PVS
 "noise"		wav file to play
 
 A global sound will play full volume throughout the level.
@@ -270,7 +268,6 @@ void target_speaker_multiple(gentity_t *ent)
 	{
 		G_Error("target_speaker cant find vis_dummy_multiple %s\n", vtos(ent->s.origin));
 	}
-
 }
 
 void SP_target_speaker(gentity_t *ent)
@@ -293,7 +290,7 @@ void SP_target_speaker(gentity_t *ent)
 		ent->spawnflags |= 8;
 	}
 
-	// Ridah, had to disable this so we can use sound scripts
+	// had to disable this so we can use sound scripts
 	// don't worry, if the script isn't found, it'll default back to
 	// .wav on the client-side
 	//if (!strstr( s, ".wav" )) {
@@ -308,7 +305,6 @@ void SP_target_speaker(gentity_t *ent)
 	ent->s.eventParm = ent->noise_index;
 	ent->s.frame     = ent->wait * 10;
 	ent->s.clientNum = ent->random * 10;
-
 
 	// check for prestarted looping sound
 	if (ent->spawnflags & 1)
@@ -351,7 +347,7 @@ void SP_target_speaker(gentity_t *ent)
 		ent->s.dmgFlags = 0;
 	}
 
-	// Gordon: Volume control!, i want some cookies for this Tim! :o
+	// Volume control!, i want some cookies for this Tim! :o
 	G_SpawnInt("volume", "255", &ent->s.onFireStart);
 	if (!ent->s.onFireStart)
 	{
@@ -363,9 +359,8 @@ void SP_target_speaker(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-
-
-/*QUAKED misc_beam (0 .5 .8) (-8 -8 -8) (8 8 8)
+/*
+QUAKED misc_beam (0 .5 .8) (-8 -8 -8) (8 8 8)
 When on, displays a electric beam from target to target2.
 "target"	start of beam
 "target2"	end of beam
@@ -374,11 +369,8 @@ When on, displays a electric beam from target to target2.
 "scale"		width of beam		*NOT WORKIN YET*
 */
 
-
 void misc_beam_think(gentity_t *self)
 {
-//	trace_t	trace;
-
 	if (self->enemy)
 	{
 		if (self->enemy != self)
@@ -516,7 +508,8 @@ void SP_misc_beam(gentity_t *self)
 
 //==========================================================
 
-/*QUAKED target_laser (0 .5 .8) (-8 -8 -8) (8 8 8) START_ON
+/*
+QUAKED target_laser (0 .5 .8) (-8 -8 -8) (8 8 8) START_ON
 When triggered, fires a laser.  You can either set a target or a direction.
 */
 void target_laser_think(gentity_t *self)
@@ -631,7 +624,6 @@ void SP_target_laser(gentity_t *self)
 	self->nextthink = level.time + FRAMETIME;
 }
 
-
 //==========================================================
 
 void target_teleporter_use(gentity_t *self, gentity_t *other, gentity_t *activator)
@@ -652,7 +644,8 @@ void target_teleporter_use(gentity_t *self, gentity_t *other, gentity_t *activat
 	TeleportPlayer(activator, dest->s.origin, dest->s.angles);
 }
 
-/*QUAKED target_teleporter (1 0 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED target_teleporter (1 0 0) (-8 -8 -8) (8 8 8)
 The activator will be teleported away.
 */
 void SP_target_teleporter(gentity_t *self)
@@ -667,8 +660,8 @@ void SP_target_teleporter(gentity_t *self)
 
 //==========================================================
 
-
-/*QUAKED target_relay (1 1 0) (-8 -8 -8) (8 8 8) RED_ONLY BLUE_ONLY RANDOM NOKEY_ONLY TAKE_KEY NO_LOCKED_NOISE
+/*
+QUAKED target_relay (1 1 0) (-8 -8 -8) (8 8 8) RED_ONLY BLUE_ONLY RANDOM NOKEY_ONLY TAKE_KEY NO_LOCKED_NOISE
 This doesn't perform any actions except fire its targets.
 The activator can be forced to be from a certain team.
 if RANDOM is checked, only one of the targets will be fired, not all of them
@@ -709,57 +702,28 @@ void target_relay_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 	{
 		if (self->key)
 		{
-			// Gordon: removed keys
-//			gitem_t *item;
+			// removed keys
+			//gitem_t *item;
 
 			if (self->key == -1)     // relay permanently locked
 			{
 				if (self->soundPos1)
 				{
-					G_Sound(self, self->soundPos1);      //----(SA)	added
+					G_Sound(self, self->soundPos1);
 				}
 				return;
 			}
 
-/*			item = BG_FindItemForKey(self->key, 0);
-
-            if(item)
-            {
-                if(activator->client->ps.stats[STAT_KEYS] & (1<<item->giTag))	// user has key
-                {
-                    if (self->spawnflags & 8 ) {	// relay is NOKEY_ONLY and player has key
-                        if (self->soundPos1)
-                            G_Sound( self, self->soundPos1);	//----(SA)	added
-                        return;
-                    }
-                }
-                else							// user does not have key
-                {
-                    if (!(self->spawnflags & 8) )
-                    {
-                        if (self->soundPos1)
-                            G_Sound( self, self->soundPos1);	//----(SA)	added
-                        return;
-                    }
-                }
-            }*/
-
-/*			if(self->spawnflags & 16) {	// (SA) take key
-                activator->client->ps.stats[STAT_KEYS] &= ~(1<<item->giTag);
-                // (SA) TODO: "took inventory item" sound
-            }*/
+			/*
+			if(self->spawnflags & 16) {	// take key
+			    activator->client->ps.stats[STAT_KEYS] &= ~(1<<item->giTag);
+			    // TODO: "took inventory item" sound
+			}*/
 		}
 	}
 
 	G_UseTargets(self, activator);
 }
-
-
-void relay_AIScript_AlertEntity(gentity_t *self)
-{
-	G_UseEntity(self, NULL, NULL);
-}
-
 
 /*
 ==============
@@ -783,13 +747,12 @@ void SP_target_relay(gentity_t *self)
 			self->soundPos1 = G_SoundIndex("sound/movers/doors/default_door_locked.wav");
 		}
 	}
-
 }
-
 
 //==========================================================
 
-/*QUAKED target_kill (.5 .5 .5) (-8 -8 -8) (8 8 8) kill_user_too
+/*
+QUAKED target_kill (.5 .5 .5) (-8 -8 -8) (8 8 8) kill_user_too
 Kills the activator. (default)
 If targets, they will be killed when this is fired
 "kill_user_too" will still kill the activator when this ent has targets (default is only kill targets, not activator)
@@ -801,7 +764,6 @@ void G_KillEnts(const char *target, gentity_t *ignore, gentity_t *killer, meansO
 
 	while ((targ = G_FindByTargetname(targ, target)))
 	{
-
 		// make sure it isn't going to respawn or show any events
 		targ->nextthink = 0;
 
@@ -810,11 +772,10 @@ void G_KillEnts(const char *target, gentity_t *ignore, gentity_t *killer, meansO
 			continue;
 		}
 
-		// RF, script_movers should die!
+		// script_movers should die!
 		if (targ->s.eType == ET_MOVER && !Q_stricmp(targ->classname, "script_mover") && targ->die)
 		{
 			G_Damage(targ, killer, killer, NULL, NULL, 100000, DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
-//			targ->die(targ, killer, killer, targ->health, 0);
 			continue;
 		}
 
@@ -852,7 +813,8 @@ void SP_target_kill(gentity_t *self)
 	self->use = target_kill_use;
 }
 
-/*DEFUNCT target_position (0 0.5 0) (-4 -4 -4) (4 4 4)
+/*
+DEFUNCT target_position (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for in-game calculation, like jumppad targets.
 */
 void SP_target_position(gentity_t *self)
@@ -860,7 +822,8 @@ void SP_target_position(gentity_t *self)
 	G_SetOrigin(self, self->s.origin);
 }
 
-/*QUAKED target_location (0 0.5 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED target_location (0 0.5 0) (-8 -8 -8) (8 8 8)
 Set "message" to the name of this location.
 Set "count" to 0-7 for color.
 0:white 1:red 2:green 3:yellow 4:blue 5:cyan 6:magenta 7:white
@@ -875,7 +838,7 @@ void SP_target_location(gentity_t *self)
 	G_FreeEntity(self);
 }
 
-//---- (SA) Wolf targets
+// Wolf targets
 
 /*
 ==============
@@ -891,7 +854,7 @@ void Use_Target_Counter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	ent->count -= 1;    // dec count
 
-//	G_Printf("count at: %d\n", ent->count);
+	//	G_Printf("count at: %d\n", ent->count);
 
 	if (!ent->count)       // specified count is now hit
 	{ //		G_Printf("firing!!\n");
@@ -910,11 +873,9 @@ void Use_Target_Lock(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	while ((t = G_Find(t, FOFS(targetname), ent->target)) != NULL)
 	{
-//		G_Printf("target_lock locking entity with key: %d\n", ent->count);
+		G_Printf("target_lock locking entity with key: %d\n", ent->count);
 		t->key = ent->key;
-
 	}
-
 }
 
 //==========================================================
@@ -935,7 +896,8 @@ void Use_target_fog(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	trap_SetConfigstring(CS_FOGVARS, va("%f %f %f %f %f %f %i", 1.0f, (float)ent->s.density, 1.0f, (float)ent->dl_color[0], (float)ent->dl_color[1], (float)ent->dl_color[2], ent->s.time));
 }
 
-/*QUAKED target_fog (1 1 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED target_fog (1 1 0) (-8 -8 -8) (8 8 8)
 color picker chooses color of fog
 "distance" sets fog distance.  Use value '0' to give control back to the game (and use the fog values specified in the sky shader if present)
 "time" time it takes to change fog to new value.  default time is 1 sec
@@ -968,7 +930,8 @@ void SP_target_fog(gentity_t *ent)
 
 //==========================================================
 
-/*QUAKED target_counter (1 1 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED target_counter (1 1 0) (-8 -8 -8) (8 8 8)
 Increments the counter pointed to.
 "count" is the key for the count value
 */
@@ -978,19 +941,10 @@ void SP_target_counter(gentity_t *ent)
 	ent->use = Use_Target_Counter;
 }
 
-
-
-/*QUAKED target_autosave (1 1 0) (-8 -8 -8) (8 8 8)
-saves game to 'autosave.sav' when triggered then dies.
-*/
-void SP_target_autosave(gentity_t *ent)
-{
-	G_Printf("SP_target_autosave not supported.\n");
-}
-
 //==========================================================
 
-/*QUAKED target_lock (1 1 0) (-8 -8 -8) (8 8 8)
+/*
+QUAKED target_lock (1 1 0) (-8 -8 -8) (8 8 8)
 Sets the door to a state requiring key n
 "key" is the required key
 so:
@@ -1003,14 +957,13 @@ void SP_target_lock(gentity_t *ent)
 	ent->use = Use_Target_Lock;
 }
 
-
-
 void Use_Target_Alarm(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	G_UseTargets(ent, other);
 }
 
-/*QUAKED target_alarm (1 1 0) (-4 -4 -4) (4 4 4)
+/*
+QUAKED target_alarm (1 1 0) (-4 -4 -4) (4 4 4)
 does nothing yet (effectively a relay right now)
 */
 void SP_target_alarm(gentity_t *ent)
@@ -1018,9 +971,8 @@ void SP_target_alarm(gentity_t *ent)
 	ent->use = Use_Target_Alarm;
 }
 
-//---- end
-
-/*QUAKED target_smoke (1 0 0) (-32 -32 -16) (32 32 16) Black White SmokeON Gravity
+/*
+QUAKED target_smoke (1 0 0) (-32 -32 -16) (32 32 16) Black White SmokeON Gravity
 1 second	= 1000
 1 FRAME		= 100
 delay		= 100 = one millisecond default this is the maximum smoke that will show up
@@ -1031,43 +983,6 @@ end_size	= 96 default
 wait		= default is 50 the rate at which it will travel up
 shader		= custom shader to use for particles
 */
-
-/*void smoke_think (gentity_t *ent)
-{
-    gentity_t	*tent;
-
-    ent->nextthink = level.time + ent->delay;
-
-    if (!(ent->spawnflags & 4))
-        return;
-
-    if (ent->health)
-    {
-        ent->health --;
-        if (!ent->health)
-        {
-            ent->think = G_FreeEntity;
-            ent->nextthink = level.time + FRAMETIME;
-        }
-    }
-
-    tent = G_TempEntity (ent->r.currentOrigin, EV_SMOKE);
-    VectorCopy (ent->r.currentOrigin, tent->s.origin);
-    tent->s.time = ent->speed;
-    tent->s.time2 = ent->duration;
-    tent->s.density = ent->s.density;
-
-    // this is used to set the size of the smoke particle
-    tent->s.angles2[0] = ent->start_size;
-    tent->s.angles2[1] = ent->end_size;
-    tent->s.angles2[2] = ent->wait;
-
-    VectorCopy (ent->pos3, tent->s.origin2);
-
-    if (ent->s.frame) // denotes reverse gravity effect
-        tent->s.frame = 1;
-
-}*/
 
 void smoke_think(gentity_t *ent)
 {
@@ -1148,7 +1063,7 @@ void SP_target_smoke(gentity_t *ent)
 		ent->s.modelindex2 = 0;
 	}
 
-	// Arnout - modified this a lot to be sent to the client as one entity and then is shown at the client
+	// modified this a lot to be sent to the client as one entity and then is shown at the client
 	if (!ent->delay)
 	{
 		ent->delay = 100;
@@ -1221,11 +1136,10 @@ void SP_target_smoke(gentity_t *ent)
 	{
 		trap_LinkEntity(ent);
 	}
-
 }
 
-
-/*QUAKED target_script_trigger (1 .7 .2) (-8 -8 -8) (8 8 8)
+/*
+QUAKED target_script_trigger (1 .7 .2) (-8 -8 -8) (8 8 8)
 must have an aiName
 must have a target
 
@@ -1233,10 +1147,7 @@ when used it will fire its targets
 */
 void target_script_trigger_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-// START	Mad Doctor I changes, 8/16/2002
-
 	qboolean found = qfalse;
-
 	// for all entities/bots with this ainame
 	gentity_t *trent = NULL;
 
@@ -1269,7 +1180,6 @@ void target_script_trigger_use(gentity_t *ent, gentity_t *other, gentity_t *acti
 	}
 
 	G_UseTargets(ent, other);
-
 }
 
 void SP_target_script_trigger(gentity_t *ent)
@@ -1280,8 +1190,8 @@ void SP_target_script_trigger(gentity_t *ent)
 	ent->use       = target_script_trigger_use;
 }
 
-
-/*QUAKED target_rumble (0 0.75 0.8) (-8 -8 -8) (8 8 8) STARTOFF
+/*
+QUAKED target_rumble (0 0.75 0.8) (-8 -8 -8) (8 8 8) STARTOFF
 wait = default is 2 seconds = time the entity will enable rumble effect
 "pitch" value from 1 to 10 default is 5
 "yaw"   value from 1 to 10 default is 5
@@ -1299,11 +1209,9 @@ int rumble_snd;
 
 void target_rumble_think(gentity_t *ent)
 {
-	gentity_t *tent;
-	float     ratio;
-	float     time, time2;
-	float     dapitch, dayaw;
-	qboolean  validrumble = qtrue;
+	float    ratio;
+	float    dapitch, dayaw;
+	qboolean validrumble = qtrue;
 
 	if (!(ent->count))
 	{
@@ -1327,6 +1235,8 @@ void target_rumble_think(gentity_t *ent)
 
 	if (ent->start_size)
 	{
+		int time, time2;
+
 		if (level.time < (ent->timestamp + ent->start_size))
 		{
 			time  = level.time - ent->timestamp;
@@ -1347,7 +1257,7 @@ void target_rumble_think(gentity_t *ent)
 
 	if (validrumble)
 	{
-		tent = G_TempEntity(ent->r.currentOrigin, EV_RUMBLE_EFX);
+		gentity_t *tent = G_TempEntity(ent->r.currentOrigin, EV_RUMBLE_EFX);
 
 		tent->s.angles[0] = dapitch * ratio;
 		tent->s.angles[1] = dayaw * ratio;
@@ -1368,7 +1278,6 @@ void target_rumble_think(gentity_t *ent)
 	{
 		ent->nextthink = level.time + 50;
 	}
-
 }
 
 void target_rumble_use(gentity_t *ent, gentity_t *other, gentity_t *activator)

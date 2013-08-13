@@ -1,0 +1,18 @@
+/**
+ * @def ETLEGACY_VERSION
+ * @brief Version in long format.
+ *
+ * If the current commit is tagged, then it is just the tag.
+ * Otherwise, it consists of three parts separated by dashes:
+ * 1. most recent tag
+ * 2. commits made since last tagging
+ * 3. abbreviated SHA1 of the current commit
+ */
+#define ETLEGACY_VERSION "@ETL_CMAKE_VERSION@"
+
+/**
+ * @def ETLEGACY_VERSION_SHORT
+ * @brief Version in short format. Contains only the most recent tag.
+ */
+#define ETLEGACY_VERSION_SHORT "@ETL_CMAKE_VERSION_SHORT@"
+

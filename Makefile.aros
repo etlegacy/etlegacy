@@ -1,0 +1,728 @@
+#
+# ET: Legacy Makefile for AROS
+#
+
+ETLEGACY_VERSION = 2.71rc1
+
+BUILD_CLIENT = 1
+BUILD_SERVER = 0
+BUILD_GAME_SO = 1
+
+CC = gcc
+MKDIR = mkdir
+
+CLIENT_NAME = etl
+SERVER_NAME = etlded
+MODNAME = legacy
+
+PLATFORM = $(shell uname -s)
+ARCH = $(shell uname -m)
+ifeq ($(ARCH),powerpc)
+	ARCH = ppc
+endif
+ifeq ($(ARCH),powerpc64)
+	ARCH = ppc64
+endif
+
+MOUNT_DIR = src
+BUILD_DIR = build
+
+GENERATE_DEPENDENCIES = 1
+
+FEATURE_OPENAL = 0
+FEATURE_FREETYPE = 0
+FEATURE_TRACKBASE = 1
+FEATURE_OGG_VORBIS = 1
+FEATURE_PUREHACK = 1
+
+#############################################################################
+
+BD = $(BUILD_DIR)/debug-$(PLATFORM)-$(ARCH)
+BR = $(BUILD_DIR)/release-$(PLATFORM)-$(ARCH)
+CDIR = $(MOUNT_DIR)/client
+SDIR = $(MOUNT_DIR)/server
+RDIR =  $(MOUNT_DIR)/renderer
+CMDIR = $(MOUNT_DIR)/qcommon
+SDLDIR = $(MOUNT_DIR)/sdl
+SYSDIR = $(MOUNT_DIR)/sys
+GDIR = $(MOUNT_DIR)/game
+CGDIR = $(MOUNT_DIR)/cgame
+BLIBDIR = $(MOUNT_DIR)/botlib
+NDIR = $(MOUNT_DIR)/null
+UIDIR = $(MOUNT_DIR)/ui
+
+#############################################################################
+# SETUP AND BUILD -- AROS
+#############################################################################
+
+BASE_CFLAGS = -Wall -fno-strict-aliasing -Wimplicit -pipe -I$(BUILD_DIR)
+
+CLIENT_CFLAGS = $(shell sdl-config --cflags)
+SERVER_CFLAGS =
+
+ifeq ($(FEATURE_OPENAL),1)
+	CLIENT_CFLAGS += -DFEATURE_OPENAL
+endif
+
+ifeq ($(FEATURE_OGG_VORBIS),1)
+	CLIENT_CFLAGS += -DFEATURE_OGG_VORBIS
+endif
+
+ifeq ($(FEATURE_FREETYPE),1)
+	CLIENT_CFLAGS += -DFEATURE_FREETYPE
+endif
+
+ifeq ($(FEATURE_TRACKBASE),1)
+	CLIENT_CFLAGS += -DFEATURE_TRACKBASE
+	SERVER_CFLAGS += -DFEATURE_TRACKBASE
+endif
+
+ifeq ($(FEATURE_PUREHACK),1)
+	CLIENT_CFLAGS += -DFEATURE_PUREHACK
+	SERVER_CFLAGS += -DFEATURE_PUREHACK
+endif
+
+DEBUG_CFLAGS = -g -O0
+OPTIMIZEVM = -O2 -funroll-loops -fomit-frame-pointer
+OPTIMIZE = $(OPTIMIZEVM) -ffast-math
+
+SHLIBEXT = dll
+SHLIBCFLAGS =
+SHLIBLDFLAGS = $(LDFLAGS)
+
+LIBS = -ldll
+
+CLIENT_LIBS = $(shell sdl-config --libs) -ljpeg 
+
+ifeq ($(FEATURE_OPENAL),1)
+	CLIENT_LIBS += -lopenal
+endif
+
+ifeq ($(FEATURE_OGG_VORBIS),1)
+	CLIENT_LIBS += -lvorbisfile -lvorbis -logg
+endif
+
+ifeq ($(FEATURE_FREETYPE),1)
+	CLIENT_LIBS += -lfreetype2
+endif
+
+CLIENT_LIBS += -lcurl -lssl -lcrypto -lz
+
+SHLIBNAME=_mp_aros_$(ARCH).$(SHLIBEXT)
+
+TARGETS =
+
+ifneq ($(BUILD_SERVER),0)
+	TARGETS += $(B)/$(SERVER_NAME)
+endif
+
+ifneq ($(BUILD_CLIENT),0)
+	TARGETS += $(B)/$(CLIENT_NAME)
+endif
+
+ifneq ($(BUILD_GAME_SO),0)
+	TARGETS += \
+		$(B)/$(MODNAME)/cgame$(SHLIBNAME) \
+		$(B)/$(MODNAME)/qagame$(SHLIBNAME) \
+		$(B)/$(MODNAME)/ui$(SHLIBNAME)
+endif
+
+ifeq ($(GENERATE_DEPENDENCIES),1)
+	DEPEND_CFLAGS = -MMD
+else
+	DEPEND_CFLAGS =
+endif
+
+ifeq ($(V),1)
+	echo_cmd = @:
+	Q =
+else
+	echo_cmd = @echo
+	Q = @
+endif
+
+define DO_CC
+$(echo_cmd) "CC $<"
+$(Q)$(CC) $(NOTSHLIBCFLAGS) $(CFLAGS) $(CLIENT_CFLAGS) $(OPTIMIZE) -o $@ -c $<
+endef
+
+define DO_BOT_CC
+$(echo_cmd) "BOT_CC $<"
+$(Q)$(CC) $(NOTSHLIBCFLAGS) $(CFLAGS) $(BOTCFLAGS) $(OPTIMIZE) -DBOTLIB -o $@ -c $<
+endef
+
+define DO_SHLIB_CC
+$(echo_cmd) "SHLIB_CC $<"
+$(Q)$(CC) $(SHLIBCFLAGS) $(CFLAGS) $(OPTIMIZEVM) -o $@ -c $<
+endef
+
+define DO_GAME_CC
+$(echo_cmd) "GAME_CC $<"
+$(Q)$(CC) -DGAMEDLL $(SHLIBCFLAGS) $(CFLAGS) $(OPTIMIZEVM) -o $@ -c $<
+endef
+
+define DO_CGAME_CC
+$(echo_cmd) "CGAME_CC $<"
+$(Q)$(CC) -DCGAMEDLL $(SHLIBCFLAGS) $(CFLAGS) $(OPTIMIZEVM) -o $@ -c $<
+endef
+
+define DO_UI_CC
+$(echo_cmd) "UI_CC $<"
+$(Q)$(CC) -DUIDLL $(SHLIBCFLAGS) $(CFLAGS) $(OPTIMIZEVM) -o $@ -c $<
+endef
+
+define DO_DED_CC
+$(echo_cmd) "DED_CC $<"
+$(Q)$(CC) $(NOTSHLIBCFLAGS) -DDEDICATED $(CFLAGS) $(SERVER_CFLAGS) $(OPTIMIZE) -o $@ -c $<
+endef
+
+#############################################################################
+# MAIN TARGETS
+#############################################################################
+
+default: release
+all: debug release
+
+debug:
+	@$(MAKE) -f makefile.aros targets B=$(BD) CFLAGS="$(CFLAGS) $(BASE_CFLAGS) $(DEPEND_CFLAGS)" \
+	  OPTIMIZE="-D_DEBUG $(DEBUG_CFLAGS)" OPTIMIZEVM="-D_DEBUG $(DEBUG_CFLAGS)" \
+	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V) \
+	  STRIP="echo"
+
+release:
+	@$(MAKE) -f makefile.aros targets B=$(BR) CFLAGS="$(CFLAGS) $(BASE_CFLAGS) $(DEPEND_CFLAGS)" \
+	  OPTIMIZE="-DNDEBUG $(OPTIMIZE)" OPTIMIZEVM="-DNDEBUG $(OPTIMIZEVM)" \
+	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V) \
+	  STRIP="strip"
+
+# Create the build directories, check libraries and print out
+# an informational message, then start building
+targets: makedirs
+	@echo ""
+	@echo "Building ET: Legacy in $(B):"
+	@echo "  PLATFORM: $(PLATFORM)"
+	@echo "  ARCH: $(ARCH)"
+	@echo "  CC: $(CC)"
+	@echo ""
+	@echo "  CFLAGS:"
+	-@for i in $(CFLAGS); \
+	do \
+		echo "    $$i"; \
+	done
+	-@for i in $(OPTIMIZE); \
+	do \
+		echo "    $$i"; \
+	done
+	@echo ""
+	@echo "  CLIENT_CFLAGS:"
+	-@for i in $(CLIENT_CFLAGS); \
+	do \
+		echo "    $$i"; \
+	done
+	@echo ""
+	@echo "  SERVER_CFLAGS:"
+	-@for i in $(SERVER_CFLAGS); \
+	do \
+		echo "    $$i"; \
+	done
+	@echo ""
+	@echo "  LDFLAGS:"
+	-@for i in $(LDFLAGS); \
+	do \
+		echo "    $$i"; \
+	done
+	@echo ""
+	@echo "  LIBS:"
+	-@for i in $(LIBS); \
+	do \
+		echo "    $$i"; \
+	done
+	@echo ""
+	@echo "  CLIENT_LIBS:"
+	-@for i in $(CLIENT_LIBS); \
+	do \
+		echo "    $$i"; \
+	done
+	@echo ""
+	@echo "  Output:"
+	-@for i in $(TARGETS); \
+	do \
+		echo "    $$i"; \
+	done
+	@echo ""
+ifneq ($(TARGETS),)
+	@$(MAKE) -f Makefile.aros $(TARGETS) V=$(V)
+endif
+
+makedirs:
+	@if [ ! -d $(BUILD_DIR) ];then $(MKDIR) $(BUILD_DIR);fi
+	@if [ ! -d $(B) ];then $(MKDIR) $(B);fi
+	@if [ ! -d $(B)/client ];then $(MKDIR) $(B)/client;fi
+	@if [ ! -d $(B)/ded ];then $(MKDIR) $(B)/ded;fi
+	@if [ ! -d $(B)/$(MODNAME) ];then $(MKDIR) $(B)/$(MODNAME);fi
+	@if [ ! -d $(B)/$(MODNAME)/cgame ];then $(MKDIR) $(B)/$(MODNAME)/cgame;fi
+	@if [ ! -d $(B)/$(MODNAME)/game ];then $(MKDIR) $(B)/$(MODNAME)/game;fi
+	@if [ ! -d $(B)/$(MODNAME)/ui ];then $(MKDIR) $(B)/$(MODNAME)/ui;fi
+	@echo "#define ETLEGACY_VERSION \"$(ETLEGACY_VERSION)\"" > $(BUILD_DIR)/git_version.h
+	@echo "#define ETLEGACY_VERSION_SHORT \"$(ETLEGACY_VERSION)\"" >> $(BUILD_DIR)/git_version.h
+
+	
+
+#############################################################################
+# CLIENT/SERVER
+#############################################################################
+
+Q3OBJ = \
+	$(B)/client/cl_avi.o \
+	$(B)/client/cl_cgame.o \
+	$(B)/client/cl_cin.o \
+	$(B)/client/cl_console.o \
+	$(B)/client/cl_input.o \
+	$(B)/client/cl_keys.o \
+	$(B)/client/cl_main.o \
+	$(B)/client/cl_net_chan.o \
+	$(B)/client/cl_parse.o \
+	$(B)/client/cl_scrn.o \
+	$(B)/client/cl_ui.o \
+	\
+	$(B)/client/cm_load.o \
+	$(B)/client/cm_patch.o \
+	$(B)/client/cm_polylib.o \
+	$(B)/client/cm_test.o \
+	$(B)/client/cm_trace.o \
+	\
+	$(B)/client/cmd.o \
+	$(B)/client/common.o \
+	$(B)/client/cvar.o \
+	$(B)/client/dl_main_curl.o \
+	$(B)/client/files.o \
+	$(B)/client/md4.o \
+	$(B)/client/md5.o \
+	$(B)/client/msg.o \
+	$(B)/client/net_chan.o \
+	$(B)/client/net_ip.o \
+	$(B)/client/puff.o \
+	$(B)/client/huffman.o \
+	\
+	$(B)/client/snd_adpcm.o \
+	$(B)/client/snd_codec.o \
+	$(B)/client/snd_codec_ogg.o \
+	$(B)/client/snd_codec_wav.o \
+	$(B)/client/snd_dma.o \
+	$(B)/client/snd_main.o \
+	$(B)/client/snd_mem.o \
+	$(B)/client/snd_mix.o \
+	$(B)/client/qal.o \
+	$(B)/client/snd_openal.o \
+	$(B)/client/snd_wavelet.o \
+	\
+	$(B)/client/sv_bot.o \
+	$(B)/client/sv_ccmds.o \
+	$(B)/client/sv_client.o \
+	$(B)/client/sv_game.o \
+	$(B)/client/sv_init.o \
+	$(B)/client/sv_main.o \
+	$(B)/client/sv_net_chan.o \
+	$(B)/client/sv_snapshot.o \
+	$(B)/client/sv_trackbase.o \
+	$(B)/client/sv_world.o \
+	\
+	$(B)/client/q_math.o \
+	$(B)/client/q_shared.o \
+	\
+	$(B)/client/unzip.o \
+	$(B)/client/vm.o \
+	$(B)/client/vm_interpreted.o \
+	\
+	$(B)/client/be_interface.o \
+	$(B)/client/l_libvar.o \
+	$(B)/client/l_log.o \
+	$(B)/client/l_memory.o \
+	$(B)/client/l_precomp.o \
+	$(B)/client/l_script.o \
+	$(B)/client/l_struct.o \
+	\
+	$(B)/client/tr_animation_mdm.o \
+	$(B)/client/tr_animation_mds.o \
+	$(B)/client/tr_backend.o \
+	$(B)/client/tr_bsp.o \
+	$(B)/client/tr_cmds.o \
+	$(B)/client/tr_cmesh.o \
+	$(B)/client/tr_curve.o \
+	$(B)/client/tr_decals.o \
+	$(B)/client/tr_flares.o \
+	$(B)/client/tr_font.o \
+	$(B)/client/tr_image.o \
+	$(B)/client/tr_image_bmp.o \
+	$(B)/client/tr_image_jpg.o \
+	$(B)/client/tr_image_pcx.o \
+	$(B)/client/tr_image_png.o \
+	$(B)/client/tr_image_tga.o \
+	$(B)/client/tr_init.o \
+	$(B)/client/tr_light.o \
+	$(B)/client/tr_main.o \
+	$(B)/client/tr_marks.o \
+	$(B)/client/tr_mesh.o \
+	$(B)/client/tr_model.o \
+	$(B)/client/tr_noise.o \
+	$(B)/client/tr_scene.o \
+	$(B)/client/tr_shade_calc.o \
+	$(B)/client/tr_shade.o \
+	$(B)/client/tr_shader.o \
+	$(B)/client/tr_shadows.o \
+	$(B)/client/tr_sky.o \
+	$(B)/client/tr_surface.o \
+	$(B)/client/tr_world.o \
+	\
+	$(B)/client/sdl_glimp.o \
+	$(B)/client/sdl_gamma.o \
+	$(B)/client/sdl_input.o \
+	$(B)/client/sdl_snd.o \
+	\
+	$(B)/client/con_log.o \
+	$(B)/client/sys_main.o \
+	$(B)/client/sys_unix.o \
+	$(B)/client/con_passive.o
+
+$(B)/$(CLIENT_NAME)$(FULLBINEXT): $(Q3OBJ) $(Q3POBJ)
+	$(echo_cmd) "LD $@"
+	$(echo_cmd) "$(CC) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) -o $@ $(Q3OBJ) $(Q3POBJ) $(CLIENT_LIBS) $(LIBS)"
+	$(Q)$(CC) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) \
+		-o $@ $(Q3OBJ) $(Q3POBJ) \
+		$(CLIENT_LIBS) $(LIBS)
+	$(Q)$(STRIP) --strip-unneeded $@
+
+#############################################################################
+# DEDICATED SERVER
+#############################################################################
+
+Q3DOBJ = \
+	$(B)/ded/sv_bot.o \
+	$(B)/ded/sv_client.o \
+	$(B)/ded/sv_ccmds.o \
+	$(B)/ded/sv_game.o \
+	$(B)/ded/sv_init.o \
+	$(B)/ded/sv_main.o \
+	$(B)/ded/sv_net_chan.o \
+	$(B)/ded/sv_snapshot.o \
+	$(B)/ded/sv_trackbase.o \
+	$(B)/ded/sv_world.o \
+	\
+	$(B)/ded/cm_load.o \
+	$(B)/ded/cm_patch.o \
+	$(B)/ded/cm_polylib.o \
+	$(B)/ded/cm_test.o \
+	$(B)/ded/cm_trace.o \
+	$(B)/ded/cmd.o \
+	$(B)/ded/common.o \
+	$(B)/ded/cvar.o \
+	$(B)/ded/files.o \
+	$(B)/ded/md4.o \
+	$(B)/ded/md5.o \
+	$(B)/ded/msg.o \
+	$(B)/ded/net_chan.o \
+	$(B)/ded/net_ip.o \
+	$(B)/ded/puff.o \
+	$(B)/ded/huffman.o \
+	\
+	$(B)/ded/q_math.o \
+	$(B)/ded/q_shared.o \
+	\
+	$(B)/ded/unzip.o \
+	$(B)/ded/vm.o \
+	$(B)/ded/vm_interpreted.o \
+	\
+	$(B)/ded/be_interface.o \
+	$(B)/ded/l_libvar.o \
+	$(B)/ded/l_log.o \
+	$(B)/ded/l_memory.o \
+	$(B)/ded/l_precomp.o \
+	$(B)/ded/l_script.o \
+	$(B)/ded/l_struct.o \
+	\
+	$(B)/ded/null_client.o \
+	$(B)/ded/null_input.o \
+	$(B)/ded/null_snddma.o \
+	\
+	$(B)/ded/con_log.o \
+	$(B)/ded/sys_main.o \
+	$(B)/ded/sys_platform.o \
+	$(B)/ded/con_passive.o
+
+$(B)/$(SERVER_NAME)$(FULLBINEXT): $(Q3DOBJ)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(Q3DOBJ) $(LIBS)
+
+
+#############################################################################
+## CGAME
+#############################################################################
+
+Q3CGOBJ_ = \
+	$(B)/$(MODNAME)/cgame/cg_main.o \
+	$(B)/$(MODNAME)/cgame/bg_animation.o \
+	$(B)/$(MODNAME)/cgame/bg_animgroup.o \
+	$(B)/$(MODNAME)/cgame/bg_campaign.o \
+	$(B)/$(MODNAME)/cgame/bg_character.o \
+	$(B)/$(MODNAME)/cgame/bg_classes.o \
+	$(B)/$(MODNAME)/cgame/bg_misc.o \
+	$(B)/$(MODNAME)/cgame/bg_pmove.o \
+	$(B)/$(MODNAME)/cgame/bg_slidemove.o \
+	$(B)/$(MODNAME)/cgame/bg_sscript.o \
+	$(B)/$(MODNAME)/cgame/bg_stats.o \
+	$(B)/$(MODNAME)/cgame/bg_tracemap.o \
+	$(B)/$(MODNAME)/cgame/ui_shared.o \
+	$(B)/$(MODNAME)/cgame/cg_atmospheric.o \
+	$(B)/$(MODNAME)/cgame/cg_character.o \
+	$(B)/$(MODNAME)/cgame/cg_commandmap.o \
+	$(B)/$(MODNAME)/cgame/cg_consolecmds.o \
+	$(B)/$(MODNAME)/cgame/cg_debriefing.o \
+	$(B)/$(MODNAME)/cgame/cg_draw.o \
+	$(B)/$(MODNAME)/cgame/cg_drawtools.o \
+	$(B)/$(MODNAME)/cgame/cg_effects.o \
+	$(B)/$(MODNAME)/cgame/cg_ents.o \
+	$(B)/$(MODNAME)/cgame/cg_event.o \
+	$(B)/$(MODNAME)/cgame/cg_fireteamoverlay.o \
+	$(B)/$(MODNAME)/cgame/cg_fireteams.o \
+	$(B)/$(MODNAME)/cgame/cg_flamethrower.o \
+	$(B)/$(MODNAME)/cgame/cg_info.o \
+	$(B)/$(MODNAME)/cgame/cg_limbopanel.o \
+	$(B)/$(MODNAME)/cgame/cg_loadpanel.o \
+	$(B)/$(MODNAME)/cgame/cg_localents.o \
+	$(B)/$(MODNAME)/cgame/cg_marks.o \
+	$(B)/$(MODNAME)/cgame/cg_missionbriefing.o \
+	$(B)/$(MODNAME)/cgame/cg_multiview.o \
+	$(B)/$(MODNAME)/cgame/cg_newDraw.o \
+	$(B)/$(MODNAME)/cgame/cg_particles.o \
+	$(B)/$(MODNAME)/cgame/cg_players.o \
+	$(B)/$(MODNAME)/cgame/cg_playerstate.o \
+	$(B)/$(MODNAME)/cgame/cg_polybus.o \
+	$(B)/$(MODNAME)/cgame/cg_popupmessages.o \
+	$(B)/$(MODNAME)/cgame/cg_predict.o \
+	$(B)/$(MODNAME)/cgame/cg_scoreboard.o \
+	$(B)/$(MODNAME)/cgame/cg_servercmds.o \
+	$(B)/$(MODNAME)/cgame/cg_snapshot.o \
+	$(B)/$(MODNAME)/cgame/cg_sound.o \
+	$(B)/$(MODNAME)/cgame/cg_spawn.o \
+	$(B)/$(MODNAME)/cgame/cg_statsranksmedals.o \
+	$(B)/$(MODNAME)/cgame/cg_trails.o \
+	$(B)/$(MODNAME)/cgame/cg_view.o \
+	$(B)/$(MODNAME)/cgame/cg_weapons.o \
+	$(B)/$(MODNAME)/cgame/cg_window.o \
+	$(B)/$(MODNAME)/cgame/q_math.o \
+	$(B)/$(MODNAME)/cgame/q_shared.o
+  
+Q3CGOBJ = $(Q3CGOBJ_) $(B)/$(MODNAME)/cgame/cg_syscalls.o
+
+$(B)/$(MODNAME)/cgame$(SHLIBNAME): $(Q3CGOBJ)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3CGOBJ) $(LIBS)
+	$(Q)$(STRIP) --strip-unneeded $@
+
+#############################################################################
+## GAME
+#############################################################################
+
+Q3GOBJ_ = \
+	$(B)/$(MODNAME)/game/g_main.o \
+	$(B)/$(MODNAME)/game/bg_animation.o \
+	$(B)/$(MODNAME)/game/bg_animgroup.o \
+	$(B)/$(MODNAME)/game/bg_campaign.o \
+	$(B)/$(MODNAME)/game/bg_character.o \
+	$(B)/$(MODNAME)/game/bg_classes.o \
+	$(B)/$(MODNAME)/game/bg_misc.o \
+	$(B)/$(MODNAME)/game/bg_pmove.o \
+	$(B)/$(MODNAME)/game/bg_slidemove.o \
+	$(B)/$(MODNAME)/game/bg_sscript.o \
+	$(B)/$(MODNAME)/game/bg_stats.o \
+	$(B)/$(MODNAME)/game/bg_tracemap.o \
+	$(B)/$(MODNAME)/game/et-antiwarp.o \
+	$(B)/$(MODNAME)/game/g_active.o \
+	$(B)/$(MODNAME)/game/g_alarm.o \
+	$(B)/$(MODNAME)/game/g_antilag.o \
+	$(B)/$(MODNAME)/game/g_buddy_list.o \
+	$(B)/$(MODNAME)/game/g_character.o \
+	$(B)/$(MODNAME)/game/g_client.o \
+	$(B)/$(MODNAME)/game/g_cmds.o \
+	$(B)/$(MODNAME)/game/g_cmds_ext.o \
+	$(B)/$(MODNAME)/game/g_combat.o \
+	$(B)/$(MODNAME)/game/g_config.o \
+	$(B)/$(MODNAME)/game/g_fireteams.o \
+	$(B)/$(MODNAME)/game/g_items.o \
+	$(B)/$(MODNAME)/game/g_match.o \
+	$(B)/$(MODNAME)/game/g_match_tokens.o \
+	$(B)/$(MODNAME)/game/g_mem.o \
+	$(B)/$(MODNAME)/game/g_misc.o \
+	$(B)/$(MODNAME)/game/g_missile.o \
+	$(B)/$(MODNAME)/game/g_mover.o \
+	$(B)/$(MODNAME)/game/g_multiview.o \
+	$(B)/$(MODNAME)/game/g_props.o \
+	$(B)/$(MODNAME)/game/g_referee.o \
+	$(B)/$(MODNAME)/game/g_script_actions.o \
+	$(B)/$(MODNAME)/game/g_script.o \
+	$(B)/$(MODNAME)/game/g_session.o \
+	$(B)/$(MODNAME)/game/g_spawn.o \
+	$(B)/$(MODNAME)/game/g_stats.o \
+	$(B)/$(MODNAME)/game/g_strparse.o \
+	$(B)/$(MODNAME)/game/g_svcmds.o \
+	$(B)/$(MODNAME)/game/g_systemmsg.o \
+	$(B)/$(MODNAME)/game/g_target.o \
+	$(B)/$(MODNAME)/game/g_team.o \
+	$(B)/$(MODNAME)/game/g_teammapdata.o \
+	$(B)/$(MODNAME)/game/g_trigger.o \
+	$(B)/$(MODNAME)/game/g_utils.o \
+	$(B)/$(MODNAME)/game/g_vote.o \
+	$(B)/$(MODNAME)/game/g_weapon.o \
+	$(B)/$(MODNAME)/game/q_math.o \
+	$(B)/$(MODNAME)/game/q_shared.o
+
+Q3GOBJ = $(Q3GOBJ_) $(B)/$(MODNAME)/game/g_syscalls.o
+
+$(B)/$(MODNAME)/qagame$(SHLIBNAME): $(Q3GOBJ)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3GOBJ) $(LIBS)
+	$(Q)$(STRIP) --strip-unneeded $@
+
+#############################################################################
+## UI
+#############################################################################
+
+Q3UIOBJ_ = \
+	$(B)/$(MODNAME)/ui/bg_campaign.o \
+	$(B)/$(MODNAME)/ui/bg_classes.o \
+	$(B)/$(MODNAME)/ui/bg_misc.o \
+	$(B)/$(MODNAME)/ui/ui_main.o \
+	$(B)/$(MODNAME)/ui/ui_atoms.o \
+	$(B)/$(MODNAME)/ui/ui_gameinfo.o \
+	$(B)/$(MODNAME)/ui/ui_loadpanel.o \
+	$(B)/$(MODNAME)/ui/ui_shared.o \
+	$(B)/$(MODNAME)/ui/q_math.o \
+	$(B)/$(MODNAME)/ui/q_shared.o
+
+Q3UIOBJ = $(Q3UIOBJ_) $(B)/$(MODNAME)/ui/ui_syscalls.o
+
+$(B)/$(MODNAME)/ui$(SHLIBNAME): $(Q3UIOBJ)
+	$(echo_cmd) "LD $@"
+	$(Q)$(CC) $(CFLAGS) $(SHLIBLDFLAGS) -o $@ $(Q3UIOBJ) $(LIBS)
+	$(Q)$(STRIP) --strip-unneeded $@
+
+#############################################################################
+## CLIENT/SERVER RULES
+#############################################################################
+
+$(B)/client/%.o: $(CDIR)/%.c
+	$(DO_CC)
+
+$(B)/client/%.o: $(SDIR)/%.c
+	$(DO_CC)
+
+$(B)/client/%.o: $(CMDIR)/%.c
+	$(DO_CC)
+
+$(B)/client/%.o: $(BLIBDIR)/%.c
+	$(DO_BOT_CC)
+
+$(B)/client/%.o: $(RDIR)/%.c
+	$(DO_CC)
+
+$(B)/client/%.o: $(SDLDIR)/%.c
+	$(DO_CC)
+	
+$(B)/client/%.o: $(GDIR)/%.c
+	$(DO_CC)
+
+$(B)/client/%.o: $(SYSDIR)/%.c
+	$(DO_CC)
+
+$(B)/client/%.o: $(SYSDIR)/%.m
+	$(DO_CC)
+
+$(B)/ded/%.o: $(SDIR)/%.c
+	$(DO_DED_CC)
+
+$(B)/ded/%.o: $(CMDIR)/%.c
+	$(DO_DED_CC)
+
+$(B)/ded/%.o: $(BLIBDIR)/%.c
+	$(DO_BOT_CC)
+
+$(B)/ded/%.o: $(SYSDIR)/%.c
+	$(DO_DED_CC)
+
+$(B)/ded/%.o: $(SYSDIR)/%.m
+	$(DO_DED_CC)
+
+$(B)/ded/%.o: $(NDIR)/%.c
+	$(DO_DED_CC)
+
+$(B)/ded/%.o: $(GDIR)/%.c
+	$(DO_DED_CC)
+	
+#############################################################################
+## GAME MODULE RULES
+#############################################################################
+
+$(B)/$(MODNAME)/cgame/q_%.o: $(CMDIR)/q_%.c
+	$(DO_CGAME_CC)
+	
+$(B)/$(MODNAME)/cgame/bg_%.o: $(GDIR)/bg_%.c
+	$(DO_CGAME_CC)
+
+$(B)/$(MODNAME)/cgame/ui_%.o: $(UIDIR)/ui_%.c
+	$(DO_CGAME_CC)
+
+$(B)/$(MODNAME)/cgame/%.o: $(CGDIR)/%.c
+	$(DO_CGAME_CC)
+
+$(B)/$(MODNAME)/game/%.o: $(GDIR)/%.c
+	$(DO_GAME_CC)
+
+$(B)/$(MODNAME)/game/q_%.o: $(CMDIR)/q_%.c
+	$(DO_GAME_CC)	
+	
+$(B)/$(MODNAME)/ui/q_%.o: $(CMDIR)/q_%.c
+	$(DO_UI_CC)
+	
+$(B)/$(MODNAME)/ui/bg_%.o: $(GDIR)/bg_%.c
+	$(DO_UI_CC)
+
+$(B)/$(MODNAME)/ui/%.o: $(UIDIR)/%.c
+	$(DO_UI_CC)
+
+#############################################################################
+# MISC
+#############################################################################
+
+OBJ = $(Q3OBJ) $(Q3POBJ) $(Q3DOBJ) \
+	$(Q3GOBJ) $(Q3CGOBJ) $(Q3UIOBJ)
+
+clean: clean-debug clean-release
+
+clean-debug:
+	@$(MAKE) clean2 B=$(BD)
+
+clean-release:
+	@$(MAKE) clean2 B=$(BR)
+
+clean2:
+	@echo "CLEAN $(B)"
+	@rm -f $(OBJ)
+	@rm -f $(OBJ_D_FILES)
+	@rm -f $(TARGETS)
+
+distclean: clean
+	@rm -rf $(BUILD_DIR)
+
+#############################################################################
+# DEPENDENCIES
+#############################################################################
+
+ifneq ($(B),)
+	OBJ_D_FILES=$(filter %.d,$(OBJ:%.o=%.d))
+	-include $(OBJ_D_FILES)
+endif
+
+.PHONY: all clean clean2 clean-debug clean-release  \
+	debug default distclean makedirs \
+	release targets \
+	$(OBJ_D_FILES)

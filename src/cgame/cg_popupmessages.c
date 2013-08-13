@@ -34,9 +34,8 @@
 #include "cg_local.h"
 
 #define NUM_PM_STACK_ITEMS  32
-#define MAX_VISIBLE_ITEMS   5
 
-#define NUM_PM_STACK_ITEMS_BIG 8 // Gordon: we shouldn't need many of these
+#define NUM_PM_STACK_ITEMS_BIG 8 // we shouldn't need many of these
 
 typedef struct pmStackItem_s pmListItem_t;
 typedef struct pmStackItemBig_s pmListItemBig_t;
@@ -48,6 +47,8 @@ struct pmStackItem_s
 	int time;
 	char message[128];
 	qhandle_t shader;
+
+	vec3_t color;
 
 	pmListItem_t *next;
 };
@@ -70,7 +71,6 @@ pmListItemBig_t *cg_pmWaitingListBig;
 
 pmListItemBig_t cg_pmStackBig[NUM_PM_STACK_ITEMS_BIG];
 
-
 const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1] =
 {
 	{ "Binoculars",                               "Improved Physical Fitness",                 "Improved Health",                       "Trap Awareness"           }, // battle sense
@@ -83,9 +83,6 @@ const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1] =
 };
 
 void CG_PMItemBigSound(pmListItemBig_t *item);
-
-
-
 
 void CG_InitPMGraphics(void)
 {
@@ -115,29 +112,17 @@ void CG_InitPM(void)
 	cg_pmWaitingListBig = NULL;
 }
 
-#define PM_FADETIME 2500
-#define PM_WAITTIME 2000
+
+/*
+* These have been replaced by cvars
+* #define PM_FADETIME 2500
+* #define PM_WAITTIME 2000
+* #define PM_POPUP_TIME 1000
+*/
 
 #define PM_FADETIME_BIG 1000
 #define PM_WAITTIME_BIG 3500
-
-int CG_TimeForPopup(popupMessageType_t type)
-{
-	switch (type)
-	{
-	default:
-		return 1000;
-	}
-}
-
-int CG_TimeForBigPopup(popupMessageBigType_t type)
-{
-	switch (type)
-	{
-	default:
-		return 2500;
-	}
-}
+#define PM_BIGPOPUP_TIME 2500
 
 void CG_AddToListFront(pmListItem_t **list, pmListItem_t *item)
 {
@@ -153,7 +138,8 @@ void CG_UpdatePMLists(void)
 
 	if ((listItem = cg_pmWaitingList))
 	{
-		int t = (CG_TimeForPopup(listItem->type) + listItem->time);
+		int t = cg_popupTime.integer + listItem->time;
+
 		if (cg.time > t)
 		{
 			if (listItem->next)
@@ -166,7 +152,7 @@ void CG_UpdatePMLists(void)
 			}
 			else
 			{
-				if (cg.time > t + PM_WAITTIME + PM_FADETIME)
+				if (cg.time > t + cg_popupStayTime.integer + cg_popupFadeTime.integer)
 				{
 					// we're gone completely
 					cg_pmWaitingList = NULL;
@@ -185,7 +171,8 @@ void CG_UpdatePMLists(void)
 	lastItem = NULL;
 	while (listItem)
 	{
-		int t = (CG_TimeForPopup(listItem->type) + listItem->time + PM_WAITTIME + PM_FADETIME);
+		int t = cg_popupTime.integer + listItem->time + cg_popupStayTime.integer + cg_popupFadeTime.integer;
+
 		if (cg.time > t)
 		{
 			// nuke this, and everything below it (though there shouldn't BE anything below us anyway)
@@ -219,10 +206,10 @@ void CG_UpdatePMLists(void)
 		listItem = listItem->next;
 	}
 
-
 	if ((listItem2 = cg_pmWaitingListBig))
 	{
-		int t = CG_TimeForBigPopup(listItem2->type) + listItem2->time;
+		int t = PM_BIGPOPUP_TIME + listItem2->time;
+
 		if (cg.time > t)
 		{
 			if (listItem2->next)
@@ -238,7 +225,7 @@ void CG_UpdatePMLists(void)
 			}
 			else
 			{
-				if (cg.time > t + PM_WAITTIME + PM_FADETIME)
+				if (cg.time > t + cg_popupStayTime.integer + cg_popupFadeTime.integer)
 				{
 					// we're gone completely
 					cg_pmWaitingListBig = NULL;
@@ -257,6 +244,7 @@ void CG_UpdatePMLists(void)
 pmListItemBig_t *CG_FindFreePMItem2(void)
 {
 	int i = 0;
+
 	for ( ; i < NUM_PM_STACK_ITEMS_BIG; i++)
 	{
 		if (!cg_pmStackBig[i].inuse)
@@ -272,8 +260,8 @@ pmListItem_t *CG_FindFreePMItem(void)
 {
 	pmListItem_t *listItem;
 	pmListItem_t *lastItem;
+	int          i = 0;
 
-	int i = 0;
 	for ( ; i < NUM_PM_STACK_ITEMS; i++)
 	{
 		if (!cg_pmStack[i].inuse)
@@ -311,7 +299,7 @@ pmListItem_t *CG_FindFreePMItem(void)
 	}
 }
 
-void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader)
+void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader, vec3_t color)
 {
 	pmListItem_t *listItem;
 	char         *end;
@@ -346,7 +334,14 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 	listItem->type  = type;
 	Q_strncpyz(listItem->message, message, sizeof(cg_pmStack[0].message));
 
-	// rain - moved this: print and THEN chop off the newline, as the
+	// colored obituaries
+	listItem->color[0] = listItem->color[1] = listItem->color[2] = 1.f;
+	if (color != NULL)
+	{
+		VectorCopy(color, listItem->color);
+	}
+
+	// moved this: print and THEN chop off the newline, as the
 	// console deals with newlines perfectly.  We do chop off the newline
 	// at the end, if any, though.
 	if (listItem->message[strlen(listItem->message) - 1] == '\n')
@@ -356,13 +351,12 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 
 	trap_Print(va("%s\n", listItem->message));
 
-	// rain - added parens
-	while ((end = strchr(listItem->message, '\n')))
+	while ((end = strchr(listItem->message, '\n'))) // added parens
 	{
 		*end = '\0';
 	}
 
-	// rain - don't eat popups for empty lines
+	// don't eat popups for empty lines
 	if (*listItem->message == '\0')
 	{
 		return;
@@ -376,6 +370,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, qhandle_t shader
 	else
 	{
 		pmListItem_t *loop = cg_pmWaitingList;
+
 		while (loop->next)
 		{
 			loop = loop->next;
@@ -408,6 +403,7 @@ void CG_PMItemBigSound(pmListItemBig_t *item)
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader)
 {
 	pmListItemBig_t *listItem = CG_FindFreePMItem2();
+
 	if (!listItem)
 	{
 		return;
@@ -437,6 +433,7 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 	else
 	{
 		pmListItemBig_t *loop = cg_pmWaitingListBig;
+
 		while (loop->next)
 		{
 			loop = loop->next;
@@ -448,14 +445,14 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 
 #define PM_ICON_SIZE_NORMAL 20
 #define PM_ICON_SIZE_SMALL 12
-void CG_DrawPMItems(void)
+void CG_DrawPMItems(rectDef_t rect)
 {
 	vec4_t       colour     = { 0.f, 0.f, 0.f, 1.f };
 	vec4_t       colourText = { 1.f, 1.f, 1.f, 1.f };
 	float        t;
-	int          i, size;
+	int          i, j, size;
 	pmListItem_t *listItem = cg_pmOldList;
-	float        y         = 360;
+	float        y         = rect.y; //360;
 
 	if (cg_drawSmallPopupIcons.integer)
 	{
@@ -478,35 +475,72 @@ void CG_DrawPMItems(void)
 		return;
 	}
 
-	t = cg_pmWaitingList->time + CG_TimeForPopup(cg_pmWaitingList->type) + PM_WAITTIME;
+	t = cg_pmWaitingList->time + cg_popupTime.integer + cg_popupStayTime.integer;
 	if (cg.time > t)
 	{
-		colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)PM_FADETIME);
+		colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
 	}
 
-	trap_R_SetColor(colourText);
-	CG_DrawPic(4, y, size, size, cg_pmWaitingList->shader);
-	trap_R_SetColor(NULL);
+	if (cg_pmWaitingList->shader > 0)
+	{
+		// colorize
+		for (j = 0; j < 3; j++)
+		{
+			colourText[j] = cg_pmWaitingList->color[j];
+		}
+		trap_R_SetColor(colourText);
+		// draw
+		CG_DrawPic(4, y, size, size, cg_pmWaitingList->shader);
+		// decolorize
+		for (j = 0; j < 3; j++)
+		{
+			colourText[j] = 1.f;
+		}
+		trap_R_SetColor(NULL);
+	}
+	else
+	{
+		size = 0;
+	}
+
 	CG_Text_Paint_Ext(4 + size + 2, y + 12, 0.2f, 0.2f, colourText, cg_pmWaitingList->message, 0, 0, 0, &cgs.media.limboFont2);
 
-	for (i = 0; i < 4 && listItem; i++, listItem = listItem->next)
+	for (i = 0; i < 6 && listItem; i++, listItem = listItem->next)
 	{
 		y -= size + 2;
 
-		t = listItem->time + CG_TimeForPopup(listItem->type) + PM_WAITTIME;
+		t = listItem->time + cg_popupTime.integer + cg_popupStayTime.integer;
 		if (cg.time > t)
 		{
-			colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)PM_FADETIME);
+			colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
 		}
 		else
 		{
 			colourText[3] = colour[3] = 1.f;
 		}
 
-		trap_R_SetColor(colourText);
-		CG_DrawPic(4, y, size, size, listItem->shader);
-		trap_R_SetColor(NULL);
-		CG_Text_Paint_Ext(4 + size + 2, y + 12, 0.2f, 0.2f, colourText, listItem->message, 0, 0, 0, &cgs.media.limboFont2);
+		if (listItem->shader > 0)
+		{
+			for (j = 0; j < 3; j++) // colorize
+			{
+				colourText[j] = listItem->color[j];
+			}
+
+			trap_R_SetColor(colourText);
+			CG_DrawPic(4, y, size, size, listItem->shader);
+
+			for (j = 0; j < 3; j++) // decolorize
+			{
+				colourText[j] = 1.f;
+			}
+			trap_R_SetColor(NULL);
+		}
+		else
+		{
+			size = 0;
+		}
+
+		CG_Text_Paint_Ext(rect.x + size + 2, y + 12, 0.2f, 0.2f, colourText, listItem->message, 0, 0, 0, &cgs.media.limboFont2);
 	}
 }
 
@@ -523,20 +557,22 @@ void CG_DrawPMItemsBig(void)
 		return;
 	}
 
-	t = cg_pmWaitingListBig->time + CG_TimeForBigPopup(cg_pmWaitingListBig->type) + PM_WAITTIME_BIG;
+	t = cg_pmWaitingListBig->time + PM_BIGPOPUP_TIME + PM_WAITTIME_BIG;
 	if (cg.time > t)
 	{
 		colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)PM_FADETIME_BIG);
 	}
 
 	trap_R_SetColor(colourText);
-	CG_DrawPic(640 - 56, y, 48, 48, cg_pmWaitingListBig->shader);
+	CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) - 56, y, 48, 48, cg_pmWaitingListBig->shader);
 	trap_R_SetColor(NULL);
 
 
 	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, 0.22f, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(640 - 4 - w, y + 56, 0.22f, 0.24f, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 4 - w, y + 56, 0.22f, 0.24f, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
 }
+
+#define TXTCOLOR_OBJ "^O"
 
 const char *CG_GetPMItemText(centity_t *cent)
 {
@@ -546,9 +582,9 @@ const char *CG_GetPMItemText(centity_t *cent)
 		switch (cent->currentState.effect2Time)
 		{
 		case 0:
-			return va("Planted at %s.", CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("Planted at %s."), CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
 		case 1:
-			return va("Defused at %s.", CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("Defused at %s."), CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
 		}
 		break;
 	case PM_CONSTRUCTION:
@@ -557,16 +593,16 @@ const char *CG_GetPMItemText(centity_t *cent)
 		case -1:
 			return CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time);
 		case 0:
-			return va("%s has been constructed.", CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("%s has been constructed."), CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
 		}
 		break;
 	case PM_DESTRUCTION:
 		switch (cent->currentState.effect2Time)
 		{
 		case 0:
-			return va("%s has been damaged.", CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("%s has been damaged."), CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
 		case 1:
-			return va("%s has been destroyed.", CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("%s has been destroyed."), CG_ConfigString(CS_OID_TRIGGERS + cent->currentState.effect3Time));
 		}
 		break;
 	case PM_MINES:
@@ -579,14 +615,29 @@ const char *CG_GetPMItemText(centity_t *cent)
 		{
 			return NULL;
 		}
-		return va("Spotted by %s^7 at %s", cgs.clientinfo[cent->currentState.effect3Time].name, BG_GetLocationString(cent->currentState.origin));
+
+		if (cg_locations.integer & LOC_LANDMINES)
+		{
+			char *locStr = CG_BuildLocationString(-1, cent->currentState.origin, LOC_LANDMINES);
+
+			if (!locStr || !*locStr)
+			{
+				return va("%sSpotted by ^7%s", TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name);
+			}
+			return va(CG_TranslateString("%sSpotted by ^7%s%s at %s"), TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name, TXTCOLOR_OBJ, locStr);
+		}
+		else
+		{
+			return va(CG_TranslateString("%sSpotted by ^7%s"), TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name);
+		}
+		break;
 	case PM_OBJECTIVE:
 		switch (cent->currentState.density)
 		{
 		case 0:
-			return va("%s have stolen %s!", cent->currentState.effect2Time == TEAM_ALLIES ? "Allies" : "Axis", CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("%s have stolen %s!"), cent->currentState.effect2Time == TEAM_ALLIES ? CG_TranslateString("Allies") : CG_TranslateString("Axis"), CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time));
 		case 1:
-			return va("%s have returned %s!", cent->currentState.effect2Time == TEAM_ALLIES ? "Allies" : "Axis", CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time));
+			return va(CG_TranslateString("%s have returned %s!"), cent->currentState.effect2Time == TEAM_ALLIES ? CG_TranslateString("Allies") : CG_TranslateString("Axis"), CG_ConfigString(CS_STRINGS + cent->currentState.effect3Time));
 		}
 		break;
 	case PM_TEAM:
@@ -595,6 +646,7 @@ const char *CG_GetPMItemText(centity_t *cent)
 		case 0:         // joined
 		{
 			const char *teamstr = NULL;
+
 			switch (cent->currentState.effect2Time)
 			{
 			case TEAM_AXIS:
@@ -608,10 +660,10 @@ const char *CG_GetPMItemText(centity_t *cent)
 				break;
 			}
 
-			return va("%s^7 has joined the %s^7!", cgs.clientinfo[cent->currentState.effect3Time].name, teamstr);
+			return va(CG_TranslateString("%s^7 has joined the %s^7!"), cgs.clientinfo[cent->currentState.effect3Time].name, CG_TranslateString(teamstr));
 		}
 		case 1:
-			return va("%s^7 disconnected", cgs.clientinfo[cent->currentState.effect3Time].name);
+			return va(CG_TranslateString("%s^7 disconnected"), cgs.clientinfo[cent->currentState.effect3Time].name);
 		}
 	}
 
@@ -715,41 +767,4 @@ qhandle_t CG_GetPMItemIcon(centity_t *cent)
 	default:
 		return cgs.media.pmImages[cent->currentState.effect1Time];
 	}
-
-	return 0;
-}
-
-
-
-void CG_DrawKeyHint(rectDef_t *rect, const char *binding)
-{
-	/*  int k1, k2;
-	    char buffer[256];
-	    char k[2] = { 0, 0 };
-	    float w;
-
-	    trap_Key_KeysForBinding( binding, &k1, &k2 );
-
-	    if( k1 != -1 ) {
-	        trap_Key_KeynumToStringBuf( k1, buffer, 256 );
-	        if( strlen( buffer ) != 1 ) {
-	            if( k2 != -1 ) {
-	                trap_Key_KeynumToStringBuf( k2, buffer, 256 );
-	                if( strlen( buffer ) == 1 ) {
-	                    *k = toupper( *buffer );
-	                }
-	            }
-	        } else {
-	            *k = toupper( *buffer );
-	        }
-	    }
-
-	    if( !*k ) {
-	        return;
-	    }
-
-	    CG_DrawPic( rect->x, rect->y, rect->w, rect->h, cgs.media.hintKey );
-
-	    w = CG_Text_Width_Ext( k, 0.2f, 0, &cgs.media.limboFont1 );
-	    CG_Text_Paint_Ext( rect->x + ((rect->w - w) * 0.5f), rect->y + 14, 0.2f, 0.2f, colorWhite, k, 0, 0, 0, &cgs.media.limboFont1 );*/
 }

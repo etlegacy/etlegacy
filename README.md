@@ -1,9 +1,9 @@
-ET: Legacy
+ET: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=master)](https://travis-ci.org/etlegacy/etlegacy)
 ==========
 
 *A second breath of life for Wolfenstein: Enemy Territory*
 
-Website: [http://etlegacy.com](http://etlegacy.com)
+Website: [http://www.etlegacy.com](http://www.etlegacy.com)
 
 IRC: \#etlegacy on irc.freenode.net
 
@@ -16,7 +16,7 @@ ET: Legacy is based on the [raedwulf-et project](https://bitbucket.org/tcmreastw
 which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory. 
 
 Its main goal is to fix bugs and clean up the codebase while remaining 
-(somewhat) compatible with the ET 2.60b version. 
+compatible with the ET 2.60b version.
 
 GENERAL NOTES
 =============
@@ -49,11 +49,13 @@ Dependencies
 -----------------------------------------------------------------------------
 
 * **CMake** (compile-time only)
-* **libSDL 1.2**
-* **libjpeg 8**
+* **libSDL**, version 1.2
+* **libjpeg**, version 8 is required, version 6 won't compile!
+* **lua**, either version 5.2 or 5.1 (optional)
 * **libcurl** (optional, enabled by default)
 * **OGG Vorbis File** (optional)
 * **OpenAL** (optional)
+* **OpenGL**
 * **Freetype** (optional)
 
 To get the latest source code install [git](http://git-scm.com/) and
@@ -66,10 +68,10 @@ If the required dependencies are not installed on your system run:
     $ git submodule init
     $ git submodule update
 
-This downloads the essential dependencies (libjpeg, libSDL and libcurl) into the `libs/` 
-directory. If one of those libraries is not installed on your system CMake will use the
-ones located in the `libs/` directory automatically. Otherwise, you can control this 
-by changing the `BUNDLED_LIBS` variable in the CMake script.
+This downloads the essential dependencies (libjpeg, libSDL and libcurl) into the `libs/`
+directory. You can choose whether to use bundled libraries instead of the system ones by
+changing the `BUNDLED_LIBS` variable in the CMake configuration. You can then select which
+bundled libraries to use by toggling the respective `BUNDLED_XXX` variable.
 
 Compile and install
 -----------------------------------------------------------------------------
@@ -78,14 +80,28 @@ Compile and install
 
 In terminal run:
 
-    $ mkdir build && cd build && cmake ..
+    $ mkdir build && cd build && cmake-gui ..
+
+If you do not wish to install ET:L system-wide simply run:
+
     $ make
 
-To install the binaries system-wide, run as root:
+To install the binaries system-wide, you need to compile ET:L with hardcoded fs_basepath.
 
-    # make install
+First adjust the following variables in CMake:
+  * **INSTALL_DEFAULT_BASEDIR**: sets default *fs_basepath*, i.e. where etl and etlded
+    executables look for data files. In most cases it is CMAKE_INSTALL_PREFIX+INSTALL_DEFAULT_MODDIR.
+    Defaults to empty value, because we want *fs_basepath* to be the current working directory
+    when not installing the game system-wide.
+  * (optional) **INSTALL_DEFAULT_BINDIR**: Location for executables. Appended to CMAKE_INSTALL_PREFIX.
+    Defaults to "bin".
+  * (optional) **INSTALL_DEFAULT_MODDIR**: Location for libraries and paks. Appended to
+    CMAKE_INSTALL_PREFIX. Defaults to "share/etlegacy" and then "etmain" is appended to it.
 
-Alternatively you can run the game by specifying the full path to the `etl` binary in the `build` directory.
+Then compile ET:L:
+
+	$ make
+	# make install
 
 ### Crosscompiling on linux with mingw32
 
@@ -104,11 +120,24 @@ in `cmake/Toolchain-cross-mingw32-linux.cmake` depending on how it is called on 
 
     1. download free Visual Studio C++ Express 2010
     2. when you install CMake, make sure it is added into your system PATH
-    3. open `Visual Studio Command Prompt (2010)` (search for it in the Start menu)
-    4. run `cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake` in the ET:L directory
+    3. create `build` directory inside the directory which contains ET:L sources
+    4. open `Visual Studio Command Prompt (2010)` (search for it in the Start menu) and `cd` to the newly created build directory
+    5. run `cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake`
        ... or `cmake -G "Visual Studio 10" ..` and open the resulting project in VS 2010
 
 * option B: open the CMakeLists.txt file in [QT Creator](http://qt.nokia.com/products/developer-tools).
+
+NOTE: In order to compile the jpeg library properly there is a need for a file named 'win32.mak'. 
+Unfortunately this file isn't shipped with later Windows SDK versions. Solution: Get the Windows 
+SDK 6 and copy 'win32.mak' to libs\jpeg\.
+
+NOTE: If build fails during libcurl compilation because of missing *sed* utility,
+download it from http://gnuwin32.sourceforge.net/packages/sed.htm and place it into
+your system path or copy it into MSVC/VC/bin. It also comes with Git and can be placed
+into your system path automatically if you select that option during Git installation.
+
+If compilation of bundled libraries is aborted for any reason, you will probably need to clean libs/ directory
+and start over. This can be done by executing `git clean -df && git reset --hard HEAD` inside libs/ directory.
 
 LICENSE
 =======

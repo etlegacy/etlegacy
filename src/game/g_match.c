@@ -35,7 +35,6 @@
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
 
-
 void G_initMatch(void)
 {
 	int i;
@@ -45,7 +44,6 @@ void G_initMatch(void)
 		G_teamReset(i, qfalse);
 	}
 }
-
 
 // Setting initialization
 void G_loadMatchGame(void)
@@ -72,9 +70,6 @@ void G_loadMatchGame(void)
 	// Voting flags
 	G_voteFlags();
 
-	// Set version info for demoplayback compatibility
-//  trap_SetConfigstring(CS_OSPVERSION, va("%s", G_BASEVERSION));   // Add more tokens as needed
-
 	// Set up the random reinforcement seeds for both teams and send to clients
 	dwBlueOffset = rand() % MAX_REINFSEEDS;
 	dwRedOffset  = rand() % MAX_REINFSEEDS;
@@ -93,7 +88,6 @@ void G_loadMatchGame(void)
 	trap_SetConfigstring(CS_REINFSEEDS, strReinfSeeds);
 }
 
-
 // Simple alias for sure-fire print :)
 void G_printFull(char *str, gentity_t *ent)
 {
@@ -109,15 +103,14 @@ void G_printFull(char *str, gentity_t *ent)
 	}
 }
 
-
 // Plays specified sound globally.
 void G_globalSound(char *sound)
 {
-	gentity_t *te = G_TempEntity(level.intermission_origin, EV_GLOBAL_SOUND);
+	gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
+
 	te->s.eventParm = G_SoundIndex(sound);
 	te->r.svFlags  |= SVF_BROADCAST;
 }
-
 
 void G_delayPrint(gentity_t *dpent)
 {
@@ -174,6 +167,7 @@ void G_delayPrint(gentity_t *dpent)
 		break;
 	}
 
+#ifdef FEATURE_MULTIVIEW
 	case DP_MVSPAWN:
 	{
 		int       i;
@@ -196,6 +190,7 @@ void G_delayPrint(gentity_t *dpent)
 
 		break;
 	}
+#endif
 
 	default:
 		break;
@@ -240,20 +235,23 @@ void G_spawnPrintf(int print_type, int print_time, gentity_t *owner)
 	ent->think     = G_delayPrint;
 }
 
-
 // Records accuracy, damage, and kill/death stats.
 void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 {
 	int dmg, ref;
 
+	if (!targ || !targ->client)
+	{
+		return;
+	}
 
 	// Keep track of only active player-to-player interactions in a real game
-	if (!targ || !targ->client ||
+	if (
 #ifndef DEBUG_STATS
 	    g_gamestate.integer != GS_PLAYING ||
 #endif
 	    mod == MOD_SWITCHTEAM ||
-	    (g_gametype.integer >= GT_WOLF && (targ->client->ps.pm_flags & PMF_LIMBO)) ||
+	    (g_gametype.integer >= GT_WOLF && (targ->client->ps.pm_flags & PMF_LIMBO)) || // FIXME: inspect - this is a bit odd by gametype
 	    (g_gametype.integer < GT_WOLF && (targ->s.eFlags == EF_DEAD || targ->client->ps.pm_type == PM_DEAD)))
 	{
 		return;
@@ -262,21 +260,25 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 	// Special hack for intentional gibbage
 	if (targ->health <= 0 && targ->client->ps.pm_type == PM_DEAD)
 	{
-		if (mod < MOD_CROSS && attacker && attacker->client)
+		if (attacker && attacker->client)
 		{
-			int x = attacker->client->sess.aWeaponStats[G_weapStatIndex_MOD(mod)].atts--;
+			int x;
+
+			ref = G_weapStatIndex_MOD(mod);
+			x   = attacker->client->sess.aWeaponStats[ref].atts--;
+
 			if (x < 1)
 			{
-				attacker->client->sess.aWeaponStats[G_weapStatIndex_MOD(mod)].atts = 1;
+				attacker->client->sess.aWeaponStats[ref].atts = 1;
 			}
 		}
 		return;
 	}
 
-//  G_Printf("mod: %d, Index: %d, dmg: %d\n", mod, G_weapStatIndex_MOD(mod), dmg_ref);
+	//  G_Printf("mod: %d, Index: %d, dmg: %d\n", mod, G_weapStatIndex_MOD(mod), dmg_ref);
 
 	// Suicides only affect the player specifically
-	if (targ == attacker || !attacker || !attacker->client || mod == MOD_SUICIDE)
+	if (targ == attacker || !attacker || !attacker->client || mod == MOD_SUICIDE) // FIXME: inspect world kills count as suicide?
 	{
 		if (targ->health <= 0)
 		{
@@ -337,7 +339,6 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 	}
 }
 
-
 // Records weapon headshots
 void G_addStatsHeadShot(gentity_t *attacker, int mod)
 {
@@ -355,105 +356,100 @@ void G_addStatsHeadShot(gentity_t *attacker, int mod)
 	attacker->client->sess.aWeaponStats[G_weapStatIndex_MOD(mod)].headshots++;
 }
 
-// Ugh, converting enums is my day-time job :)
 //  --> MOD_* to WS_* conversion
 //
 // WS_MAX = no equivalent/not used
-//
-// FIXME: Remove everything that maps to WS_MAX to save space
-//
-static const weap_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
+static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 {
-	{ MOD_UNKNOWN,                 WS_MAX             },
-	{ MOD_MACHINEGUN,              WS_MG42            },
-	{ MOD_GRENADE,                 WS_GRENADE         },
-	{ MOD_ROCKET,                  WS_PANZERFAUST     },
+	{ MOD_UNKNOWN,                            WS_MAX             },
+	{ MOD_MACHINEGUN,                         WS_MG42            },
+	{ MOD_BROWNING,                           WS_MG42            },
+	{ MOD_MG42,                               WS_MG42            },
+	{ MOD_GRENADE,                            WS_GRENADE         }, // FIXME: explosion (world kills = WS_GREANDE) ?!
 
-	{ MOD_KNIFE,                   WS_KNIFE           },
-	{ MOD_LUGER,                   WS_LUGER           },
-	{ MOD_COLT,                    WS_COLT            },
-	{ MOD_MP40,                    WS_MP40            },
-	{ MOD_THOMPSON,                WS_THOMPSON        },
-	{ MOD_STEN,                    WS_STEN            },
-	{ MOD_GARAND,                  WS_GARAND          },
-	{ MOD_SILENCER,                WS_LUGER           },
-	{ MOD_FG42,                    WS_FG42            },
-	{ MOD_FG42SCOPE,               WS_FG42            },
-	{ MOD_PANZERFAUST,             WS_PANZERFAUST     },
-	{ MOD_GRENADE_LAUNCHER,        WS_GRENADE         },
-	{ MOD_FLAMETHROWER,            WS_FLAMETHROWER    },
-	{ MOD_GRENADE_PINEAPPLE,       WS_GRENADE         },
-	{ MOD_CROSS,                   WS_MAX             },
-	{ MOD_AKIMBO_COLT,             WS_COLT            },
-	{ MOD_AKIMBO_LUGER,            WS_LUGER           },
-	{ MOD_AKIMBO_SILENCEDCOLT,     WS_COLT            },
-	{ MOD_AKIMBO_SILENCEDLUGER,    WS_LUGER           },
+	{ MOD_KNIFE,                              WS_KNIFE           },
+	{ MOD_LUGER,                              WS_LUGER           },
+	{ MOD_COLT,                               WS_COLT            },
+	{ MOD_MP40,                               WS_MP40            },
+	{ MOD_THOMPSON,                           WS_THOMPSON        },
+	{ MOD_STEN,                               WS_STEN            },
+	{ MOD_GARAND,                             WS_GARAND          },
 
-	{ MOD_MAPMORTAR,               WS_MORTAR          },
-	{ MOD_MAPMORTAR_SPLASH,        WS_MORTAR          },
+	{ MOD_SILENCER,                           WS_LUGER           },
+	{ MOD_FG42,                               WS_FG42            },
+	{ MOD_FG42SCOPE,                          WS_FG42            },
+	{ MOD_PANZERFAUST,                        WS_PANZERFAUST     },
+	{ MOD_GRENADE_LAUNCHER,                   WS_GRENADE         },
+	{ MOD_FLAMETHROWER,                       WS_FLAMETHROWER    },
+	{ MOD_GRENADE_PINEAPPLE,                  WS_GRENADE         },
 
-	{ MOD_KICKED,                  WS_MAX             },
-	{ MOD_GRABBER,                 WS_MAX             },
+	{ MOD_MAPMORTAR,                          WS_MORTAR          }, // FIXME: do we have to convert an attacker=world weapon as WS?
+	{ MOD_MAPMORTAR_SPLASH,                   WS_MORTAR          },
 
-	{ MOD_DYNAMITE,                WS_DYNAMITE        },
-	{ MOD_AIRSTRIKE,               WS_AIRSTRIKE       },
-	{ MOD_SYRINGE,                 WS_SYRINGE         },
-	{ MOD_AMMO,                    WS_MAX             },
-	{ MOD_ARTY,                    WS_ARTILLERY       },
+	{ MOD_KICKED,                             WS_MAX             },
 
-	{ MOD_WATER,                   WS_MAX             },
-	{ MOD_SLIME,                   WS_MAX             },
-	{ MOD_LAVA,                    WS_MAX             },
-	{ MOD_CRUSH,                   WS_MAX             },
-	{ MOD_TELEFRAG,                WS_MAX             },
-	{ MOD_FALLING,                 WS_MAX             },
-	{ MOD_SUICIDE,                 WS_MAX             },
-	{ MOD_TARGET_LASER,            WS_MAX             },
-	{ MOD_TRIGGER_HURT,            WS_MAX             },
-	{ MOD_EXPLOSIVE,               WS_MAX             },
+	{ MOD_DYNAMITE,                           WS_DYNAMITE        },
+	{ MOD_AIRSTRIKE,                          WS_AIRSTRIKE       },
+	{ MOD_SYRINGE,                            WS_SYRINGE         },
+	{ MOD_AMMO,                               WS_MAX             },
+	{ MOD_ARTY,                               WS_ARTILLERY       },
 
-	{ MOD_CARBINE,                 WS_GARAND          },
+	{ MOD_WATER,                              WS_MAX             },
+	{ MOD_SLIME,                              WS_MAX             },
+	{ MOD_LAVA,                               WS_MAX             },
+	{ MOD_CRUSH,                              WS_MAX             },
+	{ MOD_TELEFRAG,                           WS_MAX             },
+	{ MOD_FALLING,                            WS_MAX             },
+	{ MOD_SUICIDE,                            WS_MAX             },
+	{ MOD_TARGET_LASER,                       WS_MAX             },
+	{ MOD_TRIGGER_HURT,                       WS_MAX             },
+	{ MOD_EXPLOSIVE,                          WS_MAX             },
 
-	{ MOD_KAR98,                   WS_K43             },
-	{ MOD_GPG40,                   WS_GRENADELAUNCHER },
-	{ MOD_M7,                      WS_GRENADELAUNCHER },
-	{ MOD_LANDMINE,                WS_LANDMINE        },
-	{ MOD_SATCHEL,                 WS_SATCHEL         },
-	{ MOD_TRIPMINE,                WS_LANDMINE        },
-	{ MOD_SMOKEBOMB,               WS_SMOKE           }, // ??
-	{ MOD_SMOKEGRENADE,            WS_AIRSTRIKE       }, // rain - airstrike tag
-	{ MOD_MOBILE_MG42,             WS_MG42            },
-	{ MOD_SILENCED_COLT,           WS_COLT            }, // where is silencer? // Gordon: up top^
-	{ MOD_GARAND_SCOPE,            WS_GARAND          },
+	{ MOD_CARBINE,                            WS_GARAND          },
+	{ MOD_KAR98,                              WS_K43             },
+	{ MOD_GPG40,                              WS_GRENADELAUNCHER },
+	{ MOD_M7,                                 WS_GRENADELAUNCHER },
+	{ MOD_LANDMINE,                           WS_LANDMINE        },
+	{ MOD_SATCHEL,                            WS_SATCHEL         },
 
-	{ MOD_CRUSH_CONSTRUCTION,      WS_MAX             },
-	{ MOD_CRUSH_CONSTRUCTIONDEATH, WS_MAX             },
+	{ MOD_SMOKEBOMB,                          WS_SMOKE           },
+	{ MOD_MOBILE_MG42,                        WS_MG42            },
+	{ MOD_SILENCED_COLT,                      WS_COLT            },
+	{ MOD_GARAND_SCOPE,                       WS_GARAND          },
 
-	{ MOD_K43,                     WS_K43             },
-	{ MOD_K43_SCOPE,               WS_K43             },
+	{ MOD_CRUSH_CONSTRUCTION,                 WS_MAX             },
+	{ MOD_CRUSH_CONSTRUCTIONDEATH,            WS_MAX             },
+	{ MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER, WS_MAX             },
 
-	{ MOD_MORTAR,                  WS_MORTAR          },
+	{ MOD_K43,                                WS_K43             },
+	{ MOD_K43_SCOPE,                          WS_K43             },
 
-	{ MOD_SWAP_PLACES,             WS_MAX             },
+	{ MOD_MORTAR,                             WS_MORTAR          },
 
-	{ MOD_SWITCHTEAM,              WS_MAX             }
+	{ MOD_AKIMBO_COLT,                        WS_COLT            },
+	{ MOD_AKIMBO_LUGER,                       WS_LUGER           },
+	{ MOD_AKIMBO_SILENCEDCOLT,                WS_COLT            },
+	{ MOD_AKIMBO_SILENCEDLUGER,               WS_LUGER           },
 
+	{ MOD_SMOKEGRENADE,                       WS_AIRSTRIKE       }, // airstrike tag
+
+	{ MOD_SWAP_PLACES,                        WS_MAX             },
+
+	{ MOD_SWITCHTEAM,                         WS_MAX             },
+
+	{ MOD_SHOVE,                              WS_MAX             },
 };
-
 
 // Get right stats index based on weapon mod
 unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD)
 {
-	unsigned int i;
+	if (iWeaponMOD >= MOD_NUM_MODS)
+	{
+		return WS_MAX;
+	}
 
-	for (i = 0; i < MOD_NUM_MODS; i++)
-		if (iWeaponMOD == aWeapMOD[i].iWeapon)
-		{
-			return(aWeapMOD[i].iWS);
-		}
-	return(WS_MAX);
+	return aWeapMOD[iWeaponMOD].iWS;
 }
-
 
 // Generates weapon stat info for given ent
 char *G_createStats(gentity_t *refEnt)
@@ -511,7 +507,6 @@ char *G_createStats(gentity_t *refEnt)
 	          ));
 }
 
-
 // Resets player's current stats
 void G_deleteStats(int nClient)
 {
@@ -531,7 +526,6 @@ void G_deleteStats(int nClient)
 	trap_Cvar_Set(va("wstats%i", nClient), va("%d", nClient));
 }
 
-
 // Parses weapon stat info for given ent
 //  ---> The given string must be space delimited and contain only integers
 void G_parseStats(char *pszStatsInfo)
@@ -540,7 +534,7 @@ void G_parseStats(char *pszStatsInfo)
 	const char   *tmp = pszStatsInfo;
 	unsigned int i, dwWeaponMask, dwClientID = atoi(pszStatsInfo);
 
-	if (dwClientID < 0 || dwClientID > MAX_CLIENTS)
+	if (dwClientID > MAX_CLIENTS)
 	{
 		return;
 	}
@@ -573,19 +567,16 @@ void G_parseStats(char *pszStatsInfo)
 	}
 }
 
-
 // Prints current player match info.
 //  --> FIXME: put the pretty print on the client
 void G_printMatchInfo(gentity_t *ent)
 {
-	int       i, j, cnt, eff;
+	int       i, j, cnt = 0, eff;
 	int       tot_kills, tot_deaths, tot_gp, tot_sui, tot_tk, tot_dg, tot_dr, tot_td;
 	gclient_t *cl;
 	char      *ref;
 	char      n2[MAX_STRING_CHARS];
 
-
-	cnt = 0;
 	for (i = TEAM_AXIS; i <= TEAM_ALLIES; i++)
 	{
 		if (!TeamCount(-1, i))
@@ -602,8 +593,8 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_td     = 0;
 		tot_gp     = 0;
 
-		CP("sc \"\n^7TEAM   Player          Kll Dth Sui TK Eff  ^3GP^7    ^2DG    ^1DR   ^6TD  ^3Score\n"
-		   "^7---------------------------------------------------------------------\n\"");
+		CP("sc \"^7TEAM   Player          Kll Dth Sui TK Eff  ^3GP^7    ^2DG    ^1DR   ^6TD  ^3Score\n\"");
+		CP("sc \"^7---------------------------------------------------------------------\n\"");
 
 		for (j = 0; j < level.numPlayingClients; j++)
 		{
@@ -665,8 +656,8 @@ void G_printMatchInfo(gentity_t *ent)
 			eff = 0;
 		}
 
-		CP(va("sc \"^7---------------------------------------------------------------------\n"
-		      "%-10s ^5%-15s%4d%4d%4d%3d^5%4d^3%4d^2%6d^1%6d^6%5d^3%7d\n\"",
+		CP("sc \"^7---------------------------------------------------------------------\n\"");
+		CP(va("sc \"%-10s ^5%-15s%4d%4d%4d%3d^5%4d^3%4d^2%6d^1%6d^6%5d^3%7d\n\"",
 		      aTeams[i],
 		      "Totals",
 		      tot_kills,
@@ -683,7 +674,6 @@ void G_printMatchInfo(gentity_t *ent)
 
 	CP(va("sc \"%s\n\n\" 0", ((!cnt) ? "^3\nNo scores to report." : "")));
 }
-
 
 // Dumps end-of-match info
 void G_matchInfoDump(unsigned int dwDumpType)
@@ -708,7 +698,11 @@ void G_matchInfoDump(unsigned int dwDumpType)
 			// If client wants to write stats to a file, don't auto send this stuff
 			if (!(cl->pers.clientFlags & CGF_STATSDUMP))
 			{
-				if ((cl->pers.autoaction & AA_STATSALL) || cl->pers.mvCount > 0)
+				if ((cl->pers.autoaction & AA_STATSALL)
+#ifdef FEATURE_MULTIVIEW
+				    || cl->pers.mvCount > 0
+#endif
+				    )
 				{
 					G_statsall_cmd(ent, 0, qfalse);
 				}
@@ -716,7 +710,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 				{
 					if (cl->pers.autoaction & AA_STATSTEAM)
 					{
-						G_statsall_cmd(ent, cl->sess.sessionTeam, qfalse);                                      // Currently broken.. need to support the overloading of dwCommandID
+						G_statsall_cmd(ent, cl->sess.sessionTeam, qfalse);                // Currently broken.. need to support the overloading of dwCommandID
 					}
 					else
 					{
@@ -730,7 +724,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 
 					if ((cl->pers.autoaction & AA_STATSTEAM))
 					{
-						G_statsall_cmd(ent, level.clients[pid].sess.sessionTeam, qfalse);                                       // Currently broken.. need to support the overloading of dwCommandID
+						G_statsall_cmd(ent, level.clients[pid].sess.sessionTeam, qfalse); // Currently broken.. need to support the overloading of dwCommandID
 					}
 					else
 					{
@@ -763,6 +757,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 				else
 				{
 					float val = (float)((level.timeCurrent - (level.startTime + level.time - level.intermissiontime)) / 60000.0);
+
 					if (val < g_timelimit.value)
 					{
 						CP(va("print \">>> ^3Objective reached at %d:%02d (original: %d:%02d)\n\n\n\"",
@@ -782,7 +777,6 @@ void G_matchInfoDump(unsigned int dwDumpType)
 		}
 	}
 }
-
 
 // Update configstring for vote info
 int G_checkServerToggle(vmCvar_t *cv)
@@ -829,7 +823,7 @@ int G_checkServerToggle(vmCvar_t *cv)
 		{
 			level.server_settings &= ~CV_SVS_NEXTMAP;
 		}
-		return(qtrue);
+		return qtrue;
 	}
 	else if (cv == &g_nextcampaign && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -841,11 +835,11 @@ int G_checkServerToggle(vmCvar_t *cv)
 		{
 			level.server_settings &= ~CV_SVS_NEXTMAP;
 		}
-		return(qtrue);
+		return qtrue;
 	}
 	else
 	{
-		return(qfalse);
+		return qfalse;
 	}
 
 	if (cv->integer > 0)
@@ -857,14 +851,12 @@ int G_checkServerToggle(vmCvar_t *cv)
 		level.server_settings &= ~nFlag;
 	}
 
-	return(qtrue);
+	return qtrue;
 }
-
 
 // Sends a player's stats to the requesting client.
 void G_statsPrint(gentity_t *ent, int nType)
 {
-	int  pid;
 	char *cmd = (nType == 0) ? "ws" : ((nType == 1) ? "wws" : "gstats");         // Yes, not the cleanest
 	char arg[MAX_TOKEN_CHARS];
 
@@ -893,6 +885,8 @@ void G_statsPrint(gentity_t *ent, int nType)
 	}
 	else
 	{
+		int pid;
+
 		// Find the player to poll stats.
 		trap_Argv(1, arg, sizeof(arg));
 		if ((pid = ClientNumberFromString(ent, arg)) == -1)
@@ -903,61 +897,6 @@ void G_statsPrint(gentity_t *ent, int nType)
 		CP(va("%s %s\n", cmd, G_createStats(g_entities + pid)));
 	}
 }
-
-/*
-// See if the player is allowed to have a panzer
-qboolean G_allowPanzer(gentity_t *ent)
-{
-    int i, cPanzers = 0;
-    gclient_t *cl;
-
-    if(team_maxPanzers.integer < 0) return(qtrue);
-    if(ent->client->sess.latchPlayerType != PC_SOLDIER || ent->client->sess.latchPlayerWeapon != 8) {
-        ent->client->pers.panzerSelectTime = 0;
-        return(qtrue);
-    }
-
-    if(team_maxPanzers.integer == 0) {
-        if(ent->client->pers.cmd_debounce < level.time) {
-            ent->client->pers.cmd_debounce = level.time + 3000;
-            G_printFull("[lof]^3*** [lon]Panzers are disabled on this server[lof].", ent);
-        }
-        return(qfalse);
-    }
-
-    for(i=0; i<level.numConnectedClients; i++) {
-        cl = level.clients + level.sortedClients[i];
-
-        if(cl == ent->client) continue;
-        if(cl->sess.sessionTeam != ent->client->sess.sessionTeam) continue;
-        if(cl->sess.latchPlayerType != PC_SOLDIER) continue;
-
-        // ACTIVE panzers take precedence.  Limbo players will fight amongst themselves
-        if(COM_BitCheck(cl->ps.weapons, WP_PANZERFAUST) || cl->pers.panzerDropTime > level.time) {
-            cPanzers++;
-            continue;
-        }
-
-        // Deal with waiting-to-spawn clients where there is contention on who gets a panzer
-        if((cl->ps.pm_flags & PMF_LIMBO) &&
-          ((cl->pers.panzerSelectTime != 0 && ent->client->pers.panzerSelectTime == 0) ||
-           (cl->pers.panzerSelectTime > 0 && cl->pers.panzerSelectTime < ent->client->pers.panzerSelectTime)))
-        {
-            cPanzers++;
-            continue;
-        }
-    }
-
-    if(cPanzers < team_maxPanzers.integer) return(qtrue);
-
-    if(ent->client->pers.cmd_debounce < level.time) {
-        ent->client->pers.cmd_debounce = level.time + 3000;
-        G_printFull(va("[lof]^3*** [lon]Already[lof %d [lon]panzers in the game[lof].", team_maxPanzers.integer), ent);
-    }
-
-    return(qfalse);
-}
-*/
 
 void G_resetRoundState(void)
 {
@@ -971,7 +910,6 @@ void G_resetRoundState(void)
 		trap_Cvar_Set("g_lms_currentMatch", "0");
 	}
 }
-
 
 void G_resetModeState(void)
 {

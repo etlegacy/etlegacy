@@ -40,7 +40,6 @@ fontInfo_t bg_loadscreenfont2;
 
 void UI_LoadPanel_RenderHeaderText(panel_button_t *button);
 void UI_LoadPanel_RenderLoadingText(panel_button_t *button);
-void UI_LoadPanel_RenderPercentageMeter(panel_button_t *button);
 
 // panel_button_text_t FONTNAME = { SCALEX, SCALEY, COLOUR, STYLE, FONT };
 
@@ -102,18 +101,6 @@ panel_button_t loadScreenBack =
 	NULL,
 };
 
-/*panel_button_t loadingPanelHeaderText = {
-    NULL,
-    "***TOP SECRET***",
-    { 440, 72, 200, 32 },
-    { 0, 0, 0, 0, 0, 0, 0, 0 },
-    &missiondescriptionHeaderTxt,
-    NULL,
-    NULL,
-    BG_PanelButtonsRender_Text,
-    NULL,
-};*/
-
 panel_button_t loadingPanelText =
 {
 	NULL,
@@ -127,18 +114,6 @@ panel_button_t loadingPanelText =
 	NULL,
 };
 
-/*panel_button_t campaignheaderPanelText = {
-    NULL,
-    "Connecting to:",
-    { 456, 24, 152, 232 },
-    { 0, 0, 0, 0, 0, 0, 0, 0 },
-    &campaignpheaderTxt,
-    NULL,
-    NULL,
-    BG_PanelButtonsRender_Text,
-    NULL,
-};
-*/
 panel_button_t campaignPanelText =
 {
 	NULL,
@@ -156,7 +131,6 @@ panel_button_t *loadpanelButtons[] =
 {
 	&loadScreenMap,                                   &loadScreenBack,
 
-
 	&loadingPanelText,                                /*&loadingPanelHeaderText,*/
 
 	/*&campaignheaderPanelText,*/ &campaignPanelText,
@@ -164,13 +138,8 @@ panel_button_t *loadpanelButtons[] =
 	NULL,
 };
 
-/*
-================
-CG_DrawConnectScreen
-================
-*/
 static qboolean connect_ownerdraw;
-void UI_DrawLoadPanel(qboolean forcerefresh, qboolean ownerdraw, qboolean uihack)
+void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack)
 {
 	static qboolean inside = qfalse;
 
@@ -193,16 +162,12 @@ void UI_DrawLoadPanel(qboolean forcerefresh, qboolean ownerdraw, qboolean uihack
 		trap_R_RegisterFont("courbd", 30, &bg_loadscreenfont2);
 
 		BG_PanelButtonsSetup(loadpanelButtons);
+		C_PanelButtonsSetup(loadpanelButtons, Cui_WideXoffset());   // convert to possible widescreen coordinates..
 
 		bg_loadscreeninited = qtrue;
 	}
 
 	BG_PanelButtonsRender(loadpanelButtons);
-
-	if (forcerefresh)
-	{
-		//trap_UpdateScreen();
-	}
 
 	if (!uihack && trap_Cvar_VariableValue("ui_connecting"))
 	{
@@ -210,93 +175,6 @@ void UI_DrawLoadPanel(qboolean forcerefresh, qboolean ownerdraw, qboolean uihack
 	}
 
 	inside = qfalse;
-}
-
-#define STARTANGLE 40
-void UI_LoadPanel_RenderPercentageMeter(panel_button_t *button)
-{
-	float      hunkfrac;
-	float      w, h;
-	vec2_t     org;
-	polyVert_t verts[4];
-
-	org[0] = button->rect.x;
-	org[1] = button->rect.y;
-	w      = button->rect.w;
-	h      = button->rect.h;
-
-	hunkfrac = 0.f;
-	AdjustFrom640(&org[0], &org[1], &w, &h);
-	SetupRotatedThing(verts, org, w, h, DEG2RAD((180 - STARTANGLE) - ((180 - (2 * STARTANGLE)) * hunkfrac)));
-
-	trap_R_Add2dPolys(verts, 4, button->hShaderNormal);
-}
-/*
-void UI_LoadPanel_RenderCampaignNameText( panel_button_t* button ) {
-    uiClientState_t cstate;
-    char *s;
-
-    trap_GetClientState( &cstate );
-
-    s = Q_strupr( cstate.servername );
-
-    Text_Paint_Ext( button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, s, 0, 14, 0, button->font->font );
-}*/
-
-void MiniAngleToAxis(vec_t angle, vec2_t axes[2])
-{
-	axes[0][0] = (vec_t)sin(-angle);
-	axes[0][1] = -(vec_t)cos(-angle);
-
-	axes[1][0] = -axes[0][1];
-	axes[1][1] = axes[0][0];
-}
-
-void SetupRotatedThing(polyVert_t *verts, vec2_t org, float w, float h, vec_t angle)
-{
-	vec2_t axes[2];
-
-	MiniAngleToAxis(angle, axes);
-
-	verts[0].xyz[0]      = org[0] - (w * 0.5f) * axes[0][0];
-	verts[0].xyz[1]      = org[1] - (w * 0.5f) * axes[0][1];
-	verts[0].xyz[2]      = 0;
-	verts[0].st[0]       = 0;
-	verts[0].st[1]       = 1;
-	verts[0].modulate[0] = 255;
-	verts[0].modulate[1] = 255;
-	verts[0].modulate[2] = 255;
-	verts[0].modulate[3] = 255;
-
-	verts[1].xyz[0]      = verts[0].xyz[0] + w * axes[0][0];
-	verts[1].xyz[1]      = verts[0].xyz[1] + w * axes[0][1];
-	verts[1].xyz[2]      = 0;
-	verts[1].st[0]       = 1;
-	verts[1].st[1]       = 1;
-	verts[1].modulate[0] = 255;
-	verts[1].modulate[1] = 255;
-	verts[1].modulate[2] = 255;
-	verts[1].modulate[3] = 255;
-
-	verts[2].xyz[0]      = verts[1].xyz[0] + h * axes[1][0];
-	verts[2].xyz[1]      = verts[1].xyz[1] + h * axes[1][1];
-	verts[2].xyz[2]      = 0;
-	verts[2].st[0]       = 1;
-	verts[2].st[1]       = 0;
-	verts[2].modulate[0] = 255;
-	verts[2].modulate[1] = 255;
-	verts[2].modulate[2] = 255;
-	verts[2].modulate[3] = 255;
-
-	verts[3].xyz[0]      = verts[2].xyz[0] - w * axes[0][0];
-	verts[3].xyz[1]      = verts[2].xyz[1] - w * axes[0][1];
-	verts[3].xyz[2]      = 0;
-	verts[3].st[0]       = 0;
-	verts[3].st[1]       = 0;
-	verts[3].modulate[0] = 255;
-	verts[3].modulate[1] = 255;
-	verts[3].modulate[2] = 255;
-	verts[3].modulate[3] = 255;
 }
 
 void UI_LoadPanel_RenderHeaderText(panel_button_t *button)
@@ -334,7 +212,6 @@ const char *UI_DownloadInfo(const char *downloadName)
 
 	char       dlSizeBuf[64], totalSizeBuf[64], xferRateBuf[64], dlTimeBuf[64];
 	int        downloadSize, downloadCount, downloadTime;
-	int        xferRate;
 	const char *s, *ds;
 
 	downloadSize  = trap_Cvar_VariableValue("cl_downloadSize");
@@ -363,6 +240,8 @@ const char *UI_DownloadInfo(const char *downloadName)
 	}
 	else
 	{
+		int xferRate;
+
 		if ((uiInfo.uiDC.realTime - downloadTime) / 1000)
 		{
 			xferRate = downloadCount / ((uiInfo.uiDC.realTime - downloadTime) / 1000);
@@ -432,27 +311,22 @@ const char *UI_DownloadInfo(const char *downloadName)
 
 void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 {
-	uiClientState_t    cstate;
-	char               downloadName[MAX_INFO_VALUE];
-	char               buff[2560];
-	static connstate_t lastConnState;
-	static char        lastLoadingText[MAX_INFO_VALUE];
-	char               *p, *s = "";
-	float              y;
+	uiClientState_t cstate;
+	char            downloadName[MAX_INFO_VALUE];
+	char            buff[2560];
+	char            *p, *s = "";
+	float           y;
 
 	trap_GetClientState(&cstate);
 
 	Com_sprintf(buff, sizeof(buff), "Connecting to:\n %s^*\n\n%s", cstate.servername, Info_ValueForKey(cstate.updateInfoString, "motd"));
 
-	//Com_sprintf( buff, sizeof(buff), "%s^*", cstate.servername, Info_ValueForKey( cstate.updateInfoString, "motd" ) );
+	if (trap_Cvar_VariableValue("com_updateavailable"))
+	{
+		Q_strcat(buff, sizeof(buff), "\n\nYour ET:L client is outdated. New update is available for download at www.etlegacy.com");
+	}
 
 	trap_Cvar_VariableStringBuffer("cl_downloadName", downloadName, sizeof(downloadName));
-
-	if (lastConnState > cstate.connState)
-	{
-		lastLoadingText[0] = '\0';
-	}
-	lastConnState = cstate.connState;
 
 	if (!connect_ownerdraw)
 	{
