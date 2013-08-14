@@ -43,7 +43,7 @@ glstate_t glState;
 
 float displayAspect = 0.0f;
 
-static void     GfxInfo_f(void);
+static void GfxInfo_f(void);
 
 cvar_t *r_glCoreProfile;
 cvar_t *r_glMajorVersion;
@@ -1188,6 +1188,29 @@ void GL_SetDefaultState(void)
 }
 #endif
 
+/*
+================
+R_PrintLongString
+
+Workaround for ri.Printf's 1024 characters buffer limit.
+
+FIXME: move to renderercommon
+================
+*/
+void R_PrintLongString(const char *string)
+{
+	char       buffer[1024];
+	const char *p   = string;
+	int        size = strlen(string);
+
+	while (size > 0)
+	{
+		Q_strncpyz(buffer, p, sizeof(buffer));
+		ri.Printf(PRINT_ALL, "%s", buffer);
+		p    += 1023;
+		size -= 1023;
+	}
+}
 
 /*
 ================
@@ -1209,7 +1232,9 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "\nGL_VENDOR: %s\n", glConfig.vendor_string);
 	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string);
 	ri.Printf(PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string);
-	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: %s\n", glConfig.extensions_string);
+	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: ");
+	R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
+
 	ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 
 	if (glConfig.driverType != GLDRV_OPENGL3)
