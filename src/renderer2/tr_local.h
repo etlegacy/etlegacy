@@ -1710,7 +1710,7 @@ void            GLimp_LogComment(char *comment);
 #endif
 
 // *INDENT-OFF*
-
+#ifndef RENDERER2C
 static ID_INLINE void GLSL_SetUniform_ColorTextureMatrix(shaderProgram_t *program, const matrix_t m)
 {
 #if defined(USE_UNIFORM_FIREWALL)
@@ -2543,7 +2543,7 @@ static ID_INLINE void GLSL_SetUniform_Time(shaderProgram_t *program, float value
 
 	qglUniform1fARB(program->u_Time, value);
 }
-
+#endif //RENDERER2C
 // *INDENT-ON*
 
 //=================================================================================

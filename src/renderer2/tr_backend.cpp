@@ -159,6 +159,7 @@ void GL_TextureFilter(image_t *image, filterType_t filterType)
 	}
 }
 
+#ifndef RENDERER2C
 void GL_BindProgram(shaderProgram_t *program)
 {
 	if (!program)
@@ -193,6 +194,7 @@ void GL_BindNullProgram(void)
 		glState.currentProgram = NULL;
 	}
 }
+#endif
 
 void GL_SelectTexture(int unit)
 {

@@ -1969,6 +1969,7 @@ static void Tess_SurfaceAxis(void)
 	/*
 	   GL_BindProgram(0);
 	   GL_SelectTexture(0);
+	   GL_State( GLS_DEFAULT );
 	   GL_Bind(tr.whiteImage);
 
 	   glLineWidth(3);
