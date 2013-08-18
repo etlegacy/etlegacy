@@ -11096,30 +11096,8 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	GL_SelectTexture(0);
 	GL_Bind(tr.scratchImage[client]);
 	gl_genericShader->SetUniform_ColorTextureMatrix(matrixIdentity);
-
-	// if the scratchImage isn't in the format we want, specify it as a new texture
-	if (cols != tr.scratchImage[client]->width || rows != tr.scratchImage[client]->height)
-	{
-		tr.scratchImage[client]->width  = tr.scratchImage[client]->uploadWidth = cols;
-		tr.scratchImage[client]->height = tr.scratchImage[client]->uploadHeight = rows;
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	}
-	else
-	{
-		if (dirty)
-		{
-			// otherwise, just subimage upload it so that drivers can tell we are going to be changing
-			// it and don't try and do a texture compression
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, cols, rows, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		}
-	}
+	
+	RE_UploadCinematic (w, h, cols, rows, data, client, dirty);
 
 	if (r_speeds->integer)
 	{
@@ -11218,9 +11196,14 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+#if 1
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#else	
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, colorBlack);
+#endif
 	}
 	else
 	{

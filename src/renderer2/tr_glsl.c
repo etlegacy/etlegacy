@@ -686,7 +686,7 @@ void GLSL_InitUniforms(shaderProgram_t *program)
 		}
 	}
 
-	program->uniformBuffer = ri.Malloc(size);
+	program->uniformBuffer = Ren_Malloc(size);
 }
 
 void GLSL_FinishGPUShader(shaderProgram_t *program)

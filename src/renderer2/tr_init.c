@@ -1232,9 +1232,13 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "\nGL_VENDOR: %s\n", glConfig.vendor_string);
 	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string);
 	ri.Printf(PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string);
+
+	//Lets not do this on gl3.2 context as the functionality is not supported.
+	/*
 	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: ");
 	R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
-
+	*/
+	
 	ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 
 	if (glConfig.driverType != GLDRV_OPENGL3)

@@ -1499,10 +1499,21 @@ typedef enum
 typedef struct shaderProgram_s
 {
 	char name[MAX_QPATH];
-	char *compileMacros;
 
 	GLuint program;
 	uint32_t attribs;           // vertex array attributes
+
+	
+#ifdef RENDERER2C
+	GLhandleARB     vertexShader;
+	GLhandleARB     fragmentShader;
+
+	// uniform parameters
+	GLint uniforms[UNIFORM_COUNT];
+	short uniformBufferOffsets[UNIFORM_COUNT]; // max 32767/64=511 uniforms
+	char  *uniformBuffer;
+#else
+	char *compileMacros;
 
 	// uniform parameters
 	int32_t u_ColorMap;
@@ -1695,6 +1706,7 @@ typedef struct shaderProgram_s
 
 	int32_t u_Time;
 	float t_Time;
+#endif
 } shaderProgram_t;
 
 #define SHADER_PROGRAM_T_OFS(x) ((size_t)&(((shaderProgram_t *)0)->x))
@@ -3998,6 +4010,27 @@ typedef struct
 
 #endif // GLSL_COMPILE_STARTUP_ONLY
 #endif // USE_D3D10
+
+#ifdef RENDERER2C
+	//
+	// GPU shader programs
+	//
+	shaderProgram_t genericShader[GENERICDEF_COUNT];
+	shaderProgram_t textureColorShader;
+	shaderProgram_t fogShader[FOGDEF_COUNT];
+	shaderProgram_t dlightShader[DLIGHTDEF_COUNT];
+	shaderProgram_t lightallShader[LIGHTDEF_COUNT];
+	shaderProgram_t shadowmapShader;
+	shaderProgram_t pshadowShader;
+	shaderProgram_t down4xShader;
+	shaderProgram_t bokehShader;
+	shaderProgram_t tonemapShader;
+	shaderProgram_t calclevels4xShader[2];
+	shaderProgram_t shadowmaskShader;
+	shaderProgram_t ssaoShader;
+	shaderProgram_t depthBlurShader[2];
+#endif // RENDERER2C
+
 
 	// -----------------------------------------
 
