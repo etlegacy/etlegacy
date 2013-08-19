@@ -795,6 +795,8 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	centered       = (r->x == 16 && r->w == 608);
 	menuName       = menu->window.name;
 
+	Cui_WideRect(&menu->window.rect);
+
 	for (i = 0; i < menu->itemCount; ++i)
 	{
 		itemName = menu->items[i]->window.name;

@@ -1294,6 +1294,8 @@ void GfxInfo_f(void)
 		ri.Printf(PRINT_ALL, "N/A\n");
 	}
 
+	ri.Printf(PRINT_ALL, "ASPECT RATION: %.4f\n", glConfig.windowAspect);
+
 	if (glConfig.deviceSupportsGamma)
 	{
 		ri.Printf(PRINT_ALL, "GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);

@@ -1075,7 +1075,7 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 	ri.Printf(PRINT_ALL, "GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
 	ri.Printf(PRINT_ALL, "PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
-	ri.Printf(PRINT_ALL, "MODE: %d, %d x %d %s hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1]);
+	ri.Printf(PRINT_ALL, "MODE: %d, %d x %d %s Hz:", r_mode->integer, glConfig.vidWidth, glConfig.vidHeight, fsstrings[r_fullscreen->integer == 1]);
 
 	if (glConfig.displayFrequency)
 	{
@@ -1085,6 +1085,8 @@ void GfxInfo_f(void)
 	{
 		ri.Printf(PRINT_ALL, "N/A\n");
 	}
+
+	ri.Printf(PRINT_ALL, "ASPECT RATION: %.4f\n", glConfig.windowAspect);
 
 	if (glConfig.deviceSupportsGamma)
 	{
