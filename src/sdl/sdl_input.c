@@ -1268,6 +1268,52 @@ static void IN_InitKeyLockStates(void)
 	keys[K_CAPSLOCK].down   = keystate[SDLK_CAPSLOCK];
 }
 
+#ifdef _WIN32
+WNDPROC LegacyWndProc = NULL;
+
+/**
+ * @brief Skips the show menu command for the frame, and thatway disables the "no menu found" error sound.
+ */
+LRESULT CALLBACK WNDDingIgnore(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	if (msg == WM_SYSCOMMAND && (wparam & 0xfff0) == SC_KEYMENU)
+	{
+		return 0;
+	}
+	return CallWindowProc(LegacyWndProc, wnd, msg, wparam, lparam);
+}
+
+/**
+ * @brief Enables the filter if not already active
+ */
+void IN_EnableDingFilter()
+{
+	if (!LegacyWndProc)
+	{
+		SDL_SysWMinfo wmInfo;
+		SDL_VERSION(&wmInfo.version);
+		SDL_GetWMInfo(&wmInfo);
+		LegacyWndProc = (WNDPROC)GetWindowLongPtr(wmInfo.window, GWLP_WNDPROC);
+		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)&WNDDingIgnore);
+	}
+}
+
+/**
+ * @brief Disables the filter if active
+ */
+void IN_DisableDingFilter()
+{
+	if (LegacyWndProc)
+	{
+		SDL_SysWMinfo wmInfo;
+		SDL_VERSION(&wmInfo.version);
+		SDL_GetWMInfo(&wmInfo);
+		SetWindowLongPtr(wmInfo.window, GWLP_WNDPROC, (LONG_PTR)LegacyWndProc);
+		LegacyWndProc = NULL;
+	}
+}
+#endif
+
 void IN_Init(void)
 {
 	int appState;
@@ -1329,6 +1375,10 @@ void IN_Init(void)
 #ifndef __APPLE__ // FIXME: Joystick initialization crashes some Mac OS X clients
 	IN_InitJoystick();
 #endif
+
+#ifdef _WIN32
+	IN_EnableDingFilter();
+#endif
 	Com_DPrintf("------------------------------------\n");
 }
 
@@ -1338,6 +1388,11 @@ void IN_Shutdown(void)
 #ifdef USE_RAW_INPUT_MOUSE
 	IN_ShutdownRawMouse();
 #endif
+
+#ifdef _WIN32
+	IN_DisableDingFilter();
+#endif
+
 	IN_DeactivateMouse();
 	mouseAvailable = qfalse;
 
