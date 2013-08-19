@@ -62,7 +62,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	EDITFIELDLEFT( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "New Profile Name:", .2, 8, "ui_profile_renameto", 32, 23, "" )
+	EDITFIELDLEFT( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "New Profile Name:", .2, 8, "ui_profile_renameto", 32, 23, "New name of profile" )
 	
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "BACK", .3, 14, close profile_rename ; open profile )
 

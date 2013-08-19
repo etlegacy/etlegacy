@@ -35,7 +35,7 @@ menuDef {
 	NUMERICFIELD( 8, 84, (SUBWINDOW_WIDTH)-4, 10, "Player Inactivity:", .2, 8, "g_inactivity", 3, "Max time (in sec) a player can remain idle before being kicked from the server (0 = disabled)" )
 	NUMERICFIELD( 8, 96, (SUBWINDOW_WIDTH)-4, 10, "Spectator Inactivity:", .2, 8, "g_spectatorInactivity", 3, "Max time (in sec) a spectator can remain idle before being kicked from the server (0 = disabled)" )
 	NUMERICFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, "Intermission Time:", .2, 8, "g_intermissionTime", 3, "Time of intermission" )
-	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Intermission Ready %:", .2, 8, "g_intermissionReadyPercent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "" )
+	MULTI( 8, 120, (SUBWINDOW_WIDTH)-4, 10, "Intermission Ready %:", .2, 8, "g_intermissionReadyPercent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, "Percentage of 'ready' players to start next map" )
 	
 // Match //
 	SUBWINDOW( 6, 138, (SUBWINDOW_WIDTH), 220, "MATCH" )
