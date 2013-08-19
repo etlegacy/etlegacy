@@ -535,12 +535,17 @@ static const char *IN_TranslateSDLToQ3Key(SDL_keysym *keysym,
 	if (down && strlen(Key_KeynumToString(*key)) == 1 &&
 	    keysym->unicode == 0)
 	{
-		if (in_keyboardDebug->integer)
+		//Added this check due to Windows not playing nice with numbers when number mod is active.
+		//Should not cause any harm for other platforms either.
+		if (*key < '0' || *key > '9')
 		{
-			Com_Printf("  Ignored dead key '%c'\n", *key);
-		}
+			if (in_keyboardDebug->integer)
+			{
+				Com_Printf("  Ignored dead key '%c'\n", *key);
+			}
 
-		*key = 0;
+			*key = 0;
+		}
 	}
 
 	if (IN_IsConsoleKey(*key, *buf))

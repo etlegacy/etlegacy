@@ -1238,7 +1238,7 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: ");
 	R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
 	*/
-	
+
 	ri.Printf(PRINT_ALL, "GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 
 	if (glConfig.driverType != GLDRV_OPENGL3)

@@ -1503,15 +1503,15 @@ typedef struct shaderProgram_s
 	GLuint program;
 	uint32_t attribs;           // vertex array attributes
 
-	
+
 #ifdef RENDERER2C
-	GLhandleARB     vertexShader;
-	GLhandleARB     fragmentShader;
+	GLhandleARB vertexShader;
+	GLhandleARB fragmentShader;
 
 	// uniform parameters
 	GLint uniforms[UNIFORM_COUNT];
 	short uniformBufferOffsets[UNIFORM_COUNT]; // max 32767/64=511 uniforms
-	char  *uniformBuffer;
+	char *uniformBuffer;
 #else
 	char *compileMacros;
 

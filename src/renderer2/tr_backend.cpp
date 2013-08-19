@@ -11096,8 +11096,8 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	GL_SelectTexture(0);
 	GL_Bind(tr.scratchImage[client]);
 	gl_genericShader->SetUniform_ColorTextureMatrix(matrixIdentity);
-	
-	RE_UploadCinematic (w, h, cols, rows, data, client, dirty);
+
+	RE_UploadCinematic(w, h, cols, rows, data, client, dirty);
 
 	if (r_speeds->integer)
 	{
@@ -11199,7 +11199,7 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 #if 1
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#else	
+#else
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, colorBlack);
