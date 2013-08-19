@@ -1294,7 +1294,7 @@ void GfxInfo_f(void)
 		ri.Printf(PRINT_ALL, "N/A\n");
 	}
 
-	ri.Printf(PRINT_ALL, "ASPECT RATION: %.4f\n", glConfig.windowAspect);
+	ri.Printf(PRINT_ALL, "ASPECT RATIO: %.4f\n", glConfig.windowAspect);
 
 	if (glConfig.deviceSupportsGamma)
 	{
