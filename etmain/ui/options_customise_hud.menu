@@ -81,7 +81,7 @@ menuDef {
 		border		WINDOW_BORDER_FULL
 		bordercolor	.6 .6 .6 1
 		visible		1
-		tooltip		""
+		tooltip		"Set crosshair type"
 		
 		mouseEnter {
 			setitemcolor "crosshair_select" bordercolor .9 .9 .9 1
