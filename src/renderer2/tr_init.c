@@ -1776,6 +1776,7 @@ void R_Register(void)
 	ri.Cmd_AddCommand("gfxinfo", GfxInfo_f);
 	//	ri.Cmd_AddCommand("generatemtr", R_GenerateMaterialFile_f);
 	ri.Cmd_AddCommand("buildcubemaps", R_BuildCubeMaps);
+	ri.Cmd_AddCommand("minimize", GLimp_Minimize);
 
 #if !defined(USE_D3D10)
 	ri.Cmd_AddCommand("glsl_restart", GLSL_restart_f);

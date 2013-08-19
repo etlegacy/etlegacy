@@ -1408,26 +1408,6 @@ int R_GetTextureId(const char *name);
 
 /*
 ====================================================================
-IMPLEMENTATION SPECIFIC FUNCTIONS
-====================================================================
-*/
-
-extern int gl_NormalFontBase;
-
-void GLimp_Init(void);
-void GLimp_Shutdown(void);
-void GLimp_EndFrame(void);
-void GLimp_LogComment(char *comment);
-void GLimp_Minimize(void);
-
-// NOTE: linux works with float gamma value, not the gamma table
-// the params won't be used, getting the r_gamma cvar directly
-void GLimp_SetGamma(unsigned char red[256],
-                    unsigned char green[256],
-                    unsigned char blue[256]);
-
-/*
-====================================================================
 TESSELATOR/SHADER DECLARATIONS
 ====================================================================
 */

@@ -61,6 +61,32 @@ typedef enum
 void *R_GetImageBuffer(int size, bufferMemType_t bufferType);
 void R_FreeImageBuffer(void);
 
+/*
+====================================================================
+IMPLEMENTATION SPECIFIC GLIMP FUNCTIONS
+====================================================================
+*/
+extern int gl_NormalFontBase;
+
+void GLimp_Init(void);
+void GLimp_Shutdown(void);
+void GLimp_EndFrame(void);
+void GLimp_LogComment(char *comment);
+void GLimp_Minimize(void);
+
+// NOTE: linux works with float gamma value, not the gamma table
+// the params won't be used, getting the r_gamma cvar directly
+void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
+
+//To be dropped functions
+qboolean GLimp_SpawnRenderThread(void (*function) (void));
+void GLimp_ShutdownRenderThread(void);
+void GLimp_WakeRenderer(void *data);
+
+void *GLimp_RendererSleep(void);
+void GLimp_FrontEndSleep(void);
+//End of to be dropped functions
+
 // These two variables should live inside glConfig but can't because of compatibility issues to the original ID vms.
 // If you release a stand-alone game and your mod uses tr_types.h from this build you can safely move them to
 // the glconfig_t struct.
