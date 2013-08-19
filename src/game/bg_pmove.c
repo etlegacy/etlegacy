@@ -655,7 +655,7 @@ static float PM_CmdScale(usercmd_t *cmd)
 	             + cmd->rightmove * cmd->rightmove + cmd->upmove * cmd->upmove);
 	scale = (float)pm->ps->speed * max / (127.0 * total);
 
-	if (pm->cmd.buttons & BUTTON_SPRINT && pm->pmext->sprintTime > 50)
+	if ((pm->cmd.buttons & BUTTON_SPRINT) && pm->pmext->sprintTime > 50)
 	{
 		scale *= pm->ps->sprintSpeedScale;
 	}
@@ -692,7 +692,7 @@ static float PM_CmdScale(usercmd_t *cmd)
 
 	if (pm->ps->weapon == WP_FLAMETHROWER)     // trying some different balance for the FT
 	{
-		if (!(pm->skill[SK_HEAVY_WEAPONS] >= 3) || pm->cmd.buttons & BUTTON_ATTACK)
+		if (!(pm->skill[SK_HEAVY_WEAPONS] >= 3) || (pm->cmd.buttons & BUTTON_ATTACK))
 		{
 			scale *= 0.7;
 		}
@@ -894,7 +894,7 @@ static qboolean PM_CheckProne(void)
 		}
 
 		// no prone when using mg42's
-		if (pm->ps->persistant[PERS_HWEAPON_USE] || pm->ps->eFlags & EF_MOUNTEDTANK)
+		if (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK))
 		{
 			return qfalse;
 		}
@@ -915,7 +915,7 @@ static qboolean PM_CheckProne(void)
 			return qfalse;
 		}
 
-		if (((pm->ps->pm_flags & PMF_DUCKED && pm->cmd.doubleTap == DT_FORWARD) ||
+		if ((((pm->ps->pm_flags & PMF_DUCKED) && pm->cmd.doubleTap == DT_FORWARD) ||
 		     (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - -pm->pmext->proneTime > 750)
 		{
 			trace_t trace;
@@ -947,8 +947,8 @@ static qboolean PM_CheckProne(void)
 	{
 		if (pm->waterlevel > 1 ||
 		    pm->ps->pm_type == PM_DEAD ||
-		    pm->ps->eFlags & EF_MOUNTEDTANK ||
-		    ((pm->cmd.doubleTap == DT_BACK || pm->cmd.upmove > 10 || pm->cmd.wbuttons & WBUTTON_PRONE) && pm->cmd.serverTime - pm->pmext->proneTime > 750))
+		    (pm->ps->eFlags & EF_MOUNTEDTANK) ||
+		    ((pm->cmd.doubleTap == DT_BACK || pm->cmd.upmove > 10 || (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - pm->pmext->proneTime > 750))
 		{
 			trace_t trace;
 
@@ -1387,7 +1387,7 @@ static void PM_WalkMove(void)
 
 	// when a player gets hit, they temporarily lose
 	// full control, which allows them to be moved a bit
-	if ((pml.groundTrace.surfaceFlags & SURF_SLICK) || pm->ps->pm_flags & PMF_TIME_KNOCKBACK)
+	if ((pml.groundTrace.surfaceFlags & SURF_SLICK) || (pm->ps->pm_flags & PMF_TIME_KNOCKBACK))
 	{
 		accelerate = pm_airaccelerate;
 	}
@@ -1401,7 +1401,7 @@ static void PM_WalkMove(void)
 	//Com_Printf("velocity = %1.1f %1.1f %1.1f\n", pm->ps->velocity[0], pm->ps->velocity[1], pm->ps->velocity[2]);
 	//Com_Printf("velocity1 = %1.1f\n", VectorLength(pm->ps->velocity));
 
-	if ((pml.groundTrace.surfaceFlags & SURF_SLICK) || pm->ps->pm_flags & PMF_TIME_KNOCKBACK)
+	if ((pml.groundTrace.surfaceFlags & SURF_SLICK) || (pm->ps->pm_flags & PMF_TIME_KNOCKBACK))
 	{
 		pm->ps->velocity[2] -= pm->ps->gravity * pml.frametime;
 	}
@@ -1545,7 +1545,6 @@ static int PM_FootstepForSurface(void)
 	// In just the GAME DLL, we want to store the groundtrace surface stuff,
 	// so we don't have to keep tracing.
 	ClientStoreSurfaceFlags(pm->ps->clientNum, pml.groundTrace.surfaceFlags);
-
 #endif // GAMEDLL
 
 	return BG_FootstepForSurface(pml.groundTrace.surfaceFlags);
@@ -1803,7 +1802,7 @@ static void PM_GroundTrace(void)
 	point[0] = pm->ps->origin[0];
 	point[1] = pm->ps->origin[1];
 
-	if (pm->ps->eFlags & EF_MG42_ACTIVE || pm->ps->eFlags & EF_AAGUN_ACTIVE)
+	if ((pm->ps->eFlags & EF_MG42_ACTIVE) || (pm->ps->eFlags & EF_AAGUN_ACTIVE))
 	{
 		point[2] = pm->ps->origin[2] - 1.f;
 	}
@@ -3240,7 +3239,7 @@ void PM_CoolWeapons(void)
 	// a weapon is currently selected, convert current heat value to 0-255 range for client transmission
 	if (pm->ps->weapon)
 	{
-		if (pm->ps->persistant[PERS_HWEAPON_USE] || pm->ps->eFlags & EF_MOUNTEDTANK)
+		if (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK))
 		{
 			// floor to prevent 8-bit wrap
 			pm->ps->curWeapHeat = floor((((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT)) * 255.0f);
@@ -3350,7 +3349,7 @@ void PM_AdjustAimSpreadScale(void)
 		float viewchange = 0;
 
 		// crouched players recover faster (mostly useful for snipers)
-		if (pm->ps->eFlags & EF_CROUCHING || pm->ps->eFlags & EF_PRONE)
+		if ((pm->ps->eFlags & EF_CROUCHING) || (pm->ps->eFlags & EF_PRONE))
 		{
 			wpnScale *= 0.5;
 		}
@@ -3412,8 +3411,6 @@ void PM_AdjustAimSpreadScale(void)
 }
 
 #define weaponstateFiring (pm->ps->weaponstate == WEAPON_FIRING || pm->ps->weaponstate == WEAPON_FIRINGALT)
-
-#define GRENADE_DELAY   250
 
 /*
 ==============
@@ -3602,7 +3599,7 @@ static qboolean PM_CheckGrenade()
 			}
 		}
 
-		if (!(pm->cmd.buttons & BUTTON_ATTACK) || forcethrow || pm->ps->eFlags & EF_PRONE_MOVING)
+		if (!(pm->cmd.buttons & BUTTON_ATTACK) || forcethrow || (pm->ps->eFlags & EF_PRONE_MOVING))
 		{
 			if (pm->ps->weaponDelay == GetAmmoTableData(pm->ps->weapon)->fireDelayTime || forcethrow)
 			{
@@ -3808,7 +3805,7 @@ static void PM_Weapon(void)
 		return;
 	}
 
-	if (pm->ps->eFlags & EF_PRONE_MOVING && !delayedFire)
+	if ((pm->ps->eFlags & EF_PRONE_MOVING) && !delayedFire)
 	{
 		return;
 	}
@@ -3900,8 +3897,8 @@ static void PM_Weapon(void)
 	{
 		pm->ps->weaponstate = WEAPON_READY;
 
-		//if( pm->ps->eFlags & EF_PRONE && pm->ps->weapon == WP_MOBILE_MG42 )
-		//    pm->pmext->proneMG42Zoomed = qtrue;
+		//if((pm->ps->eFlags & EF_PRONE) && pm->ps->weapon == WP_MOBILE_MG42 )
+		//  pm->pmext->proneMG42Zoomed = qtrue;
 
 		PM_StartWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
 		return;
@@ -3915,14 +3912,12 @@ static void PM_Weapon(void)
 		return;
 	}
 
-	if (pm->ps->weapon == WP_NONE)     // this is possible since the player starts with nothing
+	// in multiplayer, don't allow some weapons to fire if charge bar isn't full
+	switch (pm->ps->weapon)
 	{
+	case WP_NONE: // this is possible since the player starts with nothing
 		return;
-	}
-
-	// in multiplayer, don't allow panzerfaust or dynamite to fire if charge bar isn't full
-	if (pm->ps->weapon == WP_PANZERFAUST)
-	{
+	case WP_PANZERFAUST:
 		if (pm->ps->eFlags & EF_PRONE)
 		{
 			return;
@@ -3939,18 +3934,16 @@ static void PM_Weapon(void)
 		{
 			return;
 		}
-	}
 
-	if (pm->ps->weapon == WP_GPG40 || pm->ps->weapon == WP_M7)
-	{
+		break;
+	case WP_GPG40:
+	case WP_M7:
 		if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->engineerChargeTime * 0.5f))
 		{
 			return;
 		}
-	}
-
-	if (pm->ps->weapon == WP_MORTAR_SET)
-	{
+		break;
+	case WP_MORTAR_SET:
 		if (pm->skill[SK_HEAVY_WEAPONS] >= 1)
 		{
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->soldierChargeTime * 0.33f))
@@ -3967,10 +3960,9 @@ static void PM_Weapon(void)
 		{
 			pm->ps->weaponstate = WEAPON_READY;
 		}
-	}
-
-	if (pm->ps->weapon == WP_SMOKE_BOMB || pm->ps->weapon == WP_SATCHEL)
-	{
+		break;
+	case WP_SMOKE_BOMB:
+	case WP_SATCHEL:
 		if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 2)
 		{
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->covertopsChargeTime * 0.66f))
@@ -3982,10 +3974,8 @@ static void PM_Weapon(void)
 		{
 			return;
 		}
-	}
-
-	if (pm->ps->weapon == WP_LANDMINE)
-	{
+		break;
+	case WP_LANDMINE:
 		if (pm->skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2)
 		{
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->engineerChargeTime * 0.33f))
@@ -3997,10 +3987,8 @@ static void PM_Weapon(void)
 		{
 			return;
 		}
-	}
-
-	if (pm->ps->weapon == WP_DYNAMITE)
-	{
+		break;
+	case WP_DYNAMITE:
 		if (pm->skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
 		{
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->engineerChargeTime * 0.66f))
@@ -4012,10 +4000,8 @@ static void PM_Weapon(void)
 		{
 			return;
 		}
-	}
-
-	if (pm->ps->weapon == WP_AMMO)
-	{
+		break;
+	case WP_AMMO:
 		if (pm->skill[SK_SIGNALS] >= 1)
 		{
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->ltChargeTime * 0.15f))
@@ -4035,10 +4021,8 @@ static void PM_Weapon(void)
 			}
 			return;
 		}
-	}
-
-	if (pm->ps->weapon == WP_MEDKIT)
-	{
+		break;
+	case WP_MEDKIT:
 		if (pm->skill[SK_FIRST_AID] >= 2)
 		{
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->medicChargeTime * 0.15f))
@@ -4058,10 +4042,8 @@ static void PM_Weapon(void)
 			}
 			return;
 		}
-	}
-
-	if (pm->ps->weapon == WP_SMOKE_MARKER)
-	{
+		break;
+	case WP_SMOKE_MARKER:
 		if (pm->skill[SK_SIGNALS] >= 2)
 		{
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->ltChargeTime * 0.66f))
@@ -4073,14 +4055,15 @@ static void PM_Weapon(void)
 		{
 			return;
 		}
-	}
-
-	if (pm->ps->weapon == WP_MEDIC_ADRENALINE)
-	{
+		break;
+	case WP_MEDIC_ADRENALINE:
 		if (pm->cmd.serverTime - pm->ps->classWeaponTime < pm->medicChargeTime)
 		{
 			return;
 		}
+		break;
+	default:
+		break;
 	}
 
 	// check for fire
@@ -4522,7 +4505,7 @@ static void PM_Weapon(void)
 		}
 	}
 
-	switch (pm->ps->weapon)
+	switch (pm->ps->weapon) // weapon animation
 	{
 	case WP_GRENADE_LAUNCHER:
 	case WP_GRENADE_PINEAPPLE:
@@ -4560,28 +4543,39 @@ static void PM_Weapon(void)
 	}
 
 	// Jin multiplayer, pfaust fires once then switches to pistol since it's useless for a while
-	if ((pm->ps->weapon == WP_PANZERFAUST) || (pm->ps->weapon == WP_SMOKE_MARKER) || (pm->ps->weapon == WP_DYNAMITE) || (pm->ps->weapon == WP_SMOKE_BOMB) || (pm->ps->weapon == WP_LANDMINE) || (pm->ps->weapon == WP_SATCHEL))
+	switch (pm->ps->weapon) // no ammo events
 	{
+	case WP_PANZERFAUST:
+	case WP_SMOKE_MARKER:
+	case WP_DYNAMITE:
+	case WP_SMOKE_BOMB:
+	case WP_LANDMINE:
+	case WP_SATCHEL:
 		PM_AddEvent(EV_NOAMMO);
-	}
-
-	if (pm->ps->weapon == WP_SATCHEL)
-	{
-		pm->ps->ammoclip[WP_SATCHEL_DET] = 1;
-		pm->ps->ammo[WP_SATCHEL]         = 0;
-		pm->ps->ammoclip[WP_SATCHEL]     = 0;
-		PM_BeginWeaponChange(WP_SATCHEL, WP_SATCHEL_DET, qfalse);
-	}
-
+		if (pm->ps->weapon == WP_SATCHEL)
+		{
+			pm->ps->ammoclip[WP_SATCHEL_DET] = 1;
+			pm->ps->ammo[WP_SATCHEL]         = 0;
+			pm->ps->ammoclip[WP_SATCHEL]     = 0;
+			PM_BeginWeaponChange(WP_SATCHEL, WP_SATCHEL_DET, qfalse);
+		}
+		break;
 	// WP_M7 and WP_GPG40 run out of ammo immediately after firing their last grenade
-	if ((pm->ps->weapon == WP_M7 || pm->ps->weapon == WP_GPG40) && !pm->ps->ammo[BG_FindAmmoForWeapon(pm->ps->weapon)])
-	{
-		PM_AddEvent(EV_NOAMMO);
-	}
-
-	if (pm->ps->weapon == WP_MORTAR_SET && !pm->ps->ammo[WP_MORTAR])
-	{
-		PM_AddEvent(EV_NOAMMO);
+	case WP_M7:
+	case WP_GPG40:
+		if (!pm->ps->ammo[BG_FindAmmoForWeapon(pm->ps->weapon)])
+		{
+			PM_AddEvent(EV_NOAMMO);
+		}
+		break;
+	case WP_MORTAR_SET:
+		if (!pm->ps->ammo[WP_MORTAR])
+		{
+			PM_AddEvent(EV_NOAMMO);
+		}
+		break;
+	default:
+		break;
 	}
 
 	if (BG_IsAkimboWeapon(pm->ps->weapon))
@@ -4782,7 +4776,7 @@ static void PM_Weapon(void)
 	case WP_MOBILE_MG42:
 		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
 		pm->pmext->weapRecoilDuration = 200;
-		if (pm->ps->pm_flags & PMF_DUCKED || pm->ps->eFlags & EF_PRONE)
+		if ((pm->ps->pm_flags & PMF_DUCKED) || (pm->ps->eFlags & EF_PRONE))
 		{
 			pm->pmext->weapRecoilYaw   = crandom() * .5f;
 			pm->pmext->weapRecoilPitch = .45f * random() * .15f;
@@ -4989,7 +4983,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 
 	}
 
-	if (ps->eFlags & EF_PRONE || ps->weapon == WP_MORTAR_SET)
+	if ((ps->eFlags & EF_PRONE) || ps->weapon == WP_MORTAR_SET)
 	{
 		leaning = 0;    // not allowed to lean while prone
 
@@ -5106,7 +5100,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 	vec3_t oldViewAngles;
 
 	// Added support for PMF_TIME_LOCKPLAYER
-	if (ps->pm_type == PM_INTERMISSION || ps->pm_flags & PMF_TIME_LOCKPLAYER)
+	if (ps->pm_type == PM_INTERMISSION || (ps->pm_flags & PMF_TIME_LOCKPLAYER))
 	{
 		// reset all angle changes, so it does not suddenly happens after unlocked
 		ps->delta_angles[0] = ANGLE2SHORT(ps->viewangles[0]) - cmd->angles[0];
@@ -5753,7 +5747,7 @@ void PM_Sprint(void)
 {
 	if (pm->waterlevel <= 1) // no sprint & no stamina recharge under water
 	{
-		if (pm->cmd.buttons & BUTTON_SPRINT && (pm->cmd.forwardmove || pm->cmd.rightmove) && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE))
+		if ((pm->cmd.buttons & BUTTON_SPRINT) && (pm->cmd.forwardmove || pm->cmd.rightmove) && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE))
 		{
 			if (pm->ps->powerups[PW_ADRENALINE])
 			{
@@ -5883,7 +5877,7 @@ void PmoveSingle(pmove_t *pmove)
 
 	pm->ps->eFlags &= ~(EF_FIRING | EF_ZOOMING);
 
-	if (pm->cmd.wbuttons & WBUTTON_ZOOM && pm->ps->stats[STAT_HEALTH] >= 0 && !(pm->ps->weaponDelay))
+	if ((pm->cmd.wbuttons & WBUTTON_ZOOM) && pm->ps->stats[STAT_HEALTH] >= 0 && !(pm->ps->weaponDelay))
 	{
 		if (pm->ps->stats[STAT_KEYS] & (1 << INV_BINOCS))          // binoculars are an inventory item (inventory==keys)
 		{
@@ -5921,7 +5915,7 @@ void PmoveSingle(pmove_t *pmove)
 					{
 
 						// all clear, fire!
-						if (pm->cmd.buttons & BUTTON_ATTACK && !(pm->cmd.buttons & BUTTON_TALK))
+						if ((pm->cmd.buttons & BUTTON_ATTACK) && !(pm->cmd.buttons & BUTTON_TALK))
 						{
 							pm->ps->eFlags |= EF_FIRING;
 						}
@@ -6023,7 +6017,7 @@ void PmoveSingle(pmove_t *pmove)
 		pm->ps->pm_flags &= ~PMF_BACKWARDS_RUN;
 	}
 
-	if (pm->ps->pm_type >= PM_DEAD || pm->ps->pm_flags & (PMF_LIMBO | PMF_TIME_LOCKPLAYER))
+	if (pm->ps->pm_type >= PM_DEAD || (pm->ps->pm_flags & (PMF_LIMBO | PMF_TIME_LOCKPLAYER)))
 	{
 		pm->cmd.forwardmove = 0;
 		pm->cmd.rightmove   = 0;
@@ -6239,7 +6233,7 @@ int Pmove(pmove_t *pmove)
 		pmove->ps->curWeapHeat = 0;
 	}
 
-	if ((pm->ps->stats[STAT_HEALTH] <= 0 || pm->ps->pm_type == PM_DEAD) && pml.groundTrace.surfaceFlags & SURF_MONSTERSLICK)
+	if ((pm->ps->stats[STAT_HEALTH] <= 0 || pm->ps->pm_type == PM_DEAD) && (pml.groundTrace.surfaceFlags & SURF_MONSTERSLICK))
 	{
 		return (pml.groundTrace.surfaceFlags);
 	}
