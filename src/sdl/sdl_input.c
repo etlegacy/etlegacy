@@ -531,6 +531,9 @@ static const char *IN_TranslateSDLToQ3Key(SDL_keysym *keysym,
 		{
 		case K_KP_SLASH:
 			*buf = '/';
+			break;
+		default:
+			break;
 		}
 	}
 
