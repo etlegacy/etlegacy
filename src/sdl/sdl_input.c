@@ -524,10 +524,10 @@ static const char *IN_TranslateSDLToQ3Key(SDL_keysym *keysym,
 			break;
 		}
 	}
-	else if(down && !keysym->unicode)
+	else if (down && !keysym->unicode)
 	{
 		//Some exceptions which are missing the unicode value ex KP_SLASH
-		switch(*key)
+		switch (*key)
 		{
 		case K_KP_SLASH:
 			*buf = '/';

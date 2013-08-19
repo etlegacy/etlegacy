@@ -1081,7 +1081,6 @@ GLimp_SetMode
 */
 static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 {
-	const char  *glstring;
 	int         sdlcolorbits;
 	int         colorbits, depthbits, stencilbits;
 	int         tcolorbits, tdepthbits, tstencilbits;
@@ -1397,8 +1396,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 	screen = vidscreen;
 
-	glstring = (char *) qglGetString(GL_RENDERER);
-	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", glstring);
+	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", (char *) qglGetString(GL_RENDERER));
 
 	return RSERR_OK;
 }
@@ -1448,6 +1446,8 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 
 	switch (err)
 	{
+	case RSERR_OK:
+		return qtrue;
 	case RSERR_INVALID_FULLSCREEN:
 		ri.Printf(PRINT_ALL, "...WARNING: fullscreen unavailable in this mode\n");
 		return qfalse;
@@ -1457,11 +1457,14 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 	case RSERR_OLD_GL:
 		ri.Error(ERR_VID_FATAL, "Could not create opengl 3 context");
 		return qfalse;
+	case RSERR_UNKNOWN:
+		ri.Error(ERR_VID_FATAL, "An unknown error occured - set mode failed");
+		return qfalse;
 	default:
 		break;
 	}
 
-	return qtrue;
+	return qfalse;
 }
 
 #ifndef FEATURE_RENDERER2
