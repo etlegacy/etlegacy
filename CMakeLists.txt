@@ -79,14 +79,14 @@ option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
 option(FEATURE_IRC_CLIENT	"Enable IRC client"							OFF)
 option(RENDERER_DYNAMIC		"Build renderer into a dynamic library"					OFF)
 
-cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"	ON "BUNDLED_LIBS" OFF)
+cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"				ON "BUNDLED_LIBS" OFF)
 
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (32-bit Windows or linux only)"	ON "WIN32 OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"						ON "FEATURE_OMNIBOT" OFF)
 
 set(ET_FS_BASEPATH		""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
-option(ET_KEY			"Copy etkey file (requires ET_FS_BASEPATH set)"				OFF)
-	
+cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"				ON "ET_FS_BASEPATH" OFF)
+
 #-----------------------------------------------------------------
 # Platform-specific settings
 #-----------------------------------------------------------------
@@ -138,9 +138,7 @@ if(UNIX)
 	if(NOT MSYS)
 		include(CheckCCompilerFlag)
 		check_c_compiler_flag("-fvisibility=hidden" SUPPORT_VISIBILITY)
-		if(SUPPORT_VISIBILITY)
-			# note: visibility support starts with  __GNUC__ >= 4
-			message(STATUS "Compiling with -fvisibility=hidden")
+		if(SUPPORT_VISIBILITY) # GCC 4+
 			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 		endif(SUPPORT_VISIBILITY)
 	endif(NOT MSYS)
