@@ -1050,7 +1050,6 @@ static panel_button_t *speakerInfoButtons[] =
 	NULL
 };
 
-
 void CG_SpeakerEditor_RenderEdit(panel_button_t *button)
 {
 	vec4_t colour;

@@ -1295,7 +1295,7 @@ int CG_CalcViewValues(void)
 			VectorCopy(cgs.ccPortalAngles, cg.refdefViewAngles);
 		}
 	}
-	else if (cg.renderingThirdPerson && (ps->eFlags & EF_MG42_ACTIVE || ps->eFlags & EF_AAGUN_ACTIVE)) // see if we're attached to a gun
+	else if (cg.renderingThirdPerson && ((ps->eFlags & EF_MG42_ACTIVE) || (ps->eFlags & EF_AAGUN_ACTIVE))) // see if we're attached to a gun
 	{
 		centity_t *mg42 = &cg_entities[ps->viewlocked_entNum];
 		vec3_t    forward;

@@ -1425,8 +1425,8 @@ qboolean CG_ConsoleCommand(void)
 }
 
 
-/*
- * Let the client system know about all of our commands so it can perform tab
+/**
+ * @brief Let the client system know about all of our commands so it can perform tab
  * completion
  */
 void CG_InitConsoleCommands(void)

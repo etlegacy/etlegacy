@@ -2932,6 +2932,7 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 
 	default:     // shouldn't happen
 		*shader = 0;
+		break;
 	}
 
 	// setup s co-ords

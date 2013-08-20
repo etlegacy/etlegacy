@@ -168,7 +168,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 			}
 		}
 
-		if (cg_locations.integer & LOC_SHOWCOORDS && locValid)
+		if ((cg_locations.integer & LOC_SHOWCOORDS) && locValid)
 		{
 			Q_strcat(locStr, 64, va(" ^3(%s)", BG_GetLocationString(loc)));   // append a location
 		}

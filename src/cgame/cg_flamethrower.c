@@ -118,7 +118,6 @@ static flameSoundStatus_t centFlameStatus[MAX_GENTITIES];
 // procedure defs
 flameChunk_t *CG_SpawnFlameChunk(flameChunk_t *headFlameChunk);
 void CG_FlameCalcOrg(flameChunk_t *f, int time, vec3_t outOrg);
-void CG_FlameGetMuzzlePoint(vec3_t org, vec3_t fwd, vec3_t right, vec3_t up, vec3_t outPos);
 
 // these must be globals, since they cannot expand or contract, since that might result in them getting
 //  stuck in geometry. therefore when a chunk hits a surface, we should deflect it away from the surface

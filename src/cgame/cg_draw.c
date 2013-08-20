@@ -38,7 +38,6 @@
 #define STATUSBARHEIGHT 452
 char *BindingFromName(const char *cvar);
 void Controls_GetConfig(void);
-void SetHeadOrigin(clientInfo_t *ci, playerInfo_t *pi);
 void CG_DrawOverlays(void);
 int activeFont;
 
@@ -1579,7 +1578,7 @@ static void CG_DrawNoShootIcon(void)
 {
 	float x, y, w, h;
 
-	if (cg.predictedPlayerState.eFlags & EF_PRONE && cg.snap->ps.weapon == WP_PANZERFAUST)
+	if ((cg.predictedPlayerState.eFlags & EF_PRONE) && cg.snap->ps.weapon == WP_PANZERFAUST)
 	{
 		trap_R_SetColor(colorRed);
 	}
@@ -1687,7 +1686,7 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 
 	cent = &cg_entities[cg.crosshairClientNum];
 
-	if (cent && cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
+	if (cent && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 	{
 		if (cgs.clientinfo[cg.crosshairClientNum].team == cgs.clientinfo[cg.clientNum].team)
 		{
@@ -2455,7 +2454,7 @@ static void CG_DrawSpectatorMessage(void)
 		return;
 	}
 
-	if (!(cg.snap->ps.pm_flags & PMF_LIMBO || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR))
+	if (!((cg.snap->ps.pm_flags & PMF_LIMBO) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR))
 	{
 		return;
 	}
@@ -2535,7 +2534,7 @@ static void CG_DrawLimboMessage(void)
 		return;
 	}
 
-	if (cg.snap->ps.pm_flags & PMF_LIMBO || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+	if ((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
 		return;
 	}
@@ -2721,7 +2720,7 @@ static void CG_DrawWarmup(void)
 
 		CPri(CG_TranslateString("^3PREPARE TO FIGHT!\n"));
 
-		if (!cg.demoPlayback && cg_autoAction.integer & AA_DEMORECORD)
+		if (!cg.demoPlayback && (cg_autoAction.integer & AA_DEMORECORD))
 		{
 			CG_autoRecord_f();
 		}
@@ -3087,7 +3086,7 @@ CG_DrawFlashBlend
 static void CG_DrawFlashBlend(void)
 {
 	// no flash blends if in limbo or spectator, and in the limbo menu
-	if ((cg.snap->ps.pm_flags & PMF_LIMBO || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
+	if (((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
 	{
 		return;
 	}
@@ -3754,6 +3753,7 @@ void CG_DrawActive(stereoFrame_t stereoView)
 	default:
 		separation = 0;
 		CG_Error("CG_DrawActive: Undefined stereoView\n");
+		break;
 	}
 
 	// clear around the rendered view if sized down

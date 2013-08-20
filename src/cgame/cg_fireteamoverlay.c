@@ -77,12 +77,12 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 	}
 
 	// Then score
-	/*  if ( ca->score > cb->score ) {
-	        return -1;
-	    }
-	    if ( cb->score > ca->score ) {
-	        return 1;
-	    }*/                                                                                                                            // not atm
+	//if ( ca->score > cb->score ) {
+	//  return -1;
+	//}
+	//if ( cb->score > ca->score ) {
+	//  return 1;
+	//}                                                                                                                       // not atm
 
 	return 0;
 }

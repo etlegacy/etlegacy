@@ -512,9 +512,8 @@ void CG_ReadHudScripts(void)
 	Com_Printf("...hud count: %i\n", hudCount);
 }
 
-/*
-* HUD DRAWING FUNCTIONS BELLOW
-*/
+// HUD DRAWING FUNCTIONS BELLOW
+
 static void CG_DrawPicShadowed(float x, float y, float w, float h, qhandle_t icon)
 {
 	trap_R_SetColor(colorBlack);
@@ -652,7 +651,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		break;
 	}
 
-	if (cg.snap->ps.eFlags & EF_MG42_ACTIVE || cg.snap->ps.eFlags & EF_MOUNTEDTANK)
+	if ((cg.snap->ps.eFlags & EF_MG42_ACTIVE) || (cg.snap->ps.eFlags & EF_MOUNTEDTANK))
 	{
 		return WP_MOBILE_MG42;
 	}
@@ -781,9 +780,7 @@ static void CG_DrawBreathBar(rectDef_t *rect)
 	static vec4_t colourlow = { 1.0f, 0.1f, 0.1f, 0.5f };
 	vec_t         *color    = colour;
 	int           flags     = 1 | 4 | 16 | 64;
-	float         frac;
-
-	frac = cg.snap->ps.stats[STAT_AIRLEFT] / (float)HOLDBREATHTIME;
+	float         frac      = cg.snap->ps.stats[STAT_AIRLEFT] / (float)HOLDBREATHTIME;
 
 	if (frac < 0.25)
 	{
@@ -800,12 +797,10 @@ static void CG_DrawBreathBar(rectDef_t *rect)
 static void CG_DrawWeapRecharge(rectDef_t *rect)
 {
 	float    barFrac, chargeTime;
-	int      flags;
+	int      flags   = 1 | 4 | 16;
 	qboolean fade    = qfalse;
 	vec4_t   bgcolor = { 1.0f, 1.0f, 1.0f, 0.25f };
 	vec4_t   color;
-
-	flags = 1 | 4 | 16;
 
 	// Draw power bar
 	if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
@@ -855,6 +850,7 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 static void CG_DrawGunIcon(rectDef_t location)
 {
 	rectDef_t rect = location;
+
 	// Draw weapon icon and overheat bar
 	CG_DrawWeapHeat(&rect, HUD_HORIZONTAL);
 	if (
@@ -1654,7 +1650,7 @@ static float CG_DrawTimer(float y)
 	int    w, w2;
 	vec4_t color = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int    tens;
-	char   *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || cg.snap->ps.pm_flags & PMF_FOLLOW) && cg_drawReinforcementTime.integer > 0) ?
+	char   *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0) ?
 	             va("^F%d%s", CG_CalculateReinfTime(qfalse), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
 	int x;
 	int msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
@@ -1693,7 +1689,7 @@ static float CG_DrawTimer(float y)
 	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING)
 	{
 		seconds = msec / 1000;
-		s = va("^1%d %s", cg_spawnTimer_period.integer + (seconds - cg_spawnTimer_set.integer) % cg_spawnTimer_period.integer, s);
+		s       = va("^1%d %s", cg_spawnTimer_period.integer + (seconds - cg_spawnTimer_set.integer) % cg_spawnTimer_period.integer, s);
 	}
 	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
 	{
@@ -1709,7 +1705,6 @@ static float CG_DrawTimer(float y)
 	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
 	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
 	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
-
 
 	return y + 12 + 4;
 }
