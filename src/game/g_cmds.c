@@ -3307,7 +3307,7 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 		return qfalse;
 	}
 
-	if (ent->client->pers.cmd.buttons & BUTTON_WALKING || (ent->client->ps.pm_flags & PMF_DUCKED))
+	if ((ent->client->pers.cmd.buttons & BUTTON_WALKING) || (ent->client->ps.pm_flags & PMF_DUCKED))
 	{
 		walking = qtrue;
 	}
@@ -3734,7 +3734,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 
 	// look for a guy to push
 #ifdef FEATURE_OMNIBOT
-	if (g_OmniBotFlags.integer & OBF_SHOVING || !(ent->r.svFlags & SVF_BOT))
+	if ((g_OmniBotFlags.integer & OBF_SHOVING) || !(ent->r.svFlags & SVF_BOT))
 	{
 #endif
 	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, CONTENTS_BODY);

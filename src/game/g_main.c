@@ -3820,7 +3820,7 @@ void CheckIntermissionExit(void)
 
 			// changed from counting bots to just ignoring them
 			if (cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam == TEAM_SPECTATOR
-			    || g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT)
+			    || (g_entities[level.sortedClients[i]].r.svFlags & SVF_BOT))
 			{
 				continue;
 			}

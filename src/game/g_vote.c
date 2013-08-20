@@ -803,7 +803,7 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 		else if (g_gametype.integer == GT_WOLF_MAPVOTE)
 		{
 			if (g_gamestate.integer == GS_PLAYING     // don't do in intermission (check warmup/warmup-countdown
-			    && g_mapVoteFlags.integer & MAPVOTE_NEXTMAP_VOTEMAP)
+			    && (g_mapVoteFlags.integer & MAPVOTE_NEXTMAP_VOTEMAP))
 			{
 				// Don't do this. This is awkward, since it is not done at
 				// !nextmap nor nextcampaignvotes. Besides we don't want to store

@@ -2299,7 +2299,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		if (!strcmp(cs_ip, "localhost"))
 		{
 			// give bots country flag of the server location g_countryflags 2
-			if (isBot && g_countryflags.integer & CF_BOTS)
+			if (isBot && (g_countryflags.integer & CF_BOTS))
 			{
 				char          server_ip[MAX_IP4_LENGTH];
 				unsigned int  ret;

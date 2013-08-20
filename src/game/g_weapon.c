@@ -2640,6 +2640,7 @@ void weapon_callAirStrike(gentity_t *ent)
 
 	{
 		gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
+
 		te->s.eventParm = GAMESOUND_WPN_AIRSTRIKE_PLANE;
 		te->r.svFlags  |= SVF_BROADCAST;
 	}
@@ -3221,7 +3222,6 @@ float G_GetWeaponSpread(int weapon)
 	case WP_SILENCER:
 	case WP_AKIMBO_LUGER:
 	case WP_AKIMBO_SILENCEDLUGER:
-		return 600;
 	case WP_COLT:
 	case WP_SILENCED_COLT:
 	case WP_AKIMBO_COLT:
@@ -3231,7 +3231,6 @@ float G_GetWeaponSpread(int weapon)
 	case WP_THOMPSON:
 		return 400;
 	case WP_STEN:
-		return 200;
 	case WP_FG42SCOPE:
 		return 200;
 	case WP_FG42:
