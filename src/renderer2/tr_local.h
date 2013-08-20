@@ -4947,8 +4947,8 @@ void RE_AddDynamicLightToSceneQ3A(const vec3_t org, float intensity, float r, fl
 
 void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);
 void RE_RenderScene(const refdef_t *fd);
-void RE_SaveViewParms();
-void RE_RestoreViewParms();
+void RE_SaveViewParms(void);
+void RE_RestoreViewParms(void);
 
 /*
 =============================================================
