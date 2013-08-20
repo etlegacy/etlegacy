@@ -352,9 +352,11 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 			{
 				Vector4Set(line, x + grid_x, y + dim_y[0], 1.f, h);
 			}
+
 			line[0] *= cgs.screenXScale;
 			line[1] *= cgs.screenYScale;
 			line[3] *= cgs.screenYScale;
+
 			trap_R_DrawStretchPic(line[0], line[1], line[2], line[3], 0, 0, 0, 1, cgs.media.whiteShader);
 		}
 
@@ -1100,7 +1102,8 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			trap_R_DrawStretchPic(0, 0, 0, 0, 0, 0, 0, 0, cgs.media.whiteShader);   // HACK : the code above seems to do weird things to																	// the next trap_R_DrawStretchPic issued. This works																					// around this.
 		}
 		// Draw the grid
-		CG_DrawGrid(x, y, w, h, scissor);
+		//Disabled because this is bugged on widescreen
+		//CG_DrawGrid(x, y, w, h, scissor);
 	}
 	else
 	{

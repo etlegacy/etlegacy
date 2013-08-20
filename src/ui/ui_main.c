@@ -33,8 +33,8 @@
 
 #include "ui_local.h"
 
-extern qboolean  g_waitingForKey;
-extern qboolean  g_editingField;
+extern qboolean g_waitingForKey;
+extern qboolean g_editingField;
 
 uiInfo_t uiInfo;
 
