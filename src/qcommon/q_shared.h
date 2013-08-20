@@ -726,9 +726,6 @@ static ID_NONSTATIC_INLINE long Q_ftol(float f)
 	__asm fld f
 	__asm fistp tmp
 	__asm mov eax, tmp
-// TODO: qftolsse has not been ported yet
-//#elif idx64
-//	return qftolsse(f);
 #else
 	return (long)f;
 #endif
