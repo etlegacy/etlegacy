@@ -35,7 +35,6 @@
 
 extern qboolean  g_waitingForKey;
 extern qboolean  g_editingField;
-extern itemDef_t *g_editItem;
 
 uiInfo_t uiInfo;
 
