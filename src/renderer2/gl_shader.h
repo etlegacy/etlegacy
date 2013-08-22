@@ -150,11 +150,15 @@ protected:
 
 	void GetShaderText(const char *name, GLenum shaderType, char **data, int *size, qboolean append) const;
 
+	void GetShaderExtraDefines(char **defines, int *size) const;
+
 	void CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 	                                    const char *programName,
 	                                    const std::string &vertexShaderText,
 	                                    const std::string &fragmentShaderText,
 	                                    const std::string &compileMacros, int iteration) const;
+
+	void                OptimizeShader(const std::string &shader, const char *programname);
 
 	void                CompilePermutations();
 	virtual void        BuildShaderVertexLibNames(std::string& vertexInlines)
