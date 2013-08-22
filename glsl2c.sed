@@ -1,5 +1,17 @@
 # sed script to convert a text file to a C string
 
+/\/\*/{
+	# here we've got an /*, append lines until get the corresponding
+	# */
+	:x
+	/\*\//!{
+		N
+		bx
+	}
+	# delete /*...*/
+	s/\/\*.*\*\///
+}
+
 #1 iconst char *charName =	# the name of the string
 $ a\;
 /^M/d						# remove carriage return
