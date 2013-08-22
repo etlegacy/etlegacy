@@ -227,10 +227,10 @@ std::string GLShader::BuildGPUShaderText(const char *mainShaderName,
                                          GLenum shaderType) const
 {
 	GLchar *mainBuffer = NULL;
-	int    mainSize = 0;
+	int    mainSize    = 0;
 	char   *token;
 
-	int  libsSize = 0;
+	int  libsSize    = 0;
 	char *libsBuffer = NULL;        // all libs concatenated
 
 	char **libs = ( char ** ) &libShaderNames;
@@ -247,15 +247,15 @@ std::string GLShader::BuildGPUShaderText(const char *mainShaderName,
 		{
 			break;
 		}
-		GetShaderText(token,shaderType,&libsBuffer,&libsSize,qtrue);
+		GetShaderText(token, shaderType, &libsBuffer, &libsSize, qtrue);
 	}
 
 	// load main() program
-	GetShaderText(mainShaderName,shaderType,&mainBuffer,&mainSize,qfalse);
+	GetShaderText(mainShaderName, shaderType, &mainBuffer, &mainSize, qfalse);
 
-	if(!libsBuffer && !mainBuffer)
+	if (!libsBuffer && !mainBuffer)
 	{
-		ri.Error(ERR_FATAL,"Shader loading failed!\n");
+		ri.Error(ERR_FATAL, "Shader loading failed!\n");
 	}
 	{
 		static char bufferExtra[32000];
@@ -780,37 +780,37 @@ void GLShader::GetShaderText(const char *name, GLenum shaderType, char **data, i
 
 	if (shaderType == GL_VERTEX_SHADER)
 	{
-		Com_sprintf(fullname,sizeof(fullname),"%s_vp",name);
+		Com_sprintf(fullname, sizeof(fullname), "%s_vp", name);
 		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", fullname);
 	}
 	else
 	{
-		Com_sprintf(fullname,sizeof(fullname),"%s_fp",name);
+		Com_sprintf(fullname, sizeof(fullname), "%s_fp", name);
 		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", fullname);
 	}
-	
-	dataSize = ri.FS_ReadFile(va("glsl/%s.glsl",fullname), ( void ** ) &dataBuffer);
+
+	dataSize = ri.FS_ReadFile(va("glsl/%s.glsl", fullname), ( void ** ) &dataBuffer);
 
 	if (!dataBuffer)
 	{
 		const char *temp = NULL;
 
 		temp = GetFallbackShader(fullname);
-		if(temp)
+		if (temp)
 		{
 			//Found a fallback shader and will use it
 			int strl = 0;
 			strl = strlen(temp) + 1;
-			if(append && *size)
+			if (append && *size)
 			{
 				*data = ( char * ) realloc(*data, *size + strl);
 				memset(*data + *size, 0, strl);
-				
+
 			}
 			else
 			{
 				*data = (char *) malloc(strl);
-				memset(*data,0,strl);
+				memset(*data, 0, strl);
 			}
 
 			*size += strl;
@@ -826,7 +826,7 @@ void GLShader::GetShaderText(const char *name, GLenum shaderType, char **data, i
 	else
 	{
 		++dataSize; //We incease this for the newline
-		if(append && *size)
+		if (append && *size)
 		{
 			*data = ( char * ) realloc(*data, *size + dataSize);
 			memset(*data + *size, 0, dataSize);
@@ -834,7 +834,7 @@ void GLShader::GetShaderText(const char *name, GLenum shaderType, char **data, i
 		else
 		{
 			*data = (char *) malloc(dataSize);
-			memset(*data,0,dataSize);
+			memset(*data, 0, dataSize);
 		}
 
 		*size += dataSize;
@@ -843,12 +843,12 @@ void GLShader::GetShaderText(const char *name, GLenum shaderType, char **data, i
 		Q_strcat(*data, *size, "\n");
 	}
 
-	if(dataBuffer)
+	if (dataBuffer)
 	{
 		ri.FS_FreeFile(dataBuffer);
 	}
 
-	Com_Printf("Loaded shader '%s'\n",fullname);
+	Com_Printf("Loaded shader '%s'\n", fullname);
 }
 
 void GLShader::SaveShaderProgram(GLuint program, const char *pname, int i) const
@@ -1201,7 +1201,7 @@ void GLShader::CompileGPUShader(GLuint program, const char *programName, const c
 	{
 		PrintShaderSource(shader);
 		PrintInfoLog(shader, qfalse);
-		ri.FS_WriteFile(va("debug/%s_%s.debug",programName,(shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")),shaderText,shaderTextSize);
+		ri.FS_WriteFile(va("debug/%s_%s.debug", programName, (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")), shaderText, shaderTextSize);
 		ri.Error(ERR_FATAL, "Couldn't compile %s %s", (shaderType == GL_VERTEX_SHADER ? "vertex shader" : "fragment shader"), programName);
 		return;
 	}

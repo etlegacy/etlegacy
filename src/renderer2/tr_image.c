@@ -2092,7 +2092,7 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 		int        i;
 		const char *ext;
 		char       filename[MAX_QPATH];
-		char	   *altName;
+		char       *altName;
 		byte       alphaByte;
 
 		// Tr3B: clear alpha of normalmaps for displacement mapping
@@ -2111,51 +2111,51 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 
 		if (*ext)
 		{
-			// look for the correct loader and use it
-			for (i = 0; i < numImageLoaders; i++)
-			{
-				if (!Q_stricmp(ext, imageLoaders[i].ext))
-				{
-					// load
-					imageLoaders[i].ImageLoader(filename, pic, width, height, alphaByte);
-					break;
-				}
-			}
+		    // look for the correct loader and use it
+		    for (i = 0; i < numImageLoaders; i++)
+		    {
+		        if (!Q_stricmp(ext, imageLoaders[i].ext))
+		        {
+		            // load
+		            imageLoaders[i].ImageLoader(filename, pic, width, height, alphaByte);
+		            break;
+		        }
+		    }
 
-			// a loader was found
-			if (i < numImageLoaders)
-			{
-				if (*pic == NULL)
-				{
-					// loader failed, most likely because the file isn't there;
-					// try again without the extension
-					orgNameFailed = qtrue;
-					COM_StripExtension3(token, filename, MAX_QPATH);
-				}
-				else
-				{
-					// something loaded
-					return;
-				}
-			}
+		    // a loader was found
+		    if (i < numImageLoaders)
+		    {
+		        if (*pic == NULL)
+		        {
+		            // loader failed, most likely because the file isn't there;
+		            // try again without the extension
+		            orgNameFailed = qtrue;
+		            COM_StripExtension3(token, filename, MAX_QPATH);
+		        }
+		        else
+		        {
+		            // something loaded
+		            return;
+		        }
+		    }
 		}
 
 		// try and find a suitable match using all the image formats supported
 		for (i = 0; i < numImageLoaders; i++)
 		{
-			char *altName = va("%s.%s", filename, imageLoaders[i].ext);
+		    char *altName = va("%s.%s", filename, imageLoaders[i].ext);
 
-			// load
-			imageLoaders[i].ImageLoader(altName, pic, width, height, alphaByte);
+		    // load
+		    imageLoaders[i].ImageLoader(altName, pic, width, height, alphaByte);
 
-			if (*pic)
-			{
-				if (orgNameFailed)
-				{
-					//ri.Printf(PRINT_DEVELOPER, "WARNING: %s not present, using %s instead\n", token, altName);
-				}
-				break;
-			}
+		    if (*pic)
+		    {
+		        if (orgNameFailed)
+		        {
+		            //ri.Printf(PRINT_DEVELOPER, "WARNING: %s not present, using %s instead\n", token, altName);
+		        }
+		        break;
+		    }
 		}
 		*/
 		Q_strncpyz(filename, token, MAX_QPATH);
