@@ -189,7 +189,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		return;
 	}
 
-	if (!(cg.snap->ps.persistant[PERS_HWEAPON_USE]) && (cent->currentState.clientNum == cg.snap->ps.clientNum) && (!(cent->currentState.eFlags & EF_MG42_ACTIVE || cent->currentState.eFlags & EF_AAGUN_ACTIVE)))
+	if (!(cg.snap->ps.persistant[PERS_HWEAPON_USE]) && (cent->currentState.clientNum == cg.snap->ps.clientNum) && (!((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))))
 	{
 		CG_MachineGunEjectBrassNew(cent);
 		return;
@@ -208,7 +208,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	AnglesToAxis(cent->lerpAngles, v);
 
 	// new brass handling behavior because the SP stuff just doesn't cut it for MP
-	if (cent->currentState.eFlags & EF_MG42_ACTIVE || cent->currentState.eFlags & EF_AAGUN_ACTIVE)
+	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))
 	{
 		offset[0]             = 25;
 		offset[1]             = -4;
@@ -2500,7 +2500,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		return;
 	}
 
-	if (cent->currentState.eFlags & EF_MG42_ACTIVE || cent->currentState.eFlags & EF_AAGUN_ACTIVE)
+	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))
 	{
 		// MG42 Muzzle Flash
 		if (cg.time - cent->muzzleFlashTime < MUZZLE_FLASH_TIME)
@@ -2510,7 +2510,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		return;
 	}
 
-	if ((!ps || cg.renderingThirdPerson) && cent->currentState.eFlags & EF_PRONE_MOVING)
+	if ((!ps || cg.renderingThirdPerson) && (cent->currentState.eFlags & EF_PRONE_MOVING))
 	{
 		return;
 	}
@@ -2565,7 +2565,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		team_t team = cgs.clientinfo[cent->currentState.clientNum].team;
 
-		if ((weaponNum != WP_SATCHEL) && cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
+		if ((weaponNum != WP_SATCHEL) && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 		{
 			team = team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
 		}
@@ -2596,7 +2596,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		return;
 	}
 
-	if (!ps && cg.snap->ps.pm_flags & PMF_LADDER && isPlayer)          // player on ladder
+	if (!ps && (cg.snap->ps.pm_flags & PMF_LADDER) && isPlayer)          // player on ladder
 	{
 		if (debuggingweapon)
 		{
@@ -2804,13 +2804,13 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				if (drawpart)
 				{
 					if ((ps->persistant[PERS_TEAM] == TEAM_AXIS ||
-					     (ps->persistant[PERS_TEAM] == TEAM_ALLIES && cent->currentState.powerups & (1 << PW_OPS_DISGUISED))) &&
+					     (ps->persistant[PERS_TEAM] == TEAM_ALLIES && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))) &&
 					    weapon->partModels[W_FP_MODEL][i].skin[TEAM_AXIS])
 					{
 						barrel.customSkin = weapon->partModels[W_FP_MODEL][i].skin[TEAM_AXIS];
 					}
 					else if ((ps->persistant[PERS_TEAM] == TEAM_ALLIES ||
-					          (ps->persistant[PERS_TEAM] == TEAM_AXIS && cent->currentState.powerups & (1 << PW_OPS_DISGUISED))) &&
+					          (ps->persistant[PERS_TEAM] == TEAM_AXIS && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))) &&
 					         weapon->partModels[W_FP_MODEL][i].skin[TEAM_ALLIES])
 					{
 						barrel.customSkin = weapon->partModels[W_FP_MODEL][i].skin[TEAM_ALLIES];
@@ -3249,7 +3249,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	{
 		vec3_t origin;
 
-		if (cg.predictedPlayerState.eFlags & EF_FIRING && !(cg.predictedPlayerState.eFlags & (EF_MG42_ACTIVE | EF_MOUNTEDTANK)))
+		if ((cg.predictedPlayerState.eFlags & EF_FIRING) && !(cg.predictedPlayerState.eFlags & (EF_MG42_ACTIVE | EF_MOUNTEDTANK)))
 		{
 			// special hack for flamethrower...
 			VectorCopy(cg.refdef_current->vieworg, origin);
@@ -3293,7 +3293,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 		return;
 	}
 
-	if (ps->eFlags & EF_MG42_ACTIVE || ps->eFlags & EF_AAGUN_ACTIVE)
+	if ((ps->eFlags & EF_MG42_ACTIVE) || (ps->eFlags & EF_AAGUN_ACTIVE))
 	{
 		return;
 	}
@@ -3992,7 +3992,7 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 //      break;
 	}
 
-	if (lastweap == WP_BINOCULARS && cg.snap->ps.eFlags & EF_ZOOMING)
+	if (lastweap == WP_BINOCULARS && (cg.snap->ps.eFlags & EF_ZOOMING))
 	{
 		trap_SendConsoleCommand("-zoom\n");
 	}
@@ -5836,7 +5836,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			d[2] += 16;
 
 			//  use dirt images
-			if ((surfFlags & SURF_GRASS || surfFlags & SURF_GRAVEL || surfFlags & SURF_SNOW))       // added SURF_SNOW
+			if (((surfFlags & SURF_GRASS) || (surfFlags & SURF_GRAVEL) || (surfFlags & SURF_SNOW)))       // added SURF_SNOW
 			{   // some debris particles
 				// added surf_snow
 				if (surfFlags & SURF_SNOW)
@@ -5892,7 +5892,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 				radius = 1.0f + 0.5f * (rand() % 2);
 
 #define MAX_IMPACT_SOUNDS 5
-				if (surfFlags & SURF_METAL || surfFlags & SURF_ROOF)
+				if ((surfFlags & SURF_METAL) || (surfFlags & SURF_ROOF))
 				{
 					sfx  = cgs.media.sfx_bullet_metalhit[rand() % MAX_IMPACT_SOUNDS];
 					mark = cgs.media.bulletMarkShaderMetal;
@@ -5951,7 +5951,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			VectorCopy(origin, tmpv2);
 			tmpv2[2] -= 20;
 			trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
-			if (trace.surfaceFlags & SURF_GRASS || trace.surfaceFlags & SURF_GRAVEL)
+			if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
 			{
 				CG_AddDirtBulletParticles(origin, dir, 600, 2000, 10, 0.5, 275, 125, 0.25, cgs.media.dirtParticle1Shader);
 			}
@@ -6005,7 +6005,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			VectorSet(tmpv, origin[0], origin[1], origin[2] + 20);
 			VectorSet(tmpv2, origin[0], origin[1], origin[2] - 20);
 			trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
-			if (trace.surfaceFlags & SURF_GRASS || trace.surfaceFlags & SURF_GRAVEL)
+			if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
 			{
 				CG_AddDirtBulletParticles(origin, dir, 400 + random() * 200, 3000, 10, 0.5, 400, 256, 0.25, cgs.media.dirtParticle1Shader);
 			}
@@ -6105,7 +6105,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			VectorCopy(origin, tmpv2);
 			tmpv2[2] -= 20;
 			trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
-			if (trace.surfaceFlags & SURF_GRASS || trace.surfaceFlags & SURF_GRAVEL)
+			if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
 			{
 				CG_AddDirtBulletParticles(origin, dir, 400, 2000, 10, 0.5, 200, 75, 0.25, cgs.media.dirtParticle1Shader);
 			}
@@ -6164,7 +6164,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			tmpv2[2] -= 20;
 			trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
 
-			if (trace.surfaceFlags & SURF_GRASS || trace.surfaceFlags & SURF_GRAVEL)
+			if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
 			{
 				CG_AddDirtBulletParticles(origin, dir, 400 + random() * 200, 3000, 10, 0.5, 400, 256, 0.25, cgs.media.dirtParticle1Shader);
 			}
@@ -6352,7 +6352,7 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 	{
 		// for visual purposes, find the actual tag_weapon for this client
 		// and offset the start and end accordingly
-		if (!(cg_entities[sourceEnt].currentState.eFlags & EF_MG42_ACTIVE || cg_entities[sourceEnt].currentState.eFlags & EF_AAGUN_ACTIVE))          // not MG42
+		if (!((cg_entities[sourceEnt].currentState.eFlags & EF_MG42_ACTIVE) || (cg_entities[sourceEnt].currentState.eFlags & EF_AAGUN_ACTIVE)))          // not MG42
 		{
 			if (CG_GetWeaponTag(sourceEnt, "tag_flash", &or))
 			{
@@ -6684,7 +6684,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 	}
 
 	// snap tracers for MG42 to viewangle of client when antilag is enabled
-	if (cgs.antilag && otherEntNum2 == cg.snap->ps.clientNum && cg_entities[otherEntNum2].currentState.eFlags & EF_MG42_ACTIVE)
+	if (cgs.antilag && otherEntNum2 == cg.snap->ps.clientNum && (cg_entities[otherEntNum2].currentState.eFlags & EF_MG42_ACTIVE))
 	{
 		vec3_t muzzle, forward, right, up;
 		float r, u;
@@ -6900,8 +6900,8 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, i
 		int fromweap = WP_MP40; // cg_entities[sourceEntityNum].currentState.weapon;
 
 		if (!fromweap ||
-		    cg_entities[sourceEntityNum].currentState.eFlags & EF_MG42_ACTIVE ||
-		    cg_entities[sourceEntityNum].currentState.eFlags & EF_MOUNTEDTANK)        // mounted
+		    (cg_entities[sourceEntityNum].currentState.eFlags & EF_MG42_ACTIVE) ||
+		    (cg_entities[sourceEntityNum].currentState.eFlags & EF_MOUNTEDTANK))        // mounted
 		{
 			fromweap = WP_MP40;
 		}

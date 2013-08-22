@@ -905,7 +905,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			w = CG_Text_Width_Ext(name, 0.2f, 0, &cgs.media.limboFont2);
 			CG_CommandMap_SetHighlightText(name, icon_pos[0] - (w * 0.5f), icon_pos[1] - 8);
 		}
-		else if (interactive && (mEnt->yaw & 0xFF) & (1 << cgs.ccSelectedObjective))
+		else if (interactive && ((mEnt->yaw & 0xFF) & (1 << cgs.ccSelectedObjective)))
 		{
 			float scalesize;
 			int   time = cg.time % 1400;
@@ -1099,11 +1099,16 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			{
 				trap_R_DrawStretchPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1, cgs.media.commandCentreAutomapShader[0]);
 			}
-			trap_R_DrawStretchPic(0, 0, 0, 0, 0, 0, 0, 0, cgs.media.whiteShader);   // HACK : the code above seems to do weird things to																	// the next trap_R_DrawStretchPic issued. This works																					// around this.
+			trap_R_DrawStretchPic(0, 0, 0, 0, 0, 0, 0, 0, cgs.media.whiteShader);   // HACK : the code above seems to do weird things to
+			                                                                        // the next trap_R_DrawStretchPic issued. This works
+			                                                                        // around this.
 		}
 		// Draw the grid
-		//Disabled because this is bugged on widescreen
-		//CG_DrawGrid(x, y, w, h, scissor);
+		// FIXME: Disabled on widescreen because this is bugged
+		if (cgs.glconfig.windowAspect <= RATIO43)
+		{
+			CG_DrawGrid(x, y, w, h, scissor);
+		}
 	}
 	else
 	{

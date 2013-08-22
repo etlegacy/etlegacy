@@ -836,7 +836,7 @@ void CG_AddFragment(localEntity_t *le)
 		// still in free fall
 		VectorCopy(newOrigin, le->refEntity.origin);
 
-		if (le->leFlags & LEF_TUMBLE || le->angles.trType == TR_LINEAR)
+		if ((le->leFlags & LEF_TUMBLE) || le->angles.trType == TR_LINEAR)
 		{
 			vec3_t angles;
 
