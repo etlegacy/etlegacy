@@ -41,79 +41,6 @@ struct glslopt_ctx *s_glslOptimizer;
 #endif
 // *INDENT-OFF*
 
-extern const char *fallbackShader_bloom_fp;
-extern const char *fallbackShader_bloom_vp;
-extern const char *fallbackShader_blurx_fp;
-extern const char *fallbackShader_blurx_vp;
-extern const char *fallbackShader_blury_fp;
-extern const char *fallbackShader_blury_vp;
-extern const char *fallbackShader_cameraeffects_fp;
-extern const char *fallbackShader_cameraeffects_vp;
-extern const char *fallbackShader_contrast_fp;
-extern const char *fallbackShader_contrast_vp;
-extern const char *fallbackShader_debugshadowmap_fp;
-extern const char *fallbackShader_debugshadowmap_vp;
-extern const char *fallbackShader_deferredlighting_fp;
-extern const char *fallbackShader_deferredlighting_vp;
-extern const char *fallbackShader_deferredshadowing_proj_fp;
-extern const char *fallbackShader_deferredshadowing_proj_vp;
-extern const char *fallbackShader_deformvertexes_vp;
-extern const char *fallbackShader_depthfill_fp;
-extern const char *fallbackShader_depthfill_vp;
-extern const char *fallbackShader_depthoffield_fp;
-extern const char *fallbackShader_depthoffield_vp;
-extern const char *fallbackShader_depthtocolor_fp;
-extern const char *fallbackShader_depthtocolor_vp;
-extern const char *fallbackShader_dispersion_c_fp;
-extern const char *fallbackShader_dispersion_c_vp;
-extern const char *fallbackShader_fogglobal_fp;
-extern const char *fallbackShader_fogglobal_vp;
-extern const char *fallbackShader_fogquake3_fp;
-extern const char *fallbackShader_fogquake3_vp;
-extern const char *fallbackShader_forwardlighting_fp;
-extern const char *fallbackShader_forwardlighting_vp;
-extern const char *fallbackShader_generic_fp;
-extern const char *fallbackShader_generic_vp;
-extern const char *fallbackShader_geometricfill_fp;
-extern const char *fallbackShader_geometricfill_vp;
-extern const char *fallbackShader_heathaze_fp;
-extern const char *fallbackShader_heathaze_vp;
-extern const char *fallbackShader_lightmapping_fp;
-extern const char *fallbackShader_lightmapping_vp;
-extern const char *fallbackShader_lightvolume_omni_fp;
-extern const char *fallbackShader_lightvolume_omni_vp;
-extern const char *fallbackShader_liquid_fp;
-extern const char *fallbackShader_liquid_vp;
-extern const char *fallbackShader_portal_fp;
-extern const char *fallbackShader_portal_vp;
-extern const char *fallbackShader_reflection_cb_fp;
-extern const char *fallbackShader_reflection_cb_vp;
-extern const char *fallbackShader_reflection_c_fp;
-extern const char *fallbackShader_reflection_c_vp;
-extern const char *fallbackShader_refraction_c_fp;
-extern const char *fallbackShader_refraction_c_vp;
-extern const char *fallbackShader_reliefmapping_fp;
-extern const char *fallbackShader_rotoscope_fp;
-extern const char *fallbackShader_rotoscope_vp;
-extern const char *fallbackShader_screenspaceambientocclusion_fp;
-extern const char *fallbackShader_screenspaceambientocclusion_vp;
-extern const char *fallbackShader_screen_fp;
-extern const char *fallbackShader_screen_vp;
-extern const char *fallbackShader_shadowfill_fp;
-extern const char *fallbackShader_shadowfill_vp;
-extern const char *fallbackShader_skybox_fp;
-extern const char *fallbackShader_skybox_vp;
-extern const char *fallbackShader_tonemapping_fp;
-extern const char *fallbackShader_tonemapping_vp;
-extern const char *fallbackShader_vertexanimation_vp;
-extern const char *fallbackShader_vertexlighting_dbs_entity_fp;
-extern const char *fallbackShader_vertexlighting_dbs_entity_vp;
-extern const char *fallbackShader_vertexlighting_dbs_world_fp;
-extern const char *fallbackShader_vertexlighting_dbs_world_vp;
-extern const char *fallbackShader_vertexskinning_vp;
-extern const char *fallbackShader_volumetricfog_fp;
-extern const char *fallbackShader_volumetricfog_vp;
-
 GLShader_generic                         *gl_genericShader                         = NULL;
 GLShader_lightMapping                    *gl_lightMappingShader                    = NULL;
 GLShader_vertexLighting_DBS_entity       *gl_vertexLightingShader_DBS_entity       = NULL;
@@ -295,15 +222,10 @@ void GLShader::UpdateShaderProgramUniformLocations(shaderProgram_t *shaderProgra
 	}
 }
 
-#define ignore_fallbackshaders 1
-
 std::string GLShader::BuildGPUShaderText(const char *mainShaderName,
                                          const char *libShaderNames,
                                          GLenum shaderType) const
 {
-#if ignore_fallbackshaders
-	char   filename[MAX_QPATH];
-#endif
 	GLchar *mainBuffer = NULL;
 	int    mainSize = 0;
 	char   *token;
@@ -319,80 +241,22 @@ std::string GLShader::BuildGPUShaderText(const char *mainShaderName,
 
 	while (1)
 	{
-#if ignore_fallbackshaders
-		int  libSize;
-		char *libBuffer; // single extra lib file
-#endif
 		token = COM_ParseExt2(libs, qfalse);
 
 		if (!token[0])
 		{
 			break;
 		}
-#if ignore_fallbackshaders
-		if (shaderType == GL_VERTEX_SHADER)
-		{
-			Com_sprintf(filename, sizeof(filename), "glsl/%s_vp.glsl", token);
-			ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", filename);
-		}
-		else
-		{
-			Com_sprintf(filename, sizeof(filename), "glsl/%s_fp.glsl", token);
-			ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", filename);
-		}
-
-		libSize = ri.FS_ReadFile(filename, ( void ** ) &libBuffer);
-
-		if (!libBuffer)
-		{
-			ri.Error(ERR_DROP, "Couldn't load %s", filename);
-		}
-
-		// append it to the libsBuffer
-		libsBuffer = ( char * ) realloc(libsBuffer, libsSize + libSize);
-
-		memset(libsBuffer + libsSize, 0, libSize);
-		libsSize += libSize;
-
-		Q_strcat(libsBuffer, libsSize, libBuffer);
-		//Q_strncpyz(libsBuffer + libsSize, libBuffer, libSize -1);
-
-		ri.FS_FreeFile(libBuffer);
-#else
 		GetShaderText(token,shaderType,&libsBuffer,&libsSize,qtrue);
-#endif
 	}
 
 	// load main() program
-#if !ignore_fallbackshaders
 	GetShaderText(mainShaderName,shaderType,&mainBuffer,&mainSize,qfalse);
-
-
-	Com_Printf("%s\n%s\n",libsBuffer,mainBuffer);
 
 	if(!libsBuffer && !mainBuffer)
 	{
 		ri.Error(ERR_FATAL,"Shader loading failed!\n");
 	}
-#else
-	if (shaderType == GL_VERTEX_SHADER)
-	{
-		Com_sprintf(filename, sizeof(filename), "glsl/%s_vp.glsl", mainShaderName);
-		ri.Printf(PRINT_ALL, "...loading vertex main() shader '%s'\n", filename);
-	}
-	else
-	{
-		Com_sprintf(filename, sizeof(filename), "glsl/%s_fp.glsl", mainShaderName);
-		ri.Printf(PRINT_ALL, "...loading fragment main() shader '%s'\n", filename);
-	}
-
-	mainSize = ri.FS_ReadFile(filename, ( void ** ) &mainBuffer);
-
-	if (!mainBuffer)
-	{
-		ri.Error(ERR_DROP, "Couldn't load %s", filename);
-	}
-#endif
 	{
 		static char bufferExtra[32000];
 		int         sizeExtra;
@@ -902,11 +766,7 @@ std::string GLShader::BuildGPUShaderText(const char *mainShaderName,
 
 		ri.Hunk_FreeTempMemory(bufferFinal);
 	}
-#if ignore_fallbackshaders
-	ri.FS_FreeFile(mainBuffer);
-#else
 	free(mainBuffer);
-#endif
 	free(libsBuffer);
 
 	return shaderText;
@@ -914,45 +774,38 @@ std::string GLShader::BuildGPUShaderText(const char *mainShaderName,
 
 void GLShader::GetShaderText(const char *name, GLenum shaderType, char **data, int *size, qboolean append) const
 {
-	char   filename[MAX_QPATH];
+	char fullname[MAX_QPATH];
 	int  dataSize;
 	char *dataBuffer;
 
 	if (shaderType == GL_VERTEX_SHADER)
 	{
-		Com_sprintf(filename, sizeof(filename), "glsl/%s_vp.glsl", name);
-		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", filename);
+		Com_sprintf(fullname,sizeof(fullname),"%s_vp",name);
+		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", fullname);
 	}
 	else
 	{
-		Com_sprintf(filename, sizeof(filename), "glsl/%s_fp.glsl", name);
-		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", filename);
+		Com_sprintf(fullname,sizeof(fullname),"%s_fp",name);
+		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", fullname);
 	}
 	
-	dataSize = ri.FS_ReadFile(filename, ( void ** ) &dataBuffer);
+	dataSize = ri.FS_ReadFile(va("glsl/%s.glsl",fullname), ( void ** ) &dataBuffer);
 
 	if (!dataBuffer)
 	{
 		const char *temp = NULL;
-		char fullname[MAX_QPATH];
-		if (shaderType == GL_VERTEX_SHADER)
-		{
-			Com_sprintf(fullname,sizeof(fullname),"%s_vp",name);
-		}
-		else
-		{
-			Com_sprintf(fullname,sizeof(fullname),"%s_fp",name);
-		}
-		
+
 		temp = GetFallbackShader(fullname);
 		if(temp)
 		{
+			//Found a fallback shader and will use it
 			int strl = 0;
-			strl = strlen(temp) * sizeof(char);
-			if(append && !*size)
+			strl = strlen(temp) + 1;
+			if(append && *size)
 			{
 				*data = ( char * ) realloc(*data, *size + strl);
 				memset(*data + *size, 0, strl);
+				
 			}
 			else
 			{
@@ -961,36 +814,41 @@ void GLShader::GetShaderText(const char *name, GLenum shaderType, char **data, i
 			}
 
 			*size += strl;
+
 			Q_strcat(*data, *size, temp);
-			
-			//ri.Error(ERR_FATAL, "Fallback name was: %s Len %i\n %s",fullname,strlen(data),data);
-			return;
+			Q_strcat(*data, *size, "\n");
 		}
 		else
 		{
-			ri.Error(ERR_FATAL, "Couldn't load %s", filename);
+			ri.Error(ERR_FATAL, "Couldn't load shader %s", fullname);
 		}
-	}
-
-	if(append && !*size)
-	{
-		*data = ( char * ) realloc(*data, *size + dataSize);
-		memset(*data + *size, 0, *size);
 	}
 	else
 	{
-		*data = (char *) malloc(*size);
-		memset(*data,0,dataSize);
+		++dataSize; //We incease this for the newline
+		if(append && *size)
+		{
+			*data = ( char * ) realloc(*data, *size + dataSize);
+			memset(*data + *size, 0, dataSize);
+		}
+		else
+		{
+			*data = (char *) malloc(dataSize);
+			memset(*data,0,dataSize);
+		}
+
+		*size += dataSize;
+
+		Q_strcat(*data, *size, dataBuffer);
+		Q_strcat(*data, *size, "\n");
 	}
 
-	*size += dataSize;
+	if(dataBuffer)
+	{
+		ri.FS_FreeFile(dataBuffer);
+	}
 
-	Q_strcat(*data, *size, dataBuffer);
-	//Q_strncpyz(libsBuffer + libsSize, libBuffer, libSize -1);
-
-	ri.FS_FreeFile(dataBuffer);
-
-	Com_Printf("Loaded: %s\n",filename);
+	Com_Printf("Loaded shader '%s'\n",fullname);
 }
 
 void GLShader::SaveShaderProgram(GLuint program, const char *pname, int i) const
@@ -1343,7 +1201,8 @@ void GLShader::CompileGPUShader(GLuint program, const char *programName, const c
 	{
 		PrintShaderSource(shader);
 		PrintInfoLog(shader, qfalse);
-		ri.Error(ERR_DROP, "Couldn't compile %s %s", (shaderType == GL_VERTEX_SHADER ? "vertex shader" : "fragment shader"), programName);
+		ri.FS_WriteFile(va("debug/%s_%s.debug",programName,(shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")),shaderText,shaderTextSize);
+		ri.Error(ERR_FATAL, "Couldn't compile %s %s", (shaderType == GL_VERTEX_SHADER ? "vertex shader" : "fragment shader"), programName);
 		return;
 	}
 
@@ -1449,7 +1308,7 @@ void GLShader::LinkProgram(GLuint program) const
 	if (!linked)
 	{
 		PrintInfoLog(program, qfalse);
-		ri.Error(ERR_DROP, "Shaders failed to link!!!");
+		ri.Error(ERR_FATAL, "Shaders failed to link!!!");
 	}
 }
 
@@ -1464,7 +1323,7 @@ void GLShader::ValidateProgram(GLuint program) const
 	if (!validated)
 	{
 		PrintInfoLog(program, qfalse);
-		ri.Error(ERR_DROP, "Shaders failed to validate!!!");
+		ri.Error(ERR_FATAL, "Shaders failed to validate!!!");
 	}
 }
 

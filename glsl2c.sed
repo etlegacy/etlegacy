@@ -14,7 +14,9 @@
 
 #1 iconst char *charName =	# the name of the string
 $ a\;
+s/\x1b\[.\{1,5\}m//g
 /^M/d						# remove carriage return
+s/\r//						# remove carriage return
 /^[ \t]*$/d					# remove empty lines
 /^[ \t]*\/\/.*$/d			# remove commented out lines
 s/\\/\\\\/g					# escapes backslashes

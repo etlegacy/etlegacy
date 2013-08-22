@@ -53,6 +53,3 @@ float RayIntersectDisplaceMap(vec2 dp, vec2 ds, sampler2D normalMap)
 	return bestDepth;
 }
 #endif
-
-
-
