@@ -5267,6 +5267,9 @@ void RE_Finish(void);
 void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qboolean doGamma, qboolean toneMap, qboolean compensate);
 void LoadRGBEToHalfs(const char *name, unsigned short **halfImage, int *width, int *height);
 
+// fallback shaders
+const char* GetFallbackShader(const char *name);
+
 #if defined(__cplusplus)
 }
 #endif
