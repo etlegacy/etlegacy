@@ -1942,12 +1942,12 @@ typedef struct
 // when there are multiple images of different formats available
 static imageExtToLoaderMap_t imageLoaders[] =
 {
-	{ "png",  R_LoadPNG },
 	{ "tga",  R_LoadTGA },
 	{ "jpg",  R_LoadJPG },
 	{ "jpeg", R_LoadJPG },
+	{ "png",  R_LoadPNG },
 	{ "pcx",  R_LoadPCX },
-	{ "bmp",  R_LoadBMP },
+	{ "bmp",  R_LoadBMP }
 };
 
 static int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
@@ -2092,6 +2092,7 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 		int        i;
 		const char *ext;
 		char       filename[MAX_QPATH];
+		char	   *altName;
 		byte       alphaByte;
 
 		// Tr3B: clear alpha of normalmaps for displacement mapping
@@ -2103,7 +2104,7 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 		{
 			alphaByte = 0xFF;
 		}
-
+		/*
 		Q_strncpyz(filename, token, sizeof(filename));
 
 		ext = COM_GetExtension(filename);
@@ -2155,6 +2156,35 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 				}
 				break;
 			}
+		}
+		*/
+		Q_strncpyz(filename, token, MAX_QPATH);
+
+		COM_StripExtension(token, filename, MAX_QPATH);
+
+		// Try and find a suitable match using all the image formats supported
+		// Searching is done in this order: tga, jp(e)g, png, pcx, bmp
+		for (i = 0; i < numImageLoaders; i++)
+		{
+			altName = va("%s.%s", filename, imageLoaders[i].ext);
+
+			// Check if file exists
+			if (ri.FS_FOpenFileRead(altName, NULL, qfalse))
+			{
+				// Load
+				imageLoaders[i].ImageLoader(altName, pic, width, height, alphaByte);
+			}
+
+			if (*pic)
+			{
+				break;
+			}
+		}
+
+		if (*pic == NULL)
+		{
+			// Loader failed, most likely because the file isn't there
+			ri.Printf(PRINT_DEVELOPER, "WARNING: %s not present in any supported image format\n", filename);
 		}
 	}
 }
@@ -2219,9 +2249,7 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 		}
 	}
 
-#if defined(USE_D3D10)
-	// TODO
-#else
+#if 0
 	if (glConfig.textureCompression == TC_S3TC && !(bits & IF_NOCOMPRESSION) && Q_stricmpn(imageName, "fonts", 5))
 	{
 		Q_strncpyz(ddsName, imageName, sizeof(ddsName));
@@ -2528,9 +2556,7 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 	}
 
 
-#if defined(USE_D3D10)
-	// TODO
-#else
+#if 0
 	if (glConfig.textureCompression == TC_S3TC && !(bits & IF_NOCOMPRESSION) && Q_stricmpn(imageName, "fonts", 5))
 	{
 		Q_strncpyz(ddsName, imageName, sizeof(ddsName));

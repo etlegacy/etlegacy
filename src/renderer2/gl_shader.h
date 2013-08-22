@@ -148,6 +148,10 @@ protected:
 	                               const char *libShaders,
 	                               GLenum shaderType) const;
 
+	void GetShaderText(const char *name, GLenum shaderType, char **data, int *size, qboolean append) const;
+
+	const char* GetFallbackShader(const char *name) const;
+
 	void CompileAndLinkGPUShaderProgram(shaderProgram_t *program,
 	                                    const char *programName,
 	                                    const std::string &vertexShaderText,
