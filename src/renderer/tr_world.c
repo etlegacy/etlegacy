@@ -241,7 +241,6 @@ static void R_AddWorldSurface(msurface_t *surf, shader_t *shader, int dlightMap,
 {
 	int frontFace;
 
-
 	if (surf->viewCount == tr.viewCount)
 	{
 		return;     // already in this view
@@ -338,7 +337,6 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 	bmodel_t         *bmodel;
 	int              savedNumDecalProjectors, numLocalProjectors;
 	decalProjector_t *savedDecalProjectors, localProjectors[MAX_DECAL_PROJECTORS];
-
 
 	pModel = R_GetModelByHandle(ent->e.hModel);
 

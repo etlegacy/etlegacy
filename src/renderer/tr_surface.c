@@ -200,7 +200,6 @@ void RB_AddQuadStampExt(vec3_t origin, vec3_t left, vec3_t up, byte *color, floa
 	tess.xyz[ndx + 3].v[1] = origin[1] + left[1] - up[1];
 	tess.xyz[ndx + 3].v[2] = origin[2] + left[2] - up[2];
 
-
 	// constant normal all the way around
 	VectorSubtract(vec3_origin, backEnd.viewParms.orientation.axis[0], normal);
 
@@ -252,10 +251,9 @@ RB_SurfaceSplash
 static void RB_SurfaceSplash(void)
 {
 	vec3_t left, up;
-	float  radius;
+	float  radius = backEnd.currentEntity->e.radius;
 
 	// calculate the xyz locations for the four corners
-	radius = backEnd.currentEntity->e.radius;
 
 	VectorSet(left, -radius, 0, 0);
 	VectorSet(up, 0, radius, 0);
@@ -275,10 +273,10 @@ RB_SurfaceSprite
 static void RB_SurfaceSprite(void)
 {
 	vec3_t left, up;
-	float  radius;
+	float  radius = backEnd.currentEntity->e.radius;
 
 	// calculate the xyz locations for the four corners
-	radius = backEnd.currentEntity->e.radius;
+
 	if (backEnd.currentEntity->e.rotation == 0)
 	{
 		VectorScale(backEnd.viewParms.orientation.axis[1], radius, left);
@@ -286,12 +284,9 @@ static void RB_SurfaceSprite(void)
 	}
 	else
 	{
-		float s, c;
-		float ang;
-
-		ang = M_PI * backEnd.currentEntity->e.rotation / 180;
-		s   = sin(ang);
-		c   = cos(ang);
+		float ang = M_PI * backEnd.currentEntity->e.rotation / 180;
+		float s   = sin(ang);
+		float c   = cos(ang);
 
 		VectorScale(backEnd.viewParms.orientation.axis[1], c * radius, left);
 		VectorMA(left, -s * radius, backEnd.viewParms.orientation.axis[2], left);
@@ -428,22 +423,15 @@ RB_SurfaceFoliage
 */
 void RB_SurfaceFoliage(srfFoliage_t *srf)
 {
-	int               o, i, a, numVerts, numIndexes;
+	int               o, i, a;
+	int               numVerts = srf->numVerts, numIndexes = srf->numIndexes;   // basic setup
 	vec4_t            distanceCull, distanceVector;
-	float             alpha, z, dist, fovScale;
+	float             alpha, z, dist, fovScale = backEnd.viewParms.fovX * (1.0 / 90.0);
 	vec3_t            local;
 	vec_t             *xyz;
 	int               srcColor, *color;
 	int               dlightBits;
 	foliageInstance_t *instance;
-
-
-	// basic setup
-	numVerts   = srf->numVerts;
-	numIndexes = srf->numIndexes;
-
-	// set fov scale
-	fovScale = backEnd.viewParms.fovX * (1.0 / 90.0);
 
 	// calculate distance vector
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
@@ -570,14 +558,12 @@ RB_SurfaceBeam
 void RB_SurfaceBeam(void)
 {
 #define NUM_BEAM_SEGS 6
-	refEntity_t *e;
+	refEntity_t *e = &backEnd.currentEntity->e;
 	int         i;
 	vec3_t      perpvec;
 	vec3_t      direction, normalized_direction;
 	vec3_t      start_points[NUM_BEAM_SEGS], end_points[NUM_BEAM_SEGS];
 	vec3_t      oldorigin, origin;
-
-	e = &backEnd.currentEntity->e;
 
 	oldorigin[0] = e->oldorigin[0];
 	oldorigin[1] = e->oldorigin[1];
@@ -626,10 +612,8 @@ void RB_SurfaceBeam(void)
 static void DoRailCore(const vec3_t start, const vec3_t end, const vec3_t up, float len, float spanWidth)
 {
 	float spanWidth2;
-	int   vbase;
+	int   vbase = tess.numVertexes;
 	float t;       // = len / 256.0f;
-
-	vbase = tess.numVertexes;
 
 	// configurable tile
 	if (backEnd.currentEntity->e.radius > 0)
@@ -757,14 +741,12 @@ RB_SurfaceRailRinges
 */
 void RB_SurfaceRailRings(void)
 {
-	refEntity_t *e;
+	refEntity_t *e = &backEnd.currentEntity->e;
 	int         numSegs;
 	int         len;
 	vec3_t      vec;
 	vec3_t      right, up;
 	vec3_t      start, end;
-
-	e = &backEnd.currentEntity->e;
 
 	VectorCopy(e->oldorigin, start);
 	VectorCopy(e->origin, end);
@@ -789,14 +771,12 @@ RB_SurfaceRailCore
 */
 void RB_SurfaceRailCore(void)
 {
-	refEntity_t *e;
+	refEntity_t *e = &backEnd.currentEntity->e;
 	int         len;
 	vec3_t      right;
 	vec3_t      vec;
 	vec3_t      start, end;
 	vec3_t      v1, v2;
-
-	e = &backEnd.currentEntity->e;
 
 	VectorCopy(e->oldorigin, start);
 	VectorCopy(e->origin, end);
@@ -820,7 +800,7 @@ RB_SurfaceLightningBolt
 */
 void RB_SurfaceLightningBolt(void)
 {
-	refEntity_t *e;
+	refEntity_t *e = &backEnd.currentEntity->e;
 	int         len;
 	vec3_t      right;
 	vec3_t      vec;
@@ -828,8 +808,6 @@ void RB_SurfaceLightningBolt(void)
 	vec3_t      v1, v2;
 	vec3_t      temp;
 	int         i;
-
-	e = &backEnd.currentEntity->e;
 
 	VectorCopy(e->oldorigin, end);
 	VectorCopy(e->origin, start);
@@ -1066,8 +1044,7 @@ static void LerpCMeshVertexes(mdcSurface_t *surf, float backlerp)
 	short              *oldComp    = NULL, *newComp = NULL;
 	mdcXyzCompressed_t *oldXyzComp = NULL, *newXyzComp = NULL;
 	vec3_t             oldOfsVec, newOfsVec;
-
-	qboolean hasComp;
+	qboolean           hasComp;
 
 	outXyz    = tess.xyz[tess.numVertexes].v;
 	outNormal = tess.normal[tess.numVertexes].v;
@@ -1100,7 +1077,6 @@ static void LerpCMeshVertexes(mdcSurface_t *surf, float backlerp)
 		     newXyz += 4, newNormals += 4,
 		     outXyz += 4, outNormal += 4)
 		{
-
 			outXyz[0] = newXyz[0] * newXyzScale;
 			outXyz[1] = newXyz[1] * newXyzScale;
 			outXyz[2] = newXyz[2] * newXyzScale;
@@ -1382,10 +1358,9 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 	float         lodError;
 	int           lodWidth, lodHeight;
 	int           numVertexes;
-	int           dlightBits;
+	int           dlightBits = cv->dlightBits;
 	qboolean      needsNormal;
 
-	dlightBits       = cv->dlightBits;
 	tess.dlightBits |= dlightBits;
 
 	// determine the allowable discrepance
@@ -1418,7 +1393,6 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 	}
 	heightTable[lodHeight] = cv->height - 1;
 	lodHeight++;
-
 
 	// very large grids may have more points or indexes than can be fit
 	// in the tess structure, so we may have to issue it in multiple passes
@@ -1496,13 +1470,11 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 
 		// add the indexes
 		{
-			int numIndexes;
-			int w, h;
+			int numIndexes = tess.numIndexes;
 			int v1, v2, v3, v4;
+			int h = rows - 1;
+			int w = lodWidth - 1;
 
-			h          = rows - 1;
-			w          = lodWidth - 1;
-			numIndexes = tess.numIndexes;
 			for (i = 0 ; i < h ; i++)
 			{
 				for (j = 0 ; j < w ; j++)

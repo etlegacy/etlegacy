@@ -143,15 +143,12 @@ R_CullModel
 */
 static int R_CullModel(mdsHeader_t *header, trRefEntity_t *ent)
 {
-	vec3_t     bounds[2];
-	mdsFrame_t *oldFrame, *newFrame;
-	int        i, frameSize;
-
-	frameSize = (int) (sizeof(mdsFrame_t) - sizeof(mdsBoneFrameCompressed_t) + header->numBones * sizeof(mdsBoneFrameCompressed_t));
-
+	vec3_t bounds[2];
+	int    i;
+	int    frameSize = (int) (sizeof(mdsFrame_t) - sizeof(mdsBoneFrameCompressed_t) + header->numBones * sizeof(mdsBoneFrameCompressed_t));
 	// compute frame pointers
-	newFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.frame * frameSize);
-	oldFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.oldframe * frameSize);
+	mdsFrame_t *newFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.frame * frameSize);
+	mdsFrame_t *oldFrame = ( mdsFrame_t * )(( byte * ) header + header->ofsFrames + ent->e.oldframe * frameSize);
 
 	// cull bounding sphere ONLY if this is not an upscaled entity
 	if (!ent->e.nonNormalizedAxes)

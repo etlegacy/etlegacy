@@ -675,7 +675,9 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	{
 		// copy xyz
 		for (j = 0; j < 3; j++)
+		{
 			foliage->instances[i].origin[j] = LittleFloat(verts[i].xyz[j]);
+		}
 		VectorAdd(bounds[0], foliage->instances[i].origin, boundsTranslated[0]);
 		VectorAdd(bounds[1], foliage->instances[i].origin, boundsTranslated[1]);
 		AddPointToBounds(boundsTranslated[0], foliage->bounds[0], foliage->bounds[1]);
@@ -854,7 +856,6 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 			{
 				for (m = 0; m < 2; m++)
 				{
-
 					if (m)
 					{
 						offset2 = (grid2->height - 1) * grid2->width;
@@ -889,7 +890,6 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 				}
 				for (m = 0; m < 2; m++)
 				{
-
 					if (m)
 					{
 						offset2 = grid2->width - 1;
@@ -1798,10 +1798,10 @@ R_StitchAllPatches
 */
 void R_StitchAllPatches(void)
 {
-	int           i, stitched, numstitches;
+	int           i, numstitches = 0;
 	srfGridMesh_t *grid1;
+	qboolean      stitched;
 
-	numstitches = 0;
 	do
 	{
 		stitched = qfalse;
@@ -2557,7 +2557,7 @@ qboolean R_GetEntityToken(char *buffer, int size)
 
 /*
 ============
-RE__StripExtensionForWorldDir
+RE_StripExtensionForWorldDir
 ============
 */
 void RE_StripExtensionForWorldDir(const char *in, char *out)
@@ -2698,7 +2698,7 @@ void RE_LoadWorldMap(const char *name)
 	// reset fog to world fog (if present)
 	R_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
 
-	//----(SA)  set the sun shader if there is one
+	// set the sun shader if there is one
 	if (tr.sunShaderName)
 	{
 		tr.sunShader = R_FindShader(tr.sunShaderName, LIGHTMAP_NONE, qtrue);

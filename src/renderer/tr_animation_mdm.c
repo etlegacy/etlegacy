@@ -352,16 +352,11 @@ R_MDM_AddAnimSurfaces
 */
 void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 {
-	mdmHeader_t  *header;
+	mdmHeader_t  *header = tr.currentModel->model.mdm;
 	mdmSurface_t *surface;
 	shader_t     *shader = 0;
 	int          i, fogNum, cull;
-	qboolean     personalModel;
-
-	// don't add third_person objects if not in a portal
-	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
-
-	header = tr.currentModel->model.mdm;
+	qboolean     personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal; // don't add third_person objects if not in a portal
 
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum.
@@ -647,6 +642,7 @@ ID_INLINE void Matrix4MultiplyInto3x3AndTranslation(/*const*/ vec4_t a[4], /*con
 ID_INLINE void Matrix4Transpose(const vec4_t matrix[4], vec4_t transpose[4])
 {
 	int i, j;
+
 	for (i = 0; i < 4; i++)
 	{
 		for (j = 0; j < 4; j++)
@@ -659,6 +655,7 @@ ID_INLINE void Matrix4Transpose(const vec4_t matrix[4], vec4_t transpose[4])
 ID_INLINE void Matrix4FromAxis(const vec3_t axis[3], vec4_t dst[4])
 {
 	int i, j;
+
 	for (i = 0; i < 3; i++)
 	{
 		for (j = 0; j < 3; j++)
@@ -719,6 +716,7 @@ ID_INLINE void Matrix4FromTranslation(const vec3_t t, vec4_t dst[4])
 ID_INLINE void Matrix4FromAxisPlusTranslation(/*const*/ vec3_t axis[3], const vec3_t t, vec4_t dst[4])
 {
 	int i, j;
+
 	for (i = 0; i < 3; i++)
 	{
 		for (j = 0; j < 3; j++)
@@ -792,6 +790,7 @@ ID_INLINE void Matrix4TransformVector(const vec4_t m[4], const vec3_t src, vec3_
 ID_INLINE void Matrix3Transpose(const vec3_t matrix[3], vec3_t transpose[3])
 {
 	int i, j;
+
 	for (i = 0; i < 3; i++)
 	{
 		for (j = 0; j < 3; j++)
