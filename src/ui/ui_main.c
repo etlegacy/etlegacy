@@ -68,7 +68,7 @@ static void UI_StartServerRefresh(qboolean full);
 static void UI_StopServerRefresh(void);
 static void UI_DoServerRefresh(void);
 static void UI_FeederSelection(float feederID, int index);
-qboolean UI_FeederSelectionClick(itemDef_t *item);
+static qboolean UI_FeederSelectionClick(itemDef_t *item);
 static void UI_BuildServerDisplayList(qboolean force);
 static void UI_BuildServerStatus(qboolean force);
 static void UI_BuildFindPlayerList(qboolean force);
@@ -4365,6 +4365,11 @@ void UI_RunMenuScript(char **args)
 				}
 			}
 		}
+		else if (Q_stricmp(name, "removeFavorites") == 0)
+		{
+			UI_RemoveAllFavourites_f();
+			UI_BuildServerDisplayList(qtrue);
+		}
 		else if (Q_stricmp(name, "createFavorite") == 0)
 		{
 			if (ui_netSource.integer == AS_FAVORITES)
@@ -5451,7 +5456,6 @@ static void UI_BuildServerDisplayList(qboolean force)
 		ping = trap_LAN_GetServerPing(ui_netSource.integer, i);
 		if (ping > /*=*/ 0 || ui_netSource.integer == AS_FAVORITES)
 		{
-
 			trap_LAN_GetServerInfo(ui_netSource.integer, i, info, MAX_STRING_CHARS);
 
 			clients                                  = atoi(Info_ValueForKey(info, "clients"));
@@ -6410,10 +6414,11 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 						return "???";
 					}
 				}
-				else
-				{
-					return "???";
-				}
+				//else
+				//{
+				//	return "???";
+				//}
+				return "???";
 			case SORT_PING:
 				if (ping <= 0)
 				{
@@ -6695,7 +6700,7 @@ static qhandle_t UI_FeederItemImage(float feederID, int index)
 	return 0;
 }
 
-void UI_FeederSelection(float feederID, int index)
+static void UI_FeederSelection(float feederID, int index)
 {
 	static char info[MAX_STRING_CHARS];
 
@@ -6864,7 +6869,7 @@ void UI_FeederSelection(float feederID, int index)
 
 extern void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click);
 
-qboolean UI_FeederSelectionClick(itemDef_t *item)
+static qboolean UI_FeederSelectionClick(itemDef_t *item)
 {
 	listBoxDef_t *listPtr = (listBoxDef_t *)item->typeData;
 
@@ -7160,7 +7165,7 @@ void _UI_Init(void)
 	// for 640x480 virtualized screen
 	uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * (1.0 / 480.0);
 	uiInfo.uiDC.xscale = uiInfo.uiDC.glconfig.vidWidth * (1.0 / 640.0);
-	if (uiInfo.uiDC.glconfig.vidWidth * 480 > uiInfo.uiDC.glconfig.vidHeight * 640)
+	if (uiInfo.uiDC.glconfig.vidWidth * SCREEN_HEIGHT > uiInfo.uiDC.glconfig.vidHeight * SCREEN_WIDTH)
 	{
 		// wide screen
 		uiInfo.uiDC.bias = 0.5 * (uiInfo.uiDC.glconfig.vidWidth - (uiInfo.uiDC.glconfig.vidHeight * (640.0 / 480.0)));
@@ -7297,7 +7302,8 @@ void _UI_Init(void)
 	trap_AddCommand("campaign");
 	trap_AddCommand("listcampaigns");
 
-	trap_AddCommand("listfav");
+	trap_AddCommand("listfavs");
+	trap_AddCommand("removefavs");
 }
 
 void _UI_KeyEvent(int key, qboolean down)
@@ -8143,7 +8149,7 @@ void UI_ListCampaigns_f(void)
 }
 
 /**
- * @brief prints favourite servers list to console
+ * @brief Prints favourite servers list to console
  *
  * FIXME: WIP - values (clients, mapname) are not in sync with real server status because of master server delay?
  *        -> get the values directly from the servers ...
@@ -8179,6 +8185,16 @@ void UI_ListFavourites_f(void)
 	{
 		Com_Printf("%s\n", trap_TranslateString("No favourite servers found."));
 	}
+}
+
+/**
+ * @brief Removes all favourite servers from cache
+ */
+void UI_RemoveAllFavourites_f(void)
+{
+	trap_LAN_RemoveServer(AS_FAVORITES_ALL, "");
+
+	Com_Printf("%s\n", trap_TranslateString("All favourite servers removed."));
 }
 
 #ifdef __AROS__

@@ -137,9 +137,14 @@ qboolean UI_ConsoleCommand(int realTime)
 		UI_Cache_f();
 		return qtrue;
 	}
-	else if (Q_stricmp(cmd, "listfav") == 0)
+	else if (Q_stricmp(cmd, "listfavs") == 0)
 	{
 		UI_ListFavourites_f();
+		return qtrue;
+	}
+	else if (Q_stricmp(cmd, "removefavs") == 0)
+	{
+		UI_RemoveAllFavourites_f();
 		return qtrue;
 	}
 

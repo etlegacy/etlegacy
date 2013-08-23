@@ -791,7 +791,7 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	y = menu->window.rect.y;
 
 	r              = &menu->window.rect;
-	fullscreenMenu = (r->x == 0 && r->y == 0 && r->w == 640 && r->h == 480);
+	fullscreenMenu = (r->x == 0 && r->y == 0 && r->w == SCREEN_WIDTH && r->h == SCREEN_HEIGHT);
 	centered       = (r->x == 16 && r->w == 608);
 	menuName       = menu->window.name;
 
@@ -802,7 +802,7 @@ void Menu_UpdatePosition(menuDef_t *menu)
 		itemName = menu->items[i]->window.name;
 		// fullscreen menu/item..
 		r              = &menu->items[i]->window.rectClient;
-		fullscreenItem = (r->x == 0 && r->y == 0 && r->w == 640 && r->h == 480);
+		fullscreenItem = (r->x == 0 && r->y == 0 && r->w == SCREEN_WIDTH && r->h == SCREEN_HEIGHT);
 
 		if (fullscreenItem)
 		{
@@ -853,8 +853,8 @@ void Menu_PostParse(menuDef_t *menu)
 	{
 		menu->window.rect.x = 0;
 		menu->window.rect.y = 0;
-		menu->window.rect.w = 640;
-		menu->window.rect.h = 480;
+		menu->window.rect.w = SCREEN_WIDTH;
+		menu->window.rect.h = SCREEN_HEIGHT;
 	}
 	Menu_UpdatePosition(menu);
 }

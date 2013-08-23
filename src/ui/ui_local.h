@@ -269,6 +269,7 @@ void UI_Campaign_f(void);
 void UI_ListCampaigns_f(void);
 
 void UI_ListFavourites_f(void);
+void UI_RemoveAllFavourites_f(void);
 
 #define GLINFO_LINES        256
 
