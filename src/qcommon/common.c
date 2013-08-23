@@ -2224,7 +2224,6 @@ sysEvent_t Com_GetSystemEvent(void)
 	}
 #endif
 
-
 	// check for console commands
 	s = Sys_ConsoleInput();
 	if (s)
@@ -2454,7 +2453,6 @@ int Com_EventLoop(void)
 		switch (ev.evType)
 		{
 		default:
-			// bk001129 - was ev.evTime
 			Com_Error(ERR_FATAL, "Com_EventLoop: bad event type %i", ev.evType);
 			break;
 		case SE_NONE:
@@ -2464,7 +2462,6 @@ int Com_EventLoop(void)
 			break;
 		case SE_CHAR:
 #ifndef DEDICATED
-			// fretn
 			// we just pressed the console button,
 			// so ignore this event
 			// this prevents chars appearing at console input
@@ -2775,7 +2772,7 @@ void Com_Init(char *commandLine)
 
 	Com_InitJournaling();
 
-	com_cleanwhitelist = Cvar_Get("com_cleanwhitelist", "z_hdet", CVAR_ARCHIVE);
+	com_cleanwhitelist = Cvar_Get("com_cleanwhitelist", "z_hdet", CVAR_PROTECTED);
 
 	Cbuf_AddText("exec default.cfg\n");
 
@@ -2808,6 +2805,8 @@ void Com_Init(char *commandLine)
 			}
 		}
 
+// FIXME: changing com_pidfile at runtime is a bad idea ... mark as latched?
+//        - same issue for log file & similar cvars
 #ifdef DEDICATED
 		com_pidfile = Cvar_Get("com_pidfile", "etlegacy_server.pid", CVAR_TEMP);
 #else
