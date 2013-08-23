@@ -612,7 +612,6 @@ static char wavName[MAX_QPATH];     // compiler bug workaround
 void CL_WriteWaveOpen(void)
 {
 	// we will just save it as a 16bit stereo 22050kz pcm file
-
 	char name[MAX_OSPATH];
 	char *s;
 
@@ -2193,6 +2192,7 @@ void CL_CheckForResend(void)
 
 	default:
 		Com_Error(ERR_FATAL, "CL_CheckForResend: bad cls.state");
+		break;
 	}
 }
 
@@ -3041,6 +3041,7 @@ void CL_Frame(int msec)
 				break;
 			default:
 				Cbuf_ExecuteText(EXEC_NOW, "screenshot silent\n");
+				break;
 			}
 		}
 		// fixed time for next frame
