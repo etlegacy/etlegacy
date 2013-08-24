@@ -1,5 +1,5 @@
 # sed script to convert a text file to a C string
-
+# remove comment blocks
 /\/\*/{
 	# here we've got an /*, append lines until get the corresponding
 	# */
@@ -19,6 +19,7 @@ s/\x1b\[.\{1,5\}m//g
 s/\r//						# remove carriage return
 /^[ \t]*$/d					# remove empty lines
 /^[ \t]*\/\/.*$/d			# remove commented out lines
+s/[ \t]*\/\/.*$//g			# remove normal comments
 s/\\/\\\\/g					# escapes backslashes
 s/"/\\"/g					# escapes quotes
 s/\t/\\t/g					# converts tabs to \t

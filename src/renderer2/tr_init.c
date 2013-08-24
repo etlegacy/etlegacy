@@ -1839,248 +1839,6 @@ void R_Init(void)
 
 	R_Register();
 
-#if defined(USE_D3D10)
-	if (glConfig.vidWidth == 0)
-	{
-		DXGI_SWAP_CHAIN_DESC sd;
-		SDL_SysWMinfo        info;
-		HRESULT              hr = S_OK;
-		RECT                 rc;
-		ID3D10Texture2D      *backBuffer;
-		UINT                 createDeviceFlags = 0;
-		int                  i;
-
-		D3D10_DRIVER_TYPE driverTypes[] =
-		{
-			D3D10_DRIVER_TYPE_HARDWARE,
-			D3D10_DRIVER_TYPE_REFERENCE,
-		};
-		UINT numDriverTypes = sizeof(driverTypes) / sizeof(driverTypes[0]);
-
-		GLimp_Init();
-
-		ri.Printf(PRINT_ALL, "------- D3D10 Initialization -------\n");
-
-		SDL_VERSION(&info.version);
-		if (!SDL_GetWMInfo(&info))
-		{
-			ri.Error(ERR_FATAL, "R_Init: Failed to obtain HWND from SDL (InputRegistry)");
-		}
-
-		//GetClientRect(info.window, &rc);
-		//UINT width = rc.right - rc.left;
-		//UINT height = rc.bottom - rc.top;
-
-
-#ifdef _DEBUG
-		createDeviceFlags |= D3D10_CREATE_DEVICE_DEBUG;
-#endif
-
-		ZeroMemory(&sd, sizeof(sd));
-		sd.BufferCount                        = 1;
-		sd.BufferDesc.Width                   = glConfig.vidWidth;
-		sd.BufferDesc.Height                  = glConfig.vidHeight;
-		sd.BufferDesc.Format                  = DXGI_FORMAT_R8G8B8A8_UNORM;
-		sd.BufferDesc.RefreshRate.Numerator   = 60;
-		sd.BufferDesc.RefreshRate.Denominator = 1;
-		sd.BufferUsage                        = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		sd.OutputWindow                       = info.window;
-		sd.SampleDesc.Count                   = 1;
-		sd.SampleDesc.Quality                 = 0;
-		sd.Windowed                           = TRUE;
-
-#if 1
-		// Look for 'NVIDIA PerfHUD' adapter
-		// If it is present, override default settings
-		IDXGIFactory *pDXGIFactory;
-		hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void **)&pDXGIFactory);
-
-		// Search for a PerfHUD adapter.
-		UINT         nAdapter         = 0;
-		IDXGIAdapter *adapter         = NULL;
-		IDXGIAdapter *selectedAdapter = NULL;
-		dx.driverType = D3D10_DRIVER_TYPE_HARDWARE;
-
-		ri.Printf(PRINT_ALL, "Looking for PerfHUD...");
-		bool gotPerfHUD = false;
-		while (pDXGIFactory->EnumAdapters(nAdapter, &adapter) != DXGI_ERROR_NOT_FOUND)
-		{
-			if (adapter)
-			{
-				DXGI_ADAPTER_DESC adaptDesc;
-				if (SUCCEEDED(adapter->GetDesc(&adaptDesc)))
-				{
-					const bool isPerfHUD = wcscmp(adaptDesc.Description, L"NVIDIA PerfHUD") == 0;
-
-					// Select the first adapter in normal circumstances or the PerfHUD one if it exists.
-					if (nAdapter == 0 || isPerfHUD)
-					{
-						selectedAdapter = adapter;
-					}
-
-					if (isPerfHUD)
-					{
-						gotPerfHUD = true;
-						ri.Printf(PRINT_ALL, "found\n");
-						dx.driverType = D3D10_DRIVER_TYPE_REFERENCE;
-						break;
-					}
-				}
-			}
-			++nAdapter;
-		}
-		if (!gotPerfHUD)
-		{
-			ri.Printf(PRINT_ALL, "failed\n");
-		}
-
-		hr = D3D10CreateDeviceAndSwapChain(selectedAdapter, dx.driverType, NULL, createDeviceFlags,
-		                                   D3D10_SDK_VERSION, &sd, &dx.swapChain, &dx.d3dDevice);
-
-		if (FAILED(hr))
-#endif
-		{
-			ri.Printf(PRINT_ALL, "R_Init: Failed to find PerfHUD");
-
-			for (i = 0; i < numDriverTypes; i++)
-			{
-				dx.driverType = driverTypes[i];
-				hr            = D3D10CreateDeviceAndSwapChain(NULL, dx.driverType, NULL, createDeviceFlags,
-				                                              D3D10_SDK_VERSION, &sd, &dx.swapChain, &dx.d3dDevice);
-				if (SUCCEEDED(hr))
-				{
-					break;
-				}
-			}
-
-			if (FAILED(hr))
-			{
-				ri.Error(ERR_FATAL, "R_Init: Failed to create a D3D10 device and swap chain");
-			}
-		}
-
-		// create a render target view
-		hr = dx.swapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID *) &backBuffer);
-		if (FAILED(hr))
-		{
-			ri.Error(ERR_FATAL, "R_Init: Failed to get a D3D10 back buffer");
-		}
-
-		hr = dx.d3dDevice->CreateRenderTargetView(backBuffer, NULL, &dx.renderTargetView);
-		backBuffer->Release();
-		if (FAILED(hr))
-		{
-			ri.Error(ERR_FATAL, "R_Init: Failed to create a D3D10 render target view");
-		}
-
-		dx.d3dDevice->OMSetRenderTargets(1, &dx.renderTargetView, NULL);
-
-		// TODO move this to renderer backend
-
-		// setup the viewport
-		D3D10_VIEWPORT vp;
-		vp.Width    = glConfig.vidWidth;
-		vp.Height   = glConfig.vidHeight;
-		vp.MinDepth = 0.0f;
-		vp.MaxDepth = 1.0f;
-		vp.TopLeftX = 0;
-		vp.TopLeftY = 0;
-		dx.d3dDevice->RSSetViewports(1, &vp);
-
-
-#if 0
-		// create the effect
-		DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
-#if defined(DEBUG) || defined(_DEBUG)
-		// Set the D3D10_SHADER_DEBUG flag to embed debug information in the shaders.
-		// Setting this flag improves the shader debugging experience, but still allows
-		// the shaders to be optimized and to run exactly the way they will run in
-		// the release configuration of this program.
-		dwShaderFlags |= D3D10_SHADER_DEBUG;
-#endif
-
-		byte *effectBuffer;
-		int  effectBufferLen;
-
-		effectBufferLen = ri.FS_ReadFile("shaders/Generic.fx", (void **) &effectBuffer);
-		if (effectBufferLen == 0)
-		{
-			ri.Error(ERR_FATAL, "The FX file cannot be located.  Please run this executable from the directory that contains the FX file.");
-		}
-
-		hr = D3DX10CreateEffectFromMemory(effectBuffer, effectBufferLen, "shaders/Generic.fx", NULL, NULL, "fx_4_0", dwShaderFlags, 0,
-		                                  dx.d3dDevice, NULL, NULL, &dx.genericEffect, NULL, NULL);
-		if (FAILED(hr))
-		{
-			ri.Error(ERR_FATAL, "D3DX10CreateEffect failed %i", hr);
-		}
-
-		// obtain the technique
-		dx.genericTechnique = dx.genericEffect->GetTechniqueByName("Render");
-
-		// define the input layout
-		D3D10_INPUT_ELEMENT_DESC layout[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
-		};
-		UINT numElements = sizeof(layout) / sizeof(layout[0]);
-
-		// create the input layout
-		D3D10_PASS_DESC PassDesc;
-		dx.genericTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
-
-		hr = dx.d3dDevice->CreateInputLayout(layout, numElements, PassDesc.pIAInputSignature,
-		                                     PassDesc.IAInputSignatureSize, &dx.vertexLayout);
-		if (FAILED(hr))
-		{
-			ri.Error(ERR_FATAL, "R_Init: Failed to create a D3D10 input layout");
-		}
-
-		// set the input layout
-		dx.d3dDevice->IASetInputLayout(dx.vertexLayout);
-
-		// create vertex buffer
-		D3DXVECTOR3 vertices[] =
-		{
-			D3DXVECTOR3(0.0f,  0.5f,  0.5f),
-			D3DXVECTOR3(0.5f,  -0.5f, 0.5f),
-			D3DXVECTOR3(-0.5f, -0.5f, 0.5f),
-		};
-		D3D10_BUFFER_DESC bd;
-		bd.Usage          = D3D10_USAGE_DEFAULT;
-		bd.ByteWidth      = sizeof(D3DXVECTOR3) * 3;
-		bd.BindFlags      = D3D10_BIND_VERTEX_BUFFER;
-		bd.CPUAccessFlags = 0;
-		bd.MiscFlags      = 0;
-		D3D10_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = vertices;
-		hr               = dx.d3dDevice->CreateBuffer(&bd, &InitData, &dx.vertexBuffer);
-		if (FAILED(hr))
-		{
-			ri.Error(ERR_FATAL, "R_Init: Failed to create a D3D10 input layout");
-		}
-
-		// set vertex buffer
-		UINT stride = sizeof(D3DXVECTOR3);
-		UINT offset = 0;
-		dx.d3dDevice->IASetVertexBuffers(0, 1, &dx.vertexBuffer, &stride, &offset);
-
-		// set primitive topology
-		dx.d3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-#endif
-
-		ri.Printf(PRINT_ALL, "------------------------------------\n");
-	}
-
-	// init command buffers and SMP
-	R_InitCommandBuffers();
-
-	// print info
-	GfxInfo_f();
-
-	// set default state
-	//D3D10_SetDefaultState();
-#else
 	if (!InitOpenGL())
 	{
 		ri.Error(ERR_VID_FATAL, "OpenGL initialization failed!");
@@ -2088,8 +1846,6 @@ void R_Init(void)
 
 #if !defined(GLSL_COMPILE_STARTUP_ONLY)
 	GLSL_InitGPUShaders();
-#endif
-
 #endif
 
 	backEndData[0]              = (backEndData_t *) ri.Hunk_Alloc(sizeof(*backEndData[0]), h_low);
@@ -2181,9 +1937,7 @@ void RE_Shutdown(qboolean destroyWindow)
 	ri.Cmd_RemoveCommand("generatemtr");
 	ri.Cmd_RemoveCommand("buildcubemaps");
 
-#if !defined(USE_D3D10)
 	ri.Cmd_RemoveCommand("glsl_restart");
-#endif
 
 	if (tr.registered)
 	{
@@ -2194,15 +1948,12 @@ void RE_Shutdown(qboolean destroyWindow)
 		R_ShutdownVBOs();
 		R_ShutdownFBOs();
 
-#if !defined(USE_D3D10)
 		if (glConfig.driverType == GLDRV_OPENGL3)
 		{
 			glDeleteVertexArrays(1, &tr.vao);
 			tr.vao = 0;
 		}
-#endif
 
-#if !defined(USE_D3D10)
 		if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA)
 		{
 			glDeleteQueries(MAX_OCCLUSION_QUERIES, tr.occlusionQueryObjects);
@@ -2230,7 +1981,6 @@ void RE_Shutdown(qboolean destroyWindow)
 				*/
 			}
 		}
-#endif
 
 #if !defined(GLSL_COMPILE_STARTUP_ONLY) && !defined (USE_D3D10)
 		GLSL_ShutdownGPUShaders();
@@ -2257,28 +2007,6 @@ void RE_Shutdown(qboolean destroyWindow)
 #endif
 
 		GLimp_Shutdown();
-
-#if defined(USE_D3D10)
-		if (dx.d3dDevice)
-		{
-			dx.d3dDevice->ClearState();
-		}
-
-		if (dx.renderTargetView)
-		{
-			dx.renderTargetView->Release();
-		}
-
-		if (dx.swapChain)
-		{
-			dx.swapChain->Release();
-		}
-
-		if (dx.d3dDevice)
-		{
-			dx.d3dDevice->Release();
-		}
-#endif
 	}
 
 	tr.registered = qfalse;
