@@ -306,7 +306,14 @@ void GLShader::GetShaderText(const char *name, GLenum shaderType, char **data, i
 		ri.Printf(PRINT_ALL, "...loading vertex shader '%s'\n", fullname);
 	}
 
-	dataSize = ri.FS_ReadFile(va("glsl/%s.glsl", fullname), ( void ** ) &dataBuffer);
+	if(ri.FS_FileExists(va("glsl/%s.glsl", fullname)))
+	{
+		dataSize = ri.FS_ReadFile(va("glsl/%s.glsl", fullname), ( void ** ) &dataBuffer);
+	}
+	else
+	{
+		dataBuffer = NULL;
+	}
 
 	if (!dataBuffer)
 	{
