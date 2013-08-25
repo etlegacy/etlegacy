@@ -80,14 +80,12 @@ return a hash value for the filename
 */
 long GenerateImageHashValue(const char *fname)
 {
-	int  i;
-	long hash;
+	int  i    = 0;
+	long hash = 0;
 	char letter;
 
 	//ri.Printf(PRINT_ALL, "tr_image::GenerateImageHashValue: '%s'\n", fname);
 
-	hash = 0;
-	i    = 0;
 	while (fname[i] != '\0')
 	{
 		letter = tolower(fname[i]);
@@ -204,8 +202,8 @@ void R_ImageList_f(void)
 {
 	int        i;
 	image_t    *image;
-	int        texels;
-	int        dataSize;
+	int        texels   = 0;
+	int        dataSize = 0;
 	int        imageDataSize;
 	const char *yesno[] =
 	{
@@ -214,16 +212,12 @@ void R_ImageList_f(void)
 
 	ri.Printf(PRINT_ALL, "\n      -w-- -h-- -mm- -type-   -if-- wrap --name-------\n");
 
-	texels   = 0;
-	dataSize = 0;
-
 	for (i = 0; i < tr.images.currentElements; i++)
 	{
 		image = (image_t *)Com_GrowListElement(&tr.images, i);
 
 		ri.Printf(PRINT_ALL, "%4i: %4i %4i  %s   ",
 		          i, image->uploadWidth, image->uploadHeight, yesno[image->filterType == FT_DEFAULT]);
-
 
 #if defined(USE_D3D10)
 		// TODO
@@ -411,7 +405,8 @@ static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *o
 {
 	int      x, y;
 	unsigned *inrow, *inrow2;
-	unsigned frac, fracstep;
+	unsigned fracstep = inwidth * 0x10000 / outwidth;
+	unsigned frac     = fracstep >> 2;
 	unsigned p1[2048], p2[2048];
 	byte     *pix1, *pix2, *pix3, *pix4;
 	float    inv127 = 1.0f / 127.0f;
@@ -421,9 +416,6 @@ static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *o
 	//if(outwidth > 2048)
 	//  ri.Error(ERR_DROP, "ResampleTexture: max width");
 
-	fracstep = inwidth * 0x10000 / outwidth;
-
-	frac = fracstep >> 2;
 	for (x = 0; x < outwidth; x++)
 	{
 		p1[x] = 4 * (frac >> 16);
@@ -523,12 +515,9 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean onlyG
 	{
 		if (!glConfig.deviceSupportsGamma)
 		{
-			int  i, c;
-			byte *p;
+			int  i, c = inwidth * inheight;
+			byte *p = (byte *) in;
 
-			p = (byte *) in;
-
-			c = inwidth * inheight;
 			for (i = 0; i < c; i++, p += 4)
 			{
 				p[0] = s_gammatable[p[0]];
@@ -539,12 +528,8 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean onlyG
 	}
 	else
 	{
-		int  i, c;
-		byte *p;
-
-		p = (byte *) in;
-
-		c = inwidth * inheight;
+		int  i, c = inwidth * inheight;
+		byte *p = (byte *) in;
 
 		if (glConfig.deviceSupportsGamma)
 		{
@@ -585,12 +570,11 @@ static void R_MipMap2(unsigned *in, int inWidth, int inHeight)
 	byte     *outpix;
 	int      inWidthMask, inHeightMask;
 	int      total;
-	int      outWidth, outHeight;
+	int      outWidth  = inWidth >> 1;
+	int      outHeight = inHeight >> 1;
 	unsigned *temp;
 
-	outWidth  = inWidth >> 1;
-	outHeight = inHeight >> 1;
-	temp      = (unsigned int *)ri.Hunk_AllocateTempMemory(outWidth * outHeight * 4);
+	temp = (unsigned int *)ri.Hunk_AllocateTempMemory(outWidth * outHeight * 4);
 
 	inWidthMask  = inWidth - 1;
 	inHeightMask = inHeight - 1;
@@ -1344,12 +1328,8 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		{
 			if (image->filterType == FT_DEFAULT && !(image->bits & (IF_DEPTH16 | IF_DEPTH24 | IF_DEPTH32 | IF_PACKED_DEPTH24_STENCIL8)))
 			{
-				int mipLevel;
-				int mipWidth, mipHeight;
-
-				mipLevel  = 0;
-				mipWidth  = scaledWidth;
-				mipHeight = scaledHeight;
+				int mipLevel = 0;
+				int mipWidth = scaledWidth, mipHeight = scaledHeight;
 
 				while (mipWidth > 1 || mipHeight > 1)
 				{
@@ -1613,7 +1593,7 @@ image_t *R_CreateCubeImage(const char *name,
 }
 
 static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int *bits, const char *materialName);
-image_t *R_LoadDDSImage(const char *name, int bits, filterType_t filterType, wrapType_t wrapType);
+//image_t *R_LoadDDSImage(const char *name, int bits, filterType_t filterType, wrapType_t wrapType);
 
 static qboolean ParseHeightMap(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
@@ -2318,8 +2298,8 @@ static ID_INLINE void SwapPixel(byte *inout, int x, int y, int x2, int y2, int w
 
 static void R_Flip(byte *in, int width, int height)
 {
-	int  x, y;
-	byte *out = in;
+	int x, y;
+	//byte *out = in;
 
 	for (y = 0; y < height; y++)
 	{
@@ -2332,8 +2312,8 @@ static void R_Flip(byte *in, int width, int height)
 
 static void R_Flop(byte *in, int width, int height)
 {
-	int  x, y;
-	byte *out = in;
+	int x, y;
+	//byte *out = in;
 
 	for (y = 0; y < height / 2; y++)
 	{
@@ -2723,7 +2703,6 @@ static void R_CreateFogImage(void)
 {
 	int   x, y;
 	byte  *data;
-	float g = 2.0f;
 	float d;
 	float borderColor[4];
 
@@ -3416,11 +3395,8 @@ static void R_CreateShadowCubeFBOImage(void)
 static void R_CreateBlackCubeImage(void)
 {
 	int  i;
-	int  width, height;
+	int  width = REF_CUBEMAP_SIZE, height = REF_CUBEMAP_SIZE;
 	byte *data[6];
-
-	width  = REF_CUBEMAP_SIZE;
-	height = REF_CUBEMAP_SIZE;
 
 	for (i = 0; i < 6; i++)
 	{
@@ -3442,11 +3418,8 @@ static void R_CreateBlackCubeImage(void)
 static void R_CreateWhiteCubeImage(void)
 {
 	int  i;
-	int  width, height;
+	int  width = REF_CUBEMAP_SIZE, height = REF_CUBEMAP_SIZE;
 	byte *data[6];
-
-	width  = REF_CUBEMAP_SIZE;
-	height = REF_CUBEMAP_SIZE;
 
 	for (i = 0; i < 6; i++)
 	{
