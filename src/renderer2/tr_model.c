@@ -482,11 +482,7 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 	tr.visIndex = 0;
 	memset(tr.visClusters, -2, sizeof(tr.visClusters)); // force markleafs to regenerate
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	R_ClearFlares();
-#endif
 
 	RE_ClearScene();
 
@@ -527,7 +523,6 @@ void R_ModelInit(void)
 	mod->type = MOD_BAD;
 }
 
-
 /*
 ================
 R_Modellist_f
@@ -537,8 +532,8 @@ void R_Modellist_f(void)
 {
 	int      i, j, k;
 	model_t  *mod;
-	int      total;
-	int      totalDataSize;
+	int      total         = 0;
+	int      totalDataSize = 0;
 	qboolean showFrames;
 
 	if (!strcmp(ri.Cmd_Argv(1), "frames"))
@@ -550,8 +545,6 @@ void R_Modellist_f(void)
 		showFrames = qfalse;
 	}
 
-	total         = 0;
-	totalDataSize = 0;
 	for (i = 1; i < tr.numModels; i++)
 	{
 		mod = tr.models[i];
@@ -600,7 +593,6 @@ void R_Modellist_f(void)
 			ri.Printf(PRINT_ALL, "%d.%02d MB '%s'\n", mod->dataSize / (1024 * 1024),
 			          (mod->dataSize % (1024 * 1024)) * 100 / (1024 * 1024),
 			          mod->name);
-
 			total++;
 		}
 
@@ -619,9 +611,7 @@ void R_Modellist_f(void)
 #endif
 }
 
-
 //=============================================================================
-
 
 /*
 ================
@@ -902,8 +892,6 @@ int RE_BoneIndex(qhandle_t hModel, const char *boneName)
 
 	return -1;
 }
-
-
 
 /*
 ====================

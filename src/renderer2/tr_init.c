@@ -35,11 +35,7 @@
 glconfig_t  glConfig;
 glconfig2_t glConfig2;
 
-#if defined(USE_D3D10)
-dxGlobals_t dx;
-#else
 glstate_t glState;
-#endif
 
 float displayAspect = 0.0f;
 
@@ -368,7 +364,6 @@ static void AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean sho
 ** setting variables, checking GL constants, and reporting the gfx system config
 ** to the user.
 */
-#if !defined(USE_D3D10)
 static qboolean InitOpenGL(void)
 {
 	char renderer_buffer[1024];
@@ -426,14 +421,12 @@ static qboolean InitOpenGL(void)
 
 	return qtrue;
 }
-#endif
 
 /*
 ==================
 GL_CheckErrors
 ==================
 */
-#if !defined(USE_D3D10)
 void GL_CheckErrors_(const char *fileName, int line)
 {
 	int  err;
@@ -489,7 +482,6 @@ void GL_CheckErrors_(const char *fileName, int line)
 
 	ri.Error(ERR_FATAL, "caught OpenGL error: %s in file %s line %i", s, fileName, line);
 }
-#endif
 
 /*
 ** R_GetModeInfo
@@ -987,17 +979,13 @@ RB_TakeVideoFrameCmd
 const void *RB_TakeVideoFrameCmd(const void *data)
 {
 	const videoFrameCommand_t *cmd;
-#if defined(USE_D3D10)
-	// TODO
-#else
-	GLint packAlign;
-#endif
-	int  lineLen, captureLineLen;
-	byte *pixels;
-	int  i;
-	int  outputSize;
-	int  j;
-	int  aviLineLen;
+	GLint                     packAlign;
+	int                       lineLen, captureLineLen;
+	byte                      *pixels;
+	int                       i;
+	int                       outputSize;
+	int                       j;
+	int                       aviLineLen;
 
 	cmd = (const videoFrameCommand_t *)data;
 
@@ -1006,7 +994,6 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 	if (ri.CL_VideoRecording())
 	{
 		// take care of alignment issues for reading RGB images..
-#if !defined(USE_D3D10)
 		glGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
 
 		lineLen        = cmd->width * 3;
@@ -1014,7 +1001,6 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 
 		pixels = (byte *)PADP(cmd->captureBuffer, packAlign);
 		glReadPixels(0, 0, cmd->width, cmd->height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-#endif
 
 		if (tr.overbrightBits > 0 && glConfig.deviceSupportsGamma)
 		{
@@ -1063,7 +1049,6 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 /*
 ** GL_SetDefaultState
 */
-#if !defined(USE_D3D10)
 void GL_SetDefaultState(void)
 {
 	int i;
@@ -1186,7 +1171,6 @@ void GL_SetDefaultState(void)
 		MatrixIdentity(glState.modelViewProjectionMatrix[i]);
 	}
 }
-#endif
 
 /*
 ================
@@ -1308,7 +1292,6 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "texturemode: %s\n", r_textureMode->string);
 	ri.Printf(PRINT_ALL, "picmip: %d\n", r_picmip->integer);
 
-#if !defined(USE_D3D10)
 	if (glConfig.driverType == GLDRV_OPENGL3)
 	{
 		int contextFlags, profile;
@@ -1337,7 +1320,6 @@ void GfxInfo_f(void)
 			ri.Printf(PRINT_ALL, S_COLOR_RED "Context is NOT forward compatible\n");
 		}
 	}
-#endif
 
 	if (glConfig.hardwareType == GLHW_ATI)
 	{
@@ -1376,7 +1358,6 @@ void GfxInfo_f(void)
 	ri.Printf(PRINT_ALL, "Renderer: (c)rap\n");
 }
 
-#if !defined(USE_D3D10)
 static void GLSL_restart_f(void)
 {
 	// make sure the render thread is stopped
@@ -1385,7 +1366,6 @@ static void GLSL_restart_f(void)
 	GLSL_ShutdownGPUShaders();
 	GLSL_InitGPUShaders();
 }
-#endif
 
 /*
 ===============
@@ -1780,9 +1760,7 @@ void R_Register(void)
 	ri.Cmd_AddCommand("buildcubemaps", R_BuildCubeMaps);
 	ri.Cmd_AddCommand("minimize", GLimp_Minimize);
 
-#if !defined(USE_D3D10)
 	ri.Cmd_AddCommand("glsl_restart", GLSL_restart_f);
-#endif
 }
 
 /*
@@ -1871,14 +1849,12 @@ void R_Init(void)
 
 	R_InitFBOs();
 
-#if !defined(USE_D3D10)
 	if (glConfig.driverType == GLDRV_OPENGL3)
 	{
 		tr.vao = 0;
 		glGenVertexArrays(1, &tr.vao);
 		glBindVertexArray(tr.vao);
 	}
-#endif
 
 	R_InitVBOs();
 
@@ -1899,14 +1875,12 @@ void R_Init(void)
 		AssertCvarRange(r_ext_texture_filter_anisotropic, 0, glConfig2.maxTextureAnisotropy, qfalse);
 	}
 
-#if !defined(USE_D3D10)
 	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA)
 	{
 		glGenQueries(MAX_OCCLUSION_QUERIES, tr.occlusionQueryObjects);
 	}
 
 	GL_CheckErrors();
-#endif
 
 	ri.Printf(PRINT_ALL, "----- finished R_Init -----\n");
 }
@@ -1982,7 +1956,7 @@ void RE_Shutdown(qboolean destroyWindow)
 			}
 		}
 
-#if !defined(GLSL_COMPILE_STARTUP_ONLY) && !defined (USE_D3D10)
+#if !defined(GLSL_COMPILE_STARTUP_ONLY)
 		GLSL_ShutdownGPUShaders();
 #endif
 

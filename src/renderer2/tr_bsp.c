@@ -832,7 +832,6 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 		Q_strncpyz(mapName, bspName, sizeof(mapName));
 		COM_StripExtension3(mapName, mapName, sizeof(mapName));
 
-#if !defined(USE_D3D10)
 		if (tr.worldHDR_RGBE)
 		{
 			// we are about to upload textures
@@ -916,11 +915,7 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 
 					glBindTexture(image->type, 0);
 
-#if defined(USE_D3D10)
-					// TODO
-#else
 					GL_CheckErrors();
-#endif
 
 					Com_Dealloc(hdrImage);
 
@@ -978,7 +973,6 @@ static void R_LoadLightmaps(lump_t *l, const char *bspName)
 			}
 		}
 		else
-#endif // USE_D3D10
 		{
 			lightmapFiles = ri.FS_ListFiles(mapName, ".png", &numLightmaps);
 
@@ -5717,11 +5711,7 @@ static void R_LoadNodesAndLeafs(lump_t *nodeLump, lump_t *leafLump)
 		InitLink(&out->occlusionQuery2, out);
 		//QueueInit(&node->multiQuery);
 
-#if defined(USE_D3D10)
-		// TODO
-#else
 		glGenQueriesARB(MAX_VIEWS, out->occlusionQueryObjects);
-#endif
 
 		tess.multiDrawPrimitives = 0;
 		tess.numIndexes          = 0;
@@ -9197,11 +9187,7 @@ void GL_BindNearestCubeMap(const vec3_t xyz)
 	}
 #endif
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	GL_Bind(tr.autoCubeImage);
-#endif
 }
 
 void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeNearest, cubemapProbe_t **cubeProbeSecondNearest)
@@ -9701,10 +9687,6 @@ void R_BuildCubeMaps(void)
 #endif
 		}
 
-#if defined(USE_D3D10)
-		// TODO
-		continue;
-#else
 		// build the cubemap
 		//cubeProbe->cubemap = R_CreateCubeImage(va("_autoCube%d", j), (const byte **)tr.cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
 		cubeProbe->cubemap = R_AllocImage(va("_autoCube%d", j), qfalse);
@@ -9727,7 +9709,6 @@ void R_BuildCubeMaps(void)
 		R_UploadImage((const byte **)tr.cubeTemp, 6, cubeProbe->cubemap);
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
-#endif
 	}
 	ri.Printf(PRINT_ALL, "\n");
 

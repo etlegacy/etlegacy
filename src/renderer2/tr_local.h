@@ -3994,7 +3994,6 @@ typedef struct
 	// GPU shader programs
 	//
 
-#if !defined(USE_D3D10)
 #if !defined(GLSL_COMPILE_STARTUP_ONLY)
 	// environment mapping effects
 	shaderProgram_t refractionShader_C;
@@ -4009,7 +4008,6 @@ typedef struct
 #endif
 
 #endif // GLSL_COMPILE_STARTUP_ONLY
-#endif // USE_D3D10
 
 #ifdef RENDERER2C
 	//
@@ -4077,9 +4075,7 @@ typedef struct
 	int numFBOs;
 	FBO_t *fbos[MAX_FBOS];
 
-#if !defined(USE_D3D10)
 	GLuint vao;
-#endif
 
 	growList_t vbos;
 	growList_t ibos;

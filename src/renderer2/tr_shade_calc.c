@@ -231,16 +231,11 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 	int                     i;
 	expOperation_t          op;
 	expOperation_t          ops[MAX_EXPRESSION_OPS];
-	int                     numOps;
-	float                   value;
-	float                   value1;
-	float                   value2;
+	int                     numOps = 0;
+	float                   value  = 0;
+	float                   value1 = 0;
+	float                   value2 = 0;
 	extern const opstring_t opStrings[];
-
-	numOps = 0;
-	value  = 0;
-	value1 = 0;
-	value2 = 0;
 
 	if (!exp || !exp->active)
 	{
@@ -470,9 +465,7 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 
 /*
 ====================================================================
-
 DEFORMATIONS
-
 ====================================================================
 */
 
@@ -648,7 +641,6 @@ void RB_CalcBulgeVertexes(deformStage_t *ds)
 	}
 }
 
-
 /*
 ======================
 RB_CalcMoveVertexes
@@ -677,7 +669,6 @@ void RB_CalcMoveVertexes(deformStage_t *ds)
 		VectorAdd(xyz, offset, xyz);
 	}
 }
-
 
 /*
 =============
@@ -855,7 +846,6 @@ static void AutospriteDeform(void)
 	}
 }
 
-
 /*
 =====================
 Autosprite2Deform
@@ -1018,6 +1008,7 @@ qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 
 			default:
 				cpuDeforms = qtrue;
+				break;
 			}
 		}
 
@@ -1026,7 +1017,6 @@ qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 
 	return qfalse;
 }
-
 
 /*
 =====================
@@ -1038,15 +1028,11 @@ void Tess_DeformGeometry(void)
 	int           i;
 	deformStage_t *ds;
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	if (glState.currentVBO != tess.vbo || glState.currentIBO != tess.ibo)
 	{
 		// static VBOs are incompatible with deformVertexes
 		return;
 	}
-#endif
 
 	if (!ShaderRequiresCPUDeforms(tess.surfaceShader))
 	{
@@ -1112,19 +1098,14 @@ void Tess_DeformGeometry(void)
 		}
 	}
 
-#if !defined(USE_D3D10)
 	GL_CheckErrors();
-#endif
 }
 
 /*
 ====================================================================
-
 TEX COORDS
-
 ====================================================================
 */
-
 
 /*
 ===============

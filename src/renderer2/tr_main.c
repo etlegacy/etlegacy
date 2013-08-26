@@ -72,7 +72,6 @@ const matrix_t flipZMatrix =
 	0, 0, 0,  1
 };
 
-#if !defined(USE_D3D10)
 const GLenum geometricRenderTargets[] =
 {
 	GL_COLOR_ATTACHMENT0_EXT,
@@ -80,7 +79,6 @@ const GLenum geometricRenderTargets[] =
 	GL_COLOR_ATTACHMENT2_EXT,
 	GL_COLOR_ATTACHMENT3_EXT
 };
-#endif
 
 int shadowMapResolutions[5] = { 2048, 1024, 512, 256, 128 };
 int sunShadowMapResolutions[5] = { 2048, 2048, 1024, 1024, 1024 };
@@ -3370,9 +3368,6 @@ Visualization aid for movement clipping debugging
 */
 static void R_DebugGraphics(void)
 {
-#if defined(USE_D3D10)
-	// TODO
-#else
 	if (r_debugSurface->integer)
 	{
 		// the render thread can't make callbacks to the main thread
@@ -3384,7 +3379,6 @@ static void R_DebugGraphics(void)
 		GL_Cull(CT_FRONT_SIDED);
 		ri.CM_DrawDebugSurface(R_DebugPolygon);
 	}
-#endif
 }
 
 /*

@@ -55,7 +55,7 @@ static shader_t      shader;
 static texModInfo_t  texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
 static qboolean      deferLoad;
 
-// ydnar: these are here because they are only referenced while parsing a shader
+// these are here because they are only referenced while parsing a shader
 static char       implicitMap[MAX_QPATH];
 static unsigned   implicitStateBits;
 static cullType_t implicitCullType;
@@ -67,14 +67,11 @@ return a hash value for the filename
 */
 static long generateHashValue(const char *fname, const int size)
 {
-	int i;
-
+	int i = 0;
 	//int len;
-	long hash;
+	long hash = 0;
 	char letter;
 
-	hash = 0;
-	i    = 0;
 	//len = strlen(fname);
 
 	while (fname[i] != '\0')
@@ -687,20 +684,14 @@ ParseExpression
 */
 static void ParseExpression(char **text, expression_t *exp)
 {
-	int  i;
-	char *token;
-
+	int            i;
+	char           *token;
 	expOperation_t op, op2;
-
 	expOperation_t inFixOps[MAX_EXPRESSION_OPS];
-	int            numInFixOps;
-
+	int            numInFixOps = 0;
 	// convert stack
 	expOperation_t tmpOps[MAX_EXPRESSION_OPS];
-	int            numTmpOps;
-
-	numInFixOps = 0;
-	numTmpOps   = 0;
+	int            numTmpOps = 0;
 
 	exp->numOps = 0;
 
@@ -814,9 +805,8 @@ static void ParseExpression(char **text, expression_t *exp)
 	// http://www.qiksearch.com/articles/cs/infix-postfix/
 	// http://www.experts-exchange.com/Programming/Programming_Languages/C/Q_20394130.html
 
-	//
+
 	// convert infix representation to postfix
-	//
 
 	for (i = 0; i < numInFixOps; i++)
 	{
@@ -1328,7 +1318,7 @@ static qboolean ParseTexMod(char **text, shaderStage_t *stage)
 
 	token = COM_ParseExt2(text, qfalse);
 
-//  ri.Printf(PRINT_ALL, "using tcMod '%s' in shader '%s'\n", token, shader.name);
+	//ri.Printf(PRINT_ALL, "using tcMod '%s' in shader '%s'\n", token, shader.name);
 
 	// turb
 	if (!Q_stricmp(token, "turb"))
@@ -3008,7 +2998,6 @@ static void ParseDeform(char **text)
 	ri.Printf(PRINT_WARNING, "WARNING: unknown deformVertexes subtype '%s' found in shader '%s'\n", token, shader.name);
 }
 
-
 /*
 ===============
 ParseSkyParms
@@ -3053,12 +3042,7 @@ static void ParseSkyParms(char **text)
 		shader.sky.cloudHeight = 512;
 	}
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	R_InitSkyTexCoords(shader.sky.cloudHeight);
-#endif
-
 
 	// innerbox
 	token = COM_ParseExt2(text, qfalse);
@@ -3202,7 +3186,6 @@ infoParm_t infoParms[] =
 	{ "donotenter",         1, 0,                 CONTENTS_DONOTENTER       }, // for bots
 
 	{ "donotenterlarge",    1, 0,                 CONTENTS_DONOTENTER_LARGE }, // for larger bots
-
 
 	{ "fog",                1, 0,                 CONTENTS_FOG              }, // carves surfaces entering
 	{ "sky",                0, SURF_SKY,          0                         }, // emit light from an environment map
@@ -3781,14 +3764,11 @@ will optimize it.
 */
 static qboolean ParseShader(char *_text)
 {
-	char **text;
+	char **text = &_text;
 	char *token;
-	int  s;
+	int  s = 0;
 
-	s                        = 0;
 	shader.explicitlyDefined = qtrue;
-
-	text = &_text;
 
 	token = COM_ParseExt2(text, qtrue);
 	if (token[0] != '{')
@@ -4255,9 +4235,8 @@ static qboolean ParseShader(char *_text)
 				continue;
 			}
 
-
-			//----(SA)  NOTE:   fogFar > 1 means the shader is setting the farclip, < 1 means setting
-			//                  density (so old maps or maps that just need softening fog don't have to care about farclip)
+			// NOTE:   fogFar > 1 means the shader is setting the farclip, < 1 means setting
+			//         density (so old maps or maps that just need softening fog don't have to care about farclip)
 
 			fogDensity = atof(token);
 			if (fogDensity > 1)
@@ -4783,7 +4762,6 @@ static void CollapseStages()
 			}
 		}
 
-
 		// NOTE: Tr3B - merge as many stages as possible
 
 		// try to merge diffuse/normal/specular
@@ -4973,7 +4951,6 @@ static void SortNewShader(void)
 	newShader->sortedIndex  = i + 1;
 	tr.sortedShaders[i + 1] = newShader;
 }
-
 
 /*
 ====================

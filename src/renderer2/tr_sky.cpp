@@ -31,9 +31,7 @@
  */
 // tr_sky.c
 #include "tr_local.h"
-#if !defined(USE_D3D10)
 #include "gl_shader.h"
-#endif
 
 #define SKY_SUBDIVISIONS        8
 #define HALF_SKY_SUBDIVISIONS   (SKY_SUBDIVISIONS / 2)
@@ -514,11 +512,7 @@ static void DrawSkyBox(shader_t *shader)
 	tess.numIndexes          = 0;
 	tess.numVertexes         = 0;
 
-#if defined(USE_D3D10)
-	// TODO
-#else
 	GL_State(GLS_DEFAULT);
-#endif
 
 	for (i = 0; i < 6; i++)
 	{
@@ -814,9 +808,6 @@ void RB_DrawSun(void)
 		return;
 	}
 
-#if defined(USE_D3D10)
-	//TODO
-#else
 	GL_PushMatrix();
 
 	gl_genericShader->DisableAlphaTesting();
@@ -830,14 +821,10 @@ void RB_DrawSun(void)
 
 	// set uniforms
 	gl_genericShader->SetUniform_ColorModulate(CGEN_VERTEX, AGEN_VERTEX);
-#endif
 
 	MatrixSetupTranslation(transformMatrix, backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
 	MatrixMultiplyMOD(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
 
-#if defined(USE_D3D10)
-	//TODO
-#else
 	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 	GL_LoadModelViewMatrix(modelViewMatrix);
 
@@ -845,7 +832,7 @@ void RB_DrawSun(void)
 	gl_genericShader->SetUniform_ModelViewProjectionMatrix(glState.modelViewProjectionMatrix[glState.stackIndex]);
 
 	gl_genericShader->SetPortalClipping(backEnd.viewParms.isPortal);
-#endif
+
 	if (backEnd.viewParms.isPortal)
 	{
 		float plane[4];
@@ -856,11 +843,7 @@ void RB_DrawSun(void)
 		plane[2] = backEnd.viewParms.portalPlane.normal[2];
 		plane[3] = backEnd.viewParms.portalPlane.dist;
 
-#if defined(USE_D3D10)
-		//TODO
-#else
 		gl_genericShader->SetUniform_PortalPlane(plane);
-#endif
 	}
 
 
@@ -875,11 +858,7 @@ void RB_DrawSun(void)
 	VectorScale(vec2, size, vec2);
 
 	// farthest depth range
-#if defined(USE_D3D10)
-	//TODO
-#else
 	glDepthRange(1.0, 1.0);
-#endif
 
 	// FIXME: use quad stamp
 	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.sunShader, NULL, tess.skipTangentSpaces, qfalse, -1, tess.fogNum);
@@ -949,17 +928,10 @@ void RB_DrawSun(void)
 	Tess_End();
 
 	// back to normal depth range
-#if defined(USE_D3D10)
-	//TODO
-#else
 	glDepthRange(0.0, 1.0);
 
 	GL_PopMatrix();
-#endif
 }
-
-
-
 
 /*
 ================
@@ -972,7 +944,6 @@ Other things could be stuck in here, like birds in the sky, etc
 */
 void Tess_StageIteratorSky(void)
 {
-#if !defined(USE_D3D10)
 	// log this call
 	if (r_logFile->integer)
 	{
@@ -1102,5 +1073,4 @@ void Tess_StageIteratorSky(void)
 			backEnd.skyRenderedThisView = qtrue;
 		}
 	}
-#endif
 }

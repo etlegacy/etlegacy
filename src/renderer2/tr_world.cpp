@@ -32,10 +32,7 @@
 // tr_world.c
 
 #include "tr_local.h"
-#if !defined(USE_D3D10)
 #include "gl_shader.h"
-#endif
-
 
 /*
 =================
@@ -125,7 +122,6 @@ static qboolean R_CullGrid(srfGridMesh_t * cv)
 }
 */
 
-
 /*
 ================
 R_CullSurface
@@ -141,7 +137,6 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	srfGeneric_t *gen;
 	int          cull;
 	float        d;
-
 
 	// force to non-front facing
 	*frontFace = 0;
@@ -259,7 +254,6 @@ static qboolean R_LightSurfaceGeneric(srfGeneric_t *face, trRefLight_t *light, b
 	return qtrue;
 }
 
-
 /*
 ======================
 R_AddInteractionSurface
@@ -308,8 +302,8 @@ static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 
 	default:
 		intersects = qfalse;
+		break;
 	}
-	;
 
 	if (intersects)
 	{
@@ -1186,11 +1180,7 @@ static void R_UpdateClusterSurfaces()
 				vboSurf->vbo = tr.world->vbo;
 				vboSurf->ibo = ibo = (IBO_t *) ri.Hunk_Alloc(sizeof(*ibo), h_low);
 
-#if defined(USE_D3D10)
-				// TODO
-#else
 				glGenBuffers(1, &ibo->indexesVBO);
-#endif
 
 				Com_AddToGrowList(&tr.world->clusterVBOSurfaces[tr.visIndex], vboSurf);
 			}
@@ -1217,11 +1207,9 @@ static void R_UpdateClusterSurfaces()
 			ibo->indexesSize = indexesSize;
 
 			R_BindIBO(ibo);
-#if defined(USE_D3D10)
-			// TODO
-#else
+
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexesSize, indexes, GL_DYNAMIC_DRAW);
-#endif
+
 			R_BindNullIBO();
 
 			//GL_CheckErrors();
@@ -1477,7 +1465,6 @@ static qboolean InsideViewFrustum(bspNode_t *node, int planeBits)
 
 static void DrawNode_r(bspNode_t *node, int planeBits)
 {
-#if !defined(USE_D3D10)
 	do
 	{
 		// if the bounding volume is outside the frustum, nothing
@@ -1547,7 +1534,6 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
 		node = node->children[1];
 	}
 	while (1);
-#endif // USE_D3D10
 }
 
 
@@ -1580,7 +1566,6 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 		QueueInit(&node->multiQuery);
 	}
 
-#if !defined(USE_D3D10)
 	GL_CheckErrors();
 
 #if 0
@@ -1623,7 +1608,6 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 	tess.numVertexes         = 0;
 
 	GL_CheckErrors();
-#endif
 
 	GLimp_LogComment("--- IssueOcclusionQuery end ---\n");
 }
@@ -1655,9 +1639,7 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 	multiQueryNode = (bspNode_t *) QueueFront(multiQueue)->data;
 
 	// begin the occlusion query
-#if defined(USE_D3D10)
-	// TODO
-#else
+
 	GL_CheckErrors();
 
 #if 0
@@ -1670,7 +1652,6 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 	glBeginQuery(GL_SAMPLES_PASSED, multiQueryNode->occlusionQueryObjects[tr.viewCount]);
 
 	GL_CheckErrors();
-#endif
 
 	//GLimp_LogComment("rendering nodes:[");
 	for (l = multiQueue->prev; l != multiQueue; l = l->prev)
@@ -1679,19 +1660,11 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 
 		if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
 		{
-#if defined(USE_D3D10)
-			// TODO
-#else
 			gl_genericShader->SetUniform_Color(colorGreen);
-#endif
 		}
 		else
 		{
-#if defined(USE_D3D10)
-			// TODO
-#else
 			gl_genericShader->SetUniform_Color(colorMdGrey);
-#endif
 		}
 
 		//if(r_logFile->integer)
@@ -1701,9 +1674,6 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 
 		//Tess_EndBegin();
 
-#if defined(USE_D3D10)
-		// TODO
-#else
 		R_BindVBO(node->volumeVBO);
 		R_BindIBO(node->volumeIBO);
 
@@ -1717,7 +1687,6 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 
 		tess.numIndexes  = 0;
 		tess.numVertexes = 0;
-#endif
 	}
 	//GLimp_LogComment("]\n");
 
@@ -1726,13 +1695,9 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 	tr.pc.c_occlusionQueriesMulti++;
 
 	// end the query
-#if defined(USE_D3D10)
-	// TODO
-#else
 	glEndQuery(GL_SAMPLES_PASSED);
 
 	GL_CheckErrors();
-#endif
 
 #if 0
 	if (!glIsQuery(multiQueryNode->occlusionQueryObjects[tr.viewCount]))
@@ -1755,7 +1720,6 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 	GLimp_LogComment("--- IssueMultiOcclusionQueries end ---\n");
 }
 
-#if !defined(USE_D3D10)
 static GLint ResultAvailable(bspNode_t *node)
 {
 	GLint available;
@@ -1771,9 +1735,7 @@ static GLint ResultAvailable(bspNode_t *node)
 
 	return available;
 }
-#endif
 
-#if !defined(USE_D3D10)
 static void GetOcclusionQueryResult(bspNode_t *node)
 {
 	link_t *l, *sentinel;
@@ -1825,7 +1787,6 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 		node->lastQueried[tr.viewCount]           = tr.frameCount;
 	}
 }
-#endif
 
 static void PullUpVisibility(bspNode_t *node)
 {
@@ -1988,7 +1949,6 @@ static void BuildNodeTraversalStackPost_r(bspNode_t *node)
 	while (1);
 }
 
-
 static qboolean WasVisible(bspNode_t *node)
 {
 	if (node->visible[tr.viewCount] && ((tr.frameCount - node->lastVisited[tr.viewCount]) <= r_chcMaxVisibleFrames->integer))
@@ -2013,8 +1973,7 @@ static void R_CoherentHierachicalCulling()
 {
 	bspNode_t *node;
 	bspNode_t *multiQueryNode;
-
-//	link_t			traversalStack;
+	//	link_t traversalStack;
 	link_t distanceQueue;
 	link_t occlusionQueryQueue;
 	link_t visibleQueue;          // CHC++
@@ -2023,10 +1982,6 @@ static void R_CoherentHierachicalCulling()
 	int startTime = 0, endTime = 0;
 
 	//ri.Cvar_Set("r_logFile", "1");
-
-#if defined(USE_D3D10)
-	// TODO
-#else
 
 	GLimp_LogComment("--- R_CoherentHierachicalCulling ---\n");
 
@@ -2109,23 +2064,15 @@ static void R_CoherentHierachicalCulling()
 
 	if (r_logFile->integer)
 	{
-#if defined(USE_D3D10)
-		// TODO
-#else
 		GL_ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
-#endif
 	}
 	else
 	{
 		// use the depth buffer of the previous frame for occlusion culling
-#if defined(USE_D3D10)
-		//TODO
-#else
 		GL_State(GLS_COLORMASK_BITS);
-#endif
 	}
 
 	ClearLink(&tr.traversalStack);
@@ -2350,7 +2297,6 @@ static void R_CoherentHierachicalCulling()
 					leafThatNeedsQuery = true;
 				}
 
-
 				if (r_dynamicBspOcclusionCulling->integer == 1)
 				{
 					// CHC++
@@ -2410,7 +2356,6 @@ static void R_CoherentHierachicalCulling()
 			}
 		}
 
-
 		if (r_dynamicBspOcclusionCulling->integer == 1)
 		{
 			if (QueueEmpty(&distanceQueue))
@@ -2433,11 +2378,8 @@ static void R_CoherentHierachicalCulling()
 				}
 			}
 		}
-
 		//ri.Printf(PRINT_ALL, "--- (%i, %i, %i)\n", !StackEmpty(&traversalStack), !QueueEmpty(&occlusionQueryQueue), !QueueEmpty(&invisibleQueue));
 	}
-
-
 
 	ClearLink(&tr.traversalStack);
 	BuildNodeTraversalStackPost_r(&tr.world->nodes[0]);
@@ -2457,7 +2399,6 @@ static void R_CoherentHierachicalCulling()
 		endTime         = ri.Milliseconds();
 		tr.pc.c_CHCTime = endTime - startTime;
 	}
-#endif
 }
 
 
