@@ -37,6 +37,13 @@
 
 typedef enum
 {
+	FLAGS_MOVE_TIMERS  = BIT(0),
+	FLAGS_REMOVE_RANKS = BIT(1),
+	FLAGS_MOVE_POPUPS  = BIT(2),
+} althud_flags;
+
+typedef enum
+{
 	STYLE_NORMAL,
 	STYLE_SIMPLE
 } componentStyle;
@@ -1641,10 +1648,112 @@ static float CG_DrawFPS(float y)
 
 /*
 =================
-CG_DrawTimer
+CG_DrawTimersAlt
 =================
 */
-static float CG_DrawTimer(float y)
+static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_t *localtime)
+{
+	char     *s;
+	int      w, w2;
+	qtime_t  time;
+	qboolean pmtime = qfalse;
+	vec4_t   color  = { 0.625f, 0.625f, 0.6f, 1.0f };
+	int      tens;
+	char     *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0) ?
+	               va("^F%d%s", CG_CalculateReinfTime(qfalse), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
+	int x;
+	int msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+	int seconds = msec / 1000;
+	int mins    = seconds / 60;
+
+	seconds -= mins * 60;
+	tens     = seconds / 10;
+	seconds -= tens * 10;
+
+	if (cgs.gamestate != GS_PLAYING)
+	{
+		s        = va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode // ^*
+		color[3] = fabs(sin(cg.time * 0.002));
+	}
+	else if (msec < 0 && cgs.timelimit > 0.0f)
+	{
+		s        = "^N0:00";
+		color[3] = fabs(sin(cg.time * 0.002));
+	}
+	else
+	{
+		if (cgs.timelimit <= 0.0f)
+		{
+			s = va("%s", rt);
+		}
+		else
+		{
+			s = va("%s^7%i:%i%i", rt, mins, tens, seconds);  // ^*
+		}
+
+		color[3] = 1.f;
+	}
+	CG_Text_Paint_Ext(respawn->x, respawn->y, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
+
+	// spawntimer
+	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING)
+	{
+		seconds = msec / 1000;
+		s       = va("^1%d", cg_spawnTimer_period.integer + (seconds - cg_spawnTimer_set.integer) % cg_spawnTimer_period.integer);
+		CG_Text_Paint_Ext(spawntimer->x, spawntimer->y, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
+	}
+	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
+	{
+		//We are not playing and the timer is set so reset/disable it
+		trap_Cvar_Set("cg_spawnTimer_set", "-1");
+	}
+	// end spawntimer
+
+	if (cg_drawTime.integer & LOCALTIME_ON)
+	{
+		//Fetch the local time
+		trap_RealTime(&time);
+
+		if (cg_drawTime.integer & LOCALTIME_SECOND)
+		{
+			if (cg_drawTime.integer & LOCALTIME_12HOUR)
+			{
+				if (time.tm_hour > 12)
+				{
+					pmtime = qtrue;
+				}
+				s = va("%i:%02i:%02i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, time.tm_sec, (pmtime ? "PM" : "AM"));
+			}
+			else
+			{
+				s = va("%02i:%02i:%02i", time.tm_hour, time.tm_min, time.tm_sec);
+			}
+		}
+		else
+		{
+			if (cg_drawTime.integer & LOCALTIME_12HOUR)
+			{
+				if (time.tm_hour > 12)
+				{
+					pmtime = qtrue;
+				}
+				s = va("%i:%02i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, (pmtime ? "PM" : "AM"));
+			}
+			else
+			{
+				s = va("%02i:%02i", time.tm_hour, time.tm_min);
+			}
+		}
+		CG_Text_Paint_Ext(localtime->x, localtime->y, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
+	}
+}
+
+/*
+=================
+CG_DrawTimerNormal
+=================
+*/
+static float CG_DrawTimerNormal(float y)
 {
 	char   *s;
 	int    w, w2;
@@ -1869,7 +1978,7 @@ void CG_Hud_Setup(void)
 	hud1.statsdisplay    = CG_getComponent(24, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
 	hud1.weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82 - 20), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
 	hud1.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22 - 20, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.fireteam        = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 240), 10, 100, 100, qtrue, STYLE_NORMAL);
+	hud1.fireteam        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH), 10, 100, 100, qtrue, STYLE_NORMAL);
 	hud1.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
 	hud1.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
 	hud1.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
@@ -1890,7 +1999,7 @@ void CG_Hud_Setup(void)
 	hud2.statsdisplay    = CG_getComponent(44, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
 	hud2.weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
 	hud2.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.fireteam        = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 240), 10, 100, 100, qtrue, STYLE_NORMAL);
+	hud2.fireteam        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH), 10, 100, 100, qtrue, STYLE_NORMAL);
 	hud2.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
 	hud2.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
 	hud2.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
@@ -2001,8 +2110,19 @@ CG_DrawGlobalHud
 */
 void CG_DrawGlobalHud(void)
 {
-	CG_DrawPMItems(activehud->popupmessages.location);
-	CG_DrawPMItemsBig();
+	if (cg_altHudFlags.integer & FLAGS_MOVE_POPUPS)
+	{
+		CG_DrawPMItems(activehud->popupmessages.location);
+	}
+	else
+	{
+		CG_DrawPMItems(hud0.popupmessages.location);
+	}
+
+	if (!cg_altHudFlags.integer & FLAGS_REMOVE_RANKS)
+	{
+		CG_DrawPMItemsBig();
+	}
 
 	if (cg_drawCompass.integer)
 	{
@@ -2021,7 +2141,14 @@ void CG_DrawUpperRight(void)
 
 	if (cg_drawFireteamOverlay.integer && CG_IsOnFireteam(cg.clientNum))
 	{
-		CG_DrawFireTeamOverlay(&activehud->fireteam.location);
+		if (cg_altHudFlags.integer & FLAGS_MOVE_POPUPS)
+		{
+			CG_DrawFireTeamOverlay(&activehud->fireteam.location);
+		}
+		else
+		{
+			CG_DrawFireTeamOverlay(&hud0.fireteam.location);
+		}
 	}
 
 	if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR) &&
@@ -2032,7 +2159,15 @@ void CG_DrawUpperRight(void)
 
 	if (cg_drawRoundTimer.integer)
 	{
-		y = CG_DrawTimer(y);
+		if (cg_altHudFlags.integer & FLAGS_MOVE_TIMERS)
+		{
+			// TODO: implement this
+			//CG_DrawTimersAlt(NULL,NULL,NULL);
+		}
+		else
+		{
+			y = CG_DrawTimerNormal(y);
+		}
 	}
 
 	if (cg_drawFPS.integer)
@@ -2045,7 +2180,7 @@ void CG_DrawUpperRight(void)
 		y = CG_DrawSnapshot(y);
 	}
 
-	if (cg_drawTime.integer & LOCALTIME_ON)
+	if (cg_drawTime.integer & LOCALTIME_ON && (!cg_altHudFlags.integer & FLAGS_MOVE_TIMERS))
 	{
 		y = CG_DrawLocalTime(y);
 	}

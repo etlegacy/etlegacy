@@ -2165,6 +2165,7 @@ extern vmCvar_t cg_altHud;
 extern vmCvar_t cg_altHudFlags;
 extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamLatchedClass;
+extern vmCvar_t cg_fireteamLocations;
 
 extern vmCvar_t cg_automapZoom;
 

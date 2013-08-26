@@ -669,11 +669,13 @@ CG_DrawLagometer
 */
 static void CG_DrawLagometer(void)
 {
-	int   a, x, y, i;
-	float v;
-	float ax, ay, aw, ah, mid, range;
-	int   color;
-	float vscale;
+	int    a, x, y, i;
+	float  v;
+	float  ax, ay, aw, ah, mid, range;
+	int    color;
+	float  vscale;
+	vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
+	vec4_t HUD_Border     = { 0.5f, 0.5f, 0.5f, 0.5f };
 
 	if (!cg_lagometer.integer) // || cgs.localServer)
 	{
@@ -686,7 +688,9 @@ static void CG_DrawLagometer(void)
 	y = SCREEN_HEIGHT - 200;
 
 	trap_R_SetColor(NULL);
-	CG_DrawPic(x, y, 48, 48, cgs.media.lagometerShader);
+	//CG_DrawPic(x, y, 48, 48, cgs.media.lagometerShader);
+	CG_FillRect(x, y, 48, 48 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, 48, 48, 1, HUD_Border);
 
 	ax = x;
 	ay = y;
