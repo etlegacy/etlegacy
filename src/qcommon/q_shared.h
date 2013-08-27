@@ -66,7 +66,8 @@ extern "C" {
 #ifdef PANDORA
 #define CONFIG_NAME_DEFAULT     "default_pandora.cfg"
 #else
-#define CONFIG_NAME_DEFAULT     "default.cfg"
+#define CONFIG_NAME_DEFAULT     "default.cfg" // if you change this adjust files.c
+                                              // name ist still hard coded in pk3 checks
 #endif
 
 #define DEMOEXT "dm_"           // standard demo extension

@@ -2774,7 +2774,7 @@ void Com_Init(char *commandLine)
 
 	com_cleanwhitelist = Cvar_Get("com_cleanwhitelist", "z_hdet", CVAR_PROTECTED);
 
-	Cbuf_AddText("exec default.cfg\n");
+	Cbuf_AddText(va("exec %s\n", CONFIG_NAME_DEFAULT));
 
 	// skip the etconfig.cfg if "safe" is on the command line
 	if (!Com_SafeMode())

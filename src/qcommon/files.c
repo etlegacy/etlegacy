@@ -4344,9 +4344,18 @@ void FS_InitFilesystem(void)
 	// busted and error out now, rather than getting an unreadable
 	// graphics screen when the font fails to load
 	// - we want the nice error message here as well
-	if (FS_ReadFile("default.cfg", NULL) <= 0)
+	if (FS_ReadFile("default.cfg", NULL) <= 0
+#ifdef PANDORA
+	    // also ensure default_pandora.cfg
+	    && FS_ReadFile(CONFIG_NAME_DEFAULT, NULL) <= 0
+#endif
+	    )
 	{
+#ifdef PANDORA
+		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg and default_pandora.cfg - I am missing essential files!\nVerify your installation and make sure genuine ET files\n- mp_bin.pk3\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
+#else
 		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg - I am missing essential files!\nVerify your installation and make sure genuine ET files\n- mp_bin.pk3\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
+#endif
 	}
 
 	Q_strncpyz(lastValidBase, fs_basepath->string, sizeof(lastValidBase));
@@ -4375,7 +4384,12 @@ void FS_Restart(int checksumFeed)
 	// if we can't find default.cfg, assume that the paths are
 	// busted and error out now, rather than getting an unreadable
 	// graphics screen when the font fails to load
-	if (FS_ReadFile("default.cfg", NULL) <= 0)
+	if (FS_ReadFile("default.cfg", NULL) <= 0
+#ifdef PANDORA
+	    // also ensure default_pandora.cfg
+	    && FS_ReadFile(CONFIG_NAME_DEFAULT, NULL) <= 0
+#endif
+	    )
 	{
 		// this might happen when connecting to a pure server not using BASEGAME/pak0.pk3
 		// (for instance a TA demo server)
@@ -4392,7 +4406,11 @@ void FS_Restart(int checksumFeed)
 			return;
 		}
 		// added some verbosity, 'couldn't load default.cfg' confuses the hell out of users
+#ifdef PANDORA
+		Com_Error(ERR_FATAL, "FS_Restart: Couldn't load default.cfg and default_pandora.cfg - I am missing essential files - verify your installation?");
+#else
 		Com_Error(ERR_FATAL, "FS_Restart: Couldn't load default.cfg - I am missing essential files - verify your installation?");
+#endif
 	}
 
 	// new check before safeMode
@@ -4475,6 +4493,7 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode)
 		break;
 	case FS_APPEND_SYNC:
 		sync = qtrue;
+	// fall through
 	case FS_APPEND:
 		*f = FS_FOpenFileAppend(qpath);
 		r  = 0;
