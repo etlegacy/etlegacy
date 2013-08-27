@@ -1705,6 +1705,7 @@ typedef struct oidInfo_s
 // locations
 #define MAX_C_LOCATIONS 1024
 // locations draw bits and cvar
+/*
 #define LOC_FTEAM                   1
 #define LOC_VCHAT                   2
 #define LOC_TCHAT                   2
@@ -1713,6 +1714,18 @@ typedef struct oidInfo_s
 #define LOC_SHOWCOORDS              16
 #define LOC_SHOWDISTANCE            32
 #define LOC_DEBUG                   512
+*/
+enum
+{
+	LOC_FTEAM        = BIT(0),
+	LOC_VCHAT        = BIT(1),
+	LOC_TCHAT        = BIT(1),
+	LOC_LANDMINES    = BIT(2),
+	LOC_KEEPUNKNOWN  = BIT(3),
+	LOC_SHOWCOORDS   = BIT(4),
+	LOC_SHOWDISTANCE = BIT(5),
+	LOC_DEBUG        = BIT(9),
+};
 
 typedef struct location_s
 {
@@ -2165,7 +2178,6 @@ extern vmCvar_t cg_altHud;
 extern vmCvar_t cg_altHudFlags;
 extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamLatchedClass;
-extern vmCvar_t cg_fireteamLocations;
 
 extern vmCvar_t cg_automapZoom;
 
