@@ -58,7 +58,7 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType)
 		imageBufferSize[bufferType] = R_IMAGE_BUFFER_SIZE;
 		imageBufferPtr[bufferType]  = malloc(imageBufferSize[bufferType]);
 		// TEST
-		//imageBufferPtr[bufferType] = Z_Malloc( imageBufferSize[bufferType] ); // TEST
+		//imageBufferPtr[bufferType] = Z_Malloc( imageBufferSize[bufferType] );
 	}
 	if (size > imageBufferSize[bufferType])       // it needs to grow
 	{
@@ -276,6 +276,7 @@ void R_ImageList_f(void)
 			break;
 		default:
 			ri.Printf(PRINT_ALL, "???? ");
+			break;
 		}
 
 		switch (image->wrapClampMode)
@@ -1984,6 +1985,7 @@ void *R_CacheImageAlloc(int size)
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
 		void *buf = malloc(size);    // ri.Z_Malloc causes load times about twice as long?
+
 		if (!buf)
 		{
 			ri.Error(ERR_DROP, "R_CacheImageAlloc: unable to allocate buffer\n ");

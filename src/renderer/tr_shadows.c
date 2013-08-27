@@ -57,9 +57,8 @@ static int       facing[SHADER_MAX_INDEXES / 3];
 
 void R_AddEdgeDef(int i1, int i2, int facing)
 {
-	int c;
+	int c = numEdgeDefs[i1];
 
-	c = numEdgeDefs[i1];
 	if (c == MAX_EDGE_DEFS)
 	{
 		return;     // overflow
@@ -76,15 +75,13 @@ void R_RenderShadowEdges(void)
 	int c, c2;
 	int j, k;
 	int i2;
-	int c_edges, c_rejected;
+	int c_edges = 0, c_rejected = 0;
 	int hit[2];
 
 	// an edge is NOT a silhouette edge if its face doesn't face the light,
 	// or if it has a reverse paired edge that also faces the light.
 	// A well behaved polyhedron would have exactly two faces for each edge,
 	// but lots of models have dangling edges or overfanned edges
-	c_edges    = 0;
-	c_rejected = 0;
 
 	for (i = 0 ; i < tess.numVertexes ; i++)
 	{
@@ -303,22 +300,14 @@ RB_ProjectionShadowDeform
 */
 void RB_ProjectionShadowDeform(void)
 {
-	float  *xyz;
+	float  *xyz = ( float * ) tess.xyz;
 	int    i;
 	float  h;
-	vec3_t ground;
+	vec3_t ground = { backEnd.orientation.axis[0][2], backEnd.orientation.axis[1][2], backEnd.orientation.axis[2][2] };
 	vec3_t light;
-	float  groundDist;
+	float  groundDist = backEnd.orientation.origin[2] - backEnd.currentEntity->e.shadowPlane;
 	float  d;
 	vec3_t lightDir;
-
-	xyz = ( float * ) tess.xyz;
-
-	ground[0] = backEnd.orientation.axis[0][2];
-	ground[1] = backEnd.orientation.axis[1][2];
-	ground[2] = backEnd.orientation.axis[2][2];
-
-	groundDist = backEnd.orientation.origin[2] - backEnd.currentEntity->e.shadowPlane;
 
 	VectorCopy(backEnd.currentEntity->lightDir, lightDir);
 	d = DotProduct(lightDir, ground);

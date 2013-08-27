@@ -692,7 +692,7 @@ static void DoRailDiscs(int numSegs, const vec3_t start, const vec3_t dir, const
 		return;
 	}
 
-	scale = 0.25;
+	scale = 0.25f;
 
 	for (i = 0; i < 4; i++)
 	{
@@ -837,19 +837,16 @@ LerpMeshVertexes
 */
 static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 {
-	short    *oldXyz, *newXyz, *oldNormals, *newNormals;
-	float    *outXyz, *outNormal;
+	float    *outXyz    = tess.xyz[tess.numVertexes].v;
+	float    *outNormal = tess.normal[tess.numVertexes].v;
 	float    newXyzScale;
 	float    newNormalScale;
 	int      vertNum;
 	unsigned lat, lng;
 	int      numVerts;
+	short    *oldXyz, *newXyz, *oldNormals, *newNormals;
 
-	outXyz    = tess.xyz[tess.numVertexes].v;
-	outNormal = tess.normal[tess.numVertexes].v;
-
-	newXyz = ( short * )((byte *)surf + surf->ofsXyzNormals)
-	         + (backEnd.currentEntity->e.frame * surf->numVerts * 4);
+	newXyz     = ( short * )((byte *)surf + surf->ofsXyzNormals) + (backEnd.currentEntity->e.frame * surf->numVerts * 4);
 	newNormals = newXyz + 3;
 
 	newXyzScale    = MD3_XYZ_SCALE * (1.0 - backlerp);
@@ -864,7 +861,6 @@ static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 		     newXyz += 4, newNormals += 4,
 		     outXyz += 4, outNormal += 4)
 		{
-
 			outXyz[0] = newXyz[0] * newXyzScale;
 			outXyz[1] = newXyz[1] * newXyzScale;
 			outXyz[2] = newXyz[2] * newXyzScale;
@@ -899,7 +895,7 @@ static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 		     oldXyz += 4, newXyz += 4, oldNormals += 4, newNormals += 4,
 		     outXyz += 4, outNormal += 4)
 		{
-			//% vec3_t uncompressedOldNormal, uncompressedNewNormal;
+			//vec3_t uncompressedOldNormal, uncompressedNewNormal;
 
 			// interpolate the xyz
 			outXyz[0] = oldXyz[0] * oldXyzScale + newXyz[0] * newXyzScale;
@@ -1012,10 +1008,9 @@ R_LatLongToNormal
 */
 void R_LatLongToNormal(vec3_t outNormal, short latLong)
 {
-	unsigned lat, lng;
+	unsigned lat = (latLong >> 8) & 0xff;
+	unsigned lng = (latLong & 0xff);
 
-	lat  = (latLong >> 8) & 0xff;
-	lng  = (latLong & 0xff);
 	lat *= (FUNCTABLE_SIZE / 256);
 	lng *= (FUNCTABLE_SIZE / 256);
 
@@ -1033,7 +1028,7 @@ LerpCMeshVertexes
 */
 static void LerpCMeshVertexes(mdcSurface_t *surf, float backlerp)
 {
-	short              *oldXyz, *newXyz, *oldNormals, *newNormals;
+	vec3_t             oldOfsVec, newOfsVec;
 	float              *outXyz, *outNormal;
 	float              newXyzScale;
 	float              newNormalScale;
@@ -1041,9 +1036,9 @@ static void LerpCMeshVertexes(mdcSurface_t *surf, float backlerp)
 	unsigned           lat, lng;
 	int                numVerts;
 	int                newBase;
-	short              *oldComp    = NULL, *newComp = NULL;
+	short              *oldComp = NULL, *newComp = NULL;
+	short              *oldXyz, *newXyz, *oldNormals, *newNormals;
 	mdcXyzCompressed_t *oldXyzComp = NULL, *newXyzComp = NULL;
-	vec3_t             oldOfsVec, newOfsVec;
 	qboolean           hasComp;
 
 	outXyz    = tess.xyz[tess.numVertexes].v;
@@ -1356,7 +1351,7 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 	int           widthTable[MAX_GRID_SIZE];
 	int           heightTable[MAX_GRID_SIZE];
 	float         lodError;
-	int           lodWidth, lodHeight;
+	int           lodWidth = 1, lodHeight;
 	int           numVertexes;
 	int           dlightBits = cv->dlightBits;
 	qboolean      needsNormal;
@@ -1369,7 +1364,7 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 	// determine which rows and columns of the subdivision
 	// we are actually going to use
 	widthTable[0] = 0;
-	lodWidth      = 1;
+
 	for (i = 1 ; i < cv->width - 1 ; i++)
 	{
 		if (cv->widthLodError[i] <= lodError)
@@ -1443,8 +1438,7 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 		{
 			for (j = 0 ; j < lodWidth ; j++)
 			{
-				dv = cv->verts + heightTable[used + i] * cv->width
-				     + widthTable[j];
+				dv = cv->verts + heightTable[used + i] * cv->width + widthTable[j];
 
 				xyz[0]        = dv->xyz[0];
 				xyz[1]        = dv->xyz[1];

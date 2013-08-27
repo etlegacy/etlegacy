@@ -396,6 +396,7 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent)
 			if (ent->e.renderfx & RF_BLINK)
 			{
 				char *s = va("%s_b", surface->name);   // append '_b' for 'blink'
+
 				hash = Com_HashKey(s, strlen(s));
 				for (j = 0 ; j < skin->numSurfaces ; j++)
 				{
@@ -1510,9 +1511,9 @@ RB_MDM_SurfaceAnim
 void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 {
 	int         j, k;
-	refEntity_t *refent;
-	int         *boneList;
-	mdmHeader_t *header;
+	refEntity_t *refent   = &backEnd.currentEntity->e;
+	int         *boneList = ( int * )((byte *)surface + surface->ofsBoneReferences);
+	mdmHeader_t *header   = ( mdmHeader_t * )((byte *)surface + surface->ofsHeader);
 
 #ifdef DBG_PROFILE_BONES
 	int di = 0, dt, ldt;
@@ -1520,10 +1521,6 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 	dt  = ri.Milliseconds();
 	ldt = dt;
 #endif
-
-	refent   = &backEnd.currentEntity->e;
-	boneList = ( int * )((byte *)surface + surface->ofsBoneReferences);
-	header   = ( mdmHeader_t * )((byte *)surface + surface->ofsHeader);
 
 	R_CalcBones((const refEntity_t *)refent, boneList, surface->numBoneReferences);
 
@@ -1740,6 +1737,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 				{
 					vec3_t        diff;
 					mdxBoneInfo_t *mdxBoneInfo = ( mdxBoneInfo_t * )((byte *)mdxHeader + mdxHeader->ofsBones + *boneRefs * sizeof(mdxBoneInfo_t));
+
 					bonePtr = &bones[*boneRefs];
 
 					VectorSet(vec, 0.f, 0.f, 32.f);
@@ -1826,7 +1824,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 
 		if (r_bonesDebug->integer >= 3 && r_bonesDebug->integer <= 6)
 		{
-			int render_indexes = (tess.numIndexes - oldIndexes);
+			int render_indexes = tess.numIndexes - oldIndexes;
 
 			// show mesh edges
 			tempVert   = ( float * )(tess.xyz + baseVertex);

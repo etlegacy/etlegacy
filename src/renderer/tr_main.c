@@ -599,7 +599,7 @@ R_SetFrameFog
 */
 void R_SetFrameFog(void)
 {
-	// Arnout: new style global fog transitions
+	// new style global fog transitions
 	if (tr.world->globalFogTransEndTime)
 	{
 		if (tr.world->globalFogTransEndTime >= tr.refdef.time)
