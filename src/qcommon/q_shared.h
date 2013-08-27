@@ -56,11 +56,19 @@ extern "C" {
 #else
 #define FAKE_VERSION            "ET 2.60b " CPUSTRING " May  8 2006"
 #endif
+
 #ifdef DEDICATED
 #define CONFIG_NAME             "etconfig_server.cfg"
 #else
 #define CONFIG_NAME             "etconfig.cfg"
 #endif
+
+#ifdef PANDORA
+#define CONFIG_NAME_DEFAULT     "default_pandora.cfg"
+#else
+#define CONFIG_NAME_DEFAULT     "default.cfg"
+#endif
+
 #define DEMOEXT "dm_"           // standard demo extension
 
 #define MAX_MASTER_SERVERS      5   // number of supported master servers
@@ -260,6 +268,8 @@ static ID_NONSTATIC_INLINE float idSqrt(float x)
 #define CPUSTRING   "linux-x86_64"
 #elif defined __axp__
 #define CPUSTRING   "linux-alpha"
+#elif defined ARM
+#define CPUSTRING   "linux-arm"
 #else
 #define CPUSTRING   "linux-other"
 #endif
