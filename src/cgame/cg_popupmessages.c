@@ -159,10 +159,9 @@ void CG_UpdatePMLists(void)
 					listItem->inuse  = qfalse;
 					listItem->next   = NULL;
 				}
-				else
-				{
-					// just sit where we are, no pressure to do anything...
-				}
+				//else
+				//{ // just sit where we are, no pressure to do anything...
+				//}
 			}
 		}
 	}
@@ -194,7 +193,6 @@ void CG_UpdatePMLists(void)
 
 				listItem->next  = NULL;
 				listItem->inuse = qfalse;
-
 			}
 			while ((listItem = next));
 
@@ -457,8 +455,7 @@ void CG_DrawPMItems(rectDef_t rect)
 	if (cg_drawSmallPopupIcons.integer)
 	{
 		size = PM_ICON_SIZE_SMALL;
-
-		y += 4;
+		y   += 4;
 	}
 	else
 	{
@@ -567,7 +564,6 @@ void CG_DrawPMItemsBig(void)
 	CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) - 56, y, 48, 48, cg_pmWaitingListBig->shader);
 	trap_R_SetColor(NULL);
 
-
 	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, 0.22f, 0, &cgs.media.limboFont2);
 	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 4 - w, y + 56, 0.22f, 0.24f, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
 }
@@ -643,7 +639,7 @@ const char *CG_GetPMItemText(centity_t *cent)
 	case PM_TEAM:
 		switch (cent->currentState.density)
 		{
-		case 0:         // joined
+		case 0:             // joined
 		{
 			const char *teamstr = NULL;
 
@@ -665,6 +661,7 @@ const char *CG_GetPMItemText(centity_t *cent)
 		case 1:
 			return va(CG_TranslateString("%s^7 disconnected"), cgs.clientinfo[cent->currentState.effect3Time].name);
 		}
+		break;
 	}
 
 	return NULL;
