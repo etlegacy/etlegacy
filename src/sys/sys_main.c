@@ -61,7 +61,7 @@
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 
-#ifdef WINDOWS_RELEASE
+#ifdef USE_WINDOWS_CONSOLE
 #include <windows.h>
 #endif
 
@@ -140,7 +140,7 @@ void Sys_In_Restart_f(void)
 /**
  * @brief Handle new console input
  */
-#if !defined (WINDOWS_RELEASE)
+#if !defined (USE_WINDOWS_CONSOLE)
 char *Sys_ConsoleInput(void)
 {
 	return CON_Input();
@@ -227,7 +227,7 @@ void Sys_Quit(void)
 	NET_Shutdown();
 #endif
 	Sys_Exit(0);
-#if defined (WINDOWS_RELEASE)
+#if defined (USE_WINDOWS_CONSOLE)
 	Sys_DestroyConsole();
 #endif
 }
@@ -284,14 +284,14 @@ cpuFeatures_t Sys_GetProcessorFeatures(void)
 Sys_Init
 =================
 */
-#if defined (WINDOWS_RELEASE)
+#if defined (USE_WINDOWS_CONSOLE)
 extern void Sys_ClearViewlog_f(void);
 #endif
 
 void Sys_Init(void)
 {
 	Cmd_AddCommand("in_restart", Sys_In_Restart_f);
-#if defined (WINDOWS_RELEASE)
+#if defined (USE_WINDOWS_CONSOLE)
 	Cmd_AddCommand("clearviewlog", Sys_ClearViewlog_f);
 #endif
 
@@ -446,7 +446,7 @@ Sys_Print
 */
 void Sys_Print(const char *msg)
 {
-#if defined (WINDOWS_RELEASE)
+#if defined (USE_WINDOWS_CONSOLE)
 	Conbuf_AppendText(msg);
 #else
 	CON_LogWrite(msg);
@@ -463,7 +463,7 @@ void Sys_Error(const char *error, ...)
 {
 	va_list argptr;
 	char    string[1024];
-#if defined (WINDOWS_RELEASE)
+#if defined (USE_WINDOWS_CONSOLE)
 	MSG msg;
 #endif
 
@@ -471,7 +471,7 @@ void Sys_Error(const char *error, ...)
 	Q_vsnprintf(string, sizeof(string), error, argptr);
 	va_end(argptr);
 
-#if defined (WINDOWS_RELEASE)
+#if defined (USE_WINDOWS_CONSOLE)
 	Conbuf_AppendText(string);
 	Conbuf_AppendText("\n");
 

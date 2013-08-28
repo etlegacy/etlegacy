@@ -2204,7 +2204,7 @@ sysEvent_t Com_GetSystemEvent(void)
 		return eventQueue[(eventTail - 1) & MASK_QUEUED_EVENTS];
 	}
 
-#if defined(WINDOWS_RELEASE)
+#if defined(USE_WINDOWS_CONSOLE)
 	// pump the message loop
 	Sys_PumpConsoleEvents();
 #endif
@@ -2873,7 +2873,7 @@ void Com_Init(char *commandLine)
 	con_drawnotify = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
-#if defined (_WIN32) || defined (__AROS__)
+#if defined (__AROS__)
 	com_ansiColor = Cvar_Get("com_ansiColor", "0", CVAR_ARCHIVE);
 #else
 	com_ansiColor = Cvar_Get("com_ansiColor", "1", CVAR_ARCHIVE);
@@ -2916,7 +2916,7 @@ void Com_Init(char *commandLine)
 	if (!com_dedicated->integer)
 	{
 		CL_Init();
-#if defined (WINDOWS_RELEASE)
+#if defined (USE_WINDOWS_CONSOLE)
 		Sys_ShowConsole(com_viewlog->integer, qfalse);
 #endif
 	}
@@ -3147,7 +3147,7 @@ void Com_Frame(void)
 	// if "viewlog" has been modified, show or hide the log console
 	if (com_viewlog->modified)
 	{
-#if defined (WINDOWS_RELEASE)
+#if defined (USE_WINDOWS_CONSOLE)
 		if (!com_dedicated->value)
 		{
 			Sys_ShowConsole(com_viewlog->integer, qfalse);
@@ -3209,14 +3209,14 @@ void Com_Frame(void)
 		if (!com_dedicated->integer)
 		{
 			CL_Init();
-#if defined (WINDOWS_RELEASE)
+#if defined (USE_WINDOWS_CONSOLE)
 			Sys_ShowConsole(com_viewlog->integer, qfalse);
 #endif
 		}
 		else
 		{
 			CL_Shutdown();
-#if defined (WINDOWS_RELEASE)
+#if defined (USE_WINDOWS_CONSOLE)
 			Sys_ShowConsole(1, qtrue);
 #endif
 		}

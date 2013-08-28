@@ -37,17 +37,16 @@
 #define _QCOMMON_H_
 
 #include "../qcommon/cm_public.h"
-
+/*
+#if defined(USE_WINDOWS_CONSOLE)
+#include "../sys/sys_win32.h"
+#endif
+*/
 // Ignore __attribute__ on non-gcc platforms
 #ifndef __GNUC__
 #   ifndef __attribute__
 #       define __attribute__(x)
 #   endif
-#endif
-
-#if !defined (_DEBUG) && defined(_WIN32)
-#define WINDOWS_RELEASE
-#include "../sys/sys_win32.h"
 #endif
 
 

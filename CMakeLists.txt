@@ -81,6 +81,7 @@ option(FEATURE_RENDERER2	"Build and use the new renderer"					OFF)
 option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
 option(FEATURE_IRC_CLIENT	"Enable IRC client"							OFF)
 option(RENDERER_DYNAMIC		"Build renderer into a dynamic library"					OFF)
+option(FEATURE_WINDOWS_CONSOLE		"Build win32 executables with Windows console"				ON)
 
 cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"				ON "BUNDLED_LIBS" OFF)
 
@@ -582,7 +583,7 @@ if(FEATURE_CURSES)
 endif(FEATURE_CURSES)
 
 #-----------------------------------------------------------------
-# Groups for Visual Studio (Windows)
+# Groups for Visual Studio (Windows) and win32 definitions
 #-----------------------------------------------------------------
 if(WIN32)
 	source_group("Source Files\\Client" FILES ${CLIENT_FILES})
@@ -597,6 +598,9 @@ if(WIN32)
 	source_group("Source Files\\Renderer2" FILES ${RENDERER2_FILES})
 	source_group("Source Files\\RendererCommon" FILES ${RENDERER_COMMON})
 	source_group("Shaders" FILES ${RENDERER2_SHADERS})
+	if(FEATURE_WINDOWS_CONSOLE)
+		add_definitions( "-DUSE_WINDOWS_CONSOLE" )
+	endif(FEATURE_WINDOWS_CONSOLE)
 endif(WIN32)
 
 #-----------------------------------------------------------------
@@ -698,7 +702,12 @@ if(BUILD_CLIENT)
 		endif()
 	endif(FEATURE_RENDERER2)
 	
-	add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+	if(FEATURE_WINDOWS_CONSOLE AND WIN32)
+		add_executable(etl WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+	else(FEATURE_WINDOWS_CONSOLE AND WIN32)
+		add_executable(etl ${COMMON_SRC} ${ZLIB_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+	endif(FEATURE_WINDOWS_CONSOLE AND WIN32)
+	
 	if(BUNDLED_SDL)
 		add_dependencies(etl bundled_sdl)
 	endif(BUNDLED_SDL)
@@ -714,6 +723,7 @@ if(BUILD_CLIENT)
 		${CLIENT_LIBRARIES}
 		${SDL_LIBRARIES}
 	)
+	
 	set_target_properties(etl
 		PROPERTIES COMPILE_DEFINITIONS "USE_ICON")
 	install(TARGETS etl
@@ -721,7 +731,11 @@ if(BUILD_CLIENT)
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
-	add_executable(etlded WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
+	if(FEATURE_WINDOWS_CONSOLE AND WIN32)
+		add_executable(etlded WIN32 ${COMMON_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
+	else(FEATURE_WINDOWS_CONSOLE AND WIN32)
+		add_executable(etlded ${COMMON_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
+	endif(FEATURE_WINDOWS_CONSOLE AND WIN32)
 	target_link_libraries(etlded ${OS_LIBRARIES} ${SERVER_LIBRARIES})
 	set_target_properties(etlded PROPERTIES COMPILE_DEFINITIONS "DEDICATED")
 	install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")

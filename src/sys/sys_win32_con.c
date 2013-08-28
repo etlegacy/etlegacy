@@ -32,7 +32,7 @@
  * @file sys_platform.c
  * @brief Contains windows-specific code for console.
  */
-#if defined(WINDOWS_RELEASE)
+#if defined(USE_WINDOWS_CONSOLE)
 #include "../client/client.h"
 #include "win_resource.h"
 #include "sys_win32.h"
