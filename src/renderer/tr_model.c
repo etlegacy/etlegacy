@@ -176,6 +176,10 @@ qhandle_t RE_RegisterModel(const char *name)
 		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: NULL name\n");
 		return 0;
 	}
+	else
+	{
+		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel model: %s\n", name);
+	}
 
 	if (strlen(name) >= MAX_QPATH)
 	{

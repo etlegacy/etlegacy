@@ -35,7 +35,6 @@
 #include "../qcommon/qcommon.h"
 #include "sys_local.h"
 #include <windows.h>
-#include <conio.h>
 
 #define QCONSOLE_HISTORY 32
 
