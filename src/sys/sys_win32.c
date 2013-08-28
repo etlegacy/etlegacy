@@ -900,7 +900,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 WinMain
 ==================
 */
-#ifdef _WIN32
+#ifdef WINDOWS_RELEASE
 WinVars_t   g_wv;
 static char sys_cmdline[MAX_STRING_CHARS];
 int         totalMsec, countMsec;

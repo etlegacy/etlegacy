@@ -2192,9 +2192,6 @@ Com_GetSystemEvent
 */
 sysEvent_t Com_GetSystemEvent(void)
 {
-#if defined(_WIN32)
-	MSG msg;
-#endif
 	sysEvent_t ev;
 	char       *s;
 	msg_t      netmsg;
@@ -2207,21 +2204,9 @@ sysEvent_t Com_GetSystemEvent(void)
 		return eventQueue[(eventTail - 1) & MASK_QUEUED_EVENTS];
 	}
 
+#if defined(WINDOWS_RELEASE)
 	// pump the message loop
-#if defined(_WIN32)
-	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
-	{
-		if (!GetMessage(&msg, NULL, 0, 0))
-		{
-			Com_Quit_f();
-		}
-
-		// save the msg time, because wndprocs don't have access to the timestamp
-		g_wv.sysMsgTime = msg.time;
-
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
+	Sys_PumpConsoleEvents();
 #endif
 
 	// check for console commands
@@ -2931,7 +2916,7 @@ void Com_Init(char *commandLine)
 	if (!com_dedicated->integer)
 	{
 		CL_Init();
-#if defined (_WIN32) && defined (_DEBUG)
+#if defined (WINDOWS_RELEASE)
 		Sys_ShowConsole(com_viewlog->integer, qfalse);
 #endif
 	}
@@ -3162,7 +3147,7 @@ void Com_Frame(void)
 	// if "viewlog" has been modified, show or hide the log console
 	if (com_viewlog->modified)
 	{
-#if defined (_WIN32)
+#if defined (WINDOWS_RELEASE)
 		if (!com_dedicated->value)
 		{
 			Sys_ShowConsole(com_viewlog->integer, qfalse);
@@ -3224,14 +3209,14 @@ void Com_Frame(void)
 		if (!com_dedicated->integer)
 		{
 			CL_Init();
-#if defined (_WIN32)
+#if defined (WINDOWS_RELEASE)
 			Sys_ShowConsole(com_viewlog->integer, qfalse);
 #endif
 		}
 		else
 		{
 			CL_Shutdown();
-#if defined (_WIN32) && !defined (_DEBUG)
+#if defined (WINDOWS_RELEASE)
 			Sys_ShowConsole(1, qtrue);
 #endif
 		}

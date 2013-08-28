@@ -32,7 +32,7 @@
  * @file sys_platform.c
  * @brief Contains windows-specific code for console.
  */
-
+#if defined(WINDOWS_RELEASE)
 #include "../client/client.h"
 #include "win_resource.h"
 #include "sys_win32.h"
@@ -1027,3 +1027,27 @@ void Sys_ClearViewlog_f(void)
 {
 	SendMessage(s_wcd.hwndBuffer, WM_SETTEXT, 0, (LPARAM)"");
 }
+
+/*
+==============
+Sys_PumpConsoleEvents
+==============
+*/
+void Sys_PumpConsoleEvents(void)
+{
+	MSG msg;
+	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+	{
+		if (!GetMessage(&msg, NULL, 0, 0))
+		{
+			Com_Quit_f();
+		}
+
+		// save the msg time, because wndprocs don't have access to the timestamp
+		g_wv.sysMsgTime = msg.time;
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+#endif

@@ -64,3 +64,5 @@ void    Sys_ShowConsole(int level, qboolean quitOnClose);
 int     Game_Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
 void    Com_FrameExt(void);
 void    WinSetExceptionWnd(HWND wnd);
+void	Sys_SetErrorText(const char *text);
+void	Sys_PumpConsoleEvents(void);

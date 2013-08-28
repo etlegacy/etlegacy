@@ -45,6 +45,12 @@
 #   endif
 #endif
 
+#if !defined (_DEBUG) && defined(_WIN32)
+#define WINDOWS_RELEASE
+#include "../sys/sys_win32.h"
+#endif
+
+
 // msg.c
 
 typedef struct
@@ -1143,11 +1149,7 @@ void Sys_SnapVector(float *v);
 // the system console is shown when a dedicated server is running
 void Sys_DisplaySystemConsole(qboolean show);
 
-void Sys_ShowConsole(int level, qboolean quitOnClose);
-
 cpuFeatures_t Sys_GetProcessorFeatures(void);
-
-void Sys_SetErrorText(const char *text);
 
 void Sys_SendPacket(int length, const void *data, netadr_t to);
 qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message);
