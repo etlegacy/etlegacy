@@ -326,16 +326,11 @@ R_AddAnimSurfaces
 */
 void R_AddAnimSurfaces(trRefEntity_t *ent)
 {
-	mdsHeader_t  *header;
+	mdsHeader_t  *header = tr.currentModel->model.mds;
 	mdsSurface_t *surface;
 	shader_t     *shader = 0;
 	int          i, fogNum, cull;
-	qboolean     personalModel;
-
-	// don't add third_person objects if not in a portal
-	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
-
-	header = tr.currentModel->model.mds;
+	qboolean     personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal; // don't add third_person objects if not in a portal
 
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum.

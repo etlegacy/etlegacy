@@ -110,7 +110,6 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	switch (uMsg)
 	{
 	case WM_SIZE:
-
 		cx = LOWORD(lParam);
 		cy = HIWORD(lParam);
 
@@ -336,7 +335,6 @@ static char    win_currentMatch[MAX_TOKEN_CHARS];
 static int     win_matchCount;
 static int     win_matchIndex;
 static int     win_findMatchIndex;
-static int     win_tabTime = 0;
 static field_t win_historyEditLines[WIN_COMMAND_HISTORY];
 static int     win_nextHistoryLine = 0;
 static int     win_historyLine     = 0;
@@ -477,9 +475,8 @@ Win_CompleteCommand
 */
 static void Win_CompleteCommand(qboolean showMatches)
 {
-	field_t *edit, temp;
-
-	edit = &win_consoleField;
+	field_t *edit = &win_consoleField;
+	field_t temp;
 
 	if (win_acLength == 0)
 	{
@@ -655,8 +652,10 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			// enable this code for tab double-tap show matching
 #if 0
+			static int win_tabTime = 0;
 			{
 				int tabTime = Sys_Milliseconds();
+
 				if ((tabTime - win_tabTime) < 100)
 				{
 					Win_CompleteCommand(qtrue);
@@ -758,7 +757,6 @@ void Sys_CreateConsole(void)
 	{
 		return;
 	}
-
 
 	// create fonts
 	hDC     = GetDC(s_wcd.hWnd);

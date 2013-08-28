@@ -364,12 +364,18 @@ void RE_ClearDecals(void)
 
 	// clear world decals
 	for (j = 0; j < MAX_WORLD_DECALS; j++)
+	{
 		tr.world->bmodels[0].decals[j].shader = NULL;
+	}
 
 	// clear entity decals
 	for (i = 0; i < tr.world->numBModels; i++)
+	{
 		for (j = 0; j < MAX_ENTITY_DECALS; j++)
+		{
 			tr.world->bmodels[i].decals[j].shader = NULL;
+		}
+	}
 }
 
 /*

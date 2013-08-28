@@ -698,6 +698,7 @@ void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 	{
 		// this is just two gradient bars along each horz edge
 		rectDef_t r = w->rect;
+
 		r.h = w->borderSize;
 		GradientBar_Paint(&r, w->borderColor);
 		r.y = w->rect.y + w->rect.h - 1;

@@ -223,11 +223,13 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 	return -1;
 }
 
-/*
-====================
-LAN_RemoveServer
-====================
-*/
+/**
+ * @brief Removes server(s) from the 'cache'
+ * @param source Positive values AS_LOCAL, AS_GLOBAL, AS_FAVORITES
+ *               or negative values AS_LOCAL_ALL, AS_GLOBAL_ALL, AS_FAVORITES_ALL to remove all
+ * @param addr   Server address - in case of negative source param addr is not required
+ *
+ */
 static void LAN_RemoveServer(int source, const char *addr)
 {
 	int          *count   = 0;
@@ -236,19 +238,23 @@ static void LAN_RemoveServer(int source, const char *addr)
 	switch (source)
 	{
 	case AS_LOCAL:
+	case AS_LOCAL_ALL:
 		count   = &cls.numlocalservers;
 		servers = &cls.localServers[0];
 		break;
 	case AS_GLOBAL:
+	case AS_GLOBAL_ALL:
 		count   = &cls.numglobalservers;
 		servers = &cls.globalServers[0];
 		break;
 	case AS_FAVORITES:
+	case AS_FAVORITES_ALL:
 		count   = &cls.numfavoriteservers;
 		servers = &cls.favoriteServers[0];
 		break;
 	}
-	if (servers)
+
+	if (servers && source > AS_LOCAL_ALL) // single server removal
 	{
 		netadr_t comp;
 		int      i, j;
@@ -273,6 +279,28 @@ static void LAN_RemoveServer(int source, const char *addr)
 		if (source == AS_FAVORITES)
 		{
 			LAN_SaveServersToFile();
+		}
+	}
+	else if (servers && source < AS_LOCAL) // remove all
+	{
+		switch (source)
+		{
+		case AS_LOCAL_ALL:
+			Com_Printf("Removing %i local servers\n", cls.numlocalservers);
+			cls.numlocalservers = 0;
+			Com_Memset(&cls.localServers, 0, sizeof(cls.localServers));
+			break;
+		case AS_GLOBAL_ALL:
+			Com_Printf("Removing %i global servers\n", cls.numglobalservers);
+			cls.numglobalservers = 0;
+			Com_Memset(&cls.globalServers, 0, sizeof(cls.globalServers));
+			break;
+		case AS_FAVORITES_ALL:
+			Com_Printf("Removing %i favourite servers\n", cls.numfavoriteservers);
+			cls.numfavoriteservers = 0;
+			Com_Memset(&cls.favoriteServers, 0, sizeof(cls.favoriteServers));
+			LAN_SaveServersToFile();
+			break;
 		}
 	}
 }

@@ -349,7 +349,6 @@ static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ
 		{ -2, -1, 3 }, // 0 degrees yaw, look straight up
 		{ 2,  -1, -3}   // look straight down
 	};
-
 	vec3_t b;
 	int    j, k;
 	float  boxSize;
@@ -1044,8 +1043,6 @@ void RB_DrawSun(void)
 	qglDepthRange(0.0, 1.0);
 	qglPopMatrix();
 }
-
-extern void R_Fog(glfog_t *curfog);
 
 /*
 ================

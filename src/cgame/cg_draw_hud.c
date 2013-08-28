@@ -76,6 +76,11 @@ typedef struct hudStructure_s
 	hudComponent_t cursorhint;
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
+
+	hudComponent_t roundtimer;
+	hudComponent_t reinforcment;
+	hudComponent_t spawntimer;
+	hudComponent_t localtime;
 } hudStucture_t;
 
 #define SKILL_ICON_SIZE     14
@@ -139,6 +144,11 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL); // FIXME: widescreen ?
 	hud->weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud->livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
+
+	hud->reinforcment = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
+	hud->roundtimer   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
+	hud->spawntimer   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
+	hud->localtime    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
 }
 
 /* unused
@@ -435,6 +445,42 @@ static qboolean CG_ParseHUD(int handle)
 		if (!Q_stricmp(token.string, "livesleft"))
 		{
 			if (!CG_ParseHudComponent(handle, &temphud.livesleft))
+			{
+				return CG_HUD_ParseError(handle, "expected livesleft");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "roundtimer"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.roundtimer))
+			{
+				return CG_HUD_ParseError(handle, "expected livesleft");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "reinforcment"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.reinforcment))
+			{
+				return CG_HUD_ParseError(handle, "expected livesleft");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "spawntimer"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.spawntimer))
+			{
+				return CG_HUD_ParseError(handle, "expected livesleft");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "localtime"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.localtime))
 			{
 				return CG_HUD_ParseError(handle, "expected livesleft");
 			}
@@ -1651,17 +1697,15 @@ static float CG_DrawFPS(float y)
 CG_DrawTimersAlt
 =================
 */
-static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_t *localtime)
+static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_t *localtime, rectDef_t *roundtimer)
 {
 	char     *s;
-	int      w, w2;
 	qtime_t  time;
 	qboolean pmtime = qfalse;
 	vec4_t   color  = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int      tens;
 	char     *rt = (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0) ?
 	               va("^F%d%s", CG_CalculateReinfTime(qfalse), ((cgs.timelimit <= 0.0f) ? "" : " ")) : "";
-	int x;
 	int msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
 	int seconds = msec / 1000;
 	int mins    = seconds / 60;
@@ -1682,16 +1726,12 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 	}
 	else
 	{
-		if (cgs.timelimit <= 0.0f)
-		{
-			s = va("%s", rt);
-		}
-		else
-		{
-			s = va("%s^7%i:%i%i", rt, mins, tens, seconds);  // ^*
-		}
-
 		color[3] = 1.f;
+		if (cgs.timelimit > 0.0f)
+		{
+			CG_Text_Paint_Ext(roundtimer->x, roundtimer->y, 0.19f, 0.19f, color, va("^7%i:%i%i", mins, tens, seconds), 0, 0, 0, &cgs.media.limboFont1);
+		}
+		s = va("%s", rt);
 	}
 	CG_Text_Paint_Ext(respawn->x, respawn->y, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
 
@@ -1985,6 +2025,10 @@ void CG_Hud_Setup(void)
 	hud1.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.reinforcment    = CG_getComponent(55, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.roundtimer      = CG_getComponent(75, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.spawntimer      = CG_getComponent(55, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.localtime       = CG_getComponent(75, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
 	CG_addHudToList(hud1);
 
 	// Hud2
@@ -2006,6 +2050,10 @@ void CG_Hud_Setup(void)
 	hud2.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud2.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud2.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.reinforcment    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
 	CG_addHudToList(hud2);
 
 	// Read the hud files
@@ -2119,7 +2167,7 @@ void CG_DrawGlobalHud(void)
 		CG_DrawPMItems(hud0.popupmessages.location);
 	}
 
-	if (!cg_altHudFlags.integer & FLAGS_REMOVE_RANKS)
+	if (cg_altHudFlags.integer & ~FLAGS_REMOVE_RANKS)
 	{
 		CG_DrawPMItemsBig();
 	}
@@ -2161,8 +2209,7 @@ void CG_DrawUpperRight(void)
 	{
 		if (cg_altHudFlags.integer & FLAGS_MOVE_TIMERS)
 		{
-			// TODO: implement this
-			//CG_DrawTimersAlt(NULL,NULL,NULL);
+			CG_DrawTimersAlt(&activehud->reinforcment.location, &activehud->spawntimer.location, &activehud->localtime.location, &activehud->roundtimer.location);
 		}
 		else
 		{

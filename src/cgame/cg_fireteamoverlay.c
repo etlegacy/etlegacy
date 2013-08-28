@@ -396,7 +396,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 			break;
 		}
 
-		if (cg_fireteamLocations.integer)
+		if (cg_locations.integer & LOC_FTEAM)
 		{
 			origin[0] = ci->location[0];
 			origin[1] = ci->location[1];
@@ -583,7 +583,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		}
 		// Set hard limit on width
 		x += 24;
-		if (cg_fireteamLocations.integer)
+		if (cg_locations.integer & LOC_FTEAM)
 		{
 			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, tclr, locStr[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}

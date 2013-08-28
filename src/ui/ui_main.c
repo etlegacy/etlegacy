@@ -3903,7 +3903,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "resetDefaults") == 0)
 		{
 			trap_Cmd_ExecuteText(EXEC_APPEND, "cvar_restart\n");
-			trap_Cmd_ExecuteText(EXEC_APPEND, "exec default.cfg\n");
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("exec %s\n", CONFIG_NAME_DEFAULT));
 			trap_Cmd_ExecuteText(EXEC_APPEND, "setRecommended\n");
 			Controls_SetDefaults(qfalse);
 			trap_Cvar_Set("com_introPlayed", "0");
@@ -5180,7 +5180,7 @@ void UI_RunMenuScript(char **args)
 			if (ui_handedness == 0)
 			{
 				// exec default.cfg
-				trap_Cmd_ExecuteText(EXEC_APPEND, "exec default.cfg\n");
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("exec %s\n", CONFIG_NAME_DEFAULT));
 				Controls_SetDefaults(qfalse);
 			}
 			else
@@ -5205,7 +5205,7 @@ void UI_RunMenuScript(char **args)
 			if (ui_handedness == 0)
 			{
 				// exec default.cfg
-				trap_Cmd_ExecuteText(EXEC_APPEND, "exec default.cfg\n");
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("exec %s\n", CONFIG_NAME_DEFAULT));
 				Controls_SetDefaults(qfalse);
 			}
 			else

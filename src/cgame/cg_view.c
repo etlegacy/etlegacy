@@ -57,7 +57,7 @@ so you will probably have to cycle a couple frames to see it.
 
 "nextframe", "prevframe", "nextskin", and "prevskin" commands will change the
 frame or skin of the testmodel.  These are bound to F5, F6, F7, and F8 in
-q3default.cfg.
+default.cfg see CONFIG_NAME_DEFAULT
 
 If a gun is being tested, the "gun_x", "gun_y", and "gun_z" variables will let
 you adjust the positioning.

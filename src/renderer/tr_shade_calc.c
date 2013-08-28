@@ -273,11 +273,9 @@ void RB_CalcBulgeVertexes(deformStage_t *ds)
 	const float *st     = ( const float * ) tess.texCoords0;
 	float       *xyz    = ( float * ) tess.xyz;
 	float       *normal = ( float * ) tess.normal;
-	float       now;
+	float       now     = backEnd.refdef.time * ds->bulgeSpeed * 0.001f;
 	int         off;
 	float       scale;
-
-	now = backEnd.refdef.time * ds->bulgeSpeed * 0.001f;
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, st += 4, normal += 4)
 	{
@@ -331,7 +329,7 @@ Change a polygon into a bunch of text polygons
 void DeformText(const char *text)
 {
 	int    i;
-	vec3_t origin, width, height;
+	vec3_t origin, width, height = { 0, 0, -1 };
 	int    len;
 	int    ch;
 	byte   color[4];
@@ -340,9 +338,6 @@ void DeformText(const char *text)
 	int    row, col;
 	float  frow, fcol, size;
 
-	height[0] = 0;
-	height[1] = 0;
-	height[2] = -1;
 	CrossProduct(tess.normal[0].v, height, width);
 
 	// find the midpoint of the box
@@ -866,7 +861,7 @@ void RB_CalcModulateAlphasByFog(unsigned char *colors)
 
 	for (i = 0; i < tess.numVertexes; i++, colors += 4)
 	{
-		//%	float f = 1.0 - R_FogFactor( texCoords[i][0], texCoords[i][1] );'
+		//float f = 1.0 - R_FogFactor(texCoords[i][0], texCoords[i][1]);
 		if (texCoords[i][0] <= 0.0f || texCoords[i][1] <= 0.0f)
 		{
 			continue;
@@ -907,7 +902,7 @@ void RB_CalcModulateColorsByFog(unsigned char *colors)
 
 	for (i = 0; i < tess.numVertexes; i++, colors += 4)
 	{
-		//%	float f = 1.0 - R_FogFactor( texCoords[i][0], texCoords[i][1] );
+		//float f = 1.0 - R_FogFactor(texCoords[i][0], texCoords[i][1]);
 		if (texCoords[i][0] <= 0.0f || texCoords[i][1] <= 0.0f)
 		{
 			continue;
@@ -952,7 +947,7 @@ void RB_CalcModulateRGBAsByFog(unsigned char *colors)
 
 	for (i = 0; i < tess.numVertexes; i++, colors += 4)
 	{
-		//%	float f = 1.0 - R_FogFactor( texCoords[i][0], texCoords[i][1] );
+		//float f = 1.0 - R_FogFactor(texCoords[i][0], texCoords[i][1]);
 		if (texCoords[i][0] <= 0.0f || texCoords[i][1] <= 0.0f)
 		{
 			continue;
@@ -997,20 +992,10 @@ void RB_CalcFogTexCoords(float *st)
 {
 	int      i;
 	float    *v;
-	fog_t    *fog;
+	fog_t    *fog = tr.world->fogs + tess.fogNum;    // get fog stuff
 	vec3_t   local, viewOrigin;
-	vec4_t   fogSurface, fogDistanceVector, fogDepthVector;
-	bmodel_t *bmodel;
-
-	// rarrrrr, stop stupid msvc debug thing
-	fogDepthVector[0] = 0;
-	fogDepthVector[1] = 0;
-	fogDepthVector[2] = 0;
-	fogDepthVector[3] = 0;
-
-	// get fog stuff
-	fog    = tr.world->fogs + tess.fogNum;
-	bmodel = tr.world->bmodels + fog->modelNum;
+	vec4_t   fogSurface, fogDistanceVector, fogDepthVector = { 0, 0, 0, 0 };
+	bmodel_t *bmodel = tr.world->bmodels + fog->modelNum; // get fog stuff
 
 	// if the brush model containing the fog volume wasn't in the scene, then don't bother rendering the fog
 	//	if( bmodel->visible == qfalse )
@@ -1109,13 +1094,12 @@ RB_CalcEnvironmentTexCoords
 */
 void RB_CalcEnvironmentTexCoords(float *st)
 {
-	int    i;
-	float  d2, *v, *normal, sAdjust, tAdjust;
 	vec3_t viewOrigin, ia1, ia2, viewer, reflected;
+	float  d2, sAdjust, tAdjust;
+	float  *v      = tess.xyz[0].v; // setup
+	float  *normal = tess.normal[0].v; // setup
+	int    i;
 
-	// setup
-	v      = tess.xyz[0].v;
-	normal = tess.normal[0].v;
 	VectorCopy(backEnd.orientation.viewOrigin, viewOrigin);
 
 	// origin of entity affects its environment map (every 256 units)
@@ -1162,13 +1146,12 @@ RB_CalcFireRiseEnvTexCoords
 */
 void RB_CalcFireRiseEnvTexCoords(float *st)
 {
-	int    i;
-	float  *v, *normal;
 	vec3_t viewer, reflected;
+	int    i;
+	float  *v      = tess.xyz[0].v;
+	float  *normal = tess.normal[0].v;
 	float  d;
 
-	v      = tess.xyz[0].v;
-	normal = tess.normal[0].v;
 	VectorNegate(backEnd.currentEntity->e.fireRiseDir, viewer);
 
 	for (i = 0 ; i < tess.numVertexes ; i++, v += 4, normal += 4, st += 2)
@@ -1210,10 +1193,8 @@ RB_CalcTurbulentTexCoords
 void RB_CalcTurbulentTexCoords(const waveForm_t *wf, float *st)
 {
 	int    i;
-	double now;
+	double now = (wf->phase + tess.shaderTime * wf->frequency);
 	float  s, t;
-
-	now = (wf->phase + tess.shaderTime * wf->frequency);
 
 	for (i = 0; i < tess.numVertexes; i++, st += 2)
 	{
@@ -1245,11 +1226,9 @@ RB_CalcScrollTexCoords
 void RB_CalcScrollTexCoords(const float scrollSpeed[2], float *st)
 {
 	int    i;
-	double timeScale = tess.shaderTime;
-	double adjustedScrollS, adjustedScrollT;
-
-	adjustedScrollS = (double)scrollSpeed[0] * timeScale;
-	adjustedScrollT = (double)scrollSpeed[1] * timeScale;
+	double timeScale       = tess.shaderTime;
+	double adjustedScrollS = (double)scrollSpeed[0] * timeScale;
+	double adjustedScrollT = (double)scrollSpeed[1] * timeScale;
 
 	// clamp so coordinates don't continuously get larger, causing problems
 	// with hardware limits
@@ -1286,17 +1265,12 @@ RB_CalcRotateTexCoords
 */
 void RB_CalcRotateTexCoords(float degsPerSecond, float *st)
 {
-	double       timeScale = tess.shaderTime;
-	double       degs;
-	int          index;
-	float        sinValue, cosValue;
 	texModInfo_t tmi;
-
-	degs  = -degsPerSecond * timeScale;
-	index = degs * (FUNCTABLE_SIZE / 360.0f);
-
-	sinValue = tr.sinTable[index & FUNCTABLE_MASK];
-	cosValue = tr.sinTable[(index + FUNCTABLE_SIZE / 4) & FUNCTABLE_MASK];
+	double       timeScale = tess.shaderTime;
+	double       degs      = -degsPerSecond * timeScale;
+	int          index     = degs * (FUNCTABLE_SIZE / 360.0f);
+	float        sinValue  = tr.sinTable[index & FUNCTABLE_MASK];
+	float        cosValue  = tr.sinTable[(index + FUNCTABLE_SIZE / 4) & FUNCTABLE_MASK];
 
 	tmi.matrix[0][0] = cosValue;
 	tmi.matrix[1][0] = -sinValue;
@@ -1318,16 +1292,13 @@ vec3_t lightOrigin = { -960, 1980, 96 };        // FIXME: track dynamically
 
 void RB_CalcSpecularAlpha(unsigned char *alphas)
 {
-	int    i;
-	float  *v, *normal;
-	vec3_t viewer, reflected;
+	vec3_t viewer, reflected, lightDir;
+	float  *v      = tess.xyz[0].v;
+	float  *normal = tess.normal[0].v;
 	float  l, d, ilength;
 	int    b;
-	vec3_t lightDir;
 	int    numVertexes;
-
-	v      = tess.xyz[0].v;
-	normal = tess.normal[0].v;
+	int    i;
 
 	alphas += 3;
 
@@ -1335,12 +1306,12 @@ void RB_CalcSpecularAlpha(unsigned char *alphas)
 	for (i = 0 ; i < numVertexes ; i++, v += 4, normal += 4, alphas += 4)
 	{
 		VectorSubtract(lightOrigin, v, lightDir);
-//		ilength = Q_rsqrt( DotProduct( lightDir, lightDir ) );
+		//ilength = Q_rsqrt( DotProduct( lightDir, lightDir ) );
 		VectorNormalizeFast(lightDir);
 
 		// calculate the specular color
 		d = DotProduct(normal, lightDir);
-//		d *= ilength;
+		//d *= ilength;
 
 		// we don't optimize for the d < 0 case since this tends to
 		// cause visual artifacts such as faceted "snapping"
@@ -1382,20 +1353,14 @@ RB_CalcDiffuseColor
 // saves about 1-2ms per frame on my machine with 64 x 1000 triangle models in scene
 void RB_CalcDiffuseColor(unsigned char *colors)
 {
-	int           i, dp, *colorsInt;
-	float         *normal;
-	trRefEntity_t *ent;
+	int           i, dp, *colorsInt = (int *) colors;
+	float         *normal = tess.normal[0].v;
+	trRefEntity_t *ent    = backEnd.currentEntity;
 	vec3_t        lightDir;
-	int           numVertexes;
+	int           numVertexes = tess.numVertexes;
 
-
-	ent = backEnd.currentEntity;
 	VectorCopy(ent->lightDir, lightDir);
 
-	normal    = tess.normal[0].v;
-	colorsInt = (int *) colors;
-
-	numVertexes = tess.numVertexes;
 	for (i = 0; i < numVertexes; i++, normal += 4, colorsInt++)
 	{
 		dp = (int)(ENTITY_LIGHT_STEPS * DotProduct(normal, lightDir));
