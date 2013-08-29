@@ -364,7 +364,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	int            x = rect->x;
 	int            y = rect->y + 1;             // +1, jitter it into place in 1024 :)
 	int            i;
-	int            boxWidth  = 106;
+	int            boxWidth  = 90;
 	int            bestWidth = -1;
 	char           buffer[64];
 	float          h   = 16;                    // 12 + 2 + 2
@@ -373,6 +373,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	char           *locStr[MAX_FIRETEAM_MEMBERS];
 	int            locwidth;
 	int            namewidth;
+	int            lineX;
 	vec3_t         origin;
 
 	int curWeap;
@@ -472,12 +473,12 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 	Q_strupr(buffer);
 	CG_Text_Paint_Ext(x + 3, y + FT_BAR_HEIGHT, .19f, .19f, tclr, buffer, 0, 0, 0, &cgs.media.limboFont1);
-
+	x    += 2;
+	lineX = x;
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
+		x  = lineX;
 		y += FT_BAR_HEIGHT + FT_BAR_YSPACING;
-		x += 2;
-
 		// Grab a pointer to the current player
 		ci = CG_SortedFireTeamPlayerForPosition(i);
 
