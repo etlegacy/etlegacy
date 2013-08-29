@@ -34,8 +34,10 @@
 
 #ifndef DEDICATED
 #    ifdef BUNDLED_SDL
+#        include "SDL.h"
 #        include "SDL_video.h"
 #    else
+#        include <SDL/SDL.h>
 #        include <SDL/SDL_video.h>
 #    endif
 #endif
@@ -610,11 +612,17 @@ void Sys_ErrorDialog(const char *error)
 	Sys_Print(va("%s\n", error));
 
 #ifndef DEDICATED
+	// We may have grabbed input devices. Need to release.
+	if (SDL_WasInit(SDL_INIT_VIDEO))
+	{
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
+	}
+
 	Sys_Dialog(DT_ERROR, va("%s\nSee \"%s\" for details.\n", error, ospath), "Error");
 #endif
 
 	// Make sure the write path for the crashlog exists...
-	if (FS_CreatePath(ospath))
+	if (!Sys_Mkdir(ospath))
 	{
 		Com_Printf("ERROR: couldn't create path '%s' for crash log.\n", ospath);
 		return;
