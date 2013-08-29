@@ -612,7 +612,6 @@ void RB_SurfaceBeam(void)
 
 	qglColor3f(1, 0, 0);
 
-	#ifdef HAVE_GLES
 	GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
 	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
 	if (glcol)
@@ -639,15 +638,6 @@ void RB_SurfaceBeam(void)
 	{
 		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
-	#else
-	qglBegin(GL_TRIANGLE_STRIP);
-	for (i = 0; i <= NUM_BEAM_SEGS; i++)
-	{
-		qglVertex3fv(start_points[i % NUM_BEAM_SEGS]);
-		qglVertex3fv(end_points[i % NUM_BEAM_SEGS]);
-	}
-	qglEnd();
-	#endif
 }
 
 //================================================================================
@@ -1581,7 +1571,6 @@ void RB_SurfaceAxis(void)
 	GL_Bind(tr.whiteImage);
 	GL_State(GLS_DEFAULT);
 	qglLineWidth(3);
-#ifdef HAVE_GLES
 	GLfloat col[] =
 	{
 		1, 0, 0, 1,
@@ -1621,19 +1610,6 @@ void RB_SurfaceAxis(void)
 	{
 		qglDisableClientState(GL_COLOR_ARRAY);
 	}
-#else
-	qglBegin(GL_LINES);
-	qglColor3f(1, 0, 0);
-	qglVertex3f(0, 0, 0);
-	qglVertex3f(16, 0, 0);
-	qglColor3f(0, 1, 0);
-	qglVertex3f(0, 0, 0);
-	qglVertex3f(0, 16, 0);
-	qglColor3f(0, 0, 1);
-	qglVertex3f(0, 0, 0);
-	qglVertex3f(0, 0, 16);
-	qglEnd();
-#endif
 	qglLineWidth(1);
 }
 
@@ -1749,9 +1725,6 @@ void RB_SurfaceDisplayList(srfDisplayList_t *surf)
 {
 	// all apropriate state must be set in RB_BeginSurface
 	// this isn't implemented yet...
-#ifndef HAVE_GLES
-	qglCallList(surf->listNum);
-#endif
 }
 
 void RB_SurfacePolyBuffer(srfPolyBuffer_t *surf)
