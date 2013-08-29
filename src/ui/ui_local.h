@@ -75,6 +75,11 @@ extern vmCvar_t ui_browserShowMaxlives;
 extern vmCvar_t ui_browserShowAntilag;
 extern vmCvar_t ui_browserShowWeaponsRestricted;
 extern vmCvar_t ui_browserShowTeamBalanced;
+
+extern vmCvar_t ui_browserModFilter;
+extern vmCvar_t ui_browserMapFilter;
+extern vmCvar_t ui_browserMapFilterCheckBox;
+
 extern vmCvar_t ui_serverStatusTimeOut;
 
 extern vmCvar_t ui_isSpectator;
@@ -625,6 +630,19 @@ typedef struct
 	qhandle_t weaponRestrictionsFilter;
 	qhandle_t antiLagFilter;
 	qhandle_t teamBalanceFilter;
+
+	qhandle_t modFilter_etmain;
+	qhandle_t modFilter_etpub;
+	qhandle_t modFilter_jaymod;
+	qhandle_t modFilter_nq;
+	qhandle_t modFilter_nitmod;
+	qhandle_t modFilter_silent;
+	qhandle_t modFilter_tce;
+	qhandle_t modFilter_etnam;
+	qhandle_t modFilter_etrun;
+	qhandle_t modFilter_etjump;
+	qhandle_t modFilter_tjmod;
+	qhandle_t modFilter_unknown;
 
 	qhandle_t campaignMap;
 } uiInfo_t;

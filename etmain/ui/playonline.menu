@@ -81,6 +81,7 @@ menuDef {
 	
 	MULTIACTIONLEFT( 8, 80, .5*((FILTERS_WIDTH)-6), 10, "Source:", .2, 8, "ui_netSource", cvarFloatList { "Local" 0 "Internet" 1 "Favorites" 2 }, uiScript UpdateFilter, "Choose the type of game servers to display, from Internet, local and the favorites list" )
 	MULTIACTIONLEFT( 8+.5*((FILTERS_WIDTH)-6)+2, 80, .5*((FILTERS_WIDTH)-6), 10, "Game Type:", .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "Last Man Standing" 5 "Map Voting" 6 }, uiScript RefreshFilter, "Displays only game servers offering this Game Type" )
+	MULTIACTIONLEFT( 8, 140, .5*((FILTERS_WIDTH)-6), 10, "Mod filter:", .2, 8, "ui_browserModFilter", cvarFloatList { "Disabled" 0 "Original" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "Nitmod" 5 "SiLEnT" 6 "TrueCombat:Elite" 7 "ETNam" 8 "ETRun" 9 "ETJump" 10 "TJMod" 11 "Other" -1 }, uiScript UpdateFilter, "Displays only game servers offering this Mod" )
 
 	itemDef {
 		name		"filtericonEmptyFull"
@@ -160,6 +161,31 @@ menuDef {
 	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 116, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowTeamBalanced", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Force Team Balance", "Includes or excludes servers that enforce balanced teams, from the server list" )
 
 	itemDef {
+		name		"filtericonBots"
+		rect		$evalfloat(8+.5*((FILTERS_WIDTH)-6)+2+2) 128 10 10
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/filter_bots"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 128, .5*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowBots", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, /*uiScript RefreshFilter ;*/ setcvar ui_filterdescription "Filter affecting Servers with Bots", "Includes or excludes servers with bots, from the server list - THIS FEATURE CURRENTLY ARE NOT WORKING" )
+
+	itemDef {
+		name		"filtericonMapName"
+		rect		$evalfloat(8+.5*((FILTERS_WIDTH)-6)+2+2) 140 10 10
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/filter_map"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+	TRICHECKBOXACTIONMULTI( 8+.5*((FILTERS_WIDTH)-6)+2+2+12, 140, 10, 10, .2, 8, "ui_browserMapFilterCheckBox",  cvarFloatList { "" 0 "" 1 "" 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting servers with map name", "Includes or excludes servers with desired map name, from the server list" )
+
+	EDITFIELDSIMPLE( 8+.5*((FILTERS_WIDTH)-6)+16+14, 140, .5*((FILTERS_WIDTH)-6)-48, 10, "", .2, 8, "ui_browserMapFilter", 25, 25, "Includes or excludes servers with desired map name, from the server list" )
+
+	/*
+	itemDef {
 		name			"descriptionFilters"
 		group			GROUP_NAME
 		rect			10 140 $evalfloat((FILTERS_WIDTH)-8) 16
@@ -178,6 +204,7 @@ menuDef {
 		visible			1
 		decoration
 	}
+	*/
 
 	SUBWINDOW( 6+(FILTERS_WIDTH)+4, 32, ((SUBWINDOW_WIDTH)-(FILTERS_WIDTH)-4), 126, "PREVIEW" )
 	itemDef {
