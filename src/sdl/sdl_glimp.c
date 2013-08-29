@@ -57,7 +57,9 @@
 #if defined(WIN32)
 #include <GL/wglew.h>
 #else
+#ifndef HAVE_GLES
 #include <GL/glxew.h>
+#endif
 #endif
 
 //static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
@@ -94,6 +96,9 @@ static void GLimp_GetCurrentContext(void)
 	opengl_context.drawable = glXGetCurrentDrawable();
 }
 #endif // FEATURE_RENDERER2
+#ifdef HAVE_GLES
+#include "eglport.h"
+#endif
 
 #elif _WIN32
 
@@ -185,6 +190,10 @@ GLimp_Shutdown
 void GLimp_Shutdown(void)
 {
 	ri.IN_Shutdown();
+
+#ifdef HAVE_GLES
+	EGL_Close();
+#endif
 
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	screen = NULL;
@@ -1087,8 +1096,12 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	int         samples;
 	int         i          = 0;
 	SDL_Surface *vidscreen = NULL;
-	Uint32      flags      = SDL_OPENGL;
-	GLenum      glewResult;
+#ifdef HAVE_GLES
+	Uint32 flags = 0;
+#else
+	Uint32 flags = SDL_OPENGL;
+#endif
+	GLenum glewResult;
 
 	ri.Printf(PRINT_ALL, "Initializing OpenGL display\n");
 
@@ -1131,6 +1144,11 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 	ri.Printf(PRINT_ALL, "...setting mode %d: ", mode);
 
+#ifdef PANDORA
+	glConfig.vidWidth     = 800;
+	glConfig.vidHeight    = 480;
+	glConfig.windowAspect = 800.0 / 480.0;
+#else
 	if (mode == -2)
 	{
 		// use desktop video resolution
@@ -1154,8 +1172,13 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		ri.Printf(PRINT_ALL, "invalid mode\n");
 		return RSERR_INVALID_MODE;
 	}
+#endif
 	ri.Printf(PRINT_ALL, "%dx%d\n", glConfig.vidWidth, glConfig.vidHeight);
 
+#ifdef PANDORA
+	flags                |= SDL_FULLSCREEN;
+	glConfig.isFullscreen = qtrue;
+#else
 	if (fullscreen)
 	{
 		flags                |= SDL_FULLSCREEN;
@@ -1170,6 +1193,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 
 		glConfig.isFullscreen = qfalse;
 	}
+#endif
 
 	colorbits = r_colorbits->value;
 	if ((!colorbits) || (colorbits >= 32))
@@ -1276,6 +1300,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			sdlcolorbits = 8;
 		}
 
+#ifndef HAVE_GLES
 #ifdef __sgi /* Fix for SGIs grabbing too many bits of color */
 		if (sdlcolorbits == 4)
 		{
@@ -1327,6 +1352,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 			ri.Printf(PRINT_ALL, "r_swapInterval requires libSDL >= 1.2.10\n");
 		}
 
+#endif //HAVE_GLES
 #ifdef USE_ICON
 		{
 			SDL_Surface *icon = SDL_CreateRGBSurfaceFrom(
@@ -1359,6 +1385,12 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 #ifdef __APPLE__ // apple hack renderer1
 		GLimp_GetCurrentContext();
 #endif
+#ifdef HAVE_GLES
+		EGL_Open(glConfig.vidWidth, glConfig.vidHeight);
+		sdlcolorbits = eglColorbits;
+		tdepthbits   = eglDepthbits;
+		tstencilbits = eglStencilbits;
+#endif
 
 		ri.Printf(PRINT_ALL, "Using %d/%d/%d Color bits, %d depth, %d stencil display.\n",
 		          sdlcolorbits, sdlcolorbits, sdlcolorbits, tdepthbits, tstencilbits);
@@ -1369,6 +1401,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 		break;
 	}
 
+#ifndef HAVE_GLES
 	glewResult = glewInit();
 
 	if (GLEW_OK != glewResult)
@@ -1380,6 +1413,7 @@ static int GLimp_SetMode(int mode, qboolean fullscreen, qboolean noborder)
 	{
 		ri.Printf(PRINT_ALL, "Using GLEW %s\n", glewGetString(GLEW_VERSION));
 	}
+#endif
 
 #ifdef FEATURE_RENDERER2
 	if (!GLimp_InitOpenGL3xContext())
@@ -1446,8 +1480,6 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 
 	switch (err)
 	{
-	case RSERR_OK:
-		return qtrue;
 	case RSERR_INVALID_FULLSCREEN:
 		ri.Printf(PRINT_ALL, "...WARNING: fullscreen unavailable in this mode\n");
 		return qfalse;
@@ -1457,14 +1489,11 @@ static qboolean GLimp_StartDriverAndSetMode(int mode, qboolean fullscreen, qbool
 	case RSERR_OLD_GL:
 		ri.Error(ERR_VID_FATAL, "Could not create opengl 3 context");
 		return qfalse;
-	case RSERR_UNKNOWN:
-		ri.Error(ERR_VID_FATAL, "An unknown error occured - set mode failed");
-		return qfalse;
 	default:
 		break;
 	}
 
-	return qfalse;
+	return qtrue;
 }
 
 #ifndef FEATURE_RENDERER2
@@ -1485,6 +1514,7 @@ static void GLimp_InitExtensions(void)
 
 	glConfig.textureCompression = TC_NONE;
 
+#ifndef HAVE_GLES
 	// GL_EXT_texture_compression_s3tc
 	if (GLEW_ARB_texture_compression &&
 	    GLEW_EXT_texture_compression_s3tc)
@@ -1500,10 +1530,12 @@ static void GLimp_InitExtensions(void)
 		}
 	}
 	else
+#endif
 	{
 		ri.Printf(PRINT_ALL, "...GL_EXT_texture_compression_s3tc not found\n");
 	}
 
+#ifndef HAVE_GLES
 	// GL_S3_s3tc ... legacy extension before GL_EXT_texture_compression_s3tc.
 	if (glConfig.textureCompression == TC_NONE)
 	{
@@ -1524,8 +1556,13 @@ static void GLimp_InitExtensions(void)
 			ri.Printf(PRINT_ALL, "...GL_S3_s3tc not found\n");
 		}
 	}
+#endif
 
 	// GL_EXT_texture_env_add
+#ifdef HAVE_GLES
+	glConfig.textureEnvAddAvailable = qtrue;
+	ri.Printf(PRINT_ALL, "...using GL_EXT_texture_env_add\n");
+#else
 	glConfig.textureEnvAddAvailable = qfalse;
 	if (GLEW_EXT_texture_env_add)
 	{
@@ -1544,9 +1581,25 @@ static void GLimp_InitExtensions(void)
 	{
 		ri.Printf(PRINT_ALL, "...GL_EXT_texture_env_add not found\n");
 	}
+#endif
 
 	// GL_ARB_multitexture
 	glConfig.maxActiveTextures = 1;
+#ifdef HAVE_GLES
+	GLint glint = 0;
+	qglGetIntegerv(GL_MAX_TEXTURE_UNITS, &glint);
+	glConfig.maxActiveTextures = (int)glint;
+	//ri.Printf( PRINT_ALL, "...not using GL_ARB_multitexture, %i texture units\n", glConfig.maxActiveTextures );
+	//glConfig.maxActiveTextures=4;
+	if (glConfig.maxActiveTextures > 1)
+	{
+		ri.Printf(PRINT_ALL, "...using GL_ARB_multitexture (%i texture units)\n", glConfig.maxActiveTextures);
+	}
+	else
+	{
+		ri.Printf(PRINT_ALL, "...not using GL_ARB_multitexture, < 2 texture units\n");
+	}
+#else
 	if (GLEW_ARB_multitexture)
 	{
 		if (r_ext_multitexture->value)
@@ -1575,6 +1628,7 @@ static void GLimp_InitExtensions(void)
 	{
 		ri.Printf(PRINT_ALL, "...GL_ARB_multitexture not found\n");
 	}
+#endif
 }
 #endif
 
@@ -1678,7 +1732,11 @@ void GLimp_SetHardware(void)
 	}
 }
 
+#ifdef PANDORA
+#define R_MODE_FALLBACK 11 // 800 * 480
+#else
 #define R_MODE_FALLBACK 3 // 640 * 480
+#endif
 
 /**
  * @brief This routine is responsible for initializing the OS specific portions of OpenGL
@@ -1798,11 +1856,15 @@ Responsible for doing a swapbuffers
 */
 void GLimp_EndFrame(void)
 {
+#ifdef HAVE_GLES
+	EGL_SwapBuffers();
+#else
 	// don't flip if drawing to front buffer
 	if (Q_stricmp(r_drawBuffer->string, "GL_FRONT") != 0)
 	{
 		SDL_GL_SwapBuffers();
 	}
+#endif
 
 	if (r_fullscreen->modified)
 	{

@@ -458,11 +458,21 @@ static const char *IN_TranslateSDLToQ3Key(SDL_keysym *keysym,
 		case SDLK_DELETE:       *key = K_DEL;           break;
 		case SDLK_PAUSE:        *key = K_PAUSE;         break;
 
+#ifdef PANDORA
+		case SDLK_LSHIFT:       *key = K_SHIFT;         break;
+		case SDLK_RSHIFT:       *key = K_MOUSE2;        break;
+#else
 		case SDLK_LSHIFT:
 		case SDLK_RSHIFT:       *key = K_SHIFT;         break;
+#endif
 
+#ifdef PANDORA
+		case SDLK_LCTRL:        *key = K_CTRL;          break;
+		case SDLK_RCTRL:        *key = K_MOUSE1;        break;
+#else
 		case SDLK_LCTRL:
 		case SDLK_RCTRL:        *key = K_CTRL;          break;
+#endif
 
 		case SDLK_RMETA:
 		case SDLK_LMETA:        *key = K_COMMAND;       break;
@@ -517,7 +527,7 @@ static const char *IN_TranslateSDLToQ3Key(SDL_keysym *keysym,
 				*buf = CTRL('h');
 				break;
 			}
-		// fallthrough
+		// fall through
 
 		default:
 			*buf = ch;
@@ -526,7 +536,7 @@ static const char *IN_TranslateSDLToQ3Key(SDL_keysym *keysym,
 	}
 	else if (down && !keysym->unicode)
 	{
-		//Some exceptions which are missing the unicode value ex KP_SLASH
+		// Some exceptions which are missing the unicode value ex KP_SLASH
 		switch (*key)
 		{
 		case K_KP_SLASH:
@@ -547,8 +557,8 @@ static const char *IN_TranslateSDLToQ3Key(SDL_keysym *keysym,
 	if (down && strlen(Key_KeynumToString(*key)) == 1 &&
 	    keysym->unicode == 0)
 	{
-		//Added this check due to Windows not playing nice with numbers when number mod is active.
-		//Should not cause any harm for other platforms either.
+		// Added this check due to Windows not playing nice with numbers when number mod is active.
+		// Should not cause any harm for other platforms either.
 		if (*key < '0' || *key > '9')
 		{
 			if (in_keyboardDebug->integer)
@@ -1060,7 +1070,14 @@ static void IN_JoyMove(void)
 
 			if (in_joystickUseAnalog->integer)
 			{
-				float f = ((float) abs(axis)) / 32767.0f;
+				float f;
+#ifdef PANDORA
+				if (i == 1)
+				{
+					axis = -axis;           // Invert Y axis
+				}
+#endif
+				f = ((float) abs(axis)) / 32767.0f;
 
 				if (f < in_joystickThreshold->value)
 				{
@@ -1069,7 +1086,11 @@ static void IN_JoyMove(void)
 
 				if (axis != stick_state.oldaaxes[i])
 				{
+#ifdef PANDORA
+					Com_QueueEvent(0, SE_JOYSTICK_AXIS, i, axis / 256, 0, NULL);
+#else // FIXME: is axis/256 (as done for pandora) a general fix?
 					Com_QueueEvent(0, SE_JOYSTICK_AXIS, i, axis, 0, NULL);
+#endif
 					stick_state.oldaaxes[i] = axis;
 				}
 			}
