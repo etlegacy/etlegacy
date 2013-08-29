@@ -1680,10 +1680,10 @@ typedef enum
 	ET_HEALER,
 	ET_SUPPLIER,
 
-	ET_LANDMINE_HINT,       // landmine hint for botsetgoalstate filter
-	ET_ATTRACTOR_HINT,      // attractor hint for botsetgoalstate filter
-	ET_SNIPER_HINT,         // sniper hint for botsetgoalstate filter
-	ET_LANDMINESPOT_HINT,   // landminespot hint for botsetgoalstate filter
+	ET_LANDMINE_HINT,       // obsolete/unused (landmine hint for botsetgoalstate filter)
+	ET_ATTRACTOR_HINT,      // obsolete/unused (attractor hint for botsetgoalstate filter)
+	ET_SNIPER_HINT,         // obsolete/unused (sniper hint for botsetgoalstate filter)
+	ET_LANDMINESPOT_HINT,   // obsolete/unused (landminespot hint for botsetgoalstate filter)
 
 	ET_COMMANDMAP_MARKER,
 
