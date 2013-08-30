@@ -233,6 +233,7 @@ Add continuous entity effects, like local entity emission and lighting
 static void CG_EntityEffects(centity_t *cent)
 {
 	static vec3_t dir;
+	
 	// update sound origins
 	CG_SetEntitySoundPosition(cent);
 
@@ -406,7 +407,6 @@ static void CG_General(centity_t *cent)
 
 	if (ent.frame)
 	{
-
 		ent.oldframe -= 1;
 		ent.backlerp  = 1 - cg.frameInterpolation;
 
@@ -455,6 +455,7 @@ static void CG_General(centity_t *cent)
 		}
 		/*      {
 		            vec3_t v;
+
 		            VectorCopy( cent->lerpOrigin, v );
 		            VectorMA( cent->lerpOrigin, 10, ent.axis[0], v );
 		            CG_RailTrail2( NULL, cent->lerpOrigin, v );
@@ -666,7 +667,6 @@ static void CG_Item(centity_t *cent)
 	refEntity_t   ent;
 	entityState_t *es = &cent->currentState;
 	gitem_t       *item;
-	qboolean      hasStand = qfalse, highlight = qfalse;
 
 	// (item index is stored in es->modelindex for item)
 
@@ -689,6 +689,7 @@ static void CG_Item(centity_t *cent)
 
 	if (item->giType == IT_WEAPON)
 	{
+		qboolean      hasStand = qfalse;
 		weaponInfo_t *weaponInfo = &cg_weapons[item->giTag];
 
 		if (weaponInfo->standModel)
@@ -841,6 +842,8 @@ static void CG_Item(centity_t *cent)
 	// highlighting items the player looks at
 	if (cg_drawCrosshairPickups.integer)
 	{
+		qboolean highlight = qfalse;
+		
 		if (cg_drawCrosshairPickups.integer == 2)      // '2' is 'force highlights'
 		{
 			highlight = qtrue;
@@ -1299,14 +1302,10 @@ CG_Trap
 static void CG_Trap(centity_t *cent)
 {
 	refEntity_t   ent;
-	entityState_t *cs;
-	lerpFrame_t   *traplf;
+	entityState_t *cs = &cent->currentState;
+	lerpFrame_t   *traplf = &cent->lerpFrame;
 
 	memset(&ent, 0, sizeof(ent));
-
-	cs = &cent->currentState;
-
-	traplf = &cent->lerpFrame;
 
 	// initial setup
 	if (!traplf->oldFrameTime)
@@ -1353,7 +1352,7 @@ static void CG_Corona(centity_t *cent)
 {
 	int      r, g, b;
 	int      dli;
-	qboolean visible = qfalse, behind = qfalse, toofar = qfalse;
+	qboolean behind = qfalse, toofar = qfalse;
 	float    dot, dist;
 	vec3_t   dir;
 
@@ -1395,7 +1394,8 @@ static void CG_Corona(centity_t *cent)
 	if (!behind && !toofar)
 	{
 		trace_t tr;
-
+		qboolean visible = qfalse;
+				
 		CG_Trace(&tr, cg.refdef_current->vieworg, NULL, NULL, cent->lerpOrigin, -1, MASK_SOLID | CONTENTS_BODY);      // added blockage by players.  not sure how this is going to be since this is their bb, not their model (too much blockage)
 
 		if (tr.fraction == 1)
@@ -1417,12 +1417,10 @@ static void CG_SpotlightEfx(centity_t *cent)
 	vec3_t targetpos, normalized_direction, direction;
 	float  dist, fov = 90;
 	vec4_t color        = { 1, 1, 1, .1 };
-	int    splinetarget = 0;
+	int    splinetarget = cent->overheatTime;
 	char   *cs;
 
 	VectorCopy(cent->currentState.origin2, targetpos);
-
-	splinetarget = cent->overheatTime;
 
 	if (!splinetarget)
 	{
@@ -2682,6 +2680,7 @@ qboolean CG_AddEntityToTag(centity_t *cent)
 		if (!cent->currentState.density)      // this entity should rotate with it's parent, but can turn around using it's own angles
 		{   // fixed to rotate about the object's axis, not the world
 			vec3_t mat[3], mat2[3];
+			
 			memcpy(mat2, ent.axis, sizeof(mat2));
 			CreateRotationMatrix(cent->lerpAngles, mat);
 			MatrixMultiply(mat, mat2, ent.axis);
@@ -2741,9 +2740,8 @@ void CG_AddPacketEntities(void)
 	// set cg.frameInterpolation
 	if (cg.nextSnap)
 	{
-		int delta;
-
-		delta = (cg.nextSnap->serverTime - cg.snap->serverTime);
+		int delta = (cg.nextSnap->serverTime - cg.snap->serverTime);
+		
 		if (delta == 0)
 		{
 			cg.frameInterpolation = 0;

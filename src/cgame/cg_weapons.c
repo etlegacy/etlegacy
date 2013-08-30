@@ -226,16 +226,16 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	}
 	else
 	{
-		re->hModel = cgs.media.smallgunBrassModel;
 		switch (cent->currentState.weapon)
 		{
 		case WP_LUGER:
 		case WP_COLT:
 		case WP_SILENCER:
 		case WP_SILENCED_COLT:
-			offset[0] = 24;
-			offset[1] = -4;
-			offset[2] = 36;
+			offset[0]  = 24;
+			offset[1]  = -4;
+			offset[2]  = 36;
+			re->hModel = cgs.media.smallgunBrassModel;
 			break;
 		case WP_MOBILE_MG42:
 		case WP_MOBILE_MG42_SET:
@@ -247,14 +247,19 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		case WP_KAR98:
 		case WP_CARBINE:
 		case WP_K43:
+			offset[0]  = 16;
+			offset[1]  = -4;
+			offset[2]  = 24;
 			re->hModel = cgs.media.machinegunBrassModel;
+			break;
 		case WP_MP40:
 		case WP_THOMPSON:
 		case WP_STEN:
 		default:
-			offset[0] = 16;
-			offset[1] = -4;
-			offset[2] = 24;
+			offset[0]  = 16;
+			offset[1]  = -4;
+			offset[2]  = 24;
+			re->hModel = cgs.media.smallgunBrassModel;
 			break;
 		}
 		velocity[0] = -50 + 25 * crandom();
@@ -521,6 +526,7 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 		{
 			vec3_t right;
 			vec3_t angles;
+
 			VectorCopy(ent->currentState.apos.trBase, angles);
 			angles[ROLL] += cg.time % 360;
 			AngleVectors(angles, NULL, right, NULL);
@@ -674,6 +680,7 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 			{
 				vec3_t right;
 				vec3_t angles;
+
 				VectorCopy(ent->currentState.apos.trBase, angles);
 				angles[ROLL] += cg.time % 360;
 				AngleVectors(angles, NULL, right, NULL);
@@ -840,7 +847,6 @@ void CG_RailTrail2(clientInfo_t *ci, vec3_t start, vec3_t end)
 	AxisClear(re->axis);
 }
 
-//void CG_RailTrailBox( clientInfo_t *ci, vec3_t start, vec3_t end) {
 /*
 ==============
 CG_RailTrail
@@ -2329,6 +2335,8 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 		case WP_GARAND:
 			myfrac = 3.0f;
 			break;
+		default:
+			break;
 		}
 
 		// reverse the roll on the weapon so it stays relatively level
@@ -2681,6 +2689,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				}
 			}
 		}
+
 		if (!ps)
 		{
 			if (weaponNum == WP_MEDIC_SYRINGE)
@@ -2770,10 +2779,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					}
 				}
 			}
-			else if (weaponNum == WP_MOBILE_MG42_SET)
-			{
-
-			}
+			//else if (weaponNum == WP_MOBILE_MG42_SET)
+			//{
+			//}
 
 			if (spunpart)
 			{
@@ -2937,10 +2945,10 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			}
 
 			barrel.hModel = weapon->modModels[1];
-//          if(barrel.hModel) {
+			//if(barrel.hModel) {
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-//          }
+			//}
 		}
 		else if (weaponNum == WP_K43)
 		{
@@ -2952,16 +2960,17 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			}
 
 			barrel.hModel = weapon->modModels[1];
-//          if(barrel.hModel) {
+			//if(barrel.hModel) {
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-//          }
+			//}
 		}
 	}
 	// 3rd person attachements
 	else
 	{
-		if (weaponNum == WP_M7 || weaponNum == WP_GPG40 /* || weaponNum == WP_CARBINE || weaponNum == WP_KAR98*/)
+		// FIXME: do a switch
+		if (weaponNum == WP_M7 || weaponNum == WP_GPG40)
 		{
 			// the holder
 			barrel.hModel = weapon->modModels[1];
@@ -3083,8 +3092,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				{
 					if (!(rand() % 3))
 					{
-						float alpha;
-						alpha  = 1.0f - ((float)(cg.time - cent->overheatTime) / 3000.0f);
+						float alpha = 1.0f - ((float)(cg.time - cent->overheatTime) / 3000.0f);
+
 						alpha *= 0.25f;     // .25 max alpha
 						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 30, alpha, 8.f);
 					}
@@ -3097,8 +3106,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				{
 					if (!(rand() % 5))
 					{
-						float alpha;
-						alpha  = 1.0f - ((float)(cg.time - cent->muzzleFlashTime) / (float)BARREL_SMOKE_TIME);    // what fraction of BARREL_SMOKE_TIME are we at
+						float alpha = 1.0f - ((float)(cg.time - cent->muzzleFlashTime) / (float)BARREL_SMOKE_TIME);     // what fraction of BARREL_SMOKE_TIME are we at
+
 						alpha *= 0.25f;     // .25 max alpha
 						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 30, alpha, 8.f);
 					}
@@ -3125,6 +3134,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 	}
 
+	// FIXME: do a switch
 	// weapons that don't need to go any further as they have no flash or light
 	if (weaponNum == WP_GRENADE_LAUNCHER ||
 	    weaponNum == WP_GRENADE_PINEAPPLE ||
