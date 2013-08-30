@@ -5,9 +5,14 @@ ET: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=m
 
 Website: [http://www.etlegacy.com](http://www.etlegacy.com)
 
-IRC: \#etlegacy on irc.freenode.net
+Release downloads: [http://dev.etlegacy.com/download] (http://dev.etlegacy.com/download)
+Wiki/FAQ: [http://www.dev.etlegacy.com/projects/etlegacy/wiki] (http://www.dev.etlegacy.com/projects/etlegacy/wiki)
+Forums: [http://www.dev.etlegacy.com/projects/etlegacy/boards] (http://www.dev.etlegacy.com/projects/etlegacy/boards)
 
+Development (bug reports and feature requests): [http://www.dev.etlegacy.com](http://www.dev.etlegacy.com)
 Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
+
+IRC: \#etlegacy on irc.freenode.net
 
 INTRODUCTION
 ============
@@ -15,8 +20,10 @@ INTRODUCTION
 ET: Legacy is based on the [raedwulf-et project](https://bitbucket.org/tcmreastwood/raedwulf-et/) 
 which in turn is based on the GPL'd source code of Wolfenstein: Enemy Territory. 
 
-Its main goal is to fix bugs and clean up the codebase while remaining 
+Its main goals are fixing bugs, cleaning up the codebase and adding useful features while remaining 
 compatible with the ET 2.60b version.
+
+For more information consult our [changelog] (http://www.dev.etlegacy.com/projects/etlegacy/wiki/Changelog).
 
 GENERAL NOTES
 =============
@@ -49,9 +56,9 @@ Dependencies
 -----------------------------------------------------------------------------
 
 * **CMake** (compile-time only)
-* **libSDL**, version 1.2
+* **libSDL**, version 1.2.14
 * **libjpeg**, version 8 is required, version 6 won't compile!
-* **lua**, either version 5.2 or 5.1 (optional)
+* **lua**, either version 5.2 or 5.1 (optional, enabled by default)
 * **libcurl** (optional, enabled by default)
 * **OGG Vorbis File** (optional)
 * **OpenAL** (optional)
@@ -78,6 +85,8 @@ Compile and install
 
 ### Linux
 
+* option A:
+
 In terminal run:
 
     $ mkdir build && cd build && cmake-gui ..
@@ -102,6 +111,19 @@ Then compile ET:L:
 
 	$ make
 	# make install
+
+* option B:
+
+In terminal run:
+
+ $ ./easybuild.sh
+ 
+Install:
+
+ $ cd build
+ $ make install
+
+Set the CMake variables (see option A) in file easybuild.sh before.
 
 ### Crosscompiling on linux with mingw32
 
