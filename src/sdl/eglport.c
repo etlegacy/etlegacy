@@ -22,6 +22,7 @@
  *  THE SOFTWARE.
  *
  */
+#ifdef HAVE_GLES
 
 #include "eglport.h"
 
@@ -715,3 +716,4 @@ uint32_t Platform_GetTicks(void)
 #endif
 	return ticks;
 }
+#endif // HAVE_GLES

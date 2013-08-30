@@ -7,6 +7,12 @@
 #------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.3)
 
+# FIXME: rename GLES to FEATURE_RENDERER_GLES
+# FIXME: rename CROUCH to FEATURE_CROUCH
+# FIXME: HAVE_GLES -> FEATURE_RENDERER_GLES
+# FIXME: currently eglport.c and eglport.h are disabled by macro HAVE_GLES for non GLES builds 
+#        -> adjust the FILE sources and remove the macro from above files
+
 project(ETLEGACY C CXX)
 set(ETLEGACY_VERSION "2.71rc1-dirty")
 
@@ -25,6 +31,7 @@ set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 option(BUILD_SERVER		"Build the dedicated server executable"				ON)
 option(BUILD_CLIENT		"Build the client executable"					ON)
 option(BUILD_MOD		"Build the mod libraries"					ON)
+option(PANDORA			"Set to ON if targeting an OpenPandora device"	${PANDORA})
 
 # Find the sed executable
 find_program(SED_EXECUTABLE sed)
@@ -82,6 +89,9 @@ option(FEATURE_IPV6		"Enable IPv6 networking code"						OFF)
 option(FEATURE_IRC_CLIENT	"Enable IRC client"							OFF)
 option(RENDERER_DYNAMIC		"Build renderer into a dynamic library"					OFF)
 option(FEATURE_WINDOWS_CONSOLE		"Build win32 executables with Windows console"				ON)
+option(CROUCH	"Set to ON if you want Toggle Crouch"	${CROUCH})
+
+option(GLES	"Set to ON if you want GLES renderer"	${GLES})
 
 cmake_dependent_option(FEATURE_GETTEXT	"Enable localization using tinygettext"				ON "BUNDLED_LIBS" OFF)
 
@@ -98,24 +108,48 @@ cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			
 message(STATUS "System: ${CMAKE_SYSTEM} (${ETLEGACY_SYSTEM_PROCESSOR})")
 
 if(UNIX AND CROSS_COMPILE32) # 32-bit build
-	set(CMAKE_SYSTEM_PROCESSOR i386)
-	message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
+	if(PANDORA)
+		set(CMAKE_SYSTEM_PROCESSOR arm)
+		message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
+	else()
+		set(CMAKE_SYSTEM_PROCESSOR i386)
+		message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
+	endif()
 	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
 	
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+	if(PANDORA)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char")
+	else()
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+	endif()
 	
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
-	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
-	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -m32")
+	if(PANDORA)
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp")
+		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp")
+		set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp")
+	else()
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
+		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
+		set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -m32")
+	endif()
 endif(UNIX AND CROSS_COMPILE32)
 
 if(UNIX)
 	# optimization/debug flags
-	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s -ffast-math")
+	if(PANDORA)
+		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math -ftree-vectorize -Ofast")
+	else()
+		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s -ffast-math")
+	endif()
 	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
 
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s -ffast-math")
+	if(PANDORA)
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffast-math -ftree-vectorize  -Ofast")
+	else()
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s -ffast-math")
+	endif()
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
 	if(CMAKE_SYSTEM MATCHES "OpenBSD*")
@@ -173,6 +207,16 @@ if(NOT CMAKE_SYSTEM MATCHES "Darwin")
 		message(STATUS "Warning: processor architecture not recognised (${CMAKE_SYSTEM_PROCESSOR})")
 	endif()
 endif(NOT CMAKE_SYSTEM MATCHES "Darwin")
+
+if(PANDORA)
+	add_definitions(-DPANDORA -DARM -DNEON -DAUTOAIM)
+endif()
+if (GLES)
+	add_definitions(-DHAVE_GLES) 
+endif()
+if (CROUCH)
+	add_definitions(-DCROUCH)
+endif()
 
 #-----------------------------------------------------------------
 # Sources
@@ -323,6 +367,12 @@ FILE(GLOB RENDERER1_FILES
 	"src/renderer/*.h"
 )
 
+FILE(GLOB RENDERERGLES_FILES
+	"src/rendererGLES/*.c"
+	"src/rendererGLES/*.h"
+	"src/sdl/eglport.c"
+)
+
 FILE(GLOB RENDERER2_FILES
 	"src/renderer2/*.c"
 	"src/renderer2/*.cpp"
@@ -382,24 +432,31 @@ endif(BUNDLED_LIBS OR BUNDLED_SDL OR BUNDLED_CURL AND FEATURE_CURL OR BUNDLED_JP
 # Client features
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
-	find_package(OpenGL REQUIRED)
-	list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
-	include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
+	if(GLES)
+		list(APPEND RENDERER_LIBRARIES -lEGL -lGLES_CM)
+		include_directories(SYSTEM /mnt/utmp/codeblocks/usr/include/gles)
+	else()
+		find_package(OpenGL REQUIRED)
+		list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
+		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
+	endif()
 
 	if(NOT WIN32) # Dependency of GLEW and SDL_syswm.h
 		find_package(X11 REQUIRED)
 		include_directories(${X11_INCLUDE_DIR})
 	endif(NOT WIN32)
 
-	if(NOT BUNDLED_GLEW)
-		find_package(GLEW REQUIRED)
-		list(APPEND RENDERER_LIBRARIES ${GLEW_LIBRARY})
-		include_directories(SYSTEM ${GLEW_INCLUDE_PATH})
-	else()
-		list(APPEND RENDERER_LIBRARIES ${BUNDLED_GLEW_LIBRARIES})
-		include_directories(SYSTEM ${BUNDLED_GLEW_INCLUDE_DIR})
-		add_definitions(-DBUNDLED_GLEW)
-		add_definitions(-DGLEW_STATIC)
+	if(NOT GLES)
+		if(NOT BUNDLED_GLEW)
+			find_package(GLEW REQUIRED)
+			list(APPEND RENDERER_LIBRARIES ${GLEW_LIBRARY})
+			include_directories(SYSTEM ${GLEW_INCLUDE_PATH})
+		else()
+			list(APPEND RENDERER_LIBRARIES ${BUNDLED_GLEW_LIBRARIES})
+			include_directories(SYSTEM ${BUNDLED_GLEW_INCLUDE_DIR})
+			add_definitions(-DBUNDLED_GLEW)
+			add_definitions(-DGLEW_STATIC)
+		endif()
 	endif()
 
 	if(NOT BUNDLED_SDL)
@@ -619,13 +676,19 @@ if(BUILD_CLIENT)
 		set(REND_LIBTYPE STATIC)
 	endif(RENDERER_DYNAMIC)
 	if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
-		add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
+		if(GLES)
+			add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
+		else()
+			add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
+		endif()
 		if(BUNDLED_SDL)
 			add_dependencies(renderer_opengl1_${ARCH} bundled_sdl)
 		endif(BUNDLED_SDL)
-		if(BUNDLED_GLEW)
+		if(NOT GLES)
+			if(BUNDLED_GLEW)
 				add_dependencies(renderer_opengl1_${ARCH} bundled_glew)
-		endif(BUNDLED_GLEW)
+			endif(BUNDLED_GLEW)
+		endif(NOT GLES)
 		if(BUNDLED_JPEG)
 			add_dependencies(renderer_opengl1_${ARCH} bundled_jpeg)
 		endif(BUNDLED_JPEG)
