@@ -557,7 +557,11 @@ static unsigned short yuv_to_rgb(long y, long u, long v)
 		b = 31;
 	}
 
+#ifdef PANDORA
+	return (unsigned short)((r << 11) + (g << 5) + (b) | (255 << 24));
+#else
 	return (unsigned short)((r << 11) + (g << 5) + (b));
+#endif
 }
 
 static unsigned int yuv_to_rgb24(long y, long u, long v)
@@ -1641,6 +1645,8 @@ void CIN_DrawCinematic(int handle)
 		Hunk_FreeTempMemory(buf2);
 		return;
 	}
+
+	//Com_Printf(PRINT_ALL, "DrawStretchRaw(%f, %f, %f, %f)\n", x, y, w, h);
 
 	re.DrawStretchRaw(x, y, w, h, cinTable[handle].drawX, cinTable[handle].drawY, buf, handle, cinTable[handle].dirty);
 	cinTable[handle].dirty = qfalse;
