@@ -6,10 +6,13 @@ ET: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=m
 Website: [http://www.etlegacy.com](http://www.etlegacy.com)
 
 Release downloads: [http://dev.etlegacy.com/download] (http://dev.etlegacy.com/download)
+
 Wiki/FAQ: [http://www.dev.etlegacy.com/projects/etlegacy/wiki] (http://www.dev.etlegacy.com/projects/etlegacy/wiki)
+
 Forums: [http://www.dev.etlegacy.com/projects/etlegacy/boards] (http://www.dev.etlegacy.com/projects/etlegacy/boards)
 
 Development (bug reports and feature requests): [http://www.dev.etlegacy.com](http://www.dev.etlegacy.com)
+
 Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
 
 IRC: \#etlegacy on irc.freenode.net
