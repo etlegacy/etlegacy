@@ -37,9 +37,10 @@
 
 typedef enum
 {
-	FLAGS_MOVE_TIMERS  = BIT(0),
-	FLAGS_REMOVE_RANKS = BIT(1),
-	FLAGS_MOVE_POPUPS  = BIT(2),
+	FLAGS_MOVE_TIMERS   = BIT(0),
+	FLAGS_REMOVE_RANKS  = BIT(1),
+	FLAGS_MOVE_POPUPS   = BIT(2),
+	FLAGS_POPUPS_SHADOW = BIT(3)
 } althud_flags;
 
 typedef enum
@@ -1729,18 +1730,18 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 		color[3] = 1.f;
 		if (cgs.timelimit > 0.0f)
 		{
-			CG_Text_Paint_Ext(roundtimer->x, roundtimer->y, 0.19f, 0.19f, color, va("^7%i:%i%i", mins, tens, seconds), 0, 0, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(roundtimer->x, roundtimer->y, 0.19f, 0.19f, color, va("^7%i:%i%i", mins, tens, seconds), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
 		s = va("%s", rt);
 	}
-	CG_Text_Paint_Ext(respawn->x, respawn->y, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(respawn->x, respawn->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 
 	// spawntimer
 	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING)
 	{
 		seconds = msec / 1000;
 		s       = va("^1%d", cg_spawnTimer_period.integer + (seconds - cg_spawnTimer_set.integer) % cg_spawnTimer_period.integer);
-		CG_Text_Paint_Ext(spawntimer->x, spawntimer->y, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(spawntimer->x, spawntimer->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
 	{
@@ -1784,7 +1785,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 				s = va("%02i:%02i", time.tm_hour, time.tm_min);
 			}
 		}
-		CG_Text_Paint_Ext(localtime->x, localtime->y, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(localtime->x, localtime->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 }
 
@@ -2160,14 +2161,14 @@ void CG_DrawGlobalHud(void)
 {
 	if (cg_altHudFlags.integer & FLAGS_MOVE_POPUPS)
 	{
-		CG_DrawPMItems(activehud->popupmessages.location);
+		CG_DrawPMItems(activehud->popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW ? ITEM_TEXTSTYLE_SHADOWED : 0));
 	}
 	else
 	{
-		CG_DrawPMItems(hud0.popupmessages.location);
+		CG_DrawPMItems(hud0.popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW ? ITEM_TEXTSTYLE_SHADOWED : 0));
 	}
 
-	if (cg_altHudFlags.integer & ~FLAGS_REMOVE_RANKS)
+	if (!(cg_altHudFlags.integer & FLAGS_REMOVE_RANKS))
 	{
 		CG_DrawPMItemsBig();
 	}

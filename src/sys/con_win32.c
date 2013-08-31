@@ -230,7 +230,7 @@ static void CON_Show(void)
 			i     += 2;
 			continue;
 		}
-		else if (qconsole_line[i] == Q_COLOR_ESCAPE && qconsole_line[i] == Q_COLOR_ESCAPE)
+		else if (qconsole_line[i] == Q_COLOR_ESCAPE)
 		{
 			i += 1;
 		}
