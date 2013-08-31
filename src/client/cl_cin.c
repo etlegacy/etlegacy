@@ -557,11 +557,7 @@ static unsigned short yuv_to_rgb(long y, long u, long v)
 		b = 31;
 	}
 
-#ifdef PANDORA
-	return (unsigned short)((r << 11) + (g << 5) + (b) | (255 << 24));
-#else
 	return (unsigned short)((r << 11) + (g << 5) + (b));
-#endif
 }
 
 static unsigned int yuv_to_rgb24(long y, long u, long v)
