@@ -112,7 +112,7 @@ void Cui_WideRect(Rectangle *rect)
 	rect->h *= DC->yscale;
 
 #ifndef PANDORA
-	if (DC->glconfig.windowAspect > RATIO43 && trap_Cvar_VariableValue("r_mode") != 11)
+	if (DC->glconfig.windowAspect > RATIO43 && DC->getCVarValue("r_mode") != 11)
 	{
 		rect->x *= RATIO43 / DC->glconfig.windowAspect;
 		rect->w *= RATIO43 / DC->glconfig.windowAspect;
