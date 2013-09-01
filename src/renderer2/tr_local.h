@@ -1710,12 +1710,21 @@ typedef struct shaderProgram_s
 } shaderProgram_t;
 
 #ifdef RENDERER2C
+
+typedef struct macroBitMap_s
+{
+	int bitOffset;
+	unsigned int macro;
+} macroBitMap_t;
+
 typedef struct shaderProgramList_s
 {
 	shaderProgram_t *programs;
+	shaderProgram_t *current;
 	int permutations;
 	int currentPermutation;
 	int macros;
+	macroBitMap_t *macromap;
 } shaderProgramList_t;
 #endif
 

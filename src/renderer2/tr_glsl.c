@@ -52,8 +52,7 @@ typedef struct uniformInfo_s
 {
 	char *name;
 	int type;
-}
-uniformInfo_t;
+}uniformInfo_t;
 
 // These must be in the same order as in uniform_t in tr_local.h.
 static uniformInfo_t uniformsInfo[] =
@@ -750,9 +749,6 @@ static void GLSL_GetShaderExtraDefines(char **defines, int *size)
 
 static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
 {
-	char *bufferExtra;
-	int  sizeExtra;
-
 	dest[0] = '\0';
 
 	// HACK: abuse the GLSL preprocessor to turn GLSL 1.20 shaders into 1.30 ones
@@ -760,7 +756,7 @@ static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
 	{
 		Q_strcat(dest, size, "#version 130\n");
 
-		if (shaderType == GL_VERTEX_SHADER_ARB)
+		if (shaderType == GL_VERTEX_SHADER)
 		{
 			Q_strcat(dest, size, "#define attribute in\n");
 			Q_strcat(dest, size, "#define varying out\n");
@@ -972,8 +968,9 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 	return shaderText;
 }
 
-static qboolean GLSL_GenerateMacroString(const char *macros, int marcoatrib, int permutation)
+static qboolean GLSL_GenerateMacroString(macroBitMap_t *bitmap, const char *macros, int permutation, char **out)
 {
+	// TODO: implement this
 	return qtrue;
 }
 
@@ -1032,6 +1029,54 @@ static void GLSL_ShowProgramUniforms(GLhandleARB program)
 	qglUseProgramObjectARB(0);
 }
 
+static void GLSL_BindAttribLocations(GLuint program)
+{
+	//if(attribs & ATTR_POSITION)
+	glBindAttribLocation(program, ATTR_INDEX_POSITION, "attr_Position");
+
+	//if(attribs & ATTR_TEXCOORD)
+	glBindAttribLocation(program, ATTR_INDEX_TEXCOORD0, "attr_TexCoord0");
+
+	//if(attribs & ATTR_LIGHTCOORD)
+	glBindAttribLocation(program, ATTR_INDEX_TEXCOORD1, "attr_TexCoord1");
+
+	//  if(attribs & ATTR_TEXCOORD2)
+	//      glBindAttribLocation(program, ATTR_INDEX_TEXCOORD2, "attr_TexCoord2");
+
+	//  if(attribs & ATTR_TEXCOORD3)
+	//      glBindAttribLocation(program, ATTR_INDEX_TEXCOORD3, "attr_TexCoord3");
+
+	//if(attribs & ATTR_TANGENT)
+	glBindAttribLocation(program, ATTR_INDEX_TANGENT, "attr_Tangent");
+
+	//if(attribs & ATTR_BINORMAL)
+	glBindAttribLocation(program, ATTR_INDEX_BINORMAL, "attr_Binormal");
+
+	//if(attribs & ATTR_NORMAL)
+	glBindAttribLocation(program, ATTR_INDEX_NORMAL, "attr_Normal");
+
+	//if(attribs & ATTR_COLOR)
+	glBindAttribLocation(program, ATTR_INDEX_COLOR, "attr_Color");
+
+	//if(glConfig2.vboVertexSkinningAvailable)
+	{
+		glBindAttribLocation(program, ATTR_INDEX_BONE_INDEXES, "attr_BoneIndexes");
+		glBindAttribLocation(program, ATTR_INDEX_BONE_WEIGHTS, "attr_BoneWeights");
+	}
+
+	//if(attribs & ATTR_POSITION2)
+	glBindAttribLocation(program, ATTR_INDEX_POSITION2, "attr_Position2");
+
+	//if(attribs & ATTR_TANGENT2)
+	glBindAttribLocation(program, ATTR_INDEX_TANGENT2, "attr_Tangent2");
+
+	//if(attribs & ATTR_BINORMAL2)
+	glBindAttribLocation(program, ATTR_INDEX_BINORMAL2, "attr_Binormal2");
+
+	//if(attribs & ATTR_NORMAL2)
+	glBindAttribLocation(program, ATTR_INDEX_NORMAL2, "attr_Normal2");
+}
+
 static int GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, int attribs, const char *vpCode, const char *fpCode)
 {
 	ri.Printf(PRINT_DEVELOPER, "------- GPU shader -------\n");
@@ -1063,80 +1108,7 @@ static int GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, int a
 		}
 	}
 
-	if (attribs & ATTR_POSITION)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_POSITION, "attr_Position");
-	}
-
-	if (attribs & ATTR_TEXCOORD)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_TEXCOORD0, "attr_TexCoord0");
-	}
-
-	if (attribs & ATTR_LIGHTCOORD)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_TEXCOORD1, "attr_TexCoord1");
-	}
-
-//  if(attribs & ATTR_TEXCOORD2)
-//      qglBindAttribLocationARB(program->program, ATTR_INDEX_TEXCOORD2, "attr_TexCoord2");
-
-//  if(attribs & ATTR_TEXCOORD3)
-//      qglBindAttribLocationARB(program->program, ATTR_INDEX_TEXCOORD3, "attr_TexCoord3");
-
-#ifdef USE_VERT_TANGENT_SPACE
-	if (attribs & ATTR_TANGENT)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_TANGENT, "attr_Tangent");
-	}
-
-	if (attribs & ATTR_BITANGENT)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_BITANGENT, "attr_Bitangent");
-	}
-#endif
-
-	if (attribs & ATTR_NORMAL)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_NORMAL, "attr_Normal");
-	}
-
-	if (attribs & ATTR_COLOR)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_COLOR, "attr_Color");
-	}
-
-	if (attribs & ATTR_PAINTCOLOR)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_PAINTCOLOR, "attr_PaintColor");
-	}
-
-	if (attribs & ATTR_LIGHTDIRECTION)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_LIGHTDIRECTION, "attr_LightDirection");
-	}
-
-	if (attribs & ATTR_POSITION2)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_POSITION2, "attr_Position2");
-	}
-
-	if (attribs & ATTR_NORMAL2)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_NORMAL2, "attr_Normal2");
-	}
-
-#ifdef USE_VERT_TANGENT_SPACE
-	if (attribs & ATTR_TANGENT2)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_TANGENT2, "attr_Tangent2");
-	}
-
-	if (attribs & ATTR_BITANGENT2)
-	{
-		qglBindAttribLocationARB(program->program, ATTR_INDEX_BITANGENT2, "attr_Bitangent2");
-	}
-#endif
+	GLSL_BindAttribLocations(program->program);
 
 	GLSL_LinkProgram(program->program);
 
@@ -1196,6 +1168,46 @@ static int GLSL_InitGPUShader(shaderProgram_t *program, const char *name,
 }
 */
 
+static void GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const char *name, int attribs,const char *vertex, const char *frag, const char *macrostring)
+{
+	char vpSource[32000];
+	char fpSource[32000];
+	int size = sizeof(vpSource);
+
+	GLSL_GetShaderHeader(GL_VERTEX_SHADER,vpSource,size);
+	GLSL_GetShaderHeader(GL_FRAGMENT_SHADER,fpSource,size);
+
+	if (macrostring)
+	{
+		char       **compileMacrosP = ( char ** ) &macrostring;
+		char       *token;
+
+		while (1)
+		{
+			token = COM_ParseExt2(compileMacrosP, qfalse);
+
+			if (!token[0])
+			{
+				break;
+			}
+
+			Q_strcat(vpSource,size,va("#ifndef %s\n#define %s 1\n#endif\n", token, token));
+			Q_strcat(fpSource,size,va("#ifndef %s\n#define %s 1\n#endif\n", token, token));
+		}
+	}
+
+	Q_strcat(vpSource,size,vertex);
+	Q_strcat(fpSource,size,frag);
+
+	GLSL_InitGPUShader2(program,name,attribs,vpSource,fpSource);
+}
+
+static void GLSL_MapMacro(macroBitMap_t *map,int macro,int mappedbit)
+{
+	map->macro = macro;
+	map->bitOffset = mappedbit;
+}
+
 static qboolean GLSL_InitGPUShader(shaderProgramList_t program, const char *name, int attribs, const char *libs, int macros, const char *macrostring)
 {
 	char   *vertexShader   = GLSL_BuildGPUShaderText(name, libs, GL_VERTEX_SHADER);
@@ -1204,6 +1216,9 @@ static qboolean GLSL_InitGPUShader(shaderProgramList_t program, const char *name
 	int    startTime, endTime;
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0;
+
+	program.macros = macros;
+
 	if (macros)
 	{
 		for (i = 0; i < MAX_MACROS; i++)
@@ -1213,6 +1228,23 @@ static qboolean GLSL_InitGPUShader(shaderProgramList_t program, const char *name
 				macronum++;
 			}
 		}
+	}
+
+	if(macronum)
+	{
+		int macrotemp = 0;
+		program.macromap = Com_Allocate(sizeof(macroBitMap_t) * macronum);
+		for (i = 0; i < MAX_MACROS; i++)
+		{
+			if (macros & BIT(i))
+			{
+				GLSL_MapMacro(&program.macromap[macrotemp],BIT(i),i);
+			}
+		}
+	}
+	else
+	{
+		program.macromap = NULL;
 	}
 
 	startTime = ri.Milliseconds();
@@ -1225,6 +1257,8 @@ static qboolean GLSL_InitGPUShader(shaderProgramList_t program, const char *name
 
 	for (i = 0; i < numPermutations; i++)
 	{
+		char *tempString = NULL;
+
 		if ((i + 1) >= nextTicCount)
 		{
 			size_t ticsNeeded = (size_t)(((double)(i + 1) / numPermutations) * 50.0);
@@ -1248,9 +1282,9 @@ static qboolean GLSL_InitGPUShader(shaderProgramList_t program, const char *name
 			}
 		}
 
-		if (GLSL_GenerateMacroString(macrostring, macros, i))
+		if (GLSL_GenerateMacroString(program.macromap,macrostring,i,&tempString))
 		{
-
+			GLSL_FinnishShaderTextAndCompile(&program.programs[i], name,attribs,vertexShader,fragmentShader,tempString);
 			numCompiled++;
 		}
 
