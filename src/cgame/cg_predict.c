@@ -251,7 +251,7 @@ static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, cons
 			VectorCopy(vec3_origin, angles);
 			VectorCopy(cent->lerpOrigin, origin);
 		}
-		// MrE: use bbox of capsule
+		// use bbox of capsule
 		if (capsule)
 		{
 			trap_CM_TransformedCapsuleTrace(&trace, start, end,
@@ -423,7 +423,7 @@ static void CG_InterpolatePlayerState(qboolean grabAngles)
 		cmdNum = trap_GetCurrentCmdNumber();
 		trap_GetUserCmd(cmdNum, &cmd);
 
-		// rain - added tracemask
+		// added tracemask
 		PM_UpdateViewAngles(out, &cg.pmext, &cmd, CG_Trace, MASK_PLAYERSOLID);
 	}
 
@@ -1020,6 +1020,7 @@ void CG_PredictPlayerState(void)
 			{
 				vec3_t adjusted;
 				float  len;
+
 				CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.oldTime, adjusted, deltaAngles);
 				// add the deltaAngles (fixes jittery view while riding trains)
 				// only do this if player is prone or using set mortar
@@ -1045,11 +1046,9 @@ void CG_PredictPlayerState(void)
 					}
 					if (cg_errorDecay.integer)
 					{
-						int   t;
-						float f;
+						int   t = cg.time - cg.predictedErrorTime;
+						float f = (cg_errorDecay.value - t) / cg_errorDecay.value;
 
-						t = cg.time - cg.predictedErrorTime;
-						f = (cg_errorDecay.value - t) / cg_errorDecay.value;
 						if (f < 0)
 						{
 							f = 0;
@@ -1069,10 +1068,6 @@ void CG_PredictPlayerState(void)
 				}
 			}
 		}
-
-		// don't predict gauntlet firing, which is only supposed to happen
-		// when it actually inflicts damage
-		cg_pmove.gauntletHit = qfalse;
 
 		if (cg_pmove.pmove_fixed)
 		{
@@ -1146,10 +1141,7 @@ void CG_PredictPlayerState(void)
 	}
 	else
 	{
-		float x;
-
-		// starts at 1, approaches 0 over time
-		x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
+		float x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength; // starts at 1, approaches 0 over time
 
 		// move
 		cg.predictedPlayerState.origin[2] +=
