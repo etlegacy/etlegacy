@@ -374,7 +374,6 @@ void CG_CheckChangedPredictableEvents(playerState_t *ps)
 			// if the new playerstate event is different from a previously predicted one
 			if (ps->events[i & (MAX_EVENTS - 1)] != cg.predictableEvents[i & (MAX_PREDICTED_EVENTS - 1)])
 			{
-
 				event                        = ps->events[i & (MAX_EVENTS - 1)];
 				cent->currentState.event     = event;
 				cent->currentState.eventParm = ps->eventParms[i & (MAX_EVENTS - 1)];

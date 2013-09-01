@@ -494,7 +494,6 @@ typedef struct
 	int debugLevel;                 // if set, diagnostic output will be printed
 	qboolean noFootsteps;           // if the game is setup for no footsteps by the server
 	qboolean noWeapClips;           // if the game is setup for no weapon clips by the server
-	qboolean gauntletHit;           // true if a gauntlet attack would actually hit something
 
 	int gametype;
 	int ltChargeTime;
@@ -1452,10 +1451,11 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 // entityState_t->eType
 
 // cursorhints (stored in ent->s.dmgFlags since that's only used for players at the moment)
-// note: don't remove any of these see OB ET_Config.h
+// FIXME: clean this - many hint types are obsolete but keep enum numbers!
+// note: adjust omnibot while cleaning this see OB ET_Config.h
 typedef enum
 {
-	HINT_NONE,      // reserved
+	HINT_NONE = 0,      // reserved
 	HINT_FORCENONE, // reserved
 	HINT_PLAYER,
 	HINT_ACTIVATE,
@@ -1464,8 +1464,8 @@ typedef enum
 	HINT_DOOR_LOCKED,
 	HINT_DOOR_ROTATING_LOCKED,
 	HINT_MG42,
-	HINT_BREAKABLE,
-	HINT_BREAKABLE_DYNAMITE,
+	HINT_BREAKABLE,             // FIXME: remove - never set!
+	HINT_BREAKABLE_DYNAMITE,    // FIXME: remove - never set!
 	HINT_CHAIR,
 	HINT_ALARM,
 	HINT_HEALTH,
@@ -1487,10 +1487,10 @@ typedef enum
 	HINT_HOLDABLE,
 	HINT_INVENTORY,
 	HINT_SCENARIC,
-	HINT_EXIT,
-	HINT_NOEXIT,
-	HINT_PLYR_FRIEND,
-	HINT_PLYR_NEUTRAL,
+	HINT_EXIT,         // FIXME: remove me - never set!
+	HINT_NOEXIT,       // FIXME: remove me - never set!
+	HINT_PLYR_FRIEND,  // FIXME: remove this!
+	HINT_PLYR_NEUTRAL, // FIXME: remove this!
 	HINT_PLYR_ENEMY,
 	HINT_PLYR_UNKNOWN,
 	HINT_BUILD,
@@ -1502,7 +1502,7 @@ typedef enum
 	HINT_LANDMINE,
 	HINT_TANK,
 	HINT_SATCHELCHARGE,
-	HINT_LOCKPICK, // @brief unused - don't remove see OMNIBOT
+	HINT_LOCKPICK, // @brief unused
 
 	HINT_BAD_USER,  // invisible user with no target
 
