@@ -1709,6 +1709,16 @@ typedef struct shaderProgram_s
 #endif
 } shaderProgram_t;
 
+#ifdef RENDERER2C
+typedef struct shaderProgramList_s
+{
+	shaderProgram_t *programs;
+	int permutations;
+	int currentPermutation;
+	int macros;
+} shaderProgramList_t;
+#endif
+
 #define SHADER_PROGRAM_T_OFS(x) ((size_t)&(((shaderProgram_t *)0)->x))
 
 //

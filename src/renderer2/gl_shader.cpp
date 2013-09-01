@@ -1033,7 +1033,6 @@ void GLShader::CompilePermutations()
 		}
 
 		std::string compileMacros;
-
 		if (GetCompileMacrosString(i, compileMacros))
 		{
 			this->BuildShaderCompileMacros(compileMacros);
