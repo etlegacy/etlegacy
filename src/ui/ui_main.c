@@ -5582,11 +5582,11 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserModFilter);
 			if (ui_browserModFilter.integer != 0)
 			{
-				
+
 				//FIXME: some servers do not send gamename cvar in "getinfo" request -> parse them again with extended info(getstatus)
 				//future - check omnibot cvars, parse players with ping 0 and match them as bots to bot filter
 				const char *gamename = Info_ValueForKey(info, "game");
-				
+
 				if ((Q_stristr(gamename, "etmain") == 0) && (ui_browserModFilter.integer == 1))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
@@ -5643,17 +5643,17 @@ static void UI_BuildServerDisplayList(qboolean force)
 					continue;
 				}
 				if ((ui_browserModFilter.integer == -1) &&
-					((Q_stristr(gamename, "etmain") != 0) ||
-					(Q_stristr(gamename, "etpub") != 0) ||
-					(Q_stristr(gamename, "jaymod") != 0) ||
-					(Q_stristr(gamename, "nq") != 0) ||
-					(Q_stristr(gamename, "nitmod") != 0) ||
-					(Q_stristr(gamename, "silent") != 0) ||
-					(Q_stristr(gamename, "tce") != 0) ||
-					(Q_stristr(gamename, "etnam") != 0) ||
-					(Q_stristr(gamename, "etrun") != 0) ||
-					(Q_stristr(gamename, "etjump") != 0) ||
-					(Q_stristr(gamename, "tjmod") != 0)))
+				    ((Q_stristr(gamename, "etmain") != 0) ||
+				     (Q_stristr(gamename, "etpub") != 0) ||
+				     (Q_stristr(gamename, "jaymod") != 0) ||
+				     (Q_stristr(gamename, "nq") != 0) ||
+				     (Q_stristr(gamename, "nitmod") != 0) ||
+				     (Q_stristr(gamename, "silent") != 0) ||
+				     (Q_stristr(gamename, "tce") != 0) ||
+				     (Q_stristr(gamename, "etnam") != 0) ||
+				     (Q_stristr(gamename, "etrun") != 0) ||
+				     (Q_stristr(gamename, "etjump") != 0) ||
+				     (Q_stristr(gamename, "tjmod") != 0)))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -6584,11 +6584,11 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 					/*
 					if (punkbuster) // FIXME: remove, obsolete
 					{
-						handles[3] = uiInfo.punkBusterFilter;
+					    handles[3] = uiInfo.punkBusterFilter;
 					}
 					else
 					{
-						handles[3] = -1;
+					    handles[3] = -1;
 					}
 					*/
 					if (gamename)
@@ -6627,7 +6627,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 						else if (Q_stristr(gamename, "etnam") != 0)
 						{
 							handles[3] = uiInfo.modFilter_etnam;
-						}						
+						}
 						else if (Q_stristr(gamename, "etrun") != 0)
 						{
 							handles[3] = uiInfo.modFilter_etrun;
@@ -7421,18 +7421,18 @@ void _UI_Init(void)
 	uiInfo.antiLagFilter            = trap_R_RegisterShaderNoMip("ui/assets/filter_antilag.tga");
 	uiInfo.teamBalanceFilter        = trap_R_RegisterShaderNoMip("ui/assets/filter_balance.tga");
 
-	uiInfo.modFilter_etmain			= trap_R_RegisterShaderNoMip("ui/assets/mod_etmain.tga");
-	uiInfo.modFilter_etnam			= trap_R_RegisterShaderNoMip("ui/assets/mod_etnam.tga");
-	uiInfo.modFilter_etpub			= trap_R_RegisterShaderNoMip("ui/assets/mod_etpub.tga");
-	uiInfo.modFilter_etrun			= trap_R_RegisterShaderNoMip("ui/assets/mod_etrun.tga");
-	uiInfo.modFilter_etjump			= trap_R_RegisterShaderNoMip("ui/assets/mod_etjump.tga");
-	uiInfo.modFilter_jaymod			= trap_R_RegisterShaderNoMip("ui/assets/mod_jaymod.tga");
-	uiInfo.modFilter_nitmod			= trap_R_RegisterShaderNoMip("ui/assets/mod_nitmod.tga");
-	uiInfo.modFilter_nq				= trap_R_RegisterShaderNoMip("ui/assets/mod_nq.tga");
-	uiInfo.modFilter_silent			= trap_R_RegisterShaderNoMip("ui/assets/mod_silent.tga");
-	uiInfo.modFilter_tce			= trap_R_RegisterShaderNoMip("ui/assets/mod_tce.tga");
-	uiInfo.modFilter_tjmod			= trap_R_RegisterShaderNoMip("ui/assets/mod_tjmod.tga");
-	uiInfo.modFilter_unknown		= trap_R_RegisterShaderNoMip("ui/assets/mod_unknown.tga");
+	uiInfo.modFilter_etmain  = trap_R_RegisterShaderNoMip("ui/assets/mod_etmain.tga");
+	uiInfo.modFilter_etnam   = trap_R_RegisterShaderNoMip("ui/assets/mod_etnam.tga");
+	uiInfo.modFilter_etpub   = trap_R_RegisterShaderNoMip("ui/assets/mod_etpub.tga");
+	uiInfo.modFilter_etrun   = trap_R_RegisterShaderNoMip("ui/assets/mod_etrun.tga");
+	uiInfo.modFilter_etjump  = trap_R_RegisterShaderNoMip("ui/assets/mod_etjump.tga");
+	uiInfo.modFilter_jaymod  = trap_R_RegisterShaderNoMip("ui/assets/mod_jaymod.tga");
+	uiInfo.modFilter_nitmod  = trap_R_RegisterShaderNoMip("ui/assets/mod_nitmod.tga");
+	uiInfo.modFilter_nq      = trap_R_RegisterShaderNoMip("ui/assets/mod_nq.tga");
+	uiInfo.modFilter_silent  = trap_R_RegisterShaderNoMip("ui/assets/mod_silent.tga");
+	uiInfo.modFilter_tce     = trap_R_RegisterShaderNoMip("ui/assets/mod_tce.tga");
+	uiInfo.modFilter_tjmod   = trap_R_RegisterShaderNoMip("ui/assets/mod_tjmod.tga");
+	uiInfo.modFilter_unknown = trap_R_RegisterShaderNoMip("ui/assets/mod_unknown.tga");
 
 	uiInfo.campaignMap = trap_R_RegisterShaderNoMip("gfx/loading/camp_map.tga");
 
@@ -7944,9 +7944,9 @@ cvarTable_t cvarTable[] =
 	{ &ui_browserShowWeaponsRestricted, "ui_browserShowWeaponsRestricted",     "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowTeamBalanced,      "ui_browserShowTeamBalanced",          "0",                          CVAR_ARCHIVE                   },
 
-	{ &ui_browserModFilter,				"ui_browserModFilter",					"0",                         CVAR_ARCHIVE                   },
-	{ &ui_browserMapFilter,				"ui_browserMapFilter",					"",	                         CVAR_ARCHIVE                   },
-	{ &ui_browserMapFilterCheckBox,		"ui_browserMapFilterCheckBox",			"0",                         CVAR_ARCHIVE                   },
+	{ &ui_browserModFilter,             "ui_browserModFilter",                 "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserMapFilter,             "ui_browserMapFilter",                 "",                           CVAR_ARCHIVE                   },
+	{ &ui_browserMapFilterCheckBox,     "ui_browserMapFilterCheckBox",         "0",                          CVAR_ARCHIVE                   },
 
 	{ &ui_serverStatusTimeOut,          "ui_serverStatusTimeOut",              "7000",                       CVAR_ARCHIVE                   },
 
