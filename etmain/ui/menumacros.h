@@ -416,7 +416,6 @@
 		textstyle ITEM_TEXTSTYLE_SHADOWED                         \
 		textscale EDITFIELDSIMPLE_TEXT_SCALE                            \
 		textalign ITEM_ALIGN_LEFT								\
-		textalignx $evalfloat(EDITFIELDSIMPLE_W)                   \
 		textaligny EDITFIELDSIMPLE_TEXT_ALIGN_Y                          \
 		forecolor       .6 .6 .6 1                                      \
 		cvar EDITFIELDSIMPLE_CVAR                                  \
