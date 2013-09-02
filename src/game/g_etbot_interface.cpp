@@ -1838,7 +1838,7 @@ static int _GetEntityClass(gentity_t *_ent)
 	default:
 		break;
 	}
-	;
+
 	return 0;
 }
 
