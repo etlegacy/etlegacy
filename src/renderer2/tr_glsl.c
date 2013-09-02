@@ -241,12 +241,12 @@ static char *GLSL_GetMacroName(int macro)
 	}
 }
 
-static qboolean GLSL_HasConflictingMacros(int compilemacro, int permutation)
+static qboolean GLSL_HasConflictingMacros(int compilemacro, int usedmacros)
 {
 	switch (compilemacro)
 	{
 	case USE_VERTEX_SKINNING:
-		if (permutation & compilemacro && compilemacro == USE_VERTEX_ANIMATION)
+		if (usedmacros & USE_VERTEX_ANIMATION)
 		{
 			return qtrue;
 		}
@@ -258,7 +258,7 @@ static qboolean GLSL_HasConflictingMacros(int compilemacro, int permutation)
 		}
 		break;
 	case USE_VERTEX_ANIMATION:
-		if (permutation & compilemacro && compilemacro == USE_VERTEX_SKINNING)
+		if (usedmacros & USE_VERTEX_SKINNING)
 		{
 			return qtrue;
 		}
@@ -270,18 +270,18 @@ static qboolean GLSL_HasConflictingMacros(int compilemacro, int permutation)
 	return qfalse;
 }
 
-static qboolean GLSL_MissesRequiredMacros(int compilemacro, int permutation)
+static qboolean GLSL_MissesRequiredMacros(int compilemacro, int usedmacros)
 {
 	switch (compilemacro)
 	{
 	case USE_PARALLAX_MAPPING:
-		if (permutation & compilemacro && compilemacro == USE_NORMAL_MAPPING)
+		if (usedmacros & USE_NORMAL_MAPPING)
 		{
 			return qtrue;
 		}
 		break;
 	case USE_REFLECTIVE_SPECULAR:
-		if (permutation & compilemacro && compilemacro == USE_NORMAL_MAPPING)
+		if (usedmacros & USE_NORMAL_MAPPING)
 		{
 			return qtrue;
 		}
@@ -968,9 +968,48 @@ static char *GLSL_BuildGPUShaderText(const char *mainShaderName, const char *lib
 	return shaderText;
 }
 
-static qboolean GLSL_GenerateMacroString(macroBitMap_t *bitmap, const char *macros, int permutation, char **out)
+static qboolean GLSL_GenerateMacroString(shaderProgramList_t *program, const char *macros, int permutation, char **out)
 {
 	// TODO: implement this
+	int i, macroatrib = 0;
+
+	*out = (char *) malloc(1000);
+	memset(*out, 0, 1000);
+
+	if (permutation)
+	{
+		for (i = 0; i < program->mappedMacros; i++)
+		{
+			if (permutation & BIT(program->macromap[i].bitOffset))
+			{
+				macroatrib |= program->macromap[i].macro;
+			}
+		}
+
+		for (i = 0; i < MAX_MACROS; i++)
+		{
+			if (macroatrib & BIT(i))
+			{
+				if (GLSL_HasConflictingMacros(BIT(i), macroatrib))
+				{
+					return qfalse;
+				}
+
+				if (GLSL_MissesRequiredMacros(BIT(i), macroatrib))
+				{
+					return qfalse;
+				}
+
+				Q_strcat(*out, 1000, va("%s ", GLSL_GetMacroName(BIT(i))));
+			}
+		}
+	}
+
+	if (macros)
+	{
+		Q_strcat(*out, 1000, macros);
+	}
+
 	return qtrue;
 }
 
@@ -1114,73 +1153,20 @@ static int GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, int a
 
 	return 1;
 }
-/*
-static int GLSL_InitGPUShader(shaderProgram_t *program, const char *name,
-                              int attribs, qboolean fragmentShader, const GLcharARB *extra, qboolean addHeader,
-                              const char *fallback_vp, const char *fallback_fp)
-{
-    char vpCode[32000];
-    char fpCode[32000];
-    char *postHeader;
-    int  size;
-    int  result;
 
-    size = sizeof(vpCode);
-    if (addHeader)
-    {
-        GLSL_GetShaderHeader(GL_VERTEX_SHADER_ARB, extra, vpCode, size);
-        postHeader = &vpCode[strlen(vpCode)];
-        size      -= strlen(vpCode);
-    }
-    else
-    {
-        postHeader = &vpCode[0];
-    }
-
-    if (!GLSL_LoadGPUShaderText(name, fallback_vp, GL_VERTEX_SHADER_ARB, postHeader, size))
-    {
-        return 0;
-    }
-
-    if (fragmentShader)
-    {
-        size = sizeof(fpCode);
-        if (addHeader)
-        {
-            GLSL_GetShaderHeader(GL_FRAGMENT_SHADER_ARB, extra, fpCode, size);
-            postHeader = &fpCode[strlen(fpCode)];
-            size      -= strlen(fpCode);
-        }
-        else
-        {
-            postHeader = &fpCode[0];
-        }
-
-        if (!GLSL_LoadGPUShaderText(name, fallback_fp, GL_FRAGMENT_SHADER_ARB, postHeader, size))
-        {
-            return 0;
-        }
-    }
-
-    result = GLSL_InitGPUShader2(program, name, attribs, vpCode, fragmentShader ? fpCode : NULL);
-
-    return result;
-}
-*/
-
-static void GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const char *name, int attribs,const char *vertex, const char *frag, const char *macrostring)
+static void GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const char *name, int attribs, const char *vertex, const char *frag, const char *macrostring)
 {
 	char vpSource[32000];
 	char fpSource[32000];
-	int size = sizeof(vpSource);
+	int  size = sizeof(vpSource);
 
-	GLSL_GetShaderHeader(GL_VERTEX_SHADER,vpSource,size);
-	GLSL_GetShaderHeader(GL_FRAGMENT_SHADER,fpSource,size);
+	GLSL_GetShaderHeader(GL_VERTEX_SHADER, vpSource, size);
+	GLSL_GetShaderHeader(GL_FRAGMENT_SHADER, fpSource, size);
 
 	if (macrostring)
 	{
-		char       **compileMacrosP = ( char ** ) &macrostring;
-		char       *token;
+		char **compileMacrosP = ( char ** ) &macrostring;
+		char *token;
 
 		while (1)
 		{
@@ -1191,24 +1177,24 @@ static void GLSL_FinnishShaderTextAndCompile(shaderProgram_t *program, const cha
 				break;
 			}
 
-			Q_strcat(vpSource,size,va("#ifndef %s\n#define %s 1\n#endif\n", token, token));
-			Q_strcat(fpSource,size,va("#ifndef %s\n#define %s 1\n#endif\n", token, token));
+			Q_strcat(vpSource, size, va("#ifndef %s\n#define %s 1\n#endif\n", token, token));
+			Q_strcat(fpSource, size, va("#ifndef %s\n#define %s 1\n#endif\n", token, token));
 		}
 	}
 
-	Q_strcat(vpSource,size,vertex);
-	Q_strcat(fpSource,size,frag);
+	Q_strcat(vpSource, size, vertex);
+	Q_strcat(fpSource, size, frag);
 
-	GLSL_InitGPUShader2(program,name,attribs,vpSource,fpSource);
+	GLSL_InitGPUShader2(program, name, attribs, vpSource, fpSource);
 }
 
-static void GLSL_MapMacro(macroBitMap_t *map,int macro,int mappedbit)
+static void GLSL_MapMacro(macroBitMap_t *map, int macro, int mappedbit)
 {
-	map->macro = macro;
+	map->macro     = macro;
 	map->bitOffset = mappedbit;
 }
 
-static qboolean GLSL_InitGPUShader(shaderProgramList_t program, const char *name, int attribs, const char *libs, int macros, const char *macrostring)
+static qboolean GLSL_InitGPUShader(shaderProgramList_t *program, const char *name, int attribs, const char *libs, int macros, const char *macrostring)
 {
 	char   *vertexShader   = GLSL_BuildGPUShaderText(name, libs, GL_VERTEX_SHADER);
 	char   *fragmentShader = GLSL_BuildGPUShaderText(name, libs, GL_FRAGMENT_SHADER);
@@ -1217,7 +1203,7 @@ static qboolean GLSL_InitGPUShader(shaderProgramList_t program, const char *name
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0;
 
-	program.macros = macros;
+	program->macros = macros;
 
 	if (macros)
 	{
@@ -1230,21 +1216,23 @@ static qboolean GLSL_InitGPUShader(shaderProgramList_t program, const char *name
 		}
 	}
 
-	if(macronum)
+	if (macronum)
 	{
 		int macrotemp = 0;
-		program.macromap = Com_Allocate(sizeof(macroBitMap_t) * macronum);
+		program->macromap = Com_Allocate(sizeof(macroBitMap_t) * macronum);
 		for (i = 0; i < MAX_MACROS; i++)
 		{
 			if (macros & BIT(i))
 			{
-				GLSL_MapMacro(&program.macromap[macrotemp],BIT(i),i);
+				GLSL_MapMacro(&program->macromap[macrotemp], BIT(i), macrotemp);
+				macrotemp++;
 			}
 		}
+		program->mappedMacros = macrotemp;
 	}
 	else
 	{
-		program.macromap = NULL;
+		program->macromap = NULL;
 	}
 
 	startTime = ri.Milliseconds();
@@ -1282,10 +1270,14 @@ static qboolean GLSL_InitGPUShader(shaderProgramList_t program, const char *name
 			}
 		}
 
-		if (GLSL_GenerateMacroString(program.macromap,macrostring,i,&tempString))
+		if (GLSL_GenerateMacroString(program, macrostring, i, &tempString))
 		{
-			GLSL_FinnishShaderTextAndCompile(&program.programs[i], name,attribs,vertexShader,fragmentShader,tempString);
+			GLSL_FinnishShaderTextAndCompile(&program->programs[i], name, attribs, vertexShader, fragmentShader, tempString);
 			numCompiled++;
+		}
+		else
+		{
+			program->programs[i].program = NULL;
 		}
 
 	}

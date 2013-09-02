@@ -1725,6 +1725,7 @@ typedef struct shaderProgramList_s
 	int currentPermutation;
 	int macros;
 	macroBitMap_t *macromap;
+	int mappedMacros;
 } shaderProgramList_t;
 #endif
 
