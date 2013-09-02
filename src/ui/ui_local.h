@@ -631,7 +631,8 @@ typedef struct
 	qhandle_t antiLagFilter;
 	qhandle_t teamBalanceFilter;
 
-	qhandle_t modFilter_etmain;
+	// FIXME: put these into an array & sync order
+	qhandle_t modFilter_legacy;
 	qhandle_t modFilter_etpub;
 	qhandle_t modFilter_jaymod;
 	qhandle_t modFilter_nq;
@@ -642,6 +643,7 @@ typedef struct
 	qhandle_t modFilter_etrun;
 	qhandle_t modFilter_etjump;
 	qhandle_t modFilter_tjmod;
+	qhandle_t modFilter_etmain;
 	qhandle_t modFilter_unknown;
 
 	qhandle_t campaignMap;

@@ -5582,12 +5582,12 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserModFilter);
 			if (ui_browserModFilter.integer != 0)
 			{
-
-				//FIXME: some servers do not send gamename cvar in "getinfo" request -> parse them again with extended info(getstatus)
-				//future - check omnibot cvars, parse players with ping 0 and match them as bots to bot filter
+				// FIXME: some servers do not send gamename cvar in "getinfo" request -> parse them again with extended info(getstatus)
+				// future - check omnibot cvars, parse players with ping 0 and match them as bots to bot filter
 				const char *gamename = Info_ValueForKey(info, "game");
 
-				if ((Q_stristr(gamename, "etmain") == 0) && (ui_browserModFilter.integer == 1))
+				// FIXME: do a switch -> ui_browserModFilter.integer
+				if ((Q_stristr(gamename, "legacy") == 0) && (ui_browserModFilter.integer == 1))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -5642,8 +5642,14 @@ static void UI_BuildServerDisplayList(qboolean force)
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
+				if ((Q_stristr(gamename, "etmain") == 0) && (ui_browserModFilter.integer == 12))
+				{
+					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+					continue;
+				}
+
 				if ((ui_browserModFilter.integer == -1) &&
-				    ((Q_stristr(gamename, "etmain") != 0) ||
+				    ((Q_stristr(gamename, "legacy") != 0) ||
 				     (Q_stristr(gamename, "etpub") != 0) ||
 				     (Q_stristr(gamename, "jaymod") != 0) ||
 				     (Q_stristr(gamename, "nq") != 0) ||
@@ -5653,7 +5659,8 @@ static void UI_BuildServerDisplayList(qboolean force)
 				     (Q_stristr(gamename, "etnam") != 0) ||
 				     (Q_stristr(gamename, "etrun") != 0) ||
 				     (Q_stristr(gamename, "etjump") != 0) ||
-				     (Q_stristr(gamename, "tjmod") != 0)))
+				     (Q_stristr(gamename, "tjmod") != 0) ||
+				     (Q_stristr(gamename, "etmain") != 0)))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -6593,11 +6600,11 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 					*/
 					if (gamename)
 					{
-						//FIXME: some servers do not send gamename cvar in "getinfo" request -> parse them again with extended info(getstatus)
-						//future - check omnibot cvars, parse players with ping 0 and match them as bots to bot filter
-						if (Q_stristr(gamename, "etmain") != 0)
+						// FIXME: some servers do not send gamename cvar in "getinfo" request -> parse them again with extended info(getstatus)
+						// future - check omnibot cvars, parse players with ping 0 and match them as bots to bot filter
+						if (Q_stristr(gamename, "legacy") != 0)
 						{
-							handles[3] = uiInfo.modFilter_etmain;
+							handles[3] = uiInfo.modFilter_legacy;
 						}
 						else if (Q_stristr(gamename, "etpub") != 0)
 						{
@@ -6607,7 +6614,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 						{
 							handles[3] = uiInfo.modFilter_jaymod;
 						}
-						//FIXME: some older versions of NoQuarter act as "noquarter" instead of "nq"
+						// FIXME: some older versions of NoQuarter act as "noquarter" instead of "nq"
 						else if (Q_stristr(gamename, "nq") != 0)
 						{
 							handles[3] = uiInfo.modFilter_nq;
@@ -6639,6 +6646,10 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 						else if (Q_stristr(gamename, "tjmod") != 0)
 						{
 							handles[3] = uiInfo.modFilter_tjmod;
+						}
+						else if (Q_stristr(gamename, "etmain") != 0)
+						{
+							handles[3] = uiInfo.modFilter_etmain;
 						}
 						else
 						{
@@ -7421,7 +7432,7 @@ void _UI_Init(void)
 	uiInfo.antiLagFilter            = trap_R_RegisterShaderNoMip("ui/assets/filter_antilag.tga");
 	uiInfo.teamBalanceFilter        = trap_R_RegisterShaderNoMip("ui/assets/filter_balance.tga");
 
-	uiInfo.modFilter_etmain  = trap_R_RegisterShaderNoMip("ui/assets/mod_etmain.tga");
+	uiInfo.modFilter_legacy  = trap_R_RegisterShaderNoMip("ui/assets/mod_legacy.tga");
 	uiInfo.modFilter_etnam   = trap_R_RegisterShaderNoMip("ui/assets/mod_etnam.tga");
 	uiInfo.modFilter_etpub   = trap_R_RegisterShaderNoMip("ui/assets/mod_etpub.tga");
 	uiInfo.modFilter_etrun   = trap_R_RegisterShaderNoMip("ui/assets/mod_etrun.tga");
@@ -7432,6 +7443,7 @@ void _UI_Init(void)
 	uiInfo.modFilter_silent  = trap_R_RegisterShaderNoMip("ui/assets/mod_silent.tga");
 	uiInfo.modFilter_tce     = trap_R_RegisterShaderNoMip("ui/assets/mod_tce.tga");
 	uiInfo.modFilter_tjmod   = trap_R_RegisterShaderNoMip("ui/assets/mod_tjmod.tga");
+	uiInfo.modFilter_etmain  = trap_R_RegisterShaderNoMip("ui/assets/mod_etmain.tga");
 	uiInfo.modFilter_unknown = trap_R_RegisterShaderNoMip("ui/assets/mod_unknown.tga");
 
 	uiInfo.campaignMap = trap_R_RegisterShaderNoMip("gfx/loading/camp_map.tga");
