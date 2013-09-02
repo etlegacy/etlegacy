@@ -3455,7 +3455,6 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 	if (item->cvar)
 	{
 		int len;
-
 		memset(buff, 0, sizeof(buff));
 		DC->getCVarString(item->cvar, buff, sizeof(buff));
 
@@ -4179,6 +4178,40 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down)
 	}
 }
 
+void Item_CalcTextFieldCursor(itemDef_t *item)
+{
+	if (item->cvar)
+	{
+		char           buff[1024];
+		int            len;
+		editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
+		memset(buff, 0, sizeof(buff));
+		DC->getCVarString(item->cvar, buff, sizeof(buff));
+		len = strlen(buff);
+		if (editPtr->maxChars && len > editPtr->maxChars)
+		{
+			len = editPtr->maxChars;
+		}
+		item->cursorPos = len;
+	}
+}
+
+void Item_HandleTextFieldSelect(itemDef_t *item)
+{
+	if (item)
+	{
+		Item_CalcTextFieldCursor(item);
+		g_editingField = qtrue;
+		g_editItem     = item;
+	}
+}
+
+void Item_HandleTextFieldDeSelect(itemDef_t *item)
+{
+	g_editingField = qfalse;
+	g_editItem     = NULL;
+}
+
 static rectDef_t *Item_CorrectedTextRect(itemDef_t *item)
 {
 	static rectDef_t rect;
@@ -4222,14 +4255,12 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	{
 		if (!Item_TextField_HandleKey(g_editItem, key))
 		{
-			g_editingField = qfalse;
-			g_editItem     = NULL;
+			Item_HandleTextFieldDeSelect(g_editItem);
 			return;
 		}
 		else if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3)
 		{
-			g_editingField = qfalse;
-			g_editItem     = NULL;
+			Item_HandleTextFieldDeSelect(g_editItem);
 			Display_MouseMove(NULL, DC->cursorx, DC->cursory);
 		}
 		else if (key == K_TAB || key == K_UPARROW || key == K_DOWNARROW)
@@ -4348,9 +4379,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		{
 			if (item->type == ITEM_TYPE_EDITFIELD || item->type == ITEM_TYPE_NUMERICFIELD)
 			{
-				item->cursorPos = 0;
-				g_editingField  = qtrue;
-				g_editItem      = item;
+				Item_HandleTextFieldSelect(item);
 			}
 			else
 			{
@@ -4399,9 +4428,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 						editPtr->paintOffset = 0;
 					}
 
-					item->cursorPos = 0;
-					g_editingField  = qtrue;
-					g_editItem      = item;
+					Item_HandleTextFieldSelect(item);
 
 					// see elsewhere for venomous comment about this particular piece of "functionality"
 					//DC->setOverstrikeMode(qtrue);
