@@ -40,12 +40,11 @@ enum EGLCompileMacro
 	USE_PARALLAX_MAPPING    = BIT(9),
 	USE_REFLECTIVE_SPECULAR = BIT(10),
 	USE_SHADOWING           = BIT(11),
-	TWOSIDED                = BIT(12),
-	EYE_OUTSIDE             = BIT(13),
-	BRIGHTPASS_FILTER       = BIT(14),
-	LIGHT_DIRECTIONAL       = BIT(15),
-	USE_GBUFFER             = BIT(16),
-	MAX_MACROS              = 17
+	EYE_OUTSIDE             = BIT(12),
+	BRIGHTPASS_FILTER       = BIT(13),
+	LIGHT_DIRECTIONAL       = BIT(14),
+	USE_GBUFFER             = BIT(15),
+	MAX_MACROS              = 16
 };
 
 typedef struct uniformInfo_s
@@ -1203,7 +1202,7 @@ static qboolean GLSL_InitGPUShader(shaderProgramList_t *program, const char *nam
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0;
 
-	program->macros = macros;
+	program->allMacros = macros;
 
 	if (macros)
 	{
@@ -1232,7 +1231,8 @@ static qboolean GLSL_InitGPUShader(shaderProgramList_t *program, const char *nam
 	}
 	else
 	{
-		program->macromap = NULL;
+		program->macromap     = NULL;
+		program->mappedMacros = 0;
 	}
 
 	startTime = ri.Milliseconds();
@@ -1523,6 +1523,16 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 	Matrix16Copy(matrix, compare);
 
 	qglUniformMatrix4fvARB(uniforms[uniformNum], 1, GL_FALSE, matrix);
+}
+
+void GLSL_SetMacros(shaderProgramList_t *programlist, int macros)
+{
+	programlist->currentMacros = macros;
+}
+
+void GLSL_SelectPermutation(shaderProgramList_t *programlist)
+{
+
 }
 
 void GLSL_DeleteGPUShader(shaderProgram_t *program)

@@ -399,7 +399,7 @@
     itemDef {                                                           \
 		name        "efsimpleback" ## EDITFIELDSIMPLE_TEXT                            \
 		group GROUP_NAME                                          \
-		rect $evalfloat((EDITFIELDSIMPLE_X)) $evalfloat(EDITFIELDSIMPLE_Y) $evalfloat((EDITFIELDSIMPLE_W)) $evalfloat(EDITFIELDSIMPLE_H) \
+		rect $evalfloat(EDITFIELDSIMPLE_X) $evalfloat(EDITFIELDSIMPLE_Y) $evalfloat(EDITFIELDSIMPLE_W) $evalfloat(EDITFIELDSIMPLE_H) \
 		style WINDOW_STYLE_FILLED                                 \
 		backcolor   .5 .5 .5 .2                                         \
 		visible     1                                                   \
@@ -407,7 +407,7 @@
 	}                                                                   \
                                                                         \
     itemDef {                                                           \
-		name            "efsimple" ## EDITFIELDSIMPLE_TEXT                            \
+		name            "efsimple" ## EDITFIELDSIMPLE_TEXT              \
 		group GROUP_NAME                                      \
 		rect $evalfloat(EDITFIELDSIMPLE_X) $evalfloat(EDITFIELDSIMPLE_Y) $evalfloat(EDITFIELDSIMPLE_W) $evalfloat(EDITFIELDSIMPLE_H) \
 		type ITEM_TYPE_EDITFIELD                             \
@@ -416,7 +416,7 @@
 		textstyle ITEM_TEXTSTYLE_SHADOWED                         \
 		textscale EDITFIELDSIMPLE_TEXT_SCALE                            \
 		textalign ITEM_ALIGN_LEFT								\
-		textalignx EDITFIELDSIMPLE_W                   \
+		textalignx $evalfloat(EDITFIELDSIMPLE_W)                   \
 		textaligny EDITFIELDSIMPLE_TEXT_ALIGN_Y                          \
 		forecolor       .6 .6 .6 1                                      \
 		cvar EDITFIELDSIMPLE_CVAR                                  \
