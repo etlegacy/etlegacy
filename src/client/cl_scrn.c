@@ -337,7 +337,7 @@ static int SCR_Strlen(const char *str)
  */
 int SCR_GetBigStringWidth(const char *str)
 {
-	return SCR_Strlen(str) * BIGCHAR_WIDTH;;
+	return SCR_Strlen(str) * BIGCHAR_WIDTH;
 }
 
 //===============================================================================
