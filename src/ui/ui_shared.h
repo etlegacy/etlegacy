@@ -448,6 +448,8 @@ typedef struct
 
 	qboolean (*keyIsDown)(int keynum);
 
+	void (*getClipboardData)(char *buf, int bufsize);
+
 	void (*setBinding)(int keynum, const char *binding);
 	void (*executeText)(int exec_when, const char *text);
 	void (*Error)(int level, const char *error, ...) __attribute__ ((noreturn, format(printf, 2, 3)));

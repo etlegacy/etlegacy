@@ -41,6 +41,8 @@
 #define SCROLL_TIME_ADJUSTOFFSET    40
 #define SCROLL_TIME_FLOOR           20
 
+#define EDITFIELD_TEMP_CVAR         "ui_textfield_temp"
+
 typedef struct scrollInfo_s
 {
 	int nextScrollTime;
@@ -3446,6 +3448,79 @@ qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
 	return qfalse;
 }
 
+void Item_CalcTextFieldCursor(itemDef_t *item)
+{
+	if (item->cvar)
+	{
+		char           buff[1024];
+		int            len;
+		editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
+		memset(buff, 0, sizeof(buff));
+		DC->getCVarString(item->cvar, buff, sizeof(buff));
+		len = strlen(buff);
+		if (editPtr->maxChars && len > editPtr->maxChars)
+		{
+			len = editPtr->maxChars;
+		}
+		item->cursorPos = len;
+		DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
+	}
+}
+
+void Item_HandleTextFieldSelect(itemDef_t *item)
+{
+	if (item)
+	{
+		Item_CalcTextFieldCursor(item);
+		g_editingField = qtrue;
+		g_editItem     = item;
+	}
+}
+
+void Item_HandleTextFieldDeSelect(itemDef_t *item)
+{
+	if (item && item->cvar)
+	{
+		char buff[1024];
+		DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
+		DC->setCVar(item->cvar, buff);
+	}
+	g_editingField = qfalse;
+	g_editItem     = NULL;
+}
+
+qboolean Item_TextFieldInsertToCursor(int *len, char *buff, int key, itemDef_t *item, editFieldDef_t *editPtr)
+{
+	if (DC->getOverstrikeMode && !DC->getOverstrikeMode())
+	{
+		if ((*len == MAX_EDITFIELD - 1) || (editPtr->maxChars && *len >= editPtr->maxChars))
+		{
+			return qtrue;
+		}
+		memmove(&buff[item->cursorPos + 1], &buff[item->cursorPos], *len + 1 - item->cursorPos);
+	}
+	else
+	{
+		if (editPtr->maxChars && item->cursorPos >= editPtr->maxChars)
+		{
+			return qtrue;
+		}
+	}
+
+	buff[item->cursorPos] = key;
+
+	if (item->cursorPos < *len + 1)
+	{
+		item->cursorPos++;
+		if (editPtr->maxPaintChars && item->cursorPos > editPtr->maxPaintChars)
+		{
+			editPtr->paintOffset++;
+		}
+	}
+	*len += 1;
+	return qfalse;
+}
+
 qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 {
 	char           buff[1024];
@@ -3456,7 +3531,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 	{
 		int len;
 		memset(buff, 0, sizeof(buff));
-		DC->getCVarString(item->cvar, buff, sizeof(buff));
+		DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
 
 		len = strlen(buff);
 
@@ -3488,7 +3563,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 					}
 					buff[len] = '\0';
 				}
-				DC->setCVar(item->cvar, buff);
+				DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 				return qtrue;
 			}
 
@@ -3506,44 +3581,43 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				}
 			}
 
-			if (DC->getOverstrikeMode && !DC->getOverstrikeMode())
+			if (Item_TextFieldInsertToCursor(&len, buff, key, item, editPtr))
 			{
-				if ((len == MAX_EDITFIELD - 1) || (editPtr->maxChars && len >= editPtr->maxChars))
-				{
-					return qtrue;
-				}
-				memmove(&buff[item->cursorPos + 1], &buff[item->cursorPos], len + 1 - item->cursorPos);
+				return qtrue;
 			}
-			else
-			{
-				if (editPtr->maxChars && item->cursorPos >= editPtr->maxChars)
-				{
-					return qtrue;
-				}
-			}
-
-			buff[item->cursorPos] = key;
-
-			DC->setCVar(item->cvar, buff);
-
-			if (item->cursorPos < len + 1)
-			{
-				item->cursorPos++;
-				if (editPtr->maxPaintChars && item->cursorPos > editPtr->maxPaintChars)
-				{
-					editPtr->paintOffset++;
-				}
-			}
+			DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 		}
 		else
 		{
+			if (tolower(key) == 'v' && DC->keyIsDown(K_CTRL) && item->type != ITEM_TYPE_NUMERICFIELD)  //clipboard paste only on normal textfield
+			{
+				char clipbuff[1024];
+
+				memset(clipbuff, 0, sizeof(clipbuff));
+				DC->getClipboardData(clipbuff, sizeof(clipbuff));
+				if (clipbuff && strlen(clipbuff))
+				{
+					int i       = 0;
+					int cliplen = strlen(clipbuff);
+					for (; i < cliplen; i++)
+					{
+						if (Item_TextFieldInsertToCursor(&len, buff, clipbuff[i], item, editPtr))
+						{
+							break;
+						}
+					}
+					DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
+				}
+				return qtrue;
+			}
+
 			if (key == K_DEL || key == K_KP_DEL)
 			{
 				if (item->cursorPos < len)
 				{
 					memmove(buff + item->cursorPos, buff + item->cursorPos + 1, len - item->cursorPos);
 					buff[len] = '\0';
-					DC->setCVar(item->cvar, buff);
+					DC->setCVar(EDITFIELD_TEMP_CVAR, buff);
 				}
 				return qtrue;
 			}
@@ -3605,7 +3679,9 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			newItem = Menu_SetNextCursorItem(item->parent);
 			if (newItem && (newItem->type == ITEM_TYPE_EDITFIELD || newItem->type == ITEM_TYPE_NUMERICFIELD))
 			{
-				g_editItem = newItem;
+				Item_HandleTextFieldDeSelect(item);
+				Item_HandleTextFieldSelect(newItem);
+				//g_editItem = newItem;
 			}
 		}
 
@@ -3614,7 +3690,9 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			newItem = Menu_SetPrevCursorItem(item->parent);
 			if (newItem && (newItem->type == ITEM_TYPE_EDITFIELD || newItem->type == ITEM_TYPE_NUMERICFIELD))
 			{
-				g_editItem = newItem;
+				Item_HandleTextFieldDeSelect(item);
+				Item_HandleTextFieldSelect(newItem);
+				//g_editItem = newItem;
 			}
 		}
 
@@ -3622,6 +3700,11 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		{
 			if (item->onAccept)
 			{
+				//Cinda hackish but does the job
+				// TODO: make me pretty again
+				Item_HandleTextFieldDeSelect(item);
+				Item_HandleTextFieldSelect(item);
+
 				Item_RunScript(item, NULL, item->onAccept);
 			}
 		}
@@ -4176,40 +4259,6 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down)
 		}
 		Display_CloseCinematics();
 	}
-}
-
-void Item_CalcTextFieldCursor(itemDef_t *item)
-{
-	if (item->cvar)
-	{
-		char           buff[1024];
-		int            len;
-		editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
-		memset(buff, 0, sizeof(buff));
-		DC->getCVarString(item->cvar, buff, sizeof(buff));
-		len = strlen(buff);
-		if (editPtr->maxChars && len > editPtr->maxChars)
-		{
-			len = editPtr->maxChars;
-		}
-		item->cursorPos = len;
-	}
-}
-
-void Item_HandleTextFieldSelect(itemDef_t *item)
-{
-	if (item)
-	{
-		Item_CalcTextFieldCursor(item);
-		g_editingField = qtrue;
-		g_editItem     = item;
-	}
-}
-
-void Item_HandleTextFieldDeSelect(itemDef_t *item)
-{
-	g_editingField = qfalse;
-	g_editItem     = NULL;
 }
 
 static rectDef_t *Item_CorrectedTextRect(itemDef_t *item)
@@ -4857,7 +4906,14 @@ void Item_TextField_Paint(itemDef_t *item)
 
 	if (item->cvar)
 	{
-		DC->getCVarString(item->cvar, buff, sizeof(buff));
+		if ((item->window.flags & WINDOW_HASFOCUS) && g_editingField)
+		{
+			DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
+		}
+		else
+		{
+			DC->getCVarString(item->cvar, buff, sizeof(buff));
+		}
 	}
 
 	parent = (menuDef_t *)item->parent;

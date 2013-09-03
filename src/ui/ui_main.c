@@ -7393,6 +7393,7 @@ void _UI_Init(void)
 	uiInfo.uiDC.getKeysForBinding    = &trap_Key_KeysForBinding;
 	uiInfo.uiDC.keynumToStringBuf    = &trap_Key_KeynumToStringBuf;
 	uiInfo.uiDC.keyIsDown            = &trap_Key_IsDown;
+	uiInfo.uiDC.getClipboardData     = &trap_GetClipboardData;
 	uiInfo.uiDC.executeText          = &trap_Cmd_ExecuteText;
 	uiInfo.uiDC.Error                = &Com_Error;
 	uiInfo.uiDC.Print                = &Com_Printf;
@@ -7917,6 +7918,7 @@ vmCvar_t ui_autoredirect;
 
 cvarTable_t cvarTable[] =
 {
+	{ NULL,                             "ui_textfield_temp",                   "",                           CVAR_TEMP                      },
 	{ &ui_glCustom,                     "ui_glCustom",                         "4",                          CVAR_ARCHIVE                   },
 
 	{ &ui_friendlyFire,                 "g_friendlyFire",                      "1",                          CVAR_ARCHIVE                   },
