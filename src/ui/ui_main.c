@@ -4662,6 +4662,7 @@ void UI_RunMenuScript(char **args)
 			if (uiInfo.playerIndex >= 0 && uiInfo.playerIndex < uiInfo.playerCount)
 			{
 				char buffer[128];
+
 				trap_Cvar_VariableStringBuffer("ui_warnreason", buffer, 128);
 
 				trap_Cmd_ExecuteText(EXEC_APPEND, va("ref warn \"%s\" \"%s\"\n", uiInfo.playerNames[uiInfo.playerIndex], buffer));
@@ -4670,6 +4671,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "refWarmup") == 0)
 		{
 			char buffer[128];
+
 			trap_Cvar_VariableStringBuffer("ui_warmup", buffer, 128);
 
 			trap_Cmd_ExecuteText(EXEC_APPEND, va("ref warmup \"%s\"\n", buffer));
@@ -4906,6 +4908,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "toggleWeaponRestriction") == 0)
 		{
 			int ui_hwr = trap_Cvar_VariableValue("ui_heavyWeaponRestriction");
+
 			if (ui_hwr)
 			{
 				trap_Cvar_Set("g_heavyWeaponRestriction", "10");
@@ -5214,6 +5217,21 @@ void UI_RunMenuScript(char **args)
 				trap_Cmd_ExecuteText(EXEC_APPEND, "exec default_left.cfg\n");
 				Controls_SetDefaults(qtrue);
 			}
+		}
+		else if (Q_stricmp(name, "ResetFilters") == 0)
+		{
+			trap_Cvar_Set("ui_joinGameType", "-1");
+			trap_Cvar_Set("ui_netSource", "1");
+			trap_Cvar_Set("ui_browserShowEmptyOrFull", "0");
+			trap_Cvar_Set("ui_browserShowPasswordProtected", "0");
+			trap_Cvar_Set("ui_browserShowFriendlyFire", "0");
+			trap_Cvar_Set("ui_browserShowMaxlives", "0");
+			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
+			trap_Cvar_Set("ui_browserShowAntilag", "0");
+			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
+			trap_Cvar_Set("ui_browserShowBots", "0");
+			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
+			trap_Cvar_Set("ui_browserModFilter", "0");
 		}
 		else
 		{
@@ -5602,7 +5620,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-				if ((Q_stristr(gamename, "nq") == 0) && (ui_browserModFilter.integer == 4))
+				if ((Q_stristr(gamename, "nq") == 0) && (Q_stristr(gamename, "noquarter") == 0) && (ui_browserModFilter.integer == 4))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -5648,11 +5666,12 @@ static void UI_BuildServerDisplayList(qboolean force)
 					continue;
 				}
 
-				if ((ui_browserModFilter.integer == -1) &&
+				if (ui_browserModFilter.integer == -1 &&
 				    ((Q_stristr(gamename, "legacy") != 0) ||
 				     (Q_stristr(gamename, "etpub") != 0) ||
 				     (Q_stristr(gamename, "jaymod") != 0) ||
 				     (Q_stristr(gamename, "nq") != 0) ||
+				     (Q_stristr(gamename, "noquarter") != 0) ||
 				     (Q_stristr(gamename, "nitmod") != 0) ||
 				     (Q_stristr(gamename, "silent") != 0) ||
 				     (Q_stristr(gamename, "tce") != 0) ||
@@ -5662,6 +5681,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 				     (Q_stristr(gamename, "tjmod") != 0) ||
 				     (Q_stristr(gamename, "etmain") != 0)))
 				{
+
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
@@ -5671,6 +5691,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			if (ui_browserMapFilterCheckBox.integer && (strlen(ui_browserMapFilter.string) > 0))
 			{
 				const char *mapname = Info_ValueForKey(info, "mapname");
+
 				if ((Q_stristr(mapname, ui_browserMapFilter.string) != 0 && ui_browserMapFilterCheckBox.integer == 2) || // ui_browserShowTeamBalanced.integer == 2) ||
 				    (Q_stristr(mapname, ui_browserMapFilter.string) == 0 && ui_browserMapFilterCheckBox.integer == 1)) //ui_browserShowTeamBalanced.integer == 1))
 				{
@@ -6614,8 +6635,7 @@ const char *UI_FeederItemText(float feederID, int index, int column, qhandle_t *
 						{
 							handles[3] = uiInfo.modFilter_jaymod;
 						}
-						// FIXME: some older versions of NoQuarter act as "noquarter" instead of "nq"
-						else if (Q_stristr(gamename, "nq") != 0)
+						else if (Q_stristr(gamename, "nq") != 0 || Q_stristr(gamename, "noquarter") != 0)
 						{
 							handles[3] = uiInfo.modFilter_nq;
 						}
