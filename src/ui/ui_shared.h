@@ -305,6 +305,7 @@ typedef struct itemDef_s
 	int settingFlags;
 	int voteFlag;
 
+	const char *onTab;
 	const char *onEsc;
 	const char *onEnter;
 
