@@ -395,7 +395,7 @@
 		tooltip EDITFIELDLEFT_TOOLTIP                           \
 	}
 
-#define EDITFIELDSIMPLE(EDITFIELDSIMPLE_X, EDITFIELDSIMPLE_Y, EDITFIELDSIMPLE_W, EDITFIELDSIMPLE_H, EDITFIELDSIMPLE_TEXT, EDITFIELDSIMPLE_TEXT_SCALE, EDITFIELDSIMPLE_TEXT_ALIGN_Y, EDITFIELDSIMPLE_CVAR, EDITFIELDSIMPLE_MAXCHARS, EDITFIELDSIMPLE_MAXPAINTCHARS, EDITFIELDSIMPLE_TOOLTIP)   \
+#define EDITFIELDSIMPLE(EDITFIELDSIMPLE_X, EDITFIELDSIMPLE_Y, EDITFIELDSIMPLE_W, EDITFIELDSIMPLE_H, EDITFIELDSIMPLE_TEXT, EDITFIELDSIMPLE_TEXT_SCALE, EDITFIELDSIMPLE_TEXT_ALIGN_Y, EDITFIELDSIMPLE_CVAR, EDITFIELDSIMPLE_MAXCHARS, EDITFIELDSIMPLE_MAXPAINTCHARS, EDITFIELDSIMPLE_ACCEPT, EDITFIELDSIMPLE_TOOLTIP)   \
     itemDef {                                                           \
 		name        "efsimpleback" ## EDITFIELDSIMPLE_TEXT                            \
 		group GROUP_NAME                                          \
@@ -423,8 +423,10 @@
 		maxPaintChars EDITFIELDSIMPLE_MAXPAINTCHARS                         \
 		visible         1                                               \
 		tooltip EDITFIELDSIMPLE_TOOLTIP                               \
+		accept {                                                        \
+			EDITFIELDSIMPLE_ACCEPT                               \
+		}                                                         \
 	}  
-
 
 #define NUMERICFIELD(NUMERICFIELD_X, NUMERICFIELD_Y, NUMERICFIELD_W, NUMERICFIELD_H, NUMERICFIELD_TEXT, NUMERICFIELD_TEXT_SCALE, NUMERICFIELD_TEXT_ALIGN_Y, NUMERICFIELD_CVAR, NUMERICFIELD_MAXCHARS, NUMERICFIELD_TOOLTIP)   \
     itemDef {                                                           \
