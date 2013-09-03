@@ -2208,6 +2208,7 @@ void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 				editPtr->paintOffset = 0;
 			}
 
+			DC->setCVar(EDITFIELD_TEMP_CVAR, "");
 			editItem->cursorPos = 0;
 			g_editingField      = qtrue;
 			g_editItem          = editItem;

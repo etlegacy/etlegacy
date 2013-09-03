@@ -395,6 +395,28 @@
 		tooltip EDITFIELDLEFT_TOOLTIP                           \
 	}
 
+#define EDITFIELDLEFTACTION(EDITFIELDLEFTACTION_X, EDITFIELDLEFTACTION_Y, EDITFIELDLEFTACTION_W, EDITFIELDLEFTACTION_H, EDITFIELDLEFTACTION_TEXT, EDITFIELDLEFTACTION_TEXT_SCALE, EDITFIELDLEFTACTION_TEXT_ALIGN_Y, EDITFIELDLEFTACTION_CVAR, EDITFIELDLEFTACTION_MAXCHARS, EDITFIELDLEFTACTION_MAXPAINTCHARS, EDITFIELDLEFTACTION_ACTION, EDITFIELDLEFTACTION_TOOLTIP)   \
+    itemDef {                                                           \
+		name            "efleft" ## EDITFIELDLEFTACTION_TEXT                    \
+		group GROUP_NAME                                      \
+		rect $evalfloat(EDITFIELDLEFTACTION_X) $evalfloat(EDITFIELDLEFTACTION_Y) $evalfloat(EDITFIELDLEFTACTION_W) $evalfloat(EDITFIELDLEFTACTION_H) \
+		type ITEM_TYPE_EDITFIELD                             \
+		text EDITFIELDLEFTACTION_TEXT                              \
+		textfont UI_FONT_COURBD_21                               \
+		textstyle ITEM_TEXTSTYLE_SHADOWED                         \
+		textscale EDITFIELDLEFTACTION_TEXT_SCALE                        \
+		textaligny EDITFIELDLEFTACTION_TEXT_ALIGN_Y                      \
+		forecolor       .6 .6 .6 1                                      \
+		cvar EDITFIELDLEFTACTION_CVAR                              \
+		maxChars EDITFIELDLEFTACTION_MAXCHARS                          \
+		maxPaintChars EDITFIELDLEFTACTION_MAXPAINTCHARS                     \
+		visible         1                                               \
+		tooltip EDITFIELDLEFTACTION_TOOLTIP                           \
+		accept {                                                        \
+			EDITFIELDLEFTACTION_ACTION                               \
+		}                                                            \
+	}
+
 #define EDITFIELDSIMPLE(EDITFIELDSIMPLE_X, EDITFIELDSIMPLE_Y, EDITFIELDSIMPLE_W, EDITFIELDSIMPLE_H, EDITFIELDSIMPLE_TEXT, EDITFIELDSIMPLE_TEXT_SCALE, EDITFIELDSIMPLE_TEXT_ALIGN_Y, EDITFIELDSIMPLE_CVAR, EDITFIELDSIMPLE_MAXCHARS, EDITFIELDSIMPLE_MAXPAINTCHARS, EDITFIELDSIMPLE_ACCEPT, EDITFIELDSIMPLE_TOOLTIP)   \
     itemDef {                                                           \
 		name        "efsimpleback" ## EDITFIELDSIMPLE_TEXT                            \

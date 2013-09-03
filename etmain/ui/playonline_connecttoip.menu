@@ -59,7 +59,9 @@ menuDef {
 		visible		1
 		decoration
 	}
-	EDITFIELDLEFT( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Server IP:", .2, 8, "ui_connectToIPAddress", 32, 25, "Enter the IP address seperated by dots: xxx.xxx.xxx.xxx" )
+	EDITFIELDLEFTACTION( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, "Server IP:", .2, 8, "ui_connectToIPAddress", 32, 25, conditionalscript ui_connectToIPAddress 1
+		( "uiScript JoinDirectServer" )
+		( "open playonline_connecttoip" ), "Enter the IP address seperated by dots: xxx.xxx.xxx.xxx" )
 	
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "BACK", .3, 14, close playonline_connecttoip ; open playonline )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, "CONNECT", .3, 14, conditionalscript ui_connectToIPAddress 1
