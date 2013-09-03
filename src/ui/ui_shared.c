@@ -88,6 +88,7 @@ void Item_Paint(itemDef_t *item);
 void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s);
 void Item_SetupKeywordHash(void);
 void Menu_SetupKeywordHash(void);
+void Item_HandleSaveValue(void);
 int BindingIDFromName(const char *name);
 qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down);
 itemDef_t *Menu_SetPrevCursorItem(menuDef_t *menu);
@@ -2278,6 +2279,8 @@ void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s)
 	qboolean bRan;
 	qboolean b_localAbort = qfalse;
 
+	Item_HandleSaveValue();
+
 	memset(script, 0, sizeof(script));
 
 	if (item && s && s[0])
@@ -3490,6 +3493,16 @@ void Item_HandleTextFieldDeSelect(itemDef_t *item)
 	g_editItem     = NULL;
 }
 
+void Item_HandleSaveValue(void)
+{
+	if (g_editItem)
+	{
+		itemDef_t *temp = g_editItem;
+		Item_HandleTextFieldDeSelect(temp);
+		Item_HandleTextFieldSelect(temp);
+	}
+}
+
 qboolean Item_TextFieldInsertToCursor(int *len, char *buff, int key, itemDef_t *item, editFieldDef_t *editPtr)
 {
 	if (DC->getOverstrikeMode && !DC->getOverstrikeMode())
@@ -3675,7 +3688,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 			}
 		}
 
-		if (key == K_TAB || key == K_DOWNARROW || key == K_KP_DOWNARROW)
+		if ((key == K_TAB && !item->onTab) || key == K_DOWNARROW || key == K_KP_DOWNARROW)
 		{
 			newItem = Menu_SetNextCursorItem(item->parent);
 			if (newItem && (newItem->type == ITEM_TYPE_EDITFIELD || newItem->type == ITEM_TYPE_NUMERICFIELD))
@@ -3684,6 +3697,15 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				Item_HandleTextFieldSelect(newItem);
 				//g_editItem = newItem;
 			}
+			else
+			{
+				Item_HandleSaveValue();
+			}
+		}
+		else if (key == K_TAB && item->onTab)
+		{
+			Item_RunScript(item, NULL, item->onTab);
+			return qtrue;
 		}
 
 		if (key == K_UPARROW || key == K_KP_UPARROW)
@@ -3701,11 +3723,6 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		{
 			if (item->onAccept)
 			{
-				//Cinda hackish but does the job
-				// TODO: make me pretty again
-				Item_HandleTextFieldDeSelect(item);
-				Item_HandleTextFieldSelect(item);
-
 				Item_RunScript(item, NULL, item->onAccept);
 			}
 		}
@@ -3977,6 +3994,12 @@ qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 	if (!down)
 	{
 		return qfalse;
+	}
+
+	if (realKey == K_TAB && item->onTab)
+	{
+		Item_RunScript(item, NULL, item->onTab);
+		return qtrue;
 	}
 
 	if (realKey == K_ESCAPE && item->onEsc)
@@ -7285,6 +7308,15 @@ qboolean ItemParse_doubleClick(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+qboolean ItemParse_onTab(itemDef_t *item, int handle)
+{
+	if (!PC_Script_Parse(handle, &item->onTab))
+	{
+		return qfalse;
+	}
+	return qtrue;
+}
+
 qboolean ItemParse_onEsc(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->onEsc))
@@ -7823,6 +7855,7 @@ keywordHash_t itemParseKeywords[] =
 	{ "textasfloat",       ItemParse_textasfloat,       NULL },
 	{ "disableCvar",       ItemParse_disableCvar,       NULL },
 	{ "doubleclick",       ItemParse_doubleClick,       NULL },
+	{ "onTab",             ItemParse_onTab,             NULL },
 	{ "onEsc",             ItemParse_onEsc,             NULL },
 	{ "onEnter",           ItemParse_onEnter,           NULL },
 	{ "elementheight",     ItemParse_elementheight,     NULL },
