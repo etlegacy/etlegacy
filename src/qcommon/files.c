@@ -3465,7 +3465,7 @@ qboolean FS_VerifyOfficialPaks(void)
 	{
 		if (FS_idPak(fs_serverPakNames[i], BASEGAME))
 		{
-			Q_strncpyz(officialpaks[numOfficialPaksOnServer].pakname, fs_serverPakNames[i], sizeof(officialpaks[0].pakname));
+			Q_strncpyz(officialpaks[numOfficialPaksOnServer].pakname, fs_serverPakNames[i], sizeof(officialpaks[i].pakname));
 			officialpaks[numOfficialPaksOnServer].ok = qfalse;
 			numOfficialPaksOnServer++;
 		}
@@ -3488,9 +3488,9 @@ qboolean FS_VerifyOfficialPaks(void)
 						if (!Q_stricmp(packPath, officialpaks[j].pakname))
 						{
 							officialpaks[j].ok = qtrue;
+							numOfficialPaksLocal++;
 						}
 					}
-					numOfficialPaksLocal++;
 				}
 				break;
 			}
@@ -4352,9 +4352,9 @@ void FS_InitFilesystem(void)
 	    )
 	{
 #ifdef PANDORA
-		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg and default_pandora.cfg - I am missing essential files!\nVerify your installation and make sure genuine ET files\n- mp_bin.pk3\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
+		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg and default_pandora.cfg - I am missing essential files!\nVerify your installation and make sure genuine ET files\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
 #else
-		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg - I am missing essential files!\nVerify your installation and make sure genuine ET files\n- mp_bin.pk3\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
+		Com_Error(ERR_FATAL, "FS_InitFilesystem: Couldn't load default.cfg - I am missing essential files!\nVerify your installation and make sure genuine ET files\n- pak0.pk3\n- pak1.pk3\n- pak2.pk3\nare located in 'etmain' folder of fs_basepath: %s", fs_basepath->string);
 #endif
 	}
 

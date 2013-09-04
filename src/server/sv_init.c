@@ -702,7 +702,7 @@ void SV_SpawnServer(char *server)
 	// out which pk3s should be auto-downloaded
 	// NOTE: we consider the referencedPaks as 'required for operation'
 
-	// we want the server to reference the mp_bin pk3 that the client is expected to load from
+	// we want the server to reference the mod_bin pk3 that the client is expected to load from
 	SV_TouchCGameDLL();
 
 	p = FS_ReferencedPakChecksums();
