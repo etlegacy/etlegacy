@@ -63,6 +63,7 @@
 
 #ifdef USE_WINDOWS_CONSOLE
 #include <windows.h>
+#include "sys_win32.h"
 #endif
 
 static char binaryPath[MAX_OSPATH] = { 0 };
