@@ -381,6 +381,19 @@ void Con_Init(void)
 	Cmd_SetCommandCompletionFunc("condump", Cmd_CompleteTxtName);
 }
 
+/**
+ * @brief Free client console commands before shutdown
+ */
+void Con_Shutdown(void)
+{
+	Cmd_RemoveCommand("toggleconsole");
+	Cmd_RemoveCommand("clMessageMode");
+	Cmd_RemoveCommand("clMessageMode2");
+	Cmd_RemoveCommand("clMessageMode3");
+	Cmd_RemoveCommand("clear");
+	Cmd_RemoveCommand("condump");
+}
+
 /*
 ===============
 Con_Linefeed

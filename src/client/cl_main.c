@@ -3900,7 +3900,7 @@ void CL_Shutdown(void)
 
 	if (recursive)
 	{
-		printf("recursive shutdown\n");
+		Com_Printf("WARNING: Recursive shutdown\n");
 		return;
 	}
 	recursive = qtrue;
@@ -3934,6 +3934,7 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("cinematic");
 	Cmd_RemoveCommand("stoprecord");
 	Cmd_RemoveCommand("connect");
+	Cmd_RemoveCommand("reconnect");
 	Cmd_RemoveCommand("localservers");
 	Cmd_RemoveCommand("globalservers");
 	Cmd_RemoveCommand("rcon");
@@ -3941,7 +3942,13 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("ping");
 	Cmd_RemoveCommand("serverstatus");
 	Cmd_RemoveCommand("showip");
+	Cmd_RemoveCommand("fs_openedList");
+	Cmd_RemoveCommand("fs_referencedList");
 	Cmd_RemoveCommand("model");
+	Cmd_RemoveCommand("video");
+	Cmd_RemoveCommand("stopvideo");
+
+	Con_Shutdown();
 
 	// startup-caching system
 	Cmd_RemoveCommand("cache_startgather");
@@ -3963,6 +3970,7 @@ void CL_Shutdown(void)
 	recursive = qfalse;
 
 	memset(&cls, 0, sizeof(cls));
+	//Key_SetCatcher( 0 );
 
 	Com_Printf("-----------------------\n");
 }
