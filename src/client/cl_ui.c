@@ -254,54 +254,64 @@ static void LAN_RemoveServer(int source, const char *addr)
 		break;
 	}
 
-	if (servers && source > AS_LOCAL_ALL) // single server removal
+	if (servers && count > 0)
 	{
-		netadr_t comp;
-		int      i, j;
-
-		NET_StringToAdr(addr, &comp, NA_UNSPEC);
-		for (i = 0; i < *count; i++)
+		if (source >= AS_LOCAL) // single server removal
 		{
-			if (NET_CompareAdr(comp, servers[i].adr))
-			{
-				j = i;
+			netadr_t comp;
+			int      i, j;
 
-				while (j < *count - 1)
+			NET_StringToAdr(addr, &comp, NA_UNSPEC);
+			for (i = 0; i < *count; i++)
+			{
+				if (NET_CompareAdr(comp, servers[i].adr))
 				{
-					Com_Memcpy(&servers[j], &servers[j + 1], sizeof(servers[j]));
-					j++;
+					j = i;
+
+					while (j < *count - 1)
+					{
+						Com_Memcpy(&servers[j], &servers[j + 1], sizeof(servers[j]));
+						j++;
+					}
+					(*count)--;
+					break;
 				}
-				(*count)--;
+			}
+
+			if (source == AS_FAVORITES)
+			{
+				LAN_SaveServersToFile();
+			}
+		}
+		else // remove all
+		{
+			switch (source)
+			{
+			case AS_LOCAL_ALL:
+				Com_Printf("Removing %i local servers\n", cls.numlocalservers);
+				cls.numlocalservers = 0;
+				Com_Memset(&cls.localServers, 0, sizeof(cls.localServers));
+				break;
+			case AS_GLOBAL_ALL:
+				Com_Printf("Removing %i global servers\n", cls.numglobalservers);
+				cls.numglobalservers = 0;
+				Com_Memset(&cls.globalServers, 0, sizeof(cls.globalServers));
+				break;
+			case AS_FAVORITES_ALL:
+				Com_Printf("Removing %i favourite servers\n", cls.numfavoriteservers);
+				cls.numfavoriteservers = 0;
+				Com_Memset(&cls.favoriteServers, 0, sizeof(cls.favoriteServers));
+				LAN_SaveServersToFile();
+				break;
+			default:
+				Com_Printf("LAN_RemoveServer: Invalid source\n");
 				break;
 			}
 		}
-
-		if (source == AS_FAVORITES)
-		{
-			LAN_SaveServersToFile();
-		}
 	}
-	else if (servers && source < AS_LOCAL) // remove all
+	else
 	{
-		switch (source)
-		{
-		case AS_LOCAL_ALL:
-			Com_Printf("Removing %i local servers\n", cls.numlocalservers);
-			cls.numlocalservers = 0;
-			Com_Memset(&cls.localServers, 0, sizeof(cls.localServers));
-			break;
-		case AS_GLOBAL_ALL:
-			Com_Printf("Removing %i global servers\n", cls.numglobalservers);
-			cls.numglobalservers = 0;
-			Com_Memset(&cls.globalServers, 0, sizeof(cls.globalServers));
-			break;
-		case AS_FAVORITES_ALL:
-			Com_Printf("Removing %i favourite servers\n", cls.numfavoriteservers);
-			cls.numfavoriteservers = 0;
-			Com_Memset(&cls.favoriteServers, 0, sizeof(cls.favoriteServers));
-			LAN_SaveServersToFile();
-			break;
-		}
+		Com_Printf("No server found - nothing to remove\n");
 	}
 }
 

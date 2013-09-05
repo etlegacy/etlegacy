@@ -184,21 +184,14 @@ qboolean isEntVisible(entityState_t *ent)
 	return qfalse;
 }
 
-/*
-==================
-CL_DeltaEntity
-
-Parses deltas from the given base and adds the resulting entity
-to the current frame
-==================
-*/
+/**
+ * @brief Parses deltas from the given base and adds the resulting entity to the current frame
+ */
 void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *old, qboolean unchanged)
 {
-	entityState_t *state;
-
 	// save the parsed entity state into the big circular buffer so
 	// it can be used as the source for a later delta
-	state = &cl.parseEntities[cl.parseEntitiesNum & (MAX_PARSE_ENTITIES - 1)];
+	entityState_t *state = &cl.parseEntities[cl.parseEntitiesNum & (MAX_PARSE_ENTITIES - 1)];
 
 	if (unchanged)
 	{
@@ -364,8 +357,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 		}
 		else
 		{
-			oldstate = &cl.parseEntities[
-			    (oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
+			oldstate = &cl.parseEntities[(oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
 			oldnum = oldstate->number;
 		}
 	}
@@ -376,15 +368,11 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 	}
 }
 
-/*
-================
-CL_ParseSnapshot
-
-If the snapshot is parsed properly, it will be copied to
-cl.snap and saved in cl.snapshots[].  If the snapshot is invalid
-for any reason, no changes to the state will be made at all.
-================
-*/
+/**
+ * @brief If the snapshot is parsed properly, it will be copied to
+ * cl.snap and saved in cl.snapshots[].  If the snapshot is invalid
+ * for any reason, no changes to the state will be made at all.
+ */
 void CL_ParseSnapshot(msg_t *msg)
 {
 	int          len;
@@ -577,25 +565,18 @@ void CL_ParseSnapshot(msg_t *msg)
 int cl_connectedToPureServer;
 int cl_connectedToCheatServer;
 
-/*
-==================
-CL_SystemInfoChanged
-
-The systeminfo configstring has been changed, so parse
-new information out of it.  This will happen at every
-gamestate, and possibly during gameplay.
-==================
-*/
+/**
+ * @brief The systeminfo configstring has been changed, so parse new information out of it.
+ * This will happen at every gamestate, and possibly during gameplay.
+ */
 void CL_PurgeCache(void);
 void CL_SystemInfoChanged(void)
 {
-	char       *systemInfo;
+	char       *systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
 	const char *s, *t;
 	char       key[BIG_INFO_KEY];
 	char       value[BIG_INFO_VALUE];
 	qboolean   gameSet;
-
-	systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
 
 	// NOTE: when the serverId changes, any further messages we send to the server will use this new serverId
 	// in some cases, outdated cp commands might get sent with this news serverId
@@ -798,13 +779,9 @@ void CL_ParseGamestate(msg_t *msg)
 
 //=====================================================================
 
-/*
-=====================
-CL_ParseDownload
-
-A download message has been received from the server
-=====================
-*/
+/**
+ * @brief A download message has been received from the server
+ */
 void CL_ParseDownload(msg_t *msg)
 {
 	int           size;
