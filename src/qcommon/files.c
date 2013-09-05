@@ -3947,18 +3947,11 @@ const char *FS_LoadedPakNames(void)
 		{
 			Q_strcat(info, sizeof(info), " ");
 		}
-		// Arnout: changed to have the full path
-		//Q_strcat( info, sizeof( info ), search->pack->pakBasename );
+
+		// full path ...
 		Q_strcat(info, sizeof(info), search->pack->pakGamename);
 		Q_strcat(info, sizeof(info), "/");
 		Q_strcat(info, sizeof(info), search->pack->pakBasename);
-	}
-
-	// remove last space char
-	len = strlen(info);
-	if (len > 1) // foolproof
-	{
-		info[len - 1] = 0;
 	}
 
 	return info;
